@@ -744,17 +744,17 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                             imageFormat, imgMap, imgMapTransforms, tabWrite, comments,
                             string_strip_hyphen, safety, col, os, preview_dir, unpacked_images):
     material_finish = materialNames[mater.name]
-    if mater.use_transparency:
+    if mater.pov.use_transparency:
         trans = 1.0 - mater.alpha
     else:
         trans = 0.0
-    if ((mater.specular_color.s == 0.0) or (mater.diffuse_shader == 'MINNAERT')):
+    if ((mater.specular_color.s == 0.0) or (mater.pov.diffuse_shader == 'MINNAERT')):
     # No layered texture because of aoi pattern used for minnaert and pov can't layer patterned
         colored_specular_found = False
     else:
         colored_specular_found = True
 
-    if mater.use_transparency and mater.transparency_method == 'RAYTRACE':
+    if mater.pov.use_transparency and mater.transparency_method == 'RAYTRACE':
         povFilter = mater.raytrace_transparency.filter * (1.0 - mater.alpha)
         trans = (1.0 - mater.alpha) - povFilter
     else:
@@ -866,7 +866,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
     if mater.pov.replacement_text != "":
         tabWrite("%s\n" % mater.pov.replacement_text)
     #################################################################################
-    if mater.diffuse_shader == 'MINNAERT':
+    if mater.pov.diffuse_shader == 'MINNAERT':
         tabWrite("\n")
         tabWrite("aoi\n")
         tabWrite("texture_map {\n")
@@ -874,7 +874,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                  (mater.darkness / 2.0, 2.0 - mater.darkness))
         tabWrite("[%.3g\n" % (1.0 - (mater.darkness / 2.0)))
 
-    if mater.diffuse_shader == 'FRESNEL':
+    if mater.pov.diffuse_shader == 'FRESNEL':
         # For FRESNEL diffuse in POV, we'll layer slope patterned textures
         # with lamp vector as the slope vector and nest one slope per lamp
         # into each texture map's entry.
@@ -1130,10 +1130,10 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
         tabWrite("}\n")
 
     #End of slope/ior texture_map
-    if mater.diffuse_shader == 'MINNAERT' and mater.pov.replacement_text == "":
+    if mater.pov.diffuse_shader == 'MINNAERT' and mater.pov.replacement_text == "":
         tabWrite("]\n")
         tabWrite("}\n")
-    if mater.diffuse_shader == 'FRESNEL' and mater.pov.replacement_text == "":
+    if mater.pov.diffuse_shader == 'FRESNEL' and mater.pov.replacement_text == "":
         c = 1
         while (c <= lampCount):
             tabWrite("]\n")
@@ -1145,7 +1145,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
     # Close first layer of POV "texture" (Blender material)
     tabWrite("}\n")
 
-    if ((mater.specular_color.s > 0.0) and (mater.diffuse_shader != 'MINNAERT')):
+    if ((mater.specular_color.s > 0.0) and (mater.pov.diffuse_shader != 'MINNAERT')):
 
         colored_specular_found = True
     else:

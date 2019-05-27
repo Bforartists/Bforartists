@@ -20,8 +20,8 @@
 
 __author__ = "Alexander Milovsky, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 from math import sin, cos, pi
 
@@ -191,7 +191,7 @@ class _Properties:
 @BlClassRegistry()
 @compat.make_annotations
 class MUV_OT_UVW_BoxMap(bpy.types.Operator):
-    bl_idname = "uv.muv_ot_uvw_box_map"
+    bl_idname = "uv.muv_uvw_box_map"
     bl_label = "Box Map"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -249,7 +249,7 @@ class MUV_OT_UVW_BoxMap(bpy.types.Operator):
 @BlClassRegistry()
 @compat.make_annotations
 class MUV_OT_UVW_BestPlanerMap(bpy.types.Operator):
-    bl_idname = "uv.muv_ot_uvw_best_planer_map"
+    bl_idname = "uv.muv_uvw_best_planer_map"
     bl_label = "Best Planer Map"
     bl_options = {'REGISTER', 'UNDO'}
 

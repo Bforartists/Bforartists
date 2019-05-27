@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 from math import fabs
 
@@ -187,7 +187,7 @@ class MUV_OT_PackUV(bpy.types.Operator):
      - Same number of UV
     """
 
-    bl_idname = "uv.muv_ot_pack_uv"
+    bl_idname = "uv.muv_pack_uv"
     bl_label = "Pack UV"
     bl_description = "Pack UV (Same UV Islands are integrated)"
     bl_options = {'REGISTER', 'UNDO'}

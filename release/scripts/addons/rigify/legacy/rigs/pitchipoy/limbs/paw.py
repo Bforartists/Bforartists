@@ -111,7 +111,8 @@ def create_paw( cls, bones ):
 
     # Add driver to limit scale constraint influence
     b        = bones['ik']['mch_str']
-    drv      = pb[b].constraints[-1].driver_add("influence").driver
+    drv_fcu  = pb[b].constraints[-1].driver_add("influence")
+    drv      = drv_fcu.driver
     drv.type = 'AVERAGE'
 
     var = drv.variables.new()
@@ -121,7 +122,7 @@ def create_paw( cls, bones ):
     var.targets[0].data_path = \
         pb_parent.path_from_id() + '['+ '"' + prop.name + '"' + ']'
 
-    drv_modifier = cls.obj.animation_data.drivers[-1].modifiers[0]
+    drv_modifier = drv_fcu.modifiers[0]
 
     drv_modifier.mode            = 'POLYNOMIAL'
     drv_modifier.poly_order      = 1
@@ -183,7 +184,8 @@ def create_paw( cls, bones ):
 
         # Add driver to limit scale constraint influence
         b        = org_bones[3]
-        drv      = pb[b].constraints[-1].driver_add("influence").driver
+        drv_fcu  = pb[b].constraints[-1].driver_add("influence")
+        drv      = drv_fcu.driver
         drv.type = 'AVERAGE'
 
         var = drv.variables.new()
@@ -193,7 +195,7 @@ def create_paw( cls, bones ):
         var.targets[0].data_path = \
             pb_parent.path_from_id() + '['+ '"' + prop.name + '"' + ']'
 
-        drv_modifier = cls.obj.animation_data.drivers[-1].modifiers[0]
+        drv_modifier = drv_fcu.modifiers[0]
 
         drv_modifier.mode            = 'POLYNOMIAL'
         drv_modifier.poly_order      = 1

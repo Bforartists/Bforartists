@@ -66,7 +66,7 @@ if __name__ == "__main__":
                 = data['thumbnail_background_lightness']
         tscale = data["thumbnail_scale"]
         bpy.context.view_layer.objects['scaler'].scale = (tscale, tscale, tscale)
-        s.update()
+        bpy.context.view_layer.update()
         for ob in bpy.context.visible_objects:
             if ob.name[:15] == 'MaterialPreview':
                 ob.material_slots[0].material = mat
@@ -81,7 +81,7 @@ if __name__ == "__main__":
                 ts = data['texture_size_meters']
                 # if data["thumbnail_type"] in ['BALL', 'CUBE']:
                 #    utils.automap(ob.name, tex_size = ts / tscale, bg_exception=True)
-        s.update()
+        bpy.context.view_layer.update()
 
         s.cycles.volume_step_size = tscale * .1
 

@@ -62,8 +62,6 @@ from amaranth.render import (
     meshlight_add,
     meshlight_select,
     passepartout,
-    only_render,
-    unsimplify,
     final_resolution,
     samples_scene,
     render_output_z,
@@ -88,8 +86,8 @@ from amaranth.misc import (
 # register the addon + modules found in globals()
 bl_info = {
     "name": "Amaranth Toolset",
-    "author": "Pablo Vazquez, Bassam Kurdali, Sergey Sharybin, Lukas Tönne, Cesar Saez",
-    "version": (1, 0, 6),
+    "author": "Pablo Vazquez, Bassam Kurdali, Sergey Sharybin, Lukas Tönne, Cesar Saez, CansecoGPC",
+    "version": (1, 0, 7),
     "blender": (2, 80, 0),
     "location": "Everywhere!",
     "description": "A collection of tools and settings to improve productivity",

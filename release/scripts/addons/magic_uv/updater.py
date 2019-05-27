@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import os
 
@@ -41,7 +41,7 @@ from .utils import compatibility as compat
 
 @BlClassRegistry()
 class MUV_OT_CheckAddonUpdate(bpy.types.Operator):
-    bl_idname = "uv.muv_ot_check_addon_update"
+    bl_idname = "uv.muv_check_addon_update"
     bl_label = "Check Update"
     bl_description = "Check Add-on Update"
     bl_options = {'REGISTER', 'UNDO'}
@@ -56,7 +56,7 @@ class MUV_OT_CheckAddonUpdate(bpy.types.Operator):
 @BlClassRegistry()
 @compat.make_annotations
 class MUV_OT_UpdateAddon(bpy.types.Operator):
-    bl_idname = "uv.muv_ot_update_addon"
+    bl_idname = "uv.muv_update_addon"
     bl_label = "Update"
     bl_description = "Update Add-on"
     bl_options = {'REGISTER', 'UNDO'}

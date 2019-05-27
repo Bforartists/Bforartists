@@ -20,8 +20,8 @@
 
 __author__ = "Keith (Wahooney) Boshoff, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import bpy
 from bpy.props import (
@@ -136,7 +136,7 @@ class MUV_OT_MirrorUV(bpy.types.Operator):
     Operation class: Mirror UV
     """
 
-    bl_idname = "uv.muv_ot_mirror_uv"
+    bl_idname = "uv.muv_mirror_uv"
     bl_label = "Mirror UV"
     bl_options = {'REGISTER', 'UNDO'}
 

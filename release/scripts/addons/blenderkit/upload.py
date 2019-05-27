@@ -22,11 +22,12 @@ if "bpy" in locals():
     imp.reload(asset_inspector)
     imp.reload(paths)
     imp.reload(utils)
+    imp.reload(search)
     imp.reload(bg_blender)
     imp.reload(autothumb)
     imp.reload(version_checker)
 else:
-    from blenderkit import asset_inspector, paths, utils, bg_blender, autothumb, version_checker
+    from blenderkit import asset_inspector, paths, utils, bg_blender, autothumb, version_checker, search
 
 import tempfile, os, subprocess, json, re
 
@@ -445,6 +446,7 @@ def get_upload_data(self, context, asset_type):
         upload_data["category"] = props.subcategory
     upload_data["license"] = props.license
     upload_data["isFree"] = props.is_free
+    upload_data["isPrivate"] = props.is_private
     upload_data["token"] = user_preferences.api_key
 
     if props.asset_base_id != '':
@@ -465,7 +467,7 @@ def mark_for_validation(self, context, asset_type):
         "verificationStatus": "ready"
     }
 
-    url = paths.get_bkit_url() + 'assets/'
+    url = paths.get_api_url() + 'assets/'
 
     headers = utils.get_headers(user_preferences.api_key)
 
@@ -500,8 +502,33 @@ def get_upload_location(props):
     return None
 
 
+def check_storage_quota(props):
+    if not props.is_private:
+        return True
+
+    profile = bpy.context.window_manager.get('bkit profile')
+    if profile is None or profile.get('remainingPrivateQuota') is None:
+        preferences = bpy.context.preferences.addons['blenderkit'].preferences
+        adata = search.request_profile(preferences.api_key)
+        if adata is None:
+            props.report = 'User profile not retrieved.'
+            return False
+        search.write_profile(adata)
+        profile = adata
+    quota = profile['user'].get('remainingPrivateQuota')
+    if quota is None or quota > 0:
+        return True
+    props.report = 'Private storage quota exceeded.'
+    return False
+
+
 def start_upload(self, context, asset_type, as_new, metadata_only):
     props = utils.get_upload_props()
+    storage_quota_ok = check_storage_quota(props)
+    if not storage_quota_ok:
+        self.report({'ERROR_INVALID_INPUT'}, props.report)
+        return {'CANCELLED'}
+
     location = get_upload_location(props)
     props.upload_state = 'preparing upload'
     # do this for fixing long tags in some upload cases
@@ -559,7 +586,7 @@ def start_upload(self, context, asset_type, as_new, metadata_only):
         return {'CANCELLED'}
 
     # first upload metadata to server, so it can be saved inside the current file
-    url = paths.get_bkit_url() + 'assets/'
+    url = paths.get_api_url() + 'assets/'
 
     headers = utils.get_headers(upload_data['token'])
 
@@ -570,6 +597,7 @@ def start_upload(self, context, asset_type, as_new, metadata_only):
         try:
             r = requests.post(url, json=json_metadata, headers=headers, verify=True)  # files = files,
             props.upload_state = 'uploaded metadata'
+            utils.p(r.text)
         except requests.exceptions.RequestException as e:
             print(e)
             props.upload_state = str(e)
@@ -690,7 +718,7 @@ class ModelUploadOperator(Operator):
             self.metadata_only = False
             props.name_changed = False
 
-        result =    start_upload(self, context, self.asset_type, self.as_new, self.metadata_only)
+        result = start_upload(self, context, self.asset_type, self.as_new, self.metadata_only)
 
         return result
 

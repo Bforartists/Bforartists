@@ -31,9 +31,9 @@
 #  include "utfconv.h"
 
 GHOST_ImeWin32::GHOST_ImeWin32()
-    : ime_status_(false),
+    : is_composing_(false),
+      ime_status_(false),
       input_language_id_(LANG_USER_DEFAULT),
-      is_composing_(false),
       system_caret_(false),
       caret_rect_(-1, -1, 0, 0),
       is_first(true),
@@ -178,7 +178,7 @@ void GHOST_ImeWin32::CleanupComposition(HWND window_handle)
   /**
    * Notify the IMM attached to the given window to complete the ongoing
    * composition, (this case happens when the given window is de-activated
-   * while composing a text and re-activated), and reset the omposition status.
+   * while composing a text and re-activated), and reset the composition status.
    */
   if (is_composing_) {
     HIMC imm_context = ::ImmGetContext(window_handle);
@@ -273,7 +273,7 @@ void GHOST_ImeWin32::GetCaret(HIMC imm_context, LPARAM lparam, ImeComposition *c
       /**
        * For Japanese IMEs, the robustest way to retrieve the caret
        * is scanning the attribute of the latest composition string and
-       * retrieving the begining and the end of the target clause, i.e.
+       * retrieving the beginning and the end of the target clause, i.e.
        * a clause being converted.
        */
       if (lparam & GCS_COMPATTR) {

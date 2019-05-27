@@ -123,7 +123,7 @@ class RENDER_PT_network_settings(NetRenderButtonsPanel, bpy.types.Panel):
 
         row = layout.row()
 
-        split = layout.split(percentage=0.5)
+        split = layout.split(factor=0.5)
 
         col = split.column()
         col.prop(netsettings, "server_address", text="Address")

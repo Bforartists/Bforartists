@@ -449,10 +449,6 @@ class Solids(bpy.types.Operator):
     previousSetting = ""
 
     def execute(self, context):
-        # turn off undo for better performance (3-5x faster), also makes sure
-        #  that mesh ops are undoable and entire script acts as one operator
-        bpy.context.preferences.edit.use_global_undo = False
-
         # piece of code to make presets remain until parameters are changed
         if self.preset != "0":
             # if preset, set preset
@@ -511,8 +507,5 @@ class Solids(bpy.types.Operator):
 
         object_data_add(context, mesh, operator=None)
         # object generation done
-
-        # turn undo back on
-        bpy.context.preferences.edit.use_global_undo = True
 
         return {'FINISHED'}

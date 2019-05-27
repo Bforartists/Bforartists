@@ -171,46 +171,34 @@ def load_prefs():
     if os.path.exists(fpath):
         with open(fpath, 'r') as s:
             prefs = json.load(s)
-            user_preferences.api_key = prefs['API_key']
-            user_preferences.global_dir = prefs['global_dir']
+            user_preferences.api_key = prefs.get('API_key', '')
+            user_preferences.global_dir = prefs.get('global_dir', paths.default_global_dict())
+            user_preferences.api_key_refresh = prefs.get('API_key_refresh', '')
+
 
 def save_prefs(self, context):
-    # print(type(context),type(bpy.context))
+    # first check context, so we don't do this on registration or blender startup
     if not bpy.app.background and hasattr(bpy.context, 'view_layer'):
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-        if user_preferences.api_key != '':
-            if len(user_preferences.api_key)>35:
-                prefs = {
-                    'API_key': user_preferences.api_key,
-                    'global_dir': user_preferences.global_dir,
-                }
-                # user_preferences.api_key = user_preferences.api_key.strip()
-                fpath = paths.BLENDERKIT_SETTINGS_FILENAME
-                f = open(fpath, 'w')
-                with open(fpath, 'w') as s:
-                    json.dump(prefs, s)
-                bpy.ops.wm.save_userpref()
-            else:
-                # reset the api key in case the user writes some nonsense, e.g. a search string instead of the Key
-                user_preferences.api_key = ''
-                props = get_search_props()
-                props.report = 'Please paste a correct API Key.'
+        # we test the api key for lenght, so not a random accidentaly typed sequence gets saved.
+        lk = len(user_preferences.api_key)
+        if 0 < lk < 25:
+            # reset the api key in case the user writes some nonsense, e.g. a search string instead of the Key
+            user_preferences.api_key = ''
+            props = get_search_props()
+            props.report = 'Login failed. Please paste a correct API Key.'
 
-def load_categories():
-    categories.copy_categories()
-    tempdir = paths.get_temp_dir()
-    categories_filepath = os.path.join(tempdir, 'categories.json')
-
-    wm = bpy.context.window_manager
-    with open(categories_filepath, 'r') as catfile:
-        wm['bkit_categories'] = json.load(catfile)
-
-    wm['active_category'] = {
-        'MODEL': ['model'],
-        'SCENE': ['scene'],
-        'MATERIAL': ['material'],
-        'BRUSH': ['brush'],
-    }
+        prefs = {
+            'API_key': user_preferences.api_key,
+            'API_key_refresh': user_preferences.api_key_refresh,
+            'global_dir': user_preferences.global_dir,
+        }
+        # user_preferences.api_key = user_preferences.api_key.strip()
+        fpath = paths.BLENDERKIT_SETTINGS_FILENAME
+        f = open(fpath, 'w')
+        with open(fpath, 'w') as s:
+            json.dump(prefs, s)
+        bpy.ops.wm.save_userpref()
 
 
 def get_hidden_image(tpath, bdata_name, force_reload=False):
@@ -242,6 +230,7 @@ def get_hidden_image(tpath, bdata_name, force_reload=False):
         if img.packed_file is not None:
             img.unpack(method='USE_ORIGINAL')
         img.reload()
+    img.colorspace_settings.name = 'Linear'
     return img
 
 
@@ -251,6 +240,7 @@ def get_thumbnail(name):
     img = bpy.data.images.get(name)
     if img == None:
         img = bpy.data.images.load(p)
+        img.colorspace_settings.name = 'Linear'
         img.name = name
         img.name = name
 
@@ -264,11 +254,19 @@ def get_brush_props(context):
     return None
 
 
+def p(text, text1='', text2='', text3='', text4='', text5=''):
+    '''debug printing depending on blender's debug value'''
+    if bpy.app.debug_value > 0:
+        print(text, text1, text2, text3, text4, text5)
+
+
 def pprint(data):
-    print(json.dumps(data, indent=4, sort_keys=True))
+    '''pretty print jsons'''
+    p(json.dumps(data, indent=4, sort_keys=True))
 
 
 def get_hierarchy(ob):
+    '''get all objects in a tree'''
     obs = []
     doobs = [ob]
     while len(doobs) > 0:
@@ -301,13 +299,14 @@ def get_bounds_snappable(obs, use_modifiers=False):
             # If to_mesh() works we can use it on curves and any other ob type almost.
             # disabled to_mesh for 2.8 by now, not wanting to use dependency graph yet.
             depsgraph = bpy.context.evaluated_depsgraph_get()
-            object_eval = ob.evaluated_get(depsgraph)
-            mesh = object_eval.to_mesh()
 
-            # if self.applyModifiers:
-            #     evaluated_get(depsgraph).to_mesh()
-            # else:
-            #     to_mesh()
+            object_eval = ob.evaluated_get(depsgraph)
+            if ob.type == 'CURVE':
+                mesh = object_eval.to_mesh()
+            else:
+                mesh = object_eval.data
+
+            # to_mesh(context.depsgraph, apply_modifiers=self.applyModifiers, calc_undeformed=False)
             obcount += 1
             for c in mesh.vertices:
                 coord = c.co
@@ -319,8 +318,9 @@ def get_bounds_snappable(obs, use_modifiers=False):
                 maxx = max(maxx, parent_coord.x)
                 maxy = max(maxy, parent_coord.y)
                 maxz = max(maxz, parent_coord.z)
-
-            object_eval.to_mesh_clear()
+            # bpy.data.meshes.remove(mesh)
+            if ob.type == 'CURVE':
+                object_eval.to_mesh_clear()
 
     if obcount == 0:
         minx, miny, minz, maxx, maxy, maxz = 0, 0, 0, 0, 0, 0

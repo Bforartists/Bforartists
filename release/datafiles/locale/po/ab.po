@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
+"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
 "Report-Msgid-Bugs-To: \n"
 "\"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -61,6 +61,14 @@ msgid "Image"
 msgstr "Асахьанҵа"
 
 
+msgid "Rotation"
+msgstr "Агьежьра"
+
+
+msgid "Scale"
+msgstr "Ашәага"
+
+
 msgid "Curve"
 msgstr "Архәара"
 
@@ -75,6 +83,10 @@ msgstr "Абаҩ"
 
 msgid "Camera"
 msgstr "Акамера"
+
+
+msgid "Location"
+msgstr "Аҭыԥ"
 
 
 msgid "Cursor"
@@ -124,12 +136,17 @@ msgstr "Аҭыџьеихац"
 
 
 msgctxt "ID"
+msgid "Metaball"
+msgstr "Метампыл"
+
+
+msgctxt "ID"
 msgid "Speaker"
 msgstr "Абжьы Ахыҵхырҭа"
 
 
 msgid "Vertex"
-msgstr "Акәакь"
+msgstr "Ақәыцә"
 
 
 msgid "Group"
@@ -207,7 +224,15 @@ msgstr "Ашәаҳара Аиҿкаашьа"
 
 
 msgid "Vertex Paint"
-msgstr "Акәакь Ашәра"
+msgstr "Ақәыцә Ашәра"
+
+
+msgid "Weight Paint"
+msgstr "Акапан Ашәра"
+
+
+msgid "Texture Paint"
+msgstr "Атекстура Ашәра"
 
 
 msgctxt "ID"
@@ -217,6 +242,10 @@ msgstr "Аҭацәы"
 
 msgid "Global"
 msgstr "Зеиԥшла"
+
+
+msgid "3D Cursor"
+msgstr "3Д Ахырхага"
 
 
 msgid "Edit"
@@ -240,11 +269,15 @@ msgstr "Аҿарҧага"
 
 
 msgid "Edge"
-msgstr "Аган"
+msgstr "Акьыԥшь"
 
 
 msgid "Face"
 msgstr "Ахаҿы"
+
+
+msgid "Metaball"
+msgstr "Метампыл"
 
 
 msgid "Light"
@@ -321,6 +354,11 @@ msgstr "Ацҵара Алашара"
 
 
 msgctxt "Operator"
+msgid "Add Metaball"
+msgstr "Ацҵара Метампыл"
+
+
+msgctxt "Operator"
 msgid "Add Speaker"
 msgstr "Ацҵара Абжьы Ахыҵхырҭа"
 
@@ -339,6 +377,11 @@ msgstr "Арҳәара"
 
 
 msgctxt "Operator"
+msgid "Scale"
+msgstr "Ашәага"
+
+
+msgctxt "Operator"
 msgid "Circle"
 msgstr "Аицыгьежь"
 
@@ -353,6 +396,11 @@ msgid "Text"
 msgstr "Аҳәоу"
 
 
+msgctxt "MovieClip"
+msgid "View"
+msgstr "Аԥшра"
+
+
 msgid "Speaker"
 msgstr "Абжьы Ахыҵхырҭа"
 
@@ -360,6 +408,11 @@ msgstr "Абжьы Ахыҵхырҭа"
 msgctxt "WindowManager"
 msgid "Armature"
 msgstr "Абаҩ"
+
+
+msgctxt "WindowManager"
+msgid "Metaball"
+msgstr "Метампы"
 
 
 msgctxt "WindowManager"
@@ -385,6 +438,10 @@ msgstr "Агәыԥ"
 msgctxt "Operator"
 msgid "Text"
 msgstr "Аҳәоу"
+
+
+msgid "location"
+msgstr "Аҭыԥ"
 
 
 msgctxt "Operator"
@@ -435,6 +492,16 @@ msgstr "Аҭацәы"
 msgctxt "Operator"
 msgid "Speaker"
 msgstr "Абжьы Ахыҵхырҭа"
+
+
+msgctxt "Operator"
+msgid "Location"
+msgstr "Аҭыԥ"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Агьежьра"
 
 
 msgctxt "Operator"
@@ -575,6 +642,86 @@ msgstr "Аҿыц"
 msgctxt "LightProbe"
 msgid "New"
 msgstr "Аҿыц"
+
+
+msgid "Front Orthographic"
+msgstr "Аԥхьа Аҩышьаԥҟара"
+
+
+msgid "Front Perspective"
+msgstr "Аԥхьа Ԥхьаԥшра"
+
+
+msgid "Back Orthographic"
+msgstr "Ашьҭахь Аҩышьаԥҟара"
+
+
+msgid "Back Perspective"
+msgstr "Ашьҭахь Ԥхьаԥшра"
+
+
+msgid "Top Orthographic"
+msgstr "Ақә Аҩышьаԥҟара"
+
+
+msgid "Top Perspective"
+msgstr "Ақә Ԥхьаԥшра"
+
+
+msgid "Bottom Orthographic"
+msgstr "Ҵаҟа Аҩышьаԥҟара"
+
+
+msgid "Bottom Perspective"
+msgstr "Ҵаҟа Ԥхьаԥшра"
+
+
+msgid "Right Orthographic"
+msgstr "Арӷьа Аҩышьаԥҟара"
+
+
+msgid "Right Perspective"
+msgstr "Арӷьа Ԥхьаԥшра"
+
+
+msgid "Left Orthographic"
+msgstr "Арма Аҩышьаԥҟара"
+
+
+msgid "Left Perspective"
+msgstr "Арма Ԥхьаԥшра"
+
+
+msgid "Camera Perspective"
+msgstr "Акамера Ԥхьаԥшра"
+
+
+msgid "Camera Orthographic"
+msgstr "Акамера Аҩышьаԥҟара"
+
+
+msgid "User Orthographic"
+msgstr "Ахархәаҩ Аҩышьаԥҟара"
+
+
+msgid "User Perspective"
+msgstr "Ахархәаҩ Ԥхьаԥшра"
+
+
+msgid "global"
+msgstr "Зеиԥшла"
+
+
+msgid "local"
+msgstr "Ҷыдала"
+
+
+msgid "view"
+msgstr "Аԥшра"
+
+
+msgid "cursor"
+msgstr "Ахырхага"
 
 
 msgctxt "Armature"

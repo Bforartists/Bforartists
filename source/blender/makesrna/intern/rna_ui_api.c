@@ -95,13 +95,14 @@ static void rna_uiItemR(uiLayout *layout,
                         int icon,
                         bool expand,
                         bool slider,
-                        bool toggle,
+                        int toggle,
                         bool icon_only,
                         bool event,
                         bool full_event,
                         bool emboss,
                         int index,
-                        int icon_value)
+                        int icon_value,
+                        bool invert_checkbox)
 {
   PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
   int flag = 0;
@@ -120,11 +121,17 @@ static void rna_uiItemR(uiLayout *layout,
 
   flag |= (slider) ? UI_ITEM_R_SLIDER : 0;
   flag |= (expand) ? UI_ITEM_R_EXPAND : 0;
-  flag |= (toggle) ? UI_ITEM_R_TOGGLE : 0;
+  if (toggle == 1) {
+    flag |= UI_ITEM_R_TOGGLE;
+  }
+  else if (toggle == 0) {
+    flag |= UI_ITEM_R_ICON_NEVER;
+  }
   flag |= (icon_only) ? UI_ITEM_R_ICON_ONLY : 0;
   flag |= (event) ? UI_ITEM_R_EVENT : 0;
   flag |= (full_event) ? UI_ITEM_R_FULL_EVENT : 0;
   flag |= (emboss) ? 0 : UI_ITEM_R_NO_BG;
+  flag |= (invert_checkbox) ? UI_ITEM_R_CHECKBOX_INVERT : 0;
 
   uiItemFullR(layout, ptr, prop, index, 0, flag, name, icon);
 }
@@ -771,7 +778,17 @@ void RNA_api_ui_layout(StructRNA *srna)
   api_ui_item_common(func);
   RNA_def_boolean(func, "expand", false, "", "Expand button to show more detail");
   RNA_def_boolean(func, "slider", false, "", "Use slider widget for numeric values");
-  RNA_def_boolean(func, "toggle", false, "", "Use toggle widget for boolean values");
+  RNA_def_int(func,
+              "toggle",
+              -1,
+              -1,
+              1,
+              "",
+              "Use toggle widget for boolean values, "
+              "or a checkbox when disabled "
+              "(the default is -1 which uses toggle only when an icon is displayed)",
+              -1,
+              1);
   RNA_def_boolean(func, "icon_only", false, "", "Draw only icons in buttons, no text");
   RNA_def_boolean(func, "event", false, "", "Use button to input key events");
   RNA_def_boolean(
@@ -789,6 +806,7 @@ void RNA_api_ui_layout(StructRNA *srna)
               INT_MAX); /* RNA_NO_INDEX == -1 */
   parm = RNA_def_property(func, "icon_value", PROP_INT, PROP_UNSIGNED);
   RNA_def_property_ui_text(parm, "Icon Value", "Override automatic icon of the item");
+  RNA_def_boolean(func, "invert_checkbox", false, "", "Draw checkbox value inverted");
 
   func = RNA_def_function(srna, "props_enum", "uiItemsEnumR");
   api_ui_item_rna_common(func);

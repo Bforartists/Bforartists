@@ -762,22 +762,7 @@ GHOST_IWindow *GHOST_SystemCocoa::createWindow(const STR_String &title,
  */
 GHOST_IContext *GHOST_SystemCocoa::createOffscreenContext()
 {
-  GHOST_Context *context = new GHOST_ContextCGL(false,
-                                                NULL,
-                                                NULL,
-
-#if defined(WITH_GL_PROFILE_CORE)
-                                                GL_CONTEXT_CORE_PROFILE_BIT,
-                                                3,
-                                                3,
-#else
-                                                0,  // no profile bit
-                                                2,
-                                                1,
-#endif
-                                                GHOST_OPENGL_CGL_CONTEXT_FLAGS,
-                                                GHOST_OPENGL_CGL_RESET_NOTIFICATION_STRATEGY);
-
+  GHOST_Context *context = new GHOST_ContextCGL(false, NULL);
   if (context->initializeDrawingContext())
     return context;
   else
@@ -1591,7 +1576,7 @@ GHOST_TSuccess GHOST_SystemCocoa::handleMouseEvent(void *eventPtr)
             window->getClientBounds(bounds);
 
           /* Switch back to Cocoa coordinates orientation
-           * (y=0 at botton,the same as blender internal btw!), and to client coordinates. */
+           * (y=0 at bottom, the same as blender internal btw!), and to client coordinates. */
           window->getClientBounds(windowBounds);
           window->screenToClient(bounds.m_l, bounds.m_b, correctedBounds.m_l, correctedBounds.m_t);
           window->screenToClient(bounds.m_r, bounds.m_t, correctedBounds.m_r, correctedBounds.m_b);
@@ -1665,7 +1650,7 @@ GHOST_TSuccess GHOST_SystemCocoa::handleMouseEvent(void *eventPtr)
       else if (phase == NSEventPhaseEnded)
         m_multiTouchScroll = false;
 
-      /* Standard scrollwheel case, if no swiping happened,
+      /* Standard scroll-wheel case, if no swiping happened,
        * and no momentum (kinetic scroll) works. */
       if (!m_multiTouchScroll && momentumPhase == NSEventPhaseNone) {
         GHOST_TInt32 delta;

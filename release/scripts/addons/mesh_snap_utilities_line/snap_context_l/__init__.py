@@ -507,6 +507,12 @@ class SnapContext():
         #bgl.glDisable(bgl.GL_MULTISAMPLE)
         bgl.glEnable(bgl.GL_DEPTH_TEST)
 
+        is_point_size_enabled = bgl.glIsEnabled(bgl.GL_PROGRAM_POINT_SIZE)
+        if is_point_size_enabled:
+            bgl.glDisable(bgl.GL_PROGRAM_POINT_SIZE)
+
+        bgl.glPointSize(4.0)
+
         proj_mat = self.rv3d.perspective_matrix.copy()
         if self.proj_mat != proj_mat:
             self.proj_mat = proj_mat
@@ -570,10 +576,12 @@ class SnapContext():
         if snap_obj:
             ret = self._get_loc(snap_obj, index)
 
-        bgl.glDisable(bgl.GL_DEPTH_TEST)
+        if is_point_size_enabled:
+            bgl.glEnable(bgl.GL_PROGRAM_POINT_SIZE)
 
-        self._offscreen.unbind()
+        bgl.glDisable(bgl.GL_DEPTH_TEST)
         _Internal.gpu_Indices_restore_state()
+        self._offscreen.unbind()
 
         return (snap_obj, *ret)
 

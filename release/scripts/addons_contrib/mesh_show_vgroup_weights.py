@@ -254,7 +254,7 @@ class RemoveFromVertexGroup(bpy.types.Operator):
     bl_description = "Remove a specific vertex from a specific vertex group"
 
     #XXX abusing vector props here a bit; the first element is the vert index and the second is the group index
-    vert_and_group = bpy.props.IntVectorProperty(name = "Vertex and Group to remove", size = 2)
+    vert_and_group: bpy.props.IntVectorProperty(name = "Vertex and Group to remove", size = 2)
 
     @classmethod
     def poll(cls, context):
@@ -397,7 +397,7 @@ class PanelShowWeights(bpy.types.Panel):
                             for k in ob.vertex_groups:
                                 if k.index == i.groups[j].group:
                                     has_groups = True
-                                    split = col.split(percentage = 0.90, align = True)
+                                    split = col.split(factor = 0.90, align = True)
                                     vgroup_weights.append((k.index, i.groups[j].weight))
                                     row = split.row(align = True)
                                     row.prop(i.groups[j], "weight", text = k.name, slider = True, emboss = not k.lock_weight)
@@ -437,7 +437,7 @@ class PanelShowWeights(bpy.types.Panel):
                                     for k in ob.vertex_groups:
                                         if k.index == i.groups[j].group:
                                             has_groups = True
-                                            split = col.split(percentage = 0.90, align = True)
+                                            split = col.split(factor = 0.90, align = True)
                                             vgroup_weights.append((k.index, i.groups[j].weight))
                                             row = split.row(align = True)
                                             row.prop(i.groups[j], "weight", text = k.name, slider = True, emboss = not k.lock_weight)

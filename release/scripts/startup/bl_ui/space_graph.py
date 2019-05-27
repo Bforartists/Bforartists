@@ -52,9 +52,9 @@ class GRAPH_HT_header(Header):
 
         row = layout.row(align=True)
         if st.has_ghost_curves:
-            row.operator("graph.ghost_curves_clear", text="", icon='GHOST_DISABLED')
+            row.operator("graph.ghost_curves_clear", text="", icon='X')
         else:
-            row.operator("graph.ghost_curves_create", text="", icon='GHOST_ENABLED')
+            row.operator("graph.ghost_curves_create", text="", icon='FCURVE_SNAPSHOT')
 
         layout.popover(
             panel="GRAPH_PT_filters",
@@ -497,6 +497,8 @@ class GRAPH_MT_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.operator_context = 'INVOKE_DEFAULT'
+
         layout.operator("graph.copy", text="Copy", icon='COPYDOWN')
         layout.operator("graph.paste", text="Paste", icon='PASTEDOWN')
         layout.operator("graph.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
@@ -511,6 +513,7 @@ class GRAPH_MT_context_menu(Menu):
 
         layout.operator("graph.keyframe_insert").type = 'SEL'
         layout.operator("graph.duplicate_move")
+        layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("graph.delete")
 
         layout.separator()

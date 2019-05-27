@@ -399,6 +399,39 @@ static int ctx_data_collection_get(const bContext *C, const char *member, ListBa
   return 0;
 }
 
+static int ctx_data_base_collection_get(const bContext *C, const char *member, ListBase *list)
+{
+  ListBase ctx_object_list;
+  bool ok = false;
+
+  if ((ctx_data_collection_get(C, member, &ctx_object_list) == false) ||
+      BLI_listbase_is_empty(&ctx_object_list)) {
+    BLI_listbase_clear(list);
+    return 0;
+  }
+
+  bContextDataResult result;
+  memset(&result, 0, sizeof(bContextDataResult));
+
+  Scene *scene = CTX_data_scene(C);
+  ViewLayer *view_layer = CTX_data_view_layer(C);
+
+  CollectionPointerLink *ctx_object;
+  for (ctx_object = ctx_object_list.first; ctx_object; ctx_object = ctx_object->next) {
+    Object *ob = ctx_object->ptr.data;
+    Base *base = BKE_view_layer_base_find(view_layer, ob);
+    if (base != NULL) {
+      CTX_data_list_add(&result, &scene->id, &RNA_ObjectBase, base);
+      ok = true;
+    }
+  }
+  CTX_data_type_set(&result, CTX_DATA_TYPE_COLLECTION);
+  BLI_freelistN(&ctx_object_list);
+
+  *list = result.list;
+  return ok;
+}
+
 PointerRNA CTX_data_pointer_get(const bContext *C, const char *member)
 {
   bContextDataResult result;
@@ -1159,7 +1192,7 @@ int CTX_data_selected_editable_objects(const bContext *C, ListBase *list)
 
 int CTX_data_selected_editable_bases(const bContext *C, ListBase *list)
 {
-  return ctx_data_collection_get(C, "selected_editable_bases", list);
+  return ctx_data_base_collection_get(C, "selected_editable_objects", list);
 }
 
 int CTX_data_editable_objects(const bContext *C, ListBase *list)
@@ -1169,7 +1202,7 @@ int CTX_data_editable_objects(const bContext *C, ListBase *list)
 
 int CTX_data_editable_bases(const bContext *C, ListBase *list)
 {
-  return ctx_data_collection_get(C, "editable_bases", list);
+  return ctx_data_base_collection_get(C, "editable_objects", list);
 }
 
 int CTX_data_selected_objects(const bContext *C, ListBase *list)
@@ -1179,7 +1212,7 @@ int CTX_data_selected_objects(const bContext *C, ListBase *list)
 
 int CTX_data_selected_bases(const bContext *C, ListBase *list)
 {
-  return ctx_data_collection_get(C, "selected_bases", list);
+  return ctx_data_base_collection_get(C, "selected_objects", list);
 }
 
 int CTX_data_visible_objects(const bContext *C, ListBase *list)
@@ -1189,7 +1222,7 @@ int CTX_data_visible_objects(const bContext *C, ListBase *list)
 
 int CTX_data_visible_bases(const bContext *C, ListBase *list)
 {
-  return ctx_data_collection_get(C, "visible_bases", list);
+  return ctx_data_base_collection_get(C, "visible_objects", list);
 }
 
 int CTX_data_selectable_objects(const bContext *C, ListBase *list)
@@ -1199,7 +1232,7 @@ int CTX_data_selectable_objects(const bContext *C, ListBase *list)
 
 int CTX_data_selectable_bases(const bContext *C, ListBase *list)
 {
-  return ctx_data_collection_get(C, "selectable_bases", list);
+  return ctx_data_base_collection_get(C, "selectable_objects", list);
 }
 
 struct Object *CTX_data_active_object(const bContext *C)
@@ -1209,7 +1242,14 @@ struct Object *CTX_data_active_object(const bContext *C)
 
 struct Base *CTX_data_active_base(const bContext *C)
 {
-  return ctx_data_pointer_get(C, "active_base");
+  Object *ob = ctx_data_pointer_get(C, "active_object");
+
+  if (ob == NULL) {
+    return NULL;
+  }
+
+  ViewLayer *view_layer = CTX_data_view_layer(C);
+  return BKE_view_layer_base_find(view_layer, ob);
 }
 
 struct Object *CTX_data_edit_object(const bContext *C)

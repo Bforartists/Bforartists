@@ -150,36 +150,6 @@ class VIEW3D_HT_header(Header):
                 panel="VIEW3D_PT_proportional_edit",
             )
 
-        # grease pencil
-        if object_mode == 'PAINT_GPENCIL':
-            layout.prop_with_popover(
-                tool_settings,
-                "gpencil_stroke_placement_view3d",
-                text="",
-                panel="VIEW3D_PT_gpencil_origin",
-            )
-
-        if object_mode in {'PAINT_GPENCIL', 'SCULPT_GPENCIL'}:
-            layout.prop_with_popover(
-                tool_settings.gpencil_sculpt,
-                "lock_axis",
-                text="",
-                panel="VIEW3D_PT_gpencil_lock",
-            )
-
-        if object_mode == 'PAINT_GPENCIL':
-            # FIXME: this is bad practice!
-            # Tool options are to be displayed in the topbar.
-            if context.workspace.tools.from_space_view3d_mode(object_mode).idname == "builtin_brush.Draw":
-                settings = tool_settings.gpencil_sculpt.guide
-                row = layout.row(align=True)
-                row.prop(settings, "use_guide", text="", icon='GRID')
-                sub = row.row(align=True)
-                sub.active = settings.use_guide
-                sub.popover(
-                    panel="VIEW3D_PT_gpencil_guide",
-                    text="Guides",
-                )
 
     def draw(self, context):
         layout = self.layout
@@ -275,7 +245,41 @@ class VIEW3D_HT_header(Header):
 
         layout.separator_spacer()
 
-        if not show_region_tool_header:
+        if object_mode in {'PAINT_GPENCIL', 'SCULPT_GPENCIL'}:
+            # Grease pencil
+            if object_mode == 'PAINT_GPENCIL':
+                layout.prop_with_popover(
+                    tool_settings,
+                    "gpencil_stroke_placement_view3d",
+                    text="",
+                    panel="VIEW3D_PT_gpencil_origin",
+                )
+
+            if object_mode in {'PAINT_GPENCIL', 'SCULPT_GPENCIL'}:
+                layout.prop_with_popover(
+                    tool_settings.gpencil_sculpt,
+                    "lock_axis",
+                    text="",
+                    panel="VIEW3D_PT_gpencil_lock",
+                )
+
+            if object_mode == 'PAINT_GPENCIL':
+                # FIXME: this is bad practice!
+                # Tool options are to be displayed in the topbar.
+                if context.workspace.tools.from_space_view3d_mode(object_mode).idname == "builtin_brush.Draw":
+                    settings = tool_settings.gpencil_sculpt.guide
+                    row = layout.row(align=True)
+                    row.prop(settings, "use_guide", text="", icon='GRID')
+                    sub = row.row(align=True)
+                    sub.active = settings.use_guide
+                    sub.popover(
+                        panel="VIEW3D_PT_gpencil_guide",
+                        text="Guides",
+                    )
+
+            layout.separator_spacer()
+        elif not show_region_tool_header:
+            # Transform settings depending on tool header visibility
             VIEW3D_HT_header.draw_xform_template(layout, context)
 
         # Mode & Transform Settings
@@ -359,7 +363,7 @@ class VIEW3D_HT_header(Header):
 
 class VIEW3D_HT_tool_header(Header):
     bl_space_type = 'VIEW_3D'
-    bl_region_type = "TOOL_HEADER"
+    bl_region_type = 'TOOL_HEADER'
 
     def draw(self, context):
         layout = self.layout
@@ -397,19 +401,21 @@ class VIEW3D_HT_tool_header(Header):
         if draw_fn is not None:
             draw_fn(context, layout, tool)
 
+        popover_kw = {"space_type": 'VIEW_3D', "region_type": 'UI', "category": "Tool"}
+
         # Note: general mode options should be added to 'draw_mode_settings'.
         if tool_mode == 'SCULPT':
             if (tool is not None) and tool.has_datablock:
-                layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".paint_common", category="Tool")
+                layout.popover_group(context=".paint_common", **popover_kw)
         elif tool_mode == 'PAINT_VERTEX':
             if (tool is not None) and tool.has_datablock:
-                layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".paint_common", category="Tool")
+                layout.popover_group(context=".paint_common", **popover_kw)
         elif tool_mode == 'PAINT_WEIGHT':
             if (tool is not None) and tool.has_datablock:
-                layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".paint_common", category="Tool")
+                layout.popover_group(context=".paint_common", **popover_kw)
         elif tool_mode == 'PAINT_TEXTURE':
             if (tool is not None) and tool.has_datablock:
-                layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".paint_common", category="Tool")
+                layout.popover_group(context=".paint_common", **popover_kw)
         elif tool_mode == 'EDIT_ARMATURE':
             pass
         elif tool_mode == 'EDIT_CURVE':
@@ -421,52 +427,94 @@ class VIEW3D_HT_tool_header(Header):
         elif tool_mode == 'PARTICLE':
             # Disable, only shows "Brush" panel, which is already in the top-bar.
             # if tool.has_datablock:
-            #     layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".paint_common", category="Tool")
+            #     layout.popover_group(context=".paint_common", **popover_kw)
             pass
         elif tool_mode == 'PAINT_GPENCIL':
             if (tool is not None) and tool.has_datablock:
-                layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".greasepencil_paint", category="Tool")
+                layout.popover_group(context=".greasepencil_paint", **popover_kw)
         elif tool_mode == 'SCULPT_GPENCIL':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".greasepencil_sculpt", category="Tool")
+            layout.popover_group(context=".greasepencil_sculpt", **popover_kw)
         elif tool_mode == 'WEIGHT_GPENCIL':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".greasepencil_weight", category="Tool")
+            layout.popover_group(context=".greasepencil_weight", **popover_kw)
 
     def draw_mode_settings(self, context):
         layout = self.layout
+        mode_string = context.mode
 
-        # Active Tool
-        # -----------
-        from .space_toolsystem_common import ToolSelectPanelHelper
-        tool = ToolSelectPanelHelper.tool_active_from_context(context)
-        tool_mode = context.mode if tool is None else tool.mode
+        def row_for_mirror():
+            row = layout.row(align=True)
+            row.label(icon='MOD_MIRROR')
+            sub = row.row(align=True)
+            sub.scale_x = 0.6
+            return row, sub
 
-        if tool_mode == 'SCULPT':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".sculpt_mode", category="Tool")
-        elif tool_mode == 'PAINT_VERTEX':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".vertexpaint", category="Tool")
-        elif tool_mode == 'PAINT_WEIGHT':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".weightpaint", category="Tool")
-        elif tool_mode == 'PAINT_TEXTURE':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".imagepaint", category="Tool")
-        elif tool_mode == 'EDIT_TEXT':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".text_edit", category="Tool")
-        elif tool_mode == 'EDIT_ARMATURE':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".armature_edit", category="Tool")
-        elif tool_mode == 'EDIT_METABALL':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".mball_edit", category="Tool")
-        elif tool_mode == 'EDIT_LATTICE':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".lattice_edit", category="Tool")
-        elif tool_mode == 'EDIT_CURVE':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".curve_edit", category="Tool")
-        elif tool_mode == 'EDIT_MESH':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".mesh_edit", category="Tool")
-        elif tool_mode == 'POSE':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".posemode", category="Tool")
-        elif tool_mode == 'PARTICLE':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".particlemode", category="Tool")
-        elif tool_mode == 'OBJECT':
-            layout.popover_group(space_type='VIEW_3D', region_type='UI', context=".objectmode", category="Tool")
-        elif tool_mode in {'PAINT_GPENCIL', 'EDIT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL'}:
+        if mode_string == 'EDIT_MESH':
+            _row, sub = row_for_mirror()
+            sub.prop(context.object.data, "use_mirror_x", text="X", toggle=True)
+            tool_settings = context.tool_settings
+            layout.prop(tool_settings, "use_mesh_automerge", text="")
+        elif mode_string == 'EDIT_ARMATURE':
+            _row, sub = row_for_mirror()
+            sub.prop(context.object.data, "use_mirror_x", text="X", toggle=True)
+        elif mode_string == 'POSE':
+            _row, sub = row_for_mirror()
+            sub.prop(context.object.pose, "use_mirror_x", text="X", toggle=True)
+        elif mode_string == 'PAINT_WEIGHT':
+            row, sub = row_for_mirror()
+            sub.prop(context.object.data, "use_mirror_x", text="X", toggle=True)
+            row.popover(panel="VIEW3D_PT_tools_weightpaint_symmetry_for_topbar", text="")
+        elif mode_string == 'SCULPT':
+            row, sub = row_for_mirror()
+            sculpt = context.tool_settings.sculpt
+            sub.prop(sculpt, "use_symmetry_x", text="X", toggle=True)
+            sub.prop(sculpt, "use_symmetry_y", text="Y", toggle=True)
+            sub.prop(sculpt, "use_symmetry_z", text="Z", toggle=True)
+            row.popover(panel="VIEW3D_PT_sculpt_symmetry_for_topbar", text="")
+        elif mode_string == 'PAINT_TEXTURE':
+            _row, sub = row_for_mirror()
+            ipaint = context.tool_settings.image_paint
+            sub.prop(ipaint, "use_symmetry_x", text="X", toggle=True)
+            sub.prop(ipaint, "use_symmetry_y", text="Y", toggle=True)
+            sub.prop(ipaint, "use_symmetry_z", text="Z", toggle=True)
+            # No need for a popover, the panel only has these options.
+        elif mode_string == 'PAINT_VERTEX':
+            row, sub = row_for_mirror()
+            vpaint = context.tool_settings.vertex_paint
+            sub.prop(vpaint, "use_symmetry_x", text="X", toggle=True)
+            sub.prop(vpaint, "use_symmetry_y", text="Y", toggle=True)
+            sub.prop(vpaint, "use_symmetry_z", text="Z", toggle=True)
+            row.popover(panel="VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar", text="")
+
+        # Expand panels from the side-bar as popovers.
+        popover_kw = {"space_type": 'VIEW_3D', "region_type": 'UI', "category": "Tool"}
+
+        if mode_string == 'SCULPT':
+            layout.popover_group(context=".sculpt_mode", **popover_kw)
+        elif mode_string == 'PAINT_VERTEX':
+            layout.popover_group(context=".vertexpaint", **popover_kw)
+        elif mode_string == 'PAINT_WEIGHT':
+            layout.popover_group(context=".weightpaint", **popover_kw)
+        elif mode_string == 'PAINT_TEXTURE':
+            layout.popover_group(context=".imagepaint", **popover_kw)
+        elif mode_string == 'EDIT_TEXT':
+            layout.popover_group(context=".text_edit", **popover_kw)
+        elif mode_string == 'EDIT_ARMATURE':
+            layout.popover_group(context=".armature_edit", **popover_kw)
+        elif mode_string == 'EDIT_METABALL':
+            layout.popover_group(context=".mball_edit", **popover_kw)
+        elif mode_string == 'EDIT_LATTICE':
+            layout.popover_group(context=".lattice_edit", **popover_kw)
+        elif mode_string == 'EDIT_CURVE':
+            layout.popover_group(context=".curve_edit", **popover_kw)
+        elif mode_string == 'EDIT_MESH':
+            layout.popover_group(context=".mesh_edit", **popover_kw)
+        elif mode_string == 'POSE':
+            layout.popover_group(context=".posemode", **popover_kw)
+        elif mode_string == 'PARTICLE':
+            layout.popover_group(context=".particlemode", **popover_kw)
+        elif mode_string == 'OBJECT':
+            layout.popover_group(context=".objectmode", **popover_kw)
+        elif mode_string in {'PAINT_GPENCIL', 'EDIT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL'}:
             # Grease pencil layer.
             gpl = context.active_gpencil_layer
             if gpl and gpl.info is not None:
@@ -991,11 +1039,14 @@ class VIEW3D_MT_uv_map_clear_seam(bpy.types.Operator):
 class VIEW3D_MT_uv_map(Menu):
     bl_label = "UV Mapping"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
+
+        tool_settings = context.tool_settings
 
         layout.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
         layout.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+        layout.prop(tool_settings, "use_edge_path_live_unwrap")
 
         layout.separator()
 
@@ -1089,6 +1140,7 @@ class VIEW3D_MT_view(Menu):
 
         layout.prop(view, "show_region_toolbar")
         layout.prop(view, "show_region_ui")
+        layout.prop(view, "show_region_tool_header")
         layout.prop(view, "show_region_hud")
 
         layout.separator()
@@ -2650,13 +2702,13 @@ class VIEW3D_MT_object(Menu):
                 props.input_scale = 0.01
                 props.header_text = "Camera Lens Scale: %.3f"
 
-            if not obj.data.dof_object:
+            if not obj.data.dof.focus_object:
                 if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
                     props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)", icon = "DOF")
                 else:
                     props = layout.operator("wm.context_modal_mouse", text="DOF Distance", icon = "DOF")
                     props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.dof_distance"
+                    props.data_path_item = "data.dof.focus_distance"
                     props.input_scale = 0.02
                     props.header_text = "DOF Distance: %.3f"
 
@@ -4834,6 +4886,8 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
         layout.operator("mesh.normals_recalculate_inside", text="Recalculate Inside", icon = 'RECALC_NORMALS_INSIDE') # bfa - separated tooltip
         layout.operator("mesh.flip_normals", icon = 'FLIP_NORMALS')
 
+        layout.separator()
+
         layout.menu("VIEW3D_MT_edit_mesh_normals_average", text="Average")
         layout.menu("VIEW3D_MT_edit_mesh_normals_advanced")
         layout.menu("VIEW3D_MT_edit_mesh_normals_vector")
@@ -4853,6 +4907,7 @@ class VIEW3D_MT_edit_mesh_normals_advanced(Menu):
         layout.operator("mesh.split_normals", text="Split", icon = "SPLIT")
         layout.operator("mesh.average_normals", text="Average Normals", icon = "NORMAL_AVERAGE")
 
+
 class VIEW3D_MT_edit_mesh_normals_vector(Menu):
     bl_label = "Vector"
 
@@ -4861,10 +4916,9 @@ class VIEW3D_MT_edit_mesh_normals_vector(Menu):
 
         layout.operator("mesh.normals_tools", text="Copy", icon = "COPYDOWN").mode = 'COPY'
         layout.operator("mesh.normals_tools", text="Paste", icon = "PASTEDOWN").mode = 'PASTE'
-        layout.operator("mesh.normals_tools", text="Multiply", icon = "NORMAL_MULTIPLY").mode = 'MULTIPLY'
-        layout.operator("mesh.normals_tools", text="Add", icon = "ADD").mode = 'ADD'
         layout.operator("mesh.normals_tools", text="Reset", icon = "RESET").mode = 'RESET'
         layout.operator("mesh.smoothen_normals", text="Smoothen", icon = "NORMAL_SMOOTH")
+
 
 class VIEW3D_MT_edit_mesh_normals_facestrength(Menu):
     bl_label = "Face Strength"
@@ -4940,6 +4994,7 @@ class VIEW3D_MT_edit_mesh_delete(Menu):
         layout.separator()
 
         layout.operator("mesh.delete_edgeloop", text="Edge Loops", icon = "DELETE")
+
 
 class VIEW3D_MT_edit_mesh_dissolve(Menu):
     bl_label = "Dissolve"
@@ -6455,10 +6510,12 @@ class VIEW3D_PT_shading_options(Panel):
             sub.active = shading.show_xray_wireframe
             sub.prop(shading, "xray_alpha_wireframe", text="X-Ray")
         elif shading.type == 'SOLID':
-            row.prop(shading, "show_xray", text="X-Ray")
+            row.prop(shading, "show_xray", text="")
             sub = row.row()
             sub.active = shading.show_xray
-            sub.prop(shading, "xray_alpha", text="")
+            sub.prop(shading, "xray_alpha", text="X-Ray")
+            # X-ray mode is off when alpha is 1.0
+            xray_active = shading.show_xray and shading.xray_alpha != 1
 
             row = col.row(align=True)
             row.prop(shading, "show_shadows")

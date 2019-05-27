@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import bpy
 import bmesh
@@ -163,12 +163,12 @@ class _Properties:
 
 @BlClassRegistry()
 @compat.make_annotations
-class MUV_OT_FlipRotate(bpy.types.Operator):
+class MUV_OT_FlipRotateUV(bpy.types.Operator):
     """
     Operation class: Flip and Rotate UV coordinate
     """
 
-    bl_idname = "uv.muv_ot_flip_rotate_uv"
+    bl_idname = "uv.muv_flip_rotate_uv"
     bl_label = "Flip/Rotate UV"
     bl_description = "Flip/Rotate UV coordinate"
     bl_options = {'REGISTER', 'UNDO'}

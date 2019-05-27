@@ -747,6 +747,16 @@ void colormanagement_exit(void)
 
 /*********************** Internal functions *************************/
 
+static bool colormanage_compatible_look(ColorManagedLook *look, const char *view_name)
+{
+  if (look->is_noop) {
+    return true;
+  }
+
+  /* Skip looks only relevant to specific view transforms. */
+  return (look->view[0] == 0 || (view_name && STREQ(look->view, view_name)));
+}
+
 void colormanage_cache_free(ImBuf *ibuf)
 {
   if (ibuf->display_buffer_flags) {
@@ -840,7 +850,7 @@ static OCIO_ConstProcessorRcPtr *create_display_buffer_processor(const char *loo
   OCIO_displayTransformSetView(dt, view_transform);
   OCIO_displayTransformSetDisplay(dt, display);
 
-  if (look_descr->is_noop == false) {
+  if (look_descr->is_noop == false && colormanage_compatible_look(look_descr, view_transform)) {
     OCIO_displayTransformSetLooksOverrideEnabled(dt, true);
     OCIO_displayTransformSetLooksOverride(dt, look);
   }
@@ -989,9 +999,9 @@ static OCIO_ConstProcessorRcPtr *display_to_scene_linear_processor(ColorManagedD
 void IMB_colormanagement_init_default_view_settings(
     ColorManagedViewSettings *view_settings, const ColorManagedDisplaySettings *display_settings)
 {
-  /* First, try use "Default" view transform of the requested device. */
+  /* First, try use "Standard" view transform of the requested device. */
   ColorManagedView *default_view = colormanage_view_get_named_for_display(
-      display_settings->display_device, "Default");
+      display_settings->display_device, "Standard");
   /* If that fails, we fall back to the default view transform of the display
    * as per OCIO configuration. */
   if (default_view == NULL) {
@@ -1057,13 +1067,19 @@ void colormanage_imbuf_make_linear(ImBuf *ibuf, const char *from_colorspace)
 
   if (ibuf->rect_float) {
     const char *to_colorspace = global_role_scene_linear;
+    const bool predivide = IMB_alpha_affects_rgb(ibuf);
 
     if (ibuf->rect) {
       imb_freerectImBuf(ibuf);
     }
 
-    IMB_colormanagement_transform(
-        ibuf->rect_float, ibuf->x, ibuf->y, ibuf->channels, from_colorspace, to_colorspace, true);
+    IMB_colormanagement_transform(ibuf->rect_float,
+                                  ibuf->x,
+                                  ibuf->y,
+                                  ibuf->channels,
+                                  from_colorspace,
+                                  to_colorspace,
+                                  predivide);
   }
 }
 
@@ -1405,6 +1421,7 @@ typedef struct DisplayBufferThread {
   int channels;
   float dither;
   bool is_data;
+  bool predivide;
 
   const char *byte_colorspace;
   const char *float_colorspace;
@@ -1469,6 +1486,7 @@ static void display_buffer_init_handle(void *handle_v,
   handle->channels = channels;
   handle->dither = dither;
   handle->is_data = is_data;
+  handle->predivide = IMB_alpha_affects_rgb(ibuf);
 
   handle->byte_colorspace = init_data->byte_colorspace;
   handle->float_colorspace = init_data->float_colorspace;
@@ -1486,6 +1504,7 @@ static void display_buffer_apply_get_linear_buffer(DisplayBufferThread *handle,
 
   bool is_data = handle->is_data;
   bool is_data_display = handle->cm_processor->is_data_result;
+  bool predivide = handle->predivide;
 
   if (!handle->buffer) {
     unsigned char *byte_buffer = handle->byte_buffer;
@@ -1534,7 +1553,7 @@ static void display_buffer_apply_get_linear_buffer(DisplayBufferThread *handle,
 
     if (!is_data && !is_data_display) {
       IMB_colormanagement_transform(
-          linear_buffer, width, height, channels, from_colorspace, to_colorspace, true);
+          linear_buffer, width, height, channels, from_colorspace, to_colorspace, predivide);
     }
 
     *is_straight_alpha = false;
@@ -1590,13 +1609,13 @@ static void *do_display_buffer_apply_thread(void *handle_v)
     }
   }
   else {
-    bool is_straight_alpha, predivide;
+    bool is_straight_alpha;
     float *linear_buffer = MEM_mallocN(((size_t)channels) * width * height * sizeof(float),
                                        "color conversion linear buffer");
 
     display_buffer_apply_get_linear_buffer(handle, height, linear_buffer, &is_straight_alpha);
 
-    predivide = is_straight_alpha == false;
+    bool predivide = handle->predivide && (is_straight_alpha == false);
 
     if (is_data) {
       /* special case for data buffers - no color space conversions,
@@ -2178,6 +2197,7 @@ void IMB_colormanagement_imbuf_to_srgb_texture(unsigned char *out_buffer,
 
   /* TODO(brecht): make this multithreaded, or at least process in batches. */
   const unsigned char *in_buffer = (unsigned char *)ibuf->rect;
+  const bool use_premultiply = IMB_alpha_affects_rgb(ibuf);
 
   for (int y = 0; y < height; y++) {
     const size_t in_offset = (offset_y + y) * ibuf->x + offset_x;
@@ -2192,16 +2212,27 @@ void IMB_colormanagement_imbuf_to_srgb_texture(unsigned char *out_buffer,
         rgba_uchar_to_float(pixel, in);
         OCIO_processorApplyRGB(processor, pixel);
         linearrgb_to_srgb_v3_v3(pixel, pixel);
-        mul_v3_fl(pixel, pixel[3]);
+        if (use_premultiply) {
+          mul_v3_fl(pixel, pixel[3]);
+        }
         rgba_float_to_uchar(out, pixel);
       }
     }
-    else {
+    else if (use_premultiply) {
       /* Premultiply only. */
       for (int x = 0; x < width; x++, in += 4, out += 4) {
         out[0] = (in[0] * in[3]) >> 8;
         out[1] = (in[1] * in[3]) >> 8;
         out[2] = (in[2] * in[3]) >> 8;
+        out[3] = in[3];
+      }
+    }
+    else {
+      /* Copy only. */
+      for (int x = 0; x < width; x++, in += 4, out += 4) {
+        out[0] = in[0];
+        out[1] = in[1];
+        out[2] = in[2];
         out[3] = in[3];
       }
     }
@@ -3194,17 +3225,9 @@ void IMB_colormanagement_look_items_add(struct EnumPropertyItem **items,
                                         const char *view_name)
 {
   ColorManagedLook *look;
-  const char *view_filter = NULL;
-
-  /* Test if this view transform is limited to specific looks. */
-  for (look = global_looks.first; look; look = look->next) {
-    if (STREQ(look->view, view_name)) {
-      view_filter = view_name;
-    }
-  }
 
   for (look = global_looks.first; look; look = look->next) {
-    if (!look->is_noop && view_filter && !STREQ(look->view, view_filter)) {
+    if (!colormanage_compatible_look(look, view_name)) {
       continue;
     }
 

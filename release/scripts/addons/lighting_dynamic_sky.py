@@ -23,7 +23,7 @@ bl_info = {
     "name": "Dynamic Sky",
     "author": "Pratik Solanki",
     "version": (1, 0, 6),
-    "blender": (2, 78, 0),
+    "blender": (2, 80, 0),
     "location": "View3D > Tools",
     "description": "Creates Dynamic Sky for Cycles",
     "warning": "",
@@ -458,9 +458,9 @@ class Dynapanel(Panel):
     bl_label = "Dynamic sky"
     bl_idname = "DYNSKY_PT_tools"
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_context = "objectmode"
-    bl_category = "Tools"
+    bl_category = "Create"
 
     def draw(self, context):
         layout = self.layout

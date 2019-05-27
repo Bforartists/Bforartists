@@ -514,7 +514,7 @@ class PovrayColorImageNode(Node, ObjectNodeTree):
         for image in bpy.data.images:
             if image.name == self.image:
                 im=image
-        split = column.split(percentage=0.8,align=True)
+        split = column.split(factor=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
         split.operator("pov.imageopen",text="",icon="FILEBROWSER")
         if im is not None:
@@ -532,7 +532,7 @@ class PovrayColorImageNode(Node, ObjectNodeTree):
         for image in bpy.data.images:
             if image.name == self.image:
                 im=image
-        split = column.split(percentage=0.8,align=True)
+        split = column.split(factor=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
         split.operator("pov.imageopen",text="",icon="FILEBROWSER")
         if im is not None:
@@ -665,7 +665,7 @@ class PovrayImagePatternNode(Node, ObjectNodeTree):
         for image in bpy.data.images:
             if image.name == self.image:
                 im=image
-        split = column.split(percentage=0.8,align=True)
+        split = column.split(factor=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
         split.operator("pov.imageopen",text="",icon="FILEBROWSER")
         if im is not None:
@@ -684,7 +684,7 @@ class PovrayImagePatternNode(Node, ObjectNodeTree):
         for image in bpy.data.images:
             if image.name == self.image:
                 im=image
-        split = column.split(percentage=0.8,align=True)
+        split = column.split(factor=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
         split.operator("pov.imageopen",text="",icon="FILEBROWSER")
         if im is not None:

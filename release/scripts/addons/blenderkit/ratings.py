@@ -90,7 +90,7 @@ def upload_rating(asset):
 
     bkit_ratings = asset.bkit_ratings
     # print('rating asset', asset_data['name'], asset_data['asset_base_id'])
-    url = paths.get_bkit_url() + 'assets/' + asset['asset_data']['id'] + '/rating/'
+    url = paths.get_api_url() + 'assets/' + asset['asset_data']['id'] + '/rating/'
 
     ratings = [
     ]
@@ -103,7 +103,7 @@ def upload_rating(asset):
     thread = threading.Thread(target=uplaod_rating_thread, args=(url, ratings, headers))
     thread.start()
 
-    url = paths.get_bkit_url() + 'assets/' + asset['asset_data']['id'] + '/review'
+    url = paths.get_api_url() + 'assets/' + asset['asset_data']['id'] + '/review'
 
     reviews = {
         'reviewText': bkit_ratings.rating_compliments,

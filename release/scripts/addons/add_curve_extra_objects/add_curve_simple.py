@@ -1306,10 +1306,14 @@ class BezierPointsFillet(Operator):
 
     def execute(self, context):
         # main function
+        if bpy.ops.object.mode_set.poll():
+            bpy.ops.object.mode_set(mode='EDIT')
+        
         spline = bpy.context.object.data.splines.active
-        selected = [p for p in spline.bezier_points if p.select_control_point]
-
+        bpy.ops.curve.spline_type_set(type='BEZIER')
+        
         bpy.ops.curve.handle_type_set(type='VECTOR')
+        
         n = 0
         ii = []
         for p in spline.bezier_points:
@@ -1384,9 +1388,6 @@ class BezierPointsFillet(Operator):
                     selected4[1].handle_right_type = 'VECTOR'
                     selected4[2].handle_left_type = 'VECTOR'
 
-        bpy.ops.curve.select_all(action='SELECT')
-        bpy.ops.curve.spline_type_set(type='BEZIER')
-
         return {'FINISHED'}
 
 def subdivide_cubic_bezier(p1, p2, p3, p4, t):
@@ -1425,42 +1426,67 @@ class BezierDivide(Operator):
 
     def execute(self, context):
         # main function
+        if bpy.ops.object.mode_set.poll():
+            bpy.ops.object.mode_set(mode='EDIT')
+
         spline = bpy.context.object.data.splines.active
-        selected_all = [p for p in spline.bezier_points if p.select_control_point]
-        selected = []
+        bpy.ops.curve.spline_type_set(type='BEZIER')
+        
         n = 0
-        for j in spline.bezier_points:
-            n += 1
-            if j.select_control_point:
-                selected.append(n)
-        selected_all[0].handle_right_type = 'FREE'
-        selected_all[0].handle_left_type = 'FREE'
-        selected_all[1].handle_right_type = 'FREE'
-        selected_all[1].handle_left_type = 'FREE'
-        if abs(selected[0] - selected[1]) == 1:
-            h = subdivide_cubic_bezier(
-                    selected_all[0].co, selected_all[0].handle_right,
-                    selected_all[1].handle_left, selected_all[1].co, self.Bezier_t / 100
-                    )
-            bpy.ops.curve.subdivide(1)
-            selected_all = [p for p in spline.bezier_points if p.select_control_point]
-            selected_all[0].handle_right = h[0]
-            selected_all[1].co = h[2]
-            selected_all[1].handle_left = h[1]
-            selected_all[1].handle_right = h[3]
-            selected_all[2].handle_left = h[4]
-        else:
-            h = subdivide_cubic_bezier(
-                    selected_all[1].co, selected_all[1].handle_right,
-                    selected_all[0].handle_left, selected_all[0].co, self.Bezier_t / 100
-                    )
-            bpy.ops.curve.subdivide(1)
-            selected_all = [p for p in spline.bezier_points if p.select_control_point]
-            selected_all[1].handle_right = h[0]
-            selected_all[2].co = h[2]
-            selected_all[2].handle_left = h[1]
-            selected_all[2].handle_right = h[3]
-            selected_all[0].handle_left = h[4]
+        ii = []
+        for p in spline.bezier_points:
+            if p.select_control_point:
+                ii.append(n)
+                n += 1
+            else:
+                n += 1
+
+        if n > 2:
+            jn = 0
+            for j in ii:
+
+                selected_all = [p for p in spline.bezier_points]
+
+                bpy.ops.curve.select_all(action='DESELECT')
+
+                if (j in ii) and (j + 1 in ii):
+                    selected_all[j + jn].select_control_point = True
+                    selected_all[j + 1 + jn].select_control_point = True
+                    h = subdivide_cubic_bezier(
+                        selected_all[j + jn].co, selected_all[j + jn].handle_right,
+                        selected_all[j + 1 + jn].handle_left, selected_all[j + 1 + jn].co, self.Bezier_t / 100
+                        )
+                    bpy.ops.curve.subdivide(1)
+                    selected_all = [p for p in spline.bezier_points]
+                    selected_all[j + jn].handle_right_type = 'FREE'
+                    selected_all[j + jn].handle_right = h[0]
+                    selected_all[j + 1 + jn].co = h[2]
+                    selected_all[j + 1 + jn].handle_left_type = 'FREE'
+                    selected_all[j + 1 + jn].handle_left = h[1]
+                    selected_all[j + 1 + jn].handle_right_type = 'FREE'
+                    selected_all[j + 1 + jn].handle_right = h[3]
+                    selected_all[j + 2 + jn].handle_left_type = 'FREE'
+                    selected_all[j + 2 + jn].handle_left = h[4]
+                    jn += 1
+                
+                if j == n - 1 and (0 in ii) and spline.use_cyclic_u:
+                    selected_all[j + jn].select_control_point = True
+                    selected_all[0].select_control_point = True
+                    h = subdivide_cubic_bezier(
+                        selected_all[j + jn].co, selected_all[j + jn].handle_right,
+                        selected_all[0].handle_left, selected_all[0].co, self.Bezier_t / 100
+                        )
+                    bpy.ops.curve.subdivide(1)
+                    selected_all = [p for p in spline.bezier_points]
+                    selected_all[j + jn].handle_right_type = 'FREE'
+                    selected_all[j + jn].handle_right = h[0]
+                    selected_all[j + 1 + jn].co = h[2]
+                    selected_all[j + 1 + jn].handle_left_type = 'FREE'
+                    selected_all[j + 1 + jn].handle_left = h[1]
+                    selected_all[j + 1 + jn].handle_right_type = 'FREE'
+                    selected_all[j + 1 + jn].handle_right = h[3]
+                    selected_all[0].handle_left_type = 'FREE'
+                    selected_all[0].handle_left = h[4]                
 
         return {'FINISHED'}
 
