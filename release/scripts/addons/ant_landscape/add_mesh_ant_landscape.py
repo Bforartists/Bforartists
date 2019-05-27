@@ -593,10 +593,6 @@ class AntAddLandscape(bpy.types.Operator):
         if not self.refresh:
             return {'PASS_THROUGH'}
 
-        # turn off undo
-        undo = bpy.context.preferences.edit.use_global_undo
-        bpy.context.preferences.edit.use_global_undo = False
-
         # turn off 'Enter Edit Mode'
         use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
         bpy.context.preferences.edit.use_enter_edit_mode = False
@@ -783,7 +779,6 @@ class AntAddLandscape(bpy.types.Operator):
             self.refresh = False
 
         # restore pre operator state
-        context.preferences.edit.use_global_undo = undo
         bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 
         return {'FINISHED'}

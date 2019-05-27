@@ -285,7 +285,104 @@ def draw_ratings_bgl():
                          font_size)
 
 
-def draw_tooltip(x, y, text, img):
+def draw_tooltip(x, y, text='', author='', img=None):
+    region = bpy.context.region
+    scale = bpy.context.preferences.view.ui_scale
+    t = time.time()
+
+    ttipmargin = 10
+
+    font_height = int(12 * scale)
+    line_height = int(15 * scale)
+    nameline_height = int(23 * scale)
+
+    lines = text.split('\n')
+    ncolumns = 2
+    nlines = math.ceil((len(lines) - 1) / ncolumns)
+    texth = line_height * nlines + nameline_height
+
+    isizex = int(512 * scale * img.size[0] / max(img.size[0], img.size[1]))
+    isizey = int(512 * scale * img.size[1] / max(img.size[0], img.size[1]))
+
+    estimated_height = 3 * ttipmargin + isizey
+
+    if estimated_height > y:
+        scaledown = y / (estimated_height)
+        scale *= scaledown
+        # we need to scale these down to have correct size if the tooltip wouldn't fit.
+        font_height = int(12 * scale)
+        line_height = int(15 * scale)
+        nameline_height = int(23 * scale)
+
+        lines = text.split('\n')
+        ncolumns = 2
+        nlines = math.ceil((len(lines) - 1) / ncolumns)
+        texth = line_height * nlines + nameline_height
+
+        isizex = int(512 * scale * img.size[0] / max(img.size[0], img.size[1]))
+        isizey = int(512 * scale * img.size[1] / max(img.size[0], img.size[1]))
+
+    name_height = int(18 * scale)
+
+    x += 2 * ttipmargin
+    y -= 2 * ttipmargin
+
+    width = isizex + 2 * ttipmargin
+
+    properties_width = 0
+    for r in bpy.context.area.regions:
+        if r.type == 'UI':
+            properties_width = r.width
+
+    x = min(x + width, region.width - properties_width) - width
+
+    bgcol = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.inner
+    bgcol1 = (bgcol[0], bgcol[1], bgcol[2], .6)
+    textcol = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.text
+    textcol = (textcol[0], textcol[1], textcol[2], 1)
+    textcol_mild = (textcol[0] * .8, textcol[1] * .8, textcol[2] * .8, 1)
+    textcol_strong = (textcol[0] * 1.3, textcol[1] * 1.3, textcol[2] * 1.3, 1)
+    white = (1, 1, 1, .1)
+
+    ui_bgl.draw_rect(x - ttipmargin,
+                     y - 2 * ttipmargin - isizey,
+                     isizex + ttipmargin * 2,
+                     2 * ttipmargin + isizey,
+                     bgcol)
+    ui_bgl.draw_image(x, y - isizey - ttipmargin, isizex, isizey, img, 1)
+
+    ui_bgl.draw_rect(x - ttipmargin,
+                     y - 2 * ttipmargin - isizey,
+                     isizex + ttipmargin * 2,
+                     2 * ttipmargin + texth,
+                     bgcol1)
+    i = 0
+    column_break = -1  # start minus one for the name
+    xtext = x + ttipmargin
+    fsize = name_height
+    tcol = textcol
+    for l in lines:
+        if column_break >= nlines:
+            xtext += int(isizex / ncolumns)
+            column_break = 0
+        ytext = y - column_break * line_height - nameline_height - ttipmargin * 2 - isizey + texth
+        if i == 0:
+            ytext = y - name_height + 5 - isizey + texth - ttipmargin
+        elif i == len(lines) - 1:
+            ytext = y - (nlines - 1) * line_height - nameline_height - ttipmargin * 2 - isizey + texth
+            tcol = textcol
+            tsize = font_height
+        else:
+            if l[:4] == 'Tip:':
+                tcol = textcol_strong
+            fsize = font_height
+        i += 1
+        column_break += 1
+        ui_bgl.draw_text(l, xtext, ytext, fsize, tcol)
+    t = time.time()
+
+
+def draw_tooltip_old(x, y, text='', author='', img=None):
     region = bpy.context.region
     scale = bpy.context.preferences.view.ui_scale
     t = time.time()
@@ -438,11 +535,12 @@ def draw_callback_2d_progress(self, context):
                 img = utils.get_hidden_image(tpath, 'rating_preview')
                 loc = view3d_utils.location_3d_to_region_2d(bpy.context.region, bpy.context.space_data.region_3d,
                                                             d['location'])
-                if asset_data['asset_type'] == 'model':
-                    # models now draw with star trek mode, no need to draw percent for the image.
-                    draw_downloader(loc[0], loc[1], percent=tcom.progress, img=img)
-                else:
-                    draw_downloader(loc[0], loc[1], percent=tcom.progress, img=img)
+                if loc is not None:
+                    if asset_data['asset_type'] == 'model':
+                        # models now draw with star trek mode, no need to draw percent for the image.
+                        draw_downloader(loc[0], loc[1], percent=tcom.progress, img=img)
+                    else:
+                        draw_downloader(loc[0], loc[1], percent=tcom.progress, img=img)
 
 
         else:
@@ -469,7 +567,7 @@ def draw_callback_2d_upload_preview(self, context):
 
         img = utils.get_hidden_image(ui_props.thumbnail_image, 'upload_preview')
 
-        draw_tooltip(ui_props.bar_x, ui_props.bar_y, ui_props.tooltip, img)
+        draw_tooltip(ui_props.bar_x, ui_props.bar_y, text=ui_props.tooltip, img=img)
 
 
 def draw_callback_2d_search(self, context):
@@ -493,6 +591,7 @@ def draw_callback_2d_search(self, context):
     # background of asset bar
     if not ui_props.dragging:
         search_results = s.get('search results')
+        search_results_orig = s.get('search results orig')
         if search_results == None:
             return
         h_draw = min(ui_props.hcount, math.ceil(len(search_results) / ui_props.wcount))
@@ -524,7 +623,7 @@ def draw_callback_2d_search(self, context):
                                       ui_props.thumb_size,
                                       img,
                                       1)
-                if len(search_results) - ui_props.scrolloffset > (ui_props.wcount * ui_props.hcount):
+                if search_results_orig['count'] - ui_props.scrolloffset > (ui_props.wcount * ui_props.hcount):
                     if ui_props.active_index == -1:
                         ui_bgl.draw_rect(ui_props.bar_x + ui_props.bar_width - 25,
                                          ui_props.bar_y - ui_props.bar_height, 25,
@@ -625,8 +724,8 @@ def draw_callback_2d_search(self, context):
                     else:
                         iname = utils.previmg_name(ui_props.active_index)
                         img = bpy.data.images.get(iname)
-
-                draw_tooltip(ui_props.mouse_x, ui_props.mouse_y, ui_props.tooltip, img)
+                    img.colorspace_settings.name = 'Linear'
+                draw_tooltip(ui_props.mouse_x, ui_props.mouse_y, text=ui_props.tooltip, img=img)
 
     if ui_props.dragging and (
             ui_props.draw_drag_image or ui_props.draw_snapped_bounds) and ui_props.active_index > -1:
@@ -913,8 +1012,8 @@ class AssetBarOperator(bpy.types.Operator):
         default="", options={'SKIP_SAVE'})
 
     def search_more(self):
-        sro = bpy.context.scene.get('search results orig', {})
-        if sro.get('next') != None:
+        sro = bpy.context.scene.get('search results orig')
+        if sro is not None and sro.get('next') is not None:
             search.search(get_next=True)
 
     def exit_modal(self):
@@ -1311,6 +1410,23 @@ class AssetBarOperator(bpy.types.Operator):
             else:
                 return {'RUNNING_MODAL'}
 
+        if event.type == 'W' and ui_props.active_index != -3:
+            sr = bpy.context.scene['search results']
+            asset_data = sr[ui_props.active_index]
+            a = bpy.context.window_manager['bkit authors'].get(asset_data['author_id'])
+            if a is not None:
+                utils.p('author:', a)
+                if a.get('aboutMeUrl') is not None:
+                    bpy.ops.wm.url_open(url=a['aboutMeUrl'])
+            return {'RUNNING_MODAL'}
+        if event.type == 'A' and ui_props.active_index != -3:
+            sr = bpy.context.scene['search results']
+            asset_data = sr[ui_props.active_index]
+            a = asset_data['author_id']
+            if a is not None:
+                utils.p('author:', a)
+                search.search(author_id = a)
+            return {'RUNNING_MODAL'}
         if event.type == 'X' and ui_props.active_index != -3:
             sr = bpy.context.scene['search results']
             asset_data = sr[ui_props.active_index]
@@ -1331,7 +1447,7 @@ class AssetBarOperator(bpy.types.Operator):
             if self.category != '':
                 sprops = utils.get_search_props()
                 sprops.search_keywords = ''
-            search.search(category=self.category, free_only=self.free_only)
+            search.search(category=self.category)
 
         if ui_props.assetbar_on:
             # we don't want to run the assetbar many times, that's why it has a switch on/off behaviour,

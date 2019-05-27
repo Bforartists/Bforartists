@@ -57,8 +57,9 @@
 #if defined(__SANITIZE_ADDRESS__) || __has_feature(address_sanitizer)
 #  include "sanitizer/asan_interface.h"
 #else
-#  define ASAN_POISON_MEMORY_REGION(addr, size) UNUSED_VARS(addr, size)
-#  define ASAN_UNPOISON_MEMORY_REGION(addr, size) UNUSED_VARS(addr, size)
+/* Ensure return value is used. */
+#  define ASAN_POISON_MEMORY_REGION(addr, size) (void)(0 && ((size) != 0 && (addr) != NULL))
+#  define ASAN_UNPOISON_MEMORY_REGION(addr, size) (void)(0 && ((size) != 0 && (addr) != NULL))
 #endif
 
 typedef uintptr_t data_t;
@@ -239,6 +240,10 @@ static void memiter_free_data(BLI_memiter *mi)
   BLI_memiter_chunk *chunk = mi->head;
   while (chunk) {
     BLI_memiter_chunk *chunk_next = chunk->next;
+
+    /* Unpoison memory because MEM_freeN might overwrite it. */
+    ASAN_UNPOISON_MEMORY_REGION(chunk, MEM_allocN_len(chunk));
+
     MEM_freeN(chunk);
     chunk = chunk_next;
   }

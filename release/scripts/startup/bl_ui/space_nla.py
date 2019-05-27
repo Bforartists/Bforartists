@@ -316,6 +316,7 @@ class NLA_MT_snap_pie(Menu):
         pie.operator("nla.snap", text="Nearest Marker", icon = "SNAP_NEARESTMARKER").type= 'NEAREST_MARKER'
 
 
+
 class NLA_MT_context_menu(Menu):
     bl_label = "NLA Context Menu"
 
@@ -357,7 +358,6 @@ class NLA_MT_channel_context_menu(Menu):
 
         layout.operator_menu_enum("anim.channels_move", "direction", text="Track Ordering...")
         layout.operator("anim.channels_clean_empty")
-
 
 
 classes = (

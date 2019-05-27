@@ -938,8 +938,10 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         return plane
 
     def apply_image_options(self, image):
-        image.use_alpha = self.use_transparency
-        image.alpha_mode = self.alpha_mode
+        if self.use_transparency == False:
+            image.alpha_mode = 'NONE'
+        else:
+            image.alpha_mode = self.alpha_mode
 
         if self.relative:
             try:  # can't always find the relative path (between drive letters on windows)

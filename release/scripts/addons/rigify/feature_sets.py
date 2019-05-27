@@ -62,7 +62,7 @@ class DATA_OT_rigify_add_feature_set(bpy.types.Operator):
     bl_idname = "wm.rigify_add_feature_set"
     bl_label = "Add External Feature Set"
     bl_description = "Add external feature set (rigs, metarigs, ui templates)"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     filter_glob: StringProperty(default="*.zip", options={'HIDDEN'})
     filepath: StringProperty(maxlen=1024, subtype='FILE_PATH', options={'HIDDEN', 'SKIP_SAVE'})
@@ -107,7 +107,7 @@ class DATA_OT_rigify_remove_feature_set(bpy.types.Operator):
     bl_idname = "wm.rigify_remove_feature_set"
     bl_label = "Remove External Feature Set"
     bl_description = "Remove external feature set (rigs, metarigs, ui templates)"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
     featureset: StringProperty(maxlen=1024, options={'HIDDEN', 'SKIP_SAVE'})
 

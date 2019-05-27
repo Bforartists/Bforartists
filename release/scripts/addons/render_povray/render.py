@@ -451,10 +451,10 @@ def write_pov(filename, scene=None, info_callback=None):
             # reflections if IOR Mirror option is checked.
             elif material.pov.mirror_use_IOR:
                 tabWrite("interior {\n")
-                tabWrite("ior %.6f\n" % material.raytrace_transparency.ior)
+                tabWrite("ior %.6f\n" % material.pov.ior)
             else:
                 tabWrite("interior {\n")
-                tabWrite("ior %.6f\n" % material.raytrace_transparency.ior)
+                tabWrite("ior %.6f\n" % material.pov.ior)
 
             pov_fake_caustics = False
             pov_photons_refraction = False
@@ -485,15 +485,15 @@ def write_pov(filename, scene=None, info_callback=None):
                     tabWrite("dispersion_samples %.d\n" % material.pov.photons_dispersion_samples)
             #TODO
             # Other interior args
-            if material.use_transparency and material.transparency_method == 'RAYTRACE':
+            if material.pov.use_transparency and material.pov.transparency_method == 'RAYTRACE':
                 # fade_distance
                 # In Blender this value has always been reversed compared to what tooltip says.
                 # 100.001 rather than 100 so that it does not get to 0
                 # which deactivates the feature in POV
                 tabWrite("fade_distance %.3g\n" % \
-                         (100.001 - material.raytrace_transparency.depth_max))
+                         (100.001 - material.pov_raytrace_transparency.depth_max))
                 # fade_power
-                tabWrite("fade_power %.3g\n" % material.raytrace_transparency.falloff)
+                tabWrite("fade_power %.3g\n" % material.pov_raytrace_transparency.falloff)
                 # fade_color
                 tabWrite("fade_color <%.3g, %.3g, %.3g>\n" % material.pov.interior_fade_color[:])
 
@@ -519,7 +519,7 @@ def write_pov(filename, scene=None, info_callback=None):
         # DH disabled for now, this isn't the correct context
         active_object = None  # bpy.context.active_object # does not always work  MR
         matrix = global_matrix @ camera.matrix_world
-        focal_point = camera.data.dof_distance
+        focal_point = camera.data.dof.focus_distance
 
         # compute resolution
         Qsize = render.resolution_x / render.resolution_y
@@ -546,8 +546,8 @@ def write_pov(filename, scene=None, info_callback=None):
             tabWrite("rotate  <%.6f, %.6f, %.6f>\n" % \
                      tuple([degrees(e) for e in matrix.to_3x3().to_euler()]))
             tabWrite("translate <%.6f, %.6f, %.6f>\n" % matrix.translation[:])
-            if camera.data.pov.dof_enable and (focal_point != 0 or camera.data.dof_object):
-                tabWrite("aperture %.3g\n" % camera.data.pov.dof_aperture)
+            if camera.data.dof.use_dof and (focal_point != 0 or camera.data.dof.focus_object):
+                tabWrite("aperture %.3g\n" % 1/camera.data.dof.aperture_fstop*1000)
                 tabWrite("blur_samples %d %d\n" % \
                          (camera.data.pov.dof_samples_min, camera.data.pov.dof_samples_max))
                 tabWrite("variance 1/%d\n" % camera.data.pov.dof_variance)
@@ -1699,7 +1699,7 @@ def write_pov(filename, scene=None, info_callback=None):
                             diffuse_color = material.diffuse_color
                             trans = 1.0 - material.alpha
                             if material.use_transparency and material.transparency_method == 'RAYTRACE':
-                                povFilter = material.raytrace_transparency.filter * (1.0 - material.alpha)
+                                povFilter = material.pov_raytrace_transparency.filter * (1.0 - material.alpha)
                                 trans = (1.0 - material.alpha) - povFilter
                             else:
                                 povFilter = 0.0
@@ -1764,7 +1764,7 @@ def write_pov(filename, scene=None, info_callback=None):
                     diffuse_color = material.diffuse_color
                     trans = 1.0 - material.alpha
                     if material.use_transparency and material.transparency_method == 'RAYTRACE':
-                        povFilter = material.raytrace_transparency.filter * (1.0 - material.alpha)
+                        povFilter = material.pov_raytrace_transparency.filter * (1.0 - material.alpha)
                         trans = (1.0 - material.alpha) - povFilter
                     else:
                         povFilter = 0.0
@@ -2693,6 +2693,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
                     importance = ob.pov.importance_value
                     if me:
+                        me.calc_loop_triangles()
                         me_materials = me.materials
                         me_faces = me.loop_triangles[:]
                     #if len(me_faces)==0:
@@ -2777,7 +2778,7 @@ def write_pov(filename, scene=None, info_callback=None):
                         # Generate unique UV's
                         uniqueUVs = {}
                         #n = 0
-                        for f in me.faces:
+                        for f in me_faces: # me.faces in 2.7
                             uvs = [uv_layer[l].uv[:] for l in f.loops]
 
                             for uv in uvs:
@@ -3841,6 +3842,7 @@ class PovrayRender(bpy.types.RenderEngine):
         else:
             pass
     def _render(self, depsgraph):
+        scene = bpy.context.scene
         try:
             os.remove(self._temp_file_out)  # so as not to load the old file
         except OSError:

@@ -31,8 +31,8 @@ working on it!). It works since 0.8.8!
 Under the "Scene Debug" panel in Scene properties.
 
 * Lighter's Corner
-This is an UI List of Lamps in the scene(s).
-It allows you to quickly see how many lamps you have, select them by
+This is an UI List of Lights in the scene(s).
+It allows you to quickly see how many lights you have, select them by
 clicking on their name, see their type (icon), samples number (if using
 Branched Path Tracing), size, and change their visibility.
 
@@ -72,7 +72,7 @@ class AMTH_store_data():
     users = {
         'OBJECT_DATA': [],         # Store Objects with Material
         'MATERIAL': [],            # Materials (Node tree)
-        'LAMP': [],                # Lamps
+        'LIGHT': [],               # Lights
         'WORLD': [],               # World
         'TEXTURE': [],             # Textures (Psys, Brushes)
         'MODIFIER': [],            # Modifiers
@@ -644,8 +644,8 @@ class AMTH_SCENE_OT_list_users_for_x(Operator):
 
                                     if name not in AMTH_store_data.users['MATERIAL']:
                                         AMTH_store_data.users['MATERIAL'].append(name)
-            # Check Lamps
-            for la in d.lamps:
+            # Check Lights
+            for la in d.lights:
                 # Cycles
                 if utils.cycles_exists():
                     if la and la.node_tree and la.node_tree.nodes:
@@ -653,8 +653,8 @@ class AMTH_SCENE_OT_list_users_for_x(Operator):
                             if no and \
                                    no.type in {'TEX_IMAGE', 'TEX_ENVIRONMENT'} and \
                                    no.image and no.image.name == x:
-                                if la.name not in AMTH_store_data.users['LAMP']:
-                                    AMTH_store_data.users['LAMP'].append(la.name)
+                                if la.name not in AMTH_store_data.users['LIGHT']:
+                                    AMTH_store_data.users['LIGHT'].append(la.name)
             # Check World
             for wo in d.worlds:
                 # Cycles
@@ -880,7 +880,7 @@ class AMTH_SCENE_PT_scene_debug(Panel):
 
     def draw_header(self, context):
         layout = self.layout
-        layout.label(text="", icon="RADIO")
+        layout.label(text="", icon="RADIOBUT_ON")
 
     def draw_label(self, layout, body_text, single, multi, lists, ico="BLANK1"):
         layout.label(
@@ -907,7 +907,7 @@ class AMTH_SCENE_PT_scene_debug(Panel):
 
         # List Missing Images
         box = layout.box()
-        split = box.split(percentage=0.8, align=True)
+        split = box.split(factor=0.8, align=True)
         row = split.row()
 
         if has_images:
@@ -918,7 +918,7 @@ class AMTH_SCENE_PT_scene_debug(Panel):
             image_state = context.window_manager.amth_missing_images_state
 
             row.label(
-                "{} Image Blocks present in the Data".format(has_images),
+                text="{} Image Blocks present in the Data".format(has_images),
                 icon="IMAGE_DATA"
                 )
             if len(image_state.keys()) > 0:
@@ -1119,7 +1119,7 @@ class AMTH_PT_LightersCorner(Panel):
 
     def draw_header(self, context):
         layout = self.layout
-        layout.label(text="", icon="LAMP_SUN")
+        layout.label(text="", icon="LIGHT_SUN")
 
     def draw(self, context):
         layout = self.layout
@@ -1138,18 +1138,18 @@ class AMTH_PT_LightersCorner(Panel):
 
         if not state_props:
             row = box.row()
-            message = "Please Refresh" if len(bpy.data.lamps) > 0 else "No Lamps in Data"
+            message = "Please Refresh" if len(bpy.data.lights) > 0 else "No Lights in Data"
             row.label(text=message, icon="INFO")
         else:
             row = box.row(align=True)
-            split = row.split(percentage=0.5, align=True)
+            split = row.split(factor=0.5, align=True)
             col = split.column(align=True)
 
             col.label(text="Name/Library link")
 
             if engine in ["CYCLES", "BLENDER_RENDER"]:
                 splits = 0.6 if engine == "BLENDER_RENDER" else 0.4
-                splita = split.split(percentage=splits, align=True)
+                splita = split.split(factor=splits, align=True)
                 col = splita.column(align=True)
                 col.alignment = "LEFT"
                 col.label(text="Samples")
@@ -1181,14 +1181,14 @@ class AMTH_UL_MissingImages_UI(UIList):
         has_filepath = item.has_filepath
         is_library = item.is_library
 
-        split = layout.split(percentage=0.4)
+        split = layout.split(factor=0.4)
         row = split.row(align=True)
         row.alignment = "LEFT"
         row.label(text=text_lib, icon="IMAGE_DATA")
         image = bpy.data.images.get(item.name, None)
 
         subrow = split.row(align=True)
-        splitp = subrow.split(percentage=0.8, align=True).row(align=True)
+        splitp = subrow.split(factor=0.8, align=True).row(align=True)
         splitp.alignment = "LEFT"
         row_lib = subrow.row(align=True)
         row_lib.alignment = "RIGHT"
@@ -1211,7 +1211,7 @@ class AMTH_UL_LightersCorner_UI(UIList):
         text_lib = item.text_lib
         is_library = item.is_library
 
-        split = layout.split(percentage=0.35)
+        split = layout.split(factor=0.35)
         row = split.row(align=True)
         row.alignment = "LEFT"
         row.label(text=text_lib, icon=icon_type)
@@ -1227,14 +1227,14 @@ class AMTH_UL_LightersCorner_UI(UIList):
 
             rows = split.row(align=True)
             splits = 0.9 if engine == "BLENDER_RENDER" else 0.4
-            splitlamp = rows.split(percentage=splits, align=True)
+            splitlamp = rows.split(factor=splits, align=True)
             splitlampb = splitlamp.row(align=True)
             splitlampc = splitlamp.row(align=True)
             splitlampd = rows.row(align=True)
             splitlampd.alignment = "RIGHT"
 
             if utils.cycles_exists() and engine == "CYCLES":
-                if "LAMP" in icon_type:
+                if "LIGHT" in icon_type:
                     clamp = ob.data.cycles
                     if context.scene.cycles.progressive == "BRANCHED_PATH":
                         splitlampb.prop(clamp, "samples", text="")
@@ -1254,7 +1254,7 @@ class AMTH_UL_LightersCorner_UI(UIList):
                 else:
                     splitlampb.label(text="N/A")
             if engine == "BLENDER_RENDER":
-                if "LAMP" in icon_type:
+                if "LIGHT" in icon_type:
                     lamp = ob.data
                     if lamp.type == "HEMI":
                         splitlampb.label(text="Not Available")
@@ -1317,12 +1317,12 @@ def fill_ligters_corner_props(context, refresh=False):
 
     for ob in bpy.data.objects:
         if ob.name not in light_state.keys() or refresh:
-            is_lamp = ob.type == "LAMP"
+            is_light = ob.type == "LIGHT"
             is_emission = True if utils.cycles_is_emission(
                     context, ob) and list_meshlights else False
 
-            if is_lamp or is_emission:
-                icons = "LAMP_%s" % ob.data.type if is_lamp else "MESH_GRID"
+            if is_light or is_emission:
+                icons = "LIGHT_%s" % ob.data.type if is_light else "MESH_GRID"
                 text_l = "{} {}{}".format(" [L] " if ob.library else "", ob.name,
                         "" if ob.name in context.scene.objects else " [Not in Scene]")
                 prop = light_state.add()

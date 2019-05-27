@@ -1424,7 +1424,7 @@ class MATERIAL_PT_povray_reflection(MaterialButtonsPanel, bpy.types.Panel):
         if mat.pov.mirror_use_IOR:
             col2.alignment = 'CENTER'
             col2.label(text="The current Raytrace ")
-            col2.label(text="Transparency IOR is: " + str(mat.raytrace_transparency.ior))
+            col2.label(text="Transparency IOR is: " + str(mat.pov.ior))
         col2.prop(mat.pov, "mirror_metallic")
 
 
@@ -1517,6 +1517,28 @@ class MATERIAL_PT_povray_replacement_text(MaterialButtonsPanel, bpy.types.Panel)
         col.label(text="Replace properties with:")
         col.prop(mat.pov, "replacement_text", text="")
 
+class MATERIAL_TEXTURE_SLOTS_UL_List(UIList):
+    """Texture Slots UIList."""
+
+
+    def draw_item(self, context, layout, material, item, icon, active_data,
+                  material_texture_list_index, index):
+        material = context.material#.pov
+        active_data = material
+        #tex = context.texture #may be needed later?
+        
+        
+        # We could write some code to decide which icon to use here...
+        custom_icon = 'TEXTURE'
+
+        # Make sure your code supports all 3 layout types
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            layout.label(item.name, icon = custom_icon)
+
+        elif self.layout_type in {'GRID'}:
+            layout.alignment = 'CENTER'
+            layout.label("", icon = custom_icon)
+            
 class WORLD_TEXTURE_SLOTS_UL_List(UIList):
     """Texture Slots UIList."""
 
@@ -1546,16 +1568,16 @@ class TEXTURE_PT_povray_type(TextureButtonsPanel, bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-
+        world = context.world
         tex = context.texture
 
         split = layout.split(factor=0.2)
         split.label(text="POV:")
         split.prop(tex.pov, "tex_pattern_type", text="")
 
-        row = layout.row()
-        row.template_list("WORLD_TEXTURE_SLOTS_UL_List", "The_List", world,
-                          "texture_slots", world, "world_texture_list_index")
+        # row = layout.row()
+        # row.template_list("WORLD_TEXTURE_SLOTS_UL_List", "texture_slots", world,
+                          # world.texture_slots, world, "world_texture_list_index")
         
         
 class TEXTURE_PT_povray_preview(TextureButtonsPanel, bpy.types.Panel):
@@ -2307,31 +2329,33 @@ def menu_func_nodes(self, context):
 # Camera Povray Settings
 ###############################################################################
 class CAMERA_PT_povray_cam_dof(CameraDataButtonsPanel, bpy.types.Panel):
-    bl_label = "POV-Ray Depth Of Field"
+    bl_label = "POV-Ray Aperture"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
+    bl_parent_id = "DATA_PT_camera_dof_aperture"
+    bl_options = {'HIDE_HEADER'}
+    #def draw_header(self, context):
+        #cam = context.camera
 
-    def draw_header(self, context):
-        cam = context.camera
-
-        self.layout.prop(cam.pov, "dof_enable", text="")
+        #self.layout.prop(cam.pov, "dof_enable", text="")
 
     def draw(self, context):
         layout = self.layout
 
         cam = context.camera
 
-        layout.active = cam.pov.dof_enable
+        layout.active = cam.dof.use_dof
+        layout.use_property_split = True # Active single-column layout
 
-        layout.prop(cam.pov, "dof_aperture")
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
-        split = layout.split()
-
-        col = split.column()
+        col = flow.column()
+        col.label(text="F-Stop value will export as")
+        col.label(text="POV-Ray aperture : " + "%.3f" % (1/cam.dof.aperture_fstop*1000))
+        
+        col = flow.column()
         col.prop(cam.pov, "dof_samples_min")
-        col.prop(cam.pov, "dof_variance")
-
-        col = split.column()
         col.prop(cam.pov, "dof_samples_max")
+        col.prop(cam.pov, "dof_variance")        
         col.prop(cam.pov, "dof_confidence")
 
 

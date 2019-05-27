@@ -20,10 +20,10 @@ bl_info = {
     "name": "Skinify Rig",
     "author": "Albert Makac (karab44)",
     "version": (0, 11, 0),
-    "blender": (2, 79, 0),
+    "blender": (2, 80, 0),
     "location": "Properties > Bone > Skinify Rig (visible on pose mode only)",
     "description": "Creates a mesh object from selected bones",
-    "warning": "",
+    "warning": "Work in progress",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
                 "Py/Scripts/Object/Skinify",
     "category": "Object"}
@@ -420,7 +420,7 @@ def generate_mesh(shape_object, size, thickness=0.8, finger_thickness=0.25, sub_
     """
     This function adds modifiers for generated edges
     """
-    total_bones_num = len(bpy.context.object.pose.bones.keys())
+    total_bones_num = bpy.context.selected_pose_bones_from_active_object
     selected_bones_num = len(bones)
 
     bpy.ops.object.mode_set(mode='EDIT')
@@ -581,7 +581,7 @@ def main(context):
     oldLocation = None
     oldRotation = None
     oldScale = None
-    armature_object = scn.objects.active
+    armature_object = context.view_layer.objects.active
     armature_object.select_set(True)
 
     old_pose_pos = armature_object.data.pose_position
@@ -605,7 +605,7 @@ def main(context):
     bpy.ops.object.add(type='MESH', enter_editmode=False, location=origin)
 
     # get the mesh object
-    ob = scn.objects.active
+    ob = context.view_layer.objects.active
     ob.name = obj_name
     me = ob.data
     me.name = mesh_name
@@ -628,7 +628,7 @@ def main(context):
         bpy.ops.object.select_all(action='DESELECT')
         ob.select_set(True)
         armature_object.select_set(True)
-        scn.objects.active = armature_object
+        bpy.context.view_layer.objects.active = armature_object
 
         bpy.ops.object.parent_set(type='ARMATURE_AUTO')
         armature_object.data.pose_position = old_pose_pos
@@ -672,15 +672,16 @@ class BONE_OT_custom_shape(Operator):
 
 
 class BONE_PT_custom_shape(Panel):
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "bone"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Object"
+#    bl_context = "bone"
     bl_label = "Skinify Rig"
 
     @classmethod
     def poll(cls, context):
         ob = context.object
-        return ob and ob.mode == 'POSE' and context.bone
+        return ob and ob.mode == 'POSE' #and context.bone
 
     def draw(self, context):
         layout = self.layout
@@ -689,12 +690,12 @@ class BONE_PT_custom_shape(Panel):
         row = layout.row()
         row.operator("object.skinify_rig", text="Add Shape", icon='BONE_DATA')
 
-        split = layout.split(percentage=0.3)
+        split = layout.split(factor=0.3)
         split.label(text="Thickness:")
         split.prop(scn, "thickness", text="Body", icon='MOD_SKIN')
         split.prop(scn, "finger_thickness", text="Fingers", icon='HAND')
 
-        split = layout.split(percentage=0.3)
+        split = layout.split(factor=0.3)
         split.label(text="Mesh Density:")
         split.prop(scn, "sub_level", icon='MESH_ICOSPHERE')
 

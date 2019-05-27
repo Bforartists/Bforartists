@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import bpy
 from bpy.props import BoolProperty
@@ -78,7 +78,7 @@ class MUV_OT_SelectUV_SelectOverlapped(bpy.types.Operator):
     Operation class: Select faces which have overlapped UVs
     """
 
-    bl_idname = "uv.muv_ot_select_uv_select_overlapped"
+    bl_idname = "uv.muv_select_uv_select_overlapped"
     bl_label = "Overlapped"
     bl_description = "Select faces which have overlapped UVs"
     bl_options = {'REGISTER', 'UNDO'}
@@ -123,7 +123,7 @@ class MUV_OT_SelectUV_SelectFlipped(bpy.types.Operator):
     Operation class: Select faces which have flipped UVs
     """
 
-    bl_idname = "uv.muv_ot_select_uv_select_flipped"
+    bl_idname = "uv.muv_select_uv_select_flipped"
     bl_label = "Flipped"
     bl_description = "Select faces which have flipped UVs"
     bl_options = {'REGISTER', 'UNDO'}

@@ -94,7 +94,7 @@ def register():
     kc = bpy.context.window_manager.keyconfigs.addon
     km = kc.keymaps.new(name="Node Editor", space_type="NODE_EDITOR")
     kmi = km.keymap_items.new("node.show_active_node_image",
-                              "ACTIONMOUSE", "DOUBLE_CLICK")
+                              "LEFTMOUSE", "DOUBLE_CLICK")
     KEYMAPS.append((km, kmi))
 
 

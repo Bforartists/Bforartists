@@ -1602,7 +1602,7 @@ class CLIP_MT_marker_pie(Menu):
         # Make Settings Default
         pie.operator("clip.track_settings_as_default", icon='SETTINGS')
         if track_active:
-        # Use Normalization
+            # Use Normalization
             pie.prop(track_active, "use_normalization", text="Normalization")
         # Use Brute Force
             pie.prop(track_active, "use_brute", text="Use Brute Force")
@@ -1641,7 +1641,7 @@ class CLIP_MT_tracking_pie(Menu):
         prop.backwards = False
         prop.sequence = True
         # Disable Marker
-        pie.operator("clip.disable_markers", icon="VISIBLE_IPO_ON").action = 'TOGGLE'
+        pie.operator("clip.disable_markers", icon='VISIBLE_IPO_ON').action = 'TOGGLE'
         # Detect Features
         pie.operator("clip.detect_features", icon='ZOOM_SELECTED')
         # Clear Path Backwards
@@ -1679,11 +1679,17 @@ class CLIP_MT_solving_pie(Menu):
         # create Plane Track
         pie.operator("clip.create_plane_track", icon='MATPLANE')
         # Set Keyframe A
-        pie.operator("clip.set_solver_keyframe", text="Set Keyframe A",
-                    icon='KEYFRAME').keyframe = 'KEYFRAME_A'
+        pie.operator(
+            "clip.set_solver_keyframe",
+            text="Set Keyframe A",
+            icon='KEYFRAME',
+        ).keyframe = 'KEYFRAME_A'
         # Set Keyframe B
-        pie.operator("clip.set_solver_keyframe", text="Set Keyframe B",
-                    icon='KEYFRAME').keyframe = 'KEYFRAME_B'
+        pie.operator(
+            "clip.set_solver_keyframe",
+            text="Set Keyframe B",
+            icon='KEYFRAME',
+        ).keyframe = 'KEYFRAME_B'
         # Clean Tracks
         prop = pie.operator("clip.clean_tracks", icon='X')
         # Filter Tracks
@@ -1720,7 +1726,6 @@ class CLIP_MT_reconstruction_pie(Menu):
         pie.operator("clip.set_scale", text="Set Scale", icon='ARROW_LEFTRIGHT')
         # Apply Solution Scale
         pie.operator("clip.apply_solution_scale", icon='ARROW_LEFTRIGHT')
-
 
 
 classes = (

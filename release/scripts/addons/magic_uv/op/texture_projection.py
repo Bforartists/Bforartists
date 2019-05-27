@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 from collections import namedtuple
 
@@ -157,7 +157,7 @@ class _Properties:
             pass
 
         def update_func(_, __):
-            bpy.ops.uv.muv_ot_texture_projection('INVOKE_REGION_WIN')
+            bpy.ops.uv.muv_texture_projection('INVOKE_REGION_WIN')
 
         scene.muv_texture_projection_enabled = BoolProperty(
             name="Texture Projection Enabled",
@@ -225,7 +225,7 @@ class MUV_OT_TextureProjection(bpy.types.Operator):
     Render texture
     """
 
-    bl_idname = "uv.muv_ot_texture_projection"
+    bl_idname = "uv.muv_texture_projection"
     bl_description = "Render selected texture"
     bl_label = "Texture renderer"
 
@@ -332,7 +332,7 @@ class MUV_OT_TextureProjection_Project(bpy.types.Operator):
     Operation class: Project texture
     """
 
-    bl_idname = "uv.muv_ot_texture_projection_project"
+    bl_idname = "uv.muv_texture_projection_project"
     bl_label = "Project Texture"
     bl_description = "Project Texture"
     bl_options = {'REGISTER', 'UNDO'}

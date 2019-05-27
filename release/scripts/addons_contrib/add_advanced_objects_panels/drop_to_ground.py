@@ -348,12 +348,12 @@ class Drop_Operator_Panel(Panel):
     def draw(self, context):
         layout = self.layout
 
-        row = layout.split(percentage=0.8, align=True)
+        row = layout.split(factor=0.8, align=True)
         row.operator(OBJECT_OT_drop_to_ground.bl_idname,
                      text="Drop Selected")
         row.operator("help.drop", text="", icon="LAYER_USED").is_all = False
 
-        row = layout.split(percentage=0.8, align=True)
+        row = layout.split(factor=0.8, align=True)
         row.operator(OBJECT_OT_drop_all_ground.bl_idname,
                      text="Drop All")
         row.operator("help.drop", text="", icon="LAYER_USED").is_all = True

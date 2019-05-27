@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import bpy
 
@@ -38,7 +38,7 @@ class MUV_MT_CopyPasteUV_Object(bpy.types.Menu):
     Menu class: Master menu of Copy/Paste UV coordinate among object
     """
 
-    bl_idname = "uv.muv_mt_copy_paste_uv_object"
+    bl_idname = "MUV_MT_CopyPasteUV_Object"
     bl_label = "Copy/Paste UV"
     bl_description = "Copy and Paste UV coordinate among object"
 

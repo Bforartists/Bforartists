@@ -186,7 +186,7 @@ class OperatorOriginToSpline0Start(bpy.types.Operator):
     def execute(self, context):
         blCurve = context.active_object
         blSpline = blCurve.data.splines[0]
-        newOrigin = blCurve.matrix_world * blSpline.bezier_points[0].co
+        newOrigin = blCurve.matrix_world @ blSpline.bezier_points[0].co
 
         origOrigin = bpy.context.scene.cursor.location.copy()
         print("--", "origOrigin: %.6f, %.6f, %.6f" % (origOrigin.x, origOrigin.y, origOrigin.z))

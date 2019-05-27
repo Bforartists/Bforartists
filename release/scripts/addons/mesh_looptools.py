@@ -747,8 +747,6 @@ def get_parallel_loops(bm_mod, loops):
 
 # gather initial data
 def initialise():
-    global_undo = bpy.context.preferences.edit.use_global_undo
-    bpy.context.preferences.edit.use_global_undo = False
     object = bpy.context.active_object
     if 'MIRROR' in [mod.type for mod in object.modifiers if mod.show_viewport]:
         # ensure that selection is synced for the derived mesh
@@ -760,7 +758,7 @@ def initialise():
     bm.edges.ensure_lookup_table()
     bm.faces.ensure_lookup_table()
 
-    return(global_undo, object, bm)
+    return(object, bm)
 
 
 # move the vertices to their new locations
@@ -830,13 +828,11 @@ def settings_write(self):
 
 
 # clean up and set settings back to original state
-def terminate(global_undo):
+def terminate():
     # update editmesh cached data
     obj = bpy.context.active_object
     if obj.mode == 'EDIT':
         bmesh.update_edit_mesh(obj.data, loop_triangles=True, destructive=True)
-
-    bpy.context.preferences.edit.use_global_undo = global_undo
 
 
 # ########################################
@@ -3301,7 +3297,7 @@ class Bridge(Operator):
 
     def execute(self, context):
         # initialise
-        global_undo, object, bm = initialise()
+        object, bm = initialise()
         edge_faces, edgekey_to_edge, old_selected_faces, smooth = \
             bridge_initialise(bm, self.interpolation)
         settings_write(self)
@@ -3375,7 +3371,7 @@ class Bridge(Operator):
             bpy.ops.mesh.normals_make_consistent()
 
         # cleaning up
-        terminate(global_undo)
+        terminate()
 
         return{'FINISHED'}
 
@@ -3484,7 +3480,7 @@ class Circle(Operator):
 
     def execute(self, context):
         # initialise
-        global_undo, object, bm = initialise()
+        object, bm = initialise()
         settings_write(self)
         # check cache to see if we can save time
         cached, single_loops, loops, derived, mapping = cache_read("Circle",
@@ -3548,7 +3544,7 @@ class Circle(Operator):
         # cleaning up
         if derived:
             bm_mod.free()
-        terminate(global_undo)
+        terminate()
 
         return{'FINISHED'}
 
@@ -3648,7 +3644,7 @@ class Curve(Operator):
 
     def execute(self, context):
         # initialise
-        global_undo, object, bm = initialise()
+        object, bm = initialise()
         settings_write(self)
         # check cache to see if we can save time
         cached, single_loops, loops, derived, mapping = cache_read("Curve",
@@ -3692,7 +3688,7 @@ class Curve(Operator):
         # cleaning up
         if derived:
             bm_mod.free()
-        terminate(global_undo)
+        terminate()
 
         return{'FINISHED'}
 
@@ -3780,7 +3776,7 @@ class Flatten(Operator):
 
     def execute(self, context):
         # initialise
-        global_undo, object, bm = initialise()
+        object, bm = initialise()
         settings_write(self)
         # check cache to see if we can save time
         cached, single_loops, loops, derived, mapping = cache_read("Flatten",
@@ -3814,7 +3810,7 @@ class Flatten(Operator):
         move_verts(object, bm, False, move, lock, self.influence)
 
         # cleaning up
-        terminate(global_undo)
+        terminate()
 
         return{'FINISHED'}
 
@@ -3989,7 +3985,7 @@ class GStretch(Operator):
 
     def execute(self, context):
         # initialise
-        global_undo, object, bm = initialise()
+        object, bm = initialise()
         settings_write(self)
 
         # check cache to see if we can save time
@@ -4093,7 +4089,7 @@ class GStretch(Operator):
         # cleaning up
         if derived:
             bm_mod.free()
-        terminate(global_undo)
+        terminate()
 
         return{'FINISHED'}
 
@@ -4157,7 +4153,7 @@ class Relax(Operator):
 
     def execute(self, context):
         # initialise
-        global_undo, object, bm = initialise()
+        object, bm = initialise()
         settings_write(self)
         # check cache to see if we can save time
         cached, single_loops, loops, derived, mapping = cache_read("Relax",
@@ -4191,7 +4187,7 @@ class Relax(Operator):
         # cleaning up
         if derived:
             bm_mod.free()
-        terminate(global_undo)
+        terminate()
 
         return{'FINISHED'}
 
@@ -4279,7 +4275,7 @@ class Space(Operator):
 
     def execute(self, context):
         # initialise
-        global_undo, object, bm = initialise()
+        object, bm = initialise()
         settings_write(self)
         # check cache to see if we can save time
         cached, single_loops, loops, derived, mapping = cache_read("Space",
@@ -4317,7 +4313,7 @@ class Space(Operator):
         # cleaning up
         if derived:
             bm_mod.free()
-        terminate(global_undo)
+        terminate()
 
         return{'FINISHED'}
 
