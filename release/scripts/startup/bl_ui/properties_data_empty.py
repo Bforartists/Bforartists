@@ -28,7 +28,8 @@ class DataButtonsPanel:
 
     @classmethod
     def poll(cls, context):
-        return (context.object and context.object.type == 'EMPTY')
+        ob = context.object
+        return (ob and ob.type == 'EMPTY')
 
 
 class DATA_PT_empty(DataButtonsPanel, Panel):
@@ -37,6 +38,7 @@ class DATA_PT_empty(DataButtonsPanel, Panel):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
+        layout.use_property_decorate = False
 
         ob = context.object
 
@@ -44,11 +46,6 @@ class DATA_PT_empty(DataButtonsPanel, Panel):
         layout.prop(ob, "empty_display_size", text="Size")
 
         if ob.empty_display_type == 'IMAGE':
-            layout.template_ID(ob, "data", open="image.open", unlink="object.unlink_data")
-            layout.template_image(ob, "data", ob.image_user, compact=True)
-
-            layout.row(align=True).row(align=True)
-
             layout.prop(ob, "use_empty_image_alpha")
 
             col = layout.column()
@@ -66,8 +63,25 @@ class DATA_PT_empty(DataButtonsPanel, Panel):
             col.prop(ob, "show_empty_image_perspective", text="Display Perspective")
 
 
+class DATA_PT_empty_image(DataButtonsPanel, Panel):
+    bl_label = "Image"
+
+    @classmethod
+    def poll(cls, context):
+        ob = context.object
+        return (ob and ob.type == 'EMPTY' and ob.empty_display_type == 'IMAGE')
+
+    def draw(self, context):
+        layout = self.layout
+        ob = context.object
+        layout.template_ID(ob, "data", open="image.open", unlink="object.unlink_data")
+        layout.separator()
+        layout.template_image(ob, "data", ob.image_user, compact=True)
+
+
 classes = (
     DATA_PT_empty,
+    DATA_PT_empty_image,
 )
 
 if __name__ == "__main__":  # only for live edit.

@@ -20,8 +20,8 @@
 
 __author__ = "imdjs, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import bpy
 from bpy.props import BoolProperty, FloatProperty
@@ -97,7 +97,7 @@ class _Properties:
 @compat.make_annotations
 class MUV_OT_SmoothUV(bpy.types.Operator):
 
-    bl_idname = "uv.muv_ot_smooth_uv"
+    bl_idname = "uv.muv_smooth_uv"
     bl_label = "Smooth"
     bl_description = "Smooth UV coordinates"
     bl_options = {'REGISTER', 'UNDO'}

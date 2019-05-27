@@ -25,7 +25,7 @@ import typing
 log = logging.getLogger(__name__)
 
 # Can be overridden by setting the environment variable BLENDER_ID_ENDPOINT.
-BLENDER_ID_ENDPOINT = 'https://www.blender.org/id/'
+BLENDER_ID_ENDPOINT = 'https://id.blender.org/'
 
 # Will become a requests.Session at the first request to Blender ID.
 requests_session = None

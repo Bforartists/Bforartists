@@ -19,7 +19,7 @@
 bl_info = {
     "name": "BlenderKit Asset Library",
     "author": "Vilem Duha",
-    "version": (1, 0, 22),
+    "version": (1, 0, 23),
     "blender": (2, 80, 0),
     "location": "View3D > Properties > BlenderKit",
     "description": "Online BlenderKit library (materials, models, brushes and more)",
@@ -41,9 +41,11 @@ if "bpy" in locals():
     importlib.reload(bg_blender)
     importlib.reload(paths)
     importlib.reload(utils)
+    importlib.reload(bkit_oauth)
+    importlib.reload(tasks_queue)
 else:
     from blenderkit import asset_inspector, search, download, upload, ratings, autothumb, ui, bg_blender, paths, utils, \
-        overrides, ui_panels, categories
+        overrides, ui_panels, categories, bkit_oauth, tasks_queue
 
 import os
 import math
@@ -71,7 +73,6 @@ from bpy.types import (
     PropertyGroup,
 )
 
-
 # logging.basicConfig(filename = 'blenderkit.log', level = logging.INFO,
 #                     format = '	%(asctime)s:%(filename)s:%(funcName)s:%(lineno)d:%(message)s')
 
@@ -82,7 +83,8 @@ def scene_load(context):
     ui_props = bpy.context.scene.blenderkitUI
     ui_props.assetbar_on = False
     ui_props.turn_off = False
-
+    preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    preferences.login_attempt = False
 
 licenses = (
     ('royalty_free', 'Royalty Free', 'royalty free commercial license'),
@@ -204,14 +206,19 @@ def switch_search_results(self, context):
     props = s.blenderkitUI
     if props.asset_type == 'MODEL':
         s['search results'] = s.get('bkit model search')
+        s['search results orig'] = s.get('bkit model search orig')
     elif props.asset_type == 'SCENE':
         s['search results'] = s.get('bkit scene search')
+        s['search results orig'] = s.get('bkit scene search orig')
     elif props.asset_type == 'MATERIAL':
         s['search results'] = s.get('bkit material search')
+        s['search results orig'] = s.get('bkit material search orig')
     elif props.asset_type == 'TEXTURE':
         s['search results'] = s.get('bkit texture search')
+        s['search results orig'] = s.get('bkit texture search orig')
     elif props.asset_type == 'BRUSH':
         s['search results'] = s.get('bkit brush search')
+        s['search results orig'] = s.get('bkit brush search orig')
     search.load_previews()
 
 
@@ -442,6 +449,10 @@ class BlenderKitCommonUploadProps(object):
         default='royalty_free',
         description='License. Please read our help for choosing the right licenses',
     )
+    is_private: BoolProperty(name="Asset is Private",
+                          description="If not marked private, your asset will go into the validation process automatically\n"
+                                      "Private assets are limited by quota.",
+                          default=False)
 
     is_free: BoolProperty(name="Free for Everyone",
                           description="You consent you want to release this asset as free for everyone",
@@ -1029,7 +1040,7 @@ class BlenderKitModelSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
     search_style: EnumProperty(
         name="Style",
         items=search_model_styles,
-        description="keywords defining style (realistic, painted, polygonal, other)",
+        description="Keywords defining style (realistic, painted, polygonal, other)",
         default="ANY",
         update=search.search_update
     )
@@ -1047,10 +1058,13 @@ class BlenderKitModelSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
     )
     search_engine_other: StringProperty(
         name="Engine",
-        description="engine not specified by addon",
+        description="Engine not specified by addon",
         default="",
         update=search.search_update
     )
+
+    free_only: BoolProperty(name="Free only", description="Show only free models",
+                                  default=False)
 
     search_advanced: BoolProperty(name="Advanced Search Options", description="use advanced search properties",
                                   default=False)
@@ -1059,7 +1073,7 @@ class BlenderKitModelSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
     search_condition: EnumProperty(
         items=conditions,
         default='UNSPECIFIED',
-        description='condition of the object',
+        description='Condition of the object',
         update=search.search_update
     )
 
@@ -1208,9 +1222,11 @@ class BlenderKitAddonPreferences(AddonPreferences):
     # this must match the addon name, use '__package__'
     # when defining this in a submodule of a python package.
     bl_idname = __name__
-    from os.path import expanduser
-    home = expanduser("~")
-    default_global_dict = home + os.sep + 'blenderkit_data'
+
+    default_global_dict = paths.default_global_dict()
+
+    enable_oauth = False
+    enable_author_search = False
 
     api_key: StringProperty(
         name="BlenderKit API Key",
@@ -1218,6 +1234,19 @@ class BlenderKitAddonPreferences(AddonPreferences):
         default="",
         subtype="PASSWORD",
         update=utils.save_prefs
+    )
+
+    api_key_refresh: StringProperty(
+        name="BlenderKit refresh API Key",
+        description="API key used to refresh the token regularly.",
+        default="",
+        subtype="PASSWORD",
+    )
+
+    login_attempt: BoolProperty(
+        name="Login/Signup attempt",
+        description="When this is on, BlenderKit is trying to connect and login.",
+        default=False
     )
 
     global_dir: StringProperty(
@@ -1299,9 +1328,14 @@ class BlenderKitAddonPreferences(AddonPreferences):
         layout = self.layout
 
         if self.api_key.strip() == '':
-            op = layout.operator("wm.url_open", text="Register online and get your API Key",
-                                 icon='QUESTION')
-            op.url = paths.BLENDERKIT_SIGNUP_URL
+            if self.enable_oauth:
+                layout.operator("wm.blenderkit_login", text="Login/ Sign up",
+                            icon='URL')
+            else:
+                op = layout.operator("wm.url_open", text="Register online and get your API Key",
+                                     icon='QUESTION')
+                op.url = paths.BLENDERKIT_SIGNUP_URL
+
         layout.prop(self, "api_key", text='Your API Key')
         # layout.label(text='After you paste API Key, categories are downloaded, so blender will freeze for a few seconds.')
         layout.prop(self, "global_dir")
@@ -1386,10 +1420,12 @@ def register():
     ui.register_ui()
     ui_panels.register_ui_panels()
     bg_blender.register()
-    bpy.app.handlers.load_post.append(scene_load)
     utils.load_prefs()
     overrides.register_overrides()
+    bkit_oauth.register()
+    tasks_queue.register()
 
+    bpy.app.handlers.load_post.append(scene_load)
 
 def unregister():
 
@@ -1403,6 +1439,8 @@ def unregister():
     ui_panels.unregister_ui_panels()
     bg_blender.unregister()
     overrides.unregister_overrides()
+    bkit_oauth.unregister()
+    tasks_queue.unregister()
 
     del bpy.types.Scene.blenderkit_models
     del bpy.types.Scene.blenderkit_scene
@@ -1416,3 +1454,5 @@ def unregister():
 
     for cls in classes:
         bpy.utils.unregister_class(cls)
+
+    bpy.app.handlers.load_post.remove(scene_load)

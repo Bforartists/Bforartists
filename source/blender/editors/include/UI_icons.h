@@ -215,7 +215,7 @@ DEF_ICON_COLOR(PARTICLEBRUSH_WEIGHT)
 DEF_ICON_COLOR(PARTICLEBRUSH_LENGTH)
 DEF_ICON_COLOR(THREE_DOTS)
 DEF_ICON_COLOR(ADD)
-DEF_ICON_COLOR(ALEMBIC)
+DEF_ICON_BLANK(218)
 DEF_ICON_COLOR(ALIGN_CENTER)
 
 /* ------------------------- Row 4 --------------------------*/
@@ -844,7 +844,7 @@ DEF_ICON_COLOR(VIS_SEL_11)
 DEF_ICON_COLOR(VIS_SEL_10)
 DEF_ICON_COLOR(VIS_SEL_01)
 DEF_ICON_COLOR(VIS_SEL_00)
-DEF_ICON_COLOR(VOLUME)
+DEF_ICON_BLANK(847)
 DEF_ICON_COLOR(WORKSPACE)
 DEF_ICON_COLOR(XRAY)
 
@@ -1244,8 +1244,8 @@ DEF_ICON_COLOR(MOUSE_MOVE)     /*bfa- don't change the order of the mouse icons*
 DEF_ICON_COLOR(MOUSE_LMB_DRAG) /*bfa- don't change the order of the mouse icons*/
 DEF_ICON_COLOR(MOUSE_MMB_DRAG) /*bfa- don't change the order of the mouse icons*/
 DEF_ICON_COLOR(MOUSE_RMB_DRAG) /*bfa- don't change the order of the mouse icons*/
-DEF_ICON_BLANK(1247)
-DEF_ICON_BLANK(1248)
+DEF_ICON_COLOR(AUTOMERGE_OFF)  /*bfa- don't change the order of the automerge icons*/
+DEF_ICON_COLOR(AUTOMERGE_ON)   /*bfa- don't change the order of the automerge icons*/
 DEF_ICON_BLANK(1249)
 
 /* ------------------------- Row 22 --------------------------*/
@@ -1356,10 +1356,10 @@ DEF_ICON_COLOR(SELECT_EXTEND)
 DEF_ICON_COLOR(SELECT_INTERSECT)
 DEF_ICON_COLOR(SELECT_SET)
 DEF_ICON_COLOR(SELECT_SUBTRACT)
-DEF_ICON_BLANK(1359)
-DEF_ICON_BLANK(1360)
-DEF_ICON_BLANK(1361)
-DEF_ICON_BLANK(1362)
+DEF_ICON_COLOR(FCURVE_SNAPSHOT)
+DEF_ICON_COLOR(FILE_3D)
+DEF_ICON_COLOR(FILE_CACHE)
+DEF_ICON_COLOR(OBJECT_HIDDEN)
 DEF_ICON_BLANK(1363)
 
 /* ------------------------- Row 24 --------------------------*/

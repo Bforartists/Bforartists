@@ -221,7 +221,7 @@ void EEVEE_volumes_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
     current_sample = effects->taa_current_sample - 1;
     effects->volume_current_sample = -1;
   }
-  else {
+  else if (DRW_state_is_image_render()) {
     const uint max_sample = (ht_primes[0] * ht_primes[1] * ht_primes[2]);
     current_sample = effects->volume_current_sample = (effects->volume_current_sample + 1) %
                                                       max_sample;
@@ -242,11 +242,11 @@ void EEVEE_volumes_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 
   /* Update view_vecs */
   float invproj[4][4], winmat[4][4];
-  DRW_viewport_matrix_get(winmat, DRW_MAT_WIN);
-  DRW_viewport_matrix_get(invproj, DRW_MAT_WININV);
+  DRW_view_winmat_get(NULL, winmat, false);
+  DRW_view_winmat_get(NULL, invproj, true);
   EEVEE_update_viewvecs(invproj, winmat, sldata->common_data.view_vecs);
 
-  if (DRW_viewport_is_persp_get()) {
+  if (DRW_view_is_persp_get(NULL)) {
     float sample_distribution = scene_eval->eevee.volumetric_sample_distribution;
     sample_distribution = 4.0f * (1.00001f - sample_distribution);
 

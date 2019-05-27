@@ -3,6 +3,7 @@
 # Version 2.0 (in development)
 
 - Require Blender 2.80+.
+- Use the new URL https://id.blender.org/ for communication with Blender ID.
 - API change: `blender_id.get_subclient_user_id()` now returns `''` instead of `None` when the user
   is not logged in.
 - Log which Blender ID instance is communicated with.

@@ -5,7 +5,7 @@ from ...utils import strip_org, make_deformer_name, connected_children_names
 from ...utils import create_chain_widget
 from ...utils import make_mechanism_name, create_cube_widget
 from ...utils import ControlLayersOption
-from ...utils.mechanism import make_property
+from ...utils.mechanism import make_property, make_driver
 from ..limbs.limb_utils import get_bone_name
 
 
@@ -29,11 +29,11 @@ class Rig:
         setattr(v, axis, scale)
 
         if reverse:
-            tail_vec = v * self.obj.matrix_world
+            tail_vec = v @ self.obj.matrix_world
             eb.head[:] = eb.tail
             eb.tail[:] = eb.head + tail_vec
         else:
-            tail_vec = v * self.obj.matrix_world
+            tail_vec = v @ self.obj.matrix_world
             eb.tail[:] = eb.head + tail_vec
 
     def create_pivot(self, pivot=None):
@@ -473,22 +473,7 @@ class Rig:
         # driving the follow rotation switches for neck and head
         for bone, prop, in zip(owners, props):
             # Add driver to copy rotation constraint
-            drv = pb[bone].constraints[0].driver_add("influence").driver
-            drv.type = 'AVERAGE'
-
-            var = drv.variables.new()
-            var.name = prop
-            var.type = "SINGLE_PROP"
-            var.targets[0].id = self.obj
-            var.targets[0].data_path = \
-                torso.path_from_id() + '[' + '"' + prop + '"' + ']'
-
-            drv_modifier = self.obj.animation_data.drivers[-1].modifiers[0]
-
-            drv_modifier.mode = 'POLYNOMIAL'
-            drv_modifier.poly_order = 1
-            drv_modifier.coefficients[0] = 1.0
-            drv_modifier.coefficients[1] = -1.0
+            make_driver(pb[bone].constraints[0], "influence", variables=[(self.obj, torso, prop)], polynomial=[1.0, -1.0])
 
     def locks_and_widgets(self, bones):
         bpy.ops.object.mode_set(mode='OBJECT')

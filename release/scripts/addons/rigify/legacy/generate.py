@@ -99,6 +99,7 @@ def generate_rig(context, metarig):
     # Get rid of anim data in case the rig already existed
     print("Clear rig animation data.")
     obj.animation_data_clear()
+    obj.data.animation_data_clear()
 
     # Select generated rig object
     metarig.select_set(False)

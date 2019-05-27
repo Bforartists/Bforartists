@@ -528,7 +528,8 @@ class Rig:
         # driving the follow rotation switches for neck and head
         for bone, prop, in zip( owners, props ):
             # Add driver to copy rotation constraint
-            drv = pb[ bone ].constraints[ 0 ].driver_add("influence").driver
+            drv_fcu = pb[ bone ].constraints[ 0 ].driver_add("influence")
+            drv = drv_fcu.driver
             drv.type = 'AVERAGE'
 
             var = drv.variables.new()
@@ -538,7 +539,7 @@ class Rig:
             var.targets[0].data_path = \
                 torso.path_from_id() + '['+ '"' + prop + '"' + ']'
 
-            drv_modifier = self.obj.animation_data.drivers[-1].modifiers[0]
+            drv_modifier = drv_fcu.modifiers[0]
 
             drv_modifier.mode            = 'POLYNOMIAL'
             drv_modifier.poly_order      = 1

@@ -2774,7 +2774,8 @@ def appearance_LoadImageTexture(imageTexture, ancestry, node):
             # KNOWN BUG; PNGs with a transparent color are not perceived
             # as transparent. Need alpha channel.
 
-            bpyima.use_alpha = bpyima.depth in {32, 128}
+            if bpyima.depth not in {32, 128}:
+                bpyima.alpha_mode = 'NONE'
         return bpyima
 
 
@@ -2822,7 +2823,7 @@ def appearance_LoadTexture(tex_node, ancestry, node):
 def appearance_ExpandCachedMaterial(bpymat):
     if 0 and bpymat.texture_slots[0] is not None:
         bpyima = bpymat.texture_slots[0].texture.image
-        tex_has_alpha = bpyima.use_alpha
+        tex_has_alpha = bpyima.alpha_mode not in {'NONE', 'CHANNEL_PACKED'}
         return (bpymat, bpyima, tex_has_alpha)
 
     return (bpymat, None, False)
@@ -2861,7 +2862,7 @@ def appearance_Create(vrmlname, material, tex_node, ancestry, node, is_vcol):
         bpymat.use_vertex_color_paint = True
 
     if 0 and bpyima:
-        tex_has_alpha = bpyima.use_alpha
+        tex_has_alpha = bpyima.alpha_mode not in {'NONE', 'CHANNEL_PACKED'}
 
         texture = bpy.data.textures.new(bpyima.name, 'IMAGE')
         texture.image = bpyima
@@ -2873,7 +2874,7 @@ def appearance_Create(vrmlname, material, tex_node, ancestry, node, is_vcol):
         mtex.use_map_diffuse = True
         mtex.use = True
 
-        if bpyima.use_alpha:
+        if tex_has_alpha:
             bpymat.use_transparency = True
             mtex.use_map_alpha = True
             mtex.alpha_factor = 0.0
@@ -2971,7 +2972,8 @@ def appearance_LoadPixelTexture(pixelTexture, ancestry):
         print("ImportX3D warning: pixel count in PixelTexture is off")
 
     bpyima = bpy.data.images.new("PixelTexture", w, h, has_alpha, True)
-    bpyima.use_alpha = has_alpha
+    if not has_alpha:
+        bpyima.alpha_mode = 'NONE'
 
     # Conditional above the loop, for performance
     if plane_count == 3:  # RGB

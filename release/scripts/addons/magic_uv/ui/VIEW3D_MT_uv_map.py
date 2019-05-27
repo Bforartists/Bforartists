@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import bpy.utils
 
@@ -64,7 +64,7 @@ class MUV_MT_CopyPasteUV(bpy.types.Menu):
     Menu class: Master menu of Copy/Paste UV coordinate
     """
 
-    bl_idname = "uv.muv_mt_copy_paste_uv"
+    bl_idname = "MUV_MT_CopyPasteUV"
     bl_label = "Copy/Paste UV"
     bl_description = "Copy and Paste UV coordinate"
 
@@ -88,7 +88,7 @@ class MUV_MT_TransferUV(bpy.types.Menu):
     Menu class: Master menu of Transfer UV coordinate
     """
 
-    bl_idname = "uv.muv_mt_transfer_uv"
+    bl_idname = "MUV_MT_TransferUV"
     bl_label = "Transfer UV"
     bl_description = "Transfer UV coordinate"
 
@@ -109,7 +109,7 @@ class MUV_MT_TextureLock(bpy.types.Menu):
     Menu class: Master menu of Texture Lock
     """
 
-    bl_idname = "uv.muv_mt_texture_lock"
+    bl_idname = "MUV_MT_TextureLock"
     bl_label = "Texture Lock"
     bl_description = "Lock texture when vertices of mesh (Preserve UV)"
 
@@ -139,7 +139,7 @@ class MUV_MT_WorldScaleUV(bpy.types.Menu):
     Menu class: Master menu of world scale UV
     """
 
-    bl_idname = "uv.muv_mt_world_scale_uv"
+    bl_idname = "MUV_MT_WorldScaleUV"
     bl_label = "World Scale UV"
     bl_description = ""
 
@@ -181,7 +181,7 @@ class MUV_MT_TextureWrap(bpy.types.Menu):
     Menu class: Master menu of Texture Wrap
     """
 
-    bl_idname = "uv.muv_mt_texture_wrap"
+    bl_idname = "MUV_MT_TextureWrap"
     bl_label = "Texture Wrap"
     bl_description = ""
 
@@ -198,7 +198,7 @@ class MUV_MT_UVW(bpy.types.Menu):
     Menu class: Master menu of UVW
     """
 
-    bl_idname = "uv.muv_mt_uvw"
+    bl_idname = "MUV_MT_UVW"
     bl_label = "UVW"
     bl_description = ""
 
@@ -220,7 +220,7 @@ class MUV_MT_PreserveUVAspect(bpy.types.Menu):
     Menu class: Master menu of Preserve UV Aspect
     """
 
-    bl_idname = "uv.muv_mt_preserve_uv_aspect"
+    bl_idname = "MUV_MT_PreserveUVAspect"
     bl_label = "Preserve UV Aspect"
     bl_description = ""
 
@@ -240,7 +240,7 @@ class MUV_MT_TextureProjection(bpy.types.Menu):
     Menu class: Master menu of Texture Projection
     """
 
-    bl_idname = "uv.muv_mt_texture_projection"
+    bl_idname = "MUV_MT_TextureProjection"
     bl_label = "Texture Projection"
     bl_description = ""
 

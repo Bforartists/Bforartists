@@ -186,12 +186,12 @@ def ui_object_id_duplis(self, context):
 def register():
     bpy.utils.register_class(AMTH_OBJECT_OT_id_dupligroup)
     bpy.utils.register_class(AMTH_OBJECT_OT_id_dupligroup_clear)
-    bpy.types.OBJECT_PT_duplication.append(ui_dupli_group_library_path)
+    bpy.types.OBJECT_PT_instancing.append(ui_dupli_group_library_path)
     bpy.types.OBJECT_PT_relations.append(ui_object_id_duplis)
 
 
 def unregister():
     bpy.utils.unregister_class(AMTH_OBJECT_OT_id_dupligroup)
     bpy.utils.unregister_class(AMTH_OBJECT_OT_id_dupligroup_clear)
-    bpy.types.OBJECT_PT_duplication.remove(ui_dupli_group_library_path)
+    bpy.types.OBJECT_PT_instancing.remove(ui_dupli_group_library_path)
     bpy.types.OBJECT_PT_relations.remove(ui_object_id_duplis)

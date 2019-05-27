@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
+"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-15 15:28:38\n"
+"POT-Creation-Date: 2019-05-20 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -64,10 +64,6 @@ msgstr "Actie groep is geselecteerd"
 
 msgid "Expanded"
 msgstr "Uitgebreid"
-
-
-msgid "Action group is expanded"
-msgstr "Actie groep wordt getoond"
 
 
 msgid "Message"
@@ -546,10 +542,6 @@ msgstr "Zichtbaar"
 
 msgid "Freestyle Module"
 msgstr "Freestyle Module"
-
-
-msgid "Sensor"
-msgstr "Sensor"
 
 
 msgid "Grease Pencil Layer"
@@ -1147,12 +1139,21 @@ msgid "Key"
 msgstr "Sleutel"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "Toevoegen"
+
+
 msgid "Edit"
 msgstr "Bewerken"
 
 
 msgid "Converter"
 msgstr "Converteerder"
+
+
+msgid "Navigation"
+msgstr "Navigatie"
 
 
 msgid "Text"
@@ -1225,10 +1226,6 @@ msgstr "Beeldhouwen"
 
 msgid "Local View"
 msgstr "Lokale Scherm"
-
-
-msgid "Navigation"
-msgstr "Navigatie"
 
 
 msgid "Loose"
@@ -1324,6 +1321,10 @@ msgstr "Random"
 msgctxt "Curve"
 msgid "Median Step"
 msgstr "Mediaan Stap"
+
+
+msgid "Sensor"
+msgstr "Sensor"
 
 
 msgid "Active Track"
@@ -2561,6 +2562,11 @@ msgstr "Deselecteer Groep van Punten"
 
 
 msgctxt "Operator"
+msgid "Normalize Vertex Group"
+msgstr "Normaliseer Groep van Punten"
+
+
+msgctxt "Operator"
 msgid "Select Vertex Group"
 msgstr "Selecteer Groep van Punten"
 
@@ -2623,11 +2629,6 @@ msgstr "Opslaan Afbeelding"
 msgctxt "Operator"
 msgid "Save As Image"
 msgstr "Opslaan Als Afbeelding"
-
-
-msgctxt "Operator"
-msgid "Save Dirty"
-msgstr "Opslaan Vies"
 
 
 msgctxt "Operator"
@@ -3352,11 +3353,6 @@ msgstr "Verplaats Groep van Punten"
 
 
 msgctxt "Operator"
-msgid "Normalize Vertex Group"
-msgstr "Normaliseer Groep van Punten"
-
-
-msgctxt "Operator"
 msgid "Set Active Vertex Group"
 msgstr "Zet Actieve Groep van Punten"
 
@@ -3831,11 +3827,6 @@ msgstr "Vergrendel Strips"
 msgctxt "Operator"
 msgid "Paste"
 msgstr "Plakken"
-
-
-msgctxt "Operator"
-msgid "Properties"
-msgstr "Eigenschappen"
 
 
 msgctxt "Operator"
@@ -4369,14 +4360,6 @@ msgid "Scene Setup"
 msgstr "Scene Opstelling"
 
 
-msgid "Recent"
-msgstr "Recent"
-
-
-msgid "System Bookmarks"
-msgstr "Systeem Boekenleggers"
-
-
 msgctxt "Operator"
 msgid "Draw"
 msgstr "Tekenen"
@@ -4413,11 +4396,6 @@ msgstr "Ontwikkeling"
 msgctxt "Operator"
 msgid "Scale"
 msgstr "Schaal"
-
-
-msgctxt "Operator"
-msgid "Add"
-msgstr "Toevoegen"
 
 
 msgctxt "Operator"
@@ -4693,6 +4671,10 @@ msgstr "Weergave"
 
 msgid "Active Bookmark"
 msgstr "Actieve Boekenlegger"
+
+
+msgid "System Bookmarks"
+msgstr "Systeem Boekenleggers"
 
 
 msgid "Show Cursor"
@@ -5198,6 +5180,11 @@ msgstr "Toon Banen"
 
 
 msgctxt "Operator"
+msgid "Set Floor"
+msgstr "Zet Vloer"
+
+
+msgctxt "Operator"
 msgid "Floor"
 msgstr "Vloer"
 
@@ -5215,11 +5202,6 @@ msgstr "Zet X As"
 msgctxt "Operator"
 msgid "Set Y Axis"
 msgstr "Zet Y As"
-
-
-msgctxt "Operator"
-msgid "Set Floor"
-msgstr "Zet Vloer"
 
 
 msgctxt "Operator"
@@ -5702,10 +5684,6 @@ msgstr "Grote X"
 msgctxt "Operator"
 msgid "Size Y"
 msgstr "Grote Y"
-
-
-msgid "Keyframes:"
-msgstr "Sleutelframes:"
 
 
 msgctxt "Operator"

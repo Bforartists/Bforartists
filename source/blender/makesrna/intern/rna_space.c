@@ -351,15 +351,15 @@ const EnumPropertyItem rna_enum_shading_type_items[] = {
 };
 
 static const EnumPropertyItem rna_enum_viewport_lighting_items[] = {
-    {V3D_LIGHTING_FLAT, "FLAT", 0, "Flat", "Display using flat lighting"},
     {V3D_LIGHTING_STUDIO, "STUDIO", 0, "Studio", "Display using studio lighting"},
     {V3D_LIGHTING_MATCAP, "MATCAP", 0, "MatCap", "Display using matcap material and lighting"},
+    {V3D_LIGHTING_FLAT, "FLAT", 0, "Flat", "Display using flat lighting"},
     {0, NULL, 0, NULL, NULL},
 };
 
 static const EnumPropertyItem rna_enum_shading_color_type_items[] = {
-    {V3D_SHADING_SINGLE_COLOR, "SINGLE", 0, "Single", "Show scene in a single color"},
     {V3D_SHADING_MATERIAL_COLOR, "MATERIAL", 0, "Material", "Show material color"},
+    {V3D_SHADING_SINGLE_COLOR, "SINGLE", 0, "Single", "Show scene in a single color"},
     {V3D_SHADING_OBJECT_COLOR, "OBJECT", 0, "Object", "Show object color"},
     {V3D_SHADING_RANDOM_COLOR, "RANDOM", 0, "Random", "Show random object color"},
     {V3D_SHADING_VERTEX_COLOR, "VERTEX", 0, "Vertex", "Show active vertex color"},
@@ -1088,9 +1088,9 @@ static const EnumPropertyItem *rna_View3DShading_color_type_itemf(bContext *UNUS
 
   if (shading->type == OB_SOLID) {
     RNA_enum_items_add_value(
-        &item, &totitem, rna_enum_shading_color_type_items, V3D_SHADING_SINGLE_COLOR);
-    RNA_enum_items_add_value(
         &item, &totitem, rna_enum_shading_color_type_items, V3D_SHADING_MATERIAL_COLOR);
+    RNA_enum_items_add_value(
+        &item, &totitem, rna_enum_shading_color_type_items, V3D_SHADING_SINGLE_COLOR);
     RNA_enum_items_add_value(
         &item, &totitem, rna_enum_shading_color_type_items, V3D_SHADING_OBJECT_COLOR);
     RNA_enum_items_add_value(
@@ -1334,9 +1334,9 @@ static bool rna_SpaceImageEditor_show_maskedit_get(PointerRNA *ptr)
   return ED_space_image_check_show_maskedit(sima, view_layer);
 }
 
-static void rna_SpaceImageEditor_image_set(struct ReportList *UNUSED(reports),
-                                           PointerRNA *ptr,
-                                           PointerRNA value)
+static void rna_SpaceImageEditor_image_set(PointerRNA *ptr,
+                                           PointerRNA value,
+                                           struct ReportList *UNUSED(reports))
 {
   SpaceImage *sima = (SpaceImage *)(ptr->data);
   bScreen *sc = (bScreen *)ptr->id.data;
@@ -1348,9 +1348,9 @@ static void rna_SpaceImageEditor_image_set(struct ReportList *UNUSED(reports),
   ED_space_image_set(G_MAIN, sima, obedit, (Image *)value.data, false);
 }
 
-static void rna_SpaceImageEditor_mask_set(struct ReportList *UNUSED(reports),
-                                          PointerRNA *ptr,
-                                          PointerRNA value)
+static void rna_SpaceImageEditor_mask_set(PointerRNA *ptr,
+                                          PointerRNA value,
+                                          struct ReportList *UNUSED(reports))
 {
   SpaceImage *sima = (SpaceImage *)(ptr->data);
 
@@ -1516,9 +1516,9 @@ static void rna_SpaceTextEditor_word_wrap_set(PointerRNA *ptr, bool value)
   st->left = 0;
 }
 
-static void rna_SpaceTextEditor_text_set(struct ReportList *UNUSED(reports),
-                                         PointerRNA *ptr,
-                                         PointerRNA value)
+static void rna_SpaceTextEditor_text_set(PointerRNA *ptr,
+                                         PointerRNA value,
+                                         struct ReportList *UNUSED(reports))
 {
   SpaceText *st = (SpaceText *)(ptr->data);
 
@@ -1540,9 +1540,9 @@ static void rna_SpaceTextEditor_updateEdited(Main *UNUSED(bmain),
 /* Space Properties */
 
 /* note: this function exists only to avoid id refcounting */
-static void rna_SpaceProperties_pin_id_set(struct ReportList *UNUSED(reports),
-                                           PointerRNA *ptr,
-                                           PointerRNA value)
+static void rna_SpaceProperties_pin_id_set(PointerRNA *ptr,
+                                           PointerRNA value,
+                                           struct ReportList *UNUSED(reports))
 {
   SpaceProperties *sbuts = (SpaceProperties *)(ptr->data);
   sbuts->pinid = value.data;
@@ -1744,9 +1744,9 @@ static void rna_ConsoleLine_cursor_index_range(
 
 /* Space Dopesheet */
 
-static void rna_SpaceDopeSheetEditor_action_set(struct ReportList *UNUSED(reports),
-                                                PointerRNA *ptr,
-                                                PointerRNA value)
+static void rna_SpaceDopeSheetEditor_action_set(PointerRNA *ptr,
+                                                PointerRNA value,
+                                                struct ReportList *UNUSED(reports))
 {
   SpaceAction *saction = (SpaceAction *)(ptr->data);
   bAction *act = (bAction *)value.data;
@@ -1968,9 +1968,9 @@ static void rna_Sequencer_view_type_update(Main *UNUSED(bmain),
 
 /* Space Node Editor */
 
-static void rna_SpaceNodeEditor_node_tree_set(struct ReportList *UNUSED(reports),
-                                              PointerRNA *ptr,
-                                              const PointerRNA value)
+static void rna_SpaceNodeEditor_node_tree_set(PointerRNA *ptr,
+                                              const PointerRNA value,
+                                              struct ReportList *UNUSED(reports))
 {
   SpaceNode *snode = (SpaceNode *)ptr->data;
   ED_node_tree_start(snode, (bNodeTree *)value.data, NULL, NULL);
@@ -2081,9 +2081,9 @@ static void rna_SpaceNodeEditor_cursor_location_from_region(SpaceNode *snode,
   snode->cursor[1] /= UI_DPI_FAC;
 }
 
-static void rna_SpaceClipEditor_clip_set(struct ReportList *UNUSED(reports),
-                                         PointerRNA *ptr,
-                                         PointerRNA value)
+static void rna_SpaceClipEditor_clip_set(PointerRNA *ptr,
+                                         PointerRNA value,
+                                         struct ReportList *UNUSED(reports))
 {
   SpaceClip *sc = (SpaceClip *)(ptr->data);
   bScreen *screen = (bScreen *)ptr->id.data;
@@ -2091,9 +2091,9 @@ static void rna_SpaceClipEditor_clip_set(struct ReportList *UNUSED(reports),
   ED_space_clip_set_clip(NULL, screen, sc, (MovieClip *)value.data);
 }
 
-static void rna_SpaceClipEditor_mask_set(struct ReportList *UNUSED(reports),
-                                         PointerRNA *ptr,
-                                         PointerRNA value)
+static void rna_SpaceClipEditor_mask_set(PointerRNA *ptr,
+                                         PointerRNA value,
+                                         struct ReportList *UNUSED(reports))
 {
   SpaceClip *sc = (SpaceClip *)(ptr->data);
 
@@ -2489,7 +2489,7 @@ static void rna_def_space_generic_show_region_toggles(StructRNA *srna, int regio
 
   if (region_type_mask & (1 << RGN_TYPE_TOOL_HEADER)) {
     region_type_mask &= ~(1 << RGN_TYPE_TOOL_HEADER);
-    DEF_SHOW_REGION_PROPERTY(show_region_tool_header, "Tool Header", "");
+    DEF_SHOW_REGION_PROPERTY(show_region_tool_header, "Tool Settings", "");
   }
   if (region_type_mask & (1 << RGN_TYPE_HEADER)) {
     region_type_mask &= ~(1 << RGN_TYPE_HEADER);

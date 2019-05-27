@@ -562,18 +562,14 @@ class Struts(Operator):
         return obj is not None and obj.type == "MESH"
 
     def execute(self, context):
-        store_undo = bpy.context.preferences.edit.use_global_undo
-        bpy.context.preferences.edit.use_global_undo = False
         keywords = self.as_keywords()
 
         try:
             create_struts(self, context, **keywords)
-            bpy.context.preferences.edit.use_global_undo = store_undo
 
             return {"FINISHED"}
 
         except Exception as e:
-            bpy.context.preferences.edit.use_global_undo = store_undo
             self.report({"WARNING"},
                         "Make Struts could not be performed. Operation Cancelled")
             print("\n[mesh.generate_struts]\n{}".format(e))

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
+"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-15 15:28:38\n"
+"POT-Creation-Date: 2019-05-20 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -160,10 +160,6 @@ msgstr "Hapus"
 
 msgid "Expanded"
 msgstr "Perluas"
-
-
-msgid "Action group is expanded"
-msgstr "Grup aksi diperluas"
 
 
 msgid "Message"
@@ -663,6 +659,10 @@ msgid "XZ Scale Mode"
 msgstr "Modus Pahat"
 
 
+msgid "Fit Curve"
+msgstr "Hapus"
+
+
 msgid "Transformation Constraint"
 msgstr "Orientasi Transformasi"
 
@@ -749,10 +749,6 @@ msgstr "Warna Standar"
 
 msgid "Texture"
 msgstr "Tekstur"
-
-
-msgid "Use Color Preview"
-msgstr "Partikel"
 
 
 msgid "Use Output"
@@ -983,10 +979,6 @@ msgid "Edit Bones"
 msgstr "Modus Sunting"
 
 
-msgid "Auto IK"
-msgstr "Otomatis"
-
-
 msgid "Erase Alpha"
 msgstr "Hapus"
 
@@ -1053,10 +1045,6 @@ msgstr "Penyunting Gambar"
 
 msgid "Cycles camera settings"
 msgstr "Kamera"
-
-
-msgid "DOF Object"
-msgstr "Objek"
 
 
 msgid "Show Name"
@@ -1731,10 +1719,6 @@ msgid "Point selected"
 msgstr "Hapus"
 
 
-msgid "Exclude"
-msgstr "Lapisan"
-
-
 msgid "Holdout"
 msgstr "Tahan"
 
@@ -1860,6 +1844,11 @@ msgid "Delete"
 msgstr "Hapus"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "Baru"
+
+
 msgid "Matte"
 msgstr "Warna"
 
@@ -1946,10 +1935,6 @@ msgstr "Modus Pahat"
 
 msgid "Fit Type"
 msgstr "Tipe"
-
-
-msgid "Fit Curve"
-msgstr "Hapus"
 
 
 msgid "Constant Offset"
@@ -2778,10 +2763,6 @@ msgid "Checker Texture"
 msgstr "Tekstur"
 
 
-msgid "Non-Color Data"
-msgstr "Warna"
-
-
 msgid "Linear interpolation"
 msgstr "Orientasi Transformasi"
 
@@ -3226,15 +3207,6 @@ msgstr "Gunakan Skala"
 msgctxt "Operator"
 msgid "Reset Transform"
 msgstr "Ubah-bentuk ke muasal"
-
-
-msgctxt "Operator"
-msgid "UV Sculpt Tool Set"
-msgstr "Modus Pahat"
-
-
-msgid "Set the UV sculpt tool"
-msgstr "Modus Pahat"
 
 
 msgid "Display Type"
@@ -3936,6 +3908,11 @@ msgstr "Warna Standar"
 
 
 msgctxt "Operator"
+msgid "Normalize Vertex Group"
+msgstr "Warna Standar"
+
+
+msgctxt "Operator"
 msgid "Remove from Vertex Group"
 msgstr "Warna Standar"
 
@@ -4336,10 +4313,6 @@ msgid "Angle limit"
 msgstr "Kamera"
 
 
-msgid "Edge Bevel"
-msgstr "Buat"
-
-
 msgid "Bevel only vertices"
 msgstr "Induk"
 
@@ -4487,10 +4460,6 @@ msgstr "Partikel"
 
 
 msgid "Extrude individual faces only"
-msgstr "Partikel"
-
-
-msgid "Extrude faces and move result"
 msgstr "Partikel"
 
 
@@ -5332,11 +5301,6 @@ msgstr "Warna Standar"
 
 
 msgctxt "Operator"
-msgid "Normalize Vertex Group"
-msgstr "Warna Standar"
-
-
-msgctxt "Operator"
 msgid "Remove Vertex Group"
 msgstr "Warna Standar"
 
@@ -5916,11 +5880,6 @@ msgstr "Kamera"
 
 
 msgctxt "Operator"
-msgid "Properties"
-msgstr "Nama Properti"
-
-
-msgctxt "Operator"
 msgid "Refresh Sequencer"
 msgstr "Orientasi Transformasi"
 
@@ -6250,11 +6209,6 @@ msgstr "Min"
 msgctxt "Operator"
 msgid "Project From View"
 msgstr "Objek"
-
-
-msgctxt "Operator"
-msgid "Remove Doubles UV"
-msgstr "Induk"
 
 
 msgctxt "Operator"
@@ -6665,20 +6619,8 @@ msgid "Geometry Data"
 msgstr "Kamera"
 
 
-msgid "System Bookmarks"
-msgstr "Hapus"
-
-
 msgid "Fluid Presets"
 msgstr "Kamera"
-
-
-msgid "UV Sculpt"
-msgstr "Modus Pahat"
-
-
-msgid "UV Sculpt Curve"
-msgstr "Hapus"
 
 
 msgid "Adaptive Domain"
@@ -6719,11 +6661,6 @@ msgstr "Adegan"
 
 
 msgctxt "Operator"
-msgid "Add"
-msgstr "Baru"
-
-
-msgctxt "Operator"
 msgid "Erase"
 msgstr "Hapus"
 
@@ -6731,6 +6668,10 @@ msgstr "Hapus"
 msgctxt "Operator"
 msgid "Line"
 msgstr "Konsol Python"
+
+
+msgid "Auto IK"
+msgstr "Otomatis"
 
 
 msgid "Unselected F-Curve Visibility"
@@ -6779,10 +6720,6 @@ msgstr "Warna Standar"
 
 msgid "MultiSample"
 msgstr "Gerakan"
-
-
-msgid "Aperture Type"
-msgstr "Tipe"
 
 
 msgid "Panorama Type"
@@ -7109,6 +7046,10 @@ msgid "Show Group Colors"
 msgstr "Warna"
 
 
+msgid "System Bookmarks"
+msgstr "Hapus"
+
+
 msgid "Show Mask Editor"
 msgstr "Penyunting Grafik"
 
@@ -7261,6 +7202,10 @@ msgid "Camera Path"
 msgstr "Kamera"
 
 
+msgid "Edge Bevel"
+msgstr "Buat"
+
+
 msgid "Changed"
 msgstr "Saluran"
 
@@ -7285,11 +7230,11 @@ msgid "Unified Paint Settings"
 msgstr "Partikel"
 
 
-msgid "Sculpt All Islands"
+msgid "UV Sculpt"
 msgstr "Modus Pahat"
 
 
-msgid "UV Sculpt Tools"
+msgid "Sculpt All Islands"
 msgstr "Modus Pahat"
 
 
@@ -7521,6 +7466,11 @@ msgstr "Tahan Depan"
 
 
 msgctxt "Operator"
+msgid "Set Floor"
+msgstr "Tekstur"
+
+
+msgctxt "Operator"
 msgid "Set X Axis"
 msgstr "Kiri"
 
@@ -7528,11 +7478,6 @@ msgstr "Kiri"
 msgctxt "Operator"
 msgid "Set Y Axis"
 msgstr "Kiri"
-
-
-msgctxt "Operator"
-msgid "Set Floor"
-msgstr "Tekstur"
 
 
 msgctxt "Operator"
@@ -7634,6 +7579,11 @@ msgstr "Warna Standar"
 
 
 msgctxt "Operator"
+msgid "Pack"
+msgstr "Belakang"
+
+
+msgctxt "Operator"
 msgid "X Axis"
 msgstr "Kiri"
 
@@ -7641,11 +7591,6 @@ msgstr "Kiri"
 msgctxt "Operator"
 msgid "Y Axis"
 msgstr "Kiri"
-
-
-msgctxt "Operator"
-msgid "Pack"
-msgstr "Belakang"
 
 
 msgctxt "Operator"
@@ -7661,14 +7606,6 @@ msgstr "Grup"
 msgctxt "Operator"
 msgid "Sound"
 msgstr "Suara"
-
-
-msgid "Image Offset"
-msgstr "Kamera"
-
-
-msgid "Image Crop"
-msgstr "Gambar Pengguna"
 
 
 msgctxt "Operator"
@@ -7688,14 +7625,6 @@ msgstr "Teks"
 
 msgid "Show Grease Pencil"
 msgstr "Saluran"
-
-
-msgid "Tracker:"
-msgstr "Tahan Depan"
-
-
-msgid "Distortion:"
-msgstr "Penyunting Logika"
 
 
 msgctxt "Operator"
@@ -7719,11 +7648,6 @@ msgstr "Hapus"
 
 
 msgctxt "Operator"
-msgid "Recover Auto Save..."
-msgstr "Penyimpanan Otomatis"
-
-
-msgctxt "Operator"
 msgid "Render Animation"
 msgstr "Induk"
 
@@ -7734,13 +7658,13 @@ msgstr "Gambar Latar"
 
 
 msgctxt "Operator"
-msgid "Render Image"
-msgstr "Gambar"
+msgid "Blender Website"
+msgstr "Situs Blender"
 
 
 msgctxt "Operator"
-msgid "Blender Website"
-msgstr "Situs Blender"
+msgid "Render Image"
+msgstr "Gambar"
 
 
 msgid "F-Curve Visibility"
@@ -8563,14 +8487,6 @@ msgstr "Partikel"
 
 msgid "Cannot create editmode armature"
 msgstr "Tambah Gambar"
-
-
-msgid "IK constraint can only be added to bones"
-msgstr "Modus Sunting"
-
-
-msgid "Spline IK constraint can only be added to bones"
-msgstr "Modus Sunting"
 
 
 msgid "Bone already has an IK constraint"

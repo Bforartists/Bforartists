@@ -3844,7 +3844,7 @@ class BookmarkLibraryProp(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty(
         name="Name", description="Name of the bookmark library",
         options={'HIDDEN'})
-    bookmarks = bpy.props.PointerProperty(
+    bookmarks: bpy.props.PointerProperty(
         type=BookmarkIDBlock,
         options={'HIDDEN'})
     system: bpy.props.EnumProperty(
@@ -4044,69 +4044,69 @@ class DeleteCursor3DBookmarkLibrary(bpy.types.Operator):
 # TODO: ~a bug? Somewhy tooltip shows "Cursor3DToolsSettings.foo"
 # instead of "bpy.types.Screen.cursor_3d_tools_settings.foo"
 class Cursor3DToolsSettings(bpy.types.PropertyGroup):
-    transform_options = bpy.props.PointerProperty(
+    transform_options: bpy.props.PointerProperty(
         type=TransformExtraOptionsProp,
         options={'HIDDEN'})
 
     cursor_visible: bpy.props.BoolProperty(
         name="Cursor visibility",
         description="Show/hide cursor. When hidden, "\
-"Blender continuously redraws itself (eats CPU like crazy, "\
-"and becomes the less responsive the more complex scene you have)!",
+            "Blender continuously redraws itself (eats CPU like crazy, "\
+            "and becomes the less responsive the more complex scene you have)!",
         default=True)
 
-    cursor_lock = bpy.props.BoolProperty(
+    cursor_lock: bpy.props.BoolProperty(
         name="Lock cursor location",
         description="Prevent accidental cursor movement",
         default=False)
 
-    draw_guides = bpy.props.BoolProperty(
+    draw_guides: bpy.props.BoolProperty(
         name="Guides",
         description="Display guides",
         default=True)
 
-    draw_snap_elements = bpy.props.BoolProperty(
+    draw_snap_elements: bpy.props.BoolProperty(
         name="Snap elements",
         description="Display snap elements",
         default=True)
 
-    draw_N = bpy.props.BoolProperty(
+    draw_N: bpy.props.BoolProperty(
         name="Surface normal",
         description="Display surface normal",
         default=True)
 
-    draw_T1 = bpy.props.BoolProperty(
+    draw_T1: bpy.props.BoolProperty(
         name="Surface 1st tangential",
         description="Display 1st surface tangential",
         default=True)
 
-    draw_T2 = bpy.props.BoolProperty(
+    draw_T2: bpy.props.BoolProperty(
         name="Surface 2nd tangential",
         description="Display 2nd surface tangential",
         default=True)
 
-    stick_to_obj = bpy.props.BoolProperty(
+    stick_to_obj: bpy.props.BoolProperty(
         name="Stick to objects",
         description="Move cursor along with object it was snapped to",
         default=True)
 
     # HISTORY-RELATED
-    history = bpy.props.PointerProperty(
+    history: bpy.props.PointerProperty(
         type=CursorHistoryProp,
         options={'HIDDEN'})
 
     # BOOKMARK-RELATED
-    libraries = bpy.props.PointerProperty(
+    libraries: bpy.props.PointerProperty(
         type=BookmarkLibraryIDBlock,
         options={'HIDDEN'})
 
-    show_bookmarks = bpy.props.BoolProperty(
+    show_bookmarks: bpy.props.BoolProperty(
         name="Show bookmarks",
         description="Show active bookmark in 3D view",
         default=True,
         options={'HIDDEN'})
 
-    free_coord_precision = bpy.props.IntProperty(
+    free_coord_precision: bpy.props.IntProperty(
         name="Coord precision",
         description="Numer of digits afer comma "\
                     "for displayed coordinate values",
@@ -4115,7 +4115,7 @@ class Cursor3DToolsSettings(bpy.types.PropertyGroup):
         max=10,
         options={'HIDDEN'})
 
-    auto_register_keymaps = bpy.props.BoolProperty(
+    auto_register_keymaps: bpy.props.BoolProperty(
         name="Auto Register Keymaps",
         default=True)
 

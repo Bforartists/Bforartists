@@ -574,20 +574,13 @@ class CURVE_OT_simplify(Operator):
                 self.keepShort   # 7
                 ]
         try:
-            global_undo = bpy.context.preferences.edit.use_global_undo
-            context.preferences.edit.use_global_undo = False
-
             bpy.ops.object.mode_set(mode='OBJECT')
             obj = context.active_object
             curve_dimension = obj.data.dimensions
 
             main(context, obj, options, curve_dimension)
-
-            context.preferences.edit.use_global_undo = global_undo
         except Exception as e:
             error_handlers(self, "curve.simplify", e, "Simplify Curves")
-
-            context.preferences.edit.use_global_undo = global_undo
             return {'CANCELLED'}
 
         return {'FINISHED'}

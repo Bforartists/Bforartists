@@ -68,6 +68,7 @@ def upload_files(filepath, upload_data, files):
     headers = utils.get_headers(upload_data['token'])
 
     version_id = upload_data['id']
+    uploaded_all = True
     for f in files:
         bg_blender.progress('uploading %s' % f['type'])
         upload_info = {
@@ -76,7 +77,7 @@ def upload_files(filepath, upload_data, files):
             'fileIndex': f['index'],
             'originalFilename': os.path.basename(f['file_path'])
         }
-        upload_create_url = paths.get_bkit_url() + 'uploads/'
+        upload_create_url = paths.get_api_url() + 'uploads/'
         upload = requests.post(upload_create_url, json=upload_info, headers=headers, verify=True)
         upload = upload.json()
 
@@ -92,7 +93,7 @@ def upload_files(filepath, upload_data, files):
         # file gets uploaded here:
         uploaded = False
         # s3 upload is now the only option
-        for a in range(0, 20):
+        for a in range(0, 5):
             if not uploaded:
                 try:
                     upload_response = requests.put(upload['s3UploadUrl'],
@@ -102,18 +103,19 @@ def upload_files(filepath, upload_data, files):
                     if upload_response.status_code == 200:
                         uploaded = True
                     else:
-                        bg_blender.progress('Upload failed, retry.')
+                        bg_blender.progress(f'Upload failed, retry. {a}')
                 except Exception as e:
                     bg_blender.progress('Upload %s failed, retrying' % f['type'])
                     time.sleep(1)
 
                 # confirm single file upload to bkit server
-                upload_done_url = paths.get_bkit_url() + 'uploads_s3/' + upload['id'] + '/upload-file/'
+                upload_done_url = paths.get_api_url() + 'uploads_s3/' + upload['id'] + '/upload-file/'
                 upload_response = requests.post(upload_done_url, headers=headers, verify=True)
-
+        if not uploaded:
+            uploaded_all = False
         bg_blender.progress('finished uploading')
 
-    return {'FINISHED'}
+    return uploaded_all
 
 
 if __name__ == "__main__":
@@ -180,23 +182,25 @@ if __name__ == "__main__":
 
         bg_blender.progress('uploading')
 
-        upload_files(fpath, upload_data, files)
+        uploaded = upload_files(fpath, upload_data, files)
 
-        # mark on server as uploaded
-        confirm_data = {
-            "verificationStatus": "uploaded"
-        }
+        if uploaded:
+            # mark on server as uploaded
+            confirm_data = {
+                "verificationStatus": "uploaded"
+            }
 
-        url = paths.get_bkit_url() + 'assets/'
+            url = paths.get_api_url() + 'assets/'
 
-        headers = utils.get_headers(upload_data['token'])
+            headers = utils.get_headers(upload_data['token'])
 
-        url += upload_data["id"] + '/'
+            url += upload_data["id"] + '/'
 
-        r = requests.patch(url, json=confirm_data, headers=headers, verify=True)  # files = files,
+            r = requests.patch(url, json=confirm_data, headers=headers, verify=True)  # files = files,
 
-        bg_blender.progress('upload finished successfully')
-
+            bg_blender.progress('upload finished successfully')
+        else:
+            bg_blender.progress('upload failed.')
 
     except Exception as e:
         print(e)

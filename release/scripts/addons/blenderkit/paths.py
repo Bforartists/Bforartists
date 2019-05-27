@@ -18,9 +18,10 @@
 
 import bpy, os, sys
 
-BLENDERKIT_API_LOCAL = "http://localhost:8001/api/v1/"
-BLENDERKIT_API_MAIN = "https://www.blenderkit.com/api/v1/"
-BLENDERKIT_API_DEVEL = "https://devel.blenderkit.com/api/v1/"
+BLENDERKIT_LOCAL = "http://localhost:8001"
+BLENDERKIT_MAIN = "https://www.blenderkit.com"
+BLENDERKIT_DEVEL = "https://devel.blenderkit.com"
+BLENDERKIT_API = "/api/v1/"
 BLENDERKIT_REPORT_URL = "usage_report/"
 BLENDERKIT_USER_ASSETS = "https://www.blenderkit.com/my-assets"
 BLENDERKIT_PLANS = "https://www.blenderkit.com/plans/pricing/"
@@ -35,15 +36,26 @@ BLENDERKIT_SETTINGS_FILENAME = os.path.join(_presets, "bkit.json")
 
 
 def get_bkit_url():
+    # bpy.app.debug_value = 2
     d = bpy.app.debug_value
     # d = 2
     if d == 1:
-        url = BLENDERKIT_API_LOCAL
+        url = BLENDERKIT_LOCAL
     elif d == 2:
-        url = BLENDERKIT_API_DEVEL
+        url = BLENDERKIT_DEVEL
     else:
-        url = BLENDERKIT_API_MAIN
+        url = BLENDERKIT_MAIN
     return url
+
+
+def get_api_url():
+    return get_bkit_url() + BLENDERKIT_API
+
+
+def default_global_dict():
+    from os.path import expanduser
+    home = expanduser("~")
+    return home + os.sep + 'blenderkit_data'
 
 
 def get_categories_filepath():

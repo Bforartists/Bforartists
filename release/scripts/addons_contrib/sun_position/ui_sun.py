@@ -30,7 +30,7 @@ class SunPos_Panel(bpy.types.Panel):
 
     def enable(self, layout):
         row = layout.row()
-        split = row.split(percentage=.90)
+        split = row.split(factor=.90)
         colL = split.column()
         colL.alignment = 'LEFT'
         colR = split.column()
@@ -51,7 +51,7 @@ class SunPos_Panel(bpy.types.Panel):
             col1 = row.column()
             col2 = col1
         elif p.UseTimePlace:
-            split = row.split(percentage=.3)
+            split = row.split(factor=.3)
             col1 = split.column()
             col2 = split.column()
         else:
@@ -283,7 +283,7 @@ class SunPos_Panel(bpy.types.Panel):
         rr = tr.row(align=True)
 
         if Sun.UseDayMonth:
-            cs = rr.split(percentage=.82)
+            cs = rr.split(factor=.82)
             cl = cs.column()
             cl.alignment = 'LEFT'
             cr = cs.column()
@@ -293,7 +293,7 @@ class SunPos_Panel(bpy.types.Panel):
                         icon='SORTTIME')
             col.prop(sp, "Day")
         else:
-            cs = rr.split(percentage=.90)
+            cs = rr.split(factor=.90)
             cl = cs.column()
             cr = cs.column()
             cl.alignment = 'LEFT'
@@ -334,7 +334,7 @@ class SunPos_Panel(bpy.types.Panel):
         row = toprow.row(align=True)
         row.alignment = 'CENTER'
         col = row.column(align=True)
-        split = col.split(percentage=.5)
+        split = col.split(factor=.5)
         cL = split.column()
         cR = split.column()
         cL.alignment = 'LEFT'
@@ -388,7 +388,7 @@ class SunPos_Panel(bpy.types.Panel):
         distanceSet = False
 
         if p.ShowDMS:
-            split = col.split(percentage=.5)
+            split = col.split(factor=.5)
             cL = split.column()
             cR = split.column()
             cL.alignment = 'LEFT'
@@ -440,10 +440,10 @@ class SunPos_Panel(bpy.types.Panel):
         row = toprow.row(align=False)
         row.alignment = 'CENTER'
         if Sun.UseDayMonth:
-            split = row.split(percentage=.5)
+            split = row.split(factor=.5)
             colL = split.column()
             colMid = split.column()
-            colMsplit = colMid.split(percentage=.82)
+            colMsplit = colMid.split(factor=.82)
             colM = colMsplit.column()
             colR = colMsplit.column()
             colL.prop(sp, "Month")
@@ -451,11 +451,11 @@ class SunPos_Panel(bpy.types.Panel):
             colR.operator('world.sunpos_day_range', '',
                           icon='SORTTIME')
         else:
-            split = row.split(percentage=.50)
+            split = row.split(factor=.50)
             colL = split.column()
             colL.alignment = 'LEFT'
             colMid = split.column()
-            colMsplit = colMid.split(percentage=.90)
+            colMsplit = colMid.split(factor=.90)
             colM = colMsplit.column()
             colR = colM.column()
             colR.alignment = 'RIGHT'

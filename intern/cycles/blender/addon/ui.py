@@ -57,7 +57,7 @@ def node_panel(cls):
 
     node_cls.bl_space_type = 'NODE_EDITOR'
     node_cls.bl_region_type = 'UI'
-    node_cls.bl_category = "Node"
+    node_cls.bl_category = "Options"
     if hasattr(node_cls, 'bl_parent_id'):
         node_cls.bl_parent_id = 'NODE_' + node_cls.bl_parent_id
 
@@ -1184,26 +1184,52 @@ class CYCLES_OBJECT_PT_motion_blur(CyclesButtonsPanel, Panel):
         row.prop(cob, "motion_steps", text="Steps")
 
 
-class CYCLES_OBJECT_PT_cycles_settings(CyclesButtonsPanel, Panel):
-    bl_label = "Cycles Settings"
+def has_geometry_visibility(ob):
+    return ob and ((ob.type in {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META', 'LIGHT'}) or
+                    (ob.instance_type == 'COLLECTION' and ob.instance_collection))
+
+
+class CYCLES_OBJECT_PT_visibility(CyclesButtonsPanel, Panel):
+    bl_label = "Visibility"
     bl_context = "object"
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
-        ob = context.object
-        return (CyclesButtonsPanel.poll(context) and
-                ob and ((ob.type in {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META', 'LIGHT'}) or
-                        (ob.instance_type == 'COLLECTION' and ob.instance_collection)))
+        return  CyclesButtonsPanel.poll(context) and (context.object)
 
     def draw(self, context):
-        pass
+        layout = self.layout
+        layout.use_property_split = True
+
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
+        layout = self.layout
+        ob = context.object
+
+        col = flow.column()
+        col.prop(ob, "hide_viewport", text="Show in Viewports", invert_checkbox=True)
+        col = flow.column()
+        col.prop(ob, "hide_render", text="Show in Renders", invert_checkbox=True)
+        col = flow.column()
+        col.prop(ob, "hide_select", text="Selectable", invert_checkbox=True)
+
+        if has_geometry_visibility(ob):
+            cob = ob.cycles
+            col = flow.column()
+            col.prop(cob, "is_shadow_catcher")
+            col = flow.column()
+            col.prop(cob, "is_holdout")
 
 
-class CYCLES_OBJECT_PT_cycles_settings_ray_visibility(CyclesButtonsPanel, Panel):
+class CYCLES_OBJECT_PT_visibility_ray_visibility(CyclesButtonsPanel, Panel):
     bl_label = "Ray Visibility"
-    bl_parent_id = "CYCLES_OBJECT_PT_cycles_settings"
+    bl_parent_id = "CYCLES_OBJECT_PT_visibility"
     bl_context = "object"
+
+    @classmethod
+    def poll(cls, context):
+        ob = context.object
+        return CyclesButtonsPanel.poll(context) and has_geometry_visibility(ob)
 
     def draw(self, context):
         layout = self.layout
@@ -1234,19 +1260,16 @@ class CYCLES_OBJECT_PT_cycles_settings_ray_visibility(CyclesButtonsPanel, Panel)
 
         layout.separator()
 
-        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
-        col = flow.column()
-        col.prop(cob, "is_shadow_catcher")
-        col = flow.column()
-        col.prop(cob, "is_holdout")
-
-
-class CYCLES_OBJECT_PT_cycles_settings_performance(CyclesButtonsPanel, Panel):
-    bl_label = "Performance"
-    bl_parent_id = "CYCLES_OBJECT_PT_cycles_settings"
+class CYCLES_OBJECT_PT_visibility_culling(CyclesButtonsPanel, Panel):
+    bl_label = "Culling"
+    bl_parent_id = "CYCLES_OBJECT_PT_visibility"
     bl_context = "object"
 
+    @classmethod
+    def poll(cls, context):
+        ob = context.object
+        return CyclesButtonsPanel.poll(context) and has_geometry_visibility(ob)
 
     def draw(self, context):
         layout = self.layout
@@ -1712,7 +1735,7 @@ class CYCLES_MATERIAL_PT_settings_surface(CyclesButtonsPanel, Panel):
         col = layout.column()
         col.prop(cmat, "sample_as_light", text="Multiple Importance")
         col.prop(cmat, "use_transparent_shadow")
-        col.prop(cmat, "displacement_method", text="Displacement Method")
+        col.prop(cmat, "displacement_method", text="Displacement")
 
     def draw(self, context):
         self.draw_shared(self, context.material)
@@ -2099,6 +2122,7 @@ def get_panels():
         'MATERIAL_PT_preview',
         'NODE_DATA_PT_light',
         'NODE_DATA_PT_spot',
+        'OBJECT_PT_visibility',
         'VIEWLAYER_PT_filter',
         'VIEWLAYER_PT_layer_passes',
         'RENDER_PT_post_processing',
@@ -2155,9 +2179,9 @@ classes = (
     CYCLES_CAMERA_PT_dof_aperture,
     CYCLES_PT_context_material,
     CYCLES_OBJECT_PT_motion_blur,
-    CYCLES_OBJECT_PT_cycles_settings,
-    CYCLES_OBJECT_PT_cycles_settings_ray_visibility,
-    CYCLES_OBJECT_PT_cycles_settings_performance,
+    CYCLES_OBJECT_PT_visibility,
+    CYCLES_OBJECT_PT_visibility_ray_visibility,
+    CYCLES_OBJECT_PT_visibility_culling,
     CYCLES_LIGHT_PT_preview,
     CYCLES_LIGHT_PT_light,
     CYCLES_LIGHT_PT_nodes,

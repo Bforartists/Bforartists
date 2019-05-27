@@ -20,8 +20,8 @@ bl_info = {
     "name": "Curve Tools 2",
     "description": "Adds some functionality for bezier/nurbs curve/surface modeling",
     "author": "Mackraken, guy lateur",
-    "version": (0, 2, 1),
-    "blender": (2, 71, 0),
+    "version": (0, 3, 0),
+    "blender": (2, 80, 0),
     "location": "View3D > Tool Shelf > Addons Tab",
     "warning": "WIP",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -48,6 +48,7 @@ from . import Properties
 from . import Operators
 from . import auto_loft
 from . import curve_outline
+from . import curve_remove_doubles
 
 
 from bpy.types import (
@@ -185,10 +186,10 @@ class CurveTools2Settings(PropertyGroup):
             )
 
 
-class CurvePanel(Panel):
+class VIEW3D_PT_CurvePanel(Panel):
     bl_label = "Curve Tools 2"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
+    bl_region_type = "UI"
     bl_options = {'DEFAULT_CLOSED'}
     bl_category = "Tools"
 
@@ -284,7 +285,7 @@ class CurvePanel(Panel):
             layout.operator("curvetools2.create_auto_loft")
             lofters = [o for o in scene.objects if "autoloft" in o.keys()]
             for o in lofters:
-                layout.label(o.name)
+                layout.label(text=o.name)
             # layout.prop(o, '["autoloft"]', toggle=True)
             layout.prop(wm, "auto_loft", toggle=True)
 
@@ -300,6 +301,8 @@ class CurvePanel(Panel):
             row = col.row(align=True)
             row.operator("object.sep_outline", text="Separate Outline")
             row = col.row(align=True)
+            row.operator("curve.remove_doubles", text="Remove Doubles")
+            row = col.row(align=True)
             vertex = []
             selected = []
             n = 0
@@ -311,16 +314,16 @@ class CurvePanel(Panel):
                             n += 1
                             if j.select_control_point:
                                 selected.append(n)
-                                vertex.append(obj.matrix_world * j.co)
+                                vertex.append(obj.matrix_world @ j.co)
 
                 if len(vertex) > 0 and n > 2:
                     row = col.row(align=True)
                     row.operator("curve.bezier_points_fillet", text='Fillet')
-                """
+
                 if len(vertex) == 2 and abs(selected[0] - selected[1]) == 1:
                     row = col.row(align=True)
                     row.operator("curve.bezier_spline_divide", text='Divide')
-                """
+
             row = col.row(align=True)
             row.operator("curvetools2.operatorbirail", text="Birail")
         # Utils Curve options
@@ -363,7 +366,7 @@ class CurvePanel(Panel):
 
 # Define Panel classes for updating
 panels = (
-        CurvePanel,
+        VIEW3D_PT_CurvePanel,
         )
 
 
@@ -403,6 +406,28 @@ class CurveAddonPreferences(AddonPreferences):
         col.label(text="Tab Category:")
         col.prop(self, "category", text="")
 
+# REGISTER
+classes = (
+    Properties.CurveTools2SelectedObject,
+    CurveAddonPreferences,
+    CurveTools2Settings,
+    Operators.OperatorSelectionInfo,
+    Operators.OperatorCurveInfo,
+    Operators.OperatorCurveLength,
+    Operators.OperatorSplinesInfo,
+    Operators.OperatorSegmentsInfo,
+    Operators.OperatorOriginToSpline0Start,
+    Operators.OperatorIntersectCurves,
+    Operators.OperatorLoftCurves,
+    Operators.OperatorSweepCurves,
+    Operators.OperatorBirail,
+    Operators.OperatorSplinesSetResolution,
+    Operators.OperatorSplinesRemoveZeroSegment,
+    Operators.OperatorSplinesRemoveShort,
+    Operators.OperatorSplinesJoinNeighbouring,
+    VIEW3D_PT_CurvePanel,
+    SeparateOutline
+    )
 
 def register():
     bpy.types.Scene.UTSingleDrop = BoolProperty(
@@ -430,37 +455,17 @@ def register():
             default=False,
             description="Curves Utils"
             )
+    
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    
     auto_loft.register()
+    
     curve_outline.register()
-    bpy.utils.register_class(Properties.CurveTools2SelectedObject)
-    bpy.utils.register_class(CurveAddonPreferences)
-    bpy.utils.register_class(CurveTools2Settings)
+    
+    curve_remove_doubles.register()
+    
     bpy.types.Scene.curvetools = bpy.props.PointerProperty(type=CurveTools2Settings)
-
-    bpy.utils.register_class(Operators.OperatorSelectionInfo)
-    # bpy.utils.register_class(Properties.CurveTools2SelectedObjectHeader)
-
-    bpy.utils.register_class(Operators.OperatorCurveInfo)
-    bpy.utils.register_class(Operators.OperatorCurveLength)
-    bpy.utils.register_class(Operators.OperatorSplinesInfo)
-    bpy.utils.register_class(Operators.OperatorSegmentsInfo)
-    bpy.utils.register_class(Operators.OperatorOriginToSpline0Start)
-
-    bpy.utils.register_class(Operators.OperatorIntersectCurves)
-    bpy.utils.register_class(Operators.OperatorLoftCurves)
-    bpy.utils.register_class(Operators.OperatorSweepCurves)
-
-    bpy.utils.register_class(Operators.OperatorBirail)
-
-    bpy.utils.register_class(Operators.OperatorSplinesSetResolution)
-    bpy.utils.register_class(Operators.OperatorSplinesRemoveZeroSegment)
-    bpy.utils.register_class(Operators.OperatorSplinesRemoveShort)
-    bpy.utils.register_class(Operators.OperatorSplinesJoinNeighbouring)
-
-    # bpy.app.handlers.scene_update_pre.append(SceneUpdatePreHandler)
-
-    bpy.utils.register_class(CurvePanel)
-    bpy.utils.register_class(SeparateOutline)
 
 
 def unregister():
@@ -470,35 +475,16 @@ def unregister():
     del bpy.types.Scene.UTTripleDrop
     del bpy.types.Scene.UTUtilsDrop
 
-    auto_loft.unregister()
-    curve_outline.unregister()
-    bpy.utils.unregister_class(CurveAddonPreferences)
     # bpy.app.handlers.scene_update_pre.remove(SceneUpdatePreHandler)
-    bpy.utils.unregister_class(CurvePanel)
-    bpy.utils.unregister_class(SeparateOutline)
-    bpy.utils.unregister_class(Operators.OperatorSplinesJoinNeighbouring)
-    bpy.utils.unregister_class(Operators.OperatorSplinesRemoveShort)
-    bpy.utils.unregister_class(Operators.OperatorSplinesRemoveZeroSegment)
-    bpy.utils.unregister_class(Operators.OperatorSplinesSetResolution)
-
-    bpy.utils.unregister_class(Operators.OperatorBirail)
-
-    bpy.utils.unregister_class(Operators.OperatorSweepCurves)
-    bpy.utils.unregister_class(Operators.OperatorLoftCurves)
-    bpy.utils.unregister_class(Operators.OperatorIntersectCurves)
-
-    bpy.utils.unregister_class(Operators.OperatorOriginToSpline0Start)
-    bpy.utils.unregister_class(Operators.OperatorSegmentsInfo)
-    bpy.utils.unregister_class(Operators.OperatorSplinesInfo)
-    bpy.utils.unregister_class(Operators.OperatorCurveLength)
-    bpy.utils.unregister_class(Operators.OperatorCurveInfo)
-
-    # bpy.utils.unregister_class(Operators.CurveTools2SelectedObjectHeader)
-    bpy.utils.unregister_class(Operators.OperatorSelectionInfo)
-
-    bpy.utils.unregister_class(CurveTools2Settings)
-
-    bpy.utils.unregister_class(Properties.CurveTools2SelectedObject)
+    
+    auto_loft.unregister()
+    
+    curve_outline.unregister()
+    
+    curve_remove_doubles.unregister()
+    
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
 
 
 if __name__ == "__main__":

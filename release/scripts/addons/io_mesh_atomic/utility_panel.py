@@ -190,7 +190,7 @@ def distance():
     # In the 'OBJECT' mode
     else:
 
-        if len(bpy.context.selected_bases) > 1:
+        if len(bpy.context.selected_objects) > 1:
             location1 = bpy.context.selected_objects[0].location
             location2 = bpy.context.selected_objects[1].location
         else:

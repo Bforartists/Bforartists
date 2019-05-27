@@ -74,6 +74,7 @@ def gllightpreset_importall():
                 thefile=os.path.join(path, infile)       #join the filename with the path
                 gllightpreset_importsingle(thefile)     #import it!
 
+
 #import single takes a given filename and imports it
 def gllightpreset_importsingle(filename):
 
@@ -182,6 +183,7 @@ def gllightpreset_importsingle(filename):
             gllightpreset_add(name)
             gllightpreset_save()
 
+
 #Export all exports the entire contents of your presets list to the given file
 @persistent
 def gllightpreset_exportall(context):
@@ -283,6 +285,7 @@ def gllightpreset_exportsingle(index, multiimport):
     filepath=os.path.join(filepath, (name+".preset"))
     writefile = open(filepath, 'w')
     writefile.write(printstring)
+
 
 ##########################################
 ####### General  Presets Functions #######
@@ -454,6 +457,7 @@ def gllightpreset_addPresets():
     gllightpreset_add("Yellow Clay")
     gllightpreset_save()
 
+
 ##########################################
 ####### LightPreset Functions #######
 ##########################################
@@ -474,6 +478,7 @@ def gllightpreset_name(self, context):
 
     recursive=False
 
+
 def gllightpreset_checkname(name):
     collection=bpy.context.scene.quickprefs.gllightpreset
     if name=="": name="Preset"
@@ -493,10 +498,12 @@ def gllightpreset_checkname(name):
             return tmp
     return "Preset.???"
 
+
 def gllightpreset_rename(old, new):
     for o in bpy.context.scene.quickprefs.objects:
         if o.get("gllightpreset", "Default")==old:
             o.gllightpreset=new
+
 
 @persistent
 def gllightpreset_index(self, context):
@@ -511,6 +518,7 @@ def gllightpreset_index(self, context):
 
     recursive=False
 
+
 def gllightpreset_add(name=""):
     global renaming
     renaming=False
@@ -523,6 +531,7 @@ def gllightpreset_add(name=""):
 
     renaming=True
     gllightpreset_save()
+
 
 def gllightpreset_delete():
     scn=bpy.context.scene
@@ -556,6 +565,7 @@ def gllightpreset_save():
     bpy.context.scene.quickprefs.gllightpreset[index].specular1 = bpy.context.preferences.system.solid_lights[1].specular_color
     bpy.context.scene.quickprefs.gllightpreset[index].specular2 = bpy.context.preferences.system.solid_lights[2].specular_color
 
+
 #select the current light
 def gllightpreset_select():
     index=bpy.context.scene.quickprefs.gllightpreset_index
@@ -577,6 +587,7 @@ def gllightpreset_select():
     bpy.context.preferences.system.solid_lights[1].specular_color=bpy.context.scene.quickprefs.gllightpreset[index].specular1
     bpy.context.preferences.system.solid_lights[2].specular_color=bpy.context.scene.quickprefs.gllightpreset[index].specular2
 
+
 #sort alphabetically
 def gllightpreset_sort():
     collection=bpy.context.scene.quickprefs.gllightpreset
@@ -586,6 +597,7 @@ def gllightpreset_sort():
             if collection[i].name > collection[j].name:
                 collection.move(j, i)
 
+
 #Add default setting
 def gllightpreset_addDefault():
     print('adding default presets')
@@ -593,6 +605,7 @@ def gllightpreset_addDefault():
     gllightpreset_sort();
     bpy.context.scene.quickprefs['gllightpreset_index']=0
     gllightpreset_select()
+
 
 ##########################################
 ####### Persistant functions##############
@@ -602,19 +615,20 @@ def gllightpreset_addDefault():
 def gllightpreset_chooseLoadLocation(context):
 
     filepath=bpy.context.scene.quickprefs.gllightpreset_importdirectory
-    if len(bpy.context.scene.quickprefs.gllightpreset)==0:                    #is it in bpy?
-          if not os.path.exists(filepath):                                                     #is it in the folder?
+    if len(bpy.context.scene.quickprefs.gllightpreset)==0:        #is it in bpy?
+          if not os.path.exists(filepath):                                         #is it in the folder?
                print('quickprefs: loading default presets')
-               gllightpreset_addDefault()                                                       #it's not, add the default
-          else:                                                                                             #the folder exists
+               gllightpreset_addDefault()                                           #it's not, add the default
+          else:                                                                                 #the folder exists
                directorylisting = os.listdir(filepath)
-               if len(directorylisting)==0:                                                      #is the folder empty?
+               if len(directorylisting)==0:                                          #is the folder empty?
                     print('quickprefs: loading default presets')
-                    gllightpreset_addDefault()                                                  #the folder is empty, add default
-               else:                                                                                        #the folder is not empty
+                    gllightpreset_addDefault()                                      #the folder is empty, add default
+               else:                                                                            #the folder is not empty
                     print('quickprefs: loading preset folder')
-                    gllightpreset_loadpresets(1)                                                #go ahead and load it
+                    gllightpreset_loadpresets(1)                                    #go ahead and load it
     #print('quickprefs: loading from bpy')
+
 
 #This function scans for changes of the index of the selected preset and updates the selection if needed
 @persistent
@@ -625,6 +639,7 @@ def gllightpreset_scan(context):
             lastindex=bpy.context.scene.quickprefs.gllightpreset_index
             gllightpreset_select()
 
+
 #This function loads all the presets from a given folder (stored in bpy)
 @persistent
 def gllightpreset_loadpresets(context):
@@ -632,13 +647,14 @@ def gllightpreset_loadpresets(context):
        bpy.context.scene['gllightpreset_index']=0
        gllightpreset_select()
 
+
 ##########################################
 ####### GUI ##############################
 ##########################################
 
 #This function defines the layout of the openGL lamps
 def opengl_lamp_buttons(column, lamp):
-    split = column.split(percentage=0.1)
+    split = column.split(factor=0.1)
 
     split.prop(lamp, "use", text="", icon='OUTLINER_OB_LAMP' if lamp.use else 'LAMP_DATA')
 
@@ -654,6 +670,7 @@ def opengl_lamp_buttons(column, lamp):
     col = split.column()
     col.active = lamp.use
     col.prop(lamp, "direction", text="")
+
 
 class gllightpreset(bpy.types.PropertyGroup):
 
@@ -678,6 +695,7 @@ class gllightpreset(bpy.types.PropertyGroup):
 
     count: props.IntProperty(name="", default=0)
     count2: props.IntProperty(name="", default=0)
+
 
 class SCENE_OT_gllightpreset(bpy.types.Operator):
     bl_label ="Preset Action"
@@ -731,6 +749,7 @@ class SCENE_OT_gllightpreset(bpy.types.Operator):
 
         return {"FINISHED"}
 
+
 #Panel for tools
 class PANEL(bpy.types.Panel):
     bl_label = 'Quick Preferences'
@@ -752,13 +771,13 @@ class PANEL(bpy.types.Panel):
         layout = self.layout
         split = layout.split()
 
-#Setup the OpenGL lights box
-#Draw the Lights
+        #Setup the OpenGL lights box
+        #Draw the Lights
         box = layout.box().column(align=False)
         box.prop(scn,'gllights')
         if scn.gllights:
 
-            split = box.split(percentage=0.1)
+            split = box.split(factor=0.1)
             split.label()
             split.label(text="Colors:")
             split.label(text="Direction:")
@@ -774,14 +793,14 @@ class PANEL(bpy.types.Panel):
 
             box.separator()
 
-#Draw the selection box
-            split = box.split(percentage=0.7)
+            #Draw the selection box
+            split = box.split(factor=0.7)
             col = split.row()
 			#original
             col.template_list("UI_UL_list", "gl_light_presets", scn, "gllightpreset",
                               scn, "gllightpreset_index", rows=5, maxrows=5)
 
-#Draw the buttons
+            #Draw the buttons
             split = split.split()
             col = split.column()
             col.operator("gllightpreset.action", icon='ADD', text="Add").button="add"
@@ -791,7 +810,7 @@ class PANEL(bpy.types.Panel):
             col.operator("gllightpreset.action", icon="SHORTDISPLAY", text="Add Defaults").button="defaults"
             col=box.row()
             col=col.column()
-#Draw the text box
+            #Draw the text box
             count=len(scn.gllightpreset)
             if count>0:
                 entry=scn.gllightpreset[scn.gllightpreset_index]
@@ -803,10 +822,10 @@ class PANEL(bpy.types.Panel):
                     col.prop(entry, "name", text="")
                 if bpy.context.view_layer.objects.active != None:
                     name=bpy.context.view_layer.objects.active.get("gllightpreset", "Default")
-#Draw the import/export part of the box
+                #Draw the import/export part of the box
                 col.prop(scn,'importexport')
                 if scn.importexport:
-                    split = box.split(percentage=0.5)
+                    split = box.split(factor=0.5)
                     col = split.column()
                     col.label(text="Import Directory or File")
                     col.prop(scn, 'gllightpreset_importfile')
@@ -826,7 +845,7 @@ class PANEL(bpy.types.Panel):
                     col.operator("gllightpreset.action", icon="EXPORT", text="Export All").button="exportall"
 
 
-#The second box containing interface options is here
+        #The second box containing interface options is here
         #interface options
         box = layout.box().column(align=True)
         box.prop(scn,'interface')
@@ -854,6 +873,7 @@ class PANEL(bpy.types.Panel):
             boxrow.label(text="Align New Objects To:")
             boxrow=box.row()
             boxrow.prop(edit, "object_align", text="")
+
 
 ##########################################
 ####### Registration Functions ############
@@ -928,11 +948,13 @@ class quickprefproperties(bpy.types.PropertyGroup):
     def unregister(cls):
         del bpy.types.Scene.quickprefs
 
+
 @persistent
 def setup(s):
 	#let the fun begin!
     gllightpreset_chooseLoadLocation(1)
     gllightpreset_scan(bpy.context)
+
 
 def register():
     #aliases
@@ -947,8 +969,6 @@ def register():
     #handler.scene_update_pre.append(gllightpreset_scan)
     handler.scene_update_pre.append(setup)
     #handler.load_post.append(setup)     #was crashing blender on new file load - comment for now
-
-
 
 
 # unregistering and removing menus

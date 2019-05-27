@@ -68,7 +68,7 @@ def center_obs_for_thumbnail(obs):
     coef = .7
     r *= coef
     camZ.scale = (r, r, r)
-    s.update()
+    bpy.context.view_layer.update()
 
 
 def render_thumbnails():

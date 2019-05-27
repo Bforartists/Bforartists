@@ -914,7 +914,7 @@ class SunPos_HdrHelp(bpy.types.Operator):
         self.layout.label(text="Available commands:")
 
         row = self.layout.row()
-        split = row.split(percentage=.26)
+        split = row.split(factor=.26)
         colL = split.column()
         colR = split.column()
         colL.label(text="Esc or Right Mouse ")
@@ -929,7 +929,7 @@ class SunPos_HdrHelp(bpy.types.Operator):
                           "the mouse or using the scroll wheel.")
         self.layout.label(text="--- Use Ctrl for coarse increments or Alt for fine.")
         row = self.layout.row()
-        split = row.split(percentage=.25)
+        split = row.split(factor=.25)
         colL = split.column()
         colR = split.column()
         colL.label(text="Scroll wheel")

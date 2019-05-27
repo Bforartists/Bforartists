@@ -13,7 +13,7 @@ from ...utils import align_bone_y_axis, align_bone_x_axis, align_bone_z_axis
 from ...rig_ui_template import UTILITIES_RIG_LEG, REGISTER_RIG_LEG
 from ...utils import ControlLayersOption
 from rna_prop_ui import rna_idprop_ui_prop_get
-from ...utils.mechanism import make_property
+from ...utils.mechanism import make_property, make_driver
 from ..widgets import create_ikarrow_widget
 from math import trunc, pi
 
@@ -151,15 +151,7 @@ class Rig:
         # prop = rna_idprop_ui_prop_get( pb[ mch ], name, create = True )
         make_property(pb[main_parent], name, 0.0)
 
-        drv = pb[mch].constraints[0].driver_add("influence").driver
-
-        drv.type = 'AVERAGE'
-        var = drv.variables.new()
-        var.name = name
-        var.type = "SINGLE_PROP"
-        var.targets[0].id = self.obj
-        var.targets[0].data_path = pb[main_parent].path_from_id() + \
-                                   '[' + '"' + name + '"' + ']'
+        make_driver(pb[mch].constraints[0], "influence", variables=[(self.obj, main_parent, name)])
 
         size = pb[main_parent].bone.y_axis.length * 10
         create_gear_widget(self.obj, main_parent, size=size, bone_transform_name=None)
@@ -360,25 +352,11 @@ class Rig:
             make_property(pb[t], name, defval, max=2.0, soft_max=1.0)
 
         for j,d in enumerate(def_bones[:-1]):
-            drvs = {}
             if j != 0:
-                tidx = j
-                drvs[tidx] = self.obj.data.bones[d].driver_add("bbone_easein").driver
+                make_driver(self.obj.data.bones[d], "bbone_easein", variables=[(self.obj, tweaks[j], 'rubber_tweak')])
 
             if j != len( def_bones[:-1] ) - 1:
-                tidx = j + 1
-                drvs[tidx] = self.obj.data.bones[d].driver_add("bbone_easeout").driver
-
-            for d in drvs:
-                drv = drvs[d]
-                name = 'rubber_tweak'
-                drv.type = 'AVERAGE'
-                var = drv.variables.new()
-                var.name = name
-                var.type = "SINGLE_PROP"
-                var.targets[0].id = self.obj
-                var.targets[0].data_path = pb[tweaks[d]].path_from_id() + \
-                                           '[' + '"' + name + '"' + ']'
+                make_driver(self.obj.data.bones[d], "bbone_easeout", variables=[(self.obj, tweaks[j+1], 'rubber_tweak')])
 
         return def_bones
 
@@ -589,15 +567,7 @@ class Rig:
             })
 
             # Add driver to relevant constraint
-            drv = pb[o].constraints[-1].driver_add("influence").driver
-            drv.type = 'AVERAGE'
-
-            var = drv.variables.new()
-            var.name = prop.name
-            var.type = "SINGLE_PROP"
-            var.targets[0].id = self.obj
-            var.targets[0].data_path = \
-                pb_parent.path_from_id() + '[' + '"' + prop.name + '"' + ']'
+            make_driver(pb[o].constraints[-1], "influence", variables=[(self.obj, pb_parent, prop.name)])
 
     def create_leg(self, bones):
         org_bones = list(
@@ -941,22 +911,8 @@ class Rig:
 
         # Add driver to limit scale constraint influence
         b = bones['ik']['mch_str']
-        drv = pb[b].constraints[-1].driver_add("influence").driver
-        drv.type = 'AVERAGE'
 
-        var = drv.variables.new()
-        var.name = prop.name
-        var.type = "SINGLE_PROP"
-        var.targets[0].id = self.obj
-        var.targets[0].data_path = \
-            pb_parent.path_from_id() + '[' + '"' + prop.name + '"' + ']'
-
-        drv_modifier = self.obj.animation_data.drivers[-1].modifiers[0]
-
-        drv_modifier.mode = 'POLYNOMIAL'
-        drv_modifier.poly_order = 1
-        drv_modifier.coefficients[0] = 1.0
-        drv_modifier.coefficients[1] = -1.0
+        make_driver(pb[b].constraints[-1], "influence", variables=[(self.obj, pb_parent, prop.name)], polynomial=[1.0, -1.0])
 
         # Create leg widget
         create_foot_widget(self.obj, ctrl, bone_transform_name=None)
@@ -1016,22 +972,8 @@ class Rig:
 
             # Add driver to limit scale constraint influence
             b = toe_mch
-            drv = pb[b].constraints[-1].driver_add("influence").driver
-            drv.type = 'AVERAGE'
 
-            var = drv.variables.new()
-            var.name = prop.name
-            var.type = "SINGLE_PROP"
-            var.targets[0].id = self.obj
-            var.targets[0].data_path = \
-                pb_parent.path_from_id() + '['+ '"' + prop.name + '"' + ']'
-
-            drv_modifier = self.obj.animation_data.drivers[-1].modifiers[0]
-
-            drv_modifier.mode = 'POLYNOMIAL'
-            drv_modifier.poly_order = 1
-            drv_modifier.coefficients[0] = 1.0
-            drv_modifier.coefficients[1] = -1.0
+            make_driver(pb[b].constraints[-1], "influence", variables=[(self.obj, pb_parent, prop.name)], polynomial=[1.0, -1.0])
 
             # Create toe circle widget
             create_circle_widget(self.obj, toes, radius=0.4, head_tail=0.5)
@@ -1068,184 +1010,51 @@ class Rig:
 
                 # ik target hide driver
                 pole_target = pb[bones['ik']['ctrl']['ik_target']]
-                drv = pole_target.bone.driver_add("hide").driver
-                drv.type = 'AVERAGE'
 
-                var = drv.variables.new()
-                var.name = prop
-                var.type = "SINGLE_PROP"
-                var.targets[0].id = self.obj
-                var.targets[0].data_path = \
-                    owner.path_from_id() + '[' + '"' + prop + '"' + ']'
-
-                drv_modifier = self.obj.animation_data.drivers[-1].modifiers[0]
-
-                drv_modifier.mode = 'POLYNOMIAL'
-                drv_modifier.poly_order = 1
-                drv_modifier.coefficients[0] = 1.0
-                drv_modifier.coefficients[1] = -1.0
+                make_driver(pole_target.bone, "hide", variables=[(self.obj, owner, prop)], polynomial=[1.0, -1.0])
 
                 # vis-pole hide driver
                 vispole = pb[bones['ik']['visuals']['vispole']]
-                drv = vispole.bone.driver_add("hide").driver
-                drv.type = 'AVERAGE'
-                var = drv.variables.new()
-                var.name = prop
-                var.type = "SINGLE_PROP"
-                var.targets[0].id = self.obj
-                var.targets[0].data_path = \
-                    owner.path_from_id() + '[' + '"' + prop + '"' + ']'
 
-                drv_modifier = self.obj.animation_data.drivers[-1].modifiers[0]
-
-                drv_modifier.mode = 'POLYNOMIAL'
-                drv_modifier.poly_order = 1
-                drv_modifier.coefficients[0] = 1.0
-                drv_modifier.coefficients[1] = -1.0
+                make_driver(vispole.bone, "hide", variables=[(self.obj, owner, prop)], polynomial=[1.0, -1.0])
 
                 # arrow hide driver
-                # pole_target = pb[bones['ik']['ctrl']['limb']]
-                # drv = pole_target.bone.driver_add("hide").driver
-                # drv.type = 'AVERAGE'
+                # limb = pb[bones['ik']['ctrl']['limb']]
                 #
-                # var = drv.variables.new()
-                # var.name = prop
-                # var.type = "SINGLE_PROP"
-                # var.targets[0].id = self.obj
-                # var.targets[0].data_path = \
-                #     owner.path_from_id() + '[' + '"' + prop + '"' + ']'
-                #
-                # drv_modifier = self.obj.animation_data.drivers[-1].modifiers[0]
-                #
-                # drv_modifier.mode = 'POLYNOMIAL'
-                # drv_modifier.poly_order = 1
-                # drv_modifier.coefficients[0] = 0.0
-                # drv_modifier.coefficients[1] = 1.0
+                # make_driver(limb.bone, "hide", variables=[(self.obj, owner, prop)], polynomial=[0.0, 1.0])
 
                 for cns in mch_ik.constraints:
                     if 'IK' in cns.type:
-                        drv = cns.driver_add("mute").driver
-                        drv.type = 'AVERAGE'
-
-                        var = drv.variables.new()
-                        var.name = prop
-                        var.type = "SINGLE_PROP"
-                        var.targets[0].id = self.obj
-                        var.targets[0].data_path = \
-                            owner.path_from_id() + '[' + '"' + prop + '"' + ']'
-
-                        drv_modifier = self.obj.animation_data.drivers[-1].modifiers[0]
-
-                        drv_modifier.mode = 'POLYNOMIAL'
-                        drv_modifier.poly_order = 1
                         if not cns.pole_subtarget:
-                            drv_modifier.coefficients[0] = 0.0
-                            drv_modifier.coefficients[1] = 1
+                            make_driver(cns, "mute", variables=[(self.obj, owner, prop)], polynomial=[0.0, 1.0])
                         else:
-                            drv_modifier.coefficients[0] = 1.0
-                            drv_modifier.coefficients[1] = -1.0
+                            make_driver(cns, "mute", variables=[(self.obj, owner, prop)], polynomial=[1.0, -1.0])
+
 
             elif prop == 'IK_follow':
-
                 make_property(owner, prop, True)
 
-                drv = ctrl.constraints[0].driver_add("mute").driver
-                drv.type = 'AVERAGE'
-
-                var = drv.variables.new()
-                var.name = prop
-                var.type = "SINGLE_PROP"
-                var.targets[0].id = self.obj
-                var.targets[0].data_path = \
-                    owner.path_from_id() + '[' + '"' + prop + '"' + ']'
-
-                drv_modifier = self.obj.animation_data.drivers[-1].modifiers[0]
-
-                drv_modifier.mode = 'POLYNOMIAL'
-                drv_modifier.poly_order = 1
-                drv_modifier.coefficients[0] = 1.0
-                drv_modifier.coefficients[1] = -1.0
+                make_driver(ctrl.constraints[0], "mute", variables=[(self.obj, owner, prop)], polynomial=[1.0, -1.0])
 
                 if len(ctrl.constraints) > 1:
-                    drv = ctrl.constraints[1].driver_add("mute").driver
-                    drv.type = 'AVERAGE'
+                    make_driver(ctrl.constraints[1], "mute", variables=[(self.obj, owner, prop)], polynomial=[1.0, -1.0])
 
-                    var = drv.variables.new()
-                    var.name = prop
-                    var.type = "SINGLE_PROP"
-                    var.targets[0].id = self.obj
-                    var.targets[0].data_path = \
-                        owner.path_from_id() + '[' + '"' + prop + '"' + ']'
-
-                    drv_modifier = self.obj.animation_data.drivers[-1].modifiers[0]
-
-                    drv_modifier.mode = 'POLYNOMIAL'
-                    drv_modifier.poly_order = 1
-                    drv_modifier.coefficients[0] = 1.0
-                    drv_modifier.coefficients[1] = -1.0
-
-                drv = ctrl_pole.constraints[0].driver_add("mute").driver
-                drv.type = 'AVERAGE'
-
-                var = drv.variables.new()
-                var.name = prop
-                var.type = "SINGLE_PROP"
-                var.targets[0].id = self.obj
-                var.targets[0].data_path = \
-                    owner.path_from_id() + '[' + '"' + prop + '"' + ']'
-
-                drv_modifier = self.obj.animation_data.drivers[-1].modifiers[0]
-
-                drv_modifier.mode = 'POLYNOMIAL'
-                drv_modifier.poly_order = 1
-                drv_modifier.coefficients[0] = 1.0
-                drv_modifier.coefficients[1] = -1.0
+                make_driver(ctrl_pole.constraints[0], "mute", variables=[(self.obj, owner, prop)], polynomial=[1.0, -1.0])
 
                 if len(ctrl_pole.constraints) > 1:
-                    drv = ctrl_pole.constraints[1].driver_add("mute").driver
-                    drv.type = 'AVERAGE'
-
-                    var = drv.variables.new()
-                    var.name = prop
-                    var.type = "SINGLE_PROP"
-                    var.targets[0].id = self.obj
-                    var.targets[0].data_path = \
-                        owner.path_from_id() + '[' + '"' + prop + '"' + ']'
-
-                    drv_modifier = self.obj.animation_data.drivers[-1].modifiers[0]
-
-                    drv_modifier.mode = 'POLYNOMIAL'
-                    drv_modifier.poly_order = 1
-                    drv_modifier.coefficients[0] = 1.0
-                    drv_modifier.coefficients[1] = -1.0
+                    make_driver(ctrl_pole.constraints[1], "mute", variables=[(self.obj, owner, prop)], polynomial=[1.0, -1.0])
 
             elif prop == 'root/parent':
                 if len(ctrl.constraints) > 1:
                     make_property(owner, prop, 0.0)
 
-                    drv = ctrl.constraints[1].driver_add("influence").driver
-                    drv.type = 'AVERAGE'
-
-                    var = drv.variables.new()
-                    var.name = prop
-                    var.type = "SINGLE_PROP"
-                    var.targets[0].id = self.obj
-                    var.targets[0].data_path = \
-                        owner.path_from_id() + '[' + '"' + prop + '"' + ']'
+                    make_driver(ctrl.constraints[1], "influence", variables=[(self.obj, owner, prop)])
 
             elif prop == 'pole_follow':
                 if len(ctrl_pole.constraints) > 1:
                     make_property(owner, prop, 0.0)
 
-                    drv = ctrl_pole.constraints[1].driver_add("influence").driver
-                    drv.type = 'AVERAGE'
-
-                    var = drv.variables.new()
-                    var.name = prop
-                    var.type = "SINGLE_PROP"
-                    var.targets[0].id = self.obj
-                    var.targets[0].data_path = \
-                        owner.path_from_id() + '[' + '"' + prop + '"' + ']'
+                    make_driver(ctrl_pole.constraints[1], "influence", variables=[(self.obj, owner, prop)])
 
     @staticmethod
     def get_future_names(bones):

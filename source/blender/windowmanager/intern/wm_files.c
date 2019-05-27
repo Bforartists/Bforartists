@@ -490,17 +490,20 @@ void wm_file_read_report(bContext *C, Main *bmain)
 static void wm_file_read_post(bContext *C,
                               const bool is_startup_file,
                               const bool is_factory_startup,
+                              const bool use_data,
+                              const bool use_userdef,
                               const bool reset_app_template)
 {
   bool addons_loaded = false;
   wmWindowManager *wm = CTX_wm_manager(C);
 
-  if (!G.background) {
-    /* remove windows which failed to be added via WM_check */
-    wm_window_ghostwindows_remove_invalid(C, wm);
+  if (use_data) {
+    if (!G.background) {
+      /* remove windows which failed to be added via WM_check */
+      wm_window_ghostwindows_remove_invalid(C, wm);
+    }
+    CTX_wm_window_set(C, wm->windows.first);
   }
-
-  CTX_wm_window_set(C, wm->windows.first);
 
 #ifdef WITH_PYTHON
   if (is_startup_file) {
@@ -515,41 +518,56 @@ static void wm_file_read_post(bContext *C,
         /* sync addons, these may have changed from the defaults */
         BPY_execute_string(C, (const char *[]){"addon_utils", NULL}, "addon_utils.reset_all()");
       }
-      BPY_python_reset(C);
+      if (use_data) {
+        BPY_python_reset(C);
+      }
       addons_loaded = true;
     }
   }
   else {
     /* run any texts that were loaded in and flagged as modules */
-    BPY_python_reset(C);
+    if (use_data) {
+      BPY_python_reset(C);
+    }
     addons_loaded = true;
   }
 #else
   UNUSED_VARS(is_startup_file, reset_app_template);
 #endif /* WITH_PYTHON */
 
-  WM_operatortype_last_properties_clear_all();
-
-  /* important to do before NULL'ing the context */
   Main *bmain = CTX_data_main(C);
-  BLI_callback_exec(bmain, NULL, BLI_CB_EVT_VERSION_UPDATE);
-  BLI_callback_exec(bmain, NULL, BLI_CB_EVT_LOAD_POST);
-  if (is_factory_startup) {
-    BLI_callback_exec(bmain, NULL, BLI_CB_EVT_LOAD_FACTORY_STARTUP_POST);
+
+  if (use_userdef) {
+    if (is_factory_startup) {
+      BLI_callback_exec(bmain, NULL, BLI_CB_EVT_LOAD_FACTORY_USERDEF_POST);
+    }
   }
 
-  /* After load post, so for example the driver namespace can be filled
-   * before evaluating the depsgraph. */
-  DEG_on_visible_update(bmain, true);
-  wm_event_do_depsgraph(C);
+  if (use_data) {
+    /* important to do before NULL'ing the context */
+    BLI_callback_exec(bmain, NULL, BLI_CB_EVT_VERSION_UPDATE);
+    BLI_callback_exec(bmain, NULL, BLI_CB_EVT_LOAD_POST);
+    if (is_factory_startup) {
+      BLI_callback_exec(bmain, NULL, BLI_CB_EVT_LOAD_FACTORY_STARTUP_POST);
+    }
+  }
 
-  ED_editors_init(C);
+  if (use_data) {
+    WM_operatortype_last_properties_clear_all();
+
+    /* After load post, so for example the driver namespace can be filled
+     * before evaluating the depsgraph. */
+    DEG_on_visible_update(bmain, true);
+    wm_event_do_depsgraph(C);
+
+    ED_editors_init(C);
 
 #if 1
-  WM_event_add_notifier(C, NC_WM | ND_FILEREAD, NULL);
+    WM_event_add_notifier(C, NC_WM | ND_FILEREAD, NULL);
 #else
-  WM_msg_publish_static(CTX_wm_message_bus(C), WM_MSG_STATICTYPE_FILE_READ);
+    WM_msg_publish_static(CTX_wm_message_bus(C), WM_MSG_STATICTYPE_FILE_READ);
 #endif
+  }
 
   /* report any errors.
    * currently disabled if addons aren't yet loaded */
@@ -557,25 +575,29 @@ static void wm_file_read_post(bContext *C,
     wm_file_read_report(C, bmain);
   }
 
-  if (!G.background) {
-    if (wm->undo_stack == NULL) {
-      wm->undo_stack = BKE_undosys_stack_create();
+  if (use_data) {
+    if (!G.background) {
+      if (wm->undo_stack == NULL) {
+        wm->undo_stack = BKE_undosys_stack_create();
+      }
+      else {
+        BKE_undosys_stack_clear(wm->undo_stack);
+      }
+      BKE_undosys_stack_init_from_main(wm->undo_stack, bmain);
+      BKE_undosys_stack_init_from_context(wm->undo_stack, C);
     }
-    else {
-      BKE_undosys_stack_clear(wm->undo_stack);
-    }
-    BKE_undosys_stack_init_from_main(wm->undo_stack, bmain);
-    BKE_undosys_stack_init_from_context(wm->undo_stack, C);
   }
 
-  if (!G.background) {
-    /* in background mode this makes it hard to load
-     * a blend file and do anything since the screen
-     * won't be set to a valid value again */
-    CTX_wm_window_set(C, NULL); /* exits queues */
+  if (use_data) {
+    if (!G.background) {
+      /* in background mode this makes it hard to load
+       * a blend file and do anything since the screen
+       * won't be set to a valid value again */
+      CTX_wm_window_set(C, NULL); /* exits queues */
 
-    /* Ensure tools are registered. */
-    WM_toolsystem_init(C);
+      /* Ensure tools are registered. */
+      WM_toolsystem_init(C);
+    }
   }
 }
 
@@ -602,6 +624,8 @@ bool WM_file_read(bContext *C, const char *filepath, ReportList *reports)
 
   /* we didn't succeed, now try to read Blender file */
   if (retval == BKE_READ_EXOTIC_OK_BLEND) {
+    bool use_data = true;
+    bool use_userdef = false;
     const int G_f_orig = G.f;
     ListBase wmbase;
 
@@ -640,6 +664,7 @@ bool WM_file_read(bContext *C, const char *filepath, ReportList *reports)
     if (retval == BKE_BLENDFILE_READ_OK_USERPREFS) {
       /* in case a userdef is read from regular .blend */
       wm_init_userdef(bmain, false);
+      use_userdef = true;
     }
 
     if (retval != BKE_BLENDFILE_READ_FAIL) {
@@ -648,7 +673,7 @@ bool WM_file_read(bContext *C, const char *filepath, ReportList *reports)
       }
     }
 
-    wm_file_read_post(C, false, false, false);
+    wm_file_read_post(C, false, false, use_data, use_userdef, false);
 
     success = true;
   }
@@ -953,7 +978,7 @@ void wm_homefile_read(bContext *C,
         }
       }
     }
-    if (BLI_listbase_is_empty(&wmbase)) {
+    if (use_data && BLI_listbase_is_empty(&wmbase)) {
       wm_clear_default_size(C);
     }
   }
@@ -1041,9 +1066,9 @@ void wm_homefile_read(bContext *C,
 
     /* start with save preference untitled.blend */
     G.save_over = 0;
-
-    wm_file_read_post(C, true, is_factory_startup, reset_app_template);
   }
+
+  wm_file_read_post(C, true, is_factory_startup, use_data, use_userdef, reset_app_template);
 
   if (r_is_factory_startup) {
     *r_is_factory_startup = is_factory_startup;
@@ -1245,7 +1270,6 @@ static ImBuf *blend_file_thumb(const bContext *C,
                                           BLEN_THUMB_SIZE * 2,
                                           BLEN_THUMB_SIZE * 2,
                                           IB_rect,
-                                          V3D_OFSDRAW_NONE,
                                           R_ALPHAPREMUL,
                                           0,
                                           NULL,
@@ -1653,6 +1677,7 @@ static int wm_userpref_autoexec_add_exec(bContext *UNUSED(C), wmOperator *UNUSED
 {
   bPathCompare *path_cmp = MEM_callocN(sizeof(bPathCompare), "bPathCompare");
   BLI_addtail(&U.autoexec_paths, path_cmp);
+  U.runtime.is_dirty = true;
   return OPERATOR_FINISHED;
 }
 
@@ -1673,6 +1698,7 @@ static int wm_userpref_autoexec_remove_exec(bContext *UNUSED(C), wmOperator *op)
   bPathCompare *path_cmp = BLI_findlink(&U.autoexec_paths, index);
   if (path_cmp) {
     BLI_freelinkN(&U.autoexec_paths, path_cmp);
+    U.runtime.is_dirty = true;
   }
   return OPERATOR_FINISHED;
 }
@@ -2855,7 +2881,7 @@ static void wm_block_file_close_cancel(bContext *C, void *arg_block, void *UNUSE
 
 static void wm_block_file_close_discard(bContext *C, void *arg_block, void *arg_data)
 {
-  wmGenericCallback *callback = wm_generic_callback_steal((wmGenericCallback *)arg_data);
+  wmGenericCallback *callback = WM_generic_callback_steal((wmGenericCallback *)arg_data);
 
   /* Close the popup before executing the callback. Otherwise
    * the popup might be closed by the callback, which will lead
@@ -2864,12 +2890,12 @@ static void wm_block_file_close_discard(bContext *C, void *arg_block, void *arg_
   UI_popup_block_close(C, win, arg_block);
 
   callback->exec(C, callback->user_data);
-  wm_generic_callback_free(callback);
+  WM_generic_callback_free(callback);
 }
 
 static void wm_block_file_close_save(bContext *C, void *arg_block, void *arg_data)
 {
-  wmGenericCallback *callback = wm_generic_callback_steal((wmGenericCallback *)arg_data);
+  wmGenericCallback *callback = WM_generic_callback_steal((wmGenericCallback *)arg_data);
   bool execute_callback = true;
 
   wmWindow *win = CTX_wm_window(C);
@@ -2897,7 +2923,7 @@ static void wm_block_file_close_save(bContext *C, void *arg_block, void *arg_dat
   if (execute_callback) {
     callback->exec(C, callback->user_data);
   }
-  wm_generic_callback_free(callback);
+  WM_generic_callback_free(callback);
 }
 
 static void wm_block_file_close_cancel_button(uiBlock *block, wmGenericCallback *post_action)
@@ -2925,13 +2951,15 @@ static void wm_block_file_close_save_button(uiBlock *block, wmGenericCallback *p
   UI_but_flag_enable(but, UI_BUT_ACTIVE_DEFAULT);
 }
 
+static const char *close_file_dialog_name = "file_close_popup";
+
 static uiBlock *block_create__close_file_dialog(struct bContext *C, struct ARegion *ar, void *arg1)
 {
   wmGenericCallback *post_action = (wmGenericCallback *)arg1;
   Main *bmain = CTX_data_main(C);
 
   uiStyle *style = UI_style_get();
-  uiBlock *block = UI_block_begin(C, ar, "file_close_popup", UI_EMBOSS);
+  uiBlock *block = UI_block_begin(C, ar, close_file_dialog_name, UI_EMBOSS);
 
   UI_block_flag_enable(
       block, UI_BLOCK_KEEP_OPEN | UI_BLOCK_LOOP | UI_BLOCK_NO_WIN_CLIP | UI_BLOCK_NUMSELECT);
@@ -3039,40 +3067,24 @@ static uiBlock *block_create__close_file_dialog(struct bContext *C, struct ARegi
 static void free_post_file_close_action(void *arg)
 {
   wmGenericCallback *action = (wmGenericCallback *)arg;
-  wm_generic_callback_free(action);
+  WM_generic_callback_free(action);
 }
 
 void wm_close_file_dialog(bContext *C, wmGenericCallback *post_action)
 {
-  UI_popup_block_invoke(
-      C, block_create__close_file_dialog, post_action, free_post_file_close_action);
+  if (!UI_popup_block_name_exists(C, close_file_dialog_name)) {
+    UI_popup_block_invoke(
+        C, block_create__close_file_dialog, post_action, free_post_file_close_action);
+  }
+  else {
+    WM_generic_callback_free(post_action);
+  }
 }
 
 bool wm_file_or_image_is_modified(const bContext *C)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
   return !wm->file_saved || ED_image_should_save_modified(C);
-}
-
-void wm_generic_callback_free(wmGenericCallback *callback)
-{
-  if (callback->free_user_data) {
-    callback->free_user_data(callback->user_data);
-  }
-  MEM_freeN(callback);
-}
-
-static void do_nothing(bContext *UNUSED(C), void *UNUSED(user_data))
-{
-}
-
-wmGenericCallback *wm_generic_callback_steal(wmGenericCallback *callback)
-{
-  wmGenericCallback *new_callback = MEM_dupallocN(callback);
-  callback->exec = do_nothing;
-  callback->free_user_data = NULL;
-  callback->user_data = NULL;
-  return new_callback;
 }
 
 /** \} */
