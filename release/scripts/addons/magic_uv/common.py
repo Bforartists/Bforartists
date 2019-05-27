@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 from collections import defaultdict
 from pprint import pprint
@@ -41,7 +41,7 @@ __DEBUG_MODE = False
 def is_console_mode():
     if "MUV_CONSOLE_MODE" not in os.environ:
         return False
-    return os.environ["MUV_CONSOLE_MODE"] == "True"
+    return os.environ["MUV_CONSOLE_MODE"] == "true"
 
 
 def is_debug_mode():
@@ -382,6 +382,8 @@ def find_texture_layer(bm):
 def find_texture_nodes(obj):
     nodes = []
     for mat in obj.material_slots:
+        if not mat.material:
+            continue
         if not mat.material.node_tree:
             continue
         for node in mat.material.node_tree.nodes:
@@ -399,23 +401,34 @@ def find_texture_nodes(obj):
 
 
 def find_image(obj, face=None, tex_layer=None):
+    images = find_images(obj, face, tex_layer)
+
+    if len(images) >= 2:
+        raise RuntimeError("Find more than 2 images")
+    if len(images) == 0:
+        return None
+
+    return images[0]
+
+
+def find_images(obj, face=None, tex_layer=None):
+    images = []
+
     # try to find from texture_layer
-    img = None
     if tex_layer and face:
-        img = face[tex_layer].image
+        if face[tex_layer].image is not None:
+            images.append(face[tex_layer].image)
 
     # not found, then try to search from node
-    if not img:
+    if not images:
         nodes = find_texture_nodes(obj)
-        if len(nodes) >= 2:
-            raise RuntimeError("Find more than 2 texture nodes")
-        if len(nodes) == 1:
-            img = nodes[0].image
+        for n in nodes:
+            images.append(n.image)
 
-    return img
+    return images
 
 
-def measure_uv_area(obj, tex_size=None):
+def measure_uv_area(obj, method='FIRST', tex_size=None):
     bm = bmesh.from_edit_mesh(obj.data)
     if check_version(2, 73, 0) >= 0:
         bm.verts.ensure_lookup_table()
@@ -437,17 +450,53 @@ def measure_uv_area(obj, tex_size=None):
         f_uv_area = calc_polygon_2d_area(uvs)
 
         # user specified
-        if tex_size:
-            uv_area = uv_area + f_uv_area * tex_size[0] * tex_size[1]
-            continue
+        if method == 'USER_SPECIFIED' and tex_size is not None:
+            img_size = tex_size
+        # first texture if there are more than 2 textures assigned
+        # to the object
+        elif method == 'FIRST':
+            img = find_image(obj, f, tex_layer)
+            # can not find from node, so we can not get texture size
+            if not img:
+                return None
+            img_size = img.size
+        # average texture size
+        elif method == 'AVERAGE':
+            imgs = find_images(obj, f, tex_layer)
+            if not imgs:
+                return None
 
-        img = find_image(obj, f, tex_layer)
+            img_size_total = [0.0, 0.0]
+            for img in imgs:
+                img_size_total = [img_size_total[0] + img.size[0],
+                                  img_size_total[1] + img.size[1]]
+            img_size = [img_size_total[0] / len(imgs),
+                        img_size_total[1] / len(imgs)]
+        # max texture size
+        elif method == 'MAX':
+            imgs = find_images(obj, f, tex_layer)
+            if not imgs:
+                return None
 
-        # can not find from node, so we can not get texture size
-        if not img:
-            return None
+            img_size_max = [-99999999.0, -99999999.0]
+            for img in imgs:
+                img_size_max = [max(img_size_max[0], img.size[0]),
+                                max(img_size_max[1], img.size[1])]
+            img_size = img_size_max
+        # min texture size
+        elif method == 'MIN':
+            imgs = find_images(obj, f, tex_layer)
+            if not imgs:
+                return None
 
-        img_size = img.size
+            img_size_min = [99999999.0, 99999999.0]
+            for img in imgs:
+                img_size_min = [min(img_size_min[0], img.size[0]),
+                                min(img_size_min[1], img.size[1])]
+            img_size = img_size_min
+        else:
+            raise RuntimeError("Unexpected method: {}".format(method))
+
         uv_area = uv_area + f_uv_area * img_size[0] * img_size[1]
 
     return uv_area

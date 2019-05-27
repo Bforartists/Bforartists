@@ -116,6 +116,16 @@ typedef struct BlenderDefRNA {
   ListBase allocs;
   struct StructRNA *laststruct;
   int error, silent, preprocess, verify, animate;
+  /* Keep last. */
+#ifndef RNA_RUNTIME
+  struct {
+    /** #RNA_def_property_update */
+    struct {
+      int noteflag;
+      const char *updatefunc;
+    } property_update;
+  } fallback;
+#endif
 } BlenderDefRNA;
 
 extern BlenderDefRNA DefRNA;
@@ -277,9 +287,9 @@ int rna_object_shapekey_index_set(struct ID *id, PointerRNA value, int current);
 /* ViewLayer related functions defined in rna_scene.c but required in rna_layer.c */
 void rna_def_freestyle_settings(struct BlenderRNA *brna);
 struct PointerRNA rna_FreestyleLineSet_linestyle_get(struct PointerRNA *ptr);
-void rna_FreestyleLineSet_linestyle_set(struct ReportList *reports,
-                                        struct PointerRNA *ptr,
-                                        struct PointerRNA value);
+void rna_FreestyleLineSet_linestyle_set(struct PointerRNA *ptr,
+                                        struct PointerRNA value,
+                                        struct ReportList *reports);
 struct FreestyleLineSet *rna_FreestyleSettings_lineset_add(struct ID *id,
                                                            struct FreestyleSettings *config,
                                                            struct Main *bmain,
@@ -340,6 +350,10 @@ bool rna_GPencil_datablocks_obdata_poll(struct PointerRNA *ptr, const struct Poi
 
 char *rna_TextureSlot_path(struct PointerRNA *ptr);
 char *rna_Node_ImageUser_path(struct PointerRNA *ptr);
+
+/* Set U.is_dirty and redraw. */
+void rna_userdef_is_dirty_update_impl(void);
+void rna_userdef_is_dirty_update(struct Main *bmain, struct Scene *scene, struct PointerRNA *ptr);
 
 /* API functions */
 

@@ -225,6 +225,16 @@ MaskLayer *BKE_mask_layer_copy(const MaskLayer *masklay)
     MaskSpline *spline_new = BKE_mask_spline_copy(spline);
 
     BLI_addtail(&masklay_new->splines, spline_new);
+
+    if (spline == masklay->act_spline) {
+      masklay_new->act_spline = spline_new;
+    }
+
+    if (masklay->act_point >= spline->points &&
+        masklay->act_point < spline->points + spline->tot_point) {
+      const size_t point_index = masklay->act_point - spline->points;
+      masklay_new->act_point = spline_new->points + point_index;
+    }
   }
 
   /* correct animation */
@@ -1457,13 +1467,6 @@ void BKE_mask_evaluate(Mask *mask, const float ctime, const bool do_newframe)
   for (masklay = mask->masklayers.first; masklay; masklay = masklay->next) {
     BKE_mask_layer_evaluate(masklay, ctime, do_newframe);
   }
-}
-
-/* the purpose of this function is to ensure spline->points_deform is never out of date.
- * for now re-evaluate all. eventually this might work differently */
-void BKE_mask_update_display(Mask *mask, float ctime)
-{
-  BKE_mask_evaluate(mask, ctime, false);
 }
 
 void BKE_mask_evaluate_all_masks(Main *bmain, float ctime, const bool do_newframe)

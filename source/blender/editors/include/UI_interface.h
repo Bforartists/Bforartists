@@ -281,6 +281,9 @@ enum {
 
   /** Value is animated, but the current value differs from the animated one. */
   UI_BUT_ANIMATED_CHANGED = 1 << 25,
+
+  /* Draw the checkbox buttons inverted. */
+  UI_BUT_CHECKBOX_INVERT = 1 << 26,
 };
 
 /* scale fixed button widths by this to account for DPI */
@@ -1627,7 +1630,7 @@ struct Panel *UI_panel_begin(struct ScrArea *sa,
                              struct PanelType *pt,
                              struct Panel *pa,
                              bool *r_open);
-void UI_panel_end(uiBlock *block, int width, int height);
+void UI_panel_end(uiBlock *block, int width, int height, bool open);
 void UI_panels_scale(struct ARegion *ar, float new_width);
 void UI_panel_label_offset(struct uiBlock *block, int *r_x, int *r_y);
 int UI_panel_size_y(const struct Panel *pa);
@@ -1638,6 +1641,7 @@ struct PanelCategoryDyn *UI_panel_category_find(struct ARegion *ar, const char *
 struct PanelCategoryStack *UI_panel_category_active_find(struct ARegion *ar, const char *idname);
 const char *UI_panel_category_active_get(struct ARegion *ar, bool set_fallback);
 void UI_panel_category_active_set(struct ARegion *ar, const char *idname);
+void UI_panel_category_active_set_default(struct ARegion *ar, const char *idname);
 struct PanelCategoryDyn *UI_panel_category_find_mouse_over_ex(struct ARegion *ar,
                                                               const int x,
                                                               const int y);
@@ -1711,14 +1715,28 @@ enum {
   UI_ITEM_O_RETURN_PROPS = 1 << 0,
   UI_ITEM_R_EXPAND = 1 << 1,
   UI_ITEM_R_SLIDER = 1 << 2,
+  /**
+   * Use for booleans, causes the button to draw with an outline (emboss),
+   * instead of text with a checkbox.
+   * This is implied when toggle buttons have an icon
+   * unless #UI_ITEM_R_ICON_NEVER flag is set.
+   */
   UI_ITEM_R_TOGGLE = 1 << 3,
-  UI_ITEM_R_ICON_ONLY = 1 << 4,
-  UI_ITEM_R_EVENT = 1 << 5,
-  UI_ITEM_R_FULL_EVENT = 1 << 6,
-  UI_ITEM_R_NO_BG = 1 << 7,
-  UI_ITEM_R_IMMEDIATE = 1 << 8,
-  UI_ITEM_O_DEPRESS = 1 << 9,
-  UI_ITEM_R_COMPACT = 1 << 10,
+  /**
+   * Don't attempt to use an icon when the icon is set to #ICON_NONE.
+   *
+   * Use for boolean's, causes the buttons to always show as a checkbox
+   * even when there is an icon (which would normally show the button as a toggle).
+   */
+  UI_ITEM_R_ICON_NEVER = 1 << 4,
+  UI_ITEM_R_ICON_ONLY = 1 << 5,
+  UI_ITEM_R_EVENT = 1 << 6,
+  UI_ITEM_R_FULL_EVENT = 1 << 7,
+  UI_ITEM_R_NO_BG = 1 << 8,
+  UI_ITEM_R_IMMEDIATE = 1 << 9,
+  UI_ITEM_O_DEPRESS = 1 << 10,
+  UI_ITEM_R_COMPACT = 1 << 11,
+  UI_ITEM_R_CHECKBOX_INVERT = 1 << 12,
 };
 
 #define UI_HEADER_OFFSET ((void)0, 0.4f * UI_UNIT_X)

@@ -1964,7 +1964,7 @@ static void convert_ensure_curve_cache(Depsgraph *depsgraph, Scene *scene, Objec
     if (ELEM(ob->type, OB_SURF, OB_CURVE, OB_FONT)) {
       /* We need 'for render' ON here, to enable computing bevel dipslist if needed.
        * Also makes sense anyway, we would not want e.g. to loose hidden parts etc. */
-      BKE_displist_make_curveTypes(depsgraph, scene, ob, true, false, NULL);
+      BKE_displist_make_curveTypes(depsgraph, scene, ob, true, false);
     }
     else if (ob->type == OB_MBALL) {
       BKE_displist_make_mball(depsgraph, scene, ob);
@@ -2054,7 +2054,8 @@ static int convert_exec(bContext *C, wmOperator *op)
     FOREACH_SCENE_OBJECT_END;
   }
 
-  ListBase selected_editable_bases = CTX_data_collection_get(C, "selected_editable_bases");
+  ListBase selected_editable_bases;
+  CTX_data_selected_editable_bases(C, &selected_editable_bases);
 
   /* Ensure we get all meshes calculated with a sufficient data-mask,
    * needed since re-evaluating single modifiers causes bugs if they depend

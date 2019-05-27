@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
+"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-15 15:28:38\n"
+"POT-Creation-Date: 2019-05-20 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
 "Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -287,6 +287,11 @@ msgid "Mist"
 msgstr "לפרע"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "ףסוה"
+
+
 msgid "Python"
 msgstr "Python"
 
@@ -520,11 +525,6 @@ msgid "Text Style"
 msgstr "האבה הבכש"
 
 
-msgctxt "Operator"
-msgid "Add"
-msgstr "ףסוה"
-
-
 msgid "Tile Order"
 msgstr ":םונילופ תלעמ"
 
@@ -677,22 +677,14 @@ msgid "Alpha Under"
 msgstr "רמה"
 
 
-msgid "Path:"
-msgstr ":ביתנ"
-
-
-msgid "Color Space:"
-msgstr ":עבצ בחרמ"
+msgctxt "Operator"
+msgid "Blender Website"
+msgstr "Blender לש טנרטניאה רתא"
 
 
 msgctxt "Operator"
 msgid "Manual"
 msgstr "ינדי"
-
-
-msgctxt "Operator"
-msgid "Blender Website"
-msgstr "Blender לש טנרטניאה רתא"
 
 
 msgid "Preferences:"
@@ -968,6 +960,14 @@ msgstr "תיוות לדוג"
 
 msgid "Squash"
 msgstr "ךעמ"
+
+
+msgid "Color Space:"
+msgstr ":עבצ בחרמ"
+
+
+msgid "Path:"
+msgstr ":ביתנ"
 
 
 msgid "Add Input"

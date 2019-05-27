@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import bpy
 
@@ -37,10 +37,15 @@ class BlClassRegistry:
     def __call__(self, cls):
         if hasattr(cls, "bl_idname"):
             BlClassRegistry.add_class(cls.bl_idname, cls, self.legacy)
-        else:
+        elif hasattr(cls, "bl_context"):
             bl_idname = "{}{}{}{}".format(cls.bl_space_type,
                                           cls.bl_region_type,
                                           cls.bl_context, cls.bl_label)
+            BlClassRegistry.add_class(bl_idname, cls, self.legacy)
+        else:
+            bl_idname = "{}{}{}".format(cls.bl_space_type,
+                                        cls.bl_region_type,
+                                        cls.bl_label)
             BlClassRegistry.add_class(bl_idname, cls, self.legacy)
         return cls
 

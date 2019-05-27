@@ -1,7 +1,8 @@
 import requests
 import json
 import os
-from blenderkit import paths,utils
+import bpy
+from blenderkit import paths, utils, tasks_queue
 import shutil
 import threading
 
@@ -18,6 +19,7 @@ def fix_category_counts(categories):
 
 
 def filter_category(category):
+    ''' filter categories with no assets, so they aren't shown in search panel'''
     if category['assetCount'] < 1:
         return True
     else:
@@ -57,10 +59,25 @@ def copy_categories():
             print("couldn't copy categories file")
 
 
-def fetch_categories(API_key):
-    BLENDERKIT_API_MAIN = "https://www.blenderkit.com/api/v1/"
+def load_categories():
+    copy_categories()
+    tempdir = paths.get_temp_dir()
+    categories_filepath = os.path.join(tempdir, 'categories.json')
 
-    url = paths.get_bkit_url() + 'categories/'
+    wm = bpy.context.window_manager
+    with open(categories_filepath, 'r') as catfile:
+        wm['bkit_categories'] = json.load(catfile)
+
+    wm['active_category'] = {
+        'MODEL': ['model'],
+        'SCENE': ['scene'],
+        'MATERIAL': ['material'],
+        'BRUSH': ['brush'],
+    }
+
+
+def fetch_categories(API_key):
+    url = paths.get_api_url() + 'categories/'
 
     headers = utils.get_headers(API_key)
 
@@ -75,8 +92,10 @@ def fetch_categories(API_key):
         # filter_categories(categories) #TODO this should filter categories for search, but not for upload. by now off.
         with open(categories_filepath, 'w') as s:
             json.dump(categories, s, indent=4)
-    except:
-        # print('category fetching failed')
+        tasks_queue.add_task((load_categories, ()))
+    except Exception as e:
+        utils.p('category fetching failed')
+        utils.p(e)
         if not os.path.exists(categories_filepath):
             source_path = paths.get_addon_file(subpath='data' + os.sep + 'categories.json')
             shutil.copy(source_path, categories_filepath)

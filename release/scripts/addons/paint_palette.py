@@ -23,7 +23,7 @@ bl_info = {
     "name": "Paint Palettes",
     "author": "Dany Lebel (Axon D)",
     "version": (0, 9, 4),
-    "blender": (2, 63, 0),
+    "blender": (2, 80, 0),
     "location": "Image Editor and 3D View > Any Paint mode > Color Palette or Weight Palette panel",
     "description": "Palettes for color and weight paint modes",
     "warning": "",
@@ -517,8 +517,8 @@ class BrushButtonsPanel():
 
 class PaintPanel():
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
-    bl_category = 'Tools'
+    bl_region_type = 'UI'
+    bl_category = 'Paint'
 
     @staticmethod
     def paint_settings(context):

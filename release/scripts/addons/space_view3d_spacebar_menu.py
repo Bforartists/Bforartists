@@ -20,7 +20,7 @@
 bl_info = {
     "name": "Dynamic Context Menu",
     "author": "meta-androcto",
-    "version": (1, 9, 1),
+    "version": (1, 9, 3),
     "blender": (2, 80, 0),
     "location": "View3D > Spacebar",
     "description": "Object Mode Context Sensitive Spacebar Menu",
@@ -79,8 +79,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             UseSeparator(self, context)
             layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
             layout.prop(view, "show_region_ui", icon='MENU_PANEL')
-            if context.gpencil_data and context.gpencil_data.use_stroke_edit_mode:
-                layout.menu("VIEW3D_MT_Edit_Gpencil", icon='GREASEPENCIL')
+
         else:
 # Mesh Object Mode #
 
@@ -91,6 +90,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
@@ -105,8 +105,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_GroupMenu", icon='GROUP')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_object_context_menu", text="Specials", icon='SOLO_OFF')
-                if context.gpencil_data and context.gpencil_data.use_stroke_edit_mode:
-                    layout.menu("VIEW3D_MT_Edit_Gpencil", icon='GREASEPENCIL')
+#                if context.gpencil_data and context.gpencil_data.use_stroke_edit_mode:
+#                    layout.menu("VIEW3D_MT_Edit_Gpencil", icon='GREASEPENCIL')
                 layout.menu("VIEW3D_MT_Camera_Options", icon='OUTLINER_OB_CAMERA')
                 layout.operator_menu_enum("object.modifier_add", "type", icon='MODIFIER')
                 layout.operator_menu_enum("object.constraint_add",
@@ -115,7 +115,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -127,6 +126,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Edit_Mesh", icon='RESTRICT_SELECT_OFF')
                 layout.menu("VIEW3D_MT_Edit_Multi", icon='VERTEXSEL')
@@ -149,7 +149,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_edit_mesh_delete", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -159,6 +158,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
 
                 layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Sculpts", icon='SCULPTMODE_HLT')
@@ -169,7 +169,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Sculpt_Specials", icon='SOLO_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -179,6 +178,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
 
                 layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 UseSeparator(self, context)
     #            layout.menu("VIEW3D_MT_Brush_Settings", icon='BRUSH_DATA')
@@ -187,7 +187,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Vertex_Colors", icon='GROUP_VCOL')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -197,6 +196,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
 
                 layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Paint_Weights", icon='WPAINT_HLT')
@@ -205,7 +205,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                             text="Weight Paint Tool", icon='BRUSH_TEXMASK')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -215,13 +214,13 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
 
                 layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
     #            layout.menu("VIEW3D_MT_Brush_Settings", icon='BRUSH_DATA')
                 layout.menu("VIEW3D_MT_Brush_Selection",
                             text="Texture Paint Tool", icon='SCULPTMODE_HLT')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -234,6 +233,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
@@ -257,7 +257,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -269,6 +268,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Edit_Curve",
                             icon='RESTRICT_SELECT_OFF')
@@ -289,7 +289,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                                 icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -302,6 +301,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
@@ -324,7 +324,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -336,6 +335,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Edit_Surface", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
@@ -356,7 +356,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                                 icon='CANCEL')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -369,6 +368,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
@@ -390,7 +390,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -402,6 +401,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_SelectMetaball", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
@@ -421,7 +421,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                                 icon='CANCEL')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -434,6 +433,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.operator("view3d.interactive_mode_text", icon='VIEW3D')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
@@ -457,8 +457,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                # New Entry For Switching to Editmode
-                layout.operator("view3d.interactive_mode_text", icon='VIEW3D')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -472,13 +470,13 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.operator("object.editmode_toggle", text="Enter Object Mode",
+                                icon='OBJECT_DATA')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_select_edit_text", icon='VIEW3D')
                 layout.menu("VIEW3D_MT_edit_font", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.operator("object.editmode_toggle", text="Enter Object Mode",
-                                icon='OBJECT_DATA')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -557,6 +555,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_Object_Interactive_Armature", icon='VIEW3D')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
@@ -579,7 +578,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_Object_Interactive_Armature", icon='VIEW3D')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -591,6 +589,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_Object_Interactive_Armature", icon='VIEW3D')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Edit_Armature",
                             icon='RESTRICT_SELECT_OFF')
@@ -614,7 +613,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                                 icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_Object_Interactive_Armature", icon='VIEW3D')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -628,6 +626,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_Object_Interactive_Armature", icon='VIEW3D')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Pose", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
@@ -652,7 +651,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                                           "type", text="Add Constraint", icon='CONSTRAINT_BONE')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_Object_Interactive_Armature", icon='VIEW3D')
+
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -665,6 +664,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
@@ -688,7 +688,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -700,6 +699,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Edit_Lattice",
                             icon='RESTRICT_SELECT_OFF')
@@ -716,7 +716,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("lattice.make_regular")
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
@@ -792,6 +791,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_Object_Interactive_Mode", icon='VIEW3D')
                 layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Particle",
                             icon='RESTRICT_SELECT_OFF')
@@ -813,26 +813,133 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                layout.menu("VIEW3D_MT_Object_Interactive_Mode", icon='VIEW3D')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
                 layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
-    # Grease Pencil Menu #
-            if obj and obj.type == 'GPENCIL':
+    # Grease Pencil Object Mode #
+            if obj and obj.type == 'GPENCIL' and obj.mode in {'OBJECT'}:
                 layout.operator_context = 'INVOKE_REGION_WIN'
                 layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
                 layout.menu("VIEW3D_MT_Animation_Player",
                             text="Animation", icon='PLAY')
                 UseSeparator(self, context)
-                layout.menu("INFO_MT_area", icon='WORKSPACE')
+                layout.menu("VIEW3D_MT_interactive_mode_gpencil", icon='EDITMODE_HLT')
+                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
+                UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
-                layout.menu("VIEW3D_MT_View_Directions", icon='ZOOM_ALL')
-                layout.menu("VIEW3D_MT_View_Navigation", icon='PIVOT_BOUNDBOX')
+                layout.menu("VIEW3D_MT_Object", icon='VIEW3D')
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_TransformMenu", icon='EMPTY_ARROWS')
+                layout.menu("VIEW3D_MT_MirrorMenu", icon='MOD_MIRROR')
+                layout.menu("VIEW3D_MT_CursorMenu", icon='PIVOT_CURSOR')
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_ParentMenu", icon='PIVOT_ACTIVE')
+                layout.menu("VIEW3D_MT_GroupMenu", icon='GROUP')
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_object_context_menu", text="Specials", icon='SOLO_OFF')
+                layout.menu("VIEW3D_MT_Camera_Options", icon='OUTLINER_OB_CAMERA')
+                UseSeparator(self, context)
+                layout.operator_menu_enum("object.gpencil_modifier_add", "type", icon='MODIFIER')
+                layout.operator_menu_enum("object.shaderfx_add", "type", icon ='SHADERFX')
+                layout.operator_menu_enum("object.constraint_add",
+                                          "type", text="Add Constraint", icon='CONSTRAINT')
+                UseSeparator(self, context)
+                layout.operator("object.delete", text="Delete Object", icon='X')
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
+                UseSeparator(self, context)
+                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
+
+    # Grease Pencil Edit Mode #
+            if obj and obj.type == 'GPENCIL' and obj.mode in {'EDIT_GPENCIL'}:
+                layout.operator_context = 'INVOKE_REGION_WIN'
+
+                layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
+                layout.menu("VIEW3D_MT_Animation_Player",
+                            text="Animation", icon='PLAY')
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_interactive_mode_gpencil", icon='EDITMODE_HLT')
+                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_select_gpencil", icon='RESTRICT_SELECT_OFF')
+                layout.menu("VIEW3D_MT_edit_gpencil", icon='GREASEPENCIL')
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
+                UseSeparator(self, context)
                 layout.operator("view3d.snap_cursor_to_center",
-                                text="Cursor to World Origin")
+                                text="Cursor to World Origin", icon='CURSOR')
                 layout.operator("view3d.snap_cursor_to_grid",
-                                text="Cursor to Grid")
+                                text="Cursor to Grid", icon='SNAP_GRID')
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
+                UseSeparator(self, context)
+                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
+
+    # Grease Pencil Sculpt Mode #
+            if obj and obj.type == 'GPENCIL' and obj.mode in {'SCULPT_GPENCIL'}:
+                layout.operator_context = 'INVOKE_REGION_WIN'
+
+                layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
+                layout.menu("VIEW3D_MT_Animation_Player",
+                            text="Animation", icon='PLAY')
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_interactive_mode_gpencil", icon='EDITMODE_HLT')
+                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_select_gpencil", icon='RESTRICT_SELECT_OFF')
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
+                UseSeparator(self, context)
+                layout.operator("view3d.snap_cursor_to_center",
+                                text="Cursor to World Origin", icon='CURSOR')
+                layout.operator("view3d.snap_cursor_to_grid",
+                                text="Cursor to Grid", icon='SNAP_GRID')
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
+                UseSeparator(self, context)
+                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
+
+    # Grease Pencil Paint Mode #
+            if obj and obj.type == 'GPENCIL' and obj.mode in {'PAINT_GPENCIL'}:
+                layout.operator_context = 'INVOKE_REGION_WIN'
+
+                layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
+                layout.menu("VIEW3D_MT_Animation_Player",
+                            text="Animation", icon='PLAY')
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_interactive_mode_gpencil", icon='EDITMODE_HLT')
+                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_paint_gpencil", icon='RESTRICT_SELECT_OFF')
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
+                UseSeparator(self, context)
+                layout.operator("view3d.snap_cursor_to_center",
+                                text="Cursor to World Origin", icon='CURSOR')
+                layout.operator("view3d.snap_cursor_to_grid",
+                                text="Cursor to Grid", icon='SNAP_GRID')
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
+                UseSeparator(self, context)
+                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
+
+    # Grease Pencil Weight Mode #
+            if obj and obj.type == 'GPENCIL' and obj.mode in {'WEIGHT_GPENCIL'}:
+                layout.operator_context = 'INVOKE_REGION_WIN'
+
+                layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
+                layout.menu("VIEW3D_MT_Animation_Player",
+                            text="Animation", icon='PLAY')
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_interactive_mode_gpencil", icon='EDITMODE_HLT')
+                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_weight_gpencil", icon="GPBRUSH_WEIGHT")
+                UseSeparator(self, context)
+                layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
+                UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
@@ -853,9 +960,10 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
                 UseSeparator(self, context)
                 layout.operator("view3d.snap_cursor_to_center",
-                                text="Cursor to World Origin")
+                                text="Cursor to World Origin", icon='CURSOR')
                 layout.operator("view3d.snap_cursor_to_grid",
-                                text="Cursor to Grid")
+                                text="Cursor to Grid", icon='SNAP_GRID')
+                UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
                 UseSeparator(self, context)
                 layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
@@ -1105,8 +1213,8 @@ class VIEW3D_MT_InteractiveMode(Menu):
         if obj and psys_items:
             layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Particle Edit",
                             icon="PARTICLEMODE").mode = "PARTICLE_EDIT"
-        if context.gpencil_data:
-            layout.operator("view3d.interactive_mode_grease_pencil", icon="GREASEPENCIL")
+#        if context.gpencil_data:
+#            layout.operator("view3d.interactive_mode_grease_pencil", icon="GREASEPENCIL")
 
 
 # ********** Object Armature Interactive Mode **********
@@ -1121,8 +1229,8 @@ class VIEW3D_MT_InteractiveModeArmature(Menu):
         layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Object", icon="OBJECT_DATAMODE").mode = "OBJECT"
         layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Edit", icon="EDITMODE_HLT").mode = "EDIT"
         layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Pose", icon="POSE_HLT").mode = "POSE"
-        if context.gpencil_data:
-            layout.operator("view3d.interactive_mode_grease_pencil", icon="GREASEPENCIL")
+#        if context.gpencil_data:
+#            layout.operator("view3d.interactive_mode_grease_pencil", icon="GREASEPENCIL")
 
 
 # ********** Interactive Mode Other **********
@@ -1135,8 +1243,6 @@ class VIEW3D_MT_InteractiveModeOther(Menu):
         layout = self.layout
         layout.operator("object.editmode_toggle", text="Edit/Object Toggle",
                         icon='OBJECT_DATA')
-        if context.gpencil_data:
-            layout.operator("view3d.interactive_mode_grease_pencil", icon="GREASEPENCIL")
 
 
 # ********** Grease Pencil Interactive Mode **********
@@ -1156,7 +1262,21 @@ class VIEW3D_OT_Interactive_Mode_Grease_Pencil(Operator):
             self.report({'WARNING'}, "It is not possible to enter into the interactive mode")
         return {'FINISHED'}
 
+class VIEW3D_MT_Interactive_Mode_GPencil(Menu):
+    bl_idname = "VIEW3D_MT_interactive_mode_gpencil"
+    bl_label = "Interactive Mode"
+    bl_description = "Menu of objects interactive mode"
 
+    def draw(self, context):
+        toolsettings = context.tool_settings
+        layout = self.layout
+        layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Object", icon="OBJECT_DATAMODE").mode = "OBJECT"
+        layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Edit", icon="EDITMODE_HLT").mode = "EDIT_GPENCIL"
+        layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Sculpt", icon="SCULPTMODE_HLT").mode = "SCULPT_GPENCIL"
+        layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Draw", icon="GREASEPENCIL").mode = "PAINT_GPENCIL"
+        layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Weight Paint", icon="WPAINT_HLT").mode = "WEIGHT_GPENCIL"
+
+# currently unused
 class VIEW3D_MT_Edit_Gpencil(Menu):
     bl_label = "GPencil"
 
@@ -3139,6 +3259,7 @@ classes = (
     VIEW3D_MT_Vertex_Colors,
     VIEW3D_MT_Paint_Weights,
     VIEW3D_OT_Interactive_Mode_Grease_Pencil,
+    VIEW3D_MT_Interactive_Mode_GPencil,
     VIEW3D_MT_Edit_Gpencil,
     VIEW3D_OT_MultieditVertex,
     VIEW3D_OT_MultieditEdge,

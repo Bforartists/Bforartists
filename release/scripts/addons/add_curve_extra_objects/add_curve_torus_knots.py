@@ -711,15 +711,8 @@ class torus_knot_plus(Operator, AddObjectHelper):
         # update align matrix
         self.align_matrix = align_matrix(self, context)
 
-        # turn off undo
-        #undo = bpy.context.preferences.edit.use_global_undo
-        #bpy.context.preferences.edit.use_global_undo = False
-
         # create the curve
         create_torus_knot(self, context)
-
-        # restore pre operator undo state
-        #bpy.context.preferences.edit.use_global_undo = undo
 
         return {'FINISHED'}
 

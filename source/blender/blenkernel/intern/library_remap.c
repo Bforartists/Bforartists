@@ -287,6 +287,13 @@ static int foreach_libblock_remap_callback(void *user_data, ID *id_self, ID **id
       if (!is_indirect || is_obj_proxy) {
         id_remap_data->status |= ID_REMAP_IS_LINKED_DIRECT;
       }
+      /* We need to remap proxy_from pointer of remapped proxy... sigh. */
+      if (is_obj_proxy && new_id != NULL) {
+        Object *ob = (Object *)id;
+        if (ob->proxy == (Object *)new_id) {
+          ob->proxy->proxy_from = ob;
+        }
+      }
     }
   }
 
@@ -367,6 +374,11 @@ static void libblock_remap_data_postprocess_collection_update(Main *bmain,
      * whole existing collections for NULL pointers.
      * I'd consider optimizing that whole collection remapping process a TODO for later. */
     BKE_collections_child_remove_nulls(bmain, NULL /*old_collection*/);
+  }
+  else {
+    /* Temp safe fix, but a "tad" brute force... We should probably be able to use parents from
+     * old_collection instead? */
+    BKE_main_collections_parent_relations_rebuild(bmain);
   }
 
   BKE_main_collection_sync_remap(bmain);

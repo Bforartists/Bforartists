@@ -1661,7 +1661,12 @@ static void WIDGETGROUP_gizmo_setup(const bContext *C, wmGizmoGroup *gzgroup)
     else if (tref && STREQ(tref->idname, "builtin.scale")) {
       ggd->twtype |= V3D_GIZMO_SHOW_OBJECT_SCALE;
     }
+    else if (tref && STREQ(tref->idname, "builtin.transform")) {
+      ggd->twtype = V3D_GIZMO_SHOW_OBJECT_TRANSLATE | V3D_GIZMO_SHOW_OBJECT_ROTATE |
+                    V3D_GIZMO_SHOW_OBJECT_SCALE;
+    }
     else {
+      /* This is also correct logic for 'builtin.transform', no special check needed. */
       /* Setup all gizmos, they can be toggled via 'ToolSettings.gizmo_flag' */
       ggd->twtype = V3D_GIZMO_SHOW_OBJECT_TRANSLATE | V3D_GIZMO_SHOW_OBJECT_ROTATE |
                     V3D_GIZMO_SHOW_OBJECT_SCALE;
@@ -1971,12 +1976,12 @@ static bool WIDGETGROUP_gizmo_poll_tool(const struct bContext *C, struct wmGizmo
   return true;
 }
 
-/* Expose as multiple gizmos so tools use one, persistant context another.
+/* Expose as multiple gizmos so tools use one, persistent context another.
  * Needed because they use different options which isn't so simple to dynamically update. */
 
 void VIEW3D_GGT_xform_gizmo(wmGizmoGroupType *gzgt)
 {
-  gzgt->name = "Transform Gizmo";
+  gzgt->name = "3D View: Transform Gizmo";
   gzgt->idname = "VIEW3D_GGT_xform_gizmo";
 
   gzgt->flag = WM_GIZMOGROUPTYPE_3D;
@@ -1990,12 +1995,26 @@ void VIEW3D_GGT_xform_gizmo(wmGizmoGroupType *gzgt)
   gzgt->message_subscribe = WIDGETGROUP_gizmo_message_subscribe;
   gzgt->draw_prepare = WIDGETGROUP_gizmo_draw_prepare;
   gzgt->invoke_prepare = WIDGETGROUP_gizmo_invoke_prepare;
+
+  static const EnumPropertyItem rna_enum_gizmo_items[] = {
+      {V3D_GIZMO_SHOW_OBJECT_TRANSLATE, "TRANSLATE", 0, "Move", ""},
+      {V3D_GIZMO_SHOW_OBJECT_ROTATE, "ROTATE", 0, "Rotate", ""},
+      {V3D_GIZMO_SHOW_OBJECT_SCALE, "SCALE", 0, "Scale", ""},
+      {0, "NONE", 0, "None", ""},
+      {0, NULL, 0, NULL, NULL},
+  };
+  RNA_def_enum(gzgt->srna,
+               "drag_action",
+               rna_enum_gizmo_items,
+               V3D_GIZMO_SHOW_OBJECT_TRANSLATE,
+               "Drag Action",
+               "");
 }
 
 /** Only poll, flag & gzmap_params differ. */
 void VIEW3D_GGT_xform_gizmo_context(wmGizmoGroupType *gzgt)
 {
-  gzgt->name = "Transform Gizmo Context";
+  gzgt->name = "3D View: Transform Gizmo Context";
   gzgt->idname = "VIEW3D_GGT_xform_gizmo_context";
 
   gzgt->flag = WM_GIZMOGROUPTYPE_3D | WM_GIZMOGROUPTYPE_PERSISTENT;

@@ -18,8 +18,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import bpy
 from bpy.props import (
@@ -92,7 +92,7 @@ class MUV_OT_UnwrapConstraint(bpy.types.Operator):
     Operation class: Unwrap with constrain UV coordinate
     """
 
-    bl_idname = "uv.muv_ot_unwrap_constraint"
+    bl_idname = "uv.muv_unwrap_constraint"
     bl_label = "Unwrap Constraint"
     bl_description = "Unwrap while keeping uv coordinate"
     bl_options = {'REGISTER', 'UNDO'}

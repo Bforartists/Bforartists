@@ -1336,6 +1336,7 @@ def blen_read_material(fbx_tmpl, fbx_obj, settings):
 
     fbx_props = (elem_find_first(fbx_obj, b'Properties70'),
                  elem_find_first(fbx_tmpl, b'Properties70', fbx_elem_nil))
+    fbx_props_no_template = (fbx_props[0], fbx_elem_nil)
 
     ma_wrap = node_shader_utils.PrincipledBSDFWrapper(ma, is_readonly=False, use_nodes=True)
     ma_wrap.base_color = elem_props_get_color_rgb(fbx_props, b'DiffuseColor', const_color_white)
@@ -1354,9 +1355,14 @@ def blen_read_material(fbx_tmpl, fbx_obj, settings):
     #       alpha = 1 - TransparentColor.r
     #
     # Until further info, let's assume this is correct way to do, hence the following code for TransparentColor.
+    # However, there are some cases (from 3DSMax, see T65065), where we do have TransparencyFactor only defined
+    # in the template to 0.0, and then materials defining TransparentColor to pure white (1.0, 1.0, 1.0),
+    # and setting alpha value in Opacity... try to cope with that too. :((((
     alpha = 1.0 - elem_props_get_number(fbx_props, b'TransparencyFactor', 0.0)
     if (alpha == 1.0 or alpha == 0.0):
-        alpha = 1.0 - elem_props_get_color_rgb(fbx_props, b'TransparentColor', const_color_black)[0]
+        alpha = elem_props_get_number(fbx_props_no_template, b'Opacity', None)
+        if alpha is None:
+            alpha = 1.0 - elem_props_get_color_rgb(fbx_props, b'TransparentColor', const_color_black)[0]
     ma_wrap.alpha = alpha
     ma_wrap.metallic = elem_props_get_number(fbx_props, b'ReflectionFactor', 0.0)
     # We have no metallic (a.k.a. reflection) color...

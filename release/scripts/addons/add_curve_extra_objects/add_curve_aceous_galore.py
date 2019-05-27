@@ -1433,10 +1433,6 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
         return context.scene is not None
 
     def execute(self, context):
-        # turn off undo
-        undo = context.preferences.edit.use_global_undo
-        context.preferences.edit.use_global_undo = False
-
         # deal with 2D - 3D curve differences
         if self.ProfileType in ['Helix', 'Cycloid', 'Noise']:
             self.shape = '3D'
@@ -1459,9 +1455,6 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
         # main function
         self.align_matrix = align_matrix(context, self.startlocation)
         main(context, self, self.align_matrix or Matrix())
-
-        # restore pre operator undo state
-        context.preferences.edit.use_global_undo = undo
 
         return {'FINISHED'}
 

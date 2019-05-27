@@ -731,7 +731,7 @@ class LayerInit(bpy.types.Operator):
 
     bl_idname = "pose.rigify_layer_init"
     bl_label = "Add Rigify Layers"
-    bl_options = {'UNDO'}
+    bl_options = {'UNDO', 'INTERNAL'}
 
     def execute(self, context):
         obj = context.object
@@ -748,21 +748,17 @@ class Generate(bpy.types.Operator):
 
     bl_idname = "pose.rigify_generate"
     bl_label = "Rigify Generate Rig"
-    bl_options = {'UNDO'}
+    bl_options = {'UNDO', 'INTERNAL'}
     bl_description = 'Generates a rig from the active metarig armature'
 
     def execute(self, context):
         import importlib
         importlib.reload(generate)
 
-        use_global_undo = context.preferences.edit.use_global_undo
-        context.preferences.edit.use_global_undo = False
         try:
             generate.generate_rig(context, context.object)
         except MetarigError as rig_exception:
             rigify_report_exception(self, rig_exception)
-        finally:
-            context.preferences.edit.use_global_undo = use_global_undo
 
         return {'FINISHED'}
 
@@ -788,7 +784,7 @@ class SwitchToLegacy(bpy.types.Operator):
     bl_idname = "pose.rigify_switch_to_legacy"
     bl_label = "Legacy Mode will disable Rigify new features"
     bl_description = 'Switches Rigify to Legacy Mode'
-    bl_options = {'UNDO'}
+    bl_options = {'UNDO', 'INTERNAL'}
 
     def invoke(self, context, event):
         return context.window_manager.invoke_confirm(self, event)
@@ -803,7 +799,7 @@ class Sample(bpy.types.Operator):
 
     bl_idname = "armature.metarig_sample_add"
     bl_label = "Add a sample metarig for a rig type"
-    bl_options = {'UNDO'}
+    bl_options = {'UNDO', 'INTERNAL'}
 
     metarig_type: StringProperty(
         name="Type",
@@ -813,8 +809,6 @@ class Sample(bpy.types.Operator):
 
     def execute(self, context):
         if context.mode == 'EDIT_ARMATURE' and self.metarig_type != "":
-            use_global_undo = context.preferences.edit.use_global_undo
-            context.preferences.edit.use_global_undo = False
             try:
                 rig = rig_lists.rigs[self.metarig_type]["module"]
                 create_sample = rig.create_sample
@@ -823,7 +817,6 @@ class Sample(bpy.types.Operator):
             else:
                 create_sample(context.active_object)
             finally:
-                context.preferences.edit.use_global_undo = use_global_undo
                 bpy.ops.object.mode_set(mode='EDIT')
 
         return {'FINISHED'}
@@ -1218,6 +1211,7 @@ class OBJECT_OT_IK2FK(bpy.types.Operator):
     bl_idname = "rigify.ik2fk"
     bl_label = "IK2FK"
     bl_description = "Snaps IK limb on FK"
+    bl_options = {'INTERNAL'}
 
     def execute(self,context):
         rig = context.object
@@ -1233,6 +1227,7 @@ class OBJECT_OT_FK2IK(bpy.types.Operator):
     bl_idname = "rigify.fk2ik"
     bl_label = "FK2IK"
     bl_description = "Snaps FK limb on IK"
+    bl_options = {'INTERNAL'}
 
     def execute(self,context):
         rig = context.object
@@ -1247,6 +1242,7 @@ class OBJECT_OT_TransferFKtoIK(bpy.types.Operator):
     bl_idname = "rigify.transfer_fk_to_ik"
     bl_label = "Transfer FK anim to IK"
     bl_description = "Transfer FK animation to IK bones"
+    bl_options = {'INTERNAL'}
 
     def execute(self, context):
         rig = context.object
@@ -1262,6 +1258,7 @@ class OBJECT_OT_TransferIKtoFK(bpy.types.Operator):
     bl_idname = "rigify.transfer_ik_to_fk"
     bl_label = "Transfer IK anim to FK"
     bl_description = "Transfer IK animation to FK bones"
+    bl_options = {'INTERNAL'}
 
     def execute(self, context):
         rig = context.object
@@ -1275,25 +1272,20 @@ class OBJECT_OT_ClearAnimation(bpy.types.Operator):
     bl_idname = "rigify.clear_animation"
     bl_label = "Clear Animation"
     bl_description = "Clear Animation For FK or IK Bones"
+    bl_options = {'INTERNAL'}
 
     anim_type: StringProperty()
 
     def execute(self, context):
+        rig = context.object
+        scn = context.scene
+        if not rig.animation_data:
+            return {'FINISHED'}
+        act = rig.animation_data.action
+        if not act:
+            return {'FINISHED'}
 
-        use_global_undo = context.preferences.edit.use_global_undo
-        context.preferences.edit.use_global_undo = False
-        try:
-            rig = context.object
-            scn = context.scene
-            if not rig.animation_data:
-                return {'FINISHED'}
-            act = rig.animation_data.action
-            if not act:
-                return {'FINISHED'}
-
-            clearAnimation(act, self.anim_type, names=get_limb_generated_names(rig))
-        finally:
-            context.preferences.edit.use_global_undo = use_global_undo
+        clearAnimation(act, self.anim_type, names=get_limb_generated_names(rig))
         return {'FINISHED'}
 
 
@@ -1301,6 +1293,7 @@ class OBJECT_OT_Rot2Pole(bpy.types.Operator):
     bl_idname = "rigify.rotation_pole"
     bl_label = "Rotation - Pole toggle"
     bl_description = "Toggles IK chain between rotation and pole target"
+    bl_options = {'INTERNAL'}
 
     bone_name: StringProperty(default='')
     window: StringProperty(default='ALL')
