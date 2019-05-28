@@ -522,7 +522,7 @@ class SEQUENCER_MT_add(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.effect_strip_add", text="Adjustment Layer", icon='NODE_DISPLACE').type = 'ADJUSTMENT'
+        layout.operator("sequencer.effect_strip_add", text="Adjustment Layer", icon='MOD_DISPLACE').type = 'ADJUSTMENT'
 
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.menu("SEQUENCER_MT_add_effect")
@@ -576,7 +576,7 @@ class SEQUENCER_MT_add_effect(Menu):
         col.operator("sequencer.effect_strip_add", text="Subtract", icon='NODE_INVERT').type = 'SUBTRACT'
         col.operator("sequencer.effect_strip_add", text="Multiply", icon='SEQ_MULTIPLY').type = 'MULTIPLY'
         col.operator("sequencer.effect_strip_add", text="Over Drop", icon='SEQ_ALPHA_OVER').type = 'OVER_DROP'
-        col.operator("sequencer.effect_strip_add", text="Alpha Over", icon='NODE_ALPHA').type = 'ALPHA_OVER'
+        col.operator("sequencer.effect_strip_add", text="Alpha Over", icon='IMAGE_ALPHA').type = 'ALPHA_OVER'
         col.operator("sequencer.effect_strip_add", text="Alpha Under", icon='NODE_HOLDOUTSHADER').type = 'ALPHA_UNDER'
         col.operator("sequencer.effect_strip_add", text="Color Mix", icon='NODE_MIXRGB').type = 'COLORMIX'
         col.enabled = selected_sequences_len(context) >= 2
@@ -593,7 +593,7 @@ class SEQUENCER_MT_add_effect(Menu):
 
         col.separator()
 
-        col.operator("sequencer.effect_strip_add", text="Glow", icon='NODE_LAMP').type = 'GLOW'
+        col.operator("sequencer.effect_strip_add", text="Glow", icon='LAMP_SUN').type = 'GLOW'
         col.operator("sequencer.effect_strip_add", text="Gaussian Blur", icon='NODE_BLUR').type = 'GAUSSIAN_BLUR'
         col.enabled = selected_sequences_len(context) != 0
 
@@ -630,7 +630,7 @@ class SEQUENCER_MT_strip_input(Menu):
 
         layout.operator("sequencer.reload", text="Reload Strips", icon = "SEQ_RELOAD_STRIPS")
         layout.operator("sequencer.reload", text="Reload Strips and Adjust Length", icon = "SEQ_RELOAD_ADJUST_LENGTH").adjust_length = True
-        prop = layout.operator("sequencer.change_path", text="Change Path/Files", icon = "NODE_MOVIE")
+        prop = layout.operator("sequencer.change_path", text="Change Path/Files", icon = "FILE_MOVIE")
         layout.operator("sequencer.swap_data", text="Swap Data", icon = "SEQ_SWAP_DATA")
 
         if strip:
