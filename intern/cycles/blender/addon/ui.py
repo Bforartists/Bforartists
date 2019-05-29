@@ -814,6 +814,7 @@ class CYCLES_RENDER_PT_passes_light(CyclesButtonsPanel, Panel):
     bl_label = "Light"
     bl_context = "view_layer"
     bl_parent_id = "CYCLES_RENDER_PT_passes"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -873,6 +874,7 @@ class CYCLES_RENDER_PT_passes_crypto(CyclesButtonsPanel, Panel):
     bl_label = "Cryptomatte"
     bl_context = "view_layer"
     bl_parent_id = "CYCLES_RENDER_PT_passes"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         import _cycles
