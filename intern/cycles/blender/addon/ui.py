@@ -167,17 +167,23 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
         layout.use_property_decorate = False
 
         layout.prop(cscene, "progressive")
+        
+        col = layout.column()
 
         if cscene.progressive == 'PATH' or use_branched_path(context) is False:
-            col = layout.column(align=True)
             col.prop(cscene, "samples", text="Render")
             col.prop(cscene, "preview_samples", text="Viewport")
-
+            col = layout.column()
+            col.use_property_split = False
+            col.prop(cscene, "use_square_samples")
             draw_samples_info(layout, context)
+            
         else:
-            col = layout.column(align=True)
             col.prop(cscene, "aa_samples", text="Render")
             col.prop(cscene, "preview_aa_samples", text="Viewport")
+            col = layout.column()
+            col.use_property_split = False
+            col.prop(cscene, "use_square_samples")
 
 
 class CYCLES_RENDER_PT_sampling_sub_samples(CyclesButtonsPanel, Panel):
@@ -231,12 +237,6 @@ class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
         row.prop(cscene, "use_animated_seed", text="", icon='TIME')
 
         layout.prop(cscene, "sampling_pattern", text="Pattern")
-        
-        col = layout.column()
-        layout.use_property_split = False
-        layout.prop(cscene, "use_square_samples")
-
-        layout.separator()
 
         col = layout.column(align=True)
         col.prop(cscene, "light_sampling_threshold", text="Light Threshold")
