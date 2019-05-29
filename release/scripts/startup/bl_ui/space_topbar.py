@@ -38,8 +38,6 @@ class TOPBAR_HT_upper_bar(Header):
         window = context.window
         screen = context.screen
 
-        layout.operator("wm.splash", text="", icon='BLENDER', emboss=False)
-
         TOPBAR_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.separator()
