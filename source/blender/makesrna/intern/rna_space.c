@@ -2501,7 +2501,7 @@ static void rna_def_space_generic_show_region_toggles(StructRNA *srna, int regio
   }
   if (region_type_mask & (1 << RGN_TYPE_TOOLS)) {
     region_type_mask &= ~(1 << RGN_TYPE_TOOLS);
-    DEF_SHOW_REGION_PROPERTY(show_region_toolbar, "Toolbar", "");
+    DEF_SHOW_REGION_PROPERTY(show_region_toolbar, "Tool Shelf", ""); /*bfa - changed toolbar to tool shelf. Our tooblar is in the header*/
   }
   if (region_type_mask & (1 << RGN_TYPE_UI)) {
     region_type_mask &= ~(1 << RGN_TYPE_UI);
