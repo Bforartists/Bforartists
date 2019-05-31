@@ -264,10 +264,6 @@ class NLA_MT_edit(Menu):
             layout.operator("nla.tweakmode_enter", text="Start Editing Stashed Action", icon = "ACTION_TWEAK").isolate_action = True
             layout.operator("nla.tweakmode_enter", text="Start Tweaking Strip Actions", icon = "ACTION_TWEAK")
 
-        layout.separator()
-
-        layout.operator("anim.channels_find", icon = "VIEWZOOM")
-
 
 class NLA_MT_add(Menu):
     bl_label = "Add"
