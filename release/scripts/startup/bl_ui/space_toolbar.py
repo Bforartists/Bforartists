@@ -158,6 +158,10 @@ class TOOLBAR_MT_file(Menu):
             row = layout.row(align=True)
 
             row.operator("wm.read_homefile", text="", icon='NEW')
+            
+            row = layout.row(align=True)
+            
+            row.menu("TOPBAR_MT_file_new", text="", icon='FILE_NEW')
 
             row = layout.row(align=True)
 
