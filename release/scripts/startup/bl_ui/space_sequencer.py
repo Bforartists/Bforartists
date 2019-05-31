@@ -588,7 +588,7 @@ class SEQUENCER_MT_add_effect(Menu):
         layout.separator()
 
         col = layout.column()
-        col.operator("sequencer.effect_strip_add", text="Transform", icon='NODE_MOVE').type = 'TRANSFORM'
+        col.operator("sequencer.effect_strip_add", text="Transform", icon='TRANSFORM_MOVE').type = 'TRANSFORM'
         col.operator("sequencer.effect_strip_add", text="Speed Control", icon='NODE_CURVE_TIME').type = 'SPEED'
 
         col.separator()
@@ -609,8 +609,8 @@ class SEQUENCER_MT_strip_transform(Menu):
         layout.operator("sequencer.slip", text="Slip Strip Contents", icon = "SEQ_SLIP_CONTENTS")
 
         layout.separator()
-        layout.operator("sequencer.snap")
-        layout.operator("sequencer.offset_clear")
+        layout.operator("sequencer.snap",)
+        layout.operator("sequencer.offset_clear",)
 
         layout.separator()
         layout.operator("sequencer.swap", text="Swap Strip Left", icon = "SEQ_SWAP_LEFT").side = 'LEFT'
