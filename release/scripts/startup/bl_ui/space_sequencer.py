@@ -609,8 +609,8 @@ class SEQUENCER_MT_strip_transform(Menu):
         layout.operator("sequencer.slip", text="Slip Strip Contents", icon = "SEQ_SLIP_CONTENTS")
 
         layout.separator()
-        layout.operator("sequencer.snap",)
-        layout.operator("sequencer.offset_clear",)
+        layout.operator("sequencer.snap", icon = "SEQ_SNAP_STRIP")
+        layout.operator("sequencer.offset_clear", icon = "SEQ_CLEAR_OFFSET")
 
         layout.separator()
         layout.operator("sequencer.swap", text="Swap Strip Left", icon = "SEQ_SWAP_LEFT").side = 'LEFT'
@@ -658,7 +658,7 @@ class SEQUENCER_MT_strip_lock_mute(Menu):
         layout.operator("sequencer.mute", icon='RESTRICT_VIEW_ON').unselected = False
         layout.operator("sequencer.unmute", icon='RESTRICT_VIEW_OFF').unselected = False
         layout.operator("sequencer.mute", text="Mute Unselected Strips", icon='HIDE_UNSELECTED').unselected = True
-        layout.operator("sequencer.unmute", text="Unmute Deselected Strips").unselected = True
+        layout.operator("sequencer.unmute", text="Unmute Deselected Strips", icon='SHOW_UNSELECTED').unselected = True
 
 
 class SEQUENCER_MT_strip_effect(Menu):
@@ -716,7 +716,7 @@ class SEQUENCER_MT_strip(Menu):
             if stype != 'SOUND':
                 layout.separator()
                 layout.operator_menu_enum("sequencer.strip_modifier_add", "type", text="Add Modifier")
-                layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection")
+                layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection", icon='ICON_COPYDOWN')
 
             if stype in {
                     'CROSS', 'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',
@@ -743,7 +743,7 @@ class SEQUENCER_MT_strip(Menu):
 
         layout.separator()
         layout.operator("sequencer.meta_make", icon='ADD_METASTRIP')
-        layout.operator("sequencer.meta_toggle", text="Toggle Meta")
+        layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon='TOGGLE_META')
 
         layout.separator()
         layout.menu("SEQUENCER_MT_strip_input")
@@ -777,8 +777,8 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.snap")
-        layout.operator("sequencer.offset_clear")
+        layout.operator("sequencer.snap", icon = "SEQ_SNAP_STRIP")
+        layout.operator("sequencer.offset_clear", icon = "SEQ_CLEAR_OFFSET")
 
         strip = act_strip(context)
 
@@ -789,7 +789,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
                 layout.separator()
                 layout.operator_menu_enum("sequencer.strip_modifier_add", "type", text="Add Modifier")
-                layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection")
+                layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection", icon='ICON_COPYDOWN')
 
                 if selected_sequences_len(context) >= 2:
                     layout.separator()
@@ -819,11 +819,11 @@ class SEQUENCER_MT_context_menu(Menu):
                 layout.separator()
                 layout.operator("sequencer.meta_make")
                 layout.operator("sequencer.meta_separate")
-                layout.operator("sequencer.meta_toggle", text="Toggle Meta")
+                layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon='TOGGLE_META')
             if stype != 'META':
                 layout.separator()
                 layout.operator("sequencer.meta_make")
-                layout.operator("sequencer.meta_toggle", text="Toggle Meta")
+                layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon='TOGGLE_META')
 
         layout.separator()
 
@@ -1886,7 +1886,7 @@ class SEQUENCER_PT_modifiers(SequencerButtonsPanel, Panel):
         layout.prop(strip, "use_linear_modifiers")
 
         layout.operator_menu_enum("sequencer.strip_modifier_add", "type")
-        layout.operator("sequencer.strip_modifier_copy")
+        layout.operator("sequencer.strip_modifier_copy", icon='ICON_COPYDOWN')
 
         for mod in strip.modifiers:
             box = layout.box()
