@@ -44,6 +44,9 @@ class TOOLBAR_HT_header(Header):
         TOOLBAR_MT_tools.hide_tools_toolbar(context, layout)
         TOOLBAR_MT_animation.hide_animation_toolbar(context, layout)
         TOOLBAR_MT_edit.hide_edit_toolbar(context, layout)
+        
+        layout.separator_spacer()
+        
         TOOLBAR_MT_misc.hide_misc_toolbar(context, layout)
 
 ########################################################################
