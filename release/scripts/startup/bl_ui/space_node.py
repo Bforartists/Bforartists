@@ -253,6 +253,8 @@ class NODE_MT_view(Menu):
     def draw(self, context):
         layout = self.layout
 
+        snode = context.space_data
+
         layout.prop(snode, "show_region_toolbar")
         layout.prop(snode, "show_region_ui")
         
