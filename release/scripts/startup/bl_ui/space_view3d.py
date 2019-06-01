@@ -3994,10 +3994,6 @@ class VIEW3D_MT_pose(Menu):
         layout.menu("VIEW3D_MT_pose_show_hide")
         layout.menu("VIEW3D_MT_bone_options_toggle", text="Bone Settings")
 
-        layout.separator()
-
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe", icon = "KEYFRAMES_INSERT")
-
 
 class VIEW3D_MT_pose_transform(Menu):
     bl_label = "Clear Transform"
