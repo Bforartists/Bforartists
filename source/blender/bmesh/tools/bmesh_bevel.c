@@ -1256,8 +1256,9 @@ static void set_profile_params(BevelParams *bp, BevVert *bv, BoundVert *bndv)
     pro->super_r = bp->pro_super_r;
     /* projection direction is direction of the edge */
     sub_v3_v3v3(pro->proj_dir, e->e->v1->co, e->e->v2->co);
-    if (e->is_rev)
+    if (e->is_rev) {
       negate_v3(pro->proj_dir);
+    }
     normalize_v3(pro->proj_dir);
     project_to_edge(e->e, co1, co2, pro->midco);
     if (DEBUG_OLD_PROJ_TO_PERP_PLANE) {
@@ -1377,31 +1378,31 @@ static void set_profile_params(BevelParams *bp, BevVert *bv, BoundVert *bndv)
   }
 }
 
-/* Move the profile plane for bndv to the plane containing e1 and e2, which share a vert */
-static void move_profile_plane(BoundVert *bndv, EdgeHalf *e1, EdgeHalf *e2)
+/* Maybe move the profile plane for bndv->ebev to the plane its profile's coa, cob and the
+ * original beveled vert, bmv. This will usually be the plane containing its adjacent
+ * non-beveled edges, but sometimes coa and cob are not on those edges.
+ */
+static void move_profile_plane(BoundVert *bndv, BMVert *bmv)
 {
   float d1[3], d2[3], no[3], no2[3], no3[3], dot2, dot3;
+  Profile *pro = &bndv->profile;
 
-  /* only do this if projecting, and e1, e2, and proj_dir are not coplanar */
-  if (is_zero_v3(bndv->profile.proj_dir)) {
+  /* only do this if projecting, and coa, cob, and proj_dir are not coplanar */
+  if (is_zero_v3(pro->proj_dir)) {
     return;
   }
-  sub_v3_v3v3(d1, e1->e->v1->co, e1->e->v2->co);
-  if (e1->is_rev)
-    negate_v3(d1);
+  sub_v3_v3v3(d1, bmv->co, pro->coa);
   normalize_v3(d1);
-  sub_v3_v3v3(d2, e2->e->v1->co, e2->e->v2->co);
-  if (e2->is_rev)
-    negate_v3(d2);
+  sub_v3_v3v3(d2, bmv->co, pro->cob);
   normalize_v3(d2);
   cross_v3_v3v3(no, d1, d2);
-  cross_v3_v3v3(no2, d1, bndv->profile.proj_dir);
-  cross_v3_v3v3(no3, d2, bndv->profile.proj_dir);
+  cross_v3_v3v3(no2, d1, pro->proj_dir);
+  cross_v3_v3v3(no3, d2, pro->proj_dir);
   if (normalize_v3(no) > BEVEL_EPSILON_BIG && normalize_v3(no2) > BEVEL_EPSILON_BIG &&
       normalize_v3(no3) > BEVEL_EPSILON_BIG) {
     dot2 = dot_v3v3(no, no2);
     dot3 = dot_v3v3(no, no3);
-    if (fabsf(dot2) < 0.95f && fabsf(dot3) < 0.95f) {
+    if (fabsf(dot2) < (1 - BEVEL_EPSILON_BIG) && fabsf(dot3) < (1 - BEVEL_EPSILON_BIG)) {
       copy_v3_v3(bndv->profile.plane_no, no);
     }
   }
@@ -1832,6 +1833,10 @@ static void bevel_extend_edge_data(BevVert *bv)
 {
   VMesh *vm = bv->vmesh;
 
+  if (vm->mesh_kind == M_TRI_FAN) {
+    return;
+  }
+
   BoundVert *bcur = bv->vmesh->boundstart, *start = bcur;
 
   do {
@@ -2177,10 +2182,11 @@ static int count_bound_vert_seams(BevVert *bv)
   }
 
   ans = 0;
-  for (i = 0; i < bv->edgecount; i++)
+  for (i = 0; i < bv->edgecount; i++) {
     if (bv->edges[i].is_seam) {
       ans++;
     }
+  }
   return ans;
 }
 
@@ -2351,7 +2357,7 @@ static void build_boundary_terminal_edge(BevelParams *bp,
     /* special case: snap profile to plane of adjacent two edges */
     v = vm->boundstart;
     BLI_assert(v->ebev != NULL);
-    move_profile_plane(v, v->next->elast, v->efirst);
+    move_profile_plane(v, bv->v);
     calculate_profile(bp, v);
   }
 

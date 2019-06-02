@@ -93,7 +93,7 @@ def backup_blender_settings():
         deepcopy(bpy.context.tool_settings.snap_target),
         deepcopy(bpy.context.tool_settings.transform_pivot_point),
         deepcopy(bpy.context.scene.transform_orientation_slots[0].type),
-        #deepcopy(bpy.context.space_data.show_manipulator),
+        deepcopy(bpy.context.space_data.show_gizmo),
         deepcopy(bpy.context.scene.cursor.location)]
     return backup
 
@@ -104,7 +104,7 @@ def init_blender_settings():
     bpy.context.tool_settings.snap_target = 'CLOSEST'
     bpy.context.tool_settings.transform_pivot_point = 'ACTIVE_ELEMENT'
     bpy.context.scene.transform_orientation_slots[0].type = 'GLOBAL'
-    #bpy.context.space_data.show_manipulator = False
+    bpy.context.space_data.show_gizmo = False
     return
 
 
@@ -114,8 +114,8 @@ def restore_blender_settings(backup):
     bpy.context.tool_settings.snap_target = deepcopy(backup[2])
     bpy.context.tool_settings.transform_pivot_point = deepcopy(backup[3])
     bpy.context.scene.transform_orientation_slots[0].type = deepcopy(backup[4])
-    #bpy.context.space_data.show_manipulator = deepcopy(backup[5])
-    bpy.context.scene.cursor.location = deepcopy(backup[5])
+    bpy.context.space_data.show_gizmo = deepcopy(backup[5])
+    bpy.context.scene.cursor.location = deepcopy(backup[6])
     return
 
 
@@ -135,9 +135,9 @@ def vec3s_alm_eq(vec_a, vec_b):
 
 
 # assume both float lists are same size?
-def flt_lists_alm_eq(ls_a, ls_b):
+def flt_lists_alm_eq(ls_a, ls_b, tol=0.001):
     for i in range(len(ls_a)):
-        if not flts_alm_eq(ls_a[i], ls_b[i]):
+        if not (ls_a[i] > (ls_b[i] - tol) and ls_a[i] < (ls_b[i] + tol)):
             return False
     return True
 
@@ -1019,7 +1019,7 @@ def set_arc_pts(ref_pts):
         mid_piv_free = piv.lerp(fre, ratio)
         arc_pts = [mid_piv_free]
         steps = 36
-        ang_step = pi*2 / steps
+        ang_step = pi * 2 / steps
         mid_align = mid_piv_free - piv
         for a in range(1, steps+1):
             rot_val = Quaternion(piv_norm, ang_step * a)
@@ -1239,39 +1239,47 @@ def prep_rotation_info(curr_ms_stor, new_ms_stor):
     RotDat.ang_diff_r = radians(new_ms_stor - curr_ms_stor)
 
 
+def create_z_orient(rot_vec):
+    x_dir_p = Vector(( 1.0,  0.0,  0.0))
+    y_dir_p = Vector(( 0.0,  1.0,  0.0))
+    z_dir_p = Vector(( 0.0,  0.0,  1.0))
+    if flt_lists_alm_eq(rot_vec, (0.0, 0.0, 0.0)) or \
+            flt_lists_alm_eq(rot_vec, z_dir_p):
+        return Matrix((x_dir_p, y_dir_p, z_dir_p))  # 3x3 identity
+    new_z = rot_vec.copy()  # rot_vec already normalized
+    new_y = new_z.cross(z_dir_p)
+    if flt_lists_alm_eq(new_y, (0.0, 0.0, 0.0)):
+        new_y = y_dir_p
+    new_x = new_y.cross(new_z)
+    new_x.normalize()
+    new_y.normalize()
+    return Matrix(((new_x.x, new_y.x, new_z.x),
+                   (new_x.y, new_y.y, new_z.y),
+                   (new_x.z, new_y.z, new_z.z)))
+
+
 # Uses axis_lock or piv_norm from RotDat to obtain rotation axis.
 # Then rotates selected objects or selected vertices around the
 # 3D cursor using RotDat's ang_diff_r radian value.
 def do_rotate(self):
-    #print("def do_rotate(self):")
+    #print("def do_rotate(self):")  # debug
 
     axis_lock = RotDat.axis_lock
     pivot = self.pts[2].co3d.copy()
-    mode = bpy.context.mode
     if axis_lock is None:
-        rot_matr = Matrix.Rotation(RotDat.ang_diff_r, 4, RotDat.piv_norm)
+        #rot_matr = Matrix.Rotation(RotDat.ang_diff_r, 4, RotDat.piv_norm)
+        norml = RotDat.piv_norm
+        o_mat = create_z_orient(norml)
 
-        if mode == "EDIT_MESH":
-            bm = bmesh.from_edit_mesh(bpy.context.edit_object.data)
-            if hasattr(bm.verts, "ensure_lookup_table"):
-                bm.verts.ensure_lookup_table()
-            for v in bm.verts:
-                if v.select:
-                    v.co = pivot + (rot_matr @ (v.co - pivot))
-
-            bmesh.update_edit_mesh(bpy.context.edit_object.data)
-
-        elif mode == "OBJECT":
-            for ob in bpy.context.selected_objects:
-                ob_loc, ob_rot, ob_scale = ob.matrix_world.decompose()
-                ob_loc = pivot + (rot_matr @ (ob_loc - pivot))
-                ob_loc_mat   = Matrix.Translation(ob_loc)
-                ob_rot_mat   = ob_rot.to_matrix().to_4x4()
-                ob_scale_mat = (Matrix.Scale(ob_scale[0],4,(1,0,0)) @ 
-                                Matrix.Scale(ob_scale[1],4,(0,1,0)) @ 
-                                Matrix.Scale(ob_scale[2],4,(0,0,1)))
-
-                ob.matrix_world = ob_loc_mat @ rot_matr @ ob_rot_mat @ ob_scale_mat
+        bpy.ops.transform.rotate(
+            value=RotDat.ang_diff_r, 
+            orient_axis='Z',
+            orient_type='LOCAL',
+            #orient_type='GLOBAL',
+            orient_matrix=o_mat,
+            orient_matrix_type='LOCAL',
+            center_override=pivot,
+            constraint_axis=(False, False, False))
 
     else:
         const_ax = False, False, False

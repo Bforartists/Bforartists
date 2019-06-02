@@ -48,8 +48,9 @@ void FEdgeXDetector::processShapes(WingedEdge &we)
   }
 
   for (vector<WShape *>::const_iterator it = wshapes.begin(); it != wshapes.end(); it++) {
-    if (_pRenderMonitor && _pRenderMonitor->testBreak())
+    if (_pRenderMonitor && _pRenderMonitor->testBreak()) {
       break;
+    }
     wxs = dynamic_cast<WXShape *>(*it);
 #if 0
     wxs->bbox(Min, Max);
@@ -72,29 +73,36 @@ void FEdgeXDetector::processShapes(WingedEdge &we)
       _computeViewIndependent = true;
     }
     preProcessShape(wxs);
-    if (progressBarDisplay)
+    if (progressBarDisplay) {
       _pProgressBar->setProgress(_pProgressBar->getProgress() + 1);
+    }
     processBorderShape(wxs);
-    if (_computeMaterialBoundaries)
+    if (_computeMaterialBoundaries) {
       processMaterialBoundaryShape(wxs);
+    }
     processCreaseShape(wxs);
-    if (_computeRidgesAndValleys)
+    if (_computeRidgesAndValleys) {
       processRidgesAndValleysShape(wxs);
-    if (_computeSuggestiveContours)
+    }
+    if (_computeSuggestiveContours) {
       processSuggestiveContourShape(wxs);
+    }
     processSilhouetteShape(wxs);
     processEdgeMarksShape(wxs);
-    if (progressBarDisplay)
+    if (progressBarDisplay) {
       _pProgressBar->setProgress(_pProgressBar->getProgress() + 1);
+    }
 
     // build smooth edges:
     buildSmoothEdges(wxs);
 
     // Post processing for suggestive contours
-    if (_computeSuggestiveContours)
+    if (_computeSuggestiveContours) {
       postProcessSuggestiveContourShape(wxs);
-    if (progressBarDisplay)
+    }
+    if (progressBarDisplay) {
       _pProgressBar->setProgress(_pProgressBar->getProgress() + 1);
+    }
 
     wxs->setComputeViewIndependentFlag(false);
     _computeViewIndependent = false;
@@ -211,15 +219,18 @@ void FEdgeXDetector::computeCurvatures(WXVertex *vertex)
 
     real absK1 = fabs(C->K1);
     _meanK1 += absK1;
-    if (absK1 > _maxK1)
+    if (absK1 > _maxK1) {
       _maxK1 = absK1;
-    if (absK1 < _minK1)
+    }
+    if (absK1 < _minK1) {
       _minK1 = absK1;
+    }
   }
   // view dependant
   C = vertex->curvatures();
-  if (C == 0)
+  if (C == 0) {
     return;
+  }
 
   // compute radial curvature :
   n = C->e1 ^ C->e2;
@@ -239,10 +250,12 @@ void FEdgeXDetector::computeCurvatures(WXVertex *vertex)
   C->Kr = C->K1 * cos2theta + C->K2 * sin2theta;
   real absKr = fabs(C->Kr);
   _meanKr += absKr;
-  if (absKr > _maxKr)
+  if (absKr > _maxKr) {
     _maxKr = absKr;
-  if (absKr < _minKr)
+  }
+  if (absKr < _minKr) {
     _minKr = absKr;
+  }
 
   ++_nPoints;
 }
@@ -311,8 +324,9 @@ void FEdgeXDetector::ProcessSilhouetteFace(WXFace *iFace)
 
 void FEdgeXDetector::ProcessSilhouetteEdge(WXEdge *iEdge)
 {
-  if (iEdge->nature() & Nature::BORDER)
+  if (iEdge->nature() & Nature::BORDER) {
     return;
+  }
   // SILHOUETTE ?
   //-------------
   WXFace *fA = (WXFace *)iEdge->GetaOEdge()->GetaFace();
@@ -324,13 +338,16 @@ void FEdgeXDetector::ProcessSilhouetteEdge(WXEdge *iEdge)
     // normals for 1 vertex for these two faces
     //--------------------
     // In reality we only test the normals for 1 of the 2 vertices.
-    if (fA->GetVertexNormal(iEdge->GetaVertex()) == fB->GetVertexNormal(iEdge->GetaVertex()))
+    if (fA->GetVertexNormal(iEdge->GetaVertex()) == fB->GetVertexNormal(iEdge->GetaVertex())) {
       return;
+    }
     iEdge->AddNature(Nature::SILHOUETTE);
-    if (fB->front())
+    if (fB->front()) {
       iEdge->setOrder(1);
-    else
+    }
+    else {
       iEdge->setOrder(-1);
+    }
   }
 }
 
@@ -338,8 +355,9 @@ void FEdgeXDetector::ProcessSilhouetteEdge(WXEdge *iEdge)
 /////////
 void FEdgeXDetector::processBorderShape(WXShape *iWShape)
 {
-  if (!_computeViewIndependent)
+  if (!_computeViewIndependent) {
     return;
+  }
   // Make a pass on the edges to detect the BORDER
   vector<WEdge *>::iterator we, weend;
   vector<WEdge *> &wedges = iWShape->getEdgeList();
@@ -362,8 +380,9 @@ void FEdgeXDetector::ProcessBorderEdge(WXEdge *iEdge)
 /////////
 void FEdgeXDetector::processCreaseShape(WXShape *iWShape)
 {
-  if (!_computeViewIndependent)
+  if (!_computeViewIndependent) {
     return;
+  }
 
   // Make a pass on the edges to detect the CREASE
   vector<WEdge *>::iterator we, weend;
@@ -377,14 +396,16 @@ void FEdgeXDetector::ProcessCreaseEdge(WXEdge *iEdge)
 {
   // CREASE ?
   //---------
-  if (iEdge->nature() & Nature::BORDER)
+  if (iEdge->nature() & Nature::BORDER) {
     return;
+  }
   WXFace *fA = (WXFace *)iEdge->GetaOEdge()->GetaFace();
   WXFace *fB = (WXFace *)iEdge->GetaOEdge()->GetbFace();
 
   WVertex *aVertex = iEdge->GetaVertex();
-  if ((fA->GetVertexNormal(aVertex) * fB->GetVertexNormal(aVertex)) <= _creaseAngle)
+  if ((fA->GetVertexNormal(aVertex) * fB->GetVertexNormal(aVertex)) <= _creaseAngle) {
     iEdge->AddNature(Nature::CREASE);
+  }
 }
 
 // RIDGES AND VALLEYS
@@ -394,8 +415,9 @@ void FEdgeXDetector::processRidgesAndValleysShape(WXShape *iWShape)
   // Don't forget to add the built layer to the face at the end of the ProcessFace:
   // iFace->AddSmoothLayer(faceLayer);
 
-  if (!_computeViewIndependent)
+  if (!_computeViewIndependent) {
     return;
+  }
 
   // Here the curvatures must already have been computed
   vector<WFace *> &wfaces = iWShape->GetFaceList();
@@ -450,8 +472,9 @@ void FEdgeXDetector::ProcessRidgeFace(WXFace *iFace)
 
   // find the ridge layer of the face
   iFace->retrieveSmoothLayers(Nature::RIDGE, SmoothLayers);
-  if (SmoothLayers.size() != 1)
+  if (SmoothLayers.size() != 1) {
     return;
+  }
   faceLayer = SmoothLayers[0];
   // retrieve the curvature info of this layer
   layer_info = (Face_Curvature_Info *)faceLayer->userdata;
@@ -469,8 +492,9 @@ void FEdgeXDetector::ProcessRidgeFace(WXFace *iFace)
     for (; fit != fitend; ++fit) {
       WXFace *wxf = dynamic_cast<WXFace *>(*fit);
       WOEdge *oppositeEdge;
-      if (!(wxf->getOppositeEdge(v, oppositeEdge)))
+      if (!(wxf->getOppositeEdge(v, oppositeEdge))) {
         continue;
+      }
       v1v2 = oppositeEdge->GetbVertex()->GetVertex() - oppositeEdge->GetaVertex()->GetVertex();
       GeomUtils::intersection_test res;
       res = GeomUtils::intersectRayPlane(
@@ -478,8 +502,9 @@ void FEdgeXDetector::ProcessRidgeFace(WXFace *iFace)
       if ((res == GeomUtils::DO_INTERSECT) && (t >= 0.0) && (t <= 1.0)) {
         vector<WXFaceLayer *> second_ridge_layer;
         wxf->retrieveSmoothLayers(Nature::RIDGE, second_ridge_layer);
-        if (second_ridge_layer.size() != 1)
+        if (second_ridge_layer.size() != 1) {
           continue;
+        }
         Face_Curvature_Info *second_layer_info =
             (Face_Curvature_Info *)second_ridge_layer[0]->userdata;
 
@@ -520,12 +545,14 @@ void FEdgeXDetector::ProcessRidgeFace(WXFace *iFace)
   e1.normalize();
   Vec3r e2((layer_info->vec_curvature_info[2]->K1 * layer_info->vec_curvature_info[2]->e1));
   e2.normalize();
-  if (e0 * e1 < 0)
+  if (e0 * e1 < 0) {
     // invert dotP[1]
     faceLayer->ReplaceDotP(1, -faceLayer->dotP(1));
-  if (e0 * e2 < 0)
+  }
+  if (e0 * e2 < 0) {
     // invert dotP[2]
     faceLayer->ReplaceDotP(2, -faceLayer->dotP(2));
+  }
 
 #  if 0  // remove the weakest values;
   real minDiff = (_maxK1 - _minK1) / 10.0;
@@ -595,8 +622,9 @@ void FEdgeXDetector::postProcessSuggestiveContourFace(WXFace *iFace)
   // Find the suggestive contour layer of the face (zero or one edge).
   vector<WXFaceLayer *> sc_layers;
   iFace->retrieveSmoothEdgesLayers(Nature::SUGGESTIVE_CONTOUR, sc_layers);
-  if (sc_layers.empty())
+  if (sc_layers.empty()) {
     return;
+  }
 
   WXFaceLayer *sc_layer;
   sc_layer = sc_layers[0];
@@ -628,8 +656,9 @@ void FEdgeXDetector::postProcessSuggestiveContourFace(WXFace *iFace)
     for (WVertex::face_iterator fit = v->faces_begin(), fitend = v->faces_end(); fit != fitend;
          ++fit) {
       wxf = dynamic_cast<WXFace *>(*fit);
-      if (!wxf->getOppositeEdge(v, opposite_edge))
+      if (!wxf->getOppositeEdge(v, opposite_edge)) {
         continue;
+      }
 
       opposite_vertex_a = (WXVertex *)opposite_edge->GetaVertex();
       opposite_vertex_b = (WXVertex *)opposite_edge->GetbVertex();
@@ -695,8 +724,9 @@ void FEdgeXDetector::postProcessSuggestiveContourFace(WXFace *iFace)
 ////////////////////
 void FEdgeXDetector::processMaterialBoundaryShape(WXShape *iWShape)
 {
-  if (!_computeViewIndependent)
+  if (!_computeViewIndependent) {
     return;
+  }
   // Make a pass on the edges to detect material boundaries
   vector<WEdge *>::iterator we, weend;
   vector<WEdge *> &wedges = iWShape->getEdgeList();
@@ -748,8 +778,9 @@ void FEdgeXDetector::buildSmoothEdges(WXShape *iShape)
     for (vector<WXFaceLayer *>::iterator wxfl = faceLayers.begin(), wxflend = faceLayers.end();
          wxfl != wxflend;
          ++wxfl) {
-      if ((*wxfl)->BuildSmoothEdge())
+      if ((*wxfl)->BuildSmoothEdge()) {
         hasSmoothEdges = true;
+      }
     }
   }
 

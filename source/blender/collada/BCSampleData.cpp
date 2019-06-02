@@ -66,7 +66,7 @@ BCMatrix::BCMatrix(BC_global_forward_axis global_forward_axis, BC_global_up_axis
   mat3_from_axis_conversion(
       BC_DEFAULT_FORWARD, BC_DEFAULT_UP, global_forward_axis, global_up_axis, mrot);
 
-  transpose_m3(mrot); // TODO: Verify that mat3_from_axis_conversion() returns a transposed matrix
+  transpose_m3(mrot);  // TODO: Verify that mat3_from_axis_conversion() returns a transposed matrix
   copy_m4_m3(mat, mrot);
   set_transform(mat);
 }
@@ -98,7 +98,10 @@ void BCMatrix::add_transform(Matrix &to, const Matrix &transform, const Matrix &
   }
 }
 
-void BCMatrix::apply_transform(Matrix &to, const Matrix &transform, const Matrix &from, bool inverse)
+void BCMatrix::apply_transform(Matrix &to,
+                               const Matrix &transform,
+                               const Matrix &from,
+                               bool inverse)
 {
   Matrix globinv;
   invert_m4_m4(globinv, transform);
@@ -200,13 +203,15 @@ void BCMatrix::unit()
  * precision = -1 indicates to not limit the precision. */
 void BCMatrix::get_matrix(DMatrix &mat, const bool transposed, const int precision) const
 {
-  for (int i = 0; i < 4; i++)
+  for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
       float val = (transposed) ? matrix[j][i] : matrix[i][j];
-      if (precision >= 0)
+      if (precision >= 0) {
         val = floor((val * pow(10, precision) + 0.5)) / pow(10, precision);
+      }
       mat[i][j] = val;
     }
+  }
 }
 
 void BCMatrix::get_matrix(Matrix &mat,
@@ -214,13 +219,15 @@ void BCMatrix::get_matrix(Matrix &mat,
                           const int precision,
                           const bool inverted) const
 {
-  for (int i = 0; i < 4; i++)
+  for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
       float val = (transposed) ? matrix[j][i] : matrix[i][j];
-      if (precision >= 0)
+      if (precision >= 0) {
         val = floor((val * pow(10, precision) + 0.5)) / pow(10, precision);
+      }
       mat[i][j] = val;
     }
+  }
 
   if (inverted) {
     invert_m4(mat);

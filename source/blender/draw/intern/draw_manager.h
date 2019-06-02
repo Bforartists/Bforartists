@@ -283,6 +283,8 @@ typedef struct DRWManager {
   ViewportMemoryPool *vmempool;
   DRWInstanceDataList *idatalist;
   DRWInstanceData *object_instance_data[MAX_INSTANCE_DATA_SIZE];
+  /* Default Unit model matrix state without culling. */
+  DRWCallState *unit_state;
   /* State of the object being evaluated if already allocated. */
   DRWCallState *ob_state;
   struct DupliObject *dupli_source;
@@ -313,6 +315,7 @@ typedef struct DRWManager {
     uint is_depth : 1;
     uint is_image_render : 1;
     uint is_scene_render : 1;
+    uint do_color_management : 1;
     uint draw_background : 1;
     uint draw_text : 1;
   } options;

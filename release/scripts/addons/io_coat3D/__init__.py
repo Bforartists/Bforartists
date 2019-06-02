@@ -1050,6 +1050,7 @@ class SCENE_OT_import(bpy.types.Operator):
             3DC -> Blender workflow
             '''
 
+            bpy.ops.object.select_all(action='DESELECT')
             for old_obj in bpy.context.collection.objects:
                 old_obj.coat3D.applink_old = True
 
@@ -1093,7 +1094,7 @@ class SCENE_OT_import(bpy.types.Operator):
             old_materials = bpy.data.materials.keys()
             old_objects = bpy.data.objects.keys()
 
-            bpy.ops.import_scene.fbx(filepath=new_applink_address, global_scale = 1, use_manual_orientation=True, axis_forward='-Z', axis_up='Y', use_custom_normals=False)
+            bpy.ops.import_scene.fbx(filepath=new_applink_address, global_scale = 1, axis_forward='-Z', axis_up='Y')
 
             new_materials = bpy.data.materials.keys()
             new_objects = bpy.data.objects.keys()
@@ -1111,12 +1112,12 @@ class SCENE_OT_import(bpy.types.Operator):
                 bpy.data.objects[c_index].data.coat3D.name = '3DC'
                 laskuri += 1
 
+            bpy.ops.object.transforms_to_deltas(mode='SCALE')
             bpy.ops.object.select_all(action='DESELECT')
             for new_obj in bpy.context.collection.objects:
 
                 if(new_obj.coat3D.applink_old == False):
                     new_obj.select_set(True)
-                    new_obj.scale = (1, 1, 1)
                     new_obj.coat3D.applink_firsttime = False
                     new_obj.select_set(False)
                     new_obj.coat3D.type = 'ppp'

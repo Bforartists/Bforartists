@@ -67,7 +67,7 @@ class MUV_PT_View3D_UVManipulation(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "UV Manipulation"
-    bl_category = "Magic UV"
+    bl_category = "Edit"
     bl_context = 'mesh_edit'
     bl_options = {'DEFAULT_CLOSED'}
 

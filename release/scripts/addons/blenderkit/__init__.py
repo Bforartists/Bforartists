@@ -19,7 +19,7 @@
 bl_info = {
     "name": "BlenderKit Asset Library",
     "author": "Vilem Duha",
-    "version": (1, 0, 23),
+    "version": (1, 0, 24),
     "blender": (2, 80, 0),
     "location": "View3D > Properties > BlenderKit",
     "description": "Online BlenderKit library (materials, models, brushes and more)",
@@ -30,19 +30,23 @@ bl_info = {
 }
 
 if "bpy" in locals():
-    import importlib
+    from importlib import reload
 
-    importlib.reload(asset_inspector)
-    importlib.reload(search)
-    importlib.reload(download)
-    importlib.reload(ratings)
-    importlib.reload(autothumb)
-    importlib.reload(ui)
-    importlib.reload(bg_blender)
-    importlib.reload(paths)
-    importlib.reload(utils)
-    importlib.reload(bkit_oauth)
-    importlib.reload(tasks_queue)
+    asset_inspector = reload(asset_inspector)
+    search = reload(search)
+    download = reload(download)
+    upload = reload(upload)
+    ratings = reload(ratings)
+    autothumb = reload(autothumb)
+    ui = reload(ui)
+    bg_blender = reload(bg_blender)
+    paths = reload(paths)
+    utils = reload(utils)
+    overrides = reload(overrides)
+    ui_panels = reload(ui_panels)
+    categories = reload(categories)
+    bkit_oauth = reload(bkit_oauth)
+    tasks_queue = reload(tasks_queue)
 else:
     from blenderkit import asset_inspector, search, download, upload, ratings, autothumb, ui, bg_blender, paths, utils, \
         overrides, ui_panels, categories, bkit_oauth, tasks_queue
@@ -73,6 +77,7 @@ from bpy.types import (
     PropertyGroup,
 )
 
+
 # logging.basicConfig(filename = 'blenderkit.log', level = logging.INFO,
 #                     format = '	%(asctime)s:%(filename)s:%(funcName)s:%(lineno)d:%(message)s')
 
@@ -85,6 +90,7 @@ def scene_load(context):
     ui_props.turn_off = False
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     preferences.login_attempt = False
+
 
 licenses = (
     ('royalty_free', 'Royalty Free', 'royalty free commercial license'),
@@ -449,10 +455,22 @@ class BlenderKitCommonUploadProps(object):
         default='royalty_free',
         description='License. Please read our help for choosing the right licenses',
     )
-    is_private: BoolProperty(name="Asset is Private",
-                          description="If not marked private, your asset will go into the validation process automatically\n"
-                                      "Private assets are limited by quota.",
-                          default=False)
+
+    is_private: EnumProperty(
+        name="Thumbnail Style",
+        items=(
+            ('PRIVATE', 'Private', "You asset will be hidden to public. The private assets are limited by a quota."),
+            ('PUBLIC', 'Public', '"Your asset will go into the validation process automatically')
+        ),
+        description="If not marked private, your asset will go into the validation process automatically\n"
+                    "Private assets are limited by quota.",
+        default="PUBLIC",
+    )
+
+    # is_private: BoolProperty(name="Asset is Private",
+    #                       description="If not marked private, your asset will go into the validation process automatically\n"
+    #                                   "Private assets are limited by quota.",
+    #                       default=False)
 
     is_free: BoolProperty(name="Free for Everyone",
                           description="You consent you want to release this asset as free for everyone",
@@ -1064,7 +1082,7 @@ class BlenderKitModelSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
     )
 
     free_only: BoolProperty(name="Free only", description="Show only free models",
-                                  default=False)
+                            default=False)
 
     search_advanced: BoolProperty(name="Advanced Search Options", description="use advanced search properties",
                                   default=False)
@@ -1226,7 +1244,6 @@ class BlenderKitAddonPreferences(AddonPreferences):
     default_global_dict = paths.default_global_dict()
 
     enable_oauth = False
-    enable_author_search = False
 
     api_key: StringProperty(
         name="BlenderKit API Key",
@@ -1309,12 +1326,11 @@ class BlenderKitAddonPreferences(AddonPreferences):
                                    min=0,
                                    max=20)
 
-    asset_counter:  IntProperty(name="Usage Counter",
-                                   description="Counts usages so it asks for registration only after reaching a limit",
-                                   default=0,
-                                   min=0,
-                                   max=20000)
-
+    asset_counter: IntProperty(name="Usage Counter",
+                               description="Counts usages so it asks for registration only after reaching a limit",
+                               default=0,
+                               min=0,
+                               max=20000)
 
     # allow_proximity : BoolProperty(
     #     name="allow proximity data reports",
@@ -1329,8 +1345,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
 
         if self.api_key.strip() == '':
             if self.enable_oauth:
-                layout.operator("wm.blenderkit_login", text="Login/ Sign up",
-                            icon='URL')
+                ui_panels.draw_login_buttons(layout)
             else:
                 op = layout.operator("wm.url_open", text="Register online and get your API Key",
                                      icon='QUESTION')
@@ -1427,8 +1442,8 @@ def register():
 
     bpy.app.handlers.load_post.append(scene_load)
 
-def unregister():
 
+def unregister():
     ui.unregister_ui()
     search.unregister_search()
     asset_inspector.unregister_asset_inspector()

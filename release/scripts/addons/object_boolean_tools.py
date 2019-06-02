@@ -1176,7 +1176,7 @@ class PREFS_BoolTool_Props(AddonPreferences):
     category: StringProperty(
         name="Tab Category",
         description="Choose a name for the category of the panel",
-        default="Tools",
+        default="Edit",
         update=update_panels,
     )
     Enable_Tab_01: BoolProperty(default=False)

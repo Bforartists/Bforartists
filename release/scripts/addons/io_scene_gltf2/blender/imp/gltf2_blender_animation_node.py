@@ -18,6 +18,7 @@ from mathutils import Vector
 from ..com.gltf2_blender_conversion import loc_gltf_to_blender, quaternion_gltf_to_blender, scale_gltf_to_blender
 from ..com.gltf2_blender_conversion import correction_rotation
 from ...io.imp.gltf2_io_binary import BinaryData
+from .gltf2_blender_animation_utils import simulate_stash, restore_last_action
 
 
 class BlenderNodeAnim():
@@ -40,6 +41,30 @@ class BlenderNodeAnim():
             kf.interpolation = 'LINEAR'
 
     @staticmethod
+    def stash_action(gltf, anim_idx, node_idx, action_name):
+        node = gltf.data.nodes[node_idx]
+        obj = bpy.data.objects[node.blender_object]
+
+        if anim_idx not in node.animations.keys():
+            return
+
+        if (obj.name, action_name) in gltf.actions_stashed.keys():
+            return
+
+        start_frame = bpy.context.scene.frame_start
+
+        simulate_stash(obj, bpy.data.actions[action_name], start_frame)
+
+        gltf.actions_stashed[(obj.name, action_name)] = True
+
+    @staticmethod
+    def restore_last_action(gltf, node_idx):
+        node = gltf.data.nodes[node_idx]
+        obj = bpy.data.objects[node.blender_object]
+
+        restore_last_action(obj)
+
+    @staticmethod
     def anim(gltf, anim_idx, node_idx):
         """Manage animation."""
         node = gltf.data.nodes[node_idx]
@@ -55,6 +80,12 @@ class BlenderNodeAnim():
             name = animation.name + "_" + obj.name
         else:
             name = "Animation_" + str(anim_idx) + "_" + obj.name
+        if len(name) >= 63:
+            # Name is too long to be kept, we are going to keep only animation name for now
+            name = animation.name
+            if len(name) >= 63:
+                # Very long name!
+                name = "Animation_" + str(anim_idx)
         action = bpy.data.actions.new(name)
         # Check if this action has some users.
         # If no user (only 1 indeed), that means that this action must be deleted
@@ -141,10 +172,17 @@ class BlenderNodeAnim():
                         if len(prim.targets) > nb_targets:
                             nb_targets = len(prim.targets)
 
+                if animation.samplers[channel.sampler].interpolation == "CUBICSPLINE":
+                    factor = 3
+                    delta = nb_targets
+                else:
+                    factor = 1
+                    delta = 0
+
                 for idx, key in enumerate(keys):
                     for sk in range(nb_targets):
                         if gltf.shapekeys[sk] is not None: # Do not animate shapekeys not created
-                            obj.data.shape_keys.key_blocks[gltf.shapekeys[sk]].value = values[idx * nb_targets + sk][0]
+                            obj.data.shape_keys.key_blocks[gltf.shapekeys[sk]].value = values[factor * idx * nb_targets + delta + sk][0]
                             obj.data.shape_keys.key_blocks[gltf.shapekeys[sk]].keyframe_insert(
                                 "value",
                                 frame=key[0] * fps,

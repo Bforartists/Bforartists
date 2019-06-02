@@ -33,11 +33,39 @@ def gather_animations(blender_object: bpy.types.Object, export_settings) -> typi
     # Collect all 'actions' affecting this object. There is a direct mapping between blender actions and glTF animations
     blender_actions = __get_blender_actions(blender_object)
 
+    # save the current active action of the object, if any
+    # We will restore it after export
+    current_action = None
+    if blender_object.animation_data and blender_object.animation_data.action:
+        current_action = blender_object.animation_data.action
+
     # Export all collected actions.
     for blender_action in blender_actions:
+
+        # Set action as active, to be able to bake if needed
+        if blender_object.animation_data: # Not for shapekeys!
+            if blender_object.animation_data.action is None \
+                    or (blender_object.animation_data.action.name != blender_action.name):
+                if blender_object.animation_data.is_property_readonly('action'):
+                    # NLA stuff: some track are on readonly mode, we can't change action
+                    error = "Action is readonly. Please check NLA editor"
+                    print_console("WARNING", "Animation '{}' could not be exported. Cause: {}".format(blender_action.name, error))
+                    continue
+                try:
+                    blender_object.animation_data.action = blender_action
+                except:
+                    error = "Action is readonly. Please check NLA editor"
+                    print_console("WARNING", "Animation '{}' could not be exported. Cause: {}".format(blender_action.name, error))
+                    continue
+
         animation = __gather_animation(blender_action, blender_object, export_settings)
         if animation is not None:
             animations.append(animation)
+
+    # Restore current action
+    if blender_object.animation_data:
+        if blender_object.animation_data.action is not None and current_action is not None and blender_object.animation_data.action.name != current_action.name:
+            blender_object.animation_data.action = current_action
 
     return animations
 

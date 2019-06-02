@@ -22,10 +22,12 @@ import os
 import traceback
 
 from string import capwords
+from collections import defaultdict
 
 import bpy
 
 from . import utils
+from . import feature_set_list
 
 
 class ArmatureSubMenu(bpy.types.Menu):
@@ -39,22 +41,22 @@ class ArmatureSubMenu(bpy.types.Menu):
             layout.operator(op, icon='OUTLINER_OB_ARMATURE', text=text)
 
 
-def get_metarigs(base_path, path, depth=0):
+def get_metarigs(metarigs, base_dir, base_path, *, path=[], nested=False):
     """ Searches for metarig modules, and returns a list of the
         imported modules.
     """
 
-    metarigs = {}
+    dir_path = os.path.join(base_dir, *path)
 
     try:
-        files = os.listdir(os.path.join(base_path, path))
+        files = os.listdir(dir_path)
     except FileNotFoundError:
         files = []
 
     files.sort()
 
     for f in files:
-        is_dir = os.path.isdir(os.path.join(base_path, path, f))  # Whether the file is a directory
+        is_dir = os.path.isdir(os.path.join(dir_path, f))  # Whether the file is a directory
 
         # Stop cases
         if f[0] in [".", "_"]:
@@ -64,19 +66,15 @@ def get_metarigs(base_path, path, depth=0):
             continue
 
         if is_dir:  # Check directories
-            # Check for sub-metarigs
-            metarigs[f] = get_metarigs(base_path, os.path.join(path, f, ""), depth=1)  # "" adds a final slash
+            get_metarigs(metarigs[f], base_dir, base_path, path=[*path, f], nested=True)  # "" adds a final slash
         elif f.endswith(".py"):
             # Check straight-up python files
             f = f[:-3]
-            module_name = os.path.join(path, f).replace(os.sep, ".")
-            metarig_module = utils.get_resource(module_name, base_path=base_path)
-            if depth == 1:
-                metarigs[f] = metarig_module
+            module = utils.get_resource('.'.join([*base_path, *path, f]))
+            if nested:
+                metarigs[f] = module
             else:
-                metarigs[utils.METARIG_DIR] = {f: metarig_module}
-
-    return metarigs
+                metarigs[utils.METARIG_DIR][f] = module
 
 
 def make_metarig_add_execute(m):
@@ -119,11 +117,15 @@ def make_submenu_func(bl_idname, text):
 
 # Get the metarig modules
 def get_internal_metarigs():
-    MODULE_DIR = os.path.dirname(os.path.dirname(__file__))
+    BASE_RIGIFY_DIR = os.path.dirname(__file__)
+    BASE_RIGIFY_PATH = __name__.split('.')[:-1]
 
-    metarigs.update(get_metarigs(MODULE_DIR, os.path.join(os.path.basename(os.path.dirname(__file__)), utils.METARIG_DIR, '')))
+    get_metarigs(metarigs, os.path.join(BASE_RIGIFY_DIR, utils.METARIG_DIR), [*BASE_RIGIFY_PATH, utils.METARIG_DIR])
 
-metarigs = {}
+def infinite_defaultdict():
+    return defaultdict(infinite_defaultdict)
+
+metarigs = infinite_defaultdict()
 metarig_ops = {}
 armature_submenus = []
 menu_funcs = []
@@ -212,29 +214,24 @@ def unregister():
     for mf in menu_funcs:
         bpy.types.VIEW3D_MT_armature_add.remove(mf)
 
-def get_external_metarigs(feature_sets_path):
+def get_external_metarigs(set_list):
     unregister()
 
     # Clear and fill metarigs public variables
     metarigs.clear()
     get_internal_metarigs()
-    metarigs['external'] = {}
 
-    for feature_set in os.listdir(feature_sets_path):
-        if feature_set:
-            try:
-                try:
-                    utils.get_resource(os.path.join(feature_set, '__init__'), feature_sets_path)
-                except FileNotFoundError:
-                    print("Rigify Error: Could not load feature set '%s': __init__.py not found.\n" % (feature_set))
-                    continue
 
-                metarigs['external'].update(get_metarigs(feature_sets_path, os.path.join(feature_set, utils.METARIG_DIR)))
-            except Exception:
-                print("Rigify Error: Could not load feature set '%s' metarigs: exception occurred.\n" % (feature_set))
-                traceback.print_exc()
-                print("")
-                continue
+    for feature_set in set_list:
+        try:
+            base_dir, base_path = feature_set_list.get_dir_path(feature_set, utils.METARIG_DIR)
+
+            get_metarigs(metarigs['external'], base_dir, base_path)
+        except Exception:
+            print("Rigify Error: Could not load feature set '%s' metarigs: exception occurred.\n" % (feature_set))
+            traceback.print_exc()
+            print("")
+            continue
 
     metarig_ops.clear()
     armature_submenus.clear()

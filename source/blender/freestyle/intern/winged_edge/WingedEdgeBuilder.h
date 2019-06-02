@@ -48,14 +48,15 @@ class WingedEdgeBuilder : public SceneVisitor {
   virtual ~WingedEdgeBuilder()
   {
     for (vector<Matrix44r *>::iterator it = _matrices_stack.begin(); it != _matrices_stack.end();
-         ++it)
+         ++it) {
       delete *it;
+    }
     _matrices_stack.clear();
   }
 
-  VISIT_DECL(IndexedFaceSet)
-  VISIT_DECL(NodeShape)
-  VISIT_DECL(NodeTransform)
+  VISIT_DECL(IndexedFaceSet);
+  VISIT_DECL(NodeShape);
+  VISIT_DECL(NodeTransform);
 
   virtual void visitNodeTransformAfter(NodeTransform &);
 

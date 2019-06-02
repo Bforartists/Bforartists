@@ -35,7 +35,7 @@ from bpy.types import Menu
 
 
 # Pie Delete - X
-class PieDelete(Menu):
+class PIE_MT_PieDelete(Menu):
     bl_idname = "PIE_MT_delete"
     bl_label = "Pie Delete"
 
@@ -67,7 +67,7 @@ class PieDelete(Menu):
 
 
 classes = (
-    PieDelete,
+    PIE_MT_PieDelete,
     )
 
 

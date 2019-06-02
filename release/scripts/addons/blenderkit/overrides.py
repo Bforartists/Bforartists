@@ -16,11 +16,17 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+
+if "bpy" in locals():
+    from importlib import reload
+
+    utils = reload(utils)
+else:
+    from blenderkit import utils
+
 import bpy, mathutils
 from bpy.types import (
     Operator)
-
-from blenderkit import utils
 
 
 def getNodes(nt, node_type='OUTPUT_MATERIAL'):

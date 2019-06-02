@@ -461,13 +461,24 @@ static void IMAGE_GGT_gizmo2d(wmGizmoGroupType *gzgt)
 
   gzgt->poll = ED_widgetgroup_gizmo2d_poll;
   gzgt->setup = ED_widgetgroup_gizmo2d_setup;
+  gzgt->setup_keymap = WM_gizmogroup_setup_keymap_generic_drag;
   gzgt->refresh = ED_widgetgroup_gizmo2d_refresh;
   gzgt->draw_prepare = ED_widgetgroup_gizmo2d_draw_prepare;
 }
 
+static void IMAGE_GGT_navigate(wmGizmoGroupType *gzgt)
+{
+  VIEW2D_GGT_navigate_impl(gzgt, "IMAGE_GGT_navigate");
+}
+
 static void image_widgets(void)
 {
+  wmGizmoMapType *gzmap_type = WM_gizmomaptype_ensure(
+      &(const struct wmGizmoMapType_Params){SPACE_IMAGE, RGN_TYPE_WINDOW});
+
   WM_gizmogrouptype_append(IMAGE_GGT_gizmo2d);
+
+  WM_gizmogrouptype_append_and_link(gzmap_type, IMAGE_GGT_navigate);
 }
 
 /************************** main region ***************************/

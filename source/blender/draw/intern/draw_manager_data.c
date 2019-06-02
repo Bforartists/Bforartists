@@ -396,15 +396,10 @@ static DRWCallState *drw_call_state_create(DRWShadingGroup *shgroup, float (*obm
   state->matflag = 0;
 
   /* Matrices */
-  if (obmat != NULL) {
-    copy_m4_m4(state->model, obmat);
+  copy_m4_m4(state->model, obmat);
 
-    if (ob && (ob->transflag & OB_NEG_SCALE)) {
-      state->flag |= DRW_CALL_NEGSCALE;
-    }
-  }
-  else {
-    unit_m4(state->model);
+  if (ob && (ob->transflag & OB_NEG_SCALE)) {
+    state->flag |= DRW_CALL_NEGSCALE;
   }
 
   drw_call_state_update_matflag(state, shgroup, ob);
@@ -412,9 +407,9 @@ static DRWCallState *drw_call_state_create(DRWShadingGroup *shgroup, float (*obm
   DRWCullingState *cull = BLI_memblock_alloc(DST.vmempool->cullstates);
   state->culling = cull;
 
-  if (ob != NULL) {
+  BoundBox *bbox;
+  if (ob != NULL && (bbox = BKE_object_boundbox_get(ob))) {
     float corner[3];
-    BoundBox *bbox = BKE_object_boundbox_get(ob);
     /* Get BoundSphere center and radius from the BoundBox. */
     mid_v3_v3v3(cull->bsphere.center, bbox->vec[0], bbox->vec[6]);
     mul_v3_m4v3(corner, obmat, bbox->vec[0]);
@@ -433,65 +428,70 @@ static DRWCallState *drw_call_state_create(DRWShadingGroup *shgroup, float (*obm
 
 static DRWCallState *drw_call_state_object(DRWShadingGroup *shgroup, float (*obmat)[4], Object *ob)
 {
-  if (DST.ob_state == NULL) {
-    DST.ob_state = drw_call_state_create(shgroup, obmat, ob);
+  if (ob == NULL) {
+    if (obmat == NULL) {
+      BLI_assert(DST.unit_state);
+      return DST.unit_state;
+    }
+    else {
+      return drw_call_state_create(shgroup, obmat, ob);
+    }
   }
   else {
-    /* If the DRWCallState is reused, add necessary matrices. */
-    drw_call_state_update_matflag(DST.ob_state, shgroup, ob);
+    if (DST.ob_state == NULL) {
+      DST.ob_state = drw_call_state_create(shgroup, obmat, ob);
+    }
+    else {
+      /* If the DRWCallState is reused, add necessary matrices. */
+      drw_call_state_update_matflag(DST.ob_state, shgroup, ob);
+    }
+
+    return DST.ob_state;
   }
-
-  return DST.ob_state;
 }
 
-void DRW_shgroup_call(DRWShadingGroup *shgroup, GPUBatch *geom, float (*obmat)[4])
+void DRW_shgroup_call_ex(DRWShadingGroup *shgroup,
+                         Object *ob,
+                         float (*obmat)[4],
+                         struct GPUBatch *geom,
+                         uint v_sta,
+                         uint v_ct,
+                         bool bypass_culling,
+                         void *user_data)
 {
   BLI_assert(geom != NULL);
 
   DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
   BLI_LINKS_APPEND(&shgroup->calls, call);
 
-  call->state = drw_call_state_create(shgroup, obmat, NULL);
-  call->batch = geom;
-  call->vert_first = 0;
-  call->vert_count = 0; /* Auto from batch. */
-  call->inst_count = 0;
-#ifdef USE_GPU_SELECT
-  call->select_id = DST.select_id;
-  call->inst_selectid = NULL;
-#endif
-}
-
-void DRW_shgroup_call_range(
-    DRWShadingGroup *shgroup, GPUBatch *geom, float (*obmat)[4], uint v_sta, uint v_count)
-{
-  BLI_assert(geom != NULL);
-  BLI_assert(v_count);
-
-  DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
-  BLI_LINKS_APPEND(&shgroup->calls, call);
-
-  call->state = drw_call_state_create(shgroup, obmat, NULL);
+  call->state = drw_call_state_object(shgroup, ob ? ob->obmat : obmat, ob);
   call->batch = geom;
   call->vert_first = v_sta;
-  call->vert_count = v_count;
+  call->vert_count = v_ct; /* 0 means auto from batch. */
   call->inst_count = 0;
 #ifdef USE_GPU_SELECT
   call->select_id = DST.select_id;
   call->inst_selectid = NULL;
 #endif
+  if (call->state->culling) {
+    call->state->culling->user_data = user_data;
+    if (bypass_culling) {
+      /* NOTE this will disable culling for the whole object. */
+      call->state->culling->bsphere.radius = -1.0f;
+    }
+  }
 }
 
 static void drw_shgroup_call_procedural_add_ex(DRWShadingGroup *shgroup,
                                                GPUBatch *geom,
-                                               uint vert_count,
-                                               float (*obmat)[4])
+                                               Object *ob,
+                                               uint vert_count)
 {
 
   DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
   BLI_LINKS_APPEND(&shgroup->calls, call);
 
-  call->state = drw_call_state_object(shgroup, obmat, NULL);
+  call->state = drw_call_state_object(shgroup, ob ? ob->obmat : NULL, ob);
   call->batch = geom;
   call->vert_first = 0;
   call->vert_count = vert_count;
@@ -502,81 +502,27 @@ static void drw_shgroup_call_procedural_add_ex(DRWShadingGroup *shgroup,
 #endif
 }
 
-void DRW_shgroup_call_procedural_points(DRWShadingGroup *shgroup,
-                                        uint point_len,
-                                        float (*obmat)[4])
+void DRW_shgroup_call_procedural_points(DRWShadingGroup *shgroup, Object *ob, uint point_len)
 {
   struct GPUBatch *geom = drw_cache_procedural_points_get();
-  drw_shgroup_call_procedural_add_ex(shgroup, geom, point_len, obmat);
+  drw_shgroup_call_procedural_add_ex(shgroup, geom, ob, point_len);
 }
 
-void DRW_shgroup_call_procedural_lines(DRWShadingGroup *shgroup,
-                                       uint line_count,
-                                       float (*obmat)[4])
+void DRW_shgroup_call_procedural_lines(DRWShadingGroup *shgroup, Object *ob, uint line_count)
 {
   struct GPUBatch *geom = drw_cache_procedural_lines_get();
-  drw_shgroup_call_procedural_add_ex(shgroup, geom, line_count * 2, obmat);
+  drw_shgroup_call_procedural_add_ex(shgroup, geom, ob, line_count * 2);
 }
 
-void DRW_shgroup_call_procedural_triangles(DRWShadingGroup *shgroup,
-                                           uint tria_count,
-                                           float (*obmat)[4])
+void DRW_shgroup_call_procedural_triangles(DRWShadingGroup *shgroup, Object *ob, uint tria_count)
 {
   struct GPUBatch *geom = drw_cache_procedural_triangles_get();
-  drw_shgroup_call_procedural_add_ex(shgroup, geom, tria_count * 3, obmat);
-}
-
-/* These calls can be culled and are optimized for redraw */
-void DRW_shgroup_call_object_ex(DRWShadingGroup *shgroup,
-                                GPUBatch *geom,
-                                Object *ob,
-                                bool bypass_culling)
-{
-  BLI_assert(geom != NULL);
-
-  DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
-  BLI_LINKS_APPEND(&shgroup->calls, call);
-
-  call->state = drw_call_state_object(shgroup, ob->obmat, ob);
-  call->batch = geom;
-  call->vert_first = 0;
-  call->vert_count = 0; /* Auto from batch. */
-  call->inst_count = 0;
-#ifdef USE_GPU_SELECT
-  call->select_id = DST.select_id;
-  call->inst_selectid = NULL;
-#endif
-  if (bypass_culling) {
-    /* NOTE this will disable culling for the whole object. */
-    call->state->culling->bsphere.radius = -1.0f;
-  }
-}
-
-void DRW_shgroup_call_object_with_callback(DRWShadingGroup *shgroup,
-                                           GPUBatch *geom,
-                                           Object *ob,
-                                           void *user_data)
-{
-  BLI_assert(geom != NULL);
-
-  DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
-  BLI_LINKS_APPEND(&shgroup->calls, call);
-
-  call->state = drw_call_state_object(shgroup, ob->obmat, ob);
-  call->state->culling->user_data = user_data;
-  call->batch = geom;
-  call->vert_first = 0;
-  call->vert_count = 0; /* Auto from batch. */
-  call->inst_count = 0;
-#ifdef USE_GPU_SELECT
-  call->select_id = DST.select_id;
-  call->inst_selectid = NULL;
-#endif
+  drw_shgroup_call_procedural_add_ex(shgroup, geom, ob, tria_count * 3);
 }
 
 void DRW_shgroup_call_instances(DRWShadingGroup *shgroup,
-                                GPUBatch *geom,
-                                float (*obmat)[4],
+                                Object *ob,
+                                struct GPUBatch *geom,
                                 uint count)
 {
   BLI_assert(geom != NULL);
@@ -584,7 +530,7 @@ void DRW_shgroup_call_instances(DRWShadingGroup *shgroup,
   DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
   BLI_LINKS_APPEND(&shgroup->calls, call);
 
-  call->state = drw_call_state_create(shgroup, obmat, NULL);
+  call->state = drw_call_state_object(shgroup, ob ? ob->obmat : NULL, ob);
   call->batch = geom;
   call->vert_first = 0;
   call->vert_count = 0; /* Auto from batch. */
@@ -596,8 +542,8 @@ void DRW_shgroup_call_instances(DRWShadingGroup *shgroup,
 }
 
 void DRW_shgroup_call_instances_with_attribs(DRWShadingGroup *shgroup,
+                                             Object *ob,
                                              struct GPUBatch *geom,
-                                             float (*obmat)[4],
                                              struct GPUBatch *inst_attributes)
 {
   BLI_assert(geom != NULL);
@@ -608,7 +554,7 @@ void DRW_shgroup_call_instances_with_attribs(DRWShadingGroup *shgroup,
   DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
   BLI_LINKS_APPEND(&shgroup->calls, call);
 
-  call->state = drw_call_state_create(shgroup, obmat, NULL);
+  call->state = drw_call_state_object(shgroup, ob ? ob->obmat : NULL, ob);
   call->batch = DRW_temp_batch_instance_request(DST.idatalist, buf_inst, geom);
   call->vert_first = 0;
   call->vert_count = 0; /* Auto from batch. */
@@ -669,9 +615,9 @@ static void sculpt_draw_cb(DRWSculptCallbackData *scd, GPU_PBVH_Buffers *buffers
     shgrp = DRW_shgroup_create_sub(shgrp);
     DRW_shgroup_uniform_vec3(shgrp, "materialDiffuseColor", SCULPT_DEBUG_COLOR(scd->node_nr++), 1);
 #endif
-    /* DRW_shgroup_call_object_ex reuses matrices calculations for all the drawcalls of this
+    /* DRW_shgroup_call_no_cull reuses matrices calculations for all the drawcalls of this
      * object. */
-    DRW_shgroup_call_object_ex(shgrp, geom, scd->ob, true);
+    DRW_shgroup_call_no_cull(shgrp, geom, scd->ob);
   }
 }
 
@@ -702,8 +648,8 @@ static void sculpt_debug_cb(void *user_data,
 
 static void drw_sculpt_generate_calls(DRWSculptCallbackData *scd, bool use_vcol)
 {
-  /* XXX should be ensured before but sometime it's not... go figure (see T57040). */
-  PBVH *pbvh = BKE_sculpt_object_pbvh_ensure(DST.draw_ctx.depsgraph, scd->ob);
+  /* PBVH should always exist for non-empty meshes, created by depsgrah eval. */
+  PBVH *pbvh = (scd->ob->sculpt) ? scd->ob->sculpt->pbvh : NULL;
   if (!pbvh) {
     return;
   }
@@ -719,8 +665,11 @@ static void drw_sculpt_generate_calls(DRWSculptCallbackData *scd, bool use_vcol)
     }
   }
 
-  BKE_pbvh_draw_cb(
-      pbvh, planes, NULL, use_vcol, (void (*)(void *, GPU_PBVH_Buffers *))sculpt_draw_cb, scd);
+  Mesh *mesh = scd->ob->data;
+  BKE_pbvh_update_normals(pbvh, mesh->runtime.subdiv_ccg);
+  BKE_pbvh_update_draw_buffers(pbvh, use_vcol);
+
+  BKE_pbvh_draw_cb(pbvh, planes, (void (*)(void *, GPU_PBVH_Buffers *))sculpt_draw_cb, scd);
 
 #ifdef SCULPT_DEBUG_BUFFERS
   int node_nr = 0;
@@ -769,7 +718,7 @@ DRWCallBuffer *DRW_shgroup_call_buffer(DRWShadingGroup *shgroup,
   DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
   BLI_LINKS_APPEND(&shgroup->calls, call);
 
-  call->state = drw_call_state_create(shgroup, NULL, NULL);
+  call->state = drw_call_state_object(shgroup, NULL, NULL);
   GPUVertBuf *buf = DRW_temp_buffer_request(DST.idatalist, format, &call->vert_count);
   call->batch = DRW_temp_batch_request(DST.idatalist, buf, prim_type);
   call->vert_first = 0;
@@ -799,7 +748,7 @@ DRWCallBuffer *DRW_shgroup_call_buffer_instance(DRWShadingGroup *shgroup,
   DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
   BLI_LINKS_APPEND(&shgroup->calls, call);
 
-  call->state = drw_call_state_create(shgroup, NULL, NULL);
+  call->state = drw_call_state_object(shgroup, NULL, NULL);
   GPUVertBuf *buf = DRW_temp_buffer_request(DST.idatalist, format, &call->inst_count);
   call->batch = DRW_temp_batch_instance_request(DST.idatalist, buf, geom);
   call->vert_first = 0;
@@ -874,6 +823,7 @@ static void drw_shgroup_init(DRWShadingGroup *shgroup, GPUShader *shader)
     drw_shgroup_builtin_uniform(shgroup, GPU_UNIFORM_VIEWPROJECTION_INV, storage->persinv, 16, 1);
     drw_shgroup_builtin_uniform(shgroup, GPU_UNIFORM_PROJECTION, storage->winmat, 16, 1);
     drw_shgroup_builtin_uniform(shgroup, GPU_UNIFORM_PROJECTION_INV, storage->wininv, 16, 1);
+    drw_shgroup_builtin_uniform(shgroup, GPU_UNIFORM_CLIPPLANES, storage->clipplanes, 4, 6);
   }
 
   /* Not supported. */
@@ -1048,7 +998,6 @@ bool DRW_shgroup_is_empty(DRWShadingGroup *shgroup)
 
 DRWShadingGroup *DRW_shgroup_create_sub(DRWShadingGroup *shgroup)
 {
-  /* Remove this assertion if needed but implement the other cases first! */
   DRWShadingGroup *shgroup_new = BLI_memblock_alloc(DST.vmempool->shgroups);
 
   *shgroup_new = *shgroup;
@@ -1292,8 +1241,11 @@ static void draw_view_matrix_state_update(DRWViewUboStorage *storage,
                                           const float winmat[4][4])
 {
   /* If only one the matrices is negative, then the
-   * polygon winding changes and we don't want that. */
-  BLI_assert(is_negative_m4(viewmat) != is_negative_m4(winmat));
+   * polygon winding changes and we don't want that.
+   * By convention, the winmat is negative because
+   * looking through the -Z axis. So this inverse the
+   * changes the test for the winmat. */
+  BLI_assert(is_negative_m4(viewmat) == !is_negative_m4(winmat));
 
   copy_m4_m4(storage->viewmat, viewmat);
   invert_m4_m4(storage->viewinv, storage->viewmat);
@@ -1541,7 +1493,7 @@ void DRW_view_persmat_get(const DRWView *view, float mat[4][4], bool inverse)
 DRWPass *DRW_pass_create(const char *name, DRWState state)
 {
   DRWPass *pass = BLI_memblock_alloc(DST.vmempool->passes);
-  pass->state = state;
+  pass->state = state | DRW_STATE_PROGRAM_POINT_SIZE;
   if (((G.debug_value > 20) && (G.debug_value < 30)) || (G.debug & G_DEBUG)) {
     BLI_strncpy(pass->name, name, MAX_PASS_NAME);
   }
@@ -1564,7 +1516,7 @@ bool DRW_pass_is_empty(DRWPass *pass)
 
 void DRW_pass_state_set(DRWPass *pass, DRWState state)
 {
-  pass->state = state;
+  pass->state = state | DRW_STATE_PROGRAM_POINT_SIZE;
 }
 
 void DRW_pass_state_add(DRWPass *pass, DRWState state)

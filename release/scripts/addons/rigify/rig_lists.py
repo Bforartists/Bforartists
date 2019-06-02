@@ -20,9 +20,10 @@ import os
 import traceback
 
 from . import utils
+from . import feature_set_list
 
 
-def get_rigs(base_path, path, feature_set='rigify'):
+def get_rigs(base_dir, base_path, *, path=[], feature_set=feature_set_list.DEFAULT_NAME):
     """ Recursively searches for rig types, and returns a list.
 
     :param base_path: base dir where rigs are stored
@@ -34,74 +35,74 @@ def get_rigs(base_path, path, feature_set='rigify'):
     rigs = {}
     impl_rigs = {}
 
+    dir_path = os.path.join(base_dir, *path)
+
     try:
-        files = os.listdir(os.path.join(base_path, path))
+        files = os.listdir(dir_path)
     except FileNotFoundError:
         files = []
 
     files.sort()
 
     for f in files:
-        is_dir = os.path.isdir(os.path.join(base_path, path, f))  # Whether the file is a directory
+        is_dir = os.path.isdir(os.path.join(dir_path, f))  # Whether the file is a directory
 
         # Stop cases
         if f[0] in [".", "_"]:
             continue
         if f.count(".") >= 2 or (is_dir and "." in f):
-            print("Warning: %r, filename contains a '.', skipping" % os.path.join(path, f))
+            print("Warning: %r, filename contains a '.', skipping" % os.path.join(*base_path, *path, f))
             continue
 
         if is_dir:
-            # Check directories
-            module_name = os.path.join(path, "__init__").replace(os.sep, ".")
             # Check for sub-rigs
-            sub_rigs, sub_impls = get_rigs(base_path, os.path.join(path, f, ""), feature_set)  # "" adds a final slash
-            rigs.update({"%s.%s" % (f, l): sub_rigs[l] for l in sub_rigs})
-            impl_rigs.update({"%s.%s" % (f, l): sub_rigs[l] for l in sub_impls})
+            sub_rigs, sub_impls = get_rigs(base_dir, base_path, path=[*path, f], feature_set=feature_set)
+            rigs.update(sub_rigs)
+            impl_rigs.update(sub_impls)
         elif f.endswith(".py"):
             # Check straight-up python files
-            f = f[:-3]
-            module_name = os.path.join(path, f).replace(os.sep, ".")
-            rig_module = utils.get_resource(module_name, base_path=base_path)
+            subpath = [*path, f[:-3]]
+            key = '.'.join(subpath)
+            rig_module = utils.get_resource('.'.join(base_path + subpath))
             if hasattr(rig_module, "Rig"):
-                rigs[f] = {"module": rig_module,
-                           "feature_set": feature_set}
+                rigs[key] = {"module": rig_module,
+                             "feature_set": feature_set}
             if hasattr(rig_module, 'IMPLEMENTATION') and rig_module.IMPLEMENTATION:
-                impl_rigs[f] = rig_module
+                impl_rigs[key] = rig_module
 
     return rigs, impl_rigs
 
 
 # Public variables
-MODULE_DIR = os.path.dirname(os.path.dirname(__file__))
+def get_internal_rigs():
+    BASE_RIGIFY_DIR = os.path.dirname(__file__)
+    BASE_RIGIFY_PATH = __name__.split('.')[:-1]
 
-rigs, implementation_rigs = get_rigs(MODULE_DIR, os.path.join(os.path.basename(os.path.dirname(__file__)), utils.RIG_DIR, ''))
+    return get_rigs(os.path.join(BASE_RIGIFY_DIR, utils.RIG_DIR), [*BASE_RIGIFY_PATH, utils.RIG_DIR])
 
 
-def get_external_rigs(feature_sets_path):
+rigs, implementation_rigs = get_internal_rigs()
+
+
+def get_external_rigs(set_list):
     # Clear and fill rigify rigs and implementation rigs public variables
     for rig in list(rigs.keys()):
-        if rigs[rig]["feature_set"] != "rigify":
+        if rigs[rig]["feature_set"] != feature_set_list.DEFAULT_NAME:
             rigs.pop(rig)
             if rig in implementation_rigs:
                 implementation_rigs.pop(rig)
 
     # Get external rigs
-    for feature_set in os.listdir(feature_sets_path):
-        if feature_set:
-            try:
-                try:
-                    utils.get_resource(os.path.join(feature_set, '__init__'), feature_sets_path)
-                except FileNotFoundError:
-                    print("Rigify Error: Could not load feature set '%s': __init__.py not found.\n" % (feature_set))
-                    continue
+    for feature_set in set_list:
+        try:
+            base_dir, base_path = feature_set_list.get_dir_path(feature_set, utils.RIG_DIR)
 
-                external_rigs, external_impl_rigs = get_rigs(feature_sets_path, os.path.join(feature_set, utils.RIG_DIR), feature_set)
-            except Exception:
-                print("Rigify Error: Could not load feature set '%s' rigs: exception occurred.\n" % (feature_set))
-                traceback.print_exc()
-                print("")
-                continue
+            external_rigs, external_impl_rigs = get_rigs(base_dir, base_path, feature_set=feature_set)
+        except Exception:
+            print("Rigify Error: Could not load feature set '%s' rigs: exception occurred.\n" % (feature_set))
+            traceback.print_exc()
+            print("")
+            continue
 
-            rigs.update(external_rigs)
-            implementation_rigs.update(external_impl_rigs)
+        rigs.update(external_rigs)
+        implementation_rigs.update(external_impl_rigs)

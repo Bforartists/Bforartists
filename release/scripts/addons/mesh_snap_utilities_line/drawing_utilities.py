@@ -70,6 +70,20 @@ class SnapDrawn():
 
         self._batch_point = None
 
+
+    def _gl_state_push(self):
+        self._is_point_size_enabled = bgl.glIsEnabled(bgl.GL_PROGRAM_POINT_SIZE)
+        if self._is_point_size_enabled:
+            bgl.glDisable(bgl.GL_PROGRAM_POINT_SIZE)
+
+        # draw 3d point OpenGL in the 3D View
+        bgl.glEnable(bgl.GL_BLEND)
+
+    def _gl_state_restore(self):
+        bgl.glDisable(bgl.GL_BLEND)
+        if self._is_point_size_enabled:
+            bgl.glEnable(bgl.GL_PROGRAM_POINT_SIZE)
+
     def batch_line_strip_create(self, coords):
         from gpu.types import (
             GPUVertBuf,
