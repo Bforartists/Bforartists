@@ -1582,7 +1582,7 @@ static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *UNUSED(ar
                  0,
                  0.5f * U.widget_unit,
                  U.dpi_fac * 501,
-                 U.dpi_fac * 250,
+                 U.dpi_fac * 282, /* bfa - changed from 250 to 282 - our splash screen is higher*/
                  ibuf,
                  0.0,
                  0.0,
