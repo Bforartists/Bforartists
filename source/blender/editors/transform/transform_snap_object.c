@@ -337,6 +337,7 @@ static bool raycastMesh(SnapObjectContext *sctx,
                         Mesh *me,
                         float obmat[4][4],
                         const unsigned int ob_index,
+                        bool use_hide,
                         /* read/write args */
                         float *ray_depth,
                         /* return args */
@@ -419,7 +420,12 @@ static bool raycastMesh(SnapObjectContext *sctx,
   }
 
   if (treedata->tree == NULL) {
-    BKE_bvhtree_from_mesh_get(treedata, me, BVHTREE_FROM_LOOPTRI, 4);
+    if (use_hide) {
+      BKE_bvhtree_from_mesh_get(treedata, me, BVHTREE_FROM_LOOPTRI_NO_HIDDEN, 4);
+    }
+    else {
+      BKE_bvhtree_from_mesh_get(treedata, me, BVHTREE_FROM_LOOPTRI, 4);
+    }
 
     /* required for snapping with occlusion. */
     treedata->edge = me->medge;
@@ -706,23 +712,23 @@ static bool raycastObj(SnapObjectContext *sctx,
                        ListBase *r_hit_list)
 {
   bool retval = false;
+  if (use_occlusion_test) {
+    if (use_obedit && sctx->use_v3d && XRAY_ENABLED(sctx->v3d_data.v3d)) {
+      /* Use of occlude geometry in editing mode disabled. */
+      return false;
+    }
+
+    if (ELEM(ob->dt, OB_BOUNDBOX, OB_WIRE)) {
+      /* Do not hit objects that are in wire or bounding box
+       * display mode. */
+      return false;
+    }
+  }
 
   switch (ob->type) {
     case OB_MESH: {
-      if (use_occlusion_test) {
-        if (use_obedit && sctx->use_v3d && XRAY_ENABLED(sctx->v3d_data.v3d)) {
-          /* Use of occlude geometry in editing mode disabled. */
-          return false;
-        }
-
-        if (ELEM(ob->dt, OB_BOUNDBOX, OB_WIRE)) {
-          /* Do not hit objects that are in wire or bounding box
-           * display mode. */
-          return false;
-        }
-      }
-
       Mesh *me = ob->data;
+      bool use_hide = false;
       if (BKE_object_is_in_editmode(ob)) {
         BMEditMesh *em = BKE_editmesh_from_object(ob);
         if (use_obedit) {
@@ -742,6 +748,7 @@ static bool raycastObj(SnapObjectContext *sctx,
         }
         else if (em->mesh_eval_final) {
           me = em->mesh_eval_final;
+          use_hide = true;
         }
       }
       retval = raycastMesh(sctx,
@@ -751,12 +758,33 @@ static bool raycastObj(SnapObjectContext *sctx,
                            me,
                            obmat,
                            ob_index,
+                           use_hide,
                            ray_depth,
                            r_loc,
                            r_no,
                            r_index,
                            r_hit_list);
       break;
+    }
+    case OB_CURVE:
+    case OB_SURF:
+    case OB_FONT: {
+      if (ob->runtime.mesh_eval) {
+        retval = raycastMesh(sctx,
+                             ray_start,
+                             ray_dir,
+                             ob,
+                             ob->runtime.mesh_eval,
+                             obmat,
+                             ob_index,
+                             false,
+                             ray_depth,
+                             r_loc,
+                             r_no,
+                             r_index,
+                             r_hit_list);
+        break;
+      }
     }
   }
 

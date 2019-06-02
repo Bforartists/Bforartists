@@ -200,7 +200,6 @@ class TOPBAR_MT_file(Menu):
 
         layout.separator()
 
-        layout.operator_context = 'EXEC_AREA'
         layout.operator("wm.quit_blender", text="Quit", icon='QUIT')
 
 
@@ -272,7 +271,7 @@ class TOPBAR_MT_file_new(Menu):
 class TOPBAR_MT_file_recover(Menu):
     bl_label = "Recover"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("wm.recover_last_session", text="Last Session")

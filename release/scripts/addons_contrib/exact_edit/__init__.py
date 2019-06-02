@@ -21,7 +21,7 @@ END GPL LICENSE BLOCK
 bl_info = {
     "name": "Exact Edit",
     "author": "nBurn",
-    "version": (0, 3, 0),
+    "version": (0, 3, 1),
     "blender": (2, 80, 0),
     "location": "View3D",
     "description": "Tool for precisely setting distance, scale, and rotation",
@@ -32,10 +32,10 @@ bl_info = {
 if "bpy" in locals():
     import importlib
     importlib.reload(xedit_set_meas)
-    #importlib.reload(xedit_free_rotate)  # not working yet
+    importlib.reload(xedit_free_rotate)  # beta testing...
 else:
     from . import xedit_set_meas
-    #from . import xedit_free_rotate  # not working yet
+    from . import xedit_free_rotate  # beta testing...
 
 import bpy
 
@@ -47,20 +47,20 @@ class XEDIT_PT_ui_pan(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     #bl_context = 'objectmode'
-    bl_category = 'Tools'
+    bl_category = 'Edit'
 
     def draw(self, context):
         row = self.layout.row(align=True)
         col = row.column()
-        col.operator("view3d.xedit_set_meas_op", text="Set Measure")
-        #col.operator("view3d.xedit_free_rotate_op", text="Free Rotate")  # not working yet
+        col.operator("view3d.xedit_set_meas_op", text="Set Measure", icon="EDITMODE_HLT")
+        col.operator("view3d.xedit_free_rotate_op", text="Free Rotate", icon="FORCE_MAGNETIC")  # not working yet
 
 
 classes = (
     xedit_set_meas.XEDIT_OT_store_meas_btn,
     xedit_set_meas.XEDIT_OT_meas_inp_dlg,
     xedit_set_meas.XEDIT_OT_set_meas,
-    #xedit_free_rotate.XEDIT_OT_free_rotate,  # not working yet
+    xedit_free_rotate.XEDIT_OT_free_rotate,  # beta testing...
     XEDIT_PT_ui_pan
 )
 

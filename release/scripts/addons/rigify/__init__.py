@@ -35,11 +35,11 @@ if "bpy" in locals():
     importlib.reload(generate)
     importlib.reload(ui)
     importlib.reload(utils)
+    importlib.reload(feature_set_list)
     importlib.reload(metarig_menu)
     importlib.reload(rig_lists)
-    importlib.reload(feature_sets)
 else:
-    from . import (utils, rig_lists, generate, ui, metarig_menu, feature_sets)
+    from . import (utils, feature_set_list, rig_lists, generate, ui, metarig_menu)
 
 import bpy
 import sys
@@ -127,23 +127,21 @@ class RigifyPreferences(AddonPreferences):
 
             register()
 
-    def update_external_rigs(self):
+    def update_external_rigs(self, force=False):
         """Get external feature sets"""
         if self.legacy_mode:
             return
 
-        feature_sets_path = os.path.join(bpy.utils.script_path_user(), 'rigify')
+        set_list = feature_set_list.get_installed_list()
 
-        if os.path.exists(feature_sets_path):
-            if feature_sets_path not in sys.path:
-                sys.path.append(feature_sets_path)
+        if force or len(set_list) > 0:
             # Reload rigs
             print('Reloading external rigs...')
-            rig_lists.get_external_rigs(feature_sets_path)
+            rig_lists.get_external_rigs(set_list)
 
             # Reload metarigs
             print('Reloading external metarigs...')
-            metarig_menu.get_external_metarigs(feature_sets_path)
+            metarig_menu.get_external_metarigs(set_list)
 
             # Re-register rig paramaters
             register_rig_parameters()
@@ -198,13 +196,11 @@ class RigifyPreferences(AddonPreferences):
         op.data_path = 'addon_prefs.show_rigs_folder_expanded'
         sub.label(text='{}: {}'.format('Rigify', 'External feature sets'))
         if rigs_expand:
-            if os.path.exists(os.path.join(bpy.utils.script_path_user(), 'rigify')):
-                feature_sets_path = os.path.join(bpy.utils.script_path_user(), 'rigify')
-                for fs in os.listdir(feature_sets_path):
-                    row = col.row()
-                    row.label(text=fs)
-                    op = row.operator("wm.rigify_remove_feature_set", text="Remove", icon='CANCEL')
-                    op.featureset = fs
+            for fs in feature_set_list.get_installed_list():
+                row = col.split(factor=0.8)
+                row.label(text=feature_set_list.get_ui_name(fs))
+                op = row.operator("wm.rigify_remove_feature_set", text="Remove", icon='CANCEL')
+                op.featureset = fs
             row = col.row(align=True)
             row.operator("wm.rigify_add_feature_set", text="Install Feature Set from File...", icon='FILEBROWSER')
 
@@ -372,7 +368,7 @@ def register():
 
     # Sub-modules.
     ui.register()
-    feature_sets.register()
+    feature_set_list.register()
     metarig_menu.register()
 
     # Classes.
@@ -383,7 +379,7 @@ def register():
     bpy.types.Armature.rigify_layers = CollectionProperty(type=RigifyArmatureLayer)
 
     bpy.types.Armature.active_feature_set = EnumProperty(
-        items=feature_sets.feature_set_items,
+        items=feature_set_list.feature_set_items,
         name="Feature Set",
         description="Restrict the rig list to a specific custom feature set"
         )
@@ -538,4 +534,4 @@ def unregister():
     # Sub-modules.
     metarig_menu.unregister()
     ui.unregister()
-    feature_sets.unregister()
+    feature_set_list.unregister()

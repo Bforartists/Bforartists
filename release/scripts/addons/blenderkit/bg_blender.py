@@ -16,6 +16,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+if "bpy" in locals():
+    from importlib import reload
+
+    utils = reload(utils)
+else:
+    from blenderkit import utils
 
 import bpy
 import sys, threading, os
@@ -24,8 +30,6 @@ import re
 from bpy.props import (
     EnumProperty,
 )
-
-from blenderkit import utils
 
 bg_processes = []
 
@@ -112,19 +116,19 @@ def bg_update():
             # readthread.
             if tcom.error:
                 estring = tcom.eval_path_computing + ' = False'
-                exec (estring)
+                exec(estring)
 
             tcom.lasttext = tcom.outtext
             if tcom.outtext != '':
                 tcom.outtext = ''
                 estring = tcom.eval_path_state + ' = tcom.lasttext'
 
-                exec (estring)
+                exec(estring)
             # print(tcom.lasttext)
             if 'finished successfully' in tcom.lasttext:
                 bg_processes.remove(p)
                 estring = tcom.eval_path_computing + ' = False'
-                exec (estring)
+                exec(estring)
             else:
                 readthread = threading.Thread(target=threadread, args=([tcom]), daemon=True)
                 readthread.start()
@@ -205,7 +209,7 @@ class KillBgProcess(bpy.types.Operator):
                         kill = True
                 if kill:
                     estring = tcom.eval_path_computing + ' = False'
-                    exec (estring)
+                    exec(estring)
                     processes.remove(p)
                     tcom.proc.kill()
 

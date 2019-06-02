@@ -1586,7 +1586,7 @@ static void ed_default_handlers(
     UI_region_handlers_add(handlers);
   }
   if (flag & ED_KEYMAP_GIZMO) {
-    BLI_assert(ar && ar->type->regionid == RGN_TYPE_WINDOW);
+    BLI_assert(ar && ELEM(ar->type->regionid, RGN_TYPE_WINDOW, RGN_TYPE_PREVIEW));
     if (ar) {
       /* Anything else is confusing, only allow this. */
       BLI_assert(&ar->handlers == handlers);
@@ -1612,9 +1612,9 @@ static void ed_default_handlers(
     keymap = WM_keymap_ensure(wm->defaultconf, "Markers", 0, 0);
     WM_event_add_keymap_handler_poll(handlers, keymap, event_in_markers_region);
 
-    /* time-scrubbing */
-    keymap = WM_keymap_ensure(wm->defaultconf, "Scrubbing", 0, 0);
-    WM_event_add_keymap_handler_poll(handlers, keymap, ED_event_in_scrubbing_region);
+    /* time-scrub */
+    keymap = WM_keymap_ensure(wm->defaultconf, "Time Scrub", 0, 0);
+    WM_event_add_keymap_handler_poll(handlers, keymap, ED_time_scrub_event_in_region);
 
     /* frame changing and timeline operators (for time spaces) */
     keymap = WM_keymap_ensure(wm->defaultconf, "Animation", 0, 0);

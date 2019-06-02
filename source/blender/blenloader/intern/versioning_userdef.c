@@ -127,11 +127,11 @@ static void do_versions_theme(const UserDef *userdef, bTheme *btheme)
     FROM_DEFAULT_V4_UCHAR(space_sequencer.text);
     FROM_DEFAULT_V4_UCHAR(space_clip.text);
 
-    FROM_DEFAULT_V4_UCHAR(space_graph.scrubbing_background);
-    FROM_DEFAULT_V4_UCHAR(space_action.scrubbing_background);
-    FROM_DEFAULT_V4_UCHAR(space_nla.scrubbing_background);
-    FROM_DEFAULT_V4_UCHAR(space_sequencer.scrubbing_background);
-    FROM_DEFAULT_V4_UCHAR(space_clip.scrubbing_background);
+    FROM_DEFAULT_V4_UCHAR(space_graph.time_scrub_background);
+    FROM_DEFAULT_V4_UCHAR(space_action.time_scrub_background);
+    FROM_DEFAULT_V4_UCHAR(space_nla.time_scrub_background);
+    FROM_DEFAULT_V4_UCHAR(space_sequencer.time_scrub_background);
+    FROM_DEFAULT_V4_UCHAR(space_clip.time_scrub_background);
   }
 
   if (!USER_VERSION_ATLEAST(280, 67)) {
@@ -411,9 +411,6 @@ void BLO_version_defaults_userpref_blend(Main *bmain, UserDef *userdef)
         userdef->ndof_flag |= NDOF_TURNTABLE;
       }
     }
-    if (userdef->tweak_threshold == 0) {
-      userdef->tweak_threshold = 10;
-    }
   }
 
   /* NOTE!! from now on use userdef->versionfile and userdef->subversionfile */
@@ -602,6 +599,12 @@ void BLO_version_defaults_userpref_blend(Main *bmain, UserDef *userdef)
     }
 
     userdef->pref_flag |= USER_PREF_FLAG_SAVE;
+  }
+
+  if (!USER_VERSION_ATLEAST(280, 73)) {
+    userdef->drag_threshold = 30;
+    userdef->drag_threshold_mouse = 3;
+    userdef->drag_threshold_tablet = 10;
   }
 
   /**

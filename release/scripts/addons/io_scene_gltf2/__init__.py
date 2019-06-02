@@ -15,7 +15,7 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (0, 9, 11),
+    "version": (0, 9, 21),
     'blender': (2, 80, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -205,12 +205,6 @@ class ExportGLTF2_Base:
         default=False
     )
 
-    # export_layers: BoolProperty(
-    #     name='All layers',
-    #     description='Export all layers, rather than just the first',
-    #     default=True
-    # )
-
     export_extras: BoolProperty(
         name='Custom Properties',
         description='Export custom properties as glTF extras',
@@ -265,12 +259,6 @@ class ExportGLTF2_Base:
         name='Skinning',
         description='Export skinning (armature) data',
         default=True
-    )
-
-    export_bake_skins: BoolProperty(
-        name='Bake Skinning Constraints',
-        description='Apply skinning constraints to armatures',
-        default=False
     )
 
     export_all_influences: BoolProperty(
@@ -400,10 +388,8 @@ class ExportGLTF2_Base:
             export_settings['gltf_force_sampling'] = False
         export_settings['gltf_skins'] = self.export_skins
         if self.export_skins:
-            export_settings['gltf_bake_skins'] = self.export_bake_skins
             export_settings['gltf_all_vertex_influences'] = self.export_all_influences
         else:
-            export_settings['gltf_bake_skins'] = False
             export_settings['gltf_all_vertex_influences'] = False
         export_settings['gltf_frame_step'] = self.export_frame_step
         export_settings['gltf_morph'] = self.export_morph
@@ -485,7 +471,6 @@ class ExportGLTF2_Base:
             col.prop(self, 'export_force_sampling')
         col.prop(self, 'export_skins')
         if self.export_skins:
-            col.prop(self, 'export_bake_skins')
             col.prop(self, 'export_all_influences')
         col.prop(self, 'export_morph')
         if self.export_morph:

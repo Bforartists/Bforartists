@@ -24,8 +24,8 @@ from .widgets_special import create_neck_bend_widget, create_neck_tweak_widget
 
 from .animation import get_keyed_frames, bones_in_frame, overwrite_prop_animation
 
-from .rig import RIG_DIR, METARIG_DIR, MODULE_NAME, TEMPLATE_DIR, outdated_types, upgradeMetarigTypes
-from .rig import get_rig_type, get_metarig_module, write_metarig, get_resource
+from .rig import RIG_DIR, METARIG_DIR, TEMPLATE_DIR, outdated_types, upgradeMetarigTypes
+from .rig import write_metarig, get_resource
 from .rig import connected_children_names, has_connected_children
 
 from .layers import get_layers, ControlLayersOption

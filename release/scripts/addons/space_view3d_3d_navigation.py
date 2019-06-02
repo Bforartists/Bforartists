@@ -25,9 +25,9 @@
 bl_info = {
     "name": "3D Navigation",
     "author": "Demohero, uriel",
-    "version": (1, 2, 4),
+    "version": (1, 2, 5),
     "blender": (2, 80, 0),
-    "location": "View3D > Sidebar > Display Tab",
+    "location": "View3D > Sidebar > View Tab",
     "description": "Navigate the Camera & 3D View from the Toolshelf",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -219,8 +219,8 @@ class BottomViewpoint1(Operator):
 class VIEW3D_PT_3dnavigationPanel(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_label = "3D Nav"
-    bl_category = "Display"
+    bl_label = "3d Nav"
+    bl_category = "View"
 
     def draw(self, context):
         layout = self.layout
@@ -263,7 +263,7 @@ class VIEW3D_PT_3dnavigationPanel2(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Pan Orbit Zoom Roll"
-    bl_category = "Display"
+    bl_category = "View"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
@@ -341,7 +341,7 @@ class NavAddonPreferences(AddonPreferences):
     category: StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
-            default="Display",
+            default="View",
             update=update_panel
             )
 

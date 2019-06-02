@@ -293,7 +293,7 @@ class OBJECT_OT_particletrace(Operator):
             Btrace = bpy.context.window_manager.curve_tracer
             particle_step = Btrace.particle_step    # step size in frames
             obj = bpy.context.object
-            obj = bpy.context.depsgraph.objects.get(ob.name, None)
+            obj = bpy.context.evaluated_depsgraph_get().objects.get(ob.name, None)
             ps = obj.particle_systems.active
             curvelist = []
             curve_handle = Btrace.curve_handle
@@ -375,7 +375,7 @@ class OBJECT_OT_traceallparticles(Operator):
     def execute(self, context):
         try:
             obj = context.object
-            eval_ob = bpy.context.depsgraph.objects.get(obj.name, None)
+            eval_ob = bpy.context.evaluated_depsgraph_get().objects.get(obj.name, None)
             ps = obj.particle_systems.active
             setting = ps.settings
 

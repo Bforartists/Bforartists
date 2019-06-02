@@ -39,7 +39,7 @@ from bpy.props import (
         )
 
 
-class OrientPie(Menu):
+class PIE_MT_OrientPie(Menu):
     bl_label = "Transform Orientation"
     bl_idname = "PIE_MT_orient"
 
@@ -54,7 +54,7 @@ class OrientPie(Menu):
 addon_keymaps = []
 
 classes = (
-    OrientPie,
+    PIE_MT_OrientPie,
     )
 
 

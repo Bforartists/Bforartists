@@ -77,25 +77,9 @@ struct GPUMaterial {
   ListBase inputs; /* GPUInput */
   GPUVertAttrLayers attrs;
   int builtins;
-  int alpha, obcolalpha;
-  int dynproperty;
-
-  /* for passing uniforms */
-  int viewmatloc, invviewmatloc;
-  int obmatloc, invobmatloc;
-  int localtoviewmatloc, invlocaltoviewmatloc;
-  int obcolloc, obautobumpscaleloc;
-  int cameratexcofacloc;
-
-  int partscalarpropsloc;
-  int partcoloc;
-  int partvel;
-  int partangvel;
-
-  int objectinfoloc;
 
   /* XXX: Should be in Material. But it depends on the output node
-   * used and since the output selection is difference for GPUMaterial...
+   * used and since the output selection is different for GPUMaterial...
    */
   int domain;
 
@@ -262,7 +246,10 @@ typedef struct GPUSssKernelData {
   float kernel[SSS_SAMPLES][4];
   float param[3], max_radius;
   int samples;
+  int pad[3];
 } GPUSssKernelData;
+
+BLI_STATIC_ASSERT_ALIGN(GPUSssKernelData, 16)
 
 static void sss_calculate_offsets(GPUSssKernelData *kd, int count, float exponent)
 {
