@@ -883,8 +883,7 @@ static uiTooltipData *ui_tooltip_data_from_gizmo(bContext *C, wmGizmo *gz)
 
   /* Operator Actions */
   {
-    bool use_drag = gz->drag_part != -1 && gz->highlight_part != gz->drag_part;
-
+    const bool use_drag = gz->drag_part != -1 && gz->highlight_part != gz->drag_part;
     const struct {
       int part;
       const char *prefix;

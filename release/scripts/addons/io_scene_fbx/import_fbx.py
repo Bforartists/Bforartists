@@ -70,7 +70,12 @@ def validate_blend_names(name):
     if len(name) > 63:
         import hashlib
         h = hashlib.sha1(name).hexdigest()
-        return name[:55].decode('utf-8', 'replace') + "_" + h[:7]
+        n = 55
+        name_utf8 = name[:n].decode('utf-8', 'replace') + "_" + h[:7]
+        while len(name_utf8.encode()) > 63:
+            n -= 1
+            name_utf8 = name[:n].decode('utf-8', 'replace') + "_" + h[:7]
+        return name_utf8
     else:
         # We use 'replace' even though FBX 'specs' say it should always be utf8, see T53841.
         return name.decode('utf-8', 'replace')

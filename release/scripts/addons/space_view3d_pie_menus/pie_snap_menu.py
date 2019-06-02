@@ -38,7 +38,7 @@ from bpy.types import (
 
 
 # Pie Snap - Shift + Tab
-class PieSnaping(Menu):
+class PIE_MT_Snaping(Menu):
     bl_idname = "PIE_MT_snapping"
     bl_label = "Pie Snapping"
 
@@ -63,7 +63,7 @@ class PieSnaping(Menu):
         pie.operator("wm.call_menu_pie", text="Snap Target", icon='NONE').name = "SNAP_MT_targetmenu"
 
 
-class SnapActive(Operator):
+class PIE_OT_SnapActive(Operator):
     bl_idname = "snap.active"
     bl_label = "Snap Active"
     bl_options = {'REGISTER', 'UNDO'}
@@ -80,7 +80,7 @@ class SnapActive(Operator):
         return {'FINISHED'}
 
 
-class SnapVolume(Operator):
+class PIE_OT_SnapVolume(Operator):
     bl_idname = "snap.volume"
     bl_label = "Snap Volume"
     bl_options = {'REGISTER', 'UNDO'}
@@ -95,7 +95,7 @@ class SnapVolume(Operator):
         return {'FINISHED'}
 
 
-class SnapFace(Operator):
+class PIE_OT_SnapFace(Operator):
     bl_idname = "snap.face"
     bl_label = "Snap Face"
     bl_options = {'REGISTER', 'UNDO'}
@@ -112,7 +112,7 @@ class SnapFace(Operator):
         return {'FINISHED'}
 
 
-class SnapEdge(Operator):
+class PIE_OT_SnapEdge(Operator):
     bl_idname = "snap.edge"
     bl_label = "Snap Edge"
     bl_options = {'REGISTER', 'UNDO'}
@@ -129,7 +129,7 @@ class SnapEdge(Operator):
         return {'FINISHED'}
 
 
-class SnapVertex(Operator):
+class PIE_OT_SnapVertex(Operator):
     bl_idname = "snap.vertex"
     bl_label = "Snap Vertex"
     bl_options = {'REGISTER', 'UNDO'}
@@ -146,7 +146,7 @@ class SnapVertex(Operator):
         return {'FINISHED'}
 
 
-class SnapIncrement(Operator):
+class PIE_OT_SnapIncrement(Operator):
     bl_idname = "snap.increment"
     bl_label = "Snap Increment"
     bl_options = {'REGISTER', 'UNDO'}
@@ -163,7 +163,7 @@ class SnapIncrement(Operator):
         return {'FINISHED'}
 
 
-class SnapAlignRotation(Operator):
+class PIE_OT_SnapAlignRotation(Operator):
     bl_idname = "snap.alignrotation"
     bl_label = "Snap Align rotation"
     bl_options = {'REGISTER', 'UNDO'}
@@ -180,7 +180,7 @@ class SnapAlignRotation(Operator):
         return {'FINISHED'}
 
 
-class SnapTargetVariable(Operator):
+class PIE_OT_SnapTargetVariable(Operator):
     bl_idname = "object.snaptargetvariable"
     bl_label = "Snap Target Variable"
     bl_options = {'REGISTER', 'UNDO'}
@@ -200,7 +200,7 @@ class SnapTargetVariable(Operator):
 # Menu Snap Target - Shift + Tab
 
 
-class SnapTargetMenu(Menu):
+class PIE_MT_SnapTargetMenu(Menu):
     bl_idname = "SNAP_MT_targetmenu"
     bl_label = "Snap Target Menu"
 
@@ -224,16 +224,16 @@ class SnapTargetMenu(Menu):
 # Pie Snapping - Shift + Tab
 
 classes = (
-    PieSnaping,
-    SnapTargetMenu,
-    SnapActive,
-    SnapVolume,
-    SnapFace,
-    SnapEdge,
-    SnapVertex,
-    SnapIncrement,
-    SnapAlignRotation,
-    SnapTargetVariable
+    PIE_MT_Snaping,
+    PIE_MT_SnapTargetMenu,
+    PIE_OT_SnapActive,
+    PIE_OT_SnapVolume,
+    PIE_OT_SnapFace,
+    PIE_OT_SnapEdge,
+    PIE_OT_SnapVertex,
+    PIE_OT_SnapIncrement,
+    PIE_OT_SnapAlignRotation,
+    PIE_OT_SnapTargetVariable
     )
 
 addon_keymaps = []

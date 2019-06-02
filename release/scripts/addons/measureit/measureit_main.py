@@ -327,7 +327,7 @@ class MEASUREIT_PT_Edit(Panel):
     bl_label = "Items"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category= 'Display'
+    bl_category= 'View'
     bl_parent_id = 'MEASUREIT_PT_Main'
 
     # -----------------------------------------------------
@@ -612,7 +612,7 @@ class MEASUREIT_PT_Main(Panel):
     bl_label = "MeasureIt Tools"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category= 'Display'
+    bl_category= 'View'
 
     # ------------------------------
     # Draw UI
@@ -738,7 +738,7 @@ class MEASUREIT_PT_Conf(Panel):
     bl_label = "Configuration"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category= 'Display'
+    bl_category= 'View'
     bl_parent_id = 'MEASUREIT_PT_Main'
     bl_options = {'DEFAULT_CLOSED'}
 

@@ -16,18 +16,20 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-if "bpy" in locals():
-    import imp
 
-    imp.reload(asset_inspector)
-    imp.reload(paths)
-    imp.reload(utils)
-    imp.reload(search)
-    imp.reload(bg_blender)
-    imp.reload(autothumb)
-    imp.reload(version_checker)
+if "bpy" in locals():
+    from importlib import reload
+
+    asset_inspector = reload(asset_inspector)
+    paths = reload(paths)
+    utils = reload(utils)
+    bg_blender = reload(bg_blender)
+    autothumb = reload(autothumb)
+    version_checker = reload(version_checker)
+    search = reload(search)
+    ui_panels = reload(ui_panels)
 else:
-    from blenderkit import asset_inspector, paths, utils, bg_blender, autothumb, version_checker, search
+    from blenderkit import asset_inspector, paths, utils, bg_blender, autothumb, version_checker, search, ui_panels
 
 import tempfile, os, subprocess, json, re
 
@@ -446,7 +448,7 @@ def get_upload_data(self, context, asset_type):
         upload_data["category"] = props.subcategory
     upload_data["license"] = props.license
     upload_data["isFree"] = props.is_free
-    upload_data["isPrivate"] = props.is_private
+    upload_data["isPrivate"] = props.is_private == 'PRIVATE'
     upload_data["token"] = user_preferences.api_key
 
     if props.asset_base_id != '':
@@ -503,7 +505,7 @@ def get_upload_location(props):
 
 
 def check_storage_quota(props):
-    if not props.is_private:
+    if props.is_private == 'PUBLIC':
         return True
 
     profile = bpy.context.window_manager.get('bkit profile')
@@ -549,6 +551,7 @@ def start_upload(self, context, asset_type, as_new, metadata_only):
     if props.report != '':
         self.report({'ERROR_INVALID_INPUT'}, props.report)
         return {'CANCELLED'}
+
     if as_new:
         props.asset_base_id = ''
         props.id = ''
@@ -723,13 +726,24 @@ class ModelUploadOperator(Operator):
         return result
 
     def draw(self, context):
+        props = utils.get_upload_props()
         layout = self.layout
-        layout.label(text="Really upload as new? ")
-        layout.label(text="Do this only when you create a new asset from an old one.")
-        layout.label(text="For updates of thumbnail or model use reupload.")
+
+        if self.as_new:
+            layout.label(text="Really upload as new? ")
+            layout.label(text="Do this only when you create a new asset from an old one.")
+            layout.label(text="For updates of thumbnail or model use reupload.")
+
+        if props.is_private == 'PUBLIC':
+            ui_panels.label_multiline(layout, text='Since this version (1.0.24), '
+                                                   'PUBLIC ASSETS ARE VALIDATED AUTOMATICALLY '
+                                                   ' after upload. '
+                                                   'Click Ok to proceed.')
 
     def invoke(self, context, event):
-        if self.as_new:
+        props = utils.get_upload_props()
+
+        if self.as_new or props.is_private == 'PUBLIC':
             return context.window_manager.invoke_props_dialog(self)
         else:
             return self.execute(context)

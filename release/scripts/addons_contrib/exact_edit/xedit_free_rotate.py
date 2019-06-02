@@ -25,12 +25,14 @@ import bpy
 import bmesh
 import bgl
 import blf
-from mathutils import geometry, Euler, Quaternion, Vector
+import gpu
+from mathutils import geometry, Euler, Matrix, Quaternion, Vector
 from bpy_extras import view3d_utils
 from bpy_extras.view3d_utils import location_3d_to_region_2d as loc3d_to_reg2d
 from bpy_extras.view3d_utils import region_2d_to_vector_3d as reg2d_to_vec3d
 from bpy_extras.view3d_utils import region_2d_to_location_3d as reg2d_to_loc3d
 from bpy_extras.view3d_utils import region_2d_to_origin_3d as reg2d_to_org3d
+from gpu_extras.batch import batch_for_shader
 
 # "Constant" values
 (
@@ -85,32 +87,32 @@ def editmode_refresh():
 def backup_blender_settings():
     backup = [
         deepcopy(bpy.context.tool_settings.use_snap),
-        deepcopy(bpy.context.tool_settings.snap_element),
+        deepcopy(bpy.context.tool_settings.snap_elements),
         deepcopy(bpy.context.tool_settings.snap_target),
-        deepcopy(bpy.context.space_data.pivot_point),
-        deepcopy(bpy.context.space_data.transform_orientation),
-        deepcopy(bpy.context.space_data.show_manipulator),
+        deepcopy(bpy.context.tool_settings.transform_pivot_point),
+        deepcopy(bpy.context.scene.transform_orientation_slots[0].type),
+        deepcopy(bpy.context.space_data.show_gizmo),
         deepcopy(bpy.context.scene.cursor.location)]
     return backup
 
 
 def init_blender_settings():
     bpy.context.tool_settings.use_snap = False
-    bpy.context.tool_settings.snap_element = 'VERTEX'
+    bpy.context.tool_settings.snap_elements = {'VERTEX'}
     bpy.context.tool_settings.snap_target = 'CLOSEST'
-    bpy.context.space_data.pivot_point = 'ACTIVE_ELEMENT'
-    bpy.context.space_data.transform_orientation = 'GLOBAL'
-    bpy.context.space_data.show_manipulator = False
+    bpy.context.tool_settings.transform_pivot_point = 'ACTIVE_ELEMENT'
+    bpy.context.scene.transform_orientation_slots[0].type = 'GLOBAL'
+    bpy.context.space_data.show_gizmo = False
     return
 
 
 def restore_blender_settings(backup):
     bpy.context.tool_settings.use_snap = deepcopy(backup[0])
-    bpy.context.tool_settings.snap_element = deepcopy(backup[1])
+    bpy.context.tool_settings.snap_elements = deepcopy(backup[1])
     bpy.context.tool_settings.snap_target = deepcopy(backup[2])
-    bpy.context.space_data.pivot_point = deepcopy(backup[3])
-    bpy.context.space_data.transform_orientation = deepcopy(backup[4])
-    bpy.context.space_data.show_manipulator = deepcopy(backup[5])
+    bpy.context.tool_settings.transform_pivot_point = deepcopy(backup[3])
+    bpy.context.scene.transform_orientation_slots[0].type = deepcopy(backup[4])
+    bpy.context.space_data.show_gizmo = deepcopy(backup[5])
     bpy.context.scene.cursor.location = deepcopy(backup[6])
     return
 
@@ -131,9 +133,9 @@ def vec3s_alm_eq(vec_a, vec_b):
 
 
 # assume both float lists are same size?
-def flt_lists_alm_eq(ls_a, ls_b):
+def flt_lists_alm_eq(ls_a, ls_b, tol=0.001):
     for i in range(len(ls_a)):
-        if not flts_alm_eq(ls_a[i], ls_b[i]):
+        if not (ls_a[i] > (ls_b[i] - tol) and ls_a[i] < (ls_b[i] + tol)):
             return False
     return True
 
@@ -162,7 +164,7 @@ class MenuHandler:
         self.dis_colr = dis_colr  # disabled color
         self.reg = reg  # region
 
-        view_offset = 36, 45  # box left top start
+        self.view_offset = 20, 95  # box left top start
         self.box_y_pad = 8  # vertical space between boxes
 
         fontid = 0
@@ -170,18 +172,19 @@ class MenuHandler:
         lcase_wid, lcase_hgt = blf.dimensions(fontid, "n")
         ucase_wid, ucase_hgt = blf.dimensions(fontid, "N")
         bot_space = blf.dimensions(fontid, "gp")[1] - lcase_hgt
-        self.full_hgt = blf.dimensions(fontid, "NTgp")[1]
+        self.full_txt_hgt = blf.dimensions(fontid, "NTgp")[1]
 
         arr_wid, arr_hgt = 12, 16
         arrow_base = (0, 0), (0, arr_hgt), (arr_wid, arr_hgt/2)
-        aw_adj, ah_adj = arr_wid * 1.5, (arr_hgt - ucase_hgt) / 2
+        aw_adj, ah_adj = arr_wid * 0.50, (arr_hgt - ucase_hgt) / 2
         self.arrow_pts = []
         for a in arrow_base:
             self.arrow_pts.append((a[0] - aw_adj, a[1] - ah_adj))
 
-        self.blef = view_offset[0] + toolwid  # box left start
-        self.titlco = self.blef // 2, self.reg.height - view_offset[1]
-        self.btop = self.titlco[1] - (self.full_hgt // 1.5)
+        self.blef = self.view_offset[0] + toolwid  # box left start
+        #self.titlco = self.blef // 2, self.reg.height - self.view_offset[1]
+        self.titlco = self.blef, self.reg.height - self.view_offset[1]
+        self.btop = self.titlco[1] - (self.full_txt_hgt // 1.5)
         self.txt_y_pad = bot_space * 2
 
     def add_menu(self, strings):
@@ -193,8 +196,8 @@ class MenuHandler:
         for i in range(new.cnt):
             new.txtcolrs.append(self.dis_colr)
             new.texts.append(strings[i])
-            bbot = btop - self.full_hgt
-            new.tcoords.append((tlef, bbot))
+            bbot = btop - self.full_txt_hgt
+            new.tcoords.append((tlef + self.view_offset[0], bbot))
             btop = bbot - self.box_y_pad
             new.arrows.append((
                 (self.arrow_pts[0][0] + tlef, self.arrow_pts[0][1] + bbot),
@@ -227,23 +230,33 @@ class MenuHandler:
         font_id = 0
         blf.size(font_id, self.tsize, self.dpi)
         # draw title
-        bgl.glColor4f(*self.dis_colr)
+        #bgl.glColor4f(*self.dis_colr)
         blf.position(font_id, self.titlco[0], self.titlco[1], 0)
+        blf.color(font_id, *self.dis_colr)
         blf.draw(font_id, self.title)
         # draw menu
         if menu_visible and menu is not None:
             for i in range(menu.cnt):
-                bgl.glColor4f(*menu.txtcolrs[i])
+                #bgl.glColor4f(*menu.txtcolrs[i])
                 blf.position(font_id, menu.tcoords[i][0], menu.tcoords[i][1], 0)
+                blf.color(font_id, *menu.txtcolrs[i])
                 blf.draw(font_id, menu.texts[i])
 
             # draw arrow
+            '''
             bgl.glEnable(bgl.GL_BLEND)
             bgl.glColor4f(*self.act_colr)
             bgl.glBegin(bgl.GL_LINE_LOOP)
             for p in menu.arrows[menu.active]:
                 bgl.glVertex2f(*p)
             bgl.glEnd()
+            '''
+            indices = ((0, 1), (1, 2), (2, 0))
+            shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+            batch = batch_for_shader(shader, 'LINES', {"pos": menu.arrows[menu.active]}, indices=indices)
+            shader.bind()
+            shader.uniform_float("color", self.act_colr)
+            batch.draw(shader)
 
 
 # === 3D View mouse location and button code ===
@@ -310,7 +323,7 @@ class ViewButton():
         if my < self.ms_chk[2] or my > self.ms_chk[3]:
             return False
         return True
-    
+
     def draw_btn(self, btn_loc, mouse_co, highlight_mouse=False):
         if btn_loc is not None:
             offs_loc = btn_loc + self.offset
@@ -323,27 +336,46 @@ class ViewButton():
             else:
                 self.ms_over = False
             # draw button box
+            '''
             bgl.glColor4f(*colr)
             bgl.glBegin(bgl.GL_LINE_STRIP)
             for coord in self.coords:
                 bgl.glVertex2f(coord[0], coord[1])
             bgl.glVertex2f(self.coords[0][0], self.coords[0][1])
             bgl.glEnd()
+            '''
+            indc = ((0, 1), (1, 2), (2, 3), (3, 0))
+            shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+            batch = batch_for_shader(shader, 'LINES', {"pos": self.coords}, indices=indc)
+            shader.bind()
+            shader.uniform_float("color", colr)
+            batch.draw(shader)
+
             # draw outline around button box
             if highlight_mouse and self.ms_over:
-                bgl.glColor4f(*self.colr_off)
+                #bgl.glColor4f(*self.colr_off)
                 HO = 4  # highlight_mouse offset
                 offs = (-HO, -HO), (-HO, HO), (HO, HO), (HO, -HO)
-                bgl.glBegin(bgl.GL_LINE_STRIP)
+                #bgl.glBegin(bgl.GL_LINE_STRIP)
+                off_co = []
                 for i, coord in enumerate(self.coords):
-                    bgl.glVertex2f(coord[0] + offs[i][0], coord[1] + offs[i][1])
-                bgl.glVertex2f(self.coords[0][0] + offs[0][0], self.coords[0][1] + offs[0][1])
-                bgl.glEnd()
+                    off_co.append((coord[0] + offs[i][0], coord[1] + offs[i][1]))
+                off_co.append((self.coords[0][0] + offs[0][0], self.coords[0][1] + offs[0][1]))
+
+                shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+                batch = batch_for_shader(shader, 'LINES', {"pos": off_co})
+                shader.bind()
+                shader.uniform_float("color", self.colr_off)
+                batch.draw(shader)
+
             # draw button text
-            bgl.glColor4f(*self.txt_colr)
-            blf.size(font_id, self.txt_sz, self.dpi)
             blf.position(font_id, self.txt_co[0], self.txt_co[1], 0)
+            #bgl.glColor4f(*self.txt_colr)
+            blf.size(font_id, self.txt_sz, self.dpi)
+            blf.color(font_id, *self.txt_colr)
+            #blf.position(font_id, self.txt_co[0], self.txt_co[1], 0)
             blf.draw(font_id, self.txt)
+
         else:
             self.ms_over = False
 
@@ -535,7 +567,7 @@ def add_select(self):
                     elif type(sel) is bmesh.types.BMFace:
                         sel_verts = sel.verts
                     for v in sel_verts:
-                        v_co3d = m_w * v.co
+                        v_co3d = m_w @ v.co
                         add_pt(self, v_co3d)
                         if self.pt_cnt > 2:
                             exit_loop = True
@@ -567,7 +599,7 @@ def add_select_multi(self):
                     elif type(sel) is bmesh.types.BMFace:
                         sel_verts = sel.verts
                     for v in sel_verts:
-                        v_co3d = m_w * v.co
+                        v_co3d = m_w @ v.co
                         self.multi_tmp.try_add(v_co3d)
                         if self.multi_tmp.cnt == self.multi_tmp.max_cnt:
                             exit_loop = True
@@ -625,7 +657,7 @@ def new_select_multi(self):
                 elif type(sel) is bmesh.types.BMFace:
                     sel_verts = sel.verts
                 for v in sel_verts:
-                    v_co3d = m_w * v.co
+                    v_co3d = m_w @ v.co
                     self.multi_tmp.try_add(v_co3d)
                     if self.multi_tmp.cnt == self.multi_tmp.max_cnt:
                         exit_loop = True
@@ -701,7 +733,7 @@ def find_closest_point(loc):
         if obj.type == 'MESH':
             if len(obj.data.vertices) > 0:
                 for v in obj.data.vertices:
-                    v_co3d = obj.matrix_world * v.co
+                    v_co3d = obj.matrix_world @ v.co
                     v_co2d = loc3d_to_reg2d(region, rv3d, v_co3d)
                     if v_co2d is not None:
                         dist2d = (loc - v_co2d).length
@@ -710,7 +742,7 @@ def find_closest_point(loc):
                             closest = v_co3d
     return closest
 
-
+'''
 def draw_pt_2d(pt_co, pt_color, pt_size):
     if pt_co is not None:
         bgl.glEnable(bgl.GL_BLEND)
@@ -720,8 +752,19 @@ def draw_pt_2d(pt_co, pt_color, pt_size):
         bgl.glVertex2f(*pt_co)
         bgl.glEnd()
     return
+'''
 
+def draw_pt_2d(pt_co, pt_color, pt_size):
+    if pt_co is not None:
+        coords = [pt_co]
+        bgl.glPointSize(pt_size)
+        shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+        batch = batch_for_shader(shader, 'POINTS', {"pos": coords})
+        shader.bind()
+        shader.uniform_float("color", pt_color)
+        batch.draw(shader)
 
+'''
 def draw_line_2d(pt_co_1, pt_co_2, pt_color):
     if None not in (pt_co_1, pt_co_2):
         bgl.glEnable(bgl.GL_BLEND)
@@ -732,6 +775,16 @@ def draw_line_2d(pt_co_1, pt_co_2, pt_color):
         bgl.glVertex2f(*pt_co_2)
         bgl.glEnd()
     return
+'''
+
+def draw_line_2d(pt_co_1, pt_co_2, pt_color):
+    if None not in (pt_co_1, pt_co_2):
+        coords = [pt_co_1, pt_co_2]
+        shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+        batch = batch_for_shader(shader, 'LINES', {"pos": coords})
+        shader.bind()
+        shader.uniform_float("color", pt_color)
+        batch.draw(shader)
 
 
 def closest_to_point(pt, pts):
@@ -801,7 +854,7 @@ def set_arc_pts(ref_pts):
         mid_piv_free = piv.lerp(fre, ratio)
         arc_pts = [mid_piv_free]
         steps = 36
-        ang_step = pi*2 / steps
+        ang_step = pi * 2 / steps
         mid_align = mid_piv_free - piv
         for a in range(1, steps+1):
             rot_val = Quaternion(piv_norm, ang_step * a)
@@ -846,6 +899,25 @@ def ang_match3d(end_a, piv_pt, end_b, exp_ang):
     #print("exp_ang ", exp_ang)  # debug
     #print("ang_meas ", ang_meas)  # debug
     return flts_alm_eq(ang_meas, exp_ang)
+
+
+def create_z_orient(rot_vec):
+    x_dir_p = Vector(( 1.0,  0.0,  0.0))
+    y_dir_p = Vector(( 0.0,  1.0,  0.0))
+    z_dir_p = Vector(( 0.0,  0.0,  1.0))
+    if flt_lists_alm_eq(rot_vec, (0.0, 0.0, 0.0)) or \
+            flt_lists_alm_eq(rot_vec, z_dir_p):
+        return Matrix((x_dir_p, y_dir_p, z_dir_p))  # 3x3 identity
+    new_z = rot_vec.copy()  # rot_vec already normalized
+    new_y = new_z.cross(z_dir_p)
+    if flt_lists_alm_eq(new_y, (0.0, 0.0, 0.0)):
+        new_y = y_dir_p
+    new_x = new_y.cross(new_z)
+    new_x.normalize()
+    new_y.normalize()
+    return Matrix(((new_x.x, new_y.x, new_z.x),
+                   (new_x.y, new_y.y, new_z.y),
+                   (new_x.z, new_y.z, new_z.z)))
 
 
 # Updates lock points and changes curr_meas_stor to use measure based on
@@ -967,10 +1039,10 @@ def draw_callback_px(self, context):
                 if RotDat.axis_lock == 'X':
                     test = self.pts[0].co3d + Vector((1, 0, 0))
                     colr = Colr.red
-                if RotDat.axis_lock == 'Y':
+                elif RotDat.axis_lock == 'Y':
                     test = self.pts[0].co3d + Vector((0, 1, 0))
                     colr = Colr.green
-                if RotDat.axis_lock == 'Z':
+                elif RotDat.axis_lock == 'Z':
                     test = self.pts[0].co3d + Vector((0, 0, 1))
                     colr = Colr.blue
 
@@ -982,7 +1054,8 @@ def draw_callback_px(self, context):
                 dpi = bpy.context.preferences.system.dpi
                 font_id, txt_sz = 0, 32
                 x_pos, y_pos = self.rtoolsw + 80, 36
-                bgl.glColor4f(*colr)
+                #bgl.glColor4f(*colr)
+                blf.color(font_id, *colr)
                 blf.size(font_id, txt_sz, dpi)
                 blf.position(font_id, x_pos, y_pos, 0)
                 blf.draw(font_id, RotDat.axis_lock)
@@ -1030,7 +1103,7 @@ def draw_callback_px(self, context):
 
 def exit_addon(self):
     restore_blender_settings(self.settings_backup)
-    bpy.context.area.header_text_set()
+    bpy.context.area.header_text_set(None)
     # todo : reset openGL settings?
     #bgl.glColor4f()
     #blf.size()
@@ -1038,7 +1111,7 @@ def exit_addon(self):
     #print("\n\nAdd-On Exited\n")  # debug
 
 
-# Sees if "use_region_overlap" is enabled and X offset is needed.
+# Checks if "use_region_overlap" is enabled and X offset is needed.
 def get_reg_overlap():
     rtoolsw = 0  # region tools (toolbar) width
     #ruiw = 0  # region ui (Number/n-panel) width
@@ -1131,13 +1204,13 @@ class XEDIT_OT_free_rotate(bpy.types.Operator):
                 #bpy.ops.object.ms_input_dialog_op('INVOKE_DEFAULT')
                 if self.pt_cnt == 1:
                     if RotDat.axis_lock == 'X':
-                        rot_axis = 1.0, 0.0, 0.0
+                        rot_axis = Vector((1.0, 0.0, 0.0))
                     elif RotDat.axis_lock == 'Y':
-                        rot_axis = 0.0, 1.0, 0.0
+                        rot_axis = Vector((0.0, 1.0, 0.0))
                     elif RotDat.axis_lock == 'Z':
                         # -1 because it is assumed most rotations
                         # will have negative z pointing down
-                        rot_axis = 0.0, 0.0, -1.0
+                        rot_axis = Vector((0.0, 0.0, -1.0))
                     curs_loc = self.pts[0].co3d.copy()
                 elif self.pt_cnt == 2:
                     #if RotDat.axis_lock is None:
@@ -1148,10 +1221,12 @@ class XEDIT_OT_free_rotate(bpy.types.Operator):
                     #if RotDat.axis_lock is None:
                     rot_axis = RotDat.piv_norm
                     curs_loc = self.pts[2].co3d.copy()
+                o_mat = create_z_orient(rot_axis)
                 self.running_transf = True
-                bpy.context.space_data.pivot_point = 'CURSOR'
+                bpy.context.tool_settings.transform_pivot_point = 'CURSOR'
                 bpy.context.scene.cursor.location = curs_loc
-                bpy.ops.transform.rotate('INVOKE_DEFAULT',axis=rot_axis)
+                #bpy.ops.transform.rotate('INVOKE_DEFAULT', axis=rot_axis)
+                bpy.ops.transform.rotate('INVOKE_DEFAULT', orient_matrix=o_mat)
 
             #===========================================
             # Check for click on "Add Selected" Button
@@ -1182,13 +1257,13 @@ class XEDIT_OT_free_rotate(bpy.types.Operator):
                             if not self.shift_held:
                                 for sel in bm.select_history:
                                     if type(sel) is bmesh.types.BMVert:
-                                        co3d = m_w * sel.co
+                                        co3d = m_w @ sel.co
                                         break
                                     elif type(sel) is bmesh.types.BMEdge or \
                                             type(sel) is bmesh.types.BMFace:
                                         co3d = Vector()
                                         for v in sel.verts:
-                                            co3d += m_w * v.co
+                                            co3d += m_w @ v.co
                                         co3d = co3d / len(sel.verts)
                                         break
                             else:
@@ -1398,8 +1473,8 @@ class XEDIT_OT_free_rotate(bpy.types.Operator):
             #self.addon_mode = CLICK_CHECK
             self.lmb_held = False
 
-            self.menu = MenuHandler("Free Rotate", 18, Colr.yellow, Colr.white, \
-                    self.rtoolsw, context.region)
+            self.menu = MenuHandler("Free Rotate", 18, Colr.yellow, \
+                    Colr.white, self.rtoolsw, context.region)
             self.menu.add_menu(["Axis Lock Rotate"])
             self.menu.add_menu(["Axis Rotate"])
             self.menu.add_menu(["Planar Rotate"])

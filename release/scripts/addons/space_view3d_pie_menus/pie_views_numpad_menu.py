@@ -38,7 +38,7 @@ from bpy.types import (
 
 
 # Lock Camera Transforms
-class LockTransforms(Operator):
+class PIE_OT_LockTransforms(Operator):
     bl_idname = "object.locktransforms"
     bl_label = "Lock Object Transforms"
     bl_description = ("Enable or disable the editing of objects transforms in the 3D View\n"
@@ -71,7 +71,7 @@ class LockTransforms(Operator):
 
 
 # Pie View All Sel Glob Etc - Q
-class PieViewallSelGlobEtc(Menu):
+class PIE_MT_ViewallSelGlobEtc(Menu):
     bl_idname = "PIE_MT_vieallselglobetc"
     bl_label = "Pie View All Sel Glob..."
 
@@ -96,7 +96,7 @@ class PieViewallSelGlobEtc(Menu):
 
 
 # Pie views numpad - Q
-class PieViewNumpad(Menu):
+class PIE_MT_ViewNumpad(Menu):
     bl_idname = "PIE_MT_viewnumpad"
     bl_label = "Pie Views Ortho"
 
@@ -147,9 +147,9 @@ class PieViewNumpad(Menu):
 
 
 classes = (
-    PieViewNumpad,
-    LockTransforms,
-    PieViewallSelGlobEtc,
+    PIE_MT_ViewNumpad,
+    PIE_OT_LockTransforms,
+    PIE_MT_ViewallSelGlobEtc,
     )
 
 addon_keymaps = []

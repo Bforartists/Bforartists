@@ -41,7 +41,7 @@ from bpy.props import (
 )
 
 
-class WManupulators(Operator):
+class PIE_OT_WManupulators(Operator):
     bl_idname = "w.manipulators"
     bl_label = "W Manupulators"
     bl_options = {'REGISTER', 'UNDO'}
@@ -84,7 +84,7 @@ class WManupulators(Operator):
 
 
 # Pie Manipulators - Ctrl + Space
-class PieManipulator(Menu):
+class PIE_MT_Manipulator(Menu):
     bl_idname = "PIE_MT_manipulator"
     bl_label = "Pie Manipulator"
 
@@ -103,8 +103,8 @@ class PieManipulator(Menu):
 
 
 classes = (
-    PieManipulator,
-    WManupulators,
+    PIE_OT_WManupulators,
+    PIE_MT_Manipulator,
     )
 
 addon_keymaps = []

@@ -228,13 +228,14 @@ struct EDBMSelectID_Context {
 static bool check_ob_drawface_dot(short select_mode, const View3D *v3d, char dt)
 {
   if (select_mode & SCE_SELECT_FACE) {
-    if (dt < OB_SOLID) {
+    if ((dt < OB_SOLID) || XRAY_FLAG_ENABLED(v3d)) {
       return true;
     }
     if (v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_FACE_DOT) {
       return true;
     }
-    if (XRAY_FLAG_ENABLED(v3d)) {
+    if ((v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_EDGES) == 0) {
+      /* Since we can't deduce face selection when edges aren't visible - show dots. */
       return true;
     }
   }
@@ -301,6 +302,11 @@ BMElem *EDBM_select_id_bm_elem_get(struct EDBMSelectID_Context *sel_id_ctx,
     }
   }
 
+  if (base_index >= sel_id_ctx->bases_len) {
+    BLI_assert(0);
+    return NULL;
+  }
+
   if (r_base_index) {
     *r_base_index = base_index;
   }
@@ -346,7 +352,7 @@ uint EDBM_select_id_context_elem_len(const struct EDBMSelectID_Context *sel_id_c
 
 struct EDBMSelectID_Context *EDBM_select_id_context_create(ViewContext *vc,
                                                            Base **bases,
-                                                           uint bases_len,
+                                                           const uint bases_len,
                                                            short select_mode)
 {
   struct EDBMSelectID_Context *sel_id_ctx = MEM_mallocN(sizeof(*sel_id_ctx), __func__);

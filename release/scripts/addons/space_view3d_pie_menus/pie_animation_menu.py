@@ -39,7 +39,7 @@ from bpy.types import (
 # Pie Animation
 
 
-class PieAnimation(Menu):
+class PIE_MT_PieAnimation(Menu):
     bl_idname = "PIE_MT_animation"
     bl_label = "Pie Animation"
 
@@ -68,7 +68,7 @@ class PieAnimation(Menu):
 
 
 # Insert Auto Keyframe
-class InsertAutoKeyframe(Operator):
+class PIE_OT_InsertAutoKeyframe(Operator):
     bl_idname = "insert.autokeyframe"
     bl_label = "Insert Auto Keyframe"
     bl_description = "Toggle Insert Auto Keyframe"
@@ -87,8 +87,8 @@ class InsertAutoKeyframe(Operator):
 
 
 classes = (
-    PieAnimation,
-    InsertAutoKeyframe
+    PIE_MT_PieAnimation,
+    PIE_OT_InsertAutoKeyframe
     )
 
 addon_keymaps = []

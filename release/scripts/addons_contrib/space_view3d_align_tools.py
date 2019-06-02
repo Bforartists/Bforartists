@@ -1035,7 +1035,7 @@ class VIEW3D_PT_AlignUi(Panel):
     bl_region_type = 'UI'
     bl_label = "Align Tools"
     bl_context = "objectmode"
-    bl_category = 'Tools'
+    bl_category = 'Item'
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
@@ -1120,7 +1120,7 @@ class AlignAddonPreferences(AddonPreferences):
     category: StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
-            default="Tools",
+            default="Item",
             update=update_panel
             )
 
