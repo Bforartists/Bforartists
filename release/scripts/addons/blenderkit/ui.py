@@ -16,14 +16,18 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-if "bpy" in locals():
-    import imp
 
-    imp.reload(paths)
-    imp.reload(ratings)
-    imp.reload(utils)
-    imp.reload(search)
-    imp.reload(upload)
+if "bpy" in locals():
+    import importlib
+
+    paths = importlib.reload(paths)
+    ratings = importlib.reload(ratings)
+    utils = importlib.reload(utils)
+    search = importlib.reload(search)
+    upload = importlib.reload(upload)
+    ui_bgl = importlib.reload(ui_bgl)
+    download = importlib.reload(download)
+    bg_blender = importlib.reload(bg_blender)
 else:
     from blenderkit import paths, ratings, utils, search, upload, ui_bgl, download, bg_blender
 
@@ -1425,7 +1429,7 @@ class AssetBarOperator(bpy.types.Operator):
             a = asset_data['author_id']
             if a is not None:
                 utils.p('author:', a)
-                search.search(author_id = a)
+                search.search(author_id=a)
             return {'RUNNING_MODAL'}
         if event.type == 'X' and ui_props.active_index != -3:
             sr = bpy.context.scene['search results']

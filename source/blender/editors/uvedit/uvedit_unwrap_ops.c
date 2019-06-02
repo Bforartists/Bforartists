@@ -889,7 +889,7 @@ void UV_OT_minimize_stretch(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Minimize Stretch";
   ot->idname = "UV_OT_minimize_stretch";
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_GRAB_CURSOR | OPTYPE_BLOCKING;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_GRAB_CURSOR_XY | OPTYPE_BLOCKING;
   ot->description = "Minimize Stretch\nReduce UV stretching by relaxing angles";
 
   /* api callbacks */
@@ -1075,9 +1075,7 @@ void UV_OT_average_islands_scale(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Average Islands Scale";
   ot->idname = "UV_OT_average_islands_scale";
-  ot->description =
-      "Average Islands Scale\nAverage the size of separate UV islands, based on their area in 3D "
-      "space";
+  ot->description = "Islands Scale\nAverage the size of separate UV islands, based on their area in 3D space";
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 

@@ -94,8 +94,9 @@ bool ArmatureExporter::add_instance_controller(Object *ob)
   ins.setUrl(COLLADASW::URI(COLLADABU::Utils::EMPTY_STRING, controller_id));
 
   Mesh *me = (Mesh *)ob->data;
-  if (!me->dvert)
+  if (!me->dvert) {
     return false;
+  }
 
   // write root bone URLs
   Bone *bone;
@@ -234,8 +235,9 @@ void ArmatureExporter::add_bone_node(Bone *bone,
         copy_m4_m4(ob->parentinv, backup_parinv);
         iter = child_objects.erase(iter);
       }
-      else
+      else {
         iter++;
+      }
     }
 
     for (Bone *child = (Bone *)bone->childbase.first; child; child = child->next) {
@@ -291,7 +293,7 @@ void ArmatureExporter::add_bone_transform(Object *ob_arm, Bone *bone, COLLADASW:
     }
 
     // OPEN_SIM_COMPATIBILITY
-    
+
     if (export_settings.get_open_sim()) {
       // Remove rotations vs armature from transform
       // parent_rest_rot * mat * irest_rot
@@ -308,17 +310,15 @@ void ArmatureExporter::add_bone_transform(Object *ob_arm, Bone *bone, COLLADASW:
         workmat[3][0] = workmat[3][1] = workmat[3][2] = 0.0f;
 
         mul_m4_m4m4(mat, workmat, mat);
-
       }
     }
-    
   }
 
   if (this->export_settings.get_limit_precision()) {
     bc_sanitize_mat(mat, LIMITTED_PRECISION);
   }
 
-  TransformWriter::add_node_transform(node, mat, NULL, this->export_settings, has_restmat);
+  TransformWriter::add_joint_transform(node, mat, NULL, this->export_settings, has_restmat);
 }
 
 std::string ArmatureExporter::get_controller_id(Object *ob_arm, Object *ob)

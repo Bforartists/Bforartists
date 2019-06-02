@@ -195,7 +195,7 @@ class VIEW3D_PT_BisectMirror(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Auto Mirror"
-    bl_category = 'Tools'
+    bl_category = 'Edit'
     bl_options = {'DEFAULT_CLOSED'}
 
 
@@ -288,7 +288,7 @@ class AutoMirrorAddonPreferences(AddonPreferences):
     category: StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
-            default="Tools",
+            default="Edit",
             update=update_panel
             )
 

@@ -14,7 +14,7 @@ uniform int tonemapping;
 #define ON 1
 #define OFF 0
 
-#define MODE_NORMAL 0
+#define MODE_REGULAR 0
 #define MODE_OVERLAY 1
 #define MODE_ADD 2
 #define MODE_SUB 3
@@ -43,39 +43,38 @@ vec4 get_blend_color(int mode, vec4 src_color, vec4 blend_color)
     outcolor = src_color;
   }
   else if (mode == MODE_OVERLAY) {
-    mix_color.rgb = mix_color.rgb * mix_color.a * blend_opacity;
+    mix_color.rgb = mix(src_color.rgb, mix_color.rgb, mix_color.a * blend_opacity);
     outcolor.r = overlay_color(src_color.r, mix_color.r);
     outcolor.g = overlay_color(src_color.g, mix_color.g);
     outcolor.b = overlay_color(src_color.b, mix_color.b);
     outcolor.a = src_color.a;
   }
   else if (mode == MODE_ADD) {
-    mix_color.rgb = mix_color.rgb * mix_color.a * blend_opacity;
+    mix_color.rgb = mix(src_color.rgb, mix_color.rgb, mix_color.a * blend_opacity);
     outcolor = src_color + mix_color;
     outcolor.a = src_color.a;
   }
   else if (mode == MODE_SUB) {
+    mix_color.rgb = mix(src_color.rgb, mix_color.rgb, mix_color.a * blend_opacity);
     outcolor = src_color - mix_color;
     outcolor.a = clamp(src_color.a - (mix_color.a * blend_opacity), 0.0, 1.0);
   }
   else if (mode == MODE_MULTIPLY) {
-    /* interpolate between 1 and color using opacity */
-    mix_color.rgb = mix(vec3(1, 1, 1), mix_color.rgb * mix_color.a, blend_opacity);
+    mix_color.rgb = mix(src_color.rgb, mix_color.rgb, mix_color.a * blend_opacity);
     outcolor = src_color * mix_color;
     outcolor.a = src_color.a;
   }
   else if (mode == MODE_DIVIDE) {
-    mix_color.rgb = mix_color.rgb * mix_color.a * blend_opacity;
+    mix_color.rgb = mix(src_color.rgb, mix_color.rgb, mix_color.a * blend_opacity);
     outcolor = src_color / mix_color;
     outcolor.a = src_color.a;
   }
   else {
     outcolor = mix_color * blend_opacity;
-    ;
     outcolor.a = src_color.a;
   }
 
-  return outcolor;
+  return clamp(outcolor, 0.0, 1.0);
 }
 
 float linearrgb_to_srgb(float c)
@@ -112,19 +111,12 @@ void main()
   vec4 mix_color = texelFetch(blendColor, uv, 0).rgba;
   float mix_depth = texelFetch(blendDepth, uv, 0).r;
 
-  /* premult alpha factor to remove double blend effects */
-  if (stroke_color.a > 0) {
-    stroke_color = vec4(vec3(stroke_color.rgb / stroke_color.a), stroke_color.a);
-  }
-  if (mix_color.a > 0) {
-    mix_color = vec4(vec3(mix_color.rgb / mix_color.a), mix_color.a);
-  }
-
-  /* Normal mode */
-  if (mode == MODE_NORMAL) {
+  /* Default mode */
+  if (mode == MODE_REGULAR) {
     if (stroke_color.a > 0) {
       if (mix_color.a > 0) {
-        FragColor = vec4(mix(stroke_color.rgb, mix_color.rgb, mix_color.a), stroke_color.a);
+        FragColor = vec4(mix(stroke_color.rgb, mix_color.rgb, mix_color.a * blend_opacity),
+                         stroke_color.a);
         gl_FragDepth = mix_depth;
       }
       else {

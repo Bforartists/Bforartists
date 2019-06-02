@@ -38,7 +38,7 @@ from bpy.types import (
 
 
 # Pivot to selection
-class PivotToSelection(Operator):
+class PIE_OT_PivotToSelection(Operator):
     bl_idname = "object.pivot2selection"
     bl_label = "Pivot To Selection"
     bl_description = "Pivot Point To Selection"
@@ -59,7 +59,7 @@ class PivotToSelection(Operator):
 
 
 # Pivot to Bottom
-class PivotBottom(Operator):
+class PIE_OT_PivotBottom(Operator):
     bl_idname = "object.pivotobottom"
     bl_label = "Pivot To Bottom"
     bl_description = ("Set the Pivot Point To Lowest Point\n"
@@ -94,7 +94,7 @@ class PivotBottom(Operator):
 
 
 # Pie Origin/Pivot - Shift + S
-class PieOriginPivot(Menu):
+class PIE_MT_OriginPivot(Menu):
     bl_idname = "ORIGIN_MT_pivotmenu"
     bl_label = "Origin Menu"
 
@@ -141,9 +141,9 @@ class PieOriginPivot(Menu):
 
 
 classes = (
-    PieOriginPivot,
-    PivotToSelection,
-    PivotBottom,
+    PIE_MT_OriginPivot,
+    PIE_OT_PivotToSelection,
+    PIE_OT_PivotBottom,
     )
 
 addon_keymaps = []

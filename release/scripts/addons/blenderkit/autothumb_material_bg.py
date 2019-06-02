@@ -16,10 +16,19 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+
+if "bpy" in locals():
+    from importlib import reload
+
+    utils = reload(utils)
+    append_link = reload(append_link)
+    bg_blender = reload(bg_blender)
+else:
+    from blenderkit import utils, append_link, bg_blender
+
 import sys, json, math
 import bpy
 from pathlib import Path
-from blenderkit import utils, append_link, bg_blender
 
 BLENDERKIT_EXPORT_TEMP_DIR = sys.argv[-1]
 BLENDERKIT_THUMBNAIL_PATH = sys.argv[-2]

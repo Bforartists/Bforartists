@@ -4343,7 +4343,7 @@ class VIEW3D_MT_edit_mesh_looptools(Menu):
 class VIEW3D_PT_tools_looptools(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'View'
+    bl_category = 'Edit'
     bl_context = "mesh_edit"
     bl_label = "LoopTools"
     bl_options = {'DEFAULT_CLOSED'}
@@ -5081,7 +5081,7 @@ class LoopPreferences(AddonPreferences):
     category: StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
-            default="Tools",
+            default="Edit",
             update=update_panel
             )
 

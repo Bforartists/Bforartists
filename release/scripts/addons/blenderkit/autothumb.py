@@ -16,17 +16,13 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import importlib
 
 if "bpy" in locals():
     from importlib import reload
 
-    if "paths" in locals():
-        reload(paths)
-    if "utils" in locals():
-        reload(utils)
-    if "bg_blender" in locals():
-        reload(bg_blender)
+    paths = reload(paths)
+    utils = reload(utils)
+    bg_blender = reload(bg_blender)
 else:
     from blenderkit import paths, utils, bg_blender
 

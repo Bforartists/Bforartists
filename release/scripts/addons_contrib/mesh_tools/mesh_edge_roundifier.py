@@ -20,7 +20,7 @@ bl_info = {
     "name": "Edge Roundifier",
     "category": "Mesh",
     "author": "Piotr Komisarczyk (komi3D), PKHG",
-    "version": (1, 0, 1),
+    "version": (1, 0, 2),
     "blender": (2, 80, 0),
     "location": "SPACE > Edge Roundifier or CTRL-E > "
                 "Edge Roundifier or Tools > Addons > Edge Roundifier",
@@ -255,7 +255,7 @@ class SelectionHelper:
 
 # Operator
 
-class MESH_OT_EdgeRoundifier(Operator):
+class EdgeRoundifier(Operator):
     bl_idname = "mesh.edge_roundifier"
     bl_label = "Edge Roundifier"
     bl_description = "Mesh modeling tool for building arcs on selected Edges"
@@ -479,7 +479,7 @@ class MESH_OT_EdgeRoundifier(Operator):
 
     @classmethod
     def poll(cls, context):
-        obj = context.view_layer.objects.active
+        obj = context.active_object
         return (obj and obj.type == 'MESH' and
                 obj.mode == 'EDIT')
 
@@ -580,10 +580,10 @@ class MESH_OT_EdgeRoundifier(Operator):
 
     def addParameterToUI(self, layout, alignment, percent, label, properties, disable=True):
         row = layout.row(align=alignment)
-        split = row.split(align=percent)
+        split = row.split(factor=percent)
         col = split.column()
 
-        col.label(text="test")
+        col.label(text=label)
         col2 = split.column()
         row = col2.row(align=alignment)
         row.enabled = disable
@@ -592,10 +592,10 @@ class MESH_OT_EdgeRoundifier(Operator):
     def addCheckboxToUI(self, layout, alignment, label, property1, property2=None):
         if label not in (""):
             row = layout.row()
-            row.label(text="b")
+            row.label(text=label)
         row2 = layout.row(align=alignment)
         if property2:
-            split = row2.split(align=True)
+            split = row2.split(factor=0.5)
             split.prop(self, property1, toggle=True)
             split.prop(self, property2, toggle=True)
         else:
@@ -604,10 +604,10 @@ class MESH_OT_EdgeRoundifier(Operator):
 
     def addEnumParameterToUI(self, layout, alignment, percent, label, properties):
         row = layout.row(align=alignment)
-        split = row.split(align=True)
+        split = row.split(factor=percent)
         col = split.column()
 
-        col.label(text="c")
+        col.label(text=label)
         col2 = split.column()
         row = col2.row(align=alignment)
         row.prop(self, properties, expand=True, text="a")
@@ -634,10 +634,10 @@ class MESH_OT_EdgeRoundifier(Operator):
             debugPrintNew(True, "No edges selected!")
 
         if parameters["removeEdges"]:
-            bmesh.ops.delete(bm, geom=edges, context="EDGES")
+            bmesh.ops.delete(bm, geom=edges, context='EDGES')
 
         if parameters["removeScaledEdges"] and self.edgeScaleFactor != 1.0:
-            bmesh.ops.delete(bm, geom=scaledEdges, context="EDGES")
+            bmesh.ops.delete(bm, geom=scaledEdges, context='EDGES')
 
         bpy.ops.object.mode_set(mode='OBJECT')
         bm.to_mesh(mesh)
@@ -788,10 +788,12 @@ class MESH_OT_EdgeRoundifier(Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
         old_location = self.obj.location.copy()
         bpy.ops.transform.translate(
-                            value=-old_location, constraint_axis=(False, False, False),
-                            orient_type='GLOBAL', mirror=False, proportional='DISABLED',
-                            proportional_edit_falloff='SMOOTH', proportional_size=1
-                            )
+            value=-old_location,
+            constraint_axis=(False, False, False),
+            orient_type='GLOBAL',
+            mirror=False,
+            use_proportional_edit=False,
+        )
         bpy.ops.object.mode_set(mode='EDIT')
         adjust_matrix = self.obj.matrix_parent_inverse
         bm = bmesh.from_edit_mesh(self.obj.data)
@@ -819,10 +821,12 @@ class MESH_OT_EdgeRoundifier(Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
         # PKHG>INFO move origin object back print("old location = " , old_location)
         bpy.ops.transform.translate(
-                        value=old_location, constraint_axis=(False, False, False),
-                        orient_type='GLOBAL', mirror=False, proportional='DISABLED',
-                        proportional_edit_falloff='SMOOTH', proportional_size=1
-                        )
+            value=old_location,
+            constraint_axis=(False, False, False),
+            orient_type='GLOBAL',
+            mirror=False,
+            use_proportional_edit=False,
+        )
         bpy.ops.object.mode_set(mode='EDIT')
 
     def makeElliptic(self, bm, mesh, arcVertices, parameters):
@@ -1060,7 +1064,7 @@ class MESH_OT_EdgeRoundifier(Operator):
         debugPrintNew(d_Roots, "roots=" + str(roots))
 
         refObjectLocation = None
-        objectLocation = bpy.context.view_layer.objects.active.location  # Origin Location
+        objectLocation = bpy.context.active_object.location  # Origin Location
 
         if parameters["refObject"] == "ORG":
             refObjectLocation = [0, 0, 0]
@@ -1209,7 +1213,7 @@ class MESH_OT_EdgeRoundifier(Operator):
             debugPrintNew(True, str(i) + ") " + str(vi))
             verticesForDeletion.append(vi)
 
-        bmesh.ops.delete(bm, geom=verticesForDeletion, context="VERTS")
+        bmesh.ops.delete(bm, geom=verticesForDeletion, context = 'VERTS')
         bmesh.update_edit_mesh(mesh, True)
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.mode_set(mode='EDIT')
@@ -1364,13 +1368,30 @@ class MESH_OT_EdgeRoundifier(Operator):
         return axis
 
 
+    @classmethod
+    def poll(cls, context):
+        return (context.view_layer.objects.active.type == 'MESH') and (context.view_layer.objects.active.mode == 'EDIT')
+    
+def draw_item(self, context):
+    self.layout.operator_context = 'INVOKE_DEFAULT'
+    self.layout.operator('mesh.edge_roundifier')
+
+    
+classes = (
+           EdgeRoundifier,
+           )
+
+reg_cls, unreg_cls = bpy.utils.register_classes_factory(classes)
+
+
 def register():
-    bpy.utils.register_class(MESH_OT_EdgeRoundifier)
+    reg_cls()
+    bpy.types.VIEW3D_MT_edit_mesh_edges.append(draw_item)
 
 
 def unregister():
-    bpy.utils.unregister_class(MESH_OT_EdgeRoundifier)
-
+    unreg_cls()
+    bpy.types.VIEW3D_MT_edit_mesh_edges.remove(draw_item)
 
 if __name__ == "__main__":
     register()

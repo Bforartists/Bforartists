@@ -49,7 +49,7 @@ class MUV_PT_CopyPasteUVEditMode(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Copy/Paste UV"
-    bl_category = "Magic UV"
+    bl_category = "Edit"
     bl_context = 'mesh_edit'
     bl_options = {'DEFAULT_CLOSED'}
 

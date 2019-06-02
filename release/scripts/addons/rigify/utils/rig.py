@@ -27,7 +27,6 @@ RIG_DIR = "rigs"  # Name of the directory where rig types are kept
 METARIG_DIR = "metarigs"  # Name of the directory where metarigs are kept
 TEMPLATE_DIR = "ui_templates"  # Name of the directory where ui templates are kept
 
-MODULE_NAME = "rigify"  # Windows/Mac blender is weird, so __package__ doesn't work
 
 outdated_types = {"pitchipoy.limbs.super_limb": "limbs.super_limb",
                   "pitchipoy.limbs.super_arm": "limbs.super_limb",
@@ -81,36 +80,13 @@ def upgradeMetarigTypes(metarig, revert=False):
 # Misc
 #=============================================
 
-def get_rig_type(rig_type, base_path=''):
-    return get_resource(rig_type, base_path=base_path)
-
-def get_resource(resource_name, base_path=''):
+def get_resource(resource_name):
     """ Fetches a rig module by name, and returns it.
     """
 
-    if '.' in resource_name:
-        module_subpath = str.join(os.sep, resource_name.split('.'))
-        package = resource_name.split('.')[0]
-        for sub in resource_name.split('.')[1:]:
-            package = '.'.join([package, sub])
-            submod = importlib.import_module(package)
-    else:
-        module_subpath = resource_name
-
-    spec = importlib.util.spec_from_file_location(resource_name, os.path.join(base_path, module_subpath + '.py'))
-    submod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(submod)
-    return submod
-
-
-def get_metarig_module(metarig_name, path=METARIG_DIR):
-    """ Fetches a rig module by name, and returns it.
-    """
-
-    name = ".%s.%s" % (path, metarig_name)
-    submod = importlib.import_module(name, package=MODULE_NAME)
-    importlib.reload(submod)
-    return submod
+    module = importlib.import_module(resource_name)
+    importlib.reload(module)
+    return module
 
 
 def connected_children_names(obj, bone_name):

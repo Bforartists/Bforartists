@@ -31,11 +31,15 @@ bl_info = {
     }
 
 import bpy
-from bpy.types import Menu
+from bpy.types import (
+    Menu,
+    Operator
+)
+
 
 
 # Pie Selection Object Mode - A
-class PieSelectionsMore(Menu):
+class PIE_MT_SelectionsMore(Menu):
     bl_idname = "PIE_MT_selectionsmore"
     bl_label = "Pie Selections Object Mode"
 
@@ -50,7 +54,7 @@ class PieSelectionsMore(Menu):
 
 
 # Pie Selection Object Mode - A
-class PieSelectionsOM(Menu):
+class PIE_MT_SelectionsOM(Menu):
     bl_idname = "PIE_MT_selectionsom"
     bl_label = "Pie Selections Object Mode"
 
@@ -78,7 +82,7 @@ class PieSelectionsOM(Menu):
 
 
 # Pie Selection Edit Mode
-class PieSelectionsEM(Menu):
+class PIE_MT_SelectionsEM(Menu):
     bl_idname = "PIE_MT_selectionsem"
     bl_label = "Pie Selections Edit Mode"
 
@@ -106,42 +110,92 @@ class PieSelectionsEM(Menu):
         pie.operator("view3d.select_circle", text="Circle Select",
                     icon='NONE')
         # 3 - BOTTOM - RIGHT
-        pie.menu("PIE_MT_selectallbyselection", text="Multi Select Menu", icon='SNAP_EDGE')
+        pie.menu("PIE_MT_selectallbyselection", text="Edit Modes", icon='VERTEXSEL')
 
 
 # Select All By Selection
-class SelectAllBySelection(Menu):
+class PIE_MT_SelectAllBySelection(Menu):
     bl_idname = "PIE_MT_selectallbyselection"
     bl_label = "Verts Edges Faces"
     bl_options = {'REGISTER', 'UNDO'}
 
     def draw(self, context):
         layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
+        pie = layout.menu_pie()
+        box = pie.split().column()
 
-        prop = layout.operator("wm.context_set_value", text="Vertex Select",
-                               icon='VERTEXSEL')
-        prop.value = "(True, False, False)"
-        prop.data_path = "tool_settings.mesh_select_mode"
-
-        prop = layout.operator("wm.context_set_value", text="Edge Select",
-                               icon='EDGESEL')
-        prop.value = "(False, True, False)"
-        prop.data_path = "tool_settings.mesh_select_mode"
-
-        prop = layout.operator("wm.context_set_value", text="Face Select",
-                               icon='FACESEL')
-        prop.value = "(False, False, True)"
-        prop.data_path = "tool_settings.mesh_select_mode"
-
-        prop = layout.operator("wm.context_set_value",
-                               text="Vertex & Edge & Face Select",
-                               icon='SNAP_VOLUME')
-        prop.value = "(True, True, True)"
-        prop.data_path = "tool_settings.mesh_select_mode"
+        box.operator("class.vertexop", text="Vertex", icon='VERTEXSEL')
+        box.operator("class.edgeop", text="Edge", icon='EDGESEL')
+        box.operator("class.faceop", text="Face", icon='FACESEL')
+        box.operator("verts.edgesfacesop", text="Vertex/Edges/Faces", icon='OBJECT_DATAMODE')
 
 
-class SelectLoopSelection(Menu):
+# Edit Selection Modes
+class PIE_OT_classvertexop(Operator):
+    bl_idname = "class.vertexop"
+    bl_label = "Class Vertex"
+    bl_description = "Vert Select Mode"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        if context.object.mode != "EDIT":
+            bpy.ops.object.mode_set(mode="EDIT")
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+        if bpy.ops.mesh.select_mode != "EDGE, FACE":
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+            return {'FINISHED'}
+
+
+class PIE_OT_classedgeop(Operator):
+    bl_idname = "class.edgeop"
+    bl_label = "Class Edge"
+    bl_description = "Edge Select Mode"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        if context.object.mode != "EDIT":
+            bpy.ops.object.mode_set(mode="EDIT")
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
+        if bpy.ops.mesh.select_mode != "VERT, FACE":
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
+            return {'FINISHED'}
+
+
+class PIE_OT_classfaceop(Operator):
+    bl_idname = "class.faceop"
+    bl_label = "Class Face"
+    bl_description = "Face Select Mode"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        if context.object.mode != "EDIT":
+            bpy.ops.object.mode_set(mode="EDIT")
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
+        if bpy.ops.mesh.select_mode != "VERT, EDGE":
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
+            return {'FINISHED'}
+
+
+# Combined Selection Mode
+class PIE_OT_vertsedgesfacesop(Operator):
+    bl_idname = "verts.edgesfacesop"
+    bl_label = "Verts Edges Faces"
+    bl_description = "Vert/Edge/Face Select Mode"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        if context.object.mode != "EDIT":
+            bpy.ops.object.mode_set(mode="EDIT")
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+        if bpy.ops.mesh.select_mode != "VERT, EDGE, FACE":
+            bpy.ops.object.mode_set(mode="EDIT")
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+            bpy.ops.mesh.select_mode(use_extend=True, use_expand=False, type='EDGE')
+            bpy.ops.mesh.select_mode(use_extend=True, use_expand=False, type='FACE')
+            return {'FINISHED'}
+
+
+class PIE_MT_SelectLoopSelection(Menu):
     bl_idname = "OBJECT_MT_selectloopselection"
     bl_label = "Verts Edges Faces"
     bl_options = {'REGISTER', 'UNDO'}
@@ -156,11 +210,15 @@ class SelectLoopSelection(Menu):
 
 
 classes = (
-    PieSelectionsOM,
-    PieSelectionsEM,
-    SelectAllBySelection,
-    PieSelectionsMore,
-    SelectLoopSelection,
+    PIE_MT_SelectionsOM,
+    PIE_MT_SelectionsEM,
+    PIE_MT_SelectAllBySelection,
+    PIE_MT_SelectionsMore,
+    PIE_MT_SelectLoopSelection,
+    PIE_OT_classvertexop,
+    PIE_OT_classedgeop,
+    PIE_OT_classfaceop,
+    PIE_OT_vertsedgesfacesop
     )
 
 addon_keymaps = []

@@ -38,7 +38,7 @@ from bpy.types import (
 
 
 # SnapCursSelToCenter1 thanks to Isaac Weaver (wisaac) D1963
-class Snap_CursSelToCenter1(Operator):
+class PIE_OT_Snap_CursSelToCenter1(Operator):
     bl_idname = "view3d.snap_cursor_selected_to_center1"
     bl_label = "Snap Cursor & Selection to Center"
     bl_description = ("Snap 3D cursor and selected objects to the center \n"
@@ -57,7 +57,7 @@ class Snap_CursSelToCenter1(Operator):
 
 
 # Origin/Pivot menu1  - Shift + S
-class Snap_CursorMenu(Menu):
+class PIE_MT_Snap_CursorMenu(Menu):
     bl_idname = "SNAP_MT_cursormenu"
     bl_label = "Cursor Menu"
 
@@ -86,8 +86,8 @@ class Snap_CursorMenu(Menu):
 
 
 classes = (
-    Snap_CursorMenu,
-    Snap_CursSelToCenter1,
+    PIE_MT_Snap_CursorMenu,
+    PIE_OT_Snap_CursSelToCenter1,
     )
 
 addon_keymaps = []

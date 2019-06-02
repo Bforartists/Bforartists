@@ -1392,10 +1392,12 @@ static void link_to_scene(Main *UNUSED(bmain), unsigned short UNUSED(nr))
   Scene *sce = (Scene *)BLI_findlink(&bmain->scene, G.curscreen->scenenr - 1);
   Base *base, *nbase;
 
-  if (sce == NULL)
+  if (sce == NULL) {
     return;
-  if (sce->id.lib)
+  }
+  if (sce->id.lib) {
     return;
+  }
 
   for (base = FIRSTBASE; base; base = base->next) {
     if (BASE_SELECTED(v3d, base)) {
@@ -1975,9 +1977,6 @@ static void single_mat_users(
           if (ma->id.us > 1) {
             man = BKE_material_copy(bmain, ma);
             BKE_animdata_copy_id_action(bmain, &man->id, false);
-            if (man->nodetree != NULL) {
-              BKE_animdata_copy_id_action(bmain, &man->nodetree->id, false);
-            }
 
             man->id.us = 0;
             assign_material(bmain, ob, man, a, BKE_MAT_ASSIGN_USERPREF);

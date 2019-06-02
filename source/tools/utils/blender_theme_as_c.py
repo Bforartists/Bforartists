@@ -199,18 +199,56 @@ sys.path.append(os.path.join(
     "..", "..", "..",
     "release", "scripts", "addons", "io_blend_utils", "blend",
 ))
+del sys
 
 source_dst = os.path.join(
     os.path.dirname(__file__),
     "..", "..", "..",
     "release", "datafiles", "userdef", "userdef_default_theme.c"
 )
-del sys
+
+dna_rename_defs_h = os.path.join(
+    os.path.dirname(__file__),
+    "..", "..", "..",
+    "source", "blender", "makesdna", "intern", "dna_rename_defs.h"
+)
+
+
+def dna_rename_defs(blend):
+    """
+    """
+    from blendfile import DNAName
+    import re
+    re_dna_struct_rename_elem = re.compile(
+        r'DNA_STRUCT_RENAME_ELEM+\('
+        r'([a-zA-Z0-9_]+)' ',\s*'
+        r'([a-zA-Z0-9_]+)' ',\s*'
+        r'([a-zA-Z0-9_]+)' '\)',
+    )
+    with open(dna_rename_defs_h, 'r', encoding='utf-8') as fh:
+        data = fh.read()
+    for l in data.split('\n'):
+        m = re_dna_struct_rename_elem.match(l)
+        if m is not None:
+            struct_name, member_storage, member_runtime = m.groups()
+            struct_name = struct_name.encode('utf-8')
+            member_storage = member_storage.encode('utf-8')
+            member_runtime = member_runtime.encode('utf-8')
+            dna_struct = blend.structs[blend.sdna_index_from_id[struct_name]]
+            for field in dna_struct.fields:
+                dna_name = field.dna_name
+                if member_storage == dna_name.name_only:
+                    field.dna_name = dna_name = DNAName(dna_name.name_full)
+                    del dna_struct.field_from_name[dna_name.name_only]
+                    dna_name.name_full = dna_name.name_full.replace(member_storage, member_runtime)
+                    dna_name.name_only = member_runtime
+                    dna_struct.field_from_name[dna_name.name_only] = field
 
 
 def theme_data(userpref_filename):
     import blendfile
     blend = blendfile.open_blend(userpref_filename)
+    dna_rename_defs(blend)
     u = next((c for c in blend.blocks if c.code == b'USER'), None)
     # theme_type = b.sdna_index_from_id[b'bTheme']
     t = u.get_pointer((b'themes', b'first'))
@@ -219,9 +257,7 @@ def theme_data(userpref_filename):
 
 
 def is_ignore_dna_name(name):
-    if name.startswith(b'_') or name == b'pad':
-        return True
-    elif name.startswith(b'pad') and name[3:].isdigit():
+    if name.startswith(b'_'):
         return True
     elif name in {
             b'active_theme_area',
@@ -333,6 +369,10 @@ def file_remove_empty_braces(source_dst):
             r'\s+\.[a-zA-Z_0-9]+\s+=\s+\{\s*\},',
             key_replace, data, re.MULTILINE
         )
+
+    # Use two spaces instead of tabs.
+    data = data.replace('\t', '  ')
+
     with open(source_dst, 'w', encoding='utf-8') as fh:
         fh.write(data)
 

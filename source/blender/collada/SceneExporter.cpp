@@ -128,7 +128,7 @@ void SceneExporter::writeNode(Object *ob)
     colladaNode.start();
     if (ob->type == OB_MESH && armature_exported) {
       /* for skinned mesh we write obmat in <bind_shape_matrix> */
-      TransformWriter::add_node_transform_identity(colladaNode);
+      TransformWriter::add_node_transform_identity(colladaNode, this->export_settings);
     }
     else {
       TransformWriter::add_node_transform_ob(colladaNode, ob, this->export_settings);
@@ -223,8 +223,9 @@ void SceneExporter::writeNode(Object *ob)
               colladaNode.addExtraTechniqueChildParameter("blender", con_tag, "target_id", tar_id);
             }
 
-            if (cti->flush_constraint_targets)
+            if (cti->flush_constraint_targets) {
               cti->flush_constraint_targets(con, &targets, 1);
+            }
           }
 
           con = con->next;
