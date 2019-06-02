@@ -2220,7 +2220,7 @@ def fbx_data_from_scene(scene, depsgraph, settings):
                             armature = object.data
                             backup_pose_positions.append((armature, armature.pose_position))
                             armature.pose_position = 'REST'
-                    if mod.show_render or mod.show_viewport:
+                    elif mod.show_render or mod.show_viewport:
                         use_org_data = False
             if not use_org_data:
                 # If modifiers has been altered need to update dependency graph.
@@ -2230,7 +2230,8 @@ def fbx_data_from_scene(scene, depsgraph, settings):
                 # NOTE: The dependency graph might be re-evaluating multiple times, which could
                 # potentially free the mesh created early on. So we put those meshes to bmain and
                 # free them afterwards. Not ideal but ensures correct ownerwhip.
-                tmp_me = bpy.data.meshes.new_from_object(ob_to_convert)
+                tmp_me = bpy.data.meshes.new_from_object(
+                            ob_to_convert, preserve_all_data_layers=True, depsgraph=depsgraph)
                 data_meshes[ob_obj] = (get_blenderID_key(tmp_me), tmp_me, True)
             # Change armatures back.
             for armature, pose_position in backup_pose_positions:

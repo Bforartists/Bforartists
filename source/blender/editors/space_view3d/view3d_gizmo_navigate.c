@@ -131,7 +131,7 @@ static bool WIDGETGROUP_navigate_poll(const bContext *C, wmGizmoGroupType *UNUSE
   return true;
 }
 
-static void WIDGETGROUP_navigate_setup(const bContext *UNUSED(C), wmGizmoGroup *gzgroup)
+static void WIDGETGROUP_navigate_setup(const bContext *C, wmGizmoGroup *gzgroup)
 {
   struct NavigateWidgetGroup *navgroup = MEM_callocN(sizeof(struct NavigateWidgetGroup), __func__);
 
@@ -205,7 +205,7 @@ static void WIDGETGROUP_navigate_setup(const bContext *UNUSED(C), wmGizmoGroup *
     for (int i = 0; i < ARRAY_SIZE(gz_ids); i++) {
       wmGizmo *gz = navgroup->gz_array[gz_ids[i]];
       wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, 0);
-      RNA_boolean_set(&gzop->ptr, "use_mouse_init", false);
+      RNA_boolean_set(&gzop->ptr, "use_cursor_init", false);
     }
   }
 
@@ -227,6 +227,8 @@ static void WIDGETGROUP_navigate_setup(const bContext *UNUSED(C), wmGizmoGroup *
     }
 
     /* When dragging an axis, use this instead. */
+    wmWindowManager *wm = CTX_wm_manager(C);
+    gz->keymap = WM_gizmo_keymap_generic_click_drag(wm);
     gz->drag_part = 0;
   }
 

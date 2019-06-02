@@ -62,7 +62,7 @@ from bpy.types import (
 class VIEW3D_PT_tools_SURFSK_mesh(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'Tools'
+    bl_category = 'Edit'
     #bl_context = "mesh_edit"
     bl_label = "Bsurfaces"
 
@@ -99,7 +99,7 @@ class VIEW3D_PT_tools_SURFSK_curve(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_context = "curve_edit"
-    bl_category = 'Tools'
+    bl_category = 'Edit'
     bl_label = "Bsurfaces"
 
     @classmethod
@@ -183,8 +183,6 @@ def get_strokes_type(context):
 
     if strokes_type == "":
         strokes_type = "NO_STROKES"
-
-    print(strokes_type)
     
     return strokes_type
 
@@ -3215,7 +3213,7 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
                 # Convert grease pencil strokes to curve
                 gp = bsurfaces_props.SURFSK_object_with_strokes
                 #bpy.ops.gpencil.convert(type='CURVE', use_link_strokes=False)
-                self.original_curve = conver_gpencil_to_curve(context, gp, 'GPensil')
+                self.original_curve = conver_gpencil_to_curve(self, context, gp, 'GPensil')
                 # XXX gpencil.convert now keep org object as active/selected, *not* newly created curve!
                 # XXX This is far from perfect, but should work in most cases...
                 # self.original_curve = bpy.context.object
@@ -3230,7 +3228,7 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
                 # Convert grease pencil strokes to curve
                 gp = bpy.data.grease_pencils["Annotations"]
                 #bpy.ops.gpencil.convert(type='CURVE', use_link_strokes=False)
-                self.original_curve = conver_gpencil_to_curve(context, gp, 'Annotation')
+                self.original_curve = conver_gpencil_to_curve(self, context, gp, 'Annotation')
                 # XXX gpencil.convert now keep org object as active/selected, *not* newly created curve!
                 # XXX This is far from perfect, but should work in most cases...
                 # self.original_curve = bpy.context.object
@@ -3356,7 +3354,8 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
             for sp_idx in range(len(self.temporary_curve.data.splines)):
                 self.last_strokes_splines_coords.append([])
                 for bp_idx in range(len(self.temporary_curve.data.splines[sp_idx].bezier_points)):
-                    coords = self.temporary_curve.data.splines[sp_idx].bezier_points[bp_idx].co
+                    coords = self.temporary_curve.matrix_world @ \
+                             self.temporary_curve.data.splines[sp_idx].bezier_points[bp_idx].co
                     self.last_strokes_splines_coords[sp_idx].append([coords[0], coords[1], coords[2]])
 
             # Check for cyclic splines, put the first and last points in the middle of their actual positions
@@ -3411,7 +3410,6 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
             bpy.context.view_layer.objects.active = self.main_object
             
             # Set again since "execute()" will turn it again to its initial value
-            #bpy.ops.gpencil.surfsk_add_surface()
             self.execute(context)
 
             if not self.stopping_errors:
@@ -3609,7 +3607,7 @@ class GPENCIL_OT_SURFSK_edit_strokes(Operator):
             bpy.ops.object.editmode_toggle('INVOKE_REGION_WIN')
             #bpy.ops.gpencil.convert('INVOKE_REGION_WIN', type='CURVE', use_link_strokes=False)
             gp = bpy.context.scene.bsurfaces.SURFSK_object_with_strokes
-            conver_gpencil_to_curve(context, gp, 'GPensil')
+            conver_gpencil_to_curve(self, context, gp, 'GPensil')
             for ob in bpy.context.selected_objects:
                     if ob != bpy.context.view_layer.objects.active and ob.name.startswith("GP_Layer"):
                         ob_gp_strokes = ob
@@ -4059,10 +4057,11 @@ def update_panel(self, context):
         print("\n[{}]\n{}\n\nError:\n{}".format(__name__, message, e))
         pass
         
-def conver_gpencil_to_curve(context, pencil, type):
+def conver_gpencil_to_curve(self, context, pencil, type):
     newCurve = bpy.data.curves.new('gpencil_curve', type='CURVE')  # curvedatablock
     newCurve.dimensions = '3D'
     CurveObject = object_utils.object_data_add(context, newCurve)  # place in active scene
+    CurveObject.location = self.main_object.location
     
     if type == 'GPensil':
         strokes = pencil.data.layers[0].active_frame.strokes
@@ -4097,7 +4096,7 @@ class BsurfPreferences(AddonPreferences):
     category: StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
-            default="Tools",
+            default="Edit",
             update=update_panel
             )
 

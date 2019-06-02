@@ -38,7 +38,7 @@ from bpy.types import (
 
 
 # Sculpt Draw
-class SculptSculptDraw(Operator):
+class PIE_OT_SculptSculptDraw(Operator):
     bl_idname = "sculpt.sculptraw"
     bl_label = "Sculpt SculptDraw"
     bl_options = {'REGISTER', 'UNDO'}
@@ -49,7 +49,7 @@ class SculptSculptDraw(Operator):
 
 
 # Pie Sculp Pie Menus - W
-class PieSculptPie(Menu):
+class PIE_MT_SculptPie(Menu):
     bl_idname = "PIE_MT_sculpt"
     bl_label = "Pie Sculpt"
 
@@ -83,7 +83,7 @@ class PieSculptPie(Menu):
 
 
 # Pie Sculpt 2
-class PieSculpttwo(Menu):
+class PIE_MT_Sculpttwo(Menu):
     bl_idname = "PIE_MT_sculpttwo"
     bl_label = "Pie Sculpt 2"
 
@@ -107,7 +107,7 @@ class PieSculpttwo(Menu):
 
 
 # Pie Sculpt Three
-class PieSculptthree(Menu):
+class PIE_MT_Sculptthree(Menu):
     bl_idname = "PIE_MT_sculptthree"
     bl_label = "Pie Sculpt 3"
 
@@ -127,10 +127,10 @@ class PieSculptthree(Menu):
 
 
 classes = (
-    PieSculptPie,
-    PieSculpttwo,
-    PieSculptthree,
-    SculptSculptDraw,
+    PIE_MT_SculptPie,
+    PIE_MT_Sculpttwo,
+    PIE_MT_Sculptthree,
+    PIE_OT_SculptSculptDraw,
     )
 
 addon_keymaps = []

@@ -451,6 +451,13 @@ def create_materials(filepath, relpath,
             mtl.close()
 
 
+def face_is_edge(face):
+    """Simple check to test whether given (temp, working) data is an edge, and not a real face."""
+    face_vert_loc_indices = face[0]
+    face_vert_nor_indices = face[1]
+    return len(face_vert_nor_indices) == 1 or len(face_vert_loc_indices) == 2
+
+
 def split_mesh(verts_loc, faces, unique_materials, filepath, SPLIT_OB_OR_GROUP):
     """
     Takes vert_loc and faces, and separates into multiple sets of
@@ -496,12 +503,12 @@ def split_mesh(verts_loc, faces, unique_materials, filepath, SPLIT_OB_OR_GROUP):
              use_verts_nor, use_verts_tex) = face_split_dict.setdefault(key, ([], [], {}, {}, [], []))
             oldkey = key
 
+        if not face_is_edge(face):
+            if not use_verts_nor and face_vert_nor_indices:
+                use_verts_nor.append(True)
 
-        if not use_verts_nor and face_vert_nor_indices:
-            use_verts_nor.append(True)
-
-        if not use_verts_tex and face_vert_tex_indices:
-            use_verts_tex.append(True)
+            if not use_verts_tex and face_vert_tex_indices:
+                use_verts_tex.append(True)
 
         # Remap verts to new vert list and add where needed
         for loop_idx, vert_idx in enumerate(face_vert_loc_indices):
@@ -513,7 +520,7 @@ def split_mesh(verts_loc, faces, unique_materials, filepath, SPLIT_OB_OR_GROUP):
 
             face_vert_loc_indices[loop_idx] = map_index  # remap to the local index
 
-            if context_material not in unique_materials_split:
+            if context_material is not None and context_material not in unique_materials_split:
                 unique_materials_split[context_material] = unique_materials[context_material]
 
         faces_split.append(face)
@@ -553,6 +560,8 @@ def create_mesh(new_objects,
 
     # reverse loop through face indices
     for f_idx in range(len(faces) - 1, -1, -1):
+        face = faces[f_idx]
+
         (face_vert_loc_indices,
          face_vert_nor_indices,
          face_vert_tex_indices,
@@ -560,7 +569,7 @@ def create_mesh(new_objects,
          context_smooth_group,
          context_object_key,
          face_invalid_blenpoly,
-         ) = faces[f_idx]
+         ) = face
 
         len_face_vert_loc_indices = len(face_vert_loc_indices)
 
@@ -568,7 +577,7 @@ def create_mesh(new_objects,
             faces.pop(f_idx)  # cant add single vert faces
 
         # Face with a single item in face_vert_nor_indices is actually a polyline!
-        elif len(face_vert_nor_indices) == 1 or len_face_vert_loc_indices == 2:
+        elif face_is_edge(face):
             if use_edges:
                 edges.extend((face_vert_loc_indices[i], face_vert_loc_indices[i + 1])
                              for i in range(len_face_vert_loc_indices - 1))
@@ -687,12 +696,16 @@ def create_mesh(new_objects,
         # Note: we store 'temp' normals in loops, since validate() may alter final mesh,
         #       we can only set custom lnors *after* calling it.
         me.create_normals_split()
-        loops_nor = tuple(no for (_, face_vert_nor_indices, _, _, _, _, _) in faces for face_noidx in face_vert_nor_indices for no in verts_nor[face_noidx])
+        loops_nor = tuple(no for (_, face_vert_nor_indices, _, _, _, _, _) in faces
+                             for face_noidx in face_vert_nor_indices
+                             for no in verts_nor[face_noidx])
         me.loops.foreach_set("normal", loops_nor)
 
     if verts_tex and me.polygons:
         me.uv_layers.new(do_init=False)
-        loops_uv = tuple(uv for (_, _, face_vert_tex_indices, _, _, _, _) in faces for face_uvidx in face_vert_tex_indices for uv in verts_tex[face_uvidx])
+        loops_uv = tuple(uv for (_, _, face_vert_tex_indices, _, _, _, _) in faces
+                            for face_uvidx in face_vert_tex_indices
+                            for uv in verts_tex[face_uvidx])
         me.uv_layers[0].data.foreach_set("uv", loops_uv)
 
     use_edges = use_edges and bool(edges)

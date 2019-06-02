@@ -2855,7 +2855,6 @@ class VIEW3D_MT_object_context_menu(Menu):
         view = context.space_data
 
         obj = context.object
-        is_eevee = context.scene.render.engine == 'BLENDER_EEVEE'
 
         selected_objects_len = len(context.selected_objects)
 
@@ -4862,6 +4861,11 @@ class VIEW3D_MT_edit_mesh_normals_advanced(Menu):
         layout = self.layout
 
         layout.operator("mesh.set_normals_from_faces", text="Set From Faces", icon = 'SET_FROM_FACES')
+
+        layout.operator_context = 'INVOKE_DEFAULT'
+        layout.operator("transform.rotate_normal", text="Rotate")
+        layout.operator_context = 'EXEC_DEFAULT'
+
         layout.operator("transform.rotate_normal", text="Rotate Normal", icon = "NORMAL_ROTATE")
         layout.operator("mesh.point_normals", text="Point normals to target", icon = "NORMAL_TARGET")
         layout.operator("mesh.merge_normals", text="Merge", icon = "MERGE")
@@ -6837,6 +6841,7 @@ class VIEW3D_PT_overlay_edit_mesh_shading(Panel):
         layout = self.layout
 
         view = context.space_data
+        shading = view.shading
         overlay = view.overlay
         tool_settings = context.tool_settings
         display_all = overlay.show_overlays
@@ -6854,12 +6859,21 @@ class VIEW3D_PT_overlay_edit_mesh_shading(Panel):
             sub = row.row()
             sub.prop(tool_settings, "vertex_group_user", expand=True)
 
-        col.prop(overlay, "show_statvis", text="Mesh Analysis")
+        if shading.type == 'WIREFRAME':
+            xray = shading.show_xray_wireframe and shading.xray_alpha_wireframe < 1.0
+        elif shading.type == 'SOLID':
+            xray = shading.show_xray and shading.xray_alpha < 1.0
+        else:
+            xray = False
+        statvis_active = not xray
+        row = col.row()
+        row.active = statvis_active
+        row.prop(overlay, "show_statvis", text="Mesh Analysis")
         if overlay.show_statvis:
             col = col.column()
+            col.active = statvis_active
 
             sub = col.split()
-            sub.active = overlay.show_statvis
             sub.label(text="Type")
             sub.prop(statvis, "type", text="")
 

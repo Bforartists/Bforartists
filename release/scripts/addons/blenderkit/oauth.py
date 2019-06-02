@@ -20,7 +20,7 @@
 import json
 import webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, quote as urlquote, urlparse
 
 import requests
 
@@ -53,7 +53,7 @@ class SimpleOAuthAuthenticator(object):
         access_token = json.loads(response.content)['access_token']
         return access_token, refresh_token
 
-    def get_new_token(self):
+    def get_new_token(self, register=True, redirect_url=None):
         class HTTPServerHandler(BaseHTTPRequestHandler):
             def do_GET(self):
                 self.send_response(200)
@@ -62,7 +62,14 @@ class SimpleOAuthAuthenticator(object):
                 if 'code' in self.path:
                     self.auth_code = self.path.split('=')[1]
                     # Display to the user that they no longer need the browser window
-                    self.wfile.write(bytes('<html><h1>You may now close this window.</h1></html>', 'utf-8'))
+                    if redirect_url:
+                        redirect_string = (
+                            '<head><meta http-equiv="refresh" content="0;url=%(redirect_url)s"></head>'
+                            '<script> window.location.href="%(redirect_url)s"; </script>' % {'redirect_url': redirect_url}
+                        )
+                    else:
+                        redirect_string = ""
+                    self.wfile.write(bytes('<html>%s<h1>You may now close this window.</h1></html>' % redirect_string, 'utf-8'))
                     qs = parse_qs(urlparse(self.path).query)
                     self.server.authorization_code = qs['code'][0]
 
@@ -72,10 +79,15 @@ class SimpleOAuthAuthenticator(object):
             except OSError:
                 continue
             break
-        webbrowser.open_new(
-            "%s/o/authorize?client_id=%s&state=random_state_string&response_type=code&"
-            "redirect_uri=http://localhost:%s/consumer/exchange/" % (self.server_url, self.client_id, port),
+        authorize_url = (
+            "/o/authorize?client_id=%s&state=random_state_string&response_type=code&"
+            "redirect_uri=http://localhost:%s/consumer/exchange/" % (self.client_id, port)
         )
+        if register:
+            authorize_url = "%s/accounts/register/?next=%s" % (self.server_url, urlquote(authorize_url))
+        else:
+            authorize_url = "%s%s" % (self.server_url, authorize_url)
+        webbrowser.open_new(authorize_url)
 
         httpServer.handle_request()
         authorization_code = httpServer.authorization_code

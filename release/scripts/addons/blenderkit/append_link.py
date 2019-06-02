@@ -16,9 +16,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+
+if "bpy" in locals():
+    from importlib import reload
+
+    utils = reload(utils)
+else:
+    from blenderkit import utils
+
 import bpy
-import os, uuid
-from blenderkit import utils
+import uuid
 
 
 def append_brush(file_name, brushname=None, link=False, fake_user=True):

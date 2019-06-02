@@ -39,7 +39,7 @@ from bpy.props import EnumProperty
 
 
 # Pie Align - Alt + X
-class PieAlign(Menu):
+class PIE_MT_Align(Menu):
     bl_idname = "PIE_MT_align"
     bl_label = "Pie Align"
 
@@ -96,7 +96,7 @@ class PieAlign(Menu):
 
 
 # Align to X, Y, Z
-class AlignSelectedXYZ(Operator):
+class PIE_OT_AlignSelectedXYZ(Operator):
     bl_idname = "align.selected2xyz"
     bl_label = "Align to X, Y, Z"
     bl_description = "Align Selected Along the chosen axis"
@@ -140,7 +140,7 @@ class AlignSelectedXYZ(Operator):
 #    Align To 0     #
 # ################# #
 
-class AlignToXYZ0(Operator):
+class PIE_OT_AlignToXYZ0(Operator):
     bl_idname = "align.2xyz"
     bl_label = "Align To X, Y or Z = 0"
     bl_description = "Align Active Object To a chosen X, Y or Z equals 0 Location"
@@ -174,7 +174,7 @@ class AlignToXYZ0(Operator):
 
 
 # Align X Left
-class AlignXYZAll(Operator):
+class PIE_OT_AlignXYZAll(Operator):
     bl_idname = "alignxyz.all"
     bl_label = "Align to Front/Back Axis"
     bl_description = "Align to a Front or Back along the chosen Axis"
@@ -235,10 +235,10 @@ class AlignXYZAll(Operator):
 
 
 classes = (
-    PieAlign,
-    AlignSelectedXYZ,
-    AlignToXYZ0,
-    AlignXYZAll,
+    PIE_MT_Align,
+    PIE_OT_AlignSelectedXYZ,
+    PIE_OT_AlignToXYZ0,
+    PIE_OT_AlignXYZAll,
     )
 
 addon_keymaps = []

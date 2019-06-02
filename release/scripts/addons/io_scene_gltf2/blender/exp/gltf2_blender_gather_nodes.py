@@ -71,10 +71,6 @@ def __filter_node(blender_object, export_settings):
         return False
     if export_settings[gltf2_blender_export_keys.SELECTED] and blender_object.select_get() is False:
         return False
-    if not export_settings[gltf2_blender_export_keys.LAYERS] and not blender_object.layers[0]:
-        return False
-    if blender_object.instance_collection is not None and not blender_object.instance_collection.layers[0]:
-        return False
 
     return True
 

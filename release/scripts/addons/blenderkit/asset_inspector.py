@@ -16,18 +16,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-if "bpy" in locals():
-    import imp
 
-    imp.reload(utils)
+if "bpy" in locals():
+    from importlib import reload
+
+    utils = reload(utils)
 else:
     from blenderkit import utils
 
-import bpy, bmesh
-import mathutils
-import object_print3d_utils
+import bpy
 from object_print3d_utils import operators as ops
-from mathutils import Vector
 
 RENDER_OBTYPES = ['MESH', 'CURVE', 'SURFACE', 'METABALL', 'TEXT']
 
@@ -93,7 +91,6 @@ def check_render_engine(props, obs):
     elif e == 'CYCLES':
 
         props.engine = 'CYCLES'
-
 
         for mname in materials:
             m = bpy.data.materials[mname]
@@ -315,7 +312,7 @@ def check_modifiers(props, obs):
 def get_autotags():
     """ call all analysis functions """
     ui = bpy.context.scene.blenderkitUI
-    if ui.asset_type =='MODEL':
+    if ui.asset_type == 'MODEL':
         ob = utils.get_active_model()
         obs = utils.get_hierarchy(ob)
         props = ob.blenderkit
@@ -339,7 +336,7 @@ def get_autotags():
         check_meshprops(props, obs)
         check_modifiers(props, obs)
         countObs(props, obs)
-    elif ui.asset_type =='MATERIAL':
+    elif ui.asset_type == 'MATERIAL':
         # reset some properties here, because they might not get re-filled at all when they aren't needed anymore.
 
         mat = utils.get_active_asset()

@@ -39,7 +39,7 @@ from bpy.props import EnumProperty
 
 
 # Pie Apply Transforms - Ctrl + A
-class PieApplyTransforms(Menu):
+class PIE_MT_PieApplyTransforms(Menu):
     bl_idname = "PIE_MT_applytransforms"
     bl_label = "Pie Apply Transforms"
 
@@ -65,7 +65,7 @@ class PieApplyTransforms(Menu):
 
 
 # Apply Transforms
-class ApplyTransLocRotPie(Operator):
+class PIE_OT_ApplyTransLocRotPie(Operator):
     bl_idname = "apply.transformlocrotscale"
     bl_label = "Apply Transforms"
     bl_description = "Apply Transform: Location, Rotation or Scale"
@@ -91,7 +91,7 @@ class ApplyTransLocRotPie(Operator):
 
 
 # Apply Transforms
-class ApplyTransformAll(Operator):
+class PIE_OT_ApplyTransformAll(Operator):
     bl_idname = "apply.transformall"
     bl_label = "Apply All Transforms"
     bl_description = "Apply Transform All"
@@ -103,7 +103,7 @@ class ApplyTransformAll(Operator):
 
 
 # Clear Menu
-class ClearMenu(Menu):
+class PIE_OT_ClearMenu(Menu):
     bl_idname = "PIE_MT_clear_menu"
     bl_label = "Clear Menu"
 
@@ -116,7 +116,7 @@ class ClearMenu(Menu):
 
 
 # Clear all
-class ClearAll(Operator):
+class PIE_OT_ClearAll(Operator):
     bl_idname = "clear.all"
     bl_label = "Clear All"
     bl_description = "Clear All Transforms"
@@ -130,11 +130,11 @@ class ClearAll(Operator):
 
 
 classes = (
-    PieApplyTransforms,
-    ApplyTransLocRotPie,
-    ApplyTransformAll,
-    ClearMenu,
-    ClearAll,
+    PIE_MT_PieApplyTransforms,
+    PIE_OT_ApplyTransLocRotPie,
+    PIE_OT_ApplyTransformAll,
+    PIE_OT_ClearMenu,
+    PIE_OT_ClearAll,
     )
 
 addon_keymaps = []

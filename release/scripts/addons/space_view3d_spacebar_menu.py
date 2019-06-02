@@ -1484,18 +1484,19 @@ class VIEW3D_MT_Edit_Mesh(Menu):
 
 # ********** Edit Multiselect **********
 class VIEW3D_MT_Edit_Multi(Menu):
-    bl_label = "Multi Select"
+    bl_label = "Mode Select"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("multiedit.vertex", text="Vertex", icon='VERTEXSEL')
-        layout.operator("multiedit.edge", text="Edge", icon='EDGESEL')
-        layout.operator("multiedit.face", text="Face", icon='FACESEL')
-        layout.operator("multiedit.vertsfaces", text="Vertex/Faces", icon='VERTEXSEL')
-        layout.operator("multiedit.vertsedges", text="Vertex/Edges", icon='EDGESEL')
-        layout.operator("multiedit.edgesfaces", text="Edges/Faces", icon='FACESEL')
-        layout.operator("multiedit.vertsedgesfaces", text="Vertex/Edges/Faces", icon='OBJECT_DATAMODE')
+        layout.operator("selectedit.vertex", text="Vertex", icon='VERTEXSEL')
+        layout.operator("selectedit.edge", text="Edge", icon='EDGESEL')
+        layout.operator("selectedit.face", text="Face", icon='FACESEL')
+        layout.operator("selectedit.vertsfaces", text="Vertex/Faces", icon='VERTEXSEL')
+        layout.operator("selectedit.vertsedges", text="Vertex/Edges", icon='EDGESEL')
+        layout.operator("selectedit.edgesfaces", text="Edges/Faces", icon='FACESEL')
+        layout.operator("selectedit.vertsedgesfaces", text="Vertex/Edges/Faces", icon='OBJECT_DATAMODE')
+
 
 # ********** Edit Mesh Edge **********
 class VIEW3D_MT_EditM_Edge(Menu):
@@ -3008,8 +3009,8 @@ class VIEW3D_OT_SetOriginToSelected(Operator):
         return {'FINISHED'}
 
 # multiple edit select modes.
-class VIEW3D_OT_MultieditVertex(Operator):
-    bl_idname = "multiedit.vertex"
+class VIEW3D_OT_selecteditVertex(Operator):
+    bl_idname = "selectedit.vertex"
     bl_label = "Vertex Mode"
     bl_description = "Vert Select"
     bl_options = {'REGISTER', 'UNDO'}
@@ -3023,8 +3024,8 @@ class VIEW3D_OT_MultieditVertex(Operator):
             return {'FINISHED'}
 
 
-class VIEW3D_OT_MultieditEdge(Operator):
-    bl_idname = "multiedit.edge"
+class VIEW3D_OT_selecteditEdge(Operator):
+    bl_idname = "selectedit.edge"
     bl_label = "Edge Mode"
     bl_description = "Edge Select"
     bl_options = {'REGISTER', 'UNDO'}
@@ -3038,8 +3039,8 @@ class VIEW3D_OT_MultieditEdge(Operator):
             return {'FINISHED'}
 
 
-class VIEW3D_OT_MultieditFace(Operator):
-    bl_idname = "multiedit.face"
+class VIEW3D_OT_selecteditFace(Operator):
+    bl_idname = "selectedit.face"
     bl_label = "Multiedit Face"
     bl_description = "Face Mode"
     bl_options = {'REGISTER', 'UNDO'}
@@ -3052,9 +3053,10 @@ class VIEW3D_OT_MultieditFace(Operator):
             bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='FACE')
             return {'FINISHED'}
 
+
 # Components Multi Selection Mode
-class VIEW3D_OT_MultieditVertsEdges(Operator):
-    bl_idname = "multiedit.vertsedges"
+class VIEW3D_OT_selecteditVertsEdges(Operator):
+    bl_idname = "selectedit.vertsedges"
     bl_label = "Verts Edges Mode"
     bl_description = "Vert/Edge Select"
     bl_options = {'REGISTER', 'UNDO'}
@@ -3062,14 +3064,16 @@ class VIEW3D_OT_MultieditVertsEdges(Operator):
     def execute(self, context):
         if context.object.mode != "EDIT":
             bpy.ops.object.mode_set(mode="EDIT")
-            context.tool_settings.mesh_select_mode = (True, True, False)
-        if context.object.mode == "EDIT":
-            context.tool_settings.mesh_select_mode = (True, True, False)
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+        if bpy.ops.mesh.select_mode != "VERT, EDGE, FACE":
+            bpy.ops.object.mode_set(mode="EDIT")
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+            bpy.ops.mesh.select_mode(use_extend=True, use_expand=False, type='EDGE')
             return {'FINISHED'}
 
 
-class VIEW3D_OT_MultieditEdgesFaces(Operator):
-    bl_idname = "multiedit.edgesfaces"
+class VIEW3D_OT_selecteditEdgesFaces(Operator):
+    bl_idname = "selectedit.edgesfaces"
     bl_label = "Edges Faces Mode"
     bl_description = "Edge/Face Select"
     bl_options = {'REGISTER', 'UNDO'}
@@ -3077,14 +3081,16 @@ class VIEW3D_OT_MultieditEdgesFaces(Operator):
     def execute(self, context):
         if context.object.mode != "EDIT":
             bpy.ops.object.mode_set(mode="EDIT")
-            context.tool_settings.mesh_select_mode = (False, True, True)
-        if context.object.mode == "EDIT":
-            context.tool_settings.mesh_select_mode = (False, True, True)
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
+        if bpy.ops.mesh.select_mode != "VERT, EDGE, FACE":
+            bpy.ops.object.mode_set(mode="EDIT")
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='EDGE')
+            bpy.ops.mesh.select_mode(use_extend=True, use_expand=False, type='FACE')
             return {'FINISHED'}
 
 
-class VIEW3D_OT_MultieditVertsFaces(Operator):
-    bl_idname = "multiedit.vertsfaces"
+class VIEW3D_OT_selecteditVertsFaces(Operator):
+    bl_idname = "selectedit.vertsfaces"
     bl_label = "Verts Faces Mode"
     bl_description = "Vert/Face Select"
     bl_options = {'REGISTER', 'UNDO'}
@@ -3092,14 +3098,16 @@ class VIEW3D_OT_MultieditVertsFaces(Operator):
     def execute(self, context):
         if context.object.mode != "EDIT":
             bpy.ops.object.mode_set(mode="EDIT")
-            context.tool_settings.mesh_select_mode = (True, False, True)
-        if context.object.mode == "EDIT":
-            context.tool_settings.mesh_select_mode = (True, False, True)
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+        if bpy.ops.mesh.select_mode != "VERT, EDGE, FACE":
+            bpy.ops.object.mode_set(mode="EDIT")
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+            bpy.ops.mesh.select_mode(use_extend=True, use_expand=False, type='FACE')
             return {'FINISHED'}
 
 
-class VIEW3D_OT_MultieditVertsEdgesFaces(Operator):
-    bl_idname = "multiedit.vertsedgesfaces"
+class VIEW3D_OT_selecteditVertsEdgesFaces(Operator):
+    bl_idname = "selectedit.vertsedgesfaces"
     bl_label = "Verts Edges Faces Mode"
     bl_description = "Vert/Edge/Face Select"
     bl_options = {'REGISTER', 'UNDO'}
@@ -3107,9 +3115,12 @@ class VIEW3D_OT_MultieditVertsEdgesFaces(Operator):
     def execute(self, context):
         if context.object.mode != "EDIT":
             bpy.ops.object.mode_set(mode="EDIT")
-            context.tool_settings.mesh_select_mode = (True, True, True)
-        if context.object.mode == "EDIT":
-            context.tool_settings.mesh_select_mode = (True, True, True)
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+        if bpy.ops.mesh.select_mode != "VERT, EDGE, FACE":
+            bpy.ops.object.mode_set(mode="EDIT")
+            bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
+            bpy.ops.mesh.select_mode(use_extend=True, use_expand=False, type='EDGE')
+            bpy.ops.mesh.select_mode(use_extend=True, use_expand=False, type='FACE')
             return {'FINISHED'}
 
 # Code thanks to Isaac Weaver (wisaac) D1963
@@ -3261,13 +3272,13 @@ classes = (
     VIEW3D_OT_Interactive_Mode_Grease_Pencil,
     VIEW3D_MT_Interactive_Mode_GPencil,
     VIEW3D_MT_Edit_Gpencil,
-    VIEW3D_OT_MultieditVertex,
-    VIEW3D_OT_MultieditEdge,
-    VIEW3D_OT_MultieditFace,
-    VIEW3D_OT_MultieditVertsEdges,
-    VIEW3D_OT_MultieditEdgesFaces,
-    VIEW3D_OT_MultieditVertsFaces,
-    VIEW3D_OT_MultieditVertsEdgesFaces
+    VIEW3D_OT_selecteditVertex,
+    VIEW3D_OT_selecteditEdge,
+    VIEW3D_OT_selecteditFace,
+    VIEW3D_OT_selecteditVertsEdges,
+    VIEW3D_OT_selecteditEdgesFaces,
+    VIEW3D_OT_selecteditVertsFaces,
+    VIEW3D_OT_selecteditVertsEdgesFaces
 )
 
 

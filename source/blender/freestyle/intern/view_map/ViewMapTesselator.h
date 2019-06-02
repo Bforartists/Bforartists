@@ -180,13 +180,15 @@ NodeGroup *ViewMapTesselator::Tesselate(ViewEdgesIterator begin, ViewEdgesIterat
     firstEdge = (*c)->fedgeA();
 
 #if 0
-    if (firstEdge->invisibility() > 0)
+    if (firstEdge->invisibility() > 0) {
       continue;
+    }
 #endif
 
     line = new OrientedLineRep();
-    if (_overloadFrsMaterial)
+    if (_overloadFrsMaterial) {
       line->setFrsMaterial(_FrsMaterial);
+    }
 
     // there might be chains containing a single element
     if (0 == (firstEdge)->nextEdge()) {
