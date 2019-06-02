@@ -50,7 +50,7 @@ class convert():
             if fc.data_path == data_path and (array_index < 0 or fc.array_index == array_index):
                 return fc
 
-        fc = action.fcurves.new(data_path, array_index)
+        fc = action.fcurves.new(data_path, index=array_index)
         fc.group = group
         return fc
 

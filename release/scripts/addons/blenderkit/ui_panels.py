@@ -17,15 +17,15 @@
 # ##### END GPL LICENSE BLOCK #####
 
 if "bpy" in locals():
-    import imp
+    import importlib
 
-    imp.reload(paths)
-    imp.reload(ratings)
-    imp.reload(utils)
-    imp.reload(search)
-    imp.reload(upload)
+    paths = importlib.reload(paths)
+    ratings = importlib.reload(ratings)
+    utils = importlib.reload(utils)
+    download = importlib.reload(download)
+    categories = importlib.reload(categories)
 else:
-    from blenderkit import paths, ratings, utils, download, categories, ui
+    from blenderkit import paths, ratings, utils, download, categories
 
 from bpy.types import (
     Panel
@@ -43,7 +43,7 @@ def label_multiline(layout, text='', icon='NONE', width=-1):
         threshold = int(width / 5.5)
     else:
         threshold = 35
-    maxlines = 3
+    maxlines = 6
     li = 0
     for l in lines:
         while len(l) > threshold:
@@ -134,8 +134,8 @@ def draw_upload_common(layout, props, asset_type, context):
     if asset_type == 'MODEL' and props.subcategory != '':  # by now block this for other asset types.
         layout.prop(props, 'subcategory')
 
-    layout.prop(props, 'is_private')
-    if not props.is_private:
+    layout.prop(props, 'is_private', expand=True)
+    if props.is_private == 'PUBLIC':
         layout.prop(props, 'license')
 
 
@@ -394,10 +394,8 @@ class VIEW3D_PT_blenderkit_profile(Panel):
 
     @classmethod
     def poll(cls, context):
-        user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-        if user_preferences.enable_oauth:
-            return True
-        return False
+
+        return True
 
     def draw(self, context):
         # draw asset properties here
@@ -411,9 +409,8 @@ class VIEW3D_PT_blenderkit_profile(Panel):
             return
 
         if len(user_preferences.api_key) < 20:
-            layout.operator("wm.blenderkit_login", text="Login/ Sign up",
-                            icon='URL')
-
+            if user_preferences.enable_oauth:
+                draw_login_buttons(layout)
         else:
             me = bpy.context.window_manager.get('bkit profile')
             if me is not None:
@@ -421,13 +418,16 @@ class VIEW3D_PT_blenderkit_profile(Panel):
                 layout.label(text='User: %s %s' % (me['firstName'], me['lastName']))
                 layout.label(text='Email: %s' % (me['email']))
                 if me.get('sumAssetFilesSize') is not None:  # TODO remove this when production server has these too.
-                    layout.label(text='Public assets: %i Mb' % (me['sumAssetFilesSize']))
-                    layout.label(text='Private assets: %i Mb' % (me['sumPrivateAssetFilesSize']))
-                    layout.label(text='Remaining private storage: %i Mb' % (me['remainingPrivateQuota']))
+                    layout.label(text='Public assets: %i MiB' % (me['sumAssetFilesSize']))
+                if me.get('sumPrivateAssetFilesSize') is not None:
+                    layout.label(text='Private assets: %i MiB' % (me['sumPrivateAssetFilesSize']))
+                if me.get('remainingPrivateQuota') is not None:
+                    layout.label(text='Remaining private storage: %i MiB' % (me['remainingPrivateQuota']))
             layout.operator("wm.url_open", text="See my uploads",
                             icon='URL').url = paths.BLENDERKIT_USER_ASSETS
-            layout.operator("wm.blenderkit_logout", text="Logout",
-                            icon='URL')
+            if user_preferences.enable_oauth:
+                layout.operator("wm.blenderkit_logout", text="Logout",
+                                icon='URL')
 
 
 def draw_panel_model_rating(self, context):
@@ -543,6 +543,20 @@ def draw_panel_brush_ratings(self, context):
     op.asset_type = 'BRUSH'
 
 
+def draw_login_buttons(layout):
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+
+    if user_preferences.login_attempt:
+        layout.label(text='Login through browser')
+        layout.label(text='in progress.')
+        layout.operator("wm.blenderkit_login_cancel", text="Cancel", icon='CANCEL')
+    else:
+        layout.operator("wm.blenderkit_login", text="Login",
+                        icon='URL').signup = False
+        layout.operator("wm.blenderkit_login", text="Sign up",
+                        icon='URL').signup = True
+
+
 class VIEW3D_PT_blenderkit_unified(Panel):
     bl_category = "BlenderKit"
     bl_idname = "VIEW3D_PT_blenderkit_unified"
@@ -579,8 +593,7 @@ class VIEW3D_PT_blenderkit_unified(Panel):
 
         if len(user_preferences.api_key) < 20 and user_preferences.asset_counter > 20:
             if user_preferences.enable_oauth:
-                layout.operator("wm.blenderkit_login", text="Login/ Sign up",
-                                icon='URL')
+                draw_login_buttons(layout)
             else:
                 op = layout.operator("wm.url_open", text="Get your API Key",
                                      icon='QUESTION')
@@ -802,11 +815,11 @@ class VIEW3D_PT_blenderkit_downloads(Panel):
             row.label(text=asset_data['name'])
             row.label(text=str(int(tcom.progress)) + ' %')
             row.operator('scene.blenderkit_download_kill', text='', icon='CANCEL')
-            if tcom.passargs.get('retry_counter',0)>0:
+            if tcom.passargs.get('retry_counter', 0) > 0:
                 row = layout.row()
-                row.label(text = 'failed. retrying ... ', icon='ERROR')
-                row.label(text = str(tcom.passargs["retry_counter"]))
-                
+                row.label(text='failed. retrying ... ', icon='ERROR')
+                row.label(text=str(tcom.passargs["retry_counter"]))
+
                 layout.separator()
 
 

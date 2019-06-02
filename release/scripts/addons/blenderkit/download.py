@@ -16,23 +16,22 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+if "bpy" in locals():
+    from importlib import reload
+
+    paths = reload(paths)
+    append_link = reload(append_link)
+    utils = reload(utils)
+else:
+    from blenderkit import paths, append_link, utils
+
 import threading
 import time
 import requests
-import shutil, sys, os, math
-import random
+import shutil, sys, os
 import uuid
 import copy
 
-if "bpy" in locals():
-    import imp
-
-    imp.reload(paths)
-    imp.reload(append_link)
-    imp.reload(utils)
-
-else:
-    from blenderkit import paths, append_link, utils
 import bpy
 from bpy.props import (
     IntProperty,
@@ -492,7 +491,7 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff, not 
                     done = try_finished_append(asset_data, **tcom.passargs)
                     if not done:
                         at = asset_data['asset_type']
-                        tcom.passargs['retry_counter'] = tcom.passargs.get('retry_counter',0) +1
+                        tcom.passargs['retry_counter'] = tcom.passargs.get('retry_counter', 0) + 1
                         if at in ('model', 'material'):
                             download(asset_data, **tcom.passargs)
                         elif asset_data['asset_type'] == 'material':
@@ -595,12 +594,11 @@ def download(asset_data, **kwargs):
     tcom = ThreadCom()
     tcom.passargs = kwargs
 
-    if kwargs.get('retry_counter',0) > 3:
+    if kwargs.get('retry_counter', 0) > 3:
         sprops = utils.get_search_props()
         sprops.report = f"Maximum retries exceeded for {asset_data['name']}"
         utils.p(sprops.report)
         return
-
 
     # incoming data can be either directly dict from python, or blender id property
     # (recovering failed downloads on reload)

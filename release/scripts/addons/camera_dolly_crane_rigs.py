@@ -20,11 +20,11 @@
 bl_info = {
     "name": "Add Camera Rigs",
     "author": "Wayne Dixon, Kris Wittig",
-    "version": (1, 1, 1),
+    "version": (1, 1, 2),
     "blender": (2, 80, 0),
     "location": "View3D > Add > Camera > Dolly or Crane Rig",
     "description": "Adds a Camera Rig with UI",
-    "warning": "Enable Auto Run Python Scripts in User Preferences > File",
+    "warning": "Enable Auto Run Python Scripts in User Preferences > Save & Load",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
                 "Py/Scripts/Rigging/Add_Camera_Rigs",
     "category": "Camera",
@@ -329,7 +329,7 @@ def markerBind():
     active_cam = ob.children[0]     # camera object
 
     # switch area to timeline to add marker
-    bpy.context.area.type = 'TIMELINE'
+    bpy.context.area.ui_type = 'TIMELINE'
     # add marker
     bpy.ops.marker.add()
     bpy.ops.marker.rename(name="cam_" + str(bpy.context.scene.frame_current))
@@ -340,7 +340,7 @@ def markerBind():
     # switch selected object back to the rig
     view_layer.objects.active = ob
     # switch back to 3d view
-    bpy.context.area.type = 'VIEW_3D'
+    bpy.context.area.ui_type = 'VIEW_3D'
 
 
 class AddMarkerBind(Operator):
@@ -387,7 +387,7 @@ def add_DOF_Empty():
     obj.location = bone.head
 
     # make this new empty the dof_object
-    cam.dof_object = obj
+#    cam.dof_object = obj
     # reselect the rig
     view_layer.objects.active = rig
     obj.select_set(False)
@@ -543,6 +543,8 @@ def build_dolly_rig(context):
     cam_data_name = bpy.context.object.data.name
     bpy.data.cameras[cam_data_name].display_size = 1.0
     cam.rotation_euler[0] = 1.5708   # rotate the camera 90 degrees in x
+    cam.rotation_euler[2] = 0.01309
+
     cam.location = (0.0, -2.0, 0.0)  # move the camera to the correct position
     cam.parent = rig
     cam.parent_type = "BONE"
@@ -729,6 +731,7 @@ def build_crane_rig(context):
     cam_data_name = bpy.context.object.data.name
     bpy.data.cameras[cam_data_name].display_size = 1.0
     cam.rotation_euler[0] = 1.5708   # rotate the camera 90 degrees in x
+    cam.rotation_euler[2] = 0.01309
     cam.location = (0.0, -2.0, 0.0)  # move the camera to the correct position
     cam.parent = rig
     cam.parent_type = "BONE"
@@ -762,11 +765,11 @@ def build_crane_rig(context):
 # =========================================================================
 # This is the UI for the Dolly Camera Rig
 # =========================================================================
-class DollyCameraUI(Panel):
-    bl_idname = "CAMERA_DOLLY_PT_ui"
+class VIEW3D_PT_DollyCameraUI(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Dolly Camera UI"
+    bl_category = "Tool"
 
     @classmethod
     def poll(self, context):
@@ -793,13 +796,13 @@ class DollyCameraUI(Panel):
         col.prop(cam, "clip_start", text="Start")
         col.prop(cam, "clip_end", text="End")
         col.prop(cam, "type")
-        col.prop(cam, "dof_object")
+#        col.prop(cam, "dof_object")
 
-        if cam.dof_object is None:
-            col.operator("add.dof_empty", text="Add DOF Empty")
-            col.prop(cam, "dof_distance")
+#        if cam.dof_object is None:
+#        col.operator("add.dof_empty", text="Add DOF Empty")
+#        col.prop(cam, "dof_distance")
         # added the comp guides here
-        col.prop_menu_enum(cam, "show_guide", text="Compostion Guides")
+#        col.prop_menu_enum(cam, "show_guide", text="Compostion Guides")
         col.prop(bpy.data.objects[active_cam],
                  "hide_select", text="Make Camera Unselectable")
 
@@ -828,11 +831,11 @@ class DollyCameraUI(Panel):
 # =========================================================================
 # This is the UI for the Crane Rig Camera
 # =========================================================================
-class CraneCameraUI(Panel):
-    bl_idname = "CAMERA_CRANE_PT_ui"
+class VIEW3D_PT_CraneCameraUI(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Crane Camera UI"
+    bl_category = "Tool"
 
     @classmethod
     def poll(self, context):
@@ -859,13 +862,13 @@ class CraneCameraUI(Panel):
         col.prop(cam, "clip_start", text="Start")
         col.prop(cam, "clip_end", text="End")
         col.prop(cam, "type")
-        col.prop(cam, "dof_object")
-
-        if cam.dof_object is None:
-            col.operator("add.dof_empty", text="Add DOF object")
-            col.prop(cam, "dof_distance")
+#        col.prop(cam, "dof_object")
+        ob = bpy.context.object
+#        if cam.dof_object is None:
+#           col.operator("add.dof_empty", text="Add DOF object")
+#           col.prop(cam, "dof_distance")
         # added the comp guides here
-        col.prop_menu_enum(cam, "show_guide", text="Compostion Guides")
+#        col.prop_menu_enum(cam, "show_guide", text="Compostion Guides")
         col.prop(bpy.data.objects[active_cam],
                  "hide_select", text="Make Camera Unselectable")
         col.operator("add.marker_bind", text="Add Marker and Bind")
@@ -970,8 +973,8 @@ def add_dolly_crane_buttons(self, context):
 def register():
     bpy.utils.register_class(BuildDollyRig)
     bpy.utils.register_class(BuildCraneRig)
-    bpy.utils.register_class(DollyCameraUI)
-    bpy.utils.register_class(CraneCameraUI)
+    bpy.utils.register_class(VIEW3D_PT_DollyCameraUI)
+    bpy.utils.register_class(VIEW3D_PT_CraneCameraUI)
     bpy.utils.register_class(MakeCameraActive)
     bpy.utils.register_class(AddMarkerBind)
     bpy.utils.register_class(AddDofEmpty)
@@ -981,8 +984,8 @@ def register():
 def unregister():
     bpy.utils.unregister_class(BuildDollyRig)
     bpy.utils.unregister_class(BuildCraneRig)
-    bpy.utils.unregister_class(DollyCameraUI)
-    bpy.utils.unregister_class(CraneCameraUI)
+    bpy.utils.unregister_class(VIEW3D_PT_DollyCameraUI)
+    bpy.utils.unregister_class(VIEW3D_PT_CraneCameraUI)
     bpy.utils.unregister_class(MakeCameraActive)
     bpy.utils.unregister_class(AddMarkerBind)
     bpy.utils.unregister_class(AddDofEmpty)

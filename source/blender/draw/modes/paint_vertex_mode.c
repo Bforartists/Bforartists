@@ -100,12 +100,14 @@ typedef struct PAINT_VERTEX_PrivateData {
   } by_mode[MODE_LEN];
   DRWShadingGroup *face_select_shgrp;
   DRWShadingGroup *vert_select_shgrp;
+  DRWView *view_wires;
 } PAINT_VERTEX_PrivateData; /* Transient data */
 
 /* *********** FUNCTIONS *********** */
 
-static void PAINT_VERTEX_engine_init(void *UNUSED(vedata))
+static void PAINT_VERTEX_engine_init(void *vedata)
 {
+  PAINT_VERTEX_StorageList *stl = ((PAINT_VERTEX_Data *)vedata)->stl;
   const DRWContextState *draw_ctx = DRW_context_state_get();
   PAINT_VERTEX_Shaders *sh_data = &e_data.sh_data[draw_ctx->sh_cfg];
 
@@ -175,6 +177,13 @@ static void PAINT_VERTEX_engine_init(void *UNUSED(vedata))
       });
     }
   }
+
+  if (!stl->g_data) {
+    /* Alloc transient pointers */
+    stl->g_data = MEM_mallocN(sizeof(*stl->g_data), __func__);
+  }
+
+  stl->g_data->view_wires = DRW_view_create_with_zoffset(draw_ctx->rv3d, 1.0f);
 }
 
 static void PAINT_VERTEX_cache_init(void *vedata)
@@ -186,20 +195,15 @@ static void PAINT_VERTEX_cache_init(void *vedata)
   const RegionView3D *rv3d = draw_ctx->rv3d;
   PAINT_VERTEX_Shaders *sh_data = &e_data.sh_data[draw_ctx->sh_cfg];
 
-  if (!stl->g_data) {
-    /* Alloc transient pointers */
-    stl->g_data = MEM_mallocN(sizeof(*stl->g_data), __func__);
-  }
-
   /* Vertex color pass */
   {
     DRWPass *pass = DRW_pass_create(
-        "Vert Color Pass", DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_EQUAL | DRW_STATE_MULTIPLY);
+        "Vert Color Pass", DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_EQUAL | DRW_STATE_BLEND_MUL);
     DRWShadingGroup *shgrp = DRW_shgroup_create(sh_data->by_mode[VERTEX_MODE].color_face, pass);
     DRW_shgroup_uniform_float_copy(
         shgrp, "white_factor", 1.0f - v3d->overlay.vertex_paint_mode_opacity);
     if (rv3d->rflag & RV3D_CLIPPING) {
-      DRW_shgroup_world_clip_planes_from_rv3d(shgrp, rv3d);
+      DRW_shgroup_state_enable(shgrp, DRW_STATE_CLIP_PLANES);
     }
     psl->by_mode[VERTEX_MODE].color_faces = pass;
     stl->g_data->by_mode[VERTEX_MODE].color_shgrp = shgrp;
@@ -208,7 +212,7 @@ static void PAINT_VERTEX_cache_init(void *vedata)
   /* Weight color pass */
   {
     DRWPass *pass = DRW_pass_create(
-        "Weight Pass", DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_EQUAL | DRW_STATE_MULTIPLY);
+        "Weight Pass", DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_EQUAL | DRW_STATE_BLEND_MUL);
     DRWShadingGroup *shgrp = DRW_shgroup_create(sh_data->by_mode[WEIGHT_MODE].color_face, pass);
     DRW_shgroup_uniform_bool_copy(
         shgrp, "drawContours", (v3d->overlay.wpaint_flag & V3D_OVERLAY_WPAINT_CONTOURS) != 0);
@@ -216,21 +220,20 @@ static void PAINT_VERTEX_cache_init(void *vedata)
     DRW_shgroup_uniform_texture(shgrp, "colorramp", G_draw.weight_ramp);
     DRW_shgroup_uniform_block(shgrp, "globalsBlock", G_draw.block_ubo);
     if (rv3d->rflag & RV3D_CLIPPING) {
-      DRW_shgroup_world_clip_planes_from_rv3d(shgrp, rv3d);
+      DRW_shgroup_state_enable(shgrp, DRW_STATE_CLIP_PLANES);
     }
     psl->by_mode[WEIGHT_MODE].color_faces = pass;
     stl->g_data->by_mode[WEIGHT_MODE].color_shgrp = shgrp;
   }
 
   {
-    DRWPass *pass = DRW_pass_create("Wire Pass",
-                                    DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH |
-                                        DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_OFFSET_NEGATIVE);
+    DRWPass *pass = DRW_pass_create(
+        "Wire Pass", DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL);
     for (int i = 0; i < MODE_LEN; i++) {
       DRWShadingGroup *shgrp = DRW_shgroup_create(sh_data->by_mode[i].wire_overlay, pass);
       DRW_shgroup_uniform_block(shgrp, "globalsBlock", G_draw.block_ubo);
       if (rv3d->rflag & RV3D_CLIPPING) {
-        DRW_shgroup_world_clip_planes_from_rv3d(shgrp, rv3d);
+        DRW_shgroup_state_enable(shgrp, DRW_STATE_CLIP_PLANES);
       }
       stl->g_data->by_mode[i].lwire_shgrp = shgrp;
     }
@@ -240,12 +243,12 @@ static void PAINT_VERTEX_cache_init(void *vedata)
   {
     DRWPass *pass = DRW_pass_create("Wire Mask Pass",
                                     DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH |
-                                        DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_OFFSET_NEGATIVE);
+                                        DRW_STATE_DEPTH_LESS_EQUAL);
     for (int i = 0; i < MODE_LEN; i++) {
       DRWShadingGroup *shgrp = DRW_shgroup_create(sh_data->by_mode[i].wire_select_overlay, pass);
       DRW_shgroup_uniform_block(shgrp, "globalsBlock", G_draw.block_ubo);
       if (rv3d->rflag & RV3D_CLIPPING) {
-        DRW_shgroup_world_clip_planes_from_rv3d(shgrp, rv3d);
+        DRW_shgroup_state_enable(shgrp, DRW_STATE_CLIP_PLANES);
       }
       stl->g_data->by_mode[i].lwire_select_shgrp = shgrp;
     }
@@ -256,11 +259,11 @@ static void PAINT_VERTEX_cache_init(void *vedata)
     static float col[4] = {1.0f, 1.0f, 1.0f, 0.2f};
     DRWPass *pass = DRW_pass_create("Face Mask Pass",
                                     DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH |
-                                        DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_BLEND);
+                                        DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_BLEND_ALPHA);
     DRWShadingGroup *shgrp = DRW_shgroup_create(sh_data->face_select_overlay, pass);
     DRW_shgroup_uniform_vec4(shgrp, "color", col, 1);
     if (rv3d->rflag & RV3D_CLIPPING) {
-      DRW_shgroup_world_clip_planes_from_rv3d(shgrp, rv3d);
+      DRW_shgroup_state_enable(shgrp, DRW_STATE_CLIP_PLANES);
     }
     psl->face_select_overlay = pass;
     stl->g_data->face_select_shgrp = shgrp;
@@ -269,11 +272,11 @@ static void PAINT_VERTEX_cache_init(void *vedata)
   {
     DRWPass *pass = DRW_pass_create("Vert Mask Pass",
                                     DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH |
-                                        DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_OFFSET_NEGATIVE);
+                                        DRW_STATE_DEPTH_LESS_EQUAL);
     DRWShadingGroup *shgrp = DRW_shgroup_create(sh_data->vert_select_overlay, pass);
     DRW_shgroup_uniform_block(shgrp, "globalsBlock", G_draw.block_ubo);
     if (rv3d->rflag & RV3D_CLIPPING) {
-      DRW_shgroup_world_clip_planes_from_rv3d(shgrp, rv3d);
+      DRW_shgroup_state_enable(shgrp, DRW_STATE_CLIP_PLANES);
     }
     psl->vert_select_overlay = pass;
     stl->g_data->vert_select_shgrp = shgrp;
@@ -309,24 +312,24 @@ static void PAINT_VERTEX_cache_populate(void *vedata, Object *ob)
       }
     }
     if (geom != NULL) {
-      DRW_shgroup_call(stl->g_data->by_mode[draw_mode].color_shgrp, geom, ob->obmat);
+      DRW_shgroup_call(stl->g_data->by_mode[draw_mode].color_shgrp, geom, ob);
     }
 
     if (use_face_sel || use_wire) {
       DRWShadingGroup *shgrp = use_face_sel ? stl->g_data->by_mode[draw_mode].lwire_select_shgrp :
                                               stl->g_data->by_mode[draw_mode].lwire_shgrp;
       geom = DRW_cache_mesh_surface_edges_get(ob);
-      DRW_shgroup_call(shgrp, geom, ob->obmat);
+      DRW_shgroup_call(shgrp, geom, ob);
     }
 
     if (use_face_sel) {
       geom = DRW_cache_mesh_surface_get(ob);
-      DRW_shgroup_call(stl->g_data->face_select_shgrp, geom, ob->obmat);
+      DRW_shgroup_call(stl->g_data->face_select_shgrp, geom, ob);
     }
 
     if (use_vert_sel) {
       geom = DRW_cache_mesh_all_verts_get(ob);
-      DRW_shgroup_call(stl->g_data->vert_select_shgrp, geom, ob->obmat);
+      DRW_shgroup_call(stl->g_data->vert_select_shgrp, geom, ob);
     }
   }
 }
@@ -334,13 +337,18 @@ static void PAINT_VERTEX_cache_populate(void *vedata, Object *ob)
 static void PAINT_VERTEX_draw_scene(void *vedata)
 {
   PAINT_VERTEX_PassList *psl = ((PAINT_VERTEX_Data *)vedata)->psl;
+  PAINT_VERTEX_StorageList *stl = ((PAINT_VERTEX_Data *)vedata)->stl;
   for (int i = 0; i < MODE_LEN; i++) {
     DRW_draw_pass(psl->by_mode[i].color_faces);
   }
+  DRW_draw_pass(psl->face_select_overlay);
+
+  DRW_view_set_active(stl->g_data->view_wires);
   DRW_draw_pass(psl->wire_overlay);
   DRW_draw_pass(psl->wire_select_overlay);
   DRW_draw_pass(psl->vert_select_overlay);
-  DRW_draw_pass(psl->face_select_overlay);
+
+  DRW_view_set_active(NULL);
 }
 
 static void PAINT_VERTEX_engine_free(void)

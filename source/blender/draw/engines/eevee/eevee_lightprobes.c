@@ -66,7 +66,7 @@ bool EEVEE_lightprobes_obj_visibility_cb(bool vis_in, void *user_data)
   EEVEE_ObjectEngineData *oed = (EEVEE_ObjectEngineData *)user_data;
 
   /* test disabled if group is NULL */
-  if (oed->test_data->collection == NULL) {
+  if (oed == NULL || oed->test_data->collection == NULL) {
     return vis_in;
   }
 
@@ -398,7 +398,7 @@ void EEVEE_lightprobes_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedat
       DRW_shgroup_uniform_block(grp, "planar_block", sldata->planar_ubo);
       DRW_shgroup_uniform_block(grp, "grid_block", sldata->grid_ubo);
 
-      DRW_shgroup_call_procedural_triangles(grp, cube_len * 2, NULL);
+      DRW_shgroup_call_procedural_triangles(grp, NULL, cube_len * 2);
     }
 
     /* Grid Display */
@@ -424,7 +424,7 @@ void EEVEE_lightprobes_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedat
         DRW_shgroup_uniform_block(shgrp, "grid_block", sldata->grid_ubo);
         DRW_shgroup_uniform_block(shgrp, "common_block", sldata->common_ubo);
         int tri_count = egrid->resolution[0] * egrid->resolution[1] * egrid->resolution[2] * 2;
-        DRW_shgroup_call_procedural_triangles(shgrp, tri_count, NULL);
+        DRW_shgroup_call_procedural_triangles(shgrp, NULL, tri_count);
       }
     }
 
@@ -787,7 +787,7 @@ void EEVEE_lightprobes_cache_finish(EEVEE_ViewLayerData *sldata, EEVEE_Data *ved
 
     DRW_shgroup_uniform_texture_ref(grp, "source", &txl->planar_pool);
     DRW_shgroup_uniform_float(grp, "fireflyFactor", &sldata->common_data.ssr_firefly_fac, 1);
-    DRW_shgroup_call_procedural_triangles(grp, pinfo->num_planar, NULL);
+    DRW_shgroup_call_procedural_triangles(grp, NULL, pinfo->num_planar);
   }
 }
 
@@ -911,6 +911,7 @@ static void lightbake_render_scene_face(int face, EEVEE_BakeRenderData *user_dat
   DRW_draw_pass(psl->sss_pass); /* Only output standard pass */
   DRW_draw_pass(psl->sss_pass_cull);
   EEVEE_draw_default_passes(psl);
+  DRW_draw_pass(psl->transparent_pass);
 }
 
 /* Render the scene to the probe_rt texture. */
@@ -1053,7 +1054,7 @@ void EEVEE_lightbake_filter_glossy(EEVEE_ViewLayerData *sldata,
   /* 3 - Render to probe array to the specified layer, do prefiltering. */
   int mipsize = GPU_texture_width(light_cache->cube_tx.tex);
   for (int i = 0; i < maxlevel + 1; i++) {
-    float bias = (i == 0) ? -1.0f : 1.0f;
+    float bias = 0.0f;
     pinfo->texel_size = 1.0f / (float)mipsize;
     pinfo->padding_size = (i == maxlevel) ? 0 : (float)(1 << (maxlevel - i - 1));
     pinfo->padding_size *= pinfo->texel_size;
@@ -1063,22 +1064,27 @@ void EEVEE_lightbake_filter_glossy(EEVEE_ViewLayerData *sldata,
     pinfo->roughness *= pinfo->roughness;     /* Distribute Roughness accros lod more evenly */
     CLAMP(pinfo->roughness, 1e-8f, 0.99999f); /* Avoid artifacts */
 
-#if 1 /* Variable Sample count (fast) */
+#if 1 /* Variable Sample count and bias (fast) */
     switch (i) {
       case 0:
         pinfo->samples_len = 1.0f;
+        bias = -1.0f;
         break;
       case 1:
-        pinfo->samples_len = 16.0f;
+        pinfo->samples_len = 32.0f;
+        bias = 1.0f;
         break;
       case 2:
-        pinfo->samples_len = 32.0f;
+        pinfo->samples_len = 40.0f;
+        bias = 2.0f;
         break;
       case 3:
         pinfo->samples_len = 64.0f;
+        bias = 2.0f;
         break;
       default:
         pinfo->samples_len = 128.0f;
+        bias = 2.0f;
         break;
     }
 #else /* Constant Sample count (slow) */

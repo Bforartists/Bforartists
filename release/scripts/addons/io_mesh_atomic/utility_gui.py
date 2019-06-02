@@ -39,7 +39,7 @@ class PANEL_PT_prepare(Panel):
     bl_space_type  = "VIEW_3D"
     bl_region_type = "UI"
     bl_options     = {'DEFAULT_CLOSED'}
-    bl_category = "Tools"
+    bl_category = "Create"
     bl_idname = "ATOMIC_PT_utilities"
 
 

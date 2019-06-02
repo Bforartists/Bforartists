@@ -16,8 +16,15 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+
+if "requests" in locals():
+    from importlib import reload
+
+    paths = reload(paths)
+else:
+    from blenderkit import paths
+
 import requests, os, json, threading
-from blenderkit import paths
 
 
 def get_addon_version():

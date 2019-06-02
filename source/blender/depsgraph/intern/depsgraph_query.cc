@@ -29,12 +29,14 @@ extern "C" {
 #include <string.h>  // XXX: memcpy
 
 #include "BLI_utildefines.h"
+#include "BLI_listbase.h"
+#include "BLI_ghash.h"
+
+#include "BKE_action.h"  // XXX: BKE_pose_channel_find_name
 #include "BKE_customdata.h"
 #include "BKE_idcode.h"
 #include "BKE_main.h"
-#include "BLI_listbase.h"
 
-#include "BKE_action.h"  // XXX: BKE_pose_channel_from_name
 } /* extern "C" */
 
 #include "DNA_object_types.h"
@@ -91,6 +93,12 @@ bool DEG_id_type_any_updated(const Depsgraph *graph)
   }
 
   return false;
+}
+
+bool DEG_id_type_any_exists(const Depsgraph *depsgraph, short id_type)
+{
+  const DEG::Depsgraph *deg_graph = reinterpret_cast<const DEG::Depsgraph *>(depsgraph);
+  return deg_graph->id_type_exist[BKE_idcode_to_index(id_type)] != 0;
 }
 
 uint32_t DEG_get_eval_flags_for_id(const Depsgraph *graph, ID *id)
@@ -302,4 +310,18 @@ bool DEG_is_evaluated_id(ID *id)
 bool DEG_is_evaluated_object(Object *object)
 {
   return !DEG_is_original_object(object);
+}
+
+bool DEG_is_fully_evaluated(const struct Depsgraph *depsgraph)
+{
+  const DEG::Depsgraph *deg_graph = (const DEG::Depsgraph *)depsgraph;
+  /* Check whether relations are up to date. */
+  if (deg_graph->need_update) {
+    return false;
+  }
+  /* Check whether IDs are up to date. */
+  if (BLI_gset_len(deg_graph->entry_tags) > 0) {
+    return false;
+  }
+  return true;
 }

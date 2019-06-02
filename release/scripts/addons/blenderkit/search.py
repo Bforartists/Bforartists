@@ -16,16 +16,17 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-if "bpy" in locals():
-    import imp
 
-    imp.reload(paths)
-    imp.reload(utils)
-    imp.reload(categories)
-    imp.reload(ui)
-    imp.reload(version_checker)
-    imp.reload(bkit_oauth)
-    imp.reload(tasks_queue)
+if "bpy" in locals():
+    from importlib import reload
+
+    paths = reload(paths)
+    utils = reload(utils)
+    categories = reload(categories)
+    ui = reload(ui)
+    bkit_oauth = reload(bkit_oauth)
+    version_checker = reload(version_checker)
+    tasks_queue = reload(tasks_queue)
 else:
     from blenderkit import paths, utils, categories, ui, bkit_oauth, version_checker, tasks_queue
 
@@ -65,7 +66,8 @@ def check_errors(rdata):
         if rdata.get('detail') == 'Invalid token.':
             user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
             if user_preferences.api_key != '':
-                bkit_oauth.refresh_token_thread()
+                if user_preferences.enable_oauth:
+                    bkit_oauth.refresh_token_thread()
                 return False, "You've been logged out. Logging in...."
             return False, 'Missing or wrong api_key in addon preferences'
     return True, ''
@@ -102,7 +104,8 @@ def fetch_server_data():
     url = paths.BLENDERKIT_ADDON_URL
     api_key = user_preferences.api_key
     # version_checker.check_version_thread(url, api_key, blenderkit)
-    bkit_oauth.refresh_token_thread()
+    if user_preferences.enable_oauth:
+        bkit_oauth.refresh_token_thread()
     get_profile()
     categories.fetch_categories_thread(api_key)
 
@@ -307,11 +310,13 @@ def split_subs(text):
     threshold = 40
     text = text.rstrip()
     lines = []
+
     while len(text) > threshold:
         i = text.rfind(' ', 0, threshold)
         i1 = text.rfind(',', 0, threshold)
-        i = max(i, i1)
-        if i == -1:
+        i2 = text.rfind('.', 0, threshold)
+        i = max(i, i1, i2)
+        if i <= 0:
             i = threshold
         lines.append(text[:i])
         text = text[i:]
@@ -573,10 +578,12 @@ def get_author(r):
 def write_profile(adata):
     utils.p('writing profile')
     user = adata['user']
-    # we have to convert to MB here, numbers too big for python int type
+    # we have to convert to MiB here, numbers too big for python int type
     if user.get('sumAssetFilesSize') is not None:
         user['sumAssetFilesSize'] /= (1024 * 1024)
+    if user.get('sumPrivateAssetFilesSize') is not None:
         user['sumPrivateAssetFilesSize'] /= (1024 * 1024)
+    if user.get('remainingPrivateQuota') is not None:
         user['remainingPrivateQuota'] /= (1024 * 1024)
 
     bpy.context.window_manager['bkit profile'] = adata
@@ -1008,7 +1015,7 @@ def search(category='', get_next=False, author_id=''):
     if category != '':
         query['category_subtree'] = category
 
-    if author_id != '' and user_preferences.enable_author_search:
+    if author_id != '':
         query['author_id'] = author_id
 
     # utils.p('searching')

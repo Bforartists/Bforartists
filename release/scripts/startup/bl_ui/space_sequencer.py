@@ -97,7 +97,6 @@ class SEQUENCER_HT_header(Header):
         layout = self.layout
 
         st = context.space_data
-        scene = context.scene
 
         layout.template_header()
 
@@ -193,7 +192,7 @@ class SEQUENCER_MT_view_cache(Menu):
 class SEQUENCER_MT_range(Menu):
     bl_label = "Range"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("anim.previewrange_set", text="Set Preview Range")
@@ -322,7 +321,7 @@ class SEQUENCER_MT_select_none(bpy.types.Operator):
 class SEQUENCER_MT_select_handle(Menu):
     bl_label = "Select Handle"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("sequencer.select_handles", text="Both").side = 'BOTH'
@@ -333,7 +332,7 @@ class SEQUENCER_MT_select_handle(Menu):
 class SEQUENCER_MT_select_channel(Menu):
     bl_label = "Select Channel"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("sequencer.select_active_side", text="Left").side = 'LEFT'
@@ -343,7 +342,7 @@ class SEQUENCER_MT_select_channel(Menu):
 class SEQUENCER_MT_select_linked(Menu):
     bl_label = "Select Linked"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("sequencer.select_linked", text="All")
@@ -354,7 +353,7 @@ class SEQUENCER_MT_select_linked(Menu):
 class SEQUENCER_MT_select_playhead(Menu):
     bl_label = "Select Playhead"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         props = layout.operator("sequencer.select", text="Left")
@@ -445,7 +444,7 @@ class SEQUENCER_MT_change(Menu):
 class SEQUENCER_MT_navigation(Menu):
     bl_label = "Navigation"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("sequencer.view_frame", text="Go to Playhead")
@@ -664,7 +663,7 @@ class SEQUENCER_MT_strip_lock_mute(Menu):
 class SEQUENCER_MT_strip_effect(Menu):
     bl_label = "Effect Strip"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator_menu_enum("sequencer.change_effect_input", "swap")
@@ -676,7 +675,7 @@ class SEQUENCER_MT_strip_effect(Menu):
 class SEQUENCER_MT_strip_movie(Menu):
     bl_label = "Movie Strip"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("sequencer.rendersize")
@@ -740,6 +739,10 @@ class SEQUENCER_MT_strip(Menu):
                 layout.separator()
                 layout.operator("sequencer.meta_make")
                 layout.operator("sequencer.meta_separate", icon='REMOVE_METASTRIP')
+                layout.operator("sequencer.meta_toggle", text="Toggle Meta")
+
+        layout.separator()
+        layout.menu("SEQUENCER_MT_strip_lock_mute")
 
         layout.separator()
         layout.operator("sequencer.meta_make", icon='ADD_METASTRIP')
@@ -867,7 +870,6 @@ class SEQUENCER_PT_info(SequencerButtonsPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        scene = context.scene
         strip = act_strip(context)
 
         row = layout.row(align=True)
@@ -1126,7 +1128,6 @@ class SEQUENCER_PT_info_input(SequencerButtonsPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        st = context.space_data
         scene = context.scene
         strip = act_strip(context)
         seq_type = strip.type
@@ -1211,7 +1212,6 @@ class SEQUENCER_PT_sound(SequencerButtonsPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        st = context.space_data
         strip = act_strip(context)
         sound = strip.sound
 
@@ -1370,15 +1370,15 @@ class SEQUENCER_PT_info_timecodes(SequencerButtonsPanel, Panel):
         split = sub.split(factor=0.5 + max_factor)
         split.alignment = 'RIGHT'
         split.label(text="Start")
-        split.prop(strip, "frame_start", text=str(bpy.utils.smpte_from_frame(strip.frame_start)).replace(':', ' '))
+        split.prop(strip, "frame_start", text=str(bpy.utils.smpte_from_frame(strip.frame_start)))
         split = sub.split(factor=0.5 + max_factor)
         split.alignment = 'RIGHT'
         split.label(text="End")
-        split.prop(strip, "frame_final_end", text=str(bpy.utils.smpte_from_frame(strip.frame_final_end)).replace(':', ' '))
+        split.prop(strip, "frame_final_end", text=str(bpy.utils.smpte_from_frame(strip.frame_final_end)))
         split = sub.split(factor=0.5 + max_factor)
         split.alignment = 'RIGHT'
         split.label(text="Duration")
-        split.prop(strip, "frame_final_duration", text=str(bpy.utils.smpte_from_frame(strip.frame_final_duration)).replace(':', ' '))
+        split.prop(strip, "frame_final_duration", text=str(bpy.utils.smpte_from_frame(strip.frame_final_duration)))
 
         if not isinstance(strip, bpy.types.EffectSequence):
             layout.alignment = 'RIGHT'
@@ -1386,22 +1386,22 @@ class SEQUENCER_PT_info_timecodes(SequencerButtonsPanel, Panel):
             split = sub.split(factor=0.5 + max_factor, align=True)
             split.alignment = 'RIGHT'
             split.label(text="Soft Trim Start")
-            split.prop(strip, "frame_offset_start", text=str(bpy.utils.smpte_from_frame(strip.frame_offset_start)).replace(':', ' '))
+            split.prop(strip, "frame_offset_start", text=str(bpy.utils.smpte_from_frame(strip.frame_offset_start)))
             split = sub.split(factor=0.5 + max_factor, align=True)
             split.alignment = 'RIGHT'
             split.label(text='End')
-            split.prop(strip, "frame_offset_end", text=str(bpy.utils.smpte_from_frame(strip.frame_offset_end)).replace(':', ' '))
+            split.prop(strip, "frame_offset_end", text=str(bpy.utils.smpte_from_frame(strip.frame_offset_end)))
 
             layout.alignment = 'RIGHT'
             sub = layout.column(align=True)
             split = sub.split(factor=0.5 + max_factor)
             split.alignment = 'RIGHT'
             split.label(text="Hard Trim Start")
-            split.prop(strip, "animation_offset_start", text=str(bpy.utils.smpte_from_frame(strip.animation_offset_start)).replace(':', ' '))
+            split.prop(strip, "animation_offset_start", text=str(bpy.utils.smpte_from_frame(strip.animation_offset_start)))
             split = sub.split(factor=0.5 + max_factor, align=True)
             split.alignment = 'RIGHT'
             split.label(text='End')
-            split.prop(strip, "animation_offset_end", text=str(bpy.utils.smpte_from_frame(strip.animation_offset_end)).replace(':', ' '))
+            split.prop(strip, "animation_offset_end", text=str(bpy.utils.smpte_from_frame(strip.animation_offset_end)))
 
         playhead = frame_current - strip.frame_start
         col = layout.column(align=True)

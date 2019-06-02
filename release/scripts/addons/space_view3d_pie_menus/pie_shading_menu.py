@@ -35,7 +35,7 @@ from bpy.types import Menu
 
 
 # Pie Shading - Z
-class PieShadingView(Menu):
+class PIE_MT_ShadingView(Menu):
     bl_idname = "PIE_MT_shadingview"
     bl_label = "Pie Shading"
 
@@ -55,7 +55,7 @@ class PieShadingView(Menu):
 
 
 classes = (
-    PieShadingView,
+    PIE_MT_ShadingView,
     )
 
 addon_keymaps = []

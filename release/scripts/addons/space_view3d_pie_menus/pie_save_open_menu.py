@@ -38,7 +38,7 @@ import os
 # Pie Save/Open
 
 
-class PieSaveOpen(Menu):
+class PIE_MT_SaveOpen(Menu):
     bl_idname = "PIE_MT_saveopen"
     bl_label = "Pie Save/Open"
 
@@ -63,7 +63,7 @@ class PieSaveOpen(Menu):
         pie.menu("PIE_MT_recover", text="Recovery Menu", icon='RECOVER_LAST')
 
 
-class pie_link(Menu):
+class PIE_MT_link(Menu):
     bl_idname = "PIE_MT_link"
     bl_label = "Link"
 
@@ -76,7 +76,7 @@ class pie_link(Menu):
         box.menu("EXTERNAL_MT_data", text="External Data")
 
 
-class pie_recover(Menu):
+class PIE_MT_recover(Menu):
     bl_idname = "PIE_MT_recover"
     bl_label = "Recovery"
 
@@ -89,7 +89,7 @@ class pie_recover(Menu):
         box.operator("wm.revert_mainfile", text="Revert", icon='FILE_REFRESH')
 
 
-class pie_fileio(Menu):
+class PIE_MT_fileio(Menu):
     bl_idname = "PIE_MT_fileio"
     bl_label = "Import/Export"
 
@@ -102,7 +102,7 @@ class pie_fileio(Menu):
         box.menu("TOPBAR_MT_file_export", icon='EXPORT')
 
 
-class ExternalData(Menu):
+class PIE_MT_ExternalData(Menu):
     bl_idname = "EXTERNAL_MT_data"
     bl_label = "External Data"
 
@@ -122,7 +122,7 @@ class ExternalData(Menu):
 
 # Save Incremental
 
-class FileIncrementalSave(Operator):
+class PIE_OT_FileIncrementalSave(Operator):
     bl_idname = "file.save_incremental"
     bl_label = "Save Incremental"
     bl_description = "Save First! then Incremental, .blend will get _001 extension"
@@ -173,12 +173,12 @@ class FileIncrementalSave(Operator):
 
 
 classes = (
-    PieSaveOpen,
-    ExternalData,
-    FileIncrementalSave,
-    pie_fileio,
-    pie_recover,
-    pie_link,
+    PIE_MT_SaveOpen,
+    PIE_MT_ExternalData,
+    PIE_OT_FileIncrementalSave,
+    PIE_MT_fileio,
+    PIE_MT_recover,
+    PIE_MT_link,
     )
 
 addon_keymaps = []

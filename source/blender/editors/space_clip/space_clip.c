@@ -802,6 +802,19 @@ static void clip_refresh(const bContext *C, ScrArea *sa)
   BKE_movieclip_user_set_frame(&sc->user, scene->r.cfra);
 }
 
+static void CLIP_GGT_navigate(wmGizmoGroupType *gzgt)
+{
+  VIEW2D_GGT_navigate_impl(gzgt, "CLIP_GGT_navigate");
+}
+
+static void clip_gizmos(void)
+{
+  wmGizmoMapType *gzmap_type = WM_gizmomaptype_ensure(
+      &(const struct wmGizmoMapType_Params){SPACE_CLIP, RGN_TYPE_WINDOW});
+
+  WM_gizmogrouptype_append_and_link(gzmap_type, CLIP_GGT_navigate);
+}
+
 /********************* main region ********************/
 
 /* sets up the fields of the View2D from zoom and offset */
@@ -973,6 +986,8 @@ static void clip_main_region_draw(const bContext *C, ARegion *ar)
     /* draw Grease Pencil - screen space only */
     clip_draw_grease_pencil((bContext *)C, false);
   }
+
+  WM_gizmomap_draw(ar->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D);
 }
 
 static void clip_main_region_listener(wmWindow *UNUSED(win),
@@ -1007,8 +1022,8 @@ static void clip_preview_region_init(wmWindowManager *wm, ARegion *ar)
   keymap = WM_keymap_ensure(wm->defaultconf, "Clip", SPACE_CLIP, 0);
   WM_event_add_keymap_handler_v2d_mask(&ar->handlers, keymap);
 
-  keymap = WM_keymap_ensure(wm->defaultconf, "Clip Scrubbing", SPACE_CLIP, RGN_TYPE_PREVIEW);
-  WM_event_add_keymap_handler_poll(&ar->handlers, keymap, ED_event_in_scrubbing_region);
+  keymap = WM_keymap_ensure(wm->defaultconf, "Clip Time Scrub", SPACE_CLIP, RGN_TYPE_PREVIEW);
+  WM_event_add_keymap_handler_poll(&ar->handlers, keymap, ED_time_scrub_event_in_region);
 
   keymap = WM_keymap_ensure(wm->defaultconf, "Clip Graph Editor", SPACE_CLIP, 0);
   WM_event_add_keymap_handler_v2d_mask(&ar->handlers, keymap);
@@ -1048,7 +1063,7 @@ static void graph_region_draw(const bContext *C, ARegion *ar)
   UI_view2d_view_restore(C);
 
   /* time-scrubbing */
-  ED_scrubbing_draw(ar, scene, sc->flag & SC_SHOW_SECONDS, true);
+  ED_time_scrub_draw(ar, scene, sc->flag & SC_SHOW_SECONDS, true);
 
   /* scrollers */
   scrollers = UI_view2d_scrollers_calc(v2d, NULL);
@@ -1062,7 +1077,7 @@ static void graph_region_draw(const bContext *C, ARegion *ar)
                   0,
                   15 * UI_DPI_FAC,
                   15 * UI_DPI_FAC,
-                  UI_DPI_FAC * ar->sizey - UI_SCRUBBING_MARGIN_Y);
+                  UI_DPI_FAC * ar->sizey - UI_TIME_SCRUB_MARGIN_Y);
     UI_view2d_draw_scale_y__values(ar, v2d, &rect, TH_TEXT);
   }
 }
@@ -1102,7 +1117,7 @@ static void dopesheet_region_draw(const bContext *C, ARegion *ar)
   UI_view2d_view_restore(C);
 
   /* time-scrubbing */
-  ED_scrubbing_draw(ar, scene, sc->flag & SC_SHOW_SECONDS, true);
+  ED_time_scrub_draw(ar, scene, sc->flag & SC_SHOW_SECONDS, true);
 
   /* scrollers */
   scrollers = UI_view2d_scrollers_calc(v2d, NULL);
@@ -1344,6 +1359,7 @@ void ED_spacetype_clip(void)
   st->keymap = clip_keymap;
   st->listener = clip_listener;
   st->context = clip_context;
+  st->gizmos = clip_gizmos;
   st->dropboxes = clip_dropboxes;
   st->refresh = clip_refresh;
   st->id_remap = clip_id_remap;
@@ -1354,7 +1370,7 @@ void ED_spacetype_clip(void)
   art->init = clip_main_region_init;
   art->draw = clip_main_region_draw;
   art->listener = clip_main_region_listener;
-  art->keymapflag = ED_KEYMAP_FRAMES | ED_KEYMAP_UI | ED_KEYMAP_GPENCIL;
+  art->keymapflag = ED_KEYMAP_GIZMO | ED_KEYMAP_FRAMES | ED_KEYMAP_UI | ED_KEYMAP_GPENCIL;
 
   BLI_addhead(&st->regiontypes, art);
 

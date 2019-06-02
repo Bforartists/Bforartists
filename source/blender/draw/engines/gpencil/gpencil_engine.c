@@ -244,9 +244,6 @@ void GPENCIL_engine_init(void *vedata)
   /* init storage */
   if (!stl->storage) {
     stl->storage = MEM_callocN(sizeof(GPENCIL_Storage), "GPENCIL_Storage");
-
-    /* unit matrix */
-    unit_m4(stl->storage->unit_matrix);
     stl->storage->shade_render[0] = OB_RENDER;
     stl->storage->shade_render[1] = 0;
   }
@@ -352,16 +349,17 @@ void GPENCIL_cache_init(void *vedata)
     /* Stroke pass 2D */
     psl->stroke_pass_2d = DRW_pass_create("GPencil Stroke Pass",
                                           DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH |
-                                              DRW_STATE_DEPTH_ALWAYS | DRW_STATE_BLEND);
+                                              DRW_STATE_DEPTH_ALWAYS | DRW_STATE_BLEND_ALPHA);
     stl->storage->shgroup_id = 0;
     /* Stroke pass 3D */
     psl->stroke_pass_3d = DRW_pass_create("GPencil Stroke Pass",
                                           DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH |
-                                              DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_BLEND);
+                                              DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_BLEND_ALPHA);
     stl->storage->shgroup_id = 0;
 
     /* edit pass */
-    psl->edit_pass = DRW_pass_create("GPencil Edit Pass", DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND);
+    psl->edit_pass = DRW_pass_create("GPencil Edit Pass",
+                                     DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND_ALPHA);
 
     /* detect if playing animation */
     if (draw_ctx->evil_C) {
@@ -453,13 +451,13 @@ void GPENCIL_cache_init(void *vedata)
      * is stored in sbuffer
      */
     psl->drawing_pass = DRW_pass_create("GPencil Drawing Pass",
-                                        DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND |
+                                        DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND_ALPHA |
                                             DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_ALWAYS);
 
     /* full screen pass to combine the result with default framebuffer */
     struct GPUBatch *quad = DRW_cache_fullscreen_quad_get();
     psl->mix_pass = DRW_pass_create("GPencil Mix Pass",
-                                    DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND |
+                                    DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND_ALPHA |
                                         DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS);
     DRWShadingGroup *mix_shgrp = DRW_shgroup_create(e_data.gpencil_fullscreen_sh, psl->mix_pass);
     DRW_shgroup_call(mix_shgrp, quad, NULL);
@@ -494,7 +492,7 @@ void GPENCIL_cache_init(void *vedata)
      * is far to agile.
      */
     psl->background_pass = DRW_pass_create("GPencil Background Painting Session Pass",
-                                           DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND |
+                                           DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND_ALPHA |
                                                DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS);
     DRWShadingGroup *background_shgrp = DRW_shgroup_create(e_data.gpencil_background_sh,
                                                            psl->background_pass);
@@ -509,7 +507,7 @@ void GPENCIL_cache_init(void *vedata)
      */
     if (v3d) {
       psl->paper_pass = DRW_pass_create("GPencil Paper Pass",
-                                        DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND);
+                                        DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND_ALPHA);
       DRWShadingGroup *paper_shgrp = DRW_shgroup_create(e_data.gpencil_paper_sh, psl->paper_pass);
       DRW_shgroup_call(paper_shgrp, quad, NULL);
       DRW_shgroup_uniform_vec3(paper_shgrp, "color", v3d->shading.background_color, 1);
@@ -519,14 +517,14 @@ void GPENCIL_cache_init(void *vedata)
     /* grid pass */
     if (v3d) {
       psl->grid_pass = DRW_pass_create("GPencil Grid Pass",
-                                       DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND |
+                                       DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND_ALPHA |
                                            DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_ALWAYS);
       stl->g_data->shgrps_grid = DRW_shgroup_create(e_data.gpencil_line_sh, psl->grid_pass);
     }
 
     /* blend layers pass */
     psl->blend_pass = DRW_pass_create("GPencil Blend Layers Pass",
-                                      DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND |
+                                      DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND_ALPHA |
                                           DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS);
     DRWShadingGroup *blend_shgrp = DRW_shgroup_create(e_data.gpencil_blend_fullscreen_sh,
                                                       psl->blend_pass);
@@ -590,6 +588,7 @@ void GPENCIL_cache_populate(void *vedata, Object *ob)
   ToolSettings *ts = scene->toolsettings;
   View3D *v3d = draw_ctx->v3d;
   const View3DCursor *cursor = &scene->cursor;
+  float grid_matrix[4][4];
 
   if (ob->type == OB_GPENCIL && ob->data) {
     bGPdata *gpd = (bGPdata *)ob->data;
@@ -657,32 +656,31 @@ void GPENCIL_cache_populate(void *vedata, Object *ob)
       switch (ts->gp_sculpt.lock_axis) {
         case GP_LOCKAXIS_VIEW: {
           /* align always to view */
-          invert_m4_m4(stl->storage->grid_matrix, draw_ctx->rv3d->viewmat);
+          invert_m4_m4(grid_matrix, draw_ctx->rv3d->viewmat);
           /* copy ob location */
-          copy_v3_v3(stl->storage->grid_matrix[3], ob->obmat[3]);
+          copy_v3_v3(grid_matrix[3], ob->obmat[3]);
           break;
         }
         case GP_LOCKAXIS_CURSOR: {
           float scale[3] = {1.0f, 1.0f, 1.0f};
-          loc_eul_size_to_mat4(
-              stl->storage->grid_matrix, cursor->location, cursor->rotation_euler, scale);
+          loc_eul_size_to_mat4(grid_matrix, cursor->location, cursor->rotation_euler, scale);
           break;
         }
         default: {
-          copy_m4_m4(stl->storage->grid_matrix, ob->obmat);
+          copy_m4_m4(grid_matrix, ob->obmat);
           break;
         }
       }
 
       /* Move the origin to Object or Cursor */
       if (ts->gpencil_v3d_align & GP_PROJECT_CURSOR) {
-        copy_v3_v3(stl->storage->grid_matrix[3], cursor->location);
+        copy_v3_v3(grid_matrix[3], cursor->location);
       }
       else {
-        copy_v3_v3(stl->storage->grid_matrix[3], ob->obmat[3]);
+        copy_v3_v3(grid_matrix[3], ob->obmat[3]);
       }
 
-      DRW_shgroup_call(stl->g_data->shgrps_grid, e_data.batch_grid, stl->storage->grid_matrix);
+      DRW_shgroup_call_obmat(stl->g_data->shgrps_grid, e_data.batch_grid, grid_matrix);
     }
   }
 }
@@ -946,10 +944,10 @@ void GPENCIL_draw_scene(void *ved)
         bool use_blend = false;
         if (cache_ob->tot_layers > 0) {
           for (int e = 0; e < cache_ob->tot_layers; e++) {
-            bool is_last = e == cache_ob->tot_layers - 1 ? true : false;
+            bool is_last = (e == cache_ob->tot_layers - 1) ? true : false;
             array_elm = &cache_ob->shgrp_array[e];
 
-            if (((array_elm->mode == eGplBlendMode_Normal) && (!use_blend) &&
+            if (((array_elm->mode == eGplBlendMode_Regular) && (!use_blend) &&
                  (!array_elm->clamp_layer)) ||
                 (e == 0)) {
               if (init_shgrp == NULL) {
@@ -963,7 +961,7 @@ void GPENCIL_draw_scene(void *ved)
               gpencil_draw_pass_range(
                   fbl, stl, psl, txl, fbl->temp_fb_a, ob, gpd, init_shgrp, end_shgrp, is_last);
 
-              /* draw current group in separated texture */
+              /* Draw current group in separated texture to blend later */
               init_shgrp = array_elm->init_shgrp;
               end_shgrp = array_elm->end_shgrp;
 
@@ -978,7 +976,7 @@ void GPENCIL_draw_scene(void *ved)
               stl->storage->blend_mode = array_elm->mode;
               stl->storage->clamp_layer = (int)array_elm->clamp_layer;
               stl->storage->blend_opacity = array_elm->blend_opacity;
-              stl->storage->tonemapping = stl->storage->is_render ? 1 : 0;
+              stl->storage->tonemapping = DRW_state_do_color_management() ? 0 : 1;
               DRW_draw_pass(psl->blend_pass);
               stl->storage->tonemapping = 0;
 
@@ -1020,19 +1018,22 @@ void GPENCIL_draw_scene(void *ved)
           GPU_framebuffer_bind(fbl->main);
         }
         /* tonemapping */
-        stl->storage->tonemapping = stl->storage->is_render ? 1 : 0;
+        stl->storage->tonemapping = DRW_state_do_color_management() ? 0 : 1;
 
         /* active select flag and selection color */
+        if (!is_render) {
+          UI_GetThemeColorShadeAlpha4fv(
+              (ob == draw_ctx->obact) ? TH_ACTIVE : TH_SELECT, 0, -40, stl->storage->select_color);
+        }
         stl->storage->do_select_outline = ((overlay) && (ob->base_flag & BASE_SELECTED) &&
                                            (ob->mode == OB_MODE_OBJECT) && (!is_render) &&
                                            (!playing) && (v3d->flag & V3D_SELECT_OUTLINE));
 
         /* if active object is not object mode, disable for all objects */
-        if ((draw_ctx->obact) && (draw_ctx->obact->mode != OB_MODE_OBJECT)) {
+        if ((stl->storage->do_select_outline) && (draw_ctx->obact) &&
+            (draw_ctx->obact->mode != OB_MODE_OBJECT)) {
           stl->storage->do_select_outline = 0;
         }
-        UI_GetThemeColorShadeAlpha4fv(
-            (ob == draw_ctx->obact) ? TH_ACTIVE : TH_SELECT, 0, -40, stl->storage->select_color);
 
         /* draw mix pass */
         DRW_draw_pass(psl->mix_pass);
