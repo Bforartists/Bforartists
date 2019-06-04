@@ -455,7 +455,7 @@
       <ThemeGraphEditor
         grid="#5e5e5e"
         frame_current="#60c040"
-        scrubbing_background="#00000000"
+        time_scrub_background="#00000000"
         window_sliders="#969696"
         channels_region="#707070"
         dopesheet_channel="#52606e"
@@ -580,7 +580,7 @@
         keyframe_border="#000000ff"
         keyframe_border_selected="#000000ff"
         frame_current="#60c040"
-        scrubbing_background="#00000000"
+        time_scrub_background="#00000000"
         >
         <space>
           <ThemeSpaceGeneric
@@ -591,7 +591,7 @@
             header="#333333ff"
             header_text="#cccccc"
             header_text_hi="#ffffff"
-            button="#404040ff"
+            button="#40404000"
             button_title="#cccccc"
             button_text="#cccccc"
             button_text_hi="#ffffff"
@@ -627,7 +627,7 @@
       <ThemeDopeSheet
         grid="#5e5e5e"
         frame_current="#60c040"
-        scrubbing_background="#00000000"
+        time_scrub_background="#00000000"
         value_sliders="#000000"
         view_sliders="#969696"
         dopesheet_channel="#52606e24"
@@ -664,7 +664,7 @@
             header="#333333ff"
             header_text="#cccccc"
             header_text_hi="#ffffff"
-            button="#404040ff"
+            button="#40404000"
             button_title="#cccccc"
             button_text="#cccccc"
             button_text_hi="#ffffff"
@@ -698,9 +698,6 @@
     </dopesheet_editor>
     <image_editor>
       <ThemeImageEditor
-        gp_vertex="#000000"
-        gp_vertex_select="#ff8500"
-        gp_vertex_size="3"
         vertex="#000000"
         vertex_select="#ff8500"
         vertex_size="3"
@@ -749,7 +746,7 @@
             header="#333333ff"
             header_text="#cccccc"
             header_text_hi="#ffffff"
-            button="#404040ff"
+            button="#40404000"
             button_title="#cccccc"
             button_text="#cccccc"
             button_text_hi="#ffffff"
@@ -774,9 +771,6 @@
     </image_editor>
     <sequence_editor>
       <ThemeSequenceEditor
-        gp_vertex="#000000"
-        gp_vertex_select="#ff8500"
-        gp_vertex_size="3"
         grid="#404040"
         window_sliders="#a0a0a0"
         movie_strip="#516987"
@@ -789,7 +783,7 @@
         meta_strip="#6d9183"
         text_strip="#a29700"
         frame_current="#60c040"
-        scrubbing_background="#00000000"
+        time_scrub_background="#00000000"
         keyframe="#ff8500"
         draw_action="#50c8ff"
         preview_back="#000000"
@@ -805,7 +799,7 @@
             header="#333333ff"
             header_text="#cccccc"
             header_text_hi="#ffffff"
-            button="#404040ff"
+            button="#40404000"
             button_title="#cccccc"
             button_text="#cccccc"
             button_text_hi="#ffffff"
@@ -839,7 +833,7 @@
             header="#333333ff"
             header_text="#cccccc"
             header_text_hi="#ffffff"
-            button="#404040ff"
+            button="#40404000"
             button_title="#cccccc"
             button_text="#cccccc"
             button_text_hi="#ffffff"
@@ -885,7 +879,7 @@
             header="#33333300"
             header_text="#cccccc"
             header_text_hi="#ffffff"
-            button="#404040ff"
+            button="#40404000"
             button_title="#cccccc"
             button_text="#cccccc"
             button_text_hi="#ffffff"
@@ -910,9 +904,6 @@
     </text_editor>
     <node_editor>
       <ThemeNodeEditor
-        gp_vertex="#979797"
-        gp_vertex_select="#ff8500"
-        gp_vertex_size="3"
         node_selected="#f15800"
         node_active="#eefcff"
         wire="#808080"
@@ -947,7 +938,7 @@
             header="#333333ff"
             header_text="#cccccc"
             header_text_hi="#ffffff"
-            button="#404040ff"
+            button="#40404000"
             button_title="#cccccc"
             button_text="#ffffff"
             button_text_hi="#ffffff"
@@ -997,7 +988,7 @@
             header="#333333ff"
             header_text="#cccccc"
             header_text_hi="#ffffff"
-            button="#404040ff"
+            button="#40404000"
             button_title="#cccccc"
             button_text="#cccccc"
             button_text_hi="#ffffff"
@@ -1117,7 +1108,7 @@
             header="#333333ff"
             header_text="#cccccc"
             header_text_hi="#83e3f9"
-            button="#75828f7f"
+            button="#75828f00"
             button_title="#cccccc"
             button_text="#cccccc"
             button_text_hi="#ffffff"
@@ -1142,9 +1133,6 @@
     </console>
     <clip_editor>
       <ThemeClipEditor
-        gp_vertex="#000000"
-        gp_vertex_select="#ff8500"
-        gp_vertex_size="3"
         marker_outline="#000000"
         marker="#7f7f00"
         active_marker="#ffffff"
@@ -1154,7 +1142,7 @@
         path_before="#ff0000"
         path_after="#0000ff"
         frame_current="#60c040"
-        scrubbing_background="#00000000"
+        time_scrub_background="#00000000"
         strips="#0c0a0a"
         strips_selected="#ff8c00"
         metadatabg="#000000"
@@ -1180,7 +1168,7 @@
             header="#333333ff"
             header_text="#cccccc"
             header_text_hi="#ffffff"
-            button="#404040ff"
+            button="#40404000"
             button_title="#cccccc"
             button_text="#ffffff"
             button_text_hi="#ffffff"
@@ -1404,7 +1392,7 @@
         normal="#000000"
         select="#000000"
         active="#000000"
-        show_colored_constraints="TRUE"
+        show_colored_constraints="FALSE"
         >
       </ThemeBoneColorSet>
       <ThemeBoneColorSet
