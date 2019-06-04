@@ -32,583 +32,1716 @@ set(LIB
 )
 
 # Order matches "UI_icons.h", final name will be formatted: "icons{size}_{name}.dat"
-# set(ICON_NAMES
-#   question
-#   error
-#   cancel
-#   tria_right
-#   tria_down
-#   tria_left
-#   tria_up
-#   arrow_leftright
-#   plus
-#   disclosure_tri_right
-#   disclosure_tri_down
-#   radiobut_off
-#   radiobut_on
-#   menu_panel
-#   blender
-#   grip
-#   dot
-#   collapsemenu
-#   x
-#   duplicate
-#   node
-#   node_sel
-#   window
-#   workspace
-#   rightarrow_thin
-#   bordermove
-#   viewzoom
-#   add
-#   remove
-#   panel_close
-#   copy_id
-#   eyedropper
-#   auto
-#   checkbox_dehlt
-#   checkbox_hlt
-#   unlocked
-#   locked
-#   unpinned
-#   pinned
-#   screen_back
-#   rightarrow
-#   downarrow_hlt
-#   plugin
-#   help
-#   ghost_enabled
-#   color
-#   unlinked
-#   linked
-#   hand
-#   zoom_all
-#   zoom_selected
-#   zoom_previous
-#   zoom_in
-#   zoom_out
-#   driver_distance
-#   driver_rotational_difference
-#   driver_transform
-#   freeze
-#   stylus_pressure
-#   ghost_disabled
-#   file_new
-#   file_tick
-#   quit
-#   url
-#   recover_last
-#   three_dots
-#   fullscreen_enter
-#   fullscreen_exit
-#   light
-#   material
-#   texture
-#   anim
-#   world
-#   scene
-#   output
-#   script
-#   particles
-#   physics
-#   speaker
-#   tool_settings
-#   shaderfx
-#   fake_user_off
-#   fake_user_on
-#   view3d
-#   graph
-#   outliner
-#   properties
-#   filebrowser
-#   image
-#   info
-#   sequence
-#   text
-#   sound
-#   action
-#   nla
-#   preferences
-#   time
-#   nodetree
-#   console
-#   clip
-#   asset_manager
-#   node_compositing
-#   node_texture
-#   node_material
-#   object_datamode
-#   editmode_hlt
-#   uv
-#   vpaint_hlt
-#   tpaint_hlt
-#   wpaint_hlt
-#   sculptmode_hlt
-#   pose_hlt
-#   particlemode
-#   tracking
-#   tracking_backwards
-#   tracking_forwards
-#   tracking_backwards_single
-#   tracking_forwards_single
-#   tracking_clear_backwards
-#   tracking_clear_forwards
-#   tracking_refine_backwards
-#   tracking_refine_forwards
-#   scene_data
-#   renderlayers
-#   world_data
-#   object_data
-#   mesh_data
-#   curve_data
-#   meta_data
-#   lattice_data
-#   light_data
-#   material_data
-#   texture_data
-#   anim_data
-#   camera_data
-#   particle_data
-#   library_data_direct
-#   group
-#   armature_data
-#   community
-#   bone_data
-#   constraint
-#   shapekey_data
-#   constraint_bone
-#   camera_stereo
-#   package
-#   uglypackage
-#   experimental
-#   brush_data
-#   image_data
-#   file
-#   fcurve
-#   font_data
-#   render_result
-#   surface_data
-#   empty_data
-#   preset
-#   render_animation
-#   render_still
-#   library_data_broken
-#   boids
-#   strands
-#   library_data_indirect
-#   greasepencil
-#   line_data
-#   library_data_override
-#   group_bone
-#   group_vertex
-#   group_vcol
-#   group_uvs
-#   face_maps
-#   rna
-#   rna_add
-#   mouse_lmb
-#   mouse_mmb
-#   mouse_rmb
-#   mouse_move
-#   mouse_lmb_drag
-#   mouse_mmb_drag
-#   mouse_rmb_drag
-#   preset_new
-#   decorate
-#   decorate_keyframe
-#   decorate_animate
-#   decorate_driver
-#   decorate_linked
-#   decorate_library_override
-#   decorate_unlocked
-#   decorate_locked
-#   decorate_override
-#   sealed
-#   heart
-#   orphan_data
-#   user
-#   system
-#   settings
-#   outliner_ob_empty
-#   outliner_ob_mesh
-#   outliner_ob_curve
-#   outliner_ob_lattice
-#   outliner_ob_meta
-#   outliner_ob_light
-#   outliner_ob_camera
-#   outliner_ob_armature
-#   outliner_ob_font
-#   outliner_ob_surface
-#   outliner_ob_speaker
-#   outliner_ob_force_field
-#   outliner_ob_group_instance
-#   outliner_ob_greasepencil
-#   outliner_ob_lightprobe
-#   outliner_ob_image
-#   restrict_color_off
-#   restrict_color_on
-#   hide_on
-#   hide_off
-#   restrict_select_on
-#   restrict_select_off
-#   restrict_render_on
-#   restrict_render_off
-#   outliner_data_empty
-#   outliner_data_mesh
-#   outliner_data_curve
-#   outliner_data_lattice
-#   outliner_data_meta
-#   outliner_data_light
-#   outliner_data_camera
-#   outliner_data_armature
-#   outliner_data_font
-#   outliner_data_surface
-#   outliner_data_speaker
-#   outliner_data_greasepencil
-#   gp_select_points
-#   gp_select_strokes
-#   gp_multiframe_editing
-#   gp_only_selected
-#   modifier_off
-#   modifier_on
-#   onionskin_off
-#   onionskin_on
-#   restrict_view_on
-#   restrict_view_off
-#   mesh_plane
-#   mesh_cube
-#   mesh_circle
-#   mesh_uvsphere
-#   mesh_icosphere
-#   mesh_grid
-#   mesh_monkey
-#   mesh_cylinder
-#   mesh_torus
-#   mesh_cone
-#   mesh_capsule
-#   empty_single_arrow
-#   light_point
-#   light_sun
-#   light_spot
-#   light_hemi
-#   light_area
-#   cube
-#   sphere
-#   cone
-#   meta_plane
-#   meta_cube
-#   meta_ball
-#   meta_ellipsoid
-#   meta_capsule
-#   surface_ncurve
-#   surface_ncircle
-#   surface_nsurface
-#   surface_ncylinder
-#   surface_nsphere
-#   surface_ntorus
-#   empty_axis
-#   stroke
-#   empty_arrows
-#   curve_bezcurve
-#   curve_bezcircle
-#   curve_ncurve
-#   curve_ncircle
-#   curve_path
-#   lightprobe_cubemap
-#   lightprobe_planar
-#   lightprobe_grid
-#   color_red
-#   color_green
-#   color_blue
-#   tria_right_bar
-#   tria_down_bar
-#   tria_left_bar
-#   tria_up_bar
-#   force_force
-#   force_wind
-#   force_vortex
-#   force_magnetic
-#   force_harmonic
-#   force_charge
-#   force_lennardjones
-#   force_texture
-#   force_curve
-#   force_boid
-#   force_turbulence
-#   force_drag
-#   force_smokeflow
-#   image_plane
-#   image_background
-#   image_reference
-#   node_insert_on
-#   node_insert_off
-#   node_top
-#   node_side
-#   node_corner
-#   align_left
-#   align_center
-#   align_right
-#   align_justify
-#   align_flush
-#   align_top
-#   align_middle
-#   align_bottom
-#   bold
-#   italic
-#   underline
-#   small_caps
-#   modifier
-#   mod_wave
-#   mod_build
-#   mod_decim
-#   mod_mirror
-#   mod_soft
-#   mod_subsurf
-#   hook
-#   mod_physics
-#   mod_particles
-#   mod_boolean
-#   mod_edgesplit
-#   mod_array
-#   mod_uvproject
-#   mod_displace
-#   mod_curve
-#   mod_lattice
-#   mod_tint
-#   mod_armature
-#   mod_shrinkwrap
-#   mod_cast
-#   mod_meshdeform
-#   mod_bevel
-#   mod_smooth
-#   mod_simpledeform
-#   mod_mask
-#   mod_cloth
-#   mod_explode
-#   mod_fluidsim
-#   mod_multires
-#   mod_smoke
-#   mod_solidify
-#   mod_screw
-#   mod_vertex_weight
-#   mod_dynamicpaint
-#   mod_remesh
-#   mod_ocean
-#   mod_warp
-#   mod_skin
-#   mod_triangulate
-#   mod_wireframe
-#   mod_data_transfer
-#   mod_normaledit
-#   mod_particle_instance
-#   mod_hue_saturation
-#   mod_noise
-#   mod_offset
-#   mod_simplify
-#   mod_thickness
-#   mod_instance
-#   mod_time
-#   mod_opacity
-#   rec
-#   play
-#   ff
-#   rew
-#   pause
-#   prev_keyframe
-#   next_keyframe
-#   play_reverse
-#   preview_range
-#   action_tweak
-#   pmarker_act
-#   pmarker_sel
-#   pmarker
-#   marker_hlt
-#   marker
-#   keyframe_hlt
-#   keyframe
-#   keyingset
-#   key_dehlt
-#   key_hlt
-#   mute_ipo_off
-#   mute_ipo_on
-#   visible_ipo_off
-#   visible_ipo_on
-#   driver
-#   solo_off
-#   solo_on
-#   frame_prev
-#   frame_next
-#   nla_pushdown
-#   ipo_constant
-#   ipo_linear
-#   ipo_bezier
-#   ipo_sine
-#   ipo_quad
-#   ipo_cubic
-#   ipo_quart
-#   ipo_quint
-#   ipo_expo
-#   ipo_circ
-#   ipo_bounce
-#   ipo_elastic
-#   ipo_back
-#   ipo_ease_in
-#   ipo_ease_out
-#   ipo_ease_in_out
-#   normalize_fcurves
-#   vertexsel
-#   edgesel
-#   facesel
-#   pivot_boundbox
-#   pivot_cursor
-#   pivot_individual
-#   pivot_median
-#   pivot_active
-#   center_only
-#   smoothcurve
-#   spherecurve
-#   rootcurve
-#   sharpcurve
-#   lincurve
-#   nocurve
-#   rndcurve
-#   prop_off
-#   prop_on
-#   prop_con
-#   sculpt_dyntopo
-#   particle_point
-#   particle_tip
-#   particle_path
-#   snap_off
-#   snap_on
-#   snap_normal
-#   snap_grid
-#   snap_vertex
-#   snap_edge
-#   snap_face
-#   snap_volume
-#   snap_increment
-#   sticky_uvs_loc
-#   sticky_uvs_disable
-#   sticky_uvs_vert
-#   clipuv_dehlt
-#   clipuv_hlt
-#   snap_peel_object
-#   grid
-#   object_origin
-#   orientation_global
-#   orientation_gimbal
-#   orientation_local
-#   orientation_normal
-#   orientation_view
-#   copydown
-#   pastedown
-#   pasteflipup
-#   pasteflipdown
-#   vis_sel_11
-#   vis_sel_10
-#   vis_sel_01
-#   vis_sel_00
-#   automerge_on
-#   automerge_off
-#   uv_vertexsel
-#   uv_edgesel
-#   uv_facesel
-#   uv_islandsel
-#   uv_sync_select
-#   normals_vertex
-#   normals_face
-#   normals_vertex_face
-#   shading_bbox
-#   shading_wire
-#   shading_solid
-#   shading_rendered
-#   shading_texture
-#   overlay
-#   xray
-#   lockview_off
-#   lockview_on
-#   axis_side
-#   axis_front
-#   axis_top
-#   ndof_dom
-#   ndof_turn
-#   ndof_fly
-#   ndof_trans
-#   layer_used
-#   layer_active
-#   sortalpha
-#   sortbyext
-#   sorttime
-#   sortsize
-#   shortdisplay
-#   longdisplay
-#   imgdisplay
-#   bookmarks
-#   fontpreview
-#   filter
-#   newfolder
-#   file_parent
-#   file_refresh
-#   file_folder
-#   file_blank
-#   file_blend
-#   file_image
-#   file_movie
-#   file_script
-#   file_sound
-#   file_font
-#   file_text
-#   sort_desc
-#   sort_asc
-#   link_blend
-#   append_blend
-#   import
-#   export
-#   loop_back
-#   loop_forwards
-#   back
-#   forward
-#   file_volume
-#   alembic
-#   volume
-#   file_hidden
-#   file_backup
-#   disk_drive
-#   matplane
-#   matsphere
-#   matcube
-#   monkey
-#   hair
-#   aliased
-#   antialiased
-#   mat_sphere_sky
-#   matshaderball
-#   matcloth
-#   matfluid
-#   wordwrap_off
-#   wordwrap_on
-#   syntax_off
-#   syntax_on
-#   linenumbers_off
-#   linenumbers_on
-#   scriptplugins
-#   seq_sequencer
-#   seq_preview
-#   seq_luma_waveform
-#   seq_chroma_scope
-#   seq_histogram
-#   seq_splitview
-#   image_rgb
-#   image_rgb_alpha
-#   image_alpha
-#   image_zdepth
-#   view_perspective
-#   view_ortho
-#   view_camera
-#   view_pan
-#   view_zoom
-# )
+set(ICON_NAMES
+
+# ------------------------- row 1 --------------------------*/
+
+question
+error
+cancel
+tria_right
+tria_down
+tria_left
+tria_up
+arrow_leftright
+plus
+
+disclosure_tri_down
+disclosure_tri_right
+radiobut_off
+radiobut_on
+menu_panel
+blender
+grip
+dot
+collapsemenu
+x
+
+template
+lastoperator
+alternated
+ui
+node
+node_sel
+blend_tex
+cloud_tex
+distorted_noise_tex
+assign
+
+connected
+prefix
+suffix
+flip
+string
+set_roll
+clear_roll
+roll_x_neg
+roll_x_pos
+roll_x_tang_neg
+
+marker_to_mesh
+origin
+floor
+wall
+setup
+background
+select_root
+select_tip
+image_aspect
+brushsize
+
+# ------------------------- row 2 --------------------------*/
+
+fullscreen
+splitscreen
+rightarrow_thin
+bordermove
+viewzoom
+zoomin
+zoomout
+panel_close
+copy_id
+eyedropper
+
+link_area
+auto
+checkbox_dehlt
+checkbox_hlt
+unlocked
+locked
+unpinned
+pinned
+screen_back
+rightarrow
+
+downarrow_hlt
+spot_blend
+lens_scale
+make_internal
+normal_setstrength
+plugin
+magic_tex
+marble_tex
+musgrave_tex
+noise_tex
+
+roll_x_tang_pos
+roll_y_neg
+roll_y_pos
+roll_z_neg
+roll_z_pos
+roll_z_tang_neg
+roll_z_tang_pos
+clear_constraint
+add_ik
+clear_ik
+
+floodfill
+optimize
+propagate
+brushstrength
+interpolate
+reproject
+brushangle
+vertcolfromweight
+huecorrect
+particlebrush_none
+
+# ------------------------- row 3 --------------------------*/
+
+help
+ghost_enabled
+color # see color_red/green/blue */
+linked
+unlinked
+hand
+zoom_all
+zoom_selected
+zoom_previous
+zoom_in
+
+zoom_out
+render_region
+border_rect
+border_lasso
+freeze
+stylus_pressure
+ghost_disabled
+new
+file_tick
+quit
+
+url
+recover_last
+duplicate
+fullscreen_enter
+fullscreen_exit
+load_gitf
+save_gitf
+stucci_tex
+voroni_tex
+
+clear
+reset
+flip_x
+flip_y
+flip_z
+zoom_set
+view_fit
+gp_select_between_strokes
+inversesquarecurve
+prop_projected
+
+particlebrush_add
+particlebrush_comb
+particlebrush_puff
+particlebrush_smooth
+particlebrush_weight
+particlebrush_length
+three_dots
+add
+#def_icon_blank(218
+align_center
+
+# ------------------------- row 4 --------------------------*/
+
+lamp
+material
+texture
+normal_multiply
+world
+scene
+edit
+game
+radio
+script
+
+particles
+physics
+speaker
+texture_shaded
+view_front
+view_back
+view_left
+view_right
+view_top
+view_bottom
+
+view_reset
+view_switchtocam
+view_switchactivecam
+delete
+persp_ortho
+wireframe
+wood_tex
+renderborder_clear
+renderborder
+clippingborder
+
+edit_external
+save_all
+stitch
+marker_bind
+split_horizontal
+split_vertical
+view_frame
+after_current_frame
+before_current_frame
+between_markers
+
+align_flush
+align_justify
+align_left
+align_middle
+align_right
+align_bottom
+align_top
+decorate
+decorate_animate
+decorate_driver
+
+# ------------------------- row 5 --------------------------*/
+
+view3d
+ipo
+oops
+buts
+dissolve_between
+dissolve_unselected
+info
+sequence
+text
+imasel
+
+sound
+action
+nla
+scriptwin
+time
+nodetree
+rename
+console
+preferences
+clip
+
+asset_manager
+toolbar
+circle_select
+inverse
+select_all
+select_none
+apptemplate
+maximize_area
+new_window
+quadview
+
+column_current_frame
+columns_keys
+columns_markers
+expandmenu
+bake_curve
+bake_sound
+clean_channels
+clean_keys
+discontinue_euler
+jump_to_keyframes
+
+decorate_keyframe
+orientation_cursor
+decorate_override
+decorate_unlocked
+decorate_locked
+face_maps
+fake_user
+file_new
+filebrowser
+smooth_laplacian
+
+# ------------------------- row 6 --------------------------*/
+
+object_datamode
+editmode_hlt
+facesel_hlt
+vpaint_hlt
+tpaint_hlt
+wpaint_hlt
+sculptmode_hlt
+pose_hlt
+particlemode
+knife
+
+selectless
+selectmore
+bend
+shear
+tosphere
+joincopy
+splitedge
+vertexconnectpath
+vertexconnect
+marksharpedges
+
+buts_active
+oops_active
+nla_active
+dopesheet_active
+graph_active
+offset_edge_slide
+viewall
+viewall_resetcursor
+view_global_local
+view_selected
+
+sample_keyframes
+smooth_keyframes
+flatten_handler
+snap_currentframe
+snap_cursorvalue
+snap_nearestframe
+snap_nearestmarker
+snap_nearestsecond
+mirror_cursorvalue
+mirror_marker
+
+graph
+loop_cut_and_slide
+hide_on
+hide_off
+image
+keyframe_hlt
+keyframe
+library_data_override
+light
+light_area
+
+# ------------------------- row 7  --------------------------*/
+
+scene_data
+renderlayers
+#def_icon_blank(396
+object_data
+mesh_data
+curve_data
+meta_data
+lattice_data
+apply_rotscale
+material_data
+
+#def_icon_blank(405
+anim_data
+camera_data
+particle_data
+library_data_direct
+group
+armature_data
+pose_data
+bone_data
+constraint
+
+shapekey_data
+constraint_bone
+camera_stereo
+package
+uglypackage
+solidify
+viewcameracenter
+view_active_back
+view_active_bottom
+view_active_front
+
+mirror_time
+handle_auto_clamped
+move_down
+move_to_bottom
+move_to_top
+move_up
+extrapolation_constant
+extrapolation_cyclic
+extrapolation_cyclic_clear
+extrapolation_linear
+
+light_data
+light_hemi
+light_point
+light_spot
+light_sun
+lightprobe_cubemap
+lightprobe_grid
+lightprobe_planar
+view_remove_local
+shape
+
+# ------------------------- row 8 --------------------------*/
+
+brush_data
+image_data
+file
+fcurve
+font_data
+render_result
+surface_data
+empty_data
+settings
+render_animation
+
+render_still
+library_data_broken
+boids
+gizmo
+library_data_indirect
+greasepencil
+line_data
+hide_renderview
+group_bone
+group_vertex
+
+group_vcol
+group_uvs
+render_still_view
+render_ani_view
+rna
+outliner_data_lightprobe
+view_active_left
+view_active_right
+view_active_top
+centertomouse
+
+builtin_modifier
+cycles_modifier
+envelope_modifier
+generator_modifier
+limit_modifier
+noise_modifier
+stepped_modifier
+swap
+sync
+transition
+
+matcloth
+matfluid
+matshaderball
+node_compositing
+node_corner
+node_material
+node_side
+node_top
+normals_face
+normals_vertex
+
+# ------------------------- row 9 --------------------------*/
+
+clearsharpedges
+convexhull
+blendfromshape
+shapepropagate
+bridge_edgeloops
+clear_fs_edge
+mark_fs_edge
+makedupliface
+rotatecw
+split
+
+subdivedgeloop
+unsubdivide
+subdiv_edgering
+reverse_colors
+rotate_colors
+reverse_uvs
+rotate_uvs
+alignauto
+alignhorizontal
+alignvertical
+
+straighten
+straighten_x
+straighten_y
+unwrap_abf
+unwrap_lscm
+weld
+dolly
+fly_navigation
+view_navigation
+walk_navigation
+
+add_strip
+add_track
+add_track_above
+add_metastrip
+remove_metastrip
+seq_multiply
+add_selected
+center
+hierarchy
+hierarchy_down
+
+normals_vertex_face
+object_origin
+onionskin_off
+onionskin_on
+orientation_gimbal
+orientation_local
+orientation_normal
+orientation_view
+orphan_data
+outliner
+
+# ------------------------- row 10 --------------------------*/
+
+outliner_ob_empty
+outliner_ob_mesh
+outliner_ob_curve
+outliner_ob_lattice
+outliner_ob_meta
+outliner_ob_lamp
+outliner_ob_camera
+outliner_ob_armature
+outliner_ob_font
+outliner_ob_surface
+
+outliner_ob_speaker
+empty_arrows
+empty_circle
+empty_cone
+empty_cube
+empty_image
+empty_singlearrow
+empty_sphere
+restrict_color_off
+restrict_color_on
+
+restrict_view_on
+restrict_view_off
+restrict_select_on
+restrict_select_off
+restrict_render_on
+restrict_render_off
+outliner_ob_force_field
+outliner_ob_group_instance
+zoom_camera
+zoom_border
+
+hierarchy_up
+cut_links
+detach_links
+toggle_node_mute
+toggle_node_options
+toggle_node_preview
+#def_icon_blank(602
+#def_icon_blank(603
+caret_line_begin
+caret_line_end
+
+outliner_data_greasepencil
+outliner_data_light
+outliner_ob_greasepencil
+outliner_ob_image
+outliner_ob_light
+outliner_ob_lightprobe
+overlay
+pivot_active
+pivot_boundbox
+pivot_cursor
+
+# ------------------------- row 11 --------------------------*/
+
+outliner_data_empty
+outliner_data_mesh
+outliner_data_curve
+outliner_data_lattice
+outliner_data_meta
+outliner_data_lamp
+#def_icon_blank(628
+outliner_data_armature
+outliner_data_font
+outliner_data_surface
+
+outliner_data_speaker
+outliner_data_pose
+applyall
+applymove
+applyrotate
+applyscale
+clearmove
+clearorigin
+clearrotate
+clearscale
+
+makeduplireal
+visualtransform
+pokefaces
+splitbyedges
+triangulate
+tristoquads
+pan_down
+pan_left
+pan_right
+pan_up
+
+caret_next_char
+caret_next_word
+caret_prev_word
+caret_prev_char
+history_cycle_back
+history_cycle_forward
+indent
+unindent
+autocomplete
+goto
+
+pivot_individual
+pivot_median
+preset
+properties
+remove
+sculpt_dyntopo
+shaderfx
+shading_bbox
+shading_rendered
+shading_solid
+
+# ------------------------- row 12 --------------------------*/
+
+# primitives */
+mesh_plane
+mesh_cube
+mesh_circle
+mesh_uvsphere
+mesh_icosphere
+mesh_grid
+mesh_monkey
+mesh_cylinder
+mesh_torus
+mesh_cone
+
+mesh_capsule
+intersect
+lamp_point
+lamp_sun
+lamp_spot
+#def_icon_blank(695
+lamp_area
+markfsface
+clearfsface
+meta_empty
+
+meta_plane
+meta_cube
+meta_ball
+meta_ellipsoid
+meta_capsule
+boolean_intersect
+orbit_down
+orbit_left
+orbit_right
+orbit_up
+
+select_line
+comment
+uncomment
+whitespace_spaces
+whitespace_tabs
+debug
+seq_multicam
+make_screenshot
+seq_alpha_over
+prefetch
+
+shading_texture
+shading_wire
+sort_desc
+sort_asc
+system
+collection_new
+tool_settings
+tracking
+tracking_backwards
+tracking_backwards_single
+
+# ------------------------- row 13 --------------------------*/
+
+# primitives */
+surface_ncurve
+surface_ncircle
+surface_nsurface
+surface_ncylinder
+surface_nsphere
+surface_ntorus
+beautify
+fill
+gridfill
+curve_bezcurve
+
+curve_bezcircle
+curve_ncurve
+curve_ncircle
+curve_path
+averageislandscale
+copymirrored
+minimizestretch
+packisland
+seamsfromisland
+color_red
+
+color_green
+color_blue
+tria_right_bar
+tria_down_bar
+tria_left_bar
+tria_up_bar
+orbit_opposite
+roll_left
+roll_right
+layer
+
+node_add_shader
+#def_icon_blank(772
+node_alphaconvert
+node_ambient_occlusion
+node_anisotopic
+node_at
+node_attribute
+node_backgroundshader
+node_bilateral_blur
+node_blackbody
+
+tracking_clear_backwards
+tracking_clear_forwards
+tracking_forwards
+tracking_forwards_single
+tracking_refine_backwards
+tracking_refine_forwards
+underline
+user
+view_camera
+view_ortho
+
+# ------------------------- row 14 --------------------------*/
+
+# empty */
+force_force
+force_wind
+force_vortex
+force_magnetic
+force_harmonic
+force_charge
+force_lennardjones
+force_texture
+force_curve
+force_boid
+
+force_turbulence
+force_drag
+force_smokeflow
+recalc_normals
+recalc_normals_inside
+flip_normals
+mark_seam
+clear_seam
+#def_icon_blank(814
+push_pose
+
+relax_pose
+breakdowner_pose
+keyframes_clear
+remove_from_all_groups
+remove_selected_from_active_group
+fillbetween
+parent
+child
+child_recursive
+siblings
+
+#def_icon_blank(829
+node_blur
+node_bokeh_blur
+node_bokeh_image
+node_boxmask
+node_brick
+node_bright_contrast
+node_bump
+node_cameradata
+node_channel
+
+view_pan
+view_perspective
+view_zoom
+vis_sel_11
+vis_sel_10
+vis_sel_01
+vis_sel_00
+#def_icon_blank(847
+workspace
+xray
+
+# ------------------------- row 15 --------------------------*/
+
+snaptopixel_center
+snaptopixel_corner
+snaptopixel_off
+node_insert_on
+node_insert_off
+rigid_add_active
+rigid_add_passive
+rigid_remove
+rigid_change_shape
+rigid_calculate_mass
+
+rigid_copy_from_active
+rigid_apply_trans
+rigid_bake_to_keyframe
+rigid_constraints_connect
+keyframes_insert
+keyframes_remove
+motionpaths_calculate
+motionpaths_clear
+bake_action
+toggle_cyclic
+
+switch_direction
+handle_auto
+handle_vector
+handle_align
+handle_free
+radius
+type
+pass
+select_faces_by_side
+checker_deselect
+
+node_checker
+node_chroma
+node_clouds
+#def_icon_blank(889
+node_colorbalance
+node_colorcorrection
+node_colorramp
+node_combinehsv
+node_combinergb
+node_combinexyz
+
+center_only
+holdout_off
+holdout_on
+community
+cone
+cube
+#def_icon_blank(902
+driver_distance
+driver_rotational_difference
+driver_transform
+
+# ------------------------- row 16 --------------------------*/
+
+origin_to_volume
+weight_transfer_weights
+join
+geometry_to_origin
+origin_to_geometry
+origin_to_cursor
+origin_to_centerofmass
+shading_smooth
+shading_flat
+transfer_data
+
+transfer_data_layout
+new_group
+add_to_active
+#def_icon_blank(923
+parent_set
+parent_clear
+link_data
+make_single_user
+make_local
+make_proxy
+
+erase
+extrudesize
+width_size
+#def_icon_blank(934
+ruler
+vertex_parent
+select_nonmanifold
+select_boundary
+select_edgeloop
+select_edgering
+
+node_combineycbcra
+node_combineyuva
+node_composite_output
+node_cornerpin
+node_crop
+node_curve_time
+node_defocus
+node_despeckle
+#def_icon_blank(951
+node_diffuseshader
+
+empty_axis
+empty_single_arrow
+experimental
+fake_user_off
+fake_user_on
+#def_icon_blank(958
+gp_multiframe_editing
+gp_only_selected
+gp_select_points
+gp_select_strokes
+
+# ------------------------- row 17 --------------------------*/
+
+inset_faces
+make_edgeface
+subdivide_edges
+normal_rotate
+normal_average
+normal_smooth
+normal_target
+knife_project
+bisect
+dissolve_verts
+
+dissolve_edges
+dissolve_faces
+dissolve_limited
+dissolve_selection
+edge_collapse
+remove_doubles
+weight_normalize_all
+weight_normalize
+weight_mirror
+weight_invert
+
+weight_clean
+weight_quantize
+weight_levels
+weight_smooth
+weight_limit_total
+weight_fix_deforms
+select_interior
+select_loopinner
+select_loose
+select_sharpedges
+
+node_direcitonalblur
+#def_icon_blank(1001
+#def_icon_blank(1002
+#def_icon_blank(1003
+node_doubleedgemask
+node_editgroup
+node_ellipsemask
+node_emission
+node_environment
+node_erode
+
+rigid_body
+image_background
+rigid_body_constraint
+image_reference
+indirect_only_off
+indirect_only_on
+#def_icon_blank(1016
+mod_hue_saturation
+#def_icon_blank(1018
+mod_noise
+
+# ------------------------- row 18 --------------------------*/
+
+modifier
+mod_wave
+mod_build
+mod_decim
+mod_mirror
+mod_soft
+mod_subsurf
+hook
+mod_physics
+mod_particles
+
+mod_boolean
+mod_edgesplit
+mod_array
+mod_uvproject
+mod_displace
+mod_curve
+mod_lattice
+constraint_data
+mod_armature
+mod_shrinkwrap
+
+mod_cast
+mod_meshdeform
+mod_bevel
+mod_smooth
+mod_simpledeform
+mod_mask
+select_shortestpath
+select_sideofactive
+select_ungrouped_verts
+angle
+
+node_exiteditgroup
+node_fileoutput
+#def_icon_blank(1059
+#def_icon_blank(1060
+node_frame
+node_fresnel
+node_gamma
+node_geometry
+node_glare
+node_glasshader
+
+mod_offset
+mod_opacity
+mod_particle_instance
+mod_simplify
+mod_thickness
+mod_time
+mod_tint
+modifier_off
+modifier_on
+orientation_global
+
+# ------------------------- row 19 --------------------------*/
+
+# modifiers */
+mod_cloth
+mod_explode
+mod_fluidsim
+mod_multires
+mod_smoke
+mod_solidify
+mod_screw
+mod_vertex_weight
+mod_dynamicpaint
+mod_remesh
+
+mod_ocean
+mod_warp
+mod_skin
+mod_triangulate
+mod_wireframe
+mod_data_transfer
+mod_normaledit
+decimate
+degenerate_dissolve
+delete_loose
+
+fill_hole
+make_planar
+split_concave
+split_nonplanar
+merge
+separate
+crease
+faceregions
+perimeter
+polygonsides
+
+node_glossyshader
+node_gradient
+node_groupinsert
+node_hairinfo
+#def_icon_blank(1119
+node_holdoutshader
+node_huesaturation
+#def_icon_blank(1122
+node_impaint
+node_invert
+
+#def_icon_blank(1125
+output
+#def_icon_blank(1127
+#def_icon_blank(1128
+sphere
+stroke
+#def_icon_blank(1131
+uv
+window
+#def_icon_blank(1134
+
+# ------------------------- row 20 --------------------------*/
+
+rec
+play
+ff
+rew
+pause
+prev_keyframe
+next_keyframe
+play_audio
+play_reverse
+preview_range
+
+action_tweak
+pmarker_act
+pmarker_sel
+pmarker
+marker_hlt
+marker
+space2
+space3
+keyingset
+key_dehlt
+
+key_hlt
+mute_ipo_off
+mute_ipo_on
+visible_ipo_off
+visible_ipo_on
+driver
+area
+mirror_vertexgroup
+snap_symmetry
+symmetrize
+
+node_keyingscreen
+node_layerweight
+node_lensdistort
+#def_icon_blank(1175
+node_lightfalloff
+node_lightpath
+node_linestyle_output
+node_luminance
+#def_icon_blank(1180
+node_makegroup
+
+modifier_data
+tracker
+tracker_data
+uv_data
+cubeproject
+cylinderproject
+followquads
+lightmappack
+projectfromview
+sphereproject
+
+# ------------------------- row 21 --------------------------*/
+
+solo_off
+solo_on
+frame_prev
+frame_next
+nla_pushdown
+ipo_constant
+ipo_linear
+ipo_bezier
+ipo_sine
+ipo_quad
+
+ipo_cubic
+ipo_quart
+ipo_quint
+ipo_expo
+ipo_circ
+ipo_bounce
+ipo_elastic
+ipo_back
+ipo_ease_in
+ipo_ease_out
+
+ipo_ease_in_out
+normalize_fcurves
+light_size
+light_strength
+dof
+lens_angle
+x_icon
+y_icon
+z_icon
+extend_vertices
+
+node_mapping
+#def_icon_blank(1230
+node_materialoutput
+node_math
+node_mixrgb
+node_mixshader
+#def_icon_blank(1235
+#def_icon_blank(1236
+node_moviedistort
+#def_icon_blank(1238
+
+mouse_lmb      
+mouse_mmb      
+mouse_rmb      
+mouse_move     
+mouse_lmb_drag 
+mouse_mmb_drag 
+mouse_rmb_drag 
+automerge_off
+automerge_on
+#def_icon_blank(1249
+
+# ------------------------- row 22 --------------------------*/
+
+vertexsel
+edgesel
+facesel
+loopsel
+drawsize
+rotate
+cursor
+rotatecollection
+rotatecenter
+rotactive
+
+align
+hide_unselected
+smoothcurve
+spherecurve
+rootcurve
+sharpcurve
+lincurve
+nocurve
+rndcurve
+prop_off
+
+prop_on
+prop_con
+clear_track
+particle_point
+particle_tip
+particle_path
+rip
+rip_fill
+hook_new
+hook_selected
+
+#def_icon_blank(1286
+#def_icon_blank(1287
+node_normalize
+node_normalmap
+node_objectinfo
+node_output
+node_particleinfo
+node_pixelated
+node_planetrackdeform
+node_pointcloud
+
+parent_bone
+parent_curve
+parent_lattice
+parent_object
+togglecaps_both
+togglecaps_default
+togglecaps_end
+togglecaps_start
+#def_icon_blank(1305
+#def_icon_blank(1306
+
+# ------------------------- row 23 --------------------------*/
+
+man_trans
+man_rot
+man_scale
+manipul
+snap_off
+snap_on
+snap_normal
+snap_grid
+snap_vertex
+snap_edge
+
+snap_face
+snap_volume
+snap_increment
+sticky_uvs_loc
+sticky_uvs_disable
+sticky_uvs_vert
+clipuv_dehlt
+clipuv_hlt
+snap_peel_object
+grid
+
+undo
+redo
+repeat
+undo_history
+redo_history
+bevel
+hook_bone
+hook_assign
+hook_reset
+hook_recenter
+
+node_principled
+node_range
+node_refractionshader
+#def_icon_blank(1346
+node_reroute
+node_rgb
+node_rgbcurve
+node_rgbtobw
+#def_icon_blank(1351
+#def_icon_blank(1352
+
+select_difference
+select_extend
+select_intersect
+select_set
+select_subtract
+fcurve_snapshot
+file_3d
+file_cache
+object_hidden
+#def_icon_blank(1363
+
+# ------------------------- row 24 --------------------------*/
+
+pastedown
+copydown
+pasteflipup
+pasteflipdown
+slide_edge
+slide_vertex
+smooth_vertex
+#def_icon_blank(1374
+snap_surface
+#def_icon_blank(1376
+
+#def_icon_blank(1378
+retopo
+uv_vertexsel
+uv_edgesel
+uv_facesel
+uv_islandsel
+uv_sync_select
+noise
+randomize
+extrude_region
+
+show_unselected
+dupli_extrude
+dupli_extrude_rotate
+spin
+screw
+make_regular
+hook_remove
+hook_select
+box_mask
+clear_mask
+
+#def_icon_blank(1400
+node_separate_ycbcra
+node_separate_yuva
+node_separatehsv
+node_separatergb
+node_separatexyz
+node_sky
+node_sss
+node_stabilize2d
+#def_icon_blank(1409
+
+#def_icon_blank(1411
+#def_icon_blank(1412
+#def_icon_blank(1413
+#def_icon_blank(1414
+#def_icon_blank(1415
+#def_icon_blank(1416
+#def_icon_blank(1417
+#def_icon_blank(1418
+#def_icon_blank(1419
+#def_icon_blank(1420
+
+# ------------------------- row 25 --------------------------*/
+
+bbox
+wire
+solid
+smooth
+potato
+transfer_uv
+ortho
+push_pull
+shrink_fatten
+
+#def_icon_blank(1434
+view
+tilt
+axis_side
+axis_front
+axis_top
+ndof_dom
+ndof_turn
+ndof_fly
+ndof_trans
+
+layer_used
+layer_active
+transform_mirror
+transform_move
+transform_rotate
+transform_scale
+seq_add
+fill_mask
+invert_mask
+lasso_mask
+
+brightness_contrast
+node_sunbeams
+#def_icon_blank(1458
+#def_icon_blank(1459
+node_tangent
+node_texcoordinate
+#def_icon_blank(1462
+#def_icon_blank(1436
+node_tonemap
+node_toonshader
+node_trackposition
+
+#def_icon_blank(1468
+#def_icon_blank(1469
+#def_icon_blank(1470
+#def_icon_blank(1471
+#def_icon_blank(1472
+#def_icon_blank(1473
+#def_icon_blank(1474
+#def_icon_blank(1475
+#def_icon_blank(1476
+#def_icon_blank(1477
+
+# ------------------------- row 26 --------------------------*/
+
+load_3ds
+load_bvh
+load_dae
+load_fbx
+load_obj
+load_ply
+load_stl
+load_svg
+load_wrl
+save_3ds
+
+save_bvh
+save_dae
+save_fbx
+save_obj
+save_ply
+save_stl
+save_wrl
+load_abc
+save_abc
+rotate_minus_90
+
+rotate_plus_90
+mirror_x
+mirror_y
+mirror_z
+library
+library_object
+dirty_vertex
+huesatval
+levels
+seq_text
+
+node_transform
+node_translucent
+node_transparent
+node_ungroup
+node_uvalongstroke
+#def_icon_blank(1519
+node_value
+node_vector
+node_vector_blur
+node_vector_transform
+
+#def_icon_blank(1525
+#def_icon_blank(1526
+#def_icon_blank(1527
+#def_icon_blank(1528
+#def_icon_blank(1529
+#def_icon_blank(1530
+#def_icon_blank(1531
+#def_icon_blank(1532
+#def_icon_blank(1533
+#def_icon_blank(1534
+
+# ------------------------- row 27  --------------------------*/
+
+sortalpha
+sortbyext
+sorttime
+sortsize
+longdisplay
+shortdisplay
+ghost
+imgdisplay
+save_as
+save_copy
+
+bookmarks
+fontpreview
+filter
+newfolder
+open_recent
+file_parent
+file_refresh
+file_folder
+#def_icon_blank(1557
+file_blend
+
+file_image
+file_movie
+file_script
+file_sound
+file_font
+file_text
+select_first
+select_last
+controlpointrow
+make_curvesegment
+
+node_vectormath
+node_velvet
+node_viewer
+node_viwersplit
+node_volumeabsorption
+node_volumescatter
+#def_icon_blank(1577
+node_wavelength
+node_waves
+node_wireframe
+
+#def_icon_blank(1582
+#def_icon_blank(1583
+#def_icon_blank(1584
+#def_icon_blank(1585
+#def_icon_blank(1586
+#def_icon_blank(1587
+#def_icon_blank(1588
+#def_icon_blank(1589
+#def_icon_blank(1590
+#def_icon_blank(1591
+
+# ------------------------- row 28 --------------------------*/
+
+recover_auto
+save_prefs
+link_blend
+append_blend
+import
+export
+external_data
+load_factory
+applymovedelta
+applyrotatedelta
+
+applyscaledelta
+applyalldelta
+applyanidelta
+loop_back
+loop_forwards
+back
+forward
+aligncamera_active
+aligncamera_view
+centertocursor
+
+lock_clear
+locktoactive
+locktocenter
+file_hidden
+file_backup
+disk_drive
+smooth_radius
+smooth_tilt
+smooth_weight
+clear_tilt
+
+#def_icon_blank(1628
+#def_icon_blank(1629
+node_zcombine
+node_keying
+#def_icon_blank(1632
+#def_icon_blank(1633
+node_spill
+remove_active_group
+remove_all_groups
+set_frames
+
+#def_icon_blank(1639
+#def_icon_blank(1640
+#def_icon_blank(1641
+#def_icon_blank(1642
+#def_icon_blank(1643
+#def_icon_blank(1644
+#def_icon_blank(1645
+#def_icon_blank(1646
+#def_icon_blank(1647
+#def_icon_blank(1648
+
+# ------------------------- row 29 --------------------------*/
+
+matplane
+matsphere
+matcube
+monkey
+hair
+aliased
+antialiased
+mat_sphere_sky
+move_texturespace
+scale_texturespace
+
+randomize_transform
+align_transform
+wordwrap_off
+wordwrap_on
+syntax_off
+syntax_on
+linenumbers_off
+linenumbers_on
+scriptplugins
+bold
+
+italic
+underlined
+set_lowercase
+set_uppercase
+small_caps
+set_from_faces
+cut
+pastefile
+circle
+copyright
+
+yen
+absolutepath
+relativepath
+batch_generate
+batch_generate_clear
+datablock_clear
+detect
+disable
+enable
+planetrack
+
+seq_swap_left
+seq_swap_right
+seq_reload_strips
+seq_reload_adjust_length
+toggle_meta
+seq_snap_strip
+
+# ------------------------- row 30 --------------------------*/
+
+seq_sequencer
+seq_preview
+seq_luma_waveform
+seq_chroma_scope
+seq_histogram
+seq_splitview
+nextactive
+previousactive
+brush_reset
+image_rgb
+
+image_rgb_alpha
+image_alpha
+image_zdepth
+#def_icon_blank(1723
+cursortoactive
+cursortocenter
+cursortogrid
+cursortoselection
+selectiontocursoroffset
+selectiontoactive
+
+selectiontocursor
+selectiontogrid
+cursor_to_pixels
+snap_to_adjacent
+snap_to_pixels
+pattern
+degree
+double_left
+double_right
+dutch_florin
+
+german_s
+multiplication
+pound
+promille
+spanish_exclamation
+spanish_question
+super_one
+super_two
+super_three
+trademark
+
+seq_snap_to_frame
+seq_clear_offset
+seq_cut_hard_at_frame
+seq_cut_soft_at_frame
+seq_deinterlace
+seq_move_extend
+seq_slip_contents
+seq_remove_gaps
+seq_insert_gaps
+seq_swap_data
+)
 
 # This section is maintained by the updating script, keep BEGIN/END comments.
 set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
