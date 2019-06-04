@@ -114,7 +114,7 @@ const EnumPropertyItem rna_enum_gpencil_weight_brush_items[] = {
 static const EnumPropertyItem rna_enum_gpencil_lock_axis_items[] = {
     {GP_LOCKAXIS_VIEW,
      "VIEW",
-     ICON_RESTRICT_VIEW_ON,
+     ICON_VIEW,
      "View",
      "Align strokes to current view plane"},
     {GP_LOCKAXIS_Y,
