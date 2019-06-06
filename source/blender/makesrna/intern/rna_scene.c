@@ -100,60 +100,60 @@ static const EnumPropertyItem uv_sculpt_relaxation_items[] = {
      "LAPLACIAN",
      0,
      "Laplacian",
-     "Use Laplacian method for relaxation"},
+     "Laplacian\nUse Laplacian method for relaxation"},
     {UV_SCULPT_TOOL_RELAX_HC, "HC", 0, "HC", "Use HC method for relaxation"},
     {0, NULL, 0, NULL, NULL},
 };
 #endif
 
 const EnumPropertyItem rna_enum_snap_target_items[] = {
-    {SCE_SNAP_TARGET_CLOSEST, "CLOSEST", 0, "Closest", "Snap closest point onto target"},
-    {SCE_SNAP_TARGET_CENTER, "CENTER", 0, "Center", "Snap transformation center onto target"},
-    {SCE_SNAP_TARGET_MEDIAN, "MEDIAN", 0, "Median", "Snap median onto target"},
-    {SCE_SNAP_TARGET_ACTIVE, "ACTIVE", 0, "Active", "Snap active onto target"},
+    {SCE_SNAP_TARGET_CLOSEST, "CLOSEST", 0, "Closest", "Closest\nSnap closest point onto target"},
+    {SCE_SNAP_TARGET_CENTER, "CENTER", 0, "Center", "Center\nSnap transformation center onto target"},
+    {SCE_SNAP_TARGET_MEDIAN, "MEDIAN", 0, "Median", "Median\nSnap median onto target"},
+    {SCE_SNAP_TARGET_ACTIVE, "ACTIVE", 0, "Active", "Active\nSnap active onto target"},
     {0, NULL, 0, NULL, NULL},
 };
 
 const EnumPropertyItem rna_enum_proportional_falloff_items[] = {
-    {PROP_SMOOTH, "SMOOTH", ICON_SMOOTHCURVE, "Smooth", "Smooth falloff"},
-    {PROP_SPHERE, "SPHERE", ICON_SPHERECURVE, "Sphere", "Spherical falloff"},
-    {PROP_ROOT, "ROOT", ICON_ROOTCURVE, "Root", "Root falloff"},
+    {PROP_SMOOTH, "SMOOTH", ICON_SMOOTHCURVE, "Smooth", "Smooth\nSmooth falloff"},
+    {PROP_SPHERE, "SPHERE", ICON_SPHERECURVE, "Sphere", "Sphere\nSpherical falloff"},
+    {PROP_ROOT, "ROOT", ICON_ROOTCURVE, "Root", "Root\nRoot falloff"},
     {PROP_INVSQUARE,
      "INVERSE_SQUARE",
      ICON_INVERSESQUARECURVE,
      "Inverse Square",
-     "Inverse Square falloff"},
-    {PROP_SHARP, "SHARP", ICON_SHARPCURVE, "Sharp", "Sharp falloff"},
-    {PROP_LIN, "LINEAR", ICON_LINCURVE, "Linear", "Linear falloff"},
-    {PROP_CONST, "CONSTANT", ICON_NOCURVE, "Constant", "Constant falloff"},
-    {PROP_RANDOM, "RANDOM", ICON_RNDCURVE, "Random", "Random falloff"},
+     "Inverse Square\nInverse Square falloff"},
+    {PROP_SHARP, "SHARP", ICON_SHARPCURVE, "Sharp", "Sharp\nSharp falloff"},
+    {PROP_LIN, "LINEAR", ICON_LINCURVE, "Linear", "Linear\nLinear falloff"},
+    {PROP_CONST, "CONSTANT", ICON_NOCURVE, "Constant", "Constant\nConstant falloff"},
+    {PROP_RANDOM, "RANDOM", ICON_RNDCURVE, "Random", "Random\nRandom falloff"},
     {0, NULL, 0, NULL, NULL},
 };
 
 /* subset of the enum - only curves, missing random and const */
 const EnumPropertyItem rna_enum_proportional_falloff_curve_only_items[] = {
-    {PROP_SMOOTH, "SMOOTH", ICON_SMOOTHCURVE, "Smooth", "Smooth falloff"},
-    {PROP_SPHERE, "SPHERE", ICON_SPHERECURVE, "Sphere", "Spherical falloff"},
-    {PROP_ROOT, "ROOT", ICON_ROOTCURVE, "Root", "Root falloff"},
-    {PROP_INVSQUARE, "INVERSE_SQUARE", ICON_ROOTCURVE, "Inverse Square", "Inverse Square falloff"},
-    {PROP_SHARP, "SHARP", ICON_SHARPCURVE, "Sharp", "Sharp falloff"},
-    {PROP_LIN, "LINEAR", ICON_LINCURVE, "Linear", "Linear falloff"},
+    {PROP_SMOOTH, "SMOOTH", ICON_SMOOTHCURVE, "Smooth", "Smooth\nSmooth falloff"},
+    {PROP_SPHERE, "SPHERE", ICON_SPHERECURVE, "Sphere", "Sphere\nSpherical falloff"},
+    {PROP_ROOT, "ROOT", ICON_ROOTCURVE, "Root", "Root\nRoot falloff"},
+    {PROP_INVSQUARE, "INVERSE_SQUARE", ICON_ROOTCURVE, "Inverse Square", "Inverse Square\nInverse Square falloff"},
+    {PROP_SHARP, "SHARP", ICON_SHARPCURVE, "Sharp", "Sharp\nSharp falloff"},
+    {PROP_LIN, "LINEAR", ICON_LINCURVE, "Linear", "Linear\nLinear falloff"},
     {0, NULL, 0, NULL, NULL},
 };
 
 /* keep for operators, not used here */
 const EnumPropertyItem rna_enum_mesh_select_mode_items[] = {
-    {SCE_SELECT_VERTEX, "VERTEX", ICON_VERTEXSEL, "Vertex", "Vertex selection mode"},
-    {SCE_SELECT_EDGE, "EDGE", ICON_EDGESEL, "Edge", "Edge selection mode"},
-    {SCE_SELECT_FACE, "FACE", ICON_FACESEL, "Face", "Face selection mode"},
+    {SCE_SELECT_VERTEX, "VERTEX", ICON_VERTEXSEL, "Vertex", "Vertex\nVertex selection mode"},
+    {SCE_SELECT_EDGE, "EDGE", ICON_EDGESEL, "Edge", "Edge\nEdge selection mode"},
+    {SCE_SELECT_FACE, "FACE", ICON_FACESEL, "Face", "Face\nFace selection mode"},
     {0, NULL, 0, NULL, NULL},
 };
 
 const EnumPropertyItem rna_enum_mesh_select_mode_uv_items[] = {
-    {UV_SELECT_VERTEX, "VERTEX", ICON_UV_VERTEXSEL, "Vertex", "Vertex selection mode"},
-    {UV_SELECT_EDGE, "EDGE", ICON_UV_EDGESEL, "Edge", "Edge selection mode"},
-    {UV_SELECT_FACE, "FACE", ICON_UV_FACESEL, "Face", "Face selection mode"},
-    {UV_SELECT_ISLAND, "ISLAND", ICON_UV_ISLANDSEL, "Island", "Island selection mode"},
+    {UV_SELECT_VERTEX, "VERTEX", ICON_UV_VERTEXSEL, "Vertex", "Vertex\nVertex selection mode"},
+    {UV_SELECT_EDGE, "EDGE", ICON_UV_EDGESEL, "Edge", "Edge\nEdge selection mode"},
+    {UV_SELECT_FACE, "FACE", ICON_UV_FACESEL, "Face", "Face\nFace selection mode"},
+    {UV_SELECT_ISLAND, "ISLAND", ICON_UV_ISLANDSEL, "Island", "Island\nIsland selection mode"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -163,17 +163,17 @@ const EnumPropertyItem rna_enum_snap_element_items[] = {
      ICON_SNAP_INCREMENT,
      "Increment",
      "Snap to increments of grid"},
-    {SCE_SNAP_MODE_VERTEX, "VERTEX", ICON_SNAP_VERTEX, "Vertex", "Snap to vertices"},
-    {SCE_SNAP_MODE_EDGE, "EDGE", ICON_SNAP_EDGE, "Edge", "Snap to edges"},
-    {SCE_SNAP_MODE_FACE, "FACE", ICON_SNAP_FACE, "Face", "Snap to faces"},
-    {SCE_SNAP_MODE_VOLUME, "VOLUME", ICON_SNAP_VOLUME, "Volume", "Snap to volume"},
+    {SCE_SNAP_MODE_VERTEX, "VERTEX", ICON_SNAP_VERTEX, "Vertex", "Vertex\nSnap to vertices"},
+    {SCE_SNAP_MODE_EDGE, "EDGE", ICON_SNAP_EDGE, "Edge", "Edge\nSnap to edges"},
+    {SCE_SNAP_MODE_FACE, "FACE", ICON_SNAP_FACE, "Face", "Face\nSnap to faces"},
+    {SCE_SNAP_MODE_VOLUME, "VOLUME", ICON_SNAP_VOLUME, "Volume", "Volume\nSnap to volume"},
     {0, NULL, 0, NULL, NULL},
 };
 
 const EnumPropertyItem rna_enum_snap_node_element_items[] = {
-    {SCE_SNAP_MODE_GRID, "GRID", ICON_SNAP_GRID, "Grid", "Snap to grid"},
-    {SCE_SNAP_MODE_NODE_X, "NODE_X", ICON_NODE_SIDE, "Node X", "Snap to left/right node border"},
-    {SCE_SNAP_MODE_NODE_Y, "NODE_Y", ICON_NODE_TOP, "Node Y", "Snap to top/bottom node border"},
+    {SCE_SNAP_MODE_GRID, "GRID", ICON_SNAP_GRID, "Grid", "Grid\nSnap to grid"},
+    {SCE_SNAP_MODE_NODE_X, "NODE_X", ICON_NODE_SIDE, "Node X", "Node X\nSnap to left/right node border"},
+    {SCE_SNAP_MODE_NODE_Y, "NODE_Y", ICON_NODE_TOP, "Node Y", "Node Y\nSnap to top/bottom node border"},
     {SCE_SNAP_MODE_NODE_X | SCE_SNAP_MODE_NODE_Y,
      "NODE_XY",
      ICON_NODE_CORNER,
@@ -189,7 +189,7 @@ static const EnumPropertyItem snap_uv_element_items[] = {
      ICON_SNAP_INCREMENT,
      "Increment",
      "Snap to increments of grid"},
-    {SCE_SNAP_MODE_VERTEX, "VERTEX", ICON_SNAP_VERTEX, "Vertex", "Snap to vertices"},
+    {SCE_SNAP_MODE_VERTEX, "VERTEX", ICON_SNAP_VERTEX, "Vertex", "Vertex\nSnap to vertices"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -198,37 +198,37 @@ static const EnumPropertyItem rna_enum_scene_display_aa_methods[] = {
      "OFF",
      0,
      "No Anti-Aliasing",
-     "Scene will be rendering without any anti-aliasing"},
+     "No Anti-Aliasing\nScene will be rendering without any anti-aliasing"},
     {SCE_DISPLAY_AA_FXAA,
      "FXAA",
      0,
      "Single Pass Anti-Aliasing",
-     "Scene will be rendered using a single pass anti-aliasing method (FXAA)"},
+     "Single Pass Anti-Aliasing\nScene will be rendered using a single pass anti-aliasing method (FXAA)"},
     {SCE_DISPLAY_AA_SAMPLES_5,
      "5",
      0,
      "5 Samples",
-     "Scene will be rendered using 5 anti-aliasing samples"},
+     "5 Samples\nScene will be rendered using 5 anti-aliasing samples"},
     {SCE_DISPLAY_AA_SAMPLES_8,
      "8",
      0,
      "8 Samples",
-     "Scene will be rendered using 8 anti-aliasing samples"},
+     "8 Samples\nScene will be rendered using 8 anti-aliasing samples"},
     {SCE_DISPLAY_AA_SAMPLES_11,
      "11",
      0,
      "11 Samples",
-     "Scene will be rendered using 11 anti-aliasing samples"},
+     "11 Samples\nScene will be rendered using 11 anti-aliasing samples"},
     {SCE_DISPLAY_AA_SAMPLES_16,
      "16",
      0,
      "16 Samples",
-     "Scene will be rendered using 16 anti-aliasing samples"},
+     "16 Samples\nScene will be rendered using 16 anti-aliasing samples"},
     {SCE_DISPLAY_AA_SAMPLES_32,
      "32",
      0,
      "32 Samples",
-     "Scene will be rendered using 32 anti-aliasing samples"},
+     "32 Samples\nScene will be rendered using 32 anti-aliasing samples"},
     {0, NULL, 0, NULL, NULL},
 };
 #endif
@@ -238,12 +238,12 @@ const EnumPropertyItem rna_enum_curve_fit_method_items[] = {
      "REFIT",
      0,
      "Refit",
-     "Incrementally re-fit the curve (high quality)"},
+     "Refit\nIncrementally re-fit the curve (high quality)"},
     {CURVE_PAINT_FIT_METHOD_SPLIT,
      "SPLIT",
      0,
      "Split",
-     "Split the curve until the tolerance is met (fast)"},
+     "Split\nSplit the curve until the tolerance is met (fast)"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -252,21 +252,21 @@ const EnumPropertyItem rna_enum_curve_fit_method_items[] = {
  */
 
 #define R_IMF_ENUM_BMP \
-  {R_IMF_IMTYPE_BMP, "BMP", ICON_FILE_IMAGE, "BMP", "Output image in bitmap format"},
+  {R_IMF_IMTYPE_BMP, "BMP", ICON_FILE_IMAGE, "BMP", "BMP\nOutput image in bitmap format"},
 #define R_IMF_ENUM_IRIS \
-  {R_IMF_IMTYPE_IRIS, "IRIS", ICON_FILE_IMAGE, "Iris", "Output image in (old!) SGI IRIS format"},
+  {R_IMF_IMTYPE_IRIS, "IRIS", ICON_FILE_IMAGE, "Iris", "Iris\nOutput image in (old!) SGI IRIS format"},
 #define R_IMF_ENUM_PNG \
-  {R_IMF_IMTYPE_PNG, "PNG", ICON_FILE_IMAGE, "PNG", "Output image in PNG format"},
+  {R_IMF_IMTYPE_PNG, "PNG", ICON_FILE_IMAGE, "PNG", "PNG\nOutput image in PNG format"},
 #define R_IMF_ENUM_JPEG \
-  {R_IMF_IMTYPE_JPEG90, "JPEG", ICON_FILE_IMAGE, "JPEG", "Output image in JPEG format"},
+  {R_IMF_IMTYPE_JPEG90, "JPEG", ICON_FILE_IMAGE, "JPEG", "JPEG\nOutput image in JPEG format"},
 #define R_IMF_ENUM_TAGA \
-  {R_IMF_IMTYPE_TARGA, "TARGA", ICON_FILE_IMAGE, "Targa", "Output image in Targa format"},
+  {R_IMF_IMTYPE_TARGA, "TARGA", ICON_FILE_IMAGE, "Targa", "Targa\nOutput image in Targa format"},
 #define R_IMF_ENUM_TAGA_RAW \
   {R_IMF_IMTYPE_RAWTGA, \
    "TARGA_RAW", \
    ICON_FILE_IMAGE, \
    "Targa Raw", \
-   "Output image in uncompressed Targa format"},
+   "Targa Raw\nOutput image in uncompressed Targa format"},
 
 #if 0 /* UNUSED (so far) */
 #  ifdef WITH_DDS
@@ -366,7 +366,7 @@ const EnumPropertyItem rna_enum_image_type_items[] = {
      ICON_FILE_MOVIE,
      "AVI JPEG",
      "Output video in AVI JPEG format"},
-    {R_IMF_IMTYPE_AVIRAW, "AVI_RAW", ICON_FILE_MOVIE, "AVI Raw", "Output video in AVI Raw format"},
+    {R_IMF_IMTYPE_AVIRAW, "AVI_RAW", ICON_FILE_MOVIE, "AVI Raw", "AVI Raw\nOutput video in AVI Raw format"},
 #ifdef WITH_FFMPEG
     {R_IMF_IMTYPE_FFMPEG,
      "FFMPEG",
@@ -383,12 +383,12 @@ const EnumPropertyItem rna_enum_image_color_mode_items[] = {
      0,
      "BW",
      "Images get saved in 8 bits grayscale (only PNG, JPEG, TGA, TIF)"},
-    {R_IMF_PLANES_RGB, "RGB", 0, "RGB", "Images are saved with RGB (color) data"},
+    {R_IMF_PLANES_RGB, "RGB", 0, "RGB", "RGB\nImages are saved with RGB (color) data"},
     {R_IMF_PLANES_RGBA,
      "RGBA",
      0,
      "RGBA",
-     "Images are saved with RGB and Alpha data (if supported)"},
+     "RGBA\nImages are saved with RGB and Alpha data (if supported)"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -410,8 +410,8 @@ const EnumPropertyItem rna_enum_image_color_depth_items[] = {
 };
 
 const EnumPropertyItem rna_enum_normal_space_items[] = {
-    {R_BAKE_SPACE_OBJECT, "OBJECT", 0, "Object", "Bake the normals in object space"},
-    {R_BAKE_SPACE_TANGENT, "TANGENT", 0, "Tangent", "Bake the normals in tangent space"},
+    {R_BAKE_SPACE_OBJECT, "OBJECT", 0, "Object", "Object\nBake the normals in object space"},
+    {R_BAKE_SPACE_TANGENT, "TANGENT", 0, "Tangent", "Tangent\nBake the normals in tangent space"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -431,7 +431,7 @@ const EnumPropertyItem rna_enum_bake_save_mode_items[] = {
      0,
      "Internal",
      "Save the baking map in an internal image data-block"},
-    {R_BAKE_SAVE_EXTERNAL, "EXTERNAL", 0, "External", "Save the baking map in an external file"},
+    {R_BAKE_SAVE_EXTERNAL, "EXTERNAL", 0, "External", "External\nSave the baking map in an external file"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -440,11 +440,11 @@ const EnumPropertyItem rna_enum_bake_save_mode_items[] = {
    "INDIVIDUAL", \
    0, \
    "Individual", \
-   "Individual files for each view with the prefix as defined by the scene views"},
+   "Individual\nIndividual files for each view with the prefix as defined by the scene views"},
 #define R_IMF_VIEWS_ENUM_S3D \
-  {R_IMF_VIEWS_STEREO_3D, "STEREO_3D", 0, "Stereo 3D", "Single file with an encoded stereo pair"},
+  {R_IMF_VIEWS_STEREO_3D, "STEREO_3D", 0, "Stereo 3D", "Stereo 3D\nSingle file with an encoded stereo pair"},
 #define R_IMF_VIEWS_ENUM_MV \
-  {R_IMF_VIEWS_MULTIVIEW, "MULTIVIEW", 0, "Multi-View", "Single file with all the views"},
+  {R_IMF_VIEWS_MULTIVIEW, "MULTIVIEW", 0, "Multi-View", "Multi-View\nSingle file with all the views"},
 
 const EnumPropertyItem rna_enum_views_format_items[] = {
     R_IMF_VIEWS_ENUM_IND R_IMF_VIEWS_ENUM_S3D{0, NULL, 0, NULL, NULL},
@@ -467,30 +467,30 @@ const EnumPropertyItem rna_enum_stereo3d_display_items[] = {
      "ANAGLYPH",
      0,
      "Anaglyph",
-     "Render views for left and right eyes as two differently filtered colors in a single image "
+     "Anaglyph\nRender views for left and right eyes as two differently filtered colors in a single image "
      "(anaglyph glasses are required)"},
     {S3D_DISPLAY_INTERLACE,
      "INTERLACE",
      0,
      "Interlace",
-     "Render views for left and right eyes interlaced in a single image (3D-ready monitor is "
+     "Interlace\nRender views for left and right eyes interlaced in a single image (3D-ready monitor is "
      "required)"},
     {S3D_DISPLAY_PAGEFLIP,
      "TIMESEQUENTIAL",
      0,
      "Time Sequential",
-     "Render alternate eyes (also known as page flip, quad buffer support in the graphic card is "
+     "Time Sequential\nRender alternate eyes (also known as page flip, quad buffer support in the graphic card is "
      "required)"},
     {S3D_DISPLAY_SIDEBYSIDE,
      "SIDEBYSIDE",
      0,
      "Side-by-Side",
-     "Render views for left and right eyes side-by-side"},
+     "Side-by-Side\nRender views for left and right eyes side-by-side"},
     {S3D_DISPLAY_TOPBOTTOM,
      "TOPBOTTOM",
      0,
      "Top-Bottom",
-     "Render views for left and right eyes one above another"},
+     "Top-Bottom\nRender views for left and right eyes one above another"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -530,12 +530,12 @@ static const EnumPropertyItem rna_enum_gpencil_interpolation_mode_items[] = {
      "LINEAR",
      ICON_IPO_LINEAR,
      "Linear",
-     "Straight-line interpolation between A and B (i.e. no ease in/out)"},
+     "Linear\nStraight-line interpolation between A and B (i.e. no ease in/out)"},
     {GP_IPO_CURVEMAP,
      "CUSTOM",
      ICON_IPO_BEZIER,
      "Custom",
-     "Custom interpolation defined using a curve map"},
+     "Custom\nCustom interpolation defined using a curve map"},
 
     /* easing */
     {0,
@@ -561,17 +561,17 @@ static const EnumPropertyItem rna_enum_gpencil_interpolation_mode_items[] = {
      "Circular easing (strongest and most dynamic)"},
 
     {0, "", 0, N_("Dynamic Effects"), "Simple physics-inspired easing effects"},
-    {GP_IPO_BACK, "BACK", ICON_IPO_BACK, "Back", "Cubic easing with overshoot and settle"},
+    {GP_IPO_BACK, "BACK", ICON_IPO_BACK, "Back", "Back\nCubic easing with overshoot and settle"},
     {GP_IPO_BOUNCE,
      "BOUNCE",
      ICON_IPO_BOUNCE,
      "Bounce",
-     "Exponentially decaying parabolic bounce, like when objects collide"},
+     "Bounce\nExponentially decaying parabolic bounce, like when objects collide"},
     {GP_IPO_ELASTIC,
      "ELASTIC",
      ICON_IPO_ELASTIC,
      "Elastic",
-     "Exponentially decaying sine wave, like an elastic band"},
+     "Elastic\nExponentially decaying sine wave, like an elastic band"},
 
     {0, NULL, 0, NULL, NULL},
 };
@@ -584,22 +584,22 @@ const EnumPropertyItem rna_enum_transform_pivot_items_full[] = {
      ICON_PIVOT_BOUNDBOX,
      "Bounding Box Center",
      "Pivot around bounding box center of selected object(s)"},
-    {V3D_AROUND_CURSOR, "CURSOR", ICON_PIVOT_CURSOR, "3D Cursor", "Pivot around the 3D cursor"},
+    {V3D_AROUND_CURSOR, "CURSOR", ICON_PIVOT_CURSOR, "3D Cursor", "3D Cursor\nPivot around the 3D cursor"},
     {V3D_AROUND_LOCAL_ORIGINS,
      "INDIVIDUAL_ORIGINS",
      ICON_PIVOT_INDIVIDUAL,
      "Individual Origins",
-     "Pivot around each object's own origin"},
+     "Individual Origins\nPivot around each object's own origin"},
     {V3D_AROUND_CENTER_MEDIAN,
      "MEDIAN_POINT",
      ICON_PIVOT_MEDIAN,
      "Median Point",
-     "Pivot around the median point of selected objects"},
+     "Median Point\nPivot around the median point of selected objects"},
     {V3D_AROUND_ACTIVE,
      "ACTIVE_ELEMENT",
      ICON_PIVOT_ACTIVE,
      "Active Element",
-     "Pivot around active object"},
+     "Active Element\nPivot around active object"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -609,33 +609,33 @@ const EnumPropertyItem rna_enum_transform_orientation_items[] = {
      "GLOBAL",
      ICON_ORIENTATION_GLOBAL,
      "Global",
-     "Align the transformation axes to world space"},
+     "Global\nAlign the transformation axes to world space"},
     {V3D_ORIENT_LOCAL,
      "LOCAL",
      ICON_ORIENTATION_LOCAL,
      "Local",
-     "Align the transformation axes to the selected objects' local space"},
+     "Local\nAlign the transformation axes to the selected objects' local space"},
     {V3D_ORIENT_NORMAL,
      "NORMAL",
      ICON_ORIENTATION_NORMAL,
      "Normal",
-     "Align the transformation axes to average normal of selected elements "
+     "Normal\nAlign the transformation axes to average normal of selected elements "
      "(bone Y axis for pose mode)"},
     {V3D_ORIENT_GIMBAL,
      "GIMBAL",
      ICON_ORIENTATION_GIMBAL,
      "Gimbal",
-     "Align each axis to the Euler rotation axis as used for input"},
+     "Gimbal\nAlign each axis to the Euler rotation axis as used for input"},
     {V3D_ORIENT_VIEW,
      "VIEW",
      ICON_ORIENTATION_VIEW,
      "View",
-     "Align the transformation axes to the window"},
+     "View\nAlign the transformation axes to the window"},
     {V3D_ORIENT_CURSOR,
      "CURSOR",
      ICON_ORIENTATION_CURSOR,
      "Cursor",
-     "Align the transformation axes to the 3D cursor"},
+     "Cursor\nAlign the transformation axes to the 3D cursor"},
     // {V3D_ORIENT_CUSTOM, "CUSTOM", 0, "Custom", "Use a custom transform orientation"},
     {0, NULL, 0, NULL, NULL},
 };
@@ -2546,7 +2546,7 @@ static void rna_def_view3d_cursor(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, NULL, "rotation_quaternion");
   RNA_def_property_float_array_default(prop, rna_default_quaternion);
   RNA_def_property_ui_text(
-      prop, "Quaternion Rotation", "Rotation in quaternions (keep normalized)");
+      prop, "Quaternion Rotation", "Quaternion Rotation\nRotation in quaternions (keep normalized)");
   RNA_def_property_update(prop, NC_WINDOW, NULL);
 
   prop = RNA_def_property(srna, "rotation_axis_angle", PROP_FLOAT, PROP_AXISANGLE);
@@ -2558,13 +2558,13 @@ static void rna_def_view3d_cursor(BlenderRNA *brna)
                                NULL);
   RNA_def_property_float_array_default(prop, rna_default_axis_angle);
   RNA_def_property_ui_text(
-      prop, "Axis-Angle Rotation", "Angle of Rotation for Axis-Angle rotation representation");
+      prop, "Axis-Angle Rotation", "Axis-Angle Rotation\nAngle of Rotation for Axis-Angle rotation representation");
   RNA_def_property_update(prop, NC_WINDOW, NULL);
 
   prop = RNA_def_property(srna, "rotation_euler", PROP_FLOAT, PROP_EULER);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_float_sdna(prop, NULL, "rotation_euler");
-  RNA_def_property_ui_text(prop, "Euler Rotation", "3D rotation");
+  RNA_def_property_ui_text(prop, "Euler Rotation", "Euler Rotation\n3D rotation");
   RNA_def_property_update(prop, NC_WINDOW, NULL);
 
   prop = RNA_def_property(srna, "rotation_mode", PROP_ENUM, PROP_NONE);
@@ -2579,7 +2579,7 @@ static void rna_def_view3d_cursor(BlenderRNA *brna)
   prop = RNA_def_property(srna, "matrix", PROP_FLOAT, PROP_MATRIX);
   RNA_def_property_multi_array(prop, 2, rna_matrix_dimsize_4x4);
   RNA_def_property_flag(prop, PROP_THICK_WRAP); /* no reference to original data */
-  RNA_def_property_ui_text(prop, "Transform Matrix", "Matrix combining loc/rot of the cursor");
+  RNA_def_property_ui_text(prop, "Transform Matrix", "Transform Matrix\nMatrix combining loc/rot of the cursor");
   RNA_def_property_float_funcs(
       prop, "rna_View3DCursor_matrix_get", "rna_View3DCursor_matrix_set", NULL);
 }
@@ -2605,23 +2605,23 @@ static void rna_def_tool_settings(BlenderRNA *brna)
        "ACTIVE",
        0,
        "Active",
-       "Show vertices with no weights in the active group"},
-      {OB_DRAW_GROUPUSER_ALL, "ALL", 0, "All", "Show vertices with no weights in any group"},
+       "Active\nShow vertices with no weights in the active group"},
+      {OB_DRAW_GROUPUSER_ALL, "ALL", 0, "All", "All\nShow vertices with no weights in any group"},
       {0, NULL, 0, NULL, NULL},
   };
 
   static const EnumPropertyItem vertex_group_select_items[] = {
-      {WT_VGROUP_ALL, "ALL", 0, "All", "All Vertex Groups"},
+      {WT_VGROUP_ALL, "ALL", 0, "All", "All\nAll Vertex Groups"},
       {WT_VGROUP_BONE_DEFORM,
        "BONE_DEFORM",
        0,
        "Deform",
-       "Vertex Groups assigned to Deform Bones"},
+       "Deform\nVertex Groups assigned to Deform Bones"},
       {WT_VGROUP_BONE_DEFORM_OFF,
        "OTHER_DEFORM",
        0,
        "Other",
-       "Vertex Groups assigned to non Deform Bones"},
+       "Other\nVertex Groups assigned to non Deform Bones"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -2630,48 +2630,48 @@ static void rna_def_tool_settings(BlenderRNA *brna)
        "ORIGIN",
        ICON_OBJECT_ORIGIN,
        "Origin",
-       "Draw stroke at Object origin"},
+       "Origin\nDraw stroke at Object origin"},
       {GP_PROJECT_VIEWSPACE | GP_PROJECT_CURSOR,
        "CURSOR",
        ICON_PIVOT_CURSOR,
        "3D Cursor",
-       "Draw stroke at 3D cursor location"},
+       "3D Cursor\nDraw stroke at 3D cursor location"},
       {GP_PROJECT_VIEWSPACE | GP_PROJECT_DEPTH_VIEW,
        "SURFACE",
        ICON_SNAP_FACE,
        "Surface",
-       "Stick stroke to surfaces"},
+       "Surface\nStick stroke to surfaces"},
       {GP_PROJECT_VIEWSPACE | GP_PROJECT_DEPTH_STROKE,
        "STROKE",
        ICON_STROKE,
        "Stroke",
-       "Stick stroke to other strokes"},
+       "Stroke\nStick stroke to other strokes"},
       {0, NULL, 0, NULL, NULL},
   };
 
   static const EnumPropertyItem gpencil_stroke_snap_items[] = {
-      {0, "NONE", 0, "All points", "Snap to all points"},
+      {0, "NONE", 0, "All points", "All points\nSnap to all points"},
       {GP_PROJECT_DEPTH_STROKE_ENDPOINTS,
        "ENDS",
        0,
        "End points",
-       "Snap to first and last points and interpolate"},
-      {GP_PROJECT_DEPTH_STROKE_FIRST, "FIRST", 0, "First point", "Snap to first point"},
+       "End points\nSnap to first and last points and interpolate"},
+      {GP_PROJECT_DEPTH_STROKE_FIRST, "FIRST", 0, "First point", "First point\nSnap to first point"},
       {0, NULL, 0, NULL, NULL},
   };
 
   static const EnumPropertyItem gpencil_selectmode_items[] = {
-      {GP_SELECTMODE_POINT, "POINT", ICON_GP_SELECT_POINTS, "Point", "Select only points"},
+      {GP_SELECTMODE_POINT, "POINT", ICON_GP_SELECT_POINTS, "Point", "Point\nSelect only points"},
       {GP_SELECTMODE_STROKE,
        "STROKE",
        ICON_GP_SELECT_STROKES,
        "Stroke",
-       "Select all stroke points"},
+       "Stroke\nSelect all stroke points"},
       {GP_SELECTMODE_SEGMENT,
        "SEGMENT",
        ICON_GP_SELECT_BETWEEN_STROKES,
        "Segment",
-       "Select all stroke points between other strokes"},
+       "Segment\nSelect all stroke points between other strokes"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -2680,14 +2680,14 @@ static void rna_def_tool_settings(BlenderRNA *brna)
        "CURSOR",
        ICON_PIVOT_CURSOR,
        "3D Cursor",
-       "Draw stroke at 3D cursor location"},
+       "3D Cursor\nDraw stroke at 3D cursor location"},
       /* Weird, GP_PROJECT_VIEWALIGN is inverted. */
-      {0, "VIEW", ICON_RESTRICT_VIEW_ON, "View", "Stick stroke to the view "},
+      {0, "VIEW", ICON_RESTRICT_VIEW_ON, "View", "View\nStick stroke to the view "},
       {GP_PROJECT_VIEWSPACE | GP_PROJECT_DEPTH_VIEW,
        "SURFACE",
        ICON_FACESEL,
        "Surface",
-       "Stick stroke to surfaces"},
+       "Surface\nStick stroke to surfaces"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -3226,12 +3226,12 @@ static void rna_def_unified_paint_settings(BlenderRNA *brna)
   PropertyRNA *prop;
 
   static const EnumPropertyItem brush_size_unit_items[] = {
-      {0, "VIEW", 0, "View", "Measure brush size relateve to the view"},
+      {0, "VIEW", 0, "View", "View\nMeasure brush size relative to the view"},
       {UNIFIED_PAINT_BRUSH_LOCK_SIZE,
        "SCENE",
        0,
        "Scene",
-       "Measure brush size relateve to the scene"},
+       "Scene\nMeasure brush size relative to the scene"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -3450,13 +3450,13 @@ static void rna_def_curve_paint_settings(BlenderRNA *brna)
        "NORMAL_VIEW",
        0,
        "Normal/View",
-       "Display perpendicular to the surface"},
+       "Normal/View\nDisplay perpendicular to the surface"},
       {CURVE_PAINT_SURFACE_PLANE_NORMAL_SURFACE,
        "NORMAL_SURFACE",
        0,
        "Normal/Surface",
-       "Display aligned to the surface"},
-      {CURVE_PAINT_SURFACE_PLANE_VIEW, "VIEW", 0, "View", "Display aligned to the viewport"},
+       "Normal/Surface\nDisplay aligned to the surface"},
+      {CURVE_PAINT_SURFACE_PLANE_VIEW, "VIEW", 0, "View", "View\nDisplay aligned to the viewport"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -3596,7 +3596,7 @@ static void rna_def_unit_settings(BlenderRNA *brna)
   };
 
   static const EnumPropertyItem rotation_units[] = {
-      {0, "DEGREES", 0, "Degrees", "Use degrees for measuring angles and rotations"},
+      {0, "DEGREES", 0, "Degrees", "Degrees\nUse degrees for measuring angles and rotations"},
       {USER_UNIT_ROT_RADIANS, "RADIANS", 0, "Radians", ""},
       {0, NULL, 0, NULL, NULL},
   };
@@ -4155,12 +4155,12 @@ void rna_def_freestyle_settings(BlenderRNA *brna)
        "INCLUSIVE",
        0,
        "Inclusive",
-       "Select feature edges satisfying the given edge type conditions"},
+       "Inclusive\nSelect feature edges satisfying the given edge type conditions"},
       {FREESTYLE_LINESET_FE_NOT,
        "EXCLUSIVE",
        0,
        "Exclusive",
-       "Select feature edges not satisfying the given edge type conditions"},
+       "Exclusive\nSelect feature edges not satisfying the given edge type conditions"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -4169,12 +4169,12 @@ void rna_def_freestyle_settings(BlenderRNA *brna)
        "OR",
        0,
        "Logical OR",
-       "Select feature edges satisfying at least one of edge type conditions"},
+       "Logical OR\nSelect feature edges satisfying at least one of edge type conditions"},
       {FREESTYLE_LINESET_FE_AND,
        "AND",
        0,
        "Logical AND",
-       "Select feature edges satisfying all edge type conditions"},
+       "Logical AND\nSelect feature edges satisfying all edge type conditions"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -4183,12 +4183,12 @@ void rna_def_freestyle_settings(BlenderRNA *brna)
        "INCLUSIVE",
        0,
        "Inclusive",
-       "Select feature edges belonging to some object in the group"},
+       "Inclusive\nSelect feature edges belonging to some object in the group"},
       {FREESTYLE_LINESET_GR_NOT,
        "EXCLUSIVE",
        0,
        "Exclusive",
-       "Select feature edges not belonging to any object in the group"},
+       "Exclusive\nSelect feature edges not belonging to any object in the group"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -4197,22 +4197,22 @@ void rna_def_freestyle_settings(BlenderRNA *brna)
        "INCLUSIVE",
        0,
        "Inclusive",
-       "Select feature edges satisfying the given face mark conditions"},
+       "Inclusive\nSelect feature edges satisfying the given face mark conditions"},
       {FREESTYLE_LINESET_FM_NOT,
        "EXCLUSIVE",
        0,
        "Exclusive",
-       "Select feature edges not satisfying the given face mark conditions"},
+       "Exclusive\nSelect feature edges not satisfying the given face mark conditions"},
       {0, NULL, 0, NULL, NULL},
   };
 
   static const EnumPropertyItem face_mark_condition_items[] = {
-      {0, "ONE", 0, "One Face", "Select a feature edge if either of its adjacent faces is marked"},
+      {0, "ONE", 0, "One Face", "One Face\nSelect a feature edge if either of its adjacent faces is marked"},
       {FREESTYLE_LINESET_FM_BOTH,
        "BOTH",
        0,
        "Both Faces",
-       "Select a feature edge if both of its adjacent faces are marked"},
+       "Both Faces\nSelect a feature edge if both of its adjacent faces are marked"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -4221,23 +4221,23 @@ void rna_def_freestyle_settings(BlenderRNA *brna)
        "SCRIPT",
        0,
        "Python Scripting Mode",
-       "Advanced mode for using style modules written in Python"},
+       "Python Scripting Mode\nAdvanced mode for using style modules written in Python"},
       {FREESTYLE_CONTROL_EDITOR_MODE,
        "EDITOR",
        0,
        "Parameter Editor Mode",
-       "Basic mode for interactive style parameter editing"},
+       "Parameter Editor Mode\nBasic mode for interactive style parameter editing"},
       {0, NULL, 0, NULL, NULL},
   };
 
   static const EnumPropertyItem visibility_items[] = {
-      {FREESTYLE_QI_VISIBLE, "VISIBLE", 0, "Visible", "Select visible feature edges"},
-      {FREESTYLE_QI_HIDDEN, "HIDDEN", 0, "Hidden", "Select hidden feature edges"},
+      {FREESTYLE_QI_VISIBLE, "VISIBLE", 0, "Visible", "Visible\nSelect visible feature edges"},
+      {FREESTYLE_QI_HIDDEN, "HIDDEN", 0, "Hidden", "Hidden\nSelect hidden feature edges"},
       {FREESTYLE_QI_RANGE,
        "RANGE",
        0,
        "QI Range",
-       "Select feature edges within a range of quantitative invisibility (QI) values"},
+       "QI Range\nSelect feature edges within a range of quantitative invisibility (QI) values"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -5002,24 +5002,24 @@ static void rna_def_image_format_stereo3d_format(BlenderRNA *brna)
        "ANAGLYPH",
        0,
        "Anaglyph",
-       "Render views for left and right eyes as two differently filtered colors in a single image "
+       "Anaglyph\nRender views for left and right eyes as two differently filtered colors in a single image "
        "(anaglyph glasses are required)"},
       {S3D_DISPLAY_INTERLACE,
        "INTERLACE",
        0,
        "Interlace",
-       "Render views for left and right eyes interlaced in a single image (3D-ready monitor is "
+       "Interlace\nRender views for left and right eyes interlaced in a single image (3D-ready monitor is "
        "required)"},
       {S3D_DISPLAY_SIDEBYSIDE,
        "SIDEBYSIDE",
        0,
        "Side-by-Side",
-       "Render views for left and right eyes side-by-side"},
+       "Side-by-Side\nRender views for left and right eyes side-by-side"},
       {S3D_DISPLAY_TOPBOTTOM,
        "TOPBOTTOM",
        0,
        "Top-Bottom",
-       "Render views for left and right eyes one above another"},
+       "Top-Bottom\nRender views for left and right eyes one above another"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -5313,7 +5313,7 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
        "BEST",
        0,
        "Slowest",
-       "Recommended if you have lots of time and want the best compression efficiency"},
+       "Slowest\nRecommended if you have lots of time and want the best compression efficiency"},
       {FFM_PRESET_GOOD, "GOOD", 0, "Good", "The default and recommended for most applications"},
       {FFM_PRESET_REALTIME, "REALTIME", 0, "Realtime", "Recommended for fast encoding"},
       {0, NULL, 0, NULL, NULL},
@@ -5336,7 +5336,7 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
   };
 
   static const EnumPropertyItem ffmpeg_audio_codec_items[] = {
-      {AV_CODEC_ID_NONE, "NONE", 0, "No Audio", "Disables audio output, for video-only renders"},
+      {AV_CODEC_ID_NONE, "NONE", 0, "No Audio", "No Audio\nDisables audio output, for video-only renders"},
       {AV_CODEC_ID_AAC, "AAC", 0, "AAC", ""},
       {AV_CODEC_ID_AC3, "AC3", 0, "AC3", ""},
       {AV_CODEC_ID_FLAC, "FLAC", 0, "FLAC", ""},
@@ -5349,26 +5349,26 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
 #  endif
 
   static const EnumPropertyItem audio_channel_items[] = {
-      {FFM_CHANNELS_MONO, "MONO", 0, "Mono", "Set audio channels to mono"},
-      {FFM_CHANNELS_STEREO, "STEREO", 0, "Stereo", "Set audio channels to stereo"},
-      {FFM_CHANNELS_SURROUND4, "SURROUND4", 0, "4 Channels", "Set audio channels to 4 channels"},
+      {FFM_CHANNELS_MONO, "MONO", 0, "Mono", "Mono\nSet audio channels to mono"},
+      {FFM_CHANNELS_STEREO, "STEREO", 0, "Stereo", "Stereo\nSet audio channels to stereo"},
+      {FFM_CHANNELS_SURROUND4, "SURROUND4", 0, "4 Channels", "4 Channels\nSet audio channels to 4 channels"},
       {FFM_CHANNELS_SURROUND51,
        "SURROUND51",
        0,
        "5.1 Surround",
-       "Set audio channels to 5.1 surround sound"},
+       "5.1 Surround\nSet audio channels to 5.1 surround sound"},
       {FFM_CHANNELS_SURROUND71,
        "SURROUND71",
        0,
        "7.1 Surround",
-       "Set audio channels to 7.1 surround sound"},
+       "7.1 Surround\nSet audio channels to 7.1 surround sound"},
       {0, NULL, 0, NULL, NULL},
   };
 
   srna = RNA_def_struct(brna, "FFmpegSettings", NULL);
   RNA_def_struct_sdna(srna, "FFMpegCodecData");
   RNA_def_struct_ui_text(
-      srna, "FFmpeg Settings", "FFmpeg Settings\nFFmpeg related settings for the scene");
+      srna, "FFmpeg Settings", "FFmpeg Settings\nFFmpeg Settings\nFFmpeg related settings for the scene");
 
 #  ifdef WITH_FFMPEG
   prop = RNA_def_property(srna, "format", PROP_ENUM, PROP_NONE);
@@ -5376,7 +5376,7 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_enum_items(prop, ffmpeg_format_items);
   RNA_def_property_enum_default(prop, FFMPEG_MKV);
-  RNA_def_property_ui_text(prop, "Container", "Output file container");
+  RNA_def_property_ui_text(prop, "Container", "Container\nOutput file container");
   RNA_def_property_update(
       prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_FFmpegSettings_codec_settings_update");
 
@@ -5385,33 +5385,33 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_enum_items(prop, ffmpeg_codec_items);
   RNA_def_property_enum_default(prop, AV_CODEC_ID_H264);
-  RNA_def_property_ui_text(prop, "Video Codec", "FFmpeg codec to use for video output");
+  RNA_def_property_ui_text(prop, "Video Codec", "Video Codec\nFFmpeg codec to use for video output");
   RNA_def_property_update(
       prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_FFmpegSettings_codec_settings_update");
 
   prop = RNA_def_property(srna, "video_bitrate", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, NULL, "video_bitrate");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(prop, "Bitrate", "Video bitrate (kb/s)");
+  RNA_def_property_ui_text(prop, "Bitrate", "Bitrate\nVideo bitrate (kb/s)");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "minrate", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, NULL, "rc_min_rate");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(prop, "Min Rate", "Rate control: min rate (kb/s)");
+  RNA_def_property_ui_text(prop, "Min Rate", "Min Rate\nRate control: min rate (kb/s)");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "maxrate", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, NULL, "rc_max_rate");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(prop, "Max Rate", "Rate control: max rate (kb/s)");
+  RNA_def_property_ui_text(prop, "Max Rate", "Max RatenRate control: max rate (kb/s)");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "muxrate", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, NULL, "mux_rate");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_range(prop, 0, 100000000);
-  RNA_def_property_ui_text(prop, "Mux Rate", "Mux rate (bits/s(!))");
+  RNA_def_property_ui_text(prop, "Mux Rate", "Mux Rate\nMux rate (bits/s(!))");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "gopsize", PROP_INT, PROP_NONE);
@@ -5421,7 +5421,7 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
   RNA_def_property_int_default(prop, 25);
   RNA_def_property_ui_text(prop,
                            "Keyframe interval",
-                           "Distance between key frames, also known as GOP size; "
+                           "Keyframe interval\nDistance between key frames, also known as GOP size; "
                            "influences file size and seekability");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
@@ -5432,27 +5432,27 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Max B-frames",
-      "Maximum number of B-frames between non-B-frames; influences file size and seekability");
+      "Max B-frames\nMaximum number of B-frames between non-B-frames; influences file size and seekability");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "use_max_b_frames", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flags", FFMPEG_USE_MAX_B_FRAMES);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(prop, "Use max B-frames", "Set a maximum number of B-frames");
+  RNA_def_property_ui_text(prop, "Use max B-frames", "Use max B-frames\nSet a maximum number of B-frames");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "buffersize", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, NULL, "rc_buffer_size");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_range(prop, 0, 2000);
-  RNA_def_property_ui_text(prop, "Buffersize", "Rate control: buffer size (kb)");
+  RNA_def_property_ui_text(prop, "Buffersize", "Buffersize\nRate control: buffer size (kb)");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "packetsize", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, NULL, "mux_packet_size");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_range(prop, 0, 16384);
-  RNA_def_property_ui_text(prop, "Mux Packet Size", "Mux packet size (byte)");
+  RNA_def_property_ui_text(prop, "Mux Packet Size", "Mux Packet Size\nMux packet size (byte)");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "constant_rate_factor", PROP_ENUM, PROP_NONE);
@@ -5463,7 +5463,7 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Output quality",
-      "Constant Rate Factor (CRF); tradeoff between video quality and file size");
+      "Output quality\nConstant Rate Factor (CRF); tradeoff between video quality and file size");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "ffmpeg_preset", PROP_ENUM, PROP_NONE);
@@ -5472,20 +5472,20 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, ffmpeg_preset_items);
   RNA_def_property_enum_default(prop, FFM_PRESET_GOOD);
   RNA_def_property_ui_text(
-      prop, "Encoding speed", "Tradeoff between encoding speed and compression ratio");
+      prop, "Encoding speed", "Encoding speed\nTradeoff between encoding speed and compression ratio");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "use_autosplit", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flags", FFMPEG_AUTOSPLIT_OUTPUT);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(prop, "Autosplit Output", "Autosplit output at 2GB boundary");
+  RNA_def_property_ui_text(prop, "Autosplit Output", "Autosplit Output\nAutosplit output at 2GB boundary");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "use_lossless_output", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flags", FFMPEG_LOSSLESS_OUTPUT);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_boolean_funcs(prop, NULL, "rna_FFmpegSettings_lossless_output_set");
-  RNA_def_property_ui_text(prop, "Lossless Output", "Use lossless output for video streams");
+  RNA_def_property_ui_text(prop, "Lossless Output", "Lossless Output\nUse lossless output for video streams");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   /* FFMPEG Audio*/
@@ -5493,21 +5493,21 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
   RNA_def_property_enum_bitflag_sdna(prop, NULL, "audio_codec");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_enum_items(prop, ffmpeg_audio_codec_items);
-  RNA_def_property_ui_text(prop, "Audio Codec", "FFmpeg audio codec to use");
+  RNA_def_property_ui_text(prop, "Audio Codec", "Audio Codec\nFFmpeg audio codec to use");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "audio_bitrate", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, NULL, "audio_bitrate");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_range(prop, 32, 384);
-  RNA_def_property_ui_text(prop, "Bitrate", "Audio bitrate (kb/s)");
+  RNA_def_property_ui_text(prop, "Bitrate", "Bitrate\nAudio bitrate (kb/s)");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "audio_volume", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, NULL, "audio_volume");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_range(prop, 0.0f, 1.0f);
-  RNA_def_property_ui_text(prop, "Volume", "Audio volume");
+  RNA_def_property_ui_text(prop, "Volume", "Volume\nAudio volume");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_SOUND);
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 #  endif
@@ -5537,14 +5537,14 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
        "SCREEN",
        0,
        "Full Screen",
-       "Images are rendered in a maximized Image Editor"},
-      {R_OUTPUT_AREA, "AREA", 0, "Image Editor", "Images are rendered in an Image Editor"},
+       "Full Screen\nImages are rendered in a maximized Image Editor"},
+      {R_OUTPUT_AREA, "AREA", 0, "Image Editor", "Image Editor\nImages are rendered in an Image Editor"},
       {R_OUTPUT_WINDOW, "WINDOW", 0, "New Window", "Images are rendered in a new window"},
       {R_OUTPUT_NONE,
        "NONE",
        0,
        "Keep User Interface",
-       "Images are rendered without changing the user interface"},
+       "Keep User Interface\nImages are rendered without changing the user interface"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -5552,16 +5552,16 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   static const EnumPropertyItem bake_mode_items[] = {
       //{RE_BAKE_AO, "AO", 0, "Ambient Occlusion", "Bake ambient occlusion"},
       {RE_BAKE_NORMALS, "NORMALS", 0, "Normals", "Bake normals"},
-      {RE_BAKE_DISPLACEMENT, "DISPLACEMENT", 0, "Displacement", "Bake displacement"},
+      {RE_BAKE_DISPLACEMENT, "DISPLACEMENT", 0, "Displacement", "Displacement\nBake displacement"},
       {0, NULL, 0, NULL, NULL},
   };
 
   static const EnumPropertyItem pixel_size_items[] = {
-      {0, "AUTO", 0, "Automatic", "Automatic pixel size, depends on the user interface scale"},
-      {1, "1", 0, "1x", "Render at full resolution"},
-      {2, "2", 0, "2x", "Render at 50% resolution"},
-      {4, "4", 0, "4x", "Render at 25% resolution"},
-      {8, "8", 0, "8x", "Render at 12.5% resolution"},
+      {0, "AUTO", 0, "Automatic", "Automatic\nAutomatic pixel size, depends on the user interface scale"},
+      {1, "1", 0, "1x", "1x\nRender at full resolution"},
+      {2, "2", 0, "2x", "2x\nRender at 50% resolution"},
+      {4, "4", 0, "4x", "4x\nRender at 25% resolution"},
+      {8, "8", 0, "8x", "8x\nRender at 12.5% resolution"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -5570,8 +5570,8 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
        "AUTO",
        0,
        "Auto-detect",
-       "Automatically determine the number of threads, based on CPUs"},
-      {R_FIXED_THREADS, "FIXED", 0, "Fixed", "Manually determine the number of threads"},
+       "Auto-detect\nAutomatically determine the number of threads, based on CPUs"},
+      {R_FIXED_THREADS, "FIXED", 0, "Fixed", "Fixed\nManually determine the number of threads"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -5585,12 +5585,12 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
        "ABSOLUTE",
        0,
        "Absolute",
-       "Specify unit line thickness in pixels"},
+       "Absolute\nSpecify unit line thickness in pixels"},
       {R_LINE_THICKNESS_RELATIVE,
        "RELATIVE",
        0,
        "Relative",
-       "Unit line thickness is scaled by the proportion of the present vertical image "
+       "Relative\nUnit line thickness is scaled by the proportion of the present vertical image "
        "resolution to 480 pixels"},
       {0, NULL, 0, NULL, NULL},
   };
@@ -5600,12 +5600,12 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
        "STEREO_3D",
        0,
        "Stereo 3D",
-       "Single stereo camera system, adjust the stereo settings in the camera panel"},
+       "Stereo 3D\nSingle stereo camera system, adjust the stereo settings in the camera panel"},
       {SCE_VIEWS_FORMAT_MULTIVIEW,
        "MULTIVIEW",
        0,
        "Multi-View",
-       "Multi camera system, adjust the cameras individually"},
+       "Multi-View\nMulti camera system, adjust the cameras individually"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -7355,20 +7355,20 @@ void RNA_def_scene(BlenderRNA *brna)
   PropertyRNA *parm;
 
   static const EnumPropertyItem audio_distance_model_items[] = {
-      {0, "NONE", 0, "None", "No distance attenuation"},
-      {1, "INVERSE", 0, "Inverse", "Inverse distance model"},
-      {2, "INVERSE_CLAMPED", 0, "Inverse Clamped", "Inverse distance model with clamping"},
-      {3, "LINEAR", 0, "Linear", "Linear distance model"},
-      {4, "LINEAR_CLAMPED", 0, "Linear Clamped", "Linear distance model with clamping"},
-      {5, "EXPONENT", 0, "Exponent", "Exponent distance model"},
-      {6, "EXPONENT_CLAMPED", 0, "Exponent Clamped", "Exponent distance model with clamping"},
+      {0, "NONE", 0, "None", "None\nNo distance attenuation"},
+      {1, "INVERSE", 0, "Inverse", "Inverse\nInverse distance model"},
+      {2, "INVERSE_CLAMPED", 0, "Inverse Clamped", "Inverse Clamped\nInverse distance model with clamping"},
+      {3, "LINEAR", 0, "Linear", "Linear\nLinear distance model"},
+      {4, "LINEAR_CLAMPED", 0, "Linear Clamped", "Linear Clamped\nLinear distance model with clamping"},
+      {5, "EXPONENT", 0, "Exponent", "Exponent\nExponent distance model"},
+      {6, "EXPONENT_CLAMPED", 0, "Exponent Clamped", "Exponent Clamped\nExponent distance model with clamping"},
       {0, NULL, 0, NULL, NULL},
   };
 
   static const EnumPropertyItem sync_mode_items[] = {
-      {0, "NONE", 0, "No Sync", "Do not sync, play every frame"},
-      {SCE_FRAME_DROP, "FRAME_DROP", 0, "Frame Dropping", "Drop frames if playback is too slow"},
-      {AUDIO_SYNC, "AUDIO_SYNC", 0, "AV-sync", "Sync to audio playback, dropping frames"},
+      {0, "NONE", 0, "No Sync", "No Sync\nDo not sync, play every frame"},
+      {SCE_FRAME_DROP, "FRAME_DROP", 0, "Frame Dropping", "Frame Dropping\nDrop frames if playback is too slow"},
+      {AUDIO_SYNC, "AUDIO_SYNC", 0, "AV-sync", "AV-sync\nSync to audio playback, dropping frames"},
       {0, NULL, 0, NULL, NULL},
   };
 
