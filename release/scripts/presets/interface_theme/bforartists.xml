@@ -103,8 +103,8 @@
           <ThemeWidgetColors
             outline="#252525"
             inner="#808080ff"
-            inner_sel="#5680c2ff"
-            item="#b3ffb3ff"
+            inner_sel="#80e6ffff"
+            item="#000000ff"
             text="#cccccc"
             text_sel="#e6fff2"
             show_shaded="FALSE"
@@ -410,7 +410,7 @@
         paint_curve_handle="#7fff7f7f"
         paint_curve_pivot="#ff7f7f7f"
         outline_width="1"
-        object_origin_size="0"
+        object_origin_size="6"
         >
         <space>
           <ThemeSpaceGradient
