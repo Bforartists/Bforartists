@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -1156,6 +1156,10 @@ msgid "Navigation"
 msgstr "Navigatie"
 
 
+msgid "Select Linked"
+msgstr "Selecteer Aaneengesloten"
+
+
 msgid "Text"
 msgstr "Tekst"
 
@@ -1186,10 +1190,6 @@ msgstr "Vlak"
 
 msgid "Normals"
 msgstr "Normalen"
-
-
-msgid "Select Linked"
-msgstr "Selecteer Aaneengesloten"
 
 
 msgid "Select Similar"
@@ -5300,6 +5300,16 @@ msgstr "Passend"
 
 
 msgctxt "Operator"
+msgid "Left"
+msgstr "Links"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "Rechts"
+
+
+msgctxt "Operator"
 msgid "Movie"
 msgstr "Film"
 
@@ -5414,16 +5424,6 @@ msgstr "Voorkant"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Terug"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "Rechts"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "Links"
 
 
 msgctxt "Operator"

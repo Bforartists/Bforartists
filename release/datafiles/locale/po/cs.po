@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -1577,10 +1577,6 @@ msgstr "Nastavení mapování"
 
 msgid "Input Color Space"
 msgstr "Barva "
-
-
-msgid "Color space of the image or movie on disk"
-msgstr "Přidat vazbu aktivní kosti"
 
 
 msgid "Color Space"
@@ -10073,8 +10069,16 @@ msgid "Navigation"
 msgstr "Navigace"
 
 
+msgid "Select Linked"
+msgstr "Vybrat Propojené"
+
+
 msgid "Strip"
 msgstr "NLA Proužky"
+
+
+msgid "Movie Strip"
+msgstr "Přidat action strip"
 
 
 msgid "View Type"
@@ -10179,10 +10183,6 @@ msgstr "Sloučit"
 
 msgid "Normals"
 msgstr "Normály"
-
-
-msgid "Select Linked"
-msgstr "Vybrat Propojené"
 
 
 msgid "Mesh Select Mode"
@@ -19464,6 +19464,22 @@ msgid "Shape Propagate"
 msgstr "Vložit"
 
 
+msgid "Tag Seam"
+msgstr "Označit šev"
+
+
+msgid "Tag Sharp"
+msgstr "Zrušit šev"
+
+
+msgid "Tag Crease"
+msgstr "Ostrost"
+
+
+msgid "Tag Bevel"
+msgstr "Zaoblit"
+
+
 msgctxt "Operator"
 msgid "Solidify"
 msgstr "Rozšířit"
@@ -26145,10 +26161,6 @@ msgid "Spot Shape"
 msgstr "Velikost fontu:   8"
 
 
-msgid "Performance"
-msgstr "Transformace"
-
-
 msgid "Ray Visibility"
 msgstr "Viditelnost"
 
@@ -26175,6 +26187,10 @@ msgstr "Zvukÿ: "
 
 msgid "Passes"
 msgstr "Průchody:"
+
+
+msgid "Performance"
+msgstr "Transformace"
 
 
 msgid "Threads"
@@ -31266,10 +31282,6 @@ msgid "Meta Strip"
 msgstr "Zarovnat NLA proužky"
 
 
-msgid "Movie Strip"
-msgstr "Přidat action strip"
-
-
 msgid "Clip Strip"
 msgstr "Začátek střihu"
 
@@ -31634,30 +31646,6 @@ msgid "Add & Replace"
 msgstr "Nahrazeno "
 
 
-msgid "Double Threshold"
-msgstr "Práh"
-
-
-msgid "Edge Tag Mode"
-msgstr "Opustit Editační mód"
-
-
-msgid "Tag Seam"
-msgstr "Označit šev"
-
-
-msgid "Tag Sharp"
-msgstr "Zrušit šev"
-
-
-msgid "Tag Crease"
-msgstr "Ostrost"
-
-
-msgid "Tag Bevel"
-msgstr "Zaoblit"
-
-
 msgid "Stick stroke to other strokes"
 msgstr "Konvertuje označené trojúhlníky na čtyřúhelníky"
 
@@ -31748,10 +31736,6 @@ msgstr "Vložit hodnotu"
 
 msgid "Automatic keyframe insertion using active Keying Set only"
 msgstr "Automaticky vkládat klíče objektu a Action Ipo křivky"
-
-
-msgid "AutoMerge Editing"
-msgstr "Automatické slučování"
 
 
 msgid "Automatically merge vertices moved to the same location"
@@ -32026,10 +32010,6 @@ msgid "Draw Edges"
 msgstr "Zobrazit skryté hrany"
 
 
-msgid "Display selected edges using highlights in the 3D view and UV editor"
-msgstr "Zobrazit obrázek na pozadí pohledu do 3D"
-
-
 msgid "Edge Angle"
 msgstr "Zobrazit nastaveni hran"
 
@@ -32052,10 +32032,6 @@ msgstr "Zobrazit soubory jako krátký seznam"
 
 msgid "Draw Faces"
 msgstr "Kreslit plošky"
-
-
-msgid "Display all faces as shades in the 3D view and UV editor"
-msgstr "Zobrazit obrázek na pozadí pohledu do 3D"
 
 
 msgid "Display Grid Floor"
@@ -33391,6 +33367,16 @@ msgstr "Hra"
 
 
 msgctxt "Operator"
+msgid "Left"
+msgstr "Zleva"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "Zprava"
+
+
+msgctxt "Operator"
 msgid "Grouped"
 msgstr "Seskupené"
 
@@ -33407,31 +33393,6 @@ msgstr "Zvuk"
 
 msgid "Storage"
 msgstr "Sloučit"
-
-
-msgctxt "Operator"
-msgid "Strips to the Left"
-msgstr "Přepne směr normál označených plošek"
-
-
-msgctxt "Operator"
-msgid "Strips to the Right"
-msgstr "Přepne směr normál označených plošek"
-
-
-msgctxt "Operator"
-msgid "Surrounding Handles"
-msgstr "Mód Úchopu"
-
-
-msgctxt "Operator"
-msgid "Left Handle"
-msgstr "Vazby a spojení"
-
-
-msgctxt "Operator"
-msgid "Right Handle"
-msgstr "Mód Úchopu"
 
 
 msgctxt "Operator"
@@ -33768,16 +33729,6 @@ msgstr "Zepředu"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Zezadu"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "Zprava"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "Zleva"
 
 
 msgctxt "Operator"

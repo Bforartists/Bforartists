@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -4310,10 +4310,6 @@ msgid "Input Color Space"
 msgstr "Espace de couleur d’entrée"
 
 
-msgid "Color space of the image or movie on disk"
-msgstr "Espace de couleur de l’image ou de la vidéo sur le disque"
-
-
 msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
 msgstr "Formateur “filmic” logarithmique avec 16.5 ouvertures de latitude, et 25 ouvertures de dynamique"
 
@@ -4332,10 +4328,6 @@ msgstr "Espace de couleur utilisé pour les images ne contenant pas de données 
 
 msgid "Standard RGB Display Space"
 msgstr "Espace d’écran RGB standard"
-
-
-msgid "The simple video conversion from a gamma 2.2 sRGB space"
-msgstr "La simple conversion vidéo depuis un espace sRGB de gamma 2.2"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -15556,10 +15548,6 @@ msgid "Alpha Mode"
 msgstr "Mode alpha"
 
 
-msgid "Representation of alpha information in the RGBA pixels"
-msgstr "Représentation de l’information alpha dans les pixels RGBA"
-
-
 msgid "Straight"
 msgstr "Direct"
 
@@ -23902,12 +23890,20 @@ msgid "Navigation"
 msgstr "Navigation"
 
 
+msgid "Select Linked"
+msgstr "Sélectionner liés"
+
+
 msgid "Strip"
 msgstr "Bande"
 
 
 msgid "Lock/Mute"
 msgstr "Verrouiller/rendre muet"
+
+
+msgid "Movie Strip"
+msgstr "Bande vidéo"
 
 
 msgid "Cache"
@@ -24044,10 +24040,6 @@ msgstr "Normales"
 
 msgid "Select All by Trait"
 msgstr "Tout sélectionner par caractéristiques"
-
-
-msgid "Select Linked"
-msgstr "Sélectionner liés"
 
 
 msgid "Select Loops"
@@ -42530,6 +42522,30 @@ msgid "Apply selected vertex locations to all other shape keys"
 msgstr "Appliquer les positions des vertices sélectionnés à toutes les autres clés de forme"
 
 
+msgid "The edge flag to tag when selecting the shortest path"
+msgstr "Le drapeau d’arête à taguer lors de la sélection du chemin le plus court"
+
+
+msgid "Tag Seam"
+msgstr "Taguer couture"
+
+
+msgid "Tag Sharp"
+msgstr "Taguer dureté"
+
+
+msgid "Tag Crease"
+msgstr "Taguer plis"
+
+
+msgid "Tag Bevel"
+msgstr "Taguer biseau"
+
+
+msgid "Tag Freestyle Edge Mark"
+msgstr "Marquer arête Freestyle"
+
+
 msgid "Face Stepping"
 msgstr "Étape (pas) de face"
 
@@ -52485,14 +52501,6 @@ msgid "Region Position Y"
 msgstr "Position de région Y"
 
 
-msgid "Mouse Init"
-msgstr "Initialisation de la souris"
-
-
-msgid "Use initial mouse position"
-msgstr "Utiliser la position initiale de la souris"
-
-
 msgctxt "Operator"
 msgid "Extrude Individual and Move"
 msgstr "Extruder individuels et déplacer"
@@ -53221,22 +53229,6 @@ msgstr "Appliquer les réglages de vue des modificateurs"
 
 msgid "Apply modifier's render settings"
 msgstr "Appliquer les réglages de rendu des modificateurs"
-
-
-msgid "Transformation type for translation, scale and rotation"
-msgstr "Type de transformation pour les translation, redimensionnement et rotation"
-
-
-msgid "Use <matrix> to specify transformations"
-msgstr "Utiliser <matrice> pour spécifier les transformations"
-
-
-msgid "TransRotLoc"
-msgstr "TransRotPos"
-
-
-msgid "Use <translate>, <rotate>, <scale> to specify transformations"
-msgstr "Utiliser <translation>, <rotation>, <redimensionnement> pour spécifier les transformations"
 
 
 msgid "Include Armatures"
@@ -55003,14 +54995,6 @@ msgid "Spot Shape"
 msgstr "Forme de spot"
 
 
-msgid "Cycles Settings"
-msgstr "Réglages de Cycles"
-
-
-msgid "Performance"
-msgstr "Performance"
-
-
 msgid "Ray Visibility"
 msgstr "Visibilité de rayon"
 
@@ -55061,6 +55045,10 @@ msgstr "Courbe d’obturateur"
 
 msgid "Passes"
 msgstr "Passes"
+
+
+msgid "Performance"
+msgstr "Performance"
 
 
 msgid "Acceleration Structure"
@@ -61821,6 +61809,10 @@ msgid "Sequence strip applying an effect on the images created by other strips"
 msgstr "Bande séquence appliquant un effet aux images créées par d’autres bandes"
 
 
+msgid "Representation of alpha information in the RGBA pixels"
+msgstr "Représentation de l’information alpha dans les pixels RGBA"
+
+
 msgid "RGB channels in transparent pixels are unaffected by the alpha channel"
 msgstr "Les canaux RGB des pixels transparents ne sont pas affectés par le canal alpha"
 
@@ -66163,18 +66155,6 @@ msgid "Color of disabled marker"
 msgstr "Couleur de marqueur désactivé"
 
 
-msgid "Grease Pencil Vertex"
-msgstr "Vertex de crayon gras"
-
-
-msgid "Grease Pencil Vertex Select"
-msgstr "Crayon gras, vertex sélectionné"
-
-
-msgid "Grease Pencil Vertex Size"
-msgstr "Crayon gras, taille de vertex"
-
-
 msgid "Align handle color"
 msgstr "Couleur des poignées alignées"
 
@@ -66947,10 +66927,6 @@ msgid "Meta Strip"
 msgstr "Bande méta"
 
 
-msgid "Movie Strip"
-msgstr "Bande vidéo"
-
-
 msgid "Clip Strip"
 msgstr "Bande clip"
 
@@ -67287,6 +67263,18 @@ msgid "Face Area Text"
 msgstr "Texte de surface des faces"
 
 
+msgid "Grease Pencil Vertex"
+msgstr "Vertex de crayon gras"
+
+
+msgid "Grease Pencil Vertex Select"
+msgstr "Crayon gras, vertex sélectionné"
+
+
+msgid "Grease Pencil Vertex Size"
+msgstr "Crayon gras, taille de vertex"
+
+
 msgid "Face Normal"
 msgstr "Normales des faces"
 
@@ -67461,42 +67449,6 @@ msgstr "Mode d’automation pour les objets et os"
 
 msgid "Add & Replace"
 msgstr "Ajouter & remplacer"
-
-
-msgid "Double Threshold"
-msgstr "Limite double"
-
-
-msgid "Limit for removing duplicates and 'Auto Merge'"
-msgstr "Limite pour enlever les copies et pour l’“Auto-fusion”"
-
-
-msgid "Edge Tag Mode"
-msgstr "Mode de tagage d’arête"
-
-
-msgid "The edge flag to tag when selecting the shortest path"
-msgstr "Le drapeau d’arête à taguer lors de la sélection du chemin le plus court"
-
-
-msgid "Tag Seam"
-msgstr "Taguer couture"
-
-
-msgid "Tag Sharp"
-msgstr "Taguer dureté"
-
-
-msgid "Tag Crease"
-msgstr "Taguer plis"
-
-
-msgid "Tag Bevel"
-msgstr "Taguer biseau"
-
-
-msgid "Tag Freestyle Edge Mark"
-msgstr "Marquer arête Freestyle"
 
 
 msgid "Grease Pencil Interpolate"
@@ -67681,10 +67633,6 @@ msgstr "Automation dans ensemble de clés"
 
 msgid "Automatic keyframe insertion using active Keying Set only"
 msgstr "Insertion automatique d’images clé uniquement dans l’ensemble de clés actif"
-
-
-msgid "AutoMerge Editing"
-msgstr "Auto-fusionner à l’édition"
 
 
 msgid "Automatically merge vertices moved to the same location"
@@ -68235,10 +68183,6 @@ msgid "Draw Edges"
 msgstr "Afficher arêtes"
 
 
-msgid "Display selected edges using highlights in the 3D view and UV editor"
-msgstr "Surligner les arêtes sélectionnées dans les vues 3D et l’éditeur UV"
-
-
 msgid "Edge Angle"
 msgstr "Angle entre arêtes"
 
@@ -68281,10 +68225,6 @@ msgstr "Orientation de face"
 
 msgid "Draw Faces"
 msgstr "Dessiner faces"
-
-
-msgid "Display all faces as shades in the 3D view and UV editor"
-msgstr "Afficher toutes les faces comme ombres dans les vues 3D et l’éditeur UV"
 
 
 msgid "Display Grid Floor"
@@ -72000,13 +71940,13 @@ msgstr "Gain :"
 
 
 msgctxt "Operator"
-msgid "All Strips to the Left"
-msgstr "Toutes les bandes à gauche"
+msgid "Left"
+msgstr "Gauche"
 
 
 msgctxt "Operator"
-msgid "All Strips to the Right"
-msgstr "Toutes les bandes à droite"
+msgid "Right"
+msgstr "Droite"
 
 
 msgctxt "Operator"
@@ -72070,31 +72010,6 @@ msgstr "Stockage"
 msgctxt "Operator"
 msgid "Fit Preview in window"
 msgstr "Ajuster prévis. dans fenêtre"
-
-
-msgctxt "Operator"
-msgid "Strips to the Left"
-msgstr "Bandes à gauche"
-
-
-msgctxt "Operator"
-msgid "Strips to the Right"
-msgstr "Bandes à droite"
-
-
-msgctxt "Operator"
-msgid "Surrounding Handles"
-msgstr "Poignées voisines"
-
-
-msgctxt "Operator"
-msgid "Left Handle"
-msgstr "Poignée gauche"
-
-
-msgctxt "Operator"
-msgid "Right Handle"
-msgstr "Poignée droite"
 
 
 msgctxt "Operator"
@@ -72185,16 +72100,6 @@ msgstr "Flou gaussien"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "Recharger bandes et ajuster longueurs"
-
-
-msgctxt "Operator"
-msgid "Cut (Hard) at frame"
-msgstr "Couper (dur) à la frame"
-
-
-msgctxt "Operator"
-msgid "Cut (Soft) at frame"
-msgstr "Couper (doux) à la frame"
 
 
 msgid "Show Grease Pencil"
@@ -72342,13 +72247,13 @@ msgstr "Installer patron d’application…"
 
 
 msgctxt "Operator"
-msgid "Quit"
-msgstr "Quitter"
+msgid "Append..."
+msgstr "Ajouter…"
 
 
 msgctxt "Operator"
-msgid "Append..."
-msgstr "Ajouter…"
+msgid "Quit"
+msgstr "Quitter"
 
 
 msgctxt "Operator"
@@ -72714,16 +72619,6 @@ msgstr "De face"
 msgctxt "Operator"
 msgid "Back"
 msgstr "De derrière"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "Droite"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "Gauche"
 
 
 msgctxt "Operator"
@@ -74559,10 +74454,6 @@ msgid "Marker offset %s"
 msgstr "Marqueur décalage %s"
 
 
-msgid "Programming error: operator does not actually have code to do anything!"
-msgstr "Erreur de programmation : l’opérateur n’a aucun code pour faire quoi que ce soit !"
-
-
 msgid "Scene not found"
 msgstr "Scène non trouvée"
 
@@ -75986,12 +75877,12 @@ msgid "Export Data Options:"
 msgstr "Options d’export de données :"
 
 
-msgid "Armature Options:"
-msgstr "Options d’armature :"
-
-
 msgid "Transformation Type"
 msgstr "Type de transformation"
+
+
+msgid "Armature Options:"
+msgstr "Options d’armature :"
 
 
 msgid "Collada Options:"
@@ -77549,10 +77440,6 @@ msgid "Search Area:"
 msgstr "Zone de recherche :"
 
 
-msgid "Size %d x %d"
-msgstr "Taille %d × %d"
-
-
 msgid ", %d float channel(s)"
 msgstr ", %d canal(-naux) flottant(s)"
 
@@ -78888,10 +78775,6 @@ msgid "No active camera"
 msgstr "Pas de caméra active"
 
 
-msgid "%s: confirm, %s: cancel, %s: gravity (%s), %s|%s|%s|%s: move around, %s: fast, %s: slow, %s|%s: up and down, %s: teleport, %s: jump, %s: increase speed, %s: decrease speed"
-msgstr "%s: confirmer, %s: annuler, %s: gravité (%s), %s|%s|%s|%s: déplacer, %s: rapide, %s: lent, %s|%s: haut et bas, %s: téléporter, %s: sauter, %s: augmenter vitesse, %s: diminuer vitesse"
-
-
 msgid "Cannot navigate a camera from an external library"
 msgstr "Impossible de déplacer une caméra provenant d’une bibliothèque externe"
 
@@ -79423,18 +79306,6 @@ msgstr "au juge blond"
 
 msgid "the lazy dog"
 msgstr "qui fume 0123456789"
-
-
-msgid "'Refresh' incompatible with Object ID type"
-msgstr "“Rafraîchissement” incompatible avec le type d’ID “Object”"
-
-
-msgid "'Refresh' incompatible with ParticleSettings ID type"
-msgstr "“Rafraîchissement” incompatible avec le type d’ID “ParticleSettings”"
-
-
-msgid "This ID type is not compatible with any 'refresh' options"
-msgstr "Ce type d’ID n’est compatible avec aucunes options de “rafraîchissement”"
 
 
 msgid "Index out of range"

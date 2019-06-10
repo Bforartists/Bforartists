@@ -86,6 +86,21 @@
 #include "RNA_enum_types.h"
 
 #include "DEG_depsgraph.h"
+#include "DEG_depsgraph_query.h"
+
+/**
+ * When a gizmo is highlighted and uses click/drag events,
+ * this prevents mouse button press events from being passed through to other key-maps
+ * which would obscure those events.
+ *
+ * This allows gizmos that only use drag to co-exist with tools that use click.
+ *
+ * Without tools using press events which would prevent click/drag events getting to the gizmos.
+ *
+ * This is not a fool proof solution since since it's possible the gizmo operators would pass
+ * through thse events when called, see: T65479.
+ */
+#define USE_GIZMO_MOUSE_PRIORITY_HACK
 
 static void wm_notifier_clear(wmNotifier *note);
 static void update_tablet_data(wmWindow *win, wmEvent *event);
@@ -312,7 +327,7 @@ static void wm_notifier_clear(wmNotifier *note)
   memset(((char *)note) + sizeof(Link), 0, sizeof(*note) - sizeof(Link));
 }
 
-void wm_event_do_depsgraph(bContext *C)
+void wm_event_do_depsgraph(bContext *C, bool is_after_open_file)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
   /* The whole idea of locked interface is to prevent viewport and whatever
@@ -346,6 +361,10 @@ void wm_event_do_depsgraph(bContext *C)
      * across visible view layers and has overrides on it.
      */
     Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer, true);
+    if (is_after_open_file) {
+      DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
+      DEG_graph_on_visible_update(bmain, depsgraph, true);
+    }
     DEG_make_active(depsgraph);
     BKE_scene_graph_update_tagged(depsgraph, bmain);
   }
@@ -373,7 +392,7 @@ void wm_event_do_refresh_wm_and_depsgraph(bContext *C)
     }
   }
 
-  wm_event_do_depsgraph(C);
+  wm_event_do_depsgraph(C, false);
 
   CTX_wm_window_set(C, NULL);
 }
@@ -2564,7 +2583,7 @@ static int wm_handlers_do_keymap_with_keymap_handler(
   return action;
 }
 
-static bool wm_handlers_do_keymap_with_gizmo_handler(
+static int wm_handlers_do_keymap_with_gizmo_handler(
     /* From 'wm_handlers_do_intern' */
     bContext *C,
     wmEvent *event,
@@ -2573,14 +2592,17 @@ static bool wm_handlers_do_keymap_with_gizmo_handler(
     /* Additional. */
     wmGizmoGroup *gzgroup,
     wmKeyMap *keymap,
-    const bool do_debug_handler)
+    const bool do_debug_handler,
+    bool *r_keymap_poll)
 {
   int action = WM_HANDLER_CONTINUE;
+  bool keymap_poll = false;
   wmKeyMapItem *kmi;
 
   PRINT("%s:   checking '%s' ...", __func__, keymap->idname);
 
   if (WM_keymap_poll(C, keymap)) {
+    keymap_poll = true;
     PRINT("pass\n");
     for (kmi = keymap->items.first; kmi; kmi = kmi->next) {
       if (wm_eventmatch(event, kmi)) {
@@ -2618,6 +2640,11 @@ static bool wm_handlers_do_keymap_with_gizmo_handler(
   else {
     PRINT("fail\n");
   }
+
+  if (r_keymap_poll) {
+    *r_keymap_poll = keymap_poll;
+  }
+
   return action;
 }
 
@@ -2766,14 +2793,50 @@ static int wm_handlers_do_intern(bContext *C, wmEvent *event, ListBase *handlers
           }
         }
 
+        /* Don't use from now on. */
+        bool is_event_handle_all = gz && (gz->flag & WM_GIZMO_EVENT_HANDLE_ALL);
+
         if (handle_keymap) {
           /* Handle highlight gizmo. */
           if (gz != NULL) {
+            bool keymap_poll = false;
             wmGizmoGroup *gzgroup = gz->parent_gzgroup;
             wmKeyMap *keymap = WM_keymap_active(wm,
                                                 gz->keymap ? gz->keymap : gzgroup->type->keymap);
             action |= wm_handlers_do_keymap_with_gizmo_handler(
-                C, event, handlers, handler, gzgroup, keymap, do_debug_handler);
+                C, event, handlers, handler, gzgroup, keymap, do_debug_handler, &keymap_poll);
+
+#ifdef USE_GIZMO_MOUSE_PRIORITY_HACK
+            if (((action & WM_HANDLER_BREAK) == 0) && !is_event_handle_all && keymap_poll) {
+              if ((event->val == KM_PRESS) &&
+                  ELEM(event->type, LEFTMOUSE, MIDDLEMOUSE, RIGHTMOUSE)) {
+
+                wmEvent event_test_click = *event;
+                event_test_click.val = KM_CLICK;
+
+                wmEvent event_test_click_drag = *event;
+                event_test_click_drag.val = KM_CLICK_DRAG;
+
+                wmEvent event_test_tweak = *event;
+                event_test_tweak.type = EVT_TWEAK_L + (event->type - LEFTMOUSE);
+                event_test_tweak.val = KM_ANY;
+
+                for (wmKeyMapItem *kmi = keymap->items.first; kmi; kmi = kmi->next) {
+                  if ((kmi->flag & KMI_INACTIVE) == 0) {
+                    if (wm_eventmatch(&event_test_click, kmi) ||
+                        wm_eventmatch(&event_test_click_drag, kmi) ||
+                        wm_eventmatch(&event_test_tweak, kmi)) {
+                      wmOperatorType *ot = WM_operatortype_find(kmi->idname, 0);
+                      if (WM_operator_poll_context(C, ot, WM_OP_INVOKE_DEFAULT)) {
+                        is_event_handle_all = true;
+                        break;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+#endif /* USE_GIZMO_MOUSE_PRIORITY_HACK */
           }
 
           /* Don't use from now on. */
@@ -2787,13 +2850,19 @@ static int wm_handlers_do_intern(bContext *C, wmEvent *event, ListBase *handlers
                 if (wm_gizmogroup_is_any_selected(gzgroup)) {
                   wmKeyMap *keymap = WM_keymap_active(wm, gzgroup->type->keymap);
                   action |= wm_handlers_do_keymap_with_gizmo_handler(
-                      C, event, handlers, handler, gzgroup, keymap, do_debug_handler);
+                      C, event, handlers, handler, gzgroup, keymap, do_debug_handler, NULL);
                   if (action & WM_HANDLER_BREAK) {
                     break;
                   }
                 }
               }
             }
+          }
+        }
+
+        if (is_event_handle_all) {
+          if (action == WM_HANDLER_CONTINUE) {
+            action |= WM_HANDLER_BREAK | WM_HANDLER_MODAL;
           }
         }
 
@@ -3064,7 +3133,7 @@ static void wm_paintcursor_test(bContext *C, const wmEvent *event)
   }
 }
 
-static void wm_event_drag_test(wmWindowManager *wm, wmWindow *win, wmEvent *event)
+static void wm_event_drag_and_drop_test(wmWindowManager *wm, wmWindow *win, wmEvent *event)
 {
   bScreen *screen = WM_window_get_active_screen(win);
 
@@ -3145,13 +3214,17 @@ void wm_event_do_handlers(bContext *C)
     else {
       Scene *scene = WM_window_get_active_scene(win);
 
-      if (scene) {
-        int is_playing_sound = BKE_sound_scene_playing(scene);
+      CTX_wm_window_set(C, win);
+      CTX_data_scene_set(C, scene);
+
+      Depsgraph *depsgraph = CTX_data_depsgraph(C);
+      Scene *scene_eval = DEG_get_evaluated_scene_if_exists(depsgraph);
+
+      if (scene_eval) {
+        const int is_playing_sound = BKE_sound_scene_playing(scene_eval);
 
         if (is_playing_sound != -1) {
           bool is_playing_screen;
-          CTX_wm_window_set(C, win);
-          CTX_data_scene_set(C, scene);
 
           is_playing_screen = (ED_screen_animation_playing(wm) != NULL);
 
@@ -3166,18 +3239,17 @@ void wm_event_do_handlers(bContext *C)
               int ncfra = time * (float)FPS + 0.5f;
               if (ncfra != scene->r.cfra) {
                 scene->r.cfra = ncfra;
-                Depsgraph *depsgraph = CTX_data_depsgraph(C);
                 ED_update_for_newframe(CTX_data_main(C), depsgraph);
                 WM_event_add_notifier(C, NC_WINDOW, NULL);
               }
             }
           }
-
-          CTX_data_scene_set(C, NULL);
-          CTX_wm_screen_set(C, NULL);
-          CTX_wm_window_set(C, NULL);
         }
       }
+
+      CTX_data_scene_set(C, NULL);
+      CTX_wm_screen_set(C, NULL);
+      CTX_wm_window_set(C, NULL);
     }
 
     while ((event = win->queue.first)) {
@@ -3239,7 +3311,7 @@ void wm_event_do_handlers(bContext *C)
       }
 
       /* check dragging, creates new event or frees, adds draw tag */
-      wm_event_drag_test(wm, win, event);
+      wm_event_drag_and_drop_test(wm, win, event);
 
       /* builtin tweak, if action is break it removes tweak */
       wm_tweakevent_test(C, event, action);
@@ -4289,8 +4361,7 @@ static wmEvent *wm_event_add_mousemove(wmWindow *win, const wmEvent *event)
 
 /* windows store own event queues, no bContext here */
 /* time is in 1000s of seconds, from ghost */
-void wm_event_add_ghostevent(
-    wmWindowManager *wm, wmWindow *win, int type, int UNUSED(time), void *customdata)
+void wm_event_add_ghostevent(wmWindowManager *wm, wmWindow *win, int type, void *customdata)
 {
   wmWindow *owin;
 
@@ -4321,6 +4392,8 @@ void wm_event_add_ghostevent(
       copy_v2_v2_int(&event.x, &cd->x);
       wm_stereo3d_mouse_offset_apply(win, &event.x);
 
+      event.prevtype = event.type;
+      event.prevval = event.val;
       event.type = MOUSEMOVE;
       {
         wmEvent *event_new = wm_event_add_mousemove(win, &event);
@@ -4337,6 +4410,8 @@ void wm_event_add_ghostevent(
         oevent = *oevt;
 
         copy_v2_v2_int(&oevent.x, &event.x);
+        oevent.prevtype = oevent.type;
+        oevent.prevval = oevent.val;
         oevent.type = MOUSEMOVE;
         {
           wmEvent *event_new = wm_event_add_mousemove(owin, &oevent);
@@ -5087,7 +5162,8 @@ void WM_window_cursor_keymap_status_refresh(bContext *C, wmWindow *win)
     }
     if (kmi) {
       wmOperatorType *ot = WM_operatortype_find(kmi->idname, 0);
-      STRNCPY(cd->text[button_index][type_index], ot ? ot->name : kmi->idname);
+      const char *name = (ot) ? WM_operatortype_name(ot, kmi->ptr) : kmi->idname;
+      STRNCPY(cd->text[button_index][type_index], name);
     }
   }
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: blend-it <https://developer.blender.org/T42765>\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -3436,10 +3436,6 @@ msgstr "Impostazioni spazio colore input"
 
 msgid "Input Color Space"
 msgstr "Spazio Colore Input"
-
-
-msgid "Color space of the image or movie on disk"
-msgstr "Spazio colore dell'immagine o del filmato sul disco"
 
 
 msgid "Color Space"
@@ -12326,10 +12322,6 @@ msgid "Alpha Mode"
 msgstr "Modalità Alfa"
 
 
-msgid "Representation of alpha information in the RGBA pixels"
-msgstr "Modo di rappresentare le informazioni alfa nei pixel RGBA"
-
-
 msgid "Straight"
 msgstr "Diretto"
 
@@ -19098,12 +19090,20 @@ msgid "Navigation"
 msgstr "Navigazione"
 
 
+msgid "Select Linked"
+msgstr "Seleziona Collegati"
+
+
 msgid "Strip"
 msgstr "Spezzone"
 
 
 msgid "Lock/Mute"
 msgstr "Blocca/Disattiva"
+
+
+msgid "Movie Strip"
+msgstr "Spezzone Filmato"
 
 
 msgid "Cache"
@@ -19232,10 +19232,6 @@ msgstr "Normali"
 
 msgid "Select All by Trait"
 msgstr "Seleziona Tutto per Caratteristica"
-
-
-msgid "Select Linked"
-msgstr "Seleziona Collegati"
 
 
 msgid "Select Loops"
@@ -34478,6 +34474,26 @@ msgid "Apply selected vertex locations to all other shape keys"
 msgstr "Applica la posizione dei vertici selezionati a tutte le altre chiavi forma"
 
 
+msgid "Tag Seam"
+msgstr "Etichetta Cucitura"
+
+
+msgid "Tag Sharp"
+msgstr "Etichetta Nitido"
+
+
+msgid "Tag Crease"
+msgstr "Etichetta Piega"
+
+
+msgid "Tag Bevel"
+msgstr "Etichetta Smusso"
+
+
+msgid "Tag Freestyle Edge Mark"
+msgstr "Etichetta Marcatura Spigolo Freestyle"
+
+
 msgid "Face Stepping"
 msgstr "Passo Faccia"
 
@@ -45225,14 +45241,6 @@ msgid "Spot Shape"
 msgstr "Forma Faretto"
 
 
-msgid "Cycles Settings"
-msgstr "Impostazioni Cycles"
-
-
-msgid "Performance"
-msgstr "Prestazioni"
-
-
 msgid "Ray Visibility"
 msgstr "Visibilità Raggio"
 
@@ -45279,6 +45287,10 @@ msgstr "Curva Otturatore"
 
 msgid "Passes"
 msgstr "Passaggi"
+
+
+msgid "Performance"
+msgstr "Prestazioni"
 
 
 msgid "Threads"
@@ -50630,6 +50642,10 @@ msgid "Use Linear Modifiers"
 msgstr "Usa Modificatori Lineari"
 
 
+msgid "Representation of alpha information in the RGBA pixels"
+msgstr "Modo di rappresentare le informazioni alfa nei pixel RGBA"
+
+
 msgid "RGB channels in transparent pixels are unaffected by the alpha channel"
 msgstr "I canali RGB dei pixel trasparenti non sono influenzati dal canale alfa"
 
@@ -53795,18 +53811,6 @@ msgid "Color of disabled marker"
 msgstr "Colore del marcatore disabilitato"
 
 
-msgid "Grease Pencil Vertex"
-msgstr "Vertice Matita"
-
-
-msgid "Grease Pencil Vertex Select"
-msgstr "Vertice Matita Selezionato"
-
-
-msgid "Grease Pencil Vertex Size"
-msgstr "Dimensione Vertice Matita"
-
-
 msgid "Align handle color"
 msgstr "Colore maniglia allineamento"
 
@@ -54439,10 +54443,6 @@ msgid "Meta Strip"
 msgstr "Meta Spezzone"
 
 
-msgid "Movie Strip"
-msgstr "Spezzone Filmato"
-
-
 msgid "Clip Strip"
 msgstr "Spezzone Clip"
 
@@ -54719,6 +54719,18 @@ msgid "Face Area Text"
 msgstr "Testo Area Faccia"
 
 
+msgid "Grease Pencil Vertex"
+msgstr "Vertice Matita"
+
+
+msgid "Grease Pencil Vertex Select"
+msgstr "Vertice Matita Selezionato"
+
+
+msgid "Grease Pencil Vertex Size"
+msgstr "Dimensione Vertice Matita"
+
+
 msgid "Face Normal"
 msgstr "Normale Faccia"
 
@@ -54837,34 +54849,6 @@ msgstr "Modalità per l'inserimento automatico di chiavi per Oggetti ed Ossa"
 
 msgid "Add & Replace"
 msgstr "Aggiungi & Sostituisci"
-
-
-msgid "Double Threshold"
-msgstr "Doppia Soglia"
-
-
-msgid "Edge Tag Mode"
-msgstr "Modo Etichetta Spigolo"
-
-
-msgid "Tag Seam"
-msgstr "Etichetta Cucitura"
-
-
-msgid "Tag Sharp"
-msgstr "Etichetta Nitido"
-
-
-msgid "Tag Crease"
-msgstr "Etichetta Piega"
-
-
-msgid "Tag Bevel"
-msgstr "Etichetta Smusso"
-
-
-msgid "Tag Freestyle Edge Mark"
-msgstr "Etichetta Marcatura Spigolo Freestyle"
 
 
 msgid "Stroke Placement (3D View)"
@@ -55029,10 +55013,6 @@ msgstr "Inserimento automatico fotogrammi chiave per Oggetti ed Ossa"
 
 msgid "Automatic keyframe insertion using active Keying Set only"
 msgstr "Inserimento automatico fotogrammi chiave utilizzando solo il Gruppo Chiavi attivo"
-
-
-msgid "AutoMerge Editing"
-msgstr "AutoUnione Vertici Coincidenti"
 
 
 msgid "Automatically merge vertices moved to the same location"
@@ -55475,10 +55455,6 @@ msgid "Draw Edges"
 msgstr "Disegna Spigoli"
 
 
-msgid "Display selected edges using highlights in the 3D view and UV editor"
-msgstr "Evidenzia gli spigoli selezionati nella vista 3D e nell'editor UV"
-
-
 msgid "Edge Angle"
 msgstr "Angolo Spigolo"
 
@@ -55517,10 +55493,6 @@ msgstr "Mostra le normali delle facce come linee"
 
 msgid "Draw Faces"
 msgstr "Disegna Facce"
-
-
-msgid "Display all faces as shades in the 3D view and UV editor"
-msgstr "Mostrare tutte le facce come ombre nella vista 3D e nell'editor UV"
 
 
 msgid "Display Grid Floor"
@@ -58857,13 +58829,13 @@ msgstr "Guadagno:"
 
 
 msgctxt "Operator"
-msgid "All Strips to the Left"
-msgstr "Tutti gli Spezzoni a Sinistra"
+msgid "Left"
+msgstr "Sinistra"
 
 
 msgctxt "Operator"
-msgid "All Strips to the Right"
-msgstr "Tutti gli Spezzoni a Destra"
+msgid "Right"
+msgstr "Destra"
 
 
 msgctxt "Operator"
@@ -58927,31 +58899,6 @@ msgstr "Deposito"
 msgctxt "Operator"
 msgid "Fit Preview in window"
 msgstr "Adatta Anteprima alla finestra"
-
-
-msgctxt "Operator"
-msgid "Strips to the Left"
-msgstr "Spezzoni alla Sinistra"
-
-
-msgctxt "Operator"
-msgid "Strips to the Right"
-msgstr "Spezzoni alla Destra"
-
-
-msgctxt "Operator"
-msgid "Surrounding Handles"
-msgstr "Entrambe le Maniglie"
-
-
-msgctxt "Operator"
-msgid "Left Handle"
-msgstr "Maniglia Sinistra"
-
-
-msgctxt "Operator"
-msgid "Right Handle"
-msgstr "Maniglia Destra"
 
 
 msgctxt "Operator"
@@ -59037,16 +58984,6 @@ msgstr "Sfumatura Gaussiana"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "Ricarica Spezzoni e Aggiusta Lunghezza"
-
-
-msgctxt "Operator"
-msgid "Cut (Hard) at frame"
-msgstr "Taglio (duro) al fotogramma"
-
-
-msgctxt "Operator"
-msgid "Cut (Soft) at frame"
-msgstr "Taglio (morbido) al fotogramma"
 
 
 msgid "Show Grease Pencil"
@@ -59485,16 +59422,6 @@ msgstr "Fronte"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Posteriore"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "Destra"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "Sinistra"
 
 
 msgctxt "Operator"
@@ -62143,12 +62070,12 @@ msgid "Export Data Options:"
 msgstr "Opzioni Esportazione Dati:"
 
 
-msgid "Armature Options:"
-msgstr "Opzioni Armatura:"
-
-
 msgid "Transformation Type"
 msgstr "Tipo Trasformazione"
+
+
+msgid "Armature Options:"
+msgstr "Opzioni Armatura:"
 
 
 msgid "Collada Options:"
@@ -63202,10 +63129,6 @@ msgid "Search Area:"
 msgstr "Area Ricerca:"
 
 
-msgid "Size %d x %d"
-msgstr "Dim. %d x %d"
-
-
 msgid ", failed to load"
 msgstr ", impossibile caricare"
 
@@ -64139,10 +64062,6 @@ msgstr "Nessun elemento attivo trovato!"
 
 msgid "No active camera"
 msgstr "Nessuna camera attiva"
-
-
-msgid "%s: confirm, %s: cancel, %s: gravity (%s), %s|%s|%s|%s: move around, %s: fast, %s: slow, %s|%s: up and down, %s: teleport, %s: jump, %s: increase speed, %s: decrease speed"
-msgstr "%s: conferma, %s: annulla, %s: gravità (%s), %s|%s|%s|%s: muovi attorno, %s: veloce, %s: lento, %s|%s: su e giù, %s: teleport, %s: salta, %s: aumenta velocità, %s: riduci velocità"
 
 
 msgid "along X"

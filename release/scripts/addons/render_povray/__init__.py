@@ -929,8 +929,51 @@ class MaterialTextureSlot(PropertyGroup):
                 description="Amount texture affects color of the zenith above",
                 soft_min=0.0, soft_max=1.0, default=1.0)
 
+                
+# former Space properties from  removed Blender Internal added below at superclass level 
+# so as to be available in World, Material, Light for texture slots use  
+
+bpy.types.ID.use_limited_texture_context = BoolProperty(
+        name="",
+        description="Use the limited version of texture user (for ‘old shading’ mode)",
+        default=True)
+bpy.types.ID.texture_context = EnumProperty(
+        name="Texture context",
+        description="Type of texture data to display and edit",
+        items=(('MATERIAL', "", "Show material textures", "MATERIAL",0), #"Show material textures"
+               ('WORLD', "", "Show world textures", "WORLD",1), #"Show world textures"
+               ('LAMP', "", "Show lamp textures", "LIGHT",2), #"Show lamp textures"
+               ('PARTICLES', "", "Show particles textures", "PARTICLES",3), #"Show particles textures"
+               ('LINESTYLE', "", "Show linestyle textures", "LINE_DATA",4), #"Show linestyle textures"
+               ('OTHER', "", "Show other data textures", "TEXTURE_DATA",5)), #"Show other data textures"
+        default = 'MATERIAL')
+
+bpy.types.ID.active_texture_index = IntProperty(
+        name = "Index for texture_slots",
+        default = 0)
+                
 class RenderPovSettingsMaterial(PropertyGroup):
 ######################Begin Old Blender Internal Props#########################
+    #former Space properties from  removed Blender Internal
+    use_limited_texture_context: BoolProperty(
+            name="",
+            description="Use the limited version of texture user (for ‘old shading’ mode)",
+            default=True)
+    texture_context: EnumProperty(
+            name="Texture context",
+            description="Type of texture data to display and edit",
+            items=(('MATERIAL', "", "Show material textures", "MATERIAL",0), #"Show material textures"
+                   ('WORLD', "", "Show world textures", "WORLD",1), #"Show world textures"
+                   ('LAMP', "", "Show lamp textures", "LIGHT",2), #"Show lamp textures"
+                   ('PARTICLES', "", "Show particles textures", "PARTICLES",3), #"Show particles textures"
+                   ('LINESTYLE', "", "Show linestyle textures", "LINE_DATA",4), #"Show linestyle textures"
+                   ('OTHER', "", "Show other data textures", "TEXTURE_DATA",5)), #"Show other data textures"
+            default = 'MATERIAL')
+ 
+    active_texture_index: IntProperty(
+            name = "Index for texture_slots",
+            default = 0)
+            
     transparency_method: EnumProperty(
             name="Specular Shader Model",
             description="Method to use for rendering transparency",   
@@ -2973,6 +3016,25 @@ node_categories = [
 # Texture POV properties.
 ###############################################################################
 class RenderPovSettingsTexture(PropertyGroup):
+    #former Space properties from  removed Blender Internal
+    active_texture_index: IntProperty(
+            name = "Index for texture_slots",
+            default = 0)    
+    use_limited_texture_context: BoolProperty(
+            name="",
+            description="Use the limited version of texture user (for ‘old shading’ mode)",
+            default=True)
+    texture_context: EnumProperty(
+            name="Texture context",
+            description="Type of texture data to display and edit",
+            items=(('MATERIAL', "", "Show material textures", "MATERIAL",0), #"Show material textures"
+                   ('WORLD', "", "Show world textures", "WORLD",1), #"Show world textures"
+                   ('LAMP', "", "Show lamp textures", "LIGHT",2), #"Show lamp textures"
+                   ('PARTICLES', "", "Show particles textures", "PARTICLES",3), #"Show particles textures"
+                   ('LINESTYLE', "", "Show linestyle textures", "LINE_DATA",4), #"Show linestyle textures"
+                   ('OTHER', "", "Show other data textures", "TEXTURE_DATA",5)), #"Show other data textures"
+            default = 'MATERIAL')
+ 
     #Custom texture gamma
     tex_gamma_enable: BoolProperty(
             name="Enable custom texture gamma",
@@ -4008,16 +4070,51 @@ class RenderPovSettingsCamera(PropertyGroup):
 # Light POV properties.
 ###############################################################################
 class RenderPovSettingsLight(PropertyGroup):
+    #former Space properties from  removed Blender Internal
+    use_limited_texture_context: BoolProperty(
+            name="",
+            description="Use the limited version of texture user (for ‘old shading’ mode)",
+            default=True)
+    texture_context: EnumProperty(
+            name="Texture context",
+            description="Type of texture data to display and edit",
+            items=(('MATERIAL', "", "Show material textures", "MATERIAL",0), #"Show material textures"
+                   ('WORLD', "", "Show world textures", "WORLD",1), #"Show world textures"
+                   ('LAMP', "", "Show lamp textures", "LIGHT",2), #"Show lamp textures"
+                   ('PARTICLES', "", "Show particles textures", "PARTICLES",3), #"Show particles textures"
+                   ('LINESTYLE', "", "Show linestyle textures", "LINE_DATA",4), #"Show linestyle textures"
+                   ('OTHER', "", "Show other data textures", "TEXTURE_DATA",5)), #"Show other data textures"
+            default = 'MATERIAL')
+ 
     shadow_method: EnumProperty(
                 name="Shadow",
                 description="",
                 items=(("NOSHADOW", "No Shadow", "No Shadow"),
                        ("RAY_SHADOW", "Ray Shadow", "Ray Shadow, Use ray tracing for shadow")),
                 default="RAY_SHADOW")
+    active_texture_index: IntProperty(
+            name = "Index for texture_slots",
+            default = 0)                
 ###############################################################################
 # World POV properties.
 ###############################################################################
 class RenderPovSettingsWorld(PropertyGroup):
+    #former Space properties from  removed Blender Internal
+    use_limited_texture_context: BoolProperty(
+            name="",
+            description="Use the limited version of texture user (for ‘old shading’ mode)",
+            default=True)
+    texture_context: EnumProperty(
+            name="Texture context",
+            description="Type of texture data to display and edit",
+            items=(('MATERIAL', "", "Show material textures", "MATERIAL",0), #"Show material textures"
+                   ('WORLD', "", "Show world textures", "WORLD",1), #"Show world textures"
+                   ('LAMP', "", "Show lamp textures", "LIGHT",2), #"Show lamp textures"
+                   ('PARTICLES', "", "Show particles textures", "PARTICLES",3), #"Show particles textures"
+                   ('LINESTYLE', "", "Show linestyle textures", "LINE_DATA",4), #"Show linestyle textures"
+                   ('OTHER', "", "Show other data textures", "TEXTURE_DATA",5)), #"Show other data textures"
+            default = 'MATERIAL')
+
     use_sky_blend: BoolProperty(
             name="Blend Sky", description="Render background with natural progression from horizon to zenith",
             default=False)
@@ -4046,7 +4143,7 @@ class RenderPovSettingsWorld(PropertyGroup):
             precision=4, step=0.01, min=0, soft_max=1,
             default=(0.0, 0.0, 0.0), options={'ANIMATABLE'}, subtype='COLOR',
     )
-    world_texture_list_index: IntProperty(
+    active_texture_index: IntProperty(
             name = "Index for texture_slots",
             default = 0)
 class WorldTextureSlot(PropertyGroup):
@@ -4240,6 +4337,7 @@ def unregister():
     del bpy.types.Light.pov
     del bpy.types.World.pov    
     del bpy.types.Text.pov
+
     nodeitems_utils.unregister_node_categories("POVRAYNODES")
     bpy.types.NODE_HT_header.remove(ui.menu_func_nodes)
     '''

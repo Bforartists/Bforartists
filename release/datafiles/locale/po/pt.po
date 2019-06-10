@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Inês Almeida, João Brandão (ULISBOA), Paulo Martins <ivan.paulos.tome@yandex.com>\n"
@@ -3669,10 +3669,6 @@ msgid "Input Color Space"
 msgstr "Espaço de cor de entrada"
 
 
-msgid "Color space of the image or movie on disk"
-msgstr "O espaço de cor da imagem ou filme no disco."
-
-
 msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
 msgstr "Formatador logarítmico com base no sistema \"Filmic\", com 16.5 intervalos de latitude, e 25 intervalos de amplitude dinâmica."
 
@@ -3691,10 +3687,6 @@ msgstr "O espaço de cor usado para imagens que não contém dados de cores (por
 
 msgid "Standard RGB Display Space"
 msgstr "Espaço de exibição padrão RGB"
-
-
-msgid "The simple video conversion from a gamma 2.2 sRGB space"
-msgstr "A conversão simples de vídeo a partir de um espaço padrão de cores (sRGB) usando 2.2 como valor de gama."
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -14193,10 +14185,6 @@ msgid "Alpha Mode"
 msgstr "Modo para alfa"
 
 
-msgid "Representation of alpha information in the RGBA pixels"
-msgstr "Representação da informação de alfa dentro dos pixeis de cores e transparência (RGBA)."
-
-
 msgid "Straight"
 msgstr "Direto(a)"
 
@@ -22511,8 +22499,16 @@ msgid "Navigation"
 msgstr "Navegação"
 
 
+msgid "Select Linked"
+msgstr "Selecionar vinculados(as)"
+
+
 msgid "Strip"
 msgstr "Faixa"
+
+
+msgid "Movie Strip"
+msgstr "Faixa de filme"
 
 
 msgid "Cache"
@@ -22645,10 +22641,6 @@ msgstr "Normais"
 
 msgid "Select All by Trait"
 msgstr "Selecionar todos por características..."
-
-
-msgid "Select Linked"
-msgstr "Selecionar vinculados(as)"
 
 
 msgid "Mesh Select Mode"
@@ -40941,6 +40933,30 @@ msgid "Apply selected vertex locations to all other shape keys"
 msgstr "Aplica as localizações dos vértices selecionados para todas as outras chaves de formato."
 
 
+msgid "The edge flag to tag when selecting the shortest path"
+msgstr "Marca as bandeiras de rótulos das arestas a ser etiquetadas durante a seleção dos caminhos mais curtos."
+
+
+msgid "Tag Seam"
+msgstr "Rotular costuras"
+
+
+msgid "Tag Sharp"
+msgstr "Rotular ressaltos"
+
+
+msgid "Tag Crease"
+msgstr "Rotular vincos"
+
+
+msgid "Tag Bevel"
+msgstr "Rotular chanfros"
+
+
+msgid "Tag Freestyle Edge Mark"
+msgstr "Rotular marcações de aresta Freestyle"
+
+
 msgid "Face Stepping"
 msgstr "Intervalos entre as faces"
 
@@ -51559,22 +51575,6 @@ msgid "Apply modifier's render settings"
 msgstr "Aplica as definições de renderização dos modificadores."
 
 
-msgid "Transformation type for translation, scale and rotation"
-msgstr "Tipo de transformação para movimentação, escala e rotação."
-
-
-msgid "Use <matrix> to specify transformations"
-msgstr "Usa a <matriz> para especificar transformações."
-
-
-msgid "TransRotLoc"
-msgstr "Transformações, rotações, localizações"
-
-
-msgid "Use <translate>, <rotate>, <scale> to specify transformations"
-msgstr "Usa a <movimentação>, <rotação>, <escalonamento> para especificar as transformações."
-
-
 msgid "Include Armatures"
 msgstr "Incluir armações"
 
@@ -53311,14 +53311,6 @@ msgid "Spot Shape"
 msgstr "Formato do foco"
 
 
-msgid "Cycles Settings"
-msgstr "Definições do Cycles"
-
-
-msgid "Performance"
-msgstr "Performance"
-
-
 msgid "Ray Visibility"
 msgstr "Visibilidade dos raios projetados"
 
@@ -53365,6 +53357,10 @@ msgstr "Curva do obturador"
 
 msgid "Passes"
 msgstr "Passos"
+
+
+msgid "Performance"
+msgstr "Performance"
 
 
 msgid "Threads"
@@ -59788,6 +59784,10 @@ msgid "Sequence strip applying an effect on the images created by other strips"
 msgstr "Faixas de sequência aplicando efeitos nas imagens criadas por outras faixas."
 
 
+msgid "Representation of alpha information in the RGBA pixels"
+msgstr "Representação da informação de alfa dentro dos pixeis de cores e transparência (RGBA)."
+
+
 msgid "RGB channels in transparent pixels are unaffected by the alpha channel"
 msgstr "Canais de cores (RGB) em pixeis transparentes não são afetados pelo canal alfa."
 
@@ -64069,18 +64069,6 @@ msgid "Color of disabled marker"
 msgstr "A cor do marcadores desativados."
 
 
-msgid "Grease Pencil Vertex"
-msgstr "Vértice de lápis de cera"
-
-
-msgid "Grease Pencil Vertex Select"
-msgstr "Selecionar vértices de lápis de cera"
-
-
-msgid "Grease Pencil Vertex Size"
-msgstr "Tamanho dos vértices de lápis de cera"
-
-
 msgid "Align handle color"
 msgstr "Cor - Manípulo de alinhamento"
 
@@ -64853,10 +64841,6 @@ msgid "Meta Strip"
 msgstr "Faixa meta"
 
 
-msgid "Movie Strip"
-msgstr "Faixa de filme"
-
-
 msgid "Clip Strip"
 msgstr "Faixa de clipe"
 
@@ -65193,6 +65177,18 @@ msgid "Face Area Text"
 msgstr "Texto das áreas das faces"
 
 
+msgid "Grease Pencil Vertex"
+msgstr "Vértice de lápis de cera"
+
+
+msgid "Grease Pencil Vertex Select"
+msgstr "Selecionar vértices de lápis de cera"
+
+
+msgid "Grease Pencil Vertex Size"
+msgstr "Tamanho dos vértices de lápis de cera"
+
+
 msgid "Face Normal"
 msgstr "Normais das faces"
 
@@ -65367,42 +65363,6 @@ msgstr "Modo de inserção automática de fotogramas chave para objetos e ossos.
 
 msgid "Add & Replace"
 msgstr "Adicionar e substituir"
-
-
-msgid "Double Threshold"
-msgstr "Ajuste para as duplicatas"
-
-
-msgid "Limit for removing duplicates and 'Auto Merge'"
-msgstr "Limite para remoção de duplicatas e fusão automática."
-
-
-msgid "Edge Tag Mode"
-msgstr "Modo para rotular as arestas"
-
-
-msgid "The edge flag to tag when selecting the shortest path"
-msgstr "Marca as bandeiras de rótulos das arestas a ser etiquetadas durante a seleção dos caminhos mais curtos."
-
-
-msgid "Tag Seam"
-msgstr "Rotular costuras"
-
-
-msgid "Tag Sharp"
-msgstr "Rotular ressaltos"
-
-
-msgid "Tag Crease"
-msgstr "Rotular vincos"
-
-
-msgid "Tag Bevel"
-msgstr "Rotular chanfros"
-
-
-msgid "Tag Freestyle Edge Mark"
-msgstr "Rotular marcações de aresta Freestyle"
 
 
 msgid "Grease Pencil Interpolate"
@@ -65587,10 +65547,6 @@ msgstr "Inserção automática de fotograma chave para o conjunto de inserção 
 
 msgid "Automatic keyframe insertion using active Keying Set only"
 msgstr "Inserção automática de fotograma chave usando somente o conjunto de inserção de chaves ativo."
-
-
-msgid "AutoMerge Editing"
-msgstr "Fusão automática durante a edição"
 
 
 msgid "Automatically merge vertices moved to the same location"
@@ -66141,10 +66097,6 @@ msgid "Draw Edges"
 msgstr "Desenhar arestas"
 
 
-msgid "Display selected edges using highlights in the 3D view and UV editor"
-msgstr "Mostra as arestas selecionadas usando realces dentro da janela de visualização 3D e dentro do editor de imagens e UVs."
-
-
 msgid "Edge Angle"
 msgstr "Ângulos das arestas"
 
@@ -66183,10 +66135,6 @@ msgstr "Mostra as normais das faces como linhas."
 
 msgid "Draw Faces"
 msgstr "Desenhar faces"
-
-
-msgid "Display all faces as shades in the 3D view and UV editor"
-msgstr "Mostra todas as faces como sombras dentro da janela de visualização 3D e do editor de imagens e UVs."
 
 
 msgid "Display Grid Floor"
@@ -69675,6 +69623,16 @@ msgstr "Ganho:"
 
 
 msgctxt "Operator"
+msgid "Left"
+msgstr "Esquerda"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "Direita"
+
+
+msgctxt "Operator"
 msgid "Grouped"
 msgstr "Agrupados(as) por..."
 
@@ -69720,31 +69678,6 @@ msgstr "Converter para ponto flutuante"
 
 msgid "Storage"
 msgstr "Armazenamento"
-
-
-msgctxt "Operator"
-msgid "Strips to the Left"
-msgstr "Faixas à esquerda da ativa"
-
-
-msgctxt "Operator"
-msgid "Strips to the Right"
-msgstr "Faixas à direita da ativa"
-
-
-msgctxt "Operator"
-msgid "Surrounding Handles"
-msgstr "Hastes adjacentes"
-
-
-msgctxt "Operator"
-msgid "Left Handle"
-msgstr "Haste esquerda"
-
-
-msgctxt "Operator"
-msgid "Right Handle"
-msgstr "Haste direita"
 
 
 msgctxt "Operator"
@@ -70240,16 +70173,6 @@ msgstr "Frente"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Trás"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "Direita"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "Esquerda"
 
 
 msgctxt "Operator"
@@ -72040,10 +71963,6 @@ msgid "Marker offset %s"
 msgstr "Deslocamento do marcador: %s"
 
 
-msgid "Programming error: operator does not actually have code to do anything!"
-msgstr "Erro de programação: operador não possui atualmente código para fazer nada !"
-
-
 msgid "Scene not found"
 msgstr "Cena não encontrada."
 
@@ -73455,12 +73374,12 @@ msgid "Export Data Options:"
 msgstr "Opções de exportação de dados:"
 
 
-msgid "Armature Options:"
-msgstr "Opções para armação:"
-
-
 msgid "Transformation Type"
 msgstr "Tipo de transformação"
+
+
+msgid "Armature Options:"
+msgstr "Opções para armação:"
 
 
 msgid "Collada Options:"
@@ -75018,10 +74937,6 @@ msgid "Search Area:"
 msgstr "Área de pesquisa:"
 
 
-msgid "Size %d x %d"
-msgstr "Tamanho %d x %d"
-
-
 msgid ", %d float channel(s)"
 msgstr ", %d canais em ponto flutuante"
 
@@ -76321,10 +76236,6 @@ msgid "No active camera"
 msgstr "Nenhuma câmara ativa."
 
 
-msgid "%s: confirm, %s: cancel, %s: gravity (%s), %s|%s|%s|%s: move around, %s: fast, %s: slow, %s|%s: up and down, %s: teleport, %s: jump, %s: increase speed, %s: decrease speed"
-msgstr "%s: Confirmar, %s: Cancelar, %s: Gravidade (%s), %s|%s|%s|%s: Mover-se, %s: Acelerar t., %s: Desacelerar t., %s|%s: Pan. acima e abaixo, %s: Teleporte, %s: Saltar, %s: Acelerar, %s: Desacelerar"
-
-
 msgid "Cannot navigate a camera from an external library"
 msgstr "Não é possível navegar com a câmara vinculada a partir de uma biblioteca externa."
 
@@ -76848,18 +76759,6 @@ msgstr "viu dez"
 
 msgid "the lazy dog"
 msgstr "cegonhas felizes"
-
-
-msgid "'Refresh' incompatible with Object ID type"
-msgstr "\"Atualização\" incompatível com tipo de identificador de objeto."
-
-
-msgid "'Refresh' incompatible with ParticleSettings ID type"
-msgstr "\"Atualização\" incompatível com tipo de identificador de definição de partículas."
-
-
-msgid "This ID type is not compatible with any 'refresh' options"
-msgstr "Este tipo de identificador não é compatível com quaisquer opções de \"atualização\"."
 
 
 msgid "Index out of range"

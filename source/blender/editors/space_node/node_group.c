@@ -197,7 +197,7 @@ static int node_group_ungroup(Main *bmain, bNodeTree *ntree, bNode *gnode)
    * - ngroup (i.e. the source NodeTree) is left unscathed
    * - temp copy. don't change ID usercount
    */
-  wgroup = ntreeCopyTree_ex(ngroup, bmain, false);
+  wgroup = ntreeCopyTree_ex_new_pointers(ngroup, bmain, false);
 
   /* Add the nodes into the ntree */
   for (node = wgroup->nodes.first; node; node = nextnode) {
@@ -439,7 +439,7 @@ static int node_group_separate_selected(
 
     if (make_copy) {
       /* make a copy */
-      newnode = BKE_node_copy_ex(ngroup, node, LIB_ID_COPY_DEFAULT);
+      newnode = BKE_node_copy_store_new_pointers(ngroup, node, LIB_ID_COPY_DEFAULT);
     }
     else {
       /* use the existing node */

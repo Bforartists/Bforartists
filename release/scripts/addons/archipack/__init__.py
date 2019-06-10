@@ -31,7 +31,7 @@ bl_info = {
     'author': 's-leger',
     'license': 'GPL',
     'deps': '',
-    'version': (1, 2, 82),
+    'version': (1, 2, 83),
     'blender': (2, 80, 0),
     'location': 'View3D > Tools > Create > Archipack',
     'warning': '',

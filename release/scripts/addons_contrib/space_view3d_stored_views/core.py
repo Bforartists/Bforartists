@@ -8,13 +8,13 @@ import hashlib
 import bpy
 
 
-# Utility function get preferences setting for exporters
+#Utility function get preferences setting for exporters
 def get_preferences():
     # replace the key if the add-on name changes
     addon = bpy.context.preferences.addons[__package__]
-    show_warn = (addon.preferences.show_exporters if addon else False)
+#    show_warn = (addon.preferences.show_exporters if addon else False)
 
-    return show_warn
+    return True
 
 
 class StoredView():
@@ -75,7 +75,7 @@ class POV(StoredView):
         else:
             stored_view.lock_object_name = ""
         stored_view.lock_cursor = view3d.lock_cursor
-        stored_view.cursor_location = view3d.cursor_location
+        stored_view.cursor_location = bpy.context.scene.cursor.location
 
     def update_v3d(self, stored_view):
         view3d = self.view3d
@@ -131,95 +131,95 @@ class POV(StoredView):
         return md5
 
 
-class Layers(StoredView):
-    def __init__(self, index=None):
-        super().__init__(mode='LAYERS', index=index)
-        self.logger = logging.getLogger('%s.Layers' % __name__)
+# class Layers(StoredView):
+#     def __init__(self, index=None):
+#         super().__init__(mode='COLLECTIONS', index=index)
+#         self.logger = logging.getLogger('%s.Layers' % __name__)
 
-    def from_v3d(self, stored_view):
-        view3d = self.view3d
-        stored_view.view_layers = view3d.layers
-        stored_view.scene_layers = self.scene.layers
-        stored_view.lock_camera_and_layers = view3d.lock_camera_and_layers
+#     def from_v3d(self, stored_view):
+#         view3d = self.view3d
+#         stored_view.view_layers = bpy.types.layer.collection
+#         stored_view.scene_layers = self.scene.layers
+#         stored_view.lock_camera = view3d.lock_camera
 
-    def update_v3d(self, stored_view):
-        view3d = self.view3d
-        view3d.lock_camera_and_layers = stored_view.lock_camera_and_layers
-        if stored_view.lock_camera_and_layers is True:
-            self.scene.layers = stored_view.scene_layers
-        else:
-            view3d.layers = stored_view.view_layers
+#     def update_v3d(self, stored_view):
+#         view3d = self.view3d
+#         view3d.camera = stored_view.camera
+#         if stored_view.camera is True:
+#             self.scene.layers = stored_view.scene_layers
+#         else:
+#             view3d.layers = stored_view.view_layers
 
-    @staticmethod
-    def is_modified(context, stored_view):
-        Layers.logger = logging.getLogger('%s.Layers' % __name__)
-        if stored_view.lock_camera_and_layers != context.space_data.lock_camera_and_layers:
-            Layers.logger.debug('lock_camera_and_layers')
-            return True
-        if stored_view.lock_camera_and_layers is True:
-            for i in range(20):
-                if stored_view.scene_layers[i] != context.scene.layers[i]:
-                    Layers.logger.debug('scene_layers[%s]' % (i, ))
-                    return True
-        else:
-            for i in range(20):
-                if stored_view.view_layers[i] != context.space_data.view3d.layers[i]:
-                    return True
-        return False
+    # @staticmethod
+    # def is_modified(context, stored_view):
+    #     Layers.logger = logging.getLogger('%s.Layers' % __name__)
+    #     if stored_view.camera != context.space_data.camera:
+    #         Layers.logger.debug('lock_camera')
+    #         return True
+    #     if stored_view.camera is True:
+    #         for i in range(20):
+    #             if stored_view.scene_layers[i] != context.scene.layers[i]:
+    #                 Layers.logger.debug('scene_layers[%s]' % (i, ))
+    #                 return True
+    #     else:
+    #         for i in range(20):
+    #             if stored_view.view_layers[i] != context.space_data.view3d.layers[i]:
+    #                 return True
+    #     return False
 
 
-class Display(StoredView):
-    def __init__(self, index=None):
-        super().__init__(mode='DISPLAY', index=index)
-        self.logger = logging.getLogger('%s.Display' % __name__)
+# class Display(StoredView):
+#     def __init__(self, index=None):
+#         super().__init__(mode='DISPLAY', index=index)
+#         self.logger = logging.getLogger('%s.Display' % __name__)
 
-    def from_v3d(self, stored_view):
-        view3d = self.view3d
-        stored_view.viewport_shade = view3d.viewport_shade
-        stored_view.show_only_render = view3d.show_only_render
-        stored_view.show_outline_selected = view3d.show_outline_selected
-        stored_view.show_all_objects_origin = view3d.show_all_objects_origin
-        stored_view.show_relationship_lines = view3d.show_relationship_lines
-        stored_view.show_floor = view3d.show_floor
-        stored_view.show_axis_x = view3d.show_axis_x
-        stored_view.show_axis_y = view3d.show_axis_y
-        stored_view.show_axis_z = view3d.show_axis_z
-        stored_view.grid_lines = view3d.grid_lines
-        stored_view.grid_scale = view3d.grid_scale
-        stored_view.grid_subdivisions = view3d.grid_subdivisions
-        stored_view.material_mode = self.scene.game_settings.material_mode
-        stored_view.show_textured_solid = view3d.show_textured_solid
+#     def from_v3d(self, stored_view):
+#         view3d = self.view3d
+#         stored_view.viewport_shade = view3d.viewport_shade
+#         stored_view.show_only_render = view3d.show_only_render
+#         stored_view.show_outline_selected = view3d.show_outline_selected
+#         stored_view.show_all_objects_origin = view3d.show_all_objects_origin
+#         stored_view.show_relationship_lines = view3d.show_relationship_lines
+#         stored_view.show_floor = view3d.show_floor
+#         stored_view.show_axis_x = view3d.show_axis_x
+#         stored_view.show_axis_y = view3d.show_axis_y
+#         stored_view.show_axis_z = view3d.show_axis_z
+#         stored_view.grid_lines = view3d.grid_lines
+#         stored_view.grid_scale = view3d.grid_scale
+#         stored_view.grid_subdivisions = view3d.grid_subdivisions
+#         stored_view.material_mode = self.scene.game_settings.material_mode
+#         stored_view.show_textured_solid = view3d.show_textured_solid
 
-    def update_v3d(self, stored_view):
-        view3d = self.view3d
-        view3d.viewport_shade = stored_view.viewport_shade
-        view3d.show_only_render = stored_view.show_only_render
-        view3d.show_outline_selected = stored_view.show_outline_selected
-        view3d.show_all_objects_origin = stored_view.show_all_objects_origin
-        view3d.show_relationship_lines = stored_view.show_relationship_lines
-        view3d.show_floor = stored_view.show_floor
-        view3d.show_axis_x = stored_view.show_axis_x
-        view3d.show_axis_y = stored_view.show_axis_y
-        view3d.show_axis_z = stored_view.show_axis_z
-        view3d.grid_lines = stored_view.grid_lines
-        view3d.grid_scale = stored_view.grid_scale
-        view3d.grid_subdivisions = stored_view.grid_subdivisions
-        self.scene.game_settings.material_mode = stored_view.material_mode
-        view3d.show_textured_solid = stored_view.show_textured_solid
+    # def update_v3d(self, stored_view):
+    #     view3d = self.view3d
+    #     view3d.viewport_shade = stored_view.viewport_shade
+    #     view3d.show_only_render = stored_view.show_only_render
+    #     view3d.show_outline_selected = stored_view.show_outline_selected
+    #     view3d.show_all_objects_origin = stored_view.show_all_objects_origin
+    #     view3d.show_relationship_lines = stored_view.show_relationship_lines
+    #     view3d.show_floor = stored_view.show_floor
+    #     view3d.show_axis_x = stored_view.show_axis_x
+    #     view3d.show_axis_y = stored_view.show_axis_y
+    #     view3d.show_axis_z = stored_view.show_axis_z
+    #     view3d.grid_lines = stored_view.grid_lines
+    #     view3d.grid_scale = stored_view.grid_scale
+    #     view3d.grid_subdivisions = stored_view.grid_subdivisions
+    #     self.scene.game_settings.material_mode = stored_view.material_mode
+    #     view3d.show_textured_solid = stored_view.show_textured_solid
 
-    @staticmethod
-    def is_modified(context, stored_view):
-        Display.logger = logging.getLogger('%s.Display' % __name__)
-        view3d = context.space_data
-        excludes = ["material_mode", "quad_view", "lock_rotation", "show_sync_view", "use_box_clip", "name"]
-        for k, v in stored_view.items():
-            if k not in excludes:
-                if getattr(view3d, k) != getattr(stored_view, k):
-                    return True
+    # @staticmethod
+    # def is_modified(context, stored_view):
+    #     Display.logger = logging.getLogger('%s.Display' % __name__)
+    #     view3d = context.space_data
+    #     excludes = ["material_mode", "quad_view", "lock_rotation", "show_sync_view", "use_box_clip", "name"]
+    #     for k, v in stored_view.items():
+    #         if k not in excludes:
+    #             if getattr(view3d, k) != getattr(stored_view, k):
+    #                 return True
 
-        if stored_view.material_mode != context.scene.game_settings.material_mode:
-            Display.logger.debug('material_mode')
-            return True
+    #     if stored_view.material_mode != context.scene.game_settings.material_mode:
+    #         Display.logger.debug('material_mode')
+    #         return True
 
 
 class View(StoredView):
@@ -227,26 +227,26 @@ class View(StoredView):
         super().__init__(mode='VIEW', index=index)
         self.logger = logging.getLogger('%s.View' % __name__)
         self.pov = POV()
-        self.layers = Layers()
-        self.display = Display()
+        # self.layers = Layers()
+        # self.display = Display()
 
     def from_v3d(self, stored_view):
         self.pov.from_v3d(stored_view.pov)
-        self.layers.from_v3d(stored_view.layers)
-        self.display.from_v3d(stored_view.display)
+        # self.layers.from_v3d(stored_view.layers)
+        # self.display.from_v3d(stored_view.display)
 
     def update_v3d(self, stored_view):
         self.pov.update_v3d(stored_view.pov)
-        self.layers.update_v3d(stored_view.layers)
-        self.display.update_v3d(stored_view.display)
+        # self.layers.update_v3d(stored_view.layers)
+        # self.display.update_v3d(stored_view.display)
 
     @staticmethod
     def is_modified(context, stored_view):
-        if POV.is_modified(context, stored_view.pov) or \
-           Layers.is_modified(context, stored_view.layers) or \
-           Display.is_modified(context, stored_view.display):
-            return True
-        return False
+        POV.is_modified(context, stored_view.pov) #or \
+        #    Layers.is_modified(context, stored_view.layers) or \
+        #    Display.is_modified(context, stored_view.display):
+        return True
+        # return False
 
 
 class DataStore():
