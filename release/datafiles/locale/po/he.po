@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
 "Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -648,13 +648,18 @@ msgstr "Y ריצ"
 
 
 msgctxt "Operator"
-msgid "Movie"
-msgstr "טרס"
+msgid "Left"
+msgstr "לאמש"
 
 
 msgctxt "Operator"
-msgid "Right Handle"
-msgstr ":תינמי תידי"
+msgid "Right"
+msgstr "ןימי"
+
+
+msgctxt "Operator"
+msgid "Movie"
+msgstr "טרס"
 
 
 msgctxt "Operator"
@@ -689,16 +694,6 @@ msgstr "ינדי"
 
 msgid "Preferences:"
 msgstr "Blender שמתשמ תופדעה"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "ןימי"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "לאמש"
 
 
 msgctxt "Operator"

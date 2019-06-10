@@ -273,11 +273,11 @@ def draw_panel_model_search(self, context):
     layout.prop(props, "search_keywords", text="", icon='VIEWZOOM')
 
     icon = 'NONE'
-    if props.report == 'Available only in higher plans.':
+    if props.report == 'You need Standard plan to get this item.':
         icon = 'ERROR'
     label_multiline(layout, text=props.report, icon=icon)
-    if props.report == 'Available only in higher plans.':
-        layout.operator("wm.url_open", text="Check plans", icon='URL').url = paths.BLENDERKIT_PLANS
+    if props.report == 'You need Standard plan to get this item.':
+        layout.operator("wm.url_open", text="Get Standard plan", icon='URL').url = paths.BLENDERKIT_PLANS
 
     layout.prop(props, "search_style")
     layout.prop(props, "free_only")
@@ -425,9 +425,6 @@ class VIEW3D_PT_blenderkit_profile(Panel):
                     layout.label(text='Remaining private storage: %i MiB' % (me['remainingPrivateQuota']))
             layout.operator("wm.url_open", text="See my uploads",
                             icon='URL').url = paths.BLENDERKIT_USER_ASSETS
-            if user_preferences.enable_oauth:
-                layout.operator("wm.blenderkit_logout", text="Logout",
-                                icon='URL')
 
 
 def draw_panel_model_rating(self, context):

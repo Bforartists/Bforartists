@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -2042,10 +2042,6 @@ msgid "Input Color Space"
 msgstr "Farbraum"
 
 
-msgid "Color space of the image or movie on disk"
-msgstr "Farbraum des Bildes oder Films auf der Festplatte"
-
-
 msgid "Rec. 709 (Full Range), Blender native linear space"
 msgstr "Rec. 709 (Volle Breite), Blender nativer linearer Raum"
 
@@ -2060,10 +2056,6 @@ msgstr "Verwendet Farbraum für Bilder, die Nicht-Farbdaten enthalten (z.B. Norm
 
 msgid "Standard RGB Display Space"
 msgstr "Standard RGB-Anzeigeraum"
-
-
-msgid "The simple video conversion from a gamma 2.2 sRGB space"
-msgstr "Die einfache Videoumstellung von einem Gamma 2.2 sRGB-Raum"
 
 
 msgid "Color Space"
@@ -7821,10 +7813,6 @@ msgid "Alpha Mode"
 msgstr "Alphamodus"
 
 
-msgid "Representation of alpha information in the RGBA pixels"
-msgstr "Darstellung der Alphainformation in den RGBA Pixeln"
-
-
 msgid "Straight"
 msgstr "Begradigen"
 
@@ -11454,8 +11442,16 @@ msgid "Navigation"
 msgstr "Navigation"
 
 
+msgid "Select Linked"
+msgstr "Verknüpfte auswählen"
+
+
 msgid "Strip"
 msgstr "Streifen"
+
+
+msgid "Movie Strip"
+msgstr "Filmstreifen"
 
 
 msgid "Cache"
@@ -11540,10 +11536,6 @@ msgstr "Zusammenführen"
 
 msgid "Normals"
 msgstr "Normalen"
-
-
-msgid "Select Linked"
-msgstr "Verknüpfte auswählen"
 
 
 msgid "Metaball"
@@ -20428,6 +20420,26 @@ msgid "By Material"
 msgstr "Nach Material"
 
 
+msgid "The edge flag to tag when selecting the shortest path"
+msgstr "Die Kantenmarkierung-Bezeichnung, wenn der kürzeste Pfad ausgewählt wird"
+
+
+msgid "Tag Seam"
+msgstr "Naht markieren"
+
+
+msgid "Tag Sharp"
+msgstr "Scharfe markieren"
+
+
+msgid "Tag Crease"
+msgstr "Falte makieren"
+
+
+msgid "Tag Bevel"
+msgstr "Fase markieren"
+
+
 msgctxt "Operator"
 msgid "Select Shortest Path"
 msgstr "Kürzesten Pfad auswählen"
@@ -26286,10 +26298,6 @@ msgid "Spot Shape"
 msgstr "Punkt-Form"
 
 
-msgid "Performance"
-msgstr "Leistung"
-
-
 msgid "Ray Visibility"
 msgstr "Strahlensichtbarkeit"
 
@@ -26324,6 +26332,10 @@ msgstr "Lichtpfade"
 
 msgid "Max Bounces"
 msgstr "Maximaler Aufprall"
+
+
+msgid "Performance"
+msgstr "Leistung"
 
 
 msgid "Threads"
@@ -29569,6 +29581,10 @@ msgid "Effect Sequence"
 msgstr "Sequenz"
 
 
+msgid "Representation of alpha information in the RGBA pixels"
+msgstr "Darstellung der Alphainformation in den RGBA Pixeln"
+
+
 msgid "Multiply Colors"
 msgstr "Farben multiplizieren"
 
@@ -31905,10 +31921,6 @@ msgid "Meta Strip"
 msgstr "Metastreifen"
 
 
-msgid "Movie Strip"
-msgstr "Filmstreifen"
-
-
 msgid "Clip Strip"
 msgstr "Clip-Streifen"
 
@@ -32199,38 +32211,6 @@ msgstr "Modus um automatisch Schlüsselbilder für Objekte und Knochen einzufüg
 
 msgid "Add & Replace"
 msgstr "Hinzufügen & Ersetzen"
-
-
-msgid "Double Threshold"
-msgstr "Doppelten-Schwellwert"
-
-
-msgid "Limit for removing duplicates and 'Auto Merge'"
-msgstr "Begrenzung für Löschen von Doppeltem und 'Automatischen Zusammenführen'"
-
-
-msgid "Edge Tag Mode"
-msgstr "Kanten Bezeichnungsmodus"
-
-
-msgid "The edge flag to tag when selecting the shortest path"
-msgstr "Die Kantenmarkierung-Bezeichnung, wenn der kürzeste Pfad ausgewählt wird"
-
-
-msgid "Tag Seam"
-msgstr "Naht markieren"
-
-
-msgid "Tag Sharp"
-msgstr "Scharfe markieren"
-
-
-msgid "Tag Crease"
-msgstr "Falte makieren"
-
-
-msgid "Tag Bevel"
-msgstr "Fase markieren"
 
 
 msgid "Snap Element"
@@ -32547,10 +32527,6 @@ msgstr "Nähte zeichnen"
 
 msgid "Draw Sharp"
 msgstr "Form"
-
-
-msgid "Display selected edges using highlights in the 3D view and UV editor"
-msgstr "Referenzbilder hinter Objekten in der 3D-Ansicht darstellen"
 
 
 msgid "Edge Length"
@@ -34209,6 +34185,16 @@ msgstr "Verstärkung:"
 
 
 msgctxt "Operator"
+msgid "Left"
+msgstr "Links"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "Rechts"
+
+
+msgctxt "Operator"
 msgid "Grouped"
 msgstr "Gruppiert"
 
@@ -34221,26 +34207,6 @@ msgstr "Film"
 msgctxt "Operator"
 msgid "Sound"
 msgstr "Klang"
-
-
-msgctxt "Operator"
-msgid "Strips to the Left"
-msgstr "Streifen nach links"
-
-
-msgctxt "Operator"
-msgid "Strips to the Right"
-msgstr "Streifen nach rechts"
-
-
-msgctxt "Operator"
-msgid "Left Handle"
-msgstr "Linker Anfasser"
-
-
-msgctxt "Operator"
-msgid "Right Handle"
-msgstr "Rechter Anfasser"
 
 
 msgctxt "Operator"
@@ -34599,16 +34565,6 @@ msgstr "Vorne"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Hinten"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "Rechts"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "Links"
 
 
 msgctxt "Operator"
@@ -36308,12 +36264,12 @@ msgid "Export Data Options:"
 msgstr "Exportdaten Optionen:"
 
 
-msgid "Armature Options:"
-msgstr "Skelettoptionen"
-
-
 msgid "Transformation Type"
 msgstr "Transformationstyp"
+
+
+msgid "Armature Options:"
+msgstr "Skelettoptionen"
 
 
 msgid "Collada Options:"

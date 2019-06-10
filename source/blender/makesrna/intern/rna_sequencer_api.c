@@ -70,8 +70,9 @@ static void rna_Sequence_swap_internal(Sequence *seq_self,
 {
   const char *error_msg;
 
-  if (BKE_sequence_swap(seq_self, seq_other, &error_msg) == 0)
+  if (BKE_sequence_swap(seq_self, seq_other, &error_msg) == 0) {
     BKE_report(reports, RPT_ERROR, error_msg);
+  }
 }
 
 static Sequence *alloc_generic_sequence(
@@ -132,6 +133,7 @@ static Sequence *rna_Sequences_new_mask(
   id_us_plus((ID *)mask);
 
   BKE_sequence_calc_disp(scene, seq);
+  BKE_sequence_invalidate_cache_composite(scene, seq);
 
   WM_main_add_notifier(NC_SCENE | ND_SEQUENCER, scene);
 
@@ -152,6 +154,7 @@ static Sequence *rna_Sequences_new_scene(
   id_us_plus((ID *)sce_seq);
 
   BKE_sequence_calc_disp(scene, seq);
+  BKE_sequence_invalidate_cache_composite(scene, seq);
 
   WM_main_add_notifier(NC_SCENE | ND_SEQUENCER, scene);
 
@@ -180,6 +183,7 @@ static Sequence *rna_Sequences_new_image(ID *id,
   }
 
   BKE_sequence_calc_disp(scene, seq);
+  BKE_sequence_invalidate_cache_composite(scene, seq);
 
   WM_main_add_notifier(NC_SCENE | ND_SEQUENCER, scene);
 
@@ -215,6 +219,7 @@ static Sequence *rna_Sequences_new_movie(ID *id,
   seq->len = IMB_anim_get_duration(an, IMB_TC_RECORD_RUN);
 
   BKE_sequence_calc_disp(scene, seq);
+  BKE_sequence_invalidate_cache_composite(scene, seq);
 
   WM_main_add_notifier(NC_SCENE | ND_SEQUENCER, scene);
 
@@ -339,6 +344,7 @@ static Sequence *rna_Sequences_new_effect(ID *id,
 
   BKE_sequence_calc(scene, seq);
   BKE_sequence_calc_disp(scene, seq);
+  BKE_sequence_invalidate_cache_composite(scene, seq);
 
   WM_main_add_notifier(NC_SCENE | ND_SEQUENCER, scene);
 
@@ -374,7 +380,6 @@ static StripElem *rna_SequenceElements_append(ID *id, Sequence *seq, const char 
   seq->len++;
 
   BKE_sequence_calc_disp(scene, seq);
-
   WM_main_add_notifier(NC_SCENE | ND_SEQUENCER, scene);
 
   return se;
@@ -404,11 +409,13 @@ static void rna_SequenceElements_pop(ID *id, Sequence *seq, ReportList *reports,
   seq->len--;
 
   se = seq->strip->stripdata;
-  if (index > 0)
+  if (index > 0) {
     memcpy(new_seq, se, sizeof(StripElem) * index);
+  }
 
-  if (index < seq->len)
+  if (index < seq->len) {
     memcpy(&new_seq[index], &se[index + 1], sizeof(StripElem) * (seq->len - index));
+  }
 
   MEM_freeN(seq->strip->stripdata);
   seq->strip->stripdata = new_seq;

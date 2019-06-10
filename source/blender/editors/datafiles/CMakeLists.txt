@@ -198,7 +198,7 @@ particlebrush_puff
 particlebrush_smooth
 particlebrush_weight
 particlebrush_length
-three_dots
+#def_icon_blank(216
 add
 #def_icon_blank(218
 align_center
@@ -312,7 +312,7 @@ decorate_override
 decorate_unlocked
 decorate_locked
 face_maps
-fake_user
+#DEF_ICON_BLANK(330)
 file_new
 filebrowser
 smooth_laplacian
@@ -1393,16 +1393,16 @@ node_sss
 node_stabilize2d
 #def_icon_blank(1409
 
-#def_icon_blank(1411
-#def_icon_blank(1412
-#def_icon_blank(1413
-#def_icon_blank(1414
-#def_icon_blank(1415
-#def_icon_blank(1416
-#def_icon_blank(1417
-#def_icon_blank(1418
-#def_icon_blank(1419
-#def_icon_blank(1420
+con_camerasolver
+con_followtrack
+con_objectsolver
+con_loclike
+con_rotlike
+con_sizelike
+con_translike
+con_distlimit
+con_loclimit
+con_rotlimit
 
 # ------------------------- row 25 --------------------------*/
 
@@ -1450,16 +1450,16 @@ node_tonemap
 node_toonshader
 node_trackposition
 
-#def_icon_blank(1468
-#def_icon_blank(1469
-#def_icon_blank(1470
-#def_icon_blank(1471
-#def_icon_blank(1472
-#def_icon_blank(1473
-#def_icon_blank(1474
-#def_icon_blank(1475
-#def_icon_blank(1476
-#def_icon_blank(1477
+con_sizelimit
+con_samevol
+con_transform
+con_transform_cache
+con_clampto
+con_kinematic
+con_locktrack
+con_splineik
+con_stretchto
+con_trackto
 
 # ------------------------- row 26 --------------------------*/
 
@@ -1507,12 +1507,12 @@ node_vector
 node_vector_blur
 node_vector_transform
 
-#def_icon_blank(1525
-#def_icon_blank(1526
-#def_icon_blank(1527
-#def_icon_blank(1528
-#def_icon_blank(1529
-#def_icon_blank(1530
+con_armature
+con_childof
+con_floor
+con_followpath
+con_pivot
+con_shrinkwrap
 #def_icon_blank(1531
 #def_icon_blank(1532
 #def_icon_blank(1533
@@ -1684,6 +1684,10 @@ seq_reload_strips
 seq_reload_adjust_length
 toggle_meta
 seq_snap_strip
+#def_icon_blank(1702
+#def_icon_blank(1703
+#def_icon_blank(1704
+#def_icon_blank(1705
 
 # ------------------------- row 30 --------------------------*/
 
@@ -1870,6 +1874,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.pose.relax
   ops.sculpt.border_hide
   ops.sculpt.border_mask
+  ops.sculpt.lasso_mask
   ops.transform.bone_envelope
   ops.transform.bone_size
   ops.transform.edge_slide

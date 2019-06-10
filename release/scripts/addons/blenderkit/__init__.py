@@ -1350,8 +1350,13 @@ class BlenderKitAddonPreferences(AddonPreferences):
                 op = layout.operator("wm.url_open", text="Register online and get your API Key",
                                      icon='QUESTION')
                 op.url = paths.BLENDERKIT_SIGNUP_URL
+        else:
+            if self.enable_oauth:
+                layout.operator("wm.blenderkit_logout", text="Logout",
+                                icon='URL')
 
-        layout.prop(self, "api_key", text='Your API Key')
+        if not self.enable_oauth:
+            layout.prop(self, "api_key", text='Your API Key')
         # layout.label(text='After you paste API Key, categories are downloaded, so blender will freeze for a few seconds.')
         layout.prop(self, "global_dir")
         layout.prop(self, "project_subdir")

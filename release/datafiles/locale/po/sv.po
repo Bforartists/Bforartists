@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -1359,10 +1359,6 @@ msgstr "Flytta Till Lager"
 
 msgid "Input Color Space"
 msgstr "Färgrymd:"
-
-
-msgid "Color space of the image or movie on disk"
-msgstr "Markera Länkad"
 
 
 msgid "Color Space"
@@ -8975,7 +8971,15 @@ msgid "Navigation"
 msgstr "Renderings Fönster"
 
 
+msgid "Select Linked"
+msgstr "Avmarkera Länkad"
+
+
 msgid "Strip"
+msgstr "Lägg till Stripp"
+
+
+msgid "Movie Strip"
 msgstr "Lägg till Stripp"
 
 
@@ -9081,10 +9085,6 @@ msgstr "Yta"
 
 msgid "Normals"
 msgstr "Normaler"
-
-
-msgid "Select Linked"
-msgstr "Avmarkera Länkad"
 
 
 msgid "Mesh Select Mode"
@@ -17982,6 +17982,22 @@ msgid "Apply selected vertex locations to all other shape keys"
 msgstr "Markera Länkad"
 
 
+msgid "Tag Seam"
+msgstr "Rensa Förälder"
+
+
+msgid "Tag Sharp"
+msgstr "Rensa Förälder"
+
+
+msgid "Tag Crease"
+msgstr "Arkiv"
+
+
+msgid "Tag Bevel"
+msgstr "Avfasning:"
+
+
 msgctxt "Operator"
 msgid "Solidify"
 msgstr "Massiv"
@@ -24567,10 +24583,6 @@ msgid "Spot Shape"
 msgstr "Beräkna Normaler"
 
 
-msgid "Performance"
-msgstr "Rensa Rotation"
-
-
 msgid "Ray Visibility"
 msgstr "Växla synlighet"
 
@@ -24597,6 +24609,10 @@ msgstr "Mitten"
 
 msgid "Passes"
 msgstr "Rendera"
+
+
+msgid "Performance"
+msgstr "Rensa Rotation"
 
 
 msgid "Threads"
@@ -29004,10 +29020,6 @@ msgid "Meta Strip"
 msgstr "Meta-remsa"
 
 
-msgid "Movie Strip"
-msgstr "Lägg till Stripp"
-
-
 msgid "Clip Strip"
 msgstr "Beskärningsstart"
 
@@ -29336,30 +29348,6 @@ msgid "Add & Replace"
 msgstr "Lägg till & ersätt"
 
 
-msgid "Double Threshold"
-msgstr "Tröskel"
-
-
-msgid "Edge Tag Mode"
-msgstr "Redigerings Läge"
-
-
-msgid "Tag Seam"
-msgstr "Rensa Förälder"
-
-
-msgid "Tag Sharp"
-msgstr "Rensa Förälder"
-
-
-msgid "Tag Crease"
-msgstr "Arkiv"
-
-
-msgid "Tag Bevel"
-msgstr "Avfasning:"
-
-
 msgid "Stick stroke to other strokes"
 msgstr "Markera Länkad"
 
@@ -29438,10 +29426,6 @@ msgstr "Flytta Till Lager"
 
 msgid "Auto Keyframe Insert Keying Set"
 msgstr "Radera"
-
-
-msgid "AutoMerge Editing"
-msgstr "Skärmredigering"
 
 
 msgid "WPaint Multi-Paint"
@@ -31049,6 +31033,11 @@ msgstr "Gamma-övertona"
 
 
 msgctxt "Operator"
+msgid "Right"
+msgstr "Höger"
+
+
+msgctxt "Operator"
 msgid "Grouped"
 msgstr "Grupp"
 
@@ -31061,31 +31050,6 @@ msgstr "Film"
 msgctxt "Operator"
 msgid "Sound"
 msgstr "Ljud"
-
-
-msgctxt "Operator"
-msgid "Strips to the Left"
-msgstr "Höger"
-
-
-msgctxt "Operator"
-msgid "Strips to the Right"
-msgstr "Höger"
-
-
-msgctxt "Operator"
-msgid "Surrounding Handles"
-msgstr "Kringliggande handtag"
-
-
-msgctxt "Operator"
-msgid "Left Handle"
-msgstr "Vänster handtag"
-
-
-msgctxt "Operator"
-msgid "Right Handle"
-msgstr "Höger handtag"
 
 
 msgctxt "Operator"
@@ -31448,11 +31412,6 @@ msgstr "Fram"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Svart"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "Höger"
 
 
 msgctxt "Operator"

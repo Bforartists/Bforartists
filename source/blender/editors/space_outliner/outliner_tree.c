@@ -1380,25 +1380,27 @@ static void outliner_add_layer_collections_recursive(SpaceOutliner *soops,
 {
   for (LayerCollection *lc = layer_collections->first; lc; lc = lc->next) {
     const bool exclude = (lc->flag & LAYER_COLLECTION_EXCLUDE) != 0;
+    TreeElement *ten;
 
     if (exclude && ((soops->show_restrict_flags & SO_RESTRICT_ENABLE) == 0)) {
-      continue;
+      ten = parent_ten;
     }
+    else {
+      ID *id = &lc->collection->id;
+      ten = outliner_add_element(soops, tree, id, parent_ten, TSE_LAYER_COLLECTION, 0);
 
-    ID *id = &lc->collection->id;
-    TreeElement *ten = outliner_add_element(soops, tree, id, parent_ten, TSE_LAYER_COLLECTION, 0);
+      ten->name = id->name + 2;
+      ten->directdata = lc;
 
-    ten->name = id->name + 2;
-    ten->directdata = lc;
+      /* Open by default. */
+      TreeStoreElem *tselem = TREESTORE(ten);
+      if (!tselem->used) {
+        tselem->flag &= ~TSE_CLOSED;
+      }
 
-    /* Open by default. */
-    TreeStoreElem *tselem = TREESTORE(ten);
-    if (!tselem->used) {
-      tselem->flag &= ~TSE_CLOSED;
-    }
-
-    if (exclude || (lc->runtime_flag & LAYER_COLLECTION_VISIBLE) == 0) {
-      ten->flag |= TE_DISABLED;
+      if (exclude || (lc->runtime_flag & LAYER_COLLECTION_VISIBLE) == 0) {
+        ten->flag |= TE_DISABLED;
+      }
     }
 
     outliner_add_layer_collections_recursive(
@@ -1839,7 +1841,6 @@ static void outliner_restore_scrolling_position(SpaceOutliner *soops,
                                                 OutlinerTreeElementFocus *focus)
 {
   View2D *v2d = &ar->v2d;
-  int ytop;
 
   if (focus->tselem != NULL) {
     outliner_set_coordinates(ar, soops);
@@ -1847,18 +1848,11 @@ static void outliner_restore_scrolling_position(SpaceOutliner *soops,
     TreeElement *te_new = outliner_find_tree_element(&soops->tree, focus->tselem);
 
     if (te_new != NULL) {
-      int ys_new, ys_old;
+      int ys_new = te_new->ys;
+      int ys_old = focus->ys;
 
-      ys_new = te_new->ys;
-      ys_old = focus->ys;
-
-      ytop = v2d->cur.ymax + (ys_new - ys_old) - 1;
-      if (ytop > 0) {
-        ytop = 0;
-      }
-
-      v2d->cur.ymax = (float)ytop;
-      v2d->cur.ymin = (float)(ytop - BLI_rcti_size_y(&v2d->mask));
+      float y_move = MIN2(ys_new - ys_old, -v2d->cur.ymax);
+      BLI_rctf_translate(&v2d->cur, 0, y_move);
     }
     else {
       return;

@@ -58,6 +58,7 @@ extern "C" {
 #include "DNA_lightprobe_types.h"
 #include "DNA_rigidbody_types.h"
 #include "DNA_scene_types.h"
+#include "DNA_sequence_types.h"
 #include "DNA_sound_types.h"
 #include "DNA_speaker_types.h"
 #include "DNA_texture_types.h"
@@ -78,6 +79,7 @@ extern "C" {
 #include "BKE_image.h"
 #include "BKE_key.h"
 #include "BKE_lattice.h"
+#include "BKE_layer.h"
 #include "BKE_mask.h"
 #include "BKE_material.h"
 #include "BKE_mesh.h"
@@ -89,6 +91,8 @@ extern "C" {
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
 #include "BKE_rigidbody.h"
+#include "BKE_scene.h"
+#include "BKE_sequencer.h"
 #include "BKE_shader_fx.h"
 #include "BKE_sound.h"
 #include "BKE_tracking.h"
@@ -1564,10 +1568,66 @@ void DepsgraphNodeBuilder::build_sound(bSound *sound)
   if (built_map_.checkIsBuiltAndTag(sound)) {
     return;
   }
-  /* Placeholder so we can add relations and tag ID node for update. */
-  add_operation_node(&sound->id, NodeType::AUDIO, OperationCode::SOUND_EVAL);
+  add_id_node(&sound->id);
+  bSound *sound_cow = get_cow_datablock(sound);
+  add_operation_node(&sound->id,
+                     NodeType::AUDIO,
+                     OperationCode::SOUND_EVAL,
+                     function_bind(BKE_sound_evaluate, _1, bmain_, sound_cow));
   build_animdata(&sound->id);
   build_parameters(&sound->id);
+}
+
+void DepsgraphNodeBuilder::build_scene_sequencer(Scene *scene)
+{
+  if (scene->ed == NULL) {
+    return;
+  }
+  build_scene_audio(scene);
+  Scene *scene_cow = get_cow_datablock(scene);
+  add_operation_node(&scene->id,
+                     NodeType::SEQUENCER,
+                     OperationCode::SEQUENCES_EVAL,
+                     function_bind(BKE_scene_eval_sequencer_sequences, _1, scene_cow));
+  /* Make sure data for sequences is in the graph. */
+  Sequence *seq;
+  SEQ_BEGIN (scene->ed, seq) {
+    if (seq->sound != NULL) {
+      build_sound(seq->sound);
+    }
+    if (seq->scene != NULL) {
+      build_scene_parameters(seq->scene);
+    }
+    if (seq->type == SEQ_TYPE_SCENE && seq->scene != NULL) {
+      if (seq->flag & SEQ_SCENE_STRIPS) {
+        build_scene_sequencer(seq->scene);
+      }
+      ViewLayer *sequence_view_layer = BKE_view_layer_default_render(seq->scene);
+      build_scene_speakers(seq->scene, sequence_view_layer);
+    }
+    /* TODO(sergey): Movie clip, scene, camera, mask. */
+  }
+  SEQ_END;
+}
+
+void DepsgraphNodeBuilder::build_scene_audio(Scene *scene)
+{
+  if (built_map_.checkIsBuiltAndTag(scene, BuilderMap::TAG_SCENE_AUDIO)) {
+    return;
+  }
+  add_operation_node(&scene->id, NodeType::AUDIO, OperationCode::SOUND_EVAL);
+}
+
+void DepsgraphNodeBuilder::build_scene_speakers(Scene * /*scene*/, ViewLayer *view_layer)
+{
+  LISTBASE_FOREACH (Base *, base, &view_layer->object_bases) {
+    Object *object = base->object;
+    if (object->type != OB_SPEAKER || !need_pull_base_into_graph(base)) {
+      continue;
+    }
+    /* NOTE: Can not use base because it does not belong to a current view layer. */
+    build_object(-1, base->object, DEG_ID_LINKED_INDIRECTLY, true);
+  }
 }
 
 /* **** ID traversal callbacks functions **** */

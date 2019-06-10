@@ -41,17 +41,20 @@ def create_lamp(context, loc):
         location=loc)
     lamp = context.active_object
     lamp.data.use_nodes = True
+    lamp.location = loc
     tree = lamp.data.node_tree
     return tree, tree.nodes, lamp.data
 
 
 def create_camera(context, loc, rot):
     bpy.ops.object.camera_add(
-        align='VIEW',
+        align='WORLD',
         enter_editmode=False,
         location=loc,
         rotation=rot)
     cam = context.active_object
+    cam.location = loc
+    cam.rotation_euler = rot
     context.scene.camera = cam
     return cam
 
@@ -76,9 +79,6 @@ def apply_simple_material(o, name, color):
     m.use_nodes = True
     m.node_tree.nodes[1].inputs[0].default_value = color
     o.data.materials.append(m)
-
-
-# /home/stephen/blender-28-git/build_linux_full/bin/blender --background --factory-startup -noaudio --python /home/stephen/blender-28-git/build_linux_full/bin/2.80/scripts/addons/archipack/archipack_thumbs.py -- addon:archipack matlib:/medias/stephen/DATA/lib/ cls:roof preset:/home/stephen/.config/blender/2.80/scripts/presets/archipack_roof/square.py
 
 
 def generateThumb(context, cls, preset, engine):
@@ -169,17 +169,19 @@ def generateThumb(context, cls, preset, engine):
 
     # add 3 lights
     tree, nodes, lamp = create_lamp(context, (3.69736, -7, 6.0))
-    lamp.energy = 50
+    lamp.energy = 1000
     emit = nodes["Emission"]
     emit.inputs[1].default_value = 2000.0
 
     tree, nodes, lamp = create_lamp(context, (9.414563179016113, 5.446230888366699, 5.903861999511719))
+    lamp.energy = 400
     emit = nodes["Emission"]
     falloff = nodes.new(type="ShaderNodeLightFalloff")
     falloff.inputs[0].default_value = 5
     tree.links.new(falloff.outputs[2], emit.inputs[1])
 
     tree, nodes, lamp = create_lamp(context, (-7.847615718841553, 1.03135085105896, 5.903861999511719))
+    lamp.energy = 200
     emit = nodes["Emission"]
     falloff = nodes.new(type="ShaderNodeLightFalloff")
     falloff.inputs[0].default_value = 5

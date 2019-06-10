@@ -584,4 +584,15 @@ static void wm_operatortype_free_macro(wmOperatorType *ot)
   BLI_freelistN(&ot->macro);
 }
 
+const char *WM_operatortype_name(struct wmOperatorType *ot, struct PointerRNA *properties)
+{
+  const char *name = NULL;
+
+  if (ot->get_name && properties) {
+    name = ot->get_name(ot, properties);
+  }
+
+  return (name && name[0]) ? name : RNA_struct_ui_name(ot->srna);
+}
+
 /** \} */

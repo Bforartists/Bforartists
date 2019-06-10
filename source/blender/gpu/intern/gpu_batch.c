@@ -545,22 +545,6 @@ void GPU_batch_uniform_mat4(GPUBatch *batch, const char *name, const float data[
   glUniformMatrix4fv(uniform->location, 1, GL_FALSE, (const float *)data);
 }
 
-static void primitive_restart_index(const GPUIndexBuf *el)
-{
-#if GPU_TRACK_INDEX_RANGE
-  /* Can be removed if GL 4.3 is available. */
-  if (!GLEW_ARB_ES3_compatibility) {
-    /* Stay sync with GPU_state_init(). */
-    static int last_type = GPU_INDEX_U32;
-    if (el->index_type != last_type) {
-      GLuint restart_index = (el->index_type == GPU_INDEX_U16) ? (GLuint)0xFFFF :
-                                                                 (GLuint)0xFFFFFFFF;
-      glPrimitiveRestartIndex(restart_index);
-    }
-  }
-#endif
-}
-
 static void *elem_offset(const GPUIndexBuf *el, int v_first)
 {
 #if GPU_TRACK_INDEX_RANGE
@@ -575,6 +559,15 @@ static void *elem_offset(const GPUIndexBuf *el, int v_first)
 void GPU_batch_bind(GPUBatch *batch)
 {
   glBindVertexArray(batch->vao_id);
+
+#if GPU_TRACK_INDEX_RANGE
+  /* Can be removed if GL 4.3 is required. */
+  if (!GLEW_ARB_ES3_compatibility && batch->elem != NULL) {
+    GLuint restart_index = (batch->elem->index_type == GPU_INDEX_U16) ? (GLuint)0xFFFF :
+                                                                        (GLuint)0xFFFFFFFF;
+    glPrimitiveRestartIndex(restart_index);
+  }
+#endif
 }
 
 void GPU_batch_draw(GPUBatch *batch)
@@ -631,8 +624,6 @@ void GPU_batch_draw_advanced(GPUBatch *batch, int v_first, int v_count, int i_fi
 #endif
     void *v_first_ofs = elem_offset(el, v_first);
 
-    primitive_restart_index(el);
-
     if (GLEW_ARB_base_instance) {
       glDrawElementsInstancedBaseVertexBaseInstance(
           batch->gl_prim_type, v_count, index_type, v_first_ofs, i_count, base_index, i_first);
@@ -643,12 +634,18 @@ void GPU_batch_draw_advanced(GPUBatch *batch, int v_first, int v_count, int i_fi
     }
   }
   else {
+#ifdef __APPLE__
+    glDisable(GL_PRIMITIVE_RESTART);
+#endif
     if (GLEW_ARB_base_instance) {
       glDrawArraysInstancedBaseInstance(batch->gl_prim_type, v_first, v_count, i_count, i_first);
     }
     else {
       glDrawArraysInstanced(batch->gl_prim_type, v_first, v_count, i_count);
     }
+#ifdef __APPLE__
+    glEnable(GL_PRIMITIVE_RESTART);
+#endif
   }
 }
 
