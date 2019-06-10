@@ -960,7 +960,7 @@ class CARVER_OT_operator(bpy.types.Operator):
 			ob = bpy.data.objects.new("CarverBrushCopy", context.object.data.copy())
 			ob.location = self.ObjectBrush.location
 			context.collection.objects.link(ob)
-			context.scene.update()
+			context.view_layer.update()
 
 			# Save default variables
 			self.InitBrush['location'] = self.ObjectBrush.location.copy()

@@ -36,6 +36,9 @@ class AddTeapot(bpy.types.Operator):
                                    self.resolution)
         # Actually create the mesh object from this geometry data.
         obj = create_mesh_object(context, verts, [], faces, "Teapot")
+        bpy.ops.object.editmode_toggle()
+        bpy.ops.mesh.remove_doubles()
+        bpy.ops.object.editmode_toggle()
         return {'FINISHED'}
 
 

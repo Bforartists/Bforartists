@@ -5227,7 +5227,7 @@ static void sculpt_flush_update_step(bContext *C)
       r.xmax += ar->winrct.xmin + 2;
       r.ymin += ar->winrct.ymin - 2;
       r.ymax += ar->winrct.ymin + 2;
-      ED_region_tag_redraw_partial(ar, &r);
+      ED_region_tag_redraw_partial(ar, &r, true);
     }
   }
 }
@@ -5585,6 +5585,9 @@ void sculpt_pbvh_clear(Object *ob)
   }
   ss->pbvh = NULL;
   BKE_object_free_derived_caches(ob);
+
+  /* Tag to rebuild PBVH in depsgraph. */
+  DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 }
 
 void sculpt_dyntopo_node_layers_add(SculptSession *ss)

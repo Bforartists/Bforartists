@@ -245,7 +245,7 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff.
                 props.search_error = False
                 props.report = 'Open assetbar to see %i results. ' % len(s['search results'])
                 if len(s['search results']) == 0:
-                    props.report = 'No matching results found.'
+                    tasks_queue.add_task((ui.add_report, ('No matching results found.',)))
 
             # (rdata['next'])
             # if rdata['next'] != None:
@@ -1032,6 +1032,8 @@ def search(category='', get_next=False, author_id=''):
     #     query['keywords'] += '+is_free:true'
 
     add_search_process(query, params)
+    tasks_queue.add_task((ui.add_report, ('BlenderKit searching....',2)))
+
     props.report = 'BlenderKit searching....'
 
 

@@ -737,7 +737,6 @@ def create_armature(armAnim, leafP, cu, frameRate, leafMesh, leafObj, leafVertSi
     armOb.animation_data_create()
     armOb.animation_data.action = newAction
     arm.display_type = 'STICK'
-    arm.use_deform_delay = True
     # Add the armature modifier to the curve
     armMod = treeOb.modifiers.new('windSway', 'ARMATURE')
     if previewArm:

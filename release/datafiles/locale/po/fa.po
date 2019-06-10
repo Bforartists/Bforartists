@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -4553,6 +4553,10 @@ msgid "Transitions"
 msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
 
+msgid "Select Linked"
+msgstr "ﻪﻘﻠﺣ ﺏﺎﺨﺘﻧﺍ"
+
+
 msgid "Python"
 msgstr "ﻥﻮﺘﯾﺎﭘ"
 
@@ -4587,10 +4591,6 @@ msgstr "ﻩﺪﺷ ﻝﺎﻌﻓ"
 
 msgid "Mesh"
 msgstr "ﺶﻣ"
-
-
-msgid "Select Linked"
-msgstr "ﻪﻘﻠﺣ ﺏﺎﺨﺘﻧﺍ"
 
 
 msgid "Hide/Mask"
@@ -12273,10 +12273,6 @@ msgid "Tracking Presets"
 msgstr "ﯼﺯﺎﺑ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
-msgid "Performance"
-msgstr "ﺩﺮﮑﻠﻤﻋ"
-
-
 msgid "Ray Visibility"
 msgstr "ﻪﻌﺷﺍ ﺪﯾﺩ"
 
@@ -12295,6 +12291,10 @@ msgstr "ﻑﺎﻔﺷ"
 
 msgid "Light Paths"
 msgstr "ﻥﺯﻭ ﯽﺷﺎﻘﻧ"
+
+
+msgid "Performance"
+msgstr "ﺩﺮﮑﻠﻤﻋ"
 
 
 msgid "Geometry Data"
@@ -13446,10 +13446,6 @@ msgid "Changed"
 msgstr "ﺎﻫ ﻝﺎﻧﺎﮐ"
 
 
-msgid "Double Threshold"
-msgstr "ﮏﯿﻠﮐ ﺭﺎﺑﻭﺩ:"
-
-
 msgid "Snap Node Element"
 msgstr "ﻁﺎﻘﻧ ﻑﺬﺣ"
 
@@ -14250,6 +14246,16 @@ msgstr "ﻪﻤﻫ ﺯﺍ ﻑﺬﺣ"
 
 
 msgctxt "Operator"
+msgid "Left"
+msgstr "ﭗﭼ"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "ﺖﺳﺍﺭ"
+
+
+msgctxt "Operator"
 msgid "Grouped"
 msgstr "ﻩﻭﺮﮔ"
 
@@ -14257,16 +14263,6 @@ msgstr "ﻩﻭﺮﮔ"
 msgctxt "Operator"
 msgid "Sound"
 msgstr "ﺍﺪﺻ"
-
-
-msgctxt "Operator"
-msgid "Left Handle"
-msgstr "ﺭﻮﺘﮐﻭ ﻪٔﺘﺳﺩ"
-
-
-msgctxt "Operator"
-msgid "Right Handle"
-msgstr "ﺭﺎﮐﺩﻮﺧ ﻪﺘﺳﺩ"
 
 
 msgctxt "Operator"
@@ -14521,16 +14517,6 @@ msgstr "ﻮﻠﺟ"
 msgctxt "Operator"
 msgid "Back"
 msgstr "ﺐﻘﻋ"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "ﺖﺳﺍﺭ"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "ﭗﭼ"
 
 
 msgctxt "Operator"

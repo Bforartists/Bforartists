@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -2586,10 +2586,6 @@ msgid "Input Color Space"
 msgstr "Wejściowa przestrzeń kolorów"
 
 
-msgid "Color space of the image or movie on disk"
-msgstr "Przestrzeń kolorów obrazu lub filmu na dysku"
-
-
 msgid "Rec. 709 (Full Range), Blender native linear space"
 msgstr "Domyślna przestrzeń liniowa Blendera Rec.709 (pełen zakres)"
 
@@ -2604,10 +2600,6 @@ msgstr "Przestrzeń liniowa używana dla obrazków, które zawierają dane nie b
 
 msgid "Standard RGB Display Space"
 msgstr "Standardowa przestrzeń kolorów RGB"
-
-
-msgid "The simple video conversion from a gamma 2.2 sRGB space"
-msgstr "Prosta konwersja wideo z gammy 2.2 w przestrzeni sRGB"
 
 
 msgid "Color Space"
@@ -7520,10 +7512,6 @@ msgid "<no path>"
 msgstr "<brak ścieżki>"
 
 
-msgid "Programming error: operator does not actually have code to do anything!"
-msgstr "Błąd programowania: operator w zasadzie nie posiada kodu, który robi cokolwiek!"
-
-
 msgid "Scene not found"
 msgstr "Nie odnaleziono sceny"
 
@@ -8726,12 +8714,12 @@ msgid "Export Data Options:"
 msgstr "Opcje danych eksportu:"
 
 
-msgid "Armature Options:"
-msgstr "Opcje szkieletu:"
-
-
 msgid "Transformation Type"
 msgstr "Typ transformacji"
+
+
+msgid "Armature Options:"
+msgstr "Opcje szkieletu:"
 
 
 msgid "Collada Options:"
@@ -10095,10 +10083,6 @@ msgstr "Wysokość:"
 
 msgid "Search Area:"
 msgstr "Obszar poszukiwania:"
-
-
-msgid "Size %d x %d"
-msgstr "Wymiary %d x %d"
 
 
 msgid ", %d float channel(s)"
@@ -11674,18 +11658,6 @@ msgstr "Obiekt posiada ujemną skalę, odwijanie (unwrap) będzie używało nie 
 
 msgid "Cannot open file: %s"
 msgstr "Nie można otworzyć pliku: %s"
-
-
-msgid "'Refresh' incompatible with Object ID type"
-msgstr "'Odśwież' nie kompatybilne w typem ID Object"
-
-
-msgid "'Refresh' incompatible with ParticleSettings ID type"
-msgstr "'Odśwież' nie kompatybilne z typem ID ParticleSettings"
-
-
-msgid "This ID type is not compatible with any 'refresh' options"
-msgstr "Ten typ ID nie jest kompatybilny z żadnymi opcjami 'odśwież'"
 
 
 msgid "Index out of range"

@@ -46,6 +46,8 @@
 
 #  include "ED_clip.h"
 
+#  include "BKE_sequencer.h"
+
 #  include "DNA_screen_types.h"
 #  include "DNA_space_types.h"
 
@@ -71,7 +73,14 @@ static float rna_MovieClip_fps_get(PointerRNA *ptr)
   return BKE_movieclip_get_fps(clip);
 }
 
-static void rna_MovieClipUser_proxy_render_settings_update(Main *UNUSED(bmain),
+static void rna_MovieClip_use_proxy_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *ptr)
+{
+  MovieClip *clip = (MovieClip *)ptr->id.data;
+  BKE_movieclip_clear_cache(clip);
+  BKE_sequence_invalidate_movieclip_strips(bmain, clip);
+}
+
+static void rna_MovieClipUser_proxy_render_settings_update(Main *bmain,
                                                            Scene *UNUSED(scene),
                                                            PointerRNA *ptr)
 {
@@ -95,8 +104,10 @@ static void rna_MovieClipUser_proxy_render_settings_update(Main *UNUSED(bmain),
           if (&sc->user == user) {
             MovieClip *clip = ED_space_clip_get_clip(sc);
 
-            if (clip && (clip->flag & MCLIP_USE_PROXY))
+            if (clip && (clip->flag & MCLIP_USE_PROXY)) {
               BKE_movieclip_clear_cache(clip);
+              BKE_sequence_invalidate_movieclip_strips(bmain, clip);
+            }
 
             break;
           }
@@ -338,7 +349,7 @@ static void rna_def_movieclip(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(
       prop, "Use Proxy / Timecode", "Use a preview proxy and/or timecode index for this clip");
-  RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, NULL);
+  RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, "rna_MovieClip_use_proxy_update");
 
   prop = RNA_def_int_vector(srna,
                             "size",

@@ -46,7 +46,9 @@ if "bpy" in locals():
     importlib.reload(mesh_edge_roundifier)
     importlib.reload(mesh_edgetools)
     importlib.reload(mesh_edges_floor_plan)
-
+    importlib.reload(mesh_edges_length)
+    importlib.reload(pkhg_faces)
+    importlib.reload(mesh_cut_faces)
 
 else:
     from . import mesh_offset_edges
@@ -58,6 +60,9 @@ else:
     from . import mesh_edge_roundifier
     from . import mesh_edgetools
     from . import mesh_edges_floor_plan
+    from . import mesh_edges_length
+    from . import pkhg_faces
+    from . import mesh_cut_faces
 
 
 import bmesh
@@ -944,6 +949,8 @@ class VIEW3D_PT_edit_mesh_tools(Panel):
             row = col_top.row(align=True)
             row.operator('mesh.edge_roundifier', text="Edge Roundify")
             row = col_top.row(align=True)
+            row.operator('object.mesh_edge_length_set', text="Set Edge Length")
+            row = col_top.row(align=True)
             row.operator('mesh.edges_floor_plan', text="Edges Floor Plan")
             row = col_top.row(align=True)
             row.operator("mesh.extrude_edges_move", text="Extrude Edges")
@@ -965,18 +972,22 @@ class VIEW3D_PT_edit_mesh_tools(Panel):
             row.operator("mesh.face_inset_fillet",
                             text="Face Inset Fillet")
             row = col_top.row(align=True)
+            row.operator("mesh.ext_cut_faces",
+                            text="Cut Faces")
+            row = col_top.row(align=True)
             row.operator("mesh.extrude_reshape",
                             text="Push/Pull Faces")
-            row = col_top.row(align=True)
-            row.operator("mesh.inset")
-            row = col_top.row(align=True)
-            row.operator("mesh.extrude_faces_move", text="Extrude Individual Faces")
             row = col_top.row(align=True)
             row.operator("object.mextrude",
                             text="Multi Extrude")
             row = col_top.row(align=True)
             row.operator('mesh.split_solidify', text="Split Solidify")
-
+            row = col_top.row(align=True)
+            row.operator('mesh.add_faces_to_object', text="Face Shape")
+            row = col_top.row(align=True)
+            row.operator("mesh.inset")
+            row = col_top.row(align=True)
+            row.operator("mesh.extrude_faces_move", text="Extrude Individual Faces")
 
         # util - first line
         split = col.split(factor=0.80, align=True)
@@ -985,7 +996,7 @@ class VIEW3D_PT_edit_mesh_tools(Panel):
         else:
             split.prop(et, "display_util", text="Utility Tools", icon='RIGHTARROW')
         split.menu("VIEW3D_MT_Edit_MultiMET", text="", icon='RESTRICT_SELECT_OFF')
-        # face - settings
+        # util - settings
         if et.display_util:
             box = col.column(align=True).box().column()
             col_top = box.column(align=True)
@@ -1120,6 +1131,9 @@ def register():
     mesh_edge_roundifier.register()
     mesh_edgetools.register()
     mesh_edges_floor_plan.register()
+    mesh_edges_length.register()
+    pkhg_faces.register()
+    mesh_cut_faces.register()
 
 
 # unregistering and removing menus
@@ -1142,6 +1156,10 @@ def unregister():
     mesh_edge_roundifier.unregister()
     mesh_edgetools.unregister()
     mesh_edges_floor_plan.unregister()
+    mesh_edges_length.unregister()
+    pkhg_faces.unregister()
+    mesh_cut_faces.unregister()
+
 
 if __name__ == "__main__":
     register()

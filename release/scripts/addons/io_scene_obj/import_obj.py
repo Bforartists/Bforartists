@@ -520,7 +520,7 @@ def split_mesh(verts_loc, faces, unique_materials, filepath, SPLIT_OB_OR_GROUP):
 
             face_vert_loc_indices[loop_idx] = map_index  # remap to the local index
 
-            if context_material is not None and context_material not in unique_materials_split:
+            if context_material not in unique_materials_split:
                 unique_materials_split[context_material] = unique_materials[context_material]
 
         faces_split.append(face)
@@ -1104,6 +1104,8 @@ def load(context,
                         #     as a polyline, and not a regular face...
                         face[1][:] = [True]
                         faces.append(face)
+                        if context_material is None:
+                            use_default_material = True
                     # Else, use face_vert_loc_indices previously defined and used the obj_face
 
                     context_multi_line = b'l' if strip_slash(line_split) else b''
