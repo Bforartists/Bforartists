@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -2811,10 +2811,6 @@ msgid "Input Color Space"
 msgstr "ﻥﻮﻠﻟﺍ ءﺎﻀﻓ"
 
 
-msgid "Color space of the image or movie on disk"
-msgstr "ﺹﺮﻘﻟﺍ ﻰﻠﻋ ﻢﻠﻔﻟﺍ ﻭﺍ ﺓﺭﻮﺼﻠﻟ ﻥﻮﻠﻟﺍ ءﺎﻀﻓ"
-
-
 msgid "Rec. 709 (Full Range), Blender native linear space"
 msgstr "(ﻯﺪﻤﻟﺍ ﻞﻣﺎﻛ) Rec. 709 ,ﻲﻠﺻﻻ﻿ﺍ ﻲﻄﺨﻟﺍ ﺭﺪﻨﻠﺑ ءﺎﻀﻓ"
 
@@ -2829,10 +2825,6 @@ msgstr "(ﻢﻇﺍﻮﻨﻟﺍ ﻂﺋﺍﺮﺧ ,ﻝﺎﺜﻣ) ﺔﻴﻧﻮﻟ-�
 
 msgid "Standard RGB Display Space"
 msgstr "RGB ﻲﺟﺫﻮﻤﻨﻟﺍ ﺽﺮﻌﻟﺍ ءﺎﻀﻓ"
-
-
-msgid "The simple video conversion from a gamma 2.2 sRGB space"
-msgstr "sRGB 2.2 ﺓﺭﺎﻧﺇ ءﺎﻀﻓ ﻦﻣ ﻢﻠﻔﻠﻟ ﻂﻴﺴﺒﻟﺍ ﻞﻳﻮﺤﺘﻟﺍ"
 
 
 msgid "Color Space"
@@ -12027,10 +12019,6 @@ msgid "Alpha Mode"
 msgstr "ﺎﻔﻟﻷ﻿ﺍ ﻊﺿﻭ"
 
 
-msgid "Representation of alpha information in the RGBA pixels"
-msgstr "ﺔﻴﻓﺎﻔﺸﻟﺍ ﻭ ﻥﺍﻮﻟﻷ﻿ﺍ ﺕﻼ﻿ﺴﻜﺑ ﻲﻓ ﺎﻔﻟﻷ﻿ﺍ ﺕﺎﻣﻮﻠﻌﻣ ﻞﻴﺜﻤﺗ"
-
-
 msgid "Straight"
 msgstr "ﻢﻴﻘﺘﺴﻣ ﻊﻄﻗ"
 
@@ -18600,6 +18588,10 @@ msgid "Navigation"
 msgstr "ﺢﻔّﺼﺗ"
 
 
+msgid "Select Linked"
+msgstr "ﺔﻄﺒﺗﺮﻤﻟﺍ ﺭﺎﺘﺧﺇ"
+
+
 msgid "Strip"
 msgstr "ﻂﻳﺮﺷ"
 
@@ -18710,10 +18702,6 @@ msgstr "ﺕﺎﻤﻇﺎﻨﻟﺍ"
 
 msgid "Select All by Trait"
 msgstr "ﺔﻤﺴﻟﺍ ﺐﺴﺣ ﻞﻛ ﺭﺎﻴﺘﺧﺍ"
-
-
-msgid "Select Linked"
-msgstr "ﺔﻄﺒﺗﺮﻤﻟﺍ ﺭﺎﺘﺧﺇ"
 
 
 msgid "Select More/Less"
@@ -27785,6 +27773,26 @@ msgid "Shape Propagate"
 msgstr "ﻞﻜﺸﻟﺍ ﺐﺳﺎﻧ "
 
 
+msgid "The edge flag to tag when selecting the shortest path"
+msgstr " ﺭﺎﺴﻣ ﺮﺼﻗﺃ ﺭﺎﻴﺘﺧﺍ ﺪﻨﻋ ﻢﻴﺳﻮﺘﻠﻟ ﺔﻓﺎﺤﻟﺍ ﻢﻠﻋ"
+
+
+msgid "Tag Seam"
+msgstr "ﻢﺳﻮﻟﺍ ﺓﺯﺭﺩ"
+
+
+msgid "Tag Sharp"
+msgstr "ﻢﺳﻮﻟﺍ ﺓﺪّﺣ"
+
+
+msgid "Tag Crease"
+msgstr "ﻢﺳﻮﻟﺍ ﺪﻌﺠﺗ"
+
+
+msgid "Tag Bevel"
+msgstr "ﻢﺳﻮﻟﺍ ﺔﻔﻄﺷ"
+
+
 msgid "Face Stepping"
 msgstr "ﻪﺟﻮﻟﺍ ﻂُﺧﺃ"
 
@@ -33314,14 +33322,6 @@ msgid "Spot Shape"
 msgstr "ءﻮﻀﻟﺍ ﺔﻌﻘﺑ ﻞﻜﺷ"
 
 
-msgid "Cycles Settings"
-msgstr "ﺰﻠﻜﻳﺎﺳ ﺕﺍﺩﺍﺪﻋﺇ"
-
-
-msgid "Performance"
-msgstr "ءﺍﺩﺍ"
-
-
 msgid "Ray Visibility"
 msgstr "ﻉﺎﻌﺸﻟﺍ ﺭﻮﻬﻇ"
 
@@ -33356,6 +33356,10 @@ msgstr "ﺕﺍﺩﺍﺪﺗﺭﺇ ﺮﺜﻛﺍ"
 
 msgid "Passes"
 msgstr "ﺕﺍﺮﻤﻣ"
+
+
+msgid "Performance"
+msgstr "ءﺍﺩﺍ"
 
 
 msgid "Threads"
@@ -37614,6 +37618,10 @@ msgid "Effect Sequence"
 msgstr "ﺮﻴﺛﺄﺘﻟﺍ ﻞﺴﻠﺴﺗ"
 
 
+msgid "Representation of alpha information in the RGBA pixels"
+msgstr "ﺔﻴﻓﺎﻔﺸﻟﺍ ﻭ ﻥﺍﻮﻟﻷ﻿ﺍ ﺕﻼ﻿ﺴﻜﺑ ﻲﻓ ﺎﻔﻟﻷ﻿ﺍ ﺕﺎﻣﻮﻠﻌﻣ ﻞﻴﺜﻤﺗ"
+
+
 msgid "RGB channels in transparent pixels are unaffected by the alpha channel"
 msgstr "ﺎﻔﻟﻷ﻿ﺍ ﺓﺎﻨﻗ ﻲﻓ ﻒﻋﺎﻀﺗ ﺔﻓﺎﻔﺷ ﻥﺍﻮﻟﺃ ﺕﻼ﻿ﺴﻜﺑ"
 
@@ -39106,10 +39114,6 @@ msgid "Disabled Marker"
 msgstr "ﺔﻠﻄّﻌﻣ ﺔﻣﻼ﻿ﻋ"
 
 
-msgid "Grease Pencil Vertex"
-msgstr "ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻗ ﺔﻄﻘﻧ"
-
-
 msgid "Auto handle color"
 msgstr "ﺎﻴﺗﺍﺫ ﻥﻮﻠﻟﺍ ﺞﻟﺎﻋ"
 
@@ -39666,6 +39670,10 @@ msgid "Face Area Text"
 msgstr "ﻪﺟﻭﻷ﻿ﺍ ﺔﻘﻄﻨﻣ ﺺﻧ"
 
 
+msgid "Grease Pencil Vertex"
+msgstr "ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻗ ﺔﻄﻘﻧ"
+
+
 msgid "Face Normal"
 msgstr "ﻪﺟﻭﻷ﻿ﺍ ﺕﺎﻤﻇﺎﻧ"
 
@@ -39814,38 +39822,6 @@ msgid "Add & Replace"
 msgstr "ﻝﺪّﺑ ﻭ ﻒﺿﺃ"
 
 
-msgid "Double Threshold"
-msgstr "ﺔﺒﺘﻌﻟﺍ ﻒﻋﺎﺿ"
-
-
-msgid "Limit for removing duplicates and 'Auto Merge'"
-msgstr "'ﺎﻴﺗﺍﺫ ﺞﻣﺪﻟﺍ' ﻭ ﺕﺍﺭﺮﻜﺘﻤﻟﺍ ﻑﺬﺣ ﺪﺣ"
-
-
-msgid "Edge Tag Mode"
-msgstr "ﺔﻓﺎﺤﻟﺍ ﻢﺳﻭ ﻊﺿﻭ"
-
-
-msgid "The edge flag to tag when selecting the shortest path"
-msgstr " ﺭﺎﺴﻣ ﺮﺼﻗﺃ ﺭﺎﻴﺘﺧﺍ ﺪﻨﻋ ﻢﻴﺳﻮﺘﻠﻟ ﺔﻓﺎﺤﻟﺍ ﻢﻠﻋ"
-
-
-msgid "Tag Seam"
-msgstr "ﻢﺳﻮﻟﺍ ﺓﺯﺭﺩ"
-
-
-msgid "Tag Sharp"
-msgstr "ﻢﺳﻮﻟﺍ ﺓﺪّﺣ"
-
-
-msgid "Tag Crease"
-msgstr "ﻢﺳﻮﻟﺍ ﺪﻌﺠﺗ"
-
-
-msgid "Tag Bevel"
-msgstr "ﻢﺳﻮﻟﺍ ﺔﻔﻄﺷ"
-
-
 msgid "Stick stroke to other strokes"
 msgstr "ﻯﺮﺧﻷ﻿ﺍ ﺕﺎﺒﻄﺸﻠﻟ ﺔﺒﻄﺸﻟﺍ ﻖﺼﻟﺍ"
 
@@ -39948,10 +39924,6 @@ msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﻲﻓ ﺎﻴﺗﺍﺫ ﺢ�
 
 msgid "Automatic keyframe insertion using active Keying Set only"
 msgstr "ﻂﻘﻓ ﺔﻟﺎﻌّﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﻲﻓ ﺢﻴﺗﺎﻔﻤﻠﻟ ﺔﻴﺗﺍﺫ ﺔﻓﺎﺿﺇ"
-
-
-msgid "AutoMerge Editing"
-msgstr "ﻲﺗﺍﺬﻟﺍ ﺞﻣﺪﻟﺎﺑ ﺮﻳﺮﺤﺗ"
 
 
 msgid "Automatically merge vertices moved to the same location"
@@ -40310,10 +40282,6 @@ msgid "Draw Edges"
 msgstr "ﻑﺍﻮﺤﻟﺍ ﻢﺳﺭﺍ"
 
 
-msgid "Display selected edges using highlights in the 3D view and UV editor"
-msgstr "UV ﺭﺮﺤﻣ ﻭ ﻲﺛﻼ﻿ﺜﻟﺍ ﺬﻔﻨﻣ ﻲﻓ ﺓﺭﺎﻧﺇ ﻡﺍﺪﺨﺘﺳﺈﺑ ﺓﺭﺎﺘﺨﻤﻟﺍ ﻑﺍﻮﺤﻟﺍ ﺽﺮﻋﺇ"
-
-
 msgid "Edge Angle"
 msgstr "ﺔﻓﺎﺤﻟﺍ ﺔﻳﻭﺍﺯ"
 
@@ -40352,10 +40320,6 @@ msgstr "ﻁﻮﻄﺨﻛ ﻪﺟﻮﻟﺍ ﻢﻇﺍﻮﻧ ﺽﺮﻋﺇ"
 
 msgid "Draw Faces"
 msgstr "ﻪﺟﻭﻷ﻿ﺍ ﻢﺳﺭﺃ"
-
-
-msgid "Display all faces as shades in the 3D view and UV editor"
-msgstr "UV ﺭﺮﺤﻣ ﻭ ﻲﺛﻼ﻿ﺜﻟﺍ ﺬﻔﻨﻣ ﻲﻓ ﻞﻴﻠﻈﺘﻛ ﻪﺟﻭﻷ﻿ﺍ ﻞﻛ ﺽﺮﻋﺇ"
 
 
 msgid "Display Grid Floor"
@@ -42620,6 +42584,16 @@ msgstr ":ﺮﻴﺛﺄﺘﻟﺍ"
 
 
 msgctxt "Operator"
+msgid "Left"
+msgstr "ﺭﺎﺴﻳ"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "ﻦﻴﻤﻳ"
+
+
+msgctxt "Operator"
 msgid "Grouped"
 msgstr "ﺔﻌﻤﺠﻣ"
 
@@ -42641,31 +42615,6 @@ msgstr "ﺕﻮﺻ"
 
 msgid "Storage"
 msgstr "ﺔﻴﻄﻐﺘﻟﺍ"
-
-
-msgctxt "Operator"
-msgid "Strips to the Left"
-msgstr "ﺭﺎﺴﻴﻟﺍ ﻰﻟﺇ ﻂﺋﺍﺮﺸﻟﺍ"
-
-
-msgctxt "Operator"
-msgid "Strips to the Right"
-msgstr "ﻦﻴﻤﻴﻟﺍ ﻰﻟﺇ ﻂﺋﺍﺮﺸﻟﺍ"
-
-
-msgctxt "Operator"
-msgid "Surrounding Handles"
-msgstr "ﺔﻄﻴﺤﻤﻟﺍ ﺾﺑﺎﻘﻤﻟﺍ"
-
-
-msgctxt "Operator"
-msgid "Left Handle"
-msgstr "ﻝﺎﻤﺸﻟﺍ ﺾﺒﻘﻤﻟﺍ"
-
-
-msgctxt "Operator"
-msgid "Right Handle"
-msgstr "ﻦﻴﻤﻴﻟﺍ ﺾﺒﻘﻤﻟﺍ"
 
 
 msgctxt "Operator"
@@ -43051,16 +43000,6 @@ msgstr "ﻡﺎﻣﺃ"
 msgctxt "Operator"
 msgid "Back"
 msgstr "ﻒﻠﺧ"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "ﻦﻴﻤﻳ"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "ﺭﺎﺴﻳ"
 
 
 msgctxt "Operator"
@@ -44925,12 +44864,12 @@ msgid "Export Data Options:"
 msgstr ":ﺕﺎﻧﺎﻴﺒﻟﺍ ﺮﻳﺪﺼﺗ ﺕﺍﺭﺎﻴﺧ"
 
 
-msgid "Armature Options:"
-msgstr ":ﻞﻜﻴﻬﻟﺍ ﺕﺍﺭﺎﻴﺧ"
-
-
 msgid "Transformation Type"
 msgstr "ﻝﻮﺤﺘﻟﺍ ﻉﻮﻧ"
+
+
+msgid "Armature Options:"
+msgstr ":ﻞﻜﻴﻬﻟﺍ ﺕﺍﺭﺎﻴﺧ"
 
 
 msgid "Collada Options:"

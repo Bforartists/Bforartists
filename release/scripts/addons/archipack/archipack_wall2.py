@@ -2234,8 +2234,9 @@ class ARCHIPACK_OT_wall2_draw(ArchipackDrawTool, Operator):
                 for o in self.sel:
                     o.select_set(state=True)
                 # select and make active
-                self.act.select_set(state=True)
-                context.view_layer.objects.active = self.act
+                if self.act is not None:
+                    self.act.select_set(state=True)
+                    context.view_layer.objects.active = self.act
 
             else:
                 o = self.o

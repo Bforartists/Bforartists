@@ -28,8 +28,9 @@ if "bpy" in locals():
     ui_bgl = importlib.reload(ui_bgl)
     download = importlib.reload(download)
     bg_blender = importlib.reload(bg_blender)
+    colors = importlib.reload(colors)
 else:
-    from blenderkit import paths, ratings, utils, search, upload, ui_bgl, download, bg_blender
+    from blenderkit import paths, ratings, utils, search, upload, ui_bgl, download, bg_blender, colors
 
 import bpy
 
@@ -48,6 +49,7 @@ import os
 
 handler_2d = None
 handler_3d = None
+reports = []
 
 mappingdict = {
     'MODEL': 'model',
@@ -93,6 +95,48 @@ def get_approximate_text_width(st):
         else:
             size += 7
     return size  # Convert to picas
+
+
+def add_report(text='', timeout=5, color=colors.GREEN):
+    global reports
+    updated = False
+
+    #check for same reports and just make them longer by the timeout.
+    for old_report in reports:
+        if old_report.text == text:
+            old_report.timeout = old_report.age + timeout
+            updated = True
+    if not updated:
+        report = Report(text=text, timeout=timeout, color=color)
+        reports.append(report)
+    print('added report')
+    print(report)
+
+
+class Report():
+    def __init__(self, text='', timeout=5, color=(.5, 1, .5, 1)):
+        self.text = text
+        self.timeout = timeout
+        self.start_time = time.time()
+        self.color = color
+        self.draw_color = color
+        self.age = 0
+
+    def fade(self):
+        fade_time = 1
+        self.age = time.time() - self.start_time
+        if self.age + fade_time > self.timeout:
+            alpha_multiplier = (self.timeout - self.age) / fade_time
+            self.draw_color = (self.color[0], self.color[1], self.color[2], self.color[3] * alpha_multiplier)
+            if self.age > self.timeout:
+                global reports
+                try:
+                    reports.remove(self)
+                except Exception as e:
+                    pass;
+
+    def draw(self, x, y):
+        ui_bgl.draw_text(self.text, x, y + 8, 16, self.draw_color)
 
 
 def get_asset_under_mouse(mousex, mousey):
@@ -502,9 +546,9 @@ def draw_downloader(x, y, percent=0, img=None):
     ui_bgl.draw_rect(x - 3, y - 3, 6, 6, (1, 0, 0, .3))
 
 
-def draw_progress(x, y, text='', percent=None, color=(.2, 1, .2, .3)):
+def draw_progress(x, y, text='', percent=None, color=colors.GREEN):
     ui_bgl.draw_rect(x, y, percent, 5, color)
-    ui_bgl.draw_text(text, x, y + 8, 10, color)
+    ui_bgl.draw_text(text, x, y + 8, 16, color)
 
 
 def draw_callback_3d_progress(self, context):
@@ -556,6 +600,11 @@ def draw_callback_2d_progress(self, context):
         draw_progress(x, y - index * 30, '%s' % tcom.lasttext,
                       tcom.progress)
         index += 1
+    global reports
+    for report in reports:
+        report.draw(x, y - index * 30)
+        index += 1
+        report.fade()
 
 
 def draw_callback_2d_upload_preview(self, context):
@@ -685,19 +734,19 @@ def draw_callback_2d_search(self, context):
                         img = utils.get_thumbnail(v_icon)
                         ui_bgl.draw_image(x + ui_props.thumb_size - 26, y + 2, 24, 24, img, 1)
 
-            if user_preferences.api_key == '':
-                report = 'Register on BlenderKit website to upload your own assets.'
-                ui_bgl.draw_text(report, ui_props.bar_x + ui_props.margin,
-                                 ui_props.bar_y - 25 - ui_props.margin - ui_props.bar_height, 15)
-            elif len(search_results) == 0:
-                report = 'BlenderKit - No matching results found.'
-                ui_bgl.draw_text(report, ui_props.bar_x + ui_props.margin,
-                                 ui_props.bar_y - 25 - ui_props.margin, 15)
+            # if user_preferences.api_key == '':
+            #     report = 'Register on BlenderKit website to upload your own assets.'
+            #     ui_bgl.draw_text(report, ui_props.bar_x + ui_props.margin,
+            #                      ui_props.bar_y - 25 - ui_props.margin - ui_props.bar_height, 15)
+            # elif len(search_results) == 0:
+            #     report = 'BlenderKit - No matching results found.'
+            #     ui_bgl.draw_text(report, ui_props.bar_x + ui_props.margin,
+            #                      ui_props.bar_y - 25 - ui_props.margin, 15)
         s = bpy.context.scene
         props = utils.get_search_props()
-        if props.report != '' and props.is_searching or props.search_error:
-            ui_bgl.draw_text(props.report, ui_props.bar_x,
-                             ui_props.bar_y - 15 - ui_props.margin - ui_props.bar_height, 15)
+        # if props.report != '' and props.is_searching or props.search_error:
+        #     ui_bgl.draw_text(props.report, ui_props.bar_x,
+        #                      ui_props.bar_y - 15 - ui_props.margin - ui_props.bar_height, 15)
 
         props = s.blenderkitUI
         if props.draw_tooltip:
@@ -990,10 +1039,10 @@ def update_ui_size(area, region):
     ui.bar_height = (ui.thumb_size + ui.margin) * ui.hcount + ui.margin
     ui.bar_y = region.height - ui.bar_y_offset * ui_scale
     if ui.down_up == 'UPLOAD':
-        ui.reports_y = ui.bar_y + 800
+        ui.reports_y = ui.bar_y - 600
         ui.reports_x = ui.bar_x
     else:
-        ui.reports_y = ui.bar_y + ui.bar_height
+        ui.reports_y = ui.bar_y - ui.bar_height - 100
         ui.reports_x = ui.bar_x
 
     ui.rating_x = ui.bar_x

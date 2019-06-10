@@ -89,8 +89,8 @@ const EnumPropertyItem rna_enum_brush_sculpt_tool_items[] = {
     {SCULPT_TOOL_NUDGE, "NUDGE", ICON_BRUSH_NUDGE, "Nudge", ""},
     {SCULPT_TOOL_ROTATE, "ROTATE", ICON_BRUSH_ROTATE, "Rotate", ""},
     {0, "", 0, NULL, NULL},
+    {SCULPT_TOOL_SIMPLIFY, "SIMPLIFY", ICON_BRUSH_DATA, "Simplify", ""},
     {SCULPT_TOOL_MASK, "MASK", ICON_BRUSH_MASK, "Mask", ""},
-    {SCULPT_TOOL_SIMPLIFY, "SIMPLIFY", ICON_BRUSH_DATA /* icon TODO */, "Simplify", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -461,8 +461,9 @@ static void rna_Brush_reset_icon(Brush *br)
 {
   ID *id = &br->id;
 
-  if (br->flag & BRUSH_CUSTOM_ICON)
+  if (br->flag & BRUSH_CUSTOM_ICON) {
     return;
+  }
 
   if (id->icon_id >= BIFICONID_LAST) {
     BKE_icon_id_delete(id);
@@ -568,13 +569,16 @@ static void rna_Brush_use_gradient_set(PointerRNA *ptr, bool value)
 {
   Brush *br = (Brush *)ptr->data;
 
-  if (value)
+  if (value) {
     br->flag |= BRUSH_USE_GRADIENT;
-  else
+  }
+  else {
     br->flag &= ~BRUSH_USE_GRADIENT;
+  }
 
-  if ((br->flag & BRUSH_USE_GRADIENT) && br->gradient == NULL)
+  if ((br->flag & BRUSH_USE_GRADIENT) && br->gradient == NULL) {
     br->gradient = BKE_colorband_add(true);
+  }
 }
 
 static void rna_Brush_set_unprojected_radius(PointerRNA *ptr, float value)

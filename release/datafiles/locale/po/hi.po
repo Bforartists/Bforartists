@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -781,10 +781,6 @@ msgstr "रंग रिक्त स्थान छवियों के ल�
 
 msgid "Standard RGB Display Space"
 msgstr "मानक ला.ह.नी. प्रदर्शित करें रिक्त स्थान"
-
-
-msgid "The simple video conversion from a gamma 2.2 sRGB space"
-msgstr "सरल वीडियो रूपांतरण एक गामा २.२ sRGB रिक्त स्थान से"
 
 
 msgid "Curve"
@@ -4842,22 +4838,6 @@ msgid "Call (draw) a pre-defined menu"
 msgstr "कॉल (आकर्षित) एक पूर्व-निर्धारित मेनू"
 
 
-msgid "Transformation type for translation, scale and rotation"
-msgstr "परिवर्तन प्रकार अनुवाद, प्रंमाण और घूर्णन के लिए"
-
-
-msgid "Use <matrix> to specify transformations"
-msgstr "परिवर्तनों को निर्दिष्ट करने के लिए <matrix>का उपयोग करें"
-
-
-msgid "TransRotLoc"
-msgstr "TransRotLoc"
-
-
-msgid "Use <translate>, <rotate>, <scale> to specify transformations"
-msgstr "का प्रयोग करें <translate>, <rotate>, <scale>परिवर्तनों को निर्दिष्ट करने के लिए"
-
-
 msgctxt "Operator"
 msgid "Demo"
 msgstr "प्रदर्शित करें"
@@ -5038,12 +5018,12 @@ msgid "Cloth Presets"
 msgstr "पूर्वनिश्चित कपड़ा"
 
 
-msgid "Performance"
-msgstr "प्रदर्शित करें"
-
-
 msgid "Film"
 msgstr "चलचित्र"
+
+
+msgid "Performance"
+msgstr "प्रदर्शित करें"
 
 
 msgid "Threads"
@@ -6563,6 +6543,16 @@ msgstr "वृद्धि:"
 
 
 msgctxt "Operator"
+msgid "Left"
+msgstr "बाईं ओर"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "दाईं ओर"
+
+
+msgctxt "Operator"
 msgid "Movie"
 msgstr "चलचित्र"
 
@@ -6705,16 +6695,6 @@ msgstr "सामने"
 msgctxt "Operator"
 msgid "Back"
 msgstr "पार्श्व"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "दाईं ओर"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "बाईं ओर"
 
 
 msgctxt "Operator"

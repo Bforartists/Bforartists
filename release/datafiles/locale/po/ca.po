@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -1096,10 +1096,6 @@ msgstr "Moure a Capa"
 
 msgid "Input Color Space"
 msgstr "Desparentar"
-
-
-msgid "Color space of the image or movie on disk"
-msgstr "Seleccionar connectats"
 
 
 msgid "Color Space"
@@ -7740,7 +7736,15 @@ msgid "Navigation"
 msgstr "Finestra de Render"
 
 
+msgid "Select Linked"
+msgstr "Deseleccionar Enllaçats"
+
+
 msgid "Strip"
+msgstr "Afegir Tira"
+
+
+msgid "Movie Strip"
 msgstr "Afegir Tira"
 
 
@@ -7810,10 +7814,6 @@ msgstr "Unir"
 
 msgid "Normals"
 msgstr "Calcular Normals"
-
-
-msgid "Select Linked"
-msgstr "Deseleccionar Enllaçats"
 
 
 msgid "Mesh Select Mode"
@@ -15611,6 +15611,18 @@ msgid "Shape Propagate"
 msgstr "Seleccionar fila"
 
 
+msgid "Tag Seam"
+msgstr "Desparentar"
+
+
+msgid "Tag Sharp"
+msgstr "Desparentar"
+
+
+msgid "Tag Crease"
+msgstr "Arxiu"
+
+
 msgctxt "Operator"
 msgid "Solidify"
 msgstr "Esborrar tot"
@@ -21039,10 +21051,6 @@ msgid "Spot Shape"
 msgstr "Moure a Capa"
 
 
-msgid "Performance"
-msgstr "Esborrar Rotació"
-
-
 msgid "Ray Visibility"
 msgstr "Cíclic"
 
@@ -21073,6 +21081,10 @@ msgstr "Centre"
 
 msgid "Passes"
 msgstr "Render"
+
+
+msgid "Performance"
+msgstr "Esborrar Rotació"
 
 
 msgid "Threads"
@@ -25167,10 +25179,6 @@ msgid "Meta Strip"
 msgstr "Afegir Tira"
 
 
-msgid "Movie Strip"
-msgstr "Afegir Tira"
-
-
 msgid "Clip Strip"
 msgstr "Començar Joc"
 
@@ -25495,26 +25503,6 @@ msgid "Add & Replace"
 msgstr "Pla"
 
 
-msgid "Double Threshold"
-msgstr "Corba de Bezier"
-
-
-msgid "Edge Tag Mode"
-msgstr "Mode d'Edició"
-
-
-msgid "Tag Seam"
-msgstr "Desparentar"
-
-
-msgid "Tag Sharp"
-msgstr "Desparentar"
-
-
-msgid "Tag Crease"
-msgstr "Arxiu"
-
-
 msgid "Stick stroke to other strokes"
 msgstr "Seleccionar connectats"
 
@@ -25593,10 +25581,6 @@ msgstr "Moure a Capa"
 
 msgid "Auto Keyframe Insert Keying Set"
 msgstr "Esborrar"
-
-
-msgid "AutoMerge Editing"
-msgstr "Editar"
 
 
 msgid "WPaint Multi-Paint"
@@ -26948,6 +26932,11 @@ msgstr "Dreta"
 
 
 msgctxt "Operator"
+msgid "Right"
+msgstr "Dreta"
+
+
+msgctxt "Operator"
 msgid "Grouped"
 msgstr "Seleccionar fila"
 
@@ -26964,31 +26953,6 @@ msgstr "So:"
 
 msgid "Storage"
 msgstr "Emmagatzematge"
-
-
-msgctxt "Operator"
-msgid "Strips to the Left"
-msgstr "Dreta"
-
-
-msgctxt "Operator"
-msgid "Strips to the Right"
-msgstr "Dreta"
-
-
-msgctxt "Operator"
-msgid "Surrounding Handles"
-msgstr "Autotangents"
-
-
-msgctxt "Operator"
-msgid "Left Handle"
-msgstr "Tangents lineals"
-
-
-msgctxt "Operator"
-msgid "Right Handle"
-msgstr "Autotangents"
 
 
 msgctxt "Operator"
@@ -27220,11 +27184,6 @@ msgstr "Frontal"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Negre"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "Dreta"
 
 
 msgctxt "Operator"

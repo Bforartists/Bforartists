@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -7131,7 +7131,15 @@ msgid "Navigation"
 msgstr "Dolaşım Görünümü"
 
 
+msgid "Select Linked"
+msgstr "Bağlantılı Çoğalt"
+
+
 msgid "Strip"
+msgstr "Strip Özellikleri..."
+
+
+msgid "Movie Strip"
 msgstr "Strip Özellikleri..."
 
 
@@ -7221,10 +7229,6 @@ msgstr "Birleştir"
 
 msgid "Normals"
 msgstr "Normaller"
-
-
-msgid "Select Linked"
-msgstr "Bağlantılı Çoğalt"
 
 
 msgid "Mesh Select Mode"
@@ -14172,6 +14176,18 @@ msgstr "Malzeme butonları"
 msgctxt "Operator"
 msgid "Shape Propagate"
 msgstr "Şekil Anahtarı Ekle"
+
+
+msgid "Tag Seam"
+msgstr "Dikişi Temizle"
+
+
+msgid "Tag Sharp"
+msgstr "Sivri Bozulma"
+
+
+msgid "Tag Crease"
+msgstr "AltYüzeyi Buruştur"
 
 
 msgctxt "Operator"
@@ -23073,10 +23089,6 @@ msgid "Meta Strip"
 msgstr "Strip Özellikleri..."
 
 
-msgid "Movie Strip"
-msgstr "Strip Özellikleri..."
-
-
 msgid "Clip Strip"
 msgstr "Strip Özellikleri..."
 
@@ -23393,26 +23405,6 @@ msgid "Add & Replace"
 msgstr "Varolanla Değiştir..."
 
 
-msgid "Double Threshold"
-msgstr "Çift <<|Alt <"
-
-
-msgid "Edge Tag Mode"
-msgstr "Kenar Seçme Modu:"
-
-
-msgid "Tag Seam"
-msgstr "Dikişi Temizle"
-
-
-msgid "Tag Sharp"
-msgstr "Sivri Bozulma"
-
-
-msgid "Tag Crease"
-msgstr "AltYüzeyi Buruştur"
-
-
 msgid "Mesh Selection Mode"
 msgstr "Kamera Uçuş Modu"
 
@@ -23483,10 +23475,6 @@ msgstr "Yalnız Kenarlar"
 
 msgid "Auto Keying"
 msgstr "Otomatik Normalleştir"
-
-
-msgid "AutoMerge Editing"
-msgstr "Düzenleme (F9)"
 
 
 msgid "WPaint Multi-Paint"
@@ -24862,6 +24850,16 @@ msgstr "(Gamma Düzeltildi)"
 
 
 msgctxt "Operator"
+msgid "Left"
+msgstr "Sol Fare"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "Yörüngede Sağa"
+
+
+msgctxt "Operator"
 msgid "Grouped"
 msgstr "Gruplanmış"
 
@@ -24874,26 +24872,6 @@ msgstr "Film"
 msgctxt "Operator"
 msgid "Sound"
 msgstr "Ses"
-
-
-msgctxt "Operator"
-msgid "Strips to the Left"
-msgstr "Otomatik İsimlendir Sol/Sağ"
-
-
-msgctxt "Operator"
-msgid "Strips to the Right"
-msgstr "Otomatik İsimlendir Sol/Sağ"
-
-
-msgctxt "Operator"
-msgid "Left Handle"
-msgstr "Sol Tutamak:"
-
-
-msgctxt "Operator"
-msgid "Right Handle"
-msgstr "Sağ Tutamak:"
 
 
 msgctxt "Operator"
@@ -25208,16 +25186,6 @@ msgstr "Ön"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Arka"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "Yörüngede Sağa"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "Sol Fare"
 
 
 msgctxt "Operator"

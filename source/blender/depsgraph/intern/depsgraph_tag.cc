@@ -215,6 +215,16 @@ void depsgraph_tag_to_component_opcode(const ID *id,
       /* There is no such node in depsgraph, this tag is to be handled
        * separately. */
       break;
+    case ID_RECALC_SEQUENCER_STRIPS:
+      *component_type = NodeType::SEQUENCER;
+      break;
+    case ID_RECALC_AUDIO_SEEK:
+    case ID_RECALC_AUDIO_FPS:
+    case ID_RECALC_AUDIO_VOLUME:
+    case ID_RECALC_AUDIO_MUTE:
+    case ID_RECALC_AUDIO_LISTENER:
+      *component_type = NodeType::AUDIO;
+      break;
     case ID_RECALC_ALL:
     case ID_RECALC_PSYS_ALL:
       BLI_assert(!"Should not happen");
@@ -450,30 +460,31 @@ void deg_graph_node_tag_zero(Main *bmain,
   deg_graph_id_tag_legacy_compat(bmain, graph, id, (IDRecalcFlag)0, update_source);
 }
 
-void deg_graph_on_visible_update(Main *bmain, Depsgraph *graph)
+void deg_graph_on_visible_update(Main *bmain, Depsgraph *graph, const bool do_time)
 {
+  /* NOTE: It is possible to have this function called with `do_time=false` first and later (prior
+   * to evaluation though) with `do_time=true`. This means early output checks should be aware of
+   * this. */
   for (DEG::IDNode *id_node : graph->id_nodes) {
     if (!id_node->visible_components_mask) {
       /* ID has no components which affects anything visible.
        * No need bother with it to tag or anything. */
       continue;
     }
-    if (id_node->visible_components_mask == id_node->previously_visible_components_mask) {
-      /* The ID was already visible and evaluated, all the subsequent
-       * updates and tags are to be done explicitly. */
-      continue;
-    }
     int flag = 0;
     if (!DEG::deg_copy_on_write_is_expanded(id_node->id_cow)) {
       flag |= ID_RECALC_COPY_ON_WRITE;
-      /* TODO(sergey): Shouldn't be needed, but currently we are lackign
-       * some flushing of evaluated data to the original one, which makes,
-       * for example, files saved with the rest pose.
-       * Need to solve those issues carefully, for until then we evaluate
-       * animation for datablocks which appears in the graph for the first
-       * time. */
-      if (BKE_animdata_from_id(id_node->id_orig) != NULL) {
-        flag |= ID_RECALC_ANIMATION;
+      if (do_time) {
+        if (BKE_animdata_from_id(id_node->id_orig) != NULL) {
+          flag |= ID_RECALC_ANIMATION;
+        }
+      }
+    }
+    else {
+      if (id_node->visible_components_mask == id_node->previously_visible_components_mask) {
+        /* The ID was already visible and evaluated, all the subsequent
+         * updates and tags are to be done explicitly. */
+        continue;
       }
     }
     /* We only tag components which needs an update. Tagging everything is
@@ -578,6 +589,11 @@ void graph_id_tag_update(
   if (flag == 0) {
     deg_graph_node_tag_zero(bmain, graph, id_node, update_source);
   }
+  /* Store original flag in the ID.
+   * Allows to have more granularity than a node-factory based flags. */
+  if (id_node != NULL) {
+    id_node->id_cow->recalc |= flag;
+  }
   int current_flag = flag;
   while (current_flag != 0) {
     IDRecalcFlag tag = (IDRecalcFlag)(1 << bitscan_forward_clear_i(&current_flag));
@@ -628,6 +644,18 @@ const char *DEG_update_tag_as_string(IDRecalcFlag flag)
       return "POINT_CACHE";
     case ID_RECALC_EDITORS:
       return "EDITORS";
+    case ID_RECALC_SEQUENCER_STRIPS:
+      return "SEQUENCER_STRIPS";
+    case ID_RECALC_AUDIO_SEEK:
+      return "AUDIO_SEEK";
+    case ID_RECALC_AUDIO_FPS:
+      return "AUDIO_FPS";
+    case ID_RECALC_AUDIO_VOLUME:
+      return "AUDIO_VOLUME";
+    case ID_RECALC_AUDIO_MUTE:
+      return "AUDIO_MUTE";
+    case ID_RECALC_AUDIO_LISTENER:
+      return "AUDIO_LISTENER";
     case ID_RECALC_ALL:
       return "ALL";
   }
@@ -699,19 +727,19 @@ void DEG_graph_flush_update(Main *bmain, Depsgraph *depsgraph)
 }
 
 /* Update dependency graph when visible scenes/layers changes. */
-void DEG_graph_on_visible_update(Main *bmain, Depsgraph *depsgraph)
+void DEG_graph_on_visible_update(Main *bmain, Depsgraph *depsgraph, const bool do_time)
 {
   DEG::Depsgraph *graph = (DEG::Depsgraph *)depsgraph;
-  DEG::deg_graph_on_visible_update(bmain, graph);
+  DEG::deg_graph_on_visible_update(bmain, graph, do_time);
 }
 
-void DEG_on_visible_update(Main *bmain, const bool UNUSED(do_time))
+void DEG_on_visible_update(Main *bmain, const bool do_time)
 {
   LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
     LISTBASE_FOREACH (ViewLayer *, view_layer, &scene->view_layers) {
       Depsgraph *depsgraph = (Depsgraph *)BKE_scene_get_depsgraph(scene, view_layer, false);
       if (depsgraph != NULL) {
-        DEG_graph_on_visible_update(bmain, depsgraph);
+        DEG_graph_on_visible_update(bmain, depsgraph, do_time);
       }
     }
   }
@@ -741,6 +769,8 @@ static void deg_graph_clear_id_node_func(void *__restrict data_v,
    * the recalc flag. */
   DEG::Depsgraph *deg_graph = reinterpret_cast<DEG::Depsgraph *>(data_v);
   DEG::IDNode *id_node = deg_graph->id_nodes[i];
+
+  id_node->is_user_modified = false;
   id_node->id_cow->recalc &= ~ID_RECALC_ALL;
 
   /* Clear embedded node trees too. */

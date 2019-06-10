@@ -2742,13 +2742,6 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
     for (Camera *ca = bmain->cameras.first; ca; ca = ca->id.next) {
       ca->drawsize *= 2.0f;
     }
-    for (Object *ob = bmain->objects.first; ob; ob = ob->id.next) {
-      if (ob->type != OB_EMPTY) {
-        if (UNLIKELY(ob->transflag & OB_DUPLICOLLECTION)) {
-          BKE_object_type_set_empty_for_versioning(ob);
-        }
-      }
-    }
 
     /* Grease pencil primitive curve */
     if (!DNA_struct_elem_find(
@@ -3075,8 +3068,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
     }
 
     LISTBASE_FOREACH (bArmature *, arm, &bmain->armatures) {
-      arm->flag &= ~(ARM_FLAG_UNUSED_1 | ARM_FLAG_UNUSED_5 | ARM_FLAG_UNUSED_7 |
-                     ARM_FLAG_UNUSED_12);
+      arm->flag &= ~(ARM_FLAG_UNUSED_1 | ARM_FLAG_UNUSED_5 | ARM_FLAG_UNUSED_6 |
+                     ARM_FLAG_UNUSED_7 | ARM_FLAG_UNUSED_12);
     }
 
     LISTBASE_FOREACH (Text *, text, &bmain->texts) {
@@ -3512,6 +3505,10 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
                                             COLLECTION_RESTRICT_SELECT |
                                             COLLECTION_RESTRICT_RENDER);
       }
+    }
+
+    LISTBASE_FOREACH (bArmature *, arm, &bmain->armatures) {
+      arm->flag &= ~(ARM_FLAG_UNUSED_6);
     }
   }
 }
