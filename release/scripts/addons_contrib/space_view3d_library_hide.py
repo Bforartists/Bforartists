@@ -134,7 +134,7 @@ def pick_object(context, event, pick_objects, ray_max=10000.0):
 
         #if best_obj_parent:
         #    best_obj_parent.update_tag(refresh={'OBJECT'})
-        #scene.update()
+        #context.view_layer.update()
         return True
     else:
         print("found none")

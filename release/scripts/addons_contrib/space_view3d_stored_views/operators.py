@@ -15,7 +15,7 @@ class VIEW3D_stored_views_save(Operator):
     bl_label = "Save Current"
     bl_description = "Save the view 3d current state"
 
-    index: IntProperty()
+    index : IntProperty()
 
     def execute(self, context):
         mode = context.scene.stored_views.mode
@@ -32,7 +32,7 @@ class VIEW3D_stored_views_set(Operator):
     bl_label = "Set"
     bl_description = "Update the view 3D according to this view"
 
-    index: IntProperty()
+    index : IntProperty()
 
     def execute(self, context):
         mode = context.scene.stored_views.mode
@@ -49,7 +49,7 @@ class VIEW3D_stored_views_delete(Operator):
     bl_label = "Delete"
     bl_description = "Delete this view"
 
-    index: IntProperty()
+    index : IntProperty()
 
     def execute(self, context):
         data = DataStore()
@@ -102,7 +102,7 @@ class SetSceneCamera(Operator):
             for c in [o for o in scene.objects if o.type == 'CAMERA']:
                 c.hide = (c != chosen_camera)
         scene.camera = chosen_camera
-        bpy.ops.object.select_all(action='DESELECT')
+        bpy.ops.object.select_all(action ='DESELECT')
         chosen_camera.select_set(True)
         return {'FINISHED'}
 
@@ -159,6 +159,24 @@ class AddCameraMarker(Operator):
         marker.select = True
 
         for other_marker in [m for m in scene.timeline_markers if m != marker]:
-            other_marker.select = False
+            other_marker.select = True
 
         return {'FINISHED'}
+
+classes = (
+    VIEW3D_stored_views_save,
+    VIEW3D_stored_views_set,
+    VIEW3D_stored_views_delete,
+    VIEW3D_New_Camera_to_View,
+    SetSceneCamera,
+    PreviewSceneCamera,
+    AddCameraMarker
+)
+
+def register():
+  for cls in classes:
+    bpy.utils.register_class(cls)
+
+def unregister():
+  for cls in classes:
+    bpy.utils.unregister_class(cls)

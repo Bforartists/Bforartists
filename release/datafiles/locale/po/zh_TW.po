@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: 2018-09-23 13:23+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -3032,10 +3032,6 @@ msgid "Input Color Space"
 msgstr "輸入色彩空間"
 
 
-msgid "Color space of the image or movie on disk"
-msgstr "磁碟上影像或影片的色彩空間"
-
-
 msgid "Rec. 709 (Full Range), Blender native linear space"
 msgstr "Rec. 709 (全範圍)，Blender 原生線性空間"
 
@@ -3050,10 +3046,6 @@ msgstr "影像使用的色彩空間，包含非色彩資料 (例如：一般映�
 
 msgid "Standard RGB Display Space"
 msgstr "標準 RGB 顯示空間"
-
-
-msgid "The simple video conversion from a gamma 2.2 sRGB space"
-msgstr "從伽瑪 2.2 sRGB 空間簡易視訊轉換"
 
 
 msgid "Color Space"
@@ -12394,10 +12386,6 @@ msgid "Alpha Mode"
 msgstr "Alpha 模式"
 
 
-msgid "Representation of alpha information in the RGBA pixels"
-msgstr "在 RGBA 像素中表現 alpha 資訊"
-
-
 msgid "Straight"
 msgstr "坦直"
 
@@ -18780,8 +18768,16 @@ msgid "Navigation"
 msgstr "導覽"
 
 
+msgid "Select Linked"
+msgstr "選取連結項"
+
+
 msgid "Strip"
 msgstr "片段"
+
+
+msgid "Movie Strip"
+msgstr "影片片段"
 
 
 msgid "Cache"
@@ -18906,10 +18902,6 @@ msgstr "合併"
 
 msgid "Normals"
 msgstr "法線"
-
-
-msgid "Select Linked"
-msgstr "選取連結項"
 
 
 msgid "Mesh Select Mode"
@@ -34128,6 +34120,30 @@ msgid "Apply selected vertex locations to all other shape keys"
 msgstr "將所選頂位置套用到其他所有外形鍵"
 
 
+msgid "The edge flag to tag when selecting the shortest path"
+msgstr "當選取最短路徑時要貼上標籤的邊線旗幟"
+
+
+msgid "Tag Seam"
+msgstr "貼上縫線標籤"
+
+
+msgid "Tag Sharp"
+msgstr "貼上銳利標籤"
+
+
+msgid "Tag Crease"
+msgstr "貼上褶皺標籤"
+
+
+msgid "Tag Bevel"
+msgstr "貼上倒角標籤"
+
+
+msgid "Tag Freestyle Edge Mark"
+msgstr "貼上 Freestyle 邊線標記標籤"
+
+
 msgctxt "Operator"
 msgid "Select Shortest Path"
 msgstr "選取最短路徑"
@@ -43222,22 +43238,6 @@ msgid "Apply modifier's render settings"
 msgstr "套用修改器的算繪設定"
 
 
-msgid "Transformation type for translation, scale and rotation"
-msgstr "平移、縮放、旋轉的變換類型"
-
-
-msgid "Use <matrix> to specify transformations"
-msgstr "使用 <矩陣> 來指定變換"
-
-
-msgid "TransRotLoc"
-msgstr "平旋位"
-
-
-msgid "Use <translate>, <rotate>, <scale> to specify transformations"
-msgstr "使用 <平移>、<旋轉>、<縮放> 來指定變換"
-
-
 msgid "Include Armatures"
 msgstr "包含骨架"
 
@@ -44476,10 +44476,6 @@ msgid "Spot Shape"
 msgstr "聚光外形"
 
 
-msgid "Performance"
-msgstr "效能"
-
-
 msgid "Ray Visibility"
 msgstr "光線可見性"
 
@@ -44518,6 +44514,10 @@ msgstr "最大反彈數"
 
 msgid "Passes"
 msgstr "通遞數"
+
+
+msgid "Performance"
+msgstr "效能"
 
 
 msgid "Threads"
@@ -49667,6 +49667,10 @@ msgid "Sequence strip applying an effect on the images created by other strips"
 msgstr "由其他片段所建立成的，對影像套用影響的序段片段"
 
 
+msgid "Representation of alpha information in the RGBA pixels"
+msgstr "在 RGBA 像素中表現 alpha 資訊"
+
+
 msgid "RGB channels in transparent pixels are unaffected by the alpha channel"
 msgstr "透明像素中的 RGB 通道不受 alpha 通道影響"
 
@@ -54008,10 +54012,6 @@ msgid "Meta Strip"
 msgstr "後設片段"
 
 
-msgid "Movie Strip"
-msgstr "影片片段"
-
-
 msgid "Clip Strip"
 msgstr "剪輯片段"
 
@@ -54476,42 +54476,6 @@ msgid "Add & Replace"
 msgstr "添加與替換"
 
 
-msgid "Double Threshold"
-msgstr "雙閾值"
-
-
-msgid "Limit for removing duplicates and 'Auto Merge'"
-msgstr "移除複本與「自動合併」的限制"
-
-
-msgid "Edge Tag Mode"
-msgstr "邊線標籤模式"
-
-
-msgid "The edge flag to tag when selecting the shortest path"
-msgstr "當選取最短路徑時要貼上標籤的邊線旗幟"
-
-
-msgid "Tag Seam"
-msgstr "貼上縫線標籤"
-
-
-msgid "Tag Sharp"
-msgstr "貼上銳利標籤"
-
-
-msgid "Tag Crease"
-msgstr "貼上褶皺標籤"
-
-
-msgid "Tag Bevel"
-msgstr "貼上倒角標籤"
-
-
-msgid "Tag Freestyle Edge Mark"
-msgstr "貼上 Freestyle 邊線標記標籤"
-
-
 msgid "Grease Pencil Interpolate"
 msgstr "蠟筆插補"
 
@@ -54654,10 +54618,6 @@ msgstr "讓鍵幀自動插入鍵處理集"
 
 msgid "Automatic keyframe insertion using active Keying Set only"
 msgstr "僅使用作用中鍵處理集作自動鍵幀插入"
-
-
-msgid "AutoMerge Editing"
-msgstr "自動合併編輯"
 
 
 msgid "Automatically merge vertices moved to the same location"
@@ -55112,10 +55072,6 @@ msgid "Draw Edges"
 msgstr "描繪邊線"
 
 
-msgid "Display selected edges using highlights in the 3D view and UV editor"
-msgstr "在 3D 視圖與 UV 編輯器中使用突顯方式來顯示所選的邊線"
-
-
 msgid "Edge Angle"
 msgstr "線角"
 
@@ -55154,10 +55110,6 @@ msgstr "將面法線顯示為線條"
 
 msgid "Draw Faces"
 msgstr "描繪面"
-
-
-msgid "Display all faces as shades in the 3D view and UV editor"
-msgstr "在 3D 視圖與 UV 編輯器中顯示的所有面與外形"
 
 
 msgid "Display Grid Floor"
@@ -57931,6 +57883,16 @@ msgstr "增益："
 
 
 msgctxt "Operator"
+msgid "Left"
+msgstr "左"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "右"
+
+
+msgctxt "Operator"
 msgid "Grouped"
 msgstr "已群組"
 
@@ -57952,31 +57914,6 @@ msgstr "滑動片段內容"
 
 msgid "Storage"
 msgstr "儲藏"
-
-
-msgctxt "Operator"
-msgid "Strips to the Left"
-msgstr "片段至左方"
-
-
-msgctxt "Operator"
-msgid "Strips to the Right"
-msgstr "片段至右方"
-
-
-msgctxt "Operator"
-msgid "Surrounding Handles"
-msgstr "環繞控制桿"
-
-
-msgctxt "Operator"
-msgid "Left Handle"
-msgstr "左控制桿"
-
-
-msgctxt "Operator"
-msgid "Right Handle"
-msgstr "右控制桿"
 
 
 msgctxt "Operator"
@@ -58442,16 +58379,6 @@ msgstr "前"
 msgctxt "Operator"
 msgid "Back"
 msgstr "後"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "右"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "左"
 
 
 msgctxt "Operator"
@@ -59898,10 +59825,6 @@ msgid "<no path>"
 msgstr "<無路徑>"
 
 
-msgid "Programming error: operator does not actually have code to do anything!"
-msgstr "程式設計錯誤：操作器實際上沒有程式代碼表明要執行什麼事！"
-
-
 msgid "Scene not found"
 msgstr "找不到場景"
 
@@ -61053,12 +60976,12 @@ msgid "Export Data Options:"
 msgstr "匯出資料選項："
 
 
-msgid "Armature Options:"
-msgstr "骨架選項："
-
-
 msgid "Transformation Type"
 msgstr "變換類型"
+
+
+msgid "Armature Options:"
+msgstr "骨架選項："
 
 
 msgid "Collada Options:"
@@ -62010,10 +61933,6 @@ msgstr "高度："
 
 msgid "Search Area:"
 msgstr "搜尋區域："
-
-
-msgid "Size %d x %d"
-msgstr "尺寸 %d x %d"
 
 
 msgid ", %d float channel(s)"
@@ -63546,18 +63465,6 @@ msgstr "jumps over"
 
 msgid "the lazy dog"
 msgstr "the lazy dog"
-
-
-msgid "'Refresh' incompatible with Object ID type"
-msgstr "「重新整理」與 Object ID 類型不相容"
-
-
-msgid "'Refresh' incompatible with ParticleSettings ID type"
-msgstr "「重新整理」與 Particle Settings ID 類型不相容"
-
-
-msgid "This ID type is not compatible with any 'refresh' options"
-msgstr "此 ID 類型與任何「重新整理」選項皆不相容"
 
 
 msgid "Index out of range"

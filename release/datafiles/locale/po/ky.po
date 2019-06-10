@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -2845,16 +2845,16 @@ msgid "Lens"
 msgstr "Объектив"
 
 
-msgid "Performance"
-msgstr "Өндүргүчтүк"
-
-
 msgid "Post Processing"
 msgstr "Постиштетүү"
 
 
 msgid "Film"
 msgstr "Тасма"
+
+
+msgid "Performance"
+msgstr "Өндүргүчтүк"
 
 
 msgid "Paragraph"
@@ -3608,6 +3608,16 @@ msgstr "Гамма:"
 
 
 msgctxt "Operator"
+msgid "Left"
+msgstr "Солдон"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "Оңдон"
+
+
+msgctxt "Operator"
 msgid "Movie"
 msgstr "Тасма"
 
@@ -3750,16 +3760,6 @@ msgstr "Алдынан"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Артынан"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "Оңдон"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "Солдон"
 
 
 msgctxt "Operator"

@@ -783,7 +783,7 @@ def createMeshFromData(self):
 
 		# Link object to scene and make active
 		bpy.context.collection.objects.link(ob)
-		bpy.context.scene.update()
+		bpy.context.view_layer.update()
 		bpy.context.view_layer.objects.active = ob
 		ob.select_set(True)
 		ob.location = Vector((10000.0, 0.0, 0.0))

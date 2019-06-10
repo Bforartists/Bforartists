@@ -63,7 +63,7 @@ class PIE_MT_SculptPie(Menu):
         pie.operator("paint.brush_select",
                     text='Blob', icon='BRUSH_BLOB').sculpt_tool = 'BLOB'
         # 2 - BOTTOM
-        pie.menu(PieSculpttwo.bl_idname,
+        pie.menu(PIE_MT_Sculpttwo.bl_idname,
                     text="More Brushes", icon='BRUSH_SMOOTH')
         # 8 - TOP
         pie.operator("sculpt.sculptraw",
@@ -78,7 +78,7 @@ class PIE_MT_SculptPie(Menu):
         pie.operator("paint.brush_select",
                     text='Inflate/Deflate', icon='BRUSH_INFLATE').sculpt_tool = 'INFLATE'
         # 3 - BOTTOM - RIGHT
-        pie.menu(PieSculptthree.bl_idname,
+        pie.menu(PIE_MT_Sculptthree.bl_idname,
                     text="Grab Brushes", icon='BRUSH_GRAB')
 
 

@@ -336,7 +336,7 @@ def writeArrayToCubes(arr, gridBU, orig, cBOOL=False, jBOOL=True):
                 col = (0.0, 0.0, a[3], 1.0)
             ob.color = col
         bpy.context.collection.objects.link(ob)
-        bpy.context.scene.update()
+        bpy.context.view_layer.update()
 
     if jBOOL:
         # Selects all cubes w/ ?bpy.ops.object.join() b/c

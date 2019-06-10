@@ -894,7 +894,6 @@ static bool gp_brush_weight_apply(
   /* create dvert */
   BKE_gpencil_dvert_ensure(gps);
 
-  bGPDspoint *pt = gps->points + pt_index;
   MDeformVert *dvert = gps->dvert + pt_index;
   float inf;
 
@@ -923,25 +922,18 @@ static bool gp_brush_weight_apply(
   float curweight = dw ? dw->weight : 0.0f;
 
   if (gp_brush_invert_check(gso)) {
-    /* reduce weight */
     curweight -= inf;
   }
   else {
     /* increase weight */
     curweight += inf;
+    /* verify maximum target weight */
+    CLAMP_MAX(curweight, gso->gp_brush->weight);
   }
-
-  /* verify target weight */
-  CLAMP_MAX(curweight, gso->gp_brush->weight);
 
   CLAMP(curweight, 0.0f, 1.0f);
   if (dw) {
     dw->weight = curweight;
-  }
-
-  /* weight should stay within [0.0, 1.0] */
-  if (pt->pressure < 0.0f) {
-    pt->pressure = 0.0f;
   }
 
   return true;

@@ -177,7 +177,7 @@ void integrate_slice(
   /* Solving inner integral */
   vec2 h_2 = 2.0 * h;
   vec2 vd = -cos(h_2 - n) + cos_n + h_2 * sin(n);
-  float vis = (vd.x + vd.y) * 0.25 * n_proj_len;
+  float vis = saturate((vd.x + vd.y) * 0.25 * n_proj_len);
 
   visibility += vis;
 
@@ -198,8 +198,8 @@ void gtao_deferred(
   dirs.xy = get_ao_dir(noise.x * 0.5);
   dirs.zw = get_ao_dir(noise.x * 0.5 + 0.5);
 
-  bent_normal = vec3(0.0);
-  visibility = 0.0;
+  bent_normal = normal * 1e-8;
+  visibility = 1e-8;
 
   horizons = unpack_horizons(horizons);
 
@@ -217,8 +217,8 @@ void gtao(vec3 normal, vec3 position, vec4 noise, out float visibility, out vec3
   vec2 max_dir = get_max_dir(position.z);
   vec2 dir = get_ao_dir(noise.x);
 
-  bent_normal = vec3(0.0);
-  visibility = 0.0;
+  bent_normal = normal * 1e-8;
+  visibility = 1e-8;
 
   /* Only trace in 2 directions. May lead to a darker result but since it's mostly for
    * alpha blended objects that will have overdraw, we limit the performance impact. */
@@ -232,8 +232,9 @@ void gtao(vec3 normal, vec3 position, vec4 noise, out float visibility, out vec3
  * Page 78 in the .pdf version. */
 float gtao_multibounce(float visibility, vec3 albedo)
 {
-  if (aoBounceFac == 0.0)
+  if (aoBounceFac == 0.0) {
     return visibility;
+  }
 
   /* Median luminance. Because Colored multibounce looks bad. */
   float lum = dot(albedo, vec3(0.3333));

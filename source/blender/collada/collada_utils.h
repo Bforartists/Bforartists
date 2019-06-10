@@ -160,11 +160,20 @@ extern int bc_get_active_UVLayer(Object *ob);
 
 std::string bc_find_bonename_in_path(std::string path, std::string probe);
 
-inline std::string bc_string_after(const std::string &s, const char c)
+inline std::string bc_string_after(const std::string &s, const std::string probe)
 {
-  size_t i = s.rfind(c, s.length());
+  size_t i = s.rfind(probe);
   if (i != std::string::npos) {
-    return (s.substr(i + 1, s.length() - i));
+    return (s.substr(i + probe.length(), s.length() - i));
+  }
+  return (s);
+}
+
+inline std::string bc_string_before(const std::string &s, const std::string probe)
+{
+  size_t i = s.find(probe);
+  if (i != std::string::npos) {
+    return s.substr(0, i);
   }
   return (s);
 }
@@ -175,6 +184,15 @@ inline bool bc_startswith(std::string const &value, std::string const &starting)
     return false;
   }
   return (value.substr(0, starting.size()) == starting);
+}
+
+inline bool bc_endswith(const std::string &value, const std::string &ending)
+{
+  if (ending.size() > value.size()) {
+    return false;
+  }
+
+  return value.compare(value.size() - ending.size(), ending.size(), ending) == 0;
 }
 
 #if 0 /* UNUSED */
@@ -217,8 +235,6 @@ void bc_copy_darray_m4d(double *r, double a[4][4]);
 void bc_copy_m4d_v44(double (&r)[4][4], std::vector<std::vector<double>> &a);
 void bc_copy_v44_m4d(std::vector<std::vector<double>> &a, double (&r)[4][4]);
 
-void bc_sanitize_mat(float mat[4][4], int precision);
-void bc_sanitize_mat(double mat[4][4], int precision);
 void bc_sanitize_v3(double v[3], int precision);
 void bc_sanitize_v3(float v[3], int precision);
 
@@ -368,10 +384,24 @@ class BoneExtensionManager {
 
 void bc_add_default_shader(bContext *C, Material *ma);
 bNode *bc_get_master_shader(Material *ma);
-COLLADASW::ColorOrTexture bc_get_cot(float r, float g, float b, float a);
-COLLADASW::ColorOrTexture bc_get_base_color(bNode *shader);
-bool bc_get_reflectivity(bNode *shader, double &reflectivity);
-double bc_get_reflectivity(Material *ma);
+
 COLLADASW::ColorOrTexture bc_get_base_color(Material *ma);
+COLLADASW::ColorOrTexture bc_get_emission(Material *ma);
+COLLADASW::ColorOrTexture bc_get_ambient(Material *ma);
+COLLADASW::ColorOrTexture bc_get_specular(Material *ma);
+COLLADASW::ColorOrTexture bc_get_reflective(Material *ma);
+
+double bc_get_reflectivity(Material *ma);
+double bc_get_alpha(Material *ma);
+double bc_get_ior(Material *ma);
+double bc_get_shininess(Material *ma);
+
+double bc_get_float_from_shader(bNode *shader, double &ior, std::string nodeid);
+COLLADASW::ColorOrTexture bc_get_cot_from_shader(bNode *shader,
+                                                 std::string nodeid,
+                                                 Color &default_color);
+
+COLLADASW::ColorOrTexture bc_get_cot(float r, float g, float b, float a);
+COLLADASW::ColorOrTexture bc_get_cot(Color col);
 
 #endif
