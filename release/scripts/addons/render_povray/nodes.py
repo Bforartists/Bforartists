@@ -1200,8 +1200,8 @@ class NODE_OT_povray_image_open(bpy.types.Operator):
         # im=bpy.data.images.load(self.filepath)
         # tex = context.texture
         # tex.pov.image = im.name
-        # scene = context.scene
-        # scene.update()
+        # view_layer = context.view_layer
+        # view_layer.update()
         # return {'FINISHED'}
 
 class PovrayPatternNode(bpy.types.Operator):

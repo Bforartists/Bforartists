@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -1861,6 +1861,10 @@ msgid "Transitions"
 msgstr "Orientasi Transformasi"
 
 
+msgid "Select Linked"
+msgstr "Seleksi"
+
+
 msgid "Text"
 msgstr "Teks"
 
@@ -1871,10 +1875,6 @@ msgstr "Dokumen"
 
 msgid "Enabled Modes"
 msgstr "Modus Sunting"
-
-
-msgid "Select Linked"
-msgstr "Seleksi"
 
 
 msgid "Hide/Mask"
@@ -7599,6 +7599,16 @@ msgstr "Grup"
 
 
 msgctxt "Operator"
+msgid "Left"
+msgstr "Kiri"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "Kanan"
+
+
+msgctxt "Operator"
 msgid "Grouped"
 msgstr "Grup"
 
@@ -7740,16 +7750,6 @@ msgstr "Depan"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Belakang"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "Kanan"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "Kiri"
 
 
 msgctxt "Operator"

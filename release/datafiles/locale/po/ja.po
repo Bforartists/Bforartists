@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
 "Last-Translator: \n"
 "Language-Team: Japanese Translation Team (https://sites.google.com/site/blugjp/blender-translators)\n"
@@ -4385,10 +4385,6 @@ msgid "Input Color Space"
 msgstr "入力色空間"
 
 
-msgid "Color space of the image or movie on disk"
-msgstr "ディスク上の画像や動画の色空間"
-
-
 msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
 msgstr "露出寛容度が16.5、ダイナミックレンジが25ストップの対数ベースの映画状 Shaper"
 
@@ -4407,10 +4403,6 @@ msgstr "非カラーデータ（ノーマルマップなど）を含む画像用
 
 msgid "Standard RGB Display Space"
 msgstr "標準RGBディスプレイ空間"
-
-
-msgid "The simple video conversion from a gamma 2.2 sRGB space"
-msgstr "ガンマ2.2 sRGB空間からのシンプルなビデオ変換"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -17163,10 +17155,6 @@ msgid "Alpha Mode"
 msgstr "アルファモード"
 
 
-msgid "Representation of alpha information in the RGBA pixels"
-msgstr "RGBAピクセルでアルファ情報を表現します"
-
-
 msgid "Straight"
 msgstr "ストレート"
 
@@ -27033,12 +27021,20 @@ msgid "Navigation"
 msgstr "視点の操作"
 
 
+msgid "Select Linked"
+msgstr "リンク中の物を選択"
+
+
 msgid "Strip"
 msgstr "ストリップ"
 
 
 msgid "Lock/Mute"
 msgstr "ロック/無効化"
+
+
+msgid "Movie Strip"
+msgstr "動画ストリップ"
 
 
 msgid "Cache"
@@ -27199,10 +27195,6 @@ msgstr "ノーマル"
 
 msgid "Select All by Trait"
 msgstr "特徴で全選択"
-
-
-msgid "Select Linked"
-msgstr "リンク中の物を選択"
 
 
 msgid "Select Loops"
@@ -41590,14 +41582,6 @@ msgid "Apply modifiers (excluding Armatures) to mesh objects"
 msgstr "メッシュオブジェクトに（アーマチュア以外の）モディファイアーを適用します"
 
 
-msgid "Bake Skinning Constraints"
-msgstr "スキニングコンストレイントをベイク"
-
-
-msgid "Apply skinning constraints to armatures"
-msgstr "アーマチュアにスキニングコンストレイントを適用します"
-
-
 msgid "Export cameras"
 msgstr "カメラをエクスポート"
 
@@ -48291,6 +48275,30 @@ msgstr "形状を伝播"
 
 msgid "Apply selected vertex locations to all other shape keys"
 msgstr "他のすべてのシェイプキーに選択頂点の位置を適用します"
+
+
+msgid "The edge flag to tag when selecting the shortest path"
+msgstr "最短経路を選択した時のタグ付けする辺フラグ"
+
+
+msgid "Tag Seam"
+msgstr "シームを付ける"
+
+
+msgid "Tag Sharp"
+msgstr "シャープを付ける"
+
+
+msgid "Tag Crease"
+msgstr "クリースを付ける"
+
+
+msgid "Tag Bevel"
+msgstr "ベベルを付ける"
+
+
+msgid "Tag Freestyle Edge Mark"
+msgstr "Freestyleマークを付ける"
 
 
 msgid "Face Stepping"
@@ -59652,14 +59660,6 @@ msgid "Region Position Y"
 msgstr "領域のY座標"
 
 
-msgid "Mouse Init"
-msgstr "マウス初期化"
-
-
-msgid "Use initial mouse position"
-msgstr "最初のマウス位置を使用します"
-
-
 msgctxt "Operator"
 msgid "Extrude Individual and Move"
 msgstr "個別に押し出し"
@@ -60630,22 +60630,6 @@ msgstr "モディファイアーのビュー設定を適用します"
 
 msgid "Apply modifier's render settings"
 msgstr "モディファイアーのレンダリング設定を適用します"
-
-
-msgid "Transformation type for translation, scale and rotation"
-msgstr "移動・拡大縮小・回転のトランスフォームタイプ"
-
-
-msgid "Use <matrix> to specify transformations"
-msgstr "<matrix>をトランスフォームの指定に使用します"
-
-
-msgid "TransRotLoc"
-msgstr "TransRotLoc"
-
-
-msgid "Use <translate>, <rotate>, <scale> to specify transformations"
-msgstr "<translate> <rotate> <scale>をトランスフォームの指定に使用します"
 
 
 msgid "Include all Actions"
@@ -62770,14 +62754,6 @@ msgid "Spot Shape"
 msgstr "スポット形状"
 
 
-msgid "Cycles Settings"
-msgstr "Cycles設定"
-
-
-msgid "Performance"
-msgstr "パフォーマンス"
-
-
 msgid "Ray Visibility"
 msgstr "レイの可視性"
 
@@ -62836,6 +62812,10 @@ msgstr "オーバーライド"
 
 msgid "Passes"
 msgstr "パス"
+
+
+msgid "Performance"
+msgstr "パフォーマンス"
 
 
 msgid "Acceleration Structure"
@@ -63863,10 +63843,6 @@ msgstr "ボーンエンベロープ"
 msgctxt "Operator"
 msgid "Extrude to Cursor"
 msgstr "押し出し（カーソル方向）"
-
-
-msgid "Add cube to mesh interactively"
-msgstr "立方体をメッシュにインタラクティブに追加します"
 
 
 msgid "Extrude freely or along an axis"
@@ -65948,12 +65924,6 @@ msgid "Drag Threshold"
 msgstr "ドラッグのしきい値"
 
 
-msgid "Number of pixels you have to drag before a tweak/drag event is triggered (otherwise click events are detected)"
-msgstr ""
-"長押し・ドラッグイベントのトリガー発生に必要なドラッグピクセル数\n"
-"（足りない場合はクリックイベントが探知されます）"
-
-
 msgid "Invert Zoom Direction"
 msgstr "ズーム方向を反転"
 
@@ -65980,12 +65950,6 @@ msgstr "ダブルクリックの時間/遅延 (ミリ秒)"
 
 msgid "Motion Threshold"
 msgstr "移動のしきい値"
-
-
-msgid "Number of pixels you have to before the cursor is considered to have moved (used for cycling selected items on successive clicks)"
-msgstr ""
-"カーソルが移動したと見なされるのに必要なピクセル数\n"
-"（連続クリック時のアイテム選択の循環で使用）"
 
 
 msgid "View Navigation"
@@ -69651,10 +69615,6 @@ msgid "Display in solid mode"
 msgstr "ソリッドモードで表示します"
 
 
-msgid "Display in LookDev mode"
-msgstr "ルック開発モードで表示します"
-
-
 msgid "Display render preview"
 msgstr "レンダープレビューを表示"
 
@@ -71759,6 +71719,10 @@ msgstr "エフェクトシーケンス"
 
 msgid "Sequence strip applying an effect on the images created by other strips"
 msgstr "他のストリップで作成された画像にエフェクトを適用するシーケンスストリップ"
+
+
+msgid "Representation of alpha information in the RGBA pixels"
+msgstr "RGBAピクセルでアルファ情報を表現します"
 
 
 msgid "RGB channels in transparent pixels are unaffected by the alpha channel"
@@ -77084,18 +77048,6 @@ msgid "Color of disabled marker"
 msgstr "無効化されたマーカーの色"
 
 
-msgid "Grease Pencil Vertex"
-msgstr "グリースペンシル頂点"
-
-
-msgid "Grease Pencil Vertex Select"
-msgstr "グリースペンシル頂点選択"
-
-
-msgid "Grease Pencil Vertex Size"
-msgstr "グリースペンシル頂点サイズ"
-
-
 msgid "Align handle color"
 msgstr "整列ハンドル色"
 
@@ -77916,10 +77868,6 @@ msgid "Meta Strip"
 msgstr "メタストリップ"
 
 
-msgid "Movie Strip"
-msgstr "動画ストリップ"
-
-
 msgid "Clip Strip"
 msgstr "ストリップを切り抜き"
 
@@ -78324,6 +78272,18 @@ msgid "Face Area Text"
 msgstr "面積のテキスト"
 
 
+msgid "Grease Pencil Vertex"
+msgstr "グリースペンシル頂点"
+
+
+msgid "Grease Pencil Vertex Select"
+msgstr "グリースペンシル頂点選択"
+
+
+msgid "Grease Pencil Vertex Size"
+msgstr "グリースペンシル頂点サイズ"
+
+
 msgid "Face Normal"
 msgstr "面の法線"
 
@@ -78542,46 +78502,6 @@ msgstr "オブジェクトやボーンに自動的にキーフレームを挿入
 
 msgid "Add & Replace"
 msgstr "追加と置換"
-
-
-msgid "Double Threshold"
-msgstr "重複しきい値"
-
-
-msgid "Limit for removing duplicates and 'Auto Merge'"
-msgstr "「重複頂点の自動マージ」の境界"
-
-
-msgid "Edge Tag Mode"
-msgstr "辺のタグ付けモード"
-
-
-msgid "The edge flag to tag when selecting the shortest path"
-msgstr "最短経路を選択した時のタグ付けする辺フラグ"
-
-
-msgid "Tag Seam"
-msgstr "シームを付ける"
-
-
-msgid "Tag Sharp"
-msgstr "シャープを付ける"
-
-
-msgid "Tag Crease"
-msgstr "クリースを付ける"
-
-
-msgid "Tag Bevel"
-msgstr "ベベルを付ける"
-
-
-msgid "Tag Freestyle Edge Mark"
-msgstr "Freestyleマークを付ける"
-
-
-msgid "Set strength of face to specified value"
-msgstr "指定の値で面の強さを設定します"
 
 
 msgid "Grease Pencil Interpolate"
@@ -78864,10 +78784,6 @@ msgstr "自動キーフレームで挿入するキーイングセット"
 
 msgid "Automatic keyframe insertion using active Keying Set only"
 msgstr "自動キーフレーム挿入はアクティブなキーイングセットのみを使用します"
-
-
-msgid "AutoMerge Editing"
-msgstr "重複頂点の自動マージ"
 
 
 msgid "Automatically merge vertices moved to the same location"
@@ -79590,10 +79506,6 @@ msgid "Draw Edges"
 msgstr "辺を表示"
 
 
-msgid "Display selected edges using highlights in the 3D view and UV editor"
-msgstr "3DビューとUVエディターで選択中の辺をハイライト表示します"
-
-
 msgid "Edge Angle"
 msgstr "辺の角度"
 
@@ -79660,10 +79572,6 @@ msgstr "オーバーレイで面の向きを表示します"
 
 msgid "Draw Faces"
 msgstr "面を表示"
-
-
-msgid "Display all faces as shades in the 3D view and UV editor"
-msgstr "3DビューとUV/画像エディター内のすべての面をシェーディングして表示します"
 
 
 msgid "Display Grid Floor"
@@ -79978,12 +79886,12 @@ msgid "Color Type"
 msgstr "カラータイプ"
 
 
-msgid "Show scene in a single color"
-msgstr "シーンを単一カラーで表示します"
-
-
 msgid "Show material color"
 msgstr "マテリアルカラーを表示します"
+
+
+msgid "Show scene in a single color"
+msgstr "シーンを単一カラーで表示します"
 
 
 msgid "Show object color"
@@ -80022,16 +79930,16 @@ msgid "Lighting Method for Solid/Texture Viewport Shading"
 msgstr "ソリッド/テクスチャビューポートシェーディングでのライティング方法"
 
 
-msgid "Display using flat lighting"
-msgstr "フラットライティングを使用して表示します"
-
-
 msgid "Display using studio lighting"
 msgstr "スタジオライティングを使用して表示します"
 
 
 msgid "Display using matcap material and lighting"
 msgstr "MatCap マテリアルとライティングを使用して表示します"
+
+
+msgid "Display using flat lighting"
+msgstr "フラットライティングを使用して表示します"
 
 
 msgid "Outline Color"
@@ -84794,6 +84702,11 @@ msgstr "水平のハンドル"
 
 
 msgctxt "Operator"
+msgid "Frame All"
+msgstr "全体を表示"
+
+
+msgctxt "Operator"
 msgid "Less"
 msgstr "選択を縮小"
 
@@ -84849,6 +84762,11 @@ msgstr "マスクテクスチャアルファ"
 
 msgid "Show Same Material"
 msgstr "同じマテリアルを表示"
+
+
+msgctxt "Operator"
+msgid "Frame Selected"
+msgstr "選択を表示"
 
 
 msgctxt "Operator"
@@ -85258,13 +85176,13 @@ msgstr "シーケンスアニメーションをレンダリング"
 
 
 msgctxt "Operator"
-msgid "All Strips to the Left"
-msgstr "左側の全ストリップ"
+msgid "Left"
+msgstr "左"
 
 
 msgctxt "Operator"
-msgid "All Strips to the Right"
-msgstr "右側の全ストリップ"
+msgid "Right"
+msgstr "右"
 
 
 msgctxt "Operator"
@@ -85340,16 +85258,6 @@ msgstr "ストレージ"
 
 
 msgctxt "Operator"
-msgid "Frame All"
-msgstr "全体を表示"
-
-
-msgctxt "Operator"
-msgid "Frame Selected"
-msgstr "選択を表示"
-
-
-msgctxt "Operator"
 msgid "Fit Preview in window"
 msgstr "ウィンドウにプレビューを合わせる"
 
@@ -85357,31 +85265,6 @@ msgstr "ウィンドウにプレビューを合わせる"
 msgctxt "Operator"
 msgid "Sequence Render Image"
 msgstr "シーケンス画像をレンダリング"
-
-
-msgctxt "Operator"
-msgid "Strips to the Left"
-msgstr "左のストリップ"
-
-
-msgctxt "Operator"
-msgid "Strips to the Right"
-msgstr "右のストリップ"
-
-
-msgctxt "Operator"
-msgid "Surrounding Handles"
-msgstr "両ハンドル"
-
-
-msgctxt "Operator"
-msgid "Left Handle"
-msgstr "左ハンドル"
-
-
-msgctxt "Operator"
-msgid "Right Handle"
-msgstr "右ハンドル"
 
 
 msgctxt "Operator"
@@ -85487,16 +85370,6 @@ msgstr "ストリップ再読み込みと長さ調整"
 msgctxt "Operator"
 msgid "Mute Unselected Strips"
 msgstr "非選択ストリップをミュート"
-
-
-msgctxt "Operator"
-msgid "Cut (Hard) at frame"
-msgstr "フレームでカット(ハード)"
-
-
-msgctxt "Operator"
-msgid "Cut (Soft) at frame"
-msgstr "フレームでカット(ソフト)"
 
 
 msgid "Show Grease Pencil"
@@ -85701,18 +85574,8 @@ msgstr ""
 
 
 msgctxt "Operator"
-msgid "Preferences..."
-msgstr "設定..."
-
-
-msgctxt "Operator"
 msgid "Install Application Template..."
 msgstr "アプリケーションテンプレートのインストール..."
-
-
-msgctxt "Operator"
-msgid "Quit"
-msgstr "終了"
 
 
 msgctxt "Operator"
@@ -85723,6 +85586,11 @@ msgstr "リンク..."
 msgctxt "Operator"
 msgid "Append..."
 msgstr "アペンド..."
+
+
+msgctxt "Operator"
+msgid "Quit"
+msgstr "終了"
 
 
 msgctxt "Operator"
@@ -85768,6 +85636,11 @@ msgstr "オペレーターを検索..."
 msgctxt "Operator"
 msgid "Rename Active Item..."
 msgstr "アクティブアイテムのリネーム..."
+
+
+msgctxt "Operator"
+msgid "Preferences..."
+msgstr "設定..."
 
 
 msgctxt "Operator"
@@ -86303,16 +86176,6 @@ msgstr "前"
 msgctxt "Operator"
 msgid "Back"
 msgstr "後"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "右"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "左"
 
 
 msgctxt "Operator"
@@ -87387,16 +87250,6 @@ msgstr "ベクトルをコピー"
 msgctxt "Operator"
 msgid "Paste Vectors"
 msgstr "ベクトルを貼り付け"
-
-
-msgctxt "Operator"
-msgid "Add Vectors"
-msgstr "ベクトルを追加"
-
-
-msgctxt "Operator"
-msgid "Multiply Vectors"
-msgstr "ベクトルを乗算"
 
 
 msgctxt "Operator"
@@ -88878,10 +88731,6 @@ msgstr "マーカー %d オフセット %s"
 
 msgid "Marker offset %s"
 msgstr "マーカーオフセット %s"
-
-
-msgid "Programming error: operator does not actually have code to do anything!"
-msgstr "プログラミングエラー：オペレーターに実際に何のコードも書かれていません！"
 
 
 msgid "Scene not found"
@@ -90638,12 +90487,12 @@ msgid "Export Data Options:"
 msgstr "エクスポートデータオプション:"
 
 
-msgid "Armature Options:"
-msgstr "アーマチュアオプション:"
-
-
 msgid "Transformation Type"
 msgstr "トランスフォームタイプ"
+
+
+msgid "Armature Options:"
+msgstr "アーマチュアオプション:"
 
 
 msgid "Collada Options:"
@@ -92446,10 +92295,6 @@ msgid "Search Area:"
 msgstr "検索領域:"
 
 
-msgid "Size %d x %d"
-msgstr "サイズ %d×%d"
-
-
 msgid ", %d float channel(s)"
 msgstr "、%d Floatチャンネル"
 
@@ -94033,10 +93878,6 @@ msgid "No object selected"
 msgstr "選択オブジェクトがありません"
 
 
-msgid "%s: confirm, %s: cancel, %s: gravity (%s), %s|%s|%s|%s: move around, %s: fast, %s: slow, %s|%s: up and down, %s: teleport, %s: jump, %s: increase speed, %s: decrease speed"
-msgstr "%s:決定、%s:キャンセル、%s:重力(%s)、%s|%s|%s|%s:平行移動、%s:高速、%s:低速、%s|%s:上下移動、%s:ワープ、%s:ジャンプ、%s:加速、%s:減速"
-
-
 msgid "Cannot navigate a camera from an external library"
 msgstr "外部ライブラリのカメラはナビゲートできません"
 
@@ -94604,18 +94445,6 @@ msgstr "我が世誰ぞ"
 
 msgid "the lazy dog"
 msgstr "常ならん"
-
-
-msgid "'Refresh' incompatible with Object ID type"
-msgstr "オブジェクトIDタイプの「更新」の互換性がありません"
-
-
-msgid "'Refresh' incompatible with ParticleSettings ID type"
-msgstr "パーティクル設定IDタイプの「更新」の互換性がありません"
-
-
-msgid "This ID type is not compatible with any 'refresh' options"
-msgstr "このIDタイプはどの「更新」オプションとも互換性がありません"
 
 
 msgid "Index out of range"

@@ -2001,6 +2001,8 @@ void DRW_render_to_image(RenderEngine *engine, struct Depsgraph *depsgraph)
 
   /* Reset state before drawing */
   DRW_state_reset();
+  /* Set the default Blender draw state */
+  GPU_state_init();
 
   /* Init render result. */
   RenderResult *render_result = RE_engine_begin_result(engine,
@@ -3158,7 +3160,7 @@ void DRW_opengl_context_create(void)
   DST.gl_context = WM_opengl_context_create();
   WM_opengl_context_activate(DST.gl_context);
   /* Be sure to create gawain.context too. */
-  DST.gpu_context = GPU_context_create();
+  DST.gpu_context = GPU_context_create(0);
   if (!G.background) {
     immActivate();
   }

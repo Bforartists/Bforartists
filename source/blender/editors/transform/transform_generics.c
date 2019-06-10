@@ -819,6 +819,9 @@ static void pose_transform_mirror_update(Object *ob, PoseInitData_Mirror *pid)
           pid++;
         }
         BKE_pchan_apply_mat4(pchan, pchan_mtx_final, false);
+
+        /* set flag to let autokeyframe know to keyframe the mirrred bone */
+        pchan->bone->flag |= BONE_TRANSFORM_MIRROR;
       }
     }
   }
@@ -1043,7 +1046,6 @@ static void recalcData_objects(TransInfo *t)
 
     FOREACH_TRANS_DATA_CONTAINER (t, tc) {
       Object *ob = tc->poseobj;
-      bArmature *arm = ob->data;
       bPose *pose = ob->pose;
 
       if (pose->flag & POSE_MIRROR_EDIT) {
@@ -1080,15 +1082,7 @@ static void recalcData_objects(TransInfo *t)
         BLI_gset_insert(motionpath_updates, ob);
       }
 
-      /* old optimize trick... this enforces to bypass the depgraph */
-      if (!(arm->flag & ARM_DELAYDEFORM)) {
-        DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY); /* sets recalc flags */
-        /* transformation of pose may affect IK tree, make sure it is rebuilt */
-        BIK_clear_data(ob->pose);
-      }
-      else {
-        BKE_pose_where_is(t->depsgraph, t->scene, ob);
-      }
+      DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
     }
 
     /* Update motion paths once for all transformed bones in an object. */
@@ -1182,6 +1176,8 @@ static void recalcData_sequencer(TransInfo *t)
 
     seq_prev = seq;
   }
+
+  DEG_id_tag_update(&t->scene->id, ID_RECALC_SEQUENCER_STRIPS);
 
   flushTransSeq(t);
 }

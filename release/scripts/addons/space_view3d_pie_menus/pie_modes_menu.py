@@ -366,11 +366,11 @@ class PIE_MT_ObjectEditMode(Menu):
         elif ob and ob.type == 'ARMATURE':
             pie = layout.menu_pie()
             # 4 - LEFT
-            pie.operator(SetObjectModePie.bl_idname, text="Object", icon="OBJECT_DATAMODE").mode = "OBJECT"
+            pie.operator(PIE_OT_SetObjectModePie.bl_idname, text="Object", icon="OBJECT_DATAMODE").mode = "OBJECT"
             # 6 - RIGHT
-            pie.operator(SetObjectModePie.bl_idname, text="Pose", icon="POSE_HLT").mode = "POSE"
+            pie.operator(PIE_OT_SetObjectModePie.bl_idname, text="Pose", icon="POSE_HLT").mode = "POSE"
             # 2 - BOTTOM
-            pie.operator(SetObjectModePie.bl_idname, text="Edit", icon="EDITMODE_HLT").mode = "EDIT"
+            pie.operator(PIE_OT_SetObjectModePie.bl_idname, text="Edit", icon="EDITMODE_HLT").mode = "EDIT"
             # 8 - TOP
             pie.operator("object.editmode_toggle", text="Edit Mode", icon='OBJECT_DATAMODE')
             # 7 - TOP - LEFT
@@ -431,9 +431,28 @@ class PIE_MT_ObjectEditMode(Menu):
             pie.separator()
             pie.separator()
             pie.separator()
+
+        if ob and ob.type == 'GPENCIL':
+            pie = layout.menu_pie()
+            # 4 - LEFT
+            pie.operator(PIE_OT_SetObjectModePie.bl_idname, text="Sculpt", icon="SCULPTMODE_HLT").mode = "SCULPT_GPENCIL"
+            # 6 - RIGHT
+            pie.operator(PIE_OT_SetObjectModePie.bl_idname, text="Draw", icon="GREASEPENCIL").mode = "PAINT_GPENCIL"
+            # 2 - BOTTOM
+            pie.operator(PIE_OT_SetObjectModePie.bl_idname, text="Edit", icon="EDITMODE_HLT").mode = "EDIT_GPENCIL"
+            # 8 - TOP
+            pie.operator(PIE_OT_SetObjectModePie.bl_idname, text="Object", icon="OBJECT_DATAMODE").mode = "OBJECT"
+            # 7 - TOP - LEFT
+            pie.separator()
+            # 9 - TOP - RIGHT
+            pie.separator()
+            # 1 - BOTTOM - LEFT
+            pie.separator()
             # 3 - BOTTOM - RIGHT
-            if context.gpencil_data:
-                pie.operator("view3d.pie_interactive_mode_grease_pencil", icon="GREASEPENCIL")
+            pie.operator(PIE_OT_SetObjectModePie.bl_idname, text="Weight Paint", icon="WPAINT_HLT").mode = "WEIGHT_GPENCIL"
+
+
+
         else:
             message = "Active Object has only Object Mode available" if ob \
                     and ob.type in {"LIGHT", "CAMERA", "EMPTY", "SPEAKER"} else \

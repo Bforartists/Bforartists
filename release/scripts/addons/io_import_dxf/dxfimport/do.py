@@ -1013,7 +1013,7 @@ class Do:
             o.hide_viewport = invisible
         o.location = self.proj(entity.basepoint)
         scene.collection.objects.link(o)
-        # block_scene.update()
+        # block_scene.view_layers[0].update()
 
         return o
 

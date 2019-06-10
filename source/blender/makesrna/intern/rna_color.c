@@ -66,9 +66,11 @@ static int rna_CurveMapping_curves_length(PointerRNA *ptr)
   CurveMapping *cumap = (CurveMapping *)ptr->data;
   int len;
 
-  for (len = 0; len < CM_TOT; len++)
-    if (!cumap->cm[len].curve)
+  for (len = 0; len < CM_TOT; len++) {
+    if (!cumap->cm[len].curve) {
       break;
+    }
+  }
 
   return len;
 }
@@ -85,10 +87,12 @@ static void rna_CurveMapping_clip_set(PointerRNA *ptr, bool value)
 {
   CurveMapping *cumap = (CurveMapping *)ptr->data;
 
-  if (value)
+  if (value) {
     cumap->flag |= CUMA_DO_CLIP;
-  else
+  }
+  else {
     cumap->flag &= ~CUMA_DO_CLIP;
+  }
 
   curvemapping_changed(cumap, false);
 }
@@ -340,8 +344,9 @@ static CBData *rna_ColorRampElement_new(struct ColorBand *coba,
 {
   CBData *element = BKE_colorband_element_add(coba, position);
 
-  if (element == NULL)
+  if (element == NULL) {
     BKE_reportf(reports, RPT_ERROR, "Unable to add element to colorband (limit %d)", MAXCOLORBAND);
+  }
 
   return element;
 }
@@ -414,8 +419,9 @@ static void rna_ColorManagedDisplaySettings_display_device_update(Main *bmain,
 {
   ID *id = ptr->id.data;
 
-  if (!id)
+  if (!id) {
     return;
+  }
 
   if (GS(id->name) == ID_SCE) {
     Scene *scene = (Scene *)id;
@@ -592,12 +598,14 @@ static void rna_ColorManagedColorspaceSettings_reload_update(Main *bmain,
     MovieClip *clip = (MovieClip *)id;
 
     BKE_movieclip_reload(bmain, clip);
+    BKE_sequence_invalidate_movieclip_strips(bmain, clip);
 
     WM_main_add_notifier(NC_MOVIECLIP | ND_DISPLAY, &clip->id);
     WM_main_add_notifier(NC_MOVIECLIP | NA_EDITED, &clip->id);
   }
   else if (GS(id->name) == ID_SCE) {
     Scene *scene = (Scene *)id;
+    BKE_sequence_invalidate_scene_strips(bmain, scene);
 
     if (scene->ed) {
       ColorManagedColorspaceSettings *colorspace_settings = (ColorManagedColorspaceSettings *)
@@ -635,8 +643,6 @@ static void rna_ColorManagedColorspaceSettings_reload_update(Main *bmain,
       WM_main_add_notifier(NC_SCENE | ND_SEQUENCER, NULL);
     }
   }
-
-  BKE_sequencer_cache_cleanup_all(bmain);
 }
 
 static char *rna_ColorManagedSequencerColorspaceSettings_path(PointerRNA *UNUSED(ptr))
@@ -653,8 +659,9 @@ static void rna_ColorManagement_update(Main *UNUSED(bmain), Scene *UNUSED(scene)
 {
   ID *id = ptr->id.data;
 
-  if (!id)
+  if (!id) {
     return;
+  }
 
   if (GS(id->name) == ID_SCE) {
     DEG_id_tag_update(id, 0);

@@ -237,7 +237,7 @@ static void graph_build_finalize_common(DEG::Depsgraph *deg_graph, Main *bmain)
   deg_graph->scene_cow = (Scene *)deg_graph->get_cow_id(&deg_graph->scene->id);
   /* Flush visibility layer and re-schedule nodes for update. */
   DEG::deg_graph_build_finalize(bmain, deg_graph);
-  DEG_graph_on_visible_update(bmain, reinterpret_cast<::Depsgraph *>(deg_graph));
+  DEG_graph_on_visible_update(bmain, reinterpret_cast<::Depsgraph *>(deg_graph), false);
 #if 0
   if (!DEG_debug_consistency_check(deg_graph)) {
     printf("Consistency validation failed, ABORTING!\n");
@@ -272,7 +272,7 @@ void DEG_graph_build_from_view_layer(Depsgraph *graph,
   /* Hook up relationships between operations - to determine evaluation order. */
   DEG::DepsgraphRelationBuilder relation_builder(bmain, deg_graph, &builder_cache);
   relation_builder.begin_build();
-  relation_builder.build_view_layer(scene, view_layer);
+  relation_builder.build_view_layer(scene, view_layer, DEG::DEG_ID_LINKED_DIRECTLY);
   relation_builder.build_copy_on_write_relations();
   /* Finalize building. */
   graph_build_finalize_common(deg_graph, bmain);
@@ -306,6 +306,42 @@ void DEG_graph_build_for_render_pipeline(Depsgraph *graph,
   DEG::DepsgraphRelationBuilder relation_builder(bmain, deg_graph, &builder_cache);
   relation_builder.begin_build();
   relation_builder.build_scene_render(scene);
+  relation_builder.build_copy_on_write_relations();
+  /* Finalize building. */
+  graph_build_finalize_common(deg_graph, bmain);
+  /* Finish statistics. */
+  if (G.debug & (G_DEBUG_DEPSGRAPH_BUILD | G_DEBUG_DEPSGRAPH_TIME)) {
+    printf("Depsgraph built in %f seconds.\n", PIL_check_seconds_timer() - start_time);
+  }
+}
+
+void DEG_graph_build_for_compositor_preview(Depsgraph *graph,
+                                            Main *bmain,
+                                            Scene *scene,
+                                            struct ViewLayer * /*view_layer*/,
+                                            bNodeTree *nodetree)
+{
+  double start_time = 0.0;
+  if (G.debug & (G_DEBUG_DEPSGRAPH_BUILD | G_DEBUG_DEPSGRAPH_TIME)) {
+    start_time = PIL_check_seconds_timer();
+  }
+  DEG::Depsgraph *deg_graph = reinterpret_cast<DEG::Depsgraph *>(graph);
+  /* Perform sanity checks. */
+  BLI_assert(deg_graph->scene == scene);
+  deg_graph->is_render_pipeline_depsgraph = true;
+  DEG::DepsgraphBuilderCache builder_cache;
+  /* Generate all the nodes in the graph first */
+  DEG::DepsgraphNodeBuilder node_builder(bmain, deg_graph, &builder_cache);
+  node_builder.begin_build();
+  node_builder.build_scene_render(scene);
+  node_builder.build_nodetree(nodetree);
+  node_builder.end_build();
+  /* Hook up relationships between operations - to determine evaluation
+   * order. */
+  DEG::DepsgraphRelationBuilder relation_builder(bmain, deg_graph, &builder_cache);
+  relation_builder.begin_build();
+  relation_builder.build_scene_render(scene);
+  relation_builder.build_nodetree(nodetree);
   relation_builder.build_copy_on_write_relations();
   /* Finalize building. */
   graph_build_finalize_common(deg_graph, bmain);

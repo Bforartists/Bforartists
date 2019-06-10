@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -9767,8 +9767,16 @@ msgid "Navigation"
 msgstr "Навигација"
 
 
+msgid "Select Linked"
+msgstr "Изабери повезано"
+
+
 msgid "Strip"
 msgstr "Одстрани"
+
+
+msgid "Movie Strip"
+msgstr "Трака филма"
 
 
 msgid "Cache"
@@ -9865,10 +9873,6 @@ msgstr "Сједини"
 
 msgid "Normals"
 msgstr "Нормале"
-
-
-msgid "Select Linked"
-msgstr "Изабери повезано"
 
 
 msgid "Mesh Select Mode"
@@ -17411,6 +17415,10 @@ msgid "By Material"
 msgstr "По материјалу"
 
 
+msgid "Tag Freestyle Edge Mark"
+msgstr "Означи ивицу као слободоручну"
+
+
 msgctxt "Operator"
 msgid "Select Shortest Path"
 msgstr "Изабери најкраћу путању"
@@ -22534,10 +22542,6 @@ msgid "Predefined tracking settings"
 msgstr "Предефинисана подешавања праћења"
 
 
-msgid "Performance"
-msgstr "Перформансе"
-
-
 msgid "Ray Visibility"
 msgstr "Видљивост зрака"
 
@@ -22568,6 +22572,10 @@ msgstr "Макс. одбијања"
 
 msgid "Passes"
 msgstr "Пролаза"
+
+
+msgid "Performance"
+msgstr "Перформансе"
 
 
 msgid "Threads"
@@ -26203,18 +26211,6 @@ msgid "Color of disabled marker"
 msgstr "Боја у зениту"
 
 
-msgid "Grease Pencil Vertex"
-msgstr "Темена скице"
-
-
-msgid "Grease Pencil Vertex Select"
-msgstr "Избор темена скице"
-
-
-msgid "Grease Pencil Vertex Size"
-msgstr "Величина темена скице"
-
-
 msgid "Auto handle color"
 msgstr "Аутоматска боја ручке"
 
@@ -26547,10 +26543,6 @@ msgid "Meta Strip"
 msgstr "Мета трака"
 
 
-msgid "Movie Strip"
-msgstr "Трака филма"
-
-
 msgid "Clip Strip"
 msgstr "Трака исечка"
 
@@ -26691,6 +26683,18 @@ msgid "Face Angle Text"
 msgstr "Текст угла странице"
 
 
+msgid "Grease Pencil Vertex"
+msgstr "Темена скице"
+
+
+msgid "Grease Pencil Vertex Select"
+msgstr "Избор темена скице"
+
+
+msgid "Grease Pencil Vertex Size"
+msgstr "Величина темена скице"
+
+
 msgid "Face Normal"
 msgstr "Нормала странице"
 
@@ -26741,10 +26745,6 @@ msgstr "Самостално умећи кључеве на ipo кривој о�
 
 msgid "Add & Replace"
 msgstr "Додај и замени"
-
-
-msgid "Tag Freestyle Edge Mark"
-msgstr "Означи ивицу као слободоручну"
 
 
 msgid "Mesh Selection Mode"
@@ -26837,10 +26837,6 @@ msgstr "Самостално умећи кључеве на ipo кривој о�
 
 msgid "Automatic keyframe insertion using active Keying Set only"
 msgstr "Самостално умећи кључеве на ipo кривој акција"
-
-
-msgid "AutoMerge Editing"
-msgstr "Аутоспајање"
 
 
 msgid "Automatically merge vertices moved to the same location"
@@ -28766,6 +28762,16 @@ msgstr "Добијање:"
 
 
 msgctxt "Operator"
+msgid "Left"
+msgstr "Лево"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "Десно"
+
+
+msgctxt "Operator"
 msgid "Grouped"
 msgstr "Груписано"
 
@@ -29120,16 +29126,6 @@ msgstr "Спреда"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Од позади"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "Десно"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "Лево"
 
 
 msgctxt "Operator"
@@ -30496,12 +30492,12 @@ msgid "Texture Options:"
 msgstr "Опције костура"
 
 
-msgid "Armature Options:"
-msgstr "Опције костура"
-
-
 msgid "Transformation Type"
 msgstr "Врста трансформације"
+
+
+msgid "Armature Options:"
+msgstr "Опције костура"
 
 
 msgid "Collada Options:"

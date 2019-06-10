@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-20 00:00:00\n"
+"POT-Creation-Date: 2019-06-03 00:00:00\n"
 "PO-Revision-Date: 2018-01-09 04:30+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -3675,10 +3675,6 @@ msgid "Input Color Space"
 msgstr "입력 색상 공간"
 
 
-msgid "Color space of the image or movie on disk"
-msgstr "디스크에있는 이미지 또는 동영상의 색 공간"
-
-
 msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
 msgstr "16.5 스톱의 위도와 25 스톱의 다이내믹 레인지를 갖춘 로그 기반의 필름 셰이퍼"
 
@@ -3697,10 +3693,6 @@ msgstr "비-색상 데이터를 포함하는 이미지에 대해 사용하는 �
 
 msgid "Standard RGB Display Space"
 msgstr "표준 RGB 표시 공간"
-
-
-msgid "The simple video conversion from a gamma 2.2 sRGB space"
-msgstr "감마 2.2의 sRGB 공간에서 심플 비디오 변환"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -14243,10 +14235,6 @@ msgid "Alpha Mode"
 msgstr "알파 모드"
 
 
-msgid "Representation of alpha information in the RGBA pixels"
-msgstr "RGBA 픽셀에서 알파 정보의 표현"
-
-
 msgid "Straight"
 msgstr "직진"
 
@@ -22567,12 +22555,20 @@ msgid "Navigation"
 msgstr "네비게이션"
 
 
+msgid "Select Linked"
+msgstr "연결된 선택"
+
+
 msgid "Strip"
 msgstr "스트립"
 
 
 msgid "Lock/Mute"
 msgstr "잠금/음소거"
+
+
+msgid "Movie Strip"
+msgstr "동영상 스트립"
 
 
 msgid "Cache"
@@ -22705,10 +22701,6 @@ msgstr "노멀"
 
 msgid "Select All by Trait"
 msgstr "형질로 모두 선택"
-
-
-msgid "Select Linked"
-msgstr "연결된 선택"
 
 
 msgid "Select Loops"
@@ -41110,6 +41102,30 @@ msgid "Apply selected vertex locations to all other shape keys"
 msgstr "모든 다른 셰이프 키로 선택된 버텍스 위치를 적용"
 
 
+msgid "The edge flag to tag when selecting the shortest path"
+msgstr "최단 경로를 선택하는 경우 테그로 에지 플래그"
+
+
+msgid "Tag Seam"
+msgstr "태그 씨임"
+
+
+msgid "Tag Sharp"
+msgstr "태그 샤프"
+
+
+msgid "Tag Crease"
+msgstr "태그 주름"
+
+
+msgid "Tag Bevel"
+msgstr "태그 베벨"
+
+
+msgid "Tag Freestyle Edge Mark"
+msgstr "태그 프리스타일 에지 마크"
+
+
 msgid "Face Stepping"
 msgstr "페이스 스테핑"
 
@@ -51787,22 +51803,6 @@ msgid "Apply modifier's render settings"
 msgstr "모디파이어의 렌더링 설정을 적용"
 
 
-msgid "Transformation type for translation, scale and rotation"
-msgstr "옮기기의 변환 형식, 규모 및 회전"
-
-
-msgid "Use <matrix> to specify transformations"
-msgstr "변환을 지정하는 <matrix>를 사용"
-
-
-msgid "TransRotLoc"
-msgstr "변환 회전 위치"
-
-
-msgid "Use <translate>, <rotate>, <scale> to specify transformations"
-msgstr "변환을 지정하는 <translate>, <rotate>, <scale>를 사용"
-
-
 msgid "Include Armatures"
 msgstr "아마튜어를 포함"
 
@@ -53539,14 +53539,6 @@ msgid "Spot Shape"
 msgstr "스폿 셰이프"
 
 
-msgid "Cycles Settings"
-msgstr "사이클 설정"
-
-
-msgid "Performance"
-msgstr "성능"
-
-
 msgid "Ray Visibility"
 msgstr "광선 가시성"
 
@@ -53593,6 +53585,10 @@ msgstr "셔터 곡선"
 
 msgid "Passes"
 msgstr "패스"
+
+
+msgid "Performance"
+msgstr "성능"
 
 
 msgid "Threads"
@@ -60101,6 +60097,10 @@ msgid "Sequence strip applying an effect on the images created by other strips"
 msgstr "다른 스트립으로 생성된 이미지에 이펙트를 적용하는 시퀀스 스트립"
 
 
+msgid "Representation of alpha information in the RGBA pixels"
+msgstr "RGBA 픽셀에서 알파 정보의 표현"
+
+
 msgid "RGB channels in transparent pixels are unaffected by the alpha channel"
 msgstr "투명 픽셀에서 RGB 채널은 알파 채널로 영향을 주지 않음"
 
@@ -64374,18 +64374,6 @@ msgid "Color of disabled marker"
 msgstr "사용 중지된 마커의 색상"
 
 
-msgid "Grease Pencil Vertex"
-msgstr "그리스 펜슬 버텍스"
-
-
-msgid "Grease Pencil Vertex Select"
-msgstr "그리스 펜슬 버텍스 선택"
-
-
-msgid "Grease Pencil Vertex Size"
-msgstr "그리스 펜슬 버텍스 크기"
-
-
 msgid "Align handle color"
 msgstr "정렬 핸들 색상"
 
@@ -65158,10 +65146,6 @@ msgid "Meta Strip"
 msgstr "메타 스트립"
 
 
-msgid "Movie Strip"
-msgstr "동영상 스트립"
-
-
 msgid "Clip Strip"
 msgstr "클립 스트립"
 
@@ -65498,6 +65482,18 @@ msgid "Face Area Text"
 msgstr "페이스 영역 텍스트"
 
 
+msgid "Grease Pencil Vertex"
+msgstr "그리스 펜슬 버텍스"
+
+
+msgid "Grease Pencil Vertex Select"
+msgstr "그리스 펜슬 버텍스 선택"
+
+
+msgid "Grease Pencil Vertex Size"
+msgstr "그리스 펜슬 버텍스 크기"
+
+
 msgid "Face Normal"
 msgstr "페이스 노멀"
 
@@ -65672,42 +65668,6 @@ msgstr "오브젝트 및 본에 대해 자동 키 프레임 삽입의 모드"
 
 msgid "Add & Replace"
 msgstr "추가 및 교체"
-
-
-msgid "Double Threshold"
-msgstr "이중 임계 값"
-
-
-msgid "Limit for removing duplicates and 'Auto Merge'"
-msgstr "중복 제거 및 '자동 병합'에 대한 제한"
-
-
-msgid "Edge Tag Mode"
-msgstr "에지 태그 모드"
-
-
-msgid "The edge flag to tag when selecting the shortest path"
-msgstr "최단 경로를 선택하는 경우 테그로 에지 플래그"
-
-
-msgid "Tag Seam"
-msgstr "태그 씨임"
-
-
-msgid "Tag Sharp"
-msgstr "태그 샤프"
-
-
-msgid "Tag Crease"
-msgstr "태그 주름"
-
-
-msgid "Tag Bevel"
-msgstr "태그 베벨"
-
-
-msgid "Tag Freestyle Edge Mark"
-msgstr "태그 프리스타일 에지 마크"
 
 
 msgid "Grease Pencil Interpolate"
@@ -65892,10 +65852,6 @@ msgstr "자동 키 프레임 삽입 키잉 설정"
 
 msgid "Automatic keyframe insertion using active Keying Set only"
 msgstr "활성 키잉 설정 만을 사용하는 자동의 키 프레임을 삽입"
-
-
-msgid "AutoMerge Editing"
-msgstr "자동 병합 편집"
 
 
 msgid "Automatically merge vertices moved to the same location"
@@ -66446,10 +66402,6 @@ msgid "Draw Edges"
 msgstr "에지를 그리기"
 
 
-msgid "Display selected edges using highlights in the 3D view and UV editor"
-msgstr "3D 뷰 및 UV 편집기에서 강조를 사용하여 선택된 에지를 표시"
-
-
 msgid "Edge Angle"
 msgstr "에지 각도"
 
@@ -66488,10 +66440,6 @@ msgstr "라인으로 페이스 노멀을 표시"
 
 msgid "Draw Faces"
 msgstr "페이스를 그리기"
-
-
-msgid "Display all faces as shades in the 3D view and UV editor"
-msgstr "3D 뷰 및 UV 편집기에서 셰이드로 모든 페이스를 표시"
 
 
 msgid "Display Grid Floor"
@@ -70041,13 +69989,13 @@ msgstr "이득:"
 
 
 msgctxt "Operator"
-msgid "All Strips to the Left"
-msgstr "왼쪽에 있는 모든 스트립"
+msgid "Left"
+msgstr "왼쪽"
 
 
 msgctxt "Operator"
-msgid "All Strips to the Right"
-msgstr "오른쪽에 있는 모든 스트립"
+msgid "Right"
+msgstr "오른쪽"
 
 
 msgctxt "Operator"
@@ -70111,31 +70059,6 @@ msgstr "스토리지"
 msgctxt "Operator"
 msgid "Fit Preview in window"
 msgstr "창에서 미리보기를 맞추기"
-
-
-msgctxt "Operator"
-msgid "Strips to the Left"
-msgstr "왼쪽으로 스트립"
-
-
-msgctxt "Operator"
-msgid "Strips to the Right"
-msgstr "오른쪽으로 스트립"
-
-
-msgctxt "Operator"
-msgid "Surrounding Handles"
-msgstr "주위의 핸들"
-
-
-msgctxt "Operator"
-msgid "Left Handle"
-msgstr "왼쪽 핸들"
-
-
-msgctxt "Operator"
-msgid "Right Handle"
-msgstr "오른쪽 핸들"
 
 
 msgctxt "Operator"
@@ -70226,16 +70149,6 @@ msgstr "가우시안 블러"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "스트립을 다시 불러오고 길이를 조정"
-
-
-msgctxt "Operator"
-msgid "Cut (Hard) at frame"
-msgstr "프레임에서 컷 (하드)"
-
-
-msgctxt "Operator"
-msgid "Cut (Soft) at frame"
-msgstr "프레임에서 컷 (소프트)"
 
 
 msgid "Show Grease Pencil"
@@ -70674,16 +70587,6 @@ msgstr "앞쪽"
 msgctxt "Operator"
 msgid "Back"
 msgstr "뒤쪽"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "오른쪽"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "왼쪽"
 
 
 msgctxt "Operator"
@@ -72484,10 +72387,6 @@ msgid "Marker offset %s"
 msgstr "마커 오프셋 %s"
 
 
-msgid "Programming error: operator does not actually have code to do anything!"
-msgstr "프로그래밍 오류: 연산자는 실제로 아무것도 하는 코드가 없음"
-
-
 msgid "Scene not found"
 msgstr "장면을 찾을 수 없음"
 
@@ -73899,12 +73798,12 @@ msgid "Export Data Options:"
 msgstr "내보내기 데이터 옵션:"
 
 
-msgid "Armature Options:"
-msgstr "아마튜어 옵션:"
-
-
 msgid "Transformation Type"
 msgstr "변환 유형"
+
+
+msgid "Armature Options:"
+msgstr "아마튜어 옵션:"
 
 
 msgid "Collada Options:"
@@ -75462,10 +75361,6 @@ msgid "Search Area:"
 msgstr "검색 영역:"
 
 
-msgid "Size %d x %d"
-msgstr "크기 %d x %d"
-
-
 msgid ", %d float channel(s)"
 msgstr ", %d 실수 채널(들)"
 
@@ -76769,10 +76664,6 @@ msgid "No active camera"
 msgstr "활성 카메라 없음"
 
 
-msgid "%s: confirm, %s: cancel, %s: gravity (%s), %s|%s|%s|%s: move around, %s: fast, %s: slow, %s|%s: up and down, %s: teleport, %s: jump, %s: increase speed, %s: decrease speed"
-msgstr "%s: 확인, %s: 취소, %s: 중력 (%s), %s|%s|%s|%s: 이동하기, %s: 빠른, %s: 느린, %s|%s: 위로 아래로, %s: 순간 이동, %s: 점프, %s: 속력를 증가, %s: 속력를 감소"
-
-
 msgid "Cannot navigate a camera from an external library"
 msgstr "외부 라이브러리에서 카메라를 탐색할 수 없습니다."
 
@@ -77296,18 +77187,6 @@ msgstr "점프 오버"
 
 msgid "the lazy dog"
 msgstr "레이지 독"
-
-
-msgid "'Refresh' incompatible with Object ID type"
-msgstr "오브젝트 ID 유형과 함께 호환되지 않는 '새로 고침'"
-
-
-msgid "'Refresh' incompatible with ParticleSettings ID type"
-msgstr "파티클 설정 ID 유형과 호환되지 않는 '새로 고침'"
-
-
-msgid "This ID type is not compatible with any 'refresh' options"
-msgstr "이 ID 유형은 '새로 고침' 옵션과 호환되지 않습니다"
 
 
 msgid "Index out of range"

@@ -22,8 +22,11 @@ if "bpy" in locals():
     paths = reload(paths)
     append_link = reload(append_link)
     utils = reload(utils)
+    ui = reload(ui)
+    colors = reload(colors)
+    tasks_queue = reload(tasks_queue)
 else:
-    from blenderkit import paths, append_link, utils
+    from blenderkit import paths, append_link, utils, ui, colors, tasks_queue
 
 import threading
 import time
@@ -596,7 +599,10 @@ def download(asset_data, **kwargs):
 
     if kwargs.get('retry_counter', 0) > 3:
         sprops = utils.get_search_props()
-        sprops.report = f"Maximum retries exceeded for {asset_data['name']}"
+        report = f"Maximum retries exceeded for {asset_data['name']}"
+        sprops.report = report
+        ui.add_report(report, 5, colors.RED)
+
         utils.p(sprops.report)
         return
 
@@ -729,6 +735,7 @@ def get_download_url(asset_data, scene_id, api_key, tcom=None):
         tcom.report = 'Connection Error'
         tcom.error = True
         return 'Connection Error'
+
     if r.status_code < 400:
         data = r.json()
         url = data['filePath']
@@ -737,9 +744,12 @@ def get_download_url(asset_data, scene_id, api_key, tcom=None):
         return True
 
     if r.status_code == 403:
-        tcom.report = 'Available only in higher plans.'
+        r = 'You need Standard plan to get this item.'
+        tcom.report = r
+        r1 = 'All materials and brushes are aviable for free. Only users registered to Standart plan can use all models.'
+        tasks_queue.add_task((ui.add_report, (r1, 5, colors.RED)))
         tcom.error = True
-        return 'Available only in higher plans.'
+
     if r.status_code == 401:
         tcom.report = 'Invalid API key'
         tcom.error = True
@@ -747,6 +757,7 @@ def get_download_url(asset_data, scene_id, api_key, tcom=None):
     elif r.status_code >= 500:
         tcom.report = 'Server error'
         tcom.error = True
+    return False
 
 
 def start_download(asset_data, **kwargs):
