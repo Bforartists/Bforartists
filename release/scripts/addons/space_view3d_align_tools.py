@@ -21,7 +21,7 @@
 bl_info = {
     "name": "Align Tools",
     "author": "gabhead, Lell, Anfeo",
-    "version": (0, 3, 3),
+    "version": (0, 3, 4),
     "blender": (2, 80, 0),
     "location": "View3D > Tool Shelf > Tools",
     "description": "Align Selected Objects to Active Object",
@@ -734,7 +734,11 @@ class OBJECT_OT_align_tools(Operator):
 
     def draw(self, context):
         layout = self.layout
-
+        obj = context.object
+        row = layout.row()
+        row.label(text="Active object is: ", icon='OBJECT_DATA')
+        box = layout.box()
+        box.label(text=obj.name, icon='EDITMODE_HLT')
         # Object-Pivot-Cursor:
         row0 = layout.row()
         row0.prop(self, 'subject', expand=True)
@@ -1083,7 +1087,7 @@ class VIEW3D_PT_AlignUi(Panel):
 
         if obj is not None:
             col = layout.column()
-            col.label(text="Advanced Align")
+            col.label(text="Advanced Align Operations")
             layout = self.layout
             self.layout.operator("object.align_tools", text="Advanced")
 

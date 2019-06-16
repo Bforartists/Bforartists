@@ -3206,7 +3206,7 @@ static void rna_def_space_view3d_shading(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_xray_wireframe", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, NULL, "flag", V3D_SHADING_XRAY_BONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "flag", V3D_SHADING_XRAY_WIREFRAME);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(prop, "Show X-Ray", "Show X-Ray\nShow whole scene transparent");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
@@ -3310,25 +3310,25 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "gridflag", V3D_SHOW_FLOOR);
   RNA_def_property_ui_text(prop,
                            "Display Grid Floor",
-                           "Display Grid Floor\nShow the ground plane grid in perspective view");
+                           "Display Grid Floor\nShow the ground plane grid");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_axis_x", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "gridflag", V3D_SHOW_X);
   RNA_def_property_ui_text(
-      prop, "Display X Axis", "Display X Axis\nShow the X axis line in perspective view");
+      prop, "Display X Axis", "Display X Axis\nShow the X axis line");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_axis_y", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "gridflag", V3D_SHOW_Y);
   RNA_def_property_ui_text(
-      prop, "Display Y Axis", "Display Y AxisnShow the Y axis line in perspective view");
+      prop, "Display Y Axis", "Display Y AxisnShow the Y axis line");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_axis_z", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "gridflag", V3D_SHOW_Z);
   RNA_def_property_ui_text(
-      prop, "Display Z Axis", "Display Z Axis\nShow the Z axis line in perspective view");
+      prop, "Display Z Axis", "Display Z Axis\nShow the Z axis line");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "grid_scale", PROP_FLOAT, PROP_NONE);
@@ -3366,8 +3366,7 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "flag", V3D_SELECT_OUTLINE);
   RNA_def_property_ui_text(prop,
                            "Outline Selected",
-                           "Outline Selected\nShow an outline highlight around selected objects "
-                           "in non-wireframe views");
+                           "Outline Selected\nShow an outline highlight around selected objects ");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_object_origins", PROP_BOOLEAN, PROP_NONE);
@@ -3524,21 +3523,20 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Draw Edges",
-      "Draw Edges\nDisplay selected edges using highlights");
+      "Draw Edges\nHighlight selected edges");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_faces", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "overlay.edit_flag", V3D_OVERLAY_EDIT_FACES);
   RNA_def_property_ui_text(
-      prop, "Draw Faces", "Draw Faces\nDisplay shading over all faces");
+      prop, "Draw Faces", "Draw Faces\nHighlight selected faces");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_face_center", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "overlay.edit_flag", V3D_OVERLAY_EDIT_FACE_DOT);
   RNA_def_property_ui_text(prop,
                            "Draw Face Center",
-                           "Draw Face Center\nDisplay face center "
-                           "(when disabled, edges display wider in edge mode)");
+                           "Draw Face Center\nDisplay face center ");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_edge_crease", PROP_BOOLEAN, PROP_NONE);
@@ -3967,7 +3965,7 @@ static void rna_def_space_view3d(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_gizmo_light_look_at", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "gizmo_show_light", V3D_GIZMO_SHOW_LIGHT_LOOK_AT);
-  RNA_def_property_ui_text(prop, "Show Light Look-At", "Gizmo to adjust spot and area size");
+  RNA_def_property_ui_text(prop, "Show Light Look-At", "Gizmo to adjust the direction of the light");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   /* Camera Object Data. */

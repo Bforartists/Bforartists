@@ -212,7 +212,7 @@
  * - link all LibBlocks and indirect pointers to libblocks
  * - initialize #FileGlobal and copy pointers to #Global
  *
- * \note Still a weak point is the new-address function, that doesnt solve reading from
+ * \note Still a weak point is the new-address function, that doesn't solve reading from
  * multiple files at the same time.
  * (added remark: oh, i thought that was solved? will look at that... (ton).
  */
@@ -676,8 +676,8 @@ static Main *blo_find_main(FileData *fd, const char *filepath, const char *relab
   m = BKE_main_new();
   BLI_addtail(mainlist, m);
 
-  /* Add library datablock itself to 'main' Main, since libraries are **never** linked data.
-   * Fixes bug where you could end with all ID_LI datablocks having the same name... */
+  /* Add library data-block itself to 'main' Main, since libraries are **never** linked data.
+   * Fixes bug where you could end with all ID_LI data-blocks having the same name... */
   lib = BKE_libblock_alloc(mainlist->first, ID_LI, BLI_path_basename(filepath), 0);
   lib->id.us = ID_FAKE_USERS(
       lib); /* Important, consistency with main ID reading code from read_libblock(). */
@@ -2622,9 +2622,10 @@ static void lib_link_id(FileData *fd, Main *main)
     ID *id;
 
     for (id = lb->first; id; id = id->next) {
-      if (id->override_static) {
-        id->override_static->reference = newlibadr_us(fd, id->lib, id->override_static->reference);
-        id->override_static->storage = newlibadr_us(fd, id->lib, id->override_static->storage);
+      if (id->override_library) {
+        id->override_library->reference = newlibadr_us(
+            fd, id->lib, id->override_library->reference);
+        id->override_library->storage = newlibadr_us(fd, id->lib, id->override_library->storage);
       }
     }
   }
@@ -2632,7 +2633,7 @@ static void lib_link_id(FileData *fd, Main *main)
 
 static void direct_link_id_override_property_operation_cb(FileData *fd, void *data)
 {
-  IDOverrideStaticPropertyOperation *opop = data;
+  IDOverrideLibraryPropertyOperation *opop = data;
 
   opop->subitem_reference_name = newdataadr(fd, opop->subitem_reference_name);
   opop->subitem_local_name = newdataadr(fd, opop->subitem_local_name);
@@ -2640,7 +2641,7 @@ static void direct_link_id_override_property_operation_cb(FileData *fd, void *da
 
 static void direct_link_id_override_property_cb(FileData *fd, void *data)
 {
-  IDOverrideStaticProperty *op = data;
+  IDOverrideLibraryProperty *op = data;
 
   op->rna_path = newdataadr(fd, op->rna_path);
   link_list_ex(fd, &op->operations, direct_link_id_override_property_operation_cb);
@@ -2662,9 +2663,9 @@ static void direct_link_id(FileData *fd, ID *id)
   id->tag = 0;
 
   /* Link direct data of overrides. */
-  if (id->override_static) {
-    id->override_static = newdataadr(fd, id->override_static);
-    link_list_ex(fd, &id->override_static->properties, direct_link_id_override_property_cb);
+  if (id->override_library) {
+    id->override_library = newdataadr(fd, id->override_library);
+    link_list_ex(fd, &id->override_library->properties, direct_link_id_override_property_cb);
   }
 
   DrawDataList *drawdata = DRW_drawdatalist_from_id(id);
@@ -3675,9 +3676,9 @@ static void lib_link_constraints(FileData *fd, ID *id, ListBase *conlist)
     /* own ipo, all constraints have it */
     con->ipo = newlibadr_us(fd, id->lib, con->ipo);  // XXX deprecated - old animation system
 
-    /* If linking from a library, clear 'local' static override flag. */
+    /* If linking from a library, clear 'local' library override flag. */
     if (id->lib != NULL) {
-      con->flag &= ~CONSTRAINT_STATICOVERRIDE_LOCAL;
+      con->flag &= ~CONSTRAINT_OVERRIDE_LIBRARY_LOCAL;
     }
   }
 
@@ -5161,10 +5162,10 @@ static void lib_link_modifiers(FileData *fd, Object *ob)
 {
   modifiers_foreachIDLink(ob, lib_link_modifiers_common, fd);
 
-  /* If linking from a library, clear 'local' static override flag. */
+  /* If linking from a library, clear 'local' library override flag. */
   if (ob->id.lib != NULL) {
     for (ModifierData *mod = ob->modifiers.first; mod != NULL; mod = mod->next) {
-      mod->flag &= ~eModifierFlag_StaticOverride_Local;
+      mod->flag &= ~eModifierFlag_OverrideLibrary_Local;
     }
   }
 }
@@ -5173,11 +5174,11 @@ static void lib_link_gpencil_modifiers(FileData *fd, Object *ob)
 {
   BKE_gpencil_modifiers_foreachIDLink(ob, lib_link_modifiers_common, fd);
 
-  /* If linking from a library, clear 'local' static override flag. */
+  /* If linking from a library, clear 'local' library override flag. */
   if (ob->id.lib != NULL) {
     for (GpencilModifierData *mod = ob->greasepencil_modifiers.first; mod != NULL;
          mod = mod->next) {
-      mod->flag &= ~eGpencilModifierFlag_StaticOverride_Local;
+      mod->flag &= ~eGpencilModifierFlag_OverrideLibrary_Local;
     }
   }
 }
@@ -5186,10 +5187,10 @@ static void lib_link_shaderfxs(FileData *fd, Object *ob)
 {
   BKE_shaderfx_foreachIDLink(ob, lib_link_modifiers_common, fd);
 
-  /* If linking from a library, clear 'local' static override flag. */
+  /* If linking from a library, clear 'local' library override flag. */
   if (ob->id.lib != NULL) {
     for (ShaderFxData *fx = ob->shader_fx.first; fx != NULL; fx = fx->next) {
-      fx->flag &= ~eShaderFxFlag_StaticOverride_Local;
+      fx->flag &= ~eShaderFxFlag_OverrideLibrary_Local;
     }
   }
 }
@@ -5663,8 +5664,6 @@ static void direct_link_modifiers(FileData *fd, ListBase *lb)
     else if (md->type == eModifierType_ParticleSystem) {
       ParticleSystemModifierData *psmd = (ParticleSystemModifierData *)md;
 
-      psmd->mesh_final = NULL;
-      psmd->mesh_original = NULL;
       psmd->psys = newdataadr(fd, psmd->psys);
       psmd->flag &= ~eParticleSystemFlag_psys_updated;
       psmd->flag |= eParticleSystemFlag_file_loaded;
@@ -9488,8 +9487,8 @@ static void lib_link_all(FileData *fd, Main *main)
   BLO_main_validate_shapekeys(main, NULL);
 
   if (fd->memfile != NULL) {
-    /* When doing redo, we perform a tremendous amount of esoterics magic tricks to avoid having to
-     * re-read all library datablocks.
+    /* When doing redo, we perform a tremendous amount of esoteric magic tricks to avoid having to
+     * re-read all library data-blocks.
      * Unfortunately, that means that we do not clear Collections' parents lists, which then get
      * improperly extended in some cases by lib_link_scene() and lib_link_collection() calls above
      * (when ome local collection is parent of linked ones).
@@ -9741,7 +9740,7 @@ BlendFileData *blo_read_file_internal(FileData *fd, const char *filepath)
      * we can re-generate overrides from their references. */
     if (fd->memfile == NULL) {
       /* Do not apply in undo case! */
-      BKE_main_override_static_update(bfd->main);
+      BKE_main_override_library_update(bfd->main);
     }
 
     BKE_collections_after_lib_link(bfd->main);
@@ -9810,7 +9809,7 @@ static void sort_bhead_old_map(FileData *fd)
 
 static BHead *find_previous_lib(FileData *fd, BHead *bhead)
 {
-  /* skip library datablocks in undo, see comment in read_libblock */
+  /* Skip library data-blocks in undo, see comment in read_libblock. */
   if (fd->memfile) {
     return NULL;
   }
@@ -10030,9 +10029,9 @@ static void expand_constraint_channels(FileData *fd, Main *mainvar, ListBase *ch
 
 static void expand_id(FileData *fd, Main *mainvar, ID *id)
 {
-  if (id->override_static) {
-    expand_doit(fd, mainvar, id->override_static->reference);
-    expand_doit(fd, mainvar, id->override_static->storage);
+  if (id->override_library) {
+    expand_doit(fd, mainvar, id->override_library->reference);
+    expand_doit(fd, mainvar, id->override_library->storage);
   }
 }
 
@@ -11680,7 +11679,7 @@ static void read_library_linked_ids(FileData *basefd,
         /* BLI_assert(*realid != NULL); */
 
         /* Now that we have a real ID, replace all pointers to placeholders in
-         * fd->libmap with pointers to the real datablocks. We do this for all
+         * fd->libmap with pointers to the real data-blocks. We do this for all
          * libraries since multiple might be referencing this ID. */
         change_link_placeholder_to_real_ID_pointer(mainlist, basefd, id, *realid);
 
@@ -11785,11 +11784,11 @@ static void read_libraries(FileData *basefd, ListBase *mainlist)
   BLO_main_expander(expand_doit_library);
 
   /* At this point the base blend file has been read, and each library blend
-   * encountered so far has a main with placeholders for linked datablocks.
+   * encountered so far has a main with placeholders for linked data-blocks.
    *
    * Now we will read the library blend files and replace the placeholders
-   * with actual datablocks. We loop over library mains multiple times in
-   * case a library needs to link additional datablocks from another library
+   * with actual data-blocks. We loop over library mains multiple times in
+   * case a library needs to link additional data-blocks from another library
    * that had been read previously. */
   while (do_it) {
     do_it = false;
@@ -11797,10 +11796,10 @@ static void read_libraries(FileData *basefd, ListBase *mainlist)
     /* Loop over mains of all library blend files encountered so far. Note
      * this list gets longer as more indirectly library blends are found. */
     for (Main *mainptr = mainl->next; mainptr; mainptr = mainptr->next) {
-      /* Does this library have any more linked datablocks we need to read? */
+      /* Does this library have any more linked data-blocks we need to read? */
       if (has_linked_ids_to_read(mainptr)) {
 #if 0
-        printf("Reading linked datablocks from %s (%s)\n",
+        printf("Reading linked data-blocks from %s (%s)\n",
                mainptr->curlib->id.name,
                mainptr->curlib->name);
 #endif

@@ -1,5 +1,18 @@
 # gpl: author Daniel Schalla
 
+bl_info = {
+    "name": "Trilighting",
+    "author": "Daniel Schalla",
+    "version": (0, 1, 3),
+    "blender": (2, 80, 0),
+    "location": "View3D > Sidebar > Create",
+    "description": "Simple 3 Point Lighting Set",
+    "warning": "",
+    "wiki_url": "",
+    "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
+    "category": "Object",
+}
+
 import bpy
 from bpy.types import Operator
 from bpy.props import (
@@ -14,12 +27,13 @@ from math import (
         )
 
 
-class TriLighting(Operator):
+class OBJECT_OT_TriLighting(Operator):
     bl_idname = "object.trilighting"
     bl_label = "Tri-Lighting Creator"
     bl_description = ("Add 3 Point Lighting to Selected / Active Object\n"
                       "Needs an existing Active Object")
     bl_options = {'REGISTER', 'UNDO'}
+    COMPAT_ENGINES = {'CYCLES', 'EEVEE'}
 
     height: FloatProperty(
             name="Height",
@@ -64,7 +78,6 @@ class TriLighting(Operator):
             ('POINT', "Point", "Point Light"),
             ('SUN', "Sun", "Sun Light"),
             ('SPOT', "Spot", "Spot Light"),
-            ('HEMI', "Hemi", "Hemi Light"),
             ('AREA', "Area", "Area Light")
             ]
     primarytype: EnumProperty(
@@ -72,7 +85,7 @@ class TriLighting(Operator):
             name="Key Type",
             description="Choose the types of Key Lights you would like",
             items=Light_Type_List,
-            default='HEMI'
+            default='AREA'
             )
     secondarytype: EnumProperty(
             attr='tl_type',
@@ -111,12 +124,13 @@ class TriLighting(Operator):
         col.label(text="Fill + Back Type:")
         col.prop(self, "secondarytype", text="")
 
+
     def execute(self, context):
         try:
             collection = context.collection
             scene = context.scene
             view = context.space_data
-            if view.type == 'VIEW_3D' and not view.lock_camera_and_layers:
+            if view.type == 'VIEW_3D':
                 camera = view.camera
             else:
                 camera = scene.camera
@@ -237,3 +251,20 @@ class TriLighting(Operator):
             return {'CANCELLED'}
 
         return {'FINISHED'}
+
+def menu_func(self, context):
+    self.layout.operator(OBJECT_OT_TriLighting.bl_idname, text="3 Point Lights", icon='LIGHT')
+
+
+
+# Register all operators and panels
+def register():
+    bpy.utils.register_class(OBJECT_OT_TriLighting)
+    bpy.types.VIEW3D_MT_light_add.append(menu_func)
+
+def unregister():
+    bpy.utils.unregister_class(OBJECT_OT_TriLighting)
+    bpy.types.VIEW3D_MT_light_add.remove(menu_func)
+
+if __name__ == "__main__":
+    register()

@@ -160,7 +160,7 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff.
                 for r in rdata['results']:
 
                     if r['assetType'] == asset_type:
-                        # print(r)
+                        # utils.pprint(r)
                         if len(r['files']) > 0:
                             furl = None
                             tname = None
@@ -304,10 +304,11 @@ def load_previews():
 
 
 #  line splitting for longer texts...
-def split_subs(text):
+def split_subs(text, threshold=40):
     if text == '':
         return []
-    threshold = 40
+    # temporarily disable this, to be able to do this in drawing code
+
     text = text.rstrip()
     lines = []
 
@@ -333,14 +334,14 @@ def list_to_str(input):
     return output
 
 
-def writeblock(t, input):  # for longer texts
-    dlines = split_subs(input)
+def writeblock(t, input, width=40):  # for longer texts
+    dlines = split_subs(input, threshold=width)
     for i, l in enumerate(dlines):
         t += '%s\n' % l
     return t
 
 
-def writeblockm(tooltip, mdata, key='', pretext=None):  # for longer texts
+def writeblockm(tooltip, mdata, key='', pretext=None, width=40):  # for longer texts
     if mdata.get(key) == None:
         return tooltip
     else:
@@ -357,7 +358,7 @@ def writeblockm(tooltip, mdata, key='', pretext=None):  # for longer texts
         if pretext != '':
             pretext = pretext + ': '
         text = pretext + intext
-        dlines = split_subs(text)
+        dlines = split_subs(text, threshold=width)
         for i, l in enumerate(dlines):
             tooltip += '%s\n' % l
 
@@ -384,14 +385,16 @@ def params_to_dict(params):
 
 
 def generate_tooltip(mdata):
+    col_w = 40
     if type(mdata['parameters']) == list:
         mparams = params_to_dict(mdata['parameters'])
     else:
         mparams = mdata['parameters']
     t = ''
-    t = writeblock(t, mdata['name'])
+    t = writeblock(t, mdata['name'], width=col_w)
+    t += '\n'
 
-    t = writeblockm(t, mdata, key='description', pretext='')
+    t = writeblockm(t, mdata, key='description', pretext='', width=col_w)
     if mdata['description'] != '':
         t += '\n'
 
@@ -407,20 +410,20 @@ def generate_tooltip(mdata):
     for b in bools_data:
         if mdata.get(b) and mdata[b]:
             mdata['tags'].append(b)
-    t = writeblockm(t, mparams, key='designer', pretext='designer')
-    t = writeblockm(t, mparams, key='manufacturer', pretext='manufacturer')
-    t = writeblockm(t, mparams, key='designCollection', pretext='design collection')
+    t = writeblockm(t, mparams, key='designer', pretext='designer', width=col_w)
+    t = writeblockm(t, mparams, key='manufacturer', pretext='manufacturer', width=col_w)
+    t = writeblockm(t, mparams, key='designCollection', pretext='design collection', width=col_w)
 
-    # t = writeblockm(t, mparams, key='engines', pretext='engine')
-    # t = writeblockm(t, mparams, key='model_style', pretext='style')
-    # t = writeblockm(t, mparams, key='material_style', pretext='style')
-    # t = writeblockm(t, mdata, key='tags')
-    # t = writeblockm(t, mparams, key='condition', pretext='condition')
-    # t = writeblockm(t, mparams, key='productionLevel', pretext='production level')
+    # t = writeblockm(t, mparams, key='engines', pretext='engine', width = col_w)
+    # t = writeblockm(t, mparams, key='model_style', pretext='style', width = col_w)
+    # t = writeblockm(t, mparams, key='material_style', pretext='style', width = col_w)
+    # t = writeblockm(t, mdata, key='tags', width = col_w)
+    # t = writeblockm(t, mparams, key='condition', pretext='condition', width = col_w)
+    # t = writeblockm(t, mparams, key='productionLevel', pretext='production level', width = col_w)
     if has(mdata, 'purePbr'):
-        t = writeblockm(t, mparams, key='pbrType', pretext='pbr')
+        t = writeblockm(t, mparams, key='pbrType', pretext='pbr', width=col_w)
 
-    t = writeblockm(t, mparams, key='designYear', pretext='design year')
+    t = writeblockm(t, mparams, key='designYear', pretext='design year', width=col_w)
 
     if has(mparams, 'dimensionX'):
         t += 'size: %s, %s, %s\n' % (fmt_length(mparams['dimensionX']),
@@ -429,65 +432,87 @@ def generate_tooltip(mdata):
     if has(mparams, 'faceCount'):
         t += 'face count: %s, render: %s\n' % (mparams['faceCount'], mparams['faceCountRender'])
 
-    # t = writeblockm(t, mparams, key='meshPolyType', pretext='mesh type')
-    # t = writeblockm(t, mparams, key='objectCount', pretext='nubmber of objects')
+    # t = writeblockm(t, mparams, key='meshPolyType', pretext='mesh type', width = col_w)
+    # t = writeblockm(t, mparams, key='objectCount', pretext='nubmber of objects', width = col_w)
 
-    # t = writeblockm(t, mparams, key='materials')
-    # t = writeblockm(t, mparams, key='modifiers')
-    # t = writeblockm(t, mparams, key='shaders')
+    # t = writeblockm(t, mparams, key='materials', width = col_w)
+    # t = writeblockm(t, mparams, key='modifiers', width = col_w)
+    # t = writeblockm(t, mparams, key='shaders', width = col_w)
 
     if has(mparams, 'textureSizeMeters'):
         t += 'texture size: %s\n' % fmt_length(mparams['textureSizeMeters'])
 
     if has(mparams, 'textureResolutionMax') and mparams['textureResolutionMax'] > 0:
         if mparams['textureResolutionMin'] == mparams['textureResolutionMax']:
-            t = writeblockm(t, mparams, key='textureResolutionMin', pretext='texture resolution')
+            t = writeblockm(t, mparams, key='textureResolutionMin', pretext='texture resolution', width=col_w)
         else:
             t += 'tex resolution: %i - %i\n' % (mparams['textureResolutionMin'], mparams['textureResolutionMax'])
 
     if has(mparams, 'thumbnailScale'):
-        t = writeblockm(t, mparams, key='thumbnailScale', pretext='preview scale')
+        t = writeblockm(t, mparams, key='thumbnailScale', pretext='preview scale', width=col_w)
 
     # t += 'uv: %s\n' % mdata['uv']
-    t += '\n'
-    # t = writeblockm(t, mdata, key='license')
+    # t += '\n'
+    # t = writeblockm(t, mdata, key='license', width = col_w)
 
     # generator is for both upload preview and search, this is only after search
-    if mdata.get('versionNumber'):
-        # t = writeblockm(t, mdata, key='versionNumber', pretext='version')
-        a_id = mdata['author'].get('id')
-        if a_id != None:
-            adata = bpy.context.window_manager['bkit authors'].get(str(a_id))
-            if adata != None:
-                t += generate_author_textblock(adata)
+    # if mdata.get('versionNumber'):
+    #     # t = writeblockm(t, mdata, key='versionNumber', pretext='version', width = col_w)
+    #     a_id = mdata['author'].get('id')
+    #     if a_id != None:
+    #         adata = bpy.context.window_manager['bkit authors'].get(str(a_id))
+    #         if adata != None:
+    #             t += generate_author_textblock(adata)
 
-    t += '\n'
-    t += get_random_tip(mdata)
+    # t += '\n'
+    if len(t.split('\n')) < 6:
+        t += '\n'
+        t += get_random_tip(mdata)
+        t += '\n'
     return t
 
 
 def get_random_tip(mdata):
-    at = mdata['assetType']
     t = ''
-    if at == 'brush' or at == 'texture':
-        t += 'click to link %s' % mdata['assetType']
-    if at == 'model' or at == 'material':
-        tips = ['Click or drag in scene to link/append %s' % mdata['assetType'],
-                "'A' key to search assets by same author",
-                "'W' key to open Authors webpage",
-                ]
-        tip = 'Tip: ' + random.choice(tips)
-        t = writeblock(t, tip)
+    rtips = ['Click or drag model or material in scene to link/append ',
+             "Click on brushes to link them into scene.",
+             "All materials are free.",
+             "All brushes are free.",
+             "Locked models are available if you subscribe to standard plan.",
+             "Login to upload your own models, materials or brushes.",
+             "Use 'A' key to search assets by same author.",
+             "Use 'W' key to open Authors webpage.", ]
+    tip = 'Tip: ' + random.choice(rtips)
+    t = writeblock(t, tip)
+    return t
+    # at = mdata['assetType']
+    # if at == 'brush' or at == 'texture':
+    #     t += 'click to link %s' % mdata['assetType']
+    # if at == 'model' or at == 'material':
+    #     tips = ['Click or drag in scene to link/append %s' % mdata['assetType'],
+    #             "'A' key to search assets by same author",
+    #             "'W' key to open Authors webpage",
+    #             ]
+    #     tip = 'Tip: ' + random.choice(tips)
+    #     t = writeblock(t, tip)
     return t
 
 
 def generate_author_textblock(adata):
-    t = ''
+    t = '\n\n\n'
+
     if adata not in (None, ''):
-        t += 'author: %s %s\n' % (adata['firstName'], adata['lastName'])
-        t = writeblockm(t, adata, key='aboutMe', pretext='about me')
-        t += '\n'
-        t = writeblockm(t, adata, key='aboutMeUrl', pretext='')
+        col_w = 40
+        if len(adata['firstName'] + adata['lastName']) > 0:
+            t = 'Author:\n'
+            t += '%s %s\n' % (adata['firstName'], adata['lastName'])
+            t += '\n'
+            if adata.get('aboutMeUrl') is not None:
+                t = writeblockm(t, adata, key='aboutMeUrl', pretext='', width=col_w)
+                t += '\n'
+            if adata.get('aboutMe') is not None:
+                t = writeblockm(t, adata, key='aboutMe', pretext='', width=col_w)
+                t += '\n'
     return t
 
 
@@ -551,11 +576,20 @@ def fetch_author(a_id, api_key):
         a_url = paths.get_api_url() + 'accounts/' + a_id + '/'
         headers = utils.get_headers(api_key)
         r = requests.get(a_url, headers=headers)
-        adata = r.json()
-        if not hasattr(adata, 'id'):
-            utils.p(adata)
-        # utils.p(adata)
-        tasks_queue.add_task((write_author, (a_id, adata)))
+        if r.status_code == 200:
+            adata = r.json()
+            if not hasattr(adata, 'id'):
+                utils.p(adata)
+            # utils.p(adata)
+            tasks_queue.add_task((write_author, (a_id, adata)))
+            if adata.get('gravatarHash') is not None:
+                gravatar_path = paths.get_temp_dir(subdir=None) + adata['gravatarHash'] + '.jpg'
+                url = "https://www.gravatar.com/avatar/" + adata['gravatarHash'] + '?d=404'
+                r = requests.get(url, stream=False)
+                if r.status_code == 200:
+                    with open(gravatar_path, 'wb') as f:
+                        f.write(r.content)
+                    adata['gravatarImg'] = gravatar_path
     except Exception as e:
         utils.p(e)
     utils.p('finish fetch')
@@ -568,8 +602,9 @@ def get_author(r):
     if authors == {}:
         bpy.context.window_manager['bkit authors'] = authors
     a = authors.get(a_id)
-    if a is None or a is '':
-        authors[a_id] = ''
+    if a is None or a is '' or \
+            (a.get('gravatarHash') is not None and a.get('gravatarImg') is None):
+        authors[a_id] = None
         thread = threading.Thread(target=fetch_author, args=(a_id, preferences.api_key), daemon=True)
         thread.start()
     return a
@@ -1032,7 +1067,7 @@ def search(category='', get_next=False, author_id=''):
     #     query['keywords'] += '+is_free:true'
 
     add_search_process(query, params)
-    tasks_queue.add_task((ui.add_report, ('BlenderKit searching....',2)))
+    tasks_queue.add_task((ui.add_report, ('BlenderKit searching....', 2)))
 
     props.report = 'BlenderKit searching....'
 
