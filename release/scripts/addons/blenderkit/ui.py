@@ -99,18 +99,13 @@ def get_approximate_text_width(st):
 
 def add_report(text='', timeout=5, color=colors.GREEN):
     global reports
-    updated = False
-
-    #check for same reports and just make them longer by the timeout.
+    # check for same reports and just make them longer by the timeout.
     for old_report in reports:
         if old_report.text == text:
             old_report.timeout = old_report.age + timeout
-            updated = True
-    if not updated:
-        report = Report(text=text, timeout=timeout, color=color)
-        reports.append(report)
-    print('added report')
-    print(report)
+            return
+    report = Report(text=text, timeout=timeout, color=color)
+    reports.append(report)
 
 
 class Report():
@@ -271,7 +266,15 @@ def draw_ratings_bgl():
                          ui.rating_ui_width + ui.margin,
                          ui.rating_ui_height + 2 * ui.margin + font_size,
                          bgcol)
-        img = utils.get_thumbnail('rating_ui.png')
+        if asset_data['asset_type'] == 'model':
+            ui_img_name = 'rating_ui.png'
+        else:
+            ui_img_name = 'rating_ui_empty.png'
+            text = 'Try to estimate how many hours it would take to a proffesional artist to create this asset:'
+            tx = ui.rating_x + ui.workhours_bar_x
+            # draw_text_block(x=tx, y=ui.rating_y, width=80, font_size=20, line_height=15, text=text, color=colors.TEXT)
+
+        img = utils.get_thumbnail(ui_img_name)
         ui_bgl.draw_image(ui.rating_x,
                           ui.rating_y - ui.rating_ui_height - 2 * ui.margin,
                           ui.rating_ui_width,
@@ -333,26 +336,43 @@ def draw_ratings_bgl():
                          font_size)
 
 
-def draw_tooltip(x, y, text='', author='', img=None):
+def draw_text_block(x=0, y=0, width=40, font_size=10, line_height=15, text='', color=colors.TEXT):
+    lines = text.split('\n')
+    nlines = []
+    for l in lines:
+        nlines.extend(search.split_subs(l, ))
+
+    column_lines = 0
+    for l in nlines:
+        ytext = y - column_lines * line_height
+        column_lines += 1
+        ui_bgl.draw_text(l, x, ytext, font_size, color)
+
+
+def draw_tooltip(x, y, text='', author='', img=None, gravatar=None):
     region = bpy.context.region
     scale = bpy.context.preferences.view.ui_scale
     t = time.time()
 
-    ttipmargin = 10
+    ttipmargin = 5
+    textmargin = 10
 
     font_height = int(12 * scale)
     line_height = int(15 * scale)
     nameline_height = int(23 * scale)
 
     lines = text.split('\n')
+    alines = author.split('\n')
     ncolumns = 2
-    nlines = math.ceil((len(lines) - 1) / ncolumns)
+    # nlines = math.ceil((len(lines) - 1) / ncolumns)
+    nlines = max(len(lines) - 1, len(alines))  # math.ceil((len(lines) - 1) / ncolumns)
+
     texth = line_height * nlines + nameline_height
 
     isizex = int(512 * scale * img.size[0] / max(img.size[0], img.size[1]))
     isizey = int(512 * scale * img.size[1] / max(img.size[0], img.size[1]))
 
-    estimated_height = 3 * ttipmargin + isizey
+    estimated_height = 2 * ttipmargin + textmargin + isizey
 
     if estimated_height > y:
         scaledown = y / (estimated_height)
@@ -363,7 +383,7 @@ def draw_tooltip(x, y, text='', author='', img=None):
         nameline_height = int(23 * scale)
 
         lines = text.split('\n')
-        ncolumns = 2
+
         nlines = math.ceil((len(lines) - 1) / ncolumns)
         texth = line_height * nlines + nameline_height
 
@@ -392,30 +412,39 @@ def draw_tooltip(x, y, text='', author='', img=None):
     textcol_strong = (textcol[0] * 1.3, textcol[1] * 1.3, textcol[2] * 1.3, 1)
     white = (1, 1, 1, .1)
 
+    # background
     ui_bgl.draw_rect(x - ttipmargin,
                      y - 2 * ttipmargin - isizey,
                      isizex + ttipmargin * 2,
                      2 * ttipmargin + isizey,
                      bgcol)
+    # main preview image
     ui_bgl.draw_image(x, y - isizey - ttipmargin, isizex, isizey, img, 1)
 
+    # text overlay background
     ui_bgl.draw_rect(x - ttipmargin,
                      y - 2 * ttipmargin - isizey,
                      isizex + ttipmargin * 2,
                      2 * ttipmargin + texth,
                      bgcol1)
+    # draw gravatar
+    gsize = 40
+    if gravatar is not None:
+        # ui_bgl.draw_image(x + isizex - gsize - textmargin, y - isizey + texth - gsize - nameline_height - textmargin,
+        #                   gsize, gsize, gravatar, 1)
+        ui_bgl.draw_image(x + isizex / 2 + textmargin, y - isizey + texth - gsize - nameline_height - textmargin,
+                          gsize, gsize, gravatar, 1)
+
     i = 0
-    column_break = -1  # start minus one for the name
-    xtext = x + ttipmargin
+    column_lines = -1  # start minus one for the name
+    xtext = x + textmargin
     fsize = name_height
     tcol = textcol
+
     for l in lines:
-        if column_break >= nlines:
-            xtext += int(isizex / ncolumns)
-            column_break = 0
-        ytext = y - column_break * line_height - nameline_height - ttipmargin * 2 - isizey + texth
+        ytext = y - column_lines * line_height - nameline_height - ttipmargin - textmargin - isizey + texth
         if i == 0:
-            ytext = y - name_height + 5 - isizey + texth - ttipmargin
+            ytext = y - name_height + 5 - isizey + texth - textmargin
         elif i == len(lines) - 1:
             ytext = y - (nlines - 1) * line_height - nameline_height - ttipmargin * 2 - isizey + texth
             tcol = textcol
@@ -425,8 +454,52 @@ def draw_tooltip(x, y, text='', author='', img=None):
                 tcol = textcol_strong
             fsize = font_height
         i += 1
-        column_break += 1
+        column_lines += 1
         ui_bgl.draw_text(l, xtext, ytext, fsize, tcol)
+    xtext += int(isizex / ncolumns)
+
+    column_lines = 1
+    for l in alines:
+        if gravatar is not None:
+            if column_lines == 1:
+                xtext += gsize + textmargin
+            if column_lines == 4:
+                xtext -= gsize + textmargin
+
+        ytext = y - column_lines * line_height - nameline_height - ttipmargin - textmargin - isizey + texth
+        if i == 0:
+            ytext = y - name_height + 5 - isizey + texth - textmargin
+        elif i == len(lines) - 1:
+            ytext = y - (nlines - 1) * line_height - nameline_height - ttipmargin * 2 - isizey + texth
+            tcol = textcol
+            tsize = font_height
+        else:
+            if l[:4] == 'Tip:':
+                tcol = textcol_strong
+            fsize = font_height
+        i += 1
+        column_lines += 1
+        ui_bgl.draw_text(l, xtext, ytext, fsize, tcol)
+
+    # for l in lines:
+    #     if column_lines >= nlines:
+    #         xtext += int(isizex / ncolumns)
+    #         column_lines = 0
+    #     ytext = y - column_lines * line_height - nameline_height - ttipmargin - textmargin - isizey + texth
+    #     if i == 0:
+    #         ytext = y - name_height + 5 - isizey + texth - textmargin
+    #     elif i == len(lines) - 1:
+    #         ytext = y - (nlines - 1) * line_height - nameline_height - ttipmargin * 2 - isizey + texth
+    #         tcol = textcol
+    #         tsize = font_height
+    #     else:
+    #         if l[:4] == 'Tip:':
+    #             tcol = textcol_strong
+    #         fsize = font_height
+    #     i += 1
+    #     column_lines += 1
+    #     ui_bgl.draw_text(l, xtext, ytext, fsize, tcol)
+
     t = time.time()
 
 
@@ -494,15 +567,15 @@ def draw_tooltip_old(x, y, text='', author='', img=None):
                      bgcol)
 
     i = 0
-    column_break = -1  # start minus one for the name
+    column_lines = -1  # start minus one for the name
     xtext = x
     fsize = name_height
     tcol = textcol
     for l in lines:
-        if column_break >= nlines:
+        if column_lines >= nlines:
             xtext += int(isizex / ncolumns)
-            column_break = 0
-        ytext = y - column_break * line_height - nameline_height - ttipmargin
+            column_lines = 0
+        ytext = y - column_lines * line_height - nameline_height - ttipmargin
         if i == 0:
             ytext = y - name_height + 5
         elif i == len(lines) - 1:
@@ -514,7 +587,7 @@ def draw_tooltip_old(x, y, text='', author='', img=None):
                 tcol = textcol1
             fsize = font_height
         i += 1
-        column_break += 1
+        column_lines += 1
         ui_bgl.draw_text(l, xtext, ytext, fsize, tcol)
     t = time.time()
     ui_bgl.draw_image(x, y - texth - isizey - ttipmargin, isizex, isizey, img, 1)
@@ -761,7 +834,8 @@ def draw_callback_2d_search(self, context):
 
                 img = bpy.data.images.get(iname)
                 if img == None or img.filepath != tpath:
-                    if os.path.exists(tpath):  # sometimes we are unlucky...
+                    # TODO replace it with a function
+                    if os.path.exists(tpath):
 
                         if img is None:
                             img = bpy.data.images.load(tpath)
@@ -778,7 +852,18 @@ def draw_callback_2d_search(self, context):
                         iname = utils.previmg_name(ui_props.active_index)
                         img = bpy.data.images.get(iname)
                     img.colorspace_settings.name = 'Linear'
-                draw_tooltip(ui_props.mouse_x, ui_props.mouse_y, text=ui_props.tooltip, img=img)
+
+                gimg = None
+                atip = ''
+                if bpy.context.window_manager.get('bkit authors') is not None:
+                    a = bpy.context.window_manager['bkit authors'].get(r['author_id'])
+                    if a is not None and a != '':
+                        if a.get('gravatarImg') is not None:
+                            gimg = utils.get_hidden_image(a['gravatarImg'], a['gravatarHash'])
+                        atip = a['tooltip']
+
+                draw_tooltip(ui_props.mouse_x, ui_props.mouse_y, text=ui_props.tooltip, author=atip, img=img,
+                             gravatar=gimg)
 
     if ui_props.dragging and (
             ui_props.draw_drag_image or ui_props.draw_snapped_bounds) and ui_props.active_index > -1:
@@ -909,16 +994,16 @@ def is_rating_possible():
 def interact_rating(r, mx, my, event):
     ui = bpy.context.scene.blenderkitUI
     rating_possible, rated, asset, asset_data = is_rating_possible()
-
     if rating_possible:
         bkit_ratings = asset.bkit_ratings
 
         t = time.time() - ui.last_rating_time
-        # if t>2:
-        #     if rated:
-        #         ui_props.rating_button_on = True
-        #         ui_props.rating_menu_on = False
-        if ui.rating_button_on and event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
+        if bpy.context.mode in ('SCULPT', 'PAINT_TEXTURE'):
+            accept_value = 'PRESS'
+        else:
+            accept_value = 'RELEASE'
+
+        if ui.rating_button_on and event.type == 'LEFTMOUSE' and event.value == accept_value:
             if mouse_in_area(mx, my,
                              ui.rating_x,
                              ui.rating_y - ui.rating_button_width,

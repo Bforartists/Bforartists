@@ -100,14 +100,14 @@ class VIEW3D_stored_views_initialize(Operator):
 class VIEW3D_stored_views_preferences(AddonPreferences):
     bl_idname = __name__
 
-    # show_exporters : BoolProperty(
-    #     name="Enable I/O Operators",
-    #     default=False,
-    #     description="Enable Import/Export Operations in the UI:\n"
-    #                 "Import Stored Views preset,\n"
-    #                 "Export Stored Views preset and \n"
-    #                 "Import stored views from scene",
-    # )
+    show_exporters : BoolProperty(
+        name="Enable I/O Operators",
+        default=False,
+        description="Enable Import/Export Operations in the UI:\n"
+                    "Import Stored Views preset,\n"
+                    "Export Stored Views preset and \n"
+                    "Import stored views from scene",
+    )
     view_3d_update_rate : IntProperty(
         name="3D view update",
         description="Update rate of the 3D view redraw\n"
@@ -121,13 +121,14 @@ class VIEW3D_stored_views_preferences(AddonPreferences):
 
         row = layout.row(align=True)
         row.prop(self, "view_3d_update_rate", toggle=True)
- #       row.prop(self, "show_exporters", toggle=True)
+        row.prop(self, "show_exporters", toggle=True)
 
 
 def register():
     ui.register()
     properties.register()
     operators.register()
+    io.register()
     bpy.utils.register_class(VIEW3D_stored_views_initialize)
     bpy.utils.register_class(VIEW3D_stored_views_preferences)
 
@@ -136,6 +137,7 @@ def unregister():
     ui.unregister()
     properties.unregister()
     operators.unregister()
+    io.unregister()
     bpy.utils.unregister_class(VIEW3D_stored_views_initialize)
     bpy.utils.unregister_class(VIEW3D_stored_views_preferences)
     ui.VIEW3D_stored_views_draw.handle_remove(bpy.context)

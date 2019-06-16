@@ -20,7 +20,7 @@
 
 # this script updates XML themes once new settings are added
 #
-#  ./blender.bin --background --python source/tools/utils/blender_update_themes.py
+#  ./blender.bin --background --python ./source/tools/utils_maintenance/blender_update_themes.py
 
 import bpy
 import os
@@ -48,12 +48,26 @@ def update(filepath):
     )
 
 
+def update_default(filepath):
+    with open(filepath, 'w', encoding='utf-8') as fh:
+        fh.write('''<bpy>
+  <Theme>
+  </Theme>
+  <ThemeStyle>
+  </ThemeStyle>
+</bpy>
+''')
+
+
 def main():
     for path in bpy.utils.preset_paths("interface_theme"):
         for fn in os.listdir(path):
             if fn.endswith(".xml"):
                 fn_full = os.path.join(path, fn)
-                update(fn_full)
+                if fn == "blender_dark.xml":
+                    update_default(fn_full)
+                else:
+                    update(fn_full)
 
 
 if __name__ == "__main__":

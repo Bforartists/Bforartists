@@ -147,6 +147,34 @@ def modelProxy():
     return False
 
 
+eevee_transp_nodes = [
+    'BSDF_GLASS',
+    'BSDF_REFRACTION',
+    'BSDF_TRANSPARENT',
+    'PRINCIPLED_VOLUME',
+    'VOLUME_ABSORPTION',
+    'VOLUME_SCATTER'
+]
+
+
+def ensure_eevee_transparency(m):
+    ''' ensures alpha for transparent materials when the user didn't set it up correctly'''
+    # if the blend mode is opaque, it means user probably ddidn't know or forgot to
+    # set up material properly
+    if m.blend_method == 'OPAQUE':
+        alpha = False
+        for n in m.node_tree.nodes:
+            if n.type in eevee_transp_nodes:
+                alpha = True
+            elif n.type == 'BSDF_PRINCIPLED':
+                i = n.inputs['Transmission']
+                if i.default_value > 0 or len(i.links) > 0:
+                    alpha = True
+        if alpha:
+            m.blend_method = 'HASHED'
+            m.shadow_method = 'HASHED'
+
+
 class BringToScene(Operator):
     """Bring linked object hierarchy to scene and make it editable."""
 
@@ -215,7 +243,7 @@ class BringToScene(Operator):
 
 
 class ModelProxy(Operator):
-    """Tooltip"""
+    """Attempt to create proxy armature from the asset"""
     bl_idname = "object.blenderkit_make_proxy"
     bl_label = "BlenderKit Make Proxy"
 
@@ -231,7 +259,7 @@ class ModelProxy(Operator):
 
 
 class ColorCorrector(Operator):
-    """Tooltip"""
+    """Add color corector to the asset. """
     bl_idname = "object.blenderkit_color_corrector"
     bl_label = "Add color corrector"
 

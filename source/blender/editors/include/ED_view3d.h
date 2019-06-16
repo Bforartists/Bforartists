@@ -512,6 +512,23 @@ int view3d_opengl_select(struct ViewContext *vc,
                          eV3DSelectObjectFilter select_filter);
 
 /* view3d_select.c */
+struct EDSelectID_Context;
+struct EDSelectID_Context *ED_view3d_select_id_context_create(struct ViewContext *vc,
+                                                              struct Base **bases,
+                                                              const uint bases_len,
+                                                              short select_mode);
+
+void ED_view3d_select_id_context_destroy(struct EDSelectID_Context *sel_id_ctx);
+uint ED_view3d_select_id_context_offset_for_object_elem(
+    const struct EDSelectID_Context *sel_id_ctx, int base_index, char elem_type);
+
+uint ED_view3d_select_id_context_elem_len(const struct EDSelectID_Context *sel_id_ctx);
+bool ED_view3d_select_id_elem_get(struct EDSelectID_Context *sel_id_ctx,
+                                  const uint sel_id,
+                                  uint *r_elem,
+                                  uint *r_base_index,
+                                  char *r_elem_type);
+
 float ED_view3d_select_dist_px(void);
 void ED_view3d_viewcontext_init(struct bContext *C, struct ViewContext *vc);
 void ED_view3d_viewcontext_init_object(struct ViewContext *vc, struct Object *obact);
@@ -701,7 +718,7 @@ void ED_view3d_shade_update(struct Main *bmain, struct View3D *v3d, struct ScrAr
 #define XRAY_ALPHA(v3d) \
   (((v3d)->shading.type == OB_WIRE) ? (v3d)->shading.xray_alpha_wire : (v3d)->shading.xray_alpha)
 #define XRAY_FLAG(v3d) \
-  (((v3d)->shading.type == OB_WIRE) ? V3D_SHADING_XRAY_BONE : V3D_SHADING_XRAY)
+  (((v3d)->shading.type == OB_WIRE) ? V3D_SHADING_XRAY_WIREFRAME : V3D_SHADING_XRAY)
 #define XRAY_FLAG_ENABLED(v3d) (((v3d)->shading.flag & XRAY_FLAG(v3d)) != 0)
 #define XRAY_ENABLED(v3d) (XRAY_FLAG_ENABLED(v3d) && (XRAY_ALPHA(v3d) < 1.0f))
 #define XRAY_ACTIVE(v3d) (XRAY_ENABLED(v3d) && ((v3d)->shading.type < OB_MATERIAL))

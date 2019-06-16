@@ -22,11 +22,11 @@
 # Pistiwique, Jimmy Hazevoet #
 
 bl_info = {
-    "name": "Mesh Tools",
+    "name": "Edit Mesh Tools",
     "author": "Meta-Androcto",
     "version": (0, 3, 6),
     "blender": (2, 80, 0),
-    "location": "View3D > Toolbar and View3D > Specials Menu",
+    "location": "View3D > Toolbar and View3D > Context Menu",
     "warning": "",
     "description": "Mesh modelling toolkit. Several tools to aid modelling",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"

@@ -17,12 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 bl_info = {
-    "name": "Simplify Curves",
-    "author": "testscreenings",
-    "version": (1, 0, 3),
+    "name": "Simplify Curves+",
+    "author": "testscreenings, Michael Soluyanov",
+    "version": (1, 1, 1),
     "blender": (2, 80, 0),
-    "location": "View3D > Add > Curve > Simplify Curves",
-    "description": "Simplifies 3D Curve objects and animation F-Curves",
+    "location": "3D View, Dopesheet & Graph Editors",
+    "description": "Simplify Curves: 3dview, Dopesheet, Graph. Distance Merge: 3d view curve edit",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Curve/Curve_Simplify",
@@ -30,7 +30,8 @@ bl_info = {
 }
 
 """
-This script simplifies Curve objects and animation F-Curves.
+This script simplifies Curve objects and animation F-Curves
+This script will also Merge by Distance 3d view curves in edit mode
 """
 
 import bpy
@@ -40,7 +41,7 @@ from bpy.props import (
     FloatProperty,
     IntProperty,
 )
-from mathutils import Vector
+import mathutils
 from math import (
     sin,
     pow,
@@ -585,11 +586,91 @@ class CURVE_OT_simplify(Operator):
 
         return {'FINISHED'}
 
+## Initial use Curve Remove Doubles ##
+
+def main(context, distance = 0.01):
+
+    obj = context.active_object
+    dellist = []
+
+    for spline in obj.data.splines:
+        if len(spline.bezier_points) > 1:
+            for i in range(0, len(spline.bezier_points)):
+
+                if i == 0:
+                    ii = len(spline.bezier_points) - 1
+                else:
+                    ii = i - 1
+
+                dot = spline.bezier_points[i];
+                dot1 = spline.bezier_points[ii];
+
+                while dot1 in dellist and i != ii:
+                    ii -= 1
+                    if ii < 0:
+                        ii = len(spline.bezier_points)-1
+                    dot1 = spline.bezier_points[ii]
+
+                if dot.select_control_point and dot1.select_control_point and (i!=0 or spline.use_cyclic_u):
+
+                    if (dot.co-dot1.co).length < distance:
+                        # remove points and recreate hangles
+                        dot1.handle_right_type = "FREE"
+                        dot1.handle_right = dot.handle_right
+                        dot1.co = (dot.co + dot1.co) / 2
+                        dellist.append(dot)
+
+                    else:
+                        # Handles that are on main point position converts to vector,
+                        # if next handle are also vector
+                        if dot.handle_left_type == 'VECTOR' and (dot1.handle_right - dot1.co).length < distance:
+                            dot1.handle_right_type = "VECTOR"
+                        if dot1.handle_right_type == 'VECTOR' and (dot.handle_left - dot.co).length < distance:
+                            dot.handle_left_type = "VECTOR"
+
+
+
+    bpy.ops.curve.select_all(action = 'DESELECT')
+
+    for dot in dellist:
+        dot.select_control_point = True
+
+    count = len(dellist)
+
+    bpy.ops.curve.delete(type = 'VERT')
+
+    bpy.ops.curve.select_all(action = 'SELECT')
+
+    return count
+
+
+
+class Curve_OT_CurveRemvDbs(bpy.types.Operator):
+    """Merge consecutive points that are near to each other"""
+    bl_idname = 'curve.remove_doubles'
+    bl_label = 'Merge By Distance'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    distance: bpy.props.FloatProperty(name = 'Distance', default = 0.01, min = 0.0001, max = 10.0, step = 1)
+
+    @classmethod
+    def poll(cls, context):
+        obj = context.active_object
+        return (obj and obj.type == 'CURVE')
+
+    def execute(self, context):
+        removed=main(context, self.distance)
+        self.report({'INFO'}, "Removed %d bezier points" % removed)
+        return {'FINISHED'}
+
+def menu_func_rd(self, context):
+    self.layout.operator(Curve_OT_CurveRemvDbs.bl_idname, text='Merge By Distance')
 
 # Register
 classes = [
     GRAPH_OT_simplify,
     CURVE_OT_simplify,
+    Curve_OT_CurveRemvDbs,
 ]
 
 
@@ -601,6 +682,8 @@ def register():
     bpy.types.GRAPH_MT_channel.append(menu_func)
     bpy.types.DOPESHEET_MT_channel.append(menu_func)
     bpy.types.VIEW3D_MT_curve_add.append(menu)
+    bpy.types.VIEW3D_MT_edit_curve_context_menu.prepend(menu)
+    bpy.types.VIEW3D_MT_edit_curve_context_menu.prepend(menu_func_rd)
 
 
 def unregister():
@@ -611,7 +694,8 @@ def unregister():
     bpy.types.GRAPH_MT_channel.remove(menu_func)
     bpy.types.DOPESHEET_MT_channel.remove(menu_func)
     bpy.types.VIEW3D_MT_curve_add.remove(menu)
-
+    bpy.types.VIEW3D_MT_edit_curve_context_menu.remove(menu)
+    bpy.types.VIEW3D_MT_edit_curve_context_menu.remove(menu_func_rd)
 
 if __name__ == "__main__":
     register()

@@ -27,7 +27,7 @@ from bpy.app.translations import (
     contexts as i18n_contexts,
     pgettext_iface as iface_,
 )
-from .properties_grease_pencil_common import (
+from bl_ui.properties_grease_pencil_common import (
     AnnotationDataPanel,
     GreasePencilToolsPanel,
 )
@@ -233,8 +233,11 @@ class SEQUENCER_MT_view(Menu):
             layout.operator("sequencer.view_selected", text = "Frame Selected", icon='VIEW_SELECTED')
             layout.operator("view2d.zoom_border", text="Zoom")
 
+            layout.separator()
+
             layout.operator_context = 'INVOKE_DEFAULT'
             layout.menu("SEQUENCER_MT_navigation")
+            layout.menu("SEQUENCER_MT_range")
 
             layout.separator()
 
@@ -410,7 +413,7 @@ class SEQUENCER_MT_marker(Menu):
         st = context.space_data
         is_sequencer_view = st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
 
-        from .space_time import marker_menu_generic
+        from bl_ui.space_time import marker_menu_generic
         marker_menu_generic(layout, context)
 
         if is_sequencer_view:
@@ -446,6 +449,10 @@ class SEQUENCER_MT_navigation(Menu):
 
     def draw(self, _context):
         layout = self.layout
+
+        layout.operator("screen.animation_play")
+
+        layout.separator()
 
         layout.operator("sequencer.view_frame", text="Go to Playhead")
 
@@ -521,13 +528,13 @@ class SEQUENCER_MT_add(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.effect_strip_add", text="Adjustment Layer", icon='MOD_DISPLACE').type = 'ADJUSTMENT'
+        layout.operator("sequencer.effect_strip_add", text="Adjustment Layer", icon='COLOR').type = 'ADJUSTMENT'
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.menu("SEQUENCER_MT_add_effect")
+        layout.menu("SEQUENCER_MT_add_effect", icon='SHADERFX')
 
         col = layout.column()
-        col.menu("SEQUENCER_MT_add_transitions")
+        col.menu("SEQUENCER_MT_add_transitions", icon='ARROW_LEFTRIGHT')
         col.enabled = selected_sequences_len(context) >= 2
 
 
@@ -724,11 +731,11 @@ class SEQUENCER_MT_strip(Menu):
                     'GAUSSIAN_BLUR', 'TEXT',
             }:
                 layout.separator()
-                layout.operator_menu_enum("sequencer.change_effect_input", "swap")
-                layout.operator_menu_enum("sequencer.change_effect_type", "type")
-                layout.operator("sequencer.reassign_inputs", icon='RANDOMIZE_TRANSFORM')
-                layout.operator("sequencer.swap_inputs", icon='RANDOMIZE')
-            elif stype in {'IMAGE', 'MOVIE'}:
+                layout.menu("SEQUENCER_MT_strip_effect")
+            elif stype in {'MOVIE'}:
+                layout.separator()
+                layout.menu("SEQUENCER_MT_strip_movie")
+            elif stype in {'IMAGE'}:
                 layout.separator()
                 layout.operator("sequencer.rendersize", icon='RENDER_REGION')
                 layout.operator("sequencer.images_separate", icon='SEPARATE')
@@ -740,19 +747,19 @@ class SEQUENCER_MT_strip(Menu):
                 layout.operator("sequencer.meta_make")
                 layout.operator("sequencer.meta_separate", icon='REMOVE_METASTRIP')
                 layout.operator("sequencer.meta_toggle", text="Toggle Meta")
+            if stype != 'META':
+                layout.separator()
+                layout.operator("sequencer.meta_make")
+                layout.operator("sequencer.meta_toggle", text="Toggle Meta")
 
         layout.separator()
         layout.menu("SEQUENCER_MT_strip_lock_mute")
-
-        layout.separator()
-        layout.operator("sequencer.meta_make", icon='ADD_METASTRIP')
-        layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon='TOGGLE_META')
 
         layout.separator()
         layout.menu("SEQUENCER_MT_strip_input")
 
         layout.separator()
-        layout.menu("SEQUENCER_MT_strip_lock_mute")
+        layout.operator("sequencer.rebuild_proxy")
 
 
 class SEQUENCER_MT_context_menu(Menu):
@@ -1043,8 +1050,7 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
                     if (i % BT_ROW) == 1:
                         row = col.row(align=True)
 
-                    # Workaround - .enabled has to have a separate UI block to
-                    # work
+                    # Workaround - .enabled has to have a separate UI block to work
                     if i == strip.multicam_source:
                         sub = row.row(align=True)
                         sub.enabled = False
@@ -1279,8 +1285,7 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
         if not strip.use_sequence:
             if scene:
                 # Warning, this is not a good convention to follow.
-                # Expose here because setting the alpha from the 'Render' menu
-                # is very inconvenient.
+                # Expose here because setting the alpha from the 'Render' menu is very inconvenient.
                 # layout.label(text="Preview")
                 layout.prop(scene.render, "film_transparent")
 
@@ -1342,7 +1347,8 @@ class SEQUENCER_PT_info_timecodes(SequencerButtonsPanel, Panel):
         frame_current = scene.frame_current
         strip = act_strip(context)
 
-        length_list = (str(strip.frame_start),
+        length_list = (
+            str(strip.frame_start),
             str(strip.frame_final_end),
             str(strip.frame_final_duration),
             str(strip.frame_offset_start),
@@ -1367,26 +1373,31 @@ class SEQUENCER_PT_info_timecodes(SequencerButtonsPanel, Panel):
 
         sub = layout.column(align=True)
         sub.enabled = not strip.lock
-        split = sub.split(factor=0.5 + max_factor)
+        split = sub.split(factor=0.5 + max_factor, align=True)
         split.alignment = 'RIGHT'
         split.label(text="Start")
-        split.prop(strip, "frame_start", text=str(bpy.utils.smpte_from_frame(strip.frame_start)))
-        split = sub.split(factor=0.5 + max_factor)
+        split.prop(strip, "frame_final_start", text=str(bpy.utils.smpte_from_frame(strip.frame_final_start)))
+
+        split = sub.split(factor=0.5 + max_factor, align=True)
         split.alignment = 'RIGHT'
         split.label(text="End")
         split.prop(strip, "frame_final_end", text=str(bpy.utils.smpte_from_frame(strip.frame_final_end)))
-        split = sub.split(factor=0.5 + max_factor)
+
+        split = sub.split(factor=0.5 + max_factor, align=True)
         split.alignment = 'RIGHT'
         split.label(text="Duration")
         split.prop(strip, "frame_final_duration", text=str(bpy.utils.smpte_from_frame(strip.frame_final_duration)))
 
         if not isinstance(strip, bpy.types.EffectSequence):
+
             layout.alignment = 'RIGHT'
             sub = layout.column(align=True)
+
             split = sub.split(factor=0.5 + max_factor, align=True)
             split.alignment = 'RIGHT'
-            split.label(text="Soft Trim Start")
+            split.label(text="Strip Offset Start")
             split.prop(strip, "frame_offset_start", text=str(bpy.utils.smpte_from_frame(strip.frame_offset_start)))
+
             split = sub.split(factor=0.5 + max_factor, align=True)
             split.alignment = 'RIGHT'
             split.label(text='End')
@@ -1394,31 +1405,32 @@ class SEQUENCER_PT_info_timecodes(SequencerButtonsPanel, Panel):
 
             layout.alignment = 'RIGHT'
             sub = layout.column(align=True)
-            split = sub.split(factor=0.5 + max_factor)
+
+            split = sub.split(factor=0.5 + max_factor,  align=True)
             split.alignment = 'RIGHT'
-            split.label(text="Hard Trim Start")
+            split.label(text="Hold Offset Start")
             split.prop(strip, "animation_offset_start", text=str(bpy.utils.smpte_from_frame(strip.animation_offset_start)))
+
             split = sub.split(factor=0.5 + max_factor, align=True)
             split.alignment = 'RIGHT'
             split.label(text='End')
             split.prop(strip, "animation_offset_end", text=str(bpy.utils.smpte_from_frame(strip.animation_offset_end)))
 
-        playhead = frame_current - strip.frame_start
         col = layout.column(align=True)
         col = col.box()
         col.active = (
-            (frame_current >= strip.frame_start) and
-            (frame_current <= strip.frame_start + strip.frame_final_duration)
+            (frame_current >= strip.frame_final_start) and
+            (frame_current <= strip.frame_final_start + strip.frame_final_duration)
         )
-        split = col.split(factor=0.5 + max_factor)
+
+        split = col.split(factor=0.5 + max_factor, align=True)
         split.alignment = 'RIGHT'
         split.label(text="Playhead")
-        split.label(text="%s:   %s" % ((bpy.utils.smpte_from_frame(playhead).replace(':', ' ')), (str(playhead))))
-
-        ''' Old data - anyone missing this data?
-        col.label(text=iface_("Frame Offset %d:%d") % (strip.frame_offset_start, strip.frame_offset_end),
-                  translate=False)
-        col.label(text=iface_("Frame Still %d:%d") % (strip.frame_still_start, strip.frame_still_end), translate=False)'''
+        split = split.split(factor=0.8 + max_factor, align=True)
+        playhead = frame_current - strip.frame_final_start
+        split.label(text='{:>14}'.format(bpy.utils.smpte_from_frame(playhead)+":"))
+        split.alignment = 'RIGHT'
+        split.label(text=str(playhead)+" ")
 
         elem = False
 
@@ -1428,7 +1440,7 @@ class SEQUENCER_PT_info_timecodes(SequencerButtonsPanel, Panel):
             elem = strip.elements[0]
 
         if strip.type != 'SOUND':
-            split = col.split(factor=0.5 + max_factor)
+            split = col.split(factor=0.5 + max_factor, align=False)
             split.alignment = 'RIGHT'
             split.label(text="Resolution")
             if elem and elem.orig_width > 0 and elem.orig_height > 0:
@@ -1617,7 +1629,7 @@ class SEQUENCER_PT_cache_settings(SequencerButtonsPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        return cls.has_sequencer(context)
+        return cls.has_sequencer(context) and context.scene.sequence_editor
 
     def draw(self, context):
         layout = self.layout
