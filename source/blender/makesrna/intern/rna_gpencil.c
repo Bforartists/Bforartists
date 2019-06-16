@@ -198,7 +198,7 @@ static void UNUSED_FUNCTION(rna_GPencil_onion_skinning_update)(Main *bmain,
   bGPDlayer *gpl;
   bool enabled = false;
 
-  /* Ensure that the datablock's onionskinning toggle flag
+  /* Ensure that the data-block's onion-skinning toggle flag
    * stays in sync with the status of the actual layers
    */
   for (gpl = gpd->layers.first; gpl; gpl = gpl->next) {
@@ -1653,7 +1653,7 @@ static void rna_def_gpencil_data(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "GreasePencil", "ID");
   RNA_def_struct_sdna(srna, "bGPdata");
   RNA_def_struct_ui_text(srna, "Grease Pencil", "Grease Pencil\nFreehand annotation sketchbook");
-  RNA_def_struct_ui_icon(srna, ICON_GREASEPENCIL);
+  RNA_def_struct_ui_icon(srna, ICON_OUTLINER_DATA_GREASEPENCIL);
 
   /* Layers */
   prop = RNA_def_property(srna, "layers", PROP_COLLECTION, PROP_NONE);

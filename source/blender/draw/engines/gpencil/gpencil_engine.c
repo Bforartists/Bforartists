@@ -467,8 +467,8 @@ void GPENCIL_cache_init(void *vedata)
     DRW_shgroup_uniform_int(mix_shgrp, "do_select", &stl->storage->do_select_outline, 1);
     DRW_shgroup_uniform_vec4(mix_shgrp, "select_color", stl->storage->select_color, 1);
 
-    /* mix pass no blend used to copy between passes. A separated pass is required
-     * because if mix_pass is used, the acumulation of blend degrade the colors.
+    /* Mix pass no blend used to copy between passes. A separated pass is required
+     * because if mix_pass is used, the accumulation of blend degrade the colors.
      *
      * This pass is used too to take the snapshot used for background_pass. This image
      * will be used as the background while the user is drawing.
@@ -535,7 +535,6 @@ void GPENCIL_cache_init(void *vedata)
     DRW_shgroup_uniform_texture_ref(blend_shgrp, "blendDepth", &e_data.temp_depth_tx_fx);
     DRW_shgroup_uniform_int(blend_shgrp, "mode", &stl->storage->blend_mode, 1);
     DRW_shgroup_uniform_int(blend_shgrp, "clamp_layer", &stl->storage->clamp_layer, 1);
-    DRW_shgroup_uniform_float(blend_shgrp, "blend_opacity", &stl->storage->blend_opacity, 1);
     DRW_shgroup_uniform_int(mix_shgrp, "tonemapping", &stl->storage->tonemapping, 1);
 
     /* create effects passes */
@@ -975,7 +974,6 @@ void GPENCIL_draw_scene(void *ved)
               GPU_framebuffer_clear_color_depth(fbl->temp_fb_b, clearcol, 1.0f);
               stl->storage->blend_mode = array_elm->mode;
               stl->storage->clamp_layer = (int)array_elm->clamp_layer;
-              stl->storage->blend_opacity = array_elm->blend_opacity;
               stl->storage->tonemapping = DRW_state_do_color_management() ? 0 : 1;
               DRW_draw_pass(psl->blend_pass);
               stl->storage->tonemapping = 0;

@@ -1873,81 +1873,66 @@ def main(self, align_matrix):
             self.Dimension_width = v.length
 
         if Type == 'Angular1' or Type == 'Angular2' or Type == 'Angular3':
-            c = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, self.Dimension_startlocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
+            a = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, self.Dimension_startlocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
             b = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, self.Dimension_startlocation.z, self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z)
-            a = ablength(self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
+            c = ablength(self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
             self.Dimension_width = max(a, b, c)
-            vanglex = self.Dimension_endanglelocation.x - self.Dimension_startlocation.x
-            vangley = self.Dimension_endanglelocation.y - self.Dimension_startlocation.y
-            vanglez = self.Dimension_endanglelocation.z - self.Dimension_startlocation.z
-            vendx = self.Dimension_endlocation.x - self.Dimension_startlocation.x
-            vendy = self.Dimension_endlocation.y - self.Dimension_startlocation.y
-            vendz = self.Dimension_endlocation.z - self.Dimension_startlocation.z
             if self.Dimension_XYZType == 'TOP' or self.Dimension_XYZType == 'BOTTOM':
-                self.Dimension_XYType = 'X'
-                g = hypot(vanglex, vangley)
-                if g !=  0 :
-                   u2 = acos(vanglex / g)
-                   u1 = asin(vangley / g)
-                   if u1 < 0 :
-                       u2 = -u2
-                else:
-                   u2 = 0
-                g = hypot(vendx, vendy)
-                if g !=  0 :
-                   uu2 = acos(vendx / g)
-                   uu1 = asin(vendy / g)
-                   if uu1 < 0 :
-                       uu2 = -uu2
-                else:
-                   uu2 = 0
-                self.Dimension_angle = degrees(u2 - uu2)
+                if self.Angle_Type == 'A':
+                   c = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, 0, self.Dimension_endlocation.x, self.Dimension_endlocation.y, 0)
+                   b = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, 0, self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, 0)
+                   a = ablength(self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, 0)
+                if self.Angle_Type == 'B':
+                   a = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, 0, self.Dimension_endlocation.x, self.Dimension_endlocation.y, 0)
+                   c = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, 0, self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, 0)
+                   b = ablength(self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, 0)
+                if self.Angle_Type == 'C':
+                   b = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, 0, self.Dimension_endlocation.x, self.Dimension_endlocation.y, 0)
+                   a = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, 0, self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, 0)
+                   c = ablength(self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, 0)
             if self.Dimension_XYZType == 'FRONT' or self.Dimension_XYZType == 'BACK':
-                self.Dimension_XZType = 'Z'
-                g = hypot(vanglex, vanglez)
-                if g !=  0 :
-                   u2 = acos(vanglex / g)
-                   u1 = asin(vanglez / g)
-                   if u1 < 0 :
-                       u2 = -u2
-                else:
-                   u2 = 0
-                g = hypot(vendx, vendz)
-                if g !=  0 :
-                   uu2 = acos(vendx / g)
-                   uu1 = asin(vendz / g)
-                   if uu1 < 0 :
-                       uu2 = -uu2
-                else:
-                   uu2 = 0
-                self.Dimension_angle = degrees(u2 - uu2)
+                if self.Angle_Type == 'A':
+                   c = ablength(self.Dimension_startlocation.x, 0, self.Dimension_startlocation.z, self.Dimension_endlocation.x, 0, self.Dimension_endlocation.z)
+                   b = ablength(self.Dimension_startlocation.x, 0, self.Dimension_startlocation.z, self.Dimension_endanglelocation.x, 0, self.Dimension_endanglelocation.z)
+                   a = ablength(self.Dimension_endanglelocation.x, 0, self.Dimension_endanglelocation.z, self.Dimension_endlocation.x, 0, self.Dimension_endlocation.z)
+                if self.Angle_Type == 'B':
+                   a = ablength(self.Dimension_startlocation.x, 0, self.Dimension_startlocation.z, self.Dimension_endlocation.x, 0, self.Dimension_endlocation.z)
+                   c = ablength(self.Dimension_startlocation.x, 0, self.Dimension_startlocation.z, self.Dimension_endanglelocation.x, 0, self.Dimension_endanglelocation.z)
+                   b = ablength(self.Dimension_endanglelocation.x, 0, self.Dimension_endanglelocation.z, self.Dimension_endlocation.x, 0, self.Dimension_endlocation.z)
+                if self.Angle_Type == 'C':
+                   b = ablength(self.Dimension_startlocation.x, 0, self.Dimension_startlocation.z, self.Dimension_endlocation.x, 0, self.Dimension_endlocation.z)
+                   a = ablength(self.Dimension_startlocation.x, 0, self.Dimension_startlocation.z, self.Dimension_endanglelocation.x, 0, self.Dimension_endanglelocation.z)
+                   c = ablength(self.Dimension_endanglelocation.x, 0, self.Dimension_endanglelocation.z, self.Dimension_endlocation.x, 0, self.Dimension_endlocation.z)
             if self.Dimension_XYZType == 'RIGHT' or self.Dimension_XYZType == 'LEFT':
-                self.Dimension_YZType = 'Z'
-                g = hypot(vangley, vanglez)
-                if g !=  0 :
-                   u2 = acos(vangley / g)
-                   u1 = asin(vanglez / g)
-                   if u1 < 0 :
-                       u2 = -u2
-                else:
-                   u2 = 0
-                g = hypot(vendy, vendz)
-                if g !=  0 :
-                   uu2 = acos(vendy / g)
-                   uu1 = asin(vendz / g)
-                   if uu1 < 0 :
-                       uu2 = -uu2
-                else:
-                   uu2 = 0
-                self.Dimension_angle = degrees(u2 - uu2)
+                if self.Angle_Type == 'A':
+                   c = ablength(0, self.Dimension_startlocation.y, self.Dimension_startlocation.z, 0, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
+                   b = ablength(0, self.Dimension_startlocation.y, self.Dimension_startlocation.z, 0, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z)
+                   a = ablength(0, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z, 0, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
+                if self.Angle_Type == 'B':
+                   a = ablength(0, self.Dimension_startlocation.y, self.Dimension_startlocation.z, 0, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
+                   c = ablength(0, self.Dimension_startlocation.y, self.Dimension_startlocation.z, 0, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z)
+                   b = ablength(0, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z, 0, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
+                if self.Angle_Type == 'C':
+                   b = ablength(0, self.Dimension_startlocation.y, self.Dimension_startlocation.z, 0, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
+                   a = ablength(0, self.Dimension_startlocation.y, self.Dimension_startlocation.z, 0, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z)
+                   c = ablength(0, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z, 0, self.Dimension_endlocation.y, self.Dimension_endlocation.z) 
             if self.Dimension_liberty == '3D':
-                c = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, self.Dimension_startlocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
-                b = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, self.Dimension_startlocation.z, self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z)
-                a = ablength(self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
-                if b != 0 and c != 0 :
-                    self.Dimension_angle = degrees(acos((b**2 + c**2 - a**2)/(2*b*c)))
-                else:
-                    self.Dimension_angle = 0
+                if self.Angle_Type == 'A':
+                   c = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, self.Dimension_startlocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
+                   b = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, self.Dimension_startlocation.z, self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z)
+                   a = ablength(self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
+                if self.Angle_Type == 'B':
+                   a = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, self.Dimension_startlocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
+                   c = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, self.Dimension_startlocation.z, self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z)
+                   b = ablength(self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
+                if self.Angle_Type == 'C':
+                   b = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, self.Dimension_startlocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
+                   a = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, self.Dimension_startlocation.z, self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z)
+                   c = ablength(self.Dimension_endanglelocation.x, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
+            if b != 0 and c != 0 :
+                self.Dimension_angle = degrees(acos((b**2 + c**2 - a**2)/(2*b*c)))
+            else:
+                self.Dimension_angle = 0
 
     #
     if self.Dimension_width == 0:
@@ -2112,6 +2097,12 @@ class Dimension(bpy.types.Operator):
     Dimension_Type : EnumProperty(name = "Type",
                 description = "Form of Curve to create",
                 items = Types)
+    ATypes = [('A', 'A', 'A'),
+              ('B', 'B', 'B'),
+              ('C', 'C', 'C')]
+    Angle_Type : EnumProperty(name = "Angle",
+                description = "Select corne ABC",
+                items = ATypes)
     XYZTypes = [
                 ('TOP', 'Top', 'TOP'),
                 ('FRONT', 'Front', 'FRONT'),
@@ -2404,41 +2395,7 @@ class Dimension(bpy.types.Operator):
                 row = layout.row()
                 row.prop(self, 'Dimension_endanglelocation')
                 row = layout.row()
-                props = row.operator("curve.dimension", text = 'Change angle')
-                props.Dimension_Change = True
-                props.Dimension_Delete = self.Dimension_Name
-                props.Dimension_width_or_location = self.Dimension_width_or_location
-                props.Dimension_startlocation = self.Dimension_endanglelocation
-                props.Dimension_endlocation = self.Dimension_startlocation
-                props.Dimension_endanglelocation = self.Dimension_endlocation
-                props.Dimension_liberty = self.Dimension_liberty
-                props.Dimension_Type = self.Dimension_Type
-                props.Dimension_XYZType = self.Dimension_XYZType
-                props.Dimension_XYType = self.Dimension_XYType
-                props.Dimension_XZType = self.Dimension_XZType
-                props.Dimension_YZType = self.Dimension_YZType
-                props.Dimension_resolution = self.Dimension_resolution
-                props.Dimension_width = self.Dimension_width
-                props.Dimension_length = self.Dimension_length
-                props.Dimension_dsize = self.Dimension_dsize
-                props.Dimension_depth = self.Dimension_depth
-                props.Dimension_depth_from_center = self.Dimension_depth_from_center
-                props.Dimension_angle = self.Dimension_angle
-                props.Dimension_rotation = self.Dimension_rotation
-                props.Dimension_offset = self.Dimension_offset
-                props.Dimension_textsize = self.Dimension_textsize
-                props.Dimension_textdepth = self.Dimension_textdepth
-                props.Dimension_textround = self.Dimension_textround
-                props.Dimension_matname = self.Dimension_matname
-                props.Dimension_note = self.Dimension_note
-                props.Dimension_align_to_camera = self.Dimension_align_to_camera
-                props.Dimension_arrow = self.Dimension_arrow
-                props.Dimension_arrowdepth = self.Dimension_arrowdepth
-                props.Dimension_arrowlength = self.Dimension_arrowlength
-                props.Dimension_parent = self.Dimension_parent
-                props.Dimension_appoint_parent = self.Dimension_appoint_parent
-                props.Dimension_units = self.Dimension_units
-                props.Dimension_add_units_name = self.Dimension_add_units_name
+                row.prop(self, 'Angle_Type')
             box = layout.box()
             box.label(text="Options")
             box.prop(self, 'Dimension_width')
@@ -2464,41 +2421,7 @@ class Dimension(bpy.types.Operator):
                 row = layout.row()
                 row.prop(self, 'Dimension_endanglelocation')
                 row = layout.row()
-                props = row.operator("curve.dimension", text = 'Change angle')
-                props.Dimension_Change = True
-                props.Dimension_Delete = self.Dimension_Name
-                props.Dimension_width_or_location = self.Dimension_width_or_location
-                props.Dimension_startlocation = self.Dimension_endanglelocation
-                props.Dimension_endlocation = self.Dimension_startlocation
-                props.Dimension_endanglelocation = self.Dimension_endlocation
-                props.Dimension_liberty = self.Dimension_liberty
-                props.Dimension_Type = self.Dimension_Type
-                props.Dimension_XYZType = self.Dimension_XYZType
-                props.Dimension_XYType = self.Dimension_XYType
-                props.Dimension_XZType = self.Dimension_XZType
-                props.Dimension_YZType = self.Dimension_YZType
-                props.Dimension_resolution = self.Dimension_resolution
-                props.Dimension_width = self.Dimension_width
-                props.Dimension_length = self.Dimension_length
-                props.Dimension_dsize = self.Dimension_dsize
-                props.Dimension_depth = self.Dimension_depth
-                props.Dimension_depth_from_center = self.Dimension_depth_from_center
-                props.Dimension_angle = self.Dimension_angle
-                props.Dimension_rotation = self.Dimension_rotation
-                props.Dimension_offset = self.Dimension_offset
-                props.Dimension_textsize = self.Dimension_textsize
-                props.Dimension_textdepth = self.Dimension_textdepth
-                props.Dimension_textround = self.Dimension_textround
-                props.Dimension_matname = self.Dimension_matname
-                props.Dimension_note = self.Dimension_note
-                props.Dimension_align_to_camera = self.Dimension_align_to_camera
-                props.Dimension_arrow = self.Dimension_arrow
-                props.Dimension_arrowdepth = self.Dimension_arrowdepth
-                props.Dimension_arrowlength = self.Dimension_arrowlength
-                props.Dimension_parent = self.Dimension_parent
-                props.Dimension_appoint_parent = self.Dimension_appoint_parent
-                props.Dimension_units = self.Dimension_units
-                props.Dimension_add_units_name = self.Dimension_add_units_name
+                row.prop(self, 'Angle_Type')
             box = layout.box()
             box.label(text="Options")
             box.prop(self, 'Dimension_width')
@@ -2522,41 +2445,7 @@ class Dimension(bpy.types.Operator):
                 row = layout.row()
                 row.prop(self, 'Dimension_endanglelocation')
                 row = layout.row()
-                props = row.operator("curve.dimension", text = 'Change angle')
-                props.Dimension_Change = True
-                props.Dimension_Delete = self.Dimension_Name
-                props.Dimension_width_or_location = self.Dimension_width_or_location
-                props.Dimension_startlocation = self.Dimension_endanglelocation
-                props.Dimension_endlocation = self.Dimension_startlocation
-                props.Dimension_endanglelocation = self.Dimension_endlocation
-                props.Dimension_liberty = self.Dimension_liberty
-                props.Dimension_Type = self.Dimension_Type
-                props.Dimension_XYZType = self.Dimension_XYZType
-                props.Dimension_XYType = self.Dimension_XYType
-                props.Dimension_XZType = self.Dimension_XZType
-                props.Dimension_YZType = self.Dimension_YZType
-                props.Dimension_resolution = self.Dimension_resolution
-                props.Dimension_width = self.Dimension_width
-                props.Dimension_length = self.Dimension_length
-                props.Dimension_dsize = self.Dimension_dsize
-                props.Dimension_depth = self.Dimension_depth
-                props.Dimension_depth_from_center = self.Dimension_depth_from_center
-                props.Dimension_angle = self.Dimension_angle
-                props.Dimension_rotation = self.Dimension_rotation
-                props.Dimension_offset = self.Dimension_offset
-                props.Dimension_textsize = self.Dimension_textsize
-                props.Dimension_textdepth = self.Dimension_textdepth
-                props.Dimension_textround = self.Dimension_textround
-                props.Dimension_matname = self.Dimension_matname
-                props.Dimension_note = self.Dimension_note
-                props.Dimension_align_to_camera = self.Dimension_align_to_camera
-                props.Dimension_arrow = self.Dimension_arrow
-                props.Dimension_arrowdepth = self.Dimension_arrowdepth
-                props.Dimension_arrowlength = self.Dimension_arrowlength
-                props.Dimension_parent = self.Dimension_parent
-                props.Dimension_appoint_parent = self.Dimension_appoint_parent
-                props.Dimension_units = self.Dimension_units
-                props.Dimension_add_units_name = self.Dimension_add_units_name
+                row.prop(self, 'Angle_Type')
             box = layout.box()
             box.label(text="Options")
             box.prop(self, 'Dimension_width')
@@ -2694,7 +2583,6 @@ def StartLocationUpdate(self, context):
 
     return
 
-# ### MENU append ###
 # ### MENU append ###
 def Dimension_object_menu(self, context):
     bl_label = 'Dimension'

@@ -344,6 +344,7 @@ void EEVEE_lightprobes_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedat
 
       if (wo->use_nodes && wo->nodetree) {
         static float error_col[3] = {1.0f, 0.0f, 1.0f};
+        static float queue_col[3] = {0.5f, 0.5f, 0.5f};
         struct GPUMaterial *gpumat = EEVEE_material_world_lightprobe_get(scene, wo);
 
         eGPUMaterialStatus status = GPU_material_status(gpumat);
@@ -360,6 +361,10 @@ void EEVEE_lightprobes_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedat
             DRW_shgroup_uniform_block(grp, "light_block", sldata->light_ubo);
             DRW_shgroup_uniform_block(grp, "shadow_block", sldata->shadow_ubo);
             DRW_shgroup_call(grp, geom, NULL);
+            break;
+          case GPU_MAT_QUEUED:
+            stl->g_data->queued_shaders_count++;
+            col = queue_col;
             break;
           default:
             col = error_col;
@@ -754,7 +759,7 @@ void EEVEE_lightprobes_cache_finish(EEVEE_ViewLayerData *sldata, EEVEE_Data *ved
   }
   planar_pool_ensure_alloc(vedata, pinfo->num_planar);
 
-  /* If lightcache auto-update is enable we tag the relevant part
+  /* If light-cache auto-update is enable we tag the relevant part
    * of the cache to update and fire up a baking job. */
   if (!DRW_state_is_image_render() && !DRW_state_is_opengl_render() &&
       (pinfo->do_grid_update || pinfo->do_cube_update)) {

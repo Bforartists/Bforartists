@@ -22,9 +22,9 @@ bl_info = {
     "name": "Export: Adobe After Effects (.jsx)",
     "description": "Export cameras, selected objects & camera solution "
         "3D Markers to Adobe After Effects CS3 and above",
-    "author": "Bartek Skorupa",
+    "author": "Bartek Skorupa, (Adi Samsonoff)",
     "version": (0, 65),
-    "blender": (2, 79, 0),
+    "blender": (2, 80, 0),
     "location": "File > Export > Adobe After Effects (.jsx)",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -94,12 +94,12 @@ def get_active_cam_for_each_frame(scene, start, end):
     return(active_cam_frames)
 
 
-# create manageable list of selected objects
+# create managable list of selected objects
 def get_selected(context):
     cameras = []  # list of selected cameras
     solids = []  # list of all selected meshes that can be exported as AE's solids
     lights = []  # list of all selected lamps that can be exported as AE's lights
-    nulls = []  # list of all selected objects except cameras (will be used to create nulls in AE)
+    nulls = []  # list of all selected objects exept cameras (will be used to create nulls in AE)
     obs = context.selected_objects
 
     for ob in obs:
@@ -110,7 +110,7 @@ def get_selected(context):
             # not ready yet. is_plane(object) returns False in all cases. This is temporary
             solids.append([ob, convert_name(ob.name)])
 
-        elif ob.type == 'LIGHT':
+        elif ob.type == 'LAMP':
             lights.append([ob, ob.data.type + convert_name(ob.name)])  # Type of lamp added to name
 
         else:
@@ -150,7 +150,7 @@ def convert_name(name):
 
 # get object's blender's location rotation and scale and return AE's Position, Rotation/Orientation and scale
 # this function will be called for every object for every frame
-def convert_transform_matrix(matrix, width, height, aspect, x_rot_correction=False, ae_size=100.0):
+def convert_transform_matrix(matrix, width, height, aspect, x_rot_correction=False):
 
     # get blender transform data for ob
     b_loc = matrix.to_translation()
@@ -159,9 +159,9 @@ def convert_transform_matrix(matrix, width, height, aspect, x_rot_correction=Fal
 
     # convert to AE Position Rotation and Scale
     # Axes in AE are different. AE's X is blender's X, AE's Y is negative Blender's Z, AE's Z is Blender's Y
-    x = (b_loc.x * ae_size) / aspect + width / 2.0  # calculate AE's X position
-    y = (-b_loc.z * ae_size) + (height / 2.0)  # calculate AE's Y position
-    z = b_loc.y * ae_size  # calculate AE's Z position
+    x = (b_loc.x * 100.0) / aspect + width / 2.0  # calculate AE's X position
+    y = (-b_loc.z * 100.0) + (height / 2.0)  # calculate AE's Y position
+    z = b_loc.y * 100.0  # calculate AE's Z position
     # Convert rotations to match AE's orientation.
     rx = degrees(b_rot.x)  # if not x_rot_correction - AE's X orientation = blender's X rotation if 'ZYX' euler.
     ry = -degrees(b_rot.y)  # AE's Y orientation is negative blender's Y rotation if 'ZYX' euler
@@ -240,7 +240,7 @@ def convert_lens(camera, width, height, aspect):
 
 
 # jsx script for AE creation
-def write_jsx_file(file, data, selection, include_animation, include_active_cam, include_selected_cams, include_selected_objects, include_cam_bundles, ae_size):
+def write_jsx_file(file, data, selection, include_animation, include_active_cam, include_selected_cams, include_selected_objects, include_cam_bundles):
 
     print("\n---------------------------\n- Export to After Effects -\n---------------------------")
     # store the current frame to restore it at the end of export
@@ -382,7 +382,7 @@ def write_jsx_file(file, data, selection, include_animation, include_active_cam,
                             # bundles are in camera space. Transpose to world space
                             matrix = Matrix.Translation(cam.matrix_basis.copy() * track.bundle)
                             # convert the position into AE space
-                            ae_transform = convert_transform_matrix(matrix, data['width'], data['height'], data['aspect'], False, ae_size)
+                            ae_transform = convert_transform_matrix(matrix, data['width'], data['height'], data['aspect'], x_rot_correction=False)
                             js_data['bundles_cam'][name_ae]['position'] += '[%f,%f,%f],' % (ae_transform[0], ae_transform[1], ae_transform[2])
 
     # get all keyframes for each object and store in dico
@@ -407,7 +407,7 @@ def write_jsx_file(file, data, selection, include_animation, include_active_cam,
             # get cam name
             name_ae = active_cam_name
             # convert cam transform properties to AE space
-            ae_transform = convert_transform_matrix(active_cam.matrix_world.copy(), data['width'], data['height'], data['aspect'], True, ae_size)
+            ae_transform = convert_transform_matrix(active_cam.matrix_world.copy(), data['width'], data['height'], data['aspect'], x_rot_correction=True)
             # convert Blender's lens to AE's zoom in pixels
             zoom = convert_lens(active_cam, data['width'], data['height'], data['aspect'])
             # store all values in dico
@@ -437,7 +437,7 @@ def write_jsx_file(file, data, selection, include_animation, include_active_cam,
                     # get cam name
                     name_ae = selection['cameras'][i][1]
                     # convert cam transform properties to AE space
-                    ae_transform = convert_transform_matrix(cam[0].matrix_world.copy(), data['width'], data['height'], data['aspect'], True, ae_size)
+                    ae_transform = convert_transform_matrix(cam[0].matrix_world.copy(), data['width'], data['height'], data['aspect'], x_rot_correction=True)
                     # convert Blender's lens to AE's zoom in pixels
                     zoom = convert_lens(cam[0], data['width'], data['height'], data['aspect'])
                     # store all values in dico
@@ -475,7 +475,7 @@ def write_jsx_file(file, data, selection, include_animation, include_active_cam,
                 name_ae = selection['lights'][i][1]
                 type = selection['lights'][i][0].data.type
                 # convert ob transform properties to AE space
-                ae_transform = convert_transform_matrix(ob[0].matrix_world.copy(), data['width'], data['height'], data['aspect'], True, ae_size)
+                ae_transform = convert_transform_matrix(ob[0].matrix_world.copy(), data['width'], data['height'], data['aspect'], x_rot_correction=True)
                 color = ob[0].data.color
                 # store all values in dico
                 position = '[%f,%f,%f],' % (ae_transform[0], ae_transform[1], ae_transform[2])
@@ -522,7 +522,7 @@ def write_jsx_file(file, data, selection, include_animation, include_active_cam,
                 # get object name
                 name_ae = selection['nulls'][i][1]
                 # convert ob transform properties to AE space
-                ae_transform = convert_transform_matrix(ob[0].matrix_world.copy(), data['width'], data['height'], data['aspect'], True, ae_size)
+                ae_transform = convert_transform_matrix(ob[0].matrix_world.copy(), data['width'], data['height'], data['aspect'], x_rot_correction=True)
                 # store all values in dico
                 position = '[%f,%f,%f],' % (ae_transform[0], ae_transform[1], ae_transform[2])
                 orientation = '[%f,%f,%f],' % (ae_transform[3], ae_transform[4], ae_transform[5])
@@ -676,10 +676,10 @@ def write_jsx_file(file, data, selection, include_animation, include_active_cam,
 ##########################################
 
 
-def main(file, context, include_animation, include_active_cam, include_selected_cams, include_selected_objects, include_cam_bundles, ae_size):
+def main(file, context, include_animation, include_active_cam, include_selected_cams, include_selected_objects, include_cam_bundles):
     data = get_comp_data(context)
     selection = get_selected(context)
-    write_jsx_file(file, data, selection, include_animation, include_active_cam, include_selected_cams, include_selected_objects, include_cam_bundles, ae_size)
+    write_jsx_file(file, data, selection, include_animation, include_active_cam, include_selected_cams, include_selected_objects, include_cam_bundles)
     print ("\nExport to After Effects Completed")
     return {'FINISHED'}
 
@@ -688,7 +688,7 @@ def main(file, context, include_animation, include_active_cam, include_selected_
 ##########################################
 
 from bpy_extras.io_utils import ExportHelper
-from bpy.props import StringProperty, BoolProperty, FloatProperty
+from bpy.props import StringProperty, BoolProperty
 
 
 class ExportJsx(bpy.types.Operator, ExportHelper):
@@ -728,18 +728,11 @@ class ExportJsx(bpy.types.Operator, ExportHelper):
 #            description="Include 3D Markers of Object Motion Solution for selected cameras",
 #            default=True,
 #            )
-    ae_size: FloatProperty(
-            name="AE Size",
-            description="Size of AE Composition (pixels per 1BU)",
-            default=100.0,
-            )
 
     def draw(self, context):
         layout = self.layout
 
         box = layout.box()
-        box.label(text='Size fo AE Comp (pixels per 1 BU)')
-        box.prop(self, 'ae_size')
         box.label(text='Animation:')
         box.prop(self, 'include_animation')
         box.label(text='Include Cameras and Objects:')
@@ -759,7 +752,7 @@ class ExportJsx(bpy.types.Operator, ExportHelper):
         return ok
 
     def execute(self, context):
-        return main(self.filepath, context, self.include_animation, self.include_active_cam, self.include_selected_cams, self.include_selected_objects, self.include_cam_bundles, self.ae_size)
+        return main(self.filepath, context, self.include_animation, self.include_active_cam, self.include_selected_cams, self.include_selected_objects, self.include_cam_bundles)
 
 
 def menu_func(self, context):

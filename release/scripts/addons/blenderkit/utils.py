@@ -180,7 +180,7 @@ def load_prefs():
 
 def save_prefs(self, context):
     # first check context, so we don't do this on registration or blender startup
-    if not bpy.app.background and hasattr(bpy.context, 'view_layer'):
+    if not bpy.app.background: #(hasattr kills blender)
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
         # we test the api key for lenght, so not a random accidentaly typed sequence gets saved.
         lk = len(user_preferences.api_key)
@@ -200,7 +200,8 @@ def save_prefs(self, context):
         f = open(fpath, 'w')
         with open(fpath, 'w') as s:
             json.dump(prefs, s)
-        bpy.ops.wm.save_userpref()
+        # this was crashing blender 2.8 since some point, probably not needed since autosave is in preferences.
+        # bpy.ops.wm.save_userpref()
 
 
 def get_hidden_image(tpath, bdata_name, force_reload=False):

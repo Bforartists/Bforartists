@@ -19,6 +19,7 @@
 if "bpy" in locals():
     from importlib import reload
 
+    ui = reload(ui)
     tasks_queue = reload(tasks_queue)
     utils = reload(utils)
     paths = reload(paths)
@@ -26,7 +27,7 @@ if "bpy" in locals():
     categories = reload(categories)
     oauth = reload(oauth)
 else:
-    from blenderkit import tasks_queue, utils, paths, search, categories, oauth
+    from blenderkit import tasks_queue, utils, paths, search, categories, oauth, ui
 
 import bpy
 
@@ -41,15 +42,15 @@ PORTS = [62485, 1234]
 
 
 def login_thread(signup=False):
-    thread = threading.Thread(target=login, args=([signup]), daemon=True)
+    r_url = paths.get_oauth_landing_url()
+    url = paths.get_bkit_url()
+    thread = threading.Thread(target=login, args=([signup, url, r_url]), daemon=True)
     thread.start()
 
 
-def login(signup):
-    r_url = paths.get_oauth_landing_url()
-
-    authenticator = oauth.SimpleOAuthAuthenticator(server_url=paths.get_bkit_url(), client_id=CLIENT_ID, ports=PORTS)
-    auth_token, refresh_token = authenticator.get_new_token(register = signup, redirect_url=r_url)
+def login(signup, url, r_url):
+    authenticator = oauth.SimpleOAuthAuthenticator(server_url=url, client_id=CLIENT_ID, ports=PORTS)
+    auth_token, refresh_token = authenticator.get_new_token(register=signup, redirect_url=r_url)
     utils.p('tokens retrieved')
     tasks_queue.add_task((write_tokens, (auth_token, refresh_token)))
 
@@ -57,12 +58,13 @@ def login(signup):
 def refresh_token_thread():
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     if len(preferences.api_key_refresh) > 0:
-        thread = threading.Thread(target=refresh_token, args=([preferences.api_key_refresh]), daemon=True)
+        url = paths.get_bkit_url()
+        thread = threading.Thread(target=refresh_token, args=([preferences.api_key_refresh, url]), daemon=True)
         thread.start()
 
 
-def refresh_token(api_key_refresh):
-    authenticator = oauth.SimpleOAuthAuthenticator(server_url=paths.get_bkit_url(), client_id=CLIENT_ID, ports=PORTS)
+def refresh_token(api_key_refresh, url):
+    authenticator = oauth.SimpleOAuthAuthenticator(server_url=url, client_id=CLIENT_ID, ports=PORTS)
     auth_token, refresh_token = authenticator.get_refreshed_token(api_key_refresh)
     if auth_token is not None and refresh_token is not None:
         tasks_queue.add_task((write_tokens, (auth_token, refresh_token)))
@@ -75,7 +77,8 @@ def write_tokens(auth_token, refresh_token):
     preferences.api_key = auth_token
     preferences.login_attempt = False
     props = utils.get_search_props()
-    props.report = 'Login success!'
+    props.report = ''
+    ui.add_report('BlenderKit Login success')
     search.get_profile()
     categories.fetch_categories_thread(auth_token)
 

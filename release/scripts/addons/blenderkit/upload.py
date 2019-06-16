@@ -28,8 +28,10 @@ if "bpy" in locals():
     version_checker = reload(version_checker)
     search = reload(search)
     ui_panels = reload(ui_panels)
+    overrides = reload(overrides)
 else:
-    from blenderkit import asset_inspector, paths, utils, bg_blender, autothumb, version_checker, search, ui_panels
+    from blenderkit import asset_inspector, paths, utils, bg_blender, autothumb, version_checker, search, ui_panels, \
+        overrides
 
 import tempfile, os, subprocess, json, re
 
@@ -524,7 +526,17 @@ def check_storage_quota(props):
     return False
 
 
+def auto_fix(asset_type=''):
+    #this applies various procedures to ensure coherency in the database.
+    asset = utils.get_active_asset()
+    props = utils.get_upload_props()
+    if asset_type == 'MATERIAL':
+        overrides.ensure_eevee_transparency(asset)
+        asset.name = props.name
+
+
 def start_upload(self, context, asset_type, as_new, metadata_only):
+    '''start upload process, by processing data'''
     props = utils.get_upload_props()
     storage_quota_ok = check_storage_quota(props)
     if not storage_quota_ok:
@@ -533,8 +545,12 @@ def start_upload(self, context, asset_type, as_new, metadata_only):
 
     location = get_upload_location(props)
     props.upload_state = 'preparing upload'
+
+    auto_fix(asset_type = asset_type)
+
     # do this for fixing long tags in some upload cases
     props.tags = props.tags[:]
+
 
     props.name = props.name.strip()
     # TODO  move this to separate function
