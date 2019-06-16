@@ -66,8 +66,10 @@ def get_socket_or_texture_slot(blender_material: bpy.types.Material, name: str):
         inputs = sum([[input for input in node.inputs if input.name == name] for node in nodes], [])
         if inputs:
             return inputs[0]
+    else:
 
 
+        pass
 
     return None
 
@@ -158,7 +160,7 @@ def get_texture_transform_from_texture_node(texture_node):
             if abs(scale[0]) < 1e-5 or abs(scale[1]) < 1e-5:
                 return None
 
-            new_offset = Matrix.Rotation(-rotation, 3, 'Z') * Vector((-offset[0], -offset[1], 1))
+            new_offset = Matrix.Rotation(-rotation, 3, 'Z') @ Vector((-offset[0], -offset[1], 1))
             new_offset[0] /= scale[0]; new_offset[1] /= scale[1]
             return {
                 "offset": new_offset[0:2],

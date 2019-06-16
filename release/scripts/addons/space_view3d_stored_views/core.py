@@ -12,9 +12,9 @@ import bpy
 def get_preferences():
     # replace the key if the add-on name changes
     addon = bpy.context.preferences.addons[__package__]
-#    show_warn = (addon.preferences.show_exporters if addon else False)
+    show_warn = (addon.preferences.show_exporters if addon else False)
 
-    return True
+    return show_warn
 
 
 class StoredView():
