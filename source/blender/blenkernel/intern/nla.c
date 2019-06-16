@@ -51,10 +51,7 @@
 #include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_nla.h"
-
-#ifdef WITH_AUDASPACE
-#  include <AUD_Special.h>
-#endif
+#include "BKE_sound.h"
 
 #include "RNA_access.h"
 #include "nla_private.h"
@@ -392,7 +389,7 @@ NlaStrip *BKE_nlastack_add_strip(AnimData *adt, bAction *act)
 }
 
 /* Add a NLA Strip referencing the given speaker's sound */
-NlaStrip *BKE_nla_add_soundstrip(Scene *scene, Speaker *speaker)
+NlaStrip *BKE_nla_add_soundstrip(Main *bmain, Scene *scene, Speaker *speaker)
 {
   NlaStrip *strip = MEM_callocN(sizeof(NlaStrip), "NlaSoundStrip");
 
@@ -401,17 +398,17 @@ NlaStrip *BKE_nla_add_soundstrip(Scene *scene, Speaker *speaker)
    */
 #ifdef WITH_AUDASPACE
   if (speaker->sound) {
-    AUD_SoundInfo info = AUD_getInfo(speaker->sound->playback_handle);
-
-    strip->end = (float)ceil((double)info.length * FPS);
+    SoundInfo info;
+    if (BKE_sound_info_get(bmain, speaker->sound, &info)) {
+      strip->end = (float)ceil((double)info.length * FPS);
+    }
   }
   else
 #endif
   {
     strip->end = 10.0f;
     /* quiet compiler warnings */
-    (void)scene;
-    (void)speaker;
+    UNUSED_VARS(bmain, scene, speaker);
   }
 
   /* general settings */
@@ -1859,7 +1856,7 @@ bool BKE_nla_action_stash(AnimData *adt)
   BLI_assert(nlt != NULL);
 
   /* We need to ensure that if there wasn't any previous instance,
-   * it must go to tbe bottom of the stack. */
+   * it must go to be bottom of the stack. */
   if (prev_track == NULL) {
     BLI_remlink(&adt->nla_tracks, nlt);
     BLI_addhead(&adt->nla_tracks, nlt);

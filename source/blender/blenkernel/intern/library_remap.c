@@ -191,7 +191,7 @@ static int foreach_libblock_remap_callback(void *user_data, ID *id_self, ID **id
       new_id = NULL;
     }
 
-    const bool is_reference = (cb_flag & IDWALK_CB_STATIC_OVERRIDE_REFERENCE) != 0;
+    const bool is_reference = (cb_flag & IDWALK_CB_OVERRIDE_LIBRARY_REFERENCE) != 0;
     const bool is_indirect = (cb_flag & IDWALK_CB_INDIRECT_USAGE) != 0;
     const bool skip_indirect = (id_remap_data->flag & ID_REMAP_SKIP_INDIRECT_USAGE) != 0;
     /* Note: proxy usage implies LIB_TAG_EXTERN, so on this aspect it is direct,
@@ -202,7 +202,7 @@ static int foreach_libblock_remap_callback(void *user_data, ID *id_self, ID **id
     const bool is_obj_editmode = (is_obj && BKE_object_is_in_editmode((Object *)id));
     const bool is_never_null = ((cb_flag & IDWALK_CB_NEVER_NULL) && (new_id == NULL) &&
                                 (id_remap_data->flag & ID_REMAP_FORCE_NEVER_NULL_USAGE) == 0);
-    const bool skip_reference = (id_remap_data->flag & ID_REMAP_SKIP_STATIC_OVERRIDE) != 0;
+    const bool skip_reference = (id_remap_data->flag & ID_REMAP_SKIP_OVERRIDE_LIBRARY) != 0;
     const bool skip_never_null = (id_remap_data->flag & ID_REMAP_SKIP_NEVER_NULL_USAGE) != 0;
 
 #ifdef DEBUG_PRINT
@@ -266,8 +266,8 @@ static int foreach_libblock_remap_callback(void *user_data, ID *id_self, ID **id
       }
       if (cb_flag & IDWALK_CB_USER) {
         /* NOTE: We don't user-count IDs which are not in the main database.
-         * This is because in certain conditions we can have datablocks in
-         * the main which are referencing datablocks outside of it.
+         * This is because in certain conditions we can have data-blocks in
+         * the main which are referencing data-blocks outside of it.
          * For example, BKE_mesh_new_from_object() called on an evaluated
          * object will cause such situation.
          */
@@ -409,7 +409,7 @@ static void libblock_remap_data_postprocess_nodetree_update(Main *bmain, ID *new
 }
 
 /**
- * Execute the 'data' part of the remapping (that is, all ID pointers from other ID datablocks).
+ * Execute the 'data' part of the remapping (that is, all ID pointers from other ID data-blocks).
  *
  * Behavior differs depending on whether given \a id is NULL or not:
  * - \a id NULL: \a old_id must be non-NULL, \a new_id may be NULL (unlinking \a old_id) or not
@@ -419,14 +419,14 @@ static void libblock_remap_data_postprocess_nodetree_update(Main *bmain, ID *new
  * - \a id is non-NULL:
  *   + If \a old_id is NULL, \a new_id must also be NULL,
  *     and all ID pointers from \a id are cleared
- *     (i.e. \a id does not references any other datablock anymore).
+ *     (i.e. \a id does not references any other data-block anymore).
  *   + If \a old_id is non-NULL, behavior is as with a NULL \a id, but only within given \a id.
  *
  * \param bmain: the Main data storage to operate on (must never be NULL).
- * \param id: the datablock to operate on
+ * \param id: the data-block to operate on
  * (can be NULL, in which case we operate over all IDs from given bmain).
- * \param old_id: the datablock to dereference (may be NULL if \a id is non-NULL).
- * \param new_id: the new datablock to replace \a old_id references with (may be NULL).
+ * \param old_id: the data-block to dereference (may be NULL if \a id is non-NULL).
+ * \param new_id: the new data-block to replace \a old_id references with (may be NULL).
  * \param r_id_remap_data: if non-NULL, the IDRemap struct to use
  * (uselful to retrieve info about remapping process).
  */
@@ -484,7 +484,7 @@ static void libblock_remap_data(
     FOREACH_MAIN_ID_END;
   }
 
-  /* XXX We may not want to always 'transfer' fakeuser from old to new id...
+  /* XXX We may not want to always 'transfer' fake-user from old to new id...
    *     Think for now it's desired behavior though,
    *     we can always add an option (flag) to control this later if needed. */
   if (old_id && (old_id->flag & LIB_FAKEUSER)) {
@@ -756,8 +756,8 @@ void BKE_libblock_free_data(ID *id, const bool do_id_user)
     MEM_freeN(id->properties);
   }
 
-  if (id->override_static) {
-    BKE_override_static_free(&id->override_static);
+  if (id->override_library) {
+    BKE_override_library_free(&id->override_library);
   }
 
   /* XXX TODO remove animdata handling from each type's freeing func,

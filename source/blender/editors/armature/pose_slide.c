@@ -27,6 +27,8 @@
 #include "BLI_blenlib.h"
 #include "BLI_dlrbTree.h"
 
+#include "BLT_translation.h"
+
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
 #include "DNA_object_types.h"
@@ -829,35 +831,35 @@ static void pose_slide_draw_status(tPoseSlideOp *pso)
 
   switch (pso->mode) {
     case POSESLIDE_PUSH:
-      strcpy(mode_str, "Push Pose");
+      strcpy(mode_str, TIP_("Push Pose"));
       break;
     case POSESLIDE_RELAX:
-      strcpy(mode_str, "Relax Pose");
+      strcpy(mode_str, TIP_("Relax Pose"));
       break;
     case POSESLIDE_BREAKDOWN:
-      strcpy(mode_str, "Breakdown");
+      strcpy(mode_str, TIP_("Breakdown"));
       break;
 
     default:
       /* unknown */
-      strcpy(mode_str, "Sliding-Tool");
+      strcpy(mode_str, TIP_("Sliding-Tool"));
       break;
   }
 
   switch (pso->axislock) {
     case PS_LOCK_X:
-      BLI_strncpy(axis_str, "[X]/Y/Z axis only (X to clear)", sizeof(axis_str));
+      BLI_strncpy(axis_str, TIP_("[X]/Y/Z axis only (X to clear)"), sizeof(axis_str));
       break;
     case PS_LOCK_Y:
-      BLI_strncpy(axis_str, "X/[Y]/Z axis only (Y to clear)", sizeof(axis_str));
+      BLI_strncpy(axis_str, TIP_("X/[Y]/Z axis only (Y to clear)"), sizeof(axis_str));
       break;
     case PS_LOCK_Z:
-      BLI_strncpy(axis_str, "X/Y/[Z] axis only (Z to clear)", sizeof(axis_str));
+      BLI_strncpy(axis_str, TIP_("X/Y/[Z] axis only (Z to clear)"), sizeof(axis_str));
       break;
 
     default:
       if (ELEM(pso->channels, PS_TFM_LOC, PS_TFM_ROT, PS_TFM_SIZE)) {
-        BLI_strncpy(axis_str, "X/Y/Z = Axis Constraint", sizeof(axis_str));
+        BLI_strncpy(axis_str, TIP_("X/Y/Z = Axis Constraint"), sizeof(axis_str));
       }
       else {
         axis_str[0] = '\0';
@@ -869,35 +871,34 @@ static void pose_slide_draw_status(tPoseSlideOp *pso)
     case PS_TFM_LOC:
       BLI_snprintf(limits_str,
                    sizeof(limits_str),
-                   "[W]/E/R/B/C - Location only (W to clear) | %s",
+                   TIP_("[W]/E/R/B/C - Location only (W to clear) | %s"),
                    axis_str); /*bfa - changed keys from grs to wer*/
       break;
     case PS_TFM_ROT:
       BLI_snprintf(limits_str,
                    sizeof(limits_str),
-                   "W/[E]/R/B/C - Rotation only (E to clear) | %s",
+                   TIP_("W/[E]/R/B/C - Rotation only (E to clear) | %s"),
                    axis_str); /*bfa - changed keys from grs to wer*/
       break;
     case PS_TFM_SIZE:
       BLI_snprintf(limits_str,
                    sizeof(limits_str),
-                   "W/E/[R]/B/C - Scale only (R to clear) | %s",
+                   TIP_("W/E/[R]/B/C - Scale only (R to clear) | %s"),
                    axis_str); /*bfa - changed keys from grs to wer*/
       break;
     case PS_TFM_BBONE_SHAPE:
       BLI_strncpy(limits_str,
-                  "W/E/R/[B]/C - Bendy Bone properties only (B to clear) | %s",
-                  sizeof(limits_str)); /*bfa - changed keys from grs to wer*/
+                  TIP_("W/E/R/[B]/C - Bendy Bone properties only (B to clear) | %s"),
+                  sizeof(limits_str));/*bfa - changed keys from grs to wer*/
       break;
     case PS_TFM_PROPS:
       BLI_strncpy(limits_str,
-                  "W/E/R/B/[C] - Custom Properties only (C to clear) | %s",
+                  TIP_("W/E/R/B/[C] - Custom Properties only (C to clear) | %s"),
                   sizeof(limits_str)); /*bfa - changed keys from grs to wer*/
       break;
     default:
-      BLI_strncpy(limits_str,
-                  "W/E/R/B/C - Limit to Transform/Property Set",
-                  sizeof(limits_str)); /*bfa - changed keys from grs to wer*/
+      BLI_strncpy(
+          limits_str, TIP_("W/E/R/B/C - Limit to Transform/Property Set"), sizeof(limits_str));/*bfa - changed keys from grs to wer*/
       break;
   }
 
@@ -1362,7 +1363,7 @@ void POSE_OT_push(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Push Pose from Breakdown";
   ot->idname = "POSE_OT_push";
-  ot->description = "Push Pose\nExaggerate the current pose";
+  ot->description = "Exaggerate the current pose in regards to the breakdown pose";
 
   /* callbacks */
   ot->exec = pose_slide_push_exec;
@@ -1424,7 +1425,7 @@ void POSE_OT_relax(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Relax Pose to Breakdown";
   ot->idname = "POSE_OT_relax";
-  ot->description = "Relax Pose\nMake the current pose more similar to its surrounding ones";
+  ot->description = "Relax Pose\nMake the current pose more similar to its breakdown pose";
 
   /* callbacks */
   ot->exec = pose_slide_relax_exec;

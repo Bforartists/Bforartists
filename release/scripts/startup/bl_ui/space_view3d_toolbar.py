@@ -18,13 +18,13 @@
 
 # <pep8 compliant>
 from bpy.types import Menu, Panel, UIList
-from .properties_grease_pencil_common import (
+from bl_ui.properties_grease_pencil_common import (
     GreasePencilStrokeEditPanel,
     GreasePencilStrokeSculptPanel,
     GreasePencilSculptOptionsPanel,
     GreasePencilAppearancePanel,
 )
-from .properties_paint_common import (
+from bl_ui.properties_paint_common import (
     UnifiedPaintPanel,
     brush_mask_texture_settings,
     brush_texpaint_common,
@@ -306,7 +306,7 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
         # Sculpt Mode #
         if context.sculpt_object and brush:
-            from .properties_paint_common import (
+            from bl_ui.properties_paint_common import (
                 brush_basic_sculpt_settings,
             )
 
@@ -390,7 +390,7 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
         # Weight Paint Mode #
         elif context.weight_paint_object and brush:
-            from .properties_paint_common import (
+            from bl_ui.properties_paint_common import (
                 brush_basic_wpaint_settings,
             )
 
@@ -401,7 +401,7 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
         # Vertex Paint Mode #
         elif context.vertex_paint_object and brush:
-            from .properties_paint_common import (
+            from bl_ui.properties_paint_common import (
                 brush_basic_vpaint_settings,
             )
 
@@ -1754,7 +1754,7 @@ class VIEW3D_PT_tools_grease_pencil_brush(View3DPanel, Panel):
                 row.prop(gp_settings, "use_material_pin", text="")
 
             if not self.is_popover:
-                from .properties_paint_common import (
+                from bl_ui.properties_paint_common import (
                     brush_basic_gpencil_paint_settings,
                 )
                 brush_basic_gpencil_paint_settings(layout, context, brush, compact=True)
@@ -2066,7 +2066,7 @@ class VIEW3D_PT_tools_grease_pencil_weight_paint(View3DPanel, Panel):
         col = layout.column()
 
         if not self.is_popover:
-            from .properties_paint_common import (
+            from bl_ui.properties_paint_common import (
                 brush_basic_gpencil_weight_settings,
             )
             brush_basic_gpencil_weight_settings(col, context, brush)

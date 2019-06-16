@@ -1835,7 +1835,12 @@ static void calc_distanceCurveVerts(TransData *head, TransData *tail)
     }
     else if (td_near) {
       float dist;
-      dist = len_v3v3(td_near->center, td->center);
+      float vec[3];
+
+      sub_v3_v3v3(vec, td_near->center, td->center);
+      mul_m3_v3(head->mtx, vec);
+      dist = len_v3(vec);
+
       if (dist < (td - 1)->dist) {
         td->dist = (td - 1)->dist;
       }
@@ -1856,7 +1861,12 @@ static void calc_distanceCurveVerts(TransData *head, TransData *tail)
     }
     else if (td_near) {
       float dist;
-      dist = len_v3v3(td_near->center, td->center);
+      float vec[3];
+
+      sub_v3_v3v3(vec, td_near->center, td->center);
+      mul_m3_v3(head->mtx, vec);
+      dist = len_v3(vec);
+
       if (td->flag & TD_NOTCONNECTED || dist < td->dist || (td + 1)->dist < td->dist) {
         td->flag &= ~TD_NOTCONNECTED;
         if (dist < (td + 1)->dist) {
@@ -2414,8 +2424,8 @@ static void createTransParticleVerts(bContext *C, TransInfo *t)
 
       if (psys && !(psys->flag & PSYS_GLOBAL_HAIR)) {
         ParticleSystemModifierData *psmd_eval = edit->psmd_eval;
-        psys_mat_hair_to_global(
-            ob, psmd_eval->mesh_final, psys->part->from, psys->particles + i, mat);
+        Mesh *mesh_final = BKE_particle_modifier_mesh_final_get(psmd_eval);
+        psys_mat_hair_to_global(ob, mesh_final, psys->part->from, psys->particles + i, mat);
       }
 
       for (k = 0, key = point->keys; k < point->totkey; k++, key++) {
@@ -2506,8 +2516,8 @@ void flushTransParticles(TransInfo *t)
 
       if (psys && !(psys->flag & PSYS_GLOBAL_HAIR)) {
         ParticleSystemModifierData *psmd_eval = edit->psmd_eval;
-        psys_mat_hair_to_global(
-            ob, psmd_eval->mesh_final, psys->part->from, psys->particles + i, mat);
+        Mesh *mesh_final = BKE_particle_modifier_mesh_final_get(psmd_eval);
+        psys_mat_hair_to_global(ob, mesh_final, psys->part->from, psys->particles + i, mat);
         invert_m4_m4(imat, mat);
 
         for (k = 0, key = point->keys; k < point->totkey; k++, key++) {

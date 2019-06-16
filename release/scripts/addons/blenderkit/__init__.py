@@ -375,6 +375,8 @@ def name_update(self, context):
             nname = nname.lower()
         nname = nname[0].upper() + nname[1:]
         props.name = nname
+        asset = utils.get_active_asset()
+        asset.name = nname
 
 
 def update_tags(self, context):
@@ -400,6 +402,7 @@ def update_tags(self, context):
     ns = ns[:-1]
     if props.tags != ns:
         props.tags = ns
+
 
 
 class BlenderKitCommonUploadProps(object):

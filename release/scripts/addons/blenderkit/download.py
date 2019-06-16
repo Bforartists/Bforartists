@@ -544,7 +544,7 @@ class Downloader(threading.Thread):
         if check_existing(asset_data) and not tcom.passargs.get('delete'):
             # this sends the thread for processing, where another check should occur, since the file might be corrupted.
             tcom.downloaded = 100
-            print('not downloading, trying to append again')
+            utils.p('not downloading, trying to append again')
             return;
         file_name = paths.get_download_filenames(asset_data)[0]  # prefer global dir if possible.
         # for k in asset_data:
@@ -646,7 +646,7 @@ def check_existing(asset_data):
 
     file_names = paths.get_download_filenames(asset_data)
 
-    print('check if file allready exists')
+    utils.p('check if file allready exists')
     if len(file_names) == 2:
         # TODO this should check also for failed or running downloads.
         # If download is running, assign just the running thread. if download isn't running but the file is wrong size,

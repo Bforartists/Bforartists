@@ -19,10 +19,10 @@
 # <pep8-80 compliant>
 
 bl_info = {
-    "name": "Corrective shape keys",
-    "author": "Ivo Grigull (loolarge), Tal Trachtman",
-    "version": (1, 0),
-    "blender": (2, 57, 0),
+    "name": "Corrective Shape Keys",
+    "author": "Ivo Grigull (loolarge), Tal Trachtman", "Tokikake"
+    "version": (1, 1, 0),
+    "blender": (2, 80, 0),
     "location": "Object Data > Shape Keys (Search: corrective) ",
     "description": "Creates a corrective shape key for the current pose",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -41,57 +41,70 @@ object as a new shape key.
 - Unpose-function reused from a script by Tal Trachtman in 2007
   http://www.apexbow.com/randd.html
 - Converted to Blender 2.5 by Ivo Grigull
+- Converted to Blender 2.8 by Tokikake 
+("fast" option was removed, add new "delta" option 
+which count currently used shape key values of armature mesh when transfer)
 
-Limitations:
+Limitations and new delta option for 2.8
 - Target mesh may not have any transformation at object level,
   it will be set to zero.
-- Fast/Armature method does not work with Bone envelopes or dual quaternions,
-  both settings will be disabled in the modifier
+  
+- new "delta" option usage, when you hope to make new shape-key with keep currently visible other shape keys value.
+ it can generate new shape key, with value as 1.00. then deform target shape as soruce shape  with keep other shape key values relative.
+  
+- If overwrite shape key,<select active shape key of target as non "base shape"> 
+ current shape key value is ignored and turn as 1.00. 
+ 
+ then if active shape key was driven (bone rotation etc), you may get un-expected result. When transfer, I recommend, keep set active-shape key as base . so transfered shape key do not "overwrite". but generate new shape key. 
+ if active-shape key have no driver, you can overwrite it (but as 1.00 value )
 """
 
 
 import bpy
 from mathutils import Vector, Matrix
 
-
 iterations = 20
 threshold = 1e-16
 
-
+def update_mesh(ob):
+    depth = bpy.context.evaluated_depsgraph_get()
+    depth.update()
+    ob.update_tag() 
+    bpy.context.view_layer.update()    
+    ob.data.update()
+    
+    
 def reset_transform(ob):
     ob.matrix_local.identity()
 
-
 # this version is for shape_key data
-def extract_vert_coords(ob, verts):
+def extract_vert_coords(verts):
     return [v.co.copy() for v in verts]
 
-
 def extract_mapped_coords(ob, shape_verts):
-    totvert = len(shape_verts)
-
-    depsgraph = bpy.context.evaluated_depsgraph_get()
-    ob_eval = ob.evaluated_get(depsgraph)
-    mesh = ob_eval.to_mesh()
+    depth = bpy.context.evaluated_depsgraph_get()
+    eobj = ob.evaluated_get(depth)
+    mesh = bpy.data.meshes.new_from_object(eobj)
 
     # cheating, the original mapped verts happen
     # to be at the end of the vertex array
     verts = mesh.vertices
-    arr = [verts[i].co.copy() for i in range(len(verts) - totvert, len(verts))]
-
+    #arr = [verts[i].co.copy() for i in range(len(verts) - totvert, len(verts))]
+    arr = [verts[i].co.copy() for i in range(0, len(verts))]
     mesh.user_clear()
-    ob_eval.to_mesh_clear()
-
+    bpy.data.meshes.remove(mesh)
+    update_mesh(ob)
     return arr
+
 
 
 def apply_vert_coords(ob, mesh, x):
     for i, v in enumerate(mesh):
         v.co = x[i]
-    ob.data.update()
+    update_mesh(ob)
 
 
-def func_add_corrective_pose_shape(source, target):
+def func_add_corrective_pose_shape(source, target, flag):
 
     ob_1 = target
     mesh_1 = target.data
@@ -100,20 +113,36 @@ def func_add_corrective_pose_shape(source, target):
 
     reset_transform(target)
 
-    # If target object doesn't have Basis shape key, create it.
+    # If target object doesn't have Base shape key, create it.
     if not mesh_1.shape_keys:
         basis = ob_1.shape_key_add()
         basis.name = "Basis"
-        ob_1.data.update()
-
+        update_mesh(ob_1)
+        ob_1.active_shape_key_index = 0
+    ob_1.show_only_shape_key = False
     key_index = ob_1.active_shape_key_index
-    # Insert new shape key
+    print(ob_1)
+    print(ob_1.active_shape_key)
+    active_key_name = ob_1.active_shape_key.name
+    
+    if (flag == True):
+    # Make mix shape key from currently used shape keys  
+        if not key_index == 0:
+            ob_1.active_shape_key.value = 0
+        mix_shape = ob_1.shape_key_add(from_mix = True)
+        mix_shape.name = "Mix_shape"
+        update_mesh(ob_1)
+        keys = ob_1.data.shape_keys.key_blocks.keys()       
+        ob_1.active_shape_key_index = keys.index(active_key_name)
+    
+    print("active_key_name: ", active_key_name)  
+    
     if key_index == 0:
         new_shapekey = ob_1.shape_key_add()
         new_shapekey.name = "Shape_" + ob_2.name
-
-        key_index = len(mesh_1.shape_keys.key_blocks) - 1
-        ob_1.active_shape_key_index = key_index
+        update_mesh(ob_1)
+        keys = ob_1.data.shape_keys.key_blocks.keys()        
+        ob_1.active_shape_key_index = keys.index(new_shapekey.name) 
 
     # else, the active shape will be used (updated)
 
@@ -122,11 +151,12 @@ def func_add_corrective_pose_shape(source, target):
     vgroup = ob_1.active_shape_key.vertex_group
     ob_1.active_shape_key.vertex_group = ""
 
-    mesh_1_key_verts = mesh_1.shape_keys.key_blocks[key_index].data
+    #mesh_1_key_verts = mesh_1.shape_keys.key_blocks[key_index].data
+    mesh_1_key_verts = ob_1.active_shape_key.data
 
-    x = extract_vert_coords(ob_1, mesh_1_key_verts)
+    x = extract_vert_coords(mesh_1_key_verts)
 
-    targetx = extract_vert_coords(ob_2, mesh_2.vertices)
+    targetx = extract_vert_coords(mesh_2.vertices)
 
     for iteration in range(0, iterations):
         dx = [[], [], [], [], [], []]
@@ -160,17 +190,35 @@ def func_add_corrective_pose_shape(source, target):
                 Gy = list((dx[2][i] - dx[3][i]) / epsilon)
                 Gz = list((dx[4][i] - dx[5][i]) / epsilon)
                 G = Matrix((Gx, Gy, Gz))
-                x[i] += G * (targetx[i] - mapx[i])
+                Delmorph = (targetx[i] - mapx[i])
+                x[i] += G @ Delmorph
 
         apply_vert_coords(ob_1, mesh_1_key_verts, x)
 
+    ob_1.show_only_shape_key = True
+    
+    if (flag == True):
+    # remove delta of mix-shape key values from new shape key
+        key_index = ob_1.active_shape_key_index
+        active_key_name = ob_1.active_shape_key.name        
+        shape_data = ob_1.active_shape_key.data
+        mix_data = mix_shape.data   
+        for i in range(0, len(mesh_1.vertices)):
+            shape_data[i].co = mesh_1.vertices[i].co + shape_data[i].co - mix_data[i].co        
+        update_mesh(ob_1)
+        
+        ob_1.active_shape_key_index = ob_1.data.shape_keys.key_blocks.keys().index("Mix_shape")
+        bpy.ops.object.shape_key_remove()
+        ob_1.active_shape_key_index = ob_1.data.shape_keys.key_blocks.keys().index(active_key_name)
+        ob_1.data.update()
+        ob_1.show_only_shape_key = False
+        
     ob_1.active_shape_key.vertex_group = vgroup
 
     # set the new shape key value to 1.0, so we see the result instantly
     ob_1.active_shape_key.value = 1.0
-
-    #mesh_1.update()
-    ob_1.show_only_shape_key = False
+    update_mesh(ob_1)   
+    
 
 
 class add_corrective_pose_shape(bpy.types.Operator):
@@ -196,24 +244,57 @@ class add_corrective_pose_shape(bpy.types.Operator):
             source = selection[1]
         else:
             source = selection[0]
+            
+        delta_flag = False
 
-        func_add_corrective_pose_shape(source, target)
+        func_add_corrective_pose_shape(source, target, delta_flag)
+
+        return {'FINISHED'}
+        
+class add_corrective_pose_shape_delta (bpy.types.Operator):
+    """Adds first object as shape to second object for the current pose """ \
+    """while maintaining modifiers and currently used other shape keys""" \
+    """with keep other shape key value, generate new shape key which deform to soruce shape """
+
+    bl_idname = "object.add_corrective_pose_shape_delta"
+    bl_label = "Add object as corrective pose shape delta"
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_object is not None
+
+    def execute(self, context):
+        selection = context.selected_objects
+        if len(selection) != 2:
+            self.report({'ERROR'}, "Select source and target objects")
+            return {'CANCELLED'}
+
+        target = context.active_object
+        if context.active_object == selection[0]:
+            source = selection[1]
+        else:
+            source = selection[0]
+            
+        delta_flag = True
+
+        func_add_corrective_pose_shape(source, target, delta_flag)
 
         return {'FINISHED'}
 
 
-def func_object_duplicate_flatten_modifiers(context, obj):
-    depsgraph = context.evaluated_depsgraph_get()
-    mesh = bpy.data.meshes.new_from_object(obj.evaluated_get(depsgraph))
-    name = obj.name + "_clean"
+def func_object_duplicate_flatten_modifiers(context, ob):
+    depth = bpy.context.evaluated_depsgraph_get()
+    eobj = ob.evaluated_get(depth)
+    mesh = bpy.data.meshes.new_from_object(eobj)
+    name = ob.name + "_clean"
     new_object = bpy.data.objects.new(name, mesh)
     new_object.data = mesh
-    context.collection.objects.link(new_object)
+    bpy.context.collection.objects.link(new_object)
     return new_object
 
 
 class object_duplicate_flatten_modifiers(bpy.types.Operator):
-    """Duplicates the selected object with modifiers applied"""
+    #Duplicates the selected object with modifiers applied
 
     bl_idname = "object.object_duplicate_flatten_modifiers"
     bl_label = "Duplicate and apply all"
@@ -235,14 +316,15 @@ class object_duplicate_flatten_modifiers(bpy.types.Operator):
 
         return {'FINISHED'}
 
+""" these old functions and class not work correctly just keep code for others try to edit
 
-def unposeMesh(meshObToUnpose, meshObToUnposeWeightSrc, armatureOb):
+def unposeMesh(meshObToUnpose, obj, armatureOb):
     psdMeshData = meshObToUnpose
 
     psdMesh = psdMeshData
     I = Matrix()  # identity matrix
 
-    meshData = meshObToUnposeWeightSrc.data
+    meshData =obj.data
     mesh = meshData
 
     armData = armatureOb.data
@@ -259,7 +341,7 @@ def unposeMesh(meshObToUnpose, meshObToUnposeWeightSrc, armatureOb):
         listOfBoneNameWeightPairs = []
         for n in mesh.vertices[index].groups:
             try:
-                name = meshObToUnposeWeightSrc.vertex_groups[n.group].name
+                name = obj.vertex_groups[n.group].name
                 weight = n.weight
                 is_bone = False
                 for i in armData.bones:
@@ -307,9 +389,12 @@ def unposeMesh(meshObToUnpose, meshObToUnposeWeightSrc, armatureOb):
 
         sigma = I + sigma
         sigma.invert()
-        psdMeshVert.co = psdMeshVert.co * sigma
+        psdMeshVert.co = psdMeshVert.co @ sigma
+        obj.update_tag()
+        bpy.context.view_layer.update()
+"""
 
-
+"""
 def func_add_corrective_pose_shape_fast(source, target):
 
     reset_transform(target)
@@ -347,7 +432,8 @@ def func_add_corrective_pose_shape_fast(source, target):
     verts = source.data.vertices
     for n in range(len(verts)):
         shape_key_verts[n].co = verts[n].co
-
+    target.update_tag() 
+    bpy.context.view_layer.update()
     # go to all armature modifies and unpose the shape
     for n in target.modifiers:
         if n.type == 'ARMATURE' and n.show_viewport:
@@ -361,19 +447,24 @@ def func_add_corrective_pose_shape_fast(source, target):
 
     # set the new shape key value to 1.0, so we see the result instantly
     target.active_shape_key.value = 1.0
-
+    
     try:
         target.active_shape_key.vertex_group = vgroup
     except:
         pass
 
     target.show_only_shape_key = False
+    target.update_tag() 
+    bpy.context.view_layer.update()
+    
     target.data.update()
+    
 
+"""
 
+"""
 class add_corrective_pose_shape_fast(bpy.types.Operator):
-    """Adds 1st object as shape to 2nd object as pose shape
-    (only 1 armature)"""
+    #Adds 1st object as shape to 2nd object as pose shape (only 1 armature)
 
     bl_idname = "object.add_corrective_pose_shape_fast"
     bl_label = "Add object as corrective shape faster"
@@ -397,6 +488,7 @@ class add_corrective_pose_shape_fast(bpy.types.Operator):
         func_add_corrective_pose_shape_fast(source, target)
 
         return {'FINISHED'}
+"""
 
 
 # -----------------------------------------------------------------------------
@@ -407,28 +499,32 @@ def vgroups_draw(self, context):
 
     layout.operator("object.object_duplicate_flatten_modifiers",
                     text='Create duplicate for editing')
-    layout.operator("object.add_corrective_pose_shape_fast",
-                    text='Add as corrective pose-shape (fast, armatures only)',
-                    icon='COPY_ID')  # icon is not ideal
     layout.operator("object.add_corrective_pose_shape",
                     text='Add as corrective pose-shape (slow, all modifiers)',
+                    icon='COPY_ID')  # icon is not ideal
+    layout.operator("object.add_corrective_pose_shape_delta",
+                    text='Add as corrective pose-shape delta" (slow, all modifiers + other shape key values)',
                     icon='COPY_ID')  # icon is not ideal
 
 
 def modifiers_draw(self, context):
     pass
 
-
+classes = (add_corrective_pose_shape, add_corrective_pose_shape_delta, object_duplicate_flatten_modifiers, )
 def register():
-    bpy.utils.register_module(__name__)
-
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
     bpy.types.MESH_MT_shape_key_context_menu.append(vgroups_draw)
     bpy.types.DATA_PT_modifiers.append(modifiers_draw)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
-
-
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
+    bpy.types.MESH_MT_shape_key_context_menu.remove(vgroups_draw)
+    bpy.types.DATA_PT_modifiers.remove(modifiers_draw)
+    
 if __name__ == "__main__":
     register()

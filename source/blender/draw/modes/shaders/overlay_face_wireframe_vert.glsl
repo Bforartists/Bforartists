@@ -1,6 +1,5 @@
 
 uniform float wireStepParam;
-uniform float ofs;
 
 in vec3 pos;
 in vec3 nor;
@@ -30,17 +29,14 @@ flat out float edgeSharpness;
 
 void main()
 {
-  mat4 projmat = ProjectionMatrix;
-  projmat[3][2] -= ofs;
-
-  vec4 wpos = ModelMatrix * vec4(pos, 1.0);
-  gl_Position = projmat * (ViewMatrix * wpos);
+  vec3 wpos = point_object_to_world(pos);
+  gl_Position = point_world_to_ndc(wpos);
 
   vec3 wnor = normalize(normal_object_to_world(nor));
   facing_g = dot(wnor, ViewMatrixInverse[2].xyz);
   edgeSharpness_g = get_edge_sharpness(wd);
 
 #ifdef USE_WORLD_CLIP_PLANES
-  world_clip_planes_calc_clip_distance(wpos.xyz);
+  world_clip_planes_calc_clip_distance(wpos);
 #endif
 }

@@ -38,6 +38,7 @@ struct ParticleKey;
 struct ParticleSettings;
 struct ParticleSystem;
 struct ParticleSystemModifierData;
+struct ParticleSystemModifierDataRuntime;
 
 struct BVHTreeRay;
 struct BVHTreeRayHit;
@@ -103,7 +104,7 @@ typedef struct SPHData {
   struct EdgeHash *eh;
   float *gravity;
   float hfac;
-  /* Average distance to neighbours (other particles in the support domain),
+  /* Average distance to neighbors (other particles in the support domain),
    * for calculating the Courant number (adaptive time step). */
   int pass;
   float element_size;
@@ -263,7 +264,7 @@ BLI_INLINE float psys_frand(ParticleSystem *psys, unsigned int seed)
   /* XXX far from ideal, this simply scrambles particle random numbers a bit
    * to avoid obvious correlations.
    * Can't use previous psys->frand arrays because these require initialization
-   * inside psys_check_enabled, which wreaks havok in multithreaded depgraph updates.
+   * inside psys_check_enabled, which wreaks havoc in multi-threaded depgraph updates.
    */
   unsigned int offset = PSYS_FRAND_SEED_OFFSET[psys->seed % PSYS_FRAND_COUNT];
   unsigned int multiplier = PSYS_FRAND_SEED_MULTIPLIER[psys->seed % PSYS_FRAND_COUNT];
@@ -607,6 +608,13 @@ float psys_get_current_display_percentage(struct ParticleSystem *psys,
 /* index_dmcache */
 #define DMCACHE_NOTFOUND -1
 #define DMCACHE_ISCHILD -2
+
+/* **** Particle system modifier helpers.  **** */
+
+struct Mesh *BKE_particle_modifier_mesh_final_get(struct ParticleSystemModifierData *psmd);
+struct Mesh *BKE_particle_modifier_mesh_original_get(struct ParticleSystemModifierData *psmd);
+struct ParticleSystemModifierDataRuntime *BKE_particle_modifier_runtime_ensure(
+    struct ParticleSystemModifierData *psmd);
 
 /* **** Depsgraph evaluation **** */
 

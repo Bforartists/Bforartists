@@ -183,11 +183,11 @@ class VIEW3D_PT_properties_stored_views(Panel):
         row.operator("stored_views.save").index = -1
 
         # IO Operators
-        # if core.get_preferences():
-        #     row = layout.row(align=True)
-        #     row.operator("stored_views.import_from_scene", text="Import from Scene")
-        #     row.operator("stored_views.import_blsv", text="", icon="IMPORT")
-        #     row.operator("stored_views.export_blsv", text="", icon="EXPORT")
+        if core.get_preferences():
+            row = layout.row(align=True)
+            row.operator("stored_views.import_from_scene", text="Import from Scene")
+            row.operator("stored_views.import_blsv", text="", icon="IMPORT")
+            row.operator("stored_views.export_blsv", text="", icon="EXPORT")
 
         data_store = core.DataStore()
         list = data_store.list
@@ -275,6 +275,3 @@ def register():
 def unregister():
   for cls in classes:
     bpy.utils.unregister_class(cls)
-
-if __name__ == "__main__":
-    register()

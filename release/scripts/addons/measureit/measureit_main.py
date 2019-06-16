@@ -1948,7 +1948,7 @@ def draw_main(context):
     if scene.measureit_gl_ghost is False:
         objlist = context.selected_objects
     else:
-        objlist = context.scene.objects
+        objlist = context.view_layer.objects
 
     # Enable GL drawing
     bgl.glEnable(bgl.GL_BLEND)
