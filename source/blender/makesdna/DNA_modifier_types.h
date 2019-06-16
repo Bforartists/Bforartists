@@ -121,7 +121,7 @@ typedef struct ModifierData {
 
 typedef enum {
   /* This modifier has been inserted in local override, and hence can be fully edited. */
-  eModifierFlag_StaticOverride_Local = (1 << 0),
+  eModifierFlag_OverrideLibrary_Local = (1 << 0),
   /* This modifier does not own its caches, but instead shares them with another modifier. */
   eModifierFlag_SharedCaches = (1 << 1),
 } ModifierFlag;
@@ -882,17 +882,24 @@ enum {
   MOD_MDEF_SURFACE = 1,
 };
 
-typedef struct ParticleSystemModifierData {
-  ModifierData modifier;
-
-  struct ParticleSystem *psys;
+/* Is stored in ModifierData.runtime. */
+#
+#
+typedef struct ParticleSystemModifierDataRuntime {
   /** Final Mesh - its topology may differ from orig mesh. */
   struct Mesh *mesh_final;
   /** Original mesh that particles are attached to. */
   struct Mesh *mesh_original;
   int totdmvert, totdmedge, totdmface;
+} ParticleSystemModifierDataRuntime;
+
+typedef struct ParticleSystemModifierData {
+  ModifierData modifier;
+
+  struct ParticleSystem *psys;
+  void *_pad1;
   short flag;
-  char _pad[2];
+  char _pad[6];
 } ParticleSystemModifierData;
 
 typedef enum {

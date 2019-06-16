@@ -49,6 +49,13 @@ def get_bkit_url():
         url = BLENDERKIT_MAIN
     return url
 
+def find_in_local(text=''):
+    fs = []
+    for p, d, f in os.walk('.'):
+        for file in f:
+            if text in file:
+                fs.append(file)
+    return fs
 
 def get_api_url():
     return get_bkit_url() + BLENDERKIT_API

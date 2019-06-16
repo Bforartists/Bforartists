@@ -1383,9 +1383,9 @@ bool rna_Object_constraints_override_apply(Main *UNUSED(bmain),
                                            PointerRNA *UNUSED(ptr_item_dst),
                                            PointerRNA *UNUSED(ptr_item_src),
                                            PointerRNA *UNUSED(ptr_item_storage),
-                                           IDOverrideStaticPropertyOperation *opop)
+                                           IDOverrideLibraryPropertyOperation *opop)
 {
-  BLI_assert(opop->operation == IDOVERRIDESTATIC_OP_INSERT_AFTER &&
+  BLI_assert(opop->operation == IDOVERRIDE_LIBRARY_OP_INSERT_AFTER &&
              "Unsupported RNA override operation on constraints collection");
 
   Object *ob_dst = (Object *)ptr_dst->id.data;
@@ -1471,9 +1471,9 @@ bool rna_Object_modifiers_override_apply(Main *UNUSED(bmain),
                                          PointerRNA *UNUSED(ptr_item_dst),
                                          PointerRNA *UNUSED(ptr_item_src),
                                          PointerRNA *UNUSED(ptr_item_storage),
-                                         IDOverrideStaticPropertyOperation *opop)
+                                         IDOverrideLibraryPropertyOperation *opop)
 {
-  BLI_assert(opop->operation == IDOVERRIDESTATIC_OP_INSERT_AFTER &&
+  BLI_assert(opop->operation == IDOVERRIDE_LIBRARY_OP_INSERT_AFTER &&
              "Unsupported RNA override operation on modifiers collection");
 
   Object *ob_dst = (Object *)ptr_dst->id.data;
@@ -1932,7 +1932,7 @@ static void rna_def_material_slot(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, link_items);
   RNA_def_property_enum_funcs(
       prop, "rna_MaterialSlot_link_get", "rna_MaterialSlot_link_set", NULL);
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(prop, "Link", "Link\nLink material to object or the object's data");
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_MaterialSlot_update");
 
@@ -1940,7 +1940,7 @@ static void rna_def_material_slot(BlenderRNA *brna)
   RNA_def_property_struct_type(prop, "Material");
   RNA_def_property_flag(prop, PROP_EDITABLE);
   RNA_def_property_editable_func(prop, "rna_MaterialSlot_material_editable");
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_pointer_funcs(prop,
                                  "rna_MaterialSlot_material_get",
                                  "rna_MaterialSlot_material_set",
@@ -2371,7 +2371,7 @@ static void rna_def_object(BlenderRNA *brna)
   RNA_def_property_pointer_funcs(
       prop, NULL, "rna_Object_data_set", "rna_Object_data_typef", "rna_Object_data_poll");
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_NEVER_UNLINK);
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(prop, "Data", "Data\nObject data");
   RNA_def_property_update(prop, 0, "rna_Object_internal_update_data");
 
@@ -2403,7 +2403,7 @@ static void rna_def_object(BlenderRNA *brna)
   prop = RNA_def_property(srna, "parent", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_funcs(prop, NULL, "rna_Object_parent_set", NULL, NULL);
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_SELF_CHECK);
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(prop, "Parent", "Parent\nParent Object");
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_dependency_update");
 
@@ -2472,7 +2472,7 @@ static void rna_def_object(BlenderRNA *brna)
   RNA_def_property_collection_sdna(prop, NULL, "mat", "totcol");
   RNA_def_property_struct_type(prop, "MaterialSlot");
   RNA_def_property_override_flag(prop,
-                                 PROPOVERRIDE_OVERRIDABLE_STATIC | PROPOVERRIDE_NO_PROP_NAME);
+                                 PROPOVERRIDE_OVERRIDABLE_LIBRARY | PROPOVERRIDE_NO_PROP_NAME);
   /* don't dereference pointer! */
   RNA_def_property_collection_funcs(
       prop, NULL, NULL, NULL, "rna_iterator_array_get", NULL, NULL, NULL, NULL);
@@ -2486,7 +2486,7 @@ static void rna_def_object(BlenderRNA *brna)
                                  NULL,
                                  "rna_MaterialSlot_material_poll");
   RNA_def_property_flag(prop, PROP_EDITABLE);
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_editable_func(prop, "rna_Object_active_material_editable");
   RNA_def_property_ui_text(
       prop, "Active Material", "Active Material\nActive material being displayed");
@@ -2495,7 +2495,7 @@ static void rna_def_object(BlenderRNA *brna)
   prop = RNA_def_property(srna, "active_material_index", PROP_INT, PROP_UNSIGNED);
   RNA_def_property_int_sdna(prop, NULL, "actcol");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_int_funcs(prop,
                              "rna_Object_active_material_index_get",
                              "rna_Object_active_material_index_set",
@@ -2508,7 +2508,7 @@ static void rna_def_object(BlenderRNA *brna)
   prop = RNA_def_property(srna, "location", PROP_FLOAT, PROP_TRANSLATION);
   RNA_def_property_float_sdna(prop, NULL, "loc");
   RNA_def_property_editable_array_func(prop, "rna_Object_location_editable");
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(prop, "Location", "Location\nLocation of the object");
   RNA_def_property_ui_range(prop, -FLT_MAX, FLT_MAX, 1, RNA_TRANSLATION_PREC_DEFAULT);
   RNA_def_property_update(prop, NC_OBJECT | ND_TRANSFORM, "rna_Object_internal_update");
@@ -2516,7 +2516,7 @@ static void rna_def_object(BlenderRNA *brna)
   prop = RNA_def_property(srna, "rotation_quaternion", PROP_FLOAT, PROP_QUATERNION);
   RNA_def_property_float_sdna(prop, NULL, "quat");
   RNA_def_property_editable_array_func(prop, "rna_Object_rotation_4d_editable");
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_float_array_default(prop, rna_default_quaternion);
   RNA_def_property_ui_text(
       prop, "Quaternion Rotation", "Quaternion Rotation\nRotation in Quaternions");
@@ -2531,7 +2531,7 @@ static void rna_def_object(BlenderRNA *brna)
       prop, "rna_Object_rotation_axis_angle_get", "rna_Object_rotation_axis_angle_set", NULL);
   RNA_def_property_editable_array_func(prop, "rna_Object_rotation_4d_editable");
   RNA_def_property_float_array_default(prop, rna_default_axis_angle);
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(
       prop,
       "Axis-Angle Rotation",
@@ -2541,7 +2541,7 @@ static void rna_def_object(BlenderRNA *brna)
   prop = RNA_def_property(srna, "rotation_euler", PROP_FLOAT, PROP_EULER);
   RNA_def_property_float_sdna(prop, NULL, "rot");
   RNA_def_property_editable_array_func(prop, "rna_Object_rotation_euler_editable");
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(prop, "Euler Rotation", "Rotation in Eulers");
   RNA_def_property_update(prop, NC_OBJECT | ND_TRANSFORM, "rna_Object_internal_update");
 
@@ -2554,7 +2554,7 @@ static void rna_def_object(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "scale", PROP_FLOAT, PROP_XYZ);
   RNA_def_property_flag(prop, PROP_PROPORTIONAL);
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_editable_array_func(prop, "rna_Object_scale_editable");
   RNA_def_property_ui_range(prop, -FLT_MAX, FLT_MAX, 1, 3);
   RNA_def_property_float_array_default(prop, rna_default_scale_3d);
@@ -2713,8 +2713,8 @@ static void rna_def_object(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop, "Modifiers", "Modifiers\nModifiers affecting the geometric data of the object");
   RNA_def_property_override_funcs(prop, NULL, NULL, "rna_Object_modifiers_override_apply");
-  RNA_def_property_override_flag(prop,
-                                 PROPOVERRIDE_OVERRIDABLE_STATIC | PROPOVERRIDE_STATIC_INSERTION);
+  RNA_def_property_override_flag(
+      prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY | PROPOVERRIDE_LIBRARY_INSERTION);
   rna_def_object_modifiers(brna, prop);
 
   /* Grease Pencil modifiers. */
@@ -2738,8 +2738,8 @@ static void rna_def_object(BlenderRNA *brna)
   /* constraints */
   prop = RNA_def_property(srna, "constraints", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_struct_type(prop, "Constraint");
-  RNA_def_property_override_flag(prop,
-                                 PROPOVERRIDE_OVERRIDABLE_STATIC | PROPOVERRIDE_STATIC_INSERTION);
+  RNA_def_property_override_flag(
+      prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY | PROPOVERRIDE_LIBRARY_INSERTION);
   RNA_def_property_ui_text(
       prop, "Constraints", "Constraints\nConstraints affecting the transformation of the object");
   RNA_def_property_override_funcs(prop, NULL, NULL, "rna_Object_constraints_override_apply");
@@ -2902,7 +2902,7 @@ static void rna_def_object(BlenderRNA *brna)
   /* restrict */
   prop = RNA_def_property(srna, "hide_viewport", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "restrictflag", OB_RESTRICT_VIEWPORT);
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(prop, "Disable View", "Disable View\nDisable object in the viewport");
   RNA_def_property_ui_icon(prop, ICON_RESTRICT_VIEW_OFF, -1);
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_hide_update");
@@ -2910,7 +2910,7 @@ static void rna_def_object(BlenderRNA *brna)
   prop = RNA_def_property(srna, "hide_select", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "restrictflag", OB_RESTRICT_SELECT);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(
       prop, "Disable Select", "Disable Select\nDisable object selection in the viewport");
   RNA_def_property_ui_icon(prop, ICON_RESTRICT_SELECT_OFF, -1);
@@ -2918,7 +2918,7 @@ static void rna_def_object(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "hide_render", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "restrictflag", OB_RESTRICT_RENDER);
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(prop, "Disable Render", "Disable Render\nDisable object in renders");
   RNA_def_property_ui_icon(prop, ICON_RESTRICT_RENDER_OFF, -1);
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_hide_update");
@@ -3040,7 +3040,7 @@ static void rna_def_object(BlenderRNA *brna)
   prop = RNA_def_property(srna, "pose", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "pose");
   RNA_def_property_struct_type(prop, "Pose");
-  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(prop, "Pose", "Current pose for armatures");
 
   /* shape keys */

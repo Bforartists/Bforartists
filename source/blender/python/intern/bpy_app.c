@@ -392,25 +392,25 @@ static PyObject *bpy_app_autoexec_fail_message_get(PyObject *UNUSED(self), void 
   return PyC_UnicodeFromByte(G.autoexec_fail);
 }
 
-PyDoc_STRVAR(bpy_app_use_static_override_doc,
-             "Boolean, whether static override is exposed in UI or not.");
-static PyObject *bpy_app_use_static_override_get(PyObject *UNUSED(self), void *UNUSED(closure))
+PyDoc_STRVAR(bpy_app_use_override_library_doc,
+             "Boolean, whether library override is exposed in UI or not.");
+static PyObject *bpy_app_use_override_library_get(PyObject *UNUSED(self), void *UNUSED(closure))
 {
-  return PyBool_FromLong((long)BKE_override_static_is_enabled());
+  return PyBool_FromLong((long)BKE_override_library_is_enabled());
 }
 
-static int bpy_app_use_static_override_set(PyObject *UNUSED(self),
-                                           PyObject *value,
-                                           void *UNUSED(closure))
+static int bpy_app_use_override_library_set(PyObject *UNUSED(self),
+                                            PyObject *value,
+                                            void *UNUSED(closure))
 {
   const int param = PyC_Long_AsBool(value);
 
   if (param == -1 && PyErr_Occurred()) {
-    PyErr_SetString(PyExc_TypeError, "bpy.app.use_static_override must be a boolean");
+    PyErr_SetString(PyExc_TypeError, "bpy.app.use_override_library must be a boolean");
     return -1;
   }
 
-  BKE_override_static_enable((const bool)param);
+  BKE_override_library_enable((const bool)param);
 
   return 0;
 }
@@ -497,16 +497,22 @@ static PyGetSetDef bpy_app_getsets[] = {
      (char *)bpy_app_debug_doc,
      (void *)G_DEBUG_IO},
 
-    {(char *)"use_static_override",
-     bpy_app_use_static_override_get,
-     bpy_app_use_static_override_set,
-     (char *)bpy_app_use_static_override_doc,
+    {(char *)"use_override_library",
+     bpy_app_use_override_library_get,
+     bpy_app_use_override_library_set,
+     (char *)bpy_app_use_override_library_doc,
      NULL},
     {(char *)"use_event_simulate",
      bpy_app_global_flag_get,
      bpy_app_global_flag_set__only_disable,
      (char *)bpy_app_global_flag_doc,
      (void *)G_FLAG_EVENT_SIMULATE},
+
+    {(char *)"use_userpref_skip_save_on_exit",
+     bpy_app_global_flag_get,
+     bpy_app_global_flag_set,
+     (char *)bpy_app_global_flag_doc,
+     (void *)G_FLAG_USERPREF_NO_SAVE_ON_EXIT},
 
     {(char *)"binary_path_python",
      bpy_app_binary_path_python_get,
