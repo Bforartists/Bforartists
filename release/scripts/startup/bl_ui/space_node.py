@@ -550,7 +550,7 @@ class NODE_PT_active_node_color(Panel):
     def poll(cls, context):
         return context.active_node is not None
 
-    def draw_header(self, _context):
+    def draw_header(self, context):
         node = context.active_node
         self.layout.prop(node, "use_custom_color", text="")
 
