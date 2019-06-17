@@ -829,7 +829,7 @@ vis_sel_11
 vis_sel_10
 vis_sel_01
 vis_sel_00
-#def_icon_blank(847
+outliner_data_gp_layer
 workspace
 xray
 
