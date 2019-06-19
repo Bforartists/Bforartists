@@ -721,7 +721,7 @@ class SEQUENCER_MT_strip(Menu):
 
             if stype != 'SOUND':
                 layout.separator()
-                layout.operator_menu_enum("sequencer.strip_modifier_add", "type", text="Add Modifier")
+                layout.operator_menu_enum("sequencer.strip_modifier_add", "type", text="Add Strip Modifier")
                 layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection", icon='COPYDOWN')
 
             if stype in {
@@ -798,8 +798,8 @@ class SEQUENCER_MT_context_menu(Menu):
             if stype != 'SOUND':
 
                 layout.separator()
-                layout.operator_menu_enum("sequencer.strip_modifier_add", "type", text="Add Modifier")
-                layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection", icon='ICON_COPYDOWN')
+                layout.operator_menu_enum("sequencer.strip_modifier_add", "type", text="Add Strip Modifier")
+                layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection", icon='COPYDOWN')
 
                 if selected_sequences_len(context) >= 2:
                     layout.separator()
