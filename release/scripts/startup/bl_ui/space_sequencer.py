@@ -675,8 +675,8 @@ class SEQUENCER_MT_strip_effect(Menu):
 
         layout.operator_menu_enum("sequencer.change_effect_input", "swap")
         layout.operator_menu_enum("sequencer.change_effect_type", "type")
-        layout.operator("sequencer.reassign_inputs")
-        layout.operator("sequencer.swap_inputs")
+        layout.operator("sequencer.reassign_inputs", icon='RANDOMIZE_TRANSFORM')
+        layout.operator("sequencer.swap_inputs", icon='ALIGN_TRANSFORM')
 
 
 class SEQUENCER_MT_strip_movie(Menu):
@@ -685,9 +685,9 @@ class SEQUENCER_MT_strip_movie(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("sequencer.rendersize")
-        layout.operator("sequencer.images_separate")
-        layout.operator("sequencer.deinterlace_selected_movies")
+        layout.operator("sequencer.rendersize", icon='RENDER_REGION')
+        layout.operator("sequencer.images_separate", icon='SEPARATE')
+        layout.operator("sequencer.deinterlace_selected_movies", icon='SEQ_DEINTERLACE')
 
 class SEQUENCER_MT_strip(Menu):
     bl_label = "Strip"
@@ -709,10 +709,6 @@ class SEQUENCER_MT_strip(Menu):
         layout.separator()
         layout.operator("sequencer.cut", text="Cut (Hard) at Playhead", icon='SEQ_CUT_HARD_AT_FRAME').type = 'HARD'
         layout.operator("sequencer.cut", text="Cut (Soft) at Playhead", icon='SEQ_CUT_SOFT_AT_FRAME').type = 'SOFT'
-
-        layout.separator()
-        layout.operator("sequencer.deinterlace_selected_movies", icon='SEQ_DEINTERLACE')
-        layout.operator("sequencer.rebuild_proxy", icon='FILE_REFRESH')
 
         strip = act_strip(context)
 
@@ -744,13 +740,13 @@ class SEQUENCER_MT_strip(Menu):
                 layout.operator("sequencer.crossfade_sounds", icon='SPEAKER')
             elif stype == 'META':
                 layout.separator()
-                layout.operator("sequencer.meta_make")
+                layout.operator("sequencer.meta_make", icon='ADD_METASTRIP')
                 layout.operator("sequencer.meta_separate", icon='REMOVE_METASTRIP')
-                layout.operator("sequencer.meta_toggle", text="Toggle Meta")
+                layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon='TOGGLE_META')
             if stype != 'META':
                 layout.separator()
-                layout.operator("sequencer.meta_make")
-                layout.operator("sequencer.meta_toggle", text="Toggle Meta")
+                layout.operator("sequencer.meta_make", icon='ADD_METASTRIP')
+                layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon='TOGGLE_META')
 
         layout.separator()
         layout.menu("SEQUENCER_MT_strip_lock_mute")
@@ -759,7 +755,7 @@ class SEQUENCER_MT_strip(Menu):
         layout.menu("SEQUENCER_MT_strip_input")
 
         layout.separator()
-        layout.operator("sequencer.rebuild_proxy")
+        layout.operator("sequencer.rebuild_proxy", icon='LASTOPERATOR')
 
 
 class SEQUENCER_MT_context_menu(Menu):
@@ -808,7 +804,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
             elif selected_sequences_len(context) >= 2:
                 layout.separator()
-                layout.operator("sequencer.crossfade_sounds", text="Crossfade Sounds")
+                layout.operator("sequencer.crossfade_sounds", text="Crossfade Sounds", icon='SPEAKER')
 
             if stype in {
                     'CROSS', 'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',
@@ -823,16 +819,16 @@ class SEQUENCER_MT_context_menu(Menu):
                 layout.menu("SEQUENCER_MT_strip_movie")
             elif stype in {'IMAGE'}:
                 layout.separator()
-                layout.operator("sequencer.rendersize")
-                layout.operator("sequencer.images_separate")
+                layout.operator("sequencer.rendersize", icon='RENDER_REGION')
+                layout.operator("sequencer.images_separate", icon='SEPARATE')
             elif stype == 'META':
                 layout.separator()
-                layout.operator("sequencer.meta_make")
+                layout.operator("sequencer.meta_make", icon='ADD_METASTRIP')
                 layout.operator("sequencer.meta_separate")
                 layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon='TOGGLE_META')
             if stype != 'META':
                 layout.separator()
-                layout.operator("sequencer.meta_make")
+                layout.operator("sequencer.meta_make", icon='ADD_METASTRIP')
                 layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon='TOGGLE_META')
 
         layout.separator()
@@ -1662,7 +1658,7 @@ class SEQUENCER_PT_proxy_settings(SequencerButtonsPanel, Panel):
 
         col = layout.column()
         col.operator("sequencer.enable_proxies")
-        col.operator("sequencer.rebuild_proxy")
+        col.operator("sequencer.rebuild_proxy", icon='LASTOPERATOR')
 
 
 class SEQUENCER_PT_strip_proxy(SequencerButtonsPanel, Panel):
