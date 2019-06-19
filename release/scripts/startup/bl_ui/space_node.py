@@ -124,9 +124,6 @@ class NODE_HT_header(Header):
 
             NODE_MT_editor_menus.draw_collapsible(context, layout)
 
-            if snode_id:
-                layout.prop(snode_id, "use_nodes")
-
         else:
             # Custom node tree is edited as independent ID block
             NODE_MT_editor_menus.draw_collapsible(context, layout)
