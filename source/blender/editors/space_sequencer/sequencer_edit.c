@@ -2442,7 +2442,7 @@ void SEQUENCER_OT_delete(wmOperatorType *ot)
   ot->description = "Erase Strips\nErase selected strips from the sequencer";
 
   /* api callbacks */
-  ot->invoke = sequencer_delete_invoke;
+  /*ot->invoke = sequencer_delete_invoke;*/ /*bfa - turned this dialog off*/
   ot->exec = sequencer_delete_exec;
   ot->poll = sequencer_edit_poll;
 
