@@ -1180,10 +1180,10 @@ DEF_ICON_COLOR(NODE_LUMINANCE)
 DEF_ICON_BLANK(1180)
 DEF_ICON_COLOR(NODE_MAKEGROUP)
 
-DEF_ICON_COLOR(MODIFIER_DATA)
-DEF_ICON_COLOR(TRACKER)
-DEF_ICON_COLOR(TRACKER_DATA)
-DEF_ICON_COLOR(UV_DATA)
+DEF_ICON_COLOR(MODIFIER_DATA)/* bfa - new iconsheet*/
+DEF_ICON_COLOR(TRACKER)/* bfa - new iconsheet*/
+DEF_ICON_COLOR(TRACKER_DATA)/* bfa - new iconsheet*/
+DEF_ICON_COLOR(UV_DATA)/* bfa - new iconsheet*/
 DEF_ICON_COLOR(CUBEPROJECT)
 DEF_ICON_COLOR(CYLINDERPROJECT)
 DEF_ICON_COLOR(FOLLOWQUADS)
@@ -1237,15 +1237,15 @@ DEF_ICON_BLANK(1236)
 DEF_ICON_COLOR(NODE_MOVIEDISTORT)
 DEF_ICON_BLANK(1238)
 
-DEF_ICON_COLOR(MOUSE_LMB)      /*bfa- don't change the order of the mouse icons*/
-DEF_ICON_COLOR(MOUSE_MMB)      /*bfa- don't change the order of the mouse icons*/
-DEF_ICON_COLOR(MOUSE_RMB)      /*bfa- don't change the order of the mouse icons*/
-DEF_ICON_COLOR(MOUSE_MOVE)     /*bfa- don't change the order of the mouse icons*/
-DEF_ICON_COLOR(MOUSE_LMB_DRAG) /*bfa- don't change the order of the mouse icons*/
-DEF_ICON_COLOR(MOUSE_MMB_DRAG) /*bfa- don't change the order of the mouse icons*/
-DEF_ICON_COLOR(MOUSE_RMB_DRAG) /*bfa- don't change the order of the mouse icons*/
-DEF_ICON_COLOR(AUTOMERGE_OFF)  /*bfa- don't change the order of the automerge icons*/
-DEF_ICON_COLOR(AUTOMERGE_ON)   /*bfa- don't change the order of the automerge icons*/
+DEF_ICON_COLOR(MOUSE_LMB)      /*bfa- don't change the order of the mouse icons*//* bfa - new iconsheet*/
+DEF_ICON_COLOR(MOUSE_MMB)      /*bfa- don't change the order of the mouse icons*//* bfa - new iconsheet*/
+DEF_ICON_COLOR(MOUSE_RMB)      /*bfa- don't change the order of the mouse icons*//* bfa - new iconsheet*/
+DEF_ICON_COLOR(MOUSE_MOVE)     /*bfa- don't change the order of the mouse icons*//* bfa - new iconsheet*/
+DEF_ICON_COLOR(MOUSE_LMB_DRAG) /*bfa- don't change the order of the mouse icons*//* bfa - new iconsheet*/
+DEF_ICON_COLOR(MOUSE_MMB_DRAG) /*bfa- don't change the order of the mouse icons*//* bfa - new iconsheet*/
+DEF_ICON_COLOR(MOUSE_RMB_DRAG) /*bfa- don't change the order of the mouse icons*//* bfa - new iconsheet*/
+DEF_ICON_COLOR(AUTOMERGE_OFF)  /*bfa- don't change the order of the automerge icons*//* bfa - new iconsheet*/
+DEF_ICON_COLOR(AUTOMERGE_ON)   /*bfa- don't change the order of the automerge icons*//* bfa - new iconsheet*/
 DEF_ICON_BLANK(1249)
 
 /* ------------------------- Row 22 --------------------------*/
