@@ -402,6 +402,7 @@ class RENDER_PT_eevee_sampling(RenderButtonsPanel, Panel):
         col.prop(props, "taa_samples", text="Viewport")
 
         col = layout.column()
+        col.use_property_split = False
         col.prop(props, "use_taa_reprojection")
 
 
