@@ -1270,10 +1270,10 @@ DEF_ICON_COLOR(SHARPCURVE)/* bfa - new iconsheet*/
 DEF_ICON_COLOR(LINCURVE)/* bfa - new iconsheet*/
 DEF_ICON_COLOR(NOCURVE)/* bfa - new iconsheet*/
 DEF_ICON_COLOR(RNDCURVE)/* bfa - new iconsheet*/
-DEF_ICON_COLOR(PROP_OFF) /*bfa - new iconset*/
+DEF_ICON_COLOR(PROP_OFF) /*bfa- don't change the order of the prop icons*//*bfa - new iconset*/
 
-DEF_ICON_COLOR(PROP_ON) /*bfa - new iconset*/
-DEF_ICON_COLOR(PROP_CON) /*bfa - new iconset*/
+DEF_ICON_COLOR(PROP_ON)/*bfa- don't change the order of the prop icons*//*bfa - new iconset*/
+DEF_ICON_COLOR(PROP_CON)/*bfa- don't change the order of the prop icons*//*bfa - new iconset*/
 DEF_ICON_COLOR(CLEAR_TRACK)
 DEF_ICON_COLOR(PARTICLE_POINT)
 DEF_ICON_COLOR(PARTICLE_TIP)
