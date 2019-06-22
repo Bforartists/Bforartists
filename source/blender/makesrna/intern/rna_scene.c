@@ -2829,7 +2829,7 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Proportional Editing Objects",
                            "Proportional Editing Objects\nProportional editing object mode");
-  RNA_def_property_ui_icon(prop, ICON_PROP_ON, 0); /* bfa - take care of icon order! ours is different! */
+  RNA_def_property_ui_icon(prop, ICON_PROP_OFF, 1);
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, NULL); /* header redraw */
 
   prop = RNA_def_property(srna, "use_proportional_projected", PROP_BOOLEAN, PROP_NONE);
