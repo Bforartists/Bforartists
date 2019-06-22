@@ -112,13 +112,10 @@ class VIEW3D_HT_header(Header):
 
             row = layout.row(align=True)
             row.prop(tool_settings, "use_snap", text="")
-
-            sub = row.row(align=True)
-            sub.popover(
-                panel="VIEW3D_PT_snapping",
-                icon=icon,
-                text=text,
-            )
+            
+            if tool_settings.use_snap is True:
+                sub = row.row(align=True)
+                sub.popover(panel="VIEW3D_PT_snapping", icon=icon, text=text)
 
         # Proportional editing
         if object_mode in {'EDIT', 'PARTICLE_EDIT', 'SCULPT_GPENCIL', 'EDIT_GPENCIL', 'OBJECT'}:
@@ -140,15 +137,9 @@ class VIEW3D_HT_header(Header):
                     kw["icon"] = 'PROP_OFF'
 
             row.prop(tool_settings, attr, icon_only=True, **kw)
-            sub = row.row(align=True)
-            sub.active = getattr(tool_settings, attr)
-            sub.prop_with_popover(
-                tool_settings,
-                "proportional_edit_falloff",
-                text="",
-                icon_only=True,
-                panel="VIEW3D_PT_proportional_edit",
-            )
+            if tool_settings.use_proportional_edit_objects or tool_settings.use_proportional_edit is True:
+                sub = row.row(align=True)
+                sub.prop_with_popover(tool_settings,"proportional_edit_falloff",text="", icon_only=True, panel="VIEW3D_PT_proportional_edit")
 
 
     def draw(self, context):
