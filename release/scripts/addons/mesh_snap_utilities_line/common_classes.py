@@ -92,7 +92,7 @@ class SnapNavigation():
             if snap_location:
                 bpy.ops.view3d.rotate_custom_pivot('INVOKE_DEFAULT', pivot=snap_location)
             else:
-                bpy.ops.view3d.rotate('INVOKE_DEFAULT', use_mouse_init=True)
+                bpy.ops.view3d.rotate('INVOKE_DEFAULT', use_cursor_init=True)
             return True
 
         if evkey in self._move:

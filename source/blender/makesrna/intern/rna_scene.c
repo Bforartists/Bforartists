@@ -2911,7 +2911,7 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Only Origins",
-      "Only Origins\nManipulate center points (object, pose and weight paint mode only)");
+      "Only Origins\nManipulate origins (object, pose and weight paint mode only)");
   RNA_def_property_ui_icon(prop, ICON_CENTER_ONLY, 0);
   RNA_def_property_update(prop, NC_SCENE, NULL);
 

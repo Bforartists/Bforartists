@@ -1826,7 +1826,7 @@ class VIEW3D_MT_master_material(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         if use_mat_preview() is True:
-            layout.operator("view3d.show_mat_preview", icon="VISIBLE_IPO_ON")
+            layout.operator("view3d.show_mat_preview", icon="HIDE_OFF")
             use_separator(self, context)
 
         if use_mat_menu_type() == 'POPUP':

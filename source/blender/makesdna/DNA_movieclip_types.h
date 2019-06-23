@@ -57,6 +57,17 @@ typedef struct MovieClipProxy {
   short build_tc_flag;
 } MovieClipProxy;
 
+typedef struct MovieClip_RuntimeGPUTexture {
+  void *next, *prev;
+  MovieClipUser user;
+  /** Not written in file 2 = TEXTARGET_COUNT. */
+  struct GPUTexture *gputexture[2];
+} MovieClip_RuntimeGPUTexture;
+
+typedef struct MovieClip_Runtime {
+  struct ListBase gputextures;
+} MovieClip_Runtime;
+
 typedef struct MovieClip {
   ID id;
   /** Animation data (must be immediately after id for utilities to use it). */
@@ -100,7 +111,7 @@ typedef struct MovieClip {
   /**
    * Scene frame number footage starts playing at affects all data
    * which is associated with a clip such as motion tracking,
-   * camera reconstruciton and so.
+   * camera Reconstruction and so.
    */
   int start_frame;
   /**
@@ -111,6 +122,8 @@ typedef struct MovieClip {
 
   /* color management */
   ColorManagedColorspaceSettings colorspace_settings;
+
+  struct MovieClip_Runtime runtime;
 } MovieClip;
 
 typedef struct MovieClipScopes {

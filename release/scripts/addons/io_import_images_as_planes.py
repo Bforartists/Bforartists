@@ -853,7 +853,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
     def invoke(self, context, event):
         engine = context.scene.render.engine
         if engine not in {'CYCLES', 'BLENDER_EEVEE'}:
-            if engine not in {'BLENDER_WORKBENCH'}:
+            if engine != 'BLENDER_WORKBENCH':
                 self.report({'ERROR'}, "Cannot generate materials for unknown %s render engine" % engine)
                 return {'CANCELLED'}
             else:
