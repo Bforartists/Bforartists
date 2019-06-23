@@ -22,7 +22,7 @@ bl_info = {
     "author": "Eclectiel, Spivak Vladimir(cwolf3d)",
     "version": (1, 6, 0),
     "blender": (2, 80, 0),
-    "location": "View3D > EditMode > ToolShelf",
+    "location": "View3D EditMode > Sidebar > Edit Tab",
     "description": "Modeling and retopology tool",
     "wiki_url": "https://wiki.blender.org/index.php/Dev:Ref/Release_Notes/2.64/Bsurfaces_1.5",
     "category": "Mesh",

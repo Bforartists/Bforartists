@@ -27,9 +27,10 @@
 
 namespace DEG {
 
-void DepsgraphNodeBuilder::build_scene_render(Scene *scene)
+void DepsgraphNodeBuilder::build_scene_render(Scene *scene, ViewLayer *view_layer)
 {
   scene_ = scene;
+  view_layer_ = view_layer;
   const bool build_compositor = (scene->r.scemode & R_DOCOMP);
   const bool build_sequencer = (scene->r.scemode & R_DOSEQ);
   IDNode *id_node = add_id_node(&scene->id);
@@ -43,6 +44,10 @@ void DepsgraphNodeBuilder::build_scene_render(Scene *scene)
   }
   if (build_sequencer) {
     build_scene_sequencer(scene);
+    build_scene_speakers(scene, view_layer);
+  }
+  if (scene->camera != NULL) {
+    build_object(-1, scene->camera, DEG_ID_LINKED_DIRECTLY, true);
   }
 }
 
@@ -55,7 +60,7 @@ void DepsgraphNodeBuilder::build_scene_parameters(Scene *scene)
   add_operation_node(&scene->id, NodeType::PARAMETERS, OperationCode::PARAMETERS_EVAL);
   /* NOTE: This is a bit overkill and can potentially pull a bit too much into the graph, but:
    *
-   * - We definitely need an ID node for the scene's compositor, othetrwise re-mapping will no
+   * - We definitely need an ID node for the scene's compositor, otherwise re-mapping will no
    *   happen correct and we will risk remapping pointers in the main database.
    * - Alternatively, we should discard compositor tree, but this might cause other headache like
    *   drivers which are coming from the tree.

@@ -100,14 +100,15 @@ def scene_load(context):
 
 def fetch_server_data():
     ''' download categories and addon version'''
-    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    url = paths.BLENDERKIT_ADDON_URL
-    api_key = user_preferences.api_key
-    # version_checker.check_version_thread(url, api_key, blenderkit)
-    if user_preferences.enable_oauth:
-        bkit_oauth.refresh_token_thread()
-    get_profile()
-    categories.fetch_categories_thread(api_key)
+    if not bpy.app.background:
+        user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+        url = paths.BLENDERKIT_ADDON_URL
+        api_key = user_preferences.api_key
+        # version_checker.check_version_thread(url, api_key, blenderkit)
+        if user_preferences.enable_oauth:
+            bkit_oauth.refresh_token_thread()
+        get_profile()
+        categories.fetch_categories_thread(api_key)
 
 
 @bpy.app.handlers.persistent
@@ -158,9 +159,13 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff.
             if ok:
 
                 for r in rdata['results']:
-
+                    # TODO remove this fix when filesSize is fixed.
+                    # this is a temporary fix for too big numbers from the server.
+                    try:
+                        r['filesSize'] = int(r['filesSize'] / 1024)
+                    except:
+                        utils.p('asset with no files-size')
                     if r['assetType'] == asset_type:
-                        # utils.pprint(r)
                         if len(r['files']) > 0:
                             furl = None
                             tname = None
@@ -181,7 +186,6 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff.
                             if durl and tname:
 
                                 tooltip = generate_tooltip(r)
-                                # utils.pprint(print(r))
                                 asset_data = {'thumbnail': tname,
                                               'thumbnail_small': small_tname,
                                               # 'thumbnails':allthumbs,
@@ -478,7 +482,7 @@ def get_random_tip(mdata):
              "Click on brushes to link them into scene.",
              "All materials are free.",
              "All brushes are free.",
-             "Locked models are available if you subscribe to standard plan.",
+             "Locked models are available if you subscribe to Full plan.",
              "Login to upload your own models, materials or brushes.",
              "Use 'A' key to search assets by same author.",
              "Use 'W' key to open Authors webpage.", ]

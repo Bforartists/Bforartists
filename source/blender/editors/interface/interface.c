@@ -1378,7 +1378,7 @@ static bool ui_but_event_property_operator_string(const bContext *C,
  *
  * but it's actually quite logical. It's designed to be 'upwards compatible'
  * for muscle memory so that the menu item locations are fixed and don't move
- * as new items are added to the menu later on. It also optimises efficiency -
+ * as new items are added to the menu later on. It also optimizes efficiency -
  * a radial menu is best kept symmetrical, with as large an angle between
  * items as possible, so that the gestural mouse movements can be fast and inexact.
  *
@@ -3280,7 +3280,7 @@ static void ui_but_build_drawstr_float(uiBut *but, double value)
   }
   else if (subtype == PROP_PERCENTAGE) {
     int prec = ui_but_calc_float_precision(but, value);
-    STR_CONCATF(but->drawstr, slen, "%.*f %%", prec, value);
+    STR_CONCATF(but->drawstr, slen, "%.*f%%", prec, value);
   }
   else if (subtype == PROP_PIXEL) {
     int prec = ui_but_calc_float_precision(but, value);
@@ -3293,7 +3293,7 @@ static void ui_but_build_drawstr_float(uiBut *but, double value)
       STR_CONCATF(but->drawstr, slen, "%.*f", precision, value);
     }
     else {
-      STR_CONCATF(but->drawstr, slen, "%.*f %%", MAX2(0, precision - 2), value * 100);
+      STR_CONCATF(but->drawstr, slen, "%.*f%%", MAX2(0, precision - 2), value * 100);
     }
   }
   else if (ui_but_is_unit(but)) {
@@ -6324,7 +6324,7 @@ void UI_but_string_info_get(bContext *C, uiBut *but, ...)
     char *tmp = NULL;
 
     if (type == BUT_GET_LABEL) {
-      if (but->str) {
+      if (but->str && but->str[0]) {
         const char *str_sep;
         size_t str_len;
 
@@ -6401,18 +6401,35 @@ void UI_but_string_info_get(bContext *C, uiBut *but, ...)
           }
         }
       }
-      else if (ELEM(but->type, UI_BTYPE_MENU, UI_BTYPE_PULLDOWN)) {
-        MenuType *mt = UI_but_menutype_get(but);
-        if (mt) {
-          /* not all menus are from python */
-          if (mt->ext.srna) {
+      else if (ELEM(but->type, UI_BTYPE_MENU, UI_BTYPE_PULLDOWN, UI_BTYPE_POPOVER)) {
+        {
+          MenuType *mt = UI_but_menutype_get(but);
+          if (mt) {
             if (type == BUT_GET_RNA_LABEL) {
-              tmp = BLI_strdup(RNA_struct_ui_name(mt->ext.srna));
+              tmp = BLI_strdup(mt->label);
             }
             else {
-              const char *t = RNA_struct_ui_description(mt->ext.srna);
-              if (t && t[0]) {
-                tmp = BLI_strdup(t);
+              /* Not all menus are from Python. */
+              if (mt->ext.srna) {
+                const char *t = RNA_struct_ui_description(mt->ext.srna);
+                if (t && t[0]) {
+                  tmp = BLI_strdup(t);
+                }
+              }
+            }
+          }
+        }
+
+        if (tmp == NULL) {
+          PanelType *pt = UI_but_paneltype_get(but);
+          if (pt) {
+            if (type == BUT_GET_RNA_LABEL) {
+              tmp = BLI_strdup(pt->label);
+            }
+            else {
+              /* Not all panels are from Python. */
+              if (pt->ext.srna) {
+                /* Panels don't yet have descriptions, this may be added. */
               }
             }
           }

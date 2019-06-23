@@ -80,7 +80,7 @@ class PIE_OT_InsertAutoKeyframe(Operator):
         ts.use_keyframe_insert_auto ^= 1
 
         for area in context.screen.areas:
-            if area.type in ('TIMELINE'):
+            if area.type == 'TIMELINE':
                 area.tag_redraw()
 
         return {'FINISHED'}

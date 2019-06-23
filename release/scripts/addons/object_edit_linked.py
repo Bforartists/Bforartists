@@ -22,7 +22,7 @@ bl_info = {
     "author": "Jason van Gumster (Fweeb), Bassam Kurdali, Pablo Vazquez, Rainer Trummer",
     "version": (0, 9, 1),
     "blender": (2, 80, 0),
-    "location": "File > External Data > Edit Linked Library",
+    "location": "File > External Data / View3D > Sidebar > Item Tab",
     "description": "Allows editing of objects linked from a .blend library.",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Object/Edit_Linked_Library",
