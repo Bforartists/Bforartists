@@ -21,7 +21,7 @@ bl_info = {
     "author": "Bart Crouch",
     "version": (4, 6, 7),
     "blender": (2, 80, 0),
-    "location": "View3D > Toolbar and View3D > Specials (W-key)",
+    "location": "View3D > Sidebar > Edit Tab / Edit Mode Context Menu",
     "warning": "",
     "description": "Mesh modelling toolkit. Several tools to aid modelling",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"

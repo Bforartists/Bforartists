@@ -24,7 +24,7 @@ bl_info = {
     "author": "Pratik Solanki",
     "version": (1, 0, 6),
     "blender": (2, 80, 0),
-    "location": "View3D > Tools",
+    "location": "View3D > Sidebar > Create Tab",
     "description": "Creates Dynamic Sky for Cycles",
     "warning": "",
     "wiki_url": "http://www.dragoneex.com/downloads/dynamic-skyadd-on",

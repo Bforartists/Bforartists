@@ -131,7 +131,7 @@ class PIE_MT_ViewNumpad(Menu):
                          icon='LOCKED').data_path = "space_data.lock_camera"
 
         row = box.row(align=True)
-        row.operator("view3d.view_camera", text="View Cam", icon='VISIBLE_IPO_ON')
+        row.operator("view3d.view_camera", text="View Cam", icon='HIDE_OFF')
         row.operator("view3d.camera_to_view", text="Cam to view", icon='NONE')
 
         icon_locked = 'LOCKED' if ob and ob.lock_rotation[0] is False else \

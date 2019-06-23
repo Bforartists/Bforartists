@@ -194,7 +194,7 @@ void OBJECT_OT_hide_view_clear(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Show Hidden Objects";
-  ot->description = "Show Hidden Objects\nReveals the hidden object(s)";
+  ot->description = "Show Hidden Objects\nReveal temporarily hidden objects";
   ot->idname = "OBJECT_OT_hide_view_clear";
 
   /* api callbacks */
@@ -868,6 +868,8 @@ static int forcefield_toggle_exec(bContext *C, wmOperator *UNUSED(op))
   ED_object_check_force_modifiers(CTX_data_main(C), CTX_data_scene(C), ob);
   WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, ob);
   WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER, ob);
+
+  DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM);
 
   return OPERATOR_FINISHED;
 }

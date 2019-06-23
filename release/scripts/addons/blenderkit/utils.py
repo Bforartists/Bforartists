@@ -78,6 +78,8 @@ def get_selected_models():
 
 def get_search_props():
     scene = bpy.context.scene
+    if scene is None:
+        return;
     uiprops = scene.blenderkitUI
     props = None
     if uiprops.asset_type == 'MODEL':

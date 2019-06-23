@@ -167,7 +167,7 @@ def generate_rig(context, metarig):
     collection.objects.link(temp_rig_2)
 
     # Select the temp rigs for merging
-    for objt in scene.objects:
+    for objt in view_layer.objects:
         objt.select_set(False)  # deselect all objects
     temp_rig_1.select_set(True)
     temp_rig_2.select_set(True)
@@ -180,7 +180,7 @@ def generate_rig(context, metarig):
     bpy.ops.object.delete()
 
     # Select the generated rig
-    for objt in scene.objects:
+    for objt in view_layer.objects:
         objt.select_set(False)  # deselect all objects
     obj.select_set(True)
     view_layer.objects.active = obj

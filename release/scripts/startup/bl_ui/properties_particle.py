@@ -825,7 +825,7 @@ class PARTICLE_PT_physics_boids_movement(ParticleButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         part = particle_get_settings(context)
-        return part.physics_type in {'BOIDS'}
+        return part.physics_type == 'BOIDS'
 
     def draw(self, context):
         layout = self.layout
@@ -878,7 +878,7 @@ class PARTICLE_PT_physics_boids_battle(ParticleButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         part = particle_get_settings(context)
-        return part.physics_type in {'BOIDS'}
+        return part.physics_type == 'BOIDS'
 
     def draw(self, context):
         layout = self.layout
@@ -905,7 +905,7 @@ class PARTICLE_PT_physics_boids_misc(ParticleButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         part = particle_get_settings(context)
-        return part.physics_type in {'BOIDS'}
+        return part.physics_type == 'BOIDS'
 
     def draw(self, context):
         layout = self.layout
@@ -1239,8 +1239,7 @@ class PARTICLE_PT_render(ParticleButtonsPanel, Panel):
                 part.type == 'EMITTER' or
                 (part.render_type in {'OBJECT', 'COLLECTION'} and part.type == 'HAIR')
         ):
-            if part.render_type not in {'NONE'}:
-
+            if part.render_type != 'NONE':
                 col = layout.column(align=True)
                 col.prop(part, "particle_size", text="Scale")
                 col.prop(part, "size_random", slider=True, text="Scale Randomness")

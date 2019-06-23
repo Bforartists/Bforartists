@@ -228,7 +228,7 @@ void BKE_image_verify_viewer_views(const struct RenderData *rd,
                                    struct ImageUser *iuser);
 
 /* called on frame change or before render */
-void BKE_image_user_frame_calc(struct ImageUser *iuser, int cfra);
+void BKE_image_user_frame_calc(struct Image *ima, struct ImageUser *iuser, int cfra);
 int BKE_image_user_frame_get(const struct ImageUser *iuser, int cfra, bool *r_is_in_range);
 void BKE_image_user_file_path(struct ImageUser *iuser, struct Image *ima, char *path);
 void BKE_image_editors_update_frame(const struct Main *bmain, int cfra);
@@ -320,6 +320,8 @@ float *BKE_image_get_float_pixels_for_frame(struct Image *image, int frame);
 /* Image modifications */
 bool BKE_image_is_dirty(struct Image *image);
 void BKE_image_mark_dirty(struct Image *image, struct ImBuf *ibuf);
+bool BKE_image_buffer_format_writable(struct ImBuf *ibuf);
+bool BKE_image_is_dirty_writable(struct Image *image, bool *is_format_writable);
 
 /* Guess offset for the first frame in the sequence */
 int BKE_image_sequence_guess_offset(struct Image *image);

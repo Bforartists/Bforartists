@@ -67,6 +67,8 @@
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
 
+#include "GPU_texture.h"
+
 #ifdef WITH_OPENEXR
 #  include "intern/openexr/openexr_multi.h"
 #endif
@@ -148,9 +150,8 @@ static void get_sequence_fname(const MovieClip *clip, const int framenr, char *n
   BLI_strncpy(name, clip->name, sizeof(clip->name));
   BLI_stringdec(name, head, tail, &numlen);
 
-  /* movieclips always points to first image from sequence,
-   * autoguess offset for now. could be something smarter in the future
-   */
+  /* Movie-clips always points to first image from sequence, auto-guess offset for now.
+   * Could be something smarter in the future. */
   offset = sequence_guess_offset(clip->name, strlen(head), numlen);
 
   if (numlen) {
@@ -1354,6 +1355,17 @@ static void free_buffers(MovieClip *clip)
     IMB_free_anim(clip->anim);
     clip->anim = NULL;
   }
+
+  MovieClip_RuntimeGPUTexture *tex;
+  for (tex = clip->runtime.gputextures.first; tex; tex = tex->next) {
+    for (int i = 0; i < TEXTARGET_COUNT; i++) {
+      if (tex->gputexture[i] != NULL) {
+        GPU_texture_free(tex->gputexture[i]);
+        tex->gputexture[i] = NULL;
+      }
+    }
+  }
+  BLI_freelistN(&clip->runtime.gputextures);
 }
 
 void BKE_movieclip_clear_cache(MovieClip *clip)

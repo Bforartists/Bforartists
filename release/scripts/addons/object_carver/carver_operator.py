@@ -210,7 +210,7 @@ class CARVER_OT_operator(bpy.types.Operator):
 		self.check_region(context,event)
 
 		for area in win.screen.areas:
-			if area.type in ('VIEW_3D'):
+			if area.type == 'VIEW_3D':
 				for region in area.regions:
 					if not region_types or region.type in region_types:
 						region.tag_redraw()

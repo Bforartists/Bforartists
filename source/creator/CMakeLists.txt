@@ -340,7 +340,7 @@ elseif(APPLE)
   if(WITH_PYTHON_MODULE)
     set(TARGETDIR_VER ${BLENDER_VERSION})
   else()
-    set(TARGETDIR_VER bforartists.app/Contents/Resources/${BLENDER_VERSION})
+    set(TARGETDIR_VER Bforartists.app/Contents/Resources/${BLENDER_VERSION})
   endif()
   # Skip relinking on cpack / install
   set_target_properties(bforartists PROPERTIES BUILD_WITH_INSTALL_RPATH true)
@@ -868,6 +868,8 @@ elseif(WIN32)
     )
   endif()
 elseif(APPLE)
+  # Uppercase name for app bundle
+  set_target_properties(blender PROPERTIES OUTPUT_NAME Bforartists)
 
   # handy install macro to exclude files, we use \$ escape for the "to"
   # argument when calling so ${BUILD_TYPE} does not get expanded
@@ -895,7 +897,7 @@ elseif(APPLE)
     )
   endmacro()
 
-  set(OSX_APP_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/blender.app)
+  set(OSX_APP_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/Bforartists.app)
 
   # setup Info.plist
   execute_process(COMMAND date "+%Y-%m-%d"
@@ -914,7 +916,7 @@ elseif(APPLE)
 
   # Give the bundle actual creation/modification date
   execute_process(COMMAND SetFile -d ${SETFILE_DATE} -m ${SETFILE_DATE}
-                  ${EXECUTABLE_OUTPUT_PATH}/bforartists.app)
+                  ${EXECUTABLE_OUTPUT_PATH}/Bforartists.app)
 
   install(
     TARGETS bforartists
@@ -922,29 +924,29 @@ elseif(APPLE)
   )
 
   # install release and app files
-  set(BLENDER_TEXT_FILES_DESTINATION ".")
+  set(BLENDER_TEXT_FILES_DESTINATION Bforartists.app/Contents/Resources/text)
 
   install(
     FILES ${OSX_APP_SOURCEDIR}/Contents/PkgInfo
-    DESTINATION bforartists.app/Contents
+    DESTINATION Bforartists.app/Contents
   )
 
   install_dir(
     ${OSX_APP_SOURCEDIR}/Contents/Resources
-    bforartists.app/Contents/
+    Bforartists.app/Contents/
   )
 
   if(WITH_OPENMP AND OPENMP_CUSTOM)
     install(
       FILES ${LIBDIR}/openmp/lib/libomp.dylib
-      DESTINATION blender.app/Contents/Resources/lib
+      DESTINATION Bforartists.app/Contents/Resources/lib
     )
   endif()
 
   if(WITH_LLVM AND NOT LLVM_STATIC)
     install(
       FILES ${LIBDIR}/llvm/lib/libLLVM-3.4.dylib
-      DESTINATION bforartists.app/Contents/MacOS
+      DESTINATION Bforartists.app/Contents/MacOS
     )
   endif()
 

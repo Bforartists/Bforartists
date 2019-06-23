@@ -22,7 +22,7 @@ bl_info = {
     "author": "nfloyd, Francesco Siddi",
     "version": (0, 3, 7),
     "blender": (2, 80, 0),
-    "location": "View3D > Properties > Stored Views",
+    "location": "View3D > Sidebar > View > Stored Views",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.5/"
                 "Py/Scripts/3D_interaction/stored_views",
