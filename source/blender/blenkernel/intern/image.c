@@ -316,6 +316,8 @@ static void image_init(Image *ima, short source, short type)
 
   BKE_color_managed_colorspace_settings_init(&ima->colorspace_settings);
   ima->stereo3d_format = MEM_callocN(sizeof(Stereo3dFormat), "Image Stereo Format");
+
+  ima->gpuframenr = INT_MAX;
 }
 
 void BKE_image_init(struct Image *image)
@@ -3953,7 +3955,7 @@ static ImBuf *load_image_single(Image *ima,
     flag |= imbuf_alpha_flags_for_image(ima);
 
     /* get the correct filepath */
-    BKE_image_user_frame_calc(iuser, cfra);
+    BKE_image_user_frame_calc(ima, iuser, cfra);
 
     if (iuser) {
       iuser_t = *iuser;
@@ -4133,7 +4135,6 @@ static ImBuf *image_get_render_result(Image *ima, ImageUser *iuser, void **r_loc
   ImBuf *ibuf;
   int from_render = (ima->render_slot == ima->last_render_slot);
   int actview;
-  bool byte_buffer_in_display_space = false;
 
   if (!(iuser && iuser->scene)) {
     return NULL;
@@ -4219,16 +4220,7 @@ static ImBuf *image_get_render_result(Image *ima, ImageUser *iuser, void **r_loc
       RenderPass *rpass = image_render_pass_get(rl, pass, actview, NULL);
       if (rpass) {
         rectf = rpass->rect;
-        if (pass == 0) {
-          if (rectf == NULL) {
-            /* Happens when Save Buffers is enabled.
-             * Use display buffer stored in the render layer.
-             */
-            rect = (unsigned int *)rl->display_buffer;
-            byte_buffer_in_display_space = true;
-          }
-        }
-        else {
+        if (pass != 0) {
           channels = rpass->channels;
           dither = 0.0f; /* don't dither passes */
         }
@@ -4259,16 +4251,8 @@ static ImBuf *image_get_render_result(Image *ima, ImageUser *iuser, void **r_loc
    * For other cases we need to be sure it stays to default byte buffer space.
    */
   if (ibuf->rect != rect) {
-    if (byte_buffer_in_display_space) {
-      const char *colorspace = IMB_colormanagement_get_display_colorspace_name(
-          &iuser->scene->view_settings, &iuser->scene->display_settings);
-      IMB_colormanagement_assign_rect_colorspace(ibuf, colorspace);
-    }
-    else {
-      const char *colorspace = IMB_colormanagement_role_colorspace_name_get(
-          COLOR_ROLE_DEFAULT_BYTE);
-      IMB_colormanagement_assign_rect_colorspace(ibuf, colorspace);
-    }
+    const char *colorspace = IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_DEFAULT_BYTE);
+    IMB_colormanagement_assign_rect_colorspace(ibuf, colorspace);
   }
 
   /* invalidate color managed buffers if render result changed */
@@ -4813,7 +4797,7 @@ int BKE_image_user_frame_get(const ImageUser *iuser, int cfra, bool *r_is_in_ran
   }
 }
 
-void BKE_image_user_frame_calc(ImageUser *iuser, int cfra)
+void BKE_image_user_frame_calc(Image *ima, ImageUser *iuser, int cfra)
 {
   if (iuser) {
     bool is_in_range;
@@ -4827,28 +4811,30 @@ void BKE_image_user_frame_calc(ImageUser *iuser, int cfra)
     }
 
     iuser->framenr = framenr;
+
+    if (ima && BKE_image_is_animated(ima) && ima->gpuframenr != framenr) {
+      /* Note: a single texture and refresh doesn't really work when
+       * multiple image users may use different frames, this is to
+       * be improved with perhaps a GPU texture cache. */
+      ima->gpuflag |= IMA_GPU_REFRESH;
+      ima->gpuframenr = framenr;
+    }
+
     if (iuser->ok == 0) {
       iuser->ok = 1;
     }
+
+    iuser->flag &= ~IMA_NEED_FRAME_RECALC;
   }
 }
 
 /* goes over all ImageUsers, and sets frame numbers if auto-refresh is set */
-static void image_editors_update_frame(struct Image *ima,
-                                       struct ImageUser *iuser,
-                                       void *customdata)
+static void image_editors_update_frame(Image *ima, ImageUser *iuser, void *customdata)
 {
   int cfra = *(int *)customdata;
 
   if ((iuser->flag & IMA_ANIM_ALWAYS) || (iuser->flag & IMA_NEED_FRAME_RECALC)) {
-    int framenr = iuser->framenr;
-
-    BKE_image_user_frame_calc(iuser, cfra);
-    iuser->flag &= ~IMA_NEED_FRAME_RECALC;
-
-    if (ima && iuser->framenr != framenr) {
-      ima->gpuflag |= IMA_GPU_REFRESH;
-    }
+    BKE_image_user_frame_calc(ima, iuser, cfra);
   }
 }
 
@@ -4860,9 +4846,7 @@ void BKE_image_editors_update_frame(const Main *bmain, int cfra)
   image_walk_id_all_users(&wm->id, false, &cfra, image_editors_update_frame);
 }
 
-static void image_user_id_has_animation(struct Image *ima,
-                                        struct ImageUser *UNUSED(iuser),
-                                        void *customdata)
+static void image_user_id_has_animation(Image *ima, ImageUser *UNUSED(iuser), void *customdata)
 {
   if (ima && BKE_image_is_animated(ima)) {
     *(bool *)customdata = true;
@@ -4879,27 +4863,16 @@ bool BKE_image_user_id_has_animation(ID *id)
   return has_animation;
 }
 
-static void image_user_id_eval_animation(struct Image *ima,
-                                         struct ImageUser *iuser,
-                                         void *customdata)
+static void image_user_id_eval_animation(Image *ima, ImageUser *iuser, void *customdata)
 {
   if (ima && BKE_image_is_animated(ima)) {
     Depsgraph *depsgraph = (Depsgraph *)customdata;
 
     if ((iuser->flag & IMA_ANIM_ALWAYS) || (iuser->flag & IMA_NEED_FRAME_RECALC) ||
         (DEG_get_mode(depsgraph) == DAG_EVAL_RENDER)) {
-      int framenr = iuser->framenr;
       float cfra = DEG_get_ctime(depsgraph);
 
-      BKE_image_user_frame_calc(iuser, cfra);
-      iuser->flag &= ~IMA_NEED_FRAME_RECALC;
-
-      if (iuser->framenr != framenr) {
-        /* Note: a single texture and refresh doesn't really work when
-         * multiple image users may use different frames, this is to
-         * be improved with perhaps a GPU texture cache. */
-        ima->gpuflag |= IMA_GPU_REFRESH;
-      }
+      BKE_image_user_frame_calc(ima, iuser, cfra);
     }
   }
 }
@@ -5102,9 +5075,10 @@ bool BKE_image_is_animated(Image *image)
 }
 
 /* Image modifications */
-bool BKE_image_is_dirty(Image *image)
+bool BKE_image_is_dirty_writable(Image *image, bool *r_is_writable)
 {
   bool is_dirty = false;
+  bool is_writable = false;
 
   BLI_spin_lock(&image_spin);
   if (image->cache != NULL) {
@@ -5113,6 +5087,7 @@ bool BKE_image_is_dirty(Image *image)
     while (!IMB_moviecacheIter_done(iter)) {
       ImBuf *ibuf = IMB_moviecacheIter_getImBuf(iter);
       if (ibuf->userflags & IB_BITMAPDIRTY) {
+        is_writable = BKE_image_buffer_format_writable(ibuf);
         is_dirty = true;
         break;
       }
@@ -5122,12 +5097,29 @@ bool BKE_image_is_dirty(Image *image)
   }
   BLI_spin_unlock(&image_spin);
 
+  if (r_is_writable) {
+    *r_is_writable = is_writable;
+  }
+
   return is_dirty;
+}
+
+bool BKE_image_is_dirty(Image *image)
+{
+  return BKE_image_is_dirty_writable(image, NULL);
 }
 
 void BKE_image_mark_dirty(Image *UNUSED(image), ImBuf *ibuf)
 {
   ibuf->userflags |= IB_BITMAPDIRTY;
+}
+
+bool BKE_image_buffer_format_writable(ImBuf *ibuf)
+{
+  ImageFormatData im_format;
+  ImbFormatOptions options_dummy;
+  BKE_imbuf_to_image_format(&im_format, ibuf);
+  return (BKE_image_imtype_to_ftype(im_format.imtype, &options_dummy) == ibuf->ftype);
 }
 
 void BKE_image_file_format_set(Image *image, int ftype, const ImbFormatOptions *options)

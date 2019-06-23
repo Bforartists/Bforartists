@@ -1078,7 +1078,7 @@ def km_view3d(params):
         items.extend([
             op_menu_pie("VIEW3D_MT_snap_pie", {"type": 'S', "value": 'PRESS', "shift": True}),
             ("wm.context_toggle", {"type": 'ACCENT_GRAVE', "value": 'PRESS', "ctrl": True},
-             {"properties": [("data_path", 'space_data.show_gizmo_context')]}),
+             {"properties": [("data_path", 'space_data.show_gizmo')]}),
             op_menu_pie("VIEW3D_MT_pivot_pie", {"type": 'PERIOD', "value": 'PRESS'}),
             op_menu_pie("VIEW3D_MT_orientations_pie", {"type": 'COMMA', "value": 'PRESS'}),
             op_menu_pie(
@@ -1750,7 +1750,7 @@ def km_file_browser(_params):
     return keymap
 
 
-def km_file_browser_main(_params):
+def km_file_browser_main(params):
     items = []
     keymap = (
         "File Browser Main",
@@ -1799,7 +1799,7 @@ def km_file_browser_main(_params):
          {"properties": [("direction", 'RIGHT'), ("extend", True), ("fill", True)]}),
         ("file.previous", {"type": 'BUTTON4MOUSE', "value": 'CLICK'}, None),
         ("file.next", {"type": 'BUTTON5MOUSE', "value": 'CLICK'}, None),
-        ("file.select_all", {"type": 'A', "value": 'PRESS'}, None),
+        *_template_items_select_actions(params, "file.select_all"),
         ("file.select_box", {"type": 'B', "value": 'PRESS'}, None),
         ("file.select_box", {"type": 'EVT_TWEAK_L', "value": 'ANY'}, None),
         ("file.select_box", {"type": 'EVT_TWEAK_L', "value": 'ANY', "shift": True},

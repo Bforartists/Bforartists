@@ -28,7 +28,7 @@
 bl_info = {
     "name": "Archimesh",
     "author": "Antonio Vazquez (antonioya)",
-    "location": "View3D > Add Mesh / Sidebar",
+    "location": "View3D > Add Mesh / Sidebar > Create Tab",
     "version": (1, 2, 2),
     "blender": (2, 80, 0),
     "description": "Generate rooms, doors, windows, and other architecture objects",

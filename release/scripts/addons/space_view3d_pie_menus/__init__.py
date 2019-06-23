@@ -190,7 +190,7 @@ class PieToolsPreferences(AddonPreferences):
         row.alignment = "LEFT"
         sub_box = row.box()
         sub_box.prop(self, "enable_all", emboss=False,
-                    icon="VISIBLE_IPO_ON", icon_only=True)
+                    icon="HIDE_OFF", icon_only=True)
         row.label(text="Enable All")
 
         row = split.row()
@@ -198,7 +198,7 @@ class PieToolsPreferences(AddonPreferences):
         row.label(text="Disable All")
         sub_box = row.box()
         sub_box.prop(self, "disable_all", emboss=False,
-                    icon="VISIBLE_IPO_OFF", icon_only=True)
+                    icon="HIDE_ON", icon_only=True)
 
         for mod in sub_modules:
             mod_name = mod.__name__.split('.')[-1]

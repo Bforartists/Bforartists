@@ -273,11 +273,11 @@ def draw_panel_model_search(self, context):
     layout.prop(props, "search_keywords", text="", icon='VIEWZOOM')
 
     icon = 'NONE'
-    if props.report == 'You need Standard plan to get this item.':
+    if props.report == 'You need Full plan to get this item.':
         icon = 'ERROR'
     label_multiline(layout, text=props.report, icon=icon)
-    if props.report == 'You need Standard plan to get this item.':
-        layout.operator("wm.url_open", text="Get Standard plan", icon='URL').url = paths.BLENDERKIT_PLANS
+    if props.report == 'You need Full plan to get this item.':
+        layout.operator("wm.url_open", text="Get Full plan", icon='URL').url = paths.BLENDERKIT_PLANS
 
     layout.prop(props, "search_style")
     layout.prop(props, "free_only")

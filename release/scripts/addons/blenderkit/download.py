@@ -744,7 +744,7 @@ def get_download_url(asset_data, scene_id, api_key, tcom=None):
         return True
 
     if r.status_code == 403:
-        r = 'You need Standard plan to get this item.'
+        r = 'You need Full plan to get this item.'
         tcom.report = r
         r1 = 'All materials and brushes are aviable for free. Only users registered to Standart plan can use all models.'
         tasks_queue.add_task((ui.add_report, (r1, 5, colors.RED)))

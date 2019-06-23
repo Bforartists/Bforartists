@@ -151,7 +151,7 @@ class PHYSICS_PT_dynamic_paint_settings(PhysicButtonsPanel, Panel):
             row = layout.row()
             row.template_list(
                 "PHYSICS_UL_dynapaint_surfaces", "", canvas, "canvas_surfaces",
-                canvas.canvas_surfaces, "active_index", rows=1
+                canvas.canvas_surfaces, "active_index", rows=1,
             )
 
             col = row.column(align=True)
@@ -164,7 +164,7 @@ class PHYSICS_PT_dynamic_paint_settings(PhysicButtonsPanel, Panel):
 
             if surface:
                 flow = layout.grid_flow(
-                    row_major=True, columns=0, even_columns=True, even_rows=False, align=False
+                    row_major=True, columns=0, even_columns=True, even_rows=False, align=False,
                 )
                 col = flow.column()
 
@@ -192,7 +192,7 @@ class PHYSICS_PT_dynamic_paint_settings(PhysicButtonsPanel, Panel):
             layout.use_property_split = True
 
             flow = layout.grid_flow(
-                row_major=True, columns=0, even_columns=True, even_rows=False, align=False
+                row_major=True, columns=0, even_columns=True, even_rows=False, align=False,
             )
             col = flow.column()
             col.prop(brush, "paint_color")

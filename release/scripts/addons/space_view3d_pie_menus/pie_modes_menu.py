@@ -294,8 +294,17 @@ class PIE_MT_ObjectEditMode(Menu):
     def draw(self, context):
         layout = self.layout
         ob = context.object
+        # No Object Selected #
+        if not ob or not ob.select_get():
+            message = "No Active Object Selected" 
+            pie = layout.menu_pie()
+            pie.separator()
+            pie.separator()
+            pie.separator()
+            box = pie.box()
+            box.label(text=message, icon="INFO")
 
-        if ob and ob.type == 'MESH' and ob.mode in {'OBJECT', 'SCULPT', 'VERTEX_PAINT',
+        elif ob and ob.type == 'MESH' and ob.mode in {'OBJECT', 'SCULPT', 'VERTEX_PAINT',
                                                     'WEIGHT_PAINT', 'TEXTURE_PAINT',
                                                     'PARTICLE_EDIT', 'GPENCIL_EDIT'}:
             pie = layout.menu_pie()
@@ -453,10 +462,8 @@ class PIE_MT_ObjectEditMode(Menu):
 
 
 
-        else:
-            message = "Active Object has only Object Mode available" if ob \
-                    and ob.type in {"LIGHT", "CAMERA", "EMPTY", "SPEAKER"} else \
-                    "No active object found. Please select one first"
+        elif ob and ob.type in {"LIGHT", "CAMERA", "EMPTY", "SPEAKER"}:
+            message = "Active Object has only Object Mode available" 
             pie = layout.menu_pie()
             pie.separator()
             pie.separator()

@@ -23,7 +23,7 @@ bl_info = {
     "author": "gabhead, Lell, Anfeo",
     "version": (0, 3, 4),
     "blender": (2, 80, 0),
-    "location": "View3D > Tool Shelf > Tools",
+    "location": "View3D > Sidebar > Item Tab",
     "description": "Align Selected Objects to Active Object",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -55,29 +55,29 @@ from mathutils import (
 # Align all
 def main(context):
     for i in bpy.context.selected_objects:
-        i.location = bpy.context.active_object.location
+        i.matrix_world.translation = bpy.context.active_object.matrix_world.translation.copy()
         i.rotation_euler = bpy.context.active_object.rotation_euler
 
 
 # Align Location
 def LocAll(context):
     for i in bpy.context.selected_objects:
-        i.location = bpy.context.active_object.location
+        i.matrix_world.translation = bpy.context.active_object.matrix_world.translation.copy()
 
 
 def LocX(context):
     for i in bpy.context.selected_objects:
-        i.location.x = bpy.context.active_object.location.x
+        i.matrix_world.translation.x = bpy.context.active_object.matrix_world.translation.x
 
 
 def LocY(context):
     for i in bpy.context.selected_objects:
-        i.location.y = bpy.context.active_object.location.y
+        i.matrix_world.translation.y = bpy.context.active_object.matrix_world.translation.y
 
 
 def LocZ(context):
     for i in bpy.context.selected_objects:
-        i.location.z = bpy.context.active_object.location.z
+        i.matrix_world.translation.z = bpy.context.active_object.matrix_world.translation.z
 
 
 # Align Rotation
@@ -212,7 +212,7 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
 
         else:
             # otherwise use the pivot object
-            a = obj.location
+            a = obj.matrix_world.translation
             min_x = a[0]
             max_x = a[0]
             min_y = a[1]
@@ -292,7 +292,7 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
             elif ref1 == "3":
                 max_x = ref_points[2]
                 new_x = ref2_co[0] - (max_x - obj.location[0]) + loc_offset[0]
-            obj.location[0] = new_x
+            obj.matrix_world.translation[0] = new_x
         if loc_y is True:
             if ref1 == "0":
                 min_y = ref_points[3]
@@ -305,7 +305,7 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
             elif ref1 == "3":
                 max_y = ref_points[5]
                 new_y = ref2_co[1] - (max_y - obj.location[1]) + loc_offset[1]
-            obj.location[1] = new_y
+            obj.matrix_world.translation[1] = new_y
         if loc_z is True:
             if ref1 == "0":
                 min_z = ref_points[6]
@@ -318,7 +318,7 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
             elif ref1 == "3":
                 max_z = ref_points[8]
                 new_z = ref2_co[2] - (max_z - obj.location[2]) + loc_offset[2]
-            obj.location[2] = new_z
+            obj.matrix_world.translation[2] = new_z
 
     def find_new_rotation(obj):
         if rot_x is True:
@@ -365,7 +365,7 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
             pivot = obj.location
             pivot += move_pivot
 
-            nm = obj_mtx.inverted() * Matrix.Translation(-move_pivot) @ obj_mtx
+            nm = obj_mtx.inverted() @ Matrix.Translation(-move_pivot) @ obj_mtx
 
             # Transform the mesh now
             me.transform(nm)
@@ -385,28 +385,28 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
                 obj_mtx = o.matrix_world
                 if o.type == 'MESH' and len(o.data.vertices) > 0:
                     ref_co = o.data.vertices[0].co.copy()
-                    ref_co = obj_mtx * ref_co
+                    ref_co = obj_mtx @ ref_co
                     ok = True
                     break
                 elif o.type == 'CURVE' and len(o.data.splines) > 0:
                     ref_co = o.data.splines[0].bezier_point[0].co.copy()
-                    ref_co = obj_mtx * ref_co
+                    ref_co = obj_mtx @ ref_co
                     ok = True
                     break
                 elif o.type == 'SURFACE' and len(o.data.splines) > 0:
                     ref_co = o.data.splines[0].points[0].co.copy()
-                    ref_co = obj_mtx * ref_co
+                    ref_co = obj_mtx @ ref_co
                     ok = True
                     break
                 elif o.type == 'FONT' and len(o.data.splines) > 0:
                     ref_co = o.data.splines[0].bezier_points[0].co.copy()
-                    ref_co = obj_mtx * ref_co
+                    ref_co = obj_mtx @ ref_co
                     ok = True
                     break
         # if no object had data, use the position of an object that was not active as an internal
         # point of selection
         if ok is False:
-            ref_co = ref_ob.location
+            ref_co = ref_ob.matrix_world.translation
 
         return ref_co
 
@@ -418,7 +418,7 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
             if ref2 == "4":
                 ref2_co = bpy.context.scene.cursor.location
             else:
-                ref2_co = act_obj.location
+                ref2_co = act_obj.matrix_world.translation
 
         # in the case of substantial selection
         if consistent:
@@ -503,10 +503,10 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
                 ref2_co = find_ref2_co(act_obj)
                 ref_points = get_reference_points(act_obj, "global")
             else:
-                ref2_co = act_obj.location
-                ref_points = [act_obj.location[0], act_obj.location[0], act_obj.location[0],
-                              act_obj.location[1], act_obj.location[1], act_obj.location[1],
-                              act_obj.location[2], act_obj.location[2], act_obj.location[2]]
+                ref2_co = act_obj.matrix_world.translation
+                ref_points = [ref2_co[0], ref2_co[0], ref2_co[0],
+                              ref2_co[1], ref2_co[1], ref2_co[1],
+                              ref2_co[2], ref2_co[2], ref2_co[2]]
 
             if ref2 == "0":
                 if loc_x is True:
