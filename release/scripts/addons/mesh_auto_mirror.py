@@ -12,7 +12,7 @@ bl_info = {
     "author": "Lapineige",
     "version": (2, 5, 2),
     "blender": (2, 80, 0),
-    "location": "View 3D > Sidebar > Tools Tab > AutoMirror (panel)",
+    "location": "View 3D > Sidebar > Edit Tab > AutoMirror (panel)",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
                 "Py/Scripts/Modeling/AutoMirror",

@@ -154,7 +154,7 @@ class VIEW3D_PT_properties_stored_views(Panel):
     bl_label = "Stored Views"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "StoredViews"
+    bl_category = "View"
 
     def draw(self, context):
         self.logger = logging.getLogger('%s Properties panel' % __name__)

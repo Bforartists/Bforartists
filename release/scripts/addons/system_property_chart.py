@@ -23,7 +23,7 @@ bl_info = {
     "author": "Campbell Barton (ideasman42)",
     "version": (0, 1, 1),
     "blender": (2, 80, 0),
-    "location": "Tool Shelf",
+    "location": "View3D > Sidebar > Item Tab",
     "description": ("Edit arbitrary selected properties for "
                     "objects/sequence strips of the same type"),
     "warning": "",

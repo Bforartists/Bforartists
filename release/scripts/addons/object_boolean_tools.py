@@ -23,7 +23,7 @@ bl_info = {
     "author": "Vitor Balbio, Mikhail Rachinskiy, TynkaTopi, Meta-Androcto, Simon Appelt",
     "version": (0, 4, 0),
     "blender": (2, 80, 0),
-    "location": "View3D > Sidebar",
+    "location": "View3D > Sidebar > Edit Tab",
     "description": "Bool Tool Hotkey: Ctrl Shift B",
     "category": "Object",
 }
@@ -355,7 +355,7 @@ class BTool_DrawPolyBrush(Operator):
             actObj.select_set(state=True)
             bpy.ops.gpencil.draw("INVOKE_DEFAULT", mode="DRAW_POLY")
 
-        if event.type in {"RIGHTMOUSE"}:
+        if event.type == "RIGHTMOUSE":
             # use this to pass to the Grease Pencil eraser (see T52321)
             pass
 
@@ -396,7 +396,7 @@ class BTool_DrawPolyBrush(Operator):
 
             return {"FINISHED"}
 
-        if event.type in {"ESC"}:
+        if event.type == "ESC":
             bpy.ops.ed.undo()  # remove o Grease Pencil
             self.set_cont_draw(context)
 
@@ -977,10 +977,10 @@ class VIEW3D_PT_booltool_config(Panel):
             if isFTransf():
                 row = layout.row(align=True)
                 row.operator(BTool_EnableFTransform.bl_idname, text="Fast Vis", icon=icon)
-                row.operator(BTool_EnableThisBrush.bl_idname, text="Enable", icon="VISIBLE_IPO_ON")
+                row.operator(BTool_EnableThisBrush.bl_idname, text="Enable", icon="HIDE_OFF")
                 row = layout.row(align=True)
             else:
-                row.operator(BTool_EnableThisBrush.bl_idname, icon="VISIBLE_IPO_ON")
+                row.operator(BTool_EnableThisBrush.bl_idname, icon="HIDE_OFF")
                 row = layout.row(align=True)
 
         if isPolyBrush(actObj):
