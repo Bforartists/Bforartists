@@ -113,9 +113,12 @@ class VIEW3D_HT_header(Header):
             row = layout.row(align=True)
             row.prop(tool_settings, "use_snap", text="")
             
-            if tool_settings.use_snap is True:
-                sub = row.row(align=True)
-                sub.popover(panel="VIEW3D_PT_snapping", icon=icon, text=text)
+            sub = row.row(align=True)
+            sub.popover(
+                panel="VIEW3D_PT_snapping",
+                icon=icon,
+                text=text,
+            )
 
         # Proportional editing
         if object_mode in {'EDIT', 'PARTICLE_EDIT', 'SCULPT_GPENCIL', 'EDIT_GPENCIL', 'OBJECT'}:
