@@ -55,6 +55,7 @@ class SimpleOAuthAuthenticator(object):
 
     def get_new_token(self, register=True, redirect_url=None):
         class HTTPServerHandler(BaseHTTPRequestHandler):
+            html_template = '<html>%(head)s<h1>%(message)s</h1></html>'
             def do_GET(self):
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
@@ -69,9 +70,11 @@ class SimpleOAuthAuthenticator(object):
                         )
                     else:
                         redirect_string = ""
-                    self.wfile.write(bytes('<html>%s<h1>You may now close this window.</h1></html>' % redirect_string, 'utf-8'))
+                    self.wfile.write(bytes(self.html_template % {'head': redirect_string, 'message': 'You may now close this window.'}, 'utf-8'))
                     qs = parse_qs(urlparse(self.path).query)
                     self.server.authorization_code = qs['code'][0]
+                else:
+                    self.wfile.write(bytes(self.html_template % {'head': '', 'message': 'Authorization failed.'}, 'utf-8'))
 
         for port in self.ports:
             try:

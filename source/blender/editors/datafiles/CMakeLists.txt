@@ -1146,8 +1146,8 @@ key_dehlt
 key_hlt
 mute_ipo_off
 mute_ipo_on
-visible_ipo_off
-visible_ipo_on
+#def_icon_blank(1164
+#def_icon_blank(1165
 driver
 area
 mirror_vertexgroup

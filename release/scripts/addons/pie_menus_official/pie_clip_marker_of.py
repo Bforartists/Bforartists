@@ -95,7 +95,7 @@ class CLIP_MT_display_pie(Menu):
         pie = layout.menu_pie()
 
         pie.prop(space, "show_names", text="Show Track Info", icon='WORDWRAP_ON')
-        pie.prop(space, "show_disabled", text="Show Disabled Tracks", icon='VISIBLE_IPO_ON')
+        pie.prop(space, "show_disabled", text="Show Disabled Tracks", icon='HIDE_OFF')
         pie.prop(space, "show_marker_search", text="Display Search Area", icon='VIEWZOOM')
         pie.prop(space, "show_marker_pattern", text="Display Pattern Area", icon='BORDERMOVE')
 

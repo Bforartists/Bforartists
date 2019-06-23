@@ -26,7 +26,7 @@ bl_info = {
     "author": "Fabian Fricke",
     "version": (1, 2, 0),
     "blender": (2, 80, 0),
-    "location": "View3D > Specials > Relax ",
+    "location": "View3D > Edit Mode Context Menu > Relax ",
     "description": "Relax the selected verts while retaining the shape",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"

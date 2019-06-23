@@ -141,7 +141,10 @@ class ExportUVLayout(bpy.types.Operator):
         polygon_data = list(self.iter_polygon_data_to_draw(context, meshes))
         different_colors = set(color for _, color in polygon_data)
         if self.modified:
-            self.free_meshes(meshes)
+          depsgraph = context.evaluated_depsgraph_get()
+          for obj in self.iter_objects_to_export(context):
+              obj_eval = obj.evaluated_get(depsgraph)
+              obj_eval.to_mesh_clear()
 
         export = self.get_exporter()
         export(filepath, polygon_data, different_colors, self.size[0], self.size[1], self.opacity)
@@ -168,11 +171,6 @@ class ExportUVLayout(bpy.types.Operator):
             if mesh.uv_layers.active is None:
                 continue
             yield obj
-
-    @staticmethod
-    def free_meshes(meshes):
-        for mesh in meshes:
-            bpy.data.meshes.remove(mesh)
 
     @staticmethod
     def currently_image_image_editor(context):

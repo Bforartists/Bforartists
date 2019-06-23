@@ -24,7 +24,7 @@ bl_info = {
     "author": "Jimmy Hazevoet",
     "version": (0, 1, 8),
     "blender": (2, 80, 0),
-    "location": "View3D > Sidebar",
+    "location": "View3D > Sidebar > Create Tab",
     "description": "Another Noise Tool: Landscape and Displace",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"

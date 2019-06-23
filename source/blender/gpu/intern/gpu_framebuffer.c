@@ -130,26 +130,29 @@ static void gpu_print_framebuffer_error(GLenum status, char err_out[256])
   const char *format = "GPUFrameBuffer: framebuffer status %s\n";
   const char *err = "unknown";
 
-#define format_status(X) \
+#define FORMAT_STATUS(X) \
   case GL_FRAMEBUFFER_##X: \
     err = "GL_FRAMEBUFFER_" #X; \
     break;
 
   switch (status) {
     /* success */
-    format_status(COMPLETE)
-        /* errors shared by OpenGL desktop & ES */
-        format_status(INCOMPLETE_ATTACHMENT) format_status(INCOMPLETE_MISSING_ATTACHMENT)
-            format_status(UNSUPPORTED)
+    FORMAT_STATUS(COMPLETE);
+    /* errors shared by OpenGL desktop & ES */
+    FORMAT_STATUS(INCOMPLETE_ATTACHMENT);
+    FORMAT_STATUS(INCOMPLETE_MISSING_ATTACHMENT);
+    FORMAT_STATUS(UNSUPPORTED);
 #if 0 /* for OpenGL ES only */
-                format_status(INCOMPLETE_DIMENSIONS)
+    FORMAT_STATUS(INCOMPLETE_DIMENSIONS);
 #else /* for desktop GL only */
-                format_status(INCOMPLETE_DRAW_BUFFER) format_status(INCOMPLETE_READ_BUFFER)
-                    format_status(INCOMPLETE_MULTISAMPLE) format_status(UNDEFINED)
+    FORMAT_STATUS(INCOMPLETE_DRAW_BUFFER);
+    FORMAT_STATUS(INCOMPLETE_READ_BUFFER);
+    FORMAT_STATUS(INCOMPLETE_MULTISAMPLE);
+    FORMAT_STATUS(UNDEFINED);
 #endif
   }
 
-#undef format_status
+#undef FORMAT_STATUS
 
   if (err_out) {
     BLI_snprintf(err_out, 256, format, err);
@@ -1039,6 +1042,11 @@ void GPU_offscreen_viewport_data_get(GPUOffScreen *ofs,
 void GPU_clear_color(float red, float green, float blue, float alpha)
 {
   glClearColor(red, green, blue, alpha);
+}
+
+void GPU_clear_depth(float depth)
+{
+  glClearDepth(depth);
 }
 
 void GPU_clear(eGPUFrameBufferBits flags)

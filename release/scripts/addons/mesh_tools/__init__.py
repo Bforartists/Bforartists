@@ -26,7 +26,7 @@ bl_info = {
     "author": "Meta-Androcto",
     "version": (0, 3, 6),
     "blender": (2, 80, 0),
-    "location": "View3D > Toolbar and View3D > Context Menu",
+    "location": "View3D > Sidebar > Edit Tab / Edit Mode Context Menu",
     "warning": "",
     "description": "Mesh modelling toolkit. Several tools to aid modelling",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
