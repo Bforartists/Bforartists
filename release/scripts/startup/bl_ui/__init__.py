@@ -156,7 +156,7 @@ def register():
         items=[
             ('OFFICIAL', "Official", "Officially supported", 'FILE_BLEND', 1),
             ('COMMUNITY', "Community", "Maintained by community developers", 'COMMUNITY', 2),
-            ('TESTING', "Testing", "Newly contributed scripts (excluded from release builds)", 'EXPERIMENTAL', 4) # bfa - don't ask me why, but it requires the unique number 4 here. 3 breaks functionality ...
+            ('TESTING', "Testing", "Newly contributed scripts (excluded from release builds)", 'EXPERIMENTAL', 4) # bfa - 4 , not 3. enum flag requires for every new item a power of two value. Fourth element would be 8, fifth, 16 and so on.
         ],
         name="Support",
         description="Display support level",
