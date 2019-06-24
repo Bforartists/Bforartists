@@ -151,17 +151,18 @@ def register():
         name="Category",
         description="Filter add-ons by category",
     )
-
+    # bfa - iconized enum menu
     WindowManager.addon_support = EnumProperty(
         items=[
-            ('OFFICIAL', "Official", "Officially supported"),
-            ('COMMUNITY', "Community", "Maintained by community developers"),
-            ('TESTING', "Testing", "Newly contributed scripts (excluded from release builds)")
+            ('OFFICIAL', "Official", "Officially supported", 'FILE_BLEND', 1),
+            ('COMMUNITY', "Community", "Maintained by community developers", 'COMMUNITY', 2),
+            ('TESTING', "Testing", "Newly contributed scripts (excluded from release builds)", 'EXPERIMENTAL', 4) # bfa - don't ask me why, but it requires the unique number 4 here. 3 breaks functionality ...
         ],
         name="Support",
         description="Display support level",
         default={'OFFICIAL', 'COMMUNITY'},
         options={'ENUM_FLAG'},
+        
     )
     # done...
 
