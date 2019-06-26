@@ -16,11 +16,13 @@
         gizmo_secondary="#63ffff"
         gizmo_a="#4da84d"
         gizmo_b="#a33535"
+        icon_scene="#e6e6e6ff"
         icon_collection="#e6e6e6ff"
         icon_object="#e49759ff"
         icon_object_data="#89e689ff"
         icon_modifier="#84b8ffff"
         icon_shading="#ff6060ff"
+        icon_border_intensity="0"
         >
         <wcol_regular>
           <ThemeWidgetColors
@@ -342,7 +344,7 @@
     </user_interface>
     <view_3d>
       <ThemeView3D
-        grid="#a7a7a733"
+        grid="#66666633"
         clipping_border_3d="#313131ff"
         wire="#000000"
         wire_edit="#111111"
@@ -369,7 +371,7 @@
         edge_bevel="#00a5ff"
         edge_facesel="#4b4b4b"
         freestyle_edge_mark="#7fff7f"
-        face="#00000012"
+        face="#ffffff12"
         face_select="#ff85004d"
         face_dot="#ff8500"
         facedot_size="3"
@@ -408,6 +410,7 @@
         paint_curve_handle="#7fff7f7f"
         paint_curve_pivot="#ff7f7f7f"
         outline_width="1"
+        object_origin_size="6"
         >
         <space>
           <ThemeSpaceGradient
@@ -452,6 +455,7 @@
       <ThemeGraphEditor
         grid="#2a2a2a"
         frame_current="#5680c2"
+        time_scrub_background="#292929e6"
         window_sliders="#969696"
         channels_region="#333333"
         dopesheet_channel="#0f2c4d"
@@ -483,7 +487,7 @@
           <ThemeSpaceGeneric
             back="#424242"
             title="#ffffff"
-            text="#000000"
+            text="#a6a6a6"
             text_hi="#ffffff"
             header="#2e2e2eff"
             header_text="#eeeeee"
@@ -576,12 +580,13 @@
         keyframe_border="#000000ff"
         keyframe_border_selected="#000000ff"
         frame_current="#5680c2"
+        time_scrub_background="#292929e6"
         >
         <space>
           <ThemeSpaceGeneric
             back="#424242"
             title="#ffffff"
-            text="#000000"
+            text="#a6a6a6"
             text_hi="#ffffff"
             header="#424242ff"
             header_text="#eeeeee"
@@ -609,7 +614,7 @@
         </space>
         <space_list>
           <ThemeSpaceListGeneric
-            list="#333333"
+            list="#282828"
             list_title="#ffffff"
             list_text="#b8b8b8"
             list_text_hi="#cccccc"
@@ -622,6 +627,7 @@
       <ThemeDopeSheet
         grid="#2a2a2a"
         frame_current="#5680c2"
+        time_scrub_background="#292929e6"
         value_sliders="#000000"
         view_sliders="#c0c0c0"
         dopesheet_channel="#0f2c4d24"
@@ -653,12 +659,12 @@
           <ThemeSpaceGeneric
             back="#424242"
             title="#eeeeee"
-            text="#000000"
+            text="#a6a6a6"
             text_hi="#ffffff"
             header="#424242ff"
             header_text="#eeeeee"
             header_text_hi="#ffffff"
-            button="#424242ff"
+            button="#282828ff"
             button_title="#ffffff"
             button_text="#e5e5e5"
             button_text_hi="#ffffff"
@@ -681,7 +687,7 @@
         </space>
         <space_list>
           <ThemeSpaceListGeneric
-            list="#333333"
+            list="#282828"
             list_title="#ffffff"
             list_text="#b8b8b8"
             list_text_hi="#ffffff"
@@ -692,9 +698,6 @@
     </dopesheet_editor>
     <image_editor>
       <ThemeImageEditor
-        gp_vertex="#000000"
-        gp_vertex_select="#ff8500"
-        gp_vertex_size="3"
         vertex="#000000"
         vertex_select="#ff8500"
         vertex_size="3"
@@ -768,9 +771,6 @@
     </image_editor>
     <sequence_editor>
       <ThemeSequenceEditor
-        gp_vertex="#000000"
-        gp_vertex_select="#ff8500"
-        gp_vertex_size="3"
         grid="#404040"
         window_sliders="#a0a0a0"
         movie_strip="#516987"
@@ -783,6 +783,7 @@
         meta_strip="#6d9183"
         text_strip="#a29700"
         frame_current="#5680c2"
+        time_scrub_background="#292929e6"
         keyframe="#ff8500"
         draw_action="#50c8ff"
         preview_back="#000000"
@@ -793,7 +794,7 @@
           <ThemeSpaceGeneric
             back="#424242"
             title="#eeeeee"
-            text="#000000"
+            text="#7f7f7f"
             text_hi="#ffffff"
             header="#424242ff"
             header_text="#eeeeee"
@@ -857,8 +858,8 @@
     </properties>
     <text_editor>
       <ThemeTextEditor
-        line_numbers_background="#313133"
-        selected_text="#19191a"
+        line_numbers_background="#202020"
+        selected_text="#5680c2"
         cursor="#ff0000"
         syntax_builtin="#ff1961"
         syntax_symbols="#ff734d"
@@ -903,9 +904,6 @@
     </text_editor>
     <node_editor>
       <ThemeNodeEditor
-        gp_vertex="#979797"
-        gp_vertex_select="#ff8500"
-        gp_vertex_size="3"
         node_selected="#ed5700"
         node_active="#ffffff"
         wire="#808080"
@@ -915,7 +913,7 @@
         node_backdrop="#565656ff"
         converter_node="#66c4ff"
         color_node="#ccb83d"
-        group_node="#426628"
+        group_node="#426628bf"
         group_socket_node="#1a1a1a"
         frame_node="#1a1a1acc"
         matte_node="#975b5b"
@@ -963,7 +961,7 @@
         </space>
         <space_list>
           <ThemeSpaceListGeneric
-            list="#2e2e2e"
+            list="#282828"
             list_title="#ffffff"
             list_text="#cccccc"
             list_text_hi="#ffffff"
@@ -976,6 +974,10 @@
       <ThemeOutliner
         match="#337f33"
         selected_highlight="#314e78"
+        selected_object="#e96a00"
+        active_object="#ffaf29"
+        edited_object="#00806266"
+        row_alternate="#ffffff06"
         >
         <space>
           <ThemeSpaceGeneric
@@ -1017,7 +1019,7 @@
         info_error_text="#ffffff"
         info_warning="#b36a00"
         info_warning_text="#ffffff"
-        info_info="#668000"
+        info_info="#1d4383"
         info_info_text="#ffffff"
         info_debug="#d3d3d3"
         info_debug_text="#000000"
@@ -1131,9 +1133,6 @@
     </console>
     <clip_editor>
       <ThemeClipEditor
-        gp_vertex="#000000"
-        gp_vertex_select="#000000"
-        gp_vertex_size="1"
         marker_outline="#000000"
         marker="#7f7f00"
         active_marker="#ffffff"
@@ -1143,6 +1142,7 @@
         path_before="#ff0000"
         path_after="#0000ff"
         frame_current="#5680c2"
+        time_scrub_background="#292929e6"
         strips="#0c0a0a"
         strips_selected="#ff8c00"
         metadatabg="#000000"
@@ -1163,7 +1163,7 @@
           <ThemeSpaceGeneric
             back="#424242"
             title="#eeeeee"
-            text="#e6e6e6"
+            text="#a6a6a6"
             text_hi="#ffffff"
             header="#424242ff"
             header_text="#eeeeee"
@@ -1191,7 +1191,7 @@
         </space>
         <space_list>
           <ThemeSpaceListGeneric
-            list="#666666"
+            list="#282828"
             list_title="#000000"
             list_text="#000000"
             list_text_hi="#ffffff"
