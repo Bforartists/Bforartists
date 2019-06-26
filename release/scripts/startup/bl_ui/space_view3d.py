@@ -4784,15 +4784,15 @@ class VIEW3D_MT_edit_mesh_normals_select_strength(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        op = layout.operator("mesh.mod_weighted_strength", text="Weak")
+        op = layout.operator("mesh.mod_weighted_strength", text="Weak", icon='FACESEL')
         op.set = False
         op.face_strength = 'WEAK'
 
-        op = layout.operator("mesh.mod_weighted_strength", text="Medium")
+        op = layout.operator("mesh.mod_weighted_strength", text="Medium", icon='FACESEL')
         op.set = False
         op.face_strength = 'MEDIUM'
 
-        op = layout.operator("mesh.mod_weighted_strength", text="Strong")
+        op = layout.operator("mesh.mod_weighted_strength", text="Strong", icon='FACESEL')
         op.set = False
         op.face_strength = 'STRONG'
 
@@ -4803,15 +4803,15 @@ class VIEW3D_MT_edit_mesh_normals_set_strength(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        op = layout.operator("mesh.mod_weighted_strength", text="Weak")
+        op = layout.operator("mesh.mod_weighted_strength", text="Weak", icon='NORMAL_SETSTRENGTH')
         op.set = True
         op.face_strength = 'WEAK'
 
-        op = layout.operator("mesh.mod_weighted_strength", text="Medium")
+        op = layout.operator("mesh.mod_weighted_strength", text="Medium", icon='NORMAL_SETSTRENGTH')
         op.set = True
         op.face_strength = 'MEDIUM'
 
-        op = layout.operator("mesh.mod_weighted_strength", text="Strong")
+        op = layout.operator("mesh.mod_weighted_strength", text="Strong", icon='NORMAL_SETSTRENGTH')
         op.set = True
         op.face_strength = 'STRONG'
 
@@ -4822,9 +4822,9 @@ class VIEW3D_MT_edit_mesh_normals_average(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mesh.average_normals", text="Custom Normal").average_type = 'CUSTOM_NORMAL'
-        layout.operator("mesh.average_normals", text="Face Area").average_type = 'FACE_AREA'
-        layout.operator("mesh.average_normals", text="Corner Angle").average_type = 'CORNER_ANGLE'
+        layout.operator("mesh.average_normals", text="Custom Normal", icon = "NORMAL_AVERAGE").average_type = 'CUSTOM_NORMAL'
+        layout.operator("mesh.average_normals", text="Face Area", icon = "NORMAL_AVERAGE").average_type = 'FACE_AREA'
+        layout.operator("mesh.average_normals", text="Corner Angle", icon = "NORMAL_AVERAGE").average_type = 'CORNER_ANGLE'
 
 
 class VIEW3D_MT_edit_mesh_normals(Menu):
@@ -4835,55 +4835,32 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
 
         layout.operator("mesh.normals_make_consistent", text="Recalculate Outside", icon = 'RECALC_NORMALS').inside = False
         layout.operator("mesh.normals_recalculate_inside", text="Recalculate Inside", icon = 'RECALC_NORMALS_INSIDE') # bfa - separated tooltip
-        layout.operator("mesh.flip_normals", icon = 'FLIP_NORMALS')
+        layout.operator("mesh.flip_normals", text = "Flip", icon = 'FLIP_NORMALS')
 
         layout.separator()
-
-        layout.menu("VIEW3D_MT_edit_mesh_normals_average", text="Average")
-        layout.menu("VIEW3D_MT_edit_mesh_normals_advanced")
-        layout.menu("VIEW3D_MT_edit_mesh_normals_vector")
-        layout.menu("VIEW3D_MT_edit_mesh_normals_facestrength")
-
-
-class VIEW3D_MT_edit_mesh_normals_advanced(Menu):
-    bl_label = "Advanced"
-
-    def draw(self, context):
-        layout = self.layout
 
         layout.operator("mesh.set_normals_from_faces", text="Set From Faces", icon = 'SET_FROM_FACES')
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("transform.rotate_normal", text="Rotate")
-        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator("transform.rotate_normal", text="Rotate", icon = "NORMAL_ROTATE")
 
-        layout.operator("transform.rotate_normal", text="Rotate Normal", icon = "NORMAL_ROTATE")
+        layout.operator_context = 'EXEC_DEFAULT'
         layout.operator("mesh.point_normals", text="Point normals to target", icon = "NORMAL_TARGET")
         layout.operator("mesh.merge_normals", text="Merge", icon = "MERGE")
         layout.operator("mesh.split_normals", text="Split", icon = "SPLIT")
-        layout.operator("mesh.average_normals", text="Average Normals", icon = "NORMAL_AVERAGE")
+        layout.menu("VIEW3D_MT_edit_mesh_normals_average", text="Average")
 
+        layout.separator()
 
-class VIEW3D_MT_edit_mesh_normals_vector(Menu):
-    bl_label = "Vector"
+        layout.operator("mesh.normals_tools", text="Copy Vectors", icon = "COPYDOWN").mode = 'COPY'
+        layout.operator("mesh.normals_tools", text="Paste Vectors", icon = "PASTEDOWN").mode = 'PASTE'
+        layout.operator("mesh.smoothen_normals", text="Smoothen Vectors", icon = "NORMAL_SMOOTH")
+        layout.operator("mesh.normals_tools", text="Reset Vectors", icon = "RESET").mode = 'RESET'
 
-    def draw(self, context):
-        layout = self.layout
+        layout.separator()
 
-        layout.operator("mesh.normals_tools", text="Copy", icon = "COPYDOWN").mode = 'COPY'
-        layout.operator("mesh.normals_tools", text="Paste", icon = "PASTEDOWN").mode = 'PASTE'
-        layout.operator("mesh.normals_tools", text="Reset", icon = "RESET").mode = 'RESET'
-        layout.operator("mesh.smoothen_normals", text="Smoothen", icon = "NORMAL_SMOOTH")
-
-
-class VIEW3D_MT_edit_mesh_normals_facestrength(Menu):
-    bl_label = "Face Strength"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.menu("VIEW3D_MT_edit_mesh_normals_select_strength", text="Select by Face Strength", icon='FACESEL')
-        layout.menu("VIEW3D_MT_edit_mesh_normals_set_strength", text="Set Face Strength", icon='NORMAL_SETSTRENGTH')
+        layout.menu("VIEW3D_MT_edit_mesh_normals_select_strength", text="Select by Face Strength")
+        layout.menu("VIEW3D_MT_edit_mesh_normals_set_strength", text="Set Face Strength")
 
 
 class VIEW3D_MT_edit_mesh_shading(Menu):
@@ -7929,9 +7906,6 @@ classes = (
     VIEW3D_MT_edit_mesh_normals_select_strength,
     VIEW3D_MT_edit_mesh_normals_set_strength,
     VIEW3D_MT_edit_mesh_normals_average,
-    VIEW3D_MT_edit_mesh_normals_advanced,
-    VIEW3D_MT_edit_mesh_normals_vector,
-    VIEW3D_MT_edit_mesh_normals_facestrength,
     VIEW3D_MT_edit_mesh_shading,
     VIEW3D_MT_edit_mesh_weights,
     VIEW3D_MT_edit_mesh_clean,
