@@ -5723,7 +5723,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.stroke_smooth", text="Smooth", icon = "SMOOTH")
+        layout.operator("gpencil.stroke_smooth", text="Smooth", icon = "PARTICLEBRUSH_SMOOTH")
         layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
         layout.operator("gpencil.stroke_merge", text="Merge", icon = "MERGE")
 
