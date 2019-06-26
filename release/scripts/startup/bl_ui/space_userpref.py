@@ -856,13 +856,15 @@ class PreferenceThemeWidgetColorPanel:
         col.prop(widget_style, "text_sel")
         col.prop(widget_style, "roundness")
 
-        col = flow.column()
+        col = layout.column()
+        col.use_property_split = False # checkbox at the left
         col.prop(widget_style, "show_shaded")
 
         colsub = col.column()
-        colsub.active = widget_style.show_shaded
-        colsub.prop(widget_style, "shadetop")
-        colsub.prop(widget_style, "shadedown")
+        if widget_style.show_shaded is True:
+        #colsub.active = widget_style.show_shaded
+            colsub.prop(widget_style, "shadetop")
+            colsub.prop(widget_style, "shadedown")
 
     @classmethod
     def poll(cls, context):
