@@ -252,7 +252,7 @@ class NLA_MT_edit(Menu):
 
         # TODO: this really belongs more in a "channel" (or better, "track") menu
         layout.separator()
-        layout.operator_menu_enum("anim.channels_move", "direction", text="Track Ordering...")
+        layout.operator_menu_enum("anim.channels_move", "direction", text="Track Ordering")
         layout.operator("anim.channels_clean_empty", icon = "CLEAN_CHANNELS")
 
         layout.separator()
