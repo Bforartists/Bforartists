@@ -298,7 +298,7 @@ class VIEW3D_HT_header(Header):
         row.prop(overlay, "show_overlays", icon='OVERLAY', text="")
         sub = row.row(align=True)
         sub.active = overlay.show_overlays
-        sub.popover(panel="VIEW3D_PT_overlay")
+        sub.popover(panel="VIEW3D_PT_overlay", text="")
 
         row = layout.row()
         row.active = (object_mode == 'EDIT') or (shading.type in {'WIREFRAME', 'SOLID'})
@@ -315,7 +315,7 @@ class VIEW3D_HT_header(Header):
         # show the shading popover which shows double-sided option.
 
         # sub.enabled = shading.type != 'RENDERED'
-        sub.popover(panel="VIEW3D_PT_shading")
+        sub.popover(panel="VIEW3D_PT_shading", text="")
 
 class VIEW3D_HT_tool_header(Header):
     bl_space_type = 'VIEW_3D'
