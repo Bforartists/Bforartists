@@ -56,6 +56,7 @@
 
 #include "UI_view2d.h"
 #include "UI_interface.h"
+#include "UI_resources.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
 
 #include "ED_anim_api.h"
 #include "ED_armature.h"
@@ -737,10 +738,10 @@ typedef enum eRearrangeAnimChan_Mode {
 
 /* defines for rearranging channels */
 static const EnumPropertyItem prop_animchannel_rearrange_types[] = {
-    {REARRANGE_ANIMCHAN_TOP, "TOP", 0, "To Top", ""},
-    {REARRANGE_ANIMCHAN_UP, "UP", 0, "Up", ""},
-    {REARRANGE_ANIMCHAN_DOWN, "DOWN", 0, "Down", ""},
-    {REARRANGE_ANIMCHAN_BOTTOM, "BOTTOM", 0, "To Bottom", ""},
+    {REARRANGE_ANIMCHAN_TOP, "TOP", ICON_MOVE_TO_TOP, "To Top", ""},
+    {REARRANGE_ANIMCHAN_UP, "UP", ICON_MOVE_UP, "Up", ""},
+    {REARRANGE_ANIMCHAN_DOWN, "DOWN", ICON_MOVE_DOWN, "Down", ""},
+    {REARRANGE_ANIMCHAN_BOTTOM, "BOTTOM", ICON_MOVE_TO_BOTTOM, "To Bottom", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
