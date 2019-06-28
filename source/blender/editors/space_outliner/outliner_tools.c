@@ -1365,7 +1365,7 @@ static const EnumPropertyItem prop_id_op_types[] = {
     {OUTLINER_IDOP_DELETE, "DELETE", ICON_DELETE, "Delete", ""},
     {OUTLINER_IDOP_REMAP,
      "REMAP",
-     0,
+     ICON_USER,
      "Remap Users",
      "Make all users of selected data-blocks to use instead current (clicked) one"},
     {0, "", 0, NULL, NULL},
@@ -1374,7 +1374,7 @@ static const EnumPropertyItem prop_id_op_types[] = {
     {0, "", 0, NULL, NULL},
     {OUTLINER_IDOP_FAKE_ADD,
      "ADD_FAKE",
-     0,
+     ICON_FAKE_USER_ON,
      "Add Fake User",
      "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material "
      "libraries)"},
