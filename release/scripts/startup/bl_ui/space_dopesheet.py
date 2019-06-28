@@ -279,6 +279,10 @@ class DOPESHEET_HT_editor_buttons(Header):
         if tool_settings.use_proportional_action:
             sub = row.row(align=True)
             sub.prop(tool_settings, "proportional_edit_falloff", text="", icon_only=True)
+            
+        layout.operator_menu_enum("action.handle_type", "type", text="", icon = "HANDLE_AUTO")
+        layout.operator_menu_enum("action.interpolation_type", "type", text="", icon = "INTERPOLATE")
+        layout.prop(tool_settings, "keyframe_type", text="", icon_only=True)
 
 
 class DOPESHEET_MT_editor_menus(Menu):
@@ -540,12 +544,6 @@ class DOPESHEET_MT_key(Menu):
 
         layout.operator("action.duplicate_move", icon = "DUPLICATE")
         layout.operator("action.delete", icon = "DELETE")
-
-        layout.separator()
-
-        layout.operator_menu_enum("action.keyframe_type", "type", text="Keyframe Type")
-        layout.operator_menu_enum("action.handle_type", "type", text="Handle Type")
-        layout.operator_menu_enum("action.interpolation_type", "type", text="Interpolation Mode")
 
         layout.separator()
 
