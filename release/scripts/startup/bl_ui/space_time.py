@@ -131,7 +131,7 @@ class TIME_MT_view(Menu):
         scene = context.scene
         st = context.space_data
 
-        layout.operator("action.properties", text = "Sidebar")
+        layout.prop(st, "show_region_ui")
 
         layout.separator()
 
