@@ -335,6 +335,12 @@ class OUTLINER_MT_object(Menu):
         obj = context.active_object
         object_mode = 'OBJECT' if obj is None else obj.mode
 
+        layout.operator("outliner.object_operation", text="Select", icon="RESTRICT_SELECT_OFF").type = 'SELECT'
+        layout.operator("outliner.object_operation", text="Select Hierarchy", icon="RESTRICT_SELECT_OFF").type = 'SELECT_HIERARCHY'
+        layout.operator("outliner.object_operation", text="Deselect", icon = "SELECT_NONE").type = 'DESELECT'
+
+        layout.separator()
+
         layout.operator("outliner.id_copy", text="Copy", icon='COPYDOWN')
         layout.operator("outliner.id_paste", text="Paste", icon='PASTEDOWN')
 
@@ -344,12 +350,6 @@ class OUTLINER_MT_object(Menu):
 
         if space.display_mode == 'VIEW_LAYER' and not space.use_filter_collection:
             layout.operator("outliner.object_operation", text="Delete Hierarchy", icon="DELETE").type = 'DELETE_HIERARCHY'
-
-        layout.separator()
-
-        layout.operator("outliner.object_operation", text="Select", icon="RESTRICT_SELECT_OFF").type = 'SELECT'
-        layout.operator("outliner.object_operation", text="Select Hierarchy", icon="RESTRICT_SELECT_OFF").type = 'SELECT_HIERARCHY'
-        layout.operator("outliner.object_operation", text="Deselect", icon = "SELECT_NONE").type = 'DESELECT'
 
         layout.separator()
 
