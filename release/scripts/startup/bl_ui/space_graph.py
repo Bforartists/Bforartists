@@ -72,6 +72,10 @@ class GRAPH_HT_header(Header):
             sub.prop(tool_settings, "proportional_edit_falloff", text="", icon_only=True)
 
         layout.prop(st, "pivot_point", icon_only=True)
+        
+        layout.operator_menu_enum("graph.easing_type", "type", text="", icon = "HANDLE_AUTO")
+        layout.operator_menu_enum("graph.interpolation_type", "type", text="", icon = "INTERPOLATE")
+        layout.prop(tool_settings, "keyframe_type", text="", icon_only=True)
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
@@ -420,10 +424,6 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
         layout.operator("graph.duplicate_move", icon = "DUPLICATE")
         layout.operator("graph.delete", icon = "DELETE")
-        layout.separator()
-        layout.operator_menu_enum("graph.handle_type", "type", text="Handle Type")
-        layout.operator_menu_enum("graph.interpolation_type", "type", text="Interpolation Mode")
-        layout.operator_menu_enum("graph.easing_type", "type", text="Easing Type")
 
         layout.separator()
 
