@@ -1002,9 +1002,9 @@ class SEQUENCER_PT_input(SequencerButtonsPanel, Panel):
             row.prop(strip.crop, "max_x")
             col.prop(strip.crop, "min_y")
 
-                box = col.box()
-                box.active = strip.views_format == 'STEREO_3D'
-                box.template_image_stereo_3d(strip.stereo_3d_format)
+            box = col.box()
+            box.active = strip.views_format == 'STEREO_3D'
+            box.template_image_stereo_3d(strip.stereo_3d_format)
 
             # Resolution.
             col = layout.column(align=True)
@@ -1629,7 +1629,6 @@ classes = (
     SEQUENCER_PT_view_safe_areas,
     SEQUENCER_PT_modifiers,
     SEQUENCER_PT_grease_pencil,
-    SEQUENCER_PT_annotation_onion,
     SEQUENCER_PT_grease_pencil_tools,
     SEQUENCER_PT_custom_props,
     SEQUENCER_PT_marker_options,
