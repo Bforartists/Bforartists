@@ -205,7 +205,8 @@ struct Image *BKE_image_add_generated(struct Main *bmain,
                                       int floatbuf,
                                       short gen_type,
                                       const float color[4],
-                                      const bool stereo3d);
+                                      const bool stereo3d,
+                                      const bool is_data);
 /* adds image from imbuf, owns imbuf */
 struct Image *BKE_image_add_from_imbuf(struct Main *bmain, struct ImBuf *ibuf, const char *name);
 
@@ -217,6 +218,7 @@ void BKE_image_signal(struct Main *bmain, struct Image *ima, struct ImageUser *i
 void BKE_image_walk_all_users(const struct Main *mainp,
                               void *customdata,
                               void callback(struct Image *ima,
+                                            struct ID *iuser_id,
                                             struct ImageUser *iuser,
                                             void *customdata));
 

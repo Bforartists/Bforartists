@@ -14,7 +14,6 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # ##### END GPL LICENSE BLOCK #####
-
 import bpy
 
 from bpy.props import (
@@ -36,105 +35,93 @@ class SnapUtilitiesPreferences(bpy.types.AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __package__
 
-    intersect: BoolProperty(
-        name="Intersect",
+    intersect : BoolProperty(name="Intersect",
         description="intersects created line with the existing edges, even if the lines do not intersect",
         default=True)
 
-    create_face: BoolProperty(
-        name="Create faces",
+    create_face : BoolProperty(name="Create faces",
         description="Create faces defined by enclosed edges",
         default=False)
 
-    outer_verts: BoolProperty(
-        name="Snap to outer vertices",
+    outer_verts : BoolProperty(name="Snap to outer vertices",
         description="The vertices of the objects are not activated also snapped",
         default=True)
 
-    increments_grid: BoolProperty(
-        name="Increments of Grid",
+    increments_grid : BoolProperty(name="Increments of Grid",
         description="Snap to increments of grid",
         default=False)
 
-    incremental: FloatProperty(
-        name="Incremental",
+    auto_constrain : BoolProperty(name="Automatic Constraint",
+        description="Detects a direction to constrain depending on the position of the mouse.",
+        default=False)
+
+    incremental : FloatProperty(name="Incremental",
         description="Snap in defined increments",
         default=0,
         min=0,
         step=1,
         precision=3)
 
-    relative_scale: FloatProperty(
-        name="Relative Scale",
+    relative_scale : FloatProperty(name="Relative Scale",
         description="Value that divides the global scale",
         default=1,
         min=0,
         step=1,
         precision=3)
 
-    out_color: FloatVectorProperty(
-        name="Floor",
+    out_color : FloatVectorProperty(name="Floor",
         default=(0.0, 0.0, 0.0, 0.5),
         size=4,
         subtype="COLOR",
         min=0,
         max=1)
 
-    face_color: FloatVectorProperty(
-        name="Face Highlighted",
+    face_color : FloatVectorProperty(name="Face Highlighted",
         default=(1.0, 0.8, 0.0, 0.5),
         size=4,
         subtype="COLOR",
         min=0,
         max=1)
 
-    edge_color: FloatVectorProperty(
-        name="Edge Highlighted",
+    edge_color : FloatVectorProperty(name="Edge Highlighted",
         default=(0.0, 0.8, 1.0, 0.5),
         size=4,
         subtype="COLOR",
         min=0,
         max=1)
 
-    vert_color: FloatVectorProperty(
-        name="Vertex Highlighted",
+    vert_color : FloatVectorProperty(name="Vertex Highlighted",
         default=(1.0, 0.5, 0.0, 0.5),
         size=4, subtype="COLOR",
         min=0,
         max=1)
 
-    center_color: FloatVectorProperty(
-        name="Middle of the Edge",
+    center_color : FloatVectorProperty(name="Middle of the Edge",
         default=(1.0, 0.0, 1.0, 1.0),
         size=4,
         subtype="COLOR",
         min=0,
         max=1)
 
-    perpendicular_color: FloatVectorProperty(
-        name="Perpendicular Point",
+    perpendicular_color : FloatVectorProperty(name="Perpendicular Point",
         default=(0.1, 0.5, 0.5, 1.0),
         size=4,
         subtype="COLOR",
         min=0,
         max=1)
 
-    constrain_shift_color: FloatVectorProperty(
-        name="Shift Constrain",
+    constrain_shift_color : FloatVectorProperty(name="Shift Constrain",
         default=(0.8, 0.5, 0.4, 1.0),
         size=4,
         subtype="COLOR",
         min=0,
         max=1)
 
-    tabs: EnumProperty(
-        name="Tabs",
-        items = [
-            ("GENERAL", "General", ""),
+    tabs : EnumProperty(name="Tabs",
+        items = [("GENERAL", "General", ""),
             ("KEYMAPS", "Keymaps", ""),
             ("COLORS", "Colors", ""),
-            ("HELP", "Links", ""),
-        ],
+            ("HELP", "Links", ""),],
         default="GENERAL")
 
     def draw(self, context):
@@ -190,21 +177,13 @@ class SnapUtilitiesPreferences(bpy.types.AddonPreferences):
         flow.prop(self, "perpendicular_color")
 
     def draw_snap_utilities_help(self, layout):
-        layout.operator(
-            "wm.url_open", text="Gumroad Page", icon='HELP',
-        ).url = "https://gum.co/IaqQf"
+        layout.operator("wm.url_open", text="Gumroad Page", icon='HELP',).url = "https://gum.co/IaqQf"
 
-        layout.operator(
-            "wm.url_open", text="Blender Market Page", icon='HELP',
-        ).url = "https://blendermarket.com/products/snap-utilities"
+        layout.operator("wm.url_open", text="Blender Market Page", icon='HELP',).url = "https://blendermarket.com/products/snap-utilities"
 
-        layout.operator(
-            "wm.url_open", text="Wiki", icon='HELP',
-        ).url = "https://github.com/Mano-Wii/Addon-Snap-Utilities-Line/wiki"
+        layout.operator("wm.url_open", text="Wiki", icon='HELP',).url = "https://github.com/Mano-Wii/Addon-Snap-Utilities-Line/wiki"
 
-        layout.operator(
-            "wm.url_open", text="Forum", icon='HELP',
-        ).url = "https://blenderartists.org/t/cad-snap-utilities"
+        layout.operator("wm.url_open", text="Forum", icon='HELP',).url = "https://blenderartists.org/t/cad-snap-utilities"
 
 
     def draw_snap_utilities_keymaps(self, context, layout):

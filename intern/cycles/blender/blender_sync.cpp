@@ -216,6 +216,10 @@ void BlenderSync::sync_data(BL::RenderSettings &b_render,
 
   mesh_synced.clear();
 
+  /* Shader sync done at the end, since object sync uses it.
+   * false = don't delete unused shaders, not supported. */
+  shader_map.post_sync(false);
+
   free_data_after_sync(b_depsgraph);
 }
 
@@ -231,6 +235,7 @@ void BlenderSync::sync_integrator()
   Integrator *integrator = scene->integrator;
   Integrator previntegrator = *integrator;
 
+  integrator->min_bounce = get_int(cscene, "min_light_bounces");
   integrator->max_bounce = get_int(cscene, "max_bounces");
 
   integrator->max_diffuse_bounce = get_int(cscene, "diffuse_bounces");
@@ -238,6 +243,7 @@ void BlenderSync::sync_integrator()
   integrator->max_transmission_bounce = get_int(cscene, "transmission_bounces");
   integrator->max_volume_bounce = get_int(cscene, "volume_bounces");
 
+  integrator->transparent_min_bounce = get_int(cscene, "min_transparent_bounces");
   integrator->transparent_max_bounce = get_int(cscene, "transparent_max_bounces");
 
   integrator->volume_max_steps = get_int(cscene, "volume_max_steps");

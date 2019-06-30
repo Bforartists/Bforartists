@@ -4613,7 +4613,7 @@ static int view3d_navigate_invoke(bContext *C,
 void VIEW3D_OT_navigate(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "View Navigation";
+  ot->name = "View Navigation (Walk/Fly)";
   ot->description =
       "View Navigation\nInteractively navigate around the scene (uses the mode (walk/fly) "
       "preference)";

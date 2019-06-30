@@ -105,6 +105,8 @@ void WM_init_opengl(struct Main *bmain);
 void WM_check(struct bContext *C);
 void WM_reinit_gizmomap_all(struct Main *bmain);
 
+uint *WM_window_pixels_read(struct wmWindowManager *wm, struct wmWindow *win, int r_size[2]);
+
 int WM_window_pixels_x(const struct wmWindow *win);
 int WM_window_pixels_y(const struct wmWindow *win);
 void WM_window_rect_calc(const struct wmWindow *win, struct rcti *r_rect);
@@ -391,7 +393,7 @@ int WM_operator_call_ex(struct bContext *C, struct wmOperator *op, const bool st
 int WM_operator_call(struct bContext *C, struct wmOperator *op);
 int WM_operator_call_notest(struct bContext *C, struct wmOperator *op);
 int WM_operator_repeat(struct bContext *C, struct wmOperator *op);
-int WM_operator_repeat_interactive(struct bContext *C, struct wmOperator *op);
+int WM_operator_repeat_last(struct bContext *C, struct wmOperator *op);
 bool WM_operator_repeat_check(const struct bContext *C, struct wmOperator *op);
 bool WM_operator_is_repeat(const struct bContext *C, const struct wmOperator *op);
 int WM_operator_name_call_ptr(struct bContext *C,
