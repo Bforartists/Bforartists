@@ -1408,6 +1408,8 @@ def blen_read_texture_image(fbx_tmpl, fbx_obj, basedir, settings):
     # Aaaaaaaarrrrrrrrgggggggggggg!!!!!!!!!!!!!!
     filepath = elem_find_first_string(fbx_obj, b'RelativeFilename')
     if filepath:
+        # Make sure we do handle a relative path, and not an absolute one (see D5143).
+        filepath = filepath.lstrip(os.path.sep).lstrip(os.path.altsep)
         filepath = os.path.join(basedir, filepath)
     else:
         filepath = elem_find_first_string(fbx_obj, b'FileName')

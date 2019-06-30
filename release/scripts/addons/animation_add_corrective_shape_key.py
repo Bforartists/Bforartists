@@ -21,7 +21,7 @@
 bl_info = {
     "name": "Corrective Shape Keys",
     "author": "Ivo Grigull (loolarge), Tal Trachtman", "Tokikake"
-    "version": (1, 1, 0),
+    "version": (1, 1, 1),
     "blender": (2, 80, 0),
     "location": "Object Data > Shape Keys (Search: corrective) ",
     "description": "Creates a corrective shape key for the current pose",
@@ -316,7 +316,7 @@ class object_duplicate_flatten_modifiers(bpy.types.Operator):
 
         return {'FINISHED'}
 
-""" these old functions and class not work correctly just keep code for others try to edit
+#these old functions and class not work correctly just keep code for others try to edit
 
 def unposeMesh(meshObToUnpose, obj, armatureOb):
     psdMeshData = meshObToUnpose
@@ -389,14 +389,13 @@ def unposeMesh(meshObToUnpose, obj, armatureOb):
 
         sigma = I + sigma
         sigma.invert()
-        psdMeshVert.co = psdMeshVert.co @ sigma
+        psdMeshVert.co = sigma @ psdMeshVert.co
         obj.update_tag()
         bpy.context.view_layer.update()
-"""
 
-"""
+
+
 def func_add_corrective_pose_shape_fast(source, target):
-
     reset_transform(target)
 
     # If target object doesn't have Basis shape key, create it.
@@ -460,9 +459,9 @@ def func_add_corrective_pose_shape_fast(source, target):
     target.data.update()
     
 
-"""
 
-"""
+
+
 class add_corrective_pose_shape_fast(bpy.types.Operator):
     #Adds 1st object as shape to 2nd object as pose shape (only 1 armature)
 
@@ -488,7 +487,7 @@ class add_corrective_pose_shape_fast(bpy.types.Operator):
         func_add_corrective_pose_shape_fast(source, target)
 
         return {'FINISHED'}
-"""
+
 
 
 # -----------------------------------------------------------------------------
@@ -510,7 +509,7 @@ def vgroups_draw(self, context):
 def modifiers_draw(self, context):
     pass
 
-classes = (add_corrective_pose_shape, add_corrective_pose_shape_delta, object_duplicate_flatten_modifiers, )
+classes = (add_corrective_pose_shape, add_corrective_pose_shape_delta, object_duplicate_flatten_modifiers, add_corrective_pose_shape_fast)
 def register():
     from bpy.utils import register_class
     for cls in classes:

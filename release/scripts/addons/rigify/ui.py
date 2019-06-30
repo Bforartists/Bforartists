@@ -662,7 +662,8 @@ class VIEW3D_PT_rigify_animation_tools(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.object.type == 'ARMATURE' and context.active_object.data.get("rig_id") is not None
+        return context.object and context.object.type == 'ARMATURE'\
+               and context.active_object.data.get("rig_id") is not None
 
     def draw(self, context):
         obj = context.active_object

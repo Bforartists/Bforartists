@@ -14,14 +14,18 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # ##### END GPL LICENSE BLOCK #####
-
 import bpy
 
-from mathutils import Vector
+from mathutils import (
+    Vector,
+    Matrix,
+    )
+from mathutils.geometry import intersect_point_line
 from .drawing_utilities import SnapDrawn
 from .common_utilities import (
     convert_distance,
     get_units_info,
+    location_3d_to_region_2d,
     )
 
 
@@ -96,9 +100,6 @@ class SnapNavigation():
             return True
 
         if evkey in self._move:
-            #if event.shift and self.vector_constrain and \
-            #    self.vector_constrain[2] in {'RIGHT_SHIFT', 'LEFT_SHIFT', 'shift'}:
-            #    self.vector_constrain = None
             bpy.ops.view3d.move('INVOKE_DEFAULT')
             return True
 
@@ -187,8 +188,7 @@ class CharMap:
                         self.line_pos = (pos + 1) % (len(self.length_entered) + 1)
 
                     try:
-                        self.length_entered_value = bpy.utils.units.to_value(
-                                self.unit_system, 'LENGTH', self.length_entered)
+                        self.length_entered_value = bpy.utils.units.to_value(self.unit_system, 'LENGTH', self.length_entered)
                     except:  # ValueError:
                         self.length_entered_value = 0.0 #invalid
                         #self.report({'INFO'}, "Operation not supported yet")
@@ -212,6 +212,114 @@ class CharMap:
         self.length_entered = ''
         self.length_entered_value = 0.0
         self.line_pos = 0
+
+
+class Constrain:
+    def __init__(self, peferences, scene, obj):
+        self.last_type = None
+        self.last_vec = None
+        self.rotMat = None
+        self.preferences = peferences
+        trans_orient = scene.transform_orientation_slots[0]
+        self.orientation = [None, None]
+        if trans_orient.type == 'LOCAL':
+            self.orientation[0] = obj.matrix_world.to_3x3().transposed()
+            self.orientation[1] = Matrix.Identity(3)
+        else:
+            self.orientation[0] = Matrix.Identity(3)
+            self.orientation[1] = obj.matrix_world.to_3x3().transposed()
+
+        self.orientation_id = 0
+        self.center = Vector((0.0, 0.0, 0.0))
+        self.center_2d = Vector((0.0, 0.0))
+        self.projected_vecs = Matrix(([0.0, 0.0], [0.0, 0.0], [0.0, 0.0]))
+
+    def _constrain_set(self, mcursor):
+        vec = (mcursor - self.center_2d)
+        vec.normalize()
+
+        dot_x = abs(vec.dot(self.projected_vecs[0]))
+        dot_y = abs(vec.dot(self.projected_vecs[1]))
+        dot_z = abs(vec.dot(self.projected_vecs[2]))
+
+        if dot_x > dot_y and dot_x > dot_z:
+            vec = self.orientation[self.orientation_id][0]
+            type = 'X'
+
+        elif dot_y > dot_x and dot_y > dot_z:
+            vec = self.orientation[self.orientation_id][1]
+            type = 'Y'
+
+        else: # dot_z > dot_y and dot_z > dot_x:
+            vec = self.orientation[self.orientation_id][2]
+            type = 'Z'
+
+        return vec, type
+
+    def modal(self, event, shift_callback):
+        type = event.type
+        if self.last_type == type:
+            self.orientation_id += 1
+
+        if type == 'X':
+            if self.orientation_id < 2:
+                self.last_vec = self.orientation[self.orientation_id][0]
+            else:
+                self.orientation_id = 0
+                self.last_vec = type = None
+        elif type == 'Y':
+            if self.orientation_id < 2:
+                self.last_vec = self.orientation[self.orientation_id][1]
+            else:
+                self.orientation_id = 0
+                self.last_vec = type = None
+        elif type == 'Z':
+            if self.orientation_id < 2:
+                self.last_vec = self.orientation[self.orientation_id][2]
+            else:
+                self.orientation_id = 0
+                self.last_vec = type = None
+        elif shift_callback and type in {'RIGHT_SHIFT', 'LEFT_SHIFT'}:
+            if self.orientation_id < 1:
+                type = 'shift'
+                self.last_vec = shift_callback()
+            else:
+                self.orientation_id = 0
+                self.last_vec = type = None
+        else:
+            return False
+
+        self.preferences.auto_constrain = False
+        self.last_type = type
+        return True
+
+    def toogle(self):
+        self.rotMat = None # update
+        if self.preferences.auto_constrain:
+            self.orientation_id = (self.orientation_id + 1) % 2
+            self.preferences.auto_constrain = self.orientation_id != 0
+        else:
+            self.preferences.auto_constrain = True
+
+    def update(self, region, rv3d, mcursor, center):
+        if rv3d.view_matrix != self.rotMat or self.center != center:
+            self.rotMat = rv3d.view_matrix.copy()
+
+            self.center = center.copy()
+            self.center_2d = location_3d_to_region_2d(region, rv3d, self.center)
+
+            vec = self.center + self.orientation[self.orientation_id][0]
+            self.projected_vecs[0] = location_3d_to_region_2d(region, rv3d, vec) - self.center_2d
+            vec = self.center + self.orientation[self.orientation_id][1]
+            self.projected_vecs[1] = location_3d_to_region_2d(region, rv3d, vec) - self.center_2d
+            vec = self.center + self.orientation[self.orientation_id][2]
+            self.projected_vecs[2] = location_3d_to_region_2d(region, rv3d, vec) - self.center_2d
+
+            self.projected_vecs[0].normalize()
+            self.projected_vecs[1].normalize()
+            self.projected_vecs[2].normalize()
+
+        return self._constrain_set(mcursor)
 
 
 class SnapUtilities:
@@ -304,7 +412,7 @@ class SnapUtilities:
             if obj.instance_type == 'COLLECTION':
                 mat = obj.matrix_world.copy()
                 for ob in obj.instance_collection.objects:
-                    snap_obj = self.sctx.add_obj(obj, mat @ ob.matrix_world)
+                    snap_obj = self.sctx.add_obj(ob, mat @ ob.matrix_world)
                     if is_moving:
                         moving_snp_objects.add(snap_obj)
 
@@ -332,7 +440,7 @@ class SnapUtilities:
             self.sctx.add_obj(obj, matrix)
 
 
-    def snap_context_init(self, context, snap_edge_and_vert = True):
+    def snap_context_init(self, context, snap_edge_and_vert=True):
         from .snap_context_l import global_snap_context_get
 
         #Create Snap Context
@@ -352,8 +460,6 @@ class SnapUtilities:
             self.draw_cache = widget.draw_cache
             if hasattr(widget, "normal"):
                 self.normal = widget.normal
-                #loc = widget.location
-                #self.vector_constrain = [loc, loc + widget.normal, self.constrain]
 
         else:
             #init these variables to avoid errors
@@ -376,17 +482,14 @@ class SnapUtilities:
                 preferences.constrain_shift_color,
                 tuple(context.preferences.themes[0].user_interface.axis_x) + (1.0,),
                 tuple(context.preferences.themes[0].user_interface.axis_y) + (1.0,),
-                tuple(context.preferences.themes[0].user_interface.axis_z) + (1.0,)
-            )
+                tuple(context.preferences.themes[0].user_interface.axis_z) + (1.0,))
 
         self.snap_vert = self.snap_edge = snap_edge_and_vert
 
         shading = context.space_data.shading
-        self.snap_face = not (snap_edge_and_vert and
-                             (shading.show_xray or shading.type == 'WIREFRAME'))
+        self.snap_face = not (snap_edge_and_vert and (shading.show_xray or shading.type == 'WIREFRAME'))
 
-        self.sctx.set_snap_mode(
-                 self.snap_vert, self.snap_edge, self.snap_face)
+        self.sctx.set_snap_mode(self.snap_vert, self.snap_edge, self.snap_face)
 
         #Configure the unit of measure
         unit_system = context.scene.unit_settings.system
@@ -394,8 +497,7 @@ class SnapUtilities:
         scale /= context.space_data.overlay.grid_scale
         self.rd = bpy.utils.units.to_value(unit_system, 'LENGTH', str(1 / scale))
 
-        self.incremental = bpy.utils.units.to_value(
-                unit_system, 'LENGTH', str(self.preferences.incremental))
+        self.incremental = bpy.utils.units.to_value(unit_system, 'LENGTH', str(self.preferences.incremental))
 
     def snap_to_grid(self):
         if self.type == 'OUT' and self.preferences.increments_grid:

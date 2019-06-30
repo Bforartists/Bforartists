@@ -1,16 +1,17 @@
-# gpl: author Daniel Schalla
+# gpl: author Daniel Schalla, maintained by meta-androcto
 
 bl_info = {
-    "name": "Trilighting",
+    "name": "Tri-lighting",
     "author": "Daniel Schalla",
-    "version": (0, 1, 3),
+    "version": (0, 1, 4),
     "blender": (2, 80, 0),
-    "location": "View3D > Sidebar > Create",
-    "description": "Simple 3 Point Lighting Set",
+    "location": "View3D > Add > Lights",
+    "description": "Add 3 Point Lighting to Selected / Active Object",
     "warning": "",
-    "wiki_url": "",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
-    "category": "Object",
+    "category": "Lighting",
+    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+    "Scripts/",
 }
 
 import bpy
@@ -92,7 +93,7 @@ class OBJECT_OT_TriLighting(Operator):
             name="Fill + Back Type",
             description="Choose the types of secondary Lights you would like",
             items=Light_Type_List,
-            default="POINT"
+            default="AREA"
             )
 
     @classmethod
@@ -142,7 +143,7 @@ class OBJECT_OT_TriLighting(Operator):
                 scene.camera = cam_obj
                 bpy.ops.view3d.camera_to_view()
                 camera = cam_obj
-                bpy.ops.view3d.viewnumpad(type='TOP')
+                bpy.ops.view3d.view_axis(type='TOP')
 
             obj = bpy.context.view_layer.objects.active
 
@@ -257,7 +258,7 @@ def menu_func(self, context):
 
 
 
-# Register all operators and panels
+# Register all operators and menu
 def register():
     bpy.utils.register_class(OBJECT_OT_TriLighting)
     bpy.types.VIEW3D_MT_light_add.append(menu_func)

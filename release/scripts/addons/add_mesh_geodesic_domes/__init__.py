@@ -190,7 +190,7 @@ def menu_func(self, context):
 
 # Register
 classes = [
-    add_shape_geodesic.add_corrective_pose_shape_fast,
+    add_shape_geodesic.add_pose_shape_fast,
     third_domes_panel_271.GenerateGeodesicDome,
     third_domes_panel_271.DialogOperator,
 ]

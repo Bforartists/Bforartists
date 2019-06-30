@@ -239,6 +239,8 @@ class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
         layout.prop(cscene, "sampling_pattern", text="Pattern")
 
         col = layout.column(align=True)
+        col.prop(cscene, "min_light_bounces")
+        col.prop(cscene, "min_transparent_bounces")
         col.prop(cscene, "light_sampling_threshold", text="Light Threshold")
 
         if cscene.progressive != 'PATH' and use_branched_path(context):

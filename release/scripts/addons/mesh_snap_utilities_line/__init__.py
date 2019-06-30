@@ -16,13 +16,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # Contact for more information about the Addon:
-# Email:    germano.costa@ig.com.br
-# Twitter:  wii_mano @mano_wii
-
+# Email: germano.costa@ig.com.br
+# Twitter: wii_mano @mano_wii
 bl_info = {
     "name": "Snap_Utilities_Line",
     "author": "Germano Cavalcante",
-    "version": (5, 9, 15),
+    "version": (5, 9, 18),
     "blender": (2, 80, 0),
     "location": "View3D > TOOLS > Line Tool",
     "description": "Extends Blender Snap controls",
@@ -117,7 +116,7 @@ def unregister_snap_tools():
 def register_keymaps():
     keyconfigs = bpy.context.window_manager.keyconfigs
     kc_defaultconf = keyconfigs.default
-    kc_addonconf   = keyconfigs.addon
+    kc_addonconf = keyconfigs.addon
 
     # TODO: find the user defined tool_mouse.
     from bl_keymap_utils.io import keyconfig_init_from_data
@@ -126,14 +125,21 @@ def register_keymaps():
 
     #snap_modalkeymap = kc_addonconf.keymaps.find(keys.km_snap_utilities_modal_keymap)
     #snap_modalkeymap.assign("MESH_OT_snap_utilities_line")
-
-
 def unregister_keymaps():
     keyconfigs = bpy.context.window_manager.keyconfigs
     defaultmap = keyconfigs.get("blender").keymaps
     addonmap   = keyconfigs.get("blender addon").keymaps
 
-    for keyconfig_data in keys.generate_snap_utilities_keymaps():
+    for keyconfig_data in keys.generate_snap_utilities_global_keymaps():
+        km_name, km_args, km_content = keyconfig_data
+        keymap = addonmap.find(km_name, **km_args)
+        keymap_items = keymap.keymap_items
+        for item in km_content['items']:
+            item_id = keymap_items.find(item[0])
+            if item_id != -1:
+                keymap_items.remove(keymap_items[item_id])
+
+    for keyconfig_data in keys.generate_snap_utilities_tools_keymaps():
         km_name, km_args, km_content = keyconfig_data
         addonmap.remove(addonmap.find(km_name, **km_args))
 

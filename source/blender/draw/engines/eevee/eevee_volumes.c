@@ -509,11 +509,10 @@ void EEVEE_volumes_cache_finish(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 
     DRW_shgroup_call_procedural_triangles(grp, NULL, common_data->vol_tex_size[2]);
 
-    DRW_PASS_CREATE(psl->volumetric_resolve_ps, DRW_STATE_WRITE_COLOR);
+    DRW_PASS_CREATE(psl->volumetric_resolve_ps, DRW_STATE_WRITE_COLOR | DRW_STATE_BLEND_CUSTOM);
     grp = DRW_shgroup_create(e_data.volumetric_resolve_sh, psl->volumetric_resolve_ps);
     DRW_shgroup_uniform_texture_ref(grp, "inScattering", &txl->volume_scatter);
     DRW_shgroup_uniform_texture_ref(grp, "inTransmittance", &txl->volume_transmit);
-    DRW_shgroup_uniform_texture_ref(grp, "inSceneColor", &e_data.color_src);
     DRW_shgroup_uniform_texture_ref(grp, "inSceneDepth", &e_data.depth_src);
     DRW_shgroup_uniform_block(grp, "common_block", sldata->common_ubo);
 
@@ -631,29 +630,19 @@ void EEVEE_volumes_compute(EEVEE_ViewLayerData *UNUSED(sldata), EEVEE_Data *veda
 void EEVEE_volumes_resolve(EEVEE_ViewLayerData *UNUSED(sldata), EEVEE_Data *vedata)
 {
   EEVEE_PassList *psl = vedata->psl;
-  EEVEE_TextureList *txl = vedata->txl;
   EEVEE_FramebufferList *fbl = vedata->fbl;
   EEVEE_StorageList *stl = vedata->stl;
   EEVEE_EffectsInfo *effects = stl->effects;
 
   if ((effects->enabled_effects & EFFECT_VOLUMETRIC) != 0) {
     DefaultTextureList *dtxl = DRW_viewport_texture_list_get();
-
-    e_data.color_src = txl->color;
     e_data.depth_src = dtxl->depth;
 
-    /* Step 4: Apply for opaque */
-    GPU_framebuffer_bind(fbl->effect_color_fb);
+    /* Apply for opaque geometry. */
+    GPU_framebuffer_bind(fbl->main_color_fb);
     DRW_draw_pass(psl->volumetric_resolve_ps);
 
-    /* Swap the buffers and rebind depth to the current buffer */
-    SWAP(GPUFrameBuffer *, fbl->main_fb, fbl->effect_fb);
-    SWAP(GPUFrameBuffer *, fbl->main_color_fb, fbl->effect_color_fb);
-    SWAP(GPUTexture *, txl->color, txl->color_post);
-
-    /* Restore */
-    GPU_framebuffer_texture_detach(fbl->effect_fb, dtxl->depth);
-    GPU_framebuffer_texture_attach(fbl->main_fb, dtxl->depth, 0, 0);
+    /* Restore. */
     GPU_framebuffer_bind(fbl->main_fb);
   }
 }
