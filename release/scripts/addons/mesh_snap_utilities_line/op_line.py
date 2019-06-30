@@ -25,6 +25,7 @@ from .drawing_utilities import SnapDrawn
 from .common_utilities import snap_utilities
 from .common_classes import (
     CharMap,
+    Constrain,
     SnapNavigation,
     SnapUtilities,
     )
@@ -206,7 +207,7 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
     bl_label = "Line Tool"
     bl_options = {'REGISTER'}
 
-    wait_for_input: bpy.props.BoolProperty(name="Wait for Input", default=True)
+    wait_for_input : bpy.props.BoolProperty(name="Wait for Input", default=True)
 
     def _exit(self, context):
         #avoids unpredictable crashs
@@ -229,7 +230,7 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
         self.list_verts = []
         self.list_edges = []
         self.list_verts_co = []
-        self.bool_update = False
+        self.bool_update = True
         self.vector_constrain = ()
         self.len = 0
 
@@ -239,6 +240,12 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
 
         self.main_snap_obj = self.snap_obj = self.sctx._get_snap_obj_by_obj(self.obj)
         self.main_bm = self.bm
+
+    def _shift_contrain_callback(self):
+        if isinstance(self.geom, bmesh.types.BMEdge):
+            mat = self.main_snap_obj.mat
+            verts_co = [mat @ v.co for v in self.geom.verts]
+            return verts_co[1] - verts_co[0]
 
     def modal(self, context, event):
         if self.navigation_ops.run(context, event, self.prevloc if self.vector_constrain else self.location):
@@ -270,14 +277,14 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
         is_making_lines = bool(self.list_verts_co)
 
         if (event.type == 'MOUSEMOVE' or self.bool_update) and self.charmap.length_entered_value == 0.0:
+            mval = Vector((event.mouse_region_x, event.mouse_region_y))
+
             if self.rv3d.view_matrix != self.rotMat:
                 self.rotMat = self.rv3d.view_matrix.copy()
                 self.bool_update = True
                 snap_utilities.cache.clear()
             else:
                 self.bool_update = False
-
-            mval = Vector((event.mouse_region_x, event.mouse_region_y))
 
             self.snap_obj, self.prevloc, self.location, self.type, self.bm, self.geom, self.len = snap_utilities(
                     self.sctx,
@@ -289,25 +296,10 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
 
             self.snap_to_grid()
 
-            if is_making_lines and self.keyf8:
-                lloc = self.list_verts_co[-1]
-                view_vec, orig = self.sctx.last_ray
-                location = intersect_point_line(lloc, orig, (orig + view_vec))
-                vec = (location[0] - lloc)
-                ax, ay, az = abs(vec.x), abs(vec.y), abs(vec.z)
-                vec.x = ax > ay and ax > az
-                vec.y = ay > ax and ay > az
-                vec.z = az > ay and az > ax
-                if not (vec.x or vec.y or vec.z):
-                    self.vector_constrain = None
-                else:
-                    vc = lloc + vec
-                    if self.vector_constrain is None or vc != self.vector_constrain[1]:
-                        type = 'X' if vec.x else 'Y' if vec.y else 'Z' if vec.z else 'shift'
-                        self.vector_constrain = [lloc, vc, type]
-                        #del vc, type
-
-                #del view_vec, orig, location, ax, ay, az, vec
+            if is_making_lines and self.preferences.auto_constrain:
+                loc = self.list_verts_co[-1]
+                vec, type = self.constrain.update(self.sctx.region, self.sctx.rv3d, mval, loc)
+                self.vector_constrain = [loc, loc + vec, type]
 
         if event.value == 'PRESS':
             if is_making_lines and self.charmap.modal_(context, event):
@@ -319,29 +311,17 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
                     self.location = self.list_verts_co[-1] + (vector * text_value)
                     del vector
 
-            elif event.type in self.constrain_keys:
+            elif self.constrain.modal(event, self._shift_contrain_callback):
                 self.bool_update = True
-                self.keyf8 = False
-
-                if self.vector_constrain and self.vector_constrain[2] == event.type:
-                    self.vector_constrain = ()
-
-                else:
-                    if event.shift:
-                        if isinstance(self.geom, bmesh.types.BMEdge):
-                            mat = self.main_snap_obj.mat
-                            verts_co = [mat @ v.co for v in self.geom.verts]
-                            if is_making_lines:
-                                loc = self.list_verts_co[-1]
-                                self.vector_constrain = (loc, loc + verts_co[1] - verts_co[0], event.type)
-                            else:
-                                self.vector_constrain = verts_co + [event.type]
+                if self.constrain.last_vec:
+                    if self.list_verts_co:
+                        loc = self.list_verts_co[-1]
                     else:
-                        if is_making_lines:
-                            loc = self.list_verts_co[-1]
-                        else:
-                            loc = self.location
-                        self.vector_constrain = [loc, loc + self.constrain_keys[event.type], event.type]
+                        loc = self.location
+
+                    self.vector_constrain = (loc, loc + self.constrain.last_vec, self.constrain.last_type)
+                else:
+                    self.vector_constrain = None
 
             elif event.type in {'LEFTMOUSE', 'RET', 'NUMPAD_ENTER'}:
                 if event.type == 'LEFTMOUSE' or self.charmap.length_entered_value != 0.0:
@@ -351,7 +331,6 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
 
                     mat_inv = self.main_snap_obj.mat.inverted_safe()
                     point = mat_inv @ self.location
-                    # with constraint the intersection can be in a different element of the selected one
                     geom2 = self.geom
                     if geom2:
                         geom2.select = False
@@ -369,7 +348,7 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
 
             elif event.type == 'F8':
                 self.vector_constrain = None
-                self.keyf8 = self.keyf8 is False
+                self.constrain.toogle()
 
             elif event.type in {'RIGHTMOUSE', 'ESC'}:
                 if not self.wait_for_input or not is_making_lines or event.type == 'ESC':
@@ -406,6 +385,8 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
             self.snap_context_init(context)
             self.snap_context_update(context)
 
+            self.constrain = Constrain(self.preferences, context.scene, self.obj)
+
             self.intersect = self.preferences.intersect
             self.create_face = self.preferences.create_face
             self.navigation_ops = SnapNavigation(context, True)
@@ -427,10 +408,8 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
             #Store values from 3d view context
             self.rv3d = context.region_data
             self.rotMat = self.rv3d.view_matrix.copy()
-            # self.obj_glmatrix = bgl.Buffer(bgl.GL_FLOAT, [4, 4], self.obj_matrix.transposed())
-
-            #Init event variables
-            self.keyf8 = False
+            # self.obj_glmatrix = bgl.Buffer(bgl.GL_FLOAT, [4, 4],
+            # self.obj_matrix.transposed())
 
             #modals
             context.window_manager.modal_handler_add(self)

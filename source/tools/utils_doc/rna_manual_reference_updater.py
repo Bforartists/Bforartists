@@ -39,7 +39,7 @@
 # URL is the: url_manual_prefix + url_manual_mapping[#id]
 
 import os
-import sphobjinv
+import sphobjinv as soi
 import urllib.request
 
 # Download the objects.inv file
@@ -47,11 +47,11 @@ urlretrieve = urllib.request.urlretrieve
 urlretrieve("https://docs.blender.org/manual/en/dev/objects.inv", "objects.inv")
 
 # Decode objects.inv
-objects = sphobjinv.readfile('objects.inv')
-objects_data = sphobjinv.decode(objects)
-sphobjinv.writefile('objects.tmp', objects_data)  # TODO leave in memory
-os.remove("objects.inv")
 
+inv = soi.Inventory('objects.inv')
+objects_data = inv.data_file()
+soi.writebytes('objects.tmp', objects_data)  # TODO leave in memory
+os.remove("objects.inv")
 
 # Write the fire
 filepath = os.path.join("rna_manual_reference.py")
@@ -97,7 +97,6 @@ fw("}.get(language)\n\n")
 fw("if LANG is not None:\n")
 fw("    url_manual_prefix = url_manual_prefix.replace(\"manual/en\", \"manual/\" + LANG)\n\n")
 fw("url_manual_mapping = (\n")
-
 
 # Logic to manipulate strings from objects.inv
 with open("objects.tmp", encoding="utf8") as obj_tmp:

@@ -80,8 +80,7 @@ def location_3d_to_region_2d(region, rv3d, coord):
     width_half = region.width / 2.0
     height_half = region.height / 2.0
     return Vector((width_half + width_half * (prj.x / prj.w),
-                   height_half + height_half * (prj.y / prj.w),
-                   prj.z / prj.w
+                   height_half + height_half * (prj.y / prj.w)
                    ))
 
 

@@ -51,7 +51,7 @@ class PIE_MT_PieApplyTransforms(Menu):
         # 6 - RIGHT
         pie.operator("clear.all", text="Clear All", icon='NONE')
         # 2 - BOTTOM
-        pie.operator("object.duplicates_make_real", text="Make Duplicates Real")
+        pie.operator("object.duplicates_make_real", text="Make Instances Real")
         # 8 - TOP
         pie.operator("apply.transformlocrotscale", text="Rotation", icon='NONE').option = 'ROT'
         # 7 - TOP - LEFT

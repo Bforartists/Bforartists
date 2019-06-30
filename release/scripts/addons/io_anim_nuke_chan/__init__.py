@@ -76,7 +76,7 @@ class ImportChan(Operator, ImportHelper):
 
     filter_glob: StringProperty(default="*.chan", options={'HIDDEN'})
 
-    rotation_order = rotation_order
+    rotation_order: rotation_order
     z_up: BoolProperty(
             name="Make Z up",
             description="Switch the Y and Z axis",
@@ -118,7 +118,7 @@ class ExportChan(Operator, ExportHelper):
             name="Make Y up",
             description="Switch the Y and Z axis",
             default=True)
-    rotation_order = rotation_order
+    rotation_order: rotation_order
 
     @classmethod
     def poll(cls, context):

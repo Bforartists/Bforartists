@@ -898,6 +898,13 @@ void DepsgraphRelationBuilder::build_object_pointcache(Object *object)
       OperationKey transform_key(
           &object->id, NodeType::TRANSFORM, OperationCode::TRANSFORM_SIMULATION_INIT);
       add_relation(point_cache_key, transform_key, "Point Cache -> Rigid Body");
+      /* Manual changes to effectors need to invalidate simulation. */
+      OperationKey rigidbody_rebuild_key(
+          &scene_->id, NodeType::TRANSFORM, OperationCode::RIGIDBODY_REBUILD);
+      add_relation(rigidbody_rebuild_key,
+                   point_cache_key,
+                   "Rigid Body Rebuild -> Point Cache Reset",
+                   RELATION_FLAG_FLUSH_USER_EDIT_ONLY);
     }
     else {
       flag = FLAG_GEOMETRY;
@@ -1199,7 +1206,10 @@ void DepsgraphRelationBuilder::build_animdata_curves_targets(ID *id,
     const IDNode *id_node_to = operation_to->owner->owner;
     if (id_node_from != id_node_to) {
       ComponentKey cow_key(id_node_to->id_orig, NodeType::COPY_ON_WRITE);
-      add_relation(cow_key, adt_key, "Animated CoW -> Animation", RELATION_CHECK_BEFORE_ADD);
+      add_relation(cow_key,
+                   adt_key,
+                   "Animated CoW -> Animation",
+                   RELATION_CHECK_BEFORE_ADD | RELATION_FLAG_NO_FLUSH);
     }
   }
 }
@@ -2367,7 +2377,9 @@ void DepsgraphRelationBuilder::build_scene_sequencer(Scene *scene)
       if (seq->flag & SEQ_SCENE_STRIPS) {
         build_scene_sequencer(seq->scene);
         ComponentKey sequence_scene_audio_key(&seq->scene->id, NodeType::AUDIO);
-        add_relation(sequence_scene_audio_key, scene_audio_key, "Sequence Audio -> Scene Audio");
+        add_relation(sequence_scene_audio_key, sequencer_key, "Sequence Scene Audio -> Sequencer");
+        ComponentKey sequence_scene_key(&seq->scene->id, NodeType::SEQUENCER);
+        add_relation(sequence_scene_key, sequencer_key, "Sequence Scene -> Sequencer");
       }
       ViewLayer *sequence_view_layer = BKE_view_layer_default_render(seq->scene);
       build_scene_speakers(seq->scene, sequence_view_layer);
