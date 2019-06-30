@@ -334,6 +334,8 @@ class VIEW3D_HT_tool_header(Header):
 
         VIEW3D_HT_header.draw_xform_template(layout, context)
 
+        self.draw_mode_settings(context)
+
     def draw_tool_settings(self, context):
         layout = self.layout
         tool_mode = context.mode
