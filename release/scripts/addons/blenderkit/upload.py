@@ -599,11 +599,11 @@ def start_upload(self, context, asset_type, as_new, metadata_only):
     datafile = os.path.join(tempdir, BLENDERKIT_EXPORT_DATA_FILE)
 
     # check if thumbnail exists:
-
-    if not os.path.exists(export_data["thumbnail_path"]):
-        props.upload_state = 'Thumbnail not found'
-        props.uploading = False
-        return {'CANCELLED'}
+    if not metadata_only:
+        if not os.path.exists(export_data["thumbnail_path"]):
+            props.upload_state = 'Thumbnail not found'
+            props.uploading = False
+            return {'CANCELLED'}
 
     # first upload metadata to server, so it can be saved inside the current file
     url = paths.get_api_url() + 'assets/'
@@ -648,10 +648,10 @@ def start_upload(self, context, asset_type, as_new, metadata_only):
     try:
         rj = r.json()
         utils.pprint(rj)
-        if r.status_code != 200:
-            if r.status_code == 401:
-                ui.add_report(r.detail, 5, colors.RED)
-            return {'CANCELLED'}
+        # if r.status_code not in (200, 201):
+        #     if r.status_code == 401:
+        #         ui.add_report(r.detail, 5, colors.RED)
+        #     return {'CANCELLED'}
         if props.asset_base_id == '':
             props.asset_base_id = rj['assetBaseId']
             props.id = rj['id']

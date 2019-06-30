@@ -187,6 +187,12 @@ bool ED_gpencil_add_armature_weights(const struct bContext *C,
                                      struct Object *ob_arm,
                                      int mode);
 
+/* Add Lattice modifier using Parent operator */
+bool ED_gpencil_add_lattice_modifier(const struct bContext *C,
+                                     struct ReportList *reports,
+                                     struct Object *ob,
+                                     struct Object *ob_latt);
+
 /* keep this aligned with gpencil_armature enum */
 #define GP_PAR_ARMATURE_NAME 0
 #define GP_PAR_ARMATURE_AUTO 1
@@ -220,6 +226,7 @@ struct Object *ED_gpencil_add_object(struct bContext *C,
 void ED_gpencil_add_defaults(struct bContext *C, struct Object *ob);
 /* set object modes */
 void ED_gpencil_setup_modes(struct bContext *C, struct bGPdata *gpd, int newmode);
+bool ED_object_gpencil_exit(struct Main *bmain, struct Object *ob);
 
 void ED_gp_project_stroke_to_plane(const struct Scene *scene,
                                    const struct Object *ob,

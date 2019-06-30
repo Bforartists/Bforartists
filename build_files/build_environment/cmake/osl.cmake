@@ -111,8 +111,16 @@ add_dependencies(
   external_zlib
   external_flexbison
   external_openimageio
-  external_pugixml
 )
+
+if(UNIX AND NOT APPLE)
+  # Rely on PugiXML compiled with OpenImageIO
+else()
+  add_dependencies(
+    external_osl
+    external_pugixml
+  )
+endif()
 
 if(WIN32)
   if(BUILD_MODE STREQUAL Release)

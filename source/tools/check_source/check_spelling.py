@@ -333,8 +333,9 @@ def spell_check_comments_recursive(dirpath):
         for dirpath, dirnames, filenames in os.walk(path):
             # skip '.git'
             dirnames[:] = [d for d in dirnames if not d.startswith(".")]
-
             for filename in filenames:
+                if filename.startswith("."):
+                    continue
                 filepath = join(dirpath, filename)
                 if filename_check is None or filename_check(filepath):
                     yield filepath
@@ -343,6 +344,7 @@ def spell_check_comments_recursive(dirpath):
         ext = splitext(filename)[1]
         return (ext in {
             ".c",
+            ".cc",
             ".inl",
             ".cpp",
             ".cxx",
