@@ -63,6 +63,10 @@ ALLOWED_LIBS = (
     "libGL.so",
     "libGLU.so",
 
+    # Library the software-GL is linking against and distributes with it.
+    'libglapi.so',
+    'libxcb.so',
+
     # Own dependencies we don't link statically.
     "libfreetype.so",
 )

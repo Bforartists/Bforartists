@@ -38,6 +38,8 @@
 #include "BLI_blenlib.h"
 #include "BLI_utildefines.h"
 
+#include "PIL_time.h"
+
 #include "BLO_readfile.h"
 
 #include "DNA_world_types.h"
@@ -1209,6 +1211,10 @@ static void icon_preview_startjob_all_sizes(void *customdata,
   for (cur_size = ip->sizes.first; cur_size; cur_size = cur_size->next) {
     PreviewImage *prv = ip->owner;
 
+    if (*stop) {
+      break;
+    }
+
     if (prv->tag & PRV_TAG_DEFFERED_DELETE) {
       /* Non-thread-protected reading is not an issue here. */
       continue;
@@ -1379,7 +1385,10 @@ void ED_preview_icon_job(
 
   /* setup job */
   WM_jobs_customdata_set(wm_job, ip, icon_preview_free);
-  WM_jobs_timer(wm_job, 0.1, NC_WINDOW, NC_WINDOW);
+  /* Wait 2s to start rendering icon previews, to not bog down user interaction.
+   * Particularly important for heavy scenes and Eevee using OpenGL that blocks
+   * the user interface drawing. */
+  WM_jobs_timer(wm_job, 2.0, NC_WINDOW, NC_WINDOW);
   WM_jobs_callbacks(wm_job, icon_preview_startjob_all_sizes, NULL, NULL, icon_preview_endjob);
 
   WM_jobs_start(CTX_wm_manager(C), wm_job);
@@ -1470,6 +1479,9 @@ void ED_preview_shader_job(const bContext *C,
 void ED_preview_kill_jobs(wmWindowManager *wm, Main *UNUSED(bmain))
 {
   if (wm) {
+    /* This is called to stop all preview jobs before scene data changes, to
+     * avoid invalid memory access. */
     WM_jobs_kill(wm, NULL, common_preview_startjob);
+    WM_jobs_kill(wm, NULL, icon_preview_startjob_all_sizes);
   }
 }

@@ -92,6 +92,8 @@ def draw_upload_common(layout, props, asset_type, context):
         op.url = paths.BLENDERKIT_MODEL_UPLOAD_INSTRUCTIONS_URL
     if asset_type == 'MATERIAL':
         op.url = paths.BLENDERKIT_MATERIAL_UPLOAD_INSTRUCTIONS_URL
+    if asset_type == 'BRUSH':
+        op.url = paths.BLENDERKIT_BRUSH_UPLOAD_INSTRUCTIONS_URL
 
     row = layout.row(align=True)
     if props.upload_state != '':
@@ -661,7 +663,7 @@ class VIEW3D_PT_blenderkit_unified(Panel):
                 return;
 
             if ui_props.asset_type == 'MODEL':
-                label_multiline(layout, "Uploaded models won't be available in b2.79", icon='ERROR')
+                # label_multiline(layout, "Uploaded models won't be available in b2.79", icon='ERROR')
                 if bpy.context.active_object is not None:
                     draw_panel_model_upload(self, context)
                 else:
@@ -670,7 +672,7 @@ class VIEW3D_PT_blenderkit_unified(Panel):
                 draw_panel_scene_upload(self, context)
 
             elif ui_props.asset_type == 'MATERIAL':
-                label_multiline(layout, "Uploaded materials won't be available in b2.79", icon='ERROR')
+                # label_multiline(layout, "Uploaded materials won't be available in b2.79", icon='ERROR')
 
                 if bpy.context.active_object is not None and bpy.context.active_object.active_material is not None:
                     draw_panel_material_upload(self, context)

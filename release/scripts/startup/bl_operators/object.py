@@ -154,8 +154,8 @@ class SelectCamera(Operator):
 
 
 class SelectHierarchy(Operator):
-    """Select Hierarchy\nSelect object relative to the active object's position\nChild selects the child objects"""
-    """\nParent selects the parent objects\nExtended extends the current selection in the hierarchy"""
+    """Select Hierarchy\nSelect object relative to the active object's position """ \
+        """in the hierarchy"""
     bl_idname = "object.select_hierarchy"
     bl_label = "Select Hierarchy"
     bl_options = {'REGISTER', 'UNDO'}
@@ -586,9 +586,9 @@ class JoinUVs(Operator):
 
 
 class MakeDupliFace(Operator):
-    """Make Dupli Face\nConvert objects into dupli-face instanced"""
+    """Make Dupli Face\nConvert objects into instanced faces"""
     bl_idname = "object.make_dupli_face"
-    bl_label = "Make Dupli-Face"
+    bl_label = "Make Instance Face"
     bl_options = {'REGISTER', 'UNDO'}
 
     @staticmethod

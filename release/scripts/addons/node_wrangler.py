@@ -547,6 +547,8 @@ draw_color_sets = {
 def is_cycles_or_eevee(context):
     return context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}
 
+def is_visible_socket(socket):
+    return not socket.hide and socket.enabled
 
 def nice_hotkey_name(punc):
     # convert the ugly string name into the actual character
@@ -1622,7 +1624,7 @@ class NWEmissionViewer(Operator, NWBase):
             if active:
                 if (active.name != "Emission Viewer") and (active.type not in output_types) and not in_group:
                     for out in active.outputs:
-                        if not out.hide:
+                        if is_visible_socket(out):
                             valid = True
                             break
             if valid:
@@ -1658,7 +1660,7 @@ class NWEmissionViewer(Operator, NWBase):
                 out_i = None
                 valid_outputs = []
                 for i, out in enumerate(active.outputs):
-                    if not out.hide:
+                    if is_visible_socket(out):
                         valid_outputs.append(i)
                 if valid_outputs:
                     out_i = valid_outputs[0]  # Start index of node's outputs
@@ -3211,7 +3213,7 @@ class NWLinkToOutputNode(Operator, NWBase):
         if nw_check(context):
             if context.active_node is not None:
                 for out in context.active_node.outputs:
-                    if not out.hide:
+                    if is_visible_socket(out):
                         valid = True
                         break
         return valid
@@ -3246,11 +3248,11 @@ class NWLinkToOutputNode(Operator, NWBase):
             output_node.location.y = active.location.y
         if (output_node and active.outputs):
             for i, output in enumerate(active.outputs):
-                if not output.hide:
+                if is_visible_socket(output):
                     output_index = i
                     break
             for i, output in enumerate(active.outputs):
-                if output.type == output_node.inputs[0].type and not output.hide:
+                if output.type == output_node.inputs[0].type and is_visible_socket(output):
                     output_index = i
                     break
 

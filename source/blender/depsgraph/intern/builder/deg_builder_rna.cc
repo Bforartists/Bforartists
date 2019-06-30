@@ -228,7 +228,7 @@ RNANodeIdentifier RNANodeQuery::construct_node_identifier(const PointerRNA *ptr,
     /* Armature-level bone mapped to Armature Eval, and thus Pose Init.
      * Drivers have special code elsewhere that links them to the pose
      * bone components, instead of using this generic code. */
-    node_identifier.type = NodeType::PARAMETERS;
+    node_identifier.type = NodeType::ARMATURE;
     node_identifier.operation_code = OperationCode::ARMATURE_EVAL;
     /* If trying to look up via an Object, e.g. due to lookup via
      * obj.pose.bones[].bone in a driver attached to the Object,
@@ -279,7 +279,7 @@ RNANodeIdentifier RNANodeQuery::construct_node_identifier(const PointerRNA *ptr,
   }
   else if (RNA_struct_is_a(ptr->type, &RNA_Mesh) || RNA_struct_is_a(ptr->type, &RNA_Modifier) ||
            RNA_struct_is_a(ptr->type, &RNA_GpencilModifier) ||
-           RNA_struct_is_a(ptr->type, &RNA_Spline)) {
+           RNA_struct_is_a(ptr->type, &RNA_Spline) || RNA_struct_is_a(ptr->type, &RNA_TextBox)) {
     /* When modifier is used as FROM operation this is likely referencing to
      * the property (for example, modifier's influence).
      * But when it's used as TO operation, this is geometry component. */

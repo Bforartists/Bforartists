@@ -1923,8 +1923,8 @@ static int object_duplicates_make_real_exec(bContext *C, wmOperator *op)
 void OBJECT_OT_duplicates_make_real(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Make Duplicates Real";
-  ot->description = "Make Duplicates Real\nMake dupli objects attached to this object real";
+  ot->name = "Make Instances Real";
+  ot->description = "Make Instances Real\nMake instanced objects attached to this object real";
   ot->idname = "OBJECT_OT_duplicates_make_real";
 
   /* api callbacks */
@@ -2031,6 +2031,18 @@ static Base *duplibase_for_convert(
   ED_object_base_select(basen, BA_SELECT);
   ED_object_base_select(base, BA_DESELECT);
 
+  /* XXX An ugly hack needed because if we re-run depsgraph with some new MBall objects
+   * having same 'family name' as orig ones, they will affect end result of MBall computation...
+   * For until we get rid of that name-based thingy in MBalls, that should do the trick
+   * (this is weak, but other solution (to change name of obn) is even worse imho).
+   * See T65996. */
+  const bool is_meta_ball = (obn->type == OB_MBALL);
+  void *obdata = obn->data;
+  if (is_meta_ball) {
+    obn->type = OB_EMPTY;
+    obn->data = NULL;
+  }
+
   /* XXX Doing that here is stupid, it means we update and re-evaluate the whole depsgraph every
    * time we need to duplicate an object to convert it. Even worse, this is not 100% correct, since
    * we do not yet have duplicated obdata.
@@ -2044,6 +2056,11 @@ static Base *duplibase_for_convert(
   CustomData_MeshMasks_update(&scene->customdata_mask, &CD_MASK_MESH);
   BKE_scene_graph_update_tagged(depsgraph, bmain);
   scene->customdata_mask = customdata_mask_prev;
+
+  if (is_meta_ball) {
+    obn->type = OB_MBALL;
+    obn->data = obdata;
+  }
 
   return basen;
 }
@@ -2314,8 +2331,6 @@ static int convert_exec(bContext *C, wmOperator *op)
       }
 
       if (!(baseob->flag & OB_DONE)) {
-        baseob->flag |= OB_DONE;
-
         basen = duplibase_for_convert(bmain, depsgraph, scene, view_layer, base, baseob);
         newob = basen->object;
 
@@ -2341,6 +2356,7 @@ static int convert_exec(bContext *C, wmOperator *op)
           basact = basen;
         }
 
+        baseob->flag |= OB_DONE;
         mballConverted = 1;
       }
     }
@@ -2424,7 +2440,7 @@ void OBJECT_OT_convert(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Convert to";
-  ot->description = "Convert to, Convert selected objects:";
+  ot->description = "Convert to\nConvert selected objects to another type";
   ot->idname = "OBJECT_OT_convert";
 
   /* api callbacks */

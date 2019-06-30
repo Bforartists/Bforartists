@@ -22,7 +22,7 @@ bl_info = {
     "name": "Freestyle SVG Exporter",
     "author": "Folkert de Vries",
     "version": (1, 0),
-    "blender": (2, 72, 1),
+    "blender": (2, 80, 0),
     "location": "Properties > Render > Freestyle SVG Export",
     "description": "Exports Freestyle's stylized edges in SVG format",
     "warning": "",
@@ -189,7 +189,7 @@ class SVGExporterLinesetPanel(bpy.types.Panel):
 
         scene = context.scene
         svg = scene.svg_export
-        freestyle = scene.render.layers.active.freestyle_settings
+        freestyle = context.window.view_layer.freestyle_settings
 
         try:
             linestyle = freestyle.linesets.active.linestyle
@@ -265,7 +265,7 @@ class SVGExporterPanel(bpy.types.Panel):
 
         scene = context.scene
         svg = scene.svg_export
-        freestyle = scene.render.layers.active.freestyle_settings
+        freestyle = context.window.view_layer.freestyle_settings
 
         layout.active = (svg.use_svg_export and freestyle.mode != 'SCRIPT')
 

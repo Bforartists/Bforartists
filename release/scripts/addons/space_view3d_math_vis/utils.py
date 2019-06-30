@@ -95,12 +95,29 @@ def get_math_data():
 
     variables = {}
     for key, var in locals.items():
-        if len(key)==0 or key[0] == "_" or not var:
+        if len(key) == 0 or key[0] == "_":
             continue
-        if type(var) in {Matrix, Vector, Quaternion, Euler} or \
-           type(var) in {tuple, list} and is_display_list(var):
 
-            variables[key] = type(var)
+        type_var = type(var)
+
+        # Rules out sets/dicts.
+        # It's also possible the length check below is slow
+        # for data with underlying linked-list structure.
+        if not hasattr(type_var, "__getitem__"):
+            continue
+
+        # Don't do a truth test on the data because this causes an error with some
+        # array types, see T66107.
+        len_fn = getattr(type_var, "__len__", None)
+        if len_fn is None:
+            continue
+        if len_fn(var) == 0:
+            continue
+
+        if type_var in {Matrix, Vector, Quaternion, Euler} or \
+           type_var in {tuple, list} and is_display_list(var):
+
+            variables[key] = type_var
 
     return variables
 
