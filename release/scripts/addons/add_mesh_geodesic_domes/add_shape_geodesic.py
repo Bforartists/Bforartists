@@ -7,7 +7,7 @@ def reset_transform(ob):
     ob.matrix_local = m
 
 
-def func_add_corrective_pose_shape_fast(source, target):
+def func_add_pose_shape_fast(source, target):
     result = ""
     reset_transform(target)
     # If target object doesn't have Basis shape key, create it.
@@ -67,8 +67,8 @@ def func_add_corrective_pose_shape_fast(source, target):
     return result
 
 
-class add_corrective_pose_shape_fast(bpy.types.Operator):
-    bl_idname = "object.add_corrective_pose_shape_fast"
+class add_pose_shape_fast(bpy.types.Operator):
+    bl_idname = "object.add_pose_shape_fast"
     bl_label = "Add object as corrective shape faster"
     bl_description = "Adds 1st object as shape to 2nd object as pose shape (only 1 armature)"
 
@@ -90,6 +90,6 @@ class add_corrective_pose_shape_fast(bpy.types.Operator):
             source = selection[0]
         print(source)
         print(target)
-        func_add_corrective_pose_shape_fast(source, target)
+        func_add_pose_shape_fast(source, target)
 
         return {'FINISHED'}

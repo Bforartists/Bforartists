@@ -588,7 +588,7 @@ class CURVE_OT_simplify(Operator):
 
 ## Initial use Curve Remove Doubles ##
 
-def main(context, distance = 0.01):
+def main_rd(context, distance = 0.01):
 
     obj = context.active_object
     dellist = []
@@ -659,7 +659,7 @@ class Curve_OT_CurveRemvDbs(bpy.types.Operator):
         return (obj and obj.type == 'CURVE')
 
     def execute(self, context):
-        removed=main(context, self.distance)
+        removed=main_rd(context, self.distance)
         self.report({'INFO'}, "Removed %d bezier points" % removed)
         return {'FINISHED'}
 
