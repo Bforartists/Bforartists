@@ -308,7 +308,7 @@ class SEQUENCER_MT_select(Menu):
         layout.operator("sequencer.select_handles", text="Right Handle").side = 'RIGHT'
 
         layout.separator()
-        
+
         layout.operator("sequencer.select_less", text = "Less")
         layout.operator("sequencer.select_more", text = "More")
 
@@ -680,6 +680,7 @@ class SEQUENCER_PT_edit(SequencerButtonsPanel, Panel):
     bl_category = "Strip"
 
     def draw(self, context):
+
         layout = self.layout
 
         scene = context.scene
@@ -693,6 +694,8 @@ class SEQUENCER_PT_edit(SequencerButtonsPanel, Panel):
         split = layout.split(factor=0.25)
         split.label(text="Type:")
         split.prop(strip, "type", text="")
+
+        strip_type = strip.type
 
         if strip_type != 'SOUND':
             split = layout.split(factor=0.25)
@@ -1214,7 +1217,7 @@ class SEQUENCER_PT_filter(SequencerButtonsPanel, Panel):
 
         split = layout.split(factor=0.6)
         col = split.column()
-        col.prop(strip, "use_reverse_frames", text="Reverse")
+        #col.prop(strip, "use_reverse_frames", text="Reverse")
         col.prop(strip, "use_deinterlace")
 
         col = split.column()
