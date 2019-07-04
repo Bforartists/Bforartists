@@ -580,10 +580,6 @@ class SEQUENCER_MT_strip_transform(Menu):
         layout.operator("sequencer.slip", text="Slip Strip Contents", icon = "SEQ_SLIP_CONTENTS")
 
         layout.separator()
-        layout.operator("sequencer.snap", icon = "SEQ_SNAP_STRIP")
-        layout.operator("sequencer.offset_clear", icon = "SEQ_CLEAR_OFFSET")
-
-        layout.separator()
         layout.operator("sequencer.swap", text="Swap Strip Left", icon = "SEQ_SWAP_LEFT").side = 'LEFT'
         layout.operator("sequencer.swap", text="Swap Strip Right", icon = "SEQ_SWAP_RIGHT").side = 'RIGHT'
 
@@ -665,8 +661,8 @@ class SEQUENCER_MT_strip(Menu):
 
         layout.separator()
         layout.menu("SEQUENCER_MT_strip_transform")
-        layout.operator("sequencer.snap")
-        layout.operator("sequencer.offset_clear")
+        layout.operator("sequencer.snap", icon = "SEQ_SNAP_STRIP")
+        layout.operator("sequencer.offset_clear", icon = "SEQ_CLEAR_OFFSET")
 
         layout.separator()
         layout.operator("sequencer.cut", text="Cut", icon='SEQ_CUT_HARD_AT_FRAME').type = 'SOFT'
@@ -1867,6 +1863,8 @@ class SEQUENCER_PT_frame_overlay(SequencerButtonsPanel_Output, Panel):
         col.prop(ed, "overlay_frame", text="Frame Offset")
         col.prop(st, "overlay_type")
         col.prop(ed, "use_overlay_lock")
+
+
 class SEQUENCER_PT_view_safe_areas(SequencerButtonsPanel_Output, Panel):
     bl_label = "Safe Areas"
     bl_options = {'DEFAULT_CLOSED'}
