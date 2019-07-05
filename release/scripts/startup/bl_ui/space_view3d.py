@@ -7686,6 +7686,15 @@ class VIEW3D_MT_gpencil_sculpt(Menu):
         myvar = layout.operator("wm.radial_control", text = "Brush Strength", icon = "BRUSHSTRENGTH")
         myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.strength'
 
+        layout.separator()
+
+        # line edit toggles from the keympap
+        props = layout.operator("wm.context_toggle", text="Toggle Edit Lines", icon='STROKE')
+        props.data_path = "space_data.overlay.use_gpencil_edit_lines"
+
+        props = layout.operator("wm.context_toggle", text="Toggle Multiline Edit Only", icon='STROKE')
+        props.data_path = "space_data.overlay.use_gpencil_multiedit_line_only"
+
 
 class VIEW3D_PT_sculpt_context_menu(Panel):
     # Only for popover, these are dummy values.
