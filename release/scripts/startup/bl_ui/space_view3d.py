@@ -5815,11 +5815,11 @@ class VIEW3D_MT_weight_gpencil(Menu):
 
         #radial control button brush size
         myvar = layout.operator("wm.radial_control", text = "Brush Radius", icon = "BRUSHSIZE")
-        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.weight_brush.size'
+        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.size'
 
         #radial control button brush strength
         myvar = layout.operator("wm.radial_control", text = "Brush Strength", icon = "BRUSHSTRENGTH")
-        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.weight_brush.strength'
+        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.strength'
 
 class VIEW3D_MT_gpencil_animation(Menu):
     bl_label = "Animation"
