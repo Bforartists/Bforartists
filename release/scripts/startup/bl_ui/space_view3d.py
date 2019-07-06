@@ -216,13 +216,10 @@ class VIEW3D_HT_header(Header):
                     row.separator()
 
                 row.prop(gpd, "use_multiedit", text="", icon='GP_MULTIFRAME_EDITING')
-
-                sub = row.row(align=True)
-                sub.active = gpd.use_multiedit
-                sub.popover(
-                    panel="VIEW3D_PT_gpencil_multi_frame",
-                    text="Multiframe"
-                )
+                
+                if gpd.use_multiedit:
+                    sub = row.row(align=True)
+                    sub.popover(panel="VIEW3D_PT_gpencil_multi_frame", text="")
 
             if gpd.use_stroke_edit_mode:
                 row = layout.row(align=True)
