@@ -1470,10 +1470,13 @@ class USERPREF_PT_input_mouse(PreferencePanel, Panel):
         inputs = prefs.inputs
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-
+        
+        flow.use_property_split = False
         flow.prop(inputs, "use_mouse_emulate_3_button")
         flow.prop(inputs, "use_mouse_continuous")
         flow.prop(inputs, "use_drag_immediately")
+        
+        flow.use_property_split = True
         flow.prop(inputs, "mouse_double_click_time", text="Double Click Speed")
         flow.prop(inputs, "drag_threshold_mouse")
         flow.prop(inputs, "drag_threshold_tablet")
