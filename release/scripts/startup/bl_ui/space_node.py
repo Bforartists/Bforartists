@@ -374,23 +374,52 @@ class NODE_MT_node(Menu):
 
         layout.separator()
 
+        layout.menu("NODE_MT_node_links")
+        layout.operator("node.parent_set", icon = "PARENT_SET")
+
+        layout.separator()
+
+        layout.menu("NODE_MT_node_group")
+        layout.menu("NODE_MT_node_group_separate")
+
+        layout.separator()
+
+        layout.menu("NODE_MT_node_toggle")
+
+        layout.separator()
+
+        layout.operator("node.read_viewlayers", icon = "RENDERLAYERS")
+        layout.operator("node.render_changed", icon = "RENDERLAYERS")
+
+class NODE_MT_node_links(Menu):
+    bl_label = "Links"
+
+    def draw(self, _context):
+        layout = self.layout
+
         layout.operator("node.link_make", icon = "LINK_DATA").replace = False
         layout.operator("node.link_make", text="Make and Replace Links", icon = "LINK_DATA").replace = True
         layout.operator("node.links_cut", icon = "CUT_LINKS")
         layout.operator("node.links_detach", icon = "DETACH_LINKS")
         layout.operator("node.move_detach_links", text = "Detach Links Move", icon = "DETACH_LINKS")
-        layout.operator("node.parent_set", icon = "PARENT_SET")
 
-        layout.separator()
+class NODE_MT_node_group(Menu):
+    bl_label = "Group"
+
+    def draw(self, _context):
+        layout = self.layout
 
         layout.operator("node.group_edit", icon = "NODE_EDITGROUP").exit = False
         layout.operator("node.group_edit_exit", text="Exit Edit Group", icon = "NODE_EXITEDITGROUP") # bfa - separated tooltip
         layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
         layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
         layout.operator("node.group_insert", icon = "NODE_GROUPINSERT")
-        layout.menu("NODE_MT_node_group_separate")
 
-        layout.separator()
+class NODE_MT_node_toggle(Menu):
+    bl_label = "Hide/Toggle"
+
+    def draw(self, _context):
+        layout = self.layout
 
         layout.operator("node.hide_toggle", icon = "RESTRICT_VIEW_ON")
         layout.operator("node.mute_toggle", icon = "TOGGLE_NODE_MUTE")
@@ -398,11 +427,6 @@ class NODE_MT_node(Menu):
         layout.operator("node.hide_socket_toggle", icon = "RESTRICT_VIEW_OFF")
         layout.operator("node.options_toggle", icon = "TOGGLE_NODE_OPTIONS")
         layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
-
-        layout.separator()
-
-        layout.operator("node.read_viewlayers", icon = "RENDERLAYERS")
-        layout.operator("node.render_changed", icon = "RENDERLAYERS")
 
 
 class NODE_PT_active_tool(ToolActivePanelHelper, Panel):
@@ -809,6 +833,9 @@ classes = (
     NODE_MT_select,
     NODE_MT_node_group_separate,
     NODE_MT_node,
+    NODE_MT_node_links,
+    NODE_MT_node_group,
+    NODE_MT_node_toggle,
     NODE_MT_node_color_context_menu,
     NODE_MT_context_menu,
     NODE_PT_material_slots,
