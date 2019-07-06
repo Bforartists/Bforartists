@@ -123,7 +123,6 @@ keyconfig_data = \
       },
      ),
     ("gpencil.selection_opacity_toggle", {"type": 'H', "value": 'PRESS', "ctrl": True}, None),
-    ("gpencil.layer_isolate", {"type": 'NUMPAD_ASTERIX', "value": 'PRESS'}, None),
     ("gpencil.move_to_layer", {"type": 'M', "value": 'PRESS'}, None),
     ("transform.translate", {"type": 'W', "value": 'PRESS'}, None),
     ("transform.translate", {"type": 'EVT_TWEAK_L', "value": 'ANY'}, None),
