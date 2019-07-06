@@ -637,8 +637,8 @@ class SEQUENCER_MT_strip_effect(Menu):
 
         layout.operator_menu_enum("sequencer.change_effect_input", "swap")
         layout.operator_menu_enum("sequencer.change_effect_type", "type")
-        layout.operator("sequencer.reassign_inputs")
-        layout.operator("sequencer.swap_inputs")
+        layout.operator("sequencer.reassign_inputs", icon='RANDOMIZE_TRANSFORM')
+        layout.operator("sequencer.swap_inputs", icon='RANDOMIZE')
 
 
 class SEQUENCER_MT_strip_movie(Menu):
@@ -647,8 +647,8 @@ class SEQUENCER_MT_strip_movie(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("sequencer.rendersize")
-        layout.operator("sequencer.deinterlace_selected_movies")
+        layout.operator("sequencer.rendersize", icon='RENDER_REGION')
+        layout.operator("sequencer.deinterlace_selected_movies", icon='SEQ_DEINTERLACE')
 
 
 class SEQUENCER_MT_strip(Menu):
@@ -675,8 +675,8 @@ class SEQUENCER_MT_strip(Menu):
         layout.operator("sequencer.delete", text="Delete...", icon='DELETE')
 
         layout.separator()
-        layout.operator("sequencer.deinterlace_selected_movies")
-        layout.operator("sequencer.rebuild_proxy")
+        layout.operator("sequencer.deinterlace_selected_movies", icon='SEQ_DEINTERLACE')
+        layout.operator("sequencer.rebuild_proxy", icon='LASTOPERATOR')
 
         strip = act_strip(context)
 
@@ -701,17 +701,17 @@ class SEQUENCER_MT_strip(Menu):
                 layout.menu("SEQUENCER_MT_strip_movie")
             elif strip_type == 'IMAGE':
                 layout.separator()
-                layout.operator("sequencer.rendersize")
-                layout.operator("sequencer.images_separate")
+                layout.operator("sequencer.rendersize", icon='RENDER_REGION')
+                layout.operator("sequencer.images_separate", icon='SEPARATE')
             elif strip_type == 'META':
                 layout.separator()
-                layout.operator("sequencer.meta_make")
-                layout.operator("sequencer.meta_separate")
-                layout.operator("sequencer.meta_toggle", text="Toggle Meta")
+                layout.operator("sequencer.meta_make", icon='ADD_METASTRIP')
+                layout.operator("sequencer.meta_separate", icon='REMOVE_METASTRIP')
+                layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon='TOGGLE_META')
             if strip_type != 'META':
                 layout.separator()
-                layout.operator("sequencer.meta_make")
-                layout.operator("sequencer.meta_toggle", text="Toggle Meta")
+                layout.operator("sequencer.meta_make", icon='ADD_METASTRIP')
+                layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon='TOGGLE_META')
 
         layout.separator()
         layout.menu("SEQUENCER_MT_strip_lock_mute")
@@ -728,24 +728,24 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("sequencer.cut", text="Cut").type = 'SOFT'
+        layout.operator("sequencer.cut", text="Cut", icon='SEQ_CUT_HARD_AT_FRAME').type = 'SOFT'
 
         layout.separator()
 
         layout.operator("sequencer.copy", text="Copy", icon='COPYDOWN')
         layout.operator("sequencer.paste", text="Paste", icon='PASTEDOWN')
-        layout.operator("sequencer.duplicate_move")
-        layout.operator("sequencer.delete", text="Delete...")
+        layout.operator("sequencer.duplicate_move", icon='DUPLICATE')
+        layout.operator("sequencer.delete", text="Delete...", icon='DELETE')
 
         layout.separator()
 
-        layout.operator("sequencer.slip", text="Slip Strip Contents")
-        layout.operator("sequencer.snap")
+        layout.operator("sequencer.slip", text="Slip Strip Contents", icon = "SEQ_SLIP_CONTENTS")
+        layout.operator("sequencer.snap", icon = "SEQ_SNAP_STRIP")
 
         layout.separator()
 
-        layout.operator("sequencer.gap_remove").all = False
-        layout.operator("sequencer.gap_insert")
+        layout.operator("sequencer.gap_remove", icon = "SEQ_REMOVE_GAPS").all = False
+        layout.operator("sequencer.gap_insert", icon = "SEQ_INSERT_GAPS")
 
         strip = act_strip(context)
 
@@ -756,7 +756,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
                 layout.separator()
                 layout.operator_menu_enum("sequencer.strip_modifier_add", "type", text="Add Modifier")
-                layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection")
+                layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection", icon='COPYDOWN')
 
                 if selected_sequences_len(context) >= 2:
                     layout.separator()
@@ -765,7 +765,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
             elif selected_sequences_len(context) >= 2:
                 layout.separator()
-                layout.operator("sequencer.crossfade_sounds", text="Crossfade Sounds")
+                layout.operator("sequencer.crossfade_sounds", text="Crossfade Sounds", icon='SPEAKER')
 
             if strip_type in {
                     'CROSS', 'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',
@@ -780,17 +780,17 @@ class SEQUENCER_MT_context_menu(Menu):
                 layout.menu("SEQUENCER_MT_strip_movie")
             elif strip_type == 'IMAGE':
                 layout.separator()
-                layout.operator("sequencer.rendersize")
-                layout.operator("sequencer.images_separate")
+                layout.operator("sequencer.rendersize", icon='RENDER_REGION')
+                layout.operator("sequencer.images_separate", icon='SEPARATE')
             elif strip_type == 'META':
                 layout.separator()
-                layout.operator("sequencer.meta_make")
-                layout.operator("sequencer.meta_separate")
-                layout.operator("sequencer.meta_toggle", text="Toggle Meta")
+                layout.operator("sequencer.meta_make", icon='ADD_METASTRIP')
+                layout.operator("sequencer.meta_separate", icon='REMOVE_METASTRIP')
+                layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon='TOGGLE_META')
             if strip_type != 'META':
                 layout.separator()
-                layout.operator("sequencer.meta_make")
-                layout.operator("sequencer.meta_toggle", text="Toggle Meta")
+                layout.operator("sequencer.meta_make", icon='ADD_METASTRIP')
+                layout.operator("sequencer.meta_toggle", text="Toggle Meta", icon='TOGGLE_META')
 
         layout.separator()
 
