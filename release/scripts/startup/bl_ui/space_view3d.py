@@ -5854,6 +5854,12 @@ class VIEW3D_MT_edit_gpencil_transform(Menu):
         layout.operator("transform.tosphere", text="To Sphere", icon = "TOSPHERE")
         layout.operator("transform.transform", text="Shrink Fatten", icon = 'SHRINK_FATTEN').mode = 'GPENCIL_SHRINKFATTEN'
 
+        layout.separator()
+
+        layout.operator("transform.mirror", text="Mirror", icon = "TRANSFORM_MIRROR")
+
+
+
 
 class VIEW3D_MT_object_mode_pie(Menu):
     bl_label = "Mode"
