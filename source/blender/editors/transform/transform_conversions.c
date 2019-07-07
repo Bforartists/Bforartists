@@ -2935,11 +2935,16 @@ static void VertsToTransData(TransInfo *t,
   }
   else if (t->mode == TFM_SKIN_RESIZE) {
     MVertSkin *vs = CustomData_bmesh_get(&em->bm->vdata, eve->head.data, CD_MVERT_SKIN);
-    /* skin node size */
-    td->ext = tx;
-    copy_v3_v3(tx->isize, vs->radius);
-    tx->size = vs->radius;
-    td->val = vs->radius;
+    if (vs) {
+      /* skin node size */
+      td->ext = tx;
+      copy_v3_v3(tx->isize, vs->radius);
+      tx->size = vs->radius;
+      td->val = vs->radius;
+    }
+    else {
+      td->flag |= TD_SKIP;
+    }
   }
   else if (t->mode == TFM_SHRINKFATTEN) {
     td->ext = tx;
@@ -6438,10 +6443,15 @@ static void trans_object_base_deps_flag_prepare(ViewLayer *view_layer)
   }
 }
 
-static void set_trans_object_base_deps_flag_cb(ID *id, void *UNUSED(user_data))
+static void set_trans_object_base_deps_flag_cb(ID *id,
+                                               eDepsObjectComponentType component,
+                                               void *UNUSED(user_data))
 {
   /* Here we only handle object IDs. */
   if (GS(id->name) != ID_OB) {
+    return;
+  }
+  if (!ELEM(component, DEG_OB_COMP_TRANSFORM, DEG_OB_COMP_GEOMETRY)) {
     return;
   }
   id->tag |= LIB_TAG_DOIT;
@@ -6450,7 +6460,8 @@ static void set_trans_object_base_deps_flag_cb(ID *id, void *UNUSED(user_data))
 static void flush_trans_object_base_deps_flag(Depsgraph *depsgraph, Object *object)
 {
   object->id.tag |= LIB_TAG_DOIT;
-  DEG_foreach_dependent_ID(depsgraph, &object->id, set_trans_object_base_deps_flag_cb, NULL);
+  DEG_foreach_dependent_ID_component(
+      depsgraph, &object->id, DEG_OB_COMP_TRANSFORM, set_trans_object_base_deps_flag_cb, NULL);
 }
 
 static void trans_object_base_deps_flag_finish(ViewLayer *view_layer)

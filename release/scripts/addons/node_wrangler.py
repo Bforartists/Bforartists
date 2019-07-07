@@ -3504,8 +3504,8 @@ class NWViewerFocus(bpy.types.Operator):
                 bd_x = render.resolution_x * percent * space.backdrop_zoom
                 bd_y = render.resolution_y * percent * space.backdrop_zoom
 
-                backdrop_center_x = (bd_x / 2) - space.backdrop_x
-                backdrop_center_y = (bd_y / 2) - space.backdrop_y
+                backdrop_center_x = (bd_x / 2) - space.backdrop_offset[0]
+                backdrop_center_y = (bd_y / 2) - space.backdrop_offset[1]
 
                 margin_x = region_center_x - backdrop_center_x
                 margin_y = region_center_y - backdrop_center_y

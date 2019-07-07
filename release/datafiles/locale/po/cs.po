@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -2330,10 +2330,6 @@ msgstr "Přesune geometrii objektu ke středovému bodu objektu"
 
 msgid "Use Rotation"
 msgstr "X Otáčení"
-
-
-msgid "Sticky"
-msgstr "Tyč"
 
 
 msgid "Follow Path Constraint"
@@ -5109,6 +5105,10 @@ msgid "Lock current frame displayed by layer"
 msgstr "Uzamkne současný snímek zobrazovaný ve vrstvě"
 
 
+msgid "Mask Layer"
+msgstr "Vrstvy masky"
+
+
 msgid "Opacity"
 msgstr "Neprůsvitnost"
 
@@ -5569,6 +5569,10 @@ msgid "Bones"
 msgstr "Kosti:"
 
 
+msgid "Display Type"
+msgstr "Přemístit typ"
+
+
 msgid "Stick"
 msgstr "Vyhladit"
 
@@ -5607,10 +5611,6 @@ msgstr "Poloha"
 
 msgid "Rest Position"
 msgstr "Poloha"
-
-
-msgid "Delay Deform"
-msgstr "Deformace"
 
 
 msgid "X-Axis Mirror"
@@ -8573,10 +8573,6 @@ msgid "Animation playback is active"
 msgstr "Přehrání animace"
 
 
-msgid "All 3D View Editors"
-msgstr "Všechny pohledy"
-
-
 msgid "Animation Editors"
 msgstr "Editor akcí"
 
@@ -9763,10 +9759,6 @@ msgid "Orientation"
 msgstr "Orientace"
 
 
-msgid "Mask Layer"
-msgstr "Vrstvy masky"
-
-
 msgid "Render Opacity"
 msgstr "Sytost"
 
@@ -9966,10 +9958,6 @@ msgstr "Seskupený objekt"
 
 msgid "Show/Hide"
 msgstr "Zobrazit/skrýt"
-
-
-msgid "Specials"
-msgstr "Speciality"
 
 
 msgid "Tracking"
@@ -15205,10 +15193,6 @@ msgid "Accept"
 msgstr "Přijmout"
 
 
-msgid "Display Type"
-msgstr "Přemístit typ"
-
-
 msgid "File Browser Mode"
 msgstr "Souborový manažer "
 
@@ -19538,10 +19522,6 @@ msgid "Extrude selected vertices in a circle around the cursor in indicated view
 msgstr "Vytáhne označené vertexy v kruhu kolem osy kurzor - pozorovatel"
 
 
-msgid "Dupli"
-msgstr "Duplikace"
-
-
 msgid "Make Duplicates"
 msgstr "Vytvořit zdvojené"
 
@@ -20544,15 +20524,6 @@ msgid "Duplicate Linked"
 msgstr "Zdvojit připojené"
 
 
-msgctxt "Operator"
-msgid "Make Duplicates Real"
-msgstr "Změnit duplicity na reálné"
-
-
-msgid "Make dupli objects attached to this object real"
-msgstr "Změnit duplikované objekty na reálné"
-
-
 msgid "Parent newly created objects to the original duplicator"
 msgstr "Převede označené hrany na plošky a označí nové vertexy"
 
@@ -20758,26 +20729,12 @@ msgstr "Spojí vybrané objekty do aktivního objektu"
 
 
 msgctxt "Operator"
-msgid "Join as Shapes"
-msgstr "Spojit oblasti "
-
-
-msgid "Merge selected objects to shapes of active object"
-msgstr "Konvertuje označené trojúhlníky na čtyřúhelníky"
-
-
-msgctxt "Operator"
 msgid "Clear Location"
 msgstr "Vyčistit umístění"
 
 
 msgid "Clear the object's location"
 msgstr "Zruší nastavení pro umístění objektu"
-
-
-msgctxt "Operator"
-msgid "Make Dupli-Face"
-msgstr "Změnit duplicity na reálné"
 
 
 msgctxt "Operator"
@@ -26258,6 +26215,11 @@ msgstr "Vzorky"
 
 
 msgctxt "Operator"
+msgid "Scale"
+msgstr "Změnit velikost"
+
+
+msgctxt "Operator"
 msgid "Draw"
 msgstr "Kreslit"
 
@@ -26310,10 +26272,6 @@ msgid "Movement"
 msgstr "Pohyb"
 
 
-msgid "Self Collision"
-msgstr "Kolize"
-
-
 msgid "Viscosity"
 msgstr "Viskozita"
 
@@ -26328,6 +26286,10 @@ msgstr "Dynamický"
 
 msgid "Adaptive Domain"
 msgstr "Aktivní kosti"
+
+
+msgid "Self Collision"
+msgstr "Kolize"
 
 
 msgid "Color Management"
@@ -26420,11 +26382,6 @@ msgstr "Horizontální"
 
 msgid "Motion Tracking"
 msgstr "Cesta pro otáčení"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Změnit velikost"
 
 
 msgctxt "Operator"
@@ -28784,14 +28741,6 @@ msgstr "Limituje rotaci po Y ose"
 
 msgid "Convert Float"
 msgstr "Převést na"
-
-
-msgid "Flip Time"
-msgstr "NLA Proužky"
-
-
-msgid "Reverse frame order"
-msgstr "Odstranit herní vlastnost"
 
 
 msgid "Use Translation"
@@ -31946,24 +31895,12 @@ msgid "Display X Axis"
 msgstr "Ukázat osu X"
 
 
-msgid "Show the X axis line in perspective view"
-msgstr "Ukáže čáru osy X v perspektivním pohledu"
-
-
 msgid "Display Y Axis"
 msgstr "Ukázat osu Y"
 
 
-msgid "Show the Y axis line in perspective view"
-msgstr "Ukáže čáru osy Y v perspektivním pohledu"
-
-
 msgid "Display Z Axis"
 msgstr "Ukázat osu Z"
-
-
-msgid "Show the Z axis line in perspective view"
-msgstr "Ukáže čáru osy Z v perspektivním pohledu"
 
 
 msgid "Draw Handles"
@@ -32038,10 +31975,6 @@ msgid "Display Grid Floor"
 msgstr "Orientační síť"
 
 
-msgid "Show the ground plane grid in perspective view"
-msgstr "Úhel čočky v perspektivním pohledu"
-
-
 msgid "All Object Origins"
 msgstr "Středy všech objektů"
 
@@ -32052,10 +31985,6 @@ msgstr "Ukáže středový bod objektu (tečku) pro všechny (vybrané i nevybra
 
 msgid "Outline Selected"
 msgstr "Obrys výběru"
-
-
-msgid "Show an outline highlight around selected objects in non-wireframe views"
-msgstr "Ukáže zvýraznění obrysu vybraných objektů v ne-drátěných pohledech"
 
 
 msgid "Relationship Lines"
@@ -32826,6 +32755,11 @@ msgstr "Transformace:"
 
 
 msgctxt "Operator"
+msgid "Parent"
+msgstr "Rodič"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "Odstranit značku"
 
@@ -33055,11 +32989,6 @@ msgstr "Stopa dopředu"
 
 
 msgctxt "Operator"
-msgid "Show Tracks"
-msgstr "Zobrazit tvar"
-
-
-msgctxt "Operator"
 msgid "Set Floor"
 msgstr "Orientační síť"
 
@@ -33100,6 +33029,11 @@ msgstr "Vybrat řádek"
 msgctxt "Operator"
 msgid "Inverse"
 msgstr "Prohodit"
+
+
+msgctxt "Operator"
+msgid "Show Tracks"
+msgstr "Zobrazit tvar"
 
 
 msgctxt "Operator"
@@ -33697,11 +33631,6 @@ msgstr "Kamera"
 
 
 msgctxt "Operator"
-msgid "Zoom Border..."
-msgstr "Zobrazit oblast..."
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "Zarovnat aktivní kameru na pohled"
 
@@ -33729,11 +33658,6 @@ msgstr "Zepředu"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Zezadu"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "Rodič"
 
 
 msgctxt "Operator"
@@ -34562,10 +34486,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Krok Snímku"
 
 
-msgid "No active keying set"
-msgstr "Nastavit aktivní klíčovací sestavu"
-
-
 msgid "No active Keying Set"
 msgstr "Nastavit aktivní klíčovací sestavu"
 
@@ -34574,32 +34494,12 @@ msgid "Keying set failed to remove any keyframes"
 msgstr "Krok Snímku"
 
 
-msgid "No active keying set to remove"
-msgstr "Nastavit aktivní klíčovací sestavu"
-
-
 msgid "Cannot remove built in keying set"
-msgstr "Odstraněná aktivní klíčovací sestava"
-
-
-msgid "No active keying set to add empty path to"
-msgstr "Změnit scénu..."
-
-
-msgid "No active keying set path to remove"
-msgstr "Odstraněná aktivní klíčovací sestava"
-
-
-msgid "No active keying set to remove a path from"
 msgstr "Odstraněná aktivní klíčovací sestava"
 
 
 msgid "Cannot add property to built in keying set"
 msgstr "Odstranit z klíčovací sestavy"
-
-
-msgid "No active keying set to remove property from"
-msgstr "Odstraněná aktivní klíčovací sestava"
 
 
 msgid "Cannot remove property from built in keying set"
@@ -35615,16 +35515,16 @@ msgid "Driver Value:"
 msgstr "Aktivovat materiálové uzly"
 
 
-msgid "Delete target variable"
-msgstr "Renderovat plošky z obou stran"
-
-
 msgid "Update Dependencies"
 msgstr "Přehrát animaci"
 
 
 msgid "Add Modifier"
 msgstr "Přidat modifikátor"
+
+
+msgid "Delete target variable"
+msgstr "Renderovat plošky z obou stran"
 
 
 msgid "View Properties"
@@ -35643,10 +35543,6 @@ msgid "No F-Modifiers to paste"
 msgstr "Jméno modifikátoru"
 
 
-msgid "Can't Load Image"
-msgstr "Uložit obrazek"
-
-
 msgid "Select Slot"
 msgstr "Vybrat řádek"
 
@@ -35657,6 +35553,10 @@ msgstr "Označit vrstvu"
 
 msgid "Select Pass"
 msgstr "Vybrat méně"
+
+
+msgid "Can't Load Image"
+msgstr "Uložit obrazek"
 
 
 msgid "unsupported image format"

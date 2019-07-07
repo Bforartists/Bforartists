@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
 "Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -762,14 +762,6 @@ msgid "Coefficient of x"
 msgstr "x לש םדקמה"
 
 
-msgid "No active keying set"
-msgstr "הליעפ הבכש עבק"
-
-
-msgid "No active keying set to remove"
-msgstr "הליעפ הבכש עבק"
-
-
 msgid "No joints selected"
 msgstr "רבד רחבנ אל"
 
@@ -921,6 +913,10 @@ msgid "Right Handle:"
 msgstr ":תינמי תידי"
 
 
+msgid "Add Modifier"
+msgstr "הנשמ ףסוה"
+
+
 msgid "ERROR: Invalid Python expression"
 msgstr "ןיקת אל Python יוטיב :האיגש"
 
@@ -929,20 +925,16 @@ msgid "ERROR: Invalid target channel(s)"
 msgstr "םיניקת אל הרטמ יצורע :האיגש"
 
 
-msgid "Add Modifier"
-msgstr "הנשמ ףסוה"
-
-
 msgid "View Properties"
 msgstr "הגוצת ינייפאמ"
 
 
-msgid " + Z"
-msgstr " + Z"
-
-
 msgid "Select Layer"
 msgstr "הבכש רחב"
+
+
+msgid " + Z"
+msgstr " + Z"
 
 
 msgid "Saved %s"

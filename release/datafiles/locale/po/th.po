@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: 2019-06-01 18:12+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -3030,6 +3030,11 @@ msgid "System"
 msgstr "ระบบ"
 
 
+msgctxt "Operator"
+msgid "Scale"
+msgstr "ปรับย่อขนาด"
+
+
 msgid "Overlays"
 msgstr "วางซ้อน"
 
@@ -3117,11 +3122,6 @@ msgstr "อินเตอร์เฟสผู้ใช้"
 
 msgid "3D View"
 msgstr "มุมมองสามมิติ"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "ปรับย่อขนาด"
 
 
 msgctxt "Operator"
@@ -3632,10 +3632,6 @@ msgid "Display Grid Floor"
 msgstr "แสดงพื้นตาราง"
 
 
-msgid "Show the ground plane grid in perspective view"
-msgstr "แสดงแผ่นตารางบนพื้นบนมุมมองทัศนมิติ"
-
-
 msgid "Hidden Wire"
 msgstr "เส้นที่มองไม่เห็น"
 
@@ -3832,6 +3828,11 @@ msgstr "แม่:"
 
 msgid "Transform:"
 msgstr "การปรับเปลี่ยน:"
+
+
+msgctxt "Operator"
+msgid "Parent"
+msgstr "แม่"
 
 
 msgctxt "Operator"
@@ -4234,11 +4235,6 @@ msgstr "ขอบเขตการตัด..."
 msgctxt "Operator"
 msgid "Render Region..."
 msgstr "ขอบเขตเรนเดอร์…"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "แม่"
 
 
 msgctxt "Operator"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -2032,10 +2032,6 @@ msgstr "Rensa Placering"
 
 msgid "Use Rotation"
 msgstr "Rotation"
-
-
-msgid "Sticky"
-msgstr "&gt;Nurbs Cirkel"
 
 
 msgid "Follow Path Constraint"
@@ -4427,6 +4423,10 @@ msgid "Frame Locked"
 msgstr "Spel"
 
 
+msgid "Mask Layer"
+msgstr "Maskera lager:"
+
+
 msgid "Opacity"
 msgstr "Genomskinlighet"
 
@@ -4847,6 +4847,10 @@ msgid "Bones"
 msgstr "Ben:"
 
 
+msgid "Display Type"
+msgstr "Markera Rad"
+
+
 msgid "Stick"
 msgstr "Tjocklek"
 
@@ -4885,10 +4889,6 @@ msgstr "Position"
 
 msgid "Rest Position"
 msgstr "Position"
-
-
-msgid "Delay Deform"
-msgstr "Fördröja "
 
 
 msgid "X-Axis Mirror"
@@ -7619,10 +7619,6 @@ msgid "Animation playback is active"
 msgstr "Animationsuppspelning"
 
 
-msgid "All 3D View Editors"
-msgstr "Rensa Placering"
-
-
 msgid "Animation Editors"
 msgstr "Bild Displist"
 
@@ -8693,10 +8689,6 @@ msgid "Orientation"
 msgstr "Rensa Rotation"
 
 
-msgid "Mask Layer"
-msgstr "Maskera lager:"
-
-
 msgid "Render Opacity"
 msgstr "Genomskinlighet"
 
@@ -8884,10 +8876,6 @@ msgstr "Markera Rad"
 
 msgid "Show/Hide"
 msgstr "Visa"
-
-
-msgid "Specials"
-msgstr "Specialare"
 
 
 msgid "Tracking"
@@ -13854,10 +13842,6 @@ msgid "Directory of the file"
 msgstr "Riktning"
 
 
-msgid "Display Type"
-msgstr "Markera Rad"
-
-
 msgid "File Browser Mode"
 msgstr "Växla poseringsläge"
 
@@ -18056,10 +18040,6 @@ msgid "Extrude selected vertices in a circle around the cursor in indicated view
 msgstr "Markera Länkad"
 
 
-msgid "Dupli"
-msgstr "Duplicering"
-
-
 msgid "Make Duplicates"
 msgstr "Duplicera"
 
@@ -19078,11 +19058,6 @@ msgid "Duplicate Linked"
 msgstr "Duplicera"
 
 
-msgctxt "Operator"
-msgid "Make Duplicates Real"
-msgstr "Duplicera"
-
-
 msgid "Parent newly created objects to the original duplicator"
 msgstr "Markera Länkad"
 
@@ -19264,25 +19239,11 @@ msgstr "Markera Länkad"
 
 
 msgctxt "Operator"
-msgid "Join as Shapes"
-msgstr "Förena som UV"
-
-
-msgid "Merge selected objects to shapes of active object"
-msgstr "Markera Länkad"
-
-
-msgctxt "Operator"
 msgid "Clear Location"
 msgstr "Rensa Placering"
 
 
 msgid "Clear the object's location"
-msgstr "Duplicera"
-
-
-msgctxt "Operator"
-msgid "Make Dupli-Face"
 msgstr "Duplicera"
 
 
@@ -24684,6 +24645,11 @@ msgstr "Samplinglinje"
 
 
 msgctxt "Operator"
+msgid "Scale"
+msgstr "Skala"
+
+
+msgctxt "Operator"
 msgid "Draw"
 msgstr "Duplicera"
 
@@ -24736,10 +24702,6 @@ msgid "Movement"
 msgstr "Segment"
 
 
-msgid "Self Collision"
-msgstr "Självkrock"
-
-
 msgid "Viscosity"
 msgstr "Viskositet"
 
@@ -24758,6 +24720,10 @@ msgstr "Aktiv spline"
 
 msgid "Behavior"
 msgstr "Beteende:"
+
+
+msgid "Self Collision"
+msgstr "Självkrock"
 
 
 msgid "Color Management"
@@ -24834,11 +24800,6 @@ msgstr "Markera Rad"
 
 msgid "Motion Tracking"
 msgstr "Rensa Rotation"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Skala"
 
 
 msgctxt "Operator"
@@ -26782,14 +26743,6 @@ msgstr "Vektor Måla"
 
 msgid "Convert Float"
 msgstr "Konvertera:"
-
-
-msgid "Flip Time"
-msgstr "Lägg till Stripp"
-
-
-msgid "Reverse frame order"
-msgstr "Markera Rad"
 
 
 msgid "Use Translation"
@@ -30001,10 +29954,6 @@ msgid "Shapes"
 msgstr "Former"
 
 
-msgid "Delay Refresh"
-msgstr "Fördröja "
-
-
 msgctxt "Operator"
 msgid "Remove"
 msgstr "Ta bort"
@@ -30468,6 +30417,11 @@ msgstr "Transformera"
 
 
 msgctxt "Operator"
+msgid "Parent"
+msgstr "Förälder"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "Raderings Meny"
 
@@ -30726,11 +30680,6 @@ msgstr "Baklänges"
 
 
 msgctxt "Operator"
-msgid "Show Tracks"
-msgstr "Bildrutenummer"
-
-
-msgctxt "Operator"
 msgid "Set Floor"
 msgstr "Markera Länkad"
 
@@ -30766,6 +30715,11 @@ msgstr "Börja innan:"
 msgctxt "Operator"
 msgid "Inverse"
 msgstr "Markera Rad"
+
+
+msgctxt "Operator"
+msgid "Show Tracks"
+msgstr "Bildrutenummer"
 
 
 msgctxt "Operator"
@@ -31380,11 +31334,6 @@ msgstr "Kamera"
 
 
 msgctxt "Operator"
-msgid "Zoom Border..."
-msgstr "Ram Markering"
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "Kamera"
 
@@ -31412,11 +31361,6 @@ msgstr "Fram"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Svart"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "Förälder"
 
 
 msgctxt "Operator"
@@ -32195,10 +32139,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Radera"
 
 
-msgid "No active keying set"
-msgstr "Byta Stripp"
-
-
 msgid "No active Keying Set"
 msgstr "Byta Stripp"
 
@@ -32207,32 +32147,12 @@ msgid "Keying set failed to remove any keyframes"
 msgstr "Radera"
 
 
-msgid "No active keying set to remove"
-msgstr "Byta Stripp"
-
-
 msgid "Cannot remove built in keying set"
-msgstr "Byta Stripp"
-
-
-msgid "No active keying set to add empty path to"
-msgstr "Byta Stripp"
-
-
-msgid "No active keying set path to remove"
-msgstr "Byta Stripp"
-
-
-msgid "No active keying set to remove a path from"
 msgstr "Byta Stripp"
 
 
 msgid "Cannot add property to built in keying set"
 msgstr "Renderings Fönster"
-
-
-msgid "No active keying set to remove property from"
-msgstr "Byta Stripp"
 
 
 msgid "Cannot remove property from built in keying set"
@@ -33048,16 +32968,16 @@ msgid "Driver Value:"
 msgstr "Driver"
 
 
-msgid "Delete target variable"
-msgstr "Flytta Till Lager"
-
-
 msgid "Update Dependencies"
 msgstr "Renderings Fönster"
 
 
 msgid "Add Modifier"
 msgstr "Radera Allt"
+
+
+msgid "Delete target variable"
+msgstr "Flytta Till Lager"
 
 
 msgid "View Properties"
@@ -33076,10 +32996,6 @@ msgid "No F-Modifiers to paste"
 msgstr "Modifierad"
 
 
-msgid "Can't Load Image"
-msgstr "Rendera"
-
-
 msgid "Select Slot"
 msgstr "Markera Rad"
 
@@ -33090,6 +33006,10 @@ msgstr "Markera Rad"
 
 msgid "Select Pass"
 msgstr "Avmarkera Länkad"
+
+
+msgid "Can't Load Image"
+msgstr "Rendera"
 
 
 msgid "unsupported image format"
