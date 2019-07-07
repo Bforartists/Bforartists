@@ -190,15 +190,11 @@ def repr_f32(f):
             return "%.*f" % (i, f_test)
     return f_str
 
+import os
 
 # Avoid maintaining multiple blendfile modules
-import os
 import sys
-sys.path.append(os.path.join(
-    os.path.dirname(__file__),
-    "..", "..", "..",
-    "release", "scripts", "addons", "io_blend_utils", "blend",
-))
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "modules"))
 del sys
 
 source_dst = os.path.join(

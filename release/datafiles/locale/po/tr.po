@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -3584,6 +3584,10 @@ msgid "Frame Locked"
 msgstr "Kare Sil"
 
 
+msgid "Mask Layer"
+msgstr "Katman Sil"
+
+
 msgid "Layer Opacity"
 msgstr "Katman Sil"
 
@@ -3916,6 +3920,10 @@ msgid "Bones"
 msgstr "Kemik:"
 
 
+msgid "Display Type"
+msgstr "Kesme Biçimi "
+
+
 msgid "B-Bone"
 msgstr "Kemik"
 
@@ -3950,10 +3958,6 @@ msgstr "Poz Ekle..."
 
 msgid "Rest Position"
 msgstr "Aktif pozisyonu sil"
-
-
-msgid "Delay Deform"
-msgstr "Araçkutusu tıklama geçikmesi:"
 
 
 msgid "X-Axis Mirror"
@@ -6044,10 +6048,6 @@ msgid "Areas"
 msgstr "Alanları Birleştir"
 
 
-msgid "All 3D View Editors"
-msgstr "Anim 3D Grnmde oynat"
-
-
 msgid "Animation Editors"
 msgstr "Animasyon Pencereleri"
 
@@ -6861,10 +6861,6 @@ msgid "Orientation"
 msgstr "Yönelim"
 
 
-msgid "Mask Layer"
-msgstr "Katman Sil"
-
-
 msgid "Render Opacity"
 msgstr "Sunum Sonucu"
 
@@ -7032,10 +7028,6 @@ msgstr "Ters Seçim"
 
 msgid "Show/Hide"
 msgstr "Göster/Gizle"
-
-
-msgid "Specials"
-msgstr "Ekstralar"
 
 
 msgid "Tracking"
@@ -10877,10 +10869,6 @@ msgid "Directory of the file"
 msgstr "Dosya adı"
 
 
-msgid "Display Type"
-msgstr "Kesme Biçimi "
-
-
 msgid "File Browser Mode"
 msgstr "Kamera Uçuş Modu"
 
@@ -14223,10 +14211,6 @@ msgid "Extrude selected vertices in a circle around the cursor in indicated view
 msgstr "Seçili noktalar, bakış doğrultusunda, imleç etrafında dairesel olarak Extrude edilir"
 
 
-msgid "Dupli"
-msgstr "Çoğalt"
-
-
 msgid "Make Duplicates"
 msgstr "Gerçek Kopyalarını Oluştur"
 
@@ -14980,11 +14964,6 @@ msgid "Duplicate Linked"
 msgstr "Bağlantılı Çoğalt"
 
 
-msgctxt "Operator"
-msgid "Make Duplicates Real"
-msgstr "Gerçek Kopyalarını Oluştur"
-
-
 msgid "Keep Hierarchy"
 msgstr "Hiyerarşiyi Göster"
 
@@ -15121,22 +15100,12 @@ msgstr "Birleştir"
 
 
 msgctxt "Operator"
-msgid "Join as Shapes"
-msgstr "Resmi farklı kaydet:"
-
-
-msgctxt "Operator"
 msgid "Clear Location"
 msgstr "Konumu Sıfırla"
 
 
 msgid "Clear the object's location"
 msgstr "Tüm Nesne Merkezleri"
-
-
-msgctxt "Operator"
-msgid "Make Dupli-Face"
-msgstr "Kenar/Yüzey Yap"
 
 
 msgctxt "Operator"
@@ -19217,6 +19186,11 @@ msgstr "Tam Doğrultu"
 
 
 msgctxt "Operator"
+msgid "Scale"
+msgstr "Ölçekle"
+
+
+msgctxt "Operator"
 msgid "Draw"
 msgstr "Çiz:"
 
@@ -19335,11 +19309,6 @@ msgstr "Ekran Rengi:"
 
 msgid "Motion Tracking"
 msgstr "Parçacık Hareketi"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Ölçekle"
 
 
 msgctxt "Operator"
@@ -21231,14 +21200,6 @@ msgstr "Eksenlerde Çevir"
 
 msgid "Convert Float"
 msgstr "Nesne Çevir"
-
-
-msgid "Flip Time"
-msgstr "Bitiş Zamanı"
-
-
-msgid "Reverse frame order"
-msgstr "Geçerli Karenin Tersine"
 
 
 msgid "Use Translation"
@@ -23942,10 +23903,6 @@ msgid "Shapes"
 msgstr "Şekiller"
 
 
-msgid "Delay Refresh"
-msgstr "Otomatik Yenile"
-
-
 msgctxt "Operator"
 msgid "Remove"
 msgstr "Çıkar"
@@ -24367,6 +24324,11 @@ msgstr "Dönüştür:"
 
 
 msgctxt "Operator"
+msgid "Parent"
+msgstr "Ebeveyn Nesne"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "İşaret Ekle"
 
@@ -24557,11 +24519,6 @@ msgstr "Geçerli Karenin Tersine"
 
 
 msgctxt "Operator"
-msgid "Show Tracks"
-msgstr "Aktif olanı göster"
-
-
-msgctxt "Operator"
 msgid "Set Floor"
 msgstr "Izgara Zemini"
 
@@ -24602,6 +24559,11 @@ msgstr "Özellik Seti"
 msgctxt "Operator"
 msgid "Inverse"
 msgstr "Seçimi ters çevir"
+
+
+msgctxt "Operator"
+msgid "Show Tracks"
+msgstr "Aktif olanı göster"
 
 
 msgctxt "Operator"
@@ -25154,11 +25116,6 @@ msgstr "Kamera"
 
 
 msgctxt "Operator"
-msgid "Zoom Border..."
-msgstr "Çerçeve Kadar Yaklaş..."
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "Kamerayı Görüntüye Hizala"
 
@@ -25186,11 +25143,6 @@ msgstr "Ön"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Arka"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "Ebeveyn Nesne"
 
 
 msgctxt "Operator"
@@ -25960,15 +25912,7 @@ msgid "No suitable context info for active keying set"
 msgstr "Aktif Grubu Sil"
 
 
-msgid "No active keying set"
-msgstr "Aktif katmana ayarla"
-
-
 msgid "No active Keying Set"
-msgstr "Aktif katmana ayarla"
-
-
-msgid "No active keying set to remove"
 msgstr "Aktif katmana ayarla"
 
 
@@ -25976,24 +25920,8 @@ msgid "Cannot remove built in keying set"
 msgstr "Aktif Grubu Sil"
 
 
-msgid "No active keying set to add empty path to"
-msgstr "Aktif katmana ayarla"
-
-
-msgid "No active keying set path to remove"
-msgstr "Seçili Kamerayı Aktif Yap"
-
-
-msgid "No active keying set to remove a path from"
-msgstr "Aktif katmana ayarla"
-
-
 msgid "Cannot add property to built in keying set"
 msgstr "Tüm grupları sil"
-
-
-msgid "No active keying set to remove property from"
-msgstr "Aktif katmana ayarla"
 
 
 msgid "Cannot remove property from built in keying set"
@@ -26960,16 +26888,16 @@ msgid "Driver Value:"
 msgstr "Sürücüyü Kaldır"
 
 
-msgid "Delete target variable"
-msgstr "Hedef değişkeni sil"
-
-
 msgid "Update Dependencies"
 msgstr "Güncelleme Bağımlılıkları"
 
 
 msgid "Add Modifier"
 msgstr "Değiştirici Ekle"
+
+
+msgid "Delete target variable"
+msgstr "Hedef değişkeni sil"
 
 
 msgid "View Properties"
@@ -26984,10 +26912,6 @@ msgid "No F-Modifiers to paste"
 msgstr "Değiştirici Ekle"
 
 
-msgid "Can't Load Image"
-msgstr "Arkaplan Resmi"
-
-
 msgid "Select Slot"
 msgstr "Ters Seçim"
 
@@ -26998,6 +26922,10 @@ msgstr "Katmandan Tümünü Seç"
 
 msgid "Select Pass"
 msgstr "Ters Seçim"
+
+
+msgid "Can't Load Image"
+msgstr "Arkaplan Resmi"
 
 
 msgid "unsupported image format"

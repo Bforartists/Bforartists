@@ -515,7 +515,7 @@ static void outliner_add_object_contents(SpaceOutliner *soops,
   }
 
   /* duplicated group */
-  if (ob->instance_collection) {
+  if (ob->instance_collection && (ob->transflag & OB_DUPLICOLLECTION)) {
     outliner_add_element(soops, &te->subtree, ob->instance_collection, te, 0, 0);
   }
 }
@@ -1545,7 +1545,7 @@ static void outliner_make_object_parent_hierarchy_collections(SpaceOutliner *soo
 
       if (!found) {
         /* We add the child in the tree even if it is not in the collection.
-         * We deliberately clear its subtree though, to make it less proeminent. */
+         * We deliberately clear its sub-tree though, to make it less prominent. */
         TreeElement *child_ob_tree_element = outliner_add_element(
             soops, &parent_ob_tree_element->subtree, child, parent_ob_tree_element, 0, 0);
         outliner_free_tree(&child_ob_tree_element->subtree);

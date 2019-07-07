@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -1806,6 +1806,11 @@ msgid "Save System Info"
 msgstr "Sistemaren Informazioa Gorde"
 
 
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Eskalatu"
+
+
 msgid "Physics"
 msgstr "Fisikak"
 
@@ -1828,11 +1833,6 @@ msgstr "Bideo Sekuentzia Editorea"
 
 msgid "3D View"
 msgstr "3D Bista"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Eskalatu"
 
 
 msgctxt "Operator"

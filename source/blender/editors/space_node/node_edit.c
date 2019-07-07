@@ -2423,6 +2423,7 @@ static int ntree_socket_move_exec(bContext *C, wmOperator *op)
     }
   }
 
+  ntree->update |= NTREE_UPDATE_GROUP;
   ntreeUpdateTree(CTX_data_main(C), ntree);
 
   snode_notify(C, snode);

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -971,6 +971,10 @@ msgid "Bones"
 msgstr "Tulang"
 
 
+msgid "Display Type"
+msgstr "Tipe"
+
+
 msgid "B-Bone"
 msgstr "Tulang"
 
@@ -1509,10 +1513,6 @@ msgstr "Partikel"
 
 msgid "Animation Playing"
 msgstr "Data Animasi"
-
-
-msgid "All 3D View Editors"
-msgstr "Semua Tampilan"
 
 
 msgid "Animation Editors"
@@ -3207,10 +3207,6 @@ msgstr "Gunakan Skala"
 msgctxt "Operator"
 msgid "Reset Transform"
 msgstr "Ubah-bentuk ke muasal"
-
-
-msgid "Display Type"
-msgstr "Tipe"
 
 
 msgctxt "Operator"
@@ -6623,6 +6619,11 @@ msgid "Fluid Presets"
 msgstr "Kamera"
 
 
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Adegan"
+
+
 msgid "Adaptive Domain"
 msgstr "Tambah Baru"
 
@@ -6653,11 +6654,6 @@ msgstr "Tampilan 3D"
 
 msgid "Gradient Colors"
 msgstr "Warna Standar"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Adegan"
 
 
 msgctxt "Operator"
@@ -7415,6 +7411,11 @@ msgstr "Hapus"
 
 
 msgctxt "Operator"
+msgid "Parent"
+msgstr "Induk"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "Induk"
 
@@ -7750,11 +7751,6 @@ msgstr "Depan"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Belakang"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "Induk"
 
 
 msgctxt "Operator"
@@ -8094,15 +8090,7 @@ msgid "No suitable context info for active keying set"
 msgstr "Tekstur"
 
 
-msgid "No active keying set"
-msgstr "Tekstur"
-
-
 msgid "No active Keying Set"
-msgstr "Tekstur"
-
-
-msgid "No active keying set to remove"
 msgstr "Tekstur"
 
 
@@ -8110,24 +8098,8 @@ msgid "Cannot remove built in keying set"
 msgstr "Induk"
 
 
-msgid "No active keying set to add empty path to"
-msgstr "Tekstur"
-
-
-msgid "No active keying set path to remove"
-msgstr "Tekstur"
-
-
-msgid "No active keying set to remove a path from"
-msgstr "Tekstur"
-
-
 msgid "Cannot add property to built in keying set"
 msgstr "Induk"
-
-
-msgid "No active keying set to remove property from"
-msgstr "Tekstur"
 
 
 msgid "Cannot remove property from built in keying set"
@@ -8665,10 +8637,6 @@ msgid "No F-Modifiers to paste"
 msgstr "Modus Sunting"
 
 
-msgid "Can't Load Image"
-msgstr "Gambar"
-
-
 msgid "Select Slot"
 msgstr "Seleksi"
 
@@ -8679,6 +8647,10 @@ msgstr "Hapus"
 
 msgid "Select Pass"
 msgstr "Seleksi"
+
+
+msgid "Can't Load Image"
+msgstr "Gambar"
 
 
 msgid "Can only save sequence on image sequences"

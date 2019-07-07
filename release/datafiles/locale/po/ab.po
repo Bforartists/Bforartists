@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
 "\"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -368,17 +368,17 @@ msgid "Add Text"
 msgstr "Ацҵара Аҳәоу"
 
 
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Ашәага"
+
+
 msgid "Overlays"
 msgstr "Ақәҵакәа"
 
 
 msgid "Playback"
 msgstr "Арҳәара"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Ашәага"
 
 
 msgctxt "Operator"

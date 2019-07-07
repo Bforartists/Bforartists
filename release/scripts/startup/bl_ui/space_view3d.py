@@ -4842,9 +4842,9 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
 
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("transform.rotate_normal", text="Rotate", icon = "NORMAL_ROTATE")
-
-        layout.operator_context = 'EXEC_DEFAULT'
         layout.operator("mesh.point_normals", text="Point normals to target", icon = "NORMAL_TARGET")
+
+        layout.operator_context = 'EXEC_DEFAULT'       
         layout.operator("mesh.merge_normals", text="Merge", icon = "MERGE")
         layout.operator("mesh.split_normals", text="Split", icon = "SPLIT")
         layout.menu("VIEW3D_MT_edit_mesh_normals_average", text="Average")
@@ -5702,6 +5702,9 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.operator("gpencil.stroke_smooth", text="Smooth", icon = "PARTICLEBRUSH_SMOOTH")
         layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
         layout.operator("gpencil.stroke_merge", text="Merge", icon = "MERGE")
+        op = layout.operator("gpencil.stroke_cyclical_set", text="Close")
+        op.type = 'CLOSE'
+        op.geometry = True
 
         layout.separator()
 
@@ -7254,15 +7257,16 @@ class VIEW3D_PT_gpencil_guide(Panel):
             else:
                 col.prop(settings, "spacing")
 
-        col.label(text="Reference Point")
-        row = col.row(align=True)
-        row.prop(settings, "reference_point", expand=True)
-        if settings.reference_point == 'CUSTOM':
-            col.prop(settings, "location", text="Custom Location")
-        elif settings.reference_point == 'OBJECT':
-            col.prop(settings, "reference_object", text="Object Location")
-            if not settings.reference_object:
-                col.label(text="No object selected, using cursor")
+        if settings.type in ('CIRCULAR', 'RADIAL'):
+            col.label(text="Reference Point")
+            row = col.row(align=True)
+            row.prop(settings, "reference_point", expand=True)
+            if settings.reference_point == 'CUSTOM':
+                col.prop(settings, "location", text="Custom Location")
+            elif settings.reference_point == 'OBJECT':
+                col.prop(settings, "reference_object", text="Object Location")
+                if not settings.reference_object:
+                    col.label(text="No object selected, using cursor")
 
 
 class VIEW3D_PT_overlay_gpencil_options(Panel):
@@ -7515,6 +7519,9 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
         layout.operator("gpencil.stroke_join", text="Join & Copy").type = 'JOINCOPY'
         layout.menu("GPENCIL_MT_separate", text="Separate")
         layout.operator("gpencil.stroke_split", text="Split")
+        op = layout.operator("gpencil.stroke_cyclical_set", text="Close")
+        op.type = 'CLOSE'
+        op.geometry = True
 
         layout.separator()
 

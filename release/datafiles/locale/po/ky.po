@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -2878,6 +2878,11 @@ msgstr "Система"
 
 
 msgctxt "Operator"
+msgid "Scale"
+msgstr "Масштаб"
+
+
+msgctxt "Operator"
 msgid "Draw"
 msgstr "Тартуу"
 
@@ -2932,11 +2937,6 @@ msgstr "3D-көрүнүш"
 
 msgid "Print3D"
 msgstr "3D-басма"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Масштаб"
 
 
 msgctxt "Operator"
@@ -4167,16 +4167,16 @@ msgid "<No ID>"
 msgstr "<ID жок>"
 
 
+msgid "Select Layer"
+msgstr "Катты тандоо"
+
+
 msgid "Can't Load Image"
 msgstr "Сүрөттү жүктөө оңунан чыккан жок"
 
 
 msgid " + Z"
 msgstr " + Z"
-
-
-msgid "Select Layer"
-msgstr "Катты тандоо"
 
 
 msgid "(Key) "

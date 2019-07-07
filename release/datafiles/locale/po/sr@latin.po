@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -2362,10 +2362,6 @@ msgstr "Ostojanje poda od centra objekta"
 
 msgid "Use Rotation"
 msgstr "Koristi okretanje"
-
-
-msgid "Sticky"
-msgstr "Lepljivo"
 
 
 msgid "Follow Path Constraint"
@@ -4909,6 +4905,10 @@ msgid "Frame Locked"
 msgstr "Zaključan kadar"
 
 
+msgid "Mask Layer"
+msgstr "Maskiraj sloj"
+
+
 msgid "Opacity"
 msgstr "Providnost"
 
@@ -5388,10 +5388,6 @@ msgstr "Vidljivost sloja kostura"
 
 msgid "Pose Position"
 msgstr "Pozicija poze"
-
-
-msgid "Delay Deform"
-msgstr "Odlaganje deformacije"
 
 
 msgid "X-Axis Mirror"
@@ -8182,10 +8178,6 @@ msgid "Animation playback is active"
 msgstr "Reprodukcija animacije"
 
 
-msgid "All 3D View Editors"
-msgstr "Svi pogledi"
-
-
 msgid "Animation Editors"
 msgstr "Uređivači animacije"
 
@@ -9508,10 +9500,6 @@ msgid "Minimum thickness"
 msgstr "Najmanja debljina"
 
 
-msgid "Mask Layer"
-msgstr "Maskiraj sloj"
-
-
 msgid "Render Opacity"
 msgstr "Renderuj providnost"
 
@@ -9664,10 +9652,6 @@ msgstr "Izabrana grupa"
 
 msgid "Show/Hide"
 msgstr "Prikaži/sakrij"
-
-
-msgid "Specials"
-msgstr "Posebni"
 
 
 msgid "Tracking"
@@ -17462,10 +17446,6 @@ msgid "Extrude selected vertices in a circle around the cursor in indicated view
 msgstr "Izvlači izabrana temena u krug oko kursora prema trenutnom pogledu"
 
 
-msgid "Dupli"
-msgstr "Duplikat"
-
-
 msgid "Make Duplicates"
 msgstr "Nampravi duplikate"
 
@@ -18207,11 +18187,6 @@ msgid "Duplicate Linked"
 msgstr "Dupliraj povezano"
 
 
-msgctxt "Operator"
-msgid "Make Duplicates Real"
-msgstr "Primeni duplikate"
-
-
 msgid "Keep Hierarchy"
 msgstr "Zadrži hijerarhiju"
 
@@ -18344,11 +18319,6 @@ msgstr "Spoji"
 
 msgid "Join selected objects into active object"
 msgstr "Spoj izabrane objekte u aktivan objekat"
-
-
-msgctxt "Operator"
-msgid "Join as Shapes"
-msgstr "Spoji oblike"
 
 
 msgctxt "Operator"
@@ -21674,11 +21644,6 @@ msgstr "Pomeri pogled"
 
 
 msgctxt "Operator"
-msgid "View Navigation"
-msgstr "Navigacija pogleda"
-
-
-msgctxt "Operator"
 msgid "NDOF Orbit View"
 msgstr "NDOF okretanje pogleda"
 
@@ -22647,6 +22612,11 @@ msgstr "Svojstva tečnosti:"
 
 
 msgctxt "Operator"
+msgid "Scale"
+msgstr "Povećaj/smanji"
+
+
+msgctxt "Operator"
 msgid "Draw"
 msgstr "Crtaj"
 
@@ -22691,10 +22661,6 @@ msgid "Movement"
 msgstr "Kretanje"
 
 
-msgid "Self Collision"
-msgstr "Samoodbijanje"
-
-
 msgid "Force Fields"
 msgstr "Fh sila "
 
@@ -22709,6 +22675,10 @@ msgstr "Prilagodljivi domen"
 
 msgid "Behavior"
 msgstr "Ponašanje"
+
+
+msgid "Self Collision"
+msgstr "Samoodbijanje"
 
 
 msgid "Color Management"
@@ -22817,11 +22787,6 @@ msgstr "3D štampa"
 
 msgid "Dyntopo"
 msgstr "Dinamičko vajanje"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Povećaj/smanji"
 
 
 msgctxt "Operator"
@@ -24850,14 +24815,6 @@ msgstr "Pretvori decimalni"
 
 msgid "Convert input to float data"
 msgstr "Pretvori ulaz u decimalni podatak"
-
-
-msgid "Flip Time"
-msgstr "Obrni vreme"
-
-
-msgid "Reverse frame order"
-msgstr "Obrni redosled kadrova"
 
 
 msgid "Use Translation"
@@ -27007,24 +26964,12 @@ msgid "Display X Axis"
 msgstr "Prikaži X osu"
 
 
-msgid "Show the X axis line in perspective view"
-msgstr "Prikazuje liniju X ose u perspektivnom pogledu"
-
-
 msgid "Display Y Axis"
 msgstr "Prikaži Y osu"
 
 
-msgid "Show the Y axis line in perspective view"
-msgstr "Prikazuje liniju Y ose u perspektivnom pogledu"
-
-
 msgid "Display Z Axis"
 msgstr "Prikaži Z osu"
-
-
-msgid "Show the Z axis line in perspective view"
-msgstr "Prikazuje liniju Z ose u perspektivnom pogledu"
 
 
 msgid "Draw Handles"
@@ -27788,10 +27733,6 @@ msgid "Shapes"
 msgstr "Oblici"
 
 
-msgid "Delay Refresh"
-msgstr "Osveži sa kašnjenjem"
-
-
 msgctxt "Operator"
 msgid "Remove"
 msgstr "Ukloni"
@@ -28304,6 +28245,11 @@ msgstr "Transformacija:"
 
 
 msgctxt "Operator"
+msgid "Parent"
+msgstr "Roditelj"
+
+
+msgctxt "Operator"
 msgid "All"
 msgstr "Sve"
 
@@ -28492,11 +28438,6 @@ msgstr "Prati kadrove unazad"
 
 
 msgctxt "Operator"
-msgid "Show Tracks"
-msgstr "Prikaži staze"
-
-
-msgctxt "Operator"
 msgid "Set Floor"
 msgstr "Postavi pod"
 
@@ -28541,6 +28482,11 @@ msgstr "Izoštri"
 msgctxt "Operator"
 msgid "Inverse"
 msgstr "Obrnuto"
+
+
+msgctxt "Operator"
+msgid "Show Tracks"
+msgstr "Prikaži staze"
 
 
 msgctxt "Operator"
@@ -29094,11 +29040,6 @@ msgstr "Kamera"
 
 
 msgctxt "Operator"
-msgid "Zoom Border..."
-msgstr "Približi okvir..."
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "Poravnaj aktivnu kameru sa pogledom"
 
@@ -29126,11 +29067,6 @@ msgstr "Spreda"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Od pozadi"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "Roditelj"
 
 
 msgctxt "Operator"
@@ -29934,24 +29870,12 @@ msgid "No F-Curve to add keyframes to"
 msgstr "Kadar za ibacivanje ključnog kadra"
 
 
-msgid "No active keying set"
-msgstr "Bez aktivne zbirke ključeva"
-
-
 msgid "No active Keying Set"
 msgstr "Bez aktivne zbirke ključeva"
 
 
-msgid "No active keying set to remove"
-msgstr "Nema aktivne zbirke ključeva za uklanjanje"
-
-
 msgid "Cannot remove built in keying set"
 msgstr "Ne mogu da uklonim ugrađenu zbirku ključeva"
-
-
-msgid "No active keying set path to remove"
-msgstr "Nema putanje aktivne zbirke ključeva za uklanjanje"
 
 
 msgid "Add New"
@@ -30895,10 +30819,6 @@ msgid "OK"
 msgstr "U redu"
 
 
-msgid "Unsupported audio format"
-msgstr "Nepodržan fotmat zvuka"
-
-
 msgid "Compiled without sound support"
 msgstr "Kompajlirano bez podrške za zvuk"
 
@@ -30919,6 +30839,14 @@ msgid "Height:"
 msgstr "Visina"
 
 
+msgid "Marker is disabled at current frame"
+msgstr "Marker je isključen na ternutnom kadru"
+
+
+msgid "Marker is enabled at current frame"
+msgstr "Marker je uključen na ternutnom kadru"
+
+
 msgid "Frame: %d / %d"
 msgstr "Kadar: %d / %d"
 
@@ -30929,14 +30857,6 @@ msgstr "Kadar: - / %d"
 
 msgid "File: %s"
 msgstr "Datoteka: %s"
-
-
-msgid "Marker is disabled at current frame"
-msgstr "Marker je isključen na ternutnom kadru"
-
-
-msgid "Marker is enabled at current frame"
-msgstr "Marker je uključen na ternutnom kadru"
 
 
 msgid "unsupported movie clip format"
@@ -31043,16 +30963,12 @@ msgid "View Properties"
 msgstr "Osobine pogleda"
 
 
+msgid "Unsupported audio format"
+msgstr "Nepodržan fotmat zvuka"
+
+
 msgid "Slot %d"
 msgstr "Slot %d"
-
-
-msgid "Can't Load Image"
-msgstr "Ne mogu da učitam sliku"
-
-
-msgid " + Z"
-msgstr " + Z"
 
 
 msgid "Select Slot"
@@ -31065,6 +30981,14 @@ msgstr "Izabrani sloj"
 
 msgid "Select Pass"
 msgstr "Izaberi prolaz"
+
+
+msgid "Can't Load Image"
+msgstr "Ne mogu da učitam sliku"
+
+
+msgid " + Z"
+msgstr " + Z"
 
 
 msgid "unsupported image format"
