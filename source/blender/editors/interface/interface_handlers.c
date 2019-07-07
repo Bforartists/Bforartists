@@ -551,12 +551,15 @@ static bool ui_but_dragedit_update_mval(uiHandleButtonData *data, int mx)
   return true;
 }
 
-static void ui_but_update_preferences_dirty(uiBut *but)
+static void ui_rna_update_preferences_dirty(PointerRNA *ptr, PropertyRNA *prop)
 {
   /* Not very elegant, but ensures preference changes force re-save. */
   bool tag = false;
-  if (but->rnaprop) {
-    StructRNA *base = RNA_struct_base(but->rnapoin.type);
+  if (prop && !(RNA_property_flag(prop) & PROP_NO_DEG_UPDATE)) {
+    StructRNA *base = RNA_struct_base(ptr->type);
+    if (base == NULL) {
+      base = ptr->type;
+    }
     if (ELEM(base, &RNA_AddonPreferences, &RNA_KeyConfigPreferences, &RNA_KeyMapItem)) {
       tag = true;
     }
@@ -566,6 +569,16 @@ static void ui_but_update_preferences_dirty(uiBut *but)
     U.runtime.is_dirty = true;
     WM_main_add_notifier(NC_WINDOW, NULL);
   }
+}
+
+static void ui_but_update_preferences_dirty(uiBut *but)
+{
+  ui_rna_update_preferences_dirty(&but->rnapoin, but->rnaprop);
+}
+
+static void ui_afterfunc_update_preferences_dirty(uiAfterFunc *after)
+{
+  ui_rna_update_preferences_dirty(&after->rnapoin, after->rnaprop);
 }
 
 /** \} */
@@ -743,6 +756,14 @@ static void ui_apply_but_undo(uiBut *but)
       str = "Unknown Action";
     }
 
+    /* Optionally override undo when undo system doesn't support storing properties. */
+    if (but->rnapoin.id.data) {
+      ID *id = but->rnapoin.id.data;
+      if (!ED_undo_is_legacy_compatible_for_property(but->block->evil_C, id)) {
+        str = "";
+      }
+    }
+
     /* delayed, after all other funcs run, popups are closed, etc */
     after = ui_afterfunc_new();
     BLI_strncpy(after->undostr, str, sizeof(after->undostr));
@@ -842,6 +863,8 @@ static void ui_apply_but_funcs_after(bContext *C)
     if (after.rename_orig) {
       MEM_freeN(after.rename_orig);
     }
+
+    ui_afterfunc_update_preferences_dirty(&after);
 
     if (after.undostr[0]) {
       ED_undo_push(C, after.undostr);
@@ -1347,7 +1370,7 @@ static bool ui_drag_toggle_set_xy_xy(
             /* is it pressed? */
             int pushed_state_but = ui_drag_toggle_but_pushed_state(C, but);
             if (pushed_state_but != pushed_state) {
-              UI_but_execute(C, but);
+              UI_but_execute(C, ar, but);
               if (do_check) {
                 ui_but_update_edited(but);
               }
@@ -7278,7 +7301,7 @@ static void button_activate_state(bContext *C, uiBut *but, uiHandleButtonState s
     button_tooltip_timer_reset(C, but);
 
     /* automatic open pulldown block timer */
-    if (ELEM(but->type, UI_BTYPE_BLOCK, UI_BTYPE_PULLDOWN, UI_BTYPE_POPOVER)) {
+    if (ELEM(but->type, UI_BTYPE_BLOCK, UI_BTYPE_PULLDOWN, UI_BTYPE_POPOVER, UI_BTYPE_MENU)) {
       if (data->used_mouse && !data->autoopentimer) {
         int time;
 
@@ -7939,6 +7962,8 @@ void ui_but_execute_begin(struct bContext *UNUSED(C),
                           uiBut *but,
                           void **active_back)
 {
+  BLI_assert(ar != NULL);
+  BLI_assert(BLI_findindex(&ar->uiblocks, but->block) != -1);
   /* note: ideally we would not have to change 'but->active' however
    * some functions we call don't use data (as they should be doing) */
   uiHandleButtonData *data;
@@ -9269,7 +9294,7 @@ static int ui_handle_menu_event(bContext *C,
             for (but = block->buttons.first; but; but = but->next) {
               if (!(but->flag & UI_BUT_DISABLED) && but->menu_key == event->type) {
                 if (but->type == UI_BTYPE_BUT) {
-                  UI_but_execute(C, but);
+                  UI_but_execute(C, ar, but);
                 }
                 else {
                   ui_handle_button_activate_by_type(C, ar, but);
@@ -9350,7 +9375,7 @@ static int ui_handle_menu_event(bContext *C,
             ar, UI_BUT_ACTIVE_DEFAULT, UI_HIDDEN);
         if ((but_default != NULL) && (but_default->active == NULL)) {
           if (but_default->type == UI_BTYPE_BUT) {
-            UI_but_execute(C, but_default);
+            UI_but_execute(C, ar, but_default);
           }
           else {
             ui_handle_button_activate_by_type(C, ar, but_default);
@@ -10100,9 +10125,10 @@ static int ui_handler_region_menu(bContext *C, const wmEvent *event, void *UNUSE
 
     if ((data->state == BUTTON_STATE_MENU_OPEN) &&
         /* make sure mouse isn't inside another menu (see T43247) */
-        (is_inside_menu == false) && (ELEM(but->type, UI_BTYPE_PULLDOWN, UI_BTYPE_POPOVER)) &&
+        (is_inside_menu == false) &&
+        (ELEM(but->type, UI_BTYPE_PULLDOWN, UI_BTYPE_POPOVER, UI_BTYPE_MENU)) &&
         (but_other = ui_but_find_mouse_over(ar, event)) && (but != but_other) &&
-        (ELEM(but_other->type, UI_BTYPE_PULLDOWN, UI_BTYPE_POPOVER))) {
+        (ELEM(but_other->type, UI_BTYPE_PULLDOWN, UI_BTYPE_POPOVER, UI_BTYPE_MENU))) {
       /* if mouse moves to a different root-level menu button,
        * open it to replace the current menu */
       if ((but_other->flag & UI_BUT_DISABLED) == 0) {

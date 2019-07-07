@@ -475,6 +475,10 @@ static void ignore_parent_tx(Main *bmain, Depsgraph *depsgraph, Scene *scene, Ob
       invert_m4_m4(ob_child->parentinv, workob.obmat);
       /* Copy result of BKE_object_apply_mat4(). */
       BKE_object_transform_copy(ob_child, ob_child_eval);
+      /* Tag for update.
+       * This is because parent matrix did change, so in theory the child object might now be
+       * evaluated to a different location in another editing context. */
+      DEG_id_tag_update(&ob_child->id, ID_RECALC_TRANSFORM);
     }
   }
 }
@@ -1490,7 +1494,7 @@ void OBJECT_OT_origin_set(wmOperatorType *ot)
 /* -------------------------------------------------------------------- */
 /** \name Transform Axis Target
  *
- * Note this is an experemental operator to point lights/cameras at objects.
+ * Note this is an experimental operator to point lights/cameras at objects.
  * We may re-work how this behaves based on user feedback.
  * - campbell.
  * \{ */

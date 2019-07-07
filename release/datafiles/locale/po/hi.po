@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -2968,10 +2968,6 @@ msgid "Show/Hide"
 msgstr "छुपाएँ / दिखाएँ"
 
 
-msgid "Specials"
-msgstr "विशिष्ट"
-
-
 msgid "Channel"
 msgstr "सरणि"
 
@@ -4264,10 +4260,6 @@ msgid "Expand"
 msgstr "विस्तृत करें"
 
 
-msgid "Dupli"
-msgstr "प्रतिलिपि"
-
-
 msgid "Fan"
 msgstr "प्रशंसक"
 
@@ -4291,11 +4283,6 @@ msgstr "निर्गम"
 msgctxt "Operator"
 msgid "Hide"
 msgstr "छिपाएँ"
-
-
-msgctxt "Operator"
-msgid "Viewer Border"
-msgstr "प्रेक्षक  प्रतिपादन"
 
 
 msgid "Set the boundaries for viewer operations"
@@ -5039,6 +5026,11 @@ msgstr "पूर्वनिश्चित द्रव"
 
 
 msgctxt "Operator"
+msgid "Scale"
+msgstr "प्रमाण"
+
+
+msgctxt "Operator"
 msgid "Draw"
 msgstr "चित्रण"
 
@@ -5051,12 +5043,12 @@ msgid "Physics"
 msgstr "भौतिकी"
 
 
-msgid "Self Collision"
-msgstr "आत्म टक्कर"
-
-
 msgid "Force Fields"
 msgstr "बल क्षेत्र"
+
+
+msgid "Self Collision"
+msgstr "आत्म टक्कर"
 
 
 msgid "Color Management"
@@ -5105,11 +5097,6 @@ msgstr "त्रि-आयाम दृश्य"
 
 msgid "Motion Tracking"
 msgstr "गति मार्गन"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "प्रमाण"
 
 
 msgctxt "Operator"
@@ -6319,6 +6306,11 @@ msgstr "संचनांतरण:"
 
 
 msgctxt "Operator"
+msgid "Parent"
+msgstr "कारण"
+
+
+msgctxt "Operator"
 msgid "All"
 msgstr "सभी"
 
@@ -6695,11 +6687,6 @@ msgstr "सामने"
 msgctxt "Operator"
 msgid "Back"
 msgstr "पार्श्व"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "कारण"
 
 
 msgctxt "Operator"
@@ -7708,10 +7695,6 @@ msgid "OK"
 msgstr "ठीक है"
 
 
-msgid "Unsupported audio format"
-msgstr "असमर्थित श्रव्य स्वरूप"
-
-
 msgid "Width:"
 msgstr "चौड़ाई"
 
@@ -7720,12 +7703,12 @@ msgid "Height:"
 msgstr "ऊँचाई"
 
 
-msgid "Frame: - / %d"
-msgstr "गठन: %d"
-
-
 msgid "Y-position of search at frame relative to marker's position"
 msgstr "बाएँ-नीचे शंकुे सापेक्ष सामान्यीकृत निर्देशांक में खोज क्षेत्र के चिन्हक की स्थिति"
+
+
+msgid "Frame: - / %d"
+msgstr "गठन: %d"
 
 
 msgid "Cannot read '%s': %s"
@@ -7762,6 +7745,10 @@ msgstr "संशोधक जोड़ें"
 
 msgid "View Properties"
 msgstr "दृश्य गुण"
+
+
+msgid "Unsupported audio format"
+msgstr "असमर्थित श्रव्य स्वरूप"
 
 
 msgid "(Key) "

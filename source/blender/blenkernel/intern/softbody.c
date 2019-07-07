@@ -155,8 +155,8 @@ typedef struct SB_thread_context {
 #define BFF_INTERSECT 1 /* collider edge   intrudes face */
 #define BFF_CLOSEVERT 2 /* collider vertex repulses face */
 
-static float SoftHeunTol =
-    1.0f; /* humm .. this should be calculated from sb parameters and sizes */
+/* humm .. this should be calculated from sb parameters and sizes. */
+static float SoftHeunTol = 1.0f;
 
 /* local prototypes */
 static void free_softbody_intern(SoftBody *sb);
@@ -251,7 +251,7 @@ static float _final_mass(Object *ob, BodyPoint *bp)
 /*
  * for each target object/face the axis aligned bounding box (AABB) is stored
  * faces parallel to global axes
- * so only simple "value" in [min, max] ckecks are used
+ * so only simple "value" in [min, max] checks are used
  * float operations still
  */
 

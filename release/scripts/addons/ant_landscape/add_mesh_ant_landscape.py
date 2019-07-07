@@ -77,7 +77,7 @@ class AntAddLandscape(bpy.types.Operator):
             )
     smooth_mesh: BoolProperty(
             name="Smooth",
-            default=True,
+            default=False,
             description="Shade smooth"
             )
     tri_face: BoolProperty(

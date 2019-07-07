@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -4361,6 +4361,11 @@ msgstr "Scene Opstelling"
 
 
 msgctxt "Operator"
+msgid "Scale"
+msgstr "Schaal"
+
+
+msgctxt "Operator"
 msgid "Draw"
 msgstr "Tekenen"
 
@@ -4391,11 +4396,6 @@ msgstr "Tijdslijn"
 
 msgid "Development"
 msgstr "Ontwikkeling"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Schaal"
 
 
 msgctxt "Operator"
@@ -5129,6 +5129,11 @@ msgstr "Meer..."
 
 
 msgctxt "Operator"
+msgid "Parent"
+msgstr "Ouder"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "Schaal Veer"
 
@@ -5175,11 +5180,6 @@ msgstr "Bereken"
 
 
 msgctxt "Operator"
-msgid "Show Tracks"
-msgstr "Toon Banen"
-
-
-msgctxt "Operator"
 msgid "Set Floor"
 msgstr "Zet Vloer"
 
@@ -5207,6 +5207,11 @@ msgstr "Zet Y As"
 msgctxt "Operator"
 msgid "Set Wall"
 msgstr "Zet Muur"
+
+
+msgctxt "Operator"
+msgid "Show Tracks"
+msgstr "Toon Banen"
 
 
 msgctxt "Operator"
@@ -5424,11 +5429,6 @@ msgstr "Voorkant"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Terug"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "Ouder"
 
 
 msgctxt "Operator"
