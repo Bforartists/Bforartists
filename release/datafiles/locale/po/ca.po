@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -1721,10 +1721,6 @@ msgstr "Esborrar Posició"
 
 msgid "Use Rotation"
 msgstr "Esborrar Rotació"
-
-
-msgid "Sticky"
-msgstr "&gt;Cercle Nurbs"
 
 
 msgid "Follow Path Constraint"
@@ -3832,6 +3828,10 @@ msgid "Frame Locked"
 msgstr "Joc"
 
 
+msgid "Mask Layer"
+msgstr "Moure a Capa"
+
+
 msgid "Parent Object"
 msgstr "Comprimir Dades"
 
@@ -4192,6 +4192,10 @@ msgid "Bones"
 msgstr "Corba de Bezier"
 
 
+msgid "Display Type"
+msgstr "Seleccionar fila"
+
+
 msgid "Stick"
 msgstr "&gt;Cercle Nurbs"
 
@@ -4226,10 +4230,6 @@ msgstr "Esborrar Posició"
 
 msgid "Rest Position"
 msgstr "Esborrar Posició"
-
-
-msgid "Delay Deform"
-msgstr "Corba"
 
 
 msgid "X-Axis Mirror"
@@ -6580,10 +6580,6 @@ msgid "Animation playback is active"
 msgstr "Finestra de Render"
 
 
-msgid "All 3D View Editors"
-msgstr "Esborrar Posició"
-
-
 msgid "Animation Editors"
 msgstr "Image Displist"
 
@@ -7478,10 +7474,6 @@ msgid "Orientation"
 msgstr "Esborrar Rotació"
 
 
-msgid "Mask Layer"
-msgstr "Moure a Capa"
-
-
 msgid "Render Opacity"
 msgstr "Render"
 
@@ -7653,10 +7645,6 @@ msgstr "Seleccionar fila"
 
 msgid "Show/Hide"
 msgstr "Mostrar"
-
-
-msgid "Specials"
-msgstr "Especials"
 
 
 msgid "Tracking"
@@ -12047,10 +12035,6 @@ msgstr "Seleccionar connectats"
 msgctxt "Operator"
 msgid "Accept"
 msgstr "Afegir"
-
-
-msgid "Display Type"
-msgstr "Seleccionar fila"
 
 
 msgctxt "Operator"
@@ -16562,11 +16546,6 @@ msgid "Duplicate Linked"
 msgstr "Duplicar"
 
 
-msgctxt "Operator"
-msgid "Make Duplicates Real"
-msgstr "Duplicar"
-
-
 msgid "Parent newly created objects to the original duplicator"
 msgstr "Seleccionar connectats"
 
@@ -16733,11 +16712,6 @@ msgstr "Esborrar Posició"
 
 
 msgid "Clear the object's location"
-msgstr "Duplicar"
-
-
-msgctxt "Operator"
-msgid "Make Dupli-Face"
 msgstr "Duplicar"
 
 
@@ -21147,6 +21121,11 @@ msgid "Sample Line"
 msgstr "Partir"
 
 
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Escalar"
+
+
 msgid "2D Cursor"
 msgstr "Seleccionar connectats"
 
@@ -21257,11 +21236,6 @@ msgstr "Seleccionar fila"
 
 msgid "Motion Tracking"
 msgstr "Esborrar Rotació"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Escalar"
 
 
 msgctxt "Operator"
@@ -23057,14 +23031,6 @@ msgstr "Duplicar"
 
 msgid "Convert Float"
 msgstr "Comprimir Dades"
-
-
-msgid "Flip Time"
-msgstr "Afegir Tira"
-
-
-msgid "Reverse frame order"
-msgstr "Seleccionar fila"
 
 
 msgid "Use Translation"
@@ -26472,6 +26438,11 @@ msgstr "Seleccionar fila"
 
 
 msgctxt "Operator"
+msgid "Parent"
+msgstr "Seleccionar fila"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "Menú Esborrar"
 
@@ -26639,11 +26610,6 @@ msgstr "Crear Pista"
 
 
 msgctxt "Operator"
-msgid "Show Tracks"
-msgstr "Arxiu"
-
-
-msgctxt "Operator"
 msgid "Set Floor"
 msgstr "Seleccionar connectats"
 
@@ -26679,6 +26645,11 @@ msgstr "Seleccionar fila"
 msgctxt "Operator"
 msgid "Inverse"
 msgstr "Seleccionar fila"
+
+
+msgctxt "Operator"
+msgid "Show Tracks"
+msgstr "Arxiu"
 
 
 msgctxt "Operator"
@@ -27152,11 +27123,6 @@ msgstr "Càmera"
 
 
 msgctxt "Operator"
-msgid "Zoom Border..."
-msgstr "Seleccionar amb límit"
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "Amagar Seleccionats"
 
@@ -27184,11 +27150,6 @@ msgstr "Frontal"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Negre"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "Seleccionar fila"
 
 
 msgctxt "Operator"
@@ -27870,10 +27831,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Esborrar"
 
 
-msgid "No active keying set"
-msgstr "Canviar Str"
-
-
 msgid "No active Keying Set"
 msgstr "Canviar Str"
 
@@ -27882,32 +27839,12 @@ msgid "Keying set failed to remove any keyframes"
 msgstr "Esborrar"
 
 
-msgid "No active keying set to remove"
-msgstr "Canviar Str"
-
-
 msgid "Cannot remove built in keying set"
-msgstr "Canviar Str"
-
-
-msgid "No active keying set to add empty path to"
-msgstr "Canviar Str"
-
-
-msgid "No active keying set path to remove"
-msgstr "Canviar Str"
-
-
-msgid "No active keying set to remove a path from"
 msgstr "Canviar Str"
 
 
 msgid "Cannot add property to built in keying set"
 msgstr "Moure a Capa"
-
-
-msgid "No active keying set to remove property from"
-msgstr "Canviar Str"
 
 
 msgid "Cannot remove property from built in keying set"
@@ -28694,16 +28631,16 @@ msgid "Driver Value:"
 msgstr "Afegir Tira"
 
 
-msgid "Delete target variable"
-msgstr "Finestra de Render"
-
-
 msgid "Update Dependencies"
 msgstr "Finestra de Render"
 
 
 msgid "Add Modifier"
 msgstr "Esborrar tot"
+
+
+msgid "Delete target variable"
+msgstr "Finestra de Render"
 
 
 msgid "View Properties"
@@ -28722,10 +28659,6 @@ msgid "No F-Modifiers to paste"
 msgstr "Esborrar tot"
 
 
-msgid "Can't Load Image"
-msgstr "Render"
-
-
 msgid "Select Slot"
 msgstr "Seleccionar fila"
 
@@ -28736,6 +28669,10 @@ msgstr "Seleccionar fila"
 
 msgid "Select Pass"
 msgstr "Deseleccionar Enllaçats"
+
+
+msgid "Can't Load Image"
+msgstr "Render"
 
 
 msgid "unsupported image format"

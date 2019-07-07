@@ -24,6 +24,8 @@
 
 #include "DNA_userdef_types.h"
 
+#include "ED_view3d.h"
+
 #include "UI_resources.h"
 
 #include "GPU_batch.h"
@@ -43,16 +45,14 @@ void workbench_private_data_init(WORKBENCH_PrivateData *wpd)
   wpd->preferences = &U;
 
   View3D *v3d = draw_ctx->v3d;
-  if (!v3d) {
+  if (!v3d || (v3d->shading.type == OB_RENDER && BKE_scene_uses_blender_workbench(scene))) {
     wpd->shading = scene->display.shading;
-    wpd->use_color_render_settings = true;
-  }
-  else if (v3d->shading.type == OB_RENDER && BKE_scene_uses_blender_workbench(scene)) {
-    wpd->shading = scene->display.shading;
+    wpd->shading.xray_alpha = XRAY_ALPHA((&scene->display));
     wpd->use_color_render_settings = true;
   }
   else {
     wpd->shading = v3d->shading;
+    wpd->shading.xray_alpha = XRAY_ALPHA(v3d);
     wpd->use_color_render_settings = false;
   }
 

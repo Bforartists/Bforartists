@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: nge\n"
 "Language-Team: \n"
@@ -14,7 +14,7 @@ msgstr ""
 "Language: zh_CN\n"
 "=====X-Generator: Poedit 1.6.9\n"
 "Language: zh_CN>>>>>> .r306\n"
-"X-Generator: Poedit 2.2.1"
+"X-Generator: Poedit 2.2.3"
 
 
 msgid "Action F-Curves"
@@ -2606,7 +2606,7 @@ msgstr "存在随机纹理角度值"
 
 
 msgid "Has Smooth Stroke"
-msgstr "具有平滑笔触特性"
+msgstr "具有平滑笔画特性"
 
 
 msgid "Has Spacing"
@@ -2742,7 +2742,7 @@ msgstr "犀利"
 
 
 msgid "Stroke"
-msgstr "笔触"
+msgstr "笔画"
 
 
 msgid "Affect Stroke Strength"
@@ -2754,7 +2754,7 @@ msgstr "默认"
 
 
 msgid "Strokes"
-msgstr "笔触"
+msgstr "笔画"
 
 
 msgid "Edit Lines"
@@ -2802,7 +2802,7 @@ msgstr "橡皮擦硬度"
 
 
 msgid "Eraser Stroke"
-msgstr "擦除笔触"
+msgstr "擦除笔画"
 
 
 msgid "Aspect Ratio"
@@ -2866,7 +2866,7 @@ msgstr "显示套索"
 
 
 msgid "Trim Stroke Ends"
-msgstr "修建笔触末端"
+msgstr "修剪笔画末端"
 
 
 msgid "Enable Cursor"
@@ -3577,6 +3577,10 @@ msgid "Enable this objects as a collider for physics systems"
 msgstr "将该物体设置为物理仿真的碰撞器"
 
 
+msgid "Override Normals"
+msgstr "覆盖法线"
+
+
 msgid "Kill Particles"
 msgstr "消除粒子"
 
@@ -3599,6 +3603,10 @@ msgstr "显示设备名称"
 
 msgid "Input color space settings"
 msgstr "输入色彩空间设置"
+
+
+msgid "Is Data"
+msgstr "是否数据"
 
 
 msgid "Input Color Space"
@@ -3654,7 +3662,7 @@ msgstr "伽玛"
 
 
 msgid "Amount of gamma modification applied after display transform"
-msgstr "显示形变后应用的伽玛修改量"
+msgstr "显示转换后应用的伽玛修改量"
 
 
 msgid "Look"
@@ -4684,14 +4692,6 @@ msgstr "使用旋转"
 
 msgid "Use the target's rotation to determine floor"
 msgstr "使用目标物体的旋转确定基面"
-
-
-msgid "Sticky"
-msgstr "黏性"
-
-
-msgid "Immobilize object while constrained"
-msgstr "约束时固定物体"
 
 
 msgid "Follow Path Constraint"
@@ -9763,7 +9763,7 @@ msgstr "选择材质分界边"
 
 
 msgid "Enable or disable this line set during stroke rendering"
-msgstr "在渲染笔触时启用或禁用此线条集"
+msgstr "在渲染笔画时启用或禁用此线条集"
 
 
 msgid "Visibility"
@@ -9811,7 +9811,7 @@ msgstr "使用"
 
 
 msgid "Enable or disable this style module during stroke rendering"
-msgstr "在渲染笔触时启用或禁用此样式模块"
+msgstr "在渲染笔画时启用或禁用此样式模块"
 
 
 msgid "Style Modules"
@@ -9824,6 +9824,10 @@ msgstr "样式模块列表 (从上至下应用)"
 
 msgid "Freestyle Settings"
 msgstr "Freestyle 设置"
+
+
+msgid "Freestyle settings for a ViewLayer data-block"
+msgstr "用于视图层数据块的 Freestyle设置"
 
 
 msgid "Crease Angle"
@@ -10178,6 +10182,10 @@ msgid "Lock current frame displayed by layer"
 msgstr "锁定当前层的显示帧"
 
 
+msgid "Mask Layer"
+msgstr "遮罩层"
+
+
 msgid "Opacity"
 msgstr "不透明度"
 
@@ -10223,7 +10231,7 @@ msgstr "显示控制点"
 
 
 msgid "Draw the points which make up the strokes (for debugging purposes)"
-msgstr "绘制组成笔触的点(用于调试)"
+msgstr "绘制组成笔画的点(用于调试)"
 
 
 msgid "Thickness"
@@ -10359,7 +10367,7 @@ msgstr "使用曲线"
 
 
 msgid "Grease Pencil Stroke"
-msgstr "蜡笔笔触"
+msgstr "蜡笔笔画"
 
 
 msgid "Freehand curve defining part of a sketch"
@@ -10371,7 +10379,7 @@ msgstr "绘制模式"
 
 
 msgid "Stroke is in screen-space"
-msgstr "视屏空间中的笔触"
+msgstr "视屏空间中的笔画"
 
 
 msgid "3D Space"
@@ -10379,7 +10387,7 @@ msgstr "3D 空间"
 
 
 msgid "Stroke is in 3D-space"
-msgstr "3D 空间中的笔触"
+msgstr "3D 空间中的笔画"
 
 
 msgid "2D Space"
@@ -10387,7 +10395,7 @@ msgstr "2D 空间"
 
 
 msgid "Stroke is in 2D-space"
-msgstr "2D 空间中的笔触"
+msgstr "2D 空间中的笔画"
 
 
 msgid "2D Image"
@@ -10395,7 +10403,7 @@ msgstr "2D 图像"
 
 
 msgid "Stroke is in 2D-space (but with special 'image' scaling)"
-msgstr "2D空间中的笔触(但仅开启'图像'缩放)"
+msgstr "2D空间中的笔画(但仅开启'图像'缩放)"
 
 
 msgid "Enable cyclic drawing, closing the stroke"
@@ -10423,11 +10431,11 @@ msgstr "材质编号"
 
 
 msgid "Stroke Points"
-msgstr "笔触控制点"
+msgstr "笔画控制点"
 
 
 msgid "Stroke data points"
-msgstr "笔触数据点"
+msgstr "笔画数据点"
 
 
 msgid "Start Cap"
@@ -10439,11 +10447,11 @@ msgstr "三角形"
 
 
 msgid "Grease Pencil Stroke Point"
-msgstr "蜡笔的笔触控制点"
+msgstr "蜡笔的笔画控制点"
 
 
 msgid "Data point for freehand stroke curve"
-msgstr "用于自由笔触的曲线控制点数据"
+msgstr "用于自由笔画的曲线控制点数据"
 
 
 msgid "Coordinates"
@@ -10932,6 +10940,10 @@ msgid "Bones"
 msgstr "骨骼"
 
 
+msgid "Display Type"
+msgstr "显示类型"
+
+
 msgid "Octahedral"
 msgstr "八面锥"
 
@@ -11020,14 +11032,6 @@ msgid "Show Armature in binding pose state (no posing possible)"
 msgstr "在姿态绑定状态中（无法调节姿态）显示骨架"
 
 
-msgid "Delay Deform"
-msgstr "延迟形变"
-
-
-msgid "Don't deform children when manipulating bones in Pose Mode"
-msgstr "在姿态模式下操控骨骼时, 不对子级进行形变操作"
-
-
 msgid "X-Axis Mirror"
 msgstr "X 轴镜像"
 
@@ -11041,7 +11045,7 @@ msgstr "自动平滑"
 
 
 msgid "Amount of smoothing to automatically apply to each stroke"
-msgstr "自动应用到各个笔触的平滑量"
+msgstr "自动应用到各个笔画的平滑量"
 
 
 msgid "Blending mode"
@@ -11485,19 +11489,19 @@ msgstr "锐度阈值"
 
 
 msgid "Smooth Stroke Factor"
-msgstr "平滑笔触系数"
+msgstr "平滑笔画系数"
 
 
 msgid "Higher values give a smoother stroke"
-msgstr "值越高, 笔触越平滑"
+msgstr "值越高, 笔画越平滑"
 
 
 msgid "Smooth Stroke Radius"
-msgstr "平滑笔触半径"
+msgstr "平滑笔画半径"
 
 
 msgid "Minimum distance from last point before stroke continues"
-msgstr "在笔触继续之前, 与前一点间的最小距离"
+msgstr "在笔画继续之前, 与前一点间的最小距离"
 
 
 msgid "Spacing between brush daubs as a percentage of brush diameter"
@@ -11525,7 +11529,7 @@ msgstr "应用笔刷时的影响力度"
 
 
 msgid "Stroke Method"
-msgstr "笔触方式"
+msgstr "笔画方式"
 
 
 msgid "Dots"
@@ -11597,7 +11601,7 @@ msgstr "累积"
 
 
 msgid "Accumulate stroke daubs on top of each other"
-msgstr "笔触颜料相互叠加"
+msgstr "笔画颜料相互叠加"
 
 
 msgid "Adaptive Spacing"
@@ -11685,7 +11689,7 @@ msgstr "原始法线"
 
 
 msgid "When locked keep using normal of surface where stroke was initiated"
-msgstr "锁定时, 将持续使用笔触起始处的表面法线"
+msgstr "锁定时, 将持续使用笔画起始处的表面法线"
 
 
 msgid "Use Sculpt"
@@ -12372,10 +12376,6 @@ msgid "Map Taper"
 msgstr "映射锥化"
 
 
-msgid "Map effect of taper object on actually beveled curve"
-msgstr "基于放样曲线的锥形物体映射效果"
-
-
 msgid "Enable the curve to become a translation path"
 msgstr "将曲线作为转化路径"
 
@@ -12641,7 +12641,7 @@ msgstr "端点样式"
 
 
 msgid "Select the shape of both ends of strokes"
-msgstr "选择笔触的两个末端的形状"
+msgstr "选择笔画的两个末端的形状"
 
 
 msgid "Butt"
@@ -12761,7 +12761,7 @@ msgstr "几何形状修改器"
 
 
 msgid "List of stroke geometry modifiers"
-msgstr "笔触几何形状修改器列表"
+msgstr "笔画几何形状修改器列表"
 
 
 msgid "Integration Type"
@@ -12813,7 +12813,7 @@ msgstr "选择想要显示的属性面板"
 
 
 msgid "Show the panel for stroke construction"
-msgstr "显示笔触构型"
+msgstr "显示笔画构型"
 
 
 msgid "Show the panel for line color options"
@@ -12829,11 +12829,11 @@ msgstr "显示线条宽度选项面板"
 
 
 msgid "Show the panel for stroke geometry options"
-msgstr "显示笔触形态选项面板"
+msgstr "显示笔画形态选项面板"
 
 
 msgid "Show the panel for stroke texture options"
-msgstr "显示笔触纹理选项面板"
+msgstr "显示笔画纹理选项面板"
 
 
 msgid "Rounds"
@@ -13029,7 +13029,7 @@ msgstr "排列"
 
 
 msgid "Arrange the stacking order of strokes"
-msgstr "排列笔触的堆叠次序"
+msgstr "排列笔画的堆叠次序"
 
 
 msgid "Use Split Length"
@@ -13101,7 +13101,7 @@ msgstr "洋葱皮"
 
 
 msgid "Stroke Edit Mode"
-msgstr "笔触编辑模式"
+msgstr "笔画编辑模式"
 
 
 msgid "Alpha Mode"
@@ -13788,10 +13788,6 @@ msgstr "视差半径"
 
 msgid "Clipping"
 msgstr "范围限制"
-
-
-msgid "Show Data"
-msgstr "显示数据"
 
 
 msgid "Parallax"
@@ -16438,10 +16434,6 @@ msgid "Show status bar"
 msgstr "显示状态栏"
 
 
-msgid "All 3D View Editors"
-msgstr "所有视图 3D 视图编辑器"
-
-
 msgid "Animation Editors"
 msgstr "动画编辑器"
 
@@ -18931,7 +18923,7 @@ msgstr "用于定义 Alpha 透明度修改器的基型"
 
 
 msgid "Along Stroke"
-msgstr "沿笔触"
+msgstr "沿笔画"
 
 
 msgid "Curve used for the curve mapping"
@@ -19079,7 +19071,7 @@ msgstr "用于定义线条颜色修改器的基型"
 
 
 msgid "Change line color along stroke"
-msgstr "沿笔触改变线条颜色"
+msgstr "沿笔画改变线条颜色"
 
 
 msgid "Burn"
@@ -19119,7 +19111,7 @@ msgstr "线条样式几何形状修改器"
 
 
 msgid "Base type to define stroke geometry modifiers"
-msgstr "用于定义笔触几何形状修改器的基型"
+msgstr "用于定义笔画几何形状修改器的基型"
 
 
 msgid "2D Offset"
@@ -19195,19 +19187,19 @@ msgstr "缩放及旋转操作的轴心"
 
 
 msgid "Stroke Center"
-msgstr "笔触中心"
+msgstr "笔画中心"
 
 
 msgid "Stroke Start"
-msgstr "笔触起始"
+msgstr "笔画起始"
 
 
 msgid "Stroke End"
-msgstr "笔触结束"
+msgstr "笔画结束"
 
 
 msgid "Stroke Point Parameter"
-msgstr "笔触点参数"
+msgstr "笔画点参数"
 
 
 msgid "Absolute 2D Point"
@@ -19271,11 +19263,11 @@ msgstr "半径随机性"
 
 
 msgid "Number of rounds in contour strokes"
-msgstr "轮廓笔触的圆角数量"
+msgstr "轮廓笔画的圆角数量"
 
 
 msgid "Select the shape of blueprint contour strokes"
-msgstr "选择蓝图的轮廓笔触形状"
+msgstr "选择蓝图的轮廓笔画形状"
 
 
 msgid "Circles"
@@ -19283,7 +19275,7 @@ msgstr "圆形"
 
 
 msgid "Draw a blueprint using circular contour strokes"
-msgstr "使用圆形轮廓笔触绘制蓝图"
+msgstr "使用圆形轮廓笔画绘制蓝图"
 
 
 msgid "Ellipses"
@@ -19291,7 +19283,7 @@ msgstr "椭圆形"
 
 
 msgid "Draw a blueprint using elliptic contour strokes"
-msgstr "使用椭圆轮廓笔触绘制蓝图"
+msgstr "使用椭圆轮廓笔画绘制蓝图"
 
 
 msgid "Squares"
@@ -19299,11 +19291,11 @@ msgstr "方形"
 
 
 msgid "Draw a blueprint using square contour strokes"
-msgstr "使用方形轮廓笔触绘制蓝图"
+msgstr "使用方形轮廓笔画绘制蓝图"
 
 
 msgid "Modify the stroke geometry so that it corresponds to its main direction line"
-msgstr "修改笔触构型, 使其迎合主方向线"
+msgstr "修改笔画构型, 使其迎合主方向线"
 
 
 msgid "Displacement that is applied to the main direction line along its normal"
@@ -19311,7 +19303,7 @@ msgstr "沿自身法线应用到主方向线的位移"
 
 
 msgid "Add one-dimensional Perlin noise to stroke backbone geometry"
-msgstr "为笔触主干构型添加单维柏林噪波"
+msgstr "为笔画主干构型添加单维柏林噪波"
 
 
 msgid "Amplitude of the Perlin noise"
@@ -19339,7 +19331,7 @@ msgstr "多边形化"
 
 
 msgid "Modify the stroke geometry so that it looks more 'polygonal'"
-msgstr "修改笔触构型, 使其趋于多边形化"
+msgstr "修改笔画构型, 使其趋于多边形化"
 
 
 msgid "New sampling value to be used for subsequent modifiers"
@@ -19347,11 +19339,11 @@ msgstr "用于后续修改器的新采样值"
 
 
 msgid "Simplify the stroke set"
-msgstr "简化笔触集"
+msgstr "简化笔画集"
 
 
 msgid "Add sinus displacement to stroke backbone geometry"
-msgstr "为笔触主干构型添加凹陷位移"
+msgstr "为笔画主干构型添加凹陷位移"
 
 
 msgid "Amplitude of the sinus displacement"
@@ -19371,7 +19363,7 @@ msgstr "凹陷位移的波长"
 
 
 msgid "Add spatial noise to stroke backbone geometry"
-msgstr "为笔触主干构型添加空间噪波"
+msgstr "为笔画主干构型添加空间噪波"
 
 
 msgid "Amplitude of the spatial noise"
@@ -19399,7 +19391,7 @@ msgstr "若启用, 则不同调显示空间噪波"
 
 
 msgid "Remove a piece of stroke at the beginning and the end of stroke backbone"
-msgstr "移除一个笔触"
+msgstr "移除一个笔画"
 
 
 msgid "Tip Length"
@@ -19419,7 +19411,7 @@ msgstr "用于定义线条宽度修改器的基型"
 
 
 msgid "Change line thickness along stroke"
-msgstr "线条粗细沿笔触变化"
+msgstr "线条粗细沿笔画变化"
 
 
 msgid "Calligraphy"
@@ -19468,10 +19460,6 @@ msgstr "活动线条集合"
 
 msgid "Index of active line set slot"
 msgstr "活动纹理槽的编号"
-
-
-msgid "Mask Layer"
-msgstr "遮罩层"
 
 
 msgid "Single layer used for masking pixels"
@@ -19767,10 +19755,6 @@ msgstr "按组选择"
 
 msgid "Show/Hide"
 msgstr "显示 / 隐藏"
-
-
-msgid "Specials"
-msgstr "专用项"
 
 
 msgid "Tracking"
@@ -27289,7 +27273,7 @@ msgstr "使用环状波纹理"
 
 
 msgid "UV Along Stroke"
-msgstr "沿笔触的UV"
+msgstr "沿笔画的UV"
 
 
 msgid "Use Tips"
@@ -29430,10 +29414,6 @@ msgid "Directory of the file"
 msgstr "文件所在目录"
 
 
-msgid "Display Type"
-msgstr "显示类型"
-
-
 msgid "Automatically determine display type for files"
 msgstr "自动决定文件的显示类型"
 
@@ -29693,11 +29673,11 @@ msgstr "创建平面追踪"
 
 msgctxt "Operator"
 msgid "Set 2D Cursor"
-msgstr "设置游标"
+msgstr "设置2D游标"
 
 
 msgid "Set 2D cursor location"
-msgstr "设置游标位置"
+msgstr "设置2D游标位置"
 
 
 msgid "Cursor location in normalized clip coordinates"
@@ -31584,7 +31564,7 @@ msgstr "重做特定的历史动作"
 
 
 msgid "Item"
-msgstr "物体名称"
+msgstr "条目"
 
 
 msgctxt "Operator"
@@ -32808,7 +32788,7 @@ msgstr "绘制自由线"
 
 
 msgid "Draw freehand stroke(s)"
-msgstr "绘制自由笔触"
+msgstr "绘制自由笔画"
 
 
 msgid "Draw Straight Lines"
@@ -32894,7 +32874,7 @@ msgstr "半径系数"
 
 
 msgid "Multiplier for the points' radii (set from stroke width)"
-msgstr "多个点的半径倍值 (由笔触宽度决定)"
+msgstr "多个点的半径倍值 (由笔画宽度决定)"
 
 
 msgid "Custom Gap mode: Random generator seed"
@@ -32910,7 +32890,7 @@ msgstr "时序模式"
 
 
 msgid "How to use timing data stored in strokes"
-msgstr "存储于笔触中的时序数据的使用方式"
+msgstr "存储于笔画中的时序数据的使用方式"
 
 
 msgid "No Timing"
@@ -32954,11 +32934,11 @@ msgstr "多边形曲线"
 
 
 msgid "Link Strokes"
-msgstr "连接笔触"
+msgstr "连接笔画"
 
 
 msgid "Whether to link strokes with zero-radius sections of curves"
-msgstr "是否将笔触连接到曲线的零范围选区"
+msgstr "是否将笔画连接到曲线的零范围选区"
 
 
 msgid "Normalize Weight"
@@ -32966,7 +32946,7 @@ msgstr "将权重规格化"
 
 
 msgid "Normalize weight (set from stroke width)"
-msgstr "将权重规格化 (根据笔触宽度设置)"
+msgstr "将权重规格化 (根据笔画宽度设置)"
 
 
 msgid "Whether the path control curve reproduces the drawing in realtime, starting from Start Frame"
@@ -33006,11 +32986,11 @@ msgstr "擦除蜡笔线段"
 
 msgctxt "Operator"
 msgid "Duplicate Strokes"
-msgstr "复制笔触"
+msgstr "复制笔画"
 
 
 msgid "Duplicate Strokes"
-msgstr "复制笔触"
+msgstr "复制笔画"
 
 
 msgctxt "Operator"
@@ -33079,7 +33059,7 @@ msgstr "锁定所有蜡笔图层，避免意外编辑操作"
 
 msgctxt "Operator"
 msgid "Paste Strokes"
-msgstr "粘贴笔触"
+msgstr "粘贴笔画"
 
 
 msgid "Side"
@@ -33091,7 +33071,7 @@ msgstr "显示所有的蜡笔层"
 
 
 msgid "Entire Strokes"
-msgstr "全部笔触"
+msgstr "全部笔画"
 
 
 msgid "Mouse location"
@@ -33100,7 +33080,7 @@ msgstr "鼠标位置"
 
 msgctxt "Operator"
 msgid "(De)select All Strokes"
-msgstr "全选 / 弃选所有的笔触"
+msgstr "全选 / 弃选所有的笔画"
 
 
 msgid "Shared layers"
@@ -33109,11 +33089,11 @@ msgstr "共享层"
 
 msgctxt "Operator"
 msgid "Lasso Select Strokes"
-msgstr "用套索选择笔触"
+msgstr "用套索选择笔画"
 
 
 msgid "Select Grease Pencil strokes using lasso selection"
-msgstr "用套索选择蜡笔笔触"
+msgstr "用套索选择蜡笔笔画"
 
 
 msgctxt "Operator"
@@ -33501,7 +33481,7 @@ msgstr "清除当前选中渲染槽"
 
 msgctxt "Operator"
 msgid "Set Curves Point"
-msgstr "设置曲线的光标"
+msgstr "设置曲线控制点"
 
 
 msgid "Set black point or white point for curves"
@@ -35995,6 +35975,11 @@ msgid "Select boundary edges around the selected faces"
 msgstr "选择所选面区的边界线"
 
 
+msgctxt "Operator"
+msgid "Merge by Distance"
+msgstr "按间距合并"
+
+
 msgid "Merge selected to other unselected vertices"
 msgstr "允许选中顶点与未选中顶点合并"
 
@@ -36406,12 +36391,12 @@ msgid "Extrude selected vertices in a circle around the cursor in indicated view
 msgstr "在当前视口中, 以指针为中心挤出选中的循环点"
 
 
-msgid "Dupli"
-msgstr "复制"
-
-
 msgid "Make Duplicates"
 msgstr "创建副本"
+
+
+msgid "Auto Merge"
+msgstr "自动合并"
 
 
 msgid "Split off selected geometry from connected unselected geometry"
@@ -37612,11 +37597,6 @@ msgid "Resize view so you can see selected nodes"
 msgstr "缩放视图, 以浏览全部节点"
 
 
-msgctxt "Operator"
-msgid "Viewer Border"
-msgstr "视图边界"
-
-
 msgid "Set the boundaries for viewer operations"
 msgstr "为视图操作设定边界"
 
@@ -37980,15 +37960,6 @@ msgid "Duplicate Linked"
 msgstr "关联复制"
 
 
-msgctxt "Operator"
-msgid "Make Duplicates Real"
-msgstr "副本独立化"
-
-
-msgid "Make dupli objects attached to this object real"
-msgstr "将附加到该物体的副本独立化"
-
-
 msgid "Parent newly created objects to the original duplicator"
 msgstr "将新创建的物体绑定为原始复制体的子级"
 
@@ -38213,15 +38184,6 @@ msgstr "将选中的物体合并到活动物体"
 
 
 msgctxt "Operator"
-msgid "Join as Shapes"
-msgstr "合并为形变"
-
-
-msgid "Merge selected objects to shapes of active object"
-msgstr "将所选物体合并为活动物体的形变"
-
-
-msgctxt "Operator"
 msgid "Transfer UV Maps"
 msgstr "传递 UV 映射"
 
@@ -38255,15 +38217,6 @@ msgstr "清除增量"
 
 msgid "Clear delta location in addition to clearing the normal location transform"
 msgstr "在清除常规位置变换的同时清除增量位置变换"
-
-
-msgctxt "Operator"
-msgid "Make Dupli-Face"
-msgstr "生成面副本"
-
-
-msgid "Convert objects into dupli-face instanced"
-msgstr "将物体转换为实例化的面副本"
 
 
 msgctxt "Operator"
@@ -39043,10 +38996,6 @@ msgstr "重置所有绝对形态键的时序"
 msgctxt "Operator"
 msgid "Transfer Shape Key"
 msgstr "传递形态键"
-
-
-msgid "Copy another selected objects active shape to this one by applying the relative offsets"
-msgstr "应用相对偏移, 将另一选中物体的激活形状复制到当前物体"
 
 
 msgid "Transformation Mode"
@@ -39882,6 +39831,10 @@ msgid "Drag object to scene in Outliner"
 msgstr "在大纲视图中拖拽, 以关联父级"
 
 
+msgid "Scene Operation"
+msgstr "场景操作"
+
+
 msgctxt "Operator"
 msgid "Scroll Page"
 msgstr "滚动页面"
@@ -39935,6 +39888,15 @@ msgid "Expand all entries one level deep"
 msgstr "展开一个层级的所有项目"
 
 
+msgctxt "Operator"
+msgid "Unhide All"
+msgstr "全部取消隐藏"
+
+
+msgid "Unhide all objects and collections"
+msgstr "取消所有物体和集合的隐藏状态"
+
+
 msgid "Location of vertex in area space"
 msgstr "区域空间内的顶点位置"
 
@@ -39949,7 +39911,7 @@ msgstr "滑移绘画曲线点"
 
 msgctxt "Operator"
 msgid "Place Cursor"
-msgstr "放置光标"
+msgstr "放置游标"
 
 
 msgid "Place cursor"
@@ -40125,15 +40087,15 @@ msgstr "图像绘制"
 
 
 msgid "Paint a stroke into the image"
-msgstr "将笔触贴附到视图角度"
+msgstr "将笔画贴附到视图角度"
 
 
 msgid "Stroke Mode"
-msgstr "笔触模式:"
+msgstr "笔画模式:"
 
 
 msgid "Action taken when a paint stroke is made"
-msgstr "当形成了绘制笔触时的执行动作"
+msgstr "当形成了绘制笔画时的执行动作"
 
 
 msgid "Apply brush normally"
@@ -40141,11 +40103,11 @@ msgstr "正常应用笔刷"
 
 
 msgid "Invert action of brush for duration of stroke"
-msgstr "为笔触持续时间反转笔刷动作"
+msgstr "为笔画持续时间反转笔刷动作"
 
 
 msgid "Switch brush to smooth mode for duration of stroke"
-msgstr "为笔触的持续时间将笔刷切换到光滑模式"
+msgstr "为笔画的持续时间将笔刷切换到光滑模式"
 
 
 msgctxt "Operator"
@@ -40176,6 +40138,10 @@ msgstr "从活动摄像机向物体表面投射一个经过编辑的渲染图"
 
 msgid "Use the mouse to sample a color in the image"
 msgstr "使用鼠标在图像中拾取颜色"
+
+
+msgid "Sample Merged"
+msgstr "合并后采样"
 
 
 msgctxt "Operator"
@@ -40363,7 +40329,7 @@ msgstr "笔刷编辑"
 
 
 msgid "Apply a stroke of brush to the particles"
-msgstr "对粒子应用一个笔刷的笔触"
+msgstr "对粒子应用一个笔刷的笔画"
 
 
 msgctxt "Operator"
@@ -41306,11 +41272,6 @@ msgid "MatCap"
 msgstr "快照材质"
 
 
-msgctxt "Operator"
-msgid "Save custom Studio light"
-msgstr "保存自定义棚灯"
-
-
 msgid "Show light preferences"
 msgstr "显示光照偏好"
 
@@ -42215,7 +42176,7 @@ msgstr "雕刻"
 
 
 msgid "Sculpt a stroke into the geometry"
-msgstr "将笔触雕刻至几何体上"
+msgstr "将笔画雕刻至几何体上"
 
 
 msgid "Ignore Background Click"
@@ -42223,7 +42184,7 @@ msgstr "忽略背景点击"
 
 
 msgid "Clicks on the background do not start the stroke"
-msgstr "在背景中点击并不会激活笔触"
+msgstr "在背景中点击并不会激活笔画"
 
 
 msgctxt "Operator"
@@ -42295,7 +42256,7 @@ msgstr "使用笔刷雕刻UV"
 
 
 msgid "Switch brush to relax mode for duration of stroke"
-msgstr "为笔触的持续时间, 将笔刷切换为松缓模式"
+msgstr "为笔画的持续时间, 将笔刷切换为松缓模式"
 
 
 msgctxt "Operator"
@@ -44621,6 +44582,11 @@ msgid "Use orthographic projection"
 msgstr "使用正交投射"
 
 
+msgctxt "Operator"
+msgid "Merge UVs by Distance"
+msgstr "按间距合并UV"
+
+
 msgid "Selected UV vertices that are within a radius of each other are welded together"
 msgstr "在彼此半径范围内的选中的 UV 顶点将被焊接在一起"
 
@@ -45075,11 +45041,6 @@ msgstr "分别切换并在视图中心显示选中的物体"
 
 msgid "Move the view"
 msgstr "移动视图"
-
-
-msgctxt "Operator"
-msgid "View Navigation"
-msgstr "浏览飞行模式"
 
 
 msgctxt "Operator"
@@ -46418,10 +46379,6 @@ msgid "Load default file and preferences"
 msgstr "载入初始文件和用户设置"
 
 
-msgid "Temporary Preferences"
-msgstr "临时用户设置"
-
-
 msgctxt "Operator"
 msgid "Load Factory Preferences"
 msgstr "载入初始用户设置"
@@ -46733,7 +46690,7 @@ msgstr "活动笔刷"
 
 
 msgid "Average multiple input samples together to smooth the brush stroke"
-msgstr "同时均化多重输入采样, 以平滑笔刷的笔触"
+msgstr "同时均化多重输入采样, 以平滑笔刷的笔画"
 
 
 msgid "Palette"
@@ -47355,6 +47312,10 @@ msgid "Sample Line"
 msgstr "采样线"
 
 
+msgid "Snapping"
+msgstr "吸附"
+
+
 msgctxt "Operator"
 msgid "Sample"
 msgstr "采样"
@@ -47398,6 +47359,11 @@ msgstr "套索选择"
 msgctxt "Operator"
 msgid "Cursor"
 msgstr "游标"
+
+
+msgctxt "Operator"
+msgid "Scale"
+msgstr "缩放"
 
 
 msgctxt "Operator"
@@ -47556,10 +47522,6 @@ msgid "Property Weights"
 msgstr "属性权重"
 
 
-msgid "Self Collision"
-msgstr "自碰撞"
-
-
 msgid "Viscosity"
 msgstr "粘度"
 
@@ -47582,6 +47544,10 @@ msgstr "自适配域"
 
 msgid "Behavior"
 msgstr "行为"
+
+
+msgid "Self Collision"
+msgstr "自碰撞"
 
 
 msgid "Color Management"
@@ -47877,10 +47843,6 @@ msgid "Mesh Edit Mode"
 msgstr "网格编辑模式"
 
 
-msgid "Developer"
-msgstr "开发人员"
-
-
 msgid "Measurement"
 msgstr "测量"
 
@@ -47919,15 +47881,6 @@ msgstr "动态拓扑"
 
 msgid "Shadow Settings"
 msgstr "阴影设置"
-
-
-msgid "Snapping"
-msgstr "吸附"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "缩放"
 
 
 msgctxt "Operator"
@@ -48071,13 +48024,18 @@ msgstr "简化"
 
 
 msgctxt "Operator"
-msgid "Box Hide"
-msgstr "框选隐藏"
+msgid "Box Mask"
+msgstr "框选遮罩"
 
 
 msgctxt "Operator"
-msgid "Box Mask"
-msgstr "框选遮罩"
+msgid "Lasso Mask"
+msgstr "套索遮罩"
+
+
+msgctxt "Operator"
+msgid "Box Hide"
+msgstr "框选隐藏"
 
 
 msgctxt "Operator"
@@ -49315,7 +49273,7 @@ msgstr "蜡笔的曼哈顿间距"
 
 
 msgid "Pixels moved by mouse per axis when drawing stroke"
-msgstr "使用鼠标绘制时笔触在各轴向上的移动像素"
+msgstr "使用鼠标绘制时笔画在各轴向上的移动像素"
 
 
 msgid "New Handles Type"
@@ -49503,11 +49461,11 @@ msgstr "为全局撤销保存完整的操作历史记录至内存, 这会消耗�
 
 
 msgid "Grease Pencil Simplify Stroke"
-msgstr "蜡笔笔触简化"
+msgstr "蜡笔笔画简化"
 
 
 msgid "Simplify the final stroke"
-msgstr "简化最终笔触"
+msgstr "简化最终笔画"
 
 
 msgid "New F-Curve Colors - XYZ to RGB"
@@ -49686,10 +49644,6 @@ msgid "Python Scripts Directory"
 msgstr "Python 脚本路经"
 
 
-msgid "Hide Dot Files/Libraries"
-msgstr "不显示隐藏文件/库文件"
-
-
 msgid "Show Thumbnails"
 msgstr "显示缩略图"
 
@@ -49724,10 +49678,6 @@ msgstr "默认的纹理库路经"
 
 msgid "Auto Save Temporary Files"
 msgstr "自动保存临时文件"
-
-
-msgid "Automatic saving of temporary files in temp directory, uses process ID (Sculpt or edit mode data won't be saved!')"
-msgstr "使用序列编号自动保存临时文件至临时目录(不保存雕刻编辑模式下的数据)"
 
 
 msgid "Compress File"
@@ -51679,11 +51629,11 @@ msgstr "鼠标位时"
 
 
 msgid "Operator Stroke Element"
-msgstr "操作项笔触元素"
+msgstr "操作项笔画元素"
 
 
 msgid "Is Stroke Start"
-msgstr "笔触起始"
+msgstr "笔画起始"
 
 
 msgid "Tablet pressure"
@@ -53560,7 +53510,7 @@ msgstr "叠加颜色"
 
 
 msgid "Strobe"
-msgstr "笔触"
+msgstr "笔画"
 
 
 msgid "Only display every nth frame"
@@ -53593,14 +53543,6 @@ msgstr "将输入内容转换为浮点数据"
 
 msgid "Use a preview proxy and/or timecode index for this strip"
 msgstr "为此片段使用一个预览代理图像序列和 / 或时间码编号"
-
-
-msgid "Flip Time"
-msgstr "翻转时间"
-
-
-msgid "Reverse frame order"
-msgstr "反转帧的顺序"
 
 
 msgid "Use Translation"
@@ -56469,10 +56411,6 @@ msgid "Use Local Camera"
 msgstr "使用自身相机"
 
 
-msgid "Use a local camera in this view, rather than scene's active camera camera"
-msgstr "在此视图中使用自身相机，而非场景活动相机"
-
-
 msgid "Space UV Editor"
 msgstr "UV 编辑器的空间"
 
@@ -56898,11 +56836,11 @@ msgstr "将全局坐标系用作纹理的坐标系"
 
 
 msgid "Along stroke"
-msgstr "沿笔触"
+msgstr "沿笔画"
 
 
 msgid "Use stroke length for texture coordinates"
-msgstr "为纹理坐标使用笔触长度"
+msgstr "为纹理坐标使用笔画长度"
 
 
 msgid "Use the original undeformed coordinates of the object"
@@ -58390,7 +58328,7 @@ msgstr "时间步长"
 
 
 msgid "Draw stroke at 3D cursor location"
-msgstr "在 3D 游标位置绘制笔触"
+msgstr "在 3D 游标位置绘制笔画"
 
 
 msgid "Stick stroke to the view "
@@ -58411,6 +58349,10 @@ msgstr "为物体和骨骼开启自动插入关键帧模式"
 
 msgid "Add & Replace"
 msgstr "添加&替换"
+
+
+msgid "Merge Threshold"
+msgstr "合并阈值"
 
 
 msgid "Grease Pencil Interpolate"
@@ -58550,7 +58492,7 @@ msgstr "仅端点"
 
 
 msgid "Only use the first and last parts of the stroke for snapping"
-msgstr "仅贴附到笔触的始末点"
+msgstr "仅贴附到笔画的始末点"
 
 
 msgid "Auto Keying"
@@ -58643,10 +58585,6 @@ msgstr "将单个元素投射到在其他物体的表面上"
 
 msgid "Only Origins"
 msgstr "仅原心"
-
-
-msgid "Manipulate center points (object, pose and weight paint mode only)"
-msgstr "控制中心点(仅适用物体、姿态和权重绘制模式)"
 
 
 msgid "UV Sync Selection"
@@ -58977,24 +58915,12 @@ msgid "Display X Axis"
 msgstr "显示 X 轴"
 
 
-msgid "Show the X axis line in perspective view"
-msgstr "在透视视图中显示 X 轴"
-
-
 msgid "Display Y Axis"
 msgstr "显示 Y 轴"
 
 
-msgid "Show the Y axis line in perspective view"
-msgstr "在透视视图中显示 Z 轴"
-
-
 msgid "Display Z Axis"
 msgstr "显示 Z 轴"
-
-
-msgid "Show the Z axis line in perspective view"
-msgstr "在透视视图中显示 Z 轴"
 
 
 msgid "Draw Handles"
@@ -59101,10 +59027,6 @@ msgid "Display Grid Floor"
 msgstr "显示栅格平面"
 
 
-msgid "Show the ground plane grid in perspective view"
-msgstr "在透视视图中显示地平面栅格"
-
-
 msgid "Draw Freestyle Edge Marks"
 msgstr "显示 Freestyle 边标记"
 
@@ -59135,10 +59057,6 @@ msgstr "隐藏网格"
 
 msgid "Outline Selected"
 msgstr "所选物体的轮廓线"
-
-
-msgid "Show an outline highlight around selected objects in non-wireframe views"
-msgstr "在非线框模式下, 显示所选物体的轮廓线"
 
 
 msgid "Relationship Lines"
@@ -59190,7 +59108,7 @@ msgstr "Alpha 阈值"
 
 
 msgid "Render stylized strokes in this Layer"
-msgstr "在当前层中渲染样式笔触"
+msgstr "在当前层中渲染样式笔画"
 
 
 msgid "Walk navigation settings"
@@ -59765,7 +59683,7 @@ msgstr "切刀工具模态映射"
 
 msgctxt "WindowManager"
 msgid "Paint Stroke Modal"
-msgstr "绘画笔触模态"
+msgstr "绘画笔画模态"
 
 
 msgctxt "WindowManager"
@@ -59965,17 +59883,17 @@ msgstr "蜡笔笔画雕刻模式"
 
 msgctxt "WindowManager"
 msgid "Grease Pencil Stroke Paint (Draw brush)"
-msgstr "蜡笔的笔触绘制(绘制笔刷)"
+msgstr "蜡笔的笔画绘制(绘制笔刷)"
 
 
 msgctxt "WindowManager"
 msgid "Grease Pencil Stroke Paint (Fill)"
-msgstr "蜡笔的笔触绘制(填充)"
+msgstr "蜡笔的笔画绘制(填充)"
 
 
 msgctxt "WindowManager"
 msgid "Grease Pencil Stroke Paint (Erase)"
-msgstr "蜡笔的笔触绘制(擦除)"
+msgstr "蜡笔的笔画绘制(擦除)"
 
 
 msgctxt "WindowManager"
@@ -60659,10 +60577,6 @@ msgid "Shapes"
 msgstr "形状"
 
 
-msgid "Delay Refresh"
-msgstr "延迟刷新"
-
-
 msgctxt "Operator"
 msgid "Remove"
 msgstr "移除"
@@ -61329,7 +61243,7 @@ msgstr "基线宽度:"
 
 
 msgid "Spacing Along Stroke"
-msgstr "沿笔触的间隔"
+msgstr "沿笔画的间隔"
 
 
 msgid "Stroke Placement:"
@@ -61525,6 +61439,11 @@ msgstr "父级:"
 
 msgid "Transform:"
 msgstr "变换操作:"
+
+
+msgctxt "Operator"
+msgid "Parent"
+msgstr "父级"
 
 
 msgid "Holes"
@@ -61957,11 +61876,6 @@ msgstr "向右追踪帧"
 
 
 msgctxt "Operator"
-msgid "Show Tracks"
-msgstr "显示轨迹"
-
-
-msgctxt "Operator"
 msgid "Set Floor"
 msgstr "设定基面"
 
@@ -62017,13 +61931,8 @@ msgstr "反选"
 
 
 msgctxt "Operator"
-msgid "Enable Markers"
-msgstr "启用标记"
-
-
-msgctxt "Operator"
-msgid "Unlock Tracks"
-msgstr "轨迹解锁"
+msgid "Show Tracks"
+msgstr "显示轨迹"
 
 
 msgid "Tracks For Rotation / Scale"
@@ -62033,6 +61942,16 @@ msgstr "缩放/旋转轨迹"
 msgctxt "Operator"
 msgid "View Fit"
 msgstr "匹配视图"
+
+
+msgctxt "Operator"
+msgid "Enable Markers"
+msgstr "启用标记"
+
+
+msgctxt "Operator"
+msgid "Unlock Tracks"
+msgstr "轨迹解锁"
 
 
 msgid "Solve error: %.4f"
@@ -62979,11 +62898,6 @@ msgstr "常规"
 
 
 msgctxt "Operator"
-msgid "Load Factory Settings (Temporary)"
-msgstr "恢复初始设置(临时)"
-
-
-msgctxt "Operator"
 msgid "Release Notes"
 msgstr "发布说明"
 
@@ -63133,7 +63047,7 @@ msgstr "擦除半径"
 
 
 msgid "Simplify Stroke"
-msgstr "简化笔触"
+msgstr "简化笔画"
 
 
 msgid "Use Custom Colors"
@@ -63445,11 +63359,6 @@ msgstr "相机"
 
 
 msgctxt "Operator"
-msgid "Zoom Border..."
-msgstr "缩放区域..."
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "将活动摄像机对齐到当前视角"
 
@@ -63482,11 +63391,6 @@ msgstr "后视图"
 msgctxt "Operator"
 msgid "Render Region..."
 msgstr "渲染框..."
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "父级"
 
 
 msgctxt "Operator"
@@ -63858,12 +63762,12 @@ msgstr "多线程雕刻"
 
 msgctxt "Operator"
 msgid "Hide Bounding Box"
-msgstr "隐藏边界盒"
+msgstr "隐藏框选"
 
 
 msgctxt "Operator"
 msgid "Show Bounding Box"
-msgstr "显示边界盒"
+msgstr "显示框选"
 
 
 msgctxt "Operator"
@@ -63884,11 +63788,6 @@ msgstr "填充遮罩"
 msgctxt "Operator"
 msgid "Clear Mask"
 msgstr "清除遮罩"
-
-
-msgctxt "Operator"
-msgid "Lasso Mask"
-msgstr "套索遮罩"
 
 
 msgctxt "Operator"
@@ -64119,7 +64018,7 @@ msgstr "显示:"
 
 msgctxt "Operator"
 msgid "Arrange Strokes"
-msgstr "整理笔触"
+msgstr "整理笔画"
 
 
 msgctxt "Operator"
@@ -64530,6 +64429,10 @@ msgstr "透视模式"
 
 msgid "Marker Names"
 msgstr "标记名称"
+
+
+msgid "Developer"
+msgstr "开发人员"
 
 
 msgctxt "Operator"
@@ -65105,6 +65008,14 @@ msgid "Undefined Type"
 msgstr "未定义的类型"
 
 
+msgid "Can't add Rigid Body to non mesh object"
+msgstr "无法为非网格物体添加刚体"
+
+
+msgid "Can't create Rigid Body world"
+msgstr "无法创建刚体世界"
+
+
 msgctxt "Sequence"
 msgid "Color Balance"
 msgstr "色彩平衡"
@@ -65527,10 +65438,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "插入关键帧的帧位置"
 
 
-msgid "No active keying set"
-msgstr "无激活的插帧集"
-
-
 msgid "No active Keying Set"
 msgstr "无激活的插帧集"
 
@@ -65567,32 +65474,12 @@ msgid "\"%s\" property cannot be animated"
 msgstr "无法为 \"%s\" 属性设定动画"
 
 
-msgid "No active keying set to remove"
-msgstr "激活的插帧集"
-
-
 msgid "Cannot remove built in keying set"
 msgstr "移除激活的插帧集"
 
 
-msgid "No active keying set to add empty path to"
-msgstr "将插帧集导出为 Python 脚本"
-
-
-msgid "No active keying set path to remove"
-msgstr "移除激活的插帧集路径"
-
-
-msgid "No active keying set to remove a path from"
-msgstr "移除激活的插帧集路径"
-
-
 msgid "Cannot add property to built in keying set"
 msgstr "无法在内建的插帧集中添加属性"
-
-
-msgid "No active keying set to remove property from"
-msgstr "移除激活的插帧集路径"
 
 
 msgid "Cannot remove property from built in keying set"
@@ -65836,7 +65723,7 @@ msgstr "文件过长 %s"
 
 
 msgid "Cannot paint stroke"
-msgstr "无法绘制笔触"
+msgstr "无法绘制笔画"
 
 
 msgid "Failed to find Grease Pencil data to draw into"
@@ -66131,10 +66018,6 @@ msgid "Unknown"
 msgstr "未知"
 
 
-msgid "Cannot edit Proxy-Protected Constraint"
-msgstr "无法编辑受代理保护的约束"
-
-
 msgid "Pos"
 msgstr "位置"
 
@@ -66209,6 +66092,10 @@ msgstr "将虚修改器转换为实修改器"
 
 msgid "Proxy Protected"
 msgstr "受保护的代理"
+
+
+msgid "Cannot edit Proxy-Protected Constraint"
+msgstr "无法编辑受代理保护的约束"
 
 
 msgid "Delete the active position"
@@ -67408,14 +67295,6 @@ msgid "Timber"
 msgstr "木材"
 
 
-msgid "Can't add Rigid Body to non mesh object"
-msgstr "无法为非网格物体添加刚体"
-
-
-msgid "Can't create Rigid Body world"
-msgstr "无法创建刚体世界"
-
-
 msgid "Object has no Rigid Body settings to remove"
 msgstr "物体不包含可供移除的刚体设置"
 
@@ -67640,10 +67519,6 @@ msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
 msgstr "动态拓扑雕刻将不会保留顶点色, UV, 或其他的自定义数据"
 
 
-msgid "Unsupported audio format"
-msgstr "不支持的音频格式"
-
-
 msgid "Compiled without sound support"
 msgstr "不使用声音来进行编译"
 
@@ -67704,42 +67579,6 @@ msgid "Search Area:"
 msgstr "搜索区域:"
 
 
-msgid ", %d float channel(s)"
-msgstr ", %d 浮动型通道"
-
-
-msgid ", RGBA float"
-msgstr ", RGBA 浮点"
-
-
-msgid ", RGB float"
-msgstr ", RGB 浮点"
-
-
-msgid ", RGBA byte"
-msgstr ", RGBA 字节"
-
-
-msgid ", RGB byte"
-msgstr ", RGB 字节"
-
-
-msgid ", failed to load"
-msgstr ", 载入失败"
-
-
-msgid "Frame: %d / %d"
-msgstr "帧: %d / %d"
-
-
-msgid "Frame: - / %d"
-msgstr "帧: - / %d"
-
-
-msgid "File: %s"
-msgstr "文件: %s"
-
-
 msgid "Marker is disabled at current frame"
 msgstr "已在当前帧禁用标记"
 
@@ -67786,6 +67625,42 @@ msgstr "屏幕坐标中的标记搜索块宽度"
 
 msgid "Height of marker's search in screen coordinates"
 msgstr "屏幕坐标中的标记搜索块高度"
+
+
+msgid ", %d float channel(s)"
+msgstr ", %d 浮动型通道"
+
+
+msgid ", RGBA float"
+msgstr ", RGBA 浮点"
+
+
+msgid ", RGB float"
+msgstr ", RGB 浮点"
+
+
+msgid ", RGBA byte"
+msgstr ", RGBA 字节"
+
+
+msgid ", RGB byte"
+msgstr ", RGB 字节"
+
+
+msgid ", failed to load"
+msgstr ", 载入失败"
+
+
+msgid "Frame: %d / %d"
+msgstr "帧: %d / %d"
+
+
+msgid "Frame: - / %d"
+msgstr "帧: - / %d"
+
+
+msgid "File: %s"
+msgstr "文件: %s"
 
 
 msgid "unsupported movie clip format"
@@ -67944,6 +67819,14 @@ msgid "Driver Value:"
 msgstr "驱动器值:"
 
 
+msgid "Update Dependencies"
+msgstr "更新相关性"
+
+
+msgid "Add Modifier"
+msgstr "添加修改器"
+
+
 msgid "ERROR: Invalid Python expression"
 msgstr "错误: Python 表达式无效"
 
@@ -67958,14 +67841,6 @@ msgstr "错误:  目标通道无效"
 
 msgid "Delete target variable"
 msgstr "删除目标变量"
-
-
-msgid "Update Dependencies"
-msgstr "更新相关性"
-
-
-msgid "Add Modifier"
-msgstr "添加修改器"
 
 
 msgid "View Properties"
@@ -67986,6 +67861,10 @@ msgstr "活动的函数曲线不可编辑"
 
 msgid "Remove F-Modifiers from F-Curve to add keyframes"
 msgstr "从函数曲线中移除函数曲线修改器以添加关键帧"
+
+
+msgid "Unsupported audio format"
+msgstr "不支持的音频格式"
 
 
 msgid "No Euler Rotation F-Curves to fix up"
@@ -68016,6 +67895,18 @@ msgid "Hard coded Non-Linear, Gamma:1.7"
 msgstr "硬编码的非线性, 伽玛值: 1.7"
 
 
+msgid "Select Slot"
+msgstr "选取槽"
+
+
+msgid "Select Layer"
+msgstr "选择层"
+
+
+msgid "Select Pass"
+msgstr "选择通道"
+
+
 msgid "Can't Load Image"
 msgstr "无法载入图像"
 
@@ -68042,18 +67933,6 @@ msgstr "RGB 字节型"
 
 msgid " + Z"
 msgstr " + Z"
-
-
-msgid "Select Slot"
-msgstr "选取槽"
-
-
-msgid "Select Layer"
-msgstr "选择层"
-
-
-msgid "Select Pass"
-msgstr "选择通道"
 
 
 msgid "unsupported image format"
@@ -68766,10 +68645,6 @@ msgid "Depth too large"
 msgstr "深度值过大"
 
 
-msgid "%s: confirm, %s: cancel, %s: pan enable, %s|%s|%s|%s|%s|%s: direction, %s: slow, %s: free look, %s: Upright x axis (%s), %s: Upright z axis (%s), %s: increase  speed, %s: decrease speed"
-msgstr "%s: 确认, %s: 取消, %s: 启用平移, %s|%s|%s|%s|%s|%s: 方向, %s: slow, %s: 自由观察, %s: x轴朝上 (%s), %s: z轴朝上 (%s), %s: 加快速度, %s: 降低速度"
-
-
 msgid "Cannot fly a camera from an external library"
 msgstr "从外部读取缓存数据"
 
@@ -68818,6 +68693,10 @@ msgid "Cannot navigate an object with constraints"
 msgstr "无法在物体拥有约束的情况下开启飞行模式"
 
 
+msgid "Auto Keying On"
+msgstr "开启自动插帧"
+
+
 msgid "along X"
 msgstr "沿 X 向"
 
@@ -68856,10 +68735,6 @@ msgstr "锁定%s Z 向"
 
 msgid "along local Z"
 msgstr "沿自身 Z 向"
-
-
-msgid "Auto Keying On"
-msgstr "开启自动插帧"
 
 
 msgid "Bend Angle: %s Radius: %s Alt, Clamp %s"

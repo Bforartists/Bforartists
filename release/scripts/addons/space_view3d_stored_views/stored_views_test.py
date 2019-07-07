@@ -43,7 +43,7 @@ NOTE: logging setup has to be provided by the user in a separate config file
     as Blender will not try to configure logging by default in an add-on
     The Config File should be in the Blender Config folder > /scripts/startup/config_logging.py
     For setting up /location of the config folder see:
-    https://docs.blender.org/manual/en/dev/getting_started/
+    https://docs.blender.org/manual/en/latest/getting_started/
     installing/configuration/directories.html
     For configuring logging itself in the file, general Python documentation should work
     As the logging calls are not configured, they can be kept in the other modules of this add-on
