@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -3639,14 +3639,6 @@ msgid "Use the target's rotation to determine floor"
 msgstr "Użyj rotacji obiektu docelowego aby określić podłogę"
 
 
-msgid "Sticky"
-msgstr "Klejący"
-
-
-msgid "Immobilize object while constrained"
-msgstr "Unieruchomienie obiektu podczas działania ogranicznika"
-
-
 msgid "Follow Path Constraint"
 msgstr "Ogranicznik podążania za ścieżką"
 
@@ -6812,6 +6804,11 @@ msgid "Performance"
 msgstr "Wydajność"
 
 
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Skaluj"
+
+
 msgid "Slot"
 msgstr "Otwór"
 
@@ -6838,11 +6835,6 @@ msgstr "Edytor Sekwencji Wideo"
 
 msgid "3D View"
 msgstr "Widok 3D"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Skaluj"
 
 
 msgid "Continue"
@@ -7208,6 +7200,14 @@ msgstr "Błąd braku pamięci"
 
 msgid "Undefined Type"
 msgstr "Niezdefiniowany typ"
+
+
+msgid "Can't add Rigid Body to non mesh object"
+msgstr "Nie można dodać Ciała Sztywnego do obiektu innego typu niż Siatka"
+
+
+msgid "Can't create Rigid Body world"
+msgstr "Nie mogę utworzyć świata Brył Sztywnych"
 
 
 msgctxt "Sequence"
@@ -7656,10 +7656,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Zestaw Kluczowania nie zdołał wstawić żadnych klatek kluczowych"
 
 
-msgid "No active keying set"
-msgstr "Brak aktywnego zestawu kluczowania"
-
-
 msgid "No active Keying Set"
 msgstr "Brak aktywnego Zestawu Kluczowania"
 
@@ -7736,32 +7732,12 @@ msgid "Button doesn't appear to have any property information attached (ptr.data
 msgstr "Wygląda na to, że przycisk nie posiada załączonej żadnej informacji o właściwości (ptr.data = %p, prop = %p)"
 
 
-msgid "No active keying set to remove"
-msgstr "Brak aktywnego zestawu kluczowania do usunięcia"
-
-
 msgid "Cannot remove built in keying set"
 msgstr "Nie można usunąć wbudowanego zestawu kluczowania"
 
 
-msgid "No active keying set to add empty path to"
-msgstr "Brak aktywnego zestawu kluczowania do dodania pustej ścieżki"
-
-
-msgid "No active keying set path to remove"
-msgstr "Brak aktywnej ścieżki zestawu kluczowania do usunięcia"
-
-
-msgid "No active keying set to remove a path from"
-msgstr "Brak aktywnego zestawu kluczowania, z którego można usunąć ścieżkę"
-
-
 msgid "Cannot add property to built in keying set"
 msgstr "Nie można dodać właściwości do wbudowanego zestawu kluczowania"
-
-
-msgid "No active keying set to remove property from"
-msgstr "Brak aktywnego zestawu kluczowania, z którego można usunąć właściwość"
 
 
 msgid "Cannot remove property from built in keying set"
@@ -8295,16 +8271,16 @@ msgid "Menu \"%s\" not found"
 msgstr "Nie odnaleziono menu \"%s\""
 
 
-msgid "(Shift-Click/Drag to select multiple)"
-msgstr "(Shift klik/ciągnij by zaznaczyć wiele)"
-
-
 msgid "Shortcut: %s"
 msgstr "Skrót: %s"
 
 
 msgid "Python: %s"
 msgstr "Python: %s"
+
+
+msgid "(Shift-Click/Drag to select multiple)"
+msgstr "(Shift klik/ciągnij by zaznaczyć wiele)"
 
 
 msgid "Value: %s"
@@ -8345,10 +8321,6 @@ msgstr "Utwórz prawdziwy"
 
 msgid "Unknown"
 msgstr "Nieznany"
-
-
-msgid "Cannot edit Proxy-Protected Constraint"
-msgstr "Nie można edytować ogranicznika zabezpieczonego zastępcą"
 
 
 msgid "Pos"
@@ -8421,6 +8393,10 @@ msgstr "Ten modyfikator może być zaaplikowany wyłącznie na punktach splajnó
 
 msgid "Proxy Protected"
 msgstr "Zastępca Chroniony"
+
+
+msgid "Cannot edit Proxy-Protected Constraint"
+msgstr "Nie można edytować ogranicznika zabezpieczonego zastępcą"
 
 
 msgid "Delete the active position"
@@ -9729,14 +9705,6 @@ msgid "Timber"
 msgstr "Drewno"
 
 
-msgid "Can't add Rigid Body to non mesh object"
-msgstr "Nie można dodać Ciała Sztywnego do obiektu innego typu niż Siatka"
-
-
-msgid "Can't create Rigid Body world"
-msgstr "Nie mogę utworzyć świata Brył Sztywnych"
-
-
 msgid "Object has no Rigid Body settings to remove"
 msgstr "Obiekt nie posiada ustawień Brył Sztywnych do usunięcia"
 
@@ -10017,10 +9985,6 @@ msgid "Object has negative scale, sculpting may be unpredictable"
 msgstr "Obiekt ma skalę ujemną, rzeźbienie może dać nieprzewidywalne skutki"
 
 
-msgid "Unsupported audio format"
-msgstr "Format dźwiękowy nieobsługiwany"
-
-
 msgid "Compiled without sound support"
 msgstr "Skompilowano bez obsługi dźwięku"
 
@@ -10085,42 +10049,6 @@ msgid "Search Area:"
 msgstr "Obszar poszukiwania:"
 
 
-msgid ", %d float channel(s)"
-msgstr ", %d kanały float"
-
-
-msgid ", RGBA float"
-msgstr ", RGBA float"
-
-
-msgid ", RGB float"
-msgstr ", RGB float"
-
-
-msgid ", RGBA byte"
-msgstr ", bit RGBA"
-
-
-msgid ", RGB byte"
-msgstr ", bit RGB"
-
-
-msgid ", failed to load"
-msgstr ", Nie udało się załadować"
-
-
-msgid "Frame: %d / %d"
-msgstr "Klatka: %d / %d"
-
-
-msgid "Frame: - / %d"
-msgstr "Klatka: - / %d"
-
-
-msgid "File: %s"
-msgstr "Plik: %s"
-
-
 msgid "Marker is disabled at current frame"
 msgstr "Marker jest nieaktywny w aktualnej klatce"
 
@@ -10167,6 +10095,42 @@ msgstr "Szerokość obszaru szukania markera we współrzędnych ekranowych"
 
 msgid "Height of marker's search in screen coordinates"
 msgstr "Wysokość obszaru szukania markera we współrzędnych ekranowych"
+
+
+msgid ", %d float channel(s)"
+msgstr ", %d kanały float"
+
+
+msgid ", RGBA float"
+msgstr ", RGBA float"
+
+
+msgid ", RGB float"
+msgstr ", RGB float"
+
+
+msgid ", RGBA byte"
+msgstr ", bit RGBA"
+
+
+msgid ", RGB byte"
+msgstr ", bit RGB"
+
+
+msgid ", failed to load"
+msgstr ", Nie udało się załadować"
+
+
+msgid "Frame: %d / %d"
+msgstr "Klatka: %d / %d"
+
+
+msgid "Frame: - / %d"
+msgstr "Klatka: - / %d"
+
+
+msgid "File: %s"
+msgstr "Plik: %s"
 
 
 msgid "unsupported movie clip format"
@@ -10325,6 +10289,14 @@ msgid "Driver Value:"
 msgstr "Wartość Sterownika:"
 
 
+msgid "Update Dependencies"
+msgstr "Odśwież Zależności"
+
+
+msgid "Add Modifier"
+msgstr "Dodaj Modyfikator"
+
+
 msgid "ERROR: Invalid Python expression"
 msgstr "BŁĄD: Nieprawidłowe wyrażenie Python"
 
@@ -10361,14 +10333,6 @@ msgid "Delete target variable"
 msgstr "Usuń docelową zmienną"
 
 
-msgid "Update Dependencies"
-msgstr "Odśwież Zależności"
-
-
-msgid "Add Modifier"
-msgstr "Dodaj Modyfikator"
-
-
 msgid "View Properties"
 msgstr "Właściwości Widoku"
 
@@ -10387,6 +10351,10 @@ msgstr "Aktywna krzywa F jest nieedytowalna"
 
 msgid "Remove F-Modifiers from F-Curve to add keyframes"
 msgstr "Usuń modyfikatory F z krzywych F aby dodać klatki kluczowe"
+
+
+msgid "Unsupported audio format"
+msgstr "Format dźwiękowy nieobsługiwany"
 
 
 msgid "No Euler Rotation F-Curves to fix up"
@@ -10429,6 +10397,18 @@ msgid "Hard coded Non-Linear, Gamma:1.7"
 msgstr "Twardo zakodowane nieliniowo, Gamma 1.7"
 
 
+msgid "Select Slot"
+msgstr "Zaznacz otwór"
+
+
+msgid "Select Layer"
+msgstr "Zaznacz Warstwę"
+
+
+msgid "Select Pass"
+msgstr "Zaznacz Pass"
+
+
 msgid "Can't Load Image"
 msgstr "Nie można załadować obrazu"
 
@@ -10455,18 +10435,6 @@ msgstr " bit RGB"
 
 msgid " + Z"
 msgstr " + Z"
-
-
-msgid "Select Slot"
-msgstr "Zaznacz otwór"
-
-
-msgid "Select Layer"
-msgstr "Zaznacz Warstwę"
-
-
-msgid "Select Pass"
-msgstr "Zaznacz Pass"
 
 
 msgid "unsupported image format"
@@ -11211,6 +11179,10 @@ msgid "Cannot navigate an object with constraints"
 msgstr "Nie można nawigować obiektem z ogranicznikami"
 
 
+msgid "Auto Keying On"
+msgstr "Automatyczne kluczowanie WŁ"
+
+
 msgid "along X"
 msgstr "wzdłuż X"
 
@@ -11249,10 +11221,6 @@ msgstr "blokada Z - %s"
 
 msgid "along local Z"
 msgstr "wzdłuż lokalnej Z"
-
-
-msgid "Auto Keying On"
-msgstr "Automatyczne kluczowanie WŁ"
 
 
 msgid "Bend Angle: %.3f Radius: %.4f, Alt, Clamp %s"

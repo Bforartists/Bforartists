@@ -838,7 +838,7 @@ class OBJECT_OT_align_tools(Operator):
 # Simple Align Classes #
 
 # Align All Rotation And Location
-class AlignOperator(Operator):
+class OBJECT_OT_AlignOperator(Operator):
     bl_idname = "object.align"
     bl_label = "Align Selected To Active"
     bl_description = "Align Selected To Active"
@@ -853,7 +853,7 @@ class AlignOperator(Operator):
 
 
 # Align Location All
-class AlignLocationOperator(Operator):
+class OBJECT_OT_AlignLocationOperator(Operator):
     bl_idname = "object.align_location_all"
     bl_label = "Align Selected Location To Active"
     bl_description = "Align Selected Location To Active"
@@ -868,7 +868,7 @@ class AlignLocationOperator(Operator):
 
 
 # Align Location X
-class AlignLocationXOperator(Operator):
+class OBJECT_OT_AlignLocationXOperator(Operator):
     bl_idname = "object.align_location_x"
     bl_label = "Align Selected Location X To Active"
     bl_description = "Align Selected Location X To Active"
@@ -883,7 +883,7 @@ class AlignLocationXOperator(Operator):
 
 
 # Align Location Y
-class AlignLocationYOperator(Operator):
+class OBJECT_OT_AlignLocationYOperator(Operator):
     bl_idname = "object.align_location_y"
     bl_label = "Align Selected Location Y To Active"
     bl_description = "Align Selected Location Y To Active"
@@ -898,7 +898,7 @@ class AlignLocationYOperator(Operator):
 
 
 # Align LocationZ
-class AlignLocationZOperator(Operator):
+class OBJECT_OT_AlignLocationZOperator(Operator):
     bl_idname = "object.align_location_z"
     bl_label = "Align Selected Location Z To Active"
     bl_description = "Align Selected Location Z To Active"
@@ -913,7 +913,7 @@ class AlignLocationZOperator(Operator):
 
 
 # Align Rotation All
-class AlignRotationOperator(Operator):
+class OBJECT_OT_AlignRotationOperator(Operator):
     bl_idname = "object.align_rotation_all"
     bl_label = "Align Selected Rotation To Active"
     bl_description = "Align Selected Rotation To Active"
@@ -928,7 +928,7 @@ class AlignRotationOperator(Operator):
 
 
 # Align Rotation X
-class AlignRotationXOperator(Operator):
+class OBJECT_OT_AlignRotationXOperator(Operator):
     bl_idname = "object.align_rotation_x"
     bl_label = "Align Selected Rotation X To Active"
     bl_description = "Align Selected Rotation X To Active"
@@ -943,7 +943,7 @@ class AlignRotationXOperator(Operator):
 
 
 # Align Rotation Y
-class AlignRotationYOperator(Operator):
+class OBJECT_OT_AlignRotationYOperator(Operator):
     bl_idname = "object.align_rotation_y"
     bl_label = "Align Selected Rotation Y To Active"
     bl_description = "Align Selected Rotation Y To Active"
@@ -958,7 +958,7 @@ class AlignRotationYOperator(Operator):
 
 
 # Align Rotation Z
-class AlignRotationZOperator(Operator):
+class OBJECT_OT_AlignRotationZOperator(Operator):
     bl_idname = "object.align_rotation_z"
     bl_label = "Align Selected Rotation Z To Active"
     bl_description = "Align Selected Rotation Z To Active"
@@ -973,7 +973,7 @@ class AlignRotationZOperator(Operator):
 
 
 # Scale All
-class AlignScaleOperator(Operator):
+class OBJECT_OT_AlignScaleOperator(Operator):
     bl_idname = "object.align_objects_scale_all"
     bl_label = "Align Selected Scale To Active"
     bl_description = "Align Selected Scale To Active"
@@ -988,7 +988,7 @@ class AlignScaleOperator(Operator):
 
 
 # Align Scale X
-class AlignScaleXOperator(Operator):
+class OBJECT_OT_AlignScaleXOperator(Operator):
     bl_idname = "object.align_objects_scale_x"
     bl_label = "Align Selected Scale X To Active"
     bl_description = "Align Selected Scale X To Active"
@@ -1003,7 +1003,7 @@ class AlignScaleXOperator(Operator):
 
 
 # Align Scale Y
-class AlignScaleYOperator(Operator):
+class OBJECT_OT_AlignScaleYOperator(Operator):
     bl_idname = "object.align_objects_scale_y"
     bl_label = "Align Selected Scale Y To Active"
     bl_description = "Align Selected Scale Y To Active"
@@ -1018,7 +1018,7 @@ class AlignScaleYOperator(Operator):
 
 
 # Align Scale Z
-class AlignScaleZOperator(Operator):
+class OBJECT_OT_AlignScaleZOperator(Operator):
     bl_idname = "object.align_objects_scale_z"
     bl_label = "Align Selected Scale Z To Active"
     bl_description = "Align Selected Scale Z To Active"
@@ -1140,19 +1140,19 @@ class AlignAddonPreferences(AddonPreferences):
 # Class List
 classes = (
     VIEW3D_PT_AlignUi,
-    AlignOperator,
-    AlignLocationOperator,
-    AlignLocationXOperator,
-    AlignLocationYOperator,
-    AlignLocationZOperator,
-    AlignRotationOperator,
-    AlignRotationXOperator,
-    AlignRotationYOperator,
-    AlignRotationZOperator,
-    AlignScaleOperator,
-    AlignScaleXOperator,
-    AlignScaleYOperator,
-    AlignScaleZOperator,
+    OBJECT_OT_AlignOperator,
+    OBJECT_OT_AlignLocationOperator,
+    OBJECT_OT_AlignLocationXOperator,
+    OBJECT_OT_AlignLocationYOperator,
+    OBJECT_OT_AlignLocationZOperator,
+    OBJECT_OT_AlignRotationOperator,
+    OBJECT_OT_AlignRotationXOperator,
+    OBJECT_OT_AlignRotationYOperator,
+    OBJECT_OT_AlignRotationZOperator,
+    OBJECT_OT_AlignScaleOperator,
+    OBJECT_OT_AlignScaleXOperator,
+    OBJECT_OT_AlignScaleYOperator,
+    OBJECT_OT_AlignScaleZOperator,
     OBJECT_OT_align_tools,
     AlignAddonPreferences,
     )

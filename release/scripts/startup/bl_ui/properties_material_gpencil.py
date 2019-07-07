@@ -145,7 +145,7 @@ class MATERIAL_PT_gpencil_strokecolor(GPMaterialButtonsPanel, Panel):
                 if gpcolor.mode == 'LINE':
                     col.prop(gpcolor, "pixel_size", text="UV Factor")
 
-                col.prop(gpcolor, "use_stroke_pattern", text="Use As Pattern")
+                col.prop(gpcolor, "use_stroke_pattern", text="Use As Stencil Mask")
                 if gpcolor.use_stroke_pattern is False:
                     col.prop(gpcolor, "use_stroke_texture_mix", text="Mix Color")
                     if gpcolor.use_stroke_texture_mix is True:
@@ -189,25 +189,25 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
         if gpcolor.fill_style != 'TEXTURE':
             col.prop(gpcolor, "fill_color", text="Color")
 
-            if gpcolor.fill_style in {'GRADIENT', 'CHESSBOARD'}:
+            if gpcolor.fill_style in {'GRADIENT', 'CHECKER'}:
                 col.prop(gpcolor, "mix_color", text="Secondary Color")
 
             if gpcolor.fill_style == 'GRADIENT':
                 col.prop(gpcolor, "mix_factor", text="Mix Factor", slider=True)
 
-            if gpcolor.fill_style in {'GRADIENT', 'CHESSBOARD'}:
+            if gpcolor.fill_style in {'GRADIENT', 'CHECKER'}:
                 col.prop(gpcolor, "flip", text="Flip Colors")
 
                 col.prop(gpcolor, "pattern_shift", text="Location")
                 col.prop(gpcolor, "pattern_scale", text="Scale")
 
-            if gpcolor.gradient_type == 'RADIAL' and gpcolor.fill_style not in {'SOLID', 'CHESSBOARD'}:
+            if gpcolor.gradient_type == 'RADIAL' and gpcolor.fill_style not in {'SOLID', 'CHECKER'}:
                 col.prop(gpcolor, "pattern_radius", text="Radius")
             else:
                 if gpcolor.fill_style != 'SOLID':
                     col.prop(gpcolor, "pattern_angle", text="Angle")
 
-            if gpcolor.fill_style == 'CHESSBOARD':
+            if gpcolor.fill_style == 'CHECKER':
                 col.prop(gpcolor, "pattern_gridsize", text="Box Size")
 
         # Texture
@@ -215,7 +215,7 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
             col.template_ID(gpcolor, "fill_image", open="image.open")
 
             if gpcolor.fill_style == 'TEXTURE':
-                col.prop(gpcolor, "use_fill_pattern", text="Use As Pattern")
+                col.prop(gpcolor, "use_fill_pattern", text="Use As Stencil Mask")
                 if gpcolor.use_fill_pattern is True:
                     col.prop(gpcolor, "fill_color", text="Color")
 

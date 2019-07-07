@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-09 04:30+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -4778,14 +4778,6 @@ msgstr "회전을 사용"
 
 msgid "Use the target's rotation to determine floor"
 msgstr "바닥을 결정하는 대상의 회전을 사용"
-
-
-msgid "Sticky"
-msgstr "점착"
-
-
-msgid "Immobilize object while constrained"
-msgstr "제약되는 동안 오브젝트 고정"
 
 
 msgid "Follow Path Constraint"
@@ -10816,6 +10808,10 @@ msgid "Lock current frame displayed by layer"
 msgstr "레이어로 표시되는 현재 프레임을 잠금"
 
 
+msgid "Mask Layer"
+msgstr "마스크 레이어"
+
+
 msgid "Parent inverse transformation matrix"
 msgstr "부모 반전 변환 매트릭스"
 
@@ -11763,6 +11759,10 @@ msgid "Bones"
 msgstr "본"
 
 
+msgid "Display Type"
+msgstr "표시 유형"
+
+
 msgid "Octahedral"
 msgstr "팔면체"
 
@@ -11849,14 +11849,6 @@ msgstr "휴식 위치"
 
 msgid "Show Armature in binding pose state (no posing possible)"
 msgstr "결속하는 포스 상태에서 아마튜어를 표시 (가능한 포즈 없음)"
-
-
-msgid "Delay Deform"
-msgstr "변형을 지연"
-
-
-msgid "Don't deform children when manipulating bones in Pose Mode"
-msgstr "포즈 모드에서 본을 조작할 때 자식을 변형하지 않음"
 
 
 msgid "X-Axis Mirror"
@@ -13309,10 +13301,6 @@ msgstr "모든 모디파이어 및 셰이프 키를 적용 이후 곡선을 채�
 
 msgid "Map Taper"
 msgstr "맵 테이퍼"
-
-
-msgid "Map effect of taper object on actually beveled curve"
-msgstr "실제로 베벨된 곡선에 대한 테이퍼 오브젝트의 맵 이펙트"
 
 
 msgid "Enable the curve to become a translation path"
@@ -17643,10 +17631,6 @@ msgid "Use Preview Range"
 msgstr "미리보기 범위를 사용"
 
 
-msgid "Use an alternative start/end frame range for animation playback and OpenGL renders instead of the Render properties start/end frame range"
-msgstr "렌더 속성 시작/종료 프레임 범위의 대신 렌더하는 애니메이션 재생 및 OpenGL에 대해 다른 시작/종료 프레임 범위를 사용"
-
-
 msgid "Stamp Note"
 msgstr "스탬프 메모"
 
@@ -17701,10 +17685,6 @@ msgstr "영역은 최대화, 이 화면을 채우기"
 
 msgid "Follow current frame in editors"
 msgstr "편집기에서 현재를 따라가기"
-
-
-msgid "All 3D View Editors"
-msgstr "모든 3D 뷰 편집기"
 
 
 msgid "Animation Editors"
@@ -22015,10 +21995,6 @@ msgid "Active vertex color index"
 msgstr "활성 버텍스 색상 인덱스"
 
 
-msgid "Mask Layer"
-msgstr "마스크 레이어"
-
-
 msgid "Single layer used for masking pixels"
 msgstr "마스킹 픽셀에 대해 사용된 싱글 레이어"
 
@@ -22404,10 +22380,6 @@ msgstr "회전 트랙 지정"
 
 msgid "Show/Hide"
 msgstr "표시/숨기기"
-
-
-msgid "Specials"
-msgstr "지정"
 
 
 msgid "Tracking"
@@ -33115,10 +33087,6 @@ msgid "Directory of the file"
 msgstr "파일의 디렉토리"
 
 
-msgid "Display Type"
-msgstr "표시 유형"
-
-
 msgid "Automatically determine display type for files"
 msgstr "자동으로 파일에 대한 표시 유형을 결정하기"
 
@@ -37689,10 +37657,6 @@ msgid "Copy Driver Variables"
 msgstr "드라이버 변수를 복사"
 
 
-msgid "Copy the driver variables of the active F-Curve"
-msgstr "활성 F-커브의 드라이브 변수를 복사"
-
-
 msgctxt "Operator"
 msgid "Paste Driver Variables"
 msgstr "드라이버 변수를 붙여 넣기"
@@ -41237,10 +41201,6 @@ msgid "Rotation for each step"
 msgstr "각 단계별 회전"
 
 
-msgid "Dupli"
-msgstr "듀플리"
-
-
 msgid "Make Duplicates"
 msgstr "중복를 만들기"
 
@@ -42530,11 +42490,6 @@ msgid "Resize view so you can see selected nodes"
 msgstr "선택된 노드를 볼 수 있도록 뷰 크기를 조절"
 
 
-msgctxt "Operator"
-msgid "Viewer Border"
-msgstr "뷰어 경계"
-
-
 msgid "Set the boundaries for viewer operations"
 msgstr "뷰어 연산에 대한 경계를 설정"
 
@@ -42926,15 +42881,6 @@ msgid "Duplicate Linked"
 msgstr "연결된 복제"
 
 
-msgctxt "Operator"
-msgid "Make Duplicates Real"
-msgstr "중복 리얼을 만들기"
-
-
-msgid "Make dupli objects attached to this object real"
-msgstr "이 오브젝트의 실제에 첨부된 듀플리 오브젝트를  만들기"
-
-
 msgid "Parent newly created objects to the original duplicator"
 msgstr "원본 복제자로 새로 만들어진 오브젝트를 부모"
 
@@ -43168,15 +43114,6 @@ msgstr "활성 오브젝트에 선택된 오브젝트를 합치기"
 
 
 msgctxt "Operator"
-msgid "Join as Shapes"
-msgstr "셰이프로 합치기"
-
-
-msgid "Merge selected objects to shapes of active object"
-msgstr "활성 오브젝트의 셰이프로 선택된 오브젝트를 병합"
-
-
-msgctxt "Operator"
 msgid "Transfer UV Maps"
 msgstr "UV 맵을 전송"
 
@@ -43209,15 +43146,6 @@ msgstr "델타를 지우기"
 
 msgid "Clear delta location in addition to clearing the normal location transform"
 msgstr "노멀 위치 변환을 지우는 것 외에도 델타 위치를 지우기"
-
-
-msgctxt "Operator"
-msgid "Make Dupli-Face"
-msgstr "듀플리 페이스를 만들기"
-
-
-msgid "Convert objects into dupli-face instanced"
-msgstr "오브젝트를 듀플리 된면으로 인스턴스 변환"
 
 
 msgctxt "Operator"
@@ -44053,10 +43981,6 @@ msgstr "절대적인 셰이프 키에 대한 타이밍을 재 설정"
 msgctxt "Operator"
 msgid "Transfer Shape Key"
 msgstr "셰이프 키를 전송"
-
-
-msgid "Copy another selected objects active shape to this one by applying the relative offsets"
-msgstr "상대적인 오프셋을 적용하여 다른 선택된 오브젝트 활성 셰이프를이 셰이프로 복사합니다"
 
 
 msgid "Transformation Mode"
@@ -51110,11 +51034,6 @@ msgid "Move the view"
 msgstr "뷰를 이동"
 
 
-msgctxt "Operator"
-msgid "View Navigation"
-msgstr "뷰 네비게이션"
-
-
 msgid "Interactively navigate around the scene (uses the mode (walk/fly) preference)"
 msgstr "장면 주위를 대화식으로 탐색합니다 (모드 (걷기/날기) 환경 설정 사용)"
 
@@ -53688,6 +53607,11 @@ msgstr "샘플 라인"
 
 
 msgctxt "Operator"
+msgid "Scale"
+msgstr "규모"
+
+
+msgctxt "Operator"
 msgid "Draw"
 msgstr "그리기"
 
@@ -53785,10 +53709,6 @@ msgid "Viscoelastic Springs"
 msgstr "점탄성 스프링"
 
 
-msgid "Self Collision"
-msgstr "자체 충돌"
-
-
 msgid "Viscosity"
 msgstr "점도"
 
@@ -53811,6 +53731,10 @@ msgstr "적응 도메인"
 
 msgid "Behavior"
 msgstr "행동"
+
+
+msgid "Self Collision"
+msgstr "자체 충돌"
 
 
 msgid "Color Management"
@@ -53954,13 +53878,13 @@ msgstr "다인토포"
 
 
 msgctxt "Operator"
-msgid "Scale"
-msgstr "규모"
+msgid "Box Mask"
+msgstr "박스 마스크"
 
 
 msgctxt "Operator"
-msgid "Box Mask"
-msgstr "박스 마스크"
+msgid "Lasso Mask"
+msgstr "올가미 마스크"
 
 
 msgctxt "Operator"
@@ -55653,10 +55577,6 @@ msgstr "텍스처를 찾기에 대한 기본 디렉토리"
 
 msgid "Auto Save Temporary Files"
 msgstr "임시 파일을 자동 저장"
-
-
-msgid "Automatic saving of temporary files in temp directory, uses process ID (Sculpt or edit mode data won't be saved!')"
-msgstr "임시 디렉토리에 임시 파일을 자동 저장, 프로세스 ID를 사용 (조형 또는 편집 모드 데이터는 저장되지 않습니다!)"
 
 
 msgid "Compress File"
@@ -60157,14 +60077,6 @@ msgid "Use a preview proxy and/or timecode index for this strip"
 msgstr "이 스트립에 대해 미리보기 프록시 및/또는 타임 코드 인덱스를 사용"
 
 
-msgid "Flip Time"
-msgstr "시간을 뒤집기"
-
-
-msgid "Reverse frame order"
-msgstr "프레임 순서를 반전"
-
-
 msgid "Use Translation"
 msgstr "옮기기를 사용"
 
@@ -60401,10 +60313,6 @@ msgid "Text that will be displayed"
 msgstr "표시되는 텍스트"
 
 
-msgid "Draw text with shadow"
-msgstr "텍스트와 그림자를 그리기"
-
-
 msgid "Wrap Width"
 msgstr "둘러싸기 폭"
 
@@ -60619,14 +60527,6 @@ msgstr "그리스 펜슬을 사용"
 
 msgid "Show Grease Pencil strokes in OpenGL previews"
 msgstr "OpenGL 미리보기에서 그리스 펜슬 스트로크를 표시"
-
-
-msgid "Use Sequence"
-msgstr "시퀀스를 사용"
-
-
-msgid "Use scenes sequence strips directly, instead of rendering"
-msgstr "렌더링 대신 장면 시퀀스 스트립을 직접 사용"
 
 
 msgid "Sound Sequence"
@@ -65942,10 +65842,6 @@ msgid "Project individual elements on the surface of other objects"
 msgstr "다른 오브젝트의 표면에 개별 요소를 투사"
 
 
-msgid "Manipulate center points (object, pose and weight paint mode only)"
-msgstr "중심점 조작 (오브젝트, 포즈 및 웨이트 페인트 모드 만 해당)"
-
-
 msgid "UV Sync Selection"
 msgstr "UV 동기화 선택"
 
@@ -66330,24 +66226,12 @@ msgid "Display X Axis"
 msgstr "X 축을 표시"
 
 
-msgid "Show the X axis line in perspective view"
-msgstr "원근법 뷰에서 X 축 라인을 표시"
-
-
 msgid "Display Y Axis"
 msgstr "Y 축을 표시"
 
 
-msgid "Show the Y axis line in perspective view"
-msgstr "원근법 뷰에서 Y 축 라인을 표시"
-
-
 msgid "Display Z Axis"
 msgstr "Z 축을 표시"
-
-
-msgid "Show the Z axis line in perspective view"
-msgstr "원근법 뷰에서 Z 축 라인을 표시"
 
 
 msgid "Draw Handles"
@@ -66446,10 +66330,6 @@ msgid "Display Grid Floor"
 msgstr "격자 바닥을 표시"
 
 
-msgid "Show the ground plane grid in perspective view"
-msgstr "원근법 뷰에서 접지면 격자를 표시"
-
-
 msgid "Draw Freestyle Edge Marks"
 msgstr "프리스타일 에지 마크를 그리기"
 
@@ -66484,10 +66364,6 @@ msgstr "숨겨진 와이어프레임 표시를 사용"
 
 msgid "Outline Selected"
 msgstr "선택된 항목 윤곽선"
-
-
-msgid "Show an outline highlight around selected objects in non-wireframe views"
-msgstr "와이어 프레임되지 않은 뷰에서 선택된 오브젝트 주위에 윤곽 강조 표시"
 
 
 msgid "Relationship Lines"
@@ -68150,10 +68026,6 @@ msgid "Shapes"
 msgstr "셰이프"
 
 
-msgid "Delay Refresh"
-msgstr "새로 고침을 지연"
-
-
 msgctxt "Operator"
 msgid "Remove"
 msgstr "제거"
@@ -69062,6 +68934,11 @@ msgid "Transform:"
 msgstr "변환:"
 
 
+msgctxt "Operator"
+msgid "Parent"
+msgstr "부모"
+
+
 msgid "Holes"
 msgstr "구멍"
 
@@ -69134,10 +69011,6 @@ msgstr "공기 항력"
 
 msgid "Density Target"
 msgstr "밀도 대상"
-
-
-msgid "Length in Frames"
-msgstr "프레임에서 길이"
 
 
 msgid "Roughness 1"
@@ -69478,11 +69351,6 @@ msgstr "프레임 앞으로 트랙"
 
 
 msgctxt "Operator"
-msgid "Show Tracks"
-msgstr "트랙을 표시"
-
-
-msgctxt "Operator"
 msgid "Set Floor"
 msgstr "바닥을 설정"
 
@@ -69542,13 +69410,8 @@ msgstr "반전"
 
 
 msgctxt "Operator"
-msgid "Enable Markers"
-msgstr "마커를 사용"
-
-
-msgctxt "Operator"
-msgid "Unlock Tracks"
-msgstr "트랙을 잠금 해제"
+msgid "Show Tracks"
+msgstr "트랙을 표시"
 
 
 msgid "Tracks For Rotation / Scale"
@@ -69558,6 +69421,16 @@ msgstr "회전/규모에 대한 트랙"
 msgctxt "Operator"
 msgid "View Fit"
 msgstr "뷰 맞추기"
+
+
+msgctxt "Operator"
+msgid "Enable Markers"
+msgstr "마커를 사용"
+
+
+msgctxt "Operator"
+msgid "Unlock Tracks"
+msgstr "트랙을 잠금 해제"
 
 
 msgid "Solve error: %.4f"
@@ -70555,11 +70428,6 @@ msgstr "오비트 반대편"
 
 
 msgctxt "Operator"
-msgid "Zoom Border..."
-msgstr "줌 경계..."
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "뷰에 활성 카메라를 정렬"
 
@@ -70587,11 +70455,6 @@ msgstr "앞쪽"
 msgctxt "Operator"
 msgid "Back"
 msgstr "뒤쪽"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "부모"
 
 
 msgctxt "Operator"
@@ -70964,11 +70827,6 @@ msgstr "마스크를 채우기"
 msgctxt "Operator"
 msgid "Clear Mask"
 msgstr "마스크를 지우기"
-
-
-msgctxt "Operator"
-msgid "Lasso Mask"
-msgstr "올가미 마스크"
 
 
 msgctxt "Operator"
@@ -71999,6 +71857,14 @@ msgid "Undefined Type"
 msgstr "정의되지 않은 유형"
 
 
+msgid "Can't add Rigid Body to non mesh object"
+msgstr "메쉬가 아닌 오브젝트에 리지드 바디를 추가할 수 없습니다"
+
+
+msgid "Can't create Rigid Body world"
+msgstr "리지드 바디 월드를 만들 수 없습니다"
+
+
 msgid "RenderView"
 msgstr "렌더 뷰"
 
@@ -72555,10 +72421,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "모든 키 프레임을 삽입에 실패한 키잉 세트"
 
 
-msgid "No active keying set"
-msgstr "활성 키잉 설정이 없음"
-
-
 msgid "No active Keying Set"
 msgstr "활성 키잉 설정되지 않음"
 
@@ -72643,32 +72505,12 @@ msgid "Not deleting keyframe for locked F-Curve for NLA Strip influence on %s - 
 msgstr "%s의 NLA 스트립 영향에 대한 잠긴 F-커브의 키 프레임을 삭제하지 않음 - %s '%s'"
 
 
-msgid "No active keying set to remove"
-msgstr "제거하는 활성 키잉 설정가 없음"
-
-
 msgid "Cannot remove built in keying set"
 msgstr "내장 키잉 설정을 제거 할 수 없음"
 
 
-msgid "No active keying set to add empty path to"
-msgstr "다음으로 엠프티 경로를 추가하는 활성 키잉 설정이 없음"
-
-
-msgid "No active keying set path to remove"
-msgstr "제거하는 활성 키잉 설정 경로가 없음"
-
-
-msgid "No active keying set to remove a path from"
-msgstr "다음에서 경로를 제거하는 활성 키잉 설정이 없음"
-
-
 msgid "Cannot add property to built in keying set"
 msgstr "내장 키잉 설정으로 속성을 추가 할 수 없음"
-
-
-msgid "No active keying set to remove property from"
-msgstr "다음에서 속성을 제거하는 활성 키잉 설정이 없음"
 
 
 msgid "Cannot remove property from built in keying set"
@@ -73111,10 +72953,6 @@ msgid "Grease Pencil Line Session: Hold and drag LMB to draw | ESC/Enter to end 
 msgstr "그리스 펜슬 라인 세션: LMB를 누른 상태에서 드래그로 그리기 | ESC/Enter로 종료 (또는 이 영역 외부를 클릭)"
 
 
-msgid "Grease Pencil Session: ESC/Enter to end   (or click outside this area)"
-msgstr "그리스 펜슬 세션: 끝내려면 ESC/Enter (또는 이 영역 외부를 클릭)"
-
-
 msgid "Grease Pencil operator is already active"
 msgstr "그리스 펜슬 연산자는 이미 활성"
 
@@ -73334,16 +73172,16 @@ msgid "Menu \"%s\" not found"
 msgstr "메뉴 \"%s\" 는 찾을 수 없음"
 
 
-msgid "(Shift-Click/Drag to select multiple)"
-msgstr "(다중 선택하는 드레그/Shift-클릭)"
-
-
 msgid "Shortcut: %s"
 msgstr "단축 키: %s"
 
 
 msgid "Python: %s"
 msgstr "파이썬: %s"
+
+
+msgid "(Shift-Click/Drag to select multiple)"
+msgstr "(다중 선택하는 드레그/Shift-클릭)"
 
 
 msgid "Value: %s"
@@ -73384,10 +73222,6 @@ msgstr "리얼을 만들기"
 
 msgid "Unknown"
 msgstr "알 수 없는"
-
-
-msgid "Cannot edit Proxy-Protected Constraint"
-msgstr "보호되는 프록시 제약을 편집 할 수 없음"
 
 
 msgid "Pos"
@@ -73476,6 +73310,10 @@ msgstr "이 모디파이어는 스플라인 포인트에만 적용할 수 있습
 
 msgid "Proxy Protected"
 msgstr "프록시 보호된"
+
+
+msgid "Cannot edit Proxy-Protected Constraint"
+msgstr "보호되는 프록시 제약을 편집 할 수 없음"
 
 
 msgid "Delete the active position"
@@ -74909,14 +74747,6 @@ msgid "Timber"
 msgstr "목재"
 
 
-msgid "Can't add Rigid Body to non mesh object"
-msgstr "메쉬가 아닌 오브젝트에 리지드 바디를 추가할 수 없습니다"
-
-
-msgid "Can't create Rigid Body world"
-msgstr "리지드 바디 월드를 만들 수 없습니다"
-
-
 msgid "Object has no Rigid Body settings to remove"
 msgstr "오브젝트는 제거하는 리지드 바디 설정이 없음"
 
@@ -75257,10 +75087,6 @@ msgid "Dynamic Topology found: %s, disabled"
 msgstr "발견된 다이나믹 토폴로지 : %s, 비활성화됨"
 
 
-msgid "Unsupported audio format"
-msgstr "지원되지 않는 오디오 형식"
-
-
 msgid "Compiled without sound support"
 msgstr "소리 지원 없이 컴파일됨"
 
@@ -75361,42 +75187,6 @@ msgid "Search Area:"
 msgstr "검색 영역:"
 
 
-msgid ", %d float channel(s)"
-msgstr ", %d 실수 채널(들)"
-
-
-msgid ", RGBA float"
-msgstr ", RGBA 실수"
-
-
-msgid ", RGB float"
-msgstr ", RGB 실수"
-
-
-msgid ", RGBA byte"
-msgstr ", RGBA 바이트"
-
-
-msgid ", RGB byte"
-msgstr ", RGB 바이트"
-
-
-msgid ", failed to load"
-msgstr ", 불러올 수 없습니다"
-
-
-msgid "Frame: %d / %d"
-msgstr "프레임: %d / %d"
-
-
-msgid "Frame: - / %d"
-msgstr "프레임: - / %d"
-
-
-msgid "File: %s"
-msgstr "파일: %s"
-
-
 msgid "Marker is disabled at current frame"
 msgstr "현재 프레임에서 마커는 사용 중지됨"
 
@@ -75443,6 +75233,42 @@ msgstr "화면 좌표에서 마커 검색의 폭"
 
 msgid "Height of marker's search in screen coordinates"
 msgstr "화면 좌표에서 마커 검색의 높이"
+
+
+msgid ", %d float channel(s)"
+msgstr ", %d 실수 채널(들)"
+
+
+msgid ", RGBA float"
+msgstr ", RGBA 실수"
+
+
+msgid ", RGB float"
+msgstr ", RGB 실수"
+
+
+msgid ", RGBA byte"
+msgstr ", RGBA 바이트"
+
+
+msgid ", RGB byte"
+msgstr ", RGB 바이트"
+
+
+msgid ", failed to load"
+msgstr ", 불러올 수 없습니다"
+
+
+msgid "Frame: %d / %d"
+msgstr "프레임: %d / %d"
+
+
+msgid "Frame: - / %d"
+msgstr "프레임: - / %d"
+
+
+msgid "File: %s"
+msgstr "파일: %s"
 
 
 msgid "unsupported movie clip format"
@@ -75637,6 +75463,14 @@ msgid "Driver Value:"
 msgstr "드라이버 값:"
 
 
+msgid "Update Dependencies"
+msgstr "의존성 업데이트"
+
+
+msgid "Add Modifier"
+msgstr "모디파이어를 추가"
+
+
 msgid "ERROR: Invalid Python expression"
 msgstr "오류: 잘못된 파이썬 표현식"
 
@@ -75677,14 +75511,6 @@ msgid "Delete target variable"
 msgstr "대상 변수를 삭제"
 
 
-msgid "Update Dependencies"
-msgstr "의존성 업데이트"
-
-
-msgid "Add Modifier"
-msgstr "모디파이어를 추가"
-
-
 msgid "View Properties"
 msgstr "뷰 속성"
 
@@ -75720,6 +75546,10 @@ msgstr "활성 F-커브는 편집 가능 없음"
 
 msgid "Remove F-Modifiers from F-Curve to add keyframes"
 msgstr "키 프레임을 추가하는 F-커브에서 F-모디파이어를 제거"
+
+
+msgid "Unsupported audio format"
+msgstr "지원되지 않는 오디오 형식"
 
 
 msgid "No Euler Rotation F-Curves to fix up"
@@ -75766,6 +75596,22 @@ msgid "Hard coded Non-Linear, Gamma:1.7"
 msgstr "비선형 하드 코딩, 감마:1.7"
 
 
+msgid "Select Slot"
+msgstr "슬롯을 선택"
+
+
+msgid "Select Layer"
+msgstr "레이어를 선택"
+
+
+msgid "Select Pass"
+msgstr "패스를 선택"
+
+
+msgid "Select View"
+msgstr "뷰를 선택"
+
+
 msgid "Can't Load Image"
 msgstr "이미지를 불러올 수 없습니다"
 
@@ -75792,22 +75638,6 @@ msgstr " RGB byte"
 
 msgid " + Z"
 msgstr " + Z"
-
-
-msgid "Select Slot"
-msgstr "슬롯을 선택"
-
-
-msgid "Select Layer"
-msgstr "레이어를 선택"
-
-
-msgid "Select Pass"
-msgstr "패스를 선택"
-
-
-msgid "Select View"
-msgstr "뷰를 선택"
 
 
 msgid "unsupported image format"
@@ -76628,10 +76458,6 @@ msgid "Depth too large"
 msgstr "너무 큰 깊이"
 
 
-msgid "%s: confirm, %s: cancel, %s: pan enable, %s|%s|%s|%s|%s|%s: direction, %s: slow, %s: free look, %s: Upright x axis (%s), %s: Upright z axis (%s), %s: increase  speed, %s: decrease speed"
-msgstr "%s: 확인, %s: 취소, %s: 팬 사용, %s|%s|%s|%s|%s|%s: 이동 방향, %s: 느린, %s: 자유 보기, %s: 수직 X 축 (%s), %s: 수직 Z 축 (%s), %s: 속력를 증가, %s: 속력를 감소"
-
-
 msgid "Cannot fly a camera from an external library"
 msgstr "외부 라이브러리에서 카메라를 조종 할수 없습니다"
 
@@ -76676,6 +76502,10 @@ msgid "Cannot navigate an object with constraints"
 msgstr "제약이 있는 오브젝트를 탐색 할 수 없습니다"
 
 
+msgid "Auto Keying On"
+msgstr "자동 키잉 켜기"
+
+
 msgid "along X"
 msgstr "X 따라"
 
@@ -76714,10 +76544,6 @@ msgstr "잠그기 %s Z"
 
 msgid "along local Z"
 msgstr "로컬 Z 따라"
-
-
-msgid "Auto Keying On"
-msgstr "자동 키잉 켜기"
 
 
 msgid "Bend Angle: %s Radius: %s Alt, Clamp %s"

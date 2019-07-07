@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -1509,10 +1509,6 @@ msgid "Use Rotation"
 msgstr "ﺱﻭﺎﻣ ﻥﺎﮑﻣ"
 
 
-msgid "Sticky"
-msgstr "ﻩﺪﻨﺒﺴﭼ"
-
-
 msgid "Follow Path Constraint"
 msgstr "ﻥﺍﻮﺨﺘﺳﺍ ﯼﺎﻫ‌ﺖﯾﺩﻭﺪﺤﻣ"
 
@@ -2660,6 +2656,10 @@ msgstr "‪%s‬ :ﻝﺎﻌﻓ ﺮﯿﻏ"
 
 msgid "Bones"
 msgstr "ﺎﻫ‌ﻥﺍﻮﺨﺘﺳﺍ"
+
+
+msgid "Display Type"
+msgstr "ﯽﯾﺎﺠﺑﺎﺟ ﻉﻮﻧ"
 
 
 msgid "B-Bone"
@@ -3920,10 +3920,6 @@ msgstr "ﻦﺸﯿﻤﯿﻧﺍ ﺶﺨﭘ:"
 
 msgid "Animation playback is active"
 msgstr "ﻦﺸﯿﻤﯿﻧﺍ ﺶﺨﭘ ﻒﻗﻮﺗ"
-
-
-msgid "All 3D View Editors"
-msgstr "ﺎﻫ‌ﺶﯾﺎﻤﻧ ﻡﺎﻤﺗ"
 
 
 msgid "Animation Editors"
@@ -6964,10 +6960,6 @@ msgid "Reset Brush"
 msgstr "ﻮﻣ ﻢﻠﻗ ﻑﺬﺣ"
 
 
-msgid "Display Type"
-msgstr "ﯽﯾﺎﺠﺑﺎﺟ ﻉﻮﻧ"
-
-
 msgctxt "Operator"
 msgid "Add Camera Preset"
 msgstr "ﻦﯿﺑﺭﻭﺩ ﺰﻨﻟ ﻪﯾﻭﺍﺯ"
@@ -9649,11 +9641,6 @@ msgstr "ﺭﺍﺮﮑﺗ"
 
 
 msgctxt "Operator"
-msgid "Make Duplicates Real"
-msgstr "ﻦﮐ ﺩﺎﺠﯾﺍ ﯽﻌﻗﺍﻭ"
-
-
-msgctxt "Operator"
 msgid "Toggle Editmode"
 msgstr "ﻩﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
@@ -12326,6 +12313,11 @@ msgstr "ﺎﻫ‌ﮓﻧﺭ:"
 
 
 msgctxt "Operator"
+msgid "Scale"
+msgstr "ﺲﻧﺎﺠﺗ"
+
+
+msgctxt "Operator"
 msgid "Draw"
 msgstr "ﺩﺍﺯﺁ ﯽﺷﺎﻘﻧ"
 
@@ -12412,11 +12404,6 @@ msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
 
 msgid "Motion Tracking"
 msgstr "ﺖﮐﺮﺣ ﯽﺑﺎﯾﺩﺭ"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "ﺲﻧﺎﺠﺗ"
 
 
 msgctxt "Operator"
@@ -12856,10 +12843,6 @@ msgstr "ﮓﻧﺭ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
 
 msgid "Convert Float"
 msgstr "ﻝﺪﺒﻣ"
-
-
-msgid "Flip Time"
-msgstr "ﺱﻮﮑﻌﻣ ﻥﺎﻣﺯ"
 
 
 msgid "Use Translation"
@@ -13895,6 +13878,11 @@ msgstr "ﻞﯾﺪﺒﺗ:"
 
 
 msgctxt "Operator"
+msgid "Parent"
+msgstr "ﻊﺒﻨﻣ"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﺮﮕﻧﺎﺸﻧ"
 
@@ -14026,11 +14014,6 @@ msgstr "ﺐﻘﻋ ﻪﺑ ﻢﯾﺮﻓ ﯽﺑﺎﯾﺩﺭ"
 
 
 msgctxt "Operator"
-msgid "Show Tracks"
-msgstr "ﺎﻫ ﮎﺮﺗِ ﺶﯾﺎﻤﻧ"
-
-
-msgctxt "Operator"
 msgid "Set Floor"
 msgstr "ﻒﮐ ﻢﯿﻈﻨﺗ"
 
@@ -14062,6 +14045,11 @@ msgstr "ﺭﺍﻮﯾﺩ ﻢﯿﻈﻨﺗ"
 msgctxt "Operator"
 msgid "Inverse"
 msgstr "ﺭﺍﺩﺮﮐ ﺮﯿﺛﺎﺗ"
+
+
+msgctxt "Operator"
+msgid "Show Tracks"
+msgstr "ﺎﻫ ﮎﺮﺗِ ﺶﯾﺎﻤﻧ"
 
 
 msgctxt "Operator"
@@ -14495,11 +14483,6 @@ msgstr "ﻦﯿﺑﺭﻭﺩ"
 
 
 msgctxt "Operator"
-msgid "Zoom Border..."
-msgstr "ﯽﯾﺎﻤﻨﮔﺭﺰﺑ ﺯﺮﻣ..."
-
-
-msgctxt "Operator"
 msgid "Top"
 msgstr "ﻻ﻿ﺎﺑ"
 
@@ -14517,11 +14500,6 @@ msgstr "ﻮﻠﺟ"
 msgctxt "Operator"
 msgid "Back"
 msgstr "ﺐﻘﻋ"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "ﻊﺒﻨﻣ"
 
 
 msgctxt "Operator"
@@ -15182,10 +15160,6 @@ msgid "No suitable context info for active keying set"
 msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
 
 
-msgid "No active keying set"
-msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
-
-
 msgid "No active Keying Set"
 msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
 
@@ -15194,31 +15168,11 @@ msgid "Keying set failed to remove any keyframes"
 msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
 
 
-msgid "No active keying set to remove"
-msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
-
-
 msgid "Cannot remove built in keying set"
 msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
 
 
-msgid "No active keying set to add empty path to"
-msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
-
-
-msgid "No active keying set path to remove"
-msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
-
-
-msgid "No active keying set to remove a path from"
-msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
-
-
 msgid "Cannot add property to built in keying set"
-msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
-
-
-msgid "No active keying set to remove property from"
 msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
 
 
@@ -16011,10 +15965,6 @@ msgid "OK"
 msgstr "ﺪﯿﯾﺄﺗ"
 
 
-msgid "Unsupported audio format"
-msgstr "ﻩﺪﺸﻧ ﯽﻧﺎﺒﯿﺘﺸﭘ ﯽﺗﻮﺻ ﺖﻣﺮﻓ"
-
-
 msgid "Compiled without sound support"
 msgstr "ﺍﺪﺻ ﺯﺍ ﯽﻧﺎﺒﯿﺘﺸﭘ ﻥﻭﺪﺑ ﻩﺪﺷ ﻞﯾﺎﭙﻣﺎﮐ"
 
@@ -16131,16 +16081,16 @@ msgid "Driver Value:"
 msgstr "ﺭﻮﯾﺍﺭﺩ ﺮﯿﻐﺘﻣ"
 
 
-msgid "ERROR: Invalid target channel(s)"
-msgstr "ﺖﺳﺍ ﺮﺒﺘﻌﻣﺎﻧ ﻑﺪﻫ ﻝﺎﻧﺎﮐ :ﺎﻄﺧ"
-
-
 msgid "Update Dependencies"
 msgstr "ﺎﻫ‌ﯽﮕﺘﺴﺑﺍﻭ ﯽﻧﺎﺳﺭ ﺯﻭﺭ‌ﻪﺑ"
 
 
 msgid "Add Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
+
+
+msgid "ERROR: Invalid target channel(s)"
+msgstr "ﺖﺳﺍ ﺮﺒﺘﻌﻣﺎﻧ ﻑﺪﻫ ﻝﺎﻧﺎﮐ :ﺎﻄﺧ"
 
 
 msgid "View Properties"
@@ -16151,8 +16101,24 @@ msgid "Active F-Curve is not editable"
 msgstr "ﻝﺎﻌﻓ ﻦﯿﺑﺭﻭﺩ"
 
 
+msgid "Unsupported audio format"
+msgstr "ﻩﺪﺸﻧ ﯽﻧﺎﺒﯿﺘﺸﭘ ﯽﺗﻮﺻ ﺖﻣﺮﻓ"
+
+
 msgid "No F-Modifiers to paste"
 msgstr "ﻩﺪﻨﻫﺩ ﺮﯿﯿﻐﺗ ﺖﯿﻌﺿﻭ"
+
+
+msgid "Select Slot"
+msgstr "ﺎﺑ ﺏﺎﺨﺘﻧﺍ:"
+
+
+msgid "Select Layer"
+msgstr "ﻪﯾﻻ﻿ ﺱﺎﺳﺍﺮﺑ ﻪﻤﻫ ﺏﺎﺨﺘﻧﺍ..."
+
+
+msgid "Select Pass"
+msgstr "ﺏﺎﺨﺘﻧﺍ ﻮﻨﻣ"
 
 
 msgid "Can't Load Image"
@@ -16177,18 +16143,6 @@ msgstr "RGB ﺖﯾﺎﺑ"
 
 msgid " + Z"
 msgstr " + Z"
-
-
-msgid "Select Slot"
-msgstr "ﺎﺑ ﺏﺎﺨﺘﻧﺍ:"
-
-
-msgid "Select Layer"
-msgstr "ﻪﯾﻻ﻿ ﺱﺎﺳﺍﺮﺑ ﻪﻤﻫ ﺏﺎﺨﺘﻧﺍ..."
-
-
-msgid "Select Pass"
-msgstr "ﺏﺎﺨﺘﻧﺍ ﻮﻨﻣ"
 
 
 msgid "unsupported image format"

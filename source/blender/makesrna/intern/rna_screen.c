@@ -621,7 +621,7 @@ static void rna_def_screen(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "use_play_3d_editors", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "redraws_flag", TIME_ALL_3D_WIN);
-  RNA_def_property_ui_text(prop, "All 3D View Editors", "All 3D View Editors\nPlay animation in 3D View Editors");
+  RNA_def_property_ui_text(prop, "All 3D Viewports", "All 3D Viewports\nPlay animation in all 3D Viewports");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Screen_redraw_update");
 
   prop = RNA_def_property(srna, "use_follow", PROP_BOOLEAN, PROP_NONE);

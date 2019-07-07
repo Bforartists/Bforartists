@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -2793,10 +2793,6 @@ msgstr "Position des Ziels, das Objekt nicht passieren kann"
 
 msgid "Use Rotation"
 msgstr "Rotation verwenden"
-
-
-msgid "Sticky"
-msgstr "Einzelner Knochen"
 
 
 msgid "Follow Path Constraint"
@@ -6040,6 +6036,10 @@ msgid "Frame Locked"
 msgstr "Rahmen sperren"
 
 
+msgid "Mask Layer"
+msgstr "Maskenebene"
+
+
 msgid "Opacity"
 msgstr "Deckkraft"
 
@@ -6529,6 +6529,10 @@ msgid "Bones"
 msgstr "Knochen"
 
 
+msgid "Display Type"
+msgstr "Anzeigetyp"
+
+
 msgid "Octahedral"
 msgstr "Achteckig"
 
@@ -6583,10 +6587,6 @@ msgstr "Skelett im posierten Zustand zeigen"
 
 msgid "Rest Position"
 msgstr "Auflösung"
-
-
-msgid "Delay Deform"
-msgstr "Transformieren"
 
 
 msgid "X-Axis Mirror"
@@ -9829,10 +9829,6 @@ msgid "Animation Playing"
 msgstr "Animationsdaten"
 
 
-msgid "All 3D View Editors"
-msgstr "Alle 3D-Ansichten-Editoren"
-
-
 msgid "Animation Editors"
 msgstr "Animationseditoren"
 
@@ -11165,10 +11161,6 @@ msgstr "Maximale Dicke"
 
 msgid "Min Thickness"
 msgstr "Minimale Dicke"
-
-
-msgid "Mask Layer"
-msgstr "Maskenebene"
 
 
 msgid "Render Opacity"
@@ -16649,10 +16641,6 @@ msgid "Accept"
 msgstr "Akzeptieren"
 
 
-msgid "Display Type"
-msgstr "Anzeigetyp"
-
-
 msgid "Automatically determine display type for files"
 msgstr "Anzeigetyp für Dateien automatisch ermitteln"
 
@@ -20491,10 +20479,6 @@ msgid "Extrude selected vertices in a circle around the cursor in indicated view
 msgstr "Extrudiert ausgewählte Vertices kreisförmig um den Cursor im Ansichtsfenster"
 
 
-msgid "Dupli"
-msgstr "Dupli"
-
-
 msgid "Subdivide selected edges"
 msgstr "Ausgewählte Kanten unterteilen"
 
@@ -21281,11 +21265,6 @@ msgstr "Neues Verzeichnis erstellen"
 
 
 msgctxt "Operator"
-msgid "Viewer Border"
-msgstr "Betrachterrand"
-
-
-msgctxt "Operator"
 msgid "Add Object"
 msgstr "Objekt hinzufügen"
 
@@ -21490,11 +21469,6 @@ msgid "Duplicate Linked"
 msgstr "Verknüpfte duplizieren"
 
 
-msgctxt "Operator"
-msgid "Make Duplicates Real"
-msgstr "Duplikate real machen"
-
-
 msgid "Keep Hierarchy"
 msgstr "Hierarchie zeigen"
 
@@ -21665,11 +21639,6 @@ msgstr "Position löschen"
 
 msgid "Clear the object's location"
 msgstr "Objekt-Position entfernen"
-
-
-msgctxt "Operator"
-msgid "Make Dupli-Face"
-msgstr "Dupli-Fläche erzeugen"
 
 
 msgctxt "Operator"
@@ -25361,11 +25330,6 @@ msgstr "Separate Anzeige ausgewählter Objekte in Ansicht zentriert ein/aus"
 
 
 msgctxt "Operator"
-msgid "View Navigation"
-msgstr "Navigation anzeigen"
-
-
-msgctxt "Operator"
 msgid "NDOF Orbit View"
 msgstr "Ansicht"
 
@@ -26411,6 +26375,11 @@ msgstr "Linie abtasten"
 
 
 msgctxt "Operator"
+msgid "Scale"
+msgstr "Skalieren"
+
+
+msgctxt "Operator"
 msgid "Draw"
 msgstr "Zeichnen"
 
@@ -26467,10 +26436,6 @@ msgid "Viscoelastic Springs"
 msgstr "Visko-elastische Sprungfeder"
 
 
-msgid "Self Collision"
-msgstr "Selbstkollision"
-
-
 msgid "Viscosity"
 msgstr "Zähigkeit"
 
@@ -26489,6 +26454,10 @@ msgstr "Adaptiver Wirkungsbereich"
 
 msgid "Behavior"
 msgstr "Verhalten"
+
+
+msgid "Self Collision"
+msgstr "Selbstkollision"
 
 
 msgid "Color Management"
@@ -26588,13 +26557,13 @@ msgstr "Bewegungsverfolgung"
 
 
 msgctxt "Operator"
-msgid "Scale"
-msgstr "Skalieren"
+msgid "Box Mask"
+msgstr "Rechteckige Maske"
 
 
 msgctxt "Operator"
-msgid "Box Mask"
-msgstr "Rechteckige Maske"
+msgid "Lasso Mask"
+msgstr "Lasso-Maske"
 
 
 msgctxt "Operator"
@@ -29601,14 +29570,6 @@ msgid "Convert Float"
 msgstr "Float umwandeln"
 
 
-msgid "Flip Time"
-msgstr "Zeit umkehren"
-
-
-msgid "Reverse frame order"
-msgstr "Spieleigenschaft entfernen"
-
-
 msgid "Use Translation"
 msgstr "Verschieben"
 
@@ -32485,24 +32446,12 @@ msgid "Display X Axis"
 msgstr "X-Achse anzeigen"
 
 
-msgid "Show the X axis line in perspective view"
-msgstr "X-Achsen Linie in der perspektivischen Ansicht anzeigen"
-
-
 msgid "Display Y Axis"
 msgstr "Y-Achse anzeigen"
 
 
-msgid "Show the Y axis line in perspective view"
-msgstr "Y-Achsen Linie in der perspektivischen Ansicht anzeigen"
-
-
 msgid "Display Z Axis"
 msgstr "Z-Achse anzeigen"
-
-
-msgid "Show the Z axis line in perspective view"
-msgstr "Z-Achsen Linie in der perspektivischen Ansicht anzeigen"
 
 
 msgid "Draw Handles"
@@ -32549,10 +32498,6 @@ msgid "Display Grid Floor"
 msgstr "Bodenraster anzeigen"
 
 
-msgid "Show the ground plane grid in perspective view"
-msgstr "Bodenraster in der perspektivischen Ansicht anzeigen"
-
-
 msgid "All Object Origins"
 msgstr "Alle Objektursprünge"
 
@@ -32563,10 +32508,6 @@ msgstr "Objekt-Ursprungsmittelpunkt für alle ausgewählten und nicht ausgewähl
 
 msgid "Outline Selected"
 msgstr "Auswahlumrandung"
-
-
-msgid "Show an outline highlight around selected objects in non-wireframe views"
-msgstr "Ausgewählte Objekte mit einer hervorgehobenen Außenumrandung anzeigen (nicht in der Drahtgitteransicht)"
 
 
 msgid "Relationship Lines"
@@ -33650,6 +33591,11 @@ msgstr "Transformieren:"
 
 
 msgctxt "Operator"
+msgid "Parent"
+msgstr "Elternteil"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "Feder skalieren"
 
@@ -33870,11 +33816,6 @@ msgstr "Einzelbild vorwärts verfolgen"
 
 
 msgctxt "Operator"
-msgid "Show Tracks"
-msgstr "Spuren anzeigen"
-
-
-msgctxt "Operator"
 msgid "Set Floor"
 msgstr "Boden festlegen"
 
@@ -33919,6 +33860,11 @@ msgstr "Wand festlegen"
 msgctxt "Operator"
 msgid "Inverse"
 msgstr "Umkehren"
+
+
+msgctxt "Operator"
+msgid "Show Tracks"
+msgstr "Spuren anzeigen"
 
 
 msgctxt "Operator"
@@ -34533,11 +34479,6 @@ msgstr "Kamera"
 
 
 msgctxt "Operator"
-msgid "Zoom Border..."
-msgstr "Zoomen-Rand..."
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "Aktive Kamera an Ansicht ausrichten"
 
@@ -34565,11 +34506,6 @@ msgstr "Vorne"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Hinten"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "Elternteil"
 
 
 msgctxt "Operator"
@@ -34868,11 +34804,6 @@ msgstr "Maske füllen"
 msgctxt "Operator"
 msgid "Clear Mask"
 msgstr "Maske entfernen"
-
-
-msgctxt "Operator"
-msgid "Lasso Mask"
-msgstr "Lasso-Maske"
 
 
 msgctxt "Operator"
@@ -35631,10 +35562,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Schlüsselbildsatz konnte keine Schlüsselbilder einfügen"
 
 
-msgid "No active keying set"
-msgstr "Kein aktiver Schlüsselbildsatz"
-
-
 msgid "No active Keying Set"
 msgstr "Kein aktiver Schlüsselbildsatz"
 
@@ -35659,32 +35586,12 @@ msgid "Object '%s' successfully had %d keyframes removed"
 msgstr "Objekt '%s' hat erfolgreich %d Schlüsselbilder entfernt"
 
 
-msgid "No active keying set to remove"
-msgstr "Kein aktiver Schlüsselbildsatz zum Entfernen"
-
-
 msgid "Cannot remove built in keying set"
 msgstr "Eingebauter Schlüsselbildsatz konnte nicht entfernt werden"
 
 
-msgid "No active keying set to add empty path to"
-msgstr "Kein aktiver Schlüsselbildsatz, um leere Pfade 'nach' hinzuzufügen"
-
-
-msgid "No active keying set path to remove"
-msgstr "Kein aktiver Schlüsselbildsatz-Pfad zum Entfernen"
-
-
-msgid "No active keying set to remove a path from"
-msgstr "Kein aktiver Schlüsselbildsatz, um Pfade 'von' zu entfernen"
-
-
 msgid "Cannot add property to built in keying set"
 msgstr "Eigenschaft konnte nicht zum eingebauten Schlüsselbildsatz hinzugefügt werden"
-
-
-msgid "No active keying set to remove property from"
-msgstr "Kein aktiver Schlüsselbildsatz, um Eigenschaften 'von' zu entfernen"
 
 
 msgid "Cannot remove property from built in keying set"
@@ -36650,10 +36557,6 @@ msgid "OK"
 msgstr "OK"
 
 
-msgid "Unsupported audio format"
-msgstr "Nicht unterstütztes Audioformat"
-
-
 msgid "Active F-Curve"
 msgstr "Aktive F-Kurve"
 
@@ -36814,6 +36717,14 @@ msgid "Driver Value:"
 msgstr "Treiberwert:"
 
 
+msgid "Update Dependencies"
+msgstr "Abhängigkeiten aktualisieren"
+
+
+msgid "Add Modifier"
+msgstr "Modifikator hinzufügen"
+
+
 msgid "ERROR: Invalid Python expression"
 msgstr "FEHLER: ungültiger Python-Ausdruck"
 
@@ -36824,14 +36735,6 @@ msgstr "FEHLER: ein oder mehrere ungültige Zielkanäle"
 
 msgid "Delete target variable"
 msgstr "Zielvariable löschen"
-
-
-msgid "Update Dependencies"
-msgstr "Abhängigkeiten aktualisieren"
-
-
-msgid "Add Modifier"
-msgstr "Modifikator hinzufügen"
 
 
 msgid "View Properties"
@@ -36846,8 +36749,24 @@ msgid "Remove F-Modifiers from F-Curve to add keyframes"
 msgstr "F-Modifikator von F-Kurve entfernen, um Schlüsselbilder einzufügen"
 
 
+msgid "Unsupported audio format"
+msgstr "Nicht unterstütztes Audioformat"
+
+
 msgid "No F-Modifiers to paste"
 msgstr "Kein F-Modifikator zum Einfügen"
+
+
+msgid "Select Slot"
+msgstr "Slot auswählen"
+
+
+msgid "Select Layer"
+msgstr "Ebene auswählen"
+
+
+msgid "Select Pass"
+msgstr "Durchgang auswählen"
 
 
 msgid "Can't Load Image"
@@ -36876,18 +36795,6 @@ msgstr "RGB Byte"
 
 msgid " + Z"
 msgstr " + Z"
-
-
-msgid "Select Slot"
-msgstr "Slot auswählen"
-
-
-msgid "Select Layer"
-msgstr "Ebene auswählen"
-
-
-msgid "Select Pass"
-msgstr "Durchgang auswählen"
 
 
 msgid "unsupported image format"
@@ -37344,6 +37251,10 @@ msgid "No active camera"
 msgstr "Keine aktive Kamera"
 
 
+msgid "Auto Keying On"
+msgstr "Automatische Schlüsselbilder"
+
+
 msgid "along X"
 msgstr "entlang X"
 
@@ -37382,10 +37293,6 @@ msgstr "sperre %s Z"
 
 msgid "along local Z"
 msgstr "entlang lokaler Z"
-
-
-msgid "Auto Keying On"
-msgstr "Automatische Schlüsselbilder"
 
 
 msgid "Scale: %s%s %s"

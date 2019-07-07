@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: blend-it <https://developer.blender.org/T42765>\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -4473,14 +4473,6 @@ msgstr "Usa Rotazione"
 
 msgid "Use the target's rotation to determine floor"
 msgstr "Usa la rotazione dell'obiettivo per determinare il pavimento"
-
-
-msgid "Sticky"
-msgstr "Adesivo"
-
-
-msgid "Immobilize object while constrained"
-msgstr "Immobilizza l'oggetto finché vincolato"
 
 
 msgid "Follow Path Constraint"
@@ -9715,6 +9707,10 @@ msgid "Lock current frame displayed by layer"
 msgstr "Blocca il fotogramma corrente visualizzato dal livello"
 
 
+msgid "Mask Layer"
+msgstr "Livello Maschera"
+
+
 msgid "Opacity"
 msgstr "Opacità"
 
@@ -10558,6 +10554,10 @@ msgid "Bones"
 msgstr "Ossa"
 
 
+msgid "Display Type"
+msgstr "Mostra Aspetto"
+
+
 msgid "Octahedral"
 msgstr "Ottaedrico"
 
@@ -10636,10 +10636,6 @@ msgstr "Posizione a Riposo"
 
 msgid "Show Armature in binding pose state (no posing possible)"
 msgstr "Mostra l'armatura in stato a riposo (non è possibile metterla in posa)"
-
-
-msgid "Delay Deform"
-msgstr "Deformazione Ritardata"
 
 
 msgid "X-Axis Mirror"
@@ -15186,10 +15182,6 @@ msgid "Use Preview Range"
 msgstr "Usa Intervallo di Anteprima"
 
 
-msgid "Use an alternative start/end frame range for animation playback and OpenGL renders instead of the Render properties start/end frame range"
-msgstr "Usa un intervallo fotogrammi inizio/fine alternativo per la riproduzione animazione ed i render OpenGL al posto di quelli di Proprietà Render"
-
-
 msgid "Stamp Note"
 msgstr "Sovraimprimi Note"
 
@@ -15232,10 +15224,6 @@ msgstr "Massimizza"
 
 msgid "An area is maximized, filling this screen"
 msgstr "Un'area è massimizzata, riempiendo questo schermo"
-
-
-msgid "All 3D View Editors"
-msgstr "Tutti gli Editor Vista 3D"
 
 
 msgid "Animation Editors"
@@ -18683,10 +18671,6 @@ msgid "Collection of vertex colors"
 msgstr "Raccolta di colori vertice"
 
 
-msgid "Mask Layer"
-msgstr "Livello Maschera"
-
-
 msgid "Render Opacity"
 msgstr "Opacità Render"
 
@@ -18951,10 +18935,6 @@ msgstr "Speciali Rotazione Traccia"
 
 msgid "Show/Hide"
 msgstr "Mostra/Nascondi"
-
-
-msgid "Specials"
-msgstr "Speciali"
 
 
 msgid "Tracking"
@@ -27677,10 +27657,6 @@ msgid "Directory of the file"
 msgstr "Cartella del file"
 
 
-msgid "Display Type"
-msgstr "Mostra Aspetto"
-
-
 msgid "Automatically determine display type for files"
 msgstr "Unisce automaticamente i fotogrammi chiave vicini"
 
@@ -31505,10 +31481,6 @@ msgid "Copy Driver Variables"
 msgstr "Copia Variabili Guida"
 
 
-msgid "Copy the driver variables of the active F-Curve"
-msgstr "Copia le variabili della guida della Curva-F attiva"
-
-
 msgctxt "Operator"
 msgid "Paste Driver Variables"
 msgstr "Incolla Variabili Guida"
@@ -34593,10 +34565,6 @@ msgid "Rotation for each step"
 msgstr "Rotazione per ogni passo"
 
 
-msgid "Dupli"
-msgstr "Dupli"
-
-
 msgid "Make Duplicates"
 msgstr "Crea Duplicati"
 
@@ -35704,11 +35672,6 @@ msgstr "Riscala la vista in modo da poter vedere i nodi selezionati"
 
 
 msgctxt "Operator"
-msgid "Viewer Border"
-msgstr "Bordo Visualizzatore"
-
-
-msgctxt "Operator"
 msgid "Add Object"
 msgstr "Aggiungi Oggetto"
 
@@ -36022,11 +35985,6 @@ msgid "Duplicate Linked"
 msgstr "Duplica e Collega"
 
 
-msgctxt "Operator"
-msgid "Make Duplicates Real"
-msgstr "Rendi Duplicati Reali"
-
-
 msgid "Keep Hierarchy"
 msgstr "Mantieni Gerarchia"
 
@@ -36248,15 +36206,6 @@ msgstr "Unisce gli oggetti selezionati all'oggetto attivo"
 
 
 msgctxt "Operator"
-msgid "Join as Shapes"
-msgstr "Riunisci come Forme"
-
-
-msgid "Merge selected objects to shapes of active object"
-msgstr "Unisci l'oggetto selezionato alle forme dell'oggetto attivo"
-
-
-msgctxt "Operator"
 msgid "Transfer UV Maps"
 msgstr "Trasferisci Mappe UV"
 
@@ -36272,11 +36221,6 @@ msgstr "Resetta la posizione dell'oggetto"
 
 msgid "Clear Delta"
 msgstr "Cancella Delta"
-
-
-msgctxt "Operator"
-msgid "Make Dupli-Face"
-msgstr "Rendi Dupli-Face"
 
 
 msgctxt "Operator"
@@ -43395,11 +43339,6 @@ msgstr "Sposta la visuale"
 
 
 msgctxt "Operator"
-msgid "View Navigation"
-msgstr "Navigazione Vista"
-
-
-msgctxt "Operator"
 msgid "NDOF Orbit View"
 msgstr "Orbita visuale NDOF"
 
@@ -45382,6 +45321,11 @@ msgstr "Linea Campioni"
 
 
 msgctxt "Operator"
+msgid "Scale"
+msgstr "Scala"
+
+
+msgctxt "Operator"
 msgid "Draw"
 msgstr "Disegna"
 
@@ -45479,10 +45423,6 @@ msgid "Viscoelastic Springs"
 msgstr "Molle Viscoelastiche"
 
 
-msgid "Self Collision"
-msgstr "Auto Collisione"
-
-
 msgid "Viscosity"
 msgstr "Viscosità"
 
@@ -45501,6 +45441,10 @@ msgstr "Dominio Adattabile"
 
 msgid "Behavior"
 msgstr "Comportamento"
+
+
+msgid "Self Collision"
+msgstr "Auto Collisione"
 
 
 msgid "Color Management"
@@ -45644,13 +45588,13 @@ msgstr "Topologia Dinamica"
 
 
 msgctxt "Operator"
-msgid "Scale"
-msgstr "Scala"
+msgid "Box Mask"
+msgstr "Maschera Box"
 
 
 msgctxt "Operator"
-msgid "Box Mask"
-msgstr "Maschera Box"
+msgid "Lasso Mask"
+msgstr "Maschera Lazo"
 
 
 msgctxt "Operator"
@@ -47091,10 +47035,6 @@ msgstr "La cartella predefinita per cercare le texture"
 
 msgid "Auto Save Temporary Files"
 msgstr "Auto Salva File Temporanei"
-
-
-msgid "Automatic saving of temporary files in temp directory, uses process ID (Sculpt or edit mode data won't be saved!')"
-msgstr "Salvataggio automatico dei file temporanei nella cartella temp, usa ID processo (i dati di modalità modifica o scultrura non sono salvati!)"
 
 
 msgid "Compress File"
@@ -50682,14 +50622,6 @@ msgid "Convert Float"
 msgstr "Converti in Float"
 
 
-msgid "Flip Time"
-msgstr "Ribalta il Tempo"
-
-
-msgid "Reverse frame order"
-msgstr "Ribalta l'ordine dei fotogrammi"
-
-
 msgid "Add Sequence"
 msgstr "Aggiungi Sequenza"
 
@@ -50816,10 +50748,6 @@ msgstr "Posizione del testo"
 
 msgid "Text that will be displayed"
 msgstr "Testo che sarà visualizzato"
-
-
-msgid "Draw text with shadow"
-msgstr "Disegna testo con ombre"
 
 
 msgid "Wrap Width"
@@ -50964,10 +50892,6 @@ msgstr "Sovrascrivi Camera"
 
 msgid "Use Grease Pencil"
 msgstr "Usa Matita"
-
-
-msgid "Use Sequence"
-msgstr "Usa Sequenza"
 
 
 msgid "Sound Sequence"
@@ -55083,10 +55007,6 @@ msgid "Project individual elements on the surface of other objects"
 msgstr "Proietta individualmente gli elementi sulle superfici degli altri oggetti"
 
 
-msgid "Manipulate center points (object, pose and weight paint mode only)"
-msgstr "Manipola i punti centrali (solo in modalità oggetto, posa e pittura vertici) anzichè gli oggetti in sè"
-
-
 msgid "UV Sync Selection"
 msgstr "Sincronizza Selezione UV"
 
@@ -55383,24 +55303,12 @@ msgid "Display X Axis"
 msgstr "Mostra Asse X"
 
 
-msgid "Show the X axis line in perspective view"
-msgstr "Mostra la linea dell'asse X nella vista prospettica"
-
-
 msgid "Display Y Axis"
 msgstr "Mostra Asse Y"
 
 
-msgid "Show the Y axis line in perspective view"
-msgstr "Mostra la linea dell'asse Y nella vista prospettica"
-
-
 msgid "Display Z Axis"
 msgstr "Mostra Asse Z"
-
-
-msgid "Show the Z axis line in perspective view"
-msgstr "Mostra la linea dell'asse Z nella vista prospettica"
 
 
 msgid "Draw Handles"
@@ -55499,10 +55407,6 @@ msgid "Display Grid Floor"
 msgstr "Mostra Griglia Pavimento"
 
 
-msgid "Show the ground plane grid in perspective view"
-msgstr "Mostra la griglia del piano globale in vista prospettica"
-
-
 msgid "Draw Freestyle Edge Marks"
 msgstr "Mostra Marcature Spigolo Freestyle"
 
@@ -55537,10 +55441,6 @@ msgstr "Usa vista a reticolo senza mostrare le facce nascoste"
 
 msgid "Outline Selected"
 msgstr "Contorna Selezionati"
-
-
-msgid "Show an outline highlight around selected objects in non-wireframe views"
-msgstr "Mostra un bordo evidenziato intorno agli oggetti nelle viste non retinate"
 
 
 msgid "Relationship Lines"
@@ -57010,10 +56910,6 @@ msgid "Shapes"
 msgstr "Forme"
 
 
-msgid "Delay Refresh"
-msgstr "Ritarda Aggiornamento"
-
-
 msgctxt "Operator"
 msgid "Remove"
 msgstr "Rimuovi"
@@ -57918,6 +57814,11 @@ msgid "Transform:"
 msgstr "Trasforma:"
 
 
+msgctxt "Operator"
+msgid "Parent"
+msgstr "Genitore"
+
+
 msgid "Holes"
 msgstr "Buchi"
 
@@ -57986,10 +57887,6 @@ msgstr "Attrito Aria"
 
 msgid "Density Target"
 msgstr "Densità Obiettivo"
-
-
-msgid "Length in Frames"
-msgstr "Lunghezza in Fotogrammi"
 
 
 msgid "Roughness 1"
@@ -58318,11 +58215,6 @@ msgstr "Traccia Fotogramma in Avanti"
 
 
 msgctxt "Operator"
-msgid "Show Tracks"
-msgstr "Mostra Tracce"
-
-
-msgctxt "Operator"
 msgid "Set Floor"
 msgstr "Imposta Pavimento"
 
@@ -58382,13 +58274,8 @@ msgstr "Inverso"
 
 
 msgctxt "Operator"
-msgid "Enable Markers"
-msgstr "Abilita Marcatori"
-
-
-msgctxt "Operator"
-msgid "Unlock Tracks"
-msgstr "Sblocca Tracce"
+msgid "Show Tracks"
+msgstr "Mostra Tracce"
 
 
 msgid "Tracks For Rotation / Scale"
@@ -58398,6 +58285,16 @@ msgstr "Tracce Per Rotazione / Scala"
 msgctxt "Operator"
 msgid "View Fit"
 msgstr "Adatta Vista"
+
+
+msgctxt "Operator"
+msgid "Enable Markers"
+msgstr "Abilita Marcatori"
+
+
+msgctxt "Operator"
+msgid "Unlock Tracks"
+msgstr "Sblocca Tracce"
 
 
 msgid "Solve error: %.4f"
@@ -59390,11 +59287,6 @@ msgstr "Orbita di Fronte"
 
 
 msgctxt "Operator"
-msgid "Zoom Border..."
-msgstr "Zoom Finestra..."
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "Allinea Camera Attiva alla Vista"
 
@@ -59422,11 +59314,6 @@ msgstr "Fronte"
 msgctxt "Operator"
 msgid "Back"
 msgstr "Posteriore"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "Genitore"
 
 
 msgctxt "Operator"
@@ -59799,11 +59686,6 @@ msgstr "Riempi Maschera"
 msgctxt "Operator"
 msgid "Clear Mask"
 msgstr "Pulisci Maschera"
-
-
-msgctxt "Operator"
-msgid "Lasso Mask"
-msgstr "Maschera Lazo"
 
 
 msgctxt "Operator"
@@ -61083,10 +60965,6 @@ msgid "<Missing ID block>"
 msgstr "<ID Blocco Mancante>"
 
 
-msgid "No active keying set"
-msgstr "Nessun gruppo chiavi attivo"
-
-
 msgid "No active Keying Set"
 msgstr "Nessun Gruppo Chiavi attivo"
 
@@ -61099,16 +60977,8 @@ msgid "\"%s\" property cannot be animated"
 msgstr "La proprietà \"%s\" non può essere animata"
 
 
-msgid "No active keying set to remove"
-msgstr "Nessun Gruppo Chiavi attivo da rimuovere"
-
-
 msgid "Cannot remove built in keying set"
 msgstr "Impossibile rimuovere Gruppo Chiavi incorporato"
-
-
-msgid "No active keying set path to remove"
-msgstr "Nessun percorso Gruppo Chiavi attivo da rimuovere"
 
 
 msgid "Property removed from Keying Set"
@@ -61395,10 +61265,6 @@ msgid "Grease Pencil Line Session: Hold and drag LMB to draw | ESC/Enter to end 
 msgstr "Sessione Linea Matita: Premi e trascina LMB per disegnare | ESC/Invio per terminare (o click fuori dall'area)"
 
 
-msgid "Grease Pencil Session: ESC/Enter to end   (or click outside this area)"
-msgstr "Sessione Matita: ESC/Invio per terminare (o click fuori dall'area)"
-
-
 msgid "Non-Keyboard Shortcut"
 msgstr "Scorciatoia Non-di-Tastiera"
 
@@ -61614,16 +61480,16 @@ msgid "Menu \"%s\" not found"
 msgstr "Menu \"%s\" non trovato"
 
 
-msgid "(Shift-Click/Drag to select multiple)"
-msgstr "(Shift-Click/Trascina per selezione multipla)"
-
-
 msgid "Shortcut: %s"
 msgstr "Scorciatoia: %s"
 
 
 msgid "Python: %s"
 msgstr "Python: %s"
+
+
+msgid "(Shift-Click/Drag to select multiple)"
+msgstr "(Shift-Click/Trascina per selezione multipla)"
 
 
 msgid "Value: %s"
@@ -61660,10 +61526,6 @@ msgstr "Rendi Reale"
 
 msgid "Unknown"
 msgstr "Sconosciuto"
-
-
-msgid "Cannot edit Proxy-Protected Constraint"
-msgstr "Impossibile modificare un Vincolo protetto da proxy"
 
 
 msgid "Pos"
@@ -61752,6 +61614,10 @@ msgstr "Questo modificatore può essere applicato solo sui punti di una spline"
 
 msgid "Proxy Protected"
 msgstr "Protetto da Proxy"
+
+
+msgid "Cannot edit Proxy-Protected Constraint"
+msgstr "Impossibile modificare un Vincolo protetto da proxy"
 
 
 msgid "Delete the active position"
@@ -63061,10 +62927,6 @@ msgid "Dynamic Topology found: %s, disabled"
 msgstr "Rilevata Topologia Dinamica:  %s, disabilitato"
 
 
-msgid "Unsupported audio format"
-msgstr "Formato audio non supportato"
-
-
 msgid "Compiled without sound support"
 msgstr "Compilato senza supporto ai suoni"
 
@@ -63285,6 +63147,14 @@ msgid "Driver Value:"
 msgstr "Valore Guida:"
 
 
+msgid "Update Dependencies"
+msgstr "Aggiorna Dipendenze"
+
+
+msgid "Add Modifier"
+msgstr "Aggiungi Modificatore"
+
+
 msgid "ERROR: Invalid Python expression"
 msgstr "ERRORE: espressione Python non valida"
 
@@ -63309,14 +63179,6 @@ msgid "Delete target variable"
 msgstr "Cancella variabile obiettivo"
 
 
-msgid "Update Dependencies"
-msgstr "Aggiorna Dipendenze"
-
-
-msgid "Add Modifier"
-msgstr "Aggiungi Modificatore"
-
-
 msgid "View Properties"
 msgstr "Proprietà Vista"
 
@@ -63338,6 +63200,10 @@ msgid "Active F-Curve is not editable"
 msgstr "La Curva-F attiva non è modificabile"
 
 
+msgid "Unsupported audio format"
+msgstr "Formato audio non supportato"
+
+
 msgid "No F-Modifiers to paste"
 msgstr "Nessun Modificatore-F da incollare"
 
@@ -63354,14 +63220,6 @@ msgid "Hard coded Non-Linear, Gamma:1.7"
 msgstr "Hard coded Non-Lineare, Gamma:1.7"
 
 
-msgid "Can't Load Image"
-msgstr "Impossibile Caricare Immagine"
-
-
-msgid " + Z"
-msgstr " + Z"
-
-
 msgid "Select Slot"
 msgstr "Seleziona Slot"
 
@@ -63376,6 +63234,14 @@ msgstr "Seleziona Passaggio"
 
 msgid "Select View"
 msgstr "Seleziona Vista"
+
+
+msgid "Can't Load Image"
+msgstr "Impossibile Caricare Immagine"
+
+
+msgid " + Z"
+msgstr " + Z"
 
 
 msgid "unsupported image format"
@@ -64040,10 +63906,6 @@ msgid "Depth too large"
 msgstr "Profondità troppo ampia"
 
 
-msgid "%s: confirm, %s: cancel, %s: pan enable, %s|%s|%s|%s|%s|%s: direction, %s: slow, %s: free look, %s: Upright x axis (%s), %s: Upright z axis (%s), %s: increase  speed, %s: decrease speed"
-msgstr "%s: conferma, %s: annulla, %s: abilita pan, %s|%s|%s|%s|%s|%s: direzione, %s: lento, %s: vista libera, %s: Verso asse x (%s), %s: Verso asse z (%s), %s: aumenta velocità, %s: riduci velocità"
-
-
 msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
 msgstr "Selezione vertice - Shift-Click per modalità multiple, Ctrl-Click riduce la selezione"
 
@@ -64062,6 +63924,10 @@ msgstr "Nessun elemento attivo trovato!"
 
 msgid "No active camera"
 msgstr "Nessuna camera attiva"
+
+
+msgid "Auto Keying On"
+msgstr "Auto-Chiavi On"
 
 
 msgid "along X"
@@ -64102,10 +63968,6 @@ msgstr "bloccando Z %s"
 
 msgid "along local Z"
 msgstr "lungo Z locale"
-
-
-msgid "Auto Keying On"
-msgstr "Auto-Chiavi On"
 
 
 msgid "Bend Angle: %s Radius: %s Alt, Clamp %s"
