@@ -136,14 +136,14 @@ class GenerateGeodesicDome(Operator):
                    ("7", "spikes", "spikes"),
                    ("8", "boxed", "boxed"),
                    ("9", "diamond", "diamond"),
-                   ("10", "bar", "bar"),
+#                   ("10", "bar", "bar"),
                   ],
             default='0'
             )
     facetoggle: BoolProperty(
             name="Activate: Face Object",
             description="Activate Faces for Geodesic object",
-            default=False
+            default=True
             )
     face_use_imported_object: BoolProperty(
             name="Use: Imported Object",
@@ -1647,7 +1647,7 @@ class DialogOperator(Operator):
         col = layout.column()
         tmp = message.split("\n")
         for el in tmp:
-            col.label(el)
+            col.label(text = "")
 
     def execute(self, context):
         return {'FINISHED'}

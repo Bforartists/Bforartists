@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: 2018-09-23 13:23+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -4099,14 +4099,6 @@ msgstr "使用旋轉"
 
 msgid "Use the target's rotation to determine floor"
 msgstr "使用目標的旋轉來決定地面"
-
-
-msgid "Sticky"
-msgstr "黏性"
-
-
-msgid "Immobilize object while constrained"
-msgstr "當約束於讓物體無法移動"
 
 
 msgid "Follow Path Constraint"
@@ -9441,6 +9433,10 @@ msgid "Lock current frame displayed by layer"
 msgstr "鎖定依層顯示的目前框幀"
 
 
+msgid "Mask Layer"
+msgstr "遮罩分層"
+
+
 msgid "Opacity"
 msgstr "不透明度"
 
@@ -10114,6 +10110,10 @@ msgid "Bones"
 msgstr "骨骼"
 
 
+msgid "Display Type"
+msgstr "顯示類型"
+
+
 msgid "Octahedral"
 msgstr "八面體"
 
@@ -10200,14 +10200,6 @@ msgstr "靜止位置"
 
 msgid "Show Armature in binding pose state (no posing possible)"
 msgstr "於綁定姿勢狀態顯示骨架 (不可能姿勢處理)"
-
-
-msgid "Delay Deform"
-msgstr "延遲變形"
-
-
-msgid "Don't deform children when manipulating bones in Pose Mode"
-msgstr "當在姿勢模式中操控骨骼時不要讓子代變形"
 
 
 msgid "X-Axis Mirror"
@@ -11560,10 +11552,6 @@ msgstr "在套用外形鍵與其他所有修改器後填補曲線"
 
 msgid "Map Taper"
 msgstr "映射窄縮"
-
-
-msgid "Map effect of taper object on actually beveled curve"
-msgstr "映射窄縮物體對實際倒角曲線的效果"
 
 
 msgid "Enable the curve to become a translation path"
@@ -15586,10 +15574,6 @@ msgid "An area is maximized, filling this screen"
 msgstr "讓某區域最大化，填滿這個螢幕"
 
 
-msgid "All 3D View Editors"
-msgstr "所有視圖 3D 視圖編輯器"
-
-
 msgid "Animation Editors"
 msgstr "動畫編輯器"
 
@@ -18336,10 +18320,6 @@ msgid "Change line thickness based on a material attribute"
 msgstr "根據材質特性來變更線條厚度"
 
 
-msgid "Mask Layer"
-msgstr "遮罩分層"
-
-
 msgid "Single layer used for masking pixels"
 msgstr "用於遮罩像素的單一層"
 
@@ -18633,10 +18613,6 @@ msgstr "選取已成群組"
 
 msgid "Show/Hide"
 msgstr "顯示/隱藏"
-
-
-msgid "Specials"
-msgstr "特殊項"
 
 
 msgid "Tracking"
@@ -27775,10 +27751,6 @@ msgid "Directory of the file"
 msgstr "檔案的目錄"
 
 
-msgid "Display Type"
-msgstr "顯示類型"
-
-
 msgid "Automatically determine display type for files"
 msgstr "自動決定檔案的顯示類型"
 
@@ -34223,10 +34195,6 @@ msgid "Extrude selected vertices in a circle around the cursor in indicated view
 msgstr "在指示的視接口中圍以繞游標的圓擠出所選的點"
 
 
-msgid "Dupli"
-msgstr "複本"
-
-
 msgid "Make Duplicates"
 msgstr "創建複本"
 
@@ -35431,11 +35399,6 @@ msgid "Resize view so you can see selected nodes"
 msgstr "重新調整視圖大小以讓您可查看選取的節點"
 
 
-msgctxt "Operator"
-msgid "Viewer Border"
-msgstr "檢視器邊緣"
-
-
 msgid "Set the boundaries for viewer operations"
 msgstr "設定檢視器操作的邊界"
 
@@ -35722,15 +35685,6 @@ msgid "Duplicate Linked"
 msgstr "製作連結複本"
 
 
-msgctxt "Operator"
-msgid "Make Duplicates Real"
-msgstr "讓複本轉為真實"
-
-
-msgid "Make dupli objects attached to this object real"
-msgstr "讓連接到此物體的複本物體轉為真實"
-
-
 msgid "Parent newly created objects to the original duplicator"
 msgstr "讓新建立的物體認原始複本製作器為親代"
 
@@ -35964,15 +35918,6 @@ msgstr "將選取的物體結合到作用中物體中"
 
 
 msgctxt "Operator"
-msgid "Join as Shapes"
-msgstr "結合為外形"
-
-
-msgid "Merge selected objects to shapes of active object"
-msgstr "將所選物體與作用中物體的外形合併"
-
-
-msgctxt "Operator"
 msgid "Transfer UV Maps"
 msgstr "傳輸 UV 映射"
 
@@ -35997,11 +35942,6 @@ msgstr "清除物體的位置"
 
 msgid "Clear Delta"
 msgstr "清除增減"
-
-
-msgctxt "Operator"
-msgid "Make Dupli-Face"
-msgstr "創建複本面"
 
 
 msgctxt "Operator"
@@ -36761,10 +36701,6 @@ msgstr "重設絕對外形鍵的時機"
 msgctxt "Operator"
 msgid "Transfer Shape Key"
 msgstr "傳輸外形鍵"
-
-
-msgid "Copy another selected objects active shape to this one by applying the relative offsets"
-msgstr "透過套用相對偏移來複製另一個選取的物體作用中外形至此外形"
 
 
 msgid "Transformation Mode"
@@ -42799,11 +42735,6 @@ msgid "Move the view"
 msgstr "移動視圖"
 
 
-msgctxt "Operator"
-msgid "View Navigation"
-msgstr "視圖導覽"
-
-
 msgid "Interactively navigate around the scene (uses the mode (walk/fly) preference)"
 msgstr "互動式導覽場景 (採用模式 (行走/飛行) 偏好設定)"
 
@@ -44605,6 +44536,11 @@ msgstr "樣本線條"
 
 
 msgctxt "Operator"
+msgid "Scale"
+msgstr "縮放"
+
+
+msgctxt "Operator"
 msgid "Draw"
 msgstr "描繪"
 
@@ -44693,10 +44629,6 @@ msgid "Viscoelastic Springs"
 msgstr "黏彈性彈簧"
 
 
-msgid "Self Collision"
-msgstr "自身碰撞"
-
-
 msgid "Viscosity"
 msgstr "黏滯度"
 
@@ -44719,6 +44651,10 @@ msgstr "適應性領域"
 
 msgid "Behavior"
 msgstr "行為"
+
+
+msgid "Self Collision"
+msgstr "自身碰撞"
 
 
 msgid "Color Management"
@@ -44862,13 +44798,13 @@ msgstr "Dyntopo"
 
 
 msgctxt "Operator"
-msgid "Scale"
-msgstr "縮放"
+msgid "Box Mask"
+msgstr "方塊遮罩"
 
 
 msgctxt "Operator"
-msgid "Box Mask"
-msgstr "方塊遮罩"
+msgid "Lasso Mask"
+msgstr "套索遮罩"
 
 
 msgctxt "Operator"
@@ -49717,14 +49653,6 @@ msgstr "轉換輸入為浮點資料"
 
 msgid "Use a preview proxy and/or timecode index for this strip"
 msgstr "為此片段使用預覽代理與/或時間碼索引"
-
-
-msgid "Flip Time"
-msgstr "翻轉時間"
-
-
-msgid "Reverse frame order"
-msgstr "反轉框幀順序"
 
 
 msgid "Use Translation"
@@ -55008,24 +54936,12 @@ msgid "Display X Axis"
 msgstr "顯示 X 軸"
 
 
-msgid "Show the X axis line in perspective view"
-msgstr "在透視法視圖中顯示 X 軸"
-
-
 msgid "Display Y Axis"
 msgstr "顯示 Y 軸"
 
 
-msgid "Show the Y axis line in perspective view"
-msgstr "在透視法視圖中顯示 Y 軸"
-
-
 msgid "Display Z Axis"
 msgstr "顯示 Z 軸"
-
-
-msgid "Show the Z axis line in perspective view"
-msgstr "在透視法視圖中顯示 Z 軸"
 
 
 msgid "Draw Handles"
@@ -55116,10 +55032,6 @@ msgid "Display Grid Floor"
 msgstr "顯示格線地面"
 
 
-msgid "Show the ground plane grid in perspective view"
-msgstr "在透視法視圖中顯示地面格線"
-
-
 msgid "Draw Freestyle Edge Marks"
 msgstr "描繪 Freestyle 邊線標記"
 
@@ -55154,10 +55066,6 @@ msgstr "使用隱藏的線框顯示"
 
 msgid "Outline Selected"
 msgstr "外框已選取"
-
-
-msgid "Show an outline highlight around selected objects in non-wireframe views"
-msgstr "非線框視圖中在選取物體的周圍顯示外框標明"
 
 
 msgid "Relationship Lines"
@@ -56329,10 +56237,6 @@ msgid "Shapes"
 msgstr "外形"
 
 
-msgid "Delay Refresh"
-msgstr "延遲重新整理"
-
-
 msgctxt "Operator"
 msgid "Remove"
 msgstr "移除"
@@ -57117,6 +57021,11 @@ msgid "Transform:"
 msgstr "變換："
 
 
+msgctxt "Operator"
+msgid "Parent"
+msgstr "親子"
+
+
 msgid "Holes"
 msgstr "空洞"
 
@@ -57487,11 +57396,6 @@ msgstr "軌道框幀前進"
 
 
 msgctxt "Operator"
-msgid "Show Tracks"
-msgstr "顯示軌道"
-
-
-msgctxt "Operator"
 msgid "Set Floor"
 msgstr "設定地面"
 
@@ -57540,6 +57444,11 @@ msgstr "設定牆壁"
 msgctxt "Operator"
 msgid "Inverse"
 msgstr "反轉"
+
+
+msgctxt "Operator"
+msgid "Show Tracks"
+msgstr "顯示軌道"
 
 
 msgctxt "Operator"
@@ -58347,11 +58256,6 @@ msgstr "相反繞軌"
 
 
 msgctxt "Operator"
-msgid "Zoom Border..."
-msgstr "調焦邊緣..."
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "將作用中攝影機對齊視圖"
 
@@ -58379,11 +58283,6 @@ msgstr "前"
 msgctxt "Operator"
 msgid "Back"
 msgstr "後"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "親子"
 
 
 msgctxt "Operator"
@@ -58731,11 +58630,6 @@ msgstr "充填遮罩"
 msgctxt "Operator"
 msgid "Clear Mask"
 msgstr "清除遮罩"
-
-
-msgctxt "Operator"
-msgid "Lasso Mask"
-msgstr "套索遮罩"
 
 
 msgctxt "Operator"
@@ -59559,6 +59453,14 @@ msgid "Undefined Type"
 msgstr "未定義的類型"
 
 
+msgid "Can't add Rigid Body to non mesh object"
+msgstr "無法將剛體加入非網格物體"
+
+
+msgid "Can't create Rigid Body world"
+msgstr "無法建立剛體世界"
+
+
 msgctxt "Sequence"
 msgid "Color Balance"
 msgstr "色彩平衡"
@@ -59965,10 +59867,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "鍵處理集無法插入任何鍵幀"
 
 
-msgid "No active keying set"
-msgstr "無作用中鍵處理集"
-
-
 msgid "No active Keying Set"
 msgstr "無作用中鍵處理集"
 
@@ -60033,32 +59931,12 @@ msgid "Button doesn't appear to have any property information attached (ptr.data
 msgstr "按鈕似乎沒有連結任何屬性資訊 (ptr.data = %p，prop = %p)"
 
 
-msgid "No active keying set to remove"
-msgstr "無作用中鍵處理集可移除"
-
-
 msgid "Cannot remove built in keying set"
 msgstr "無法移除內建的鍵處理集"
 
 
-msgid "No active keying set to add empty path to"
-msgstr "無作用中鍵處理集可加入空路徑"
-
-
-msgid "No active keying set path to remove"
-msgstr "無作用中鍵處理集可移除路徑"
-
-
-msgid "No active keying set to remove a path from"
-msgstr "無作用中鍵處理集可供移除路徑"
-
-
 msgid "Cannot add property to built in keying set"
 msgstr "無法添加屬性至內建的鍵處理集"
-
-
-msgid "No active keying set to remove property from"
-msgstr "無作用中鍵處理集可供移除路徑"
 
 
 msgid "Cannot remove property from built in keying set"
@@ -60600,10 +60478,6 @@ msgid "Unknown"
 msgstr "未知"
 
 
-msgid "Cannot edit Proxy-Protected Constraint"
-msgstr "無法編輯代理受保護的約束"
-
-
 msgid "Use Clipping"
 msgstr "使用剪輯"
 
@@ -60674,6 +60548,10 @@ msgstr "此修改器僅可套用至樣條的點上"
 
 msgid "Proxy Protected"
 msgstr "受保護的代理"
+
+
+msgid "Cannot edit Proxy-Protected Constraint"
+msgstr "無法編輯代理受保護的約束"
 
 
 msgid "Delete the active position"
@@ -61679,14 +61557,6 @@ msgid "Timber"
 msgstr "木材"
 
 
-msgid "Can't add Rigid Body to non mesh object"
-msgstr "無法將剛體加入非網格物體"
-
-
-msgid "Can't create Rigid Body world"
-msgstr "無法建立剛體世界"
-
-
 msgid "Object has no Rigid Body settings to remove"
 msgstr "物體無可移除的剛體設定"
 
@@ -61871,10 +61741,6 @@ msgid "face data"
 msgstr "面資料"
 
 
-msgid "Unsupported audio format"
-msgstr "未支援的音訊格式"
-
-
 msgid "Compiled without sound support"
 msgstr "不使用音效支援編譯"
 
@@ -61935,6 +61801,14 @@ msgid "Search Area:"
 msgstr "搜尋區域："
 
 
+msgid "Marker is disabled at current frame"
+msgstr "目前框幀的標記已停用"
+
+
+msgid "Marker is enabled at current frame"
+msgstr "目前框幀的標記已啟用"
+
+
 msgid ", %d float channel(s)"
 msgstr "，%d 個浮點通道"
 
@@ -61969,14 +61843,6 @@ msgstr "框幀：- / %d"
 
 msgid "File: %s"
 msgstr "檔案：%s"
-
-
-msgid "Marker is disabled at current frame"
-msgstr "目前框幀的標記已停用"
-
-
-msgid "Marker is enabled at current frame"
-msgstr "目前框幀的標記已啟用"
 
 
 msgid "unsupported movie clip format"
@@ -62143,6 +62009,14 @@ msgid "Driver Value:"
 msgstr "驅動器值："
 
 
+msgid "Update Dependencies"
+msgstr "更新相依關係"
+
+
+msgid "Add Modifier"
+msgstr "添加修改器"
+
+
 msgid "ERROR: Invalid Python expression"
 msgstr "錯誤：無效的 Python 表述式"
 
@@ -62183,14 +62057,6 @@ msgid "Delete target variable"
 msgstr "刪除目標變數"
 
 
-msgid "Update Dependencies"
-msgstr "更新相依關係"
-
-
-msgid "Add Modifier"
-msgstr "添加修改器"
-
-
 msgid "View Properties"
 msgstr "檢視屬性"
 
@@ -62226,6 +62092,10 @@ msgstr "作用中 F 曲線不可編輯"
 
 msgid "Remove F-Modifiers from F-Curve to add keyframes"
 msgstr "從 F 曲線移除 F 修改器以添加鍵幀"
+
+
+msgid "Unsupported audio format"
+msgstr "未支援的音訊格式"
 
 
 msgid "No Euler Rotation F-Curves to fix up"
@@ -62272,6 +62142,18 @@ msgid "Hard coded Non-Linear, Gamma:1.7"
 msgstr "非線性硬式編碼，伽瑪值：1.7"
 
 
+msgid "Select Slot"
+msgstr "選取槽"
+
+
+msgid "Select Layer"
+msgstr "選取層"
+
+
+msgid "Select Pass"
+msgstr "選取通遞"
+
+
 msgid "Can't Load Image"
 msgstr "無法載入影像"
 
@@ -62298,18 +62180,6 @@ msgstr "RGB 位元組"
 
 msgid " + Z"
 msgstr " + Z"
-
-
-msgid "Select Slot"
-msgstr "選取槽"
-
-
-msgid "Select Layer"
-msgstr "選取層"
-
-
-msgid "Select Pass"
-msgstr "選取通遞"
 
 
 msgid "unsupported image format"

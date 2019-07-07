@@ -84,11 +84,7 @@ import re
 
 # Avoid maintaining multiple blendfile modules
 import sys
-sys.path.append(os.path.join(
-    os.path.dirname(__file__),
-    "..", "..", "..",
-    "release", "scripts", "addons", "io_blend_utils", "blend",
-))
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "modules"))
 del sys
 
 import blendfile

@@ -28,23 +28,12 @@
 #                                                                              #
 # ############################################################################ #
 
-bl_info = {
-    "name": "UV to Mesh",
-    "author": "Alessandro Zomparelli (Co-de-iT)",
-    "version": (0, 1, 1),
-    "blender": (2, 79, 0),
-    "location": "",
-    "description": "Create a new Mesh based on active UV",
-    "warning": "",
-    "wiki_url": "",
-    "category": "Mesh"}
-
-
 import bpy
 import math
 from bpy.types import Operator
 from bpy.props import BoolProperty
 from mathutils import Vector
+from .utils import *
 
 
 class uv_to_mesh(Operator):
@@ -53,22 +42,22 @@ class uv_to_mesh(Operator):
     bl_description = ("Create a new Mesh based on active UV")
     bl_options = {'REGISTER', 'UNDO'}
 
-    apply_modifiers: BoolProperty(
+    apply_modifiers : BoolProperty(
             name="Apply Modifiers",
-            default=False,
+            default=True,
             description="Apply object's modifiers"
             )
-    vertex_groups: BoolProperty(
+    vertex_groups : BoolProperty(
             name="Keep Vertex Groups",
-            default=False,
+            default=True,
             description="Transfer all the Vertex Groups"
             )
-    materials: BoolProperty(
+    materials : BoolProperty(
             name="Keep Materials",
             default=True,
             description="Transfer all the Materials"
             )
-    auto_scale: BoolProperty(
+    auto_scale : BoolProperty(
             name="Resize",
             default=True,
             description="Scale the new object in order to preserve the average surface area"
@@ -76,7 +65,7 @@ class uv_to_mesh(Operator):
 
     def execute(self, context):
         bpy.ops.object.mode_set(mode='OBJECT')
-        for o in bpy.data.objects:
+        for o in bpy.data.objects and bpy.context.view_layer.objects:
             o.select_set(False)
         bpy.context.object.select_set(True)
 
@@ -85,11 +74,12 @@ class uv_to_mesh(Operator):
             bpy.ops.object.convert(target='MESH')
         ob0 = bpy.context.object
 
-        if self.apply_modifiers:
-            depsgraph = context.evaluated_depsgraph_get()
-            me0 = bpy.data.meshes.new_from_object(ob0.evaluated_get(depsgraph))
-        else:
-            me0 = bpy.data.new_from_meshed(ob0)
+#        me0 = ob0.to_mesh(bpy.context.depsgraph, apply_modifiers=self.apply_modifiers)
+        #if self.apply_modifiers: me0 = simple_to_mesh(ob0)
+        #else: me0 = ob0.data.copy()
+        name0 = ob0.name
+        ob0 = convert_object_to_mesh(ob0, apply_modifiers=self.apply_modifiers, preserve_status=False)
+        me0 = ob0.data
         area = 0
 
         verts = []
@@ -115,15 +105,15 @@ class uv_to_mesh(Operator):
 
                 return {'CANCELLED'}
 
-        name = ob0.name + 'UV'
+        name = name0 + 'UV'
         # Create mesh and object
         me = bpy.data.meshes.new(name + 'Mesh')
         ob = bpy.data.objects.new(name, me)
 
         # Link object to scene and make active
         scn = bpy.context.scene
-        scn.objects.link(ob)
-        scn.objects.active = ob
+        bpy.context.collection.objects.link(ob)
+        bpy.context.view_layer.objects.active = ob
         ob.select_set(True)
 
         # Create mesh from given verts, faces.
@@ -136,20 +126,21 @@ class uv_to_mesh(Operator):
                 new_area += p.area
             if new_area == 0:
                 self.report({'ERROR'}, "Impossible to generate mesh from UV")
+                bpy.data.objects.remove(ob0)
 
                 return {'CANCELLED'}
 
         # VERTEX GROUPS
         if self.vertex_groups:
-            try:
-                for group in ob0.vertex_groups:
-                    index = group.index
-                    ob.vertex_groups.new(name=group.name)
-                    for p in me0.polygons:
-                        for vert, loop in zip(p.vertices, p.loop_indices):
-                            ob.vertex_groups[index].add([loop], group.weight(vert), "ADD")
-            except:
-                pass
+            for group in ob0.vertex_groups:
+                index = group.index
+                ob.vertex_groups.new(name=group.name)
+                for p in me0.polygons:
+                    for vert, loop in zip(p.vertices, p.loop_indices):
+                        try:
+                            ob.vertex_groups[index].add([loop], group.weight(vert), 'REPLACE')
+                        except:
+                            pass
 
         ob0.select_set(False)
         if self.auto_scale:
@@ -173,7 +164,7 @@ class uv_to_mesh(Operator):
                     ob.data.polygons[i].material_index = face_materials[i]
             except:
                 pass
-
+        '''
         if self.apply_modifiers:
             bpy.ops.object.mode_set(mode='OBJECT')
             ob.select_set(False)
@@ -181,17 +172,8 @@ class uv_to_mesh(Operator):
             bpy.ops.object.delete(use_global=False)
             ob.select_set(True)
             bpy.context.view_layer.objects.active = ob
+        '''
 
+        bpy.data.objects.remove(ob0)
+        bpy.data.meshes.remove(me0)
         return {'FINISHED'}
-
-
-def register():
-    bpy.utils.register_class(uv_to_mesh)
-
-
-def unregister():
-    bpy.utils.unregister_class(uv_to_mesh)
-
-
-if __name__ == "__main__":
-    register()

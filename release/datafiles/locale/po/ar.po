@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'0efe89bdd810')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-03 00:00:00\n"
+"POT-Creation-Date: 2019-07-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -3870,14 +3870,6 @@ msgstr "ﺮﻳﻭﺪﺘﻟﺍ ﻡﺪﺨﺘﺳﺍ"
 
 msgid "Use the target's rotation to determine floor"
 msgstr "ﺢﻄﺴﻟﺍ ﺪﻳﺪﺤﺘﻟ ﻑﺪﻬﻟﺍ ﺮﻳﻭﺪﺗ ﻞﻤﻌﺘﺳﺇ"
-
-
-msgid "Sticky"
-msgstr "ﻖﺻﻻ﻿"
-
-
-msgid "Immobilize object while constrained"
-msgstr "ﺪﻴﻴﻘﺘﻟﺍ ءﺎﻨﺛﺃ ﻦﺋﺎﻜﻟﺍ ﻞّﺷ"
 
 
 msgid "Follow Path Constraint"
@@ -9743,6 +9735,10 @@ msgid "Bones"
 msgstr "ﻡﺎﻈﻌﻟﺍ"
 
 
+msgid "Display Type"
+msgstr "ﺽﺮﻌﻟﺍ ﻉﻮﻧ"
+
+
 msgid "Octahedral"
 msgstr "ﻲﻧﺎﻤﺛ ﻢﺴﺠﻣ"
 
@@ -9829,14 +9825,6 @@ msgstr "ﺔﺣﺍﺮﻟﺍ ﻊﻗﻮﻣ"
 
 msgid "Show Armature in binding pose state (no posing possible)"
 msgstr "(ﻦﻜﻤﻣ ﺮﻴﻏ ﻚﻳﺮﺤﺘﻟﺍ)ﻂﺑﺮﻟﺍ ﺔﻔﻗﻭ ﺔﻟﺎﺣ ﻲﻓ ﻞﻜﻴﻬﻟﺍ ﺮﻬﻇﺍ"
-
-
-msgid "Delay Deform"
-msgstr "ﻊﻳﻮﻄﺗ ﺮﺧﺃ"
-
-
-msgid "Don't deform children when manipulating bones in Pose Mode"
-msgstr "ﺔﻔﻗﻮﻟﺍ ﻊﺿﻭ ﻲﻓ ﻡﺎﻈﻌﻟﺎﺑ ﺐﻋﻼ﻿ﺘﻟﺍ ﺪﻨﻋ ﻉﻭﺮﻔﻟﺍ ﻉﻮﻄﺗ ﻻ﻿"
 
 
 msgid "X-Axis Mirror"
@@ -11197,10 +11185,6 @@ msgstr "ﺕﺍﺮﻴﻐﻤﻟﺍ ﻞﻛ ﻭ ﻞﻜﺸﻟﺍ ﺢﻴﺗﺎﻔﻣ �
 
 msgid "Map Taper"
 msgstr "ﺭﺎﺼﺘﺧﻹ﻿ﺍ ﻉﻮﻧ"
-
-
-msgid "Map effect of taper object on actually beveled curve"
-msgstr "ﺔﻴﻠﻌﻓ ﺔﻔﻄﺷ ﻭﺫ ﻰﻨﺤﻨﻣ ﻰﻠﻋ ﻉﻮّﻄﻤﻟﺍ ﻦﺋﺎﻛ ﺮﻴﺛﺄﺗ ﻖﻓﺍﻭ"
 
 
 msgid "Enable the curve to become a translation path"
@@ -15255,10 +15239,6 @@ msgid "Use Preview Range"
 msgstr "ﺔﻨﻳﺎﻌﻤﻟﺍ ﻯﺪﻣ ﻡﺪﺨﺘﺳﺍ"
 
 
-msgid "Use an alternative start/end frame range for animation playback and OpenGL renders instead of the Render properties start/end frame range"
-msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﺺﺋﺎﺼﺨﻟ ﺔﻳﺎﻬﻨﻟﺍ/ﺔﻳﺍﺪﺒﻟﺍ ﺭﺎﻃﺇ ﻯﺪﻣ ﻦﻣ ﻼً﻿ﺑ ﻝﺃ ﻲﺟ ﻦﺑﻭﺍ ﺕﺍﺮﻴﻴﺼﺗ ﻭ ﺕﺎﻜﻳﺮﺤﺘﻟﺍ ﺽﺮﻌﻟ ﺔﻳﺎﻬﻨﻠﻟ/ﺔﻳﺍﺪﺒﻠﻟ ﻞﻳﺪﺑ ﺭﺎﻃﺇ ﻯﺪﻣ ﻡﺪﺨﺘﺳﺍ"
-
-
 msgid "Stamp Note"
 msgstr "ﺔﻤﺻﻭ ﻦﻳﻭﺪﺗ"
 
@@ -15309,10 +15289,6 @@ msgstr "ﺔﺷﺎﺸﻟﺍ ﺔﺌﺒﻌﺘﻟ ﺔﻘﻄﻨﻤﻟﺍ ﺮﻴﺒﻜ
 
 msgid "Follow current frame in editors"
 msgstr "ﺕﺍﺭﺮﺤﻣ ﻲﻓ ﻲﻟﺎﺤﻟﺍ ﺭﺎﻃﻻ﻿ﺍ ﻊﺒﺗﺍ"
-
-
-msgid "All 3D View Editors"
-msgstr " 3D ـﻟﺍ ﺬﻔﻨﻣ ﺭﺍﺮﺤﻣ ﻞﻛ"
 
 
 msgid "Animation Editors"
@@ -24177,10 +24153,6 @@ msgid "Directory of the file"
 msgstr "ﻒﻠﻤﻟﺍ ﺪﻠّﺠﻣ"
 
 
-msgid "Display Type"
-msgstr "ﺽﺮﻌﻟﺍ ﻉﻮﻧ"
-
-
 msgid "Automatically determine display type for files"
 msgstr "ﺎﻴﺗﺍﺫ ﺕﺎﻔﻠﻤﻠﻟ ﺽﺮﻌﻟﺍ ﻉﻮﻧ ﺩﺪﺣ"
 
@@ -27856,10 +27828,6 @@ msgid "Reverse current order of selected elements"
 msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺮﺻﺎﻨﻌﻠﻟ ﻲﻟﺎﺤﻟﺍ ﺐﻴﺗﺮﺘﻟﺍ ﺲﻜﻋﺍ"
 
 
-msgid "Dupli"
-msgstr "ﺭﺮﻜﻣ"
-
-
 msgid "Make Duplicates"
 msgstr "ﺦﺴﻧ ﻞﻌﺟﺇ"
 
@@ -28526,11 +28494,6 @@ msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺪﻘﻌﻟﺍ ﺮﻬﻈﺗ ﻰﺘﺣ ﺮﻈ�
 
 
 msgctxt "Operator"
-msgid "Viewer Border"
-msgstr "ﺽﺭﺎﻌﻟﺍ ﺪﺣ"
-
-
-msgctxt "Operator"
 msgid "Add Object"
 msgstr "ﻦﺋﺎﻛ ﻒﺿﺃ"
 
@@ -28669,15 +28632,6 @@ msgid "Duplicate Linked"
 msgstr "ﺔﻄﺒﺗﺮﻤﻟﺍ ﺭﺮﻛ"
 
 
-msgctxt "Operator"
-msgid "Make Duplicates Real"
-msgstr "ﺔﻴﻘﻴﻘﺣ ﺭﺍﺮﻜﺘﻟﺍ ﻝﻮﺣ"
-
-
-msgid "Make dupli objects attached to this object real"
-msgstr "ﺔﻴﻘﻴﻘﺣ ﻦﺋﺎﻜﻟﺍ ﺍﺬﻬﺑ ﺔﻄﺒﺗﺮﻤﻟﺍ ﺭﺍﺮﻜﺘﻟﺍ ﺕﺎﻨﺋﺎﻛ ﻞﻌﺟﺍ"
-
-
 msgid "Keep Hierarchy"
 msgstr "ﺔﻴﻠﻜﻴﻬﻟﺍ ﻆﻔﺣﺍ"
 
@@ -28798,18 +28752,8 @@ msgstr "ﺭﺎﺘﺨﻣ ﺮﻴﻐﻠﻟ ﺮﻴﻴﺼﺘﻟﺍ ﺪﻴﻗ"
 
 
 msgctxt "Operator"
-msgid "Join as Shapes"
-msgstr "ﻝﺎﻜﺷﺄﻛ ﺞﻣﺩﺇ"
-
-
-msgctxt "Operator"
 msgid "Clear Location"
 msgstr "ﻊﻗﻮﻤﻟﺍ ﻂﺒﺿ ﺪﻋﺍ"
-
-
-msgctxt "Operator"
-msgid "Make Dupli-Face"
-msgstr "ﺭﺮﻜﻤﻟﺍ ﻪﺟﻮﻟﺍ ﺔﻴﺻﺎﺧ ﻞﻌﻓ"
 
 
 msgctxt "Operator"
@@ -32287,11 +32231,6 @@ msgstr "ﻲﻠّﺤﻣ ﺮﻈﻨﻣ"
 
 
 msgctxt "Operator"
-msgid "View Navigation"
-msgstr "ﺮﻈﻨﻤﻟﺍ ﺢﻔّﺼﺗ"
-
-
-msgctxt "Operator"
 msgid "NDOF Orbit View"
 msgstr "NDOF ﺮﻈﻨﻤﻟﺍ ﺭﺍﺪﻣ"
 
@@ -33431,6 +33370,11 @@ msgstr "ﻞﺋﺍﻮﺴﻠﻟ ﺔﻘﺒﺴﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ"
 
 
 msgctxt "Operator"
+msgid "Scale"
+msgstr "ﻢﺠّﺣ"
+
+
+msgctxt "Operator"
 msgid "Draw"
 msgstr "ﻢﺳﺭﺍ"
 
@@ -33507,10 +33451,6 @@ msgid "Viscoelastic Springs"
 msgstr "ﺔﺟﺰﻠﻟﺍ ﺕﺍﺮﺗﻮﺘﻟﺍ"
 
 
-msgid "Self Collision"
-msgstr "ﻲﺗﺍﺬﻟﺍ ﻞﻋﺎﻔﺘﻟﺍ"
-
-
 msgid "Viscosity"
 msgstr "ﺔﺟﻭﺰﻠﻟﺍ"
 
@@ -33529,6 +33469,10 @@ msgstr "ﺔﻤﻠﻗﺄﺘﻣ ﺕﺎﻓﺎﺴﻣ"
 
 msgid "Behavior"
 msgstr "ﻙﻮﻠﺴﻟﺍ"
+
+
+msgid "Self Collision"
+msgstr "ﻲﺗﺍﺬﻟﺍ ﻞﻋﺎﻔﺘﻟﺍ"
 
 
 msgid "Color Management"
@@ -33625,11 +33569,6 @@ msgstr "ﻥﻮﻠﻟﺍ ﻢﺳﺭﺍ"
 
 msgid "Motion Tracking"
 msgstr "ﺔﻛﺮﺤﻟﺍ ﺔﻘﺣﻼ﻿ﻣ"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "ﻢﺠّﺣ"
 
 
 msgctxt "Operator"
@@ -35147,10 +35086,6 @@ msgstr "ﺔﺠﺴﻧﻷ﻿ﺍ ﻦﻋ ﺚﺤﺒﻠﻟ ﻲﺿﺍﺮﺘﻓﻹ﻿ﺍ
 
 msgid "Auto Save Temporary Files"
 msgstr "ﺔﺘﻗﺆﻤﻟﺍ ﺕﺎﻔﻠﻤﻟﺍ ﺎﻴﺗﺍﺫ ﻆﻔﺣﺇ"
-
-
-msgid "Automatic saving of temporary files in temp directory, uses process ID (Sculpt or edit mode data won't be saved!')"
-msgstr "(!ﺮﻳﺮﺤﺘﻟﺍ ﻭﺃ ﺖﺤﻨﻟﺍ ﻊﺿﻭ ﺕﺎﻧﺎﻴﺑ ﻆﻔﺣ ﻢﺘﻳ ﻦﻟ) ﺔﻴﻠﻤﻌﻟﺍ ﻑﺮّﻌﻣ ﻞﻤﻌﺘﺴﻳ ،ﺖﻗﺆﻣ ﺪﻠﺠﻣ ﻲﻓ ﺔﺘﻗﺆﻤﻟﺍ ﺕﺎﻔﻠﻤﻠﻟ ﻲﺗﺍﺬﻟﺍ ﻆﻔﺤﻟﺍ"
 
 
 msgid "Compress File"
@@ -37658,10 +37593,6 @@ msgid "Convert Float"
 msgstr "ﻱﺮﺴﻜﻟ ﻝﻮّﺣ"
 
 
-msgid "Flip Time"
-msgstr "ﻦﻣﺰﻟﺍ ﺐﻠﻗﺍ"
-
-
 msgid "Use Translation"
 msgstr "ﺔﺣﺍﺯﻹ﻿ﺍ ﻡﺪﺨﺘﺳﺍ"
 
@@ -37900,10 +37831,6 @@ msgstr "ﺔﻟﺎﻌّﻔﻟﺍ ﺪﻬﺸﻤﻟﺍ ﺍﺮﻴﻤﻛ ﻯﺪﻌﺗ"
 
 msgid "Use Grease Pencil"
 msgstr "ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻗ ﻡﺪﺨﺘﺳﺇ"
-
-
-msgid "Use Sequence"
-msgstr "ﻞﺴﻠﺴﺘﻟﺍ ﻡﺪﺨﺘﺳﺍ"
 
 
 msgid "Sound Sequence"
@@ -41202,10 +41129,6 @@ msgid "Shapes"
 msgstr "ﻝﺎﻜﺷﻷ﻿ﺍ"
 
 
-msgid "Delay Refresh"
-msgstr "ﺚﻳﺪﺤﺘﻟﺍ ﺮﺧّﺃ"
-
-
 msgctxt "Operator"
 msgid "Remove"
 msgstr "ﺔﻟﺍﺯﺇ"
@@ -41858,6 +41781,11 @@ msgstr ":ﻞﻳﻮﺤﺗ"
 
 
 msgctxt "Operator"
+msgid "Parent"
+msgstr "ﻞﺻﺃ"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "ﺶﻣﺎﻬﻟﺍ ﻢﺠّﺣ"
 
@@ -42186,11 +42114,6 @@ msgstr "ﻡﺎﻣﻷ﻿ﺍ ﻰﻟﺇ ﺮﻃﻷ﻿ﺍ ﻊﺒﺘﺗ"
 
 
 msgctxt "Operator"
-msgid "Show Tracks"
-msgstr "ﺕﺍﺭﺎﺴﻤﻟﺍ ﺮﻬﻇﺃ"
-
-
-msgctxt "Operator"
 msgid "Set Floor"
 msgstr "ﺽﺭﻷ﻿ﺍ ﺩﺪﺣ"
 
@@ -42238,6 +42161,16 @@ msgstr "ﺲﻜﻌﻟﺍ ﺩﺪﺣ"
 
 
 msgctxt "Operator"
+msgid "Show Tracks"
+msgstr "ﺕﺍﺭﺎﺴﻤﻟﺍ ﺮﻬﻇﺃ"
+
+
+msgctxt "Operator"
+msgid "View Fit"
+msgstr "ﺮﻈﻨﻤﻟﺍ ﺐﺳﺎﻧ"
+
+
+msgctxt "Operator"
 msgid "Enable Markers"
 msgstr "ﺕﺎﻣﻼ﻿ﻌﻟﺍ ﻞﻌّﻓ"
 
@@ -42245,11 +42178,6 @@ msgstr "ﺕﺎﻣﻼ﻿ﻌﻟﺍ ﻞﻌّﻓ"
 msgctxt "Operator"
 msgid "Unlock Tracks"
 msgstr "ﺕﺍﺭﺎﺴﻤﻟﺍ ﻞﻔﻗ ﻚﻓ"
-
-
-msgctxt "Operator"
-msgid "View Fit"
-msgstr "ﺮﻈﻨﻤﻟﺍ ﺐﺳﺎﻧ"
 
 
 msgid "Solve error: %.4f"
@@ -42968,11 +42896,6 @@ msgstr "ﺍﺮﻴﻤﻜﻟﺍ"
 
 
 msgctxt "Operator"
-msgid "Zoom Border..."
-msgstr "...ﺐﻳﺮﻘﺘﻟﺍ ﺩﻭﺪﺣ"
-
-
-msgctxt "Operator"
 msgid "Align Active Camera to View"
 msgstr "ﺮﻈﻨﻤﻟﺍ ﻰﻟﺇ ﺍﺮﻤﻜﻟﺍ ﺓﺍﺫﺎﺤﻣ"
 
@@ -43000,11 +42923,6 @@ msgstr "ﻡﺎﻣﺃ"
 msgctxt "Operator"
 msgid "Back"
 msgstr "ﻒﻠﺧ"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "ﻞﺻﺃ"
 
 
 msgctxt "Operator"
@@ -44120,10 +44038,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "ﺎﻌﻣ ﻞﺠﺴﺗ ﻲﺘﻟﺍ ﺕﺍﺩﺍﺪﻋﻻ﻿ﺍ ﻑﺮﻌﺘﻟ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺕﺍﺭﺎﺴﻣ"
 
 
-msgid "No active keying set"
-msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ"
-
-
 msgid "No active Keying Set"
 msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ"
 
@@ -44132,32 +44046,12 @@ msgid "Keying set failed to remove any keyframes"
 msgstr "ﺎﻌﻣ ﻞﺠﺴﺗ ﻲﺘﻟﺍ ﺕﺍﺩﺍﺪﻋﻻ﻿ﺍ ﻑﺮﻌﺘﻟ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺕﺍﺭﺎﺴﻣ"
 
 
-msgid "No active keying set to remove"
-msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ"
-
-
 msgid "Cannot remove built in keying set"
 msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﻑﺬﺣﺍ"
 
 
-msgid "No active keying set to add empty path to"
-msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺭﺎﺴﻣ ﻑﺬﺣﺍ"
-
-
-msgid "No active keying set path to remove"
-msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺭﺎﺴﻣ ﻑﺬﺣﺍ"
-
-
-msgid "No active keying set to remove a path from"
-msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺭﺎﺴﻣ ﻑﺬﺣﺍ"
-
-
 msgid "Cannot add property to built in keying set"
 msgstr "ﺔﻴﻠﺧﺍﺪﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺕﺎﻋﻮﻤﺠﻤﻟ ﻊﺟﺍﺮﻟﺍ ﻞﻌﻔﻟﺍ ﺕﺎﻓﺮﻌﻣ"
-
-
-msgid "No active keying set to remove property from"
-msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺭﺎﺴﻣ ﻑﺬﺣﺍ"
 
 
 msgid "Cannot remove property from built in keying set"
@@ -45513,6 +45407,14 @@ msgid "Driver Value:"
 msgstr ":ﻞﻐﺸﻤﻟﺍ ﺔﻤﻴﻗ"
 
 
+msgid "Update Dependencies"
+msgstr "ﺕﺎﻳﺩﺎﻤﺘﻋﻻ﻿ﺍ ﺙﺪﺣ"
+
+
+msgid "Add Modifier"
+msgstr "ﺮﻴﻐﻣ ﻒﺿﺃ"
+
+
 msgid "ERROR: Invalid Python expression"
 msgstr "ﺢﻴﺤﺻ ﺮﻴﻏ ﻥﻮﺜﻳﺎﺑ ﺮﻴﺒﻌﺗ :ﺄﻄﺧ"
 
@@ -45523,14 +45425,6 @@ msgstr "ﺔﺤﻴﺤﺻ ﺮﻴﻏ ﻑﺪﻬﻟﺍ ﺓﺎﻨﻗ :ﺄﻄﺧ"
 
 msgid "Delete target variable"
 msgstr "ﻑﺪﻬﻟﺍ ﺮﻴﻐﺘﻣ ﻑﺬﺣﺍ"
-
-
-msgid "Update Dependencies"
-msgstr "ﺕﺎﻳﺩﺎﻤﺘﻋﻻ﻿ﺍ ﺙﺪﺣ"
-
-
-msgid "Add Modifier"
-msgstr "ﺮﻴﻐﻣ ﻒﺿﺃ"
 
 
 msgid "View Properties"
@@ -45561,6 +45455,22 @@ msgid "Hard coded Non-Linear, Gamma:1.7"
 msgstr "1.0 :ﺔﻴﻄﺧ ﺮﻴﻏ ﺎﻘﺒﺴﻣ ﺓﺩﺪﺤﻣ ﺓﺭﺎﻧﺍ"
 
 
+msgid "Select Slot"
+msgstr "ﺓﺭﺄﻔﻟﺍ ﺮﺘﺧﺍ"
+
+
+msgid "Select Layer"
+msgstr "ﺔﻘﺒﻄﻟﺍ ﺮﺘﺧﺍ"
+
+
+msgid "Select Pass"
+msgstr "ﺮﻤﻤﻟﺍ ﺮﺘﺧﺍ"
+
+
+msgid "Select View"
+msgstr "ﺮﻈﻨﻤﻟﺍ ﺮﺘﺧﺍ"
+
+
 msgid "Can't Load Image"
 msgstr "ﺓﺭﻮﺼﻟﺍ ﻞﻴﻤﺤﺗ ﻦﻜﻤﻳ ﻻ﻿"
 
@@ -45583,22 +45493,6 @@ msgstr "RGB ﺖﻳﺎﺑ"
 
 msgid " + Z"
 msgstr " + Z"
-
-
-msgid "Select Slot"
-msgstr "ﺓﺭﺄﻔﻟﺍ ﺮﺘﺧﺍ"
-
-
-msgid "Select Layer"
-msgstr "ﺔﻘﺒﻄﻟﺍ ﺮﺘﺧﺍ"
-
-
-msgid "Select Pass"
-msgstr "ﺮﻤﻤﻟﺍ ﺮﺘﺧﺍ"
-
-
-msgid "Select View"
-msgstr "ﺮﻈﻨﻤﻟﺍ ﺮﺘﺧﺍ"
 
 
 msgid "unsupported image format"
