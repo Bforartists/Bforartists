@@ -1342,8 +1342,8 @@ select_intersect
 select_set
 select_subtract
 fcurve_snapshot
-file_3d
-file_cache
+#def_icon_blank(1360
+#def_icon_blank(1361
 object_hidden
 #def_icon_blank(1363
 
