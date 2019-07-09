@@ -89,7 +89,9 @@ class _defs_view3d_generic:
     def cursor():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("view3d.cursor3d")
+            layout.use_property_split = False
             layout.prop(props, "use_depth")
+            layout.use_property_split = True
             layout.prop(props, "orientation")
         return dict(
             idname="builtin.cursor",
@@ -467,6 +469,7 @@ class _defs_edit_mesh:
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("mesh.rip_move")
             props_macro = props.MESH_OT_rip
+            layout.use_property_split = False
             layout.prop(props_macro, "use_fill")
 
         return dict(
@@ -502,6 +505,7 @@ class _defs_edit_mesh:
     def edge_slide():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("transform.edge_slide")
+            layout.use_property_split = False
             layout.prop(props, "correct_uv")
 
         return dict(
@@ -566,6 +570,7 @@ class _defs_edit_mesh:
     def inset():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("mesh.inset")
+            layout.use_property_split = False
             layout.prop(props, "use_outset")
             layout.prop(props, "use_individual")
             layout.prop(props, "use_even_offset")
@@ -587,6 +592,7 @@ class _defs_edit_mesh:
             layout.prop(props, "offset_type")
             layout.prop(props, "segments")
             layout.prop(props, "profile", slider=True)
+            layout.use_property_split = False
             layout.prop(props, "vertex_only")
 
         return dict(
@@ -664,6 +670,7 @@ class _defs_edit_mesh:
             props_macro = props.MESH_OT_loopcut
             layout.prop(props_macro, "number_cuts")
             props_macro = props.TRANSFORM_OT_edge_slide
+            layout.use_property_split = False
             layout.prop(props_macro, "correct_uv")
 
         return dict(
@@ -745,6 +752,7 @@ class _defs_edit_mesh:
     def shrink_fatten():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("transform.shrink_fatten")
+            layout.use_property_split = False
             layout.prop(props, "use_even_offset")
 
         return dict(
@@ -770,6 +778,7 @@ class _defs_edit_mesh:
     def knife():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("mesh.knife_tool")
+            layout.use_property_split = False
             layout.prop(props, "use_occlude_geometry")
             layout.prop(props, "only_selected")
 
@@ -817,9 +826,11 @@ class _defs_edit_curve:
             if cps.curve_type == 'BEZIER':
                 col.prop(cps, "error_threshold")
                 col.prop(cps, "fit_method")
+                col.use_property_split = False
                 col.prop(cps, "use_corners_detect")
 
                 col = layout.row()
+                layout.use_property_split = True
                 col.active = cps.use_corners_detect
                 col.prop(cps, "corner_angle")
 
