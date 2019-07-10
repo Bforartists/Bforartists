@@ -1552,7 +1552,7 @@ class VIEW3D_MT_edit_mesh_select_similar(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        select_mode = context.tool_settings.mesh_select_mode
+        select_mode = _context.tool_settings.mesh_select_mode
 
         # Vertices select mode
         if tuple(select_mode) == (True, False, False):
@@ -1680,7 +1680,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.separator()
 
         # topology
-        tool_settings = context.tool_settings
+        tool_settings = _context.tool_settings
         if tool_settings.mesh_select_mode[2] is False:
             layout.operator("mesh.select_non_manifold", text="Non Manifold", icon = "SELECT_NONMANIFOLD")
         layout.operator("mesh.select_loose", text="Loose Geometry", icon = "SELECT_LOOSE")
