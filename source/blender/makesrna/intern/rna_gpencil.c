@@ -1464,8 +1464,7 @@ static void rna_def_gpencil_layer(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(prop,
                            "Lock Material",
-                           "Lock Material\nDisallow Locked Materials Editing",
-                           "Avoids editing locked materials in the layer");
+                           "Lock Material\nAvoids editing locked materials in the layer");
   RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, NULL);
 
   prop = RNA_def_property(srna, "mask_layer", PROP_BOOLEAN, PROP_NONE);
