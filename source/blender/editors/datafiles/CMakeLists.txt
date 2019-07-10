@@ -176,6 +176,7 @@ recover_last
 duplicate
 fullscreen_enter
 fullscreen_exit
+#blank1  // not actually blank - this is used all over the place
 load_gitf
 save_gitf
 stucci_tex
@@ -198,7 +199,7 @@ particlebrush_puff
 particlebrush_smooth
 particlebrush_weight
 particlebrush_length
-#def_icon_blank(216
+mod_mesh_cache
 add
 #def_icon_blank(218
 align_center
@@ -312,7 +313,7 @@ decorate_override
 decorate_unlocked
 decorate_locked
 face_maps
-#DEF_ICON_BLANK(330)
+#def_icon_blank(330
 file_new
 filebrowser
 smooth_laplacian
@@ -1406,11 +1407,11 @@ con_rotlimit
 
 # ------------------------- row 25 --------------------------*/
 
-bbox
-wire
-solid
-smooth
-potato
+#def_icon_blank(1424
+#def_icon_blank(1425
+#def_icon_blank(1426
+#def_icon_blank(1427
+#def_icon_blank(1428
 transfer_uv
 ortho
 push_pull
@@ -1513,7 +1514,7 @@ con_floor
 con_followpath
 con_pivot
 con_shrinkwrap
-#def_icon_blank(1531
+con_action
 #def_icon_blank(1532
 #def_icon_blank(1533
 #def_icon_blank(1534
