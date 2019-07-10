@@ -1408,16 +1408,16 @@ DEF_ICON_COLOR(NODE_SSS)
 DEF_ICON_COLOR(NODE_STABILIZE2D)
 DEF_ICON_BLANK(1409)
 
-DEF_ICON_MODIFIER(CON_CAMERASOLVER)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_FOLLOWTRACK)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_OBJECTSOLVER)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_LOCLIKE)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_ROTLIKE)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_SIZELIKE)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_TRANSLIKE)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_DISTLIMIT)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_LOCLIMIT)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_ROTLIMIT)/*bfa - new iconset*/
+DEF_ICON_COLOR(CON_CAMERASOLVER)   /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_FOLLOWTRACK)     /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_OBJECTSOLVER)   /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_LOCLIKE)         /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_ROTLIKE)        /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_SIZELIKE)        /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_TRANSLIKE)      /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_DISTLIMIT)       /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_LOCLIMIT)       /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_ROTLIMIT)        /*bfa - new iconset*/
 
 /* ------------------------- Row 25 --------------------------*/
 
@@ -1465,16 +1465,16 @@ DEF_ICON_COLOR(NODE_TONEMAP)
 DEF_ICON_COLOR(NODE_TOONSHADER)
 DEF_ICON_COLOR(NODE_TRACKPOSITION)
 
-DEF_ICON_MODIFIER(CON_SIZELIMIT)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_SAMEVOL)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_TRANSFORM)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_TRANSFORM_CACHE)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_CLAMPTO)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_KINEMATIC)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_LOCKTRACK)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_SPLINEIK)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_STRETCHTO)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_TRACKTO)/*bfa - new iconset*/
+DEF_ICON_COLOR(CON_SIZELIMIT)   /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_SAMEVOL)           /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_TRANSFORM)   /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_TRANSFORM_CACHE)   /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_CLAMPTO)         /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_KINEMATIC)         /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_LOCKTRACK)       /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_SPLINEIK)          /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_STRETCHTO)       /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_TRACKTO)           /*bfa - new iconset*/
 
 /* ------------------------- Row 26 --------------------------*/
 
@@ -1522,13 +1522,13 @@ DEF_ICON_COLOR(NODE_VECTOR)
 DEF_ICON_COLOR(NODE_VECTOR_BLUR)
 DEF_ICON_COLOR(NODE_VECTOR_TRANSFORM)
 
-DEF_ICON_MODIFIER(CON_ARMATURE)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_CHILDOF)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_FLOOR)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_FOLLOWPATH)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_PIVOT)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_SHRINKWRAP)/*bfa - new iconset*/
-DEF_ICON_MODIFIER(CON_ACTION)     /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_ARMATURE)   /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_CHILDOF)      /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_FLOOR)      /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_FOLLOWPATH)   /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_PIVOT)      /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_SHRINKWRAP)   /*bfa - new iconset*/
+DEF_ICON_COLOR(CON_ACTION)     /*bfa - new iconset*/
 DEF_ICON_BLANK(1532)
 DEF_ICON_BLANK(1533)
 DEF_ICON_BLANK(1534)
