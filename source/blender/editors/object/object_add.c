@@ -717,7 +717,7 @@ void OBJECT_OT_effector_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Effector";
-  ot->description = "Add an empty object with a physics effector to the scene";
+  ot->description = "Add Effector\nAdd an empty object with a physics effector to the scene";
   ot->idname = "OBJECT_OT_effector_add";
 
   /* api callbacks */
@@ -1007,7 +1007,7 @@ void OBJECT_OT_empty_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Empty";
-  ot->description = "Add an empty object to the scene";
+  ot->description = "Add Empty\nAdd an empty object to the scene";
   ot->idname = "OBJECT_OT_empty_add";
 
   /* api callbacks */
