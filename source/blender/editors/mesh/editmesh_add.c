@@ -144,7 +144,7 @@ void MESH_OT_primitive_plane_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Plane";
-  ot->description = "Construct a filled planar mesh with 4 vertices";
+  ot->description = "Add Plane\nAdd a filled planar mesh with 4 vertices";
   ot->idname = "MESH_OT_primitive_plane_add";
 
   /* api callbacks */
@@ -200,7 +200,7 @@ void MESH_OT_primitive_cube_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Cube";
-  ot->description = "Add Cube\nConstruct a cube mesh";
+  ot->description = "Add Cube\nAdd a cube mesh";
   ot->idname = "MESH_OT_primitive_cube_add";
 
   /* api callbacks */
@@ -270,7 +270,7 @@ void MESH_OT_primitive_circle_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Circle";
-  ot->description = "Add Circle\nConstruct a circle mesh";
+  ot->description = "Add Circle\nAdd a circle mesh";
   ot->idname = "MESH_OT_primitive_circle_add";
 
   /* api callbacks */
@@ -342,7 +342,7 @@ void MESH_OT_primitive_cylinder_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Cylinder";
-  ot->description = "Add Cylinder\nConstruct a cylinder mesh";
+  ot->description = "Add Cylinder\nAdd a cylinder mesh";
   ot->idname = "MESH_OT_primitive_cylinder_add";
 
   /* api callbacks */
@@ -412,7 +412,7 @@ void MESH_OT_primitive_cone_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Cone";
-  ot->description = "Add Cone\nConstruct a conic mesh";
+  ot->description = "Add Cone\nAdd a conic mesh";
   ot->idname = "MESH_OT_primitive_cone_add";
 
   /* api callbacks */
@@ -479,7 +479,7 @@ void MESH_OT_primitive_grid_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Grid";
-  ot->description = "Add Grid\nConstruct a grid mesh";
+  ot->description = "Add Grid\nAdd a grid mesh";
   ot->idname = "MESH_OT_primitive_grid_add";
 
   /* api callbacks */
@@ -546,7 +546,7 @@ void MESH_OT_primitive_monkey_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Monkey";
-  ot->description = "Add Monkey\nConstruct a Suzanne mesh";
+  ot->description = "Add Monkey\nAdd a Suzanne mesh";
   ot->idname = "MESH_OT_primitive_monkey_add";
 
   /* api callbacks */
@@ -605,7 +605,7 @@ void MESH_OT_primitive_uv_sphere_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add UV Sphere";
-  ot->description = "Add UV Sphere\nConstruct a UV sphere mesh";
+  ot->description = "Add UV Sphere\nAdd a UV sphere mesh";
   ot->idname = "MESH_OT_primitive_uv_sphere_add";
 
   /* api callbacks */
@@ -670,7 +670,7 @@ void MESH_OT_primitive_ico_sphere_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Ico Sphere";
-  ot->description = "Add Ico Sphere\nConstruct an Icosphere mesh";
+  ot->description = "Add Ico Sphere\nAdd an Icosphere mesh";
   ot->idname = "MESH_OT_primitive_ico_sphere_add";
 
   /* api callbacks */
