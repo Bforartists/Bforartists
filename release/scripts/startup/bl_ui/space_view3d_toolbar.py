@@ -891,7 +891,9 @@ class VIEW3D_PT_tools_brush_stroke(Panel, View3DPaintPanel):
         if context.sculpt_object:
 
             if brush.sculpt_capabilities.has_space_attenuation:
+                col.use_property_split = False
                 col.prop(brush, "use_space_attenuation")
+                col.use_property_split = True
 
             if brush.sculpt_capabilities.has_jitter:
 
