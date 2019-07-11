@@ -2496,27 +2496,27 @@ static void rna_def_space_generic_show_region_toggles(StructRNA *srna, int regio
 
   if (region_type_mask & (1 << RGN_TYPE_TOOL_HEADER)) {
     region_type_mask &= ~(1 << RGN_TYPE_TOOL_HEADER);
-    DEF_SHOW_REGION_PROPERTY(show_region_tool_header, "Tool Settings", "");
+    DEF_SHOW_REGION_PROPERTY(show_region_tool_header, "Tool Settings", "Tool Settings\nDisplay the tool settings above the header");
   }
   if (region_type_mask & (1 << RGN_TYPE_HEADER)) {
     region_type_mask &= ~(1 << RGN_TYPE_HEADER);
-    DEF_SHOW_REGION_PROPERTY(show_region_header, "Header", "");
+    DEF_SHOW_REGION_PROPERTY(show_region_header, "Header", "Header\nDisplay the header");
   }
   if (region_type_mask & (1 << RGN_TYPE_FOOTER)) {
     region_type_mask &= ~(1 << RGN_TYPE_FOOTER);
-    DEF_SHOW_REGION_PROPERTY(show_region_footer, "Footer", "");
+    DEF_SHOW_REGION_PROPERTY(show_region_footer, "Footer", "Footer\nDisplay the footer");
   }
   if (region_type_mask & (1 << RGN_TYPE_TOOLS)) {
     region_type_mask &= ~(1 << RGN_TYPE_TOOLS);
-    DEF_SHOW_REGION_PROPERTY(show_region_toolbar, "Tool Shelf", ""); /*bfa - changed toolbar to tool shelf. Our tooblar is in the header*/
+    DEF_SHOW_REGION_PROPERTY(show_region_toolbar, "Tool Shelf", "Tool Shelf\nDisplay the tool shelf"); /*bfa - changed toolbar to tool shelf. Our tooblar is in the header*/
   }
   if (region_type_mask & (1 << RGN_TYPE_UI)) {
     region_type_mask &= ~(1 << RGN_TYPE_UI);
-    DEF_SHOW_REGION_PROPERTY(show_region_ui, "Sidebar", "");
+    DEF_SHOW_REGION_PROPERTY(show_region_ui, "Sidebar", "Sidebar\nDisplay the sidebar");
   }
   if (region_type_mask & (1 << RGN_TYPE_HUD)) {
     region_type_mask &= ~(1 << RGN_TYPE_HUD);
-    DEF_SHOW_REGION_PROPERTY(show_region_hud, "Adjust Last Operation", "");
+    DEF_SHOW_REGION_PROPERTY(show_region_hud, "Adjust Last Operation", "Adjust Last Operation\nDisplay the Last Operation panel in the view ");
   }
   BLI_assert(region_type_mask == 0);
 }
