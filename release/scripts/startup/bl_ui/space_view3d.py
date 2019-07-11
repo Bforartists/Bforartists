@@ -1001,7 +1001,6 @@ class VIEW3D_MT_uv_map(Menu):
 
         layout.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
         layout.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
-        layout.prop(tool_settings, "use_edge_path_live_unwrap")
 
         layout.separator()
 
