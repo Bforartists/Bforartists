@@ -99,11 +99,13 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
         mesh = ob.data
 
         col = layout.column(align=True)
-        col.prop(mesh, "use_mirror_x")
-
         row = col.row(align=True)
-        row.active = ob.data.use_mirror_x
-        row.prop(mesh, "use_mirror_topology")
+        row.prop(mesh, "use_mirror_x")
+        if mesh.use_mirror_x:
+            row.prop(mesh, "use_mirror_topology")
+        
+        tool_settings = context.tool_settings
+        col.prop(tool_settings, "use_edge_path_live_unwrap")
 
 
 class VIEW3D_PT_tools_meshedit_options_automerge(View3DPanel, Panel):
