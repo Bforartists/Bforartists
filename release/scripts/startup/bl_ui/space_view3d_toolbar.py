@@ -1649,6 +1649,7 @@ class VIEW3D_PT_tools_particlemode_options(View3DPanel, Panel):
 
         col = layout.column(align=True)
         col.active = pe.is_editable
+        col.use_property_split = False
         col.prop(ob.data, "use_mirror_x")
         col.separator()
         col.prop(pe, "use_preserve_length", text="Preserve Strand Lengths")
@@ -1695,13 +1696,17 @@ class VIEW3D_PT_tools_particlemode_options_display(View3DPanel, Panel):
         col.active = pe.is_editable
         col.prop(pe, "display_step", text="Path Steps")
         if pe.is_hair:
+            col.use_property_split = False
             col.prop(pe, "show_particles", text="Children")
         else:
             if pe.type == 'PARTICLES':
+                col.use_property_split = False
                 col.prop(pe, "show_particles", text="Particles")
+            col.use_property_split = False
             col.prop(pe, "use_fade_time")
             sub = col.row(align=True)
             sub.active = pe.use_fade_time
+            sub.use_property_split = True
             sub.prop(pe, "fade_frames", slider=True)
 
 
