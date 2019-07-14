@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-01 00:00:00\n"
+"POT-Creation-Date: 2019-07-10 00:00:00\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -13895,10 +13895,6 @@ msgid "Factor of Simplify"
 msgstr "Hệ Số Đơn Giản Hóa"
 
 
-msgid "How simplify the stroke"
-msgstr "Phương pháp cho đơn giản hóa nét"
-
-
 msgid "Fixed"
 msgstr "Đẳng"
 
@@ -15066,10 +15062,6 @@ msgstr "Khe Họa Tiết"
 
 msgid "Topology Rake"
 msgstr "Cây Cào Hình Dạng Học"
-
-
-msgid "Automatically align edges to the brush direction to to generate cleaner topology and define sharp features dynamic topology. Best used on low-poly meshes as it has a performance impact"
-msgstr "Tự động sắp xếp cạnh đến hướng bút để chế tạo hình dạng học sạch sẽ hơn và chỉ định hình dạng học động lý của đặc trưng bén. Tốt nhất cho mạng lưới đa giác ít vì sẽ giảm hiệu suất"
 
 
 msgid "Unprojected Radius"
@@ -18784,10 +18776,6 @@ msgstr "Mặt nạ sự lựa chọn mặt cho sơn"
 
 msgid "Vertex Selection"
 msgstr "Sự Lựa Chọn Đỉnh"
-
-
-msgid "Vertex selection masking for painting (weight paint only)"
-msgstr "Mặt nạ sự lựa chọn đỉnh cho sơn (chỉ cho sơn quyền lượng)"
 
 
 msgid "Clone UV loop layer"
@@ -26615,10 +26603,6 @@ msgid "Checker Board"
 msgstr "Bảng Ca Rô"
 
 
-msgid "Fill area with chessboard pattern"
-msgstr "Tô đầy bằng họa tiết bảng ca rô"
-
-
 msgid "Fill area with image texture"
 msgstr "Tô đầy bằng họa tiết ảnh"
 
@@ -26831,26 +26815,6 @@ msgid "Material slot name"
 msgstr "Tên khe vật liệu"
 
 
-msgid "Editor menu containing buttons"
-msgstr "Danh bạ biên tập đang chứa nút"
-
-
-msgid "If this is set, the menu gets a custom ID, otherwise it takes the name of the class used to define the menu (for example, if the class name is \"OBJECT_MT_hello\", and bl_idname is not set by the script, then bl_idname = \"OBJECT_MT_hello\")"
-msgstr "Nếu được đặt này, danh bạ được một ID tùy chọn. Nếu không, nó lấy tên của lớp được dùng để xác định danh bạ (ví dụ, nếu lớp tên là \"VẬT_THỂ_MT_xinChào\", và bl_idname chưa được bản thảo đặt giùm, thì bl_idname = \"VẬT_THỂ_MT_xinChào\")"
-
-
-msgid "The menu label"
-msgstr "Nhãn danh bạ"
-
-
-msgid "Layout"
-msgstr "Bố Trí"
-
-
-msgid "Defines the structure of the menu in the UI"
-msgstr "Cho xác định cấu trúc của danh bạ trong giao diện"
-
-
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "ĐOẠN_PHIM_MT_đoạn_phim"
@@ -27017,6 +26981,11 @@ msgid "Fractional Zoom"
 msgstr "Phóng To Số Phân"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "Cộng"
+
+
 msgid "Material Specials"
 msgstr "Đồ Đặc Biệt Vật Liệu"
 
@@ -27032,11 +27001,6 @@ msgstr "Đồ Đặc Biệt Nhóm Đỉnh"
 msgctxt "Operator"
 msgid "NLA_MT_add"
 msgstr "NLA_MT_thêm"
-
-
-msgctxt "Operator"
-msgid "Add"
-msgstr "Cộng"
 
 
 msgid "NLA Channel Context Menu"
@@ -27062,6 +27026,10 @@ msgstr "Đồ Biến Đổi"
 
 msgid "Distort"
 msgstr "Méo Hóa"
+
+
+msgid "Layout"
+msgstr "Bố Trí"
 
 
 msgid "Matte"
@@ -50847,6 +50815,11 @@ msgstr "Nối vật thể được chọn vào vật thể hoạt động"
 
 
 msgctxt "Operator"
+msgid "Join as Shapes"
+msgstr "Kết Nối Dạng"
+
+
+msgctxt "Operator"
 msgid "Transfer UV Maps"
 msgstr "Truyền Bản Đồ UV"
 
@@ -60069,10 +60042,6 @@ msgid "Object Name"
 msgstr "Tên Vật Thể"
 
 
-msgid "Toggle selection instead of deselecting everything first"
-msgstr "Bật/tắt sự lựa chọn thay thế thả hết trước"
-
-
 msgctxt "Operator"
 msgid "Smooth View"
 msgstr "Màn Mịn"
@@ -60805,14 +60774,6 @@ msgid "Apply Global Orientation"
 msgstr "Áp Dụng Định Hướng Toàn Cầu"
 
 
-msgid ""
-"enabled: Rotate all root objects to match the global orientation settings.\n"
-"disabled: set global orientation in Collada assets"
-msgstr ""
-"bật: Xoay hết vật thể rễ cho giống cài đặt định hướng toàn cầu.\n"
-"tắt: đặt định hướng toàn cầu cho tích sản Collada"
-
-
 msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "Áp dụng cụ sửa đổi với mạng lưới xuất (không pha/đổi cái gì)"
 
@@ -60823,16 +60784,6 @@ msgstr "Chỉ Xương Méo Hóa"
 
 msgid "Only export deforming bones with armatures"
 msgstr "Chỉ xuất xương có thể méo với cốt"
-
-
-msgid ""
-"Transformation type for translation, scale and rotation\n"
-"Note: The Animation transformation type in the Anim Tab\n"
-"is always equal to the Object transformation type in the Geom tab"
-msgstr ""
-"Biến hóa cho dịch, phóng to và xoay\n"
-"Lưu Ý: Loại biến hóa Hoạt Hình trong Nhãn Hoạt Hình\n"
-"lần nào cũng bằng loại biến hóa Vật Thể trong nhãn Hình Dạng"
 
 
 msgid "Use <matrix> representation for exported transformations"
@@ -80110,10 +80061,6 @@ msgid "Show the bone selection overlay"
 msgstr "Hiện lớp che của sự lựa chọn xương"
 
 
-msgid "Opacity of the texture paint mode overlay"
-msgstr "Độ đục của lớp che chế độ sơn họa tiết"
-
-
 msgid "Show Edit Lines"
 msgstr "Hiện Đường Biên Tập"
 
@@ -81762,14 +81709,6 @@ msgstr "Mục tiêu không hợp lệ %r (phải là 'ARMATURE' ('CỐT') hay 'O
 
 msgid "Cameras & Markers (.py)"
 msgstr "Máy Quay Phim & Ký Hiệu (.py)"
-
-
-msgid "Operation aborted by user"
-msgstr "Người dùng đã hủy thao tác "
-
-
-msgid "utf-8surrogateescape"
-msgstr "utf-8surrogateescape"
 
 
 msgid "Unable to parse XML, %s:%s for file %r"
@@ -84611,12 +84550,12 @@ msgid "Use for Rendering"
 msgstr "Dùng cho Kết Xuất"
 
 
-msgid "%s: %s"
-msgstr "%s: %s"
-
-
 msgid "Unknown add-ons"
 msgstr "Đồ kèm lạ"
+
+
+msgid "%s: %s"
+msgstr "%s: %s"
 
 
 msgid "B/W"
@@ -87472,10 +87411,6 @@ msgid "PAINT_TEXTUREPAINT_VERTEXPAINT_WEIGHTTexture PaintVertex PaintWeight Pain
 msgstr "SƠN_SƠNHỌATIẾT_SƠNĐỈNH_QUYỀNLƯỢNGHọaTiết_SơnĐỉnh SơnQuyềnLượng Sơn"
 
 
-msgid "Reference Point"
-msgstr "Tham Chiếu"
-
-
 msgid "PAINT_GPENCILEDIT_GPENCILSCULPT_GPENCILWEIGHT_GPENCILOBJECTDraw Grease PencilEdit Grease PencilSculpt Grease PencilWeight Grease PencilGrease Pencil"
 msgstr "BútKhắc Bút Sáp QuyềnLượngBút Sáp SápBút Bút"
 
@@ -88004,8 +87939,8 @@ msgid "Fade Geometry"
 msgstr "Phai Hình Dạng"
 
 
-msgid "Custom Location"
-msgstr "Vị Trí Tùy Chọn"
+msgid "Reference Point"
+msgstr "Tham Chiếu"
 
 
 msgid "Show Edit Lines only in multiframe"
@@ -88094,8 +88029,8 @@ msgid "Specular Lighting"
 msgstr "Ánh Sáng Cao Quang"
 
 
-msgid "Object Location"
-msgstr "Vị Trí Vật Thể"
+msgid "Custom Location"
+msgstr "Vị Trí Tùy Chọn"
 
 
 msgctxt "Operator"
@@ -88112,8 +88047,8 @@ msgid "Disable Studio Light Edit"
 msgstr "Tắt Biên Tập Đèn Xưởng"
 
 
-msgid "No object selected, using cursor"
-msgstr "Không có vật thể nào được chọn, đang dùng con trỏ"
+msgid "Object Location"
+msgstr "Vị Trí Vật Thể"
 
 
 msgctxt "Operator"
@@ -88152,6 +88087,10 @@ msgstr "Dãy Đỉnh"
 
 msgid "Valley"
 msgstr "Thung Lũng"
+
+
+msgid "No object selected, using cursor"
+msgstr "Không có vật thể nào được chọn, đang dùng con trỏ"
 
 
 msgctxt "Operator"
@@ -93784,10 +93723,6 @@ msgid "Could not find a valid parent collection for the new duplicate, it won't 
 msgstr "Không tìm được một sưu tập phụ huynh hợp lệ cho bản sao, nó sẽ không được liên kết với bắt cứ lớp nào"
 
 
-msgid "Cannot add a colection to a linked collection/scene"
-msgstr "Không thể thêm một sưu tập vào sưu tập/cảnh được liên kết"
-
-
 msgid "Cannot delete linked collection '%s', it is used by other linked scenes/collections"
 msgstr "Không thể xóa sưu tập được liên kết '%s', nó có cảnh/sưu tập khác được liên kết đang dùng nó"
 
@@ -95562,10 +95497,6 @@ msgstr "Đăng ký lớp giao điểm: '%s' quá dài, bề dài tối đa là %
 
 msgid "Registering node socket class: '%s' is too long, maximum length is %d"
 msgstr "Đăng ký lớp ổ cắm giao điểm: '%s' quá dài, bề dài tối đa là %d"
-
-
-msgid "Only empty objects support group instances"
-msgstr "Chỉ vật thể rỗng được hỗ trợ thực thể nhóm"
 
 
 msgid "Cannot set instance-collection as object belongs in group being instanced, thus causing a cycle"

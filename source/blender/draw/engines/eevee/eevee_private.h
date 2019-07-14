@@ -562,6 +562,7 @@ typedef struct EEVEE_EffectsInfo {
   /* SSR */
   bool reflection_trace_full;
   bool ssr_was_persp;
+  bool ssr_was_valid_double_buffer;
   int ssr_neighbor_ofs;
   int ssr_halfres_ofs[2];
   struct GPUTexture *ssr_normal_input; /* Textures from pool */
@@ -671,6 +672,7 @@ typedef struct EEVEE_CommonUniformBuffer {
   float ssr_firefly_fac;                              /* float */
   float ssr_brdf_bias;                                /* float */
   int ssr_toggle;                                     /* bool */
+  int ssrefract_toggle;                               /* bool */
   /* SubSurface Scattering */
   float sss_jitter_threshold; /* float */
   int sss_toggle;             /* bool */
@@ -690,8 +692,6 @@ typedef struct EEVEE_CommonUniformBuffer {
   int hiz_mip_offset; /* int */
   int ray_type;       /* int */
   float ray_depth;    /* float */
-
-  float pad_common_ubo;
 } EEVEE_CommonUniformBuffer;
 
 BLI_STATIC_ASSERT_ALIGN(EEVEE_CommonUniformBuffer, 16)

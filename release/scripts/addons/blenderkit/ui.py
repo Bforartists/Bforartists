@@ -65,7 +65,8 @@ verification_icons = {
     'uploaded': 'vs_uploaded.png',
     'uploading': None,
     'on_hold': 'vs_on_hold.png',
-    'validated': None
+    'validated': None,
+    'rejected': None
 
 }
 

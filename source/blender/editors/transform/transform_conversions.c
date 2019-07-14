@@ -2537,6 +2537,7 @@ void flushTransParticles(TransInfo *t)
     }
 
     PE_update_object(t->depsgraph, scene, OBACT(view_layer), 1);
+    BKE_particle_batch_cache_dirty_tag(psys, BKE_PARTICLE_BATCH_DIRTY_ALL);
     DEG_id_tag_update(&ob->id, ID_RECALC_PSYS_REDO);
   }
 }
@@ -3710,50 +3711,48 @@ bool clipUVTransform(TransInfo *t, float vec[2], const bool resize)
     for (a = 0, td = tc->data; a < tc->data_len; a++, td++) {
       minmax_v2v2_v2(min, max, td->loc);
     }
+  }
 
-    if (resize) {
-      if (min[0] < 0.0f && t->center_global[0] > 0.0f &&
-          t->center_global[0] < t->aspect[0] * 0.5f) {
-        vec[0] *= t->center_global[0] / (t->center_global[0] - min[0]);
-      }
-      else if (max[0] > t->aspect[0] && t->center_global[0] < t->aspect[0]) {
-        vec[0] *= (t->center_global[0] - t->aspect[0]) / (t->center_global[0] - max[0]);
-      }
-      else {
-        clipx = 0;
-      }
-
-      if (min[1] < 0.0f && t->center_global[1] > 0.0f &&
-          t->center_global[1] < t->aspect[1] * 0.5f) {
-        vec[1] *= t->center_global[1] / (t->center_global[1] - min[1]);
-      }
-      else if (max[1] > t->aspect[1] && t->center_global[1] < t->aspect[1]) {
-        vec[1] *= (t->center_global[1] - t->aspect[1]) / (t->center_global[1] - max[1]);
-      }
-      else {
-        clipy = 0;
-      }
+  if (resize) {
+    if (min[0] < 0.0f && t->center_global[0] > 0.0f && t->center_global[0] < t->aspect[0] * 0.5f) {
+      vec[0] *= t->center_global[0] / (t->center_global[0] - min[0]);
+    }
+    else if (max[0] > t->aspect[0] && t->center_global[0] < t->aspect[0]) {
+      vec[0] *= (t->center_global[0] - t->aspect[0]) / (t->center_global[0] - max[0]);
     }
     else {
-      if (min[0] < 0.0f) {
-        vec[0] -= min[0];
-      }
-      else if (max[0] > t->aspect[0]) {
-        vec[0] -= max[0] - t->aspect[0];
-      }
-      else {
-        clipx = 0;
-      }
+      clipx = 0;
+    }
 
-      if (min[1] < 0.0f) {
-        vec[1] -= min[1];
-      }
-      else if (max[1] > t->aspect[1]) {
-        vec[1] -= max[1] - t->aspect[1];
-      }
-      else {
-        clipy = 0;
-      }
+    if (min[1] < 0.0f && t->center_global[1] > 0.0f && t->center_global[1] < t->aspect[1] * 0.5f) {
+      vec[1] *= t->center_global[1] / (t->center_global[1] - min[1]);
+    }
+    else if (max[1] > t->aspect[1] && t->center_global[1] < t->aspect[1]) {
+      vec[1] *= (t->center_global[1] - t->aspect[1]) / (t->center_global[1] - max[1]);
+    }
+    else {
+      clipy = 0;
+    }
+  }
+  else {
+    if (min[0] < 0.0f) {
+      vec[0] -= min[0];
+    }
+    else if (max[0] > t->aspect[0]) {
+      vec[0] -= max[0] - t->aspect[0];
+    }
+    else {
+      clipx = 0;
+    }
+
+    if (min[1] < 0.0f) {
+      vec[1] -= min[1];
+    }
+    else if (max[1] > t->aspect[1]) {
+      vec[1] -= max[1] - t->aspect[1];
+    }
+    else {
+      clipy = 0;
     }
   }
 

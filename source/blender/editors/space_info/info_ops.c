@@ -65,7 +65,7 @@ static int pack_libraries_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
 
-  packLibraries(bmain, op->reports);
+  BKE_packedfile_pack_all_libraries(bmain, op->reports);
 
   return OPERATOR_FINISHED;
 }
@@ -89,7 +89,7 @@ static int unpack_libraries_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
 
-  unpackLibraries(bmain, op->reports);
+  BKE_packedfile_unpack_all_libraries(bmain, op->reports);
 
   return OPERATOR_FINISHED;
 }
@@ -126,7 +126,7 @@ static int autopack_toggle_exec(bContext *C, wmOperator *op)
     G.fileflags &= ~G_FILE_AUTOPACK;
   }
   else {
-    packAll(bmain, op->reports, true);
+    BKE_packedfile_pack_all(bmain, op->reports, true);
     G.fileflags |= G_FILE_AUTOPACK;
   }
 
@@ -154,7 +154,7 @@ static int pack_all_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
 
-  packAll(bmain, op->reports, true);
+  BKE_packedfile_pack_all(bmain, op->reports, true);
 
   return OPERATOR_FINISHED;
 }
@@ -224,7 +224,7 @@ static int unpack_all_exec(bContext *C, wmOperator *op)
   int method = RNA_enum_get(op->ptr, "method");
 
   if (method != PF_KEEP) {
-    unpackAll(bmain, op->reports, method); /* XXX PF_ASK can't work here */
+    BKE_packedfile_unpack_all(bmain, op->reports, method); /* XXX PF_ASK can't work here */
   }
   G.fileflags &= ~G_FILE_AUTOPACK;
 
@@ -239,7 +239,7 @@ static int unpack_all_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(
   char title[64];
   int count = 0;
 
-  count = countPackedFiles(bmain);
+  count = BKE_packedfile_count_all(bmain);
 
   if (!count) {
     BKE_report(op->reports, RPT_WARNING, "No packed files to unpack");
@@ -327,7 +327,7 @@ static int unpack_item_exec(bContext *C, wmOperator *op)
   }
 
   if (method != PF_KEEP) {
-    BKE_unpack_id(bmain, id, op->reports, method); /* XXX PF_ASK can't work here */
+    BKE_packedfile_id_unpack(bmain, id, op->reports, method); /* XXX PF_ASK can't work here */
   }
 
   G.fileflags &= ~G_FILE_AUTOPACK;
@@ -552,7 +552,8 @@ static int update_reports_display_invoke(bContext *C, wmOperator *UNUSED(op), co
 
   /* escape if not our timer */
   if ((reports->reporttimer == NULL) || (reports->reporttimer != event->customdata) ||
-      ((report = BKE_reports_last_displayable(reports)) == NULL) /* may have been deleted */
+      ((report = BKE_reports_last_displayable(reports)) == NULL)
+      /* may have been deleted */
   ) {
     return OPERATOR_PASS_THROUGH;
   }
