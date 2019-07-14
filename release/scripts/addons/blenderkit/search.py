@@ -63,12 +63,13 @@ prev_time = 0
 
 def check_errors(rdata):
     if rdata.get('statusCode') == 401:
+        utils.p(rdata)
         if rdata.get('detail') == 'Invalid token.':
             user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
             if user_preferences.api_key != '':
                 if user_preferences.enable_oauth:
                     bkit_oauth.refresh_token_thread()
-                return False, "You've been logged out. Logging in...."
+                return False, rdata.get('detail')
             return False, 'Missing or wrong api_key in addon preferences'
     return True, ''
 
@@ -712,6 +713,13 @@ class Searcher(threading.Thread):
                 requeststring += q + ':' + str(query[q]).lower()
                 if i < len(query) - 1:
                     requeststring += '+'
+
+            # result ordering: _score - relevance, score - BlenderKit score
+            if query.get('category_subtree') is not None:
+                requeststring += '+order:_score,-score'
+            else:
+                requeststring += '+order:-score'
+
 
             requeststring += '&addon_version=%s' % params['addon_version']
             if params.get('scene_uuid') is not None:

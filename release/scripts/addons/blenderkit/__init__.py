@@ -173,6 +173,12 @@ thumbnail_snap = (
     ('FLOAT', 'floating', ''),
 )
 
+thumbnail_resolutions = (
+    ('256', '256', ''),
+    ('512', '512 - minimum for public', ''),
+    ('1024', '1024', ''),
+    ('2048', '2048', ''),
+)
 
 def get_upload_asset_type(self):
     typemapper = {
@@ -632,6 +638,13 @@ class BlenderKitMaterialUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
                                       description="Use denoising", default=True)
     adaptive_subdivision: BoolProperty(name="Adaptive Subdivide",
                                        description="Use adaptive displacement subdivision", default=False)
+
+    thumbnail_resolution: EnumProperty(
+        name="Resolution",
+        items=thumbnail_resolutions,
+        description="Thumbnail resolution.",
+        default="512",
+    )
 
     thumbnail_generator_type: EnumProperty(
         name="Thumbnail Style",

@@ -279,7 +279,10 @@ def _template_items_proportional_editing(*, connected=False):
 def _template_items_tool_select(params, operator, cursor_operator):
     if params.select_mouse == 'LEFTMOUSE':
         # Immediate select without quick delay.
-        return [(operator, {"type": 'LEFTMOUSE', "value": 'PRESS'}, None)]
+        return [
+            (operator, {"type": 'LEFTMOUSE', "value": 'PRESS'},
+             {"properties": [("deselect_all", True)]}),
+        ]
     else:
         # For right mouse, set the cursor.
         return [
@@ -3662,7 +3665,10 @@ def km_vertex_paint(params):
     )
 
     items.extend([
-        ("paint.vertex_paint", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
+        ("paint.vertex_paint", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+         {"properties": [("mode", 'NORMAL')]}),
+        ("paint.vertex_paint", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
+         {"properties": [("mode", 'INVERT')]}),
         ("paint.brush_colors_flip", {"type": 'X', "value": 'PRESS'}, None),
         ("paint.sample_color", {"type": 'S', "value": 'PRESS'}, None),
         ("paint.vertex_color_set", {"type": 'K', "value": 'PRESS', "shift": True}, None),

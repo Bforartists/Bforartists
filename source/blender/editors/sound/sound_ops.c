@@ -104,7 +104,7 @@ static int sound_open_exec(bContext *C, wmOperator *op)
   }
 
   if (RNA_boolean_get(op->ptr, "cache")) {
-    BKE_sound_cache(sound);
+    sound->flags |= SOUND_FLAGS_CACHING;
   }
 
   /* hook into UI */
@@ -765,7 +765,8 @@ static int sound_pack_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  sound->packedfile = newPackedFile(op->reports, sound->name, ID_BLEND_PATH(bmain, &sound->id));
+  sound->packedfile = BKE_packedfile_new(
+      op->reports, sound->name, ID_BLEND_PATH(bmain, &sound->id));
   BKE_sound_load(bmain, sound);
 
   return OPERATOR_FINISHED;
@@ -811,7 +812,7 @@ static int sound_unpack_exec(bContext *C, wmOperator *op)
                "AutoPack is enabled, so image will be packed again on file save");
   }
 
-  unpackSound(bmain, op->reports, sound, method);
+  BKE_packedfile_unpack_sound(bmain, op->reports, sound, method);
 
   return OPERATOR_FINISHED;
 }

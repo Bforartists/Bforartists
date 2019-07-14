@@ -3740,9 +3740,6 @@ static ImBuf *do_render_strip_uncached(const SeqRenderData *context,
         ibuf = seq_render_scene_strip(context, seq, nr, cfra);
       }
 
-      /* Scene strips update all animation, so we need to restore original state.*/
-      BKE_animsys_evaluate_all_animation(context->bmain, context->depsgraph, context->scene, cfra);
-
       break;
     }
 
@@ -5400,7 +5397,7 @@ static void seq_load_apply(Main *bmain, Scene *scene, Sequence *seq, SeqLoadInfo
 
     if (seq_load->flag & SEQ_LOAD_SOUND_CACHE) {
       if (seq->sound) {
-        BKE_sound_cache(seq->sound);
+        seq->sound->flags |= SOUND_FLAGS_CACHING;
       }
     }
 

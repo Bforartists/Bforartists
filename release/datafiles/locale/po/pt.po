@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2019-07-01 00:00:00\n"
+"POT-Creation-Date: 2019-07-10 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Inês Almeida, João Brandão (ULISBOA), Paulo Martins <ivan.paulos.tome@yandex.com>\n"
@@ -15217,10 +15217,6 @@ msgid "Vertex Selection"
 msgstr "Seleção de vértices"
 
 
-msgid "Vertex selection masking for painting (weight paint only)"
-msgstr "A seleção de mascaramento de vértices para a pintura (somente para a pintura de pesos)."
-
-
 msgid "Clone UV loop layer"
 msgstr "Clona a camada de anéis UV"
 
@@ -22292,10 +22288,6 @@ msgid "Material slot name"
 msgstr "Nome do compartimento do material."
 
 
-msgid "Layout"
-msgstr "Organizar"
-
-
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "Clipe de captura de movimentos"
@@ -22406,6 +22398,11 @@ msgid "Weld/Align"
 msgstr "Soldar e alinhar"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "Adicionar"
+
+
 msgid "Material Specials"
 msgstr "Especiais para materiais"
 
@@ -22418,11 +22415,6 @@ msgid "Vertex Group Specials"
 msgstr "Especiais para grupo de vértices"
 
 
-msgctxt "Operator"
-msgid "Add"
-msgstr "Adicionar"
-
-
 msgid "Edit"
 msgstr "Editar"
 
@@ -22433,6 +22425,10 @@ msgstr "Conversor"
 
 msgid "Distort"
 msgstr "Distorcer"
+
+
+msgid "Layout"
+msgstr "Organizar"
 
 
 msgid "Matte"
@@ -42933,6 +42929,11 @@ msgstr "Junta os objetos selecionados dentro do objeto ativo."
 
 
 msgctxt "Operator"
+msgid "Join as Shapes"
+msgstr "Juntar como formatos"
+
+
+msgctxt "Operator"
 msgid "Transfer UV Maps"
 msgstr "Transferir mapas UV"
 
@@ -50902,10 +50903,6 @@ msgstr "O menu para seleção de objeto(s)."
 
 msgid "Object Name"
 msgstr "Nome do objeto"
-
-
-msgid "Toggle selection instead of deselecting everything first"
-msgstr "Alterna a seleção ao invés de de-selecionar tudo inicialmente."
 
 
 msgctxt "Operator"
@@ -67123,14 +67120,6 @@ msgstr "%r é um alvo inválido (Para funcionamento adequado, o alvo deve ser do
 
 msgid "Cameras & Markers (.py)"
 msgstr "Câmaras e marcadores (.py)"
-
-
-msgid "Operation aborted by user"
-msgstr "Operação cancelada pelo utilizador."
-
-
-msgid "utf-8surrogateescape"
-msgstr "Escape alternativo ao padrão utf-8."
 
 
 msgid "Unable to parse XML, %s:%s for file %r"

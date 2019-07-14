@@ -88,8 +88,8 @@ if __name__ == "__main__":
                 else:
                     ob.cycles.use_adaptive_subdivision = False
                 ts = data['texture_size_meters']
-                # if data["thumbnail_type"] in ['BALL', 'CUBE']:
-                #    utils.automap(ob.name, tex_size = ts / tscale, bg_exception=True)
+                if data["thumbnail_type"] in ['BALL', 'CUBE', 'CLOTH']:
+                   utils.automap(ob.name, tex_size = ts / tscale, just_scale = True, bg_exception=True)
         bpy.context.view_layer.update()
 
         s.cycles.volume_step_size = tscale * .1
@@ -114,6 +114,9 @@ if __name__ == "__main__":
         img = bpy.data.images['interior.exr']
         img.filepath = ipath
         img.reload()
+
+        bpy.context.scene.render.resolution_x = int(data['thumbnail_resolution'])
+        bpy.context.scene.render.resolution_y = int(data['thumbnail_resolution'])
 
         bpy.context.scene.render.filepath = BLENDERKIT_THUMBNAIL_PATH
         bg_blender.progress('rendering thumbnail')
