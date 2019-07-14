@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-01 00:00:00\n"
+"POT-Creation-Date: 2019-07-10 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -4491,10 +4491,6 @@ msgid "Link"
 msgstr "ﺪﻧﻮﯿﭘ"
 
 
-msgid "Layout"
-msgstr "ﺡﺮﻃ"
-
-
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "ﭗﯿﻠﮐ:"
@@ -4535,6 +4531,10 @@ msgstr "ﺶﯾﺍﺮﯾﻭ"
 
 msgid "Distort"
 msgstr "ﻥﺩﺮﮐ‌ﺞﮐ"
+
+
+msgid "Layout"
+msgstr "ﺡﺮﻃ"
 
 
 msgid "Matte"

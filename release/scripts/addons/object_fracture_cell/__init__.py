@@ -431,8 +431,7 @@ class FractureCell(Operator):
     use_debug_redraw: BoolProperty(
             name="Show Progress Realtime",
             description="Redraw as fracture is done",
-            # FIXME(campbell): causes crash in 2.8.
-            default=False,
+            default=True,
             )
 
     use_debug_bool: BoolProperty(

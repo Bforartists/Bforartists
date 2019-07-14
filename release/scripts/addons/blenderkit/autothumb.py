@@ -217,6 +217,7 @@ def start_material_thumbnailer(self, context):
                 "thumbnail_scale": bkit.thumbnail_scale,
                 "thumbnail_background": bkit.thumbnail_background,
                 "thumbnail_background_lightness": bkit.thumbnail_background_lightness,
+                "thumbnail_resolution": bkit.thumbnail_resolution,
                 "thumbnail_samples": bkit.thumbnail_samples,
                 "thumbnail_denoising": bkit.thumbnail_denoising,
                 "adaptive_subdivision": bkit.adaptive_subdivision,
@@ -270,6 +271,7 @@ class GenerateThumbnailOperator(bpy.types.Operator):
         layout.prop(props, 'thumbnail_angle')
         layout.prop(props, 'thumbnail_snap_to')
         layout.prop(props, 'thumbnail_samples')
+        layout.prop(props, 'thumbnail_resolution')
         layout.prop(props, 'thumbnail_denoising')
 
     def execute(self, context):
@@ -301,6 +303,7 @@ class GenerateMaterialThumbnailOperator(bpy.types.Operator):
         layout.prop(props, 'thumbnail_background')
         if props.thumbnail_background:
             layout.prop(props, 'thumbnail_background_lightness')
+        layout.prop(props, 'thumbnail_resolution')
         layout.prop(props, 'thumbnail_samples')
         layout.prop(props, 'thumbnail_denoising')
         layout.prop(props, 'adaptive_subdivision')

@@ -554,10 +554,10 @@ static void sculpt_undo_restore_list(bContext *C, ListBase *lb)
 
     if (BKE_sculpt_multires_active(scene, ob)) {
       if (rebuild) {
-        multires_mark_as_modified(ob, MULTIRES_HIDDEN_MODIFIED);
+        multires_mark_as_modified(depsgraph, ob, MULTIRES_HIDDEN_MODIFIED);
       }
       else {
-        multires_mark_as_modified(ob, MULTIRES_COORDS_MODIFIED);
+        multires_mark_as_modified(depsgraph, ob, MULTIRES_COORDS_MODIFIED);
       }
     }
 
@@ -1109,10 +1109,8 @@ static void sculpt_undosys_step_decode_redo(struct bContext *C, SculptUndoStep *
   }
 }
 
-static void sculpt_undosys_step_decode(struct bContext *C,
-                                       struct Main *bmain,
-                                       UndoStep *us_p,
-                                       int dir)
+static void sculpt_undosys_step_decode(
+    struct bContext *C, struct Main *bmain, UndoStep *us_p, int dir, bool UNUSED(is_final))
 {
   /* Ensure sculpt mode. */
   {

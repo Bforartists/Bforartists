@@ -4654,11 +4654,11 @@ kmi_defs = (
     # Reload Images
     (NWReloadImages.bl_idname, 'R', 'PRESS', False, False, True, None, "Reload images"),
     # Lazy Mix
-    (NWLazyMix.bl_idname, 'RIGHTMOUSE', 'PRESS', False, False, True, None, "Lazy Mix"),
+    (NWLazyMix.bl_idname, 'RIGHTMOUSE', 'PRESS', True, True, False, None, "Lazy Mix"),
     # Lazy Connect
-    (NWLazyConnect.bl_idname, 'RIGHTMOUSE', 'PRESS', True, False, False, (('with_menu', False),), "Lazy Connect"),
+    (NWLazyConnect.bl_idname, 'RIGHTMOUSE', 'PRESS', False, False, True, (('with_menu', False),), "Lazy Connect"),
     # Lazy Connect with Menu
-    (NWLazyConnect.bl_idname, 'RIGHTMOUSE', 'PRESS', True, True, False, (('with_menu', True),), "Lazy Connect with Socket Menu"),
+    (NWLazyConnect.bl_idname, 'RIGHTMOUSE', 'PRESS', False, True, True, (('with_menu', True),), "Lazy Connect with Socket Menu"),
     # Viewer Tile Center
     (NWViewerFocus.bl_idname, 'LEFTMOUSE', 'DOUBLE_CLICK', False, False, False, None, "Set Viewers Tile Center"),
     # Align Nodes

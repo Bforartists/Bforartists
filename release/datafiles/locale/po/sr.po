@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-01 00:00:00\n"
+"POT-Creation-Date: 2019-07-10 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -9702,17 +9702,17 @@ msgid "Show/Hide Faces"
 msgstr "Прикажи/сакриј странице"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "Додај"
+
+
 msgid "Material Specials"
 msgstr "Специјални материјали"
 
 
 msgid "Vertex Group Specials"
 msgstr "Специјална група темена"
-
-
-msgctxt "Operator"
-msgid "Add"
-msgstr "Додај"
 
 
 msgid "Edit"
@@ -18319,6 +18319,11 @@ msgstr "Споји"
 
 msgid "Join selected objects into active object"
 msgstr "Спој изабране објекте у активан објекат"
+
+
+msgctxt "Operator"
+msgid "Join as Shapes"
+msgstr "Споји облике"
 
 
 msgctxt "Operator"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-01 00:00:00\n"
+"POT-Creation-Date: 2019-07-10 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -9935,10 +9935,6 @@ msgid "Material slot name"
 msgstr "Název okénka materiálu"
 
 
-msgid "Layout"
-msgstr "Vzhled"
-
-
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Střih"
@@ -10004,6 +10000,11 @@ msgid "Weld/Align"
 msgstr "Zarovnaný"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "Přidat"
+
+
 msgid "Material Specials"
 msgstr "Materiál"
 
@@ -10016,17 +10017,16 @@ msgid "Vertex Group Specials"
 msgstr "Skupina vertexů"
 
 
-msgctxt "Operator"
-msgid "Add"
-msgstr "Přidat"
-
-
 msgid "Edit"
 msgstr "Upravit"
 
 
 msgid "Distort"
 msgstr "Historie vracení"
+
+
+msgid "Layout"
+msgstr "Vzhled"
 
 
 msgid "Matte"
@@ -20729,6 +20729,11 @@ msgstr "Spojí vybrané objekty do aktivního objektu"
 
 
 msgctxt "Operator"
+msgid "Join as Shapes"
+msgstr "Spojit oblasti "
+
+
+msgctxt "Operator"
 msgid "Clear Location"
 msgstr "Vyčistit umístění"
 
@@ -25175,10 +25180,6 @@ msgstr "Zarovnat výběr na střed"
 
 msgid "Object Name"
 msgstr "Objekt"
-
-
-msgid "Toggle selection instead of deselecting everything first"
-msgstr "Vzbrat vše podle typu"
 
 
 msgctxt "Operator"

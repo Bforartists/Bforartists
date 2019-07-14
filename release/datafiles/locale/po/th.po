@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-01 00:00:00\n"
+"POT-Creation-Date: 2019-07-10 00:00:00\n"
 "PO-Revision-Date: 2019-06-01 18:12+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -1808,10 +1808,6 @@ msgid "Link"
 msgstr "เชื่อมโยง"
 
 
-msgid "Layout"
-msgstr "เค้าโครง"
-
-
 msgid "Pivot Point"
 msgstr "จุดหมุน"
 
@@ -1835,6 +1831,10 @@ msgstr "เพิ่ม"
 
 msgid "Edit"
 msgstr "แก้ไข"
+
+
+msgid "Layout"
+msgstr "เค้าโครง"
 
 
 msgid "Node"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-01 00:00:00\n"
+"POT-Creation-Date: 2019-07-10 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -7009,10 +7009,6 @@ msgid "Material slot name"
 msgstr "İşareti (Tekrar) Adlandır"
 
 
-msgid "Layout"
-msgstr "Mizanpaj"
-
-
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Klip:"
@@ -7074,6 +7070,11 @@ msgid "Weld/Align"
 msgstr "Görüntü Hizalama"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "Ekle"
+
+
 msgid "Material Specials"
 msgstr "Ekstra Kenar Özellikleri"
 
@@ -7086,17 +7087,16 @@ msgid "Vertex Group Specials"
 msgstr "Yeni bir nokta grubu oluşturur"
 
 
-msgctxt "Operator"
-msgid "Add"
-msgstr "Ekle"
-
-
 msgid "Edit"
 msgstr "Düzenle"
 
 
 msgid "Distort"
 msgstr "Çarpıt"
+
+
+msgid "Layout"
+msgstr "Mizanpaj"
 
 
 msgid "Node"
@@ -15097,6 +15097,11 @@ msgstr "Bake Render Meshes"
 msgctxt "Operator"
 msgid "Join"
 msgstr "Birleştir"
+
+
+msgctxt "Operator"
+msgid "Join as Shapes"
+msgstr "Resmi farklı kaydet:"
 
 
 msgctxt "Operator"
