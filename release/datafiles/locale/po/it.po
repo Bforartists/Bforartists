@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-01 00:00:00\n"
+"POT-Creation-Date: 2019-07-10 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: blend-it <https://developer.blender.org/T42765>\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -13194,10 +13194,6 @@ msgid "Vertex Selection"
 msgstr "Selezione Vertici"
 
 
-msgid "Vertex selection masking for painting (weight paint only)"
-msgstr "Mascheratura vertici selezionati per la pittura (solo pittura pesi)"
-
-
 msgid "Clone UV loop layer"
 msgstr "Clona livello anello UV"
 
@@ -18908,10 +18904,6 @@ msgid "Material slot name"
 msgstr "Nome dello slot materiale"
 
 
-msgid "Layout"
-msgstr "Livello"
-
-
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "Filmato"
@@ -19005,6 +18997,11 @@ msgid "Weld/Align"
 msgstr "Salda/Allinea"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "Aggiungi"
+
+
 msgid "Material Specials"
 msgstr "Materiali Speciali"
 
@@ -19017,11 +19014,6 @@ msgid "Vertex Group Specials"
 msgstr "Gruppo Vertici Speciali"
 
 
-msgctxt "Operator"
-msgid "Add"
-msgstr "Aggiungi"
-
-
 msgid "Edit"
 msgstr "Modifica"
 
@@ -19032,6 +19024,10 @@ msgstr "Converti"
 
 msgid "Distort"
 msgstr "Distorcere"
+
+
+msgid "Layout"
+msgstr "Livello"
 
 
 msgid "Matte"
@@ -36206,6 +36202,11 @@ msgstr "Unisce gli oggetti selezionati all'oggetto attivo"
 
 
 msgctxt "Operator"
+msgid "Join as Shapes"
+msgstr "Riunisci come Forme"
+
+
+msgctxt "Operator"
 msgid "Transfer UV Maps"
 msgstr "Trasferisci Mappe UV"
 
@@ -43414,10 +43415,6 @@ msgstr "Menù selezione oggetto"
 
 msgid "Object Name"
 msgstr "Nome Oggetto"
-
-
-msgid "Toggle selection instead of deselecting everything first"
-msgstr "Estendere la selezione invece di deselezionare tutto prima"
 
 
 msgctxt "Operator"
@@ -56365,10 +56362,6 @@ msgstr "Deseleziona"
 
 msgid "Cameras & Markers (.py)"
 msgstr "Camere & Marcatori (.py)"
-
-
-msgid "Operation aborted by user"
-msgstr "Operazione annullata dall'utente"
 
 
 msgid "Position:"

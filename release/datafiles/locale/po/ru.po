@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-01 00:00:00\n"
+"POT-Creation-Date: 2019-07-10 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
 "Last-Translator: Lockal <lockalsash@gmail.com>, 2019\n"
 "Language-Team: Russian (https://www.transifex.com/translateblender/teams/82039/ru/)\n"
@@ -13900,10 +13900,6 @@ msgid "Factor of Simplify"
 msgstr "Коэффициент упрощения"
 
 
-msgid "How simplify the stroke"
-msgstr "Способ упрощения штрихо"
-
-
 msgid "Fixed"
 msgstr "Фикс"
 
@@ -15071,10 +15067,6 @@ msgstr "Слот текстуры"
 
 msgid "Topology Rake"
 msgstr "Выравнивание топологии"
-
-
-msgid "Automatically align edges to the brush direction to to generate cleaner topology and define sharp features dynamic topology. Best used on low-poly meshes as it has a performance impact"
-msgstr "Автоматически выравнивать рёбра по направлению движения кисти, для генерации более чистой топологии и подчеркнуть чёткие особенности в динамической топологии. Лучше использовать на низко-полигональных моделях, так как функция влияет на производительность"
 
 
 msgid "Unprojected Radius"
@@ -18789,10 +18781,6 @@ msgstr "Маскирование выбранных граней при рисо
 
 msgid "Vertex Selection"
 msgstr "Выделение вершин"
-
-
-msgid "Vertex selection masking for painting (weight paint only)"
-msgstr "Маскировка выбранных вершин при рисовании (только в режиме рисования весов)"
 
 
 msgid "Clone UV loop layer"
@@ -26620,10 +26608,6 @@ msgid "Checker Board"
 msgstr "Шахматная доска"
 
 
-msgid "Fill area with chessboard pattern"
-msgstr "Заливать область паттерном шахматной доски"
-
-
 msgid "Fill area with image texture"
 msgstr "Заливать область изображением текстуры"
 
@@ -26836,26 +26820,6 @@ msgid "Material slot name"
 msgstr "Имя слота материала"
 
 
-msgid "Editor menu containing buttons"
-msgstr "Меню редактора с кнопками"
-
-
-msgid "If this is set, the menu gets a custom ID, otherwise it takes the name of the class used to define the menu (for example, if the class name is \"OBJECT_MT_hello\", and bl_idname is not set by the script, then bl_idname = \"OBJECT_MT_hello\")"
-msgstr "Если установлено, меню приобретает особый идентификатор. В противном случае он принимает имя класса, используемого для определения ключевого набора (например, если имя класса «OBJECT_MT_hello» и bl_idname не установлено скриптом, тогда bl_idname = \"OBJECT_MT_hello\")"
-
-
-msgid "The menu label"
-msgstr "Метка меню"
-
-
-msgid "Layout"
-msgstr "Разметка"
-
-
-msgid "Defines the structure of the menu in the UI"
-msgstr "Определяет структуру меню в интерфейсе пользователя"
-
-
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "CLIP_MT_clip"
@@ -27022,6 +26986,11 @@ msgid "Fractional Zoom"
 msgstr "Выбор масштаба"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "Добавить"
+
+
 msgid "Material Specials"
 msgstr "Настройки материала"
 
@@ -27037,11 +27006,6 @@ msgstr "Настройка группы вершин"
 msgctxt "Operator"
 msgid "NLA_MT_add"
 msgstr "NLA_MT_add"
-
-
-msgctxt "Operator"
-msgid "Add"
-msgstr "Добавить"
 
 
 msgid "NLA Channel Context Menu"
@@ -27067,6 +27031,10 @@ msgstr "Преобразователь"
 
 msgid "Distort"
 msgstr "Искажение"
+
+
+msgid "Layout"
+msgstr "Разметка"
 
 
 msgid "Matte"
@@ -50852,6 +50820,11 @@ msgstr "Присоединить выделенные объекты к акти
 
 
 msgctxt "Operator"
+msgid "Join as Shapes"
+msgstr "Присоединить как формы"
+
+
+msgctxt "Operator"
 msgid "Transfer UV Maps"
 msgstr "Перенести UV-карты"
 
@@ -60074,10 +60047,6 @@ msgid "Object Name"
 msgstr "Имя объекта"
 
 
-msgid "Toggle selection instead of deselecting everything first"
-msgstr "Переключить выделение, а не снимать выделение со всего"
-
-
 msgctxt "Operator"
 msgid "Smooth View"
 msgstr "Плавный просмотр"
@@ -60810,14 +60779,6 @@ msgid "Apply Global Orientation"
 msgstr "Применить глобальную ориентацию"
 
 
-msgid ""
-"enabled: Rotate all root objects to match the global orientation settings.\n"
-"disabled: set global orientation in Collada assets"
-msgstr ""
-"Включено: поворачивать все корневые объекты для совпадения с настройками глобальной ориентации\n"
-"Отключено: установить глобальную ориентацию в ассетах Collada"
-
-
 msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "Применить модификаторы к экспортируемого меша (недеструктивно)"
 
@@ -60828,16 +60789,6 @@ msgstr "Только кости деформации"
 
 msgid "Only export deforming bones with armatures"
 msgstr "Экспортировать только деформирующие кости со арматурами"
-
-
-msgid ""
-"Transformation type for translation, scale and rotation\n"
-"Note: The Animation transformation type in the Anim Tab\n"
-"is always equal to the Object transformation type in the Geom tab"
-msgstr ""
-"Тип трансформации для перемещения, вращения и масштабирования\n"
-"Внимание: тип трансформации анимации на вкладке анимации\n"
-"всегда совпадает с типом трансформации объекта на вкладке геометрии"
 
 
 msgid "Use <matrix> representation for exported transformations"
@@ -80115,10 +80066,6 @@ msgid "Show the bone selection overlay"
 msgstr "Показать наложение с выделением костей"
 
 
-msgid "Opacity of the texture paint mode overlay"
-msgstr "Прозрачность наложения в режиме рисования текстур"
-
-
 msgid "Show Edit Lines"
 msgstr "Показывать редактируемые линии"
 
@@ -81767,14 +81714,6 @@ msgstr "Неверная цель %r (должно быть 'ARMATURE' или 'O
 
 msgid "Cameras & Markers (.py)"
 msgstr "Камеры и маркеры (.py)"
-
-
-msgid "Operation aborted by user"
-msgstr "Операция отменена пользователем"
-
-
-msgid "utf-8surrogateescape"
-msgstr "utf-8surrogateescape"
 
 
 msgid "Unable to parse XML, %s:%s for file %r"
@@ -84616,12 +84555,12 @@ msgid "Use for Rendering"
 msgstr "Использовать для рендера"
 
 
-msgid "%s: %s"
-msgstr "%s: %s"
-
-
 msgid "Unknown add-ons"
 msgstr "Неизвестные аддоны"
+
+
+msgid "%s: %s"
+msgstr "%s: %s"
 
 
 msgid "B/W"
@@ -87477,10 +87416,6 @@ msgid "PAINT_TEXTUREPAINT_VERTEXPAINT_WEIGHTTexture PaintVertex PaintWeight Pain
 msgstr "PAINT_TEXTUREPAINT_VERTEXPAINT_WEIGHTTexture PaintVertex PaintWeight Paint"
 
 
-msgid "Reference Point"
-msgstr "Ориентир"
-
-
 msgid "PAINT_GPENCILEDIT_GPENCILSCULPT_GPENCILWEIGHT_GPENCILOBJECTDraw Grease PencilEdit Grease PencilSculpt Grease PencilWeight Grease PencilGrease Pencil"
 msgstr "PAINT_GPENCILEDIT_GPENCILSCULPT_GPENCILWEIGHT_GPENCILOBJECTDraw Grease PencilEdit Grease PencilSculpt Grease PencilWeight Grease PencilGrease Pencil"
 
@@ -88009,8 +87944,8 @@ msgid "Fade Geometry"
 msgstr "Затемнить геометрию"
 
 
-msgid "Custom Location"
-msgstr "Настраиваемое положение"
+msgid "Reference Point"
+msgstr "Ориентир"
 
 
 msgid "Show Edit Lines only in multiframe"
@@ -88099,8 +88034,8 @@ msgid "Specular Lighting"
 msgstr "Блики"
 
 
-msgid "Object Location"
-msgstr "Положение объекта"
+msgid "Custom Location"
+msgstr "Настраиваемое положение"
 
 
 msgctxt "Operator"
@@ -88117,8 +88052,8 @@ msgid "Disable Studio Light Edit"
 msgstr "Отключить редактирование студийного освещения"
 
 
-msgid "No object selected, using cursor"
-msgstr "Нет выбранного объекта, используется курсор"
+msgid "Object Location"
+msgstr "Положение объекта"
 
 
 msgctxt "Operator"
@@ -88157,6 +88092,10 @@ msgstr "Выпуклость"
 
 msgid "Valley"
 msgstr "Впадины"
+
+
+msgid "No object selected, using cursor"
+msgstr "Нет выбранного объекта, используется курсор"
 
 
 msgctxt "Operator"
@@ -93793,10 +93732,6 @@ msgid "Could not find a valid parent collection for the new duplicate, it won't 
 msgstr "Не удалось найти корректную родительскую коллекцию для нового дубликата, поэтому он не будет связан и с каким слоём вида"
 
 
-msgid "Cannot add a colection to a linked collection/scene"
-msgstr "Невозможно добавить коллекцию внутри связанной коллекции/сцены"
-
-
 msgid "Cannot delete linked collection '%s', it is used by other linked scenes/collections"
 msgstr "Нельзя удалить связанную коллекцию «%s», она используется другими связанными сценами/коллекциями"
 
@@ -95595,10 +95530,6 @@ msgstr "Регистрация класса ноды: имя «%s» слишко
 
 msgid "Registering node socket class: '%s' is too long, maximum length is %d"
 msgstr "Регистрация класса нодового сокета: имя «%s» слишком длинное, максимальная длина — %d"
-
-
-msgid "Only empty objects support group instances"
-msgstr "Только объекты-пустышки могут содержать экземпляры групп"
 
 
 msgid "Cannot set instance-collection as object belongs in group being instanced, thus causing a cycle"

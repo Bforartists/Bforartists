@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-01 00:00:00\n"
+"POT-Creation-Date: 2019-07-10 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -12963,10 +12963,6 @@ msgid "Vertex Selection"
 msgstr "ﻂﻘﻨﻟﺍ ﺭﺎﻴﺘﺧﺍ"
 
 
-msgid "Vertex selection masking for painting (weight paint only)"
-msgstr "(ﻂﻘﻓ ﻥﺯﻮﻟﺍ ﻢﺳﺮﻟ) ﻢﺳﺮﻠﻟ ﺔﻄﻘﻨﻟﺍ ﺭﺎﻴﺘﺧﺍ ﺐﺠﺣ"
-
-
 msgid "Clone UV loop layer"
 msgstr "UV ﻞﺴﻠﺴﺘﻟﺍ ﺔﻘﺒﻃ ﺦﺴﻧﺍ"
 
@@ -18442,10 +18438,6 @@ msgid "Material slot name"
 msgstr "ﺔﻣﺎﺨﻟﺍ ﺔﺤﺘﻓ ﻢﺳﺇ"
 
 
-msgid "Layout"
-msgstr "ﻖﻴﺴﻨﺗ"
-
-
 msgctxt "MovieClip"
 msgid "Clip"
 msgstr "ﻢﻠﻗ"
@@ -18507,6 +18499,11 @@ msgid "Weld/Align"
 msgstr "ﻱﺫﺎﺣ/ﻢﺤﻟﺍ"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "ﻒﺿﺃ"
+
+
 msgid "Material Specials"
 msgstr "ﺕﺎﻣﺎﺨﻟﺍ ﺕﺎﻓﺎﺿﺇ"
 
@@ -18519,11 +18516,6 @@ msgid "Vertex Group Specials"
 msgstr "ﻂﻘﻨﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺕﺎﻓﺎﺿﺇ"
 
 
-msgctxt "Operator"
-msgid "Add"
-msgstr "ﻒﺿﺃ"
-
-
 msgid "Edit"
 msgstr "ﺭﺮﺣ"
 
@@ -18534,6 +18526,10 @@ msgstr "ﻝﻮّﺤﻣ"
 
 msgid "Distort"
 msgstr "ﻩﻮﺷ"
+
+
+msgid "Layout"
+msgstr "ﻖﻴﺴﻨﺗ"
 
 
 msgid "Matte"
@@ -28752,6 +28748,11 @@ msgstr "ﺭﺎﺘﺨﻣ ﺮﻴﻐﻠﻟ ﺮﻴﻴﺼﺘﻟﺍ ﺪﻴﻗ"
 
 
 msgctxt "Operator"
+msgid "Join as Shapes"
+msgstr "ﻝﺎﻜﺷﺄﻛ ﺞﻣﺩﺇ"
+
+
+msgctxt "Operator"
 msgid "Clear Location"
 msgstr "ﻊﻗﻮﻤﻟﺍ ﻂﺒﺿ ﺪﻋﺍ"
 
@@ -32274,10 +32275,6 @@ msgstr "ﻦﺋﺎﻜﻟﺍ ﺭﺎﻴﺘﺧﺍ ﺔﻤﺋﺎﻗ"
 
 msgid "Object Name"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﻢﺳﺍ"
-
-
-msgid "Toggle selection instead of deselecting everything first"
-msgstr "ﺎﻴﺋﺪﺑ ءﻲﺷ ﻞﻛ ﺭﺎﻴﺘﺧﺍ ءﺎﻐﻟﺇ ﻝﺪﺑ ﺭﺎﻴﺘﺧﻹ﻿ﺍ ﺩﺪﻣ"
 
 
 msgctxt "Operator"

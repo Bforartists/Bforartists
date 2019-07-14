@@ -9,7 +9,7 @@ bl_info = {
     "warning": "",
     "wiki_url": "",
     "category": "3d View"
-    }
+}
 
 import bpy
 from bpy.types import Menu
@@ -24,13 +24,13 @@ class VIEW3D_MT_snap_of(Menu):
 
         toolsettings = context.tool_settings
         pie = layout.menu_pie()
-        pie.prop(toolsettings, "snap_element", expand=True)
+        pie.prop(toolsettings, "snap_elements", expand=True)
         pie.prop(toolsettings, "use_snap")
 
 
 classes = (
     VIEW3D_MT_snap_of,
-    )
+)
 
 addon_keymaps = []
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-01 00:00:00\n"
+"POT-Creation-Date: 2019-07-10 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -8906,6 +8906,11 @@ msgid "Weld/Align"
 msgstr "Löd/räta upp"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "Ny"
+
+
 msgid "Material Specials"
 msgstr "Spara som"
 
@@ -8916,11 +8921,6 @@ msgstr "Specialare för formnycklar"
 
 msgid "Vertex Group Specials"
 msgstr "Vertexgrupp-special"
-
-
-msgctxt "Operator"
-msgid "Add"
-msgstr "Ny"
 
 
 msgid "Edit"
@@ -19239,6 +19239,11 @@ msgstr "Markera Länkad"
 
 
 msgctxt "Operator"
+msgid "Join as Shapes"
+msgstr "Förena som UV"
+
+
+msgctxt "Operator"
 msgid "Clear Location"
 msgstr "Rensa Placering"
 
@@ -23694,10 +23699,6 @@ msgstr "Göm Markerad"
 
 msgid "Object Name"
 msgstr "Packa Data"
-
-
-msgid "Toggle selection instead of deselecting everything first"
-msgstr "Växla markeringsstatus för alla ben"
 
 
 msgctxt "Operator"

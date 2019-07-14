@@ -30,7 +30,7 @@ from bpy.types import (
 bl_info = {
     "name": "UI Pie Menu Official",
     "author": "Antony Riakiotakis, Sebastian Koenig",
-    "version": (1, 1, 5),
+    "version": (1, 1, 6),
     "blender": (2, 80, 0),
     "description": "Individual Pie Menu Activation List",
     "location": "Addons Preferences",
@@ -47,8 +47,8 @@ sub_modules_names = (
     "pie_shade_of",
     "pie_manipulator_of",
     "pie_pivot_of",
-    "pie_snap_of",
-    "pie_clip_marker_of",
+#    "pie_snap_of",
+#    "pie_clip_marker_of",
     )
 
 
