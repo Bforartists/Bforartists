@@ -170,7 +170,7 @@ void BKE_sound_free(bSound *sound)
   /* No animdata here. */
 
   if (sound->packedfile) {
-    freePackedFile(sound->packedfile);
+    BKE_packedfile_free(sound->packedfile);
     sound->packedfile = NULL;
   }
 
@@ -211,7 +211,7 @@ void BKE_sound_copy_data(Main *UNUSED(bmain),
   sound_dst->newpackedfile = NULL;
 
   if (sound_dst->packedfile) {
-    sound_dst->packedfile = dupPackedFile(sound_dst->packedfile);
+    sound_dst->packedfile = BKE_packedfile_duplicate(sound_dst->packedfile);
   }
 
   BKE_sound_reset_runtime(sound_dst);
@@ -389,7 +389,6 @@ void BKE_sound_cache(bSound *sound)
 {
   sound_verify_evaluated_id(&sound->id);
 
-  sound->flags |= SOUND_FLAGS_CACHING;
   if (sound->cache) {
     AUD_Sound_free(sound->cache);
   }
@@ -405,7 +404,6 @@ void BKE_sound_cache(bSound *sound)
 
 void BKE_sound_delete_cache(bSound *sound)
 {
-  sound->flags &= ~SOUND_FLAGS_CACHING;
   if (sound->cache) {
     AUD_Sound_free(sound->cache);
     sound->cache = NULL;

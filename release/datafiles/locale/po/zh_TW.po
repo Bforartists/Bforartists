@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-01 00:00:00\n"
+"POT-Creation-Date: 2019-07-10 00:00:00\n"
 "PO-Revision-Date: 2018-09-23 13:23+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -13302,10 +13302,6 @@ msgid "Vertex Selection"
 msgstr "頂點選取項"
 
 
-msgid "Vertex selection masking for painting (weight paint only)"
-msgstr "用於繪圖的頂點選取項遮罩處理 (僅權重繪圖)"
-
-
 msgid "Clone UV loop layer"
 msgstr "拓製 UV 迴圈分層"
 
@@ -18585,10 +18581,6 @@ msgid "Material slot name"
 msgstr "材質槽名稱"
 
 
-msgid "Layout"
-msgstr "配置"
-
-
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "CLIP_MT_clip"
@@ -18683,6 +18675,11 @@ msgid "Weld/Align"
 msgstr "焊接/對齊"
 
 
+msgctxt "Operator"
+msgid "Add"
+msgstr "添加"
+
+
 msgid "Material Specials"
 msgstr "材質特殊項"
 
@@ -18695,11 +18692,6 @@ msgid "Vertex Group Specials"
 msgstr "頂點群組特殊項"
 
 
-msgctxt "Operator"
-msgid "Add"
-msgstr "添加"
-
-
 msgid "Edit"
 msgstr "編輯"
 
@@ -18710,6 +18702,10 @@ msgstr "轉換器"
 
 msgid "Distort"
 msgstr "扭曲"
+
+
+msgid "Layout"
+msgstr "配置"
 
 
 msgid "Matte"
@@ -35918,6 +35914,11 @@ msgstr "將選取的物體結合到作用中物體中"
 
 
 msgctxt "Operator"
+msgid "Join as Shapes"
+msgstr "結合為外形"
+
+
+msgctxt "Operator"
 msgid "Transfer UV Maps"
 msgstr "傳輸 UV 映射"
 
@@ -42827,10 +42828,6 @@ msgstr "選單物體選取"
 
 msgid "Object Name"
 msgstr "物體名稱"
-
-
-msgid "Toggle selection instead of deselecting everything first"
-msgstr "切換選取與否，而不是先取消選取到的每個東西"
 
 
 msgctxt "Operator"

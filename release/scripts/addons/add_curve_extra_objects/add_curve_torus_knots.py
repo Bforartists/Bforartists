@@ -269,13 +269,11 @@ def create_torus_knot(self, context):
     # set object in the scene
     scene = bpy.context.scene
     scene.collection.objects.link(new_obj)  # place in active scene
+    bpy.ops.object.select_all(action='DESELECT')
     new_obj.select_set(True)  # set as selected
-    #scene.objects.active = new_obj  # set as active
+    bpy.context.view_layer.objects.active = new_obj
     new_obj.matrix_world = self.align_matrix  # apply matrix
-
-    # set BEZIER handles
-    #if splineType == 'BEZIER':
-    #    setBezierHandles(new_obj, self.handleType)
+    bpy.context.view_layer.update()
 
     return
 
@@ -331,9 +329,9 @@ def addLinkColors(self, curveData):
             mat.diffuse_color = (*colors[cID], 1.0)
 
         if self.options_plus:
-            mat.diffuse_color.s = self.saturation
+            mat.diffuse_color = (mat.diffuse_color[0] * self.saturation, mat.diffuse_color[1] * self.saturation, mat.diffuse_color[2] * self.saturation, 1.0)
         else:
-            mat.diffuse_color.s = 0.75
+            mat.diffuse_color = (mat.diffuse_color[0] * 0.75, mat.diffuse_color[1] * 0.75, mat.diffuse_color[2] * 0.75, 1.0)
 
         me.materials.append(mat)
 

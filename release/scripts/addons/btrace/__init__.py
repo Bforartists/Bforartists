@@ -20,11 +20,11 @@
 bl_info = {
     "name": "Btrace",
     "author": "liero, crazycourier, Atom, Meta-Androcto, MacKracken",
-    "version": (1, 2, 2),
+    "version": (1, 2, 3),
     "blender": (2, 80, 0),
     "location": "View3D > Sidebar > Create Tab",
     "description": "Tools for converting/animating objects/particles into curves",
-    "warning": "Particle Tracers not working",
+    "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Curve/Btrace",
     "category": "Add Curve"}
 
