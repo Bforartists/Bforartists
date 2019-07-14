@@ -560,7 +560,9 @@ class CYCLES_RENDER_PT_film_transparency(CyclesButtonsPanel, Panel):
         layout.active = rd.film_transparent
 
         col = layout.column()
+        col.use_property_split = False
         col.prop(cscene, "film_transparent_glass", text="Transparent Glass")
+        col.use_property_split = True
 
         sub = col.column()
         sub.active = rd.film_transparent and cscene.film_transparent_glass
