@@ -558,8 +558,9 @@ void BKE_mesh_copy_data(Main *bmain, Mesh *me_dst, const Mesh *me_src, const int
   /* XXX WHAT? Why? Comment, please! And pretty sure this is not valid for regular Mesh copying? */
   me_dst->runtime.is_original = false;
 
-  const bool do_tessface = ((me_src->totface != 0) &&
-                            (me_src->totpoly == 0)); /* only do tessface if we have no polys */
+  /* Only do tessface if we have no polys. */
+  const bool do_tessface = ((me_src->totface != 0) && (me_src->totpoly == 0));
+
   CustomData_MeshMasks mask = CD_MASK_MESH;
 
   if (me_src->id.tag & LIB_TAG_NO_MAIN) {
@@ -664,6 +665,7 @@ static Mesh *mesh_new_nomain_from_template_ex(const Mesh *me_src,
 
   me_dst->cd_flag = me_src->cd_flag;
   me_dst->editflag = me_src->editflag;
+  me_dst->texflag = me_src->texflag;
 
   CustomData_copy(&me_src->vdata, &me_dst->vdata, mask.vmask, CD_CALLOC, verts_len);
   CustomData_copy(&me_src->edata, &me_dst->edata, mask.emask, CD_CALLOC, edges_len);

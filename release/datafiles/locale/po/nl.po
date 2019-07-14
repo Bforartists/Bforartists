@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'65d770ffa36d')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-01 00:00:00\n"
+"POT-Creation-Date: 2019-07-10 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -1113,10 +1113,6 @@ msgid "Link"
 msgstr "Koppel"
 
 
-msgid "Layout"
-msgstr "Indeling"
-
-
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "CLIP_MT_clip"
@@ -1150,6 +1146,10 @@ msgstr "Bewerken"
 
 msgid "Converter"
 msgstr "Converteerder"
+
+
+msgid "Layout"
+msgstr "Indeling"
 
 
 msgid "Navigation"

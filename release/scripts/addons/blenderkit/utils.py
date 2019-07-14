@@ -394,9 +394,22 @@ def get_headers(api_key):
         headers["Authorization"] = "Bearer %s" % api_key
     return headers
 
+def scale_2d(v, s, p):
+    '''scale a 2d vector with a pivot'''
+    return (p[0] + s[0] * (v[0] - p[0]), p[1] + s[1] * (v[1] - p[1]))
+
+def scale_uvs(ob, scale  = 1.0, pivot = Vector((.5,.5))):
+    mesh = ob.data
+    if len(mesh.uv_layers)>0:
+        uv = mesh.uv_layers[mesh.uv_layers.active_index]
+
+        # Scale a UV map iterating over its coordinates to a given scale and with a pivot point
+        for uvindex in range(len(uv.data)):
+            uv.data[uvindex].uv = scale_2d(uv.data[uvindex].uv, scale, pivot)
+
 
 # map uv cubic and switch of auto tex space and set it to 1,1,1
-def automap(target_object=None, target_slot=None, tex_size=1, bg_exception=False):
+def automap(target_object=None, target_slot=None, tex_size=1, bg_exception=False, just_scale = False):
     from blenderkit import bg_blender as bg
     s = bpy.context.scene
     mat_props = s.blenderkit_mat
@@ -435,10 +448,17 @@ def automap(target_object=None, target_slot=None, tex_size=1, bg_exception=False
                 bpy.ops.object.material_slot_select()
 
             scale = (scale.x + scale.y + scale.z) / 3.0
-            bpy.ops.uv.cube_project(
-                cube_size=scale * 2.0 / (tex_size),
-                correct_aspect=False)  # it's 2.0 because blender can't tell size of a cube :)
+            if not just_scale:
+                bpy.ops.uv.cube_project(
+                    cube_size=scale * 2.0 / (tex_size),
+                    correct_aspect=False)  # it's * 2.0 because blender can't tell size of a unit cube :)
+
             bpy.ops.object.editmode_toggle()
             tob.data.uv_layers.active = tob.data.uv_layers['automap']
             tob.data.uv_layers["automap"].active_render = True
+            # this by now works only for thumbnail preview, but should be extended to work on arbitrary objects.
+            # by now, it takes the basic uv map = 1 meter. also, it now doeasn't respect more materials on one object,
+            # it just scales whole UV.
+            if just_scale:
+                scale_uvs(tob, scale=Vector((1/tex_size, 1/tex_size)))
             bpy.context.view_layer.objects.active = actob

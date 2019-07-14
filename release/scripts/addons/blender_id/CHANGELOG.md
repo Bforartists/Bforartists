@@ -1,6 +1,6 @@
 # Blender ID Add-on Changelog
 
-# Version 2.0 (in development)
+# Version 2.0 (released 2019-07-09)
 
 - Require Blender 2.80+.
 - Use the new URL https://id.blender.org/ for communication with Blender ID.
@@ -8,7 +8,7 @@
   is not logged in.
 - Log which Blender ID instance is communicated with.
 - Show which Blender ID instance is communicated with in the addon preferences,
-  if it was overridden by setting the BLENDER_ID_ENDPOINT environment variable.
+  if it was overridden by setting the `BLENDER_ID_ENDPOINT` environment variable.
 - Automatically retry failed connections to Blender ID for more stability.
 - Include Blender and add-on version in User-Agent header when communicating with Blender ID.
 

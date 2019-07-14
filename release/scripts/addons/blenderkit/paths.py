@@ -137,10 +137,10 @@ def slugify(slug):
     Normalizes string, converts to lowercase, removes non-alpha characters,
     and converts spaces to hyphens.
     """
-
     import unicodedata, re
     slug = slug.lower()
-    slug.replace('.', '_')
+    slug = slug.replace('.', '_')
+    slug = slug.replace('"', '')
     slug = slug.replace(' ', '_')
     # import re
     # slug = unicodedata.normalize('NFKD', slug)
