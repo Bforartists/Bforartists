@@ -6435,15 +6435,19 @@ class VIEW3D_PT_shading_options(Panel):
             col.prop(shading, "show_backface_culling")
 
         row = col.row(align=True)
+        
+        
 
         if shading.type == 'WIREFRAME':
             row.prop(shading, "show_xray_wireframe")
             sub = row.row()
+            sub.use_property_split = True
             sub.active = shading.show_xray_wireframe
             sub.prop(shading, "xray_alpha_wireframe", text="X-Ray")
         elif shading.type == 'SOLID':
             row.prop(shading, "show_xray", text="")
-            sub = row.row()
+            sub = row.row()     
+            sub.use_property_split = True    
             sub.active = shading.show_xray
             sub.prop(shading, "xray_alpha", text="X-Ray")
             # X-ray mode is off when alpha is 1.0
