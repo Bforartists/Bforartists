@@ -6445,22 +6445,22 @@ class VIEW3D_PT_shading_options(Panel):
             sub.active = shading.show_xray_wireframe
             sub.prop(shading, "xray_alpha_wireframe", text="X-Ray")
         elif shading.type == 'SOLID':
-            row.prop(shading, "show_xray", text="")
+            row.prop(shading, "show_xray")
             sub = row.row()     
-            sub.use_property_split = True    
-            sub.active = shading.show_xray
-            sub.prop(shading, "xray_alpha", text="X-Ray")
-            # X-ray mode is off when alpha is 1.0
-            xray_active = shading.show_xray and shading.xray_alpha != 1
+            sub.use_property_split = True
+            if shading.show_xray:
+                sub.prop(shading, "xray_alpha", text = "")
+                # X-ray mode is off when alpha is 1.0
+                xray_active = shading.show_xray and shading.xray_alpha != 1
 
             row = col.row(align=True)
             row.prop(shading, "show_shadows")
             row.active = not shading.show_xray
             
             sub = row.row(align=True)
-            sub.active = shading.show_shadows
-            sub.prop(shading, "shadow_intensity", text="")
-            sub.popover(panel="VIEW3D_PT_shading_options_shadow", icon='PREFERENCES', text="")
+            if shading.show_shadows:
+                sub.prop(shading, "shadow_intensity", text="")
+                sub.popover(panel="VIEW3D_PT_shading_options_shadow", icon='PREFERENCES', text="")
 
             col = layout.column()
 
@@ -6492,8 +6492,8 @@ class VIEW3D_PT_shading_options(Panel):
             row = layout.split()
             row.prop(shading, "show_object_outline")
             sub = row.row()
-            sub.active = shading.show_object_outline
-            sub.prop(shading, "object_outline_color", text="")
+            if shading.show_object_outline:
+                sub.prop(shading, "object_outline_color", text="")
 
             col = layout.column()
             if (shading.light == 'STUDIO') and (shading.type != 'WIREFRAME'):
