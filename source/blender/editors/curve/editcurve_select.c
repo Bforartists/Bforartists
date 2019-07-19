@@ -510,7 +510,7 @@ void CURVE_OT_de_select_first(wmOperatorType *ot)
   /* identifiers */
   ot->name = "(De)select First";
   ot->idname = "CURVE_OT_de_select_first";
-  ot->description = "(De)select First\n(De)select first of visible part of each NURBS";
+  ot->description = "(De)select first of visible part of each NURBS";
 
   /* api cfirstbacks */
   ot->exec = de_select_first_exec;
@@ -544,7 +544,7 @@ void CURVE_OT_de_select_last(wmOperatorType *ot)
   /* identifiers */
   ot->name = "(De)select Last";
   ot->idname = "CURVE_OT_de_select_last";
-  ot->description = "(De)select Last\n(De)select last of visible part of each NURBS";
+  ot->description = "(De)select last of visible part of each NURBS";
 
   /* api clastbacks */
   ot->exec = de_select_last_exec;
@@ -610,7 +610,7 @@ void CURVE_OT_select_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "(De)select All";
   ot->idname = "CURVE_OT_select_all";
-  ot->description = "(De)select All\n(De)select all control points";
+  ot->description = "(De)select all control points";
 
   /* api callbacks */
   ot->exec = de_select_all_exec;
@@ -667,7 +667,7 @@ void CURVE_OT_select_linked(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Linked All";
   ot->idname = "CURVE_OT_select_linked";
-  ot->description = "Select Linked All\nSelect all control points linked to the current selection";
+  ot->description = "Select all control points linked to the current selection";
 
   /* api callbacks */
   ot->exec = select_linked_exec;
@@ -734,7 +734,7 @@ void CURVE_OT_select_linked_pick(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Linked";
   ot->idname = "CURVE_OT_select_linked_pick";
-  ot->description = "Select Linked\nSelect all control points linked to already selected ones";
+  ot->description = "Select all control points linked to already selected ones";
 
   /* api callbacks */
   ot->invoke = select_linked_pick_invoke;
@@ -803,8 +803,7 @@ void CURVE_OT_select_row(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Control Point Row";
   ot->idname = "CURVE_OT_select_row";
-  ot->description =
-      "Select Control Point Row\nSelect a row of control points including active one";
+  ot->description = "Select a row of control points including active one";
 
   /* api callbacks */
   ot->exec = select_row_exec;
@@ -839,8 +838,7 @@ void CURVE_OT_select_next(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Next";
   ot->idname = "CURVE_OT_select_next";
-  ot->description =
-      "Select Next\nSelect control points following already selected ones along the curves";
+  ot->description = "Select control points following already selected ones along the curves";
 
   /* api callbacks */
   ot->exec = select_next_exec;
@@ -875,8 +873,7 @@ void CURVE_OT_select_previous(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Previous";
   ot->idname = "CURVE_OT_select_previous";
-  ot->description =
-      "Select Previous\nSelect control points preceding already selected ones along the curves";
+  ot->description = "Select control points preceding already selected ones along the curves";
 
   /* api callbacks */
   ot->exec = select_previous_exec;
@@ -985,7 +982,7 @@ void CURVE_OT_select_more(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select More";
   ot->idname = "CURVE_OT_select_more";
-  ot->description = "Select More\nSelect control points directly linked to already selected ones";
+  ot->description = "Select control points directly linked to already selected ones";
 
   /* api callbacks */
   ot->exec = curve_select_more_exec;
@@ -1200,7 +1197,7 @@ void CURVE_OT_select_less(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Less";
   ot->idname = "CURVE_OT_select_less";
-  ot->description = "Select Less\nReduce current selection by deselecting boundary elements";
+  ot->description = "Reduce current selection by deselecting boundary elements";
 
   /* api callbacks */
   ot->exec = curve_select_less_exec;
@@ -1289,7 +1286,7 @@ void CURVE_OT_select_random(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Random";
   ot->idname = "CURVE_OT_select_random";
-  ot->description = "Select Random\Randomly select some control points";
+  ot->description = "Randomly select some control points";
 
   /* api callbacks */
   ot->exec = curve_select_random_exec;
@@ -1420,7 +1417,7 @@ void CURVE_OT_select_nth(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Checker Deselect";
-  ot->description = "Checker Deselect\nDeselect every other vertex";
+  ot->description = "Deselect every other vertex";
   ot->idname = "CURVE_OT_select_nth";
 
   /* api callbacks */
@@ -1780,7 +1777,7 @@ void CURVE_OT_select_similar(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Similar";
   ot->idname = "CURVE_OT_select_similar";
-  ot->description = "Select Similar\nSelect similar curve points by property type";
+  ot->description = "Select similar curve points by property type";
 
   /* api callbacks */
   ot->invoke = WM_menu_invoke;
@@ -2023,7 +2020,7 @@ void CURVE_OT_shortest_path_pick(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Pick Shortest Path";
   ot->idname = "CURVE_OT_shortest_path_pick";
-  ot->description = "Pick Shortest Path\nSelect shortest path between two selections";
+  ot->description = "Select shortest path between two selections";
 
   /* api callbacks */
   ot->invoke = edcu_shortest_path_pick_invoke;

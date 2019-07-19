@@ -476,7 +476,7 @@ void ARMATURE_OT_calculate_roll(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Recalculate Roll";
   ot->idname = "ARMATURE_OT_calculate_roll";
-  ot->description = "Recalculate Roll\nAutomatically fix alignment of select bones' axes";
+  ot->description = "Automatically fix alignment of select bones' axes";
 
   /* api callbacks */
   ot->invoke = WM_menu_invoke;
@@ -875,7 +875,7 @@ void ARMATURE_OT_fill(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Fill Between Joints";
   ot->idname = "ARMATURE_OT_fill";
-  ot->description = "Fill Between Joints\nAdd bone between selected joint(s) and/or 3D-Cursor";
+  ot->description = "Add bone between selected joint(s) and/or 3D-Cursor";
 
   /* callbacks */
   ot->exec = armature_fill_bones_exec;
@@ -1070,7 +1070,7 @@ void ARMATURE_OT_merge(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Merge Bones";
   ot->idname = "ARMATURE_OT_merge";
-  ot->description = "Merge Bones\nMerge continuous chains of selected bones";
+  ot->description = "Merge continuous chains of selected bones";
 
   /* callbacks */
   ot->invoke = WM_menu_invoke;
@@ -1209,9 +1209,7 @@ void ARMATURE_OT_switch_direction(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Switch Direction";
   ot->idname = "ARMATURE_OT_switch_direction";
-  ot->description =
-      "Switch Direction\nChange the direction that a chain of bones points in (head <-> tail "
-      "swap)";
+  ot->description = "Change the direction that a chain of bones points in (head <-> tail swap)";
 
   /* api callbacks */
   ot->exec = armature_switch_direction_exec;
@@ -1354,7 +1352,7 @@ void ARMATURE_OT_align(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Align Bones";
   ot->idname = "ARMATURE_OT_align";
-  ot->description = "Align Bones\nAlign selected bones to the active bone (or to their parent)";
+  ot->description = "Align selected bones to the active bone (or to their parent)";
 
   /* api callbacks */
   ot->exec = armature_align_bones_exec;
@@ -1399,7 +1397,7 @@ void ARMATURE_OT_split(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Split";
   ot->idname = "ARMATURE_OT_split";
-  ot->description = "Split\nSplit off selected bones from connected unselected bones";
+  ot->description = "Split off selected bones from connected unselected bones";
 
   /* api callbacks */
   ot->exec = armature_split_exec;
@@ -1481,7 +1479,7 @@ void ARMATURE_OT_delete(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Delete Selected Bone(s)";
   ot->idname = "ARMATURE_OT_delete";
-  ot->description = "Delete Selected Bone(s)\nRemove selected bones from the armature";
+  ot->description = "Remove selected bones from the armature";
 
   /* api callbacks */
   //ot->invoke = WM_operator_confirm; // bfa - turned off confirm on delete
@@ -1654,7 +1652,7 @@ void ARMATURE_OT_dissolve(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Dissolve Selected Bone(s)";
   ot->idname = "ARMATURE_OT_dissolve";
-  ot->description = "Dissolve Selected Bone(s)\nDissolve selected bones from the armature";
+  ot->description = "Dissolve selected bones from the armature";
 
   /* api callbacks */
   ot->exec = armature_dissolve_selected_exec;
@@ -1711,7 +1709,7 @@ void ARMATURE_OT_hide(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Hide Selected";
   ot->idname = "ARMATURE_OT_hide";
-  ot->description = "Hide Selected Bones\nTag selected bones to not be visible in Edit Mode";
+  ot->description = "Tag selected bones to not be visible in Edit Mode";
 
   /* api callbacks */
   ot->exec = armature_hide_exec;
@@ -1764,7 +1762,7 @@ void ARMATURE_OT_reveal(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Reveal Hidden";
   ot->idname = "ARMATURE_OT_reveal";
-  ot->description = "Reveal Bones\nReveal all bones hidden in Edit Mode";
+  ot->description = "Reveal all bones hidden in Edit Mode";
 
   /* api callbacks */
   ot->exec = armature_reveal_exec;

@@ -382,7 +382,7 @@ void NODE_OT_select_grouped(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Select Grouped";
-  ot->description = "Select Grouped, Select nodes with similar properties";
+  ot->description = "Select nodes with similar properties";
   ot->idname = "NODE_OT_select_grouped";
 
   /* api callbacks */
@@ -646,7 +646,7 @@ void NODE_OT_select(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select";
   ot->idname = "NODE_OT_select";
-  ot->description = "Select\nSelect the node under the cursor";
+  ot->description = "Select the node under the cursor";
 
   /* api callbacks */
   ot->invoke = node_select_invoke;
@@ -729,7 +729,7 @@ void NODE_OT_select_box(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Box Select";
   ot->idname = "NODE_OT_select_box";
-  ot->description = "Box Select\nUse box selection to select nodes";
+  ot->description = "Use box selection to select nodes";
 
   /* api callbacks */
   ot->invoke = node_box_select_invoke;
@@ -800,7 +800,7 @@ void NODE_OT_select_circle(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Circle Select";
   ot->idname = "NODE_OT_select_circle";
-  ot->description = "Circle Select\nUse circle selection to select nodes";
+  ot->description = "Use circle selection to select nodes";
 
   /* api callbacks */
   ot->invoke = WM_gesture_circle_invoke;
@@ -900,7 +900,7 @@ void NODE_OT_select_lasso(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Lasso Select";
-  ot->description = "Lasso Select\nSelect nodes using lasso selection";
+  ot->description = "Select nodes using lasso selection";
   ot->idname = "NODE_OT_select_lasso";
 
   /* api callbacks */
@@ -948,7 +948,7 @@ void NODE_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "(De)select All";
-  ot->description = "(De)select All\n(De)select all nodes";
+  ot->description = "(De)select all nodes";
   ot->idname = "NODE_OT_select_all";
 
   /* api callbacks */
@@ -1002,7 +1002,7 @@ void NODE_OT_select_linked_to(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select Linked To";
-  ot->description = "Select Linked To\nSelect nodes linked to the selected ones";
+  ot->description = "Select nodes linked to the selected ones";
   ot->idname = "NODE_OT_select_linked_to";
 
   /* api callbacks */
@@ -1054,7 +1054,7 @@ void NODE_OT_select_linked_from(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select Linked From";
-  ot->description = "Select Linked From\nSelect nodes linked from the selected ones";
+  ot->description = "Select nodes linked from the selected ones";
   ot->idname = "NODE_OT_select_linked_from";
 
   /* api callbacks */
@@ -1160,7 +1160,7 @@ void NODE_OT_select_same_type_step(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Activate Same Type Next/Prev";
-  ot->description = "Activate Same Type Next/Prev\nActivate and view same node type, step by step";
+  ot->description = "Activate and view same node type, step by step";
   ot->idname = "NODE_OT_select_same_type_step";
 
   /* api callbacks */
@@ -1271,7 +1271,7 @@ void NODE_OT_find_node(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Find Node";
-  ot->description = "Find Node\nSearch for named node and allow to select and activate it";
+  ot->description = "Search for named node and allow to select and activate it";
   ot->idname = "NODE_OT_find_node";
 
   /* api callbacks */

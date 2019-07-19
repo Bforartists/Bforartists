@@ -255,8 +255,7 @@ void ARMATURE_OT_click_extrude(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Click-Extrude";
   ot->idname = "ARMATURE_OT_click_extrude";
-  ot->description =
-      "Click-Extrude\nCreate a new bone going from the last selected joint to the mouse position";
+  ot->description = "Create a new bone going from the last selected joint to the mouse position";
 
   /* api callbacks */
   ot->invoke = armature_click_extrude_invoke;
@@ -620,8 +619,7 @@ void ARMATURE_OT_duplicate(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Duplicate Selected Bone(s)";
   ot->idname = "ARMATURE_OT_duplicate";
-  ot->description =
-      "Duplicate Selected Bone(s)\nMake copies of the selected bones within the same armature";
+  ot->description = "Make copies of the selected bones within the same armature";
 
   /* api callbacks */
   ot->exec = armature_duplicate_selected_exec;
@@ -858,7 +856,7 @@ void ARMATURE_OT_symmetrize(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Symmetrize";
   ot->idname = "ARMATURE_OT_symmetrize";
-  ot->description = "Symmetrize\nEnforce symmetry, make copies of the selection or use existing";
+  ot->description = "Enforce symmetry, make copies of the selection or use existing";
 
   /* api callbacks */
   ot->exec = armature_symmetrize_exec;
@@ -1065,7 +1063,7 @@ void ARMATURE_OT_extrude(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Extrude";
   ot->idname = "ARMATURE_OT_extrude";
-  ot->description = "Extrude\nCreate new bones from the selected joints";
+  ot->description = "Create new bones from the selected joints";
 
   /* api callbacks */
   ot->exec = armature_extrude_exec;
@@ -1134,7 +1132,7 @@ void ARMATURE_OT_bone_primitive_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Add Bone";
   ot->idname = "ARMATURE_OT_bone_primitive_add";
-  ot->description = "Add Bone\nAdd a new bone located at the 3D-Cursor";
+  ot->description = "Add a new bone located at the 3D-Cursor";
 
   /* api callbacks */
   ot->exec = armature_bone_primitive_add_exec;
@@ -1225,7 +1223,7 @@ void ARMATURE_OT_subdivide(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Subdivide Multi";
   ot->idname = "ARMATURE_OT_subdivide";
-  ot->description = "Subdivide Multi\nBreak selected bones into chains of smaller bones";
+  ot->description = "Break selected bones into chains of smaller bones";
 
   /* api callbacks */
   ot->exec = armature_subdivide_exec;

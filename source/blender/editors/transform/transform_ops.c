@@ -197,7 +197,7 @@ static void TRANSFORM_OT_select_orientation(struct wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Select Orientation";
-  ot->description = "Select Orientation\nSelect transformation orientation";
+  ot->description = "Select transformation orientation";
   ot->idname = "TRANSFORM_OT_select_orientation";
   ot->flag = OPTYPE_UNDO;
 
@@ -207,7 +207,7 @@ static void TRANSFORM_OT_select_orientation(struct wmOperatorType *ot)
   ot->poll = ED_operator_view3d_active;
 
   prop = RNA_def_property(ot->srna, "orientation", PROP_ENUM, PROP_NONE);
-  RNA_def_property_ui_text(prop, "Orientation", "Orientation\nTransformation orientation");
+  RNA_def_property_ui_text(prop, "Orientation", "Transformation orientation");
   RNA_def_enum_funcs(prop, rna_TransformOrientation_itemf);
 }
 
@@ -243,7 +243,7 @@ static void TRANSFORM_OT_delete_orientation(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Delete Orientation";
-  ot->description = "Delete Orientation\nDelete transformation orientation";
+  ot->description = "Delete transformation orientation";
   ot->idname = "TRANSFORM_OT_delete_orientation";
   ot->flag = OPTYPE_UNDO;
 
@@ -282,7 +282,7 @@ static void TRANSFORM_OT_create_orientation(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Create Orientation";
-  ot->description = "Create Orientation\nCreate transformation orientation from selection";
+  ot->description = "Create transformation orientation from selection";
   ot->idname = "TRANSFORM_OT_create_orientation";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
@@ -290,27 +290,23 @@ static void TRANSFORM_OT_create_orientation(struct wmOperatorType *ot)
   ot->exec = create_orientation_exec;
   ot->poll = ED_operator_areaactive;
 
-  RNA_def_string(
-      ot->srna, "name", NULL, MAX_NAME, "Name", "Name\nName of the new custom orientation");
+  RNA_def_string(ot->srna, "name", NULL, MAX_NAME, "Name", "Name of the new custom orientation");
   RNA_def_boolean(
       ot->srna,
       "use_view",
       false,
       "Use View",
-      "Use View\nUse the current view instead of the active object to create the new orientation");
+      "Use the current view instead of the active object to create the new orientation");
 
   WM_operatortype_props_advanced_begin(ot);
 
-  RNA_def_boolean(ot->srna,
-                  "use",
-                  false,
-                  "Use after creation",
-                  "Use after creation\nSelect orientation after its creation");
+  RNA_def_boolean(
+      ot->srna, "use", false, "Use after creation", "Select orientation after its creation");
   RNA_def_boolean(ot->srna,
                   "overwrite",
                   false,
                   "Overwrite previous",
-                  "Overwrite previous\nOverwrite previously created orientation with same name");
+                  "Overwrite previously created orientation with same name");
 }
 
 #ifdef USE_LOOPSLIDE_HACK
@@ -683,7 +679,7 @@ void Transform_Properties(struct wmOperatorType *ot, int flags)
 
   if (flags & P_CORRECT_UV) {
     RNA_def_boolean(
-        ot->srna, "correct_uv", true, "Correct UVs", "Correct UVs\nCorrect UV coordinates when transforming");
+        ot->srna, "correct_uv", true, "Correct UVs", "Correct UV coordinates when transforming");
   }
 
   if (flags & P_CENTER) {
@@ -699,7 +695,7 @@ void Transform_Properties(struct wmOperatorType *ot, int flags)
                            "release_confirm",
                            0,
                            "Confirm on Release",
-                           "Confirm on Release\nAlways confirm operation when releasing button");
+                           "Always confirm operation when releasing button");
     RNA_def_property_flag(prop, PROP_HIDDEN);
 
     prop = RNA_def_boolean(ot->srna, "use_accurate", 0, "Accurate", "Use accurate transformation");
@@ -711,7 +707,7 @@ static void TRANSFORM_OT_translate(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Move";
-  ot->description = "Move\nMove selected items";
+  ot->description = "Move selected items";
   ot->idname = OP_TRANSLATION;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -737,7 +733,7 @@ static void TRANSFORM_OT_resize(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Resize";
-  ot->description = "Resize\nScale (resize) selected items";
+  ot->description = "Scale (resize) selected items";
   ot->idname = OP_RESIZE;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -763,7 +759,7 @@ static void TRANSFORM_OT_skin_resize(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Skin Resize";
-  ot->description = "Skin Resize\nScale selected vertices' skin radii";
+  ot->description = "Scale selected vertices' skin radii";
   ot->idname = OP_SKIN_RESIZE;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -789,7 +785,7 @@ static void TRANSFORM_OT_trackball(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Trackball";
-  ot->description = "Trackball\nTrackball style rotation of selected items";
+  ot->description = "Trackball style rotation of selected items";
   ot->idname = OP_TRACKBALL;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -814,7 +810,7 @@ static void TRANSFORM_OT_rotate(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Rotate";
-  ot->description = "Rotate\nRotate selected items";
+  ot->description = "Rotate selected items";
   ot->idname = OP_ROTATION;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -841,9 +837,9 @@ static void TRANSFORM_OT_tilt(struct wmOperatorType *ot)
   /* identifiers */
   ot->name = "Tilt";
   /* optional -
-	 * "Tilt selected vertices"
-	 * "Specify an extra axis rotation for selected vertices of 3D curve" */
-  ot->description = "Tilt\nTilt selected control vertices of 3D curve";
+   * "Tilt selected vertices"
+   * "Specify an extra axis rotation for selected vertices of 3D curve" */
+  ot->description = "Tilt selected control vertices of 3D curve";
   ot->idname = OP_TILT;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -867,7 +863,7 @@ static void TRANSFORM_OT_bend(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Bend";
-  ot->description = "Bend\nBend selected items between the 3D cursor and the mouse";
+  ot->description = "Bend selected items between the 3D cursor and the mouse";
   ot->idname = OP_BEND;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -891,7 +887,7 @@ static void TRANSFORM_OT_shear(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Shear";
-  ot->description = "Shear\nShear selected items along the horizontal screen axis";
+  ot->description = "Shear selected items along the horizontal screen axis";
   ot->idname = OP_SHEAR;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -917,7 +913,7 @@ static void TRANSFORM_OT_push_pull(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Push/Pull";
-  ot->description = "Push/Pull\nPush/Pull selected items";
+  ot->description = "Push/Pull selected items";
   ot->idname = OP_PUSH_PULL;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -940,7 +936,7 @@ static void TRANSFORM_OT_shrink_fatten(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Shrink/Fatten";
-  ot->description = "Shrink/Fatten\nShrink/fatten selected vertices along normals";
+  ot->description = "Shrink/fatten selected vertices along normals";
   ot->idname = OP_SHRINK_FATTEN;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -958,7 +954,7 @@ static void TRANSFORM_OT_shrink_fatten(struct wmOperatorType *ot)
                   "use_even_offset",
                   false,
                   "Offset Even",
-                  "Offset Even\nScale the offset to give more even thickness");
+                  "Scale the offset to give more even thickness");
 
   WM_operatortype_props_advanced_begin(ot);
 
@@ -969,9 +965,8 @@ static void TRANSFORM_OT_tosphere(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "To Sphere";
-  //added "around mesh center" to differentiate between "MESH_OT_vertices_to_sphere()"
-  ot->description =
-      "To Sphere\nMove selected vertices outward in a spherical shape around mesh center";
+  // added "around mesh center" to differentiate between "MESH_OT_vertices_to_sphere()"
+  ot->description = "Move selected vertices outward in a spherical shape around mesh center";
   ot->idname = OP_TOSPHERE;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -994,7 +989,7 @@ static void TRANSFORM_OT_mirror(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Mirror";
-  ot->description = "Mirror\nMirror selected geometry around one or more axes";
+  ot->description = "Mirror selected items around one or more axes";
   ot->idname = OP_MIRROR;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -1016,7 +1011,7 @@ static void TRANSFORM_OT_edge_slide(struct wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Edge Slide";
-  ot->description = "Edge Slide\nSlide an edge loop along a mesh";
+  ot->description = "Slide an edge loop along a mesh";
   ot->idname = OP_EDGE_SLIDE;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -1054,7 +1049,7 @@ static void TRANSFORM_OT_vert_slide(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Vertex Slide";
-  ot->description = "Vertex Slide\nSlide a vertex along a mesh";
+  ot->description = "Slide a vertex along a mesh";
   ot->idname = OP_VERT_SLIDE;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -1089,7 +1084,7 @@ static void TRANSFORM_OT_edge_crease(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Edge Crease";
-  ot->description = "Edge Crease\nChange the crease of edges";
+  ot->description = "Change the crease of edges";
   ot->idname = OP_EDGE_CREASE;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -1112,7 +1107,7 @@ static void TRANSFORM_OT_edge_bevelweight(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Edge Bevel Weight";
-  ot->description = "Edge Bevel Weight\nChange the bevel weight of edges";
+  ot->description = "Change the bevel weight of edges";
   ot->idname = OP_EDGE_BWEIGHT;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -1134,7 +1129,7 @@ static void TRANSFORM_OT_seq_slide(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Sequence Slide";
-  ot->description = "Sequence Slide\nSlide a sequence strip in time";
+  ot->description = "Slide a sequence strip in time";
   ot->idname = OP_SEQ_SLIDE;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -1157,7 +1152,7 @@ static void TRANSFORM_OT_rotate_normal(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Rotate Normals";
-  ot->description = "Rotate Normals\nRotate split normal of selected items";
+  ot->description = "Rotate split normal of selected items";
   ot->idname = OP_NORMAL_ROTATION;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -1180,7 +1175,7 @@ static void TRANSFORM_OT_transform(struct wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Transform";
-  ot->description = "Transform\nTransform selected items by mode type";
+  ot->description = "Transform selected items by mode type";
   ot->idname = "TRANSFORM_OT_transform";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 

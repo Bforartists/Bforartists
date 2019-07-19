@@ -1425,7 +1425,7 @@ void POSE_OT_relax(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Relax Pose to Breakdown";
   ot->idname = "POSE_OT_relax";
-  ot->description = "Relax Pose\nMake the current pose more similar to its breakdown pose";
+  ot->description = "Make the current pose more similar to its breakdown pose";
 
   /* callbacks */
   ot->exec = pose_slide_relax_exec;
@@ -1610,7 +1610,7 @@ void POSE_OT_breakdown(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Pose Breakdowner";
   ot->idname = "POSE_OT_breakdown";
-  ot->description = "Pose Breakdowner\nCreate a suitable breakdown pose on the current frame";
+  ot->description = "Create a suitable breakdown pose on the current frame";
 
   /* callbacks */
   ot->exec = pose_slide_breakdown_exec;
@@ -2018,8 +2018,7 @@ void POSE_OT_propagate(wmOperatorType *ot)
   ot->name = "Propagate Pose";
   ot->idname = "POSE_OT_propagate";
   ot->description =
-      "Propagate Pose\nCopy selected aspects of the current pose to subsequent poses already "
-      "keyframed";
+      "Copy selected aspects of the current pose to subsequent poses already keyframed";
 
   /* callbacks */
   ot->exec = pose_propagate_exec;

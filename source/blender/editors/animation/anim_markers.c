@@ -683,7 +683,7 @@ static void MARKER_OT_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Time Marker";
-  ot->description = "Add Time Marker\nAdd a new time marker";
+  ot->description = "Add a new time marker";
   ot->idname = "MARKER_OT_add";
 
   /* api callbacks */
@@ -1026,7 +1026,7 @@ static void MARKER_OT_move(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Move Time Marker";
-  ot->description = "Move Time Marker\nMove selected time marker(s)";
+  ot->description = "Move selected time marker(s)";
   ot->idname = "MARKER_OT_move";
 
   /* api callbacks */
@@ -1117,7 +1117,7 @@ static void MARKER_OT_duplicate(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Duplicate Time Marker";
-  ot->description = "Duplicate Time Marker\nDuplicate selected time marker(s)";
+  ot->description = "Duplicate selected time marker(s)";
   ot->idname = "MARKER_OT_duplicate";
 
   /* api callbacks */
@@ -1348,7 +1348,7 @@ static void MARKER_OT_select_box(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Marker Box Select";
-  ot->description = "Marker Box Select\nSelect all time markers using box selection";
+  ot->description = "Select all time markers using box selection";
   ot->idname = "MARKER_OT_select_box";
 
   /* api callbacks */
@@ -1393,7 +1393,7 @@ static void MARKER_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "(De)select all Markers";
-  ot->description = "(De)select all Markers\nChange selection of all time markers";
+  ot->description = "Change selection of all time markers";
   ot->idname = "MARKER_OT_select_all";
 
   /* api callbacks */
@@ -1440,7 +1440,7 @@ static void MARKER_OT_delete(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Delete Markers";
-  ot->description = "Delete Markers\nDelete selected time marker(s)";
+  ot->description = "Delete selected time marker(s)";
   ot->idname = "MARKER_OT_delete";
 
   /* api callbacks */
@@ -1487,7 +1487,7 @@ static void MARKER_OT_rename(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Rename Marker";
-  ot->description = "Rename Marker\nRename first selected time marker";
+  ot->description = "Rename first selected time marker";
   ot->idname = "MARKER_OT_rename";
 
   /* api callbacks */
@@ -1556,7 +1556,7 @@ static void MARKER_OT_make_links_scene(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Make Links to Scene";
-  ot->description = "Make Links to Scene\nCopy selected markers to another scene";
+  ot->description = "Copy selected markers to another scene";
   ot->idname = "MARKER_OT_make_links_scene";
 
   /* api callbacks */
@@ -1629,8 +1629,7 @@ static void MARKER_OT_camera_bind(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Bind Camera to Markers";
-  ot->description =
-      "Bind Camera to Markers\nBind the selected camera to a marker on the current frame";
+  ot->description = "Bind the selected camera to a marker on the current frame";
   ot->idname = "MARKER_OT_camera_bind";
 
   /* api callbacks */

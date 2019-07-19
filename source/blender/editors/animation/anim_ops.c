@@ -258,7 +258,7 @@ static void ANIM_OT_change_frame(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Change Frame";
   ot->idname = "ANIM_OT_change_frame";
-  ot->description = "Change Frame\nInteractively change the current frame number";
+  ot->description = "Interactively change the current frame number";
 
   /* api callbacks */
   ot->exec = change_frame_exec;
@@ -340,7 +340,7 @@ static void ANIM_OT_start_frame_set(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Start Frame";
   ot->idname = "ANIM_OT_start_frame_set";
-  ot->description = "Set Start Frame\nSet the current frame as the preview or scene start frame";
+  ot->description = "Set the current frame as the preview or scene start frame";
 
   /* api callbacks */
   ot->exec = anim_set_sfra_exec;
@@ -388,7 +388,7 @@ static void ANIM_OT_end_frame_set(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set End Frame";
   ot->idname = "ANIM_OT_end_frame_set";
-  ot->description = "Set End Frame\nSet the current frame as the preview or scene end frame";
+  ot->description = "Set the current frame as the preview or scene end frame";
 
   /* api callbacks */
   ot->exec = anim_set_efra_exec;
@@ -439,7 +439,7 @@ static void ANIM_OT_previewrange_set(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Preview Range";
   ot->idname = "ANIM_OT_previewrange_set";
-  ot->description = "Set Preview Range\nInteractively define frame range used for playback";
+  ot->description = "Interactively define frame range used for playback";
 
   /* api callbacks */
   ot->invoke = WM_gesture_box_invoke;
@@ -490,7 +490,7 @@ static void ANIM_OT_previewrange_clear(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Preview Range";
   ot->idname = "ANIM_OT_previewrange_clear";
-  ot->description = "Clear Preview Range\Clear Preview Range";
+  ot->description = "Clear Preview Range";
 
   /* api callbacks */
   ot->exec = previewrange_clear_exec;

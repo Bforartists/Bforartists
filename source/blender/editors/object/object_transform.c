@@ -340,7 +340,7 @@ void OBJECT_OT_location_clear(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Clear Location";
-  ot->description = "Clear Location\nClear the object's location";
+  ot->description = "Clear the object's location";
   ot->idname = "OBJECT_OT_location_clear";
 
   /* api callbacks */
@@ -368,7 +368,7 @@ void OBJECT_OT_rotation_clear(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Clear Rotation";
-  ot->description = "Clear Rotation\nClear the object's rotation";
+  ot->description = "Clear the object's rotation";
   ot->idname = "OBJECT_OT_rotation_clear";
 
   /* api callbacks */
@@ -396,7 +396,7 @@ void OBJECT_OT_scale_clear(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Clear Scale";
-  ot->description = "Clear Scale\nClear the object's scale";
+  ot->description = "Clear the object's scale";
   ot->idname = "OBJECT_OT_scale_clear";
 
   /* api callbacks */
@@ -446,7 +446,7 @@ void OBJECT_OT_origin_clear(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Clear Origin";
-  ot->description = "Clear Origin\nClear the object's origin";
+  ot->description = "Clear the object's origin";
   ot->idname = "OBJECT_OT_origin_clear";
 
   /* api callbacks */
@@ -908,7 +908,7 @@ void OBJECT_OT_visual_transform_apply(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Apply Visual Transform";
-  ot->description = "Apply Visual Transform\nApply the object's visual transformation to its data";
+  ot->description = "Apply the object's visual transformation to its data";
   ot->idname = "OBJECT_OT_visual_transform_apply";
 
   /* api callbacks */
@@ -939,7 +939,7 @@ void OBJECT_OT_transform_apply(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Apply Object Transform";
-  ot->description = "Apply Object Transform\nApply the object's transformation to its data";
+  ot->description = "Apply the object's transformation to its data";
   ot->idname = "OBJECT_OT_transform_apply";
 
   /* api callbacks */
@@ -1487,8 +1487,8 @@ void OBJECT_OT_origin_set(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Origin";
   ot->description =
-      "Set Origin.\nSet the object's origin, by either moving the data, or set to center of data, "
-      "or use 3D cursor";
+      "Set the object's origin, by either moving the data, or set to center of data, or use 3D "
+      "cursor";
   ot->idname = "OBJECT_OT_origin_set";
 
   /* api callbacks */

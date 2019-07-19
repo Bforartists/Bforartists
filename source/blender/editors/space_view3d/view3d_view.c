@@ -504,7 +504,7 @@ void VIEW3D_OT_camera_to_view(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Align Camera To View";
-  ot->description = "Align Camera To View\nSet camera view to active view";
+  ot->description = "Set camera view to active view";
   ot->idname = "VIEW3D_OT_camera_to_view";
 
   /* api callbacks */
@@ -571,7 +571,7 @@ void VIEW3D_OT_camera_to_view_selected(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Camera Fit Frame to Selected";
-  ot->description = "Camera Fit Frame to Selected\nMove the camera so selected objects are framed";
+  ot->description = "Move the camera so selected objects are framed";
   ot->idname = "VIEW3D_OT_camera_to_view_selected";
 
   /* api callbacks */
@@ -707,9 +707,7 @@ void VIEW3D_OT_object_as_camera(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Set Active Object as Camera";
-  ot->description =
-      "Set Active Object as Camera\nSet the active object as the active camera for this view or "
-      "scene";
+  ot->description = "Set the active object as the active camera for this view or scene";
   ot->idname = "VIEW3D_OT_object_as_camera";
 
   /* api callbacks */
@@ -1446,8 +1444,7 @@ void VIEW3D_OT_localview(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Local View";
-  ot->description =
-      "Local View\nToggle display of selected object(s) separately and centered in view";
+  ot->description = "Toggle display of selected object(s) separately and centered in view";
   ot->idname = "VIEW3D_OT_localview";
 
   /* api callbacks */

@@ -376,9 +376,7 @@ void ARMATURE_OT_select_linked(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Connected";
   ot->idname = "ARMATURE_OT_select_linked";
-  ot->description =
-      "Select Connected\nSelect bones that are connected with the bone under the mouse\nHOTKEY "
-      "ONLY TOOL! Move the mouse over the armature, then press the hotkey";
+  ot->description = "Select bones related to selected ones by parent/child relationships\nHOTKEY ONLY TOOL! Move the mouse over the armature, then press the hotkey";
 
   /* api callbacks */
   /* leave 'exec' unset */
@@ -421,7 +419,7 @@ static EditBone *get_nearest_editbonepoint(
   };
 
   /* find the bone after the current active bone, so as to bump up its chances in selection.
-	 * this way overlapping bones will cycle selection state as with objects. */
+   * this way overlapping bones will cycle selection state as with objects. */
   EditBone *ebone_next_act = ((bArmature *)vc->obedit->data)->act_edbone;
   {
     bArmature *arm = (bArmature *)vc->obedit->data;
@@ -1042,7 +1040,7 @@ void ARMATURE_OT_select_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "(De)select All";
   ot->idname = "ARMATURE_OT_select_all";
-  ot->description = "(De)select All\nToggle selection status of all bones";
+  ot->description = "Toggle selection status of all bones";
 
   /* api callbacks */
   ot->exec = armature_de_select_all_exec;
@@ -1161,7 +1159,7 @@ void ARMATURE_OT_select_more(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select More";
   ot->idname = "ARMATURE_OT_select_more";
-  ot->description = "Select More\nSelect those bones connected to the initial selection";
+  ot->description = "Select those bones connected to the initial selection";
 
   /* api callbacks */
   ot->exec = armature_de_select_more_exec;
@@ -1191,7 +1189,7 @@ void ARMATURE_OT_select_less(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Less";
   ot->idname = "ARMATURE_OT_select_less";
-  ot->description = "Select Less\nDeselect those bones at the boundary of each selection region";
+  ot->description = "Deselect those bones at the boundary of each selection region";
 
   /* api callbacks */
   ot->exec = armature_de_select_less_exec;
@@ -1588,7 +1586,7 @@ void ARMATURE_OT_select_similar(wmOperatorType *ot)
   ot->invoke = WM_menu_invoke;
   ot->exec = armature_select_similar_exec;
   ot->poll = ED_operator_editarmature;
-  ot->description = "Select Similar\nSelect similar bones by property types";
+  ot->description = "Select similar bones by property types";
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1687,7 +1685,7 @@ void ARMATURE_OT_select_hierarchy(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Hierarchy";
   ot->idname = "ARMATURE_OT_select_hierarchy";
-  ot->description = "Select Hierarchy\nSelect immediate parent/children of selected bones";
+  ot->description = "Select immediate parent/children of selected bones";
 
   /* api callbacks */
   ot->exec = armature_select_hierarchy_exec;
@@ -1768,7 +1766,7 @@ void ARMATURE_OT_select_mirror(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Flip Active/Selected Bone";
   ot->idname = "ARMATURE_OT_select_mirror";
-  ot->description = "Flip Active/Selected Bone\nMirror the bone selection";
+  ot->description = "Mirror the bone selection";
 
   /* api callbacks */
   ot->exec = armature_select_mirror_exec;
@@ -1898,7 +1896,7 @@ void ARMATURE_OT_shortest_path_pick(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Pick Shortest Path";
   ot->idname = "ARMATURE_OT_shortest_path_pick";
-  ot->description = "Pick Shortest Path\nSelect shortest path between two bones";
+  ot->description = "Select shortest path between two bones";
 
   /* api callbacks */
   ot->invoke = armature_shortest_path_pick_invoke;

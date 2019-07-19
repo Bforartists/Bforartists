@@ -264,7 +264,7 @@ void SEQUENCER_OT_select_all(struct wmOperatorType *ot)
   /* identifiers */
   ot->name = "(De)select All";
   ot->idname = "SEQUENCER_OT_select_all";
-  ot->description = "(De)select All\nSelect or deselect all strips";
+  ot->description = "Select or deselect all strips";
 
   /* api callbacks */
   ot->exec = sequencer_de_select_all_exec;
@@ -303,7 +303,7 @@ void SEQUENCER_OT_select_inverse(struct wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Inverse";
   ot->idname = "SEQUENCER_OT_select_inverse";
-  ot->description = "Select Inverse\nSelect unselected strips";
+  ot->description = "Select unselected strips";
 
   /* api callbacks */
   ot->exec = sequencer_select_inverse_exec;
@@ -561,7 +561,7 @@ void SEQUENCER_OT_select(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select";
   ot->idname = "SEQUENCER_OT_select";
-  ot->description = "Select\nSelect a strip (last selected becomes the \"active strip\")";
+  ot->description = "Select a strip (last selected becomes the \"active strip\")";
 
   /* api callbacks */
   ot->invoke = sequencer_select_invoke;
@@ -678,7 +678,7 @@ void SEQUENCER_OT_select_more(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select More";
   ot->idname = "SEQUENCER_OT_select_more";
-  ot->description = "Select More\nSelect more strips adjacent to the current selection";
+  ot->description = "Select more strips adjacent to the current selection";
 
   /* api callbacks */
   ot->exec = sequencer_select_more_exec;
@@ -709,7 +709,7 @@ void SEQUENCER_OT_select_less(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Less";
   ot->idname = "SEQUENCER_OT_select_less";
-  ot->description = "Select Less\nShrink the current selection of adjacent selected strips";
+  ot->description = "Shrink the current selection of adjacent selected strips";
 
   /* api callbacks */
   ot->exec = sequencer_select_less_exec;
@@ -760,8 +760,7 @@ void SEQUENCER_OT_select_linked_pick(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Pick Linked";
   ot->idname = "SEQUENCER_OT_select_linked_pick";
-  ot->description =
-      "Select Pick Linked\nSelect a chain of linked strips nearest to the mouse pointer";
+  ot->description = "Select a chain of linked strips nearest to the mouse pointer";
 
   /* api callbacks */
   ot->invoke = sequencer_select_linked_pick_invoke;
@@ -795,7 +794,7 @@ void SEQUENCER_OT_select_linked(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Linked";
   ot->idname = "SEQUENCER_OT_select_linked";
-  ot->description = "Select Linked\nSelect all strips adjacent to the current selection";
+  ot->description = "Select all strips adjacent to the current selection";
 
   /* api callbacks */
   ot->exec = sequencer_select_linked_exec;
@@ -843,7 +842,7 @@ void SEQUENCER_OT_select_handles(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Handles";
   ot->idname = "SEQUENCER_OT_select_handles";
-  ot->description = "Select Handles\nSelect gizmo handles on the sides of the selected strip";
+  ot->description = "Select gizmo handles on the sides of the selected strip";
 
   /* api callbacks */
   ot->exec = sequencer_select_handles_exec;
@@ -887,7 +886,7 @@ void SEQUENCER_OT_select_active_side(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Active Side";
   ot->idname = "SEQUENCER_OT_select_active_side";
-  ot->description = "Select Active Side\nSelect strips on the nominated side of the active strip";
+  ot->description = "Select strips on the nominated side of the active strip";
 
   /* api callbacks */
   ot->exec = sequencer_select_active_side_exec;
@@ -964,7 +963,7 @@ void SEQUENCER_OT_select_box(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Box Select";
   ot->idname = "SEQUENCER_OT_select_box";
-  ot->description = "Box Select\nSelect strips using box selection";
+  ot->description = "Select strips using box selection";
 
   /* api callbacks */
   ot->invoke = sequencer_box_select_invoke;
@@ -1323,7 +1322,7 @@ void SEQUENCER_OT_select_grouped(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select Grouped";
-  ot->description = "Select Grouped, Select all strips grouped by various properties";
+  ot->description = "Select all strips grouped by various properties";
   ot->idname = "SEQUENCER_OT_select_grouped";
 
   /* api callbacks */

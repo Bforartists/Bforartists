@@ -65,7 +65,7 @@ void SCRIPT_OT_python_file_run(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Run Python File";
-  ot->description = "Run Python File\nRun Python file";
+  ot->description = "Run Python file";
   ot->idname = "SCRIPT_OT_python_file_run";
   ot->flag = OPTYPE_UNDO;
 
@@ -132,7 +132,7 @@ void SCRIPT_OT_reload(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Reload Scripts";
-  ot->description = "Reload Scripts\nReload all Python Scripts, including the Bforartists UI";
+  ot->description = "Reload all Python Scripts, including the Bforartists UI";
   ot->idname = "SCRIPT_OT_reload";
 
   /* api callbacks */

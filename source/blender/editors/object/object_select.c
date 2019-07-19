@@ -443,7 +443,7 @@ void OBJECT_OT_select_by_type(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select By Type";
-  ot->description = "Select By Type\nSelect By Type, all visible objects of type";
+  ot->description = "Select all visible objects that are of a type";
   ot->idname = "OBJECT_OT_select_by_type";
 
   /* api callbacks */
@@ -727,7 +727,7 @@ void OBJECT_OT_select_linked(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select Linked";
-  ot->description = "Select Linked\n Select all visible objects that are linked to";
+  ot->description = "Select all visible objects that are linked to";
   ot->idname = "OBJECT_OT_select_linked";
 
   /* api callbacks */
@@ -1110,7 +1110,7 @@ void OBJECT_OT_select_grouped(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select Grouped";
-  ot->description = "Select Grouped\nSelect all visible objects grouped by various properties";
+  ot->description = "Select all visible objects grouped by various properties";
   ot->idname = "OBJECT_OT_select_grouped";
 
   /* api callbacks */
@@ -1167,7 +1167,7 @@ void OBJECT_OT_select_all(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "(De)select All";
-  ot->description = "(De)select All\nChange selection of all visible objects in scene";
+  ot->description = "Change selection of all visible objects in scene";
   ot->idname = "OBJECT_OT_select_all";
 
   /* api callbacks */
@@ -1226,7 +1226,7 @@ void OBJECT_OT_select_same_collection(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Select Same Collection";
-  ot->description = "Select Same Collection\nSelect object in the same collection";
+  ot->description = "Select object in the same collection";
   ot->idname = "OBJECT_OT_select_same_collection";
 
   /* api callbacks */
@@ -1289,8 +1289,7 @@ void OBJECT_OT_select_mirror(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Select Mirror";
-  ot->description =
-      "Select Mirror\nSelect the Mirror objects of the selected object eg. L.sword -> R.sword";
+  ot->description = "Select the Mirror objects of the selected object eg. L.sword -> R.sword";
   ot->idname = "OBJECT_OT_select_mirror";
 
   /* api callbacks */
@@ -1382,7 +1381,7 @@ void OBJECT_OT_select_more(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select More";
   ot->idname = "OBJECT_OT_select_more";
-  ot->description = "Select More\nSelect connected parent/child objects";
+  ot->description = "Select connected parent/child objects";
 
   /* api callbacks */
   ot->exec = object_select_more_exec;
@@ -1412,8 +1411,7 @@ void OBJECT_OT_select_less(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Less";
   ot->idname = "OBJECT_OT_select_less";
-  ot->description =
-      "Select Less\nDeselect objects at the boundaries of parent/child relationships";
+  ot->description = "Deselect objects at the boundaries of parent/child relationships";
 
   /* api callbacks */
   ot->exec = object_select_less_exec;
@@ -1457,7 +1455,7 @@ void OBJECT_OT_select_random(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select Random";
-  ot->description = "Select Random\nSet select on random visible objects";
+  ot->description = "Set select on random visible objects";
   ot->idname = "OBJECT_OT_select_random";
 
   /* api callbacks */

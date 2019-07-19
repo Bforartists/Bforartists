@@ -414,7 +414,7 @@ void MASK_OT_new(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "New Mask";
-  ot->description = "New Mask\nCreate new mask";
+  ot->description = "Create new mask";
   ot->idname = "MASK_OT_new";
 
   /* flags */
@@ -449,7 +449,7 @@ void MASK_OT_layer_new(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Mask Layer";
-  ot->description = "Add Mask Layer\nAdd new mask layer for masking";
+  ot->description = "Add new mask layer for masking";
   ot->idname = "MASK_OT_layer_new";
 
   /* api callbacks */
@@ -483,7 +483,7 @@ void MASK_OT_layer_remove(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Remove Mask Layer";
-  ot->description = "Remove Mask Layer\nRemove mask layer";
+  ot->description = "Remove mask layer";
   ot->idname = "MASK_OT_layer_remove";
 
   /* api callbacks */
@@ -1183,7 +1183,7 @@ void MASK_OT_slide_point(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Slide Point";
-  ot->description = "Slide Point\nSlide control points";
+  ot->description = "Slide control points";
   ot->idname = "MASK_OT_slide_point";
 
   /* api callbacks */
@@ -1567,7 +1567,7 @@ void MASK_OT_slide_spline_curvature(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Slide Spline Curvature";
-  ot->description = "Slide Spline Curvature\nSlide a point on the spline to define it's curvature";
+  ot->description = "Slide a point on the spline to define it's curvature";
   ot->idname = "MASK_OT_slide_spline_curvature";
 
   /* api callbacks */
@@ -1610,7 +1610,7 @@ void MASK_OT_cyclic_toggle(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Toggle Cyclic";
-  ot->description = "Toggle Cyclic\nToggle cyclic for selected splines";
+  ot->description = "Toggle cyclic for selected splines";
   ot->idname = "MASK_OT_cyclic_toggle";
 
   /* api callbacks */
@@ -1768,7 +1768,7 @@ void MASK_OT_delete(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Delete";
-  ot->description = "Delete\nDelete selected control points or splines";
+  ot->description = "Delete selected control points or splines";
   ot->idname = "MASK_OT_delete";
 
   /* api callbacks */
@@ -1829,7 +1829,7 @@ void MASK_OT_switch_direction(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Switch Direction";
-  ot->description = "Switch Direction\nSwitch direction of selected splines";
+  ot->description = "Switch direction of selected splines";
   ot->idname = "MASK_OT_switch_direction";
 
   /* api callbacks */
@@ -1895,7 +1895,7 @@ void MASK_OT_normals_make_consistent(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Recalc Normals";
-  ot->description = "Recalc Normals\nRe-calculate the direction of selected handles";
+  ot->description = "Re-calculate the direction of selected handles";
   ot->idname = "MASK_OT_normals_make_consistent";
 
   /* api callbacks */
@@ -1978,7 +1978,7 @@ void MASK_OT_handle_type_set(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Set Handle Type";
-  ot->description = "Set Handle Type\nSet type of handles for selected control points";
+  ot->description = "Set type of handles for selected control points";
   ot->idname = "MASK_OT_handle_type_set";
 
   /* api callbacks */
@@ -2026,7 +2026,7 @@ void MASK_OT_hide_view_clear(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Show hidden Layer";
-  ot->description = "Show hidden Layer\nReveals the hidden layer(s)";
+  ot->description = "Reveals the hidden layer(s)";
   ot->idname = "MASK_OT_hide_view_clear";
 
   /* api callbacks */
@@ -2089,7 +2089,7 @@ void MASK_OT_hide_view_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Hide Layer";
-  ot->description = "Hide Layer\nHide the layer";
+  ot->description = "Hide the layer";
   ot->idname = "MASK_OT_hide_view_set";
 
   /* api callbacks */
@@ -2147,7 +2147,7 @@ void MASK_OT_feather_weight_clear(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Clear Feather Weight";
-  ot->description = "Clear Feather Weight\nReset the feather weight to zero";
+  ot->description = "Reset the feather weight to zero";
   ot->idname = "MASK_OT_feather_weight_clear";
 
   /* api callbacks */
@@ -2220,7 +2220,7 @@ void MASK_OT_layer_move(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Move Layer";
-  ot->description = "Move Layer\nMove the active layer up/down in the list";
+  ot->description = "Move the active layer up/down in the list";
   ot->idname = "MASK_OT_layer_move";
 
   /* api callbacks */
@@ -2343,7 +2343,7 @@ void MASK_OT_duplicate(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Duplicate Mask";
-  ot->description = "Duplicate Mask\nDuplicate selected control points and segments between them";
+  ot->description = "Duplicate selected control points and segments between them";
   ot->idname = "MASK_OT_duplicate";
 
   /* api callbacks */
@@ -2374,7 +2374,7 @@ void MASK_OT_copy_splines(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Copy Splines";
-  ot->description = "Copy Splines\nCopy selected splines to clipboard";
+  ot->description = "Copy selected splines to clipboard";
   ot->idname = "MASK_OT_copy_splines";
 
   /* api callbacks */
@@ -2418,7 +2418,7 @@ void MASK_OT_paste_splines(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Paste Splines";
-  ot->description = "Paste Splines\nPaste splines from clipboard";
+  ot->description = "Paste splines from clipboard";
   ot->idname = "MASK_OT_paste_splines";
 
   /* api callbacks */
