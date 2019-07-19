@@ -131,7 +131,7 @@ void RIGIDBODY_OT_object_add(wmOperatorType *ot)
   /* identifiers */
   ot->idname = "RIGIDBODY_OT_object_add";
   ot->name = "Add Rigid Body";
-  ot->description = "Add Rigid Body\nAdd active object as Rigid Body";
+  ot->description = "Add active object as Rigid Body";
 
   /* callbacks */
   ot->exec = rigidbody_object_add_exec;
@@ -183,7 +183,7 @@ void RIGIDBODY_OT_object_remove(wmOperatorType *ot)
   /* identifiers */
   ot->idname = "RIGIDBODY_OT_object_remove";
   ot->name = "Remove Rigid Body";
-  ot->description = "Remove Rigid Body\nRemove Rigid Body settings from Object";
+  ot->description = "Remove Rigid Body settings from Object";
 
   /* callbacks */
   ot->exec = rigidbody_object_remove_exec;
@@ -229,7 +229,7 @@ void RIGIDBODY_OT_objects_add(wmOperatorType *ot)
   /* identifiers */
   ot->idname = "RIGIDBODY_OT_objects_add";
   ot->name = "Add Rigid Bodies";
-  ot->description = "Add Rigid Bodies, Add selected objects as Rigid Bodies";
+  ot->description = "Add selected objects as Rigid Bodies";
 
   /* callbacks */
   ot->exec = rigidbody_objects_add_exec;
@@ -282,7 +282,7 @@ void RIGIDBODY_OT_objects_remove(wmOperatorType *ot)
   /* identifiers */
   ot->idname = "RIGIDBODY_OT_objects_remove";
   ot->name = "Remove Rigid Bodies";
-  ot->description = "Remove Rigid Bodies\nRemove selected objects from Rigid Body simulation";
+  ot->description = "Remove selected objects from Rigid Body simulation";
 
   /* callbacks */
   ot->exec = rigidbody_objects_remove_exec;
@@ -336,8 +336,7 @@ void RIGIDBODY_OT_shape_change(wmOperatorType *ot)
   /* identifiers */
   ot->idname = "RIGIDBODY_OT_shape_change";
   ot->name = "Change Collision Shape";
-  ot->description =
-      "Change Collision Shape, Change the collision shapes for selected Rigid Body Objects";
+  ot->description = "Change collision shapes for selected Rigid Body Objects";
 
   /* callbacks */
   ot->invoke = WM_menu_invoke;
@@ -530,8 +529,7 @@ void RIGIDBODY_OT_mass_calculate(wmOperatorType *ot)
   /* identifiers */
   ot->idname = "RIGIDBODY_OT_mass_calculate";
   ot->name = "Calculate Mass";
-  ot->description =
-      "Calculate Mass\nAutomatically calculate mass values for Rigid Body Objects based on volume";
+  ot->description = "Automatically calculate mass values for Rigid Body Objects based on volume";
 
   /* callbacks */
   ot->invoke = WM_menu_invoke;  // XXX

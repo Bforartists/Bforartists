@@ -159,7 +159,7 @@ void ED_operatormacros_armature(void)
   ot = WM_operatortype_append_macro(
       "ARMATURE_OT_duplicate_move",
       "Duplicate",
-      "Duplicate\nMake copies of the selected bones within the same armature and move them",
+      "Make copies of the selected bones within the same armature and move them",
       OPTYPE_UNDO | OPTYPE_REGISTER);
   WM_operatortype_macro_define(ot, "ARMATURE_OT_duplicate");
   otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");
@@ -167,7 +167,7 @@ void ED_operatormacros_armature(void)
 
   ot = WM_operatortype_append_macro("ARMATURE_OT_extrude_move",
                                     "Extrude",
-                                    "Extrude\nCreate new bones from the selected joints and move them",
+                                    "Create new bones from the selected joints and move them",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   otmacro = WM_operatortype_macro_define(ot, "ARMATURE_OT_extrude");
   RNA_boolean_set(otmacro->ptr, "forked", false);
@@ -179,7 +179,7 @@ void ED_operatormacros_armature(void)
    * that would require fixing a properties bug T19733. */
   ot = WM_operatortype_append_macro("ARMATURE_OT_extrude_forked",
                                     "Extrude Forked",
-                                    "Extrude Forked\nCreate new bones from the selected joints and move them",
+                                    "Create new bones from the selected joints and move them",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   otmacro = WM_operatortype_macro_define(ot, "ARMATURE_OT_extrude");
   RNA_boolean_set(otmacro->ptr, "forked", true);

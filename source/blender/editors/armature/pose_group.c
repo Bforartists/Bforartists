@@ -77,7 +77,7 @@ void POSE_OT_group_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Add Bone Group";
   ot->idname = "POSE_OT_group_add";
-  ot->description = "Add Bone Group\nAdd a new bone group";
+  ot->description = "Add a new bone group";
 
   /* api callbacks */
   ot->exec = pose_group_add_exec;
@@ -111,7 +111,7 @@ void POSE_OT_group_remove(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Remove Bone Group";
   ot->idname = "POSE_OT_group_remove";
-  ot->description = "Remove Bone Group\nRemove the active bone group";
+  ot->description = "Remove the active bone group";
 
   /* api callbacks */
   ot->exec = pose_group_remove_exec;
@@ -230,7 +230,7 @@ void POSE_OT_group_assign(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Add Selected to Bone Group";
   ot->idname = "POSE_OT_group_assign";
-  ot->description = "Add Selected to Bone Group\nAdd selected bones to the chosen bone group";
+  ot->description = "Add selected bones to the chosen bone group";
 
   /* api callbacks */
   ot->invoke = pose_groups_menu_invoke;
@@ -281,7 +281,7 @@ void POSE_OT_group_unassign(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Remove Selected from Bone Groups";
   ot->idname = "POSE_OT_group_unassign";
-  ot->description = "Remove Selected from Bone Groups\nRemove selected bones from all bone groups";
+  ot->description = "Remove selected bones from all bone groups";
 
   /* api callbacks */
   ot->exec = pose_group_unassign_exec;
@@ -346,7 +346,7 @@ void POSE_OT_group_move(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Move Bone Group";
   ot->idname = "POSE_OT_group_move";
-  ot->description = "Move Bone Group\nChange position of active Bone Group in list of Bone Groups";
+  ot->description = "Change position of active Bone Group in list of Bone Groups";
 
   /* api callbacks */
   ot->exec = group_move_exec;
@@ -438,7 +438,7 @@ void POSE_OT_group_sort(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Sort Bone Groups";
   ot->idname = "POSE_OT_group_sort";
-  ot->description = "Sort Bone Groups\nSort Bone Groups by their names in ascending order";
+  ot->description = "Sort Bone Groups by their names in ascending order";
 
   /* api callbacks */
   ot->exec = group_sort_exec;
@@ -493,7 +493,7 @@ void POSE_OT_group_select(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Bones of Bone Group";
   ot->idname = "POSE_OT_group_select";
-  ot->description = "Select Bones of Bone Group\nSelect bones in active Bone Group";
+  ot->description = "Select bones in active Bone Group";
 
   /* api callbacks */
   ot->exec = pose_group_select_exec;
@@ -527,7 +527,7 @@ void POSE_OT_group_deselect(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Deselect Bone Group";
   ot->idname = "POSE_OT_group_deselect";
-  ot->description = "Deselect Bone Group\nDeselect bones of active Bone Group";
+  ot->description = "Deselect bones of active Bone Group";
 
   /* api callbacks */
   ot->exec = pose_group_deselect_exec;

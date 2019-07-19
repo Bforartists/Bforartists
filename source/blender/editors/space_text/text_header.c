@@ -97,7 +97,7 @@ void TEXT_OT_start_find(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Find";
-  ot->description = "Find\nStart searching text";
+  ot->description = "Start searching text";
   ot->idname = "TEXT_OT_start_find";
 
   /* api callbacks */

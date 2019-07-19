@@ -413,7 +413,7 @@ void NLA_OT_channels_click(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Mouse Click on NLA Channels";
   ot->idname = "NLA_OT_channels_click";
-  ot->description = "Mouse Click on NLA Channels\nHandle clicks to select NLA channels";
+  ot->description = "Handle clicks to select NLA channels";
 
   /* api callbacks */
   ot->invoke = nlachannels_mouseclick_invoke;
@@ -528,8 +528,7 @@ void NLA_OT_action_pushdown(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Push Down Action";
   ot->idname = "NLA_OT_action_pushdown";
-  ot->description =
-      "Push Down Action\nPush action down onto the top of the NLA stack as a new strip";
+  ot->description = "Push action down onto the top of the NLA stack as a new strip";
 
   /* callbacks */
   ot->exec = nlachannels_pushdown_exec;
@@ -603,8 +602,7 @@ void NLA_OT_action_unlink(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Unlink Action";
   ot->idname = "NLA_OT_action_unlink";
-  ot->description =
-      "Unlink Action\nUnlink this action from the active action slot (and/or exit Tweak Mode)";
+  ot->description = "Unlink this action from the active action slot (and/or exit Tweak Mode)";
 
   /* callbacks */
   ot->invoke = nla_action_unlink_invoke;
@@ -748,7 +746,7 @@ void NLA_OT_tracks_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Add Tracks";
   ot->idname = "NLA_OT_tracks_add";
-  ot->description = "Add Tracks\nAdd NLA-Tracks above/after the selected tracks";
+  ot->description = "Add NLA-Tracks above/after the selected tracks";
 
   /* api callbacks */
   ot->exec = nlaedit_add_tracks_exec;
@@ -823,7 +821,7 @@ void NLA_OT_tracks_delete(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Delete Tracks";
   ot->idname = "NLA_OT_tracks_delete";
-  ot->description = "Delete Tracks\nDelete selected NLA-Tracks and the strips they contain";
+  ot->description = "Delete selected NLA-Tracks and the strips they contain";
 
   /* api callbacks */
   ot->exec = nlaedit_delete_tracks_exec;
@@ -879,9 +877,7 @@ void NLA_OT_selected_objects_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Include Selected Objects";
   ot->idname = "NLA_OT_selected_objects_add";
-  ot->description =
-      "Include Selected Objects\nMake selected objects appear in NLA Editor by adding Animation "
-      "Data";
+  ot->description = "Make selected objects appear in NLA Editor by adding Animation Data";
 
   /* api callbacks */
   ot->exec = nlaedit_objects_add_exec;

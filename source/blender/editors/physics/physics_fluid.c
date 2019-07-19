@@ -1237,7 +1237,7 @@ void FLUID_OT_bake(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Fluid Simulation Bake";
-  ot->description = "Fluid Simulation Bake\nBake fluid simulation";
+  ot->description = "Bake fluid simulation";
   ot->idname = "FLUID_OT_bake";
 
   /* api callbacks */

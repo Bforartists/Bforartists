@@ -644,7 +644,7 @@ void IMAGE_OT_view_zoom(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Zoom View";
   ot->idname = "IMAGE_OT_view_zoom";
-  ot->description = "Zoom View \nZoom in/out the image";
+  ot->description = "Zoom in/out the image";
 
   /* api callbacks */
   ot->exec = image_view_zoom_exec;
@@ -714,7 +714,7 @@ void IMAGE_OT_view_ndof(wmOperatorType *ot)
   /* identifiers */
   ot->name = "NDOF Pan/Zoom";
   ot->idname = "IMAGE_OT_view_ndof";
-  ot->description = "NDOF Pan/Zoom\nUse a 3D mouse device to pan/zoom the view";
+  ot->description = "Use a 3D mouse device to pan/zoom the view";
 
   /* api callbacks */
   ot->invoke = image_view_ndof_invoke;
@@ -788,7 +788,7 @@ void IMAGE_OT_view_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View All";
   ot->idname = "IMAGE_OT_view_all";
-  ot->description = "View All\nView the entire image";
+  ot->description = "View the entire image";
 
   /* api callbacks */
   ot->exec = image_view_all_exec;
@@ -862,7 +862,7 @@ void IMAGE_OT_view_selected(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View Center";
   ot->idname = "IMAGE_OT_view_selected";
-  ot->description = "View Center\nView all selected UVs";
+  ot->description = "View all selected UVs";
 
   /* api callbacks */
   ot->exec = image_view_selected_exec;
@@ -905,7 +905,7 @@ void IMAGE_OT_view_zoom_in(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View Zoom In";
   ot->idname = "IMAGE_OT_view_zoom_in";
-  ot->description = "View Zoom In\nZoom in the image (centered around 2D cursor)";
+  ot->description = "Zoom in the image (centered around 2D cursor)";
 
   /* api callbacks */
   ot->invoke = image_view_zoom_in_invoke;
@@ -963,7 +963,7 @@ void IMAGE_OT_view_zoom_out(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View Zoom Out";
   ot->idname = "IMAGE_OT_view_zoom_out";
-  ot->description = "View Zoom Out\nZoom out the image (centered around 2D cursor)";
+  ot->description = "Zoom out the image (centered around 2D cursor)";
 
   /* api callbacks */
   ot->invoke = image_view_zoom_out_invoke;
@@ -1010,7 +1010,7 @@ void IMAGE_OT_view_zoom_ratio(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View Zoom Ratio";
   ot->idname = "IMAGE_OT_view_zoom_ratio";
-  ot->description = "View Zoom Ratio\nSet zoom ratio of the view";
+  ot->description = "Set zoom ratio of the view";
 
   /* api callbacks */
   ot->exec = image_view_zoom_ratio_exec;
@@ -1071,8 +1071,8 @@ static int image_view_zoom_border_exec(bContext *C, wmOperator *op)
 void IMAGE_OT_view_zoom_border(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Zoom Border";
-  ot->description = "Zoom Border\nZoom in the view to the nearest item contained in the border";
+  ot->name = "Zoom to Border";
+  ot->description = "Zoom in the view to the nearest item contained in the border";
   ot->idname = "IMAGE_OT_view_zoom_border";
 
   /* api callbacks */
@@ -1498,7 +1498,7 @@ void IMAGE_OT_open(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Open Image";
-  ot->description = "Open Image\nOpen image";
+  ot->description = "Open image";
   ot->idname = "IMAGE_OT_open";
 
   /* api callbacks */
@@ -1563,7 +1563,7 @@ void IMAGE_OT_match_movie_length(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Match Movie Length";
-  ot->description = "Match Movie Length\nSet image's user's length to the one of this video";
+  ot->description = "Set image's user's length to the one of this video";
   ot->idname = "IMAGE_OT_match_movie_length";
 
   /* api callbacks */
@@ -1639,7 +1639,7 @@ void IMAGE_OT_replace(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Replace Image";
   ot->idname = "IMAGE_OT_replace";
-  ot->description = "Replace Image\nReplace current image by another one from disk";
+  ot->description = "Replace current image by another one from disk";
 
   /* api callbacks */
   ot->exec = image_replace_exec;
@@ -1995,7 +1995,7 @@ void IMAGE_OT_save_as(wmOperatorType *ot)
   ot->name = "Save As Image";
   ot->idname = "IMAGE_OT_save_as";
   ot->description =
-      "Save As Image / a Copy\nSace as Image saves the image with another name and/or settings\n "
+      "Sace as Image saves the image with another name and/or settings\n "
       "Save a Copy saves a copy of the current Image";
 
   /* api callbacks */
@@ -2140,7 +2140,7 @@ void IMAGE_OT_save(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Save Image";
   ot->idname = "IMAGE_OT_save";
-  ot->description = "Save Image\nSave the image with current name and settings";
+  ot->description = "Save the image with current name and settings";
 
   /* api callbacks */
   ot->exec = image_save_exec;
@@ -2233,7 +2233,7 @@ void IMAGE_OT_save_sequence(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Save Sequence";
   ot->idname = "IMAGE_OT_save_sequence";
-  ot->description = "Save Sequence\nSave a sequence of images";
+  ot->description = "Save a sequence of images";
 
   /* api callbacks */
   ot->exec = image_save_sequence_exec;
@@ -2421,7 +2421,7 @@ void IMAGE_OT_reload(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Reload Image";
   ot->idname = "IMAGE_OT_reload";
-  ot->description = "Reload Image\nReload current image from disk";
+  ot->description = "Reload current image from disk";
 
   /* api callbacks */
   ot->exec = image_reload_exec;
@@ -2607,7 +2607,7 @@ void IMAGE_OT_new(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "New Image";
-  ot->description = "New Image\nCreate a new image";
+  ot->description = "Create a new image";
   ot->idname = "IMAGE_OT_new";
 
   /* api callbacks */
@@ -2758,7 +2758,7 @@ void IMAGE_OT_invert(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Invert Channels";
   ot->idname = "IMAGE_OT_invert";
-  ot->description = "Invert Channels\nInvert image's channels";
+  ot->description = "Invert image's channels";
 
   /* api callbacks */
   ot->exec = image_invert_exec;
@@ -2821,7 +2821,7 @@ void IMAGE_OT_pack(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Pack Image";
-  ot->description = "Pack Image\nPack an image as embedded data into the .blend file";
+  ot->description = "Pack an image as embedded data into the .blend file";
   ot->idname = "IMAGE_OT_pack";
 
   /* api callbacks */
@@ -2912,7 +2912,7 @@ void IMAGE_OT_unpack(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Unpack Image";
-  ot->description = "Unpack Image\nSave an image packed in the .blend file to disk";
+  ot->description = "Save an image packed in the .blend file to disk";
   ot->idname = "IMAGE_OT_unpack";
 
   /* api callbacks */
@@ -3326,7 +3326,7 @@ void IMAGE_OT_sample(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Sample Color";
   ot->idname = "IMAGE_OT_sample";
-  ot->description = "Sample Color\nUse mouse to sample a color in current image";
+  ot->description = "Use mouse to sample a color in current image";
 
   /* api callbacks */
   ot->invoke = image_sample_invoke;
@@ -3413,7 +3413,7 @@ void IMAGE_OT_sample_line(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Sample Line";
   ot->idname = "IMAGE_OT_sample_line";
-  ot->description = "Sample Line\nSample a line and show it in Scope panels";
+  ot->description = "Sample a line and show it in Scope panels";
 
   /* api callbacks */
   ot->invoke = image_sample_line_invoke;
@@ -3441,7 +3441,7 @@ void IMAGE_OT_curves_point_set(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Curves Point";
   ot->idname = "IMAGE_OT_curves_point_set";
-  ot->description = "Set Curves Point\nSet black point or white point for curves";
+  ot->description = "Set black point or white point for curves";
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -3702,7 +3702,7 @@ void IMAGE_OT_change_frame(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Change Frame";
   ot->idname = "IMAGE_OT_change_frame";
-  ot->description = "Change Frame\nInteractively change the current frame number";
+  ot->description = "Interactively change the current frame number";
 
   /* api callbacks */
   ot->exec = change_frame_exec;
@@ -3741,8 +3741,7 @@ void IMAGE_OT_read_viewlayers(wmOperatorType *ot)
 {
   ot->name = "Open Cached Render";
   ot->idname = "IMAGE_OT_read_viewlayers";
-  ot->description =
-      "Open Cached Render\nRead all the current scene's view layers from cache, as needed";
+  ot->description = "Read all the current scene's view layers from cache, as needed";
 
   ot->poll = space_image_main_region_poll;
   ot->exec = image_read_viewlayers_exec;
@@ -3803,7 +3802,7 @@ void IMAGE_OT_render_border(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Render Region";
-  ot->description = "Render Region\nDraw a rectangle to render a portion of the Image";
+  ot->description = "Set the boundaries of the render region and enable render region";
   ot->idname = "IMAGE_OT_render_border";
 
   /* api callbacks */
@@ -3836,7 +3835,7 @@ void IMAGE_OT_clear_render_border(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Render Region";
   ot->description =
-      "Clear Render Region\nRemoves an existing Render border";  // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
+      "Removes an existing Render border";  // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
   ot->idname = "IMAGE_OT_clear_render_border";
 
   /* api callbacks */

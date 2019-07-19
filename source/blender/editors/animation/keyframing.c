@@ -1881,8 +1881,7 @@ void ANIM_OT_keyframe_insert(wmOperatorType *ot)
   ot->name = "Insert Keyframe";
   ot->idname = "ANIM_OT_keyframe_insert";
   ot->description =
-      "Insert Keyframe\nInsert keyframes on the current frame for all properties in the specified "
-      "Keying Set";
+      "Insert keyframes on the current frame for all properties in the specified Keying Set";
 
   /* callbacks */
   ot->exec = insert_key_exec;
@@ -1981,8 +1980,7 @@ void ANIM_OT_keyframe_insert_menu(wmOperatorType *ot)
   ot->name = "Insert Keyframe Menu";
   ot->idname = "ANIM_OT_keyframe_insert_menu";
   ot->description =
-      "Insert Keyframe Menu\nInsert Keyframes for specified Keying Set, \nwith menu of available "
-      "Keying Sets if undefined";
+      "Insert Keyframes for specified Keying Set, with menu of available Keying Sets if undefined";
 
   /* callbacks */
   ot->invoke = insert_key_menu_invoke;
@@ -2099,8 +2097,7 @@ void ANIM_OT_keyframe_delete(wmOperatorType *ot)
   ot->name = "Delete Keying-Set Keyframe";
   ot->idname = "ANIM_OT_keyframe_delete";
   ot->description =
-      "Delete Keying-Set Keyframe\nDelete keyframes on the current frame for all properties in "
-      "the specified Keying Set";
+      "Delete keyframes on the current frame for all properties in the specified Keying Set";
 
   /* callbacks */
   ot->exec = delete_key_exec;
@@ -2234,7 +2231,7 @@ void ANIM_OT_keyframe_clear_v3d(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Remove Animation";
-  ot->description = "Remove Animation\nRemove all keyframe animation for selected objects";
+  ot->description = "Remove all keyframe animation for selected objects";
   ot->idname = "ANIM_OT_keyframe_clear_v3d";
 
   /* callbacks */
@@ -2346,7 +2343,7 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Delete Keyframe";
-  ot->description = "Delete Keyframe\nRemove keyframes on current frame for selected objects";
+  ot->description = "Remove keyframes on current frame for selected objects and bones";
   ot->idname = "ANIM_OT_keyframe_delete_v3d";
 
   /* callbacks */
@@ -2520,7 +2517,7 @@ void ANIM_OT_keyframe_insert_button(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Insert Keyframe (Buttons)";
   ot->idname = "ANIM_OT_keyframe_insert_button";
-  ot->description = "Insert Keyframe (Buttons)\nInsert a keyframe for current UI-active property";
+  ot->description = "Insert a keyframe for current UI-active property";
 
   /* callbacks */
   ot->exec = insert_key_button_exec;
@@ -2630,8 +2627,7 @@ void ANIM_OT_keyframe_delete_button(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Delete Keyframe (Buttons)";
   ot->idname = "ANIM_OT_keyframe_delete_button";
-  ot->description =
-      "Delete Keyframe (Buttons)\nDelete current keyframe of current UI-active property";
+  ot->description = "Delete current keyframe of current UI-active property";
 
   /* callbacks */
   ot->exec = delete_key_button_exec;
@@ -2698,8 +2694,7 @@ void ANIM_OT_keyframe_clear_button(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Keyframe (Buttons)";
   ot->idname = "ANIM_OT_keyframe_clear_button";
-  ot->description =
-      "Clear Keyframe (Buttons)\nClear all keyframes on the currently active property";
+  ot->description = "Clear all keyframes on the currently active property";
 
   /* callbacks */
   ot->exec = clear_key_button_exec;

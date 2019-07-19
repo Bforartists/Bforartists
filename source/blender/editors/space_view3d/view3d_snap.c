@@ -218,7 +218,7 @@ void VIEW3D_OT_snap_selected_to_grid(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Snap Selection to Grid";
-  ot->description = "Snap Selection to Grid\nSnap selected item(s) to nearest grid division";
+  ot->description = "Snap selected item(s) to their nearest grid division";
   ot->idname = "VIEW3D_OT_snap_selected_to_grid";
 
   /* api callbacks */
@@ -478,7 +478,7 @@ void VIEW3D_OT_snap_selected_to_cursor(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Snap Selection to Cursor";
-  ot->description = "Snap Selection to Cursor\nSnap selected item(s) to 3D cursor";
+  ot->description = "Snap selected item(s) to the 3D cursor";
   ot->idname = "VIEW3D_OT_snap_selected_to_cursor";
 
   /* api callbacks */
@@ -553,7 +553,7 @@ void VIEW3D_OT_snap_cursor_to_grid(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Snap Cursor to Grid";
-  ot->description = "Snap Cursor to Grid\nSnap 3D cursor to nearest grid division";
+  ot->description = "Snap 3D cursor to the nearest grid division";
   ot->idname = "VIEW3D_OT_snap_cursor_to_grid";
 
   /* api callbacks */
@@ -759,7 +759,7 @@ void VIEW3D_OT_snap_cursor_to_selected(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Snap Cursor to Selected";
-  ot->description = "Snap Cursor to Selected\nSnap 3D cursor to center of selected item(s)";
+  ot->description = "Snap 3D cursor to the middle of the selected item(s)";
   ot->idname = "VIEW3D_OT_snap_cursor_to_selected";
 
   /* api callbacks */
@@ -806,7 +806,7 @@ void VIEW3D_OT_snap_cursor_to_active(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Snap Cursor to Active";
-  ot->description = "Snap Cursor to Active\nSnap 3D cursor to active item";
+  ot->description = "Snap 3D cursor to the active item";
   ot->idname = "VIEW3D_OT_snap_cursor_to_active";
 
   /* api callbacks */
@@ -839,7 +839,7 @@ void VIEW3D_OT_snap_cursor_to_center(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Snap Cursor to World Origin";
-  ot->description = "Snap Cursor to World Origin\nSnap 3D cursor to the world origin";
+  ot->description = "Snap 3D cursor to the world origin";
   ot->idname = "VIEW3D_OT_snap_cursor_to_center";
 
   /* api callbacks */

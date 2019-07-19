@@ -389,7 +389,7 @@ void CLIP_OT_track_markers(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Track Markers";
-  ot->description = "Track Markers\nTrack selected markers in chosen direction";
+  ot->description = "Track selected markers";
   ot->idname = "CLIP_OT_track_markers";
 
   /* api callbacks */
@@ -440,7 +440,7 @@ void CLIP_OT_refine_markers(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Refine Markers";
   ot->description =
-      "Refine Markers\nRefine selected markers positions "
+      "Refine selected markers positions "
       "by running the tracker from track's reference "
       "to current frame";
   ot->idname = "CLIP_OT_refine_markers";

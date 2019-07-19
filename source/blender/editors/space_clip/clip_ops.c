@@ -305,7 +305,7 @@ void CLIP_OT_open(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Open Clip";
-  ot->description = "Open Clip\nLoad a sequence of frames or a movie file";
+  ot->description = "Load a sequence of frames or a movie file";
   ot->idname = "CLIP_OT_open";
 
   /* api callbacks */
@@ -348,7 +348,7 @@ void CLIP_OT_reload(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Reload Clip";
-  ot->description = "Reload Clip\nReload clip";
+  ot->description = "Reload clip";
   ot->idname = "CLIP_OT_reload";
 
   /* api callbacks */
@@ -500,7 +500,7 @@ void CLIP_OT_view_pan(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Pan View";
   ot->idname = "CLIP_OT_view_pan";
-  ot->description = "View Pan\nPan the view";
+  ot->description = "Pan the view";
 
   /* api callbacks */
   ot->exec = view_pan_exec;
@@ -513,17 +513,16 @@ void CLIP_OT_view_pan(wmOperatorType *ot)
   ot->flag = OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY;
 
   /* properties */
-  RNA_def_float_vector(
-      ot->srna,
-      "offset",
-      2,
-      NULL,
-      -FLT_MAX,
-      FLT_MAX,
-      "Offset",
-      "Offset\nOffset in floating point units, 1.0 is the width and height of the image",
-      -FLT_MAX,
-      FLT_MAX);
+  RNA_def_float_vector(ot->srna,
+                       "offset",
+                       2,
+                       NULL,
+                       -FLT_MAX,
+                       FLT_MAX,
+                       "Offset",
+                       "Offset\nOffset in floating point units, 1.0 is the width and height of the image",
+                       -FLT_MAX,
+                       FLT_MAX);
 }
 
 /********************** view zoom operator *********************/
@@ -702,7 +701,7 @@ void CLIP_OT_view_zoom(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View Zoom";
   ot->idname = "CLIP_OT_view_zoom";
-  ot->description = "View Zoom\nZoom in/out the view";
+  ot->description = "Zoom in/out the view";
 
   /* api callbacks */
   ot->exec = view_zoom_exec;
@@ -764,7 +763,7 @@ void CLIP_OT_view_zoom_in(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View Zoom In";
   ot->idname = "CLIP_OT_view_zoom_in";
-  ot->description = "View Zoom In\nZoom in the view";
+  ot->description = "Zoom in the view";
 
   /* api callbacks */
   ot->exec = view_zoom_in_exec;
@@ -818,7 +817,7 @@ void CLIP_OT_view_zoom_out(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View Zoom Out";
   ot->idname = "CLIP_OT_view_zoom_out";
-  ot->description = "View Zoom Out\nZoom out the view";
+  ot->description = "Zoom out the view";
 
   /* api callbacks */
   ot->exec = view_zoom_out_exec;
@@ -861,7 +860,7 @@ void CLIP_OT_view_zoom_ratio(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View Zoom Ratio";
   ot->idname = "CLIP_OT_view_zoom_ratio";
-  ot->description = "View Zoom Ratio\nSet the zoom ratio (based on clip size)";
+  ot->description = "Set the zoom ratio (based on clip size)";
 
   /* api callbacks */
   ot->exec = view_zoom_ratio_exec;
@@ -939,7 +938,7 @@ void CLIP_OT_view_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View All";
   ot->idname = "CLIP_OT_view_all";
-  ot->description = "View All\nView whole image with markers";
+  ot->description = "View whole image with markers";
 
   /* api callbacks */
   ot->exec = view_all_exec;
@@ -972,7 +971,7 @@ void CLIP_OT_view_selected(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View Selected";
   ot->idname = "CLIP_OT_view_selected";
-  ot->description = "View Selected\nView all selected elements";
+  ot->description = "View all selected elements";
 
   /* api callbacks */
   ot->exec = view_selected_exec;
@@ -1081,7 +1080,7 @@ void CLIP_OT_change_frame(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Change Frame";
   ot->idname = "CLIP_OT_change_frame";
-  ot->description = "Change Frame\nInteractively change the current frame number";
+  ot->description = "Interactively change the current frame number";
 
   /* api callbacks */
   ot->exec = change_frame_exec;
@@ -1498,9 +1497,7 @@ void CLIP_OT_rebuild_proxy(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Rebuild Proxy and Timecode Indices";
   ot->idname = "CLIP_OT_rebuild_proxy";
-  ot->description =
-      "Rebuild Proxy and Timecode Indices\nRebuild all selected proxies and timecode indices in "
-      "the background";
+  ot->description = "Rebuild all selected proxies and timecode indices in the background";
 
   /* api callbacks */
   ot->exec = clip_rebuild_proxy_exec;
@@ -1528,7 +1525,7 @@ void CLIP_OT_mode_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Set Clip Mode";
-  ot->description = "Set Clip Mode\nSet the clip interaction mode";
+  ot->description = "Set the clip interaction mode";
   ot->idname = "CLIP_OT_mode_set";
 
   /* api callbacks */
@@ -1582,7 +1579,7 @@ void CLIP_OT_view_ndof(wmOperatorType *ot)
   /* identifiers */
   ot->name = "NDOF Pan/Zoom";
   ot->idname = "CLIP_OT_view_ndof";
-  ot->description = "NDOF Pan/Zoom\nUse a 3D mouse device to pan/zoom the view";
+  ot->description = "Use a 3D mouse device to pan/zoom the view";
 
   /* api callbacks */
   ot->invoke = clip_view_ndof_invoke;
@@ -1623,7 +1620,7 @@ void CLIP_OT_prefetch(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Prefetch Frames";
   ot->idname = "CLIP_OT_prefetch";
-  ot->description = "Prefetch Frames\nPrefetch frames from disk for faster playback/tracking";
+  ot->description = "Prefetch frames from disk for faster playback/tracking";
 
   /* api callbacks */
   ot->poll = ED_space_clip_view_clip_poll;
@@ -1660,8 +1657,7 @@ void CLIP_OT_set_scene_frames(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Scene Frames";
   ot->idname = "CLIP_OT_set_scene_frames";
-  ot->description =
-      "Set Scene Frames\nSet scene's start and end frame to match clip's start frame and length";
+  ot->description = "Set scene's start and end frame to match clip's start frame and length";
 
   /* api callbacks */
   ot->poll = ED_space_clip_view_clip_poll;
@@ -1705,7 +1701,7 @@ void CLIP_OT_cursor_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Set 2D Cursor";
-  ot->description = "Set 2D Cursor\nSet 2D cursor location";
+  ot->description = "Set 2D cursor location";
   ot->idname = "CLIP_OT_cursor_set";
 
   /* api callbacks */
@@ -1738,7 +1734,7 @@ void ED_operatormacros_clip(void)
 
   ot = WM_operatortype_append_macro("CLIP_OT_add_marker_move",
                                     "Add Marker and Move",
-                                    "Add Marker and Move\nAdd new marker and move it on movie",
+                                    "Add new marker and move it on movie",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   WM_operatortype_macro_define(ot, "CLIP_OT_add_marker");
   otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");
@@ -1747,7 +1743,7 @@ void ED_operatormacros_clip(void)
   ot = WM_operatortype_append_macro(
       "CLIP_OT_add_marker_slide",
       "Add Marker and Slide",
-      "Add Marker and Slide\nAdd new marker and slide it with mouse until mouse button release",
+      "Add new marker and slide it with mouse until mouse button release",
       OPTYPE_UNDO | OPTYPE_REGISTER);
   WM_operatortype_macro_define(ot, "CLIP_OT_add_marker");
   otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");

@@ -317,7 +317,7 @@ void OBJECT_OT_vertex_parent_set(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Make Vertex Parent";
   ot->description =
-      "Make Vertex Parent\nParent selected objects to the selected vertices\nCan be used at Mesh, "
+      "Parent selected objects to the selected vertices\nCan be used at Mesh, "
       "Lattice and Curve Objects\nSelect vertice(s), select object to parent with strg+lmb, then "
       "perform Make Vertex Parent";
   ot->idname = "OBJECT_OT_vertex_parent_set";
@@ -461,8 +461,7 @@ void OBJECT_OT_proxy_make(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Make Proxy";
   ot->idname = "OBJECT_OT_proxy_make";
-  ot->description =
-      "Make Proxy, Add empty object to become local replacement data of a library-linked object";
+  ot->description = "Add empty object to become local replacement data of a library-linked object";
 
   /* callbacks */
   ot->invoke = make_proxy_invoke;
@@ -612,7 +611,7 @@ void OBJECT_OT_parent_clear(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Clear Parent";
-  ot->description = "Clear Parent, Clear the object's parenting";
+  ot->description = "Clear the object's parenting";
   ot->idname = "OBJECT_OT_parent_clear";
 
   /* api callbacks */
@@ -1119,7 +1118,7 @@ void OBJECT_OT_parent_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Make Parent";
-  ot->description = "Make Parent, Set the object's parenting";
+  ot->description = "Set the object's parenting";
   ot->idname = "OBJECT_OT_parent_set";
 
   /* api callbacks */
@@ -1186,9 +1185,7 @@ void OBJECT_OT_parent_no_inverse_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Make Parent without Inverse";
-  ot->description =
-      "Make Parent without Inverse, Set the object's parenting without setting the inverse parent "
-      "correction";
+  ot->description = "Set the object's parenting without setting the inverse parent correction";
   ot->idname = "OBJECT_OT_parent_no_inverse_set";
 
   /* api callbacks */
@@ -1261,7 +1258,7 @@ void OBJECT_OT_track_clear(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Clear Track";
-  ot->description = "Clear Track, Clear tracking constraint or flag from object";
+  ot->description = "Clear tracking constraint or flag from object";
   ot->idname = "OBJECT_OT_track_clear";
 
   /* api callbacks */
@@ -1379,8 +1376,7 @@ void OBJECT_OT_track_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Make Track";
-  ot->description =
-      "Make Track, Make the object track another object, using various methods/constraints";
+  ot->description = "Make the object track another object, using various methods/constraints";
   ot->idname = "OBJECT_OT_track_set";
 
   /* api callbacks */
@@ -1664,7 +1660,7 @@ void OBJECT_OT_make_links_scene(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Link Objects to Scene";
-  ot->description = "Link Objects to Scene\nLink selection to another scene";
+  ot->description = "Link selection to another scene";
   ot->idname = "OBJECT_OT_make_links_scene";
 
   /* api callbacks */
@@ -1697,7 +1693,7 @@ void OBJECT_OT_make_links_data(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Link Data";
-  ot->description = "Link Data, Apply active object links to other selected objects";
+  ot->description = "Apply active object links to other selected objects";
   ot->idname = "OBJECT_OT_make_links_data";
 
   /* api callbacks */
@@ -2328,7 +2324,7 @@ void OBJECT_OT_make_local(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Make Local";
-  ot->description = "Make Local, Make library linked datablocks local to this file";
+  ot->description = "Make library linked data-blocks local to this file";
   ot->idname = "OBJECT_OT_make_local";
 
   /* api callbacks */
@@ -2641,7 +2637,7 @@ void OBJECT_OT_make_single_user(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Make Single User";
-  ot->description = "Make Single User, Make linked data local to each object";
+  ot->description = "Make linked data local to each object";
   ot->idname = "OBJECT_OT_make_single_user";
 
   /* api callbacks */

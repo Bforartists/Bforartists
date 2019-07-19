@@ -235,8 +235,7 @@ void CLIP_OT_set_origin(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Origin";
   ot->description =
-      "Set Origin\nSet active marker as origin by moving camera (or its parent if present) in 3D "
-      "space";
+      "Set active marker as origin by moving camera (or its parent if present) in 3D space";
   ot->idname = "CLIP_OT_set_origin";
 
   /* api callbacks */
@@ -508,7 +507,7 @@ void CLIP_OT_set_plane(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Plane";
   ot->description =
-      "Set plane based\nSet Plane based on 3 selected bundles by moving camera "
+      "Set plane based on 3 selected bundles by moving camera "
       "(or its parent if present) in 3D space";
   ot->idname = "CLIP_OT_set_plane";
 
@@ -578,7 +577,7 @@ void CLIP_OT_set_axis(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Axis";
   ot->description =
-      "Set Axis\nSet direction of scene axis rotating camera "
+      "Set direction of scene axis rotating camera "
       "(or its parent if present) and assume selected track "
       "lies on real axis, joining it with the origin";
   ot->idname = "CLIP_OT_set_axis";
@@ -713,7 +712,7 @@ void CLIP_OT_set_scale(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Set Scale";
-  ot->description = "Set Scale\nSet scale of scene by scaling camera (or its parent if present)";
+  ot->description = "Set scale of scene by scaling camera (or its parent if present)";
   ot->idname = "CLIP_OT_set_scale";
 
   /* api callbacks */
@@ -774,7 +773,7 @@ void CLIP_OT_set_solution_scale(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Solution Scale";
   ot->description =
-      "Set Solution Scale\nSet object solution scale using distance between "
+      "Set object solution scale using distance between "
       "two selected tracks";
   ot->idname = "CLIP_OT_set_solution_scale";
 
@@ -834,7 +833,7 @@ void CLIP_OT_apply_solution_scale(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Apply Solution Scale";
   ot->description =
-      "Apply Solution Scale\nApply scale on solution itself to make distance between "
+      "Apply scale on solution itself to make distance between "
       "selected tracks equals to desired";
   ot->idname = "CLIP_OT_apply_solution_scale";
 

@@ -1340,7 +1340,7 @@ void MESH_OT_select_similar_region(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Similar Regions";
   ot->idname = "MESH_OT_select_similar_region";
-  ot->description = "Select Similar Regions\nSelect similar face regions to the current selection";
+  ot->description = "Select similar face regions to the current selection";
 
   /* api callbacks */
   ot->exec = edbm_select_similar_region_exec;
@@ -1418,7 +1418,7 @@ void MESH_OT_select_mode(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Mode";
   ot->idname = "MESH_OT_select_mode";
-  ot->description = "Select Mode\nChange selection mode";
+  ot->description = "Change selection mode";
 
   /* api callbacks */
   ot->invoke = edbm_select_mode_invoke;
@@ -1576,7 +1576,7 @@ void MESH_OT_loop_multi_select(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Multi Select Loops";
   ot->idname = "MESH_OT_loop_multi_select";
-  ot->description = "Multi Select Loops\nSelect a loop of connected edges by connection type";
+  ot->description = "Select a loop of connected edges by connection type";
 
   /* api callbacks */
   ot->exec = edbm_loop_multiselect_exec;
@@ -1839,7 +1839,7 @@ void MESH_OT_loop_select(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Loop Select";
   ot->idname = "MESH_OT_loop_select";
-  ot->description = "Loop Select\nSelect a loop of connected edges";
+  ot->description = "Select a loop of connected edges";
 
   /* api callbacks */
   ot->invoke = edbm_select_loop_invoke;
@@ -1860,7 +1860,7 @@ void MESH_OT_edgering_select(wmOperatorType *ot)
   /* description */
   ot->name = "Edge Ring Select";
   ot->idname = "MESH_OT_edgering_select";
-  ot->description = "Edge Ring Select\nSelect an edge ring";
+  ot->description = "Select an edge ring";
 
   /* callbacks */
   ot->invoke = edbm_select_loop_invoke;
@@ -1931,7 +1931,7 @@ void MESH_OT_select_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "(De)select All";
   ot->idname = "MESH_OT_select_all";
-  ot->description = "(De)select All\n(De)select all vertices, edges or faces";
+  ot->description = "(De)select all vertices, edges or faces";
 
   /* api callbacks */
   ot->exec = edbm_select_all_exec;
@@ -1977,8 +1977,7 @@ void MESH_OT_select_interior_faces(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Interior Faces";
   ot->idname = "MESH_OT_select_interior_faces";
-  ot->description =
-      "Select Interior Faces\nSelect faces where all edges have more than 2 face users";
+  ot->description = "Select faces where all edges have more than 2 face users";
 
   /* api callbacks */
   ot->exec = edbm_faces_select_interior_exec;
@@ -3009,7 +3008,7 @@ void MESH_OT_select_linked(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Linked All";
   ot->idname = "MESH_OT_select_linked";
-  ot->description = "Select Linked All\nSelect all vertices connected to the current selection";
+  ot->description = "Select all vertices connected to the current selection";
 
   /* api callbacks */
   ot->exec = edbm_select_linked_exec;
@@ -3271,8 +3270,7 @@ void MESH_OT_select_linked_pick(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Linked";
   ot->idname = "MESH_OT_select_linked_pick";
-  ot->description =
-      "Select Linked\n(De)select all vertices linked to the edge under the mouse cursor";
+  ot->description = "(De)select all vertices linked to the edge under the mouse cursor";
 
   /* api callbacks */
   ot->invoke = edbm_select_linked_pick_invoke;
@@ -3373,8 +3371,7 @@ void MESH_OT_select_face_by_sides(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Select Faces by Sides";
-  ot->description =
-      "Select Faces by Sides\nSelect vertices or faces by the number of polygon sides";
+  ot->description = "Select vertices or faces by the number of polygon sides";
   ot->idname = "MESH_OT_select_face_by_sides";
 
   /* api callbacks */
@@ -3466,7 +3463,7 @@ void MESH_OT_select_loose(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select Loose Geometry";
-  ot->description = "Select Loose Geometry\nSelect loose geometry based on the selection mode";
+  ot->description = "Select loose geometry based on the selection mode";
   ot->idname = "MESH_OT_select_loose";
 
   /* api callbacks */
@@ -3538,7 +3535,7 @@ void MESH_OT_select_mirror(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select Mirror";
-  ot->description = "Select Mirror\nSelect mesh items at mirrored locations";
+  ot->description = "Select mesh items at mirrored locations";
   ot->idname = "MESH_OT_select_mirror";
 
   /* api callbacks */
@@ -3591,8 +3588,7 @@ void MESH_OT_select_more(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select More";
   ot->idname = "MESH_OT_select_more";
-  ot->description =
-      "Select More\nSelect more vertices, edges or faces connected to initial selection";
+  ot->description = "Select more vertices, edges or faces connected to initial selection";
 
   /* api callbacks */
   ot->exec = edbm_select_more_exec;
@@ -3642,8 +3638,7 @@ void MESH_OT_select_less(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Less";
   ot->idname = "MESH_OT_select_less";
-  ot->description =
-      "Select Less\nDeselect vertices, edges or faces at the boundary of each selection region";
+  ot->description = "Deselect vertices, edges or faces at the boundary of each selection region";
 
   /* api callbacks */
   ot->exec = edbm_select_less_exec;
@@ -3892,8 +3887,7 @@ void MESH_OT_select_nth(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Checker Deselect";
   ot->idname = "MESH_OT_select_nth";
-  ot->description =
-      "Checker Deselect\nDeselect every Nth element starting from the active vertex, edge or face";
+  ot->description = "Deselect every Nth element starting from the active vertex, edge or face";
 
   /* api callbacks */
   ot->exec = edbm_select_nth_exec;
@@ -3972,7 +3966,7 @@ void MESH_OT_edges_select_sharp(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Select Sharp Edges";
-  ot->description = "Select Sharp Edges\nSelect all sharp-enough edges";
+  ot->description = "Select all sharp-enough edges";
   ot->idname = "MESH_OT_edges_select_sharp";
 
   /* api callbacks */
@@ -4182,7 +4176,7 @@ void MESH_OT_select_non_manifold(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select Non Manifold";
-  ot->description = "Select Non Manifold\nSelect all non-manifold vertices or edges";
+  ot->description = "Select all non-manifold vertices or edges";
   ot->idname = "MESH_OT_select_non_manifold";
 
   /* api callbacks */
@@ -4285,7 +4279,7 @@ void MESH_OT_select_random(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select Random";
-  ot->description = "Select Random\nRandomly select vertices";
+  ot->description = "Randomly select vertices";
   ot->idname = "MESH_OT_select_random";
 
   /* api callbacks */
@@ -4382,7 +4376,7 @@ void MESH_OT_select_ungrouped(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Ungrouped";
   ot->idname = "MESH_OT_select_ungrouped";
-  ot->description = "Select Ungrouped\nSelect vertices without a group";
+  ot->description = "Select vertices without a group";
 
   /* api callbacks */
   ot->exec = edbm_select_ungrouped_exec;
@@ -4518,7 +4512,7 @@ void MESH_OT_select_axis(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Select Axis";
-  ot->description = "Select Axis\nSelect all data in the mesh on a single axis";
+  ot->description = "Select all data in the mesh on a single axis";
   ot->idname = "MESH_OT_select_axis";
 
   /* api callbacks */
@@ -4618,7 +4612,7 @@ void MESH_OT_region_to_loop(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Boundary Loop";
   ot->idname = "MESH_OT_region_to_loop";
-  ot->description = "Select Boundary Loop\nSelect boundary edges around the selected faces";
+  ot->description = "Select boundary edges around the selected faces";
 
   /* api callbacks */
   ot->exec = edbm_region_to_loop_exec;
@@ -4832,8 +4826,7 @@ void MESH_OT_loop_to_region(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Loop Inner-Region";
   ot->idname = "MESH_OT_loop_to_region";
-  ot->description =
-      "Select Loop Inner-Region\nSelect region of faces inside of a selected loop of edges";
+  ot->description = "Select region of faces inside of a selected loop of edges";
 
   /* api callbacks */
   ot->exec = edbm_loop_to_region_exec;

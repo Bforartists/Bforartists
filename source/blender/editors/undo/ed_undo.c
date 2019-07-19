@@ -463,7 +463,7 @@ void ED_OT_undo(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Undo";
-  ot->description = "Undo\nUndo previous action";
+  ot->description = "Undo previous action";
   ot->idname = "ED_OT_undo";
 
   /* api callbacks */
@@ -475,7 +475,7 @@ void ED_OT_undo_push(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Undo Push";
-  ot->description = "Undo Push\nAdd an undo state (internal use only)";
+  ot->description = "Add an undo state (internal use only)";
   ot->idname = "ED_OT_undo_push";
 
   /* api callbacks */
@@ -497,7 +497,7 @@ void ED_OT_redo(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Redo";
-  ot->description = "Redo\nRedo previous action";
+  ot->description = "Redo previous action";
   ot->idname = "ED_OT_redo";
 
   /* api callbacks */
@@ -705,7 +705,7 @@ void ED_OT_undo_history(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Undo History";
-  ot->description = "Undo history\nRedo specific action in history";
+  ot->description = "Redo specific action in history";
   ot->idname = "ED_OT_undo_history";
 
   /* api callbacks */

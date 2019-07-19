@@ -437,7 +437,7 @@ void CLIP_OT_select(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select";
-  ot->description = "Select\nSelect tracking markers";
+  ot->description = "Select tracking markers";
   ot->idname = "CLIP_OT_select";
 
   /* api callbacks */
@@ -569,7 +569,7 @@ void CLIP_OT_select_box(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Box Select";
-  ot->description = "Box Select\nSelect markers using box selection";
+  ot->description = "Select markers using box selection";
   ot->idname = "CLIP_OT_select_box";
 
   /* api callbacks */
@@ -700,7 +700,7 @@ void CLIP_OT_select_lasso(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Lasso Select";
-  ot->description = "Lasso Select\nSelect markers using lasso selection";
+  ot->description = "Select markers using lasso selection";
   ot->idname = "CLIP_OT_select_lasso";
 
   /* api callbacks */
@@ -830,7 +830,7 @@ void CLIP_OT_select_circle(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Circle Select";
-  ot->description = "Circle Select\nSelect markers using circle selection";
+  ot->description = "Select markers using circle selection";
   ot->idname = "CLIP_OT_select_circle";
 
   /* api callbacks */
@@ -877,7 +877,7 @@ void CLIP_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "(De)select All";
-  ot->description = "(De)select All\nChange selection of all tracking markers";
+  ot->description = "Change selection of all tracking markers";
   ot->idname = "CLIP_OT_select_all";
 
   /* api callbacks */
@@ -979,7 +979,7 @@ void CLIP_OT_select_grouped(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Select Grouped";
-  ot->description = "Select Grouped, Select all tracks from specified group";
+  ot->description = "Select all tracks from specified group";
   ot->idname = "CLIP_OT_select_grouped";
 
   /* api callbacks */

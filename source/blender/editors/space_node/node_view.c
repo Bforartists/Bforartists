@@ -143,7 +143,7 @@ void NODE_OT_view_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View All";
   ot->idname = "NODE_OT_view_all";
-  ot->description = "View All\nResize view so you can see all nodes";
+  ot->description = "Resize view so you can see all nodes";
 
   /* api callbacks */
   ot->exec = node_view_all_exec;
@@ -172,7 +172,7 @@ void NODE_OT_view_selected(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View Selected";
   ot->idname = "NODE_OT_view_selected";
-  ot->description = "View Selected\nResize view so you can see selected nodes";
+  ot->description = "Resize view so you can see selected nodes";
 
   /* api callbacks */
   ot->exec = node_view_selected_exec;
@@ -274,7 +274,7 @@ void NODE_OT_backimage_move(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Background Image Move";
-  ot->description = "Background Image Move\nMove Node backdrop";
+  ot->description = "Move Node backdrop";
   ot->idname = "NODE_OT_backimage_move";
 
   /* api callbacks */
@@ -306,7 +306,7 @@ void NODE_OT_backimage_zoom(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Background Image Zoom";
   ot->idname = "NODE_OT_backimage_zoom";
-  ot->description = "Background Image Zoom\nZoom in/out the background image";
+  ot->description = "Zoom in/out the background image";
 
   /* api callbacks */
   ot->exec = backimage_zoom_exec;
@@ -364,7 +364,7 @@ void NODE_OT_backimage_fit(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Background Image Fit";
   ot->idname = "NODE_OT_backimage_fit";
-  ot->description = "Background Image Fit\nFit the background image to the view";
+  ot->description = "Fit the background image to the view";
 
   /* api callbacks */
   ot->exec = backimage_fit_exec;
@@ -631,7 +631,7 @@ void NODE_OT_backimage_sample(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Backimage Sample";
   ot->idname = "NODE_OT_backimage_sample";
-  ot->description = "Backimage Sample\nUse mouse to sample background image";
+  ot->description = "Use mouse to sample background image";
 
   /* api callbacks */
   ot->invoke = sample_invoke;
