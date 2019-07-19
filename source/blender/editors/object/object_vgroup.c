@@ -2766,8 +2766,7 @@ void OBJECT_OT_vertex_group_remove(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Remove Vertex Group";
   ot->idname = "OBJECT_OT_vertex_group_remove";
-  ot->description =
-      "Remove Vertex Group\nDelete the active or all vertex groups from the active object";
+  ot->description = "Delete the active or all vertex groups from the active object";
 
   /* api callbacks */
   ot->poll = vertex_group_poll;
@@ -2804,8 +2803,7 @@ void OBJECT_OT_vertex_group_assign(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Assign to Vertex Group";
   ot->idname = "OBJECT_OT_vertex_group_assign";
-  ot->description =
-      "Assign to Vertex Group\nAssign the selected vertices to the active vertex group";
+  ot->description = "Assign the selected vertices to the active vertex group";
 
   /* api callbacks */
   ot->poll = vertex_group_vert_select_unlocked_poll;
@@ -2834,7 +2832,7 @@ void OBJECT_OT_vertex_group_assign_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Assign to New Group";
   ot->idname = "OBJECT_OT_vertex_group_assign_new";
-  ot->description = "Assign to New Group\nAssign the selected vertices to a new vertex group";
+  ot->description = "Assign the selected vertices to a new vertex group";
 
   /* api callbacks */
   ot->poll = vertex_group_vert_select_poll;
@@ -2879,8 +2877,7 @@ void OBJECT_OT_vertex_group_remove_from(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Remove from Vertex Group";
   ot->idname = "OBJECT_OT_vertex_group_remove_from";
-  ot->description =
-      "Remove from Vertex Group\nRemove the selected vertices from active or all vertex group(s)";
+  ot->description = "Remove the selected vertices from active or all vertex group(s)";
 
   /* api callbacks */
   ot->poll = vertex_group_vert_select_unlocked_poll;
@@ -2919,8 +2916,7 @@ void OBJECT_OT_vertex_group_select(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Vertex Group";
   ot->idname = "OBJECT_OT_vertex_group_select";
-  ot->description =
-      "Select Vertex Group\nSelect all the vertices assigned to the active vertex group";
+  ot->description = "Select all the vertices assigned to the active vertex group";
 
   /* api callbacks */
   ot->poll = vertex_group_vert_select_poll;
@@ -2946,8 +2942,7 @@ void OBJECT_OT_vertex_group_deselect(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Deselect Vertex Group";
   ot->idname = "OBJECT_OT_vertex_group_deselect";
-  ot->description =
-      "Deselect Vertex Group\nDeselect all selected vertices assigned to the active vertex group";
+  ot->description = "Deselect all selected vertices assigned to the active vertex group";
 
   /* api callbacks */
   ot->poll = vertex_group_vert_select_poll;
@@ -2975,7 +2970,7 @@ void OBJECT_OT_vertex_group_copy(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Copy Vertex Group";
   ot->idname = "OBJECT_OT_vertex_group_copy";
-  ot->description = "Copy Vertex Group\nMake a copy of the active vertex group";
+  ot->description = "Make a copy of the active vertex group";
 
   /* api callbacks */
   ot->poll = vertex_group_poll;
@@ -3013,8 +3008,7 @@ void OBJECT_OT_vertex_group_levels(wmOperatorType *ot)
   ot->name = "Vertex Group Levels";
   ot->idname = "OBJECT_OT_vertex_group_levels";
   ot->description =
-      "Vertex Group Levels\nAdd some offset and multiply with some gain the weights of the active "
-      "vertex group";
+      "Add some offset and multiply with some gain the weights of the active vertex group";
 
   /* api callbacks */
   ot->poll = vertex_group_poll;
@@ -3055,8 +3049,7 @@ void OBJECT_OT_vertex_group_normalize(wmOperatorType *ot)
   ot->name = "Normalize Vertex Group";
   ot->idname = "OBJECT_OT_vertex_group_normalize";
   ot->description =
-      "Normalize Vertex Group\nNormalize weights of the active vertex group, so that the highest "
-      "ones are now 1.0";
+      "Normalize weights of the active vertex group, so that the highest ones are now 1.0";
 
   /* api callbacks */
   ot->poll = vertex_group_poll;
@@ -3099,7 +3092,7 @@ void OBJECT_OT_vertex_group_normalize_all(wmOperatorType *ot)
   ot->name = "Normalize All Vertex Groups";
   ot->idname = "OBJECT_OT_vertex_group_normalize_all";
   ot->description =
-      "Normalize All Vertex Groups\nNormalize all weights of all vertex groups, "
+      "Normalize all weights of all vertex groups, "
       "so that for each vertex, the sum of all weights is 1.0";
 
   /* api callbacks */
@@ -3155,8 +3148,7 @@ void OBJECT_OT_vertex_group_fix(wmOperatorType *ot)
   ot->name = "Fix Vertex Group Deform";
   ot->idname = "OBJECT_OT_vertex_group_fix";
   ot->description =
-      "Fix Vertex Group Deform\nModify the position of selected vertices by changing only their "
-      "respective "
+      "Modify the position of selected vertices by changing only their respective "
       "groups' weights (this tool may be slow for many vertices)";
 
   /* api callbacks */
@@ -3211,9 +3203,7 @@ void OBJECT_OT_vertex_group_lock(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Change the Lock On Vertex Groups";
   ot->idname = "OBJECT_OT_vertex_group_lock";
-  ot->description =
-      "Change the Lock On Vertex Groups\nChange the lock state of all vertex groups of active "
-      "object";
+  ot->description = "Change the lock state of all vertex groups of active object";
 
   /* api callbacks */
   ot->poll = vertex_group_poll;
@@ -3257,7 +3247,7 @@ void OBJECT_OT_vertex_group_invert(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Invert Vertex Group";
   ot->idname = "OBJECT_OT_vertex_group_invert";
-  ot->description = "Invert Vertex Group\nInvert active vertex group's weights";
+  ot->description = "Invert active vertex group's weights";
 
   /* api callbacks */
   ot->poll = vertex_group_poll;
@@ -3327,7 +3317,7 @@ void OBJECT_OT_vertex_group_smooth(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Smooth Vertex Weights";
   ot->idname = "OBJECT_OT_vertex_group_smooth";
-  ot->description = "Smooth Vertex Weights\nSmooth weights for selected vertices";
+  ot->description = "Smooth weights for selected vertices";
 
   /* api callbacks */
   ot->poll = vertex_group_mesh_vert_poll;
@@ -3378,7 +3368,7 @@ void OBJECT_OT_vertex_group_clean(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clean Vertex Group";
   ot->idname = "OBJECT_OT_vertex_group_clean";
-  ot->description = "Clean Vertex Group\nRemove vertex group assignments which are not required";
+  ot->description = "Remove vertex group assignments which are not required";
 
   /* api callbacks */
   ot->poll = vertex_group_poll;
@@ -3578,8 +3568,8 @@ void OBJECT_OT_vertex_group_copy_to_linked(wmOperatorType *ot)
   ot->name = "Copy Vertex Groups to Linked";
   ot->idname = "OBJECT_OT_vertex_group_copy_to_linked";
   ot->description =
-      "Copy Vertex Groups to Linked\nReplace vertex groups of all users of the same geometry data "
-      "by vertex groups of active object";
+      "Replace vertex groups of all users of the same geometry data by vertex groups of active "
+      "object";
 
   /* api callbacks */
   ot->poll = vertex_group_poll;
@@ -3627,9 +3617,7 @@ void OBJECT_OT_vertex_group_copy_to_selected(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Copy Vertex Group to Selected";
   ot->idname = "OBJECT_OT_vertex_group_copy_to_selected";
-  ot->description =
-      "Copy Vertex Group to Selected\nReplace vertex groups of selected objects by vertex groups "
-      "of active object";
+  ot->description = "Replace vertex groups of selected objects by vertex groups of active object";
 
   /* api callbacks */
   ot->poll = vertex_group_poll;
@@ -3689,7 +3677,7 @@ void OBJECT_OT_vertex_group_set_active(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Active Vertex Group";
   ot->idname = "OBJECT_OT_vertex_group_set_active";
-  ot->description = "Set Active Vertex Group\nSet the active vertex group";
+  ot->description = "Set the active vertex group";
 
   /* api callbacks */
   ot->poll = vertex_group_poll;
@@ -3889,7 +3877,7 @@ void OBJECT_OT_vertex_group_sort(wmOperatorType *ot)
 
   ot->name = "Sort Vertex Groups";
   ot->idname = "OBJECT_OT_vertex_group_sort";
-  ot->description = "Sort Vertex Groups\nSort vertex groups";
+  ot->description = "Sort vertex groups";
 
   /* api callbacks */
   ot->poll = vertex_group_poll;
@@ -4068,8 +4056,7 @@ void OBJECT_OT_vertex_weight_paste(wmOperatorType *ot)
   ot->name = "Paste Weight to Selected";
   ot->idname = "OBJECT_OT_vertex_weight_paste";
   ot->description =
-      "Paste Weight to Selected\nCopy this group's weight to other selected verts (disabled if "
-      "vertex group is locked)";
+      "Copy this group's weight to other selected verts (disabled if vertex group is locked)";
 
   /* api callbacks */
   ot->poll = vertex_group_vert_select_mesh_poll;
@@ -4113,8 +4100,7 @@ void OBJECT_OT_vertex_weight_delete(wmOperatorType *ot)
 
   ot->name = "Delete Weight";
   ot->idname = "OBJECT_OT_vertex_weight_delete";
-  ot->description =
-      "Delete Weight\nDelete this weight from the vertex (disabled if vertex group is locked)";
+  ot->description = "Delete this weight from the vertex (disabled if vertex group is locked)";
 
   /* api callbacks */
   ot->poll = vertex_group_vert_select_mesh_poll;
@@ -4155,7 +4141,7 @@ void OBJECT_OT_vertex_weight_set_active(wmOperatorType *ot)
 
   ot->name = "Set Active Group";
   ot->idname = "OBJECT_OT_vertex_weight_set_active";
-  ot->description = "Set Active Group\nSet as active vertex group";
+  ot->description = "Set as active vertex group";
 
   /* api callbacks */
   ot->poll = vertex_group_vert_select_mesh_poll;
@@ -4201,7 +4187,7 @@ void OBJECT_OT_vertex_weight_normalize_active_vertex(wmOperatorType *ot)
 
   ot->name = "Normalize Active";
   ot->idname = "OBJECT_OT_vertex_weight_normalize_active_vertex";
-  ot->description = "Normalize Active\nNormalize active vertex's weights";
+  ot->description = "Normalize active vertex's weights";
 
   /* api callbacks */
   ot->poll = vertex_group_vert_select_mesh_poll;
@@ -4230,7 +4216,7 @@ void OBJECT_OT_vertex_weight_copy(wmOperatorType *ot)
 
   ot->name = "Copy Active";
   ot->idname = "OBJECT_OT_vertex_weight_copy";
-  ot->description = "Copy Active\nCopy weights from active to selected";
+  ot->description = "Copy weights from active to selected";
 
   /* api callbacks */
   ot->poll = vertex_group_vert_select_mesh_poll;

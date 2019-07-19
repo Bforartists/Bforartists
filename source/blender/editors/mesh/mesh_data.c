@@ -525,7 +525,7 @@ void MESH_OT_uv_texture_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add UV Map";
-  ot->description = "Add UV Map\nAdd a new UV Map";
+  ot->description = "Add UV Map";
   ot->idname = "MESH_OT_uv_texture_add";
 
   /* api callbacks */
@@ -558,7 +558,7 @@ void MESH_OT_uv_texture_remove(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Remove UV Map";
-  ot->description = "Remove UV Map\nRemove UV Map";
+  ot->description = "Remove UV Map";
   ot->idname = "MESH_OT_uv_texture_remove";
 
   /* api callbacks */
@@ -587,7 +587,7 @@ void MESH_OT_vertex_color_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Vertex Color";
-  ot->description = "Add Vertex Color\nAdd vertex color layer";
+  ot->description = "Add vertex color layer";
   ot->idname = "MESH_OT_vertex_color_add";
 
   /* api callbacks */
@@ -614,7 +614,7 @@ void MESH_OT_vertex_color_remove(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Remove Vertex Color";
-  ot->description = "Remove Vertex Color\nRemove vertex color layer";
+  ot->description = "Remove vertex color layer";
   ot->idname = "MESH_OT_vertex_color_remove";
 
   /* api callbacks */
@@ -699,7 +699,7 @@ void MESH_OT_customdata_mask_clear(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Sculpt-Mask Data";
   ot->idname = "MESH_OT_customdata_mask_clear";
-  ot->description = "Clear Sculpt-Mask Data\nClear vertex sculpt masking data from the mesh";
+  ot->description = "Clear vertex sculpt masking data from the mesh";
 
   /* api callbacks */
   ot->exec = mesh_customdata_mask_clear_exec;
@@ -750,7 +750,7 @@ void MESH_OT_customdata_skin_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Add Skin Data";
   ot->idname = "MESH_OT_customdata_skin_add";
-  ot->description = "Add Skin Data\nAdd a vertex skin layer";
+  ot->description = "Add a vertex skin layer";
 
   /* api callbacks */
   ot->exec = mesh_customdata_skin_add_exec;
@@ -775,7 +775,7 @@ void MESH_OT_customdata_skin_clear(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Skin Data";
   ot->idname = "MESH_OT_customdata_skin_clear";
-  ot->description = "Clear Skin Data\nClear vertex skin layer";
+  ot->description = "Clear vertex skin layer";
 
   /* api callbacks */
   ot->exec = mesh_customdata_skin_clear_exec;
@@ -849,8 +849,7 @@ void MESH_OT_customdata_custom_splitnormals_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Add Custom Split Normals Data";
   ot->idname = "MESH_OT_customdata_custom_splitnormals_add";
-  ot->description =
-      "Add Custom Split Normals Data\nAdd a custom split normals layer, if none exists yet";
+  ot->description = "Add a custom split normals layer, if none exists yet";
 
   /* api callbacks */
   ot->exec = mesh_customdata_custom_splitnormals_add_exec;
@@ -876,8 +875,7 @@ void MESH_OT_customdata_custom_splitnormals_clear(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Custom Split Normals Data";
   ot->idname = "MESH_OT_customdata_custom_splitnormals_clear";
-  ot->description =
-      "Clear Custom Split Normals Data\nRemove the custom split normals layer, if it exists";
+  ot->description = "Remove the custom split normals layer, if it exists";
 
   /* api callbacks */
   ot->exec = mesh_customdata_custom_splitnormals_clear_exec;

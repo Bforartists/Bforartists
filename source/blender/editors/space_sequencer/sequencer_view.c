@@ -239,7 +239,7 @@ void SEQUENCER_OT_sample(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Sample Color";
   ot->idname = "SEQUENCER_OT_sample";
-  ot->description = "Sample Color\nUse mouse to sample color in current frame";
+  ot->description = "Use mouse to sample color in current frame";
 
   /* api callbacks */
   ot->invoke = sample_invoke;

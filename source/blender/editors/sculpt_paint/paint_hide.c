@@ -440,10 +440,7 @@ void PAINT_OT_hide_show(struct wmOperatorType *ot)
   /* identifiers */
   ot->name = "Hide/Show";
   ot->idname = "PAINT_OT_hide_show";
-  ot->description =
-      "Hide/Show\nShow all shows all geometry\nHide Bounding Box hides what you border select "
-      "with the tool\nShow Bounding Box shows hidden geometry that you border select with the "
-      "tool\nHide masked hides what is currently selected as a mask";
+  ot->description = "Hide/show some vertices";
 
   /* api callbacks */
   ot->invoke = hide_show_invoke;

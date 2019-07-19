@@ -121,8 +121,7 @@ void GPENCIL_OT_select_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "(De)select All Strokes";
   ot->idname = "GPENCIL_OT_select_all";
-  ot->description =
-      "(De)select All Strokes\nChange selection of all Grease Pencil strokes currently visible";
+  ot->description = "Change selection of all Grease Pencil strokes currently visible";
 
   /* callbacks */
   ot->exec = gpencil_select_all_exec;
@@ -183,7 +182,7 @@ void GPENCIL_OT_select_linked(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Linked";
   ot->idname = "GPENCIL_OT_select_linked";
-  ot->description = "Select Linked\nSelect all points in same strokes as already selected points";
+  ot->description = "Select all points in same strokes as already selected points";
 
   /* callbacks */
   ot->exec = gpencil_select_linked_exec;
@@ -680,7 +679,7 @@ void GPENCIL_OT_select_more(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select More";
   ot->idname = "GPENCIL_OT_select_more";
-  ot->description = "Select More\nGrow sets of selected Grease Pencil points";
+  ot->description = "Grow sets of selected Grease Pencil points";
 
   /* callbacks */
   ot->exec = gpencil_select_more_exec;
@@ -766,7 +765,7 @@ void GPENCIL_OT_select_less(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Less";
   ot->idname = "GPENCIL_OT_select_less";
-  ot->description = "Select Less\nShrink sets of selected Grease Pencil points";
+  ot->description = "Shrink sets of selected Grease Pencil points";
 
   /* callbacks */
   ot->exec = gpencil_select_less_exec;
@@ -980,7 +979,7 @@ void GPENCIL_OT_select_circle(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Circle Select";
-  ot->description = "Circle Select\nSelect Grease Pencil strokes using brush selection";
+  ot->description = "Select Grease Pencil strokes using brush selection";
   ot->idname = "GPENCIL_OT_select_circle";
 
   /* callbacks */
@@ -1170,7 +1169,7 @@ void GPENCIL_OT_select_box(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Box Select";
-  ot->description = "Box Select\nSelect Grease Pencil strokes within a rectangular region";
+  ot->description = "Select Grease Pencil strokes within a rectangular region";
   ot->idname = "GPENCIL_OT_select_box";
 
   /* callbacks */
@@ -1240,7 +1239,7 @@ static int gpencil_lasso_select_exec(bContext *C, wmOperator *op)
 void GPENCIL_OT_select_lasso(wmOperatorType *ot)
 {
   ot->name = "Lasso Select Strokes";
-  ot->description = "Lasso Select Strokes\nSelect Grease Pencil strokes using lasso selection";
+  ot->description = "Select Grease Pencil strokes using lasso selection";
   ot->idname = "GPENCIL_OT_select_lasso";
 
   ot->invoke = WM_gesture_lasso_invoke;
@@ -1461,7 +1460,7 @@ void GPENCIL_OT_select(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Select";
-  ot->description = "Select\nSelect Grease Pencil strokes and/or stroke points";
+  ot->description = "Select Grease Pencil strokes and/or stroke points";
   ot->idname = "GPENCIL_OT_select";
 
   /* callbacks */

@@ -75,8 +75,7 @@ void FILE_OT_pack_libraries(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Pack Blender Libraries";
   ot->idname = "FILE_OT_pack_libraries";
-  ot->description =
-      "Pack Blender Libraries\nPack all used Blender library files into the current .blend";
+  ot->description = "Pack all used Blender library files into the current .blend";
 
   /* api callbacks */
   ot->exec = pack_libraries_exec;
@@ -105,8 +104,7 @@ void FILE_OT_unpack_libraries(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Unpack Blender Libraries";
   ot->idname = "FILE_OT_unpack_libraries";
-  ot->description =
-      "Unpack Blender Libraries\nUnpack all used Blender library files from this .blend file";
+  ot->description = "Unpack all used Blender library files from this .blend file";
 
   /* api callbacks */
   ot->invoke = unpack_libraries_invoke;
@@ -138,8 +136,7 @@ void FILE_OT_autopack_toggle(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Automatically Pack Into .blend";
   ot->idname = "FILE_OT_autopack_toggle";
-  ot->description =
-      "Automatically Pack Into .blend\nAutomatically pack all external files into the .blend file";
+  ot->description = "Automatically pack all external files into the .blend file";
 
   /* api callbacks */
   ot->exec = autopack_toggle_exec;
@@ -184,7 +181,7 @@ void FILE_OT_pack_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Pack All Into .blend";
   ot->idname = "FILE_OT_pack_all";
-  ot->description = "Pack All Into .blend\nPack all used external files into the .blend";
+  ot->description = "Pack all used external files into the .blend";
 
   /* api callbacks */
   ot->exec = pack_all_exec;
@@ -271,7 +268,7 @@ void FILE_OT_unpack_all(wmOperatorType *ot)
   ot->name = "Unpack packed files";
   ot->idname = "FILE_OT_unpack_all";
   ot->description =
-      "Unpack packed Files\nUnpack embedded files from this .blend file\n'Current directory' "
+      "Unpack embedded files from this .blend file\n'Current directory' "
       "methods extracts the data into a subfolder called 'textures'\n 'Original Location' methods "
       "tries to write the data to the original directories\nBeware of absolute paths here!";
 
@@ -356,7 +353,7 @@ void FILE_OT_unpack_item(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Unpack Item";
   ot->idname = "FILE_OT_unpack_item";
-  ot->description = "Unpack Item\nUnpack this file to an external file";
+  ot->description = "Unpack this file to an external file";
 
   /* api callbacks */
   ot->exec = unpack_item_exec;
@@ -405,8 +402,7 @@ void FILE_OT_make_paths_relative(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Make All Paths Relative";
   ot->idname = "FILE_OT_make_paths_relative";
-  ot->description =
-      "Make All Paths Relative\nMake all paths to external files relative to current .blend";
+  ot->description = "Make all paths to external files relative to current .blend";
 
   /* api callbacks */
   ot->exec = make_paths_relative_exec;
@@ -439,7 +435,7 @@ void FILE_OT_make_paths_absolute(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Make All Paths Absolute";
   ot->idname = "FILE_OT_make_paths_absolute";
-  ot->description = "Make All Paths Absolute\nMake all paths to external files absolute";
+  ot->description = "Make all paths to external files absolute";
 
   /* api callbacks */
   ot->exec = make_paths_absolute_exec;
@@ -465,7 +461,7 @@ void FILE_OT_report_missing_files(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Report Missing Files";
   ot->idname = "FILE_OT_report_missing_files";
-  ot->description = "Report Missing Files\nReport all missing external files";
+  ot->description = "Report all missing external files";
 
   /* api callbacks */
   ot->exec = report_missing_files_exec;
@@ -500,7 +496,7 @@ void FILE_OT_find_missing_files(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Find Missing Files";
   ot->idname = "FILE_OT_find_missing_files";
-  ot->description = "Find Missing Files\nTry to find missing external files";
+  ot->description = "Try to find missing external files";
 
   /* api callbacks */
   ot->exec = find_missing_files_exec;
@@ -626,8 +622,7 @@ void INFO_OT_reports_display_update(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Update Reports Display";
   ot->idname = "INFO_OT_reports_display_update";
-  ot->description =
-      "Update Reports Display\nUpdate the display of reports in Blender UI (internal use)";
+  ot->description = "Update the display of reports in Blender UI (internal use)";
 
   /* api callbacks */
   ot->invoke = update_reports_display_invoke;

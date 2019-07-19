@@ -266,7 +266,7 @@ void ED_operatormacros_object(void)
 
   ot = WM_operatortype_append_macro("OBJECT_OT_duplicate_move",
                                     "Duplicate Objects",
-                                    "Duplicate Objects\nDuplicate selected objects and move them",
+                                    "Duplicate selected objects and move them",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   if (ot) {
     WM_operatortype_macro_define(ot, "OBJECT_OT_duplicate");
@@ -277,7 +277,7 @@ void ED_operatormacros_object(void)
   /* grr, should be able to pass options on... */
   ot = WM_operatortype_append_macro("OBJECT_OT_duplicate_move_linked",
                                     "Duplicate Linked",
-                                    "Duplicate Linked\nDuplicate selected objects and move them",
+                                    "Duplicate selected objects and move them",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   if (ot) {
     otmacro = WM_operatortype_macro_define(ot, "OBJECT_OT_duplicate");

@@ -139,7 +139,7 @@ static void UI_OT_copy_data_path_button(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Copy Data Path";
   ot->idname = "UI_OT_copy_data_path_button";
-  ot->description = "Copy Data Path\nCopy the RNA data path for this property to the clipboard";
+  ot->description = "Copy the RNA data path for this property to the clipboard";
 
   /* callbacks */
   ot->exec = copy_data_path_button_exec;
@@ -270,7 +270,7 @@ static void UI_OT_reset_default_button(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Reset to Default Value";
   ot->idname = "UI_OT_reset_default_button";
-  ot->description = "Copy Data Path\nReset this property's value to its default value";
+  ot->description = "Reset this property's value to its default value";
 
   /* callbacks */
   ot->poll = reset_default_button_poll;
@@ -372,8 +372,7 @@ static void UI_OT_unset_property_button(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Unset property";
   ot->idname = "UI_OT_unset_property_button";
-  ot->description =
-      "Unset property\nClear the property and use default or generated value in operators";
+  ot->description = "Clear the property and use default or generated value in operators";
 
   /* callbacks */
   ot->poll = ED_operator_regionactive;
@@ -863,8 +862,7 @@ static void UI_OT_copy_to_selected_button(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Copy To Selected";
   ot->idname = "UI_OT_copy_to_selected_button";
-  ot->description =
-      "Copy To Selected\nCopy property from this object to selected objects or bones";
+  ot->description = "Copy property from this object to selected objects or bones";
 
   /* callbacks */
   ot->poll = copy_to_selected_button_poll;
@@ -1070,7 +1068,7 @@ static void UI_OT_reports_to_textblock(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Reports to Text Block";
   ot->idname = "UI_OT_reports_to_textblock";
-  ot->description = "Reports to Text Block\nWrite the reports ";
+  ot->description = "Write the reports ";
 
   /* callbacks */
   ot->poll = reports_to_text_poll;
@@ -1282,7 +1280,7 @@ static void UI_OT_editsource(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Edit Source";
   ot->idname = "UI_OT_editsource";
-  ot->description = "Edit Source\nEdit UI source code of the active button";
+  ot->description = "Edit UI source code of the active button";
 
   /* callbacks */
   ot->exec = editsource_exec;
@@ -1469,7 +1467,7 @@ static void UI_OT_edittranslation_init(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Edit Translation";
   ot->idname = "UI_OT_edittranslation_init";
-  ot->description = "Edit Translation\nEdit i18n in current language for the active button";
+  ot->description = "Edit i18n in current language for the active button";
 
   /* callbacks */
   ot->exec = edittranslation_exec;
@@ -1497,7 +1495,7 @@ static void UI_OT_reloadtranslation(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Reload Translation";
   ot->idname = "UI_OT_reloadtranslation";
-  ot->description = "Reload Translation\nForce a full reload of UI translation";
+  ot->description = "Force a full reload of UI translation";
 
   /* callbacks */
   ot->exec = reloadtranslation_exec;
@@ -1653,7 +1651,7 @@ static void UI_OT_drop_color(wmOperatorType *ot)
 {
   ot->name = "Drop Color";
   ot->idname = "UI_OT_drop_color";
-  ot->description = "Drop Color\nDrop colors to buttons";
+  ot->description = "Drop colors to buttons";
 
   ot->invoke = drop_color_invoke;
   ot->flag = OPTYPE_INTERNAL;

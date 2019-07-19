@@ -1366,7 +1366,7 @@ void VIEW3D_OT_walk(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Walk Navigation";
-  ot->description = "Walk Navigation\nInteractively walk around the scene";
+  ot->description = "Interactively walk around the scene";
   ot->idname = "VIEW3D_OT_walk";
 
   /* api callbacks */

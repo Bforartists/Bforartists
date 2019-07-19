@@ -5514,7 +5514,7 @@ static void SCULPT_OT_brush_stroke(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Sculpt";
   ot->idname = "SCULPT_OT_brush_stroke";
-  ot->description = "Sculpt\nSculpt a stroke into the geometry";
+  ot->description = "Sculpt a stroke into the geometry";
 
   /* api callbacks */
   ot->invoke = sculpt_brush_stroke_invoke;
@@ -5558,7 +5558,7 @@ static void SCULPT_OT_set_persistent_base(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Persistent Base";
   ot->idname = "SCULPT_OT_set_persistent_base";
-  ot->description = "Set Persistent Base\nReset the copy of the mesh that is being sculpted on";
+  ot->description = "Reset the copy of the mesh that is being sculpted on";
 
   /* api callbacks */
   ot->exec = sculpt_set_persistent_base_exec;
@@ -5917,8 +5917,7 @@ static void SCULPT_OT_dynamic_topology_toggle(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Dynamic Topology Toggle";
   ot->idname = "SCULPT_OT_dynamic_topology_toggle";
-  ot->description =
-      "Dynamic Topology Toggle\nDynamic topology alters the mesh topology while sculpting";
+  ot->description = "Dynamic topology alters the mesh topology while sculpting";
 
   /* api callbacks */
   ot->invoke = sculpt_dynamic_topology_toggle_invoke;
@@ -5956,7 +5955,7 @@ static void SCULPT_OT_optimize(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Optimize";
   ot->idname = "SCULPT_OT_optimize";
-  ot->description = "Optimize\nRecalculate the sculpt BVH to improve performance";
+  ot->description = "Recalculate the sculpt BVH to improve performance";
 
   /* api callbacks */
   ot->exec = sculpt_optimize_exec;
@@ -6012,7 +6011,7 @@ static void SCULPT_OT_symmetrize(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Symmetrize";
   ot->idname = "SCULPT_OT_symmetrize";
-  ot->description = "Symmetrize\nSymmetrize the topology modifications";
+  ot->description = "Symmetrize the topology modifications";
 
   /* api callbacks */
   ot->exec = sculpt_symmetrize_exec;
@@ -6260,7 +6259,7 @@ static void SCULPT_OT_sculptmode_toggle(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Sculpt Mode";
   ot->idname = "SCULPT_OT_sculptmode_toggle";
-  ot->description = "Sculpt Mode\nToggle sculpt mode in 3D view";
+  ot->description = "Toggle sculpt mode in 3D view";
 
   /* api callbacks */
   ot->exec = sculpt_mode_toggle_exec;
@@ -6334,7 +6333,7 @@ static void SCULPT_OT_detail_flood_fill(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Detail Flood Fill";
   ot->idname = "SCULPT_OT_detail_flood_fill";
-  ot->description = "Detail Flood Fill\nFlood fill the mesh with the selected detail setting";
+  ot->description = "Flood fill the mesh with the selected detail setting";
 
   /* api callbacks */
   ot->exec = sculpt_detail_flood_fill_exec;
@@ -6442,7 +6441,7 @@ static void SCULPT_OT_sample_detail_size(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Sample Detail Size";
   ot->idname = "SCULPT_OT_sample_detail_size";
-  ot->description = "Sample Detail Size\nSample the mesh detail on clicked point";
+  ot->description = "Sample the mesh detail on clicked point";
 
   /* api callbacks */
   ot->invoke = sculpt_sample_detail_size_invoke;
@@ -6511,8 +6510,7 @@ static void SCULPT_OT_set_detail_size(wmOperatorType *ot)
   ot->name = "Set Detail Size";
   ot->idname = "SCULPT_OT_set_detail_size";
   ot->description =
-      "Set Detail Size\nSet the mesh detail (either relative or constant one, depending on "
-      "current dyntopo mode)";
+      "Set the mesh detail (either relative or constant one, depending on current dyntopo mode)";
 
   /* api callbacks */
   ot->exec = sculpt_set_detail_size_exec;

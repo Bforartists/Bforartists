@@ -414,7 +414,7 @@ void POSE_OT_armature_apply(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Apply Pose as Rest Pose";
   ot->idname = "POSE_OT_armature_apply";
-  ot->description = "Apply Pose as Rest Pose\nApply the current pose as the new rest pose";
+  ot->description = "Apply the current pose as the new rest pose";
 
   /* callbacks */
   ot->exec = apply_armature_pose2bones_exec;
@@ -478,9 +478,7 @@ void POSE_OT_visual_transform_apply(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Apply Visual Transform to Pose";
   ot->idname = "POSE_OT_visual_transform_apply";
-  ot->description =
-      "Apply Visual Transform to Pose\nApply final constrained position of pose bones to their "
-      "transform";
+  ot->description = "Apply final constrained position of pose bones to their transform";
 
   /* callbacks */
   ot->exec = pose_visual_transform_apply_exec;
@@ -727,8 +725,7 @@ void POSE_OT_copy(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Copy Pose";
   ot->idname = "POSE_OT_copy";
-  ot->description =
-      "Copy Pose\nCopies the current pose of the selected bones to copy/paste buffer";
+  ot->description = "Copies the current pose of the selected bones to copy/paste buffer";
 
   /* api callbacks */
   ot->exec = pose_copy_exec;
@@ -826,7 +823,7 @@ void POSE_OT_paste(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Paste Pose";
   ot->idname = "POSE_OT_paste";
-  ot->description = "Paste Pose\nPaste the stored pose on to the current pose";
+  ot->description = "Paste the stored pose on to the current pose";
 
   /* api callbacks */
   ot->exec = pose_paste_exec;
@@ -1119,7 +1116,7 @@ void POSE_OT_scale_clear(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Pose Scale";
   ot->idname = "POSE_OT_scale_clear";
-  ot->description = "Clear Pose Scale\nReset scaling of selected bones to their default values";
+  ot->description = "Reset scaling of selected bones to their default values";
 
   /* api callbacks */
   ot->exec = pose_clear_scale_exec;
@@ -1139,8 +1136,7 @@ void POSE_OT_rot_clear(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Pose Rotation";
   ot->idname = "POSE_OT_rot_clear";
-  ot->description =
-      "Clear Pose Rotation\nReset rotations of selected bones to their default values";
+  ot->description = "Reset rotations of selected bones to their default values";
 
   /* api callbacks */
   ot->exec = pose_clear_rot_exec;
@@ -1160,8 +1156,7 @@ void POSE_OT_loc_clear(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Pose Location";
   ot->idname = "POSE_OT_loc_clear";
-  ot->description =
-      "Clear Pose Location\nReset locations of selected bones to their default values";
+  ot->description = "Reset locations of selected bones to their default values";
 
   /* api callbacks */
   ot->exec = pose_clear_loc_exec;
@@ -1183,8 +1178,7 @@ void POSE_OT_transforms_clear(wmOperatorType *ot)
   ot->name = "Clear Pose Transforms";
   ot->idname = "POSE_OT_transforms_clear";
   ot->description =
-      "Clear Pose Transforms\nReset location, rotation, and scaling of selected bones to their "
-      "default values";
+      "Reset location, rotation, and scaling of selected bones to their default values";
 
   /* api callbacks */
   ot->exec = pose_clear_transforms_exec;
@@ -1262,7 +1256,7 @@ void POSE_OT_user_transforms_clear(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear User Transforms";
   ot->idname = "POSE_OT_user_transforms_clear";
-  ot->description = "Clear User Transforms\nReset pose on selected bones to keyframed state";
+  ot->description = "Reset pose on selected bones to keyframed state";
 
   /* callbacks */
   ot->exec = pose_clear_user_transforms_exec;

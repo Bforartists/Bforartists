@@ -194,7 +194,7 @@ void NLA_OT_select_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "(De)select All";
   ot->idname = "NLA_OT_select_all";
-  ot->description = "(De)select All\nSelect or deselect all NLA-Strips";
+  ot->description = "Select or deselect all NLA-Strips";
 
   /* api callbacks */
   ot->exec = nlaedit_deselectall_exec;
@@ -404,7 +404,7 @@ void NLA_OT_select_box(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Box Select";
   ot->idname = "NLA_OT_select_box";
-  ot->description = "Box Select\nUse box selection to grab NLA-Strips";
+  ot->description = "Use box selection to grab NLA-Strips";
 
   /* api callbacks */
   ot->invoke = nlaedit_box_select_invoke;
@@ -575,8 +575,7 @@ void NLA_OT_select_leftright(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Left/Right";
   ot->idname = "NLA_OT_select_leftright";
-  ot->description =
-      "Select Left/Right\nSelect strips to the left or the right of the current frame";
+  ot->description = "Select strips to the left or the right of the current frame";
 
   /* api callbacks  */
   ot->invoke = nlaedit_select_leftright_invoke;
@@ -694,7 +693,7 @@ void NLA_OT_click_select(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select";
   ot->idname = "NLA_OT_click_select";
-  ot->description = "Select\nHandle clicks to select NLA Strips";
+  ot->description = "Handle clicks to select NLA Strips";
 
   /* api callbacks - absolutely no exec() this yet... */
   ot->invoke = nlaedit_clickselect_invoke;

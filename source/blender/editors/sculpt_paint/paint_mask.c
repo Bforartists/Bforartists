@@ -188,8 +188,7 @@ void PAINT_OT_mask_flood_fill(struct wmOperatorType *ot)
   /* identifiers */
   ot->name = "Mask Flood Fill";
   ot->idname = "PAINT_OT_mask_flood_fill";
-  ot->description =
-      "Mask Flood Fill\nFill the whole mask with a given value, or invert its values";
+  ot->description = "Fill the whole mask with a given value, or invert its values";
 
   /* api callbacks */
   ot->exec = mask_flood_fill_exec;
@@ -549,7 +548,7 @@ void PAINT_OT_mask_lasso_gesture(wmOperatorType *ot)
 {
   ot->name = "Mask Lasso Gesture";
   ot->idname = "PAINT_OT_mask_lasso_gesture";
-  ot->description = "Mask Lasso Gesture\nAdd mask within the lasso as you move the pointer";
+  ot->description = "Add mask within the lasso as you move the brush";
 
   ot->invoke = WM_gesture_lasso_invoke;
   ot->modal = WM_gesture_lasso_modal;
