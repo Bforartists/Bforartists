@@ -567,7 +567,7 @@ void MESH_OT_inset(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Inset Faces";
   ot->idname = "MESH_OT_inset";
-  ot->description = "Inset Faces\nInset new faces into selected faces";
+  ot->description = "Inset new faces into selected faces";
 
   /* api callbacks */
   ot->invoke = edbm_inset_invoke;

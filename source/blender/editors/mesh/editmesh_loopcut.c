@@ -686,7 +686,7 @@ void MESH_OT_edgering_select(wmOperatorType *ot)
   /* description */
   ot->name = "Edge Ring Select";
   ot->idname = "MESH_OT_edgering_select";
-  ot->description = "Edge Ring Select\nSelect an edge ring";
+  ot->description = "Select an edge ring";
 
   /* callbacks */
   ot->invoke = ringsel_invoke;
@@ -707,7 +707,7 @@ void MESH_OT_loopcut(wmOperatorType *ot)
   /* description */
   ot->name = "Loop Cut";
   ot->idname = "MESH_OT_loopcut";
-  ot->description = "Loop Cut\nAdd a new loop between existing loops";
+  ot->description = "Add a new loop between existing loops";
 
   /* callbacks */
   ot->invoke = ringcut_invoke;

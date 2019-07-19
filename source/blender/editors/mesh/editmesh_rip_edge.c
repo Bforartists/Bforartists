@@ -237,7 +237,7 @@ void MESH_OT_rip_edge(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Extend Vertices";
   ot->idname = "MESH_OT_rip_edge";
-  ot->description = "Extend Vertices\nExtend vertices along the edge closest to the cursor";
+  ot->description = "Extend vertices along the edge closest to the cursor";
 
   /* api callbacks */
   ot->invoke = edbm_rip_edge_invoke;

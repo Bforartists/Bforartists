@@ -617,7 +617,7 @@ void TEXT_OT_autocomplete(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Text Auto Complete";
-  ot->description = "Text Auto Complete\nShow a list of used text in the open document";
+  ot->description = "Show a list of used text in the open document";
   ot->idname = "TEXT_OT_autocomplete";
 
   /* api callbacks */

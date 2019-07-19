@@ -1072,7 +1072,7 @@ void VIEW3D_OT_fly(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Fly Navigation";
-  ot->description = "Fly Navigation\nInteractively fly around the scene";
+  ot->description = "Interactively fly around the scene";
   ot->idname = "VIEW3D_OT_fly";
 
   /* api callbacks */

@@ -1416,7 +1416,7 @@ static void WM_OT_debug_menu(wmOperatorType *ot)
 {
   ot->name = "Debug Menu";
   ot->idname = "WM_OT_debug_menu";
-  ot->description = "Debug Menu\nOpen a popup to set the debug level";
+  ot->description = "Open a popup to set the debug level";
 
   ot->invoke = wm_debug_menu_invoke;
   ot->exec = wm_debug_menu_exec;
@@ -1444,7 +1444,7 @@ static void WM_OT_operator_defaults(wmOperatorType *ot)
 {
   ot->name = "Restore Defaults";
   ot->idname = "WM_OT_operator_defaults";
-  ot->description = "Restore Defaults\nSet the active operator to its default values";
+  ot->description = "Set the active operator to its default values";
 
   ot->exec = wm_operator_defaults_exec;
 
@@ -1700,7 +1700,7 @@ static void WM_OT_splash(wmOperatorType *ot)
 {
   ot->name = "Splash Screen";
   ot->idname = "WM_OT_splash";
-  ot->description = "Splash Screen\nOpen the splash screen with release info";
+  ot->description = "Open the splash screen with release info";
 
   ot->invoke = wm_splash_invoke;
   ot->poll = WM_operator_winactive;
@@ -1806,7 +1806,7 @@ static void WM_OT_search_menu(wmOperatorType *ot)
 {
   ot->name = "Search Menu";
   ot->idname = "WM_OT_search_menu";
-  ot->description = "Search Menu\nPop-up a search menu over all available operators in current context";
+  ot->description = "Pop-up a search menu over all available operators in current context";
 
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
@@ -1833,7 +1833,7 @@ static void WM_OT_call_menu(wmOperatorType *ot)
 {
   ot->name = "Call Menu";
   ot->idname = "WM_OT_call_menu";
-  ot->description = "Call Menu\nCall (draw) a pre-defined menu";
+  ot->description = "Call (draw) a pre-defined menu";
 
   ot->exec = wm_call_menu_exec;
   ot->poll = WM_operator_winactive;
@@ -1864,7 +1864,7 @@ static void WM_OT_call_menu_pie(wmOperatorType *ot)
 {
   ot->name = "Call Pie Menu";
   ot->idname = "WM_OT_call_menu_pie";
-  ot->description = "Call Pie Menu\nCall (draw) a pre-defined pie menu";
+  ot->description = "Call (draw) a pre-defined pie menu";
 
   ot->invoke = wm_call_pie_menu_invoke;
   ot->exec = wm_call_pie_menu_exec;
@@ -1947,7 +1947,7 @@ static void WM_OT_window_new(wmOperatorType *ot)
 {
   ot->name = "New Window";
   ot->idname = "WM_OT_window_new";
-  ot->description = "New Window\nCreate a new window";
+  ot->description = "Create a new window";
 
   ot->exec = wm_window_new_exec;
   ot->poll = wm_operator_winactive_normal;
@@ -1957,7 +1957,7 @@ static void WM_OT_window_new_main(wmOperatorType *ot)
 {
   ot->name = "New Main Window";
   ot->idname = "WM_OT_window_new_main";
-  ot->description = "New Main WIndow\nCreate a new main window with its own workspace and scene selection";
+  ot->description = "Create a new main window with its own workspace and scene selection";
 
   ot->exec = wm_window_new_main_exec;
   ot->poll = wm_operator_winactive_normal;
@@ -1967,7 +1967,7 @@ static void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
 {
   ot->name = "Toggle Window Fullscreen";
   ot->idname = "WM_OT_window_fullscreen_toggle";
-  ot->description = "Toggle Window Fullscreen\nToggle the current window fullscreen";
+  ot->description = "Toggle the current window fullscreen";
 
   ot->exec = wm_window_fullscreen_toggle_exec;
   ot->poll = WM_operator_winactive;
@@ -2945,7 +2945,7 @@ static void WM_OT_radial_control(wmOperatorType *ot)
 {
   ot->name = "Radial Control";
   ot->idname = "WM_OT_radial_control";
-  ot->description = "Radial Control\nSet some size property (like e.g. brush size) with mouse wheel";
+  ot->description = "Set some size property (like e.g. brush size) with mouse wheel";
 
   ot->invoke = radial_control_invoke;
   ot->modal = radial_control_modal;
@@ -3200,7 +3200,7 @@ static void WM_OT_redraw_timer(wmOperatorType *ot)
 {
   ot->name = "Redraw Timer";
   ot->idname = "WM_OT_redraw_timer";
-  ot->description = "Redraw Timer\nSimple redraw timer to test the speed of updating the interface";
+  ot->description = "Simple redraw timer to test the speed of updating the interface";
 
   ot->invoke = WM_menu_invoke;
   ot->exec = redraw_timer_exec;
@@ -3232,7 +3232,7 @@ static void WM_OT_memory_statistics(wmOperatorType *ot)
 {
   ot->name = "Memory Statistics";
   ot->idname = "WM_OT_memory_statistics";
-  ot->description = "Memory Statistics\nPrint memory statistics to the console";
+  ot->description = "Print memory statistics to the console";
 
   ot->exec = memory_statistics_exec;
 }
@@ -3321,7 +3321,7 @@ static void WM_OT_previews_ensure(wmOperatorType *ot)
   ot->name = "Refresh Data-Block Previews";
   ot->idname = "WM_OT_previews_ensure";
   ot->description =
-      "Refresh DataBlock Previews\nEnsure data-block previews are available and up-to-date "
+      "Ensure data-block previews are available and up-to-date "
       "(to be saved in .blend file, only for some types like materials, textures, etc.)";
 
   ot->exec = previews_ensure_exec;
@@ -3412,7 +3412,7 @@ static void WM_OT_previews_clear(wmOperatorType *ot)
   ot->name = "Clear Data-Block Previews";
   ot->idname = "WM_OT_previews_clear";
   ot->description =
-      "Clear DataBlock Previews\nClear data-block previews (only for some types like objects, materials, textures, etc.)";
+      "Clear data-block previews (only for some types like objects, materials, textures, etc.)";
 
   ot->exec = previews_clear_exec;
   ot->invoke = WM_menu_invoke;
@@ -3452,7 +3452,7 @@ static void WM_OT_doc_view_manual_ui_context(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View Online Manual";
   ot->idname = "WM_OT_doc_view_manual_ui_context";
-  ot->description = "View Online Manual\nView a context based online manual in a web browser";
+  ot->description = "View a context based online manual in a web browser";
 
   /* callbacks */
   ot->poll = ED_operator_regionactive;
@@ -3467,7 +3467,7 @@ static void WM_OT_stereo3d_set(wmOperatorType *ot)
 
   ot->name = "Set Stereo 3D";
   ot->idname = "WM_OT_set_stereo_3d";
-  ot->description = "Set Stereo 3D\nToggle 3D stereo support for current window (or change the display mode)";
+  ot->description = "Toggle 3D stereo support for current window (or change the display mode)";
 
   ot->exec = wm_stereo3d_set_exec;
   ot->invoke = wm_stereo3d_set_invoke;

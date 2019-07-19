@@ -317,7 +317,7 @@ void CLIP_OT_graph_select(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Select";
-  ot->description = "Select\nSelect graph curves";
+  ot->description = "Select graph curves";
   ot->idname = "CLIP_OT_graph_select";
 
   /* api callbacks */
@@ -493,7 +493,7 @@ void CLIP_OT_graph_select_all_markers(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "(De)select All Markers";
-  ot->description = "(De)select All Markers\nChange selection of all markers of active track";
+  ot->description = "Change selection of all markers of active track";
   ot->idname = "CLIP_OT_graph_select_all_markers";
 
   /* api callbacks */
@@ -528,7 +528,7 @@ void CLIP_OT_graph_delete_curve(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Delete Curve";
-  ot->description = "Delete Curve\nDelete track corresponding to the selected curve";
+  ot->description = "Delete track corresponding to the selected curve";
   ot->idname = "CLIP_OT_graph_delete_curve";
 
   /* api callbacks */
@@ -571,7 +571,7 @@ void CLIP_OT_graph_delete_knot(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Delete Knot";
-  ot->description = "Delete Knot\nDelete curve knots";
+  ot->description = "Delete curve knots";
   ot->idname = "CLIP_OT_graph_delete_knot";
 
   /* api callbacks */
@@ -657,7 +657,7 @@ void CLIP_OT_graph_view_all(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "View All";
-  ot->description = "View All\nView all curves in editor";
+  ot->description = "View all curves in editor";
   ot->idname = "CLIP_OT_graph_view_all";
 
   /* api callbacks */
@@ -693,7 +693,7 @@ void CLIP_OT_graph_center_current_frame(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Center Current Frame";
-  ot->description = "Center Current Frame\nScroll view so current frame would be centered";
+  ot->description = "Scroll view so current frame would be centered";
   ot->idname = "CLIP_OT_graph_center_current_frame";
 
   /* api callbacks */
@@ -751,7 +751,7 @@ void CLIP_OT_graph_disable_markers(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Disable Markers";
-  ot->description = "Disable Markers\nDisable/enable selected markers";
+  ot->description = "Disable/enable selected markers";
   ot->idname = "CLIP_OT_graph_disable_markers";
 
   /* api callbacks */

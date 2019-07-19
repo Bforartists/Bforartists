@@ -892,7 +892,7 @@ void OBJECT_OT_modifier_add(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Add Modifier";
-  ot->description = "Add Modifier\nAdd a procedural operation/effect to the active object";
+  ot->description = "Add a procedural operation/effect to the active object";
   ot->idname = "OBJECT_OT_modifier_add";
 
   /* api callbacks */
@@ -1021,7 +1021,7 @@ static int modifier_remove_invoke(bContext *C, wmOperator *op, const wmEvent *UN
 void OBJECT_OT_modifier_remove(wmOperatorType *ot)
 {
   ot->name = "Remove Modifier";
-  ot->description = "Remove Modifier\nRemove a modifier from the active object";
+  ot->description = "Remove a modifier from the active object";
   ot->idname = "OBJECT_OT_modifier_remove";
 
   ot->invoke = modifier_remove_invoke;
@@ -1063,7 +1063,7 @@ static int modifier_move_up_invoke(bContext *C, wmOperator *op, const wmEvent *U
 void OBJECT_OT_modifier_move_up(wmOperatorType *ot)
 {
   ot->name = "Move Up Modifier";
-  ot->description = "Move Up Modifier\nMove modifier up in the stack";
+  ot->description = "Move modifier up in the stack";
   ot->idname = "OBJECT_OT_modifier_move_up";
 
   ot->invoke = modifier_move_up_invoke;
@@ -1105,7 +1105,7 @@ static int modifier_move_down_invoke(bContext *C, wmOperator *op, const wmEvent 
 void OBJECT_OT_modifier_move_down(wmOperatorType *ot)
 {
   ot->name = "Move Down Modifier";
-  ot->description = "Move Down Modifier\nMove modifier down in the stack";
+  ot->description = "Move modifier down in the stack";
   ot->idname = "OBJECT_OT_modifier_move_down";
 
   ot->invoke = modifier_move_down_invoke;
@@ -1162,7 +1162,7 @@ static const EnumPropertyItem modifier_apply_as_items[] = {
 void OBJECT_OT_modifier_apply(wmOperatorType *ot)
 {
   ot->name = "Apply Modifier";
-  ot->description = "Apply Modifier\nApply modifier and remove from the stack";
+  ot->description = "Apply modifier and remove from the stack";
   ot->idname = "OBJECT_OT_modifier_apply";
 
   ot->invoke = modifier_apply_invoke;
@@ -1216,7 +1216,7 @@ static int modifier_convert_invoke(bContext *C, wmOperator *op, const wmEvent *U
 void OBJECT_OT_modifier_convert(wmOperatorType *ot)
 {
   ot->name = "Convert Modifier";
-  ot->description = "Convert Modifier\nConvert particles to a mesh object";
+  ot->description = "Convert particles to a mesh object";
   ot->idname = "OBJECT_OT_modifier_convert";
 
   ot->invoke = modifier_convert_invoke;
@@ -1258,7 +1258,7 @@ static int modifier_copy_invoke(bContext *C, wmOperator *op, const wmEvent *UNUS
 void OBJECT_OT_modifier_copy(wmOperatorType *ot)
 {
   ot->name = "Copy Modifier";
-  ot->description = "Copy Modifier\nDuplicate modifier at the same position in the stack";
+  ot->description = "Duplicate modifier at the same position in the stack";
   ot->idname = "OBJECT_OT_modifier_copy";
 
   ot->invoke = modifier_copy_invoke;
@@ -1313,8 +1313,7 @@ static int multires_higher_levels_delete_invoke(bContext *C,
 void OBJECT_OT_multires_higher_levels_delete(wmOperatorType *ot)
 {
   ot->name = "Delete Higher Levels";
-  ot->description =
-      "Delete Higher Levels\nDeletes the higher resolution mesh, potential loss of detail";
+  ot->description = "Deletes the higher resolution mesh, potential loss of detail";
   ot->idname = "OBJECT_OT_multires_higher_levels_delete";
 
   ot->poll = multires_poll;
@@ -1368,7 +1367,7 @@ static int multires_subdivide_invoke(bContext *C, wmOperator *op, const wmEvent 
 void OBJECT_OT_multires_subdivide(wmOperatorType *ot)
 {
   ot->name = "Multires Subdivide";
-  ot->description = "Multires Subdivide\nAdd a new level of subdivision";
+  ot->description = "Add a new level of subdivision";
   ot->idname = "OBJECT_OT_multires_subdivide";
 
   ot->poll = multires_poll;
@@ -1435,7 +1434,7 @@ static int multires_reshape_invoke(bContext *C, wmOperator *op, const wmEvent *U
 void OBJECT_OT_multires_reshape(wmOperatorType *ot)
 {
   ot->name = "Multires Reshape";
-  ot->description = "Multires Reshape\nCopy vertex coordinates from other object";
+  ot->description = "Copy vertex coordinates from other object";
   ot->idname = "OBJECT_OT_multires_reshape";
 
   ot->poll = multires_poll;
@@ -1515,7 +1514,7 @@ static int multires_external_save_invoke(bContext *C, wmOperator *op, const wmEv
 void OBJECT_OT_multires_external_save(wmOperatorType *ot)
 {
   ot->name = "Multires Save External";
-  ot->description = "Multires Save External\nSave displacements to an external file";
+  ot->description = "Save displacements to an external file";
   ot->idname = "OBJECT_OT_multires_external_save";
 
   /* XXX modifier no longer in context after file browser .. ot->poll = multires_poll; */
@@ -1556,7 +1555,7 @@ static int multires_external_pack_exec(bContext *C, wmOperator *UNUSED(op))
 void OBJECT_OT_multires_external_pack(wmOperatorType *ot)
 {
   ot->name = "Multires Pack External";
-  ot->description = "Multires Pack External\nPack displacements from an external file";
+  ot->description = "Pack displacements from an external file";
   ot->idname = "OBJECT_OT_multires_external_pack";
 
   ot->poll = multires_poll;
@@ -1599,7 +1598,7 @@ static int multires_base_apply_invoke(bContext *C, wmOperator *op, const wmEvent
 void OBJECT_OT_multires_base_apply(wmOperatorType *ot)
 {
   ot->name = "Multires Apply Base";
-  ot->description = "Multires Apply Base\nModify the base mesh to conform to the displaced mesh";
+  ot->description = "Modify the base mesh to conform to the displaced mesh";
   ot->idname = "OBJECT_OT_multires_base_apply";
 
   ot->poll = multires_poll;
@@ -1695,7 +1694,7 @@ static int skin_root_mark_exec(bContext *C, wmOperator *UNUSED(op))
 void OBJECT_OT_skin_root_mark(wmOperatorType *ot)
 {
   ot->name = "Skin Root Mark";
-  ot->description = "Skin Root Mark\nMark selected vertices as roots";
+  ot->description = "Mark selected vertices as roots";
   ot->idname = "OBJECT_OT_skin_root_mark";
 
   ot->poll = skin_edit_poll;
@@ -1753,7 +1752,7 @@ void OBJECT_OT_skin_loose_mark_clear(wmOperatorType *ot)
   };
 
   ot->name = "Skin Mark/Clear Loose";
-  ot->description = "Skin Mark/Clear Loose\nMark/clear selected vertices as loose";
+  ot->description = "Mark/clear selected vertices as loose";
   ot->idname = "OBJECT_OT_skin_loose_mark_clear";
 
   ot->poll = skin_edit_poll;
@@ -1795,7 +1794,7 @@ static int skin_radii_equalize_exec(bContext *C, wmOperator *UNUSED(op))
 void OBJECT_OT_skin_radii_equalize(wmOperatorType *ot)
 {
   ot->name = "Skin Radii Equalize";
-  ot->description = "Skin Radii Equalize\nMake skin radii of selected vertices equal on each axis";
+  ot->description = "Make skin radii of selected vertices equal on each axis";
   ot->idname = "OBJECT_OT_skin_radii_equalize";
 
   ot->poll = skin_edit_poll;
@@ -1973,7 +1972,7 @@ static int skin_armature_create_invoke(bContext *C, wmOperator *op, const wmEven
 void OBJECT_OT_skin_armature_create(wmOperatorType *ot)
 {
   ot->name = "Skin Armature Create";
-  ot->description = "Skin Armature Create\nCreate an armature that parallels the skin layout";
+  ot->description = "Create an armature that parallels the skin layout";
   ot->idname = "OBJECT_OT_skin_armature_create";
 
   ot->poll = skin_poll;
@@ -2049,7 +2048,7 @@ void OBJECT_OT_correctivesmooth_bind(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Corrective Smooth Bind";
-  ot->description = "Corrective Smooth Bind\nBind base pose in Corrective Smooth modifier";
+  ot->description = "Bind base pose in Corrective Smooth modifier";
   ot->idname = "OBJECT_OT_correctivesmooth_bind";
 
   /* api callbacks */
@@ -2122,7 +2121,7 @@ void OBJECT_OT_meshdeform_bind(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Mesh Deform Bind";
-  ot->description = "Mesh Deform Bind\nBind mesh to cage in mesh deform modifier";
+  ot->description = "Bind mesh to cage in mesh deform modifier";
   ot->idname = "OBJECT_OT_meshdeform_bind";
 
   /* api callbacks */
@@ -2173,7 +2172,7 @@ static int explode_refresh_invoke(bContext *C, wmOperator *op, const wmEvent *UN
 void OBJECT_OT_explode_refresh(wmOperatorType *ot)
 {
   ot->name = "Explode Refresh";
-  ot->description = "Explode Refresh\nRefresh data in the Explode modifier";
+  ot->description = "Refresh data in the Explode modifier";
   ot->idname = "OBJECT_OT_explode_refresh";
 
   ot->poll = explode_poll;
@@ -2372,7 +2371,7 @@ static int ocean_bake_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(
 void OBJECT_OT_ocean_bake(wmOperatorType *ot)
 {
   ot->name = "Bake Ocean";
-  ot->description = "Bake Ocean\nBake an image sequence of ocean data";
+  ot->description = "Bake an image sequence of ocean data";
   ot->idname = "OBJECT_OT_ocean_bake";
 
   ot->poll = ocean_bake_poll;
@@ -2448,7 +2447,7 @@ void OBJECT_OT_laplaciandeform_bind(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Laplacian Deform Bind";
-  ot->description = "Laplacian Deform Bind\nBind mesh to system in laplacian deform modifier";
+  ot->description = "Bind mesh to system in laplacian deform modifier";
   ot->idname = "OBJECT_OT_laplaciandeform_bind";
 
   /* api callbacks */

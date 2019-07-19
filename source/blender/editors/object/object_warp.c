@@ -267,7 +267,7 @@ void TRANSFORM_OT_vertex_warp(struct wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Warp";
-  ot->description = "Warp\nWarp vertices around the cursor";
+  ot->description = "Warp vertices around the cursor";
   ot->idname = "TRANSFORM_OT_vertex_warp";
 
   /* api callbacks */

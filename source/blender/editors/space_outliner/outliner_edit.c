@@ -193,7 +193,7 @@ void OUTLINER_OT_item_openclose(wmOperatorType *ot)
 {
   ot->name = "Open/Close";
   ot->idname = "OUTLINER_OT_item_openclose";
-  ot->description = "Open/Close\nToggle whether item under cursor is enabled or closed";
+  ot->description = "Toggle whether item under cursor is enabled or closed";
 
   ot->invoke = outliner_item_openclose;
 
@@ -378,7 +378,7 @@ void OUTLINER_OT_item_rename(wmOperatorType *ot)
 {
   ot->name = "Rename";
   ot->idname = "OUTLINER_OT_item_rename";
-  ot->description = "Rename\nRename item under cursor";
+  ot->description = "Rename item under cursor";
 
   ot->invoke = outliner_item_rename;
 
@@ -1070,7 +1070,7 @@ void OUTLINER_OT_expanded_toggle(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Expand/Collapse All";
   ot->idname = "OUTLINER_OT_expanded_toggle";
-  ot->description = "Expand/Collapse All\nExpand/Collapse all items";
+  ot->description = "Expand/Collapse all items";
 
   /* callbacks */
   ot->exec = outliner_toggle_expanded_exec;
@@ -1115,7 +1115,7 @@ void OUTLINER_OT_select_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Toggle Selected";
   ot->idname = "OUTLINER_OT_select_all";
-  ot->description = "Toggle Selected\nToggle the Outliner selection of items";
+  ot->description = "Toggle the Outliner selection of items";
 
   /* callbacks */
   ot->exec = outliner_select_all_exec;
@@ -1247,8 +1247,7 @@ void OUTLINER_OT_show_active(wmOperatorType *ot)
   ot->name = "Show Active";
   ot->idname = "OUTLINER_OT_show_active";
   ot->description =
-      "Show Active\nOpen up the tree and adjust the view so that the active Object is shown "
-      "centered";
+      "Open up the tree and adjust the view so that the active Object is shown centered";
 
   /* callbacks */
   ot->exec = outliner_show_active_exec;
@@ -1285,7 +1284,7 @@ void OUTLINER_OT_scroll_page(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Scroll Page";
   ot->idname = "OUTLINER_OT_scroll_page";
-  ot->description = "Scroll Page\nScroll page up or down";
+  ot->description = "Scroll page up or down";
 
   /* callbacks */
   ot->exec = outliner_scroll_page_exec;
@@ -1474,7 +1473,7 @@ void OUTLINER_OT_show_one_level(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Show/Hide One Level";
   ot->idname = "OUTLINER_OT_show_one_level";
-  ot->description = "Show/Hide One Level\nExpand all entries by one level";
+  ot->description = "Expand/collapse all entries by one level";
 
   /* callbacks */
   ot->exec = outliner_one_level_exec;
@@ -1566,7 +1565,7 @@ void OUTLINER_OT_show_hierarchy(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Show Hierarchy";
   ot->idname = "OUTLINER_OT_show_hierarchy";
-  ot->description = "Show Hierarchy\nOpen all object entries and close all others";
+  ot->description = "Open all object entries and close all others";
 
   /* callbacks */
   ot->exec = outliner_show_hierarchy_exec;
@@ -1854,7 +1853,7 @@ void OUTLINER_OT_drivers_add_selected(wmOperatorType *ot)
   /* api callbacks */
   ot->idname = "OUTLINER_OT_drivers_add_selected";
   ot->name = "Add Drivers for Selected";
-  ot->description = "Add Drivers for Selected\nAdd drivers to selected items";
+  ot->description = "Add drivers to selected items";
 
   /* api callbacks */
   ot->exec = outliner_drivers_addsel_exec;
@@ -1889,7 +1888,7 @@ void OUTLINER_OT_drivers_delete_selected(wmOperatorType *ot)
   /* identifiers */
   ot->idname = "OUTLINER_OT_drivers_delete_selected";
   ot->name = "Delete Drivers for Selected";
-  ot->description = "Delete Drivers for Selected\nDelete drivers assigned to selected items";
+  ot->description = "Delete drivers assigned to selected items";
 
   /* api callbacks */
   ot->exec = outliner_drivers_deletesel_exec;
@@ -2034,8 +2033,7 @@ void OUTLINER_OT_keyingset_add_selected(wmOperatorType *ot)
   /* identifiers */
   ot->idname = "OUTLINER_OT_keyingset_add_selected";
   ot->name = "Keying Set Add Selected";
-  ot->description =
-      "Keying Set Add Selected\nAdd selected items (blue-gray rows) to active Keying Set";
+  ot->description = "Add selected items (blue-gray rows) to active Keying Set";
 
   /* api callbacks */
   ot->exec = outliner_keyingset_additems_exec;
@@ -2072,8 +2070,7 @@ void OUTLINER_OT_keyingset_remove_selected(wmOperatorType *ot)
   /* identifiers */
   ot->idname = "OUTLINER_OT_keyingset_remove_selected";
   ot->name = "Keying Set Remove Selected";
-  ot->description =
-      "Keying Set Remove Selected\nRemove selected items (blue-gray rows) from active Keying Set";
+  ot->description = "Remove selected items (blue-gray rows) from active Keying Set";
 
   /* api callbacks */
   ot->exec = outliner_keyingset_removeitems_exec;
@@ -2197,7 +2194,7 @@ void OUTLINER_OT_orphans_purge(wmOperatorType *ot)
   /* identifiers */
   ot->idname = "OUTLINER_OT_orphans_purge";
   ot->name = "Purge All";
-  ot->description = "Purge All\nClear all orphaned data-blocks without any users from the file";
+  ot->description = "Clear all orphaned data-blocks without any users from the file";
 
   /* callbacks */
   ot->invoke = outliner_orphans_purge_invoke;

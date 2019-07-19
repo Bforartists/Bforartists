@@ -545,7 +545,7 @@ void NODE_OT_link_viewer(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Link to Viewer Node";
-  ot->description = "Link to Viewer Node\nLink to viewer node";
+  ot->description = "Link to viewer node";
   ot->idname = "NODE_OT_link_viewer";
 
   /* api callbacks */
@@ -938,7 +938,7 @@ void NODE_OT_link(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Link Nodes";
   ot->idname = "NODE_OT_link";
-  ot->description = "Link Nodes\nUse the mouse to create a link between two nodes";
+  ot->description = "Use the mouse to create a link between two nodes";
 
   /* api callbacks */
   ot->invoke = node_link_invoke;
@@ -981,7 +981,7 @@ void NODE_OT_link_make(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Make Links";
-  ot->description = "Make Links\nMakes a link between selected output in input sockets";
+  ot->description = "Makes a link between selected output in input sockets";
   ot->idname = "NODE_OT_link_make";
 
   /* callbacks */
@@ -1085,7 +1085,7 @@ void NODE_OT_links_cut(wmOperatorType *ot)
 {
   ot->name = "Cut Links";
   ot->idname = "NODE_OT_links_cut";
-  ot->description = "Cut Links\nUse the mouse to cut (remove) some links";
+  ot->description = "Use the mouse to cut (remove) some links";
 
   ot->invoke = WM_gesture_lines_invoke;
   ot->modal = WM_gesture_lines_modal;
@@ -1135,8 +1135,7 @@ void NODE_OT_links_detach(wmOperatorType *ot)
   ot->name = "Detach Links";
   ot->idname = "NODE_OT_links_detach";
   ot->description =
-      "Detach Links\nRemove all links to selected nodes, and try to connect neighbor nodes "
-      "together";
+      "Remove all links to selected nodes, and try to connect neighbor nodes together";
 
   ot->exec = detach_links_exec;
   ot->poll = ED_operator_node_editable;
@@ -1176,7 +1175,7 @@ void NODE_OT_parent_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Make Parent";
-  ot->description = "Make Parent, Attach selected nodes";
+  ot->description = "Attach selected nodes";
   ot->idname = "NODE_OT_parent_set";
 
   /* api callbacks */
@@ -1270,7 +1269,7 @@ void NODE_OT_join(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Join Nodes";
-  ot->description = "Join Nodes\nAttach selected nodes to a new common frame";
+  ot->description = "Attach selected nodes to a new common frame";
   ot->idname = "NODE_OT_join";
 
   /* api callbacks */
@@ -1353,7 +1352,7 @@ void NODE_OT_attach(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Attach Nodes";
-  ot->description = "Attach Nodes\nAttach active node to a frame";
+  ot->description = "Attach active node to a frame";
   ot->idname = "NODE_OT_attach";
 
   /* api callbacks */
@@ -1426,7 +1425,7 @@ void NODE_OT_detach(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Detach Nodes";
-  ot->description = "Detach Nodes\nDetach selected nodes from parents";
+  ot->description = "Detach selected nodes from parents";
   ot->idname = "NODE_OT_detach";
 
   /* api callbacks */
@@ -1900,7 +1899,7 @@ void NODE_OT_insert_offset(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Insert Offset";
-  ot->description = "Insert Offset\nAutomatically offset nodes on insertion";
+  ot->description = "Automatically offset nodes on insertion";
   ot->idname = "NODE_OT_insert_offset";
 
   /* callbacks */

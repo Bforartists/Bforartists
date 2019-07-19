@@ -256,7 +256,7 @@ void POSELIB_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New Pose Library";
   ot->idname = "POSELIB_OT_new";
-  ot->description = "New Pose Library\nAdd New Pose Library to active Object";
+  ot->description = "Add New Pose Library to active Object";
 
   /* callbacks */
   ot->exec = poselib_new_exec;
@@ -292,7 +292,7 @@ void POSELIB_OT_unlink(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Unlink Pose Library";
   ot->idname = "POSELIB_OT_unlink";
-  ot->description = "Unlink Pose Library\nRemove Pose Library from active Object";
+  ot->description = "Remove Pose Library from active Object";
 
   /* callbacks */
   ot->exec = poselib_unlink_exec;
@@ -379,7 +379,7 @@ void POSELIB_OT_action_sanitize(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Sanitize Pose Library Action";
   ot->idname = "POSELIB_OT_action_sanitize";
-  ot->description = "Sanitize Pose Library Action\nMake action suitable for use as a Pose Library";
+  ot->description = "Make action suitable for use as a Pose Library";
 
   /* callbacks */
   ot->exec = poselib_sanitize_exec;
@@ -542,7 +542,7 @@ void POSELIB_OT_pose_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "PoseLib Add Pose";
   ot->idname = "POSELIB_OT_pose_add";
-  ot->description = "PoseLib Add Pose\nAdd the current Pose to the active Pose Library";
+  ot->description = "Add the current Pose to the active Pose Library";
 
   /* api callbacks */
   ot->invoke = poselib_add_menu_invoke;
@@ -662,7 +662,7 @@ void POSELIB_OT_pose_remove(wmOperatorType *ot)
   /* identifiers */
   ot->name = "PoseLib Remove Pose";
   ot->idname = "POSELIB_OT_pose_remove";
-  ot->description = "PoseLib Remove Pose\nRemove nth pose from the active Pose Library";
+  ot->description = "Remove nth pose from the active Pose Library";
 
   /* api callbacks */
   ot->invoke = WM_menu_invoke;
@@ -752,7 +752,7 @@ void POSELIB_OT_pose_rename(wmOperatorType *ot)
   /* identifiers */
   ot->name = "PoseLib Rename Pose";
   ot->idname = "POSELIB_OT_pose_rename";
-  ot->description = "PoseLib Rename Pose\nRename specified pose from the active Pose Library";
+  ot->description = "Rename specified pose from the active Pose Library";
 
   /* api callbacks */
   ot->invoke = poselib_rename_invoke;
@@ -1852,7 +1852,7 @@ void POSELIB_OT_browse_interactive(wmOperatorType *ot)
   /* identifiers */
   ot->name = "PoseLib Browse Poses";
   ot->idname = "POSELIB_OT_browse_interactive";
-  ot->description = "PoseLib Browse Poses\nInteractively browse poses in 3D-View";
+  ot->description = "Interactively browse poses in 3D-View";
 
   /* callbacks */
   ot->invoke = poselib_preview_invoke;
@@ -1897,7 +1897,7 @@ void POSELIB_OT_apply_pose(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Apply Pose Library Pose";
   ot->idname = "POSELIB_OT_apply_pose";
-  ot->description = "Apply Pose Library Pose\nApply specified Pose Library pose to the rig";
+  ot->description = "Apply specified Pose Library pose to the rig";
 
   /* callbacks */
   ot->exec = poselib_preview_exec;

@@ -161,7 +161,7 @@ void NODE_OT_group_edit(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Edit Group";
-  ot->description = "Edit Group\nEdit node group";
+  ot->description = "Edit node group";
   ot->idname = "NODE_OT_group_edit";
 
   /* api callbacks */
@@ -393,7 +393,7 @@ void NODE_OT_group_ungroup(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Ungroup";
-  ot->description = "Ungroup\nUngroup selected nodes";
+  ot->description = "Ungroup selected nodes";
   ot->idname = "NODE_OT_group_ungroup";
 
   /* api callbacks */
@@ -611,7 +611,7 @@ void NODE_OT_group_separate(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Separate";
-  ot->description = "Separate\nSeparate selected nodes from the node group";
+  ot->description = "Separate selected nodes from the node group";
   ot->idname = "NODE_OT_group_separate";
 
   /* api callbacks */
@@ -1013,7 +1013,7 @@ void NODE_OT_group_make(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Make Group";
-  ot->description = "Make Group\nMake group from selected nodes";
+  ot->description = "Make group from selected nodes";
   ot->idname = "NODE_OT_group_make";
 
   /* api callbacks */
@@ -1066,7 +1066,7 @@ void NODE_OT_group_insert(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Group Insert";
-  ot->description = "Group Insert\nInsert selected nodes into a node group";
+  ot->description = "Insert selected nodes into a node group";
   ot->idname = "NODE_OT_group_insert";
 
   /* api callbacks */
