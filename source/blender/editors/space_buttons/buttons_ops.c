@@ -69,7 +69,7 @@ void BUTTONS_OT_context_menu(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Context Menu";
-  ot->description = "Context Menu\nDisplay properties editor context_menu";
+  ot->description = "Display properties editor context_menu";
   ot->idname = "BUTTONS_OT_context_menu";
 
   /* api callbacks */
@@ -246,8 +246,7 @@ void BUTTONS_OT_file_browse(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Accept";
   ot->description =
-      "Accept\nOpen a file browser, Hold Shift to open the file, Alt to browse containing "
-      "directory";
+      "Open a file browser, Hold Shift to open the file, Alt to browse containing directory";
   ot->idname = "BUTTONS_OT_file_browse";
 
   /* api callbacks */
@@ -274,8 +273,7 @@ void BUTTONS_OT_directory_browse(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Accept";
   ot->description =
-      "Accept\nOpen a directory browser, Hold Shift to open the file, Alt to browse containing "
-      "directory";
+      "Open a directory browser, Hold Shift to open the file, Alt to browse containing directory";
   ot->idname = "BUTTONS_OT_directory_browse";
 
   /* api callbacks */

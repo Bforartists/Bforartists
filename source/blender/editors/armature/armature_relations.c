@@ -696,7 +696,7 @@ void ARMATURE_OT_separate(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Separate Bones";
   ot->idname = "ARMATURE_OT_separate";
-  ot->description = "Separate Bones\nIsolate selected bones into a separate armature";
+  ot->description = "Isolate selected bones into a separate armature";
 
   /* callbacks */
   ot->invoke = WM_operator_confirm;
@@ -907,7 +907,7 @@ void ARMATURE_OT_parent_set(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Make Parent";
   ot->idname = "ARMATURE_OT_parent_set";
-  ot->description = "Make Parent, Set the active bone as the parent of the selected bones";
+  ot->description = "Set the active bone as the parent of the selected bones";
 
   /* api callbacks */
   ot->invoke = armature_parent_set_invoke;
@@ -985,8 +985,7 @@ void ARMATURE_OT_parent_clear(wmOperatorType *ot)
   ot->name = "Clear Parent";
   ot->idname = "ARMATURE_OT_parent_clear";
   ot->description =
-      "Clear Parent, Remove the parent-child relationship between selected bones and their "
-      "parents";
+      "Remove the parent-child relationship between selected bones and their parents";
 
   /* api callbacks */
   ot->invoke = WM_menu_invoke;

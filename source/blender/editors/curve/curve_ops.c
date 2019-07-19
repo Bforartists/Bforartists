@@ -142,8 +142,8 @@ void ED_operatormacros_curve(void)
   wmOperatorTypeMacro *otmacro;
 
   ot = WM_operatortype_append_macro("CURVE_OT_duplicate_move",
-                                    "Duplicate",
-                                    "Duplicate\nDuplicate curve and move",
+                                    "Add Duplicate",
+                                    "Duplicate curve and move",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   WM_operatortype_macro_define(ot, "CURVE_OT_duplicate");
   otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");
@@ -152,7 +152,7 @@ void ED_operatormacros_curve(void)
 
   ot = WM_operatortype_append_macro("CURVE_OT_extrude_move",
                                     "Extrude Curve and Move",
-                                    "Extrude Curve and Move\nExtrude curve and move result",
+                                    "Extrude curve and move result",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   WM_operatortype_macro_define(ot, "CURVE_OT_extrude");
   otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");

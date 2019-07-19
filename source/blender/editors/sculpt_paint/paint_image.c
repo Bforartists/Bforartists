@@ -742,7 +742,7 @@ void PAINT_OT_image_paint(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Image Paint";
   ot->idname = "PAINT_OT_image_paint";
-  ot->description = "Image Paint\nPaint a stroke into the image";
+  ot->description = "Paint a stroke into the image";
 
   /* api callbacks */
   ot->invoke = paint_invoke;
@@ -911,7 +911,7 @@ void PAINT_OT_grab_clone(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Grab Clone";
   ot->idname = "PAINT_OT_grab_clone";
-  ot->description = "Grab Clone\nMove the clone source image";
+  ot->description = "Move the clone source image";
 
   /* api callbacks */
   ot->exec = grab_clone_exec;
@@ -1092,7 +1092,7 @@ void PAINT_OT_sample_color(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Sample Color";
   ot->idname = "PAINT_OT_sample_color";
-  ot->description = "Sample Color\nUse the mouse to sample a color in the image";
+  ot->description = "Use the mouse to sample a color in the image";
 
   /* api callbacks */
   ot->exec = sample_color_exec;
@@ -1231,7 +1231,7 @@ void PAINT_OT_texture_paint_toggle(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Texture Paint Toggle";
   ot->idname = "PAINT_OT_texture_paint_toggle";
-  ot->description = "Texture Paint Toggle\nToggle texture paint mode in 3D view";
+  ot->description = "Toggle texture paint mode in 3D view";
 
   /* api callbacks */
   ot->exec = texture_paint_toggle_exec;
@@ -1285,7 +1285,7 @@ void PAINT_OT_brush_colors_flip(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Brush Colors Flip";
   ot->idname = "PAINT_OT_brush_colors_flip";
-  ot->description = "Brush Colors Flip\nToggle foreground and background brush colors";
+  ot->description = "Toggle foreground and background brush colors";
 
   /* api callbacks */
   ot->exec = brush_colors_flip_exec;

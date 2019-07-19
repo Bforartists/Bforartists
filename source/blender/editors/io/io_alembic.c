@@ -303,7 +303,7 @@ static bool wm_alembic_export_check(bContext *UNUSED(C), wmOperator *op)
 void WM_OT_alembic_export(wmOperatorType *ot)
 {
   ot->name = "Export Alembic";
-  ot->description = "Export Alembic\nExport current scene in an Alembic archive";
+  ot->description = "Export current scene in an Alembic archive";
   ot->idname = "WM_OT_alembic_export";
 
   ot->invoke = wm_alembic_export_invoke;
@@ -679,7 +679,7 @@ static int wm_alembic_import_exec(bContext *C, wmOperator *op)
 void WM_OT_alembic_import(wmOperatorType *ot)
 {
   ot->name = "Import Alembic";
-  ot->description = "Import Alembic\nLoad an Alembic archive";
+  ot->description = "Load an Alembic archive";
   ot->idname = "WM_OT_alembic_import";
 
   ot->invoke = wm_alembic_import_invoke;

@@ -675,7 +675,7 @@ void MASK_OT_add_vertex(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Vertex";
-  ot->description = "Add Vertex\nAdd vertex to active spline";
+  ot->description = "Add vertex to active spline";
   ot->idname = "MASK_OT_add_vertex";
 
   /* api callbacks */
@@ -756,7 +756,7 @@ void MASK_OT_add_feather_vertex(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Feather Vertex";
-  ot->description = "Add Feather Vertex\nAdd vertex to feather";
+  ot->description = "Add vertex to feather";
   ot->idname = "MASK_OT_add_feather_vertex";
 
   /* api callbacks */
@@ -901,7 +901,7 @@ void MASK_OT_primitive_circle_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Circle";
-  ot->description = "Add Circle\nAdd new circle-shaped spline";
+  ot->description = "Add new circle-shaped spline";
   ot->idname = "MASK_OT_primitive_circle_add";
 
   /* api callbacks */
@@ -932,7 +932,7 @@ void MASK_OT_primitive_square_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Square";
-  ot->description = "Add Square\nAdd new square-shaped spline";
+  ot->description = "Add new square-shaped spline";
   ot->idname = "MASK_OT_primitive_square_add";
 
   /* api callbacks */

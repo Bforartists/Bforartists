@@ -2769,7 +2769,7 @@ void UV_OT_stitch(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Stitch";
-  ot->description = "Stitch\nStitch selected UV vertices by proximity";
+  ot->description = "Stitch selected UV vertices by proximity";
   ot->idname = "UV_OT_stitch";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
