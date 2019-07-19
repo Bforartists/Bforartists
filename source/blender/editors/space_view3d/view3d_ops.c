@@ -129,7 +129,7 @@ static void VIEW3D_OT_pastebuffer(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Paste Objects";
   ot->idname = "VIEW3D_OT_pastebuffer";
-  ot->description = "Paste Objects\nObjects from the clipboard are pasted";
+  ot->description = "Objects from the clipboard are pasted";
 
   /* api callbacks */
   ot->exec = view3d_pastebuffer_exec;

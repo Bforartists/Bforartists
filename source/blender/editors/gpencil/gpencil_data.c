@@ -161,7 +161,7 @@ void GPENCIL_OT_data_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Grease Pencil Add New";
   ot->idname = "GPENCIL_OT_data_add";
-  ot->description = "Grease Pencil Add New\nAdd new Grease Pencil datablock";
+  ot->description = "Add new Grease Pencil data-block";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* callbacks */
@@ -215,7 +215,7 @@ void GPENCIL_OT_data_unlink(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Annotation Unlink";
   ot->idname = "GPENCIL_OT_data_unlink";
-  ot->description = "Annotation Unlink\nUnlink active Annotation data-block";
+  ot->description = "Unlink active Annotation data-block";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* callbacks */
@@ -282,8 +282,7 @@ void GPENCIL_OT_layer_add(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Add New Layer";
   ot->idname = "GPENCIL_OT_layer_add";
-  ot->description =
-      "Add New Layer\nAdd new Grease Pencil layer for the active Grease Pencil datablock";
+  ot->description = "Add new layer or note for the active data-block";
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
@@ -335,7 +334,7 @@ void GPENCIL_OT_layer_remove(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Remove Layer";
   ot->idname = "GPENCIL_OT_layer_remove";
-  ot->description = "Remove Layer\nRemove active Grease Pencil layer";
+  ot->description = "Remove active Grease Pencil layer";
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
@@ -383,8 +382,7 @@ void GPENCIL_OT_layer_move(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Move Grease Pencil Layer";
   ot->idname = "GPENCIL_OT_layer_move";
-  ot->description =
-      "Move Grease Pencil Layer\nMove the active Grease Pencil layer up/down in the list";
+  ot->description = "Move the active Grease Pencil layer up/down in the list";
 
   /* api callbacks */
   ot->exec = gp_layer_move_exec;
@@ -434,7 +432,7 @@ void GPENCIL_OT_layer_duplicate(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Duplicate Layer";
   ot->idname = "GPENCIL_OT_layer_duplicate";
-  ot->description = "Duplicate Layer\nMake a copy of the active Grease Pencil layer";
+  ot->description = "Make a copy of the active Grease Pencil layer";
 
   /* callbacks */
   ot->exec = gp_layer_copy_exec;
@@ -570,7 +568,7 @@ void GPENCIL_OT_layer_duplicate_object(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Duplicate Layer to new Object";
   ot->idname = "GPENCIL_OT_layer_duplicate_object";
-  ot->description = "Duplicate Layer to new Object\nMake a copy of the active Grease Pencil layer to new object";
+  ot->description = "Make a copy of the active Grease Pencil layer to new object";
 
   /* callbacks */
   ot->exec = gp_layer_duplicate_object_exec;
@@ -634,7 +632,7 @@ void GPENCIL_OT_frame_duplicate(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Duplicate Frame";
   ot->idname = "GPENCIL_OT_frame_duplicate";
-  ot->description = "Duplicate Frame\nMake a copy of the active Grease Pencil Frame";
+  ot->description = "Make a copy of the active Grease Pencil Frame";
 
   /* callbacks */
   ot->exec = gp_frame_duplicate_exec;
@@ -722,7 +720,7 @@ void GPENCIL_OT_frame_clean_fill(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clean Fill Boundaries";
   ot->idname = "GPENCIL_OT_frame_clean_fill";
-  ot->description = "Clean Fill Boundaries\nRemove 'no fill' boundary strokes";
+  ot->description = "Remove 'no fill' boundary strokes";
 
   /* callbacks */
   ot->exec = gp_frame_clean_fill_exec;
@@ -802,7 +800,7 @@ void GPENCIL_OT_frame_clean_loose(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clean Loose points";
   ot->idname = "GPENCIL_OT_frame_clean_loose";
-  ot->description = "Clean Loose points\nRemove loose points";
+  ot->description = "Remove loose points";
 
   /* callbacks */
   ot->exec = gp_frame_clean_loose_exec;
@@ -862,7 +860,7 @@ void GPENCIL_OT_hide(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Hide Layer(s)";
   ot->idname = "GPENCIL_OT_hide";
-  ot->description = "Hide Layer(s)\nHide selected/unselected Grease Pencil layers";
+  ot->description = "Hide selected/unselected Grease Pencil layers";
 
   /* callbacks */
   ot->exec = gp_hide_exec;
@@ -952,7 +950,7 @@ void GPENCIL_OT_reveal(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Show All Layers";
   ot->idname = "GPENCIL_OT_reveal";
-  ot->description = "Show All Layers\nShow all Grease Pencil layers";
+  ot->description = "Show all Grease Pencil layers";
 
   /* callbacks */
   ot->exec = gp_reveal_exec;
@@ -995,7 +993,7 @@ void GPENCIL_OT_lock_all(wmOperatorType *ot)
   ot->name = "Lock All Layers";
   ot->idname = "GPENCIL_OT_lock_all";
   ot->description =
-      "Lock All Layers\nLock all Grease Pencil layers to prevent them from being accidentally modified";
+      "Lock all Grease Pencil layers to prevent them from being accidentally modified";
 
   /* callbacks */
   ot->exec = gp_lock_all_exec;
@@ -1034,7 +1032,7 @@ void GPENCIL_OT_unlock_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Unlock All Layers";
   ot->idname = "GPENCIL_OT_unlock_all";
-  ot->description = "Unlock All Layers\nUnlock all Grease Pencil layers so that they can be edited";
+  ot->description = "Unlock all Grease Pencil layers so that they can be edited";
 
   /* callbacks */
   ot->exec = gp_unlock_all_exec;
@@ -1112,7 +1110,7 @@ void GPENCIL_OT_layer_isolate(wmOperatorType *ot)
   ot->name = "Isolate Layer";
   ot->idname = "GPENCIL_OT_layer_isolate";
   ot->description =
-      "Isolate Layer\nToggle whether the active layer is the only one that can be edited and/or visible";
+      "Toggle whether the active layer is the only one that can be edited and/or visible";
 
   /* callbacks */
   ot->exec = gp_isolate_layer_exec;
@@ -1181,7 +1179,7 @@ void GPENCIL_OT_layer_merge(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Merge Down";
   ot->idname = "GPENCIL_OT_layer_merge";
-  ot->description = "Merge Down\nMerge the current layer with the layer below";
+  ot->description = "Merge the current layer with the layer below";
 
   /* callbacks */
   ot->exec = gp_merge_layer_exec;
@@ -1244,7 +1242,7 @@ void GPENCIL_OT_layer_change(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Change Layer";
   ot->idname = "GPENCIL_OT_layer_change";
-  ot->description = "Change Layer\nChange active Grease Pencil layer";
+  ot->description = "Change active Grease Pencil layer";
 
   /* callbacks */
   ot->invoke = gp_layer_change_invoke;
@@ -1397,7 +1395,7 @@ void GPENCIL_OT_stroke_arrange(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Arrange Stroke";
   ot->idname = "GPENCIL_OT_stroke_arrange";
-  ot->description = "Arrange Stroke\nArrange selected strokes up/down in the drawing order of the active layer";
+  ot->description = "Arrange selected strokes up/down in the drawing order of the active layer";
 
   /* callbacks */
   ot->exec = gp_stroke_arrange_exec;
@@ -1493,7 +1491,7 @@ void GPENCIL_OT_stroke_change_color(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Change Stroke Color";
   ot->idname = "GPENCIL_OT_stroke_change_color";
-  ot->description = "Change Stroke Color/nMove selected strokes to active material";
+  ot->description = "Move selected strokes to active material";
 
   /* callbacks */
   ot->exec = gp_stroke_change_color_exec;
@@ -1565,7 +1563,7 @@ void GPENCIL_OT_stroke_lock_color(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Lock Unused Colors";
   ot->idname = "GPENCIL_OT_stroke_lock_color";
-  ot->description = "Lock Unused Colors\nLock any color not used in any selected stroke";
+  ot->description = "Lock any color not used in any selected stroke";
 
   /* api callbacks */
   ot->exec = gp_stroke_lock_color_exec;
@@ -1594,7 +1592,7 @@ void GPENCIL_OT_brush_presets_create(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Create Preset Brushes";
   ot->idname = "GPENCIL_OT_brush_presets_create";
-  ot->description = "Create Preset Brushes\nCreate a set of predefined Grease Pencil drawing brushes";
+  ot->description = "Create a set of predefined Grease Pencil drawing brushes";
 
   /* api callbacks */
   ot->exec = gp_brush_presets_create_exec;
@@ -1660,7 +1658,7 @@ void GPENCIL_OT_vertex_group_assign(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Assign to Vertex Group";
   ot->idname = "GPENCIL_OT_vertex_group_assign";
-  ot->description = "Assign to Vertex Group\nAssign the selected vertices to the active vertex group";
+  ot->description = "Assign the selected vertices to the active vertex group";
 
   /* api callbacks */
   ot->poll = gpencil_vertex_group_poll;
@@ -1695,7 +1693,7 @@ void GPENCIL_OT_vertex_group_remove_from(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Remove from Vertex Group";
   ot->idname = "GPENCIL_OT_vertex_group_remove_from";
-  ot->description = "Remove from Vertex Group\nRemove the selected vertices from active or all vertex group(s)";
+  ot->description = "Remove the selected vertices from active or all vertex group(s)";
 
   /* api callbacks */
   ot->poll = gpencil_vertex_group_poll;
@@ -1729,7 +1727,7 @@ void GPENCIL_OT_vertex_group_select(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Vertex Group";
   ot->idname = "GPENCIL_OT_vertex_group_select";
-  ot->description = "Select Vertex Group\nSelect all the vertices assigned to the active vertex group";
+  ot->description = "Select all the vertices assigned to the active vertex group";
 
   /* api callbacks */
   ot->poll = gpencil_vertex_group_poll;
@@ -1763,7 +1761,7 @@ void GPENCIL_OT_vertex_group_deselect(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Deselect Vertex Group";
   ot->idname = "GPENCIL_OT_vertex_group_deselect";
-  ot->description = "Deselect Vertex Group\nDeselect all selected vertices assigned to the active vertex group";
+  ot->description = "Deselect all selected vertices assigned to the active vertex group";
 
   /* api callbacks */
   ot->poll = gpencil_vertex_group_poll;
@@ -1825,7 +1823,7 @@ void GPENCIL_OT_vertex_group_invert(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Invert Vertex Group";
   ot->idname = "GPENCIL_OT_vertex_group_invert";
-  ot->description = "Invert Vertex Group\nInvert weights to the active vertex group";
+  ot->description = "Invert weights to the active vertex group";
 
   /* api callbacks */
   ot->poll = gpencil_vertex_group_weight_poll;
@@ -1921,7 +1919,7 @@ void GPENCIL_OT_vertex_group_smooth(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Smooth Vertex Group";
   ot->idname = "GPENCIL_OT_vertex_group_smooth";
-  ot->description = "Smooth Vertex Group\nSmooth weights to the active vertex group";
+  ot->description = "Smooth weights to the active vertex group";
 
   /* api callbacks */
   ot->poll = gpencil_vertex_group_weight_poll;
@@ -1994,7 +1992,7 @@ void GPENCIL_OT_vertex_group_normalize(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Normalize Vertex Group";
   ot->idname = "GPENCIL_OT_vertex_group_normalize";
-  ot->description = "Normalize Vertex Group\nNormalize weights to the active vertex group";
+  ot->description = "Normalize weights to the active vertex group";
 
   /* api callbacks */
   ot->poll = gpencil_vertex_group_weight_poll;
@@ -2099,7 +2097,7 @@ void GPENCIL_OT_vertex_group_normalize_all(wmOperatorType *ot)
   ot->name = "Normalize All Vertex Group";
   ot->idname = "GPENCIL_OT_vertex_group_normalize_all";
   ot->description =
-      "Normalize All Vertex Group\nNormalize all weights of all vertex groups, "
+      "Normalize all weights of all vertex groups, "
       "so that for each vertex, the sum of all weights is 1.0";
 
   /* api callbacks */
@@ -2482,7 +2480,7 @@ void GPENCIL_OT_lock_layer(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Disable Unused Layer Colors";
   ot->idname = "GPENCIL_OT_lock_layer";
-  ot->description = "Disable Unused Layer Colors\nLock and hide any color not used in any layer";
+  ot->description = "Lock and hide any color not used in any layer";
 
   /* api callbacks */
   ot->exec = gpencil_lock_layer_exec;
@@ -2573,7 +2571,7 @@ void GPENCIL_OT_color_isolate(wmOperatorType *ot)
   ot->name = "Isolate Color";
   ot->idname = "GPENCIL_OT_color_isolate";
   ot->description =
-      "Isolate Color\nToggle whether the active color is the only one that is editable and/or visible";
+      "Toggle whether the active color is the only one that is editable and/or visible";
 
   /* callbacks */
   ot->exec = gpencil_color_isolate_exec;
@@ -2695,7 +2693,7 @@ void GPENCIL_OT_color_reveal(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Show All Colors";
   ot->idname = "GPENCIL_OT_color_reveal";
-  ot->description = "Show All Colors\NUnhide all hidden Grease Pencil colors";
+  ot->description = "Unhide all hidden Grease Pencil colors";
 
   /* callbacks */
   ot->exec = gpencil_color_reveal_exec;
@@ -2747,7 +2745,7 @@ void GPENCIL_OT_color_lock_all(wmOperatorType *ot)
   ot->name = "Lock All Colors";
   ot->idname = "GPENCIL_OT_color_lock_all";
   ot->description =
-      "Lock All Colors\nLock all Grease Pencil colors to prevent them from being accidentally modified";
+      "Lock all Grease Pencil colors to prevent them from being accidentally modified";
 
   /* callbacks */
   ot->exec = gpencil_color_lock_all_exec;
@@ -2797,7 +2795,7 @@ void GPENCIL_OT_color_unlock_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Unlock All Colors";
   ot->idname = "GPENCIL_OT_color_unlock_all";
-  ot->description = "Unlock All Colors\nUnlock all Grease Pencil colors so that they can be edited";
+  ot->description = "Unlock all Grease Pencil colors so that they can be edited";
 
   /* callbacks */
   ot->exec = gpencil_color_unlock_all_exec;
@@ -2884,7 +2882,7 @@ void GPENCIL_OT_color_select(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Color";
   ot->idname = "GPENCIL_OT_color_select";
-  ot->description = "Select Color\NSelect all Grease Pencil strokes using current color";
+  ot->description = "Select all Grease Pencil strokes using current color";
 
   /* callbacks */
   ot->exec = gpencil_color_select_exec;

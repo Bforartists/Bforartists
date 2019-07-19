@@ -74,7 +74,7 @@ void MASK_OT_parent_clear(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Clear Parent";
-  ot->description = "Clear Parent, Clear the mask's parenting";
+  ot->description = "Clear the mask's parenting";
   ot->idname = "MASK_OT_parent_clear";
 
   /* api callbacks */
@@ -180,7 +180,7 @@ void MASK_OT_parent_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Make Parent";
-  ot->description = "Make Parent, Set the mask's parenting";
+  ot->description = "Set the mask's parenting";
   ot->idname = "MASK_OT_parent_set";
 
   /* api callbacks */

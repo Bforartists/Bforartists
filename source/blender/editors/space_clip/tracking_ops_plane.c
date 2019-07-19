@@ -84,7 +84,7 @@ void CLIP_OT_create_plane_track(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Create Plane Track";
-  ot->description = "Create Plane Track\nCreate new plane track out of selected point tracks";
+  ot->description = "Create new plane track out of selected point tracks";
   ot->idname = "CLIP_OT_create_plane_track";
 
   /* api callbacks */

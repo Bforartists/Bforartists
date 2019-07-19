@@ -634,7 +634,7 @@ void BRUSH_OT_curve_preset(wmOperatorType *ot)
   };
 
   ot->name = "Preset";
-  ot->description = "Preset\nSet brush shape";
+  ot->description = "Set brush shape";
   ot->idname = "BRUSH_OT_curve_preset";
 
   ot->exec = brush_curve_preset_exec;
@@ -655,7 +655,7 @@ static int paint_select_linked_exec(bContext *C, wmOperator *UNUSED(op))
 void PAINT_OT_face_select_linked(wmOperatorType *ot)
 {
   ot->name = "Select Linked";
-  ot->description = "Select Linked\nSelect linked faces";
+  ot->description = "Select linked faces";
   ot->idname = "PAINT_OT_face_select_linked";
 
   ot->exec = paint_select_linked_exec;
@@ -676,7 +676,7 @@ static int paint_select_linked_pick_invoke(bContext *C, wmOperator *op, const wm
 void PAINT_OT_face_select_linked_pick(wmOperatorType *ot)
 {
   ot->name = "Select Linked Pick";
-  ot->description = "Select Linked Pick\nSelect linked faces under the cursor";
+  ot->description = "Select linked faces under the cursor";
   ot->idname = "PAINT_OT_face_select_linked_pick";
 
   ot->invoke = paint_select_linked_pick_invoke;
@@ -700,7 +700,7 @@ static int face_select_all_exec(bContext *C, wmOperator *op)
 void PAINT_OT_face_select_all(wmOperatorType *ot)
 {
   ot->name = "(De)select All";
-  ot->description = "(De)select All\nChange selection for all faces";
+  ot->description = "Change selection for all faces";
   ot->idname = "PAINT_OT_face_select_all";
 
   ot->exec = face_select_all_exec;
@@ -723,7 +723,7 @@ static int vert_select_all_exec(bContext *C, wmOperator *op)
 void PAINT_OT_vert_select_all(wmOperatorType *ot)
 {
   ot->name = "(De)select All";
-  ot->description = "(De)select All\nChange selection for all vertices";
+  ot->description = "Change selection for all vertices";
   ot->idname = "PAINT_OT_vert_select_all";
 
   ot->exec = vert_select_all_exec;
@@ -755,7 +755,7 @@ void PAINT_OT_vert_select_ungrouped(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Ungrouped";
   ot->idname = "PAINT_OT_vert_select_ungrouped";
-  ot->description = "Select Ungrouped\nSelect vertices without a group";
+  ot->description = "Select vertices without a group";
 
   /* api callbacks */
   ot->exec = vert_select_ungrouped_exec;
@@ -779,9 +779,7 @@ static int face_select_hide_exec(bContext *C, wmOperator *op)
 void PAINT_OT_face_select_hide(wmOperatorType *ot)
 {
   ot->name = "Face Select Hide";
-  ot->description =
-      "Face Select Hide\nHide selected hides the selected geometry\nHide unselected hides the "
-      "unselected geometry";
+  ot->description = "Hide selected faces";
   ot->idname = "PAINT_OT_face_select_hide";
 
   ot->exec = face_select_hide_exec;
@@ -805,7 +803,7 @@ static int face_select_reveal_exec(bContext *C, wmOperator *op)
 void PAINT_OT_face_select_reveal(wmOperatorType *ot)
 {
   ot->name = "Face Select Reveal";
-  ot->description = "Face Select Reveal\nReveal hidden faces";
+  ot->description = "Reveal hidden faces";
   ot->idname = "PAINT_OT_face_select_reveal";
 
   ot->exec = face_select_reveal_exec;

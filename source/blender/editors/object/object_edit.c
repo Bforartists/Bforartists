@@ -194,7 +194,7 @@ void OBJECT_OT_hide_view_clear(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Show Hidden Objects";
-  ot->description = "Show Hidden Objects\nReveal temporarily hidden objects";
+  ot->description = "Reveal temporarily hidden objects";
   ot->idname = "OBJECT_OT_hide_view_clear";
 
   /* api callbacks */
@@ -251,7 +251,7 @@ void OBJECT_OT_hide_view_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Hide Objects";
-  ot->description = "Hide Objects\nTemporarily hide objects from the viewport";
+  ot->description = "Temporarily hide objects from the viewport";
   ot->idname = "OBJECT_OT_hide_view_set";
 
   /* api callbacks */
@@ -357,7 +357,7 @@ void OBJECT_OT_hide_collection(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Hide Collection";
-  ot->description = "Hide Collection\nShow only objects in collection (Shift to extend)";
+  ot->description = "Show only objects in collection (Shift to extend)";
   ot->idname = "OBJECT_OT_hide_collection";
 
   /* api callbacks */
@@ -732,7 +732,7 @@ void OBJECT_OT_editmode_toggle(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Toggle Editmode";
-  ot->description = "Toggle Editmode\nToggle object's editmode";
+  ot->description = "Toggle object's editmode";
   ot->idname = "OBJECT_OT_editmode_toggle";
 
   /* api callbacks */
@@ -817,7 +817,7 @@ void OBJECT_OT_posemode_toggle(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Toggle Pose Mode";
   ot->idname = "OBJECT_OT_posemode_toggle";
-  ot->description = "Toggle Pose Mode\nEnable or disable posing/selecting bones";
+  ot->description = "Enable or disable posing/selecting bones";
 
   /* api callbacks */
   ot->exec = posemode_exec;
@@ -879,7 +879,7 @@ void OBJECT_OT_forcefield_toggle(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Toggle Force Field";
-  ot->description = "Toggle Force Field\nToggle object's force field";
+  ot->description = "Toggle object's force field";
   ot->idname = "OBJECT_OT_forcefield_toggle";
 
   /* api callbacks */
@@ -989,7 +989,7 @@ void OBJECT_OT_paths_calculate(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Calculate Object Paths";
   ot->idname = "OBJECT_OT_paths_calculate";
-  ot->description = "Calculate Object Paths\nCalculate motion paths for the selected objects";
+  ot->description = "Calculate motion paths for the selected objects";
 
   /* api callbacks */
   ot->invoke = object_calculate_paths_invoke;
@@ -1054,7 +1054,7 @@ void OBJECT_OT_paths_update(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Update Object Paths";
   ot->idname = "OBJECT_OT_paths_update";
-  ot->description = "Update Object Paths\nRecalculate paths for selected objects";
+  ot->description = "Recalculate paths for selected objects";
 
   /* api callbakcs */
   ot->exec = object_update_paths_exec;
@@ -1126,9 +1126,7 @@ void OBJECT_OT_paths_clear(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Object Paths";
   ot->idname = "OBJECT_OT_paths_clear";
-  ot->description =
-      "Clear Object Paths\nClear path caches for all objects, hold Shift key for selected objects "
-      "only";
+  ot->description = "Clear path caches for all objects, hold Shift key for selected objects only";
 
   /* api callbacks */
   ot->invoke = object_clear_paths_invoke;
@@ -1243,7 +1241,7 @@ void OBJECT_OT_shade_flat(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Shade Flat";
-  ot->description = "Shade Flat\nRender and display faces uniform, using Face Normals";
+  ot->description = "Render and display faces uniform, using Face Normals";
   ot->idname = "OBJECT_OT_shade_flat";
 
   /* api callbacks */
@@ -1258,8 +1256,7 @@ void OBJECT_OT_shade_smooth(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Shade Smooth";
-  ot->description =
-      "Shade Smooth\nRender and display faces smooth, using interpolated Vertex Normals";
+  ot->description = "Render and display faces smooth, using interpolated Vertex Normals";
   ot->idname = "OBJECT_OT_shade_smooth";
 
   /* api callbacks */
@@ -1714,7 +1711,7 @@ void OBJECT_OT_move_to_collection(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Move to Collection";
-  ot->description = "Move to Collection\nMove objects to a scene collection";
+  ot->description = "Move objects to a collection";
   ot->idname = "OBJECT_OT_move_to_collection";
 
   /* api callbacks */

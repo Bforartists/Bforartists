@@ -1617,7 +1617,7 @@ static void ANIM_OT_channels_group(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Group Channels";
   ot->idname = "ANIM_OT_channels_group";
-  ot->description = "Group Channels\nAdd selected F-Curves to a new group";
+  ot->description = "Add selected F-Curves to a new group";
 
   /* callbacks */
   ot->invoke = WM_operator_props_popup;
@@ -1694,7 +1694,7 @@ static void ANIM_OT_channels_ungroup(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Ungroup Channels";
   ot->idname = "ANIM_OT_channels_ungroup";
-  ot->description = "Ungroup Channels\nRemove selected F-Curves from their current groups";
+  ot->description = "Remove selected F-Curves from their current groups";
 
   /* callbacks */
   ot->exec = animchannels_ungroup_exec;
@@ -1864,7 +1864,7 @@ static void ANIM_OT_channels_delete(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Delete Channels";
   ot->idname = "ANIM_OT_channels_delete";
-  ot->description = "Delete Channels\nDelete all selected animation channels";
+  ot->description = "Delete all selected animation channels";
 
   /* api callbacks */
   ot->exec = animchannels_delete_exec;
@@ -2003,8 +2003,8 @@ static int animchannels_setflag_exec(bContext *C, wmOperator *op)
   }
 
   /* modify setting
-	 * - only selected channels are affected
-	 */
+   * - only selected channels are affected
+   */
   setflag_anim_channels(&ac, setting, mode, true, flush);
 
   /* send notifier that things have changed */
@@ -2021,8 +2021,7 @@ static void ANIM_OT_channels_setting_enable(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Enable Channel Setting";
   ot->idname = "ANIM_OT_channels_setting_enable";
-  ot->description =
-      "Enable Channel Setting, Enable specified setting on all selected animation channels";
+  ot->description = "Enable specified setting on all selected animation channels";
 
   /* api callbacks */
   ot->invoke = WM_menu_invoke;
@@ -2048,8 +2047,7 @@ static void ANIM_OT_channels_setting_disable(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Disable Channel Setting";
   ot->idname = "ANIM_OT_channels_setting_disable";
-  ot->description =
-      "Disable Channel Setting, Disable specified setting on all selected animation channels";
+  ot->description = "Disable specified setting on all selected animation channels";
 
   /* api callbacks */
   ot->invoke = WM_menu_invoke;
@@ -2075,8 +2073,7 @@ static void ANIM_OT_channels_setting_toggle(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Toggle Channel Setting";
   ot->idname = "ANIM_OT_channels_setting_toggle";
-  ot->description =
-      "Toggle Channel Setting, Toggle specified setting on all selected animation channels";
+  ot->description = "Toggle specified setting on all selected animation channels";
 
   /* api callbacks */
   ot->invoke = WM_menu_invoke;
@@ -2102,7 +2099,7 @@ static void ANIM_OT_channels_editable_toggle(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Toggle Channel Editability";
   ot->idname = "ANIM_OT_channels_editable_toggle";
-  ot->description = "Toggle Channel Editability\nToggle editability of selected channels";
+  ot->description = "Toggle editability of selected channels";
 
   /* api callbacks */
   ot->exec = animchannels_setflag_exec;
@@ -2152,8 +2149,7 @@ static void ANIM_OT_channels_expand(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Expand Channels";
   ot->idname = "ANIM_OT_channels_expand";
-  ot->description =
-      "Expand Channels\nExpand (i.e. open) all selected expandable animation channels";
+  ot->description = "Expand (i.e. open) all selected expandable animation channels";
 
   /* api callbacks */
   ot->exec = animchannels_expand_exec;
@@ -2198,8 +2194,7 @@ static void ANIM_OT_channels_collapse(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Collapse Channels";
   ot->idname = "ANIM_OT_channels_collapse";
-  ot->description =
-      "Collapse Channels\nCollapse (i.e. close) all selected expandable animation channels";
+  ot->description = "Collapse (i.e. close) all selected expandable animation channels";
 
   /* api callbacks */
   ot->exec = animchannels_collapse_exec;
@@ -2310,9 +2305,7 @@ static void ANIM_OT_channels_clean_empty(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Remove Empty Animation Data";
   ot->idname = "ANIM_OT_channels_clean_empty";
-  ot->description =
-      "Remove Empty Animation Data\nDelete all empty animation data containers from visible "
-      "datablocks";
+  ot->description = "Delete all empty animation data containers from visible data-blocks";
 
   /* api callbacks */
   ot->exec = animchannels_clean_empty_exec;
@@ -2389,9 +2382,7 @@ static void ANIM_OT_channels_fcurves_enable(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Revive Disabled F-Curves";
   ot->idname = "ANIM_OT_channels_fcurves_enable";
-  ot->description =
-      "Revive Disabled F-Curves\nClears 'disabled' tag from all F-Curves to get broken F-Curves "
-      "working again";
+  ot->description = "Clears 'disabled' tag from all F-Curves to get broken F-Curves working again";
 
   /* api callbacks */
   ot->exec = animchannels_enable_exec;
@@ -2457,8 +2448,7 @@ static void ANIM_OT_channels_find(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Find Channels";
   ot->idname = "ANIM_OT_channels_find";
-  ot->description =
-      "Find Channels\nFilter the set of channels shown to only include those with matching names";
+  ot->description = "Filter the set of channels shown to only include those with matching names";
 
   /* callbacks */
   ot->invoke = animchannels_find_invoke;
@@ -2519,7 +2509,7 @@ static void ANIM_OT_channels_select_all(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select All";
   ot->idname = "ANIM_OT_channels_select_all";
-  ot->description = "Select All\nToggle selection of all animation channels";
+  ot->description = "Toggle selection of all animation channels";
 
   /* api callbacks */
   ot->exec = animchannels_deselectall_exec;
@@ -2794,7 +2784,7 @@ static void ANIM_OT_channels_rename(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Rename Channels";
   ot->idname = "ANIM_OT_channels_rename";
-  ot->description = "Rename Channels\nRename animation channel under mouse";
+  ot->description = "Rename animation channel under mouse";
 
   /* api callbacks */
   ot->invoke = animchannels_rename_invoke;
@@ -3236,7 +3226,7 @@ static void ANIM_OT_channels_click(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Mouse Click on Channels";
   ot->idname = "ANIM_OT_channels_click";
-  ot->description = "Mouse Click on Channels\nHandle mouse-clicks over animation channels";
+  ot->description = "Handle mouse-clicks over animation channels";
 
   /* api callbacks */
   ot->invoke = animchannels_mouseclick_invoke;
@@ -3350,7 +3340,7 @@ static void ANIM_OT_channel_select_keys(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Channel keyframes";
   ot->idname = "ANIM_OT_channel_select_keys";
-  ot->description = "Select Channel keyframes\nSelect all keyframes of channel under mouse";
+  ot->description = "Select all keyframes of channel under mouse";
 
   /* api callbacks */
   ot->invoke = animchannels_channel_select_keys_invoke;

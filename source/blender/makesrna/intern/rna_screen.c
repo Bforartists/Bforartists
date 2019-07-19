@@ -301,7 +301,7 @@ static void rna_def_area_spaces(BlenderRNA *brna, PropertyRNA *cprop)
   prop = RNA_def_property(srna, "active", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "spacedata.first");
   RNA_def_property_struct_type(prop, "Space");
-  RNA_def_property_ui_text(prop, "Active Space", "Active Space\nSpace currently being displayed in this area");
+  RNA_def_property_ui_text(prop, "Active Space", "Space currently being displayed in this area");
 }
 
 static void rna_def_area_api(StructRNA *srna)
@@ -333,7 +333,7 @@ static void rna_def_area(BlenderRNA *brna)
   RNA_def_property_struct_type(prop, "Space");
   RNA_def_property_ui_text(prop,
                            "Spaces",
-                           "Spaces\nSpaces contained in this area, the first being the active space "
+                           "Spaces contained in this area, the first being the active space "
                            "(NOTE: Useful for example to restore a previously used 3D view space "
                            "in a certain area to get the old view orientation)");
   rna_def_area_spaces(brna, prop);
@@ -341,56 +341,56 @@ static void rna_def_area(BlenderRNA *brna)
   prop = RNA_def_property(srna, "regions", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, NULL, "regionbase", NULL);
   RNA_def_property_struct_type(prop, "Region");
-  RNA_def_property_ui_text(prop, "Regions", "Regions\nRegions this area is subdivided in");
+  RNA_def_property_ui_text(prop, "Regions", "Regions this area is subdivided in");
 
   prop = RNA_def_property(srna, "show_menus", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_NO_PULLDOWN);
-  RNA_def_property_ui_text(prop, "Show Menus", "Show Menus\nShow menus in the header");
+  RNA_def_property_ui_text(prop, "Show Menus", "Show Show menus in the header");
 
   // bfa - show hide the editortype menu
   prop = RNA_def_property(srna, "show_editortypemenu", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_NO_EDITORTYPEMENU);
-  RNA_def_property_ui_text(prop, "Show Editortype menu", "Show Editortype menu\nShows or hides the Editortype menu to change the editor type");
+  RNA_def_property_ui_text(prop, "Show Editortype menu", "Shows or hides the Editortype menu to change the editor type");
 
   // bfa - show hide the File toolbars
   prop = RNA_def_property(srna, "file_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_FILE);
-  RNA_def_property_ui_text(prop, "File Toolbars", "File Toolbars\nShows or hides the File Toolbars");
+  RNA_def_property_ui_text(prop, "File Toolbars", "Shows or hides the File Toolbars");
 
   // bfa - show hide the Meshedit toolbars
   prop = RNA_def_property(srna, "meshedit_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_MESHEDIT);
-  RNA_def_property_ui_text(prop, "Mesh Edit Toolbars", "Mesh Edit Toolbars\nShows or hides the Mesh Edit Toolbars");
+  RNA_def_property_ui_text(prop, "Mesh Edit Toolbars", "Shows or hides the Mesh Edit Toolbars");
 
   // bfa - show hide the Primitives toolbars
   prop = RNA_def_property(srna, "primitives_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_PRIMITIVES);
-  RNA_def_property_ui_text(prop, "Primitives Toolbars", "Primitives Toolbarsnhows or hides the Primitives Toolbars");
+  RNA_def_property_ui_text(prop, "Primitives Toolbars", "Shows or hides the Primitives Toolbars");
 
   // bfa - show hide the Image toolbars
   prop = RNA_def_property(srna, "image_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_IMAGE);
-  RNA_def_property_ui_text(prop, "Image Toolbars", "Image Toolbars\nShows or hides the Image Toolbars");
+  RNA_def_property_ui_text(prop, "Image Toolbars", "Shows or hides the Image Toolbars");
 
   // bfa - show hide the Tools toolbars
   prop = RNA_def_property(srna, "tools_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_TOOLS);
-  RNA_def_property_ui_text(prop, "Tools Toolbars", "Tools Toolbars\nShows or hides the Tools Toolbars");
+  RNA_def_property_ui_text(prop, "Tools Toolbars", "Shows or hides the Tools Toolbars");
 
   // bfa - show hide the Animation toolbars
   prop = RNA_def_property(srna, "animation_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_ANIMATION);
-  RNA_def_property_ui_text(prop, "Animation Toolbars", "Animation Toolbars\nShows or hides the Animation Toolbars");
+  RNA_def_property_ui_text(prop, "Animation Toolbars", "Shows or hides the Animation Toolbars");
 
   // bfa - show hide the Edit toolbars
   prop = RNA_def_property(srna, "edit_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_EDIT);
-  RNA_def_property_ui_text(prop, "Edit Toolbars", "Edit Toolbars\nShows or hides the Edit Toolbars");
+  RNA_def_property_ui_text(prop, "Edit Toolbars", "Shows or hides the Edit Toolbars");
 
   // bfa - show hide the Misc toolbars
   prop = RNA_def_property(srna, "misc_toolbars", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_MISC);
-  RNA_def_property_ui_text(prop, "Misc Toolbars", "Misc Toolbars\nShows or hides the Misc Toolbars");
+  RNA_def_property_ui_text(prop, "Misc Toolbars", "Shows or hides the Misc Toolbars");
 
   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "spacetype");
@@ -398,7 +398,7 @@ static void rna_def_area(BlenderRNA *brna)
   RNA_def_property_enum_default(prop, SPACE_VIEW3D);
   RNA_def_property_enum_funcs(
       prop, "rna_Area_type_get", "rna_Area_type_set", "rna_Area_type_itemf");
-  RNA_def_property_ui_text(prop, "Editor Type", "Editor Type\nCurrent editor type for this area");
+  RNA_def_property_ui_text(prop, "Editor Type", "Current editor type for this area");
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, 0, "rna_Area_type_update");
@@ -408,7 +408,7 @@ static void rna_def_area(BlenderRNA *brna)
   RNA_def_property_enum_default(prop, SPACE_VIEW3D << 16);
   RNA_def_property_enum_funcs(
       prop, "rna_Area_ui_type_get", "rna_Area_ui_type_set", "rna_Area_ui_type_itemf");
-  RNA_def_property_ui_text(prop, "Editor Type", "Editor Type\nCurrent editor type for this area");
+  RNA_def_property_ui_text(prop, "Editor Type", "Current editor type for this area");
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, 0, "rna_Area_ui_type_update");
@@ -417,23 +417,23 @@ static void rna_def_area(BlenderRNA *brna)
   RNA_def_property_int_sdna(prop, NULL, "totrct.xmin");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_ui_text(
-      prop, "X Position", "X Position\nThe window relative vertical location of the area");
+      prop, "X Position", "The window relative vertical location of the area");
 
   prop = RNA_def_property(srna, "y", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, NULL, "totrct.ymin");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_ui_text(
-      prop, "Y Position", "Y Position\nThe window relative horizontal location of the area");
+      prop, "Y Position", "The window relative horizontal location of the area");
 
   prop = RNA_def_property(srna, "width", PROP_INT, PROP_UNSIGNED);
   RNA_def_property_int_sdna(prop, NULL, "winx");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-  RNA_def_property_ui_text(prop, "Width", "Width\nArea width");
+  RNA_def_property_ui_text(prop, "Width", "Area width");
 
   prop = RNA_def_property(srna, "height", PROP_INT, PROP_UNSIGNED);
   RNA_def_property_int_sdna(prop, NULL, "winy");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-  RNA_def_property_ui_text(prop, "Height", "HeightnArea height");
+  RNA_def_property_ui_text(prop, "Height", "Area height");
 
   rna_def_area_api(srna);
 }
@@ -536,41 +536,41 @@ static void rna_def_region(BlenderRNA *brna)
   RNA_def_property_enum_sdna(prop, NULL, "regiontype");
   RNA_def_property_enum_items(prop, rna_enum_region_type_items);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-  RNA_def_property_ui_text(prop, "Region Type", "Region TypenType of this region");
+  RNA_def_property_ui_text(prop, "Region Type", "Type of this region");
 
   prop = RNA_def_property(srna, "x", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, NULL, "winrct.xmin");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_ui_text(
-      prop, "X Position", "X Position\nThe window relative vertical location of the region");
+      prop, "X Position", "The window relative vertical location of the region");
 
   prop = RNA_def_property(srna, "y", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, NULL, "winrct.ymin");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_ui_text(
-      prop, "Y Position", "Y Position\nThe window relative horizontal location of the region");
+      prop, "Y Position", "The window relative horizontal location of the region");
 
   prop = RNA_def_property(srna, "width", PROP_INT, PROP_UNSIGNED);
   RNA_def_property_int_sdna(prop, NULL, "winx");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-  RNA_def_property_ui_text(prop, "Width", "Width\nRegion width");
+  RNA_def_property_ui_text(prop, "Width", "Region width");
 
   prop = RNA_def_property(srna, "height", PROP_INT, PROP_UNSIGNED);
   RNA_def_property_int_sdna(prop, NULL, "winy");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-  RNA_def_property_ui_text(prop, "Height", "Height\nRegion height");
+  RNA_def_property_ui_text(prop, "Height", "Region height");
 
   prop = RNA_def_property(srna, "view2d", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "v2d");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
-  RNA_def_property_ui_text(prop, "View2D", "View2D\n2D view of the region");
+  RNA_def_property_ui_text(prop, "View2D", "2D view of the region");
 
   prop = RNA_def_property(srna, "alignment", PROP_ENUM, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_enum_items(prop, alignment_types);
   RNA_def_property_enum_funcs(prop, "rna_region_alignment_get", NULL, NULL);
-  RNA_def_property_ui_text(prop, "Alignment", "Alignment\nAlignment of the region within the area");
+  RNA_def_property_ui_text(prop, "Alignment", "Alignment of the region within the area");
 
   RNA_def_function(srna, "tag_redraw", "ED_region_tag_redraw");
 }
@@ -590,13 +590,13 @@ static void rna_def_screen(BlenderRNA *brna)
   prop = RNA_def_property(srna, "areas", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, NULL, "areabase", NULL);
   RNA_def_property_struct_type(prop, "Area");
-  RNA_def_property_ui_text(prop, "Areas", "Areas\nAreas the screen is subdivided into");
+  RNA_def_property_ui_text(prop, "Areas", "Areas the screen is subdivided into");
 
   /* readonly status indicators */
   prop = RNA_def_property(srna, "is_animation_playing", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_boolean_funcs(prop, "rna_Screen_is_animation_playing_get", NULL);
-  RNA_def_property_ui_text(prop, "Animation Playing", "Animation Playing\nAnimation playback is active");
+  RNA_def_property_ui_text(prop, "Animation Playing", "Animation playback is active");
 
   prop = RNA_def_property(srna, "is_temporary", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
@@ -606,57 +606,57 @@ static void rna_def_screen(BlenderRNA *brna)
   prop = RNA_def_property(srna, "show_fullscreen", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_boolean_funcs(prop, "rna_Screen_fullscreen_get", NULL);
-  RNA_def_property_ui_text(prop, "Maximize", "Maximize\nAn area is maximized, filling this screen");
+  RNA_def_property_ui_text(prop, "Maximize", "An area is maximized, filling this screen");
 
   prop = RNA_def_property(srna, "show_statusbar", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", SCREEN_COLLAPSE_STATUSBAR);
-  RNA_def_property_ui_text(prop, "Show Status Bar", "Show Status Bar\nShow the status bar");
+  RNA_def_property_ui_text(prop, "Show Status Bar", "Show status bar");
   RNA_def_property_update(prop, 0, "rna_Screen_bar_update");
 
   /* Define Anim Playback Areas */
   prop = RNA_def_property(srna, "use_play_top_left_3d_editor", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "redraws_flag", TIME_REGION);
-  RNA_def_property_ui_text(prop, "Top-Left 3D Editor", "Active Editor Only\nPlay animation in Active Editor only");
+  RNA_def_property_ui_text(prop, "Top-Left 3D Editor", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Screen_redraw_update");
 
   prop = RNA_def_property(srna, "use_play_3d_editors", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "redraws_flag", TIME_ALL_3D_WIN);
-  RNA_def_property_ui_text(prop, "All 3D Viewports", "All 3D Viewports\nPlay animation in all 3D Viewports");
+  RNA_def_property_ui_text(prop, "All 3D Viewports", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Screen_redraw_update");
 
   prop = RNA_def_property(srna, "use_follow", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "redraws_flag", TIME_FOLLOW);
-  RNA_def_property_ui_text(prop, "Follow", "Follow Playhead\nFollow current frame in editors");
+  RNA_def_property_ui_text(prop, "Follow", "Follow current frame in editors");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Screen_redraw_update");
 
   prop = RNA_def_property(srna, "use_play_animation_editors", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "redraws_flag", TIME_ALL_ANIM_WIN);
-  RNA_def_property_ui_text(prop, "Animation Editors", "Animation Editors\nPlay animation in 3D View Editors");
+  RNA_def_property_ui_text(prop, "Animation Editors", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Screen_redraw_update");
 
   prop = RNA_def_property(srna, "use_play_properties_editors", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "redraws_flag", TIME_ALL_BUTS_WIN);
-  RNA_def_property_ui_text(prop, "Property Editors", "Property Editors\nPlay animation in Property Editors");
+  RNA_def_property_ui_text(prop, "Property Editors", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Screen_redraw_update");
 
   prop = RNA_def_property(srna, "use_play_image_editors", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "redraws_flag", TIME_ALL_IMAGE_WIN);
-  RNA_def_property_ui_text(prop, "Image Editors", "Image Editors\nPlay animation in Image Editors");
+  RNA_def_property_ui_text(prop, "Image Editors", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Screen_redraw_update");
 
   prop = RNA_def_property(srna, "use_play_sequence_editors", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "redraws_flag", TIME_SEQ);
-  RNA_def_property_ui_text(prop, "Sequencer Editors", "Sequencer Editors\nPlay animation in Sequencer Editors");
+  RNA_def_property_ui_text(prop, "Sequencer Editors", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Screen_redraw_update");
 
   prop = RNA_def_property(srna, "use_play_node_editors", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "redraws_flag", TIME_NODES);
-  RNA_def_property_ui_text(prop, "Node Editors", "Node Editors\nPlay animation in Node Editors");
+  RNA_def_property_ui_text(prop, "Node Editors", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Screen_redraw_update");
 
   prop = RNA_def_property(srna, "use_play_clip_editors", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "redraws_flag", TIME_CLIPS);
-  RNA_def_property_ui_text(prop, "Clip Editors", "Clip Editors\nPlay animation in Clip Editors");
+  RNA_def_property_ui_text(prop, "Clip Editors", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Screen_redraw_update");
 }
 

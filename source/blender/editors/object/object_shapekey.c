@@ -317,7 +317,7 @@ void OBJECT_OT_shape_key_remove(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Remove Shape Key";
   ot->idname = "OBJECT_OT_shape_key_remove";
-  ot->description = "Remove Shape Key\nRemove shape key from the object";
+  ot->description = "Remove shape key from the object";
 
   /* api callbacks */
   ot->poll = shape_key_mode_exists_poll;
@@ -354,7 +354,7 @@ void OBJECT_OT_shape_key_clear(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Clear Shape Keys";
-  ot->description = "Clear Shape Keys\nClear weights for all shape keys";
+  ot->description = "Clear weights for all shape keys";
   ot->idname = "OBJECT_OT_shape_key_clear";
 
   /* api callbacks */
@@ -392,7 +392,7 @@ void OBJECT_OT_shape_key_retime(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Re-Time Shape Keys";
-  ot->description = "Re-Time Shape Keys\nResets the timing for absolute shape keys";
+  ot->description = "Resets the timing for absolute shape keys";
   ot->idname = "OBJECT_OT_shape_key_retime";
 
   /* api callbacks */
@@ -423,7 +423,7 @@ void OBJECT_OT_shape_key_mirror(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Mirror Shape Key";
   ot->idname = "OBJECT_OT_shape_key_mirror";
-  ot->description = "Mirror Shape Key\nMirror the current shape key along the local X axis";
+  ot->description = "Mirror the current shape key along the local X axis";
 
   /* api callbacks */
   ot->poll = shape_key_mode_poll;
@@ -495,7 +495,7 @@ void OBJECT_OT_shape_key_move(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Move Shape Key";
   ot->idname = "OBJECT_OT_shape_key_move";
-  ot->description = "Move Shape Key\nMove the active shape key up/down in the list";
+  ot->description = "Move the active shape key up/down in the list";
 
   /* api callbacks */
   ot->poll = shape_key_move_poll;

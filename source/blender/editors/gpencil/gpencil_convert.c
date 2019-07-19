@@ -1641,8 +1641,7 @@ void GPENCIL_OT_convert(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Convert Grease Pencil";
   ot->idname = "GPENCIL_OT_convert";
-  ot->description =
-      "Convert Grease Pencil, Convert the active Grease Pencil layer to a new Curve Object";
+  ot->description = "Convert the active Grease Pencil layer to a new Curve Object";
 
   /* callbacks */
   ot->invoke = WM_menu_invoke;

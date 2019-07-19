@@ -493,8 +493,7 @@ void ARMATURE_OT_flip_names(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Flip Names";
   ot->idname = "ARMATURE_OT_flip_names";
-  ot->description =
-      "Flip Names\nFlips (and corrects) the axis suffixes of the names of selected bones";
+  ot->description = "Flips (and corrects) the axis suffixes of the names of selected bones";
 
   /* api callbacks */
   ot->exec = armature_flip_names_exec;
@@ -585,8 +584,8 @@ void ARMATURE_OT_autoside_names(wmOperatorType *ot)
   ot->name = "AutoName by Axis";
   ot->idname = "ARMATURE_OT_autoside_names";
   ot->description =
-      "AutoName by Axis\nAutomatically renames the selected bones according to which side of the "
-      "target axis they fall on";
+      "Automatically renames the selected bones according to which side of the target axis they "
+      "fall on";
 
   /* api callbacks */
   ot->invoke = WM_menu_invoke;

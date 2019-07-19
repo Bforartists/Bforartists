@@ -973,7 +973,7 @@ void VIEW3D_OT_rotate(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Rotate View";
-  ot->description = "Rotate View\nRotate the view";
+  ot->description = "Rotate the view";
   ot->idname = "VIEW3D_OT_rotate";
 
   /* api callbacks */
@@ -1374,7 +1374,7 @@ void VIEW3D_OT_ndof_orbit(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "NDOF Orbit View";
-  ot->description = "NDOF Orbit View\nOrbit the view using the 3D mouse";
+  ot->description = "Orbit the view using the 3D mouse";
   ot->idname = "VIEW3D_OT_ndof_orbit";
 
   /* api callbacks */
@@ -1488,7 +1488,7 @@ void VIEW3D_OT_ndof_orbit_zoom(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "NDOF Orbit View with Zoom";
-  ot->description = "NDOF Orbit View with Zoom\nOrbit and zoom the view using the 3D mouse";
+  ot->description = "Orbit and zoom the view using the 3D mouse";
   ot->idname = "VIEW3D_OT_ndof_orbit_zoom";
 
   /* api callbacks */
@@ -1553,7 +1553,7 @@ void VIEW3D_OT_ndof_pan(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "NDOF Pan View";
-  ot->description = "NDOF Pan View\nPan the view with the 3D mouse";
+  ot->description = "Pan the view with the 3D mouse";
   ot->idname = "VIEW3D_OT_ndof_pan";
 
   /* api callbacks */
@@ -1592,7 +1592,7 @@ void VIEW3D_OT_ndof_all(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "NDOF Transform View";
-  ot->description = "NDOF Transform View\nPan and rotate the view with the 3D mouse";
+  ot->description = "Pan and rotate the view with the 3D mouse";
   ot->idname = "VIEW3D_OT_ndof_all";
 
   /* api callbacks */
@@ -1784,7 +1784,7 @@ void VIEW3D_OT_move(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Pan View";
-  ot->description = "Pan View\nPan the view";
+  ot->description = "Move the view";
   ot->idname = "VIEW3D_OT_move";
 
   /* api callbacks */
@@ -2344,7 +2344,7 @@ void VIEW3D_OT_zoom(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Zoom View";
-  ot->description = "Zoom View\nZoom in/out in the view";
+  ot->description = "Zoom in/out in the view";
   ot->idname = "VIEW3D_OT_zoom";
 
   /* api callbacks */
@@ -2657,7 +2657,7 @@ void VIEW3D_OT_dolly(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Dolly View";
-  ot->description = "Dolly View\nDolly in/out in the view";
+  ot->description = "Dolly in/out in the view";
   ot->idname = "VIEW3D_OT_dolly";
 
   /* api callbacks */
@@ -2892,7 +2892,7 @@ void VIEW3D_OT_view_all(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "View All";
-  ot->description = "View All\nView all objects in scene";
+  ot->description = "View all objects in scene";
   ot->idname = "VIEW3D_OT_view_all";
 
   /* api callbacks */
@@ -3050,7 +3050,7 @@ void VIEW3D_OT_view_selected(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "View Selected";
-  ot->description = "View Selected\nMove the view to the selection center";
+  ot->description = "Move the view to the selection center";
   ot->idname = "VIEW3D_OT_view_selected";
 
   /* api callbacks */
@@ -3091,7 +3091,7 @@ void VIEW3D_OT_view_lock_clear(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "View Lock Clear";
-  ot->description = "View Lock Clear\nClear all view locking";
+  ot->description = "Clear all view locking";
   ot->idname = "VIEW3D_OT_view_lock_clear";
 
   /* api callbacks */
@@ -3148,7 +3148,7 @@ void VIEW3D_OT_view_lock_to_active(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "View Lock to Active";
-  ot->description = "View Lock to Active\nLock the view to the active object/bone";
+  ot->description = "Lock the view to the active object/bone";
   ot->idname = "VIEW3D_OT_view_lock_to_active";
 
   /* api callbacks */
@@ -3192,8 +3192,7 @@ void VIEW3D_OT_view_center_cursor(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Center View to Cursor";
-  ot->description =
-      "Center View to Cursor\nCenter the view so that the cursor is in the middle of the view";
+  ot->description = "Center the view so that the cursor is in the middle of the view";
   ot->idname = "VIEW3D_OT_view_center_cursor";
 
   /* api callbacks */
@@ -3244,8 +3243,7 @@ void VIEW3D_OT_view_center_pick(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Center View to Mouse";
-  ot->description =
-      "Center View to Mouse\nCenter the view to the Z-depth position under the mouse cursor";
+  ot->description = "Center the view to the Z-depth position under the mouse cursor";
   ot->idname = "VIEW3D_OT_view_center_pick";
 
   /* api callbacks */
@@ -3297,7 +3295,7 @@ void VIEW3D_OT_view_center_camera(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "View Camera Center";
-  ot->description = "View Camera Center\nCenter the camera view";
+  ot->description = "Center the camera view";
   ot->idname = "VIEW3D_OT_view_center_camera";
 
   /* api callbacks */
@@ -3329,7 +3327,7 @@ void VIEW3D_OT_view_center_lock(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "View Lock Center";
-  ot->description = "View Lock Center\nCenter the view lock offset";
+  ot->description = "Center the view lock offset";
   ot->idname = "VIEW3D_OT_view_center_lock";
 
   /* api callbacks */
@@ -3424,7 +3422,7 @@ void VIEW3D_OT_render_border(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Render Region";
   ot->description =
-      "Set Render Region\nDraw a rectangle to render a portion of the Viewport / Cameraview";
+      "Draw a rectangle to render a portion of the Viewport / Cameraview";
   ot->idname = "VIEW3D_OT_render_border";
 
   /* api callbacks */
@@ -3485,7 +3483,7 @@ void VIEW3D_OT_clear_render_border(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Render Region";
   ot->description =
-      "Clear Render Region\nRemoves an existing Render border";  // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
+      "Removes an existing Render border";  // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
   ot->idname = "VIEW3D_OT_clear_render_border";
 
   /* api callbacks */
@@ -3648,7 +3646,7 @@ void VIEW3D_OT_zoom_border(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Zoom Border";
   ot->description =
-      "Zoom Border\nDrawing rectangle with LMB zooms in. Drawing rectangle with MMB zooms out";
+      "Drawing a rectangle with LMB zooms in. Drawing a rectangle with MMB zooms out";
   ot->idname = "VIEW3D_OT_zoom_border";
 
   /* api callbacks */
@@ -4058,7 +4056,7 @@ void VIEW3D_OT_view_camera(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "View Camera";
-  ot->description = "View Camera\nToggle the camera view";
+  ot->description = "Toggle the camera view";
   ot->idname = "VIEW3D_OT_view_camera";
 
   /* api callbacks */
@@ -4196,7 +4194,7 @@ void VIEW3D_OT_view_orbit(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "View Orbit";
-  ot->description = "View Orbit\n Orbits the view";
+  ot->description = "Orbit the view";
   ot->idname = "VIEW3D_OT_view_orbit";
 
   /* api callbacks */
@@ -4440,7 +4438,7 @@ void VIEW3D_OT_view_roll(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "View Roll";
-  ot->description = "View Roll\nRoll the view";
+  ot->description = "Roll the view";
   ot->idname = "VIEW3D_OT_view_roll";
 
   /* api callbacks */
@@ -4523,7 +4521,7 @@ void VIEW3D_OT_view_pan(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Pan View Direction";
-  ot->description = "Pan View Direction\nPan the view in a given direction";
+  ot->description = "Pan the view in a given direction";
   ot->idname = "VIEW3D_OT_view_pan";
 
   /* api callbacks */
@@ -4571,8 +4569,7 @@ void VIEW3D_OT_view_persportho(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "View Persp/Ortho";
-  ot->description =
-      "View Persp/Ortho\nSwitch the current view from perspective/orthographic projection";
+  ot->description = "Switch the current view from perspective/orthographic projection";
   ot->idname = "VIEW3D_OT_view_persportho";
 
   /* api callbacks */
@@ -4615,8 +4612,7 @@ void VIEW3D_OT_navigate(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View Navigation (Walk/Fly)";
   ot->description =
-      "View Navigation\nInteractively navigate around the scene (uses the mode (walk/fly) "
-      "preference)";
+      "Interactively navigate around the scene (uses the mode (walk/fly) preference)";
   ot->idname = "VIEW3D_OT_navigate";
 
   /* api callbacks */
@@ -4683,7 +4679,7 @@ void VIEW3D_OT_background_image_add(wmOperatorType *ot)
   /* note: having key shortcut here is bad practice,
    * but for now keep because this displays when dragging an image over the 3D viewport */
   ot->name = "Add Background Image";
-  ot->description = "Add Background Image\nAdd a new background image";
+  ot->description = "Add a new background image";
   ot->idname = "VIEW3D_OT_background_image_add";
 
   /* api callbacks */
@@ -4739,7 +4735,7 @@ void VIEW3D_OT_background_image_remove(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Remove Background Image";
-  ot->description = "Remove Background Image\nRemove a background image from the 3D view";
+  ot->description = "Remove a background image from the 3D view";
   ot->idname = "VIEW3D_OT_background_image_remove";
 
   /* api callbacks */
@@ -4825,7 +4821,7 @@ void VIEW3D_OT_clip_border(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Clipping Region";
-  ot->description = "Clipping Region\nSet a view clipping rectangle";
+  ot->description = "Set the view clipping region";
   ot->idname = "VIEW3D_OT_clip_border";
 
   /* api callbacks */
@@ -5083,7 +5079,7 @@ void VIEW3D_OT_cursor3d(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Set 3D Cursor";
-  ot->description = "Set 3D Cursor\nSet the location of the 3D cursor";
+  ot->description = "Set the location of the 3D cursor";
   ot->idname = "VIEW3D_OT_cursor3d";
 
   /* api callbacks */
@@ -5178,7 +5174,7 @@ void VIEW3D_OT_toggle_shading(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Toggle Shading Type";
-  ot->description = "Toggle Shading Type\nToggle shading type in 3D viewport";
+  ot->description = "Toggle shading type in 3D viewport";
   ot->idname = "VIEW3D_OT_toggle_shading";
 
   /* api callbacks */
