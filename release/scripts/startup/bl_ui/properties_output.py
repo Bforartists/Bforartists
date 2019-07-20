@@ -142,6 +142,22 @@ class RENDER_PT_dimensions(RenderOutputButtonsPanel, Panel):
         self.draw_framerate(layout, col, rd)
 
 
+class RENDER_PT_display_mode(RenderOutputButtonsPanel,Panel):
+    bl_label = "Render Display"
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        rd = context.scene.render
+
+        layout.prop(rd, "use_lock_interface", text="Lock Interface")
+        layout.prop(rd, "display_mode", text="Render Display Mode")
+
+
 class RENDER_PT_frame_remapping(RenderOutputButtonsPanel, Panel):
     bl_label = "Time Remapping"
     bl_parent_id = "RENDER_PT_dimensions"
@@ -524,6 +540,7 @@ classes = (
     RENDER_PT_ffmpeg_presets,
     RENDER_MT_framerate_presets,
     RENDER_PT_dimensions,
+    RENDER_PT_display_mode,
     RENDER_PT_frame_remapping,
     RENDER_PT_stereoscopy,
     RENDER_PT_output,
