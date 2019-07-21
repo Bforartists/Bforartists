@@ -4134,11 +4134,6 @@ class VIEW3D_MT_pose_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("pose.paths_calculate", text="Calculate")
-        layout.operator("pose.paths_clear", text="Clear")
-
-        layout.separator()
-
         layout.operator("pose.push")
         layout.operator("pose.relax")
         layout.operator("pose.breakdown")

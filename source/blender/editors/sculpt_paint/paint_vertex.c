@@ -56,6 +56,7 @@
 #include "BKE_paint.h"
 #include "BKE_report.h"
 #include "BKE_subsurf.h"
+#include "BKE_layer.h"
 
 #include "DEG_depsgraph.h"
 
@@ -1305,18 +1306,47 @@ static int wpaint_mode_toggle_exec(bContext *C, wmOperator *op)
     BKE_paint_toolslots_brush_validate(bmain, &ts->wpaint->paint);
   }
 
-  /* When locked, it's almost impossible to select the pose
-   * then the object to enter weight paint mode.
+  /* When locked, it's almost impossible to select the pose-object
+   * then the mesh-object to enter weight paint mode.
+   * Even when the object mode is not locked this is inconvenient - so allow in either case.
+   *
    * In this case move our pose object in/out of pose mode.
-   * This is in fits with the convention of selecting multiple objects and entering a mode. */
-  if (scene->toolsettings->object_flag & SCE_OBJECT_MODE_LOCK) {
-    Object *ob_arm = modifiers_isDeformedByArmature(ob);
-    if (ob_arm && (ob_arm->base_flag & BASE_SELECTED)) {
-      if (ob_arm->mode & OB_MODE_POSE) {
-        ED_object_posemode_exit_ex(bmain, ob_arm);
-      }
-      else {
-        ED_object_posemode_enter_ex(bmain, ob_arm);
+   * This is in fits with the convention of selecting multiple objects and entering a mode.
+   */
+  {
+    VirtualModifierData virtualModifierData;
+    ModifierData *md = modifiers_getVirtualModifierList(ob, &virtualModifierData);
+    if (md != NULL) {
+      /* Can be NULL. */
+      View3D *v3d = CTX_wm_view3d(C);
+      ViewLayer *view_layer = CTX_data_view_layer(C);
+      for (; md; md = md->next) {
+        if (md->type == eModifierType_Armature) {
+          ArmatureModifierData *amd = (ArmatureModifierData *)md;
+          Object *ob_arm = amd->object;
+          if (ob_arm != NULL) {
+            const Base *base_arm = BKE_view_layer_base_find(view_layer, ob_arm);
+            if (base_arm && BASE_VISIBLE(v3d, base_arm)) {
+              if (is_mode_set) {
+                if ((ob_arm->mode & OB_MODE_POSE) != 0) {
+                  ED_object_posemode_exit_ex(bmain, ob_arm);
+                }
+              }
+              else {
+                /* Only check selected status when entering weight-paint mode
+                 * because we may have multiple armature objects.
+                 * Selecting one will de-select the other, which would leave it in pose-mode
+                 * when exiting weight paint mode. While usable, this looks like inconsistent
+                 * behavior from a user perspective. */
+                if (base_arm->flag & BASE_SELECTED) {
+                  if ((ob_arm->mode & OB_MODE_POSE) == 0) {
+                    ED_object_posemode_enter_ex(bmain, ob_arm);
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -2271,7 +2301,6 @@ static void wpaint_stroke_update_step(bContext *C, struct PaintStroke *stroke, P
   vwpaint_update_cache_variants(C, wp, ob, itemptr);
 
   float mat[4][4];
-  float mval[2];
 
   const float brush_alpha_value = BKE_brush_alpha_get(scene, brush);
 
@@ -2321,7 +2350,7 @@ static void wpaint_stroke_update_step(bContext *C, struct PaintStroke *stroke, P
 
   /* calculate pivot for rotation around seletion if needed */
   /* also needed for "View Selected" on last stroke */
-  paint_last_stroke_update(scene, vc->ar, mval);
+  paint_last_stroke_update(scene, vc->ar, ss->cache->mouse);
 
   BKE_mesh_batch_cache_dirty_tag(ob->data, BKE_MESH_BATCH_DIRTY_ALL);
 
@@ -3273,12 +3302,12 @@ static void vpaint_stroke_update_step(bContext *C, struct PaintStroke *stroke, P
   VPaint *vp = ts->vpaint;
   ViewContext *vc = &vpd->vc;
   Object *ob = vc->obact;
+  SculptSession *ss = ob->sculpt;
   Sculpt *sd = CTX_data_tool_settings(C)->sculpt;
 
   vwpaint_update_cache_variants(C, vp, ob, itemptr);
 
   float mat[4][4];
-  float mval[2];
 
   ED_view3d_init_mats_rv3d(ob, vc->rv3d);
 
@@ -3300,7 +3329,7 @@ static void vpaint_stroke_update_step(bContext *C, struct PaintStroke *stroke, P
 
   /* calculate pivot for rotation around seletion if needed */
   /* also needed for "View Selected" on last stroke */
-  paint_last_stroke_update(scene, vc->ar, mval);
+  paint_last_stroke_update(scene, vc->ar, ss->cache->mouse);
 
   ED_region_tag_redraw(vc->ar);
 
