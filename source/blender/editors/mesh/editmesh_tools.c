@@ -7419,7 +7419,7 @@ void MESH_OT_symmetry_snap(struct wmOperatorType *ot)
 #ifdef WITH_FREESTYLE
 
 /* -------------------------------------------------------------------- */
-/** \name Mark Edge (FreeStyle) Operator
+/** \name Mark Edge (Freestyle) Operator
  * \{ */
 
 static int edbm_mark_freestyle_edge_exec(bContext *C, wmOperator *op)
@@ -7499,7 +7499,7 @@ void MESH_OT_mark_freestyle_edge(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Mark Face (FreeStyle) Operator
+/** \name Mark Face (Freestyle) Operator
  * \{ */
 
 static int edbm_mark_freestyle_face_exec(bContext *C, wmOperator *op)
