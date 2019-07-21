@@ -272,6 +272,7 @@ class TEXT_MT_templates_py(Menu):
             bpy.utils.script_paths("templates_py"),
             "text.open",
             props_default={"internal": True},
+            filter_ext=lambda ext: (ext.lower() == ".py")
         )
 
 
@@ -283,6 +284,7 @@ class TEXT_MT_templates_osl(Menu):
             bpy.utils.script_paths("templates_osl"),
             "text.open",
             props_default={"internal": True},
+            filter_ext=lambda ext: (ext.lower() == ".osl")
         )
 
 
