@@ -767,23 +767,39 @@ def createCurve(context, vertArray, self, align_matrix):
     if bpy.context.mode == 'EDIT_CURVE':
         Curve = context.active_object
         newSpline = Curve.data.splines.new(type=splineType)          # spline
-        Curve.matrix_world = align_matrix  # apply matrix
-        Curve.rotation_euler = self.rotation_euler
     else:
         # create curve
-        newCurve = bpy.data.curves.new(name, type='CURVE')  # curve data block
-        newSpline = newCurve.splines.new(type=splineType)          # spline
-
-        # set curveOptions
-        newCurve.dimensions = self.shape
-        newCurve.use_path = True
+        dataCurve = bpy.data.curves.new(name, type='CURVE')  # curve data block
+        newSpline = dataCurve.splines.new(type=splineType)          # spline
         
         # create object with newCurve
-        SimpleCurve = object_utils.object_data_add(context, newCurve, operator=self)  # place in active scene
-        SimpleCurve.select_set(True)
-        SimpleCurve.matrix_world = align_matrix  # apply matrix
-        SimpleCurve.rotation_euler = self.rotation_euler
+        Curve = object_utils.object_data_add(context, dataCurve, operator=self)  # place in active scene
+        Curve.matrix_world = align_matrix  # apply matrix
+        Curve.rotation_euler = self.rotation_euler
+        
+    # set newSpline Options
+    newSpline.use_cyclic_u = self.use_cyclic_u
+    newSpline.use_endpoint_u = self.endp_u
+    newSpline.order_u = self.order_u
+    
+    # set curve Options
+    Curve.data.dimensions = self.shape
+    Curve.data.use_path = True
+    if self.shape == '3D':
+        Curve.data.fill_mode = 'FULL'
+    else:
+        Curve.data.fill_mode = 'BOTH'
 
+    for spline in Curve.data.splines:
+        if spline.type == 'BEZIER':
+            for point in spline.bezier_points:
+                point.select_control_point = False
+                point.select_left_handle = False
+                point.select_right_handle = False
+        else:
+            for point in spline.points:
+                point.select = False
+    
     # create spline from vertarray
     if splineType == 'BEZIER':
         newSpline.bezier_points.add(int(len(vertArray) * 0.33))
@@ -791,15 +807,23 @@ def createCurve(context, vertArray, self, align_matrix):
         for point in newSpline.bezier_points:
             point.handle_right_type = self.handleType
             point.handle_left_type = self.handleType
+            point.select_control_point = True
+            point.select_left_handle = True
+            point.select_right_handle = True
     else:
         newSpline.points.add(int(len(vertArray) * 0.25 - 1))
         newSpline.points.foreach_set('co', vertArray)
         newSpline.use_endpoint_u = True
+        for point in newSpline.points:
+            point.select = True
+            
+    # move and rotate spline in edit mode
+    if bpy.context.mode == 'EDIT_CURVE':
+        bpy.ops.transform.translate(value = self.startlocation)
+        bpy.ops.transform.rotate(value = self.rotation_euler[0], orient_axis = 'X')
+        bpy.ops.transform.rotate(value = self.rotation_euler[1], orient_axis = 'Y')
+        bpy.ops.transform.rotate(value = self.rotation_euler[2], orient_axis = 'Z')
 
-    # set curveOptions
-    newSpline.use_cyclic_u = self.use_cyclic_u
-    newSpline.use_endpoint_u = self.endp_u
-    newSpline.order_u = self.order_u
     return
 
 
@@ -1408,6 +1432,9 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
             col.prop(self, "noiseBasis")
             col.prop(self, "noiseSeed")
 
+        row = layout.row()
+        row.prop(self, "shape", expand=True)
+        
         # output options
         col = layout.column()
         col.label(text="Output Curve Type:")
@@ -1418,8 +1445,8 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
         elif self.outputType == 'BEZIER':
             col.row().prop(self, 'handleType', expand=True)
 
-        #col = layout.column()
-        #col.row().prop(self, "use_cyclic_u", expand=True)
+        col = layout.column()
+        col.row().prop(self, "use_cyclic_u", expand=True)
 
         box = layout.box()
         box.label(text="Location:")
@@ -1433,6 +1460,23 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
         return context.scene is not None
 
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
+        
+        # main function
+        self.align_matrix = align_matrix(context, self.startlocation)
+        main(context, self, self.align_matrix or Matrix())
+        
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+        
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
+        
+        return {'FINISHED'}
+        
+    def invoke(self, context, event):
         # deal with 2D - 3D curve differences
         if self.ProfileType in ['Helix', 'Cycloid', 'Noise']:
             self.shape = '3D'
@@ -1451,10 +1495,8 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
                 self.use_cyclic_u = False
             else:
                 self.use_cyclic_u = True
-
-        # main function
-        self.align_matrix = align_matrix(context, self.startlocation)
-        main(context, self, self.align_matrix or Matrix())
+                
+        self.execute(context)
 
         return {'FINISHED'}
 

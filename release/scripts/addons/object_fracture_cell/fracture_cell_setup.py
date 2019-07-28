@@ -321,7 +321,6 @@ def cell_fracture_boolean(context, obj, objects,
     collection = context.collection
     scene = context.scene
     view_layer = context.view_layer
-    depsgraph = context.evaluated_depsgraph_get()
 
     if use_interior_hide and level == 0:
         # only set for level 0
@@ -337,11 +336,18 @@ def cell_fracture_boolean(context, obj, objects,
             if use_interior_hide:
                 obj_cell.data.polygons.foreach_set("hide", [True] * len(obj_cell.data.polygons))
 
+    # Calculates all booleans at once (faster).
+    depsgraph = context.evaluated_depsgraph_get()
+
+    for obj_cell in objects:
+
+        if not use_debug_bool:
+
             obj_cell_eval = obj_cell.evaluated_get(depsgraph)
             mesh_new = bpy.data.meshes.new_from_object(obj_cell_eval)
             mesh_old = obj_cell.data
             obj_cell.data = mesh_new
-            obj_cell.modifiers.remove(mod)
+            obj_cell.modifiers.remove(obj_cell.modifiers[-1])
 
             # remove if not valid
             if not mesh_old.users:

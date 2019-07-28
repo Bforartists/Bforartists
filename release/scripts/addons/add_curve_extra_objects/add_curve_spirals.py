@@ -233,42 +233,67 @@ def draw_curve(props, context, align_matrix):
     # create object
     if bpy.context.mode == 'EDIT_CURVE':
         Curve = context.active_object
-        spline = Curve.data.splines.new(type=splineType)          # spline
+        newSpline = Curve.data.splines.new(type=splineType)          # spline
     else:
         # create curve
-        newCurve = bpy.data.curves.new(name='Spiral', type='CURVE')  # curvedatablock
-        spline = newCurve.splines.new(type=splineType)          # spline
-
-        # set curveOptions
-        newCurve.dimensions = props.shape
-        newCurve.use_path = True
+        dataCurve = bpy.data.curves.new(name='Spiral', type='CURVE')  # curvedatablock
+        newSpline = dataCurve.splines.new(type=splineType)          # spline
         
         # create object with newCurve
-        Curve = object_data_add(context, newCurve)  # place in active scene
+        Curve = object_data_add(context, dataCurve)  # place in active scene
+        Curve.matrix_world = align_matrix  # apply matrix
+        Curve.rotation_euler = props.rotation_euler
         Curve.select_set(True)
         
-    Curve.matrix_world = align_matrix  # apply matrix
-    Curve.rotation_euler = props.rotation_euler
+    # set curveOptions
+    Curve.data.dimensions = props.shape
+    Curve.data.use_path = True
+    if props.shape == '3D':
+        Curve.data.fill_mode = 'FULL'
+    else:
+        Curve.data.fill_mode = 'BOTH'
         
     # set curveOptions
-    spline.use_cyclic_u = props.use_cyclic_u
-    spline.use_endpoint_u = props.endp_u
-    spline.order_u = props.order_u
+    newSpline.use_cyclic_u = props.use_cyclic_u
+    newSpline.use_endpoint_u = props.endp_u
+    newSpline.order_u = props.order_u
     
     # turn verts into array
     vertArray = vertsToPoints(verts, splineType)
         
-    # create spline from vertarray
+    for spline in Curve.data.splines:
+        if spline.type == 'BEZIER':
+            for point in spline.bezier_points:
+                point.select_control_point = False
+                point.select_left_handle = False
+                point.select_right_handle = False
+        else:
+            for point in spline.points:
+                point.select = False
+    
+    # create newSpline from vertarray
     if splineType == 'BEZIER':
-        spline.bezier_points.add(int(len(vertArray) * 0.33))
-        spline.bezier_points.foreach_set('co', vertArray)
-        for point in spline.bezier_points:
+        newSpline.bezier_points.add(int(len(vertArray) * 0.33))
+        newSpline.bezier_points.foreach_set('co', vertArray)
+        for point in newSpline.bezier_points:
             point.handle_right_type = props.handleType
             point.handle_left_type = props.handleType
+            point.select_control_point = True
+            point.select_left_handle = True
+            point.select_right_handle = True
     else:
-        spline.points.add(int(len(vertArray) * 0.25 - 1))
-        spline.points.foreach_set('co', vertArray)
-        spline.use_endpoint_u = False
+        newSpline.points.add(int(len(vertArray) * 0.25 - 1))
+        newSpline.points.foreach_set('co', vertArray)
+        newSpline.use_endpoint_u = False
+        for point in newSpline.points:
+            point.select = True
+
+    # move and rotate spline in edit mode
+    if bpy.context.mode == 'EDIT_CURVE':
+        bpy.ops.transform.translate(value = props.startlocation)
+        bpy.ops.transform.rotate(value = props.rotation_euler[0], orient_axis = 'X')
+        bpy.ops.transform.rotate(value = props.rotation_euler[1], orient_axis = 'Y')
+        bpy.ops.transform.rotate(value = props.rotation_euler[2], orient_axis = 'Z')
 
 class CURVE_OT_spirals(Operator):
     bl_idname = "curve.spirals"
@@ -509,9 +534,19 @@ class CURVE_OT_spirals(Operator):
         return context.scene is not None
 
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
+        
         time_start = time.time()
         self.align_matrix = align_matrix(context, self.startlocation)
         draw_curve(self, context, self.align_matrix)
+        
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+        
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 
         #self.report({'INFO'},
                     #"Drawing Spiral Finished: %.4f sec" % (time.time() - time_start))

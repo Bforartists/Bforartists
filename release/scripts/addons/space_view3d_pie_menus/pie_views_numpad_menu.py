@@ -143,7 +143,7 @@ class PIE_MT_ViewNumpad(Menu):
         row = box.row(align=True)
         row.prop(rd, "use_border", text="Border")
         # 3 - BOTTOM - RIGHT
-        pie.menu(PieViewallSelGlobEtc.bl_idname, text="View Menu", icon='NONE')
+        pie.menu(PIE_MT_ViewallSelGlobEtc.bl_idname, text="View Menu", icon='NONE')
 
 
 classes = (

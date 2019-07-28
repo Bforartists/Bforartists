@@ -57,6 +57,9 @@ bpy.coat3D = dict()
 bpy.coat3D['active_coat'] = ''
 bpy.coat3D['status'] = 0
 
+run_background_update = False
+time_interval = 2.0
+
 def folder_size(path):
 
     folder_size_max = int(bpy.context.scene.coat3D.folder_size)
@@ -423,7 +426,7 @@ def deleteNodes(type):
 
 
 def delete_materials_from_end(keep_materials_count, objekti):
-    bpy.context.object.active_material_index = 0
+    #bpy.context.object.active_material_index = 0
     index_t = 0
     while (index_t < keep_materials_count):
         temp_len = len(objekti.material_slots)-1
@@ -487,7 +490,23 @@ class SCENE_OT_export(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     def invoke(self, context, event):
+        bpy.ops.export_applink.pilgway_3d_coat()
+        global run_background_update
+        if run_background_update:
+            if bpy.app.timers.is_registered(run_import_periodically):
+                bpy.app.timers.unregister(run_import_periodically)
+                print('Disabling listener')
+                run_background_update = False
+        else:
+            if not bpy.app.timers.is_registered(run_import_periodically):
+                bpy.app.timers.register(run_import_periodically, persistent=True)
+                print('Enabling listener')
+                run_background_update = True
+        return {'FINISHED'}
 
+    def execute(self, context):
+        global run_background_update
+        run_background_update = False
         for mesh in bpy.data.meshes:
             if (mesh.users == 0 and mesh.coat3D.name == '3DC'):
                 bpy.data.meshes.remove(mesh)
@@ -516,6 +535,15 @@ class SCENE_OT_export(bpy.types.Operator):
         checkname = ''
         coa = bpy.context.active_object.coat3D
         coat3D.exchangedir = set_exchange_folder()
+
+        kokeilu = coat3D.exchangedir[:-9]
+        print('export kokeilu:', kokeilu)
+        Blender_folder2 = ("%s%sExchange" % (kokeilu, os.sep))
+        Blender_folder2 += ('%sexport.txt' % (os.sep))
+        print('BB: ', Blender_folder2)
+
+        if (os.path.isfile(Blender_folder2)):
+            os.remove(Blender_folder2)
 
         if (not os.path.isdir(coat3D.exchangedir)):
             coat3D.exchange_found = False
@@ -761,6 +789,25 @@ class SCENE_OT_import(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     def invoke(self, context, event):
+        global run_background_update
+        if run_background_update:
+            if bpy.app.timers.is_registered(run_import_periodically):
+                bpy.app.timers.unregister(run_import_periodically)
+                print('Disabling listener')
+                run_background_update = False
+
+        else:
+            if not bpy.app.timers.is_registered(run_import_periodically):
+                bpy.app.timers.register(run_import_periodically, persistent=True)
+                print('Enabling listener')
+                run_background_update = True
+
+        return {'FINISHED'}
+
+    def execute(self, context):
+
+        global run_background_update
+        run_background_update = True
 
         for node_group in bpy.data.node_groups:
             if(node_group.users == 0):
@@ -957,7 +1004,7 @@ class SCENE_OT_import(bpy.types.Operator):
 
                             elif objekti.coat3D.applink_firsttime == True:
                                 objekti.scale = (objekti.scale[0]/objekti.coat3D.applink_scale[0],objekti.scale[1]/objekti.coat3D.applink_scale[1],objekti.scale[2]/objekti.coat3D.applink_scale[2])
-                                bpy.ops.object.transforms_to_deltas(mode='SCALE')
+                                #bpy.ops.object.transforms_to_deltas(mode='SCALE')
                                 if(objekti.coat3D.applink_onlyone == False):
                                     objekti.rotation_euler = (0,0,0)
                                 objekti.coat3D.applink_firsttime = False
@@ -973,7 +1020,7 @@ class SCENE_OT_import(bpy.types.Operator):
                                 bpy.context.view_layer.objects.active = obj_proxy
                                 keep_materials_count = len(obj_proxy.material_slots) - len(objekti.material_slots)
 
-                                delete_materials_from_end(keep_materials_count, obj_proxy)
+                                #delete_materials_from_end(keep_materials_count, obj_proxy)
 
                                 for index, material in enumerate(objekti.material_slots):
                                     obj_proxy.material_slots[index-1].material = material.material
@@ -1023,6 +1070,7 @@ class SCENE_OT_import(bpy.types.Operator):
             if(import_list):
                 for del_obj in diff_objects:
 
+
                     if(bpy.context.collection.all_objects[del_obj].coat3D.type == 'vox' and bpy.context.collection.all_objects[del_obj].coat3D.delete_proxy_mesh == False):
                         bpy.context.collection.all_objects[del_obj].select_set(True)
                         objekti = bpy.context.collection.all_objects[del_obj]
@@ -1043,12 +1091,18 @@ class SCENE_OT_import(bpy.types.Operator):
 
                     else:
                         bpy.context.collection.all_objects[del_obj].select_set(True)
-                        bpy.ops.object.delete()
+                        bpy.data.objects.remove(bpy.data.objects[del_obj])
 
             if (coat3D.bring_retopo or coat3D.bring_retopo_path):
                 if(os.path.isfile(coat3D.bring_retopo_path)):
                     bpy.ops.import_scene.fbx(filepath=coat3D.bring_retopo_path, global_scale=1, axis_forward='X', use_custom_normals=False)
                     os.remove(coat3D.bring_retopo_path)
+
+            kokeilu = coat3D.exchangedir[:-9]
+            Blender_folder2 = ("%s%sExchange" % (kokeilu, os.sep))
+            Blender_folder2 += ('%sexport.txt' % (os.sep))
+            if (os.path.isfile(Blender_folder2)):
+                os.remove(Blender_folder2)
 
         else:
 
@@ -1175,6 +1229,38 @@ class SCENE_OT_import(bpy.types.Operator):
 
         return {'FINISHED'}
 
+def run_import_periodically():
+    # print("Runing timers update check")
+    coat3D = bpy.context.scene.coat3D
+    kokeilu = coat3D.exchangedir[:-9]
+    Blender_folder2 = ("%s%sExchange" % (kokeilu, os.sep))
+    Blender_folder2 += ('%sexport.txt' % (os.sep))
+    global run_background_update
+
+    try:
+        os.path.isfile(Blender_folder2)
+    except Exception as e:
+        print(e)
+        run_background_update = False
+        if bpy.app.timers.is_registered(run_import_periodically):
+            bpy.app.timers.unregister(run_import_periodically)
+        return time_interval
+
+    if  os.path.isfile(Blender_folder2):
+        # ! cant get proper context from timers for now. Override context: https://developer.blender.org/T62074
+        window = bpy.context.window_manager.windows[0]
+        ctx = {'window': window, 'screen': window.screen, 'workspace': window.workspace}
+        bpy.ops.import_applink.pilgway_3d_coat()
+    else:
+        # print("GOZ: Nothing to update")
+        return time_interval
+
+    if not run_background_update and bpy.app.timers.is_registered(run_import_periodically):
+        bpy.app.timers.unregister(run_import_periodically)
+    return time_interval
+
+
+
 from bpy import *
 from mathutils import Vector, Matrix
 
@@ -1272,6 +1358,7 @@ class SCENE_PT_Material_Import(MaterialButtonsPanel, bpy.types.Panel):
         col.prop(coat3D, "coat3D_normal", text="NormalMap")
         col.prop(coat3D, "coat3D_displacement", text="Displacement")
         col.prop(coat3D, "coat3D_emissive", text="Emissive")
+        col.prop(coat3D, "coat3D_alpha", text="Alpha")
 
 
 
@@ -1800,6 +1887,11 @@ def register():
         description="Import diffuse texture",
         default=True
     )
+    bpy.types.Material.coat3D_alpha = BoolProperty(
+        name="Import alpha texture",
+        description="Import alpha texture",
+        default=True
+    )
 
 
     from bpy.utils import register_class
@@ -1832,6 +1924,7 @@ def unregister():
     bpy.types.Material.coat3D_normal
     bpy.types.Material.coat3D_displacement
     bpy.types.Material.coat3D_emissive
+    bpy.types.Material.coat3D_alpha
     del bpy.coat3D
 
     kc = bpy.context.window_manager.keyconfigs.addon

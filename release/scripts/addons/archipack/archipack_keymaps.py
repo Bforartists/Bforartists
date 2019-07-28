@@ -24,7 +24,6 @@
 # Author: Stephen Leger (s-leger)
 #
 # ----------------------------------------------------------
-import bpy
 
 
 class Keymaps:
@@ -52,9 +51,7 @@ class Keymaps:
         """
         # provide abstration between user and addon
         # with different select mouse side
-        wm = context.window_manager
-        keyconfig = wm.keyconfigs.active
-        mouse_right = getattr(keyconfig.preferences, "select_mouse", "LEFT")
+        mouse_right = context.window_manager.keyconfigs.active.preferences.select_mouse
         if mouse_right == 'LEFT':
             mouse_left = 'RIGHT'
             mouse_right_side = 'Left'
@@ -69,48 +66,57 @@ class Keymaps:
         """
 
     def check(self, event, against):
-        return against['event'] == (event.alt, event.ctrl, event.shift, event.type, event.value)
+        res = False
+        signature = (event.alt, event.ctrl, event.shift, event.type, event.value)
+        for ev in against:
+            # print ("check %s == %s" % (signature, ev))
+            if ev['event'] == signature:
+                # print("check True")
+                res = True
+                break
+        return res
 
     def get_event(self, context, keyconfig, keymap_item):
         """
-            Return simple keymaps event signature as dict
+            Return simple keymaps event signature as array of dict
             NOTE:
                 this won't work for complex keymaps such as select_all
                 using properties to call operator in different manner
             type: keyboard main type
             name: event name as defined in user preferences
             event: simple event signature to compare  like :
-              if event == keymap.undo.event:
+              if keymap.check(event, keymap.undo):
         """
-        # Headless mode fails without this check
-        if bpy.app.background:
-            return {'type': None, 'event':(False, False, False, False, None, None)}
+        evs = [ev for k, ev in context.window_manager.keyconfigs[0].keymaps[keyconfig].keymap_items.items()
+               if k == keymap_item]
+        # ev = context.window_manager.keyconfigs[0].keymaps[keyconfig].keymap_items[keymap_item]
+        res = []
+        for ev in evs:
+            key = ev.type
+            if ev.ctrl:
+                key += '+CTRL'
+            if ev.alt:
+                key += '+ALT'
+            if ev.shift:
+                key += '+SHIFT'
+            res.append({'type': key, 'name': ev.name, 'event': (ev.alt, ev.ctrl, ev.shift, ev.type, ev.value)})
+        return res
 
-        ev = context.window_manager.keyconfigs.user.keymaps[keyconfig].keymap_items[keymap_item]
-        key = ev.type
-        if ev.ctrl:
-            key += '+CTRL'
-        if ev.alt:
-            key += '+ALT'
-        if ev.shift:
-            key += '+SHIFT'
-        return {'type': key, 'name': ev.name, 'event': (ev.alt, ev.ctrl, ev.shift, ev.type, ev.value)}
-
-
-    def dump_keys(self, context, filename="c:\\tmp\\keymap.txt"):
+    def dump_keys(self, context, filename="/tmp/keymap.txt"):
         """
-            Utility for developers :
+            Utility for developpers :
             Dump all keymaps to a file
             filename : string a file path to dump keymaps
         """
         str = ""
-        km = context.window_manager.keyconfigs.user.keymaps
-        for key in km.keys():
-            str += "\n\n#--------------------------------\n{}:\n#--------------------------------\n\n".format(key)
-            for sub in km[key].keymap_items.keys():
-                k = km[key].keymap_items[sub]
-                str += "alt:{} ctrl:{} shift:{} type:{} value:{}  idname:{} name:{}\n".format(
-                    k.alt, k.ctrl, k.shift, k.type, k.value, sub, k.name)
+        kms = context.window_manager.keyconfigs
+        for name, km in kms.items():
+            for key in km.keymaps.keys():
+                str += "\n\n#--------------------------------\n{} - {}:\n#--------------------------------\n\n".format(name, key)
+                for sub in km[key].keymap_items.keys():
+                    k = km[key].keymap_items[sub]
+                    str += "alt:{} ctrl:{} shift:{} type:{} value:{}  idname:{} name:{}\n".format(
+                        k.alt, k.ctrl, k.shift, k.type, k.value, sub, k.name)
         file = open(filename, "w")
         file.write(str)
         file.close()

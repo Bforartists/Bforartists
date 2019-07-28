@@ -311,13 +311,20 @@ static void undosys_stack_clear_all_last(UndoStack *ustack, UndoStep *us)
   }
 }
 
-static void undosys_stack_clear_all_first(UndoStack *ustack, UndoStep *us)
+static void undosys_stack_clear_all_first(UndoStack *ustack, UndoStep *us, UndoStep *us_exclude)
 {
+  if (us && us == us_exclude) {
+    us = us->prev;
+  }
+
   if (us) {
     bool is_not_empty = true;
     UndoStep *us_iter;
     do {
       us_iter = ustack->steps.first;
+      if (us_iter == us_exclude) {
+        us_iter = us_iter->next;
+      }
       BLI_assert(us_iter != ustack->step_active);
       undosys_step_free_and_unlink(ustack, us_iter);
       undosys_stack_validate(ustack, is_not_empty);
@@ -395,9 +402,7 @@ void BKE_undosys_stack_limit_steps_and_memory(UndoStack *ustack, int steps, size
 
   CLOG_INFO(&LOG, 1, "steps=%d, memory_limit=%zu", steps, memory_limit);
   UndoStep *us;
-#ifdef WITH_GLOBAL_UNDO_KEEP_ONE
   UndoStep *us_exclude = NULL;
-#endif
   /* keep at least two (original + other) */
   size_t data_size_all = 0;
   size_t us_count = 0;
@@ -430,20 +435,11 @@ void BKE_undosys_stack_limit_steps_and_memory(UndoStack *ustack, int steps, size
       while (us_exclude && us_exclude->type != BKE_UNDOSYS_TYPE_MEMFILE) {
         us_exclude = us_exclude->prev;
       }
-      if (us_exclude) {
-        BLI_remlink(&ustack->steps, us_exclude);
-      }
     }
 #endif
     /* Free from first to last, free functions may update de-duplication info
      * (see #MemFileUndoStep). */
-    undosys_stack_clear_all_first(ustack, us->prev);
-
-#ifdef WITH_GLOBAL_UNDO_KEEP_ONE
-    if (us_exclude) {
-      BLI_addhead(&ustack->steps, us_exclude);
-    }
-#endif
+    undosys_stack_clear_all_first(ustack, us->prev, us_exclude);
   }
 }
 
@@ -564,12 +560,15 @@ bool BKE_undosys_step_push_with_type(UndoStack *ustack,
   }
 
   if (use_memfile_step) {
-    const char *name_internal = "MemFile Internal (post)";
+    /* Make this the user visible undo state, so redo always applies
+     * on top of the mem-file undo instead of skipping it. see: T67256. */
+    UndoStep *us_prev = ustack->step_active;
+    const char *name_internal = us_prev->name;
     const bool ok = undosys_stack_push_main(ustack, name_internal, G_MAIN);
     if (ok) {
       UndoStep *us = ustack->steps.last;
       BLI_assert(STREQ(us->name, name_internal));
-      us->skip = true;
+      us_prev->skip = true;
 #ifdef WITH_GLOBAL_UNDO_CORRECT_ORDER
       ustack->step_active_memfile = us;
 #endif

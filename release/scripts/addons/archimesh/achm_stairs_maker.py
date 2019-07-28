@@ -209,7 +209,7 @@ def create_stairs_mesh(self):
         if o.select_get() is True:
             o.select_set(False)
 
-    bpy.ops.object.select_all(False)
+    bpy.ops.object.select_all(action='DESELECT')
 
     # ------------------------
     # Create stairs
@@ -245,7 +245,7 @@ def create_stairs_mesh(self):
         mat = create_diffuse_material("Stairs_material", False, 0.8, 0.8, 0.8)
         set_material(mystairs, mat)
 
-    bpy.ops.object.select_all(False)
+    bpy.ops.object.select_all(action='DESELECT')
     mystairs.select_set(True)
     bpy.context.view_layer.objects.active = mystairs
 

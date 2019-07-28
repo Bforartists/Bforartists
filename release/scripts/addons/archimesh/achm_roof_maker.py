@@ -160,7 +160,7 @@ def create_roof_mesh(self):
     for o in bpy.data.objects:
         if o.select_get() is True:
             o.select_set(False)
-    bpy.ops.object.select_all(False)
+    bpy.ops.object.select_all(action='DESELECT')
 
     mydata = create_roof(self)
     myroof = mydata[0]
@@ -210,7 +210,7 @@ def create_roof_mesh(self):
         mat = create_diffuse_material("Roof_material", False, 0.482, 0.061, 0.003, 0.581, 0.105, 0.068, 0.01)
         set_material(myroof, mat)
 
-    bpy.ops.object.select_all(False)
+    bpy.ops.object.select_all(action='DESELECT')
     myroof.select_set(True)
     bpy.context.view_layer.objects.active = myroof
     return

@@ -134,7 +134,8 @@ def render_cycles_scene_samples(self, context):
             text="25%").percent = 25
 
     # List Samples
-    if (len(scene.render.layers) > 1) or (len(bpy.data.scenes) > 1):
+    #if (len(scene.render.layers) > 1) or (len(bpy.data.scenes) > 1):
+    if (len(scene.render.views) > 1) or (len(bpy.data.scenes) > 1):
 
         box = layout.box()
         row = box.row(align=True)
@@ -147,13 +148,16 @@ def render_cycles_scene_samples(self, context):
                  emboss=False)
 
     if list_sampling:
-        if len(scene.render.layers) == 1 and render.layers[0].samples == 0:
+        #if len(scene.render.layers) == 1 and render.layers[0].samples == 0:
+        if len(scene.render.views) == 1 and render.view_layers[0].samples == 0:		
             pass
         else:
             col.separator()
-            col.label(text="RenderLayers:", icon="RENDERLAYERS")
+            #col.label(text="RenderLayers:", icon="RENDERLAYERS")
+            col.label(text="View Layers:", icon="RENDERLAYERS")			
 
-            for rl in scene.render.layers:
+            #for rl in scene.render.layers:
+            for rl in scene.view_layers:			
                 row = col.row(align=True)
                 row.label(text=rl.name, icon="BLANK1")
                 row.prop(
@@ -173,7 +177,8 @@ def render_cycles_scene_samples(self, context):
                         if s.render.engine == "CYCLES":
                             cscene = s.cycles
 
-                            row.label(s.name)
+                            #row.label(s.name)
+                            row.label(text=s.name)							
                             row.prop(cscene, "samples", icon="BLANK1")
                         else:
                             row.label(
