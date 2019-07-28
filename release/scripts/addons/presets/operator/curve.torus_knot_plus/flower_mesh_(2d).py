@@ -34,5 +34,5 @@ op.torus_h = 0.0
 op.torus_res = 198
 op.segment_res = 33
 op.outputType = 'BEZIER'
-op.handleType = 'AUTOMATIC'
+op.handleType = 'AUTO'
 op.adaptive_resolution = False

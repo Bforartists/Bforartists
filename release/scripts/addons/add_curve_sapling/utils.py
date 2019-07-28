@@ -755,7 +755,7 @@ def create_armature(armAnim, leafP, cu, frameRate, leafMesh, leafObj, leafVertSi
         armMod.use_vertex_groups = True
 
     # Make sure all objects are deselected (may not be required?)
-    for ob in bpy.data.objects:
+    for ob in bpy.context.view_layer.objects:
         ob.select_set(state=False)
 
     fps = bpy.context.scene.render.fps
@@ -1594,7 +1594,7 @@ def addTree(props):
     else:
         handles = 'VECTOR'
 
-    for ob in bpy.data.objects:
+    for ob in bpy.context.view_layer.objects:
         ob.select_set(state=False)
 
     # Initialise the tree object and curve and adjust the settings

@@ -45,7 +45,10 @@ from mathutils import (
         Vector,
         Matrix,
         )
-from bpy_extras.object_utils import AddObjectHelper
+from bpy_extras.object_utils import (
+        AddObjectHelper,
+        object_data_add
+        )
 from random import random
 from bpy.types import Operator
 
@@ -264,11 +267,8 @@ def create_torus_knot(self, context):
         curve_data.extrude = self.geo_extrude
         curve_data.offset = self.geo_offset
 
-    new_obj = bpy.data.objects.new(aName, curve_data)
-
     # set object in the scene
-    scene = bpy.context.scene
-    scene.collection.objects.link(new_obj)  # place in active scene
+    new_obj = object_data_add(context, curve_data)  # place in active scene
     bpy.ops.object.select_all(action='DESELECT')
     new_obj.select_set(True)  # set as selected
     bpy.context.view_layer.objects.active = new_obj
@@ -675,11 +675,13 @@ class torus_knot_plus(Operator, AddObjectHelper):
 
     @classmethod
     def poll(cls, context):
-        if context.mode != "OBJECT":
-            return False
         return context.scene is not None
 
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
+        
         if self.mode == 'EXT_INT':
             # adjust the equivalent radii pair : (R,r) <=> (eR,iR)
             self.torus_R = (self.torus_eR + self.torus_iR) * 0.5
@@ -711,6 +713,12 @@ class torus_knot_plus(Operator, AddObjectHelper):
 
         # create the curve
         create_torus_knot(self, context)
+        
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+        
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 
         return {'FINISHED'}
 

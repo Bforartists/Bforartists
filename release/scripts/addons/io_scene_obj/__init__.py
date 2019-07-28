@@ -21,12 +21,12 @@
 bl_info = {
     "name": "Wavefront OBJ format",
     "author": "Campbell Barton, Bastien Montagne",
-    "version": (3, 5, 9),
+    "version": (3, 5, 11),
     "blender": (2, 80, 0),
     "location": "File > Import-Export",
     "description": "Import-Export OBJ, Import OBJ mesh, UV's, materials and textures",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Import-Export/Wavefront_OBJ",
+    "wiki_url": "https://docs.blender.org/manual/en/latest/addons/io_scene_obj.html",
     "support": 'OFFICIAL',
     "category": "Import-Export"}
 

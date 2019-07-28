@@ -1497,9 +1497,10 @@ def export(file,
         bpy.data.images.tag(False)
 
         if use_selection:
-            objects = [obj for obj in scene.objects if obj.visible_get(view_layer=view_layer) and obj.select]
+            objects = [obj for obj in view_layer.objects if obj.visible_get(view_layer=view_layer)
+                       and obj.select_get(view_layer=view_layer)]
         else:
-            objects = [obj for obj in scene.objects if obj.visible_get(view_layer=view_layer)]
+            objects = [obj for obj in view_layer.objects if obj.visible_get(view_layer=view_layer)]
 
         print('Info: starting X3D export to %r...' % file.name)
         ident = ''

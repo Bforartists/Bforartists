@@ -26,7 +26,7 @@ bl_info = {
     "location": "File > Import-Export",
     "description": "FBX IO meshes, UV's, vertex colors, materials, textures, cameras, lamps and actions",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Import-Export/Autodesk_FBX",
+    "wiki_url": "https://docs.blender.org/manual/en/latest/addons/io_scene_fbx.html",
     "support": 'OFFICIAL',
     "category": "Import-Export",
 }

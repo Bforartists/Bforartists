@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'38d4483c6a51')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-10 00:00:00\n"
+"POT-Creation-Date: 2019-07-24 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
 "Last-Translator: \n"
 "Language-Team: Japanese Translation Team (https://sites.google.com/site/blugjp/blender-translators)\n"
@@ -832,7 +832,7 @@ msgstr "ファイルとアセットを閲覧します"
 
 
 msgid "Preferences"
-msgstr "Blender設定"
+msgstr "プリファレンス"
 
 
 msgid "Edit persistent configuration settings"
@@ -3474,15 +3474,15 @@ msgstr "拡大縮小"
 
 
 msgid "Scale the background image"
-msgstr "背景画像を拡大縮小します"
+msgstr "下絵を拡大縮小します"
 
 
 msgid "Show Background Image"
-msgstr "背景画像を表示"
+msgstr "下絵を表示"
 
 
 msgid "Show this image as background"
-msgstr "この画像を背景として表示します"
+msgstr "この画像を下絵として表示します"
 
 
 msgid "Show Expanded"
@@ -5508,7 +5508,7 @@ msgstr "パワー"
 
 
 msgid "Raise the target's scale to the specified power"
-msgstr "ターゲットのスケールを指定の指数まで上げます"
+msgstr "ターゲットのスケールを指定の指数でべき乗します"
 
 
 msgid "Additive"
@@ -5888,11 +5888,11 @@ msgstr "ターゲットオブジェクトからの距離を制限します"
 
 
 msgid "For Transform"
-msgstr "トランスフォーム時も"
+msgstr "操作時も"
 
 
 msgid "Transforms are affected by this constraint as well"
-msgstr "トランスフォームもこのコンストレイントの影響を受けます"
+msgstr "トランスフォーム操作もこのコンストレイントの影響を受けます"
 
 
 msgid "Limit Location Constraint"
@@ -11739,7 +11739,7 @@ msgstr "ストロークレンダリング中にこのラインセットを有効
 
 
 msgid "Visibility"
-msgstr "表示/非表示"
+msgstr "可視性"
 
 
 msgid "Determine how to use visibility for feature edge selection"
@@ -13966,6 +13966,10 @@ msgid "Factor of Simplify"
 msgstr "簡略化の係数"
 
 
+msgid "How to simplify the stroke"
+msgstr "ストロークを簡略化する方法"
+
+
 msgid "Fixed"
 msgstr "固定"
 
@@ -15152,7 +15156,7 @@ msgstr "トポロジーレーキ"
 msgid "Automatically align edges to the brush direction to generate cleaner topology and define sharp features. Best used on low-poly meshes as it has a performance impact"
 msgstr ""
 "自動的に辺をブラシ方向に揃えて綺麗なトポロジーを生成し、\n"
-"メリハリのある形状にします。パフォーマンスインパクトを持つ\n"
+"メリハリのある形状にします。パフォーマンスに影響を与える\n"
 "ローポリメッシュでの使用に最適です"
 
 
@@ -16868,6 +16872,34 @@ msgid "Curvilinear 2D length for chain splitting"
 msgstr "チェーンを分割する曲線の2Dの長さ"
 
 
+msgid "Stroke Color Mode"
+msgstr "ストロークカラーモード"
+
+
+msgid "Base Color"
+msgstr "ベースカラー"
+
+
+msgid "Use the linestyle's base color"
+msgstr "ラインスタイルのベースカラーを使用します"
+
+
+msgid "First Vertex"
+msgstr "最初の頂点"
+
+
+msgid "Use the color of a stroke's first vertex"
+msgstr "ストロークの最初の頂点の色を使用します"
+
+
+msgid "Final Vertex"
+msgstr "最後の頂点"
+
+
+msgid "Use the color of a stroke's final vertex"
+msgstr "ストロークの最後の頂点の色を使用します"
+
+
 msgid "Texture slots defining the mapping and influence of textures"
 msgstr "テクスチャの影響とマッピングを定義するテクスチャスロット"
 
@@ -16962,6 +16994,22 @@ msgstr "破線"
 
 msgid "Enable or disable dashed line"
 msgstr "破線をON/OFFします"
+
+
+msgid "Export Fills"
+msgstr "フィルをエクスポート"
+
+
+msgid "Export fills for this Line Style"
+msgstr "このラインスタイルのフィルをエクスポートします"
+
+
+msgid "Export Strokes"
+msgstr "ストロークをエクスポート"
+
+
+msgid "Export strokes for this Line Style"
+msgstr "このラインスタイルのストロークをエクスポートします"
 
 
 msgid "Use Max 2D Length"
@@ -19381,7 +19429,7 @@ msgstr "コンストレイントがオブジェクトのトランスフォーム
 
 
 msgid "Cycles Object Settings"
-msgstr "Cycles オブジェクト設定"
+msgstr "Cyclesオブジェクト設定"
 
 
 msgid "Cycles object settings"
@@ -19389,7 +19437,7 @@ msgstr "Cycles のオブジェクト設定"
 
 
 msgid "Cycles Visibility Settings"
-msgstr "Cycles表示/非表示設定"
+msgstr "Cycles可視性設定"
 
 
 msgid "Cycles visibility settings"
@@ -20900,11 +20948,11 @@ msgstr "オブジェクト Z"
 
 
 msgid "Rough1"
-msgstr "ラフ1"
+msgstr "粗さ1"
 
 
 msgid "Amount of location dependent rough"
-msgstr "位置に依存する粗さの強さ"
+msgstr "位置に依存する粗さの量"
 
 
 msgid "Size1"
@@ -20916,11 +20964,11 @@ msgstr "位置に依存する粗さの間隔"
 
 
 msgid "Rough2"
-msgstr "ラフ2"
+msgstr "粗さ2"
 
 
 msgid "Amount of random rough"
-msgstr "粗さのランダムの量"
+msgstr "ランダムな粗さの量"
 
 
 msgid "Size2"
@@ -20928,15 +20976,15 @@ msgstr "サイズ2"
 
 
 msgid "Size of random rough"
-msgstr "粗さのランダムのサイズ"
+msgstr "ランダムな粗さの間隔"
 
 
 msgid "Amount of particles left untouched by random rough"
-msgstr "ランダムラフが影響しないパーティクルの量"
+msgstr "ランダムな粗さが影響しないパーティクルの量"
 
 
 msgid "Roughness Curve"
-msgstr "ラフカーブ"
+msgstr "粗さカーブ"
 
 
 msgid "Curve defining roughness"
@@ -20944,15 +20992,15 @@ msgstr "粗さを決めるカーブ"
 
 
 msgid "Shape of end point rough"
-msgstr "終点ラフの形状"
+msgstr "終端の粗さの形状"
 
 
 msgid "Rough Endpoint"
-msgstr "ヘア終端のラフ"
+msgstr "ヘアー終端の粗さ"
 
 
 msgid "Amount of end point rough"
-msgstr "終点ラフの量"
+msgstr "終端の粗さの量"
 
 
 msgid "Strand shape parameter"
@@ -21252,7 +21300,7 @@ msgstr "パーティクルの回転を計算します"
 
 
 msgid "Use Roughness Curve"
-msgstr "ラフカーブを使用"
+msgstr "粗さカーブを使用"
 
 
 msgid "Use a curve to define roughness"
@@ -30727,7 +30775,7 @@ msgstr "入力メッシュからシャープな縁と角を持つサーフェー
 
 
 msgid "Octree Depth"
-msgstr "オクツリーの深度"
+msgstr "オクツリー深度"
 
 
 msgid "Resolution of the octree; higher values give finer details"
@@ -37122,7 +37170,7 @@ msgstr "新しいアクションを作成します"
 
 msgctxt "Operator"
 msgid "Paste Keyframes"
-msgstr "キーフレームを貼付け"
+msgstr "キーフレームを貼り付け"
 
 
 msgid "Paste keyframes from copy/paste buffer for the selected channels, starting on the current frame"
@@ -37170,11 +37218,11 @@ msgstr "コピーするキーの全範囲で、貼り付け範囲のキーを上
 
 
 msgid "Paste time offset of keys"
-msgstr "キーの時間オフセットを貼付けます"
+msgstr "キーの時間オフセットを貼り付けます"
 
 
 msgid "Paste keys starting at current frame"
-msgstr "現在のフレームで始まるキーを貼りつけます"
+msgstr "現在のフレームで始まるキーを貼り付けます"
 
 
 msgid "Frame End"
@@ -40398,7 +40446,7 @@ msgstr "スタックからコンストレイントを削除します"
 
 msgctxt "Operator"
 msgid "Disable and Keep Transform"
-msgstr "無効化しトランスフォーム維持"
+msgstr "無効化とトランスフォーム維持"
 
 
 msgid "Set the influence of this constraint to zero while trying to maintain the object's transformation. Other active constraints can still influence the final transformation"
@@ -45195,7 +45243,7 @@ msgstr "オリジナルファイルに書き出す(既存に上書き)"
 
 
 msgid "View the entire image"
-msgstr "画像全体を表示"
+msgstr "画像全体を表示します"
 
 
 msgctxt "Operator"
@@ -47136,7 +47184,7 @@ msgstr "収縮/膨張"
 
 
 msgid "Shrink/fatten selected vertices along normals"
-msgstr "選択中の頂点を法線にそって収縮/膨張します"
+msgstr "選択中の頂点を法線にそって拡大縮小します"
 
 
 msgctxt "Operator"
@@ -47162,7 +47210,7 @@ msgstr "領域を押し出して収縮/膨張"
 
 
 msgid "Extrude region together along local normals"
-msgstr "領域を各法線方向に押し出します"
+msgstr "領域を法線方向に押し出します"
 
 
 msgctxt "Operator"
@@ -47358,11 +47406,11 @@ msgstr "内側ではなく外側に挿入"
 
 
 msgid "Select Outer"
-msgstr "より外のものを選択"
+msgstr "外側を選択"
 
 
 msgid "Select the new inset faces"
-msgstr "新しく差し込まれた面を選択"
+msgstr "新しく差し込まれた面を選択します"
 
 
 msgctxt "Operator"
@@ -47733,7 +47781,7 @@ msgstr "オフセット辺ループ"
 
 
 msgid "Create offset edge loop from the current selection"
-msgstr "現在の選択からずらした辺ループを作成します"
+msgstr "選択中のループの両側に辺ループを作ります"
 
 
 msgid "Cap Endpoint"
@@ -47741,7 +47789,7 @@ msgstr "終点をつなぐ"
 
 
 msgid "Extend loop around end-points"
-msgstr "終点の周囲のループを広げます"
+msgstr "終点同士をつなぎ、ループを作ります"
 
 
 msgctxt "Operator"
@@ -47750,7 +47798,7 @@ msgstr "オフセット辺スライド"
 
 
 msgid "Offset edge loop slide"
-msgstr "ずらした辺ループのスライド"
+msgstr "選択中のループの両側に辺ループを作り、スライドします"
 
 
 msgid "Offset Edge Loop"
@@ -52988,11 +53036,11 @@ msgstr "コレクションとその子、オブジェクトとオブジェクト
 
 msgctxt "Operator"
 msgid "Duplicate Linked Collection"
-msgstr "リンク中のコレクションを複製"
+msgstr "コレクションをリンク複製"
 
 
 msgid "Recursively duplicate the collection, all its children and objects, with linked object data"
-msgstr "コレクションとその子すべてとオブジェクトを、リンクされているオブジェクトデータと共に、再帰的に複製します"
+msgstr "コレクションとその子すべてとオブジェクトを「オブジェクトデータをリンクして」再帰的に複製します"
 
 
 msgctxt "Operator"
@@ -53719,10 +53767,6 @@ msgstr "テクスチャペイントスロットを追加"
 
 msgid "Add a texture paint slot"
 msgstr "テクスチャペイントスロットを追加します"
-
-
-msgid "Base Color"
-msgstr "ベースカラー"
 
 
 msgctxt "Operator"
@@ -56268,7 +56312,7 @@ msgstr "ライトキャッシュを削除"
 
 
 msgid "Delete cached indirect lighting"
-msgstr "キャッシュした間接ライティングを削除します"
+msgstr "キャッシュした間接照明を削除します"
 
 
 msgctxt "Operator"
@@ -56719,7 +56763,7 @@ msgstr "不可視エディターの未使用の設定を削除します"
 
 msgctxt "Operator"
 msgid "Show Preferences"
-msgstr "Blender設定を表示"
+msgstr "プリファレンスを表示"
 
 
 msgid "Edit user preferences and system settings"
@@ -59659,11 +59703,11 @@ msgstr "選択中の頂点のピン止めをクリアします"
 
 msgctxt "Operator"
 msgid "Project From View"
-msgstr "プロジェクション"
+msgstr "ビューから投影"
 
 
 msgid "Project the UV vertices of the mesh as seen in current 3D view"
-msgstr "現在の3Dビューの表示同様にメッシュの頂点をUV展開"
+msgstr "現在の3Dビューの表示と同じようにメッシュ頂点をUV展開します"
 
 
 msgid "Camera Bounds"
@@ -60090,7 +60134,7 @@ msgstr "新しい下絵を追加します"
 
 msgctxt "Operator"
 msgid "Remove Background Image"
-msgstr "背景画像を削除"
+msgstr "下絵を削除"
 
 
 msgid "Remove a background image from the 3D view"
@@ -60098,7 +60142,7 @@ msgstr "3Dビューから下絵を削除します"
 
 
 msgid "Background image index to remove"
-msgstr "削除する背景画像のインデックス"
+msgstr "削除する下絵のインデックス"
 
 
 msgctxt "Operator"
@@ -60846,7 +60890,7 @@ msgstr "Ogawa"
 
 
 msgid "Curves as Mesh"
-msgstr "カーブをメッシュで"
+msgstr "カーブをメッシュ化"
 
 
 msgid "Export curves and NURBS surfaces as meshes"
@@ -62277,17 +62321,17 @@ msgid "Load Factory Settings"
 msgstr "初期設定を読み込む"
 
 
-msgid "Load default file and preferences"
-msgstr "デフォルトのファイルと設定を読み込みます"
+msgid "Load factory default startup file and preferences. To make changes permanent, use \"Save Startup File\" and \"Save Preferences\""
+msgstr "デフォルトスタートアップファイルと初期設定を読み込みます。変更を保存するには「スタートアップファイルの保存」と「プリファレンスの保存」を使用してください"
 
 
 msgctxt "Operator"
 msgid "Load Factory Preferences"
-msgstr "初期設定を読み込む"
+msgstr "初期プリファレンスを読み込む"
 
 
-msgid "Load default preferences"
-msgstr "デフォルト設定を読み込みます"
+msgid "Load factory default preferences. To make changes to preferences permanent, use \"Save Preferences\""
+msgstr "デフォルトの初期プリファレンスを読み込みます。プリファレンスへの変更を保存するには「プリファレンスの保存」を使用してください"
 
 
 msgctxt "Operator"
@@ -62318,7 +62362,7 @@ msgstr ".blendファイルからUI設定を読み込みます"
 
 msgctxt "Operator"
 msgid "Load Preferences"
-msgstr "Blender設定を読み込む"
+msgstr "プリファレンスを読み込む"
 
 
 msgid "Load last saved preferences"
@@ -62470,7 +62514,7 @@ msgstr "保存後にBlenderを終了します"
 
 msgctxt "Operator"
 msgid "Save Preferences"
-msgstr "Blender設定を保存"
+msgstr "プリファレンスを保存"
 
 
 msgid "Save preferences separately, overrides startup file preferences"
@@ -64084,6 +64128,22 @@ msgid "Helpers"
 msgstr "ヘルパー"
 
 
+msgid "Creates a Panel in the Render Layers context of the properties editor"
+msgstr "プロパティエディターのレンダーレイヤーコンテクスト内にパネルを作成します"
+
+
+msgid "Freestyle Line Style SVG Export"
+msgstr "FreestyleラインスタイルSVGエクスポート"
+
+
+msgid "Creates a Panel in the render context of the properties editor"
+msgstr "プロパティエディターのレンダーコンテクスト内にパネルを作成します"
+
+
+msgid "Freestyle SVG Export"
+msgstr "Freestyle SVGエクスポート"
+
+
 msgid "Color Management"
 msgstr "カラーマネージメント"
 
@@ -64295,7 +64355,7 @@ msgstr "キーマップ"
 
 
 msgid "Preferences Navigation"
-msgstr "Blender設定ナビゲーション"
+msgstr "プリファレンスナビゲーション"
 
 
 msgid "Fly & Walk"
@@ -64311,7 +64371,7 @@ msgstr "周回とパン"
 
 
 msgid "Save Preferences"
-msgstr "Blender設定を保存"
+msgstr "プリファレンスを保存"
 
 
 msgid "Auto Run Python Scripts"
@@ -64804,7 +64864,7 @@ msgstr "ボックス"
 
 msgctxt "Operator"
 msgid "Circle"
-msgstr "サークル"
+msgstr "円"
 
 
 msgid "Expand or contract the radius of the selected points"
@@ -68463,7 +68523,7 @@ msgstr "モーションブラーの精度。ステップ数が大きいとメモ
 
 
 msgid "Use Adaptive Subdivision"
-msgstr "アダプティブサブディビジョン"
+msgstr "アダプティブサブディビジョンを使用"
 
 
 msgid "Use adaptive render time subdivision"
@@ -68947,7 +69007,7 @@ msgstr "GPU演算"
 msgid "Use GPU compute device for rendering, configured in the system tab in the user preferences"
 msgstr ""
 "レンダリングにGPU演算デバイスを使用します。\n"
-"設定はBlender設定のシステムタブで行います"
+"設定はプリファレンスのシステムタブで行います"
 
 
 msgid "Dicing Camera"
@@ -69124,8 +69184,8 @@ msgid "Min Transparent Bounces"
 msgstr "最小透過バウンス数"
 
 
-msgid "Minimum number of transparnet bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
-msgstr "透過バウンスの最小数。これより高い設定で、最初のバウンス時のノイズが減りますが、ヘアーやボリュームなどのもっと複雑な形状では効率が低下する可能性があります"
+msgid "Minimum number of transparent bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
+msgstr "透過バウンスの最小数。大きくすると、最初のバウンス時のノイズが減りますが、ヘアーやボリュームのようなもっと複雑な形状では効果が減る可能性があります"
 
 
 msgid "Motion Blur Position"
@@ -69796,6 +69856,62 @@ msgid "Copy textures on export to the output path"
 msgstr "エクスポート時、テクスチャを出力パスにコピーします"
 
 
+msgid "Implements the properties for the SVG exporter"
+msgstr "SVG エクスポーター用のプロパティの実装"
+
+
+msgid "Linejoin"
+msgstr "Linejoin"
+
+
+msgid "Miter"
+msgstr "Miter"
+
+
+msgid "Corners are sharp"
+msgstr "角がシャープになります"
+
+
+msgid "Corners are smoothed"
+msgstr "角がスムーズになります"
+
+
+msgid "Corners are bevelled"
+msgstr "角が面取りされます"
+
+
+msgid "Export a single frame"
+msgstr "単一フレームをエクスポートします"
+
+
+msgid "Export an animation"
+msgstr "アニメーションをエクスポートします"
+
+
+msgid "Fill Contours"
+msgstr "輪郭をフィル"
+
+
+msgid "Fill the contour with the object's material color"
+msgstr "オブジェクトのマテリアルカラーで輪郭をフィルします"
+
+
+msgid "Split at Invisible"
+msgstr "不可視頂点で分割"
+
+
+msgid "Split the stroke at an invisible vertex"
+msgstr "ストロークを見えない頂点で分割します"
+
+
+msgid "SVG Export"
+msgstr "SVGエクスポート"
+
+
+msgid "Export Freestyle edges to an .svg format"
+msgstr "Freestyle の辺を .svg フォーマットでエクスポートします"
+
+
 msgid "Selected UV Element"
 msgstr "選択したUV要素"
 
@@ -70133,7 +70249,7 @@ msgstr "このレイヤーに空をレンダリングします"
 
 
 msgid "Render Solid faces in this Layer"
-msgstr "このレイヤーの立体の面をレンダリングします"
+msgstr "このレイヤーに不透明の面をレンダリングします"
 
 
 msgid "Strand"
@@ -71907,7 +72023,7 @@ msgstr "イラディアンスサンプル球のサイズ（光の捕捉のデバ
 
 
 msgid "Irradiance Smoothing"
-msgstr "イラディアンスをスムージング"
+msgstr "放射照度のスムージング"
 
 
 msgid "Smoother irradiance interpolation but introduce light bleeding"
@@ -76384,11 +76500,11 @@ msgstr "アルファベット順にソート"
 
 
 msgid "Space Preferences"
-msgstr "Blender設定スペース"
+msgstr "プリファレンススペース"
 
 
 msgid "Blender preferences space data"
-msgstr "Blender設定スペースデータ"
+msgstr "Blenderプリファレンススペースデータ"
 
 
 msgid "Search term for filtering in the UI"
@@ -77734,7 +77850,7 @@ msgstr "オブジェクトのテクスチャ座標を マッピングに使う�
 
 
 msgid "Rough Factor"
-msgstr "ラフ係数"
+msgstr "粗さ係数"
 
 
 msgid "Amount texture affects child roughness"
@@ -77834,7 +77950,7 @@ msgstr "パーティクルの寿命に影響します"
 
 
 msgid "Rough"
-msgstr "ラフ"
+msgstr "粗さ"
 
 
 msgid "Affect the child rough"
@@ -78738,11 +78854,11 @@ msgstr "サブ背景"
 
 
 msgid "Theme Preferences"
-msgstr "Blender設定のテーマ"
+msgstr "プリファレンスのテーマ"
 
 
 msgid "Theme settings for the Blender Preferences"
-msgstr "Blender設定のためのテーマ設定"
+msgstr "プリファレンスのためのテーマ設定"
 
 
 msgid "Theme Properties"
@@ -81908,8 +82024,33 @@ msgstr "UVエディター"
 
 
 msgctxt "WindowManager"
+msgid "Image Editor Tool: Uv, Move"
+msgstr "画像エディターツール：UV、移動"
+
+
+msgctxt "WindowManager"
+msgid "Image Editor Tool: Uv, Rotate"
+msgstr "画像エディターツール：UV、回転"
+
+
+msgctxt "WindowManager"
+msgid "Image Editor Tool: Uv, Scale"
+msgstr "画像エディターツール：UV、拡大縮小"
+
+
+msgctxt "WindowManager"
 msgid "UV Sculpt"
 msgstr "UVスカルプト"
+
+
+msgctxt "WindowManager"
+msgid "Image View"
+msgstr "画像ビュー"
+
+
+msgctxt "WindowManager"
+msgid "Image Editor Tool: Sample"
+msgstr "画像エディターツール：スポイト"
 
 
 msgctxt "WindowManager"
@@ -82806,7 +82947,7 @@ msgstr "固定:"
 
 msgctxt "Operator"
 msgid "Animate Path"
-msgstr "パスのアニメ"
+msgstr "パスアニメーション"
 
 
 msgid "Forward:"
@@ -83752,7 +83893,7 @@ msgstr "データレイヤーを生成"
 
 
 msgid "Weighting Mode:"
-msgstr "ウェイティングモード:"
+msgstr "重み付けモード:"
 
 
 msgid "Affect:"
@@ -83990,7 +84131,7 @@ msgstr "破線:"
 
 
 msgid "Visibility:"
-msgstr "表示/非表示"
+msgstr "可視性:"
 
 
 msgid "Edge Types:"
@@ -84640,7 +84781,7 @@ msgstr "パーティングは仮想の親には利用できません"
 
 
 msgid "Endpoint"
-msgstr "終点"
+msgstr "終端"
 
 
 msgid "Randomize Amplitude"
@@ -85717,7 +85858,7 @@ msgstr "水平のハンドル"
 
 msgctxt "Operator"
 msgid "Frame All"
-msgstr "全体を表示"
+msgstr "全てを表示"
 
 
 msgctxt "Operator"
@@ -85789,7 +85930,7 @@ msgstr "選択を表示"
 
 msgctxt "Operator"
 msgid "Frame All Fit"
-msgstr "全体を表示"
+msgstr "全体に表示"
 
 
 msgctxt "Operator"
@@ -86800,7 +86941,7 @@ msgstr "アクティブアイテムのリネーム..."
 
 msgctxt "Operator"
 msgid "Preferences..."
-msgstr "Blender設定..."
+msgstr "プリファレンス..."
 
 
 msgctxt "Operator"
@@ -86940,12 +87081,12 @@ msgstr "ノードラベル"
 
 
 msgid "Auto-Save Preferences"
-msgstr "自動保存の設定"
+msgstr "プリファレンスを自動保存"
 
 
 msgctxt "Operator"
-msgid "Revert to Saved"
-msgstr "保存済の設定に戻す"
+msgid "Revert to Saved Preferences"
+msgstr "保存したプリファレンスに戻す"
 
 
 msgid "Resolution Scale"
@@ -87186,11 +87327,6 @@ msgid "Save as Studio light"
 msgstr "スタジオライトとして保存"
 
 
-msgctxt "Operator"
-msgid "Save Current State"
-msgstr "現在の状態を保存"
-
-
 msgid "Color Set d"
 msgstr "カラーセット d"
 
@@ -87233,11 +87369,6 @@ msgstr "見つからないスクリプトファイル"
 
 msgid "No custom {} configured"
 msgstr "設定済のカスタム{}がありません"
-
-
-msgctxt "Operator"
-msgid "Skip Auto-Save"
-msgstr "自動保存をスキップ"
 
 
 msgid ":"
@@ -88229,7 +88360,7 @@ msgstr "座標系に揃える"
 
 msgctxt "Operator"
 msgid "Project from View (Bounds)"
-msgstr "視点から投影 (バウンド)"
+msgstr "ビューから投影 (バウンド)"
 
 
 msgctxt "Operator"
@@ -91043,7 +91174,7 @@ msgstr "[Shift]＋左クリック"
 
 
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
-msgstr "この方法ではキーボードショートカットのみ編集可能です。それ以外はBlender設定を使用してください"
+msgstr "この方法ではキーボードショートカットのみ編集可能です。それ以外はプリファレンスを使用してください"
 
 
 msgctxt "Operator"
@@ -91212,7 +91343,7 @@ msgstr "アクティブボタンがありません"
 
 
 msgid "Please set your Preferences' 'Translation Branches Directory' path to a valid directory"
-msgstr "Blender設定の「翻訳ブランチディレクトリ」パスに有効なディレクトリを設定してください"
+msgstr "プリファレンスの「翻訳ブランチディレクトリ」パスに有効なディレクトリを設定してください"
 
 
 msgid "File '%s' cannot be opened"
@@ -91224,7 +91355,7 @@ msgstr "テキストエディターで「%s」を見てください"
 
 
 msgid "Could not find operator '%s'! Please enable ui_translate add-on in the User Preferences"
-msgstr "「%s」オペレーターがありません！　Blender設定にある、ui_translateアドオンをONにしてください"
+msgstr "「%s」オペレーターがありません！　プリファレンスにある、ui_translateアドオンをONにしてください"
 
 
 msgid "No valid po found for language '%s' under %s"
@@ -94622,11 +94753,15 @@ msgstr "アクティブなコレクションなし"
 
 
 msgid "Can't duplicate the master collection"
-msgstr "masterコレクションは複製できません"
+msgstr "master コレクションは複製できません"
 
 
 msgid "Could not find a valid parent collection for the new duplicate, it won't be linked to any view layer"
 msgstr "正常な親コレクションが見つからないため、新規複製はどのビューポートにもリンクされません"
+
+
+msgid "Cannot add a collection to a linked collection/scene"
+msgstr "リンク中のコレクションやシーンには、コレクションが追加できません"
 
 
 msgid "Cannot delete linked collection '%s', it is used by other linked scenes/collections"
@@ -94730,7 +94865,7 @@ msgid ""
 "* Ctrl to isolate collection\n"
 "* Shift to set inside collections"
 msgstr ""
-"ビューレイヤー内の間接的に（影や反射を通じて）寄与するコレクション内のオブジェクトのみ\n"
+"ビューレイヤー内でコレクション内のオブジェクトのみ、間接的に（影や反射を通じて）寄与します\n"
 "＋[Ctrl]で対象コレクション以外にセット\n"
 "＋[Shift]で内部のコレクションにセット"
 
@@ -96441,6 +96576,10 @@ msgid "Can only assign evaluated data to evaluated object, or original data to o
 msgstr "評価済データを評価済オブジェクトに、もしくは元データを元オブジェクトにのみ割り当て可能です"
 
 
+msgid "Only empty objects support collection instances"
+msgstr "エンプティのみコレクションインスタンスに対応しています"
+
+
 msgid "Cannot set instance-collection as object belongs in group being instanced, thus causing a cycle"
 msgstr ""
 "循環になるため、インスタンス化しているコレクション内に属する\n"
@@ -96448,11 +96587,11 @@ msgstr ""
 
 
 msgid "VertexGroup.add(): cannot be called while object is in edit mode"
-msgstr "VertexGroup.add(): オブジェクトが編集モード中の時は呼び出しできません"
+msgstr "VertexGroup.add(): オブジェクトが編集モード中は呼び出しできません"
 
 
 msgid "VertexGroup.remove(): cannot be called while object is in edit mode"
-msgstr "VertexGroup.remove(): オブジェクトが編集モード中の時は呼び出しできません"
+msgstr "VertexGroup.remove(): オブジェクトが編集モード中は呼び出しできません"
 
 
 msgid "Vertex not in group"
@@ -96460,7 +96599,7 @@ msgstr "頂点がグループ内にありません"
 
 
 msgid "FaceMap.add(): cannot be called while object is in edit mode"
-msgstr "FaceMap.add(): オブジェクトが編集モード中の時は呼び出しできません"
+msgstr "FaceMap.add(): オブジェクトが編集モード中は呼び出しできません"
 
 
 msgid "Constraint '%s' not found in object '%s'"
@@ -96503,8 +96642,12 @@ msgid "Bad vertex index in list"
 msgstr "リスト中の頂点インデックスが異常です"
 
 
-msgid "Object '%s' not in View Layer '%s'!"
-msgstr "オブジェクト「%s」はビューレイヤー「%s」にありません"
+msgid "Object '%s' can't be selected because it is not in View Layer '%s'!"
+msgstr "オブジェクト「%s」はビューレイヤー「%s」にないため選択できません！"
+
+
+msgid "Object '%s' can't be hidden because it is not in View Layer '%s'!"
+msgstr "オブジェクト「%s」はビューレイヤー「%s」にないため隠せません！"
 
 
 msgid "Object %s not in view layer %s"
@@ -97856,7 +97999,7 @@ msgstr "Blenderレンダー"
 
 
 msgid "Blender Preferences"
-msgstr "Blender設定"
+msgstr "Blenderプリファレンス"
 
 
 msgid "Blender File View"

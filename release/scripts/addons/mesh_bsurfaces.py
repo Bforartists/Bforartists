@@ -125,9 +125,9 @@ def get_strokes_type(context):
     # Check if they are grease pencil
     if context.scene.bsurfaces.SURFSK_use_annotation:
         try:
-            frame = bpy.data.grease_pencils["Annotations"].layers["Note"].active_frame
+            strokes = bpy.data.grease_pencils[0].layers.active.active_frame.strokes
         
-            strokes_num = len(frame.strokes)
+            strokes_num = len(strokes)
 
             if strokes_num > 0:
                strokes_type = "GP_ANNOTATION"
@@ -136,10 +136,9 @@ def get_strokes_type(context):
     
     try:
        gpencil = bpy.context.scene.bsurfaces.SURFSK_object_with_strokes
-       layer = gpencil.data.layers[0]
-       frame = layer.frames[0]
+       strokes = gpencil.data.layers.active.active_frame.strokes
         
-       strokes_num = len(frame.strokes)
+       strokes_num = len(strokes)
 
        if strokes_num > 0:
            strokes_type = "GP_STROKES"
@@ -3148,11 +3147,11 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
             
             # Delete grease pencil strokes
             if self.strokes_type == "GP_STROKES" and not self.stopping_errors and not self.keep_strokes:
-                bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers[0].clear()
+                bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers.active.clear()
                 
             # Delete annotations
             if self.strokes_type == "GP_ANNOTATION" and not self.stopping_errors and not self.keep_strokes:
-                bpy.data.grease_pencils["Annotations"].layers["Note"].clear()
+                bpy.data.grease_pencils[0].layers.active.clear()
 
             bsurfaces_props.SURFSK_edges_U = self.edges_U
             bsurfaces_props.SURFSK_edges_V = self.edges_V
@@ -3399,11 +3398,11 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
 
             # Delete grease pencil strokes
             if self.strokes_type == "GP_STROKES" and not self.stopping_errors and not self.keep_strokes:
-                bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers[0].clear()
+                bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers.active.clear()
                 
             # Delete grease pencil strokes
             if self.strokes_type == "GP_ANNOTATION" and not self.stopping_errors and not self.keep_strokes:
-                bpy.data.grease_pencils["Annotations"].layers["Note"].clear()
+                bpy.data.grease_pencils[0].layers.active.clear()
             
             bpy.ops.object.select_all('INVOKE_REGION_WIN', action='DESELECT')
             self.main_object.select_set(True)
@@ -3615,7 +3614,7 @@ class GPENCIL_OT_SURFSK_edit_strokes(Operator):
             ob_gp_strokes = bpy.context.object
 
             # Delete grease pencil strokes
-            bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers[0].clear()
+            bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers.active.clear()
 
             # Clean up curves
             bpy.ops.object.select_all('INVOKE_REGION_WIN', action='DESELECT')
@@ -3871,7 +3870,7 @@ class CURVE_OT_SURFSK_reorder_splines(Operator):
         bpy.ops.object.editmode_toggle('INVOKE_REGION_WIN')
         bpy.ops.curve.select_all('INVOKE_REGION_WIN', action='DESELECT')
 
-        bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers[0].clear()
+        bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers.active.clear()
 
         return {"FINISHED"}
 
@@ -4061,12 +4060,18 @@ def conver_gpencil_to_curve(self, context, pencil, type):
     newCurve = bpy.data.curves.new('gpencil_curve', type='CURVE')  # curvedatablock
     newCurve.dimensions = '3D'
     CurveObject = object_utils.object_data_add(context, newCurve)  # place in active scene
-    CurveObject.location = self.main_object.location
     
     if type == 'GPensil':
-        strokes = pencil.data.layers[0].active_frame.strokes
+        strokes = pencil.data.layers.active.active_frame.strokes
+        CurveObject.location = pencil.location
+        CurveObject.rotation_euler = pencil.rotation_euler
+        CurveObject.scale = pencil.scale
     elif type == 'Annotation':
-        strokes = bpy.data.grease_pencils["Annotations"].layers["Note"].active_frame.strokes
+        grease_pencil = bpy.data.grease_pencils[0]
+        strokes = grease_pencil.layers.active.active_frame.strokes
+        CurveObject.location = (0.0, 0.0, 0.0)
+        CurveObject.rotation_euler = (0.0, 0.0, 0.0)
+        CurveObject.scale = (1.0, 1.0, 1.0)
     
     for i, stroke in enumerate(strokes):
         stroke_points = strokes[i].points

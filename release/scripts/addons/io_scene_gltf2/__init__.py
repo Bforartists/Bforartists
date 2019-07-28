@@ -20,7 +20,7 @@ bl_info = {
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
     'warning': '',
-    'wiki_url': "https://docs.blender.org/manual/en/dev/addons/io_gltf2.html",
+    'wiki_url': "https://docs.blender.org/manual/en/latest/addons/io_scene_gltf2.html",
     'tracker_url': "https://github.com/KhronosGroup/glTF-Blender-IO/issues/",
     'support': 'OFFICIAL',
     'category': 'Import-Export',
@@ -595,4 +595,3 @@ def unregister():
     # remove from the export / import menu
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
-

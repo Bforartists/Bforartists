@@ -122,6 +122,10 @@ class CelticKnotOperator(Operator):
         layout.prop(self, "geo_bDepth")
 
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
+        
         # Cache some values
         s = sin(self.crossing_angle) * self.crossing_strength
         c = cos(self.crossing_angle) * self.crossing_strength
@@ -267,7 +271,11 @@ class CelticKnotOperator(Operator):
             curve_obj.data.bevel_depth = self.geo_bDepth
         except:
             pass
-        #context.scene.objects.active = orig_obj
+        
+        bpy.context.view_layer.objects.active = orig_obj
+        
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 
         return {'FINISHED'}
 
