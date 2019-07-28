@@ -94,8 +94,8 @@ class PIE_MT_AreaTypePieOther(Menu):
     def draw(self, context):
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="File Browser", icon="FILEBROWSER").types = "FILE_BROWSER"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Python Console", icon="CONSOLE").types = "CONSOLE"
-        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="User Preferences",
-                             icon="PREFERENCES").types = "USER_PREFERENCES"
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Preferences",
+                             icon="PREFERENCES").types = "PREFERENCES"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Info", icon="INFO").types = "INFO"
 
 
@@ -121,7 +121,7 @@ class PIE_MT_AreaTypePieAnim(Menu):
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="NLA Editor", icon="NLA").types = "NLA_EDITOR"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="DopeSheet", icon="ACTION").types = "DOPESHEET_EDITOR"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Graph Editor", icon="GRAPH").types = "GRAPH_EDITOR"
-        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Timeline", icon="TIME").types = "TIMELINE"
+#        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Timeline", icon="TIME").types = "TIMELINE"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname,
                              text="Video Sequence Editor", icon="SEQUENCE").types = "SEQUENCE_EDITOR"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname,

@@ -321,7 +321,7 @@ def angle_between_nor(nor_orig, nor_result):
     return q
 
 
-def doodads(object1, mesh1, dmin, dmax):
+def doodads(self, object1, mesh1, dmin, dmax):
     """function to generate the doodads"""
     global dVerts
     global dPolygons
@@ -510,7 +510,7 @@ def discombobulate(self, minHeight, maxHeight, minTaper, maxTaper, sf1, sf2, sf3
     protusions_repeat(object1, mesh1, r_prot)
 
     if(len(self.DISC_doodads) != 0 and self.dodoodads and isLast):
-        doodads(object1, mesh1, dmin, dmax)
+        doodads(self, object1, mesh1, dmin, dmax)
         mesh2 = bpy.data.meshes.new("dood_mesh")
         object2 = bpy.data.objects.new("dood_obj", mesh2)
         bpy.context.collection.objects.link(object2)
@@ -566,8 +566,10 @@ class chooseDoodad(Operator):
         obj_name = bpy.context.active_object.name
         msg = "Object with this name already saved"
 
-        if obj_name not in self.DISC_doodads:
-            self.DISC_doodads.append(obj_name)
+        DISC_doodads = context.scene.discombobulator.DISC_doodads
+        
+        if obj_name not in DISC_doodads:
+            DISC_doodads.append(obj_name)
             msg = "Saved Doodad object: {}".format(obj_name)
 
         self.report({"INFO"}, message=msg)
@@ -590,15 +592,15 @@ class unchooseDoodad(Operator):
 
     def execute(self, context):
         msg = ("No doodads to remove")
-        doodadery = self.DISC_doodads
-        if len(doodadery) > 0:
+        DISC_doodads = context.scene.discombobulator.DISC_doodads
+        if len(DISC_doodads) > 0:
             if not self.remove_all:
                 name = bpy.context.active_object.name
-                if name in doodadery:
-                    self.DISC_doodads.remove(name)
+                if name in DISC_doodads:
+                    DISC_doodads.remove(name)
                     msg = ("Removed Doodad object: {}".format(name))
             else:
-                self.DISC_doodads[:] = []
+                DISC_doodads[:] = []
                 msg = "Removed all Doodads"
         else:
             msg = "No Doodads to Remove"
@@ -639,12 +641,14 @@ class discombobulator_dodads_list(Menu):
 
     def draw(self, context):
         layout = self.layout
+        
+        DISC_doodads = context.scene.discombobulator.DISC_doodads
 
-        doodle = len(self.DISC_doodads)
+        doodle = len(DISC_doodads)
         layout.label(text="Saved doodads : {}".format(doodle))
         layout.separator()
         if doodle > 0:
-            for name in self.DISC_doodads:
+            for name in DISC_doodads:
                 layout.label(text=name)
 
 
@@ -682,8 +686,7 @@ class VIEW3D_OT_tools_discombobulate(Operator):
     bl_options = {"REGISTER"}
 
     executing = False
-    
-    DISC_doodads = []
+
     # Protusions Buttons:
     repeatprot: IntProperty(
             name="Repeat protusions",
@@ -785,6 +788,8 @@ class VIEW3D_OT_tools_discombobulate(Operator):
 
     def draw(self, context):
         layout = self.layout
+        
+        self.DISC_doodads = bpy.context.scene.discombobulator.DISC_doodads
 
         row = layout.row()
         row.menu("HELP_MT_discombobulator", icon="INFO")

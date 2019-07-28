@@ -1,5 +1,12 @@
 # Blender ID Add-on Changelog
 
+# Version 2.1 (released 2019-08-18)
+
+- Add a timeout to communication with Blender ID. Any attempt at communication will now time out
+  after 5 seconds, and be re-tried 5 times. Combined a request can "hang" for a minute, but not
+  longer than that.
+
+
 # Version 2.0 (released 2019-07-09)
 
 - Require Blender 2.80+.

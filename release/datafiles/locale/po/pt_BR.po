@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'38d4483c6a51')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2019-07-10 00:00:00\n"
+"POT-Creation-Date: 2019-07-24 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Dalai Felinto, Bruno Gonçalves Pirajá, Samuel Arataca, Daniel Tavares, Moraes Junior <ivan.paulos.tome@yandex.com>\n"
@@ -13971,6 +13971,10 @@ msgstr "Dividir comprimento"
 
 msgid "Curvilinear 2D length for chain splitting"
 msgstr "Usa o comprimento curvilíneo 2D para dividir os encadeamentos."
+
+
+msgid "Base Color"
+msgstr "Cor de base"
 
 
 msgid "Texture slots defining the mapping and influence of textures"
@@ -45172,10 +45176,6 @@ msgstr "Adicionar compartimento de pintura de textura."
 
 msgid "Add a texture paint slot"
 msgstr "Adiciona um novo compartimento de pintura de textura."
-
-
-msgid "Base Color"
-msgstr "Cor de base"
 
 
 msgctxt "Operator"

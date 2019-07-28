@@ -359,7 +359,7 @@ def create_column_mesh(self):
         if o.select_get() is True:
             o.select_set(False)
 
-    bpy.ops.object.select_all(False)
+    bpy.ops.object.select_all(action='DESELECT')
 
     radio_top = self.rad_top
     if self.keep_size is True:
@@ -380,7 +380,7 @@ def create_column_mesh(self):
     # Create circular column
     # ------------------------
     if self.model == "1":
-        bpy.ops.object.select_all(False)
+        bpy.ops.object.select_all(action='DESELECT')
         mycolumn = create_circular_column(self, "Column", radio_top, radio_mid, radio_bottom, height)
         mycolumn.select_set(True)
         bpy.context.view_layer.objects.active = mycolumn
@@ -392,7 +392,7 @@ def create_column_mesh(self):
     # ------------------------
     if self.model == "2":
         mycolumn = create_rectangular_base(self, "Column", self.col_sx, self.col_sy, height)
-        bpy.ops.object.select_all(False)
+        bpy.ops.object.select_all(action='DESELECT')
         mycolumn.select_set(True)
         bpy.context.view_layer.objects.active = mycolumn
         set_normals(mycolumn)
@@ -401,7 +401,7 @@ def create_column_mesh(self):
     # ------------------------
     if self.cir_base is True:
         cir_bottom = create_torus("Column_cir_bottom", radio_bottom, self.cir_base_r, self.cir_base_z)
-        bpy.ops.object.select_all(False)
+        bpy.ops.object.select_all(action='DESELECT')
         cir_bottom.select_set(True)
         bpy.context.view_layer.objects.active = cir_bottom
         set_modifier_subsurf(cir_bottom)
@@ -417,7 +417,7 @@ def create_column_mesh(self):
     if self.box_base is True:
         box_bottom = create_rectangular_base(self, "Column_box_bottom", self.box_base_x, self.box_base_y,
                                              self.box_base_z)
-        bpy.ops.object.select_all(False)
+        bpy.ops.object.select_all(action='DESELECT')
         box_bottom.select_set(True)
         bpy.context.view_layer.objects.active = box_bottom
         box_bottom.parent = mycolumn
@@ -433,7 +433,7 @@ def create_column_mesh(self):
     # ------------------------
     if self.cir_top is True:
         cir_top = create_torus("Column_cir_top", radio_top, self.cir_top_r, self.cir_top_z)
-        bpy.ops.object.select_all(False)
+        bpy.ops.object.select_all(action='DESELECT')
         cir_top.select_set(True)
         bpy.context.view_layer.objects.active = cir_top
         set_modifier_subsurf(cir_top)
@@ -449,7 +449,7 @@ def create_column_mesh(self):
     if self.box_top is True:
         box_top = create_rectangular_base(self, "Column_box_top", self.box_top_x, self.box_top_y,
                                           self.box_top_z, self.ramp)
-        bpy.ops.object.select_all(False)
+        bpy.ops.object.select_all(action='DESELECT')
         box_top.select_set(True)
         bpy.context.view_layer.objects.active = box_top
         set_normals(box_top)
@@ -465,7 +465,7 @@ def create_column_mesh(self):
         myarc = create_arc("Column_arch", self.arc_radio, self.arc_gap, self.arc_width,
                            self.array_space_factor)
         myarc.parent = mycolumn
-        bpy.ops.object.select_all(False)
+        bpy.ops.object.select_all(action='DESELECT')
         myarc.select_set(True)
         bpy.context.view_layer.objects.active = myarc
         set_normals(myarc)
@@ -555,7 +555,7 @@ def create_column_mesh(self):
             mat = create_diffuse_material("Column_arch", False, 0.8, 0.8, 0.8)
             set_material(myarc, mat)
 
-    bpy.ops.object.select_all(False)
+    bpy.ops.object.select_all(action='DESELECT')
     mycolumn.select_set(True)
     bpy.context.view_layer.objects.active = mycolumn
 
