@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'38d4483c6a51')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-10 00:00:00\n"
+"POT-Creation-Date: 2019-07-24 00:00:00\n"
 "PO-Revision-Date: 2018-09-23 13:23+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -12172,6 +12172,10 @@ msgstr "分割長度"
 
 msgid "Curvilinear 2D length for chain splitting"
 msgstr "鏈接分割的由曲線組成的 2D 長度"
+
+
+msgid "Base Color"
+msgstr "基礎色彩"
 
 
 msgid "Texture slots defining the mapping and influence of textures"
@@ -37497,10 +37501,6 @@ msgstr "展開一個層級深的所有條目"
 
 msgid "Draw curve"
 msgstr "描繪曲線"
-
-
-msgid "Base Color"
-msgstr "基礎色彩"
 
 
 msgctxt "Operator"

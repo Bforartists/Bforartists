@@ -421,33 +421,10 @@ def vertsToPoints(Verts, splineType):
 # ------------------------------------------------------------
 # Main Function
 
-def main(context, self, align_matrix):
+def main(context, self, align_matrix, use_enter_edit_mode):
     # output splineType 'POLY' 'NURBS' 'BEZIER'
     splineType = self.outputType
     
-    # create object
-    if bpy.context.mode == 'EDIT_CURVE':
-        Curve = context.active_object
-        newSpline = Curve.data.splines.new(type=splineType)          # spline
-        Curve.matrix_world = align_matrix  # apply matrix
-        Curve.rotation_euler = self.Simple_rotation_euler
-    else:
-        name = self.Simple_Type  # Type as name
-        # create curve
-    
-        newCurve = bpy.data.curves.new(name, type='CURVE')  # curvedatablock
-        newSpline = newCurve.splines.new(type=splineType)          # spline
-
-        # set curveOptions
-        newCurve.dimensions = self.shape
-        newCurve.use_path = True
-        
-        # create object with newCurve
-        SimpleCurve = object_utils.object_data_add(context, newCurve, operator=self)  # place in active scene
-        SimpleCurve.select_set(True)
-        SimpleCurve.matrix_world = align_matrix  # apply matrix
-        SimpleCurve.rotation_euler = self.Simple_rotation_euler
-
     sides = abs(int((self.Simple_endangle - self.Simple_startangle) / 90))
 
     # get verts
@@ -538,28 +515,55 @@ def main(context, self, align_matrix):
         verts = SimpleTrapezoid(
                     self.Simple_a, self.Simple_b, self.Simple_h, self.Simple_center
                     )
-
-    # set curveOptions
-    newSpline.use_cyclic_u = self.use_cyclic_u
-    newSpline.use_endpoint_u = self.endp_u
-    newSpline.order_u = self.order_u
     
     # turn verts into array
     vertArray = vertsToPoints(verts, splineType)
-        
+    
+    # create object
+    if bpy.context.mode == 'EDIT_CURVE':
+        Curve = context.active_object
+        newSpline = Curve.data.splines.new(type=splineType)          # spline
+    else:
+        name = self.Simple_Type  # Type as name
+    
+        dataCurve = bpy.data.curves.new(name, type='CURVE')  # curve data block
+        newSpline = dataCurve.splines.new(type=splineType)          # spline
+
+        # create object with new Curve
+        Curve = object_utils.object_data_add(context, dataCurve, operator=self)  # place in active scene
+        Curve.matrix_world = align_matrix  # apply matrix
+        Curve.rotation_euler = self.Simple_rotation_euler
+        Curve.select_set(True)
+    
+    for spline in Curve.data.splines:
+        if spline.type == 'BEZIER':
+            for point in spline.bezier_points:
+                point.select_control_point = False
+                point.select_left_handle = False
+                point.select_right_handle = False
+        else:
+            for point in spline.points:
+                point.select = False
+    
     # create spline from vertarray
+    all_points = []
     if splineType == 'BEZIER':
         newSpline.bezier_points.add(int(len(vertArray) * 0.33))
         newSpline.bezier_points.foreach_set('co', vertArray)
-        all_points = [p for p in newSpline.bezier_points]
         for point in newSpline.bezier_points:
             point.handle_right_type = self.handleType
             point.handle_left_type = self.handleType
+            point.select_control_point = True
+            point.select_left_handle = True
+            point.select_right_handle = True
+            all_points.append(point)
     else:
         newSpline.points.add(int(len(vertArray) * 0.25 - 1))
         newSpline.points.foreach_set('co', vertArray)
         newSpline.use_endpoint_u = True
-        all_points = [p for p in newSpline.points]
+        for point in newSpline.points:
+            all_points.append(point)
+            point.select = True
     
     n = len(all_points)
 
@@ -786,7 +790,25 @@ def main(context, self, align_matrix):
             all_points[int(n / 2) - 1].handle_right_type = 'VECTOR'
             all_points[int(n / 2)].handle_left_type = 'VECTOR'
 
-    return
+    # move and rotate spline in edit mode
+    if bpy.context.mode == 'EDIT_CURVE':
+        bpy.ops.transform.translate(value = self.Simple_startlocation)
+        bpy.ops.transform.rotate(value = self.Simple_rotation_euler[0], orient_axis = 'X')
+        bpy.ops.transform.rotate(value = self.Simple_rotation_euler[1], orient_axis = 'Y')
+        bpy.ops.transform.rotate(value = self.Simple_rotation_euler[2], orient_axis = 'Z')
+    
+    # set newSpline Options
+    newSpline.use_cyclic_u = self.use_cyclic_u
+    newSpline.use_endpoint_u = self.endp_u
+    newSpline.order_u = self.order_u
+    
+    # set curve Options
+    Curve.data.dimensions = self.shape
+    Curve.data.use_path = True
+    if self.shape == '3D':
+        Curve.data.fill_mode = 'FULL'
+    else:
+        Curve.data.fill_mode = 'BOTH'
 
 # ### MENU append ###
 def Simple_curve_edit_menu(self, context):
@@ -795,6 +817,13 @@ def Simple_curve_edit_menu(self, context):
     self.layout.operator("curve.bezier_points_fillet", text="Fillet")
     self.layout.operator("curve.bezier_spline_divide", text="Divide")
     self.layout.separator()
+    
+def Simple_curve_object_menu(self, context):
+    bl_label = 'Simple edit'
+   
+    if context.active_object.type == "CURVE":
+        self.layout.operator("curve.scale_reset", text="Scale Reset")
+        self.layout.separator()
 
 def menu(self, context):
     oper1 = self.layout.operator(Simple.bl_idname, text="Angle", icon="MOD_CURVE")
@@ -1263,9 +1292,20 @@ class Simple(Operator, object_utils.AddObjectHelper):
         return context.scene is not None
 
     def execute(self, context):
+        
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
+        
         # main function
         self.align_matrix = align_matrix(context, self.Simple_startlocation)
-        main(context, self, self.align_matrix)
+        main(context, self, self.align_matrix, use_enter_edit_mode)
+        
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+        
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 
         return {'FINISHED'}
 
@@ -1489,12 +1529,46 @@ class BezierDivide(Operator):
                     selected_all[0].handle_left = h[4]                
 
         return {'FINISHED'}
+        
+# ------------------------------------------------------------
+# CurveScaleReset Operator
+
+class CurveScaleReset(Operator):
+    bl_idname = "curve.scale_reset"
+    bl_label = "Curve Scale Reset"
+    bl_description = "Curve Scale Reset"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene is not None
+
+    def execute(self, context):
+        # main function
+        oldCurve = context.active_object
+        oldCurveName = oldCurve.name
+        
+        bpy.ops.object.duplicate_move(OBJECT_OT_duplicate=None, TRANSFORM_OT_translate=None)
+        newCurve = context.active_object
+        newCurve.data.splines.clear()
+        newCurve.scale = (1.0, 1.0, 1.0)
+        
+        oldCurve.select_set(True)
+        newCurve.select_set(True)
+        bpy.context.view_layer.objects.active = newCurve
+        bpy.ops.object.join()
+        
+        joinCurve = context.active_object
+        joinCurve.name = oldCurveName
+
+        return {'FINISHED'}
 
 # Register
 classes = [
     Simple,
     BezierDivide,
-    BezierPointsFillet
+    BezierPointsFillet,
+    CurveScaleReset
 ]
 
 def register():
@@ -1504,6 +1578,7 @@ def register():
 
     bpy.types.VIEW3D_MT_curve_add.append(menu)
     bpy.types.VIEW3D_MT_edit_curve_context_menu.prepend(Simple_curve_edit_menu)
+    bpy.types.VIEW3D_MT_object_context_menu.prepend(Simple_curve_object_menu)
 
 def unregister():
     from bpy.utils import unregister_class
@@ -1512,6 +1587,7 @@ def unregister():
 
     bpy.types.VIEW3D_MT_curve_add.remove(menu)
     bpy.types.VIEW3D_MT_edit_curve_context_menu.remove(Simple_curve_edit_menu)
+    bpy.types.VIEW3D_MT_object_context_menu.remove(Simple_curve_object_menu)
 
 if __name__ == "__main__":
     register()

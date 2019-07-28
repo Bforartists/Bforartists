@@ -116,10 +116,10 @@ def ConvertToMesh(obj):
 
 # Do the Union, Difference and Intersection Operations with a Brush
 def Operation(context, _operation):
-    prefs = bpy.context.preferences.addons[__name__].preferences
+    prefs = context.preferences.addons[__name__].preferences
     useWire = prefs.use_wire
 
-    for selObj in bpy.context.selected_objects:
+    for selObj in context.selected_objects:
         if (
             selObj != context.active_object and
             (selObj.type == "MESH" or selObj.type == "CURVE")
@@ -140,17 +140,26 @@ def Operation(context, _operation):
             cyclesVis.glossy = False
             cyclesVis.shadow = False
             cyclesVis.transmission = False
+
             if _operation == "SLICE":
                 # copies instance_collection property(empty), but group property is empty (users_group = None)
-                clone = context.active_object.copy()
-                # clone.select_set(state=True)
+                clone = actObj.copy()
                 context.collection.objects.link(clone)
+
+                space_data = context.space_data
+                is_local_view = bool(space_data.local_view)
+
+                if is_local_view:
+                    clone.local_view_set(space_data, True)
+
                 sliceMod = clone.modifiers.new("BTool_" + selObj.name, "BOOLEAN")  # add mod to clone obj
                 sliceMod.object = selObj
                 sliceMod.operation = "DIFFERENCE"
                 clone["BoolToolRoot"] = True
+
             newMod = actObj.modifiers.new("BTool_" + selObj.name, "BOOLEAN")
             newMod.object = selObj
+
             if _operation == "SLICE":
                 newMod.operation = "INTERSECT"
             else:
@@ -645,8 +654,14 @@ class OBJECT_OT_BoolTool_Auto_Slice(Operator, Auto_Boolean):
         obj_copy.data = obj.data.copy()
         context.collection.objects.link(obj_copy)
 
+        space_data = context.space_data
+        is_local_view = bool(space_data.local_view)
+
+        if is_local_view:
+            obj_copy.local_view_set(space_data, True)
+
         self.boolean_mod(obj, ob, "DIFFERENCE", ob_delete=False)
-        bpy.context.view_layer.objects.active = obj_copy
+        context.view_layer.objects.active = obj_copy
         self.boolean_mod(obj_copy, ob, "INTERSECT")
         obj_copy.select_set(state=True)
 

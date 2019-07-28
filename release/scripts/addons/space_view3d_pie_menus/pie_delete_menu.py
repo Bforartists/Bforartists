@@ -63,7 +63,7 @@ class PIE_MT_PieDelete(Menu):
         box = pie.split().column()
         box.operator("mesh.delete", text="Only Edge & Faces", icon='NONE').type = 'EDGE_FACE'
         box.operator("mesh.delete", text="Only Faces", icon='UV_FACESEL').type = 'ONLY_FACE'
-        box.operator("mesh.remove_doubles", text="Remove Doubles", icon='NONE')
+        box.operator("mesh.remove_doubles", text="Merge By Distance", icon='NONE')
 
 
 classes = (

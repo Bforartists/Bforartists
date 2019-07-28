@@ -160,7 +160,7 @@ def add_builtin_menu():
 
 def remove_builtin_menu():
     bpy.types.IMAGE_MT_uvs.remove(image_uvs_menu_fn)
-    bpy.types.VIEW3D_MT_object.append(view3d_object_menu_fn)
+    bpy.types.VIEW3D_MT_object.remove(view3d_object_menu_fn)
     bpy.types.VIEW3D_MT_uv_map.remove(view3d_uvmap_menu_fn)
 
 

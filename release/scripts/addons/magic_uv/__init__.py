@@ -77,8 +77,9 @@ def register():
 
 def unregister():
     user_prefs = utils.compatibility.get_user_preferences(bpy.context)
-    if user_prefs.addons['magic_uv'].preferences.enable_builtin_menu:
-        preferences.remove_builtin_menu()
+
+    preferences.remove_builtin_menu()
+
     properites.clear_props(bpy.types.Scene)
     utils.bl_class_registry.BlClassRegistry.unregister()
 

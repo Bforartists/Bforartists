@@ -213,6 +213,7 @@ def make_curve(self, context, verts, lh, rh):
                         name=target.name + '_Bevel', type='CURVE'
                         )
     curve_data.dimensions = '3D'
+    curve_data.fill_mode = 'FULL'
 
     for p in range(len(verts)):
         c = 0

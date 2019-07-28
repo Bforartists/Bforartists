@@ -32,24 +32,30 @@ else:
 import bpy
 
 import threading
+import requests
+
 
 from bpy.props import (
     BoolProperty,
 )
 
 CLIENT_ID = "IdFRwa3SGA8eMpzhRVFMg5Ts8sPK93xBjif93x0F"
-PORTS = [62485, 1234]
+PORTS = [62485, 65425, 55428, 49452]
 
+active_authenticator = None
 
 def login_thread(signup=False):
+    global active_authenticator
     r_url = paths.get_oauth_landing_url()
     url = paths.get_bkit_url()
-    thread = threading.Thread(target=login, args=([signup, url, r_url]), daemon=True)
+    authenticator = oauth.SimpleOAuthAuthenticator(server_url=url, client_id=CLIENT_ID, ports=PORTS)
+    #we store authenticator globally to be able to ping the server if connection fails.
+    active_authenticator = authenticator
+    thread = threading.Thread(target=login, args=([signup, url, r_url, authenticator]), daemon=True)
     thread.start()
 
 
-def login(signup, url, r_url):
-    authenticator = oauth.SimpleOAuthAuthenticator(server_url=url, client_id=CLIENT_ID, ports=PORTS)
+def login(signup, url, r_url, authenticator):
     auth_token, refresh_token = authenticator.get_new_token(register=signup, redirect_url=r_url)
     utils.p('tokens retrieved')
     tasks_queue.add_task((write_tokens, (auth_token, refresh_token)))
@@ -140,8 +146,16 @@ class CancelLoginOnline(bpy.types.Operator):
         return True
 
     def execute(self, context):
+        global active_authenticator
         preferences = bpy.context.preferences.addons['blenderkit'].preferences
         preferences.login_attempt = False
+        try:
+            if active_authenticator is not None:
+                requests.get(active_authenticator.redirect_uri)
+                active_authenticator = None
+        except Exception as e:
+            print('stopped login attempt')
+            print(e)
         return {'FINISHED'}
 
 
