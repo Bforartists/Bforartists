@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'38d4483c6a51')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-10 00:00:00\n"
+"POT-Creation-Date: 2019-07-24 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzan <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -7475,6 +7475,14 @@ msgid "Include visualization of animation data related to data-blocks linked to 
 msgstr "Incluir la visualización de los datos de animación relativos a bloques de datos vinculados a modificadores"
 
 
+msgid "Display Movie Clips"
+msgstr "Mostrar clips de película"
+
+
+msgid "Include visualization of movie clip related animation data"
+msgstr "Incluir la visualización de los datos de animación relativos a clips de película"
+
+
 msgid "Display Node"
 msgstr "Mostrar nodo"
 
@@ -9533,7 +9541,7 @@ msgstr "Repite los valores de la curva-f modificada"
 
 
 msgid "After Cycles"
-msgstr "Repeticiones"
+msgstr "Repeticiones finales"
 
 
 msgid "Maximum number of cycles to allow after last keyframe (0 = infinite)"
@@ -9541,7 +9549,7 @@ msgstr "Cantidad máxima de repeticiones permitidas luego del último fotograma 
 
 
 msgid "Before Cycles"
-msgstr "Repeticiones"
+msgstr "Repeticiones iniciales"
 
 
 msgid "Maximum number of cycles to allow before first keyframe (0 = infinite)"
@@ -9549,7 +9557,7 @@ msgstr "Cantidad máxima de repeticiones permitidas antes del primer fotograma c
 
 
 msgid "After Mode"
-msgstr "Modo después"
+msgstr "Modo final"
 
 
 msgid "Cycling mode to use after last keyframe"
@@ -9561,11 +9569,11 @@ msgstr "No repetir"
 
 
 msgid "Don't do anything"
-msgstr "No hace nada"
+msgstr "No hacer nada"
 
 
 msgid "Repeat Motion"
-msgstr "Repetir"
+msgstr "Repetir movimiento"
 
 
 msgid "Repeat keyframe range as-is"
@@ -9589,7 +9597,7 @@ msgstr "Alternancia entre una reproducción normal e inversa del rango de fotogr
 
 
 msgid "Before Mode"
-msgstr "Modo antes"
+msgstr "Modo inicial"
 
 
 msgid "Cycling mode to use before first keyframe"
@@ -13916,6 +13924,10 @@ msgid "Factor of Simplify"
 msgstr "Factor de simplificación"
 
 
+msgid "How to simplify the stroke"
+msgstr "Cómo simplificar el trazo"
+
+
 msgid "Fixed"
 msgstr "Fijo"
 
@@ -15091,6 +15103,10 @@ msgstr "Contenedor de texturas"
 
 msgid "Topology Rake"
 msgstr "Arrastrar topología"
+
+
+msgid "Automatically align edges to the brush direction to generate cleaner topology and define sharp features. Best used on low-poly meshes as it has a performance impact"
+msgstr "Alinea los bordes de la malla en la dirección del pincel para generar una topología más limpia y definir formas de una manera más precisa. Mejor al ser usado en mallas de bajos polígonos, dado que tiene un impacto sobre el rendimiento"
 
 
 msgid "Unprojected Radius"
@@ -16793,6 +16809,34 @@ msgid "Curvilinear 2D length for chain splitting"
 msgstr "Longitud curvilínea 2D para la división de cadenas"
 
 
+msgid "Stroke Color Mode"
+msgstr "Modo de color del trazo"
+
+
+msgid "Base Color"
+msgstr "Color base"
+
+
+msgid "Use the linestyle's base color"
+msgstr "Usa el color base del estilo de línea"
+
+
+msgid "First Vertex"
+msgstr "Vértice inicial"
+
+
+msgid "Use the color of a stroke's first vertex"
+msgstr "Usa el color del primer vértice del trazo"
+
+
+msgid "Final Vertex"
+msgstr "Vértice final"
+
+
+msgid "Use the color of a stroke's final vertex"
+msgstr "Usa el color del último vértice del trazo"
+
+
 msgid "Texture slots defining the mapping and influence of textures"
 msgstr "Contenedores de textura que definen el mapeo e influencia de las texturas"
 
@@ -16887,6 +16931,22 @@ msgstr "Línea discontinua"
 
 msgid "Enable or disable dashed line"
 msgstr "Habilita o deshabilita la línea discontinua"
+
+
+msgid "Export Fills"
+msgstr "Exportar rellenos"
+
+
+msgid "Export fills for this Line Style"
+msgstr "Exportar rellenos para este estilo de línea"
+
+
+msgid "Export Strokes"
+msgstr "Exportar trazos"
+
+
+msgid "Export strokes for this Line Style"
+msgstr "Exportar trazos para este estilo de línea"
 
 
 msgid "Use Max 2D Length"
@@ -18821,6 +18881,10 @@ msgstr "Permite enmascarar las áreas a pintar, mediante la selección de caras"
 
 msgid "Vertex Selection"
 msgstr "Selección de vértices"
+
+
+msgid "Vertex selection masking for painting"
+msgstr "Permite enmascarar las áreas a pintar, mediante la selección de vértices"
 
 
 msgid "Clone UV loop layer"
@@ -26672,6 +26736,10 @@ msgid "Checker Board"
 msgstr "Damero"
 
 
+msgid "Fill area with checkerboard pattern"
+msgstr "Rellenar el área con un patrón de damero"
+
+
 msgid "Fill area with image texture"
 msgstr "Rellenar el área con una textura de imagen"
 
@@ -27056,6 +27124,11 @@ msgstr "Fusionar / Alinear"
 
 msgid "Fractional Zoom"
 msgstr "Zoom fraccional"
+
+
+msgctxt "Operator"
+msgid "MASK_MT_add"
+msgstr "MASK_MT_add"
 
 
 msgctxt "Operator"
@@ -35639,7 +35712,7 @@ msgstr "Usar sombreadores para Eevee"
 
 
 msgid "Cycles"
-msgstr "Repetición"
+msgstr "Cycles"
 
 
 msgid "Use shaders for Cycles renderer"
@@ -53532,10 +53605,6 @@ msgid "Add a texture paint slot"
 msgstr "Permite agregar un contenedor donde pintar una textura"
 
 
-msgid "Base Color"
-msgstr "Color base"
-
-
 msgctxt "Operator"
 msgid "Brush Colors Flip"
 msgstr "Invertir colores pincel"
@@ -60937,6 +61006,10 @@ msgid "Apply Global Orientation"
 msgstr "Aplicar orientación global"
 
 
+msgid "Rotate all root objects to match the global orientation settings otherwise set the global orientation per Collada asset"
+msgstr "Rotar todos los objetos raíz para que coincidan con las preferencias de orientación global, de lo contrario se define la orientación global por cada elemento de Collada"
+
+
 msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "Aplica los modificadores a la malla exportada (no destructivo)"
 
@@ -60947,6 +61020,10 @@ msgstr "Sólo huesos deformantes"
 
 msgid "Only export deforming bones with armatures"
 msgstr "Sólo exporta en el esqueleto los huesos que deforman"
+
+
+msgid "Transformation type for translation, scale and rotation. Note: The Animation transformation type in the Anim Tab is always equal to the Object transformation type in the Geom tab"
+msgstr "Tipo de transformación para traslación, rotación y escala. Nota: El valor Tipo de transformación de la solapa Anim es siempre igual al valor Tipo de transformación de la solapa Geom"
 
 
 msgid "Use <matrix> representation for exported transformations"
@@ -62062,17 +62139,17 @@ msgid "Load Factory Settings"
 msgstr "Cargar opciones predefinidas"
 
 
-msgid "Load default file and preferences"
-msgstr "Carga el archivo y preferencias de usuario predefinidos"
+msgid "Load factory default startup file and preferences. To make changes permanent, use \"Save Startup File\" and \"Save Preferences\""
+msgstr "Carga el archivo de inicio y las preferencias predefinidas de fábrica. Para hacer los cambios permanentes, usar \"Guardar archivo de inicio\" y \"Guardar preferencias\""
 
 
 msgctxt "Operator"
 msgid "Load Factory Preferences"
-msgstr "Cargar preferencias de fábrica"
+msgstr "Cargar preferencias predefinidas"
 
 
-msgid "Load default preferences"
-msgstr "Carga las preferencias predefinidas"
+msgid "Load factory default preferences. To make changes to preferences permanent, use \"Save Preferences\""
+msgstr "Carga las preferencias predefinidas de fábrica. Para hacer los cambios permanentes, usar \"Guardar preferencias\""
 
 
 msgctxt "Operator"
@@ -63863,6 +63940,22 @@ msgstr "Diagnósticos"
 
 msgid "Helpers"
 msgstr "Ayudantes"
+
+
+msgid "Creates a Panel in the Render Layers context of the properties editor"
+msgstr "Crea un panel en el contexto de Capas de procesamiento del editor de propiedades"
+
+
+msgid "Freestyle Line Style SVG Export"
+msgstr "Freestyle - Exportar a SVG estilos de línea "
+
+
+msgid "Creates a Panel in the render context of the properties editor"
+msgstr "Crea un panel en el contexto de Procesamiento del editor de propiedades"
+
+
+msgid "Freestyle SVG Export"
+msgstr "Freestyle - Exportar a SVG"
 
 
 msgid "Color Management"
@@ -68851,8 +68944,8 @@ msgid "Min Transparent Bounces"
 msgstr "Rebotes de transparencia mín"
 
 
-msgid "Minimum number of transparnet bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
-msgstr "Cantidad mínima de rebotes de transparencia. Valores más altos reducen el ruido de los primeros rebotes, pero también puede resultar más ineficiente con geometría compleja como pelo o volúmenes"
+msgid "Minimum number of transparent bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
+msgstr "Cantidad mínima de rebotes de transparencia. Valores más altos reducen el ruido de los primeros rebotes, pero también puede resultar menos eficiente con geometrías complejas como pelo o volúmenes"
 
 
 msgid "Motion Blur Position"
@@ -69517,6 +69610,62 @@ msgstr "Copiar texturas"
 
 msgid "Copy textures on export to the output path"
 msgstr "Al exportar copia las texturas a la ruta de destino"
+
+
+msgid "Implements the properties for the SVG exporter"
+msgstr "Implementa las propiedades para el exportador a SVG"
+
+
+msgid "Linejoin"
+msgstr "Unir líneas"
+
+
+msgid "Miter"
+msgstr "Inglete"
+
+
+msgid "Corners are sharp"
+msgstr "Esquinas definidas"
+
+
+msgid "Corners are smoothed"
+msgstr "Esquinas suavizadas"
+
+
+msgid "Corners are bevelled"
+msgstr "Esquinas biseladas"
+
+
+msgid "Export a single frame"
+msgstr "Exportar fotograma"
+
+
+msgid "Export an animation"
+msgstr "Exportar animación"
+
+
+msgid "Fill Contours"
+msgstr "Rellenar contronos"
+
+
+msgid "Fill the contour with the object's material color"
+msgstr "Rellena el contorno con el color del material del objeto"
+
+
+msgid "Split at Invisible"
+msgstr "Dividir en invisibles"
+
+
+msgid "Split the stroke at an invisible vertex"
+msgstr "Divide el trazo en los vértices invisibles"
+
+
+msgid "SVG Export"
+msgstr "Exportar a SVG"
+
+
+msgid "Export Freestyle edges to an .svg format"
+msgstr "Exporta los bordes de Freestyle a formato .svg"
 
 
 msgid "Selected UV Element"
@@ -80397,6 +80546,14 @@ msgid "Show the bone selection overlay"
 msgstr "Muestra superpuesta la selección de huesos"
 
 
+msgid "Stencil Opacity"
+msgstr "Opacidad esténcil"
+
+
+msgid "Opacity of the texture paint mode stencil mask overlay"
+msgstr "Opacidad de la máscara del esténcil del modo de pintura de texturas"
+
+
 msgid "Show Edit Lines"
 msgstr "Mostrar líneas edición"
 
@@ -81609,8 +81766,33 @@ msgstr "UV - Editor"
 
 
 msgctxt "WindowManager"
+msgid "Image Editor Tool: Uv, Move"
+msgstr "Editor de imágenes: UV, Mover"
+
+
+msgctxt "WindowManager"
+msgid "Image Editor Tool: Uv, Rotate"
+msgstr "Editor de imágenes: UV, Rotar"
+
+
+msgctxt "WindowManager"
+msgid "Image Editor Tool: Uv, Scale"
+msgstr "Editor de imágenes: UV, Escalar"
+
+
+msgctxt "WindowManager"
 msgid "UV Sculpt"
 msgstr "UV - Escultura"
+
+
+msgctxt "WindowManager"
+msgid "Image View"
+msgstr "Visor de imágenes"
+
+
+msgctxt "WindowManager"
+msgid "Image Editor Tool: Sample"
+msgstr "Editor de imágenes: Muestra"
 
 
 msgctxt "WindowManager"
@@ -86637,8 +86819,8 @@ msgstr "Auto-guardar preferencias"
 
 
 msgctxt "Operator"
-msgid "Revert to Saved"
-msgstr "Recuperar guardadas"
+msgid "Revert to Saved Preferences"
+msgstr "Revertir a preferencias guardadas"
 
 
 msgid "Resolution Scale"
@@ -86879,11 +87061,6 @@ msgid "Save as Studio light"
 msgstr "Guardar como iluminación de estudio"
 
 
-msgctxt "Operator"
-msgid "Save Current State"
-msgstr "Guardar estado actual"
-
-
 msgid "Color Set d"
 msgstr "Conjunto de colores d"
 
@@ -86926,11 +87103,6 @@ msgstr "Archivos de script faltantes"
 
 msgid "No custom {} configured"
 msgstr "No hay un {} personalizado configurado"
-
-
-msgctxt "Operator"
-msgid "Skip Auto-Save"
-msgstr "Omitir guardado automático"
 
 
 msgid ":"
@@ -93078,6 +93250,10 @@ msgid "Right click on buttons to add them to this menu"
 msgstr "Clic derecho sobre los botones para agregarlos a este menú"
 
 
+msgid "Quick Favorites"
+msgstr "Favoritos rápidos"
+
+
 msgctxt "Operator"
 msgid "Duplicate Current"
 msgstr "Duplicar activo"
@@ -94310,6 +94486,10 @@ msgstr "No es posible duplicar la colección principal"
 
 msgid "Could not find a valid parent collection for the new duplicate, it won't be linked to any view layer"
 msgstr "No se pudo encontrar una colección superior válida para el nuevo duplicado, no quedará vinculado a ninguna capa de visualización"
+
+
+msgid "Cannot add a collection to a linked collection/scene"
+msgstr "No es posible agregar una colección a una colección/escena vinculada"
 
 
 msgid "Cannot delete linked collection '%s', it is used by other linked scenes/collections"
@@ -96124,6 +96304,10 @@ msgid "Can only assign evaluated data to evaluated object, or original data to o
 msgstr "Sólo es posible asignar datos evaluados a un objeto evaluado, o datos originales a un objeto original"
 
 
+msgid "Only empty objects support collection instances"
+msgstr "Sólo los objetos vacíos soportan instancias de colecciones"
+
+
 msgid "Cannot set instance-collection as object belongs in group being instanced, thus causing a cycle"
 msgstr "No es posible definir una instancia de la colección porque el objeto pertenece a la colección que está siendo instanciada, causando así una dependencia cíclica"
 
@@ -96184,8 +96368,12 @@ msgid "Bad vertex index in list"
 msgstr "Índice de vértices en lista incorrecto"
 
 
-msgid "Object '%s' not in View Layer '%s'!"
-msgstr "¡El objeto '%s' no está en la capa de visualización '%s'!"
+msgid "Object '%s' can't be selected because it is not in View Layer '%s'!"
+msgstr "El objeto '%s' no puede ser seleccionado porque no se encuentra en la Capa de visualización '%s'!"
+
+
+msgid "Object '%s' can't be hidden because it is not in View Layer '%s'!"
+msgstr "El objeto '%s' no puede ser ocultado porque no se encuentra en la Capa de visualización '%s'!"
 
 
 msgid "Object %s not in view layer %s"

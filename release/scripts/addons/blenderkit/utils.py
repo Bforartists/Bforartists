@@ -197,13 +197,15 @@ def save_prefs(self, context):
             'API_key_refresh': user_preferences.api_key_refresh,
             'global_dir': user_preferences.global_dir,
         }
-        # user_preferences.api_key = user_preferences.api_key.strip()
-        fpath = paths.BLENDERKIT_SETTINGS_FILENAME
-        f = open(fpath, 'w')
-        with open(fpath, 'w') as s:
-            json.dump(prefs, s)
-        # this was crashing blender 2.8 since some point, probably not needed since autosave is in preferences.
-        # bpy.ops.wm.save_userpref()
+        try:
+            fpath = paths.BLENDERKIT_SETTINGS_FILENAME
+            if not os.path.exists(paths._presets):
+                os.makedirs(paths._presets)
+            f = open(fpath, 'w')
+            with open(fpath, 'w') as s:
+                json.dump(prefs, s)
+        except Exception as e:
+            print(e)
 
 
 def get_hidden_image(tpath, bdata_name, force_reload=False):
@@ -261,7 +263,7 @@ def get_brush_props(context):
 
 def p(text, text1='', text2='', text3='', text4='', text5=''):
     '''debug printing depending on blender's debug value'''
-    if bpy.app.debug_value > 0:
+    if bpy.app.debug_value != 0:
         print(text, text1, text2, text3, text4, text5)
 
 
@@ -424,7 +426,8 @@ def automap(target_object=None, target_slot=None, tex_size=1, bg_exception=False
             if tob.data.use_auto_texspace:
                 tob.data.use_auto_texspace = False
 
-            tob.data.texspace_size = (1, 1, 1)
+            if not just_scale:
+                tob.data.texspace_size = (1, 1, 1)
 
             if 'automap' not in tob.data.uv_layers:
                 bpy.ops.mesh.uv_texture_add()

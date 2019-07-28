@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'38d4483c6a51')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-10 00:00:00\n"
+"POT-Creation-Date: 2019-07-24 00:00:00\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -16791,6 +16791,10 @@ msgstr "Поділ за довжиною"
 
 msgid "Curvilinear 2D length for chain splitting"
 msgstr "Довжина вздовж кривої для розділення ланцюжка"
+
+
+msgid "Base Color"
+msgstr "Основний колір"
 
 
 msgid "Texture slots defining the mapping and influence of textures"
@@ -53527,10 +53531,6 @@ msgid "Add a texture paint slot"
 msgstr "Додати гніздо текстурного малювання"
 
 
-msgid "Base Color"
-msgstr "Основний колір"
-
-
 msgctxt "Operator"
 msgid "Brush Colors Flip"
 msgstr "Перемкнути кольори пензля"
@@ -62057,17 +62057,9 @@ msgid "Load Factory Settings"
 msgstr "Завантажити Заводські Устави"
 
 
-msgid "Load default file and preferences"
-msgstr "Завантажити стандартні файл та уподобання"
-
-
 msgctxt "Operator"
 msgid "Load Factory Preferences"
 msgstr "Завантажити Заводські Уподобання"
-
-
-msgid "Load default preferences"
-msgstr "Завантажити стандартні уподобання"
 
 
 msgctxt "Operator"
@@ -68844,10 +68836,6 @@ msgstr "Мінімальна кількість відскоків світла.
 
 msgid "Min Transparent Bounces"
 msgstr "Мін відскоків прозорості"
-
-
-msgid "Minimum number of transparnet bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
-msgstr "Мінімальна кількість відскоків прозорості. Задання цього вище скорочує шум у перших відскоках, але може також бути менш ефективним для більш складної геометрії, такої як волосся та об'єми"
 
 
 msgid "Motion Blur Position"
@@ -86627,11 +86615,6 @@ msgid "Auto-Save Preferences"
 msgstr "Уподобання Авто-Збереження"
 
 
-msgctxt "Operator"
-msgid "Revert to Saved"
-msgstr "Вернутися до Збереженого"
-
-
 msgid "Resolution Scale"
 msgstr "Масштаб Роздільності"
 
@@ -86870,11 +86853,6 @@ msgid "Save as Studio light"
 msgstr "Зберегти як Студійний освітлювач"
 
 
-msgctxt "Operator"
-msgid "Save Current State"
-msgstr "Зберегти Поточний Стан"
-
-
 msgid "Color Set d"
 msgstr "Набір Кольорів d"
 
@@ -86917,11 +86895,6 @@ msgstr "Немає файлів зі скриптами"
 
 msgid "No custom {} configured"
 msgstr "Нема власного {} сконфігурованого"
-
-
-msgctxt "Operator"
-msgid "Skip Auto-Save"
-msgstr "Пропуск автозбереження"
 
 
 msgid ":"
@@ -96162,10 +96135,6 @@ msgstr "Неправильний режим присвоювання"
 
 msgid "Bad vertex index in list"
 msgstr "Поганий індекс вершини у списку"
-
-
-msgid "Object '%s' not in View Layer '%s'!"
-msgstr "Об'єкт '%s' не у Шарі Огляду '%s'!"
 
 
 msgid "Object %s not in view layer %s"

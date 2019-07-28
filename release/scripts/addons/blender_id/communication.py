@@ -30,6 +30,9 @@ BLENDER_ID_ENDPOINT = 'https://id.blender.org/'
 # Will become a requests.Session at the first request to Blender ID.
 requests_session = None
 
+# Request timeout, in seconds.
+REQUESTS_TIMEOUT = 5.0
+
 
 class BlenderIdCommError(RuntimeError):
     """Raised when there was an error communicating with Blender ID"""
@@ -56,7 +59,7 @@ def host_label():
 def blender_id_session():
     """Returns the Requests session, creating it if necessary."""
     global requests_session
-    import requests
+    import requests.adapters
 
     if requests_session is not None:
         return requests_session
@@ -66,7 +69,7 @@ def blender_id_session():
     # Retry with backoff factor, so that a restart of Blender ID or hickup
     # in the connection doesn't immediately fail the request.
     retries = requests.packages.urllib3.util.retry.Retry(
-        total=10,
+        total=5,
         backoff_factor=0.05,
     )
     http_adapter = requests.adapters.HTTPAdapter(max_retries=retries)
@@ -129,7 +132,7 @@ def blender_id_server_authenticate(username, password) -> AuthResult:
     url = blender_id_endpoint('u/identify')
     session = blender_id_session()
     try:
-        r = session.post(url, data=payload, verify=True)
+        r = session.post(url, data=payload, verify=True, timeout=REQUESTS_TIMEOUT)
     except (requests.exceptions.SSLError,
             requests.exceptions.HTTPError,
             requests.exceptions.ConnectionError) as e:
@@ -169,7 +172,7 @@ def blender_id_server_validate(token) -> typing.Tuple[typing.Optional[str], typi
     url = blender_id_endpoint('u/validate_token')
     session = blender_id_session()
     try:
-        r = session.post(url, data={'token': token}, verify=True)
+        r = session.post(url, data={'token': token}, verify=True, timeout=REQUESTS_TIMEOUT)
     except requests.exceptions.ConnectionError:
         log.exception('error connecting to Blender ID at %s', url)
         return None, 'Unable to connect to Blender ID'
@@ -204,7 +207,7 @@ def blender_id_server_logout(user_id, token):
     session = blender_id_session()
     try:
         r = session.post(blender_id_endpoint('u/delete_token'),
-                         data=payload, verify=True)
+                         data=payload, verify=True, timeout=REQUESTS_TIMEOUT)
     except (requests.exceptions.SSLError,
             requests.exceptions.HTTPError,
             requests.exceptions.ConnectionError) as e:
@@ -263,7 +266,8 @@ def make_authenticated_call(method, url, auth_token, data):
                             blender_id_endpoint(url),
                             data=data,
                             headers={'Authorization': 'Bearer %s' % auth_token},
-                            verify=True)
+                            verify=True,
+                            timeout=REQUESTS_TIMEOUT)
     except (requests.exceptions.HTTPError,
             requests.exceptions.ConnectionError) as e:
         raise BlenderIdCommError(str(e))
@@ -292,7 +296,8 @@ def send_token_to_subclient(webservice_endpoint: str, user_id: str,
                          data={'user_id': user_id,
                                'subclient_id': subclient_id,
                                'token': subclient_token},
-                         verify=True)
+                         verify=True,
+                         timeout=REQUESTS_TIMEOUT)
         r.raise_for_status()
     except (requests.exceptions.HTTPError,
             requests.exceptions.ConnectionError) as e:

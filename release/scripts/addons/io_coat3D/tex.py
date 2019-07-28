@@ -234,7 +234,7 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures): #r
                             else:
                                 os.remove(texture_info[3])
                         elif texture_info[2] == 'alpha' or texture_info[2] == 'opacity':
-                            if (index_mat.material.coat3D_metalness):
+                            if (index_mat.material.coat3D_alpha):
                                 texcoat['alpha'].append(texture_info[3])
                                 create_nodes = True
                             else:
@@ -293,7 +293,7 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures): #r
                             else:
                                 os.remove(texture_info[3])
                         elif texture_info[2] == 'alpha' or texture_info[2] == 'opacity':
-                            if (index_mat.material.coat3D_metalness):
+                            if (index_mat.material.coat3D_alpha):
                                 texcoat['alpha'].append(texture_info[3])
                                 create_nodes = True
                             else:
@@ -511,7 +511,7 @@ def createnodes(active_mat,texcoat, create_group_node, tile_list, objekti, ind, 
             if (bring_displacement == True and texcoat['displacement'] != []):
                 CreateTextureLine(data['displacement'], act_material, main_mat, texcoat, coat3D, notegroup,
                                   main_material, applink_tree, out_mat, coatMat, tile_list, objekti, ind, is_new)
-            if (bring_color == True and texcoat['alpha'] != []):
+            if (bring_alpha == True and texcoat['alpha'] != []):
                 CreateTextureLine(data['alpha'], act_material, main_mat, texcoat, coat3D, notegroup,
                                   main_material, applink_tree, out_mat, coatMat, tile_list, objekti, ind, is_new)
 
@@ -716,12 +716,11 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
             coatMat.cycles.displacement_method = 'BOTH'
 
         else:
-
             if (texcoat['alpha'] != []):
                 if (type['name'] == 'color'):
                     act_material.links.new(node.outputs[1], notegroup.inputs[8])
             else:
-                if (type['name'] == 'alpha'):
+                if (type['name'] == 'color'):
                     act_material.links.new(node.outputs[1], notegroup.inputs[8])
 
             huenode = createExtraNodes(act_material, node, type)
@@ -729,6 +728,9 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
             act_material.links.new(huenode.outputs[0], notegroup.inputs[type['input']])
             if (main_mat.type != 'MIX_SHADER' and input_color != -1):
                 main_material.links.new(applink_tree.outputs[type['input']], main_mat.inputs[input_color])
+                if(type['name'] == 'color'): #Alpha connection into Principled shader
+                    main_material.links.new(applink_tree.outputs['Alpha'], main_mat.inputs['Alpha'])
+
             else:
                 location = main_mat.location
                 #applink_tree.location = main_mat.location[0], main_mat.location[1] + 200

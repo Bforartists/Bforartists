@@ -370,6 +370,8 @@ def draw_tooltip(x, y, text='', author='', img=None, gravatar=None):
 
     texth = line_height * nlines + nameline_height
 
+    if max(img.size[0], img.size[1]) == 0:
+        return;
     isizex = int(512 * scale * img.size[0] / max(img.size[0], img.size[1]))
     isizey = int(512 * scale * img.size[1] / max(img.size[0], img.size[1]))
 
@@ -1563,6 +1565,8 @@ class AssetBarOperator(bpy.types.Operator):
             asset_data = sr[ui_props.active_index]
             a = asset_data['author_id']
             if a is not None:
+                sprops = utils.get_search_props()
+                sprops.search_keywords = ''
                 utils.p('author:', a)
                 search.search(author_id=a)
             return {'RUNNING_MODAL'}
@@ -1644,8 +1648,8 @@ classess = (
 
 )
 
-# store keymaps here to access after registration
-addon_keymaps = []
+# store keymap items here to access after registration
+addon_keymapitems = []
 
 
 def register_ui():
@@ -1669,7 +1673,7 @@ def register_ui():
     kmi.properties.keep_running = False
     kmi.properties.do_search = False
 
-    addon_keymaps.append(km)
+    addon_keymapitems.append(kmi)
 
 
 def unregister_ui():
@@ -1681,12 +1685,11 @@ def unregister_ui():
     for c in classess:
         bpy.utils.unregister_class(c)
 
-    args = (None, bpy.context)
-
     wm = bpy.context.window_manager
     if not wm.keyconfigs.addon:
         return
 
-    for km in addon_keymaps:
-        wm.keyconfigs.addon.keymaps.remove(km)
-    del addon_keymaps[:]
+    km = wm.keyconfigs.addon.keymaps['Window']
+    for kmi in addon_keymapitems:
+        km.keymap_items.remove(kmi)
+    del addon_keymapitems[:]

@@ -61,10 +61,14 @@ looptools_cache = {}
 
 
 def get_annotation(self, context):
-    if 'Annotations' in bpy.data.grease_pencils.keys():
-        return True
+    if self.use_annotation:
+        try:
+            strokes = bpy.data.grease_pencils[0].layers.active.active_frame.strokes
+            return True
+        except:
+            self.report({'WARNING'}, "active Annotation strokes not found")
+            return False
     else:
-        self.report({'WARNING'}, "Annotation not found")
         return False
 
 # force a full recalculation next time
@@ -2840,7 +2844,7 @@ def gstretch_get_strokes(self, context):
     gp = get_annotation(self, context)
     if not gp:
         return(None)
-    layer = bpy.data.grease_pencils["Annotations"].layers["Note"]
+    layer = bpy.data.grease_pencils[0].layers.active
     if not layer:
         return(None)
     frame = layer.active_frame
@@ -3818,15 +3822,15 @@ class Flatten(Operator):
 # gstretch operator
 class RemoveGP(Operator):
     bl_idname = "remove.gp"
-    bl_label = "Remove GP"
+    bl_label = "Remove Annotation"
     bl_description = "Remove all Annotation Strokes"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
 
-        if get_annotation(self, context):
-            bpy.data.grease_pencils["Annotations"].layers["Note"].clear()
-        else:
+        try:
+            bpy.data.grease_pencils[0].layers.active.clear()
+        except:
             self.report({'INFO'}, "No Annotation data to Unlink")
             return {'CANCELLED'}
 
@@ -3836,7 +3840,7 @@ class RemoveGP(Operator):
 class GStretch(Operator):
     bl_idname = "mesh.looptools_gstretch"
     bl_label = "Gstretch"
-    bl_description = "Stretch selected vertices to Annotation stroke"
+    bl_description = "Stretch selected vertices to active Annotation stroke"
     bl_options = {'REGISTER', 'UNDO'}
 
     conversion: EnumProperty(
@@ -3932,6 +3936,10 @@ class GStretch(Operator):
                     "stroke",
         default='regular'
         )
+    use_annotation: BoolProperty(
+        name="Use Annotation",
+        default=True
+        )
 
     @classmethod
     def poll(cls, context):
@@ -3941,7 +3949,10 @@ class GStretch(Operator):
     def draw(self, context):
         layout = self.layout
         col = layout.column()
-
+        
+        col.separator()
+        col.prop(self, "use_annotation")
+        col.separator()
         col.prop(self, "method")
         col.separator()
 
@@ -3973,7 +3984,7 @@ class GStretch(Operator):
             row.prop(self, "lock_z", text="Z", icon='UNLOCKED')
         col_move.prop(self, "influence")
         col.separator()
-        col.operator("remove.gp", text="Delete GP Strokes")
+        col.operator("remove.gp", text="Cancel and delete annotation strokes")
 
     def invoke(self, context, event):
         # flush cached strokes
@@ -4499,6 +4510,7 @@ class VIEW3D_PT_tools_looptools(Panel):
         # gstretch settings
         if lt.display_gstretch:
             box = col.column(align=True).box().column()
+            box.prop(lt, "gstretch_use_annotation")
             box.prop(lt, "gstretch_method")
 
             col_conv = box.column(align=True)
@@ -4970,6 +4982,10 @@ class LoopToolsProps(PropertyGroup):
                     "Pencil stroke",
         default='regular'
         )
+    gstretch_use_annotation: BoolProperty(
+        name="Use Annotation",
+        default=False
+        )
 
     # relax properties
     relax_input: EnumProperty(name="Input",
@@ -5041,7 +5057,6 @@ class LoopToolsProps(PropertyGroup):
         description="Lock editing of the z-coordinate",
         default=False
         )
-
 
 # draw function for integration in menus
 def menu_func(self, context):
