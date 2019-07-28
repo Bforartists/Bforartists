@@ -386,6 +386,10 @@ class VIEW3D_PT_blenderkit_model_properties(Panel):
         layout.operator('object.blenderkit_bring_to_scene', text='Bring to scene')
         # layout.operator('object.blenderkit_color_corrector')
 
+def draw_login_progress(layout):
+    layout.label(text='Login through browser')
+    layout.label(text='in progress.')
+    layout.operator("wm.blenderkit_login_cancel", text="Cancel", icon='CANCEL')
 
 class VIEW3D_PT_blenderkit_profile(Panel):
     bl_category = "BlenderKit"
@@ -405,14 +409,14 @@ class VIEW3D_PT_blenderkit_profile(Panel):
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
         if user_preferences.login_attempt:
-            layout.label(text='Login through browser')
-            layout.label(text='in progress.')
-            layout.operator("wm.blenderkit_login_cancel", text="Cancel", icon='CANCEL')
+            draw_login_progress(layout)
             return
 
         if user_preferences.enable_oauth:
             draw_login_buttons(layout)
-        else:
+
+
+        if user_preferences.api_key != '':
             me = bpy.context.window_manager.get('bkit profile')
             if me is not None:
                 me = me['user']
@@ -424,6 +428,7 @@ class VIEW3D_PT_blenderkit_profile(Panel):
                     layout.label(text='Private assets: %i MiB' % (me['sumPrivateAssetFilesSize']))
                 if me.get('remainingPrivateQuota') is not None:
                     layout.label(text='Remaining private storage: %i MiB' % (me['remainingPrivateQuota']))
+                    
             layout.operator("wm.url_open", text="See my uploads",
                             icon='URL').url = paths.BLENDERKIT_USER_ASSETS
 
@@ -545,18 +550,22 @@ def draw_login_buttons(layout):
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
     if user_preferences.login_attempt:
-        layout.label(text='Login through browser')
-        layout.label(text='in progress.')
-        layout.operator("wm.blenderkit_login_cancel", text="Cancel", icon='CANCEL')
+        draw_login_progress(layout)
     else:
-        layout.operator("wm.blenderkit_login", text="Login",
-                        icon='URL').signup = False
-        layout.operator("wm.blenderkit_login", text="Sign up",
-                        icon='URL').signup = True
+        if user_preferences.api_key == '':
+            layout.operator("wm.blenderkit_login", text="Login",
+                            icon='URL').signup = False
+            layout.operator("wm.blenderkit_login", text="Sign up",
+                            icon='URL').signup = True
 
-    if user_preferences.api_key != '':
-        layout.operator("wm.blenderkit_logout", text="Logout",
-                icon='URL')
+        else:
+            layout.operator("wm.blenderkit_login", text="Login as someone else",
+                           icon='URL').signup = False
+            layout.operator("wm.blenderkit_logout", text="Logout",
+                            icon='URL')
+
+
+
 
 class VIEW3D_PT_blenderkit_unified(Panel):
     bl_category = "BlenderKit"
@@ -587,9 +596,7 @@ class VIEW3D_PT_blenderkit_unified(Panel):
 
         w = context.region.width
         if user_preferences.login_attempt:
-            layout.label(text='Login through browser')
-            layout.label(text='in progress.')
-            layout.operator("wm.blenderkit_login_cancel", text="Cancel", icon='CANCEL')
+            draw_login_progress(layout)
             return
 
         if len(user_preferences.api_key) < 20 and user_preferences.asset_counter > 20:

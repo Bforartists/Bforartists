@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'91d3b00395ec')\n"
+"Project-Id-Version: Blender 2.80 (sub 74) (b'38d4483c6a51')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-10 00:00:00\n"
-"PO-Revision-Date: 2019-07-10 22:10+0900\n"
+"POT-Creation-Date: 2019-07-24 00:00:00\n"
+"PO-Revision-Date: 2019-07-22 21:03+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
 "MIME-Version: 1.0\n"
@@ -2852,7 +2852,7 @@ msgstr "조각 기능"
 
 
 msgid "Read-only indications of which brush operations are supported by the current sculpt tool"
-msgstr "현재 조각 도구에서 지원되는 브러시 작업에 읽기 전용 표시"
+msgstr "현재 조각 도구에서 지원되는 브러시 작업에 읽기 전용을 표시합니다"
 
 
 msgid "Has Auto Smooth"
@@ -8236,7 +8236,7 @@ msgstr "브러시 컬렉션"
 
 
 msgid "Only use brush objects from this collection"
-msgstr "이 컬렉션에서 브러시 오브젝트로 사용 만"
+msgstr "이 컬렉션의 브러시 오브젝트 만 사용"
 
 
 msgid "Influence Scale"
@@ -9894,7 +9894,7 @@ msgstr "페이스 맵 이름"
 
 
 msgid "Face-map selection state (for tools to use)"
-msgstr "페이스-맵 선택 상태 (도구 사용)"
+msgstr "페이스 맵 선택 상태 (도구을 사용하는 경우)"
 
 
 msgid "Face Maps"
@@ -11990,7 +11990,7 @@ msgstr "그리스 펜슬 보간 설정"
 
 
 msgid "Settings for Grease Pencil interpolation tools"
-msgstr "그리스 펜슬 보간 도구 설정"
+msgstr "그리스 펜슬 보간 도구에 대한 설정"
 
 
 msgid "Amount to boost elastic bounces for 'elastic' easing"
@@ -12370,19 +12370,19 @@ msgstr "주석 스트로크의 두께"
 
 
 msgid "Tint Color"
-msgstr "착색 컬러"
+msgstr "틴트 컬러"
 
 
 msgid "Color for tinting stroke colors"
-msgstr "착색하는 스트로크 컬러에 대한 컬러"
+msgstr "틴트 스트로크 컬러에 대한 컬러"
 
 
 msgid "Tint Factor"
-msgstr "착색 팩터"
+msgstr "틴트 팩터"
 
 
 msgid "Factor of tinting color"
-msgstr "착색하는 컬러의 팩터"
+msgstr "틴트 컬러의 팩터"
 
 
 msgid "Onion Skinning"
@@ -13200,7 +13200,7 @@ msgstr "푸더"
 
 
 msgid "Tool Header"
-msgstr "툴 해더"
+msgstr "도구 해더"
 
 
 msgid "Space type"
@@ -13364,11 +13364,11 @@ msgstr "스트로크의 불투명도"
 
 
 msgid "Tint"
-msgstr "착색"
+msgstr "틴트"
 
 
 msgid "Tint strokes with new color"
-msgstr "새로운 컬러의 착색 스트로크"
+msgstr "새로운 컬러와함께 틴트 스트로크"
 
 
 msgid "Armature Modifier"
@@ -13925,6 +13925,10 @@ msgid "Factor of Simplify"
 msgstr "단순화의 팩터"
 
 
+msgid "How to simplify the stroke"
+msgstr "스트로크를 단순화하는 방법"
+
+
 msgid "Fixed"
 msgstr "고정됨"
 
@@ -14082,15 +14086,15 @@ msgstr "종료 프레임 재 지정 및 루프 유지를 위해 애니메이션 
 
 
 msgid "Tint Modifier"
-msgstr "착색 모디파이어"
+msgstr "틴트 모디파이어"
 
 
 msgid "Tint Stroke Color modifier"
-msgstr "착색 스트로크 컬러 모디파이어"
+msgstr "틴트 스트로크 컬러 모디파이어"
 
 
 msgid "Color used for tinting"
-msgstr "착색에 사용되는 컬러"
+msgstr "틴트에 사용되는 컬러"
 
 
 msgid "Factor for mixing color"
@@ -16806,6 +16810,34 @@ msgid "Curvilinear 2D length for chain splitting"
 msgstr "체인 분할에 대한 커브의 2D 길이"
 
 
+msgid "Stroke Color Mode"
+msgstr "스트로크 컬러 모드"
+
+
+msgid "Base Color"
+msgstr "기초 컬러"
+
+
+msgid "Use the linestyle's base color"
+msgstr "라인 스타일의 기초 컬러를 사용합니다"
+
+
+msgid "First Vertex"
+msgstr "첫째 버텍스"
+
+
+msgid "Use the color of a stroke's first vertex"
+msgstr "스트로크의 첫째 버택스의 색상 사용"
+
+
+msgid "Final Vertex"
+msgstr "최종 버텍스"
+
+
+msgid "Use the color of a stroke's final vertex"
+msgstr "스트로크의 최종 버텍스의 컬러를 사용합니다"
+
+
 msgid "Texture slots defining the mapping and influence of textures"
 msgstr "텍스처의 맵핑 및 영향을 정의하는 텍스처 슬롯"
 
@@ -16900,6 +16932,22 @@ msgstr "점선"
 
 msgid "Enable or disable dashed line"
 msgstr "점선 사용 또는 사용 중지"
+
+
+msgid "Export Fills"
+msgstr "채우기를 내보내기"
+
+
+msgid "Export fills for this Line Style"
+msgstr "이 라인 스타일 채우기를 내보내기"
+
+
+msgid "Export Strokes"
+msgstr "스트로크를 내보내기"
+
+
+msgid "Export strokes for this Line Style"
+msgstr "이 라인 스타일에 대한 스트로크를 내보내기"
 
 
 msgid "Use Max 2D Length"
@@ -18661,7 +18709,7 @@ msgstr "화면 공간 굴절"
 
 
 msgid "Use raytraced screen space refractions"
-msgstr "레이트레이스된 스크린 공간 굴절 사용"
+msgstr "레이트레이스된 스크린 공간 굴절을 사용합니다"
 
 
 msgid "Subsurface Translucency"
@@ -22873,7 +22921,7 @@ msgstr "범주"
 
 
 msgid "Filter add-ons by category"
-msgstr "카테고리로 애드온을 필터"
+msgstr "카테고리로 필터 애드온"
 
 
 msgid "Search"
@@ -28489,11 +28537,11 @@ msgstr "버텍스를 병합"
 
 
 msgid "Merge vertices in adjacent duplicates"
-msgstr "인접한 복제에서 버텍스를 병합"
+msgstr "인접한 복제에서 버텍스를 병합합니다"
 
 
 msgid "Merge vertices in first and last duplicates"
-msgstr "처음과 마지막 복제에서 버텍스를 병합"
+msgstr "처음과 마지막 복제에서 버텍스를 병합합니다"
 
 
 msgid "Add another object's transformation to the total offset"
@@ -30057,7 +30105,7 @@ msgstr "미러 축"
 
 
 msgid "Enable axis mirror"
-msgstr "축 미러를 사용"
+msgstr "축 미러를 사용합니다"
 
 
 msgid "Bisect Axis"
@@ -30065,7 +30113,7 @@ msgstr "이등분 축"
 
 
 msgid "Cuts the mesh across the mirror plane"
-msgstr "미러 평면을 가로 지르는 메쉬를 절단"
+msgstr "미러 평면을 가로 지르는 메쉬를 절단합니다"
 
 
 msgid "Bisect Flip Axis"
@@ -30077,11 +30125,11 @@ msgstr "슬라이스의 방향을 뒤집습니다"
 
 
 msgid "Prevent vertices from going through the mirror during transform"
-msgstr "변환하는 동안 미러를 통해 진행에서 버텍스를 방지"
+msgstr "변환하는 도중 버텍스가 미러를 통과하는 것을 방지합니다"
 
 
 msgid "Merge vertices within the merge threshold"
-msgstr "병합 임계 값 내에서 버텍스를 병합"
+msgstr "병합 임계 값 내에서 버텍스를 병합합니다"
 
 
 msgid "Mirror U"
@@ -30710,7 +30758,7 @@ msgstr "그 축을 따라 회전을 오프셋"
 
 
 msgid "Merge adjacent vertices (screw offset must be zero)"
-msgstr "인접한 버텍스를 병합 (나사 오프셋은 0이어야 함)"
+msgstr "인접한 버텍스를 병합합니다 (스크류 오프셋은 0이어야 함)"
 
 
 msgid "Calc Order"
@@ -35527,7 +35575,7 @@ msgstr "방출"
 
 
 msgid "Fresnel"
-msgstr "굴절"
+msgstr "프레넬"
 
 
 msgid "Hair Info"
@@ -46816,7 +46864,7 @@ msgstr "페이스를 병합하는 대신 페이스 코너를 분할"
 
 
 msgid "Dissolve verts, merge edges and faces"
-msgstr "버텍스를 디졸브, 에지 및 페이스를 병합"
+msgstr "버텍스를 디졸브, 에지 및 페이스를 병합합니다"
 
 
 msgctxt "Operator"
@@ -51964,7 +52012,7 @@ msgstr "컬러라이즈"
 
 
 msgid "Apply different tint effects"
-msgstr "다른 착색 이펙트를 적용"
+msgstr "다른 틴트 이펙트를 적용"
 
 
 msgctxt "ID"
@@ -53558,10 +53606,6 @@ msgstr "텍스처 페인트 슬롯을 추가"
 
 msgid "Add a texture paint slot"
 msgstr "텍스처 페인트 슬롯을 추가"
-
-
-msgid "Base Color"
-msgstr "기초 컬러"
 
 
 msgctxt "Operator"
@@ -58604,7 +58648,7 @@ msgstr "번역을 편집"
 
 
 msgid "Translate the label and tooltip of the given property"
-msgstr "해당 속성의 레이블 및 툴팁을 번역"
+msgstr "해당 속성의 레이블 및 툴팁을 번역합니다"
 
 
 msgid "Label of the control"
@@ -62098,8 +62142,8 @@ msgid "Load Factory Settings"
 msgstr "최초 설정을 불러오기"
 
 
-msgid "Load default file and preferences"
-msgstr "기본 파일 및 환경 설정을 불러오기"
+msgid "Load factory default startup file and preferences. To make changes permanent, use \"Save Startup File\" and \"Save Preferences\""
+msgstr "초기 기본 시작 파일 및 기본 설정을 불러옵니다. 변경 사항을 영구히 유지하려면 \"시작 파일 저장\" 및 \"환경 설정 저장\"을 하십시오"
 
 
 msgctxt "Operator"
@@ -62107,8 +62151,8 @@ msgid "Load Factory Preferences"
 msgstr "최초 환경 설정을 불러오기"
 
 
-msgid "Load default preferences"
-msgstr "기본 환경 설정을 불러오기"
+msgid "Load factory default preferences. To make changes to preferences permanent, use \"Save Preferences\""
+msgstr "초기 기본 시작 설정을 불러옵니다. 환경 설정을 영구적으로 변경하려면 \"환경 설정 저장\"을 하십시오"
 
 
 msgctxt "Operator"
@@ -62440,7 +62484,7 @@ msgstr "이 그룹에서 도구를 통해 순환"
 
 
 msgid "Identifier of the tool"
-msgstr "툴의 식별자"
+msgstr "도구의 식별자"
 
 
 msgctxt "Operator"
@@ -62453,7 +62497,7 @@ msgstr "인덱스로 도구를 설정 (키맵 용)"
 
 
 msgid "Include tool sub-groups"
-msgstr "툴 하위 그룹을 포함"
+msgstr "도구 하위 그룹을 포함"
 
 
 msgid "Index in toolbar"
@@ -63224,7 +63268,7 @@ msgstr "CLIP_PT_tools_clip"
 
 
 msgid "Mask Tools"
-msgstr "마스크 툴"
+msgstr "마스크 도구"
 
 
 msgid "Transforms"
@@ -63899,6 +63943,22 @@ msgstr "진단"
 
 msgid "Helpers"
 msgstr "도우미"
+
+
+msgid "Creates a Panel in the Render Layers context of the properties editor"
+msgstr "속성 에디터의 렌더 레이어 컨텍스트에 패널을 작성합니다"
+
+
+msgid "Freestyle Line Style SVG Export"
+msgstr "프리스타일 라인 스타일 SVG 내보내기"
+
+
+msgid "Creates a Panel in the render context of the properties editor"
+msgstr "속성 에디터의 렌더 컨텍스트에 패널을 작성합니다 "
+
+
+msgid "Freestyle SVG Export"
+msgstr "프리스타일 SVG 내보내기"
 
 
 msgid "Color Management"
@@ -64696,7 +64756,7 @@ msgstr "뷰 잠금"
 
 
 msgid "Filter Add-ons"
-msgstr "애드온을 필터"
+msgstr "필터 애드온"
 
 
 msgid "Particle in a particle system"
@@ -68520,7 +68580,7 @@ msgstr "AO 바운스"
 
 
 msgid "Approximate indirect light with background tinted ambient occlusion at the specified bounce, 0 disables this feature"
-msgstr "지정된 산란에서 배경으로 착색된 주변 폐색이 있는 대략적인 간접 라이트, 0은 이 기능을 비활성화합니다"
+msgstr "지정된 산란에서 배경으로 틴트된 주변 폐색이 있는 대략적인 간접 라이트, 0은 이 기능을 비활성화합니다"
 
 
 msgid "AO Bounces Render"
@@ -68887,8 +68947,8 @@ msgid "Min Transparent Bounces"
 msgstr "최소 투명 바운스"
 
 
-msgid "Minimum number of transparnet bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
-msgstr "투명 바운스의 최소 수. 이 값을 높게 설정하면 첫 번째 바운스에서 노이즈가 줄어들지 만 머리카락이나 볼륨과 같이 더 복잡한 지오메트리에는 효율성이 떨어질 수 있습니다"
+msgid "Minimum number of transparent bounces. Setting this higher reduces noise in the first bounces, but can also be less efficient for more complex geometry like hair and volumes"
+msgstr "투명한 바우스의 최소 횟수입니다. 이 값을 높게 설정하면 첫 번째 바운스에서 노이즈가 줄어들지 만 머리카락이나 볼륨과 같이 더 복잡한 지오메트리에는 효율성이 떨어질 수 있습니다"
 
 
 msgid "Motion Blur Position"
@@ -69553,6 +69613,62 @@ msgstr "텍스처를 복사"
 
 msgid "Copy textures on export to the output path"
 msgstr "내보낼 때 텍스처를 출력 경로에 복사"
+
+
+msgid "Implements the properties for the SVG exporter"
+msgstr "SVG 내보내기에 대한 속성을 구현합니다"
+
+
+msgid "Linejoin"
+msgstr "라인 결합"
+
+
+msgid "Miter"
+msgstr "마이터"
+
+
+msgid "Corners are sharp"
+msgstr "코너가 날카롭게 처리됩니다"
+
+
+msgid "Corners are smoothed"
+msgstr "코너가 부드럽게 처리됩니다"
+
+
+msgid "Corners are bevelled"
+msgstr "코너가 경사지게 처리됩니다"
+
+
+msgid "Export a single frame"
+msgstr "싱글 프레임을 내보내기"
+
+
+msgid "Export an animation"
+msgstr "애니메이션 내보내기"
+
+
+msgid "Fill Contours"
+msgstr "윤곽을 채우기"
+
+
+msgid "Fill the contour with the object's material color"
+msgstr "오브젝트의 매테리얼 컬러으로 윤곽을 채우기"
+
+
+msgid "Split at Invisible"
+msgstr "안보이는 곳에서 분할"
+
+
+msgid "Split the stroke at an invisible vertex"
+msgstr "안보이는 버텍스에서 스트로크를 분할니다"
+
+
+msgid "SVG Export"
+msgstr "SVG 내보내기"
+
+
+msgid "Export Freestyle edges to an .svg format"
+msgstr "프리스타일 에지를 .svg 형식으로 내보내기"
 
 
 msgid "Selected UV Element"
@@ -71892,7 +72008,7 @@ msgstr "화면 공간 반사"
 
 
 msgid "Enable screen space Refractions"
-msgstr "화면 공간 굴절을 사용"
+msgstr "화면 공간 굴절을 사용합니다"
 
 
 msgid "Separate Albedo"
@@ -81439,7 +81555,7 @@ msgstr "3D보기 도구: 축적"
 
 msgctxt "WindowManager"
 msgid "3D View Tool: Transform"
-msgstr "3D 뷰 툴: 변형"
+msgstr "3D 뷰 도구: 변형"
 
 
 msgctxt "WindowManager"
@@ -81539,7 +81655,7 @@ msgstr "파티클"
 
 msgctxt "WindowManager"
 msgid "Knife Tool Modal Map"
-msgstr "나이프 툴 모달 맵"
+msgstr "나이프 도구 모달 맵"
 
 
 msgctxt "WindowManager"
@@ -81653,8 +81769,33 @@ msgstr "UV 에디터"
 
 
 msgctxt "WindowManager"
+msgid "Image Editor Tool: Uv, Move"
+msgstr "이미지 에디터 도구: Uv, 이동"
+
+
+msgctxt "WindowManager"
+msgid "Image Editor Tool: Uv, Rotate"
+msgstr "이미지 에디터 도구 : Uv, 회전"
+
+
+msgctxt "WindowManager"
+msgid "Image Editor Tool: Uv, Scale"
+msgstr "이미지 에디터 도구 : Uv, 축척"
+
+
+msgctxt "WindowManager"
 msgid "UV Sculpt"
 msgstr "UV 조각"
+
+
+msgctxt "WindowManager"
+msgid "Image View"
+msgstr "이미지 뷰"
+
+
+msgctxt "WindowManager"
+msgid "Image Editor Tool: Sample"
+msgstr "이미지 에디터 도구: 샘플"
 
 
 msgctxt "WindowManager"
@@ -85904,7 +86045,7 @@ msgstr "씬에 연결"
 
 
 msgid "Restriction Toggles:"
-msgstr "제한 토글 :"
+msgstr "제한 토글:"
 
 
 msgid "Others"
@@ -86681,8 +86822,8 @@ msgstr "환경 설정을 자동 저장"
 
 
 msgctxt "Operator"
-msgid "Revert to Saved"
-msgstr "저장된 상태로 재설정"
+msgid "Revert to Saved Preferences"
+msgstr "저장된 환경 설정으로 되돌리기"
 
 
 msgid "Resolution Scale"
@@ -86923,11 +87064,6 @@ msgid "Save as Studio light"
 msgstr "스튜디오 라이트로 저장"
 
 
-msgctxt "Operator"
-msgid "Save Current State"
-msgstr "현재 상태를 저장"
-
-
 msgid "Color Set d"
 msgstr "Color Set d"
 
@@ -86970,11 +87106,6 @@ msgstr "스크립트 파일이 누락 됨"
 
 msgid "No custom {} configured"
 msgstr "커스텀이 {} 설정되지 않았습니다"
-
-
-msgctxt "Operator"
-msgid "Skip Auto-Save"
-msgstr "자동 저장을 건너 뛰기"
 
 
 msgid ":"
@@ -93031,7 +93162,7 @@ msgstr "해더를 표시"
 
 
 msgid "Show Tool Settings"
-msgstr "툴 설정을 표시"
+msgstr "도구 설정을 표시"
 
 
 msgid "Tile Area"
@@ -94350,6 +94481,10 @@ msgstr "마스터 컬렉션을 복제 할 수 없습니다"
 
 msgid "Could not find a valid parent collection for the new duplicate, it won't be linked to any view layer"
 msgstr "새 복제본에 대한 유효한 상위 컬렉션을 찾을 수 없으며, 어떤 뷰 레이어에도 연결되지 않습니다"
+
+
+msgid "Cannot add a collection to a linked collection/scene"
+msgstr "연결된 컬렉션/장면에 컬렉션을 추가 할 수 없습니다"
 
 
 msgid "Cannot delete linked collection '%s', it is used by other linked scenes/collections"
@@ -96160,6 +96295,10 @@ msgid "Can only assign evaluated data to evaluated object, or original data to o
 msgstr "평가된 오브젝트에만 평가된 데이터를 할당 할 수 있으며, 또는 원본 데이터를 원래 오브젝트로 할당 할 수 있습니다"
 
 
+msgid "Only empty objects support collection instances"
+msgstr "엠프티 오브젝 만 컬렉션 인스턴스를 지원합니다"
+
+
 msgid "Cannot set instance-collection as object belongs in group being instanced, thus causing a cycle"
 msgstr "인스턴스화 된 그룹에 오브젝트가 속할 때 인스턴스 콜렉션을 설정할 수 없으므로 사이클이 발생합니다"
 
@@ -96220,8 +96359,12 @@ msgid "Bad vertex index in list"
 msgstr "목록에서 잘못된 버텍스 인덱스"
 
 
-msgid "Object '%s' not in View Layer '%s'!"
-msgstr "오브젝트 '%s'은 뷰 레이어 '%s'에 없습니다!"
+msgid "Object '%s' can't be selected because it is not in View Layer '%s'!"
+msgstr "오브젝트 '%s'는 뷰 레이어 '%s'에 없으므로 선택할 수 없습니다!"
+
+
+msgid "Object '%s' can't be hidden because it is not in View Layer '%s'!"
+msgstr "오브젝트 '%s'는 뷰 레이어 '%s'에 없으므로 숨길 수 없습니다!"
 
 
 msgid "Object %s not in view layer %s"
@@ -96870,7 +97013,7 @@ msgstr "서브 표면 샘플 반경"
 
 
 msgid "Specular Tint"
-msgstr "반사 착색"
+msgstr "반사 틴트"
 
 
 msgid "Anisotropic"
@@ -96882,11 +97025,11 @@ msgstr "비등방성 회전"
 
 
 msgid "Sheen"
-msgstr "광택"
+msgstr "광휘"
 
 
 msgid "Sheen Tint"
-msgstr "광택 착색"
+msgstr "광휘 틴트"
 
 
 msgid "Clearcoat"
@@ -96970,7 +97113,7 @@ msgstr "탄젠트 노멀"
 
 
 msgid "Facing"
-msgstr "착색"
+msgstr "외장하기"
 
 
 msgid "Is Camera Ray"
@@ -97102,7 +97245,7 @@ msgstr "블렉보디 강도"
 
 
 msgid "Blackbody Tint"
-msgstr "블렉보디 착색"
+msgstr "블렉보디 틴트"
 
 
 msgid "Temperature Attribute"

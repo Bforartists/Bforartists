@@ -166,7 +166,7 @@ def create_japan_mesh(self):
     for o in bpy.data.objects:
         if o.select_get() is True:
             o.select_set(False)
-    bpy.ops.object.select_all(False)
+    bpy.ops.object.select_all(action='DESELECT')
     # Create units
     generate_japan(self)
 
@@ -252,7 +252,7 @@ def create_roller_mesh(self):
     for o in bpy.data.objects:
         if o.select_get() is True:
             o.select_set(False)
-    bpy.ops.object.select_all(False)
+    bpy.ops.object.select_all(action='DESELECT')
     generate_roller(self)
 
     return

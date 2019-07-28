@@ -172,7 +172,7 @@ def create_book_mesh(self):
     for o in bpy.data.objects:
         if o.select_get() is True:
             o.select_set(False)
-    bpy.ops.object.select_all(False)
+    bpy.ops.object.select_all(action='DESELECT')
     generate_books(self)
 
     return

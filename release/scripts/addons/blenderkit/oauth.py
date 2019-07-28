@@ -38,6 +38,8 @@ class SimpleOAuthAuthenticator(object):
             "client_id": self.client_id,
             "scopes": "read write",
         }
+        if hasattr(self, 'redirect_uri'):
+            data["redirect_uri"] = self.redirect_uri
         if authorization_code:
             data['code'] = authorization_code
         if refresh_token:
@@ -48,6 +50,8 @@ class SimpleOAuthAuthenticator(object):
             data=data
         )
         if response.status_code != 200:
+            print("error retrieving refresh tokens %s" % response.status_code)
+            print(response.content)
             return None, None
         refresh_token = json.loads(response.content)['refresh_token']
         access_token = json.loads(response.content)['access_token']
@@ -82,9 +86,10 @@ class SimpleOAuthAuthenticator(object):
             except OSError:
                 continue
             break
+        self.redirect_uri = "http://localhost:%s/consumer/exchange/" % port
         authorize_url = (
             "/o/authorize?client_id=%s&state=random_state_string&response_type=code&"
-            "redirect_uri=http://localhost:%s/consumer/exchange/" % (self.client_id, port)
+            "redirect_uri=%s" % (self.client_id, self.redirect_uri)
         )
         if register:
             authorize_url = "%s/accounts/register/?next=%s" % (self.server_url, urlquote(authorize_url))

@@ -25,7 +25,7 @@
 bl_info = {
     "name": "Discombobulator",
     "author": "Multiple Authors",
-    "version": (0, 0, 8),
+    "version": (0, 0, 9),
     "blender": (2, 80, 0),
     "location": "View3D > Add > Mesh",
     "description": "Add Discombobulator",
@@ -45,7 +45,13 @@ else:
     from . import mesh_discombobulator
 
 import bpy
-from bpy.types import Menu
+from bpy.types import (
+                Menu,
+                PropertyGroup,
+                )
+from bpy.props import (
+                PointerProperty,
+                )
 
 # Register all operators and panels
 
@@ -58,22 +64,28 @@ def menu_func(self, context):
     lay_out.operator("discombobulate.ops",
                     text="Discombobulator")
 
-# Register
-classes = [
 
+# Properties
+class DISCProps(PropertyGroup):
+    DISC_doodads = []
+
+# Register
+classes = (
     mesh_discombobulator.discombobulator,
     mesh_discombobulator.discombobulator_dodads_list,
     mesh_discombobulator.discombob_help,
     mesh_discombobulator.VIEW3D_OT_tools_discombobulate,
     mesh_discombobulator.chooseDoodad,
-    mesh_discombobulator.unchooseDoodad
-]
+    mesh_discombobulator.unchooseDoodad,
+    DISCProps
+)
 
 def register():
     from bpy.utils import register_class
     for cls in classes:
         register_class(cls)
 
+    bpy.types.Scene.discombobulator = PointerProperty(type=DISCProps)
     # Add "Extras" menu to the "Add Mesh" menu
     bpy.types.VIEW3D_MT_mesh_add.append(menu_func)
 
@@ -85,6 +97,8 @@ def unregister():
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)
+        
+    del bpy.types.Scene.discombobulator
 
 if __name__ == "__main__":
     register()
