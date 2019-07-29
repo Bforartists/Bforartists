@@ -3783,7 +3783,7 @@ class VIEW3D_MT_particle(Menu):
         layout.separator()
 
         if particle_edit.select_mode == 'POINT':
-            layout.operator("particle.subdivide")
+            layout.operator("particle.subdivide", icon = "SUBDIVIDE_EDGES")
 
         layout.operator("particle.unify_length", icon = "RULER")
         layout.operator("particle.rekey", icon = "KEY_HLT")
