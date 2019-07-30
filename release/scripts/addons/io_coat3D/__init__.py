@@ -40,6 +40,7 @@ import os
 import ntpath
 import re
 import shutil
+import pathlib
 
 import time
 import bpy
@@ -495,12 +496,10 @@ class SCENE_OT_export(bpy.types.Operator):
         if run_background_update:
             if bpy.app.timers.is_registered(run_import_periodically):
                 bpy.app.timers.unregister(run_import_periodically)
-                print('Disabling listener')
                 run_background_update = False
         else:
             if not bpy.app.timers.is_registered(run_import_periodically):
                 bpy.app.timers.register(run_import_periodically, persistent=True)
-                print('Enabling listener')
                 run_background_update = True
         return {'FINISHED'}
 
@@ -536,11 +535,10 @@ class SCENE_OT_export(bpy.types.Operator):
         coa = bpy.context.active_object.coat3D
         coat3D.exchangedir = set_exchange_folder()
 
+        p = pathlib.Path(coat3D.exchangedir)
         kokeilu = coat3D.exchangedir[:-9]
-        print('export kokeilu:', kokeilu)
         Blender_folder2 = ("%s%sExchange" % (kokeilu, os.sep))
         Blender_folder2 += ('%sexport.txt' % (os.sep))
-        print('BB: ', Blender_folder2)
 
         if (os.path.isfile(Blender_folder2)):
             os.remove(Blender_folder2)
@@ -793,13 +791,11 @@ class SCENE_OT_import(bpy.types.Operator):
         if run_background_update:
             if bpy.app.timers.is_registered(run_import_periodically):
                 bpy.app.timers.unregister(run_import_periodically)
-                print('Disabling listener')
                 run_background_update = False
 
         else:
             if not bpy.app.timers.is_registered(run_import_periodically):
                 bpy.app.timers.register(run_import_periodically, persistent=True)
-                print('Enabling listener')
                 run_background_update = True
 
         return {'FINISHED'}
@@ -1195,7 +1191,6 @@ class SCENE_OT_import(bpy.types.Operator):
                     if (os.path.isfile(osoite_3b)):
                         mesh_time = os.path.getmtime(new_obj.coat3D.applink_address)
                         b_time = os.path.getmtime(osoite_3b)
-                        print('abs:', abs(mesh_time-b_time))
                         if (abs(mesh_time-b_time) < 240):
                             new_obj.coat3D.applink_3b_path = osoite_3b
                             new_obj.coat3D.applink_3b_just_name = just_3b_name
@@ -1230,7 +1225,6 @@ class SCENE_OT_import(bpy.types.Operator):
         return {'FINISHED'}
 
 def run_import_periodically():
-    # print("Runing timers update check")
     coat3D = bpy.context.scene.coat3D
     kokeilu = coat3D.exchangedir[:-9]
     Blender_folder2 = ("%s%sExchange" % (kokeilu, os.sep))
@@ -1240,19 +1234,16 @@ def run_import_periodically():
     try:
         os.path.isfile(Blender_folder2)
     except Exception as e:
-        print(e)
         run_background_update = False
         if bpy.app.timers.is_registered(run_import_periodically):
             bpy.app.timers.unregister(run_import_periodically)
         return time_interval
 
     if  os.path.isfile(Blender_folder2):
-        # ! cant get proper context from timers for now. Override context: https://developer.blender.org/T62074
         window = bpy.context.window_manager.windows[0]
         ctx = {'window': window, 'screen': window.screen, 'workspace': window.workspace}
         bpy.ops.import_applink.pilgway_3d_coat()
     else:
-        # print("GOZ: Nothing to update")
         return time_interval
 
     if not run_background_update and bpy.app.timers.is_registered(run_import_periodically):

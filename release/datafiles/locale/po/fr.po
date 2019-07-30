@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'38d4483c6a51')\n"
+"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-24 00:00:00\n"
+"POT-Creation-Date: 2019-07-29 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1"
+"X-Generator: Poedit 2.2.3"
 
 
 msgid "Action F-Curves"
@@ -62689,6 +62689,10 @@ msgid "MultiSample"
 msgstr "Multi-échantillonnage"
 
 
+msgid "Enable OpenGL multi-sampling, only for systems that support it"
+msgstr "Activer le multi-échantillonnage OpenGL, uniquement pour les systèmes qui le supportent"
+
+
 msgid "OpenSubdiv Compute Type"
 msgstr "Type de calcul OpenSubdiv"
 
@@ -62749,6 +62753,10 @@ msgid "UI Line Width"
 msgstr "Épaisseur ligne UI"
 
 
+msgid "Suggested line thickness and point size in pixels, for add-ons drawing custom user interface elements, based on operating system settings and Blender UI scale"
+msgstr "Épaisseur de ligne et taille de point suggérées en pixels, pour les add-ons qui dessinent des éléments d’interface utilisateur personnalisés, d’après les réglages du système d’exploitation et l’échelle UI de Blender"
+
+
 msgid "UI Scale"
 msgstr "Échelle UI"
 
@@ -62757,8 +62765,52 @@ msgid "Region Overlap"
 msgstr "Superposition de région"
 
 
+msgid "Draw tool/property regions over the main region"
+msgstr "Dessiner les régions de propriétés/outils par-dessus la région principale"
+
+
 msgid "OpenGL Depth Picking"
 msgstr "Depth Picking OpenGL"
+
+
+msgid "VBO Collection Rate"
+msgstr "Délai de nettoyage VBO"
+
+
+msgid "Number of seconds between each run of the GL Vertex buffer object garbage collector"
+msgstr "Nombre de secondes entre chaque exécution du ramasse-miettes objet de tampon de vertices GL"
+
+
+msgid "Time since last access of a GL Vertex buffer object in seconds after which it is freed (set to 0 to keep vbo allocated)"
+msgstr "Temps, en secondes, depuis le dernier accès au tampon de vertices GL, après quoi il est libéré (mettre à 0 pour conserver les vbo alloués)"
+
+
+msgid "Viewport Anti-Aliasing"
+msgstr "Anti-aliasing de la vue"
+
+
+msgid "No Anti-Aliasing"
+msgstr "Pas d’anti-aliasing"
+
+
+msgid "5 Samples"
+msgstr "5 échantillons"
+
+
+msgid "8 Samples"
+msgstr "8 échantillons"
+
+
+msgid "11 Samples"
+msgstr "11 échantillons"
+
+
+msgid "16 Samples"
+msgstr "16 échantillons"
+
+
+msgid "32 Samples"
+msgstr "32 échantillons"
 
 
 msgid "Color Picker Type"
@@ -62809,6 +62861,10 @@ msgid "A square showing Hue/Value, with Saturation slider"
 msgstr "Un carré montrant les Teinte/Valeur, avec un curseur Saturation"
 
 
+msgid "Factor Display Type"
+msgstr "Type d’affichage de facteur"
+
+
 msgid "Interface Font"
 msgstr "Police d’interface"
 
@@ -62823,6 +62879,14 @@ msgstr "Police à chasse fixe"
 
 msgid "Path to interface mono-space Font"
 msgstr "Chemin vers la police d’interface à chasse fixe"
+
+
+msgid "Diameter of the gizmo"
+msgstr "Diamètre du gizmo"
+
+
+msgid "Header Position"
+msgstr "Position de l’en-tête"
 
 
 msgid "Language used for translation"
@@ -62843,6 +62907,18 @@ msgstr "Taille mini axes"
 
 msgid "The axes icon's size"
 msgstr "Taille de l’icône des axes"
+
+
+msgid "Mini Axes Type"
+msgstr "Type de mini axes"
+
+
+msgid "Show a small rotating 3D axes in the top right corner of the 3D View"
+msgstr "Afficher de petits axes 3D tournants dans le coin supérieur droit de la vue 3D"
+
+
+msgid "Simple Axis"
+msgstr "Axe simple"
 
 
 msgid "Sub Level Menu Open Delay"
@@ -62969,6 +63045,10 @@ msgid "Time to animate the view in milliseconds, zero to disable"
 msgstr "Temps pour animer le changement de vue, en millisecondes, zéro pour désactiver"
 
 
+msgid "Slight"
+msgstr "Léger"
+
+
 msgid "TimeCode Style"
 msgstr "Style de timecode"
 
@@ -63037,12 +63117,20 @@ msgid "Thicker lines than the default"
 msgstr "Des lignes plus épaisses que par défaut"
 
 
+msgid "Changes the size of the fonts and widgets in the interface"
+msgstr "Modifier les tailles des polices et boutons dans l’interface"
+
+
 msgid "Contents Follow Opening Direction"
 msgstr "Contenu suit la direction d’ouverture"
 
 
 msgid "Otherwise menus, etc will always be top to bottom, left to right, no matter opening direction"
 msgstr "Autrement les menus et autres seront toujours du haut vers le bas, de gauche à droite, quelle que soit la direction de l’ouverture"
+
+
+msgid "Translate UI"
+msgstr "Traduire UI"
 
 
 msgid "Open On Mouse Over"
@@ -63213,6 +63301,10 @@ msgid "Uses the mirror ball mapping"
 msgstr "Utiliser le placage de “boule miroir”"
 
 
+msgid "Cull Back-faces"
+msgstr "Supprimer faces arrières"
+
+
 msgid "Do not test the back-face of each strand"
 msgstr "Ne pas tester la face arrière de chaque fibre"
 
@@ -63285,8 +63377,16 @@ msgid "Cast Shadow"
 msgstr "Projeter ombre"
 
 
+msgid "Light casts shadows"
+msgstr "La lumière projette des ombres"
+
+
 msgid "Is Portal"
 msgstr "Est portail"
+
+
+msgid "Use this area light to guide sampling of the background, note that this will make the light invisible"
+msgstr "Utiliser cette lumière “zone” pour guider l’échantillonnage de l’arrière-plan, notez que cela rendra la lampe invisible"
 
 
 msgid "Maximum number of bounces the light will contribute to the render"
@@ -63299,6 +63399,10 @@ msgstr "Nombre d’échantillons de lumière à rendre pour chaque échantillon 
 
 msgid "Multiple Importance Sample"
 msgstr "Échantillonnage à importance multiple"
+
+
+msgid "Use multiple importance sampling for the light, reduces noise for area lights and sharp glossy materials"
+msgstr "Utiliser l’échantillonnage à importance multiple pour la lumière, réduit le bruit pour les lampes “zone“ et les matériaux fortement brillants"
 
 
 msgid "Displacement Method"
@@ -63401,6 +63505,14 @@ msgid "Dicing Scale"
 msgstr "Échelle de découpage en dés"
 
 
+msgid "Multiplier for scene dicing rate (located in the Subdivision panel)"
+msgstr "Multiplicateur pour le taux de découpage en dés (dans le panneau Subdivision)"
+
+
+msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
+msgstr "Rendre les objets comme cache, qui créent un trou dans l’image avec un alpha nul, à remplir en compositing avec des vidéos ou un autre rendu"
+
+
 msgid "Shadow Catcher"
 msgstr "Attrapeur d’ombres"
 
@@ -63411,6 +63523,10 @@ msgstr "Ne rendre que les ombres sur cet objet, pour compositer des rendus dans 
 
 msgid "Motion Steps"
 msgstr "Étapes de mouvement"
+
+
+msgid "Control accuracy of motion blur, more steps gives more memory usage (actual number of steps is 2^(steps - 1))"
+msgstr "Contrôler la précision du flou cinétique, plus d’étapes consomme plus de mémoire (nombre d’étapes réel : 2^(étapes - 1))"
 
 
 msgid "Use Adaptive Subdivision"
@@ -63603,6 +63719,10 @@ msgstr "Utiliser débruitage"
 
 msgid "Denoise the rendered image"
 msgstr "Débruiter l’image rendue"
+
+
+msgid "Cryptomatte Material"
+msgstr "Matériau cryptomatte"
 
 
 msgid "Volume Direct"
@@ -63987,6 +64107,14 @@ msgstr "Échantillons de lumière mesh"
 
 msgid "Number of mesh emission light samples to render for each AA sample"
 msgstr "Nombre d’échantillons de lumière émise par mesh à rendre pour chaque échantillon AA"
+
+
+msgid "Min Light Bounces"
+msgstr "Rebonds min lumière"
+
+
+msgid "Min Transparent Bounces"
+msgstr "Rebonds min transparence"
 
 
 msgid "Motion Blur Position"

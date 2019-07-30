@@ -229,6 +229,9 @@ void depsgraph_tag_to_component_opcode(const ID *id,
     case ID_RECALC_PARAMETERS:
       *component_type = NodeType::PARAMETERS;
       break;
+    case ID_RECALC_SOURCE:
+      *component_type = NodeType::PARAMETERS;
+      break;
     case ID_RECALC_TIME:
       BLI_assert(!"Should be handled outside of this function");
       break;
@@ -449,7 +452,7 @@ const char *update_source_as_string(eUpdateSource source)
 
 int deg_recalc_flags_for_legacy_zero()
 {
-  return ID_RECALC_ALL & ~(ID_RECALC_PSYS_ALL | ID_RECALC_ANIMATION);
+  return ID_RECALC_ALL & ~(ID_RECALC_PSYS_ALL | ID_RECALC_ANIMATION | ID_RECALC_SOURCE);
 }
 
 int deg_recalc_flags_effective(Depsgraph *graph, int flags)
@@ -703,6 +706,8 @@ const char *DEG_update_tag_as_string(IDRecalcFlag flag)
       return "PARAMETERS";
     case ID_RECALC_TIME:
       return "TIME";
+    case ID_RECALC_SOURCE:
+      return "SOURCE";
     case ID_RECALC_ALL:
       return "ALL";
   }
@@ -819,7 +824,7 @@ static void deg_graph_clear_id_recalc_flags(ID *id)
 
 static void deg_graph_clear_id_node_func(void *__restrict data_v,
                                          const int i,
-                                         const ParallelRangeTLS *__restrict /*tls*/)
+                                         const TaskParallelTLS *__restrict /*tls*/)
 {
   /* TODO: we clear original ID recalc flags here, but this may not work
    * correctly when there are multiple depsgraph with others still using
@@ -845,7 +850,7 @@ void DEG_ids_clear_recalc(Main *UNUSED(bmain), Depsgraph *depsgraph)
   }
   /* Go over all ID nodes nodes, clearing tags. */
   const int num_id_nodes = deg_graph->id_nodes.size();
-  ParallelRangeSettings settings;
+  TaskParallelSettings settings;
   BLI_parallel_range_settings_defaults(&settings);
   settings.min_iter_per_thread = 1024;
   BLI_task_parallel_range(0, num_id_nodes, deg_graph, deg_graph_clear_id_node_func, &settings);

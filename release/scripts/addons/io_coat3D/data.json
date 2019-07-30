@@ -98,6 +98,19 @@
     "huenode": "no",
     "node_location": [ 100, 100 ],
     "node_color": [ 0.1, 0.5, 0.1 ]
+  },
+
+ "alpha": {
+    "name": "alpha",
+    "colorspace":  "noncolor",
+    "normal": "no",
+    "displacement": "no",
+    "find_input": [ "Alpha"],
+    "input": 8,
+    "rampnode": "no",
+    "huenode": "no",
+    "node_location": [ 0, -1000 ],
+    "node_color": [0.535, 0.608, 0.306]
   }
 
 }

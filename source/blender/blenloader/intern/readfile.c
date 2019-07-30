@@ -6220,6 +6220,7 @@ static void direct_link_collection(FileData *fd, Collection *collection)
   collection->preview = direct_link_preview_image(fd, collection->preview);
 
   collection->flag &= ~COLLECTION_HAS_OBJECT_CACHE;
+  collection->tag = 0;
   BLI_listbase_clear(&collection->object_cache);
   BLI_listbase_clear(&collection->parents);
 
@@ -7038,6 +7039,7 @@ static void direct_link_gpencil(FileData *fd, bGPdata *gpd)
 
   /* init stroke buffer */
   gpd->runtime.sbuffer = NULL;
+  gpd->runtime.sbuffer_used = 0;
   gpd->runtime.sbuffer_size = 0;
   gpd->runtime.tot_cp_points = 0;
 
