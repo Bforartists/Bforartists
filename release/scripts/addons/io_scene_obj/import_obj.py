@@ -357,7 +357,8 @@ def create_materials(filepath, relpath,
                     elif line_id == b'ns':
                         # XXX Totally empirical conversion, trying to adapt it
                         #     (from 0.0 - 900.0 OBJ specular exponent range to 1.0 - 0.0 Principled BSDF range)...
-                        context_mat_wrap.roughness = 1.0 - (sqrt(float_func(line_split[1])) / 30)
+                        val = max(0.0, min(900.0, float_func(line_split[1])))
+                        context_mat_wrap.roughness = 1.0 - (sqrt(val) / 30)
                         context_material_vars.add("roughness")
                     elif line_id == b'ni':  # Refraction index (between 0.001 and 10).
                         context_mat_wrap.ior = float_func(line_split[1])

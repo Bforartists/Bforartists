@@ -347,7 +347,6 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures): #r
                 coat3D.remove_path = True
             createnodes(index_mat, texcoat, create_group_node, tile_list, objekti, ind, is_new)
 
-
 def createnodes(active_mat,texcoat, create_group_node, tile_list, objekti, ind, is_new): # Cretes new nodes and link textures into them
     bring_color = True # Meaning of these is to check if we can only update textures or do we need to create new nodes
     bring_metalness = True
@@ -717,15 +716,19 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
 
         else:
             if (texcoat['alpha'] != []):
-                if (type['name'] == 'color'):
+                if (type['name'] == 'alpha'):
                     act_material.links.new(node.outputs[1], notegroup.inputs[8])
             else:
                 if (type['name'] == 'color'):
                     act_material.links.new(node.outputs[1], notegroup.inputs[8])
+            if(type['name'] != 'alpha'):
+                huenode = createExtraNodes(act_material, node, type)
+            else:
+                huenode = node
+                huenode.location = -100, -800
 
-            huenode = createExtraNodes(act_material, node, type)
-
-            act_material.links.new(huenode.outputs[0], notegroup.inputs[type['input']])
+            if(type['name'] != 'alpha'):
+                act_material.links.new(huenode.outputs[0], notegroup.inputs[type['input']])
             if (main_mat.type != 'MIX_SHADER' and input_color != -1):
                 main_material.links.new(applink_tree.outputs[type['input']], main_mat.inputs[input_color])
                 if(type['name'] == 'color'): #Alpha connection into Principled shader

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 74) (b'38d4483c6a51')\n"
+"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-24 00:00:00\n"
+"POT-Creation-Date: 2019-07-29 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: DeathBlood\n"
 "Language-Team: \n"
@@ -17367,15 +17367,15 @@ msgstr "阴影缓冲区裁剪起始点"
 
 
 msgid "Shadow map clip start, below which objects will not generate shadows"
-msgstr "阴影映射区段结束点, 越过此点的物体将不产生阴影"
+msgstr "阴影映射区裁剪起始点, 越过此点的物体将不产生阴影"
 
 
 msgid "Shadow Buffer Exponent"
-msgstr "阴影缓冲区段结束点"
+msgstr "阴影缓冲区指数"
 
 
 msgid "Bias for reducing light-bleed on exponential shadow maps"
-msgstr "在方差阴影映射(VSM)降低灯光出血的偏移量"
+msgstr "在指数阴影映射上降低灯光出血的偏移量"
 
 
 msgid "Number of shadow buffer samples"
@@ -21387,7 +21387,7 @@ msgstr "最大离心率 (值越高, 则远处角/斜角处就越模糊, 但速�
 
 
 msgid "Filter Probes"
-msgstr "滤镜试样"
+msgstr "过渡探头"
 
 
 msgid "Maximum number of samples (higher gives less blur at distant/oblique angles, but is also slower)"
@@ -21403,7 +21403,7 @@ msgstr "叠加滤镜尺寸, 用于插值和多级纹理"
 
 
 msgid "Filter"
-msgstr "滤镜"
+msgstr "滤镜(过滤)"
 
 
 msgid "Texture filter to use for sampling image"
@@ -28882,7 +28882,7 @@ msgstr "平滑着色"
 
 
 msgid "Output faces with smooth shading rather than flat shaded"
-msgstr "输出为光滑着色面,, 而非平展着色"
+msgstr "输出为平滑着色面,, 而非平展着色"
 
 
 msgid "Screw Modifier"
@@ -38627,7 +38627,7 @@ msgstr "将着色方式设为平直"
 
 msgctxt "Operator"
 msgid "Shade Smooth"
-msgstr "光滑着色"
+msgstr "平滑着色"
 
 
 msgid "Set shading to smooth"
@@ -39085,7 +39085,7 @@ msgstr "为输出的网格应用修改器"
 
 
 msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will be exported as individual faces)"
-msgstr "导出用于光滑着色面及锐利着色面的法线数据 (锐利着色面将以多个独立面的形式导出)"
+msgstr "导出用于平滑着色面及锐利着色面的法线数据 (锐利着色面将以多个独立面的形式导出)"
 
 
 msgid "Export the active UV layer"
@@ -46436,7 +46436,7 @@ msgstr "添加节点"
 
 
 msgid "Add a node to the active tree"
-msgstr "为激活树添加一个节点"
+msgstr "为活动节点添加一个节点"
 
 
 msgctxt "Operator"
@@ -79146,7 +79146,7 @@ msgstr "框"
 
 
 msgid "Material Index Offset:"
-msgstr "材料指数偏移:"
+msgstr "材质编号偏移:"
 
 
 msgid "Aspect X"
@@ -91093,19 +91093,19 @@ msgstr "无法打开文件: %s"
 
 
 msgid "AaBbCc"
-msgstr "AaBbCc"
+msgstr "斑斓中国"
 
 
 msgid "The quick"
-msgstr "快速"
+msgstr "BlenderCN"
 
 
 msgid "brown fox"
-msgstr "棕色狐狸"
+msgstr "简体字 - 繁體字"
 
 
 msgid "jumps over"
-msgstr "跳过"
+msgstr "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 
 msgid "the lazy dog"

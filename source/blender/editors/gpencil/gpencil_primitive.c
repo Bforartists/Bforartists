@@ -114,16 +114,8 @@ static void gp_session_validatebuffer(tGPDprimitive *p)
   bGPdata *gpd = p->gpd;
 
   /* clear memory of buffer (or allocate it if starting a new session) */
-  if (gpd->runtime.sbuffer) {
-    memset(gpd->runtime.sbuffer, 0, sizeof(tGPspoint) * GP_STROKE_BUFFER_MAX);
-  }
-  else {
-    gpd->runtime.sbuffer = MEM_callocN(sizeof(tGPspoint) * GP_STROKE_BUFFER_MAX,
-                                       "gp_session_strokebuffer");
-  }
-
-  /* reset indices */
-  gpd->runtime.sbuffer_size = 0;
+  gpd->runtime.sbuffer = ED_gpencil_sbuffer_ensure(
+      gpd->runtime.sbuffer, &gpd->runtime.sbuffer_size, &gpd->runtime.sbuffer_used, true);
 
   /* reset flags */
   gpd->runtime.sbuffer_sflag = 0;
@@ -306,7 +298,7 @@ static void gpencil_primitive_allocate_memory(tGPDprimitive *tgpi)
 static void gp_primitive_set_initdata(bContext *C, tGPDprimitive *tgpi)
 {
   Scene *scene = CTX_data_scene(C);
-  int cfra_eval = CFRA;
+  int cfra = CFRA;
 
   bGPDlayer *gpl = CTX_data_active_gpencil_layer(C);
 
@@ -318,7 +310,7 @@ static void gp_primitive_set_initdata(bContext *C, tGPDprimitive *tgpi)
 
   /* create a new temporary frame */
   tgpi->gpf = MEM_callocN(sizeof(bGPDframe), "Temp bGPDframe");
-  tgpi->gpf->framenum = tgpi->cframe = cfra_eval;
+  tgpi->gpf->framenum = tgpi->cframe = cfra;
 
   /* create new temp stroke */
   bGPDstroke *gps = MEM_callocN(sizeof(bGPDstroke), "Temp bGPDstroke");
@@ -828,7 +820,7 @@ static void gp_primitive_update_strokes(bContext *C, tGPDprimitive *tgpi)
     }
 
     /* Copy points to buffer */
-    tGPspoint *tpt = ((tGPspoint *)(gpd->runtime.sbuffer) + gpd->runtime.sbuffer_size);
+    tGPspoint *tpt = ((tGPspoint *)(gpd->runtime.sbuffer) + gpd->runtime.sbuffer_used);
 
     /* Store original points */
     float tmp_xyp[2];
@@ -927,10 +919,10 @@ static void gp_primitive_update_strokes(bContext *C, tGPDprimitive *tgpi)
     tpt->time = p2d->time;
 
     /* point uv */
-    if (gpd->runtime.sbuffer_size > 0) {
+    if (gpd->runtime.sbuffer_used > 0) {
       MaterialGPencilStyle *gp_style = tgpi->mat->gp_style;
       const float pixsize = gp_style->texture_pixsize / 1000000.0f;
-      tGPspoint *tptb = (tGPspoint *)gpd->runtime.sbuffer + gpd->runtime.sbuffer_size - 1;
+      tGPspoint *tptb = (tGPspoint *)gpd->runtime.sbuffer + gpd->runtime.sbuffer_used - 1;
       bGPDspoint spt, spt2;
 
       /* get origin to reproject point */
@@ -958,7 +950,11 @@ static void gp_primitive_update_strokes(bContext *C, tGPDprimitive *tgpi)
 
     tpt->uv_rot = p2d->uv_rot;
 
-    gpd->runtime.sbuffer_size++;
+    gpd->runtime.sbuffer_used++;
+
+    /* check if still room in buffer or add more */
+    gpd->runtime.sbuffer = ED_gpencil_sbuffer_ensure(
+        gpd->runtime.sbuffer, &gpd->runtime.sbuffer_size, &gpd->runtime.sbuffer_used, false);
 
     /* add small offset to keep stroke over the surface */
     if ((depth_arr) && (gpd->zdepth_offset > 0.0f)) {
@@ -1078,6 +1074,7 @@ static void gpencil_primitive_exit(bContext *C, wmOperator *op)
     gpd->runtime.sbuffer = NULL;
 
     /* clear flags */
+    gpd->runtime.sbuffer_used = 0;
     gpd->runtime.sbuffer_size = 0;
     gpd->runtime.sbuffer_sflag = 0;
   }
@@ -1097,8 +1094,6 @@ static void gpencil_primitive_init(bContext *C, wmOperator *op)
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   Paint *paint = &ts->gp_paint->paint;
-
-  int cfra_eval = CFRA;
 
   /* create temporary operator data */
   tGPDprimitive *tgpi = MEM_callocN(sizeof(tGPDprimitive), "GPencil Primitive Data");
@@ -1121,7 +1116,7 @@ static void gpencil_primitive_init(bContext *C, wmOperator *op)
   tgpi->orign_type = RNA_enum_get(op->ptr, "type");
 
   /* set current frame number */
-  tgpi->cframe = cfra_eval;
+  tgpi->cframe = CFRA;
 
   /* set GP datablock */
   tgpi->gpd = gpd;
