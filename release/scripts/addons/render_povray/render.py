@@ -4180,7 +4180,8 @@ class PovrayRender(bpy.types.RenderEngine):
             data = b""
             last_line = ""
             while _test_wait():
-                # POV in Windows does not output its stdout/stderr, it displays them in its GUI
+                # POV in Windows did not output its stdout/stderr, it displayed them in its GUI
+                # But now writes file
                 if self._is_windows:
                     self.update_stats("", "POV-Ray 3.7: Rendering File")
                 else:
