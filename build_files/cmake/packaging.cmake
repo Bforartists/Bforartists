@@ -80,8 +80,8 @@ if(APPLE)
 endif()
 
 if(WIN32)
-  set(CPACK_PACKAGE_INSTALL_DIRECTORY "Bforartists 2 - 0.5.0")
-  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Bforartists 2 - 0.5.0")
+  set(CPACK_PACKAGE_INSTALL_DIRECTORY "Bforartists 2 - 0.6.0")
+  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Bforartists 2 - 0.6.0")
 
   set(CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/release/windows/icons/winblender.ico)
   set(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
