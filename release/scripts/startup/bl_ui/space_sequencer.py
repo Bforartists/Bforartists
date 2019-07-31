@@ -29,6 +29,7 @@ from bpy.app.translations import (
 )
 from bl_ui.properties_grease_pencil_common import (
     AnnotationDataPanel,
+    GreasePencilToolsPanel,
 )
 from rna_prop_ui import PropertyPanel
 
@@ -219,9 +220,6 @@ class SEQUENCER_MT_view(Menu):
             layout.operator_context = 'INVOKE_REGION_PREVIEW'
         layout.prop(st, "show_region_ui")
         layout.operator_context = 'INVOKE_DEFAULT'
-
-        if st.view_type == 'SEQUENCER':
-            layout.prop(st, "show_backdrop", text="Preview as Backdrop")
 
         layout.separator()
 
@@ -2013,22 +2011,23 @@ class SEQUENCER_PT_modifiers(SequencerButtonsPanel, Panel):
                         col.prop(mod, "gamma")
 
 
-class SEQUENCER_PT_annotation(AnnotationDataPanel, SequencerButtonsPanel_Output, Panel):
+class SEQUENCER_PT_grease_pencil(AnnotationDataPanel, SequencerButtonsPanel_Output, Panel):
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "View"
 
-    @staticmethod
-    def has_preview(context):
-        st = context.space_data
-        return st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}
-
-    @classmethod
-    def poll(cls, context):
-        return cls.has_preview(context)
-
     # NOTE: this is just a wrapper around the generic GP Panel
     # But, it should only show up when there are images in the preview region
+
+
+class SEQUENCER_PT_grease_pencil_tools(GreasePencilToolsPanel, SequencerButtonsPanel_Output, Panel):
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "View"
+
+    # NOTE: this is just a wrapper around the generic GP tools panel
+    # It contains access to some essential tools usually found only in
+    # toolbar, which doesn't exist here...
 
 
 class SEQUENCER_PT_custom_props(SequencerButtonsPanel, PropertyPanel, Panel):
@@ -2067,6 +2066,8 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
         is_sequencer_view = st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
 
         if is_sequencer_view:
+            if st.view_type == 'SEQUENCER':
+                layout.prop(st, "show_backdrop", text="Preview as Backdrop")
             layout.prop(st, "show_seconds")
             layout.prop(st, "show_frame_indicator")
             layout.prop(st, "show_strip_offset")
@@ -2084,6 +2085,8 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 layout.prop(st, "show_metadata")
             elif st.display_mode == 'WAVEFORM':
                 layout.prop(st, "show_separate_color")
+
+
 
 
 classes = (
@@ -2149,7 +2152,8 @@ classes = (
     SEQUENCER_PT_view_safe_areas,
     SEQUENCER_PT_view_safe_areas_center_cut,
 
-    SEQUENCER_PT_annotation,
+    SEQUENCER_PT_grease_pencil,
+    SEQUENCER_PT_grease_pencil_tools,
 
 #BFA
 
