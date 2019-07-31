@@ -220,9 +220,6 @@ class SEQUENCER_MT_view(Menu):
         layout.prop(st, "show_region_ui")
         layout.operator_context = 'INVOKE_DEFAULT'
 
-        if st.view_type == 'SEQUENCER':
-            layout.prop(st, "show_backdrop", text="Preview as Backdrop")
-
         layout.separator()
 
         if is_sequencer_view:
@@ -2067,6 +2064,8 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
         is_sequencer_view = st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
 
         if is_sequencer_view:
+            if st.view_type == 'SEQUENCER':
+                layout.prop(st, "show_backdrop", text="Preview as Backdrop")
             layout.prop(st, "show_seconds")
             layout.prop(st, "show_frame_indicator")
             layout.prop(st, "show_strip_offset")
