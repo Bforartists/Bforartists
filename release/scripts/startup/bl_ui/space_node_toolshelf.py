@@ -483,6 +483,10 @@ class NODES_PT_Input_shader(bpy.types.Panel):
                 props = col.operator("node.add_node", text=" Background    ", icon = "NODE_BACKGROUNDSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBackground"
+                
+            props = col.operator("node.add_node", text=" Principled Volume       ", icon = "NODE_PRINCIPLED")
+            props.use_transform = True
+            props.type = "ShaderNodeVolumePrincipled"
 
 
         #### Icon Buttons
