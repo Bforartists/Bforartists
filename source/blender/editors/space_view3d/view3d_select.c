@@ -126,7 +126,7 @@ void ED_view3d_viewcontext_init(bContext *C, ViewContext *vc)
   vc->C = C;
   vc->ar = CTX_wm_region(C);
   vc->bmain = CTX_data_main(C);
-  vc->depsgraph = CTX_data_depsgraph(C);
+  vc->depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   vc->scene = CTX_data_scene(C);
   vc->view_layer = CTX_data_view_layer(C);
   vc->v3d = CTX_wm_view3d(C);
@@ -220,12 +220,9 @@ static void editselect_buf_cache_init(struct EditSelectBuf_Cache *esel, ViewCont
       esel->bases_len = 0;
     }
   }
-  DRW_draw_select_id(vc->depsgraph,
-                     vc->ar,
-                     vc->v3d,
-                     esel->bases,
-                     esel->bases_len,
-                     vc->scene->toolsettings->selectmode);
+
+  DRW_draw_select_id(vc->depsgraph, vc->ar, vc->v3d, esel->bases, esel->bases_len, -1);
+
   for (int i = 0; i < esel->bases_len; i++) {
     esel->bases[i]->object->runtime.select_id = i;
   }
@@ -3956,7 +3953,7 @@ static int view3d_circle_select_exec(bContext *C, wmOperator *op)
   const int radius = RNA_int_get(op->ptr, "radius");
   const int mval[2] = {RNA_int_get(op->ptr, "x"), RNA_int_get(op->ptr, "y")};
 
-  /* Allow each selection type to allocate their own data thats used between executions. */
+  /* Allow each selection type to allocate their own data that's used between executions. */
   wmGesture *gesture = op->customdata; /* NULL when non-modal. */
   wmGenericUserData wm_userdata_buf = {0};
   wmGenericUserData *wm_userdata = gesture ? &gesture->user_data : &wm_userdata_buf;

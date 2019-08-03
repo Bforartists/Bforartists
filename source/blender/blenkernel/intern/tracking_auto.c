@@ -42,7 +42,7 @@
 #include "tracking_private.h"
 
 typedef struct AutoTrackOptions {
-  int clip_index;            /** Index of the clip this track belogs to. */
+  int clip_index;            /** Index of the clip this track belongs to. */
   int track_index;           /* Index of the track in AutoTrack tracks structure. */
   MovieTrackingTrack *track; /* Pointer to an original track/ */
   libmv_TrackRegionOptions track_region_options; /* Options for the region tracker. */
@@ -50,7 +50,7 @@ typedef struct AutoTrackOptions {
 
   /* TODO(sergey): A bit awkward to keep it in here, only used to
    * place a disabled marker once the tracking fails,
-   * Wither find a more clear way to do it or call it track context
+   * Either find a clearer way to do it or call it track context
    * or state, not options.
    */
   bool is_failed;

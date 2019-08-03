@@ -751,7 +751,7 @@ float AnimationImporter::convert_to_focal_length(float in_xfov,
                                                  float aspect,
                                                  float sensorx)
 {
-  /* NOTE: Needs more testing (As we curretnly have no official test data for this) */
+  /* NOTE: Needs more testing (As we currently have no official test data for this) */
   float xfov = (fov_type == CAMERA_YFOV) ?
                    (2.0f * atanf(aspect * tanf(DEG2RADF(in_xfov) * 0.5f))) :
                    DEG2RADF(in_xfov);
@@ -966,7 +966,7 @@ void AnimationImporter::apply_matrix_curves(Object *ob,
 }
 
 /*
- * This function returns the aspet ration from the Collada camera.
+ * This function returns the aspect ration from the Collada camera.
  *
  * Note:COLLADA allows to specify either XFov, or YFov alone.
  * In that case the aspect ratio can be determined from
