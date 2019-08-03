@@ -105,7 +105,7 @@ int BLI_file_gzip(const char *from, const char *to)
 #endif
 
 /* gzip the file in from_file and write it to memory to_mem, at most size bytes.
- * return the unziped size
+ * return the unzipped size
  */
 char *BLI_file_ungzip_to_mem(const char *from_file, int *r_size)
 {
@@ -519,7 +519,7 @@ enum {
   /* operation requested not to perform recursive digging for current path */
   RecursiveOp_Callback_StopRecurs = 1,
 
-  /* error occured in callback and recursive walking should stop immediately */
+  /* error occurred in callback and recursive walking should stop immediately */
   RecursiveOp_Callback_Error = 2,
 };
 

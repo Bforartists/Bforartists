@@ -3559,7 +3559,7 @@ ModifierData *object_add_particle_system(Main *bmain, Scene *scene, Object *ob, 
 
   psys->totpart = 0;
   psys->flag = PSYS_CURRENT;
-  psys->cfra = BKE_scene_frame_get_from_ctime(scene, CFRA + 1);
+  psys->cfra = BKE_scene_frame_to_ctime(scene, CFRA + 1);
 
   DEG_relations_tag_update(bmain);
   DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
@@ -4259,7 +4259,7 @@ static void get_child_modifier_parameters(ParticleSettings *part,
         ctx->mesh, cpa_from, cpa_num, cpa_fuv, ctx->vg_twist);
   }
 }
-/* get's hair (or keyed) particles state at the "path time" specified in state->time */
+/* gets hair (or keyed) particles state at the "path time" specified in state->time */
 void psys_get_particle_on_path(ParticleSimulationData *sim,
                                int p,
                                ParticleKey *state,

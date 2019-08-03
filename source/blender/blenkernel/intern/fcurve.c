@@ -1113,7 +1113,7 @@ void calchandles_fcurve(FCurve *fcu)
     first->f5 = last->f5 = HD_AUTOTYPE_SPECIAL;
   }
 
-  /* do a second pass for auto handle: compute the handle to have 0 accelaration step */
+  /* do a second pass for auto handle: compute the handle to have 0 acceleration step */
   if (fcu->auto_smoothing != FCURVE_SMOOTH_NONE) {
     BKE_nurb_handle_smooth_fcurve(fcu->bezt, fcu->totvert, cycle);
   }
@@ -1744,7 +1744,7 @@ static float dvar_eval_transChan(ChannelDriver *driver, DriverVar *dvar)
 
 /* ......... */
 
-/* Table of Driver Varaiable Type Info Data */
+/* Table of Driver Variable Type Info Data */
 static DriverVarTypeInfo dvar_types[MAX_DVAR_TYPES] = {
     BEGIN_DVAR_TYPEDEF(DVAR_TYPE_SINGLE_PROP) dvar_eval_singleProp, /* eval callback */
     1,                                                              /* number of targets used */

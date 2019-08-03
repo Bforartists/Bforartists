@@ -1171,10 +1171,9 @@ void ED_object_vpaintmode_enter_ex(
 {
   ed_vwpaintmode_enter_generic(bmain, depsgraph, wm, scene, ob, OB_MODE_VERTEX_PAINT);
 }
-void ED_object_vpaintmode_enter(struct bContext *C)
+void ED_object_vpaintmode_enter(struct bContext *C, Depsgraph *depsgraph)
 {
   Main *bmain = CTX_data_main(C);
-  Depsgraph *depsgraph = CTX_data_depsgraph(C);
   wmWindowManager *wm = CTX_wm_manager(C);
   Scene *scene = CTX_data_scene(C);
   Object *ob = CTX_data_active_object(C);
@@ -1186,10 +1185,9 @@ void ED_object_wpaintmode_enter_ex(
 {
   ed_vwpaintmode_enter_generic(bmain, depsgraph, wm, scene, ob, OB_MODE_WEIGHT_PAINT);
 }
-void ED_object_wpaintmode_enter(struct bContext *C)
+void ED_object_wpaintmode_enter(struct bContext *C, Depsgraph *depsgraph)
 {
   Main *bmain = CTX_data_main(C);
-  Depsgraph *depsgraph = CTX_data_depsgraph(C);
   wmWindowManager *wm = CTX_wm_manager(C);
   Scene *scene = CTX_data_scene(C);
   Object *ob = CTX_data_active_object(C);
@@ -1396,7 +1394,7 @@ void PAINT_OT_weight_paint_toggle(wmOperatorType *ot)
   ot->poll = paint_poll_test;
 
   /* flags */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_USE_EVAL_DATA;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
 /** \} */
@@ -1556,7 +1554,7 @@ static bool wpaint_stroke_test_start(bContext *C, wmOperator *op, const float mo
   bool *defbase_sel;
   SculptSession *ss = ob->sculpt;
   VPaint *vp = CTX_data_tool_settings(C)->wpaint;
-  Depsgraph *depsgraph = CTX_data_depsgraph(C);
+  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
 
   if (ED_wpaint_ensure_data(C, op->reports, WPAINT_ENSURE_MIRROR, &vgroup_index) == false) {
     return false;
@@ -2569,7 +2567,7 @@ void PAINT_OT_vertex_paint_toggle(wmOperatorType *ot)
   ot->poll = paint_poll_test;
 
   /* flags */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_USE_EVAL_DATA;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
 /** \} */
@@ -2638,7 +2636,7 @@ static bool vpaint_stroke_test_start(bContext *C, struct wmOperator *op, const f
   Object *ob = CTX_data_active_object(C);
   Mesh *me;
   SculptSession *ss = ob->sculpt;
-  Depsgraph *depsgraph = CTX_data_depsgraph(C);
+  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
 
   /* context checks could be a poll() */
   me = BKE_mesh_from_object(ob);
@@ -2705,8 +2703,9 @@ static bool vpaint_stroke_test_start(bContext *C, struct wmOperator *op, const f
   return 1;
 }
 
-static void do_vpaint_brush_calc_average_color_cb_ex(
-    void *__restrict userdata, const int n, const TaskParallelTLS *__restrict UNUSED(tls))
+static void do_vpaint_brush_calc_average_color_cb_ex(void *__restrict userdata,
+                                                     const int n,
+                                                     const TaskParallelTLS *__restrict UNUSED(tls))
 {
   SculptThreadedTaskData *data = userdata;
   SculptSession *ss = data->ob->sculpt;

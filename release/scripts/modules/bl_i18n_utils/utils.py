@@ -180,9 +180,8 @@ def enable_addons(addons=None, support=None, disable=False, check_only=False):
 
     prefs = bpy.context.preferences
     used_ext = {ext.module for ext in prefs.addons}
-    # XXX TEMP WORKAROUND
-    black_list = {"space_view3d_math_vis",
-                  "object_scatter"}
+    # In case we need to blacklist some add-ons...
+    black_list = {}
 
     ret = [
         mod for mod in addon_utils.modules()
@@ -1340,7 +1339,7 @@ class I18n:
     def parse_from_py(self, src, langs=set()):
         """
         src must be a valid path, either a py file or a module directory (in which case all py files inside it
-        will be checked, first file macthing will win!).
+        will be checked, first file matching will win!).
         if langs set is void, all languages found are loaded.
         """
         default_context = self.settings.DEFAULT_CONTEXT
