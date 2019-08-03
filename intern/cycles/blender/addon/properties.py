@@ -1314,7 +1314,7 @@ class CyclesRenderLayerSettings(bpy.types.PropertyGroup):
         )
     use_pass_crypto_material: BoolProperty(
         name="Cryptomatte Material",
-        description="Cryptomatte Material\Render cryptomatte material pass, for isolating materials in compositing",
+        description="Cryptomatte Material\nRender cryptomatte material pass, for isolating materials in compositing",
         default=False,
         update=update_render_passes,
         )
