@@ -1059,7 +1059,7 @@ static int actionzone_modal(bContext *C, wmOperator *op, const wmEvent *event)
             is_gesture = (delta_max > split_threshold);
           }
           else {
-            /* Different area, so posible join. */
+            /* Different area, so possible join. */
             if (sad->gesture_dir == 'n') {
               WM_cursor_set(win, BC_N_ARROWCURSOR);
             }
@@ -4791,7 +4791,7 @@ int ED_screen_animation_play(bContext *C, int sync, int mode)
 {
   bScreen *screen = CTX_wm_screen(C);
   Scene *scene = CTX_data_scene(C);
-  Scene *scene_eval = DEG_get_evaluated_scene(CTX_data_depsgraph(C));
+  Scene *scene_eval = DEG_get_evaluated_scene(CTX_data_ensure_evaluated_depsgraph(C));
 
   if (ED_screen_animation_playing(CTX_wm_manager(C))) {
     /* stop playback now */

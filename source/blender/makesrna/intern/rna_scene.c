@@ -877,7 +877,7 @@ static float rna_Scene_frame_current_final_get(PointerRNA *ptr)
 {
   Scene *scene = (Scene *)ptr->data;
 
-  return BKE_scene_frame_get_from_ctime(scene, (float)scene->r.cfra);
+  return BKE_scene_frame_to_ctime(scene, (float)scene->r.cfra);
 }
 
 static void rna_Scene_start_frame_set(PointerRNA *ptr, int value)
@@ -5171,6 +5171,7 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
       {FFMPEG_OGG, "OGG", 0, "Ogg", ""},
       {FFMPEG_MKV, "MKV", 0, "Matroska", ""},
       {FFMPEG_FLV, "FLASH", 0, "Flash", ""},
+      {FFMPEG_WEBM, "WEBM", 0, "WebM", ""},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -5229,6 +5230,7 @@ static void rna_def_scene_ffmpeg_settings(BlenderRNA *brna)
       {AV_CODEC_ID_FLAC, "FLAC", 0, "FLAC", ""},
       {AV_CODEC_ID_MP2, "MP2", 0, "MP2", ""},
       {AV_CODEC_ID_MP3, "MP3", 0, "MP3", ""},
+      {AV_CODEC_ID_OPUS, "OPUS", 0, "Opus", ""},
       {AV_CODEC_ID_PCM_S16LE, "PCM", 0, "PCM", ""},
       {AV_CODEC_ID_VORBIS, "VORBIS", 0, "Vorbis", ""},
       {0, NULL, 0, NULL, NULL},
