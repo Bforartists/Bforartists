@@ -1123,7 +1123,7 @@ void ViewMapBuilder::CullViewEdges(ViewMap *ioViewMap,
   GridHelpers::getDefaultViewProscenium(occluderProscenium);
 
   // N.B. Freestyle is inconsistent in its use of ViewMap::viewedges_container and
-  // vector<ViewEdge*>::iterator. Probably all occurences of vector<ViewEdge*>::iterator should be
+  // vector<ViewEdge*>::iterator. Probably all occurrences of vector<ViewEdge*>::iterator should be
   // replaced ViewMap::viewedges_container throughout the code. For each view edge
   ViewMap::viewedges_container::iterator ve, veend;
 
@@ -1137,7 +1137,7 @@ void ViewMapBuilder::CullViewEdges(ViewMap *ioViewMap,
     //        If none exists, find the feature edge with center point closest to viewport origin.
     //            Expand occluder proscenium to enclose center point.
 
-    // For each feature edge, while bestOccluderTarget not found and view edge not visibile
+    // For each feature edge, while bestOccluderTarget not found and view edge not visible
     bool bestOccluderTargetFound = false;
     FEdge *bestOccluderTarget = NULL;
     real bestOccluderDistance = 0.0;

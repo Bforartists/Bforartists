@@ -599,7 +599,7 @@ struct GP_EditableStrokes_Iter {
 #define GP_EDITABLE_STROKES_BEGIN(gpstroke_iter, C, gpl, gps) \
   { \
     struct GP_EditableStrokes_Iter gpstroke_iter = {{{0}}}; \
-    Depsgraph *depsgraph_ = CTX_data_depsgraph(C); \
+    Depsgraph *depsgraph_ = CTX_data_ensure_evaluated_depsgraph(C); \
     Object *obact_ = CTX_data_active_object(C); \
     bGPdata *gpd_ = CTX_data_gpencil_data(C); \
     const bool is_multiedit_ = (bool)GPENCIL_MULTIEDIT_SESSIONS_ON(gpd_); \
@@ -610,7 +610,9 @@ struct GP_EditableStrokes_Iter {
           ED_gpencil_parent_location(depsgraph_, obact_, gpd_, gpl, gpstroke_iter.diff_mat); \
           invert_m4_m4(gpstroke_iter.inverse_diff_mat, gpstroke_iter.diff_mat); \
           /* loop over strokes */ \
-          for (bGPDstroke *gps = gpf_->strokes.first; gps; gps = gps->next) { \
+          bGPDstroke *gpsn_; \
+          for (bGPDstroke *gps = gpf_->strokes.first; gps; gps = gpsn_) { \
+            gpsn_ = gps->next; \
             /* skip strokes that are invalid for current view */ \
             if (ED_gpencil_stroke_can_use(C, gps) == false) \
               continue; \

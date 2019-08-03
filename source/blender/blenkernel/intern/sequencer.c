@@ -3336,8 +3336,7 @@ static ImBuf *seq_render_mask(const SeqRenderData *context, Mask *mask, float nr
 
     /* anim-data */
     adt = BKE_animdata_from_id(&mask->id);
-    BKE_animsys_evaluate_animdata(
-        context->depsgraph, context->scene, &mask_temp->id, adt, nr, ADT_RECALC_ANIM);
+    BKE_animsys_evaluate_animdata(context->scene, &mask_temp->id, adt, nr, ADT_RECALC_ANIM, false);
 
     maskbuf = MEM_mallocN(sizeof(float) * context->rectx * context->recty, __func__);
 
@@ -3711,7 +3710,7 @@ static ImBuf *do_render_strip_uncached(const SeqRenderData *context,
     case SEQ_TYPE_SCENE: {
       if (seq->flag & SEQ_SCENE_STRIPS) {
         if (seq->scene && (context->scene != seq->scene)) {
-          /* recusrive check */
+          /* recursive check */
           if (BLI_linklist_index(state->scene_parents, seq->scene) != -1) {
             break;
           }
@@ -4645,7 +4644,7 @@ void BKE_sequence_tx_handle_xlimits(Sequence *seq, int leftflag, int rightflag)
         BKE_sequence_tx_set_final_left(seq, seq_tx_get_end(seq) - 1);
       }
 
-      /* dosnt work now - TODO */
+      /* doesn't work now - TODO */
 #if 0
       if (seq_tx_get_start(seq) >= seq_tx_get_final_right(seq, 0)) {
         int ofs;
@@ -5836,7 +5835,7 @@ static Sequence *seq_dupli(const Scene *scene_src,
   /* When using SEQ_DUPE_UNIQUE_NAME, it is mandatory to add new sequences in relevant container
    * (scene or meta's one), *before* checking for unique names. Otherwise the meta's list is empty
    * and hence we miss all seqs in that meta that have already been duplicated (see T55668).
-   * Note that unique name check itslef could be done at a later step in calling code, once all
+   * Note that unique name check itself could be done at a later step in calling code, once all
    * seqs have bee duplicated (that was first, simpler solution), but then handling of animation
    * data will be broken (see T60194). */
   if (new_seq_list != NULL) {

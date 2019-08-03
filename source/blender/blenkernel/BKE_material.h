@@ -28,6 +28,7 @@
 extern "C" {
 #endif
 
+struct bNode;
 struct ID;
 struct Main;
 struct Material;
@@ -89,11 +90,13 @@ void assign_matarar(struct Main *bmain, struct Object *ob, struct Material ***ma
 short BKE_object_material_slot_find_index(struct Object *ob, struct Material *ma);
 bool BKE_object_material_slot_add(struct Main *bmain, struct Object *ob);
 bool BKE_object_material_slot_remove(struct Main *bmain, struct Object *ob);
+bool BKE_object_material_slot_used(struct ID *id, short actcol);
 
 struct MaterialGPencilStyle *BKE_material_gpencil_settings_get(struct Object *ob, short act);
 
 void BKE_texpaint_slot_refresh_cache(struct Scene *scene, struct Material *ma);
 void BKE_texpaint_slots_refresh_object(struct Scene *scene, struct Object *ob);
+struct bNode *BKE_texpaint_slot_material_find_node(struct Material *ma, short texpaint_slot);
 
 /* rna api */
 void BKE_material_resize_id(struct Main *bmain, struct ID *id, short totcol, bool do_id_user);

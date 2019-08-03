@@ -7108,7 +7108,7 @@ class VIEW3D_PT_snapping(Panel):
 
         layout = self.layout
         col = layout.column()
-        col.label(text="Snapping")
+        col.label(text="Snap to")
         col.prop(tool_settings, "snap_elements", expand=True)
 
         col.separator()
@@ -7116,7 +7116,7 @@ class VIEW3D_PT_snapping(Panel):
             col.prop(tool_settings, "use_snap_grid_absolute")
 
         if snap_elements != {'INCREMENT'}:
-            col.label(text="Target")
+            col.label(text="Snap with")
             row = col.row(align=True)
             row.prop(tool_settings, "snap_target", expand=True)
 

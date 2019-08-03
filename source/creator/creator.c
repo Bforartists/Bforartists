@@ -25,9 +25,6 @@
 #include <string.h>
 
 #ifdef WIN32
-#  if defined(_MSC_VER) && defined(_M_X64)
-#    include <math.h> /* needed for _set_FMA3_enable */
-#  endif
 #  include <windows.h>
 #  include "utfconv.h"
 #endif
@@ -235,12 +232,6 @@ int main(int argc,
   /* We delay loading of openmp so we can set the policy here. */
 #  if defined(_MSC_VER)
   _putenv_s("OMP_WAIT_POLICY", "PASSIVE");
-#  endif
-
-  /* FMA3 support in the 2013 CRT is broken on Vista and Windows 7 RTM
-   * (fixed in SP1). Just disable it. */
-#  if defined(_MSC_VER) && defined(_M_X64)
-  _set_FMA3_enable(0);
 #  endif
 
   /* Win32 Unicode Args */
@@ -505,7 +496,7 @@ int main(int argc,
 #ifdef WITH_PYTHON_MODULE
 void main_python_exit(void)
 {
-  WM_exit_ext((bContext *)evil_C, true);
+  WM_exit_ex((bContext *)evil_C, true);
   evil_C = NULL;
 }
 #endif
