@@ -752,7 +752,7 @@ void GPENCIL_OT_duplicate(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Duplicate Strokes";
   ot->idname = "GPENCIL_OT_duplicate";
-  ot->description = "Duplicate Strokes\nDuplicate the selected Grease Pencil strokes";
+  ot->description = "Duplicate the selected Grease Pencil strokes";
 
   /* callbacks */
   ot->exec = gp_duplicate_exec;
@@ -1202,7 +1202,7 @@ void GPENCIL_OT_copy(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Copy Strokes";
   ot->idname = "GPENCIL_OT_copy";
-  ot->description = "Copy Strokes\nCopy selected Grease Pencil points and strokes";
+  ot->description = "Copy selected Grease Pencil points and strokes";
 
   /* callbacks */
   ot->exec = gp_strokes_copy_exec;
@@ -1375,7 +1375,7 @@ void GPENCIL_OT_paste(wmOperatorType *ot)
   ot->name = "Paste Strokes";
   ot->idname = "GPENCIL_OT_paste";
   ot->description =
-      "Paste Strokes\nPaste previously copied strokes or copy and merge in active layer";
+      "Paste previously copied strokes or copy and merge in active layer";
 
   /* callbacks */
   ot->exec = gp_strokes_paste_exec;
@@ -1606,7 +1606,7 @@ void GPENCIL_OT_blank_frame_add(wmOperatorType *ot)
                   "all_layers",
                   false,
                   "All Layers",
-                  "All Layers\nCreate blank frame in all layers, not only active");
+                  "Create blank frame in all layers, not only active");
 }
 
 /* ******************* Delete Active Frame ************************ */
@@ -1656,7 +1656,7 @@ void GPENCIL_OT_active_frame_delete(wmOperatorType *ot)
   ot->name = "Delete Active Frame";
   ot->idname = "GPENCIL_OT_active_frame_delete";
   ot->description =
-      "Delete Active Frame\nDelete the active frame for the active Grease Pencil Layer";
+      "Delete the active frame for the active Grease Pencil Layer";
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
@@ -1718,7 +1718,7 @@ void GPENCIL_OT_active_frames_delete_all(wmOperatorType *ot)
   ot->name = "Delete All Active Frames";
   ot->idname = "GPENCIL_OT_active_frames_delete_all";
   ot->description =
-      "Delete all active Frames\nDelete the active frame(s) of all editable Grease Pencil layers";
+      "Delete the active frame(s) of all editable Grease Pencil layers";
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
@@ -2385,7 +2385,7 @@ void GPENCIL_OT_delete(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Delete";
   ot->idname = "GPENCIL_OT_delete";
-  ot->description = "Delete\nDelete selected Grease Pencil strokes, vertices, or frames";
+  ot->description = "Delete selected Grease Pencil strokes, vertices, or frames";
 
   /* callbacks */
   ot->invoke = WM_menu_invoke;
@@ -2431,7 +2431,7 @@ void GPENCIL_OT_dissolve(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Dissolve";
   ot->idname = "GPENCIL_OT_dissolve";
-  ot->description = "Dissolve\nDelete selected points without splitting strokes";
+  ot->description = "Delete selected points without splitting strokes";
 
   /* callbacks */
   ot->invoke = WM_menu_invoke;
