@@ -563,6 +563,7 @@ UserDef *BKE_blendfile_userdef_from_defaults(void)
   memcpy(userdef, &U_default, sizeof(*userdef));
 
   /* Add-ons. */
+  /*here you define the by default activated addons*/
   {
     const char *addons[] = {
         "io_anim_bvh",
@@ -574,6 +575,13 @@ UserDef *BKE_blendfile_userdef_from_defaults(void)
         "io_scene_gltf2",
         "io_scene_obj",
         "io_scene_x3d",
+        "materials_library_vx",
+        "minilightlib",
+        "bforartists_toolbar_settings",        
+        "createisocam",
+        "edit_dimensions",
+        "reset3dview",
+        "smartdelete_bfa",
     };
     for (int i = 0; i < ARRAY_SIZE(addons); i++) {
       bAddon *addon = BKE_addon_new();
