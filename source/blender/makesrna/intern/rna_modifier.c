@@ -1114,8 +1114,6 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_src_itemf(
     return rna_enum_dt_layers_select_src_items;
   }
 
-  Depsgraph *depsgraph = CTX_data_depsgraph(C);
-
   /* No active here! */
   RNA_enum_items_add_value(
       &item, &totitem, rna_enum_dt_layers_select_src_items, DT_LAYERS_ALL_SRC);
@@ -1155,6 +1153,7 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_src_itemf(
       Mesh *me_eval;
       int num_data, i;
 
+      Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
       Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
       Object *ob_src_eval = DEG_get_evaluated_object(depsgraph, ob_src);
 
@@ -1180,6 +1179,7 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_src_itemf(
       Mesh *me_eval;
       int num_data, i;
 
+      Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
       Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
       Object *ob_src_eval = DEG_get_evaluated_object(depsgraph, ob_src);
 
@@ -5668,7 +5668,8 @@ static void rna_def_modifier_datatransfer(BlenderRNA *brna)
       0.0f,
       1.0f,
       "Mix Factor",
-      "Factor to use when applying data to destination (exact behavior depends on mix mode)",
+      "Factor to use when applying data to destination (exact behavior depends on mix mode, "
+      "multiplied with weights from vertex group when defined)",
       0.0f,
       1.0f);
   RNA_def_property_update(prop, 0, "rna_Modifier_update");

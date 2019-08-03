@@ -105,6 +105,7 @@ void BKE_mesh_looptri_get_real_edges(const struct Mesh *mesh,
 
 void BKE_mesh_free(struct Mesh *me);
 void BKE_mesh_init(struct Mesh *me);
+void BKE_mesh_clear_geometry(struct Mesh *me);
 struct Mesh *BKE_mesh_add(struct Main *bmain, const char *name);
 void BKE_mesh_copy_data(struct Main *bmain,
                         struct Mesh *me_dst,
@@ -181,6 +182,7 @@ void BKE_mesh_to_curve(struct Main *bmain,
                        struct Scene *scene,
                        struct Object *ob);
 void BKE_mesh_material_index_remove(struct Mesh *me, short index);
+bool BKE_mesh_material_index_used(struct Mesh *me, short index);
 void BKE_mesh_material_index_clear(struct Mesh *me);
 void BKE_mesh_material_remap(struct Mesh *me, const unsigned int *remap, unsigned int remap_len);
 void BKE_mesh_smooth_flag_set(struct Object *meshOb, int enableSmooth);

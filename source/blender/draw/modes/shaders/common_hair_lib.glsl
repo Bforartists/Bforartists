@@ -1,8 +1,8 @@
 /**
  * Library to create hairs dynamically from control points.
  * This is less bandwidth intensive than fetching the vertex attributes
- * but does more ALU work per vertex. This also reduce the number
- * of data the CPU has to precompute and transfert for each update.
+ * but does more ALU work per vertex. This also reduces the amount
+ * of data the CPU has to precompute and transfer for each update.
  */
 
 /**
@@ -44,7 +44,7 @@ uniform usamplerBuffer hairStrandSegBuffer; /* R16UI */
 /* -- Subdivision stage -- */
 /**
  * We use a transform feedback to preprocess the strands and add more subdivision to it.
- * For the moment theses are simple smooth interpolation but one could hope to see the full
+ * For the moment these are simple smooth interpolation but one could hope to see the full
  * children particle modifiers being evaluated at this stage.
  *
  * If no more subdivision is needed, we can skip this step.
