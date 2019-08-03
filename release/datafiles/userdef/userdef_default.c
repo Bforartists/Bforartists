@@ -21,10 +21,14 @@
 
 #include "BKE_blender_version.h"
 
+/* bfa - for the flag names have a look into source\blender\makesrna\intern\rna_userdef.c*/
+/*bfa -  added USER_TOOLTIPS_PYTHON, USER_DEVELOPER_UI and USER_FILENOUI to the .flag*/
+
 const UserDef U_default = {
     .versionfile = BLENDER_VERSION,
     .subversionfile = BLENDER_SUBVERSION,
-    .flag = (USER_AUTOSAVE | USER_TOOLTIPS | USER_SAVE_PREVIEWS | USER_RELPATHS |
+    .flag = (USER_AUTOSAVE | USER_TOOLTIPS | USER_TOOLTIPS_PYTHON | 
+             USER_DEVELOPER_UI | USER_SAVE_PREVIEWS | USER_RELPATHS | USER_FILENOUI | 
              USER_RELEASECONFIRM | USER_SCRIPT_AUTOEXEC_DISABLE | USER_NONEGFRAMES),
     .dupflag = USER_DUP_MESH | USER_DUP_CURVE | USER_DUP_SURF | USER_DUP_FONT | USER_DUP_MBALL |
                USER_DUP_LAMP | USER_DUP_ARM | USER_DUP_ACT | USER_DUP_LIGHTPROBE |
@@ -93,12 +97,13 @@ const UserDef U_default = {
     .user_keyconfig_prefs = {NULL},
 
     /** Initialized by #BKE_blendfile_userdef_from_defaults. */
+    /*source\blender\blenkernel\intern\blendfile.c*/
     .addons = {NULL},
 
     .autoexec_paths = {NULL},
     .user_menus = {NULL},
 
-    .keyconfigstr = "blender",
+    .keyconfigstr = "bforartists", /*bfa - the active keymap*/
     .undosteps = 32,
     .undomemory = 0,
     .gpu_viewport_quality = 0.6,
