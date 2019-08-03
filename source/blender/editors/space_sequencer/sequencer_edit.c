@@ -211,7 +211,7 @@ static void seq_proxy_build_job(const bContext *C)
 {
   wmJob *wm_job;
   ProxyJob *pj;
-  struct Depsgraph *depsgraph = CTX_data_depsgraph(C);
+  struct Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   Scene *scene = CTX_data_scene(C);
   Editing *ed = BKE_sequencer_editing_get(scene, false);
   ScrArea *sa = CTX_wm_area(C);
@@ -224,7 +224,7 @@ static void seq_proxy_build_job(const bContext *C)
 
   wm_job = WM_jobs_get(CTX_wm_manager(C),
                        CTX_wm_window(C),
-                       sa,
+                       scene,
                        "Building Proxies",
                        WM_JOB_PROGRESS,
                        WM_JOB_TYPE_SEQ_BUILD_PROXY);
@@ -1165,6 +1165,7 @@ static int sequencer_gap_remove_exec(bContext *C, wmOperator *op)
   }
 
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
+  DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
 
   return OPERATOR_FINISHED;
 }
@@ -2842,10 +2843,12 @@ void SEQUENCER_OT_meta_separate(wmOperatorType *ot)
 static int sequencer_view_all_exec(bContext *C, wmOperator *op)
 {
   ARegion *ar = CTX_wm_region(C);
-  View2D *v2d = UI_view2d_fromcontext(C);
+  rctf box;
+
   const int smooth_viewtx = WM_operator_smooth_viewtx_get(op);
 
-  UI_view2d_smooth_view(C, ar, &v2d->tot, smooth_viewtx);
+  boundbox_seq(CTX_data_scene(C), &box);
+  UI_view2d_smooth_view(C, ar, &box, smooth_viewtx);
   return OPERATOR_FINISHED;
 }
 
@@ -2916,7 +2919,7 @@ static int sequencer_view_all_preview_exec(bContext *C, wmOperator *UNUSED(op))
   imgwidth = (scene->r.size * scene->r.xsch) / 100;
   imgheight = (scene->r.size * scene->r.ysch) / 100;
 
-  /* Apply aspect, dosnt need to be that accurate */
+  /* Apply aspect, doesn't need to be that accurate */
   imgwidth = (int)(imgwidth * (scene->r.xasp / scene->r.yasp));
 
   if (((imgwidth >= width) || (imgheight >= height)) && ((width > 0) && (height > 0))) {
@@ -3644,7 +3647,7 @@ static int sequencer_rebuild_proxy_invoke(bContext *C,
 static int sequencer_rebuild_proxy_exec(bContext *C, wmOperator *UNUSED(op))
 {
   Main *bmain = CTX_data_main(C);
-  struct Depsgraph *depsgraph = CTX_data_depsgraph(C);
+  struct Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Scene *scene = CTX_data_scene(C);
   Editing *ed = BKE_sequencer_editing_get(scene, false);
   Sequence *seq;

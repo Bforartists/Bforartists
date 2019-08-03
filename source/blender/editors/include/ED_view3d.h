@@ -76,6 +76,10 @@ enum eGPUFXFlags;
 typedef struct ViewContext {
   struct bContext *C;
   struct Main *bmain;
+  /* Dependency graph is uses for depth drawing, viewport camera matrix access, and also some areas
+   * are re-using this to access evaluated entities.
+   *
+   * Moral of the story: assign to a fully evaluated state. */
   struct Depsgraph *depsgraph;
   struct Scene *scene;
   struct ViewLayer *view_layer;
@@ -564,7 +568,7 @@ void ED_view3d_draw_offscreen(struct Depsgraph *depsgraph,
                               bool do_sky,
                               bool is_persp,
                               const char *viewname,
-                              const bool do_color_managment,
+                              const bool do_color_management,
                               struct GPUOffScreen *ofs,
                               struct GPUViewport *viewport);
 void ED_view3d_draw_setup_view(struct wmWindow *win,
