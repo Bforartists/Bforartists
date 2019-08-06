@@ -1671,7 +1671,7 @@ class SEQUENCER_PT_cache_settings(SequencerButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         ed = context.scene.sequence_editor
@@ -1683,6 +1683,7 @@ class SEQUENCER_PT_cache_settings(SequencerButtonsPanel, Panel):
         col.prop(ed, "use_cache_composite")
         col.prop(ed, "use_cache_final")
         col.separator()
+        col.use_property_split = True
         col.prop(ed, "recycle_max_cost")
 
 
