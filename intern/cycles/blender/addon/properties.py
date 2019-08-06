@@ -156,136 +156,136 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     device: EnumProperty(
         name="Device",
-        description="Device\nDevice to use for rendering",
+        description="Device to use for rendering",
         items=enum_devices,
         default='CPU',
     )
     feature_set: EnumProperty(
         name="Feature Set",
-        description="Feature Set\nFeature set to use for rendering",
+        description="Feature set to use for rendering",
         items=enum_feature_set,
         default='SUPPORTED',
     )
     shading_system: BoolProperty(
         name="Open Shading Language",
-        description="Open Shading Language\nUse Open Shading Language (CPU rendering only)",
+        description="Use Open Shading Language (CPU rendering only)",
     )
 
     progressive: EnumProperty(
         name="Integrator",
-        description="Integrator\nMethod to sample lights and materials",
+        description="Method to sample lights and materials",
         items=enum_integrator,
         default='PATH',
     )
 
     use_square_samples: BoolProperty(
         name="Square Samples",
-        description="Square Samples\nSquare sampling values for easier artist control",
+        description="Square sampling values for easier artist control",
         default=False,
     )
 
     samples: IntProperty(
         name="Samples",
-        description="Samples\nNumber of samples to render for each pixel",
+        description="Number of samples to render for each pixel",
         min=1, max=(1 << 24),
         default=128,
     )
     preview_samples: IntProperty(
         name="Preview Samples",
-        description="Preview Samples\nNumber of samples to render in the viewport, unlimited if 0",
+        description="Number of samples to render in the viewport, unlimited if 0",
         min=0, max=(1 << 24),
         default=32,
     )
     preview_pause: BoolProperty(
         name="Pause Preview",
-        description="Pause Preview\nPause all viewport preview renders",
+        description="Pause all viewport preview renders",
         default=False,
     )
     aa_samples: IntProperty(
         name="AA Samples",
-        description="AA Samples\nNumber of antialiasing samples to render for each pixel",
+        description="Number of antialiasing samples to render for each pixel",
         min=1, max=2097151,
         default=128,
     )
     preview_aa_samples: IntProperty(
         name="AA Samples",
-        description="AA Samples\nNumber of antialiasing samples to render in the viewport, unlimited if 0",
+        description="Number of antialiasing samples to render in the viewport, unlimited if 0",
         min=0, max=2097151,
         default=32,
     )
     diffuse_samples: IntProperty(
         name="Diffuse Samples",
-        description="Diffuse Samples\nNumber of diffuse bounce samples to render for each AA sample",
+        description="Number of diffuse bounce samples to render for each AA sample",
         min=1, max=1024,
         default=1,
     )
     glossy_samples: IntProperty(
         name="Glossy Samples",
-        description="\nNumber of glossy bounce samples to render for each AA sample",
+        description="Number of glossy bounce samples to render for each AA sample",
         min=1, max=1024,
         default=1,
     )
     transmission_samples: IntProperty(
         name="Transmission Samples",
-        description="Transmission Samples\nNumber of transmission bounce samples to render for each AA sample",
+        description="Number of transmission bounce samples to render for each AA sample",
         min=1, max=1024,
         default=1,
     )
     ao_samples: IntProperty(
         name="Ambient Occlusion Samples",
-        description="Ambient Occlusion Samples\nNumber of ambient occlusion samples to render for each AA sample",
+        description="Number of ambient occlusion samples to render for each AA sample",
         min=1, max=1024,
         default=1,
     )
     mesh_light_samples: IntProperty(
         name="Mesh Light Samples",
-        description="Mesh Light Samples\nNumber of mesh emission light samples to render for each AA sample",
+        description="Number of mesh emission light samples to render for each AA sample",
         min=1, max=1024,
         default=1,
     )
 
     subsurface_samples: IntProperty(
         name="Subsurface Samples",
-        description="Subsurface Samples\nNumber of subsurface scattering samples to render for each AA sample",
+        description="Number of subsurface scattering samples to render for each AA sample",
         min=1, max=1024,
         default=1,
     )
 
     volume_samples: IntProperty(
         name="Volume Samples",
-        description="Volume Samples\nNumber of volume scattering samples to render for each AA sample",
+        description="Number of volume scattering samples to render for each AA sample",
         min=1, max=1024,
         default=1,
     )
 
     sampling_pattern: EnumProperty(
         name="Sampling Pattern",
-        description="Sampling Pattern\nRandom sampling pattern used by the integrator",
+        description="Random sampling pattern used by the integrator",
         items=enum_sampling_pattern,
         default='SOBOL',
     )
 
     use_layer_samples: EnumProperty(
         name="Layer Samples",
-        description="Layer Samples\nHow to use per view layer sample settings",
+        description="How to use per view layer sample settings",
         items=enum_use_layer_samples,
         default='USE',
     )
 
     sample_all_lights_direct: BoolProperty(
         name="Sample All Direct Lights",
-        description="Sample All Direct Lights\nSample all lights (for direct samples), rather than randomly picking one",
+        description="Sample all lights (for direct samples), rather than randomly picking one",
         default=True,
     )
 
     sample_all_lights_indirect: BoolProperty(
         name="Sample All Indirect Lights",
-        description="Sample All Indirect Lights\nSample all lights (for indirect samples), rather than randomly picking one",
+        description="Sample all lights (for indirect samples), rather than randomly picking one",
         default=True,
     )
     light_sampling_threshold: FloatProperty(
         name="Light Sampling Threshold",
-        description="Light Sampling Threshold\nProbabilistically terminate light samples when the light contribution is below this threshold (more noise but faster rendering). "
+        description="Probabilistically terminate light samples when the light contribution is below this threshold (more noise but faster rendering). "
         "Zero disables the test and never ignores lights",
         min=0.0, max=1.0,
         default=0.01,
@@ -308,19 +308,19 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     caustics_reflective: BoolProperty(
         name="Reflective Caustics",
-        description="Reflective Caustics\nUse reflective caustics, resulting in a brighter image (more noise but added realism)",
+        description="Use reflective caustics, resulting in a brighter image (more noise but added realism)",
         default=True,
     )
 
     caustics_refractive: BoolProperty(
         name="Refractive Caustics",
-        description="Refractive Caustics\nUse refractive caustics, resulting in a brighter image (more noise but added realism)",
+        description="Use refractive caustics, resulting in a brighter image (more noise but added realism)",
         default=True,
     )
 
     blur_glossy: FloatProperty(
         name="Filter Glossy",
-        description="Filter Glossy\nAdaptively blur glossy shaders after blurry bounces, "
+        description="Adaptively blur glossy shaders after blurry bounces, "
         "to reduce noise at the cost of accuracy",
         min=0.0, max=10.0,
         default=1.0,
@@ -328,46 +328,46 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     max_bounces: IntProperty(
         name="Max Bounces",
-        description="Max Bounces\nTotal maximum number of bounces",
+        description="Total maximum number of bounces",
         min=0, max=1024,
         default=12,
     )
 
     diffuse_bounces: IntProperty(
         name="Diffuse Bounces",
-        description="Diffuse Bounces\nMaximum number of diffuse reflection bounces, bounded by total maximum",
+        description="Maximum number of diffuse reflection bounces, bounded by total maximum",
         min=0, max=1024,
         default=4,
     )
     glossy_bounces: IntProperty(
         name="Glossy Bounces",
-        description="Glossy Bounces\nMaximum number of glossy reflection bounces, bounded by total maximum",
+        description="Maximum number of glossy reflection bounces, bounded by total maximum",
         min=0, max=1024,
         default=4,
     )
     transmission_bounces: IntProperty(
         name="Transmission Bounces",
-        description="Transmission Bounces\nMaximum number of transmission bounces, bounded by total maximum",
+        description="Maximum number of transmission bounces, bounded by total maximum",
         min=0, max=1024,
         default=12,
     )
     volume_bounces: IntProperty(
         name="Volume Bounces",
-        description="Volume Bounces\nMaximum number of volumetric scattering events",
+        description="Maximum number of volumetric scattering events",
         min=0, max=1024,
         default=0,
     )
 
     transparent_max_bounces: IntProperty(
         name="Transparent Max Bounces",
-        description="Transparent Max Bounces\nMaximum number of transparent bounces",
+        description="Maximum number of transparent bounces",
         min=0, max=1024,
         default=8,
     )
 
     volume_step_size: FloatProperty(
         name="Step Size",
-        description="Step Size\nDistance between volume shader samples when rendering the volume "
+        description="Distance between volume shader samples when rendering the volume "
         "(lower values give more accurate and detailed results, but also increased render time)",
         default=0.1,
         min=0.0000001, max=100000.0, soft_min=0.01, soft_max=1.0, precision=4,
@@ -376,7 +376,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     volume_max_steps: IntProperty(
         name="Max Steps",
-        description="Max Steps\nMaximum number of steps through the volume before giving up, "
+        description="Maximum number of steps through the volume before giving up, "
         "to avoid extremely long render times with big objects or small step sizes",
         default=1024,
         min=2, max=65536
@@ -384,14 +384,14 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     dicing_rate: FloatProperty(
         name="Dicing Rate",
-        description="Dicing Rate\nSize of a micropolygon in pixels",
+        description="Size of a micropolygon in pixels",
         min=0.1, max=1000.0, soft_min=0.5,
         default=1.0,
         subtype='PIXEL'
     )
     preview_dicing_rate: FloatProperty(
         name="Preview Dicing Rate",
-        description="Preview Dicing Rate\nSize of a micropolygon in pixels during preview render",
+        description="Size of a micropolygon in pixels during preview render",
         min=0.1, max=1000.0, soft_min=0.5,
         default=8.0,
         subtype='PIXEL'
@@ -399,21 +399,21 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     max_subdivisions: IntProperty(
         name="Max Subdivisions",
-        description="Max Subdivisions\nStop subdividing when this level is reached even if the dice rate would produce finer tessellation",
+        description="Stop subdividing when this level is reached even if the dice rate would produce finer tessellation",
         min=0, max=16,
         default=12,
     )
 
     dicing_camera: PointerProperty(
         name="Dicing Camera",
-        description="Dicing Camera\nCamera to use as reference point when subdividing geometry, useful to avoid crawling "
+        description="Camera to use as reference point when subdividing geometry, useful to avoid crawling "
         "artifacts in animations when the scene camera is moving",
         type=bpy.types.Object,
         poll=lambda self, obj: obj.type == 'CAMERA',
     )
     offscreen_dicing_scale: FloatProperty(
         name="Offscreen Dicing Scale",
-        description="Offscreen Dicing Scale\nMultiplier for dicing rate of geometry outside of the camera view. The dicing rate "
+        description="Multiplier for dicing rate of geometry outside of the camera view. The dicing rate "
         "of objects is gradually increased the further they are outside the camera view. "
         "Lower values provide higher quality reflections and shadows for off screen objects, "
         "while higher values use less memory",
@@ -423,18 +423,18 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     film_exposure: FloatProperty(
         name="Exposure",
-        description="Exposure\nImage brightness scale",
+        description="Image brightness scale",
         min=0.0, max=10.0,
         default=1.0,
     )
     film_transparent_glass: BoolProperty(
         name="Transparent Glass",
-        description="Transparent Glass\nRender transmissive surfaces as transparent, for compositing glass over another background",
+        description="Render transmissive surfaces as transparent, for compositing glass over another background",
         default=False,
     )
     film_transparent_roughness: FloatProperty(
         name="Transparent Roughness Threshold",
-        description="Transparent Roughness Threshold\nFor transparent transmission, keep surfaces with roughness above the threshold opaque",
+        description="For transparent transmission, keep surfaces with roughness above the threshold opaque",
         min=0.0, max=1.0,
         default=0.1,
     )
@@ -445,21 +445,21 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     # TODO(sergey): Remove this during 2.8x series of Blender.
     filter_type: EnumProperty(
         name="Filter Type",
-        description="Filter Type\nPixel filter type",
+        description="Pixel filter type",
         items=enum_filter_types,
         default='BLACKMAN_HARRIS',
     )
 
     pixel_filter_type: EnumProperty(
         name="Filter Type",
-        description="Filter Type\nPixel filter type",
+        description="Pixel filter type",
         items=enum_filter_types,
         default='BLACKMAN_HARRIS',
     )
 
     filter_width: FloatProperty(
         name="Filter Width",
-        description="Filter Width\nPixel filter width",
+        description="Pixel filter width",
         min=0.01, max=10.0,
         default=1.5,
         subtype='PIXEL'
@@ -467,20 +467,20 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     seed: IntProperty(
         name="Seed",
-        description="Seed\nSeed value for integrator to get different noise patterns",
+        description="Seed value for integrator to get different noise patterns",
         min=0, max=2147483647,
         default=0,
     )
 
     use_animated_seed: BoolProperty(
         name="Use Animated Seed",
-        description="Use Animated Seed\nUse different seed values (and hence noise patterns) at different frames",
+        description="Use different seed values (and hence noise patterns) at different frames",
         default=False,
     )
 
     sample_clamp_direct: FloatProperty(
         name="Clamp Direct",
-        description="Clamp Direct\nIf non-zero, the maximum value for a direct sample, "
+        description="If non-zero, the maximum value for a direct sample, "
         "higher values will be scaled down to avoid too "
         "much noise and slow convergence at the cost of accuracy",
         min=0.0, max=1e8,
@@ -489,7 +489,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     sample_clamp_indirect: FloatProperty(
         name="Clamp Indirect",
-        description="Clamp Indirect\nIf non-zero, the maximum value for an indirect sample, "
+        description="If non-zero, the maximum value for an indirect sample, "
         "higher values will be scaled down to avoid too "
         "much noise and slow convergence at the cost of accuracy",
         min=0.0, max=1e8,
@@ -498,14 +498,14 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     debug_tile_size: IntProperty(
         name="Tile Size",
-        description="Tile Size\nTile Size",
+        description="",
         min=1, max=4096,
         default=1024,
     )
 
     preview_start_resolution: IntProperty(
         name="Start Resolution",
-        description="Start Resolution\nResolution to start rendering preview at, "
+        description="Resolution to start rendering preview at, "
         "progressively increasing it to the full viewport size",
         min=8, max=16384,
         default=64,
@@ -514,60 +514,60 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     debug_reset_timeout: FloatProperty(
         name="Reset timeout",
-        description="Reset timeout\nReset timeout",
+        description="",
         min=0.01, max=10.0,
         default=0.1,
     )
     debug_cancel_timeout: FloatProperty(
         name="Cancel timeout",
-        description="Cancel timeout\nCancel timeout",
+        description="",
         min=0.01, max=10.0,
         default=0.1,
     )
     debug_text_timeout: FloatProperty(
         name="Text timeout",
-        description="Text timeout\nText timeout",
+        description="",
         min=0.01, max=10.0,
         default=1.0,
     )
 
     debug_bvh_type: EnumProperty(
         name="Viewport BVH Type",
-        description="Viewport BVH Type\nChoose between faster updates, or faster render",
+        description="Choose between faster updates, or faster render",
         items=enum_bvh_types,
         default='DYNAMIC_BVH',
     )
     use_bvh_embree: BoolProperty(
         name="Use Embree",
-        description="Use Embree\nUse Embree as ray accelerator",
+        description="Use Embree as ray accelerator",
         default=False,
     )
     debug_use_spatial_splits: BoolProperty(
         name="Use Spatial Splits",
-        description="Use Spatial Splits\nUse BVH spatial splits: longer builder time, faster render",
+        description="Use BVH spatial splits: longer builder time, faster render",
         default=False,
     )
     debug_use_hair_bvh: BoolProperty(
         name="Use Hair BVH",
-        description="Use Hair BVH\nUse special type BVH optimized for hair (uses more ram but renders faster)",
+        description="Use special type BVH optimized for hair (uses more ram but renders faster)",
         default=True,
     )
     debug_bvh_time_steps: IntProperty(
         name="BVH Time Steps",
-        description="BVH Time Steps\nSplit BVH primitives by this number of time steps to speed up render time in cost of memory",
+        description="Split BVH primitives by this number of time steps to speed up render time in cost of memory",
         default=0,
         min=0, max=16,
     )
     tile_order: EnumProperty(
         name="Tile Order",
-        description="Tile Order\nTile order for rendering",
+        description="Tile order for rendering",
         items=enum_tile_order,
         default='HILBERT_SPIRAL',
         options=set(),  # Not animatable!
     )
     use_progressive_refine: BoolProperty(
         name="Progressive Refine",
-        description="Progressive Refine\nInstead of rendering each tile until it is finished, "
+        description="Instead of rendering each tile until it is finished, "
         "refine the whole image progressively "
         "(this renders somewhat slower, "
         "but time can be saved by manually stopping the render when the noise is low enough)",
@@ -596,13 +596,13 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     use_camera_cull: BoolProperty(
         name="Use Camera Cull",
-        description="Use Camera Cull\nAllow objects to be culled based on the camera frustum",
+        description="Allow objects to be culled based on the camera frustum",
         default=False,
     )
 
     camera_cull_margin: FloatProperty(
         name="Camera Cull Margin",
-        description="Camera Cull Margin\nMargin for the camera space culling",
+        description="Margin for the camera space culling",
         default=0.1,
         min=0.0, max=5.0,
         subtype='FACTOR'
@@ -610,13 +610,13 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     use_distance_cull: BoolProperty(
         name="Use Distance Cull",
-        description="Use Distance Cull\nAllow objects to be culled based on the distance from camera",
+        description="Allow objects to be culled based on the distance from camera",
         default=False,
     )
 
     distance_cull_margin: FloatProperty(
         name="Cull Distance",
-        description="Cull Distance\nCull objects which are further away from camera than this distance",
+        description="Cull objects which are further away from camera than this distance",
         default=50,
         min=0.0,
         unit='LENGTH'
@@ -625,7 +625,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     motion_blur_position: EnumProperty(
         name="Motion Blur Position",
         default='CENTER',
-        description="Motion Blur Position\nOffset for the shutter's time interval, allows to change the motion blur trails",
+        description="Offset for the shutter's time interval, allows to change the motion blur trails",
         items=(
             ('START', "Start on Frame", "The shutter opens at the current frame"),
             ('CENTER', "Center on Frame", "The shutter is open during the current frame"),
@@ -636,7 +636,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     rolling_shutter_type: EnumProperty(
         name="Shutter Type",
         default='NONE',
-        description="Shutter Type\nType of rolling shutter effect matching CMOS-based cameras",
+        description="Type of rolling shutter effect matching CMOS-based cameras",
         items=(
             ('NONE', "None", "No rolling shutter effect used"),
             ('TOP', "Top-Bottom", "Sensor is being scanned from top to bottom")
@@ -646,7 +646,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     rolling_shutter_duration: FloatProperty(
         name="Rolling Shutter Duration",
-        description="Rolling Shutter Duration\nScanline \"exposure\" time for the rolling shutter effect",
+        description="Scanline \"exposure\" time for the rolling shutter effect",
         default=0.1,
         min=0.0, max=1.0,
         subtype='FACTOR',
@@ -655,28 +655,28 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     texture_limit: EnumProperty(
         name="Viewport Texture Limit",
         default='OFF',
-        description="Viewport Texture Limit\nLimit texture size used by viewport rendering",
+        description="Limit texture size used by viewport rendering",
         items=enum_texture_limit
     )
 
     texture_limit_render: EnumProperty(
         name="Render Texture Limit",
         default='OFF',
-        description="Render Texture Limit\nLimit texture size used by final rendering",
+        description="Limit texture size used by final rendering",
         items=enum_texture_limit
     )
 
     ao_bounces: IntProperty(
         name="AO Bounces",
         default=0,
-        description="AO Bounces\nApproximate indirect light with background tinted ambient occlusion at the specified bounce, 0 disables this feature",
+        description="Approximate indirect light with background tinted ambient occlusion at the specified bounce, 0 disables this feature",
         min=0, max=1024,
     )
 
     ao_bounces_render: IntProperty(
         name="AO Bounces Render",
         default=0,
-        description="AO Bounces Render\nApproximate indirect light with background tinted ambient occlusion at the specified bounce, 0 disables this feature",
+        description="Approximate indirect light with background tinted ambient occlusion at the specified bounce, 0 disables this feature",
         min=0, max=1024,
     )
 
@@ -734,7 +734,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     debug_opencl_mem_limit: IntProperty(
         name="Memory limit",
         default=0,
-        description="Memory limit\nArtificial limit on OpenCL memory usage in MB (0 to disable limit)"
+        description="Artificial limit on OpenCL memory usage in MB (0 to disable limit)"
     )
 
     @classmethod
@@ -754,47 +754,47 @@ class CyclesCameraSettings(bpy.types.PropertyGroup):
 
     panorama_type: EnumProperty(
         name="Panorama Type",
-        description="Panorama Type\nDistortion to use for the calculation",
+        description="Distortion to use for the calculation",
         items=enum_panorama_types,
         default='FISHEYE_EQUISOLID',
     )
     fisheye_fov: FloatProperty(
         name="Field of View",
-        description="Field of View\nField of view for the fisheye lens",
+        description="Field of view for the fisheye lens",
         min=0.1745, soft_max=2.0 * pi, max=10.0 * pi,
         subtype='ANGLE',
         default=pi,
     )
     fisheye_lens: FloatProperty(
         name="Fisheye Lens",
-        description="Fisheye Lens\nLens focal length (mm)",
+        description="Lens focal length (mm)",
         min=0.01, soft_max=15.0, max=100.0,
         default=10.5,
     )
     latitude_min: FloatProperty(
         name="Min Latitude",
-        description="Min Latitude\nMinimum latitude (vertical angle) for the equirectangular lens",
+        description="Minimum latitude (vertical angle) for the equirectangular lens",
         min=-0.5 * pi, max=0.5 * pi,
         subtype='ANGLE',
         default=-0.5 * pi,
     )
     latitude_max: FloatProperty(
         name="Max Latitude",
-        description="Max Latitude\nMaximum latitude (vertical angle) for the equirectangular lens",
+        description="Maximum latitude (vertical angle) for the equirectangular lens",
         min=-0.5 * pi, max=0.5 * pi,
         subtype='ANGLE',
         default=0.5 * pi,
     )
     longitude_min: FloatProperty(
         name="Min Longitude",
-        description="Min Longitude\nMinimum longitude (horizontal angle) for the equirectangular lens",
+        description="Minimum longitude (horizontal angle) for the equirectangular lens",
         min=-pi, max=pi,
         subtype='ANGLE',
         default=-pi,
     )
     longitude_max: FloatProperty(
         name="Max Longitude",
-        description="Max Longitude\nMaximum longitude (horizontal angle) for the equirectangular lens",
+        description="Maximum longitude (horizontal angle) for the equirectangular lens",
         min=-pi, max=pi,
         subtype='ANGLE',
         default=pi,
@@ -817,40 +817,40 @@ class CyclesMaterialSettings(bpy.types.PropertyGroup):
 
     sample_as_light: BoolProperty(
         name="Multiple Importance Sample",
-        description="Multiple Importance Sample\nUse multiple importance sampling for this material, "
+        description="Use multiple importance sampling for this material, "
         "disabling may reduce overall noise for large "
         "objects that emit little light compared to other light sources",
         default=True,
     )
     use_transparent_shadow: BoolProperty(
         name="Transparent Shadows",
-        description="Transparent Shadows\nUse transparent shadows for this material if it contains a Transparent BSDF, "
+        description="Use transparent shadows for this material if it contains a Transparent BSDF, "
         "disabling will render faster but not give accurate shadows",
         default=True,
     )
     homogeneous_volume: BoolProperty(
         name="Homogeneous Volume",
-        description="Homogeneous Volume\nWhen using volume rendering, assume volume has the same density everywhere "
+        description="When using volume rendering, assume volume has the same density everywhere "
         "(not using any textures), for faster rendering",
         default=False,
     )
     volume_sampling: EnumProperty(
         name="Volume Sampling",
-        description="Volume Sampling\nSampling method to use for volumes",
+        description="Sampling method to use for volumes",
         items=enum_volume_sampling,
         default='MULTIPLE_IMPORTANCE',
     )
 
     volume_interpolation: EnumProperty(
         name="Volume Interpolation",
-        description="Volume Interpolation\nInterpolation method to use for smoke/fire volumes",
+        description="Interpolation method to use for smoke/fire volumes",
         items=enum_volume_interpolation,
         default='LINEAR',
     )
 
     displacement_method: EnumProperty(
         name="Displacement Method",
-        description="Displacement Method\nMethod to use for the displacement",
+        description="Method to use for the displacement",
         items=enum_displacement_methods,
         default='BUMP',
     )
@@ -859,7 +859,7 @@ class CyclesMaterialSettings(bpy.types.PropertyGroup):
     def register(cls):
         bpy.types.Material.cycles = PointerProperty(
             name="Cycles Material Settings",
-            description="Cycles Material Settings\nCycles material settings",
+            description="Cycles material settings",
             type=cls,
         )
 
@@ -872,30 +872,30 @@ class CyclesLightSettings(bpy.types.PropertyGroup):
 
     cast_shadow: BoolProperty(
         name="Cast Shadow",
-        description="Cast Shadow\nLight casts shadows",
+        description="Light casts shadows",
         default=True,
     )
     samples: IntProperty(
         name="Samples",
-        description="Samples\nNumber of light samples to render for each AA sample",
+        description="Number of light samples to render for each AA sample",
         min=1, max=10000,
         default=1,
     )
     max_bounces: IntProperty(
         name="Max Bounces",
-        description="Max Bounces\nMaximum number of bounces the light will contribute to the render",
+        description="Maximum number of bounces the light will contribute to the render",
         min=0, max=1024,
         default=1024,
     )
     use_multiple_importance_sampling: BoolProperty(
         name="Multiple Importance Sample",
-        description="Multiple Importance Sample\nUse multiple importance sampling for the light, "
+        description="Use multiple importance sampling for the light, "
         "reduces noise for area lights and sharp glossy materials",
         default=True,
     )
     is_portal: BoolProperty(
         name="Is Portal",
-        description="Is Portal\nUse this area light to guide sampling of the background, "
+        description="Use this area light to guide sampling of the background, "
         "note that this will make the light invisible",
         default=False,
     )
@@ -917,44 +917,44 @@ class CyclesWorldSettings(bpy.types.PropertyGroup):
 
     sampling_method: EnumProperty(
         name="Sampling method",
-        description="Sampling method\nHow to sample the background light",
+        description="How to sample the background light",
         items=enum_world_mis,
         default='AUTOMATIC',
     )
     sample_map_resolution: IntProperty(
         name="Map Resolution",
-        description="Map Resolution\nImportance map size is resolution x resolution/2; "
+        description="Importance map size is resolution x resolution/2; "
         "higher values potentially produce less noise, at the cost of memory and speed",
         min=4, max=8192,
         default=1024,
     )
     samples: IntProperty(
         name="Samples",
-        description="Samples\nNumber of light samples to render for each AA sample",
+        description="Number of light samples to render for each AA sample",
         min=1, max=10000,
         default=1,
     )
     max_bounces: IntProperty(
         name="Max Bounces",
-        description="Max Bounces\nMaximum number of bounces the background light will contribute to the render",
+        description="Maximum number of bounces the background light will contribute to the render",
         min=0, max=1024,
         default=1024,
     )
     homogeneous_volume: BoolProperty(
         name="Homogeneous Volume",
-        description="Homogeneous Volume\nWhen using volume rendering, assume volume has the same density everywhere"
+        description="When using volume rendering, assume volume has the same density everywhere"
         "(not using any textures), for faster rendering",
         default=False,
     )
     volume_sampling: EnumProperty(
         name="Volume Sampling",
-        description="Volume Sampling\nSampling method to use for volumes",
+        description="Sampling method to use for volumes",
         items=enum_volume_sampling,
         default='EQUIANGULAR',
     )
     volume_interpolation: EnumProperty(
         name="Volume Interpolation",
-        description="Volume Interpolation\nInterpolation method to use for volumes",
+        description="Interpolation method to use for volumes",
         items=enum_volume_interpolation,
         default='LINEAR',
     )
@@ -976,32 +976,32 @@ class CyclesVisibilitySettings(bpy.types.PropertyGroup):
 
     camera: BoolProperty(
         name="Camera",
-        description="Camera\nObject visibility for camera rays",
+        description="Object visibility for camera rays",
         default=True,
     )
     diffuse: BoolProperty(
         name="Diffuse",
-        description="Diffuse\nObject visibility for diffuse reflection rays",
+        description="Object visibility for diffuse reflection rays",
         default=True,
     )
     glossy: BoolProperty(
         name="Glossy",
-        description="Glossy\nObject visibility for glossy reflection rays",
+        description="Object visibility for glossy reflection rays",
         default=True,
     )
     transmission: BoolProperty(
         name="Transmission",
-        description="Transmission\nObject visibility for transmission rays",
+        description="Object visibility for transmission rays",
         default=True,
     )
     shadow: BoolProperty(
         name="Shadow",
-        description="Shadow\nObject visibility for shadow rays",
+        description="Object visibility for shadow rays",
         default=True,
     )
     scatter: BoolProperty(
         name="Volume Scatter",
-        description="Volume Scatter\nObject visibility for volume scatter rays",
+        description="Object visibility for volume scatter rays",
         default=True,
     )
 
@@ -1055,57 +1055,57 @@ class CyclesObjectSettings(bpy.types.PropertyGroup):
 
     use_motion_blur: BoolProperty(
         name="Use Motion Blur",
-        description="Use Motion Blur\nUse motion blur for this object",
+        description="Use motion blur for this object",
         default=True,
     )
 
     use_deform_motion: BoolProperty(
         name="Use Deformation Motion",
-        description="Use Deformation Motion\nUse deformation motion blur for this object",
+        description="Use deformation motion blur for this object",
         default=True,
     )
 
     motion_steps: IntProperty(
         name="Motion Steps",
-        description="Motion Steps\nControl accuracy of motion blur, more steps gives more memory usage (actual number of steps is 2^(steps - 1))",
+        description="Control accuracy of motion blur, more steps gives more memory usage (actual number of steps is 2^(steps - 1))",
         min=1, soft_max=8,
         default=1,
     )
 
     use_camera_cull: BoolProperty(
         name="Use Camera Cull",
-        description="Use Camera Cull\nAllow this object and its duplicators to be culled by camera space culling",
+        description="Allow this object and its duplicators to be culled by camera space culling",
         default=False,
     )
 
     use_distance_cull: BoolProperty(
         name="Use Distance Cull",
-        description="Use Distance Cull\nAllow this object and its duplicators to be culled by distance from camera",
+        description="Allow this object and its duplicators to be culled by distance from camera",
         default=False,
     )
 
     use_adaptive_subdivision: BoolProperty(
         name="Use Adaptive Subdivision",
-        description="Use Adaptive Subdivision\nUse adaptive render time subdivision",
+        description="Use adaptive render time subdivision",
         default=False,
     )
 
     dicing_rate: FloatProperty(
         name="Dicing Scale",
-        description="Dicing Scale\nMultiplier for scene dicing rate (located in the Subdivision panel)",
+        description="Multiplier for scene dicing rate (located in the Subdivision panel)",
         min=0.1, max=1000.0, soft_min=0.5,
         default=1.0,
     )
 
     is_shadow_catcher: BoolProperty(
         name="Shadow Catcher",
-        description="Shadow Catcher\nOnly render shadows on this object, for compositing renders into real footage",
+        description="Only render shadows on this object, for compositing renders into real footage",
         default=False,
     )
 
     is_holdout: BoolProperty(
         name="Holdout",
-        description="Holdout\nRender objects as a holdout or matte, creating a "
+        description="Render objects as a holdout or matte, creating a "
         "hole in the image with zero alpha, to fill out in "
         "compositing with real footage or another render",
         default=False,
@@ -1128,35 +1128,35 @@ class CyclesCurveRenderSettings(bpy.types.PropertyGroup):
 
     primitive: EnumProperty(
         name="Primitive",
-        description="Primitive\nType of primitive used for hair rendering",
+        description="Type of primitive used for hair rendering",
         items=enum_curve_primitives,
         default='LINE_SEGMENTS',
     )
     shape: EnumProperty(
         name="Shape",
-        description="Shape\nForm of hair",
+        description="Form of hair",
         items=enum_curve_shape,
         default='THICK',
     )
     cull_backfacing: BoolProperty(
         name="Cull Back-faces",
-        description="Cull Back-faces\nDo not test the back-face of each strand",
+        description="Do not test the back-face of each strand",
         default=True,
     )
     use_curves: BoolProperty(
         name="Use Cycles Hair Rendering",
-        description="Use Cycles Hair Rendering\nActivate Cycles hair rendering for particle system",
+        description="Activate Cycles hair rendering for particle system",
         default=True,
     )
     resolution: IntProperty(
         name="Resolution",
-        description="Resolution\nResolution of generated mesh",
+        description="Resolution of generated mesh",
         min=3, max=64,
         default=3,
     )
     subdivisions: IntProperty(
         name="Subdivisions",
-        description="Subdivisions\nNumber of subdivisions used in Cardinal curve intersection (power of 2)",
+        description="Number of subdivisions used in Cardinal curve intersection (power of 2)",
         min=0, max=24,
         default=4,
     )
@@ -1183,156 +1183,156 @@ class CyclesRenderLayerSettings(bpy.types.PropertyGroup):
 
     pass_debug_bvh_traversed_nodes: BoolProperty(
         name="Debug BVH Traversed Nodes",
-        description="Debug BVH Traversed Nodes\nStore Debug BVH Traversed Nodes pass",
+        description="Store Debug BVH Traversed Nodes pass",
         default=False,
         update=update_render_passes,
     )
     pass_debug_bvh_traversed_instances: BoolProperty(
         name="Debug BVH Traversed Instances",
-        description="Debug BVH Traversed Instances\nStore Debug BVH Traversed Instances pass",
+        description="Store Debug BVH Traversed Instances pass",
         default=False,
         update=update_render_passes,
     )
     pass_debug_bvh_intersections: BoolProperty(
         name="Debug BVH Intersections",
-        description="Debug BVH Intersections\nStore Debug BVH Intersections",
+        description="Store Debug BVH Intersections",
         default=False,
         update=update_render_passes,
     )
     pass_debug_ray_bounces: BoolProperty(
         name="Debug Ray Bounces",
-        description="Debug Ray Bounces\nStore Debug Ray Bounces pass",
+        description="Store Debug Ray Bounces pass",
         default=False,
         update=update_render_passes,
     )
     pass_debug_render_time: BoolProperty(
         name="Debug Render Time",
-        description="Debug Render Time\nRender time in milliseconds per sample and pixel",
+        description="Render time in milliseconds per sample and pixel",
         default=False,
         update=update_render_passes,
     )
     use_pass_volume_direct: BoolProperty(
         name="Volume Direct",
-        description="Volume Direct\nDeliver direct volumetric scattering pass",
+        description="Deliver direct volumetric scattering pass",
         default=False,
         update=update_render_passes,
     )
     use_pass_volume_indirect: BoolProperty(
         name="Volume Indirect",
-        description="Volume Indirect\nDeliver indirect volumetric scattering pass",
+        description="Deliver indirect volumetric scattering pass",
         default=False,
         update=update_render_passes,
     )
 
     use_denoising: BoolProperty(
         name="Use Denoising",
-        description="Use Denoising\nDenoise the rendered image",
+        description="Denoise the rendered image",
         default=False,
         update=update_render_passes,
     )
     denoising_diffuse_direct: BoolProperty(
         name="Diffuse Direct",
-        description="Diffuse Direct\nDenoise the direct diffuse lighting",
+        description="Denoise the direct diffuse lighting",
         default=True,
     )
     denoising_diffuse_indirect: BoolProperty(
         name="Diffuse Indirect",
-        description="Diffuse Indirect\nDenoise the indirect diffuse lighting",
+        description="Denoise the indirect diffuse lighting",
         default=True,
     )
     denoising_glossy_direct: BoolProperty(
         name="Glossy Direct",
-        description="Glossy Direct\nDenoise the direct glossy lighting",
+        description="Denoise the direct glossy lighting",
         default=True,
     )
     denoising_glossy_indirect: BoolProperty(
         name="Glossy Indirect",
-        description="Glossy Indirect\nDenoise the indirect glossy lighting",
+        description="Denoise the indirect glossy lighting",
         default=True,
     )
     denoising_transmission_direct: BoolProperty(
         name="Transmission Direct",
-        description="Transmission Direct\nDenoise the direct transmission lighting",
+        description="Denoise the direct transmission lighting",
         default=True,
     )
     denoising_transmission_indirect: BoolProperty(
         name="Transmission Indirect",
-        description="Transmission Indirect\nDenoise the indirect transmission lighting",
+        description="Denoise the indirect transmission lighting",
         default=True,
     )
     denoising_subsurface_direct: BoolProperty(
         name="Subsurface Direct",
-        description="Subsurface Direct\nDenoise the direct subsurface lighting",
+        description="Denoise the direct subsurface lighting",
         default=True,
     )
     denoising_subsurface_indirect: BoolProperty(
         name="Subsurface Indirect",
-        description="Subsurface Indirect\nDenoise the indirect subsurface lighting",
+        description="Denoise the indirect subsurface lighting",
         default=True,
     )
     denoising_strength: FloatProperty(
         name="Denoising Strength",
-        description="Denoising Strength\nControls neighbor pixel weighting for the denoising filter (lower values preserve more detail, but aren't as smooth)",
+        description="Controls neighbor pixel weighting for the denoising filter (lower values preserve more detail, but aren't as smooth)",
         min=0.0, max=1.0,
         default=0.5,
     )
     denoising_feature_strength: FloatProperty(
         name="Denoising Feature Strength",
-        description="Denoising Feature Strength\nControls removal of noisy image feature passes (lower values preserve more detail, but aren't as smooth)",
+        description="Controls removal of noisy image feature passes (lower values preserve more detail, but aren't as smooth)",
         min=0.0, max=1.0,
         default=0.5,
     )
     denoising_radius: IntProperty(
         name="Denoising Radius",
-        description="Denoising Radius\nSize of the image area that's used to denoise a pixel (higher values are smoother, but might lose detail and are slower)",
+        description="Size of the image area that's used to denoise a pixel (higher values are smoother, but might lose detail and are slower)",
         min=1, max=25,
         default=8,
         subtype="PIXEL",
     )
     denoising_relative_pca: BoolProperty(
         name="Relative filter",
-        description="Relative filter\nWhen removing pixels that don't carry information, use a relative threshold instead of an absolute one (can help to reduce artifacts, but might cause detail loss around edges)",
+        description="When removing pixels that don't carry information, use a relative threshold instead of an absolute one (can help to reduce artifacts, but might cause detail loss around edges)",
         default=False,
     )
     denoising_store_passes: BoolProperty(
         name="Store denoising passes",
-        description="Store denoising passes\nStore the denoising feature passes and the noisy image",
+        description="Store the denoising feature passes and the noisy image",
         default=False,
         update=update_render_passes,
     )
     denoising_neighbor_frames: IntProperty(
         name="Neighbor Frames",
-        description="Neighbor Frames\nNumber of neighboring frames to use for denoising animations (more frames produce smoother results at the cost of performance)",
+        description="Number of neighboring frames to use for denoising animations (more frames produce smoother results at the cost of performance)",
         min=0, max=7,
         default=0,
     )
     use_pass_crypto_object: BoolProperty(
         name="Cryptomatte Object",
-        description="Cryptomatte Object\nRender cryptomatte object pass, for isolating objects in compositing",
+        description="Render cryptomatte object pass, for isolating objects in compositing",
         default=False,
         update=update_render_passes,
         )
     use_pass_crypto_material: BoolProperty(
         name="Cryptomatte Material",
-        description="Cryptomatte Material\nRender cryptomatte material pass, for isolating materials in compositing",
+        description="Render cryptomatte material pass, for isolating materials in compositing",
         default=False,
         update=update_render_passes,
         )
     use_pass_crypto_asset: BoolProperty(
         name="Cryptomatte Asset",
-        description="Cryptomatte Asset\nRender cryptomatte asset pass, for isolating groups of objects with the same parent",
+        description="Render cryptomatte asset pass, for isolating groups of objects with the same parent",
         default=False,
         update=update_render_passes,
         )
     pass_crypto_depth: IntProperty(
         name="Cryptomatte Levels",
-        description="Cryptomatte Levels\nSets how many unique objects can be distinguished per pixel",
+        description="Sets how many unique objects can be distinguished per pixel",
         default=6, min=2, max=16, step=2,
         update=update_render_passes,
         )
     pass_crypto_accurate: BoolProperty(
         name="Cryptomatte Accurate",
-        description="Cryptomatte Accurate\nGenerate a more accurate Cryptomatte pass. CPU only, may render slower and use more memory",
+        description="Generate a more accurate Cryptomatte pass. CPU only, may render slower and use more memory",
         default=True,
         update=update_render_passes,
         )
@@ -1372,7 +1372,7 @@ class CyclesPreferences(bpy.types.AddonPreferences):
 
     compute_device_type: EnumProperty(
         name="Compute Device Type",
-        description="Compute Device Type\nDevice to use for computation (rendering with Cycles)",
+        description="Device to use for computation (rendering with Cycles)",
         items=get_device_types,
     )
 
