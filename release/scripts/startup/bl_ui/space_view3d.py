@@ -6438,7 +6438,7 @@ class VIEW3D_PT_shading_options(Panel):
             sub = row.row()
             sub.use_property_split = True
             sub.active = shading.show_xray_wireframe
-            sub.prop(shading, "xray_alpha_wireframe", text="X-Ray")
+            sub.prop(shading, "xray_alpha_wireframe", text="")
         elif shading.type == 'SOLID':
             row.prop(shading, "show_xray")
             sub = row.row()     
