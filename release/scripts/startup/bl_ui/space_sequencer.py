@@ -1855,7 +1855,7 @@ class SEQUENCER_PT_frame_overlay(SequencerButtonsPanel_Output, Panel):
     bl_category = "View"
     bl_options = {'DEFAULT_CLOSED'}
 
-    def draw_header(self, context):
+    def draw(self, context):
         scene = context.scene
         ed = scene.sequence_editor
 
