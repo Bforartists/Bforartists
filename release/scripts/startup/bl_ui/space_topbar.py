@@ -144,7 +144,7 @@ class TOPBAR_MT_editor_menus(Menu):
     bl_idname = "TOPBAR_MT_editor_menus"
     bl_label = ""
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
         layout.menu("TOPBAR_MT_file")

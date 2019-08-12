@@ -82,7 +82,7 @@ static SpaceLink *text_new(const ScrArea *UNUSED(area), const Scene *UNUSED(scen
 
   BLI_addtail(&stext->regionbase, ar);
   ar->regiontype = RGN_TYPE_UI;
-  ar->alignment = RGN_ALIGN_LEFT;
+  ar->alignment = RGN_ALIGN_RIGHT;
   ar->flag = RGN_FLAG_HIDDEN;
 
   /* main region */
@@ -197,9 +197,7 @@ static void text_operatortypes(void)
   WM_operatortype_append(TEXT_OT_duplicate_line);
 
   WM_operatortype_append(TEXT_OT_convert_whitespace);
-  WM_operatortype_append(TEXT_OT_uncomment);
-  WM_operatortype_append(TEXT_OT_comment);
-  WM_operatortype_append(TEXT_OT_toggle_comment);
+  WM_operatortype_append(TEXT_OT_comment_toggle);
   WM_operatortype_append(TEXT_OT_unindent);
   WM_operatortype_append(TEXT_OT_indent);
 

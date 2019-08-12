@@ -442,14 +442,14 @@ static bool outliner_collection_is_isolated(Scene *scene,
   else if (BKE_collection_has_collection(collection_ensure, (Collection *)collection_ensure_cmp) ||
            BKE_collection_has_collection((Collection *)collection_ensure_cmp, collection_ensure)) {
     /* This collection is either a parent or a child of the collection.
-     * We expect it to be set "visble" already. */
+     * We expect it to be set "visible" already. */
     if (value != value_cmp) {
       return false;
     }
   }
   else {
     /* This collection is neither a parent nor a child of the collection.
-     * We expect it to be "invisble". */
+     * We expect it to be "invisible". */
     if (value == value_cmp) {
       return false;
     }
@@ -2407,9 +2407,9 @@ static void tselem_draw_layer_collection_enable_icon(
 
     /* restrict column clip... it has been coded by simply overdrawing,
      * doesn't work for buttons */
-    char color[4];
+    uchar color[4];
     int icon = RNA_property_ui_icon(exclude_prop);
-    if (UI_icon_get_theme_color(icon, (uchar *)color)) {
+    if (UI_icon_get_theme_color(icon, color)) {
       UI_icon_draw_ex(x, y, icon, U.inv_dpi_fac, alpha, 0.0f, color, true);
     }
     else {
@@ -2467,8 +2467,8 @@ static void tselem_draw_icon(uiBlock *block,
 
     /* restrict column clip... it has been coded by simply overdrawing,
      * doesn't work for buttons */
-    char color[4];
-    if (UI_icon_get_theme_color(data.icon, (uchar *)color)) {
+    uchar color[4];
+    if (UI_icon_get_theme_color(data.icon, color)) {
       UI_icon_draw_ex(x, y, data.icon, U.inv_dpi_fac, alpha, 0.0f, color, true);
     }
     else {

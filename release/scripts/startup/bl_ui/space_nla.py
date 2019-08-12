@@ -195,7 +195,7 @@ class NLA_MT_select(Menu):
 
         layout.separator()
         layout.operator("nla.select_box", icon='BORDER_RECT').axis_range = False
-        layout.operator("nla.select_box", text="Border Axis Range", icon='BORDER_RECT').axis_range = True
+        layout.operator("nla.select_box", text="Box Select (Axis Range)", icon='BORDER_RECT').axis_range = True
 
         layout.separator()
         props = layout.operator("nla.select_leftright", text="Before Current Frame", icon = "BEFORE_CURRENT_FRAME")

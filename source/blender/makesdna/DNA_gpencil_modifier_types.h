@@ -502,6 +502,10 @@ typedef struct SimplifyGpencilModifierData {
   short step;
   /** Custom index for passes. */
   int layer_pass;
+  /** Sample length */
+  float length;
+  /** Merge distance */
+  float distance;
   char _pad[4];
 } SimplifyGpencilModifierData;
 
@@ -516,6 +520,10 @@ typedef enum eSimplifyGpencil_Mode {
   GP_SIMPLIFY_FIXED = 0,
   /* Use RDP algorithm */
   GP_SIMPLIFY_ADAPTIVE = 1,
+  /* Sample the stroke using a fixed length */
+  GP_SIMPLIFY_SAMPLE = 2,
+  /* Sample the stroke doing vertex merge */
+  GP_SIMPLIFY_MERGE = 3,
 } eSimplifyGpencil_Mode;
 
 typedef struct OffsetGpencilModifierData {

@@ -570,6 +570,8 @@ static void image_zoom_apply(ViewZoomData *vpd,
     delta = x - vpd->origx + y - vpd->origy;
   }
 
+  delta /= U.pixelsize;
+
   if (zoom_invert) {
     delta = -delta;
   }
@@ -3221,10 +3223,10 @@ static void image_sample_apply(bContext *C, wmOperator *op, const wmEvent *event
         int point = RNA_enum_get(op->ptr, "point");
 
         if (point == 1) {
-          curvemapping_set_black_white(curve_mapping, NULL, info->linearcol);
+          BKE_curvemapping_set_black_white(curve_mapping, NULL, info->linearcol);
         }
         else if (point == 0) {
-          curvemapping_set_black_white(curve_mapping, info->linearcol, NULL);
+          BKE_curvemapping_set_black_white(curve_mapping, info->linearcol, NULL);
         }
         WM_event_add_notifier(C, NC_WINDOW, NULL);
       }

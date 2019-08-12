@@ -272,7 +272,8 @@ class PARTICLE_PT_emission(ParticleButtonsPanel, Panel):
         col = layout.column()
         col.active = part.emit_from == 'VERT' or part.distribution != 'GRID'
         col.prop(part, "count")
-        col.prop(psys, "seed")
+        if psys is not None:
+            col.prop(psys, "seed")
 
         if part.type == 'HAIR':
             col.prop(part, "hair_length")
@@ -316,7 +317,7 @@ class PARTICLE_PT_emission_source(ParticleButtonsPanel, Panel):
             col.prop(part, "hexagonal_grid")
         else:
             col.use_property_split = False
-            col.prop(part, "use_emit_random")
+            col.prop(part, "use_emit_random", text="Random Order")
             col.prop(part, "use_even_distribution")
             col.use_property_split = True
 

@@ -372,7 +372,7 @@ static void setup_app_data(bContext *C,
      * lib_link on local IDs using linked ones.
      * There is no real way to predict amount of changes here, so we have to fully redo
      * refcounting . */
-    BLE_main_id_refcount_recompute(bmain, true);
+    BKE_main_id_refcount_recompute(bmain, true);
   }
 }
 
@@ -575,9 +575,10 @@ UserDef *BKE_blendfile_userdef_from_defaults(void)
         "io_scene_gltf2",
         "io_scene_obj",
         "io_scene_x3d",
+	"cycles",
         "materials_library_vx",
         "minilightlib",
-        "bforartists_toolbar_settings",        
+        "bforartists_toolbar_settings",
         "createisocam",
         "edit_dimensions",
         "reset3dview",

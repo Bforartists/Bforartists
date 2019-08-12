@@ -735,7 +735,7 @@ static void rna_GPencilInterpolateSettings_type_set(PointerRNA *ptr, int value)
 
   /* init custom interpolation curve here now the first time it's used */
   if ((settings->type == GP_IPO_CURVEMAP) && (settings->custom_ipo == NULL)) {
-    settings->custom_ipo = curvemapping_add(1, 0.0f, 0.0f, 1.0f, 1.0f);
+    settings->custom_ipo = BKE_curvemapping_add(1, 0.0f, 0.0f, 1.0f, 1.0f);
   }
 }
 
@@ -6276,7 +6276,7 @@ static void rna_def_scene_objects(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_property_srna(cprop, "SceneObjects");
   srna = RNA_def_struct(brna, "SceneObjects", NULL);
   RNA_def_struct_sdna(srna, "Scene");
-  RNA_def_struct_ui_text(srna, "Scene Objects", "All the of scene objects");
+  RNA_def_struct_ui_text(srna, "Scene Objects", "All of the scene objects");
 }
 
 /* scene.timeline_markers */
