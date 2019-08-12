@@ -37,6 +37,53 @@ from bl_ui.properties_paint_common import (
 from bl_ui.utils import PresetPanel
 
 
+class VIEW3D_MT_brush_context_menu(Menu):
+    bl_label = "Material Specials"
+
+    def draw(self, context):
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        settings = UnifiedPaintPanel.paint_settings(context)
+        brush = getattr(settings, "brush", None)
+
+        # skip if no active brush
+        if not brush:
+            layout.label(text="No Brushes currently available", icon='INFO')
+            return
+
+        # brush paint modes
+        layout.menu("VIEW3D_MT_brush_paint_modes")
+
+        # brush tool
+
+        if context.image_paint_object:
+            layout.prop_menu_enum(brush, "image_tool")
+        elif context.vertex_paint_object:
+            layout.prop_menu_enum(brush, "vertex_tool")
+        elif context.weight_paint_object:
+            layout.prop_menu_enum(brush, "weight_tool")
+        elif context.sculpt_object:
+            layout.prop_menu_enum(brush, "sculpt_tool")
+            layout.operator("brush.reset")
+
+
+class VIEW3D_MT_brush_context_menu_paint_modes(Menu):
+    bl_label = "Enabled Modes"
+
+    def draw(self, context):
+        layout = self.layout
+
+        settings = UnifiedPaintPanel.paint_settings(context)
+        brush = settings.brush
+
+        layout.prop(brush, "use_paint_sculpt", text="Sculpt")
+        layout.prop(brush, "use_paint_uv_sculpt", text="UV Sculpt")
+        layout.prop(brush, "use_paint_vertex", text="Vertex Paint")
+        layout.prop(brush, "use_paint_weight", text="Weight Paint")
+        layout.prop(brush, "use_paint_image", text="Texture Paint")
+
+
 class View3DPanel:
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -303,8 +350,9 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
         brush = settings.brush
 
         if not self.is_popover:
-            col = layout.split().column()
-            col.template_ID_preview(settings, "brush", new="brush.add", rows=3, cols=8)
+            row = layout.row()
+            row.column().template_ID_preview(settings, "brush", new="brush.add", rows=3, cols=8)
+            row.menu("VIEW3D_MT_brush_context_menu", icon='DOWNARROW_HLT', text="")
 
         # Sculpt Mode #
         if context.sculpt_object and brush:
@@ -433,9 +481,16 @@ class VIEW3D_PT_tools_brush_color(Panel, View3DPaintPanel):
         settings = self.paint_settings(context)
         brush = settings.brush
 
-        layout.active = not brush.use_gradient
+        if context.vertex_paint_object:
+            brush_texpaint_common_color(self, context, layout, brush, settings, True)
 
-        brush_texpaint_common_color(self, context, layout, brush, settings, True)
+        else:
+            layout.prop(brush, "color_type", expand=True)
+
+            if brush.color_type == 'COLOR':
+                brush_texpaint_common_color(self, context, layout, brush, settings, True)
+            elif brush.color_type == 'GRADIENT':
+                brush_texpaint_common_gradient(self, context, layout, brush, settings, True)
 
 
 class VIEW3D_PT_tools_brush_swatches(Panel, View3DPaintPanel):
@@ -463,37 +518,6 @@ class VIEW3D_PT_tools_brush_swatches(Panel, View3DPaintPanel):
         layout.template_ID(settings, "palette", new="palette.new")
         if settings.palette:
             layout.template_palette(settings, "palette", color=True)
-
-
-class VIEW3D_PT_tools_brush_gradient(Panel, View3DPaintPanel):
-    bl_context = ".paint_common"  # dot on purpose (access from topbar)
-    bl_parent_id = "VIEW3D_PT_tools_brush"
-    bl_label = "Gradient"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        settings = cls.paint_settings(context)
-        brush = settings.brush
-        capabilities = brush.image_paint_capabilities
-
-        return capabilities.has_color and context.image_paint_object
-
-    def draw_header(self, context):
-        settings = self.paint_settings(context)
-        brush = settings.brush
-        self.layout.prop(brush, "use_gradient", text="")
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = False
-        layout.use_property_decorate = False  # No animation.
-        settings = self.paint_settings(context)
-        brush = settings.brush
-
-        layout.active = brush.use_gradient
-
-        brush_texpaint_common_gradient(self, context, layout, brush, settings, True)
 
 
 class VIEW3D_PT_tools_brush_clone(Panel, View3DPaintPanel):
@@ -1153,10 +1177,6 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
         col.prop(sculpt, "show_low_resolution")
         col = flow.column()
         col.prop(sculpt, "use_deform_only")
-        col = flow.column()
-        col.prop(sculpt, "show_diffuse_color")
-        col = flow.column()
-        col.prop(sculpt, "show_mask")
 
 
 class VIEW3D_PT_sculpt_options_unified(Panel, View3DPaintPanel):
@@ -2151,6 +2171,8 @@ class VIEW3D_PT_gpencil_brush_presets(PresetPanel, Panel):
 
 
 classes = (
+    VIEW3D_MT_brush_context_menu,
+    VIEW3D_MT_brush_context_menu_paint_modes,
     VIEW3D_PT_tools_meshedit_options,
     VIEW3D_PT_tools_meshedit_options_automerge,
     VIEW3D_PT_tools_curveedit_options_stroke,
@@ -2160,7 +2182,6 @@ classes = (
     VIEW3D_PT_tools_brush,
     VIEW3D_PT_tools_brush_color,
     VIEW3D_PT_tools_brush_swatches,
-    VIEW3D_PT_tools_brush_gradient,
     VIEW3D_PT_tools_brush_clone,
     VIEW3D_PT_tools_brush_options,
     TEXTURE_UL_texpaintslots,

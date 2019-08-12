@@ -658,15 +658,16 @@ void BKE_paint_cavity_curve_preset(Paint *p, int preset)
   CurveMap *cm = NULL;
 
   if (!p->cavity_curve) {
-    p->cavity_curve = curvemapping_add(1, 0, 0, 1, 1);
+    p->cavity_curve = BKE_curvemapping_add(1, 0, 0, 1, 1);
   }
 
   cm = p->cavity_curve->cm;
   cm->flag &= ~CUMA_EXTEND_EXTRAPOLATE;
 
   p->cavity_curve->preset = preset;
-  curvemap_reset(cm, &p->cavity_curve->clipr, p->cavity_curve->preset, CURVEMAP_SLOPE_POSITIVE);
-  curvemapping_changed(p->cavity_curve, false);
+  BKE_curvemap_reset(
+      cm, &p->cavity_curve->clipr, p->cavity_curve->preset, CURVEMAP_SLOPE_POSITIVE);
+  BKE_curvemapping_changed(p->cavity_curve, false);
 }
 
 eObjectMode BKE_paint_object_mode_from_paintmode(ePaintMode mode)
@@ -778,7 +779,7 @@ void BKE_paint_init(Main *bmain, Scene *sce, ePaintMode mode, const char col[3])
 
 void BKE_paint_free(Paint *paint)
 {
-  curvemapping_free(paint->cavity_curve);
+  BKE_curvemapping_free(paint->cavity_curve);
   MEM_SAFE_FREE(paint->tool_slots);
 }
 
@@ -789,7 +790,7 @@ void BKE_paint_free(Paint *paint)
 void BKE_paint_copy(Paint *src, Paint *tar, const int flag)
 {
   tar->brush = src->brush;
-  tar->cavity_curve = curvemapping_copy(src->cavity_curve);
+  tar->cavity_curve = BKE_curvemapping_copy(src->cavity_curve);
   tar->tool_slots = MEM_dupallocN(src->tool_slots);
 
   if ((flag & LIB_ID_CREATE_NO_USER_REFCOUNT) == 0) {
@@ -1158,7 +1159,6 @@ static void sculpt_update_object(
   MultiresModifierData *mmd = BKE_sculpt_multires_active(scene, ob);
 
   ss->modifiers_active = sculpt_modifiers_active(scene, sd, ob);
-  ss->show_diffuse_color = (sd->flags & SCULPT_SHOW_DIFFUSE) != 0;
   ss->show_mask = (sd->flags & SCULPT_HIDE_MASK) == 0;
 
   ss->building_vp_handle = false;
@@ -1213,7 +1213,6 @@ static void sculpt_update_object(
         &ss->pmap, &ss->pmap_mem, me->mpoly, me->mloop, me->totvert, me->totpoly, me->totloop);
   }
 
-  pbvh_show_diffuse_color_set(ss->pbvh, ss->show_diffuse_color);
   pbvh_show_mask_set(ss->pbvh, ss->show_mask);
 
   if (ss->modifiers_active) {
@@ -1449,7 +1448,6 @@ static PBVH *build_pbvh_for_dynamic_topology(Object *ob)
                        ob->sculpt->bm_log,
                        ob->sculpt->cd_vert_node_offset,
                        ob->sculpt->cd_face_node_offset);
-  pbvh_show_diffuse_color_set(pbvh, ob->sculpt->show_diffuse_color);
   pbvh_show_mask_set(pbvh, ob->sculpt->show_mask);
   return pbvh;
 }
@@ -1474,7 +1472,6 @@ static PBVH *build_pbvh_from_regular_mesh(Object *ob, Mesh *me_eval_deform)
                       looptri,
                       looptris_num);
 
-  pbvh_show_diffuse_color_set(pbvh, ob->sculpt->show_diffuse_color);
   pbvh_show_mask_set(pbvh, ob->sculpt->show_mask);
 
   const bool is_deformed = check_sculpt_object_deformed(ob, true);
@@ -1500,7 +1497,6 @@ static PBVH *build_pbvh_from_ccg(Object *ob, SubdivCCG *subdiv_ccg)
                        (void **)subdiv_ccg->grid_faces,
                        subdiv_ccg->grid_flag_mats,
                        subdiv_ccg->grid_hidden);
-  pbvh_show_diffuse_color_set(pbvh, ob->sculpt->show_diffuse_color);
   pbvh_show_mask_set(pbvh, ob->sculpt->show_mask);
   return pbvh;
 }

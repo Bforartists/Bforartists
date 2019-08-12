@@ -5841,7 +5841,7 @@ static void direct_link_gpencil_modifiers(FileData *fd, ListBase *lb)
       if (gpmd->curve_thickness) {
         direct_link_curvemapping(fd, gpmd->curve_thickness);
         /* initialize the curve. Maybe this could be moved to modififer logic */
-        curvemapping_initialize(gpmd->curve_thickness);
+        BKE_curvemapping_initialize(gpmd->curve_thickness);
       }
     }
   }
@@ -9395,8 +9395,8 @@ static void do_versions_userdef(FileData *fd, BlendFileData *bfd)
     /* Themes for Node and Sequence editor were not using grid color,
      * but back. we copy this over then. */
     for (btheme = user->themes.first; btheme; btheme = btheme->next) {
-      copy_v4_v4_char(btheme->space_node.grid, btheme->space_node.back);
-      copy_v4_v4_char(btheme->space_sequencer.grid, btheme->space_sequencer.back);
+      copy_v4_v4_uchar(btheme->space_node.grid, btheme->space_node.back);
+      copy_v4_v4_uchar(btheme->space_sequencer.grid, btheme->space_sequencer.back);
     }
   }
 
