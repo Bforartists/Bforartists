@@ -102,6 +102,7 @@
 #include "RE_engine.h"
 
 #include "DRW_engine.h"
+#include "DRW_select_buffer.h"
 
 #include "view3d_intern.h" /* own include */
 
@@ -238,22 +239,6 @@ void ED_view3d_backbuf_depth_validate(ViewContext *vc)
   }
 }
 
-uint *ED_view3d_select_id_read_rect(const rcti *clip, uint *r_buf_len)
-{
-  uint width = BLI_rcti_size_x(clip);
-  uint height = BLI_rcti_size_y(clip);
-  uint buf_len = width * height;
-  uint *buf = MEM_mallocN(buf_len * sizeof(*buf), __func__);
-
-  DRW_framebuffer_select_id_read(clip, buf);
-
-  if (r_buf_len) {
-    *r_buf_len = buf_len;
-  }
-
-  return buf;
-}
-
 /**
  * allow for small values [0.5 - 2.5],
  * and large values, FLT_MAX by clamping by the area size
@@ -261,30 +246,6 @@ uint *ED_view3d_select_id_read_rect(const rcti *clip, uint *r_buf_len)
 int ED_view3d_backbuf_sample_size_clamp(ARegion *ar, const float dist)
 {
   return (int)min_ff(ceilf(dist), (float)max_ii(ar->winx, ar->winx));
-}
-
-/* reads full rect, converts indices */
-uint *ED_view3d_select_id_read(int xmin, int ymin, int xmax, int ymax, uint *r_buf_len)
-{
-  if (UNLIKELY((xmin > xmax) || (ymin > ymax))) {
-    return NULL;
-  }
-
-  const rcti rect = {
-      .xmin = xmin,
-      .xmax = xmax + 1,
-      .ymin = ymin,
-      .ymax = ymax + 1,
-  };
-
-  uint buf_len;
-  uint *buf = ED_view3d_select_id_read_rect(&rect, &buf_len);
-
-  if (r_buf_len) {
-    *r_buf_len = buf_len;
-  }
-
-  return buf;
 }
 
 /* *********************** */

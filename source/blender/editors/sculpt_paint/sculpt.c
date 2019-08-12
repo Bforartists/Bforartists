@@ -2308,7 +2308,7 @@ static void do_draw_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode)
 
   /* XXX - this shouldn't be necessary, but sculpting crashes in blender2.8 otherwise
    * initialize before threads so they can do curve mapping */
-  curvemapping_initialize(brush->curve);
+  BKE_curvemapping_initialize(brush->curve);
 
   /* threaded loop over nodes */
   SculptThreadedTaskData data = {
@@ -4604,7 +4604,7 @@ static void sculpt_update_cache_invariants(
         brush = br;
         cache->saved_smooth_size = BKE_brush_size_get(scene, brush);
         BKE_brush_size_set(scene, brush, size);
-        curvemapping_initialize(brush->curve);
+        BKE_curvemapping_initialize(brush->curve);
       }
     }
   }
@@ -6238,6 +6238,9 @@ static int sculpt_mode_toggle_exec(bContext *C, wmOperator *op)
     ED_object_sculptmode_exit_ex(bmain, depsgraph, scene, ob);
   }
   else {
+    if (depsgraph) {
+      depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
+    }
     ED_object_sculptmode_enter_ex(bmain, depsgraph, scene, ob, false, op->reports);
     BKE_paint_toolslots_brush_validate(bmain, &ts->sculpt->paint);
   }
