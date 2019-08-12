@@ -44,9 +44,11 @@ class USERPREF_HT_header(Header):
         if prefs.use_preferences_save and (not bpy.app.use_userpref_skip_save_on_exit):
             pass
         else:
-            sub = row.row(align=True)
-            sub.active = prefs.is_dirty
-            sub.operator("wm.save_userpref")
+            # Show '*' to let users know the preferences have been modified.
+            row.operator(
+                "wm.save_userpref",
+                text="Save Preferences{:s}".format(" *" if prefs.is_dirty else ""),
+            )
 
     def draw(self, context):
         layout = self.layout
@@ -84,7 +86,9 @@ class USERPREF_MT_save_load(Menu):
 
         prefs = context.preferences
 
-        layout.prop(prefs, "use_preferences_save", text="Auto-Save Preferences")
+        row = layout.row()
+        row.active = not bpy.app.use_userpref_skip_save_on_exit
+        row.prop(prefs, "use_preferences_save", text="Auto-Save Preferences")
 
         layout.separator()
 
@@ -437,8 +441,6 @@ class USERPREF_PT_edit_annotations(PreferencePanel, Panel):
 
         flow.prop(edit, "grease_pencil_default_color", text="Default Color")
         flow.prop(edit, "grease_pencil_eraser_radius", text="Eraser Radius")
-        flow.use_property_split = False
-        flow.prop(edit, "use_grease_pencil_simplify_stroke", text="Simplify Stroke")
 
 
 class USERPREF_PT_edit_weight_paint(PreferencePanel, Panel):
@@ -1493,6 +1495,11 @@ class USERPREF_PT_navigation_orbit(PreferencePanel, Panel):
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
         flow.row().prop(inputs, "view_rotate_method", expand=True)
+        if inputs.view_rotate_method == 'TURNTABLE':
+            flow.prop(inputs, "view_rotate_sensitivity_turntable")
+        else:
+            flow.prop(inputs, "view_rotate_sensitivity_trackball")
+
         flow.use_property_split = False
         flow.prop(inputs, "use_rotate_around_active")
         flow.prop(inputs, "use_auto_perspective")

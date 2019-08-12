@@ -1212,9 +1212,17 @@ float ED_view3d_radius_to_dist(const View3D *v3d,
 /** \name View Distance Utilities
  * \{ */
 
-/* problem - ofs[3] can be on same location as camera itself.
- * Blender needs proper dist value for zoom.
- * use fallback_dist to override small values
+/**
+ * This function solves the problem of having to switch between camera and non-camera views.
+ *
+ * When viewing from the perspective of \a mat, and having the view center \a ofs,
+ * this calculates a distance from \a ofs to the matrix \a mat.
+ * Using \a fallback_dist when the distance would be too small.
+ *
+ * \param mat: A matrix use for the view-point (typically the camera objects matrix).
+ * \param ofs: Orbit center (negated), matching #RegionView3D.ofs, which is typically passed in.
+ * \param fallback_dist: The distance to use if the object is too near or in front of \a ofs.
+ * \returns A newly calculated distance or the fallback.
  */
 float ED_view3d_offset_distance(float mat[4][4], const float ofs[3], const float fallback_dist)
 {
@@ -1259,6 +1267,36 @@ void ED_view3d_distance_set(RegionView3D *rv3d, const float dist)
   sub_v3_v3(rv3d->ofs, tvec);
 
   rv3d->dist = dist;
+}
+
+/**
+ * Change the distance & offset to match the depth of \a dist_co along the view axis.
+ *
+ * \param dist_co: A world-space location to use for the new depth.
+ * \param dist_min: Resulting distances below this will be ignored.
+ * \return Success if the distance was set.
+ */
+bool ED_view3d_distance_set_from_location(RegionView3D *rv3d,
+                                          const float dist_co[3],
+                                          const float dist_min)
+{
+  float viewinv[4];
+  invert_qt_qt_normalized(viewinv, rv3d->viewquat);
+
+  float tvec[3] = {0.0f, 0.0f, -1.0f};
+  mul_qt_v3(viewinv, tvec);
+
+  float dist_co_local[3];
+  negate_v3_v3(dist_co_local, rv3d->ofs);
+  sub_v3_v3v3(dist_co_local, dist_co, dist_co_local);
+  const float delta = dot_v3v3(tvec, dist_co_local);
+  const float dist_new = rv3d->dist + delta;
+  if (dist_new >= dist_min) {
+    madd_v3_v3fl(rv3d->ofs, tvec, -delta);
+    rv3d->dist = dist_new;
+    return true;
+  }
+  return false;
 }
 
 /** \} */

@@ -240,13 +240,13 @@ class GRAPH_MT_select(Menu):
         props = layout.operator("graph.select_box", icon='BORDER_RECT')
         props.axis_range = False
         props.include_handles = False
-        props = layout.operator("graph.select_box", text="Border Axis Range", icon='BORDER_RECT')
+        props = layout.operator("graph.select_box", text="Box Select (Axis Range)", icon='BORDER_RECT')
         props.axis_range = True
         props.include_handles = False
-        props = layout.operator("graph.select_box", text="Border (Include Handles)", icon='BORDER_RECT')
+        props = layout.operator("graph.select_box", text="Box Select (Include Handles)", icon='BORDER_RECT')
         props.axis_range = False
         props.include_handles = True
-        props = layout.operator("graph.select_box", text="Border (Axis + Handles)", icon='BORDER_RECT')
+        props = layout.operator("graph.select_box", text="Box Select (Axis + Handles)", icon='BORDER_RECT')
         props.axis_range = True
         props.include_handles = True
 
@@ -505,7 +505,6 @@ class GRAPH_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("graph.keyframe_type", "type", text="Keyframe Type")
         layout.operator_menu_enum("graph.handle_type", "type", text="Handle Type")
         layout.operator_menu_enum("graph.interpolation_type", "type", text="Interpolation Mode")
         layout.operator_menu_enum("graph.easing_type", "type", text="Easing Type")
