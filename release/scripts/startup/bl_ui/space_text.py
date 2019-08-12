@@ -81,20 +81,21 @@ class TEXT_HT_footer(Header):
             if text.filepath:
                 if text.is_dirty:
                     row.label(
-                        text=iface_(f"File: *{text.filepath:s} (unsaved)"),
+                        text=iface_("File: *%s (unsaved)" % text.filepath),
                         translate=False,
                     )
                 else:
                     row.label(
-                        text=iface_(f"File: {text.filepath:s}"),
+                        text=iface_("File: %s" % text.filepath),
                         translate=False,
                     )
             else:
                 row.label(
-                    text="Text: External"
+                    text=iface_("Text: External")
                     if text.library
-                    else "Text: Internal",
+                    else iface_("Text: Internal"),
                 )
+
 
 
 # bfa - show hide the editormenu
@@ -138,6 +139,8 @@ class TEXT_PT_properties(Panel):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
         st = context.space_data
 
@@ -151,7 +154,7 @@ class TEXT_PT_properties(Panel):
 
         text = st.text
         if text:
-            flow.prop(text, "use_tabs_as_spaces")
+            layout.prop(text, "indentation")
 
         flow.prop(st, "show_margin")
         if st.show_margin:
@@ -164,7 +167,7 @@ class TEXT_PT_find(Panel):
     bl_space_type = 'TEXT_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Text"
-    bl_label = "Find"
+    bl_label = "Find & Replace"
 
     def draw(self, context):
         layout = self.layout
@@ -174,22 +177,24 @@ class TEXT_PT_find(Panel):
         # find
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.prop(st, "find_text", text="")
-        row.operator("text.find_set_selected", text="", icon='TEXT')
+        row.prop(st, "find_text", text="", icon='VIEWZOOM')
+        row.operator("text.find_set_selected", text="", icon='EYEDROPPER')
         col.operator("text.find")
 
         # replace
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.prop(st, "replace_text", text="")
-        row.operator("text.replace_set_selected", text="", icon='TEXT')
+        row.prop(st, "replace_text", text="", icon='DECORATE_OVERRIDE')
+        row.operator("text.replace_set_selected", text="", icon='EYEDROPPER')
         col.operator("text.replace")
 
         # settings
-        layout.prop(st, "use_match_case")
         row = layout.row(align=True)
-        row.prop(st, "use_find_wrap", text="Wrap")
-        row.prop(st, "use_find_all", text="All")
+        if not st.text:
+            row.active = False
+        row.prop(st, "use_match_case", text="Case", toggle=True)
+        row.prop(st, "use_find_wrap", text="Wrap", toggle=True)
+        row.prop(st, "use_find_all", text="All", toggle=True)
 
 
 class TEXT_MT_view(Menu):
@@ -248,9 +253,18 @@ class TEXT_MT_text(Menu):
             layout.operator("text.save_as", icon='SAVE_AS')
 
             if text.filepath:
+                layout.separator()
                 layout.operator("text.make_internal", icon = "MAKE_INTERNAL")
 
-            layout.column()
+            layout.separator()
+            row = layout.row()
+            row.active = text.name.endswith(".py")
+            row.prop(text, "use_module")
+            row = layout.row()
+
+            layout.prop(st, "use_live_edit")
+
+            layout.separator()
             layout.operator("text.run_script", icon = "PLAY")
 
         layout.separator()
@@ -332,7 +346,7 @@ class TEXT_MT_edit(Menu):
 
     @classmethod
     def poll(cls, _context):
-        return (context.space_data.text)
+        return context.space_data.text is not None
 
     def draw(self, context):
         layout = self.layout
@@ -344,8 +358,8 @@ class TEXT_MT_edit(Menu):
 
         layout.separator()
 
-        layout.operator("text.move_lines", text="Move line(s) up", icon = "MOVE_UP").direction = 'UP'
-        layout.operator("text.move_lines", text="Move line(s) down", icon = "MOVE_DOWN").direction = 'DOWN'
+        layout.operator("text.move_lines", text="Move Line(s) Up", icon = "MOVE_UP").direction = 'UP'
+        layout.operator("text.move_lines", text="Move Line(s) Down", icon = "MOVE_DOWN").direction = 'DOWN'
 
         layout.separator()
 
@@ -390,7 +404,7 @@ class TEXT_MT_edit_move_select(Menu):
         layout.operator("text.move_select", text = "Next Character", icon = "HAND").type = 'NEXT_CHARACTER'
 
 
-class TEXT_MT_toolbox(Menu):
+class TEXT_MT_context_menu(Menu):
     bl_label = ""
 
     def draw(self, _context):
@@ -404,7 +418,21 @@ class TEXT_MT_toolbox(Menu):
 
         layout.separator()
 
-        layout.operator("text.run_script")
+        layout.operator("text.move_lines", text="Move Line(s) Up").direction = 'UP'
+        layout.operator("text.move_lines", text="Move Line(s) Down").direction = 'DOWN'
+
+        layout.separator()
+
+        layout.operator("text.indent")
+        layout.operator("text.unindent")
+
+        layout.separator()
+
+        layout.operator("text.comment_toggle")
+
+        layout.separator()
+
+        layout.operator("text.autocomplete")
 
 class TEXT_MT_edit_delete(Menu):
     bl_label = "Delete"
@@ -433,9 +461,9 @@ classes = (
     TEXT_MT_templates_osl,
     TEXT_MT_format,
     TEXT_MT_edit_to3d,
+    TEXT_MT_context_menu,
     TEXT_MT_edit,
     TEXT_MT_edit_move_select,
-    TEXT_MT_toolbox,
     TEXT_MT_edit_delete,
 )
 
