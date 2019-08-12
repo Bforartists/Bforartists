@@ -5722,7 +5722,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.menu("GPENCIL_MT_separate")
         layout.operator("gpencil.stroke_split", text="Split", icon = "SPLIT")
         layout.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
         layout.operator("gpencil.stroke_join", text="Join and Copy", icon = "JOIN").type = 'JOINCOPY'
