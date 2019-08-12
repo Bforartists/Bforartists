@@ -17,13 +17,12 @@ echo - format [path] ^(Format the source using clang-format, path is optional, r
 echo.
 echo Configuration options
 echo - verbose ^(enable diagnostic output during configuration^)
+echo - developer ^(enable faster builds, error checking and tests, recommended for developers^)
 echo - with_tests ^(enable building unit tests^)
 echo - nobuildinfo ^(disable buildinfo^)
 echo - debug ^(Build an unoptimized debuggable build^)
 echo - packagename [newname] ^(override default cpack package name^)
 echo - buildir [newdir] ^(override default build folder^)
-echo - x86 ^(override host auto-detect and build 32 bit code^)
-echo - x64 ^(override host auto-detect and build 64 bit code^)
 echo - 2017 ^(build with visual studio 2017^)
 echo - 2017pre ^(build with visual studio 2017 pre-release^)
 echo - 2017b ^(build with visual studio 2017 Build Tools^)

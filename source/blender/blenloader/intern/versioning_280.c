@@ -1347,12 +1347,12 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
           /* sculpt brushes */
           GP_Sculpt_Settings *gset = &scene->toolsettings->gp_sculpt;
           if ((gset) && (gset->cur_falloff == NULL)) {
-            gset->cur_falloff = curvemapping_add(1, 0.0f, 0.0f, 1.0f, 1.0f);
-            curvemapping_initialize(gset->cur_falloff);
-            curvemap_reset(gset->cur_falloff->cm,
-                           &gset->cur_falloff->clipr,
-                           CURVE_PRESET_GAUSS,
-                           CURVEMAP_SLOPE_POSITIVE);
+            gset->cur_falloff = BKE_curvemapping_add(1, 0.0f, 0.0f, 1.0f, 1.0f);
+            BKE_curvemapping_initialize(gset->cur_falloff);
+            BKE_curvemap_reset(gset->cur_falloff->cm,
+                               &gset->cur_falloff->clipr,
+                               CURVE_PRESET_GAUSS,
+                               CURVEMAP_SLOPE_POSITIVE);
           }
         }
       }
@@ -2748,12 +2748,12 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
       for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
         GP_Sculpt_Settings *gset = &scene->toolsettings->gp_sculpt;
         if ((gset) && (gset->cur_primitive == NULL)) {
-          gset->cur_primitive = curvemapping_add(1, 0.0f, 0.0f, 1.0f, 1.0f);
-          curvemapping_initialize(gset->cur_primitive);
-          curvemap_reset(gset->cur_primitive->cm,
-                         &gset->cur_primitive->clipr,
-                         CURVE_PRESET_BELL,
-                         CURVEMAP_SLOPE_POSITIVE);
+          gset->cur_primitive = BKE_curvemapping_add(1, 0.0f, 0.0f, 1.0f, 1.0f);
+          BKE_curvemapping_initialize(gset->cur_primitive);
+          BKE_curvemap_reset(gset->cur_primitive->cm,
+                             &gset->cur_primitive->clipr,
+                             CURVE_PRESET_BELL,
+                             CURVEMAP_SLOPE_POSITIVE);
         }
       }
     }
@@ -3407,11 +3407,11 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
             ARegion *ar = NULL;
             if (sl->spacetype == SPACE_CLIP) {
               if (((SpaceClip *)sl)->view == SC_VIEW_GRAPH) {
-                ar = do_versions_find_region(regionbase, RGN_TYPE_PREVIEW);
+                ar = do_versions_find_region_or_null(regionbase, RGN_TYPE_PREVIEW);
               }
             }
             else {
-              ar = do_versions_find_region(regionbase, RGN_TYPE_WINDOW);
+              ar = do_versions_find_region_or_null(regionbase, RGN_TYPE_WINDOW);
             }
 
             if (ar != NULL) {
@@ -3551,5 +3551,22 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
   {
     /* Versioning code until next subversion bump goes here. */
+    if (U.view_rotate_sensitivity_turntable == 0) {
+      U.view_rotate_sensitivity_turntable = DEG2RADF(0.4f);
+      U.view_rotate_sensitivity_trackball = 1.0f;
+    }
+    for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
+      for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
+        for (SpaceLink *sl = sa->spacedata.first; sl; sl = sl->next) {
+          if (sl->spacetype == SPACE_TEXT) {
+            ListBase *regionbase = (sl == sa->spacedata.first) ? &sa->regionbase : &sl->regionbase;
+            ARegion *ar = do_versions_find_region_or_null(regionbase, RGN_TYPE_UI);
+            if (ar) {
+              ar->alignment = RGN_ALIGN_RIGHT;
+            }
+          }
+        }
+      }
+    }
   }
 }

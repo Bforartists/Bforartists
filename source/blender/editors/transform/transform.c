@@ -4607,6 +4607,10 @@ static void applyRotationValue(TransInfo *t,
   }
 
   axis_angle_normalized_to_mat3(mat, axis, angle);
+  /* Counter for needed updates (when we need to update to non-default matrix,
+   * we also need another update on next iteration to go back to default matrix,
+   * hence the '2' value used here, instead of a mere boolean). */
+  short do_update_matrix = 0;
 
   FOREACH_TRANS_DATA_CONTAINER (t, tc) {
     TransData *td = tc->data;
@@ -4623,6 +4627,9 @@ static void applyRotationValue(TransInfo *t,
       if (t->con.applyRot) {
         t->con.applyRot(t, tc, td, axis, NULL);
         angle_final = angle * td->factor;
+        /* Even though final angle might be identical to orig value,
+         * we have to update the rotation matrix in that case... */
+        do_update_matrix = 2;
       }
       else if (t->flag & T_PROP_EDIT) {
         angle_final = angle * td->factor;
@@ -4645,11 +4652,17 @@ static void applyRotationValue(TransInfo *t,
           axis_angle_normalized_to_mat3(mat, axis, angle_progress);
           ElementRotation(t, tc, td, mat, t->around);
         }
-        axis_angle_normalized_to_mat3(mat, axis, angle_final);
+        do_update_matrix = 2;
       }
       else if (angle_final != angle) {
-        axis_angle_normalized_to_mat3(mat, axis, angle_final);
+        do_update_matrix = 2;
       }
+
+      if (do_update_matrix > 0) {
+        axis_angle_normalized_to_mat3(mat, axis, angle_final);
+        do_update_matrix--;
+      }
+
       ElementRotation(t, tc, td, mat, t->around);
     }
   }
@@ -9449,7 +9462,7 @@ static void headerTimeTranslate(TransInfo *t, char str[UI_MAX_DRAW_STR])
   }
 }
 
-static void applyTimeTranslateValue(TransInfo *t)
+static void applyTimeTranslateValue(TransInfo *t, float value)
 {
   Scene *scene = t->scene;
   int i;
@@ -9458,7 +9471,6 @@ static void applyTimeTranslateValue(TransInfo *t)
   const double secf = FPS;
 
   float deltax, val /* , valprev */;
-  t->values_final[0] = t->values[0];
 
   FOREACH_TRANS_DATA_CONTAINER (t, tc) {
     TransData *td = tc->data;
@@ -9476,7 +9488,7 @@ static void applyTimeTranslateValue(TransInfo *t)
 
       /* check if any need to apply nla-mapping */
       if (adt && (t->spacetype != SPACE_SEQ)) {
-        deltax = t->values_final[0];
+        deltax = value;
 
         if (autosnap == SACTSNAP_TSTEP) {
           deltax = (float)(floor(((double)deltax / secf) + 0.5) * secf);
@@ -9529,7 +9541,7 @@ static void applyTimeTranslate(TransInfo *t, const int mval[2])
   t->values_final[0] = t->vec[0];
   headerTimeTranslate(t, str);
 
-  applyTimeTranslateValue(t);
+  applyTimeTranslateValue(t, t->values_final[0]);
 
   recalcData(t);
 
@@ -9637,20 +9649,17 @@ static void headerTimeSlide(TransInfo *t, const float sval, char str[UI_MAX_DRAW
   BLI_snprintf(str, UI_MAX_DRAW_STR, TIP_("TimeSlide: %s"), &tvec[0]);
 }
 
-static void applyTimeSlideValue(TransInfo *t, float sval)
+static void applyTimeSlideValue(TransInfo *t, float sval, float cval)
 {
   int i;
   const float *range = t->custom.mode.data;
   float minx = range[0];
   float maxx = range[1];
-  t->values_final[0] = t->values[0];
 
   /* set value for drawing black line */
   if (t->spacetype == SPACE_ACTION) {
     SpaceAction *saction = (SpaceAction *)t->sa->spacedata.first;
-    float cvalf = t->values_final[0];
-
-    saction->timeslide = cvalf;
+    saction->timeslide = cval;
   }
 
   /* It doesn't matter whether we apply to t->data or
@@ -9663,7 +9672,6 @@ static void applyTimeSlideValue(TransInfo *t, float sval)
        * (this is only valid when not in NLA)
        */
       AnimData *adt = (t->spacetype != SPACE_NLA) ? td->extra : NULL;
-      float cval = t->values_final[0];
 
       /* only apply to data if in range */
       if ((sval > minx) && (sval < maxx)) {
@@ -9724,7 +9732,7 @@ static void applyTimeSlide(TransInfo *t, const int mval[2])
   t->values_final[0] = (maxx - minx) * t->vec[0] / 2.0f + sval[0];
 
   headerTimeSlide(t, sval[0], str);
-  applyTimeSlideValue(t, sval[0]);
+  applyTimeSlideValue(t, sval[0], t->values_final[0]);
 
   recalcData(t);
 
@@ -9796,14 +9804,13 @@ static void headerTimeScale(TransInfo *t, char str[UI_MAX_DRAW_STR])
   BLI_snprintf(str, UI_MAX_DRAW_STR, TIP_("ScaleX: %s"), &tvec[0]);
 }
 
-static void applyTimeScaleValue(TransInfo *t)
+static void applyTimeScaleValue(TransInfo *t, float value)
 {
   Scene *scene = t->scene;
   int i;
 
   const short autosnap = getAnimEdit_SnapMode(t);
   const double secf = FPS;
-  t->values_final[0] = t->values[0];
 
   FOREACH_TRANS_DATA_CONTAINER (t, tc) {
     TransData *td = tc->data;
@@ -9815,7 +9822,7 @@ static void applyTimeScaleValue(TransInfo *t)
        */
       AnimData *adt = (t->spacetype != SPACE_NLA) ? td->extra : NULL;
       float startx = CFRA;
-      float fac = t->values_final[0];
+      float fac = value;
 
       if (autosnap == SACTSNAP_TSTEP) {
         fac = (float)(floor((double)fac / secf + 0.5) * secf);
@@ -9851,7 +9858,7 @@ static void applyTimeScale(TransInfo *t, const int UNUSED(mval[2]))
   t->values_final[0] = t->vec[0];
   headerTimeScale(t, str);
 
-  applyTimeScaleValue(t);
+  applyTimeScaleValue(t, t->values_final[0]);
 
   recalcData(t);
 

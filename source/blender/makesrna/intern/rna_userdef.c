@@ -30,6 +30,7 @@
 
 #include "BLI_utildefines.h"
 #include "BLI_math_base.h"
+#include "BLI_math_rotation.h"
 
 #include "BLT_translation.h"
 
@@ -4589,10 +4590,6 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
                            "Grease Pencil Euclidean Distance",
                            "Distance moved by mouse when drawing stroke to include");
 
-  prop = RNA_def_property(srna, "use_grease_pencil_simplify_stroke", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, NULL, "gp_settings", GP_PAINT_DOSIMPLIFY);
-  RNA_def_property_ui_text(prop, "Grease Pencil Simplify Stroke", "Simplify the final stroke");
-
   prop = RNA_def_property(srna, "grease_pencil_eraser_radius", PROP_INT, PROP_PIXEL);
   RNA_def_property_int_sdna(prop, NULL, "gp_eraser");
   RNA_def_property_range(prop, 1, 500);
@@ -5230,6 +5227,20 @@ static void rna_def_userdef_input(BlenderRNA *brna)
   RNA_def_property_struct_type(prop, "WalkNavigation");
   RNA_def_property_ui_text(prop, "Walk Navigation", "Settings for walk navigation mode");
 
+  prop = RNA_def_property(srna, "view_rotate_sensitivity_turntable", PROP_FLOAT, PROP_ANGLE);
+  RNA_def_property_range(prop, DEG2RADF(0.001f), DEG2RADF(15.0f));
+  RNA_def_property_float_default(prop, DEG2RADF(0.4f));
+  RNA_def_property_ui_range(prop, DEG2RADF(0.001f), DEG2RADF(15.0f), 1.0f, 2);
+  RNA_def_property_ui_text(prop,
+                           "Orbit Sensitivity",
+                           "Rotation amount per-pixel to control how fast the viewport orbits");
+
+  prop = RNA_def_property(srna, "view_rotate_sensitivity_trackball", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_range(prop, 0.1f, 10.0f);
+  RNA_def_property_float_default(prop, 1.0f);
+  RNA_def_property_ui_range(prop, 0.1f, 2.0f, 0.01f, 2);
+  RNA_def_property_ui_text(prop, "Orbit Sensitivity", "Scale trackball orbit sensitivity");
+
   /* tweak tablet & mouse preset */
   prop = RNA_def_property(srna, "drag_threshold_mouse", PROP_INT, PROP_PIXEL);
   RNA_def_property_range(prop, 1, 255);
@@ -5809,7 +5820,10 @@ void RNA_def_userdef(BlenderRNA *brna)
   /* Preferences Flags */
   prop = RNA_def_property(srna, "use_preferences_save", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "pref_flag", USER_PREF_FLAG_SAVE);
-  RNA_def_property_ui_text(prop, "Save on Exit", "Save modified preferences on exit");
+  RNA_def_property_ui_text(prop,
+                           "Save on Exit",
+                           "Save preferences on exit when modified "
+                           "(unless factory settings have been loaded)");
 
   prop = RNA_def_property(srna, "is_dirty", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "runtime.is_dirty", 0);
