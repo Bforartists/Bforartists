@@ -3850,7 +3850,7 @@ class VIEW3D_MT_particle_context_menu(Menu):
         layout.operator("particle.unify_length")
 
         if particle_edit.select_mode == 'POINT':
-            layout.operator("particle.subdivide")
+            layout.operator("particle.subdivide", icon = "SUBDIVIDE_EDGES")
 
         layout.operator("particle.weight_set")
 
@@ -4330,7 +4330,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()
 
             # Additive Operators
-            col.operator("mesh.subdivide", text="Subdivide")
+            col.operator("mesh.subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
 
             col.separator()
 
@@ -4377,7 +4377,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()
 
             # Additive Operators
-            col.operator("mesh.subdivide", text="Subdivide")
+            col.operator("mesh.subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
 
             col.separator()
 
@@ -4443,7 +4443,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()
 
             # Additive Operators
-            col.operator("mesh.subdivide", text="Subdivide")
+            col.operator("mesh.subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
 
             col.separator()
 
@@ -5489,7 +5489,7 @@ class VIEW3D_MT_armature_context_menu(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         # Add
-        layout.operator("armature.subdivide", text="Subdivide")
+        layout.operator("armature.subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
         layout.operator("armature.duplicate_move", text="Duplicate", icon = "DUPLICATE")
         layout.operator("armature.extrude_move", icon='EXTRUDE_REGION')
         if arm.use_mirror_x:
@@ -5699,7 +5699,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.menu("VIEW3D_MT_gpencil_copy_layer")
         layout.menu("VIEW3D_MT_gpencil_simplify")
-        layout.operator("gpencil.stroke_trim", text="Trim", icon = "CUT")
 
         layout.separator()
 
@@ -5713,22 +5712,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.stroke_smooth", text="Smooth", icon = "PARTICLEBRUSH_SMOOTH")
-        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
-        layout.operator("gpencil.stroke_merge", text="Merge", icon = "MERGE")
-        op = layout.operator("gpencil.stroke_cyclical_set", text="Close")
-        op.type = 'CLOSE'
-        op.geometry = True
-
-        layout.separator()
-
         layout.operator("gpencil.stroke_split", text="Split", icon = "SPLIT")
-        layout.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
-        layout.operator("gpencil.stroke_join", text="Join and Copy", icon = "JOIN").type = 'JOINCOPY'
-
-        layout.separator()
-
-        layout.operator("gpencil.stroke_flip", text="Flip Direction", icon = "FLIP")
 
         layout.separator()
 
@@ -5738,24 +5722,12 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.menu("GPENCIL_MT_gpencil_vertex_group")
-        layout.operator_menu_enum("gpencil.move_to_layer", "layer", text="Move to Layer")
-        layout.menu("VIEW3D_MT_assign_material")
-        layout.menu("VIEW3D_MT_edit_gpencil_arrange_strokes")
-
-        layout.separator()
-
         layout.operator_menu_enum("gpencil.convert", "type", text="Convert to Geometry")
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_gpencil_delete")
         layout.operator_menu_enum("gpencil.dissolve", "type")
-
-        layout.separator()
-
-        layout.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
-        layout.operator_menu_enum("gpencil.stroke_caps_set", text="Toggle Caps...", property="type")
 
         layout.separator()
 
@@ -5770,8 +5742,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.operator_menu_enum("gpencil.stroke_separate", "mode")
         layout.menu("GPENCIL_MT_cleanup")
-
-        layout.separator()
 
 
 class VIEW3D_MT_edit_gpencil_hide(Menu):
@@ -5806,13 +5776,14 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("gpencil.stroke_subdivide", text="Subdivide").only_selected = False
+        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES").only_selected = False
         layout.menu("VIEW3D_MT_gpencil_simplify")
-        layout.operator("gpencil.stroke_trim", text="Trim")
+        layout.operator("gpencil.stroke_trim", text="Trim", icon = "CUT")
 
         layout.separator()
 
-        layout.operator_menu_enum("gpencil.stroke_join", "type", text="Join...")
+        layout.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
+        layout.operator("gpencil.stroke_join", text="Join and Copy", icon = "JOIN").type = 'JOINCOPY'
 
         layout.separator()
 
@@ -5826,9 +5797,9 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
         op = layout.operator("gpencil.stroke_cyclical_set", text="Close")
         op.type = 'CLOSE'
         op.geometry = True
-        layout.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic").type = 'TOGGLE'
+        layout.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
         layout.operator_menu_enum("gpencil.stroke_caps_set", text="Toggle Caps...", property="type")
-        layout.operator("gpencil.stroke_flip", text="Switch Direction")
+        layout.operator("gpencil.stroke_flip", text="Switch Direction", icon = "FLIP")
 
 class VIEW3D_MT_edit_gpencil_point(Menu):
     bl_label = "Point"
@@ -5840,11 +5811,11 @@ class VIEW3D_MT_edit_gpencil_point(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.stroke_smooth", text="Smooth Points").only_selected = True
+        layout.operator("gpencil.stroke_smooth", text="Smooth Points", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
 
         layout.separator()
 
-        layout.operator("gpencil.stroke_merge", text="Merge Points")
+        layout.operator("gpencil.stroke_merge", text="Merge Points", icon = "MERGE")
 
         # TODO: add new RIP operator
 
@@ -7609,14 +7580,14 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         # Add
-        layout.operator("gpencil.stroke_subdivide", text="Subdivide")
+        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
 
         layout.separator()
 
         # Transform
         layout.operator("transform.transform", text="Shrink/Fatten").mode = 'GPENCIL_SHRINKFATTEN'
         layout.operator("gpencil.stroke_smooth", text="Smooth")
-        layout.operator("gpencil.stroke_trim", text="Trim")
+        layout.operator("gpencil.stroke_trim", text="Trim", icon = "CUT")
 
         layout.separator()
 
