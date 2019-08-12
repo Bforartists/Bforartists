@@ -116,8 +116,8 @@ class CONSOLE_MT_edit(Menu):
         
         layout.separator()
         
-        layout.operator("console.history_cycle", icon = "HISTORY_CYCLE_FORWARD").reverse = False
-        layout.operator("console.history_cycle", icon = "HISTORY_CYCLE_BACK").reverse = True
+        layout.operator("console.history_cycle", text = "Forward in History", icon = "HISTORY_CYCLE_FORWARD").reverse = False
+        layout.operator("console.history_cycle", text = "Backward in History", icon = "HISTORY_CYCLE_BACK").reverse = True
 
 
 class CONSOLE_MT_language(Menu):
