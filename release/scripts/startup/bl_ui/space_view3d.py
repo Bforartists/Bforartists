@@ -4600,7 +4600,7 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.merge", text="Merge Vertices", icon = "MERGE")
+        layout.menu("VIEW3D_MT_edit_mesh_merge", text="Merge Vertices")
 
         layout.separator()
 
@@ -4983,7 +4983,7 @@ class VIEW3D_MT_edit_mesh_merge(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.remove_doubles", text="By Distance")
+        layout.operator("mesh.remove_doubles", text="By Distance", icon = "REMOVE_DOUBLES")
 
 
 class VIEW3D_MT_edit_mesh_show_hide(Menu):
