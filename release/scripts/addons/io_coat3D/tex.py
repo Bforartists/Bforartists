@@ -347,7 +347,7 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures): #r
                 coat3D.remove_path = True
             createnodes(index_mat, texcoat, create_group_node, tile_list, objekti, ind, is_new)
 
-def createnodes(active_mat,texcoat, create_group_node, tile_list, objekti, ind, is_new): # Cretes new nodes and link textures into them
+def createnodes(active_mat,texcoat, create_group_node, tile_list, objekti, ind, is_new): # Creates new nodes and link textures into them
     bring_color = True # Meaning of these is to check if we can only update textures or do we need to create new nodes
     bring_metalness = True
     bring_roughness = True
@@ -366,7 +366,7 @@ def createnodes(active_mat,texcoat, create_group_node, tile_list, objekti, ind, 
     main_material = coatMat.node_tree
     applink_group_node = False
 
-    # First go throug all image nodes and let's check if it starts with 3DC and reload if needed
+    # First go through all image nodes and let's check if it starts with 3DC and reload if needed
 
     for node in coatMat.node_tree.nodes:
         if (node.type == 'OUTPUT_MATERIAL'):

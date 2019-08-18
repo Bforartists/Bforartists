@@ -1,5 +1,6 @@
 # gpl author: Ryan Inch (Imaginer)
 
+import bpy
 from bpy.types import (
         Operator,
         Menu,
@@ -40,8 +41,10 @@ class BrushCurveMenu(Menu):
 
 
 class CurvePopup(Operator):
+    """Edit Falloff Curve"""
     bl_label = "Adjust Curve"
     bl_idname = "view3d.sv3_curve_popup"
+    bl_description = "Edit Falloff Curve"
     bl_options = {'REGISTER'}
 
     @classmethod
@@ -69,3 +72,17 @@ class CurvePopup(Operator):
 
     def execute(self, context):
         return context.window_manager.invoke_popup(self, width=180)
+
+
+classes = (
+    BrushCurveMenu,
+    CurvePopup
+    )
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)

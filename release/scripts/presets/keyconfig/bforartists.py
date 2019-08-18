@@ -359,7 +359,6 @@ keyconfig_data = \
      {"type": 'LEFTMOUSE', "value": 'CLICK'},
      {"properties":
       [("extend", False),
-       ("recursive", False),
        ],
       },
      ),
@@ -367,7 +366,6 @@ keyconfig_data = \
      {"type": 'LEFTMOUSE', "value": 'CLICK', "shift": True},
      {"properties":
       [("extend", True),
-       ("recursive", False),
        ],
       },
      ),
@@ -375,7 +373,6 @@ keyconfig_data = \
      {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True},
      {"properties":
       [("extend", False),
-       ("recursive", True),
        ],
       },
      ),
@@ -383,7 +380,6 @@ keyconfig_data = \
      {"type": 'LEFTMOUSE', "value": 'CLICK', "shift": True, "ctrl": True},
      {"properties":
       [("extend", True),
-       ("recursive", True),
        ],
       },
      ),

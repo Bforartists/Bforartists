@@ -2972,7 +2972,7 @@ def save_single(operator, scene, depsgraph, filepath="",
         path_mode,
         os.path.dirname(bpy.data.filepath),  # base_src
         os.path.dirname(filepath),  # base_dst
-        # Local dir where to put images (medias), using FBX conventions.
+        # Local dir where to put images (media), using FBX conventions.
         os.path.splitext(os.path.basename(filepath))[0] + ".fbm",  # subdir
         embed_textures,
         set(),  # copy_set

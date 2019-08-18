@@ -96,16 +96,16 @@ int EXPP_VectorsAreEqual(const float *vecA, const float *vecB, int size, int flo
 
 typedef struct Mathutils_Callback Mathutils_Callback;
 
-typedef int (*BaseMathCheckFunc)(BaseMathObject *);    /* checks the user is still valid */
-typedef int (*BaseMathGetFunc)(BaseMathObject *, int); /* gets the vector from the user */
-typedef int (*BaseMathSetFunc)(BaseMathObject *,
-                               int); /* sets the users vector values once its modified */
-typedef int (*BaseMathGetIndexFunc)(BaseMathObject *,
-                                    int,
-                                    int); /* same as above but only for an index */
-typedef int (*BaseMathSetIndexFunc)(BaseMathObject *,
-                                    int,
-                                    int); /* same as above but only for an index */
+/** Checks the user is still valid. */
+typedef int (*BaseMathCheckFunc)(BaseMathObject *);
+/** Gets the vector from the user. */
+typedef int (*BaseMathGetFunc)(BaseMathObject *, int);
+/** Sets the users vector values once its modified. */
+typedef int (*BaseMathSetFunc)(BaseMathObject *, int);
+/** Same as above but only for an index. */
+typedef int (*BaseMathGetIndexFunc)(BaseMathObject *, int, int);
+/** Same as above but only for an index. */
+typedef int (*BaseMathSetIndexFunc)(BaseMathObject *, int, int);
 
 struct Mathutils_Callback {
   BaseMathCheckFunc check;
@@ -167,6 +167,16 @@ int mathutils_array_parse_alloc_v(float **array,
                                   int array_dim,
                                   PyObject *value,
                                   const char *error_prefix);
+int mathutils_int_array_parse(int *array,
+                              int array_dim,
+                              PyObject *value,
+                              const char *error_prefix);
+int mathutils_array_parse_alloc_vi(int **array,
+                                   int array_dim,
+                                   PyObject *value,
+                                   const char *error_prefix);
+int mathutils_array_parse_alloc_viseq(
+    int **array, int **start_table, int **len_table, PyObject *value, const char *error_prefix);
 int mathutils_any_to_rotmat(float rmat[3][3], PyObject *value, const char *error_prefix);
 
 Py_hash_t mathutils_array_hash(const float *float_array, size_t array_len);

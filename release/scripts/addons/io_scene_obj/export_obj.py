@@ -386,7 +386,7 @@ def write_file(filepath, objects, depsgraph, scene,
 
                         if not (len(face_index_pairs) + len(edges) + len(me.vertices)):  # Make sure there is something to write
                             # clean up
-                            bpy.data.meshes.remove(me)
+                            ob_for_convert.to_mesh_clear()
                             continue  # dont bother with this mesh.
 
                         if EXPORT_NORMALS and face_index_pairs:

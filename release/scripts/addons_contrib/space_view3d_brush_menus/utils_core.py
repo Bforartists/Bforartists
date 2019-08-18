@@ -34,13 +34,12 @@ def get_brush_link(context, types="brush"):
 
 
 # Addon settings
-def addon_settings(lists=True):
+def addon_settings():
     # separate function just for more convenience
     addon = bpy.context.preferences.addons[get_addon_name]
     colum_n = addon.preferences.column_set if addon else 1
-    use_list = addon.preferences.use_brushes_menu_type
 
-    return use_list if lists else colum_n
+    return colum_n
 
 
 def error_handlers(self, op_name, error, reports="ERROR", func=False):
@@ -56,16 +55,7 @@ def error_handlers(self, op_name, error, reports="ERROR", func=False):
 # 'VERTEX_PAINT' 'WEIGHT_PAINT' 'TEXTURE_PAINT'
 # 'PARTICLE_EDIT' 'POSE' 'GPENCIL_EDIT'
 def get_mode():
-    try:
-        if bpy.context.gpencil_data and \
-        bpy.context.object.mode == 'OBJECT' and \
-        bpy.context.scene.grease_pencil.use_stroke_edit_mode:
-            return 'GPENCIL_EDIT'
-        else:
-            return bpy.context.object.mode
-    except:
-        return None
-
+    return bpy.context.object.mode
 
 def menuprop(item, name, value, data_path,
              icon='NONE', disable=False, disable_icon=None,

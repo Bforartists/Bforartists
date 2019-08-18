@@ -50,12 +50,12 @@ Limitations and new delta option for 2.8
   it will be set to zero.
   
 - new "delta" option usage, when you hope to make new shape-key with keep currently visible other shape keys value.
- it can generate new shape key, with value as 1.00. then deform target shape as soruce shape  with keep other shape key values relative.
-  
-- If overwrite shape key,<select active shape key of target as non "base shape"> 
- current shape key value is ignored and turn as 1.00. 
- 
- then if active shape key was driven (bone rotation etc), you may get un-expected result. When transfer, I recommend, keep set active-shape key as base . so transfered shape key do not "overwrite". but generate new shape key. 
+ it can generate new shape key, with value as 1.00. then deform target shape as source shape with keep other shape key values relative.
+
+- If overwrite shape key,<select active shape key of target as non "base shape">
+ current shape key value is ignored and turn as 1.00.
+
+ then if active shape key was driven (bone rotation etc), you may get un-expected result. When transfer, I recommend, keep set active-shape key as base. so transferred shape key do not "overwrite". but generate new shape key.
  if active-shape key have no driver, you can overwrite it (but as 1.00 value )
 """
 
@@ -254,7 +254,7 @@ class add_corrective_pose_shape(bpy.types.Operator):
 class add_corrective_pose_shape_delta (bpy.types.Operator):
     """Adds first object as shape to second object for the current pose """ \
     """while maintaining modifiers and currently used other shape keys""" \
-    """with keep other shape key value, generate new shape key which deform to soruce shape """
+    """with keep other shape key value, generate new shape key which deform to source shape """
 
     bl_idname = "object.add_corrective_pose_shape_delta"
     bl_label = "Add object as corrective pose shape delta"

@@ -14,7 +14,7 @@ class PaintCurvesMenu(Menu):
     def draw(self, context):
         mode = utils_core.get_mode()
         layout = self.layout
-        colum_n = utils_core.addon_settings(lists=False)
+        colum_n = utils_core.addon_settings()
 
         layout.row().label(text="Paint Curves")
         layout.row().separator()
@@ -102,7 +102,7 @@ class StrokeOptionsMenu(Menu):
 
                 layout.row().menu(PaintCurvesMenu.bl_idname, text=current_curve,
                                   icon='CURVE_BEZCURVE')
-                layout.row().operator("paintcurve.new", icon='ZOOMIN')
+                layout.row().operator("paintcurve.new", icon='ADD')
                 layout.row().operator("paintcurve.draw")
 
                 layout.row().separator()
@@ -183,3 +183,18 @@ class StrokeMethodMenu(Menu):
                         )
         else:
             layout.row().label(text="No Stroke Method available", icon="INFO")
+
+
+classes = (
+    PaintCurvesMenu,
+    StrokeOptionsMenu,
+    StrokeMethodMenu
+    )
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
