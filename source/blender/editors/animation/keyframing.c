@@ -1484,10 +1484,10 @@ short insert_keyframe(Main *bmain,
                                             flag);
       }
     }
-  }
 
-  if (values != value_buffer) {
-    MEM_freeN(values);
+    if (values != value_buffer) {
+      MEM_freeN(values);
+    }
   }
 
   BKE_animsys_free_nla_keyframing_context_cache(&tmp_nla_cache);
@@ -1544,9 +1544,9 @@ static bool delete_keyframe_fcurve(AnimData *adt, FCurve *fcu, float cfra)
 static void deg_tag_after_keyframe_delete(Main *bmain, ID *id, AnimData *adt)
 {
   if (adt->action == NULL) {
-    /* In the case last f-curve wes removed need to inform dependency graph
+    /* In the case last f-curve was removed need to inform dependency graph
      * about relations update, since it needs to get rid of animation operation
-     * for this datablock. */
+     * for this data-block. */
     DEG_id_tag_update_ex(bmain, id, ID_RECALC_ANIMATION_NO_FLUSH);
     DEG_relations_tag_update(bmain);
   }

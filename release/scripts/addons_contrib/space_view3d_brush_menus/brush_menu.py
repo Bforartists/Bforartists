@@ -22,18 +22,6 @@ class BrushOptionsMenu(Menu):
                     'PARTICLE_EDIT'
                     )
 
-    def draw_brushes(self, layout, h_brush, ico, context):
-        if utils_core.addon_settings(lists=True) == 'popup' or not h_brush:
-            layout.row().operator(
-                    "view3d.sv3_brush_menu_popup", text="Brush",
-                    icon=ico
-                    )
-        else:
-            layout.row().menu(
-                    "VIEW3D_MT_sv3_brushes_menu", text="Brush",
-                    icon=ico
-                    )
-
     def draw(self, context):
         mode = utils_core.get_mode()
         layout = self.layout
@@ -55,7 +43,8 @@ class BrushOptionsMenu(Menu):
         icons = brushes.brush_icon[mode][has_brush.sculpt_tool] if \
                 has_brush else "BRUSH_DATA"
 
-        self.draw_brushes(layout, has_brush, icons, context)
+        layout.row().menu("VIEW3D_MT_sv3_brushes_menu",
+                            icon=icons)
 
         layout.row().menu(BrushRadiusMenu.bl_idname)
 
@@ -80,7 +69,8 @@ class BrushOptionsMenu(Menu):
             layout.row().operator(ColorPickerPopup.bl_idname, icon="COLOR")
             layout.row().separator()
 
-        self.draw_brushes(layout, has_brush, icons, context)
+        layout.row().menu("VIEW3D_MT_sv3_brushes_menu",
+                            icon=icons)
 
         if mode == 'VERTEX_PAINT':
             layout.row().menu(BrushRadiusMenu.bl_idname)
@@ -106,21 +96,42 @@ class BrushOptionsMenu(Menu):
 
     def texpaint(self, mode, layout, context):
         toolsettings = context.tool_settings.image_paint
+        
+        has_brush = utils_core.get_brush_link(context, types="brush")
+        icons = brushes.brush_icon[mode][has_brush.image_tool] if \
+                    has_brush else "BRUSH_DATA"
 
         if context.image_paint_object and not toolsettings.detect_data():
-            layout.row().label(text="Missing Data", icon="INFO")
-            layout.row().label(text="See Tool Shelf", icon="BACK")
+            if toolsettings.missing_uvs or toolsettings.missing_materials or \
+               toolsettings.missing_texture:
+                layout.row().label(text="Missing Data", icon='ERROR')
+                layout.row().operator_menu_enum("paint.add_texture_paint_slot", \
+                                                  "type", \
+                                                  icon='ADD', \
+                                                  text="Add Texture Paint Slot")
+                
+                return
+        
+            elif toolsettings.missing_stencil:
+                layout.row().label(text="Missing Data", icon='ERROR')
+                layout.row().label(text="See Mask Properties", icon='FORWARD')
+                layout.row().separator()
+                layout.row().menu("VIEW3D_MT_sv3_brushes_menu",
+                                    icon=icons)
+                
+                return
+            
+            else:
+                layout.row().label(text="Missing Data", icon="INFO")
+        
         else:
-            has_brush = utils_core.get_brush_link(context, types="brush")
             if has_brush and has_brush.image_tool in {'DRAW', 'FILL'} and \
                has_brush.blend not in {'ERASE_ALPHA', 'ADD_ALPHA'}:
                 layout.row().operator(ColorPickerPopup.bl_idname, icon="COLOR")
                 layout.row().separator()
 
-            icons = brushes.brush_icon[mode][has_brush.image_tool] if \
-                    has_brush else "BRUSH_DATA"
-
-            self.draw_brushes(layout, has_brush, icons, context)
+            layout.row().menu("VIEW3D_MT_sv3_brushes_menu",
+                                icon=icons)
 
             if has_brush:
                 # if the active brush is unlinked these menus don't do anything
@@ -144,34 +155,28 @@ class BrushOptionsMenu(Menu):
     def particle(self, layout, context):
         particle_edit = context.tool_settings.particle_edit
 
-        if particle_edit.tool == 'NONE':
-            layout.row().label(text="No Brush Selected", icon="INFO")
-            layout.row().separator()
-            layout.row().menu("VIEW3D_MT_sv3_brushes_menu",
-                                text="Select Brush", icon="BRUSH_DATA")
+        layout.row().menu("VIEW3D_MT_sv3_brushes_menu",
+                            icon="BRUSH_DATA")
+        layout.row().menu(BrushRadiusMenu.bl_idname)
+
+        if particle_edit.tool != 'ADD':
+            layout.row().menu(BrushStrengthMenu.bl_idname)
         else:
-            layout.row().menu("VIEW3D_MT_sv3_brushes_menu",
-                                icon="BRUSH_DATA")
-            layout.row().menu(BrushRadiusMenu.bl_idname)
+            layout.row().menu(ParticleCountMenu.bl_idname)
+            layout.row().separator()
+            layout.row().prop(particle_edit, "use_default_interpolate", toggle=True)
 
-            if particle_edit.tool != 'ADD':
-                layout.row().menu(BrushStrengthMenu.bl_idname)
-            else:
-                layout.row().menu(ParticleCountMenu.bl_idname)
-                layout.row().separator()
-                layout.row().prop(particle_edit, "use_default_interpolate", toggle=True)
+            layout.row().prop(particle_edit.brush, "steps", slider=True)
+            layout.row().prop(particle_edit, "default_key_count", slider=True)
 
-                layout.row().prop(particle_edit.brush, "steps", slider=True)
-                layout.row().prop(particle_edit, "default_key_count", slider=True)
+        if particle_edit.tool == 'LENGTH':
+            layout.row().separator()
+            layout.row().menu(ParticleLengthMenu.bl_idname)
 
-            if particle_edit.tool == 'LENGTH':
-                layout.row().separator()
-                layout.row().menu(ParticleLengthMenu.bl_idname)
-
-            if particle_edit.tool == 'PUFF':
-                layout.row().separator()
-                layout.row().menu(ParticlePuffMenu.bl_idname)
-                layout.row().prop(particle_edit.brush, "use_puff_volume", toggle=True)
+        if particle_edit.tool == 'PUFF':
+            layout.row().separator()
+            layout.row().menu(ParticlePuffMenu.bl_idname)
+            layout.row().prop(particle_edit.brush, "use_puff_volume", toggle=True)
 
 
 class BrushRadiusMenu(Menu):
@@ -288,14 +293,14 @@ class BrushModeMenu(Menu):
             path = "tool_settings.sculpt.brush.sculpt_plane"
 
         elif mode == 'VERTEX_PAINT':
-            enum = has_brush.bl_rna.properties['vertex_tool'].enum_items if \
+            enum = has_brush.bl_rna.properties['blend'].enum_items if \
                    has_brush else None
-            path = "tool_settings.vertex_paint.brush.vertex_tool"
+            path = "tool_settings.vertex_paint.brush.blend"
 
         elif mode == 'WEIGHT_PAINT':
-            enum = has_brush.bl_rna.properties['vertex_tool'].enum_items if \
+            enum = has_brush.bl_rna.properties['blend'].enum_items if \
                    has_brush else None
-            path = "tool_settings.weight_paint.brush.vertex_tool"
+            path = "tool_settings.weight_paint.brush.blend"
 
         elif mode == 'TEXTURE_PAINT':
             enum = has_brush.bl_rna.properties['blend'].enum_items if \
@@ -311,13 +316,13 @@ class BrushModeMenu(Menu):
     def draw(self, context):
         enum, path = self.init()
         layout = self.layout
-        colum_n = utils_core.addon_settings(lists=False)
+        colum_n = utils_core.addon_settings()
 
         layout.row().label(text="Brush Mode")
         layout.row().separator()
 
         if enum:
-            if utils_core.get_mode() == 'TEXTURE_PAINT':
+            if utils_core.get_mode() != 'SCULPT':
                 column_flow = layout.column_flow(columns=colum_n)
 
                 # add all the brush modes to the menu
@@ -492,6 +497,7 @@ class ParticlePuffMenu(Menu):
 
 
 class FlipColorsAll(Operator):
+    """Switch between Foreground and Background colors"""
     bl_label = "Flip Colors"
     bl_idname = "view3d.sv3_flip_colors_all"
     bl_description = "Switch between Foreground and Background colors"
@@ -532,8 +538,10 @@ class FlipColorsAll(Operator):
 
 
 class ColorPickerPopup(Operator):
+    """Open Color Picker"""
     bl_label = "Color"
     bl_idname = "view3d.sv3_color_picker_popup"
+    bl_description = "Open Color Picker"
     bl_options = {'REGISTER'}
 
     @classmethod
@@ -592,34 +600,24 @@ class ColorPickerPopup(Operator):
         return context.window_manager.invoke_popup(self, width=180)
 
 
-class BrushMenuPopup(Operator):
-    bl_label = "Color"
-    bl_idname = "view3d.sv3_brush_menu_popup"
-    bl_options = {'REGISTER'}
+classes = (
+    BrushOptionsMenu,
+    BrushRadiusMenu,
+    BrushStrengthMenu,
+    BrushModeMenu,
+    BrushAutosmoothMenu,
+    BrushWeightMenu,
+    ParticleCountMenu,
+    ParticleLengthMenu,
+    ParticlePuffMenu,
+    FlipColorsAll,
+    ColorPickerPopup
+    )
 
-    @classmethod
-    def poll(self, context):
-        return utils_core.get_mode() in (
-                        'VERTEX_PAINT',
-                        'TEXTURE_PAINT',
-                        'SCULPT',
-                        'WEIGHT_PAINT'
-                        )
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
-    def check(self, context):
-        return True
-
-    def draw(self, context):
-        layout = self.layout
-        settings = UnifiedPaintPanel.paint_settings(context)
-        colum_n = utils_core.addon_settings(lists=False)
-
-        if utils_core.addon_settings(lists=True) != 'popup':
-            layout.label(text="Seems no active brush", icon="INFO")
-            layout.label(text="in the Tool Shelf", icon="BACK")
-
-        layout.template_ID_preview(settings, "brush",
-                                   new="brush.add", rows=3, cols=colum_n)
-
-    def execute(self, context):
-        return context.window_manager.invoke_popup(self, width=180)
+def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)

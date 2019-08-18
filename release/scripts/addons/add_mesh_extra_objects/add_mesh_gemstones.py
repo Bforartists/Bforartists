@@ -10,6 +10,8 @@ from math import cos, sin, pi
 from bpy.props import (
         FloatProperty,
         IntProperty,
+        BoolProperty,
+        StringProperty,
         )
 
 
@@ -211,6 +213,18 @@ class AddDiamond(Operator):
     bl_description = "Construct a diamond mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
+    Diamond : BoolProperty(name = "Diamond",
+                default = True,
+                description = "Diamond")
+
+    #### change properties
+    name : StringProperty(name = "Name",
+                    description = "Name")
+
+    change : BoolProperty(name = "Change",
+                default = False,
+                description = "change Diamond")
+
     segments: IntProperty(
             name="Segments",
             description="Number of segments for the diamond",
@@ -247,16 +261,85 @@ class AddDiamond(Operator):
             default=0.8
             )
 
-    def execute(self, context):
-        verts, faces = add_diamond(self.segments,
-            self.girdle_radius,
-            self.table_radius,
-            self.crown_height,
-            self.pavilion_height)
+    def draw(self, context):
+        layout = self.layout
+        box = layout.box()
+        box.prop(self, "segments")
+        box.prop(self, "girdle_radius")
+        box.prop(self, "table_radius")
+        box.prop(self, "crown_height")
+        box.prop(self, "pavilion_height")
 
-        obj = create_mesh_object(context, verts, [], faces, "Diamond")
+    def execute(self, context):
+        
+        if bpy.context.mode == "OBJECT":
+            if self.change == True and self.change != None:
+                obj = context.active_object
+                if 'Diamond' in obj.data.keys():
+                    oldmesh = obj.data
+                    oldmeshname = obj.data.name
+                    verts, faces = add_diamond(self.segments,
+                        self.girdle_radius,
+                        self.table_radius,
+                        self.crown_height,
+                        self.pavilion_height)
+                    mesh = bpy.data.meshes.new("TMP")
+                    mesh.from_pydata(verts, [], faces)
+                    mesh.update()
+                    obj.data = mesh
+                    bpy.data.meshes.remove(oldmesh)
+                    obj.data.name = oldmeshname
+                else:
+                    verts, faces = add_diamond(self.segments,
+                        self.girdle_radius,
+                        self.table_radius,
+                        self.crown_height,
+                        self.pavilion_height)
+
+                    obj = create_mesh_object(context, verts, [], faces, "Diamond")
+            else:
+                verts, faces = add_diamond(self.segments,
+                    self.girdle_radius,
+                    self.table_radius,
+                    self.crown_height,
+                    self.pavilion_height)
+
+                obj = create_mesh_object(context, verts, [], faces, "Diamond")
+        
+            obj.data["Diamond"] = True
+            obj.data["change"] = False
+            for prm in DiamondParameters():
+                obj.data[prm] = getattr(self, prm)
+        
+        if bpy.context.mode == "EDIT_MESH":
+            active_object = context.active_object
+            name_active_object = active_object.name
+            bpy.ops.object.mode_set(mode='OBJECT')
+            verts, faces = add_diamond(self.segments,
+                self.girdle_radius,
+                self.table_radius,
+                self.crown_height,
+                self.pavilion_height)
+
+            obj = create_mesh_object(context, verts, [], faces, "TMP")
+            
+            obj.select_set(True)
+            active_object.select_set(True)
+            bpy.ops.object.join()
+            context.active_object.name = name_active_object
+            bpy.ops.object.mode_set(mode='EDIT')
 
         return {'FINISHED'}
+
+def DiamondParameters():
+    DiamondParameters = [
+        "segments",
+        "girdle_radius",
+        "table_radius",
+        "crown_height",
+        "pavilion_height",
+        ]
+    return DiamondParameters
 
 
 class AddGem(Operator):
@@ -265,6 +348,18 @@ class AddGem(Operator):
     bl_description = "Construct an offset faceted gem mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
+    Gem : BoolProperty(name = "Gem",
+                default = True,
+                description = "Gem")
+
+    #### change properties
+    name : StringProperty(name = "Name",
+                    description = "Name")
+
+    change : BoolProperty(name = "Change",
+                default = False,
+                description = "change Gem")
+    
     segments: IntProperty(
             name="Segments",
             description="Longitudial segmentation",
@@ -301,15 +396,86 @@ class AddGem(Operator):
             default=0.8
             )
 
+    def draw(self, context):
+        layout = self.layout
+        box = layout.box()
+        box.prop(self, "segments")
+        box.prop(self, "pavilion_radius")
+        box.prop(self, "crown_radius")
+        box.prop(self, "crown_height")
+        box.prop(self, "pavilion_height")
+    
     def execute(self, context):
-        # create mesh
-        verts, faces = add_gem(
-            self.pavilion_radius,
-            self.crown_radius,
-            self.segments,
-            self.pavilion_height,
-            self.crown_height)
+        
+        if bpy.context.mode == "OBJECT":
+            if self.change == True and self.change != None:
+                obj = context.active_object
+                if 'Gem' in obj.data.keys():
+                    oldmesh = obj.data
+                    oldmeshname = obj.data.name
+                    verts, faces = add_gem(
+                        self.pavilion_radius,
+                        self.crown_radius,
+                        self.segments,
+                        self.pavilion_height,
+                        self.crown_height)
+                    mesh = bpy.data.meshes.new("TMP")
+                    mesh.from_pydata(verts, [], faces)
+                    mesh.update()
+                    obj.data = mesh
+                    bpy.data.meshes.remove(oldmesh)
+                    obj.data.name = oldmeshname
+                else:
+                    verts, faces = add_gem(
+                        self.pavilion_radius,
+                        self.crown_radius,
+                        self.segments,
+                        self.pavilion_height,
+                        self.crown_height)
 
-        obj = create_mesh_object(context, verts, [], faces, "Gem")
+                    obj = create_mesh_object(context, verts, [], faces, "Gem")
+            else:
+                verts, faces = add_gem(
+                    self.pavilion_radius,
+                    self.crown_radius,
+                    self.segments,
+                    self.pavilion_height,
+                    self.crown_height)
+
+                obj = create_mesh_object(context, verts, [], faces, "Gem")
+        
+            obj.data["Gem"] = True
+            obj.data["change"] = False
+            for prm in GemParameters():
+                obj.data[prm] = getattr(self, prm)
+        
+        if bpy.context.mode == "EDIT_MESH":
+            active_object = context.active_object
+            name_active_object = active_object.name
+            bpy.ops.object.mode_set(mode='OBJECT')
+            verts, faces = add_gem(
+                self.pavilion_radius,
+                self.crown_radius,
+                self.segments,
+                self.pavilion_height,
+                self.crown_height)
+
+            obj = create_mesh_object(context, verts, [], faces, "TMP")
+            
+            obj.select_set(True)
+            active_object.select_set(True)
+            bpy.ops.object.join()
+            context.active_object.name = name_active_object
+            bpy.ops.object.mode_set(mode='EDIT')
 
         return {'FINISHED'}
+
+def GemParameters():
+    GemParameters = [
+        "segments",
+        "pavilion_radius",
+        "crown_radius",
+        "crown_height",
+        "pavilion_height",
+        ]
+    return GemParameters

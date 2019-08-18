@@ -45,7 +45,7 @@ def append_material(file_name, matname=None, link=False, fake_user=True):
     '''append a material type asset'''
     # first, we have to check if there is a material with same name
     # in previous step there's check if the imported material
-    # is allready in the scene, so we know same name != same material
+    # is already in the scene, so we know same name != same material
 
     mats_before = bpy.data.materials.keys()
 

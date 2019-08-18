@@ -249,6 +249,11 @@ static void node_buts_texture(uiLayout *layout, bContext *UNUSED(C), PointerRNA 
   }
 }
 
+static void node_buts_map_range(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+  uiItemR(layout, ptr, "clamp", 0, NULL, ICON_NONE);
+}
+
 static void node_buts_math(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 {
   uiItemR(layout, ptr, "operation", 0, "", ICON_NONE);
@@ -1208,6 +1213,9 @@ static void node_shader_set_butfunc(bNodeType *ntype)
       break;
     case SH_NODE_VALTORGB:
       ntype->draw_buttons = node_buts_colorramp;
+      break;
+    case SH_NODE_MAP_RANGE:
+      ntype->draw_buttons = node_buts_map_range;
       break;
     case SH_NODE_MATH:
       ntype->draw_buttons = node_buts_math;
@@ -2683,6 +2691,15 @@ static void node_composit_buts_brightcontrast(uiLayout *layout,
   uiItemR(layout, ptr, "use_premultiply", 0, NULL, ICON_NONE);
 }
 
+static void node_composit_buts_denoise(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+#ifndef WITH_OPENIMAGEDENOISE
+  uiItemL(layout, IFACE_("Disabled, built without OpenImageDenoise"), ICON_ERROR);
+#endif
+
+  uiItemR(layout, ptr, "use_hdr", 0, NULL, ICON_NONE);
+}
+
 /* only once called */
 static void node_composit_set_butfunc(bNodeType *ntype)
 {
@@ -2916,6 +2933,10 @@ static void node_composit_set_butfunc(bNodeType *ntype)
       break;
     case CMP_NODE_BRIGHTCONTRAST:
       ntype->draw_buttons = node_composit_buts_brightcontrast;
+      break;
+    case CMP_NODE_DENOISE:
+      ntype->draw_buttons = node_composit_buts_denoise;
+      break;
   }
 }
 
@@ -3337,8 +3358,13 @@ static void std_node_socket_draw(
         uiTemplateComponentMenu(layout, ptr, "default_value", text);
       }
       else {
-        uiLayout *column = uiLayoutColumn(layout, true);
-        uiItemR(column, ptr, "default_value", 0, text, 0);
+        if (sock->typeinfo->subtype == PROP_DIRECTION) {
+          uiItemR(layout, ptr, "default_value", 0, "", ICON_NONE);
+        }
+        else {
+          uiLayout *column = uiLayoutColumn(layout, true);
+          uiItemR(column, ptr, "default_value", 0, text, ICON_NONE);
+        }
       }
       break;
     case SOCK_RGBA:

@@ -584,7 +584,7 @@ class GlLine(GlBaseLine):
     def sized_normal(self, t, size):
         """
             GlLine perpendicular on plane defined by z_axis and of given size
-            positionned at t in current line
+            positioned at t in current line
             lie on the right side
             p1
             |--x

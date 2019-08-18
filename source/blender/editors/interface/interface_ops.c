@@ -172,7 +172,8 @@ static bool copy_as_driver_button_poll(bContext *C)
   UI_context_active_but_prop_get(C, &ptr, &prop, &index);
 
   if (ptr.id.data && ptr.data && prop &&
-      ELEM(RNA_property_type(prop), PROP_BOOLEAN, PROP_INT, PROP_FLOAT, PROP_ENUM)) {
+      ELEM(RNA_property_type(prop), PROP_BOOLEAN, PROP_INT, PROP_FLOAT, PROP_ENUM) &&
+      (index >= 0 || !RNA_property_array_check(prop))) {
     path = RNA_path_from_ID_to_property(&ptr, prop);
 
     if (path) {
@@ -1118,7 +1119,7 @@ static int reports_to_text_exec(bContext *C, wmOperator *UNUSED(op))
   txt = BKE_text_add(bmain, "Recent Reports");
 
   /* convert entire list to a display string, and add this to the text-block
-   * - if commandline debug option enabled, show debug reports too
+   * - if command-line debug option enabled, show debug reports too
    * - otherwise, up to info (which is what users normally see)
    */
   str = BKE_reports_string(reports, (G.debug & G_DEBUG) ? RPT_DEBUG : RPT_INFO);

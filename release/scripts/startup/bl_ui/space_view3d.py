@@ -204,16 +204,20 @@ class VIEW3D_HT_header(Header):
                 sub.separator(factor=0.4)
                 sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
 
+            # Select mode for Editing
             if gpd.use_stroke_edit_mode:
                 row = layout.row(align=True)
-                row.prop(tool_settings, "gpencil_selectmode", text="", expand=True)
+                row.prop(tool_settings, "gpencil_selectmode_edit", text="", expand=True)
+
+            # Select mode for Sculpt
+            if gpd.is_stroke_sculpt_mode :
+                row = layout.row(align=True)
+                row.prop(tool_settings, "use_gpencil_select_mask_point", text="")
+                row.prop(tool_settings, "use_gpencil_select_mask_stroke", text="")
+                row.prop(tool_settings, "use_gpencil_select_mask_segment", text="")
 
             if gpd.use_stroke_edit_mode or gpd.is_stroke_sculpt_mode or gpd.is_stroke_weight_mode:
                 row = layout.row(align=True)
-
-                if gpd.is_stroke_sculpt_mode:
-                    row.prop(tool_settings.gpencil_sculpt, "use_select_mask", text="")
-                    row.separator()
 
                 row.prop(gpd, "use_multiedit", text="", icon='GP_MULTIFRAME_EDITING')
                 
@@ -223,8 +227,6 @@ class VIEW3D_HT_header(Header):
 
             if gpd.use_stroke_edit_mode:
                 row = layout.row(align=True)
-                row.prop(tool_settings.gpencil_sculpt, "use_select_mask", text="")
-
                 row.popover(
                     panel="VIEW3D_PT_tools_grease_pencil_interpolate",
                     text="Interpolate"
@@ -738,10 +740,13 @@ class VIEW3D_MT_editor_menus(Menu):
         # Select Menu
         if gp_edit:
             if mode_string not in {'PAINT_GPENCIL', 'WEIGHT_GPENCIL'}:
-                if ts.gpencil_sculpt.use_select_mask:
+                if mode_string == 'SCULPT_GPENCIL' and \
+                    (ts.use_gpencil_select_mask_point or
+                     ts.use_gpencil_select_mask_stroke or
+                     ts.use_gpencil_select_mask_segment):
                     layout.menu("VIEW3D_MT_select_gpencil")
-            if mode_string in {'SCULPT_GPENCIL'}:
-                layout.menu("VIEW3D_MT_gpencil_sculpt")
+                elif mode_string == 'EDIT_GPENCIL':
+                    layout.menu("VIEW3D_MT_select_gpencil")
 
         elif mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
             mesh = obj.data
@@ -6278,7 +6283,7 @@ class VIEW3D_PT_collections(Panel):
         layout.use_property_split = False
 
         view_layer = context.view_layer
-        # We pass index 0 here beause the index is increased
+        # We pass index 0 here because the index is increased
         # so the first real index is 1
         # And we start with index as 1 because we skip the master collection
         self._draw_collection(layout, view_layer, view_layer.layer_collection, 0)

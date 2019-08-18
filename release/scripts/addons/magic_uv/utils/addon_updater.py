@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.1"
-__date__ = "19 May 2019"
+__version__ = "6.2"
+__date__ = "31 Jul 2019"
 
 from threading import Lock
 import urllib
@@ -75,7 +75,7 @@ def _download(url, path):
 
 
 def _make_workspace_path(addon_dir):
-    return addon_dir + get_separator() + "addon_updator_workspace"
+    return addon_dir + get_separator() + "addon_updater_workspace"
 
 
 def _make_workspace(addon_dir):
@@ -161,7 +161,7 @@ def _compare_version(ver1, ver2):
     return comp(ver1, ver2, 0)
 
 
-class AddonUpdatorConfig:
+class AddonUpdaterConfig:
     def __init__(self):
         # Name of owner
         self.owner = ""
@@ -179,7 +179,13 @@ class AddonUpdatorConfig:
         self.min_release_version = (-1, -1)
 
         # Target add-on path
-        self.target_addon_path = ""
+        # {"branch/tag": "add-on path"}
+        self.target_addon_path = {}
+
+        # Default target add-on path.
+        # Search this path if branch/tag is not found in
+        # self.target_addon_path.
+        self.default_target_addon_path = ""
 
         # Current add-on path
         self.current_addon_path = ""
@@ -195,7 +201,7 @@ class UpdateCandidateInfo:
         self.group = ""   # BRANCH|RELEASE
 
 
-class AddonUpdatorManager:
+class AddonUpdaterManager:
     __inst = None
     __lock = Lock()
 
@@ -240,7 +246,7 @@ class AddonUpdatorManager:
 
     def check_update_candidate(self):
         if not self.initialized():
-            raise RuntimeError("AddonUpdatorManager must be initialized")
+            raise RuntimeError("AddonUpdaterManager must be initialized")
 
         self.__update_candidate = []
         self.__candidate_checked = False
@@ -293,7 +299,7 @@ class AddonUpdatorManager:
 
     def update(self, version_name):
         if not self.initialized():
-            raise RuntimeError("AddonUpdatorManager must be initialized.")
+            raise RuntimeError("AddonUpdaterManager must be initialized.")
 
         if not self.candidate_checked():
             raise RuntimeError("Update candidate is not checked.")
@@ -315,14 +321,20 @@ class AddonUpdatorManager:
             # download add-on
             _download_addon(self.__config.addon_directory, info.url)
 
+            # get add-on path
+            if info.name in self.__config.target_addon_path:
+                addon_path = self.__config.target_addon_path[info.name]
+            else:
+                addon_path = self.__config.default_target_addon_path
+
             # replace add-on
             offset_path = ""
             if info.group == 'BRANCH':
                 offset_path = "{}-{}{}{}".format(
                     self.__config.repository, info.name, get_separator(),
-                    self.__config.target_addon_path)
+                    addon_path)
             elif info.group == 'RELEASE':
-                offset_path = self.__config.target_addon_path
+                offset_path = addon_path
             _replace_addon(self.__config.addon_directory,
                            info, self.__config.current_addon_path,
                            offset_path)
@@ -337,7 +349,7 @@ class AddonUpdatorManager:
 
     def get_candidate_branch_names(self):
         if not self.initialized():
-            raise RuntimeError("AddonUpdatorManager must be initialized.")
+            raise RuntimeError("AddonUpdaterManager must be initialized.")
 
         if not self.candidate_checked():
             raise RuntimeError("Update candidate is not checked.")

@@ -725,6 +725,8 @@ def create_mesh(new_objects,
         me.loops.foreach_set("normal", loops_nor)
 
     if verts_tex and me.polygons:
+        # Some files Do not explicitely write the 'v' value when it's 0.0, see T68249...
+        verts_tex = [uv if len(uv) == 2 else uv + [0.0] for uv in verts_tex]
         me.uv_layers.new(do_init=False)
         loops_uv = tuple(uv for (_, _, face_vert_tex_indices, _, _, _, _) in faces
                             for face_uvidx in face_vert_tex_indices
@@ -738,7 +740,7 @@ def create_mesh(new_objects,
         me.edges.foreach_set("vertices", unpack_list(edges))
 
     me.validate(clean_customdata=False)  # *Very* important to not remove lnors here!
-    me.update(calc_edges=use_edges)
+    me.update(calc_edges=use_edges, calc_edges_loose=use_edges)
 
     # Un-tessellate as much as possible, in case we had to triangulate some ngons...
     if fgon_edges:
@@ -1042,7 +1044,7 @@ def load(context,
                 if vdata_len:
                     if do_quick_vert:
                         try:
-                            vdata.append(tuple(map(float_func, line_split[1:vdata_len + 1])))
+                            vdata.append(list(map(float_func, line_split[1:vdata_len + 1])))
                         except:
                             do_quick_vert = False
                             # In case we get too many failures on quick parsing, force fallback to full multi-line one.
@@ -1052,7 +1054,8 @@ def load(context,
                                 skip_quick_vert = True
                     if not do_quick_vert:
                         context_multi_line = handle_vec(line_start, context_multi_line, line_split,
-                                                        context_multi_line or line_start, vdata, vec, vdata_len)
+                                                        context_multi_line or line_start,
+                                                        vdata, vec, vdata_len)
 
                 elif line_start == b'f' or context_multi_line == b'f':
                     if not context_multi_line:

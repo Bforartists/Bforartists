@@ -246,7 +246,7 @@ class MathVis(PropertyGroup):
     in_front: BoolProperty(
         name="Always In Front",
         default=True,
-        description="Draw Points and lines alwasy in front",
+        description="Draw Points and lines always in front",
         update=call_console_hook
     )
 

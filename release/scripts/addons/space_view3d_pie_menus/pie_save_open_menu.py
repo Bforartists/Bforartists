@@ -191,7 +191,7 @@ def register():
     wm = bpy.context.window_manager
     if wm.keyconfigs.addon:
         # Save/Open/...
-        km = wm.keyconfigs.addon.keymaps.new(name='Window')
+        km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'S', 'PRESS', ctrl=True)
         kmi.properties.name = "PIE_MT_saveopen"
         addon_keymaps.append((km, kmi))

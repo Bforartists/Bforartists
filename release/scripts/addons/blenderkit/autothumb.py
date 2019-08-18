@@ -142,6 +142,7 @@ def start_thumbnailer(self, context):
                 "thumbnail_angle": bkit.thumbnail_angle,
                 "thumbnail_snap_to": bkit.thumbnail_snap_to,
                 "thumbnail_background_lightness": bkit.thumbnail_background_lightness,
+                "thumbnail_resolution": bkit.thumbnail_resolution,
                 "thumbnail_samples": bkit.thumbnail_samples,
                 "thumbnail_denoising": bkit.thumbnail_denoising,
             }, s)
@@ -252,7 +253,7 @@ def start_material_thumbnailer(self, context):
 
 
 class GenerateThumbnailOperator(bpy.types.Operator):
-    """Tooltip"""
+    """Generate Cycles thumbnail for model assets"""
     bl_idname = "object.blenderkit_generate_thumbnail"
     bl_label = "BlenderKit Thumbnail Generator"
 

@@ -546,6 +546,46 @@ static void rna_Object_parent_set(PointerRNA *ptr,
   }
 }
 
+bool rna_Object_parent_override_apply(Main *UNUSED(bmain),
+                                      PointerRNA *ptr_dst,
+                                      PointerRNA *ptr_src,
+                                      PointerRNA *ptr_storage,
+                                      PropertyRNA *prop_dst,
+                                      PropertyRNA *prop_src,
+                                      PropertyRNA *UNUSED(prop_storage),
+                                      const int len_dst,
+                                      const int len_src,
+                                      const int len_storage,
+                                      PointerRNA *UNUSED(ptr_item_dst),
+                                      PointerRNA *UNUSED(ptr_item_src),
+                                      PointerRNA *UNUSED(ptr_item_storage),
+                                      IDOverrideLibraryPropertyOperation *opop)
+{
+  BLI_assert(len_dst == len_src && (!ptr_storage || len_dst == len_storage) && len_dst == 0);
+  BLI_assert(opop->operation == IDOVERRIDE_LIBRARY_OP_REPLACE &&
+             "Unsupported RNA override operation on animdata pointer");
+  UNUSED_VARS_NDEBUG(ptr_storage, len_dst, len_src, len_storage, opop);
+
+  /* We need a special handling here because setting parent resets pinvert parent matrix,
+   * which is evil in our case. */
+  Object *ob = (Object *)ptr_dst->data;
+  Object *parent_dst = RNA_property_pointer_get(ptr_dst, prop_dst).data;
+  Object *parent_src = RNA_property_pointer_get(ptr_src, prop_src).data;
+
+  if (parent_src == parent_dst) {
+    return false;
+  }
+
+  if (parent_src == NULL) {
+    /* The only case where we do want default behavior (with matrix reset). */
+    ED_object_parent(ob, parent_src, ob->partype, ob->parsubstr);
+  }
+  else {
+    ob->parent = parent_src;
+  }
+  return true;
+}
+
 static void rna_Object_parent_type_set(PointerRNA *ptr, int value)
 {
   Object *ob = (Object *)ptr->data;
@@ -1392,8 +1432,8 @@ bool rna_Object_constraints_override_apply(Main *UNUSED(bmain),
   Object *ob_src = (Object *)ptr_src->id.data;
 
   /* Remember that insertion operations are defined and stored in correct order, which means that
-   * even if we insert several items in a row, we alays insert first one, then second one, etc.
-   * So we should always find 'anchor' constraint in both _src *and* _dst> */
+   * even if we insert several items in a row, we always insert first one, then second one, etc.
+   * So we should always find 'anchor' constraint in both _src *and* _dst. */
   bConstraint *con_anchor = NULL;
   if (opop->subitem_local_name && opop->subitem_local_name[0]) {
     con_anchor = BLI_findstring(
@@ -1480,8 +1520,8 @@ bool rna_Object_modifiers_override_apply(Main *UNUSED(bmain),
   Object *ob_src = (Object *)ptr_src->id.data;
 
   /* Remember that insertion operations are defined and stored in correct order, which means that
-   * even if we insert several items in a row, we alays insert first one, then second one, etc.
-   * So we should always find 'anchor' constraint in both _src *and* _dst> */
+   * even if we insert several items in a row, we always insert first one, then second one, etc.
+   * So we should always find 'anchor' constraint in both _src *and* _dst. */
   ModifierData *mod_anchor = NULL;
   if (opop->subitem_local_name && opop->subitem_local_name[0]) {
     mod_anchor = BLI_findstring(
@@ -2389,6 +2429,7 @@ static void rna_def_object(BlenderRNA *brna)
   RNA_def_property_pointer_funcs(prop, NULL, "rna_Object_parent_set", NULL, NULL);
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_SELF_CHECK);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
+  RNA_def_property_override_funcs(prop, NULL, NULL, "rna_Object_parent_override_apply");
   RNA_def_property_ui_text(prop, "Parent", "Parent Object");
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_dependency_update");
 
