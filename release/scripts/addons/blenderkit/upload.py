@@ -45,6 +45,7 @@ BLENDERKIT_EXPORT_DATA_FILE = "data.json"
 from bpy.props import (  # TODO only keep the ones actually used when cleaning
     EnumProperty,
     BoolProperty,
+    StringProperty,
 )
 from bpy.types import (
     Operator,
@@ -112,14 +113,14 @@ def get_missing_data_model(props):
 
     if props.name == '':
         write_to_report(props, 'Set model name')
-    if props.tags == '':
-        write_to_report(props, 'Write at least 3 tags')
+    # if props.tags == '':
+    #     write_to_report(props, 'Write at least 3 tags')
     if not props.has_thumbnail:
         write_to_report(props, 'Add thumbnail:')
 
         props.report += props.thumbnail_generating_state + '\n'
-    if props.work_hours == 0.0:
-        write_to_report(props, 'Fill in work hours')
+    # if props.work_hours == 0.0:
+    #     write_to_report(props, 'Fill in work hours')
     if props.engine == 'NONE':
         write_to_report(props, 'Set at least one rendering/output engine')
     if not any(props.dimensions):
@@ -132,14 +133,14 @@ def get_missing_data_scene(props):
 
     if props.name == '':
         write_to_report(props, 'Set scene name')
-    if props.tags == '':
-        write_to_report(props, 'Write at least 3 tags')
+    # if props.tags == '':
+    #     write_to_report(props, 'Write at least 3 tags')
     if not props.has_thumbnail:
         write_to_report(props, 'Add thumbnail:')
 
         props.report += props.thumbnail_generating_state + '\n'
-    if props.work_hours == 0.0:
-        write_to_report(props, 'Fill in work hours')
+    # if props.work_hours == 0.0:
+    #     write_to_report(props, 'Fill in work hours')
     if props.engine == 'NONE':
         write_to_report(props, 'Set at least one rendering/output engine')
 
@@ -149,8 +150,8 @@ def get_missing_data_material(props):
     autothumb.update_upload_material_preview(None, None)
     if props.name == '':
         write_to_report(props, 'Set material name')
-    if props.tags == '':
-        write_to_report(props, 'Write at least 3 tags')
+    # if props.tags == '':
+    #     write_to_report(props, 'Write at least 3 tags')
     if not props.has_thumbnail:
         write_to_report(props, 'Add thumbnail:')
         props.report += props.thumbnail_generating_state
@@ -163,8 +164,8 @@ def get_missing_data_brush(props):
     props.report = ''
     if props.name == '':
         write_to_report(props, 'Set brush name')
-    if props.tags == '':
-        write_to_report(props, 'Write at least 3 tags')
+    # if props.tags == '':
+    #     write_to_report(props, 'Write at least 3 tags')
     if not props.has_thumbnail:
         write_to_report(props, 'Add thumbnail:')
         props.report += props.thumbnail_generating_state
@@ -217,8 +218,8 @@ def get_upload_data(self, context, asset_type):
             engines.append(props.engine_other.lower())
 
         style = props.style.lower()
-        if style == 'OTHER':
-            style = props.style_other.lower()
+        # if style == 'OTHER':
+        #     style = props.style_other.lower()
 
         pl_dict = {'FINISHED': 'finished', 'TEMPLATE': 'template'}
 
@@ -301,8 +302,8 @@ def get_upload_data(self, context, asset_type):
             engines.append(props.engine_other.lower())
 
         style = props.style.lower()
-        if style == 'OTHER':
-            style = props.style_other.lower()
+        # if style == 'OTHER':
+        #     style = props.style_other.lower()
 
         pl_dict = {'FINISHED': 'finished', 'TEMPLATE': 'template'}
 
@@ -363,8 +364,8 @@ def get_upload_data(self, context, asset_type):
             engine = props.engine_other
         engine = engine.lower()
         style = props.style.lower()
-        if style == 'OTHER':
-            style = props.style_other.lower()
+        # if style == 'OTHER':
+        #     style = props.style_other.lower()
 
         upload_data = {
             "assetType": 'material',
@@ -421,8 +422,8 @@ def get_upload_data(self, context, asset_type):
 
     elif asset_type == 'TEXTURE':
         style = props.style
-        if style == 'OTHER':
-            style = props.style_other
+        # if style == 'OTHER':
+        #     style = props.style_other
 
         upload_data = {
             "assetType": 'texture',
@@ -464,27 +465,19 @@ def get_upload_data(self, context, asset_type):
     return export_data, upload_data, eval_path_computing, eval_path_state, eval_path, props
 
 
-def mark_for_validation(self, context, asset_type):
-    props = utils.get_upload_props()
-    props.upload_state = 'marking for validation'
+def verification_status_change(self, context, asset_id, state):
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-
     upload_data = {
-        "verificationStatus": "ready"
+        "verificationStatus": state
     }
-
-    url = paths.get_api_url() + 'assets/'
-
+    url = paths.get_api_url() + 'assets/' + str(asset_id) + '/'
     headers = utils.get_headers(user_preferences.api_key)
-
-    url += props.id + '/'
-
     try:
         r = requests.patch(url, json=upload_data, headers=headers, verify=True)  # files = files,
-        props.upload_state = 'marked for validation'
+        #print('changed status ')
+        #print(r.text)
     except requests.exceptions.RequestException as e:
-        props.upload_state = str(e)
-        props.uploading = False
+        print(e)
         return {'CANCELLED'}
     return {'FINISHED'}
 
@@ -537,7 +530,7 @@ def auto_fix(asset_type=''):
         asset.name = props.name
 
 
-def start_upload(self, context, asset_type, as_new, metadata_only):
+def start_upload(self, context, asset_type, reupload, upload_set):
     '''start upload process, by processing data'''
     props = utils.get_upload_props()
     storage_quota_ok = check_storage_quota(props)
@@ -569,7 +562,7 @@ def start_upload(self, context, asset_type, as_new, metadata_only):
         self.report({'ERROR_INVALID_INPUT'}, props.report)
         return {'CANCELLED'}
 
-    if as_new:
+    if not reupload:
         props.asset_base_id = ''
         props.id = ''
     export_data, upload_data, eval_path_computing, eval_path_state, eval_path, props = get_upload_data(self, context,
@@ -595,11 +588,12 @@ def start_upload(self, context, asset_type, as_new, metadata_only):
         'export_data': export_data,
         'upload_data': upload_data,
         'debug_value': bpy.app.debug_value,
+        'upload_set': upload_set,
     }
     datafile = os.path.join(tempdir, BLENDERKIT_EXPORT_DATA_FILE)
 
     # check if thumbnail exists:
-    if not metadata_only:
+    if 'THUMBNAIL' in upload_set:
         if not os.path.exists(export_data["thumbnail_path"]):
             props.upload_state = 'Thumbnail not found'
             props.uploading = False
@@ -616,7 +610,7 @@ def start_upload(self, context, asset_type, as_new, metadata_only):
     if props.asset_base_id == '':
         try:
             r = requests.post(url, json=json_metadata, headers=headers, verify=True)  # files = files,
-            props.upload_state = 'uploaded metadata'
+            ui.add_report('uploaded metadata')
             utils.p(r.text)
         except requests.exceptions.RequestException as e:
             print(e)
@@ -627,11 +621,11 @@ def start_upload(self, context, asset_type, as_new, metadata_only):
     else:
         url += props.id + '/'
         try:
-            if not metadata_only:
+            if upload_set != ['METADATA']:
                 json_metadata["verificationStatus"] = "uploading"
             r = requests.put(url, json=json_metadata, headers=headers, verify=True)  # files = files,
-            props.upload_state = 'uploaded metadata'
-            # parse the reqest
+            ui.add_report('uploaded metadata')
+            # parse the request
             # print('uploaded metadata')
             # print(r.text)
         except requests.exceptions.RequestException as e:
@@ -641,9 +635,9 @@ def start_upload(self, context, asset_type, as_new, metadata_only):
             return {'CANCELLED'}
 
     # props.upload_state = 'step 1'
-    if metadata_only:
+    if upload_set == ['METADATA']:
         props.uploading = False
-
+        props.upload_state = 'upload finished successfully'
         return {'FINISHED'}
     try:
         rj = r.json()
@@ -658,7 +652,9 @@ def start_upload(self, context, asset_type, as_new, metadata_only):
         upload_data['assetBaseId'] = props.asset_base_id
         upload_data['id'] = props.id
 
-        bpy.ops.wm.save_mainfile()
+        # bpy.ops.wm.save_mainfile()
+        # bpy.ops.wm.save_as_mainfile(filepath=filepath, compress=False, copy=True)
+
         props.uploading = True
         # save a copy of actual scene but don't interfere with the users models
         bpy.ops.wm.save_as_mainfile(filepath=source_filepath, compress=False, copy=True)
@@ -697,7 +693,7 @@ asset_types = (
 )
 
 
-class ModelUploadOperator(Operator):
+class UploadOperator(Operator):
     """Tooltip"""
     bl_idname = "object.blenderkit_upload"
     bl_description = "Upload or re-upload asset + thumbnail + metadata"
@@ -712,16 +708,27 @@ class ModelUploadOperator(Operator):
         default="MODEL",
     )
 
-    as_new: BoolProperty(
-        name="upload as new",
-        description="delets asset id and uploads as new file",
+    reupload: BoolProperty(
+        name="reupload",
+        description="reupload but also draw so that it asks what to reupload",
         default=False,
         options={'SKIP_SAVE'}
     )
 
-    metadata_only: BoolProperty(
-        name="upload metadata",
-        description="update only metadata",
+    metadata: BoolProperty(
+        name="metadata",
+        default=True,
+        options={'SKIP_SAVE'}
+    )
+
+    thumbnail: BoolProperty(
+        name="thumbnail",
+        default=False,
+        options={'SKIP_SAVE'}
+    )
+
+    main_file: BoolProperty(
+        name="main file",
         default=False,
         options={'SKIP_SAVE'}
     )
@@ -736,13 +743,24 @@ class ModelUploadOperator(Operator):
 
         # in case of name change, we have to reupload everything, since the name is stored in blender file,
         # and is used for linking to scene
-        metadata_only = self.metadata_only
         if props.name_changed:
+            # TODO: this needs to be replaced with new double naming scheme (metadata vs blend data)
             # print('has to reupload whole data, name has changed.')
-            self.metadata_only = False
+            self.main_file = True
             props.name_changed = False
 
-        result = start_upload(self, context, self.asset_type, self.as_new, self.metadata_only)
+        upload_set = []
+        if not self.reupload:
+            upload_set = ['METADATA', 'THUMBNAIL', 'MAINFILE']
+        else:
+            if self.metadata:
+                upload_set.append('METADATA')
+            if self.thumbnail:
+                upload_set.append('THUMBNAIL')
+            if self.main_file:
+                upload_set.append('MAINFILE')
+
+        result = start_upload(self, context, self.asset_type, self.reupload, upload_set)
 
         return result
 
@@ -750,84 +768,71 @@ class ModelUploadOperator(Operator):
         props = utils.get_upload_props()
         layout = self.layout
 
-        if self.as_new:
+        if self.reupload:
+            # layout.prop(self, 'metadata')
+            layout.prop(self, 'main_file')
+            layout.prop(self, 'thumbnail')
+
+        if props.asset_base_id != '' and not self.reupload:
             layout.label(text="Really upload as new? ")
             layout.label(text="Do this only when you create a new asset from an old one.")
             layout.label(text="For updates of thumbnail or model use reupload.")
 
         if props.is_private == 'PUBLIC':
-            ui_panels.label_multiline(layout, text='Since version 1.0.24: '
-                                                   'PUBLIC ASSETS ARE VALIDATED AUTOMATICALLY '
-                                                   ' after upload. '
-                                                   'Click Ok to proceed.')
+            ui_panels.label_multiline(layout, text='public assets are validated several hours'
+                                                   ' or days after upload. ', width = 300)
 
     def invoke(self, context, event):
         props = utils.get_upload_props()
 
-        if self.as_new or props.is_private == 'PUBLIC':
+        if props.is_private == 'PUBLIC':
             return context.window_manager.invoke_props_dialog(self)
         else:
             return self.execute(context)
 
 
-class ModelMarkForValidation(Operator):
-    """Tooltip"""
-    bl_idname = "object.blenderkit_mark_for_validation"
-    bl_description = "After this, model can be validated by our validators and \n then be part of the public database"
 
-    bl_label = "Mark for validation"
+class AssetVerificationStatusChange(Operator):
+    """Change verification status"""
+    bl_idname = "object.blenderkit_change_status"
+    bl_description = "Change asset ststus"
+    bl_label = "Change verification status"
 
     # type of upload - model, material, textures, e.t.c.
-    asset_type: EnumProperty(
-        name="type",
-        items=asset_types,
-        description="Type of upload",
-        default="MODEL",
+    asset_id: StringProperty(
+        name="asset id",
     )
 
+    state: StringProperty(
+        name="verification_status",
+        default = 'uploaded'
+    )
     @classmethod
     def poll(cls, context):
-        props = utils.get_upload_props()
-        return bpy.context.active_object is not None and props.asset_base_id != ''
+        return True
+
+    def draw(self, context):
+        layout = self.layout
+        #if self.state == 'deleted':
+        layout.label(text='Really delete asset from BlenderKit online storage?')
+        # layout.prop(self, 'state')
 
     def execute(self, context):
-        result = mark_for_validation(self, context, self.asset_type)
-
+        result = verification_status_change(self, context, self.asset_id, self.state)
         return result
 
-
-# TODO this is for upldating by creators, if they edit metadata on server or want to upload from older file version.
-# class GetMetadataFromServer(Operator):
-#     """Tooltip"""
-#     bl_idname = "object.blenderkit_get_from_server"
-#     bl_description ="After this, model can be validated by our validators and \n then be part of the public database"
-#
-#     bl_label = "Mark for validation"
-#
-#     # type of upload - model, material, textures, e.t.c.
-#     asset_type : EnumProperty(
-#         name="type",
-#         items=asset_types,
-#         description="Type of upload",
-#         default="MODEL",
-#     )
-#
-#     @classmethod
-#     def poll(cls, context):
-#         props = utils.get_upload_props()
-#         return bpy.context.active_object is not None and props.asset_base_id != ''
-#
-#     def execute(self, context):
-#         result = mark_for_validation(self, context, self.asset_type)
-#
-#         return result
+    def invoke(self, context, event):
+        print(self.state)
+        if self.state =='deleted':
+            wm = context.window_manager
+            return wm.invoke_props_dialog(self)
 
 
 def register_upload():
-    bpy.utils.register_class(ModelUploadOperator)
-    bpy.utils.register_class(ModelMarkForValidation)
+    bpy.utils.register_class(UploadOperator)
+    bpy.utils.register_class(AssetVerificationStatusChange)
 
 
 def unregister_upload():
-    bpy.utils.unregister_class(ModelUploadOperator)
-    bpy.utils.unregister_class(ModelMarkForValidation)
+    bpy.utils.unregister_class(UploadOperator)
+    bpy.utils.unregister_class(AssetVerificationStatusChange)

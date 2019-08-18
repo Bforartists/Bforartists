@@ -172,7 +172,7 @@ def create_roof_mesh(self):
     bpy.context.view_layer.objects.active = myroof
     myroof.select_set(True)
 
-    # Thicknes
+    # Thickness
     if self.roof_thick > 0.0:
         set_modifier_solidify(myroof, self.roof_thick)
     # Subsurf

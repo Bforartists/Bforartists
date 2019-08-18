@@ -390,7 +390,7 @@ def modify_objects(action_type,
                 break
 
 
-# Separating atoms from a dupliverts strucutre.
+# Separating atoms from a dupliverts structure.
 def separate_atoms(scn):
 
     # Get the mesh.

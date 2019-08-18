@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
         unhide_collection(colmapdict[data["thumbnail_type"]])
         if data['thumbnail_background']:
-            unhide_collection('Collection 13')
+            unhide_collection('Background')
             bpy.data.materials["bg checker colorable"].node_tree.nodes['input_level'].outputs['Value'].default_value \
                 = data['thumbnail_background_lightness']
         tscale = data["thumbnail_scale"]

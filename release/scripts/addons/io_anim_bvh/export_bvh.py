@@ -161,7 +161,7 @@ def write_armature(
             "pose_mat",
             # Blender rest matrix (armature space).
             "rest_arm_mat",
-            # Blender rest batrix (local space).
+            # Blender rest matrix (local space).
             "rest_local_mat",
             # Pose_mat inverted.
             "pose_imat",

@@ -2896,7 +2896,7 @@ def importShape_LoadAppearance(vrmlname, appr, ancestry, node, is_vcol):
     USE on an Appearance node and USE on a Material node
     call for different approaches.
 
-    Tools generate repeating, idential material definitions.
+    Tools generate repeating, identical material definitions.
     Can't rely on USE alone. Repeating texture definitions
     are entirely possible, too.
 

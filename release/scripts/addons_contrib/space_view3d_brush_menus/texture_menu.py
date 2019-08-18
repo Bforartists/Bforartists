@@ -394,3 +394,22 @@ class MaskPressureModeMenu(Menu):
                     disable=True,
                     disable_icon='RADIOBUT_ON'
                     )
+
+
+classes = (
+    TextureMenu,
+    Textures,
+    TextureMapMode,
+    MaskTextures,
+    MaskMapMode,
+    TextureAngleSource,
+    MaskPressureModeMenu
+    )
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)

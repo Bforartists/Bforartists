@@ -128,8 +128,6 @@ def register():
         items = [
             ('All', "All", "All Add-ons"),
             ('User', "User", "All Add-ons Installed by User"),
-            ('Enabled', "Enabled", "All Enabled Add-ons"),
-            ('Disabled', "Disabled", "All Disabled Add-ons"),
         ]
 
         items_unique = set()
@@ -204,7 +202,7 @@ class UI_UL_list(bpy.types.UIList):
         for i, item in enumerate(items):
             name = getattr(item, propname, None)
             # This is similar to a logical xor
-            if bool(name and fnmatch.fnmatchcase(name, pattern)) is not bool(reverse):
+            if bool(name and fnmatch.fnmatch(name, pattern)) is not bool(reverse):
                 flags[i] |= bitflag
         return flags
 

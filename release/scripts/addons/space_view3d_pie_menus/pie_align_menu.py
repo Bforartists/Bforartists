@@ -47,24 +47,6 @@ class PIE_MT_Align(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         # 4 - LEFT
-        pie.operator("align.selected2xyz",
-                    text="Align X", icon='TRIA_LEFT').axis = 'X'
-        # 6 - RIGHT
-        pie.operator("align.selected2xyz",
-                    text="Align Z", icon='TRIA_DOWN').axis = 'Z'
-        # 2 - BOTTOM
-        pie.operator("align.selected2xyz",
-                    text="Align Y", icon='PLUS').axis = 'Y'
-        # 8 - TOP
-        pie.operator("align.2xyz", text="Align To Y-0").axis = '1'
-        # 7 - TOP - LEFT
-        pie.operator("align.2xyz", text="Align To X-0").axis = '0'
-        # 9 - TOP - RIGHT
-        pie.operator("align.2xyz", text="Align To Z-0").axis = '2'
-        # 1 - BOTTOM - LEFT
-        pie.separator()
-        # 3 - BOTTOM - RIGHT
-        # pie.menu("align.xyz")
         box = pie.split().box().column()
 
         row = box.row(align=True)
@@ -72,27 +54,53 @@ class PIE_MT_Align(Menu):
         align_1 = row.operator("alignxyz.all", text="Neg")
         align_1.axis = '0'
         align_1.side = 'NEGATIVE'
-        align_2 = row.operator("alignxyz.all", text="Pos")
-        align_2.axis = '0'
-        align_2.side = 'POSITIVE'
 
         row = box.row(align=True)
         row.label(text="Y")
         align_3 = row.operator("alignxyz.all", text="Neg")
         align_3.axis = '1'
         align_3.side = 'NEGATIVE'
-        align_4 = row.operator("alignxyz.all", text="Pos")
-        align_4.axis = '1'
-        align_4.side = 'POSITIVE'
 
         row = box.row(align=True)
         row.label(text="Z")
         align_5 = row.operator("alignxyz.all", text="Neg")
         align_5.axis = '2'
         align_5.side = 'NEGATIVE'
+        # 6 - RIGHT
+        box = pie.split().box().column()
+
+        row = box.row(align=True)
+        row.label(text="X")
+        align_2 = row.operator("alignxyz.all", text="Pos")
+        align_2.axis = '0'
+        align_2.side = 'POSITIVE'
+
+        row = box.row(align=True)
+        row.label(text="Y")
+        align_4 = row.operator("alignxyz.all", text="Pos")
+        align_4.axis = '1'
+        align_4.side = 'POSITIVE'
+
+        row = box.row(align=True)
+        row.label(text="Z")
         align_6 = row.operator("alignxyz.all", text="Pos")
         align_6.axis = '2'
         align_6.side = 'POSITIVE'
+        # 2 - BOTTOM
+        pie.operator("align.2xyz", text="Align To Y-0").axis = '1'
+        # 8 - TOP
+        pie.operator("align.selected2xyz",
+                    text="Align Y").axis = 'Y'
+        # 7 - TOP - LEFT
+        pie.operator("align.selected2xyz",
+                    text="Align X").axis = 'X'
+        # 9 - TOP - RIGHT
+        pie.operator("align.selected2xyz",
+                    text="Align Z").axis = 'Z'
+        # 1 - BOTTOM - LEFT
+        pie.operator("align.2xyz", text="Align To X-0").axis = '0'
+        # 3 - BOTTOM - RIGHT
+        pie.operator("align.2xyz", text="Align To Z-0").axis = '2'
 
 
 # Align to X, Y, Z

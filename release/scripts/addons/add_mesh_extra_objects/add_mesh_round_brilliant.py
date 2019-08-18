@@ -14,12 +14,12 @@ from bpy.props import (
         IntProperty,
         FloatProperty,
         BoolProperty,
+        StringProperty,
         )
+from bpy_extras import object_utils
 
-
-# mesh/object generating function, returns final object
-
-def addBrilliant(context, s, table_w, crown_h, girdle_t, pavi_d, bezel_f,
+# mesh generating function, returns mesh
+def add_mesh_Brilliant(context, s, table_w, crown_h, girdle_t, pavi_d, bezel_f,
                  pavi_f, culet, girdle_real, keep_lga, g_real_smooth):
 
     # # possible user inputs  ( output 100% = 2 blender units )
@@ -220,16 +220,25 @@ def addBrilliant(context, s, table_w, crown_h, girdle_t, pavi_d, bezel_f,
                 cf.append(i)
         fa(*cf)
 
-    # deactivate possible active Objects
-    bpy.context.view_layer.objects.active = None
-
     # create actual mesh and object based on Verts and Faces given
     dmesh = bpy.data.meshes.new("dmesh")
     dmesh.from_pydata(Verts, [], Faces)
     dmesh.update()
+    
+    return dmesh
+
+# object generating function, returns final object
+def addBrilliant(context, s, table_w, crown_h, girdle_t, pavi_d, bezel_f,
+                 pavi_f, culet, girdle_real, keep_lga, g_real_smooth):
+
+    # deactivate possible active Objects
+    bpy.context.view_layer.objects.active = None
+
+    # create actual mesh and object based on Verts and Faces given
+    dmesh = add_mesh_Brilliant(context, s, table_w, crown_h, girdle_t, pavi_d, bezel_f,
+                 pavi_f, culet, girdle_real, keep_lga, g_real_smooth)
 
     # Create object and link it into scene.
-    from bpy_extras import object_utils
     dobj = object_utils.object_data_add(context, dmesh, operator=None, name="dobj")
 
     # activate and select object
@@ -301,7 +310,18 @@ class MESH_OT_primitive_brilliant_add(Operator):
     bl_description = "Construct a custom brilliant mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    # set user options
+    Brilliant : BoolProperty(name = "Brilliant",
+                default = True,
+                description = "Brilliant")
+
+    #### change properties
+    name : StringProperty(name = "Name",
+                    description = "Name")
+
+    change : BoolProperty(name = "Change",
+                default = False,
+                description = "change Brilliant")   
+
     s: IntProperty(
             name="Segments",
             description="Longitudial segmentation",
@@ -383,11 +403,84 @@ class MESH_OT_primitive_brilliant_add(Operator):
             default=False
             )
 
+    def draw(self, context):
+        layout = self.layout
+        box = layout.box()
+        box.prop(self, "s")
+        box.prop(self, "table_w")
+        box.prop(self, "crown_h")
+        box.prop(self, "girdle_t")
+        box.prop(self, "girdle_real")
+        box.prop(self, "g_real_smooth")
+        box.prop(self, "pavi_d")
+        box.prop(self, "bezel_f")
+        box.prop(self, "pavi_f")
+        box.prop(self, "culet")
+        box.prop(self, "keep_lga")
+
     # call mesh/object generator function with user inputs
     def execute(self, context):
-        ob = addBrilliant(context, self.s, self.table_w, self.crown_h,
+    
+        if bpy.context.mode == "OBJECT":
+            if self.change == True and self.change != None:
+                obj = context.active_object
+                if 'Brilliant' in obj.data.keys():
+                    oldmesh = obj.data
+                    oldmeshname = obj.data.name
+                    mesh = add_mesh_Brilliant(context, self.s, self.table_w, self.crown_h,
                           self.girdle_t, self.pavi_d, self.bezel_f,
                           self.pavi_f, self.culet, self.girdle_real,
                           self.keep_lga, self.g_real_smooth
                           )
+                    obj.data = mesh
+                    bpy.data.meshes.remove(oldmesh)
+                    obj.data.name = oldmeshname
+                else:
+                    obj = addBrilliant(context, self.s, self.table_w, self.crown_h,
+                          self.girdle_t, self.pavi_d, self.bezel_f,
+                          self.pavi_f, self.culet, self.girdle_real,
+                          self.keep_lga, self.g_real_smooth
+                          )
+            else:
+                obj = addBrilliant(context, self.s, self.table_w, self.crown_h,
+                          self.girdle_t, self.pavi_d, self.bezel_f,
+                          self.pavi_f, self.culet, self.girdle_real,
+                          self.keep_lga, self.g_real_smooth
+                          )
+            obj.data["Brilliant"] = True
+            obj.data["change"] = False
+            for prm in BrilliantParameters():
+                obj.data[prm] = getattr(self, prm)
+        
+        if bpy.context.mode == "EDIT_MESH":
+            active_object = context.active_object
+            name_active_object = active_object.name
+            bpy.ops.object.mode_set(mode='OBJECT')
+            obj = addBrilliant(context, self.s, self.table_w, self.crown_h,
+                          self.girdle_t, self.pavi_d, self.bezel_f,
+                          self.pavi_f, self.culet, self.girdle_real,
+                          self.keep_lga, self.g_real_smooth
+                          )
+            obj.select_set(True)
+            active_object.select_set(True)
+            bpy.ops.object.join()
+            context.active_object.name = name_active_object
+            bpy.ops.object.mode_set(mode='EDIT')
+
         return {'FINISHED'}
+
+def BrilliantParameters():
+    BrilliantParameters = [
+        "s",
+        "table_w",
+        "crown_h",
+        "girdle_t",
+        "girdle_real",
+        "g_real_smooth",
+        "pavi_d",
+        "bezel_f",
+        "pavi_f",
+        "culet",
+        "keep_lga",
+        ]
+    return BrilliantParameters

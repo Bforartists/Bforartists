@@ -1725,9 +1725,9 @@ void DRW_draw_render_loop_ex(struct Depsgraph *depsgraph,
 
   if (G.debug_value > 20 && G.debug_value < 30) {
     GPU_depth_test(false);
-    rcti rect; /* local coordinate visible rect inside region, to accommodate overlapping ui */
-    ED_region_visible_rect(DST.draw_ctx.ar, &rect);
-    DRW_stats_draw(&rect);
+    /* local coordinate visible rect inside region, to accommodate overlapping ui */
+    const rcti *rect = ED_region_visible_rect(DST.draw_ctx.ar);
+    DRW_stats_draw(rect);
     GPU_depth_test(true);
   }
 
@@ -1864,7 +1864,7 @@ void DRW_render_gpencil(struct RenderEngine *engine, struct Depsgraph *depsgraph
     DRW_opengl_render_context_enable(re_gl_context);
     /* We need to query gpu context after a gl context has been bound. */
     re_gpu_context = RE_gpu_context_get(render);
-    DRW_gawain_render_context_enable(re_gpu_context);
+    DRW_gpu_render_context_enable(re_gpu_context);
   }
   else {
     DRW_opengl_context_enable();
@@ -1949,13 +1949,13 @@ void DRW_render_to_image(RenderEngine *engine, struct Depsgraph *depsgraph)
     DRW_opengl_render_context_enable(re_gl_context);
     /* We need to query gpu context after a gl context has been bound. */
     re_gpu_context = RE_gpu_context_get(render);
-    DRW_gawain_render_context_enable(re_gpu_context);
+    DRW_gpu_render_context_enable(re_gpu_context);
   }
   else {
     DRW_opengl_context_enable();
   }
 
-  /* IMPORTANT: We dont support immediate mode in render mode!
+  /* IMPORTANT: We don't support immediate mode in render mode!
    * This shall remain in effect until immediate mode supports
    * multiple threads. */
 
@@ -2040,7 +2040,7 @@ void DRW_render_to_image(RenderEngine *engine, struct Depsgraph *depsgraph)
 
   /* Changing Context */
   if (re_gl_context != NULL) {
-    DRW_gawain_render_context_disable(re_gpu_context);
+    DRW_gpu_render_context_disable(re_gpu_context);
     DRW_opengl_render_context_disable(re_gl_context);
   }
   else {
@@ -2555,23 +2555,13 @@ void DRW_draw_depth_loop_gpencil(struct Depsgraph *depsgraph,
   DRW_opengl_context_disable();
 }
 
-void DRW_draw_select_id(Depsgraph *depsgraph,
-                        ARegion *ar,
-                        View3D *v3d,
-                        Base **bases,
-                        const uint bases_len,
-                        short select_mode)
+void DRW_draw_select_id(Depsgraph *depsgraph, ARegion *ar, View3D *v3d, const rcti *rect)
 {
   Scene *scene = DEG_get_evaluated_scene(depsgraph);
   ViewLayer *view_layer = DEG_get_evaluated_view_layer(depsgraph);
 
-  DRW_select_buffer_context_create(bases, bases_len, select_mode);
-
-  DRW_opengl_context_enable();
-
   /* Reset before using it. */
   drw_state_prepare_clean_for_draw(&DST);
-  DST.buffer_finish_called = true;
 
   /* Instead of 'DRW_context_state_init(C, &DST.draw_ctx)', assign from args */
   DST.draw_ctx = (DRWContextState){
@@ -2584,7 +2574,6 @@ void DRW_draw_select_id(Depsgraph *depsgraph,
       .depsgraph = depsgraph,
   };
 
-  use_drw_engine(&draw_engine_select_type);
   drw_context_state_init();
 
   /* Setup viewport */
@@ -2594,20 +2583,24 @@ void DRW_draw_select_id(Depsgraph *depsgraph,
   /* Update ubos */
   DRW_globals_update();
 
-  /* Init engines */
-  drw_engines_init();
+  /* Init Select Engine */
+  struct SELECTID_Context *sel_ctx = DRW_select_engine_context_get();
+  sel_ctx->last_rect = *rect;
 
+  use_drw_engine(&draw_engine_select_type);
+  drw_engines_init();
   {
     drw_engines_cache_init();
 
-    /* Keep `base_index` in sync with `e_data.context.last_base_drawn`.
-     * So don't skip objects. */
-    for (uint base_index = 0; base_index < bases_len; base_index++) {
-      Object *obj_eval = DEG_get_evaluated_object(depsgraph, bases[base_index]->object);
+    Object **obj = &sel_ctx->objects[0];
+    for (uint remaining = sel_ctx->objects_len; remaining--; obj++) {
+      Object *obj_eval = DEG_get_evaluated_object(depsgraph, *obj);
       drw_engines_cache_populate(obj_eval);
     }
 
     drw_engines_cache_finish();
+
+    DRW_render_instance_buffer_finish();
   }
 
   /* Start Drawing */
@@ -2617,14 +2610,12 @@ void DRW_draw_select_id(Depsgraph *depsgraph,
 
   drw_engines_disable();
 
+  drw_viewport_cache_resize();
+
 #ifdef DEBUG
   /* Avoid accidental reuse. */
   drw_state_ensure_not_reused(&DST);
 #endif
-
-  /* Changin context */
-  GPU_framebuffer_restore();
-  DRW_opengl_context_disable();
 }
 
 /** See #DRW_shgroup_world_clip_planes_from_rv3d. */
@@ -2932,7 +2923,7 @@ void DRW_opengl_context_create(void)
   /* This changes the active context. */
   DST.gl_context = WM_opengl_context_create();
   WM_opengl_context_activate(DST.gl_context);
-  /* Be sure to create gawain.context too. */
+  /* Be sure to create gpu_context too. */
   DST.gpu_context = GPU_context_create(0);
   if (!G.background) {
     immActivate();
@@ -3031,7 +3022,7 @@ void DRW_opengl_render_context_disable(void *re_gl_context)
 }
 
 /* Needs to be called AFTER DRW_opengl_render_context_enable() */
-void DRW_gawain_render_context_enable(void *re_gpu_context)
+void DRW_gpu_render_context_enable(void *re_gpu_context)
 {
   /* If thread is main you should use DRW_opengl_context_enable(). */
   BLI_assert(!BLI_thread_is_main());
@@ -3041,7 +3032,7 @@ void DRW_gawain_render_context_enable(void *re_gpu_context)
 }
 
 /* Needs to be called BEFORE DRW_opengl_render_context_disable() */
-void DRW_gawain_render_context_disable(void *UNUSED(re_gpu_context))
+void DRW_gpu_render_context_disable(void *UNUSED(re_gpu_context))
 {
   DRW_shape_cache_reset(); /* XXX fix that too. */
   GPU_context_active_set(NULL);

@@ -20,13 +20,13 @@
 
 bl_info = {
     "name": "Autodesk 3DS format",
-    "author": "Bob Holcomb, Campbell Barton",
-    "version": (1, 0, 0),
-    "blender": (2, 74, 0),
-    "location": "File > Import-Export",
-    "description": "Import-Export 3DS, meshes, uvs, materials, textures, "
+    "author": "Bob Holcomb, Campbell Barton, Andreas Atteneder",
+    "version": (2, 0, 0),
+    "blender": (2, 80, 0),
+    "location": "File > Import",
+    "description": "Import 3DS, meshes, uvs, materials, textures, "
                    "cameras & lamps",
-    "warning": "",
+    "warning": "Images must be in file folder",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Import-Export/Autodesk_3DS",
     "category": "Import-Export"}
@@ -145,14 +145,18 @@ def menu_func_import(self, context):
 
 
 def register():
-    bpy.utils.register_module(__name__)
+    bpy.utils.register_class(Import3DS)
+#     TODO: Restore export
+#     bpy.utils.register_class(Export3DS)
 
     bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    bpy.utils.unregister_class(Import3DS)
+#    TODO: Restore export
+#     bpy.utils.unregister_class(Export3DS)
 
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)

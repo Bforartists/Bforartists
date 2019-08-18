@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.1"
-__date__ = "19 May 2019"
+__version__ = "6.2"
+__date__ = "31 Jul 2019"
 
 import bpy
 from bpy.props import (
@@ -58,7 +58,7 @@ from .ui.IMAGE_MT_uvs import (
     MUV_MT_UVInspection,
 )
 from .utils.bl_class_registry import BlClassRegistry
-from .utils.addon_updator import AddonUpdatorManager
+from .utils.addon_updater import AddonUpdaterManager
 from .utils import compatibility as compat
 from . import updater
 
@@ -165,7 +165,7 @@ def remove_builtin_menu():
 
 
 def get_update_candidate_branches(_, __):
-    manager = AddonUpdatorManager.get_instance()
+    manager = AddonUpdaterManager.get_instance()
     if not manager.candidate_checked():
         return []
 

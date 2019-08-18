@@ -125,8 +125,8 @@ static void do_version_workspaces_create_from_screens(Main *bmain)
     }
 
     if (screen_parent) {
-      /* fullscreen with "Back to Previous" option, don't create
-       * a new workspace, add layout workspace containing parent */
+      /* Full-screen with "Back to Previous" option, don't create
+       * a new workspace, add layout workspace containing parent. */
       workspace = BLI_findstring(
           &bmain->workspaces, screen_parent->id.name + 2, offsetof(ID, name) + 2);
     }
@@ -734,7 +734,98 @@ static void do_versions_seq_alloc_transform_and_crop(ListBase *seqbase)
   }
 }
 
-void do_versions_after_linking_280(Main *bmain)
+/* Return true if there is something to convert. */
+static void do_versions_material_convert_legacy_blend_mode(bNodeTree *ntree, char blend_method)
+{
+  bool need_update = false;
+
+  /* Iterate backwards from end so we don't encounter newly added links. */
+  bNodeLink *prevlink;
+  for (bNodeLink *link = ntree->links.last; link; link = prevlink) {
+    prevlink = link->prev;
+
+    /* Detect link to replace. */
+    bNode *fromnode = link->fromnode;
+    bNodeSocket *fromsock = link->fromsock;
+    bNode *tonode = link->tonode;
+    bNodeSocket *tosock = link->tosock;
+
+    if (!(tonode->type == SH_NODE_OUTPUT_MATERIAL && STREQ(tosock->identifier, "Surface"))) {
+      continue;
+    }
+
+    /* Only do outputs that are enabled for EEVEE */
+    if (!ELEM(tonode->custom1, SHD_OUTPUT_ALL, SHD_OUTPUT_EEVEE)) {
+      continue;
+    }
+
+    if (blend_method == 1 /* MA_BM_ADD */) {
+      nodeRemLink(ntree, link);
+
+      bNode *add_node = nodeAddStaticNode(NULL, ntree, SH_NODE_ADD_SHADER);
+      add_node->locx = 0.5f * (fromnode->locx + tonode->locx);
+      add_node->locy = 0.5f * (fromnode->locy + tonode->locy);
+
+      bNodeSocket *shader1_socket = add_node->inputs.first;
+      bNodeSocket *shader2_socket = add_node->inputs.last;
+      bNodeSocket *add_socket = nodeFindSocket(add_node, SOCK_OUT, "Shader");
+
+      bNode *transp_node = nodeAddStaticNode(NULL, ntree, SH_NODE_BSDF_TRANSPARENT);
+      transp_node->locx = add_node->locx;
+      transp_node->locy = add_node->locy - 110.0f;
+
+      bNodeSocket *transp_socket = nodeFindSocket(transp_node, SOCK_OUT, "BSDF");
+
+      /* Link to input and material output node. */
+      nodeAddLink(ntree, fromnode, fromsock, add_node, shader1_socket);
+      nodeAddLink(ntree, transp_node, transp_socket, add_node, shader2_socket);
+      nodeAddLink(ntree, add_node, add_socket, tonode, tosock);
+
+      need_update = true;
+    }
+    else if (blend_method == 2 /* MA_BM_MULTIPLY */) {
+      nodeRemLink(ntree, link);
+
+      bNode *transp_node = nodeAddStaticNode(NULL, ntree, SH_NODE_BSDF_TRANSPARENT);
+
+      bNodeSocket *color_socket = nodeFindSocket(transp_node, SOCK_IN, "Color");
+      bNodeSocket *transp_socket = nodeFindSocket(transp_node, SOCK_OUT, "BSDF");
+
+      /* If incomming link is from a closure socket, we need to convert it. */
+      if (fromsock->type == SOCK_SHADER) {
+        transp_node->locx = 0.33f * fromnode->locx + 0.66f * tonode->locx;
+        transp_node->locy = 0.33f * fromnode->locy + 0.66f * tonode->locy;
+
+        bNode *shtorgb_node = nodeAddStaticNode(NULL, ntree, SH_NODE_SHADERTORGB);
+        shtorgb_node->locx = 0.66f * fromnode->locx + 0.33f * tonode->locx;
+        shtorgb_node->locy = 0.66f * fromnode->locy + 0.33f * tonode->locy;
+
+        bNodeSocket *shader_socket = nodeFindSocket(shtorgb_node, SOCK_IN, "Shader");
+        bNodeSocket *rgba_socket = nodeFindSocket(shtorgb_node, SOCK_OUT, "Color");
+
+        nodeAddLink(ntree, fromnode, fromsock, shtorgb_node, shader_socket);
+        nodeAddLink(ntree, shtorgb_node, rgba_socket, transp_node, color_socket);
+      }
+      else {
+        transp_node->locx = 0.5f * (fromnode->locx + tonode->locx);
+        transp_node->locy = 0.5f * (fromnode->locy + tonode->locy);
+
+        nodeAddLink(ntree, fromnode, fromsock, transp_node, color_socket);
+      }
+
+      /* Link to input and material output node. */
+      nodeAddLink(ntree, transp_node, transp_socket, tonode, tosock);
+
+      need_update = true;
+    }
+  }
+
+  if (need_update) {
+    ntreeUpdateTree(NULL, ntree);
+  }
+}
+
+void do_versions_after_linking_280(Main *bmain, ReportList *UNUSED(reports))
 {
   bool use_collection_compat_28 = true;
 
@@ -1127,6 +1218,28 @@ void do_versions_after_linking_280(Main *bmain)
       camera->dof.aperture_ratio = camera->gpu_dof.ratio;
       camera->dof.aperture_blades = camera->gpu_dof.num_blades;
       camera->dof_ob = NULL;
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 281, 2)) {
+    /* Replace Multiply and Additive blend mode by Alpha Blend
+     * now that we use dualsource blending. */
+    /* We take care of doing only nodetrees that are always part of materials
+     * with old blending modes. */
+    for (Material *ma = bmain->materials.first; ma; ma = ma->id.next) {
+      bNodeTree *ntree = ma->nodetree;
+      if (ma->blend_method == 1 /* MA_BM_ADD */) {
+        if (ma->use_nodes) {
+          do_versions_material_convert_legacy_blend_mode(ntree, 1 /* MA_BM_ADD */);
+        }
+        ma->blend_method = MA_BM_BLEND;
+      }
+      else if (ma->blend_method == 2 /* MA_BM_MULTIPLY */) {
+        if (ma->use_nodes) {
+          do_versions_material_convert_legacy_blend_mode(ntree, 2 /* MA_BM_MULTIPLY */);
+        }
+        ma->blend_method = MA_BM_BLEND;
+      }
     }
   }
 }
@@ -2668,9 +2781,9 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
               navigation_region = MEM_callocN(sizeof(ARegion),
                                               "userpref navigation-region do_versions");
 
-              BLI_insertlinkbefore(regionbase,
-                                   main_region,
-                                   navigation_region); /* order matters, addhead not addtail! */
+              /* Order matters, addhead not addtail! */
+              BLI_insertlinkbefore(regionbase, main_region, navigation_region);
+
               navigation_region->regiontype = RGN_TYPE_NAV_BAR;
               navigation_region->alignment = RGN_ALIGN_LEFT;
             }
@@ -3565,7 +3678,18 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
               ar->alignment = RGN_ALIGN_RIGHT;
             }
           }
+          /* Mark outliners as dirty for syncing and enable synced selection */
+          if (sl->spacetype == SPACE_OUTLINER) {
+            SpaceOutliner *soutliner = (SpaceOutliner *)sl;
+            soutliner->sync_select_dirty |= WM_OUTLINER_SYNC_SELECT_FROM_ALL;
+            soutliner->flag |= SO_SYNC_SELECT;
+          }
         }
+      }
+    }
+    for (Mesh *mesh = bmain->meshes.first; mesh; mesh = mesh->id.next) {
+      if (mesh->remesh_voxel_size == 0.0f) {
+        mesh->remesh_voxel_size = 0.1f;
       }
     }
   }

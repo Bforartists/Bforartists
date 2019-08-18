@@ -1358,7 +1358,7 @@ def perform_pruning(baseSize, baseSplits, childP, cu, currentMax, currentMin, cu
                         stemsegL, lengthV[n], taperCrown, boneStep, rotate, rotateV
                         )
 
-        # If pruning is enabled then we must to the check to see if the end of the spline is within the evelope
+        # If pruning is enabled then we must check to see if the end of the spline is within the envelope
         if prune:
             # Check each endpoint to see if it is inside
             for s in splineList:

@@ -19,12 +19,12 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "Hotkey: 'Q'",
+    "name": "Hotkey: 'Alt Q'",
     "description": "Viewport Numpad Menus",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 1),
     "blender": (2, 80, 0),
-    "location": "Q key",
+    "location": "Alt Q key",
     "warning": "",
     "wiki_url": "",
     "category": "View Numpad Pie"
@@ -70,35 +70,10 @@ class PIE_OT_LockTransforms(Operator):
         return {'FINISHED'}
 
 
-# Pie View All Sel Glob Etc - Q
-class PIE_MT_ViewallSelGlobEtc(Menu):
-    bl_idname = "PIE_MT_vieallselglobetc"
-    bl_label = "Pie View All Sel Glob..."
-
-    def draw(self, context):
-        layout = self.layout
-
-        # 4 - LEFT
-        layout.operator("view3d.view_all", text="View All").center = True
-        # 6 - RIGHT
-        layout.operator("view3d.view_selected", text="View Selected")
-        # 2 - BOTTOM
-        layout.operator("view3d.view_persportho", text="Persp/Ortho", icon='RESTRICT_VIEW_OFF')
-        # 8 - TOP
-        layout.operator("view3d.localview", text="Local/Global")
-        # 7 - TOP - LEFT
-        layout.operator("screen.region_quadview", text="Toggle Quad View", icon='NONE')
-        # 1 - BOTTOM - LEFT
-        layout.operator("wm.call_menu_pie", text="Previous Menu", icon='BACK').name = "PIE_MT_viewnumpad"
-        # 9 - TOP - RIGHT
-        layout.operator("screen.screen_full_area", text="Full Screen", icon='FULLSCREEN_ENTER')
-        # 3 - BOTTOM - RIGHT
-
-
 # Pie views numpad - Q
 class PIE_MT_ViewNumpad(Menu):
     bl_idname = "PIE_MT_viewnumpad"
-    bl_label = "Pie Views Ortho"
+    bl_label = "Pie Views Menu"
 
     def draw(self, context):
         layout = self.layout
@@ -116,23 +91,23 @@ class PIE_MT_ViewNumpad(Menu):
         # 8 - TOP
         pie.operator("view3d.view_axis", text="Top", icon='TRIA_UP').type = 'TOP'
         # 7 - TOP - LEFT
-        pie.operator("view3d.view_axis", text="Front").type = 'FRONT'
-        # 9 - TOP - RIGHT
         pie.operator("view3d.view_axis", text="Back").type = 'BACK'
+        # 9 - TOP - RIGHT
+        pie.operator("view3d.view_axis", text="Front").type = 'FRONT'
         # 1 - BOTTOM - LEFT
         box = pie.split().column()
-        row = box.row(align=True)
 
+        row = box.row(align=True)
+        row.operator("view3d.view_camera", text="View Cam", icon='HIDE_OFF')
+        row.operator("view3d.camera_to_view", text="Cam To View", icon='NONE')
+
+        row = box.row(align=True)
         if context.space_data.lock_camera is False:
-            row.operator("wm.context_toggle", text="Lock Cam to View",
+            row.operator("wm.context_toggle", text="Lock Cam To View",
                          icon='UNLOCKED').data_path = "space_data.lock_camera"
         elif context.space_data.lock_camera is True:
             row.operator("wm.context_toggle", text="Lock Cam to View",
                          icon='LOCKED').data_path = "space_data.lock_camera"
-
-        row = box.row(align=True)
-        row.operator("view3d.view_camera", text="View Cam", icon='HIDE_OFF')
-        row.operator("view3d.camera_to_view", text="Cam to view", icon='NONE')
 
         icon_locked = 'LOCKED' if ob and ob.lock_rotation[0] is False else \
                       'UNLOCKED' if ob and ob.lock_rotation[0] is True else 'LOCKED'
@@ -143,13 +118,24 @@ class PIE_MT_ViewNumpad(Menu):
         row = box.row(align=True)
         row.prop(rd, "use_border", text="Border")
         # 3 - BOTTOM - RIGHT
-        pie.menu(PIE_MT_ViewallSelGlobEtc.bl_idname, text="View Menu", icon='NONE')
+        box = pie.split().column()
+
+        row = box.row(align=True)
+        row.operator("view3d.view_all", text="View All").center = True
+        row.operator("view3d.view_selected", text="Selected")
+
+        row = box.row(align=True)
+        row.operator("view3d.view_persportho", text="Persp/Ortho")
+        row.operator("view3d.localview", text="Local/Global")
+
+        row = box.row(align=True)
+        row.operator("screen.region_quadview", text="Toggle Quad")
+        row.operator("screen.screen_full_area", text="Toggle Full")
 
 
 classes = (
     PIE_MT_ViewNumpad,
     PIE_OT_LockTransforms,
-    PIE_MT_ViewallSelGlobEtc,
     )
 
 addon_keymaps = []
@@ -163,7 +149,7 @@ def register():
     if wm.keyconfigs.addon:
         # Views numpad
         km = wm.keyconfigs.addon.keymaps.new(name='3D View Generic', space_type='VIEW_3D')
-        kmi = km.keymap_items.new('wm.call_menu_pie', 'Q', 'PRESS')
+        kmi = km.keymap_items.new('wm.call_menu_pie', 'Q', 'PRESS', alt=True)
         kmi.properties.name = "PIE_MT_viewnumpad"
         addon_keymaps.append((km, kmi))
 

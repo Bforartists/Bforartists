@@ -144,7 +144,7 @@ def pLoopExec(self, context, funk):
         funk(bone, active, context)
 
 
-# The following functions are used o copy attributes from active to bone
+# The following functions are used to copy attributes from active to bone
 
 def pLocLocExec(bone, active, context):
     bone.location = active.location
@@ -316,7 +316,7 @@ def world_to_basis(active, ob, context):
     return(mat)
 
 
-# The following functions are used o copy attributes from
+# The following functions are used to copy attributes from
 # active to selected object
 
 def obLoc(ob, active, context):

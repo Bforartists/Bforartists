@@ -210,7 +210,7 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
     wait_for_input : bpy.props.BoolProperty(name="Wait for Input", default=True)
 
     def _exit(self, context):
-        #avoids unpredictable crashs
+        #avoids unpredictable crashes
         del self.main_snap_obj
         del self.main_bm
         del self.list_edges

@@ -47,19 +47,19 @@ class PIE_MT_PieApplyTransforms(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         # 4 - LEFT
-        pie.operator("apply.transformall", text="Apply All", icon='FREEZE')
+        pie.operator("object.visual_transform_apply", text="Apply Visual")	
         # 6 - RIGHT
-        pie.operator("clear.all", text="Clear All", icon='NONE')
+        pie.operator("apply.transformall", text="Apply All")
         # 2 - BOTTOM
-        pie.operator("object.duplicates_make_real", text="Make Instances Real")
+        pie.operator("apply.transformrotsca", text="Rotation/Scale")
         # 8 - TOP
-        pie.operator("apply.transformlocrotscale", text="Rotation", icon='NONE').option = 'ROT'
+        pie.operator("apply.transformlocrotscale", text="Rotation").option = 'ROT'
         # 7 - TOP - LEFT
-        pie.operator("apply.transformlocrotscale", text="Location", icon='NONE').option = 'LOC'
+        pie.operator("apply.transformlocrotscale", text="Location").option = 'LOC'
         # 9 - TOP - RIGHT
-        pie.operator("apply.transformlocrotscale", text="Scale", icon='NONE').option = 'SCALE'
+        pie.operator("apply.transformlocrotscale", text="Scale").option = 'SCALE'
         # 1 - BOTTOM - LEFT
-        pie.operator("object.visual_transform_apply", text="Visual Transforms")
+        pie.operator("object.duplicates_make_real", text="Make Instances Real")
         # 3 - BOTTOM - RIGHT
         pie.menu("PIE_MT_clear_menu", text="Clear Transform Menu")
 
@@ -94,7 +94,7 @@ class PIE_OT_ApplyTransLocRotPie(Operator):
 class PIE_OT_ApplyTransformAll(Operator):
     bl_idname = "apply.transformall"
     bl_label = "Apply All Transforms"
-    bl_description = "Apply Transform All"
+    bl_description = "Apply Transform Loc/Rotation/Scale"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -102,13 +102,26 @@ class PIE_OT_ApplyTransformAll(Operator):
         return {'FINISHED'}
 
 
+# Apply Transforms
+class PIE_OT_ApplyTransformRotSca(Operator):
+    bl_idname = "apply.transformrotsca"
+    bl_label = "Rotation/Scale"
+    bl_description = "Apply Transform Rotation/Scale"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+        return {'FINISHED'}
+
+
 # Clear Menu
-class PIE_OT_ClearMenu(Menu):
+class PIE_MT_ClearMenu(Menu):
     bl_idname = "PIE_MT_clear_menu"
     bl_label = "Clear Menu"
 
     def draw(self, context):
         layout = self.layout
+        layout.operator("clear.all", text="Clear All", icon='NONE')
         layout.operator("object.location_clear", text="Clear Location", icon='NONE')
         layout.operator("object.rotation_clear", text="Clear Rotation", icon='NONE')
         layout.operator("object.scale_clear", text="Clear Scale", icon='NONE')
@@ -133,8 +146,9 @@ classes = (
     PIE_MT_PieApplyTransforms,
     PIE_OT_ApplyTransLocRotPie,
     PIE_OT_ApplyTransformAll,
-    PIE_OT_ClearMenu,
+    PIE_MT_ClearMenu,
     PIE_OT_ClearAll,
+    PIE_OT_ApplyTransformRotSca,
     )
 
 addon_keymaps = []

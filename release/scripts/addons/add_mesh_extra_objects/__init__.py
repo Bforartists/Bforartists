@@ -260,39 +260,88 @@ def Extras_contex_menu(self, context):
     obj = context.object
     layout = self.layout
     
-    if 'Gear' in obj.keys():
+    if 'Gear' in obj.data.keys():
         props = layout.operator("mesh.primitive_gear", text="Change Gear")
         props.change = True
-        props.delete = obj.name
-        props.startlocation = obj.location
-        props.rotation_euler = obj.rotation_euler
-        props.number_of_teeth = obj["number_of_teeth"]
-        props.radius = obj["radius"]
-        props.addendum = obj["addendum"]
-        props.dedendum = obj["dedendum"]
-        props.base = obj["base"]
-        props.angle = obj["angle"]
-        props.width = obj["width"]
-        props.skew = obj["skew"]
-        props.conangle = obj["conangle"]
-        props.crown = obj["crown"]
+        for prm in add_mesh_gears.GearParameters():
+            setattr(props, prm, obj.data[prm])
         layout.separator()
 
-    if 'WormGear' in obj.keys():
+    if 'WormGear' in obj.data.keys():
         props = layout.operator("mesh.primitive_worm_gear", text="Change WormGear")
         props.change = True
-        props.delete = obj.name
-        props.startlocation = obj.location
-        props.rotation_euler = obj.rotation_euler
-        props.number_of_teeth = obj["number_of_teeth"]
-        props.number_of_rows = obj["number_of_rows"]
-        props.radius = obj["radius"]
-        props.addendum = obj["addendum"]
-        props.dedendum = obj["dedendum"]
-        props.angle = obj["angle"]
-        props.row_height = obj["row_height"]
-        props.skew = obj["skew"]
-        props.crown = obj["crown"]
+        for prm in add_mesh_gears.WormGearParameters():
+            setattr(props, prm, obj.data[prm])
+        layout.separator()
+        
+    if 'Beam' in obj.data.keys():
+        props = layout.operator("mesh.add_beam", text="Change Beam")
+        props.change = True
+        for prm in add_mesh_beam_builder.BeamParameters():
+            setattr(props, prm, obj.data[prm])
+        layout.separator()
+
+    if 'Wall' in obj.data.keys():
+        props = layout.operator("mesh.wall_add", text="Change Wall")
+        props.change = True
+        for prm in Wallfactory.WallParameters():
+            setattr(props, prm, obj.data[prm])
+        layout.separator()
+
+    if 'ElbowJoint' in obj.data.keys():
+        props = layout.operator("mesh.primitive_elbow_joint_add", text="Change ElbowJoint")
+        props.change = True
+        for prm in add_mesh_pipe_joint.ElbowJointParameters():
+            setattr(props, prm, obj.data[prm])
+        layout.separator()
+
+    if 'TeeJoint' in obj.data.keys():
+        props = layout.operator("mesh.primitive_tee_joint_add", text="Change TeeJoint")
+        props.change = True
+        for prm in add_mesh_pipe_joint.TeeJointParameters():
+            setattr(props, prm, obj.data[prm])
+        layout.separator()
+
+    if 'WyeJoint' in obj.data.keys():
+        props = layout.operator("mesh.primitive_wye_joint_add", text="Change WyeJoint")
+        props.change = True
+        for prm in add_mesh_pipe_joint.WyeJointParameters():
+            setattr(props, prm, obj.data[prm])
+        layout.separator()
+
+    if 'CrossJoint' in obj.data.keys():
+        props = layout.operator("mesh.primitive_cross_joint_add", text="Change CrossJoint")
+        props.change = True
+        for prm in add_mesh_pipe_joint.CrossJointParameters():
+            setattr(props, prm, obj.data[prm])
+        layout.separator()
+
+    if 'NJoint' in obj.data.keys():
+        props = layout.operator("mesh.primitive_n_joint_add", text="Change NJoint")
+        props.change = True
+        for prm in add_mesh_pipe_joint.NJointParameters():
+            setattr(props, prm, obj.data[prm])
+        layout.separator()
+
+    if 'Diamond' in obj.data.keys():
+        props = layout.operator("mesh.primitive_diamond_add", text="Change Diamond")
+        props.change = True
+        for prm in add_mesh_gemstones.DiamondParameters():
+            setattr(props, prm, obj.data[prm])
+        layout.separator()
+        
+    if 'Gem' in obj.data.keys():
+        props = layout.operator("mesh.primitive_gem_add", text="Change Gem")
+        props.change = True
+        for prm in add_mesh_gemstones.GemParameters():
+            setattr(props, prm, obj.data[prm])
+        layout.separator()
+        
+    if 'Brilliant' in obj.data.keys():
+        props = layout.operator("mesh.primitive_brilliant_add", text="Change Brilliant")
+        props.change = True
+        for prm in add_mesh_round_brilliant.BrilliantParameters():
+            setattr(props, prm, obj.data[prm])
         layout.separator()
 
 # Register
@@ -335,7 +384,7 @@ classes = [
     add_empty_as_parent.PreFix,
     add_mesh_beam_builder.addBeam,
     Wallfactory.add_mesh_wallb,
-    add_mesh_triangles.MakeTriangle
+    add_mesh_triangles.MakeTriangle,
 ]
 
 def register():

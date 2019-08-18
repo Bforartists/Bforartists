@@ -122,7 +122,7 @@ def quad_from_edge(bm, edge_sel, context, event):
                 flip_align = False
     if flip_align:  # there is a face to which the normal can be aligned
         ref_verts = [v for v in normal_edge.link_faces[0].verts]
-        if v3 in ref_verts:
+        if v3 in ref_verts and v1 in ref_verts:
             va_1 = v3
             va_2 = v1
         elif normal_edge == edge_sel:

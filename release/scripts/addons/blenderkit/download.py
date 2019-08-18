@@ -312,7 +312,7 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
             sprops.append_link = 'APPEND'
             sprops.import_as = 'INDIVIDUAL'
 
-        # set consistency for objects allready in scene, otherwise this literally breaks blender :)
+        # set consistency for objects already in scene, otherwise this literally breaks blender :)
         ain = asset_in_scene(asset_data)
         if ain is not False:
             if ain == 'LINKED':
@@ -382,7 +382,7 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
 
     elif asset_data['asset_type'] == 'brush':
 
-        # TODO if allready in scene, should avoid reappending.
+        # TODO if already in scene, should avoid reappending.
         inscene = False
         for b in bpy.data.brushes:
 
@@ -536,10 +536,15 @@ class Downloader(threading.Thread):
         api_key = self.api_key
 
         # TODO get real link here...
-        get_download_url(asset_data, scene_id, api_key, tcom=tcom)
+        has_url = get_download_url(asset_data, scene_id, api_key, tcom=tcom)
+
+        if not has_url:
+            tasks_queue.add_task(
+                (ui.add_report, ('Failed to obtain download URL for %s.' % asset_data['name'], 5, colors.RED)))
+            return;
         if tcom.error:
             return
-        # only now we can check if the file allready exists. This should have 2 levels, for materials and for brushes
+        # only now we can check if the file already exists. This should have 2 levels, for materials and for brushes
         # different than for the non free content. delete is here when called after failed append tries.
         if check_existing(asset_data) and not tcom.passargs.get('delete'):
             # this sends the thread for processing, where another check should occur, since the file might be corrupted.
@@ -622,7 +627,7 @@ def download(asset_data, **kwargs):
 
 
 def check_downloading(asset_data, **kwargs):
-    ''' check if an asset is allready downloading, if yes, just make a progress bar with downloader object.'''
+    ''' check if an asset is already downloading, if yes, just make a progress bar with downloader object.'''
     global download_threads
 
     downloading = False
@@ -646,7 +651,7 @@ def check_existing(asset_data):
 
     file_names = paths.get_download_filenames(asset_data)
 
-    utils.p('check if file allready exists')
+    utils.p('check if file already exists')
     if len(file_names) == 2:
         # TODO this should check also for failed or running downloads.
         # If download is running, assign just the running thread. if download isn't running but the file is wrong size,
@@ -663,11 +668,11 @@ def check_existing(asset_data):
 
 
 def try_finished_append(asset_data, **kwargs):  # location=None, material_target=None):
-    ''' try to append asset, if not successfull delete source files.
+    ''' try to append asset, if not successfully delete source files.
      This means probably wrong download, so download should restart'''
     file_names = paths.get_download_filenames(asset_data)
     done = False
-    utils.p('try to append allready existing asset')
+    utils.p('try to append already existing asset')
     if len(file_names) > 0:
         if os.path.isfile(file_names[-1]):
             kwargs['name'] = asset_data['name']
@@ -688,7 +693,7 @@ def try_finished_append(asset_data, **kwargs):  # location=None, material_target
 
 
 def asset_in_scene(asset_data):
-    '''checks if the asset is allready in scene. If yes, modifies asset data so the asset can be reached again.'''
+    '''checks if the asset is already in scene. If yes, modifies asset data so the asset can be reached again.'''
     scene = bpy.context.scene
     au = scene.get('assets used', {})
 
@@ -746,7 +751,7 @@ def get_download_url(asset_data, scene_id, api_key, tcom=None):
     if r.status_code == 403:
         r = 'You need Full plan to get this item.'
         tcom.report = r
-        r1 = 'All materials and brushes are aviable for free. Only users registered to Standart plan can use all models.'
+        r1 = 'All materials and brushes are available for free. Only users registered to Standard plan can use all models.'
         tasks_queue.add_task((ui.add_report, (r1, 5, colors.RED)))
         tcom.error = True
 
@@ -764,7 +769,7 @@ def start_download(asset_data, **kwargs):
     '''
     check if file isn't downloading or doesn't exist, then start new download
     '''
-    # first check if the asset is allready in scene. We can use that asset without checking with server
+    # first check if the asset is already in scene. We can use that asset without checking with server
     quota_ok = asset_in_scene(asset_data) is not False
 
     # otherwise, check on server
@@ -774,7 +779,7 @@ def start_download(asset_data, **kwargs):
     # is the asseet being currently downloaded?
     downloading = check_downloading(asset_data, **kwargs)
     if not downloading:
-        # check if there are files allready. This check happens 2x once here(for free assets),
+        # check if there are files already. This check happens 2x once here(for free assets),
         # once in thread(for non-free)
         fexists = check_existing(asset_data)
 
@@ -823,7 +828,7 @@ class BlenderkitKillDownloadOperator(bpy.types.Operator):
 
 
 class BlenderkitDownloadOperator(bpy.types.Operator):
-    """Download and link asset to scene. Only link if asset allready available locally."""
+    """Download and link asset to scene. Only link if asset already available locally."""
     bl_idname = "scene.blenderkit_download"
     bl_label = "BlenderKit Asset Download"
     bl_options = {'REGISTER', 'UNDO'}

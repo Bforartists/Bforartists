@@ -34,6 +34,7 @@ from bpy.types import Operator
 from bpy.props import (
         BoolProperty,
         FloatProperty,
+        StringProperty,
         )
 from .Blocks import (
         NOTZERO, PI,
@@ -53,7 +54,7 @@ from .Blocks import (
         stepOnly,
         stepBack,
         )
-
+from bpy_extras import object_utils
 
 class add_mesh_wallb(Operator):
     bl_idname = "mesh.wall_add"
@@ -63,6 +64,18 @@ class add_mesh_wallb(Operator):
 
     # UI items - API for properties - User accessible variables...
     # not all options are via UI, and some operations just don't work yet
+    
+    Wall : BoolProperty(name = "Wall",
+                default = True,
+                description = "Wall")
+
+    #### change properties
+    name : StringProperty(name = "Name",
+                    description = "Name")
+
+    change : BoolProperty(name = "Change",
+                default = False,
+                description = "change Wall")
 
     # only create object when True
     # False allows modifying several parameters without creating object
@@ -859,25 +872,111 @@ class add_mesh_wallb(Operator):
                                         stepBack
                                         )
 
-        # Create new mesh
-        mesh = bpy.data.meshes.new("Wall")
-
-        # Make a mesh from a list of verts/edges/faces.
-        mesh.from_pydata(verts_array, [], faces_array)
-
-        # Deselect all objects.
-        bpy.ops.object.select_all(action='DESELECT')
-
-        mesh.update()
-
-        ob_new = bpy.data.objects.new("Wall", mesh)
-        context.collection.objects.link(ob_new)
-        # leave this out to prevent 'Tab key" going into edit mode :)
-        # Use rmb click to select and still modify.
-        context.view_layer.objects.active = ob_new
-        ob_new.select_set(True)
-
-        ob_new.location = tuple(context.scene.cursor.location)
-        ob_new.rotation_quaternion = [1.0, 0.0, 0.0, 0.0]
+        if bpy.context.mode == "OBJECT":
+            if self.change == True and self.change != None:
+                obj = context.active_object
+                oldmesh = obj.data
+                oldmeshname = obj.data.name
+                mesh = bpy.data.meshes.new("Wall")
+                mesh.from_pydata(verts_array, [], faces_array)
+                obj.data = mesh
+                bpy.data.meshes.remove(oldmesh)
+                obj.data.name = oldmeshname
+            else:
+                mesh = bpy.data.meshes.new("Wall")
+                mesh.from_pydata(verts_array, [], faces_array)
+                obj = object_utils.object_data_add(context, mesh, operator=None)
+            
+            mesh.update()
+            
+            obj.data["Wall"] = True
+            obj.data["change"] = False
+            for prm in WallParameters():
+                obj.data[prm] = getattr(self, prm)
+                
+        if bpy.context.mode == "EDIT_MESH":
+            active_object = context.active_object
+            name_active_object = active_object.name
+            bpy.ops.object.mode_set(mode='OBJECT')
+            mesh = bpy.data.meshes.new("TMP")
+            mesh.from_pydata(verts_array, [], faces_array)
+            obj = object_utils.object_data_add(context, mesh, operator=None)
+            obj.select_set(True)
+            active_object.select_set(True)
+            bpy.ops.object.join()
+            context.active_object.name = name_active_object
+            bpy.ops.object.mode_set(mode='EDIT')
 
         return {'FINISHED'}
+
+def WallParameters():
+    WallParameters = [
+        "ConstructTog",
+        "RadialTog",
+        "SlopeTog",
+        "WallStart",
+        "WallEnd",
+        "WallBottom",
+        "WallTop",
+        "EdgeOffset",
+        "Width",
+        "WidthVariance",
+        "WidthMinimum",
+        "Height",
+        "HeightVariance",
+        "HeightMinimum",
+        "Depth",
+        "DepthVariance",
+        "DepthMinimum",
+        "MergeBlock",
+        "Grout",
+        "GroutVariance",
+        "GroutDepth",
+        "GroutDepthVariance",
+        "GroutEdge",
+        "Opening1Tog",
+        "Opening1Width",
+        "Opening1Height",
+        "Opening1X",
+        "Opening1Z",
+        "Opening1Repeat",
+        "Opening1TopArchTog",
+        "Opening1TopArch",
+        "Opening1TopArchThickness",
+        "Opening1BtmArchTog",
+        "Opening1BtmArch",
+        "Opening1BtmArchThickness",
+        "CrenelTog",
+        "CrenelXP",
+        "CrenelZP",
+        "SlotTog",
+        "SlotRpt",
+        "SlotWdg",
+        "SlotX",
+        "SlotGap",
+        "SlotV",
+        "SlotVH",
+        "SlotVBtm",
+        "SlotH",
+        "SlotHW",
+        "SlotHBtm",
+        "ShelfTog",
+        "ShelfX",
+        "ShelfZ",
+        "ShelfH",
+        "ShelfW",
+        "ShelfD",
+        "ShelfBack",
+        "StepTog",
+        "StepX",
+        "StepZ",
+        "StepH",
+        "StepW",
+        "StepD",
+        "StepV",
+        "StepT",
+        "StepLeft",
+        "StepOnly",
+        "StepBack",
+        ]
+    return WallParameters
