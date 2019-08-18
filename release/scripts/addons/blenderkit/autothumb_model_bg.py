@@ -153,6 +153,9 @@ if __name__ == "__main__":
         img.filepath = ipath
         img.reload()
 
+        bpy.context.scene.render.resolution_x = int(data['thumbnail_resolution'])
+        bpy.context.scene.render.resolution_y = int(data['thumbnail_resolution'])
+
         bg_blender.progress('rendering thumbnail')
         render_thumbnails()
         fpath = BLENDERKIT_THUMBNAIL_PATH + '0001.jpg'

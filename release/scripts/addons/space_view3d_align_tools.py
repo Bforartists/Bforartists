@@ -141,7 +141,7 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
 
         me = obj.data
         co_list = []
-        # let's get all the points coodinates
+        # let's get all the points coordinates
         if space == "global":
             ok = False
             obj_mtx = obj.matrix_world
@@ -626,7 +626,7 @@ class OBJECT_OT_align_tools(Operator):
             name="Selection reference",
             description="Moved objects reference point"
             )
-    # Active Oject Option:
+    # Active Object Option:
     ref2: EnumProperty(
             items=(("3", "Max", "Align to the maximum point"),
                    ("1", "Center", "Align to the center point"),

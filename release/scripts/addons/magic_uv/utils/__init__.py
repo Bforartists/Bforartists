@@ -20,17 +20,17 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.1"
-__date__ = "19 May 2019"
+__version__ = "6.2"
+__date__ = "31 Jul 2019"
 
 if "bpy" in locals():
     import importlib
-    importlib.reload(addon_updator)
+    importlib.reload(addon_updater)
     importlib.reload(bl_class_registry)
     importlib.reload(compatibility)
     importlib.reload(property_class_registry)
 else:
-    from . import addon_updator
+    from . import addon_updater
     from . import bl_class_registry
     from . import compatibility
     from . import property_class_registry

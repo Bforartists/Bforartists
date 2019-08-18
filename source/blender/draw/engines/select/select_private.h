@@ -32,6 +32,7 @@ typedef struct SELECTID_StorageList {
 } SELECTID_StorageList;
 
 typedef struct SELECTID_PassList {
+  struct DRWPass *depth_only_pass;
   struct DRWPass *select_id_face_pass;
   struct DRWPass *select_id_edge_pass;
   struct DRWPass *select_id_vert_pass;
@@ -52,51 +53,21 @@ typedef struct SELECTID_Shaders {
 } SELECTID_Shaders;
 
 typedef struct SELECTID_PrivateData {
+  DRWShadingGroup *shgrp_depth_only;
   DRWShadingGroup *shgrp_face_unif;
   DRWShadingGroup *shgrp_face_flat;
   DRWShadingGroup *shgrp_edge;
   DRWShadingGroup *shgrp_vert;
 
+  DRWView *view_subregion;
   DRWView *view_faces;
   DRWView *view_edges;
   DRWView *view_verts;
 } SELECTID_PrivateData; /* Transient data */
 
-struct BaseOffset {
-  /* For convenience only. */
-  union {
-    uint offset;
-    uint face_start;
-  };
-  union {
-    uint face;
-    uint edge_start;
-  };
-  union {
-    uint edge;
-    uint vert_start;
-  };
-  uint vert;
-};
-
-struct SELECTID_Context {
-  struct GPUFrameBuffer *framebuffer_select_id;
-  struct GPUTexture *texture_u32;
-
-  struct BaseOffset *index_offsets;
-  uint objects_len;
-  uint last_object_drawn;
-  /** Total number of items `base_array_index_offsets[bases_len - 1].vert`. */
-  uint last_index_drawn;
-
-  short select_mode;
-};
-
-/* select_engine.c */
-struct SELECTID_Context *select_context_get(void);
-
 /* select_draw_utils.c */
-void draw_select_framebuffer_select_id_setup(struct SELECTID_Context *r_select_ctx);
+void select_id_context_clear(struct SELECTID_Context *select_ctx);
+void select_id_object_min_max(struct Object *obj, float r_min[3], float r_max[3]);
 short select_id_get_object_select_mode(Scene *scene, Object *ob);
 void select_id_draw_object(void *vedata,
                            View3D *v3d,

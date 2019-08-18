@@ -400,8 +400,8 @@ int main(int argc,
   /* background render uses this font too */
   BKE_vfont_builtin_register(datatoc_bfont_pfb, datatoc_bfont_pfb_size);
 
-  /* Initialize ffmpeg if built in, also needed for bg mode if videos are
-   * rendered via ffmpeg */
+  /* Initialize ffmpeg if built in, also needed for background-mode if videos are
+   * rendered via ffmpeg. */
   BKE_sound_init_once();
 
   init_def_material();
@@ -442,7 +442,7 @@ int main(int argc,
       "this is not intended for typical usage\n\n");
 #endif
 
-  CTX_py_init_set(C, 1);
+  CTX_py_init_set(C, true);
   WM_keyconfig_init(C);
 
 #ifdef WITH_FREESTYLE

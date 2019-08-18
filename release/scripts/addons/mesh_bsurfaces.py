@@ -79,7 +79,7 @@ class VIEW3D_PT_tools_SURFSK_mesh(Panel):
         if not scn.SURFSK_use_annotation:
             col.prop(scn, "SURFSK_object_with_strokes")
         col.separator()
-        col.operator("gpencil.surfsk_add_surface", text="Add Surface")
+        props = col.operator("gpencil.surfsk_add_surface", text="Add Surface")
         col.operator("gpencil.surfsk_edit_surface", text="Edit Surface")
         if not scn.SURFSK_use_annotation:
            col.operator("gpencil.surfsk_add_strokes", text="Add Strokes")
@@ -87,6 +87,7 @@ class VIEW3D_PT_tools_SURFSK_mesh(Panel):
         else:
            col.operator("gpencil.surfsk_add_annotation", text="Add Annotation")
         col.separator()
+        col.label(text="Initial settings:")
         col.prop(scn, "SURFSK_edges_U")
         col.prop(scn, "SURFSK_edges_V")
         col.prop(scn, "SURFSK_cyclic_cross")
@@ -146,43 +147,41 @@ def get_strokes_type(context):
         pass
         
     # Check if they are mesh
-    try:
-       main_object = bpy.context.scene.bsurfaces.SURFSK_object_with_retopology
-    except:
-        pass
+    main_object = bpy.context.scene.bsurfaces.SURFSK_object_with_retopology
+    total_vert_sel = len([v for v in main_object.data.vertices if v.select])
 
     # Check if they are curves, if there aren't grease pencil strokes
     if strokes_type == "":
-        if len(bpy.context.selected_objects) == 2:
-            for ob in bpy.context.selected_objects:
-                if ob != bpy.context.view_layer.objects.active and ob.type == "CURVE":
-                    strokes_type = "EXTERNAL_CURVE"
-                    strokes_num = len(ob.data.splines)
+        try:
+            ob = bpy.context.scene.bsurfaces.SURFSK_object_with_strokes
+            if ob.type == "CURVE":
+                strokes_type = "EXTERNAL_CURVE"
+                strokes_num = len(ob.data.splines)
+        
+                # Check if there is any non-bezier spline
+                for i in range(len(ob.data.splines)):
+                    if ob.data.splines[i].type != "BEZIER":
+                        strokes_type = "CURVE_WITH_NON_BEZIER_SPLINES"
+                        break
 
-                    # Check if there is any non-bezier spline
-                    for i in range(len(ob.data.splines)):
-                        if ob.data.splines[i].type != "BEZIER":
-                            strokes_type = "CURVE_WITH_NON_BEZIER_SPLINES"
-                            break
-
-                elif ob != bpy.context.view_layer.objects.active and ob.type != "CURVE":
-                    strokes_type = "EXTERNAL_NO_CURVE"
-        elif len(bpy.context.selected_objects) > 2:
-            strokes_type = "MORE_THAN_ONE_EXTERNAL"
+            else:
+                strokes_type = "EXTERNAL_NO_CURVE"
+        except:
+            pass
 
     # Check if there is a single stroke without any selection in the object
-    if strokes_num == 1 and main_object.data.total_vert_sel == 0:
+    if strokes_num == 1 and total_vert_sel == 0:
         if strokes_type == "EXTERNAL_CURVE":
             strokes_type = "SINGLE_CURVE_STROKE_NO_SELECTION"
         elif strokes_type == "GP_STROKES":
             strokes_type = "SINGLE_GP_STROKE_NO_SELECTION"
 
-    if strokes_num == 0 and main_object.data.total_vert_sel > 0:
+    if strokes_num == 0 and total_vert_sel > 0:
         strokes_type = "SELECTION_ALONE"
 
     if strokes_type == "":
         strokes_type = "NO_STROKES"
-    
+        
     return strokes_type
 
 
@@ -1727,12 +1726,12 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
                            self.main_object_selected_verts_count == 0:
 
                             ob_surface.data.vertices[i].co = final_ob_duplicate.data.vertices[i].co
-                            ob_surface.data.vertices[i].select_set(True)
+                            ob_surface.data.vertices[i].select = True
                             crosshatch_verts_to_merge.append(i)
 
                             # Make sure the vert in the main object is selected,
                             # in case it wasn't selected and the "join crosshatch" option is active
-                            self.main_object.data.vertices[main_object_related_vert_idx].select_set(True)
+                            self.main_object.data.vertices[main_object_related_vert_idx].select = True
 
         # Delete duplicated object
         bpy.ops.object.delete({"selected_objects": [final_ob_duplicate]})
@@ -2721,7 +2720,7 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
                     # Move the first vert to the center coordinates
                     ob_ctrl_pts.data.vertices[first_verts[i]].co = verts_center_co
                     # Select the last verts from Cyclic loops, for later deletion all at once
-                    v[last_verts[i]].select_set(True)
+                    v[last_verts[i]].select = True
                 else:
                     cyclic_loops_U.append(False)
             else:
@@ -3056,7 +3055,7 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
         # Select all the "unselected but participating" verts, from closed selection
         # or double selections with middle-vertex, for later join with remove doubles
         for v_idx in single_unselected_verts:
-            self.main_object.data.vertices[v_idx].select_set(True)
+            self.main_object.data.vertices[v_idx].select = True
 
         # Join the new mesh to the main object
         ob_surface.select_set(True)
@@ -3079,7 +3078,6 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
              bpy.ops.object.mode_set(mode='OBJECT')
         
         bsurfaces_props = bpy.context.scene.bsurfaces
-        
         self.main_object = bsurfaces_props.SURFSK_object_with_retopology
         self.main_object.select_set(True)
         bpy.context.view_layer.objects.active = self.main_object
@@ -3143,15 +3141,34 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
             # Delete main splines
             #bpy.ops.object.editmode_toggle('INVOKE_REGION_WIN')
             bpy.ops.object.mode_set(mode='OBJECT')
-            bpy.ops.object.delete({"selected_objects": [self.main_splines]})
+            if self.keep_strokes:
+                self.main_splines.name = "keep_strokes"
+                self.main_splines.data.bevel_depth = 0.001
+                if "keep_strokes_material" in bpy.data.materials :
+                    self.main_splines.data.materials.append(bpy.data.materials["keep_strokes_material"])
+                else:
+                    mat = bpy.data.materials.new("keep_strokes_material")
+                    mat.diffuse_color = (1, 0, 0, 0)
+                    mat.specular_color = (1, 0, 0)
+                    mat.specular_intensity = 0.0
+                    mat.roughness = 0.0
+                    self.main_splines.data.materials.append(mat)
+            else:
+                bpy.ops.object.delete({"selected_objects": [self.main_splines]})
             
             # Delete grease pencil strokes
-            if self.strokes_type == "GP_STROKES" and not self.stopping_errors and not self.keep_strokes:
-                bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers.active.clear()
+            if self.strokes_type == "GP_STROKES" and not self.stopping_errors:
+                try:
+                    bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers.active.clear()
+                except:
+                    pass
                 
             # Delete annotations
-            if self.strokes_type == "GP_ANNOTATION" and not self.stopping_errors and not self.keep_strokes:
-                bpy.data.grease_pencils[0].layers.active.clear()
+            if self.strokes_type == "GP_ANNOTATION" and not self.stopping_errors:
+                try:
+                    bpy.data.grease_pencils[0].layers.active.clear()
+                except:
+                    pass
 
             bsurfaces_props.SURFSK_edges_U = self.edges_U
             bsurfaces_props.SURFSK_edges_V = self.edges_V
@@ -3172,14 +3189,13 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
     def invoke(self, context, event):
         if bpy.ops.object.mode_set.poll():
              bpy.ops.object.mode_set(mode='OBJECT')
-        
+
         bsurfaces_props = bpy.context.scene.bsurfaces
         self.cyclic_cross = bsurfaces_props.SURFSK_cyclic_cross
         self.cyclic_follow = bsurfaces_props.SURFSK_cyclic_follow
         self.automatic_join = bsurfaces_props.SURFSK_automatic_join
         self.loops_on_strokes = bsurfaces_props.SURFSK_loops_on_strokes
         self.keep_strokes = bsurfaces_props.SURFSK_keep_strokes
-            
         self.main_object = bsurfaces_props.SURFSK_object_with_retopology
         try:
             self.main_object.select_set(True)
@@ -3188,15 +3204,16 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
             return{"CANCELLED"}
         bpy.context.view_layer.objects.active = self.main_object
 
-        self.main_object_selected_verts_count = int(self.main_object.data.total_vert_sel)
+        self.main_object_selected_verts_count = len([v for v in self.main_object.data.vertices if v.select])
 
         bpy.ops.wm.context_set_value(data_path='tool_settings.mesh_select_mode',
                                      value='True, False, False')
 
-        if self.loops_on_strokes:
-            self.edges_V = 1
-        else:
-            self.edges_V = bsurfaces_props.SURFSK_edges_V
+        #if self.loops_on_strokes:
+        #    self.edges_V = 1
+        #else:
+        #    self.edges_V = bsurfaces_props.SURFSK_edges_V
+        self.edges_V = bsurfaces_props.SURFSK_edges_V
 
         self.is_fill_faces = False
         self.stopping_errors = False
@@ -3239,9 +3256,7 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
                 self.using_external_curves = False
                 
             elif self.strokes_type == "EXTERNAL_CURVE":
-                for ob in bpy.context.selected_objects:
-                    if ob != bpy.context.view_layer.objects.active:
-                        self.original_curve = ob
+                self.original_curve = bsurfaces_props.SURFSK_object_with_strokes
                 self.using_external_curves = True
 
                 bpy.ops.object.editmode_toggle('INVOKE_REGION_WIN')
@@ -3391,18 +3406,24 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
 
             # Delete temporary strokes curve object
             bpy.ops.object.delete({"selected_objects": [self.temporary_curve]})
-
+            
             # If "Keep strokes" option is not active, delete original strokes curve object
-            if (not self.stopping_errors and not self.keep_strokes) or self.is_crosshatch:
+            if not self.stopping_errors or self.is_crosshatch:
                 bpy.ops.object.delete({"selected_objects": [self.original_curve]})
 
             # Delete grease pencil strokes
-            if self.strokes_type == "GP_STROKES" and not self.stopping_errors and not self.keep_strokes:
-                bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers.active.clear()
+            if self.strokes_type == "GP_STROKES" and not self.stopping_errors:
+                try:
+                    bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers.active.clear()
+                except:
+                    pass
                 
             # Delete grease pencil strokes
-            if self.strokes_type == "GP_ANNOTATION" and not self.stopping_errors and not self.keep_strokes:
-                bpy.data.grease_pencils[0].layers.active.clear()
+            if self.strokes_type == "GP_ANNOTATION" and not self.stopping_errors:
+                try:
+                    bpy.data.grease_pencils[0].layers.active.clear()
+                except:
+                    pass
             
             bpy.ops.object.select_all('INVOKE_REGION_WIN', action='DESELECT')
             self.main_object.select_set(True)
@@ -3457,8 +3478,8 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
 class GPENCIL_OT_SURFSK_init(Operator):
     bl_idname = "gpencil.surfsk_init"
     bl_label = "Bsurfaces initialize"
-    bl_description = "Bsurfaces initialiaze"
-    
+    bl_description = "Bsurfaces initialize"
+
     active_object: PointerProperty(type=bpy.types.Object)
 
     def execute(self, context):
@@ -3614,7 +3635,10 @@ class GPENCIL_OT_SURFSK_edit_strokes(Operator):
             ob_gp_strokes = bpy.context.object
 
             # Delete grease pencil strokes
-            bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers.active.clear()
+            try:
+                bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers.active.clear()
+            except:
+                pass
 
             # Clean up curves
             bpy.ops.object.select_all('INVOKE_REGION_WIN', action='DESELECT')
@@ -3870,7 +3894,11 @@ class CURVE_OT_SURFSK_reorder_splines(Operator):
         bpy.ops.object.editmode_toggle('INVOKE_REGION_WIN')
         bpy.ops.curve.select_all('INVOKE_REGION_WIN', action='DESELECT')
 
-        bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers.active.clear()
+        try:
+            bpy.context.scene.bsurfaces.SURFSK_object_with_strokes.data.layers.active.clear()
+        except:
+            pass
+        
 
         return {"FINISHED"}
 
@@ -4057,9 +4085,9 @@ def update_panel(self, context):
         pass
         
 def conver_gpencil_to_curve(self, context, pencil, type):
-    newCurve = bpy.data.curves.new('gpencil_curve', type='CURVE')  # curvedatablock
+    newCurve = bpy.data.curves.new('gpencil_curve', type='CURVE')
     newCurve.dimensions = '3D'
-    CurveObject = object_utils.object_data_add(context, newCurve)  # place in active scene
+    CurveObject = object_utils.object_data_add(context, newCurve)
     
     if type == 'GPensil':
         strokes = pencil.data.layers.active.active_frame.strokes
@@ -4083,7 +4111,7 @@ def conver_gpencil_to_curve(self, context, pencil, type):
         for point in data_list:
             flat_list.extend(point)
 
-        spline = newCurve.splines.new(type='BEZIER')          # spline
+        spline = newCurve.splines.new(type='BEZIER')
         spline.bezier_points.add(points_to_add)
         spline.bezier_points.foreach_set("co", flat_list)
         
@@ -4101,7 +4129,7 @@ class BsurfPreferences(AddonPreferences):
     category: StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
-            default="Edit",
+            default="Tool",
             update=update_panel
             )
 
@@ -4112,7 +4140,6 @@ class BsurfPreferences(AddonPreferences):
         col = row.column()
         col.label(text="Tab Category:")
         col.prop(self, "category", text="")
-
 
 # Properties
 class BsurfacesProps(PropertyGroup):
@@ -4168,11 +4195,11 @@ class BsurfacesProps(PropertyGroup):
                 max=100
                 )
     SURFSK_object_with_retopology: PointerProperty(
-                name="Retopology",
+                name="Mesh of BSurface",
                 type=bpy.types.Object
                 )
     SURFSK_object_with_strokes: PointerProperty(
-                name="Strokes",
+                name="GPensil or Curve object",
                 type=bpy.types.Object
                 )
 

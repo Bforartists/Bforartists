@@ -815,7 +815,7 @@ def _EMatch(er):
         return (er, er[1][1])
     i = random.randint(0, len(er) - 1)
     eri = (wi, _, tl, tr) = er[i]
-    # case a: include eri.  exlude other edges that touch tl or tr
+    # case a: include eri. exclude other edges that touch tl or tr
     a = _CopyExcluding(er, tl, tr)
     a.append(eri)
     (amatch, wa) = _DCMatch(a)

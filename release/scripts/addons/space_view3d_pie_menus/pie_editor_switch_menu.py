@@ -19,7 +19,7 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "Hotkey: 'Ctrl Alt S ",
+    "name": "Hotkey: 'Ctrl Alt S' ",
     "description": "Switch Editor Type Menu",
     "author": "saidenka, meta-androcto",
     "version": (0, 1, 0),
@@ -39,28 +39,7 @@ from bpy.props import (
         StringProperty,
         )
 
-
-class PIE_MT_AreaPieMenu(Menu):
-    bl_idname = "TOPBAR_MT_window_pie"
-    bl_label = "Pie Menu"
-    bl_description = "Window Pie Menus"
-
-    def draw(self, context):
-        self.layout.operator(PIE_OT_AreaTypePieOperator.bl_idname, icon="PLUGIN")
-
-
-class PIE_OT_AreaTypePieOperator(Operator):
-    bl_idname = "wm.area_type_pie_operator"
-    bl_label = "Editor Type"
-    bl_description = "This is pie menu of editor type change"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        bpy.ops.wm.call_menu_pie(name=PIE_MT_AreaPieEditor.bl_idname)
-
-        return {'FINISHED'}
-
-
+# Pie Menu
 class PIE_MT_AreaPieEditor(Menu):
     bl_idname = "PIE_MT_editor"
     bl_label = "Editor Switch"
@@ -69,36 +48,65 @@ class PIE_MT_AreaPieEditor(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         # 4 - LEFT
-        pie.operator(PIE_OT_SetAreaType.bl_idname, text="Text Editor", icon="TEXT").types = "TEXT_EDITOR"
+        pie.operator(PIE_OT_SetAreaType.bl_idname,
+                             text="Video Sequence Editor", icon="SEQUENCE").types = "SEQUENCE_EDITOR"
         # 6 - RIGHT
-        pie.menu(PIE_MT_AreaTypePieAnim.bl_idname, text="Animation Editors", icon="ACTION")
+        pie.menu(PIE_MT_AreaTypePieNode.bl_idname, text="Node Editors", icon="NODETREE")
         # 2 - BOTTOM
-        pie.operator(PIE_OT_SetAreaType.bl_idname, text="Property", icon="PROPERTIES").types = "PROPERTIES"
+        pie.menu(PIE_MT_AreaTypePieOther.bl_idname, text="Script/Data Editors", icon="PREFERENCES")
         # 8 - TOP
-        pie.operator(PIE_OT_SetAreaType.bl_idname, text="3D View", icon="MESH_CUBE").types = "VIEW_3D"
+        pie.operator(PIE_OT_SetAreaType.bl_idname, text="3D View", icon="VIEW3D").types = "VIEW_3D"
         # 7 - TOP - LEFT
-        pie.operator(PIE_OT_SetAreaType.bl_idname, text="UV/Image Editor", icon="UV").types = "IMAGE_EDITOR"
+        pie.operator(PIE_OT_SetAreaType.bl_idname, text="Image Editor", icon="IMAGE").types = "VIEW"
         # 9 - TOP - RIGHT
-        pie.operator(PIE_OT_SetAreaType.bl_idname, text="Node Editor", icon="NODETREE").types = "NODE_EDITOR"
+        pie.operator(PIE_OT_SetAreaType.bl_idname, text="UV Editor", icon="UV").types = "UV"
         # 1 - BOTTOM - LEFT
-        pie.operator(PIE_OT_SetAreaType.bl_idname, text="Outliner", icon="OUTLINER").types = "OUTLINER"
+        pie.operator(PIE_OT_SetAreaType.bl_idname,
+                             text="Movie Clip Editor", icon="TRACKER").types = "CLIP_EDITOR"
         # 3 - BOTTOM - RIGHT
-        pie.menu(PIE_MT_AreaTypePieOther.bl_idname, text="More Editors", icon="QUESTION")
+        pie.menu(PIE_MT_AreaTypePieAnim.bl_idname, text="Animation Editors", icon="ACTION")
 
-
+# Sub Menu Script/Data Editors
 class PIE_MT_AreaTypePieOther(Menu):
     bl_idname = "TOPBAR_MT_window_pie_area_type_other"
     bl_label = "Editor Type (other)"
     bl_description = "Is pie menu change editor type (other)"
 
     def draw(self, context):
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Outliner", icon="OUTLINER").types = "OUTLINER"
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Properties", icon="PROPERTIES").types = "PROPERTIES"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="File Browser", icon="FILEBROWSER").types = "FILE_BROWSER"
-        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Python Console", icon="CONSOLE").types = "CONSOLE"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Preferences",
                              icon="PREFERENCES").types = "PREFERENCES"
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Text Editor", icon="TEXT").types = "TEXT_EDITOR" 
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Python Console", icon="CONSOLE").types = "CONSOLE"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Info", icon="INFO").types = "INFO"
 
+# Sub Menu Node editors
+class PIE_MT_AreaTypePieNode(Menu):
+    bl_idname = "TOPBAR_MT_window_pie_area_type_node"
+    bl_label = "Editor Type (Node)"
+    bl_description = "Menu to change node editor types"
 
+    def draw(self, context):
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Shader", icon="NODE_MATERIAL").types = "ShaderNodeTree"
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Compositor", icon="NODE_COMPOSITING").types = "CompositorNodeTree"
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Texture", icon="NODE_TEXTURE").types = "TextureNodeTree"
+
+# Sub Menu animation Editors
+class PIE_MT_AreaTypePieAnim(Menu):
+    bl_idname = "TOPBAR_MT_window_pie_area_type_anim"
+    bl_label = "Editor Type (Animation)"
+    bl_description = "Menu for changing editor type (animation related)"
+
+    def draw(self, context):
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="DopeSheet", icon="ACTION").types = "DOPESHEET"
+        self.layout.operator(PIE_OT_Timeline.bl_idname, text="Timeline", icon="TIME")
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Graph Editor", icon="GRAPH").types = "FCURVES"
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Drivers", icon="DRIVER").types = "DRIVERS"
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="NLA Editor", icon="NLA").types = "NLA_EDITOR"
+
+# Operators
 class PIE_OT_SetAreaType(Operator):
     bl_idname = "wm.set_area_type"
     bl_label = "Change Editor Type"
@@ -108,33 +116,26 @@ class PIE_OT_SetAreaType(Operator):
     types: StringProperty(name="Area Type")
 
     def execute(self, context):
-        context.area.type = self.types
+        context.area.ui_type = self.types
         return {'FINISHED'}
 
+class PIE_OT_Timeline(Operator):
+    bl_idname = "wm.set_timeline"
+    bl_label = "Change Editor Type"
+    bl_description = "Change Editor Type"
+    bl_options = {'REGISTER'}
 
-class PIE_MT_AreaTypePieAnim(Menu):
-    bl_idname = "TOPBAR_MT_window_pie_area_type_anim"
-    bl_label = "Editor Type (Animation)"
-    bl_description = "Menu for changing editor type (animation related)"
-
-    def draw(self, context):
-        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="NLA Editor", icon="NLA").types = "NLA_EDITOR"
-        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="DopeSheet", icon="ACTION").types = "DOPESHEET_EDITOR"
-        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Graph Editor", icon="GRAPH").types = "GRAPH_EDITOR"
-#        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Timeline", icon="TIME").types = "TIMELINE"
-        self.layout.operator(PIE_OT_SetAreaType.bl_idname,
-                             text="Video Sequence Editor", icon="SEQUENCE").types = "SEQUENCE_EDITOR"
-        self.layout.operator(PIE_OT_SetAreaType.bl_idname,
-                             text="Video Clip Editor", icon="RENDER_ANIMATION").types = "CLIP_EDITOR"
-
+    def execute(self, context):
+        bpy.context.area.ui_type = 'TIMELINE'
+        return {'FINISHED'}
 
 classes = (
-    PIE_MT_AreaPieMenu,
-    PIE_OT_AreaTypePieOperator,
     PIE_MT_AreaPieEditor,
     PIE_MT_AreaTypePieOther,
     PIE_OT_SetAreaType,
     PIE_MT_AreaTypePieAnim,
+    PIE_OT_Timeline,
+    PIE_MT_AreaTypePieNode
     )
 
 addon_keymaps = []

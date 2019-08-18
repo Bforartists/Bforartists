@@ -22,6 +22,7 @@
 
 #include "draw_manager.h"
 
+#include "BLI_math.h"
 #include "BLI_math_bits.h"
 #include "BLI_memblock.h"
 
@@ -488,6 +489,26 @@ bool DRW_culling_plane_test(const DRWView *view, const float plane[4])
   return draw_culling_plane_test(&view->frustum_corners, plane);
 }
 
+/* Return True if the given box intersect the current view frustum.
+ * This function will have to be replaced when world space bb per objects is implemented. */
+bool DRW_culling_min_max_test(const DRWView *view, float obmat[4][4], float min[3], float max[3])
+{
+  view = view ? view : DST.view_default;
+  float tobmat[4][4];
+  transpose_m4_m4(tobmat, obmat);
+  for (int i = 6; i--;) {
+    float frustum_plane_local[4], bb_near[3], bb_far[3];
+    mul_v4_m4v4(frustum_plane_local, tobmat, view->frustum_planes[i]);
+    aabb_get_near_far_from_plane(frustum_plane_local, min, max, bb_near, bb_far);
+
+    if (plane_point_side_v3(frustum_plane_local, bb_far) < 0.0f) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 void DRW_culling_frustum_corners_get(const DRWView *view, BoundBox *corners)
 {
   view = view ? view : DST.view_default;
@@ -601,12 +622,12 @@ BLI_INLINE void draw_geometry_execute(DRWShadingGroup *shgroup,
     GPU_batch_bind(geom);
   }
 
-  /* XXX hacking gawain. we don't want to call glUseProgram! (huge performance loss) */
+  /* XXX hacking #GPUBatch. we don't want to call glUseProgram! (huge performance loss) */
   geom->program_in_use = true;
 
   GPU_batch_draw_advanced(geom, vert_first, vert_count, inst_first, inst_count);
 
-  geom->program_in_use = false; /* XXX hacking gawain */
+  geom->program_in_use = false; /* XXX hacking #GPUBatch */
 }
 
 enum {

@@ -216,7 +216,7 @@ class Unfolder:
 
     def save(self, properties):
         """Export the document"""
-        # Note about scale: input is direcly in blender length
+        # Note about scale: input is directly in blender length
         # Mesh.scale_islands multiplies everything by a user-defined ratio
         # exporters (SVG or PDF) multiply everything by 1000 (output in millimeters)
         Exporter = SVG if properties.file_format == 'SVG' else PDF
@@ -438,7 +438,7 @@ class Mesh:
     def generate_stickers(self, default_width, do_create_numbers=True):
         """Add sticker faces where they are needed."""
         def uvedge_priority(uvedge):
-            """Retuns whether it is a good idea to stick something on this edge's face"""
+            """Returns whether it is a good idea to stick something on this edge's face"""
             # TODO: it should take into account overlaps with faces and with other stickers
             face = uvedge.uvface.face
             return face.calc_area() / face.calc_perimeter()

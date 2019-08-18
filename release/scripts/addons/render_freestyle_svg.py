@@ -183,7 +183,7 @@ class SVGExporterLinesetPanel(bpy.types.Panel):
     bl_space_type = 'PROPERTIES'
     bl_label = "Freestyle Line Style SVG Export"
     bl_region_type = 'WINDOW'
-    bl_context = "render_layer"
+    bl_context = "view_layer"
 
     def draw(self, context):
         layout = self.layout

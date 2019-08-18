@@ -233,20 +233,20 @@ def Mirror_Verts_Faces(VERTS, FACES, AXIS, FLIP_POINT=0):
 
 # Returns a list of faces that
 # make up an array of 4 point polygon.
-def Build_Face_List_Quads(OFFSET, COLUM, ROW, FLIP=0):
+def Build_Face_List_Quads(OFFSET, COLUMN, ROW, FLIP=0):
     Ret = []
     RowStart = 0
     for j in range(ROW):
-        for i in range(COLUM):
+        for i in range(COLUMN):
             Res1 = RowStart + i
-            Res2 = RowStart + i + (COLUM + 1)
-            Res3 = RowStart + i + (COLUM + 1) + 1
+            Res2 = RowStart + i + (COLUMN + 1)
+            Res3 = RowStart + i + (COLUMN + 1) + 1
             Res4 = RowStart + i + 1
             if FLIP:
                 Ret.append([OFFSET + Res1, OFFSET + Res2, OFFSET + Res3, OFFSET + Res4])
             else:
                 Ret.append([OFFSET + Res4, OFFSET + Res3, OFFSET + Res2, OFFSET + Res1])
-        RowStart += COLUM + 1
+        RowStart += COLUMN + 1
     return Ret
 
 

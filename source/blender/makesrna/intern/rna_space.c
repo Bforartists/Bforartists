@@ -32,6 +32,8 @@
 #include "BKE_studiolight.h"
 #include "BKE_sequencer.h"
 
+#include "ED_text.h"
+
 #include "BLI_math.h"
 
 #include "DNA_action_types.h"
@@ -1509,6 +1511,11 @@ static void rna_SpaceTextEditor_text_set(PointerRNA *ptr,
   WM_main_add_notifier(NC_TEXT | NA_SELECTED, st->text);
 }
 
+static bool rna_SpaceTextEditor_text_is_syntax_highlight_supported(struct SpaceText *space)
+{
+  return ED_text_is_syntax_highlight_supported(space->text);
+}
+
 static void rna_SpaceTextEditor_updateEdited(Main *UNUSED(bmain),
                                              Scene *UNUSED(scene),
                                              PointerRNA *ptr)
@@ -2787,6 +2794,7 @@ static void rna_def_space_outliner(BlenderRNA *brna)
   static const EnumPropertyItem filter_state_items[] = {
       {SO_FILTER_OB_ALL, "ALL", 0, "All", "Show all objects in the view layer"},
       {SO_FILTER_OB_VISIBLE, "VISIBLE", 0, "Visible", "Show visible objects"},
+      {SO_FILTER_OB_INVISIBLE, "INVISIBLE", 0, "Invisible", "Show invisible objects"},
       {SO_FILTER_OB_SELECTED, "SELECTED", 0, "Selected", "Show selected objects"},
       {SO_FILTER_OB_ACTIVE, "ACTIVE", 0, "Active", "Show only the active object"},
       {0, NULL, 0, NULL, NULL},
@@ -2823,6 +2831,12 @@ static void rna_def_space_outliner(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_sort_alpha", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", SO_SKIP_SORT_ALPHA);
   RNA_def_property_ui_text(prop, "Sort Alphabetically", "");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, NULL);
+
+  prop = RNA_def_property(srna, "use_sync_select", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "flag", SO_SYNC_SELECT);
+  RNA_def_property_ui_text(
+      prop, "Sync Outliner Selection", "Sync outliner selection with other editors");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, NULL);
 
   /* Granular restriction column option. */
@@ -4556,6 +4570,7 @@ static void rna_def_space_text(BlenderRNA *brna)
 {
   StructRNA *srna;
   PropertyRNA *prop;
+  FunctionRNA *func;
 
   srna = RNA_def_struct(brna, "SpaceTextEditor", "Space");
   RNA_def_struct_sdna(srna, "SpaceText");
@@ -4584,6 +4599,15 @@ static void rna_def_space_text(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Line Numbers", "Show line numbers next to the text");
   RNA_def_property_ui_icon(prop, ICON_LINENUMBERS_ON, 0);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TEXT, NULL);
+
+  func = RNA_def_function(srna,
+                          "is_syntax_highlight_supported",
+                          "rna_SpaceTextEditor_text_is_syntax_highlight_supported");
+  RNA_def_function_return(func,
+                          RNA_def_boolean(func, "is_syntax_highlight_supported", false, "", ""));
+  RNA_def_function_ui_description(func,
+                                  "Returns True if the editor supports syntax highlighting "
+                                  "for the current text datablock");
 
   prop = RNA_def_property(srna, "show_syntax_highlight", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "showsyntax", 0);
