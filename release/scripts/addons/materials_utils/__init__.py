@@ -1,3 +1,19 @@
+# Material Utilities v2.2.0-Beta
+#
+#  Usage: Shift + Q in the 3D viewport
+#
+# Ported from 2.6/2.7 to 2.8x by
+#    Christopher Hindefjord (chrishinde) 2019
+#
+# ## Port based on 2010 version by MichaelW with some code added from latest 2.7x version
+# ## Same code may be attributed to one of the following awesome people!
+#  (c) 2016 meta-androcto, parts based on work by Saidenka, lijenstina
+#  Materials Utils: by MichaleW, lijenstina,
+#       (some code thanks to: CoDEmanX, SynaGl0w, ideasman42)
+#  Link to base names: Sybren, Texture renamer: Yadoob
+# ###
+#
+#
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
@@ -15,22 +31,15 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
- 
-#  Based on 2010 version by MichaelW
-#  (c) 2016 meta-androcto, parts based on work by Saidenka, lijenstina
-#  Materials Utils: by MichaleW, meta-androcto, lijenstina,
-#  (some code thanks to: CoDEmanX, SynaGl0w, ideasman42)
-#  Link to base names: Sybren, Texture renamer: Yadoob
-#  Ported from 2.6/2.7 to 2.8x by Christopher Hindefjord (chrishinde) 2019
 
 bl_info = {
-    "name": "Material Utils",
+    "name": "Material Utilities",
     "author": "MichaleW, ChrisHinde",
-    "version": (1, 0, 6),
+    "version": (2, 2, 0),
     "blender": (2, 80, 0),
     "location": "View3D > Shift + Q key",
     "description": "Menu of material tools (assign, select..) in the 3D View",
-    "warning": "",
+    "warning": "Beta",
     "wiki_url": "https://github.com/ChrisHinde/MaterialUtilities",
     "category": "Material"
 }
@@ -78,13 +87,34 @@ This script has several functions and operators, grouped for convenience:
 
 """
 
+if "bpy" in locals():
+    import importlib
+    if "enum_values" in locals():
+        importlib.reload(enum_values)
+    if "functions" in locals():
+        importlib.reload(functions)
+    if "operators" in locals():
+        importlib.reload(operators)
+    if "menues" in locals():
+        importlib.reload(menus)
+    if "preferences" in locals():
+        importlib.reload(preferences)
+else:
+    from .enum_values import *
+    from .functions import *
+    from .operators import *
+    from .menus import *
+    from .preferences import *
 
 import bpy
+from bpy.props import (
+    PointerProperty,
+    )
+from bpy.types import (
+    AddonPreferences,
+    PropertyGroup,
+    )
 
-from .enum_values import *
-from .functions import *
-from .operators import *
-from .menus import *
 
 # All classes used by Material Utilities, that need to be registred
 classes = (
@@ -102,6 +132,8 @@ classes = (
     VIEW3D_OT_materialutilities_change_material_link,
 
     MATERIAL_OT_materialutilities_merge_base_names,
+    MATERIAL_OT_materialutilities_join_objects,
+    MATERIAL_OT_materialutilities_auto_smooth_angle,
 
     MATERIAL_OT_materialutilities_material_slot_move,
 
@@ -112,12 +144,13 @@ classes = (
     VIEW3D_MT_materialutilities_specials,
 
     VIEW3D_MT_materialutilities_main,
+
+    VIEW3D_MT_materialutilities_preferences
 )
 
 
 # This allows you to right click on a button and link to the manual
 def materialutilities_manual_map():
-    print("ManMap")
     url_manual_prefix = "https://github.com/ChrisHinde/MaterialUtilities"
     url_manual_map = []
     #url_manual_mapping = ()
@@ -156,7 +189,6 @@ def register():
 
 def unregister():
     """Unregister the classes of Material Utilities together with the default shortcut for the menu"""
-    mu_classes_unregister()
 
     bpy.utils.unregister_manual_map(materialutilities_manual_map)
 
@@ -174,6 +206,7 @@ def unregister():
                     km.keymap_items.remove(kmi)
                     break
 
+    mu_classes_unregister()
 
 if __name__ == "__main__":
     register()

@@ -1,11 +1,19 @@
 import bpy
 
 from bpy.types import Operator
-from bpy.props import StringProperty, BoolProperty, EnumProperty
+from bpy.props import (
+    StringProperty,
+    BoolProperty,
+    EnumProperty,
+    IntProperty,
+    FloatProperty
+    )
 
 
 from .enum_values import *
 from .functions import *
+
+from math import radians
 
 # -----------------------------------------------------------------------------
 # operator classes
@@ -23,15 +31,49 @@ class VIEW3D_OT_materialutilities_assign_material_edit(bpy.types.Operator):
             default = "",
             maxlen = 63
             )
+    new_material: BoolProperty(
+            name = '',
+            description = 'Add a new material, enter the name in the box',
+            default = False
+            )
+    show_dialog: BoolProperty(
+            name = 'Show Dialog',
+            default = False
+            )
 
     @classmethod
     def poll(cls, context):
         return context.active_object is not None
 
+    def invoke(self, context, event):
+        if self.show_dialog:
+            return context.window_manager.invoke_props_dialog(self)
+        else:
+            return self.execute(context)
+
+    def draw(self, context):
+        layout = self.layout
+
+        col = layout.column()
+        row = col.split(factor = 0.9, align = True)
+
+        if self.new_material:
+            row.prop(self, "material_name")
+        else:
+            row.prop_search(self, "material_name", bpy.data, "materials")
+
+        row.prop(self, "new_material", expand = True, icon = 'ADD')
+
     def execute(self, context):
         material_name = self.material_name
-        return mu_assign_material(self, material_name, 'APPEND_MATERIAL')
 
+        if self.new_material:
+            material_name = mu_new_material_name(material_name)
+        elif material_name == "":
+            self.report({'WARNING'}, "No Material Name given!")
+            return {'CANCELLED'}
+
+        return mu_assign_material(self, material_name, 'APPEND_MATERIAL')
 
 
 class VIEW3D_OT_materialutilities_assign_material_object(bpy.types.Operator):
@@ -45,7 +87,7 @@ class VIEW3D_OT_materialutilities_assign_material_object(bpy.types.Operator):
     material_name: StringProperty(
             name = 'Material Name',
             description = 'Name of Material to assign to current selection',
-            default = "Unnamed Material",
+            default = "",
             maxlen = 63
             )
     override_type: EnumProperty(
@@ -53,23 +95,54 @@ class VIEW3D_OT_materialutilities_assign_material_object(bpy.types.Operator):
             description = '',
             items = mu_override_type_enums
             )
+    new_material: BoolProperty(
+            name = '',
+            description = 'Add a new material, enter the name in the box',
+            default = False
+            )
+    show_dialog: BoolProperty(
+            name = 'Show Dialog',
+            default = False
+            )
 
     @classmethod
     def poll(cls, context):
         return len(context.selected_editable_objects) > 0
 
+    def invoke(self, context, event):
+        if self.show_dialog:
+            return context.window_manager.invoke_props_dialog(self)
+        else:
+            return self.execute(context)
+
     def draw(self, context):
         layout = self.layout
-        layout.prop_search(self, "material_name", bpy.data, "materials")
+
+        col = layout.column()
+        row = col.split(factor=0.9, align = True)
+
+        if self.new_material:
+            row.prop(self, "material_name")
+        else:
+            row.prop_search(self, "material_name", bpy.data, "materials")
+
+        row.prop(self, "new_material", expand = True, icon = 'ADD')
 
         layout.prop(self, "override_type")
+
 
     def execute(self, context):
         material_name = self.material_name
         override_type = self.override_type
+
+        if self.new_material:
+            material_name = mu_new_material_name(material_name)
+        elif material_name == "":
+            self.report({'WARNING'}, "No Material Name given!")
+            return {'CANCELLED'}
+
         result = mu_assign_material(self, material_name, override_type)
         return result
-
 
 class VIEW3D_OT_materialutilities_select_by_material_name(bpy.types.Operator):
     """Select geometry that has the chosen material assigned to it
@@ -88,10 +161,20 @@ class VIEW3D_OT_materialutilities_select_by_material_name(bpy.types.Operator):
             description = 'Name of Material to find and Select',
             maxlen = 63
             )
+    show_dialog: BoolProperty(
+            name = 'Show Dialog',
+            default = False
+    )
 
     @classmethod
     def poll(cls, context):
         return len(context.visible_objects) > 0
+
+    def invoke(self, context, event):
+        if self.show_dialog:
+            return context.window_manager.invoke_props_dialog(self)
+        else:
+            return self.execute(context)
 
     def draw(self, context):
         layout = self.layout
@@ -127,12 +210,32 @@ class VIEW3D_OT_materialutilities_clean_material_slots(bpy.types.Operator):
     bl_label = "Clean Material Slots (Material Utilities)"
     bl_options = {'REGISTER', 'UNDO'}
 
+    # affect: EnumProperty(
+    #         name = "Affect",
+    #         description = "Which objects material slots should be cleaned",
+    #         items = mu_clean_slots_enums,
+    #         default = 'ACTIVE'
+    #         )
+
+    only_active: BoolProperty(
+            name = 'Only active object',
+            description = 'Only remove the material slots for the active object ' +
+                            '(otherwise do it for every selected object)',
+            default = True
+            )
+
     @classmethod
     def poll(cls, context):
         return len(context.selected_editable_objects) > 0
 
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "only_active", icon = "PIVOT_ACTIVE")
+
     def execute(self, context):
-        return mu_cleanmatslots(self)
+        affect = "ACTIVE" if self.only_active else "SELECTED"
+
+        return mu_cleanmatslots(self, affect)
 
 
 class VIEW3D_OT_materialutilities_remove_material_slot(bpy.types.Operator):
@@ -146,7 +249,8 @@ class VIEW3D_OT_materialutilities_remove_material_slot(bpy.types.Operator):
     only_active: BoolProperty(
             name = 'Only active object',
             description = 'Only remove the active material slot for the active object ' +
-                            '(otherwise do it for every selected object)'
+                            '(otherwise do it for every selected object)',
+            default = True
             )
 
     @classmethod
@@ -171,7 +275,8 @@ class VIEW3D_OT_materialutilities_remove_all_material_slots(bpy.types.Operator):
     only_active: BoolProperty(
             name = 'Only active object',
             description = 'Only remove the material slots for the active object ' +
-                            '(otherwise do it for every selected object)'
+                            '(otherwise do it for every selected object)',
+            default = True
             )
 
     @classmethod
@@ -243,10 +348,10 @@ class VIEW3D_OT_materialutilities_fake_user_set(bpy.types.Operator):
             default = 'TOGGLE'
             )
 
-    materials: EnumProperty(
-            name = "Materials",
+    affect: EnumProperty(
+            name = "Affect",
             description = "Which materials of objects to affect",
-            items = mu_fake_user_materials_enums,
+            items = mu_fake_user_affect_enums,
             default = 'UNUSED'
             )
 
@@ -259,13 +364,13 @@ class VIEW3D_OT_materialutilities_fake_user_set(bpy.types.Operator):
         layout.prop(self, "fake_user", expand = True)
         layout.separator()
 
-        layout.prop(self, "materials")
+        layout.prop(self, "affect")
 
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
-        return mu_set_fake_user(self, self.fake_user, self.materials)
+        return mu_set_fake_user(self, self.fake_user, self.affect)
 
 
 class VIEW3D_OT_materialutilities_change_material_link(bpy.types.Operator):
@@ -290,7 +395,7 @@ class VIEW3D_OT_materialutilities_change_material_link(bpy.types.Operator):
             )
 
     affect: EnumProperty(
-            name = "Materials",
+            name = "Affect",
             description = "Which materials of objects to affect",
             items = mu_link_affect_enums,
             default = 'SELECTED'
@@ -428,7 +533,7 @@ class MATERIAL_OT_materialutilities_merge_base_names(bpy.types.Operator):
 
     @classmethod
     def poll(self, context):
-        return len(context.selected_editable_objects) > 0
+        return (context.mode == 'OBJECT') and (len(context.visible_objects) > 0)
 
     def draw(self, context):
         layout = self.layout
@@ -492,7 +597,7 @@ class MATERIAL_OT_materialutilities_material_slot_move(bpy.types.Operator):
 
     @classmethod
     def poll(self, context):
-        # would prefer to access sely.movement here, but can'-'t..
+        # would prefer to access self.movement here, but can't..
         obj = context.active_object
         if not obj:
             return False
@@ -523,3 +628,115 @@ class MATERIAL_OT_materialutilities_material_slot_move(bpy.types.Operator):
             self.report({'INFO'}, active_material.name + ' moved to ' + self.movement.lower())
 
         return {'FINISHED'}
+
+
+
+class MATERIAL_OT_materialutilities_join_objects(bpy.types.Operator):
+    """Join objects that have the same (selected) material(s)"""
+
+    bl_idname = "material.materialutilities_join_objects"
+    bl_label = "Join by material (Material Utilities)"
+    bl_description = "Join objects that share the same material"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    material_name: StringProperty(
+                            name = "Material",
+                            default = "",
+                            description = 'Material to use to join objects'
+                            )
+    is_auto: BoolProperty(
+                            name = "Auto Join",
+                            description = "Join objects for all materials"
+                            )
+
+    is_not_undo = True
+    material_error = []          # collect mat for warning messages
+
+
+    @classmethod
+    def poll(self, context):
+        # This operator only works in Object mode
+        return (context.mode == 'OBJECT') and (len(context.visible_objects) > 0)
+
+    def draw(self, context):
+        layout = self.layout
+
+        box_1 = layout.box()
+        box_1.prop_search(self, "material_name", bpy.data, "materials")
+        box_1.enabled = not self.is_auto
+        layout.separator()
+
+        layout.prop(self, "is_auto", text = "Auto Join", icon = "SYNTAX_ON")
+
+    def invoke(self, context, event):
+        self.is_not_undo = True
+        return context.window_manager.invoke_props_dialog(self)
+
+    def execute(self, context):
+        # Reset Material errors, otherwise we risk reporting errors erroneously..
+        self.material_error = []
+        materials = []
+
+        if not self.is_auto:
+            if self.material_name == "":
+                self.report({'WARNING'}, "No Material Name given!")
+
+                self.is_not_undo = False
+                return {'CANCELLED'}
+            materials = [self.material_name]
+        else:
+            materials = bpy.data.materials.keys()
+
+        result = mu_join_objects(self, materials)
+        self.is_not_undo = False
+
+        return result
+
+
+class MATERIAL_OT_materialutilities_auto_smooth_angle(bpy.types.Operator):
+    """Set Auto smooth values for selected objects"""
+    # Inspired by colkai
+
+    bl_idname = "view3d.materialutilities_auto_smooth_angle"
+    bl_label = "Set Auto Smooth Angle (Material Utilities)"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    affect: EnumProperty(
+            name = "Affect",
+            description = "Which objects of to affect",
+            items = mu_affect_enums,
+            default = 'SELECTED'
+            )
+    angle: FloatProperty(
+            name = "Angle",
+            description = "Maximum angle between face normals that will be considered as smooth",
+            subtype = 'ANGLE',
+            min = 0,
+            max = radians(180),
+            default = radians(35)
+            )
+    set_smooth_shading: BoolProperty(
+            name = "Set Smooth",
+            description = "Set Smooth shading for the affected objects\n"
+                   "This overrides the currenth smooth/flat shading that might be set to different parts of the object",
+            default = True
+            )
+
+    @classmethod
+    def poll(cls, context):
+        return (len(bpy.data.objects) > 0) and (context.mode == 'OBJECT')
+
+    def invoke(self, context, event):
+        self.is_not_undo = True
+        return context.window_manager.invoke_props_dialog(self)
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.prop(self, "angle")
+        layout.prop(self, "affect")
+
+        layout.prop(self, "set_smooth_shading", icon = "BLANK1")
+
+    def execute(self, context):
+        return mu_set_auto_smooth(self, self.angle, self.affect, self.set_smooth_shading)

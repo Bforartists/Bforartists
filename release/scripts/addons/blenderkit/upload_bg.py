@@ -73,57 +73,57 @@ class upload_in_chunks(object):
         return self.totalsize
 
 
-def upload_files(filepath, upload_data, files):
+def upload_file(upload_data, f):
     headers = utils.get_headers(upload_data['token'])
-
     version_id = upload_data['id']
+    bg_blender.progress('uploading %s' % f['type'])
+    upload_info = {
+        'assetId': version_id,
+        'fileType': f['type'],
+        'fileIndex': f['index'],
+        'originalFilename': os.path.basename(f['file_path'])
+    }
+    upload_create_url = paths.get_api_url() + 'uploads/'
+    upload = requests.post(upload_create_url, json=upload_info, headers=headers, verify=True)
+    upload = upload.json()
+
+    chunk_size = 1024 * 256
+
+    # file gets uploaded here:
+    uploaded = False
+    # s3 upload is now the only option
+    for a in range(0, 5):
+        if not uploaded:
+            try:
+                upload_response = requests.put(upload['s3UploadUrl'],
+                                               data=upload_in_chunks(f['file_path'], chunk_size, f['type']),
+                                               stream=True, verify=True)
+
+                if upload_response.status_code == 200:
+                    uploaded = True
+                else:
+                    bg_blender.progress(f'Upload failed, retry. {a}')
+            except Exception as e:
+                bg_blender.progress('Upload %s failed, retrying' % f['type'])
+                time.sleep(1)
+
+            # confirm single file upload to bkit server
+            upload_done_url = paths.get_api_url() + 'uploads_s3/' + upload['id'] + '/upload-file/'
+            upload_response = requests.post(upload_done_url, headers=headers, verify=True)
+
+    bg_blender.progress('finished uploading')
+
+    return uploaded
+
+
+def upload_files(upload_data, files):
+
     uploaded_all = True
     for f in files:
-        bg_blender.progress('uploading %s' % f['type'])
-        upload_info = {
-            'assetId': version_id,
-            'fileType': f['type'],
-            'fileIndex': f['index'],
-            'originalFilename': os.path.basename(f['file_path'])
-        }
-        upload_create_url = paths.get_api_url() + 'uploads/'
-        upload = requests.post(upload_create_url, json=upload_info, headers=headers, verify=True)
-        upload = upload.json()
-
-        # upheaders = {
-        #     "accept": "application/json",
-        #     "Authorization": "Bearer %s" % upload_data['token'],
-        #     "Content-Type": "multipart/form-data",
-        #     "Content-Disposition": 'form-data; name="file"; filename=%s' % f['file_path']
-        #
-        # }
-        chunk_size = 1024 * 256
-
-        # file gets uploaded here:
-        uploaded = False
-        # s3 upload is now the only option
-        for a in range(0, 5):
-            if not uploaded:
-                try:
-                    upload_response = requests.put(upload['s3UploadUrl'],
-                                                   data=upload_in_chunks(f['file_path'], chunk_size, f['type']),
-                                                   stream=True, verify=True)
-
-                    if upload_response.status_code == 200:
-                        uploaded = True
-                    else:
-                        bg_blender.progress(f'Upload failed, retry. {a}')
-                except Exception as e:
-                    bg_blender.progress('Upload %s failed, retrying' % f['type'])
-                    time.sleep(1)
-
-                # confirm single file upload to bkit server
-                upload_done_url = paths.get_api_url() + 'uploads_s3/' + upload['id'] + '/upload-file/'
-                upload_response = requests.post(upload_done_url, headers=headers, verify=True)
+        uploaded = upload_file(upload_data, f)
         if not uploaded:
             uploaded_all = False
         bg_blender.progress('finished uploading')
-
     return uploaded_all
 
 
@@ -134,15 +134,16 @@ if __name__ == "__main__":
         if s.name != 'upload':
             bpy.data.scenes.remove(s)
     try:
-        # bg_blender.progress('preparing scene')
-        bg_blender.progress('preparing scene - link objects')
+        bg_blender.progress('preparing scene - append data')
         with open(BLENDERKIT_EXPORT_DATA, 'r') as s:
             data = json.load(s)
 
-            bpy.app.debug_value = data.get('debug_value', 0)
-            export_data = data['export_data']
-            upload_data = data['upload_data']
+        bpy.app.debug_value = data.get('debug_value', 0)
+        export_data = data['export_data']
+        upload_data = data['upload_data']
 
+        upload_set = data['upload_set']
+        if 'MAINFILE' in upload_set:
             if export_data['type'] == 'MODEL':
                 obnames = export_data['models']
                 main_source, allobs = append_link.append_objects(file_name=data['source_filepath'],
@@ -166,32 +167,33 @@ if __name__ == "__main__":
                 brushname = export_data['brush']
                 main_source = append_link.append_brush(file_name=data['source_filepath'], brushname=brushname)
 
-        bpy.ops.file.pack_all()
+            bpy.ops.file.pack_all()
 
-        # TODO fetch asset_id here
-        asset_id = main_source.blenderkit.asset_base_id
-        main_source.blenderkit.uploading = False
+            main_source.blenderkit.uploading = False
+            fpath = os.path.join(data['temp_dir'], upload_data['assetBaseId'] + '.blend')
 
-        fpath = os.path.join(data['temp_dir'], asset_id + '.blend')
-
-        bpy.ops.wm.save_as_mainfile(filepath=fpath, compress=True, copy=False)
-        os.remove(data['source_filepath'])
+            bpy.ops.wm.save_as_mainfile(filepath=fpath, compress=True, copy=False)
+            os.remove(data['source_filepath'])
 
         bg_blender.progress('preparing scene - open files')
 
-        files = [{
+        files = []
+        if 'THUMBNAIL' in upload_set:
+            files.append({
             "type": "thumbnail",
             "index": 0,
             "file_path": export_data["thumbnail_path"]
-        }, {
-            "type": "blend",
-            "index": 0,
-            "file_path": fpath
-        }]
+        })
+        if 'MAINFILE' in upload_set:
+            files.append({
+                "type": "blend",
+                "index": 0,
+                "file_path": fpath
+            })
 
         bg_blender.progress('uploading')
 
-        uploaded = upload_files(fpath, upload_data, files)
+        uploaded = upload_files(upload_data, files)
 
         if uploaded:
             # mark on server as uploaded

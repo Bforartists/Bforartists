@@ -23,7 +23,7 @@ bl_info = {
     "description": "Export cameras, selected objects & camera solution "
         "3D Markers to Adobe After Effects CS3 and above",
     "author": "Bartek Skorupa, (Adi Samsonoff)",
-    "version": (0, 65),
+    "version": (0, 0, 66),
     "blender": (2, 80, 0),
     "location": "File > Export > Adobe After Effects (.jsx)",
     "warning": "",
@@ -110,7 +110,7 @@ def get_selected(context):
             # not ready yet. is_plane(object) returns False in all cases. This is temporary
             solids.append([ob, convert_name(ob.name)])
 
-        elif ob.type == 'LAMP':
+        elif ob.type == 'LIGHT':
             lights.append([ob, ob.data.type + convert_name(ob.name)])  # Type of lamp added to name
 
         else:
@@ -331,7 +331,7 @@ def write_jsx_file(file, data, selection, include_animation, include_active_cam,
                 }
 
     # create structure for nulls
-    for i, obj in enumerate(selection['nulls']):  # nulls representing blender's obs except cameras, lamps and solids
+    for i, obj in enumerate(selection['nulls']):  # nulls representing blender's obs except cameras, lights and solids
         if include_selected_objects:
             name_ae = selection['nulls'][i][1]
             js_data['nulls'][name_ae] = {
@@ -380,7 +380,7 @@ def write_jsx_file(file, data, selection, include_animation, include_active_cam,
                                 'position': '',
                                 }
                             # bundles are in camera space. Transpose to world space
-                            matrix = Matrix.Translation(cam.matrix_basis.copy() * track.bundle)
+                            matrix = Matrix.Translation(cam.matrix_basis.copy() @ track.bundle)
                             # convert the position into AE space
                             ae_transform = convert_transform_matrix(matrix, data['width'], data['height'], data['aspect'], x_rot_correction=False)
                             js_data['bundles_cam'][name_ae]['position'] += '[%f,%f,%f],' % (ae_transform[0], ae_transform[1], ae_transform[2])

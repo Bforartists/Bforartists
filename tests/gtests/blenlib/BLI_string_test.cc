@@ -12,6 +12,7 @@ extern "C" {
 #include "BLI_utildefines.h"
 #include "BLI_string.h"
 #include "BLI_string_utf8.h"
+#include "BLI_string_utils.h"
 }
 
 using std::initializer_list;
@@ -401,8 +402,8 @@ TEST(string, StrFormatByteUnits)
   BLI_str_format_byte_unit(size_str, size = -1024, true);
   EXPECT_STREQ("-1 KB", size_str);
 
-  BLI_str_format_byte_unit(
-      size_str, size = 9223372036854775807, true); /* LLONG_MAX - largest possible value */
+  /* LLONG_MAX - largest possible value */
+  BLI_str_format_byte_unit(size_str, size = 9223372036854775807, true);
   EXPECT_STREQ("9223.372 PB", size_str);
   BLI_str_format_byte_unit(size_str, size = -9223372036854775807, true);
   EXPECT_STREQ("-9223.372 PB", size_str);
@@ -428,8 +429,8 @@ TEST(string, StrFormatByteUnits)
   BLI_str_format_byte_unit(size_str, size = -1024, false);
   EXPECT_STREQ("-1 KiB", size_str);
 
-  BLI_str_format_byte_unit(
-      size_str, size = 9223372036854775807, false); /* LLONG_MAX - largest possible value */
+  /* LLONG_MAX - largest possible value */
+  BLI_str_format_byte_unit(size_str, size = 9223372036854775807, false);
   EXPECT_STREQ("8192.0 PiB", size_str);
   BLI_str_format_byte_unit(size_str, size = -9223372036854775807, false);
   EXPECT_STREQ("-8192.0 PiB", size_str);
@@ -587,4 +588,23 @@ TEST(string, StringStrncasestr)
 
   res = BLI_strncasestr(str_test0, "not there", 9);
   EXPECT_EQ(res, (void *)NULL);
+}
+
+/* BLI_string_is_decimal */
+TEST(string, StrIsDecimal)
+{
+  EXPECT_FALSE(BLI_string_is_decimal(""));
+  EXPECT_FALSE(BLI_string_is_decimal("je moeder"));
+  EXPECT_FALSE(BLI_string_is_decimal("je møder"));
+  EXPECT_FALSE(BLI_string_is_decimal("Agent 327"));
+  EXPECT_FALSE(BLI_string_is_decimal("Agent\000327"));
+  EXPECT_FALSE(BLI_string_is_decimal("\000327"));
+  EXPECT_FALSE(BLI_string_is_decimal("0x16"));
+  EXPECT_FALSE(BLI_string_is_decimal("16.4"));
+  EXPECT_FALSE(BLI_string_is_decimal("-1"));
+
+  EXPECT_TRUE(BLI_string_is_decimal("0"));
+  EXPECT_TRUE(BLI_string_is_decimal("1"));
+  EXPECT_TRUE(BLI_string_is_decimal("001"));
+  EXPECT_TRUE(BLI_string_is_decimal("11342908713948713498745980171334059871345098713405981734"));
 }

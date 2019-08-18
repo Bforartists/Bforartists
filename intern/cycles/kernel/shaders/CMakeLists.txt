@@ -13,6 +13,7 @@ set(SRC_OSL
   node_bump.osl
   node_camera.osl
   node_checker_texture.osl
+  node_clamp.osl
   node_combine_rgb.osl
   node_combine_hsv.osl
   node_combine_xyz.osl
@@ -46,6 +47,7 @@ set(SRC_OSL
   node_light_falloff.osl
   node_light_path.osl
   node_magic_texture.osl
+  node_map_range.osl
   node_mapping.osl
   node_math.osl
   node_mix.osl

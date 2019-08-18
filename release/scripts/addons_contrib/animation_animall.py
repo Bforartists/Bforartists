@@ -19,9 +19,9 @@
 bl_info = {
     "name": "AnimAll",
     "author": "Daniel Salazar <zanqdo@gmail.com>",
-    "version": (0, 8, 1),
-    "blender": (2, 73, 0),
-    "location": "Tool bar > Animation tab > AnimAll",
+    "version": (0, 8, 2),
+    "blender": (2, 80, 0),
+    "location": "3D View > Toolbox > Animation tab > AnimAll",
     "description": "Allows animation of mesh, lattice, curve and surface data",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -47,56 +47,61 @@ from bpy.props import (
 
 
 # Property Definitions
-
-bpy.types.WindowManager.key_shape = BoolProperty(
-    name="Shape",
-    description="Insert keyframes on active Shape Key layer",
-    default=False
+class AnimallProperties(bpy.types.PropertyGroup):
+    key_selected: BoolProperty(
+        name="Selected Only",
+        description="Insert keyframes only on selected elements",
+        default=True
     )
-bpy.types.WindowManager.key_uvs = BoolProperty(
-    name="UVs",
-    description="Insert keyframes on active UV coordinates",
-    default=False
+    key_shape: BoolProperty(
+        name="Shape",
+        description="Insert keyframes on active Shape Key layer",
+        default=False
     )
-bpy.types.WindowManager.key_ebevel = BoolProperty(
-    name="E-Bevel",
-    description="Insert keyframes on edge bevel weight",
-    default=False
+    key_uvs: BoolProperty(
+        name="UVs",
+        description="Insert keyframes on active UV coordinates",
+        default=False
     )
-bpy.types.WindowManager.key_vbevel = BoolProperty(
-    name="V-Bevel",
-    description="Insert keyframes on vertex bevel weight",
-    default=False
+    key_ebevel: BoolProperty(
+        name="E-Bevel",
+        description="Insert keyframes on edge bevel weight",
+        default=False
     )
-bpy.types.WindowManager.key_crease = BoolProperty(
-    name="Crease",
-    description="Insert keyframes on edge creases",
-    default=False
+    key_vbevel: BoolProperty(
+        name="V-Bevel",
+        description="Insert keyframes on vertex bevel weight",
+        default=False
     )
-bpy.types.WindowManager.key_vcols = BoolProperty(
-    name="V-Cols",
-    description="Insert keyframes on active Vertex Color values",
-    default=False
+    key_crease: BoolProperty(
+        name="Crease",
+        description="Insert keyframes on edge creases",
+        default=False
     )
-bpy.types.WindowManager.key_vgroups = BoolProperty(
-    name="V-Groups",
-    description="Insert keyframes on active Vertex Group values",
-    default=False
+    key_vcols: BoolProperty(
+        name="V-Cols",
+        description="Insert keyframes on active Vertex Color values",
+        default=False
     )
-bpy.types.WindowManager.key_points = BoolProperty(
-    name="Points",
-    description="Insert keyframes on point locations",
-    default=False
+    key_vgroups: BoolProperty(
+        name="V-groups",
+        description="Insert keyframes on active Vertex group values",
+        default=False
     )
-bpy.types.WindowManager.key_radius = BoolProperty(
-    name="Radius",
-    description="Insert keyframes on point radius (Shrink/Fatten)",
-    default=False
+    key_points: BoolProperty(
+        name="Points",
+        description="Insert keyframes on point locations",
+        default=False
     )
-bpy.types.WindowManager.key_tilt = BoolProperty(
-    name="Tilt",
-    description="Insert keyframes on point tilt",
-    default=False
+    key_radius: BoolProperty(
+        name="Radius",
+        description="Insert keyframes on point radius (Shrink/Fatten)",
+        default=False
+    )
+    key_tilt: BoolProperty(
+        name="Tilt",
+        description="Insert keyframes on point tilt",
+        default=False
     )
 
 
@@ -111,9 +116,9 @@ def refresh_ui_keyframes():
         pass
 
 
-def insert_key(data, key):
+def insert_key(data, key, group=''):
     try:
-        data.keyframe_insert(key)
+        data.keyframe_insert(key, group=group)
     except:
         pass
 
@@ -129,52 +134,56 @@ def delete_key(data, key):
 
 class VIEW3D_PT_animall(Panel):
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Animation"
     bl_label = 'AnimAll'
 
     @classmethod
     def poll(self, context):
-        if context.active_object and context.active_object.type in {'MESH', 'LATTICE', 'CURVE', 'SURFACE'}:
-            return context.active_object.type
+        return context.active_object and context.active_object.type in {'MESH', 'LATTICE', 'CURVE', 'SURFACE'}
 
     def draw(self, context):
-        Obj = context.active_object
+        obj = context.active_object
+        animall_properties = context.window_manager.animall_properties
 
         layout = self.layout
         col = layout.column(align=True)
         row = col.row()
+        row.prop(animall_properties, "key_selected")
+        col.separator()
 
-        if Obj.type == 'LATTICE':
-            row.prop(context.window_manager, "key_points")
-            row.prop(context.window_manager, "key_shape")
+        row = col.row()
 
-        elif Obj.type == 'MESH':
-            row.prop(context.window_manager, "key_points")
-            row.prop(context.window_manager, "key_shape")
-            row = col.row()
-            row.prop(context.window_manager, "key_ebevel")
-            row.prop(context.window_manager, "key_vbevel")
-            row = col.row()
-            row.prop(context.window_manager, "key_crease")
-            row.prop(context.window_manager, "key_uvs")
-            row = col.row()
-            row.prop(context.window_manager, "key_vcols")
-            row.prop(context.window_manager, "key_vgroups")
+        if obj.type == 'LATTICE':
+            row.prop(animall_properties, "key_points")
+            row.prop(animall_properties, "key_shape")
 
-        elif Obj.type == 'CURVE':
-            row.prop(context.window_manager, "key_points")
-            row.prop(context.window_manager, "key_shape")
+        elif obj.type == 'MESH':
+            row.prop(animall_properties, "key_points")
+            row.prop(animall_properties, "key_shape")
             row = col.row()
-            row.prop(context.window_manager, "key_radius")
-            row.prop(context.window_manager, "key_tilt")
+            row.prop(animall_properties, "key_ebevel")
+            row.prop(animall_properties, "key_vbevel")
+            row = col.row()
+            row.prop(animall_properties, "key_crease")
+            row.prop(animall_properties, "key_uvs")
+            row = col.row()
+            row.prop(animall_properties, "key_vcols")
+            row.prop(animall_properties, "key_vgroups")
 
-        elif Obj.type == 'SURFACE':
-            row.prop(context.window_manager, "key_points")
-            row.prop(context.window_manager, "key_shape")
+        elif obj.type == 'CURVE':
+            row.prop(animall_properties, "key_points")
+            row.prop(animall_properties, "key_shape")
             row = col.row()
-            row.prop(context.window_manager, "key_radius")
-            row.prop(context.window_manager, "key_tilt")
+            row.prop(animall_properties, "key_radius")
+            row.prop(animall_properties, "key_tilt")
+
+        elif obj.type == 'SURFACE':
+            row.prop(animall_properties, "key_points")
+            row.prop(animall_properties, "key_shape")
+            row = col.row()
+            row.prop(animall_properties, "key_radius")
+            row.prop(animall_properties, "key_tilt")
 
         layout.separator()
         row = layout.row(align=True)
@@ -183,26 +192,26 @@ class VIEW3D_PT_animall(Panel):
         row = layout.row()
         row.operator("anim.clear_animation_animall", icon="X")
 
-        if context.window_manager.key_shape:
-            ShapeKey = Obj.active_shape_key
-            ShapeKeyIndex = Obj.active_shape_key_index
+        if animall_properties.key_shape:
+            shape_key = obj.active_shape_key
+            shape_key_index = obj.active_shape_key_index
 
             split = layout.split()
             row = split.row()
 
-            if ShapeKeyIndex > 0:
-                row.label(text=ShapeKey.name, icon="SHAPEKEY_DATA")
-                row.prop(ShapeKey, "value", text="")
-                row.prop(Obj, "show_only_shape_key", text="")
-                if ShapeKey.value < 1:
+            if shape_key_index > 0:
+                row.label(text=shape_key.name, icon="SHAPEKEY_DATA")
+                row.prop(shape_key, "value", text="")
+                row.prop(obj, "show_only_shape_key", text="")
+                if shape_key.value < 1:
                     row = layout.row()
-                    row.label(text='Maybe set "%s" to 1.0?' % ShapeKey.name, icon="INFO")
-            elif ShapeKey:
-                row.label(text="Can not key on Basis Shape", icon="ERROR")
+                    row.label(text='Maybe set "%s" to 1.0?' % shape_key.name, icon="INFO")
+            elif shape_key:
+                row.label(text="Cannot key on Basis Shape", icon="ERROR")
             else:
                 row.label(text="No active Shape Key", icon="ERROR")
 
-        if context.window_manager.key_points and context.window_manager.key_shape:
+        if animall_properties.key_points and animall_properties.key_shape:
             row = layout.row()
             row.label(text='"Points" and "Shape" are redundant?', icon="INFO")
 
@@ -219,119 +228,104 @@ class ANIM_OT_insert_keyframe_animall(Operator):
         return {'FINISHED'}
 
     def execute(op, context):
-        Obj = context.active_object
+        obj = context.active_object
+        animall_properties = context.window_manager.animall_properties
 
-        if Obj.type == 'MESH':
-            Mode = False
-            if context.mode == 'EDIT_MESH':
-                Mode = not Mode
-                bpy.ops.object.editmode_toggle()
+        # Set object mode
+        if obj.type in {'MESH', 'LATTICE', 'CURVE', 'SURFACE'}:
+            mode = context.mode.split("_")[0]
+            bpy.ops.object.mode_set(mode='OBJECT')
 
-            Data = Obj.data
+            data = obj.data
 
-            if context.window_manager.key_shape:
-                if Obj.active_shape_key_index > 0:
-                    for Vert in Obj.active_shape_key.data:
-                        insert_key(Vert, 'co')
+        if obj.type == 'MESH':
+            for v_i, vert in enumerate(data.vertices):
+                if not animall_properties.key_selected or vert.select:
+                    if animall_properties.key_points:
+                        insert_key(vert, 'co', group="vertex %s" % v_i)
+                    if animall_properties.key_vbevel:
+                        insert_key(vert, 'bevel_weight', group="vertex %s" % v_i)
+                    if animall_properties.key_vgroups:
+                        for group in vert.groups:
+                            insert_key(group, 'weight', group="vertex %s" % v_i)
 
-            if context.window_manager.key_points:
-                for Vert in Data.vertices:
-                    insert_key(Vert, 'co')
+            for e_i, edge in enumerate(data.edges):
+                if not animall_properties.key_selected or edge.select:
+                    if animall_properties.key_ebevel:
+                        insert_key(edge, 'bevel_weight', group="edge %s" % e_i)
+                    if animall_properties.key_crease:
+                        insert_key(edge, 'crease', group="edge %s" % e_i)
 
-            if context.window_manager.key_ebevel:
-                for Edge in Data.edges:
-                    insert_key(Edge, 'bevel_weight')
+            if animall_properties.key_shape:
+                if obj.active_shape_key_index > 0:
+                    for v_i, vert in enumerate(obj.active_shape_key.data):
+                        insert_key(vert, 'co', group="vertex %s" % v_i)
 
-            if context.window_manager.key_vbevel:
-                for Vert in Data.vertices:
-                    insert_key(Vert, 'bevel_weight')
+            if animall_properties.key_uvs:
+                if data.uv_layers.active is not None:
+                    for uv_i, uv in enumerate(data.uv_layers.active.data):
+                        insert_key(uv, 'uv', group="UV layer %s" % uv_i)
 
-            if context.window_manager.key_crease:
-                for Edge in Data.edges:
-                    insert_key(Edge, 'crease')
+            if animall_properties.key_vcols:
+                for v_col_layer in data.vertex_colors:
+                    if v_col_layer.active:  # only insert in active VCol layer
+                        for v_i, data in enumerate(v_col_layer.data):
+                            insert_key(data, 'color', group="Loop %s" % v_i)
 
-            if context.window_manager.key_vgroups:
-                for Vert in Data.vertices:
-                    for Group in Vert.groups:
-                        insert_key(Group, 'weight')
+        elif obj.type == 'LATTICE':
+            if animall_properties.key_shape:
+                if obj.active_shape_key_index > 0:
+                    for p_i, point in enumerate(obj.active_shape_key.data):
+                        insert_key(point, 'co', group="Point %s" % p_i)
 
-            if context.window_manager.key_uvs:
-                for UV in Data.uv_layers.active.data:
-                    insert_key(UV, 'uv')
+            if animall_properties.key_points:
+                for p_i, point in enumerate(data.points):
+                    if not animall_properties.key_selected or point.select:
+                        insert_key(point, 'co_deform', group="Point %s" % p_i)
 
-            if context.window_manager.key_vcols:
-                for VColLayer in Data.vertex_colors:
-                    if VColLayer.active:  # only insert in active VCol layer
-                        for Data in VColLayer.data:
-                            insert_key(Data, 'color')
-
-            if Mode:
-                bpy.ops.object.editmode_toggle()
-
-        if Obj.type == 'LATTICE':
-            Mode = False
-            if context.mode != 'OBJECT':
-                Mode = not Mode
-                bpy.ops.object.editmode_toggle()
-
-            Data = Obj.data
-
-            if context.window_manager.key_shape:
-                if Obj.active_shape_key_index > 0:
-                    for Point in Obj.active_shape_key.data:
-                        insert_key(Point, 'co')
-
-            if context.window_manager.key_points:
-                for Point in Data.points:
-                    insert_key(Point, 'co_deform')
-
-            if Mode:
-                bpy.ops.object.editmode_toggle()
-
-        if Obj.type in {'CURVE', 'SURFACE'}:
-            Mode = False
-            if context.mode != 'OBJECT':
-                Mode = not Mode
-                bpy.ops.object.editmode_toggle()
-
-            Data = Obj.data
-
+        elif obj.type in {'CURVE', 'SURFACE'}:
             # run this outside the splines loop (only once)
-            if context.window_manager.key_shape:
-                if Obj.active_shape_key_index > 0:
-                    for CV in Obj.active_shape_key.data:
+            if animall_properties.key_shape:
+                if obj.active_shape_key_index > 0:
+                    for CV in obj.active_shape_key.data:
                         insert_key(CV, 'co')
                         insert_key(CV, 'handle_left')
                         insert_key(CV, 'handle_right')
 
-            for Spline in Data.splines:
-                if Spline.type == 'BEZIER':
+            for s_i, spline in enumerate(data.splines):
+                if spline.type == 'BEZIER':
 
-                    for CV in Spline.bezier_points:
-                        if context.window_manager.key_points:
-                            insert_key(CV, 'co')
-                            insert_key(CV, 'handle_left')
-                            insert_key(CV, 'handle_right')
+                    for v_i, CV in enumerate(spline.bezier_points):
+                        if (not animall_properties.key_selected
+                                or CV.select_control_point
+                                or CV.select_left_handle
+                                or CV.select_right_handle):
+                            if animall_properties.key_points:
+                                insert_key(CV, 'co', group="spline %s CV %s" % (s_i, v_i))
+                                insert_key(CV, 'handle_left', group="spline %s CV %s" % (s_i, v_i))
+                                insert_key(CV, 'handle_right', group="spline %s CV %s" % (s_i, v_i))
 
-                        if context.window_manager.key_radius:
-                            insert_key(CV, 'radius')
+                            if animall_properties.key_radius:
+                                insert_key(CV, 'radius', group="spline %s CV %s" % (s_i, v_i))
 
-                        if context.window_manager.key_tilt:
-                            insert_key(CV, 'tilt')
+                            if animall_properties.key_tilt:
+                                insert_key(CV, 'tilt', group="spline %s CV %s" % (s_i, v_i))
 
-                elif Spline.type == 'NURBS':
-                    for CV in Spline.points:
-                        if context.window_manager.key_points:
-                            insert_key(CV, 'co')
+                elif spline.type in ('POLY', 'NURBS'):
+                    for v_i, CV in enumerate(spline.points):
+                        if not animall_properties.key_selected or CV.select:
+                            if animall_properties.key_points:
+                                insert_key(CV, 'co', group="spline %s CV %s" % (s_i, v_i))
 
-                        if context.window_manager.key_radius:
-                            insert_key(CV, 'radius')
+                            if animall_properties.key_radius:
+                                insert_key(CV, 'radius', group="spline %s CV %s" % (s_i, v_i))
 
-                        if context.window_manager.key_tilt:
-                            insert_key(CV, 'tilt')
+                            if animall_properties.key_tilt:
+                                insert_key(CV, 'tilt', group="spline %s CV %s" % (s_i, v_i))
 
-            if Mode:
-                bpy.ops.object.editmode_toggle()
+        # Set previous mode
+        if obj.type in {'MESH', 'LATTICE', 'CURVE', 'SURFACE'}:
+            bpy.ops.object.mode_set(mode=mode)
 
         refresh_ui_keyframes()
 
@@ -350,114 +344,96 @@ class ANIM_OT_delete_keyframe_animall(Operator):
         return {'FINISHED'}
 
     def execute(op, context):
-        Obj = context.active_object
+        obj = context.active_object
+        animall_properties = context.window_manager.animall_properties
 
-        if Obj.type == 'MESH':
-            Mode = False
-            if context.mode == 'EDIT_MESH':
-                Mode = not Mode
-                bpy.ops.object.editmode_toggle()
+        # Set object mode
+        if obj.type in {'MESH', 'LATTICE', 'CURVE', 'SURFACE'}:
+            mode = context.mode.split("_")[0]
+            bpy.ops.object.mode_set(mode='OBJECT')
 
-            Data = Obj.data
+            data = obj.data
 
-            if context.window_manager.key_shape:
-                if Obj.active_shape_key:
-                    for Vert in Obj.active_shape_key.data:
-                        delete_key(Vert, 'co')
+        if obj.type == 'MESH':
+            if animall_properties.key_shape:
+                if obj.active_shape_key:
+                    for vert in obj.active_shape_key.data:
+                        delete_key(vert, 'co')
 
-            if context.window_manager.key_points:
-                for Vert in Data.vertices:
-                    delete_key(Vert, 'co')
+            if animall_properties.key_points:
+                for vert in data.vertices:
+                    delete_key(vert, 'co')
 
-            if context.window_manager.key_ebevel:
-                for Edge in Data.edges:
-                    delete_key(Edge, 'bevel_weight')
+            if animall_properties.key_ebevel:
+                for edge in data.edges:
+                    delete_key(edge, 'bevel_weight')
 
-            if context.window_manager.key_vbevel:
-                for Vert in Data.vertices:
-                    delete_key(Vert, 'bevel_weight')
+            if animall_properties.key_vbevel:
+                for vert in data.vertices:
+                    delete_key(vert, 'bevel_weight')
 
-            if context.window_manager.key_crease:
-                for Edge in Data.edges:
-                    delete_key(Edge, 'crease')
+            if animall_properties.key_crease:
+                for edge in data.edges:
+                    delete_key(edge, 'crease')
 
-            if context.window_manager.key_vgroups:
-                for Vert in Data.vertices:
-                    for Group in Vert.groups:
-                        delete_key(Group, 'weight')
+            if animall_properties.key_vgroups:
+                for vert in data.vertices:
+                    for group in vert.groups:
+                        delete_key(group, 'weight')
 
-            if context.window_manager.key_uvs:
-                for UV in Data.uv_layers.active.data:
+            if animall_properties.key_uvs:
+                for UV in data.uv_layers.active.data:
                     delete_key(UV, 'uv')
 
-            if context.window_manager.key_vcols:
-                for VColLayer in Data.vertex_colors:
-                    if VColLayer.active:  # only delete in active VCol layer
-                        for Data in VColLayer.data:
-                            delete_key(Data, 'color')
+            if animall_properties.key_vcols:
+                for v_col_layer in data.vertex_colors:
+                    if v_col_layer.active:  # only delete in active VCol layer
+                        for data in v_col_layer.data:
+                            delete_key(data, 'color')
 
-            if Mode:
-                bpy.ops.object.editmode_toggle()
+        if obj.type == 'LATTICE':
+            if animall_properties.key_shape:
+                if obj.active_shape_key:
+                    for point in obj.active_shape_key.data:
+                        delete_key(point, 'co')
 
-        if Obj.type == 'LATTICE':
-            Mode = False
-            if context.mode != 'OBJECT':
-                Mode = not Mode
-                bpy.ops.object.editmode_toggle()
-
-            Data = Obj.data
-
-            if context.window_manager.key_shape:
-                if Obj.active_shape_key:
-                    for Point in Obj.active_shape_key.data:
-                        delete_key(Point, 'co')
-
-            if context.window_manager.key_points:
-                for Point in Data.points:
+            if animall_properties.key_points:
+                for point in data.points:
                     delete_key(Point, 'co_deform')
 
-            if Mode:
-                bpy.ops.object.editmode_toggle()
-
-        if Obj.type in {'CURVE', 'SURFACE'}:
-            Mode = False
-            if context.mode != 'OBJECT':
-                Mode = not Mode
-                bpy.ops.object.editmode_toggle()
-
-            Data = Obj.data
-
+        if obj.type in {'CURVE', 'SURFACE'}:
             # run this outside the splines loop (only once)
-            if context.window_manager.key_shape:
-                if Obj.active_shape_key_index > 0:
-                    for CV in Obj.active_shape_key.data:
+            if animall_properties.key_shape:
+                if obj.active_shape_key_index > 0:
+                    for CV in obj.active_shape_key.data:
                         delete_key(CV, 'co')
                         delete_key(CV, 'handle_left')
                         delete_key(CV, 'handle_right')
 
-            for Spline in Data.splines:
-                if Spline.type == 'BEZIER':
-                    for CV in Spline.bezier_points:
-                        if context.window_manager.key_points:
+            for spline in data.splines:
+                if spline.type == 'BEZIER':
+                    for CV in spline.bezier_points:
+                        if animall_properties.key_points:
                             delete_key(CV, 'co')
                             delete_key(CV, 'handle_left')
                             delete_key(CV, 'handle_right')
-                        if context.window_manager.key_radius:
+                        if animall_properties.key_radius:
                             delete_key(CV, 'radius')
-                        if context.window_manager.key_tilt:
+                        if animall_properties.key_tilt:
                             delete_key(CV, 'tilt')
 
-                elif Spline.type == 'NURBS':
-                    for CV in Spline.points:
-                        if context.window_manager.key_points:
+                elif spline.type == 'NURBS':
+                    for CV in spline.points:
+                        if animall_properties.key_points:
                             delete_key(CV, 'co')
-                        if context.window_manager.key_radius:
+                        if animall_properties.key_radius:
                             delete_key(CV, 'radius')
-                        if context.window_manager.key_tilt:
+                        if animall_properties.key_tilt:
                             delete_key(CV, 'tilt')
 
-            if Mode:
-                bpy.ops.object.editmode_toggle()
+        # Set previous mode
+        if obj.type in {'MESH', 'LATTICE', 'CURVE', 'SURFACE'}:
+            bpy.ops.object.mode_set(mode=mode)
 
         refresh_ui_keyframes()
 
@@ -478,8 +454,8 @@ class ANIM_OT_clear_animation_animall(Operator):
 
     def execute(self, context):
         try:
-            Data = context.active_object.data
-            Data.animation_data_clear()
+            data = context.active_object.data
+            data.animation_data_clear()
         except:
             self.report({'WARNING'}, "Clear Animation could not be performed")
             return {'CANCELLED'}
@@ -519,11 +495,11 @@ class AnimallAddonPreferences(AddonPreferences):
     bl_idname = __name__
 
     category: StringProperty(
-            name="Tab Category",
-            description="Choose a name for the category of the panel",
-            default="Animation",
-            update=update_panel
-            )
+        name="Tab Category",
+        description="Choose a name for the category of the panel",
+        default="Animation",
+        update=update_panel
+    )
 
     def draw(self, context):
         layout = self.layout
@@ -535,15 +511,24 @@ class AnimallAddonPreferences(AddonPreferences):
 
 
 def register():
-    bpy.utils.register_module(__name__)
+    bpy.utils.register_class(AnimallProperties)
+    bpy.types.WindowManager.animall_properties = bpy.props.PointerProperty(type=AnimallProperties)
+    bpy.utils.register_class(VIEW3D_PT_animall)
+    bpy.utils.register_class(ANIM_OT_insert_keyframe_animall)
+    bpy.utils.register_class(ANIM_OT_delete_keyframe_animall)
+    bpy.utils.register_class(ANIM_OT_clear_animation_animall)
+    bpy.utils.register_class(AnimallAddonPreferences)
     update_panel(None, bpy.context)
-    pass
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
-    pass
-
+    del bpy.types.WindowManager.animall_properties
+    bpy.utils.unregister_class(AnimallProperties)
+    bpy.utils.unregister_class(VIEW3D_PT_animall)
+    bpy.utils.unregister_class(ANIM_OT_insert_keyframe_animall)
+    bpy.utils.unregister_class(ANIM_OT_delete_keyframe_animall)
+    bpy.utils.unregister_class(ANIM_OT_clear_animation_animall)
+    bpy.utils.unregister_class(AnimallAddonPreferences)
 
 if __name__ == "__main__":
     register()

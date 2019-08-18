@@ -1156,7 +1156,7 @@ static tGPsdata *gp_session_initpaint(bContext *C)
   /* create new context data */
   p = MEM_callocN(sizeof(tGPsdata), "Annotation Drawing Data");
 
-  /* Try to initialise context data
+  /* Try to initialize context data
    * WARNING: This may not always succeed (e.g. using GP in an annotation-only context)
    */
   if (gp_session_initdata(C, p) == 0) {
@@ -1251,15 +1251,6 @@ static void gp_paint_initstroke(tGPsdata *p, eGPencil_PaintModes paintmode, Deps
 
     /* Ensure active frame is set correctly... */
     p->gpf = p->gpl->actframe;
-
-    /* Restrict eraser to only affecting selected strokes, if the "selection mask" is on
-     * (though this is only available in editmode)
-     */
-    if (p->gpd->flag & GP_DATA_STROKE_EDITMODE) {
-      if (ts->gp_sculpt.flag & GP_SCULPT_SETT_FLAG_SELECT_MASK) {
-        p->flags |= GP_PAINTFLAG_SELECTMASK;
-      }
-    }
 
     if (has_layer_to_erase == false) {
       p->status = GP_STATUS_CAPTURE;
@@ -2242,11 +2233,9 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
         }
       }
       else if (p->ar) {
-        rcti region_rect;
-
-        /* Perform bounds check using  */
-        ED_region_visible_rect(p->ar, &region_rect);
-        in_bounds = BLI_rcti_isect_pt_v(&region_rect, event->mval);
+        /* Perform bounds check. */
+        const rcti *region_rect = ED_region_visible_rect(p->ar);
+        in_bounds = BLI_rcti_isect_pt_v(region_rect, event->mval);
       }
       else {
         /* No region */

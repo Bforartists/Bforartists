@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.1"
-__date__ = "19 May 2019"
+__version__ = "6.2"
+__date__ = "31 Jul 2019"
 
 import bpy
 import bgl
@@ -81,7 +81,7 @@ def matmul(m1, m2):
 
 def layout_split(layout, factor=0.0, align=False):
     if check_version(2, 80, 0) < 0:
-        return layout.split(factor=factor, align=align)
+        return layout.split(percentage=factor, align=align)
 
     return layout.split(factor=factor, align=align)
 

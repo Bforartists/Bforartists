@@ -78,7 +78,7 @@ def read_weight(_weight, vertex_group):
     #for t in processes: t.join()
     return weight
 
-#Recursivly transverse layer_collection for a particular name
+#Recursively transverse layer_collection for a particular name
 def recurLayerCollection(layerColl, collName):
     found = None
     if (layerColl.name == collName):

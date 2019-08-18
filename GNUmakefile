@@ -231,10 +231,14 @@ endif
 # build tool
 
 ifneq "$(findstring ninja, $(MAKECMDGOALS))" ""
-	BUILD_COMMAND:=ninja
 	BUILD_CMAKE_ARGS:=$(BUILD_CMAKE_ARGS) -G Ninja
+	BUILD_COMMAND:=ninja
 else
-	BUILD_COMMAND:=make -s
+	ifneq ("$(wildcard $(BUILD_DIR)/build.ninja)","")
+		BUILD_COMMAND:=ninja
+	else
+		BUILD_COMMAND:=make -s
+	endif
 endif
 
 # -----------------------------------------------------------------------------

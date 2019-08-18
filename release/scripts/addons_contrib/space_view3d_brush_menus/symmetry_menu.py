@@ -1,5 +1,6 @@
 # gpl author: Ryan Inch (Imaginer)
 
+import bpy
 from bpy.types import Menu
 from . import utils_core
 
@@ -62,3 +63,18 @@ class SymmetryRadialMenu(Menu):
 
         layout.column().prop(context.tool_settings.sculpt,
                              "radial_symmetry", text="", slider=True)
+
+
+classes = (
+    MasterSymmetryMenu,
+    SymmetryMenu,
+    SymmetryRadialMenu
+    )
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)

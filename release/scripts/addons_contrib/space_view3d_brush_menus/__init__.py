@@ -24,7 +24,7 @@ bl_info = {
     "description": "Fast access to brushes & tools in Sculpt and Paint Modes",
     "author": "Ryan Inch (Imaginer)",
     "version": (1, 1, 6),
-    "blender": (2, 78, 0),
+    "blender": (2, 80, 0),
     "location": "Alt V in Sculpt/Paint Modes",
     "warning": '',
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -61,23 +61,21 @@ from bpy.props import (
         )
 
 
+addon_files = (
+    brush_menu,
+    brushes,
+    curve_menu,
+    dyntopo_menu,
+    stroke_menu,
+    symmetry_menu,
+    texture_menu,
+    )
+    
+
+
 class VIEW3D_MT_Brushes_Pref(AddonPreferences):
     bl_idname = __name__
-
-    use_brushes_menu_type: EnumProperty(
-        name="Choose Brushes Selection",
-        description="",
-        items=[('lists', "Use compact Menus",
-                "Use more compact menus instead  \n"
-                "of thumbnails for displaying brushes"),
-               ('template', "Template ID Preview",
-                "Use Template ID preview menu (thumbnails) for brushes\n"
-                "(Still part of the menu)"),
-               ('popup', "Pop up menu",
-                "Use a separate pop-up window for accessing brushes")
-            ],
-        default='lists'
-        )
+    
     column_set: IntProperty(
         name="Number of Columns",
         description="Number of columns used for the brushes menu",
@@ -90,8 +88,6 @@ class VIEW3D_MT_Brushes_Pref(AddonPreferences):
         layout = self.layout
 
         col = layout.column(align=True)
-        row = col.row(align=True)
-        row.prop(self, "use_brushes_menu_type", expand=True)
         col.prop(self, "column_set", slider=True)
 
 
@@ -101,11 +97,15 @@ addon_keymaps = []
 
 
 def register():
-    # register all blender classes
-    bpy.utils.register_module(__name__)
-
+    # register all files
+    for addon_file in addon_files:
+        addon_file.register()
+    
     # set the add-on name variable to access the preferences
     utils_core.get_addon_name = __name__
+    
+    # register preferences
+    bpy.utils.register_class(VIEW3D_MT_Brushes_Pref)
 
     # register hotkeys
     wm = bpy.context.window_manager
@@ -119,12 +119,16 @@ def register():
 
 
 def unregister():
+    # unregister all files
+    for addon_file in addon_files:
+        addon_file.unregister()
+    
+    # unregister preferences
+    bpy.utils.unregister_class(VIEW3D_MT_Brushes_Pref)
+    
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
-
-    # unregister all blender classes
-    bpy.utils.unregister_module(__name__)
 
 
 if __name__ == "__main__":

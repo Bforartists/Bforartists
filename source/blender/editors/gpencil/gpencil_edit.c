@@ -220,6 +220,17 @@ void GPENCIL_OT_editmode_toggle(wmOperatorType *ot)
 }
 
 /* set select mode */
+static bool gpencil_selectmode_toggle_poll(bContext *C)
+{
+  /* edit only supported with grease pencil objects */
+  Object *ob = CTX_data_active_object(C);
+  if ((ob == NULL) || (ob->type != OB_GPENCIL) || (ob->mode != OB_MODE_EDIT_GPENCIL)) {
+    return false;
+  }
+
+  return ED_operator_view3d_active(C);
+}
+
 static int gpencil_selectmode_toggle_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
@@ -227,7 +238,7 @@ static int gpencil_selectmode_toggle_exec(bContext *C, wmOperator *op)
   const int mode = RNA_int_get(op->ptr, "mode");
 
   /* Just set mode */
-  ts->gpencil_selectmode = mode;
+  ts->gpencil_selectmode_edit = mode;
 
   WM_main_add_notifier(NC_SCENE | ND_TOOLSETTINGS, NULL);
   DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
@@ -246,7 +257,7 @@ void GPENCIL_OT_selectmode_toggle(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = gpencil_selectmode_toggle_exec;
-  ot->poll = gp_strokes_edit3d_poll;
+  ot->poll = gpencil_selectmode_toggle_poll;
 
   /* flags */
   ot->flag = OPTYPE_UNDO | OPTYPE_REGISTER;
@@ -3342,7 +3353,7 @@ typedef enum eGP_ReprojectModes {
   GP_REPROJECT_FRONT = 0,
   GP_REPROJECT_SIDE,
   GP_REPROJECT_TOP,
-  /* On same plane, parallel to viewplane */
+  /* On same plane, parallel to view-plane. */
   GP_REPROJECT_VIEW,
   /* Reprojected on to the scene geometry */
   GP_REPROJECT_SURFACE,
@@ -3385,11 +3396,10 @@ static int gp_strokes_reproject_exec(bContext *C, wmOperator *op)
       for (i = 0, pt = gps->points; i < gps->totpoints; i++, pt++) {
         float xy[2];
 
-        /* 3D to Screenspace */
-        /* Note: We can't use gp_point_to_xy() here because that uses ints for the screenspace
-         *       coordinates, resulting in lost precision, which in turn causes stairstepping
-         *       artifacts in the final points.
-         */
+        /* 3D to Screen-space */
+        /* Note: We can't use gp_point_to_xy() here because that uses ints for the screen-space
+         * coordinates, resulting in lost precision, which in turn causes stair-stepping
+         * artifacts in the final points. */
         bGPDspoint pt2;
         gp_point_to_parent_space(pt, gpstroke_iter.diff_mat, &pt2);
         gp_point_to_xy_fl(&gsc, gps, &pt2, &xy[0], &xy[1]);
@@ -3438,16 +3448,15 @@ static int gp_strokes_reproject_exec(bContext *C, wmOperator *op)
           /* apply parent again */
           gp_apply_parent_point(depsgraph, ob, gpd, gpl, pt);
         }
-        /* Project screenspace back to 3D space (from current perspective)
-         * so that all points have been treated the same way
-         */
+        /* Project screen-space back to 3D space (from current perspective)
+         * so that all points have been treated the same way. */
         else if (mode == GP_REPROJECT_VIEW) {
-          /* Planar - All on same plane parallel to the viewplane */
+          /* Planar - All on same plane parallel to the view-plane. */
           gp_point_xy_to_3d(&gsc, scene, xy, &pt->x);
         }
         else {
           /* Geometry - Snap to surfaces of visible geometry */
-          /* XXX: There will be precision loss (possible stairstep artifacts)
+          /* XXX: There will be precision loss (possible stair-step artifacts)
            * from this conversion to satisfy the API's */
           const int screen_co[2] = {(int)xy[0], (int)xy[1]};
 
@@ -3559,7 +3568,7 @@ static void gp_smooth_stroke(bContext *C, wmOperator *op)
           }
           if (smooth_thickness) {
             /* thickness need to repeat process several times */
-            for (int r2 = 0; r2 < r * 10; r2++) {
+            for (int r2 = 0; r2 < r * 20; r2++) {
               BKE_gpencil_smooth_stroke_thickness(gps, i, factor);
             }
           }
@@ -4063,8 +4072,10 @@ static int gp_stroke_separate_exec(bContext *C, wmOperator *op)
               }
 
               /* add duplicate materials */
-              ma = give_current_material(
-                  ob, gps->mat_nr + 1); /* XXX same material can be in multiple slots */
+
+              /* XXX same material can be in multiple slots. */
+              ma = give_current_material(ob, gps->mat_nr + 1);
+
               idx = BKE_gpencil_object_material_ensure(bmain, ob_dst, ma);
 
               /* selected points mode */
@@ -4325,7 +4336,7 @@ void GPENCIL_OT_stroke_smooth(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* properties */
-  prop = RNA_def_int(ot->srna, "repeat", 1, 1, 10, "Repeat", "", 1, 5);
+  prop = RNA_def_int(ot->srna, "repeat", 1, 1, 50, "Repeat", "", 1, 20);
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 
   RNA_def_float(ot->srna, "factor", 0.5f, 0.0f, 2.0f, "Factor", "", 0.0f, 2.0f);
@@ -4461,7 +4472,7 @@ static int gpencil_cutter_lasso_select(bContext *C,
       if ((pt->flag & GP_SPOINT_SELECT) || (pt->flag & GP_SPOINT_TAG)) {
         continue;
       }
-      /* convert point coords to screenspace */
+      /* convert point coords to screen-space */
       const bool is_inside = is_inside_fn(gps, pt, &gsc, gpstroke_iter.diff_mat, user_data);
       if (is_inside) {
         tot_inside++;

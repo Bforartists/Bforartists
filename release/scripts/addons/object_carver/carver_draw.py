@@ -63,7 +63,7 @@ def draw_string(self, color1, color2, left, bottom, text, max_option, divide = 1
 	line_height = (blf.dimensions(font_id, "gM")[1] * 1.45)
 	y_offset = 5
 
-	# Test if the text is a list formated like : ('option', 'key')
+	# Test if the text is a list formatted like : ('option', 'key')
 	if isinstance(text,list):
 		for string in text:
 			blf.position(font_id, (left), (bottom + y_offset), 0)
@@ -76,7 +76,7 @@ def draw_string(self, color1, color2, left, bottom, text, max_option, divide = 1
 			blf.draw(font_id, string[1])
 			y_offset += line_height
 	else:
-		# The text is formated like : ('option')
+		# The text is formatted like : ('option')
 		blf.position(font_id, left, (bottom + y_offset), 0)
 		blf.color(font_id, *color1)
 		blf.draw(font_id, text)

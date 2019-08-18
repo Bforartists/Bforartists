@@ -354,7 +354,7 @@ def obj_to_bone(obj, rig, bone_name):
 
 def create_circle_polygon(number_verts, axis, radius=1.0, head_tail=0.0):
     """ Creates a basic circle around of an axis selected.
-        number_verts: number of vertices of the poligon
+        number_verts: number of vertices of the polygon
         axis: axis normal to the circle
         radius: the radius of the circle
         head_tail: where along the length of the bone the circle is (0.0=head, 1.0=tail)

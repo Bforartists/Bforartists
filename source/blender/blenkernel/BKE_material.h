@@ -28,12 +28,12 @@
 extern "C" {
 #endif
 
-struct bNode;
 struct ID;
 struct Main;
 struct Material;
 struct Object;
 struct Scene;
+struct bNode;
 
 /* materials */
 
@@ -103,9 +103,9 @@ void BKE_material_resize_id(struct Main *bmain, struct ID *id, short totcol, boo
 void BKE_material_append_id(struct Main *bmain, struct ID *id, struct Material *ma);
 struct Material *BKE_material_pop_id(struct Main *bmain,
                                      struct ID *id,
-                                     int index,
-                                     bool update_data); /* index is an int because of RNA */
-void BKE_material_clear_id(struct Main *bmain, struct ID *id, bool update_data);
+                                     /* index is an int because of RNA. */
+                                     int index);
+void BKE_material_clear_id(struct Main *bmain, struct ID *id);
 /* rendering */
 
 void ramp_blend(int type, float r_col[3], const float fac, const float col[3]);

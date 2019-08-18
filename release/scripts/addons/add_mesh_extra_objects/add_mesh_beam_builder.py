@@ -10,8 +10,9 @@ from bpy.props import (
         EnumProperty,
         FloatProperty,
         IntProperty,
+        StringProperty,
         )
-
+from bpy_extras import object_utils
 
 # #####################
 # Create vertices for end of mesh
@@ -639,9 +640,9 @@ def create_I_beam(sRef):
 
 # ######################
 #
-# Generate beam object.
+# Generate beam mesh.
 
-def addBeamObj(sRef, context):
+def addBeamMesh(sRef, context):
     verts = []
     faces = []
 
@@ -662,25 +663,11 @@ def addBeamObj(sRef, context):
         verts, faces = create_beam(sRef)
 
     beamMesh = bpy.data.meshes.new("Beam")
-    beamObj = bpy.data.objects.new("Beam", beamMesh)
-    context.collection.objects.link(beamObj)
-    context.view_layer.objects.active = beamObj
-    beamObj.select_set(True)
 
     beamMesh.from_pydata(verts, [], faces)
     beamMesh.update(calc_edges=True)
 
-    if sRef.Type == '2':  # Rotate C shape
-        bpy.ops.transform.rotate(value=1.570796, constraint_axis=[False, True, False])
-        bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
-
-    if sRef.Cursor:
-        if beamObj.select_get() is True:
-            # we also have to check if we're considered to be in 3D View (view3d)
-            if bpy.ops.view3d.snap_selected_to_cursor.poll():
-                bpy.ops.view3d.snap_selected_to_cursor()
-            else:
-                sRef.Cursor = False
+    return beamMesh
 
 
 # ######################
@@ -692,8 +679,20 @@ class addBeam(Operator):
     bl_idname = "mesh.add_beam"
     bl_label = "Beam Builder"
     bl_description = "Create beam meshes of various profiles"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
+    Beam : BoolProperty(name = "Beam",
+                default = True,
+                description = "Beam")
+
+    #### change properties
+    name : StringProperty(name = "Name",
+                    description = "Name")
+
+    change : BoolProperty(name = "Change",
+                default = False,
+                description = "change Beam")
+    
     Type: EnumProperty(
             items=(
             ('0', "Box Profile", "Square Beam"),
@@ -707,28 +706,32 @@ class addBeam(Operator):
             )
     beamZ: FloatProperty(
             name="Height",
-            min=0.01, max=100,
+            min=0.01,
+            #max=100,
             default=1
             )
     beamX: FloatProperty(
             name="Width",
-            min=0.01, max=100,
+            min=0.01,
+            #max=100,
             default=.5
             )
     beamY: FloatProperty(
             name="Depth",
             min=0.01,
-            max=100,
+            #max=100,
             default=2
             )
     beamW: FloatProperty(
             name="Thickness",
-            min=0.01, max=1,
+            min=0.01,
+            #max=1,
             default=0.1
             )
     edgeA: IntProperty(
             name="Taper",
-            min=0, max=100,
+            min=0,
+            #max=100,
             default=0,
             description="Angle beam edges"
             )
@@ -756,8 +759,59 @@ class addBeam(Operator):
 
     def execute(self, context):
         if bpy.context.mode == "OBJECT":
-            addBeamObj(self, context)
-            return {'FINISHED'}
 
-        self.report({'WARNING'}, "Option only valid in Object mode")
-        return {'CANCELLED'}
+            if self.change == True and self.change != None:
+                obj = context.active_object
+                oldmesh = obj.data
+                oldmeshname = obj.data.name
+                mesh = addBeamMesh(self, context)
+                obj.data = mesh
+                bpy.data.meshes.remove(oldmesh)
+                obj.data.name = oldmeshname
+            else:
+                mesh = addBeamMesh(self, context)
+                obj = object_utils.object_data_add(context, mesh, operator=None)
+
+            if self.Type == '2':  # Rotate C shape
+                bpy.ops.transform.rotate(value=1.570796, constraint_axis=[False, True, False])
+                bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+
+            if self.Cursor:
+                if beamObj.select_get() is True:
+                    # we also have to check if we're considered to be in 3D View (view3d)
+                    if bpy.ops.view3d.snap_selected_to_cursor.poll():
+                        bpy.ops.view3d.snap_selected_to_cursor()
+                    else:
+                        self.Cursor = False
+
+            obj.data["Beam"] = True
+            obj.data["change"] = False
+            for prm in BeamParameters():
+                obj.data[prm] = getattr(self, prm)
+
+            return {'FINISHED'}
+            
+        if bpy.context.mode == "EDIT_MESH":
+            active_object = context.active_object
+            name_active_object = active_object.name
+            bpy.ops.object.mode_set(mode='OBJECT')
+            mesh = addBeamMesh(self, context)
+            obj = object_utils.object_data_add(context, mesh, operator=None)
+            obj.select_set(True)
+            active_object.select_set(True)
+            bpy.ops.object.join()
+            context.active_object.name = name_active_object
+            bpy.ops.object.mode_set(mode='EDIT')
+
+        return {'FINISHED'}
+
+def BeamParameters():
+    BeamParameters = [
+            "beamZ",
+            "beamX",
+            "beamY",
+            "beamW",
+            "edgeA",
+            "Cursor",
+            ]
+    return BeamParameters

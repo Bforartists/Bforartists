@@ -20,13 +20,13 @@
 
 bl_info = {
     "name": "Render to Print",
-    "author": "Marco Crippa <thekrypt77@tiscali.it>, Dealga McArdle",
-    "version": (0, 2),
-    "blender": (2, 58, 0),
-    "location": "Render > Render to Print",
+    "author": "Marco Crippa <thekrypt77@tiscali.it>, Dealga McArdle, zebus3d",
+    "version": (0, 3, 0),
+    "blender": (2, 80, 0),
+    "location": "Output > Render to Print",
     "description": "Set the size of the render for a print",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Render/Render to Print",
+    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/ \
+                Py/Scripts/Render/Render to Print",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Render"}
 
@@ -34,12 +34,13 @@ bl_info = {
 import math
 import bpy
 from bpy.types import Panel, Operator, Scene, PropertyGroup
-from bpy.props import (IntProperty,
-                       FloatProperty,
-                       StringProperty,
-                       EnumProperty,
-                       PointerProperty,
-                       )
+from bpy.props import (
+                        IntProperty,
+                        FloatProperty,
+                        StringProperty,
+                        EnumProperty,
+                        PointerProperty,
+                    )
 
 
 paper_presets = (
@@ -106,8 +107,10 @@ def paper_enum_parse(idname):
     return tipo, float(dim_w), float(dim_h)
 
 
-paper_presets_data = {idname: paper_enum_parse(idname)
-                      for idname, name, descr in paper_presets}
+paper_presets_data = {
+    idname: paper_enum_parse(idname)
+    for idname, name, descr in paper_presets
+    }
 
 
 def update_settings_cb(self, context):
@@ -220,9 +223,12 @@ def pixels_from_print(ps):
 
 class RENDER_PT_print(Panel):
     bl_label = "Render to Print"
+    # bl_space_type = 'PROPERTIES'
+    # bl_region_type = 'WINDOW'
+    # bl_context = 'render'
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    bl_context = 'render'
+    bl_context = "output"
 
     def draw(self, context):
 
@@ -326,18 +332,27 @@ class RENDER_OT_apply_size(Operator):
         return {'FINISHED'}
 
 
+classes = ( 
+            RENDER_OT_apply_size, 
+            RENDER_PT_print, 
+            RenderPrintSertings
+            )
+
 def register():
-    bpy.utils.register_class(RENDER_OT_apply_size)
-    bpy.utils.register_class(RENDER_PT_print)
-    bpy.utils.register_class(RenderPrintSertings)
+    from bpy.utils import register_class
+
+    for cls in classes:
+        register_class(cls)
 
     Scene.print_settings = PointerProperty(type=RenderPrintSertings)
 
 
 def unregister():
-    bpy.utils.unregister_class(RENDER_OT_apply_size)
-    bpy.utils.unregister_class(RENDER_PT_print)
-    bpy.utils.unregister_class(RenderPrintSertings)
+    from bpy.utils import unregister_class
+
+    for cls in classes:
+        unregister_class(cls)
+        
     del Scene.print_settings
 
 

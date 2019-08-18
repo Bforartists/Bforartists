@@ -787,6 +787,7 @@ class SCENE_OT_import(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     def invoke(self, context, event):
+        bpy.ops.import_applink.pilgway_3d_coat()
         global run_background_update
         if run_background_update:
             if bpy.app.timers.is_registered(run_import_periodically):
