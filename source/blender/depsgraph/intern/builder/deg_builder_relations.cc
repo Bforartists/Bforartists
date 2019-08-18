@@ -531,7 +531,7 @@ void DepsgraphRelationBuilder::build_collection(LayerCollection *from_layer_coll
     /* If we came from layer collection we don't go deeper, view layer
      * builder takes care of going deeper.
      *
-     * NOTE: Do early output before tagging build as done, so possbile
+     * NOTE: Do early output before tagging build as done, so possible
      * subsequent builds from outside of the layer collection properly
      * recurses into all the nested objects and collections. */
     return;
@@ -1531,8 +1531,9 @@ void DepsgraphRelationBuilder::build_driver_id_property(ID *id, const char *rna_
   }
   PointerRNA id_ptr, ptr;
   PropertyRNA *prop;
+  int index;
   RNA_id_pointer_create(id, &id_ptr);
-  if (!RNA_path_resolve_full(&id_ptr, rna_path, &ptr, &prop, NULL)) {
+  if (!RNA_path_resolve_full(&id_ptr, rna_path, &ptr, &prop, &index)) {
     return;
   }
   if (prop == NULL) {

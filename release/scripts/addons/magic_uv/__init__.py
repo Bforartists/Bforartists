@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.1"
-__date__ = "19 May 2019"
+__version__ = "6.2"
+__date__ = "31 Jul 2019"
 
 
 bl_info = {
@@ -29,7 +29,7 @@ bl_info = {
     "author": "Nutti, Mifth, Jace Priester, kgeogeo, mem, imdjs"
               "Keith (Wahooney) Boshoff, McBuff, MaxRobinot, "
               "Alexander Milovsky",
-    "version": (6, 1, 0),
+    "version": (6, 2, 0),
     "blender": (2, 80, 0),
     "location": "See Add-ons Preferences",
     "description": "UV Toolset. See Add-ons Preferences for details",
@@ -76,10 +76,7 @@ def register():
 
 
 def unregister():
-    user_prefs = utils.compatibility.get_user_preferences(bpy.context)
-
     preferences.remove_builtin_menu()
-
     properites.clear_props(bpy.types.Scene)
     utils.bl_class_registry.BlClassRegistry.unregister()
 

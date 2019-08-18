@@ -1,4 +1,5 @@
 import bpy
+from math import radians, degrees
 
 # -----------------------------------------------------------------------------
 # utility functions
@@ -54,6 +55,19 @@ def mu_assign_to_data(object, material, index, edit_mode, all = True):
             bpy.ops.object.mode_set(mode = 'OBJECT')
 
 def mu_new_material_name(material):
+    for mat in bpy.data.materials:
+        name = mat.name
+
+        if (name == material):
+            try:
+                base, suffix = name.rsplit('.', 1)
+
+                # trigger the exception
+                num = int(suffix, 10)
+                material = base + "." + '%03d' % (num + 1)
+            except ValueError:
+                material = material + ".001"
+
     return material
 
 
@@ -139,6 +153,15 @@ def mu_assign_material(self, material_name = "Default", override_type = 'APPEND_
                 obj.material_slots[i].material = target
                 i += 1
 
+        elif override_type == 'OVERRIDE_CURRENT':
+            active_slot = obj.active_material_index
+
+            if len(obj.material_slots) == 0:
+                self.report({'INFO'}, 'No material slots found! A material slot was added!')
+                bpy.ops.object.material_slot_add()
+
+            obj.material_slots[active_slot].material = target
+
         # if we should keep the material slots and just append the selected material (if not already assigned)
         elif override_type == 'APPEND_MATERIAL':
             found = False
@@ -184,7 +207,7 @@ def mu_assign_material(self, material_name = "Default", override_type = 'APPEND_
     return {'FINISHED'}
 
 
-def mu_select_by_material_name(self, find_material_name, extend_selection = False):
+def mu_select_by_material_name(self, find_material_name, extend_selection = False, internal = False):
     """Searches through all objects, or the polygons/curves of the current object
     to find and select objects/data with the desired material"""
 
@@ -195,7 +218,7 @@ def mu_select_by_material_name(self, find_material_name, extend_selection = Fals
 
     if find_material is None:
         self.report({'INFO'}, "The material " + find_material_name + " doesn't exists!")
-        return {'CANCELLED'}
+        return {'CANCELLED'} if not internal else -1
 
     # check for edit_mode
     edit_mode = False
@@ -236,9 +259,10 @@ def mu_select_by_material_name(self, find_material_name, extend_selection = Fals
                 obj.select_set(state=False)
 
         if not found_material:
-            self.report({'INFO'}, "No objects found with the material " +
-                                    find_material_name + "!")
-            return {'FINISHED'}
+            if not internal:
+                self.report({'INFO'}, "No objects found with the material " +
+                                        find_material_name + "!")
+            return {'FINISHED'} if not internal else 0
 
     else:
         # it's edit_mode, so select the polygons
@@ -253,7 +277,6 @@ def mu_select_by_material_name(self, find_material_name, extend_selection = Fals
         objects = bpy.context.selected_editable_objects
 
         for obj in objects:
-            print("Obj:" + obj.name)
             bpy.context.view_layer.objects.active = obj
 
             if obj.type == 'MESH':
@@ -305,7 +328,7 @@ def mu_select_by_material_name(self, find_material_name, extend_selection = Fals
 
                     i += 1
 
-            else:
+            elif not internal:
                 # Some object types are not supported
                 #  mostly because don't really support selecting by material (like Font/Text objects)
                 #  ore that they don't support multiple materials/are just "weird" (i.e. Meta balls)
@@ -316,10 +339,10 @@ def mu_select_by_material_name(self, find_material_name, extend_selection = Fals
 
         bpy.context.view_layer.objects.active = active_object
 
-        if not found_material:
+        if (not found_material) and (not internal):
             self.report({'INFO'}, "Material " + find_material_name + " isn't assigned to anything!")
 
-    return {'FINISHED'}
+    return {'FINISHED'} if not internal else 1
 
 
 def mu_copy_material_to_others(self):
@@ -334,7 +357,7 @@ def mu_copy_material_to_others(self):
     return {'FINISHED'}
 
 
-def mu_cleanmatslots(self):
+def mu_cleanmatslots(self, affect):
     """Clean the material slots of the seleceted objects"""
 
     # check for edit mode
@@ -344,7 +367,16 @@ def mu_cleanmatslots(self):
         edit_mode = True
         bpy.ops.object.mode_set()
 
-    objects = bpy.context.selected_editable_objects
+    objects = []
+
+    if affect == 'ACTIVE':
+        objects = [active_object]
+    elif affect == 'SELECTED':
+        objects = bpy.context.selected_editable_objects
+    elif affect == 'SCENE':
+        objects = bpy.context.scene.objects
+    else: # affect == 'ALL'
+        objects = bpy.data.objects
 
     for obj in objects:
         used_mat_index = []  # we'll store used materials indices here
@@ -600,5 +632,53 @@ def mu_change_material_link(self, link, affect, override_data_material = False):
                 slot.material = present_material
 
             index = index + 1
+
+    return {'FINISHED'}
+
+def mu_join_objects(self, materials):
+    """Join objects together based on their material"""
+
+    for material in materials:
+        mu_select_by_material_name(self, material, False, True)
+
+        bpy.ops.object.join()
+
+    return {'FINISHED'}
+
+def mu_set_auto_smooth(self, angle, affect, set_smooth_shading):
+    """Set Auto smooth values for selected objects"""
+    # Inspired by colkai
+
+    objects = []
+    objects_affected = 0
+
+    if affect == "ACTIVE":
+        objects = [bpy.context.active_object]
+    elif affect == "SELECTED":
+        objects = bpy.context.selected_editable_objects
+    elif affect == "SCENE":
+        objects = bpy.context.scene.objects
+    elif affect == "ALL":
+        objects = bpy.data.objects
+
+    if len(objects) == 0:
+        self.report({'WARNING'}, 'No objects available to set Auto Smooth on')
+        return {'CANCELLED'}
+
+    for object in objects:
+        if object.type == "MESH":
+            if set_smooth_shading:
+                for poly in object.data.polygons:
+                    poly.use_smooth = True
+
+                #bpy.ops.object.shade_smooth()
+
+            object.data.use_auto_smooth = 1
+            object.data.auto_smooth_angle = angle  # 35 degrees as radians
+
+            objects_affected += 1
+
+    self.report({'INFO'}, 'Auto smooth angle set to %.0f° on %d of %d objects' %
+                            (degrees(angle), objects_affected, len(objects)))
 
     return {'FINISHED'}

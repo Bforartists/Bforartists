@@ -1073,7 +1073,7 @@ class SizeLocationManipulator(SizeManipulator):
 
         Also take care of moving linked objects too
         Changing size is not necessary as link does
-        allredy handle this and childs panels are
+        already handle this and childs panels are
         updated by base object.
     """
     def __init__(self, context, o, datablock, manipulator, handle_size, snap_callback=None):
@@ -1185,7 +1185,7 @@ class SnapSizeLocationManipulator(SizeLocationManipulator):
 
         Also take care of moving linked objects too
         Changing size is not necessary as link does
-        allredy handle this and childs panels are
+        already handle this and childs panels are
         updated by base object.
 
 

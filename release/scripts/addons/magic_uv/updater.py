@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.1"
-__date__ = "19 May 2019"
+__version__ = "6.2"
+__date__ = "31 Jul 2019"
 
 import os
 
@@ -31,9 +31,9 @@ from bpy.props import (
 )
 
 from .utils.bl_class_registry import BlClassRegistry
-from .utils.addon_updator import (
-    AddonUpdatorManager,
-    AddonUpdatorConfig,
+from .utils.addon_updater import (
+    AddonUpdaterManager,
+    AddonUpdaterConfig,
     get_separator,
 )
 from .utils import compatibility as compat
@@ -47,7 +47,7 @@ class MUV_OT_CheckAddonUpdate(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, _):
-        updater = AddonUpdatorManager.get_instance()
+        updater = AddonUpdaterManager.get_instance()
         updater.check_update_candidate()
 
         return {'FINISHED'}
@@ -68,7 +68,7 @@ class MUV_OT_UpdateAddon(bpy.types.Operator):
     )
 
     def execute(self, _):
-        updater = AddonUpdatorManager.get_instance()
+        updater = AddonUpdaterManager.get_instance()
         updater.update(self.branch_name)
 
         return {'FINISHED'}
@@ -76,7 +76,7 @@ class MUV_OT_UpdateAddon(bpy.types.Operator):
 
 def draw_updater_ui(prefs_obj):
     layout = prefs_obj.layout
-    updater = AddonUpdatorManager.get_instance()
+    updater = AddonUpdaterManager.get_instance()
 
     layout.separator()
 
@@ -127,7 +127,7 @@ def draw_updater_ui(prefs_obj):
 
 
 def register_updater(bl_info):
-    config = AddonUpdatorConfig()
+    config = AddonUpdaterConfig()
     config.owner = "nutti"
     config.repository = "Magic-UV"
     config.current_addon_path = os.path.dirname(os.path.realpath(__file__))
@@ -136,6 +136,10 @@ def register_updater(bl_info):
         config.current_addon_path[
             :config.current_addon_path.rfind(get_separator())]
     config.min_release_version = bl_info["version"]
-    config.target_addon_path = "src/magic_uv"
-    updater = AddonUpdatorManager.get_instance()
+    config.default_target_addon_path = "magic_uv"
+    config.target_addon_path = {
+        "master": "src{}magic_uv".format(get_separator()),
+        "develop": "src{}magic_uv".format(get_separator()),
+    }
+    updater = AddonUpdaterManager.get_instance()
     updater.init(bl_info, config)

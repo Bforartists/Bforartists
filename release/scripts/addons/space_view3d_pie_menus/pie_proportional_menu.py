@@ -19,7 +19,7 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "Hotkey: 'O'",
+    "name": "Hotkey: 'Shift O'",
     "description": "Proportional Object/Edit Tools",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 1),
@@ -286,6 +286,16 @@ class PIE_OT_ProportionalRandomEdt(Operator):
         ts.proportional_edit_falloff = 'RANDOM'
         return {'FINISHED'}
 
+class PIE_OT_ProportionalInverseS(Operator):
+    bl_idname = "proportional_edt.inverse"
+    bl_label = "Proportional Inverse Square"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        ts = context.tool_settings
+        ts.use_proportional_edit = True
+        ts.proportional_edit_falloff = 'INVERSE_SQUARE'
+        return {'FINISHED'}
 
 # Pie ProportionalEditObj - O
 class PIE_MT_ProportionalObj(Menu):
@@ -326,13 +336,13 @@ class PIE_MT_ProportionalEdt(Menu):
         # 6 - RIGHT
         pie.operator("proportional_edt.projected", text="Projected", icon='PROP_ON')
         # 2 - BOTTOM
-        pie.operator("proportional_edt.smooth", text="Smooth", icon='SMOOTHCURVE')
+        pie.operator("proportional_edt.root", text="Root", icon='ROOTCURVE')
         # 8 - TOP
         pie.operator("proportional_edt.active", text="Proportional On/Off", icon='PROP_ON')
         # 7 - TOP - LEFT
-        pie.operator("proportional_edt.sphere", text="Sphere", icon='SPHERECURVE')
+        pie.operator("proportional_edt.smooth", text="Smooth", icon='SMOOTHCURVE')
         # 9 - TOP - RIGHT
-        pie.operator("proportional_edt.root", text="Root", icon='ROOTCURVE')
+        pie.operator("proportional_edt.sphere", text="Sphere", icon='SPHERECURVE')
         # 1 - BOTTOM - LEFT
         pie.operator("proportional_edt.constant", text="Constant", icon='NOCURVE')
         # 3 - BOTTOM - RIGHT
@@ -351,6 +361,7 @@ class PIE_MT_ProportionalMore(Menu):
         box.operator("proportional_edt.linear", text="Linear", icon='LINCURVE')
         box.operator("proportional_edt.sharp", text="Sharp", icon='SHARPCURVE')
         box.operator("proportional_edt.random", text="Random", icon='RNDCURVE')
+        box.operator("proportional_edt.inverse", text="INVERSE", icon='INVERSESQUARECURVE')
 
 
 classes = (
@@ -375,6 +386,7 @@ classes = (
     PIE_MT_ProportionalObj,
     PIE_MT_ProportionalEdt,
     PIE_MT_ProportionalMore,
+    PIE_OT_ProportionalInverseS,
     )
 
 addon_keymaps = []
@@ -388,13 +400,13 @@ def register():
     if wm.keyconfigs.addon:
         # ProportionalEditObj
         km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
-        kmi = km.keymap_items.new('wm.call_menu_pie', 'O', 'PRESS')
+        kmi = km.keymap_items.new('wm.call_menu_pie', 'O', 'PRESS', shift=True)
         kmi.properties.name = "PIE_MT_proportional_obj"
         addon_keymaps.append((km, kmi))
 
         # ProportionalEditEdt
         km = wm.keyconfigs.addon.keymaps.new(name='Mesh')
-        kmi = km.keymap_items.new('wm.call_menu_pie', 'O', 'PRESS')
+        kmi = km.keymap_items.new('wm.call_menu_pie', 'O', 'PRESS', shift=True)
         kmi.properties.name = "PIE_MT_proportional_edt"
         addon_keymaps.append((km, kmi))
 

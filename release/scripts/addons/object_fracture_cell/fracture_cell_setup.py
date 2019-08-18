@@ -249,7 +249,7 @@ def cell_fracture_objects(context, obj,
             except RuntimeError:
                 import traceback
                 traceback.print_exc()
-        # Smooth faces will remain only inner faces, after appling boolean modifier.
+        # Smooth faces will remain only inner faces, after applying boolean modifier.
         if use_smooth_faces:
             for bm_face in bm.faces:
                 bm_face.smooth = True

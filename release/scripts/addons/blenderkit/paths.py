@@ -164,7 +164,7 @@ def get_download_filenames(asset_data):
     file_names = []
     # fn = asset_data['file_name'].replace('blend_', '')
     if asset_data.get('url') is not None:
-        # this means asset is allready in scene and we don't nedd to check
+        # this means asset is already in scene and we don't nedd to check
 
         fn = extract_filename_from_url(asset_data['url'])
         fn.replace('_blend', '')
@@ -236,7 +236,7 @@ def get_addon_thumbnail_path(name):
     # fpath = os.path.join(p, subpath)
     ext = name.split('.')[-1]
     next = ''
-    if not (ext == 'jpg' or ext == 'png'):  # allready has ext?
+    if not (ext == 'jpg' or ext == 'png'):  # already has ext?
         next = '.jpg'
     subpath = "thumbnails" + os.sep + name + next
     return os.path.join(script_path, subpath)

@@ -780,7 +780,12 @@ class NODE_MT_exit_edit_group(bpy.types.Operator):
 # Adapt properties editor panel to display in node editor. We have to
 # copy the class rather than inherit due to the way bpy registration works.
 def node_panel(cls):
-    node_cls = type('NODE_' + cls.__name__, cls.__bases__, dict(cls.__dict__))
+    node_cls_dict = cls.__dict__.copy()
+
+    # Needed for re-registration.
+    node_cls_dict.pop("bl_rna", None)
+
+    node_cls = type('NODE_' + cls.__name__, cls.__bases__, node_cls_dict)
 
     node_cls.bl_space_type = 'NODE_EDITOR'
     node_cls.bl_region_type = 'UI'

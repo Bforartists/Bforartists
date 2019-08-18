@@ -143,7 +143,7 @@ class RigifyPreferences(AddonPreferences):
             print('Reloading external metarigs...')
             metarig_menu.get_external_metarigs(set_list)
 
-            # Re-register rig paramaters
+            # Re-register rig parameters
             register_rig_parameters()
 
     legacy_mode: BoolProperty(

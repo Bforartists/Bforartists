@@ -87,9 +87,12 @@ def faces_from_mesh(ob, global_matrix, use_mesh_modifiers=False):
     else:
         mesh_owner = ob
 
+    # Object.to_mesh() is not guaranteed to return a mesh.
     try:
         mesh = mesh_owner.to_mesh()
     except RuntimeError:
+        return
+    if mesh is None:
         return
 
     mat = global_matrix @ ob.matrix_world

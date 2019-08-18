@@ -18,7 +18,7 @@ class DynTopoMenu(Menu):
 
         if context.object.use_dynamic_topology_sculpting:
             layout.row().operator("sculpt.dynamic_topology_toggle",
-                                     "Disable Dynamic Topology")
+                                     text="Disable Dynamic Topology")
 
             layout.row().separator()
 
@@ -39,7 +39,7 @@ class DynTopoMenu(Menu):
             row = layout.row()
             row.operator_context = 'INVOKE_DEFAULT'
             row.operator("sculpt.dynamic_topology_toggle",
-                                        "Enable Dynamic Topology")
+                                        text="Enable Dynamic Topology")
 
 
 class DynDetailMenu(Menu):
@@ -154,3 +154,19 @@ class SymmetrizeMenu(Menu):
                     path, disable=True,
                     icon='RADIOBUT_OFF', disable_icon='RADIOBUT_ON'
                     )
+
+
+classes = (
+    DynTopoMenu,
+    DynDetailMenu,
+    DetailMethodMenu,
+    SymmetrizeMenu
+    )
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)

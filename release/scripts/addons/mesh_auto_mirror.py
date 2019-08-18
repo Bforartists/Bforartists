@@ -1,7 +1,7 @@
 ######################################################################################################
-# An simple add-on to auto cut in two and mirror an object                                           #
-# Actualy partialy uncommented (see further version)                                                 #
-# Author: Lapineige, Bookyakuno                                                                                  #
+# A simple add-on to auto cut in two and mirror an object                                            #
+# Actually partially uncommented (see further version)                                               #
+# Author: Lapineige, Bookyakuno                                                                      #
 # License: GPL v3                                                                                    #
 ######################################################################################################
 # 2.8 update by Bookyakuno, meta-androcto

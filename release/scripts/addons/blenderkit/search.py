@@ -92,7 +92,7 @@ def refresh_token_timer():
 def scene_load(context):
     wm = bpy.context.window_manager
     fetch_server_data()
-    # following doesn't necessarilly happen if version isn't checked yet or similar, first run.
+    # following doesn't necessarily happen if version isn't checked yet or similar, first run.
     # wm['bkit_update'] = version_checker.compare_versions(blenderkit)
     categories.load_categories()
     if not bpy.app.timers.is_registered(refresh_token_timer):
@@ -108,7 +108,8 @@ def fetch_server_data():
         # version_checker.check_version_thread(url, api_key, blenderkit)
         if user_preferences.enable_oauth:
             bkit_oauth.refresh_token_thread()
-        get_profile()
+        if api_key != '':
+            get_profile()
         categories.fetch_categories_thread(api_key)
 
 
@@ -116,7 +117,7 @@ def fetch_server_data():
 def timer_update():  # TODO might get moved to handle all blenderkit stuff.
 
     global search_threads
-    # don't do anything while dragging - this could switch asset type during drag, and make results list lenght different,
+    # don't do anything while dragging - this could switch asset type during drag, and make results list length different,
     # causing a lot of throuble literally.
     if len(search_threads) == 0 or bpy.context.scene.blenderkitUI.dragging:
         return 1
@@ -595,6 +596,8 @@ def fetch_author(a_id, api_key):
                     with open(gravatar_path, 'wb') as f:
                         f.write(r.content)
                     adata['gravatarImg'] = gravatar_path
+                elif r.status_code == '404':
+                    adata['gravatarHash'] = None
     except Exception as e:
         utils.p(e)
     utils.p('finish fetch')
@@ -720,7 +723,6 @@ class Searcher(threading.Thread):
             else:
                 requeststring += '+order:_score'
 
-
             requeststring += '&addon_version=%s' % params['addon_version']
             if params.get('scene_uuid') is not None:
                 requeststring += '&scene_uuid=%s' % params['scene_uuid']
@@ -803,7 +805,7 @@ class Searcher(threading.Thread):
         full_thbs = zip(thumb_full_filepaths, thumb_full_urls)
 
         # we save here because a missing thumbnail check is in the previous loop
-        # we can also prepend previous results. These have allready thumbnails downloaded...
+        # we can also prepend previous results. These have already thumbnails downloaded...
         if params['get_next']:
             rdata['results'][0:0] = origdata['results']
 
@@ -1098,6 +1100,7 @@ class SearchOperator(Operator):
     own: BoolProperty(name="own assets only",
                       description="Find all own assets",
                       default=False)
+
     category: StringProperty(
         name="category",
         description="search only subtree of this category",
@@ -1112,13 +1115,26 @@ class SearchOperator(Operator):
                            description="get next page from previous search",
                            default=False)
 
+    keywords = StringProperty(
+        name="Keywords",
+        description="Keywords",
+        default="")
+
     @classmethod
     def poll(cls, context):
         return True
 
     def execute(self, context):
-        search(own=self.own, category=self.category, get_next=self.get_next, author_id=self.author_id)
-        bpy.ops.view3d.blenderkit_asset_bar()
+        # TODO ; this should all get transferred to properties of the search operator, so sprops don't have to be fetched here at all.
+        sprops = utils.get_search_props()
+        if self.author_id != '':
+            sprops.search_keywords = ''
+        if self.keywords != '':
+            sprops.search_keywords = self.keywords
+
+
+        search(category=self.category, get_next=self.get_next, author_id=self.author_id)
+        #bpy.ops.view3d.blenderkit_asset_bar()
 
         return {'FINISHED'}
 
@@ -1149,12 +1165,12 @@ def unregister_search():
 
 
 '''
-search - 
+search -
 build query
 START THREAD
-send query (bg allready)
-get result - metadata, small thumbnails, big thumbnails paths (now genereate this?)
-write metadata, possibly to 
+send query (bg already)
+get result - metadata, small thumbnails, big thumbnails paths (now generate this?)
+write metadata, possibly to
 download small thumbnails first
 start big thumbnails download. these don't have to be there on updates, if they aren't the Image in image editor doesn't get updated.
 parse metadata, save it in json in the temp dir which gets read on each update of the search.

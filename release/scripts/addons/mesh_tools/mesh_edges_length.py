@@ -5,7 +5,7 @@ bl_info = {
     "description": "Edges length",
     "author": "Giuseppe De Marco [BlenderLab] inspired by NirenYang",
     "version": (0, 1, 0),
-    "blender": (2, 71, 0),
+    "blender": (2, 80, 0),
     "location": "Toolbar > Tools > Mesh Tools: set Length(Shit+Alt+E)",
     "warning": "",
     "wiki_url": "",
@@ -206,10 +206,6 @@ class LengthSet(Operator):
         if edge_length_debug:
             self.report({'INFO'}, str(self.originary_edge_length_dict))
 
-        if bpy.context.scene.unit_settings.system == 'IMPERIAL':
-            # imperial to metric conversion
-            vector.length = (0.9144 * vector.length) / 3
-
         self.target_length = vector.length
 
         return wm.invoke_props_dialog(self)
@@ -307,16 +303,6 @@ class LengthSet(Operator):
                     else:
                         edge.verts[0].co = verts[1] - vector
 
-            if bpy.context.scene.unit_settings.system == 'IMPERIAL':
-                """
-                # yards to metric conversion
-                vector.length = ( 3. * vector.length ) / 0.9144
-                # metric to yards conversion
-                vector.length = ( 0.9144 * vector.length ) / 3.
-                """
-                for mvert in edge.verts:
-                    # school time: 0.9144 : 3 = X : mvert
-                    mvert.co = (0.9144 * mvert.co) / 3
 
             if edge_length_debug:
                 self.report({'INFO'},

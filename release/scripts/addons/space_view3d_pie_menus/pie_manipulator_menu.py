@@ -19,8 +19,8 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "Hotkey: 'Ctrl Space'",
-    "description": "Extended Manipulator Menu",
+    "name": "Hotkey: 'Alt Spacebar'",
+    "description": "Manipulator Menu",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 1),
     "blender": (2, 80, 0),
@@ -92,14 +92,15 @@ class PIE_MT_Manipulator(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         # 4 - LEFT
-        pie.operator("w.manipulators", text="Translate", icon='NONE').type = 'TRANSLATE'
-        # 6 - RIGHT
         pie.operator("w.manipulators", text="Rotate", icon='NONE').type = 'ROTATE'
-        # 2 - BOTTOM
+        # 6 - RIGHT
         pie.operator("w.manipulators", text="Scale", icon='NONE').type = 'SCALE'
-        # 8 - TOP
+        # 2 - BOTTOM
         props = pie.operator("wm.context_toggle", text="Show/Hide Toggle", icon='NONE')
         props.data_path = "space_data.show_gizmo_context"
+        # 8 - TOP
+        pie.operator("w.manipulators", text="Translate", icon='NONE').type = 'TRANSLATE'
+
 
 
 classes = (
@@ -118,7 +119,7 @@ def register():
     if wm.keyconfigs.addon:
         # Manipulators
         km = wm.keyconfigs.addon.keymaps.new(name='3D View Generic', space_type='VIEW_3D')
-        kmi = km.keymap_items.new('wm.call_menu_pie', 'SPACE', 'PRESS', ctrl=True)
+        kmi = km.keymap_items.new('wm.call_menu_pie', 'SPACE', 'PRESS', alt=True)
         kmi.properties.name = "PIE_MT_manipulator"
         addon_keymaps.append((km, kmi))
 

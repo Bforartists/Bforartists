@@ -526,7 +526,7 @@ def ik2fk_leg(obj, fk, ik):
 
     else:
         # Stretch
-        if 'stretch_lenght' in footi.keys() and 'stretch_lenght' in thigh.keys():
+        if 'stretch_length' in footi.keys() and 'stretch_length' in thigh.keys():
             # Kept for compat with legacy rigify Human
             footi['stretch_length'] = thigh['stretch_length']
 

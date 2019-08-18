@@ -19,7 +19,7 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "Hotkey: 'Tab'",
+    "name": "Hotkey: 'Ctrl Tab'",
     "description": "Switch between 3d view object/edit modes",
     "author": "pitiwazou, meta-androcto, italic",
     "version": (0, 1, 2),
@@ -289,7 +289,7 @@ class PIE_MT_ObjectEditotherModes(Menu):
 class PIE_MT_ObjectEditMode(Menu):
     """Modes Switch"""
     bl_idname = "PIE_MT_objecteditmode"
-    bl_label = "Modes Menu (Tab)"
+    bl_label = "Mode Switch (Ctrl Tab)"
 
     def draw(self, context):
         layout = self.layout
@@ -315,7 +315,7 @@ class PIE_MT_ObjectEditMode(Menu):
             # 2 - BOTTOM
             pie.menu("MENU_MT_objecteditmodeothermodes", text="Vert,Edge,Face Modes", icon='EDITMODE_HLT')
             # 8 - TOP
-            pie.operator("class.object", text="Edit/Object Toggle", icon='OBJECT_DATAMODE')
+            pie.operator("class.object", text="Object/Edit Toggle", icon='OBJECT_DATAMODE')
             # 7 - TOP - LEFT
             pie.operator("sculpt.sculptmode_toggle", text="Sculpt", icon='SCULPTMODE_HLT')
             # 9 - TOP - RIGHT
@@ -492,7 +492,7 @@ classes = (
     )
 
 addon_keymaps = []
-
+	
 
 def register():
     for cls in classes:
@@ -502,12 +502,12 @@ def register():
     if wm.keyconfigs.addon:
         # Select Mode
         km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
-        kmi = km.keymap_items.new('wm.call_menu_pie', 'TAB', 'PRESS')
+        kmi = km.keymap_items.new('wm.call_menu_pie', 'TAB', 'PRESS', ctrl=True)
         kmi.properties.name = "PIE_MT_objecteditmode"
         addon_keymaps.append((km, kmi))
 
         km = wm.keyconfigs.addon.keymaps.new(name='Grease Pencil Stroke Edit Mode')
-        kmi = km.keymap_items.new('wm.call_menu_pie', 'TAB', 'PRESS')
+        kmi = km.keymap_items.new('wm.call_menu_pie', 'TAB', 'PRESS', ctrl=True)
         kmi.properties.name = "PIE_MT_objecteditmode"
         addon_keymaps.append((km, kmi))
 
