@@ -1391,7 +1391,7 @@ class VIEW3D_MT_select_grouped(Menu):
         layout.separator()
 
         layout.operator("object.select_grouped", text= "Type", icon = "TYPE").type = 'TYPE'
-        layout.operator("object.select_grouped", text= "Collection", icon = "LAYER").type = 'COLLECTION'
+        layout.operator("object.select_grouped", text= "Collection", icon = "GROUP").type = 'COLLECTION'
         layout.operator("object.select_grouped", text= "Hook", icon = "HOOK").type = 'HOOK'
 
         layout.separator()
