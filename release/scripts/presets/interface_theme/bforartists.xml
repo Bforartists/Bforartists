@@ -390,10 +390,10 @@
         handle_sel_auto="#f0ff40"
         handle_sel_align="#f090a0"
         lastsel_point="#ffffff"
-        extra_edge_len="#200000"
-        extra_edge_angle="#202000"
-        extra_face_angle="#002000"
-        extra_face_area="#000080"
+        extra_edge_len="#00fbff"
+        extra_edge_angle="#ffff00"
+        extra_face_angle="#12ff00"
+        extra_face_area="#020080"
         editmesh_active="#ffffff80"
         normal="#22dddd"
         vertex_normal="#2361dd"
@@ -973,10 +973,11 @@
     <outliner>
       <ThemeOutliner
         match="#337f33"
-        selected_highlight="#82878c"
+        selected_highlight="#223a5b"
+        active="#3b5689"
         selected_object="#e96a00"
         active_object="#ffaf29"
-        edited_object="#00806200"
+        edited_object="#00806266"
         row_alternate="#ffffff06"
         >
         <space>
@@ -988,7 +989,7 @@
             header="#333333ff"
             header_text="#cccccc"
             header_text_hi="#ffffff"
-            button="#40404000"
+            button="#404040ff"
             button_title="#cccccc"
             button_text="#cccccc"
             button_text_hi="#ffffff"
