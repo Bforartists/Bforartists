@@ -6306,21 +6306,21 @@ class VIEW3D_PT_object_type_visibility(Panel):
 
         attr_object_types = (
             # Geometry
-            ("mesh", "Mesh"),
-            ("curve", "Curve"),
-            ("surf", "Surface"),
-            ("meta", "Meta"),
-            ("font", "Text"),
+            ("mesh", "Mesh          "),
+            ("curve", "Curve       "),
+            ("surf", "Surface     "),
+            ("meta", "Meta         "),
+            ("font", "Text           "),
             ("grease_pencil", "Grease Pencil"),
             (None, None),
             # Other
-            ("armature", "Armature"),
-            ("lattice", "Lattice"),
-            ("empty", "Empty"),
-            ("light", "Light"),
-            ("light_probe", "Light Probe"),
-            ("camera", "Camera"),
-            ("speaker", "Speaker"),
+            ("armature", "Armature  "),
+            ("lattice", "Lattice      "),
+            ("empty", "Empty        "),
+            ("light", "Light        "),
+            ("light_probe", "Light Probe  "),
+            ("camera", "Camera     "),
+            ("speaker", "Speaker    "),
         )
 
         for attr, attr_name in attr_object_types:
