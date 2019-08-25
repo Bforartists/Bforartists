@@ -1096,7 +1096,7 @@ class SearchOperator(Operator):
     """Tooltip"""
     bl_idname = "view3d.blenderkit_search"
     bl_label = "BlenderKit asset search"
-
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
     own: BoolProperty(name="own assets only",
                       description="Find all own assets",
                       default=False)

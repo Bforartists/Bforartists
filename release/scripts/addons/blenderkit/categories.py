@@ -92,16 +92,18 @@ def load_categories():
     categories_filepath = os.path.join(tempdir, 'categories.json')
 
     wm = bpy.context.window_manager
-    with open(categories_filepath, 'r') as catfile:
-        wm['bkit_categories'] = json.load(catfile)
+    try:
+        with open(categories_filepath, 'r') as catfile:
+            wm['bkit_categories'] = json.load(catfile)
 
-    wm['active_category'] = {
-        'MODEL': ['model'],
-        'SCENE': ['scene'],
-        'MATERIAL': ['material'],
-        'BRUSH': ['brush'],
-    }
-
+        wm['active_category'] = {
+            'MODEL': ['model'],
+            'SCENE': ['scene'],
+            'MATERIAL': ['material'],
+            'BRUSH': ['brush'],
+        }
+    except:
+        print('categories failed to read')
 
 def fetch_categories(API_key):
     url = paths.get_api_url() + 'categories/'

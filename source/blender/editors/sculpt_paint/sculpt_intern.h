@@ -34,9 +34,7 @@
 #include "BKE_pbvh.h"
 
 struct KeyBlock;
-struct Main;
 struct Object;
-struct SculptOrigVertData;
 struct SculptUndoNode;
 struct bContext;
 
@@ -342,7 +340,7 @@ SculptUndoNode *sculpt_undo_get_node(PBVHNode *node);
 void sculpt_undo_push_begin(const char *name);
 void sculpt_undo_push_end(void);
 
-void sculpt_vertcos_to_key(Object *ob, KeyBlock *kb, float (*vertCos)[3]);
+void sculpt_vertcos_to_key(Object *ob, KeyBlock *kb, const float (*vertCos)[3]);
 
 void sculpt_update_object_bounding_box(struct Object *ob);
 

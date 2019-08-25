@@ -142,10 +142,8 @@ class NLA_PT_view_view_options(Panel):
         st = context.space_data
 
         layout.separator()
-
-        
+       
         layout.prop(st, "show_marker_lines")
-        layout.prop(st, "show_frame_indicator")
         
         layout.separator()
 

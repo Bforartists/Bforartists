@@ -4947,6 +4947,7 @@ void ED_view3d_cursor3d_position_rotation(bContext *C,
                                                        .use_object_edit_cage = false,
                                                    },
                                                    mval_fl,
+                                                   NULL,
                                                    &dist_px,
                                                    ray_co,
                                                    ray_no,
@@ -5053,7 +5054,7 @@ void ED_view3d_cursor3d_update(bContext *C,
 
   {
     struct wmMsgBus *mbus = CTX_wm_message_bus(C);
-    wmMsgParams_RNA msg_key_params = {{{0}}};
+    wmMsgParams_RNA msg_key_params = {{0}};
     RNA_pointer_create(&scene->id, &RNA_View3DCursor, &scene->cursor, &msg_key_params.ptr);
     WM_msg_publish_rna_params(mbus, &msg_key_params);
   }

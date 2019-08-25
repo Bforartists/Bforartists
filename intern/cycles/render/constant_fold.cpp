@@ -301,7 +301,7 @@ void ConstantFolder::fold_mix(NodeMix type, bool clamp) const
   }
 }
 
-void ConstantFolder::fold_math(NodeMath type, bool clamp) const
+void ConstantFolder::fold_math(NodeMathType type) const
 {
   ShaderInput *value1_in = node->input("Value1");
   ShaderInput *value2_in = node->input("Value2");
@@ -310,25 +310,25 @@ void ConstantFolder::fold_math(NodeMath type, bool clamp) const
     case NODE_MATH_ADD:
       /* X + 0 == 0 + X == X */
       if (is_zero(value1_in)) {
-        try_bypass_or_make_constant(value2_in, clamp);
+        try_bypass_or_make_constant(value2_in);
       }
       else if (is_zero(value2_in)) {
-        try_bypass_or_make_constant(value1_in, clamp);
+        try_bypass_or_make_constant(value1_in);
       }
       break;
     case NODE_MATH_SUBTRACT:
       /* X - 0 == X */
       if (is_zero(value2_in)) {
-        try_bypass_or_make_constant(value1_in, clamp);
+        try_bypass_or_make_constant(value1_in);
       }
       break;
     case NODE_MATH_MULTIPLY:
       /* X * 1 == 1 * X == X */
       if (is_one(value1_in)) {
-        try_bypass_or_make_constant(value2_in, clamp);
+        try_bypass_or_make_constant(value2_in);
       }
       else if (is_one(value2_in)) {
-        try_bypass_or_make_constant(value1_in, clamp);
+        try_bypass_or_make_constant(value1_in);
       }
       /* X * 0 == 0 * X == 0 */
       else if (is_zero(value1_in) || is_zero(value2_in)) {
@@ -338,7 +338,7 @@ void ConstantFolder::fold_math(NodeMath type, bool clamp) const
     case NODE_MATH_DIVIDE:
       /* X / 1 == X */
       if (is_one(value2_in)) {
-        try_bypass_or_make_constant(value1_in, clamp);
+        try_bypass_or_make_constant(value1_in);
       }
       /* 0 / X == 0 */
       else if (is_zero(value1_in)) {
@@ -352,17 +352,18 @@ void ConstantFolder::fold_math(NodeMath type, bool clamp) const
       }
       /* X ^ 1 == X */
       else if (is_one(value2_in)) {
-        try_bypass_or_make_constant(value1_in, clamp);
+        try_bypass_or_make_constant(value1_in);
       }
     default:
       break;
   }
 }
 
-void ConstantFolder::fold_vector_math(NodeVectorMath type) const
+void ConstantFolder::fold_vector_math(NodeVectorMathType type) const
 {
   ShaderInput *vector1_in = node->input("Vector1");
   ShaderInput *vector2_in = node->input("Vector2");
+  ShaderInput *scale_in = node->input("Scale");
 
   switch (type) {
     case NODE_VECTOR_MATH_ADD:
@@ -380,11 +381,47 @@ void ConstantFolder::fold_vector_math(NodeVectorMath type) const
         try_bypass_or_make_constant(vector1_in);
       }
       break;
+    case NODE_VECTOR_MATH_MULTIPLY:
+      /* X * 0 == 0 * X == 0 */
+      if (is_zero(vector1_in) || is_zero(vector2_in)) {
+        make_zero();
+      } /* X * 1 == 1 * X == X */
+      else if (is_one(vector1_in)) {
+        try_bypass_or_make_constant(vector2_in);
+      }
+      else if (is_one(vector2_in)) {
+        try_bypass_or_make_constant(vector1_in);
+      }
+      break;
+    case NODE_VECTOR_MATH_DIVIDE:
+      /* X / 0 == 0 / X == 0 */
+      if (is_zero(vector1_in) || is_zero(vector2_in)) {
+        make_zero();
+      } /* X / 1 == X */
+      else if (is_one(vector2_in)) {
+        try_bypass_or_make_constant(vector1_in);
+      }
+      break;
     case NODE_VECTOR_MATH_DOT_PRODUCT:
     case NODE_VECTOR_MATH_CROSS_PRODUCT:
       /* X * 0 == 0 * X == 0 */
       if (is_zero(vector1_in) || is_zero(vector2_in)) {
         make_zero();
+      }
+      break;
+    case NODE_VECTOR_MATH_LENGTH:
+    case NODE_VECTOR_MATH_ABSOLUTE:
+      if (is_zero(vector1_in)) {
+        make_zero();
+      }
+      break;
+    case NODE_VECTOR_MATH_SCALE:
+      /* X * 0 == 0 * X == 0 */
+      if (is_zero(vector1_in) || is_zero(scale_in)) {
+        make_zero();
+      } /* X * 1 == X */
+      else if (is_one(scale_in)) {
+        try_bypass_or_make_constant(vector1_in);
       }
       break;
     default:

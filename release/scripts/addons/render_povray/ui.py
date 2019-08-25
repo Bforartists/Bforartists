@@ -622,6 +622,70 @@ class LIGHT_PT_POV_shadow(PovLampButtonsPanel, Panel):
         lamp = context.lamp
 
         layout.row().prop(lamp, "shadow_method", expand=True)
+        
+        split = layout.split()
+
+        col = split.column()
+        sub = col.column()
+        sub.prop(lamp, "spot_size", text="Size")
+        sub.prop(lamp, "spot_blend", text="Blend", slider=True)
+        col.prop(lamp, "use_square")
+        col.prop(lamp, "show_cone")
+
+        col = split.column()
+
+        col.active = (lamp.shadow_method != 'BUFFER_SHADOW' or lamp.shadow_buffer_type != 'DEEP')
+        col.prop(lamp, "use_halo")
+        sub = col.column(align=True)
+        sub.active = lamp.use_halo
+        sub.prop(lamp, "halo_intensity", text="Intensity")
+        if lamp.shadow_method == 'BUFFER_SHADOW':
+            sub.prop(lamp, "halo_step", text="Step")
+        if lamp.shadow_method == 'NOSHADOW' and lamp.type == 'AREA':
+            split = layout.split()
+
+            col = split.column()
+            col.label(text="Form factor sampling:")
+
+            sub = col.row(align=True)
+
+            if lamp.shape == 'SQUARE':
+                sub.prop(lamp, "shadow_ray_samples_x", text="Samples")
+            elif lamp.shape == 'RECTANGLE':
+                sub.prop(lamp.pov, "shadow_ray_samples_x", text="Samples X")
+                sub.prop(lamp.pov, "shadow_ray_samples_y", text="Samples Y")
+
+        if lamp.shadow_method != 'NOSHADOW':
+            split = layout.split()
+
+            col = split.column()
+            col.prop(lamp, "shadow_color", text="")
+
+            col = split.column()
+            col.prop(lamp, "use_shadow_layer", text="This Layer Only")
+            col.prop(lamp, "use_only_shadow")
+
+        if lamp.shadow_method == 'RAY_SHADOW':
+            split = layout.split()
+
+            col = split.column()
+            col.label(text="Sampling:")
+
+            if lamp.type in {'POINT', 'SUN', 'SPOT'}:
+                sub = col.row()
+
+                sub.prop(lamp, "shadow_ray_samples", text="Samples")
+                sub.prop(lamp, "shadow_soft_size", text="Soft Size")
+
+            elif lamp.type == 'AREA':
+                sub = col.row(align=True)
+
+                if lamp.shape == 'SQUARE':
+                    sub.prop(lamp, "shadow_ray_samples_x", text="Samples")
+                elif lamp.shape == 'RECTANGLE':
+                    sub.prop(lamp, "shadow_ray_samples_x", text="Samples X")
+                    sub.prop(lamp, "shadow_ray_samples_y", text="Samples Y")
+            
 '''
         if lamp.shadow_method == 'NOSHADOW' and lamp.type == 'AREA':
             split = layout.split()

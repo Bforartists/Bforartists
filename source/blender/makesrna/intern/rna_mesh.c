@@ -80,7 +80,7 @@ const EnumPropertyItem rna_enum_mesh_delimit_mode_items[] = {
 
 static Mesh *rna_mesh(PointerRNA *ptr)
 {
-  Mesh *me = (Mesh *)ptr->id.data;
+  Mesh *me = (Mesh *)ptr->owner_id;
   return me;
 }
 
@@ -146,7 +146,7 @@ static void rna_cd_layer_name_set(CustomData *cdata, CustomDataLayer *cdl, const
 static CustomData *rna_cd_from_layer(PointerRNA *ptr, CustomDataLayer *cdl)
 {
   /* find out where we come from by */
-  Mesh *me = ptr->id.data;
+  Mesh *me = (Mesh *)ptr->owner_id;
   CustomData *cd;
 
   /* rely on negative values wrapping */
@@ -202,7 +202,7 @@ static bool rna_Mesh_has_custom_normals_get(PointerRNA *ptr)
 
 static void rna_Mesh_update_data(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)
 {
-  ID *id = ptr->id.data;
+  ID *id = ptr->owner_id;
 
   /* cheating way for importers to avoid slow updates */
   if (id->us > 0) {
@@ -226,7 +226,7 @@ static void rna_Mesh_update_data_edit_active_color(Main *bmain, Scene *scene, Po
 }
 static void rna_Mesh_update_select(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)
 {
-  ID *id = ptr->id.data;
+  ID *id = ptr->owner_id;
   /* cheating way for importers to avoid slow updates */
   if (id->us > 0) {
     WM_main_add_notifier(NC_GEOM | ND_SELECT, id);
@@ -235,7 +235,7 @@ static void rna_Mesh_update_select(Main *UNUSED(bmain), Scene *UNUSED(scene), Po
 
 void rna_Mesh_update_draw(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)
 {
-  ID *id = ptr->id.data;
+  ID *id = ptr->owner_id;
   /* cheating way for importers to avoid slow updates */
   if (id->us > 0) {
     WM_main_add_notifier(NC_GEOM | ND_DATA, id);
@@ -403,7 +403,7 @@ static void rna_MeshPolygon_center_get(PointerRNA *ptr, float *values)
 
 static float rna_MeshPolygon_area_get(PointerRNA *ptr)
 {
-  Mesh *me = (Mesh *)ptr->id.data;
+  Mesh *me = (Mesh *)ptr->owner_id;
   MPoly *mp = (MPoly *)ptr->data;
 
   return BKE_mesh_calc_poly_area(mp, me->mloop + mp->loopstart, me->mvert);
@@ -571,7 +571,7 @@ static int rna_CustomDataLayer_clone_get(PointerRNA *ptr, CustomData *data, int 
 static void rna_CustomDataLayer_active_set(
     PointerRNA *ptr, CustomData *data, int value, int type, int render)
 {
-  Mesh *me = ptr->id.data;
+  Mesh *me = (Mesh *)ptr->owner_id;
   int n = (((CustomDataLayer *)ptr->data) - data->layers) - CustomData_get_layer_index(data, type);
 
   if (value == 0) {
@@ -649,14 +649,6 @@ static void rna_MPoly_freestyle_face_mark_set(PointerRNA *ptr, int value)
   else {
     ffa->flag &= ~FREESTYLE_FACE_MARK;
   }
-}
-
-/* Generic UV rename! */
-static void rna_MeshUVLayer_name_set(PointerRNA *ptr, const char *name)
-{
-  char buf[MAX_CUSTOMDATA_LAYER_NAME];
-  BLI_strncpy_utf8(buf, name, MAX_CUSTOMDATA_LAYER_NAME);
-  BKE_mesh_uv_cdlayer_rename(rna_mesh(ptr), ((CustomDataLayer *)ptr->data)->name, buf, true);
 }
 
 /* uv_layers */
@@ -1941,7 +1933,7 @@ static void rna_def_mloopuv(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
   RNA_def_struct_name_property(srna, prop);
-  RNA_def_property_string_funcs(prop, NULL, NULL, "rna_MeshUVLayer_name_set");
+  RNA_def_property_string_funcs(prop, NULL, NULL, "rna_MeshLoopLayer_name_set");
   RNA_def_property_ui_text(prop, "Name", "Name of UV map");
   RNA_def_property_update(prop, 0, "rna_Mesh_update_data");
 
@@ -2789,6 +2781,7 @@ static void rna_def_mesh(BlenderRNA *brna)
   prop = RNA_def_property(srna, "texture_mesh", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "texcomesh");
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_SELF_CHECK);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(
       prop,
       "Texture Mesh",
@@ -3053,6 +3046,7 @@ static void rna_def_mesh(BlenderRNA *brna)
   prop = RNA_def_property(srna, "texco_mesh", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "texcomesh");
   RNA_def_property_flag(prop, PROP_EDITABLE);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(
       prop, "Texture Space Mesh", "Derive texture coordinates from another mesh");
 

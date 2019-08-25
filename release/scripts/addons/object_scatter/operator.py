@@ -392,8 +392,9 @@ def create_line_strip_batch(coords):
 
 def draw_text(location, text, size=15, color=(1, 1, 1, 1)):
     font_id = 0
+    ui_scale = bpy.context.preferences.system.ui_scale
     blf.position(font_id, *location)
-    blf.size(font_id, size, 72)
+    blf.size(font_id, round(size * ui_scale), bpy.context.preferences.system.dpi)
     blf.draw(font_id, text)
 
 

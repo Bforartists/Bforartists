@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -9579,6 +9579,10 @@ msgid "Adaptive"
 msgstr "ﻒﻴّﻜﺘﻣ"
 
 
+msgid "Merge"
+msgstr "ﺞﻣﺩﺇ"
+
+
 msgid "Smooth Modifier"
 msgstr "ﺔﻣﻮﻌﻨﻟﺍ ﺮﻴﻐﻣ"
 
@@ -10071,6 +10075,18 @@ msgid "Editable falloff curve"
 msgstr "ﺮﻳﺮﺤﺘﻠﻟ ﻞﺑﺎﻗ ﻁﻮﻘﺳ ﻰﻨﺤﻨﻣ"
 
 
+msgid "Root"
+msgstr "ﺓﺪﻋﺎﻗ"
+
+
+msgid "Sharp"
+msgstr "ﺩﺎﺣ"
+
+
+msgid "Sharper"
+msgstr "ﺩﺎﺣ"
+
+
 msgid "Fill Threshold"
 msgstr "ﺔﺌﺒﻌﺘﻟﺍ ﺔﺒﺘﻋ"
 
@@ -10477,14 +10493,6 @@ msgstr "ﻲﻣﺎﻣﻻ﻿ﺍ ﻪﺟﻮﻟﺍ ﻡﺪﺨﺘﺳﺍ"
 
 msgid "Brush only affects vertexes that face the viewer"
 msgstr "ﺮﻇﺎﻨﻠﻟ ﻪﺟﺍﻮﻤﻟﺍ ﻂﻘﻨﻟﺍ ﻰﻠﻏ ﻂﻘﻓ ﺓﺎﺷﺮﻔﻟﺍ ﺮﺛﺆﺗ"
-
-
-msgid "Use Gradient"
-msgstr "ﺝﺭﺪﺗ"
-
-
-msgid "Use Gradient by utilizing a sampling method"
-msgstr "ﺔﻨﻳﺎﻌﻣ ﺔﻘﻳﺮﻃ ﻦﻣ ﻉﺎﻔﺘﻧﻹ﻿ﺎﺑ ﺝﺭﺪﺘﻟﺍ ﻡﺪﺨﺘﺳﺍ"
 
 
 msgid "Inverse Smooth Pressure"
@@ -14523,10 +14531,6 @@ msgid "Number of children/parent for rendering"
 msgstr "ﺮﻴﻴﺼﺘﻠﻟ ﻞﺻﺍ ﻞﻜﻟ ﻉﻭﺮﻔﻟﺍ ﺩﺪﻋ"
 
 
-msgid "Root"
-msgstr "ﺓﺪﻋﺎﻗ"
-
-
 msgid "Random Orientation"
 msgstr "ﻲﺋﺍﻮﺸﻋ ﻩﺎﺠﺗﺍ"
 
@@ -15485,14 +15489,6 @@ msgid "Register"
 msgstr "ﻞﺠﺳ"
 
 
-msgid "Tabs as Spaces"
-msgstr "ﺕﺎﻓﺎﺴﻤﻛ ﺓﻭﺮﻋ"
-
-
-msgid "Automatically converts all new tabs into spaces"
-msgstr "ﺕﺎﻏﺍﺮﻓ ﻰﻟﺇ ءﺪﺒﻟﺍ ﺕﺎﻓﺎﺴﻣ ﻞﻛ ﺎﻴﺗﺍﺫ ﻝﻮﺤﻳ"
-
-
 msgid "Factor Blue"
 msgstr "ﻕﺭﺯﻻ﻿ﺍ ﻞﻣﺎﻌﻤﻟﺍ"
 
@@ -16077,16 +16073,8 @@ msgid "Use soft marble"
 msgstr "ﻢﻋﺎﻧ ﻡﺎﺧﺭ ﻡﺪﺨﺘﺳﺍ"
 
 
-msgid "Sharp"
-msgstr "ﺩﺎﺣ"
-
-
 msgid "Use more clearly defined marble"
 msgstr "ﺎﺣﻮﺿﻭ ﺮﺜﻛﺍ ﻞﻜﺸﺑ ﻑﺮّﻌﻣ ﻡﺎﺧﺭ ﻡﺪﺨﺘﺳﺇ"
-
-
-msgid "Sharper"
-msgstr "ﺩﺎﺣ"
 
 
 msgid "Use very clearly defined marble"
@@ -18552,10 +18540,6 @@ msgid "Frame Rate Presets"
 msgstr "ﺮﻃﻷ﻿ﺍ ﻝﺪﻌﻤﻟ ﺔﻘﺒﺴﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ"
 
 
-msgid "Transitions"
-msgstr "ﺕﻻ﻿ﺎﻘﺘﻧﻻ﻿ﺍ"
-
-
 msgid "Navigation"
 msgstr "ﺢﻔّﺼﺗ"
 
@@ -18664,10 +18648,6 @@ msgid "Face Data"
 msgstr "ﻪﺟﻮﻟﺍ ﺕﺎﻧﺎﻴﺑ"
 
 
-msgid "Merge"
-msgstr "ﺞﻣﺩﺇ"
-
-
 msgid "Normals"
 msgstr "ﺕﺎﻤﻇﺎﻨﻟﺍ"
 
@@ -18690,10 +18670,6 @@ msgstr "ﺔﻠﻋﺎﻔﺘﻣ ﺓﺮﻛ"
 
 msgid "Special Characters"
 msgstr "ﺔﺻﺎﺧ ﻑﺮﺣﺃ"
-
-
-msgid "Hide/Mask"
-msgstr "ءﺎﻔﺧﺇ"
 
 
 msgid "Hooks"
@@ -24864,11 +24840,6 @@ msgid "Console Banner"
 msgstr "ﺮﻣﺍﻭﻷ﻿ﺍ ﺔﺣﻮﻟ ﻂﻳﺮﺷ"
 
 
-msgctxt "Operator"
-msgid "Clear"
-msgstr "ﺢﺴﻣﺇ"
-
-
 msgid "Clear the scrollback history"
 msgstr "ﻊﺟﺍﺮﺘﻟﺍ ﺦﻳﺭﺎﺗ ﻒﻈﻧ"
 
@@ -27081,10 +27052,6 @@ msgid "Remove loose vertices"
 msgstr "ﺓﺮّﺤﻟﺍ ﻂﻘﻨﻟﺍ ﻝﺯﺍ"
 
 
-msgid "Minimum distance between elements to merge"
-msgstr "ﺮﺻﺎﻨﻌﻟﺍ ﻦﻴﺑ ﺞﻣﺪﻠﻟ ﺔﻓﺎﺴﻣ ﻞﻗﺍ"
-
-
 msgctxt "Operator"
 msgid "Dissolve Edges"
 msgstr "ﻑﺍﻮﺤﻟﺍ ﻞﻠّﺣ"
@@ -27569,6 +27536,10 @@ msgstr "ﻞﺠﻌﻟﺍ ﺩﺎﻌﺑﺃ"
 msgctxt "Operator"
 msgid "Add UV Sphere"
 msgstr "UV ﺓﺮﻛ ﻒﺿﺍ"
+
+
+msgid "Minimum distance between elements to merge"
+msgstr "ﺮﺻﺎﻨﻌﻟﺍ ﻦﻴﺑ ﺞﻣﺪﻠﻟ ﺔﻓﺎﺴﻣ ﻞﻗﺍ"
 
 
 msgctxt "Operator"
@@ -29612,10 +29583,6 @@ msgid "Make Local"
 msgstr "ﻲﻠﺤﻣ ﻞﻌﺠﻣﺍ"
 
 
-msgid "Recursive"
-msgstr "ﺭﺮﻜﺘﻣ"
-
-
 msgid "Close or open all items"
 msgstr "ﺮﺻﺎﻨﻌﻟﺍ ﻞﻛ ﺢﺘﻓﺍ ﻭﺍ ﻖﻠﻏﺍ"
 
@@ -29673,10 +29640,6 @@ msgstr "ﻞﺻﻻ﻿ﺍ ﻊﻀﺘﻟ ﻙﺮﺗﺍ"
 
 msgid "Drag to parent in Outliner"
 msgstr "ﻞﻜﻴﻬﻤﻟﺍ ﻲﻓ ﻞﺻﻻ﻿ﺍ ﻊﻀﺘﻟ ﺐﺤﺳﺍ"
-
-
-msgid "Child Object"
-msgstr "ﻉﺮﻓ ﻦﺋﺎﻛ"
 
 
 msgctxt "Operator"
@@ -31438,11 +31401,6 @@ msgid "Text Auto Complete"
 msgstr "ﺎﻴﺋﺎﻘﻠﺗ ﻞﻤﻛ"
 
 
-msgctxt "Operator"
-msgid "Comment"
-msgstr "ﺔﻈﺣﻼ﻿ﻣ"
-
-
 msgid "To Spaces"
 msgstr "ﺕﺎﻓﺎﺴﻤﻟ"
 
@@ -31553,11 +31511,6 @@ msgstr "ﺮﻄﺴﻟﺍ ﺮﺘﺧﺍ"
 msgctxt "Operator"
 msgid "To 3D Object"
 msgstr "ﻲﺛﻼ﻿ﺛ ﻦﺋﺎﻛ ﻰﻟﺍ"
-
-
-msgctxt "Operator"
-msgid "Uncomment"
-msgstr "ﺔﻈﺣﻼ﻿ﻤﻟﺍ ﻑﺬﺣﺍ"
 
 
 msgctxt "Operator"
@@ -33151,10 +33104,6 @@ msgstr "Z ﻞﻔﻗﺍ"
 
 msgid "Number of times to copy strokes across the surface"
 msgstr "ﺢﻄﺴﻟﺍ ﻰﻠﻋ ﺕﺎﺒﻄﺸﻟﺍ ﺦﺴﻨﻟ ﺕﺍﺮﻤﻟﺍ ﺩﺪﻋ"
-
-
-msgid "Show Diffuse Color"
-msgstr "ﺭﺎﺸﺘﻧﻻ﻿ﺍ ﻥﻮﻟ"
 
 
 msgid "Use Deform Only"
@@ -34877,14 +34826,6 @@ msgid "Global undo works by keeping a full copy of the file itself in memory, so
 msgstr "ﺔﻴﻓﺎﺿﺇ ﺓﺮﻛﺍﺫ ﺬﺧﺄﻳ ﺍﺬﻫ ﻭ ،ﺓﺮﻛﺍﺬﻟﺍ ﻲﻓ ﻪﺴﻔﻧ ﻒﻠﻤﻟﺍ ﻦﻣ ﺔﻠﻣﺎﻛ ﺔﺨﺴﻧ ءﺎﻘﺑﺈﺑ ﻞﻤﻌﻳ ﻲﻤﻟﺎﻌﻟﺍ ﻊﺟﺍﺮﺘﻟﺍ"
 
 
-msgid "Grease Pencil Simplify Stroke"
-msgstr "ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻗ ﺔﺒﻄﺷ ﻂﺴّﺑ"
-
-
-msgid "Simplify the final stroke"
-msgstr "ﺔﻴﺋﺎﻬﻨﻟﺍ ﺔﺒﻄﺸﻟﺍ ﻂﺴّﺑ"
-
-
 msgid "New F-Curve Colors - XYZ to RGB"
 msgstr " RGB ﻰﻟﺇ XYZ - ﺓﺪﻳﺪﺟ ﻞﻤﻋ ﻰﻨﺤﻨﻣ ﻥﺍﻮﻟﺃ"
 
@@ -35121,6 +35062,10 @@ msgid "Allow any .blend file to run scripts automatically (unsafe with blend fil
 msgstr "(ﻕﻮﺛﻮﻣ ﺮﻴﻏ ﺭﺪﺼﻣ ﻦﻣ ﺭﺪﻨﻠﺒﻟﺍ ﺕﺎﻔﻠﻣ ﻊﻣ ﻦﻣﺁ ﺮﻴﻏ) ﺎﻴﺗﺍﺫ ﺕﺎﺘﺒﻳﺮﻜﺴﻟﺍ ﻞﻴﻐﺸﺘﺑ blend. ﻒﻠﻣ ﻱﻷ﻿ ﺢﻤﺳﺇ"
 
 
+msgid "Tabs as Spaces"
+msgstr "ﺕﺎﻓﺎﺴﻤﻛ ﺓﻭﺮﻋ"
+
+
 msgid "Automatically convert all new tabs into spaces for new and loaded text files"
 msgstr "ﺔﻠﻤﺤﻤﻟﺍ ﻭ ﺓﺪﻳﺪﺠﻟﺍ ﺕﺎﻔﻠﻤﻠﻟ ﺕﺎﻏﺍﺮﻓ ﻰﻟﺇ ﺔﻠﻳﻮﻄﻟﺍ ﺕﺎﻓﺎﺴﻤﻟﺍ ﻞﻛ ﺎﻴﺗﺍﺫ ﻝﻮﺣ"
 
@@ -35345,16 +35290,8 @@ msgid "Continue"
 msgstr "ﺮﻤﺘﺳﺇ"
 
 
-msgid "Old style zoom, continues while moving mouse up or down"
-msgstr "ﻞﻔﺳﻸ﻿ﻟ ﻭﺃ ﻰﻠﻋﻸ﻿ﻟ ﺓﺭﺄﻔﻟﺍ ﻚﻳﺮﺤﺗ ﻊﻣ ﺮﻤﺘﺴﻣ ،ﻢﻳﺪﻘﻟﺍ ﻢﻴﺠﺤﺘﻟﺍ ﺏﻮﻠﺳﺃ"
-
-
 msgid "Dolly"
 msgstr "ﺢﺟﺭﺃ"
-
-
-msgid "Zoom in and out like scaling the view, mouse movements relative to center"
-msgstr "ﺰﻛﺮﻤﻠﻟ ﺔﻴﺒﺴﻧ ﺓﺭﺄﻔﻟﺍ ﺕﺎﻛﺮﺣ ،ﺮﻈﻨﻤﻟﺍ ﻢﻴﺠﺤﺘﻛ ﺪﻌّﺑ ﻭ ﺏﺮّﻗ"
 
 
 msgid "Walk Navigation"
@@ -37862,14 +37799,6 @@ msgid "Show Cache"
 msgstr "ﻦﻳﺰﺨﺘﻟﺍ ﺮﻬﻇﺃ"
 
 
-msgid "Draw Axes"
-msgstr "ﺭﻭﺎﺤﻤﻟﺍ ﻢﺳﺭﺍ"
-
-
-msgid "Partial overlay on top of the sequencer"
-msgstr "ﻞﺴﻠﺴﻤﻟﺍ ﻕﻮﻓ ﻰﻠﻋ ﻲﺋﺰﺟ ءﺎﻄﻏ"
-
-
 msgid "Mask Strip"
 msgstr "ﻉﺎﻨﻗ ﻂﻳﺮﺷ"
 
@@ -39238,6 +39167,10 @@ msgid "Gradient High/Off"
 msgstr "ﺝﺭﺪﺗ"
 
 
+msgid "Use Gradient"
+msgstr "ﺝﺭﺪﺗ"
+
+
 msgid "Vertex Select"
 msgstr "ﺔﻄﻘﻨﻟﺍ ﺭﺎﻴﺘﺧﺍ"
 
@@ -39316,6 +39249,10 @@ msgstr "ﺭﺎﺘﺨﻣ ﺮﻴﻏ - ﺔﻛﺮﺤﻟﺍ ﺔﺻﺎﺼﻗ ﻂﻳﺮ
 
 msgid "Action-Clip Strip - Selected"
 msgstr "ﺭﺎﺘﺨﻣ - ﺔﻛﺮﺤﻟﺍ ﺔﺻﺎﺼﻗ ﻂﻳﺮﺷ "
+
+
+msgid "Transitions"
+msgstr "ﺕﻻ﻿ﺎﻘﺘﻧﻻ﻿ﺍ"
 
 
 msgid "Transition Strip - Unselected"
@@ -41783,6 +41720,11 @@ msgstr "ﻞﺻﺃ"
 
 
 msgctxt "Operator"
+msgid "Clear"
+msgstr "ﺢﺴﻣﺇ"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "ﺶﻣﺎﻬﻟﺍ ﻢﺠّﺣ"
 
@@ -42227,11 +42169,6 @@ msgstr "ﻥﺰﺧ"
 
 
 msgctxt "Operator"
-msgid "Border Axis Range"
-msgstr "ﺭﻮﺤﻤﻟﺍ ﺩﻭﺪﺣ ﺐﺴﺣ"
-
-
-msgctxt "Operator"
 msgid "Columns on Selected Keys"
 msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﻰﻠﻋ ﻱﺩﻮﻣﺎﻋ"
 
@@ -42269,11 +42206,6 @@ msgstr "ﺡﺯﺃ"
 msgctxt "Operator"
 msgid "Cleanup"
 msgstr "ﻒﻈّﻧ"
-
-
-msgctxt "Operator"
-msgid "Border (Include Handles)"
-msgstr "(ﺾﺑﺎﻘﻤﻟﺍ ﻦﻤﺿ) ﺩﻭﺪﺣ"
 
 
 msgctxt "Operator"
@@ -42624,18 +42556,13 @@ msgstr " ﺭﺪﺼﻤﻟﺍ ﻂﻳﺮﺸﻟﺍ ﻝﻮﻃ ﻰﻟﺇ ﺩﺪﻣ"
 
 
 msgctxt "Operator"
-msgid "Find..."
-msgstr "...ﺚﺤﺑﺇ"
+msgid "Top"
+msgstr "ﻕﻮﻓ"
 
 
 msgctxt "Operator"
-msgid "Top of File"
-msgstr "ﻒﻠﻤﻟﺍ ﻰﻠﻋﺃ"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "ﻒﻠﻤﻟﺍ ﻞﻔﺳﺃ"
+msgid "Bottom"
+msgstr "ﻞﻔﺳﺃ"
 
 
 msgctxt "Operator"
@@ -42648,14 +42575,8 @@ msgid "One Object Per Line"
 msgstr "ﺮﻄﺴﻟﺎﺑ ﺪﺣﺍﻭ ﻦﺋﺎﻛ"
 
 
-msgctxt "Operator"
-msgid "Move line(s) up"
-msgstr "ﻕﻮﻔﻟ ﺮﻄﺳﻻ﻿ﺍ ﻙﺮّﺣ"
-
-
-msgctxt "Operator"
-msgid "Move line(s) down"
-msgstr "ﺖﺤﺘﻟ ﺮﻄﺳﻻ﻿ﺍ ﻙﺮّﺣ"
+msgid "File: %s"
+msgstr "‬%s‪ :ﻒﻠﻣ"
 
 
 msgid "Text: External"
@@ -42761,10 +42682,6 @@ msgstr "ﻲﺿﺍﺮﺘﻓﻹ﻿ﺍ ﻥﻮﻠﻟﺍ"
 
 msgid "Eraser Radius"
 msgstr "ﺓﺎﺤﻤﻤﻟﺍ ﻉﺎﻌﺷ"
-
-
-msgid "Simplify Stroke"
-msgstr "ﺔﻴﺋﺎﻬﻨﻟﺍ ﺔﺒﻄﺸﻟﺍ ﻂﺴّﺑ"
 
 
 msgid "Sculpt Overlay Color"
@@ -42900,16 +42817,6 @@ msgstr "ﺮﻈﻨﻤﻟﺍ ﻰﻟﺇ ﺍﺮﻤﻜﻟﺍ ﺓﺍﺫﺎﺤﻣ"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﻰﻟﺇ ﺍﺮﻤﻜﻟﺍ ﺓﺍﺫﺎﺤﻣ"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "ﻕﻮﻓ"
-
-
-msgctxt "Operator"
-msgid "Bottom"
-msgstr "ﻞﻔﺳﺃ"
 
 
 msgctxt "Operator"
@@ -43200,10 +43107,6 @@ msgid "Fix Deforms"
 msgstr "ﺕﺎﻫﻮﺸﺘﻟﺍ ﺢﻠﺻﺃ"
 
 
-msgid "Threaded Sculpt"
-msgstr "ﻊﺿﻮﻤﻣ ﺖﺤﻧ"
-
-
 msgctxt "Operator"
 msgid "Hide Bounding Box"
 msgstr "ﺩﻭﺪﺤﻟﺍ ﻕﻭﺪﻨﺻ ﻲﻔﺧﺍ"
@@ -43393,11 +43296,6 @@ msgstr "ﺕﺍﺮﻤﻣ"
 msgctxt "Operator"
 msgid "Objects to Scene..."
 msgstr "...ﺪﻬﺸﻤﻟﺍ ﻰﻟﺇ ﺕﺎﻨﺋﺎﻛ"
-
-
-msgctxt "Operator"
-msgid "Curve Preset"
-msgstr "ﻰﻨﺤﻨﻤﻠﻟ ﺔﻘﺒﺴﻣ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
 msgctxt "Operator"
@@ -43649,6 +43547,10 @@ msgid "Size Y"
 msgstr "Y ﻢﺠﺣ"
 
 
+msgid "Threaded Sculpt"
+msgstr "ﻊﺿﻮﻤﻣ ﺖﺤﻧ"
+
+
 msgid "Tile Offset"
 msgstr "ﺔﻨﺒﻠﻟﺍ ﺔﺣﺍﺯﺇ"
 
@@ -43860,10 +43762,6 @@ msgstr "ﺢﻄﺴﻤﻟﺍ ﺭﺎﺴﻣ"
 
 msgid "Error writing frame"
 msgstr "ﺔﺌﻴﺑ ﺔﻄﻳﺮﺧ"
-
-
-msgid "Could not allocate temporary frame"
-msgstr "ﺓﺪﻳﺪﺟ ﺪﻘﻋ ﺓﺮﺠﺷ ﺊﺸﻧﺍ"
 
 
 msgid "No valid formats found"
@@ -45268,10 +45166,6 @@ msgid "Frame: - / %d"
 msgstr "‬%d‪ / -:ﺭﺎﻃﺍ"
 
 
-msgid "File: %s"
-msgstr "‬%s‪ :ﻒﻠﻣ"
-
-
 msgid "unsupported movie clip format"
 msgstr "ﺓﺭﻮﺼﻟﺍ ﺔﺌﻴﻫ ﺕﺩﺍﺪﻋﺇ"
 
@@ -45706,6 +45600,16 @@ msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺔﻃﺮﺷﻷ﻿ﺍ ﻊﻄﻗﺇ"
 
 msgid "No active sequence!"
 msgstr "ﻢﻠﻔﻟﺍ ﻞﺴﻠﺴﺗ"
+
+
+msgctxt "Operator"
+msgid "Top of File"
+msgstr "ﻒﻠﻤﻟﺍ ﻰﻠﻋﺃ"
+
+
+msgctxt "Operator"
+msgid "Bottom of File"
+msgstr "ﻒﻠﻤﻟﺍ ﻞﻔﺳﺃ"
 
 
 msgctxt "Operator"
@@ -46552,14 +46456,6 @@ msgstr "ﺲﺑﺎﻘﻤﻟﺍ ﻞﻛ"
 
 msgid "All Add-ons Installed by User"
 msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﻞﺒﻗ ﻦﻣ ﺔﺒﺼﻨﻤﻟﺍ ﺲﺑﺎﻘﻤﻟﺍ ﻞﻛ"
-
-
-msgid "All Enabled Add-ons"
-msgstr "ﺔﻠﻌّﻔﻤﻟﺍ ﺲﺑﺎﻘﻤﻟﺍ ﻞﻛ"
-
-
-msgid "All Disabled Add-ons"
-msgstr "ﺔﻠﻄّﻌﻤﻟﺍ ﺲﺑﺎﻘﻤﻟﺍ ﻞﻛ"
 
 
 msgid "Add Curve"

@@ -59,7 +59,6 @@ struct RenderData;
 struct Scene;
 struct SpaceNode;
 struct Tex;
-struct ViewRender;
 struct bContext;
 struct bNode;
 struct bNodeExecContext;
@@ -615,6 +614,7 @@ void nodeUpdateInternalLinks(struct bNodeTree *ntree, struct bNode *node);
 
 int nodeSocketIsHidden(struct bNodeSocket *sock);
 void ntreeTagUsedSockets(struct bNodeTree *ntree);
+void nodeSetSocketAvailability(struct bNodeSocket *sock, bool is_available);
 
 /* Node Clipboard */
 void BKE_node_clipboard_init(struct bNodeTree *ntree);
@@ -894,7 +894,7 @@ void BKE_nodetree_remove_layer_n(struct bNodeTree *ntree,
 #define SH_NODE_CURVE_RGB 111
 #define SH_NODE_CAMERA 114
 #define SH_NODE_MATH 115
-#define SH_NODE_VECT_MATH 116
+#define SH_NODE_VECTOR_MATH 116
 #define SH_NODE_SQUEEZE 117
 //#define SH_NODE_MATERIAL_EXT  118
 #define SH_NODE_INVERT 119
@@ -977,6 +977,8 @@ void BKE_nodetree_remove_layer_n(struct bNodeTree *ntree,
 #define SH_NODE_BSDF_HAIR_PRINCIPLED 701
 #define SH_NODE_MAP_RANGE 702
 #define SH_NODE_CLAMP 703
+#define SH_NODE_TEX_WHITE_NOISE 704
+#define SH_NODE_VOLUME_INFO 705
 
 /* custom defines options for Material node */
 #define SH_NODE_MAT_DIFF 1

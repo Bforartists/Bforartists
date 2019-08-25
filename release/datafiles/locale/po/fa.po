@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -2710,6 +2710,10 @@ msgid "Subtract Color"
 msgstr "ﮓﻧﺭ ﻖﯾﺮﻔﺗ"
 
 
+msgid "Sharper"
+msgstr "ﯼﺰﯿﺗ"
+
+
 msgid "Draw"
 msgstr "ﺩﺍﺯﺁ ﯽﺷﺎﻘﻧ"
 
@@ -2784,10 +2788,6 @@ msgstr "ﻪﺒﻟ ﻪﺑ ﻪﺒﻟ"
 
 msgid "Use Front-Face"
 msgstr "ﻂﻘﻓ ﻮﻠﺟ ﺢﻄﺳ"
-
-
-msgid "Use Gradient"
-msgstr "ﻥﺯﻭ ﯽﺷﺎﻘﻧ"
 
 
 msgid "Use Texture"
@@ -4131,10 +4131,6 @@ msgid "Use soft marble"
 msgstr "ءﯽﺷ ﯼﺎﻫ‌ﻩﺩﺍﺩ"
 
 
-msgid "Sharper"
-msgstr "ﯼﺰﯿﺗ"
-
-
 msgid "Sin"
 msgstr "ﻪﻠﺻﺎﻓ"
 
@@ -4545,10 +4541,6 @@ msgid "Node Color Specials"
 msgstr "ﮓﻧﺭ ﺖﺸﻧ"
 
 
-msgid "Transitions"
-msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
-
-
 msgid "Select Linked"
 msgstr "ﻪﻘﻠﺣ ﺏﺎﺨﺘﻧﺍ"
 
@@ -4587,10 +4579,6 @@ msgstr "ﻩﺪﺷ ﻝﺎﻌﻓ"
 
 msgid "Mesh"
 msgstr "ﺶﻣ"
-
-
-msgid "Hide/Mask"
-msgstr "ﻥﺎﻬﻨﭘ"
 
 
 msgid "Apply"
@@ -7356,11 +7344,6 @@ msgstr "ﻝﻮﺴﻨﮐ ﯼﺩﻭﺭﻭ"
 msgctxt "Operator"
 msgid "Console Banner"
 msgstr "ﻝﻮﺴﻨﮐ ﯼﺩﻭﺭﻭ"
-
-
-msgctxt "Operator"
-msgid "Clear"
-msgstr "ﺰﯿﻤﺗ"
 
 
 msgctxt "Operator"
@@ -10263,10 +10246,6 @@ msgid "Drop to Set Parent"
 msgstr "ﻊﺒﻨﻣ"
 
 
-msgid "Child Object"
-msgstr "ﯽﺷ ﺶﯾﺍﺮﯾﻭ"
-
-
 msgctxt "Operator"
 msgid "Drop Object to Scene"
 msgstr "ﻪﻨﺤﺻ ﻪﺑ ءﺎﯿﺷﺍ..."
@@ -11281,11 +11260,6 @@ msgstr "ﻝﻮﺴﻨﮐ ﯼﺩﻭﺭﻭ"
 
 
 msgctxt "Operator"
-msgid "Comment"
-msgstr "ﯼﺮﺑﺭﺎﮐ ﻪﻌﻣﺎﺟ"
-
-
-msgctxt "Operator"
 msgid "Cut"
 msgstr "ﯽﺟﻭﺮﺧ"
 
@@ -11376,11 +11350,6 @@ msgstr "ﻮﺠﺘﺴﺟ..."
 msgctxt "Operator"
 msgid "To 3D Object"
 msgstr "ﯽﺷ ﮏﯾ"
-
-
-msgctxt "Operator"
-msgid "Uncomment"
-msgstr "ﯽﺸﯾﺍﺰﻓﺍ"
 
 
 msgctxt "Operator"
@@ -12206,10 +12175,6 @@ msgstr "Y ﻥﺩﺮﮐ ﻞﻔﻗ"
 
 msgid "Lock Z"
 msgstr "Z ﻥﺩﺮﮐ ﻞﻔﻗ"
-
-
-msgid "Show Diffuse Color"
-msgstr "ﮓﻧﺭ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
 msgid "Restrict"
@@ -13309,6 +13274,10 @@ msgid "Gradient Low"
 msgstr "UV ﺖﻓﺎﺑ"
 
 
+msgid "Use Gradient"
+msgstr "ﻥﺯﻭ ﯽﺷﺎﻘﻧ"
+
+
 msgid "Active Action"
 msgstr "ﻞﻤﻋ"
 
@@ -13339,6 +13308,10 @@ msgstr "ﺖﺳﺍ ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﺭﺍﺩﺮﮐ ﻩﻭﺮﮔ"
 
 msgid "Action-Clip Strip - Selected"
 msgstr "ﺖﺳﺍ ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﺭﺍﺩﺮﮐ ﻩﻭﺮﮔ"
+
+
+msgid "Transitions"
+msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
 
 msgid "Transition Strip - Unselected"
@@ -13883,6 +13856,11 @@ msgstr "ﻊﺒﻨﻣ"
 
 
 msgctxt "Operator"
+msgid "Clear"
+msgstr "ﺰﯿﻤﺗ"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﺮﮕﻧﺎﺸﻧ"
 
@@ -14293,13 +14271,13 @@ msgstr "ﯽﻨﻏﻭﺭ ﺩﺍﺪﻣ"
 
 
 msgctxt "Operator"
-msgid "Find..."
-msgstr "ﻮﺠﺘﺴﺟ..."
+msgid "Top"
+msgstr "ﻻ﻿ﺎﺑ"
 
 
 msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "ﻞﯾﺎﻓ ﻦﯿﯾﺎﭘ"
+msgid "Bottom"
+msgstr "ﻦﯿﯾﺎﭘ"
 
 
 msgctxt "Operator"
@@ -14310,16 +14288,6 @@ msgstr "ﯽﺷ ﮏﯾ"
 msgctxt "Operator"
 msgid "One Object Per Line"
 msgstr "ﻂﺧ ﺮﻫ ﺭﺩ ﯽﺷ ﮏﯾ"
-
-
-msgctxt "Operator"
-msgid "Move line(s) up"
-msgstr "ﻝﺎﻌﻓ ﻩﻭﺮﮔ ﻑﺬﺣ"
-
-
-msgctxt "Operator"
-msgid "Move line(s) down"
-msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
 
 
 msgid "Text: External"
@@ -14388,10 +14356,6 @@ msgstr "ﻥﻮﺘﯾﺎﭘ API ﻊﺟﺮﻣ"
 msgctxt "Operator"
 msgid "Report a Bug"
 msgstr "ﻝﺎﮑﺷﺍ ﮏﯾ ﺵﺭﺍﺰﮔ"
-
-
-msgid "Simplify Stroke"
-msgstr "ﻩﺩﺎﺳ ﻩﺭﺎﺘﺳ"
 
 
 msgid "F-Curve Visibility"
@@ -14480,16 +14444,6 @@ msgstr "ﻝﺎﻌﻓ ﻦﯿﺑﺭﻭﺩ"
 msgctxt "Operator"
 msgid "Camera"
 msgstr "ﻦﯿﺑﺭﻭﺩ"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "ﻻ﻿ﺎﺑ"
-
-
-msgctxt "Operator"
-msgid "Bottom"
-msgstr "ﻦﯿﯾﺎﭘ"
 
 
 msgctxt "Operator"
@@ -14869,11 +14823,6 @@ msgstr "ﻪﻨﺤﺻ ﻪﺑ ءﺎﯿﺷﺍ..."
 
 
 msgctxt "Operator"
-msgid "Curve Preset"
-msgstr "ﺎﻫ‌ﮓﻧﺭ:"
-
-
-msgctxt "Operator"
 msgid "Hook to Selected Object Bone"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﺎﻤﻧ ﻥﺎﮑﻣ"
 
@@ -15042,10 +14991,6 @@ msgstr "ﻁﻮﻠﺨﻣ ﻉﻮﻧ"
 
 msgid "Strips must have the same number of inputs"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﯽﺷ ﻭﺩ ﻦﯿﺑ ﺮﯿﺴﻣ ﻦﯾﺮﺗ ﻩﺎﺗﻮﮐ ﺏﺎﺨﺘﻧﺍ"
-
-
-msgid "Could not allocate temporary frame"
-msgstr "1 ﻪﺘﺳﺩ ﻉﻮﻧ"
 
 
 msgid "No valid formats found"
@@ -16287,6 +16232,11 @@ msgstr "ﯼﺪﯿﻠﮐ ﯼﺎﻫ ﻢﯾﺮﻓ ﺎﺑ ﺎﻫ ﮎﺮﺗِ ﻪﻤ�
 
 msgid "No active sequence!"
 msgstr "ﻢﻠﯿﻓ ﺲﻧﺎﮑﺳ"
+
+
+msgctxt "Operator"
+msgid "Bottom of File"
+msgstr "ﻞﯾﺎﻓ ﻦﯿﯾﺎﭘ"
 
 
 msgid "unknown error writing file"

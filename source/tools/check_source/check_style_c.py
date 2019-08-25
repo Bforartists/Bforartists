@@ -1175,7 +1175,7 @@ def quick_check_indentation(fn, lines):
             # * middle of multi line comment block
             elif ls.startswith("* "):
                 skip = True
-            # exclude muli-line defines
+            # exclude multi-line defines
             elif ls.endswith("\\") or ls.endswith("(void)0") or ls_prev.endswith("\\"):
                 skip = True
 
@@ -1424,7 +1424,7 @@ def scan_source_filepath(filepath, args, fn, cache=None):
     if cache:
         cache_result = scan_source_filepath__cached(filepath, args, fn, cache)
         if cache_result is None:
-            # No need to ececute
+            # No need to execute.
             return
         else:
             cache_files_src, cache_files_dst, fn = cache_result

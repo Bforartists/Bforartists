@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -685,11 +685,6 @@ msgstr "(Dokumentatu gabeko operadorea)"
 msgctxt "Operator"
 msgid "Set Origin"
 msgstr "Jatorria Ezarri"
-
-
-msgctxt "Operator"
-msgid "Clear"
-msgstr "Garbitu"
 
 
 msgid "Clear text by type"
@@ -2019,6 +2014,11 @@ msgid "Delete..."
 msgstr "Ezabatu..."
 
 
+msgctxt "Operator"
+msgid "Clear"
+msgstr "Garbitu"
+
+
 msgid "Refraction"
 msgstr "Errefrakzioa"
 
@@ -2064,21 +2064,6 @@ msgstr "Testua"
 
 
 msgctxt "Operator"
-msgid "Find..."
-msgstr "Bilatu..."
-
-
-msgctxt "Operator"
-msgid "Top of File"
-msgstr "Fitxategiaren Goialdea"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "Fitxategiaren Behealdea"
-
-
-msgctxt "Operator"
 msgid "One Object"
 msgstr "Objektu bat"
 
@@ -2086,16 +2071,6 @@ msgstr "Objektu bat"
 msgctxt "Operator"
 msgid "One Object Per Line"
 msgstr "Objektu bat lerroko"
-
-
-msgctxt "Operator"
-msgid "Move line(s) up"
-msgstr "Lerroa(k) gora mugitu"
-
-
-msgctxt "Operator"
-msgid "Move line(s) down"
-msgstr "Lerroa(k) behera mugitu"
 
 
 msgid "Text: External"
@@ -2343,6 +2318,16 @@ msgstr "Sarea"
 msgctxt "Mesh"
 msgid "Sphere"
 msgstr "Esfera"
+
+
+msgctxt "Operator"
+msgid "Top of File"
+msgstr "Fitxategiaren Goialdea"
+
+
+msgctxt "Operator"
+msgid "Bottom of File"
+msgstr "Fitxategiaren Behealdea"
 
 
 msgctxt "Operator"

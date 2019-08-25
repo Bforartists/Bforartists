@@ -1154,7 +1154,7 @@ class AssetBarOperator(bpy.types.Operator):
     '''runs search and displays the asset bar at the same time'''
     bl_idname = "view3d.blenderkit_asset_bar"
     bl_label = "BlenderKit Asset Bar UI"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     do_search: BoolProperty(name="Run Search", description='', default=True, options={'SKIP_SAVE'})
     keep_running: BoolProperty(name="Keep Running", description='', default=True, options={'SKIP_SAVE'})
@@ -1683,9 +1683,27 @@ class AssetBarOperator(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
 
+class TransferBlenderkitData(bpy.types.Operator):
+    """Regenerate cobweb"""
+    bl_idname = "object.blenderkit_data_trasnfer"
+    bl_label = "Transfer BlenderKit data"
+    bl_description = "Transfer blenderKit metadata from one object to another when fixing uploads with wrong parenting."
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        source_ob = bpy.context.active_object
+        for target_ob in bpy.context.selected_objects:
+            if target_ob != source_ob:
+                target_ob.property_unset('blenderkit')
+                for k in source_ob.keys():
+                    target_ob[k] = source_ob[k]
+        source_ob.property_unset('blenderkit')
+        return {'FINISHED'}
+
+
 classess = (
     AssetBarOperator,
-
+    TransferBlenderkitData
 )
 
 # store keymap items here to access after registration
