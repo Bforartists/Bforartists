@@ -26,18 +26,11 @@
 
 /* ******************* Registration Function ********************** */
 
-struct ARegion;
-struct ListBase;
-struct Main;
 struct Object;
 struct SnapObjectContext;
 struct SnapObjectParams;
-struct View3D;
-struct WorkSpace;
 struct bContext;
-struct wmEvent;
 struct wmKeyConfig;
-struct wmKeyMap;
 struct wmOperatorType;
 
 void ED_keymap_transform(struct wmKeyConfig *keyconf);
@@ -112,7 +105,6 @@ struct Scene;
 struct TransInfo;
 struct wmGizmoGroup;
 struct wmGizmoGroupType;
-struct wmOperator;
 
 /* UNUSED */
 // int BIF_snappingSupported(struct Object *obedit);
@@ -197,12 +189,12 @@ bool peelObjectsSnapContext(struct SnapObjectContext *sctx,
                             float r_no[3],
                             float *r_thickness);
 
-bool snapObjectsTransform(struct TransInfo *t,
-                          const float mval[2],
-                          float *dist_px,
-                          /* return args */
-                          float r_loc[3],
-                          float r_no[3]);
+short snapObjectsTransform(struct TransInfo *t,
+                           const float mval[2],
+                           float *dist_px,
+                           /* return args */
+                           float r_loc[3],
+                           float r_no[3]);
 bool snapNodesTransform(struct TransInfo *t,
                         const int mval[2],
                         /* return args */

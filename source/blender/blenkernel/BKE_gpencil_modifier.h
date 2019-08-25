@@ -24,23 +24,16 @@
 #include "BLI_compiler_attrs.h"
 #include "BKE_customdata.h"
 
-struct BMEditMesh;
-struct DepsNodeHandle;
 struct Depsgraph;
-struct DerivedMesh;
 struct GpencilModifierData;
 struct ID;
 struct ListBase;
 struct Main;
-struct Mesh;
 struct ModifierUpdateDepsgraphContext;
 struct Object;
 struct Scene;
-struct ViewLayer;
-struct bArmature;
 /* NOTE: bakeModifier() called from UI:
  * needs to create new databloc-ks, hence the need for this. */
-struct bContext;
 struct bGPDframe;
 struct bGPDlayer;
 struct bGPDstroke;
@@ -327,5 +320,9 @@ int BKE_gpencil_time_modifier(struct Depsgraph *depsgraph,
 
 void BKE_gpencil_lattice_init(struct Object *ob);
 void BKE_gpencil_lattice_clear(struct Object *ob);
+
+void BKE_gpencil_modifiers_calc(struct Depsgraph *depsgraph,
+                                struct Scene *scene,
+                                struct Object *ob);
 
 #endif /* __BKE_GPENCIL_MODIFIER_H__ */

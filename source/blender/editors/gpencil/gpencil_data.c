@@ -105,7 +105,7 @@ static bool gp_data_add_poll(bContext *C)
 /* add new datablock - wrapper around API */
 static int gp_data_add_exec(bContext *C, wmOperator *op)
 {
-  PointerRNA gpd_owner = {{NULL}};
+  PointerRNA gpd_owner = {NULL};
   bGPdata **gpd_ptr = ED_gpencil_data_get_pointers(C, &gpd_owner);
   bool is_annotation = ED_gpencil_data_owner_is_annotation(&gpd_owner);
 
@@ -231,7 +231,7 @@ void GPENCIL_OT_data_unlink(wmOperatorType *ot)
 /* add new layer - wrapper around API */
 static int gp_layer_add_exec(bContext *C, wmOperator *op)
 {
-  PointerRNA gpd_owner = {{NULL}};
+  PointerRNA gpd_owner = {NULL};
   bGPdata **gpd_ptr = ED_gpencil_data_get_pointers(C, &gpd_owner);
   bool is_annotation = ED_gpencil_data_owner_is_annotation(&gpd_owner);
 
@@ -2886,7 +2886,7 @@ static int gpencil_color_select_exec(bContext *C, wmOperator *op)
   CTX_DATA_END;
 
   /* copy on write tag is needed, or else no refresh happens */
-  DEG_id_tag_update(&gpd->id, ID_RECALC_COPY_ON_WRITE);
+  DEG_id_tag_update(&gpd->id, ID_RECALC_GEOMETRY | ID_RECALC_COPY_ON_WRITE);
 
   /* notifiers */
   WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_EDITED, NULL);

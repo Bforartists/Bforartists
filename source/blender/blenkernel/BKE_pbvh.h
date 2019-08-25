@@ -28,12 +28,10 @@
 
 struct BMLog;
 struct BMesh;
-struct CCGDerivedMesh;
 struct CCGElem;
 struct CCGKey;
 struct CustomData;
 struct DMFlagMat;
-struct GPUBatch;
 struct GPU_PBVH_Buffers;
 struct IsectRayPrecalc;
 struct MLoop;
@@ -278,9 +276,9 @@ float *BKE_pbvh_node_layer_disp_get(PBVH *pbvh, PBVHNode *node);
 void BKE_pbvh_node_layer_disp_free(PBVHNode *node);
 
 /* vertex deformer */
-float (*BKE_pbvh_get_vertCos(struct PBVH *pbvh))[3];
-void BKE_pbvh_apply_vertCos(struct PBVH *pbvh, float (*vertCos)[3], const int totvert);
-bool BKE_pbvh_isDeformed(struct PBVH *pbvh);
+float (*BKE_pbvh_vert_coords_alloc(struct PBVH *pbvh))[3];
+void BKE_pbvh_vert_coords_apply(struct PBVH *pbvh, const float (*vertCos)[3], const int totvert);
+bool BKE_pbvh_is_deformed(struct PBVH *pbvh);
 
 /* Vertex Iterator */
 

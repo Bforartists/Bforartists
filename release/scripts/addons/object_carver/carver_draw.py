@@ -57,6 +57,8 @@ def draw_string(self, color1, color2, left, bottom, text, max_option, divide = 1
 	""" Draw the text like 'option : key' or just 'option' """
 
 	font_id = 0
+	ui_scale = bpy.context.preferences.system.ui_scale
+
 	blf.enable(font_id,blf.SHADOW)
 	blf.shadow(font_id, 0, 0.0, 0.0, 0.0, 1.0)
 	blf.shadow_offset(font_id,2,-2)
@@ -65,14 +67,16 @@ def draw_string(self, color1, color2, left, bottom, text, max_option, divide = 1
 
 	# Test if the text is a list formatted like : ('option', 'key')
 	if isinstance(text,list):
+		spacer_text = " : "
+		spacer_width = blf.dimensions(font_id, spacer_text)[0]
 		for string in text:
 			blf.position(font_id, (left), (bottom + y_offset), 0)
 			blf.color(font_id, *color1)
 			blf.draw(font_id, string[0])
 			blf.position(font_id, (left + max_option), (bottom + y_offset), 0)
-			blf.draw(font_id, " : ")
+			blf.draw(font_id, spacer_text)
 			blf.color(font_id, *color2)
-			blf.position(font_id, (left + max_option + 15), (bottom + y_offset), 0)
+			blf.position(font_id, (left + max_option + spacer_width), (bottom + y_offset), 0)
 			blf.draw(font_id, string[1])
 			y_offset += line_height
 	else:
@@ -129,7 +133,8 @@ def draw_callback_px(self, context):
 
 	# Get the size of the text
 	text_size = 18 if region.width >= 850 else 12
-	blf.size(0, int(round(text_size * bpy.context.preferences.view.ui_scale, 0)), 72)
+	ui_scale = bpy.context.preferences.system.ui_scale
+	blf.size(0, round(text_size * ui_scale), bpy.context.preferences.system.dpi)
 
 	# Help Display
 	if (self.ObjectMode is False) and (self.ProfileMode is False):
@@ -227,7 +232,7 @@ def draw_callback_px(self, context):
 
 	# Display boolean mode
 	text_size = 40 if region.width >= 850 else 20
-	blf.size(0, int(round(text_size * bpy.context.preferences.view.ui_scale, 0)), 72)
+	blf.size(0, round(text_size * ui_scale), bpy.context.preferences.system.dpi)
 
 	draw_string(self, color2, color2, region_width - (blf.dimensions(0, BooleanMode)[0]) / 2, \
 				y_txt + bloc_height + 16, BooleanMode, 0, divide = 2)
@@ -236,7 +241,7 @@ def draw_callback_px(self, context):
 
 		if self.AskHelp is False:
 			# "H for Help" text
-			blf.size(0, int(round(13 * bpy.context.preferences.view.ui_scale, 0)), 72)
+			blf.size(0, round(13 * ui_scale), bpy.context.preferences.system.dpi)
 			help_txt = "[" + self.carver_prefs.Key_Help + "] for help"
 			txt_width = blf.dimensions(0, help_txt)[0]
 			txt_height = (blf.dimensions(0, "gM")[1] * 1.45)
@@ -321,7 +326,7 @@ def draw_callback_px(self, context):
 					   ["Gap for rows or columns",  self.carver_prefs.Key_Gapy + " " + self.carver_prefs.Key_Gapx]
 					   ]
 
-			blf.size(0, int(round(15 * bpy.context.preferences.view.ui_scale, 0)), 72)
+			blf.size(0, round(15 * ui_scale), bpy.context.preferences.system.dpi)
 			help_txt, bloc_height, max_option, max_key, comma = get_text_info(self, context, help_txt)
 			draw_string(self, color1, color2, xHelp, yHelp, help_txt, max_option)
 

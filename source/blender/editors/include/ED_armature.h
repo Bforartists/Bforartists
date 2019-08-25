@@ -42,7 +42,6 @@ struct ReportList;
 struct Scene;
 struct UndoType;
 struct View3D;
-struct ViewContext;
 struct ViewLayer;
 struct bArmature;
 struct bContext;
@@ -75,12 +74,14 @@ typedef struct EditBone {
   int flag;
   int layer;
 
+  /* Envelope distance & weight */
   float dist, weight;
   /** put them in order! transform uses this as scale */
   float xwidth, length, zwidth;
   float rad_head, rad_tail;
 
   /* Bendy-Bone parameters */
+  short segments;
   float roll1, roll2;
   float curve_in_x, curve_in_y;
   float curve_out_x, curve_out_y;
@@ -90,8 +91,6 @@ typedef struct EditBone {
 
   /** for envelope scaling */
   float oldlength;
-
-  short segments;
 
   /** Type of next/prev bone handles */
   char bbone_prev_type;
@@ -229,15 +228,9 @@ void ED_armature_edit_transform_mirror_update(struct Object *obedit);
 void ED_armature_origin_set(
     struct Main *bmain, struct Object *ob, const float cursor[3], int centermode, int around);
 
-void ED_armature_transform_bones(struct bArmature *arm, float mat[4][4], const bool do_props);
-void ED_armature_transform_apply(struct Main *bmain,
-                                 struct Object *ob,
-                                 float mat[4][4],
-                                 const bool do_props);
-void ED_armature_transform(struct Main *bmain,
-                           struct bArmature *arm,
-                           float mat[4][4],
-                           const bool do_props);
+void ED_armature_edit_transform(struct bArmature *arm, const float mat[4][4], const bool do_props);
+
+void ED_armature_transform(struct bArmature *arm, const float mat[4][4], const bool do_props);
 
 #define ARM_GROUPS_NAME 1
 #define ARM_GROUPS_ENVELOPE 2

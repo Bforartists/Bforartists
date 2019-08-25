@@ -430,7 +430,7 @@ class VIEW3D_PT_blenderkit_profile(Panel):
                     layout.label(text='Remaining private storage: %i MiB' % (me['remainingPrivateQuota']))
 
             layout.operator("wm.url_open", text="See my uploads",
-                            icon='URL').url = paths.BLENDERKIT_USER_ASSETS
+                            icon='URL').url = paths.get_bkit_url() + paths.BLENDERKIT_USER_ASSETS
 
 
 def draw_panel_model_rating(self, context):
@@ -769,6 +769,7 @@ class SetCategoryOperator(bpy.types.Operator):
     """Visit subcategory"""
     bl_idname = "view3d.blenderkit_set_category"
     bl_label = "BlenderKit Set Active Category"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     category: bpy.props.StringProperty(
         name="Category",
@@ -803,9 +804,12 @@ def draw_panel_categories(self, context):
     # row = layout.row()
     # row.prop(ui_props, 'asset_type', expand=True, icon_only=True)
     layout.separator()
+
+
     layout.label(text='Categories')
     wm = bpy.context.window_manager
-
+    if wm.get('bkit_categories') == None:
+        return
     col = layout.column(align=True)
     if wm.get('active_category') is not None:
         acat = wm['active_category'][ui_props.asset_type]

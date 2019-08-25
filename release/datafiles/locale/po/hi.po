@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -1726,6 +1726,10 @@ msgid "Fixed"
 msgstr "निर्धारित"
 
 
+msgid "Merge"
+msgstr "विलय करें"
+
+
 msgid "Grid Scale"
 msgstr "जालक प्रंमाण"
 
@@ -1800,6 +1804,14 @@ msgstr "प्रतिरूप छवि"
 
 msgid "Add Color"
 msgstr "रंग जोड़ें"
+
+
+msgid "Root"
+msgstr "मूल"
+
+
+msgid "Sharp"
+msgstr "पैना"
 
 
 msgid "Draw"
@@ -2486,10 +2498,6 @@ msgid "Halo"
 msgstr "तेजोमंडल"
 
 
-msgid "Root"
-msgstr "मूल"
-
-
 msgid "Velocity / Hair"
 msgstr "वेग / बाल"
 
@@ -2679,10 +2687,6 @@ msgid "Calculate Alpha"
 msgstr "पारदर्शिता गणना"
 
 
-msgid "Sharp"
-msgstr "पैना"
-
-
 msgid "Sin"
 msgstr "ज्या"
 
@@ -2867,34 +2871,6 @@ msgid "Insert a keyframe on each of the rotation and scale channels"
 msgstr "घूर्णन और प्रंमाण पर सरणिों में से प्रत्येक पर एक keyframe सम्मिलित करें"
 
 
-msgid "Insert a keyframe on each of the location channels, taking into account effects of constraints "
-msgstr "स्थान सरणि, ले जा खाते में कमी के प्रभाव से प्रत्येक पर एक keyframe सम्मिलित करें "
-
-
-msgid "Insert a keyframe on each of the location and rotation channels, taking into account effects of constraints "
-msgstr "स्थान और घूर्णन सरणि, ले जा खाते में कमी के प्रभाव से प्रत्येक पर एक keyframe सम्मिलित करें "
-
-
-msgid "Insert a keyframe on each of the location, rotation and scaling channels, taking into account effects "
-msgstr "प्रत्येक स्थान, घूर्णन और प्रमाण सरणि, खाते के प्रभाव में लेने पर एक keyframe सम्मिलित करें "
-
-
-msgid "Insert a keyframe on each of the location and scaling channels, taking into account effects of constraints "
-msgstr "प्रत्येक स्थान पर एक keyframe डालें और सरणि लेने के खाते में कमी के प्रभाव, प्रमाण "
-
-
-msgid "Insert a keyframe on each of the rotation channels, taking into account effects of constraints "
-msgstr "घूर्णन सरणि, ले जा खाते में कमी के प्रभाव से प्रत्येक पर एक keyframe सम्मिलित करें "
-
-
-msgid "Insert a keyframe on each of the rotation and scaling channels, taking into account effects of constraints "
-msgstr "घूर्णन में से प्रत्येक पर एक keyframe डालें और सरणि लेने के खाते में कमी के प्रभाव, प्रमाण "
-
-
-msgid "Insert a keyframe on each of the scale channels, taking into account effects of constraints "
-msgstr "प्रंमाण पर सरणि, ले जा खाते में कमी के प्रभाव से प्रत्येक पर एक keyframe सम्मिलित करें "
-
-
 msgid "Insert a keyframe on each of the location, rotation, and scale channels"
 msgstr "स्थान, घूर्णन, और प्रंमाण पर सरणिों में से प्रत्येक पर एक keyframe सम्मिलित करें"
 
@@ -2909,10 +2885,6 @@ msgstr "घूर्णन सरणिों में से प्रत्�
 
 msgid "Insert a keyframe on each of the scale channels"
 msgstr "प्रंमाण पर सरणिों में से प्रत्येक पर एक keyframe सम्मिलित करें"
-
-
-msgid "Insert a keyframe for all properties that are likely to get animated in a character rig "
-msgstr "सभी गुण है कि एक चरित्र रिग में एनिमेटेड हो जाने की संभावना है के लिए एक keyframe सम्मिलित करें "
 
 
 msgid "Point selected"
@@ -3091,14 +3063,6 @@ msgstr "किनारा"
 
 msgid "Face"
 msgstr "फलक"
-
-
-msgid "Merge"
-msgstr "विलय करें"
-
-
-msgid "Hide/Mask"
-msgstr "छुपाएँ/आवरण"
 
 
 msgid "Hooks"
@@ -3819,11 +3783,6 @@ msgstr "रंग की प्रतिलिपि बनाएँ"
 
 
 msgctxt "Operator"
-msgid "Clear"
-msgstr "स्पष्ट"
-
-
-msgctxt "Operator"
 msgid "Delete"
 msgstr "मिटाएँ"
 
@@ -4390,10 +4349,6 @@ msgstr "कारक"
 
 msgid "Mark"
 msgstr "चिन्ह"
-
-
-msgid "Select Objects and their children"
-msgstr "वस्तुओं और उनके बच्चों का चयन करें"
 
 
 msgid "Show"
@@ -5067,10 +5022,6 @@ msgid "Note"
 msgstr "टिप्पणी"
 
 
-msgid "Find"
-msgstr "खोजें"
-
-
 msgid "Playback"
 msgstr "प्रतिदृश्य"
 
@@ -5422,10 +5373,6 @@ msgstr "में"
 
 msgid "Active Strip"
 msgstr "सक्रिय पट्टी"
-
-
-msgid "Draw Axes"
-msgstr "अक्ष चित्रण"
 
 
 msgid "Curve Mapping"
@@ -6311,6 +6258,11 @@ msgstr "कारण"
 
 
 msgctxt "Operator"
+msgid "Clear"
+msgstr "स्पष्ट"
+
+
+msgctxt "Operator"
 msgid "All"
 msgstr "सभी"
 
@@ -6599,6 +6551,11 @@ msgstr "खोल देना"
 
 
 msgctxt "Operator"
+msgid "Top"
+msgstr "शीर्ष"
+
+
+msgctxt "Operator"
 msgid "One Object"
 msgstr "एक वस्तु"
 
@@ -6672,11 +6629,6 @@ msgstr "सक्रिय प्रतिबिंबक"
 msgctxt "Operator"
 msgid "Camera"
 msgstr "प्रतिबिंबक"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "शीर्ष"
 
 
 msgctxt "Operator"
@@ -7041,10 +6993,6 @@ msgstr "स्ट्रिप्स आदानों की समान स�
 
 msgid "Error writing frame"
 msgstr "गठन लेखन में त्रुटि"
-
-
-msgid "Could not allocate temporary frame"
-msgstr "अस्थायी गठन आवंटित नहीं कर सका"
 
 
 msgid "No valid formats found"

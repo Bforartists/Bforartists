@@ -49,7 +49,6 @@ def makeFracture(child_verts=False, division=100, noise=0.00,
 
     # Get active object name and active layer
     active_name = bpy.context.view_layer.objects.active.name
-    active_layer = bpy.context.scene.active_layer
 
     # source method of whether use child verts
     if child_verts is True:
@@ -65,15 +64,15 @@ def makeFracture(child_verts=False, division=100, noise=0.00,
             use_sharp_edges=False, use_sharp_edges_apply=True, use_data_match=True,
             use_island_split=True, margin=margin, material_index=0,
             use_interior_vgroup=False, mass_mode='VOLUME', mass=1, use_recenter=True,
-            use_remove_original=True, use_layer_index=0, use_layer_next=False,
-            group_name="", use_debug_points=False, use_debug_redraw=True, use_debug_bool=False
+            use_remove_original=True,
+            collection_name="", use_debug_points=False, use_debug_redraw=True, use_debug_bool=False
             )
 
-    _makeJoin(active_name, active_layer)
+    _makeJoin(active_name)
 
 
 # Join fractures into an object
-def _makeJoin(active_name, active_layer):
+def _makeJoin(active_name):
     # Get object by name
     bpy.ops.object.select_all(action='DESELECT')
     bpy.ops.object.select_pattern(pattern=active_name + '_cell*')

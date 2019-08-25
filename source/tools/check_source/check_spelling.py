@@ -53,9 +53,17 @@ from check_spelling_c_config import (
 )
 
 
+import re
+re_vars = re.compile("[A-Za-z]+")
+re_url = re.compile(r'(https?|ftp)://\S+')
+
 def words_from_text(text):
     """ Extract words to treat as English for spell checking.
     """
+
+    # Strip out URL's.
+    text = re_url.sub(" ", text)
+
     text = text.strip("#'\"")
     text = text.replace("/", " ")
     text = text.replace("-", " ")
@@ -144,19 +152,25 @@ def extract_py_comments(filepath):
     source = open(filepath, encoding='utf-8')
 
     comments = []
+    code_words = set()
 
     prev_toktype = token.INDENT
 
     tokgen = tokenize.generate_tokens(source.readline)
     for toktype, ttext, (slineno, scol), (elineno, ecol), ltext in tokgen:
-        if toktype == token.STRING and prev_toktype == token.INDENT:
-            comments.append(Comment(filepath, ttext, slineno, 'DOCSTRING'))
+        if toktype == token.STRING:
+            if prev_toktype == token.INDENT:
+                comments.append(Comment(filepath, ttext, slineno, 'DOCSTRING'))
         elif toktype == tokenize.COMMENT:
             # non standard hint for commented CODE that we can ignore
             if not ttext.startswith("#~"):
                 comments.append(Comment(filepath, ttext, slineno, 'COMMENT'))
+        else:
+            for match in re_vars.finditer(ttext):
+                code_words.add(match.group(0))
+
         prev_toktype = toktype
-    return comments
+    return comments, code_words
 
 
 def extract_c_comments(filepath):
@@ -167,7 +181,6 @@ def extract_c_comments(filepath):
          * This is a multi-line comment, notice the '*'s are aligned.
          */
     """
-    i = 0
     text = open(filepath, encoding='utf-8').read()
 
     BEGIN = "/*"
@@ -210,85 +223,115 @@ def extract_c_comments(filepath):
                     break
             block_split[i] = l
 
-    comments = []
+    comment_ranges = []
 
-    while i >= 0:
+    i = 0
+    while i != -1:
         i = text.find(BEGIN, i)
         if i != -1:
             i_next = text.find(END, i)
             if i_next != -1:
-
-                # not essential but seek ack to find beginning of line
+                # Not essential but seek back to find beginning of line.
                 while i > 0 and text[i - 1] in {"\t", " "}:
                     i -= 1
-
-                block = text[i:i_next + len(END)]
-
-                # add whitespace in front of the block (for alignment test)
-                ws = []
-                j = i
-                while j > 0 and text[j - 1] != "\n":
-                    ws .append("\t" if text[j - 1] == "\t" else " ")
-                    j -= 1
-                ws.reverse()
-                block = "".join(ws) + block
-
-                ok = True
-
-                if not (SINGLE_LINE or ("\n" in block)):
-                    ok = False
-
-                if ok:
-                    for c in SKIP_COMMENTS:
-                        if c in block:
-                            ok = False
-                            break
-
-                if ok:
-                    # expand tabs
-                    block_split = [l.expandtabs(TABSIZE) for l in block.split("\n")]
-
-                    # now validate that the block is aligned
-                    align_vals = tuple(sorted(set([l.find("*") for l in block_split])))
-                    is_aligned = len(align_vals) == 1
-
-                    if is_aligned:
-                        if PRINT_SPELLING:
-                            if STRIP_DOXY:
-                                strip_doxy_comments(block_split)
-
-                            align = align_vals[0] + 1
-                            block = "\n".join([l[align:] for l in block_split])[:-len(END)]
-
-                            # now strip block and get text
-                            # print(block)
-
-                            # ugh - not nice or fast
-                            slineno = 1 + text.count("\n", 0, i)
-
-                            comments.append(Comment(filepath, block, slineno, 'COMMENT'))
-                    else:
-                        if PRINT_NON_ALIGNED:
-                            lineno = 1 + text.count("\n", 0, i)
-                            if PRINT_QTC_TASKFORMAT:
-                                filepath = os.path.abspath(filepath)
-                                print("%s\t%d\t%s\t%s" % (filepath, lineno, "comment", align_vals))
-                            else:
-                                print(filepath + ":" + str(lineno) + ":")
-
+                i_next += len(END)
+                comment_ranges.append((i, i_next))
             i = i_next
         else:
             pass
 
-    return comments
+    # Collect variables from code, so we can reference variables from code blocks
+    # without this generating noise from the spell checker.
+
+    code_ranges = []
+    if not comment_ranges:
+        code_ranges.append((0, len(text)))
+    else:
+        for index in range(len(comment_ranges) + 1):
+            if index == 0:
+                i_prev = 0
+            else:
+                i_prev = comment_ranges[index - 1][1]
+
+            if index == len(comment_ranges):
+                i_next = len(text)
+            else:
+                i_next = comment_ranges[index][0]
+
+            code_ranges.append((i_prev, i_next))
+
+    code_words = set()
+
+    for i, i_next in code_ranges:
+        for match in re_vars.finditer(text[i:i_next]):
+            code_words.add(match.group(0))
+
+    comments = []
+
+    for i, i_next in comment_ranges:
+        block = text[i:i_next]
+
+        # add whitespace in front of the block (for alignment test)
+        ws = []
+        j = i
+        while j > 0 and text[j - 1] != "\n":
+            ws .append("\t" if text[j - 1] == "\t" else " ")
+            j -= 1
+        ws.reverse()
+        block = "".join(ws) + block
+
+        ok = True
+
+        if not (SINGLE_LINE or ("\n" in block)):
+            ok = False
+
+        if ok:
+            for c in SKIP_COMMENTS:
+                if c in block:
+                    ok = False
+                    break
+
+        if ok:
+            # expand tabs
+            block_split = [l.expandtabs(TABSIZE) for l in block.split("\n")]
+
+            # now validate that the block is aligned
+            align_vals = tuple(sorted(set([l.find("*") for l in block_split])))
+            is_aligned = len(align_vals) == 1
+
+            if is_aligned:
+                if PRINT_SPELLING:
+                    if STRIP_DOXY:
+                        strip_doxy_comments(block_split)
+
+                    align = align_vals[0] + 1
+                    block = "\n".join([l[align:] for l in block_split])[:-len(END)]
+
+                    # now strip block and get text
+                    # print(block)
+
+                    # ugh - not nice or fast
+                    slineno = 1 + text.count("\n", 0, i)
+
+                    comments.append(Comment(filepath, block, slineno, 'COMMENT'))
+            else:
+                if PRINT_NON_ALIGNED:
+                    lineno = 1 + text.count("\n", 0, i)
+                    if PRINT_QTC_TASKFORMAT:
+                        filepath = os.path.abspath(filepath)
+                        print("%s\t%d\t%s\t%s" % (filepath, lineno, "comment", align_vals))
+                    else:
+                        print(filepath + ":" + str(lineno) + ":")
+
+    return comments, code_words
 
 
 def spell_check_comments(filepath):
 
     if filepath.endswith(".py"):
-        comment_list = extract_py_comments(filepath)
+        comment_list, code_words = extract_py_comments(filepath)
     else:
-        comment_list = extract_c_comments(filepath)
+        comment_list, code_words = extract_c_comments(filepath)
 
     for comment in comment_list:
         for w in comment.parse():
@@ -300,6 +343,12 @@ def spell_check_comments(filepath):
                 continue
 
             if not dict_spelling.check(w):
+
+                # Ignore literals that show up in code,
+                # gets rid of a lot of noise from comments that reference variables.
+                if w in code_words:
+                    # print("Skipping", w)
+                    continue
 
                 if ONLY_ONCE:
                     if w_lower in _only_once_ids:

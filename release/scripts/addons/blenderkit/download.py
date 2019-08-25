@@ -815,7 +815,7 @@ class BlenderkitKillDownloadOperator(bpy.types.Operator):
     """Kill a download."""
     bl_idname = "scene.blenderkit_download_kill"
     bl_label = "BlenderKit Kill Asset Download"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'INTERNAL'}
 
     thread_index: IntProperty(name="Thread index", description='index of the thread to kill', default=-1)
 
@@ -831,7 +831,8 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
     """Download and link asset to scene. Only link if asset already available locally."""
     bl_idname = "scene.blenderkit_download"
     bl_label = "BlenderKit Asset Download"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
 
     asset_type: EnumProperty(
         name="Type",

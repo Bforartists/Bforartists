@@ -4859,7 +4859,7 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
 
         layout.operator("mesh.set_normals_from_faces", text="Set From Faces", icon = 'SET_FROM_FACES')
 
-        layout.operator_context = 'INVOKE_DEFAULT'
+        layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("transform.rotate_normal", text="Rotate", icon = "NORMAL_ROTATE")
         layout.operator("mesh.point_normals", text="Point normals to target", icon = "NORMAL_TARGET")
 
@@ -6668,6 +6668,8 @@ class VIEW3D_PT_overlay_guides(Panel):
         layout = self.layout
 
         view = context.space_data
+        scene = context.scene
+
         overlay = view.overlay
         shading = view.shading
         display_all = overlay.show_overlays
@@ -6689,6 +6691,8 @@ class VIEW3D_PT_overlay_guides(Panel):
             sub = col.row(align=True)
             sub.active = (overlay.show_floor and not view.region_3d.is_orthographic_side_view) or (overlay.show_ortho_grid and grid_active)
             sub.prop(overlay, "grid_scale", text="Scale")
+            sub = sub.row(align=True)
+            sub.active = scene.unit_settings.system == 'NONE'
             sub.prop(overlay, "grid_subdivisions", text="Subdivisions")
 
         sub = split.column()
@@ -7193,7 +7197,9 @@ class VIEW3D_PT_pivot_point(Panel):
         if (obj is None) or (mode in {'OBJECT', 'POSE', 'WEIGHT_PAINT'}):
             col.separator()
 
-            col.prop(tool_settings, "use_transform_pivot_point_align", text="Only Origins")
+            col.label(text="Affect Only")
+            col.prop(tool_settings, "use_transform_data_origin", text="Origins")
+            col.prop(tool_settings, "use_transform_pivot_point_align", text="Locations")
 
 
 class VIEW3D_PT_snapping(Panel):

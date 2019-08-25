@@ -31,7 +31,6 @@
 struct BMLoop;
 struct BMesh;
 struct Depsgraph;
-struct DerivedMesh;
 struct EditMeshData;
 struct Mesh;
 struct MeshStatVis;
@@ -79,7 +78,7 @@ typedef struct BMEditMesh {
 } BMEditMesh;
 
 /* editmesh.c */
-void BKE_editmesh_tessface_calc(BMEditMesh *em);
+void BKE_editmesh_looptri_calc(BMEditMesh *em);
 BMEditMesh *BKE_editmesh_create(BMesh *bm, const bool do_tessellate);
 BMEditMesh *BKE_editmesh_copy(BMEditMesh *em);
 BMEditMesh *BKE_editmesh_from_object(struct Object *ob);
@@ -88,7 +87,7 @@ void BKE_editmesh_free(BMEditMesh *em);
 
 void BKE_editmesh_color_free(BMEditMesh *em);
 void BKE_editmesh_color_ensure(BMEditMesh *em, const char htype);
-float (*BKE_editmesh_vertexCos_get_orco(BMEditMesh *em, int *r_numVerts))[3];
+float (*BKE_editmesh_vert_coords_alloc_orco(BMEditMesh *em, int *r_vert_len))[3];
 void BKE_editmesh_lnorspace_update(BMEditMesh *em);
 void BKE_editmesh_ensure_autosmooth(BMEditMesh *em);
 
@@ -98,7 +97,7 @@ void BKE_editmesh_statvis_calc(BMEditMesh *em,
                                struct EditMeshData *emd,
                                const struct MeshStatVis *statvis);
 
-float (*BKE_editmesh_vertexCos_get(
-    struct Depsgraph *depsgraph, struct BMEditMesh *em, struct Scene *scene, int *r_numVerts))[3];
+float (*BKE_editmesh_vert_coords_alloc(
+    struct Depsgraph *depsgraph, struct BMEditMesh *em, struct Scene *scene, int *r_vert_len))[3];
 
 #endif /* __BKE_EDITMESH_H__ */

@@ -757,7 +757,7 @@ static void ui_apply_but_undo(uiBut *but)
     }
 
     /* Optionally override undo when undo system doesn't support storing properties. */
-    if (but->rnapoin.id.data) {
+    if (but->rnapoin.owner_id) {
       /* Exception for renaming ID data, we always need undo pushes in this case,
        * because undo systems track data by their ID, see: T67002. */
       extern PropertyRNA rna_ID_name;
@@ -765,7 +765,7 @@ static void ui_apply_but_undo(uiBut *but)
         /* pass */
       }
       else {
-        ID *id = but->rnapoin.id.data;
+        ID *id = but->rnapoin.owner_id;
         if (!ED_undo_is_legacy_compatible_for_property(but->block->evil_C, id)) {
           str = "";
         }
@@ -1558,7 +1558,7 @@ static bool ui_selectcontext_begin(bContext *C, uiBut *but, uiSelectContextStore
           if (use_path_from_id) {
             /* Path relative to ID. */
             lprop = NULL;
-            RNA_id_pointer_create(link->ptr.id.data, &idptr);
+            RNA_id_pointer_create(link->ptr.owner_id, &idptr);
             RNA_path_resolve_property(&idptr, path, &lptr, &lprop);
           }
           else if (path) {
@@ -4800,18 +4800,19 @@ static int ui_do_but_NUM(
   if (click) {
     /* we can click on the side arrows to increment/decrement,
      * or click inside to edit the value directly */
-    const float softmin = but->softmin;
-    const float softmax = but->softmax;
 
     if (!ui_but_is_float(but)) {
       /* Integer Value. */
       if (but->drawflag & (UI_BUT_ACTIVE_LEFT | UI_BUT_ACTIVE_RIGHT)) {
         button_activate_state(C, but, BUTTON_STATE_NUM_EDITING);
+
         const int value_step = (int)but->a1;
         BLI_assert(value_step > 0);
+        const int softmin = round_fl_to_int_clamp(but->softmin);
+        const int softmax = round_fl_to_int_clamp(but->softmax);
         const double value_test = (but->drawflag & UI_BUT_ACTIVE_LEFT) ?
-                                      (double)max_ii((int)softmin, (int)data->value - value_step) :
-                                      (double)min_ii((int)softmax, (int)data->value + value_step);
+                                      (double)max_ii(softmin, (int)data->value - value_step) :
+                                      (double)min_ii(softmax, (int)data->value + value_step);
         if (value_test != data->value) {
           data->value = (double)value_test;
         }
@@ -4828,11 +4829,14 @@ static int ui_do_but_NUM(
       /* Float Value. */
       if (but->drawflag & (UI_BUT_ACTIVE_LEFT | UI_BUT_ACTIVE_RIGHT)) {
         button_activate_state(C, but, BUTTON_STATE_NUM_EDITING);
+
         const double value_step = (double)but->a1 * UI_PRECISION_FLOAT_SCALE;
         BLI_assert(value_step > 0.0f);
         const double value_test = (but->drawflag & UI_BUT_ACTIVE_LEFT) ?
-                                      (double)max_ff(softmin, (float)(data->value - value_step)) :
-                                      (double)min_ff(softmax, (float)(data->value + value_step));
+                                      (double)max_ff(but->softmin,
+                                                     (float)(data->value - value_step)) :
+                                      (double)min_ff(but->softmax,
+                                                     (float)(data->value + value_step));
         if (value_test != data->value) {
           data->value = value_test;
         }
@@ -5484,7 +5488,7 @@ static bool ui_numedit_but_UNITVEC(
 static void ui_palette_set_active(uiBut *but)
 {
   if ((int)(but->a1) == UI_PALETTE_COLOR) {
-    Palette *palette = but->rnapoin.id.data;
+    Palette *palette = (Palette *)but->rnapoin.owner_id;
     PaletteColor *color = but->rnapoin.data;
     palette->active_color = BLI_findindex(&palette->colors, color);
   }
@@ -5547,7 +5551,7 @@ static int ui_do_but_COLOR(bContext *C, uiBut *but, uiHandleButtonData *data, co
     }
     else if ((int)(but->a1) == UI_PALETTE_COLOR && event->type == DELKEY &&
              event->val == KM_PRESS) {
-      Palette *palette = but->rnapoin.id.data;
+      Palette *palette = (Palette *)but->rnapoin.owner_id;
       PaletteColor *color = but->rnapoin.data;
 
       BKE_palette_color_remove(palette, color);
