@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -4100,6 +4100,10 @@ msgid "Adaptive"
 msgstr "Moure a Capa"
 
 
+msgid "Merge"
+msgstr "Unir"
+
+
 msgid "Smooth Modifier"
 msgstr "Seleccionar fila"
 
@@ -4288,6 +4292,10 @@ msgid "Editable falloff curve"
 msgstr "Mostrar propietats de les arestes"
 
 
+msgid "Sharper"
+msgstr "Desparentar"
+
+
 msgid "Repeat"
 msgstr "Obrir l'últim"
 
@@ -4430,10 +4438,6 @@ msgstr "Seleccionar fila"
 
 msgid "Use Front-Face"
 msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Use Gradient"
-msgstr "Pintura Vectorial"
 
 
 msgid "Plane Offset Pressure"
@@ -6934,10 +6938,6 @@ msgid "Use soft marble"
 msgstr "Començar a renderitzar una seqüència"
 
 
-msgid "Sharper"
-msgstr "Desparentar"
-
-
 msgid "Sin"
 msgstr "Contreure/Engreixar"
 
@@ -7716,10 +7716,6 @@ msgid "Effect Strip"
 msgstr "Afegir Tira"
 
 
-msgid "Transitions"
-msgstr "Seleccionar connectats"
-
-
 msgid "Navigation"
 msgstr "Finestra de Render"
 
@@ -7796,10 +7792,6 @@ msgid "Mesh"
 msgstr "Malla"
 
 
-msgid "Merge"
-msgstr "Unir"
-
-
 msgid "Normals"
 msgstr "Calcular Normals"
 
@@ -7810,10 +7802,6 @@ msgstr "Seleccionar fila"
 
 msgid "Metaball"
 msgstr "MetaBall"
-
-
-msgid "Hide/Mask"
-msgstr "Mostrar"
 
 
 msgid "Light"
@@ -12720,11 +12708,6 @@ msgid "Console Banner"
 msgstr "Texte"
 
 
-msgctxt "Operator"
-msgid "Clear"
-msgstr "Esborrar Tamany"
-
-
 msgid "Clear text by type"
 msgstr "Deseleccionar Enllaçats"
 
@@ -14936,10 +14919,6 @@ msgid "Delete Edge Loop"
 msgstr "Seleccionar fila"
 
 
-msgid "Minimum distance between elements to merge"
-msgstr "Esborrar"
-
-
 msgctxt "Operator"
 msgid "Limited Dissolve"
 msgstr "Mostrar propietats de les arestes"
@@ -15423,6 +15402,10 @@ msgstr "Esfera UV"
 
 msgid "Construct a UV sphere mesh"
 msgstr "&gt;Corba de Bezier"
+
+
+msgid "Minimum distance between elements to merge"
+msgstr "Esborrar"
 
 
 msgctxt "Operator"
@@ -17583,10 +17566,6 @@ msgid "Extend selection for activation"
 msgstr "Seleccionar connectats"
 
 
-msgid "Rename item under cursor"
-msgstr "Render"
-
-
 msgctxt "Operator"
 msgid "Keying Set Add Selected"
 msgstr "Amagar Seleccionats"
@@ -17643,10 +17622,6 @@ msgstr "Seleccionar fila"
 
 msgid "Drag to parent in Outliner"
 msgstr "Seleccionar connectats"
-
-
-msgid "Child Object"
-msgstr "Comprimir Dades"
 
 
 msgctxt "Operator"
@@ -19354,15 +19329,6 @@ msgstr "Autocomençar"
 
 
 msgctxt "Operator"
-msgid "Comment"
-msgstr "Crea Segment"
-
-
-msgid "Convert selected text to comment"
-msgstr "Amagar Seleccionats"
-
-
-msgctxt "Operator"
 msgid "Convert Whitespace"
 msgstr "Image Displist"
 
@@ -19546,15 +19512,6 @@ msgstr "Comprimir Dades"
 
 msgid "Split Lines"
 msgstr "Partir"
-
-
-msgctxt "Operator"
-msgid "Uncomment"
-msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Convert selected comment to text"
-msgstr "Amagar Seleccionats"
 
 
 msgid "Unindent selected text"
@@ -20933,10 +20890,6 @@ msgid "Number of times to copy strokes across the surface"
 msgstr "Seleccionar connectats"
 
 
-msgid "Show Diffuse Color"
-msgstr "Comprimir Dades"
-
-
 msgid "Use Deform Only"
 msgstr "Corba"
 
@@ -21184,10 +21137,6 @@ msgstr "Duplicar"
 
 msgid "Render Presets"
 msgstr "Render"
-
-
-msgid "Find"
-msgstr "Trobar"
 
 
 msgid "Playback"
@@ -23349,14 +23298,6 @@ msgid "Show Cache"
 msgstr "Moure a Capa"
 
 
-msgid "Draw Axes"
-msgstr "Mostrar Tot"
-
-
-msgid "Partial overlay on top of the sequencer"
-msgstr "Començar a renderitzar una seqüència"
-
-
 msgid "Sequence Element"
 msgstr "Moure a Capa"
 
@@ -24909,6 +24850,10 @@ msgid "Gradient High/Off"
 msgstr "Seleccionar fila"
 
 
+msgid "Use Gradient"
+msgstr "Pintura Vectorial"
+
+
 msgid "Theme Graph Editor"
 msgstr "Image Displist"
 
@@ -25019,6 +24964,10 @@ msgstr "Seleccionar fila"
 
 msgid "Action-Clip Strip - Selected"
 msgstr "Seleccionar fila"
+
+
+msgid "Transitions"
+msgstr "Seleccionar connectats"
 
 
 msgid "Transition Strip - Unselected"
@@ -26439,6 +26388,11 @@ msgstr "Seleccionar fila"
 
 
 msgctxt "Operator"
+msgid "Clear"
+msgstr "Esborrar Tamany"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "Menú Esborrar"
 
@@ -26704,11 +26658,6 @@ msgstr "Esborrar Rotació"
 
 
 msgctxt "Operator"
-msgid "Border Axis Range"
-msgstr "Seleccionar amb límit"
-
-
-msgctxt "Operator"
 msgid "Columns on Selected Keys"
 msgstr "Amagar Seleccionats"
 
@@ -26731,11 +26680,6 @@ msgstr "Menú Esborrar"
 msgctxt "Operator"
 msgid "Slide"
 msgstr "Costat"
-
-
-msgctxt "Operator"
-msgid "Border (Include Handles)"
-msgstr "Calcular Tangents"
 
 
 msgctxt "Operator"
@@ -26982,12 +26926,12 @@ msgstr "Començar Joc"
 
 
 msgctxt "Operator"
-msgid "Find..."
-msgstr "Trobar..."
+msgid "Top"
+msgstr "Superior"
 
 
 msgctxt "Operator"
-msgid "Top of File"
+msgid "Bottom"
 msgstr "Arxiu"
 
 
@@ -26999,16 +26943,6 @@ msgstr "Comprimir Dades"
 msgctxt "Operator"
 msgid "One Object Per Line"
 msgstr "Duplicar"
-
-
-msgctxt "Operator"
-msgid "Move line(s) up"
-msgstr "Seleccionar fila"
-
-
-msgctxt "Operator"
-msgid "Move line(s) down"
-msgstr "Afegir Tira"
 
 
 msgid "Text: External"
@@ -27056,10 +26990,6 @@ msgstr "Render"
 
 msgid "Align to"
 msgstr "Duplicar"
-
-
-msgid "Simplify Stroke"
-msgstr "Esborrar"
 
 
 msgid "F-Curve Visibility"
@@ -27126,16 +27056,6 @@ msgstr "Amagar Seleccionats"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "Amagar Seleccionats"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "Superior"
-
-
-msgctxt "Operator"
-msgid "Bottom"
-msgstr "Arxiu"
 
 
 msgctxt "Operator"
@@ -27503,11 +27423,6 @@ msgstr "Duplicar"
 
 
 msgctxt "Operator"
-msgid "Curve Preset"
-msgstr "Render"
-
-
-msgctxt "Operator"
 msgid "Hook to Selected Object Bone"
 msgstr "Seleccionar connectats"
 
@@ -27709,10 +27624,6 @@ msgstr "Dreta"
 
 msgid "Strips must have the same number of inputs"
 msgstr "Seleccionar connectats"
-
-
-msgid "Could not allocate temporary frame"
-msgstr "Esborrar Rotació"
 
 
 msgid "No valid formats found"
@@ -28837,6 +28748,11 @@ msgstr "Seleccionar connectats"
 
 msgid "No active sequence!"
 msgstr "Començar a renderitzar una seqüència"
+
+
+msgctxt "Operator"
+msgid "Top of File"
+msgstr "Arxiu"
 
 
 msgid "Control Point:"

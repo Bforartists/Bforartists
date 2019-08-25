@@ -16,48 +16,50 @@
 
 CCL_NAMESPACE_BEGIN
 
-/* Nodes */
-
 ccl_device void svm_node_math(KernelGlobals *kg,
                               ShaderData *sd,
                               float *stack,
-                              uint itype,
-                              uint f1_offset,
-                              uint f2_offset,
+                              uint type,
+                              uint inputs_stack_offsets,
+                              uint result_stack_offset,
                               int *offset)
 {
-  NodeMath type = (NodeMath)itype;
-  float f1 = stack_load_float(stack, f1_offset);
-  float f2 = stack_load_float(stack, f2_offset);
-  float f = svm_math(type, f1, f2);
+  uint a_stack_offset, b_stack_offset;
+  decode_node_uchar4(inputs_stack_offsets, &a_stack_offset, &b_stack_offset, NULL, NULL);
 
-  uint4 node1 = read_node(kg, offset);
+  float a = stack_load_float(stack, a_stack_offset);
+  float b = stack_load_float(stack, b_stack_offset);
+  float result = svm_math((NodeMathType)type, a, b);
 
-  stack_store_float(stack, node1.y, f);
+  stack_store_float(stack, result_stack_offset, result);
 }
 
 ccl_device void svm_node_vector_math(KernelGlobals *kg,
                                      ShaderData *sd,
                                      float *stack,
-                                     uint itype,
-                                     uint v1_offset,
-                                     uint v2_offset,
+                                     uint type,
+                                     uint inputs_stack_offsets,
+                                     uint outputs_stack_offsets,
                                      int *offset)
 {
-  NodeVectorMath type = (NodeVectorMath)itype;
-  float3 v1 = stack_load_float3(stack, v1_offset);
-  float3 v2 = stack_load_float3(stack, v2_offset);
-  float f;
-  float3 v;
+  uint value_stack_offset, vector_stack_offset;
+  uint a_stack_offset, b_stack_offset, scale_stack_offset;
+  decode_node_uchar4(
+      inputs_stack_offsets, &a_stack_offset, &b_stack_offset, &scale_stack_offset, NULL);
+  decode_node_uchar4(outputs_stack_offsets, &value_stack_offset, &vector_stack_offset, NULL, NULL);
 
-  svm_vector_math(&f, &v, type, v1, v2);
+  float3 a = stack_load_float3(stack, a_stack_offset);
+  float3 b = stack_load_float3(stack, b_stack_offset);
+  float scale = stack_load_float(stack, scale_stack_offset);
 
-  uint4 node1 = read_node(kg, offset);
+  float value;
+  float3 vector;
+  svm_vector_math(&value, &vector, (NodeVectorMathType)type, a, b, scale);
 
-  if (stack_valid(node1.y))
-    stack_store_float(stack, node1.y, f);
-  if (stack_valid(node1.z))
-    stack_store_float3(stack, node1.z, v);
+  if (stack_valid(value_stack_offset))
+    stack_store_float(stack, value_stack_offset, value);
+  if (stack_valid(vector_stack_offset))
+    stack_store_float3(stack, vector_stack_offset, vector);
 }
 
 CCL_NAMESPACE_END

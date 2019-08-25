@@ -319,7 +319,6 @@ class TIME_PT_view_view_options(TimelinePanelButtons, Panel):
         scene = context.scene
 
         layout.prop(st, "show_marker_lines")
-        layout.prop(st, "show_frame_indicator")
         layout.prop(scene, "show_keys_from_selected_only")
 
         layout.separator()

@@ -42,7 +42,6 @@ struct EditBone;
 struct NumInput;
 struct Object;
 struct RNG;
-struct RenderEngineType;
 struct ReportList;
 struct Scene;
 struct ScrArea;
@@ -52,7 +51,6 @@ struct TransDataContainer;
 struct TransInfo;
 struct TransSnap;
 struct TransformOrientation;
-struct View3D;
 struct ViewLayer;
 struct bConstraint;
 struct bContext;
@@ -85,7 +83,9 @@ typedef struct TransSnap {
   bool snap_self;
   bool peel;
   bool snap_spatial_grid;
-  short status;
+  char status;
+  /* Snapped Element Type (currently for objects only). */
+  char snapElem;
   /** snapping from this point (in global-space). */
   float snapPoint[3];
   /** to this point (in global-space). */
@@ -375,6 +375,7 @@ typedef struct VertSlideParams {
 typedef struct BoneInitData {
   struct EditBone *bone;
   float tail[3];
+  float rad_head;
   float rad_tail;
   float roll;
   float head[3];
@@ -720,6 +721,16 @@ typedef struct TransInfo {
 
   /** Typically for mode settings. */
   TransCustomDataContainer custom;
+
+  /**
+   * Object to object data transform table.
+   * Don't add these to transform data because we may want to include child objects
+   * which aren't being transformed.
+   * - The key is object data #ID.
+   * - The value is #XFormObjectData_Extra.
+   */
+  struct GHash *obdata_in_obmode_map;
+
 } TransInfo;
 
 /* ******************** Macros & Prototypes *********************** */
@@ -791,6 +802,10 @@ enum {
   T_MODAL_CURSOR_SET = 1 << 26,
 
   T_CLNOR_REBUILD = 1 << 27,
+
+  /** When transforming object's, adjust the object data so it stays in the same place. */
+  T_OBJECT_DATA_IN_OBJECT_MODE = 1 << 28,
+
 };
 
 /** #TransInfo.modifiers */
@@ -1163,5 +1178,8 @@ bool checkUseAxisMatrix(TransInfo *t);
                           *tc_end = t->data_container + t->data_container_len; \
        th != tc_end; \
        th++, i++)
+
+void trans_obdata_in_obmode_free_all(struct TransInfo *t);
+void trans_obdata_in_obmode_update_all(struct TransInfo *t);
 
 #endif

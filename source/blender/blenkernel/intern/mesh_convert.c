@@ -1341,11 +1341,11 @@ Mesh *BKE_mesh_create_derived_for_modifier(struct Depsgraph *depsgraph,
 
   if (mti->type == eModifierTypeType_OnlyDeform) {
     int numVerts;
-    float(*deformedVerts)[3] = BKE_mesh_vertexCos_get(me, &numVerts);
+    float(*deformedVerts)[3] = BKE_mesh_vert_coords_alloc(me, &numVerts);
 
     BKE_id_copy_ex(NULL, &me->id, (ID **)&result, LIB_ID_COPY_LOCALIZE);
     mti->deformVerts(md_eval, &mectx, result, deformedVerts, numVerts);
-    BKE_mesh_apply_vert_coords(result, deformedVerts);
+    BKE_mesh_vert_coords_apply(result, deformedVerts);
 
     if (build_shapekey_layers) {
       add_shapekey_layers(result, me);
@@ -1434,7 +1434,6 @@ static void shapekey_layers_to_keyblocks(Mesh *mesh_src, Mesh *mesh_dst, int act
   }
 }
 
-/* This is a Mesh-based copy of DM_to_mesh() */
 void BKE_mesh_nomain_to_mesh(Mesh *mesh_src,
                              Mesh *mesh_dst,
                              Object *ob,
@@ -1442,7 +1441,7 @@ void BKE_mesh_nomain_to_mesh(Mesh *mesh_src,
                              bool take_ownership)
 {
   /* mesh_src might depend on mesh_dst, so we need to do everything with a local copy */
-  /* TODO(Sybren): the above claim came from DM_to_mesh();
+  /* TODO(Sybren): the above claim came from 2.7x derived-mesh code (DM_to_mesh);
    * check whether it is still true with Mesh */
   Mesh tmp = *mesh_dst;
   int totvert, totedge /*, totface */ /* UNUSED */, totloop, totpoly;
@@ -1594,7 +1593,6 @@ void BKE_mesh_nomain_to_mesh(Mesh *mesh_src,
   }
 }
 
-/* This is a Mesh-based copy of DM_to_meshkey() */
 void BKE_mesh_nomain_to_meshkey(Mesh *mesh_src, Mesh *mesh_dst, KeyBlock *kb)
 {
   int a, totvert = mesh_src->totvert;

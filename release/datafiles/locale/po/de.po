@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -6409,6 +6409,10 @@ msgid "Adaptive"
 msgstr "Adaptiv"
 
 
+msgid "Merge"
+msgstr "Zusammenführen"
+
+
 msgid "Smooth Modifier"
 msgstr "Weicher Modifikator"
 
@@ -6679,6 +6683,18 @@ msgstr "Farbe des Cursors beim Abziehen"
 
 msgid "Mask Texture Overlay Alpha"
 msgstr "Maskentextur überlagert Alpha"
+
+
+msgid "Root"
+msgstr "Wurzel"
+
+
+msgid "Sharp"
+msgstr "Scharf"
+
+
+msgid "Sharper"
+msgstr "Schärfer"
 
 
 msgid "Draw"
@@ -6959,10 +6975,6 @@ msgstr "Kante-zu-Kante"
 
 msgid "Use Front-Face"
 msgstr "Schriften verwenden"
-
-
-msgid "Use Gradient"
-msgstr "Verlauf"
 
 
 msgid "Use Sculpt"
@@ -9345,10 +9357,6 @@ msgid "Number of children/parent for rendering"
 msgstr "Anzahl von Kindern pro Elternteil beim Rendern"
 
 
-msgid "Root"
-msgstr "Wurzel"
-
-
 msgid "Random Orientation"
 msgstr "Zufällige Ausrichtung"
 
@@ -9959,10 +9967,6 @@ msgid "Register"
 msgstr "Registrieren"
 
 
-msgid "Tabs as Spaces"
-msgstr "Tabs als Leerzeichen"
-
-
 msgid "Factor Blue"
 msgstr "Blau-Faktor"
 
@@ -10289,14 +10293,6 @@ msgstr "Muster"
 
 msgid "Use soft marble"
 msgstr "Weichen Marmor verwenden"
-
-
-msgid "Sharp"
-msgstr "Scharf"
-
-
-msgid "Sharper"
-msgstr "Schärfer"
 
 
 msgid "Sin"
@@ -11426,10 +11422,6 @@ msgid "Effect Strip"
 msgstr "Effektstreifen"
 
 
-msgid "Transitions"
-msgstr "Übergänge"
-
-
 msgid "Navigation"
 msgstr "Navigation"
 
@@ -11522,20 +11514,12 @@ msgid "Face"
 msgstr "Fläche"
 
 
-msgid "Merge"
-msgstr "Zusammenführen"
-
-
 msgid "Normals"
 msgstr "Normalen"
 
 
 msgid "Metaball"
 msgstr "Metaball"
-
-
-msgid "Hide/Mask"
-msgstr "Verbergen/Maskieren"
 
 
 msgid "Light"
@@ -17396,11 +17380,6 @@ msgid "Print a message when the terminal initializes"
 msgstr "Meldung ausgeben, wenn sich die Konsole initialisiert"
 
 
-msgctxt "Operator"
-msgid "Clear"
-msgstr "Entfernen"
-
-
 msgid "Clear text by type"
 msgstr "Text durch Typ löschen"
 
@@ -19685,10 +19664,6 @@ msgid "Delete Edge Loop"
 msgstr "Markierung löschen"
 
 
-msgid "Minimum distance between elements to merge"
-msgstr "Entfernung zwischen zwei Knochen oder Objekten"
-
-
 msgctxt "Operator"
 msgid "Limited Dissolve"
 msgstr "Entfernung begrenzen"
@@ -20219,6 +20194,10 @@ msgstr "UV-Kugel hinzufügen"
 
 msgid "Construct a UV sphere mesh"
 msgstr "UV-Kugel-Mesh erzeugen"
+
+
+msgid "Minimum distance between elements to merge"
+msgstr "Entfernung zwischen zwei Knochen oder Objekten"
 
 
 msgctxt "Operator"
@@ -22506,14 +22485,6 @@ msgid "Rename"
 msgstr "Umbenennen"
 
 
-msgid "Recursive"
-msgstr "Rekursiv"
-
-
-msgid "Rename item under cursor"
-msgstr "Objekt unter dem Cursor umbenennen"
-
-
 msgid "Reload"
 msgstr "Neu laden"
 
@@ -22552,10 +22523,6 @@ msgstr "Ziehen um Elternteil festzulegen"
 
 msgid "Drag to parent in Outliner"
 msgstr "Ziehen um Elternteil im Outliner festzulegen"
-
-
-msgid "Child Object"
-msgstr "Kind von"
 
 
 msgctxt "Operator"
@@ -24425,15 +24392,6 @@ msgstr "Auto. Vervollständigen"
 
 
 msgctxt "Operator"
-msgid "Comment"
-msgstr "Kommentar"
-
-
-msgid "Convert selected text to comment"
-msgstr "Ausgewählten Text in Kommentar umwandeln"
-
-
-msgctxt "Operator"
 msgid "Convert Whitespace"
 msgstr "Freizeichen umwandeln"
 
@@ -24603,15 +24561,6 @@ msgstr "Zu 3D-Objekt"
 
 msgid "Split Lines"
 msgstr "Linien teilen"
-
-
-msgctxt "Operator"
-msgid "Uncomment"
-msgstr "Unkommentieren"
-
-
-msgid "Convert selected comment to text"
-msgstr "Ausgewählten Kommentar in Text umwandeln"
 
 
 msgid "Unindent selected text"
@@ -26170,10 +26119,6 @@ msgid "Disallow changes to the Z axis of vertices"
 msgstr "Änderungen an der Z-Achse von Vertices nicht erlauben"
 
 
-msgid "Show Diffuse Color"
-msgstr "Zerstreuungsfarbe"
-
-
 msgid "Source and destination for symmetrize operator"
 msgstr "Quelle und Ziel für den Symetrie-Operator"
 
@@ -26482,10 +26427,6 @@ msgstr "Render-Voreinstellungen"
 
 msgid "Note"
 msgstr "Notiz"
-
-
-msgid "Find"
-msgstr "Suchen"
 
 
 msgid "Playback"
@@ -27222,14 +27163,6 @@ msgid "Global Undo"
 msgstr "Globales Rückgängigmachen"
 
 
-msgid "Grease Pencil Simplify Stroke"
-msgstr "Wachsstift einfacher Strich"
-
-
-msgid "Simplify the final stroke"
-msgstr "Vereinfacht den finalen Strich"
-
-
 msgid "New F-Curve Colors - XYZ to RGB"
 msgstr "Neue F-Kurvenfarben - XYZ zu RGB"
 
@@ -27452,6 +27385,10 @@ msgstr "Automatisches Speichern von Vorschaubildern in .blend-Dateien erlauben"
 
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
 msgstr "Jeder .blend Datei erlauben, automatisch Scripte auszuführen (unsicher bei Blend-Dateien von nicht vertrauenswürdigen Quellen)"
+
+
+msgid "Tabs as Spaces"
+msgstr "Tabs als Leerzeichen"
 
 
 msgid "Automatically convert all new tabs into spaces for new and loaded text files"
@@ -29782,10 +29719,6 @@ msgid "Show Cache"
 msgstr "Cache anzeigen"
 
 
-msgid "Draw Axes"
-msgstr "Achsen anzeigen"
-
-
 msgid "Original image height"
 msgstr "Ursprüngliche Bildhöhe"
 
@@ -31570,6 +31503,10 @@ msgid "Gradient High/Off"
 msgstr "Verlauf"
 
 
+msgid "Use Gradient"
+msgstr "Verlauf"
+
+
 msgid "Theme Graph Editor"
 msgstr "Graph-Editor-Thema"
 
@@ -31712,6 +31649,10 @@ msgstr "Aktionsclip-Streifen - Abgewählt"
 
 msgid "Action-Clip Strip - Selected"
 msgstr "Aktionsclip-Streifen - Ausgewählt"
+
+
+msgid "Transitions"
+msgstr "Übergänge"
 
 
 msgid "Transition Strip - Unselected"
@@ -33592,6 +33533,11 @@ msgstr "Elternteil"
 
 
 msgctxt "Operator"
+msgid "Clear"
+msgstr "Entfernen"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "Feder skalieren"
 
@@ -34215,18 +34161,13 @@ msgstr "Entpacken"
 
 
 msgctxt "Operator"
-msgid "Find..."
-msgstr "Finden..."
+msgid "Top"
+msgstr "Oben"
 
 
 msgctxt "Operator"
-msgid "Top of File"
-msgstr "Anfang der Datei"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "Ende der Datei"
+msgid "Bottom"
+msgstr "Unten"
 
 
 msgctxt "Operator"
@@ -34239,14 +34180,8 @@ msgid "One Object Per Line"
 msgstr "Ein Objekt pro Zeile"
 
 
-msgctxt "Operator"
-msgid "Move line(s) up"
-msgstr "Zeile/n) hoch bewegen"
-
-
-msgctxt "Operator"
-msgid "Move line(s) down"
-msgstr "Zeile(n) nach unten bewegen"
+msgid "File: %s"
+msgstr "Datei: %s"
 
 
 msgid "Text: External"
@@ -34343,10 +34278,6 @@ msgstr "Standardfarbe"
 
 msgid "Eraser Radius"
 msgstr "Radierradius"
-
-
-msgid "Simplify Stroke"
-msgstr "Einfacher Strich"
 
 
 msgid "Sculpt Overlay Color"
@@ -34482,16 +34413,6 @@ msgstr "Aktive Kamera an Ansicht ausrichten"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "Aktive Kamera an Ausgewählten ausrichten"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "Oben"
-
-
-msgctxt "Operator"
-msgid "Bottom"
-msgstr "Unten"
 
 
 msgctxt "Operator"
@@ -34959,11 +34880,6 @@ msgstr "Objekte mit Szene verknüpfen"
 
 
 msgctxt "Operator"
-msgid "Curve Preset"
-msgstr "Kurven-Voreinstellungen"
-
-
-msgctxt "Operator"
 msgid "Transfer Weights"
 msgstr "Ebenen Gewichtung"
 
@@ -35345,10 +35261,6 @@ msgid "Error writing frame"
 msgstr "Einzelbild Schreibfehler"
 
 
-msgid "Could not allocate temporary frame"
-msgstr "Temporäres Einzelbild konnte nicht zugeordnet werden"
-
-
 msgid "No valid formats found"
 msgstr "Keine gültiges Format gefunden"
 
@@ -35576,10 +35488,6 @@ msgstr "Erfolgreich %d Schlüsselbilder zum Schlüsselbildsatz '%s' hinzugefügt
 
 msgid "Successfully removed %d keyframes for keying set '%s'"
 msgstr "Erfolgreich %d Schlüsselbilder vom Schlüsselbildsatz '%s' entfernt"
-
-
-msgid "Object '%s' successfully had %d keyframes removed"
-msgstr "Objekt '%s' hat erfolgreich %d Schlüsselbilder entfernt"
 
 
 msgid "Cannot remove built in keying set"
@@ -36605,10 +36513,6 @@ msgid "Frame: - / %d"
 msgstr "Einzelbild: - / %d"
 
 
-msgid "File: %s"
-msgstr "Datei: %s"
-
-
 msgid "unsupported movie clip format"
 msgstr "Nicht unterstütztes Filmclip-Format"
 
@@ -37075,6 +36979,16 @@ msgstr "Bitte zwei Steifen auswählen"
 
 msgid "No active sequence!"
 msgstr "Keine aktive Sequenz"
+
+
+msgctxt "Operator"
+msgid "Top of File"
+msgstr "Anfang der Datei"
+
+
+msgctxt "Operator"
+msgid "Bottom of File"
+msgstr "Ende der Datei"
 
 
 msgctxt "Operator"
@@ -37985,14 +37899,6 @@ msgstr "Alle Add-ons"
 
 msgid "All Add-ons Installed by User"
 msgstr "Alle durch den Benutzer installierten Add-ons"
-
-
-msgid "All Enabled Add-ons"
-msgstr "Alle aktivierten Add-ons"
-
-
-msgid "All Disabled Add-ons"
-msgstr "Alle deaktivierten Add-ons "
 
 
 msgid "Add Curve"

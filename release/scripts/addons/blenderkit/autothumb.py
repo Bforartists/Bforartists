@@ -256,6 +256,7 @@ class GenerateThumbnailOperator(bpy.types.Operator):
     """Generate Cycles thumbnail for model assets"""
     bl_idname = "object.blenderkit_generate_thumbnail"
     bl_label = "BlenderKit Thumbnail Generator"
+    bl_options = {'REGISTER', 'INTERNAL'}
 
     @classmethod
     def poll(cls, context):
@@ -281,6 +282,16 @@ class GenerateThumbnailOperator(bpy.types.Operator):
 
     def invoke(self, context, event):
         wm = context.window_manager
+        if bpy.data.filepath == '':
+            title = "Can't render thumbnail"
+            message = "please save your file first"
+
+            def draw_message(self, context):
+                self.layout.label(text = message)
+
+            bpy.context.window_manager.popup_menu(draw_message, title=title, icon='INFO')
+            return {'FINISHED'}
+        
         return wm.invoke_props_dialog(self)
 
 
@@ -288,6 +299,7 @@ class GenerateMaterialThumbnailOperator(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "object.blenderkit_material_thumbnail"
     bl_label = "BlenderKit Material Thumbnail Generator"
+    bl_options = {'REGISTER', 'INTERNAL'}
 
     @classmethod
     def poll(cls, context):

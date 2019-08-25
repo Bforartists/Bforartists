@@ -47,11 +47,30 @@ class PIE_MT_SelectionsMore(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         box = pie.split().column()
-        box.operator("object.select_by_type", text="Select By Type", icon='SNAP_VOLUME')
-        box.operator("object.select_grouped", text="Select Grouped", icon='NONE')
-        box.operator("object.select_linked", text="Select Linked", icon='CONSTRAINT_BONE')
-        box.menu("VIEW3D_MT_select_object_more_less", text="More/Less")
+        box.operator("object.select_random", text="Select Random")
+        box.operator("object.select_linked", text="Select Linked")
+        box.separator()
 
+        box.operator("object.select_more", text="More")
+        box.operator("object.select_less", text="Less")
+        box.separator()
+
+        props = box.operator("object.select_hierarchy", text="Parent")
+        props.extend = False
+        props.direction = 'PARENT'
+
+        props = box.operator("object.select_hierarchy", text="Child")
+        props.extend = False
+        props.direction = 'CHILD'
+        box.separator()
+
+        props = box.operator("object.select_hierarchy", text="Extend Parent")
+        props.extend = True
+        props.direction = 'PARENT'
+
+        props = box.operator("object.select_hierarchy", text="Extend Child")
+        props.extend = True
+        props.direction = 'CHILD'
 
 # Pie Selection Object Mode - A
 class PIE_MT_SelectionsOM(Menu):
@@ -62,9 +81,9 @@ class PIE_MT_SelectionsOM(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         # 4 - LEFT
-        pie.row().label(text="")
+        pie.operator("object.select_grouped", text="Select Grouped")
         # 6 - RIGHT
-        pie.operator("object.select_random", text="Select Random", icon='GROUP_VERTEX')
+        pie.operator("object.select_by_type", text="Select By Type")
         # 2 - BOTTOM
         pie.operator("object.select_all", text="Invert Selection",
                     icon='ZOOM_PREVIOUS').action = 'INVERT'
@@ -72,13 +91,13 @@ class PIE_MT_SelectionsOM(Menu):
         pie.operator("object.select_all", text="Select All Toggle",
                     icon='NONE').action = 'TOGGLE'
         # 7 - TOP - LEFT
-        pie.operator("view3d.select_circle", text="Circle Select", icon='NONE')
+        pie.operator("view3d.select_circle", text="Circle Select")
         # 9 - TOP - RIGHT
-        pie.operator("view3d.select_box", text="Box Select", icon='NONE')
+        pie.operator("view3d.select_box", text="Box Select")
         # 1 - BOTTOM - LEFT
-        pie.operator("object.select_camera", text="Select Camera", icon='CAMERA_DATA')
+        pie.operator("object.select_camera", text="Select Camera")
         # 3 - BOTTOM - RIGHT
-        pie.menu("PIE_MT_selectionsmore", text="Select Menu", icon='RESTRICT_SELECT_OFF')
+        pie.menu("PIE_MT_selectionsmore", text="Select Menu")
 
 
 # Pie Selection Edit Mode
@@ -90,25 +109,19 @@ class PIE_MT_SelectionsEM(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         # 4 - LEFT
-        pie.operator("view3d.select_box", text="Box Select",
-                    icon='NONE')
+        pie.operator("mesh.select_less", text="Select Less")
         # 6 - RIGHT
-        pie.menu("OBJECT_MT_selectloopselection", text="Select Loop Menu", icon='NONE')
+        pie.operator("mesh.select_more", text="Select More")
         # 2 - BOTTOM
-        pie.operator("mesh.select_all", text="Select None",
-                    icon='RESTRICT_SELECT_ON').action = 'DESELECT'
+        pie.menu("OBJECT_MT_selectloopselection", text="Select Loop Menu")
         # 8 - TOP
-        pie.operator("mesh.select_all", text="Select All",
-                    icon='RESTRICT_SELECT_OFF').action = 'SELECT'
+        pie.operator("mesh.select_all", text="Select All Toggle").action = 'TOGGLE'
         # 7 - TOP - LEFT
-        pie.operator("mesh.select_all", text="Select All Toggle",
-                    icon='ARROW_LEFTRIGHT').action = 'TOGGLE'
+        pie.operator("view3d.select_circle", text="Circle Select")
         # 9 - TOP - RIGHT
-        pie.operator("mesh.select_all", text="Invert Selection",
-                    icon='FULLSCREEN_EXIT').action = 'INVERT'
+        pie.operator("view3d.select_box", text="Box Select")
         # 1 - BOTTOM - LEFT
-        pie.operator("view3d.select_circle", text="Circle Select",
-                    icon='NONE')
+        pie.operator("mesh.select_all", text="Invert Selection").action = 'INVERT'
         # 3 - BOTTOM - RIGHT
         pie.menu("PIE_MT_selectallbyselection", text="Edit Modes", icon='VERTEXSEL')
 

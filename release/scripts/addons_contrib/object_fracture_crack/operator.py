@@ -15,7 +15,7 @@ def check_object_cell_fracture():
 
 
 # Access by bpy.ops.mesh.crackit_fracture
-class FractureOperation(Operator):
+class CRACKIT_OT_fracture(Operator):
     bl_idname = "mesh.crackit_fracture"
     bl_label = "Crack it!"
     bl_description = ("Make cracks using the cell fracture add-on\n"
@@ -63,7 +63,7 @@ class FractureOperation(Operator):
 
 # Apply material preset
 # Access by bpy.ops.mesh.crackit_material
-class MaterialOperation(Operator):
+class CRACKIT_OT_material(Operator):
     bl_idname = "mesh.crackit_material"
     bl_label = "Apply Material"
     bl_description = ("Apply a preset material\n"
@@ -101,11 +101,11 @@ class MaterialOperation(Operator):
 
 
 # Menu settings
-class crackitPanel(Panel):
+class CRACKIT_PT_main(Panel):
     bl_label = "Crack it!"
-    bl_idname = 'crack_it'
+    bl_idname = 'CRACKIT_PT_main'
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
+    bl_region_type = "UI"
     bl_category = "Create"
     bl_context = 'objectmode'
     bl_options = {"DEFAULT_CLOSED"}
@@ -130,7 +130,7 @@ class crackitPanel(Panel):
             layout.separator()
             return
         else:
-            row.operator(FractureOperation.bl_idname, icon="SPLITSCREEN")
+            row.operator(CRACKIT_OT_fracture.bl_idname)# ,icon="SPLITSCREEN")
 
         row = box.row()
         row.prop(crackit, "fracture_childverts")
@@ -161,4 +161,4 @@ class crackitPanel(Panel):
         row.prop(crackit, "material_preset")
 
         row = box.row()
-        row.operator(MaterialOperation.bl_idname)
+        row.operator(CRACKIT_OT_material.bl_idname)

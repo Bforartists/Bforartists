@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -654,6 +654,14 @@ msgid "Add Color"
 msgstr "Voeg Kleur Toe"
 
 
+msgid "Root"
+msgstr "Wortel"
+
+
+msgid "Sharp"
+msgstr "Scherp"
+
+
 msgid "Draw"
 msgstr "Potlood"
 
@@ -866,10 +874,6 @@ msgid "Material Slot"
 msgstr "Materiaal Plek"
 
 
-msgid "Root"
-msgstr "Wortel"
-
-
 msgid "Rigid Body World"
 msgstr "Star Lichaam Wereld"
 
@@ -893,10 +897,6 @@ msgstr "Geluid"
 
 msgid "Area"
 msgstr "Gebied"
-
-
-msgid "Sharp"
-msgstr "Scherp"
 
 
 msgid "Animation"
@@ -3864,11 +3864,6 @@ msgstr "Verplaats Textuur Plek"
 
 
 msgctxt "Operator"
-msgid "Comment"
-msgstr "Kommentaar"
-
-
-msgctxt "Operator"
 msgid "Convert Whitespace"
 msgstr "Converteer Whitespace"
 
@@ -3982,11 +3977,6 @@ msgstr "Naar 3D Object"
 
 msgid "Split Lines"
 msgstr "Split Lijnen"
-
-
-msgctxt "Operator"
-msgid "Uncomment"
-msgstr "Verwijder Commentaar"
 
 
 msgctxt "Operator"
@@ -4384,10 +4374,6 @@ msgstr "Geluid"
 
 msgid "Views"
 msgstr "Weergaves"
-
-
-msgid "Find"
-msgstr "Zoek"
 
 
 msgid "Timeline"
@@ -5374,8 +5360,13 @@ msgstr "Toon Vetkrijt"
 
 
 msgctxt "Operator"
-msgid "Find..."
-msgstr "Vind..."
+msgid "Top"
+msgstr "Bovenkant"
+
+
+msgctxt "Operator"
+msgid "Bottom"
+msgstr "Onderkant"
 
 
 msgctxt "Operator"
@@ -5409,16 +5400,6 @@ msgstr "Actieve Camera"
 msgctxt "Operator"
 msgid "Camera"
 msgstr "Camera"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "Bovenkant"
-
-
-msgctxt "Operator"
-msgid "Bottom"
-msgstr "Onderkant"
 
 
 msgctxt "Operator"
@@ -6031,10 +6012,6 @@ msgstr "Voeg Aanpasser Toe"
 
 msgid "Select Layer"
 msgstr "Selecteer Laag"
-
-
-msgid "Can't edit library linked object"
-msgstr "Kan niet een gekoppelde bibliotheek object bewerken"
 
 
 msgid "(empty)"

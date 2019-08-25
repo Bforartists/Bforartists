@@ -30,7 +30,6 @@ struct GPUBatch;
 struct GPUMaterial;
 struct ModifierData;
 struct Object;
-struct PTCacheEdit;
 struct ParticleSystem;
 struct ViewLayer;
 
@@ -113,7 +112,6 @@ typedef struct GlobalsUboStorage {
   /* Pack individual float at the end of the buffer to avoid alignment errors */
   float sizeLightCenter, sizeLightCircle, sizeLightCircleShadow;
   float sizeVertex, sizeEdge, sizeEdgeFix, sizeFaceDot;
-  float gridDistance, gridResolution, gridSubdivisions, gridScale;
 
   float pad_globalsBlock;
 } GlobalsUboStorage;

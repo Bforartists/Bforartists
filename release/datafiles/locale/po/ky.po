@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -1809,11 +1809,6 @@ msgid "Copy Color"
 msgstr "Түсүн көчүрүү"
 
 
-msgctxt "Operator"
-msgid "Clear"
-msgstr "Тазалоо"
-
-
 msgid "History"
 msgstr "Тарых"
 
@@ -2911,10 +2906,6 @@ msgid "Audio"
 msgstr "Аудио"
 
 
-msgid "Find"
-msgstr "Табуу"
-
-
 msgid "Development"
 msgstr "Иштетүү"
 
@@ -3527,6 +3518,11 @@ msgstr "Өзгөртүү:"
 
 
 msgctxt "Operator"
+msgid "Clear"
+msgstr "Тазалоо"
+
+
+msgctxt "Operator"
 msgid "All"
 msgstr "Баары"
 
@@ -3653,8 +3649,13 @@ msgstr "Көбөйтүү"
 
 
 msgctxt "Operator"
-msgid "Find..."
-msgstr "Табуу..."
+msgid "Top"
+msgstr "Үстүнөн"
+
+
+msgctxt "Operator"
+msgid "Bottom"
+msgstr "Астынан"
 
 
 msgctxt "Operator"
@@ -3740,16 +3741,6 @@ msgstr "Активдүү камера"
 msgctxt "Operator"
 msgid "Camera"
 msgstr "Камера"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "Үстүнөн"
-
-
-msgctxt "Operator"
-msgid "Bottom"
-msgstr "Астынан"
 
 
 msgctxt "Operator"

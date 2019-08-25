@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -3824,6 +3824,10 @@ msgid "Mirror Modifier"
 msgstr "Değiştirici Ekle"
 
 
+msgid "Merge"
+msgstr "Birleştir"
+
+
 msgid "Smooth Modifier"
 msgstr "Değiştirici Ekle"
 
@@ -4004,6 +4008,14 @@ msgid "Editable falloff curve"
 msgstr "Eğriyi buna Çevir"
 
 
+msgid "Root"
+msgstr "Kök"
+
+
+msgid "Sharp"
+msgstr "Sivri"
+
+
 msgid "Draw"
 msgstr "Çiz:"
 
@@ -4138,10 +4150,6 @@ msgstr "Kenardan Kenara"
 
 msgid "Use Front-Face"
 msgstr "Kenar/Yüzey Yap"
-
-
-msgid "Use Gradient"
-msgstr "Ağırlık Boyama"
 
 
 msgid "Inverse Smooth Pressure"
@@ -5732,10 +5740,6 @@ msgid "Rendered Children"
 msgstr "Çocuk (nesne) Ekle"
 
 
-msgid "Root"
-msgstr "Kök"
-
-
 msgid "Random Orientation"
 msgstr "Rasgele Bozulma"
 
@@ -6137,10 +6141,6 @@ msgid "End line of selection"
 msgstr "Seçimi İmlece"
 
 
-msgid "Tabs as Spaces"
-msgstr "Resmi farklı kaydet:"
-
-
 msgid "Factor Blue"
 msgstr "Harekete bağlı bulanıklık derecesi"
 
@@ -6315,10 +6315,6 @@ msgstr "Seçim Kalıbı..."
 
 msgid "Use soft marble"
 msgstr "Arkaplan Resmi Kullan"
-
-
-msgid "Sharp"
-msgstr "Sivri"
 
 
 msgid "Procedural musgrave texture"
@@ -7115,10 +7111,6 @@ msgid "Effect Strip"
 msgstr "Strip Özellikleri..."
 
 
-msgid "Transitions"
-msgstr "Değiştirici Ekle"
-
-
 msgid "Navigation"
 msgstr "Dolaşım Görünümü"
 
@@ -7215,10 +7207,6 @@ msgid "Face"
 msgstr "Yüzey Alanı"
 
 
-msgid "Merge"
-msgstr "Birleştir"
-
-
 msgid "Normals"
 msgstr "Normaller"
 
@@ -7229,10 +7217,6 @@ msgstr "Kenar Seçme Modu:"
 
 msgid "Metaball"
 msgstr "Metaball'u buna Çevir"
-
-
-msgid "Hide/Mask"
-msgstr "Gizle"
 
 
 msgid "Hooks"
@@ -11435,11 +11419,6 @@ msgstr "Python Konsolu"
 msgctxt "Operator"
 msgid "Console Banner"
 msgstr "Python Konsolu"
-
-
-msgctxt "Operator"
-msgid "Clear"
-msgstr "Kısıtlamaları sil"
 
 
 msgid "Clear text by type"
@@ -15963,10 +15942,6 @@ msgid "Drop to Set Parent"
 msgstr "Ayarlanan boyutun %50 si ölçeğinde işle"
 
 
-msgid "Child Object"
-msgstr "Nesne Kısıtlamaları"
-
-
 msgctxt "Operator"
 msgid "Drop Object to Scene"
 msgstr "Nesne Veri bloğuna yeni nesnenin malzemesini bağla"
@@ -17510,11 +17485,6 @@ msgstr "Python Konsolu"
 
 
 msgctxt "Operator"
-msgid "Comment"
-msgstr "Açıklama"
-
-
-msgctxt "Operator"
 msgid "Convert Whitespace"
 msgstr "Nesne Çevir"
 
@@ -17696,11 +17666,6 @@ msgstr "Nesneyi Kilitle:"
 
 msgid "Split Lines"
 msgstr "Bağlantı çizgileri"
-
-
-msgctxt "Operator"
-msgid "Uncomment"
-msgstr "Açıklamasız"
 
 
 msgid "Unindent selected text"
@@ -19070,10 +19035,6 @@ msgid "Lock Z"
 msgstr "Kilit:"
 
 
-msgid "Show Diffuse Color"
-msgstr "Nesnenin genel rengi."
-
-
 msgid "Use Deform Only"
 msgstr "Yalnızca Görülen Yüzey"
 
@@ -19258,10 +19219,6 @@ msgstr "Blender Sunum"
 
 msgid "Note"
 msgstr "Not"
-
-
-msgid "Find"
-msgstr "Bul"
 
 
 msgid "Playback"
@@ -20087,6 +20044,10 @@ msgid "Save Preview Images"
 msgstr "Önizleme Biçimi: Küp"
 
 
+msgid "Tabs as Spaces"
+msgstr "Resmi farklı kaydet:"
+
+
 msgid "Invert Zoom Direction"
 msgstr "Tekerle Yaklaş/Uzaklaş"
 
@@ -20195,16 +20156,8 @@ msgid "Continue"
 msgstr "Devamlı"
 
 
-msgid "Old style zoom, continues while moving mouse up or down"
-msgstr "Eski Stil, [Ctrl]+[FOD] ile fare aşağı ya da yukarı taşındığında (buton bırakılmadıkça) görüntüye Yaklaşlır/Uzaklaşılır"
-
-
 msgid "Dolly"
 msgstr "Eylem"
-
-
-msgid "Zoom in and out like scaling the view, mouse movements relative to center"
-msgstr "Ölçekleme mantığı gibi, [Ctrl]+[FOD] ile fare, nesne merkezine yaklaşıp/uzaklaştıkça, görüntüye Yaklaşılır/Uzaklaşılır"
 
 
 msgid "Wheel Scroll Lines"
@@ -21453,10 +21406,6 @@ msgstr "Aktif Kamera"
 
 msgid "Show Cache"
 msgstr "Aktif olanı göster"
-
-
-msgid "Draw Axes"
-msgstr "Kenarları Vurgula"
 
 
 msgid "Overlay Lock"
@@ -22871,6 +22820,10 @@ msgid "Gradient High/Off"
 msgstr "Kesme Biçimi "
 
 
+msgid "Use Gradient"
+msgstr "Ağırlık Boyama"
+
+
 msgid "Theme Graph Editor"
 msgstr "Ipo Eğri Editörü "
 
@@ -22961,6 +22914,10 @@ msgstr "NLA Strip'i eyleme çevir"
 
 msgid "Action-Clip Strip - Selected"
 msgstr "NLA Strip'i eyleme çevir"
+
+
+msgid "Transitions"
+msgstr "Değiştirici Ekle"
 
 
 msgid "Transition Strip - Unselected"
@@ -24334,6 +24291,11 @@ msgstr "Ebeveyn Nesne"
 
 
 msgctxt "Operator"
+msgid "Clear"
+msgstr "Kısıtlamaları sil"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "İşaret Ekle"
 
@@ -24627,11 +24589,6 @@ msgstr "Aradeğerleme Modu"
 
 
 msgctxt "Operator"
-msgid "Border Axis Range"
-msgstr "Yatay Eksenin Tersine"
-
-
-msgctxt "Operator"
 msgid "Column on Current Frame"
 msgstr "Geçerli Kareyi Ortala"
 
@@ -24654,11 +24611,6 @@ msgstr "Tahmini Uzat"
 msgctxt "Operator"
 msgid "Slide"
 msgstr "Vertex Slide"
-
-
-msgctxt "Operator"
-msgid "Border (Include Handles)"
-msgstr "Anahtarları Seç"
 
 
 msgctxt "Operator"
@@ -24915,33 +24867,18 @@ msgstr "Varsayılanı yükle"
 
 
 msgctxt "Operator"
-msgid "Find..."
-msgstr "Ara..."
+msgid "Top"
+msgstr "Üst"
 
 
 msgctxt "Operator"
-msgid "Top of File"
-msgstr "Dosya adı"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "Dosya adı"
+msgid "Bottom"
+msgstr "Alt "
 
 
 msgctxt "Operator"
 msgid "One Object"
 msgstr "Tek Nesne"
-
-
-msgctxt "Operator"
-msgid "Move line(s) up"
-msgstr "Aktif Grubu Sil"
-
-
-msgctxt "Operator"
-msgid "Move line(s) down"
-msgstr "İşareti Taşı"
 
 
 msgid "Text: External"
@@ -25040,10 +24977,6 @@ msgid "Eraser Radius"
 msgstr "Silgi Yarıçapı"
 
 
-msgid "Simplify Stroke"
-msgstr "Yumuşatma Konturu"
-
-
 msgid "Minimum Grid Spacing"
 msgstr "Asgari Izgara Aralığı"
 
@@ -25128,16 +25061,6 @@ msgstr "Kamerayı Görüntüye Hizala"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "Aktif Kamerayı Seçilene Hizala"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "Üst"
-
-
-msgctxt "Operator"
-msgid "Bottom"
-msgstr "Alt "
 
 
 msgctxt "Operator"
@@ -25395,10 +25318,6 @@ msgid "Fix Deforms"
 msgstr "Güzelce Kapla"
 
 
-msgid "Threaded Sculpt"
-msgstr "Heykeltraşlık Modu"
-
-
 msgctxt "Operator"
 msgid "Hide Bounding Box"
 msgstr "Sınır Kutucuğunu Gizle"
@@ -25548,11 +25467,6 @@ msgstr "Sahne bağlarına gözat"
 
 
 msgctxt "Operator"
-msgid "Curve Preset"
-msgstr "Eğri Önayarı"
-
-
-msgctxt "Operator"
 msgid "Hook to Selected Object Bone"
 msgstr "Görüntüyü Seçili Olana Hizala"
 
@@ -25686,6 +25600,10 @@ msgid "Spot Size"
 msgstr "Ekstrüzyon Boyutu"
 
 
+msgid "Threaded Sculpt"
+msgstr "Heykeltraşlık Modu"
+
+
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Hızlı Düzenle"
@@ -25787,10 +25705,6 @@ msgstr "Katmandan Tümünü Seç"
 
 msgid "Error writing frame"
 msgstr "Düzenleme (F9)"
-
-
-msgid "Could not allocate temporary frame"
-msgstr "Yeni dosya oluştur"
 
 
 msgid "No valid formats found"
@@ -27099,6 +27013,16 @@ msgstr "Seçili İşaretler arasında"
 
 msgid "No active sequence!"
 msgstr "Film Klibi"
+
+
+msgctxt "Operator"
+msgid "Top of File"
+msgstr "Dosya adı"
+
+
+msgctxt "Operator"
+msgid "Bottom of File"
+msgstr "Dosya adı"
 
 
 msgid "unknown error writing file"

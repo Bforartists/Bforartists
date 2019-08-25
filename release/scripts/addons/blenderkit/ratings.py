@@ -123,6 +123,7 @@ class StarRatingOperator(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "object.blenderkit_rating"
     bl_label = "Rate the Asset"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     property_name: StringProperty(
         name="Rating Property",
@@ -153,6 +154,7 @@ class UploadRatingOperator(bpy.types.Operator):
     """Upload rating to the web db"""
     bl_idname = "object.blenderkit_rating_upload"
     bl_label = "Upload the Rating"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     # type of upload - model, material, textures, e.t.c.
     asset_type: EnumProperty(

@@ -287,11 +287,11 @@ typedef enum eSpaceOutliner_Filter {
   SO_FILTER_NO_OB_CAMERA = (1 << 10),
   SO_FILTER_NO_OB_OTHERS = (1 << 11),
 
-  SO_FILTER_UNUSED_12 = (1 << 12),          /* cleared */
-  SO_FILTER_OB_STATE_VISIBLE = (1 << 13),   /* Not set via DNA. */
-  SO_FILTER_OB_STATE_INVISIBLE = (1 << 14), /* Not set via DNA. */
-  SO_FILTER_OB_STATE_SELECTED = (1 << 15),  /* Not set via DNA. */
-  SO_FILTER_OB_STATE_ACTIVE = (1 << 16),    /* Not set via DNA. */
+  SO_FILTER_UNUSED_12 = (1 << 12),         /* cleared */
+  SO_FILTER_OB_STATE_VISIBLE = (1 << 13),  /* Not set via DNA. */
+  SO_FILTER_OB_STATE_HIDDEN = (1 << 14),   /* Not set via DNA. */
+  SO_FILTER_OB_STATE_SELECTED = (1 << 15), /* Not set via DNA. */
+  SO_FILTER_OB_STATE_ACTIVE = (1 << 16),   /* Not set via DNA. */
   SO_FILTER_NO_COLLECTION = (1 << 17),
 
   SO_FILTER_ID_TYPE = (1 << 18),
@@ -302,7 +302,7 @@ typedef enum eSpaceOutliner_Filter {
    SO_FILTER_NO_OB_LAMP | SO_FILTER_NO_OB_CAMERA | SO_FILTER_NO_OB_OTHERS)
 
 #define SO_FILTER_OB_STATE \
-  (SO_FILTER_OB_STATE_VISIBLE | SO_FILTER_OB_STATE_INVISIBLE | SO_FILTER_OB_STATE_SELECTED | \
+  (SO_FILTER_OB_STATE_VISIBLE | SO_FILTER_OB_STATE_HIDDEN | SO_FILTER_OB_STATE_SELECTED | \
    SO_FILTER_OB_STATE_ACTIVE)
 
 #define SO_FILTER_ANY \
@@ -313,7 +313,7 @@ typedef enum eSpaceOutliner_Filter {
 typedef enum eSpaceOutliner_StateFilter {
   SO_FILTER_OB_ALL = 0,
   SO_FILTER_OB_VISIBLE = 1,
-  SO_FILTER_OB_INVISIBLE = 2,
+  SO_FILTER_OB_HIDDEN = 2,
   SO_FILTER_OB_SELECTED = 3,
   SO_FILTER_OB_ACTIVE = 4,
 } eSpaceOutliner_StateFilter;
@@ -427,8 +427,7 @@ typedef enum eGraphEdit_Flag {
   SIPO_NOTRANSKEYCULL = (1 << 1),
   /* don't show any keyframe handles at all */
   SIPO_NOHANDLES = (1 << 2),
-  /* don't show current frame number beside indicator line */
-  SIPO_NODRAWCFRANUM = (1 << 3),
+  /* SIPO_NODRAWCFRANUM = (1 << 3), DEPRECATED */
   /* show timing in seconds instead of frames */
   SIPO_DRAWTIME = (1 << 4),
   /* only show keyframes for selected F-Curves */
@@ -503,8 +502,7 @@ typedef enum eSpaceNla_Flag {
   /* draw timing in seconds instead of frames */
   SNLA_DRAWTIME = (1 << 2),
   SNLA_FLAG_UNUSED_3 = (1 << 3),
-  /* don't draw frame number beside frame indicator */
-  SNLA_NODRAWCFRANUM = (1 << 4),
+  /* SNLA_NODRAWCFRANUM = (1 << 4), DEPRECATED */
   /* don't draw influence curves on strips */
   SNLA_NOSTRIPCURVES = (1 << 5),
   /* don't perform realtime updates */
@@ -588,7 +586,7 @@ typedef enum eSpaceSeq_Flag {
   SEQ_DRAW_COLOR_SEPARATED = (1 << 2),
   SEQ_SHOW_SAFE_MARGINS = (1 << 3),
   SEQ_SHOW_GPENCIL = (1 << 4),
-  SEQ_NO_DRAW_CFRANUM = (1 << 5),
+  /* SEQ_NO_DRAW_CFRANUM = (1 << 5), DEPRECATED */
   SEQ_USE_ALPHA = (1 << 6),     /* use RGBA display mode for preview */
   SEQ_ALL_WAVEFORMS = (1 << 7), /* draw all waveforms */
   SEQ_NO_WAVEFORMS = (1 << 8),  /* draw no waveforms */

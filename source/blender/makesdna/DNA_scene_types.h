@@ -58,8 +58,6 @@ struct MovieClip;
 struct Object;
 struct Scene;
 struct SceneCollection;
-struct SceneStats;
-struct Text;
 struct World;
 struct bGPdata;
 struct bNodeTree;
@@ -2020,6 +2018,7 @@ extern const char *RE_engine_id_CYCLES;
 /* ToolSettings.transform_flag */
 enum {
   SCE_XFORM_AXIS_ALIGN = (1 << 0),
+  SCE_XFORM_DATA_ORIGIN = (1 << 1),
 };
 
 /* ToolSettings.object_flag */
@@ -2047,11 +2046,15 @@ enum {
 #define SCE_SNAP_MODE_FACE (1 << 2)
 #define SCE_SNAP_MODE_VOLUME (1 << 3)
 #define SCE_SNAP_MODE_INCREMENT (1 << 4)
+#define SCE_SNAP_MODE_EDGE_MIDPOINT (1 << 5)
+#define SCE_SNAP_MODE_EDGE_PERPENDICULAR (1 << 6)
 
 /* ToolSettings.snap_node_mode */
-#define SCE_SNAP_MODE_GRID (1 << 5)
-#define SCE_SNAP_MODE_NODE_X (1 << 6)
-#define SCE_SNAP_MODE_NODE_Y (1 << 7)
+#define SCE_SNAP_MODE_NODE_X (1 << 5)
+#define SCE_SNAP_MODE_NODE_Y (1 << 6)
+
+/* ToolSettings.snap_mode and ToolSettings.snap_node_mode */
+#define SCE_SNAP_MODE_GRID (1 << 7)
 
 /** #ToolSettings.snap_transform_mode_flag */
 enum {

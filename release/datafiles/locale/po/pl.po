@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -6735,10 +6735,6 @@ msgid "Child"
 msgstr "Potomek"
 
 
-msgid "Child Object"
-msgstr "Obiekt potomny"
-
-
 msgid "Hinge"
 msgstr "Zawias"
 
@@ -6892,6 +6888,10 @@ msgstr "Priorytet"
 
 msgid "Unpack"
 msgstr "Rozpakuj"
+
+
+msgid "File: %s"
+msgstr "Plik: %s"
 
 
 msgctxt "Operator"
@@ -7261,10 +7261,6 @@ msgstr "Nie można otworzyć lub uruchomić pliku filmowego AVI"
 
 msgid "Error writing frame"
 msgstr "Błąd zapisu klatki"
-
-
-msgid "Could not allocate temporary frame"
-msgstr "Nie można było alokować klatki tymczasowej"
 
 
 msgid "No valid formats found"
@@ -7718,10 +7714,6 @@ msgstr "Z powodzeniem usunięto %d klatek kluczowych w zestawie kluczowania '%s'
 
 msgid "Not deleting keyframe for locked F-Curve '%s', object '%s'"
 msgstr "Nie usuwam klatek kluczowych w zablokowanej krzywej-F '%s', obiekt '%s'"
-
-
-msgid "Object '%s' successfully had %d keyframes removed"
-msgstr "W obiekcie '%s' z powodzeniem usunięto %d klatek kluczowych"
 
 
 msgid "\"%s\" property cannot be animated"
@@ -10129,10 +10121,6 @@ msgid "Frame: - / %d"
 msgstr "Klatka: - / %d"
 
 
-msgid "File: %s"
-msgstr "Plik: %s"
-
-
 msgid "unsupported movie clip format"
 msgstr "Format klipu filmowego nie obsługiwany"
 
@@ -10791,10 +10779,6 @@ msgstr "Usuń nody przyłączone do tego wejścia"
 
 msgid "Disconnect nodes connected to the input"
 msgstr "Odłącz nody przyłączone do tego wejścia"
-
-
-msgid "Can't edit library linked object"
-msgstr "Nie można edytować obiektu z linkowanej biblioteki"
 
 
 msgid "Library path '%s' does not exist, correct this before saving"
@@ -12270,10 +12254,6 @@ msgid "Edges changed from %d to %d"
 msgstr "Krawędzie zmienione z %d na %d"
 
 
-msgid "Vertex group '%s' is not valid"
-msgstr "Grupa wierzchołków '%s' nieprawidłowa"
-
-
 msgid "The system did not find a solution"
 msgstr "System nie znalazł rozwiązania"
 
@@ -12845,14 +12825,6 @@ msgstr "Wszystkie dodatki"
 
 msgid "All Add-ons Installed by User"
 msgstr "Wszystkie dodatki zainstalowane przez użytkownika"
-
-
-msgid "All Enabled Add-ons"
-msgstr "Wszystkie aktywne dodatki"
-
-
-msgid "All Disabled Add-ons"
-msgstr "Wszystkie nieaktywne dodatki"
 
 
 msgid "Add Curve"

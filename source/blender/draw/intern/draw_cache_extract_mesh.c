@@ -454,7 +454,8 @@ static void *extract_tris_init(const MeshRenderData *mr, void *UNUSED(ibo))
     BMFace *efa;
     BM_ITER_MESH (efa, &iter, mr->bm, BM_FACES_OF_MESH) {
       if (!BM_elem_flag_test(efa, BM_ELEM_HIDDEN)) {
-        mat_tri_len[efa->mat_nr] += efa->len - 2;
+        int mat = min_ii(efa->mat_nr, mr->mat_len - 1);
+        mat_tri_len[mat] += efa->len - 2;
       }
     }
   }
@@ -462,7 +463,8 @@ static void *extract_tris_init(const MeshRenderData *mr, void *UNUSED(ibo))
     const MPoly *mpoly = mr->mpoly;
     for (int p = 0; p < mr->poly_len; p++, mpoly++) {
       if (!(mr->use_hide && (mpoly->flag & ME_HIDE))) {
-        mat_tri_len[mpoly->mat_nr] += mpoly->totloop - 2;
+        int mat = min_ii(mpoly->mat_nr, mr->mat_len - 1);
+        mat_tri_len[mat] += mpoly->totloop - 2;
       }
     }
   }
@@ -508,8 +510,9 @@ static void extract_tris_looptri_mesh(const MeshRenderData *mr,
   if (!(mr->use_hide && (mpoly->flag & ME_HIDE))) {
     MeshExtract_Tri_Data *data = _data;
     int *mat_tri_ofs = data->tri_mat_end;
+    int mat = min_ii(mpoly->mat_nr, mr->mat_len - 1);
     GPU_indexbuf_set_tri_verts(
-        &data->elb, mat_tri_ofs[mpoly->mat_nr]++, mlt->tri[0], mlt->tri[1], mlt->tri[2]);
+        &data->elb, mat_tri_ofs[mat]++, mlt->tri[0], mlt->tri[1], mlt->tri[2]);
   }
 }
 
@@ -534,18 +537,20 @@ static void extract_tris_finish(const MeshRenderData *mr, void *ibo, void *_data
   MEM_freeN(data);
 }
 
-const MeshExtract extract_tris = {extract_tris_init,
-                                  extract_tris_looptri_bmesh,
-                                  extract_tris_looptri_mesh,
-                                  NULL,
-                                  NULL,
-                                  NULL,
-                                  NULL,
-                                  NULL,
-                                  NULL,
-                                  extract_tris_finish,
-                                  0,
-                                  false};
+static const MeshExtract extract_tris = {
+    extract_tris_init,
+    extract_tris_looptri_bmesh,
+    extract_tris_looptri_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_tris_finish,
+    0,
+    false,
+};
 
 /** \} */
 
@@ -645,18 +650,20 @@ static void extract_lines_finish(const MeshRenderData *mr, void *ibo, void *elb)
   }
 }
 
-const MeshExtract extract_lines = {extract_lines_init,
-                                   NULL,
-                                   NULL,
-                                   extract_lines_loop_bmesh,
-                                   extract_lines_loop_mesh,
-                                   extract_lines_ledge_bmesh,
-                                   extract_lines_ledge_mesh,
-                                   NULL,
-                                   NULL,
-                                   extract_lines_finish,
-                                   0,
-                                   false};
+static const MeshExtract extract_lines = {
+    extract_lines_init,
+    NULL,
+    NULL,
+    extract_lines_loop_bmesh,
+    extract_lines_loop_mesh,
+    extract_lines_ledge_bmesh,
+    extract_lines_ledge_mesh,
+    NULL,
+    NULL,
+    extract_lines_finish,
+    0,
+    false,
+};
 
 /** \} */
 
@@ -750,18 +757,20 @@ static void extract_points_finish(const MeshRenderData *UNUSED(mr), void *ibo, v
   MEM_freeN(elb);
 }
 
-const MeshExtract extract_points = {extract_points_init,
-                                    NULL,
-                                    NULL,
-                                    extract_points_loop_bmesh,
-                                    extract_points_loop_mesh,
-                                    extract_points_ledge_bmesh,
-                                    extract_points_ledge_mesh,
-                                    extract_points_lvert_bmesh,
-                                    extract_points_lvert_mesh,
-                                    extract_points_finish,
-                                    0,
-                                    false};
+static const MeshExtract extract_points = {
+    extract_points_init,
+    NULL,
+    NULL,
+    extract_points_loop_bmesh,
+    extract_points_loop_mesh,
+    extract_points_ledge_bmesh,
+    extract_points_ledge_mesh,
+    extract_points_lvert_bmesh,
+    extract_points_lvert_mesh,
+    extract_points_finish,
+    0,
+    false,
+};
 
 /** \} */
 
@@ -813,18 +822,20 @@ static void extract_fdots_finish(const MeshRenderData *UNUSED(mr), void *ibo, vo
   MEM_freeN(elb);
 }
 
-const MeshExtract extract_fdots = {extract_fdots_init,
-                                   NULL,
-                                   NULL,
-                                   extract_fdots_loop_bmesh,
-                                   extract_fdots_loop_mesh,
-                                   NULL,
-                                   NULL,
-                                   NULL,
-                                   NULL,
-                                   extract_fdots_finish,
-                                   0,
-                                   false};
+static const MeshExtract extract_fdots = {
+    extract_fdots_init,
+    NULL,
+    NULL,
+    extract_fdots_loop_bmesh,
+    extract_fdots_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_fdots_finish,
+    0,
+    false,
+};
 
 /** \} */
 
@@ -886,18 +897,20 @@ static void extract_lines_paint_mask_finish(const MeshRenderData *UNUSED(mr),
   MEM_freeN(data);
 }
 
-const MeshExtract extract_lines_paint_mask = {extract_lines_paint_mask_init,
-                                              NULL,
-                                              NULL,
-                                              NULL,
-                                              extract_lines_paint_mask_loop_mesh,
-                                              NULL,
-                                              NULL,
-                                              NULL,
-                                              NULL,
-                                              extract_lines_paint_mask_finish,
-                                              0,
-                                              false};
+static const MeshExtract extract_lines_paint_mask = {
+    extract_lines_paint_mask_init,
+    NULL,
+    NULL,
+    NULL,
+    extract_lines_paint_mask_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_lines_paint_mask_finish,
+    0,
+    false,
+};
 
 /** \} */
 
@@ -1038,18 +1051,20 @@ static void extract_lines_adjacency_finish(const MeshRenderData *mr, void *ibo, 
 
 #undef NO_EDGE
 
-const MeshExtract extract_lines_adjacency = {extract_lines_adjacency_init,
-                                             extract_lines_adjacency_looptri_bmesh,
-                                             extract_lines_adjacency_looptri_mesh,
-                                             NULL,
-                                             NULL,
-                                             NULL,
-                                             NULL,
-                                             NULL,
-                                             NULL,
-                                             extract_lines_adjacency_finish,
-                                             0,
-                                             false};
+static const MeshExtract extract_lines_adjacency = {
+    extract_lines_adjacency_init,
+    extract_lines_adjacency_looptri_bmesh,
+    extract_lines_adjacency_looptri_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_lines_adjacency_finish,
+    0,
+    false,
+};
 
 /** \} */
 
@@ -1112,18 +1127,20 @@ static void extract_edituv_tris_finish(const MeshRenderData *UNUSED(mr), void *i
   MEM_freeN(extract_data);
 }
 
-const MeshExtract extract_edituv_tris = {extract_edituv_tris_init,
-                                         extract_edituv_tris_looptri_bmesh,
-                                         extract_edituv_tris_looptri_mesh,
-                                         NULL,
-                                         NULL,
-                                         NULL,
-                                         NULL,
-                                         NULL,
-                                         NULL,
-                                         extract_edituv_tris_finish,
-                                         0,
-                                         false};
+static const MeshExtract extract_edituv_tris = {
+    extract_edituv_tris_init,
+    extract_edituv_tris_looptri_bmesh,
+    extract_edituv_tris_looptri_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_edituv_tris_finish,
+    0,
+    false,
+};
 
 /** \} */
 
@@ -1185,18 +1202,20 @@ static void extract_edituv_lines_finish(const MeshRenderData *UNUSED(mr), void *
   MEM_freeN(extract_data);
 }
 
-const MeshExtract extract_edituv_lines = {extract_edituv_lines_init,
-                                          NULL,
-                                          NULL,
-                                          extract_edituv_lines_loop_bmesh,
-                                          extract_edituv_lines_loop_mesh,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          extract_edituv_lines_finish,
-                                          0,
-                                          false};
+static const MeshExtract extract_edituv_lines = {
+    extract_edituv_lines_init,
+    NULL,
+    NULL,
+    extract_edituv_lines_loop_bmesh,
+    extract_edituv_lines_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_edituv_lines_finish,
+    0,
+    false,
+};
 
 /** \} */
 
@@ -1254,18 +1273,20 @@ static void extract_edituv_points_finish(const MeshRenderData *UNUSED(mr), void 
   MEM_freeN(extract_data);
 }
 
-const MeshExtract extract_edituv_points = {extract_edituv_points_init,
-                                           NULL,
-                                           NULL,
-                                           extract_edituv_points_loop_bmesh,
-                                           extract_edituv_points_loop_mesh,
-                                           NULL,
-                                           NULL,
-                                           NULL,
-                                           NULL,
-                                           extract_edituv_points_finish,
-                                           0,
-                                           false};
+static const MeshExtract extract_edituv_points = {
+    extract_edituv_points_init,
+    NULL,
+    NULL,
+    extract_edituv_points_loop_bmesh,
+    extract_edituv_points_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_edituv_points_finish,
+    0,
+    false,
+};
 
 /** \} */
 
@@ -1330,18 +1351,20 @@ static void extract_edituv_fdots_finish(const MeshRenderData *UNUSED(mr), void *
   MEM_freeN(data);
 }
 
-const MeshExtract extract_edituv_fdots = {extract_edituv_fdots_init,
-                                          NULL,
-                                          NULL,
-                                          extract_edituv_fdots_loop_bmesh,
-                                          extract_edituv_fdots_loop_mesh,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          extract_edituv_fdots_finish,
-                                          0,
-                                          false};
+static const MeshExtract extract_edituv_fdots = {
+    extract_edituv_fdots_init,
+    NULL,
+    NULL,
+    extract_edituv_fdots_loop_bmesh,
+    extract_edituv_fdots_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_edituv_fdots_finish,
+    0,
+    false,
+};
 
 /** \} */
 
@@ -1479,18 +1502,20 @@ static void extract_pos_nor_finish(const MeshRenderData *UNUSED(mr), void *UNUSE
   MEM_freeN(data);
 }
 
-const MeshExtract extract_pos_nor = {extract_pos_nor_init,
-                                     NULL,
-                                     NULL,
-                                     extract_pos_nor_loop_bmesh,
-                                     extract_pos_nor_loop_mesh,
-                                     extract_pos_nor_ledge_bmesh,
-                                     extract_pos_nor_ledge_mesh,
-                                     extract_pos_nor_lvert_bmesh,
-                                     extract_pos_nor_lvert_mesh,
-                                     extract_pos_nor_finish,
-                                     0,
-                                     true};
+static const MeshExtract extract_pos_nor = {
+    extract_pos_nor_init,
+    NULL,
+    NULL,
+    extract_pos_nor_loop_bmesh,
+    extract_pos_nor_loop_mesh,
+    extract_pos_nor_ledge_bmesh,
+    extract_pos_nor_ledge_mesh,
+    extract_pos_nor_lvert_bmesh,
+    extract_pos_nor_lvert_mesh,
+    extract_pos_nor_finish,
+    0,
+    true,
+};
 /** \} */
 
 /* ---------------------------------------------------------------------- */
@@ -1538,18 +1563,20 @@ static void extract_lnor_loop_mesh(
   }
 }
 
-const MeshExtract extract_lnor = {extract_lnor_init,
-                                  NULL,
-                                  NULL,
-                                  extract_lnor_loop_bmesh,
-                                  extract_lnor_loop_mesh,
-                                  NULL,
-                                  NULL,
-                                  NULL,
-                                  NULL,
-                                  NULL,
-                                  MR_DATA_LOOP_NOR,
-                                  true};
+static const MeshExtract extract_lnor = {
+    extract_lnor_init,
+    NULL,
+    NULL,
+    extract_lnor_loop_bmesh,
+    extract_lnor_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    MR_DATA_LOOP_NOR,
+    true,
+};
 
 /** \} */
 
@@ -1633,8 +1660,21 @@ static void *extract_uv_init(const MeshRenderData *mr, void *buf)
   return NULL;
 }
 
-const MeshExtract extract_uv = {
-    extract_uv_init, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, false};
+static const MeshExtract extract_uv = {
+    extract_uv_init,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    false,
+};
+
 /** \} */
 
 /* ---------------------------------------------------------------------- */
@@ -1775,18 +1815,20 @@ static void *extract_tan_init(const MeshRenderData *mr, void *buf)
   return NULL;
 }
 
-const MeshExtract extract_tan = {extract_tan_init,
-                                 NULL,
-                                 NULL,
-                                 NULL,
-                                 NULL,
-                                 NULL,
-                                 NULL,
-                                 NULL,
-                                 NULL,
-                                 NULL,
-                                 MR_DATA_POLY_NOR | MR_DATA_TAN_LOOP_NOR | MR_DATA_LOOPTRI,
-                                 false};
+static const MeshExtract extract_tan = {
+    extract_tan_init,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    MR_DATA_POLY_NOR | MR_DATA_TAN_LOOP_NOR | MR_DATA_LOOPTRI,
+    false,
+};
 
 /** \} */
 
@@ -1840,10 +1882,21 @@ static void *extract_vcol_init(const MeshRenderData *mr, void *buf)
   return NULL;
 }
 
-const MeshExtract extract_vcol = {
-    extract_vcol_init, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, false};
+static const MeshExtract extract_vcol = {
+    extract_vcol_init,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    false,
+};
 
-/** \} */ /** \} */
+/** \} */
 
 /* ---------------------------------------------------------------------- */
 /** \name Extract Orco
@@ -1908,18 +1961,20 @@ static void extract_orco_finish(const MeshRenderData *UNUSED(mr), void *UNUSED(b
   MEM_freeN(data);
 }
 
-const MeshExtract extract_orco = {extract_orco_init,
-                                  NULL,
-                                  NULL,
-                                  extract_orco_loop_bmesh,
-                                  extract_orco_loop_mesh,
-                                  NULL,
-                                  NULL,
-                                  NULL,
-                                  NULL,
-                                  extract_orco_finish,
-                                  0,
-                                  true};
+static const MeshExtract extract_orco = {
+    extract_orco_init,
+    NULL,
+    NULL,
+    extract_orco_loop_bmesh,
+    extract_orco_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_orco_finish,
+    0,
+    true,
+};
 
 /** \} */
 
@@ -2085,18 +2140,20 @@ static void extract_edge_fac_finish(const MeshRenderData *mr, void *buf, void *_
   MEM_freeN(data);
 }
 
-const MeshExtract extract_edge_fac = {extract_edge_fac_init,
-                                      NULL,
-                                      NULL,
-                                      extract_edge_fac_loop_bmesh,
-                                      extract_edge_fac_loop_mesh,
-                                      extract_edge_fac_ledge_bmesh,
-                                      extract_edge_fac_ledge_mesh,
-                                      NULL,
-                                      NULL,
-                                      extract_edge_fac_finish,
-                                      MR_DATA_POLY_NOR,
-                                      false};
+static const MeshExtract extract_edge_fac = {
+    extract_edge_fac_init,
+    NULL,
+    NULL,
+    extract_edge_fac_loop_bmesh,
+    extract_edge_fac_loop_mesh,
+    extract_edge_fac_ledge_bmesh,
+    extract_edge_fac_ledge_mesh,
+    NULL,
+    NULL,
+    extract_edge_fac_finish,
+    MR_DATA_POLY_NOR,
+    false,
+};
 
 /** \} */
 /* ---------------------------------------------------------------------- */
@@ -2213,18 +2270,20 @@ static void extract_weights_finish(const MeshRenderData *UNUSED(mr), void *UNUSE
   MEM_freeN(data);
 }
 
-const MeshExtract extract_weights = {extract_weights_init,
-                                     NULL,
-                                     NULL,
-                                     extract_weights_loop_bmesh,
-                                     extract_weights_loop_mesh,
-                                     NULL,
-                                     NULL,
-                                     NULL,
-                                     NULL,
-                                     extract_weights_finish,
-                                     0,
-                                     true};
+static const MeshExtract extract_weights = {
+    extract_weights_init,
+    NULL,
+    NULL,
+    extract_weights_loop_bmesh,
+    extract_weights_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_weights_finish,
+    0,
+    true,
+};
 
 /** \} */
 
@@ -2479,18 +2538,20 @@ static void extract_edit_data_lvert_mesh(const MeshRenderData *mr,
   }
 }
 
-const MeshExtract extract_edit_data = {extract_edit_data_init,
-                                       NULL,
-                                       NULL,
-                                       extract_edit_data_loop_bmesh,
-                                       extract_edit_data_loop_mesh,
-                                       extract_edit_data_ledge_bmesh,
-                                       extract_edit_data_ledge_mesh,
-                                       extract_edit_data_lvert_bmesh,
-                                       extract_edit_data_lvert_mesh,
-                                       NULL,
-                                       0,
-                                       true};
+static const MeshExtract extract_edit_data = {
+    extract_edit_data_init,
+    NULL,
+    NULL,
+    extract_edit_data_loop_bmesh,
+    extract_edit_data_loop_mesh,
+    extract_edit_data_ledge_bmesh,
+    extract_edit_data_ledge_mesh,
+    extract_edit_data_lvert_bmesh,
+    extract_edit_data_lvert_mesh,
+    NULL,
+    0,
+    true,
+};
 
 /** \} */
 
@@ -2577,18 +2638,20 @@ static void extract_edituv_data_finish(const MeshRenderData *UNUSED(mr),
   MEM_freeN(data);
 }
 
-const MeshExtract extract_edituv_data = {extract_edituv_data_init,
-                                         NULL,
-                                         NULL,
-                                         extract_edituv_data_loop_bmesh,
-                                         extract_edituv_data_loop_mesh,
-                                         NULL,
-                                         NULL,
-                                         NULL,
-                                         NULL,
-                                         extract_edituv_data_finish,
-                                         0,
-                                         true};
+static const MeshExtract extract_edituv_data = {
+    extract_edituv_data_init,
+    NULL,
+    NULL,
+    extract_edituv_data_loop_bmesh,
+    extract_edituv_data_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_edituv_data_finish,
+    0,
+    true,
+};
 
 /** \} */
 
@@ -2708,18 +2771,20 @@ static void mesh_stretch_area_finish(const MeshRenderData *mr, void *buf, void *
   MEM_freeN(area_ratio);
 }
 
-const MeshExtract extract_stretch_area = {extract_stretch_area_init,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          mesh_stretch_area_finish,
-                                          0,
-                                          false};
+static const MeshExtract extract_stretch_area = {
+    extract_stretch_area_init,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    mesh_stretch_area_finish,
+    0,
+    false,
+};
 
 /** \} */
 
@@ -2896,18 +2961,20 @@ static void extract_stretch_angle_finish(const MeshRenderData *UNUSED(mr),
   MEM_freeN(data);
 }
 
-const MeshExtract extract_stretch_angle = {extract_stretch_angle_init,
-                                           NULL,
-                                           NULL,
-                                           extract_stretch_angle_loop_bmesh,
-                                           extract_stretch_angle_loop_mesh,
-                                           NULL,
-                                           NULL,
-                                           NULL,
-                                           NULL,
-                                           extract_stretch_angle_finish,
-                                           0,
-                                           true};
+static const MeshExtract extract_stretch_angle = {
+    extract_stretch_angle_init,
+    NULL,
+    NULL,
+    extract_stretch_angle_loop_bmesh,
+    extract_stretch_angle_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_stretch_angle_finish,
+    0,
+    true,
+};
 
 /** \} */
 
@@ -3479,20 +3546,22 @@ static void extract_mesh_analysis_finish(const MeshRenderData *mr, void *buf, vo
   }
 }
 
-const MeshExtract extract_mesh_analysis = {extract_mesh_analysis_init,
-                                           NULL,
-                                           NULL,
-                                           NULL,
-                                           NULL,
-                                           NULL,
-                                           NULL,
-                                           NULL,
-                                           NULL,
-                                           extract_mesh_analysis_finish,
-                                           /* This is not needed for all vis type.
-                                            * Maybe split into different extract. */
-                                           MR_DATA_POLY_NOR | MR_DATA_LOOPTRI,
-                                           false};
+static const MeshExtract extract_mesh_analysis = {
+    extract_mesh_analysis_init,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_mesh_analysis_finish,
+    /* This is not needed for all vis type.
+     * Maybe split into different extract. */
+    MR_DATA_POLY_NOR | MR_DATA_LOOPTRI,
+    false,
+};
 
 /** \} */
 
@@ -3546,18 +3615,20 @@ static void extract_fdots_pos_loop_mesh(const MeshRenderData *mr,
   }
 }
 
-const MeshExtract extract_fdots_pos = {extract_fdots_pos_init,
-                                       NULL,
-                                       NULL,
-                                       extract_fdots_pos_loop_bmesh,
-                                       extract_fdots_pos_loop_mesh,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       0,
-                                       true};
+static const MeshExtract extract_fdots_pos = {
+    extract_fdots_pos_init,
+    NULL,
+    NULL,
+    extract_fdots_pos_loop_bmesh,
+    extract_fdots_pos_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    true,
+};
 
 /** \} */
 
@@ -3604,18 +3675,20 @@ static void extract_fdots_nor_finish(const MeshRenderData *mr, void *buf, void *
   }
 }
 
-const MeshExtract extract_fdots_nor = {extract_fdots_nor_init,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       extract_fdots_nor_finish,
-                                       MR_DATA_POLY_NOR,
-                                       false};
+static const MeshExtract extract_fdots_nor = {
+    extract_fdots_nor_init,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_fdots_nor_finish,
+    MR_DATA_POLY_NOR,
+    false,
+};
 
 /** \} */
 
@@ -3686,18 +3759,20 @@ static void extract_fdots_uv_finish(const MeshRenderData *UNUSED(mr),
   MEM_freeN(data);
 }
 
-const MeshExtract extract_fdots_uv = {extract_fdots_uv_init,
-                                      NULL,
-                                      NULL,
-                                      extract_fdots_uv_loop_bmesh,
-                                      extract_fdots_uv_loop_mesh,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      extract_fdots_uv_finish,
-                                      0,
-                                      true};
+static const MeshExtract extract_fdots_uv = {
+    extract_fdots_uv_init,
+    NULL,
+    NULL,
+    extract_fdots_uv_loop_bmesh,
+    extract_fdots_uv_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_fdots_uv_finish,
+    0,
+    true,
+};
 /** \} */
 
 /* ---------------------------------------------------------------------- */
@@ -3759,18 +3834,20 @@ static void extract_fdots_edituv_data_finish(const MeshRenderData *UNUSED(mr),
   MEM_freeN(data);
 }
 
-const MeshExtract extract_fdots_edituv_data = {extract_fdots_edituv_data_init,
-                                               NULL,
-                                               NULL,
-                                               extract_fdots_edituv_data_loop_bmesh,
-                                               extract_fdots_edituv_data_loop_mesh,
-                                               NULL,
-                                               NULL,
-                                               NULL,
-                                               NULL,
-                                               extract_fdots_edituv_data_finish,
-                                               0,
-                                               true};
+static const MeshExtract extract_fdots_edituv_data = {
+    extract_fdots_edituv_data_init,
+    NULL,
+    NULL,
+    extract_fdots_edituv_data_loop_bmesh,
+    extract_fdots_edituv_data_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_fdots_edituv_data_finish,
+    0,
+    true,
+};
 /** \} */
 
 /* ---------------------------------------------------------------------- */
@@ -3898,44 +3975,50 @@ static void extract_vert_idx_lvert_mesh(const MeshRenderData *mr,
   ((uint32_t *)data)[mr->loop_len + mr->edge_loose_len * 2 + v] = v_orig;
 }
 
-const MeshExtract extract_poly_idx = {extract_select_idx_init,
-                                      NULL,
-                                      NULL,
-                                      extract_poly_idx_loop_bmesh,
-                                      extract_poly_idx_loop_mesh,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      0,
-                                      true};
+static const MeshExtract extract_poly_idx = {
+    extract_select_idx_init,
+    NULL,
+    NULL,
+    extract_poly_idx_loop_bmesh,
+    extract_poly_idx_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    true,
+};
 
-const MeshExtract extract_edge_idx = {extract_select_idx_init,
-                                      NULL,
-                                      NULL,
-                                      extract_edge_idx_loop_bmesh,
-                                      extract_edge_idx_loop_mesh,
-                                      extract_edge_idx_ledge_bmesh,
-                                      extract_edge_idx_ledge_mesh,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      0,
-                                      true};
+static const MeshExtract extract_edge_idx = {
+    extract_select_idx_init,
+    NULL,
+    NULL,
+    extract_edge_idx_loop_bmesh,
+    extract_edge_idx_loop_mesh,
+    extract_edge_idx_ledge_bmesh,
+    extract_edge_idx_ledge_mesh,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    true,
+};
 
-const MeshExtract extract_vert_idx = {extract_select_idx_init,
-                                      NULL,
-                                      NULL,
-                                      extract_vert_idx_loop_bmesh,
-                                      extract_vert_idx_loop_mesh,
-                                      extract_vert_idx_ledge_bmesh,
-                                      extract_vert_idx_ledge_mesh,
-                                      extract_vert_idx_lvert_bmesh,
-                                      extract_vert_idx_lvert_mesh,
-                                      NULL,
-                                      0,
-                                      true};
+static const MeshExtract extract_vert_idx = {
+    extract_select_idx_init,
+    NULL,
+    NULL,
+    extract_vert_idx_loop_bmesh,
+    extract_vert_idx_loop_mesh,
+    extract_vert_idx_ledge_bmesh,
+    extract_vert_idx_ledge_mesh,
+    extract_vert_idx_lvert_bmesh,
+    extract_vert_idx_lvert_mesh,
+    NULL,
+    0,
+    true,
+};
 
 static void *extract_select_fdot_idx_init(const MeshRenderData *mr, void *buf)
 {
@@ -3968,18 +4051,20 @@ static void extract_fdot_idx_loop_mesh(const MeshRenderData *mr,
   ((uint32_t *)data)[p] = (mr->p_origindex) ? mr->p_origindex[p] : p;
 }
 
-const MeshExtract extract_fdot_idx = {extract_select_fdot_idx_init,
-                                      NULL,
-                                      NULL,
-                                      extract_fdot_idx_loop_bmesh,
-                                      extract_fdot_idx_loop_mesh,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      0,
-                                      true};
+static const MeshExtract extract_fdot_idx = {
+    extract_select_fdot_idx_init,
+    NULL,
+    NULL,
+    extract_fdot_idx_loop_bmesh,
+    extract_fdot_idx_loop_mesh,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+    true,
+};
 
 /** \} */
 

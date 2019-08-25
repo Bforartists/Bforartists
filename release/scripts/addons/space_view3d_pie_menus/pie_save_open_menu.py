@@ -35,9 +35,8 @@ from bpy.types import (
         )
 import os
 
+
 # Pie Save/Open
-
-
 class PIE_MT_SaveOpen(Menu):
     bl_idname = "PIE_MT_saveopen"
     bl_label = "Pie Save/Open"
@@ -48,17 +47,17 @@ class PIE_MT_SaveOpen(Menu):
         # 4 - LEFT
         pie.operator("wm.read_homefile", text="New", icon='FILE_NEW')
         # 6 - RIGHT
-        pie.menu("PIE_MT_link", text="Link", icon='LINK_BLEND')
+        pie.menu("PIE_MT_link", text="Link Menu", icon='LINK_BLEND')
         # 2 - BOTTOM
         pie.menu("PIE_MT_fileio", text="Import/Export Menu", icon='IMPORT')
         # 8 - TOP
-        pie.operator("file.save_incremental", text="Incremental Save", icon='NONE')
+        pie.operator("wm.open_mainfile", text="Open File", icon='FILE_FOLDER')
         # 7 - TOP - LEFT
         pie.operator("wm.save_mainfile", text="Save", icon='FILE_TICK')
         # 9 - TOP - RIGHT
         pie.operator("wm.save_as_mainfile", text="Save As...", icon='NONE')
         # 1 - BOTTOM - LEFT
-        pie.operator("wm.open_mainfile", text="Open file", icon='FILE_FOLDER')
+        pie.operator("file.save_incremental", text="Incremental Save", icon='NONE')
         # 3 - BOTTOM - RIGHT
         pie.menu("PIE_MT_recover", text="Recovery Menu", icon='RECOVER_LAST')
 
@@ -73,7 +72,13 @@ class PIE_MT_link(Menu):
         box = pie.split().column()
         box.operator("wm.link", text="Link", icon='LINK_BLEND')
         box.operator("wm.append", text="Append", icon='APPEND_BLEND')
-        box.menu("EXTERNAL_MT_data", text="External Data")
+        box.separator()
+        box.operator("file.autopack_toggle", text="Automatically Pack Into .blend")
+        box.operator("file.pack_all", text="Pack All Into .blend")
+        box.operator("file.unpack_all", text="Unpack All Into Files")
+        box.separator()
+        box.operator("file.make_paths_relative", text="Make All Paths Relative")
+        box.operator("file.make_paths_absolute", text="Make All Paths Absolute")
 
 
 class PIE_MT_recover(Menu):
@@ -87,7 +92,9 @@ class PIE_MT_recover(Menu):
         box.operator("wm.recover_auto_save", text="Recover Auto Save...", icon='NONE')
         box.operator("wm.recover_last_session", text="Recover Last Session", icon='RECOVER_LAST')
         box.operator("wm.revert_mainfile", text="Revert", icon='FILE_REFRESH')
-
+        box.separator()
+        box.operator("file.report_missing_files", text="Report Missing Files")
+        box.operator("file.find_missing_files", text="Find Missing Files")
 
 class PIE_MT_fileio(Menu):
     bl_idname = "PIE_MT_fileio"
@@ -102,26 +109,7 @@ class PIE_MT_fileio(Menu):
         box.menu("TOPBAR_MT_file_export", icon='EXPORT')
 
 
-class PIE_MT_ExternalData(Menu):
-    bl_idname = "EXTERNAL_MT_data"
-    bl_label = "External Data"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("file.autopack_toggle", text="Automatically Pack Into .blend")
-        layout.separator()
-        layout.operator("file.pack_all", text="Pack All Into .blend")
-        layout.operator("file.unpack_all", text="Unpack All Into Files")
-        layout.separator()
-        layout.operator("file.make_paths_relative", text="Make All Paths Relative")
-        layout.operator("file.make_paths_absolute", text="Make All Paths Absolute")
-        layout.operator("file.report_missing_files", text="Report Missing Files")
-        layout.operator("file.find_missing_files", text="Find Missing Files")
-
-
 # Save Incremental
-
 class PIE_OT_FileIncrementalSave(Operator):
     bl_idname = "file.save_incremental"
     bl_label = "Save Incremental"
@@ -174,7 +162,6 @@ class PIE_OT_FileIncrementalSave(Operator):
 
 classes = (
     PIE_MT_SaveOpen,
-    PIE_MT_ExternalData,
     PIE_OT_FileIncrementalSave,
     PIE_MT_fileio,
     PIE_MT_recover,
@@ -191,7 +178,7 @@ def register():
     wm = bpy.context.window_manager
     if wm.keyconfigs.addon:
         # Save/Open/...
-        km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
+        km = wm.keyconfigs.addon.keymaps.new(name='Window')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'S', 'PRESS', ctrl=True)
         kmi.properties.name = "PIE_MT_saveopen"
         addon_keymaps.append((km, kmi))
