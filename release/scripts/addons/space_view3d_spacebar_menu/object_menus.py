@@ -335,19 +335,6 @@ class VIEW3D_MT_Duplicate(Menu):
         layout.operator("object.duplicate_move_linked")
 
 
-class VIEW3D_MT_KeyframeMenu(Menu):
-    bl_label = "Keyframe"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("anim.keyframe_insert_menu",
-                        text="Insert Keyframe...")
-        layout.operator("anim.keyframe_delete_v3d",
-                        text="Delete Keyframe...")
-        layout.operator("anim.keying_set_active_set",
-                        text="Change Keying Set...")
-
-
 class VIEW3D_MT_UndoS(Menu):
     bl_label = "Undo/Redo"
 
@@ -358,91 +345,6 @@ class VIEW3D_MT_UndoS(Menu):
         layout.operator("ed.redo")
         layout.separator()
         layout.operator("ed.undo_history")
-
-
-# Display Wire (Thanks to marvin.k.breuer) #
-class VIEW3D_OT_Display_Wire_All(Operator):
-    bl_label = "Wire on All Objects"
-    bl_idname = "view3d.display_wire_all"
-    bl_description = "Enable/Disable Display Wire on All Objects"
-
-    @classmethod
-    def poll(cls, context):
-        return context.active_object is not None
-
-    def execute(self, context):
-        is_error = False
-        for obj in bpy.data.objects:
-            try:
-                if obj.show_wire:
-                    obj.show_all_edges = False
-                    obj.show_wire = False
-                else:
-                    obj.show_all_edges = True
-                    obj.show_wire = True
-            except:
-                is_error = True
-                pass
-
-        if is_error:
-            self.report({'WARNING'},
-                        "Wire on All Objects could not be completed for some objects")
-
-        return {'FINISHED'}
-
-
-# Matcap and AO, Wire all and X-Ray entries thanks to marvin.k.breuer
-class VIEW3D_MT_Shade(Menu):
-    bl_label = "Shade"
-
-    def draw(self, context):
-        layout = self.layout
-
-#        layout.prop(context.space_data, "viewport_shade", expand=True)
-
-        if context.active_object:
-            if(context.mode == 'EDIT_MESH'):
-                layout.operator("MESH_OT_faces_shade_smooth", icon='SHADING_RENDERED')
-                layout.operator("MESH_OT_faces_shade_flat", icon='SHADING_SOLID')
-            else:
-                layout.operator("OBJECT_OT_shade_smooth", icon='SHADING_RENDERED')
-                layout.operator("OBJECT_OT_shade_flat", icon='SHADING_SOLID')
-
-        layout.separator()
-        layout.operator("view3d.display_wire_all", text="Wire all", icon='SHADING_WIRE')
-        layout.prop(context.object, "show_in_front", text="X-Ray", icon="META_CUBE")
-
-        layout.separator()
-        layout.prop(context.space_data.fx_settings, "use_ssao",
-                    text="Ambient Occlusion", icon="GROUP")
-#        layout.prop(context.space_data, "use_matcap", icon="MATCAP_01")
-
-#        if context.space_data.use_matcap:
-#            row = layout.column(1)
-#            row.scale_y = 0.3
-#            row.scale_x = 0.5
-#            row.template_icon_view(context.space_data, "matcap_icon")
-
-
-# Animation Player (Thanks to marvin.k.breuer) #
-class VIEW3D_MT_Animation_Player(Menu):
-    bl_label = "Animation"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("screen.frame_jump", text="Jump REW", icon='REW').end = False
-        layout.operator("screen.keyframe_jump", text="Previous FR", icon='PREV_KEYFRAME').next = False
-
-        layout.separator()
-        layout.operator("screen.animation_play", text="Reverse", icon='PLAY_REVERSE').reverse = True
-        layout.operator("screen.animation_play", text="PLAY", icon='PLAY')
-        layout.operator("screen.animation_play", text="Stop", icon='PAUSE')
-        layout.separator()
-
-        layout.operator("screen.keyframe_jump", text="Next FR", icon='NEXT_KEYFRAME').next = True
-        layout.operator("screen.frame_jump", text="Jump FF", icon='FF').end = True
-        layout.menu("VIEW3D_MT_KeyframeMenu", text="Keyframes", icon='DECORATE_ANIMATE')
 
 
 # Set Mode Operator #
@@ -478,18 +380,14 @@ classes = (
     VIEW3D_MT_MirrorMenu,
     VIEW3D_MT_ParentMenu,
     VIEW3D_MT_GroupMenu,
-    VIEW3D_MT_KeyframeMenu,
     VIEW3D_MT_UndoS,
     VIEW3D_MT_Camera_Options,
     VIEW3D_MT_InteractiveMode,
     VIEW3D_MT_InteractiveModeOther,
     VIEW3D_OT_SetObjectMode,
-    VIEW3D_MT_Shade,
     VIEW3D_MT_Object_Data_Link,
     VIEW3D_MT_Duplicate,
-    VIEW3D_MT_Animation_Player,
     VIEW3D_OT_Interactive_Mode_Text,
-    VIEW3D_OT_Display_Wire_All,
     VIEW3D_OT_Interactive_Mode_Grease_Pencil,
     VIEW3D_MT_Interactive_Mode_GPencil,
     VIEW3D_MT_Edit_Gpencil,

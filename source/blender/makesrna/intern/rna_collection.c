@@ -134,7 +134,7 @@ static bool rna_Collection_objects_override_apply(Main *bmain,
              "Unsupported RNA override operation on collections' objects");
   UNUSED_VARS_NDEBUG(opop);
 
-  Collection *coll_dst = ptr_dst->id.data;
+  Collection *coll_dst = (Collection *)ptr_dst->owner_id;
 
   if (ptr_item_dst->type == NULL || ptr_item_src->type == NULL) {
     BLI_assert(0 && "invalid source or destination object.");
@@ -234,10 +234,10 @@ static bool rna_Collection_children_override_apply(Main *bmain,
                                                    IDOverrideLibraryPropertyOperation *opop)
 {
   BLI_assert(opop->operation == IDOVERRIDE_LIBRARY_OP_REPLACE &&
-             "Unsupported RNA override operation on collections' objects");
+             "Unsupported RNA override operation on collections' children");
   UNUSED_VARS_NDEBUG(opop);
 
-  Collection *coll_dst = ptr_dst->id.data;
+  Collection *coll_dst = (Collection *)ptr_dst->owner_id;
 
   if (ptr_item_dst->type == NULL || ptr_item_src->type == NULL) {
     BLI_assert(0 && "invalid source or destination sub-collection.");

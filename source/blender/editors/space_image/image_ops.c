@@ -1433,7 +1433,7 @@ static int image_open_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(
       Image *oldima;
 
       oldptr = RNA_property_pointer_get(&ptr, prop);
-      oldima = (Image *)oldptr.id.data;
+      oldima = (Image *)oldptr.owner_id;
       /* unlikely to fail but better avoid strange crash */
       if (oldima && GS(oldima->id.name) == ID_IM) {
         ima = oldima;

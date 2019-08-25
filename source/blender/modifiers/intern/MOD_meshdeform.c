@@ -139,7 +139,12 @@ static bool isDisabled(const struct Scene *UNUSED(scene),
 {
   MeshDeformModifierData *mmd = (MeshDeformModifierData *)md;
 
-  return !mmd->object;
+  /* The object type check is only needed here in case we have a placeholder
+   * object assigned (because the library containing the mesh is missing).
+   *
+   * In other cases it should be impossible to have a type missmatch.
+   */
+  return !mmd->object || mmd->object->type != OB_MESH;
 }
 
 static void foreachObjectLink(ModifierData *md, Object *ob, ObjectWalkFunc walk, void *userData)
@@ -401,7 +406,7 @@ static void meshdeformModifier_do(ModifierData *md,
   }
 
   /* setup deformation data */
-  cagecos = BKE_mesh_vertexCos_get(cagemesh, NULL);
+  cagecos = BKE_mesh_vert_coords_alloc(cagemesh, NULL);
   bindcagecos = (float(*)[3])mmd->bindcagecos;
 
   /* We allocate 1 element extra to make it possible to

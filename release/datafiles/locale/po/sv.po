@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -4951,6 +4951,14 @@ msgid "Editable falloff curve"
 msgstr "Avtagandekurva"
 
 
+msgid "Root"
+msgstr "Rot"
+
+
+msgid "Sharper"
+msgstr "Hårdhet"
+
+
 msgid "Draw"
 msgstr "Duplicera"
 
@@ -5113,10 +5121,6 @@ msgstr "Redigerings Läge"
 
 msgid "Use Front-Face"
 msgstr "Visa inställningar för kant"
-
-
-msgid "Use Gradient"
-msgstr "Vektor Måla"
 
 
 msgid "Plane Offset Pressure"
@@ -7171,10 +7175,6 @@ msgid "Number of children/parent for rendering"
 msgstr "Markera Länkad"
 
 
-msgid "Root"
-msgstr "Rot"
-
-
 msgid "Random Orientation"
 msgstr "Rensa Rotation"
 
@@ -8065,10 +8065,6 @@ msgid "Use soft marble"
 msgstr "Materialets halo-inställningar"
 
 
-msgid "Sharper"
-msgstr "Hårdhet"
-
-
 msgid "Noise Basis 2"
 msgstr "Brusbas:"
 
@@ -8951,10 +8947,6 @@ msgid "Effect Strip"
 msgstr "Lägg till Stripp"
 
 
-msgid "Transitions"
-msgstr "Markera Länkad"
-
-
 msgid "Navigation"
 msgstr "Renderings Fönster"
 
@@ -9085,10 +9077,6 @@ msgstr "Metaball"
 
 msgid "Special Characters"
 msgstr "Tecken:"
-
-
-msgid "Hide/Mask"
-msgstr "Göm"
 
 
 msgid "Light"
@@ -14613,11 +14601,6 @@ msgid "Console Banner"
 msgstr "Text"
 
 
-msgctxt "Operator"
-msgid "Clear"
-msgstr "Nollställ"
-
-
 msgid "Clear text by type"
 msgstr "Avmarkera Länkad"
 
@@ -17239,10 +17222,6 @@ msgid "Delete Edge Loop"
 msgstr "Radera kant-slinga"
 
 
-msgid "Minimum distance between elements to merge"
-msgstr "Radera"
-
-
 msgid "Dissolve Verts"
 msgstr "Lös upp"
 
@@ -17778,6 +17757,10 @@ msgstr "UVsfär"
 
 msgid "Construct a UV sphere mesh"
 msgstr "&gt;Bezier Kurva"
+
+
+msgid "Minimum distance between elements to merge"
+msgstr "Radera"
 
 
 msgctxt "Operator"
@@ -20296,10 +20279,6 @@ msgid "Toggle whether item under cursor is enabled or closed"
 msgstr "Växla om objektet under musen är aktiverat eller stängt"
 
 
-msgid "Rename item under cursor"
-msgstr "Rendera"
-
-
 msgctxt "Operator"
 msgid "Keying Set Add Selected"
 msgstr "Göm Markerad"
@@ -20360,10 +20339,6 @@ msgstr "Markera Rad"
 
 msgid "Drag to parent in Outliner"
 msgstr "Genomskinlighet"
-
-
-msgid "Child Object"
-msgstr "Packa Data"
 
 
 msgctxt "Operator"
@@ -22536,15 +22511,6 @@ msgstr "Autostart"
 
 
 msgctxt "Operator"
-msgid "Comment"
-msgstr "Användargemenskap"
-
-
-msgid "Convert selected text to comment"
-msgstr "Göm Markerad"
-
-
-msgctxt "Operator"
 msgid "Convert Whitespace"
 msgstr "Bild Displist"
 
@@ -22763,15 +22729,6 @@ msgstr "Text till 3D-objekt"
 
 msgid "Split Lines"
 msgstr "Dela"
-
-
-msgctxt "Operator"
-msgid "Uncomment"
-msgstr "Visa inställningar för kant"
-
-
-msgid "Convert selected comment to text"
-msgstr "Göm Markerad"
 
 
 msgid "Unindent selected text"
@@ -24457,10 +24414,6 @@ msgid "Number of times to copy strokes across the surface"
 msgstr "Bild Displist"
 
 
-msgid "Show Diffuse Color"
-msgstr "Diffus färg"
-
-
 msgid "Use Deform Only"
 msgstr "Bana"
 
@@ -24753,10 +24706,6 @@ msgstr "FFMPEG-förinställningar"
 
 msgid "Render Presets"
 msgstr "Lägg till renderingsförinställning"
-
-
-msgid "Find"
-msgstr "Sök"
 
 
 msgid "Playback"
@@ -27082,14 +27031,6 @@ msgid "Show Cache"
 msgstr "Flytta Till Lager"
 
 
-msgid "Draw Axes"
-msgstr "Visa Alla"
-
-
-msgid "Partial overlay on top of the sequencer"
-msgstr "Starta rendering av sekvens"
-
-
 msgid "Sequence Element"
 msgstr "Rendera"
 
@@ -28742,6 +28683,10 @@ msgid "Gradient High/Off"
 msgstr "Arkiv"
 
 
+msgid "Use Gradient"
+msgstr "Vektor Måla"
+
+
 msgid "Theme Graph Editor"
 msgstr "Bild Displist"
 
@@ -28852,6 +28797,10 @@ msgstr "Markera Rad"
 
 msgid "Action-Clip Strip - Selected"
 msgstr "Markera Rad"
+
+
+msgid "Transitions"
+msgstr "Markera Länkad"
 
 
 msgid "Transition Strip - Unselected"
@@ -30423,6 +30372,11 @@ msgstr "Förälder"
 
 
 msgctxt "Operator"
+msgid "Clear"
+msgstr "Nollställ"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "Raderings Meny"
 
@@ -30779,11 +30733,6 @@ msgstr "Interpoleringsmetod"
 
 
 msgctxt "Operator"
-msgid "Border Axis Range"
-msgstr "Ram Markering"
-
-
-msgctxt "Operator"
 msgid "Columns on Selected Keys"
 msgstr "Göm Markerad"
 
@@ -30811,11 +30760,6 @@ msgstr "Utvidga"
 msgctxt "Operator"
 msgid "Slide"
 msgstr "Massiv"
-
-
-msgctxt "Operator"
-msgid "Border (Include Handles)"
-msgstr "Ram (med handtag)"
 
 
 msgctxt "Operator"
@@ -31100,17 +31044,12 @@ msgstr "Sträck ut till ingående remsans längd"
 
 
 msgctxt "Operator"
-msgid "Find..."
-msgstr "Sök…"
+msgid "Top"
+msgstr "Ovan"
 
 
 msgctxt "Operator"
-msgid "Top of File"
-msgstr "Början på filen"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
+msgid "Bottom"
 msgstr "Slutet av filen"
 
 
@@ -31122,16 +31061,6 @@ msgstr "Packa Data"
 msgctxt "Operator"
 msgid "One Object Per Line"
 msgstr "Ett objekt per rad"
-
-
-msgctxt "Operator"
-msgid "Move line(s) up"
-msgstr "Markera Rad"
-
-
-msgctxt "Operator"
-msgid "Move line(s) down"
-msgstr "Lägg till Stripp"
 
 
 msgid "Text: External"
@@ -31228,10 +31157,6 @@ msgstr "Visa inställningar för kant"
 
 msgid "Eraser Radius"
 msgstr "Zooma Ut"
-
-
-msgid "Simplify Stroke"
-msgstr "Samplar"
 
 
 msgid "Sculpt Overlay Color"
@@ -31342,16 +31267,6 @@ msgstr "Kamera"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "Kamera"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "Ovan"
-
-
-msgctxt "Operator"
-msgid "Bottom"
-msgstr "Slutet av filen"
 
 
 msgctxt "Operator"
@@ -31766,11 +31681,6 @@ msgstr "Duplicera"
 
 
 msgctxt "Operator"
-msgid "Curve Preset"
-msgstr "Tygförinställningar"
-
-
-msgctxt "Operator"
 msgid "Hook to Selected Object Bone"
 msgstr "Markera Länkad"
 
@@ -32006,10 +31916,6 @@ msgstr "Markera Länkad"
 
 msgid "Error writing frame"
 msgstr "Miljöbild"
-
-
-msgid "Could not allocate temporary frame"
-msgstr "Bild Displist"
 
 
 msgid "No valid formats found"
@@ -33199,6 +33105,16 @@ msgstr "Markera Länkad"
 
 msgid "No active sequence!"
 msgstr "Starta rendering av sekvens"
+
+
+msgctxt "Operator"
+msgid "Top of File"
+msgstr "Början på filen"
+
+
+msgctxt "Operator"
+msgid "Bottom of File"
+msgstr "Slutet av filen"
 
 
 msgid "unknown error writing file"

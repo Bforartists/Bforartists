@@ -189,14 +189,14 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.TEXT_MT_toolbox.append(menu_development_class_view)
+    bpy.types.TEXT_MT_context_menu.append(menu_development_class_view)
 
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
-    bpy.types.TEXT_MT_toolbox.remove(menu_development_class_view)
+    bpy.types.TEXT_MT_context_menu.remove(menu_development_class_view)
 
 
 if __name__ == "__main__":

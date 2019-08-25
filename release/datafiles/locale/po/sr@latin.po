@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -5262,6 +5262,10 @@ msgid "Adaptive"
 msgstr "Prilagođeno"
 
 
+msgid "Merge"
+msgstr "Sjedini"
+
+
 msgid "Simple"
 msgstr "Jednostavno"
 
@@ -5456,6 +5460,18 @@ msgstr "Oduzimanje boje"
 
 msgid "Mask Texture Overlay Alpha"
 msgstr "Maskiraj providnost preklapanja teksture"
+
+
+msgid "Root"
+msgstr "Koren"
+
+
+msgid "Sharp"
+msgstr "Oštro"
+
+
+msgid "Sharper"
+msgstr "Oštrije"
 
 
 msgid "Fill Threshold"
@@ -5664,10 +5680,6 @@ msgstr "Ivica do ivice"
 
 msgid "Use Front-Face"
 msgstr "Koristi prednju stranicu"
-
-
-msgid "Use Gradient"
-msgstr "Koristi prelaz"
 
 
 msgid "Original Normal"
@@ -7794,10 +7806,6 @@ msgid "Rendered Children"
 msgstr "Renderuj naslednike"
 
 
-msgid "Root"
-msgstr "Koren"
-
-
 msgid "Random Orientation"
 msgstr "Nasumično okretanje"
 
@@ -8300,14 +8308,6 @@ msgid "Register"
 msgstr "Registruj"
 
 
-msgid "Tabs as Spaces"
-msgstr "Tabulatori kao razmaci"
-
-
-msgid "Automatically converts all new tabs into spaces"
-msgstr "Automatski konvertuje sve nove tabulatore u razmake"
-
-
 msgid "Factor Blue"
 msgstr "Faktor plave"
 
@@ -8600,16 +8600,8 @@ msgid "Use soft marble"
 msgstr "Koristi meki mermer"
 
 
-msgid "Sharp"
-msgstr "Oštro"
-
-
 msgid "Use more clearly defined marble"
 msgstr "Koristi jesnije definisan mermer"
-
-
-msgid "Sharper"
-msgstr "Oštrije"
 
 
 msgid "Use very clearly defined marble"
@@ -9743,10 +9735,6 @@ msgid "Effect Strip"
 msgstr "Traka efekta"
 
 
-msgid "Transitions"
-msgstr "Prelaz"
-
-
 msgid "Navigation"
 msgstr "Navigacija"
 
@@ -9851,10 +9839,6 @@ msgid "Face"
 msgstr "Stranica"
 
 
-msgid "Merge"
-msgstr "Sjedini"
-
-
 msgid "Normals"
 msgstr "Normale"
 
@@ -9869,10 +9853,6 @@ msgstr "Meta lopta"
 
 msgid "Special Characters"
 msgstr "Specijalni znaci"
-
-
-msgid "Hide/Mask"
-msgstr "Sakrij/maskiraj"
 
 
 msgid "Hooks"
@@ -14291,11 +14271,6 @@ msgid "Console Banner"
 msgstr "Jezik konzole"
 
 
-msgctxt "Operator"
-msgid "Clear"
-msgstr "Očisti"
-
-
 msgid "Clear text by type"
 msgstr "Očisti tekst na osnovu tipa"
 
@@ -16684,10 +16659,6 @@ msgid "Remove loose vertices"
 msgstr "Ukloni slobodna temena"
 
 
-msgid "Minimum distance between elements to merge"
-msgstr "Minimalno rastojanje među elementima za spajanje"
-
-
 msgctxt "Operator"
 msgid "Dissolve Edges"
 msgstr "Rastopi ivice"
@@ -17238,6 +17209,10 @@ msgstr "Pokreni sve provere"
 
 msgid "Cleanup isolated vertices and edges"
 msgstr "Očisti izolovana temena i ivice"
+
+
+msgid "Minimum distance between elements to merge"
+msgstr "Minimalno rastojanje među elementima za spajanje"
 
 
 msgctxt "Operator"
@@ -19031,10 +19006,6 @@ msgid "Rename"
 msgstr "Preimenuj"
 
 
-msgid "Recursive"
-msgstr "Obrnuto"
-
-
 msgid "Reload"
 msgstr "Ponovo učitaj"
 
@@ -19046,10 +19017,6 @@ msgstr "Vezuje materijal za objekat"
 
 msgid "Select Hierarchy"
 msgstr "Izaberi po hijerarhiji"
-
-
-msgid "Child Object"
-msgstr "Naslednik objekta"
 
 
 msgctxt "Operator"
@@ -20739,11 +20706,6 @@ msgstr "Samodopunjavanje teksta"
 
 
 msgctxt "Operator"
-msgid "Comment"
-msgstr "Komentar"
-
-
-msgctxt "Operator"
 msgid "Convert Whitespace"
 msgstr "Meni promene"
 
@@ -20926,15 +20888,6 @@ msgstr "Izdeli redove"
 
 msgid "Create one object per line in the text"
 msgstr "Napravi posaban objekat za svaki red teksta"
-
-
-msgctxt "Operator"
-msgid "Uncomment"
-msgstr "Dekomentiraj"
-
-
-msgid "Convert selected comment to text"
-msgstr "Pretvori izabrane komentare u tekst"
 
 
 msgid "Unindent selected text"
@@ -22415,10 +22368,6 @@ msgid "Disallow changes to the Z axis of vertices"
 msgstr "Zabrani pomeranje temena po Z osi"
 
 
-msgid "Show Diffuse Color"
-msgstr "Difuzna boja"
-
-
 msgid "Use Deform Only"
 msgstr "Koristi samo deformacije"
 
@@ -22716,10 +22665,6 @@ msgstr "Slobodoručno"
 
 msgid "Note"
 msgstr "Beleška"
-
-
-msgid "Find"
-msgstr "Pronađi"
 
 
 msgid "Playback"
@@ -23516,6 +23461,10 @@ msgstr "Standardna akcija za srednji taster miša"
 
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
 msgstr "Omogući svim .blend datotekama automatsko pokretanje skripti (nije bezbedno za blend datoteke dobijene iz nepoverljivih izvora)"
+
+
+msgid "Tabs as Spaces"
+msgstr "Tabulatori kao razmaci"
 
 
 msgid "Automatically convert all new tabs into spaces for new and loaded text files"
@@ -25010,10 +24959,6 @@ msgid "Show Cache"
 msgstr "Prikaži keš"
 
 
-msgid "Draw Axes"
-msgstr "Prikaži ose"
-
-
 msgid "Sequence Element"
 msgstr "Element sekvence"
 
@@ -26313,6 +26258,10 @@ msgid "Theme Background Color"
 msgstr "Boja pozadine teme"
 
 
+msgid "Use Gradient"
+msgstr "Koristi prelaz"
+
+
 msgid "Channels Region"
 msgstr "Region kanala"
 
@@ -26399,6 +26348,10 @@ msgstr "Grupa akcija je izabrana"
 
 msgid "Action-Clip Strip - Selected"
 msgstr "Grupa akcija je izabrana"
+
+
+msgid "Transitions"
+msgstr "Prelaz"
 
 
 msgid "Transition Strip - Unselected"
@@ -28255,6 +28208,11 @@ msgstr "Roditelj"
 
 
 msgctxt "Operator"
+msgid "Clear"
+msgstr "Očisti"
+
+
+msgctxt "Operator"
 msgid "All"
 msgstr "Sve"
 
@@ -28801,23 +28759,13 @@ msgstr "Prikaži skiciranje"
 
 
 msgctxt "Operator"
-msgid "Zoom %d:%d"
-msgstr "Razmera %d:%d"
+msgid "Top"
+msgstr "Odozgo"
 
 
 msgctxt "Operator"
-msgid "Find..."
-msgstr "Pronađi..."
-
-
-msgctxt "Operator"
-msgid "Top of File"
-msgstr "Vrh datoteke"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "Dno datoteke"
+msgid "Bottom"
+msgstr "Odozdo"
 
 
 msgctxt "Operator"
@@ -28830,14 +28778,8 @@ msgid "One Object Per Line"
 msgstr "Jedan objekat po liniji"
 
 
-msgctxt "Operator"
-msgid "Move line(s) up"
-msgstr "Premesti grupu kostiju"
-
-
-msgctxt "Operator"
-msgid "Move line(s) down"
-msgstr "Naziv ograničenja"
+msgid "File: %s"
+msgstr "Datoteka: %s"
 
 
 msgid "Text: External"
@@ -28934,10 +28876,6 @@ msgstr "Tekuća boja"
 
 msgid "Eraser Radius"
 msgstr "Prečnik gumice"
-
-
-msgid "Simplify Stroke"
-msgstr "Pojednostavljen potez"
 
 
 msgid "Minimum Grid Spacing"
@@ -29052,16 +28990,6 @@ msgstr "Poravnaj aktivnu kameru sa pogledom"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "Poravnaj aktivnu kameru sa izborom"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "Odozgo"
-
-
-msgctxt "Operator"
-msgid "Bottom"
-msgstr "Odozdo"
 
 
 msgctxt "Operator"
@@ -29497,11 +29425,6 @@ msgstr "Objekti na scenu..."
 
 
 msgctxt "Operator"
-msgid "Curve Preset"
-msgstr "Predefinisane krive"
-
-
-msgctxt "Operator"
 msgid "AutoName Front/Back"
 msgstr "Spreda"
 
@@ -29768,10 +29691,6 @@ msgstr "Praćenje ploče"
 
 msgid "Error writing frame"
 msgstr "Greška pri upisu kadra"
-
-
-msgid "Could not allocate temporary frame"
-msgstr "Ne mogu da opredelim privremeni kadar"
 
 
 msgid "No valid formats found"
@@ -30860,10 +30779,6 @@ msgid "Frame: - / %d"
 msgstr "Kadar: - / %d"
 
 
-msgid "File: %s"
-msgstr "Datoteka: %s"
-
-
 msgid "unsupported movie clip format"
 msgstr "nepodržan format video snimka"
 
@@ -31186,6 +31101,16 @@ msgstr "Potebno je izabrati 2 trake sekvenci"
 
 msgid "No active sequence!"
 msgstr "Bez aktivne sekvence!"
+
+
+msgctxt "Operator"
+msgid "Top of File"
+msgstr "Vrh datoteke"
+
+
+msgctxt "Operator"
+msgid "Bottom of File"
+msgstr "Dno datoteke"
 
 
 msgctxt "Operator"

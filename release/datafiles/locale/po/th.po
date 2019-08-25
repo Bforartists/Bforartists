@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: 2019-06-01 18:12+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -1096,6 +1096,10 @@ msgid "Fixed"
 msgstr "คงที่"
 
 
+msgid "Merge"
+msgstr "ผสาน"
+
+
 msgid "Simple"
 msgstr "ง่าย ๆ"
 
@@ -1134,6 +1138,14 @@ msgstr "เพิ่มแอลฟา"
 
 msgid "Add Color"
 msgstr "เพิ่มสี"
+
+
+msgid "Root"
+msgstr "ฐาน"
+
+
+msgid "Sharp"
+msgstr "แหลม"
 
 
 msgid "Repeat"
@@ -1586,10 +1598,6 @@ msgid "Path Start"
 msgstr "เส้นทางเริ้่มต้น"
 
 
-msgid "Root"
-msgstr "ฐาน"
-
-
 msgid "Global"
 msgstr "โดยรวม"
 
@@ -1680,10 +1688,6 @@ msgstr "สะท้อน Y"
 
 msgid "Pattern"
 msgstr "ลวดลาย"
-
-
-msgid "Sharp"
-msgstr "แหลม"
 
 
 msgid "Rings"
@@ -1911,10 +1915,6 @@ msgstr "ด้าน"
 
 msgid "Face Data"
 msgstr "ข้อมูลด้าน"
-
-
-msgid "Merge"
-msgstr "ผสาน"
 
 
 msgid "Normals"
@@ -3063,10 +3063,6 @@ msgid "Render Presets"
 msgstr "รูปแบบล่วงหน้าของการเรนเดอร์"
 
 
-msgid "Find"
-msgstr "ค้นหา"
-
-
 msgid "Playback"
 msgstr "เล่น"
 
@@ -3962,6 +3958,16 @@ msgid "Scene"
 msgstr "ฉาก"
 
 
+msgctxt "Operator"
+msgid "Top"
+msgstr "บน"
+
+
+msgctxt "Operator"
+msgid "Bottom"
+msgstr "ล่าง"
+
+
 msgid "View Axis:"
 msgstr "แกนมุมมอง:"
 
@@ -4205,16 +4211,6 @@ msgstr "การตั้งค่า:"
 
 msgid "Error (see console)"
 msgstr "ข้อผิดพลาด (ดูที่คอนโซล)"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "บน"
-
-
-msgctxt "Operator"
-msgid "Bottom"
-msgstr "ล่าง"
 
 
 msgctxt "Operator"

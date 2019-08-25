@@ -19,8 +19,8 @@
 bl_info = {
     "name": "Cell Fracture Crack It",
     "author": "Nobuyuki Hirakata",
-    "version": (0, 1, 2),
-    "blender": (2, 78, 5),
+    "version": (0, 1, 3),
+    "blender": (2, 80, 0),
     "location": "View3D > Toolshelf > Create Tab",
     "description": "Displaced Cell Fracture Addon",
     "warning": "Make sure to enable 'Object: Cell Fracture' Addon",
@@ -45,6 +45,11 @@ from bpy.props import (
         IntProperty,
         PointerProperty,
         )
+from .operator import (
+    CRACKIT_OT_fracture,
+    CRACKIT_OT_material,
+    CRACKIT_PT_main,
+    )
 import os
 
 
@@ -117,11 +122,14 @@ class CrackItProperties(PropertyGroup):
             description="Material Preset",
             items=[
                 ('crackit_organic_mud', "Organic Mud", "Mud material"),
-                ('crackit_mud1', "Mud", "Mud material"),
-                ('crackit_tree1_moss1', "Tree Moss", "Tree Material"),
-                ('crackit_tree2_dry1', "Tree Dry", "Tree Material"),
-                ('crackit_tree3_red1', "Tree Red", "Tree Material"),
-                ('crackit_rock1', "Rock", "Rock Material")
+                ('crackit_mud', "Mud", "Mud material"),
+                ('crackit_tree_moss', "Tree Moss", "Tree Material"),
+                ('crackit_tree_dry', "Tree Dry", "Tree Material"),
+                ('crackit_tree_red', "Tree Red", "Tree Material"),
+                ('crackit_rock', "Rock", "Rock Material"),
+                ('crackit_lava', "Lava", "Lava Material"),
+                ('crackit_wet-paint', "Wet Paint", "Paint Material"),
+                ('crackit_soap', "Soap", "Soap Material"),
                 ]
             )
     material_lib_name: BoolProperty(
@@ -131,18 +139,25 @@ class CrackItProperties(PropertyGroup):
             default=True
             )
 
+classes = (
+    CRACKIT_OT_fracture,
+    CRACKIT_OT_material,
+    CRACKIT_PT_main,
+    CrackItProperties,
+    )
 
 def register():
-    bpy.utils.register_module(__name__)
-    bpy.types.Scene.crackit = PointerProperty(
-                                    type=CrackItProperties
-                                    )
 
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
 
+    bpy.types.Scene.crackit = PointerProperty(type=CrackItProperties)
+    
 def unregister():
+
     del bpy.types.Scene.crackit
-    bpy.utils.unregister_module(__name__)
-
-
-if __name__ == "__main__":
-    register()
+    
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -1027,10 +1027,6 @@ msgid "Show cursor in viewport"
 msgstr "Tampilkan kursor di viewport"
 
 
-msgid "Use Gradient"
-msgstr "Kamera"
-
-
 msgid "Use Texture"
 msgstr "Tekstur"
 
@@ -1857,10 +1853,6 @@ msgid "Node Color Specials"
 msgstr "Warna"
 
 
-msgid "Transitions"
-msgstr "Orientasi Transformasi"
-
-
 msgid "Select Linked"
 msgstr "Seleksi"
 
@@ -1875,10 +1867,6 @@ msgstr "Dokumen"
 
 msgid "Enabled Modes"
 msgstr "Modus Sunting"
-
-
-msgid "Hide/Mask"
-msgstr "Sembunyikan"
 
 
 msgid "Apply"
@@ -5336,10 +5324,6 @@ msgid "Drop to Set Parent"
 msgstr "Induk"
 
 
-msgid "Child Object"
-msgstr "Sunting Objek"
-
-
 msgctxt "Operator"
 msgid "Drop Object to Scene"
 msgstr "Data Objek"
@@ -6001,11 +5985,6 @@ msgstr "Tipe"
 
 
 msgctxt "Operator"
-msgid "Comment"
-msgstr "Komunitas Pengguna"
-
-
-msgctxt "Operator"
 msgid "Duplicate Line"
 msgstr "Sunting Objek"
 
@@ -6571,10 +6550,6 @@ msgid "Lock Z"
 msgstr "Kunci"
 
 
-msgid "Show Diffuse Color"
-msgstr "Warna"
-
-
 msgid "Restrict"
 msgstr "Ulang"
 
@@ -7118,6 +7093,10 @@ msgid "Gradient High/Off"
 msgstr "Tipe"
 
 
+msgid "Use Gradient"
+msgstr "Kamera"
+
+
 msgid "Active Action"
 msgstr "lokasi"
 
@@ -7144,6 +7123,10 @@ msgstr "Hapus"
 
 msgid "Action-Clip Strip - Selected"
 msgstr "Hapus"
+
+
+msgid "Transitions"
+msgstr "Orientasi Transformasi"
 
 
 msgid "Transitions Selected"
@@ -7639,18 +7622,18 @@ msgstr "Saluran"
 
 
 msgctxt "Operator"
+msgid "Top"
+msgstr "Atas"
+
+
+msgctxt "Operator"
+msgid "Bottom"
+msgstr "Bawah"
+
+
+msgctxt "Operator"
 msgid "One Object"
 msgstr "Sunting Objek"
-
-
-msgctxt "Operator"
-msgid "Move line(s) up"
-msgstr "Grup"
-
-
-msgctxt "Operator"
-msgid "Move line(s) down"
-msgstr "Grup"
 
 
 msgctxt "Operator"
@@ -7731,16 +7714,6 @@ msgstr "Bahan"
 msgctxt "Operator"
 msgid "Camera"
 msgstr "Kamera"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "Atas"
-
-
-msgctxt "Operator"
-msgid "Bottom"
-msgstr "Bawah"
 
 
 msgctxt "Operator"
@@ -7931,11 +7904,6 @@ msgstr "Seleksi"
 msgctxt "Operator"
 msgid "Objects to Scene..."
 msgstr "Data Objek"
-
-
-msgctxt "Operator"
-msgid "Curve Preset"
-msgstr "Kamera"
 
 
 msgctxt "Operator"

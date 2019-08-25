@@ -38,8 +38,6 @@ struct Camera;
 struct CustomData_MeshMasks;
 struct Depsgraph;
 struct EditBone;
-struct GPUFX;
-struct GPUFXSettings;
 struct GPUOffScreen;
 struct GPUViewport;
 struct ID;
@@ -58,7 +56,6 @@ struct View3D;
 struct View3DShading;
 struct ViewContext;
 struct ViewLayer;
-struct WorkSpace;
 struct bContext;
 struct bPoseChannel;
 struct bScreen;
@@ -690,6 +687,10 @@ bool ED_view3d_distance_set_from_location(struct RegionView3D *rv3d,
 
 float ED_scene_grid_scale(struct Scene *scene, const char **grid_unit);
 float ED_view3d_grid_scale(struct Scene *scene, struct View3D *v3d, const char **grid_unit);
+void ED_view3d_grid_steps(struct Scene *scene,
+                          struct View3D *v3d,
+                          struct RegionView3D *rv3d,
+                          float *r_grid_steps);
 float ED_view3d_grid_view_scale(struct Scene *scene,
                                 struct View3D *v3d,
                                 struct RegionView3D *rv3d,

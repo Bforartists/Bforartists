@@ -41,6 +41,7 @@ if "bpy" in locals():
     importlib.reload(curve_menus)
     importlib.reload(snap_origin_cursor)
     importlib.reload(sculpt_brush_paint)
+    importlib.reload(animation_menus)
 
 else:
     from . import object_menus
@@ -52,6 +53,7 @@ else:
     from . import curve_menus
     from . import snap_origin_cursor
     from . import sculpt_brush_paint
+    from . import animation_menus
 
 import bpy
 from bpy.types import (
@@ -91,8 +93,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
             UseSeparator(self, context)
             layout.menu("INFO_MT_area", icon='WORKSPACE')
-            layout.menu("VIEW3D_MT_View_Directions", icon='ZOOM_ALL')
-            layout.menu("VIEW3D_MT_View_Navigation", icon='PIVOT_BOUNDBOX')
+            layout.menu("VIEW3D_MT_view_viewpoint", icon='ZOOM_ALL')
+            layout.menu("VIEW3D_MT_view_navigation", icon='PIVOT_BOUNDBOX')
             UseSeparator(self, context)
             layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
             UseSeparator(self, context)
@@ -118,7 +120,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
@@ -142,9 +144,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Mesh Edit Mode #
             if obj and obj.type == 'MESH' and obj.mode in {'EDIT'}:
@@ -156,7 +155,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Edit_Mesh", icon='RESTRICT_SELECT_OFF')
                 layout.menu("VIEW3D_MT_Edit_Multi", icon='VERTEXSEL')
                 UseSeparator(self, context)
@@ -178,9 +177,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_edit_mesh_delete", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Sculpt Mode #
             if obj and obj.type == 'MESH' and obj.mode in {'SCULPT'}:
@@ -192,7 +188,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Sculpts", icon='SCULPTMODE_HLT')
                 layout.menu("VIEW3D_MT_Angle_Control", text="Angle Control", icon='BRUSH_SCULPT_DRAW')
@@ -202,9 +198,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Sculpt_Specials", icon='SOLO_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Vertex Paint #
             if obj and obj.type == 'MESH' and obj.mode in {'VERTEX_PAINT'}:
@@ -216,7 +209,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 UseSeparator(self, context)
     #            layout.menu("VIEW3D_MT_Brush_Settings", icon='BRUSH_DATA')
                 layout.menu("VIEW3D_MT_Brush_Selection",
@@ -224,9 +217,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("VIEW3D_MT_Vertex_Colors", icon='GROUP_VCOL')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Weight Paint Menu #
             if obj and obj.type == 'MESH' and obj.mode in {'WEIGHT_PAINT'}:
@@ -238,7 +228,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Paint_Weights", icon='WPAINT_HLT')
     #            layout.menu("VIEW3D_MT_Brush_Settings", icon='BRUSH_DATA')
@@ -246,9 +236,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                             text="Weight Paint Tool", icon='BRUSH_TEXMASK')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Texture Paint #
             if obj and obj.type == 'MESH' and obj.mode in {'TEXTURE_PAINT'}:
@@ -260,15 +247,12 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
     #            layout.menu("VIEW3D_MT_Brush_Settings", icon='BRUSH_DATA')
                 layout.menu("VIEW3D_MT_Brush_Selection",
                             text="Texture Paint Tool", icon='SCULPTMODE_HLT')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Curve Object Mode #
             if obj and obj.type == 'CURVE' and obj.mode in {'OBJECT'}:
@@ -281,7 +265,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
@@ -304,9 +288,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Edit Curve #
             if obj and obj.type == 'CURVE' and obj.mode in {'EDIT'}:
@@ -318,7 +299,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Edit_Curve",
                             icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
@@ -338,9 +319,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                                 icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Surface Object Mode #
             if obj and obj.type == 'SURFACE' and obj.mode in {'OBJECT'}:
@@ -353,7 +331,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
@@ -375,9 +353,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Edit Surface #
             if obj and obj.type == 'SURFACE' and obj.mode in {'EDIT'}:
@@ -389,7 +364,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Edit_Surface", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_surface_add", text="Add Surface",
@@ -409,9 +384,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                                 icon='CANCEL')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Metaball Object Mode #
             if obj and obj.type == 'META' and obj.mode in {'OBJECT'}:
@@ -424,7 +396,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
@@ -445,9 +417,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Edit Metaball #
             if obj and obj.type == 'META' and obj.mode in {'EDIT'}:
@@ -459,7 +428,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_SelectMetaball", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.operator_menu_enum("object.metaball_add", "type",
@@ -478,9 +447,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                                 icon='CANCEL')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Text Object Mode #
             if obj and obj.type == 'FONT' and obj.mode in {'OBJECT'}:
@@ -493,7 +459,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.operator("view3d.interactive_mode_text", icon='VIEW3D')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
@@ -516,9 +482,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Text Edit Mode #
             # To Do: Space is already reserved for the typing tool
@@ -533,14 +496,11 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 UseSeparator(self, context)
                 layout.operator("object.editmode_toggle", text="Enter Object Mode",
                                 icon='OBJECT_DATA')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_select_edit_text", icon='VIEW3D')
                 layout.menu("VIEW3D_MT_edit_font", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Camera Object Mode #
             if obj and obj.type == 'CAMERA' and obj.mode in {'OBJECT'}:
@@ -552,7 +512,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("wm.toolbar", text="Tools", icon='TOOL_SETTINGS')
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
@@ -573,9 +533,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Lamp Object Mode #
             if obj and obj.type == 'LIGHT' and obj.mode in {'OBJECT'}:
@@ -587,7 +544,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("wm.toolbar", text="Tools", icon='TOOL_SETTINGS')
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
@@ -608,9 +565,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Armature Object Mode #
             if obj and obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
@@ -623,7 +577,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Object_Interactive_Armature", icon='VIEW3D')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
@@ -645,9 +599,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Armature Edit #
             if obj and obj.type == 'ARMATURE' and obj.mode in {'EDIT'}:
@@ -659,7 +610,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Object_Interactive_Armature", icon='VIEW3D')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Edit_Armature",
                             icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
@@ -682,9 +633,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                                 icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Armature Pose #
             if obj and obj.type == 'ARMATURE' and obj.mode in {'POSE'}:
@@ -698,7 +646,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Object_Interactive_Armature", icon='VIEW3D')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Pose", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Pose", icon='ARMATURE_DATA')
@@ -723,10 +671,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
 
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
-
     # Lattice Object Mode #
             if obj and obj.type == 'LATTICE' and obj.mode in {'OBJECT'}:
 
@@ -738,7 +682,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
@@ -761,9 +705,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Edit Lattice #
             if obj and obj.type == 'LATTICE' and obj.mode in {'EDIT'}:
@@ -775,7 +716,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Edit_Lattice",
                             icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
@@ -791,9 +732,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("lattice.make_regular")
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Empty Object Mode #
             if obj and obj.type == 'EMPTY' and obj.mode in {'OBJECT'}:
@@ -805,7 +743,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("wm.toolbar", text="Tools", icon='TOOL_SETTINGS')
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
@@ -827,9 +765,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Speaker Object Mode #
             if obj and obj.type == 'SPEAKER' and obj.mode in {'OBJECT'}:
@@ -841,7 +776,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("wm.toolbar", text="Tools", icon='TOOL_SETTINGS')
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
@@ -859,9 +794,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Particle Menu #
             if obj and context.mode == 'PARTICLE':
@@ -873,7 +805,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_InteractiveMode", icon='VIEW3D')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Particle",
                             icon='RESTRICT_SELECT_OFF')
                 layout.menu("VIEW3D_MT_Selection_Mode_Particle",
@@ -894,9 +826,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Grease Pencil Object Mode #
             if obj and obj.type == 'GPENCIL' and obj.mode in {'OBJECT'}:
@@ -908,7 +837,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_interactive_mode_gpencil", icon='EDITMODE_HLT')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_Select_Object", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
@@ -932,9 +861,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("object.delete", text="Delete Object", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Grease Pencil Edit Mode #
             if obj and obj.type == 'GPENCIL' and obj.mode in {'EDIT_GPENCIL'}:
@@ -947,7 +873,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_interactive_mode_gpencil", icon='EDITMODE_HLT')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_select_gpencil", icon='RESTRICT_SELECT_OFF')
                 layout.menu("VIEW3D_MT_edit_gpencil", icon='GREASEPENCIL')
                 UseSeparator(self, context)
@@ -959,9 +885,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                                 text="Cursor to Grid", icon='SNAP_GRID')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Grease Pencil Sculpt Mode #
             if obj and obj.type == 'GPENCIL' and obj.mode in {'SCULPT_GPENCIL'}:
@@ -974,7 +897,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_interactive_mode_gpencil", icon='EDITMODE_HLT')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_select_gpencil", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
@@ -985,9 +908,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                                 text="Cursor to Grid", icon='SNAP_GRID')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Grease Pencil Paint Mode #
             if obj and obj.type == 'GPENCIL' and obj.mode in {'PAINT_GPENCIL'}:
@@ -1000,7 +920,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_interactive_mode_gpencil", icon='EDITMODE_HLT')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_paint_gpencil", icon='RESTRICT_SELECT_OFF')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
@@ -1011,9 +931,6 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                                 text="Cursor to Grid", icon='SNAP_GRID')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Grease Pencil Weight Mode #
             if obj and obj.type == 'GPENCIL' and obj.mode in {'WEIGHT_GPENCIL'}:
@@ -1026,15 +943,12 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_interactive_mode_gpencil", icon='EDITMODE_HLT')
-                layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view", icon='ZOOM_ALL')
                 layout.menu("VIEW3D_MT_weight_gpencil", icon="GPBRUSH_WEIGHT")
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-                UseSeparator(self, context)
-                layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
-                layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
     # Light Probe Menu #
             if obj and obj.type == 'LIGHT_PROBE':
@@ -1047,8 +961,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
                 UseSeparator(self, context)
                 layout.menu("INFO_MT_area", icon='WORKSPACE')
-                layout.menu("VIEW3D_MT_View_Directions", icon='ZOOM_ALL')
-                layout.menu("VIEW3D_MT_View_Navigation", icon='PIVOT_BOUNDBOX')
+                layout.menu("VIEW3D_MT_view_viewpoint", icon='ZOOM_ALL')
+                layout.menu("VIEW3D_MT_view_navigation", icon='PIVOT_BOUNDBOX')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_AddMenu", icon='OBJECT_DATAMODE')
                 UseSeparator(self, context)
@@ -1126,6 +1040,7 @@ def register():
     curve_menus.register()
     snap_origin_cursor.register()
     sculpt_brush_paint.register()
+    animation_menus.register()
 
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
@@ -1156,6 +1071,7 @@ def unregister():
     curve_menus.unregister()
     snap_origin_cursor.unregister()
     sculpt_brush_paint.unregister()
+    animation_menus.unregister()
 
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
