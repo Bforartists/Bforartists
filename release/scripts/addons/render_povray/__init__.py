@@ -4094,7 +4094,32 @@ class RenderPovSettingsLight(PropertyGroup):
                 default="RAY_SHADOW")
     active_texture_index: IntProperty(
             name = "Index for texture_slots",
-            default = 0)                
+            default = 0)             
+    use_halo: BoolProperty(
+            name="Halo", description="Render spotlight with a volumetric halo",
+            default=False)
+    halo_intensity: FloatProperty(
+            name="Halo intensity",
+            description="Brightness of the spotlight halo cone",
+            soft_min=0.0, soft_max=1.0, default=1.0)
+    shadow_ray_samples_x: IntProperty(
+            name = "Number of samples taken extra (samples x samples)",
+            min=1, soft_max=64,
+            default = 1)
+    shadow_ray_samples_y: IntProperty(
+            name = "Number of samples taken extra (samples x samples)",
+            min=1, soft_max=64,
+            default = 1)
+    shadow_ray_sample_method: EnumProperty(
+            name="",
+            description="Method for generating shadow samples: Adaptive QMC is fastest, Constant QMC is less noisy but slower",
+            items=(('ADAPTIVE_QMC', "", "Halton samples distribution", "",0),
+                   ('CONSTANT_QMC', "", "QMC samples distribution", "",1),
+                   ('CONSTANT_JITTERED', "", "Uses POV jitter keyword", "",2)), #"Show other data textures"
+            default = 'CONSTANT_JITTERED')
+    use_jitter: BoolProperty(
+            name="Jitter", description="Use noise for sampling (Constant Jittered sampling)",
+            default=False)
 ###############################################################################
 # World POV properties.
 ###############################################################################

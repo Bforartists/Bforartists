@@ -96,27 +96,21 @@ class SEQUENCER_HT_header(Header):
         layout = self.layout
 
         st = context.space_data
-        scene = context.scene
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        layout.template_header()
 
         layout.prop(st, "view_type", text="")
 
         SEQUENCER_MT_editor_menus.draw_collapsible(context, layout)
 
-        layout.separator_spacer()
-
-        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
-            layout.separator()
-            layout.operator("sequencer.refresh_all", icon='FILE_REFRESH', text="")
-
         if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
+
+            layout.separator_spacer()
+
             layout.prop(st, "display_mode", text="", icon_only=True)
 
-        if st.view_type != 'SEQUENCER':
             layout.prop(st, "preview_channels", text="", icon_only=True)
 
-        if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
             gpd = context.gpencil_data
             tool_settings = context.tool_settings
 
@@ -216,7 +210,7 @@ class SEQUENCER_MT_preview_zoom(Menu):
 
             layout.operator(
                 "sequencer.view_zoom_ratio",
-                text=iface_(f"Zoom {a:d}:{b:d}"),
+                text=iface_("Zoom %d:%d") % (a, b),
                 translate=False,
             ).ratio = a / b
         layout.operator_context = 'INVOKE_DEFAULT'
@@ -285,7 +279,6 @@ class SEQUENCER_MT_view(Menu):
             layout.separator()
             layout.operator_context = 'INVOKE_DEFAULT'
 
-#           layout.prop(st, "show_frame_indicator") #Do not have any function and do not work.
             layout.prop(st, "show_strip_offset")
             layout.prop(st, "show_marker_lines")
 
@@ -906,6 +899,8 @@ class SEQUENCER_PT_strip(SequencerButtonsPanel, Panel):
             icon_header = 'FONT_DATA'
         elif strip_type == 'ADJUSTMENT':
             icon_header = 'COLOR'
+        elif strip_type == 'META':
+            icon_header = 'SEQ_STRIP_META'
         else:
             icon_header = 'SEQ_SEQUENCER'
 
@@ -2222,6 +2217,7 @@ classes = (
 
     SEQUENCER_PT_strip,
 
+    SEQUENCER_PT_effect,
     SEQUENCER_PT_adjust,
     SEQUENCER_PT_adjust_comp,
     SEQUENCER_PT_adjust_transform,
@@ -2230,8 +2226,7 @@ classes = (
     SEQUENCER_PT_adjust_video,
     SEQUENCER_PT_adjust_color,
     SEQUENCER_PT_adjust_sound,
-
-    SEQUENCER_PT_effect,
+   
     SEQUENCER_PT_scene,
     SEQUENCER_PT_mask,
     SEQUENCER_PT_effect_text_style,

@@ -699,6 +699,7 @@ class UploadOperator(Operator):
     bl_description = "Upload or re-upload asset + thumbnail + metadata"
 
     bl_label = "BlenderKit asset upload"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     # type of upload - model, material, textures, e.t.c.
     asset_type: EnumProperty(
@@ -797,6 +798,7 @@ class AssetVerificationStatusChange(Operator):
     bl_idname = "object.blenderkit_change_status"
     bl_description = "Change asset ststus"
     bl_label = "Change verification status"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     # type of upload - model, material, textures, e.t.c.
     asset_id: StringProperty(

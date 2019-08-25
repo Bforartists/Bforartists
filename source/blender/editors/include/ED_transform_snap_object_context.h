@@ -32,8 +32,6 @@ struct Main;
 struct Object;
 struct Scene;
 struct View3D;
-struct ViewLayer;
-struct bContext;
 
 /* transform_snap_object.c */
 
@@ -125,6 +123,7 @@ short ED_transform_snap_object_project_view3d_ex(struct SnapObjectContext *sctx,
                                                  const unsigned short snap_to,
                                                  const struct SnapObjectParams *params,
                                                  const float mval[2],
+                                                 const float prev_co[3],
                                                  float *dist_px,
                                                  float r_loc[3],
                                                  float r_no[3],
@@ -135,6 +134,7 @@ bool ED_transform_snap_object_project_view3d(struct SnapObjectContext *sctx,
                                              const unsigned short snap_to,
                                              const struct SnapObjectParams *params,
                                              const float mval[2],
+                                             const float prev_co[3],
                                              float *dist_px,
                                              /* return args */
                                              float r_loc[3],

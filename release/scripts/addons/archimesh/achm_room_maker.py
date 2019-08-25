@@ -503,7 +503,7 @@ def shape_walls_and_create_children(myroom, tmp_mesh, update=False):
 
         create_walls(rp, baseboardmesh, get_blendunits(rp.base_height), True)
         set_normals(mybase, rp.inverse)  # inside/outside room
-        if rp.base_width > 0.0:
+        if rp.base_width:
             set_modifier_solidify(mybase, get_blendunits(rp.base_width))
             # Move to Top SOLIDIFY
             movetotopsolidify(mybase)
@@ -1527,7 +1527,7 @@ class RoomProperties(PropertyGroup):
             )
 
     base_width: FloatProperty(
-            name='Width', min=0.001, max=10,
+            name='Width', min=-10, max=10,
             default=0.015, precision=3,
             description='Baseboard width', update=update_room,
             )

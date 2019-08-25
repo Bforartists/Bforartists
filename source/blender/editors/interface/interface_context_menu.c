@@ -904,7 +904,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
             ICON_NONE,
             "UI_OT_copy_data_path_button");
 
-    if (ptr->id.data && !is_whole_array &&
+    if (ptr->owner_id && !is_whole_array &&
         ELEM(type, PROP_BOOLEAN, PROP_INT, PROP_FLOAT, PROP_ENUM)) {
       uiItemO(layout,
               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy As New Driver"),
@@ -1220,7 +1220,7 @@ void ui_popup_context_menu_for_panel(bContext *C, ARegion *ar, Panel *pa)
                  sizeof(tmpstr),
                  "%s" UI_SEP_CHAR_S "%s",
                  IFACE_("Pin"),
-                 IFACE_("Shift+Left Mouse"));
+                 IFACE_("Shift Left Mouse"));
     uiItemR(layout, &ptr, "use_pin", 0, tmpstr, ICON_NONE);
 
     /* evil, force shortcut flag */
@@ -1228,6 +1228,7 @@ void ui_popup_context_menu_for_panel(bContext *C, ARegion *ar, Panel *pa)
       uiBlock *block = uiLayoutGetBlock(layout);
       uiBut *but = block->buttons.last;
       but->flag |= UI_BUT_HAS_SEP_CHAR;
+      but->drawflag |= UI_BUT_HAS_SHORTCUT;
     }
   }
   UI_popup_menu_end(C, pup);

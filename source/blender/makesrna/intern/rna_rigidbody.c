@@ -215,7 +215,7 @@ static void rna_RigidBodyOb_reset(Main *UNUSED(bmain), Scene *scene, PointerRNA 
 
 static void rna_RigidBodyOb_shape_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
-  Object *ob = ptr->id.data;
+  Object *ob = (Object *)ptr->owner_id;
 
   rna_RigidBodyOb_reset(bmain, scene, ptr);
 
@@ -859,6 +859,7 @@ static void rna_def_rigidbody_world(BlenderRNA *brna)
   RNA_def_property_struct_type(prop, "Collection");
   RNA_def_property_pointer_sdna(prop, NULL, "group");
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_SELF_CHECK);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(
       prop, "Collection", "Collection containing objects participating in this simulation");
   RNA_def_property_update(prop, NC_SCENE, "rna_RigidBodyWorld_objects_collection_update");
@@ -866,6 +867,7 @@ static void rna_def_rigidbody_world(BlenderRNA *brna)
   prop = RNA_def_property(srna, "constraints", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "Collection");
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_SELF_CHECK);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(
       prop, "Constraints", "Collection containing rigid body constraint objects");
   RNA_def_property_update(prop, NC_SCENE, "rna_RigidBodyWorld_constraints_collection_update");
@@ -1224,15 +1226,15 @@ static void rna_def_rigidbody_constraint(BlenderRNA *brna)
   prop = RNA_def_property(srna, "object1", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "ob1");
   RNA_def_property_flag(prop, PROP_EDITABLE);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(prop, "Object 1", "First Rigid Body Object to be constrained");
-  RNA_def_property_flag(prop, PROP_EDITABLE);
   RNA_def_property_update(prop, NC_OBJECT | ND_POINTCACHE, "rna_RigidBodyOb_reset");
 
   prop = RNA_def_property(srna, "object2", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "ob2");
   RNA_def_property_flag(prop, PROP_EDITABLE);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(prop, "Object 2", "Second Rigid Body Object to be constrained");
-  RNA_def_property_flag(prop, PROP_EDITABLE);
   RNA_def_property_update(prop, NC_OBJECT | ND_POINTCACHE, "rna_RigidBodyOb_reset");
 
   /* Breaking Threshold */

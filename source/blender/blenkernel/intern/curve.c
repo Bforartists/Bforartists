@@ -4606,18 +4606,13 @@ void BKE_nurb_direction_switch(Nurb *nu)
   }
 }
 
-float (*BKE_curve_nurbs_vertexCos_get(ListBase *lb, int *r_numVerts))[3]
+void BKE_curve_nurbs_vert_coords_get(ListBase *lb, float (*vert_coords)[3], int vert_len)
 {
-  int i, numVerts = *r_numVerts = BKE_nurbList_verts_count(lb);
-  float *co, (*cos)[3] = MEM_malloc_arrayN(numVerts, sizeof(*cos), "cu_vcos");
-  Nurb *nu;
-
-  co = cos[0];
-  for (nu = lb->first; nu; nu = nu->next) {
+  float *co = vert_coords[0];
+  for (Nurb *nu = lb->first; nu; nu = nu->next) {
     if (nu->type == CU_BEZIER) {
       BezTriple *bezt = nu->bezt;
-
-      for (i = 0; i < nu->pntsu; i++, bezt++) {
+      for (int i = 0; i < nu->pntsu; i++, bezt++) {
         copy_v3_v3(co, bezt->vec[0]);
         co += 3;
         copy_v3_v3(co, bezt->vec[1]);
@@ -4628,20 +4623,30 @@ float (*BKE_curve_nurbs_vertexCos_get(ListBase *lb, int *r_numVerts))[3]
     }
     else {
       BPoint *bp = nu->bp;
-
-      for (i = 0; i < nu->pntsu * nu->pntsv; i++, bp++) {
+      for (int i = 0; i < nu->pntsu * nu->pntsv; i++, bp++) {
         copy_v3_v3(co, bp->vec);
         co += 3;
       }
     }
   }
-
-  return cos;
+  BLI_assert(co == vert_coords[vert_len]);
 }
 
-void BK_curve_nurbs_vertexCos_apply(ListBase *lb, float (*vertexCos)[3])
+float (*BKE_curve_nurbs_vert_coords_alloc(ListBase *lb, int *r_vert_len))[3]
 {
-  const float *co = vertexCos[0];
+  const int vert_len = BKE_nurbList_verts_count(lb);
+  float(*vert_coords)[3] = MEM_malloc_arrayN(vert_len, sizeof(*vert_coords), __func__);
+  BKE_curve_nurbs_vert_coords_get(lb, vert_coords, vert_len);
+  *r_vert_len = vert_len;
+  return vert_coords;
+}
+
+void BKE_curve_nurbs_vert_coords_apply_with_mat4(ListBase *lb,
+                                                 const float (*vert_coords)[3],
+                                                 const float mat[4][4],
+                                                 const bool constrain_2d)
+{
+  const float *co = vert_coords[0];
   Nurb *nu;
   int i;
 
@@ -4650,6 +4655,44 @@ void BK_curve_nurbs_vertexCos_apply(ListBase *lb, float (*vertexCos)[3])
       BezTriple *bezt = nu->bezt;
 
       for (i = 0; i < nu->pntsu; i++, bezt++) {
+        mul_v3_m4v3(bezt->vec[0], mat, co);
+        co += 3;
+        mul_v3_m4v3(bezt->vec[1], mat, co);
+        co += 3;
+        mul_v3_m4v3(bezt->vec[2], mat, co);
+        co += 3;
+      }
+    }
+    else {
+      BPoint *bp = nu->bp;
+
+      for (i = 0; i < nu->pntsu * nu->pntsv; i++, bp++) {
+        mul_v3_m4v3(bp->vec, mat, co);
+        co += 3;
+      }
+    }
+
+    if (constrain_2d) {
+      if (nu->flag & CU_2D) {
+        BKE_nurb_test_2d(nu);
+      }
+    }
+
+    calchandlesNurb_intern(nu, true);
+  }
+}
+
+void BKE_curve_nurbs_vert_coords_apply(ListBase *lb,
+                                       const float (*vert_coords)[3],
+                                       const bool constrain_2d)
+{
+  const float *co = vert_coords[0];
+
+  for (Nurb *nu = lb->first; nu; nu = nu->next) {
+    if (nu->type == CU_BEZIER) {
+      BezTriple *bezt = nu->bezt;
+
+      for (int i = 0; i < nu->pntsu; i++, bezt++) {
         copy_v3_v3(bezt->vec[0], co);
         co += 3;
         copy_v3_v3(bezt->vec[1], co);
@@ -4661,9 +4704,15 @@ void BK_curve_nurbs_vertexCos_apply(ListBase *lb, float (*vertexCos)[3])
     else {
       BPoint *bp = nu->bp;
 
-      for (i = 0; i < nu->pntsu * nu->pntsv; i++, bp++) {
+      for (int i = 0; i < nu->pntsu * nu->pntsv; i++, bp++) {
         copy_v3_v3(bp->vec, co);
         co += 3;
+      }
+    }
+
+    if (constrain_2d) {
+      if (nu->flag & CU_2D) {
+        BKE_nurb_test_2d(nu);
       }
     }
 
@@ -4671,18 +4720,17 @@ void BK_curve_nurbs_vertexCos_apply(ListBase *lb, float (*vertexCos)[3])
   }
 }
 
-float (*BKE_curve_nurbs_keyVertexCos_get(ListBase *lb, float *key))[3]
+float (*BKE_curve_nurbs_key_vert_coords_alloc(ListBase *lb, float *key, int *r_vert_len))[3]
 {
-  int i, numVerts = BKE_nurbList_verts_count(lb);
-  float *co, (*cos)[3] = MEM_malloc_arrayN(numVerts, sizeof(*cos), "cu_vcos");
-  Nurb *nu;
+  int vert_len = BKE_nurbList_verts_count(lb);
+  float(*cos)[3] = MEM_malloc_arrayN(vert_len, sizeof(*cos), __func__);
 
-  co = cos[0];
-  for (nu = lb->first; nu; nu = nu->next) {
+  float *co = cos[0];
+  for (Nurb *nu = lb->first; nu; nu = nu->next) {
     if (nu->type == CU_BEZIER) {
       BezTriple *bezt = nu->bezt;
 
-      for (i = 0; i < nu->pntsu; i++, bezt++) {
+      for (int i = 0; i < nu->pntsu; i++, bezt++) {
         copy_v3_v3(co, &key[0]);
         co += 3;
         copy_v3_v3(co, &key[3]);
@@ -4695,18 +4743,18 @@ float (*BKE_curve_nurbs_keyVertexCos_get(ListBase *lb, float *key))[3]
     else {
       BPoint *bp = nu->bp;
 
-      for (i = 0; i < nu->pntsu * nu->pntsv; i++, bp++) {
+      for (int i = 0; i < nu->pntsu * nu->pntsv; i++, bp++) {
         copy_v3_v3(co, key);
         co += 3;
         key += KEYELEM_FLOAT_LEN_BPOINT;
       }
     }
   }
-
+  *r_vert_len = vert_len;
   return cos;
 }
 
-void BKE_curve_nurbs_keyVertexTilts_apply(ListBase *lb, float *key)
+void BKE_curve_nurbs_key_vert_tilts_apply(ListBase *lb, float *key)
 {
   Nurb *nu;
   int i;

@@ -39,7 +39,7 @@ BMEditMesh *BKE_editmesh_create(BMesh *bm, const bool do_tessellate)
 
   em->bm = bm;
   if (do_tessellate) {
-    BKE_editmesh_tessface_calc(em);
+    BKE_editmesh_looptri_calc(em);
   }
 
   return em;
@@ -126,7 +126,7 @@ static void editmesh_tessface_calc_intern(BMEditMesh *em)
   BM_mesh_calc_tessellation(em->bm, em->looptris, &em->tottri);
 }
 
-void BKE_editmesh_tessface_calc(BMEditMesh *em)
+void BKE_editmesh_looptri_calc(BMEditMesh *em)
 {
   editmesh_tessface_calc_intern(em);
 
@@ -209,7 +209,7 @@ void BKE_editmesh_color_ensure(BMEditMesh *em, const char htype)
   }
 }
 
-float (*BKE_editmesh_vertexCos_get_orco(BMEditMesh *em, int *r_numVerts))[3]
+float (*BKE_editmesh_vert_coords_alloc_orco(BMEditMesh *em, int *r_vert_len))[3]
 {
   BMIter iter;
   BMVert *eve;
@@ -222,7 +222,7 @@ float (*BKE_editmesh_vertexCos_get_orco(BMEditMesh *em, int *r_numVerts))[3]
     copy_v3_v3(orco[i], eve->co);
   }
 
-  *r_numVerts = em->bm->totvert;
+  *r_vert_len = em->bm->totvert;
 
   return orco;
 }

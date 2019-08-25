@@ -113,6 +113,10 @@ ccl_device void svm_node_object_info(
       stack_store_float3(stack, out_offset, object_location(kg, sd));
       return;
     }
+    case NODE_INFO_OB_COLOR: {
+      stack_store_float3(stack, out_offset, object_color(kg, sd->object));
+      return;
+    }
     case NODE_INFO_OB_INDEX:
       data = object_pass_id(kg, sd->object);
       break;
@@ -149,7 +153,7 @@ ccl_device void svm_node_particle_info(
     }
     case NODE_INFO_PAR_RANDOM: {
       int particle_id = object_particle_id(kg, sd->object);
-      float random = hash_int_01(particle_index(kg, particle_id));
+      float random = hash_uint2_to_float(particle_index(kg, particle_id), 0);
       stack_store_float(stack, out_offset, random);
       break;
     }

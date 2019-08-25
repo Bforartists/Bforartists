@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 75) (b'8e1516b7bcca')\n"
+"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-29 00:00:00\n"
+"POT-Creation-Date: 2019-08-19 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -5453,6 +5453,10 @@ msgid "Adaptive"
 msgstr "Přidat primitivum"
 
 
+msgid "Merge"
+msgstr "Sloučit"
+
+
 msgid "Smooth Modifier"
 msgstr "Přesunout modifikátor"
 
@@ -5681,6 +5685,18 @@ msgid "Editable falloff curve"
 msgstr "Křivka útlumu"
 
 
+msgid "Root"
+msgstr "Kvadratické"
+
+
+msgid "Sharp"
+msgstr "Ostré"
+
+
+msgid "Sharper"
+msgstr "Ostré"
+
+
 msgid "Draw"
 msgstr "Kreslit"
 
@@ -5887,10 +5903,6 @@ msgstr "Zobrazit nastaveni hran"
 
 msgid "Use Front-Face"
 msgstr "Jméno skupiny"
-
-
-msgid "Use Gradient"
-msgstr "Gradient"
 
 
 msgid "Plane Offset Pressure"
@@ -8117,10 +8129,6 @@ msgid "Number of children/parent for rendering"
 msgstr "Zobrazit počet materiálů a aktivní materiál u daného objektu"
 
 
-msgid "Root"
-msgstr "Kvadratické"
-
-
 msgid "Random Orientation"
 msgstr "Orientace transformací"
 
@@ -8699,10 +8707,6 @@ msgid "Register"
 msgstr "Oblasti"
 
 
-msgid "Automatically converts all new tabs into spaces"
-msgstr "Automatické sloučení vrcholů posuntých na to samé umístění"
-
-
 msgid "Factor Blue"
 msgstr "Činitel"
 
@@ -9025,14 +9029,6 @@ msgstr "Vzor"
 
 msgid "Use soft marble"
 msgstr "Zobrazit nastavení vláken pro statické částice"
-
-
-msgid "Sharp"
-msgstr "Ostré"
-
-
-msgid "Sharper"
-msgstr "Ostré"
 
 
 msgid "Noise Basis 2"
@@ -10049,10 +10045,6 @@ msgid "Effect Strip"
 msgstr "NLA Proužky"
 
 
-msgid "Transitions"
-msgstr "Překlad"
-
-
 msgid "Navigation"
 msgstr "Navigace"
 
@@ -10165,10 +10157,6 @@ msgid "Face"
 msgstr "Plocha"
 
 
-msgid "Merge"
-msgstr "Sloučit"
-
-
 msgid "Normals"
 msgstr "Normály"
 
@@ -10183,10 +10171,6 @@ msgstr "Meta objekt"
 
 msgid "Special Characters"
 msgstr "Znaky"
-
-
-msgid "Hide/Mask"
-msgstr "Skrýt"
 
 
 msgid "Hooks"
@@ -15944,11 +15928,6 @@ msgid "Console Banner"
 msgstr "Zobrazit kontrolery"
 
 
-msgctxt "Operator"
-msgid "Clear"
-msgstr "Vyčistit"
-
-
 msgid "Clear text by type"
 msgstr "Vyberte typ textury"
 
@@ -18661,10 +18640,6 @@ msgid "Delete Edge Loop"
 msgstr "Odstranit smyčku hran"
 
 
-msgid "Minimum distance between elements to merge"
-msgstr "Minimální vzdálenost mezi slučovanými vrcholy"
-
-
 msgid "Dissolve Verts"
 msgstr "Skrýt označené"
 
@@ -19252,6 +19227,10 @@ msgstr "Přidá UV kouli"
 
 msgid "Construct a UV sphere mesh"
 msgstr "Sestaví kulovou síť s poledníky a rovnoběžníky"
+
+
+msgid "Minimum distance between elements to merge"
+msgstr "Minimální vzdálenost mezi slučovanými vrcholy"
 
 
 msgctxt "Operator"
@@ -21770,10 +21749,6 @@ msgid "Extend selection for activation"
 msgstr "Vybrat cestu"
 
 
-msgid "Rename item under cursor"
-msgstr "Vytvořit nový soubor"
-
-
 msgctxt "Operator"
 msgid "Keying Set Add Selected"
 msgstr "Označený vertex"
@@ -21830,10 +21805,6 @@ msgstr "Označit... "
 
 msgid "Drag to parent in Outliner"
 msgstr "Průhlednost"
-
-
-msgid "Child Object"
-msgstr "Přidat objekt"
 
 
 msgctxt "Operator"
@@ -23990,15 +23961,6 @@ msgstr "Vzorky"
 
 
 msgctxt "Operator"
-msgid "Comment"
-msgstr "Zakomentovat"
-
-
-msgid "Convert selected text to comment"
-msgstr "Převede vybraný text na komentář"
-
-
-msgctxt "Operator"
 msgid "Convert Whitespace"
 msgstr "Konvertovat bílé znaky"
 
@@ -24214,15 +24176,6 @@ msgstr "Vybrat řádek"
 
 msgid "Create one object per line in the text"
 msgstr "Kopírovat typ vykreslení z aktivní plošky na ostatní vybrané plošky"
-
-
-msgctxt "Operator"
-msgid "Uncomment"
-msgstr "Odkomentovat"
-
-
-msgid "Convert selected comment to text"
-msgstr "Převede vybraný komentář na text"
 
 
 msgid "Unindent selected text"
@@ -26035,10 +25988,6 @@ msgid "Number of times to copy strokes across the surface"
 msgstr "Počet opakování pro překreslení"
 
 
-msgid "Show Diffuse Color"
-msgstr "Aktuální barva"
-
-
 msgid "Use Deform Only"
 msgstr "Deformace"
 
@@ -26319,10 +26268,6 @@ msgstr "Načíst:"
 
 msgid "Render Presets"
 msgstr "Předvolby renderu"
-
-
-msgid "Find"
-msgstr "Nalézt"
 
 
 msgid "Playback"
@@ -27294,10 +27239,6 @@ msgstr "Otevřít editační mód"
 
 msgid "Global Undo"
 msgstr "Celkové vrácení"
-
-
-msgid "Grease Pencil Simplify Stroke"
-msgstr "Zjednodušení tahu skicovací tužky"
 
 
 msgid "Auto Keyframe Insert Available"
@@ -29082,14 +29023,6 @@ msgstr "Zrušit odchylku"
 
 msgid "Show Cache"
 msgstr "Přidat primitivum"
-
-
-msgid "Draw Axes"
-msgstr "Zobrazit vše"
-
-
-msgid "Partial overlay on top of the sequencer"
-msgstr "Přidat vazbu aktivní kosti"
 
 
 msgid "Overlay Lock"
@@ -30992,6 +30925,10 @@ msgid "Gradient High/Off"
 msgstr "Gradient"
 
 
+msgid "Use Gradient"
+msgstr "Gradient"
+
+
 msgid "Theme Graph Editor"
 msgstr "UV/obrázkový editor"
 
@@ -31110,6 +31047,10 @@ msgstr "Skupina pro akce je vybrána"
 
 msgid "Action-Clip Strip - Selected"
 msgstr "Skupina pro akce je vybrána"
+
+
+msgid "Transitions"
+msgstr "Překlad"
 
 
 msgid "Transition Strip - Unselected"
@@ -32761,6 +32702,11 @@ msgstr "Rodič"
 
 
 msgctxt "Operator"
+msgid "Clear"
+msgstr "Vyčistit"
+
+
+msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "Odstranit značku"
 
@@ -33093,11 +33039,6 @@ msgstr "Mód Interpolace"
 
 
 msgctxt "Operator"
-msgid "Border Axis Range"
-msgstr "V rozsahu"
-
-
-msgctxt "Operator"
 msgid "Columns on Selected Keys"
 msgstr "Obdelníkové Označení Klíčů"
 
@@ -33125,11 +33066,6 @@ msgstr "Přidat"
 msgctxt "Operator"
 msgid "Slide"
 msgstr "Válec"
-
-
-msgctxt "Operator"
-msgid "Border (Include Handles)"
-msgstr "Auto Úchop"
 
 
 msgctxt "Operator"
@@ -33405,18 +33341,13 @@ msgstr "Skicovací tužka"
 
 
 msgctxt "Operator"
-msgid "Find..."
-msgstr "Najít..."
+msgid "Top"
+msgstr "Shora"
 
 
 msgctxt "Operator"
-msgid "Top of File"
-msgstr "Začátek souboru"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "Konec souboru"
+msgid "Bottom"
+msgstr "Zespodu"
 
 
 msgctxt "Operator"
@@ -33427,16 +33358,6 @@ msgstr "Jeden objekt"
 msgctxt "Operator"
 msgid "One Object Per Line"
 msgstr "Vazby objektu"
-
-
-msgctxt "Operator"
-msgid "Move line(s) up"
-msgstr "Odstranit ze skupiny"
-
-
-msgctxt "Operator"
-msgid "Move line(s) down"
-msgstr "Odstranit vazbu"
 
 
 msgid "Text: External"
@@ -33525,10 +33446,6 @@ msgstr "Automatické zarovnání"
 
 msgid "Eraser Radius"
 msgstr "Poloměr mazání"
-
-
-msgid "Simplify Stroke"
-msgstr "Limity"
 
 
 msgid "Only Insert Available"
@@ -33639,16 +33556,6 @@ msgstr "Zarovnat aktivní kameru na pohled"
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
 msgstr "Zarovnat aktivní kameru na vybrané"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "Shora"
-
-
-msgctxt "Operator"
-msgid "Bottom"
-msgstr "Zespodu"
 
 
 msgctxt "Operator"
@@ -34073,11 +33980,6 @@ msgstr "Objekty ke scéně..."
 
 
 msgctxt "Operator"
-msgid "Curve Preset"
-msgstr "Předvolby pro látku"
-
-
-msgctxt "Operator"
 msgid "Hook to Selected Object Bone"
 msgstr "Vybrané objekty "
 
@@ -34333,10 +34235,6 @@ msgstr "Odstranit aktuální skript link"
 
 msgid "Error writing frame"
 msgstr "Inkrementální"
-
-
-msgid "Could not allocate temporary frame"
-msgstr "Vytvoří novou vrstvu barvy vertexů"
 
 
 msgid "No valid formats found"
@@ -35750,6 +35648,16 @@ msgstr "Jméno skriptu"
 
 msgid "No active sequence!"
 msgstr "Sekvence "
+
+
+msgctxt "Operator"
+msgid "Top of File"
+msgstr "Začátek souboru"
+
+
+msgctxt "Operator"
+msgid "Bottom of File"
+msgstr "Konec souboru"
 
 
 msgid "unknown error writing file"

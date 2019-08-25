@@ -149,7 +149,7 @@ class BlendFile:
         if not self.structs:
             raise BlendFileError("No DNA1 block in file, this is not a valid .blend file!")
 
-        # cache (could lazy init, incase we never use?)
+        # Cache (could lazy init, in case we never use?).
         self.block_from_offset = {block.addr_old: block for block in self.blocks if block.code != b'ENDB'}
 
     def __repr__(self):
