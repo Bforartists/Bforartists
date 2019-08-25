@@ -157,7 +157,7 @@ class KillBgProcess(bpy.types.Operator):
     '''Remove  processes in background.'''
     bl_idname = "object.kill_bg_process"
     bl_label = "Kill Background Process"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER'}
 
     process_type: EnumProperty(
         name="Type",

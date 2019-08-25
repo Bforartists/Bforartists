@@ -97,6 +97,7 @@ class RegisterLoginOnline(bpy.types.Operator):
     bl_label = "BlenderKit login or signup"
     bl_options = {'REGISTER', 'UNDO'}
 
+
     signup: BoolProperty(
         name="create a new account",
         description="True for register, otherwise login",

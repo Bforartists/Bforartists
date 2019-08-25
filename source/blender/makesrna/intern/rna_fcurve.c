@@ -191,7 +191,7 @@ static bool rna_ChannelDriver_is_simple_expression_get(PointerRNA *ptr)
 
 static void rna_ChannelDriver_update_data(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
-  ID *id = ptr->id.data;
+  ID *id = ptr->owner_id;
   ChannelDriver *driver = ptr->data;
 
   driver->flag &= ~DRIVER_FLAG_INVALID;
@@ -219,7 +219,7 @@ static void rna_DriverTarget_update_data(Main *bmain, Scene *scene, PointerRNA *
   PointerRNA driverptr;
   ChannelDriver *driver;
   FCurve *fcu;
-  AnimData *adt = BKE_animdata_from_id(ptr->id.data);
+  AnimData *adt = BKE_animdata_from_id(ptr->owner_id);
 
   /* find the driver this belongs to and update it */
   for (fcu = adt->drivers.first; fcu; fcu = fcu->next) {
@@ -229,7 +229,7 @@ static void rna_DriverTarget_update_data(Main *bmain, Scene *scene, PointerRNA *
     if (driver) {
       /* FIXME: need to be able to search targets for required one... */
       /*BLI_findindex(&driver->targets, ptr->data) != -1)  */
-      RNA_pointer_create(ptr->id.data, &RNA_Driver, driver, &driverptr);
+      RNA_pointer_create(ptr->owner_id, &RNA_Driver, driver, &driverptr);
       rna_ChannelDriver_update_data(bmain, scene, &driverptr);
       return;
     }
@@ -474,8 +474,8 @@ static void rna_FCurve_group_set(PointerRNA *ptr,
                                  PointerRNA value,
                                  struct ReportList *UNUSED(reports))
 {
-  ID *pid = (ID *)ptr->id.data;
-  ID *vid = (ID *)value.id.data;
+  ID *pid = ptr->owner_id;
+  ID *vid = value.owner_id;
   FCurve *fcu = ptr->data;
   bAction *act = NULL;
 
@@ -499,7 +499,7 @@ static void rna_FCurve_group_set(PointerRNA *ptr,
   }
   else {
     /* the ID given is the owner of the F-Curve (for drivers) */
-    AnimData *adt = BKE_animdata_from_id(ptr->id.data);
+    AnimData *adt = BKE_animdata_from_id(ptr->owner_id);
     act = (adt) ? adt->action : NULL;
   }
 
@@ -580,7 +580,7 @@ static void rna_FCurve_update_data_ex(ID *id, FCurve *fcu, Main *bmain)
 static void rna_FCurve_update_data(Main *bmain, Scene *UNUSED(scene), PointerRNA *ptr)
 {
   BLI_assert(ptr->type == &RNA_FCurve);
-  rna_FCurve_update_data_ex((ID *)ptr->id.data, (FCurve *)ptr->data, bmain);
+  rna_FCurve_update_data_ex(ptr->owner_id, (FCurve *)ptr->data, bmain);
 }
 
 static void rna_FCurve_update_data_relations(Main *bmain,
@@ -595,7 +595,7 @@ static void rna_FCurve_update_data_relations(Main *bmain,
  */
 static void rna_FCurve_update_eval(Main *bmain, Scene *UNUSED(scene), PointerRNA *ptr)
 {
-  rna_tag_animation_update(bmain, (ID *)ptr->id.data, true);
+  rna_tag_animation_update(bmain, ptr->owner_id, true);
 }
 
 static PointerRNA rna_FCurve_active_modifier_get(PointerRNA *ptr)
@@ -708,7 +708,7 @@ static void rna_FModifier_blending_range(
 
 static void rna_FModifier_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *ptr)
 {
-  ID *id = ptr->id.data;
+  ID *id = ptr->owner_id;
   FModifier *fcm = (FModifier *)ptr->data;
 
   if (fcm->curve && fcm->type == FMODIFIER_TYPE_CYCLES) {
@@ -1073,7 +1073,7 @@ static void rna_FModifierEnvelope_points_remove(
 
 static void rna_Keyframe_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *ptr)
 {
-  rna_tag_animation_update(bmain, (ID *)ptr->id.data, true);
+  rna_tag_animation_update(bmain, ptr->owner_id, true);
 }
 
 #else

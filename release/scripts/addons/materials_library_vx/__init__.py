@@ -21,7 +21,7 @@
 bl_info = {
     "name": "Material Library",
     "author": "Mackraken (mackraken2023@hotmail.com)",
-    "version": (0, 5, 8),
+    "version": (0, 5, 9),
     "blender": (2, 80, 0),
     "location": "Properties > Material",
     "description": "Material Library VX",
@@ -301,7 +301,7 @@ class matlibProperties(PropertyGroup):
     #hide_search: Hides Search Field
     link: BoolProperty(name = "Linked", description="Link the material", default = False)
     force_import: BoolProperty(name = "Force Import", description="Use Scene Materials by default", default = False)
-    filter: BoolProperty(name = "Filter",description="Filter Categories", default = False, update=update_filter)
+    filter: BoolProperty(name = "Filter",description="Filter Categories", default = True, update=update_filter)
     show_prefs: BoolProperty(name = "show_prefs", description="Preferences", default = False)
     last_selected: StringProperty(name="Last Selected")
     hide_search: BoolProperty(name="Hide Search", description="Use Blender Search Only")
@@ -1133,23 +1133,14 @@ class MATLIB_PT_vxPanel(Panel):
         #      matlib.__init__()
 
         #libraries
-        row = layout.row(align=True)
+        col = layout.column(align=True)
         if matlib.current_library:
             text = matlib.current_library.shortname
         else:
             text = "Select a Library"
-
-        row.menu("MATLIB_MT_LibsMenu",text=text)
-        row.operator("matlib.operator", icon="ADD", text="").cmd = "LIBRARY_ADD"
-        if matlib.active_material:
-            row.label(text = matlib.active_material.category)
-        else:
-            row.label(text="")
-        #
-        #    #search
-        if not matlib.hide_search:
-            row = layout.row(align=True)
-            row.prop_search(matlib, "search", matlib, "materials", text="", icon="VIEWZOOM")
+        split = col.split(factor=0.55, align=True)
+        split.menu("MATLIB_MT_LibsMenu",text=text)
+        split.operator("matlib.operator", icon="ADD", text="New Library").cmd = "LIBRARY_ADD"
             
         self.layout.template_preview(context.material) # bfa - preview window
         
@@ -1161,32 +1152,44 @@ class MATLIB_PT_vxPanel(Panel):
         #    #list
         row = layout.row()
         row.template_list("UI_UL_list", "  ", matlib, "materials", matlib, "mat_index", rows=6)
-        col = row.column(align=True)
-        row = layout.row()
-
+        col = row.column()
+ #       row = layout.row()
         #operators
-        col.operator("matlib.operator", icon="ADD", text="").cmd="ADD"
-        col.operator("matlib.operator", icon="REMOVE", text="").cmd="REMOVE"
-        col.operator("matlib.operator", icon="FILE_REFRESH", text="").cmd="RELOAD"
-        col.operator("matlib.operator", icon="GHOST_DISABLED", text="").cmd="FLUSH"
-        col.prop(matlib, "show_prefs", icon="MODIFIER", text="")
+        col.operator("matlib.operator", icon="ADD", text="Add To Library").cmd="ADD"
+        col.operator("matlib.operator", icon="MATERIAL", text="Apply To Selected").cmd="APPLY"
+        col.operator("matlib.operator", icon="FILE_REFRESH", text="Reload Material").cmd="RELOAD"
+        col.operator("matlib.operator", icon="COLOR", text="Preview Material").cmd="PREVIEW"
+        col.operator("matlib.operator", icon="GHOST_DISABLED", text="Remove Preview").cmd="FLUSH"
+        col.operator("matlib.operator", icon="REMOVE", text="Remove Material").cmd="REMOVE"
+        col.prop(matlib, "show_prefs", icon="MODIFIER", text="Settings")
+
+        # Search
+        if not matlib.hide_search:
+            row = layout.row(align=True)
+            row.prop_search(matlib, "search", matlib, "materials", text="", icon="VIEWZOOM")
 
         #categories
+        row = layout.row()
+        if matlib.active_material:
+            row.label(text="Category:")
+            row.label(text = matlib.active_material.category)
+        else:
+            row.label(text="Category Tools:")
         row = layout.row(align=True)
         text = "All"
         if matlib.current_category: text = matlib.current_category
         row.menu("MATLIB_MT_CatsMenu",text=text)
-        row.prop(matlib, "filter", icon="FILTER", text="")
-        row.operator("matlib.operator", icon="FILE_PARENT", text="").cmd="FILTER_SET"
-        row.operator("matlib.operator", icon="ADD", text="").cmd="FILTER_ADD"
-        row.operator("matlib.operator", icon="REMOVE", text="").cmd="FILTER_REMOVE"
+        row = layout.row(align=True)
+        row.prop(matlib, "filter", icon="FILTER", text="Filter")
+        row.operator("matlib.operator", icon="FILE_PARENT", text="Set Type").cmd="FILTER_SET"
+        row.operator("matlib.operator", icon="ADD", text="New").cmd="FILTER_ADD"
+        row.operator("matlib.operator", icon="REMOVE", text="Remove").cmd="FILTER_REMOVE"
 
         #prefs
         if matlib.show_prefs:
-            row = layout.row()
+            row = layout.row(align=True)
             row.prop(matlib, "force_import")
             row.prop(matlib, "link")
-            row = layout.row()
             row.prop(matlib, "hide_search")
 #      row = layout.row(align=True)
 #row = layout.row()

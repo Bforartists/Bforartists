@@ -20,7 +20,7 @@
 bl_info = {
     "name": "Bsurfaces GPL Edition",
     "author": "Eclectiel, Spivak Vladimir(cwolf3d)",
-    "version": (1, 6, 0),
+    "version": (1, 6, 1),
     "blender": (2, 80, 0),
     "location": "View3D EditMode > Sidebar > Edit Tab",
     "description": "Modeling and retopology tool",
@@ -50,6 +50,7 @@ from bpy.props import (
         IntProperty,
         StringProperty,
         PointerProperty,
+        EnumProperty,
         )
 from bpy.types import (
         Operator,
@@ -75,16 +76,16 @@ class VIEW3D_PT_tools_SURFSK_mesh(Panel):
         row.separator()
         col.operator("gpencil.surfsk_init", text="Initialize")
         col.prop(scn, "SURFSK_object_with_retopology")
-        col.prop(scn, "SURFSK_use_annotation")
-        if not scn.SURFSK_use_annotation:
+        col.row().prop(scn, "SURFSK_guide", expand=True)
+        if not scn.SURFSK_guide == 'Annotation':
             col.prop(scn, "SURFSK_object_with_strokes")
         col.separator()
         props = col.operator("gpencil.surfsk_add_surface", text="Add Surface")
         col.operator("gpencil.surfsk_edit_surface", text="Edit Surface")
-        if not scn.SURFSK_use_annotation:
+        if scn.SURFSK_guide == 'GPencil':
            col.operator("gpencil.surfsk_add_strokes", text="Add Strokes")
            col.operator("gpencil.surfsk_edit_strokes", text="Edit Strokes")
-        else:
+        if scn.SURFSK_guide == 'Annotation':
            col.operator("gpencil.surfsk_add_annotation", text="Add Annotation")
         col.separator()
         col.label(text="Initial settings:")
@@ -124,7 +125,7 @@ def get_strokes_type(context):
     strokes_num = 0
 
     # Check if they are grease pencil
-    if context.scene.bsurfaces.SURFSK_use_annotation:
+    if context.scene.bsurfaces.SURFSK_guide == 'Annotation':
         try:
             strokes = bpy.data.grease_pencils[0].layers.active.active_frame.strokes
         
@@ -3213,6 +3214,7 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
         #    self.edges_V = 1
         #else:
         #    self.edges_V = bsurfaces_props.SURFSK_edges_V
+        self.edges_U = bsurfaces_props.SURFSK_edges_U
         self.edges_V = bsurfaces_props.SURFSK_edges_V
 
         self.is_fill_faces = False
@@ -3509,7 +3511,7 @@ class GPENCIL_OT_SURFSK_init(Operator):
             
             bpy.context.scene.bsurfaces.SURFSK_object_with_retopology = mesh_object
         
-        if not context.scene.bsurfaces.SURFSK_use_annotation and bs.SURFSK_object_with_strokes == None:
+        if context.scene.bsurfaces.SURFSK_guide == 'GPencil' and bs.SURFSK_object_with_strokes == None:
             bpy.ops.object.select_all('INVOKE_REGION_WIN', action='DESELECT')
             bpy.ops.object.gpencil_add(radius=1.0, align='WORLD', location=(0.0, 0.0, 0.0), rotation=(0.0, 0.0, 0.0), type='EMPTY')
             bpy.context.scene.tool_settings.gpencil_stroke_placement_view3d = 'SURFACE'
@@ -3520,7 +3522,7 @@ class GPENCIL_OT_SURFSK_init(Operator):
             bpy.context.scene.bsurfaces.SURFSK_object_with_strokes = gpencil_object
             gpencil_object.data.stroke_depth_order = '3D'
         
-        if context.scene.bsurfaces.SURFSK_use_annotation:
+        if context.scene.bsurfaces.SURFSK_guide == 'Annotation':
             bpy.ops.wm.tool_set_by_id(name="builtin.annotate")
             bpy.context.scene.tool_settings.annotation_stroke_placement_view3d = 'SURFACE'
 
@@ -4143,10 +4145,15 @@ class BsurfPreferences(AddonPreferences):
 
 # Properties
 class BsurfacesProps(PropertyGroup):
-    SURFSK_use_annotation: BoolProperty(
-                name="Use Annotation",
-                default=True
-                )
+    SURFSK_guide: EnumProperty(
+        name="Guide:",
+        items=[
+                ('Annotation', 'Annotation', 'Annotation'),
+                ('GPencil', 'GPencil', 'GPencil'),
+                ('Curve', 'Curve', 'Curve')
+              ],
+        default="Annotation"
+        )
     SURFSK_edges_U: IntProperty(
                     name="Cross",
                     description="Number of face-loops crossing the strokes",

@@ -606,7 +606,6 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
 
         layout.prop(st, "use_realtime_update")
         layout.prop(st, "show_marker_lines")
-        layout.prop(st, "show_frame_indicator")
 
         layout.separator()
 

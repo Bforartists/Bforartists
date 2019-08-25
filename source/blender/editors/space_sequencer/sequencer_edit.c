@@ -76,51 +76,24 @@
 /* XXX */
 /* RNA Enums, used in multiple files */
 EnumPropertyItem sequencer_prop_effect_types[] = {
+    {SEQ_TYPE_CROSS, "CROSS", ICON_NODE_VECTOR, "Crossfade", "Crossfade effect strip type"},
     {SEQ_TYPE_ADD, "ADD", ICON_SEQ_ADD, "Add", "Add effect strip type"},
     {SEQ_TYPE_SUB, "SUBTRACT", ICON_NODE_INVERT, "Subtract", "Subtract effect strip type"},
+    {SEQ_TYPE_ALPHAOVER, "ALPHA_OVER", ICON_SEQ_ALPHA_OVER, "Alpha Over", "Alpha Over effect strip type"},
+    {SEQ_TYPE_ALPHAUNDER, "ALPHA_UNDER", ICON_NODE_HOLDOUTSHADER, "Alpha Under", "Alpha Under effect strip type"},
+    {SEQ_TYPE_GAMCROSS, "GAMMA_CROSS", ICON_NODE_VECTOR, "Gamma Cross", "Gamma Cross effect strip type"},
     {SEQ_TYPE_MUL, "MULTIPLY", ICON_SEQ_MULTIPLY, "Multiply", "Multiply effect strip type"},
-    {SEQ_TYPE_OVERDROP,
-     "OVER_DROP",
-     ICON_SEQ_ALPHA_OVER,
-     "Alpha Over Drop",
-     "Alpha Over Drop effect strip type"},
-    {SEQ_TYPE_ALPHAOVER,
-     "ALPHA_OVER",
-     ICON_IMAGE_ALPHA,
-     "Alpha Over",
-     "Alpha Over effect strip type"},
-    {SEQ_TYPE_ALPHAUNDER,
-     "ALPHA_UNDER",
-     ICON_NODE_HOLDOUTSHADER,
-     "Alpha Under",
-     "Alpha Under effect strip type"},
-    {SEQ_TYPE_COLORMIX, "COLORMIX", ICON_NODE_MIXRGB, "Color Mix", ""},
-    {0, "", 0, NULL, NULL},
-    {SEQ_TYPE_MULTICAM, "MULTICAM", ICON_SEQ_MULTICAM, "Multicam Selector", ""},
-    {0, "", 0, NULL, NULL},
-    {SEQ_TYPE_TRANSFORM,
-     "TRANSFORM",
-     ICON_TRANSFORM_MOVE,
-     "Transform",
-     "Transform effect strip type"},
-    {SEQ_TYPE_SPEED, "SPEED", ICON_NODE_CURVE_TIME, "Speed", "Color effect strip type"},
-    {0, "", 0, NULL, NULL},
-    {SEQ_TYPE_GLOW, "GLOW", ICON_LAMP_SUN, "Glow", "Glow effect strip type"},
-    {SEQ_TYPE_GAUSSIAN_BLUR, "GAUSSIAN_BLUR", ICON_NODE_BLUR, "Gaussian Blur", ""},
-    {0, "", 0, NULL, NULL},
-    {SEQ_TYPE_CROSS, "CROSS", ICON_NODE_VECTOR, "Crossfade", "Crossfade effect strip type"},
-    {SEQ_TYPE_GAMCROSS,
-     "GAMMA_CROSS",
-     ICON_NODE_GAMMA,
-     "Gamma Cross",
-     "Gamma Cross effect strip type"},
-    {0, "", 0, NULL, NULL},
+    {SEQ_TYPE_OVERDROP, "OVER_DROP", ICON_SEQ_ALPHA_OVER, "Alpha Over Drop", "Alpha Over Drop effect strip type"},
     {SEQ_TYPE_WIPE, "WIPE", ICON_NODE_VECTOR_TRANSFORM, "Wipe", "Wipe effect strip type"},
-    {0, "", 0, NULL, NULL},
+    {SEQ_TYPE_GLOW, "GLOW", ICON_LAMP_SUN, "Glow", "Glow effect strip type"},
+    {SEQ_TYPE_TRANSFORM, "TRANSFORM", ICON_TRANSFORM_MOVE, "Transform", "Transform effect strip type"},
     {SEQ_TYPE_COLOR, "COLOR", ICON_COLOR, "Color", "Color effect strip type"},
-    {SEQ_TYPE_TEXT, "TEXT", ICON_FONT_DATA, "Text", ""},
-    {0, "", 0, NULL, NULL},
+    {SEQ_TYPE_SPEED, "SPEED", ICON_NODE_CURVE_TIME, "Speed", "Color effect strip type"},
+    {SEQ_TYPE_MULTICAM, "MULTICAM", ICON_SEQ_MULTICAM, "Multicam Selector", ""},
     {SEQ_TYPE_ADJUSTMENT, "ADJUSTMENT", ICON_MOD_DISPLACE, "Adjustment Layer", ""},
+    {SEQ_TYPE_GAUSSIAN_BLUR, "GAUSSIAN_BLUR", ICON_NODE_BLUR, "Gaussian Blur", ""},
+    {SEQ_TYPE_TEXT, "TEXT", ICON_FONT_DATA, "Text", ""},
+    {SEQ_TYPE_COLORMIX, "COLORMIX", ICON_NODE_MIXRGB, "Color Mix", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -3783,8 +3756,7 @@ void SEQUENCER_OT_enable_proxies(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Selected Strip Proxies";
   ot->idname = "SEQUENCER_OT_enable_proxies";
-  ot->description =
-      "Set Selected Strip Proxies\nEnable selected proxies on all selected Movie strips";
+  ot->description = "Set Selected Strip Proxies\nEnable selected proxies on all selected Movie, Image and Meta strips";
 
   /* api callbacks */
   ot->invoke = sequencer_enable_proxies_invoke;

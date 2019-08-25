@@ -352,7 +352,7 @@ static bool object_hook_index_array(Main *bmain,
       em = me->edit_mesh;
 
       EDBM_mesh_normals_update(em);
-      BKE_editmesh_tessface_calc(em);
+      BKE_editmesh_looptri_calc(em);
 
       /* check selected vertices first */
       if (return_editmesh_indexar(em, r_tot, r_indexar, r_cent) == 0) {
@@ -436,7 +436,7 @@ static void object_hook_from_context(
   HookModifierData *hmd;
 
   if (ptr->data) { /* if modifier context is available, use that */
-    ob = ptr->id.data;
+    ob = (Object *)ptr->owner_id;
     hmd = ptr->data;
   }
   else { /* use the provided property */

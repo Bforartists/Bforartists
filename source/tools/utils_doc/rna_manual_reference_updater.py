@@ -18,7 +18,7 @@
 #
 # ##### RNA MANUAL REFERENCES #####
 #
-# This file geneates a file that maps RNA strings to online URL's
+# This file generates a file that maps RNA strings to online URL's
 # for the context menu documentation access
 #
 # To make international, we made a script,

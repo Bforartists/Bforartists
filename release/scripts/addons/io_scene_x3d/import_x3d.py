@@ -2341,7 +2341,7 @@ def importMesh_Extrusion(geom, ancestry):
                   in scaledLoopVertex(mloops[lb + i].vertex_index % nc)]
     importMesh_ApplyTextureToLoops(bpymesh, loops)
 
-    bpymesh.validate(True)
+    bpymesh.validate()
     bpymesh.update()
     return bpymesh
 
@@ -2478,8 +2478,19 @@ def importMesh_Sphere(geom, ancestry):
                        -cos(lou * seg) * sin(lau * ring))]
     bpymesh.vertices.foreach_set('co', co)
 
+    num_poly = ns * nr
+    num_tri = ns * 2
+    num_quad = num_poly - num_tri
+    num_loop = num_quad * 4 + num_tri * 3
     tf = bpymesh.polygons
-    tf.add(ns * nr)
+    tf.add(num_poly)
+    bpymesh.loops.add(num_loop)
+    bpymesh.polygons.foreach_set("loop_start",
+                                 tuple(range(0, ns * 3, 3)) +
+                                 tuple(range(ns * 3, num_loop - ns * 3, 4)) +
+                                 tuple(range(num_loop - ns * 3, num_loop, 3)))
+    bpymesh.polygons.foreach_set("loop_total", (3,) * ns + (4,) * num_quad + (3,) * ns)
+
     vb = 2 + (nr - 2) * ns  # First vertex index for the bottom cap
     fb = (nr - 1) * ns  # First face index for the bottom cap
 
@@ -2499,12 +2510,12 @@ def importMesh_Sphere(geom, ancestry):
     for seg in range(ns):
         tf[seg].vertices = (0, seg + 2, (seg + 1) % ns + 2)
         tf[fb + seg].vertices = (1, vb + (seg + 1) % ns, vb + seg)
-        for lidx, uv in zip(tf[seg].loops,
+        for lidx, uv in zip(tf[seg].loop_indices,
                             (((seg + 0.5) / ns, 1),
                              (seg / ns, 1 - 1 / nr),
                              ((seg + 1) / ns, 1 - 1 / nr))):
             tex[lidx].uv = uv
-        for lidx, uv in zip(tf[fb + seg].loops,
+        for lidx, uv in zip(tf[fb + seg].loop_indices,
                             (((seg + 0.5) / ns, 0),
                              ((seg + 1) / ns, 1 / nr),
                              (seg / ns, 1 / nr))):
@@ -2521,15 +2532,15 @@ def importMesh_Sphere(geom, ancestry):
         # First face index for the ring
         for seg in range(ns):
             nseg = (seg + 1) % ns
-            tf[rfb + seg].vertices_raw = (tvb + seg, bvb + seg, bvb + nseg, tvb + nseg)
-            for lidx, uv in zip(tf[rfb + seg].loops,
+            tf[rfb + seg].vertices = (tvb + seg, bvb + seg, bvb + nseg, tvb + nseg)
+            for lidx, uv in zip(tf[rfb + seg].loop_indices,
                                 ((seg / ns, 1 - (ring + 1) / nr),
                                  (seg / ns, 1 - (ring + 2) / nr),
                                  ((seg + 1) / ns, 1 - (ring + 2) / nr),
                                  ((seg + 1) / ns, 1 - (ring + 1) / nr))):
                 tex[lidx].uv = uv
 
-    bpymesh.validate(False)
+    bpymesh.validate()
     bpymesh.update()
     return bpymesh
 
@@ -2570,7 +2581,7 @@ def importMesh_Cylinder(geom, ancestry):
     # Tried constructing the mesh manually from polygons/loops/edges,
     # the difference in performance on Blender 2.74 (Win64) is negligible.
 
-    bpymesh.validate(False)
+    bpymesh.validate()
 
     # The structure of the loop array goes: cap, side, cap.
     loops = []
@@ -2619,7 +2630,7 @@ def importMesh_Cone(geom, ancestry):
     bpymesh = bpy.data.meshes.new(name="Cone")
     bpymesh.from_pydata(verts, [], faces)
 
-    bpymesh.validate(False)
+    bpymesh.validate()
     loops = []
     if side:
         loops += [co for i in range(n)
@@ -2662,7 +2673,7 @@ def importMesh_Box(geom, ancestry):
         5, 1, 0, 4,   # +z
         7, 6, 5, 4))  # -y
 
-    bpymesh.validate(False)
+    bpymesh.validate()
     d = bpymesh.uv_layers.new().data
     d.foreach_set('uv', (
         1, 0, 0, 0, 0, 1, 1, 1,

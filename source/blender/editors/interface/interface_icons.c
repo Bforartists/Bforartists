@@ -317,8 +317,9 @@ static void vicon_keytype_draw_wrapper(
       format, "outlineColor", GPU_COMP_U8, 4, GPU_FETCH_INT_TO_FLOAT_UNIT);
   uint flags_id = GPU_vertformat_attr_add(format, "flags", GPU_COMP_U32, 1, GPU_FETCH_INT);
 
-  immBindBuiltinProgram(GPU_SHADER_KEYFRAME_DIAMOND);
   GPU_program_point_size(true);
+  immBindBuiltinProgram(GPU_SHADER_KEYFRAME_DIAMOND);
+  immUniform1f("outline_scale", 1.0f);
   immUniform2f("ViewportSize", -1.0f, -1.0f);
   immBegin(GPU_PRIM_POINTS, 1);
 
@@ -2136,7 +2137,7 @@ int UI_rnaptr_icon_get(bContext *C, PointerRNA *ptr, int rnaicon, const bool big
 
   /* try ID, material, texture or dynapaint slot */
   if (RNA_struct_is_ID(ptr->type)) {
-    id = ptr->id.data;
+    id = ptr->owner_id;
   }
   else if (RNA_struct_is_a(ptr->type, &RNA_MaterialSlot)) {
     id = RNA_pointer_get(ptr, "material").data;
