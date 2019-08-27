@@ -933,7 +933,7 @@ class VIEW3D_MT_mirror(Menu):
 
         layout.separator()
 
-        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator_context = 'EXEC_REGION_WIN'
 
         props = layout.operator("transform.mirror", text="X Global", icon = "MIRROR_X")
         props.constraint_axis = (True, False, False)
@@ -945,18 +945,19 @@ class VIEW3D_MT_mirror(Menu):
         props.constraint_axis = (False, False, True)
         props.orient_type = 'GLOBAL'
 
-        if _context.edit_object:
-            layout.separator()
+        layout.separator()
 
-            props = layout.operator("transform.mirror", text="X Local", icon = "MIRROR_X")
-            props.constraint_axis = (True, False, False)
-            props.orient_type = 'LOCAL'
-            props = layout.operator("transform.mirror", text="Y Local", icon = "MIRROR_Y")
-            props.constraint_axis = (False, True, False)
-            props.orient_type = 'LOCAL'
-            props = layout.operator("transform.mirror", text="Z Local", icon = "MIRROR_Z")
-            props.constraint_axis = (False, False, True)
-            props.orient_type = 'LOCAL'
+        props = layout.operator("transform.mirror", text="X Local", icon = "MIRROR_X")
+        props.constraint_axis = (True, False, False)
+        props.orient_type = 'LOCAL'
+        props = layout.operator("transform.mirror", text="Y Local", icon = "MIRROR_Y")
+        props.constraint_axis = (False, True, False)
+        props.orient_type = 'LOCAL'
+        props = layout.operator("transform.mirror", text="Z Local", icon = "MIRROR_Z")
+        props.constraint_axis = (False, False, True)
+        props.orient_type = 'LOCAL'
+
+        if _context.edit_object:            
 
             layout.separator()
 
