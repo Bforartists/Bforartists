@@ -1037,7 +1037,7 @@ static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
 #endif
 
   uiItemO(
-      layout, IFACE_("Object (Without Inverse)"), ICON_NONE, "OBJECT_OT_parent_no_inverse_set");
+      layout, IFACE_("Object (Without Inverse)"), ICON_PARENT, "OBJECT_OT_parent_no_inverse_set");
 
   struct {
     bool mesh, gpencil;
