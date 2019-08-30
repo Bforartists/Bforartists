@@ -3124,6 +3124,11 @@ class VIEW3D_MT_object_collection(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.operator("object.move_to_collection", icon='GROUP')
+        layout.operator("object.link_to_collection", icon='GROUP')
+
+        layout.separator()
+
         layout.operator("collection.create", icon='GROUP')
         # layout.operator_menu_enum("collection.objects_remove", "collection")  # BUGGY
         layout.operator("collection.objects_remove", icon = "DELETE")
