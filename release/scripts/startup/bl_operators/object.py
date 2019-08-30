@@ -29,7 +29,7 @@ from bpy.props import (
 
 
 class SelectPattern(Operator):
-    """Select by Pattern\nSelect objects matching a naming pattern"""
+    """Select objects matching a naming pattern"""
     bl_idname = "object.select_pattern"
     bl_label = "Select Pattern"
     bl_options = {'REGISTER', 'UNDO'}
@@ -118,7 +118,7 @@ class SelectPattern(Operator):
 
 
 class SelectCamera(Operator):
-    """Select Camera\nSelect the active camera"""
+    """Select the active camera"""
     bl_idname = "object.select_camera"
     bl_label = "Select Camera"
     bl_options = {'REGISTER', 'UNDO'}
@@ -154,7 +154,7 @@ class SelectCamera(Operator):
 
 
 class SelectHierarchy(Operator):
-    """Select Hierarchy\nSelect object relative to the active object's position """ \
+    """Select object relative to the active object's position """ \
         """in the hierarchy"""
     bl_idname = "object.select_hierarchy"
     bl_label = "Select Hierarchy"
@@ -312,7 +312,7 @@ class SubdivisionSet(Operator):
 
 
 class ShapeTransfer(Operator):
-    """Shape Transfer\nCopy the active shape key of another selected object to this one"""
+    """Copy the active shape key of another selected object to this one"""
 
     bl_idname = "object.shape_key_transfer"
     bl_label = "Transfer Shape Key"
@@ -504,7 +504,7 @@ class ShapeTransfer(Operator):
 
 
 class JoinUVs(Operator):
-    """Join UV's\nTransfer UV Maps from active to selected objects """ \
+    """Transfer UV Maps from active to selected objects """ \
         """(needs matching geometry)"""
     bl_idname = "object.join_uvs"
     bl_label = "Transfer UV Maps"
@@ -586,7 +586,7 @@ class JoinUVs(Operator):
 
 
 class MakeDupliFace(Operator):
-    """Make Dupli Face\nConvert objects into instanced faces"""
+    """Convert objects into instanced faces"""
     bl_idname = "object.make_dupli_face"
     bl_label = "Make Instance Face"
     bl_options = {'REGISTER', 'UNDO'}
@@ -660,7 +660,7 @@ class MakeDupliFace(Operator):
 
 
 class IsolateTypeRender(Operator):
-    """Render selected\nRender just the selected Item, disables rendering for all others\nHave a look in the outliner """ \
+    """Render just the selected Item, disables rendering for all others\nHave a look in the outliner """ \
         """by setting the hide render flag"""
     bl_idname = "object.isolate_type_render"
     bl_label = "Restrict Render Unselected"
@@ -681,7 +681,7 @@ class IsolateTypeRender(Operator):
 
 
 class ClearAllRestrictRender(Operator):
-    """Render all\nRender all Objects in the scene\nHave a look in the outliner"""
+    """Render all Objects in the scene\nHave a look in the outliner"""
     bl_idname = "object.hide_render_clear_all"
     bl_label = "Clear All Restrict Render"
     bl_options = {'REGISTER', 'UNDO'}
@@ -767,7 +767,7 @@ class TransformsToDeltas(Operator):
 
 
 class TransformsToDeltasAnim(Operator):
-    """Transforms to Delta Anim\nConvert object animation for normal transforms to delta transforms"""
+    """Convert object animation for normal transforms to delta transforms"""
     bl_idname = "object.anim_transforms_to_deltas"
     bl_label = "Animated Transforms to Deltas"
     bl_options = {'REGISTER', 'UNDO'}
@@ -857,7 +857,7 @@ class TransformsToDeltasAnim(Operator):
 
 
 class DupliOffsetFromCursor(Operator):
-    """Dupli Offset from Cursor\nSet offset used for collection instances based on cursor position"""
+    """Set offset used for collection instances based on cursor position"""
     bl_idname = "object.instance_offset_from_cursor"
     bl_label = "Set Offset From Cursor"
     bl_options = {'INTERNAL', 'UNDO'}
