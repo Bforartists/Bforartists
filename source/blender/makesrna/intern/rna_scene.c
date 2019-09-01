@@ -749,6 +749,35 @@ static void rna_GPencilInterpolateSettings_type_set(PointerRNA *ptr, int value)
   }
 }
 
+static void rna_Gpencil_selectmode_update(bContext *C, PointerRNA *ptr)
+{
+  ToolSettings *ts = (ToolSettings *)ptr->data;
+  /* If the mode is not Stroke, don't extend selection. */
+  if ((ts->gpencil_selectmode_edit & GP_SELECTMODE_STROKE) == 0) {
+    return;
+  }
+
+  /* Extend selection to all points in all selected strokes. */
+  ViewLayer *view_layer = CTX_data_view_layer(C);
+  Object *ob = OBACT(view_layer);
+  if ((ob) && (ob->type == OB_GPENCIL)) {
+    bGPdata *gpd = (bGPdata *)ob->data;
+    CTX_DATA_BEGIN (C, bGPDstroke *, gps, editable_gpencil_strokes) {
+      if ((gps->flag & GP_STROKE_SELECT) && (gps->totpoints > 1)) {
+        bGPDspoint *pt;
+        for (int i = 0; i < gps->totpoints; i++) {
+          pt = &gps->points[i];
+          pt->flag |= GP_SPOINT_SELECT;
+        }
+      }
+    }
+    CTX_DATA_END;
+
+    gpd->flag |= GP_DATA_CACHE_IS_DIRTY;
+    DEG_id_tag_update(&gpd->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
+  }
+}
+
 static void rna_Gpencil_mask_point_update(Main *UNUSED(bmain),
                                           Scene *UNUSED(scene),
                                           PointerRNA *ptr)
@@ -2936,17 +2965,28 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "transform_flag", SCE_XFORM_AXIS_ALIGN);
   RNA_def_property_ui_text(
       prop, "Only Locations", "Manipulate origins (object, pose and weight paint mode only)");
-  RNA_def_property_update(prop, NC_SCENE, NULL);
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "use_transform_data_origin", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "transform_flag", SCE_XFORM_DATA_ORIGIN);
   RNA_def_property_ui_text(prop, "Data Origins", "Manipulate object data");
-  RNA_def_property_update(prop, NC_SCENE, NULL);
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
+
+  prop = RNA_def_property(srna, "use_transform_skip_children", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "transform_flag", SCE_XFORM_SKIP_CHILDREN);
+  RNA_def_property_ui_text(prop, "Skip Children", "Don't transform children");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "use_mesh_automerge", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, NULL, "automerge", 0);
+  RNA_def_property_boolean_sdna(prop, NULL, "automerge", AUTO_MERGE);
   RNA_def_property_ui_text(
-      prop, "Auto Merge", "Automatically merge vertices moved to the same location");
+      prop, "Auto Merge Vertices", "Automatically merge vertices moved to the same location");
+  RNA_def_property_ui_icon(prop, ICON_AUTOMERGE_OFF, 1);
+  RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, NULL); /* header redraw */
+
+  prop = RNA_def_property(srna, "use_mesh_automerge_and_split", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "automerge", AUTO_MERGE_AND_SPLIT);
+  RNA_def_property_ui_text(prop, "Split Edges & Faces", "Automatically split edges and faces");
   RNA_def_property_ui_icon(prop, ICON_AUTOMERGE_OFF, 1);
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, NULL); /* header redraw */
 
@@ -3108,6 +3148,8 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, gpencil_selectmode_items);
   RNA_def_property_ui_text(prop, "Select Mode", "");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, "rna_Gpencil_selectmode_update");
 
   /* Grease Pencil - Select mode Sculpt */
   prop = RNA_def_property(srna, "use_gpencil_select_mask_point", PROP_BOOLEAN, PROP_NONE);

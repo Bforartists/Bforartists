@@ -101,6 +101,7 @@
 #include "ED_datafiles.h"
 #include "ED_fileselect.h"
 #include "ED_image.h"
+#include "ED_outliner.h"
 #include "ED_screen.h"
 #include "ED_view3d.h"
 #include "ED_util.h"
@@ -1971,6 +1972,10 @@ static int wm_homefile_read_exec(bContext *C, wmOperator *op)
     }
   }
 
+  if (G.fileflags & G_FILE_NO_UI) {
+    ED_outliner_select_sync_from_all_tag(C);
+  }
+
   return OPERATOR_FINISHED;
 }
 
@@ -2226,6 +2231,9 @@ static int wm_open_mainfile__open(bContext *C, wmOperator *op)
   BKE_report_print_level_set(op->reports, RPT_WARNING);
 
   if (success) {
+    if (G.fileflags & G_FILE_NO_UI) {
+      ED_outliner_select_sync_from_all_tag(C);
+    }
     return OPERATOR_FINISHED;
   }
   else {
@@ -3077,7 +3085,7 @@ static uiBlock *block_create__close_file_dialog(struct bContext *C, struct ARegi
     BLI_path_extension_replace(filename, sizeof(filename), "");
   }
   else {
-    BLI_snprintf(filename, sizeof(filename), IFACE_("Untitled"));
+    STRNCPY(filename, IFACE_("Untitled"));
   }
 
   /* Title */
@@ -3113,6 +3121,12 @@ static uiBlock *block_create__close_file_dialog(struct bContext *C, struct ARegi
   BKE_reports_init(&reports, RPT_STORE);
   uint modified_images_count = ED_image_save_all_modified_info(C, &reports);
 
+  LISTBASE_FOREACH (Report *, report, &reports.list) {
+    uiLayout *row = uiLayoutRow(layout, false);
+    uiLayoutSetRedAlert(row, true);
+    uiItemL(row, report->message, ICON_CANCEL);
+  }
+
   if (modified_images_count > 0) {
     char message[64];
     BLI_snprintf(message,
@@ -3138,13 +3152,9 @@ static uiBlock *block_create__close_file_dialog(struct bContext *C, struct ARegi
                  "");
   }
 
-  LISTBASE_FOREACH (Report *, report, &reports.list) {
-    uiItemL(layout, report->message, ICON_ERROR);
-  }
-
   BKE_reports_clear(&reports);
 
-  uiItemL(layout, "", ICON_NONE);
+  uiItemS_ex(layout, 3.0f);
 
   /* Buttons */
 #ifdef _WIN32

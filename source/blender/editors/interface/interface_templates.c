@@ -538,7 +538,7 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
       break;
     case UI_ID_OVERRIDE:
       if (id && id->override_library) {
-        BKE_override_library_free(&id->override_library);
+        BKE_override_library_free(&id->override_library, true);
         /* reassign to get get proper updates/notifiers */
         idptr = RNA_property_pointer_get(&template_ui->ptr, template_ui->prop);
         RNA_property_pointer_set(&template_ui->ptr, template_ui->prop, idptr, NULL);
@@ -3209,7 +3209,7 @@ static void colorband_buttons_layout(uiLayout *layout,
                 &coba->cur,
                 0.0,
                 (float)(MAX2(0, coba->tot - 1)),
-                0,
+                1,
                 0,
                 TIP_("Choose active color stop"));
       row = uiLayoutRow(split, false);
@@ -3239,7 +3239,7 @@ static void colorband_buttons_layout(uiLayout *layout,
                 &coba->cur,
                 0.0,
                 (float)(MAX2(0, coba->tot - 1)),
-                0,
+                1,
                 0,
                 TIP_("Choose active color stop"));
       row = uiLayoutRow(subsplit, false);
@@ -3747,12 +3747,11 @@ static uiBlock *curvemap_clipping_func(bContext *C, ARegion *ar, void *cumap_v)
   float width = 8 * UI_UNIT_X;
 
   block = UI_block_begin(C, ar, __func__, UI_EMBOSS);
-
-  /* use this for a fake extra empty space around the buttons */
-  uiDefBut(block, UI_BTYPE_LABEL, 0, "", -4, 16, width + 8, 6 * UI_UNIT_Y, NULL, 0, 0, 0, 0, "");
+  UI_block_flag_enable(block, UI_BLOCK_KEEP_OPEN | UI_BLOCK_MOVEMOUSE_QUIT);
+  UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
 
   bt = uiDefButBitI(block,
-                    UI_BTYPE_TOGGLE,
+                    UI_BTYPE_CHECKBOX,
                     CUMA_DO_CLIP,
                     1,
                     IFACE_("Use Clipping"),
@@ -3772,7 +3771,7 @@ static uiBlock *curvemap_clipping_func(bContext *C, ARegion *ar, void *cumap_v)
   uiDefButF(block,
             UI_BTYPE_NUM,
             0,
-            IFACE_("Min X "),
+            IFACE_("Min X:"),
             0,
             4 * UI_UNIT_Y,
             width,
@@ -3786,7 +3785,7 @@ static uiBlock *curvemap_clipping_func(bContext *C, ARegion *ar, void *cumap_v)
   uiDefButF(block,
             UI_BTYPE_NUM,
             0,
-            IFACE_("Min Y "),
+            IFACE_("Min Y:"),
             0,
             3 * UI_UNIT_Y,
             width,
@@ -3800,7 +3799,7 @@ static uiBlock *curvemap_clipping_func(bContext *C, ARegion *ar, void *cumap_v)
   uiDefButF(block,
             UI_BTYPE_NUM,
             0,
-            IFACE_("Max X "),
+            IFACE_("Max X:"),
             0,
             2 * UI_UNIT_Y,
             width,
@@ -3814,7 +3813,7 @@ static uiBlock *curvemap_clipping_func(bContext *C, ARegion *ar, void *cumap_v)
   uiDefButF(block,
             UI_BTYPE_NUM,
             0,
-            IFACE_("Max Y "),
+            IFACE_("Max Y:"),
             0,
             UI_UNIT_Y,
             width,
@@ -3826,7 +3825,8 @@ static uiBlock *curvemap_clipping_func(bContext *C, ARegion *ar, void *cumap_v)
             2,
             "");
 
-  UI_block_direction_set(block, UI_DIR_RIGHT);
+  UI_block_bounds_set_normal(block, 0.3f * U.widget_unit);
+  UI_block_direction_set(block, UI_DIR_DOWN);
 
   return block;
 }
@@ -6624,7 +6624,7 @@ static uiBlock *component_menu(bContext *C, ARegion *ar, void *args_v)
 
   uiItemR(layout, &args->ptr, args->propname, UI_ITEM_R_EXPAND, "", ICON_NONE);
 
-  UI_block_bounds_set_normal(block, 6);
+  UI_block_bounds_set_normal(block, 0.3f * U.widget_unit);
   UI_block_direction_set(block, UI_DIR_DOWN);
 
   return block;

@@ -401,17 +401,7 @@ const EnumPropertyItem *ED_gpencil_layers_with_new_enum_itemf(bContext *C,
 
   /* Create new layer */
   /* TODO: have some way of specifying that we don't want this? */
-  {
-    /* "New Layer" entry */
-    item_tmp.identifier = "__CREATE__";
-    item_tmp.name = "New Layer";
-    item_tmp.value = -1;
-    item_tmp.icon = ICON_ADD;
-    RNA_enum_item_add(&item, &totitem, &item_tmp);
 
-    /* separator */
-    RNA_enum_item_add_separator(&item, &totitem);
-  }
   const int tot = BLI_listbase_count(&gpd->layers);
   /* Existing layers */
   for (gpl = gpd->layers.last, i = 0; gpl; gpl = gpl->prev, i++) {
@@ -426,6 +416,17 @@ const EnumPropertyItem *ED_gpencil_layers_with_new_enum_itemf(bContext *C,
       item_tmp.icon = ICON_NONE;
     }
 
+    RNA_enum_item_add(&item, &totitem, &item_tmp);
+  }
+  {
+    /* separator */
+    RNA_enum_item_add_separator(&item, &totitem);
+
+    /* "New Layer" entry */
+    item_tmp.identifier = "__CREATE__";
+    item_tmp.name = "New Layer";
+    item_tmp.value = -1;
+    item_tmp.icon = ICON_ADD;
     RNA_enum_item_add(&item, &totitem, &item_tmp);
   }
 
@@ -2063,7 +2064,7 @@ void ED_gpencil_update_color_uv(Main *bmain, Material *mat)
               if (ED_gpencil_stroke_color_use(ob, gpl, gps) == false) {
                 continue;
               }
-              gps_ma = give_current_material(ob, gps->mat_nr + 1);
+              gps_ma = BKE_material_gpencil_get(ob, gps->mat_nr + 1);
               /* update */
               if ((gps_ma) && (gps_ma == mat)) {
                 ED_gpencil_calc_stroke_uv(ob, gps);

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -2899,10 +2899,6 @@ msgid "Change alpha transparency based on a material attribute"
 msgstr "पदार्थ"
 
 
-msgid "Burn"
-msgstr "जलाएँ"
-
-
 msgid "Circles"
 msgstr "चक्र"
 
@@ -4454,22 +4450,6 @@ msgstr "देरी"
 
 msgid "Sync"
 msgstr "संकालन"
-
-
-msgid "X 2"
-msgstr "२ एक्स"
-
-
-msgid "Y 2"
-msgstr "Y २"
-
-
-msgid "X 1"
-msgstr "एक्स १"
-
-
-msgid "Y 1"
-msgstr "Y १"
 
 
 msgctxt "Operator"

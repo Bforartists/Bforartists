@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: 2019-07-22 21:03+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -25786,10 +25786,6 @@ msgid "Change line color along stroke"
 msgstr "스트로크를 따라 라인 컬러를 변경"
 
 
-msgid "Burn"
-msgstr "번"
-
-
 msgid "Dodge"
 msgstr "닷지"
 
@@ -26937,6 +26933,10 @@ msgid "Tracking"
 msgstr "트레킹"
 
 
+msgid "Fractional Zoom"
+msgstr "소수 줌"
+
+
 msgid "Collection Specials"
 msgstr "컬렉션 지정"
 
@@ -27051,10 +27051,6 @@ msgstr "페이스를 표시/숨기기"
 
 msgid "Weld/Align"
 msgstr "밀착/정렬"
-
-
-msgid "Fractional Zoom"
-msgstr "소수 줌"
 
 
 msgctxt "Operator"
@@ -36186,12 +36182,12 @@ msgid "Vector Math"
 msgstr "벡터 수학"
 
 
-msgid "Dot Product"
-msgstr "내적"
-
-
 msgid "Cross Product"
 msgstr "벡터의 외적"
+
+
+msgid "Dot Product"
+msgstr "내적"
 
 
 msgid "Vector Transform"
@@ -40458,48 +40454,8 @@ msgid "Bonesize"
 msgstr "본크기"
 
 
-msgid "Bone_Envelope"
-msgstr "Bone_Envelope"
-
-
-msgid "Bone_Envelope_Distance"
-msgstr "Bone_Envelope_Distance"
-
-
-msgid "Curve_Shrinkfatten"
-msgstr "Curve_Shrinkfatten"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "Mask_Shrinkfatten"
-
-
-msgid "GPencil_Shrinkfatten"
-msgstr "GPencil_Shrinkfatten"
-
-
-msgid "Bone_Roll"
-msgstr "Bone_Roll"
-
-
-msgid "Time_Translate"
-msgstr "Time_Translate"
-
-
-msgid "Time_Slide"
-msgstr "Time_Slide"
-
-
-msgid "Time_Scale"
-msgstr "Time_Scale"
-
-
-msgid "Time_Extend"
-msgstr "Time_Extend"
-
-
-msgid "Bake_Time"
-msgstr "Bake_Time"
+msgid "Time Scale"
+msgstr "타임 축적"
 
 
 msgid "Bweight"
@@ -40516,10 +40472,6 @@ msgstr "에지 슬라이드"
 
 msgid "Sequence Slide"
 msgstr "시퀀스 슬라이드"
-
-
-msgid "GPencil_Opacity"
-msgstr "GPencil_Opacity"
 
 
 msgctxt "Operator"
@@ -40714,10 +40666,6 @@ msgstr "커브를 따라 이미 선택된 하나를 따라가는 컨트롤 포�
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "체커 선택 취소"
-
-
-msgid "Deselect every other vertex"
-msgstr "다른 모든 버텍스를 선택 취소"
 
 
 msgid "Nth Element"
@@ -43662,10 +43610,6 @@ msgstr "그리스 펜슬 스트로크의 페인트 모드를 들어가기/나가
 msgctxt "Operator"
 msgid "Paste Strokes"
 msgstr "스트로크를 붙여 넣기"
-
-
-msgid "Paste previously copied strokes or copy and merge in active layer"
-msgstr "이전에 복사한 스트로크를 붙여 넣거나 활성 레이어에 복사 및 병합"
 
 
 msgctxt "Operator"
@@ -56186,22 +56130,6 @@ msgid "Join selected areas into new window"
 msgstr "새로운 창으로 선택된 영역을 합치기"
 
 
-msgid "X 2"
-msgstr "X 2"
-
-
-msgid "Y 2"
-msgstr "Y 2"
-
-
-msgid "X 1"
-msgstr "X 1"
-
-
-msgid "Y 1"
-msgstr "Y 1"
-
-
 msgctxt "Operator"
 msgid "Move Area Edges"
 msgstr "영역 에지를 이동"
@@ -56334,10 +56262,6 @@ msgstr "새로운 화면을 추가"
 msgctxt "Operator"
 msgid "Redo Last"
 msgstr "마지막 다시 실행"
-
-
-msgid "Display menu for last action performed"
-msgstr "실행된 마지막 작업에 대한 메뉴를 표시"
 
 
 msgctxt "Operator"
@@ -58980,15 +58904,6 @@ msgstr "번역을 다시 불러오기"
 
 msgid "Force a full reload of UI translation"
 msgstr "UI 번역의 전체 다시 불러오기를 강제"
-
-
-msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "텍스트 블록으로 보고서"
-
-
-msgid "Write the reports "
-msgstr "보고서를 작성 "
 
 
 msgctxt "Operator"
@@ -71252,10 +71167,6 @@ msgid "Number of simulation steps taken per second (higher values are more accur
 msgstr "초당 수행된 시뮬레이션 단계 수 (높은 값은 더 정확하지만 느림)"
 
 
-msgid "Time Scale"
-msgstr "타임 축적"
-
-
 msgid "Change the speed of the simulation"
 msgstr "시뮬레이션의 속력를 변경"
 
@@ -75242,14 +75153,6 @@ msgstr "커브 극단을 표시"
 
 msgid "Mark keyframes where the key value flow changes direction, based on comparison with adjacent keys"
 msgstr "인접한 키와 비교하여, 키 값 흐름이 방향을 변경하는 키 프레임을 표시"
-
-
-msgid "Show Frame Number Indicator"
-msgstr "프레임 번호 지표를 표시"
-
-
-msgid "Show frame number beside the current frame indicator line"
-msgstr "현재 프레임의 표시 라인 옆에 프레임 번호를 표시"
 
 
 msgid "Show Group Colors"
@@ -79546,10 +79449,6 @@ msgid "Move is affected by snapping settings"
 msgstr "이동이 스냅 설정에 의해 영향을받습니다"
 
 
-msgid "Only Origins"
-msgstr "오직 오리진 만"
-
-
 msgid "Manipulate origins (object, pose and weight paint mode only)"
 msgstr "오리진 조작 (오브젝트, 포즈 및 웨이트 페인트 모드 만 해당)"
 
@@ -82912,6 +82811,10 @@ msgid "Autolock Inactive Layers"
 msgstr "비활성 레이어를 자동 잠금"
 
 
+msgid "Show Only On Keyframed"
+msgstr "키 프레임에 만 표시"
+
+
 msgid "Before"
 msgstr "이전"
 
@@ -82936,10 +82839,6 @@ msgstr "기타를 숨기기"
 msgctxt "Operator"
 msgid "New Layer"
 msgstr "새로운 레이어"
-
-
-msgid "Show Only On Keyframed"
-msgstr "키 프레임에 만 표시"
 
 
 msgid "Multiuser datablock not supported"
@@ -83836,11 +83735,6 @@ msgstr "데이터 소스:"
 
 msgid "Select:"
 msgstr "선택:"
-
-
-msgctxt "Operator"
-msgid "Paste & Merge"
-msgstr "붙여 넣기 & 병합"
 
 
 msgctxt "Operator"
@@ -85130,10 +85024,6 @@ msgid "Timecode Index"
 msgstr "타임코드 인덱스"
 
 
-msgid "Zoom %d:%d"
-msgstr "줌 %d:%d"
-
-
 msgctxt "Operator"
 msgid "Set Wall"
 msgstr "벽을 설정"
@@ -85186,6 +85076,11 @@ msgstr "회전/축적에 대한 트랙"
 
 
 msgctxt "Operator"
+msgid "Zoom d:d"
+msgstr "줌 d:d"
+
+
+msgctxt "Operator"
 msgid "View Fit"
 msgstr "뷰 맞추기"
 
@@ -85207,6 +85102,10 @@ msgstr "셰이프 포인트를 다시 키"
 
 msgid "Solve error: %.4f"
 msgstr "솔브 오류: %.4f"
+
+
+msgid "Zoom d:d"
+msgstr "줌 d:d"
 
 
 msgctxt "Operator"
@@ -85596,11 +85495,6 @@ msgstr "이전 슬롯사이클 렌더"
 
 
 msgctxt "Operator"
-msgid "Zoom d:d"
-msgstr "줌 d:d"
-
-
-msgctxt "Operator"
 msgid "Replace..."
 msgstr "교체..."
 
@@ -85640,8 +85534,8 @@ msgid "Mirror Y"
 msgstr "미러 Y"
 
 
-msgid "Zoom d:d"
-msgstr "줌 d:d"
+msgid "Zoom %d:%d"
+msgstr "줌 %d:%d"
 
 
 msgctxt "Operator"
@@ -90626,10 +90520,6 @@ msgid "Non-Keyboard Shortcut"
 msgstr "비 키보드 단축 키"
 
 
-msgid "Shift+Left Mouse"
-msgstr "Shift+Left Mouse"
-
-
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
 msgstr "키보드 단축키 만 편집할 수 있습니다. 그렇지 않으면 사용자 환경 설정을 사용하십시오"
 
@@ -91725,28 +91615,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "편집 모드에서 지오메트리을 추가 할 수 없습니다"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "편집 모드에서 테스페이스를 추가 할 수 없습니다"
-
-
-msgid "Cannot add tessfaces to a mesh that already has polygons"
-msgstr "이미 폴리곤을 가지고 있는 메쉬에 Tessfaces를 추가 할 수 없습니다"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "편집 모드에서 에지를 추가 할 수 없습니다"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "편집 모드에서 버텍스를 추가 할 수 없습니다"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "편집 모드에서 페이스를 제거 할 수 없습니다"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "메쉬에 포함된 것보다 더 많은 페이스를 제거할 수 없습니다"
 
 
 msgid "Cannot remove edges in edit mode"
@@ -92925,18 +92799,6 @@ msgstr "이 방향으로 이동하는 더 이상의 키 프레임이 없습니�
 
 msgid "No more markers to jump to in this direction"
 msgstr "이 방향으로 이동하는 더 이상의 키 마커가 없습니다"
-
-
-msgid "Global areas (Top Bar, Status Bar) do not support joining"
-msgstr "글로벌 영역 (상단 바, 상태 표시줄)은 합치기를 지원하지 않습니다"
-
-
-msgid "Only window region can be 4-splitted"
-msgstr "창 지역만 4 분할 가능"
-
-
-msgid "Only last region can be 4-splitted"
-msgstr "마지막 지역만 4 분할 가능"
 
 
 msgid "No fullscreen areas were found"
@@ -97146,10 +97008,6 @@ msgstr "신뢰할 수있는 소스 [신뢰할 수없는 경로]"
 
 msgid "Allow Execution"
 msgstr "실행 허용"
-
-
-msgid "Discard Changes"
-msgstr "변경 사항을 포기"
 
 
 msgid "unable to open the file"
