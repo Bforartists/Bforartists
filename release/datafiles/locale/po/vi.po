@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -25903,10 +25903,6 @@ msgid "Change line color along stroke"
 msgstr "Đổi màu net theo nét"
 
 
-msgid "Burn"
-msgstr "Đốt"
-
-
 msgid "Dodge"
 msgstr "Né"
 
@@ -27062,6 +27058,10 @@ msgid "Tracking"
 msgstr "Theo Đõi"
 
 
+msgid "Fractional Zoom"
+msgstr "Phóng To Số Phân"
+
+
 msgid "Collection Specials"
 msgstr "Sưu Tập Đặc Biệt"
 
@@ -27180,10 +27180,6 @@ msgstr "Hiện/Ẳn Mặt"
 
 msgid "Weld/Align"
 msgstr "Hàn/Sắp Xếp"
-
-
-msgid "Fractional Zoom"
-msgstr "Phóng To Số Phân"
 
 
 msgid "Info Context Menu"
@@ -36327,12 +36323,12 @@ msgid "Vector Math"
 msgstr "Toán Vectơ"
 
 
-msgid "Dot Product"
-msgstr "Tích Vô Hướng"
-
-
 msgid "Cross Product"
 msgstr "Tích Có Hướng"
+
+
+msgid "Dot Product"
+msgstr "Tích Vô Hướng"
 
 
 msgid "Vector Transform"
@@ -40612,48 +40608,8 @@ msgid "Bonesize"
 msgstr "KíchCỡXương"
 
 
-msgid "Bone_Envelope"
-msgstr "BaoBì_Xương"
-
-
-msgid "Bone_Envelope_Distance"
-msgstr "KhoảngCách_BaoBì_Xương"
-
-
-msgid "Curve_Shrinkfatten"
-msgstr "ThuNhỏPhìnhMập_ĐườngCong"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "ThuNhỏPhìnhMập_MặtNạ"
-
-
-msgid "GPencil_Shrinkfatten"
-msgstr "ThuNhỏPhìnhMập_BútSáp"
-
-
-msgid "Bone_Roll"
-msgstr "Lăn_Xương"
-
-
-msgid "Time_Translate"
-msgstr "Dịch_ThờiGian"
-
-
-msgid "Time_Slide"
-msgstr "Trượt_ThờiGian"
-
-
-msgid "Time_Scale"
-msgstr "GiaiĐiệu_ThờiGian"
-
-
-msgid "Time_Extend"
-msgstr "KéoDài_ThờiGian"
-
-
-msgid "Bake_Time"
-msgstr "Nướng_ThờiGian"
+msgid "Time Scale"
+msgstr "Giai Điệu Thời Gian"
 
 
 msgid "Bweight"
@@ -40670,10 +40626,6 @@ msgstr "Trượt Cạnh"
 
 msgid "Sequence Slide"
 msgstr "Trượt Trình Tự"
-
-
-msgid "GPencil_Opacity"
-msgstr "ĐộĐục_BútSắp"
 
 
 msgctxt "Operator"
@@ -40868,10 +40820,6 @@ msgstr "Chọn điểm điều khiển trên đường cong tiếp theo sau các
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "Thá Lẻ"
-
-
-msgid "Deselect every other vertex"
-msgstr "Buông các đỉnh lẻ"
 
 
 msgid "Nth Element"
@@ -43816,10 +43764,6 @@ msgstr "Vào/Thoát chế độ sơn cho nét Bút Sáp"
 msgctxt "Operator"
 msgid "Paste Strokes"
 msgstr "Dán Nét"
-
-
-msgid "Paste previously copied strokes or copy and merge in active layer"
-msgstr "Dán nét được chép rồi hay chép lại và gồm trong lớp hoạt động"
 
 
 msgctxt "Operator"
@@ -56424,22 +56368,6 @@ msgid "Join selected areas into new window"
 msgstr "Kết nối khu vực được chọn thành cửa sổ mới  "
 
 
-msgid "X 2"
-msgstr "X 2"
-
-
-msgid "Y 2"
-msgstr "Y 2"
-
-
-msgid "X 1"
-msgstr "X 1"
-
-
-msgid "Y 1"
-msgstr "Y 1"
-
-
 msgctxt "Operator"
 msgid "Move Area Edges"
 msgstr "Di Chuyển Cạnh Khu Vực"
@@ -56572,10 +56500,6 @@ msgstr "Thêm màn mới"
 msgctxt "Operator"
 msgid "Redo Last"
 msgstr "Làm Lại Cuối Cùng"
-
-
-msgid "Display menu for last action performed"
-msgstr "Hiển thị danh bạ cho hành động cuối được thực hành"
 
 
 msgctxt "Operator"
@@ -59248,15 +59172,6 @@ msgstr "Nhập Lại Phiên Dịch"
 
 msgid "Force a full reload of UI translation"
 msgstr "Bắt nhập lại phiên dịch của giao diện"
-
-
-msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "Biên Bản Vào Cục Dữ Liệu Văn Bản"
-
-
-msgid "Write the reports "
-msgstr "Ghi biên bản"
 
 
 msgctxt "Operator"
@@ -71641,10 +71556,6 @@ msgid "Number of simulation steps taken per second (higher values are more accur
 msgstr "Số lượng bước mô phỏng được tính mỗi giây (giá trị càng cao càng chính xác nhưng càng chậm)"
 
 
-msgid "Time Scale"
-msgstr "Giai Điệu Thời Gian"
-
-
 msgid "Change the speed of the simulation"
 msgstr "Đổi tốc độ của mô phỏng"
 
@@ -75647,14 +75558,6 @@ msgstr "Hiện Đường Cong Cực Đoan"
 
 msgid "Mark keyframes where the key value flow changes direction, based on comparison with adjacent keys"
 msgstr "Ký hiệu bức mẫu khi giá trí bức mẫu được đổi hướng, tùy so sánh với bức mẫu kề"
-
-
-msgid "Show Frame Number Indicator"
-msgstr "Hiện Biển Số Bức"
-
-
-msgid "Show frame number beside the current frame indicator line"
-msgstr "Hiện số bức kề bên đường chỉ bức hiện tại"
 
 
 msgid "Show Group Colors"
@@ -79951,10 +79854,6 @@ msgid "Move is affected by snapping settings"
 msgstr "Chuyển động được ảnh hưởng bằng cài đặt hút dính"
 
 
-msgid "Only Origins"
-msgstr "Chỉ Gốc Tọa Độ"
-
-
 msgid "Manipulate origins (object, pose and weight paint mode only)"
 msgstr "Vận dụng gốc tọa độ (chỉ cho chế độ vật thể, dạng đứng, và sơn quyền lượng)"
 
@@ -83330,6 +83229,10 @@ msgid "Autolock Inactive Layers"
 msgstr "Tự Động Khóa Lớp Không Hoạt Động"
 
 
+msgid "Show Only On Keyframed"
+msgstr "Chỉ Hiện Trên Có Bức Mẫu"
+
+
 msgid "Before"
 msgstr "Trước"
 
@@ -83354,10 +83257,6 @@ msgstr "Ẩn Khác"
 msgctxt "Operator"
 msgid "New Layer"
 msgstr "Lớp Mới"
-
-
-msgid "Show Only On Keyframed"
-msgstr "Chỉ Hiện Trên Có Bức Mẫu"
 
 
 msgid "Multiuser datablock not supported"
@@ -84259,11 +84158,6 @@ msgstr "Nguồn Dữ Liệu:"
 
 msgid "Select:"
 msgstr "Chọn:"
-
-
-msgctxt "Operator"
-msgid "Paste & Merge"
-msgstr "Dán & Gồm"
 
 
 msgctxt "Operator"
@@ -85553,10 +85447,6 @@ msgid "Timecode Index"
 msgstr "Chỉ Số Mã Thời Gian"
 
 
-msgid "Zoom %d:%d"
-msgstr "Phóng To %d:%d"
-
-
 msgctxt "Operator"
 msgid "Set Wall"
 msgstr "Đặt Tường"
@@ -85609,6 +85499,11 @@ msgstr "Theo Dõi Cho Xoay/Phóng To"
 
 
 msgctxt "Operator"
+msgid "Zoom d:d"
+msgstr "Phóng Vào d:d"
+
+
+msgctxt "Operator"
 msgid "View Fit"
 msgstr "Vừa Màn"
 
@@ -85630,6 +85525,10 @@ msgstr "Đặt Lại Điểm Mẫu Dạng"
 
 msgid "Solve error: %.4f"
 msgstr "Sai lầm giải nghiệm: %.4f"
+
+
+msgid "Zoom d:d"
+msgstr "Phóng To d:d"
 
 
 msgctxt "Operator"
@@ -86074,11 +85973,6 @@ msgstr "Khe Kết xuất Chu Trình Trước"
 
 
 msgctxt "Operator"
-msgid "Zoom d:d"
-msgstr "Phóng Vào d:d"
-
-
-msgctxt "Operator"
 msgid "Replace..."
 msgstr "Thay Thế..."
 
@@ -86118,8 +86012,8 @@ msgid "Mirror Y"
 msgstr "Gương Y"
 
 
-msgid "Zoom d:d"
-msgstr "Phóng To d:d"
+msgid "Zoom %d:%d"
+msgstr "Phóng To %d:%d"
 
 
 msgctxt "Operator"
@@ -91260,10 +91154,6 @@ msgid "Non-Keyboard Shortcut"
 msgstr "Phím Tắt Vô Bàn Phím"
 
 
-msgid "Shift+Left Mouse"
-msgstr "Shift+Trái Chuột"
-
-
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
 msgstr "Chỉ phím tắt bàn phím có thể biên tập kiểu này, cho trường hợp khác làm ơn dùng Tùy Chọn Người Dùng"
 
@@ -92363,28 +92253,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "Không thể thêm hình dạng trong chế độ biên tập"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "Không thể thêm mặt phân hóa trong chế độ biên tập"
-
-
-msgid "Cannot add tessfaces to a mesh that already has polygons"
-msgstr "Không thể thêm mặt phân hóa trong chế độ biên tập"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "Không thể thêm cạnh trong chế độ biên tập"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "Không thể thêm đỉnh trong chế độ biên tập"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "Không thể xóa mặt trong chế độ biên tập"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "Không thể xóa số lượng mặt hơn thì có trong mạng lưới"
 
 
 msgid "Cannot remove edges in edit mode"
@@ -93571,18 +93445,6 @@ msgstr "Không còn bức mẫu nữa cho nhảy hướng này"
 
 msgid "No more markers to jump to in this direction"
 msgstr "Không còn ký hiệu nữa cho nhảy hướng này"
-
-
-msgid "Global areas (Top Bar, Status Bar) do not support joining"
-msgstr "Khu vực toàn cầu (Thanh Trên, Thanh Trạng Thái) không hỗ trợ kết nối"
-
-
-msgid "Only window region can be 4-splitted"
-msgstr "Chỉ khu vực cửa sổ có thể bị chẻ thành màn tư"
-
-
-msgid "Only last region can be 4-splitted"
-msgstr "Chỉ vùng cuối có thể chẻ thành màn tư"
 
 
 msgid "No fullscreen areas were found"
@@ -97784,10 +97646,6 @@ msgstr "Nguồn Tin Tưởng [Đường Dẫn Không Tin]"
 
 msgid "Allow Execution"
 msgstr "Cho Thức Hành"
-
-
-msgid "Discard Changes"
-msgstr "Bỏ Sự Sửa Đổi"
 
 
 msgid "unable to open the file"

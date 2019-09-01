@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -11027,10 +11027,6 @@ msgid "Specular Hardness"
 msgstr "Glanzlichthärte"
 
 
-msgid "Burn"
-msgstr "Nachbelichten"
-
-
 msgid "Dodge"
 msgstr "Abwedeln"
 
@@ -15510,12 +15506,12 @@ msgid "Vector Math"
 msgstr "Mathematischer Vektor"
 
 
-msgid "Dot Product"
-msgstr "Skalarprodukt"
-
-
 msgid "Cross Product"
 msgstr "Kreuzprodukt"
+
+
+msgid "Dot Product"
+msgstr "Skalarprodukt"
 
 
 msgid "Vector Transform"
@@ -17621,8 +17617,8 @@ msgid "Bonesize"
 msgstr "Knochengröße"
 
 
-msgid "Mask_Shrinkfatten"
-msgstr "Schrumpfen/Vergrößern"
+msgid "Time Scale"
+msgstr "Zeitskalierung"
 
 
 msgid "Align"
@@ -17768,10 +17764,6 @@ msgstr "Nächstes auswählen"
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "Entfernung prüfen"
-
-
-msgid "Deselect every other vertex"
-msgstr "Vertexgruppe abwählen"
 
 
 msgctxt "Operator"
@@ -24860,11 +24852,6 @@ msgstr "Verschieben"
 
 
 msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "Textblock erstellen"
-
-
-msgctxt "Operator"
 msgid "Reset to Default Value"
 msgstr "Auf Standardwert zurücksetzen"
 
@@ -29279,10 +29266,6 @@ msgid "Steps Per Second"
 msgstr "Bilder pro Sekunde"
 
 
-msgid "Time Scale"
-msgstr "Zeitskalierung"
-
-
 msgid "Plasticity"
 msgstr "Plastizität"
 
@@ -30549,14 +30532,6 @@ msgstr "Formschlüssel-Editor"
 
 msgid "Show the status of cached frames in the timeline"
 msgstr "Status der zwischengespeicherten Einzelbilder in der Zeitleiste anzeigen"
-
-
-msgid "Show Frame Number Indicator"
-msgstr "Einzelbildnummer-Indikator anzeigen"
-
-
-msgid "Show frame number beside the current frame indicator line"
-msgstr "Einzelbildnummer neben der der aktuellen Einzelbildindikatorzeile anzeigen"
 
 
 msgid "Show Group Colors"
@@ -36143,10 +36118,6 @@ msgid "Selection not supported in object mode"
 msgstr "Wird im Skulpturmodus nicht unterstützt"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "Diese Kurven im Bearbeitungsmodus ausblenden"
-
-
 msgid "No mesh data to join"
 msgstr "Keine Meshdaten zum Anschließen"
 
@@ -36399,14 +36370,6 @@ msgstr "Kacheln"
 
 msgid "Maximize Area"
 msgstr "Flächenbereich maximieren"
-
-
-msgid "Only window region can be 4-splitted"
-msgstr "Nur Fensterbereiche können 4-fach geteilt werden"
-
-
-msgid "Only last region can be 4-splitted"
-msgstr "Nur letzte Bereiche können 4-fach geteilt werden"
 
 
 msgid "No fullscreen areas were found"

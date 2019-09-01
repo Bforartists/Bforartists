@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -14903,36 +14903,8 @@ msgid "Bonesize"
 msgstr "Bengrupper"
 
 
-msgid "Bone_Envelope"
-msgstr "Benomslutning"
-
-
-msgid "Curve_Shrinkfatten"
-msgstr "Krympa/Förtjocka"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "Krympa/Förtjocka"
-
-
-msgid "Bone_Roll"
-msgstr "Massiv"
-
-
-msgid "Time_Slide"
+msgid "Time Scale"
 msgstr "Skala"
-
-
-msgid "Time_Scale"
-msgstr "Skala"
-
-
-msgid "Time_Extend"
-msgstr "Utvidga"
-
-
-msgid "Bake_Time"
-msgstr "Zooma Ut"
 
 
 msgid "Bweight"
@@ -15086,10 +15058,6 @@ msgstr "Markera Rad"
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "Visa inställningar för kant"
-
-
-msgid "Deselect every other vertex"
-msgstr "Markera Rad"
 
 
 msgctxt "Operator"
@@ -23009,11 +22977,6 @@ msgstr "Lägg till Stripp"
 
 
 msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "Rensa Rotation"
-
-
-msgctxt "Operator"
 msgid "Reset to Default Value"
 msgstr "Förvalt övertoning"
 
@@ -26517,10 +26480,6 @@ msgstr "Bas"
 
 msgid "Steps Per Second"
 msgstr "Bana"
-
-
-msgid "Time Scale"
-msgstr "Skala"
 
 
 msgid "Settings for particle fluids physics"
@@ -32507,24 +32466,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "Markera Länkad"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "Markering till omarkerade grannar"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "Markera Länkad"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "Markera Länkad"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "Visa ytors normaler som linjer"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "Visa ytors normaler som linjer"
 
 
 msgid "Cannot remove edges in edit mode"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -11689,40 +11689,8 @@ msgid "Trackball"
 msgstr "Trackball"
 
 
-msgid "Bone_Envelope"
-msgstr "Kemik Kısıtlamaları"
-
-
-msgid "Curve_Shrinkfatten"
-msgstr "Eğri Önayarı"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "Eğri Önayarı"
-
-
-msgid "Bone_Roll"
-msgstr "Kemik Kısıtlamaları"
-
-
-msgid "Time_Translate"
-msgstr "Araç ipuçlarını tercüme et"
-
-
-msgid "Time_Slide"
-msgstr "Vertex Slide"
-
-
-msgid "Time_Scale"
+msgid "Time Scale"
 msgstr "Döndürme & Ölçek"
-
-
-msgid "Time_Extend"
-msgstr "Tahmini Uzat"
-
-
-msgid "Bake_Time"
-msgstr "Bitiş Zamanı"
 
 
 msgid "Align"
@@ -11839,10 +11807,6 @@ msgstr "Sonrakini seç"
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "Falloff Mesafesi"
-
-
-msgid "Deselect every other vertex"
-msgstr "Yeni bir nokta grubu oluşturur"
 
 
 msgctxt "Operator"
@@ -17884,11 +17848,6 @@ msgstr "Kırpma Kullan"
 
 
 msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "Metin bağlarına gözat"
-
-
-msgctxt "Operator"
 msgid "Reset to Default Value"
 msgstr "Ses aramak için varsayılan dizin"
 
@@ -21022,10 +20981,6 @@ msgstr "Doğrusal Bozulma"
 
 msgid "Steps Per Second"
 msgstr "Saniyede kare sayısı"
-
-
-msgid "Time Scale"
-msgstr "Döndürme & Ölçek"
 
 
 msgid "Interaction Radius"
@@ -26443,23 +26398,11 @@ msgid "Cannot add geometry in edit mode"
 msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
 
 
 msgid "Cannot add vertices in edit mode"
-msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
-
-
-msgid "Cannot remove more faces than the mesh contains"
 msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
 
 

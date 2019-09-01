@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -25723,10 +25723,6 @@ msgid "Change line color along stroke"
 msgstr "Змінювати колір лінії уздовж штриха"
 
 
-msgid "Burn"
-msgstr "Затемнити"
-
-
 msgid "Dodge"
 msgstr "Освітлити"
 
@@ -26870,6 +26866,10 @@ msgid "Tracking"
 msgstr "Стеження"
 
 
+msgid "Fractional Zoom"
+msgstr "Фракційне Зумування"
+
+
 msgid "Collection Specials"
 msgstr "Колекція Спеціальне"
 
@@ -26984,10 +26984,6 @@ msgstr "Показати/приховати грані"
 
 msgid "Weld/Align"
 msgstr "Зчепити/вирівняти"
-
-
-msgid "Fractional Zoom"
-msgstr "Фракційне Зумування"
 
 
 msgctxt "Operator"
@@ -36114,12 +36110,12 @@ msgid "Vector Math"
 msgstr "Векторна математика"
 
 
-msgid "Dot Product"
-msgstr "Скал. добуток"
-
-
 msgid "Cross Product"
 msgstr "Векторний добуток"
+
+
+msgid "Dot Product"
+msgstr "Скал. добуток"
 
 
 msgid "Vector Transform"
@@ -40386,48 +40382,8 @@ msgid "Bonesize"
 msgstr "РозмірКістки"
 
 
-msgid "Bone_Envelope"
-msgstr "Оболонка_кістки"
-
-
-msgid "Bone_Envelope_Distance"
-msgstr "Відстань оболонки кістки"
-
-
-msgid "Curve_Shrinkfatten"
-msgstr "Крива_стиснути-розширити"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "Маска_стиснути-розширити"
-
-
-msgid "GPencil_Shrinkfatten"
-msgstr "НарОлівець_Стискроздув"
-
-
-msgid "Bone_Roll"
-msgstr "Вертіння_кістки"
-
-
-msgid "Time_Translate"
-msgstr "Пересунення_часу"
-
-
-msgid "Time_Slide"
-msgstr "Зсув_часу"
-
-
-msgid "Time_Scale"
-msgstr "Масштаб_часу"
-
-
-msgid "Time_Extend"
-msgstr "Розширення_часу"
-
-
-msgid "Bake_Time"
-msgstr "Запікання_часу"
+msgid "Time Scale"
+msgstr "Часова шкала"
 
 
 msgid "Bweight"
@@ -40444,10 +40400,6 @@ msgstr "Зсув ребер"
 
 msgid "Sequence Slide"
 msgstr "Пересунути послідовність"
-
-
-msgid "GPencil_Opacity"
-msgstr "GPencil_Opacity"
 
 
 msgctxt "Operator"
@@ -40642,10 +40594,6 @@ msgstr "Вибрати керувальні точки вздовж кривих
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "Зняти вибір шахівницею"
-
-
-msgid "Deselect every other vertex"
-msgstr "Зняти вибір кожної другої вершини"
 
 
 msgid "Nth Element"
@@ -43590,10 +43538,6 @@ msgstr "Увійти/вийти з режиму малювання для штр
 msgctxt "Operator"
 msgid "Paste Strokes"
 msgstr "Вставити штрихи"
-
-
-msgid "Paste previously copied strokes or copy and merge in active layer"
-msgstr "Вставити на активний шар раніше скопійовані штрихи або скопіювати та об'єднати їх"
 
 
 msgctxt "Operator"
@@ -56109,22 +56053,6 @@ msgid "Join selected areas into new window"
 msgstr "Сполучити вибрані області у нове вікно"
 
 
-msgid "X 2"
-msgstr "X 2"
-
-
-msgid "Y 2"
-msgstr "Y 2"
-
-
-msgid "X 1"
-msgstr "X 1"
-
-
-msgid "Y 1"
-msgstr "Y 1"
-
-
 msgctxt "Operator"
 msgid "Move Area Edges"
 msgstr "Пересунути межі області"
@@ -56257,10 +56185,6 @@ msgstr "Додати новий екран"
 msgctxt "Operator"
 msgid "Redo Last"
 msgstr "Повторити останнє"
-
-
-msgid "Display menu for last action performed"
-msgstr "Показати меню для останньої виконаної дії"
 
 
 msgctxt "Operator"
@@ -58903,15 +58827,6 @@ msgstr "Перезавантажити переклад"
 
 msgid "Force a full reload of UI translation"
 msgstr "Примусово оновити переклад інтерфейсу"
-
-
-msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "Звіти у текстовий блок"
-
-
-msgid "Write the reports "
-msgstr "Написати звіти"
 
 
 msgctxt "Operator"
@@ -71083,10 +70998,6 @@ msgid "Number of simulation steps taken per second (higher values are more accur
 msgstr "Кількість кроків моделювання на секунду (більші значення - точніше, але повільніше)"
 
 
-msgid "Time Scale"
-msgstr "Часова шкала"
-
-
 msgid "Change the speed of the simulation"
 msgstr "Змінити швидкість моделювання"
 
@@ -75073,14 +74984,6 @@ msgstr "Показ Екстремумів Кривої"
 
 msgid "Mark keyframes where the key value flow changes direction, based on comparison with adjacent keys"
 msgstr "Помічати ключкадри, де потік значень ключів змінює напрямок, на основі порівняння із суміжними ключами"
-
-
-msgid "Show Frame Number Indicator"
-msgstr "Показувати індикатор номера кадру"
-
-
-msgid "Show frame number beside the current frame indicator line"
-msgstr "Показати номер кадру поруч з лінією-індикатором поточного кадру"
 
 
 msgid "Show Group Colors"
@@ -79377,10 +79280,6 @@ msgid "Move is affected by snapping settings"
 msgstr "Устави підхоплення впливають на переміщення"
 
 
-msgid "Only Origins"
-msgstr "Лише Початки"
-
-
 msgid "Manipulate origins (object, pose and weight paint mode only)"
 msgstr "Маніпулювати початками (лише режими об'єкт, поза та малювання вагомостей)"
 
@@ -82710,6 +82609,10 @@ msgid "Autolock Inactive Layers"
 msgstr "Автоблокувати Неактивні Шари"
 
 
+msgid "Show Only On Keyframed"
+msgstr "Показати Лише На Ключкадрованому"
+
+
 msgid "Before"
 msgstr "Перед"
 
@@ -82734,10 +82637,6 @@ msgstr "Сховати інше"
 msgctxt "Operator"
 msgid "New Layer"
 msgstr "Новий шар"
-
-
-msgid "Show Only On Keyframed"
-msgstr "Показати Лише На Ключкадрованому"
 
 
 msgid "Multiuser datablock not supported"
@@ -83634,11 +83533,6 @@ msgstr "Джерело даних:"
 
 msgid "Select:"
 msgstr "Виділення:"
-
-
-msgctxt "Operator"
-msgid "Paste & Merge"
-msgstr "Вставити і злити"
 
 
 msgctxt "Operator"
@@ -84924,10 +84818,6 @@ msgid "Timecode Index"
 msgstr "Індекс Часкоду"
 
 
-msgid "Zoom %d:%d"
-msgstr "Зумування %d:%d"
-
-
 msgctxt "Operator"
 msgid "Set Wall"
 msgstr "Задати стіну"
@@ -84980,6 +84870,11 @@ msgstr "Стежки для обертання/масштабу"
 
 
 msgctxt "Operator"
+msgid "Zoom d:d"
+msgstr "Зум d:d"
+
+
+msgctxt "Operator"
 msgid "View Fit"
 msgstr "Підігнати огляд"
 
@@ -85001,6 +84896,10 @@ msgstr "Переключувати точки форми"
 
 msgid "Solve error: %.4f"
 msgstr "Помилка обчислювача: %.4f"
+
+
+msgid "Zoom d:d"
+msgstr "Зум d:d"
 
 
 msgctxt "Operator"
@@ -85390,11 +85289,6 @@ msgstr "Попереднє Гніздо Рендера"
 
 
 msgctxt "Operator"
-msgid "Zoom d:d"
-msgstr "Зум d:d"
-
-
-msgctxt "Operator"
 msgid "Replace..."
 msgstr "Заміна..."
 
@@ -85434,8 +85328,8 @@ msgid "Mirror Y"
 msgstr "Дзеркалення Y"
 
 
-msgid "Zoom d:d"
-msgstr "Зум d:d"
+msgid "Zoom %d:%d"
+msgstr "Зумування %d:%d"
 
 
 msgctxt "Operator"
@@ -90423,10 +90317,6 @@ msgid "Non-Keyboard Shortcut"
 msgstr "Не-клавіатурна швидка клавіша"
 
 
-msgid "Shift+Left Mouse"
-msgstr "Shift+Ліва кнопка"
-
-
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
 msgstr "Лише клавіатурні швидкі клавіші можуть таким чином редагуватися, для усіх інших випадків скористайтесь вікном Налаштунки Користувача"
 
@@ -91522,28 +91412,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "Неможливо додавати геометрію у режимі редагування"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "Неможливо додати мозаїчні грані у режимі редагування"
-
-
-msgid "Cannot add tessfaces to a mesh that already has polygons"
-msgstr "Неможливо додати мозаїчні грані у сіть, який вже має багатобічники"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "Неможливо додавати ребра у режимі редагування"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "Неможливо додавати вершини у режимі редагування"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "Неможливо вилучати грані у режимі редагування"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "Неможливо вилучити більше граней, ніж має сіть"
 
 
 msgid "Cannot remove edges in edit mode"
@@ -92722,18 +92596,6 @@ msgstr "У цьому напрямі більше немає ключових к
 
 msgid "No more markers to jump to in this direction"
 msgstr "Немає міток для переходу у цьому напрямі"
-
-
-msgid "Global areas (Top Bar, Status Bar) do not support joining"
-msgstr "Глобальні області (Верхня Смуга, Смуга Статусу) не підтримують сполучення"
-
-
-msgid "Only window region can be 4-splitted"
-msgstr "Можна розділити на 4 лише область вікна"
-
-
-msgid "Only last region can be 4-splitted"
-msgstr "Лише останню область можна розділити на 4"
 
 
 msgid "No fullscreen areas were found"
@@ -96924,10 +96786,6 @@ msgstr "Надійне джерело [Ненадійний шлях]"
 
 msgid "Allow Execution"
 msgstr "Дозвіл Виконання"
-
-
-msgid "Discard Changes"
-msgstr "Відкидання Змін"
 
 
 msgid "unable to open the file"
