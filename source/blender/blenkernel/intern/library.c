@@ -851,8 +851,8 @@ void BKE_id_swap(Main *bmain, ID *id_a, ID *id_b)
   id_b->properties = id_a_back.properties;
 
   /* Swap will have broken internal references to itself, restore them. */
-  BKE_libblock_relink_ex(bmain, id_a, id_b, id_a, false);
-  BKE_libblock_relink_ex(bmain, id_b, id_a, id_b, false);
+  BKE_libblock_relink_ex(bmain, id_a, id_b, id_a, ID_REMAP_SKIP_NEVER_NULL_USAGE);
+  BKE_libblock_relink_ex(bmain, id_b, id_a, id_b, ID_REMAP_SKIP_NEVER_NULL_USAGE);
 }
 
 /** Does *not* set ID->newid pointer. */
@@ -1417,6 +1417,9 @@ void BKE_libblock_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int fla
   const bool use_nodetree_alloc_exception = ((GS(id->name) == ID_NT) && (bmain != NULL) &&
                                              (BLI_findindex(&bmain->nodetrees, id) < 0));
 
+  /* The id->flag bits to copy over. */
+  const int copy_flag_mask = LIB_PRIVATE_DATA;
+
   BLI_assert((flag & LIB_ID_CREATE_NO_MAIN) != 0 || bmain != NULL);
   BLI_assert((flag & LIB_ID_CREATE_NO_MAIN) != 0 || (flag & LIB_ID_CREATE_NO_ALLOCATE) == 0);
   BLI_assert((flag & LIB_ID_CREATE_NO_MAIN) == 0 || (flag & LIB_ID_CREATE_NO_USER_REFCOUNT) != 0);
@@ -1447,6 +1450,8 @@ void BKE_libblock_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int fla
 
     memcpy(cpn + id_offset, cp + id_offset, id_len - id_offset);
   }
+
+  new_id->flag = (new_id->flag & ~copy_flag_mask) | (id->flag & copy_flag_mask);
 
   if (id->properties) {
     new_id->properties = IDP_CopyProperty_ex(id->properties, flag);

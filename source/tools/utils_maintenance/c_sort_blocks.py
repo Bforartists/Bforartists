@@ -46,13 +46,13 @@ def sort_struct_lists(fn, data_src):
     import re
 
     # eg:
-    #    extern StructRNA;
+    #    struct Foo;
     re_match_struct = re.compile(r"struct\s+[A-Za-z_][A-Za-z_0-9]*\s*;")
     # eg:
-    #    extern StructRNA RNA_LightProbe;
+    #    struct Foo Bar;
     re_match_struct_type = re.compile(r"struct\s+[A-Za-z_][A-Za-z_0-9]*\s+[A-Za-z_][A-Za-z_0-9]*\s*;")
 
-    #    typedef struct BMBVHTree BMBVHTree;
+    #    typedef struct Foo Bar;
     re_match_typedef_struct_type = re.compile(r"typedef\s+struct\s+[A-Za-z_][A-Za-z_0-9]*\s+[A-Za-z_][A-Za-z_0-9]*\s*;")
 
     re_match_enum = re.compile(r"enum\s+[A-Za-z_][A-Za-z_0-9]*\s*;")

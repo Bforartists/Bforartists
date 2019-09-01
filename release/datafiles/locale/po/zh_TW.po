@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: 2018-09-23 13:23+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -17940,10 +17940,6 @@ msgid "Change line color along stroke"
 msgstr "沿筆觸變更線條色彩"
 
 
-msgid "Burn"
-msgstr "加深"
-
-
 msgid "Dodge"
 msgstr "減淡"
 
@@ -25692,12 +25688,12 @@ msgid "Vector Math"
 msgstr "向量數學"
 
 
-msgid "Dot Product"
-msgstr "內積"
-
-
 msgid "Cross Product"
 msgstr "向量積"
+
+
+msgid "Dot Product"
+msgstr "內積"
 
 
 msgid "Vector Transform"
@@ -29197,44 +29193,8 @@ msgid "Bonesize"
 msgstr "骨骼大小"
 
 
-msgid "Bone_Envelope"
-msgstr "骨骼封套"
-
-
-msgid "Curve_Shrinkfatten"
-msgstr "曲線收縮擴充"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "遮罩收縮擴充"
-
-
-msgid "GPencil_Shrinkfatten"
-msgstr "蠟筆收縮擴充"
-
-
-msgid "Bone_Roll"
-msgstr "骨骼滾動"
-
-
-msgid "Time_Translate"
-msgstr "時間平移"
-
-
-msgid "Time_Slide"
-msgstr "時間滑動"
-
-
-msgid "Time_Scale"
-msgstr "時間縮放"
-
-
-msgid "Time_Extend"
-msgstr "時間擴展"
-
-
-msgid "Bake_Time"
-msgstr "烘培時間"
+msgid "Time Scale"
+msgstr "時間比例"
 
 
 msgid "Bweight"
@@ -29425,10 +29385,6 @@ msgstr "沿曲線選取緊跟已選取項目的控制點"
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "棋盤交錯式取消選取"
-
-
-msgid "Deselect every other vertex"
-msgstr "取消選取每隔一個的頂點"
 
 
 msgid "Skip"
@@ -39519,22 +39475,6 @@ msgid "Join selected areas into new window"
 msgstr "將所選的區域結合為新視窗"
 
 
-msgid "X 2"
-msgstr "X 2"
-
-
-msgid "Y 2"
-msgstr "Y 2"
-
-
-msgid "X 1"
-msgstr "X 1"
-
-
-msgid "Y 1"
-msgstr "Y 1"
-
-
 msgctxt "Operator"
 msgid "Move Area Edges"
 msgstr "移動區域邊線"
@@ -39649,10 +39589,6 @@ msgstr "添加一個新螢幕"
 msgctxt "Operator"
 msgid "Redo Last"
 msgstr "重做上一步"
-
-
-msgid "Display menu for last action performed"
-msgstr "顯示執行的上一步動作的選單"
 
 
 msgctxt "Operator"
@@ -41754,15 +41690,6 @@ msgstr "重新載入翻譯"
 
 msgid "Force a full reload of UI translation"
 msgstr "強迫 UI 翻譯完全重新載入"
-
-
-msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "報告至文字塊"
-
-
-msgid "Write the reports "
-msgstr "寫入報告"
 
 
 msgctxt "Operator"
@@ -49017,10 +48944,6 @@ msgid "Steps Per Second"
 msgstr "每秒步數"
 
 
-msgid "Time Scale"
-msgstr "時間比例"
-
-
 msgid "Change the speed of the simulation"
 msgstr "變更模擬的速度"
 
@@ -51404,14 +51327,6 @@ msgstr "編輯遮罩編輯器樣條的時機"
 
 msgid "Show the status of cached frames in the timeline"
 msgstr "在時間線上顯示快取幀的狀態"
-
-
-msgid "Show Frame Number Indicator"
-msgstr "顯示幀號指示器"
-
-
-msgid "Show frame number beside the current frame indicator line"
-msgstr "在目前框幀指示器列的旁邊顯示幀號"
 
 
 msgid "Show Group Colors"
@@ -57319,10 +57234,6 @@ msgid "No active plane track"
 msgstr "作用中平面軌道"
 
 
-msgid "Zoom %d:%d"
-msgstr "遠近 %d:%d"
-
-
 msgctxt "Operator"
 msgid "Set Wall"
 msgstr "設定牆壁"
@@ -57605,6 +57516,10 @@ msgstr " Y軸"
 msgctxt "Operator"
 msgid "Unpack"
 msgstr "解包"
+
+
+msgid "Zoom %d:%d"
+msgstr "遠近 %d:%d"
 
 
 msgctxt "Operator"
@@ -60081,10 +59996,6 @@ msgid "Grease Pencil operator is already active"
 msgstr "蠟筆資料操作器已在作用中"
 
 
-msgid "Shift+Left Mouse"
-msgstr "Shift+滑鼠左鍵"
-
-
 msgctxt "Operator"
 msgid "Replace Keyframes"
 msgstr "替換鍵幀"
@@ -60841,24 +60752,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "編輯模式中無法添加幾何"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "編輯模式中無法添加鑲嵌"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "無法在編輯模式中添加邊線"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "無法在編輯模式中添加頂點"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "無法在編輯模式中移除面"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "無法移除超過該網格所含的面數"
 
 
 msgid "Cannot remove edges in edit mode"

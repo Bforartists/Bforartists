@@ -1112,6 +1112,45 @@ def blen_read_geom_layer_smooth(fbx_obj, mesh):
         print("warning layer %r mapping type unsupported: %r" % (fbx_layer.id, fbx_layer_mapping))
         return False
 
+def blen_read_geom_layer_edge_crease(fbx_obj, mesh):
+    fbx_layer = elem_find_first(fbx_obj, b'LayerElementEdgeCrease')
+
+    if fbx_layer is None:
+        return False
+
+    # all should be valid
+    (fbx_layer_name,
+     fbx_layer_mapping,
+     fbx_layer_ref,
+     ) = blen_read_geom_layerinfo(fbx_layer)
+
+    if fbx_layer_mapping != b'ByEdge':
+        return False
+
+    layer_id = b'EdgeCrease'
+    fbx_layer_data = elem_prop_first(elem_find_first(fbx_layer, layer_id))
+
+    # some models have bad edge data, we cant use this info...
+    if not mesh.edges:
+        print("warning skipping edge crease data, no valid edges...")
+        return False
+
+    if fbx_layer_mapping == b'ByEdge':
+        # some models have bad edge data, we cant use this info...
+        if not mesh.edges:
+            print("warning skipping edge crease data, no valid edges...")
+            return False
+
+        blen_data = mesh.edges
+        return blen_read_geom_array_mapped_edge(
+            mesh, blen_data, "crease",
+            fbx_layer_data, None,
+            fbx_layer_mapping, fbx_layer_ref,
+            1, 1, layer_id,
+            )
+    else:
+        print("warning layer %r mapping type unsupported: %r" % (fbx_layer.id, fbx_layer_mapping))
+        return False
 
 def blen_read_geom_layer_normal(fbx_obj, mesh, xform=None):
     fbx_layer = elem_find_first(fbx_obj, b'LayerElementNormal')
@@ -1243,6 +1282,8 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
     # must be after edge, face loading.
     ok_smooth = blen_read_geom_layer_smooth(fbx_obj, mesh)
 
+    ok_crease = blen_read_geom_layer_edge_crease(fbx_obj, mesh)
+
     ok_normals = False
     if settings.use_custom_normals:
         # Note: we store 'temp' normals in loops, since validate() may alter final mesh,
@@ -1275,6 +1316,9 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
 
     if not ok_smooth:
         mesh.polygons.foreach_set("use_smooth", [True] * len(mesh.polygons))
+
+    if ok_crease:
+        mesh.use_customdata_edge_crease = True
 
     if settings.use_custom_props:
         blen_read_custom_properties(fbx_obj, mesh, settings)
@@ -2270,6 +2314,7 @@ def load(operator, context, filepath="",
          decal_offset=0.0,
          use_anim=True,
          anim_offset=1.0,
+         use_subsurf=False,
          use_custom_props=True,
          use_custom_props_enum_as_string=True,
          ignore_leaf_bones=False,
@@ -2398,6 +2443,7 @@ def load(operator, context, filepath="",
         use_custom_normals, use_image_search,
         use_alpha_decals, decal_offset,
         use_anim, anim_offset,
+        use_subsurf,
         use_custom_props, use_custom_props_enum_as_string,
         nodal_material_wrap_map, image_cache,
         ignore_leaf_bones, force_connect_children, automatic_bone_orientation, bone_correction_matrix,
@@ -2798,6 +2844,35 @@ def load(operator, context, filepath="",
                 keyblocks = blen_read_shape(fbx_tmpl, fbx_sdata, fbx_bcdata, meshes, scene)
                 blend_shape_channels[bc_uuid] = keyblocks
     _(); del _
+
+    if settings.use_subsurf:
+        perfmon.step("FBX import: Subdivision surfaces")
+
+        # Look through connections for subsurf in meshes and add it to the parent object
+        def _():
+            for fbx_link in fbx_connections.elems:
+                if fbx_link.props[0] != b'OO':
+                    continue
+                if fbx_link.props_type[1:3] == b'LL':
+                    c_src, c_dst = fbx_link.props[1:3]
+                    parent = fbx_helper_nodes.get(c_dst)
+                    if parent is None:
+                        continue
+
+                    child = fbx_helper_nodes.get(c_src)
+                    if child is None:
+                        fbx_sdata, bl_data = fbx_table_nodes.get(c_src, (None, None))
+                        if fbx_sdata.id != b'Geometry':
+                            continue
+
+                        preview_levels = elem_prop_first(elem_find_first(fbx_sdata, b'PreviewDivisionLevels'))
+                        render_levels = elem_prop_first(elem_find_first(fbx_sdata, b'RenderDivisionLevels'))
+                        if isinstance(preview_levels, int) and isinstance(render_levels, int):
+                            mod = parent.bl_obj.modifiers.new('subsurf', 'SUBSURF')
+                            mod.levels = preview_levels
+                            mod.render_levels = render_levels
+
+        _(); del _
 
     if use_anim:
         perfmon.step("FBX import: Animations...")

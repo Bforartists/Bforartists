@@ -51,6 +51,7 @@ FBX_GEOMETRY_NORMAL_VERSION = 101
 FBX_GEOMETRY_BINORMAL_VERSION = 101
 FBX_GEOMETRY_TANGENT_VERSION = 101
 FBX_GEOMETRY_SMOOTHING_VERSION = 102
+FBX_GEOMETRY_CREASE_VERSION = 101
 FBX_GEOMETRY_VCOLOR_VERSION = 101
 FBX_GEOMETRY_UV_VERSION = 101
 FBX_GEOMETRY_MATERIAL_VERSION = 101
@@ -1215,7 +1216,7 @@ FBXExportSettings = namedtuple("FBXExportSettings", (
     "report", "to_axes", "global_matrix", "global_scale", "apply_unit_scale", "unit_scale",
     "bake_space_transform", "global_matrix_inv", "global_matrix_inv_transposed",
     "context_objects", "object_types", "use_mesh_modifiers", "use_mesh_modifiers_render",
-    "mesh_smooth_type", "use_mesh_edges", "use_tspace",
+    "mesh_smooth_type", "use_subsurf", "use_mesh_edges", "use_tspace",
     "armature_nodetype", "use_armature_deform_only", "add_leaf_bones",
     "bone_correction_matrix", "bone_correction_matrix_inv",
     "bake_anim", "bake_anim_use_all_bones", "bake_anim_use_nla_strips", "bake_anim_use_all_actions",
@@ -1245,6 +1246,7 @@ FBXImportSettings = namedtuple("FBXImportSettings", (
     "use_custom_normals", "use_image_search",
     "use_alpha_decals", "decal_offset",
     "use_anim", "anim_offset",
+    "use_subsurf",
     "use_custom_props", "use_custom_props_enum_as_string",
     "nodal_material_wrap_map", "image_cache",
     "ignore_leaf_bones", "force_connect_children", "automatic_bone_orientation", "bone_correction_matrix",

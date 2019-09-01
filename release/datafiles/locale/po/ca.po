@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -12942,20 +12942,8 @@ msgid "Trackball"
 msgstr "Crear Pista"
 
 
-msgid "Curve_Shrinkfatten"
-msgstr "Contreure/Engreixar"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "Contreure/Engreixar"
-
-
-msgid "Time_Scale"
+msgid "Time Scale"
 msgstr "Escalar"
-
-
-msgid "Bake_Time"
-msgstr "Reduir"
 
 
 msgid "Bweight"
@@ -13097,10 +13085,6 @@ msgstr "Seleccionar fila"
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Deselect every other vertex"
-msgstr "Seleccionar fila"
 
 
 msgctxt "Operator"
@@ -19773,11 +19757,6 @@ msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "Esborrar Rotació"
-
-
-msgctxt "Operator"
 msgid "Reset to Default Value"
 msgstr "Començar Joc"
 
@@ -22828,10 +22807,6 @@ msgstr "Base"
 
 msgid "Steps Per Second"
 msgstr "Corba"
-
-
-msgid "Time Scale"
-msgstr "Escalar"
 
 
 msgid "Interaction Radius"
@@ -28190,24 +28165,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "Seleccionar connectats"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "Amagar Seleccionats"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "Seleccionar connectats"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "Seleccionar connectats"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "Finestra de Render"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "Finestra de Render"
 
 
 msgid "Cannot remove edges in edit mode"

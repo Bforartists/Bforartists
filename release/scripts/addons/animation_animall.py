@@ -19,7 +19,7 @@
 bl_info = {
     "name": "AnimAll",
     "author": "Daniel Salazar <zanqdo@gmail.com>",
-    "version": (0, 8, 2),
+    "version": (0, 8, 3),
     "blender": (2, 80, 0),
     "location": "3D View > Toolbox > Animation tab > AnimAll",
     "description": "Allows animation of mesh, lattice, curve and surface data",
@@ -116,9 +116,12 @@ def refresh_ui_keyframes():
         pass
 
 
-def insert_key(data, key, group=''):
+def insert_key(data, key, group=None):
     try:
-        data.keyframe_insert(key, group=group)
+        if group is not None:
+            data.keyframe_insert(key, group=group)
+        else:
+            data.keyframe_insert(key)
     except:
         pass
 
@@ -222,137 +225,148 @@ class ANIM_OT_insert_keyframe_animall(Operator):
     bl_description = "Insert a Keyframe"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def invoke(self, context, event):
-        self.execute(context)
-
-        return {'FINISHED'}
-
     def execute(op, context):
-        obj = context.active_object
         animall_properties = context.window_manager.animall_properties
 
-        # Maybe this should be done for all object types,
-        # but keys can only be inserted in Edit Mode for CURVEs and SURFACEs,
-        # and Object Mode for MESHes and LATTICEs.
-        # Putting it inside if blocks for now
-        # # Set object mode
-        # if obj.type in {'MESH', 'LATTICE', 'CURVE', 'SURFACE'}:
-        #     mode = obj.mode
-        #     bpy.ops.object.mode_set(mode='OBJECT')
-        #     data = obj.data
+        if context.mode == 'OBJECT':
+            objects = context.selected_objects
+        else:
+            objects = context.objects_in_mode_unique_data[:]
 
-        if obj.type == 'MESH':
-            mode = obj.mode
-            bpy.ops.object.mode_set(mode='OBJECT')
+        mode = context.object.mode
+
+        # Separate loop for lattices, curves and surfaces, since keyframe insertion
+        # has to happen in Edit Mode, otherwise points move back upon mode switch...
+        # (except for curve shape keys)
+        for obj in [o for o in objects if o.type in {'CURVE', 'SURFACE', 'LATTICE'}]:
             data = obj.data
 
-            if animall_properties.key_points:
-                for v_i, vert in enumerate(data.vertices):
-                    if not animall_properties.key_selected or vert.select:
-                        insert_key(vert, 'co', group="vertex %s" % v_i)
+            if obj.type == 'LATTICE':
+                if animall_properties.key_shape:
+                    if obj.active_shape_key_index > 0:
+                        sk_name = obj.active_shape_key.name
+                        for p_i, point in enumerate(obj.active_shape_key.data):
+                            if not animall_properties.key_selected or data.points[p_i].select:
+                                insert_key(point, 'co', group="%s Point %s" % (sk_name, p_i))
 
-            if animall_properties.key_vbevel:
-                for v_i, vert in enumerate(data.vertices):
-                    if not animall_properties.key_selected or vert.select:
-                        insert_key(vert, 'bevel_weight', group="vertex %s" % v_i)
+                if animall_properties.key_points:
+                    for p_i, point in enumerate(data.points):
+                        if not animall_properties.key_selected or point.select:
+                            insert_key(point, 'co_deform', group="Point %s" % p_i)
 
-            if animall_properties.key_vgroups:
-                for v_i, vert in enumerate(data.vertices):
-                    if not animall_properties.key_selected or vert.select:
-                        for group in vert.groups:
-                            insert_key(group, 'weight', group="vertex %s" % v_i)
+            else:
+                for s_i, spline in enumerate(data.splines):
+                    if spline.type == 'BEZIER':
+                        for v_i, CV in enumerate(spline.bezier_points):
+                            if (not animall_properties.key_selected
+                                    or CV.select_control_point
+                                    or CV.select_left_handle
+                                    or CV.select_right_handle):
+                                if animall_properties.key_points:
+                                    insert_key(CV, 'co', group="Spline %s CV %s" % (s_i, v_i))
+                                    insert_key(CV, 'handle_left', group="Spline %s CV %s" % (s_i, v_i))
+                                    insert_key(CV, 'handle_right', group="Spline %s CV %s" % (s_i, v_i))
 
-            if animall_properties.key_ebevel:
-                for e_i, edge in enumerate(data.edges):
-                    if not animall_properties.key_selected or edge.select:
-                        insert_key(edge, 'bevel_weight', group="edge %s" % e_i)
+                                if animall_properties.key_radius:
+                                    insert_key(CV, 'radius', group="Spline %s CV %s" % (s_i, v_i))
 
-            if animall_properties.key_crease:
-                for e_i, edge in enumerate(data.edges):
-                    if not animall_properties.key_selected or edge.select:
-                        insert_key(edge, 'crease', group="edge %s" % e_i)
+                                if animall_properties.key_tilt:
+                                    insert_key(CV, 'tilt', group="Spline %s CV %s" % (s_i, v_i))
 
-            if animall_properties.key_shape:
-                if obj.active_shape_key_index > 0:
-                    for v_i, vert in enumerate(obj.active_shape_key.data):
-                        insert_key(vert, 'co', group="vertex %s" % v_i)
+                    elif spline.type in ('POLY', 'NURBS'):
+                        for v_i, CV in enumerate(spline.points):
+                            if not animall_properties.key_selected or CV.select:
+                                if animall_properties.key_points:
+                                    insert_key(CV, 'co', group="Spline %s CV %s" % (s_i, v_i))
 
-            if animall_properties.key_uvs:
-                if data.uv_layers.active is not None:
-                    for uv_i, uv in enumerate(data.uv_layers.active.data):
-                        insert_key(uv, 'uv', group="UV layer %s" % uv_i)
+                                if animall_properties.key_radius:
+                                    insert_key(CV, 'radius', group="Spline %s CV %s" % (s_i, v_i))
 
-            if animall_properties.key_vcols:
-                for v_col_layer in data.vertex_colors:
-                    if v_col_layer.active:  # only insert in active VCol layer
-                        for v_i, data in enumerate(v_col_layer.data):
-                            insert_key(data, 'color', group="Loop %s" % v_i)
+                                if animall_properties.key_tilt:
+                                    insert_key(CV, 'tilt', group="Spline %s CV %s" % (s_i, v_i))
 
-            bpy.ops.object.mode_set(mode=mode)
+        bpy.ops.object.mode_set(mode='OBJECT')
 
-        elif obj.type == 'LATTICE':
-            mode = obj.mode
-            bpy.ops.object.mode_set(mode='OBJECT')
+        for obj in [o for o in objects if o.type in {'MESH', 'CURVE', 'SURFACE'}]:
             data = obj.data
+            if obj.type == 'MESH':
+                if animall_properties.key_points:
+                    for v_i, vert in enumerate(data.vertices):
+                        if not animall_properties.key_selected or vert.select:
+                            insert_key(vert, 'co', group="Vertex %s" % v_i)
 
-            if animall_properties.key_shape:
-                if obj.active_shape_key_index > 0:
-                    for p_i, point in enumerate(obj.active_shape_key.data):
-                        insert_key(point, 'co', group="Point %s" % p_i)
+                if animall_properties.key_vbevel:
+                    for v_i, vert in enumerate(data.vertices):
+                        if not animall_properties.key_selected or vert.select:
+                            insert_key(vert, 'bevel_weight', group="Vertex %s" % v_i)
 
-            if animall_properties.key_points:
-                for p_i, point in enumerate(data.points):
-                    if not animall_properties.key_selected or point.select:
-                        insert_key(point, 'co_deform', group="Point %s" % p_i)
+                if animall_properties.key_vgroups:
+                    for v_i, vert in enumerate(data.vertices):
+                        if not animall_properties.key_selected or vert.select:
+                            for group in vert.groups:
+                                insert_key(group, 'weight', group="Vertex %s" % v_i)
 
-            bpy.ops.object.mode_set(mode=mode)
+                if animall_properties.key_ebevel:
+                    for e_i, edge in enumerate(data.edges):
+                        if not animall_properties.key_selected or edge.select:
+                            insert_key(edge, 'bevel_weight', group="Edge %s" % e_i)
 
-        elif obj.type in {'CURVE', 'SURFACE'}:
-            data = obj.data
+                if animall_properties.key_crease:
+                    for e_i, edge in enumerate(data.edges):
+                        if not animall_properties.key_selected or edge.select:
+                            insert_key(edge, 'crease', group="Edge %s" % e_i)
 
-            # run this outside the splines loop (only once)
-            if animall_properties.key_shape:
-                if obj.active_shape_key_index > 0:
-                    for CV in obj.active_shape_key.data:
-                        insert_key(CV, 'co')
-                        insert_key(CV, 'handle_left')
-                        insert_key(CV, 'handle_right')
+                if animall_properties.key_shape:
+                    if obj.active_shape_key_index > 0:
+                        sk_name = obj.active_shape_key.name
+                        for v_i, vert in enumerate(obj.active_shape_key.data):
+                            if not animall_properties.key_selected or data.vertices[v_i].select:
+                                insert_key(vert, 'co', group="%s Vertex %s" % (sk_name, v_i))
 
-            for s_i, spline in enumerate(data.splines):
-                if spline.type == 'BEZIER':
-                    for v_i, CV in enumerate(spline.bezier_points):
-                        if (not animall_properties.key_selected
-                                or CV.select_control_point
-                                or CV.select_left_handle
-                                or CV.select_right_handle):
-                            if animall_properties.key_points:
-                                insert_key(CV, 'co', group="spline %s CV %s" % (s_i, v_i))
-                                insert_key(CV, 'handle_left', group="spline %s CV %s" % (s_i, v_i))
-                                insert_key(CV, 'handle_right', group="spline %s CV %s" % (s_i, v_i))
+                if animall_properties.key_uvs:
+                    if data.uv_layers.active is not None:
+                        for uv_i, uv in enumerate(data.uv_layers.active.data):
+                            if not animall_properties.key_selected or uv.select:
+                                insert_key(uv, 'uv', group="UV layer %s" % uv_i)
 
-                            if animall_properties.key_radius:
-                                insert_key(CV, 'radius', group="spline %s CV %s" % (s_i, v_i))
+                if animall_properties.key_vcols:
+                    for v_col_layer in data.vertex_colors:
+                        if v_col_layer.active:  # only insert in active VCol layer
+                            for v_i, data in enumerate(v_col_layer.data):
+                                insert_key(data, 'color', group="Loop %s" % v_i)
 
-                            if animall_properties.key_tilt:
-                                insert_key(CV, 'tilt', group="spline %s CV %s" % (s_i, v_i))
+            elif obj.type in {'CURVE', 'SURFACE'}:
+                # Shape key keys have to be inserted in object mode for curves...
+                if animall_properties.key_shape:
+                    sk_name = obj.active_shape_key.name
+                    global_spline_index = 0  # numbering for shape keys, which have flattened indices
+                    for s_i, spline in enumerate(data.splines):
+                        if spline.type == 'BEZIER':
+                            for v_i, CV in enumerate(spline.bezier_points):
+                                if (not animall_properties.key_selected
+                                        or CV.select_control_point
+                                        or CV.select_left_handle
+                                        or CV.select_right_handle):
+                                    if obj.active_shape_key_index > 0:
+                                        CV = obj.active_shape_key.data[global_spline_index]
+                                        insert_key(CV, 'co', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
+                                        insert_key(CV, 'handle_left', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
+                                        insert_key(CV, 'handle_right', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
+                                        insert_key(CV, 'radius', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
+                                        insert_key(CV, 'tilt', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
+                                global_spline_index += 1
 
-                elif spline.type in ('POLY', 'NURBS'):
-                    for v_i, CV in enumerate(spline.points):
-                        if not animall_properties.key_selected or CV.select:
-                            if animall_properties.key_points:
-                                insert_key(CV, 'co', group="spline %s CV %s" % (s_i, v_i))
+                        elif spline.type in ('POLY', 'NURBS'):
+                            for v_i, CV in enumerate(spline.points):
+                                if not animall_properties.key_selected or CV.select:
+                                    if obj.active_shape_key_index > 0:
+                                        CV = obj.active_shape_key.data[global_spline_index]
+                                        insert_key(CV, 'co', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
+                                        insert_key(CV, 'radius', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
+                                        insert_key(CV, 'tilt', group="%s Spline %s CV %s" % (sk_name, s_i, v_i))
+                                global_spline_index += 1
 
-                            if animall_properties.key_radius:
-                                insert_key(CV, 'radius', group="spline %s CV %s" % (s_i, v_i))
-
-                            if animall_properties.key_tilt:
-                                insert_key(CV, 'tilt', group="spline %s CV %s" % (s_i, v_i))
-
-        # See previous remark
-        # # Set previous mode
-        # if obj.type in {'MESH', 'LATTICE', 'CURVE', 'SURFACE'}:
-        #     bpy.ops.object.mode_set(mode=mode)
-
+        bpy.ops.object.mode_set(mode=mode)
         refresh_ui_keyframes()
 
         return {'FINISHED'}
@@ -364,102 +378,109 @@ class ANIM_OT_delete_keyframe_animall(Operator):
     bl_description = "Delete a Keyframe"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def invoke(self, context, event):
-        self.execute(context)
-
-        return {'FINISHED'}
 
     def execute(op, context):
-        obj = context.active_object
         animall_properties = context.window_manager.animall_properties
 
-        # Set object mode
-        if obj.type in {'MESH', 'LATTICE', 'CURVE', 'SURFACE'}:
-            mode = obj.mode
-            bpy.ops.object.mode_set(mode='OBJECT')
+        if context.mode == 'OBJECT':
+            objects = context.selected_objects
+        else:
+            objects = context.objects_in_mode_unique_data[:]
 
+        mode = context.object.mode
+
+        for obj in objects:
             data = obj.data
+            if obj.type == 'MESH':
+                if animall_properties.key_points:
+                    for vert in data.vertices:
+                        if not animall_properties.key_selected or vert.select:
+                            delete_key(vert, 'co')
 
-        if obj.type == 'MESH':
-            if animall_properties.key_shape:
-                if obj.active_shape_key:
-                    for vert in obj.active_shape_key.data:
-                        delete_key(vert, 'co')
+                if animall_properties.key_vbevel:
+                    for vert in data.vertices:
+                        if not animall_properties.key_selected or vert.select:
+                            delete_key(vert, 'bevel_weight')
 
-            if animall_properties.key_points:
-                for vert in data.vertices:
-                    delete_key(vert, 'co')
+                if animall_properties.key_vgroups:
+                    for vert in data.vertices:
+                        if not animall_properties.key_selected or vert.select:
+                            for group in vert.groups:
+                                delete_key(group, 'weight')
 
-            if animall_properties.key_ebevel:
-                for edge in data.edges:
-                    delete_key(edge, 'bevel_weight')
+                if animall_properties.key_ebevel:
+                    for edge in data.edges:
+                        if not animall_properties.key_selected or edge.select:
+                            delete_key(edge, 'bevel_weight')
 
-            if animall_properties.key_vbevel:
-                for vert in data.vertices:
-                    delete_key(vert, 'bevel_weight')
+                if animall_properties.key_crease:
+                    for edge in data.edges:
+                        if not animall_properties.key_selected or vert.select:
+                            delete_key(edge, 'crease')
 
-            if animall_properties.key_crease:
-                for edge in data.edges:
-                    delete_key(edge, 'crease')
+                if animall_properties.key_shape:
+                    if obj.active_shape_key:
+                        for v_i, vert in enumerate(obj.active_shape_key.data):
+                            if not animall_properties.key_selected or data.vertices[v_i].select:
+                                delete_key(vert, 'co')
 
-            if animall_properties.key_vgroups:
-                for vert in data.vertices:
-                    for group in vert.groups:
-                        delete_key(group, 'weight')
+                if animall_properties.key_uvs:
+                    if data.uv_layers.active is not None:
+                        for uv in data.uv_layers.active.data:
+                            if not animall_properties.key_selected or uv.select:
+                                delete_key(uv, 'uv')
 
-            if animall_properties.key_uvs:
-                for UV in data.uv_layers.active.data:
-                    delete_key(UV, 'uv')
+                if animall_properties.key_vcols:
+                    for v_col_layer in data.vertex_colors:
+                        if v_col_layer.active:  # only delete in active VCol layer
+                            for data in v_col_layer.data:
+                                delete_key(data, 'color')
 
-            if animall_properties.key_vcols:
-                for v_col_layer in data.vertex_colors:
-                    if v_col_layer.active:  # only delete in active VCol layer
-                        for data in v_col_layer.data:
-                            delete_key(data, 'color')
+            elif obj.type == 'LATTICE':
+                if animall_properties.key_shape:
+                    if obj.active_shape_key:
+                        for point in obj.active_shape_key.data:
+                            delete_key(point, 'co')
 
-        if obj.type == 'LATTICE':
-            if animall_properties.key_shape:
-                if obj.active_shape_key:
-                    for point in obj.active_shape_key.data:
-                        delete_key(point, 'co')
+                if animall_properties.key_points:
+                    for point in data.points:
+                        if not animall_properties.key_selected or point.select:
+                            delete_key(point, 'co_deform')
 
-            if animall_properties.key_points:
-                for point in data.points:
-                    delete_key(Point, 'co_deform')
-
-        if obj.type in {'CURVE', 'SURFACE'}:
-            # run this outside the splines loop (only once)
-            if animall_properties.key_shape:
-                if obj.active_shape_key_index > 0:
-                    for CV in obj.active_shape_key.data:
-                        delete_key(CV, 'co')
-                        delete_key(CV, 'handle_left')
-                        delete_key(CV, 'handle_right')
-
-            for spline in data.splines:
-                if spline.type == 'BEZIER':
-                    for CV in spline.bezier_points:
-                        if animall_properties.key_points:
+            elif obj.type in {'CURVE', 'SURFACE'}:
+                # run this outside the splines loop (only once)
+                if animall_properties.key_shape:
+                    if obj.active_shape_key_index > 0:
+                        for CV in obj.active_shape_key.data:
                             delete_key(CV, 'co')
                             delete_key(CV, 'handle_left')
                             delete_key(CV, 'handle_right')
-                        if animall_properties.key_radius:
-                            delete_key(CV, 'radius')
-                        if animall_properties.key_tilt:
-                            delete_key(CV, 'tilt')
 
-                elif spline.type == 'NURBS':
-                    for CV in spline.points:
-                        if animall_properties.key_points:
-                            delete_key(CV, 'co')
-                        if animall_properties.key_radius:
-                            delete_key(CV, 'radius')
-                        if animall_properties.key_tilt:
-                            delete_key(CV, 'tilt')
+                for spline in data.splines:
+                    if spline.type == 'BEZIER':
+                        for CV in spline.bezier_points:
+                            if (not animall_properties.key_selected
+                                    or CV.select_control_point
+                                    or CV.select_left_handle
+                                    or CV.select_right_handle):
+                                if animall_properties.key_points:
+                                    delete_key(CV, 'co')
+                                    delete_key(CV, 'handle_left')
+                                    delete_key(CV, 'handle_right')
+                                if animall_properties.key_radius:
+                                    delete_key(CV, 'radius')
+                                if animall_properties.key_tilt:
+                                    delete_key(CV, 'tilt')
 
-        # Set previous mode
-        if obj.type in {'MESH', 'LATTICE', 'CURVE', 'SURFACE'}:
-            bpy.ops.object.mode_set(mode=mode)
+                    elif spline.type in ('POLY', 'NURBS'):
+                        for CV in spline.points:
+                            if not animall_properties.key_selected or CV.select:
+                                if animall_properties.key_points:
+                                    delete_key(CV, 'co')
+                                if animall_properties.key_radius:
+                                    delete_key(CV, 'radius')
+                                if animall_properties.key_tilt:
+                                    delete_key(CV, 'tilt')
 
         refresh_ui_keyframes()
 
@@ -479,12 +500,18 @@ class ANIM_OT_clear_animation_animall(Operator):
         return wm.invoke_confirm(self, event)
 
     def execute(self, context):
-        try:
-            data = context.active_object.data
-            data.animation_data_clear()
-        except:
-            self.report({'WARNING'}, "Clear Animation could not be performed")
-            return {'CANCELLED'}
+        if context.mode == 'OBJECT':
+            objects = context.selected_objects
+        else:
+            objects = context.objects_in_mode_unique_data
+
+        for obj in objects:
+            try:
+                data = obj.data
+                data.animation_data_clear()
+            except:
+                self.report({'WARNING'}, "Clear Animation could not be performed")
+                return {'CANCELLED'}
 
         refresh_ui_keyframes()
 

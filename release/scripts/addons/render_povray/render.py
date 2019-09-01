@@ -579,8 +579,8 @@ def write_pov(filename, scene=None, info_callback=None):
 
             matrix = global_matrix @ ob.matrix_world
 
-            # Color is modified by energy #multiplied by 2 for a better match --Maurice
-            color = tuple([c * (lamp.energy) for c in lamp.color])
+            # Color is no longer modified by energy 
+            color = tuple([c for c in lamp.color])
 
             tabWrite("light_source {\n")
             tabWrite("< 0,0,0 >\n")
@@ -2064,7 +2064,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
         ob_num = 0
         for ob in sel:
-            #subtract original from the count of their instances as were not counted before 2.8 
+            #subtract original from the count of their instances as were not counted before 2.8
             if not (ob.is_instancer and ob.original != ob):
                 ob_num += 1
 
@@ -3238,6 +3238,10 @@ def write_pov(filename, scene=None, info_callback=None):
                         dup = "#declare DATA%s = union{\n" %(string_strip_hyphen(bpy.path.clean_name(ob.name)))
                     for eachduplicate in depsgraph.object_instances:
                         if eachduplicate.is_instance:  # Real dupli instance filtered because original included in list since 2.8
+                            print("eachduplicate.object.name: %s" % eachduplicate.object.name)
+                            if not "name" in dir(bpy.data.objects[eachduplicate.object.name].data):
+                                print("WARNING: No 'name' in dir(bpy.data.objects[eachduplicate.object.name].data) = %s" % (dir(bpy.data.objects[eachduplicate.object.name].data)))
+                                continue # don't try to parse objects with no name
                             duplidataname = "OB"+string_strip_hyphen(bpy.path.clean_name(bpy.data.objects[eachduplicate.object.name].data.name))
                             dupmatrix = eachduplicate.matrix_world.copy() #has to be copied to not store instance since 2.8
                             dup += ("\tobject {\n\t\tDATA%s\n\t\t%s\t}\n" %(string_strip_hyphen(bpy.path.clean_name(bpy.data.objects[eachduplicate.object.name].data.name)), MatrixAsPovString(ob.matrix_world.inverted() @ dupmatrix)))
@@ -3812,7 +3816,6 @@ class PovrayRender(bpy.types.RenderEngine):
     def _export(self, depsgraph, povPath, renderImagePath):
         import tempfile
         scene = bpy.context.scene
-        
         if scene.pov.tempfiles_enable:
             self._temp_file_in = tempfile.NamedTemporaryFile(suffix=".pov", delete=False).name
             # PNG with POV 3.7, can show the background color with alpha. In the long run using the

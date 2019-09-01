@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: blend-it <https://developer.blender.org/T42765>\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -18419,10 +18419,6 @@ msgid "Seed for the noise generation"
 msgstr "Valore del seme per la generazione del rumore"
 
 
-msgid "Burn"
-msgstr "Brucia"
-
-
 msgid "Dodge"
 msgstr "Scherma"
 
@@ -25515,12 +25511,12 @@ msgid "Vector Math"
 msgstr "Matematica Vettori"
 
 
-msgid "Dot Product"
-msgstr "Prodotto Scalare"
-
-
 msgid "Cross Product"
 msgstr "Prodotto Vettoriale"
+
+
+msgid "Dot Product"
+msgstr "Prodotto Scalare"
 
 
 msgid "Vector Transform"
@@ -28970,24 +28966,8 @@ msgid "Bonesize"
 msgstr "Dimensione Osso"
 
 
-msgid "Bone_Envelope"
-msgstr "Inviluppo_Osso"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "Restringi/Allarga"
-
-
-msgid "Bone_Roll"
-msgstr "Rotazione_Osso"
-
-
-msgid "Time_Scale"
-msgstr "Scala_Temporale"
-
-
-msgid "Bake_Time"
-msgstr "Tempo_Precalcolo"
+msgid "Time Scale"
+msgstr "Scala Temporale"
 
 
 msgid "Align"
@@ -29170,10 +29150,6 @@ msgstr "Seleziona Successivo"
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "Deseleziona a Scacchiera"
-
-
-msgid "Deselect every other vertex"
-msgstr "Deseleziona ogni altro vertice"
 
 
 msgid "Skip"
@@ -31074,10 +31050,6 @@ msgstr "Sposta i tratti selezionati in un altro livello"
 msgctxt "Operator"
 msgid "Paste Strokes"
 msgstr "Incolla Tratti"
-
-
-msgid "Paste previously copied strokes or copy and merge in active layer"
-msgstr "Incolla i tratti precedentemente copiati o copia ed unisce nel livello attivo"
 
 
 msgctxt "Operator"
@@ -40148,22 +40120,6 @@ msgid "Join selected areas into new window"
 msgstr "Unisce le aree selezionate in una nuova finestra"
 
 
-msgid "X 2"
-msgstr "X 2"
-
-
-msgid "Y 2"
-msgstr "Y 2"
-
-
-msgid "X 1"
-msgstr "X 1"
-
-
-msgid "Y 1"
-msgstr "Y 1"
-
-
 msgctxt "Operator"
 msgid "Move Area Edges"
 msgstr "Muovi Bordi dell'Area"
@@ -40287,10 +40243,6 @@ msgstr "Aggiunge un nuova disposizione schermo"
 msgctxt "Operator"
 msgid "Redo Last"
 msgstr "Riesegue Ultimo"
-
-
-msgid "Display menu for last action performed"
-msgstr "Mostra il menu dell'ultima azione eseguita"
 
 
 msgctxt "Operator"
@@ -42353,15 +42305,6 @@ msgstr "Ricarica Traduzione"
 
 msgid "Force a full reload of UI translation"
 msgstr "Forza la ricarica completa della traduzione dell'interfaccia"
-
-
-msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "Rapporti come Blocco di Testo"
-
-
-msgid "Write the reports "
-msgstr "Scrive le relazioni "
 
 
 msgctxt "Operator"
@@ -50039,10 +49982,6 @@ msgid "Steps Per Second"
 msgstr "Fotogrammi per secondo"
 
 
-msgid "Time Scale"
-msgstr "Scala Temporale"
-
-
 msgid "Change the speed of the simulation"
 msgstr "Cambia la velocità della simulazione"
 
@@ -52095,14 +52034,6 @@ msgstr "Editor Chiavi Forma"
 
 msgid "Show the status of cached frames in the timeline"
 msgstr "Mostra lo stato dei fotogrammi memorizzati nella cache nella linea temporale"
-
-
-msgid "Show Frame Number Indicator"
-msgstr "Mostra Indicatore Numero Fotogramma"
-
-
-msgid "Show frame number beside the current frame indicator line"
-msgstr "Mostra il numero del fotogramma accanto alla linea dell'indicatore del fotogramma corrente"
 
 
 msgid "Show Group Colors"
@@ -57567,11 +57498,6 @@ msgstr "Seleziona:"
 
 
 msgctxt "Operator"
-msgid "Paste & Merge"
-msgstr "Incolla & Unisci"
-
-
-msgctxt "Operator"
 msgid "Reproject Strokes..."
 msgstr "Riproietta Tratti..."
 
@@ -58146,10 +58072,6 @@ msgid "Tracks For Location"
 msgstr "Tracce Per Posizione"
 
 
-msgid "Zoom %d:%d"
-msgstr "Zoom %d:%d"
-
-
 msgctxt "Operator"
 msgid "Set Wall"
 msgstr "Imposta Muro"
@@ -58480,6 +58402,10 @@ msgstr "Specchia X"
 msgctxt "Operator"
 msgid "Mirror Y"
 msgstr "Specchia Y"
+
+
+msgid "Zoom %d:%d"
+msgstr "Zoom %d:%d"
 
 
 msgctxt "Operator"
@@ -61098,10 +61024,6 @@ msgid "Non-Keyboard Shortcut"
 msgstr "Scorciatoia Non-di-Tastiera"
 
 
-msgid "Shift+Left Mouse"
-msgstr "Shift+Mouse Sinistro"
-
-
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
 msgstr "Solo le scorciatoie da tastiera possono essere modificate così, per favore usa le Preferenze Utente"
 
@@ -61962,28 +61884,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "Impossibile aggiungere geometria in Modalità Modifica"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "Impossibile aggiungere facce tassellate in Modalità Modifica"
-
-
-msgid "Cannot add tessfaces to a mesh that already has polygons"
-msgstr "Impossibile aggiungere facce tassellate ad una mesh che ha già poligoni"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "Impossibile aggiungere spigoli in Modalità Modifica"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "Impossibile aggiungere vertici in Modalità Modifica"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "Impossibile rimuovere facce in modalità Modifica"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "Impossibile rimuovere più facce di quelle contenute nella mesh"
 
 
 msgid "Cannot remove edges in edit mode"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: DeathBlood\n"
 "Language-Team: \n"
@@ -2762,7 +2762,7 @@ msgstr "锁定坐标"
 
 
 msgid "Bone location is set in local space"
-msgstr "骨头坐标设置为自身空间"
+msgstr "骨头坐标设置为局部空间"
 
 
 msgid "Relative Parenting"
@@ -4763,19 +4763,19 @@ msgstr "姿态空间上的约束, 物体移动被忽略"
 
 
 msgid "Local With Parent"
-msgstr "自身带父系"
+msgstr "局部带父系"
 
 
 msgid "The constraint is applied relative to the rest pose local coordinate system of the bone, thus including the parent-induced transformation"
-msgstr "约束在物体的自身坐标系中应用, 再加父物体的移动"
+msgstr "约束在物体的局部坐标系中应用, 再加父物体的移动"
 
 
 msgid "Local Space"
-msgstr "自身空间"
+msgstr "局部空间"
 
 
 msgid "The constraint is applied relative to the local coordinate system of the object"
-msgstr "约束将相对应用于物体的自身坐标系统"
+msgstr "约束将相对应用于物体的局部坐标系统"
 
 
 msgid "Constraint's panel is expanded in UI"
@@ -4799,11 +4799,11 @@ msgstr "只在姿态空间中解算变换目标, 目标骨骼移动被忽略"
 
 
 msgid "The transformation of the target bone is evaluated relative to its rest pose local coordinate system, thus including the parent-induced transformation"
-msgstr "只在自身坐标空间中估算位置目标, 当父移动添加时"
+msgstr "只在局部坐标空间中估算位置目标, 当父移动添加时"
 
 
 msgid "The transformation of the target is evaluated relative to its local coordinate system"
-msgstr "只在自身坐标空间中进行计算"
+msgstr "只在局部坐标空间中进行计算"
 
 
 msgid "Camera Solver"
@@ -10080,11 +10080,11 @@ msgstr "通过物体中西的场半径"
 
 
 msgid "Constant force along the force object's local Z axis"
-msgstr "为力场物体的自身 Z 轴提供一个定值外力"
+msgstr "为力场物体的局部 Z 轴提供一个定值外力"
 
 
 msgid "Spiraling force that twists the force object's local Z axis"
-msgstr "给一个螺旋外力来扭曲场力的自身 Z 轴"
+msgstr "给一个螺旋外力来扭曲场力的局部 Z 轴"
 
 
 msgid "Forcefield depends on the speed of the particles"
@@ -11176,11 +11176,11 @@ msgstr "注入速度"
 
 
 msgid "Local Coordinates"
-msgstr "自身坐标系"
+msgstr "局部坐标系"
 
 
 msgid "Use local coordinates for inflow (e.g. for rotating objects)"
-msgstr "为流入类型使用自身坐标 (如物体的旋转)"
+msgstr "为流入类型使用局部坐标 (如物体的旋转)"
 
 
 msgid "Obstacle Fluid Simulation Settings"
@@ -13699,6 +13699,10 @@ msgid "Simplify Stroke modifier"
 msgstr "简化笔画修改器"
 
 
+msgid "Distance between points"
+msgstr "点间距"
+
+
 msgid "Factor of Simplify"
 msgstr "简化系数"
 
@@ -14821,7 +14825,7 @@ msgstr "应用笔刷时的影响力度"
 
 
 msgid "Stroke Method"
-msgstr "笔画方式"
+msgstr "描边方法"
 
 
 msgid "Dots"
@@ -17954,6 +17958,26 @@ msgid "Polygons of the mesh"
 msgstr "网格的多边形"
 
 
+msgid "Preserve Paint Mask"
+msgstr "保留绘制遮罩"
+
+
+msgid "Keep the current mask on the new mesh"
+msgstr "在新建网格上保留当前遮罩"
+
+
+msgid "Smooth normals"
+msgstr "平滑法向"
+
+
+msgid "Smooth the normals of the remesher result"
+msgstr "平滑网格重构结果的法向"
+
+
+msgid "Voxel size"
+msgstr "体素大小"
+
+
 msgid "Skin Vertices"
 msgstr "皮肤顶点"
 
@@ -18811,7 +18835,7 @@ msgstr "在应用约束及父级影响之前, 接入位置、旋转、以及缩�
 
 
 msgid "Local Matrix"
-msgstr "自身矩阵"
+msgstr "局部矩阵"
 
 
 msgid "Inverse of object's parent matrix at time of parenting"
@@ -24650,10 +24674,6 @@ msgid "Change line color along stroke"
 msgstr "沿笔画更改线条颜色"
 
 
-msgid "Burn"
-msgstr "加深"
-
-
 msgid "Dodge"
 msgstr "减淡"
 
@@ -25605,6 +25625,10 @@ msgid "Tracking"
 msgstr "跟踪"
 
 
+msgid "Fractional Zoom"
+msgstr "分(倍)数缩放"
+
+
 msgid "Collection Specials"
 msgstr "集合专用项"
 
@@ -25707,10 +25731,6 @@ msgstr "显示 / 隐藏面"
 
 msgid "Weld/Align"
 msgstr "焊接 / 对齐"
-
-
-msgid "Fractional Zoom"
-msgstr "分(倍)数缩放"
 
 
 msgid "Info Context Menu"
@@ -26305,11 +26325,11 @@ msgstr "此循环结构的顶点编号"
 
 
 msgid "Local space unit length split normal vector of this vertex for this polygon (must be computed beforehand using calc_normals_split or calc_tangents)"
-msgstr "此多边形的词顶点的自身空间单位长度的法线裂解矢量 (必须使用 calc_normals_split or calc_tangents 执行预计算)"
+msgstr "此多边形的词顶点的局部空间单位长度的法线裂解矢量 (必须使用 calc_normals_split or calc_tangents 执行预计算)"
 
 
 msgid "Local space unit length tangent vector of this vertex for this polygon (must be computed beforehand using calc_tangents)"
-msgstr "此多边形的词顶点的自身空间单位长度的切向裂解矢量 (必须使用 calc_tangents 执行预计算)"
+msgstr "此多边形的词顶点的局部空间单位长度的切向裂解矢量 (必须使用 calc_tangents 执行预计算)"
 
 
 msgid "Vertex index"
@@ -26377,7 +26397,7 @@ msgstr "翻转法线"
 
 
 msgid "Local space unit length split normals vectors of the vertices of this triangle (must be computed beforehand using calc_normals_split or calc_tangents)"
-msgstr "此面的自身空间单位长度的顶点拆分法线矢量 (必须使用 calc_normals_split or calc_tangents 执行预计算)"
+msgstr "此面的局部空间单位长度的顶点拆分法线矢量 (必须使用 calc_normals_split or calc_tangents 执行预计算)"
 
 
 msgid "Indices of triangle vertices"
@@ -26453,7 +26473,7 @@ msgstr "多边形法线"
 
 
 msgid "Local space unit length normal vector for this polygon"
-msgstr "多边形的自身空间单位长度的法线矢量"
+msgstr "多边形的局部空间单位长度的法线矢量"
 
 
 msgid "Freestyle Face Mark"
@@ -28009,11 +28029,11 @@ msgstr "无置换效果时的材质值"
 
 
 msgid "Local"
-msgstr "自身"
+msgstr "局部"
 
 
 msgid "Direction is defined in local coordinates"
-msgstr "在自身坐标系中定义方向"
+msgstr "在局部坐标系中定义方向"
 
 
 msgid "Direction is defined in global coordinates"
@@ -28029,7 +28049,7 @@ msgstr "纹理坐标"
 
 
 msgid "Use the local coordinate system for the texture coordinates"
-msgstr "为纹理坐标使用自身坐标系"
+msgstr "为纹理坐标使用局部坐标系"
 
 
 msgid "Use the global coordinate system for the texture coordinates"
@@ -28037,7 +28057,7 @@ msgstr "为纹理坐标使用全局坐标系"
 
 
 msgid "Use the linked object's local coordinate system for the texture coordinates"
-msgstr "为纹理坐标使用关联物体的自身坐标系"
+msgstr "为纹理坐标使用关联物体的局部坐标系"
 
 
 msgid "Use UV coordinates for the texture coordinates"
@@ -29098,7 +29118,7 @@ msgstr "形变角度"
 
 
 msgid "Deform around local axis"
-msgstr "沿自身轴向形变"
+msgstr "沿局部轴向形变"
 
 
 msgid "Rotate around the Z axis of the modifier space"
@@ -29593,7 +29613,7 @@ msgstr "用于映射的纹理坐标"
 
 
 msgid "Use local generated coordinates"
-msgstr "使用自身生成的坐标系"
+msgstr "使用局部生成的坐标系"
 
 
 msgid "Use global coordinates"
@@ -29601,7 +29621,7 @@ msgstr "使用全局坐标系"
 
 
 msgid "Use local generated coordinates of another object"
-msgstr "使用取自其他物体的自身坐标"
+msgstr "使用取自其他物体的局部坐标"
 
 
 msgid "Use coordinates from an UV layer"
@@ -31037,7 +31057,7 @@ msgstr "使用特殊解算器追踪一个固定的相机位置, 如三脚架"
 
 
 msgid "Movie tracking stabilization data"
-msgstr "运动追踪稳像数据"
+msgstr "影片追踪稳像数据"
 
 
 msgid "Active Rotation Track Index"
@@ -32217,15 +32237,15 @@ msgstr "手动补偿所有通道（分别补偿）"
 
 
 msgid "Combine HSVA"
-msgstr "合成 HSVA"
+msgstr "合并 HSVA"
 
 
 msgid "Combine RGBA"
-msgstr "合成 RGBA"
+msgstr "合并 RGBA"
 
 
 msgid "Combine YCbCrA"
-msgstr "合成 YCbCrA"
+msgstr "合并 YCbCrA"
 
 
 msgid "ITU 601"
@@ -32241,7 +32261,7 @@ msgstr "Jpeg"
 
 
 msgid "Combine YUVA"
-msgstr "合成 YUVA"
+msgstr "合并 YUVA"
 
 
 msgid "Composite"
@@ -32446,6 +32466,18 @@ msgstr "Z 缩放"
 
 msgid "Scale the Z input when not using a z-buffer, controls maximum blur designated by the color white or input value 1"
 msgstr "当不使用z-缓冲时, 则对Z输入源进行缩放, 用于控制由白色或输入值1所指定的最大模糊量"
+
+
+msgid "Denoise"
+msgstr "降噪"
+
+
+msgid "HDR"
+msgstr "HDR"
+
+
+msgid "Process HDR images"
+msgstr "处理 HDR 图像"
 
 
 msgid "Despeckle"
@@ -32874,7 +32906,7 @@ msgstr "C"
 
 
 msgid "Combined RGB"
-msgstr "合成 RGB"
+msgstr "合并后的 RGB"
 
 
 msgid "Red Channel"
@@ -32977,36 +33009,116 @@ msgid "Math"
 msgstr "运算"
 
 
+msgid "A + B"
+msgstr "A + B"
+
+
+msgid "A - B"
+msgstr "A - B"
+
+
+msgid "A * B"
+msgstr "A * B"
+
+
+msgid "A / B"
+msgstr "A / B"
+
+
+msgid "A power B"
+msgstr "A ^ B"
+
+
 msgid "Logarithm"
 msgstr "对数"
+
+
+msgid "Square root of A"
+msgstr "A的平方根"
+
+
+msgid "Magnitude of A"
+msgstr "A的绝对值"
+
+
+msgid "The minimum from A and B"
+msgstr "A与B中的较小值"
+
+
+msgid "The maximum from A and B"
+msgstr "A与B中的较大值"
 
 
 msgid "Less Than"
 msgstr "小于"
 
 
+msgid "1 if A < B else 0"
+msgstr "A < B则取1，否则取0"
+
+
 msgid "Greater Than"
 msgstr "大于"
+
+
+msgid "1 if A > B else 0"
+msgstr "A > B则取1，否则取0"
 
 
 msgid "Ceil"
 msgstr "向上取整"
 
 
+msgid "Fraction"
+msgstr "分数"
+
+
+msgid "The fraction part of A"
+msgstr "A的分数部分"
+
+
 msgid "Modulo"
 msgstr "模数"
+
+
+msgid "A mod B"
+msgstr "A % B"
+
+
+msgid "sin(A)"
+msgstr "sin(A)"
+
+
+msgid "cos(A)"
+msgstr "cos(A)"
+
+
+msgid "tan(A)"
+msgstr "tan(A)"
 
 
 msgid "Arcsine"
 msgstr "反正弦"
 
 
+msgid "arcsin(A)"
+msgstr "arcsin(A)"
+
+
 msgid "Arccosine"
 msgstr "反余弦"
 
 
+msgid "arccos(A)"
+msgstr "arccos(A)"
+
+
 msgid "Arctangent"
 msgstr "反正切"
+
+
+msgid "arctan(A)"
+msgstr "arctan(A)"
 
 
 msgid "Arctan2"
@@ -33551,11 +33663,11 @@ msgstr "相机数据"
 
 
 msgid "Combine HSV"
-msgstr "合成 HSV"
+msgstr "合并 HSV"
 
 
 msgid "Combine RGB"
-msgstr "合成 RGB"
+msgstr "合并 RGB"
 
 
 msgid "Combine XYZ"
@@ -34230,12 +34342,12 @@ msgid "Vector Math"
 msgstr "矢量运算"
 
 
-msgid "Dot Product"
-msgstr "点乘"
-
-
 msgid "Cross Product"
 msgstr "差乘"
+
+
+msgid "Dot Product"
+msgstr "点乘"
 
 
 msgid "Vector Transform"
@@ -38346,48 +38458,8 @@ msgid "Bonesize"
 msgstr "骨骼尺寸"
 
 
-msgid "Bone_Envelope"
-msgstr "骨骼封套"
-
-
-msgid "Bone_Envelope_Distance"
-msgstr "骨骼封套间距"
-
-
-msgid "Curve_Shrinkfatten"
-msgstr "曲线法向缩放"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "遮罩法向缩放"
-
-
-msgid "GPencil_Shrinkfatten"
-msgstr "蜡笔法向缩放"
-
-
-msgid "Bone_Roll"
-msgstr "骨骼扭转"
-
-
-msgid "Time_Translate"
-msgstr "时间平移"
-
-
-msgid "Time_Slide"
-msgstr "时间滑动"
-
-
-msgid "Time_Scale"
+msgid "Time Scale"
 msgstr "时间比例"
-
-
-msgid "Time_Extend"
-msgstr "扩展时间"
-
-
-msgid "Bake_Time"
-msgstr "烘培时间"
 
 
 msgid "Bweight"
@@ -38404,10 +38476,6 @@ msgstr "滑移边线"
 
 msgid "Sequence Slide"
 msgstr "滑动序列"
-
-
-msgid "GPencil_Opacity"
-msgstr "蜡笔不透明度"
 
 
 msgctxt "Operator"
@@ -38594,10 +38662,6 @@ msgstr "在曲线上的已选点之后选择控制点"
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "间隔式弃选"
-
-
-msgid "Deselect every other vertex"
-msgstr "取消选中其他各点"
 
 
 msgid "Nth Element"
@@ -39215,7 +39279,7 @@ msgstr "应用缩放"
 
 
 msgid "All Local"
-msgstr "全部自身"
+msgstr "全部局部"
 
 
 msgid "FBX Units Scale"
@@ -42430,7 +42494,7 @@ msgstr "使用本地文件"
 
 
 msgid "Write Local File (overwrite existing)"
-msgstr "写入自身文件(覆盖已存在的)"
+msgstr "写入本地文件(覆盖已存在的)"
 
 
 msgid "Use Original File"
@@ -45465,7 +45529,7 @@ msgstr "将变形坐标轴对齐至世界空间上"
 
 
 msgid "Align the transformation axes to the selected objects' local space"
-msgstr "将变形坐标轴对齐至物体的自身空间上"
+msgstr "将变形坐标轴对齐至物体的局部空间上"
 
 
 msgid "Align the transformation axes to average normal of selected elements (bone Y axis for pose mode)"
@@ -47334,7 +47398,7 @@ msgstr "烘焙贴图的纵向尺寸"
 
 
 msgid "Combined"
-msgstr "合成结果"
+msgstr "合并结果"
 
 
 msgid "Automatically name the output file with the pass type"
@@ -48554,7 +48618,7 @@ msgstr "生成代理"
 
 
 msgid "Add empty object to become local replacement data of a library-linked object"
-msgstr "添加空物体, 作为库链接物体的自身替换数据"
+msgstr "添加空物体, 作为库关联物体的自身替换数据"
 
 
 msgid "Proxy Object"
@@ -49054,7 +49118,7 @@ msgstr "镜像形态键"
 
 
 msgid "Mirror the current shape key along the local X axis"
-msgstr "沿自身 X 轴镜像当前形态键"
+msgstr "沿局部 X 轴镜像当前形态键"
 
 
 msgctxt "Operator"
@@ -49668,6 +49732,11 @@ msgstr "将物体的可视变换结果应用为自身数据"
 
 
 msgctxt "Operator"
+msgid "Voxel Remesh"
+msgstr "体素重构"
+
+
+msgctxt "Operator"
 msgid "Outliner Set Action"
 msgstr "大纲设置动作"
 
@@ -50078,6 +50147,10 @@ msgid "Extend selection for activation"
 msgstr "扩展选择激活"
 
 
+msgid "Extend Range"
+msgstr "扩展范围"
+
+
 msgctxt "Operator"
 msgid "Drag and Drop"
 msgstr "拖放"
@@ -50103,6 +50176,10 @@ msgstr "关闭或打开的所有项目"
 msgctxt "Operator"
 msgid "Rename"
 msgstr "重命名"
+
+
+msgid "Rename the active element"
+msgstr "重命名活动项"
 
 
 msgctxt "Operator"
@@ -53057,22 +53134,6 @@ msgid "Join selected areas into new window"
 msgstr "将选定区域合并到新窗口"
 
 
-msgid "X 2"
-msgstr "X 2"
-
-
-msgid "Y 2"
-msgstr "Y 2"
-
-
-msgid "X 1"
-msgstr "X 1"
-
-
-msgid "Y 1"
-msgstr "Y 1"
-
-
 msgctxt "Operator"
 msgid "Move Area Edges"
 msgstr "移动区域边界"
@@ -53172,6 +53233,15 @@ msgstr "展开 / 折叠标题栏的下拉菜单"
 
 
 msgctxt "Operator"
+msgid "Show Info Log"
+msgstr "显示信息日志"
+
+
+msgid "Show info log in a separate window"
+msgstr "在单独的窗口中显示信息日志"
+
+
+msgctxt "Operator"
 msgid "Jump to Keyframe"
 msgstr "跳转到关键帧"
 
@@ -53205,10 +53275,6 @@ msgstr "新建一个新的屏幕窗口"
 msgctxt "Operator"
 msgid "Redo Last"
 msgstr "重做上一步"
-
-
-msgid "Display menu for last action performed"
-msgstr "显示之前执行过的最后一步操作"
 
 
 msgctxt "Operator"
@@ -55872,15 +55938,6 @@ msgstr "强制完全重新加载UI翻译"
 
 
 msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "输出报告为文本块"
-
-
-msgid "Write the reports "
-msgstr "写入报告"
-
-
-msgctxt "Operator"
 msgid "Reset to Default Value"
 msgstr "恢复到默认值"
 
@@ -56876,7 +56933,7 @@ msgstr "移动视角框住选择物体"
 
 msgctxt "Operator"
 msgid "Remove from Local View"
-msgstr "从自身视图中移除"
+msgstr "从局部视图中移除"
 
 
 msgid "Move selected objects out of local view"
@@ -58650,6 +58707,10 @@ msgstr "属性名"
 
 msgid "Property name edit"
 msgstr "编辑属性名"
+
+
+msgid "Subtype"
+msgstr "子类型"
 
 
 msgid "Use Soft Limits"
@@ -64115,6 +64176,14 @@ msgid "Rotation step for numerical pad keys (2 4 6 8)"
 msgstr "使用小键盘(2 4 6 8)做旋转操作的步进值"
 
 
+msgid "Enabled Add-ons Only"
+msgstr "仅已启用插件"
+
+
+msgid "Only show enabled add-ons. Un-check to see all installed add-ons"
+msgstr "仅显示已启用插件。取消勾选查看全部已安装插件。"
+
+
 msgid "Toolbox Column Layout"
 msgstr "工具箱的行结构"
 
@@ -65889,6 +65958,10 @@ msgid "Export an animation"
 msgstr "导出动画"
 
 
+msgid "Fill Contours"
+msgstr "填充色"
+
+
 msgid "SVG Export"
 msgstr "SVG导出"
 
@@ -67597,10 +67670,6 @@ msgid "Number of simulation steps taken per second (higher values are more accur
 msgstr "每秒的模拟步数 (值越高, 结果越精确, 但速度越慢)"
 
 
-msgid "Time Scale"
-msgstr "时间比例"
-
-
 msgid "Change the speed of the simulation"
 msgstr "更改模拟速度"
 
@@ -68992,7 +69061,7 @@ msgstr "用于创建擦除过渡效果的的序列片段"
 
 
 msgid "Edge angle"
-msgstr "边线角度"
+msgstr "边夹角"
 
 
 msgid "Blur Width"
@@ -71509,14 +71578,6 @@ msgid "Show Curve Extremes"
 msgstr "显示曲线极点"
 
 
-msgid "Show Frame Number Indicator"
-msgstr "显示帧数值"
-
-
-msgid "Show frame number beside the current frame indicator line"
-msgstr "在当前帧的旁边显示帧的数字"
-
-
 msgid "Show Group Colors"
 msgstr "显示组颜色"
 
@@ -72274,6 +72335,14 @@ msgid "Sort Alphabetically"
 msgstr "按首字母排序"
 
 
+msgid "Sync Outliner Selection"
+msgstr "同步大纲选择"
+
+
+msgid "Sync outliner selection with other editors"
+msgstr "与其他编辑器同步大纲视图中的选择"
+
+
 msgid "Space Preferences"
 msgstr "空间用户设置"
 
@@ -72723,7 +72792,7 @@ msgstr "叠加设置"
 
 
 msgid "Settings for display of overlays in the 3D viewport"
-msgstr "3D 视图覆盖层的显示设置"
+msgstr "3D 视图叠加层的显示设置"
 
 
 msgid "3D Region"
@@ -72915,11 +72984,11 @@ msgstr "追踪点在视图中的显示样式"
 
 
 msgid "Use Local Camera"
-msgstr "使用自身相机"
+msgstr "使用局部相机"
 
 
 msgid "Use a local camera in this view, rather than scene's active camera"
-msgstr "在此视图中使用自身相机，而非场景活动相机"
+msgstr "在此视图中使用局部相机，而非场景活动相机"
 
 
 msgid "Get the node tree path as a string"
@@ -74554,6 +74623,10 @@ msgid "Theme settings for the Outliner"
 msgstr "用于大纲视图的主题设置"
 
 
+msgid "Active Highlight"
+msgstr "活动高光"
+
+
 msgid "Edited Object"
 msgstr "已编辑物体"
 
@@ -75023,7 +75096,7 @@ msgstr "锐边"
 
 
 msgid "Edge Angle Text"
-msgstr "面夹角提示文字"
+msgstr "边夹角提示文字"
 
 
 msgid "Edge Length Text"
@@ -75111,7 +75184,7 @@ msgstr "指示物体关键帧的颜色"
 
 
 msgid "View Overlay"
-msgstr "视图覆盖层"
+msgstr "视图叠加层"
 
 
 msgid "Color for wireframe when in edit mode, but edge selection is active"
@@ -75483,6 +75556,10 @@ msgid "Only sculpt selected stroke points"
 msgstr "仅雕刻选中的笔画端点"
 
 
+msgid "Only sculpt selected stroke"
+msgstr "仅雕刻选中的笔画"
+
+
 msgid "Only Endpoints"
 msgstr "仅端点"
 
@@ -75645,10 +75722,6 @@ msgstr "对移动使用吸附"
 
 msgid "Move is affected by snapping settings"
 msgstr "移动受吸附设置影响"
-
-
-msgid "Only Origins"
-msgstr "仅原点"
 
 
 msgid "Manipulate origins (object, pose and weight paint mode only)"
@@ -76072,7 +76145,7 @@ msgstr "三围旋转"
 
 
 msgid "3D View Overlay Settings"
-msgstr "3D 视图覆盖设置"
+msgstr "3D 视图叠加设置"
 
 
 msgid "Backwire Opacity"
@@ -76164,7 +76237,7 @@ msgstr "显示3D游标"
 
 
 msgid "Display 3D Cursor Overlay"
-msgstr "显示3D 游标覆盖"
+msgstr "显示3D 游标叠加层"
 
 
 msgid "Draw Handles"
@@ -76224,7 +76297,7 @@ msgstr "高亮显示选中的连线"
 
 
 msgid "Edge Angle"
-msgstr "边角度"
+msgstr "边夹角"
 
 
 msgid "Display selected edge angle, using global values when set in the transform panel"
@@ -76284,7 +76357,7 @@ msgstr "面朝向"
 
 
 msgid "Show the Face Orientation Overlay"
-msgstr "显示面朝向覆盖"
+msgstr "显示面朝向叠加层"
 
 
 msgid "Draw Faces"
@@ -76328,7 +76401,7 @@ msgstr "显示视觉开发的球体和调色板"
 
 
 msgid "Show the Motion Paths Overlay"
-msgstr "覆盖显示运动路径"
+msgstr "显示运动路径叠加层"
 
 
 msgid "Object Origins"
@@ -76356,7 +76429,7 @@ msgstr "显示隐藏的线框"
 
 
 msgid "Show the Onion Skinning Overlay"
-msgstr "覆盖显示洋葱皮"
+msgstr "显示洋葱皮叠加层"
 
 
 msgid "Display Grid"
@@ -76376,11 +76449,11 @@ msgstr "在非线框模式下, 显示所选物体的轮廓线"
 
 
 msgid "Show Overlays"
-msgstr "显示覆盖"
+msgstr "显示叠加层"
 
 
 msgid "Display overlays like gizmos and outlines"
-msgstr "显示覆盖, 如 gizmos 和轮廓线"
+msgstr "显示叠加层, 如 gizmos 和轮廓线"
 
 
 msgid "Show Wire"
@@ -76520,7 +76593,7 @@ msgstr "顶点绘制不透明度"
 
 
 msgid "Opacity of the vertex paint mode overlay"
-msgstr "顶点绘制模式下覆盖层的不透明度"
+msgstr "顶点绘制模式下叠加层的不透明度"
 
 
 msgid "Weight Paint Opacity"
@@ -76528,7 +76601,7 @@ msgstr "权重绘制不透明度"
 
 
 msgid "Opacity of the weight paint mode overlay"
-msgstr "权重绘制模式下覆盖层的不透明度"
+msgstr "权重绘制模式下叠加层的不透明度"
 
 
 msgid "Wireframe Threshold"
@@ -78801,6 +78874,10 @@ msgid "Steps Min"
 msgstr "最小步数"
 
 
+msgid "Display Size X"
+msgstr "显示尺寸 X"
+
+
 msgid "Start Handle"
 msgstr "起始控制柄"
 
@@ -78937,6 +79014,10 @@ msgid "Autolock Inactive Layers"
 msgstr "自动锁定非活动层"
 
 
+msgid "Show Only On Keyframed"
+msgstr "仅在关键帧上显示"
+
+
 msgid "Before"
 msgstr "前显帧数"
 
@@ -78961,10 +79042,6 @@ msgstr "隐藏其他"
 msgctxt "Operator"
 msgid "New Layer"
 msgstr "新建层"
-
-
-msgid "Show Only On Keyframed"
-msgstr "仅在关键帧上显示"
 
 
 msgid "Multiuser datablock not supported"
@@ -79854,11 +79931,6 @@ msgstr "数据源:"
 
 msgid "Select:"
 msgstr "选择:"
-
-
-msgctxt "Operator"
-msgid "Paste & Merge"
-msgstr "粘贴 & 合并"
 
 
 msgctxt "Operator"
@@ -81132,10 +81204,6 @@ msgid "Timecode Index"
 msgstr "时间码编号"
 
 
-msgid "Zoom %d:%d"
-msgstr "缩放比 %d:%d"
-
-
 msgctxt "Operator"
 msgid "Set Wall"
 msgstr "设置立面"
@@ -81188,6 +81256,11 @@ msgstr "用于旋转/缩放的轨迹"
 
 
 msgctxt "Operator"
+msgid "Zoom d:d"
+msgstr "缩放比 d:d"
+
+
+msgctxt "Operator"
 msgid "View Fit"
 msgstr "匹配视图"
 
@@ -81209,6 +81282,10 @@ msgstr "重做形状点"
 
 msgid "Solve error: %.4f"
 msgstr "解算错误: %.4f"
+
+
+msgid "Zoom d:d"
+msgstr "缩放比 d:d"
 
 
 msgctxt "Operator"
@@ -81653,11 +81730,6 @@ msgstr "向前循环滚动渲染槽"
 
 
 msgctxt "Operator"
-msgid "Zoom d:d"
-msgstr "缩放比 d:d"
-
-
-msgctxt "Operator"
 msgid "Replace..."
 msgstr "替换..."
 
@@ -81697,8 +81769,8 @@ msgid "Mirror Y"
 msgstr "镜像Y"
 
 
-msgid "Zoom d:d"
-msgstr "缩放比 d:d"
+msgid "Zoom %d:%d"
+msgstr "缩放比 %d:%d"
 
 
 msgctxt "Operator"
@@ -81877,6 +81949,10 @@ msgstr "实例化到场景"
 msgctxt "Operator"
 msgid "ID Data"
 msgstr "ID数据"
+
+
+msgid "Sync Selection"
+msgstr "同步选择"
 
 
 msgid "Search:"
@@ -83877,11 +83953,11 @@ msgstr "显示Gizmo"
 
 
 msgid "Toggle Overlays"
-msgstr "切换覆盖"
+msgstr "切换叠加层"
 
 
 msgid "Local Camera"
-msgstr "自身相机"
+msgstr "局部相机"
 
 
 msgid "Object Types Visibility"
@@ -83909,7 +83985,7 @@ msgstr "朝向"
 
 
 msgid "Viewport Overlays"
-msgstr "视图覆盖"
+msgstr "视图叠加层"
 
 
 msgid "Text Info"
@@ -83946,7 +84022,7 @@ msgstr "网格分析"
 
 
 msgid "Face Angle"
-msgstr "面夹角"
+msgstr "面内角"
 
 
 msgid "Edge Marks"
@@ -84724,6 +84800,11 @@ msgid "Detailing"
 msgstr "细节"
 
 
+msgctxt "Operator"
+msgid "Remesh"
+msgstr "重构网格"
+
+
 msgid "Threaded Sculpt"
 msgstr "多线程雕刻"
 
@@ -85339,7 +85420,7 @@ msgstr "重构时需要在两个关键帧帧之间设置至少8个共同轨迹"
 
 
 msgid "Blender is compiled without motion tracking library"
-msgstr "Blender 没有使用运动跟踪库来编译"
+msgstr "Blender 没有使用运动追踪库来编译"
 
 
 msgid "Original Mode"
@@ -85688,7 +85769,7 @@ msgstr "物体模式"
 
 
 msgid "OverlayEngine"
-msgstr "覆盖引擎"
+msgstr "叠加层引擎"
 
 
 msgid "PaintTextureMode"
@@ -86717,10 +86798,6 @@ msgstr "当活动层被锁定或者隐藏，原始物体将不能添加"
 
 msgid "Non-Keyboard Shortcut"
 msgstr "无键盘快捷键"
-
-
-msgid "Shift+Left Mouse"
-msgstr "Shift + 鼠标左键"
 
 
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
@@ -87814,28 +87891,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "编辑模式下所选边线的计数"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "编辑模式下所选面的计数值"
-
-
-msgid "Cannot add tessfaces to a mesh that already has polygons"
-msgstr "无法向已包含多边形的网格中添加细分曲面"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "编辑模式下所选边线的计数"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "编辑模式下所选顶点的计数值"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "在编辑模式中显示贝塞尔控制柄"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "在编辑模式中显示贝塞尔控制柄"
 
 
 msgid "Cannot remove edges in edit mode"
@@ -88894,14 +88955,6 @@ msgstr "此方向再无可供跳转的关键帧"
 
 msgid "No more markers to jump to in this direction"
 msgstr "此方向再无可供跳转的标识"
-
-
-msgid "Only window region can be 4-splitted"
-msgstr "四分视图只支持窗口区域"
-
-
-msgid "Only last region can be 4-splitted"
-msgstr "最后一个区可以被 4 等分"
 
 
 msgid "No fullscreen areas were found"
@@ -90158,6 +90211,10 @@ msgid "Move inside collection (Ctrl to link, Shift to parent)"
 msgstr "移动到集合内 (Ctrl 为关联, Shift 为父级)"
 
 
+msgid "Can't edit library linked object(s)"
+msgstr "无法编辑与物体关联的库"
+
+
 msgid "Use view layer for rendering"
 msgstr "使用用于渲染的视图层"
 
@@ -90312,6 +90369,10 @@ msgstr "无法主集合的名称"
 
 msgid "Cannot edit the path of an indirectly linked library"
 msgstr "无法编辑这个间接链接库的路径"
+
+
+msgid "No active item to rename"
+msgstr "无活动项可供重命名"
 
 
 msgid "No selected data-blocks to copy"
@@ -90931,7 +90992,7 @@ msgstr "锁定%s Z 向"
 
 
 msgid "along local Z"
-msgstr "沿自身 Z 向"
+msgstr "沿局部 Z 向"
 
 
 msgid "Bend Angle: %s Radius: %s Alt, Clamp %s"
@@ -91961,7 +92022,7 @@ msgstr "形变组 '%s' 未存在于物体 '%s' 中"
 
 
 msgid "Viewport not in local view"
-msgstr "视图不在自身视图状态"
+msgstr "视图不在局部视图状态"
 
 
 msgid "ShapeKey not found"
@@ -92941,10 +93002,6 @@ msgid "Allow Execution"
 msgstr "允许执行"
 
 
-msgid "Discard Changes"
-msgstr "放弃修改"
-
-
 msgid "unable to open the file"
 msgstr "无法打开文件"
 
@@ -93180,6 +93237,10 @@ msgstr "Blender文件视图"
 
 msgid "Blender Drivers Editor"
 msgstr "Blender驱动器编辑器"
+
+
+msgid "Blender Info Log"
+msgstr "Blender信息日志"
 
 
 msgid "All Add-ons"
