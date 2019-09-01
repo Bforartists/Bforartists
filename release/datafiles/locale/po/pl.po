@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -8080,10 +8080,6 @@ msgid "Grease Pencil operator is already active"
 msgstr "Operator Szkicownik jest już aktywny"
 
 
-msgid "Shift+Left Mouse"
-msgstr "Shift-LPM"
-
-
 msgctxt "Operator"
 msgid "Replace Keyframes"
 msgstr "Zastąp klatki kluczowe"
@@ -8903,28 +8899,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "Nie można dodać geometrii w trybie edycji"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "Nie można dodać tessfaces w trybie edycji"
-
-
-msgid "Cannot add tessfaces to a mesh that already has polygons"
-msgstr "Nie można dodać tessfaces do siatki, która już posiada poligony"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "Nie można dodać krawędzi w trybie edycji"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "Nie można dodać wierzchołków w trybie edycji"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "Nie można usunąć ścian w trybie edycji"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "Nie można usunąć większej ilości ścian niż występuje w siatce"
 
 
 msgid "Cannot remove edges in edit mode"
@@ -9855,14 +9835,6 @@ msgstr "Brak klatek kluczowych do których można skoczyć w tym kierunku"
 
 msgid "No more markers to jump to in this direction"
 msgstr "Brak markerów do których można skoczyć w tym kierunku"
-
-
-msgid "Only window region can be 4-splitted"
-msgstr "Tylko region okna może być podzielony na 4"
-
-
-msgid "Only last region can be 4-splitted"
-msgstr "Tylko ostatni region może być podzielony na 4"
 
 
 msgid "No fullscreen areas were found"

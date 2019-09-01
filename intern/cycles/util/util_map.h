@@ -25,6 +25,7 @@ CCL_NAMESPACE_BEGIN
 using std::map;
 using std::pair;
 using std::unordered_map;
+using std::unordered_multimap;
 
 template<typename T> static void map_free_memory(T &data)
 {

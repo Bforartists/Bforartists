@@ -21,7 +21,7 @@
 bl_info = {
     "name": "Import Images as Planes",
     "author": "Florian Meyer (tstscr), mont29, matali, Ted Schundler (SpkyElctrc)",
-    "version": (3, 2, 2),
+    "version": (3, 3, 1),
     "blender": (2, 80, 0),
     "location": "File > Import > Images as Planes or Add > Mesh > Images as Planes",
     "description": "Imports images and creates planes with the appropriate aspect ratio. "
@@ -727,11 +727,11 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
     # ------------------------------
     # Properties - Material / Shader
     SHADERS = (
-        ('DIFFUSE', "Diffuse", "Diffuse Shader"),
+        ('PRINCIPLED',"Principled","Principled Shader"),
         ('SHADELESS', "Shadeless", "Only visible to camera and reflections"),
         ('EMISSION', "Emit", "Emission Shader"),
     )
-    shader: EnumProperty(name="Shader", items=SHADERS, default='DIFFUSE', description="Node shader to use")
+    shader: EnumProperty(name="Shader", items=SHADERS, default='PRINCIPLED', description="Node shader to use")
 
     emit_strength: FloatProperty(
         name="Strength", min=0.0, default=1.0, soft_max=10.0,
@@ -1009,8 +1009,8 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
 
         tex_image = self.create_cycles_texnode(context, node_tree, img_spec)
 
-        if self.shader == 'DIFFUSE':
-            core_shader = node_tree.nodes.new('ShaderNodeBsdfDiffuse')
+        if self.shader == 'PRINCIPLED':
+            core_shader = node_tree.nodes.new('ShaderNodeBsdfPrincipled')
         elif self.shader == 'SHADELESS':
             core_shader = get_shadeless_node(node_tree)
         else:  # Emission Shading
@@ -1021,13 +1021,16 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         node_tree.links.new(core_shader.inputs[0], tex_image.outputs[0])
 
         if self.use_transparency:
-            bsdf_transparent = node_tree.nodes.new('ShaderNodeBsdfTransparent')
+            if self.shader == 'PRINCIPLED':
+                node_tree.links.new(core_shader.inputs[18], tex_image.outputs[1])
+            else:
+                bsdf_transparent = node_tree.nodes.new('ShaderNodeBsdfTransparent')
 
-            mix_shader = node_tree.nodes.new('ShaderNodeMixShader')
-            node_tree.links.new(mix_shader.inputs[0], tex_image.outputs[1])
-            node_tree.links.new(mix_shader.inputs[1], bsdf_transparent.outputs[0])
-            node_tree.links.new(mix_shader.inputs[2], core_shader.outputs[0])
-            core_shader = mix_shader
+                mix_shader = node_tree.nodes.new('ShaderNodeMixShader')
+                node_tree.links.new(mix_shader.inputs[0], tex_image.outputs[1])
+                node_tree.links.new(mix_shader.inputs[1], bsdf_transparent.outputs[0])
+                node_tree.links.new(mix_shader.inputs[2], core_shader.outputs[0])
+                core_shader = mix_shader
 
         node_tree.links.new(out_node.inputs[0], core_shader.outputs[0])
 

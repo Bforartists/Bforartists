@@ -938,6 +938,17 @@ static void gpencil_add_editpoints_vertexdata(GpencilBatchCache *cache,
 {
   const DRWContextState *draw_ctx = DRW_context_state_get();
   View3D *v3d = draw_ctx->v3d;
+  ToolSettings *ts = draw_ctx->scene->toolsettings;
+  const bool use_sculpt_mask = (GPENCIL_SCULPT_MODE(gpd) && (ts->gpencil_selectmode_sculpt &
+                                                             (GP_SCULPT_MASK_SELECTMODE_POINT |
+                                                              GP_SCULPT_MASK_SELECTMODE_STROKE |
+                                                              GP_SCULPT_MASK_SELECTMODE_SEGMENT)));
+
+  const bool show_sculpt_points = (GPENCIL_SCULPT_MODE(gpd) &&
+                                   (ts->gpencil_selectmode_sculpt &
+                                    (GP_SCULPT_MASK_SELECTMODE_POINT |
+                                     GP_SCULPT_MASK_SELECTMODE_SEGMENT)));
+
   MaterialGPencilStyle *gp_style = BKE_material_gpencil_settings_get(ob, gps->mat_nr + 1);
 
   /* alpha factor for edit points/line to make them more subtle */
@@ -950,11 +961,24 @@ static void gpencil_add_editpoints_vertexdata(GpencilBatchCache *cache,
     }
     const bool is_weight_paint = (gpd) && (gpd->flag & GP_DATA_STROKE_WEIGHTMODE);
 
+    /* If Sculpt mode and the mask is disabled, the select must be hidden. */
+    const bool hide_select = GPENCIL_SCULPT_MODE(gpd) && !use_sculpt_mask;
+
+    /* Show Edit points if:
+     *  Edit mode: Not in Stroke selection mode
+     *  Sculpt mode: Not in Stroke mask mode and any other mask mode enabled
+     *  Weight mode: Always
+     */
+    const bool show_points = (show_sculpt_points) || (is_weight_paint) ||
+                             (GPENCIL_EDIT_MODE(gpd) &&
+                              ((ts->gpencil_selectmode_edit & GP_SELECTMODE_STROKE) == 0));
+
     if (cache->is_dirty) {
       if ((obact == ob) && ((v3d->flag2 & V3D_HIDE_OVERLAYS) == 0) &&
           (v3d->gp_flag & V3D_GP_SHOW_EDIT_LINES)) {
+
         /* line of the original stroke */
-        gpencil_get_edlin_geom(&cache->b_edlin, gps, edit_alpha, gpd->flag);
+        gpencil_get_edlin_geom(&cache->b_edlin, gps, edit_alpha, hide_select);
 
         /* add to list of groups */
         cache->grp_cache = gpencil_group_cache_add(cache->grp_cache,
@@ -967,6 +991,12 @@ static void gpencil_add_editpoints_vertexdata(GpencilBatchCache *cache,
                                                    &cache->grp_size,
                                                    &cache->grp_used);
       }
+
+      /* If the points are hidden return. */
+      if ((!show_points) || (hide_select)) {
+        return;
+      }
+
       /* edit points */
       if ((gps->flag & GP_STROKE_SELECT) || (is_weight_paint)) {
         if ((gpl->flag & GP_LAYER_UNLOCK_COLOR) ||
@@ -1858,6 +1888,14 @@ void gpencil_populate_datablock(GPENCIL_e_data *e_data,
   const DRWContextState *draw_ctx = DRW_context_state_get();
   const ViewLayer *view_layer = DEG_get_evaluated_view_layer(draw_ctx->depsgraph);
   Scene *scene = draw_ctx->scene;
+
+  /* TODO: Review why is needed this recalc when render cycles + GP object in background.
+   * We need these lines to keep running the background render, but asap we get an alternative
+   * solution, we must remove it and keep all logic inside gpencil_modifier module. (antoniov)
+   */
+  if (ob->runtime.gpencil_tot_layers == 0) {
+    BKE_gpencil_modifiers_calc(draw_ctx->depsgraph, draw_ctx->scene, ob);
+  }
 
   /* Use original data to shared in edit/transform operators */
   bGPdata *gpd_eval = (bGPdata *)ob->data;

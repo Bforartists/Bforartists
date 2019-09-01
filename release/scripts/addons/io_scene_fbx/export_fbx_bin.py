@@ -49,7 +49,7 @@ from .fbx_utils import (
     FBX_VERSION, FBX_HEADER_VERSION, FBX_SCENEINFO_VERSION, FBX_TEMPLATES_VERSION,
     FBX_MODELS_VERSION,
     FBX_GEOMETRY_VERSION, FBX_GEOMETRY_NORMAL_VERSION, FBX_GEOMETRY_BINORMAL_VERSION, FBX_GEOMETRY_TANGENT_VERSION,
-    FBX_GEOMETRY_SMOOTHING_VERSION, FBX_GEOMETRY_VCOLOR_VERSION, FBX_GEOMETRY_UV_VERSION,
+    FBX_GEOMETRY_SMOOTHING_VERSION, FBX_GEOMETRY_CREASE_VERSION, FBX_GEOMETRY_VCOLOR_VERSION, FBX_GEOMETRY_UV_VERSION,
     FBX_GEOMETRY_MATERIAL_VERSION, FBX_GEOMETRY_LAYER_VERSION,
     FBX_GEOMETRY_SHAPE_VERSION, FBX_DEFORMER_SHAPE_VERSION, FBX_DEFORMER_SHAPECHANNEL_VERSION,
     FBX_POSE_BIND_VERSION, FBX_DEFORMER_SKIN_VERSION, FBX_DEFORMER_CLUSTER_VERSION,
@@ -865,6 +865,30 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
     if scene_data.settings.use_custom_props:
         fbx_data_element_custom_properties(props, me)
 
+    # Subdivision levels. Take them from the first found subsurf modifier from the
+    # first object that has the mesh. Write crease information if the object has
+    # and subsurf modifier.
+    write_crease = False
+    if scene_data.settings.use_subsurf:
+        last_subsurf = None
+        for mod in me_obj.bdata.modifiers:
+            if not (mod.show_render or mod.show_viewport):
+                continue
+            if mod.type == 'SUBSURF' and mod.subdivision_type == 'CATMULL_CLARK':
+                last_subsurf = mod
+
+        if last_subsurf:
+            elem_data_single_int32(geom, b"Smoothness", 2) # Display control mesh and smoothed
+            elem_data_single_int32(geom, b"BoundaryRule", 2) # Round edges like Blender
+            elem_data_single_int32(geom, b"PreviewDivisionLevels", last_subsurf.levels)
+            elem_data_single_int32(geom, b"RenderDivisionLevels", last_subsurf.render_levels)
+
+            elem_data_single_int32(geom, b"PreserveBorders", 0)
+            elem_data_single_int32(geom, b"PreserveHardEdges", 0)
+            elem_data_single_int32(geom, b"PropagateEdgeHardness", 0)
+
+            write_crease = mod.use_creases
+
     elem_data_single_int32(geom, b"GeometryVersion", FBX_GEOMETRY_VERSION)
 
     # Vertex cos.
@@ -980,7 +1004,21 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
         elem_data_single_int32_array(lay_smooth, b"Smoothing", t_ps)  # Sight, int32 for bool...
         del t_ps
 
-    # TODO: Edge crease (LayerElementCrease).
+    # Edge crease for subdivision
+    if write_crease:
+        t_ec = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * edges_nbr
+        for e in me.edges:
+            if e.key not in edges_map:
+                continue  # Only loose edges, in theory!
+            t_ec[edges_map[e.key]] = e.crease
+
+        lay_crease = elem_data_single_int32(geom, b"LayerElementEdgeCrease", 0)
+        elem_data_single_int32(lay_crease, b"Version", FBX_GEOMETRY_CREASE_VERSION)
+        elem_data_single_string(lay_crease, b"Name", b"")
+        elem_data_single_string(lay_crease, b"MappingInformationType", b"ByEdge")
+        elem_data_single_string(lay_crease, b"ReferenceInformationType", b"Direct")
+        elem_data_single_float64_array(lay_crease, b"EdgeCrease", t_ec)
+        del t_ec
 
     # And we are done with edges!
     del edges_map
@@ -1032,42 +1070,53 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
         if scene_data.settings.use_tspace:
             tspacenumber = len(me.uv_layers)
             if tspacenumber:
-                t_ln = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops) * 3
-                # t_lnw = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops)
-                uv_names = [uvlayer.name for uvlayer in me.uv_layers]
-                for name in uv_names:
-                    me.calc_tangents(uvmap=name)
-                for idx, uvlayer in enumerate(me.uv_layers):
-                    name = uvlayer.name
-                    # Loop bitangents (aka binormals).
-                    # NOTE: this is not supported by importer currently.
-                    me.loops.foreach_get("bitangent", t_ln)
-                    lay_nor = elem_data_single_int32(geom, b"LayerElementBinormal", idx)
-                    elem_data_single_int32(lay_nor, b"Version", FBX_GEOMETRY_BINORMAL_VERSION)
-                    elem_data_single_string_unicode(lay_nor, b"Name", name)
-                    elem_data_single_string(lay_nor, b"MappingInformationType", b"ByPolygonVertex")
-                    elem_data_single_string(lay_nor, b"ReferenceInformationType", b"Direct")
-                    elem_data_single_float64_array(lay_nor, b"Binormals",
-                                                   chain(*nors_transformed_gen(t_ln, geom_mat_no)))
-                    # Binormal weights, no idea what it is.
-                    # elem_data_single_float64_array(lay_nor, b"BinormalsW", t_lnw)
+                # We can only compute tspace on tesellated meshes, need to check that here...
+                t_lt = [None] * len(me.polygons)
+                me.polygons.foreach_get("loop_total", t_lt)
+                if any((lt > 4 for lt in t_lt)):
+                    del t_lt
+                    scene_data.settings.report(
+                        {'WARNING'},
+                        "Mesh '%s' has polygons with more than 4 vertices, "
+                        "cannot compute/export tangent space for it" % me.name)
+                else:
+                    del t_lt
+                    t_ln = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops) * 3
+                    # t_lnw = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops)
+                    uv_names = [uvlayer.name for uvlayer in me.uv_layers]
+                    for name in uv_names:
+                        me.calc_tangents(uvmap=name)
+                    for idx, uvlayer in enumerate(me.uv_layers):
+                        name = uvlayer.name
+                        # Loop bitangents (aka binormals).
+                        # NOTE: this is not supported by importer currently.
+                        me.loops.foreach_get("bitangent", t_ln)
+                        lay_nor = elem_data_single_int32(geom, b"LayerElementBinormal", idx)
+                        elem_data_single_int32(lay_nor, b"Version", FBX_GEOMETRY_BINORMAL_VERSION)
+                        elem_data_single_string_unicode(lay_nor, b"Name", name)
+                        elem_data_single_string(lay_nor, b"MappingInformationType", b"ByPolygonVertex")
+                        elem_data_single_string(lay_nor, b"ReferenceInformationType", b"Direct")
+                        elem_data_single_float64_array(lay_nor, b"Binormals",
+                                                       chain(*nors_transformed_gen(t_ln, geom_mat_no)))
+                        # Binormal weights, no idea what it is.
+                        # elem_data_single_float64_array(lay_nor, b"BinormalsW", t_lnw)
 
-                    # Loop tangents.
-                    # NOTE: this is not supported by importer currently.
-                    me.loops.foreach_get("tangent", t_ln)
-                    lay_nor = elem_data_single_int32(geom, b"LayerElementTangent", idx)
-                    elem_data_single_int32(lay_nor, b"Version", FBX_GEOMETRY_TANGENT_VERSION)
-                    elem_data_single_string_unicode(lay_nor, b"Name", name)
-                    elem_data_single_string(lay_nor, b"MappingInformationType", b"ByPolygonVertex")
-                    elem_data_single_string(lay_nor, b"ReferenceInformationType", b"Direct")
-                    elem_data_single_float64_array(lay_nor, b"Tangents",
-                                                   chain(*nors_transformed_gen(t_ln, geom_mat_no)))
-                    # Tangent weights, no idea what it is.
-                    # elem_data_single_float64_array(lay_nor, b"TangentsW", t_lnw)
+                        # Loop tangents.
+                        # NOTE: this is not supported by importer currently.
+                        me.loops.foreach_get("tangent", t_ln)
+                        lay_nor = elem_data_single_int32(geom, b"LayerElementTangent", idx)
+                        elem_data_single_int32(lay_nor, b"Version", FBX_GEOMETRY_TANGENT_VERSION)
+                        elem_data_single_string_unicode(lay_nor, b"Name", name)
+                        elem_data_single_string(lay_nor, b"MappingInformationType", b"ByPolygonVertex")
+                        elem_data_single_string(lay_nor, b"ReferenceInformationType", b"Direct")
+                        elem_data_single_float64_array(lay_nor, b"Tangents",
+                                                       chain(*nors_transformed_gen(t_ln, geom_mat_no)))
+                        # Tangent weights, no idea what it is.
+                        # elem_data_single_float64_array(lay_nor, b"TangentsW", t_lnw)
 
-                del t_ln
-                # del t_lnw
-                me.free_tangents()
+                    del t_ln
+                    # del t_lnw
+                    me.free_tangents()
 
         me.free_normals_split()
 
@@ -1181,6 +1230,10 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
     if smooth_type in {'FACE', 'EDGE'}:
         lay_smooth = elem_empty(layer, b"LayerElement")
         elem_data_single_string(lay_smooth, b"Type", b"LayerElementSmoothing")
+        elem_data_single_int32(lay_smooth, b"TypedIndex", 0)
+    if write_crease:
+        lay_smooth = elem_empty(layer, b"LayerElement")
+        elem_data_single_string(lay_smooth, b"Type", b"LayerElementEdgeCrease")
         elem_data_single_int32(lay_smooth, b"TypedIndex", 0)
     if vcolnumber:
         lay_vcol = elem_empty(layer, b"LayerElement")
@@ -2206,8 +2259,10 @@ def fbx_data_from_scene(scene, depsgraph, settings):
             # We cannot use default mesh in that case, or material would not be the right ones...
             use_org_data = not (is_ob_material or ob.type in BLENDER_OTHER_OBJECT_TYPES)
             backup_pose_positions = []
+            tmp_mods = []
             if use_org_data and ob.type == 'MESH':
                 # No need to create a new mesh in this case, if no modifier is active!
+                last_subsurf = None
                 for mod in ob.modifiers:
                     # For meshes, when armature export is enabled, disable Armature modifiers here!
                     # XXX Temp hacks here since currently we only have access to a viewport depsgraph...
@@ -2221,10 +2276,24 @@ def fbx_data_from_scene(scene, depsgraph, settings):
                             backup_pose_positions.append((armature, armature.pose_position))
                             armature.pose_position = 'REST'
                     elif mod.show_render or mod.show_viewport:
-                        use_org_data = False
+                        # If exporting with subsurf collect the last Catmull-Clark subsurf modifier
+                        # and disable it. We can use the original data as long as this is the first
+                        # found applicable subsurf modifier.
+                        if settings.use_subsurf and mod.type == 'SUBSURF' and mod.subdivision_type == 'CATMULL_CLARK':
+                            if last_subsurf:
+                                use_org_data = False
+                            last_subsurf = mod
+                        else:
+                            use_org_data = False
+                if settings.use_subsurf and last_subsurf:
+                    # XXX: When exporting with subsurf information temporarily disable
+                    # the last subsurf modifier.
+                    tmp_mods.append((last_subsurf, last_subsurf.show_render, last_subsurf.show_viewport))
+                    last_subsurf.show_render = False
+                    last_subsurf.show_viewport = False
             if not use_org_data:
                 # If modifiers has been altered need to update dependency graph.
-                if backup_pose_positions:
+                if backup_pose_positions or tmp_mods:
                     depsgraph.update()
                 ob_to_convert = ob.evaluated_get(depsgraph) if settings.use_mesh_modifiers else ob
                 # NOTE: The dependency graph might be re-evaluating multiple times, which could
@@ -2238,6 +2307,11 @@ def fbx_data_from_scene(scene, depsgraph, settings):
                 print((armature, pose_position))
                 armature.pose_position = pose_position
                 # Update now, so we don't leave modified state after last object was exported.
+            # Re-enable temporary disabled modifiers.
+            for mod, show_render, show_viewport in tmp_mods:
+                mod.show_render = show_render
+                mod.show_viewport = show_viewport
+            if backup_pose_positions or tmp_mods:
                 depsgraph.update()
         if use_org_data:
             data_meshes[ob_obj] = (get_blenderID_key(ob.data), ob.data, False)
@@ -2902,6 +2976,7 @@ def save_single(operator, scene, depsgraph, filepath="",
                 use_mesh_modifiers=True,
                 use_mesh_modifiers_render=True,
                 mesh_smooth_type='FACE',
+                use_subsurf=False,
                 use_armature_deform_only=False,
                 bake_anim=True,
                 bake_anim_use_all_bones=True,
@@ -2983,7 +3058,7 @@ def save_single(operator, scene, depsgraph, filepath="",
         operator.report, (axis_up, axis_forward), global_matrix, global_scale, apply_unit_scale, unit_scale,
         bake_space_transform, global_matrix_inv, global_matrix_inv_transposed,
         context_objects, object_types, use_mesh_modifiers, use_mesh_modifiers_render,
-        mesh_smooth_type, use_mesh_edges, use_tspace,
+        mesh_smooth_type, use_subsurf, use_mesh_edges, use_tspace,
         armature_nodetype, use_armature_deform_only,
         add_leaf_bones, bone_correction_matrix, bone_correction_matrix_inv,
         bake_anim, bake_anim_use_all_bones, bake_anim_use_nla_strips, bake_anim_use_all_actions,
@@ -3055,6 +3130,7 @@ def defaults_unity3d():
         "use_mesh_modifiers_render": True,
         "use_mesh_edges": False,
         "mesh_smooth_type": 'FACE',
+        "use_subsurf": False,
         "use_tspace": False,  # XXX Why? Unity is expected to support tspace import...
 
         "use_armature_deform_only": True,

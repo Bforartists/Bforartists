@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -9372,10 +9372,6 @@ msgid "Min Angle"
 msgstr "Мин. угао"
 
 
-msgid "Burn"
-msgstr "Спали"
-
-
 msgid "2D Transform"
 msgstr "2D трансформација"
 
@@ -14590,14 +14586,6 @@ msgstr "У сферу"
 
 msgid "Shrinkfatten"
 msgstr "СкупиУдебљај"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "Маска_СкупиУдебљај"
-
-
-msgid "GPencil_Shrinkfatten"
-msgstr "Слица_СкупиУдебљај"
 
 
 msgid "Align"
@@ -19995,22 +19983,6 @@ msgid "Join selected areas into new window"
 msgstr "Спаја изабране оквире у нови прозор"
 
 
-msgid "X 2"
-msgstr "X 2"
-
-
-msgid "Y 2"
-msgstr "Y 2"
-
-
-msgid "X 1"
-msgstr "X 1"
-
-
-msgid "Y 1"
-msgstr "Y 1"
-
-
 msgctxt "Operator"
 msgid "Split Area"
 msgstr " Раздвој површину"
@@ -21160,15 +21132,6 @@ msgstr "Изабери све"
 msgctxt "Operator"
 msgid "Reload Translation"
 msgstr "Користи премештање"
-
-
-msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "Извештаји у блок текста"
-
-
-msgid "Write the reports "
-msgstr "Напиши извештај "
 
 
 msgctxt "Operator"
@@ -28433,10 +28396,6 @@ msgid "No active track"
 msgstr "Без активне стазе"
 
 
-msgid "Zoom %d:%d"
-msgstr "Приближи %d:%d"
-
-
 msgctxt "Operator"
 msgid "Set Wall"
 msgstr "Изоштри"
@@ -28631,6 +28590,10 @@ msgstr "Y оса"
 msgctxt "Operator"
 msgid "Unpack"
 msgstr "Распакуј"
+
+
+msgid "Zoom %d:%d"
+msgstr "Приближи %d:%d"
 
 
 msgctxt "Operator"
@@ -29902,10 +29865,6 @@ msgstr "Текст је превише дугачак"
 
 msgid "No active frame to delete"
 msgstr "Модификатор вредности F-криве"
-
-
-msgid "Shift+Left Mouse"
-msgstr "Shift + леви тастер миша"
 
 
 msgctxt "Operator"
