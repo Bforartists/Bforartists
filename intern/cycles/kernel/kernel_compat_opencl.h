@@ -35,6 +35,7 @@
 #define ccl_device_inline ccl_device
 #define ccl_device_forceinline ccl_device
 #define ccl_device_noinline ccl_device ccl_noinline
+#define ccl_device_noinline_cpu ccl_device
 #define ccl_may_alias
 #define ccl_static_constant static __constant
 #define ccl_constant __constant
@@ -45,6 +46,7 @@
 #define ccl_restrict restrict
 #define ccl_ref
 #define ccl_align(n) __attribute__((aligned(n)))
+#define ccl_optional_struct_init
 
 #ifdef __SPLIT_KERNEL__
 #  define ccl_addr_space __global

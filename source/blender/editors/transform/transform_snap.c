@@ -632,12 +632,18 @@ static void initSnappingMode(TransInfo *t)
     else if (t->tsnap.applySnap != NULL &&  // A snapping function actually exist
              (obedit_type == -1))           // Object Mode
     {
-      /* In "Edit Strokes" mode,
-       * snap tool can perform snap to selected or active objects (see T49632)
-       * TODO: perform self snap in gpencil_strokes */
-      t->tsnap.modeSelect = (((t->options & (CTX_GPENCIL_STROKES | CTX_CURSOR)) != 0) ?
-                                 SNAP_ALL :
-                                 SNAP_NOT_SELECTED);
+
+      if (t->options & (CTX_GPENCIL_STROKES | CTX_CURSOR | CTX_OBMODE_XFORM_OBDATA)) {
+        /* In "Edit Strokes" mode,
+         * snap tool can perform snap to selected or active objects (see T49632)
+         * TODO: perform self snap in gpencil_strokes.
+         *
+         * When we're moving the origins, allow snapping onto our own geometry (see T69132). */
+        t->tsnap.modeSelect = SNAP_ALL;
+      }
+      else {
+        t->tsnap.modeSelect = SNAP_NOT_SELECTED;
+      }
     }
     else {
       /* Grid if snap is not possible */
@@ -1243,7 +1249,7 @@ static void TargetSnapClosest(TransInfo *t)
         for (td = tc->data, i = 0; i < tc->data_len && td->flag & TD_SELECTED; i++, td++) {
           const BoundBox *bb = NULL;
 
-          if ((t->flag & T_OBJECT_DATA_IN_OBJECT_MODE) == 0) {
+          if ((t->options & CTX_OBMODE_XFORM_OBDATA) == 0) {
             bb = BKE_object_boundbox_get(td->ob);
           }
 

@@ -1107,13 +1107,14 @@ _create_inst_shortcut() {
 # ldconfig
 run_ldconfig() {
   _lib_path="$INST/$1/lib"
+  _lib64_path="$INST/$1/lib64"
   _ldconf_path="/etc/ld.so.conf.d/$1.conf"
   PRINT ""
   if [ ! $SUDO ]; then
     WARNING "--no-sudo enabled, impossible to run ldconfig for $1, you'll have to do it yourself..."
   else
     INFO "Running ldconfig for $1..."
-    $SUDO sh -c "echo \"$_lib_path\" > $_ldconf_path"
+    $SUDO sh -c "echo -e \"$_lib_path\n$_lib64_path\" > $_ldconf_path"
     $SUDO /sbin/ldconfig  # XXX OpenSuse does not include sbin in command path with sudo!!!
   fi
   PRINT ""
@@ -2683,6 +2684,8 @@ compile_OIDN() {
     INFO "Own OpenImageDenoise-$OIDN_VERSION is up to date, nothing to do!"
     INFO "If you want to force rebuild of this lib, use the --force-oidn option."
   fi
+
+  run_ldconfig "oidn"
 }
 
 #### Build FFMPEG ####
@@ -3451,7 +3454,7 @@ install_RPM() {
       $SUDO dnf -y update
 
     elif [ "$RPM" = "RHEL" ]; then
-      if [ "`grep '6\.' /etc/redhat-release`" ]; then
+      if [ "`grep '[^.]6\.' /etc/redhat-release`" ]; then
         ERROR "Building with GCC 4.4 is not supported!"
         exit 1
       else

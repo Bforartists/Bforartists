@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzan <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -25783,10 +25783,6 @@ msgid "Change line color along stroke"
 msgstr "Cambia el color de la línea a lo largo del trazo"
 
 
-msgid "Burn"
-msgstr "Subexponer"
-
-
 msgid "Dodge"
 msgstr "Sobreexponer"
 
@@ -26934,6 +26930,10 @@ msgid "Tracking"
 msgstr "Rastreo"
 
 
+msgid "Fractional Zoom"
+msgstr "Zoom fraccional"
+
+
 msgid "Collection Specials"
 msgstr "Especiales de colecciones"
 
@@ -27048,10 +27048,6 @@ msgstr "Mostrar / Ocultar caras"
 
 msgid "Weld/Align"
 msgstr "Fusionar / Alinear"
-
-
-msgid "Fractional Zoom"
-msgstr "Zoom fraccional"
 
 
 msgctxt "Operator"
@@ -36183,12 +36179,12 @@ msgid "Vector Math"
 msgstr "Matemática vectorial"
 
 
-msgid "Dot Product"
-msgstr "Producto escalar"
-
-
 msgid "Cross Product"
 msgstr "Producto vectorial"
+
+
+msgid "Dot Product"
+msgstr "Producto escalar"
 
 
 msgid "Vector Transform"
@@ -40455,48 +40451,8 @@ msgid "Bonesize"
 msgstr "Tamaño de hueso"
 
 
-msgid "Bone_Envelope"
-msgstr "Envolvente hueso"
-
-
-msgid "Bone_Envelope_Distance"
-msgstr "Distancia envolvente hueso"
-
-
-msgid "Curve_Shrinkfatten"
-msgstr "Contraer / Expandir curva"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "Contraer / Expandir máscara"
-
-
-msgid "GPencil_Shrinkfatten"
-msgstr "Contraer / Expandir lápiz de cera"
-
-
-msgid "Bone_Roll"
-msgstr "Giro de hueso"
-
-
-msgid "Time_Translate"
-msgstr "Trasladar_tiempo"
-
-
-msgid "Time_Slide"
-msgstr "Deslizar tiempo"
-
-
-msgid "Time_Scale"
-msgstr "Escalar tiempo"
-
-
-msgid "Time_Extend"
-msgstr "Extender tiempo"
-
-
-msgid "Bake_Time"
-msgstr "Tiempo de captura"
+msgid "Time Scale"
+msgstr "Escala de tiempo"
 
 
 msgid "Bweight"
@@ -40513,10 +40469,6 @@ msgstr "Deslizar borde"
 
 msgid "Sequence Slide"
 msgstr "Deslizar secuencia"
-
-
-msgid "GPencil_Opacity"
-msgstr "Opacidad lápiz de cera"
 
 
 msgctxt "Operator"
@@ -40711,10 +40663,6 @@ msgstr "Selecciona los puntos de control que siguen a los ya seleccionados en la
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "Deseleccionar en damero"
-
-
-msgid "Deselect every other vertex"
-msgstr "Deselecciona de a un vértice por medio"
 
 
 msgid "Nth Element"
@@ -43659,10 +43607,6 @@ msgstr "Ingresar/Salir del modo de pintura de trazos de lápiz de cera"
 msgctxt "Operator"
 msgid "Paste Strokes"
 msgstr "Pegar trazos"
-
-
-msgid "Paste previously copied strokes or copy and merge in active layer"
-msgstr "Pega los trazos previamente copiados o los copia y fusiona en la capa activa"
 
 
 msgctxt "Operator"
@@ -56183,22 +56127,6 @@ msgid "Join selected areas into new window"
 msgstr "Une las áreas seleccionadas en una nueva ventana"
 
 
-msgid "X 2"
-msgstr "X 2"
-
-
-msgid "Y 2"
-msgstr "Y 2"
-
-
-msgid "X 1"
-msgstr "X 1"
-
-
-msgid "Y 1"
-msgstr "Y 1"
-
-
 msgctxt "Operator"
 msgid "Move Area Edges"
 msgstr "Mover bordes del área"
@@ -56331,10 +56259,6 @@ msgstr "Permite agregar una nueva organización de pantalla"
 msgctxt "Operator"
 msgid "Redo Last"
 msgstr "Rehacer lo último"
-
-
-msgid "Display menu for last action performed"
-msgstr "Muestra un menú con la última acción realizada"
 
 
 msgctxt "Operator"
@@ -58977,15 +58901,6 @@ msgstr "Recargar traducción"
 
 msgid "Force a full reload of UI translation"
 msgstr "Fuerza la recarga completa de la traducción de la interfaz"
-
-
-msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "Reportes a bloque de texto"
-
-
-msgid "Write the reports "
-msgstr "Guardar los reportes "
 
 
 msgctxt "Operator"
@@ -71249,10 +71164,6 @@ msgid "Number of simulation steps taken per second (higher values are more accur
 msgstr "Cantidad de intervalos de simulación por segundo (valores mayores son más precisos, pero más lentos)"
 
 
-msgid "Time Scale"
-msgstr "Escala de tiempo"
-
-
 msgid "Change the speed of the simulation"
 msgstr "Cambia la velocidad de la simulación"
 
@@ -75239,14 +75150,6 @@ msgstr "Mostrar extremos de curvas"
 
 msgid "Mark keyframes where the key value flow changes direction, based on comparison with adjacent keys"
 msgstr "Marcar los claves donde el flujo de valores cambia de dirección, basándose en la comparación con los claves adyacentes"
-
-
-msgid "Show Frame Number Indicator"
-msgstr "Mostrar indicador de número de fotograma"
-
-
-msgid "Show frame number beside the current frame indicator line"
-msgstr "Muestra el número del fotograma actual junto a la línea indicadora del fotograma actual"
 
 
 msgid "Show Group Colors"
@@ -79543,10 +79446,6 @@ msgid "Move is affected by snapping settings"
 msgstr "Al mover se usarán las opciones de adherencia"
 
 
-msgid "Only Origins"
-msgstr "Sólo orígenes"
-
-
 msgid "Manipulate origins (object, pose and weight paint mode only)"
 msgstr "Manipular los orígenes (sólo en modos Objeto, Pose y Pintura de influencias)"
 
@@ -82909,6 +82808,10 @@ msgid "Autolock Inactive Layers"
 msgstr "Autobloquear capas inactivas"
 
 
+msgid "Show Only On Keyframed"
+msgstr "Mostrar sólo lo animado"
+
+
 msgid "Before"
 msgstr "Antes"
 
@@ -82933,10 +82836,6 @@ msgstr "Ocultar otras"
 msgctxt "Operator"
 msgid "New Layer"
 msgstr "Nueva capa"
-
-
-msgid "Show Only On Keyframed"
-msgstr "Mostrar sólo lo animado"
 
 
 msgid "Multiuser datablock not supported"
@@ -83833,11 +83732,6 @@ msgstr "Origen de datos:"
 
 msgid "Select:"
 msgstr "Seleccionar:"
-
-
-msgctxt "Operator"
-msgid "Paste & Merge"
-msgstr "Pegar y funsionar"
 
 
 msgctxt "Operator"
@@ -85127,10 +85021,6 @@ msgid "Timecode Index"
 msgstr "Índice de código de tiempo"
 
 
-msgid "Zoom %d:%d"
-msgstr "Zoom %d:%d"
-
-
 msgctxt "Operator"
 msgid "Set Wall"
 msgstr "Definir como pared"
@@ -85183,6 +85073,11 @@ msgstr "Rastros de rotación / escala"
 
 
 msgctxt "Operator"
+msgid "Zoom d:d"
+msgstr "Zoom d:d"
+
+
+msgctxt "Operator"
 msgid "View Fit"
 msgstr "Ajustar vista"
 
@@ -85204,6 +85099,10 @@ msgstr "Recalcular puntos"
 
 msgid "Solve error: %.4f"
 msgstr "Error promedio de cálculo: %.4f"
+
+
+msgid "Zoom d:d"
+msgstr "Zoom d:d"
 
 
 msgctxt "Operator"
@@ -85593,11 +85492,6 @@ msgstr "Contenedor de procesamiento anterior"
 
 
 msgctxt "Operator"
-msgid "Zoom d:d"
-msgstr "Zoom d:d"
-
-
-msgctxt "Operator"
 msgid "Replace..."
 msgstr "Reemplazar..."
 
@@ -85637,8 +85531,8 @@ msgid "Mirror Y"
 msgstr "Simetrizar en Y"
 
 
-msgid "Zoom d:d"
-msgstr "Zoom d:d"
+msgid "Zoom %d:%d"
+msgstr "Zoom %d:%d"
 
 
 msgctxt "Operator"
@@ -90631,10 +90525,6 @@ msgid "Non-Keyboard Shortcut"
 msgstr "Atajo que no es de teclado"
 
 
-msgid "Shift+Left Mouse"
-msgstr "Mayúsculas + botón izq."
-
-
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
 msgstr "Sólo los atajos de teclado pueden ser editados de esta forma, alternativamente utilizar las Preferencias de usuario"
 
@@ -91730,28 +91620,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "No es posible agregar geometría en modo edición"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "No es posible agregar caras teseladas en modo edición"
-
-
-msgid "Cannot add tessfaces to a mesh that already has polygons"
-msgstr "No es posible agregar caras teseladas a una malla que ya contiene polígonos"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "No es posible agregar bordes en modo edición"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "No es posible agregar vértices en modo edición"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "No es posible eliminar caras en modo edición"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "No es posible eliminar más caras que las que contiene la malla"
 
 
 msgid "Cannot remove edges in edit mode"
@@ -92930,18 +92804,6 @@ msgstr "No hay más fotogramas clave a los cuales saltar en esta dirección"
 
 msgid "No more markers to jump to in this direction"
 msgstr "No hay más marcadores a los cuales saltar en esta dirección"
-
-
-msgid "Global areas (Top Bar, Status Bar) do not support joining"
-msgstr "Las áreas globales (Barra superior, Barra de estado) no soportan la operación de unión"
-
-
-msgid "Only window region can be 4-splitted"
-msgstr "Sólo la región de una ventana puede ser dividida en 4"
-
-
-msgid "Only last region can be 4-splitted"
-msgstr "Sólo la última región puede ser dividida en 4"
 
 
 msgid "No fullscreen areas were found"
@@ -97163,10 +97025,6 @@ msgstr "Fuente confiable [ruta no confiable]"
 
 msgid "Allow Execution"
 msgstr "Permitir ejecución"
-
-
-msgid "Discard Changes"
-msgstr "Descartar cambios"
 
 
 msgid "unable to open the file"

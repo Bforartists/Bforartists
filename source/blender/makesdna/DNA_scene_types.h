@@ -1366,6 +1366,12 @@ typedef struct MeshStatVis {
 /* *************************************************************** */
 /* Tool Settings */
 
+/* CurvePaintSettings.surface_plane */
+enum {
+  AUTO_MERGE = 1 << 0,
+  AUTO_MERGE_AND_SPLIT = 1 << 1,
+};
+
 typedef struct ToolSettings {
   /** Vertex paint. */
   VPaint *vpaint;
@@ -2019,6 +2025,7 @@ extern const char *RE_engine_id_CYCLES;
 enum {
   SCE_XFORM_AXIS_ALIGN = (1 << 0),
   SCE_XFORM_DATA_ORIGIN = (1 << 1),
+  SCE_XFORM_SKIP_CHILDREN = (1 << 2),
 };
 
 /* ToolSettings.object_flag */

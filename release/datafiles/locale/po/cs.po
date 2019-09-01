@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -16252,40 +16252,8 @@ msgid "Bonesize"
 msgstr "Původni velikost"
 
 
-msgid "Bone_Envelope"
-msgstr "Plášť"
-
-
-msgid "Curve_Shrinkfatten"
-msgstr "Smrštit/roztáhnout"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "Smrštit/roztáhnout"
-
-
-msgid "Bone_Roll"
-msgstr "Kost"
-
-
-msgid "Time_Translate"
-msgstr "Překládat"
-
-
-msgid "Time_Slide"
-msgstr "Časová osa"
-
-
-msgid "Time_Scale"
+msgid "Time Scale"
 msgstr "Změna velikosti"
-
-
-msgid "Time_Extend"
-msgstr "Tažení"
-
-
-msgid "Bake_Time"
-msgstr "Zpoždění"
 
 
 msgid "Bweight"
@@ -16439,10 +16407,6 @@ msgstr "Vybrat další"
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "Zobrazit:"
-
-
-msgid "Deselect every other vertex"
-msgstr "Seskupený objekt"
 
 
 msgctxt "Operator"
@@ -24478,15 +24442,6 @@ msgstr "Překlad"
 
 
 msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "Otevřít textový soubor"
-
-
-msgid "Write the reports "
-msgstr "Velikost štětce"
-
-
-msgctxt "Operator"
 msgid "Reset to Default Value"
 msgstr "Defaultní nastavení"
 
@@ -28503,10 +28458,6 @@ msgstr "Lineární"
 
 msgid "Steps Per Second"
 msgstr "Snímků za vteřinu"
-
-
-msgid "Time Scale"
-msgstr "Změna velikosti"
 
 
 msgid "Interaction Radius"
@@ -35010,24 +34961,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "Odstraní vybrané vrcholy, hrany nebo plošky"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "Skrýt neoznačené"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "Odstraní vybrané vrcholy, hrany nebo plošky"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "Odstraní vybrané vrcholy, hrany nebo plošky"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "Přesunout modifikátor dolů v zásobníku modifikátorů"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "Přesunout modifikátor dolů v zásobníku modifikátorů"
 
 
 msgid "Cannot remove edges in edit mode"

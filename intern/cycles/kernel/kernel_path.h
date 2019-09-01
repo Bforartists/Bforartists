@@ -65,7 +65,7 @@ ccl_device_forceinline bool kernel_path_scene_intersect(KernelGlobals *kg,
     ray->t = kernel_data.background.ao_distance;
   }
 
-  bool hit = scene_intersect(kg, *ray, visibility, isect);
+  bool hit = scene_intersect(kg, ray, visibility, isect);
 
 #ifdef __KERNEL_DEBUG__
   if (state->flag & PATH_RAY_CAMERA) {
@@ -92,7 +92,7 @@ ccl_device_forceinline void kernel_path_lamp_emission(KernelGlobals *kg,
 #ifdef __LAMP_MIS__
   if (kernel_data.integrator.use_lamp_mis && !(state->flag & PATH_RAY_CAMERA)) {
     /* ray starting from previous non-transparent bounce */
-    Ray light_ray;
+    Ray light_ray ccl_optional_struct_init;
 
     light_ray.P = ray->P - state->ray_t * ray->D;
     state->ray_t += isect->t;
@@ -103,7 +103,7 @@ ccl_device_forceinline void kernel_path_lamp_emission(KernelGlobals *kg,
     light_ray.dP = ray->dP;
 
     /* intersect with lamp */
-    float3 emission;
+    float3 emission = make_float3(0.0f, 0.0f, 0.0f);
 
     if (indirect_lamp_emission(kg, emission_sd, state, &light_ray, &emission))
       path_radiance_accum_emission(L, state, throughput, emission);
@@ -474,12 +474,10 @@ ccl_device void kernel_path_indirect(KernelGlobals *kg,
 #    endif /* __SUBSURFACE__ */
 
 #    if defined(__EMISSION__)
-        if (kernel_data.integrator.use_direct_light) {
-          int all = (kernel_data.integrator.sample_all_lights_indirect) ||
-                    (state->flag & PATH_RAY_SHADOW_CATCHER);
-          kernel_branched_path_surface_connect_light(
-              kg, sd, emission_sd, state, throughput, 1.0f, L, all);
-        }
+        int all = (kernel_data.integrator.sample_all_lights_indirect) ||
+                  (state->flag & PATH_RAY_SHADOW_CATCHER);
+        kernel_branched_path_surface_connect_light(
+            kg, sd, emission_sd, state, throughput, 1.0f, L, all);
 #    endif /* defined(__EMISSION__) */
 
 #    ifdef __VOLUME__
@@ -590,7 +588,9 @@ ccl_device_forceinline void kernel_path_integrate(KernelGlobals *kg,
           throughput /= probability;
         }
 
+#  ifdef __DENOISING_FEATURES__
         kernel_update_denoising_features(kg, &sd, state, L);
+#  endif
 
 #  ifdef __AO__
         /* ambient occlusion */
@@ -610,8 +610,10 @@ ccl_device_forceinline void kernel_path_integrate(KernelGlobals *kg,
         }
 #  endif /* __SUBSURFACE__ */
 
+#  ifdef __EMISSION__
         /* direct lighting */
         kernel_path_surface_connect_light(kg, &sd, emission_sd, throughput, state, L);
+#  endif /* __EMISSION__ */
 
 #  ifdef __VOLUME__
       }
