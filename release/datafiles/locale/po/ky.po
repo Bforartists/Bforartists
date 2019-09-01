@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -2457,22 +2457,6 @@ msgid "Animation Step"
 msgstr "Анимация кадамы"
 
 
-msgid "X 2"
-msgstr "X 2"
-
-
-msgid "Y 2"
-msgstr "Y 2"
-
-
-msgid "X 1"
-msgstr "X 1"
-
-
-msgid "Y 1"
-msgstr "Y 1"
-
-
 msgctxt "Operator"
 msgid "Delete Screen"
 msgstr "Экранды өчүрүү"
@@ -2494,10 +2478,6 @@ msgstr "Жаңы экран кошуу"
 msgctxt "Operator"
 msgid "Redo Last"
 msgstr "Акыркысын кайталоо"
-
-
-msgid "Display menu for last action performed"
-msgstr "Акыркы аткарылган аракеттин менюсун көрсөтүү"
 
 
 msgid "Display menu for previous actions performed"

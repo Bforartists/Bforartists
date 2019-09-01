@@ -21,7 +21,7 @@
 bl_info = {
     "name": "FBX format",
     "author": "Campbell Barton, Bastien Montagne, Jens Restemeier",
-    "version": (4, 14, 14),
+    "version": (4, 15, 0),
     "blender": (2, 80, 0),
     "location": "File > Import-Export",
     "description": "FBX IO meshes, UV's, vertex colors, materials, textures, cameras, lamps and actions",
@@ -131,6 +131,12 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
             default=1.0,
             )
 
+    use_subsurf: BoolProperty(
+            name="Import Subdivision Surface",
+            description="Import FBX subdivision information as subdivision surface modifiers",
+            default=False,
+            )
+
     use_custom_props: BoolProperty(
             name="Import User Properties",
             description="Import user properties as custom properties",
@@ -204,6 +210,8 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
 
             layout.prop(self, "use_anim")
             layout.prop(self, "anim_offset")
+
+            layout.prop(self, "use_subsurf")
 
             layout.prop(self, "use_custom_props")
             sub = layout.row()
@@ -333,6 +341,12 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
             description="Export smoothing information "
                         "(prefer 'Normals Only' option if your target importer understand split normals)",
             default='OFF',
+            )
+    use_subsurf: BoolProperty(
+            name="Export Subdivision Surface",
+            description="Export the last Catmull-Rom subidivion modifier as FBX subdivision "
+                        "(Does not apply the modifier even if 'Apply Modifiers' is enabled)",
+            default=False,
             )
     use_mesh_edges: BoolProperty(
             name="Loose Edges",
@@ -507,6 +521,7 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
             sub.enabled = self.use_mesh_modifiers and False  # disabled in 2.8...
             sub.prop(self, "use_mesh_modifiers_render")
             layout.prop(self, "mesh_smooth_type")
+            layout.prop(self, "use_subsurf")
             layout.prop(self, "use_mesh_edges")
             sub = layout.row()
             #~ sub.enabled = self.mesh_smooth_type in {'OFF'}

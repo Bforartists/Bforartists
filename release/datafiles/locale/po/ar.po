@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -18081,10 +18081,6 @@ msgid "Seed for the noise generation"
 msgstr "ﺔﻴﺑﺎﺒﻀﻟﺍ ﺪﻟّﻮﻣ ﺓﺭﺬﺑ"
 
 
-msgid "Burn"
-msgstr "ﻕﺮﺣﺃ"
-
-
 msgid "Dodge"
 msgstr "ﻯﺩﺎﻔﺗ"
 
@@ -25069,18 +25065,6 @@ msgid "Bonesize"
 msgstr "ﺔﻤﻈﻌﻟﺍ ﻢﺠﺣ"
 
 
-msgid "Mask_Shrinkfatten"
-msgstr "ﻉﺎﻨﻘﻟﺍ ﺢﺼّﻧ/ﺶﻤﻛﺍ"
-
-
-msgid "Bone_Roll"
-msgstr "ﻢﻈﻌﻟﺍ ءﺍﻮﺘﻟﺍ"
-
-
-msgid "Bake_Time"
-msgstr "ﻦﻳﺰﺨﺘﻟﺍ ﻦﻣﺯ"
-
-
 msgid "Bweight"
 msgstr "ﻥﺯﻮﻟﺍ"
 
@@ -25174,10 +25158,6 @@ msgstr "ﻰﻨﺤﻨﻤﻟﺍ ﻝﻮﻃ ﻰﻠﻋ ﺎﻘﺑﺎﺳ ﺓﺭﺎﺘ�
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "ﻊﻗﺮﻟﺍ ﺔﻓﺎﺴﻣ"
-
-
-msgid "Deselect every other vertex"
-msgstr "ﻂﻘﻨﻟﺍ ﺕﺎﻋﻮﻤﺠﻣ ﺖﻠﻓﺍ"
 
 
 msgctxt "Operator"
@@ -31801,11 +31781,6 @@ msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﻞﻴﻤﺤﺗ ﺪﻋﺍ"
 
 
 msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "ﺺﻧ ﺔﻠﺘﻛ ﻰﻟﺍ ﺮﻳﺭﺎﻘﺘﻟﺍ"
-
-
-msgctxt "Operator"
 msgid "Reset to Default Value"
 msgstr "ﺔﺿﺮﺘﻔﻤﻟﺍ ﺔﻤﻴﻘﻠﻟ ﻂﺒﻀﻟﺍ ﺪﻋﺍ"
 
@@ -38355,10 +38330,6 @@ msgid "Show the status of cached frames in the timeline"
 msgstr "ﻦﻣﺰﻟﺍ ﻂﺧ ﻲﻓ ﺎﻘﺒﺴﻣ ﺔﺑﻮﺴﺤﻤﻟﺍ ﺮﻃﻻ﻿ﺍ ﺔﻟﺎﺣ ﺮﻬﻇﺍ"
 
 
-msgid "Show Frame Number Indicator"
-msgstr "ﺭﺎﻃﻷ﻿ﺍ ﻢﻗﺭ ﺮﺷﺆﻣ ﺮﻬﻇﺃ"
-
-
 msgid "Show Group Colors"
 msgstr "ﺔﻋﻮﻤﺠﻤﻟﺍ ﻥﺍﻮﻟﺍ ﺮﻬﻇﺍ"
 
@@ -44134,10 +44105,6 @@ msgid "No active area"
 msgstr "ﺔﻟﺎﻌّﻓ ﺔﻘﻄﻨﻣ ﺪﺟﻮﺗ ﻻ﻿"
 
 
-msgid "Shift+Left Mouse"
-msgstr "ﻲﻟﺎﻋ+ﺓﺭﺄﻔﻟﺍ ﺭﺎﺴﻳ"
-
-
 msgctxt "Operator"
 msgid "Replace Keyframes"
 msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﻝﺪّﺑ"
@@ -44748,24 +44715,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺍﺬﻫ ﻲﻔﺧﺍ"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺍﺬﻫ ﻲﻔﺧﺍ"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺍﺬﻫ ﻲﻔﺧﺍ"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺍﺬﻫ ﻲﻔﺧﺍ"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺾﺑﺎﻘﻣ ﺮﻬﻇﺍ"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺾﺑﺎﻘﻣ ﺮﻬﻇﺍ"
 
 
 msgid "Cannot remove edges in edit mode"

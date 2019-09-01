@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -24772,10 +24772,6 @@ msgid "Change line color along stroke"
 msgstr "Modifier la couleur de ligne au long du trait"
 
 
-msgid "Burn"
-msgstr "Brûler"
-
-
 msgid "Dodge"
 msgstr "Sous-développer"
 
@@ -34502,12 +34498,12 @@ msgid "Vector Math"
 msgstr "Math vectorielles"
 
 
-msgid "Dot Product"
-msgstr "Produit scalaire"
-
-
 msgid "Cross Product"
 msgstr "Produit vectoriel"
+
+
+msgid "Dot Product"
+msgstr "Produit scalaire"
 
 
 msgid "Vector Transform"
@@ -38673,48 +38669,8 @@ msgid "Bonesize"
 msgstr "Taille d’os"
 
 
-msgid "Bone_Envelope"
-msgstr "Enveloppe d’os"
-
-
-msgid "Bone_Envelope_Distance"
-msgstr "Distance d’enveloppe d’os"
-
-
-msgid "Curve_Shrinkfatten"
-msgstr "Compresser/expanser courbe"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "Masque_Compresser/expanser"
-
-
-msgid "GPencil_Shrinkfatten"
-msgstr "Compresser/expanser crayon gras"
-
-
-msgid "Bone_Roll"
-msgstr "Roulis d’os"
-
-
-msgid "Time_Translate"
-msgstr "Déplacer temps"
-
-
-msgid "Time_Slide"
-msgstr "Glisser temps"
-
-
-msgid "Time_Scale"
+msgid "Time Scale"
 msgstr "Échelle de temps"
-
-
-msgid "Time_Extend"
-msgstr "Étendre temps"
-
-
-msgid "Bake_Time"
-msgstr "Pré-calculer temps"
 
 
 msgid "Bweight"
@@ -38917,10 +38873,6 @@ msgstr "Sélectionner les points de contrôle suivant ceux déjà sélectionnés
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "Désélection en damier"
-
-
-msgid "Deselect every other vertex"
-msgstr "Désélectionner un vertex sur n"
 
 
 msgid "Nth Element"
@@ -41423,10 +41375,6 @@ msgstr "Entrer/sortir du mode de peinture pour les traits de crayon gras"
 msgctxt "Operator"
 msgid "Paste Strokes"
 msgstr "Coller traits"
-
-
-msgid "Paste previously copied strokes or copy and merge in active layer"
-msgstr "Coller les traits précédemment copiés, ou copier et fusionner dans le calque actif"
 
 
 msgctxt "Operator"
@@ -52688,22 +52636,6 @@ msgid "Join selected areas into new window"
 msgstr "Diviser l’area sélectionnée en nouvelles fenêtres"
 
 
-msgid "X 2"
-msgstr "X 2"
-
-
-msgid "Y 2"
-msgstr "Y 2"
-
-
-msgid "X 1"
-msgstr "X 1"
-
-
-msgid "Y 1"
-msgstr "Y 1"
-
-
 msgctxt "Operator"
 msgid "Move Area Edges"
 msgstr "Déplacer bords de l’area"
@@ -52827,10 +52759,6 @@ msgstr "Ajouter une nouvelle disposition d’écran"
 msgctxt "Operator"
 msgid "Redo Last"
 msgstr "Refaire dernière"
-
-
-msgid "Display menu for last action performed"
-msgstr "Affiche un menu des dernières actions effectuées"
 
 
 msgctxt "Operator"
@@ -55348,15 +55276,6 @@ msgstr "Recharger traduction"
 
 msgid "Force a full reload of UI translation"
 msgstr "Forcer un rechargement complet des traductions de l’interface"
-
-
-msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "Rapports vers bloc de texte"
-
-
-msgid "Write the reports "
-msgstr "Écrire les rapports "
 
 
 msgctxt "Operator"
@@ -66042,10 +65961,6 @@ msgid "Number of simulation steps taken per second (higher values are more accur
 msgstr "Nombre de pas de simulation effectués par seconde (de plus hautes valeurs sont plus précises mais plus lentes)"
 
 
-msgid "Time Scale"
-msgstr "Échelle de temps"
-
-
 msgid "Change the speed of the simulation"
 msgstr "Modifier la vitesse de la simulation"
 
@@ -69060,14 +68975,6 @@ msgstr "Modifier le timing des blocs de données “fichier cache”"
 
 msgid "Show the status of cached frames in the timeline"
 msgstr "Afficher le statut des images en cache dans la timeline"
-
-
-msgid "Show Frame Number Indicator"
-msgstr "Afficher l’indicateur de numéro de frame"
-
-
-msgid "Show frame number beside the current frame indicator line"
-msgstr "Afficher le numéro de frame à côté de la ligne-indicateur de la frame courante"
 
 
 msgid "Show Group Colors"
@@ -75558,11 +75465,6 @@ msgstr "Sélectionner :"
 
 
 msgctxt "Operator"
-msgid "Paste & Merge"
-msgstr "Coller & fusionner"
-
-
-msgctxt "Operator"
 msgid "Toggle Caps..."
 msgstr "Alterner casse…"
 
@@ -76247,10 +76149,6 @@ msgid "Timecode Index"
 msgstr "Indice de timecode"
 
 
-msgid "Zoom %d:%d"
-msgstr "Zoom %d:%d"
-
-
 msgctxt "Operator"
 msgid "Set Wall"
 msgstr "Définir mur"
@@ -76586,6 +76484,10 @@ msgstr "Miroir X"
 msgctxt "Operator"
 msgid "Mirror Y"
 msgstr "Miroir Y"
+
+
+msgid "Zoom %d:%d"
+msgstr "Zoom %d:%d"
 
 
 msgctxt "Operator"
@@ -79916,10 +79818,6 @@ msgid "Non-Keyboard Shortcut"
 msgstr "Raccourci non-clavier"
 
 
-msgid "Shift+Left Mouse"
-msgstr "Maj + Clic gauche"
-
-
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
 msgstr "Seuls les raccourcis clavier peuvent être édités de cette façon, utilisez les préférences utilisateurs sinon"
 
@@ -80836,28 +80734,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "Impossible d’ajouter de la géométrie en mode Edit"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "Impossible d’ajouter des tessfaces en mode Edit"
-
-
-msgid "Cannot add tessfaces to a mesh that already has polygons"
-msgstr "Impossible d’ajouter des tessfaces à un mesh qui a déjà des polygones"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "Impossible d’ajouter des arêtes en mode Edit"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "Impossible d’ajouter des vertices en mode Edit"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "Impossible d’enlever des faces en mode Edit"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "Impossible d’enlever plus de faces que le mesh n’en a"
 
 
 msgid "Cannot remove edges in edit mode"
@@ -81868,14 +81750,6 @@ msgstr "Plus aucune image clé vers laquelle sauter dans cette direction"
 
 msgid "No more markers to jump to in this direction"
 msgstr "Plus aucun marqueur vers lequel aller dans cette direction"
-
-
-msgid "Only window region can be 4-splitted"
-msgstr "Seules les régions fenêtre peuvent être divisées en quatre"
-
-
-msgid "Only last region can be 4-splitted"
-msgstr "Seule la dernière région peut être divisée en quatre"
 
 
 msgid "No fullscreen areas were found"
@@ -85824,10 +85698,6 @@ msgstr "Source de confiance [chemin non-fiable]"
 
 msgid "Allow Execution"
 msgstr "Autoriser exécution"
-
-
-msgid "Discard Changes"
-msgstr "Annuler changements"
 
 
 msgid "unable to open the file"

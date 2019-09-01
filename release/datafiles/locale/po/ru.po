@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
 "Last-Translator: Lockal <lockalsash@gmail.com>, 2019\n"
 "Language-Team: Russian (https://www.transifex.com/translateblender/teams/82039/ru/)\n"
@@ -25903,10 +25903,6 @@ msgid "Change line color along stroke"
 msgstr "Изменить цвет вдоль штриха"
 
 
-msgid "Burn"
-msgstr "Прожигание"
-
-
 msgid "Dodge"
 msgstr "Осветление"
 
@@ -27062,6 +27058,10 @@ msgid "Tracking"
 msgstr "Трекинг"
 
 
+msgid "Fractional Zoom"
+msgstr "Выбор масштаба"
+
+
 msgid "Collection Specials"
 msgstr "Инструменты коллекций"
 
@@ -27180,10 +27180,6 @@ msgstr "Показать/скрыть грани"
 
 msgid "Weld/Align"
 msgstr "Соединение/выравнивание"
-
-
-msgid "Fractional Zoom"
-msgstr "Выбор масштаба"
 
 
 msgid "Info Context Menu"
@@ -36327,12 +36323,12 @@ msgid "Vector Math"
 msgstr "Векторная математика"
 
 
-msgid "Dot Product"
-msgstr "Скал. произведение"
-
-
 msgid "Cross Product"
 msgstr "Вект. произведение"
+
+
+msgid "Dot Product"
+msgstr "Скал. произведение"
 
 
 msgid "Vector Transform"
@@ -40612,48 +40608,8 @@ msgid "Bonesize"
 msgstr "Размер кости"
 
 
-msgid "Bone_Envelope"
-msgstr "Кость-оболочка"
-
-
-msgid "Bone_Envelope_Distance"
-msgstr "Расстояние оболочки кости"
-
-
-msgid "Curve_Shrinkfatten"
-msgstr "Кривая_сузить-утолстить"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "Маска_сузить-утолстить"
-
-
-msgid "GPencil_Shrinkfatten"
-msgstr "Утолщение/сужение Grease Pencil"
-
-
-msgid "Bone_Roll"
-msgstr "Крен кости"
-
-
-msgid "Time_Translate"
-msgstr "Перенос_времени"
-
-
-msgid "Time_Slide"
-msgstr "Скольжение_времени"
-
-
-msgid "Time_Scale"
-msgstr "Масштаб_времени"
-
-
-msgid "Time_Extend"
-msgstr "Расширение_времени"
-
-
-msgid "Bake_Time"
-msgstr "Запекание_времени"
+msgid "Time Scale"
+msgstr "Шкала времени"
 
 
 msgid "Bweight"
@@ -40670,10 +40626,6 @@ msgstr "Сдвинуть ребро"
 
 msgid "Sequence Slide"
 msgstr "Сдвинуть секвенцию"
-
-
-msgid "GPencil_Opacity"
-msgstr "Прозрачность Grease Pencil"
 
 
 msgctxt "Operator"
@@ -40868,10 +40820,6 @@ msgstr "Выделить контрольные точки, следующие �
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "Шахматное снятие выделения"
-
-
-msgid "Deselect every other vertex"
-msgstr "Снять выделение с каждой второй или N-й вершины"
 
 
 msgid "Nth Element"
@@ -43816,10 +43764,6 @@ msgstr "Войти/выйти из режима рисования штрихо�
 msgctxt "Operator"
 msgid "Paste Strokes"
 msgstr "Вставить штрихи"
-
-
-msgid "Paste previously copied strokes or copy and merge in active layer"
-msgstr "Вставить ранее скопированные штрихи или скопировать и объединить в активном слое"
 
 
 msgctxt "Operator"
@@ -56424,22 +56368,6 @@ msgid "Join selected areas into new window"
 msgstr "Объединить выбранные области в новое окно"
 
 
-msgid "X 2"
-msgstr "X 2"
-
-
-msgid "Y 2"
-msgstr "Y 2"
-
-
-msgid "X 1"
-msgstr "X 1"
-
-
-msgid "Y 1"
-msgstr "Y 1"
-
-
 msgctxt "Operator"
 msgid "Move Area Edges"
 msgstr "Переместить границы области"
@@ -56572,10 +56500,6 @@ msgstr "Добавить новый экран"
 msgctxt "Operator"
 msgid "Redo Last"
 msgstr "Повторить последнее"
-
-
-msgid "Display menu for last action performed"
-msgstr "Отобразить меню для последнего выполненного действия"
 
 
 msgctxt "Operator"
@@ -59248,15 +59172,6 @@ msgstr "Перезагрузить перевод"
 
 msgid "Force a full reload of UI translation"
 msgstr "Принудительно обновить весь перевод интерфейса"
-
-
-msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "Отчёт в текстовой блок"
-
-
-msgid "Write the reports "
-msgstr "Сгенерировать отчёт "
 
 
 msgctxt "Operator"
@@ -71641,10 +71556,6 @@ msgid "Number of simulation steps taken per second (higher values are more accur
 msgstr "Количество шагов симуляции в секунду (чем выше, тем точнее, но медленнее)"
 
 
-msgid "Time Scale"
-msgstr "Шкала времени"
-
-
 msgid "Change the speed of the simulation"
 msgstr "Изменить скорость симуляции"
 
@@ -75647,14 +75558,6 @@ msgstr "Показывать экстремумы кривой"
 
 msgid "Mark keyframes where the key value flow changes direction, based on comparison with adjacent keys"
 msgstr "Отметить ключевые кадры, в которых ключевое значение меняет направление по сравнению со смежными кадрами"
-
-
-msgid "Show Frame Number Indicator"
-msgstr "Отображать индикатор номера кадра"
-
-
-msgid "Show frame number beside the current frame indicator line"
-msgstr "Отображать номер кадра рядом с линией индикатора текущего кадра"
 
 
 msgid "Show Group Colors"
@@ -79951,10 +79854,6 @@ msgid "Move is affected by snapping settings"
 msgstr "Настройки привязки влияют на перемещение"
 
 
-msgid "Only Origins"
-msgstr "Только центры объектов"
-
-
 msgid "Manipulate origins (object, pose and weight paint mode only)"
 msgstr "Манипулировать центральными точками (только в режимах объекта, позы и рисования весов)"
 
@@ -83330,6 +83229,10 @@ msgid "Autolock Inactive Layers"
 msgstr "Автоблокировка неактивных слоёв"
 
 
+msgid "Show Only On Keyframed"
+msgstr "Показывать только ключевые кадры"
+
+
 msgid "Before"
 msgstr "До кадра"
 
@@ -83354,10 +83257,6 @@ msgstr "Скрыть остальные"
 msgctxt "Operator"
 msgid "New Layer"
 msgstr "Новый слой"
-
-
-msgid "Show Only On Keyframed"
-msgstr "Показывать только ключевые кадры"
 
 
 msgid "Multiuser datablock not supported"
@@ -84259,11 +84158,6 @@ msgstr "Источник данных:"
 
 msgid "Select:"
 msgstr "Выделение:"
-
-
-msgctxt "Operator"
-msgid "Paste & Merge"
-msgstr "Вставить и объединить"
 
 
 msgctxt "Operator"
@@ -85553,10 +85447,6 @@ msgid "Timecode Index"
 msgstr "Таймкод"
 
 
-msgid "Zoom %d:%d"
-msgstr "Масштабировать %d:%d"
-
-
 msgctxt "Operator"
 msgid "Set Wall"
 msgstr "Установить стену"
@@ -85609,6 +85499,11 @@ msgstr "Треки для вращения / масштаба"
 
 
 msgctxt "Operator"
+msgid "Zoom d:d"
+msgstr "Масштабировать d:d"
+
+
+msgctxt "Operator"
 msgid "View Fit"
 msgstr "Вписать вид"
 
@@ -85630,6 +85525,10 @@ msgstr "Переустановить ключи точек формы"
 
 msgid "Solve error: %.4f"
 msgstr "Погрешность решения: %.4f"
+
+
+msgid "Zoom d:d"
+msgstr "Масштабировать d:d"
 
 
 msgctxt "Operator"
@@ -86074,11 +85973,6 @@ msgstr "Перейти к предыдущему слоту рендера"
 
 
 msgctxt "Operator"
-msgid "Zoom d:d"
-msgstr "Масштабировать d:d"
-
-
-msgctxt "Operator"
 msgid "Replace..."
 msgstr "Заменить…"
 
@@ -86118,8 +86012,8 @@ msgid "Mirror Y"
 msgstr "Симметрия Y"
 
 
-msgid "Zoom d:d"
-msgstr "Масштабировать d:d"
+msgid "Zoom %d:%d"
+msgstr "Масштабировать %d:%d"
 
 
 msgctxt "Operator"
@@ -91260,10 +91154,6 @@ msgid "Non-Keyboard Shortcut"
 msgstr "Не клавиатурное сочетание клавиш"
 
 
-msgid "Shift+Left Mouse"
-msgstr "Shift+ЛКМ"
-
-
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
 msgstr "Только клавиатурные сочетания могут редактироваться таким образом, пожалуйста для этого используйте окно настроек"
 
@@ -92363,28 +92253,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "Добавление геометрии в режиме редактирования невозможно"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "Добавление граней после тесселляции в режиме редактирования невозможно"
-
-
-msgid "Cannot add tessfaces to a mesh that already has polygons"
-msgstr "Невозможно добавить грани после тесселляции в меш, уже содержащий полигоны"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "Добавление рёбер в режиме редактирования невозможно"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "Добавление вершин в режиме редактирования невозможно"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "Удаление граней в режиме редактирования невозможно"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "Невозможно удалить больше граней, чем сам меш их содержит"
 
 
 msgid "Cannot remove edges in edit mode"
@@ -93571,18 +93445,6 @@ msgstr "Нет ключевых кадров по заданному напра�
 
 msgid "No more markers to jump to in this direction"
 msgstr "Нет маркеров для осуществления перехода"
-
-
-msgid "Global areas (Top Bar, Status Bar) do not support joining"
-msgstr "Глобальные области (верхнюю панель, панель состояния) нельзя объединить с другими"
-
-
-msgid "Only window region can be 4-splitted"
-msgstr "Только регион окна можно разделить на 4 части"
-
-
-msgid "Only last region can be 4-splitted"
-msgstr "Только последний регион можно разделить на 4 части"
 
 
 msgid "No fullscreen areas were found"
@@ -97808,10 +97670,6 @@ msgstr "Надёжный источник [Ненадёжный путь]"
 
 msgid "Allow Execution"
 msgstr "Разрешить выполнение"
-
-
-msgid "Discard Changes"
-msgstr "Не сохранять"
 
 
 msgid "unable to open the file"

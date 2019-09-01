@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Dalai Felinto, Bruno Gonçalves Pirajá, Samuel Arataca, Daniel Tavares, Moraes Junior <ivan.paulos.tome@yandex.com>\n"
@@ -21407,10 +21407,6 @@ msgid "Change line color along stroke"
 msgstr "Altera a cor da linha ao longo do traço."
 
 
-msgid "Burn"
-msgstr "Queimar"
-
-
 msgid "Dodge"
 msgstr "Esquivar"
 
@@ -30748,12 +30744,12 @@ msgid "Vector Math"
 msgstr "Matemática vetorial"
 
 
-msgid "Dot Product"
-msgstr "Produto escalar"
-
-
 msgid "Cross Product"
 msgstr "Produto vetorial"
+
+
+msgid "Dot Product"
+msgstr "Produto escalar"
 
 
 msgid "Vector Transform"
@@ -34744,48 +34740,8 @@ msgid "Bonesize"
 msgstr "Tamanho do osso"
 
 
-msgid "Bone_Envelope"
-msgstr "Envelope de osso"
-
-
-msgid "Bone_Envelope_Distance"
-msgstr "Distância do envelope dos ossos"
-
-
-msgid "Curve_Shrinkfatten"
-msgstr "Encolher ou estufar curva"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "Encolher ou estufar máscara"
-
-
-msgid "GPencil_Shrinkfatten"
-msgstr "Encolher ou estufar lápis de cera"
-
-
-msgid "Bone_Roll"
-msgstr "Rolagem de osso"
-
-
-msgid "Time_Translate"
-msgstr "Movimentação de tempo"
-
-
-msgid "Time_Slide"
-msgstr "Deslizador de tempo"
-
-
-msgid "Time_Scale"
+msgid "Time Scale"
 msgstr "Escala de tempo"
-
-
-msgid "Time_Extend"
-msgstr "Extensão de tempo"
-
-
-msgid "Bake_Time"
-msgstr "Tempo para gerar e gravar"
 
 
 msgid "Bweight"
@@ -34980,10 +34936,6 @@ msgstr "Seleciona os pontos de controle seguintes aos já selecionados ao longo 
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "De-selecionar alternadamente"
-
-
-msgid "Deselect every other vertex"
-msgstr "De-seleciona quaisquer outros vértices permitindo alternar o fluxo da seleção."
 
 
 msgid "Skip"
@@ -37242,10 +37194,6 @@ msgstr "Move os traços selecionados para outra camada."
 msgctxt "Operator"
 msgid "Paste Strokes"
 msgstr "Colar traços"
-
-
-msgid "Paste previously copied strokes or copy and merge in active layer"
-msgstr "Cola os traços copiados previamente ou então copia-os e efetua sua fusão na camada ativa."
 
 
 msgctxt "Operator"
@@ -47537,22 +47485,6 @@ msgid "Join selected areas into new window"
 msgstr "Junta as áreas selecionadas em uma nova janela."
 
 
-msgid "X 2"
-msgstr "X 2"
-
-
-msgid "Y 2"
-msgstr "Y 2"
-
-
-msgid "X 1"
-msgstr "X 1"
-
-
-msgid "Y 1"
-msgstr "Y 1"
-
-
 msgctxt "Operator"
 msgid "Move Area Edges"
 msgstr "Mover as arestas da área"
@@ -47676,10 +47608,6 @@ msgstr "Adiciona uma nova tela, copiando a partir do padrão de tela ativo."
 msgctxt "Operator"
 msgid "Redo Last"
 msgstr "Refazer última ação"
-
-
-msgid "Display menu for last action performed"
-msgstr "Menu de amostragem para a última ação performada."
 
 
 msgctxt "Operator"
@@ -50093,15 +50021,6 @@ msgstr "Recarregar tradução"
 
 msgid "Force a full reload of UI translation"
 msgstr "Força um recarregamento total da tradução da interface de usuário."
-
-
-msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "Relatórios para o bloco de texto"
-
-
-msgid "Write the reports "
-msgstr "Escreve os relatórios em um bloco de texto."
 
 
 msgctxt "Operator"
@@ -59518,10 +59437,6 @@ msgid "Number of simulation steps taken per second (higher values are more accur
 msgstr "Número de passos de simulação tomados por segundo (valores mais altos são mais precisos, mas são mais lentos)."
 
 
-msgid "Time Scale"
-msgstr "Escala de tempo"
-
-
 msgid "Change the speed of the simulation"
 msgstr "Permite alterar a velocidade da simulação."
 
@@ -62484,14 +62399,6 @@ msgstr "Permite a edição das temporizações para os blocos de dados de arquiv
 
 msgid "Show the status of cached frames in the timeline"
 msgstr "Mostra o status dos quadros em cache dentro da linha do tempo."
-
-
-msgid "Show Frame Number Indicator"
-msgstr "Mostrar o indicador de número de quadro"
-
-
-msgid "Show frame number beside the current frame indicator line"
-msgstr "Mostra os números dos quadros ao lado da linha indicadora do quadro atual."
 
 
 msgid "Show Group Colors"
@@ -68901,11 +68808,6 @@ msgstr "Selecionar:"
 
 
 msgctxt "Operator"
-msgid "Paste & Merge"
-msgstr "Colar e fundir"
-
-
-msgctxt "Operator"
 msgid "Reproject Strokes..."
 msgstr "Reprojetar traços..."
 
@@ -69500,10 +69402,6 @@ msgid "Tracks For Location"
 msgstr "Rastreamentos para localização"
 
 
-msgid "Zoom %d:%d"
-msgstr "Ampliação %d:%d"
-
-
 msgctxt "Operator"
 msgid "Set Wall"
 msgstr "Configurar parede"
@@ -69830,6 +69728,10 @@ msgstr "Espelhar em X"
 msgctxt "Operator"
 msgid "Mirror Y"
 msgstr "Espelhar em Y"
+
+
+msgid "Zoom %d:%d"
+msgstr "Ampliação %d:%d"
 
 
 msgctxt "Operator"
@@ -73004,10 +72906,6 @@ msgid "Non-Keyboard Shortcut"
 msgstr "Atalhos não relacionados ao teclado"
 
 
-msgid "Shift+Left Mouse"
-msgstr "Shift + Botão esquerdo do mouse"
-
-
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
 msgstr "Somente atalhos relacionados ao teclado podem ser editados desta maneira. Em caso contrário, por favor, utilize as \"Preferências de usuário\"."
 
@@ -73924,28 +73822,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "Não é possível adicionar geometria no modo de edição."
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "Não é possível adicionar faces tesseladas no modo de edição."
-
-
-msgid "Cannot add tessfaces to a mesh that already has polygons"
-msgstr "Não é possível adicionar faces de tesselação para uma malha que já possui polígonos."
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "Não é possível adicionar arestas no modo de edição."
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "Não é possível adicionar vértices no modo de edição."
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "Não é possível remover faces no modo de edição."
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "Não é possível remover mais faces do que a malha contém."
 
 
 msgid "Cannot remove edges in edit mode"
@@ -74956,14 +74838,6 @@ msgstr "Sem mais quadros-chave para os quais saltar nesta direção."
 
 msgid "No more markers to jump to in this direction"
 msgstr "Sem mais marcadores para os quais saltar nesta direção."
-
-
-msgid "Only window region can be 4-splitted"
-msgstr "Somente regiões de janela podem ser divididas em 4 áreas."
-
-
-msgid "Only last region can be 4-splitted"
-msgstr "Somente a última região pode ser dividida em 4 áreas."
 
 
 msgid "No fullscreen areas were found"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 2) (b'10001d909905')\n"
+"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-19 00:00:00\n"
+"POT-Creation-Date: 2019-08-26 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
 "Last-Translator: \n"
 "Language-Team: Japanese Translation Team (https://sites.google.com/site/blugjp/blender-translators)\n"
@@ -25866,10 +25866,6 @@ msgid "Change line color along stroke"
 msgstr "ストロークに沿ってラインカラーを変更します"
 
 
-msgid "Burn"
-msgstr "焼きこみ"
-
-
 msgid "Dodge"
 msgstr "覆い焼き"
 
@@ -27017,6 +27013,10 @@ msgid "Tracking"
 msgstr "トラッキング"
 
 
+msgid "Fractional Zoom"
+msgstr "フラクタルズーム"
+
+
 msgid "Collection Specials"
 msgstr "コレクションスペシャル"
 
@@ -27131,10 +27131,6 @@ msgstr "面を表示/隠す"
 
 msgid "Weld/Align"
 msgstr "溶接/整列"
-
-
-msgid "Fractional Zoom"
-msgstr "フラクタルズーム"
 
 
 msgctxt "Operator"
@@ -36284,12 +36280,12 @@ msgid "Vector Math"
 msgstr "ベクトル演算"
 
 
-msgid "Dot Product"
-msgstr "内積"
-
-
 msgid "Cross Product"
 msgstr "外積"
+
+
+msgid "Dot Product"
+msgstr "内積"
 
 
 msgid "Vector Transform"
@@ -40564,48 +40560,8 @@ msgid "Bonesize"
 msgstr "ボーンサイズ"
 
 
-msgid "Bone_Envelope"
-msgstr "ボーンエンベロープ"
-
-
-msgid "Bone_Envelope_Distance"
-msgstr "ボーンエンベロープ距離"
-
-
-msgid "Curve_Shrinkfatten"
-msgstr "カーブの拡大縮小"
-
-
-msgid "Mask_Shrinkfatten"
-msgstr "マスクの収縮/膨張"
-
-
-msgid "GPencil_Shrinkfatten"
-msgstr "グリペンの収縮/膨張"
-
-
-msgid "Bone_Roll"
-msgstr "ボーンロール"
-
-
-msgid "Time_Translate"
-msgstr "タイムトランスレート"
-
-
-msgid "Time_Slide"
-msgstr "タイムスライド"
-
-
-msgid "Time_Scale"
-msgstr "タイムスケール"
-
-
-msgid "Time_Extend"
-msgstr "タイムエクステンド"
-
-
-msgid "Bake_Time"
-msgstr "ベイクタイム"
+msgid "Time Scale"
+msgstr "時間スケール"
 
 
 msgid "Bweight"
@@ -40622,10 +40578,6 @@ msgstr "辺をスライド"
 
 msgid "Sequence Slide"
 msgstr "シーケンスを移動"
-
-
-msgid "GPencil_Opacity"
-msgstr "グリペン不透明度"
 
 
 msgctxt "Operator"
@@ -40820,10 +40772,6 @@ msgstr "カーブ上のすでに選択中の制御点以降の物を選択しま
 msgctxt "Operator"
 msgid "Checker Deselect"
 msgstr "チェッカー選択解除"
-
-
-msgid "Deselect every other vertex"
-msgstr "頂点を一つ置きに選択解除します"
 
 
 msgid "Nth Element"
@@ -43792,10 +43740,6 @@ msgstr "グリースペンシルストロークのペイントモードを切り
 msgctxt "Operator"
 msgid "Paste Strokes"
 msgstr "ストロークを貼り付け"
-
-
-msgid "Paste previously copied strokes or copy and merge in active layer"
-msgstr "以前コピーしたストロークをアクティブレイヤーに貼り付け、またはコピーして結合します"
 
 
 msgctxt "Operator"
@@ -56344,22 +56288,6 @@ msgid "Join selected areas into new window"
 msgstr "新しいウィンドウに選択したエリアを統合します"
 
 
-msgid "X 2"
-msgstr "X 2"
-
-
-msgid "Y 2"
-msgstr "Y 2"
-
-
-msgid "X 1"
-msgstr "X 1"
-
-
-msgid "Y 1"
-msgstr "Y 1"
-
-
 msgctxt "Operator"
 msgid "Move Area Edges"
 msgstr "エリア境界を移動"
@@ -56492,10 +56420,6 @@ msgstr "新規スクリーン追加"
 msgctxt "Operator"
 msgid "Redo Last"
 msgstr "やり直し"
-
-
-msgid "Display menu for last action performed"
-msgstr "最後の操作を表示"
 
 
 msgctxt "Operator"
@@ -59138,15 +59062,6 @@ msgstr "翻訳のリロード"
 
 msgid "Force a full reload of UI translation"
 msgstr "強制的にUI翻訳をすべてリロードします"
-
-
-msgctxt "Operator"
-msgid "Reports to Text Block"
-msgstr "テキストブロックに記す"
-
-
-msgid "Write the reports "
-msgstr "レポートを書く"
 
 
 msgctxt "Operator"
@@ -71488,10 +71403,6 @@ msgid "Number of simulation steps taken per second (higher values are more accur
 msgstr "秒あたりのシミュレーションステップ数 (大きいほど精度が上がりますが遅くなります)"
 
 
-msgid "Time Scale"
-msgstr "時間スケール"
-
-
 msgid "Change the speed of the simulation"
 msgstr "シミュレーション速度を変更します"
 
@@ -75484,14 +75395,6 @@ msgstr "カーブのエクストリームを表示"
 
 msgid "Mark keyframes where the key value flow changes direction, based on comparison with adjacent keys"
 msgstr "隣のキーとの比較を元に、キーの値の変化の方向が変わる場所のキーフレームをマークします"
-
-
-msgid "Show Frame Number Indicator"
-msgstr "フレーム数インジケーターを表示"
-
-
-msgid "Show frame number beside the current frame indicator line"
-msgstr "現在のフレームを示す線の横にフレーム数を表示します"
 
 
 msgid "Show Group Colors"
@@ -79796,10 +79699,6 @@ msgid "Move is affected by snapping settings"
 msgstr "移動がスナップ設定の影響を受けます"
 
 
-msgid "Only Origins"
-msgstr "原点のみ"
-
-
 msgid "Manipulate origins (object, pose and weight paint mode only)"
 msgstr "原点の操作（オブジェクト、ポーズ、ウェイトペイントモードのみ）"
 
@@ -83170,6 +83069,10 @@ msgid "Autolock Inactive Layers"
 msgstr "非アクティブレイヤーを自動ロック"
 
 
+msgid "Show Only On Keyframed"
+msgstr "キーフレーム付のみ表示"
+
+
 msgid "Before"
 msgstr "前"
 
@@ -83194,10 +83097,6 @@ msgstr "他を非表示"
 msgctxt "Operator"
 msgid "New Layer"
 msgstr "新規レイヤー"
-
-
-msgid "Show Only On Keyframed"
-msgstr "キーフレーム付のみ表示"
 
 
 msgid "Multiuser datablock not supported"
@@ -84094,11 +83993,6 @@ msgstr "データソース:"
 
 msgid "Select:"
 msgstr "選択:"
-
-
-msgctxt "Operator"
-msgid "Paste & Merge"
-msgstr "貼り付け＆マージ"
 
 
 msgctxt "Operator"
@@ -85388,10 +85282,6 @@ msgid "Timecode Index"
 msgstr "タイムコードインデックス"
 
 
-msgid "Zoom %d:%d"
-msgstr "ズーム %d:%d"
-
-
 msgctxt "Operator"
 msgid "Set Wall"
 msgstr "壁を設定"
@@ -85444,6 +85334,11 @@ msgstr "回転・スケール用トラック"
 
 
 msgctxt "Operator"
+msgid "Zoom d:d"
+msgstr "ズーム d:d"
+
+
+msgctxt "Operator"
 msgid "View Fit"
 msgstr "画面に合わせる"
 
@@ -85465,6 +85360,10 @@ msgstr "シェイプポイントを再キー"
 
 msgid "Solve error: %.4f"
 msgstr "ソルブエラー: %.4f"
+
+
+msgid "Zoom d:d"
+msgstr "ズーム d:d"
 
 
 msgctxt "Operator"
@@ -85854,11 +85753,6 @@ msgstr "前のレンダースロット"
 
 
 msgctxt "Operator"
-msgid "Zoom d:d"
-msgstr "ズーム d:d"
-
-
-msgctxt "Operator"
 msgid "Replace..."
 msgstr "置き換え..."
 
@@ -85898,8 +85792,8 @@ msgid "Mirror Y"
 msgstr "ミラーY"
 
 
-msgid "Zoom d:d"
-msgstr "ズーム d:d"
+msgid "Zoom %d:%d"
+msgstr "ズーム %d:%d"
 
 
 msgctxt "Operator"
@@ -90894,10 +90788,6 @@ msgid "Non-Keyboard Shortcut"
 msgstr "非キーボードショートカット"
 
 
-msgid "Shift+Left Mouse"
-msgstr "[Shift]＋左クリック"
-
-
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
 msgstr "この方法ではキーボードショートカットのみ編集可能です。それ以外はプリファレンスを使用してください"
 
@@ -91995,28 +91885,12 @@ msgid "Cannot add geometry in edit mode"
 msgstr "編集モードで形状が追加できません"
 
 
-msgid "Cannot add tessfaces in edit mode"
-msgstr "編集モードでテッセレート面が追加できません"
-
-
-msgid "Cannot add tessfaces to a mesh that already has polygons"
-msgstr "テッセレート面はすでにポリゴンがあるメッシュに追加できません"
-
-
 msgid "Cannot add edges in edit mode"
 msgstr "編集モードで辺が追加できません"
 
 
 msgid "Cannot add vertices in edit mode"
 msgstr "編集モードで頂点が追加できません"
-
-
-msgid "Cannot remove faces in edit mode"
-msgstr "編集モードで面が削除できません"
-
-
-msgid "Cannot remove more faces than the mesh contains"
-msgstr "メッシュ中の数より多くの面を削除できません"
 
 
 msgid "Cannot remove edges in edit mode"
@@ -93195,18 +93069,6 @@ msgstr "この方向にはもうジャンプするキーフレームがありま
 
 msgid "No more markers to jump to in this direction"
 msgstr "この方向にはもうジャンプするマーカーがありません"
-
-
-msgid "Global areas (Top Bar, Status Bar) do not support joining"
-msgstr "グローバルエリア（トップバー、ステータスバー）は統合に未対応です"
-
-
-msgid "Only window region can be 4-splitted"
-msgstr "ウィンドウ領域のみ4分割できます"
-
-
-msgid "Only last region can be 4-splitted"
-msgstr "最後の領域のみが4分割できます"
 
 
 msgid "No fullscreen areas were found"
@@ -97432,10 +97294,6 @@ msgstr "信頼できるソース（信頼できないパス）"
 
 msgid "Allow Execution"
 msgstr "実行可能"
-
-
-msgid "Discard Changes"
-msgstr "変更を破棄"
 
 
 msgid "unable to open the file"

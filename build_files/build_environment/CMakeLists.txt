@@ -43,6 +43,7 @@ project("BlenderDependencies")
 cmake_minimum_required(VERSION 3.5)
 
 include(ExternalProject)
+include(cmake/check_software.cmake)
 include(cmake/options.cmake)
 include(cmake/versions.cmake)
 
@@ -57,7 +58,6 @@ else()
 endif()
 
 include(cmake/zlib.cmake)
-include(cmake/blendthumb.cmake)
 include(cmake/openal.cmake)
 include(cmake/png.cmake)
 include(cmake/jpeg.cmake)

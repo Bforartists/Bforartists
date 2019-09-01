@@ -1270,7 +1270,7 @@ matlibvxPref
 """
 def register():
     global libraries
-    #bpy.utils.register_module(__name__)
+
     for c in classes:
         bpy.utils.register_class(c)
     Scene.matlib_categories = CollectionProperty(type=EmptyGroup)
@@ -1281,7 +1281,7 @@ def register():
 
 def unregister():
     global libraries
-    #bpy.utils.unregister_module(__name__)
+
     try:
         # raise ValueError list.remove(x): x not in list
         del Scene.matlib_categories
