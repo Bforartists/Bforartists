@@ -3171,7 +3171,7 @@ class VIEW3D_MT_object_quick_effects(Menu):
 
 # Workaround to separate the tooltips for Show Hide
 class VIEW3D_hide_view_set_unselected(bpy.types.Operator):
-    """Hide Unselected\nHides the unselected Object(s)"""      # blender will use this as a tooltip for menu items and buttons.
+    """Hides the unselected Object(s)"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "object.hide_unselected"        # unique identifier for buttons and menu items to reference.
     bl_label = "Hide Unselected"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -3898,7 +3898,7 @@ class VIEW3D_MT_particle_context_menu(Menu):
 
 # Workaround to separate the tooltips for Show Hide for Particles in Particle mode
 class VIEW3D_particle_hide_unselected(bpy.types.Operator):
-    """Hide Unselected\nHide the unselected Particles"""      # blender will use this as a tooltip for menu items and buttons.
+    """Hide the unselected Particles"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "particle.hide_unselected"        # unique identifier for buttons and menu items to reference.
     bl_label = "Hide Unselected"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -4105,7 +4105,7 @@ class VIEW3D_MT_pose_constraints(Menu):
 
 # Workaround to separate the tooltips for Show Hide for Armature in Pose mode
 class VIEW3D_MT_pose_hide_unselected(bpy.types.Operator):
-    """Hide Unselected\nHide unselected Bones"""      # blender will use this as a tooltip for menu items and buttons.
+    """Hide unselected Bones"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "pose.hide_unselected"        # unique identifier for buttons and menu items to reference.
     bl_label = "Hide Unselected"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -4975,7 +4975,7 @@ class VIEW3D_MT_edit_mesh_dissolve(Menu):
 
 # Workaround to separate the tooltips for Show Hide for Mesh in Edit Mode
 class VIEW3D_mesh_hide_unselected(bpy.types.Operator):
-    """Hide Unselected\nHide unselected geometry in Edit Mode"""      # blender will use this as a tooltip for menu items and buttons.
+    """Hide unselected geometry in Edit Mode"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "mesh.hide_unselected"        # unique identifier for buttons and menu items to reference.
     bl_label = "Hide Unselected"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -5209,7 +5209,7 @@ class VIEW3D_MT_edit_curve_delete(Menu):
 
 # Workaround to separate the tooltips for Show Hide for Curve in Edit Mode
 class VIEW3D_curve_hide_unselected(bpy.types.Operator):
-    """Hide Unselected\nHide unselected Control Points"""      # blender will use this as a tooltip for menu items and buttons.
+    """Hide unselected Control Points"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "curve.hide_unselected"        # unique identifier for buttons and menu items to reference.
     bl_label = "Hide Unselected"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -5352,7 +5352,7 @@ class VIEW3D_MT_edit_meta(Menu):
 
 # Workaround to separate the tooltips for Show Hide for Curve in Edit Mode
 class VIEW3D_MT_edit_meta_showhide_unselected(bpy.types.Operator):
-    """Hide Unselected\nHide unselected metaelement(s)"""      # blender will use this as a tooltip for menu items and buttons.
+    """Hide unselected metaelement(s)"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "mball.hide_metaelems_unselected"        # unique identifier for buttons and menu items to reference.
     bl_label = "Hide Unselected"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -5473,7 +5473,7 @@ class VIEW3D_MT_edit_armature(Menu):
 
 # Workaround to separate the tooltips for Show Hide for Armature in Edit Mode
 class VIEW3D_armature_hide_unselected(bpy.types.Operator):
-    """Hide Unselected\nHide unselected Bones in Edit Mode"""      # blender will use this as a tooltip for menu items and buttons.
+    """Hide unselected Bones in Edit Mode"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "armature.hide_unselected"        # unique identifier for buttons and menu items to reference.
     bl_label = "Hide Unselected"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
