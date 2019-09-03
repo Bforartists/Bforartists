@@ -1042,7 +1042,7 @@ class VIEW3D_MT_uv_map(Menu):
 
     # Workaround to separate the tooltips
 class VIEW3D_MT_view_view_selected_all_regions(bpy.types.Operator):
-    """View Selected All Regions\nMove the View to the selection center in all Quad View views"""      # blender will use this as a tooltip for menu items and buttons.
+    """Move the View to the selection center in all Quad View views"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "view3d.view_selected_all_regions"        # unique identifier for buttons and menu items to reference.
     bl_label = "View Selected All Regions"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1054,7 +1054,7 @@ class VIEW3D_MT_view_view_selected_all_regions(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_view_all_all_regions(bpy.types.Operator):
-    """View All all Regions\nView all objects in scene in all four Quad View views\nJust relevant for Quad View """      # blender will use this as a tooltip for menu items and buttons.
+    """View all objects in scene in all four Quad View views\nJust relevant for Quad View """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "view3d.view_all_all_regions"        # unique identifier for buttons and menu items to reference.
     bl_label = "View All all Regions"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1065,7 +1065,7 @@ class VIEW3D_MT_view_all_all_regions(bpy.types.Operator):
 
     # Workaround to separate the tooltips
 class VIEW3D_MT_view_center_cursor_and_view_all(bpy.types.Operator):
-    """Center Cursor and View All\nViews all objects in scene and centers the 3D cursor"""      # blender will use this as a tooltip for menu items and buttons.
+    """Views all objects in scene and centers the 3D cursor"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "view3d.view_all_center_cursor"        # unique identifier for buttons and menu items to reference.
     bl_label = "Center Cursor and View All"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1075,7 +1075,7 @@ class VIEW3D_MT_view_center_cursor_and_view_all(bpy.types.Operator):
         return {'FINISHED'}
 
 class VIEW3D_MT_switchactivecamto(bpy.types.Operator):
-    """Set Active Camera\nSets the current selected camera as the active camera to render from\nYou need to have a camera object selected"""
+    """Sets the current selected camera as the active camera to render from\nYou need to have a camera object selected"""
     bl_idname = "view3d.switchactivecamto"
     bl_label = "Set active Camera"
     bl_options = {'REGISTER', 'UNDO'}
@@ -1296,7 +1296,7 @@ class VIEW3D_MT_select_object_more_less(Menu):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_object_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "object.select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1307,7 +1307,7 @@ class VIEW3D_MT_select_object_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_object_none(bpy.types.Operator):
-    """None\nDeselects everything """      # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "object.select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1419,7 +1419,7 @@ class VIEW3D_MT_select_linked(Menu):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_pose_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "pose.select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1430,7 +1430,7 @@ class VIEW3D_MT_select_pose_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_pose_none(bpy.types.Operator):
-    """None\nDeselects everything """      # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "pose.select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1493,7 +1493,7 @@ class VIEW3D_MT_select_pose(Menu):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_particle_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "particle.select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1504,7 +1504,7 @@ class VIEW3D_MT_select_particle_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_particle_none(bpy.types.Operator):
-    """None\nDeselects everything """      # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "particle.select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1614,7 +1614,7 @@ class VIEW3D_MT_edit_mesh_select_more_less(Menu):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_mesh_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "mesh.select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1625,7 +1625,7 @@ class VIEW3D_MT_select_edit_mesh_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_mesh_none(bpy.types.Operator):
-    """None\nDeselects everything """       # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """       # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "mesh.select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1710,7 +1710,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_curve_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "curve.select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1721,7 +1721,7 @@ class VIEW3D_MT_select_edit_curve_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_curve_none(bpy.types.Operator):
-    """None\nDeselects everything """       # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """       # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "curve.select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1871,7 +1871,7 @@ class VIEW3D_MT_select_edit_text(Menu):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_metaball_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "mball.select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1882,7 +1882,7 @@ class VIEW3D_MT_select_edit_metaball_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_metaball_none(bpy.types.Operator):
-    """None\nDeselects everything """           # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """           # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "mball.select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1931,7 +1931,7 @@ class VIEW3D_MT_select_edit_metaball_select_similar(Menu):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_lattice_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "lattice.select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1942,7 +1942,7 @@ class VIEW3D_MT_select_edit_lattice_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_lattice_none(bpy.types.Operator):
-    """None\nDeselects everything """        # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """        # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "lattice.select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -2002,7 +2002,7 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_armature_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "armature.select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -2013,7 +2013,7 @@ class VIEW3D_MT_select_edit_armature_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_armature_none(bpy.types.Operator):
-    """None\nDeselects everything """          # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """          # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "armature.select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -2076,7 +2076,7 @@ class VIEW3D_MT_select_edit_armature(Menu):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_gpencil_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "gpencil.select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -2087,7 +2087,7 @@ class VIEW3D_MT_select_gpencil_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_gpencil_none(bpy.types.Operator):
-    """None\nDeselects everything """          # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """          # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "gpencil.select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -2142,7 +2142,7 @@ class VIEW3D_MT_select_gpencil_grouped(Menu):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_paint_mask_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "paint.face_select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -2153,7 +2153,7 @@ class VIEW3D_MT_select_paint_mask_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_paint_mask_none(bpy.types.Operator):
-    """None\nDeselects everything """        # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """        # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "paint.face_select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -2187,7 +2187,7 @@ class VIEW3D_MT_select_paint_mask(Menu):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_paint_mask_vertex_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "paint.vert_select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -2198,7 +2198,7 @@ class VIEW3D_MT_select_paint_mask_vertex_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_paint_mask_vertex_none(bpy.types.Operator):
-    """None\nDeselects everything """       # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """       # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "paint.vert_select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -2551,7 +2551,7 @@ class VIEW3D_MT_origin_set(Menu):
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_object_delete_global(bpy.types.Operator):
-    """Delete global\nDeletes the selected object(s) globally in all opened scenes"""      # blender will use this as a tooltip for menu items and buttons.
+    """Deletes the selected object(s) globally in all opened scenes"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "object.delete_global"        # unique identifier for buttons and menu items to reference.
     bl_label = "Delete Global"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -4793,7 +4793,7 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 
 # Workaround to separate the tooltips for Recalculate Outside and Recalculate Inside
 class VIEW3D_normals_make_consistent_inside(bpy.types.Operator):
-    """Recalculate Normals Inside\nMake selected faces and normals point inside the mesh"""      # blender will use this as a tooltip for menu items and buttons.
+    """Make selected faces and normals point inside the mesh"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "mesh.normals_recalculate_inside"        # unique identifier for buttons and menu items to reference.
     bl_label = "Recalculate Inside"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
