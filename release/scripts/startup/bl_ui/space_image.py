@@ -67,7 +67,7 @@ class IMAGE_PT_active_tool(ToolActivePanelHelper, Panel):
 
 # Workaround to separate the tooltips for Toggle Maximize Area
 class IMAGE_MT_view_view_fit(bpy.types.Operator):
-    """View Fit\nFits the content area into the window"""      # blender will use this as a tooltip for menu items and buttons.
+    """Fits the content area into the window"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "image.view_all_fit"        # unique identifier for buttons and menu items to reference.
     bl_label = "View Fit"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -147,7 +147,7 @@ class IMAGE_MT_view_zoom(Menu):
 
 # Workaround to separate the tooltips
 class IMAGE_MT_select_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "uv.select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -158,7 +158,7 @@ class IMAGE_MT_select_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class IMAGE_MT_select_none(bpy.types.Operator):
-    """None\nDeselects everything """         # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """         # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "uv.select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -169,7 +169,7 @@ class IMAGE_MT_select_none(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class IMAGE_MT_select_linked_pick_extend(bpy.types.Operator):
-    """Linked Pick Extend\nSelect all UV vertices under the mouse with extend method\nHotkey Only tool! """      # blender will use this as a tooltip for menu items and buttons.
+    """Select all UV vertices under the mouse with extend method\nHotkey Only tool! """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "uv.select_linked_pick_extend"        # unique identifier for buttons and menu items to reference.
     bl_label = "Linked Pick Extend"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -180,7 +180,7 @@ class IMAGE_MT_select_linked_pick_extend(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class IMAGE_MT_select_linked_extend(bpy.types.Operator):
-    """Linked Extend\nSelect all UV vertices linked to the active keymap extended"""      # blender will use this as a tooltip for menu items and buttons.
+    """Select all UV vertices linked to the active keymap extended"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "uv.select_linked_extend"        # unique identifier for buttons and menu items to reference.
     bl_label = "Linked Extend"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.

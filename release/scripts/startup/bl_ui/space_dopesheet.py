@@ -345,7 +345,7 @@ class DOPESHEET_MT_view(Menu):
 
 # Workaround to separate the tooltips
 class DOPESHEET_MT_select_before_current_frame(bpy.types.Operator):
-    """Select Before Current Frame\nSelects the keyframes before the current frame """      # blender will use this as a tooltip for menu items and buttons.
+    """Selects the keyframes before the current frame """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "action.select_leftright_before"        # unique identifier for buttons and menu items to reference.
     bl_label = "Before Current Frame"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -356,7 +356,7 @@ class DOPESHEET_MT_select_before_current_frame(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class DOPESHEET_MT_select_after_current_frame(bpy.types.Operator):
-    """Select After Current Frame\nSelects the keyframes after the current frame """      # blender will use this as a tooltip for menu items and buttons.
+    """Selects the keyframes after the current frame """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "action.select_leftright_after"        # unique identifier for buttons and menu items to reference.
     bl_label = "After Current Frame"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -366,7 +366,7 @@ class DOPESHEET_MT_select_after_current_frame(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class DOPESHEET_MT_select_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "action.select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -377,7 +377,7 @@ class DOPESHEET_MT_select_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class DOPESHEET_MT_select_none(bpy.types.Operator):
-    """None\nDeselects everything """      # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "action.select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -508,7 +508,7 @@ class DOPESHEET_MT_channel_extrapolation(Menu):
 
 # Workaround to separate the tooltips
 class DOPESHEET_MT_key_clean_channels(bpy.types.Operator):
-    """Clean Channels\nSimplify F-Curves by removing closely spaced keyframes in selected channels"""      # blender will use this as a tooltip for menu items and buttons.
+    """Simplify F-Curves by removing closely spaced keyframes in selected channels"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "action.clean_channels"        # unique identifier for buttons and menu items to reference.
     bl_label = "Clean Channels"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
