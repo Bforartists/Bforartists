@@ -281,7 +281,7 @@ class NODE_MT_view(Menu):
 
 # Workaround to separate the tooltips
 class NODE_MT_select_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "node.select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -292,7 +292,7 @@ class NODE_MT_select_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class NODE_MT_select_none(bpy.types.Operator):
-    """None\nDeselects everything """      # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "node.select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -772,7 +772,7 @@ def node_draw_tree_view(_layout, _context):
 
 # Workaround to separate the tooltips for Show Hide for Armature in Edit Mode
 class NODE_MT_exit_edit_group(bpy.types.Operator):
-    """Exit Edit Group\nExit edit node group"""      # blender will use this as a tooltip for menu items and buttons.
+    """Exit edit node group"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "node.group_edit_exit"        # unique identifier for buttons and menu items to reference.
     bl_label = "Group Edit Exit"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
