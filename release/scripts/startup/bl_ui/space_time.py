@@ -148,7 +148,7 @@ class TIME_MT_view(Menu):
 
 # Workaround to separate the tooltips
 class TIME_MT_marker_jump_previous(bpy.types.Operator):
-    """Jump to previous Marker\nJumps to previous marker """      # blender will use this as a tooltip for menu items and buttons.
+    """Jumps to previous marker """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "screen.marker_jump_previous"        # unique identifier for buttons and menu items to reference.
     bl_label = "Jump to previous Marker"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.

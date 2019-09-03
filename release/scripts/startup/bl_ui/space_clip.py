@@ -310,7 +310,7 @@ class CLIP_MT_tracking_editor_menus(Menu):
 
 # Workaround to separate the tooltips
 class CLIP_GRAPH_MT_select_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current marker selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current marker selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "clip.graph_select_all_markers_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Markers Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -321,7 +321,7 @@ class CLIP_GRAPH_MT_select_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class CLIP_GRAPH_MT_select_none(bpy.types.Operator):
-    """None\nDeselects all markers """       # blender will use this as a tooltip for menu items and buttons.
+    """Deselects all markers """       # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "clip.graph_select_all_markers_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Markers None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1453,7 +1453,7 @@ class CLIP_MT_track_transform(Menu):
 
 # Workaround to separate the tooltips
 class CLIP_MT_select_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "clip.select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -1464,7 +1464,7 @@ class CLIP_MT_select_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class CLIP_MT_select_none(bpy.types.Operator):
-    """None\nDeselects everything """      # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "clip.select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.

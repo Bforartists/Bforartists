@@ -160,7 +160,7 @@ class NLA_PT_view_view_options(Panel):
 
 # Workaround to separate the tooltips
 class NLA_MT_select_inverse(bpy.types.Operator):
-    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "nla.select_all_inverse"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
@@ -171,7 +171,7 @@ class NLA_MT_select_inverse(bpy.types.Operator):
 
 # Workaround to separate the tooltips
 class NLA_MT_select_none(bpy.types.Operator):
-    """None\nDeselects everything """      # blender will use this as a tooltip for menu items and buttons.
+    """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "nla.select_all_none"        # unique identifier for buttons and menu items to reference.
     bl_label = "Select None"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
