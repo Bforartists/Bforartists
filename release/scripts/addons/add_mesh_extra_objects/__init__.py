@@ -25,7 +25,7 @@
 bl_info = {
     "name": "Extra Objects",
     "author": "Multiple Authors",
-    "version": (0, 3, 3),
+    "version": (0, 3, 4),
     "blender": (2, 80, 0),
     "location": "View3D > Add > Mesh",
     "description": "Add extra mesh object types",
@@ -149,21 +149,7 @@ class VIEW3D_MT_mesh_math_add(Menu):
         layout.operator("mesh.primitive_xyz_function_surface",
                         text="XYZ Math Surface")
         self.layout.operator("mesh.primitive_solid_add", text="Regular Solid")
-        self.layout.operator("mesh.make_triangle", icon="MESH_DATA")
-
-
-class VIEW3D_MT_mesh_mech(Menu):
-    # Define the "Math Function" menu
-    bl_idname = "VIEW3D_MT_mesh_mech_add"
-    bl_label = "Mechanical"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.menu("VIEW3D_MT_mesh_pipe_joints_add",
-                text="Pipe Joints")
-        layout.menu("VIEW3D_MT_mesh_gears_add",
-                text="Gears")
+        self.layout.operator("mesh.make_triangle")
 
 
 class VIEW3D_MT_mesh_extras_add(Menu):
@@ -174,9 +160,6 @@ class VIEW3D_MT_mesh_extras_add(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.menu("VIEW3D_MT_mesh_diamonds_add", text="Diamonds",
-                    icon="PMARKER_SEL")
-        layout.separator()
         layout.operator("mesh.add_beam",
                         text="Beam Builder")
         layout.operator("mesh.wall_add",
@@ -233,25 +216,29 @@ class VIEW3D_MT_mesh_pipe_joints_add(Menu):
 
 # Define "Extras" menu
 def menu_func(self, context):
-    lay_out = self.layout
-    lay_out.operator_context = 'INVOKE_REGION_WIN'
+    layout = self.layout
+    layout.operator_context = 'INVOKE_REGION_WIN'
 
-    lay_out.separator()
-    lay_out.menu("VIEW3D_MT_mesh_vert_add",
-                text="Single Vert")
-    lay_out.operator("mesh.primitive_round_cube_add",
-                    text="Round Cube")
-    lay_out.menu("VIEW3D_MT_mesh_math_add",
+    layout.separator()
+    layout.menu("VIEW3D_MT_mesh_vert_add",
+                text="Single Vert", icon="DECORATE")
+    layout.operator("mesh.primitive_round_cube_add",
+                    text="Round Cube", icon="SPHERE")
+    layout.menu("VIEW3D_MT_mesh_torus_add",
+                text="Torus Objects", icon="MESH_TORUS")
+    layout.separator()
+    layout.menu("VIEW3D_MT_mesh_math_add",
                 text="Math Function", icon="PACKAGE")
-    lay_out.menu("VIEW3D_MT_mesh_mech_add",
-                text="Mechanical")
-    lay_out.menu("VIEW3D_MT_mesh_torus_add",
-                text="Torus Objects")
-    lay_out.separator()
-    lay_out.menu("VIEW3D_MT_mesh_extras_add",
+    layout.menu("VIEW3D_MT_mesh_gears_add",
+                text="Gears", icon="PREFERENCES")
+    layout.menu("VIEW3D_MT_mesh_pipe_joints_add",
+                text="Pipe Joints", icon="EMPTY_DATA")
+    layout.separator()
+    layout.menu("VIEW3D_MT_mesh_diamonds_add", text="Diamonds")
+    layout.menu("VIEW3D_MT_mesh_extras_add",
                 text="Extras")
-    lay_out.separator()
-    lay_out.operator("object.parent_to_empty",
+    layout.separator()
+    layout.operator("object.parent_to_empty",
                     text="Parent To Empty")
 
 def Extras_contex_menu(self, context):
@@ -350,7 +337,6 @@ classes = [
     VIEW3D_MT_mesh_gears_add,
     VIEW3D_MT_mesh_diamonds_add,
     VIEW3D_MT_mesh_math_add,
-    VIEW3D_MT_mesh_mech,
     VIEW3D_MT_mesh_extras_add,
     VIEW3D_MT_mesh_torus_add,
     VIEW3D_MT_mesh_pipe_joints_add,

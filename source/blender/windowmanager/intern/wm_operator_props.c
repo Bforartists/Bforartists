@@ -65,17 +65,26 @@ void WM_operator_properties_filesel(wmOperatorType *ot,
        0,
        "Default",
        "Automatically determine display type for files"},
-      {FILE_SHORTDISPLAY,
-       "LIST_SHORT",
-       ICON_SHORTDISPLAY,
+      {FILE_VERTICALDISPLAY,
+       "LIST_VERTICAL",
+       ICON_SHORTDISPLAY, /* Name of deprecated short list */
        "Short List",
        "Display files as short list"},
-      {FILE_LONGDISPLAY,
-       "LIST_LONG",
-       ICON_LONGDISPLAY,
+      {FILE_HORIZONTALDISPLAY,
+       "LIST_HORIZONTAL",
+       ICON_LONGDISPLAY, /* Name of deprecated long list */
        "Long List",
        "Display files as a detailed list"},
       {FILE_IMGDISPLAY, "THUMBNAIL", ICON_IMGDISPLAY, "Thumbnails", "Display files as thumbnails"},
+      {0, NULL, 0, NULL, NULL},
+  };
+  static const EnumPropertyItem file_action_types[] = {
+      {FILE_OPENFILE,
+       "OPENFILE",
+       0,
+       "Open",
+       "Use the file browser for opening files or a directory"},
+      {FILE_SAVE, "SAVE", 0, "Save", "Use the file browser for saving a file"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -96,6 +105,15 @@ void WM_operator_properties_filesel(wmOperatorType *ot,
   if (flag & WM_FILESEL_FILES) {
     prop = RNA_def_collection_runtime(
         ot->srna, "files", &RNA_OperatorFileListElement, "Files", "");
+    RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  }
+
+  if ((flag & WM_FILESEL_SHOW_PROPS) == 0) {
+    prop = RNA_def_boolean(ot->srna,
+                           "hide_props_region",
+                           true,
+                           "Hide Operator Properties",
+                           "Collapse the region displaying the operator settings");
     RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
   }
 
@@ -136,6 +154,9 @@ void WM_operator_properties_filesel(wmOperatorType *ot,
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
   prop = RNA_def_boolean(
       ot->srna, "filter_text", (filter & FILE_TYPE_TEXT) != 0, "Filter text files", "");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+  prop = RNA_def_boolean(
+      ot->srna, "filter_archive", (filter & FILE_TYPE_ARCHIVE) != 0, "Filter archive files", "");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
   prop = RNA_def_boolean(
       ot->srna, "filter_btx", (filter & FILE_TYPE_BTX) != 0, "Filter btx files", "");
@@ -185,6 +206,9 @@ void WM_operator_properties_filesel(wmOperatorType *ot,
 
   prop = RNA_def_enum(
       ot->srna, "sort_method", rna_enum_file_sort_items, sort, "File sorting mode", "");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+
+  prop = RNA_def_enum(ot->srna, "action_type", file_action_types, action, "Action Type", "");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
@@ -479,19 +503,26 @@ void WM_operator_properties_mouse_select(wmOperatorType *ot)
  */
 void WM_operator_properties_checker_interval(wmOperatorType *ot, bool nth_can_disable)
 {
-  const int nth_default = nth_can_disable ? 1 : 2;
-  const int nth_min = min_ii(nth_default, 2);
+  const int nth_default = nth_can_disable ? 0 : 1;
+  const int nth_min = min_ii(nth_default, 1);
   RNA_def_int(ot->srna,
-              "nth",
+              "skip",
               nth_default,
               nth_min,
               INT_MAX,
-              "Nth Element",
-              "Skip every Nth element",
+              "Deselected",
+              "Number of deselected elements in the repetitive sequence",
               nth_min,
               100);
-  RNA_def_int(
-      ot->srna, "skip", 1, 1, INT_MAX, "Skip", "Number of elements to skip at once", 1, 100);
+  RNA_def_int(ot->srna,
+              "nth",
+              1,
+              1,
+              INT_MAX,
+              "Selected",
+              "Number of selected elements in the repetitive sequence",
+              1,
+              100);
   RNA_def_int(ot->srna,
               "offset",
               0,
@@ -506,7 +537,7 @@ void WM_operator_properties_checker_interval(wmOperatorType *ot, bool nth_can_di
 void WM_operator_properties_checker_interval_from_op(struct wmOperator *op,
                                                      struct CheckerIntervalParams *op_params)
 {
-  const int nth = RNA_int_get(op->ptr, "nth") - 1;
+  const int nth = RNA_int_get(op->ptr, "nth");
   const int skip = RNA_int_get(op->ptr, "skip");
   int offset = RNA_int_get(op->ptr, "offset");
 
@@ -520,6 +551,6 @@ void WM_operator_properties_checker_interval_from_op(struct wmOperator *op,
 bool WM_operator_properties_checker_interval_test(const struct CheckerIntervalParams *op_params,
                                                   int depth)
 {
-  return ((op_params->nth == 0) ||
+  return ((op_params->skip == 0) ||
           ((op_params->offset + depth) % (op_params->skip + op_params->nth) >= op_params->skip));
 }

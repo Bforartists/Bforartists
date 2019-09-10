@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -2719,6 +2719,26 @@ msgid "Copy the rotation of the target"
 msgstr "Rotationsbeschränkung des Ziels kopieren"
 
 
+msgid "XYZ Euler"
+msgstr "XYZ Euler"
+
+
+msgid "XZY Euler"
+msgstr "XZY Euler"
+
+
+msgid "YXZ Euler"
+msgstr "YXZ Euler"
+
+
+msgid "ZXY Euler"
+msgstr "ZXY Euler"
+
+
+msgid "ZYX Euler"
+msgstr "ZYX Euler"
+
+
 msgid "Invert the X rotation"
 msgstr "X-Rotation umkehren"
 
@@ -3893,6 +3913,10 @@ msgstr "Datenpfad"
 
 msgid "Type of ID-block that can be used"
 msgstr "ID-Block-Typ, der benützt werden kann"
+
+
+msgid "Rotation Mode"
+msgstr "Rotationsmodus"
 
 
 msgid "Transform Space"
@@ -5098,10 +5122,6 @@ msgstr "Nabla"
 
 msgid "Type of field"
 msgstr "Feldtyp"
-
-
-msgid "Forcefield based on a texture"
-msgstr "Auf einer Textur basierendes Kraftfeld"
 
 
 msgid "Create a force along a curve object"
@@ -8897,10 +8917,6 @@ msgid "Axis-Angle Rotation"
 msgstr "Achsenwinkel-Rotation"
 
 
-msgid "Rotation Mode"
-msgstr "Rotationsmodus"
-
-
 msgid "Quaternion (WXYZ)"
 msgstr "Quaternion (WXYZ)"
 
@@ -8909,24 +8925,12 @@ msgid "No Gimbal Lock"
 msgstr "Keine Aufhängungssperre"
 
 
-msgid "XYZ Euler"
-msgstr "XYZ Euler"
-
-
 msgid "XYZ Rotation Order - prone to Gimbal Lock (default)"
 msgstr "XYZ Rotationsreihenfolge - anfällig für Aufhängungsblockierung (standard)"
 
 
-msgid "XZY Euler"
-msgstr "XZY Euler"
-
-
 msgid "XZY Rotation Order - prone to Gimbal Lock"
 msgstr "XZY-Rotationsreihenfolge - anfällig für Aufhängungssperrung"
-
-
-msgid "YXZ Euler"
-msgstr "YXZ Euler"
 
 
 msgid "YXZ Rotation Order - prone to Gimbal Lock"
@@ -8937,16 +8941,8 @@ msgid "YZX Rotation Order - prone to Gimbal Lock"
 msgstr "YZX-Rotationsreihenfolge - anfällig für Aufhängungssperrung"
 
 
-msgid "ZXY Euler"
-msgstr "ZXY Euler"
-
-
 msgid "ZXY Rotation Order - prone to Gimbal Lock"
 msgstr "ZXY-Rotationsreihenfolge - anfällig für Aufhängungssperrung"
-
-
-msgid "ZYX Euler"
-msgstr "ZYX Euler"
 
 
 msgid "ZYX Rotation Order - prone to Gimbal Lock"
@@ -19659,10 +19655,6 @@ msgstr "Markierung löschen"
 msgctxt "Operator"
 msgid "Limited Dissolve"
 msgstr "Entfernung begrenzen"
-
-
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "Alle mit dem aktiven Mesh verknüpften Vertices auswählen"
 
 
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
@@ -34767,11 +34759,6 @@ msgid "Make"
 msgstr "Erstellen"
 
 
-msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "Auf Ebene verschieben"
-
-
 msgid "Creases"
 msgstr "Falte/Rille"
 
@@ -34936,11 +34923,6 @@ msgstr "Flieh-Distanz"
 msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "Nullobjekt Anzeigegröße"
-
-
-msgctxt "Operator"
-msgid "Energy"
-msgstr "Energie"
 
 
 msgctxt "Operator"
@@ -35603,6 +35585,11 @@ msgstr "Kein aktives Einzelbild zum Löschen"
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "Tastenkürzel ändern"
+
+
+msgctxt "Operator"
 msgid "Replace Keyframes"
 msgstr "Schlüsselbilder ersetzen"
 
@@ -35665,11 +35652,6 @@ msgstr "Einzelnen zum Schlüsselbildsatz hinzufügen"
 msgctxt "Operator"
 msgid "Reset All to Default Values"
 msgstr "Alle auf Standardwerte zurücksetzen"
-
-
-msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "Tastenkürzel ändern"
 
 
 msgctxt "Operator"
@@ -35745,22 +35727,6 @@ msgstr "Position"
 
 msgid "Use Clipping"
 msgstr "Clipping verwenden"
-
-
-msgid "Min X "
-msgstr "Min X"
-
-
-msgid "Min Y "
-msgstr "Min Y "
-
-
-msgid "Max X "
-msgstr "Max X"
-
-
-msgid "Max Y "
-msgstr "MaxY"
 
 
 msgid "Reset View"

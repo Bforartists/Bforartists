@@ -529,7 +529,7 @@ class RenderPovSettingsScene(PropertyGroup):
             name="Nearest Count",
             description="Number of old ambient values blended together to "
                         "create a new interpolated value",
-            min=1, max=20, default=5)
+            min=1, max=20, default=1)
 
     radio_normal: BoolProperty(
             name="Normals", description="Radiosity estimation can be affected by normals",
@@ -990,6 +990,11 @@ class RenderPovSettingsMaterial(PropertyGroup):
             name="Alpha",
             description="Alpha transparency of the material",
             min=0.0, max=1.0, soft_min=0.0, soft_max=1.0, default=1.0, precision=3)
+
+    specular_alpha: FloatProperty(
+            name="Specular alpha",
+            description="Alpha transparency for specular areas",
+            min=0.0, max=1.0, soft_min=0.0, soft_max=1.0, default=1.0, precision=3)
             
     ambient: FloatProperty(
             name="Ambient",
@@ -1385,7 +1390,7 @@ class RenderPovSettingsMaterial(PropertyGroup):
             description="Values typically range from 0.0 to 1.0 or higher. Zero is no caustics. "
                         "Low, non-zero values give broad hot-spots while higher values give "
                         "tighter, smaller simulated focal points",
-            min=0.00, max=10.0, soft_min=0.00, soft_max=5.0, default=0.07)
+            min=0.00, max=10.0, soft_min=0.00, soft_max=5.0, default=0.15)
 
     refraction_caustics: BoolProperty(
             name="Refractive Caustics", description="hotspots of light focused when going through the material",
@@ -1409,8 +1414,8 @@ class RenderPovSettingsMaterial(PropertyGroup):
 
     refraction_type: EnumProperty(
             items=[
-                   ("1", "Fake Caustics", "use fake caustics"),
-                   ("2", "Photons Caustics", "use photons for refractive caustics")],
+                   ("1", "Z Transparency Fake Caustics", "use fake caustics"),
+                   ("2", "Raytrace Photons Caustics", "use photons for refractive caustics")],
             name="Refraction Type:",
             description="use fake caustics (fast) or true photons for refractive Caustics",
             default="1")
@@ -1709,15 +1714,66 @@ class MaterialSubsurfaceScattering(PropertyGroup):
             name="Texture",
             description="Texture scattering blend factor",
             min=0.0, max=1.0, soft_min=0.0, soft_max=1.0, default=0.0, precision=3)
-                
+
+class MaterialStrandSettings(PropertyGroup):
+    bl_description = "Strand settings for the material",          
+
+    blend_distance: FloatProperty(
+            name="Distance",
+            description="Worldspace distance over which to blend in the surface normal",
+            min=0.0, max=10.0, soft_min=0.0, soft_max=10.0, default=0.0, precision=3)
+
+    root_size: FloatProperty(
+            name="Root",
+            description="Start size of strands in pixels or Blender units",
+            min=0.25, default=1.0, precision=5)
+
+    shape: FloatProperty(
+            name="Shape",
+            description="Positive values make strands rounder, negative ones make strands spiky",
+            min=-0.9, max=0.9, default=0.0, precision=3)
+
+    size_min: FloatProperty(
+            name="Minimum",
+            description="Minimum size of strands in pixels",
+            min=0.001, max=10.0, default=1.0, precision=3)
+
+    tip_size: FloatProperty(
+            name="Tip",
+            description="End size of strands in pixels or Blender units",
+            min=0.0, default=1.0, precision=5)
+
+    use_blender_units: BoolProperty(
+            name="Blender Units", 
+            description="Use Blender units for widths instead of pixels",
+            default=False)
+
+    use_surface_diffuse: BoolProperty(
+            name="Surface diffuse", 
+            description="Make diffuse shading more similar to shading the surface",
+            default=False)
+
+    use_tangent_shading: BoolProperty(
+            name="Tangent Shading", 
+            description="Use direction of strands as normal for tangent-shading",
+            default=True)
+
+    uv_layer: StringProperty(
+            name="UV Layer",
+            #icon="GROUP_UVS",
+            description="Name of UV map to override",
+            default="")
+
+    width_fade: FloatProperty(
+            name="Width Fade",
+            description="Transparency along the width of the strand",
+            min=0.0, max=2.0, default=0.0, precision=3)
+
+            
             # halo
 
                 # Halo settings for the material
                 # Type:	MaterialHalo, (readonly, never None)            
-            # alpha¶
-
-                # Alpha transparency of the material
-                # Type:	float in [0, 1], default 0.0
 
             # ambient
 
@@ -1912,10 +1968,6 @@ class MaterialSubsurfaceScattering(PropertyGroup):
                 # Shadow raytracing bias to prevent terminator problems on shadow boundary
                 # Type:	float in [0, 0.25], default 0.0
 
-            # specular_alpha
-
-                # Alpha transparency for specular areas
-                # Type:	float in [0, 1], default 0.0
 
             # specular_color
 
@@ -4298,6 +4350,7 @@ classes = (
     MaterialRaytraceTransparency,
     MaterialRaytraceMirror, 
     MaterialSubsurfaceScattering,
+    MaterialStrandSettings,
     RenderPovSettingsObject,
     RenderPovSettingsScene,
     RenderPovSettingsText,
@@ -4337,6 +4390,7 @@ def register():
     bpy.types.Material.pov_raytrace_transparency = PointerProperty(type=MaterialRaytraceTransparency)
     bpy.types.Material.pov = PointerProperty(type=RenderPovSettingsMaterial)
     bpy.types.Material.pov_subsurface_scattering = PointerProperty(type=MaterialSubsurfaceScattering)
+    bpy.types.Material.strand = PointerProperty(type= MaterialStrandSettings)
     bpy.types.Material.pov_raytrace_mirror = PointerProperty(type=MaterialRaytraceMirror)
     bpy.types.Texture.pov = PointerProperty(type=RenderPovSettingsTexture)
     bpy.types.Object.pov = PointerProperty(type=RenderPovSettingsObject)
@@ -4353,6 +4407,7 @@ def unregister():
     del bpy.types.Scene.pov
     del bpy.types.Material.pov
     del bpy.types.Material.pov_subsurface_scattering
+    del bpy.types.Material.strand
     del bpy.types.Material.pov_raytrace_mirror
     del bpy.types.Material.pov_raytrace_transparency
     #del bpy.types.Modifier.pov

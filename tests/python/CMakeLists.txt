@@ -32,19 +32,6 @@ file(MAKE_DIRECTORY ${TEST_OUT_DIR}/io_tests)
 #~      message(FATAL_ERROR "CMake test directory not found!")
 #~  endif()
 
-# all calls to blender use this
-# --env-system-scripts allows to run without the install target, but does
-# not work for all configurations.
-if(WITH_CYCLES OR (APPLE AND (${CMAKE_GENERATOR} MATCHES "Xcode")))
-  set(TEST_BLENDER_EXE_PARAMS --background -noaudio --factory-startup)
-else()
-  set(TEST_BLENDER_EXE_PARAMS --background -noaudio --factory-startup --env-system-scripts ${CMAKE_SOURCE_DIR}/release/scripts)
-endif()
-
-# for testing with valgrind prefix: valgrind --track-origins=yes --error-limit=no
-# set(TEST_BLENDER_EXE_BARE ${TEST_BLENDER_EXE})
-# set(TEST_BLENDER_EXE ${TEST_BLENDER_EXE} ${TEST_BLENDER_EXE_PARAMS} )
-
 # Run Blender command with parameters.
 function(add_blender_test testname)
   add_test(

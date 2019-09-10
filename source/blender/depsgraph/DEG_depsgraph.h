@@ -108,6 +108,8 @@ void DEG_graph_on_visible_update(struct Main *bmain, Depsgraph *depsgraph, const
 /* Update all dependency graphs when visible scenes/layers changes. */
 void DEG_on_visible_update(struct Main *bmain, const bool do_time);
 
+/* NOTE: Will return NULL if the flag is not known, allowing to gracefully handle situations
+ * when recalc flag has been removed. */
 const char *DEG_update_tag_as_string(IDRecalcFlag flag);
 
 void DEG_id_tag_update(struct ID *id, int flag);
@@ -125,11 +127,6 @@ void DEG_graph_id_type_tag(struct Depsgraph *depsgraph, short id_type);
 void DEG_id_type_tag(struct Main *bmain, short id_type);
 
 void DEG_ids_clear_recalc(struct Main *bmain, Depsgraph *depsgraph);
-
-/* Update Flushing ------------------------------- */
-
-/* Flush updates for IDs in a single scene. */
-void DEG_graph_flush_update(struct Main *bmain, Depsgraph *depsgraph);
 
 /* Check if something was changed in the database and inform
  * editors about this.
@@ -154,7 +151,7 @@ void DEG_evaluate_on_framechange(struct Main *bmain, Depsgraph *graph, float cti
 /* Data changed recalculation entry point.
  * < context_type: context to perform evaluation for
  */
-void DEG_evaluate_on_refresh(Depsgraph *graph);
+void DEG_evaluate_on_refresh(struct Main *bmain, Depsgraph *graph);
 
 bool DEG_needs_eval(Depsgraph *graph);
 

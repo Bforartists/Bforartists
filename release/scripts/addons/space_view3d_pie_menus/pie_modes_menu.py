@@ -196,25 +196,6 @@ class PIE_OT_VertsEdgesFaces(Operator):
             return {'FINISHED'}
 
 
-# Grease Pencil Interactive Mode
-class PIE_OT_InteractiveModeGreasePencil(Operator):
-    bl_idname = "view3d.pie_interactive_mode_grease_pencil"
-    bl_label = "Edit Strokes"
-    bl_description = "Toggle Edit Strokes for Grease Pencil"
-
-    @classmethod
-    def poll(cls, context):
-        return (context.gpencil_data is not None)
-
-    def execute(self, context):
-        try:
-            bpy.ops.gpencil.editmode_toggle()
-        except:
-            self.report({'WARNING'},
-                        "It is not possible to enter into the interactive mode")
-        return {'FINISHED'}
-
-
 # Menus
 class PIE_MT_ObjectEditotherModes(Menu):
     """Edit/Object Others modes"""
@@ -267,13 +248,12 @@ class PIE_MT_ObjectEditMode(Menu):
             # 9 - TOP - RIGHT
             pie.operator("class.pievertexpaint", text="Vertex Paint", icon='VPAINT_HLT')
             # 1 - BOTTOM - LEFT
+            pie.separator()
+            # 3 - BOTTOM - RIGHT
             if context.object.particle_systems:
                 pie.operator("class.pieparticleedit", text="Particle Edit", icon='PARTICLEMODE')
             else:
                 pie.separator()
-            # 3 - BOTTOM - RIGHT
-            if context.gpencil_data:
-                pie.operator("view3d.pie_interactive_mode_grease_pencil", icon="GREASEPENCIL")
 
         elif ob and ob.type == 'MESH' and ob.mode in {'EDIT'}:
             pie = layout.menu_pie()
@@ -290,13 +270,12 @@ class PIE_MT_ObjectEditMode(Menu):
             # 9 - TOP - RIGHT
             pie.operator("class.pievertexpaint", text="Vertex Paint", icon='VPAINT_HLT')
             # 1 - BOTTOM - LEFT
+            pie.separator()
+            # 3 - BOTTOM - RIGHT
             if context.object.particle_systems:
                 pie.operator("class.pieparticleedit", text="Particle Edit", icon='PARTICLEMODE')
             else:
                 pie.separator()
-            # 3 - BOTTOM - RIGHT
-            if context.gpencil_data:
-                pie.operator("view3d.pie_interactive_mode_grease_pencil", icon="GREASEPENCIL")
 
         elif ob and ob.type == 'CURVE':
             pie = layout.menu_pie()
@@ -315,8 +294,7 @@ class PIE_MT_ObjectEditMode(Menu):
             # 1 - BOTTOM - LEFT
             pie.separator()
             # 3 - BOTTOM - RIGHT
-            if context.gpencil_data:
-                pie.operator("view3d.pie_interactive_mode_grease_pencil", icon="GREASEPENCIL")
+            pie.separator()
 
         elif ob and ob.type == 'ARMATURE':
             pie = layout.menu_pie()
@@ -335,8 +313,7 @@ class PIE_MT_ObjectEditMode(Menu):
             # 1 - BOTTOM - LEFT
             pie.separator()
             # 3 - BOTTOM - RIGHT
-            if context.gpencil_data:
-                pie.operator("view3d.pie_interactive_mode_grease_pencil", icon="GREASEPENCIL")
+            pie.separator()
 
         elif ob and ob.type == 'FONT':
             pie = layout.menu_pie()
@@ -348,8 +325,7 @@ class PIE_MT_ObjectEditMode(Menu):
             pie.separator()
             pie.separator()
             # 3 - BOTTOM - RIGHT
-            if context.gpencil_data:
-                pie.operator("view3d.pie_interactive_mode_grease_pencil", icon="GREASEPENCIL")
+            pie.separator()
 
         elif ob and ob.type == 'SURFACE':
             pie = layout.menu_pie()
@@ -361,8 +337,7 @@ class PIE_MT_ObjectEditMode(Menu):
             pie.separator()
             pie.separator()
             # 3 - BOTTOM - RIGHT
-            if context.gpencil_data:
-                pie.operator("view3d.pie_interactive_mode_grease_pencil", icon="GREASEPENCIL")
+            pie.separator()
 
         elif ob and ob.type == 'META':
             pie = layout.menu_pie()
@@ -374,8 +349,7 @@ class PIE_MT_ObjectEditMode(Menu):
             pie.separator()
             pie.separator()
             # 3 - BOTTOM - RIGHT
-            if context.gpencil_data:
-                pie.operator("view3d.pie_interactive_mode_grease_pencil", icon="GREASEPENCIL")
+            pie.separator()
 
         elif ob and ob.type == 'LATTICE':
             pie = layout.menu_pie()
@@ -429,7 +403,6 @@ classes = (
     PIE_OT_ClassWeightPaint,
     PIE_OT_ClassVertexPaint,
     PIE_OT_ClassParticleEdit,
-    PIE_OT_InteractiveModeGreasePencil,
     PIE_OT_VertsEdgesFaces,
     PIE_OT_SetObjectModePie,
     )

@@ -288,6 +288,10 @@ void WM_init(bContext *C, int argc, const char **argv)
   const bool use_data = true;
   const bool use_userdef = true;
 
+  /* Studio-lights needs to be init before we read the home-file,
+   * otherwise the versioning cannot find the default studio-light. */
+  BKE_studiolight_init();
+
   wm_homefile_read(C,
                    NULL,
                    G.factory_startup,
@@ -314,8 +318,6 @@ void WM_init(bContext *C, int argc, const char **argv)
 
     UI_init();
   }
-
-  BKE_studiolight_init();
 
   ED_spacemacros_init();
 

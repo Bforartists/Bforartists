@@ -25,8 +25,9 @@ if "bpy" in locals():
     ui = reload(ui)
     colors = reload(colors)
     tasks_queue = reload(tasks_queue)
+    rerequests = reload(rerequests)
 else:
-    from blenderkit import paths, append_link, utils, ui, colors, tasks_queue
+    from blenderkit import paths, append_link, utils, ui, colors, tasks_queue, rerequests
 
 import threading
 import time
@@ -266,7 +267,7 @@ def report_usages():
         scene['assets rated'][k] = scene['assets rated'].get(k, False)
     thread = threading.Thread(target=utils.requests_post_thread, args=(url, usage_report, headers))
     thread.start()
-    # r = requests.post(url, headers=headers, json=usage_report)
+    # r = rerequests.post(url, headers=headers, json=usage_report)
     mt = time.time() - mt
     print('report generation:                ', mt)
 
@@ -551,6 +552,7 @@ class Downloader(threading.Thread):
             tcom.downloaded = 100
             utils.p('not downloading, trying to append again')
             return;
+
         file_name = paths.get_download_filenames(asset_data)[0]  # prefer global dir if possible.
         # for k in asset_data:
         #    print(asset_data[k])
@@ -617,7 +619,6 @@ def download(asset_data, **kwargs):
         asset_data = copy.deepcopy(asset_data)
     else:
         asset_data = asset_data.to_dict()
-
     readthread = Downloader(asset_data, tcom, scene_id, api_key)
     readthread.start()
 
@@ -730,7 +731,7 @@ def get_download_url(asset_data, scene_id, api_key, tcom=None):
     }
     r = None
     try:
-        r = requests.get(asset_data['download_url'], params=data, headers=headers)
+        r = rerequests.get(asset_data['download_url'], params=data, headers=headers)
     except Exception as e:
         print(e)
         if tcom is not None:
@@ -755,10 +756,6 @@ def get_download_url(asset_data, scene_id, api_key, tcom=None):
         tasks_queue.add_task((ui.add_report, (r1, 5, colors.RED)))
         tcom.error = True
 
-    if r.status_code == 401:
-        tcom.report = 'Invalid API key'
-        tcom.error = True
-        return 'Invalid API key'
     elif r.status_code >= 500:
         tcom.report = 'Server error'
         tcom.error = True
@@ -832,7 +829,6 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
     bl_idname = "scene.blenderkit_download"
     bl_label = "BlenderKit Asset Download"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
-
 
     asset_type: EnumProperty(
         name="Type",

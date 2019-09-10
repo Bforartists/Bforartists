@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
 "Last-Translator: Lockal <lockalsash@gmail.com>, 2019\n"
 "Language-Team: Russian (https://www.transifex.com/translateblender/teams/82039/ru/)\n"
@@ -5447,6 +5447,30 @@ msgid "Copy the rotation of the target"
 msgstr "Копировать вращение целевого объекта"
 
 
+msgid "XYZ Euler"
+msgstr "XYZ Эйлер"
+
+
+msgid "XZY Euler"
+msgstr "XZY Эйлер"
+
+
+msgid "YXZ Euler"
+msgstr "YXZ Эйлер"
+
+
+msgid "YZX Euler"
+msgstr "YZX Эйлер"
+
+
+msgid "ZXY Euler"
+msgstr "ZXY Эйлер"
+
+
+msgid "ZYX Euler"
+msgstr "ZYX Эйлер"
+
+
 msgid "Invert the X rotation"
 msgstr "Инверсия вращения вокруг оси X"
 
@@ -6645,6 +6669,10 @@ msgstr "Минимум по Z для источника"
 
 msgid "Bottom range of Z axis source motion"
 msgstr "Нижний диапазон перемещения по оси Z для источника"
+
+
+msgid "Quaternion"
+msgstr "Кватернион"
 
 
 msgid "Map From"
@@ -7868,6 +7896,10 @@ msgstr "Мир"
 msgctxt "ID"
 msgid "Workspace"
 msgstr "Рабочее пространство"
+
+
+msgid "Rotation Mode"
+msgstr "Режим вращения"
 
 
 msgid "Transform Space"
@@ -10242,10 +10274,6 @@ msgstr "Сферическое силовое поле на основе зар�
 
 msgid "Forcefield based on the Lennard-Jones potential"
 msgstr "Силовое поле на основе потенциала Леннарда-Джонса"
-
-
-msgid "Forcefield based on a texture"
-msgstr "Силовое поле на основе текстуры"
 
 
 msgid "Create a force along a curve object"
@@ -19915,10 +19943,6 @@ msgid "Rotation in Eulers"
 msgstr "Вращение с помощью углов Эйлера"
 
 
-msgid "Rotation Mode"
-msgstr "Режим вращения"
-
-
 msgid "Quaternion (WXYZ)"
 msgstr "Кватернион (WXYZ)"
 
@@ -19927,48 +19951,24 @@ msgid "No Gimbal Lock"
 msgstr "Без шарнирного клина"
 
 
-msgid "XYZ Euler"
-msgstr "XYZ Эйлер"
-
-
 msgid "XYZ Rotation Order - prone to Gimbal Lock (default)"
 msgstr "Порядок вращений XYZ — подвержен шарнирному клину (по умолчанию)"
-
-
-msgid "XZY Euler"
-msgstr "XZY Эйлер"
 
 
 msgid "XZY Rotation Order - prone to Gimbal Lock"
 msgstr "Порядок вращений XZY — подвержен шарнирному клину"
 
 
-msgid "YXZ Euler"
-msgstr "YXZ Эйлер"
-
-
 msgid "YXZ Rotation Order - prone to Gimbal Lock"
 msgstr "Порядок вращений YXZ — подвержен шарнирному клину"
-
-
-msgid "YZX Euler"
-msgstr "YZX Эйлер"
 
 
 msgid "YZX Rotation Order - prone to Gimbal Lock"
 msgstr "Порядок вращений YZX — подвержен шарнирному клину"
 
 
-msgid "ZXY Euler"
-msgstr "ZXY Эйлер"
-
-
 msgid "ZXY Rotation Order - prone to Gimbal Lock"
 msgstr "Порядок вращений ZXY — подвержен шарнирному клину"
-
-
-msgid "ZYX Euler"
-msgstr "ZYX Эйлер"
 
 
 msgid "ZYX Rotation Order - prone to Gimbal Lock"
@@ -27114,10 +27114,6 @@ msgid "Clean Up"
 msgstr "Очистка"
 
 
-msgid "GPencil Draw Delete"
-msgstr "Удаление для Grease Pencil"
-
-
 msgid "GP Vertex Groups"
 msgstr "Группы вершин Grease Pencil"
 
@@ -27551,10 +27547,6 @@ msgstr "Генерировать веса"
 
 msgid "Copy Layer to Object"
 msgstr "Копировать слой к объекту"
-
-
-msgid "Edit Context Menu"
-msgstr "Контекстное меню редактирования"
 
 
 msgid "Hooks"
@@ -29651,10 +29643,6 @@ msgstr "Сохранять треугольные грани после упро
 
 msgid "All Boundaries"
 msgstr "Все границы"
-
-
-msgid "Dissolve all vertices inbetween face boundaries (planar only)"
-msgstr "Растворять все вершины между границами граней (только в планарном режиме)"
 
 
 msgid "Symmetry"
@@ -45182,10 +45170,6 @@ msgid "Starting frame for the animation"
 msgstr "Начальный кадр для анимации"
 
 
-msgid "Quaternion"
-msgstr "Кватернион"
-
-
 msgid "Convert rotations to quaternions"
 msgstr "Преобразовать вращения в кватернионы"
 
@@ -45406,10 +45390,6 @@ msgstr "Использовать относительные пути к файл
 
 msgid "Node shader to use"
 msgstr "Используемая нода шейдера"
-
-
-msgid "Diffuse Shader"
-msgstr "Диффузный шейдер"
 
 
 msgid "Shadeless"
@@ -46902,10 +46882,6 @@ msgid "Delimit dissolve operation"
 msgstr "Разграничитель операции растворения"
 
 
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "Растворять все вершины на границах соседствующих граней"
-
-
 msgctxt "Operator"
 msgid "Dissolve Selection"
 msgstr "Растворить выделение"
@@ -47812,16 +47788,6 @@ msgid "Poke Offset"
 msgstr "Сместить результат"
 
 
-msgctxt "Operator"
-msgid "Poly Build Dissolve at Cursor"
-msgstr "Poly Build Растворить вершину на месте курсора"
-
-
-msgctxt "Operator"
-msgid "Poly Build Face at Cursor"
-msgstr "Poly Build Создать грань курсором мыши"
-
-
 msgctxt "Curve"
 msgid "Proportional Falloff"
 msgstr "Спад влияния"
@@ -47861,6 +47827,16 @@ msgstr "Пропорциональное редакт."
 
 msgid "Projected (2D)"
 msgstr "По проекции (2D)"
+
+
+msgctxt "Operator"
+msgid "Poly Build Dissolve at Cursor"
+msgstr "Poly Build Растворить вершину на месте курсора"
+
+
+msgctxt "Operator"
+msgid "Poly Build Face at Cursor"
+msgstr "Poly Build Создать грань курсором мыши"
 
 
 msgctxt "Operator"
@@ -72886,14 +72862,6 @@ msgid "Sequence strip creating text"
 msgstr "Дорожка видеоредактора, для создания текста"
 
 
-msgid "Align the text along the X axis"
-msgstr "Выравнивать текст вдоль оси X"
-
-
-msgid "Align the image along the Y axis"
-msgstr "Выравнивать изображение вдоль оси Y"
-
-
 msgid "Text color"
 msgstr "Цвет текста"
 
@@ -77115,14 +77083,6 @@ msgstr "Привязка по углам пикселей"
 
 msgid "Snap to pixel centers"
 msgstr "Привязка по центрам пикселей"
-
-
-msgid "Display Edges"
-msgstr "Отображать рёбра"
-
-
-msgid "Display edges in vertex select mode"
-msgstr "Рисовать рёбра в режиме выбора вершин"
 
 
 msgid "Display Faces"
@@ -84138,11 +84098,6 @@ msgstr "Курсор к сетке"
 
 
 msgctxt "Operator"
-msgid "Delete Frame"
-msgstr "Удалить кадр"
-
-
-msgctxt "Operator"
 msgid "Delete Loose Points"
 msgstr "Удалить несвязанные точки"
 
@@ -86373,10 +86328,6 @@ msgid "Alignment X"
 msgstr "Выравнивание по X"
 
 
-msgid "{:>14}:"
-msgstr "{:>14}:"
-
-
 msgid "Convert to Float"
 msgstr "Преобразовать в нецелое"
 
@@ -88143,18 +88094,18 @@ msgstr "Закреплён"
 
 
 msgctxt "Operator"
-msgid "Join..."
-msgstr "Объединить…"
-
-
-msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "Переместить на слой"
+msgid "Arrange Strokes"
+msgstr "Выстроить штрихи"
 
 
 msgctxt "Operator"
 msgid "Close"
 msgstr "Замкнуть"
+
+
+msgctxt "Operator"
+msgid "Toggle Caps"
+msgstr "Показать/скрыть концы"
 
 
 msgctxt "Operator"
@@ -88168,11 +88119,6 @@ msgstr "Объединить точки"
 
 
 msgctxt "Operator"
-msgid "Duplicate Active Frame"
-msgstr "Дублировать активный кадр"
-
-
-msgctxt "Operator"
 msgid "Interpolate"
 msgstr "Интерполировать"
 
@@ -88180,11 +88126,6 @@ msgstr "Интерполировать"
 msgctxt "Operator"
 msgid "Sequence"
 msgstr "Последовательность"
-
-
-msgctxt "Operator"
-msgid "Hide Active Layer"
-msgstr "Скрыть активный слой"
 
 
 msgid "Show Gizmos"
@@ -88288,16 +88229,6 @@ msgid "Display:"
 msgstr "Отображение:"
 
 
-msgctxt "Operator"
-msgid "Arrange Strokes"
-msgstr "Выстроить штрихи"
-
-
-msgctxt "Operator"
-msgid "Toggle Caps"
-msgstr "Показать/скрыть концы"
-
-
 msgid "Frames:"
 msgstr "Кадры:"
 
@@ -88305,16 +88236,6 @@ msgstr "Кадры:"
 msgctxt "Operator"
 msgid "Insert Blank"
 msgstr "Вставить пустой"
-
-
-msgctxt "Operator"
-msgid "Duplicate Active"
-msgstr "Дублировать активный"
-
-
-msgctxt "Operator"
-msgid "Delete All Active Layers"
-msgstr "Удалить все активные слои"
 
 
 msgid "Thickness Profile"
@@ -88769,8 +88690,8 @@ msgstr "Сгладить точки"
 
 
 msgctxt "Operator"
-msgid "Duplicate All Layers"
-msgstr "Дублировать все слои"
+msgid "Hide Active Layer"
+msgstr "Скрыть активный слой"
 
 
 msgid "Toggle X-Ray"
@@ -88814,18 +88735,8 @@ msgstr "Показывать редактируемые линии только 
 
 
 msgctxt "Operator"
-msgid "Duplicate Active Frame All Layers"
-msgstr "Дублировать все слои активного кадра"
-
-
-msgctxt "Operator"
-msgid "Duplicate for All Layers"
-msgstr "Дублировать для всех слоёв"
-
-
-msgctxt "Operator"
-msgid "Delete Active"
-msgstr "Удалить активное"
+msgid "Duplicate All Layers"
+msgstr "Дублировать все слои"
 
 
 msgid "Multiframe"
@@ -88987,11 +88898,6 @@ msgstr "Преобразовать в кривую Безье"
 msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "Размер отрисовки пустышки"
-
-
-msgctxt "Operator"
-msgid "Energy"
-msgstr "Энергия"
 
 
 msgctxt "Operator"
@@ -91159,6 +91065,16 @@ msgstr "Только клавиатурные сочетания могут ре
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "Изменить сочетание клавиш"
+
+
+msgctxt "Operator"
+msgid "Assign Shortcut"
+msgstr "Назначить сочетание клавиш"
+
+
+msgctxt "Operator"
 msgid "Open File Externally"
 msgstr "Открыть файл во внешнем редакторе"
 
@@ -91279,18 +91195,8 @@ msgstr "Добавить в избранное"
 
 
 msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "Изменить сочетание клавиш"
-
-
-msgctxt "Operator"
 msgid "Remove Shortcut"
 msgstr "Удалить сочетание клавиш"
-
-
-msgctxt "Operator"
-msgid "Assign Shortcut"
-msgstr "Назначить сочетание клавиш"
 
 
 msgctxt "Operator"
@@ -91503,22 +91409,6 @@ msgstr "Пол."
 
 msgid "Use Clipping"
 msgstr "С отсечением"
-
-
-msgid "Min X "
-msgstr "Мин X "
-
-
-msgid "Min Y "
-msgstr "Мин Y "
-
-
-msgid "Max X "
-msgstr "Макс X "
-
-
-msgid "Max Y "
-msgstr "Макс Y "
 
 
 msgid "Reset View"

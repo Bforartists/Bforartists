@@ -24,8 +24,9 @@ if "bpy" in locals():
     append_link = reload(append_link)
     bg_blender = reload(bg_blender)
     utils = reload(utils)
+    rerequests = reload(rerequests)
 else:
-    from blenderkit import paths, append_link, bg_blender, utils
+    from blenderkit import paths, append_link, bg_blender, utils, rerequests
 
 import sys, json, os, time
 import requests
@@ -84,7 +85,7 @@ def upload_file(upload_data, f):
         'originalFilename': os.path.basename(f['file_path'])
     }
     upload_create_url = paths.get_api_url() + 'uploads/'
-    upload = requests.post(upload_create_url, json=upload_info, headers=headers, verify=True)
+    upload = rerequests.post(upload_create_url, json=upload_info, headers=headers, verify=True)
     upload = upload.json()
 
     chunk_size = 1024 * 256
@@ -109,7 +110,7 @@ def upload_file(upload_data, f):
 
             # confirm single file upload to bkit server
             upload_done_url = paths.get_api_url() + 'uploads_s3/' + upload['id'] + '/upload-file/'
-            upload_response = requests.post(upload_done_url, headers=headers, verify=True)
+            upload_response = rerequests.post(upload_done_url, headers=headers, verify=True)
 
     bg_blender.progress('finished uploading')
 
@@ -117,7 +118,6 @@ def upload_file(upload_data, f):
 
 
 def upload_files(upload_data, files):
-
     uploaded_all = True
     for f in files:
         uploaded = upload_file(upload_data, f)
@@ -180,10 +180,10 @@ if __name__ == "__main__":
         files = []
         if 'THUMBNAIL' in upload_set:
             files.append({
-            "type": "thumbnail",
-            "index": 0,
-            "file_path": export_data["thumbnail_path"]
-        })
+                "type": "thumbnail",
+                "index": 0,
+                "file_path": export_data["thumbnail_path"]
+            })
         if 'MAINFILE' in upload_set:
             files.append({
                 "type": "blend",
@@ -207,7 +207,7 @@ if __name__ == "__main__":
 
             url += upload_data["id"] + '/'
 
-            r = requests.patch(url, json=confirm_data, headers=headers, verify=True)  # files = files,
+            r = rerequests.patch(url, json=confirm_data, headers=headers, verify=True)  # files = files,
 
             bg_blender.progress('upload finished successfully')
         else:

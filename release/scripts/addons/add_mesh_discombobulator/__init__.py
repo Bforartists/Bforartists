@@ -57,12 +57,12 @@ from bpy.props import (
 
 # Define "Extras" menu
 def menu_func(self, context):
-    lay_out = self.layout
-    lay_out.operator_context = 'INVOKE_REGION_WIN'
+    layout = self.layout
+    layout.operator_context = 'INVOKE_REGION_WIN'
 
-    lay_out.separator()
-    lay_out.operator("discombobulate.ops",
-                    text="Discombobulator")
+    layout.separator()
+    layout.operator("discombobulate.ops",
+                    text="Discombobulator", icon="MOD_BUILD")
 
 
 # Properties

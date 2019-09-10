@@ -22,8 +22,9 @@ if "bpy" in locals():
     paths = reload(paths)
     utils = reload(utils)
     tasks_queue = reload(tasks_queue)
+    rerequests = reload(rerequests)
 else:
-    from blenderkit import paths, utils, tasks_queue
+    from blenderkit import paths, utils, tasks_queue, rerequests
 
 import requests
 import json
@@ -114,7 +115,7 @@ def fetch_categories(API_key):
     categories_filepath = os.path.join(tempdir, 'categories.json')
 
     try:
-        r = requests.get(url, headers=headers)
+        r = rerequests.get(url, headers=headers)
         rdata = r.json()
         categories = rdata['results']
         fix_category_counts(categories)

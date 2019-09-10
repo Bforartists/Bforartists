@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -890,6 +890,14 @@ msgstr "Y"
 
 msgid "Z"
 msgstr "Z"
+
+
+msgid "ZXY Euler"
+msgstr "ZXY यूलर"
+
+
+msgid "ZYX Euler"
+msgstr "ZYX यूलर"
 
 
 msgid "Power"
@@ -2408,14 +2416,6 @@ msgstr "प्रॉक्सी"
 
 msgid "Rigid Body Constraint"
 msgstr "कठोर-पदार्थ प्रतिबंधी"
-
-
-msgid "ZXY Euler"
-msgstr "ZXY यूलर"
-
-
-msgid "ZYX Euler"
-msgstr "ZYX यूलर"
 
 
 msgid "Pixel"
@@ -6828,11 +6828,6 @@ msgstr "DOF दूरी"
 
 
 msgctxt "Operator"
-msgid "Energy"
-msgstr "ऊर्जा"
-
-
-msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "त्वरित संपादन"
 
@@ -7178,6 +7173,11 @@ msgstr "सतह"
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "परिवर्तन शॉर्टकट"
+
+
+msgctxt "Operator"
 msgid "Delete Single Keyframe"
 msgstr "एक अनुबोधक चिन्ह मिटाएँ"
 
@@ -7233,11 +7233,6 @@ msgstr "मूलभूत मान के लिए एकल पूर्व�
 
 
 msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "परिवर्तन शॉर्टकट"
-
-
-msgctxt "Operator"
 msgid "Remove Shortcut"
 msgstr "शॉर्टकट हटाएँ"
 
@@ -7256,10 +7251,6 @@ msgstr "अज्ञात"
 
 msgid "Pos"
 msgstr "पीओएस"
-
-
-msgid "Min X "
-msgstr "न्यूनतम् x "
 
 
 msgid "Reset"

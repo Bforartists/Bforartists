@@ -267,7 +267,8 @@ bGPDframe *BKE_gpencil_frame_addnew(bGPDlayer *gpl, int cframe)
 
   /* check whether frame was added successfully */
   if (state == -1) {
-    CLOG_ERROR(&LOG, "Frame (%d) existed already for this layer. Using existing frame", cframe);
+    CLOG_ERROR(
+        &LOG, "Frame (%d) existed already for this layer_active. Using existing frame", cframe);
 
     /* free the newly created one, and use the old one instead */
     MEM_freeN(gpf);
@@ -1012,6 +1013,39 @@ void BKE_gpencil_layer_setactive(bGPdata *gpd, bGPDlayer *active)
   active->flag |= GP_LAYER_ACTIVE;
   if (gpd->flag & GP_DATA_AUTOLOCK_LAYERS) {
     active->flag &= ~GP_LAYER_LOCKED;
+  }
+}
+
+/* Set locked layers for autolock mode. */
+void BKE_gpencil_layer_autolock_set(bGPdata *gpd, const bool unlock)
+{
+  BLI_assert(gpd != NULL);
+
+  bGPDlayer *gpl;
+
+  if (gpd->flag & GP_DATA_AUTOLOCK_LAYERS) {
+    bGPDlayer *layer_active = BKE_gpencil_layer_getactive(gpd);
+
+    /* Lock all other layers */
+    for (gpl = gpd->layers.first; gpl; gpl = gpl->next) {
+      /* unlock active layer */
+      if (gpl == layer_active) {
+        gpl->flag &= ~GP_LAYER_LOCKED;
+      }
+      else {
+        gpl->flag |= GP_LAYER_LOCKED;
+      }
+    }
+  }
+  else {
+    /* If disable is better unlock all layers by default or it looks there is
+     * a problem in the UI because the user expects all layers will be unlocked
+     */
+    if (unlock) {
+      for (gpl = gpd->layers.first; gpl; gpl = gpl->next) {
+        gpl->flag &= ~GP_LAYER_LOCKED;
+      }
+    }
   }
 }
 
@@ -2788,10 +2822,15 @@ static void gpencil_convert_spline(Main *bmain,
         mat_curve = give_current_material(ob_cu, 1);
         linearrgb_to_srgb_v3_v3(mat_gp->gp_style->stroke_rgba, &mat_curve->r);
         mat_gp->gp_style->stroke_rgba[3] = mat_curve->a;
-        /* Set stroke to on. */
-        mat_gp->gp_style->flag |= GP_STYLE_STROKE_SHOW;
-        /* Set fill to off. */
-        mat_gp->gp_style->flag &= ~GP_STYLE_FILL_SHOW;
+        /* Set fill and stroke depending of curve type (3D or 2D). */
+        if ((cu->flag & CU_3D) || ((cu->flag & (CU_FRONT | CU_BACK)) == 0)) {
+          mat_gp->gp_style->flag |= GP_STYLE_STROKE_SHOW;
+          mat_gp->gp_style->flag &= ~GP_STYLE_FILL_SHOW;
+        }
+        else {
+          mat_gp->gp_style->flag &= ~GP_STYLE_STROKE_SHOW;
+          mat_gp->gp_style->flag |= GP_STYLE_FILL_SHOW;
+        }
       }
     }
   }
@@ -2803,80 +2842,102 @@ static void gpencil_convert_spline(Main *bmain,
   /* Add stroke to frame.*/
   BLI_addtail(&gpf->strokes, gps);
 
-  /* Read all segments of the curve. */
   float *coord_array = NULL;
   float init_co[3];
 
-  if (nu->type == CU_BEZIER) {
-    /* Allocate memory for storage points. */
-    gps->totpoints = totpoints;
-    gps->points = MEM_callocN(sizeof(bGPDspoint) * gps->totpoints, "gp_stroke_points");
-
-    int init = 0;
-    resolu = nu->resolu + 1;
-    segments = nu->pntsu;
-    if (((nu->flagu & CU_NURB_CYCLIC) == 0) || (nu->pntsu == 2)) {
-      segments--;
-    }
-    /* Get all interpolated curve points of Beziert */
-    for (int s = 0; s < segments; s++) {
-      int inext = (s + 1) % nu->pntsu;
-      BezTriple *prevbezt = &nu->bezt[s];
-      BezTriple *bezt = &nu->bezt[inext];
-      bool last = (bool)(s == segments - 1);
-
-      coord_array = MEM_callocN((size_t)3 * resolu * sizeof(float), __func__);
-
-      for (int j = 0; j < 3; j++) {
-        BKE_curve_forward_diff_bezier(prevbezt->vec[1][j],
-                                      prevbezt->vec[2][j],
-                                      bezt->vec[0][j],
-                                      bezt->vec[1][j],
-                                      coord_array + j,
-                                      resolu - 1,
-                                      3 * sizeof(float));
-      }
-      /* Save first point coordinates. */
-      if (s == 0) {
-        copy_v3_v3(init_co, &coord_array[0]);
-      }
-      /* Add points to the stroke */
-      gpencil_add_new_points(gps, coord_array, bezt->radius, init, resolu, init_co, last);
-      /* Free memory. */
-      MEM_SAFE_FREE(coord_array);
-
-      /* As the last point of segment is the first point of next segment, back one array
-       * element to avoid duplicated points on the same location.
-       */
-      init += resolu - 1;
-    }
-  }
-  else if (nu->type == CU_NURBS) {
-    if (nu->pntsv == 1) {
-
-      int nurb_points;
-      if (nu->flagu & CU_NURB_CYCLIC) {
-        resolu++;
-        nurb_points = nu->pntsu * resolu;
-      }
-      else {
-        nurb_points = (nu->pntsu - 1) * resolu;
-      }
-      /* Get all curve points. */
-      coord_array = MEM_callocN(sizeof(float[3]) * nurb_points, __func__);
-      BKE_nurb_makeCurve(nu, coord_array, NULL, NULL, NULL, resolu, sizeof(float[3]));
-
+  switch (nu->type) {
+    case CU_POLY: {
       /* Allocate memory for storage points. */
-      gps->totpoints = nurb_points - 1;
+      gps->totpoints = nu->pntsu;
+      gps->points = MEM_callocN(sizeof(bGPDspoint) * gps->totpoints, "gp_stroke_points");
+      /* Increase thickness for this type. */
+      gps->thickness = 10.0f;
+
+      /* Get all curve points */
+      for (int s = 0; s < gps->totpoints; s++) {
+        BPoint *bp = &nu->bp[s];
+        bGPDspoint *pt = &gps->points[s];
+        copy_v3_v3(&pt->x, bp->vec);
+        pt->pressure = bp->radius;
+        pt->strength = 1.0f;
+      }
+      break;
+    }
+    case CU_BEZIER: {
+      /* Allocate memory for storage points. */
+      gps->totpoints = totpoints;
       gps->points = MEM_callocN(sizeof(bGPDspoint) * gps->totpoints, "gp_stroke_points");
 
-      /* Add points. */
-      gpencil_add_new_points(gps, coord_array, 1.0f, 0, gps->totpoints, init_co, false);
+      int init = 0;
+      resolu = nu->resolu + 1;
+      segments = nu->pntsu;
+      if (((nu->flagu & CU_NURB_CYCLIC) == 0) || (nu->pntsu == 2)) {
+        segments--;
+      }
+      /* Get all interpolated curve points of Beziert */
+      for (int s = 0; s < segments; s++) {
+        int inext = (s + 1) % nu->pntsu;
+        BezTriple *prevbezt = &nu->bezt[s];
+        BezTriple *bezt = &nu->bezt[inext];
+        bool last = (bool)(s == segments - 1);
 
-      MEM_SAFE_FREE(coord_array);
+        coord_array = MEM_callocN((size_t)3 * resolu * sizeof(float), __func__);
+
+        for (int j = 0; j < 3; j++) {
+          BKE_curve_forward_diff_bezier(prevbezt->vec[1][j],
+                                        prevbezt->vec[2][j],
+                                        bezt->vec[0][j],
+                                        bezt->vec[1][j],
+                                        coord_array + j,
+                                        resolu - 1,
+                                        3 * sizeof(float));
+        }
+        /* Save first point coordinates. */
+        if (s == 0) {
+          copy_v3_v3(init_co, &coord_array[0]);
+        }
+        /* Add points to the stroke */
+        gpencil_add_new_points(gps, coord_array, bezt->radius, init, resolu, init_co, last);
+        /* Free memory. */
+        MEM_SAFE_FREE(coord_array);
+
+        /* As the last point of segment is the first point of next segment, back one array
+         * element to avoid duplicated points on the same location.
+         */
+        init += resolu - 1;
+      }
+      break;
+    }
+    case CU_NURBS: {
+      if (nu->pntsv == 1) {
+
+        int nurb_points;
+        if (nu->flagu & CU_NURB_CYCLIC) {
+          resolu++;
+          nurb_points = nu->pntsu * resolu;
+        }
+        else {
+          nurb_points = (nu->pntsu - 1) * resolu;
+        }
+        /* Get all curve points. */
+        coord_array = MEM_callocN(sizeof(float[3]) * nurb_points, __func__);
+        BKE_nurb_makeCurve(nu, coord_array, NULL, NULL, NULL, resolu, sizeof(float[3]));
+
+        /* Allocate memory for storage points. */
+        gps->totpoints = nurb_points - 1;
+        gps->points = MEM_callocN(sizeof(bGPDspoint) * gps->totpoints, "gp_stroke_points");
+
+        /* Add points. */
+        gpencil_add_new_points(gps, coord_array, 1.0f, 0, gps->totpoints, init_co, false);
+
+        MEM_SAFE_FREE(coord_array);
+      }
+      break;
+    }
+    default: {
+      break;
     }
   }
-
   /* Cyclic curve, close stroke. */
   if ((cyclic) && (!do_stroke)) {
     BKE_gpencil_close_stroke(gps);
