@@ -1637,7 +1637,7 @@ typedef struct SceneEEVEE {
   int motion_blur_samples;
   float motion_blur_shutter;
 
-  int shadow_method;
+  int shadow_method DNA_DEPRECATED;
   int shadow_cube_size;
   int shadow_cascade_size;
 
@@ -2002,6 +2002,8 @@ extern const char *RE_engine_id_CYCLES;
   (((workspace)->object_mode & OD_MODE_EDIT) ? OBACT(_view_layer) : NULL)
 #define OBEDIT_FROM_OBACT(ob) ((ob) ? (((ob)->mode & OB_MODE_EDIT) ? ob : NULL) : NULL)
 #define OBPOSE_FROM_OBACT(ob) ((ob) ? (((ob)->mode & OB_MODE_POSE) ? ob : NULL) : NULL)
+#define OBWEIGHTPAINT_FROM_OBACT(ob) \
+  ((ob) ? (((ob)->mode & OB_MODE_WEIGHT_PAINT) ? ob : NULL) : NULL)
 #define OBEDIT_FROM_VIEW_LAYER(view_layer) OBEDIT_FROM_OBACT(OBACT(view_layer))
 
 #define V3D_CAMERA_LOCAL(v3d) ((!(v3d)->scenelock && (v3d)->camera) ? (v3d)->camera : NULL)
@@ -2324,6 +2326,7 @@ typedef enum eGPencil_GuideTypes {
   GP_GUIDE_RADIAL,
   GP_GUIDE_PARALLEL,
   GP_GUIDE_GRID,
+  GP_GUIDE_ISO,
 } eGPencil_GuideTypes;
 
 /* ToolSettings.gpencil_guide_references */
@@ -2390,7 +2393,7 @@ enum {
   SCE_EEVEE_SHADOW_HIGH_BITDEPTH = (1 << 10),
   SCE_EEVEE_TAA_REPROJECTION = (1 << 11),
   // SCE_EEVEE_SSS_ENABLED = (1 << 12), /* Unused */
-  SCE_EEVEE_SSS_SEPARATE_ALBEDO = (1 << 13),
+  // SCE_EEVEE_SSS_SEPARATE_ALBEDO = (1 << 13), /* Unused */
   SCE_EEVEE_SSR_ENABLED = (1 << 14),
   SCE_EEVEE_SSR_REFRACTION = (1 << 15),
   SCE_EEVEE_SSR_HALF_RESOLUTION = (1 << 16),

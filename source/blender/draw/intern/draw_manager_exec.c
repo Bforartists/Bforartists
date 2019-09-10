@@ -279,17 +279,34 @@ void drw_state_set(DRWState state)
     }
   }
 
+  /* Shadow Bias */
+  {
+    int test;
+    if ((test = CHANGED_TO(DRW_STATE_SHADOW_OFFSET))) {
+      if (test == 1) {
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glEnable(GL_POLYGON_OFFSET_LINE);
+        /* 2.0 Seems to be the lowest possible slope bias that works in every case. */
+        glPolygonOffset(2.0f, 1.0f);
+      }
+      else {
+        glDisable(GL_POLYGON_OFFSET_FILL);
+        glDisable(GL_POLYGON_OFFSET_LINE);
+      }
+    }
+  }
+
   /* Clip Planes */
   {
     int test;
     if ((test = CHANGED_TO(DRW_STATE_CLIP_PLANES))) {
       if (test == 1) {
-        for (int i = 0; i < DST.view_active->clip_planes_len; ++i) {
+        for (int i = 0; i < DST.view_active->clip_planes_len; i++) {
           glEnable(GL_CLIP_DISTANCE0 + i);
         }
       }
       else {
-        for (int i = 0; i < MAX_CLIP_PLANES; ++i) {
+        for (int i = 0; i < MAX_CLIP_PLANES; i++) {
           glDisable(GL_CLIP_DISTANCE0 + i);
         }
       }
@@ -754,7 +771,7 @@ static bool ubo_bindings_validate(DRWShadingGroup *shgroup)
   glGetIntegerv(GL_CURRENT_PROGRAM, &program);
   glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &active_blocks);
 
-  for (uint i = 0; i < active_blocks; ++i) {
+  for (uint i = 0; i < active_blocks; i++) {
     int binding = 0;
     int buffer = 0;
 

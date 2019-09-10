@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: DeathBlood\n"
 "Language-Team: \n"
@@ -5362,6 +5362,30 @@ msgid "Copy the rotation of the target"
 msgstr "复制目标物体的旋转"
 
 
+msgid "XYZ Euler"
+msgstr "XYZ 欧拉"
+
+
+msgid "XZY Euler"
+msgstr "XZY 欧拉"
+
+
+msgid "YXZ Euler"
+msgstr "YXZ 欧拉"
+
+
+msgid "YZX Euler"
+msgstr "YZX 欧拉"
+
+
+msgid "ZXY Euler"
+msgstr "ZXY 欧拉"
+
+
+msgid "ZYX Euler"
+msgstr "ZYX 欧拉"
+
+
 msgid "Invert the X rotation"
 msgstr "反转 X 旋转"
 
@@ -6528,6 +6552,10 @@ msgstr "来自 Z 的最小值"
 
 msgid "Bottom range of Z axis source motion"
 msgstr "Z 轴向源物体运动范围下限"
+
+
+msgid "Quaternion"
+msgstr "四元数"
 
 
 msgid "Map From"
@@ -7733,6 +7761,10 @@ msgid "Workspace"
 msgstr "工作区"
 
 
+msgid "Rotation Mode"
+msgstr "旋转模式"
+
+
 msgid "Transform Space"
 msgstr "变换空间"
 
@@ -8846,7 +8878,7 @@ msgstr "影响函数曲线形状的修改器"
 
 
 msgid "Muted"
-msgstr "禁用"
+msgstr "屏蔽"
 
 
 msgid "Disable F-Curve Modifier evaluation"
@@ -10101,10 +10133,6 @@ msgstr "基于粒子的球形外力, 仅影响其他外力场"
 
 msgid "Forcefield based on the Lennard-Jones potential"
 msgstr "基于列奥纳多 - 琼斯的潜在外力"
-
-
-msgid "Forcefield based on a texture"
-msgstr "基于纹理的力场"
 
 
 msgid "Create a force along a curve object"
@@ -13002,7 +13030,7 @@ msgstr "执行按钮"
 
 
 msgid "Footer"
-msgstr "页脚"
+msgstr "底栏"
 
 
 msgid "Tool Header"
@@ -13018,7 +13046,7 @@ msgstr "面板将要使用的空间"
 
 
 msgid "Gizmos"
-msgstr "小控件"
+msgstr "Gizmo"
 
 
 msgid "Has Reports"
@@ -13241,6 +13269,10 @@ msgid "Inverse Layers"
 msgstr "反向图层"
 
 
+msgid "Inverse Materials"
+msgstr "反转材质"
+
+
 msgid "Keep On Top"
 msgstr "保持在最前"
 
@@ -13259,6 +13291,10 @@ msgstr "通道层"
 
 msgid "Layer pass index"
 msgstr "层通道编号"
+
+
+msgid "Material name"
+msgstr "材质名称"
 
 
 msgid "Value for the distance between items"
@@ -16725,15 +16761,15 @@ msgstr "Alpha 模式"
 
 
 msgid "Straight"
-msgstr "直接"
+msgstr "直通型"
 
 
 msgid "Premultiplied"
-msgstr "预乘"
+msgstr "预乘型"
 
 
 msgid "Channel Packed"
-msgstr "通道已打包"
+msgstr "通道打包"
 
 
 msgid "Ignore alpha channel from the file and make image fully opaque"
@@ -19006,10 +19042,6 @@ msgid "Rotation in Eulers"
 msgstr "欧拉旋转"
 
 
-msgid "Rotation Mode"
-msgstr "旋转模式"
-
-
 msgid "Quaternion (WXYZ)"
 msgstr "四元数运算(WXYZ)"
 
@@ -19018,48 +19050,24 @@ msgid "No Gimbal Lock"
 msgstr "无万向轴锁定"
 
 
-msgid "XYZ Euler"
-msgstr "XYZ 欧拉"
-
-
 msgid "XYZ Rotation Order - prone to Gimbal Lock (default)"
 msgstr "XYZ旋转次序 - 类似于万向节锁 (默认)"
-
-
-msgid "XZY Euler"
-msgstr "XZY 欧拉"
 
 
 msgid "XZY Rotation Order - prone to Gimbal Lock"
 msgstr "XZY旋转次序 - 类似于万向节锁"
 
 
-msgid "YXZ Euler"
-msgstr "YXZ 欧拉"
-
-
 msgid "YXZ Rotation Order - prone to Gimbal Lock"
 msgstr "YXZ旋转次序 - 类似于万向节锁"
-
-
-msgid "YZX Euler"
-msgstr "YZX 欧拉"
 
 
 msgid "YZX Rotation Order - prone to Gimbal Lock"
 msgstr "YZX旋转次序 - 类似于万向节锁"
 
 
-msgid "ZXY Euler"
-msgstr "ZXY 欧拉"
-
-
 msgid "ZXY Rotation Order - prone to Gimbal Lock"
 msgstr "ZXY旋转次序 - 类似于万向节锁"
-
-
-msgid "ZYX Euler"
-msgstr "ZYX 欧拉"
 
 
 msgid "ZYX Rotation Order - prone to Gimbal Lock"
@@ -24674,6 +24682,10 @@ msgid "Change line color along stroke"
 msgstr "沿笔画更改线条颜色"
 
 
+msgid "Color Burn"
+msgstr "颜色加深"
+
+
 msgid "Dodge"
 msgstr "减淡"
 
@@ -25681,10 +25693,6 @@ msgid "Clean Up"
 msgstr "清理"
 
 
-msgid "GPencil Draw Delete"
-msgstr "蜡笔绘制删除"
-
-
 msgid "GP Vertex Groups"
 msgstr "蜡笔顶点组"
 
@@ -25883,7 +25891,7 @@ msgstr "特殊纹理"
 
 
 msgid "Text To 3D Object"
-msgstr "将文本转换为 3D 物体"
+msgstr "将文本转换为三维物体"
 
 
 msgid "Templates"
@@ -26102,10 +26110,6 @@ msgstr "生成权重"
 
 msgid "Copy Layer to Object"
 msgstr "复制层到物体"
-
-
-msgid "Edit Context Menu"
-msgstr "编辑上下文菜单"
 
 
 msgid "Hooks"
@@ -27962,10 +27966,6 @@ msgstr "精简时保留生成的三角面 (仅用于塌陷类型)"
 
 msgid "All Boundaries"
 msgstr "所有边界"
-
-
-msgid "Dissolve all vertices inbetween face boundaries (planar only)"
-msgstr "融并面边界间的所有顶点 (仅用于平面类型)"
 
 
 msgid "Symmetry"
@@ -31577,7 +31577,7 @@ msgstr "可选的自定义节点标签"
 
 
 msgid "Mute"
-msgstr "禁用"
+msgstr "屏蔽"
 
 
 msgid "Unique node identifier"
@@ -34346,8 +34346,24 @@ msgid "Cross Product"
 msgstr "差乘"
 
 
+msgid "Project A onto B"
+msgstr "A投影至B"
+
+
+msgid "Reflect"
+msgstr "反射"
+
+
 msgid "Dot Product"
 msgstr "点乘"
+
+
+msgid "Distance between A and B"
+msgstr "A与B的间距"
+
+
+msgid "Normalize A"
+msgstr "规格化A"
 
 
 msgid "Vector Transform"
@@ -34372,6 +34388,10 @@ msgstr "转换后的空间"
 
 msgid "Volume Absorption"
 msgstr "体积吸收"
+
+
+msgid "Volume Info"
+msgstr "体积信息"
 
 
 msgid "Principled Volume"
@@ -34544,6 +34564,18 @@ msgstr "至接口"
 
 msgid "Diamond"
 msgstr "菱形"
+
+
+msgid "Circle with inner dot"
+msgstr "中间带点的圆"
+
+
+msgid "Square with inner dot"
+msgstr "中间带点的方块"
+
+
+msgid "Diamond with inner dot"
+msgstr "中间带点的菱形"
 
 
 msgid "Enable the socket"
@@ -37594,7 +37626,7 @@ msgstr "设置追踪场景"
 
 
 msgid "Prepare scene for compositing 3D objects into this footage"
-msgstr "准备场景, 用于将 3D 物体合成到镜头中"
+msgstr "准备场景, 用于将三维物体合成到镜头中"
 
 
 msgctxt "Operator"
@@ -37828,7 +37860,7 @@ msgstr "允许使用初始鼠标位置"
 
 msgctxt "Operator"
 msgid "View Zoom In"
-msgstr "缩小视图"
+msgstr "放大视图"
 
 
 msgid "Zoom in the view"
@@ -38458,8 +38490,44 @@ msgid "Bonesize"
 msgstr "骨骼尺寸"
 
 
+msgid "Bone Envelope"
+msgstr "骨骼封套"
+
+
+msgid "Bone Envelope Distance"
+msgstr "骨骼封套间距"
+
+
+msgid "Curve Shrinkfatten"
+msgstr "曲线法向缩放"
+
+
+msgid "Mask Shrinkfatten"
+msgstr "遮罩法向缩放"
+
+
+msgid "GPencil Shrinkfatten"
+msgstr "蜡笔法向缩放"
+
+
+msgid "Time Translate"
+msgstr "时间平移"
+
+
+msgid "Time Slide"
+msgstr "时间滑动"
+
+
 msgid "Time Scale"
 msgstr "时间比例"
+
+
+msgid "Time Extend"
+msgstr "扩展时间"
+
+
+msgid "Bake Time"
+msgstr "烘培时间"
 
 
 msgid "Bweight"
@@ -38476,6 +38544,10 @@ msgstr "滑移边线"
 
 msgid "Sequence Slide"
 msgstr "滑动序列"
+
+
+msgid "GPencil Opacity"
+msgstr "蜡笔不透明度"
 
 
 msgctxt "Operator"
@@ -38554,6 +38626,10 @@ msgstr "将新建的物体与世界对齐"
 
 msgid "Align the new object to the view"
 msgstr "将新建的物体对齐到视图角度"
+
+
+msgid "Use the 3D cursor orientation for the new object"
+msgstr "对新物体使用3D游标方位"
 
 
 msgid "Enter Editmode"
@@ -38664,6 +38740,10 @@ msgid "Checker Deselect"
 msgstr "间隔式弃选"
 
 
+msgid "Deselect every Nth point starting from the active one"
+msgstr "从活动点中按照指定的元素间隔数量执行弃选"
+
+
 msgid "Nth Element"
 msgstr "第N个元素"
 
@@ -38678,6 +38758,10 @@ msgstr "从起始点偏移"
 
 msgid "Skip"
 msgstr "跳过"
+
+
+msgid "Number of elements to skip at once"
+msgstr "一次跳过的元素数量。"
 
 
 msgctxt "Operator"
@@ -41269,9 +41353,21 @@ msgid "Paste Strokes"
 msgstr "粘贴笔画"
 
 
+msgid "Paste to Active"
+msgstr "粘贴到活动项"
+
+
+msgid "Paste by Layer"
+msgstr "按层粘贴"
+
+
 msgctxt "Operator"
 msgid "Grease Pencil Shapes"
 msgstr "蜡笔形状"
+
+
+msgid "Create predefined grease pencil stroke shapes"
+msgstr "创建预定义蜡笔笔画形状"
 
 
 msgid "Number of polygon edges"
@@ -41325,12 +41421,20 @@ msgid "Strokes Sculpt Mode Toggle"
 msgstr "笔画雕刻模式切换"
 
 
+msgid "Enter/Exit sculpt mode for Grease Pencil strokes"
+msgstr "进入/退出蜡笔笔画的雕刻模式"
+
+
 msgid "Select Grease Pencil strokes and/or stroke points"
 msgstr "选择蜡笔笔画与/或控制点"
 
 
 msgid "Entire Strokes"
 msgstr "整个笔画"
+
+
+msgid "Select entire strokes instead of just the nearest stroke vertex"
+msgstr "选择整个笔画, 而不仅仅是最近的笔画顶点"
 
 
 msgid "Mouse location"
@@ -42569,10 +42673,6 @@ msgid "Starting frame for the animation"
 msgstr "动画起始帧"
 
 
-msgid "Quaternion"
-msgstr "四元数"
-
-
 msgid "Convert rotations to quaternions"
 msgstr "转换四元数的旋转"
 
@@ -42741,10 +42841,6 @@ msgstr "使用相对文件路径"
 
 msgid "Node shader to use"
 msgstr "所用节点着色器"
-
-
-msgid "Diffuse Shader"
-msgstr "漫射着色器"
 
 
 msgid "Shadeless"
@@ -44109,10 +44205,6 @@ msgid "Delimit dissolve operation"
 msgstr "为融并操作划界"
 
 
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "在关联体之间禁用碰撞"
-
-
 msgctxt "Operator"
 msgid "Dissolve Selection"
 msgstr "融并选区"
@@ -44991,16 +45083,6 @@ msgid "Poke Offset"
 msgstr "尖分偏移"
 
 
-msgctxt "Operator"
-msgid "Poly Build Dissolve at Cursor"
-msgstr "多边形构建在光标处消融"
-
-
-msgctxt "Operator"
-msgid "Poly Build Face at Cursor"
-msgstr "在光标处的多边形构建面"
-
-
 msgctxt "Curve"
 msgid "Proportional Falloff"
 msgstr "衰减编辑的衰减方式"
@@ -45040,6 +45122,16 @@ msgstr "衰减编辑"
 
 msgid "Projected (2D)"
 msgstr "投射式 (2D)"
+
+
+msgctxt "Operator"
+msgid "Poly Build Dissolve at Cursor"
+msgstr "多边形构建在光标处消融"
+
+
+msgctxt "Operator"
+msgid "Poly Build Face at Cursor"
+msgstr "在光标处的多边形构建面"
 
 
 msgctxt "Operator"
@@ -46456,7 +46548,7 @@ msgstr "切换静默"
 
 
 msgid "Mute or un-mute selected strips"
-msgstr "禁用或启用所选的片段"
+msgstr "屏蔽或启用所选的片段"
 
 
 msgid "Select or deselect all NLA-Strips"
@@ -53704,6 +53796,10 @@ msgid "Copy"
 msgstr "复制"
 
 
+msgid "Copy selected strips to clipboard"
+msgstr "将所选片段复制到剪贴板"
+
+
 msgctxt "Operator"
 msgid "Crossfade sounds"
 msgstr "声音交替渐变"
@@ -53988,6 +54084,10 @@ msgstr "清除首尾帧间的片段偏移"
 msgctxt "Operator"
 msgid "Paste"
 msgstr "粘贴"
+
+
+msgid "Paste strips from clipboard"
+msgstr "粘贴剪贴板中的片段"
 
 
 msgctxt "Operator"
@@ -54987,7 +55087,7 @@ msgstr "开始搜索文本"
 
 msgctxt "Operator"
 msgid "To 3D Object"
-msgstr "至 3D 物体"
+msgstr "至三维物体"
 
 
 msgid "Create 3D text object from active text data-block"
@@ -56758,7 +56858,7 @@ msgstr "缩放 2D 视图"
 
 msgctxt "Operator"
 msgid "Zoom In"
-msgstr "放大"
+msgstr "视图放大"
 
 
 msgid "Zoom Factor X"
@@ -56771,7 +56871,7 @@ msgstr "Y 向缩放系数"
 
 msgctxt "Operator"
 msgid "Zoom Out"
-msgstr "缩小"
+msgstr "视图缩小"
 
 
 msgctxt "Operator"
@@ -59189,6 +59289,23 @@ msgstr "要打开的URL"
 
 
 msgctxt "Operator"
+msgid "Open Preset Website"
+msgstr "打开预设网站"
+
+
+msgid "Open a preset website in the web-browser"
+msgstr "在浏览器中打开预设网站"
+
+
+msgid "Optional identifier"
+msgstr "可选标识符"
+
+
+msgid "Site"
+msgstr "站点"
+
+
+msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "添加自动执行路径"
 
@@ -59256,8 +59373,16 @@ msgid "Append and Activate Workspace"
 msgstr "追加并激活工作区"
 
 
+msgid "Append a workspace and make it the active one in the current window"
+msgstr "追加一个工作区并使之成为当前窗口中的活动工作区"
+
+
 msgid "Path to the library"
 msgstr "指向库文件的路径"
+
+
+msgid "Name of the workspace to append and activate"
+msgstr "要追加和激活的工作区的名称"
 
 
 msgctxt "Operator"
@@ -59276,6 +59401,16 @@ msgstr "新建工作区"
 
 msgid "Add a new workspace"
 msgstr "添加一个新的工作区"
+
+
+msgctxt "Operator"
+msgid "Workspace Reorder to Back"
+msgstr "工作区向后重排序"
+
+
+msgctxt "Operator"
+msgid "Workspace Reorder to Front"
+msgstr "工作区向前重排序"
 
 
 msgctxt "Operator"
@@ -59785,6 +59920,10 @@ msgstr "XXX todo"
 
 msgid "Pin"
 msgstr "钉"
+
+
+msgid "Show the panel on all tabs"
+msgstr "在所有选项卡上显示面板"
 
 
 msgid "Bone Constraints"
@@ -60675,7 +60814,7 @@ msgstr "特性权重"
 
 
 msgid "Find & Replace"
-msgstr "查找&替换"
+msgstr "查找与替换"
 
 
 msgid "Playback"
@@ -68944,14 +69083,6 @@ msgid "Sequence strip creating text"
 msgstr "用于创建的序列片段"
 
 
-msgid "Align the text along the X axis"
-msgstr "沿X轴对齐文字"
-
-
-msgid "Align the image along the Y axis"
-msgstr "沿Y轴对齐文字"
-
-
 msgid "Text color"
 msgstr "文本颜色"
 
@@ -69182,7 +69313,7 @@ msgstr "对 MPEG 影片使用多帧预寻"
 
 
 msgid "Stream Index"
-msgstr "流目录"
+msgstr "流编号"
 
 
 msgid "For files with several movie streams, use the stream with the given index"
@@ -72211,6 +72342,10 @@ msgid "Show visible objects"
 msgstr "显示可见物体"
 
 
+msgid "Show hidden objects"
+msgstr "显示隐藏物体"
+
+
 msgid "Show selected objects"
 msgstr "显示选定的物体"
 
@@ -72891,6 +73026,10 @@ msgid "Navigate Gizmo"
 msgstr "漫游Gizmo"
 
 
+msgid "Viewport navigation gizmo"
+msgstr "视图漫游小部件"
+
+
 msgid "Show Object Rotation"
 msgstr "显示物体旋转"
 
@@ -72937,6 +73076,14 @@ msgstr "显示基于活动活影片剪辑的重建数据"
 
 msgid "Show the left and right cameras"
 msgstr "显示左右相机"
+
+
+msgid "Show the stereo 3d convergence plane"
+msgstr "显示立体 3D 收敛平面"
+
+
+msgid "Show the stereo 3d frustum volume"
+msgstr "显示立体3D视锥体体积"
 
 
 msgid "3D"
@@ -73053,14 +73200,6 @@ msgstr "吸附像素点拐角"
 
 msgid "Snap to pixel centers"
 msgstr "吸附像素点中心"
-
-
-msgid "Display Edges"
-msgstr "显示边"
-
-
-msgid "Display edges in vertex select mode"
-msgstr "在顶点选择模式显示边线"
 
 
 msgid "Display Faces"
@@ -75476,6 +75615,14 @@ msgid "Snap to volume"
 msgstr "吸附至体积"
 
 
+msgid "Edge Center"
+msgstr "边中点"
+
+
+msgid "Snap to the middle of edges"
+msgstr "吸附至边的中点"
+
+
 msgid "Snap Node Element"
 msgstr "吸附节点元素"
 
@@ -75554,6 +75701,10 @@ msgstr "选中项遮罩"
 
 msgid "Only sculpt selected stroke points"
 msgstr "仅雕刻选中的笔画端点"
+
+
+msgid "Only sculpt selected stroke points between other strokes"
+msgstr "仅雕刻位于其他笔画之间的选中笔画端点"
 
 
 msgid "Only sculpt selected stroke"
@@ -75724,12 +75875,24 @@ msgid "Move is affected by snapping settings"
 msgstr "移动受吸附设置影响"
 
 
+msgid "Data Origins"
+msgstr "数据原点"
+
+
+msgid "Manipulate object data"
+msgstr "操作物体数据"
+
+
+msgid "Only Locations"
+msgstr "仅位置"
+
+
 msgid "Manipulate origins (object, pose and weight paint mode only)"
 msgstr "控制中心点(仅适用物体、姿态和权重绘制模式)"
 
 
 msgid "UV Sync Selection"
-msgstr "UV 同步选项"
+msgstr "UV 选区同步"
 
 
 msgid "Keep UV and edit mode mesh selection in sync"
@@ -79911,11 +80074,6 @@ msgstr "游标 -> 栅格点"
 
 
 msgctxt "Operator"
-msgid "Delete Frame"
-msgstr "删除帧"
-
-
-msgctxt "Operator"
 msgid "Delete Loose Points"
 msgstr "删除松散点"
 
@@ -79931,6 +80089,11 @@ msgstr "数据源:"
 
 msgid "Select:"
 msgstr "选择:"
+
+
+msgctxt "Operator"
+msgid "Paste by Layer"
+msgstr "按层粘贴"
 
 
 msgctxt "Operator"
@@ -80265,6 +80428,10 @@ msgstr "遮罩映射"
 
 msgid "Pressure Masking"
 msgstr "压力遮罩"
+
+
+msgid "Gradient Mapping"
+msgstr "渐变映射"
 
 
 msgid "Sample Bias"
@@ -81730,6 +81897,11 @@ msgstr "向前循环滚动渲染槽"
 
 
 msgctxt "Operator"
+msgid "Zoom %d:%d"
+msgstr "缩放比 %d:%d"
+
+
+msgctxt "Operator"
 msgid "Replace..."
 msgstr "替换..."
 
@@ -81952,7 +82124,7 @@ msgstr "ID数据"
 
 
 msgid "Sync Selection"
-msgstr "同步选择"
+msgstr "选区同步"
 
 
 msgid "Search:"
@@ -82118,7 +82290,7 @@ msgstr "滑动片段内容"
 
 msgctxt "Operator"
 msgid "Change Path/Files"
-msgstr "改变日期 / 文件"
+msgstr "改变路径 / 文件"
 
 
 msgctxt "Operator"
@@ -82127,15 +82299,11 @@ msgstr "交换数据"
 
 
 msgid "Position X"
-msgstr "X 位置"
+msgstr "位置 X"
 
 
 msgid "Alignment X"
 msgstr "对齐 X"
-
-
-msgid "{:>14}:"
-msgstr "{:>14}:"
 
 
 msgid "Convert to Float"
@@ -82425,7 +82593,7 @@ msgstr "单词"
 
 msgctxt "Operator"
 msgid "Find & Replace..."
-msgstr "查找&替换..."
+msgstr "查找与替换..."
 
 
 msgctxt "Operator"
@@ -82435,12 +82603,12 @@ msgstr "跳转到..."
 
 msgctxt "Operator"
 msgid "Top"
-msgstr "顶视图"
+msgstr "顶视图(行)"
 
 
 msgctxt "Operator"
 msgid "Bottom"
-msgstr "底视图"
+msgstr "底视图(行)"
 
 
 msgctxt "Operator"
@@ -82465,17 +82633,17 @@ msgstr "下一行"
 
 msgctxt "Operator"
 msgid "Previous Word"
-msgstr "上一单词"
+msgstr "前一个词"
 
 
 msgctxt "Operator"
 msgid "Next Word"
-msgstr "下一单词"
+msgstr "后一个词"
 
 
 msgctxt "Operator"
 msgid "One Object"
-msgstr "单一物体"
+msgstr "单个物体"
 
 
 msgctxt "Operator"
@@ -82994,11 +83162,11 @@ msgstr "安装..."
 
 
 msgid "Axis X"
-msgstr "X 轴"
+msgstr "轴 X"
 
 
 msgid "Shadow Offset X"
-msgstr "阴影偏移X"
+msgstr "阴影偏移 X"
 
 
 msgid "Panel Title"
@@ -83904,18 +84072,18 @@ msgstr "固定"
 
 
 msgctxt "Operator"
-msgid "Join..."
-msgstr "合并..."
-
-
-msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "移动到层"
+msgid "Arrange Strokes"
+msgstr "整理笔画"
 
 
 msgctxt "Operator"
 msgid "Close"
-msgstr "邻近"
+msgstr "闭合"
+
+
+msgctxt "Operator"
+msgid "Toggle Caps"
+msgstr "切换封顶类型"
 
 
 msgctxt "Operator"
@@ -83929,11 +84097,6 @@ msgstr "合并点"
 
 
 msgctxt "Operator"
-msgid "Duplicate Active Frame"
-msgstr "复制活动帧"
-
-
-msgctxt "Operator"
 msgid "Interpolate"
 msgstr "插值"
 
@@ -83941,11 +84104,6 @@ msgstr "插值"
 msgctxt "Operator"
 msgid "Sequence"
 msgstr "序列"
-
-
-msgctxt "Operator"
-msgid "Hide Active Layer"
-msgstr "隐藏活动层"
 
 
 msgid "Show Gizmos"
@@ -84049,16 +84207,6 @@ msgid "Display:"
 msgstr "显示:"
 
 
-msgctxt "Operator"
-msgid "Arrange Strokes"
-msgstr "整理笔画"
-
-
-msgctxt "Operator"
-msgid "Toggle Caps"
-msgstr "切换大小写"
-
-
 msgid "Frames:"
 msgstr "帧:"
 
@@ -84066,16 +84214,6 @@ msgstr "帧:"
 msgctxt "Operator"
 msgid "Insert Blank"
 msgstr "插入空白帧"
-
-
-msgctxt "Operator"
-msgid "Duplicate Active"
-msgstr "复制活动项"
-
-
-msgctxt "Operator"
-msgid "Delete All Active Layers"
-msgstr "删除所有活动层"
 
 
 msgid "Thickness Profile"
@@ -84530,8 +84668,8 @@ msgstr "平滑控制点"
 
 
 msgctxt "Operator"
-msgid "Duplicate All Layers"
-msgstr "复制所有层"
+msgid "Hide Active Layer"
+msgstr "隐藏活动层"
 
 
 msgid "Toggle X-Ray"
@@ -84562,6 +84700,14 @@ msgid "Fade Geometry"
 msgstr "淡化几何体"
 
 
+msgid "Affect Only"
+msgstr "仅影响"
+
+
+msgid "Locations"
+msgstr "位置"
+
+
 msgid "Reference Point"
 msgstr "参考点"
 
@@ -84571,18 +84717,8 @@ msgstr "仅在多重帧显示编辑线"
 
 
 msgctxt "Operator"
-msgid "Duplicate Active Frame All Layers"
-msgstr "复制全部层的活动帧"
-
-
-msgctxt "Operator"
-msgid "Duplicate for All Layers"
-msgstr "复制全部层"
-
-
-msgctxt "Operator"
-msgid "Delete Active"
-msgstr "删除活动帧"
+msgid "Duplicate All Layers"
+msgstr "复制所有层"
 
 
 msgid "Multiframe"
@@ -84747,13 +84883,8 @@ msgstr "空物体显示尺寸"
 
 
 msgctxt "Operator"
-msgid "Energy"
-msgstr "能量"
-
-
-msgctxt "Operator"
 msgid "Size X"
-msgstr "X 尺寸"
+msgstr "尺寸 X"
 
 
 msgctxt "Operator"
@@ -86800,8 +86931,22 @@ msgid "Non-Keyboard Shortcut"
 msgstr "无键盘快捷键"
 
 
+msgid "Shift Left Mouse"
+msgstr "Shift + 鼠标左键"
+
+
 msgid "Only keyboard shortcuts can be edited that way, please use User Preferences otherwise"
 msgstr "只能以这种方式编辑键盘快捷键，否则请使用用户偏好设置"
+
+
+msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "改变快捷键"
+
+
+msgctxt "Operator"
+msgid "Assign Shortcut"
+msgstr "指定快捷键"
 
 
 msgctxt "Operator"
@@ -86925,18 +87070,8 @@ msgstr "添加到快速收藏夹"
 
 
 msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "改变快捷键"
-
-
-msgctxt "Operator"
 msgid "Remove Shortcut"
 msgstr "移除快捷键"
-
-
-msgctxt "Operator"
-msgid "Assign Shortcut"
-msgstr "指定快捷键"
 
 
 msgctxt "Operator"
@@ -87149,22 +87284,6 @@ msgstr "位置"
 
 msgid "Use Clipping"
 msgstr "使用裁剪范围"
-
-
-msgid "Min X "
-msgstr "X 最小值 "
-
-
-msgid "Min Y "
-msgstr "Y 最小值 "
-
-
-msgid "Max X "
-msgstr "X 最大值 "
-
-
-msgid "Max Y "
-msgstr "Y 最大值 "
 
 
 msgid "Reset View"
@@ -88217,6 +88336,10 @@ msgid "Unexpected error, collection not found"
 msgstr "意外错误，无法找到集合"
 
 
+msgid "No objects selected"
+msgstr "无选中物体"
+
+
 msgid "%s already in %s"
 msgstr "%s 已经位于 %s"
 
@@ -88909,6 +89032,14 @@ msgid "View layer '%s' could not be removed from scene '%s'"
 msgstr "无法将视图层 '%s' 从场景 '%s' 中移除"
 
 
+msgid "Join Areas"
+msgstr "合并区域"
+
+
+msgid "Swap Areas"
+msgstr "区域互换"
+
+
 msgid "Flip to Bottom"
 msgstr "在底部显示"
 
@@ -88957,6 +89088,14 @@ msgid "No more markers to jump to in this direction"
 msgstr "此方向再无可供跳转的标识"
 
 
+msgid "Only window region can be 4-split"
+msgstr "四分视图只支持窗口区域"
+
+
+msgid "Only last region can be 4-split"
+msgstr "仅最后一个区可以被 4 等分"
+
+
 msgid "No fullscreen areas were found"
 msgstr "没有找到全屏区域"
 
@@ -88979,6 +89118,10 @@ msgstr "期望一个 3D 视图区域和编辑网格"
 
 msgid "expected a view3d region & editcurve"
 msgstr "期望一个 3D 视图区域和编辑曲线"
+
+
+msgid "Flipping regions in the Top-bar is not allowed"
+msgstr "不允许翻转区块至顶栏"
 
 
 msgid "No menu items found"
@@ -93002,6 +93145,10 @@ msgid "Allow Execution"
 msgstr "允许执行"
 
 
+msgid "Don't Save"
+msgstr "不保存"
+
+
 msgid "unable to open the file"
 msgstr "无法打开文件"
 
@@ -93024,6 +93171,10 @@ msgstr "启用脚本"
 
 msgid "Continue using file without Python scripts"
 msgstr "继续使用文件不开启Python脚本"
+
+
+msgid "Save changes to \"%s\" before closing?"
+msgstr "是否在关闭之前保存更改至 \"%s\" ？"
 
 
 msgid "Path is empty, cannot save"

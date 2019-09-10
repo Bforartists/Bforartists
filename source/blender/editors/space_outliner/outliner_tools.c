@@ -299,7 +299,7 @@ static void unlink_collection_cb(bContext *C,
     }
     else if (GS(tsep->id->name) == ID_SCE) {
       Scene *scene = (Scene *)tsep->id;
-      Collection *parent = BKE_collection_master(scene);
+      Collection *parent = scene->master_collection;
       id_fake_user_set(&collection->id);
       BKE_collection_child_remove(bmain, parent, collection);
       DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
@@ -338,7 +338,7 @@ static void unlink_object_cb(bContext *C,
       }
       else if (GS(tsep->id->name) == ID_SCE) {
         Scene *scene = (Scene *)tsep->id;
-        Collection *parent = BKE_collection_master(scene);
+        Collection *parent = scene->master_collection;
         BKE_collection_object_remove(bmain, parent, ob, true);
         DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
         DEG_relations_tag_update(bmain);
@@ -713,12 +713,15 @@ static void id_override_library_cb(bContext *C,
                                    TreeStoreElem *tselem,
                                    void *UNUSED(user_data))
 {
-  if (ID_IS_LINKED(tselem->id) && (tselem->id->tag & LIB_TAG_EXTERN)) {
+  if (ID_IS_OVERRIDABLE_LIBRARY(tselem->id)) {
     Main *bmain = CTX_data_main(C);
-    ID *override_id = BKE_override_library_create_from_id(bmain, tselem->id);
+    /* For now, remapp all local usages of linked ID to local override one here. */
+    BKE_main_id_tag_all(bmain, LIB_TAG_DOIT, true);
+    ID *override_id = BKE_override_library_create_from_id(bmain, tselem->id, true);
     if (override_id != NULL) {
       BKE_main_id_clear_newpoins(bmain);
     }
+    BKE_main_id_tag_all(bmain, LIB_TAG_DOIT, false);
   }
 }
 

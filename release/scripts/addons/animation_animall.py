@@ -44,6 +44,7 @@ from bpy.props import (
         BoolProperty,
         StringProperty,
         )
+from bpy.app.handlers import persistent
 
 
 # Property Definitions
@@ -563,6 +564,15 @@ class AnimallAddonPreferences(AddonPreferences):
         col.prop(self, "category", text="")
 
 
+@persistent
+def animall_update_handler(scene):
+    '''Force data refresh on frame change.
+    To be removed when T68666 is fixed, probably.'''
+    for obj in scene.objects:
+        if obj.data is not None and obj.data.animation_data is not None:
+            obj.update_tag(refresh={'DATA'})
+
+
 def register():
     bpy.utils.register_class(AnimallProperties)
     bpy.types.WindowManager.animall_properties = bpy.props.PointerProperty(type=AnimallProperties)
@@ -572,6 +582,7 @@ def register():
     bpy.utils.register_class(ANIM_OT_clear_animation_animall)
     bpy.utils.register_class(AnimallAddonPreferences)
     update_panel(None, bpy.context)
+    bpy.app.handlers.frame_change_post.append(animall_update_handler)
 
 
 def unregister():
@@ -582,6 +593,7 @@ def unregister():
     bpy.utils.unregister_class(ANIM_OT_delete_keyframe_animall)
     bpy.utils.unregister_class(ANIM_OT_clear_animation_animall)
     bpy.utils.unregister_class(AnimallAddonPreferences)
+    bpy.app.handlers.frame_change_post.remove(animall_update_handler)
 
 if __name__ == "__main__":
     register()

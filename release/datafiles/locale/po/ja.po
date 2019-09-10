@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
 "Last-Translator: \n"
 "Language-Team: Japanese Translation Team (https://sites.google.com/site/blugjp/blender-translators)\n"
@@ -5467,6 +5467,30 @@ msgid "Copy the rotation of the target"
 msgstr "ターゲットの回転をコピーします"
 
 
+msgid "XYZ Euler"
+msgstr "XYZ オイラー角"
+
+
+msgid "XZY Euler"
+msgstr "XZY オイラー角"
+
+
+msgid "YXZ Euler"
+msgstr "YXZ オイラー角"
+
+
+msgid "YZX Euler"
+msgstr "YZX オイラー角"
+
+
+msgid "ZXY Euler"
+msgstr "ZXY オイラー角"
+
+
+msgid "ZYX Euler"
+msgstr "ZYX オイラー角"
+
+
 msgid "Invert the X rotation"
 msgstr "X回転を反転します"
 
@@ -6667,6 +6691,10 @@ msgstr "最小Zから"
 
 msgid "Bottom range of Z axis source motion"
 msgstr "変換元のZ軸の最小範囲"
+
+
+msgid "Quaternion"
+msgstr "クォータニオン"
 
 
 msgid "Map From"
@@ -7896,6 +7924,10 @@ msgstr "ワールド"
 msgctxt "ID"
 msgid "Workspace"
 msgstr "ワークスペース"
+
+
+msgid "Rotation Mode"
+msgstr "回転モード"
 
 
 msgid "Transform Space"
@@ -10262,10 +10294,6 @@ msgstr "パーティクルの帯電を元にした球状フォースフィール
 
 msgid "Forcefield based on the Lennard-Jones potential"
 msgstr "レナードジョーンズポテンシャルを元にしたフォースフィールド"
-
-
-msgid "Forcefield based on a texture"
-msgstr "テクスチャを元にしたフォースフィールド"
 
 
 msgid "Create a force along a curve object"
@@ -19920,10 +19948,6 @@ msgid "Rotation in Eulers"
 msgstr "オイラー角での回転"
 
 
-msgid "Rotation Mode"
-msgstr "回転モード"
-
-
 msgid "Quaternion (WXYZ)"
 msgstr "クォータニオン(WXYZ)"
 
@@ -19932,48 +19956,24 @@ msgid "No Gimbal Lock"
 msgstr "ジンバルロックなし"
 
 
-msgid "XYZ Euler"
-msgstr "XYZ オイラー角"
-
-
 msgid "XYZ Rotation Order - prone to Gimbal Lock (default)"
 msgstr "XYZ回転順 - ジンバルロックしやすいです(デフォルト)"
-
-
-msgid "XZY Euler"
-msgstr "XZY オイラー角"
 
 
 msgid "XZY Rotation Order - prone to Gimbal Lock"
 msgstr "XZY回転順 - ジンバルロックしやすい"
 
 
-msgid "YXZ Euler"
-msgstr "YXZ オイラー角"
-
-
 msgid "YXZ Rotation Order - prone to Gimbal Lock"
 msgstr "YXZ回転順 - ジンバルロックしやすいです"
-
-
-msgid "YZX Euler"
-msgstr "YZX オイラー角"
 
 
 msgid "YZX Rotation Order - prone to Gimbal Lock"
 msgstr "YZX回転順 - ジンバルロックしやすい"
 
 
-msgid "ZXY Euler"
-msgstr "ZXY オイラー角"
-
-
 msgid "ZXY Rotation Order - prone to Gimbal Lock"
 msgstr "ZXY回転順 - ジンバルロックしやすいです"
-
-
-msgid "ZYX Euler"
-msgstr "ZYX オイラー角"
 
 
 msgid "ZYX Rotation Order - prone to Gimbal Lock"
@@ -27065,10 +27065,6 @@ msgid "Clean Up"
 msgstr "クリーンアップ"
 
 
-msgid "GPencil Draw Delete"
-msgstr "グリペンドロー削除"
-
-
 msgid "GP Vertex Groups"
 msgstr "グリペン頂点グループ"
 
@@ -27494,10 +27490,6 @@ msgstr "ウェイトを生成"
 
 msgid "Copy Layer to Object"
 msgstr "レイヤーからオブジェクトにコピー"
-
-
-msgid "Edit Context Menu"
-msgstr "編集コンテクストメニュー"
 
 
 msgid "Hooks"
@@ -29594,10 +29586,6 @@ msgstr "削減時に生じた三角形面をそのままにします（束ねる
 
 msgid "All Boundaries"
 msgstr "全境界"
-
-
-msgid "Dissolve all vertices inbetween face boundaries (planar only)"
-msgstr "面境界間のすべての頂点を統合します（平面のみ）"
 
 
 msgid "Symmetry"
@@ -45141,10 +45129,6 @@ msgid "Starting frame for the animation"
 msgstr "アニメーションでの開始フレーム"
 
 
-msgid "Quaternion"
-msgstr "クォータニオン"
-
-
 msgid "Convert rotations to quaternions"
 msgstr "回転をクォータニオンに変換します"
 
@@ -45367,10 +45351,6 @@ msgstr "相対ファイルパスを使用します"
 
 msgid "Node shader to use"
 msgstr "使用するノードシェーダー"
-
-
-msgid "Diffuse Shader"
-msgstr "ディフューズシェーダー"
 
 
 msgid "Shadeless"
@@ -46816,10 +46796,6 @@ msgid "Delimit dissolve operation"
 msgstr "溶解操作の区切り"
 
 
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "面の境界中にすべての頂点を溶解します"
-
-
 msgctxt "Operator"
 msgid "Dissolve Selection"
 msgstr "選択で溶解"
@@ -47726,16 +47702,6 @@ msgid "Poke Offset"
 msgstr "中心のオフセット"
 
 
-msgctxt "Operator"
-msgid "Poly Build Dissolve at Cursor"
-msgstr "カーソル位置でポリビルド溶解"
-
-
-msgctxt "Operator"
-msgid "Poly Build Face at Cursor"
-msgstr "カーソル位置でポリビルド面作成"
-
-
 msgctxt "Curve"
 msgid "Proportional Falloff"
 msgstr "プロポーショナル減衰"
@@ -47775,6 +47741,16 @@ msgstr "プロポーショナル編集"
 
 msgid "Projected (2D)"
 msgstr "投影(2D)"
+
+
+msgctxt "Operator"
+msgid "Poly Build Dissolve at Cursor"
+msgstr "カーソル位置でポリビルド溶解"
+
+
+msgctxt "Operator"
+msgid "Poly Build Face at Cursor"
+msgstr "カーソル位置でポリビルド面作成"
 
 
 msgctxt "Operator"
@@ -72733,14 +72709,6 @@ msgid "Sequence strip creating text"
 msgstr "テキストを作成するシーケンスストリップ"
 
 
-msgid "Align the text along the X axis"
-msgstr "X軸に対するテキスト整列の基準位置"
-
-
-msgid "Align the image along the Y axis"
-msgstr "Y軸に対するテキスト整列の基準位置"
-
-
 msgid "Text color"
 msgstr "テキストカラー"
 
@@ -76956,14 +76924,6 @@ msgstr "ピクセルの隅にスナップします"
 
 msgid "Snap to pixel centers"
 msgstr "ピクセルの中心スナップします"
-
-
-msgid "Display Edges"
-msgstr "辺を表示"
-
-
-msgid "Display edges in vertex select mode"
-msgstr "頂点選択モードで辺を表示します"
 
 
 msgid "Display Faces"
@@ -83978,11 +83938,6 @@ msgstr "カーソル → グリッド"
 
 
 msgctxt "Operator"
-msgid "Delete Frame"
-msgstr "フレームを削除"
-
-
-msgctxt "Operator"
 msgid "Poly"
 msgstr "多角形"
 
@@ -86144,10 +86099,6 @@ msgid "Position X"
 msgstr "位置 X"
 
 
-msgid "{:>14}:"
-msgstr "{:>14}:"
-
-
 msgid "Convert to Float"
 msgstr "Floatに変換"
 
@@ -87815,13 +87766,8 @@ msgstr "固定"
 
 
 msgctxt "Operator"
-msgid "Join..."
-msgstr "統合..."
-
-
-msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "レイヤー移動"
+msgid "Arrange Strokes"
+msgstr "ストロークを整列"
 
 
 msgctxt "Operator"
@@ -87830,8 +87776,8 @@ msgstr "閉じる"
 
 
 msgctxt "Operator"
-msgid "Duplicate Active Frame"
-msgstr "アクティブフレームを複製"
+msgid "Toggle Caps"
+msgstr "端の処理の切替え"
 
 
 msgctxt "Operator"
@@ -87941,16 +87887,6 @@ msgid "Display:"
 msgstr "表示:"
 
 
-msgctxt "Operator"
-msgid "Arrange Strokes"
-msgstr "ストロークを整列"
-
-
-msgctxt "Operator"
-msgid "Toggle Caps"
-msgstr "端の処理の切替え"
-
-
 msgid "Frames:"
 msgstr "フレーム:"
 
@@ -87958,16 +87894,6 @@ msgstr "フレーム:"
 msgctxt "Operator"
 msgid "Insert Blank"
 msgstr "ブランクを挿入"
-
-
-msgctxt "Operator"
-msgid "Duplicate Active"
-msgstr "アクションを複製"
-
-
-msgctxt "Operator"
-msgid "Delete All Active Layers"
-msgstr "全アクティブレイヤーを削除"
 
 
 msgid "Thickness Profile"
@@ -88416,11 +88342,6 @@ msgid "No layer to copy"
 msgstr "コピーするレイヤーなし"
 
 
-msgctxt "Operator"
-msgid "Duplicate All Layers"
-msgstr "全レイヤーを複製"
-
-
 msgid "Toggle X-Ray"
 msgstr "透過表示を切替え"
 
@@ -88458,18 +88379,8 @@ msgstr "マルチフレーム内の編集ラインのみ表示します"
 
 
 msgctxt "Operator"
-msgid "Duplicate Active Frame All Layers"
-msgstr "アクティブフレームの全レイヤーを複製"
-
-
-msgctxt "Operator"
-msgid "Duplicate for All Layers"
+msgid "Duplicate All Layers"
 msgstr "全レイヤーを複製"
-
-
-msgctxt "Operator"
-msgid "Delete Active"
-msgstr "アクティブを削除"
 
 
 msgid "Multiframe"
@@ -88631,11 +88542,6 @@ msgstr "ベジエカーブに変換"
 msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "エンプティの描画サイズ"
-
-
-msgctxt "Operator"
-msgid "Energy"
-msgstr "エネルギー"
 
 
 msgctxt "Operator"
@@ -90793,6 +90699,16 @@ msgstr "この方法ではキーボードショートカットのみ編集可能
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "ショートカット変更"
+
+
+msgctxt "Operator"
+msgid "Assign Shortcut"
+msgstr "ショートカットを割り当て"
+
+
+msgctxt "Operator"
 msgid "Open File Externally"
 msgstr "外部ファイルを開く"
 
@@ -90913,18 +90829,8 @@ msgstr "お気に入りツールに追加"
 
 
 msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "ショートカット変更"
-
-
-msgctxt "Operator"
 msgid "Remove Shortcut"
 msgstr "ショートカット削除"
-
-
-msgctxt "Operator"
-msgid "Assign Shortcut"
-msgstr "ショートカットを割り当て"
 
 
 msgctxt "Operator"
@@ -91133,22 +91039,6 @@ msgstr "位置"
 
 msgid "Use Clipping"
 msgstr "クリッピングを使用"
-
-
-msgid "Min X "
-msgstr "最小X"
-
-
-msgid "Min Y "
-msgstr "最小Y"
-
-
-msgid "Max X "
-msgstr "最大X"
-
-
-msgid "Max Y "
-msgstr "最大Y"
 
 
 msgid "Reset View"

@@ -18,14 +18,14 @@
 
 # <pep8 compliant>
 
+import buildbot_utils
 import os
-import runpy
+import sys
 
-# We run from build/ directory.
-blender_dir = os.path.join('..', 'blender.git')
-blender_dir = os.path.abspath(blender_dir)
-os.chdir(blender_dir)
+if __name__ == "__main__":
+    builder = buildbot_utils.create_builder_from_arguments()
+    os.chdir(builder.blender_dir)
 
-# Run make update which handles all libraries and submodules.
-make_update = os.path.join(blender_dir, "build_files", "utils", "make_update.py")
-runpy.run_path(make_update)
+    # Run make update which handles all libraries and submodules.
+    make_update = os.path.join(builder.blender_dir, "build_files", "utils", "make_update.py")
+    buildbot_utils.call([sys.executable, make_update, '--no-blender', "--use-tests"])

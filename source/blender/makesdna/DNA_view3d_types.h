@@ -152,7 +152,7 @@ typedef struct View3DShading {
   char background_type;
   char cavity_type;
   char wire_color_type;
-  char _pad[6];
+  char _pad[2];
 
   /** FILE_MAXFILE. */
   char studio_light[256];
@@ -166,6 +166,7 @@ typedef struct View3DShading {
 
   float studiolight_rot_z;
   float studiolight_background;
+  float studiolight_intensity;
 
   float object_outline_color[3];
   float xray_alpha;
@@ -178,7 +179,6 @@ typedef struct View3DShading {
 
   float curvature_ridge_factor;
   float curvature_valley_factor;
-
 } View3DShading;
 
 /** 3D Viewport Overlay settings. */
@@ -394,8 +394,9 @@ typedef struct View3D {
 #define V3D_GP_SHOW_GRID (1 << 1)  /* Activate paper grid */
 #define V3D_GP_SHOW_EDIT_LINES (1 << 2)
 #define V3D_GP_SHOW_MULTIEDIT_LINES (1 << 3)
-#define V3D_GP_SHOW_ONION_SKIN (1 << 4)      /* main switch at view level */
-#define V3D_GP_FADE_NOACTIVE_LAYERS (1 << 5) /* fade layers not active */
+#define V3D_GP_SHOW_ONION_SKIN (1 << 4)       /* main switch at view level */
+#define V3D_GP_FADE_NOACTIVE_LAYERS (1 << 5)  /* fade layers not active */
+#define V3D_GP_FADE_NOACTIVE_GPENCIL (1 << 6) /* Fade other GPencil objects */
 
 /** #View3DShading.light */
 enum {
@@ -418,6 +419,8 @@ enum {
   V3D_SHADING_WORLD_ORIENTATION = (1 << 9),
   V3D_SHADING_BACKFACE_CULLING = (1 << 10),
   V3D_SHADING_DEPTH_OF_FIELD = (1 << 11),
+  V3D_SHADING_SCENE_LIGHTS_RENDER = (1 << 12),
+  V3D_SHADING_SCENE_WORLD_RENDER = (1 << 13),
 };
 
 /** #View3DShading.color_type */

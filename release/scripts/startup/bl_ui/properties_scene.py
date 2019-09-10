@@ -70,7 +70,7 @@ class SCENE_PT_scene(SceneButtonsPanel, Panel):
         scn = context.scene
         layout.prop(scn, "camera")
         layout.prop(scn, "background_set")
-        layout.prop(scn, "active_clip")
+        layout.prop(scene, "active_clip", text="Active Clip")
 
 
 class SCENE_PT_unit(SceneButtonsPanel, Panel):

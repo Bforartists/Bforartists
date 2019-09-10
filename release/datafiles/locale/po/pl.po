@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -8081,6 +8081,11 @@ msgstr "Operator Szkicownik jest już aktywny"
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "Zmień Skrót"
+
+
+msgctxt "Operator"
 msgid "Replace Keyframes"
 msgstr "Zastąp klatki kluczowe"
 
@@ -8153,11 +8158,6 @@ msgstr "Resetuj pojedynczy do domyślnego"
 msgctxt "Operator"
 msgid "Unset"
 msgstr "Odłącz"
-
-
-msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "Zmień Skrót"
 
 
 msgctxt "Operator"
@@ -8317,22 +8317,6 @@ msgstr "Pos"
 
 msgid "Use Clipping"
 msgstr "Użyj obcinania"
-
-
-msgid "Min X "
-msgstr "Min X "
-
-
-msgid "Min Y "
-msgstr "Min Y "
-
-
-msgid "Max X "
-msgstr "Maks X "
-
-
-msgid "Max Y "
-msgstr "Maks Y "
 
 
 msgid "Reset View"

@@ -22,7 +22,7 @@ bl_info = {
     "name": "BioVision Motion Capture (BVH) format",
     "author": "Campbell Barton",
     "version": (1, 0, 0),
-    "blender": (2, 80, 0),
+    "blender": (2, 81, 6),
     "location": "File > Import-Export",
     "description": "Import-Export BVH from armature objects",
     "warning": "",
@@ -147,6 +147,91 @@ class ImportBVH(bpy.types.Operator, ImportHelper):
         from . import import_bvh
         return import_bvh.load(context, report=self.report, **keywords)
 
+    def draw(self, context):
+        pass
+
+
+class BVH_PT_import_main(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = ""
+    bl_parent_id = "FILE_PT_operator"
+    bl_options = {'HIDE_HEADER'}
+
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "IMPORT_ANIM_OT_bvh"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "target")
+
+
+class BVH_PT_import_transform(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Transform"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "IMPORT_ANIM_OT_bvh"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "global_scale")
+        layout.prop(operator, "rotate_mode")
+        layout.prop(operator, "axis_forward")
+        layout.prop(operator, "axis_up")
+
+
+class BVH_PT_import_animation(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Animation"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "IMPORT_ANIM_OT_bvh"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "frame_start")
+        layout.prop(operator, "use_fps_scale")
+        layout.prop(operator, "use_cyclic")
+
+        layout.prop(operator, "update_scene_fps")
+        layout.prop(operator, "update_scene_duration")
+
 
 class ExportBVH(bpy.types.Operator, ExportHelper):
     """Save a BVH motion capture file from an armature"""
@@ -225,6 +310,61 @@ class ExportBVH(bpy.types.Operator, ExportHelper):
         from . import export_bvh
         return export_bvh.save(context, **keywords)
 
+    def draw(self, context):
+        pass
+
+
+class BVH_PT_export_transform(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Transform"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_ANIM_OT_bvh"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "global_scale")
+        layout.prop(operator, "rotate_mode")
+        layout.prop(operator, "root_transform_only")
+
+
+class BVH_PT_export_animation(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Animation"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_ANIM_OT_bvh"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        col = layout.column(align=True)
+        col.prop(operator, "frame_start", text="Frame Start")
+        col.prop(operator, "frame_end", text="End")
+
 
 def menu_func_import(self, context):
     self.layout.operator(ImportBVH.bl_idname, text="Motion Capture (.bvh)", icon='LOAD_BVH')
@@ -236,7 +376,12 @@ def menu_func_export(self, context):
 
 classes = (
     ImportBVH,
-    ExportBVH
+    BVH_PT_import_main,
+    BVH_PT_import_transform,
+    BVH_PT_import_animation,
+    ExportBVH,
+    BVH_PT_export_transform,
+    BVH_PT_export_animation,
 )
 
 def register():

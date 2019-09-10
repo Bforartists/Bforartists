@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -3764,6 +3764,30 @@ msgid "Copy the rotation of the target"
 msgstr "ﻑﺪﻬﻟﺍ ﻥﺍﺭﻭﺩ ﺦﺴﻧﺍ"
 
 
+msgid "XYZ Euler"
+msgstr "XYZ ﺮﻟﻮﻳ"
+
+
+msgid "XZY Euler"
+msgstr "XZY ﺮﻟﻮﻳ"
+
+
+msgid "YXZ Euler"
+msgstr "YXZ ﺮﻟﻮﻳ"
+
+
+msgid "YZX Euler"
+msgstr "YZX ﺮﻟﻮﻳ"
+
+
+msgid "ZXY Euler"
+msgstr "ZXY ﺮﻟﻮﻳ"
+
+
+msgid "ZYX Euler"
+msgstr "ZYX ﺮﻟﻮﻳ"
+
+
 msgid "Invert the X rotation"
 msgstr "X ﻰﻠﻋ ﻥﺍﺭﻭﺪﻟﺍ ﺲﻜﻋﺇ"
 
@@ -4792,6 +4816,10 @@ msgid "Bottom range of Z axis source motion"
 msgstr "Y ﺭﻮﺤﻤﻟﺍ ﻰﻠﻋ ﺭﺪﺼﻤﻟﺍ ﻙﺮﺤﺗ ﻕﺎﻄﻧ ﻰﻧﺩﺃ"
 
 
+msgid "Quaternion"
+msgstr "ﻲﻋﺎﺑﺭ"
+
+
 msgid "Map From"
 msgstr "ﻦﻣ ﻂﻄﺧ"
 
@@ -5434,6 +5462,10 @@ msgstr "(ﻝﻭﻷ﻿ﺍ ﻦﻴﻌﻳ ﻥﺃ ﺐﺠﻳ ﻉﻮﻨﻟﺍ ﻑﺮﻌ
 
 msgid "Type of ID-block that can be used"
 msgstr "ﻪﻟﺎﻤﻌﺘﺳﺍ ﻦﻜﻤﻤﻟﺍ ﻞﺴﻠﺴﺘﻟﺍ ﻑﺮﻌﻣ ﻉﻮﻧ"
+
+
+msgid "Rotation Mode"
+msgstr "ﺮﻳﻭﺪﺘﻟﺍ ﻊﺿﻭ"
 
 
 msgid "Transform Space"
@@ -7439,10 +7471,6 @@ msgstr "ﻯﺮﺧﺃ ﻯﻮﻗ ﺕﻻ﻿ﺎﺠﻣ ﺕﻻ﻿ﻮﻤﺣ ﻰﻠﻋ �
 
 msgid "Forcefield based on the Lennard-Jones potential"
 msgstr "ﺰﻧﻮﺟ-ﺩﺭﺎﻨﻴﻟ ﻝﺎﻤﺘﺣﺍ ﻰﻠﻋ ﺪﻤﺘﻌﻤﻟﺍ ﺓﻮﻘﻟﺍ ﻝﺎﺠﻣ"
-
-
-msgid "Forcefield based on a texture"
-msgstr "ﺞﻴﺴﻧ ﻰﻠﻋ ﺪﻤﺘﻌﻣ ﺓﻮﻘﻟﺍ ﻝﺎﺠﻣ"
 
 
 msgid "Create a force along a curve object"
@@ -13759,10 +13787,6 @@ msgid "Rotation in Eulers"
 msgstr "ﺕﺍﺮﻟﻮﻴﻟﺎﺑ ﺮﻳﻭﺪﺘﻟﺍ"
 
 
-msgid "Rotation Mode"
-msgstr "ﺮﻳﻭﺪﺘﻟﺍ ﻊﺿﻭ"
-
-
 msgid "Quaternion (WXYZ)"
 msgstr "(WXYZ) ﻲﻋﺎﺑﺭ"
 
@@ -13771,48 +13795,24 @@ msgid "No Gimbal Lock"
 msgstr "ﻝﺎﺒﻤﻏ ﻞﻔﻗ ﻥﻭﺪﺑ"
 
 
-msgid "XYZ Euler"
-msgstr "XYZ ﺮﻟﻮﻳ"
-
-
 msgid "XYZ Rotation Order - prone to Gimbal Lock (default)"
 msgstr "(ﺎﻴﺿﺍﺮﺘﻓﺍ) ﻝﺎﺒﻤﻏ ﻞﻔﻘﻟ ﺽﺮّﻌﻣ - XYZ ﻥﺍﺭﻭﺩ ﺐﻴﺗﺮﺗ"
-
-
-msgid "XZY Euler"
-msgstr "XZY ﺮﻟﻮﻳ"
 
 
 msgid "XZY Rotation Order - prone to Gimbal Lock"
 msgstr "(ﺎﻴﺿﺍﺮﺘﻓﺍ) ﻝﺎﺒﻤﻏ ﻞﻔﻘﻟ ﺽﺮّﻌﻣ - XZY ﻥﺍﺭﻭﺩ ﺐﻴﺗﺮﺗ"
 
 
-msgid "YXZ Euler"
-msgstr "YXZ ﺮﻟﻮﻳ"
-
-
 msgid "YXZ Rotation Order - prone to Gimbal Lock"
 msgstr "ﻝﺎﺒﻤﻏ ﻞﻔﻘﻟ ﺽﺮّﻌﻣ - YXZ ﻥﺍﺭﻭﺩ ﺐﻴﺗﺮﺗ"
-
-
-msgid "YZX Euler"
-msgstr "YZX ﺮﻟﻮﻳ"
 
 
 msgid "YZX Rotation Order - prone to Gimbal Lock"
 msgstr "(ﺎﻴﺿﺍﺮﺘﻓﺍ) ﻝﺎﺒﻤﻏ ﻞﻔﻘﻟ ﺽﺮّﻌﻣ - YZX ﻥﺍﺭﻭﺩ ﺐﻴﺗﺮﺗ"
 
 
-msgid "ZXY Euler"
-msgstr "ZXY ﺮﻟﻮﻳ"
-
-
 msgid "ZXY Rotation Order - prone to Gimbal Lock"
 msgstr "(ﺎﻴﺿﺍﺮﺘﻓﺍ) ﻝﺎﺒﻤﻏ ﻞﻔﻘﻟ ﺽﺮّﻌﻣ - ZXY ﻥﺍﺭﻭﺩ ﺐﻴﺗﺮﺗ"
-
-
-msgid "ZYX Euler"
-msgstr "ZYX ﺮﻟﻮﻳ"
 
 
 msgid "ZYX Rotation Order - prone to Gimbal Lock"
@@ -26426,10 +26426,6 @@ msgid "Set zoom ratio of the view"
 msgstr "ﺮﻈﻨﻤﻠﻟ ﻢﻴﺠﺤﺘﻟﺍ ﻝﺪﻌﻣ ﻊﺿ"
 
 
-msgid "Quaternion"
-msgstr "ﻲﻋﺎﺑﺭ"
-
-
 msgid "Scale FPS"
 msgstr "ﺔﻴﻧﺎﺛ ﻞﻜﻟ ﺮﻃﻷ﻿ﺍ ﻢﺠّﺣ"
 
@@ -27053,10 +27049,6 @@ msgstr "ﻪﺟﻭﻷ﻿ﺍ ﻞﻠّﺣ"
 msgctxt "Operator"
 msgid "Limited Dissolve"
 msgstr "ﺩﻭﺪﺤﻣ ﻞﻠﺤﺗ"
-
-
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "ﺔﻠﺼﺘﻤﻟﺍ ﻡﺎﺴﺟﻻ﻿ﺍ ﻦﻴﺑ ﻡﺩﺎﺼﺘﻟﺍ ﻞﻄﻋ"
 
 
 msgctxt "Operator"
@@ -43182,11 +43174,6 @@ msgid "Make"
 msgstr "ﻞﻌﺟﺇ"
 
 
-msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "ﺔﻘﺒﻃ ﻰﻟﺍ ﻞﻘﻧﺍ"
-
-
 msgid "Creases"
 msgstr "ﻕﻮﻘﺷ"
 
@@ -43496,11 +43483,6 @@ msgstr "ﻞﻘﺤﻟﺍ ﻖﻤﻋ ﺔﻓﺎﺴﻣ"
 msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "ﻲﻤﻫﻮﻟﺍ ﻢﺳﺭ ﻢﺠﺣ"
-
-
-msgctxt "Operator"
-msgid "Energy"
-msgstr "ﺔﻗﺎﻃ"
 
 
 msgctxt "Operator"
@@ -44106,6 +44088,11 @@ msgstr "ﺔﻟﺎﻌّﻓ ﺔﻘﻄﻨﻣ ﺪﺟﻮﺗ ﻻ﻿"
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "ﺭﺎﺼﺘﺧﻹ﻿ﺍ ﺮﻴﻏ"
+
+
+msgctxt "Operator"
 msgid "Replace Keyframes"
 msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﻝﺪّﺑ"
 
@@ -44178,11 +44165,6 @@ msgstr "ﺔﺿﺮﺘﻔﻤﻟﺍ ﺔﻤﻴﻘﻠﻟ ﺍﺩﺮﻔﻨﻣ ﻂﺒﻀ
 msgctxt "Operator"
 msgid "Unset"
 msgstr "ﻎﻟﺇ"
-
-
-msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "ﺭﺎﺼﺘﺧﻹ﻿ﺍ ﺮﻴﻏ"
 
 
 msgctxt "Operator"
@@ -44270,22 +44252,6 @@ msgstr ":ﺔﻔﻗﻭ"
 
 msgid "Use Clipping"
 msgstr "ﻢﻴﻠﻘﺗ"
-
-
-msgid "Min X "
-msgstr "X ﺭﻮﺤﻤﻟﺍ ﻰﻧﺩﺃ"
-
-
-msgid "Min Y "
-msgstr "Y ﺭﻮﺤﻤﻟﺍ ﻰﻧﺩﺃ"
-
-
-msgid "Max X "
-msgstr "X ﺭﻮﺤﻤﻟﺍ ﻰﺼﻗﺃ"
-
-
-msgid "Max Y "
-msgstr "Y ﺭﻮﺤﻤﻟﺍ ﻰﺼﻗﺃ"
 
 
 msgid "Reset View"

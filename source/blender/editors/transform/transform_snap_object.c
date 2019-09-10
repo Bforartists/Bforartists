@@ -221,22 +221,40 @@ static void iter_snap_objects(SnapObjectContext *sctx,
 
   Base *base_act = view_layer->basact;
   for (Base *base = view_layer->object_bases.first; base != NULL; base = base->next) {
-    if ((BASE_VISIBLE(v3d, base)) && (base->flag_legacy & BA_SNAP_FIX_DEPS_FIASCO) == 0 &&
-        !((snap_select == SNAP_NOT_SELECTED &&
-           ((base->flag & BASE_SELECTED) || (base->flag_legacy & BA_WAS_SEL))) ||
-          (snap_select == SNAP_NOT_ACTIVE && base == base_act))) {
-      Object *obj_eval = DEG_get_evaluated_object(sctx->depsgraph, base->object);
-      if (obj_eval->transflag & OB_DUPLI) {
-        DupliObject *dupli_ob;
-        ListBase *lb = object_duplilist(sctx->depsgraph, sctx->scene, obj_eval);
-        for (dupli_ob = lb->first; dupli_ob; dupli_ob = dupli_ob->next) {
-          sob_callback(sctx, use_object_edit_cage, dupli_ob->ob, dupli_ob->mat, data);
-        }
-        free_object_duplilist(lb);
-      }
 
-      sob_callback(sctx, use_object_edit_cage, obj_eval, obj_eval->obmat, data);
+    if (!BASE_VISIBLE(v3d, base)) {
+      continue;
     }
+
+    if (base->flag_legacy & BA_TRANSFORM_LOCKED_IN_PLACE) {
+      /* pass */
+    }
+    else if (base->flag_legacy & BA_SNAP_FIX_DEPS_FIASCO) {
+      continue;
+    }
+
+    if (snap_select == SNAP_NOT_SELECTED) {
+      if ((base->flag & BASE_SELECTED) || (base->flag_legacy & BA_WAS_SEL)) {
+        continue;
+      }
+    }
+    else if (snap_select == SNAP_NOT_ACTIVE) {
+      if (base == base_act) {
+        continue;
+      }
+    }
+
+    Object *obj_eval = DEG_get_evaluated_object(sctx->depsgraph, base->object);
+    if (obj_eval->transflag & OB_DUPLI) {
+      DupliObject *dupli_ob;
+      ListBase *lb = object_duplilist(sctx->depsgraph, sctx->scene, obj_eval);
+      for (dupli_ob = lb->first; dupli_ob; dupli_ob = dupli_ob->next) {
+        sob_callback(sctx, use_object_edit_cage, dupli_ob->ob, dupli_ob->mat, data);
+      }
+      free_object_duplilist(lb);
+    }
+
+    sob_callback(sctx, use_object_edit_cage, obj_eval, obj_eval->obmat, data);
   }
 }
 
@@ -1418,8 +1436,14 @@ static short snap_mesh_edge_verts_mixed(SnapObjectContext *sctx,
     /* do nothing */
   }
   else {
-    if (snapdata->snap_to_flag & SCE_SNAP_MODE_VERTEX) {
-      if (lambda < 0.25f || 0.75f < lambda) {
+    short snap_to_flag = snapdata->snap_to_flag;
+    int e_mode_len = ((snap_to_flag & SCE_SNAP_MODE_EDGE) != 0) +
+                     ((snap_to_flag & SCE_SNAP_MODE_VERTEX) != 0) +
+                     ((snap_to_flag & SCE_SNAP_MODE_EDGE_MIDPOINT) != 0);
+
+    float range = 1.0f / (2 * e_mode_len - 1);
+    if (snap_to_flag & SCE_SNAP_MODE_VERTEX) {
+      if (lambda < (range) || (1.0f - range) < lambda) {
         int v_id = lambda < 0.5f ? 0 : 1;
 
         if (test_projected_vert_dist(&neasrest_precalc,
@@ -1436,8 +1460,9 @@ static short snap_mesh_edge_verts_mixed(SnapObjectContext *sctx,
       }
     }
 
-    if (snapdata->snap_to_flag & SCE_SNAP_MODE_EDGE_MIDPOINT) {
-      if (0.375f < lambda && lambda < 0.625f) {
+    if (snap_to_flag & SCE_SNAP_MODE_EDGE_MIDPOINT) {
+      range *= e_mode_len - 1;
+      if ((range) < lambda && lambda < (1.0f - range)) {
         float vmid[3];
         mid_v3_v3v3(vmid, v_pair[0], v_pair[1]);
 
@@ -1891,12 +1916,6 @@ static short snapCamera(const SnapObjectContext *sctx,
     return retval;
   }
 
-  float tobmat[4][4], clip_planes_local[MAX_CLIPPLANE_LEN][4];
-  transpose_m4_m4(tobmat, obmat);
-  for (int i = snapdata->clip_plane_len; i--;) {
-    mul_v4_m4v4(clip_planes_local[i], tobmat, snapdata->clip_plane[i]);
-  }
-
   tracking = &clip->tracking;
 
   BKE_tracking_get_camera_object_matrix(scene, object, orig_camera_mat);
@@ -1942,7 +1961,7 @@ static short snapCamera(const SnapObjectContext *sctx,
 
         mul_m4_v3(vertex_obmat, bundle_pos);
         if (test_projected_vert_dist(&neasrest_precalc,
-                                     clip_planes_local,
+                                     snapdata->clip_plane,
                                      snapdata->clip_plane_len,
                                      is_persp,
                                      bundle_pos,
