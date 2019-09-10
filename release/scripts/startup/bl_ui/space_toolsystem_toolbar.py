@@ -326,10 +326,10 @@ class _defs_view3d_select:
             pass
         return dict(
             idname="builtin.select",
-            label="Select",
+            label="Tweak",
             icon="ops.generic.select",
             widget=None,
-            keymap="3D View Tool: Select",
+            keymap="3D View Tool: Tweak",
             draw_settings=draw_settings,
         )
 
@@ -731,8 +731,6 @@ class _defs_edit_mesh:
     def shear():
         def draw_settings(context, layout, tool):
             props = tool.operator_properties("transform.shear")
-            layout.label(text="View Axis:")
-            layout.prop(props, "shear_axis", expand=True)
             _template_widget.VIEW3D_GGT_xform_gizmo.draw_settings_with_index(context, layout, 2)
         return dict(
             idname="builtin.shear",
@@ -1205,7 +1203,7 @@ class _defs_image_uv_select:
             pass
         return dict(
             idname="builtin.select",
-            label="Select",
+            label="Tweak",
             icon="ops.generic.select",
             widget=None,
             keymap=(),
@@ -1403,7 +1401,7 @@ class _defs_gpencil_edit:
             layout.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
         return dict(
             idname="builtin.select",
-            label="Select",
+            label="Tweak",
             icon="ops.generic.select",
             widget=None,
             keymap=(),
@@ -1568,10 +1566,10 @@ class _defs_node_select:
             pass
         return dict(
             idname="builtin.select",
-            label="Select",
+            label="Tweak",
             icon="ops.generic.select",
             widget=None,
-            keymap="Node Tool: Select",
+            keymap="Node Tool: Tweak",
             draw_settings=draw_settings,
         )
 

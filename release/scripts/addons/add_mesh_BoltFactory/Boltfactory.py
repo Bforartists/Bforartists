@@ -316,6 +316,8 @@ class add_mesh_bolt(Operator, AddObjectHelper):
 
 # Register:
 def menu_func_bolt(self, context):
+    layout = self.layout
+    layout.separator()
     self.layout.operator(
         add_mesh_bolt.bl_idname,
         text="Bolt",

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -2240,6 +2240,30 @@ msgid "Copy the rotation of the target"
 msgstr "Nastaví umístění 3D kurzoru"
 
 
+msgid "XYZ Euler"
+msgstr "XYZ Euler"
+
+
+msgid "XZY Euler"
+msgstr "XZY Euler"
+
+
+msgid "YXZ Euler"
+msgstr "YXZ Euler"
+
+
+msgid "YZX Euler"
+msgstr "YZX Euler"
+
+
+msgid "ZXY Euler"
+msgstr "ZXY Euler"
+
+
+msgid "ZYX Euler"
+msgstr "ZYX Euler"
+
+
 msgid "Invert the X rotation"
 msgstr "Původni rotace"
 
@@ -2924,6 +2948,10 @@ msgid "From Minimum Z"
 msgstr "Minimální X limitace"
 
 
+msgid "Quaternion"
+msgstr "Původni rotace"
+
+
 msgid "Map From"
 msgstr "První frame"
 
@@ -3298,6 +3326,10 @@ msgstr "Název kosti"
 
 msgid "Data Path"
 msgstr "Relativní cesta"
+
+
+msgid "Rotation Mode"
+msgstr "Mód otáčení"
 
 
 msgid "Transform Space"
@@ -7631,34 +7663,6 @@ msgstr "Původni rotace"
 
 msgid "Rotation in Eulers"
 msgstr "Rotace"
-
-
-msgid "Rotation Mode"
-msgstr "Mód otáčení"
-
-
-msgid "XYZ Euler"
-msgstr "XYZ Euler"
-
-
-msgid "XZY Euler"
-msgstr "XZY Euler"
-
-
-msgid "YXZ Euler"
-msgstr "YXZ Euler"
-
-
-msgid "YZX Euler"
-msgstr "YZX Euler"
-
-
-msgid "ZXY Euler"
-msgstr "ZXY Euler"
-
-
-msgid "ZYX Euler"
-msgstr "ZYX Euler"
 
 
 msgid "Axis Angle"
@@ -17942,10 +17946,6 @@ msgid "Starting frame for the animation"
 msgstr "Počáteční snímek animace"
 
 
-msgid "Quaternion"
-msgstr "Původni rotace"
-
-
 msgid "Convert rotations to quaternions"
 msgstr "Rotace"
 
@@ -18611,10 +18611,6 @@ msgstr "Skrýt označené"
 msgctxt "Operator"
 msgid "Limited Dissolve"
 msgstr "Maximální hodnota posuvníku"
-
-
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "Zakázat ukládání textu v blend souboru"
 
 
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
@@ -33858,11 +33854,6 @@ msgid "Make"
 msgstr "Vytvořit"
 
 
-msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "Přesunout do vrstvy"
-
-
 msgid "Creases"
 msgstr "Ostrost: "
 
@@ -34072,11 +34063,6 @@ msgstr "Zobrazit:"
 msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "Velikost zobrazení objektu Prázdný"
-
-
-msgctxt "Operator"
-msgid "Energy"
-msgstr "Energie:"
 
 
 msgctxt "Operator"
@@ -34469,6 +34455,11 @@ msgstr "Automaticky vkládat klíče objektu a Action Ipo křivky"
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "Znaky"
+
+
+msgctxt "Operator"
 msgid "Replace Keyframes"
 msgstr "Vybrat následující klíč"
 
@@ -34539,11 +34530,6 @@ msgstr "Defaultní nastavení"
 
 
 msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "Znaky"
-
-
-msgctxt "Operator"
 msgid "Remove Shortcut"
 msgstr "Obrázek na pozadí"
 
@@ -34608,22 +34594,6 @@ msgstr "Póza"
 
 msgid "Use Clipping"
 msgstr "Nastavit ořezávání pohledu"
-
-
-msgid "Min X "
-msgstr "Min X"
-
-
-msgid "Min Y "
-msgstr "Min Y"
-
-
-msgid "Max X "
-msgstr "Max X"
-
-
-msgid "Max Y "
-msgstr "Max Y"
 
 
 msgid "Reset View"

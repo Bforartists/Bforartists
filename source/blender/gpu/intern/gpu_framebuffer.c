@@ -46,8 +46,9 @@ typedef enum {
   GPU_FB_COLOR_ATTACHMENT2,
   GPU_FB_COLOR_ATTACHMENT3,
   GPU_FB_COLOR_ATTACHMENT4,
+  GPU_FB_COLOR_ATTACHMENT5,
   /* Number of maximum output slots.
-   * We support 5 outputs for now (usually we wouldn't need more to preserve fill rate). */
+   * We support 6 outputs for now (usually we wouldn't need more to preserve fill rate). */
   /* Keep in mind that GL max is GL_MAX_DRAW_BUFFERS and is at least 8, corresponding to
    * the maximum number of COLOR attachments specified by glDrawBuffers. */
   GPU_FB_MAX_ATTACHEMENT,
@@ -82,6 +83,7 @@ static GLenum convert_attachment_type_to_gl(GPUAttachmentType type)
       [GPU_FB_COLOR_ATTACHMENT2] = GL_COLOR_ATTACHMENT2,
       [GPU_FB_COLOR_ATTACHMENT3] = GL_COLOR_ATTACHMENT3,
       [GPU_FB_COLOR_ATTACHMENT4] = GL_COLOR_ATTACHMENT4,
+      [GPU_FB_COLOR_ATTACHMENT5] = GL_COLOR_ATTACHMENT5,
   };
   return table[type];
 }
@@ -330,7 +332,7 @@ void GPU_framebuffer_config_array(GPUFrameBuffer *fb, const GPUAttachment *confi
   }
 
   int slot = 0;
-  for (int i = 1; i < config_len; ++i, ++slot) {
+  for (int i = 1; i < config_len; i++, slot++) {
     if (config[i].tex != NULL) {
       BLI_assert(GPU_texture_depth(config[i].tex) == false);
       gpu_framebuffer_texture_attach_ex(fb, config[i].tex, slot, config[i].layer, config[i].mip);
@@ -384,7 +386,7 @@ static void gpu_framebuffer_update_attachments(GPUFrameBuffer *fb)
   BLI_assert(GPU_framebuffer_active_get() == fb);
 
   /* Update attachments */
-  for (GPUAttachmentType type = 0; type < GPU_FB_MAX_ATTACHEMENT; ++type) {
+  for (GPUAttachmentType type = 0; type < GPU_FB_MAX_ATTACHEMENT; type++) {
 
     if (type >= GPU_FB_COLOR_ATTACHMENT0) {
       if (fb->attachments[type].tex) {
@@ -755,7 +757,7 @@ void GPU_framebuffer_recursive_downsample(GPUFrameBuffer *fb,
     current_dim[0] = max_ii(current_dim[0] / 2, 1);
     current_dim[1] = max_ii(current_dim[1] / 2, 1);
 
-    for (GPUAttachmentType type = 0; type < GPU_FB_MAX_ATTACHEMENT; ++type) {
+    for (GPUAttachmentType type = 0; type < GPU_FB_MAX_ATTACHEMENT; type++) {
       if (fb->attachments[type].tex != NULL) {
         /* Some Intel HDXXX have issue with rendering to a mipmap that is below
          * the texture GL_TEXTURE_MAX_LEVEL. So even if it not correct, in this case
@@ -784,7 +786,7 @@ void GPU_framebuffer_recursive_downsample(GPUFrameBuffer *fb,
     }
   }
 
-  for (GPUAttachmentType type = 0; type < GPU_FB_MAX_ATTACHEMENT; ++type) {
+  for (GPUAttachmentType type = 0; type < GPU_FB_MAX_ATTACHEMENT; type++) {
     if (fb->attachments[type].tex != NULL) {
       /* reset mipmap level range */
       GPUTexture *tex = fb->attachments[type].tex;

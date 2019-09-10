@@ -74,7 +74,7 @@ def refresh_token(api_key_refresh, url):
     auth_token, refresh_token = authenticator.get_refreshed_token(api_key_refresh)
     if auth_token is not None and refresh_token is not None:
         tasks_queue.add_task((write_tokens, (auth_token, refresh_token)))
-
+    return auth_token, refresh_token
 
 def write_tokens(auth_token, refresh_token):
     utils.p('writing tokens')
@@ -85,7 +85,7 @@ def write_tokens(auth_token, refresh_token):
     props = utils.get_search_props()
     if props is not None:
         props.report = ''
-    ui.add_report('BlenderKit Login success')
+    ui.add_report('BlenderKit Re-Login success')
     search.get_profile()
     categories.fetch_categories_thread(auth_token)
 

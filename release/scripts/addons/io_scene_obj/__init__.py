@@ -21,8 +21,8 @@
 bl_info = {
     "name": "Wavefront OBJ format",
     "author": "Campbell Barton, Bastien Montagne",
-    "version": (3, 5, 15),
-    "blender": (2, 80, 0),
+    "version": (3, 6, 0),
+    "blender": (2, 81, 6),
     "location": "File > Import-Export",
     "description": "Import-Export OBJ, Import OBJ mesh, UV's, materials and textures",
     "warning": "",
@@ -145,30 +145,182 @@ class ImportOBJ(bpy.types.Operator, ImportHelper):
         return import_obj.load(context, **keywords)
 
     def draw(self, context):
+        pass
+
+
+class OBJ_PT_import_include(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Include"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "IMPORT_SCENE_OT_obj"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, 'use_image_search')
+        layout.prop(operator, 'use_smooth_groups')
+        layout.prop(operator, 'use_edges')
+
+
+class OBJ_PT_import_transform(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Transform"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "IMPORT_SCENE_OT_obj"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "global_clight_size")
+        layout.prop(operator, "axis_forward")
+        layout.prop(operator, "axis_up")
+
+
+class OBJ_PT_import_geometry(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Geometry"
+    bl_parent_id = "FILE_PT_operator"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "IMPORT_SCENE_OT_obj"
+
+    def draw(self, context):
         layout = self.layout
 
-        row = layout.row(align=True)
-        row.prop(self, "use_smooth_groups")
-        row.prop(self, "use_edges")
+        sfile = context.space_data
+        operator = sfile.active_operator
 
-        box = layout.box()
-        row = box.row()
-        row.prop(self, "split_mode", expand=True)
+        layout.row().prop(operator, "split_mode", expand=True)
 
-        row = box.row()
-        if self.split_mode == 'ON':
-            row.label(text="Split by:")
-            row.prop(self, "use_split_objects")
-            row.prop(self, "use_split_groups")
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        col = layout.column()
+        if operator.split_mode == 'ON':
+            col.prop(operator, "use_split_objects", text="Split by Object")
+            col.prop(operator, "use_split_groups", text="Split by Group")
         else:
-            row.prop(self, "use_groups_as_vgroups")
+            col.prop(operator, "use_groups_as_vgroups")
 
-        row = layout.split(factor=0.67)
-        row.prop(self, "global_clight_size")
-        layout.prop(self, "axis_forward")
-        layout.prop(self, "axis_up")
 
-        layout.prop(self, "use_image_search")
+class OBJ_PT_export_include(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Include"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENE_OT_obj"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, 'use_selection')
+        layout.prop(operator, 'use_blen_objects')
+        layout.prop(operator, 'group_by_object')
+        layout.prop(operator, 'group_by_material')
+        layout.prop(operator, 'use_animation')
+
+
+class OBJ_PT_export_transform(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Transform"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENE_OT_obj"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, 'global_scale')
+        layout.prop(operator, 'path_mode')
+        layout.prop(operator, 'axis_forward')
+        layout.prop(operator, 'axis_up')
+
+
+class OBJ_PT_export_geometry(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Geometry"
+    bl_parent_id = "FILE_PT_operator"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENE_OT_obj"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, 'use_mesh_modifiers')
+        # Property definition disabled, not working in 2.8 currently.
+        # layout.prop(operator, 'use_mesh_modifiers_render')
+        layout.prop(operator, 'use_smooth_groups')
+        layout.prop(operator, 'use_smooth_groups_bitflags')
+        layout.prop(operator, 'use_normals')
+        layout.prop(operator, 'use_uvs')
+        layout.prop(operator, 'use_materials')
+        layout.prop(operator, 'use_triangles')
+        layout.prop(operator, 'use_nurbs', text="Curves as NURBS")
+        layout.prop(operator, 'keep_vertex_order')
 
 
 @orientation_helper(axis_forward='-Z', axis_up='Y')
@@ -310,6 +462,9 @@ class ExportOBJ(bpy.types.Operator, ExportHelper):
         keywords["global_matrix"] = global_matrix
         return export_obj.save(context, **keywords)
 
+    def draw(self, context):
+        pass
+
 
 def menu_func_import(self, context):
     self.layout.operator(ImportOBJ.bl_idname, text="Wavefront (.obj)", icon = "LOAD_OBJ")
@@ -321,7 +476,13 @@ def menu_func_export(self, context):
 
 classes = (
     ImportOBJ,
+    OBJ_PT_import_include,
+    OBJ_PT_import_transform,
+    OBJ_PT_import_geometry,
     ExportOBJ,
+    OBJ_PT_export_include,
+    OBJ_PT_export_transform,
+    OBJ_PT_export_geometry,
 )
 
 

@@ -649,7 +649,9 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
             bl_obj = item.bl_obj
 
         transform_data = item.fbx_transform_data
-        rot_prev = bl_obj.rotation_euler.copy()
+        rot_eul_prev = bl_obj.rotation_euler.copy()
+        rot_quat_prev = bl_obj.rotation_quaternion.copy()
+
 
         # Pre-compute inverted local rest matrix of the bone, if relevant.
         restmat_inv = item.get_bind_matrix().inverted_safe() if item.is_bone else None
@@ -683,13 +685,15 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
             # Now we have a virtual matrix of transform from AnimCurves, we can insert keyframes!
             loc, rot, sca = mat.decompose()
             if rot_mode == 'QUATERNION':
-                pass  # nothing to do!
+                if rot_quat_prev.dot(rot) < 0.0:
+                    rot = -rot
+                rot_quat_prev = rot
             elif rot_mode == 'AXIS_ANGLE':
                 vec, ang = rot.to_axis_angle()
                 rot = ang, vec.x, vec.y, vec.z
             else:  # Euler
-                rot = rot.to_euler(rot_mode, rot_prev)
-                rot_prev = rot
+                rot = rot.to_euler(rot_mode, rot_eul_prev)
+                rot_eul_prev = rot
             for fc, value in zip(blen_curves, chain(loc, rot, sca)):
                 fc.keyframe_points.insert(frame, value, options={'NEEDED', 'FAST'}).interpolation = 'LINEAR'
 

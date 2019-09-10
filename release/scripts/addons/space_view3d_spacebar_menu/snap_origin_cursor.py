@@ -20,114 +20,114 @@
 
 import bpy
 from bpy.types import (
-        Operator,
-        Menu,
-        )
+		Operator,
+		Menu,
+		)
 from bpy.props import (
-        BoolProperty,
-        StringProperty,
-        )
+		BoolProperty,
+		StringProperty,
+		)
 from .object_menus import *
 
 # ********** Object Snap Cursor **********
 class VIEW3D_MT_Snap_Context(Menu):
-    bl_label = "Snapping"
+	bl_label = "Snapping"
 
-    def draw(self, context):
-        layout = self.layout
-        toolsettings = context.tool_settings
-        layout.prop(toolsettings, "use_snap")
-        layout.prop(toolsettings, "snap_elements", expand=True)
+	def draw(self, context):
+		layout = self.layout
+		toolsettings = context.tool_settings
+		layout.prop(toolsettings, "use_snap")
+		layout.prop(toolsettings, "snap_elements", expand=True)
 
 
 class VIEW3D_MT_Snap_Origin(Menu):
-    bl_label = "Snap Origin"
+	bl_label = "Snap Origin"
 
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = 'EXEC_AREA'
-        layout.operator("object.origin_set",
-                        text="Geometry to Origin").type = 'GEOMETRY_ORIGIN'
-        layout.separator()
-        layout.operator("object.origin_set",
-                        text="Origin to Geometry").type = 'ORIGIN_GEOMETRY'
-        layout.operator("object.origin_set",
-                        text="Origin to 3D Cursor").type = 'ORIGIN_CURSOR'
-        layout.operator("object.origin_set",
-                        text="Origin to Center of Mass").type = 'ORIGIN_CENTER_OF_MASS'
+	def draw(self, context):
+		layout = self.layout
+		layout.operator_context = 'EXEC_AREA'
+		layout.operator("object.origin_set",
+						text="Geometry to Origin").type = 'GEOMETRY_ORIGIN'
+		layout.separator()
+		layout.operator("object.origin_set",
+						text="Origin to Geometry").type = 'ORIGIN_GEOMETRY'
+		layout.operator("object.origin_set",
+						text="Origin to 3D Cursor").type = 'ORIGIN_CURSOR'
+		layout.operator("object.origin_set",
+						text="Origin to Center of Mass").type = 'ORIGIN_CENTER_OF_MASS'
 
 
 class VIEW3D_MT_CursorMenu(Menu):
-    bl_label = "Snap"
+	bl_label = "Snap To"
 
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.menu("VIEW3D_MT_Snap_Origin")
-        layout.menu("VIEW3D_MT_Snap_Context")
-        layout.separator()
-        layout.operator("view3d.snap_cursor_to_selected",
-                        text="Cursor to Selected")
-        layout.operator("view3d.snap_cursor_to_center",
-                        text="Cursor to World Origin")
-        layout.operator("view3d.snap_cursor_to_grid",
-                        text="Cursor to Grid")
-        layout.operator("view3d.snap_cursor_to_active",
-                        text="Cursor to Active")
-        layout.separator()
-        layout.operator("view3d.snap_selected_to_cursor",
-                        text="Selection to Cursor").use_offset = False
-        layout.operator("view3d.snap_selected_to_cursor",
-                        text="Selection to Cursor (Keep Offset)").use_offset = True
-        layout.operator("view3d.snap_selected_to_grid",
-                        text="Selection to Grid")
-        layout.operator("view3d.snap_cursor_selected_to_center",
-                        text="Selection and Cursor to World Origin")
+	def draw(self, context):
+		layout = self.layout
+		layout.operator_context = 'INVOKE_REGION_WIN'
+		layout.menu("VIEW3D_MT_Snap_Origin")
+		layout.menu("VIEW3D_MT_Snap_Context")
+		layout.separator()
+		layout.operator("view3d.snap_cursor_to_selected",
+						text="Cursor to Selected")
+		layout.operator("view3d.snap_cursor_to_center",
+						text="Cursor to World Origin")
+		layout.operator("view3d.snap_cursor_to_grid",
+						text="Cursor to Grid")
+		layout.operator("view3d.snap_cursor_to_active",
+						text="Cursor to Active")
+		layout.separator()
+		layout.operator("view3d.snap_selected_to_cursor",
+						text="Selection to Cursor").use_offset = False
+		layout.operator("view3d.snap_selected_to_cursor",
+						text="Selection to Cursor (Keep Offset)").use_offset = True
+		layout.operator("view3d.snap_selected_to_grid",
+						text="Selection to Grid")
+		layout.operator("view3d.snap_cursor_selected_to_center",
+						text="Selection and Cursor to World Origin")
 
 
 class VIEW3D_MT_CursorMenuLite(Menu):
-    bl_label = "Snap Cursor"
+	bl_label = "Snap to"
 
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.menu("VIEW3D_MT_Snap_Origin")
-        layout.separator()
-        layout.operator("view3d.snap_cursor_to_selected",
-                        text="Cursor to Selected")
-        layout.operator("view3d.snap_cursor_to_center",
-                        text="Cursor to World Origin")
-        layout.operator("view3d.snap_cursor_to_grid",
-                        text="Cursor to Grid")
-        layout.operator("view3d.snap_cursor_to_active",
-                        text="Cursor to Active")
-        layout.separator()
-        layout.operator("view3d.snap_selected_to_cursor",
-                        text="Selection to Cursor").use_offset = False
-        layout.operator("view3d.snap_selected_to_cursor",
-                        text="Selection to Cursor (Keep Offset)").use_offset = True
-        layout.operator("view3d.snap_selected_to_grid",
-                        text="Selection to Grid")
-        layout.operator("view3d.snap_cursor_selected_to_center",
-                        text="Selection and Cursor to World Origin")
+	def draw(self, context):
+		layout = self.layout
+		layout.operator_context = 'INVOKE_REGION_WIN'
+		layout.menu("VIEW3D_MT_Snap_Origin")
+		layout.separator()
+		layout.operator("view3d.snap_cursor_to_selected",
+						text="Cursor to Selected")
+		layout.operator("view3d.snap_cursor_to_center",
+						text="Cursor to World Origin")
+		layout.operator("view3d.snap_cursor_to_grid",
+						text="Cursor to Grid")
+		layout.operator("view3d.snap_cursor_to_active",
+						text="Cursor to Active")
+		layout.separator()
+		layout.operator("view3d.snap_selected_to_cursor",
+						text="Selection to Cursor").use_offset = False
+		layout.operator("view3d.snap_selected_to_cursor",
+						text="Selection to Cursor (Keep Offset)").use_offset = True
+		layout.operator("view3d.snap_selected_to_grid",
+						text="Selection to Grid")
+		layout.operator("view3d.snap_cursor_selected_to_center",
+						text="Selection and Cursor to World Origin")
 
 
 # Code thanks to Isaac Weaver (wisaac) D1963
 class VIEW3D_OT_SnapCursSelToCenter(Operator):
-    bl_idname = "view3d.snap_cursor_selected_to_center"
-    bl_label = "Snap Cursor & Selection to World Origin"
-    bl_description = ("Snap 3D cursor and selected objects to the center \n"
-                      "Works only in Object Mode")
+	bl_idname = "view3d.snap_cursor_selected_to_center"
+	bl_label = "Snap Cursor & Selection to World Origin"
+	bl_description = ("Snap 3D cursor and selected objects to the center \n"
+					"Works only in Object Mode")
 
-    @classmethod
-    def poll(cls, context):
-        return (context.area.type == "VIEW_3D" and context.mode == "OBJECT")
+	@classmethod
+	def poll(cls, context):
+		return (context.area.type == "VIEW_3D" and context.mode == "OBJECT")
 
-    def execute(self, context):
-        context.scene.cursor.location = (0, 0, 0)
-        for obj in context.selected_objects:
-            obj.location = (0, 0, 0)
-        return {'FINISHED'}
+	def execute(self, context):
+		context.scene.cursor.location = (0, 0, 0)
+		for obj in context.selected_objects:
+			obj.location = (0, 0, 0)
+		return {'FINISHED'}
 
 
 # Cursor Edge Intersection Defs #
@@ -239,32 +239,64 @@ class VIEW3D_OT_SetOriginToSelected(Operator):
 
 		return {'FINISHED'}
 
+# ********** Edit Mesh Cursor **********
+class VIEW3D_MT_EditCursorMenu(Menu):
+	bl_label = "Snap To"
+
+	def draw(self, context):
+		layout = self.layout
+		layout.operator_context = 'INVOKE_REGION_WIN'
+		layout.operator("object.setorigintoselected",
+						text="Origin to Selected V/F/E")
+		layout.separator()
+		layout.menu("VIEW3D_MT_Snap_Origin")
+		layout.menu("VIEW3D_MT_Snap_Context")
+		layout.separator()
+		layout.operator("view3d.snap_cursor_to_selected",
+						text="Cursor to Selected")
+		layout.operator("view3d.snap_cursor_to_center",
+						text="Cursor to World Origin")
+		layout.operator("view3d.snap_cursor_to_grid",
+						text="Cursor to Grid")
+		layout.operator("view3d.snap_cursor_to_active",
+						text="Cursor to Active")
+		layout.operator("view3d.snap_cursor_to_edge_intersection",
+						text="Cursor to Edge Intersection")
+		layout.separator()
+		layout.operator("view3d.snap_selected_to_cursor",
+						text="Selection to Cursor").use_offset = False
+		layout.operator("view3d.snap_selected_to_cursor",
+						text="Selection to Cursor (Keep Offset)").use_offset = True
+		layout.operator("view3d.snap_selected_to_grid",
+						text="Selection to Grid")
+
 
 # List The Classes #
 
 classes = (
-    VIEW3D_MT_CursorMenu,
-    VIEW3D_MT_CursorMenuLite,
-    VIEW3D_MT_Snap_Context,
-    VIEW3D_MT_Snap_Origin,
-    VIEW3D_OT_SnapCursSelToCenter,
-    VIEW3D_OT_CursorToEdgeIntersection,
-    VIEW3D_OT_SetOriginToSelected,
+	VIEW3D_MT_CursorMenu,
+	VIEW3D_MT_CursorMenuLite,
+	VIEW3D_MT_Snap_Context,
+	VIEW3D_MT_Snap_Origin,
+	VIEW3D_OT_SnapCursSelToCenter,
+	VIEW3D_OT_CursorToEdgeIntersection,
+	VIEW3D_OT_SetOriginToSelected,
+	VIEW3D_MT_EditCursorMenu,
 )
 
 
 # Register Classes & Hotkeys #
 def register():
-    for cls in classes:
-        bpy.utils.register_class(cls)
+	for cls in classes:
+		bpy.utils.register_class(cls)
 
 
 # Unregister Classes & Hotkeys #
 def unregister():
 
-    for cls in reversed(classes):
-        bpy.utils.unregister_class(cls)
+	for cls in reversed(classes):
+		bpy.utils.unregister_class(cls)
 
 
 if __name__ == "__main__":
-    register()
+	register()

@@ -27,8 +27,9 @@ if "bpy" in locals():
     bkit_oauth = reload(bkit_oauth)
     version_checker = reload(version_checker)
     tasks_queue = reload(tasks_queue)
+    rerequests = reload(rerequests)
 else:
-    from blenderkit import paths, utils, categories, ui, bkit_oauth, version_checker, tasks_queue
+    from blenderkit import paths, utils, categories, ui, bkit_oauth, version_checker, tasks_queue, rerequests
 
 import blenderkit
 from bpy.app.handlers import persistent
@@ -121,9 +122,11 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff.
     # causing a lot of throuble literally.
     if len(search_threads) == 0 or bpy.context.scene.blenderkitUI.dragging:
         return 1
-    for thread in search_threads:  # TODO this doesn't check all processess when removal... mostly 1 process will be running however.
+    for thread in search_threads:  # TODO this doesn't check all processess when one gets removed, but most time only
+        # one is running anyway
 
         if not thread[0].is_alive():
+            print('parsing')
             search_threads.remove(thread)  #
             icons_dir = thread[1]
             scene = bpy.context.scene
@@ -558,7 +561,7 @@ class ThumbDownloader(threading.Thread):
         return self._stop_event.is_set()
 
     def run(self):
-        r = requests.get(self.url, stream=False)
+        r = rerequests.get(self.url, stream=False)
         if r.status_code == 200:
             with open(self.path, 'wb') as f:
                 f.write(r.content)
@@ -581,7 +584,7 @@ def fetch_author(a_id, api_key):
     try:
         a_url = paths.get_api_url() + 'accounts/' + a_id + '/'
         headers = utils.get_headers(api_key)
-        r = requests.get(a_url, headers=headers)
+        r = rerequests.get(a_url, headers=headers)
         if r.status_code == 200:
             adata = r.json()
             if not hasattr(adata, 'id'):
@@ -591,13 +594,14 @@ def fetch_author(a_id, api_key):
             if adata.get('gravatarHash') is not None:
                 gravatar_path = paths.get_temp_dir(subdir='g/') + adata['gravatarHash'] + '.jpg'
                 url = "https://www.gravatar.com/avatar/" + adata['gravatarHash'] + '?d=404'
-                r = requests.get(url, stream=False)
+                r = rerequests.get(url, stream=False)
                 if r.status_code == 200:
                     with open(gravatar_path, 'wb') as f:
                         f.write(r.content)
                     adata['gravatarImg'] = gravatar_path
                 elif r.status_code == '404':
                     adata['gravatarHash'] = None
+                    utils.p('gravatar for author not available.')
     except Exception as e:
         utils.p(e)
     utils.p('finish fetch')
@@ -635,7 +639,7 @@ def write_profile(adata):
 def request_profile(api_key):
     a_url = paths.get_api_url() + 'me/'
     headers = utils.get_headers(api_key)
-    r = requests.get(a_url, headers=headers)
+    r = rerequests.get(a_url, headers=headers)
     adata = r.json()
     if adata.get('user') is None:
         utils.p(adata)
@@ -678,8 +682,7 @@ class Searcher(threading.Thread):
         return self._stop_event.is_set()
 
     def run(self):
-        maxthreads = 300
-        maximages = 50
+        maxthreads = 50
         query = self.query
         params = self.params
         global reports
@@ -731,7 +734,7 @@ class Searcher(threading.Thread):
 
         try:
             utils.p(urlquery)
-            r = requests.get(urlquery, headers=headers)
+            r = rerequests.get(urlquery, headers=headers)
             reports = ''
             # utils.p(r.text)
         except requests.exceptions.RequestException as e:
@@ -1115,7 +1118,7 @@ class SearchOperator(Operator):
                            description="get next page from previous search",
                            default=False)
 
-    keywords = StringProperty(
+    keywords: StringProperty(
         name="Keywords",
         description="Keywords",
         default="")
@@ -1132,9 +1135,8 @@ class SearchOperator(Operator):
         if self.keywords != '':
             sprops.search_keywords = self.keywords
 
-
         search(category=self.category, get_next=self.get_next, author_id=self.author_id)
-        #bpy.ops.view3d.blenderkit_asset_bar()
+        # bpy.ops.view3d.blenderkit_asset_bar()
 
         return {'FINISHED'}
 
@@ -1163,18 +1165,3 @@ def unregister_search():
 
     # bpy.app.timers.unregister(timer_update)
 
-
-'''
-search -
-build query
-START THREAD
-send query (bg already)
-get result - metadata, small thumbnails, big thumbnails paths (now generate this?)
-write metadata, possibly to
-download small thumbnails first
-start big thumbnails download. these don't have to be there on updates, if they aren't the Image in image editor doesn't get updated.
-parse metadata, save it in json in the temp dir which gets read on each update of the search.
-END THREAD
-when download is triggered, get also this metadata from json. E
-pass this single - item metadata in the download functions, threads.
-'''

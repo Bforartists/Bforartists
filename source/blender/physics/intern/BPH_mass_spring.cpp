@@ -231,9 +231,9 @@ static void cloth_setup_constraints(ClothModifierData *clmd,
     verts[v].impulse_count = 0;
   }
 
-  for (i = 0; i < totcolliders; ++i) {
+  for (i = 0; i < totcolliders; i++) {
     ColliderContacts *ct = &contacts[i];
-    for (j = 0; j < ct->totcollisions; ++j) {
+    for (j = 0; j < ct->totcollisions; j++) {
       CollPair *collpair = &ct->collisions[j];
       // float restitution = (1.0f - clmd->coll_parms->damping) * (1.0f - ct->ob->pd->pdef_sbdamp);
       float restitution = 0.0f;
@@ -867,8 +867,8 @@ static void cloth_continuum_step(ClothModifierData *clmd, float dt)
                           clmd->hair_grid_min[(axis + 2) % 3];
 
       BKE_sim_debug_data_clear_category(clmd->debug_data, "grid velocity");
-      for (j = 0; j < size; ++j) {
-        for (i = 0; i < size; ++i) {
+      for (j = 0; j < size; j++) {
+        for (i = 0; i < size; i++) {
           float x[3], v[3], gvel[3], gvel_smooth[3], gdensity;
 
           madd_v3_v3v3fl(x, offset, a, (float)i / (float)(size - 1));
@@ -1111,6 +1111,12 @@ int BPH_cloth_solve(
     ImplicitSolverResult result;
 
     if (is_hair) {
+      /* copy velocities for collision */
+      for (i = 0; i < mvert_num; i++) {
+        BPH_mass_spring_get_motion_state(id, i, NULL, verts[i].tv);
+        copy_v3_v3(verts[i].v, verts[i].tv);
+      }
+
       /* determine contact points */
       if (clmd->coll_parms->flags & CLOTH_COLLSETTINGS_FLAG_ENABLED) {
         cloth_find_point_contacts(depsgraph, ob, clmd, 0.0f, tf, &contacts, &totcolliders);

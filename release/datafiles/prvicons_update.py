@@ -17,6 +17,8 @@ if sys.platform == 'darwin':
 cmd = (
     inkscape_path,
     os.path.join(BASEDIR, "prvicons.svg"),
+    "--export-width=1792",
+    "--export-height=256",
     "--without-gui",
     "--export-png=" + os.path.join(BASEDIR, "prvicons.png"),
 )

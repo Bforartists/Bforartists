@@ -22,7 +22,7 @@ bl_info = {
     "name": "Stanford PLY format",
     "author": "Bruce Merry, Campbell Barton",
     "version": (1, 0, 0),
-    "blender": (2, 80, 0),
+    "blender": (2, 81, 6),
     "location": "File > Import-Export",
     "description": "Import-Export PLY mesh data with UV's and vertex colors",
     "warning": "",
@@ -166,18 +166,60 @@ class ExportPLY(bpy.types.Operator, ExportHelper):
         return export_ply.save(self, context, **keywords)
 
     def draw(self, context):
+        pass
+
+
+class PLY_PT_export_transform(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Transform"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_MESH_OT_ply"
+
+    def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
 
-        row = layout.row()
-        row.prop(self, "use_mesh_modifiers")
-        row.prop(self, "use_normals")
-        row = layout.row()
-        row.prop(self, "use_uv_coords")
-        row.prop(self, "use_colors")
+        sfile = context.space_data
+        operator = sfile.active_operator
 
-        layout.prop(self, "axis_forward")
-        layout.prop(self, "axis_up")
-        layout.prop(self, "global_scale")
+        layout.prop(operator, "axis_forward")
+        layout.prop(operator, "axis_up")
+        layout.prop(operator, "global_scale")
+
+
+class PLY_PT_export_geometry(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Geometry"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_MESH_OT_ply"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "use_mesh_modifiers")
+        layout.prop(operator, "use_normals")
+        layout.prop(operator, "use_uv_coords")
+        layout.prop(operator, "use_colors")
 
 
 def menu_func_import(self, context):
@@ -191,6 +233,8 @@ def menu_func_export(self, context):
 classes = (
     ImportPLY,
     ExportPLY,
+    PLY_PT_export_transform,
+    PLY_PT_export_geometry,
 )
 
 

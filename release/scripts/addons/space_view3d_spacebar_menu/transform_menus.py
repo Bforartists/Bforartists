@@ -74,7 +74,11 @@ class VIEW3D_MT_TransformMenuLite(Menu):
         layout.separator()
         layout.operator("transform.transform",
                         text="Align to Transform Orientation").mode = 'ALIGN'
-
+        layout.separator()
+        layout.operator("object.align")
+        layout.operator_context = 'EXEC_REGION_WIN'
+        layout.operator("transform.transform",
+                        text="Align to Transform Orientation").mode = 'ALIGN'
 
 # ********** Transform Camera **********
 class VIEW3D_MT_TransformMenuCamera(Menu):
@@ -118,61 +122,11 @@ class VIEW3D_MT_TransformMenuArmature(Menu):
                         text="Origin to Center of Mass").type = 'ORIGIN_CENTER_OF_MASS'
 
 
-# ********** Transform Armature Edit **********
-class VIEW3D_MT_TransformMenuArmatureEdit(Menu):
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("transform.translate", text="Move")
-        layout.operator("transform.rotate", text="Rotate")
-        layout.operator("transform.resize", text="Scale")
-        layout.separator()
-        layout.operator("transform.tosphere", text="To Sphere")
-        layout.operator("transform.shear", text="Shear")
-        layout.operator("transform.bend", text="Bend")
-        layout.operator("transform.push_pull", text="Push/Pull")
-        layout.operator("transform.vertex_warp", text="Warp")
-        layout.separator()
-        layout.operator("transform.vertex_random", text="Randomize")
-        layout.operator("armature.align")
-        layout.operator_context = 'EXEC_AREA'
-
-
-# ********** Transform Armature Pose **********
-class VIEW3D_MT_TransformMenuArmaturePose(Menu):
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("transform.translate", text="Move")
-        layout.operator("transform.rotate", text="Rotate")
-        layout.operator("transform.resize", text="Scale")
-        layout.separator()
-        layout.operator("pose.transforms_clear", text="Clear All")
-        layout.operator("pose.loc_clear", text="Location")
-        layout.operator("pose.rot_clear", text="Rotation")
-        layout.operator("pose.scale_clear", text="Scale")
-
-        layout.separator()
-
-        layout.operator("pose.user_transforms_clear", text="Reset unkeyed")
-        obj = context.object
-        if obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
-            if obj.data.display_type == 'BBONE':
-                layout.operator("transform.transform", text="Scale BBone").mode = 'BONE_SIZE'
-            elif obj.data.display_type == 'ENVELOPE':
-                layout.operator("transform.transform", text="Scale Envelope Distance").mode = 'BONE_SIZE'
-                layout.operator("transform.transform", text="Scale Radius").mode = 'BONE_ENVELOPE'
-
-
 # List The Classes #
 
 classes = (
     VIEW3D_MT_TransformMenu,
     VIEW3D_MT_TransformMenuArmature,
-    VIEW3D_MT_TransformMenuArmatureEdit,
-    VIEW3D_MT_TransformMenuArmaturePose,
     VIEW3D_MT_TransformMenuLite,
     VIEW3D_MT_TransformMenuCamera,
 )

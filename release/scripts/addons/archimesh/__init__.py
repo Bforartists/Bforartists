@@ -143,6 +143,8 @@ class ARCHIMESH_MT_CustomMenuAdd(Menu):
 # Define menu
 # noinspection PyUnusedLocal
 def AchmMenu_func(self, context):
+    layout = self.layout
+    layout.separator()
     self.layout.menu("VIEW3D_MT_mesh_custom_menu_add", icon="GROUP")
 
 

@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 bl_info = {
-    "name": "Geodesic Domes2",
+    "name": "Geodesic Domes",
     "author": "Noctumsolis, PKHG, Meta Androcto, Andy Houston",
     "version": (0, 3, 4),
     "blender": (2, 80, 0),
@@ -186,7 +186,7 @@ def menu_func(self, context):
 
     lay_out.separator()
     lay_out.operator("mesh.generate_geodesic_dome",
-                    text="Geodesic Dome")
+                    text="Geodesic Dome", icon="MESH_ICOSPHERE")
 
 # Register
 classes = [
