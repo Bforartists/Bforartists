@@ -71,6 +71,8 @@ def menu_func_eroder(self, context):
 
 
 def menu_func_landscape(self, context):
+    layout = self.layout
+    layout.separator()
     self.layout.operator('mesh.landscape_add', text="Landscape", icon="RNDCURVE")
 
 

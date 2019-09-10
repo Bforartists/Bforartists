@@ -125,11 +125,11 @@ class BlenderKHR_materials_pbrSpecularGlossiness():
             mapping.location = -1500, 500
             mapping.vector_type = 'POINT'
             tex_transform = text_node.image['tex_transform'][str(pbrSG['diffuseTexture']['index'])]
-            mapping.translation[0] = texture_transform_gltf_to_blender(tex_transform)['offset'][0]
-            mapping.translation[1] = texture_transform_gltf_to_blender(tex_transform)['offset'][1]
-            mapping.rotation[2] = texture_transform_gltf_to_blender(tex_transform)['rotation']
-            mapping.scale[0] = texture_transform_gltf_to_blender(tex_transform)['scale'][0]
-            mapping.scale[1] = texture_transform_gltf_to_blender(tex_transform)['scale'][1]
+            mapping.inputs['Location'].default_value[0] = texture_transform_gltf_to_blender(tex_transform)['offset'][0]
+            mapping.inputs['Location'].default_value[1] = texture_transform_gltf_to_blender(tex_transform)['offset'][1]
+            mapping.inputs['Rotation'].default_value[2] = texture_transform_gltf_to_blender(tex_transform)['rotation']
+            mapping.inputs['Scale'].default_value[0] = texture_transform_gltf_to_blender(tex_transform)['scale'][0]
+            mapping.inputs['Scale'].default_value[1] = texture_transform_gltf_to_blender(tex_transform)['scale'][1]
 
             uvmap = node_tree.nodes.new('ShaderNodeUVMap')
             uvmap.location = -2000, 500
@@ -219,11 +219,12 @@ class BlenderKHR_materials_pbrSpecularGlossiness():
                 mapping.location = -1500, 500
             mapping.vector_type = 'POINT'
             tex_transform = text_node.image['tex_transform'][str(pbrSG['diffuseTexture']['index'])]
-            mapping.translation[0] = texture_transform_gltf_to_blender(tex_transform)['offset'][0]
-            mapping.translation[1] = texture_transform_gltf_to_blender(tex_transform)['offset'][1]
-            mapping.rotation[2] = texture_transform_gltf_to_blender(tex_transform)['rotation']
-            mapping.scale[0] = texture_transform_gltf_to_blender(tex_transform)['scale'][0]
-            mapping.scale[1] = texture_transform_gltf_to_blender(tex_transform)['scale'][1]
+            mapping.inputs['Location'].default_value[0] = texture_transform_gltf_to_blender(tex_transform)['offset'][0]
+            mapping.inputs['Location'].default_value[1] = texture_transform_gltf_to_blender(tex_transform)['offset'][1]
+            mapping.inputs['Rotation'].default_value[2] = texture_transform_gltf_to_blender(tex_transform)['rotation']
+            mapping.inputs['Scale'].default_value[0] = texture_transform_gltf_to_blender(tex_transform)['scale'][0]
+            mapping.inputs['Scale'].default_value[1] = texture_transform_gltf_to_blender(tex_transform)['scale'][1]
+
 
             uvmap = node_tree.nodes.new('ShaderNodeUVMap')
             if vertex_color:
@@ -293,11 +294,12 @@ class BlenderKHR_materials_pbrSpecularGlossiness():
             spec_mapping.location = -1000, 0
             spec_mapping.vector_type = 'POINT'
             tex_transform = spec_text.image['tex_transform'][str(pbrSG['specularGlossinessTexture']['index'])]
-            spec_mapping.translation[0] = texture_transform_gltf_to_blender(tex_transform)['offset'][0]
-            spec_mapping.translation[1] = texture_transform_gltf_to_blender(tex_transform)['offset'][1]
-            spec_mapping.rotation[2] = texture_transform_gltf_to_blender(tex_transform)['rotation']
-            spec_mapping.scale[0] = texture_transform_gltf_to_blender(tex_transform)['scale'][0]
-            spec_mapping.scale[1] = texture_transform_gltf_to_blender(tex_transform)['scale'][1]
+            spec_mapping.inputs['Location'].default_value[0] = texture_transform_gltf_to_blender(tex_transform)['offset'][0]
+            spec_mapping.inputs['Location'].default_value[1] = texture_transform_gltf_to_blender(tex_transform)['offset'][1]
+            spec_mapping.inputs['Rotation'].default_value[2] = texture_transform_gltf_to_blender(tex_transform)['rotation']
+            spec_mapping.inputs['Scale'].default_value[0] = texture_transform_gltf_to_blender(tex_transform)['scale'][0]
+            spec_mapping.inputs['Scale'].default_value[1] = texture_transform_gltf_to_blender(tex_transform)['scale'][1]
+
 
             spec_uvmap = node_tree.nodes.new('ShaderNodeUVMap')
             spec_uvmap.location = -1500, 0
@@ -337,11 +339,12 @@ class BlenderKHR_materials_pbrSpecularGlossiness():
             spec_mapping.location = -1000, 0
             spec_mapping.vector_type = 'POINT'
             tex_transform = spec_text.image['tex_transform'][str(pbrSG['specularGlossinessTexture']['index'])]
-            spec_mapping.translation[0] = texture_transform_gltf_to_blender(tex_transform)['offset'][0]
-            spec_mapping.translation[1] = texture_transform_gltf_to_blender(tex_transform)['offset'][1]
-            spec_mapping.rotation[2] = texture_transform_gltf_to_blender(tex_transform)['rotation']
-            spec_mapping.scale[0] = texture_transform_gltf_to_blender(tex_transform)['scale'][0]
-            spec_mapping.scale[1] = texture_transform_gltf_to_blender(tex_transform)['scale'][1]
+            spec_mapping.inputs['Location'].default_value[0] = texture_transform_gltf_to_blender(tex_transform)['offset'][0]
+            spec_mapping.inputs['Location'].default_value[1] = texture_transform_gltf_to_blender(tex_transform)['offset'][1]
+            spec_mapping.inputs['Rotation'].default_value[2] = texture_transform_gltf_to_blender(tex_transform)['rotation']
+            spec_mapping.inputs['Scale'].default_value[0] = texture_transform_gltf_to_blender(tex_transform)['scale'][0]
+            spec_mapping.inputs['Scale'].default_value[1] = texture_transform_gltf_to_blender(tex_transform)['scale'][1]
+
 
 
             spec_uvmap = node_tree.nodes.new('ShaderNodeUVMap')

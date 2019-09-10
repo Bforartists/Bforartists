@@ -130,11 +130,12 @@ class BlenderPbr():
             mapping.vector_type = 'POINT'
             if text_node.image is not None: # Sometimes images can't be retrieved (bad gltf file ...)
                 tex_transform = text_node.image['tex_transform'][str(pypbr.base_color_texture.index)]
-                mapping.translation[0] = texture_transform_gltf_to_blender(tex_transform)['offset'][0]
-                mapping.translation[1] = texture_transform_gltf_to_blender(tex_transform)['offset'][1]
-                mapping.rotation[2] = texture_transform_gltf_to_blender(tex_transform)['rotation']
-                mapping.scale[0] = texture_transform_gltf_to_blender(tex_transform)['scale'][0]
-                mapping.scale[1] = texture_transform_gltf_to_blender(tex_transform)['scale'][1]
+                mapping.inputs['Location'].default_value[0] = texture_transform_gltf_to_blender(tex_transform)['offset'][0]
+                mapping.inputs['Location'].default_value[1] = texture_transform_gltf_to_blender(tex_transform)['offset'][1]
+                mapping.inputs['Rotation'].default_value[2] = texture_transform_gltf_to_blender(tex_transform)['rotation']
+                mapping.inputs['Scale'].default_value[0] = texture_transform_gltf_to_blender(tex_transform)['scale'][0]
+                mapping.inputs['Scale'].default_value[1] = texture_transform_gltf_to_blender(tex_transform)['scale'][1]
+
 
 
             uvmap = node_tree.nodes.new('ShaderNodeUVMap')
@@ -196,11 +197,12 @@ class BlenderPbr():
             mapping.vector_type = 'POINT'
             if text_node.image is not None: # Sometimes images can't be retrieved (bad gltf file ...)
                 tex_transform = text_node.image['tex_transform'][str(pypbr.base_color_texture.index)]
-                mapping.translation[0] = texture_transform_gltf_to_blender(tex_transform)['offset'][0]
-                mapping.translation[1] = texture_transform_gltf_to_blender(tex_transform)['offset'][1]
-                mapping.rotation[2] = texture_transform_gltf_to_blender(tex_transform)['rotation']
-                mapping.scale[0] = texture_transform_gltf_to_blender(tex_transform)['scale'][0]
-                mapping.scale[1] = texture_transform_gltf_to_blender(tex_transform)['scale'][1]
+                mapping.inputs['Location'].default_value[0] = texture_transform_gltf_to_blender(tex_transform)['offset'][0]
+                mapping.inputs['Location'].default_value[1] = texture_transform_gltf_to_blender(tex_transform)['offset'][1]
+                mapping.inputs['Rotation'].default_value[2] = texture_transform_gltf_to_blender(tex_transform)['rotation']
+                mapping.inputs['Scale'].default_value[0] = texture_transform_gltf_to_blender(tex_transform)['scale'][0]
+                mapping.inputs['Scale'].default_value[1] = texture_transform_gltf_to_blender(tex_transform)['scale'][1]
+
 
             uvmap = node_tree.nodes.new('ShaderNodeUVMap')
             if vertex_color:
@@ -249,6 +251,14 @@ class BlenderPbr():
 
                 metallic_mapping = node_tree.nodes.new('ShaderNodeMapping')
                 metallic_mapping.location = -1000, 0
+                metallic_mapping.vector_type = 'POINT'
+                tex_transform = metallic_text.image['tex_transform'][str(pypbr.metallic_roughness_texture.index)]
+                metallic_mapping.inputs['Location'].default_value[0] = texture_transform_gltf_to_blender(tex_transform)['offset'][0]
+                metallic_mapping.inputs['Location'].default_value[1] = texture_transform_gltf_to_blender(tex_transform)['offset'][1]
+                metallic_mapping.inputs['Rotation'].default_value[2] = texture_transform_gltf_to_blender(tex_transform)['rotation']
+                metallic_mapping.inputs['Scale'].default_value[0] = texture_transform_gltf_to_blender(tex_transform)['scale'][0]
+                metallic_mapping.inputs['Scale'].default_value[1] = texture_transform_gltf_to_blender(tex_transform)['scale'][1]
+
 
                 metallic_uvmap = node_tree.nodes.new('ShaderNodeUVMap')
                 metallic_uvmap.location = -1500, 0

@@ -276,7 +276,8 @@ typedef struct bNode {
   short preview_xsize, preview_ysize;
   /** Used at runtime when going through the tree. Initialize before use. */
   short tmp_flag;
-  char _pad2[2];
+  /** Used at runtime to tag derivatives branches. EEVEE only. */
+  short branch_tag;
   /** Runtime during drawing. */
   struct uiBlock *block;
 
@@ -869,6 +870,8 @@ typedef struct NodeTexGradient {
 
 typedef struct NodeTexNoise {
   NodeTexBase base;
+  int dimensions;
+  char _pad[4];
 } NodeTexNoise;
 
 typedef struct NodeTexVoronoi {
@@ -1166,6 +1169,14 @@ typedef struct NodeDenoise {
 
 #define SHD_AO_INSIDE 1
 #define SHD_AO_LOCAL 2
+
+/* Mapping node vector types */
+enum {
+  NODE_MAPPING_TYPE_POINT = 0,
+  NODE_MAPPING_TYPE_TEXTURE = 1,
+  NODE_MAPPING_TYPE_VECTOR = 2,
+  NODE_MAPPING_TYPE_NORMAL = 3,
+};
 
 /* math node clamp */
 #define SHD_MATH_CLAMP 1

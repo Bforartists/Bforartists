@@ -1,0 +1,60 @@
+#
+# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+#
+# This file is part of Power Sequencer.
+#
+# Power Sequencer is free software: you can redistribute it and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# Power Sequencer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with Power Sequencer. If
+# not, see <https://www.gnu.org/licenses/>.
+#
+import bpy
+import operator
+
+from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
+
+
+class POWER_SEQUENCER_OT_scene_rename_with_strip(bpy.types.Operator):
+    """
+    Rename a Scene Strip and its source scene
+    """
+
+    doc = {
+        "name": doc_name(__qualname__),
+        "demo": "",
+        "description": doc_description(__doc__),
+        "shortcuts": [],
+        "keymap": "Sequencer",
+    }
+
+    bl_idname = doc_idname(__qualname__)
+    bl_label = doc["name"]
+    bl_description = doc_brief(doc["description"])
+    bl_options = {"REGISTER", "UNDO"}
+
+    new_name: bpy.props.StringProperty(
+        name="Strip New Name",
+        description="The name both the SceneStrip and its source Scene will take",
+        default="",
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return context.selected_sequences
+
+    def invoke(self, context, event):
+        window_manager = context.window_manager
+        return window_manager.invoke_props_dialog(self)
+
+    def execute(self, context):
+        scene_strips = [s for s in context.selected_sequences if s.type == "SCENE"]
+        for strip in scene_strips:
+            strip.name = self.new_name
+            strip.scene.name = strip.name
+        return {"FINISHED"}

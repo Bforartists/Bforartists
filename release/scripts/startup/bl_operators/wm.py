@@ -1771,9 +1771,9 @@ class BatchRenameAction(bpy.types.PropertyGroup):
     type: EnumProperty(
         name="Operation",
         items=(
+            ('REPLACE', "Find/Replace", "Replace text in the name"),
             ('SET', "Set Name", "Set a new name or prefix/suffix the existing one"),
             ('STRIP', "Strip Characters", "Strip leading/trailing text from the name"),
-            ('REPLACE', "Find/Replace", "Replace text in the name"),
             ('CASE', "Change Case", "Change case of each name"),
         ),
     )
@@ -1816,7 +1816,15 @@ class BatchRenameAction(bpy.types.PropertyGroup):
     # type: 'REPLACE'.
     replace_src: StringProperty(name="Find")
     replace_dst: StringProperty(name="Replace")
-    replace_match_case: BoolProperty(name="Match Case")
+    replace_match_case: BoolProperty(name="Case Sensitive")
+    use_replace_regex_src: BoolProperty(
+        name="Regular Expression Find",
+        description="Use regular expressions to match text in the 'Find' field"
+    )
+    use_replace_regex_dst: BoolProperty(
+        name="Regular Expression Replace",
+        description="Use regular expression for the replacement text (supporting groups)"
+    )
 
     # type: 'CASE'.
     case_method: EnumProperty(
@@ -1839,6 +1847,30 @@ class WM_OT_batch_rename(Operator):
 
     bl_options = {'UNDO', 'INTERNAL'}
 
+    data_type: EnumProperty(
+        name="Type",
+        items=(
+            ('OBJECT', "Objects", ""),
+            ('MATERIAL', "Materials", ""),
+            None,
+            # Enum identifiers are compared with 'object.type'.
+            ('MESH', "Meshes", ""),
+            ('CURVE', "Curves", ""),
+            ('META', "Meta Balls", ""),
+            ('ARMATURE', "Armatures", ""),
+            ('LATTICE', "Lattices", ""),
+            ('GPENCIL', "Grease Pencils", ""),
+            ('CAMERA', "Cameras", ""),
+            ('SPEAKER', "Speakers", ""),
+            ('LIGHT_PROBE', "Light Probes", ""),
+            None,
+            ('BONE', "Bones", ""),
+            ('NODE', "Nodes", ""),
+            ('SEQUENCE_STRIP', "Sequence Strips", ""),
+        ),
+        description="Type of data to rename",
+    )
+
     data_source: EnumProperty(
         name="Source",
         items=(
@@ -1850,7 +1882,7 @@ class WM_OT_batch_rename(Operator):
     actions: CollectionProperty(type=BatchRenameAction)
 
     @staticmethod
-    def _data_from_context(context, only_selected):
+    def _data_from_context(context, data_type, only_selected, check_context=False):
 
         mode = context.mode
         scene = context.scene
@@ -1859,47 +1891,112 @@ class WM_OT_batch_rename(Operator):
 
         data = None
         if space_type == 'SEQUENCE_EDITOR':
-            data = (
-                # TODO, we don't have access to seqbasep, this won't work when inside metas.
-                [seq for seq in context.scene.sequence_editor.sequences_all if seq.select]
-                if only_selected else
-                context.scene.sequence_editor.sequences_all,
-                "name",
-                "Strip(s)",
-            )
+            data_type_test = 'SEQUENCE_STRIP'
+            if check_context:
+                return data_type_test
+            if data_type == data_type_test:
+                data = (
+                    # TODO, we don't have access to seqbasep, this won't work when inside metas.
+                    [seq for seq in context.scene.sequence_editor.sequences_all if seq.select]
+                    if only_selected else
+                    context.scene.sequence_editor.sequences_all,
+                    "name",
+                    "Strip(s)",
+                )
         elif space_type == 'NODE_EDITOR':
-            data = (
-                context.selected_nodes
-                if only_selected else
-                list(space.node_tree.nodes),
-                "name",
-                "Node(s)",
-            )
+            data_type_test = 'NODE'
+            if check_context:
+                return data_type_test
+            if data_type == data_type_test:
+                data = (
+                    context.selected_nodes
+                    if only_selected else
+                    list(space.node_tree.nodes),
+                    "name",
+                    "Node(s)",
+                )
         else:
             if mode == 'POSE' or (mode == 'WEIGHT_PAINT' and context.pose_object):
-                data = (
-                    [pchan.bone for pchan in context.selected_pose_bones]
-                    if only_selected else
-                    [pchan.bone for ob in context.objects_in_mode_unique_data for pbone in ob.pose.bones],
-                    "name",
-                    "Bone(s)",
-                )
+                data_type_test = 'BONE'
+                if check_context:
+                    return data_type_test
+                if data_type == data_type_test:
+                    data = (
+                        [pchan.bone for pchan in context.selected_pose_bones]
+                        if only_selected else
+                        [pchan.bone for ob in context.objects_in_mode_unique_data for pbone in ob.pose.bones],
+                        "name",
+                        "Bone(s)",
+                    )
             elif mode == 'EDIT_ARMATURE':
-                data = (
-                    context.selected_editable_bones
-                    if only_selected else
-                    [ebone for ob in context.objects_in_mode_unique_data for ebone in ob.data.edit_bones],
-                    "name",
-                    "Edit Bone(s)",
-                )
-            else:
+                data_type_test = 'BONE'
+                if check_context:
+                    return data_type_test
+                if data_type == data_type_test:
+                    data = (
+                        context.selected_editable_bones
+                        if only_selected else
+                        [ebone for ob in context.objects_in_mode_unique_data for ebone in ob.data.edit_bones],
+                        "name",
+                        "Edit Bone(s)",
+                    )
+
+        if check_context:
+            return 'OBJECT'
+
+        object_data_type_attrs_map = {
+            'MESH': ("meshes", "Mesh(es)"),
+            'CURVE': ("curves", "Curve(s)"),
+            'META': ("metaballs", "MetaBall(s)"),
+            'ARMATURE': ("armatures", "Armature(s)"),
+            'LATTICE': ("lattices", "Lattice(s)"),
+            'GPENCIL': ("grease_pencils", "Grease Pencil(s)"),
+            'CAMERA': ("cameras", "Camera(s)"),
+            'SPEAKER': ("speakers", "Speaker(s)"),
+            'LIGHT_PROBE': ("light_probes", "LightProbe(s)"),
+        }
+
+        # Finish with space types.
+        if data is None:
+
+            if data_type == 'OBJECT':
                 data = (
                     context.selected_editable_objects
                     if only_selected else
-                    [ob for ob in bpy.data.objects if ob.library is None],
+                    [id for id in bpy.data.objects if id.library is None],
                     "name",
                     "Object(s)",
                 )
+            elif data_type == 'MATERIAL':
+                data = (
+                    tuple(set(
+                        slot.material
+                        for ob in context.selected_objects
+                        for slot in ob.material_slots
+                        if slot.material is not None
+                    ))
+                    if only_selected else
+                    [id for id in bpy.data.materials if id.library is None],
+                    "name",
+                    "Material(s)",
+                )
+            elif data_type in object_data_type_attrs_map.keys():
+                attr, descr = object_data_type_attrs_map[data_type]
+                data = (
+                    tuple(set(
+                        id
+                        for ob in context.selected_objects
+                        if ob.type == data_type
+                        for id in (ob.data,)
+                        if id is not None and id.library is None
+                    ))
+                    if only_selected else
+                    [id for id in getattr(bpy.data, attr) if id.library is None],
+                    "name",
+                    descr,
+                )
+
+
         return data
 
     @staticmethod
@@ -1937,18 +2034,24 @@ class WM_OT_batch_rename(Operator):
                     name = name.rstrip(chars_strip)
 
             elif ty == 'REPLACE':
-                if action.replace_match_case:
-                    name = name.replace(
-                        action.replace_src,
-                        action.replace_dst,
-                    )
+                if action.use_replace_regex_src:
+                    replace_src = action.replace_src
+                    if action.use_replace_regex_dst:
+                        replace_dst = action.replace_dst
+                    else:
+                        replace_dst = re.escape(action.replace_dst)
                 else:
-                    name = re.sub(
-                        re.escape(action.replace_src),
-                        re.escape(action.replace_dst),
-                        name,
-                        flags=re.IGNORECASE,
-                    )
+                    replace_src = re.escape(action.replace_src)
+                    replace_dst = re.escape(action.replace_dst)
+                name = re.sub(
+                    replace_src,
+                    replace_dst,
+                    name,
+                    flags=(
+                        0 if action.replace_match_case else
+                        re.IGNORECASE
+                    ),
+                )
             elif ty == 'CASE':
                 method = action.case_method
                 if method == 'UPPER':
@@ -1963,12 +2066,29 @@ class WM_OT_batch_rename(Operator):
                 assert(0)
         return name
 
+    def _data_update(self, context):
+        only_selected = self.data_source == 'SELECT'
+
+        self._data = self._data_from_context(context, self.data_type, only_selected)
+        if self._data is None:
+            self.data_type = self._data_from_context(context, None, False, check_context=True)
+            self._data = self._data_from_context(context, self.data_type, only_selected)
+
+        self._data_source_prev = self.data_source
+        self._data_type_prev = self.data_type
+
     def draw(self, context):
+        import re
+
         layout = self.layout
 
-        row = layout.row()
-        row.label(text="Rename {:d} {:s}".format(len(self._data[0]), self._data[2]))
-        row.prop(self, "data_source", expand=True)
+        split = layout.split(factor=0.5)
+        split.label(text="Data Type:")
+        split.prop(self, "data_type", text="")
+
+        split = layout.split(factor=0.5)
+        split.label(text="Rename {:d} {:s}:".format(len(self._data[0]), self._data[2]))
+        split.row().prop(self, "data_source", expand=True)
 
         for action in self.actions:
             box = layout.box()
@@ -1986,9 +2106,40 @@ class WM_OT_batch_rename(Operator):
                 box.row().prop(action, "strip_chars")
                 box.row().prop(action, "strip_part")
             elif ty == 'REPLACE':
-                box.row().prop(action, "replace_src")
-                box.row().prop(action, "replace_dst")
-                box.row().prop(action, "replace_match_case")
+
+                row = box.row(align=True)
+                re_error_src = None
+                if action.use_replace_regex_src:
+                    try:
+                        re.compile(action.replace_src)
+                    except Exception as ex:
+                        re_error_src = str(ex)
+                        row.alert = True
+                row.prop(action, "replace_src")
+                row.prop(action, "use_replace_regex_src", text="", icon='SORTBYEXT')
+                if re_error_src is not None:
+                    box.label(text=re_error_src)
+
+                re_error_dst = None
+                row = box.row(align=True)
+                if action.use_replace_regex_src:
+                    if action.use_replace_regex_dst:
+                        if re_error_src is None:
+                            try:
+                                re.sub(action.replace_src, action.replace_dst, "")
+                            except Exception as ex:
+                                re_error_dst = str(ex)
+                                row.alert = True
+
+                row.prop(action, "replace_dst")
+                rowsub = row.row(align=True)
+                rowsub.active = action.use_replace_regex_src
+                rowsub.prop(action, "use_replace_regex_dst", text="", icon='SORTBYEXT')
+                if re_error_dst is not None:
+                    box.label(text=re_error_dst)
+
+                row = box.row()
+                row.prop(action, "replace_match_case")
             elif ty == 'CASE':
                 box.row().prop(action, "case_method", expand=True)
 
@@ -2009,18 +2160,37 @@ class WM_OT_batch_rename(Operator):
                 changed = True
                 break
 
-        if self._data_source_prev != self.data_source:
-            only_selected = self.data_source == 'SELECT'
-            self._data = self._data_from_context(context, only_selected)
-            self._data_source_prev = self.data_source
+        if (
+                (self._data_source_prev != self.data_source) or
+                (self._data_type_prev != self.data_type)
+        ):
+            self._data_update(context)
             changed = True
 
         return changed
 
     def execute(self, context):
+        import re
+
         seq, attr, descr = self._data
 
         actions = self.actions
+
+        # Sanitize actions.
+        for action in actions:
+            if action.use_replace_regex_src:
+                try:
+                    re.compile(action.replace_src)
+                except Exception as ex:
+                    self.report({'ERROR'}, "Invalid regular expression (find): " + str(ex))
+                    return {'CANCELLED'}
+
+                if action.use_replace_regex_dst:
+                    try:
+                        re.sub(action.replace_src, action.replace_dst, "")
+                    except Exception as ex:
+                        self.report({'ERROR'}, "Invalid regular expression (replace): " + str(ex))
+                        return {'CANCELLED'}
 
         total_len = 0
         change_len = 0
@@ -2038,15 +2208,7 @@ class WM_OT_batch_rename(Operator):
 
     def invoke(self, context, event):
 
-        only_selected = self.data_source == 'SELECT'
-        data = self._data_from_context(context, only_selected)
-        self._data_source_prev = self.data_source
-
-        if data is None:
-            self.report({'ERROR'}, "No usable items in this context")
-            return {'CANCELLED'}
-
-        self._data = data
+        self._data_update(context)
 
         if not self.actions:
             self.actions.add()

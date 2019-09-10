@@ -605,12 +605,17 @@ def draw_segments(context, myobj, op, region, rv3d):
                     if ms.gltype == 20:  # Area
                         obverts = get_mesh_vertices(myobj)
                         tot = 0
+                        if scene.measureit_scale is True:
+                            ms_scale = scene.measureit_scale_factor
+                        else:
+                            ms_scale = 1.0
+
                         for face in ms.measureit_faces:
                             myvertices = []
                             for v in face.measureit_index:
                                 myvertices.append(v.glidx)
 
-                            area = get_area_and_paint(myvertices, myobj, obverts, region, rv3d, rgba)
+                            area = get_area_and_paint(myvertices, myobj, obverts, region, rv3d, rgba, ms_scale)
                             tot += area
                         # Draw Area number over first face
                         if len(ms.measureit_faces) > 0:
@@ -623,9 +628,6 @@ def draw_segments(context, myobj, op, region, rv3d):
 
                             d1, dn = distance(p1, p2)
                             midpoint3d = interpolate3d(p1, p2, fabs(d1 / 2))
-                            # Scale
-                            if scene.measureit_scale is True:
-                                tot = tot * scene.measureit_scale_factor
 
                             # mult by world scale
                             tot *= scale
@@ -659,7 +661,7 @@ def draw_segments(context, myobj, op, region, rv3d):
 # Get polygon area and paint area
 #
 # ------------------------------------------
-def get_area_and_paint(myvertices, myobj, obverts, region, rv3d, rgba):
+def get_area_and_paint(myvertices, myobj, obverts, region, rv3d, rgba, ms_scale):
     mymesh = myobj.data
     totarea = 0
     if len(myvertices) > 3:
@@ -687,7 +689,7 @@ def get_area_and_paint(myvertices, myobj, obverts, region, rv3d, rgba):
 
             # Area
 
-            area = get_triangle_area(p1, p2, p3)
+            area = get_triangle_area(p1, p2, p3, ms_scale)
 
             totarea += area
     elif len(myvertices) == 3:
@@ -702,7 +704,7 @@ def get_area_and_paint(myvertices, myobj, obverts, region, rv3d, rgba):
         draw_triangle(screen_point_p1, screen_point_p2, screen_point_p3, rgba)
 
         # Area
-        area = get_triangle_area(p1, p2, p3)
+        area = get_triangle_area(p1, p2, p3, ms_scale)
         totarea += area
     else:
         return 0.0
@@ -714,10 +716,15 @@ def get_area_and_paint(myvertices, myobj, obverts, region, rv3d, rgba):
 # Get area using Heron formula
 #
 # ------------------------------------------
-def get_triangle_area(p1, p2, p3):
+def get_triangle_area(p1, p2, p3, scale=1.0):
     d1, dn = distance(p1, p2)
     d2, dn = distance(p2, p3)
     d3, dn = distance(p1, p3)
+
+    d1 *= scale
+    d2 *= scale
+    d3 *= scale
+
     per = (d1 + d2 + d3) / 2.0
     area = sqrt(per * (per - d1) * (per - d2) * (per - d3))
     return area

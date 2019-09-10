@@ -28,8 +28,46 @@ from bpy.props import (
         StringProperty,
         )
 
+from . edit_mesh import *
 
 # View Menu's #
+class VIEW3D_MT_View_Menu(Menu):
+    bl_label = "View"
+
+    def draw(self, context):
+        layout = self.layout
+        view = context.space_data
+
+        layout.menu("VIEW3D_MT_view_viewpoint")
+        layout.menu("VIEW3D_MT_view_align")
+        layout.menu("VIEW3D_MT_view_navigation")
+        layout.menu("INFO_MT_area")
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.menu("VIEW3D_MT_view_regions", text="View Regions")
+        layout.menu("VIEW3D_MT_Shade")
+        layout.separator()
+
+        layout.operator("view3d.view_selected", text="Frame Selected").use_all_regions = False
+        if view.region_quadviews:
+            layout.operator("view3d.view_selected", text="Frame Selected (Quad View)").use_all_regions = True
+        layout.operator("view3d.view_all", text="Frame All").center = False
+        layout.separator()
+
+        layout.operator("view3d.view_persportho", text="Perspective/Orthographic")
+        layout.menu("VIEW3D_MT_view_local")
+        layout.separator()
+
+        layout.operator("render.opengl", text="Viewport Render Image", icon='RENDER_STILL')
+        layout.operator("render.opengl", text="Viewport Render Animation", icon='RENDER_ANIMATION').animation = True
+        layout.separator()
+
+        layout.prop(view, "show_region_toolbar")
+        layout.prop(view, "show_region_ui")
+        layout.prop(view, "show_region_tool_header")
+        layout.prop(view, "show_region_hud")
+
+
+
 # Display Wire (Thanks to marvin.k.breuer) #
 class VIEW3D_OT_Display_Wire_All(Operator):
     bl_label = "Wire on All Objects"
@@ -81,9 +119,6 @@ class VIEW3D_MT_Shade(Menu):
         layout.separator()
         layout.operator("view3d.display_wire_all", text="Wire all", icon='SHADING_WIRE')
 
-        layout.separator()
-        layout.prop(context.space_data.fx_settings, "use_ssao",
-                    text="Ambient Occlusion", icon="GROUP")
 #        layout.prop(context.space_data, "use_matcap", icon="MATCAP_01")
 
 #        if context.space_data.use_matcap:
@@ -100,6 +135,7 @@ def menu_func(self, context):
 classes = (
     VIEW3D_MT_Shade,
     VIEW3D_OT_Display_Wire_All,
+    VIEW3D_MT_View_Menu
 )
 
 
@@ -108,14 +144,12 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.VIEW3D_MT_view.append(menu_func)
 
 # Unregister Classes & Hotkeys #
 def unregister():
 
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
-    bpy.types.VIEW3D_MT_view.remove(menu_func)
 
 if __name__ == "__main__":
     register()

@@ -412,11 +412,15 @@ static void graph_id_tag_update_single_flag(Main *bmain,
 
 string stringify_append_bit(const string &str, IDRecalcFlag tag)
 {
+  const char *tag_name = DEG_update_tag_as_string(tag);
+  if (tag_name == NULL) {
+    return str;
+  }
   string result = str;
   if (!result.empty()) {
     result += ", ";
   }
-  result += DEG_update_tag_as_string(tag);
+  result += tag_name;
   return result;
 }
 
@@ -717,8 +721,7 @@ const char *DEG_update_tag_as_string(IDRecalcFlag flag)
     case ID_RECALC_ALL:
       return "ALL";
   }
-  BLI_assert(!"Unhandled update flag, should never happen!");
-  return "UNKNOWN";
+  return NULL;
 }
 
 /* Data-Based Tagging  */
@@ -774,14 +777,6 @@ void DEG_id_type_tag(Main *bmain, short id_type)
       }
     }
   }
-}
-
-void DEG_graph_flush_update(Main *bmain, Depsgraph *depsgraph)
-{
-  if (depsgraph == NULL) {
-    return;
-  }
-  DEG::deg_graph_flush_updates(bmain, (DEG::Depsgraph *)depsgraph);
 }
 
 /* Update dependency graph when visible scenes/layers changes. */

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -8688,10 +8688,6 @@ msgid "Limited Dissolve"
 msgstr "ﻪﻠﺻﺎﻓ ﻥﺩﺮﮐ ﺩﻭﺪﺤﻣ"
 
 
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "ﺖﯿﮑﻟﺎﻣ ﻉﻮﻧ ﺎﺑ ﻪﺑﺎﺸﻣ ﯼﺎﻫ‌ﺢﻄﺳ ﺎﯾ ﻭ ﺎﻫ‌ﻪﺒﻟ ٬ﺱﻮﺋﺭ ﺏﺎﺨﺘﻧﺍ"
-
-
 msgid "Duplicate mesh and move"
 msgstr "ﻪﻨﺤﺻ ﻪﺑ ﺮﮕﻧﺎﺸﻧ ﺮﯿﺜﮑﺗ..."
 
@@ -14766,11 +14762,6 @@ msgid "Make"
 msgstr "ﺖﺧﺎﺳ"
 
 
-msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "ﻪﯾﻻ﻿ ﻪﺑ ﻝﺎﻘﺘﻧﺍ..."
-
-
 msgid "Creases"
 msgstr "ﺎﻫ ﻦﯿﭼ"
 
@@ -15210,6 +15201,11 @@ msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﺎﻤﻧ ﻥﺎﮑﻣ"
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "ﻢﯾﺮﻓ ﻥﺎﯾﺎﭘ"
+
+
+msgctxt "Operator"
 msgid "Replace Keyframes"
 msgstr "ﯼﺪﯿﻠﮐ ﻢﯾﺮﻓ ﻑﺬﺣ..."
 
@@ -15277,11 +15273,6 @@ msgstr "ﺽﺮﻓ ﺶﯿﭘ ﺮﯾﺩﺎﻘﻣ ﻪﺑ ﻪﻤﻫ ﺩﺪﺠﻣ ﻢ
 msgctxt "Operator"
 msgid "Reset Single to Default Value"
 msgstr "ﺽﺮﻓ ﺶﯿﭘ ﺭﺍﺪﻘﻣ ﻪﺑ ﯽﮑﺗ ﺩﺪﺠﻣ ﻢﯿﻈﻨﺗ"
-
-
-msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "ﻢﯾﺮﻓ ﻥﺎﯾﺎﭘ"
 
 
 msgctxt "Operator"
@@ -15357,22 +15348,6 @@ msgstr "ﻦﮐ ﺩﺎﺠﯾﺍ ﯽﻌﻗﺍﻭ"
 
 msgid "Pos"
 msgstr "ﺖﺳﮊ"
-
-
-msgid "Min X "
-msgstr "X ﻪﻨﯿﻤﮐ"
-
-
-msgid "Min Y "
-msgstr "Y ﻪﻨﯿﻤﮐ"
-
-
-msgid "Max X "
-msgstr "X ﻪﻨﯿﺸﯿﺑ"
-
-
-msgid "Max Y "
-msgstr "Y ﻪﻨﯿﺸﯿﺑ"
 
 
 msgid "Reset View"

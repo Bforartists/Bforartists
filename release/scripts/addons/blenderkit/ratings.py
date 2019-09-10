@@ -21,8 +21,9 @@ if "bpy" in locals():
 
     paths = reload(paths)
     utils = reload(utils)
+    rerequests = reload(rerequests)
 else:
-    from blenderkit import paths, utils
+    from blenderkit import paths, utils, rerequests
 
 import bpy
 import requests, threading
@@ -67,14 +68,14 @@ def uplaod_rating_thread(url, ratings, headers):
             }
 
             try:
-                r = requests.put(rating_url, data=data, verify=True, headers=headers)
+                r = rerequests.put(rating_url, data=data, verify=True, headers=headers)
 
             except requests.exceptions.RequestException as e:
                 print('ratings upload failed: %s' % str(e))
 
 
 def uplaod_review_thread(url, reviews, headers):
-    r = requests.put(url, data=reviews, verify=True, headers=headers)
+    r = rerequests.put(url, data=reviews, verify=True, headers=headers)
 
     # except requests.exceptions.RequestException as e:
     #     print('reviews upload failed: %s' % str(e))
