@@ -235,7 +235,7 @@ static bNode *ntree_shader_relink_output_from_group(bNodeTree *ntree,
 
   /* Create output sockets to plug output connection to. */
   i = 0;
-  for (bNodeSocket *sock = sh_output_node->inputs.first; sock; sock = sock->next, ++i) {
+  for (bNodeSocket *sock = sh_output_node->inputs.first; sock; sock = sock->next, i++) {
     group_surface_sockets[i] = ntreeAddSocketInterface(
         group_ntree, SOCK_OUT, sock->typeinfo->idname, sock->name);
   }
@@ -264,7 +264,7 @@ static bNode *ntree_shader_relink_output_from_group(bNodeTree *ntree,
   new_output_node->custom1 = target;
 
   i = 0;
-  for (bNodeSocket *sock = sh_output_node->inputs.first; sock; sock = sock->next, ++i) {
+  for (bNodeSocket *sock = sh_output_node->inputs.first; sock; sock = sock->next, i++) {
     if (sock->link != NULL) {
       /* Link the shader output node incoming link to the group output sockets */
       bNodeSocket *group_output_node_surface_input_sock = nodeFindSocket(
@@ -713,19 +713,22 @@ static bool ntree_branch_count_and_tag_nodes(bNode *fromnode,
   return true;
 }
 
-static void ntree_shader_copy_branch_displacement(bNodeTree *ntree,
-                                                  bNode *displacement_node,
-                                                  bNodeSocket *displacement_socket,
-                                                  bNodeLink *displacement_link)
+/* Create a copy of a branch starting from a given node.
+ * callback is executed once for every copied node.
+ * Returns input node copy. */
+static bNode *ntree_shader_copy_branch(bNodeTree *ntree,
+                                       bNode *start_node,
+                                       void (*callback)(bNode *node, int user_data),
+                                       int user_data)
 {
   /* Init tmp flag. */
   LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
     node->tmp_flag = -1;
   }
   /* Count and tag all nodes inside the displacement branch of the tree. */
-  displacement_node->tmp_flag = 0;
+  start_node->tmp_flag = 0;
   int node_count = 1;
-  nodeChainIter(ntree, displacement_node, ntree_branch_count_and_tag_nodes, &node_count, true);
+  nodeChainIter(ntree, start_node, ntree_branch_count_and_tag_nodes, &node_count, true);
   /* Make a full copy of the branch */
   bNode **nodes_copy = MEM_mallocN(sizeof(bNode *) * node_count, __func__);
   LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
@@ -755,15 +758,30 @@ static void ntree_shader_copy_branch_displacement(bNodeTree *ntree,
       nodeAddLink(ntree, fromnode, fromsock, tonode, tosock);
     }
   }
+  /* Per node callback. */
+  if (callback) {
+    for (int i = 0; i < node_count; i++) {
+      callback(nodes_copy[i], user_data);
+    }
+  }
+  bNode *start_node_copy = nodes_copy[start_node->tmp_flag];
+  MEM_freeN(nodes_copy);
+  return start_node_copy;
+}
+
+static void ntree_shader_copy_branch_displacement(bNodeTree *ntree,
+                                                  bNode *displacement_node,
+                                                  bNodeSocket *displacement_socket,
+                                                  bNodeLink *displacement_link)
+{
   /* Replace displacement socket/node/link. */
   bNode *tonode = displacement_link->tonode;
   bNodeSocket *tosock = displacement_link->tosock;
-  displacement_node = nodes_copy[displacement_node->tmp_flag];
+  displacement_node = ntree_shader_copy_branch(ntree, displacement_node, NULL, 0);
   displacement_socket = ntree_shader_node_find_output(displacement_node,
                                                       displacement_socket->identifier);
   nodeRemLink(ntree, displacement_link);
   nodeAddLink(ntree, displacement_node, displacement_socket, tonode, tosock);
-  MEM_freeN(nodes_copy);
 
   ntreeUpdateTree(G.main, ntree);
 }
@@ -802,10 +820,12 @@ static void ntree_shader_relink_displacement(bNodeTree *ntree, bNode *output_nod
   bNode *dot_node = nodeAddStaticNode(NULL, ntree, SH_NODE_VECTOR_MATH);
   bNode *geo_node = nodeAddStaticNode(NULL, ntree, SH_NODE_NEW_GEOMETRY);
   bNodeSocket *normal_socket = ntree_shader_node_find_output(geo_node, "Normal");
-  dot_node->custom1 = 3; /* dot product */
+  bNodeSocket *dot_input1 = dot_node->inputs.first;
+  bNodeSocket *dot_input2 = dot_input1->next;
+  dot_node->custom1 = NODE_VECTOR_MATH_DOT_PRODUCT;
 
-  nodeAddLink(ntree, displacement_node, displacement_socket, dot_node, dot_node->inputs.first);
-  nodeAddLink(ntree, geo_node, normal_socket, dot_node, dot_node->inputs.last);
+  nodeAddLink(ntree, displacement_node, displacement_socket, dot_node, dot_input1);
+  nodeAddLink(ntree, geo_node, normal_socket, dot_node, dot_input2);
   displacement_node = dot_node;
   displacement_socket = ntree_shader_node_find_output(dot_node, "Value");
 
@@ -834,6 +854,47 @@ static void ntree_shader_relink_displacement(bNodeTree *ntree, bNode *output_nod
       ntree, bump_node, bump_output_socket, displacement_node, displacement_socket);
   /* We modified the tree, it needs to be updated now. */
   ntreeUpdateTree(G.main, ntree);
+}
+
+static void node_tag_branch_as_derivative(bNode *node, int dx)
+{
+  if (dx) {
+    node->branch_tag = 1;
+  }
+  else {
+    node->branch_tag = 2;
+  }
+}
+
+static bool ntree_shader_bump_branches(bNode *UNUSED(fromnode),
+                                       bNode *tonode,
+                                       void *userdata,
+                                       const bool UNUSED(reversed))
+{
+  bNodeTree *ntree = (bNodeTree *)userdata;
+
+  if (tonode->type == SH_NODE_BUMP) {
+    bNodeSocket *height_dx_sock, *height_dy_sock, *bump_socket, *bump_dx_socket, *bump_dy_socket;
+    bNode *bump = tonode;
+    bump_socket = ntree_shader_node_find_input(bump, "Height");
+    bump_dx_socket = ntree_shader_node_find_input(bump, "Height_dx");
+    bump_dy_socket = ntree_shader_node_find_input(bump, "Height_dy");
+    if (bump_dx_socket->link) {
+      /* Avoid reconnecting the same bump twice. */
+    }
+    else if (bump_socket && bump_socket->link) {
+      bNodeLink *link = bump_socket->link;
+      bNode *height = link->fromnode;
+      bNode *height_dx = ntree_shader_copy_branch(ntree, height, node_tag_branch_as_derivative, 1);
+      bNode *height_dy = ntree_shader_copy_branch(ntree, height, node_tag_branch_as_derivative, 0);
+      height_dx_sock = ntree_shader_node_find_output(height_dx, link->fromsock->identifier);
+      height_dy_sock = ntree_shader_node_find_output(height_dy, link->fromsock->identifier);
+      nodeAddLink(ntree, height_dx, height_dx_sock, bump, bump_dx_socket);
+      nodeAddLink(ntree, height_dy, height_dy_sock, bump, bump_dy_socket);
+      /* We could end iter here, but other bump node could be plugged into other input sockets. */
+    }
+  }
+  return true;
 }
 
 static bool ntree_tag_bsdf_cb(bNode *fromnode,
@@ -922,6 +983,10 @@ void ntreeGPUMaterialNodes(bNodeTree *localtree,
    * displacement/bump mapping.
    */
   ntree_shader_relink_displacement(localtree, output);
+
+  /* Duplicate bump height branches for manual derivatives.
+   */
+  nodeChainIter(localtree, output, ntree_shader_bump_branches, localtree, true);
 
   /* TODO(fclem): consider moving this to the gpu shader tree evaluation. */
   nTreeTags tags = {

@@ -745,7 +745,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                             string_strip_hyphen, safety, col, os, preview_dir, unpacked_images):
     material_finish = materialNames[mater.name]
     if mater.pov.use_transparency:
-        trans = 1.0 - mater.alpha
+        trans = 1.0 - mater.pov.alpha
     else:
         trans = 0.0
     if ((mater.specular_color.s == 0.0) or (mater.pov.diffuse_shader == 'MINNAERT')):
@@ -754,9 +754,9 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
     else:
         colored_specular_found = True
 
-    if mater.pov.use_transparency and mater.transparency_method == 'RAYTRACE':
-        povFilter = mater.raytrace_transparency.filter * (1.0 - mater.alpha)
-        trans = (1.0 - mater.alpha) - povFilter
+    if mater.pov.use_transparency and mater.pov.transparency_method == 'RAYTRACE':
+        povFilter = mater.pov_raytrace_transparency.filter * (1.0 - mater.pov.alpha)
+        trans = (1.0 - mater.pov.alpha) - povFilter
     else:
         povFilter = 0.0
 

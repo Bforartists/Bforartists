@@ -31,9 +31,10 @@ if "bpy" in locals():
     ui = reload(ui)
     overrides = reload(overrides)
     colors = reload(colors)
+    rerequests = reload(rerequests)
 else:
     from blenderkit import asset_inspector, paths, utils, bg_blender, autothumb, version_checker, search, ui_panels, ui, \
-        overrides, colors
+        overrides, colors, rerequests
 
 import tempfile, os, subprocess, json, re
 
@@ -473,7 +474,7 @@ def verification_status_change(self, context, asset_id, state):
     url = paths.get_api_url() + 'assets/' + str(asset_id) + '/'
     headers = utils.get_headers(user_preferences.api_key)
     try:
-        r = requests.patch(url, json=upload_data, headers=headers, verify=True)  # files = files,
+        r = rerequests.patch(url, json=upload_data, headers=headers, verify=True)  # files = files,
         #print('changed status ')
         #print(r.text)
     except requests.exceptions.RequestException as e:
@@ -609,7 +610,7 @@ def start_upload(self, context, asset_type, reupload, upload_set):
     global reports
     if props.asset_base_id == '':
         try:
-            r = requests.post(url, json=json_metadata, headers=headers, verify=True)  # files = files,
+            r = rerequests.post(url, json=json_metadata, headers=headers, verify=True, immediate = True)  # files = files,
             ui.add_report('uploaded metadata')
             utils.p(r.text)
         except requests.exceptions.RequestException as e:
@@ -623,7 +624,7 @@ def start_upload(self, context, asset_type, reupload, upload_set):
         try:
             if upload_set != ['METADATA']:
                 json_metadata["verificationStatus"] = "uploading"
-            r = requests.put(url, json=json_metadata, headers=headers, verify=True)  # files = files,
+            r = rerequests.put(url, json=json_metadata, headers=headers, verify=True , immediate = True)  # files = files,
             ui.add_report('uploaded metadata')
             # parse the request
             # print('uploaded metadata')

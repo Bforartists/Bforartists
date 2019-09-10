@@ -58,6 +58,10 @@
 #  include "WM_types.h"
 #endif
 
+/* -------------------------------------------------------------------- */
+/** \name Local Enums/Defines
+ * \{ */
+
 /* icons are 80% of height of button (16 pixels inside 20 height) */
 #define ICON_SIZE_FROM_BUTRECT(rect) (0.8f * BLI_rcti_size_y(rect))
 
@@ -126,7 +130,66 @@ enum {
 #define UI_BUT_UPDATE_DELAY ((void)0)
 #define UI_BUT_UNDO ((void)0)
 
-/* ************** widget base functions ************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Internal Color Utilities
+ * \{ */
+
+static void color_blend_v3_v3(uchar cp[3], const uchar cpstate[3], const float fac)
+{
+  if (fac != 0.0f) {
+    cp[0] = (int)((1.0f - fac) * cp[0] + fac * cpstate[0]);
+    cp[1] = (int)((1.0f - fac) * cp[1] + fac * cpstate[1]);
+    cp[2] = (int)((1.0f - fac) * cp[2] + fac * cpstate[2]);
+  }
+}
+
+static void color_blend_v4_v4v4(uchar r_col[4],
+                                const uchar col1[4],
+                                const uchar col2[4],
+                                const float fac)
+{
+  const int faci = unit_float_to_uchar_clamp(fac);
+  const int facm = 255 - faci;
+
+  r_col[0] = (faci * col1[0] + facm * col2[0]) / 256;
+  r_col[1] = (faci * col1[1] + facm * col2[1]) / 256;
+  r_col[2] = (faci * col1[2] + facm * col2[2]) / 256;
+  r_col[3] = (faci * col1[3] + facm * col2[3]) / 256;
+}
+
+static void color_add_v3_i(uchar cp[3], int tint)
+{
+  cp[0] = clamp_i(cp[0] + tint, 0, 255);
+  cp[1] = clamp_i(cp[1] + tint, 0, 255);
+  cp[2] = clamp_i(cp[2] + tint, 0, 255);
+}
+
+static void color_ensure_contrast_v3(uchar cp[3], const uchar cp_other[3], int contrast)
+{
+  BLI_assert(contrast > 0);
+  const int item_value = rgb_to_grayscale_byte(cp);
+  const int inner_value = rgb_to_grayscale_byte(cp_other);
+  const int delta = item_value - inner_value;
+  if (delta >= 0) {
+    if (contrast > delta) {
+      color_add_v3_i(cp, contrast - delta);
+    }
+  }
+  else {
+    if (contrast > -delta) {
+      color_add_v3_i(cp, -contrast - delta);
+    }
+  }
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Widget Base Type
+ * \{ */
+
 /**
  * - in: roundbox codes for corner types and radius
  * - return: array of `[size][2][x, y]` points, the edges of the roundbox, + UV coords
@@ -193,7 +256,11 @@ typedef struct uiWidgetType {
 
 } uiWidgetType;
 
-/* *********************** draw data ************************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Shape Preset Data
+ * \{ */
 
 static const float cornervec[WIDGET_CURVE_RESOLU][2] = {
     {0.0, 0.0},
@@ -219,10 +286,6 @@ const float ui_pixel_jitter[UI_PIXEL_AA_JITTER][2] = {
 };
 #define WIDGET_AA_JITTER UI_PIXEL_AA_JITTER
 #define jit ui_pixel_jitter
-
-/* -------------------------------------------------------------------- */
-/** \name Shape Preset Data
- * \{ */
 
 static const float g_shape_preset_number_arrow_vert[3][2] = {
     {-0.352077, 0.532607},
@@ -307,12 +370,14 @@ static const uint g_shape_preset_hold_action_face[2][3] = {{2, 0, 1}, {3, 5, 4}}
 
 /** \} */
 
-/* **************** Batch creations ****************** */
-/**
+/* -------------------------------------------------------------------- */
+/** \name #GPUBatch Creation
+ *
  * In order to speed up UI drawing we create some batches that are then
  * modified by specialized shaders to draw certain elements really fast.
  * TODO: find a better place. Maybe it's own file?
- */
+ *
+ * \{ */
 
 /* offset in triavec[] in shader per type */
 static const int tria_ofs[ROUNDBOX_TRIA_MAX] = {
@@ -402,7 +467,7 @@ static void roundbox_batch_add_tria(GPUVertBufRaw *vflag_step, int tria, uint32_
   const int tria_num =
       ELEM(tria, ROUNDBOX_TRIA_CHECK, ROUNDBOX_TRIA_HOLD_ACTION_ARROW, ROUNDBOX_TRIA_MENU) ? 1 : 2;
   /* for each tria */
-  for (int t = 0; t < tria_num; ++t) {
+  for (int t = 0; t < tria_num; t++) {
     for (int j = 0; j < WIDGET_AA_JITTER; j++) {
       /* restart */
       set_roundbox_vertex_data(vflag_step, last_data);
@@ -596,7 +661,11 @@ GPUBatch *ui_batch_roundbox_shadow_get(void)
 #undef EMBOSS
 #undef NO_AA
 
-/* ************************************************* */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Draw Triangle Arrow
+ * \{ */
 
 void UI_draw_anti_tria(
     float x1, float y1, float x2, float y2, float x3, float y3, const float color[4])
@@ -695,6 +764,12 @@ static void widget_init(uiWidgetBase *wtb)
   wtb->uniform_params.shade_dir = 1.0f;
   wtb->uniform_params.alpha_discard = 1.0f;
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Draw Round Box
+ * \{ */
 
 /* helper call, makes shadow rect, with 'sun' above menu, so only shadow to left/right/bottom */
 /* return tot */
@@ -954,6 +1029,8 @@ static void round_box_edges(uiWidgetBase *wt, int roundboxalign, const rcti *rec
   round_box__edges(wt, roundboxalign, rect, rad, rad - U.pixelsize);
 }
 
+/** \} */
+
 /* -------------------------------------------------------------------- */
 /** \name Shape Preset Mini API
  * \{ */
@@ -1075,7 +1152,7 @@ static void widget_draw_vertex_buffer(uint pos,
                                       uint totvert)
 {
   immBegin(mode, totvert);
-  for (int i = 0; i < totvert; ++i) {
+  for (int i = 0; i < totvert; i++) {
     if (quads_col) {
       immAttr4ubv(col, quads_col[i]);
     }
@@ -1133,6 +1210,10 @@ static void shape_preset_trias_from_rect_checkmark(uiWidgetTrias *tria, const rc
 
 /** \} */
 
+/* -------------------------------------------------------------------- */
+/** \name Widget Base Drawing
+ * \{ */
+
 /* prepares shade colors */
 static void shadecolors4(
     uchar coltop[4], uchar coldown[4], const uchar *color, short shadetop, short shadedown)
@@ -1146,20 +1227,6 @@ static void shadecolors4(
   coldown[1] = CLAMPIS(color[1] + shadedown, 0, 255);
   coldown[2] = CLAMPIS(color[2] + shadedown, 0, 255);
   coldown[3] = color[3];
-}
-
-static void round_box_shade_col4_r(uchar r_col[4],
-                                   const uchar col1[4],
-                                   const uchar col2[4],
-                                   const float fac)
-{
-  const int faci = unit_float_to_uchar_clamp(fac);
-  const int facm = 255 - faci;
-
-  r_col[0] = (faci * col1[0] + facm * col2[0]) / 256;
-  r_col[1] = (faci * col1[1] + facm * col2[1]) / 256;
-  r_col[2] = (faci * col1[2] + facm * col2[2]) / 256;
-  r_col[3] = (faci * col1[3] + facm * col2[3]) / 256;
 }
 
 static void widget_verts_to_triangle_strip(uiWidgetBase *wtb,
@@ -1224,6 +1291,12 @@ static void widgetbase_set_uniform_colors_ubv(uiWidgetBase *wtb,
       wtb->uniform_params.color_emboss, emboss[0], emboss[1], emboss[2], emboss[3]);
   rgba_float_args_set_ch(wtb->uniform_params.color_tria, tria[0], tria[1], tria[2], tria[3]);
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Widget Base Drawing #GPUBatch Cache
+ * \{ */
 
 /* keep in sync with shader */
 #define MAX_WIDGET_BASE_BATCH 6
@@ -1400,7 +1473,11 @@ static void widgetbase_draw(uiWidgetBase *wtb, const uiWidgetColors *wcol)
   widgetbase_draw_ex(wtb, wcol, false);
 }
 
-/* *********************** text/icon ************************************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Text/Icon Drawing
+ * \{ */
 
 #define UI_TEXT_CLIP_MARGIN (0.25f * U.widget_unit / but->block->aspect)
 
@@ -2471,18 +2548,13 @@ static void widget_draw_text_icon(const uiFontStyle *fstyle,
 
 #undef UI_TEXT_CLIP_MARGIN
 
-/* *********************** widget types ************************************* */
+/** \} */
 
-/* ************ button callbacks, state ***************** */
-
-static void widget_state_blend(uchar cp[3], const uchar cpstate[3], const float fac)
-{
-  if (fac != 0.0f) {
-    cp[0] = (int)((1.0f - fac) * cp[0] + fac * cpstate[0]);
-    cp[1] = (int)((1.0f - fac) * cp[1] + fac * cpstate[1]);
-    cp[2] = (int)((1.0f - fac) * cp[2] + fac * cpstate[2]);
-  }
-}
+/* -------------------------------------------------------------------- */
+/** \name Widget State Management
+ *
+ * Adjust widget display based on animated, driven, overridden ... etc.
+ * \{ */
 
 /* put all widget colors on half alpha, use local storage */
 static void ui_widget_color_disabled(uiWidgetType *wt)
@@ -2499,31 +2571,6 @@ static void ui_widget_color_disabled(uiWidgetType *wt)
   wcol_theme_s.text_sel[3] *= 0.5;
 
   wt->wcol_theme = &wcol_theme_s;
-}
-
-static void rgb_tint(uchar cp[3], int tint)
-{
-  cp[0] = clamp_i(cp[0] + tint, 0, 255);
-  cp[1] = clamp_i(cp[1] + tint, 0, 255);
-  cp[2] = clamp_i(cp[2] + tint, 0, 255);
-}
-
-static void rgb_ensure_contrast(uchar cp[3], const uchar cp_other[3], int contrast)
-{
-  BLI_assert(contrast > 0);
-  const int item_value = rgb_to_grayscale_byte(cp);
-  const int inner_value = rgb_to_grayscale_byte(cp_other);
-  const int delta = item_value - inner_value;
-  if (delta >= 0) {
-    if (contrast > delta) {
-      rgb_tint(cp, contrast - delta);
-    }
-  }
-  else {
-    if (contrast > -delta) {
-      rgb_tint(cp, -contrast - delta);
-    }
-  }
 }
 
 static void widget_active_color(uchar cp[3])
@@ -2577,7 +2624,7 @@ static void widget_state(uiWidgetType *wt, int state, int drawflag)
   if (state & UI_SELECT) {
     copy_v4_v4_uchar(wt->wcol.inner, wt->wcol.inner_sel);
     if (color_blend != NULL) {
-      widget_state_blend(wt->wcol.inner, color_blend, wcol_state->blend);
+      color_blend_v3_v3(wt->wcol.inner, color_blend, wcol_state->blend);
     }
 
     copy_v3_v3_uchar(wt->wcol.text, wt->wcol.text_sel);
@@ -2587,8 +2634,12 @@ static void widget_state(uiWidgetType *wt, int state, int drawflag)
     }
   }
   else {
+    if (state & UI_BUT_ACTIVE_DEFAULT) {
+      copy_v4_v4_uchar(wt->wcol.inner, wt->wcol.inner_sel);
+      copy_v4_v4_uchar(wt->wcol.text, wt->wcol.text_sel);
+    }
     if (color_blend != NULL) {
-      widget_state_blend(wt->wcol.inner, color_blend, wcol_state->blend);
+      color_blend_v3_v3(wt->wcol.inner, color_blend, wcol_state->blend);
     }
 
     if (state & UI_ACTIVE) { /* mouse over? */
@@ -2599,10 +2650,10 @@ static void widget_state(uiWidgetType *wt, int state, int drawflag)
   if (state & UI_BUT_REDALERT) {
     uchar red[4] = {255, 0, 0};
     if (wt->draw) {
-      widget_state_blend(wt->wcol.inner, red, 0.4f);
+      color_blend_v3_v3(wt->wcol.inner, red, 0.4f);
     }
     else {
-      widget_state_blend(wt->wcol.text, red, 0.4f);
+      color_blend_v3_v3(wt->wcol.text, red, 0.4f);
     }
   }
 
@@ -2610,14 +2661,20 @@ static void widget_state(uiWidgetType *wt, int state, int drawflag)
     /* the button isn't SELECT but we're editing this so draw with sel color */
     copy_v4_v4_uchar(wt->wcol.inner, wt->wcol.inner_sel);
     SWAP(short, wt->wcol.shadetop, wt->wcol.shadedown);
-    widget_state_blend(wt->wcol.text, wt->wcol.text_sel, 0.85f);
+    color_blend_v3_v3(wt->wcol.text, wt->wcol.text_sel, 0.85f);
   }
 
   if (state & UI_BUT_NODE_ACTIVE) {
     uchar blue[4] = {86, 128, 194};
-    widget_state_blend(wt->wcol.inner, blue, 0.3f);
+    color_blend_v3_v3(wt->wcol.inner, blue, 0.3f);
   }
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Widget Types
+ * \{ */
 
 /* sliders use special hack which sets 'item' as inner when drawing filling */
 static void widget_state_numslider(uiWidgetType *wt, int state, int drawflag)
@@ -2633,8 +2690,8 @@ static void widget_state_numslider(uiWidgetType *wt, int state, int drawflag)
      * De-saturate so the color of the slider doesn't conflict with the blend color,
      * which can make the color hard to see when the slider is set to full (see T66102). */
     wt->wcol.item[0] = wt->wcol.item[1] = wt->wcol.item[2] = rgb_to_grayscale_byte(wt->wcol.item);
-    widget_state_blend(wt->wcol.item, color_blend, wcol_state->blend);
-    rgb_ensure_contrast(wt->wcol.item, wt->wcol.inner, 30);
+    color_blend_v3_v3(wt->wcol.item, color_blend, wcol_state->blend);
+    color_ensure_contrast_v3(wt->wcol.item, wt->wcol.inner, 30);
   }
 
   if (state & UI_SELECT) {
@@ -2677,7 +2734,7 @@ static void widget_state_pie_menu_item(uiWidgetType *wt, int state, int UNUSED(d
 
   /* active and disabled (not so common) */
   if ((state & UI_BUT_DISABLED) && (state & UI_ACTIVE)) {
-    widget_state_blend(wt->wcol.text, wt->wcol.text_sel, 0.5f);
+    color_blend_v3_v3(wt->wcol.text, wt->wcol.text_sel, 0.5f);
     /* draw the backdrop at low alpha, helps navigating with keys
      * when disabled items are active */
     copy_v4_v4_uchar(wt->wcol.inner, wt->wcol.item);
@@ -2690,7 +2747,7 @@ static void widget_state_pie_menu_item(uiWidgetType *wt, int state, int UNUSED(d
     }
     else if (state & (UI_BUT_DISABLED | UI_BUT_INACTIVE)) {
       /* regular disabled */
-      widget_state_blend(wt->wcol.text, wt->wcol.inner, 0.5f);
+      color_blend_v3_v3(wt->wcol.text, wt->wcol.inner, 0.5f);
     }
 
     if (state & UI_SELECT) {
@@ -2712,7 +2769,7 @@ static void widget_state_menu_item(uiWidgetType *wt, int state, int UNUSED(drawf
     /* draw the backdrop at low alpha, helps navigating with keys
      * when disabled items are active */
     wt->wcol.text[3] = 128;
-    widget_state_blend(wt->wcol.inner, wt->wcol.text, 0.5f);
+    color_blend_v3_v3(wt->wcol.inner, wt->wcol.text, 0.5f);
     wt->wcol.inner[3] = 64;
   }
   else {
@@ -2722,7 +2779,7 @@ static void widget_state_menu_item(uiWidgetType *wt, int state, int UNUSED(drawf
     }
     else if (state & (UI_BUT_DISABLED | UI_BUT_INACTIVE)) {
       /* regular disabled */
-      widget_state_blend(wt->wcol.text, wt->wcol.inner, 0.5f);
+      color_blend_v3_v3(wt->wcol.text, wt->wcol.inner, 0.5f);
     }
 
     if (state & UI_ACTIVE) {
@@ -2731,7 +2788,11 @@ static void widget_state_menu_item(uiWidgetType *wt, int state, int UNUSED(drawf
   }
 }
 
-/* ************ menu backdrop ************************* */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Draw Menu Backdrop
+ * \{ */
 
 /* outside of rect, rad to left/bottom/right */
 static void widget_softshadow(const rcti *rect, int roundboxalign, const float radin)
@@ -2982,7 +3043,11 @@ static void ui_draw_but_HSVCIRCLE(uiBut *but, const uiWidgetColors *wcol, const 
   ui_hsv_cursor(xpos, ypos);
 }
 
-/* ************ custom buttons, old stuff ************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Draw Custom Buttons
+ * \{ */
 
 /* draws in resolution of 48x4 colors */
 void ui_draw_gradient(const rcti *rect, const float hsv[3], const int type, const float alpha)
@@ -3268,21 +3333,7 @@ static void ui_draw_but_HSV_v(uiBut *but, const rcti *rect)
   ui_hsv_cursor(x, y);
 }
 
-/* Generic round-box drawing. */
-static void ui_draw_roundbox(const rcti *rect, const float rad, const uiWidgetColors *wcol)
-{
-  uiWidgetBase wtb;
-  widget_init(&wtb);
-  round_box_edges(&wtb, UI_CNR_ALL, rect, rad);
-  widgetbase_draw(&wtb, wcol);
-
-  /* We are drawing on top of widget bases. Flush cache. */
-  GPU_blend(true);
-  UI_widgetbase_draw_cache_flush();
-  GPU_blend(false);
-}
-
-/* ************ separator, for menus etc ***************** */
+/** Separator for menus. */
 static void ui_draw_separator(const rcti *rect, const uiWidgetColors *wcol)
 {
   int y = rect->ymin + BLI_rcti_size_y(rect) / 2 - 1;
@@ -3310,7 +3361,12 @@ static void ui_draw_separator(const rcti *rect, const uiWidgetColors *wcol)
   immUnbindProgram();
 }
 
-/* ************ button callbacks, draw ***************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Button Draw Callbacks
+ * \{ */
+
 static void widget_numbut_draw(
     uiWidgetColors *wcol, rcti *rect, int state, int roundboxalign, bool emboss)
 {
@@ -4068,7 +4124,7 @@ static void widget_state_label(uiWidgetType *wt, int state, int drawflag)
 
   if (state & UI_BUT_REDALERT) {
     uchar red[4] = {255, 0, 0};
-    widget_state_blend(wt->wcol.text, red, 0.4f);
+    color_blend_v3_v3(wt->wcol.text, red, 0.4f);
   }
 }
 
@@ -4497,10 +4553,6 @@ void ui_draw_but(const bContext *C, ARegion *ar, uiStyle *style, uiBut *but, rct
   const uiFontStyle *fstyle = &style->widget;
   uiWidgetType *wt = NULL;
 
-#ifdef USE_UI_POPOVER_ONCE
-  const rcti rect_orig = *rect;
-#endif
-
   /* handle menus separately */
   if (but->dt == UI_EMBOSS_PULLDOWN) {
     switch (but->type) {
@@ -4786,6 +4838,14 @@ void ui_draw_but(const bContext *C, ARegion *ar, uiStyle *style, uiBut *but, rct
       ui_widget_color_disabled(wt);
     }
 
+#ifdef USE_UI_POPOVER_ONCE
+    if (but->block->flag & UI_BLOCK_POPOVER_ONCE) {
+      if ((state & UI_ACTIVE) && ui_but_is_popover_once_compat(but)) {
+        state |= UI_BUT_ACTIVE_DEFAULT;
+      }
+    }
+#endif
+
     wt->state(wt, state, drawflag);
     if (wt->custom) {
       wt->custom(but, &wt->wcol, rect, state, roundboxalign);
@@ -4798,42 +4858,10 @@ void ui_draw_but(const bContext *C, ARegion *ar, uiStyle *style, uiBut *but, rct
       GPU_blend(true);
     }
 
-    bool show_semi_highlight = false;
-
-#ifdef USE_UI_POPOVER_ONCE
-    if (but->block->flag & UI_BLOCK_POPOVER_ONCE) {
-      if ((state & UI_ACTIVE) && ui_but_is_popover_once_compat(but)) {
-        show_semi_highlight = true;
-      }
-    }
-#endif
-    if (but->flag & UI_BUT_ACTIVE_DEFAULT) {
-      show_semi_highlight = true;
-    }
-
-    if (show_semi_highlight) {
-      uiWidgetType wt_back = *wt;
-      uiWidgetType *wt_temp = widget_type(UI_WTYPE_MENU_ITEM);
-      wt_temp->state(wt_temp, state, drawflag);
-      copy_v4_v4_uchar(wt->wcol.inner, wt->wcol.inner_sel);
-      wt->wcol.inner[3] = 128;
-      wt->wcol.roundness = 0.5f;
-      ui_draw_roundbox(&rect_orig,
-                       0.25f * min_ff(BLI_rcti_size_x(&rect_orig), BLI_rcti_size_y(&rect_orig)),
-                       &wt_temp->wcol);
-      *wt = wt_back;
-    }
-
     wt->text(fstyle, &wt->wcol, but, rect);
     if (disabled) {
       GPU_blend(false);
     }
-
-    //      if (state & (UI_BUT_DISABLED | UI_BUT_INACTIVE)) {
-    //          if (but->dt != UI_EMBOSS_PULLDOWN) {
-    //              widget_disabled(&disablerect);
-    //          }
-    //      }
   }
 }
 
@@ -4990,14 +5018,14 @@ static void draw_disk_shaded(float start,
 
     if (shaded) {
       fac = (y1 + radius_ext) * radius_ext_scale;
-      round_box_shade_col4_r(r_col, col1, col2, fac);
+      color_blend_v4_v4v4(r_col, col1, col2, fac);
       immAttr4ubv(col, r_col);
     }
     immVertex2f(pos, c * radius_int, s * radius_int);
 
     if (shaded) {
       fac = (y2 + radius_ext) * radius_ext_scale;
-      round_box_shade_col4_r(r_col, col1, col2, fac);
+      color_blend_v4_v4v4(r_col, col1, col2, fac);
       immAttr4ubv(col, r_col);
     }
     immVertex2f(pos, c * radius_ext, s * radius_ext);

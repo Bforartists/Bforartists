@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -5447,6 +5447,30 @@ msgid "Copy the rotation of the target"
 msgstr "Копіювати оберт цілі"
 
 
+msgid "XYZ Euler"
+msgstr "XYZ Ейлер"
+
+
+msgid "XZY Euler"
+msgstr "XZY Ейлер"
+
+
+msgid "YXZ Euler"
+msgstr "YXZ Ейлер"
+
+
+msgid "YZX Euler"
+msgstr "YZX Ейлер"
+
+
+msgid "ZXY Euler"
+msgstr "ZXY Ейлер"
+
+
+msgid "ZYX Euler"
+msgstr "ZYX Ейлер"
+
+
 msgid "Invert the X rotation"
 msgstr "Інвертувати оберт X"
 
@@ -6645,6 +6669,10 @@ msgstr "Від найменшого Z"
 
 msgid "Bottom range of Z axis source motion"
 msgstr "Нижній діапазон руху вздовж осі Z для джерела"
+
+
+msgid "Quaternion"
+msgstr "Кватерніон"
 
 
 msgid "Map From"
@@ -7860,6 +7888,10 @@ msgstr "Світ"
 msgctxt "ID"
 msgid "Workspace"
 msgstr "Робпростір"
+
+
+msgid "Rotation Mode"
+msgstr "Режим Обертання"
 
 
 msgid "Transform Space"
@@ -10226,10 +10258,6 @@ msgstr "Сферичне силове поле на основі заряду ч
 
 msgid "Forcefield based on the Lennard-Jones potential"
 msgstr "Силове поле на основі потенціалу Леннарда-Джонса"
-
-
-msgid "Forcefield based on a texture"
-msgstr "Силове поле на основі текстури"
 
 
 msgid "Create a force along a curve object"
@@ -19791,10 +19819,6 @@ msgid "Rotation in Eulers"
 msgstr "Обертання за Ейлером"
 
 
-msgid "Rotation Mode"
-msgstr "Режим Обертання"
-
-
 msgid "Quaternion (WXYZ)"
 msgstr "Кватерніон (WXYZ)"
 
@@ -19803,48 +19827,24 @@ msgid "No Gimbal Lock"
 msgstr "Не блокувати обертання"
 
 
-msgid "XYZ Euler"
-msgstr "XYZ Ейлер"
-
-
 msgid "XYZ Rotation Order - prone to Gimbal Lock (default)"
 msgstr "Порядок обертів - XYZ - можливе блокування обертань (стандартно)"
-
-
-msgid "XZY Euler"
-msgstr "XZY Ейлер"
 
 
 msgid "XZY Rotation Order - prone to Gimbal Lock"
 msgstr "Порядок обертів - XZY - можливе блокування обертань"
 
 
-msgid "YXZ Euler"
-msgstr "YXZ Ейлер"
-
-
 msgid "YXZ Rotation Order - prone to Gimbal Lock"
 msgstr "Порядок обертів - YXZ - можливе блокування обертань"
-
-
-msgid "YZX Euler"
-msgstr "YZX Ейлер"
 
 
 msgid "YZX Rotation Order - prone to Gimbal Lock"
 msgstr "Порядок обертів - YZX - можливе блокування обертань"
 
 
-msgid "ZXY Euler"
-msgstr "ZXY Ейлер"
-
-
 msgid "ZXY Rotation Order - prone to Gimbal Lock"
 msgstr "Порядок обертів - ZXY - можливе блокування обертань"
-
-
-msgid "ZYX Euler"
-msgstr "ZYX Ейлер"
 
 
 msgid "ZYX Rotation Order - prone to Gimbal Lock"
@@ -26918,10 +26918,6 @@ msgid "Clean Up"
 msgstr "Вичищення"
 
 
-msgid "GPencil Draw Delete"
-msgstr "Видалити Рисування Нарисного Олівця"
-
-
 msgid "GP Vertex Groups"
 msgstr "Групи Вершин Нарисного Олівця"
 
@@ -27342,10 +27338,6 @@ msgstr "Генерувати Вагомості"
 
 msgid "Copy Layer to Object"
 msgstr "Копіювати Шар на Об'єкт"
-
-
-msgid "Edit Context Menu"
-msgstr "Контекстне Меню Редагування"
 
 
 msgid "Hooks"
@@ -29438,10 +29430,6 @@ msgstr "Зберегти трикутні грані після спрощенн
 
 msgid "All Boundaries"
 msgstr "Усі Рубежі"
-
-
-msgid "Dissolve all vertices inbetween face boundaries (planar only)"
-msgstr "Розчинити всі вершини між рубежами граней (для планарного)"
 
 
 msgid "Symmetry"
@@ -44935,10 +44923,6 @@ msgid "Starting frame for the animation"
 msgstr "Початковий кадр для анімації"
 
 
-msgid "Quaternion"
-msgstr "Кватерніон"
-
-
 msgid "Convert rotations to quaternions"
 msgstr "Конвертувати оберти на кватерніони"
 
@@ -45159,10 +45143,6 @@ msgstr "Вжити відносні шляхи файлів"
 
 msgid "Node shader to use"
 msgstr "Вузловий шейдер для використання"
-
-
-msgid "Diffuse Shader"
-msgstr "Шейдер Розсіяння"
 
 
 msgid "Shadeless"
@@ -46606,10 +46586,6 @@ msgid "Delimit dissolve operation"
 msgstr "Розмежувати операцію розчинення"
 
 
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "Розчинити всі вершини на межах сусідніх граней"
-
-
 msgctxt "Operator"
 msgid "Dissolve Selection"
 msgstr "Розчинити вибране"
@@ -47516,16 +47492,6 @@ msgid "Poke Offset"
 msgstr "Висота"
 
 
-msgctxt "Operator"
-msgid "Poly Build Dissolve at Cursor"
-msgstr "Побудова Полі Розчинення на Курсорі"
-
-
-msgctxt "Operator"
-msgid "Poly Build Face at Cursor"
-msgstr "Побудова Полі Грань на Курсорі"
-
-
 msgctxt "Curve"
 msgid "Proportional Falloff"
 msgstr "Пропорційний Спад"
@@ -47565,6 +47531,16 @@ msgstr "Пропорційне редагування"
 
 msgid "Projected (2D)"
 msgstr "Проєктовано (2D)"
+
+
+msgctxt "Operator"
+msgid "Poly Build Dissolve at Cursor"
+msgstr "Побудова Полі Розчинення на Курсорі"
+
+
+msgctxt "Operator"
+msgid "Poly Build Face at Cursor"
+msgstr "Побудова Полі Грань на Курсорі"
 
 
 msgctxt "Operator"
@@ -72324,14 +72300,6 @@ msgid "Sequence strip creating text"
 msgstr "Смужка послідовності, що створює текст"
 
 
-msgid "Align the text along the X axis"
-msgstr "Вирівняти текст за віссю X"
-
-
-msgid "Align the image along the Y axis"
-msgstr "Вирівняти текст за віссю Y"
-
-
 msgid "Text color"
 msgstr "Колір тексту"
 
@@ -76541,14 +76509,6 @@ msgstr "Підхоплювати кутків пікселів"
 
 msgid "Snap to pixel centers"
 msgstr "Підхоплювати до центрів пікселів"
-
-
-msgid "Display Edges"
-msgstr "Показ Ребер"
-
-
-msgid "Display edges in vertex select mode"
-msgstr "Показувати ребра у режимі вибору вершин"
 
 
 msgid "Display Faces"
@@ -83518,11 +83478,6 @@ msgstr "Курсор до сітки"
 
 
 msgctxt "Operator"
-msgid "Delete Frame"
-msgstr "Видалити кадр"
-
-
-msgctxt "Operator"
 msgid "Poly"
 msgstr "Полі"
 
@@ -85680,10 +85635,6 @@ msgid "Position X"
 msgstr "Позиція X"
 
 
-msgid "{:>14}:"
-msgstr "{:>14}:"
-
-
 msgid "Convert to Float"
 msgstr "Конвертувати у дійсночислове"
 
@@ -87346,13 +87297,8 @@ msgstr "Фіксовано"
 
 
 msgctxt "Operator"
-msgid "Join..."
-msgstr "Сполучення..."
-
-
-msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "Пересунути на шар"
+msgid "Arrange Strokes"
+msgstr "Розставити Штрихи"
 
 
 msgctxt "Operator"
@@ -87361,8 +87307,8 @@ msgstr "Закриття"
 
 
 msgctxt "Operator"
-msgid "Duplicate Active Frame"
-msgstr "Дублювати Активний Кадр"
+msgid "Toggle Caps"
+msgstr "Перемкнути Торці"
 
 
 msgctxt "Operator"
@@ -87472,16 +87418,6 @@ msgid "Display:"
 msgstr "Показувати:"
 
 
-msgctxt "Operator"
-msgid "Arrange Strokes"
-msgstr "Розставити Штрихи"
-
-
-msgctxt "Operator"
-msgid "Toggle Caps"
-msgstr "Перемкнути Торці"
-
-
 msgid "Frames:"
 msgstr "Кадри:"
 
@@ -87489,16 +87425,6 @@ msgstr "Кадри:"
 msgctxt "Operator"
 msgid "Insert Blank"
 msgstr "Вставити Порожнє"
-
-
-msgctxt "Operator"
-msgid "Duplicate Active"
-msgstr "Дублювати Активне"
-
-
-msgctxt "Operator"
-msgid "Delete All Active Layers"
-msgstr "Видалити Усі Активні Шари"
 
 
 msgid "Thickness Profile"
@@ -87947,11 +87873,6 @@ msgid "No layer to copy"
 msgstr "Нема шару для копіювання"
 
 
-msgctxt "Operator"
-msgid "Duplicate All Layers"
-msgstr "Дублювати Усі Шари"
-
-
 msgid "Toggle X-Ray"
 msgstr "Перемкнути Просвічення"
 
@@ -87989,18 +87910,8 @@ msgstr "Показувати Лінії Редагування лише у ба�
 
 
 msgctxt "Operator"
-msgid "Duplicate Active Frame All Layers"
-msgstr "Дублювати Активні Шари Активного Кадру"
-
-
-msgctxt "Operator"
-msgid "Duplicate for All Layers"
-msgstr "Дублювати для Усіх Шарів"
-
-
-msgctxt "Operator"
-msgid "Delete Active"
-msgstr "Видалити Активне"
+msgid "Duplicate All Layers"
+msgstr "Дублювати Усі Шари"
 
 
 msgid "Multiframe"
@@ -88162,11 +88073,6 @@ msgstr "Конвертувати у Криві Безьє"
 msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "Розмір прорису порожняка"
-
-
-msgctxt "Operator"
-msgid "Energy"
-msgstr "Енергія"
 
 
 msgctxt "Operator"
@@ -90322,6 +90228,16 @@ msgstr "Лише клавіатурні швидкі клавіші можуть
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "Змінити швидку клавішу"
+
+
+msgctxt "Operator"
+msgid "Assign Shortcut"
+msgstr "Призначити Скорочення"
+
+
+msgctxt "Operator"
 msgid "Open File Externally"
 msgstr "Відкрити файл зовні"
 
@@ -90442,18 +90358,8 @@ msgstr "Додати у Швидкі Фаворити"
 
 
 msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "Змінити швидку клавішу"
-
-
-msgctxt "Operator"
 msgid "Remove Shortcut"
 msgstr "Вилучити швидку клавішу"
-
-
-msgctxt "Operator"
-msgid "Assign Shortcut"
-msgstr "Призначити Скорочення"
 
 
 msgctxt "Operator"
@@ -90662,22 +90568,6 @@ msgstr "Полож."
 
 msgid "Use Clipping"
 msgstr "Вжити Відсік"
-
-
-msgid "Min X "
-msgstr "Мін X "
-
-
-msgid "Min Y "
-msgstr "Мін Y "
-
-
-msgid "Max X "
-msgstr "Макс X "
-
-
-msgid "Max Y "
-msgstr "Макс Y "
 
 
 msgid "Reset View"

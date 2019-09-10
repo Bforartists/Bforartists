@@ -385,7 +385,7 @@ def get_dimensions(obs):
 
 
 def requests_post_thread(url, json, headers):
-    r = requests.post(url, json=json, verify=True, headers=headers)
+    r = rerequests.post(url, json=json, verify=True, headers=headers)
 
 
 def get_headers(api_key):

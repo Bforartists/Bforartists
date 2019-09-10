@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: blend-it <https://developer.blender.org/T42765>\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -4367,6 +4367,30 @@ msgid "Copy the rotation of the target"
 msgstr "Copia la rotazione dell'obiettivo"
 
 
+msgid "XYZ Euler"
+msgstr "XYZ di Eulero"
+
+
+msgid "XZY Euler"
+msgstr "XZY di Eulero"
+
+
+msgid "YXZ Euler"
+msgstr "YXZ di Eulero"
+
+
+msgid "YZX Euler"
+msgstr "YZX di Eulero"
+
+
+msgid "ZXY Euler"
+msgstr "ZXY di Eulero"
+
+
+msgid "ZYX Euler"
+msgstr "ZYX di Eulero"
+
+
 msgid "Invert the X rotation"
 msgstr "Inverti la rotazione X"
 
@@ -5391,6 +5415,10 @@ msgid "Bottom range of Z axis source motion"
 msgstr "Valore più basso dell'intervallo origine del movimento sull'asse X"
 
 
+msgid "Quaternion"
+msgstr "Quaternione"
+
+
 msgid "Map From"
 msgstr "Mappa Da"
 
@@ -6276,6 +6304,10 @@ msgstr "Gestore Finestra"
 msgctxt "ID"
 msgid "World"
 msgstr "Mondo"
+
+
+msgid "Rotation Mode"
+msgstr "Modalità Rotazione"
 
 
 msgid "Transform Space"
@@ -8201,10 +8233,6 @@ msgstr "Un campo di forza sferico basato sulla carica delle particelle, ha influ
 
 msgid "Forcefield based on the Lennard-Jones potential"
 msgstr "Campo di forza basato sul potenziale Lennard-Jones"
-
-
-msgid "Forcefield based on a texture"
-msgstr "Campo di forza basato su una texture"
 
 
 msgid "Create a force along a curve object"
@@ -13854,10 +13882,6 @@ msgid "Rotation in Eulers"
 msgstr "Rotazione Euleriana"
 
 
-msgid "Rotation Mode"
-msgstr "Modalità Rotazione"
-
-
 msgid "Quaternion (WXYZ)"
 msgstr "Quaternione (WXYZ)"
 
@@ -13866,48 +13890,24 @@ msgid "No Gimbal Lock"
 msgstr "No Blocco Cardano"
 
 
-msgid "XYZ Euler"
-msgstr "XYZ di Eulero"
-
-
 msgid "XYZ Rotation Order - prone to Gimbal Lock (default)"
 msgstr "Ordine di Rotazione XYZ - soggetto a Blocco Cardano (predefinito)"
-
-
-msgid "XZY Euler"
-msgstr "XZY di Eulero"
 
 
 msgid "XZY Rotation Order - prone to Gimbal Lock"
 msgstr "Ordine di Rotazione XZY - soggetto a Blocco Cardano"
 
 
-msgid "YXZ Euler"
-msgstr "YXZ di Eulero"
-
-
 msgid "YXZ Rotation Order - prone to Gimbal Lock"
 msgstr "Ordine di Rotazione YXZ - soggetto a Blocco Cardano"
-
-
-msgid "YZX Euler"
-msgstr "YZX di Eulero"
 
 
 msgid "YZX Rotation Order - prone to Gimbal Lock"
 msgstr "Ordine di Rotazione YZX - soggetto a Blocco Cardano"
 
 
-msgid "ZXY Euler"
-msgstr "ZXY di Eulero"
-
-
 msgid "ZXY Rotation Order - prone to Gimbal Lock"
 msgstr "Ordine di Rotazione ZXY - soggetto a Blocco Cardano"
-
-
-msgid "ZYX Euler"
-msgstr "ZYX di Eulero"
 
 
 msgid "ZYX Rotation Order - prone to Gimbal Lock"
@@ -20784,10 +20784,6 @@ msgstr "Mantiene le facce triangolate risultanti dalla decimazione (solo collass
 
 msgid "All Boundaries"
 msgstr "Tutti i Confini"
-
-
-msgid "Dissolve all vertices inbetween face boundaries (planar only)"
-msgstr "Dissolve tutti i vertici compresi fra i limiti delle facce (solo planare)"
 
 
 msgid "Symmetry"
@@ -31942,10 +31938,6 @@ msgid "Starting frame for the animation"
 msgstr "Primo fotogramma dell'animazione"
 
 
-msgid "Quaternion"
-msgstr "Quaternione"
-
-
 msgid "Convert rotations to quaternions"
 msgstr "Converte rotazioni in quaternioni"
 
@@ -33011,10 +33003,6 @@ msgstr "Dissolve spigoli e vertici selezionati, sulla base dell'angolo con le ge
 
 msgid "Delimit dissolve operation"
 msgstr "Delimita le operazioni di dissoluzione"
-
-
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "Dissolve tutti i vertici compresi fra i limiti della faccia"
 
 
 msgctxt "Operator"
@@ -50535,14 +50523,6 @@ msgid "Text Sequence"
 msgstr "Sequenza Testo"
 
 
-msgid "Align the text along the X axis"
-msgstr "Allinea il testo lungo l'asse X"
-
-
-msgid "Align the image along the Y axis"
-msgstr "Allinea l'immagine lungo l'asse Y"
-
-
 msgid "Text color"
 msgstr "Colore testo"
 
@@ -59537,16 +59517,6 @@ msgstr "Imposta"
 
 
 msgctxt "Operator"
-msgid "Join..."
-msgstr "Rinisci..."
-
-
-msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "Sposta al Livello"
-
-
-msgctxt "Operator"
 msgid "Interpolate"
 msgstr "Interpola"
 
@@ -59938,11 +59908,6 @@ msgstr "Distanza PdC"
 msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "Dimensione Disegno Vuoto"
-
-
-msgctxt "Operator"
-msgid "Energy"
-msgstr "Energia"
 
 
 msgctxt "Operator"
@@ -61029,6 +60994,11 @@ msgstr "Solo le scorciatoie da tastiera possono essere modificate così, per fav
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "Cambia Scorciatoia"
+
+
+msgctxt "Operator"
 msgid "Open File Externally"
 msgstr "Apri File Esternamente"
 
@@ -61121,11 +61091,6 @@ msgstr "Copia Tutto a Selezionato"
 msgctxt "Operator"
 msgid "Copy Single To Selected"
 msgstr "Copia Singolo Al Selezionato"
-
-
-msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "Cambia Scorciatoia"
 
 
 msgctxt "Operator"
@@ -61285,22 +61250,6 @@ msgstr "Pos"
 
 msgid "Use Clipping"
 msgstr "Usa Taglio"
-
-
-msgid "Min X "
-msgstr "X Min "
-
-
-msgid "Min Y "
-msgstr "Y Min "
-
-
-msgid "Max X "
-msgstr "X Max "
-
-
-msgid "Max Y "
-msgstr "Y Max "
 
 
 msgid "Reset View"

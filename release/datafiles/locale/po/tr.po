@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -2309,6 +2309,10 @@ msgstr "Kemik Adı"
 
 msgid "Data Path"
 msgstr "Veri Yolu"
+
+
+msgid "Rotation Mode"
+msgstr "Düzenleme Modu"
 
 
 msgid "Transform Space"
@@ -5458,10 +5462,6 @@ msgstr "Döndürme & Ölçek"
 
 msgid "Rotation in Eulers"
 msgstr "Ölçeyi/Çevrimi Uygula"
-
-
-msgid "Rotation Mode"
-msgstr "Düzenleme Modu"
 
 
 msgid "No Gimbal Lock"
@@ -25367,11 +25367,6 @@ msgid "Make"
 msgstr "Yap"
 
 
-msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "Katmana Yolla..."
-
-
 msgid "Display:"
 msgstr "Görüntü:"
 
@@ -25543,11 +25538,6 @@ msgstr "Falloff Mesafesi"
 msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "Boş Çizim Boyutu"
-
-
-msgctxt "Operator"
-msgid "Energy"
-msgstr "Enerji"
 
 
 msgctxt "Operator"
@@ -25911,6 +25901,11 @@ msgstr "Aktif Kamerayı Seçilene Hizala"
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "Kemik Katmanlarınını Değiştir..."
+
+
+msgctxt "Operator"
 msgid "Replace Keyframes"
 msgstr "Anahtar Kareyi Göster"
 
@@ -25978,11 +25973,6 @@ msgstr "Ses aramak için varsayılan dizin"
 msgctxt "Operator"
 msgid "Reset Single to Default Value"
 msgstr "Ses aramak için varsayılan dizin"
-
-
-msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "Kemik Katmanlarınını Değiştir..."
 
 
 msgctxt "Operator"
@@ -26062,22 +26052,6 @@ msgstr "Poz:"
 
 msgid "Use Clipping"
 msgstr "Kırpma Seçenekleri"
-
-
-msgid "Min X "
-msgstr "Asg X"
-
-
-msgid "Min Y "
-msgstr "Asg Y"
-
-
-msgid "Max X "
-msgstr "Azm X"
-
-
-msgid "Max Y "
-msgstr "Azm Y"
 
 
 msgid "Reset View"

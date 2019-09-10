@@ -2799,6 +2799,12 @@ void BKE_object_boundbox_calc_from_mesh(struct Object *ob, struct Mesh *me_eval)
   ob->runtime.bb->flag &= ~BOUNDBOX_DIRTY;
 }
 
+/* -------------------------------------------------------------------- */
+/** \name Object Dimension Get/Set
+ *
+ * \warning Setting dimensions is prone to feedback loops in evaluation.
+ * \{ */
+
 void BKE_object_dimensions_get(Object *ob, float vec[3])
 {
   BoundBox *bb = NULL;
@@ -2818,7 +2824,19 @@ void BKE_object_dimensions_get(Object *ob, float vec[3])
   }
 }
 
-void BKE_object_dimensions_set(Object *ob, const float value[3], int axis_mask)
+/**
+ * The original scale and object matrix can be passed in so any difference
+ * of the objects matrix and the final matrix can be accounted for,
+ * typically this caused by parenting, constraints or delta-scale.
+ *
+ * Re-using these values from the object causes a feedback loop
+ * when multiple values are modified at once in some situations. see: T69536.
+ */
+void BKE_object_dimensions_set_ex(Object *ob,
+                                  const float value[3],
+                                  int axis_mask,
+                                  const float ob_scale_orig[3],
+                                  const float ob_obmat_orig[4][4])
 {
   BoundBox *bb = NULL;
 
@@ -2832,12 +2850,26 @@ void BKE_object_dimensions_set(Object *ob, const float value[3], int axis_mask)
 
     for (int i = 0; i < 3; i++) {
       if (((1 << i) & axis_mask) == 0) {
+
+        if (ob_scale_orig != NULL) {
+          const float scale_delta = len_v3(ob_obmat_orig[i]) / ob_scale_orig[i];
+          if (isfinite(scale_delta)) {
+            len[i] *= scale_delta;
+          }
+        }
+
         if (len[i] > 0.0f) {
+
           ob->scale[i] = copysignf(value[i] / len[i], ob->scale[i]);
         }
       }
     }
   }
+}
+
+void BKE_object_dimensions_set(Object *ob, const float value[3], int axis_mask)
+{
+  BKE_object_dimensions_set_ex(ob, value, axis_mask, NULL, NULL);
 }
 
 void BKE_object_minmax(Object *ob, float min_r[3], float max_r[3], const bool use_hidden)
@@ -2982,6 +3014,15 @@ bool BKE_object_empty_image_data_is_visible_in_view3d(const Object *ob, const Re
       if (dot > -eps) {
         return false;
       }
+    }
+  }
+
+  if (visibility_flag & OB_EMPTY_IMAGE_HIDE_NON_AXIS_ALIGNED) {
+    float proj[3];
+    project_plane_v3_v3v3(proj, ob->obmat[2], rv3d->viewinv[2]);
+    const float proj_length_sq = len_squared_v3(proj);
+    if (proj_length_sq > 1e-5f) {
+      return false;
     }
   }
 
@@ -3871,7 +3912,7 @@ int BKE_object_scenes_users_get(Main *bmain, Object *ob)
 {
   int num_scenes = 0;
   for (Scene *scene = bmain->scenes.first; scene != NULL; scene = scene->id.next) {
-    if (BKE_collection_has_object_recursive(BKE_collection_master(scene), ob)) {
+    if (BKE_collection_has_object_recursive(scene->master_collection, ob)) {
       num_scenes++;
     }
   }

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: 2019-06-01 18:12+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -861,6 +861,10 @@ msgid "Workspace"
 msgstr "พื้นที่ใช้งาน"
 
 
+msgid "Rotation Mode"
+msgstr "โหมดหมุน"
+
+
 msgid "Replace Color"
 msgstr "แทนที่สี"
 
@@ -1552,10 +1556,6 @@ msgstr "ท่าทาง"
 
 msgid "Euler Rotation"
 msgstr "หมุน"
-
-
-msgid "Rotation Mode"
-msgstr "โหมดหมุน"
 
 
 msgid "Scaling of the object"

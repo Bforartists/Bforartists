@@ -21,13 +21,12 @@
 bl_info = {
     "name": "Web3D X3D/VRML2 format",
     "author": "Campbell Barton, Bart, Bastien Montagne, Seva Alekseyev",
-    "version": (2, 2, 2),
-    "blender": (2, 80, 0),
+    "version": (2, 2, 3),
+    "blender": (2, 81, 6),
     "location": "File > Import-Export",
     "description": "Import-Export X3D, Import VRML2",
     "warning": "",
     "wiki_url": "https://docs.blender.org/manual/en/latest/addons/io_scene_x3d.html",
-    "support": 'OFFICIAL',
     "category": "Import-Export",
 }
 
@@ -77,6 +76,89 @@ class ImportX3D(bpy.types.Operator, ImportHelper):
         keywords["global_matrix"] = global_matrix
 
         return import_x3d.load(context, **keywords)
+
+    def draw(self, context):
+        pass
+
+
+class X3D_PT_export_include(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "include"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENE_OT_x3d"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "use_selection")
+        layout.prop(operator, "use_hierarchy")
+        layout.prop(operator, "name_decorations")
+        layout.prop(operator, "use_h3d")
+
+
+class X3D_PT_export_transform(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Transform"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENE_OT_x3d"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "global_scale")
+        layout.prop(operator, "axis_forward")
+        layout.prop(operator, "axis_up")
+
+
+class X3D_PT_export_geometry(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Geometry"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENE_OT_x3d"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "use_mesh_modifiers")
+        layout.prop(operator, "use_triangulate")
+        layout.prop(operator, "use_normals")
+        layout.prop(operator, "use_compress")
 
 
 @orientation_helper(axis_forward='Z', axis_up='Y')
@@ -157,18 +239,52 @@ class ExportX3D(bpy.types.Operator, ExportHelper):
 
         return export_x3d.save(context, **keywords)
 
+    def draw(self, context):
+        pass
+
+
+class X3D_PT_import_transform(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Transform"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "IMPORT_SCENE_OT_x3d"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "axis_forward")
+        layout.prop(operator, "axis_up")
+
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportX3D.bl_idname, text="X3D Extensible 3D (.x3d/.wrl)", icon = "LOAD_WRL")
+    self.layout.operator(ImportX3D.bl_idname,
+                         text="X3D Extensible 3D (.x3d/.wrl)")
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportX3D.bl_idname, text="X3D Extensible 3D (.x3d)", icon = "SAVE_WRL")
+    self.layout.operator(ExportX3D.bl_idname,
+                         text="X3D Extensible 3D (.x3d)")
 
 
 classes = (
     ExportX3D,
+    X3D_PT_export_include,
+    X3D_PT_export_transform,
+    X3D_PT_export_geometry,
     ImportX3D,
+    X3D_PT_import_transform,
 )
 
 

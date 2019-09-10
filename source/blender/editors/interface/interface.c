@@ -2509,7 +2509,7 @@ void ui_but_string_get_ex(uiBut *but,
     else if (buf && buf != str) {
       BLI_assert(maxlen <= buf_len + 1);
       /* string was too long, we have to truncate */
-      if (ui_but_is_utf8(but)) {
+      if (UI_but_is_utf8(but)) {
         BLI_strncpy_utf8(str, buf, maxlen);
       }
       else {
@@ -2834,7 +2834,7 @@ bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
     if (!but->poin) {
       str = "";
     }
-    else if (ui_but_is_utf8(but)) {
+    else if (UI_but_is_utf8(but)) {
       BLI_strncpy_utf8(but->poin, str, but->hardmax);
     }
     else {
@@ -4250,7 +4250,7 @@ static uiBut *ui_def_but_operator_ptr(uiBlock *block,
     }
   }
 
-  if ((!tip || tip[0] == '\0') && ot && ot->srna) {
+  if ((!tip || tip[0] == '\0') && ot && ot->srna && !ot->get_description) {
     tip = RNA_struct_ui_description(ot->srna);
   }
 
@@ -6349,6 +6349,9 @@ void UI_but_string_info_get(bContext *C, uiBut *but, ...)
       }
       else if (but->tip && but->tip[0]) {
         tmp = BLI_strdup(but->tip);
+      }
+      else if (but->optype && but->optype->get_description) {
+        tmp = WM_operatortype_description(C, but->optype, but->opptr);
       }
       else {
         type = BUT_GET_RNA_TIP; /* Fail-safe solution... */

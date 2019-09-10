@@ -30,7 +30,8 @@ from bpy.props import (
 
 from bl_ui.properties_paint_common import UnifiedPaintPanel
 
-
+from . edit_mesh import *
+from . view_menus import *
 # Object Menus #
 
 # ********** Object Menu **********
@@ -41,119 +42,39 @@ class VIEW3D_MT_Object(Menu):
     def draw(self, context):
         layout = self.layout
         view = context.space_data
-        is_local_view = (view.local_view is not None)
 
-        layout.operator("object.delete", text="Delete...").use_global = False
-        layout.separator()
+        layout.menu("VIEW3D_MT_mirror")
         layout.menu("VIEW3D_MT_object_parent")
         layout.menu("VIEW3D_MT_Duplicate")
         layout.operator("object.join")
+        layout.menu("VIEW3D_MT_make_links", text="Make Links")
+        layout.menu("VIEW3D_MT_object_relations")
+        layout.separator()
 
-        if is_local_view:
-            layout.operator_context = 'EXEC_REGION_WIN'
-            layout.operator("object.move_to_layer", text="Move out of Local View")
-            layout.operator_context = 'INVOKE_REGION_WIN'
+        ob = context.active_object
+        if ob and ob.type == 'GPENCIL' and context.gpencil_data:
+            layout.operator_menu_enum("gpencil.convert", "type", text="Convert to")
+        else:
+            layout.operator_menu_enum("object.convert", "target")
 
-        layout.menu("VIEW3D_MT_make_links", text="Make Links...")
-        layout.menu("VIEW3D_MT_Object_Data_Link")
-        layout.separator()
-        layout.menu("VIEW3D_MT_AutoSmooth", icon='ALIASED')
-        layout.separator()
-        layout.menu("VIEW3D_MT_object_constraints")
-        layout.menu("VIEW3D_MT_object_track")
-        layout.menu("VIEW3D_MT_object_animation")
-        layout.separator()
         layout.menu("VIEW3D_MT_object_showhide")
         layout.separator()
-        layout.operator_menu_enum("object.convert", "target")
 
-
-# ********** Add Menu **********
-class VIEW3D_MT_AddMenu(Menu):
-    bl_label = "Add Object"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = 'EXEC_REGION_WIN'
-
-        layout.menu("VIEW3D_MT_mesh_add", text="Add Mesh",
-                    icon='OUTLINER_OB_MESH')
-        layout.menu("VIEW3D_MT_curve_add", text="Add Curve",
-                    icon='OUTLINER_OB_CURVE')
-        layout.menu("VIEW3D_MT_surface_add", text="Add Surface",
-                    icon='OUTLINER_OB_SURFACE')
-        layout.operator_menu_enum("object.metaball_add", "type",
-                                  icon='OUTLINER_OB_META')
-        layout.operator("object.text_add", text="Add Text",
-                        icon='OUTLINER_OB_FONT')
-        layout.operator_menu_enum("object.gpencil_add", "type", text="Grease Pencil", icon='OUTLINER_OB_GREASEPENCIL')
-        layout.separator()
-        layout.menu("VIEW3D_MT_armature_add", text="Add Armature",
-                    icon='OUTLINER_OB_ARMATURE')
-        layout.operator("object.add", text="Lattice",
-                        icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+        layout.menu("VIEW3D_MT_object_constraints")
+        layout.menu("VIEW3D_MT_object_track")
         layout.separator()
 
-        layout.operator_menu_enum("object.empty_add", "type", text="Empty", icon='OUTLINER_OB_EMPTY')
-        layout.menu("VIEW3D_MT_image_add", text="Image", icon='OUTLINER_OB_IMAGE')
+        layout.menu("VIEW3D_MT_object_rigid_body")
+        layout.menu("VIEW3D_MT_object_quick_effects")
         layout.separator()
 
-        layout.operator_menu_enum("object.light_add", "type",
-                                  icon="OUTLINER_OB_LIGHT")
-        layout.menu("VIEW3D_MT_lightprobe_add", icon='OUTLINER_OB_LIGHTPROBE')
-        layout.separator()
-        
-        layout.operator("object.camera_add", text="Camera",
-                        icon='OUTLINER_OB_CAMERA')
+        layout.operator("view3d.copybuffer", text="Copy Objects", icon='COPYDOWN')
+        layout.operator("view3d.pastebuffer", text="Paste Objects", icon='PASTEDOWN')
         layout.separator()
 
-        layout.operator("object.speaker_add", text="Speaker", icon='OUTLINER_OB_SPEAKER')
-        layout.separator()
-
-        layout.operator_menu_enum("object.effector_add", "type",
-                                  text="Force Field",
-                                  icon='FORCE_FORCE')
-        layout.menu("VIEW3D_MT_object_quick_effects", text="Quick Effects", icon='PARTICLES')
-        layout.separator()
-
-        has_collections = bool(bpy.data.collections)
-        col = layout.column()
-        col.enabled = has_collections
-
-        if not has_collections or len(bpy.data.collections) > 10:
-            col.operator_context = 'INVOKE_REGION_WIN'
-            col.operator(
-                "object.collection_instance_add",
-                text="Collection Instance..." if has_collections else "No Collections to Instance",
-                icon='OUTLINER_OB_GROUP_INSTANCE',
-            )
-        else:
-            col.operator_menu_enum(
-                "object.collection_instance_add",
-                "collection",
-                text="Collection Instance",
-                icon='OUTLINER_OB_GROUP_INSTANCE',
-            )
-
-
-# ********** Object Mirror **********
-class VIEW3D_MT_MirrorMenu(Menu):
-    bl_label = "Mirror"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("transform.mirror", text="Interactive Mirror")
-        layout.separator()
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        props = layout.operator("transform.mirror", text="X Global")
-        props.constraint_axis = (True, False, False)
-        props.orient_type = 'GLOBAL'
-        props = layout.operator("transform.mirror", text="Y Global")
-        props.constraint_axis = (False, True, False)
-        props.orient_type = 'GLOBAL'
-        props = layout.operator("transform.mirror", text="Z Global")
-        props.constraint_axis = (False, False, True)
-        props.orient_type = 'GLOBAL'
+        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator("object.delete", text="Delete").use_global = False
+        layout.operator("object.delete", text="Delete Global").use_global = True
 
 
 # ********** Object Interactive Mode **********
@@ -223,41 +144,6 @@ class VIEW3D_MT_Interactive_Mode_GPencil(Menu):
         layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Draw", icon="GREASEPENCIL").mode = "PAINT_GPENCIL"
         layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Weight Paint", icon="WPAINT_HLT").mode = "WEIGHT_GPENCIL"
 
-# currently unused
-class VIEW3D_MT_Edit_Gpencil(Menu):
-    bl_label = "GPencil"
-
-    def draw(self, context):
-        toolsettings = context.tool_settings
-        layout = self.layout
-
-        layout.operator("gpencil.brush_paint", text="Sculpt Strokes").wait_for_input = True
-        layout.prop_menu_enum(toolsettings.gpencil_sculpt, "tool", text="Sculpt Brush")
-        layout.separator()
-        layout.menu("VIEW3D_MT_edit_gpencil_transform")
-        layout.operator("transform.mirror", text="Mirror")
-        layout.menu("GPENCIL_MT_snap")
-        layout.separator()
-        layout.menu("VIEW3D_MT_object_animation")   # NOTE: provides keyingset access...
-        layout.separator()
-        layout.menu("VIEW3D_MT_edit_gpencil_delete")
-        layout.operator("gpencil.duplicate_move", text="Duplicate")
-        layout.separator()
-        layout.menu("VIEW3D_MT_select_gpencil")
-        layout.separator()
-        layout.operator("gpencil.copy", text="Copy")
-        layout.operator("gpencil.paste", text="Paste")
-        layout.separator()
-        layout.prop_menu_enum(toolsettings, "proportional_edit")
-        layout.prop_menu_enum(toolsettings, "proportional_edit_falloff")
-        layout.separator()
-        layout.operator("gpencil.reveal")
-        layout.operator("gpencil.hide", text="Show Active Layer Only").unselected = True
-        layout.operator("gpencil.hide", text="Hide Active Layer").unselected = False
-        layout.separator()
-        layout.operator_menu_enum("gpencil.move_to_layer", "layer", text="Move to Layer")
-        layout.operator_menu_enum("gpencil.convert", "type", text="Convert to Geometry...")
-
 
 # ********** Text Interactive Mode **********
 class VIEW3D_OT_Interactive_Mode_Text(Operator):
@@ -275,31 +161,6 @@ class VIEW3D_OT_Interactive_Mode_Text(Operator):
         return {'FINISHED'}
 
 
-# ********** Object Parent **********
-class VIEW3D_MT_ParentMenu(Menu):
-    bl_label = "Parent"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("object.parent_set", text="Set")
-        layout.operator("object.parent_clear", text="Clear")
-
-
-# ********** Object Group **********
-class VIEW3D_MT_GroupMenu(Menu):
-    bl_label = "Group"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("collection.create")
-        layout.operator("collection.objects_add_active")
-        layout.separator()
-        layout.operator("collection.objects_remove")
-        layout.operator("collection.objects_remove_all")
-        layout.operator("collection.objects_remove_active")
-
-
 # ********** Object Camera Options **********
 class VIEW3D_MT_Camera_Options(Menu):
     bl_label = "Camera"
@@ -307,22 +168,12 @@ class VIEW3D_MT_Camera_Options(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("object.camera_add", text="Add Camera", icon='OUTLINER_OB_CAMERA')
-        layout.operator("view3d.object_as_camera", text="Object As Camera", icon='OUTLINER_OB_CAMERA')
-
-class VIEW3D_MT_Object_Data_Link(Menu):
-    bl_label = "Object Data"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_menu_enum("object.make_local", "type", text="Make Local...")
-        layout.menu("VIEW3D_MT_make_single_user")
-        layout.operator("object.proxy_make", text="Make Proxy...")
-        layout.operator("object.make_dupli_face")
-        layout.separator()
-        layout.operator("object.data_transfer")
-        layout.operator("object.datalayout_transfer")
+        layout.operator("object.select_camera", text="Select Camera")
+        layout.operator("object.camera_add", text="Add Camera")
+        layout.operator("view3d.view_camera", text="View Camera")
+        layout.operator("view3d.camera_to_view", text="Camera to View")
+        layout.operator("view3d.camera_to_view_selected", text="Camera to Selected")
+        layout.operator("view3d.object_as_camera", text="Object As Camera")
 
 
 class VIEW3D_MT_Duplicate(Menu):
@@ -371,21 +222,51 @@ class VIEW3D_OT_SetObjectMode(Operator):
         return {'FINISHED'}
 
 
+# currently unused
+class VIEW3D_MT_Edit_Gpencil(Menu):
+    bl_label = "GPencil"
+
+    def draw(self, context):
+        toolsettings = context.tool_settings
+        layout = self.layout
+
+        layout.operator("gpencil.brush_paint", text="Sculpt Strokes").wait_for_input = True
+        layout.prop_menu_enum(toolsettings.gpencil_sculpt, "tool", text="Sculpt Brush")
+        layout.separator()
+        layout.menu("VIEW3D_MT_edit_gpencil_transform")
+        layout.operator("transform.mirror", text="Mirror")
+        layout.menu("GPENCIL_MT_snap")
+        layout.separator()
+        layout.menu("VIEW3D_MT_object_animation")   # NOTE: provides keyingset access...
+        layout.separator()
+        layout.menu("VIEW3D_MT_edit_gpencil_delete")
+        layout.operator("gpencil.duplicate_move", text="Duplicate")
+        layout.separator()
+        layout.menu("VIEW3D_MT_select_gpencil")
+        layout.separator()
+        layout.operator("gpencil.copy", text="Copy")
+        layout.operator("gpencil.paste", text="Paste")
+        layout.separator()
+        layout.prop_menu_enum(toolsettings, "proportional_edit")
+        layout.prop_menu_enum(toolsettings, "proportional_edit_falloff")
+        layout.separator()
+        layout.operator("gpencil.reveal")
+        layout.operator("gpencil.hide", text="Show Active Layer Only").unselected = True
+        layout.operator("gpencil.hide", text="Hide Active Layer").unselected = False
+        layout.separator()
+        layout.operator_menu_enum("gpencil.move_to_layer", "layer", text="Move to Layer")
+        layout.operator_menu_enum("gpencil.convert", "type", text="Convert to Geometry...")
+
 
 # List The Classes #
 
 classes = (
-    VIEW3D_MT_AddMenu,
     VIEW3D_MT_Object,
-    VIEW3D_MT_MirrorMenu,
-    VIEW3D_MT_ParentMenu,
-    VIEW3D_MT_GroupMenu,
     VIEW3D_MT_UndoS,
     VIEW3D_MT_Camera_Options,
     VIEW3D_MT_InteractiveMode,
     VIEW3D_MT_InteractiveModeOther,
     VIEW3D_OT_SetObjectMode,
-    VIEW3D_MT_Object_Data_Link,
     VIEW3D_MT_Duplicate,
     VIEW3D_OT_Interactive_Mode_Text,
     VIEW3D_OT_Interactive_Mode_Grease_Pencil,

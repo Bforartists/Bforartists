@@ -102,6 +102,26 @@ static const EnumPropertyItem node_chunksize_items[] = {
 };
 #endif
 
+const EnumPropertyItem rna_enum_mapping_type_items[] = {
+    {NODE_MAPPING_TYPE_POINT, "POINT", 0, "Point", "Transform a point"},
+    {NODE_MAPPING_TYPE_TEXTURE,
+     "TEXTURE",
+     0,
+     "Texture",
+     "Transform a texture by inverse mapping the texture coordinate"},
+    {NODE_MAPPING_TYPE_VECTOR,
+     "VECTOR",
+     0,
+     "Vector",
+     "Transform a direction vector. Location is ignored"},
+    {NODE_MAPPING_TYPE_NORMAL,
+     "NORMAL",
+     0,
+     "Normal",
+     "Transform a unit normal vector. Location is ignored"},
+    {0, NULL, 0, NULL, NULL},
+};
+
 const EnumPropertyItem rna_enum_node_math_items[] = {
     {NODE_MATH_ADD, "ADD", 0, "Add", "A + B"},
     {NODE_MATH_SUBTRACT, "SUBTRACT", 0, "Subtract", "A - B"},
@@ -246,7 +266,7 @@ int rna_node_tree_type_to_enum(bNodeTreeType *typeinfo)
       result = i;
       break;
     }
-    ++i;
+    i++;
   }
   NODE_TREE_TYPES_END;
   return result;
@@ -260,7 +280,7 @@ int rna_node_tree_idname_to_enum(const char *idname)
       result = i;
       break;
     }
-    ++i;
+    i++;
   }
   NODE_TREE_TYPES_END;
   return result;
@@ -275,7 +295,7 @@ bNodeTreeType *rna_node_tree_type_from_enum(int value)
       result = nt;
       break;
     }
-    ++i;
+    i++;
   }
   NODE_TREE_TYPES_END;
   return result;
@@ -291,7 +311,7 @@ const EnumPropertyItem *rna_node_tree_type_itemf(void *data,
 
   NODE_TREE_TYPES_BEGIN (nt) {
     if (poll && !poll(data, nt)) {
-      ++i;
+      i++;
       continue;
     }
 
@@ -303,7 +323,7 @@ const EnumPropertyItem *rna_node_tree_type_itemf(void *data,
 
     RNA_enum_item_add(&item, &totitem, &tmp);
 
-    ++i;
+    i++;
   }
   NODE_TREE_TYPES_END;
 
@@ -326,7 +346,7 @@ int rna_node_type_to_enum(bNodeType *typeinfo)
       result = i;
       break;
     }
-    ++i;
+    i++;
   }
   NODE_TYPES_END;
   return result;
@@ -340,7 +360,7 @@ int rna_node_idname_to_enum(const char *idname)
       result = i;
       break;
     }
-    ++i;
+    i++;
   }
   NODE_TYPES_END;
   return result;
@@ -355,7 +375,7 @@ bNodeType *rna_node_type_from_enum(int value)
       result = ntype;
       break;
     }
-    ++i;
+    i++;
   }
   NODE_TYPES_END;
   return result;
@@ -371,7 +391,7 @@ const EnumPropertyItem *rna_node_type_itemf(void *data,
 
   NODE_TYPES_BEGIN (ntype) {
     if (poll && !poll(data, ntype)) {
-      ++i;
+      i++;
       continue;
     }
 
@@ -383,7 +403,7 @@ const EnumPropertyItem *rna_node_type_itemf(void *data,
 
     RNA_enum_item_add(&item, &totitem, &tmp);
 
-    ++i;
+    i++;
   }
   NODE_TYPES_END;
 
@@ -406,7 +426,7 @@ int rna_node_socket_type_to_enum(bNodeSocketType *typeinfo)
       result = i;
       break;
     }
-    ++i;
+    i++;
   }
   NODE_SOCKET_TYPES_END;
   return result;
@@ -420,7 +440,7 @@ int rna_node_socket_idname_to_enum(const char *idname)
       result = i;
       break;
     }
-    ++i;
+    i++;
   }
   NODE_SOCKET_TYPES_END;
   return result;
@@ -435,7 +455,7 @@ bNodeSocketType *rna_node_socket_type_from_enum(int value)
       result = stype;
       break;
     }
-    ++i;
+    i++;
   }
   NODE_SOCKET_TYPES_END;
   return result;
@@ -452,7 +472,7 @@ const EnumPropertyItem *rna_node_socket_type_itemf(void *data,
 
   NODE_SOCKET_TYPES_BEGIN (stype) {
     if (poll && !poll(data, stype)) {
-      ++i;
+      i++;
       continue;
     }
 
@@ -465,7 +485,7 @@ const EnumPropertyItem *rna_node_socket_type_itemf(void *data,
 
     RNA_enum_item_add(&item, &totitem, &tmp);
 
-    ++i;
+    i++;
   }
   NODE_SOCKET_TYPES_END;
 
@@ -2632,8 +2652,8 @@ static PointerRNA rna_NodeInternal_input_template(StructRNA *srna, int index)
     bNodeSocketTemplate *stemp = ntype->inputs;
     int i = 0;
     while (i < index && stemp->type >= 0) {
-      ++i;
-      ++stemp;
+      i++;
+      stemp++;
     }
     if (i == index && stemp->type >= 0) {
       PointerRNA ptr;
@@ -2651,8 +2671,8 @@ static PointerRNA rna_NodeInternal_output_template(StructRNA *srna, int index)
     bNodeSocketTemplate *stemp = ntype->outputs;
     int i = 0;
     while (i < index && stemp->type >= 0) {
-      ++i;
-      ++stemp;
+      i++;
+      stemp++;
     }
     if (i == index && stemp->type >= 0) {
       PointerRNA ptr;
@@ -3211,13 +3231,6 @@ static void rna_Image_Node_update_id(Main *UNUSED(bmain), Scene *UNUSED(scene), 
 
   node->update |= NODE_UPDATE_ID;
   nodeUpdate(ntree, node); /* to update image node sockets */
-}
-
-static void rna_Mapping_Node_update(Main *bmain, Scene *scene, PointerRNA *ptr)
-{
-  bNode *node = ptr->data;
-  BKE_texture_mapping_init(node->storage);
-  rna_Node_update(bmain, scene, ptr);
 }
 
 static void rna_NodeOutputFile_slots_begin(CollectionPropertyIterator *iter, PointerRNA *ptr)
@@ -4034,68 +4047,13 @@ static void def_sh_output_linestyle(StructRNA *srna)
 
 static void def_sh_mapping(StructRNA *srna)
 {
-  static const EnumPropertyItem prop_vect_type_items[] = {
-      {TEXMAP_TYPE_TEXTURE,
-       "TEXTURE",
-       0,
-       "Texture",
-       "Transform a texture by inverse mapping the texture coordinate"},
-      {TEXMAP_TYPE_POINT, "POINT", 0, "Point", "Transform a point"},
-      {TEXMAP_TYPE_VECTOR, "VECTOR", 0, "Vector", "Transform a direction vector"},
-      {TEXMAP_TYPE_NORMAL, "NORMAL", 0, "Normal", "Transform a normal vector with unit length"},
-      {0, NULL, 0, NULL, NULL},
-  };
-
-  static float default_1[3] = {1.f, 1.f, 1.f};
-
   PropertyRNA *prop;
 
-  RNA_def_struct_sdna_from(srna, "TexMapping", "storage");
-
   prop = RNA_def_property(srna, "vector_type", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_sdna(prop, NULL, "type");
-  RNA_def_property_enum_items(prop, prop_vect_type_items);
+  RNA_def_property_enum_sdna(prop, NULL, "custom1");
+  RNA_def_property_enum_items(prop, rna_enum_mapping_type_items);
   RNA_def_property_ui_text(prop, "Type", "Type of vector that the mapping transforms");
-  RNA_def_property_update(prop, 0, "rna_Mapping_Node_update");
-
-  prop = RNA_def_property(srna, "translation", PROP_FLOAT, PROP_TRANSLATION);
-  RNA_def_property_float_sdna(prop, NULL, "loc");
-  RNA_def_property_ui_text(prop, "Location", "");
-  RNA_def_property_update(prop, 0, "rna_Mapping_Node_update");
-
-  /* Not PROP_XYZ, this is now in radians, no more degrees */
-  prop = RNA_def_property(srna, "rotation", PROP_FLOAT, PROP_EULER);
-  RNA_def_property_float_sdna(prop, NULL, "rot");
-  RNA_def_property_ui_text(prop, "Rotation", "");
-  RNA_def_property_update(prop, 0, "rna_Mapping_Node_update");
-
-  prop = RNA_def_property(srna, "scale", PROP_FLOAT, PROP_XYZ);
-  RNA_def_property_float_sdna(prop, NULL, "size");
-  RNA_def_property_float_array_default(prop, default_1);
-  RNA_def_property_flag(prop, PROP_PROPORTIONAL);
-  RNA_def_property_ui_text(prop, "Scale", "");
-  RNA_def_property_update(prop, 0, "rna_Mapping_Node_update");
-
-  prop = RNA_def_property(srna, "min", PROP_FLOAT, PROP_XYZ);
-  RNA_def_property_float_sdna(prop, NULL, "min");
-  RNA_def_property_ui_text(prop, "Minimum", "Minimum value for clipping");
-  RNA_def_property_update(prop, 0, "rna_Mapping_Node_update");
-
-  prop = RNA_def_property(srna, "max", PROP_FLOAT, PROP_XYZ);
-  RNA_def_property_float_sdna(prop, NULL, "max");
-  RNA_def_property_float_array_default(prop, default_1);
-  RNA_def_property_ui_text(prop, "Maximum", "Maximum value for clipping");
-  RNA_def_property_update(prop, 0, "rna_Mapping_Node_update");
-
-  prop = RNA_def_property(srna, "use_min", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, NULL, "flag", TEXMAP_CLIP_MIN);
-  RNA_def_property_ui_text(prop, "Has Minimum", "Whether to use minimum clipping value");
-  RNA_def_property_update(prop, 0, "rna_Mapping_Node_update");
-
-  prop = RNA_def_property(srna, "use_max", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, NULL, "flag", TEXMAP_CLIP_MAX);
-  RNA_def_property_ui_text(prop, "Has Maximum", "Whether to use maximum clipping value");
-  RNA_def_property_update(prop, 0, "rna_Mapping_Node_update");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_ShaderNode_socket_update");
 }
 
 static void def_sh_attribute(StructRNA *srna)
@@ -4346,8 +4304,17 @@ static void def_sh_tex_gradient(StructRNA *srna)
 
 static void def_sh_tex_noise(StructRNA *srna)
 {
+  PropertyRNA *prop;
+
   RNA_def_struct_sdna_from(srna, "NodeTexNoise", "storage");
   def_sh_tex(srna);
+
+  prop = RNA_def_property(srna, "noise_dimensions", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, NULL, "dimensions");
+  RNA_def_property_enum_items(prop, rna_enum_node_tex_dimensions_items);
+  RNA_def_property_ui_text(
+      prop, "Dimensions", "The dimensions of the space to evaluate the noise in");
+  RNA_def_property_update(prop, 0, "rna_ShaderNode_socket_update");
 }
 
 static void def_sh_tex_checker(StructRNA *srna)
@@ -4512,11 +4479,11 @@ static void def_sh_tex_white_noise(StructRNA *srna)
 {
   PropertyRNA *prop;
 
-  prop = RNA_def_property(srna, "dimensions", PROP_ENUM, PROP_NONE);
+  prop = RNA_def_property(srna, "noise_dimensions", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "custom1");
   RNA_def_property_enum_items(prop, rna_enum_node_tex_dimensions_items);
   RNA_def_property_ui_text(
-      prop, "Dimensions", "The number of dimensions to evaluate the noise in");
+      prop, "Dimensions", "The dimensions of the space to evaluate the noise in");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_ShaderNode_socket_update");
 }
 
