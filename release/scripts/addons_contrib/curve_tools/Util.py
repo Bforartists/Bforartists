@@ -6,42 +6,92 @@ def GetSelectedCurves():
     rvList = []
 
     for obj in bpy.context.selected_objects:
-        if obj.type == "CURVE": rvList.append(obj)
+        try:
+            if obj.type == "CURVE": rvList.append(obj)
+        except:
+            pass
+
+    return rvList
+    
+    
+def GetSelectedMeshes():
+    rvList = []
+
+    for obj in bpy.context.selected_objects:
+        try:
+            if obj.type == "MESH": rvList.append(obj)
+        except:
+            pass
 
     return rvList
 
 
 def Selected1Curve():
-    if len(GetSelectedCurves()) == 1:
-        return (bpy.context.active_object.type == "CURVE")
+    try:
+        if len(GetSelectedCurves()) == 1:
+            return (bpy.context.active_object.type == "CURVE")
+    except:
+        pass
+
+    return False
+
+
+def Selected1Mesh():
+    try:
+        if len(GetSelectedMeshes()) == 1:
+            return (bpy.context.active_object.type == "MESH")
+    except:
+        pass
 
     return False
 
 
 def Selected1SingleSplineCurve():
-    if Selected1Curve():
-        return (len(bpy.context.active_object.data.splines) == 1)
+    try:
+        if Selected1Curve():
+            return (len(bpy.context.active_object.data.splines) == 1)
+    except:
+        pass
 
     return False
 
 
 def Selected2Curves():
-    if len(GetSelectedCurves()) == 2:
-        return (bpy.context.active_object.type == "CURVE")
+    try:
+        if len(GetSelectedCurves()) == 2:
+            return (bpy.context.active_object.type == "CURVE")
+    except:
+        pass
 
     return False
 
 
 def Selected3Curves():
-    if len(GetSelectedCurves()) == 3:
-        return (bpy.context.active_object.type == "CURVE")
+    try:
+        if len(GetSelectedCurves()) == 3:
+            return (bpy.context.active_object.type == "CURVE")
+    except:
+        pass
 
     return False
 
 
 def Selected1OrMoreCurves():
-    if len(GetSelectedCurves()) > 0:
-        return (bpy.context.active_object.type == "CURVE")
+    try:
+        if len(GetSelectedCurves()) > 0:
+            return (bpy.context.active_object.type == "CURVE")
+    except:
+        pass
+
+    return False
+
+
+def Selected1OrMoreMesh():
+    try:
+        if len(GetSelectedMeshes()) > 0:
+            return (bpy.context.active_object.type == "MESH")
+    except:
+        pass
 
     return False
 

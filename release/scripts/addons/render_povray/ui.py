@@ -265,6 +265,11 @@ def check_material(mat):
         return True
     return False
 
+def simple_material(mat):
+    if (mat is not None) and (not mat.use_nodes):
+        return True
+    return False
+    
 def check_add_mesh_extra_objects():
     if "add_mesh_extra_objects" in bpy.context.preferences.addons.keys():
         return True
@@ -1385,7 +1390,7 @@ class MATERIAL_PT_POV_sss(MaterialButtonsPanel, Panel):
         sub.prop(sss, "back")
         col.separator()
         col.prop(sss, "error_threshold", text="Error")
-
+        
 class MATERIAL_PT_povray_activate_node(MaterialButtonsPanel, Panel):
     bl_label = "Activate Node Settings"
     bl_context = "material"
@@ -1517,6 +1522,70 @@ class MATERIAL_PT_POV_mirror(MaterialButtonsPanel, Panel):
         sub.prop(raym, "gloss_threshold", text="Threshold")
         sub.prop(raym, "gloss_samples", text="Samples")
         sub.prop(raym, "gloss_anisotropic", text="Anisotropic")
+
+class MATERIAL_PT_POV_transp(MaterialButtonsPanel, Panel):
+    bl_label = "Transparency"
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
+
+    @classmethod
+    def poll(cls, context):
+        mat = context.material
+        engine = context.scene.render.engine
+        return check_material(mat) and (mat.pov.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
+
+    def draw_header(self, context):
+        mat = context.material
+
+        if simple_material(mat):
+            self.layout.prop(mat.pov, "use_transparency", text="")
+
+    def draw(self, context):
+        layout = self.layout
+
+        base_mat = context.material
+        mat = context.material#FORMERLY active_node_mat(context.material)
+        rayt = mat.pov_raytrace_transparency
+
+        if simple_material(base_mat):
+            row = layout.row()
+            row.active = mat.pov.use_transparency
+            row.prop(mat.pov, "transparency_method", expand=True)
+
+        split = layout.split()
+        split.active = base_mat.pov.use_transparency
+
+        col = split.column()
+        col.prop(mat.pov, "alpha")
+        row = col.row()
+        row.active = (base_mat.pov.transparency_method != 'MASK') and (not mat.pov.use_shadeless)
+        row.prop(mat.pov, "specular_alpha", text="Specular")
+
+        col = split.column()
+        col.active = (not mat.pov.use_shadeless)
+        col.prop(rayt, "fresnel")
+        sub = col.column()
+        sub.active = (rayt.fresnel > 0.0)
+        sub.prop(rayt, "fresnel_factor", text="Blend")
+
+        if base_mat.pov.transparency_method == 'RAYTRACE':
+            layout.separator()
+            split = layout.split()
+            split.active = base_mat.pov.use_transparency
+
+            col = split.column()
+            col.prop(rayt, "ior")
+            col.prop(rayt, "filter")
+            col.prop(rayt, "falloff")
+            col.prop(rayt, "depth_max")
+            col.prop(rayt, "depth")
+
+            col = split.column()
+            col.label(text="Gloss:")
+            col.prop(rayt, "gloss_factor", text="Amount")
+            sub = col.column()
+            sub.active = rayt.gloss_factor < 1.0
+            sub.prop(rayt, "gloss_threshold", text="Threshold")
+            sub.prop(rayt, "gloss_samples", text="Samples")
         
 class MATERIAL_PT_povray_reflection(MaterialButtonsPanel, Panel):
     bl_label = "POV-Ray Reflection"
@@ -1646,7 +1715,52 @@ class MATERIAL_PT_povray_caustics(MaterialButtonsPanel, Panel):
                 col.label(text="Caustics override is on, ")
                 col.label(text="but you didn't chose any !")
 
+class MATERIAL_PT_strand(MaterialButtonsPanel, Panel):
+    bl_label = "Strand"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
+    @classmethod
+    def poll(cls, context):
+        mat = context.material
+        engine = context.scene.render.engine
+        return mat and (mat.type in {'SURFACE', 'WIRE', 'HALO'}) and (engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+
+        mat = context.material  # don't use node material
+        tan = mat.strand
+
+        split = layout.split()
+
+        col = split.column()
+        sub = col.column(align=True)
+        sub.label(text="Size:")
+        sub.prop(tan, "root_size", text="Root")
+        sub.prop(tan, "tip_size", text="Tip")
+        sub.prop(tan, "size_min", text="Minimum")
+        sub.prop(tan, "use_blender_units")
+        sub = col.column()
+        sub.active = (not mat.pov.use_shadeless)
+        sub.prop(tan, "use_tangent_shading")
+        col.prop(tan, "shape")
+
+        col = split.column()
+        col.label(text="Shading:")
+        col.prop(tan, "width_fade")
+        ob = context.object
+        if ob and ob.type == 'MESH':
+            col.prop_search(tan, "uv_layer", ob.data, "uv_textures", text="")
+        else:
+            col.prop(tan, "uv_layer", text="")
+        col.separator()
+        sub = col.column()
+        sub.active = (not mat.pov.use_shadeless)
+        sub.label("Surface diffuse:")
+        sub = col.column()
+        sub.prop(tan, "blend_distance", text="Distance")
+        
 class MATERIAL_PT_povray_replacement_text(MaterialButtonsPanel, Panel):
     bl_label = "Custom POV Code"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
@@ -3085,9 +3199,11 @@ classes = (
     MATERIAL_PT_POV_sss,
     MATERIAL_MT_POV_sss_presets,
     AddPresetSSS,
+    MATERIAL_PT_strand,
     MATERIAL_PT_povray_activate_node,
     MATERIAL_PT_povray_active_node,
     MATERIAL_PT_POV_mirror,
+    MATERIAL_PT_POV_transp,
     MATERIAL_PT_povray_reflection,
     #MATERIAL_PT_POV_interior,
     MATERIAL_PT_povray_fade_color,

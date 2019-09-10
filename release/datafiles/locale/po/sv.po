@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -2594,6 +2594,10 @@ msgid "From Minimum Z"
 msgstr "Beskärningsminumum"
 
 
+msgid "Quaternion"
+msgstr "Kvaternion"
+
+
 msgid "Map From"
 msgstr "Starta Spel"
 
@@ -2920,6 +2924,10 @@ msgstr "Filnamn"
 
 msgid "Data Path"
 msgstr "Bana"
+
+
+msgid "Rotation Mode"
+msgstr "Rensa Rotation"
 
 
 msgid "Transform Space"
@@ -6721,10 +6729,6 @@ msgstr "Rensa Rotation"
 
 msgid "Rotation in Eulers"
 msgstr "Rotation med Euler"
-
-
-msgid "Rotation Mode"
-msgstr "Rensa Rotation"
 
 
 msgid "Axis Angle"
@@ -16568,10 +16572,6 @@ msgid "Starting frame for the animation"
 msgstr "Starta rendering av sekvens"
 
 
-msgid "Quaternion"
-msgstr "Kvaternion"
-
-
 msgid "Convert rotations to quaternions"
 msgstr "Rensa Rotation"
 
@@ -17197,10 +17197,6 @@ msgstr "Lös upp"
 msgctxt "Operator"
 msgid "Limited Dissolve"
 msgstr "Lös upp"
-
-
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "Antal uppdelningar mellan rutnätets linjer"
 
 
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
@@ -31577,11 +31573,6 @@ msgid "Make"
 msgstr "Skapa kant/yta"
 
 
-msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "Flytta Till Lager"
-
-
 msgid "Creases"
 msgstr "Vecka:"
 
@@ -32134,6 +32125,11 @@ msgstr "Markera Länkad"
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "Rendera"
+
+
+msgctxt "Operator"
 msgid "Replace Keyframes"
 msgstr "Radera"
 
@@ -32201,11 +32197,6 @@ msgstr "Förvalt övertoning"
 msgctxt "Operator"
 msgid "Reset Single to Default Value"
 msgstr "Förvalt övertoning"
-
-
-msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "Rendera"
 
 
 msgctxt "Operator"

@@ -19,8 +19,8 @@
 bl_info = {
     "name": "Curve Tools 2",
     "description": "Adds some functionality for bezier/nurbs curve/surface modeling",
-    "author": "Mackraken, guy lateur",
-    "version": (0, 3, 0),
+    "author": "Mackraken, guy lateur, Spivak Vladimir (cwolf3d)",
+    "version": (0, 3, 1),
     "blender": (2, 80, 0),
     "location": "View3D > Tool Shelf > Addons Tab",
     "warning": "WIP",
@@ -195,9 +195,7 @@ class VIEW3D_PT_CurvePanel(Panel):
 
     @classmethod
     def poll(cls, context):
-        if len(context.selected_objects) > 0:
-            obj = context.active_object
-            return (obj and obj.type == "CURVE")
+        return context.scene is not None
 
     def draw(self, context):
         scene = context.scene
@@ -207,12 +205,6 @@ class VIEW3D_PT_CurvePanel(Panel):
         TRIPLEDROP = scene.UTTripleDrop
         UTILSDROP = scene.UTUtilsDrop
         layout = self.layout
-
-        # Z. selection
-        boxSelection = self.layout.box()
-        row = boxSelection.row(align=True)
-        row.operator("curvetools2.operatorselectioninfo", text="Selection Info")
-        row.prop(context.scene.curvetools, "NrSelectedObjects", text="")
 
         # Single Curve options
         box1 = self.layout.box()
@@ -288,6 +280,7 @@ class VIEW3D_PT_CurvePanel(Panel):
                 layout.label(text=o.name)
             # layout.prop(o, '["autoloft"]', toggle=True)
             layout.prop(wm, "auto_loft", toggle=True)
+            layout.operator("curvetools2.update_auto_loft_curves")
 
         # Advanced options
         box1 = self.layout.box()
@@ -303,29 +296,17 @@ class VIEW3D_PT_CurvePanel(Panel):
             row = col.row(align=True)
             row.operator("curve.remove_doubles", text="Remove Doubles")
             row = col.row(align=True)
-            vertex = []
-            selected = []
-            n = 0
-            obj = context.active_object
-            if obj is not None:
-                if obj.type == 'CURVE':
-                    for i in obj.data.splines:
-                        for j in i.bezier_points:
-                            n += 1
-                            if j.select_control_point:
-                                selected.append(n)
-                                vertex.append(obj.matrix_world @ j.co)
-
-                if len(vertex) > 0 and n > 2:
-                    row = col.row(align=True)
-                    row.operator("curve.bezier_points_fillet", text='Fillet')
-
-                if len(vertex) == 2 and abs(selected[0] - selected[1]) == 1:
-                    row = col.row(align=True)
-                    row.operator("curve.bezier_spline_divide", text='Divide')
-
+            row.operator("curve.bezier_points_fillet", text='Fillet')
+            row = col.row(align=True)
+            row.operator("curve.bezier_spline_divide", text='Divide')
             row = col.row(align=True)
             row.operator("curvetools2.operatorbirail", text="Birail")
+            row = col.row(align=True)
+            row.operator("curvetools2.convert_bezier_rectangle_to_surface", text="Convert Bezier Rectangle To Surface")
+            row = col.row(align=True)        
+            row.operator("curvetools2.convert_mesh_to_bezier", text="Convert Mesh to Bezier")
+            row = col.row(align=True)        
+            row.operator("curvetools2.convert_bezier_to_surface", text="Convert Bezier to Surface")
         # Utils Curve options
         box1 = self.layout.box()
         col = box1.column(align=True)
@@ -360,7 +341,6 @@ class VIEW3D_PT_CurvePanel(Panel):
 
             row = col.row(align=True)
             row.prop(context.scene.curvetools, "SplineJoinMode", text="Join mode")
-
 
 # Add-ons Preferences Update Panel
 
@@ -411,7 +391,6 @@ classes = (
     Properties.CurveTools2SelectedObject,
     CurveAddonPreferences,
     CurveTools2Settings,
-    Operators.OperatorSelectionInfo,
     Operators.OperatorCurveInfo,
     Operators.OperatorCurveLength,
     Operators.OperatorSplinesInfo,
@@ -426,7 +405,10 @@ classes = (
     Operators.OperatorSplinesRemoveShort,
     Operators.OperatorSplinesJoinNeighbouring,
     VIEW3D_PT_CurvePanel,
-    SeparateOutline
+    SeparateOutline,
+    Operators.ConvertBezierRectangleToSurface,
+    Operators.ConvertMeshToBezier,
+    Operators.ConvertBezierToSurface,
     )
 
 def register():

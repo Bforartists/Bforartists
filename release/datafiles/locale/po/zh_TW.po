@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: 2018-09-23 13:23+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -3993,6 +3993,30 @@ msgid "Copy the rotation of the target"
 msgstr "複製目標的旋轉"
 
 
+msgid "XYZ Euler"
+msgstr "XYZ 尤拉"
+
+
+msgid "XZY Euler"
+msgstr "XZY 尤拉"
+
+
+msgid "YXZ Euler"
+msgstr "YXZ 尤拉"
+
+
+msgid "YZX Euler"
+msgstr "YZX 尤拉"
+
+
+msgid "ZXY Euler"
+msgstr "ZXY 尤拉"
+
+
+msgid "ZYX Euler"
+msgstr "ZYX 尤拉"
+
+
 msgid "Invert the X rotation"
 msgstr "反轉 X 軸旋轉"
 
@@ -5049,6 +5073,10 @@ msgid "Bottom range of Z axis source motion"
 msgstr "Z 軸來源運動的底端範圍"
 
 
+msgid "Quaternion"
+msgstr "四元數"
+
+
 msgid "Map From"
 msgstr "映射從"
 
@@ -5870,6 +5898,10 @@ msgstr "視窗管理器"
 msgctxt "ID"
 msgid "World"
 msgstr "世界"
+
+
+msgid "Rotation Mode"
+msgstr "旋轉模式"
 
 
 msgid "Transform Space"
@@ -7887,10 +7919,6 @@ msgstr "基於粒子電荷的球體力場，僅影響其他電荷力場"
 
 msgid "Forcefield based on the Lennard-Jones potential"
 msgstr "基於蘭納瓊斯位能的力場"
-
-
-msgid "Forcefield based on a texture"
-msgstr "基於紋理的力場"
 
 
 msgid "Create a force along a curve object"
@@ -14102,10 +14130,6 @@ msgid "Rotation in Eulers"
 msgstr "尤拉的旋轉"
 
 
-msgid "Rotation Mode"
-msgstr "旋轉模式"
-
-
 msgid "Quaternion (WXYZ)"
 msgstr "四元數運算 (WXYZ)"
 
@@ -14114,48 +14138,24 @@ msgid "No Gimbal Lock"
 msgstr "無萬向鎖定"
 
 
-msgid "XYZ Euler"
-msgstr "XYZ 尤拉"
-
-
 msgid "XYZ Rotation Order - prone to Gimbal Lock (default)"
 msgstr "YXZ 旋轉順序 - 傾向萬向鎖定 (預設)"
-
-
-msgid "XZY Euler"
-msgstr "XZY 尤拉"
 
 
 msgid "XZY Rotation Order - prone to Gimbal Lock"
 msgstr "XZY 旋轉順序 - 傾向萬向鎖定"
 
 
-msgid "YXZ Euler"
-msgstr "YXZ 尤拉"
-
-
 msgid "YXZ Rotation Order - prone to Gimbal Lock"
 msgstr "YXZ 旋轉順序 - 傾向萬用鎖定"
-
-
-msgid "YZX Euler"
-msgstr "YZX 尤拉"
 
 
 msgid "YZX Rotation Order - prone to Gimbal Lock"
 msgstr "YZX 旋轉順序 - 傾向萬用鎖定"
 
 
-msgid "ZXY Euler"
-msgstr "ZXY 尤拉"
-
-
 msgid "ZXY Rotation Order - prone to Gimbal Lock"
 msgstr "ZXY 旋轉順序 - 傾向萬用鎖定"
-
-
-msgid "ZYX Euler"
-msgstr "ZYX 尤拉"
 
 
 msgid "ZYX Rotation Order - prone to Gimbal Lock"
@@ -20146,10 +20146,6 @@ msgstr "讓三角劃分後的面不會大規模毀滅 (僅塌陷)"
 
 msgid "All Boundaries"
 msgstr "所有邊界"
-
-
-msgid "Dissolve all vertices inbetween face boundaries (planar only)"
-msgstr "消融面邊界內部之間的所有頂點 (僅平面)"
 
 
 msgid "Vertex group name (collapse only)"
@@ -31673,10 +31669,6 @@ msgid "Starting frame for the animation"
 msgstr "動畫的起始幀"
 
 
-msgid "Quaternion"
-msgstr "四元數"
-
-
 msgid "Convert rotations to quaternions"
 msgstr "轉換旋轉為四元數"
 
@@ -32711,10 +32703,6 @@ msgstr "受限消融"
 
 msgid "Dissolve selected edges and verts, limited by the angle of surrounding geometry"
 msgstr "消融所選的邊線與頂點，受周圍幾何的角度限制"
-
-
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "消融所有面邊界內部之間的頂點"
 
 
 msgctxt "Operator"
@@ -58465,11 +58453,6 @@ msgstr "建立"
 
 
 msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "移動到層"
-
-
-msgctxt "Operator"
 msgid "Interpolate"
 msgstr "插補"
 
@@ -58835,11 +58818,6 @@ msgstr "景深距離"
 msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "空體描繪大小"
-
-
-msgctxt "Operator"
-msgid "Energy"
-msgstr "能量"
 
 
 msgctxt "Operator"
@@ -59997,6 +59975,11 @@ msgstr "蠟筆資料操作器已在作用中"
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "更改快捷鍵"
+
+
+msgctxt "Operator"
 msgid "Replace Keyframes"
 msgstr "替換鍵幀"
 
@@ -60069,11 +60052,6 @@ msgstr "重設單項回預設值"
 msgctxt "Operator"
 msgid "Unset"
 msgstr "取消設定"
-
-
-msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "更改快捷鍵"
 
 
 msgctxt "Operator"
@@ -60221,22 +60199,6 @@ msgstr "未知"
 
 msgid "Use Clipping"
 msgstr "使用剪輯"
-
-
-msgid "Min X "
-msgstr "最小 X"
-
-
-msgid "Min Y "
-msgstr "最小 Y"
-
-
-msgid "Max X "
-msgstr "最大 X"
-
-
-msgid "Max Y "
-msgstr "最大 Y"
 
 
 msgid "Reset View"

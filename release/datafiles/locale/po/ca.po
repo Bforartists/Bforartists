@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -2239,6 +2239,10 @@ msgid "Map transformations of the target to the object"
 msgstr "Seleccionar connectats"
 
 
+msgid "Quaternion"
+msgstr "Esborrar Rotació"
+
+
 msgid "Map From"
 msgstr "Començar Joc"
 
@@ -2513,6 +2517,10 @@ msgstr "Arxiu"
 
 msgid "Data Path"
 msgstr "Camí"
+
+
+msgid "Rotation Mode"
+msgstr "Esborrar Rotació"
 
 
 msgid "Transform Space"
@@ -5829,10 +5837,6 @@ msgstr "Esborrar Rotació"
 
 
 msgid "Rotation in Eulers"
-msgstr "Esborrar Rotació"
-
-
-msgid "Rotation Mode"
 msgstr "Esborrar Rotació"
 
 
@@ -14323,10 +14327,6 @@ msgid "Starting frame for the animation"
 msgstr "Començar a renderitzar una seqüència"
 
 
-msgid "Quaternion"
-msgstr "Esborrar Rotació"
-
-
 msgid "Convert rotations to quaternions"
 msgstr "Esborrar Rotació"
 
@@ -14906,10 +14906,6 @@ msgstr "Seleccionar fila"
 msgctxt "Operator"
 msgid "Limited Dissolve"
 msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "Esborrar"
 
 
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
@@ -27348,11 +27344,6 @@ msgstr "Moure a Capa"
 
 
 msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "Moure a Capa"
-
-
-msgctxt "Operator"
 msgid "Shrink Fatten"
 msgstr "Contreure/Engreixar"
 
@@ -27846,6 +27837,11 @@ msgstr "Amagar Seleccionats"
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "Render"
+
+
+msgctxt "Operator"
 msgid "Replace Keyframes"
 msgstr "Esborrar"
 
@@ -27913,11 +27909,6 @@ msgstr "Començar Joc"
 msgctxt "Operator"
 msgid "Reset Single to Default Value"
 msgstr "Començar Joc"
-
-
-msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "Render"
 
 
 msgctxt "Operator"

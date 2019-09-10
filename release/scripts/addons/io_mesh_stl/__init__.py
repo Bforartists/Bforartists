@@ -22,7 +22,7 @@ bl_info = {
     "name": "STL format",
     "author": "Guillaume Bouchard (Guillaum)",
     "version": (1, 1, 3),
-    "blender": (2, 80, 0),
+    "blender": (2, 81, 6),
     "location": "File > Import-Export > Stl",
     "description": "Import-Export STL files",
     "warning": "",
@@ -151,6 +151,61 @@ class ImportSTL(Operator, ImportHelper):
 
         return {'FINISHED'}
 
+    def draw(self, context):
+        pass
+
+
+class STL_PT_import_transform(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Transform"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "IMPORT_MESH_OT_stl"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "global_scale")
+        layout.prop(operator, "use_scene_unit")
+
+        layout.prop(operator, "axis_forward")
+        layout.prop(operator, "axis_up")
+
+
+class STL_PT_import_geometry(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Geometry"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "IMPORT_MESH_OT_stl"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "use_facet_normal")
+
 
 @orientation_helper(axis_forward='Y', axis_up='Z')
 class ExportSTL(Operator, ExportHelper):
@@ -244,18 +299,129 @@ class ExportSTL(Operator, ExportHelper):
 
         return {'FINISHED'}
 
+    def draw(self, context):
+        pass
+
+
+class STL_PT_export_main(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = ""
+    bl_parent_id = "FILE_PT_operator"
+    bl_options = {'HIDE_HEADER'}
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_MESH_OT_stl"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "ascii")
+        layout.prop(operator, "batch_mode")
+
+
+class STL_PT_export_include(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Include"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_MESH_OT_stl"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "use_selection")
+
+
+class STL_PT_export_transform(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Transform"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_MESH_OT_stl"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "global_scale")
+        layout.prop(operator, "use_scene_unit")
+
+        layout.prop(operator, "axis_forward")
+        layout.prop(operator, "axis_up")
+
+
+class STL_PT_export_geometry(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Geometry"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_MESH_OT_stl"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "use_mesh_modifiers")
+
 
 def menu_import(self, context):
-    self.layout.operator(ImportSTL.bl_idname, text="Stl (.stl)", icon = "LOAD_STL")
+    self.layout.operator(ImportSTL.bl_idname, text="Stl (.stl)")
 
 
 def menu_export(self, context):
-    self.layout.operator(ExportSTL.bl_idname, text="Stl (.stl)", icon = "SAVE_STL")
+    self.layout.operator(ExportSTL.bl_idname, text="Stl (.stl)")
 
 
 classes = (
     ImportSTL,
-    ExportSTL
+    STL_PT_import_transform,
+    STL_PT_import_geometry,
+    ExportSTL,
+    STL_PT_export_main,
+    STL_PT_export_include,
+    STL_PT_export_transform,
+    STL_PT_export_geometry,
 )
 
 def register():

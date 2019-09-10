@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzan <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -5447,6 +5447,30 @@ msgid "Copy the rotation of the target"
 msgstr "Copia la rotación del objetivo"
 
 
+msgid "XYZ Euler"
+msgstr "Euler XYZ"
+
+
+msgid "XZY Euler"
+msgstr "Euler XZY"
+
+
+msgid "YXZ Euler"
+msgstr "Euler YXZ"
+
+
+msgid "YZX Euler"
+msgstr "Euler YZX"
+
+
+msgid "ZXY Euler"
+msgstr "Euler ZXY"
+
+
+msgid "ZYX Euler"
+msgstr "Euler ZYX"
+
+
 msgid "Invert the X rotation"
 msgstr "Invierte la rotación X"
 
@@ -6645,6 +6669,10 @@ msgstr "Mínimo Z del origen"
 
 msgid "Bottom range of Z axis source motion"
 msgstr "Mínimo del rango original de movimiento en el eje Z"
+
+
+msgid "Quaternion"
+msgstr "Cuaternio"
 
 
 msgid "Map From"
@@ -7868,6 +7896,10 @@ msgstr "Entorno"
 msgctxt "ID"
 msgid "Workspace"
 msgstr "Espacio de trabajo"
+
+
+msgid "Rotation Mode"
+msgstr "Modo rotación"
 
 
 msgid "Transform Space"
@@ -10234,10 +10266,6 @@ msgstr "Campo de fuerza esférico basado en la carga de partículas, sólo influ
 
 msgid "Forcefield based on the Lennard-Jones potential"
 msgstr "Campo de fuerza basado en el potencial de Lennard-Jones"
-
-
-msgid "Forcefield based on a texture"
-msgstr "Campo de fuerza basado en una textura"
 
 
 msgid "Create a force along a curve object"
@@ -19851,10 +19879,6 @@ msgid "Rotation in Eulers"
 msgstr "Rotación tipo Euler"
 
 
-msgid "Rotation Mode"
-msgstr "Modo rotación"
-
-
 msgid "Quaternion (WXYZ)"
 msgstr "Cuaternio (WXYZ)"
 
@@ -19863,48 +19887,24 @@ msgid "No Gimbal Lock"
 msgstr "Sin bloqueo de ejes"
 
 
-msgid "XYZ Euler"
-msgstr "Euler XYZ"
-
-
 msgid "XYZ Rotation Order - prone to Gimbal Lock (default)"
 msgstr "Orden de rotación XYZ - propenso a bloqueo de ejes (predefinido)"
-
-
-msgid "XZY Euler"
-msgstr "Euler XZY"
 
 
 msgid "XZY Rotation Order - prone to Gimbal Lock"
 msgstr "Orden de rotación XZY - propenso a bloqueo de ejes"
 
 
-msgid "YXZ Euler"
-msgstr "Euler YXZ"
-
-
 msgid "YXZ Rotation Order - prone to Gimbal Lock"
 msgstr "Orden de rotación YXZ - propenso a bloqueo de ejes"
-
-
-msgid "YZX Euler"
-msgstr "Euler YZX"
 
 
 msgid "YZX Rotation Order - prone to Gimbal Lock"
 msgstr "Orden de rotación YZX - propenso a bloqueo de ejes"
 
 
-msgid "ZXY Euler"
-msgstr "Euler ZXY"
-
-
 msgid "ZXY Rotation Order - prone to Gimbal Lock"
 msgstr "Orden de rotación ZXY - propenso a bloqueo de ejes"
-
-
-msgid "ZYX Euler"
-msgstr "Euler ZYX"
 
 
 msgid "ZYX Rotation Order - prone to Gimbal Lock"
@@ -26982,10 +26982,6 @@ msgid "Clean Up"
 msgstr "Limpiar"
 
 
-msgid "GPencil Draw Delete"
-msgstr "Dibujar LC Borrar"
-
-
 msgid "GP Vertex Groups"
 msgstr "LC Grupos de vértices"
 
@@ -27411,10 +27407,6 @@ msgstr "Generar influencias"
 
 msgid "Copy Layer to Object"
 msgstr "Copiar capa a objeto"
-
-
-msgid "Edit Context Menu"
-msgstr "Edición - menú contextual"
 
 
 msgid "Hooks"
@@ -29507,10 +29499,6 @@ msgstr "Conservar caras trianguladas resultantes del diezmado (sólo modo Colaps
 
 msgid "All Boundaries"
 msgstr "Todos los límites"
-
-
-msgid "Dissolve all vertices inbetween face boundaries (planar only)"
-msgstr "Disuelve todos los vértices dentro de los límites de las caras (sólo modo Plano)"
 
 
 msgid "Symmetry"
@@ -45004,10 +44992,6 @@ msgid "Starting frame for the animation"
 msgstr "Fotograma inicial de la animación"
 
 
-msgid "Quaternion"
-msgstr "Cuaternio"
-
-
 msgid "Convert rotations to quaternions"
 msgstr "Convierte la rotación a cuaternios"
 
@@ -45228,10 +45212,6 @@ msgstr "Usar rutas de archivos relativas"
 
 msgid "Node shader to use"
 msgstr "Nodo sombreador a usar"
-
-
-msgid "Diffuse Shader"
-msgstr "Sombreador difuso"
 
 
 msgid "Shadeless"
@@ -46675,10 +46655,6 @@ msgid "Delimit dissolve operation"
 msgstr "Delimita la operación de disolución"
 
 
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "Disuelve todos los vértices dentro de las fronteras de las caras"
-
-
 msgctxt "Operator"
 msgid "Dissolve Selection"
 msgstr "Disolver selección"
@@ -47585,16 +47561,6 @@ msgid "Poke Offset"
 msgstr "Desplazamiento del pinchazo"
 
 
-msgctxt "Operator"
-msgid "Poly Build Dissolve at Cursor"
-msgstr "Crear polígono Disolver en el cursor"
-
-
-msgctxt "Operator"
-msgid "Poly Build Face at Cursor"
-msgstr "Crear polígono Cara en el cursor"
-
-
 msgctxt "Curve"
 msgid "Proportional Falloff"
 msgstr "Decaimiento edición proporcional"
@@ -47634,6 +47600,16 @@ msgstr "Edición proporcional"
 
 msgid "Projected (2D)"
 msgstr "Proyectado (2D)"
+
+
+msgctxt "Operator"
+msgid "Poly Build Dissolve at Cursor"
+msgstr "Crear polígono Disolver en el cursor"
+
+
+msgctxt "Operator"
+msgid "Poly Build Face at Cursor"
+msgstr "Crear polígono Cara en el cursor"
 
 
 msgctxt "Operator"
@@ -72490,14 +72466,6 @@ msgid "Sequence strip creating text"
 msgstr "Clip de la secuencia para crear un texto"
 
 
-msgid "Align the text along the X axis"
-msgstr "Alinear el texto a lo largo del eje X"
-
-
-msgid "Align the image along the Y axis"
-msgstr "Alinear la imagen a lo largo del eje Y"
-
-
 msgid "Text color"
 msgstr "Color del texto"
 
@@ -76707,14 +76675,6 @@ msgstr "Adherir a las esquinas de los píxeles"
 
 msgid "Snap to pixel centers"
 msgstr "Adherir al centro de los píxeles"
-
-
-msgid "Display Edges"
-msgstr "Mostrar bordes"
-
-
-msgid "Display edges in vertex select mode"
-msgstr "Muestra los bordes en el modo de selección de vértices"
 
 
 msgid "Display Faces"
@@ -83717,11 +83677,6 @@ msgstr "Cursor a la cuadrícula"
 
 
 msgctxt "Operator"
-msgid "Delete Frame"
-msgstr "Borrar fotograma"
-
-
-msgctxt "Operator"
 msgid "Poly"
 msgstr "Polígono"
 
@@ -85883,10 +85838,6 @@ msgid "Position X"
 msgstr "Posición X"
 
 
-msgid "{:>14}:"
-msgstr "{:>14}:"
-
-
 msgid "Convert to Float"
 msgstr "Convertir a decimal"
 
@@ -87554,13 +87505,8 @@ msgstr "Fijo"
 
 
 msgctxt "Operator"
-msgid "Join..."
-msgstr "Unir..."
-
-
-msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "Mover a capa"
+msgid "Arrange Strokes"
+msgstr "Ordenar trazos"
 
 
 msgctxt "Operator"
@@ -87569,8 +87515,8 @@ msgstr "Cerrar"
 
 
 msgctxt "Operator"
-msgid "Duplicate Active Frame"
-msgstr "Duplicar fotograma activo"
+msgid "Toggle Caps"
+msgstr "Mayús/minús."
 
 
 msgctxt "Operator"
@@ -87680,16 +87626,6 @@ msgid "Display:"
 msgstr "Visualización:"
 
 
-msgctxt "Operator"
-msgid "Arrange Strokes"
-msgstr "Ordenar trazos"
-
-
-msgctxt "Operator"
-msgid "Toggle Caps"
-msgstr "Mayús/minús."
-
-
 msgid "Frames:"
 msgstr "Fotogramas:"
 
@@ -87697,16 +87633,6 @@ msgstr "Fotogramas:"
 msgctxt "Operator"
 msgid "Insert Blank"
 msgstr "Insertar en blanco"
-
-
-msgctxt "Operator"
-msgid "Duplicate Active"
-msgstr "Duplicar activa"
-
-
-msgctxt "Operator"
-msgid "Delete All Active Layers"
-msgstr "Borrar todas las capas activas"
 
 
 msgid "Thickness Profile"
@@ -88155,11 +88081,6 @@ msgid "No layer to copy"
 msgstr "Ninguna capa que copiar"
 
 
-msgctxt "Operator"
-msgid "Duplicate All Layers"
-msgstr "Duplicar todas las capas"
-
-
 msgid "Toggle X-Ray"
 msgstr "Alternar rayos X"
 
@@ -88197,18 +88118,8 @@ msgstr "Mostrar Líneas de edición sólo en Multifotogramas"
 
 
 msgctxt "Operator"
-msgid "Duplicate Active Frame All Layers"
-msgstr "Duplicar fotograma activo en todas las capas"
-
-
-msgctxt "Operator"
-msgid "Duplicate for All Layers"
-msgstr "Duplicar para todas las capas"
-
-
-msgctxt "Operator"
-msgid "Delete Active"
-msgstr "Borrar activo"
+msgid "Duplicate All Layers"
+msgstr "Duplicar todas las capas"
 
 
 msgid "Multiframe"
@@ -88370,11 +88281,6 @@ msgstr "Convertir a curvas Bézier"
 msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "Ajustar tamaño del objeto Vacío"
-
-
-msgctxt "Operator"
-msgid "Energy"
-msgstr "Energía"
 
 
 msgctxt "Operator"
@@ -90530,6 +90436,16 @@ msgstr "Sólo los atajos de teclado pueden ser editados de esta forma, alternati
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "Cambiar atajo"
+
+
+msgctxt "Operator"
+msgid "Assign Shortcut"
+msgstr "Asignar atajo"
+
+
+msgctxt "Operator"
 msgid "Open File Externally"
 msgstr "Abrir archivo externamente"
 
@@ -90650,18 +90566,8 @@ msgstr "Agregar a favoritos rápidos"
 
 
 msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "Cambiar atajo"
-
-
-msgctxt "Operator"
 msgid "Remove Shortcut"
 msgstr "Eliminar atajo"
-
-
-msgctxt "Operator"
-msgid "Assign Shortcut"
-msgstr "Asignar atajo"
 
 
 msgctxt "Operator"
@@ -90870,22 +90776,6 @@ msgstr "Pos"
 
 msgid "Use Clipping"
 msgstr "Limitar"
-
-
-msgid "Min X "
-msgstr "Mín X "
-
-
-msgid "Min Y "
-msgstr "Mín Y "
-
-
-msgid "Max X "
-msgstr "Máx X "
-
-
-msgid "Max Y "
-msgstr "Máx Y "
 
 
 msgid "Reset View"

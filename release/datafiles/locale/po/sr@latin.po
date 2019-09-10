@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -4211,10 +4211,6 @@ msgstr "Prelaz"
 
 msgid "Type of field"
 msgstr "Spoj objekte"
-
-
-msgid "Forcefield based on a texture"
-msgstr "Daje teksturu oreolu"
 
 
 msgid "2D"
@@ -16684,10 +16680,6 @@ msgstr "Rastopi izabrane ivice i temena, ograničena uglom okolne geometrije"
 
 msgid "Delimit dissolve operation"
 msgstr "Poništi ograničenje operacije rastapanja"
-
-
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "Rastopi sva temena u granici stranice"
 
 
 msgctxt "Operator"
@@ -29318,11 +29310,6 @@ msgid "Make"
 msgstr "Napravi"
 
 
-msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "Premesti na sloj"
-
-
 msgctxt "Plural"
 msgid "Sharp"
 msgstr "Oštro"
@@ -29499,11 +29486,6 @@ msgstr "Širina"
 msgctxt "Operator"
 msgid "DOF Distance"
 msgstr "Udaljenost DOF-a"
-
-
-msgctxt "Operator"
-msgid "Energy"
-msgstr "Energija"
 
 
 msgctxt "Operator"
@@ -29868,6 +29850,11 @@ msgstr "Modifikator vrednosti F-krive"
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "Promeni prečicu"
+
+
+msgctxt "Operator"
 msgid "Replace Keyframes"
 msgstr "Zameni ključne kadarove"
 
@@ -29925,11 +29912,6 @@ msgstr "Vrati jedan na početnu vrednost"
 msgctxt "Operator"
 msgid "Unset"
 msgstr "Poništi"
-
-
-msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "Promeni prečicu"
 
 
 msgctxt "Operator"
@@ -30005,22 +29987,6 @@ msgstr "Poz"
 
 msgid "Use Clipping"
 msgstr "Koristi isecanje"
-
-
-msgid "Min X "
-msgstr "Min  X "
-
-
-msgid "Min Y "
-msgstr "Min Y "
-
-
-msgid "Max X "
-msgstr "Maks X "
-
-
-msgid "Max Y "
-msgstr "Maks Y "
 
 
 msgid "Reset View"

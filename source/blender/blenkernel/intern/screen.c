@@ -856,7 +856,8 @@ void BKE_screen_view3d_shading_init(View3DShading *shading)
 
   shading->type = OB_SOLID;
   shading->prev_type = OB_SOLID;
-  shading->flag = V3D_SHADING_SPECULAR_HIGHLIGHT | V3D_SHADING_XRAY_WIREFRAME;
+  shading->flag = V3D_SHADING_SPECULAR_HIGHLIGHT | V3D_SHADING_XRAY_WIREFRAME |
+                  V3D_SHADING_SCENE_LIGHTS_RENDER | V3D_SHADING_SCENE_WORLD_RENDER;
   shading->light = V3D_LIGHTING_STUDIO;
   shading->shadow_intensity = 0.5f;
   shading->xray_alpha = 0.5f;
@@ -868,6 +869,7 @@ void BKE_screen_view3d_shading_init(View3DShading *shading)
   shading->curvature_valley_factor = 1.0f;
   copy_v3_fl(shading->single_color, 0.8f);
   copy_v3_fl(shading->background_color, 0.05f);
+  shading->studiolight_intensity = 1.0f;
 }
 
 /* magic zoom calculation, no idea what

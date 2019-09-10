@@ -43,6 +43,7 @@
 #include "DNA_windowmanager_types.h"
 #include "DNA_workspace_types.h"
 #include "DNA_gpencil_types.h"
+#include "DNA_world_types.h"
 
 #include "BLI_math.h"
 #include "BLI_blenlib.h"
@@ -239,6 +240,8 @@ void BKE_scene_copy_data(Main *bmain, Scene *sce_dst, const Scene *sce_src, cons
 {
   /* We never handle usercount here for own data. */
   const int flag_subdata = flag | LIB_ID_CREATE_NO_USER_REFCOUNT;
+  /* We always need allocation of our private ID data. */
+  const int flag_private_id_data = flag_subdata & ~LIB_ID_CREATE_NO_ALLOCATE;
 
   sce_dst->ed = NULL;
   sce_dst->depsgraph_hash = NULL;
@@ -246,8 +249,10 @@ void BKE_scene_copy_data(Main *bmain, Scene *sce_dst, const Scene *sce_src, cons
 
   /* Master Collection */
   if (sce_src->master_collection) {
-    sce_dst->master_collection = BKE_collection_copy_master(
-        bmain, sce_src->master_collection, flag);
+    BKE_id_copy_ex(bmain,
+                   (ID *)sce_src->master_collection,
+                   (ID **)&sce_dst->master_collection,
+                   flag_private_id_data);
   }
 
   /* View Layers */
@@ -265,9 +270,8 @@ void BKE_scene_copy_data(Main *bmain, Scene *sce_dst, const Scene *sce_src, cons
   BKE_keyingsets_copy(&(sce_dst->keyingsets), &(sce_src->keyingsets));
 
   if (sce_src->nodetree) {
-    /* Note: nodetree is *not* in bmain, however this specific case is handled at lower level
-     *       (see BKE_libblock_copy_ex()). */
-    BKE_id_copy_ex(bmain, (ID *)sce_src->nodetree, (ID **)&sce_dst->nodetree, flag);
+    BKE_id_copy_ex(
+        bmain, (ID *)sce_src->nodetree, (ID **)&sce_dst->nodetree, flag_private_id_data);
     BKE_libblock_relink_ex(bmain,
                            sce_dst->nodetree,
                            (void *)(&sce_src->id),
@@ -958,7 +962,6 @@ void BKE_scene_init(Scene *sce)
   sce->eevee.motion_blur_samples = 8;
   sce->eevee.motion_blur_shutter = 0.5f;
 
-  sce->eevee.shadow_method = SHADOW_ESM;
   sce->eevee.shadow_cube_size = 512;
   sce->eevee.shadow_cascade_size = 1024;
 
@@ -969,7 +972,7 @@ void BKE_scene_init(Scene *sce)
 
   sce->eevee.flag = SCE_EEVEE_VOLUMETRIC_LIGHTS | SCE_EEVEE_GTAO_BENT_NORMALS |
                     SCE_EEVEE_GTAO_BOUNCE | SCE_EEVEE_TAA_REPROJECTION |
-                    SCE_EEVEE_SSR_HALF_RESOLUTION;
+                    SCE_EEVEE_SSR_HALF_RESOLUTION | SCE_EEVEE_SHADOW_SOFT;
 }
 
 Scene *BKE_scene_add(Main *bmain, const char *name)
@@ -1554,31 +1557,37 @@ static void scene_graph_update_tagged(Depsgraph *depsgraph, Main *bmain, bool on
     BLI_callback_exec(bmain, &scene->id, BLI_CB_EVT_DEPSGRAPH_UPDATE_PRE);
   }
 
-  /* TODO(sergey): Some functions here are changing global state,
-   * for example, clearing update tags from bmain.
-   */
-  /* (Re-)build dependency graph if needed. */
-  DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
-  /* Uncomment this to check if graph was properly tagged for update. */
-  // DEG_debug_graph_relations_validate(depsgraph, bmain, scene);
-  /* Flush editing data if needed. */
-  prepare_mesh_for_viewport_render(bmain, view_layer);
-  /* Flush recalc flags to dependencies. */
-  DEG_graph_flush_update(bmain, depsgraph);
-  /* Update all objects: drivers, matrices, displists, etc. flags set
-   * by depgraph or manual, no layer check here, gets correct flushed.
-   */
-  DEG_evaluate_on_refresh(depsgraph);
-  /* Update sound system. */
-  BKE_scene_update_sound(depsgraph, bmain);
-  /* Notify python about depsgraph update. */
-  if (run_callbacks) {
-    BLI_callback_exec(bmain, &scene->id, BLI_CB_EVT_DEPSGRAPH_UPDATE_POST);
+  for (int pass = 0; pass < 2; pass++) {
+    /* (Re-)build dependency graph if needed. */
+    DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
+    /* Uncomment this to check if graph was properly tagged for update. */
+    // DEG_debug_graph_relations_validate(depsgraph, bmain, scene);
+    /* Flush editing data if needed. */
+    prepare_mesh_for_viewport_render(bmain, view_layer);
+    /* Update all objects: drivers, matrices, displists, etc. flags set
+     * by depgraph or manual, no layer check here, gets correct flushed.
+     */
+    DEG_evaluate_on_refresh(bmain, depsgraph);
+    /* Update sound system. */
+    BKE_scene_update_sound(depsgraph, bmain);
+    /* Notify python about depsgraph update. */
+    if (run_callbacks) {
+      BLI_callback_exec(bmain, &scene->id, BLI_CB_EVT_DEPSGRAPH_UPDATE_POST);
+    }
+    /* Inform editors about possible changes. */
+    DEG_ids_check_recalc(bmain, depsgraph, scene, view_layer, false);
+    /* Clear recalc flags. */
+    DEG_ids_clear_recalc(bmain, depsgraph);
+
+    /* If user callback did not tag anything for update we can skip second iteration.
+     * Otherwise we update scene once again, but without running callbacks to bring
+     * scene to a fully evaluated state with user modifications taken into account. */
+    if (DEG_is_fully_evaluated(depsgraph)) {
+      break;
+    }
+
+    run_callbacks = false;
   }
-  /* Inform editors about possible changes. */
-  DEG_ids_check_recalc(bmain, depsgraph, scene, view_layer, false);
-  /* Clear recalc flags. */
-  DEG_ids_clear_recalc(bmain, depsgraph);
 }
 
 void BKE_scene_graph_update_tagged(Depsgraph *depsgraph, Main *bmain)
@@ -1597,33 +1606,44 @@ void BKE_scene_graph_update_for_newframe(Depsgraph *depsgraph, Main *bmain)
   Scene *scene = DEG_get_input_scene(depsgraph);
   ViewLayer *view_layer = DEG_get_input_view_layer(depsgraph);
 
-  /* TODO(sergey): Some functions here are changing global state,
-   * for example, clearing update tags from bmain.
-   */
-  const float ctime = BKE_scene_frame_get(scene);
   /* Keep this first. */
   BLI_callback_exec(bmain, &scene->id, BLI_CB_EVT_FRAME_CHANGE_PRE);
-  /* Update animated image textures for particles, modifiers, gpu, etc,
-   * call this at the start so modifiers with textures don't lag 1 frame.
-   */
-  BKE_image_editors_update_frame(bmain, scene->r.cfra);
-  BKE_sound_set_cfra(scene->r.cfra);
-  DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
+
+  for (int pass = 0; pass < 2; pass++) {
+    /* Update animated image textures for particles, modifiers, gpu, etc,
+     * call this at the start so modifiers with textures don't lag 1 frame.
+     */
+    BKE_image_editors_update_frame(bmain, scene->r.cfra);
+    BKE_sound_set_cfra(scene->r.cfra);
+    DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
 #ifdef POSE_ANIMATION_WORKAROUND
-  scene_armature_depsgraph_workaround(bmain, depsgraph);
+    scene_armature_depsgraph_workaround(bmain, depsgraph);
 #endif
-  /* Update all objects: drivers, matrices, displists, etc. flags set
-   * by depgraph or manual, no layer check here, gets correct flushed.
-   */
-  DEG_evaluate_on_framechange(bmain, depsgraph, ctime);
-  /* Update sound system animation. */
-  BKE_scene_update_sound(depsgraph, bmain);
-  /* Notify editors and python about recalc. */
-  BLI_callback_exec(bmain, &scene->id, BLI_CB_EVT_FRAME_CHANGE_POST);
-  /* Inform editors about possible changes. */
-  DEG_ids_check_recalc(bmain, depsgraph, scene, view_layer, true);
-  /* clear recalc flags */
-  DEG_ids_clear_recalc(bmain, depsgraph);
+    /* Update all objects: drivers, matrices, displists, etc. flags set
+     * by depgraph or manual, no layer check here, gets correct flushed.
+     */
+    const float ctime = BKE_scene_frame_get(scene);
+    DEG_evaluate_on_framechange(bmain, depsgraph, ctime);
+    /* Update sound system animation. */
+    BKE_scene_update_sound(depsgraph, bmain);
+
+    /* Notify editors and python about recalc. */
+    if (pass == 0) {
+      BLI_callback_exec(bmain, &scene->id, BLI_CB_EVT_FRAME_CHANGE_POST);
+    }
+
+    /* Inform editors about possible changes. */
+    DEG_ids_check_recalc(bmain, depsgraph, scene, view_layer, true);
+    /* clear recalc flags */
+    DEG_ids_clear_recalc(bmain, depsgraph);
+
+    /* If user callback did not tag anything for update we can skip second iteration.
+     * Otherwise we update scene once again, but without running callbacks to bring
+     * scene to a fully evaluated state with user modifications taken into account. */
+    if (DEG_is_fully_evaluated(depsgraph)) {
+      break;
+    }
+  }
 }
 
 /** Ensures given scene/view_layer pair has a valid, up-to-date depsgraph.

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 3) (b'2b55f621fe20')\n"
+"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-26 00:00:00\n"
+"POT-Creation-Date: 2019-09-02 00:00:00\n"
 "PO-Revision-Date: 2019-07-22 21:03+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -5448,6 +5448,30 @@ msgid "Copy the rotation of the target"
 msgstr "대상의 회전을 복사"
 
 
+msgid "XYZ Euler"
+msgstr "XYZ 오일러"
+
+
+msgid "XZY Euler"
+msgstr "XZY 오일러"
+
+
+msgid "YXZ Euler"
+msgstr "YXZ 오일러"
+
+
+msgid "YZX Euler"
+msgstr "YZX 오일러"
+
+
+msgid "ZXY Euler"
+msgstr "ZXY 오일러"
+
+
+msgid "ZYX Euler"
+msgstr "ZYX 오일러"
+
+
 msgid "Invert the X rotation"
 msgstr "X 회전을 반전"
 
@@ -6646,6 +6670,10 @@ msgstr "최소의 Z에서"
 
 msgid "Bottom range of Z axis source motion"
 msgstr "Z 축 소스 움직임의 아래쪽 범위"
+
+
+msgid "Quaternion"
+msgstr "쿼터니언"
 
 
 msgid "Map From"
@@ -7869,6 +7897,10 @@ msgstr "월드"
 msgctxt "ID"
 msgid "Workspace"
 msgstr "작업공간"
+
+
+msgid "Rotation Mode"
+msgstr "회전 모드"
 
 
 msgid "Transform Space"
@@ -10235,10 +10267,6 @@ msgstr "파티클의 전하를 기반으로 하는 구형의 포스는 다른 �
 
 msgid "Forcefield based on the Lennard-Jones potential"
 msgstr "레너드-존스 가능성에 기반 포스 필드"
-
-
-msgid "Forcefield based on a texture"
-msgstr "텍스쳐에 기초된 포스 필드"
 
 
 msgid "Create a force along a curve object"
@@ -19852,10 +19880,6 @@ msgid "Rotation in Eulers"
 msgstr "오일러로 회전"
 
 
-msgid "Rotation Mode"
-msgstr "회전 모드"
-
-
 msgid "Quaternion (WXYZ)"
 msgstr "쿼터니언 (WXYZ)"
 
@@ -19864,48 +19888,24 @@ msgid "No Gimbal Lock"
 msgstr "짐벌 락 현상이 없습니다"
 
 
-msgid "XYZ Euler"
-msgstr "XYZ 오일러"
-
-
 msgid "XYZ Rotation Order - prone to Gimbal Lock (default)"
 msgstr "XYZ 회전 순서 - 짐벌 락하는 경향이 있습니다 (기본 값)"
-
-
-msgid "XZY Euler"
-msgstr "XZY 오일러"
 
 
 msgid "XZY Rotation Order - prone to Gimbal Lock"
 msgstr "XZY 회전 순서 - 짐벌 락하는 경향이 있습니다"
 
 
-msgid "YXZ Euler"
-msgstr "YXZ 오일러"
-
-
 msgid "YXZ Rotation Order - prone to Gimbal Lock"
 msgstr "YXZ 회전 순서 - 짐벌 락하는 경향이 있습니다"
-
-
-msgid "YZX Euler"
-msgstr "YZX 오일러"
 
 
 msgid "YZX Rotation Order - prone to Gimbal Lock"
 msgstr "YZX 회전 순서 - 짐벌 락하는 경향이 있습니다"
 
 
-msgid "ZXY Euler"
-msgstr "ZXY 오일러"
-
-
 msgid "ZXY Rotation Order - prone to Gimbal Lock"
 msgstr "ZXY 회전 오일러 - 짐벌 락하는 경향이 있습니다"
-
-
-msgid "ZYX Euler"
-msgstr "ZYX 오일러"
 
 
 msgid "ZYX Rotation Order - prone to Gimbal Lock"
@@ -26985,10 +26985,6 @@ msgid "Clean Up"
 msgstr "정리"
 
 
-msgid "GPencil Draw Delete"
-msgstr "GPencil 그리기 삭제"
-
-
 msgid "GP Vertex Groups"
 msgstr "GP 버텍스 그룹"
 
@@ -27414,10 +27410,6 @@ msgstr "웨이트를 생성"
 
 msgid "Copy Layer to Object"
 msgstr "레이어를 오브젝트에 복사"
-
-
-msgid "Edit Context Menu"
-msgstr "컨텍스트 메뉴를 편집"
 
 
 msgid "Hooks"
@@ -29510,10 +29502,6 @@ msgstr "데시메이션으로 인한 삼각형 모양의 페이스를 유지 (�
 
 msgid "All Boundaries"
 msgstr "모든 경계선"
-
-
-msgid "Dissolve all vertices inbetween face boundaries (planar only)"
-msgstr "모든 버텍스 중간에 페이스의 경계를 디졸브 (평면 만)"
 
 
 msgid "Symmetry"
@@ -45007,10 +44995,6 @@ msgid "Starting frame for the animation"
 msgstr "애니메이션의 시작 프레임"
 
 
-msgid "Quaternion"
-msgstr "쿼터니언"
-
-
 msgid "Convert rotations to quaternions"
 msgstr "쿼터니언으로 회전을 변환"
 
@@ -45231,10 +45215,6 @@ msgstr "상대 파일 경로를 사용"
 
 msgid "Node shader to use"
 msgstr "사용할 노드 셰이더"
-
-
-msgid "Diffuse Shader"
-msgstr "확산 셰이더"
 
 
 msgid "Shadeless"
@@ -46678,10 +46658,6 @@ msgid "Delimit dissolve operation"
 msgstr "디졸브 작업 범위를 정하기"
 
 
-msgid "Dissolve all vertices inbetween face boundaries"
-msgstr "모든 버텍스 중간에 페이스의 경계를 디졸브"
-
-
 msgctxt "Operator"
 msgid "Dissolve Selection"
 msgstr "디졸브 선택"
@@ -47588,16 +47564,6 @@ msgid "Poke Offset"
 msgstr "포크 오프셋"
 
 
-msgctxt "Operator"
-msgid "Poly Build Dissolve at Cursor"
-msgstr "폴리 빌드는 커서에서 디졸브"
-
-
-msgctxt "Operator"
-msgid "Poly Build Face at Cursor"
-msgstr "폴리 빌드 페이스에서 커서"
-
-
 msgctxt "Curve"
 msgid "Proportional Falloff"
 msgstr "비례 감소"
@@ -47637,6 +47603,16 @@ msgstr "비례 편집"
 
 msgid "Projected (2D)"
 msgstr "투사된 (2D)"
+
+
+msgctxt "Operator"
+msgid "Poly Build Dissolve at Cursor"
+msgstr "폴리 빌드는 커서에서 디졸브"
+
+
+msgctxt "Operator"
+msgid "Poly Build Face at Cursor"
+msgstr "폴리 빌드 페이스에서 커서"
 
 
 msgctxt "Operator"
@@ -72493,14 +72469,6 @@ msgid "Sequence strip creating text"
 msgstr "텍스트를 만드는 시퀀스 스트립"
 
 
-msgid "Align the text along the X axis"
-msgstr "X 축을 따라 텍스트를 정렬"
-
-
-msgid "Align the image along the Y axis"
-msgstr "Y 축을 따라 텍스트를 정렬"
-
-
 msgid "Text color"
 msgstr "텍스트 컬러"
 
@@ -76710,14 +76678,6 @@ msgstr "픽셀 코너에 스넵"
 
 msgid "Snap to pixel centers"
 msgstr "픽셀 코너에 스넵"
-
-
-msgid "Display Edges"
-msgstr "에지를 표시"
-
-
-msgid "Display edges in vertex select mode"
-msgstr "버텍스 선택 모드에서 에지를 표시"
 
 
 msgid "Display Faces"
@@ -83720,11 +83680,6 @@ msgstr "커서를 격자에 스냅"
 
 
 msgctxt "Operator"
-msgid "Delete Frame"
-msgstr "프레임을 삭제"
-
-
-msgctxt "Operator"
 msgid "Poly"
 msgstr "폴리"
 
@@ -85886,10 +85841,6 @@ msgid "Position X"
 msgstr "위치 X"
 
 
-msgid "{:>14}:"
-msgstr "{:>14}:"
-
-
 msgid "Convert to Float"
 msgstr "실수로 변환"
 
@@ -87557,13 +87508,8 @@ msgstr "고정됨"
 
 
 msgctxt "Operator"
-msgid "Join..."
-msgstr "합치기..."
-
-
-msgctxt "Operator"
-msgid "Move to Layer"
-msgstr "레이어로 이동"
+msgid "Arrange Strokes"
+msgstr "스트로크를 정렬"
 
 
 msgctxt "Operator"
@@ -87572,8 +87518,8 @@ msgstr "닫기"
 
 
 msgctxt "Operator"
-msgid "Duplicate Active Frame"
-msgstr "활성 프레임을 복제"
+msgid "Toggle Caps"
+msgstr "캡을 토글"
 
 
 msgctxt "Operator"
@@ -87683,16 +87629,6 @@ msgid "Display:"
 msgstr "표시:"
 
 
-msgctxt "Operator"
-msgid "Arrange Strokes"
-msgstr "스트로크를 정렬"
-
-
-msgctxt "Operator"
-msgid "Toggle Caps"
-msgstr "캡을 토글"
-
-
 msgid "Frames:"
 msgstr "프레임:"
 
@@ -87700,16 +87636,6 @@ msgstr "프레임:"
 msgctxt "Operator"
 msgid "Insert Blank"
 msgstr "공란 삽입"
-
-
-msgctxt "Operator"
-msgid "Duplicate Active"
-msgstr "활성을 복제"
-
-
-msgctxt "Operator"
-msgid "Delete All Active Layers"
-msgstr "모든 활성 레이어를 삭제"
 
 
 msgid "Thickness Profile"
@@ -88158,11 +88084,6 @@ msgid "No layer to copy"
 msgstr "복사 할 레이어가 없습니다"
 
 
-msgctxt "Operator"
-msgid "Duplicate All Layers"
-msgstr "모든 레이어를 복제"
-
-
 msgid "Toggle X-Ray"
 msgstr "X-Ray를 토글"
 
@@ -88200,18 +88121,8 @@ msgstr "멀티 프레임에서만 편집 라인을 표시"
 
 
 msgctxt "Operator"
-msgid "Duplicate Active Frame All Layers"
-msgstr "모든 액티브 프레임 레이어를 복제"
-
-
-msgctxt "Operator"
-msgid "Duplicate for All Layers"
-msgstr "모든 레이어에 대해 복제"
-
-
-msgctxt "Operator"
-msgid "Delete Active"
-msgstr "활성을 삭제"
+msgid "Duplicate All Layers"
+msgstr "모든 레이어를 복제"
 
 
 msgid "Multiframe"
@@ -88373,11 +88284,6 @@ msgstr "베지어 커브으로 변환"
 msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "엠프티 그리기 크기"
-
-
-msgctxt "Operator"
-msgid "Energy"
-msgstr "에너지"
 
 
 msgctxt "Operator"
@@ -90525,6 +90431,16 @@ msgstr "키보드 단축키 만 편집할 수 있습니다. 그렇지 않으면 
 
 
 msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "단축 키를 변경"
+
+
+msgctxt "Operator"
+msgid "Assign Shortcut"
+msgstr "단축 키를 할당"
+
+
+msgctxt "Operator"
 msgid "Open File Externally"
 msgstr "외부 파일 열기"
 
@@ -90645,18 +90561,8 @@ msgstr "빠른 즐겨 찾기에 추가"
 
 
 msgctxt "Operator"
-msgid "Change Shortcut"
-msgstr "단축 키를 변경"
-
-
-msgctxt "Operator"
 msgid "Remove Shortcut"
 msgstr "단축 키를 제거"
-
-
-msgctxt "Operator"
-msgid "Assign Shortcut"
-msgstr "단축 키를 할당"
 
 
 msgctxt "Operator"
@@ -90865,22 +90771,6 @@ msgstr "Pos"
 
 msgid "Use Clipping"
 msgstr "클리핑을 사용"
-
-
-msgid "Min X "
-msgstr "최소 X "
-
-
-msgid "Min Y "
-msgstr "최소 Y "
-
-
-msgid "Max X "
-msgstr "최대 X "
-
-
-msgid "Max Y "
-msgstr "최대 Y "
 
 
 msgid "Reset View"

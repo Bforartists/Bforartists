@@ -31,20 +31,6 @@ from bpy.props import (
 from bl_ui.properties_paint_common import UnifiedPaintPanel
 
 
-# Animation Menus
-class VIEW3D_MT_KeyframeMenu(Menu):
-    bl_label = "Keyframe"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("anim.keyframe_insert_menu",
-                        text="Insert Keyframe...")
-        layout.operator("anim.keyframe_delete_v3d",
-                        text="Delete Keyframe...")
-        layout.operator("anim.keying_set_active_set",
-                        text="Change Keying Set...")
-
-
 
 # Animation Player (Thanks to marvin.k.breuer) #
 class VIEW3D_MT_Animation_Player(Menu):
@@ -67,14 +53,13 @@ class VIEW3D_MT_Animation_Player(Menu):
         layout.operator("screen.frame_jump", text="Jump REW", icon='REW').end = False
         layout.separator()
 
-        layout.menu("VIEW3D_MT_KeyframeMenu", text="Keyframes", icon='DECORATE_ANIMATE')
+        layout.menu("VIEW3D_MT_object_animation", text="Keyframes", icon='DECORATE_ANIMATE')
 
 
 
 # List The Classes #
 
 classes = (
-    VIEW3D_MT_KeyframeMenu,
     VIEW3D_MT_Animation_Player,
 )
 

@@ -61,6 +61,38 @@
 #define TEXTURE 4
 #define PATTERN 5
 
+/* Verify if must fade object or not. */
+static bool gpencil_fade_object_check(GPENCIL_StorageList *stl, Object *ob)
+{
+  const DRWContextState *draw_ctx = DRW_context_state_get();
+  View3D *v3d = draw_ctx->v3d;
+  const bool is_overlay = (bool)((v3d) && ((v3d->flag2 & V3D_HIDE_OVERLAYS) == 0) &&
+                                 (v3d->gp_flag & V3D_GP_SHOW_PAPER));
+
+  if ((!is_overlay) || (ob == draw_ctx->obact) ||
+      ((v3d->gp_flag & V3D_GP_FADE_NOACTIVE_GPENCIL) == 0) ||
+      (v3d->overlay.gpencil_paper_opacity == 1.0f)) {
+    return false;
+  }
+
+  const bool playing = stl->storage->is_playing;
+  const bool is_render = (bool)stl->storage->is_render;
+  const bool is_mat_preview = (bool)stl->storage->is_mat_preview;
+  const bool is_select = (bool)(DRW_state_is_select() || DRW_state_is_depth());
+
+  return (bool)((!is_render) && (!playing) && (!is_mat_preview) && (!is_select));
+}
+
+/* Define Fade object uniforms. */
+static void gpencil_set_fade_uniforms(View3D *v3d, DRWShadingGroup *grp, bool status)
+{
+  DRW_shgroup_uniform_bool_copy(grp, "fade_on", status);
+  if (v3d) {
+    DRW_shgroup_uniform_vec3(grp, "fade_color", v3d->shading.background_color, 1);
+    DRW_shgroup_uniform_float(grp, "fade_factor", &v3d->overlay.gpencil_paper_opacity, 1);
+  }
+}
+
 /* Get number of vertex for using in GPU VBOs */
 static void gpencil_calc_vertex(GPENCIL_StorageList *stl,
                                 tGPencilObjectCache *cache_ob,
@@ -254,6 +286,10 @@ static void set_wireframe_color(Object *ob,
 {
   const DRWContextState *draw_ctx = DRW_context_state_get();
   World *world = draw_ctx->scene->world;
+  const bool is_fade = (v3d) && (v3d->gp_flag & V3D_GP_FADE_NOACTIVE_LAYERS) &&
+                       (draw_ctx->obact) && (draw_ctx->obact == ob) &&
+                       ((gpl->flag & GP_LAYER_ACTIVE) == 0);
+  const float opacity = is_fade ? v3d->overlay.gpencil_fade_layer : 1.0f;
 
   float color[4];
   if (((gp_style->stroke_rgba[3] < GPENCIL_ALPHA_OPACITY_THRESH) ||
@@ -264,7 +300,7 @@ static void set_wireframe_color(Object *ob,
   else {
     copy_v4_v4(color, gp_style->stroke_rgba);
   }
-  float alpha = color[3];
+  float alpha = color[3] * opacity;
 
   /* wire color */
   if ((v3d) && (id > -1)) {
@@ -301,13 +337,13 @@ static void set_wireframe_color(Object *ob,
         else {
           copy_v3_v3(color, v3d->shading.single_color);
         }
-        color[3] = alpha;
+        color[3] = is_fade ? alpha : 1.0f;
         linearrgb_to_srgb_v4(stl->shgroups[id].wire_color, color);
         break;
       }
       case V3D_SHADING_OBJECT_COLOR: {
         copy_v4_v4(color, ob->color);
-        color[3] = alpha;
+        color[3] = is_fade ? alpha : 1.0f;
         linearrgb_to_srgb_v4(stl->shgroups[id].wire_color, color);
         break;
       }
@@ -324,7 +360,7 @@ static void set_wireframe_color(Object *ob,
         hsv_to_rgb_v(hsv, &wire_col[0]);
 
         copy_v3_v3(stl->shgroups[id].wire_color, wire_col);
-        stl->shgroups[id].wire_color[3] = alpha;
+        stl->shgroups[id].wire_color[3] = is_fade ? alpha : 1.0f;
         break;
       }
       default: {
@@ -337,9 +373,9 @@ static void set_wireframe_color(Object *ob,
     copy_v4_v4(stl->shgroups[id].wire_color, color);
   }
 
-  /* if solid, the alpha must be set to 1.0 */
+  /* if solid, the alpha must be set to alpha */
   if (stl->shgroups[id].shading_type[0] == OB_SOLID) {
-    stl->shgroups[id].wire_color[3] = 1.0f;
+    stl->shgroups[id].wire_color[3] = is_fade ? alpha : 1.0f;
   }
 }
 
@@ -430,6 +466,9 @@ static DRWShadingGroup *gpencil_shgroup_fill_create(GPENCIL_Data *vedata,
   }
 
   DRW_shgroup_uniform_int(grp, "shading_type", &stl->shgroups[id].shading_type[0], 2);
+
+  /* Fade object uniforms. */
+  gpencil_set_fade_uniforms(v3d, grp, gpencil_fade_object_check(stl, ob));
 
   /* wire color */
   set_wireframe_color(ob, gpl, v3d, stl, gp_style, id, true);
@@ -553,6 +592,9 @@ DRWShadingGroup *gpencil_shgroup_stroke_create(GPENCIL_Data *vedata,
     }
     DRW_shgroup_uniform_int(grp, "shading_type", &stl->shgroups[id].shading_type[0], 2);
 
+    /* Fade object uniforms. */
+    gpencil_set_fade_uniforms(v3d, grp, gpencil_fade_object_check(stl, ob));
+
     /* wire color */
     set_wireframe_color(ob, gpl, v3d, stl, gp_style, id, false);
     DRW_shgroup_uniform_vec4(grp, "wire_color", stl->shgroups[id].wire_color, 1);
@@ -602,6 +644,9 @@ DRWShadingGroup *gpencil_shgroup_stroke_create(GPENCIL_Data *vedata,
     /* for drawing always on predefined z-depth */
     DRW_shgroup_uniform_int(grp, "xraymode", &stl->storage->xray, 1);
   }
+
+  /* Fade object uniforms. */
+  gpencil_set_fade_uniforms(v3d, grp, false);
 
   /* image texture for pattern */
   if ((gp_style) && (gp_style->stroke_style == GP_STYLE_STROKE_STYLE_TEXTURE) && (!onion)) {
@@ -702,6 +747,9 @@ static DRWShadingGroup *gpencil_shgroup_point_create(GPENCIL_Data *vedata,
     }
     DRW_shgroup_uniform_int(grp, "shading_type", &stl->shgroups[id].shading_type[0], 2);
 
+    /* Fade object uniforms. */
+    gpencil_set_fade_uniforms(v3d, grp, gpencil_fade_object_check(stl, ob));
+
     /* wire color */
     set_wireframe_color(ob, gpl, v3d, stl, gp_style, id, false);
     DRW_shgroup_uniform_vec4(grp, "wire_color", stl->shgroups[id].wire_color, 1);
@@ -759,6 +807,9 @@ static DRWShadingGroup *gpencil_shgroup_point_create(GPENCIL_Data *vedata,
     /* for drawing always on predefined z-depth */
     DRW_shgroup_uniform_int(grp, "xraymode", &stl->storage->xray, 1);
   }
+
+  /* Fade object uniforms. */
+  gpencil_set_fade_uniforms(v3d, grp, false);
 
   /* image texture */
   if ((gp_style) && (gp_style->stroke_style == GP_STYLE_STROKE_STYLE_TEXTURE) && (!onion)) {

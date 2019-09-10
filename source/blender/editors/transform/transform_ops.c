@@ -53,6 +53,7 @@
 #include "ED_mesh.h"
 
 #include "transform.h"
+#include "transform_convert.h"
 
 typedef struct TransformModeItem {
   const char *idname;
@@ -573,7 +574,7 @@ void Transform_Properties(struct wmOperatorType *ot, int flags)
   if (flags & P_ORIENT_AXIS_ORTHO) {
     prop = RNA_def_property(ot->srna, "orient_axis_ortho", PROP_ENUM, PROP_NONE);
     RNA_def_property_ui_text(prop, "Axis Ortho", "");
-    RNA_def_property_enum_default(prop, 1);
+    RNA_def_property_enum_default(prop, 0);
     RNA_def_property_enum_items(prop, rna_enum_axis_xyz_items);
     RNA_def_property_flag(prop, PROP_SKIP_SAVE);
   }
@@ -910,7 +911,6 @@ static void TRANSFORM_OT_shear(struct wmOperatorType *ot)
   ot->poll_property = transform_poll_property;
 
   RNA_def_float(ot->srna, "value", 0, -FLT_MAX, FLT_MAX, "Offset", "", -FLT_MAX, FLT_MAX);
-  RNA_def_enum(ot->srna, "shear_axis", rna_enum_axis_xy_items, 0, "Shear Axis", "");
 
   WM_operatortype_props_advanced_begin(ot);
 

@@ -43,7 +43,7 @@ def addText(string = '', loc = ((0, 0, 0)), textsize = 1, align = 'CENTER', offs
     tcu = bpy.data.curves.new(string + 'Data', 'FONT')
     text = bpy.data.objects.new(string + 'Text', tcu)
     tcu.body = string
-    tcu.fill_mode = 'NONE'
+    tcu.fill_mode = 'BOTH'
     tcu.align_x = align
     tcu.size = textsize
     tcu.offset_y = offset_y
@@ -1524,7 +1524,7 @@ def createCurve(vertArray, self, align_matrix):
 
     # set curveOptions
     newCurve.dimensions = '2D'
-    newCurve.fill_mode = 'NONE'    
+    newCurve.fill_mode = 'BOTH'    
     newSpline.use_cyclic_u = True
     newSpline.use_endpoint_u = True
 
