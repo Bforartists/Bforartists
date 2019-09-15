@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -1481,6 +1481,10 @@ msgid "Invert the Z rotation"
 msgstr "ﺖﻓﺎﺑ ﯽﺷﺎﻘﻧ"
 
 
+msgid "Mix Mode"
+msgstr "ﯽﺒﯿﮐﺮﺗ ﺖﻟﺎﺣ"
+
+
 msgid "Copy Scale Constraint"
 msgstr "ﻥﺍﻮﺨﺘﺳﺍ ﯼﺎﻫ‌ﺖﯾﺩﻭﺪﺤﻣ"
 
@@ -2762,6 +2766,10 @@ msgid "Rotate"
 msgstr "ﻥﺍﺭﻭﺩ"
 
 
+msgid "Draw Sharp"
+msgstr "ﯼﺰﯿﺗ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
+
+
 msgid "Stroke Method"
 msgstr "ﻥﺪﯿﺸﮐ ﺵﻭﺭ:"
 
@@ -3163,10 +3171,6 @@ msgstr "ﺪﻠﯿﻓ ﯼﺎﻫ‌ﻥﺯﻭ"
 
 
 msgid "Shadow Buffer Bias"
-msgstr "ﻩﺩﺮﺘﺴﮔ ﺶﯾﺎﻤﻧ"
-
-
-msgid "Shadow Buffer Bleed Bias"
 msgstr "ﻩﺩﺮﺘﺴﮔ ﺶﯾﺎﻤﻧ"
 
 
@@ -4739,10 +4743,6 @@ msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 msgid "Deform Axis"
 msgstr "ﻡﻭﺯ ﺭﻮﺤﻣ"
-
-
-msgid "Mix Mode"
-msgstr "ﯽﺒﯿﮐﺮﺗ ﺖﻟﺎﺣ"
 
 
 msgid "Nearest vertex"
@@ -6948,6 +6948,10 @@ msgid "Reset Brush"
 msgstr "ﻮﻣ ﻢﻠﻗ ﻑﺬﺣ"
 
 
+msgid "Open"
+msgstr "ﻥﺩﺮﮐ‌ﺯﺎﺑ"
+
+
 msgctxt "Operator"
 msgid "Add Camera Preset"
 msgstr "ﻦﯿﺑﺭﻭﺩ ﺰﻨﻟ ﻪﯾﻭﺍﺯ"
@@ -7783,10 +7787,6 @@ msgstr "ﻑﺍﺮﺼﻧﺍ"
 msgctxt "Operator"
 msgid "Create New Directory"
 msgstr "ﻩﻼ﻿ﮐ ﺖﻬﺣ"
-
-
-msgid "Open"
-msgstr "ﻥﺩﺮﮐ‌ﺯﺎﺑ"
 
 
 msgctxt "Operator"
@@ -12007,11 +12007,6 @@ msgstr "ﻪﻈﻓﺎﺣ ﻥﺍﺰﯿﻣ"
 
 
 msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "ﺭﺪﻨﻠﺑ ﻞﯾﺎﻓ ﺶﯾﺎﻤﻧ"
-
-
-msgctxt "Operator"
 msgid "Operator Cheat Sheet"
 msgstr "ﺮﺑﺭﺎﮐ ﺐﻠﻘﺗ ﻪﮔﺮﺑ"
 
@@ -12097,11 +12092,6 @@ msgstr "ﻪﺴﻠﺟ ﻦﯾﺮﺧﺁ ﯽﺑﺎﯾﺯﺎﺑ"
 msgctxt "Operator"
 msgid "Redraw Timer"
 msgstr "ﻥﺪﯿﺸﮐﺯﺎﺑ ﻥﺎﻣﺯ"
-
-
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "ﺭﺪﻨﻠﺑ ﻞﯾﺎﻓ ﺶﯾﺎﻤﻧ"
 
 
 msgctxt "Operator"
@@ -13494,10 +13484,6 @@ msgid "Draw Seams"
 msgstr "ﺎﻫ‌ﺯﺭﺩ"
 
 
-msgid "Draw Sharp"
-msgstr "ﯼﺰﯿﺗ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
-
-
 msgid "Use linear progression"
 msgstr "ﯽﻄﺧ ﺖﻓﺮﺸﯿﭘ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
 
@@ -14088,6 +14074,11 @@ msgstr "ﺪﻣﺎﺟ"
 
 
 msgctxt "Operator"
+msgid "Back"
+msgstr "ﺐﻘﻋ"
+
+
+msgctxt "Operator"
 msgid "Less"
 msgstr "ﺮﺘﻤﮐ"
 
@@ -14441,11 +14432,6 @@ msgstr "ﻦﯿﺑﺭﻭﺩ"
 msgctxt "Operator"
 msgid "Front"
 msgstr "ﻮﻠﺟ"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "ﺐﻘﻋ"
 
 
 msgctxt "Operator"
@@ -15913,20 +15899,16 @@ msgid "No active track to join to"
 msgstr "ﻞﻤﻋ"
 
 
-msgid "Cancel"
-msgstr "ﻑﺍﺮﺼﻧﺍ"
-
-
 msgid "File path"
 msgstr "ﻞﯾﺎﻓ ﺮﯿﺴﻣ"
 
 
-msgid "Decrement the filename number"
-msgstr "ﻞﯾﺎﻓ ﻡﺎﻧ ﻩﺭﺎﻤﺷ ﺶﻫﺎﮐ"
+msgid "Could not create new folder name"
+msgstr "1 ﻪﺘﺳﺩ ﻉﻮﻧ"
 
 
-msgid "Increment the filename number"
-msgstr "ﻞﯾﺎﻓ ﻡﺎﻧ ﻩﺭﺎﻤﺷ ﺶﯾﺍﺰﻓﺍ"
+msgid "Cancel"
+msgstr "ﻑﺍﺮﺼﻧﺍ"
 
 
 msgid "File name, overwrite existing"
@@ -15935,10 +15917,6 @@ msgstr "ﺩﻮﺟﻮﻣ ﯽﺴﯾﻮﻧﺯﺎﺑ ٬ﻞﯾﺎﻓ ﻡﺎﻧ"
 
 msgid "File name"
 msgstr "ﻞﯾﺎﻓ ﻡﺎﻧ"
-
-
-msgid "Could not create new folder name"
-msgstr "1 ﻪﺘﺳﺩ ﻉﻮﻧ"
 
 
 msgid "Cursor from Selection"

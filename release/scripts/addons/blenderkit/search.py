@@ -266,7 +266,7 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff.
 
             # print('finished search thread')
             mt('preview loading finished')
-    return .2
+    return .3
 
 
 def load_previews():
@@ -1152,7 +1152,7 @@ def register_search():
     for c in classes:
         bpy.utils.register_class(c)
 
-    # bpy.app.timers.register(timer_update, persistent = True)
+    bpy.app.timers.register(timer_update, persistent = True)
 
     categories.load_categories()
 
@@ -1163,5 +1163,5 @@ def unregister_search():
     for c in classes:
         bpy.utils.unregister_class(c)
 
-    # bpy.app.timers.unregister(timer_update)
+    bpy.app.timers.unregister(timer_update)
 

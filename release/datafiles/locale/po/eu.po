@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -385,10 +385,6 @@ msgid "Environment"
 msgstr "Ingurunea"
 
 
-msgid "Sort alphabetically"
-msgstr "Alfabetikoki ordenatu"
-
-
 msgid "Onion Skinning"
 msgstr "Tipula-azapa"
 
@@ -682,6 +678,10 @@ msgid "(undocumented operator)"
 msgstr "(Dokumentatu gabeko operadorea)"
 
 
+msgid "Open"
+msgstr "Ireki"
+
+
 msgctxt "Operator"
 msgid "Set Origin"
 msgstr "Jatorria Ezarri"
@@ -969,10 +969,6 @@ msgstr "Direktorio berri bat sortu"
 
 msgid "Name of new directory"
 msgstr "Direktorio berriaren izena"
-
-
-msgid "Open"
-msgstr "Ireki"
 
 
 msgid "Open new directory"

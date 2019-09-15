@@ -46,6 +46,7 @@
 
 #include "BKE_action.h"
 #include "BKE_colortools.h"
+#include "BKE_collection.h"
 #include "BKE_deform.h"
 #include "BKE_main.h"
 #include "BKE_brush.h"
@@ -57,6 +58,7 @@
 #include "BKE_tracking.h"
 
 #include "WM_api.h"
+#include "WM_types.h"
 #include "WM_toolsystem.h"
 
 #include "RNA_access.h"
@@ -1950,7 +1952,7 @@ void ED_gpencil_setup_modes(bContext *C, bGPdata *gpd, int newmode)
 /* helper to convert 2d to 3d for simple drawing buffer */
 static void gpencil_stroke_convertcoords(ARegion *ar,
                                          const tGPspoint *point2D,
-                                         float origin[3],
+                                         const float origin[3],
                                          float out[3])
 {
   float mval_f[2] = {(float)point2D->x, (float)point2D->y};
@@ -2082,8 +2084,8 @@ static bool gpencil_check_collision(bGPDstroke *gps,
                                     bGPDstroke **gps_array,
                                     GHash *all_2d,
                                     int totstrokes,
-                                    float p2d_a1[2],
-                                    float p2d_a2[2],
+                                    const float p2d_a1[2],
+                                    const float p2d_a2[2],
                                     float r_hit[2])
 {
   bool hit = false;
@@ -2162,7 +2164,7 @@ static void gp_copy_points(bGPDstroke *gps, bGPDspoint *pt, bGPDspoint *pt_final
 }
 
 static void gp_insert_point(
-    bGPDstroke *gps, bGPDspoint *a_pt, bGPDspoint *b_pt, float co_a[3], float co_b[3])
+    bGPDstroke *gps, bGPDspoint *a_pt, bGPDspoint *b_pt, const float co_a[3], float co_b[3])
 {
   bGPDspoint *temp_points;
   int totnewpoints, oldtotpoints;
@@ -2558,4 +2560,25 @@ tGPspoint *ED_gpencil_sbuffer_ensure(tGPspoint *buffer_array,
   }
 
   return buffer_array;
+}
+
+/* Tag all scene grease pencil object to update. */
+void ED_gpencil_tag_scene_gpencil(Scene *scene)
+{
+  /* mark all grease pencil datablocks of the scene */
+  FOREACH_SCENE_COLLECTION_BEGIN (scene, collection) {
+    FOREACH_COLLECTION_OBJECT_RECURSIVE_BEGIN (collection, ob) {
+      if (ob->type == OB_GPENCIL) {
+        bGPdata *gpd = (bGPdata *)ob->data;
+        gpd->flag |= GP_DATA_CACHE_IS_DIRTY;
+        DEG_id_tag_update(&gpd->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
+      }
+    }
+    FOREACH_COLLECTION_OBJECT_RECURSIVE_END;
+  }
+  FOREACH_SCENE_COLLECTION_END;
+
+  DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
+
+  WM_main_add_notifier(NC_GPENCIL | NA_EDITED, NULL);
 }

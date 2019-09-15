@@ -50,7 +50,6 @@
 #include "BKE_customdata.h"
 #include "BKE_idprop.h"
 #include "BKE_global.h"
-#include "BKE_layer.h"
 #include "BKE_main.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
@@ -360,7 +359,7 @@ void wm_event_do_depsgraph(bContext *C, bool is_after_open_file)
      * and for until then we have to accept ambiguities when object is shared
      * across visible view layers and has overrides on it.
      */
-    Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer, true);
+    Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, view_layer, true);
     if (is_after_open_file) {
       DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
       DEG_graph_on_visible_update(bmain, depsgraph, true);
@@ -2384,7 +2383,13 @@ static int wm_handler_fileselect_do(bContext *C,
       /* remlink now, for load file case before removing*/
       BLI_remlink(handlers, handler);
 
-      if (val != EVT_FILESELECT_EXTERNAL_CANCEL) {
+      if (val == EVT_FILESELECT_EXTERNAL_CANCEL) {
+        /* The window might have been freed already. */
+        if (BLI_findindex(&wm->windows, handler->context.win) == -1) {
+          handler->context.win = NULL;
+        }
+      }
+      else {
         for (wmWindow *win = wm->windows.first; win; win = win->next) {
           if (WM_window_is_temp_screen(win)) {
             bScreen *screen = WM_window_get_active_screen(win);
@@ -3254,9 +3259,10 @@ void wm_event_do_handlers(bContext *C)
       wm_event_free_all(win);
     }
     else {
+      Main *bmain = CTX_data_main(C);
       Scene *scene = WM_window_get_active_scene(win);
       ViewLayer *view_layer = WM_window_get_active_view_layer(win);
-      Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer, false);
+      Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, view_layer, false);
       Scene *scene_eval = (depsgraph != NULL) ? DEG_get_evaluated_scene(depsgraph) : NULL;
 
       if (scene_eval != NULL) {

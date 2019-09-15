@@ -7,23 +7,24 @@
 #
 # Copyright (C) 2019  Shrinivas Kulkarni
 #
-# License: MIT (https://github.com/Shriinivas/assignshapekey/blob/master/LICENSE)
+# License: GPL-3.0 (https://github.com/Shriinivas/assignshapekey/blob/master/LICENSE)
 #
 
 import bpy, bmesh, bgl, gpu
 from gpu_extras.batch import batch_for_shader
-from bpy.props import BoolProperty, EnumProperty
+from bpy.props import BoolProperty, EnumProperty, StringProperty
 from collections import OrderedDict
 from mathutils import Vector
 from math import sqrt, floor
 from functools import cmp_to_key
+from bpy.types import Panel, Operator, AddonPreferences
 
 
 bl_info = {
     "name": "Assign Shape Keys",
     "author": "Shrinivas Kulkarni",
     "version": (1, 0, 0),
-    "location": "Properties > Active Tool and Workspace Settings > Assign Shape Keys",
+    "location": "View 3D > Sidebar > Edit Tab",
     "description": "Assigns one or more Bezier curves as shape keys to another Bezier curve",
     "category": "Object",
     "wiki_url": "https://github.com/Shriinivas/assignshapekey/blob/master/README.md",
@@ -762,7 +763,7 @@ def markVertHandler(self, context):
 
 #################### UI and Registration ####################
 
-class AssignShapeKeysOp(bpy.types.Operator):
+class AssignShapeKeysOp(Operator):
     bl_idname = "object.assign_shape_keys"
     bl_label = "Assign Shape Keys"
     bl_options = {'REGISTER', 'UNDO'}
@@ -929,7 +930,7 @@ class MarkerController:
             s.overlay.show_curve_handles = handleStates[i]
 
 
-class ModalMarkSegStartOp(bpy.types.Operator):
+class ModalMarkSegStartOp(Operator):
     bl_description = "Mark Vertex"
     bl_idname = "wm.mark_vertex"
     bl_label = "Mark Start Vertex"
@@ -1033,13 +1034,13 @@ class AssignShapeKeyParams(bpy.types.PropertyGroup):
             default = False, update = markVertHandler)
 
 
-class AssignShapeKeysPanel(bpy.types.Panel):
+class AssignShapeKeysPanel(Panel):
 
     bl_label = "Assign Shape Keys"
     bl_idname = "CURVE_PT_assign_shape_keys"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "Tool"
+    bl_category = "Edit"
 
     @classmethod
     def poll(cls, context):
@@ -1083,6 +1084,35 @@ class AssignShapeKeysPanel(bpy.types.Panel):
                 toggle = True)
 
 
+def updatePanel(self, context):
+    try:
+        panel = AssignShapeKeysPanel
+        if "bl_rna" in panel.__dict__:
+            bpy.utils.unregister_class(panel)
+
+        panel.bl_category = context.preferences.addons[__name__].preferences.category
+        bpy.utils.register_class(panel)
+
+    except Exception as e:
+        print("Assign Shape Keys: Updating Panel locations has failed", e)
+
+class AssignShapeKeysPreferences(AddonPreferences):
+    bl_idname = __name__
+
+    category: StringProperty(
+            name = "Tab Category",
+            description = "Choose a name for the category of the panel",
+            default = "Edit",
+            update = updatePanel
+    )
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        col = row.column()
+        col.label(text="Tab Category:")
+        col.prop(self, "category", text="")
+
 # registering and menu integration
 def register():
     bpy.utils.register_class(AssignShapeKeysPanel)
@@ -1091,6 +1121,8 @@ def register():
     bpy.types.WindowManager.AssignShapeKeyParams = \
         bpy.props.PointerProperty(type=AssignShapeKeyParams)
     bpy.utils.register_class(ModalMarkSegStartOp)
+    bpy.utils.register_class(AssignShapeKeysPreferences)
+    updatePanel(None, bpy.context)
 
 def unregister():
     bpy.utils.unregister_class(AssignShapeKeysOp)
@@ -1098,6 +1130,7 @@ def unregister():
     del bpy.types.WindowManager.AssignShapeKeyParams
     bpy.utils.unregister_class(AssignShapeKeyParams)
     bpy.utils.unregister_class(ModalMarkSegStartOp)
+    bpy.utils.unregister_class(AssignShapeKeysPreferences)
 
 if __name__ == "__main__":
     register()

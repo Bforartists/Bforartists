@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -991,6 +991,14 @@ msgid "Bone is able to be selected"
 msgstr "Nejsou vybrány žádné soubory"
 
 
+msgid "Inherit Scale"
+msgstr "Původní velikost"
+
+
+msgid "Full"
+msgstr "Plná"
+
+
 msgid "Layers"
 msgstr "Vrstvy"
 
@@ -1048,14 +1056,6 @@ msgstr "Původni rotace"
 
 
 msgid "Bone inherits rotation or scale from parent bone"
-msgstr "Nedědí rotaci nebo změnu velikosti rodičovské kosti"
-
-
-msgid "Inherit Scale"
-msgstr "Původní velikost"
-
-
-msgid "Bone inherits scaling from parent bone"
 msgstr "Nedědí rotaci nebo změnu velikosti rodičovské kosti"
 
 
@@ -2274,6 +2274,10 @@ msgstr "Původni rotace"
 
 msgid "Invert the Z rotation"
 msgstr "Původni rotace"
+
+
+msgid "Mix Mode"
+msgstr "Mód:"
 
 
 msgid "Copy the target's X rotation"
@@ -4553,10 +4557,6 @@ msgid "Display mode for the file list"
 msgstr "Zobrazí mód ze seznamu souborů"
 
 
-msgid "Display files as short list"
-msgstr "Zobrazit soubory jako krátký seznam"
-
-
 msgid "File Name"
 msgstr "Název souboru"
 
@@ -4585,28 +4585,16 @@ msgid "Show hidden dot files"
 msgstr "Ukáže skryté tečkové soubory"
 
 
-msgid "Sort alphabetically"
-msgstr "Setřídit podle abecedy"
-
-
 msgid "Sort the file list alphabetically"
 msgstr "Setřídit soubory podle abecedy"
 
 
-msgid "Sort by extension"
-msgstr "Setřídit podle přípony"
-
-
-msgid "Sort by time"
-msgstr "Setřídit podle času"
+msgid "Extension"
+msgstr "Fonetická rozšířená"
 
 
 msgid "Sort files by modification time"
 msgstr "Setřídí soubory podle času změny"
-
-
-msgid "Sort by size"
-msgstr "Setřídit podle velikosti"
 
 
 msgid "Sort files by size"
@@ -5861,6 +5849,10 @@ msgid "Rotate"
 msgstr "Otočit"
 
 
+msgid "Draw Sharp"
+msgstr "Zrušit šev"
+
+
 msgid "Smooth Stroke Factor"
 msgstr "Font rozhraní:  "
 
@@ -6291,10 +6283,6 @@ msgstr "Tažení"
 
 msgid "Fill Mode"
 msgstr "Vyplnit díry"
-
-
-msgid "Full"
-msgstr "Plná"
 
 
 msgid "Path Length"
@@ -6853,20 +6841,12 @@ msgid "Shadow Buffer Bias"
 msgstr "Vložit barvu z bufferu"
 
 
-msgid "Shadow Buffer Bleed Bias"
-msgstr "Vložit barvu z bufferu"
-
-
 msgid "Number of shadow buffer samples"
 msgstr "Číslo, určující počet 'Spin' kroků"
 
 
 msgid "Shadow Buffer Size"
 msgstr "Velikost stínu"
-
-
-msgid "Shadow Buffer Soft"
-msgstr "Kompenzace:"
 
 
 msgid "Shadow Color"
@@ -8915,10 +8895,6 @@ msgid "Minimum Y value to crop the image"
 msgstr "Vzdálenost meli linkami orientační sítě"
 
 
-msgid "Extension"
-msgstr "Fonetická rozšířená"
-
-
 msgid "Clip Cube"
 msgstr "Začátek střihu"
 
@@ -10743,10 +10719,6 @@ msgstr "Vrstvy"
 
 msgid "Mix Factor"
 msgstr "Činitel"
-
-
-msgid "Mix Mode"
-msgstr "Mód:"
 
 
 msgid "Nearest vertex"
@@ -13681,14 +13653,6 @@ msgid "Light Path"
 msgstr "Přidat primitivum"
 
 
-msgid "Has Maximum"
-msgstr "Maximalní X limitace"
-
-
-msgid "Has Minimum"
-msgstr "Minimální X limitace"
-
-
 msgid "Mix Shader"
 msgstr "Shadery"
 
@@ -15179,6 +15143,14 @@ msgstr "Překlad"
 msgctxt "Operator"
 msgid "Accept"
 msgstr "Přijmout"
+
+
+msgid "Open"
+msgstr "Otevřít"
+
+
+msgid "Display files as short list"
+msgstr "Zobrazit soubory jako krátký seznam"
 
 
 msgid "File Browser Mode"
@@ -16986,10 +16958,6 @@ msgstr "Vytvoří novou vrstvu barvy vertexů"
 
 msgid "Name of new directory"
 msgstr "Vytvoří novou vrstvu barvy vertexů"
-
-
-msgid "Open"
-msgstr "Otevřít"
 
 
 msgctxt "Operator"
@@ -19327,6 +19295,18 @@ msgstr "Seskupený objekt"
 
 msgid "Change selection mode"
 msgstr "Označené hrany: "
+
+
+msgid "Vertex selection mode"
+msgstr "Výběrový mód - vrcholy"
+
+
+msgid "Edge selection mode"
+msgstr "Označené hrany: "
+
+
+msgid "Face selection mode"
+msgstr "Výběrový mód - plošky"
 
 
 msgid "Expand"
@@ -25567,11 +25547,6 @@ msgid "Memory Statistics"
 msgstr "Paměťové statistiky"
 
 
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "Otevřít Blender soubor"
-
-
 msgid "Open a Blender file"
 msgstr "Otevře Blender soubor"
 
@@ -25771,11 +25746,6 @@ msgstr "Přehrání animace"
 
 msgid "Undo/Redo"
 msgstr "Zpět/Znovu"
-
-
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "Uložit jako Blender soubor"
 
 
 msgid "Save the current file in the desired location"
@@ -30392,6 +30362,14 @@ msgid "Z Mapping"
 msgstr "Mapování"
 
 
+msgid "Has Maximum"
+msgstr "Maximalní X limitace"
+
+
+msgid "Has Minimum"
+msgstr "Minimální X limitace"
+
+
 msgid "Text Box"
 msgstr "Textury"
 
@@ -31648,18 +31626,6 @@ msgid "UV selection and display mode"
 msgstr "Nastaví výběr na náhodné viditelné objekty"
 
 
-msgid "Vertex selection mode"
-msgstr "Výběrový mód - vrcholy"
-
-
-msgid "Edge selection mode"
-msgstr "Označené hrany: "
-
-
-msgid "Face selection mode"
-msgstr "Výběrový mód - plošky"
-
-
 msgid "Island"
 msgstr "Přibalit obrázek"
 
@@ -31826,10 +31792,6 @@ msgstr "Zobrazit tvar"
 
 msgid "Display UV unwrapping seams"
 msgstr "Zobrat čísla řádků"
-
-
-msgid "Draw Sharp"
-msgstr "Zrušit šev"
 
 
 msgid "Draw Edges"
@@ -32673,10 +32635,6 @@ msgid "Invert"
 msgstr "Převrátit"
 
 
-msgid "Not for Axis-Angle"
-msgstr "V rozsahu"
-
-
 msgid "Old"
 msgstr "Starý"
 
@@ -33013,6 +32971,11 @@ msgstr "Přidat"
 msgctxt "Operator"
 msgid "Slide"
 msgstr "Válec"
+
+
+msgctxt "Operator"
+msgid "Back"
+msgstr "Zezadu"
 
 
 msgctxt "Operator"
@@ -33508,11 +33471,6 @@ msgstr "Zarovnat aktivní kameru na vybrané"
 msgctxt "Operator"
 msgid "Front"
 msgstr "Zepředu"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "Zezadu"
 
 
 msgctxt "Operator"
@@ -35247,20 +35205,8 @@ msgid "No object to apply orientation on"
 msgstr "Animace"
 
 
-msgid "Cancel"
-msgstr "Zrušit"
-
-
 msgid "File path"
 msgstr "Cesta souboru"
-
-
-msgid "File name, overwrite existing"
-msgstr "Název souboru, přepíše stávající"
-
-
-msgid "File name"
-msgstr "Název souboru"
 
 
 msgid "No parent directory given"
@@ -35269,6 +35215,18 @@ msgstr "Vytvoří novou vrstvu barvy vertexů"
 
 msgid "Could not create new folder name"
 msgstr "Vytvoří novou vrstvu barvy vertexů"
+
+
+msgid "Cancel"
+msgstr "Zrušit"
+
+
+msgid "File name, overwrite existing"
+msgstr "Název souboru, přepíše stávající"
+
+
+msgid "File name"
+msgstr "Název souboru"
 
 
 msgid "Cursor from Selection"

@@ -110,7 +110,7 @@ def start_thumbnailer(self, context):
         basename = os.path.join(basename, "temp")
     if not ext:
         ext = ".blend"
-    asset_name = mainmodel.blenderkit.name
+    asset_name = mainmodel.name
     tempdir = tempfile.mkdtemp()
 
     file_dir = os.path.dirname(bpy.data.filepath)

@@ -510,7 +510,7 @@ void CLIP_OT_view_pan(wmOperatorType *ot)
   ot->poll = ED_space_clip_view_clip_poll;
 
   /* flags */
-  ot->flag = OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY;
+  ot->flag = OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY | OPTYPE_LOCK_BYPASS;
 
   /* properties */
   RNA_def_float_vector(ot->srna,
@@ -712,7 +712,7 @@ void CLIP_OT_view_zoom(wmOperatorType *ot)
   ot->poll = ED_space_clip_view_clip_poll;
 
   /* flags */
-  ot->flag = OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY;
+  ot->flag = OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY | OPTYPE_LOCK_BYPASS;
 
   /* properties */
   prop = RNA_def_float(ot->srna,
@@ -771,6 +771,9 @@ void CLIP_OT_view_zoom_in(wmOperatorType *ot)
   ot->invoke = view_zoom_in_invoke;
   ot->poll = ED_space_clip_view_clip_poll;
 
+  /* flags */
+  ot->flag |= OPTYPE_LOCK_BYPASS;
+
   /* properties */
   prop = RNA_def_float_vector(ot->srna,
                               "location",
@@ -825,6 +828,9 @@ void CLIP_OT_view_zoom_out(wmOperatorType *ot)
   ot->invoke = view_zoom_out_invoke;
   ot->poll = ED_space_clip_view_clip_poll;
 
+  /* flags */
+  ot->flag |= OPTYPE_LOCK_BYPASS;
+
   /* properties */
   prop = RNA_def_float_vector(ot->srna,
                               "location",
@@ -866,6 +872,9 @@ void CLIP_OT_view_zoom_ratio(wmOperatorType *ot)
   /* api callbacks */
   ot->exec = view_zoom_ratio_exec;
   ot->poll = ED_space_clip_view_clip_poll;
+
+  /* flags */
+  ot->flag |= OPTYPE_LOCK_BYPASS;
 
   /* properties */
   RNA_def_float(ot->srna,
@@ -945,6 +954,9 @@ void CLIP_OT_view_all(wmOperatorType *ot)
   ot->exec = view_all_exec;
   ot->poll = ED_space_clip_view_clip_poll;
 
+  /* flags */
+  ot->flag = OPTYPE_LOCK_BYPASS;
+
   /* properties */
   prop = RNA_def_boolean(
       ot->srna, "fit_view", 0, "Fit View", "Fit View\nFit frame to the viewport");
@@ -977,6 +989,9 @@ void CLIP_OT_view_selected(wmOperatorType *ot)
   /* api callbacks */
   ot->exec = view_selected_exec;
   ot->poll = ED_space_clip_view_clip_poll;
+
+  /* flags */
+  ot->flag = OPTYPE_LOCK_BYPASS;
 }
 
 /********************** change frame operator *********************/
@@ -1117,7 +1132,7 @@ static void proxy_freejob(void *pjv)
 static int proxy_bitflag_to_array(int size_flag, int build_sizes[4], int undistort)
 {
   int build_count = 0;
-  int size_flags[2][4] = {
+  const int size_flags[2][4] = {
       {MCLIP_PROXY_SIZE_25, MCLIP_PROXY_SIZE_50, MCLIP_PROXY_SIZE_75, MCLIP_PROXY_SIZE_100},
       {MCLIP_PROXY_UNDISTORTED_SIZE_25,
        MCLIP_PROXY_UNDISTORTED_SIZE_50,
@@ -1590,6 +1605,9 @@ void CLIP_OT_view_ndof(wmOperatorType *ot)
   /* api callbacks */
   ot->invoke = clip_view_ndof_invoke;
   ot->poll = ED_space_clip_view_clip_poll;
+
+  /* flags */
+  ot->flag = OPTYPE_LOCK_BYPASS;
 }
 #endif /* WITH_INPUT_NDOF */
 
@@ -1729,6 +1747,31 @@ void CLIP_OT_cursor_set(wmOperatorType *ot)
                        "Cursor location in normalized clip coordinates",
                        -10.0f,
                        10.0f);
+}
+
+/********************** Toggle lock to selection operator *********************/
+
+static int lock_selection_togglee_exec(bContext *C, wmOperator *UNUSED(op))
+{
+  SpaceClip *space_clip = CTX_wm_space_clip(C);
+  space_clip->flag ^= SC_LOCK_SELECTION;
+  WM_event_add_notifier(C, NC_SPACE | ND_SPACE_CLIP, NULL);
+  return OPERATOR_FINISHED;
+}
+
+void CLIP_OT_lock_selection_toggle(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Toggle Lock Selection";
+  ot->description = "Toggle Lock Selection option of the current clip editor";
+  ot->idname = "CLIP_OT_lock_selection_toggle";
+
+  /* api callbacks */
+  ot->poll = ED_space_clip_poll;
+  ot->exec = lock_selection_togglee_exec;
+
+  /* flags */
+  ot->flag = OPTYPE_LOCK_BYPASS;
 }
 
 /********************** macros *********************/

@@ -77,7 +77,7 @@ add_custom_command(
 # -----------------------------------------------------------------------------
 # Build bf_dna library
 set(INC
-
+  ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set(INC_SYS
@@ -85,6 +85,7 @@ set(INC_SYS
 )
 
 set(SRC
+  dna_defaults.c
   dna_genfile.c
   dna_utils.c
   ${CMAKE_CURRENT_BINARY_DIR}/dna.c
@@ -126,6 +127,24 @@ set(SRC
   ../../blenlib/intern/endian_switch.c
   ../../blenlib/intern/hash_mm2a.c
   ../../blenlib/intern/listbase.c
+
+  ../DNA_brush_defaults.h
+  ../DNA_cachefile_defaults.h
+  ../DNA_camera_defaults.h
+  ../DNA_curve_defaults.h
+  ../DNA_image_defaults.h
+  ../DNA_lattice_defaults.h
+  ../DNA_light_defaults.h
+  ../DNA_lightprobe_defaults.h
+  ../DNA_linestyle_defaults.h
+  ../DNA_material_defaults.h
+  ../DNA_mesh_defaults.h
+  ../DNA_meta_defaults.h
+  ../DNA_object_defaults.h
+  ../DNA_scene_defaults.h
+  ../DNA_texture_defaults.h
+  ../DNA_vec_defaults.h
+  ../DNA_view3d_defaults.h
 )
 
 set(LIB

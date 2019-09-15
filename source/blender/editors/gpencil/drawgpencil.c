@@ -62,7 +62,6 @@
 #include "BIF_glutil.h"
 
 #include "GPU_immediate.h"
-#include "GPU_draw.h"
 #include "GPU_state.h"
 
 #include "ED_gpencil.h"
@@ -268,8 +267,11 @@ static void gp_calc_2d_bounding_box(
 }
 
 /* calc texture coordinates using flat projected points */
-static void gp_calc_stroke_text_coordinates(
-    const float (*points2d)[2], int totpoints, float minv[2], float maxv[2], float (*r_uv)[2])
+static void gp_calc_stroke_text_coordinates(const float (*points2d)[2],
+                                            int totpoints,
+                                            const float minv[2],
+                                            float maxv[2],
+                                            float (*r_uv)[2])
 {
   float d[2];
   d[0] = maxv[0] - minv[0];

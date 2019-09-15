@@ -133,10 +133,11 @@ def bg_update():
                 readthread = threading.Thread(target=threadread, args=([tcom]), daemon=True)
                 readthread.start()
                 p[0] = readthread
-    if len(bg_processes) == 0:
-        bpy.app.timers.unregister(bg_update)
-
-    return .1
+    # if len(bg_processes) == 0:
+    #     bpy.app.timers.unregister(bg_update)
+    if len(bg_processes) > 0:
+        return .3
+    return 1.
 
 
 process_types = (
@@ -225,17 +226,16 @@ def add_bg_process(location=None, name=None, eval_path_computing='', eval_path_s
     readthread.start()
 
     bg_processes.append([readthread, tcom])
-    if not bpy.app.timers.is_registered(bg_update):
-        bpy.app.timers.register(bg_update, persistent=True)
-
-
-def stert_bg_blender():
-    pass;
+    # if not bpy.app.timers.is_registered(bg_update):
+    #     bpy.app.timers.register(bg_update, persistent=True)
 
 
 def register():
     bpy.utils.register_class(KillBgProcess)
+    bpy.app.timers.register(bg_update, persistent=True)
 
 
 def unregister():
     bpy.utils.unregister_class(KillBgProcess)
+    bpy.app.timers.unregister(bg_update)
+

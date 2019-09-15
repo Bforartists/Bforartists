@@ -46,7 +46,6 @@
 #include "BKE_main.h"
 #include "BKE_screen.h"
 #include "BKE_scene.h"
-#include "BKE_workspace.h"
 
 #include "GHOST_C-api.h"
 
@@ -55,10 +54,8 @@
 #include "ED_screen.h"
 
 #include "GPU_draw.h"
-#include "GPU_extensions.h"
 #include "GPU_framebuffer.h"
 #include "GPU_immediate.h"
-#include "GPU_matrix.h"
 #include "GPU_state.h"
 #include "GPU_texture.h"
 #include "GPU_viewport.h"
@@ -831,11 +828,11 @@ static void wm_draw_window(bContext *C, wmWindow *win)
 /****************** main update call **********************/
 
 /* quick test to prevent changing window drawable */
-static bool wm_draw_update_test_window(wmWindow *win)
+static bool wm_draw_update_test_window(Main *bmain, wmWindow *win)
 {
   Scene *scene = WM_window_get_active_scene(win);
   ViewLayer *view_layer = WM_window_get_active_view_layer(win);
-  struct Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer, true);
+  struct Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, view_layer, true);
   bScreen *screen = WM_window_get_active_screen(win);
   ARegion *ar;
   bool do_draw = false;
@@ -936,7 +933,7 @@ void wm_draw_update(bContext *C)
     }
 #endif
 
-    if (wm_draw_update_test_window(win)) {
+    if (wm_draw_update_test_window(bmain, win)) {
       bScreen *screen = WM_window_get_active_screen(win);
 
       CTX_wm_window_set(C, win);

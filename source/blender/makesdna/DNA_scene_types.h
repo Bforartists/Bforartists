@@ -669,9 +669,8 @@ typedef struct RenderData {
 
   char _pad0[1];
 
-  /* safety, border and display rect */
-  rctf safety, border;
-  rcti disprect;
+  /** Render border to render sub-resions. */
+  rctf border;
 
   /* information on different layers to be rendered */
   /** Converted to Scene->view_layers. */
@@ -1980,6 +1979,8 @@ extern const char *RE_engine_id_CYCLES;
 #define BASE_VISIBLE(v3d, base) \
   (((v3d == NULL) || ((v3d)->localvd == NULL) || \
     ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
+   ((v3d == NULL) || (((v3d)->flag & V3D_LOCAL_COLLECTIONS) == 0) || \
+    ((v3d)->local_collections_uuid & (base)->local_collections_bits)) && \
    ((v3d == NULL) || \
     (((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0)) && \
    (((base)->flag & BASE_VISIBLE) != 0))
@@ -2293,6 +2294,8 @@ typedef enum eGPencil_SimplifyFlags {
   SIMPLIFY_GPENCIL_FX = (1 << 5),
   /* Simplify layer blending */
   SIMPLIFY_GPENCIL_BLEND = (1 << 6),
+  /* Simplify layer tint */
+  SIMPLIFY_GPENCIL_TINT = (1 << 7),
 } eGPencil_SimplifyFlags;
 
 /* ToolSettings.gpencil_*_align - Stroke Placement mode flags */

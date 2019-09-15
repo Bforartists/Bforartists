@@ -265,9 +265,11 @@ int BKE_mesh_nurbs_displist_to_mdata(Object *ob,
   const float *data;
   int a, b, ofs, vertcount, startvert, totvert = 0, totedge = 0, totloop = 0, totpoly = 0;
   int p1, p2, p3, p4, *index;
-  const bool conv_polys = ((CU_DO_2DFILL(cu) ==
-                            false) || /* 2d polys are filled with DL_INDEX3 displists */
-                           (ob->type == OB_SURF)); /* surf polys are never filled */
+  const bool conv_polys = (
+      /* 2d polys are filled with DL_INDEX3 displists */
+      (CU_DO_2DFILL(cu) == false) ||
+      /* surf polys are never filled */
+      (ob->type == OB_SURF));
 
   /* count */
   dl = dispbase->first;
@@ -554,7 +556,7 @@ Mesh *BKE_mesh_new_nomain_from_curve_displist(Object *ob, ListBase *dispbase)
   memcpy(mesh->mpoly, allpoly, totpoly * sizeof(MPoly));
 
   if (alluv) {
-    const char *uvname = "Orco";
+    const char *uvname = "UVMap";
     CustomData_add_layer_named(&mesh->ldata, CD_MLOOPUV, CD_ASSIGN, alluv, totloop, uvname);
   }
 
@@ -633,7 +635,7 @@ void BKE_mesh_from_nurbs_displist(Main *bmain,
     me->mpoly = CustomData_add_layer(&me->pdata, CD_MPOLY, CD_ASSIGN, allpoly, me->totpoly);
 
     if (alluv) {
-      const char *uvname = "Orco";
+      const char *uvname = "UVMap";
       me->mloopuv = CustomData_add_layer_named(
           &me->ldata, CD_MLOOPUV, CD_ASSIGN, alluv, me->totloop, uvname);
     }
