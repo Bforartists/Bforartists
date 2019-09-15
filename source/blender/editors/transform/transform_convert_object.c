@@ -148,7 +148,13 @@ void trans_obdata_in_obmode_update_all(TransInfo *t)
     invert_m4(dmat);
 
     ED_object_data_xform_by_mat4(xf->xod, dmat);
-    DEG_id_tag_update(id, ID_RECALC_GEOMETRY);
+    if (xf->ob->type == OB_ARMATURE) {
+      /* TODO: none of the current flags properly update armatures, needs investigation. */
+      DEG_id_tag_update(id, 0);
+    }
+    else {
+      DEG_id_tag_update(id, ID_RECALC_GEOMETRY);
+    }
   }
 }
 
@@ -519,7 +525,7 @@ static void set_trans_object_base_flags(TransInfo *t)
   ViewLayer *view_layer = t->view_layer;
   View3D *v3d = t->view;
   Scene *scene = t->scene;
-  Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer, true);
+  Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, view_layer, true);
   /* NOTE: if Base selected and has parent selected:
    *   base->flag_legacy = BA_WAS_SEL
    */
@@ -592,8 +598,9 @@ static int count_proportional_objects(TransInfo *t)
   int total = 0;
   ViewLayer *view_layer = t->view_layer;
   View3D *v3d = t->view;
+  struct Main *bmain = CTX_data_main(t->context);
   Scene *scene = t->scene;
-  Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer, true);
+  Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, view_layer, true);
   /* Clear all flags we need. It will be used to detect dependencies. */
   trans_object_base_deps_flag_prepare(view_layer);
   /* Rotations around local centers are allowed to propagate, so we take all objects. */

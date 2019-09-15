@@ -41,7 +41,10 @@
 
 #include "GPU_immediate.h"
 #include "GPU_matrix.h"
-#include "GPU_state.h"
+
+#ifdef __APPLE__
+#  include "GPU_state.h"
+#endif
 
 #include "UI_interface.h"
 

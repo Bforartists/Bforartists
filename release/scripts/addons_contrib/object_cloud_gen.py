@@ -22,9 +22,10 @@ bl_info = {
     "name": "Cloud Generator",
     "author": "Nick Keeline(nrk)",
     "version": (1, 0, 2),
-    "blender": (2, 79, 0),
+    "blender": (2, 80, 0),
     "location": "Tool Shelf > Create Tab",
     "description": "Creates Volumetric Clouds",
+    'warning': 'under construction',
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Object/Cloud_Gen",
     "category": "Object",

@@ -48,10 +48,6 @@
 #include "ED_image.h"
 #include "ED_mesh.h"
 
-#include "GPU_immediate.h"
-#include "GPU_immediate_util.h"
-#include "GPU_state.h"
-
 #include "WM_api.h"
 #include "WM_types.h"
 
@@ -151,7 +147,7 @@ typedef struct Temp_UvData {
 
 static void HC_relaxation_iteration_uv(BMEditMesh *em,
                                        UvSculptData *sculptdata,
-                                       float mouse_coord[2],
+                                       const float mouse_coord[2],
                                        float alpha,
                                        float radius,
                                        float aspectRatio)
@@ -239,7 +235,7 @@ static void HC_relaxation_iteration_uv(BMEditMesh *em,
 
 static void laplacian_relaxation_iteration_uv(BMEditMesh *em,
                                               UvSculptData *sculptdata,
-                                              float mouse_coord[2],
+                                              const float mouse_coord[2],
                                               float alpha,
                                               float radius,
                                               float aspectRatio)

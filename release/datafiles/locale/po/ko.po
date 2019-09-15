@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: 2019-07-22 21:03+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -2627,6 +2627,14 @@ msgid "Bone is able to be selected"
 msgstr "본은 선택할 수 있습니다"
 
 
+msgid "Inherit Scale"
+msgstr "축적을 상속"
+
+
+msgid "Full"
+msgstr "전체"
+
+
 msgid "Layers"
 msgstr "레이어"
 
@@ -2745,14 +2753,6 @@ msgstr "회전을 상속"
 
 msgid "Bone inherits rotation or scale from parent bone"
 msgstr "본이 회전 및 축적을 부모 본에서 상속받습니다"
-
-
-msgid "Inherit Scale"
-msgstr "축적을 상속"
-
-
-msgid "Bone inherits scaling from parent bone"
-msgstr "본이 축적 조정을 부모 본에서 상속받습니다"
 
 
 msgid "Local Location"
@@ -5484,8 +5484,8 @@ msgid "Invert the Z rotation"
 msgstr "Z 회전을 반전"
 
 
-msgid "Add original rotation into copied rotation"
-msgstr "복사 회전에 원래의 회전을 추가"
+msgid "Mix Mode"
+msgstr "조합 모드"
 
 
 msgid "Copy the target's X rotation"
@@ -10449,22 +10449,6 @@ msgid "Display mode for the file list"
 msgstr "파일 목록에 대한 모드를 표시"
 
 
-msgid "Short List"
-msgstr "짧은 목록"
-
-
-msgid "Display files as short list"
-msgstr "짧은 목록으로 파일을 표시"
-
-
-msgid "Long List"
-msgstr "긴 목록"
-
-
-msgid "Display files as a detailed list"
-msgstr "자세한 목록으로 파일을 표시"
-
-
 msgid "Thumbnails"
 msgstr "썸네일"
 
@@ -10765,32 +10749,20 @@ msgid "Sort"
 msgstr "분류"
 
 
-msgid "Sort alphabetically"
-msgstr "알파벳순으로 분류"
-
-
 msgid "Sort the file list alphabetically"
 msgstr "알파벳순으로 파일 목록을 분류"
 
 
-msgid "Sort by extension"
-msgstr "확장자로 분류"
+msgid "Extension"
+msgstr "확장자"
 
 
 msgid "Sort the file list by extension/type"
 msgstr "확장자/유형 별로 파일 목록을 분류"
 
 
-msgid "Sort by time"
-msgstr "시간으로 분류"
-
-
 msgid "Sort files by modification time"
 msgstr "수정 시간으로 파일을 분류"
-
-
-msgid "Sort by size"
-msgstr "크기로 분류"
 
 
 msgid "Sort files by size"
@@ -14762,6 +14734,10 @@ msgid "Sharper"
 msgstr "샤프터"
 
 
+msgid "Deformation"
+msgstr "변형"
+
+
 msgid "Falloff Angle"
 msgstr "감소 각도"
 
@@ -15012,6 +14988,10 @@ msgstr "넛지"
 
 msgid "Rotate"
 msgstr "회전"
+
+
+msgid "Draw Sharp"
+msgstr "샤프를 그리기"
 
 
 msgid "Secondary Color"
@@ -15968,10 +15948,6 @@ msgstr "채우기 모드"
 
 msgid "Mode of filling curve"
 msgstr "채우는 커브의 모드"
-
-
-msgid "Full"
-msgstr "전체"
 
 
 msgid "Half"
@@ -17996,14 +17972,6 @@ msgid "World space distance in which to search for screen space occluder"
 msgstr "화면 공간 폐색를 검색 할 월드 공간 거리"
 
 
-msgid "Contact Shadow Soft"
-msgstr "접촉 섀도우 소프트"
-
-
-msgid "Control how soft the contact shadows will be"
-msgstr "콘택트 섀도우가 얼마나 부드러운지 제어합니다"
-
-
 msgid "Contact Shadow Thickness"
 msgstr "접촉 섀도우 두께"
 
@@ -18084,36 +18052,12 @@ msgid "Bias for reducing self shadowing"
 msgstr "자기 섀도우를 줄이기 위한 성향"
 
 
-msgid "Shadow Buffer Bleed Bias"
-msgstr "섀도우 버퍼 번짐 성향"
-
-
-msgid "Bias for reducing light-bleed on variance shadow maps"
-msgstr "분산 섀도우 맵에 라이트 번짐을 줄이기 위한 성향"
-
-
-msgid "Shadow Buffer Clip End"
-msgstr "섀도우 버퍼 클립 종료"
-
-
-msgid "Shadow map clip end, beyond which objects will not generate shadows"
-msgstr "섀도우 맵 클립 종료, 그 이상의 오브젝트는 섀도우를 생성하지 않습니다"
-
-
 msgid "Shadow Buffer Clip Start"
 msgstr "섀도우 버퍼 클립 시작"
 
 
 msgid "Shadow map clip start, below which objects will not generate shadows"
 msgstr "섀도우맵 클립 시작, 그 아래에 오브젝트는 섀도우를 생성하지 않음"
-
-
-msgid "Shadow Buffer Exponent"
-msgstr "섀도우 버퍼 지수"
-
-
-msgid "Bias for reducing light-bleed on exponential shadow maps"
-msgstr "지수 섀도우 맵에서 빛의 번짐을 줄이기 위한 성향"
 
 
 msgid "Number of shadow buffer samples"
@@ -18126,14 +18070,6 @@ msgstr "섀도우 버퍼 크기"
 
 msgid "Resolution of the shadow buffer, higher values give crisper shadows but use more memory"
 msgstr "섀도우 버퍼의 해상도, 값이 높을수록 선명한 섀도우를 제공하지만 더 많은 메모리를 사용합니다"
-
-
-msgid "Shadow Buffer Soft"
-msgstr "섀도우 버퍼 소프트"
-
-
-msgid "Size of shadow buffer sampling area"
-msgstr "섀도우 버퍼 샘플링 영역의 크기"
 
 
 msgid "Shadow Color"
@@ -18418,6 +18354,10 @@ msgstr "시차 보정 볼륨에 대한 커스텀 설정을 사용"
 
 msgid "Visibility Bleed Bias"
 msgstr "가시성 번짐 성향"
+
+
+msgid "Bias for reducing light-bleed on variance shadow maps"
+msgstr "분산 섀도우 맵에 라이트 번짐을 줄이기 위한 성향"
 
 
 msgid "Visibility Blur"
@@ -22318,10 +22258,6 @@ msgstr "최소의 Y를 자르기"
 
 msgid "Minimum Y value to crop the image"
 msgstr "이미지를 자르는 최소의 Y 값"
-
-
-msgid "Extension"
-msgstr "확장자"
 
 
 msgid "How the image is extrapolated past its original bounds"
@@ -29224,10 +29160,6 @@ msgid "Mix Factor"
 msgstr "조합 팩터"
 
 
-msgid "Mix Mode"
-msgstr "조합 모드"
-
-
 msgid "How to affect destination elements with source values"
 msgstr "소스 값을 가진 대상 요소에 영향을 미치는 방법"
 
@@ -35486,48 +35418,16 @@ msgid "Light Path"
 msgstr "라이트 경로"
 
 
-msgid "Maximum value for clipping"
-msgstr "클리핑에 대한 최대의 값"
-
-
-msgid "Minimum value for clipping"
-msgstr "클리핑에 대한 최소의 값"
-
-
-msgid "Has Maximum"
-msgstr "최대치가 있음"
-
-
-msgid "Whether to use maximum clipping value"
-msgstr "최대의 클리핑 값을 사용할지 여부"
-
-
-msgid "Has Minimum"
-msgstr "최소치가 있음"
-
-
-msgid "Whether to use minimum clipping value"
-msgstr "최소의 클리핑 값을 사용할지 여부"
-
-
 msgid "Type of vector that the mapping transforms"
 msgstr "맵핑 변환하는 벡터의 유형"
-
-
-msgid "Transform a texture by inverse mapping the texture coordinate"
-msgstr "텍스처 좌표를 반전 매핑으로 텍스처를 변환"
 
 
 msgid "Transform a point"
 msgstr "포인트를 변환"
 
 
-msgid "Transform a direction vector"
-msgstr "방향 벡터를 변환"
-
-
-msgid "Transform a normal vector with unit length"
-msgstr "단위 길이와 노멀 벡터를 변환"
+msgid "Transform a texture by inverse mapping the texture coordinate"
+msgstr "텍스처 좌표를 반전 매핑으로 텍스처를 변환"
 
 
 msgid "MixRGB"
@@ -36196,6 +36096,14 @@ msgstr "다음으로 변환"
 
 msgid "Space to convert to"
 msgstr "다음으로 변환할 공간"
+
+
+msgid "Transform a direction vector"
+msgstr "방향 벡터를 변환"
+
+
+msgid "Transform a normal vector with unit length"
+msgstr "단위 길이와 노멀 벡터를 변환"
 
 
 msgid "Volume Absorption"
@@ -38656,12 +38564,32 @@ msgid "Open a directory browser, Hold Shift to open the file, Alt to browse cont
 msgstr "디렉토리 브라우저를 열기, 파일을 열려면 Shift 키를 유지, 디렉토리를 포함하여 검색할 때 Alt 키를 유지"
 
 
+msgid "Open"
+msgstr "열기"
+
+
 msgid "Directory of the file"
 msgstr "파일의 디렉토리"
 
 
 msgid "Automatically determine display type for files"
 msgstr "자동으로 파일에 대한 표시 유형을 결정하기"
+
+
+msgid "Short List"
+msgstr "짧은 목록"
+
+
+msgid "Display files as short list"
+msgstr "짧은 목록으로 파일을 표시"
+
+
+msgid "Long List"
+msgstr "긴 목록"
+
+
+msgid "Display files as a detailed list"
+msgstr "자세한 목록으로 파일을 표시"
 
 
 msgid "File Browser Mode"
@@ -40656,24 +40584,8 @@ msgid "Checker Deselect"
 msgstr "체커 선택 취소"
 
 
-msgid "Nth Element"
-msgstr "N 번째 요소"
-
-
-msgid "Skip every Nth element"
-msgstr "N 번째 요소를 건너 뜁니다"
-
-
 msgid "Offset from the starting point"
 msgstr "출발점에서 오프셋"
-
-
-msgid "Skip"
-msgstr "건너뛰기"
-
-
-msgid "Number of elements to skip at once"
-msgstr "한 번에 건너 뛸 요소의 수"
 
 
 msgctxt "Operator"
@@ -41431,10 +41343,6 @@ msgid "Export each non-muted NLA strip as a separated FBX's AnimStack, if any, i
 msgstr "글로벌 씬 애니메이션 대신 분리되지 않은 각 NLA 스트립을 분리 된 FBX의 AnimStack으로 내보내기"
 
 
-msgid "!EXPERIMENTAL! Apply Transform"
-msgstr "!실험중인기능! 변환을 적용"
-
-
 msgid "Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender's space (WARNING! experimental option, use at own risks, known broken with armatures/animations)"
 msgstr "오브젝트 데이터에 공간 변환을 배이크, 대상의 공간이 블렌더 공간과 일치하지 않을 때 오브젝트에 불필요한 회전을 가지는 것을 방지합니다. (경고! 실험 옵션, 이 옵션 사용시 아마튜어, 애니메이션이 파괴될 위험이 있습니다.)"
 
@@ -41589,34 +41497,6 @@ msgstr "-Z 축"
 
 msgid "Secondary Bone Axis"
 msgstr "보조 본 축"
-
-
-msgid "Export options categories"
-msgstr "카테고리를 내보내기 옵션"
-
-
-msgid "Main"
-msgstr "메인"
-
-
-msgid "Main basic settings"
-msgstr "메인 기본 설정"
-
-
-msgid "Geometries"
-msgstr "지오메트리"
-
-
-msgid "Geometry-related settings"
-msgstr "지오메트리 관련 설정"
-
-
-msgid "Armature-related settings"
-msgstr "아마튜어 관련 설정"
-
-
-msgid "Animation-related settings"
-msgstr "애니메이션 관련 설정"
 
 
 msgid "Active Collection"
@@ -42224,12 +42104,16 @@ msgid "Create a new directory"
 msgstr "새로운 디렉토리를 만들기"
 
 
+msgid "Confirm"
+msgstr "확인"
+
+
+msgid "Prompt for confirmation"
+msgstr "확인을 위해 알림"
+
+
 msgid "Name of new directory"
 msgstr "새로운 디렉토리의 이름"
-
-
-msgid "Open"
-msgstr "열기"
 
 
 msgid "Open new directory"
@@ -43875,16 +43759,16 @@ msgid "Arrange selected strokes up/down in the drawing order of the active layer
 msgstr "활성 레이어의 그리기 순서에서 선택한 스트로크를 위/아래로 정렬합니다"
 
 
+msgid "Bring to Front"
+msgstr "앞쪽으로 가져오기"
+
+
 msgid "Bring Forward"
 msgstr "앞으로 가져오기"
 
 
 msgid "Send Backward"
 msgstr "뒤로 보내기"
-
-
-msgid "Bring to Front"
-msgstr "앞쪽으로 가져오기"
 
 
 msgid "Send to Back"
@@ -45354,6 +45238,18 @@ msgstr "각 체인 끝에 있는 마지막 본를 무시합니다 (이전 본의
 
 msgid "Import options categories"
 msgstr "카테고리를 가져오기 옵션"
+
+
+msgid "Main"
+msgstr "메인"
+
+
+msgid "Main basic settings"
+msgstr "메인 기본 설정"
+
+
+msgid "Armature-related settings"
+msgstr "아마튜어 관련 설정"
 
 
 msgid "Alpha Decals"
@@ -48254,6 +48150,18 @@ msgid "Change selection mode"
 msgstr "선택 모드를 변경"
 
 
+msgid "Vertex selection mode"
+msgstr "버텍스 선택 모드"
+
+
+msgid "Edge selection mode"
+msgstr "에지 선택 모드"
+
+
+msgid "Face selection mode"
+msgstr "페이스 선택 모드"
+
+
 msgid "Expand"
 msgstr "확장"
 
@@ -50362,14 +50270,6 @@ msgid "Delete selected objects"
 msgstr "선택된 오브젝트를 삭제"
 
 
-msgid "Confirm"
-msgstr "확인"
-
-
-msgid "Prompt for confirmation"
-msgstr "확인을 위해 알림"
-
-
 msgid "Delete Globally"
 msgstr "글로벌로 삭제"
 
@@ -51113,11 +51013,6 @@ msgstr "오브젝트 모드를 설정"
 
 msgid "Sets the object interaction mode"
 msgstr "오브젝트 상호작용 모드를 설정"
-
-
-msgctxt "Operator"
-msgid "Set Object Mode or Submode"
-msgstr "오브젝트 모드 또는 서브 모드를 설정"
 
 
 msgctxt "Operator"
@@ -54933,11 +54828,6 @@ msgid "Module name of the add-on to expand"
 msgstr "확장하는 애드온의 모듈 이름"
 
 
-msgctxt "Operator"
-msgid "Install Add-on from File..."
-msgstr "파일에서 애드온을 설치..."
-
-
 msgid "Install an add-on"
 msgstr "애드온을 설치"
 
@@ -58198,10 +58088,6 @@ msgid "Axis Ortho"
 msgstr "축 정사"
 
 
-msgid "Shear Axis"
-msgstr "전단 축"
-
-
 msgctxt "Operator"
 msgid "Shrink/Fatten"
 msgstr "수축/팽창"
@@ -60651,11 +60537,6 @@ msgid "Check imported mesh objects for invalid data (slow)"
 msgstr "유효하지 않은 데이터에 대해 가져온 메쉬 오브젝트를 확인 (느림)"
 
 
-msgctxt "Operator"
-msgid "Append from Library"
-msgstr "라이브러리에서 덧붙이기"
-
-
 msgid "Append from a Library .blend file"
 msgstr "라이브러리 .blend 파일에서 덧붙이기"
 
@@ -61496,11 +61377,6 @@ msgid "Library to relocate"
 msgstr "재배치하는 라이브러리"
 
 
-msgctxt "Operator"
-msgid "Link from Library"
-msgstr "라이브러리에서 연결"
-
-
 msgid "Link from a Library .blend file"
 msgstr "라이브러리 .blend 파일에서 연결"
 
@@ -61512,11 +61388,6 @@ msgstr "메모리 통계"
 
 msgid "Print memory statistics to the console"
 msgstr "콘솔에 메모리 통계 출력"
-
-
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "블렌더 파일을 열기"
 
 
 msgid "Open a Blender file"
@@ -62032,11 +61903,6 @@ msgstr "되돌리기"
 
 msgid "Reload the saved file"
 msgstr "저장된 파일을 다시 불러오기"
-
-
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "다른 블렌더 파일로 저장"
 
 
 msgid "Save the current file in the desired location"
@@ -70067,14 +69933,6 @@ msgid "Display in solid mode"
 msgstr "솔리드 모드로 표시"
 
 
-msgid "Look Dev"
-msgstr "룩뎁"
-
-
-msgid "Display in Look Dev mode"
-msgstr "룩뎁 모드에서 표시"
-
-
 msgid "Display render preview"
 msgstr "렌더 미리보기를 표시"
 
@@ -71591,18 +71449,6 @@ msgid "Size of point and area light shadow maps"
 msgstr "포인트 및 영역 라이트 섀도우 맵의 크기"
 
 
-msgid "Technique use to compute the shadows"
-msgstr "기술을 사용하여 그림자를 계산합니다"
-
-
-msgid "Exponential Shadow Mapping"
-msgstr "지수 섀도우 맵핑"
-
-
-msgid "Variance Shadow Mapping"
-msgstr "분산 섀도우맵핑"
-
-
 msgid "Edge Fading"
 msgstr "에지 페이딩"
 
@@ -71725,14 +71571,6 @@ msgstr "화면 공간 반사"
 
 msgid "Enable screen space Refractions"
 msgstr "화면 공간 굴절을 사용합니다"
-
-
-msgid "Separate Albedo"
-msgstr "알베도를 분리"
-
-
-msgid "Avoid albedo being blurred by the subsurface scattering but uses more video memory"
-msgstr "서브 표면 산란에 의해 알베도가 흐려지는 것을 피하고 비디오 메모리를 더 많이 사용합니다"
 
 
 msgid "Viewport Denoising"
@@ -72195,26 +72033,6 @@ msgstr "컬러를 곱하기"
 
 msgid "Adjust the intensity of the input's color"
 msgstr "입력 컬러의 강도를 조정"
-
-
-msgid "Playback Direction"
-msgstr "재생 방향"
-
-
-msgid "Play strip forwards or backwards"
-msgstr "스트립을 앞으로 또는 뒤로 움직입니다"
-
-
-msgid "Forwards"
-msgstr "앞쪽"
-
-
-msgid "Play strip forwards"
-msgstr "스트립 앞으로 재생"
-
-
-msgid "Play strip backwards"
-msgstr "스트립 뒤로 재생"
 
 
 msgid "Strobe"
@@ -75980,10 +75798,6 @@ msgid "Active Tool and Workspace settings"
 msgstr "활성 도구 및 작업공간을 설정"
 
 
-msgid "Object visual effects"
-msgstr "오브젝트 시각 이펙트"
-
-
 msgid "Pin ID"
 msgstr "고정 ID"
 
@@ -77002,6 +76816,30 @@ msgstr "Y 맵핑"
 
 msgid "Z Mapping"
 msgstr "Z 맵핑"
+
+
+msgid "Maximum value for clipping"
+msgstr "클리핑에 대한 최대의 값"
+
+
+msgid "Minimum value for clipping"
+msgstr "클리핑에 대한 최소의 값"
+
+
+msgid "Has Maximum"
+msgstr "최대치가 있음"
+
+
+msgid "Whether to use maximum clipping value"
+msgstr "최대의 클리핑 값을 사용할지 여부"
+
+
+msgid "Has Minimum"
+msgstr "최소치가 있음"
+
+
+msgid "Whether to use minimum clipping value"
+msgstr "최소의 클리핑 값을 사용할지 여부"
 
 
 msgid "Texture Paint Slot"
@@ -79469,18 +79307,6 @@ msgid "UV selection and display mode"
 msgstr "UV 선택 및 표시 모드"
 
 
-msgid "Vertex selection mode"
-msgstr "버텍스 선택 모드"
-
-
-msgid "Edge selection mode"
-msgstr "에지 선택 모드"
-
-
-msgid "Face selection mode"
-msgstr "페이스 선택 모드"
-
-
 msgid "Island"
 msgstr "아일랜드"
 
@@ -79869,10 +79695,6 @@ msgid "Canvas grid opacity"
 msgstr "캔버스 격자 불투명도"
 
 
-msgid "Paper opacity"
-msgstr "종이 불투명도"
-
-
 msgid "Grid Lines"
 msgstr "격자 라인"
 
@@ -79989,10 +79811,6 @@ msgid "Display UV unwrapping seams"
 msgstr "UV 펼치는 씨임 화면을 표시"
 
 
-msgid "Draw Sharp"
-msgstr "샤프를 그리기"
-
-
 msgid "Display sharp edges, used with the Edge Split modifier"
 msgstr "에지 분할 모디파이어와 함께 사용되는 샤프 에지를 표시"
 
@@ -80103,10 +79921,6 @@ msgstr "프리스타일 페이스 마크를 표시, 프리스타일 렌더러와
 
 msgid "Look Dev Preview"
 msgstr "룩뎁 미리보기"
-
-
-msgid "Show look development spheres and palette"
-msgstr "룩 디벨로먼트 구체 및 파레트를 표시"
 
 
 msgid "Show the Motion Paths Overlay"
@@ -80279,14 +80093,6 @@ msgstr "라인 만"
 
 msgid "Only show edit lines for additional frames"
 msgstr "추가 프레임을 위한 편집 라인 만 표시"
-
-
-msgid "Use Paper"
-msgstr "종이를 사용"
-
-
-msgid "Cover all viewport with a full color layer to improve visibility while drawing over complex scenes"
-msgstr "복잡한 씬을 그릴 때 모든 뷰포트를 풀 컬러 레이어로 덮어 가시성을 향상시킵니다"
 
 
 msgid "Vertex Opacity"
@@ -81202,11 +81008,6 @@ msgstr "오브젝트 모드"
 
 
 msgctxt "WindowManager"
-msgid "3D View Tool: Select"
-msgstr "3D보기 도구: 선택"
-
-
-msgctxt "WindowManager"
 msgid "3D View Tool: Select Box"
 msgstr "3D보기 도구: 선택 박스"
 
@@ -81860,10 +81661,6 @@ msgstr "%s AO, %s 메쉬 라이트, %s 서브 표면, %s 볼륨"
 
 msgid "Cull back-faces"
 msgstr "뒤쪽 페이스를 추려내기"
-
-
-msgid "Deformation"
-msgstr "변형"
 
 
 msgid "Incompatible output node"
@@ -82851,16 +82648,16 @@ msgid "Interpolation U"
 msgstr "보간 U"
 
 
-msgid "Bleed Bias"
-msgstr "번짐 성향"
-
-
 msgid "Clipping Start"
 msgstr "클리핑 시작"
 
 
 msgid "Clipping Offset"
 msgstr "클리핑 오프셋"
+
+
+msgid "Bleed Bias"
+msgstr "번짐 성향"
 
 
 msgid "Arrow Size"
@@ -83976,10 +83773,6 @@ msgstr "모든 에지"
 
 msgid "Align to Vertex Normal"
 msgstr "버텍스 노멀에 정렬"
-
-
-msgid "Not for Axis-Angle"
-msgstr "축 각도에 대해 아닌"
 
 
 msgid "Old"
@@ -85221,6 +85014,11 @@ msgstr "정리"
 
 
 msgctxt "Operator"
+msgid "Back"
+msgstr "뒤쪽"
+
+
+msgctxt "Operator"
 msgid "Toggle Dope Sheet"
 msgstr "도프시트를 토글"
 
@@ -86197,10 +85995,6 @@ msgid "Unable to find toolbar group"
 msgstr "툴바 그룹을 찾을 수 없습니다"
 
 
-msgid "View Axis:"
-msgstr "뷰 축:"
-
-
 msgid "Annotation:"
 msgstr "주석:"
 
@@ -86848,11 +86642,6 @@ msgstr "활성 카메라를 선택된 항목에 정렬"
 msgctxt "Operator"
 msgid "Front"
 msgstr "앞쪽"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "뒤쪽"
 
 
 msgctxt "Operator"
@@ -87621,21 +87410,12 @@ msgid "PAINT_GPENCILEDIT_GPENCILSCULPT_GPENCILWEIGHT_GPENCILOBJECTDraw Grease Pe
 msgstr "PAINT_GPENCILEDIT_GPENCILSCULPT_GPENCILWEIGHT_GPENCILOBJECTDraw Grease PencilEdit Grease PencilSculpt Grease PencilWeight Grease PencilGrease Pencil"
 
 
-msgid "Fade 3D Objects"
-msgstr "3D 오브젝트를 페이드"
-
-
 msgid "Display:"
 msgstr "표시:"
 
 
 msgid "Frames:"
 msgstr "프레임:"
-
-
-msgctxt "Operator"
-msgid "Insert Blank"
-msgstr "공란 삽입"
 
 
 msgid "Thickness Profile"
@@ -90250,6 +90030,10 @@ msgid "No active color to isolate"
 msgstr "분리하는 활성 컬러이 없음"
 
 
+msgid "No Grease Pencil data"
+msgstr "그리스 펜슬 데이터가 없음"
+
+
 msgid "Unable to add a new Lattice modifier to object"
 msgstr "오브젝트에 새로운 래티스 모디파이어를 추가 할 수 없습니다"
 
@@ -90264,10 +90048,6 @@ msgstr "존재하지 않는 레이어로 변경할 수 없습니다 (인덱스 =
 
 msgid "No active GP data"
 msgstr "활성 GP 데이터가 없음"
-
-
-msgid "No Grease Pencil data"
-msgstr "그리스 펜슬 데이터가 없음"
 
 
 msgid "Operator not supported in multiframe edition"
@@ -93136,36 +92916,8 @@ msgid "Average re-projection error: %.3f"
 msgstr "평균 재투영 오류: %.3f"
 
 
-msgid "Parent Directory"
-msgstr "부모 디렉토리"
-
-
-msgid "Open Directory"
-msgstr "디렉토리를 열기"
-
-
-msgid "Cancel"
-msgstr "취소"
-
-
 msgid "File path"
 msgstr "파일 경로"
-
-
-msgid "Decrement the filename number"
-msgstr "파일 이름 번호를 감소"
-
-
-msgid "Increment the filename number"
-msgstr "파일 이름 번호 증가"
-
-
-msgid "File name, overwrite existing"
-msgstr "파일 이름, 기존을 덮어쓰기"
-
-
-msgid "File name"
-msgstr "파일 이름"
 
 
 msgid "File does not exist"
@@ -93190,6 +92942,18 @@ msgstr "새 폴더를 만들 수 없음: %s"
 
 msgid "Could not delete file: %s"
 msgstr "파일을 삭제할 수 없음: %s"
+
+
+msgid "Cancel"
+msgstr "취소"
+
+
+msgid "File name, overwrite existing"
+msgstr "파일 이름, 기존을 덮어쓰기"
+
+
+msgid "File name"
+msgstr "파일 이름"
 
 
 msgid "Cursor from Selection"
@@ -95093,20 +94857,20 @@ msgid " along %s Z axis"
 msgstr " %s Z 축을 따라"
 
 
-msgid "Unsupported object type for text-space transform"
-msgstr "텍스트 변환에 대한 지원되지 않는 오브젝트 유형"
-
-
-msgid "Linked data can't text-space transform"
-msgstr "연결된 데이터는 텍스트 공간을 변형 할 수 없습니다"
-
-
 msgid "Cannot change Pose when 'Rest Position' is enabled"
 msgstr "'레스트 위치'가 활성화 되면 포즈를 바꿀 수 없습니다"
 
 
 msgid "Bone selection count error"
 msgstr "본 선택 개수 오류"
+
+
+msgid "Linked data can't text-space transform"
+msgstr "연결된 데이터는 텍스트 공간을 변형 할 수 없습니다"
+
+
+msgid "Unsupported object type for text-space transform"
+msgstr "텍스트 변환에 대한 지원되지 않는 오브젝트 유형"
 
 
 msgid "(Sharp)"

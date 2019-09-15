@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -1394,6 +1394,10 @@ msgid "Bone is able to be selected"
 msgstr "Knochen kann ausgewählt werden"
 
 
+msgid "Full"
+msgstr "Füllen"
+
+
 msgid "Layers"
 msgstr "Ebenen"
 
@@ -2749,6 +2753,10 @@ msgstr "Y Rotation invertieren"
 
 msgid "Invert the Z rotation"
 msgstr "Z-Rotation invertieren"
+
+
+msgid "Mix Mode"
+msgstr "Mischmodus"
 
 
 msgid "Copy the target's X rotation"
@@ -5204,22 +5212,6 @@ msgid "Display mode for the file list"
 msgstr "Anzeigemodus für die Dateiliste"
 
 
-msgid "Short List"
-msgstr "Kurze Liste"
-
-
-msgid "Display files as short list"
-msgstr "Dateien als kurze Liste anzeigen"
-
-
-msgid "Long List"
-msgstr "Lange Liste"
-
-
-msgid "Display files as a detailed list"
-msgstr "Dateien als detaillierte Liste anzeigen"
-
-
 msgid "Thumbnails"
 msgstr "Vorschaubilder"
 
@@ -5264,28 +5256,12 @@ msgid "Sort"
 msgstr "Sortieren"
 
 
-msgid "Sort alphabetically"
-msgstr "Alphabetisch sortieren"
-
-
 msgid "Sort the file list alphabetically"
 msgstr "Dateiliste alphabetisch sortieren"
 
 
-msgid "Sort by extension"
-msgstr "Nach Dateiendung sortieren"
-
-
-msgid "Sort by time"
-msgstr "Nach Zeit sortieren"
-
-
 msgid "Sort files by modification time"
 msgstr "Dateien nach Änderungszeit sortieren"
-
-
-msgid "Sort by size"
-msgstr "Nach Größe sortieren"
 
 
 msgid "Sort files by size"
@@ -6877,6 +6853,10 @@ msgid "Rotate"
 msgstr "Rotieren"
 
 
+msgid "Draw Sharp"
+msgstr "Form"
+
+
 msgid "Smooth Stroke Factor"
 msgstr "Weicher-Strich-Faktor"
 
@@ -7283,10 +7263,6 @@ msgstr "Extrudieren"
 
 msgid "Fill Mode"
 msgstr "Füllmodus"
-
-
-msgid "Full"
-msgstr "Füllen"
 
 
 msgid "Offset the curve to adjust the width of a text"
@@ -8203,10 +8179,6 @@ msgstr "Quadratische Entfernungsdämpfung"
 
 msgid "Shadow Buffer Bias"
 msgstr "Schattenpuffer-Tendenz"
-
-
-msgid "Shadow Buffer Bleed Bias"
-msgstr "Klangdateien zeigen"
 
 
 msgid "Shadow Buffer Size"
@@ -12062,10 +12034,6 @@ msgid "Mix Factor"
 msgstr "Misch-Faktor"
 
 
-msgid "Mix Mode"
-msgstr "Mischmodus"
-
-
 msgid "Nearest vertex"
 msgstr "Angrenzender Vertex"
 
@@ -15238,22 +15206,6 @@ msgid "Light Path"
 msgstr "Lichtpfad"
 
 
-msgid "Maximum value for clipping"
-msgstr "Maximaler Clipping-Wert"
-
-
-msgid "Minimum value for clipping"
-msgstr "Minimaler Clipping-Wert"
-
-
-msgid "Has Maximum"
-msgstr "Hat Maximum"
-
-
-msgid "Has Minimum"
-msgstr "Hat Minimum"
-
-
 msgid "MixRGB"
 msgstr "RGB mischen"
 
@@ -16617,8 +16569,28 @@ msgid "Accept"
 msgstr "Akzeptieren"
 
 
+msgid "Open"
+msgstr "Öffnen"
+
+
 msgid "Automatically determine display type for files"
 msgstr "Anzeigetyp für Dateien automatisch ermitteln"
+
+
+msgid "Short List"
+msgstr "Kurze Liste"
+
+
+msgid "Display files as short list"
+msgstr "Dateien als kurze Liste anzeigen"
+
+
+msgid "Long List"
+msgstr "Lange Liste"
+
+
+msgid "Display files as a detailed list"
+msgstr "Dateien als detaillierte Liste anzeigen"
 
 
 msgid "File Browser Mode"
@@ -18216,10 +18188,6 @@ msgstr "Neues Verzeichnis erstellen"
 
 msgid "Create a new directory"
 msgstr "Neues Verzeichnis erstellen"
-
-
-msgid "Open"
-msgstr "Öffnen"
 
 
 msgid "Open new directory"
@@ -20320,6 +20288,10 @@ msgstr "Modus auswählen"
 
 msgid "Change selection mode"
 msgstr "Auswahlmodus ändern"
+
+
+msgid "Vertex selection mode"
+msgstr "Vertex-Auswahlmodus"
 
 
 msgid "Expand"
@@ -25743,11 +25715,6 @@ msgid "Print memory statistics to the console"
 msgstr "Speicherstatistik auf der Konsole ausgeben"
 
 
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "Blender-Datei öffnen"
-
-
 msgid "Open a Blender file"
 msgstr "Eine Blender-Datei öffnen"
 
@@ -25918,11 +25885,6 @@ msgstr "Animationsschritte"
 
 msgid "Anim Play"
 msgstr "Animation abspielen"
-
-
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "Als Blender-Datei speichern"
 
 
 msgid "Save the current file in the desired location"
@@ -31042,6 +31004,22 @@ msgid "Z Mapping"
 msgstr "Z-Mapping:"
 
 
+msgid "Maximum value for clipping"
+msgstr "Maximaler Clipping-Wert"
+
+
+msgid "Minimum value for clipping"
+msgstr "Minimaler Clipping-Wert"
+
+
+msgid "Has Maximum"
+msgstr "Hat Maximum"
+
+
+msgid "Has Minimum"
+msgstr "Hat Minimum"
+
+
 msgid "Text Box"
 msgstr "Textbox"
 
@@ -32210,10 +32188,6 @@ msgid "Lock Borders"
 msgstr "Ränder sperren"
 
 
-msgid "Vertex selection mode"
-msgstr "Vertex-Auswahlmodus"
-
-
 msgid "Island"
 msgstr "Insel"
 
@@ -32376,10 +32350,6 @@ msgstr "Falten anzeigen"
 
 msgid "Draw Seams"
 msgstr "Nähte zeichnen"
-
-
-msgid "Draw Sharp"
-msgstr "Form"
 
 
 msgid "Edge Length"
@@ -33524,10 +33494,6 @@ msgid "Invert"
 msgstr "Invertieren"
 
 
-msgid "Not for Axis-Angle"
-msgstr "Nicht für Achsenwinkel"
-
-
 msgid "Old"
 msgstr "Alt"
 
@@ -33859,6 +33825,11 @@ msgstr "Erweitern"
 msgctxt "Operator"
 msgid "Slide"
 msgstr "Schieben"
+
+
+msgctxt "Operator"
+msgid "Back"
+msgstr "Hinten"
 
 
 msgctxt "Operator"
@@ -34385,11 +34356,6 @@ msgstr "Aktive Kamera an Ausgewählten ausrichten"
 msgctxt "Operator"
 msgid "Front"
 msgstr "Vorne"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "Hinten"
 
 
 msgctxt "Operator"
@@ -36458,28 +36424,8 @@ msgid "No active track to join to"
 msgstr "Keine aktive Spur zum Zusammenführen"
 
 
-msgid "Cancel"
-msgstr "Abbrechen"
-
-
 msgid "File path"
 msgstr "Dateipfad"
-
-
-msgid "Decrement the filename number"
-msgstr "Dateinamen-Zähler verringern"
-
-
-msgid "Increment the filename number"
-msgstr "Dateinamen-Zähler erhöhen"
-
-
-msgid "File name, overwrite existing"
-msgstr "Existierender Dateiname überschreiben"
-
-
-msgid "File name"
-msgstr "Dateiname"
 
 
 msgid "No parent directory given"
@@ -36488,6 +36434,18 @@ msgstr "Kein Elternverzeichnis vorhanden"
 
 msgid "Could not create new folder name"
 msgstr "Neuer Verzeichnisname kann nicht erstellt werden"
+
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+
+msgid "File name, overwrite existing"
+msgstr "Existierender Dateiname überschreiben"
+
+
+msgid "File name"
+msgstr "Dateiname"
 
 
 msgid "Cursor from Selection"

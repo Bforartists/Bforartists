@@ -19,11 +19,11 @@
 bl_info = {
     "name": "QuickPrefs",
     "author": "Sean Olson",
-    "version": (2, 2),
-    "blender": (2, 66, 0),
-    "location": "3DView->Properties Panel (N-Key)",
+    "version": (2, 2, 1),
+    "blender": (2, 80, 0),
+    "location": "Properties, Render Tab",
     "description": "Add often changed User Preference options to Properties panel.",
-    "warning": "",
+    "warning": "Under Reconstruction",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/3D_interaction/QuickPrefs",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
@@ -656,7 +656,7 @@ def gllightpreset_loadpresets(context):
 def opengl_lamp_buttons(column, lamp):
     split = column.split(factor=0.1)
 
-    split.prop(lamp, "use", text="", icon='OUTLINER_OB_LAMP' if lamp.use else 'LAMP_DATA')
+    split.prop(lamp, "use", text="", icon='OUTLINER_OB_LIGHT' if lamp.use else 'LIGHT_DATA')
 
     col = split.column()
     col.active = lamp.use
@@ -751,13 +751,14 @@ class SCENE_OT_gllightpreset(bpy.types.Operator):
 
 
 #Panel for tools
-class PANEL(bpy.types.Panel):
+class QP_PT_PANEL(bpy.types.Panel):
     bl_label = 'Quick Preferences'
-    bl_space_type = 'VIEW_3D'
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
     bl_context = "render"
-    bl_region_type = 'UI'
     bl_options = {'DEFAULT_CLOSED'}
 
+    bl_context = "render"
 
     def draw(self, context):
         global lastname
@@ -803,11 +804,11 @@ class PANEL(bpy.types.Panel):
             #Draw the buttons
             split = split.split()
             col = split.column()
-            col.operator("gllightpreset.action", icon='ADD', text="Add").button="add"
-            col.operator("gllightpreset.action", icon='REMOVE', text="Delete").button="delete"
-            col.operator("gllightpreset.action", icon="FILE_TICK", text="Save to Blend").button="save"
-            col.operator("gllightpreset.action", icon="SORTALPHA", text="Sort").button="sort"
-            col.operator("gllightpreset.action", icon="SHORTDISPLAY", text="Add Defaults").button="defaults"
+            col.operator("gllightpreset.action", text="Add").button="add"
+            col.operator("gllightpreset.action", text="Delete").button="delete"
+            col.operator("gllightpreset.action", text="Save to Blend").button="save"
+            col.operator("gllightpreset.action", text="Sort").button="sort"
+            col.operator("gllightpreset.action", text="Add Defaults").button="defaults"
             col=box.row()
             col=col.column()
             #Draw the text box
@@ -881,64 +882,64 @@ class PANEL(bpy.types.Panel):
 class quickprefproperties(bpy.types.PropertyGroup):
     @classmethod
     def register(cls):
-            bpy.types.Scene.quickprefs = PointerProperty(
+            bpy.types.Scene.quickprefs= PointerProperty(
                     name="QuickPrefs Settings",
                     description="QuickPrefs render settings",
                     type=cls,
                     )
             #strings for file IO
-            cls.gllightpreset_importfile = StringProperty(name = "",
+            cls.gllightpreset_importfile= StringProperty(name = "",
                     subtype='FILE_PATH',
                     default=defaultfilepath
                     )
 
-            cls.gllightpreset_importdirectory = StringProperty(name = "",
+            cls.gllightpreset_importdirectory= StringProperty(name = "",
                     subtype='FILE_PATH',
                     default=defaultfilepath
                     )
 
-            cls.gllightpreset_exportfile = StringProperty(name = "",
+            cls.gllightpreset_exportfile= StringProperty(name = "",
                     subtype='FILE_PATH',
                     default=defaultfilepath
                     )
 
-            cls.gllightpreset_exportdirectory = StringProperty(
+            cls.gllightpreset_exportdirectory= StringProperty(
                     name = "",
                     subtype='FILE_PATH',
                     default=defaultfilepath
                     )
 
-            cls.gllights = BoolProperty(
+            cls.gllights= BoolProperty(
                     name='Lights',
                     default=True
                     )
 
-            cls.gllightPresets = BoolProperty(
+            cls.gllightPresets= BoolProperty(
                     name='GL Light Presets',
                     default=True
                     )
 
-            cls.interface = BoolProperty(
+            cls.interface= BoolProperty(
                     name='Interface',
                     default=True
                     )
 
-            cls.importexport = BoolProperty(
+            cls.importexport= BoolProperty(
                     name='Import/Export',
                     default=True
                     )
 
-            cls.gllights = BoolProperty(
+            cls.gllights: BoolProperty(
                     name='Lights',
                     default=True
                     )
 
             #important storage of stuff
-            cls.gllightpreset = CollectionProperty(
+            cls.gllightpreset= CollectionProperty(
                     type=gllightpreset
                     )
 
-            cls.gllightpreset_index = IntProperty(
+            cls.gllightpreset_index= IntProperty(
                     min=0,
                     default=0,
                     update=gllightpreset_index
@@ -961,23 +962,23 @@ def register():
     handler=bpy.app.handlers
 
     #register classes
-    bpy.utils.register_class(PANEL)
+    bpy.utils.register_class(QP_PT_PANEL)
     bpy.utils.register_class(gllightpreset)
     bpy.utils.register_class(SCENE_OT_gllightpreset)
     bpy.utils.register_class(quickprefproperties)
 
     #handler.scene_update_pre.append(gllightpreset_scan)
-    handler.scene_update_pre.append(setup)
+    handler.depsgraph_update_pre.append(setup)
     #handler.load_post.append(setup)     #was crashing blender on new file load - comment for now
 
 
 # unregistering and removing menus
 def unregister():
-    bpy.utils.unregister_class(PANEL)
+    bpy.utils.unregister_class(QP_PT_PANEL)
     bpy.utils.unregister_class(gllightpreset)
     bpy.utils.unregister_class(SCENE_OT_gllightpreset)
     bpy.utils.unregister_class(quickprefproperties)
-    bpy.app.handlers.scene_update_pre.remove(setup)
+    bpy.app.handlers.depsgraph_update_pre.remove(setup)
 
 if __name__ == "__main__":
     register()

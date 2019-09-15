@@ -105,10 +105,6 @@ BlenderStrokeRenderer::BlenderStrokeRenderer(Render *re, int render_count) : Str
   freestyle_scene->r.border.xmax = old_scene->r.border.xmax;
   freestyle_scene->r.border.ymax = old_scene->r.border.ymax;
   strcpy(freestyle_scene->r.pic, old_scene->r.pic);
-  freestyle_scene->r.safety.xmin = old_scene->r.safety.xmin;
-  freestyle_scene->r.safety.ymin = old_scene->r.safety.ymin;
-  freestyle_scene->r.safety.xmax = old_scene->r.safety.xmax;
-  freestyle_scene->r.safety.ymax = old_scene->r.safety.ymax;
   freestyle_scene->r.dither_intensity = old_scene->r.dither_intensity;
   STRNCPY(freestyle_scene->r.engine, old_scene->r.engine);
   if (G.debug & G_DEBUG_FREESTYLE) {
@@ -164,7 +160,8 @@ BlenderStrokeRenderer::BlenderStrokeRenderer(Render *re, int render_count) : Str
   _nodetree_hash = BLI_ghash_ptr_new("BlenderStrokeRenderer::_nodetree_hash");
 
   // Depsgraph
-  freestyle_depsgraph = DEG_graph_new(freestyle_scene, view_layer, DAG_EVAL_RENDER);
+  freestyle_depsgraph = DEG_graph_new(
+      freestyle_bmain, freestyle_scene, view_layer, DAG_EVAL_RENDER);
   DEG_graph_id_tag_update(freestyle_bmain, freestyle_depsgraph, &freestyle_scene->id, 0);
   DEG_graph_id_tag_update(freestyle_bmain, freestyle_depsgraph, &object_camera->id, 0);
   DEG_graph_tag_relations_update(freestyle_depsgraph);

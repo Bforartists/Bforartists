@@ -19,7 +19,7 @@
 bl_info = {
     "name": "BlenderKit Asset Library",
     "author": "Vilem Duha, Petr Dlouhy",
-    "version": (1, 0, 27),
+    "version": (1, 0, 28),
     "blender": (2, 80, 0),
     "location": "View3D > Properties > BlenderKit",
     "description": "Online BlenderKit library (materials, models, brushes and more)",
@@ -371,18 +371,8 @@ class BlenderKitCommonSearchProps(object):
 def name_update(self, context):
     ''' checks for name change, because it decides if whole asset has to be re-uploaded. Name is stored in the blend file
     and that's the reason.'''
-    props = utils.get_upload_props()
-    if props.name_old != props.name:
-        props.name_changed = True
-        props.name_old = props.name
-        nname = props.name.strip()
-        nname = nname.replace('_', ' ')
-        if nname.isupper():
-            nname = nname.lower()
-        nname = nname[0].upper() + nname[1:]
-        props.name = nname
-        asset = utils.get_active_asset()
-        asset.name = nname
+    utils.name_update()
+
 
 
 def update_tags(self, context):

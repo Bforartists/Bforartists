@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -561,6 +561,10 @@ msgstr "Salin"
 
 msgid "Copy Z"
 msgstr "Salin"
+
+
+msgid "Mix Mode"
+msgstr "Modus Sunting"
 
 
 msgid "Copy Transforms Constraint"
@@ -1941,10 +1945,6 @@ msgid "Cast Type"
 msgstr "Tipe"
 
 
-msgid "Mix Mode"
-msgstr "Modus Sunting"
-
-
 msgid "Use edge collapsing"
 msgstr "Buat"
 
@@ -3197,6 +3197,10 @@ msgid "Reset Transform"
 msgstr "Ubah-bentuk ke muasal"
 
 
+msgid "Open"
+msgstr "Buka"
+
+
 msgctxt "Operator"
 msgid "Add Camera Preset"
 msgstr "Kamera"
@@ -3709,10 +3713,6 @@ msgstr "Hapus Berkas Terpilih"
 
 msgid "Delete selected files"
 msgstr "Hapus berkas terpilih"
-
-
-msgid "Open"
-msgstr "Buka"
 
 
 msgctxt "Operator"
@@ -6447,11 +6447,6 @@ msgid "View Manual"
 msgstr "Bahan"
 
 
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "Situs Blender"
-
-
 msgid "Property"
 msgstr "Properti"
 
@@ -7506,6 +7501,11 @@ msgstr "Internet:"
 
 
 msgctxt "Operator"
+msgid "Back"
+msgstr "Belakang"
+
+
+msgctxt "Operator"
 msgid "More"
 msgstr "Modus"
 
@@ -7715,11 +7715,6 @@ msgstr "Kamera"
 msgctxt "Operator"
 msgid "Front"
 msgstr "Depan"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "Belakang"
 
 
 msgctxt "Operator"
@@ -8540,6 +8535,10 @@ msgid "No active track to join to"
 msgstr "lokasi"
 
 
+msgid "Could not create new folder name"
+msgstr "Tambah Gambar"
+
+
 msgid "Cancel"
 msgstr "Batal"
 
@@ -8550,10 +8549,6 @@ msgstr "Nama file, tindih yang ada"
 
 msgid "File name"
 msgstr "Nama file"
-
-
-msgid "Could not create new folder name"
-msgstr "Tambah Gambar"
 
 
 msgid "Cursor from Selection"

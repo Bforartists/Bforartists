@@ -533,6 +533,10 @@ def auto_fix(asset_type=''):
 
 def start_upload(self, context, asset_type, reupload, upload_set):
     '''start upload process, by processing data'''
+
+    # fix the name first
+    utils.name_update()
+
     props = utils.get_upload_props()
     storage_quota_ok = check_storage_quota(props)
     if not storage_quota_ok:

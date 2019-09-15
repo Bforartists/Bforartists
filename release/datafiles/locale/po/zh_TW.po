@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: 2018-09-23 13:23+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -1960,6 +1960,14 @@ msgid "Bone is able to be selected"
 msgstr "可選取的骨骼"
 
 
+msgid "Inherit Scale"
+msgstr "繼承縮放"
+
+
+msgid "Full"
+msgstr "完整"
+
+
 msgid "Layers"
 msgstr "層"
 
@@ -2066,14 +2074,6 @@ msgstr "繼承旋轉"
 
 msgid "Bone inherits rotation or scale from parent bone"
 msgstr "骨骼繼承親代骨骼的旋轉或縮放"
-
-
-msgid "Inherit Scale"
-msgstr "繼承縮放"
-
-
-msgid "Bone inherits scaling from parent bone"
-msgstr "繼承親代骨骼的縮放"
 
 
 msgid "Local Location"
@@ -4029,8 +4029,8 @@ msgid "Invert the Z rotation"
 msgstr "反轉 Z 軸旋轉"
 
 
-msgid "Add original rotation into copied rotation"
-msgstr "添加原始旋轉至複製的旋轉"
+msgid "Mix Mode"
+msgstr "混合模式"
 
 
 msgid "Copy the target's X rotation"
@@ -8085,22 +8085,6 @@ msgid "Display mode for the file list"
 msgstr "檔案清單的顯示模式"
 
 
-msgid "Short List"
-msgstr "短清單"
-
-
-msgid "Display files as short list"
-msgstr "以短清單顯示檔案"
-
-
-msgid "Long List"
-msgstr "長清單"
-
-
-msgid "Display files as a detailed list"
-msgstr "以詳細清單顯示檔案"
-
-
 msgid "Thumbnails"
 msgstr "縮圖"
 
@@ -8149,28 +8133,16 @@ msgid "Sort"
 msgstr "排序"
 
 
-msgid "Sort alphabetically"
-msgstr "依英文字母排序"
-
-
 msgid "Sort the file list alphabetically"
 msgstr "依英文字母排序檔案清單"
 
 
-msgid "Sort by extension"
-msgstr "依副檔名排序"
-
-
-msgid "Sort by time"
-msgstr "依時間排序"
+msgid "Extension"
+msgstr "延伸"
 
 
 msgid "Sort files by modification time"
 msgstr "依修改時間排序檔案"
-
-
-msgid "Sort by size"
-msgstr "依大小排序"
 
 
 msgid "Sort files by size"
@@ -10490,6 +10462,10 @@ msgid "Sharper"
 msgstr "更銳利"
 
 
+msgid "Deformation"
+msgstr "變形"
+
+
 msgid "Paint most on faces pointing towards the view according to this angle"
 msgstr "大多根據此角度繪製在指向視圖的面上"
 
@@ -10708,6 +10684,10 @@ msgstr "輕推"
 
 msgid "Rotate"
 msgstr "旋轉"
+
+
+msgid "Draw Sharp"
+msgstr "描繪銳利"
 
 
 msgid "Secondary Color"
@@ -11444,10 +11424,6 @@ msgstr "填補模式"
 
 msgid "Mode of filling curve"
 msgstr "填補曲線的模式"
-
-
-msgid "Full"
-msgstr "完整"
 
 
 msgid "Half"
@@ -12926,22 +12902,6 @@ msgid "Shadow Buffer Bias"
 msgstr "陰影緩衝偏差"
 
 
-msgid "Shadow Buffer Bleed Bias"
-msgstr "陰影緩衝出血偏差"
-
-
-msgid "Bias for reducing light-bleed on variance shadow maps"
-msgstr "減少變異陰影映射光出血的偏差"
-
-
-msgid "Shadow Buffer Clip End"
-msgstr "陰影緩衝剪輯結束"
-
-
-msgid "Shadow map clip end, beyond which objects will not generate shadows"
-msgstr "陰影映射剪輯結束，超過這裡物體不會生成陰影"
-
-
 msgid "Shadow Buffer Clip Start"
 msgstr "陰影緩衝剪輯開始"
 
@@ -12960,14 +12920,6 @@ msgstr "陰影緩衝大小"
 
 msgid "Resolution of the shadow buffer, higher values give crisper shadows but use more memory"
 msgstr "陰影緩衝的解析度，較高的值可有較鮮銳的陰影，但消耗較多記憶體"
-
-
-msgid "Shadow Buffer Soft"
-msgstr "陰影緩衝軟"
-
-
-msgid "Size of shadow buffer sampling area"
-msgstr "陰影緩衝取樣區域的大小"
 
 
 msgid "Shadow Color"
@@ -13032,6 +12984,10 @@ msgstr "強度"
 
 msgid "Clipping"
 msgstr "剪輯"
+
+
+msgid "Bias for reducing light-bleed on variance shadow maps"
+msgstr "減少變異陰影映射光出血的偏差"
 
 
 msgid "Mask data-block defining mask for compositing"
@@ -16154,10 +16110,6 @@ msgstr "裁切最小 Y 值"
 
 msgid "Minimum Y value to crop the image"
 msgstr "裁切影像的最小 Y 值"
-
-
-msgid "Extension"
-msgstr "延伸"
 
 
 msgid "How the image is extrapolated past its original bounds"
@@ -19958,10 +19910,6 @@ msgstr "最大距離"
 
 msgid "Mix Factor"
 msgstr "混合因子"
-
-
-msgid "Mix Mode"
-msgstr "混合模式"
 
 
 msgid "Above Threshold"
@@ -25196,48 +25144,16 @@ msgid "Light Path"
 msgstr "光照路徑"
 
 
-msgid "Maximum value for clipping"
-msgstr "剪輯用的最大值"
-
-
-msgid "Minimum value for clipping"
-msgstr "剪輯用的最小值"
-
-
-msgid "Has Maximum"
-msgstr "有最大值"
-
-
-msgid "Whether to use maximum clipping value"
-msgstr "是否使用最大剪輯值"
-
-
-msgid "Has Minimum"
-msgstr "有最小值"
-
-
-msgid "Whether to use minimum clipping value"
-msgstr "是否使用最小剪輯值"
-
-
 msgid "Type of vector that the mapping transforms"
 msgstr "映射的轉換用向量類型"
-
-
-msgid "Transform a texture by inverse mapping the texture coordinate"
-msgstr "藉反轉紋理座標映射以轉換紋理"
 
 
 msgid "Transform a point"
 msgstr "轉換一點"
 
 
-msgid "Transform a direction vector"
-msgstr "轉換方向向量"
-
-
-msgid "Transform a normal vector with unit length"
-msgstr "以單位長度轉換一般向量"
+msgid "Transform a texture by inverse mapping the texture coordinate"
+msgstr "藉反轉紋理座標映射以轉換紋理"
 
 
 msgid "MixRGB"
@@ -25710,6 +25626,14 @@ msgstr "轉換目標"
 
 msgid "Space to convert to"
 msgstr "轉換的目標空間"
+
+
+msgid "Transform a direction vector"
+msgstr "轉換方向向量"
+
+
+msgid "Transform a normal vector with unit length"
+msgstr "以單位長度轉換一般向量"
 
 
 msgid "Volume Absorption"
@@ -27683,12 +27607,32 @@ msgid "Open a directory browser, Hold Shift to open the file, Alt to browse cont
 msgstr "開啟目錄瀏覽器，按住 Shift 開啟檔案，按住 Alt 瀏覽其所在目錄"
 
 
+msgid "Open"
+msgstr "開啟"
+
+
 msgid "Directory of the file"
 msgstr "檔案的目錄"
 
 
 msgid "Automatically determine display type for files"
 msgstr "自動決定檔案的顯示類型"
+
+
+msgid "Short List"
+msgstr "短清單"
+
+
+msgid "Display files as short list"
+msgstr "以短清單顯示檔案"
+
+
+msgid "Long List"
+msgstr "長清單"
+
+
+msgid "Display files as a detailed list"
+msgstr "以詳細清單顯示檔案"
 
 
 msgid "File Browser Mode"
@@ -29383,10 +29327,6 @@ msgid "Checker Deselect"
 msgstr "棋盤交錯式取消選取"
 
 
-msgid "Skip"
-msgstr "略過"
-
-
 msgctxt "Operator"
 msgid "Select Previous"
 msgstr "選取上一項"
@@ -30225,10 +30165,6 @@ msgstr "建立一個新資料夾"
 
 msgid "Name of new directory"
 msgstr "新資料夾的名稱"
-
-
-msgid "Open"
-msgstr "開啟"
 
 
 msgid "Open new directory"
@@ -33846,6 +33782,18 @@ msgstr "選取模式"
 
 msgid "Change selection mode"
 msgstr "變更選取模式"
+
+
+msgid "Vertex selection mode"
+msgstr "頂點選取模式"
+
+
+msgid "Edge selection mode"
+msgstr "邊線選取模式"
+
+
+msgid "Face selection mode"
+msgstr "面選取模式"
 
 
 msgid "Expand"
@@ -43394,11 +43342,6 @@ msgid "Print memory statistics to the console"
 msgstr "將記憶體統計資料列印至主控臺"
 
 
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "開啟 Blender 檔案"
-
-
 msgid "Open a Blender file"
 msgstr "開啟一個 Blender 檔案"
 
@@ -43713,11 +43656,6 @@ msgstr "還原"
 
 msgid "Reload the saved file"
 msgstr "重新載入儲存的檔案"
-
-
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "另存為 Bledner 檔案"
 
 
 msgid "Save the current file in the desired location"
@@ -52565,6 +52503,30 @@ msgid "Z Mapping"
 msgstr "Z 映射"
 
 
+msgid "Maximum value for clipping"
+msgstr "剪輯用的最大值"
+
+
+msgid "Minimum value for clipping"
+msgstr "剪輯用的最小值"
+
+
+msgid "Has Maximum"
+msgstr "有最大值"
+
+
+msgid "Whether to use maximum clipping value"
+msgstr "是否使用最大剪輯值"
+
+
+msgid "Has Minimum"
+msgstr "有最小值"
+
+
+msgid "Whether to use minimum clipping value"
+msgstr "是否使用最小剪輯值"
+
+
 msgid "Texture Paint Slot"
 msgstr "紋理繪製槽"
 
@@ -54445,18 +54407,6 @@ msgid "UV selection and display mode"
 msgstr "UV 選取與顯示模式"
 
 
-msgid "Vertex selection mode"
-msgstr "頂點選取模式"
-
-
-msgid "Edge selection mode"
-msgstr "邊線選取模式"
-
-
-msgid "Face selection mode"
-msgstr "面選取模式"
-
-
 msgid "Island"
 msgstr "島塊"
 
@@ -54759,10 +54709,6 @@ msgstr "描繪縫線"
 
 msgid "Display UV unwrapping seams"
 msgstr "顯示 UV 拆解縫線"
-
-
-msgid "Draw Sharp"
-msgstr "描繪銳利"
 
 
 msgid "Draw Edges"
@@ -55456,10 +55402,6 @@ msgstr "%s AO，%s 網格光照，%s 次表面，%s 體積"
 
 msgid "Cull back-faces"
 msgstr "淘選背面"
-
-
-msgid "Deformation"
-msgstr "變形"
 
 
 msgid "Portal"
@@ -56840,10 +56782,6 @@ msgid "Invert"
 msgstr "反轉"
 
 
-msgid "Not for Axis-Angle"
-msgstr "不適用於軸角度"
-
-
 msgid "Old"
 msgstr "老舊"
 
@@ -57324,6 +57262,11 @@ msgstr "擴展"
 msgctxt "Operator"
 msgid "Slide"
 msgstr "滑動"
+
+
+msgctxt "Operator"
+msgid "Back"
+msgstr "後"
 
 
 msgctxt "Operator"
@@ -58028,11 +57971,6 @@ msgstr "將作用中攝影機對齊所選項"
 msgctxt "Operator"
 msgid "Front"
 msgstr "前"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "後"
 
 
 msgctxt "Operator"
@@ -61576,36 +61514,8 @@ msgid "Average re-projection error: %.3f"
 msgstr "重新投射的平均錯誤：%.3f"
 
 
-msgid "Parent Directory"
-msgstr "上層目錄"
-
-
-msgid "Open Directory"
-msgstr "開啟目錄"
-
-
-msgid "Cancel"
-msgstr "取消"
-
-
 msgid "File path"
 msgstr "檔案路徑"
-
-
-msgid "Decrement the filename number"
-msgstr "遞減的檔名編號"
-
-
-msgid "Increment the filename number"
-msgstr "遞增的檔名編號"
-
-
-msgid "File name, overwrite existing"
-msgstr "檔案名稱, 覆蓋既有的"
-
-
-msgid "File name"
-msgstr "檔案名稱"
 
 
 msgid "File does not exist"
@@ -61626,6 +61536,18 @@ msgstr "無法建立新的資料夾：%s"
 
 msgid "Could not delete file: %s"
 msgstr "無法刪除檔案：%s"
+
+
+msgid "Cancel"
+msgstr "取消"
+
+
+msgid "File name, overwrite existing"
+msgstr "檔案名稱, 覆蓋既有的"
+
+
+msgid "File name"
+msgstr "檔案名稱"
 
 
 msgid "Cursor from Selection"
@@ -62877,20 +62799,20 @@ msgid " along %s Z axis"
 msgstr "沿 %s Z 軸"
 
 
-msgid "Unsupported object type for text-space transform"
-msgstr "文字空間轉換項為未支援的物體類型"
-
-
-msgid "Linked data can't text-space transform"
-msgstr "連結的資料無法作文字空間轉換"
-
-
 msgid "Cannot change Pose when 'Rest Position' is enabled"
 msgstr "當「靜止位置」啟用時無法變更姿勢"
 
 
 msgid "Bone selection count error"
 msgstr "骨骼選取計數錯誤"
+
+
+msgid "Linked data can't text-space transform"
+msgstr "連結的資料無法作文字空間轉換"
+
+
+msgid "Unsupported object type for text-space transform"
+msgstr "文字空間轉換項為未支援的物體類型"
 
 
 msgid "(Sharp)"

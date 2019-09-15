@@ -22,6 +22,7 @@ import bpy
 import math
 
 from .errors import MetarigError
+from .collections import ensure_widget_collection
 
 WGT_PREFIX = "WGT-"  # Prefix for widget objects
 
@@ -65,7 +66,7 @@ def create_widget(rig, bone_name, bone_transform_name=None):
 
     obj_name = WGT_PREFIX + rig.name + '_' + bone_name
     scene = bpy.context.scene
-    collection = bpy.context.collection
+    collection = ensure_widget_collection(bpy.context)
 
     # Check if it already exists in the scene
     if obj_name in scene.objects:

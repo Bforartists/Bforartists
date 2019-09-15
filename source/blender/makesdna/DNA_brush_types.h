@@ -113,7 +113,8 @@ typedef struct BrushGpencilSettings {
   float gradient_f;
   /** factor xy of shape for dots gradients */
   float gradient_s[2];
-  char _pad_2[4];
+  /** Simplify adaptive factor */
+  float simplify_f;
 
   struct CurveMapping *curve_sensitivity;
   struct CurveMapping *curve_strength;
@@ -184,6 +185,8 @@ typedef enum eGP_BrushIcons {
   GP_BRUSH_ICON_ERASE_SOFT = 8,
   GP_BRUSH_ICON_ERASE_HARD = 9,
   GP_BRUSH_ICON_ERASE_STROKE = 10,
+  GP_BRUSH_ICON_AIRBRUSH = 11,
+  GP_BRUSH_ICON_CHISEL = 12,
 } eGP_BrushIcons;
 
 typedef enum eBrushCurvePreset {
@@ -197,6 +200,18 @@ typedef enum eBrushCurvePreset {
   BRUSH_CURVE_INVSQUARE = 7,
   BRUSH_CURVE_CONSTANT = 8,
 } eBrushCurvePreset;
+
+typedef enum eBrushElasticDeformType {
+  BRUSH_ELASTIC_DEFORM_GRAB = 0,
+  BRUSH_ELASTIC_DEFORM_GRAB_BISCALE = 1,
+  BRUSH_ELASTIC_DEFORM_GRAB_TRISCALE = 2,
+  BRUSH_ELASTIC_DEFORM_SCALE = 3,
+  BRUSH_ELASTIC_DEFORM_TWIST = 4,
+} eBrushElasticDeformType;
+
+typedef enum eAutomasking_flag {
+  BRUSH_AUTOMASKING_TOPOLOGY = (1 << 0),
+} eAutomasking_flag;
 
 typedef struct Brush {
   ID id;
@@ -304,6 +319,12 @@ typedef struct Brush {
   float texture_sample_bias;
 
   int curve_preset;
+  int automasking_flags;
+
+  char _pad1[4];
+
+  int elastic_deform_type;
+  float elastic_deform_volume_preservation;
 
   /* overlay */
   int texture_overlay_alpha;
@@ -386,7 +407,7 @@ typedef enum eBrushFlags {
   BRUSH_JITTER_PRESSURE = (1 << 4),
   BRUSH_SPACING_PRESSURE = (1 << 5),
   BRUSH_FLAG_UNUSED_6 = (1 << 6), /* cleared */
-  BRUSH_FLAG_UNUSED_7 = (1 << 7), /* cleared */
+  BRUSH_GRAB_ACTIVE_VERTEX = (1 << 7),
   BRUSH_ANCHORED = (1 << 8),
   BRUSH_DIR_IN = (1 << 9),
   BRUSH_SPACE = (1 << 10),
@@ -453,6 +474,9 @@ typedef enum eBrushSculptTool {
   SCULPT_TOOL_BLOB = 17,
   SCULPT_TOOL_CLAY_STRIPS = 18,
   SCULPT_TOOL_MASK = 19,
+  SCULPT_TOOL_DRAW_SHARP = 20,
+  SCULPT_TOOL_ELASTIC_DEFORM = 21,
+  SCULPT_TOOL_POSE = 22,
 } eBrushSculptTool;
 
 /* Brush.uv_sculpt_tool */
@@ -466,6 +490,7 @@ typedef enum eBrushUVSculptTool {
 #define SCULPT_TOOL_HAS_ACCUMULATE(t) \
   ELEM(t, \
        SCULPT_TOOL_DRAW, \
+       SCULPT_TOOL_DRAW_SHARP, \
        SCULPT_TOOL_CREASE, \
        SCULPT_TOOL_BLOB, \
        SCULPT_TOOL_LAYER, \
@@ -485,8 +510,11 @@ typedef enum eBrushUVSculptTool {
         SCULPT_TOOL_ROTATE, \
         SCULPT_TOOL_THUMB, \
         SCULPT_TOOL_LAYER, \
+        SCULPT_TOOL_DRAW_SHARP, \
+        SCULPT_TOOL_ELASTIC_DEFORM, \
+        SCULPT_TOOL_POSE, \
 \
-        /* These brushes could handle dynamic topology, \
+        /* These brushes could handle dynamic topology, \ \
          * but user feedback indicates it's better not to */ \
         SCULPT_TOOL_SMOOTH, \
         SCULPT_TOOL_MASK) == 0)
@@ -496,6 +524,7 @@ typedef enum eBrushUVSculptTool {
         SCULPT_TOOL_GRAB, \
         SCULPT_TOOL_ROTATE, \
         SCULPT_TOOL_THUMB, \
+        SCULPT_TOOL_DRAW_SHARP, \
         SCULPT_TOOL_MASK) == 0)
 
 /* ImagePaintSettings.tool */
