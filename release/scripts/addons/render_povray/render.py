@@ -452,6 +452,9 @@ def write_pov(filename, scene=None, info_callback=None):
             elif material.pov.mirror_use_IOR:
                 tabWrite("interior {\n")
                 tabWrite("ior %.6f\n" % material.pov_raytrace_transparency.ior)
+            elif material.pov.transparency_method=='Z_TRANSPARENCY':
+                tabWrite("interior {\n")
+                tabWrite("ior 1.0\n")                
             else:
                 tabWrite("interior {\n")
                 tabWrite("ior %.6f\n" % material.pov_raytrace_transparency.ior)
@@ -579,7 +582,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
             matrix = global_matrix @ ob.matrix_world
 
-            # Color is no longer modified by energy 
+            # Color is no longer modified by energy
             color = tuple([c for c in lamp.color])
 
             tabWrite("light_source {\n")
@@ -2086,7 +2089,7 @@ def write_pov(filename, scene=None, info_callback=None):
                     if hasattr(ob, 'particle_systems'):
                         renderEmitter = False
                         if ob.show_instancer_for_render:
-                            renderEmitter = True                        
+                            renderEmitter = True
                         for pSys in ob.particle_systems:
                             for mod in [m for m in ob.modifiers if (m is not None) and (m.type == 'PARTICLE_SYSTEM')]:
                                 if (pSys.settings.render_type == 'PATH') and mod.show_render and (pSys.name == mod.particle_system.name):
@@ -2114,10 +2117,10 @@ def write_pov(filename, scene=None, info_callback=None):
                                         strandShape = 0.0
                                     # Set the number of particles to render count rather than 3d view display
                                     #pSys.set_resolution(scene, ob, 'RENDER') # DEPRECATED
-                                    # When you render, the entire dependency graph will be 
+                                    # When you render, the entire dependency graph will be
                                     # evaluated at render resolution, including the particles.
-                                    # In the viewport it will be at viewport resolution. 
-                                    # So there is no need fo render engines to use this function anymore, 
+                                    # In the viewport it will be at viewport resolution.
+                                    # So there is no need fo render engines to use this function anymore,
                                     # it's automatic now.
                                     steps = pSys.settings.display_step
                                     steps = 3 ** steps # or (power of 2 rather than 3) + 1 # Formerly : len(particle.hair_keys)
@@ -2262,10 +2265,10 @@ def write_pov(filename, scene=None, info_callback=None):
 
                                     # Set back the displayed number of particles to preview count
                                     # pSys.set_resolution(scene, ob, 'PREVIEW') #DEPRECATED
-                                    # When you render, the entire dependency graph will be 
+                                    # When you render, the entire dependency graph will be
                                     # evaluated at render resolution, including the particles.
-                                    # In the viewport it will be at viewport resolution. 
-                                    # So there is no need fo render engines to use this function anymore, 
+                                    # In the viewport it will be at viewport resolution.
+                                    # So there is no need fo render engines to use this function anymore,
                                     # it's automatic now.
                                     if renderEmitter == False:
                                         continue #don't render mesh, skip to next object.
@@ -3233,6 +3236,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
         if csg:
             duplidata_ref = []
+            _dupnames_seen = dict()  # avoid duplicate output during introspection
             for ob in sel:
                 #matrix = global_matrix @ ob.matrix_world
                 if ob.is_instancer:
@@ -3247,13 +3251,23 @@ def write_pov(filename, scene=None, info_callback=None):
                         dup = "#declare DATA%s = union{\n" %(string_strip_hyphen(bpy.path.clean_name(ob.name)))
                     for eachduplicate in depsgraph.object_instances:
                         if eachduplicate.is_instance:  # Real dupli instance filtered because original included in list since 2.8
-                            print("eachduplicate.object.name: %s" % eachduplicate.object.name)
-                            if not "name" in dir(bpy.data.objects[eachduplicate.object.name].data):
-                                print("WARNING: No 'name' in dir(bpy.data.objects[eachduplicate.object.name].data) = %s" % (dir(bpy.data.objects[eachduplicate.object.name].data)))
-                                continue # don't try to parse objects with no name
-                            duplidataname = "OB"+string_strip_hyphen(bpy.path.clean_name(bpy.data.objects[eachduplicate.object.name].data.name))
+                            _dupname = eachduplicate.object.name
+                            _dupobj = bpy.data.objects[_dupname]
+                            # BEGIN introspection for troubleshooting purposes
+                            if not "name" in dir(_dupobj.data):
+                                if _dupname not in _dupnames_seen:
+                                    print("WARNING: bpy.data.objects[%s].data (of type %s) has no 'name' attribute" % (_dupname, type(_dupobj.data)))
+                                    for _thing in dir(_dupobj):
+                                        print("||  %s.%s = %s" % (_dupname, _thing, getattr(_dupobj, _thing)))
+                                    _dupnames_seen[_dupname] = 1
+                                    print("''=>  Unparseable objects so far: %s" % (_dupnames_seen))
+                                else:
+                                    _dupnames_seen[_dupname] += 1
+                                continue  # don't try to parse data objects with no name attribute
+                            # END introspection for troubleshooting purposes
+                            duplidataname = "OB"+string_strip_hyphen(bpy.path.clean_name(_dupobj.data.name))
                             dupmatrix = eachduplicate.matrix_world.copy() #has to be copied to not store instance since 2.8
-                            dup += ("\tobject {\n\t\tDATA%s\n\t\t%s\t}\n" %(string_strip_hyphen(bpy.path.clean_name(bpy.data.objects[eachduplicate.object.name].data.name)), MatrixAsPovString(ob.matrix_world.inverted() @ dupmatrix)))
+                            dup += ("\tobject {\n\t\tDATA%s\n\t\t%s\t}\n" %(string_strip_hyphen(bpy.path.clean_name(_dupobj.data.name)), MatrixAsPovString(ob.matrix_world.inverted() @ dupmatrix)))
                             #add object to a list so that it is not rendered for some instance_types
                             if ob.instance_type not in {'COLLECTION'} and duplidataname not in duplidata_ref:
                                 duplidata_ref.append(duplidataname) #older key [string_strip_hyphen(bpy.path.clean_name("OB"+ob.name))]
@@ -3262,7 +3276,8 @@ def write_pov(filename, scene=None, info_callback=None):
                     tabWrite(dup)
                 else:
                     continue
-            print(duplidata_ref)
+            print("WARNING: Unparseable objects in current .blend file:\n''=> %s" % (_dupnames_seen))
+            print("duplidata_ref = %s" % (duplidata_ref))
             for data_name, inst in data_ref.items():
                 for ob_name, matrix_str in inst:
                     if ob_name not in duplidata_ref: #.items() for a dictionary

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -236,6 +236,10 @@ msgstr "Volume"
 
 msgid "Children"
 msgstr "Kinderen"
+
+
+msgid "Full"
+msgstr "Volledig"
 
 
 msgid "Layers"
@@ -712,10 +716,6 @@ msgstr "Dimensie"
 
 msgid "Extrude"
 msgstr "Uitrekken"
-
-
-msgid "Full"
-msgstr "Volledig"
 
 
 msgid "Half"
@@ -4180,18 +4180,8 @@ msgstr "Afspelen"
 
 
 msgctxt "Operator"
-msgid "Link from Library"
-msgstr "Koppel van Bibliotheek"
-
-
-msgctxt "Operator"
 msgid "Memory Statistics"
 msgstr "Geheugen Statistieken"
-
-
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "Open Blender Bestand"
 
 
 msgid "Open a Blender file"
@@ -4253,11 +4243,6 @@ msgstr "Herteken tijd"
 msgctxt "Operator"
 msgid "Revert"
 msgstr "Herstel"
-
-
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "Opslaan als Blender bestand"
 
 
 msgid "Save the current file in the desired location"
@@ -5200,6 +5185,11 @@ msgstr "Maak Schoon"
 
 
 msgctxt "Operator"
+msgid "Back"
+msgstr "Terug"
+
+
+msgctxt "Operator"
 msgid "Hide Selected Curves"
 msgstr "Verberg Geselecteerde Curven"
 
@@ -5389,11 +5379,6 @@ msgstr "Camera"
 msgctxt "Operator"
 msgid "Front"
 msgstr "Voorkant"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "Terug"
 
 
 msgctxt "Operator"
@@ -5976,14 +5961,6 @@ msgstr "Zonder Doelen"
 
 msgid "Active Keyframe"
 msgstr "Actieve Sleutelframe"
-
-
-msgid "Parent Directory"
-msgstr "Bron Map"
-
-
-msgid "Open Directory"
-msgstr "Open Map"
 
 
 msgid "Cancel"

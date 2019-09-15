@@ -238,7 +238,7 @@ def report_usages():
     scene['assets reported'] = assets_reported
 
     if new_assets_count == 0:
-        print('no new assets were added')
+        utils.p('no new assets were added')
         return;
     usage_report = {
         'scene': sid,
@@ -267,7 +267,6 @@ def report_usages():
         scene['assets rated'][k] = scene['assets rated'].get(k, False)
     thread = threading.Thread(target=utils.requests_post_thread, args=(url, usage_report, headers))
     thread.start()
-    # r = rerequests.post(url, headers=headers, json=usage_report)
     mt = time.time() - mt
     print('report generation:                ', mt)
 
@@ -282,13 +281,7 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
     # link the group we are interested in( there are more groups in File!!!! , have to get the correct one!)
     #
     scene = bpy.context.scene
-    scene['assets used'] = scene.get('assets used', {})
-    scene['assets used'][asset_data['asset_base_id']] = asset_data.copy()
 
-    scene['assets rated'] = scene.get('assets rated', {})
-
-    id = asset_data['asset_base_id']
-    scene['assets rated'][id] = scene['assets rated'].get(id, False)
 
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
@@ -343,14 +336,16 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
                                                             location=downloader['location'],
                                                             rotation=downloader['rotation'],
                                                             link=link,
-                                                            name=asset_data['name'])
+                                                            name=asset_data['name'],
+                                                            parent=kwargs.get('parent'))
 
                 else:
                     parent, newobs = append_link.append_objects(file_names[-1],
                                                                 location=downloader['location'],
                                                                 rotation=downloader['rotation'],
                                                                 link=link,
-                                                                name=asset_data['name'])
+                                                                name=asset_data['name'],
+                                                                parent=kwargs.get('parent'))
                 if parent.type == 'EMPTY' and link:
                     bmin = asset_data['bbox_min']
                     bmax = asset_data['bbox_max']
@@ -363,12 +358,14 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
                                                         location=kwargs['model_location'],
                                                         rotation=kwargs['model_rotation'],
                                                         link=link,
-                                                        name=asset_data['name'])
+                                                        name=asset_data['name'],
+                                                        parent=kwargs.get('parent'))
             else:
                 parent, newobs = append_link.append_objects(file_names[-1],
                                                             location=kwargs['model_location'],
                                                             rotation=kwargs['model_rotation'],
-                                                            link=link)
+                                                            link=link,
+                                                            parent=kwargs.get('parent'))
             if parent.type == 'EMPTY' and link:
                 bmin = asset_data['bbox_min']
                 bmax = asset_data['bbox_max']
@@ -402,9 +399,9 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
             shutil.copy(thumbpath, asset_thumb_path)
             brush.icon_filepath = asset_thumb_path
 
-        if bpy.context.sculpt_object:
+        if bpy.context.view_layer.objects.active.mode == 'SCULPT':
             bpy.context.tool_settings.sculpt.brush = brush
-        elif bpy.context.image_paint_object:  # could be just else, but for future possible more types...
+        elif bpy.context.view_layer.objects.active.mode == 'TEXTURE_PAINT':  # could be just else, but for future possible more types...
             bpy.context.tool_settings.image_paint.brush = brush
         # TODO set brush by by asset data(user can be downloading while switching modes.)
 
@@ -429,6 +426,14 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
             target_object.material_slots[kwargs['material_target_slot']].material = material
 
         parent = material
+
+    scene['assets used'] = scene.get('assets used', {})
+    scene['assets used'][asset_data['asset_base_id']] = asset_data.copy()
+
+    scene['assets rated'] = scene.get('assets rated', {})
+
+    id = asset_data['asset_base_id']
+    scene['assets rated'][id] = scene['assets rated'].get(id, False)
 
     parent['asset_data'] = asset_data  # TODO remove this??? should write to blenderkit Props?
     # moving reporting to on save.
@@ -510,7 +515,7 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff, not 
                                 sres['downloaded'] = 100
 
                 utils.p('finished download thread')
-    return .2
+    return .5
 
 
 class Downloader(threading.Thread):
@@ -698,9 +703,11 @@ def asset_in_scene(asset_data):
     scene = bpy.context.scene
     au = scene.get('assets used', {})
 
+    id = asset_data['asset_base_id']
     if id in au.keys():
         ad = au[id]
         if ad.get('file_name') != None:
+
             asset_data['file_name'] = ad['file_name']
             asset_data['url'] = ad['url']
 
@@ -839,12 +846,15 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
     asset_index: IntProperty(name="Asset Index", description='asset index in search results', default=-1)
 
     target_object: StringProperty(
-        name="Material Target Object",
-        description="",
+        name="Target Object",
+        description="Material or object target for replacement",
         default="")
+
     material_target_slot: IntProperty(name="Asset Index", description='asset index in search results', default=0)
     model_location: FloatVectorProperty(name='Asset Location', default=(0, 0, 0))
     model_rotation: FloatVectorProperty(name='Asset Rotation', default=(0, 0, 0))
+
+    replace: BoolProperty(name='Replace', description='replace selection with the asset', default=False)
 
     cast_parent: StringProperty(
         name="Particles Target Object",
@@ -865,19 +875,38 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
             s['assets used'] = {}
         if asset_data['asset_base_id'] in s.get('assets used'):
             asset_data = s['assets used'][asset_data['asset_base_id']].to_dict()
+
         atype = asset_data['asset_type']
         if bpy.context.mode != 'OBJECT' and (
                 atype == 'model' or atype == 'material') and bpy.context.active_object is not None:
             bpy.ops.object.mode_set(mode='OBJECT')
-        kwargs = {
-            'cast_parent': self.cast_parent,
-            'target_object': self.target_object,
-            'material_target_slot': self.material_target_slot,
-            'model_location': tuple(self.model_location),
-            'model_rotation': tuple(self.model_rotation)
-        }
 
-        start_download(asset_data, **kwargs)
+        if self.replace:  # cleanup first, assign later.
+            obs = utils.get_selected_models()
+
+            for ob in obs:
+                kwargs = {
+                    'cast_parent': self.cast_parent,
+                    'target_object': ob.name,
+                    'material_target_slot': ob.active_material_index,
+                    'model_location': tuple(ob.matrix_world.translation),
+                    'model_rotation': tuple(ob.matrix_world.to_euler()),
+                    'replace': False,
+                    'parent': ob.parent
+                }
+                utils.delete_hierarchy(ob)
+                start_download(asset_data, **kwargs)
+        else:
+            kwargs = {
+                'cast_parent': self.cast_parent,
+                'target_object': self.target_object,
+                'material_target_slot': self.material_target_slot,
+                'model_location': tuple(self.model_location),
+                'model_rotation': tuple(self.model_rotation),
+                'replace': False
+            }
+
+            start_download(asset_data, **kwargs)
         return {'FINISHED'}
 
 
@@ -886,7 +915,7 @@ def register_download():
     bpy.utils.register_class(BlenderkitKillDownloadOperator)
     bpy.app.handlers.load_post.append(scene_load)
     bpy.app.handlers.save_pre.append(scene_save)
-    # bpy.app.timers.register(timer_update,  persistent = True)
+    bpy.app.timers.register(timer_update, persistent=True)
 
 
 def unregister_download():
@@ -894,4 +923,4 @@ def unregister_download():
     bpy.utils.unregister_class(BlenderkitKillDownloadOperator)
     bpy.app.handlers.load_post.remove(scene_load)
     bpy.app.handlers.save_pre.remove(scene_save)
-    # bpy.app.timers.unregister(timer_update)
+    bpy.app.timers.unregister(timer_update)

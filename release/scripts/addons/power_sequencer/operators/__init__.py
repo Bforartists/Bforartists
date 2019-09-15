@@ -77,7 +77,6 @@ from .snap_selection import POWER_SEQUENCER_OT_snap_selection
 from .speed_remove_effect import POWER_SEQUENCER_OT_speed_remove_effect
 from .swap_strips import POWER_SEQUENCER_OT_swap_strips
 from .select_all_left_or_right import POWER_SEQUENCER_OT_select_all_left_or_right
-from .synchronize_titles import POWER_SEQUENCER_OT_synchronize_titles
 from .toggle_selected_mute import POWER_SEQUENCER_OT_toggle_selected_mute
 from .toggle_waveforms import POWER_SEQUENCER_OT_toggle_waveforms
 from .trim_three_point_edit import POWER_SEQUENCER_OT_trim_three_point_edit
@@ -146,7 +145,6 @@ classes = [
     POWER_SEQUENCER_OT_snap_selection,
     POWER_SEQUENCER_OT_speed_remove_effect,
     POWER_SEQUENCER_OT_swap_strips,
-    POWER_SEQUENCER_OT_synchronize_titles,
     POWER_SEQUENCER_OT_toggle_selected_mute,
     POWER_SEQUENCER_OT_toggle_waveforms,
     POWER_SEQUENCER_OT_trim_three_point_edit,

@@ -803,9 +803,9 @@ def create_fabric_material(matname, replace, r, g, b, rv=0.8, gv=0.636, bv=0.315
     node = nodes.new('ShaderNodeMapping')
     node.name = 'UVMapping'
     node.location = 266, 380
-    node.scale[0] = 1000
-    node.scale[1] = 1000
-    node.scale[2] = 1000
+    node.inputs['Scale'].default_value[0] = 1000
+    node.inputs['Scale'].default_value[1] = 1000
+    node.inputs['Scale'].default_value[2] = 1000
 
     # ===========================================================================
     # Image texture

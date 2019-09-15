@@ -79,7 +79,7 @@ else:
     from . import archipack_truss
     from . import archipack_floor
     from . import archipack_rendering
-    print("archipack: ready")
+    # print("archipack: ready")
 
 # noinspection PyUnresolvedReferences
 import bpy

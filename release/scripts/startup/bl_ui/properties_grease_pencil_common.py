@@ -307,7 +307,7 @@ class GreasePencilAppearancePanel:
             layout.prop(gp_settings, "use_cursor", text="Show Brush")
 
             if brush.gpencil_tool == 'DRAW':
-                layout.prop(gp_settings, "show_lasso", text="Show fill color while drawing")
+                layout.prop(gp_settings, "show_lasso", text="Show Fill Color While Drawing")
 
             if brush.gpencil_tool == 'FILL':
                 layout.prop(brush, "cursor_color_add", text="Color")
@@ -602,10 +602,10 @@ class GPENCIL_MT_move_to_layer(Menu):
             while(i >= 0):
                 gpl = gpd.layers[i]
                 if gpl.info == gpl_active.info:
-                    icon='GREASEPENCIL'
+                    icon = 'GREASEPENCIL'
                 else:
                     icon = 'NONE'
-                layout.operator("gpencil.move_to_layer", text=gpl.info, icon=icon).layer=i
+                layout.operator("gpencil.move_to_layer", text=gpl.info, icon=icon).layer = i
                 i -= 1
 
             layout.separator()
@@ -638,7 +638,7 @@ class GPENCIL_MT_cleanup(Menu):
 
         if ob.mode != 'PAINT_GPENCIL':
             layout.operator("gpencil.stroke_merge_by_distance", text="Merge by Distance", icon = "MERGE")
-        
+ 
         layout.separator()
 
         layout.operator("gpencil.frame_clean_fill", text="Boundary Strokes", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
@@ -947,6 +947,34 @@ class GPENCIL_UL_layer(UIList):
                 text="",
                 icon_value=icon,
             )
+
+
+class GreasePencilSimplifyPanel:
+
+    def draw_header(self, context):
+        rd = context.scene.render
+        self.layout.prop(rd, "simplify_gpencil", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        rd = context.scene.render
+
+        layout.active = rd.simplify_gpencil
+
+        col = layout.column()
+        col.prop(rd, "simplify_gpencil_onplay", text="Playback Only")
+        col.prop(rd, "simplify_gpencil_view_modifier", text="Modifiers")
+        col.prop(rd, "simplify_gpencil_shader_fx", text="ShaderFX")
+        col.prop(rd, "simplify_gpencil_blend", text="Layers Blending")
+        col.prop(rd, "simplify_gpencil_tint", text="Layers Tinting")
+
+        col.prop(rd, "simplify_gpencil_view_fill")
+        sub = col.column()
+        sub.active = rd.simplify_gpencil_view_fill
+        sub.prop(rd, "simplify_gpencil_remove_lines", text="Lines")
 
 
 classes = (

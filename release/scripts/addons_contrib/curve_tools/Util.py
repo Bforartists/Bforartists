@@ -84,6 +84,15 @@ def Selected1OrMoreCurves():
         pass
 
     return False
+    
+def Selected2OrMoreCurves():
+    try:
+        if len(GetSelectedCurves()) > 1:
+            return (bpy.context.active_object.type == "CURVE")
+    except:
+        pass
+
+    return False
 
 
 def Selected1OrMoreMesh():

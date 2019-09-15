@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -670,6 +670,14 @@ msgid "Envelope Head Radius"
 msgstr "Ölçek Zarfı/BBone"
 
 
+msgid "Inherit Scale"
+msgstr "Döndürme & Ölçek"
+
+
+msgid "Full"
+msgstr "Tam Ekran"
+
+
 msgid "Layers"
 msgstr "Katmanlar 1-5"
 
@@ -715,10 +723,6 @@ msgstr "Obje bağlarına gözat"
 
 
 msgid "Inherit Rotation"
-msgstr "Döndürme & Ölçek"
-
-
-msgid "Inherit Scale"
 msgstr "Döndürme & Ölçek"
 
 
@@ -1561,6 +1565,10 @@ msgstr "Döndürme & Ölçek"
 
 msgid "Invert the Z rotation"
 msgstr "Döndürme & Ölçek"
+
+
+msgid "Mix Mode"
+msgstr "Düzenleme Modu"
 
 
 msgid "Copy the target's X rotation"
@@ -3136,10 +3144,6 @@ msgid "Display Mode"
 msgstr "Düzenleme Modu"
 
 
-msgid "Long List"
-msgstr "Ayrıntılı bilgi göster"
-
-
 msgid "Display files as thumbnails"
 msgstr "Çoklu Resim dosyaları"
 
@@ -3166,22 +3170,6 @@ msgstr "Çevre"
 
 msgid "Show Hidden"
 msgstr "Gizlileri Göster"
-
-
-msgid "Sort alphabetically"
-msgstr "Dosyaları alfabetik olarak sırala"
-
-
-msgid "Sort by extension"
-msgstr "Dosyaları uzantısına göre sırala"
-
-
-msgid "Sort by time"
-msgstr "Dosyaları zamana göre sırala"
-
-
-msgid "Sort by size"
-msgstr "Dosyaları boyutuna göre sırala"
 
 
 msgid "Sort files by size"
@@ -4104,6 +4092,10 @@ msgid "Rotate"
 msgstr "Döndür"
 
 
+msgid "Draw Sharp"
+msgstr "Sivri Bozulma"
+
+
 msgid "Smooth Stroke Factor"
 msgstr "Eğrileri yumuşat"
 
@@ -4406,10 +4398,6 @@ msgstr "Düzenleme Modu"
 
 msgid "Mode of filling curve"
 msgstr "Eğriyi buna Çevir"
-
-
-msgid "Full"
-msgstr "Tam Ekran"
 
 
 msgid "Path Length"
@@ -4888,16 +4876,8 @@ msgid "Shadow Buffer Bias"
 msgstr "Arabellek rengini yapıştır"
 
 
-msgid "Shadow Buffer Bleed Bias"
-msgstr "Arabellek rengini yapıştır"
-
-
 msgid "Shadow Buffer Size"
 msgstr "Yazıtipi Boyutu Seçin:"
-
-
-msgid "Shadow Buffer Soft"
-msgstr "Arabellek rengini yapıştır"
 
 
 msgid "Shadow Color"
@@ -7657,10 +7637,6 @@ msgstr "Tüm Katmanları Göster"
 
 msgid "Mix Factor"
 msgstr "Harekete bağlı bulanıklık derecesi"
-
-
-msgid "Mix Mode"
-msgstr "Düzenleme Modu"
 
 
 msgid "Nearest vertex"
@@ -10849,8 +10825,16 @@ msgid "Reset Brush"
 msgstr "Eğriyi Sıfırla"
 
 
+msgid "Open"
+msgstr "Aç"
+
+
 msgid "Directory of the file"
 msgstr "Dosya adı"
+
+
+msgid "Long List"
+msgstr "Ayrıntılı bilgi göster"
 
 
 msgid "File Browser Mode"
@@ -12243,10 +12227,6 @@ msgstr "Yeni dosya oluştur"
 
 msgid "Name of new directory"
 msgstr "Yeni bir değiştirici ekle"
-
-
-msgid "Open"
-msgstr "Aç"
 
 
 msgctxt "Operator"
@@ -14065,6 +14045,18 @@ msgstr "Ters Seçim"
 
 msgid "Change selection mode"
 msgstr "Kenar Seçme Modu:"
+
+
+msgid "Vertex selection mode"
+msgstr "Kamera Uçuş Modu"
+
+
+msgid "Edge selection mode"
+msgstr "Kenar Seçme Modu:"
+
+
+msgid "Face selection mode"
+msgstr "Kamera Uçuş Modu"
 
 
 msgid "Expand"
@@ -18746,11 +18738,6 @@ msgid "Memory Statistics"
 msgstr "Bellek yetersiz."
 
 
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "Yeni dosya oluştur"
-
-
 msgid "Open a Blender file"
 msgstr "Yeni dosya oluştur"
 
@@ -18906,11 +18893,6 @@ msgstr "Animasyonu Oynat"
 
 msgid "Undo/Redo"
 msgstr "İleri Al (Düzenle)"
-
-
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "Blender Dosyasını Farklı Kaydet"
 
 
 msgid "Save Copy"
@@ -23399,18 +23381,6 @@ msgid "UV Selection Mode"
 msgstr "Kamera Uçuş Modu"
 
 
-msgid "Vertex selection mode"
-msgstr "Kamera Uçuş Modu"
-
-
-msgid "Edge selection mode"
-msgstr "Kenar Seçme Modu:"
-
-
-msgid "Face selection mode"
-msgstr "Kamera Uçuş Modu"
-
-
 msgid "Island selection mode"
 msgstr "Kamera Uçuş Modu"
 
@@ -23525,10 +23495,6 @@ msgstr "Kenarları Vurgula"
 
 msgid "Draw Seams"
 msgstr "Kenarları Vurgula"
-
-
-msgid "Draw Sharp"
-msgstr "Sivri Bozulma"
 
 
 msgid "Draw Edges"
@@ -24569,6 +24535,11 @@ msgstr "Vertex Slide"
 
 
 msgctxt "Operator"
+msgid "Back"
+msgstr "Arka"
+
+
+msgctxt "Operator"
 msgid "Discontinuity (Euler) Filter"
 msgstr "Dosya Uzantılarını Filtrele"
 
@@ -25021,11 +24992,6 @@ msgstr "Aktif Kamerayı Seçilene Hizala"
 msgctxt "Operator"
 msgid "Front"
 msgstr "Ön"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "Arka"
 
 
 msgctxt "Operator"
@@ -26652,24 +26618,8 @@ msgid "No object to apply orientation on"
 msgstr "Alttaki değerlere bağlı olarak (DupSta, DupEnd, DupOn, DupOff) nesne, dış hattı (yolu) izleyerek çoğaltılacaktır"
 
 
-msgid "Cancel"
-msgstr "İptal"
-
-
 msgid "File path"
 msgstr "Dosya yolu"
-
-
-msgid "Decrement the filename number"
-msgstr "Izgara çizgilerinin sayısını ayarlayın"
-
-
-msgid "Increment the filename number"
-msgstr "Izgara çizgilerinin sayısını ayarlayın"
-
-
-msgid "File name"
-msgstr "Dosya adı"
 
 
 msgid "No parent directory given"
@@ -26678,6 +26628,14 @@ msgstr "Ses aramak için varsayılan dizin"
 
 msgid "Could not create new folder name"
 msgstr "Yeni dosya oluştur"
+
+
+msgid "Cancel"
+msgstr "İptal"
+
+
+msgid "File name"
+msgstr "Dosya adı"
 
 
 msgid "Cursor from Selection"

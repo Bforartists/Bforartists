@@ -55,6 +55,12 @@ const EnumPropertyItem rna_enum_mesh_delimit_mode_items[] = {
     {0, NULL, 0, NULL, NULL},
 };
 
+static const EnumPropertyItem rna_enum_mesh_remesh_mode_items[] = {
+    {REMESH_VOXEL, "VOXEL", 0, "Voxel", "Use the voxel remesher"},
+    {REMESH_QUAD, "QUAD", 0, "Quad", "Use the quad remesher"},
+    {0, NULL, 0, NULL, NULL},
+};
+
 #ifdef RNA_RUNTIME
 
 #  include "DNA_scene_types.h"
@@ -2994,18 +3000,17 @@ static void rna_def_mesh(BlenderRNA *brna)
   /* Remesh */
   prop = RNA_def_property(srna, "remesh_voxel_size", PROP_FLOAT, PROP_DISTANCE);
   RNA_def_property_float_sdna(prop, NULL, "remesh_voxel_size");
-  RNA_def_property_float_default(prop, 0.1f);
   RNA_def_property_range(prop, 0.00001f, FLT_MAX);
   RNA_def_property_ui_range(prop, 0.0001f, FLT_MAX, 0.01, 4);
   RNA_def_property_ui_text(prop,
-                           "Voxel size",
+                           "Voxel Size",
                            "Size of the voxel in object space used for volume evaluation. Lower "
                            "values preserve finer details");
   RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
 
   prop = RNA_def_property(srna, "remesh_smooth_normals", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", ME_REMESH_SMOOTH_NORMALS);
-  RNA_def_property_ui_text(prop, "Smooth normals", "Smooth the normals of the remesher result");
+  RNA_def_property_ui_text(prop, "Smooth Normals", "Smooth the normals of the remesher result");
   RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
 
   prop = RNA_def_property(srna, "remesh_preserve_paint_mask", PROP_BOOLEAN, PROP_NONE);
@@ -3013,6 +3018,13 @@ static void rna_def_mesh(BlenderRNA *brna)
   RNA_def_property_boolean_default(prop, false);
   RNA_def_property_ui_text(prop, "Preserve Paint Mask", "Keep the current mask on the new mesh");
   RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
+
+  prop = RNA_def_property(srna, "remesh_mode", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, NULL, "remesh_mode");
+  RNA_def_property_enum_items(prop, rna_enum_mesh_remesh_mode_items);
+  RNA_def_property_ui_text(prop, "Remesh Mode", "");
+  RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
+
   /* End remesh */
 
   prop = RNA_def_property(srna, "use_auto_smooth", PROP_BOOLEAN, PROP_NONE);
@@ -3026,7 +3038,6 @@ static void rna_def_mesh(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "auto_smooth_angle", PROP_FLOAT, PROP_ANGLE);
   RNA_def_property_float_sdna(prop, NULL, "smoothresh");
-  RNA_def_property_float_default(prop, DEG2RADF(180.0f));
   RNA_def_property_range(prop, 0.0f, DEG2RADF(180.0f));
   RNA_def_property_ui_text(prop,
                            "Auto Smooth Angle",
@@ -3088,7 +3099,6 @@ static void rna_def_mesh(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "X Mirror", "X Axis mirror editing");
   RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
 
-#  if 0
   prop = RNA_def_property(srna, "use_mirror_y", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "editflag", ME_EDIT_MIRROR_Y);
   RNA_def_property_ui_text(prop, "Y Mirror", "Y Axis mirror editing");
@@ -3096,7 +3106,6 @@ static void rna_def_mesh(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_mirror_z", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "editflag", ME_EDIT_MIRROR_Z);
   RNA_def_property_ui_text(prop, "Z Mirror", "Z Axis mirror editing");
-#  endif
 
   prop = RNA_def_property(srna, "use_mirror_topology", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "editflag", ME_EDIT_MIRROR_TOPO);

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -2626,6 +2626,14 @@ msgid "Bone is able to be selected"
 msgstr "Кістку можна вибрати"
 
 
+msgid "Inherit Scale"
+msgstr "Успадкувати масштаб"
+
+
+msgid "Full"
+msgstr "Повний"
+
+
 msgid "Layers"
 msgstr "Шари"
 
@@ -2744,14 +2752,6 @@ msgstr "Успадкування оберту"
 
 msgid "Bone inherits rotation or scale from parent bone"
 msgstr "Кістка успадковує оберт або масштаб від кістки-предка"
-
-
-msgid "Inherit Scale"
-msgstr "Успадкувати масштаб"
-
-
-msgid "Bone inherits scaling from parent bone"
-msgstr "Кістка успадковує масштабування від кістки-предка"
 
 
 msgid "Local Location"
@@ -5483,8 +5483,8 @@ msgid "Invert the Z rotation"
 msgstr "Інвертувати оберт Z"
 
 
-msgid "Add original rotation into copied rotation"
-msgstr "Додати початковий оберт до скопійованого оберту"
+msgid "Mix Mode"
+msgstr "Режим Мішання"
 
 
 msgid "Copy the target's X rotation"
@@ -10440,22 +10440,6 @@ msgid "Display mode for the file list"
 msgstr "Режим показу для списку файлів"
 
 
-msgid "Short List"
-msgstr "Короткий список"
-
-
-msgid "Display files as short list"
-msgstr "Показати простий список файлів "
-
-
-msgid "Long List"
-msgstr "Довгий список"
-
-
-msgid "Display files as a detailed list"
-msgstr "Показати докладний список файлів"
-
-
 msgid "Thumbnails"
 msgstr "Мініатюри"
 
@@ -10756,32 +10740,20 @@ msgid "Sort"
 msgstr "Упорядкувати"
 
 
-msgid "Sort alphabetically"
-msgstr "Упорядкувати за алфавітом"
-
-
 msgid "Sort the file list alphabetically"
 msgstr "сортування списку файлів в алфавітному порядку"
 
 
-msgid "Sort by extension"
-msgstr "Упорядкувати за розширенням"
+msgid "Extension"
+msgstr "Розширення"
 
 
 msgid "Sort the file list by extension/type"
 msgstr "Упорядкувати список файлів за розширенням/типом"
 
 
-msgid "Sort by time"
-msgstr "Упорядкувати за часом"
-
-
 msgid "Sort files by modification time"
 msgstr "сортування файлів за часом зміни"
-
-
-msgid "Sort by size"
-msgstr "Упорядкувати за розміром"
 
 
 msgid "Sort files by size"
@@ -14749,6 +14721,10 @@ msgid "Sharper"
 msgstr "Різкіше"
 
 
+msgid "Deformation"
+msgstr "Деформація"
+
+
 msgid "Falloff Angle"
 msgstr "Кут спаду"
 
@@ -14999,6 +14975,10 @@ msgstr "Підштовх"
 
 msgid "Rotate"
 msgstr "Оберт"
+
+
+msgid "Draw Sharp"
+msgstr "Показати гострі"
 
 
 msgid "Secondary Color"
@@ -15951,10 +15931,6 @@ msgstr "Режим Заповнення"
 
 msgid "Mode of filling curve"
 msgstr "Режим заповнення кривої"
-
-
-msgid "Full"
-msgstr "Повний"
 
 
 msgid "Half"
@@ -17939,14 +17915,6 @@ msgid "World space distance in which to search for screen space occluder"
 msgstr "Відстань у просторі світу, на якій шукається перепиняч екранного простору"
 
 
-msgid "Contact Shadow Soft"
-msgstr "М'якість Тіні Контакту"
-
-
-msgid "Control how soft the contact shadows will be"
-msgstr "Керування тим, наскільки будуть м'якими тіні контакту"
-
-
 msgid "Contact Shadow Thickness"
 msgstr "Товщина Тіні Контакту"
 
@@ -18027,36 +17995,12 @@ msgid "Bias for reducing self shadowing"
 msgstr "Відхил для скорочення самозатінення"
 
 
-msgid "Shadow Buffer Bleed Bias"
-msgstr "Відхилення просочування для тіньового буфера"
-
-
-msgid "Bias for reducing light-bleed on variance shadow maps"
-msgstr "Відхилення для зменшення просочування світла на варіативних тіньових картах"
-
-
-msgid "Shadow Buffer Clip End"
-msgstr "Кінець відсікання для буфера тіні"
-
-
-msgid "Shadow map clip end, beyond which objects will not generate shadows"
-msgstr "Верхня межа відсікання для тіньового буфера, вище від якої об'єкти не будуть генерувати тіні"
-
-
 msgid "Shadow Buffer Clip Start"
 msgstr "Початок відсікання для буфера тіні"
 
 
 msgid "Shadow map clip start, below which objects will not generate shadows"
 msgstr "Ближня межа відсікання для тіньового буфера, нижче від якої об'єкти не будуть генерувати тіні"
-
-
-msgid "Shadow Buffer Exponent"
-msgstr "Експонента Буфера Тіні"
-
-
-msgid "Bias for reducing light-bleed on exponential shadow maps"
-msgstr "Відхил для скорочення просочування світла на експоненційних картах тіней"
 
 
 msgid "Number of shadow buffer samples"
@@ -18069,14 +18013,6 @@ msgstr "Розмір буфера тіней"
 
 msgid "Resolution of the shadow buffer, higher values give crisper shadows but use more memory"
 msgstr "Роздільність тіньового буфера. Більші значення дають чіткіші тіні, але потребують більше пам'яті"
-
-
-msgid "Shadow Buffer Soft"
-msgstr "М'якість буфера тіней"
-
-
-msgid "Size of shadow buffer sampling area"
-msgstr "Розмір області відбору тіньового буфера"
 
 
 msgid "Shadow Color"
@@ -18361,6 +18297,10 @@ msgstr "Увімкнення власних устав для об'єму кор
 
 msgid "Visibility Bleed Bias"
 msgstr "Відхил Просочення Видимості"
+
+
+msgid "Bias for reducing light-bleed on variance shadow maps"
+msgstr "Відхилення для зменшення просочування світла на варіативних тіньових картах"
 
 
 msgid "Visibility Blur"
@@ -22257,10 +22197,6 @@ msgstr "Мін. Y для обрізки"
 
 msgid "Minimum Y value to crop the image"
 msgstr "Найменше значення Y для обрізки зображення"
-
-
-msgid "Extension"
-msgstr "Розширення"
 
 
 msgid "How the image is extrapolated past its original bounds"
@@ -29152,10 +29088,6 @@ msgid "Mix Factor"
 msgstr "Фактор Мішання"
 
 
-msgid "Mix Mode"
-msgstr "Режим Мішання"
-
-
 msgid "How to affect destination elements with source values"
 msgstr "Як джерельні дані впливають на цільовий елемент"
 
@@ -35414,48 +35346,16 @@ msgid "Light Path"
 msgstr "Шлях Освітлення"
 
 
-msgid "Maximum value for clipping"
-msgstr "Найбільше значення для відсікання"
-
-
-msgid "Minimum value for clipping"
-msgstr "Найменше значення для відсікання"
-
-
-msgid "Has Maximum"
-msgstr "Має максимум"
-
-
-msgid "Whether to use maximum clipping value"
-msgstr "Чи використовувати найбільше значення відсікання"
-
-
-msgid "Has Minimum"
-msgstr "Має мінімум"
-
-
-msgid "Whether to use minimum clipping value"
-msgstr "Чи використовувати мінімальне значення відсікання"
-
-
 msgid "Type of vector that the mapping transforms"
 msgstr "Тип вектора, який розкладка трансформує"
-
-
-msgid "Transform a texture by inverse mapping the texture coordinate"
-msgstr "Трансформувати текстуру, інвертувавши розкладку текстурної координати"
 
 
 msgid "Transform a point"
 msgstr "Трансформації точку"
 
 
-msgid "Transform a direction vector"
-msgstr "Трансформації вектора напряму"
-
-
-msgid "Transform a normal vector with unit length"
-msgstr "Трансформації одиничного вектора нормалі"
+msgid "Transform a texture by inverse mapping the texture coordinate"
+msgstr "Трансформувати текстуру, інвертувавши розкладку текстурної координати"
 
 
 msgid "MixRGB"
@@ -36124,6 +36024,14 @@ msgstr "Конвертувати в"
 
 msgid "Space to convert to"
 msgstr "Простір, у який конвертувати"
+
+
+msgid "Transform a direction vector"
+msgstr "Трансформації вектора напряму"
+
+
+msgid "Transform a normal vector with unit length"
+msgstr "Трансформації одиничного вектора нормалі"
 
 
 msgid "Volume Absorption"
@@ -38584,12 +38492,32 @@ msgid "Open a directory browser, Hold Shift to open the file, Alt to browse cont
 msgstr "Відкрити оглядач файлів; утримуйте Shift, щоб відкрити файл, Alt, щоб переглянути каталог"
 
 
+msgid "Open"
+msgstr "Відкрити"
+
+
 msgid "Directory of the file"
 msgstr "Тека файлу"
 
 
 msgid "Automatically determine display type for files"
 msgstr "Автоматичне визначення типу показу файлів"
+
+
+msgid "Short List"
+msgstr "Короткий список"
+
+
+msgid "Display files as short list"
+msgstr "Показати простий список файлів "
+
+
+msgid "Long List"
+msgstr "Довгий список"
+
+
+msgid "Display files as a detailed list"
+msgstr "Показати докладний список файлів"
 
 
 msgid "File Browser Mode"
@@ -40584,24 +40512,8 @@ msgid "Checker Deselect"
 msgstr "Зняти вибір шахівницею"
 
 
-msgid "Nth Element"
-msgstr "Nий Елемент"
-
-
-msgid "Skip every Nth element"
-msgstr "Пропускати кожен Nий елемент"
-
-
 msgid "Offset from the starting point"
 msgstr "Зсув від точки старту"
-
-
-msgid "Skip"
-msgstr "Пропуск"
-
-
-msgid "Number of elements to skip at once"
-msgstr "Кількість елементів для пропуска за раз"
 
 
 msgctxt "Operator"
@@ -41359,10 +41271,6 @@ msgid "Export each non-muted NLA strip as a separated FBX's AnimStack, if any, i
 msgstr "Експортувати кожну не приглушену смужку НЛА як окремий стек анімації FBX, замість того, щоб анімувати всю сцену"
 
 
-msgid "!EXPERIMENTAL! Apply Transform"
-msgstr "!ЕКСПЕРИМЕНТАЛЬНО! Застосувати трансформації"
-
-
 msgid "Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender's space (WARNING! experimental option, use at own risks, known broken with armatures/animations)"
 msgstr "Запекти трансформування простору в дані об'єкта, запобігаючи небажаним обертанням об'єктів, коли простір цілі не вирівнюється відповідно простору Blender'а (УВАГА! Експериментальна опція, використовуйте на власний ризик, відомі збої при використанні для арматур та анімацій)"
 
@@ -41517,34 +41425,6 @@ msgstr "Вісь -Z"
 
 msgid "Secondary Bone Axis"
 msgstr "Вторинна вісь кістки"
-
-
-msgid "Export options categories"
-msgstr "Категорії опцій експорту"
-
-
-msgid "Main"
-msgstr "Головне"
-
-
-msgid "Main basic settings"
-msgstr "Основні базові параметри"
-
-
-msgid "Geometries"
-msgstr "Геометрія"
-
-
-msgid "Geometry-related settings"
-msgstr "Параметри геометрії"
-
-
-msgid "Armature-related settings"
-msgstr "Параметри арматур"
-
-
-msgid "Animation-related settings"
-msgstr "Параметри анімації"
 
 
 msgid "Active Collection"
@@ -42152,12 +42032,16 @@ msgid "Create a new directory"
 msgstr "Створити нову теку"
 
 
+msgid "Confirm"
+msgstr "Підтвердження"
+
+
+msgid "Prompt for confirmation"
+msgstr "Запит на підтвердження"
+
+
 msgid "Name of new directory"
 msgstr "Назва нової теки"
-
-
-msgid "Open"
-msgstr "Відкрити"
 
 
 msgid "Open new directory"
@@ -43803,16 +43687,16 @@ msgid "Arrange selected strokes up/down in the drawing order of the active layer
 msgstr "Впорядкувати виділені штрихи відповідно до порядку рисування на активному шарі"
 
 
+msgid "Bring to Front"
+msgstr "Перенести наперед"
+
+
 msgid "Bring Forward"
 msgstr "Перенести вперед"
 
 
 msgid "Send Backward"
 msgstr "Послати назад"
-
-
-msgid "Bring to Front"
-msgstr "Перенести наперед"
 
 
 msgid "Send to Back"
@@ -45282,6 +45166,18 @@ msgstr "Знехтувати заключною кісткою в кінці к�
 
 msgid "Import options categories"
 msgstr "Категорії опцій імпорту"
+
+
+msgid "Main"
+msgstr "Головне"
+
+
+msgid "Main basic settings"
+msgstr "Основні базові параметри"
+
+
+msgid "Armature-related settings"
+msgstr "Параметри арматур"
 
 
 msgid "Alpha Decals"
@@ -48182,6 +48078,18 @@ msgid "Change selection mode"
 msgstr "Змінити режим вибору"
 
 
+msgid "Vertex selection mode"
+msgstr "Режим вибрання вершин"
+
+
+msgid "Edge selection mode"
+msgstr "Режим вибрання ребер"
+
+
+msgid "Face selection mode"
+msgstr "Режим вибрання граней"
+
+
 msgid "Expand"
 msgstr "Розгорнути"
 
@@ -50290,14 +50198,6 @@ msgid "Delete selected objects"
 msgstr "Видалити вибрані об'єкти"
 
 
-msgid "Confirm"
-msgstr "Підтвердження"
-
-
-msgid "Prompt for confirmation"
-msgstr "Запит на підтвердження"
-
-
 msgid "Delete Globally"
 msgstr "Видалити глобально"
 
@@ -51036,11 +50936,6 @@ msgstr "Задати Режим Об'єкта"
 
 msgid "Sets the object interaction mode"
 msgstr "Встановити режим взаємодії об'єкта"
-
-
-msgctxt "Operator"
-msgid "Set Object Mode or Submode"
-msgstr "Задати Режим Об'єкта або Підрежим"
 
 
 msgctxt "Operator"
@@ -54856,11 +54751,6 @@ msgid "Module name of the add-on to expand"
 msgstr "Назва модуля додатку для розгорнення"
 
 
-msgctxt "Operator"
-msgid "Install Add-on from File..."
-msgstr "Інсталювати Додаток з Файлу..."
-
-
 msgid "Install an add-on"
 msgstr "Інсталювати додаток"
 
@@ -58121,10 +58011,6 @@ msgid "Axis Ortho"
 msgstr "Вісь Орто"
 
 
-msgid "Shear Axis"
-msgstr "Вісь Косування"
-
-
 msgctxt "Operator"
 msgid "Shrink/Fatten"
 msgstr "Стиснути/розширити"
@@ -60574,11 +60460,6 @@ msgid "Check imported mesh objects for invalid data (slow)"
 msgstr "Перевірити імпортовані сітьові об'єкти на хибні дані (повільно)"
 
 
-msgctxt "Operator"
-msgid "Append from Library"
-msgstr "Прилучити з бібліотеки"
-
-
 msgid "Append from a Library .blend file"
 msgstr "Прилучити з бібліотечного blend-файлу"
 
@@ -61411,11 +61292,6 @@ msgid "Library to relocate"
 msgstr "Бібліотека для перерозміщення"
 
 
-msgctxt "Operator"
-msgid "Link from Library"
-msgstr "Пов'язати з бібліотеки"
-
-
 msgid "Link from a Library .blend file"
 msgstr "Пов'язати з бібліотечного blend-файлу"
 
@@ -61427,11 +61303,6 @@ msgstr "Статистика пам'яті"
 
 msgid "Print memory statistics to the console"
 msgstr "Вивести статистику використання пам'яті на консоль"
-
-
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "Відкрити файл Blender"
 
 
 msgid "Open a Blender file"
@@ -61939,11 +61810,6 @@ msgstr "Перезавантажити"
 
 msgid "Reload the saved file"
 msgstr "Перезавантажити збережений файл"
-
-
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "Зберегти як файл Blender"
 
 
 msgid "Save the current file in the desired location"
@@ -69898,14 +69764,6 @@ msgid "Display in solid mode"
 msgstr "Показувати у суцільному режимі"
 
 
-msgid "Look Dev"
-msgstr "Розробка Вигляду"
-
-
-msgid "Display in Look Dev mode"
-msgstr "Показувати у режимі Розробки Вигляду"
-
-
 msgid "Display render preview"
 msgstr "Показати передогляд рендера"
 
@@ -71422,18 +71280,6 @@ msgid "Size of point and area light shadow maps"
 msgstr "Розмір розкладок тіней точкового та площинного освітлювача"
 
 
-msgid "Technique use to compute the shadows"
-msgstr "Техніка, використовувана для обчислення тіней"
-
-
-msgid "Exponential Shadow Mapping"
-msgstr "Експоненційне Розкладання Тіні"
-
-
-msgid "Variance Shadow Mapping"
-msgstr "Варіативне Розкладання Тіні"
-
-
 msgid "Edge Fading"
 msgstr "Зникання Краю"
 
@@ -71556,14 +71402,6 @@ msgstr "Рефракції Простору Екрану"
 
 msgid "Enable screen space Refractions"
 msgstr "Увімкнути Рефракції простору екрану"
-
-
-msgid "Separate Albedo"
-msgstr "Відокремити Альбедо"
-
-
-msgid "Avoid albedo being blurred by the subsurface scattering but uses more video memory"
-msgstr "Запобігти розмиванню альбедо підповерхневим розсіюванням, але використовуючи більше відео пам'яті"
 
 
 msgid "Viewport Denoising"
@@ -72026,26 +71864,6 @@ msgstr "Множення кольорів"
 
 msgid "Adjust the intensity of the input's color"
 msgstr "Наладнати інтенсивність кольору уводу"
-
-
-msgid "Playback Direction"
-msgstr "Напрямок програвання"
-
-
-msgid "Play strip forwards or backwards"
-msgstr "Грати смужку уперед або назад"
-
-
-msgid "Forwards"
-msgstr "Уперед"
-
-
-msgid "Play strip forwards"
-msgstr "Грати смужку уперед"
-
-
-msgid "Play strip backwards"
-msgstr "Грати смужку назад"
 
 
 msgid "Strobe"
@@ -75811,10 +75629,6 @@ msgid "Active Tool and Workspace settings"
 msgstr "Устави Активного Засобу та Робпростору"
 
 
-msgid "Object visual effects"
-msgstr "Візуальні ефекти об'єкта"
-
-
 msgid "Pin ID"
 msgstr "ID пришпилення"
 
@@ -76833,6 +76647,30 @@ msgstr "Y-розкладка"
 
 msgid "Z Mapping"
 msgstr "Z-розкладка"
+
+
+msgid "Maximum value for clipping"
+msgstr "Найбільше значення для відсікання"
+
+
+msgid "Minimum value for clipping"
+msgstr "Найменше значення для відсікання"
+
+
+msgid "Has Maximum"
+msgstr "Має максимум"
+
+
+msgid "Whether to use maximum clipping value"
+msgstr "Чи використовувати найбільше значення відсікання"
+
+
+msgid "Has Minimum"
+msgstr "Має мінімум"
+
+
+msgid "Whether to use minimum clipping value"
+msgstr "Чи використовувати мінімальне значення відсікання"
 
 
 msgid "Texture Paint Slot"
@@ -79300,18 +79138,6 @@ msgid "UV selection and display mode"
 msgstr "Режим вибрання та показу UV"
 
 
-msgid "Vertex selection mode"
-msgstr "Режим вибрання вершин"
-
-
-msgid "Edge selection mode"
-msgstr "Режим вибрання ребер"
-
-
-msgid "Face selection mode"
-msgstr "Режим вибрання граней"
-
-
 msgid "Island"
 msgstr "Острів"
 
@@ -79700,10 +79526,6 @@ msgid "Canvas grid opacity"
 msgstr "Безпрозорість сітки полотна"
 
 
-msgid "Paper opacity"
-msgstr "Безпрозорість паперу"
-
-
 msgid "Grid Lines"
 msgstr "Лінії сітки"
 
@@ -79820,10 +79642,6 @@ msgid "Display UV unwrapping seams"
 msgstr "Показати шви UV-розгортки"
 
 
-msgid "Draw Sharp"
-msgstr "Показати гострі"
-
-
 msgid "Display sharp edges, used with the Edge Split modifier"
 msgstr "Показати гострі ребра, використані модифікатором Поділ ребром"
 
@@ -79934,10 +79752,6 @@ msgstr "Показати позначки граней Freestyle, що вико�
 
 msgid "Look Dev Preview"
 msgstr "Передогляд Розробки Вигляду"
-
-
-msgid "Show look development spheres and palette"
-msgstr "Показувати сфери та палітру розробки вигляду"
 
 
 msgid "Show the Motion Paths Overlay"
@@ -80102,14 +79916,6 @@ msgstr "Лише Лінії"
 
 msgid "Only show edit lines for additional frames"
 msgstr "Показувати лише лінії редагування для додаткових кадрів"
-
-
-msgid "Use Paper"
-msgstr "Вжити Папір"
-
-
-msgid "Cover all viewport with a full color layer to improve visibility while drawing over complex scenes"
-msgstr "Покривати все вікно огляду шаром суцільного кольору для покращення видимості при рисуванні у складних сценах"
 
 
 msgid "Vertex Opacity"
@@ -81025,11 +80831,6 @@ msgstr "Режим Об'єкта"
 
 
 msgctxt "WindowManager"
-msgid "3D View Tool: Select"
-msgstr "Засіб 3D Огляду: Вибір"
-
-
-msgctxt "WindowManager"
 msgid "3D View Tool: Select Box"
 msgstr "Засіб 3D Огляду: Коробка Вибору"
 
@@ -81658,10 +81459,6 @@ msgstr "%s загорода оточення, %s світна сіть, %s пі�
 
 msgid "Cull back-faces"
 msgstr "Відкинути звороти граней"
-
-
-msgid "Deformation"
-msgstr "Деформація"
 
 
 msgid "Incompatible output node"
@@ -82649,16 +82446,16 @@ msgid "Interpolation U"
 msgstr "Інтерполяція U"
 
 
-msgid "Bleed Bias"
-msgstr "Ухил Просочення"
-
-
 msgid "Clipping Start"
 msgstr "Старт Відсікання"
 
 
 msgid "Clipping Offset"
 msgstr "Зсув Відсікання"
+
+
+msgid "Bleed Bias"
+msgstr "Ухил Просочення"
 
 
 msgid "Arrow Size"
@@ -83774,10 +83571,6 @@ msgstr "Всі ребра"
 
 msgid "Align to Vertex Normal"
 msgstr "Вирівняти за Нормаллю Вершини"
-
-
-msgid "Not for Axis-Angle"
-msgstr "Не для осьових кутів"
 
 
 msgid "Old"
@@ -85015,6 +84808,11 @@ msgstr "Вичищення"
 
 
 msgctxt "Operator"
+msgid "Back"
+msgstr "Позаду"
+
+
+msgctxt "Operator"
 msgid "Toggle Dope Sheet"
 msgstr "Перемкнути Аркуш Експозицій"
 
@@ -85991,10 +85789,6 @@ msgid "Unable to find toolbar group"
 msgstr "Неможливо знайти групу смуги засобів"
 
 
-msgid "View Axis:"
-msgstr "Вісь Огляду:"
-
-
 msgid "Annotation:"
 msgstr "Анотація:"
 
@@ -86637,11 +86431,6 @@ msgstr "Вирівняти Активну Камеру за Вибраним"
 msgctxt "Operator"
 msgid "Front"
 msgstr "Спереду"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "Позаду"
 
 
 msgctxt "Operator"
@@ -87410,21 +87199,12 @@ msgid "PAINT_GPENCILEDIT_GPENCILSCULPT_GPENCILWEIGHT_GPENCILOBJECTDraw Grease Pe
 msgstr "PAINT_GPENCILEDIT_GPENCILSCULPT_GPENCILWEIGHT_GPENCILOBJECTDraw Grease PencilEdit Grease PencilSculpt Grease PencilWeight Grease PencilGrease Pencil"
 
 
-msgid "Fade 3D Objects"
-msgstr "Зникання 3D Об'єктів"
-
-
 msgid "Display:"
 msgstr "Показувати:"
 
 
 msgid "Frames:"
 msgstr "Кадри:"
-
-
-msgctxt "Operator"
-msgid "Insert Blank"
-msgstr "Вставити Порожнє"
 
 
 msgid "Thickness Profile"
@@ -90047,6 +89827,10 @@ msgid "No active color to isolate"
 msgstr "Нема активного кольору для ізолювання"
 
 
+msgid "No Grease Pencil data"
+msgstr "Немає даних нарисного олівця"
+
+
 msgid "Unable to add a new Lattice modifier to object"
 msgstr "Немає змоги додати новий модифікатор Решітка для об'єкта"
 
@@ -90061,10 +89845,6 @@ msgstr "Неможливо змінити неіснуючий шар (інде�
 
 msgid "No active GP data"
 msgstr "Нема активних даних Нарисного Олівця"
-
-
-msgid "No Grease Pencil data"
-msgstr "Немає даних нарисного олівця"
 
 
 msgid "Operator not supported in multiframe edition"
@@ -92929,36 +92709,8 @@ msgid "Average re-projection error: %.3f"
 msgstr "Середня помилка перепроєктування %.3f"
 
 
-msgid "Parent Directory"
-msgstr "Батьківська тека"
-
-
-msgid "Open Directory"
-msgstr "Відкрити каталог"
-
-
-msgid "Cancel"
-msgstr "Скасувати"
-
-
 msgid "File path"
 msgstr "Шлях файлу"
-
-
-msgid "Decrement the filename number"
-msgstr "Зменшення номера в назві файлу"
-
-
-msgid "Increment the filename number"
-msgstr "Збільшити номер у назві файлу"
-
-
-msgid "File name, overwrite existing"
-msgstr "Назва файлу, перезаписати наявний"
-
-
-msgid "File name"
-msgstr "Назва файлу"
 
 
 msgid "File does not exist"
@@ -92983,6 +92735,18 @@ msgstr "Неможливо створити нову теку: %s"
 
 msgid "Could not delete file: %s"
 msgstr "Неможливо видалити файл: %s"
+
+
+msgid "Cancel"
+msgstr "Скасувати"
+
+
+msgid "File name, overwrite existing"
+msgstr "Назва файлу, перезаписати наявний"
+
+
+msgid "File name"
+msgstr "Назва файлу"
 
 
 msgid "Cursor from Selection"
@@ -94871,20 +94635,20 @@ msgid " along %s Z axis"
 msgstr " уздовж %s осі Z"
 
 
-msgid "Unsupported object type for text-space transform"
-msgstr "Непідтримуваний тип об'єкта для трансформації у просторі текстури"
-
-
-msgid "Linked data can't text-space transform"
-msgstr "Зв'язані дані не можуть трансформуватись у просторі текстури"
-
-
 msgid "Cannot change Pose when 'Rest Position' is enabled"
 msgstr "Неможливо змінити позу, коли увімкнено \"Положення спокою\""
 
 
 msgid "Bone selection count error"
 msgstr "Помилка кількості вибраних кісток"
+
+
+msgid "Linked data can't text-space transform"
+msgstr "Зв'язані дані не можуть трансформуватись у просторі текстури"
+
+
+msgid "Unsupported object type for text-space transform"
+msgstr "Непідтримуваний тип об'єкта для трансформації у просторі текстури"
 
 
 msgid "(Sharp)"

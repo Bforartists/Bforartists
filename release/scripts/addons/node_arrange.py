@@ -19,7 +19,7 @@
 bl_info = {
 	"name": "Node Arrange",
 	"author": "JuhaW",
-	"version": (0, 2, 1),
+	"version": (0, 2, 2),
 	"blender": (2, 80, 4),
 	"location": "Node Editor > Properties > Trees",
 	"description": "Node Tree Arrangement Tools",
@@ -223,6 +223,19 @@ def nodemargin(self, context):
 
 	ntree = context.space_data.node_tree
 
+	#first arrange nodegroups
+	n_groups = []
+	for i in ntree.nodes:
+		if i.type == 'GROUP':
+			n_groups.append(i)
+			
+	while n_groups:
+		j = n_groups.pop(0)
+		nodes_iterate(j.node_tree)
+		for i in j.node_tree.nodes:
+			if i.type == 'GROUP':
+				n_groups.append(i)
+		
 	nodes_iterate(ntree)
 
 	# arrange nodes + this center nodes together
@@ -264,7 +277,7 @@ class NA_OT_ArrangeNodesOp(bpy.types.Operator):
 def outputnode_search(ntree):	 # return node/None
 
 	outputnodes = []
-	for node in bpy.context.space_data.node_tree.nodes:
+	for node in ntree.nodes:
 		if not node.outputs:
 			for input in node.inputs:
 				if input.is_linked:

@@ -55,7 +55,6 @@
 #include "BIF_glutil.h"
 
 #include "GPU_immediate.h"
-#include "GPU_draw.h"
 #include "GPU_state.h"
 
 #include "ED_gpencil.h"
@@ -96,7 +95,7 @@ static void annotation_draw_stroke_buffer(const tGPspoint *points,
                                           short thickness,
                                           short dflag,
                                           short sflag,
-                                          float ink[4])
+                                          const float ink[4])
 {
   int draw_points = 0;
 
