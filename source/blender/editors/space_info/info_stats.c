@@ -441,11 +441,11 @@ static void stats_string(ViewLayer *view_layer)
 #undef SCENE_STATS_FMT_INT
 
   /* get memory statistics */
-  BLI_str_format_byte_unit(formatted_mem, mem_in_use - mmap_in_use, true);
+  BLI_str_format_byte_unit(formatted_mem, mem_in_use - mmap_in_use, false);
   ofs = BLI_snprintf(memstr, MAX_INFO_MEM_LEN, TIP_(" | Mem: %s"), formatted_mem);
 
   if (mmap_in_use) {
-    BLI_str_format_byte_unit(formatted_mem, mmap_in_use, true);
+    BLI_str_format_byte_unit(formatted_mem, mmap_in_use, false);
     BLI_snprintf(memstr + ofs, MAX_INFO_MEM_LEN - ofs, TIP_(" (%s)"), formatted_mem);
   }
 
@@ -454,11 +454,11 @@ static void stats_string(ViewLayer *view_layer)
 
     GPU_mem_stats_get(&gpu_tot_memory, &gpu_free_mem);
 
-    BLI_str_format_byte_unit(formatted_mem, gpu_free_mem, true);
+    BLI_str_format_byte_unit(formatted_mem, gpu_free_mem, false);
     ofs = BLI_snprintf(gpumemstr, MAX_INFO_MEM_LEN, TIP_(" | Free GPU Mem: %s"), formatted_mem);
 
     if (gpu_tot_memory) {
-      BLI_str_format_byte_unit(formatted_mem, gpu_tot_memory, true);
+      BLI_str_format_byte_unit(formatted_mem, gpu_tot_memory, false);
       BLI_snprintf(gpumemstr + ofs, MAX_INFO_MEM_LEN - ofs, TIP_("/%s"), formatted_mem);
     }
   }
@@ -581,7 +581,7 @@ const char *ED_info_stats_string(Main *bmain, Scene *scene, ViewLayer *view_laye
   if (wm->is_interface_locked) {
     return "";
   }
-  Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer, true);
+  Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, view_layer, true);
   if (!view_layer->stats) {
     stats_update(depsgraph, view_layer);
   }

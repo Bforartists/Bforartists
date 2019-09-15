@@ -198,7 +198,7 @@ class SEQUENCER_MT_range(Menu):
 class SEQUENCER_MT_preview_zoom(Menu):
     bl_label = "Fractional Zoom"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_PREVIEW'
 
@@ -533,6 +533,13 @@ class SEQUENCER_MT_add(Menu):
         col.menu("SEQUENCER_MT_add_transitions", icon='ARROW_LEFTRIGHT')
         col.enabled = selected_sequences_len(context) >= 2
 
+        # Disable until D5166#133312 is resolved.
+        '''
+        col = layout.column()
+        col.operator_menu_enum("sequencer.fades_add", "type", text="Fade", icon="IPO_EASE_IN_OUT")
+        col.enabled = selected_sequences_len(context) >= 1
+        '''
+
 
 class SEQUENCER_MT_add_empty(Menu):
     bl_label = "Empty"
@@ -781,25 +788,35 @@ class SEQUENCER_MT_context_menu(Menu):
         layout.operator("sequencer.gap_remove", icon = "SEQ_REMOVE_GAPS").all = False
         layout.operator("sequencer.gap_insert", icon = "SEQ_INSERT_GAPS")
 
+        layout.separator()
+
         strip = act_strip(context)
 
         if strip:
             strip_type = strip.type
+            selected_sequences_count = selected_sequences_len(context)
 
             if strip_type != 'SOUND':
-
                 layout.separator()
                 layout.operator_menu_enum("sequencer.strip_modifier_add", "type", text="Add Modifier")
                 layout.operator("sequencer.strip_modifier_copy", text="Copy Modifiers to Selection", icon='COPYDOWN')
 
-                if selected_sequences_len(context) >= 2:
+                if selected_sequences_count >= 2:
                     layout.separator()
                     col = layout.column()
                     col.menu("SEQUENCER_MT_add_transitions", text="Add Transition")
 
-            elif selected_sequences_len(context) >= 2:
+            elif selected_sequences_count >= 2:
                 layout.separator()
                 layout.operator("sequencer.crossfade_sounds", text="Crossfade Sounds", icon='SPEAKER')
+
+            # Disable until D5166#133312 is resolved.
+            '''
+            if selected_sequences_count >= 1:
+                col = layout.column()
+                col.operator_menu_enum("sequencer.fades_add", "type", text="Fade")
+                layout.operator("sequencer.fades_clear", text="Clear Fade")
+            '''
 
             if strip_type in {
                     'CROSS', 'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',
@@ -1930,6 +1947,7 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
         layout.use_property_decorate = False
 
         st = context.space_data
+        ed = context.scene.sequence_editor
 
         col = layout.column()
         col.prop(st, "display_channel", text="Channel")
@@ -1941,6 +1959,7 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
             col.prop(st, "show_separate_color")
 
         col.prop(st, "proxy_render_size")
+        col.prop(ed, "use_prefetch")
 
 
 class SEQUENCER_PT_frame_overlay(SequencerButtonsPanel_Output, Panel):

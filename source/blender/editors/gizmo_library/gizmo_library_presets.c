@@ -31,9 +31,6 @@
 
 #include "BKE_context.h"
 
-#include "GPU_draw.h"
-#include "GPU_immediate.h"
-#include "GPU_immediate_util.h"
 #include "GPU_matrix.h"
 #include "GPU_select.h"
 
@@ -57,7 +54,7 @@
  * Given a single axis, orient the matrix to a different direction.
  */
 static void single_axis_convert(int src_axis,
-                                float src_mat[4][4],
+                                const float src_mat[4][4],
                                 int dst_axis,
                                 float dst_mat[4][4])
 {
@@ -76,7 +73,7 @@ static void single_axis_convert(int src_axis,
  * Use for all geometry.
  */
 static void ed_gizmo_draw_preset_geometry(const struct wmGizmo *gz,
-                                          float mat[4][4],
+                                          const float mat[4][4],
                                           int select_id,
                                           const GizmoGeomInfo *info)
 {

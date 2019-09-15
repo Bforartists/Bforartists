@@ -41,7 +41,6 @@
 #include "DNA_userdef_types.h"
 #include "DNA_windowmanager_types.h"
 
-#include "BLI_callbacks.h"
 #include "BLI_listbase.h"
 #include "BLI_path_util.h"
 #include "BLI_string.h"
@@ -54,7 +53,7 @@
 
 #include "BKE_blendfile.h"
 #include "BKE_blender.h"
-#include "BKE_blender_undo.h"
+#include "BKE_callbacks.h"
 #include "BKE_context.h"
 #include "BKE_font.h"
 #include "BKE_global.h"
@@ -120,7 +119,6 @@
 
 #include "GPU_material.h"
 #include "GPU_draw.h"
-#include "GPU_immediate.h"
 #include "GPU_init_exit.h"
 
 #include "BKE_sound.h"
@@ -215,7 +213,7 @@ static void sound_jack_sync_callback(Main *bmain, int mode, float time)
       continue;
     }
     ViewLayer *view_layer = WM_window_get_active_view_layer(window);
-    Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer, false);
+    Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, view_layer, false);
     if (depsgraph == NULL) {
       continue;
     }
@@ -378,10 +376,10 @@ void WM_init(bContext *C, int argc, const char **argv)
      * note that recovering the last session does its own callbacks. */
     CTX_wm_window_set(C, CTX_wm_manager(C)->windows.first);
 
-    BLI_callback_exec(bmain, NULL, BLI_CB_EVT_VERSION_UPDATE);
-    BLI_callback_exec(bmain, NULL, BLI_CB_EVT_LOAD_POST);
+    BKE_callback_exec_null(bmain, BKE_CB_EVT_VERSION_UPDATE);
+    BKE_callback_exec_null(bmain, BKE_CB_EVT_LOAD_POST);
     if (is_factory_startup) {
-      BLI_callback_exec(bmain, NULL, BLI_CB_EVT_LOAD_FACTORY_STARTUP_POST);
+      BKE_callback_exec_null(bmain, BKE_CB_EVT_LOAD_FACTORY_STARTUP_POST);
     }
 
     wm_file_read_report(C, bmain);

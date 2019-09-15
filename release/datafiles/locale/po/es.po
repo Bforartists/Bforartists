@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzan <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -2626,6 +2626,14 @@ msgid "Bone is able to be selected"
 msgstr "El hueso puede ser seleccionado"
 
 
+msgid "Inherit Scale"
+msgstr "Heredar escala"
+
+
+msgid "Full"
+msgstr "Completo"
+
+
 msgid "Layers"
 msgstr "Capas"
 
@@ -2744,14 +2752,6 @@ msgstr "Heredar rotación"
 
 msgid "Bone inherits rotation or scale from parent bone"
 msgstr "El hueso hereda la rotación o escala del hueso superior"
-
-
-msgid "Inherit Scale"
-msgstr "Heredar escala"
-
-
-msgid "Bone inherits scaling from parent bone"
-msgstr "El hueso hereda la escala del hueso superior"
 
 
 msgid "Local Location"
@@ -5483,8 +5483,8 @@ msgid "Invert the Z rotation"
 msgstr "Invierte la rotación Z"
 
 
-msgid "Add original rotation into copied rotation"
-msgstr "Agrega la rotación original a la rotación copiada"
+msgid "Mix Mode"
+msgstr "Modo de mezcla"
 
 
 msgid "Copy the target's X rotation"
@@ -10448,22 +10448,6 @@ msgid "Display mode for the file list"
 msgstr "Modo de visualización de la lista"
 
 
-msgid "Short List"
-msgstr "Lista reducida"
-
-
-msgid "Display files as short list"
-msgstr "Mostrar archivos en una lista reducida"
-
-
-msgid "Long List"
-msgstr "Lista completa"
-
-
-msgid "Display files as a detailed list"
-msgstr "Mostrar archivos en una lista detallada"
-
-
 msgid "Thumbnails"
 msgstr "Miniaturas"
 
@@ -10764,32 +10748,20 @@ msgid "Sort"
 msgstr "Ordenar"
 
 
-msgid "Sort alphabetically"
-msgstr "Ordenar alfabéticamente"
-
-
 msgid "Sort the file list alphabetically"
 msgstr "Ordenar la lista alfabéticamente"
 
 
-msgid "Sort by extension"
-msgstr "Ordenar por extensión"
+msgid "Extension"
+msgstr "Extensión"
 
 
 msgid "Sort the file list by extension/type"
 msgstr "Ordenar la lista de archivos por su extensión o tipo"
 
 
-msgid "Sort by time"
-msgstr "Ordenar por tiempo"
-
-
 msgid "Sort files by modification time"
 msgstr "Ordenar los archivos por su hora de modificación"
-
-
-msgid "Sort by size"
-msgstr "Ordenar por tamaño"
 
 
 msgid "Sort files by size"
@@ -14761,6 +14733,10 @@ msgid "Sharper"
 msgstr "Muy definido"
 
 
+msgid "Deformation"
+msgstr "Deformación"
+
+
 msgid "Falloff Angle"
 msgstr "Ángulo de decaimiento"
 
@@ -15011,6 +14987,10 @@ msgstr "Empujar"
 
 msgid "Rotate"
 msgstr "Rotar"
+
+
+msgid "Draw Sharp"
+msgstr "Mostrar definidos"
 
 
 msgid "Secondary Color"
@@ -15967,10 +15947,6 @@ msgstr "Modo de relleno"
 
 msgid "Mode of filling curve"
 msgstr "Modo de rellenar la curva"
-
-
-msgid "Full"
-msgstr "Completo"
 
 
 msgid "Half"
@@ -17995,14 +17971,6 @@ msgid "World space distance in which to search for screen space occluder"
 msgstr "Distancia en términos absolutos dentro de la cual buscar oclusores en espacio de pantalla"
 
 
-msgid "Contact Shadow Soft"
-msgstr "Suavidad sombra contacto"
-
-
-msgid "Control how soft the contact shadows will be"
-msgstr "Controla la suavidad de las sombras de contacto"
-
-
 msgid "Contact Shadow Thickness"
 msgstr "Grosor sombra contacto"
 
@@ -18083,36 +18051,12 @@ msgid "Bias for reducing self shadowing"
 msgstr "Desviación para reducir las sombras propias"
 
 
-msgid "Shadow Buffer Bleed Bias"
-msgstr "Buffer sombras desviación sangrado"
-
-
-msgid "Bias for reducing light-bleed on variance shadow maps"
-msgstr "Desviación para reducir el sangrado de luz en mapas de sombras variantes"
-
-
-msgid "Shadow Buffer Clip End"
-msgstr "Buffer sombra fin recorte"
-
-
-msgid "Shadow map clip end, beyond which objects will not generate shadows"
-msgstr "Recorte final del mapa de sombras, por sobre el cual los objetos no generarán sombras"
-
-
 msgid "Shadow Buffer Clip Start"
 msgstr "Buffer sombras inicio recorte"
 
 
 msgid "Shadow map clip start, below which objects will not generate shadows"
 msgstr "Recorte inicial del mapa de sombras, debajo del cual los objetos no generarán sombras"
-
-
-msgid "Shadow Buffer Exponent"
-msgstr "Exponente buffer sombras"
-
-
-msgid "Bias for reducing light-bleed on exponential shadow maps"
-msgstr "Desviación para reducir el sangrado de luz en mapas de sombras exponenciales"
 
 
 msgid "Number of shadow buffer samples"
@@ -18125,14 +18069,6 @@ msgstr "Buffer sombras tamaño"
 
 msgid "Resolution of the shadow buffer, higher values give crisper shadows but use more memory"
 msgstr "Resolución del buffer de sombras, valores altos producen sombras más definidas pero usan más memoria"
-
-
-msgid "Shadow Buffer Soft"
-msgstr "Buffer sombras suave"
-
-
-msgid "Size of shadow buffer sampling area"
-msgstr "Tamaño del área de muestreo del buffer de sombras"
 
 
 msgid "Shadow Color"
@@ -18417,6 +18353,10 @@ msgstr "Habilita opciones personalizadas para el volumen de corrección de paral
 
 msgid "Visibility Bleed Bias"
 msgstr "Desviación de sangrado de visibilidad"
+
+
+msgid "Bias for reducing light-bleed on variance shadow maps"
+msgstr "Desviación para reducir el sangrado de luz en mapas de sombras variantes"
 
 
 msgid "Visibility Blur"
@@ -22317,10 +22257,6 @@ msgstr "Recortar mínimo Y"
 
 msgid "Minimum Y value to crop the image"
 msgstr "Valor mínimo en Y para recortar la imagen"
-
-
-msgid "Extension"
-msgstr "Extensión"
 
 
 msgid "How the image is extrapolated past its original bounds"
@@ -29221,10 +29157,6 @@ msgid "Mix Factor"
 msgstr "Factor de mezcla"
 
 
-msgid "Mix Mode"
-msgstr "Modo de mezcla"
-
-
 msgid "How to affect destination elements with source values"
 msgstr "Cómo afectar los elementos de destino con los valores de origen"
 
@@ -35483,48 +35415,16 @@ msgid "Light Path"
 msgstr "Trayectoria de rayo"
 
 
-msgid "Maximum value for clipping"
-msgstr "Máximo valor de recorte"
-
-
-msgid "Minimum value for clipping"
-msgstr "Valor mínimo de recorte"
-
-
-msgid "Has Maximum"
-msgstr "Tiene máximo"
-
-
-msgid "Whether to use maximum clipping value"
-msgstr "Define si usar eñ valor máximo de recorte"
-
-
-msgid "Has Minimum"
-msgstr "Tiene mínimo"
-
-
-msgid "Whether to use minimum clipping value"
-msgstr "Define si usar un valor mínimo de recorte"
-
-
 msgid "Type of vector that the mapping transforms"
 msgstr "Tipo de vector a ser transformado por el mapeo"
-
-
-msgid "Transform a texture by inverse mapping the texture coordinate"
-msgstr "Transforma una textura mapeando inversamente las coordenadas de texturizado"
 
 
 msgid "Transform a point"
 msgstr "Transforma un punto"
 
 
-msgid "Transform a direction vector"
-msgstr "Transforma un vector de dirección"
-
-
-msgid "Transform a normal vector with unit length"
-msgstr "Transforma un versor normal"
+msgid "Transform a texture by inverse mapping the texture coordinate"
+msgstr "Transforma una textura mapeando inversamente las coordenadas de texturizado"
 
 
 msgid "MixRGB"
@@ -36193,6 +36093,14 @@ msgstr "Convertir a"
 
 msgid "Space to convert to"
 msgstr "Espacio hacia el cual convertir"
+
+
+msgid "Transform a direction vector"
+msgstr "Transforma un vector de dirección"
+
+
+msgid "Transform a normal vector with unit length"
+msgstr "Transforma un versor normal"
 
 
 msgid "Volume Absorption"
@@ -38653,12 +38561,32 @@ msgid "Open a directory browser, Hold Shift to open the file, Alt to browse cont
 msgstr "Abre un explorador de directorios, presionar Mayúsculas para abrir el archivo, Alt para explorar el directorio contenedor"
 
 
+msgid "Open"
+msgstr "Abrir"
+
+
 msgid "Directory of the file"
 msgstr "Directorio del archivo"
 
 
 msgid "Automatically determine display type for files"
 msgstr "Determina automáticamente el tipo de visualización de los archivos"
+
+
+msgid "Short List"
+msgstr "Lista reducida"
+
+
+msgid "Display files as short list"
+msgstr "Mostrar archivos en una lista reducida"
+
+
+msgid "Long List"
+msgstr "Lista completa"
+
+
+msgid "Display files as a detailed list"
+msgstr "Mostrar archivos en una lista detallada"
 
 
 msgid "File Browser Mode"
@@ -40653,24 +40581,8 @@ msgid "Checker Deselect"
 msgstr "Deseleccionar en damero"
 
 
-msgid "Nth Element"
-msgstr "Uno de cada N"
-
-
-msgid "Skip every Nth element"
-msgstr "Saltear un elemento de cada N elementos"
-
-
 msgid "Offset from the starting point"
 msgstr "Desplazamiento con respecto al punto inicial"
-
-
-msgid "Skip"
-msgstr "Omitir"
-
-
-msgid "Number of elements to skip at once"
-msgstr "Cantidad de elementos a omitir de una vez"
 
 
 msgctxt "Operator"
@@ -41428,10 +41340,6 @@ msgid "Export each non-muted NLA strip as a separated FBX's AnimStack, if any, i
 msgstr "Exportar cada clip no silenciado de ANL como un AnimStack individual de FBX, en vez de como animación global de la escena"
 
 
-msgid "!EXPERIMENTAL! Apply Transform"
-msgstr "¡EXPERIMENTAL! Aplicar transformación"
-
-
 msgid "Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender's space (WARNING! experimental option, use at own risks, known broken with armatures/animations)"
 msgstr "Capturar las transformaciones espaciales en los datos del objeto, previene rotaciones no deseadas cuando las coordenadas de destino no se encuentran alineadas con las de Blender (¡ADVERTENCIA! opción experimental, usar a riesgo propio, se sabe que no funciona con esqueletos/animaciones)"
 
@@ -41586,34 +41494,6 @@ msgstr "Eje -Z"
 
 msgid "Secondary Bone Axis"
 msgstr "Eje secundario del hueso"
-
-
-msgid "Export options categories"
-msgstr "Categorías de opciones de exportación"
-
-
-msgid "Main"
-msgstr "Principal"
-
-
-msgid "Main basic settings"
-msgstr "Principales opciones básicas"
-
-
-msgid "Geometries"
-msgstr "Geometrías"
-
-
-msgid "Geometry-related settings"
-msgstr "Opciones relativas a geometrías"
-
-
-msgid "Armature-related settings"
-msgstr "Opciones relativas a esqueletos"
-
-
-msgid "Animation-related settings"
-msgstr "Opciones relativas a animación"
 
 
 msgid "Active Collection"
@@ -42221,12 +42101,16 @@ msgid "Create a new directory"
 msgstr "Crear un nuevo directorio"
 
 
+msgid "Confirm"
+msgstr "Confirmación"
+
+
+msgid "Prompt for confirmation"
+msgstr "Requerir una confirmación"
+
+
 msgid "Name of new directory"
 msgstr "Nombre del nuevo directorio"
-
-
-msgid "Open"
-msgstr "Abrir"
 
 
 msgid "Open new directory"
@@ -43872,16 +43756,16 @@ msgid "Arrange selected strokes up/down in the drawing order of the active layer
 msgstr "Permite ordenar los trazos seleccionados hacia arriba o abajo en el orden de dibujo de la capa activa"
 
 
+msgid "Bring to Front"
+msgstr "Traer al frente"
+
+
 msgid "Bring Forward"
 msgstr "Traer hacia adelante"
 
 
 msgid "Send Backward"
 msgstr "Enviar hacia atrás"
-
-
-msgid "Bring to Front"
-msgstr "Traer al frente"
 
 
 msgid "Send to Back"
@@ -45351,6 +45235,18 @@ msgstr "Ignorar los huesos en el extremo de cada cadena (usados para demarcar la
 
 msgid "Import options categories"
 msgstr "Categorías de opciones de importación"
+
+
+msgid "Main"
+msgstr "Principal"
+
+
+msgid "Main basic settings"
+msgstr "Principales opciones básicas"
+
+
+msgid "Armature-related settings"
+msgstr "Opciones relativas a esqueletos"
 
 
 msgid "Alpha Decals"
@@ -48251,6 +48147,18 @@ msgid "Change selection mode"
 msgstr "Cambia el modo de selección"
 
 
+msgid "Vertex selection mode"
+msgstr "Modo de selección de vértices"
+
+
+msgid "Edge selection mode"
+msgstr "Modo de selección de bordes"
+
+
+msgid "Face selection mode"
+msgstr "Modo de selección de caras"
+
+
 msgid "Expand"
 msgstr "Expandir"
 
@@ -50359,14 +50267,6 @@ msgid "Delete selected objects"
 msgstr "Borra los objetos seleccionados"
 
 
-msgid "Confirm"
-msgstr "Confirmación"
-
-
-msgid "Prompt for confirmation"
-msgstr "Requerir una confirmación"
-
-
 msgid "Delete Globally"
 msgstr "Borrar globalmente"
 
@@ -51110,11 +51010,6 @@ msgstr "Definir modo objeto"
 
 msgid "Sets the object interaction mode"
 msgstr "Define el modo de interacción del objeto"
-
-
-msgctxt "Operator"
-msgid "Set Object Mode or Submode"
-msgstr "Definir modo o submodo objeto"
 
 
 msgctxt "Operator"
@@ -54930,11 +54825,6 @@ msgid "Module name of the add-on to expand"
 msgstr "Nombre de módulo del agregado a expandir"
 
 
-msgctxt "Operator"
-msgid "Install Add-on from File..."
-msgstr "Instalar agregado desde archivo..."
-
-
 msgid "Install an add-on"
 msgstr "Permite instalar un agregado"
 
@@ -58195,10 +58085,6 @@ msgid "Axis Ortho"
 msgstr "Eje ortogonal"
 
 
-msgid "Shear Axis"
-msgstr "Eje de inclinación"
-
-
 msgctxt "Operator"
 msgid "Shrink/Fatten"
 msgstr "Contraer / Expandir"
@@ -60648,11 +60534,6 @@ msgid "Check imported mesh objects for invalid data (slow)"
 msgstr "Comprueba las mallas de los objetos importados en busca de datos inválidos (es lento)"
 
 
-msgctxt "Operator"
-msgid "Append from Library"
-msgstr "Anexar desde biblioteca"
-
-
 msgid "Append from a Library .blend file"
 msgstr "Anexar desde un archivo de biblioteca .blend"
 
@@ -61493,11 +61374,6 @@ msgid "Library to relocate"
 msgstr "Biblioteca a reubicar"
 
 
-msgctxt "Operator"
-msgid "Link from Library"
-msgstr "Vincular desde biblioteca"
-
-
 msgid "Link from a Library .blend file"
 msgstr "Vincular desde un archivo de biblioteca .blend"
 
@@ -61509,11 +61385,6 @@ msgstr "Estadísticas de memoria"
 
 msgid "Print memory statistics to the console"
 msgstr "Imprime estadísticas de la memoria a la consola"
-
-
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "Abrir archivo de Blender"
 
 
 msgid "Open a Blender file"
@@ -62029,11 +61900,6 @@ msgstr "Revertir"
 
 msgid "Reload the saved file"
 msgstr "Vuelve a cargar el archivo previamente guardado"
-
-
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "Guardar como archivo de Blender"
 
 
 msgid "Save the current file in the desired location"
@@ -70064,14 +69930,6 @@ msgid "Display in solid mode"
 msgstr "Muestra los objetos en modo sólido"
 
 
-msgid "Look Dev"
-msgstr "Desarrollo visual"
-
-
-msgid "Display in Look Dev mode"
-msgstr "Mostrar en modo desarrollo visual"
-
-
 msgid "Display render preview"
 msgstr "Mostrar previsualización de procesamiento"
 
@@ -71588,18 +71446,6 @@ msgid "Size of point and area light shadow maps"
 msgstr "Tamaño de los mapas de sombra de las luces de tipo punto y área"
 
 
-msgid "Technique use to compute the shadows"
-msgstr "Técnica usada para calcular las sombras"
-
-
-msgid "Exponential Shadow Mapping"
-msgstr "Mapeo de sombras exponencial"
-
-
-msgid "Variance Shadow Mapping"
-msgstr "Mapeo de sombras por varianza"
-
-
 msgid "Edge Fading"
 msgstr "Fundido de bordes"
 
@@ -71722,14 +71568,6 @@ msgstr "Refracciones en espacio de pantalla"
 
 msgid "Enable screen space Refractions"
 msgstr "Habilita la refractividad en espacio de pantalla"
-
-
-msgid "Separate Albedo"
-msgstr "Separar albedo"
-
-
-msgid "Avoid albedo being blurred by the subsurface scattering but uses more video memory"
-msgstr "Evita que el albedo quede desenfocado por la transluminiscencia, a costa de un mayor uso de memoria"
 
 
 msgid "Viewport Denoising"
@@ -72192,26 +72030,6 @@ msgstr "Multiplicar colores"
 
 msgid "Adjust the intensity of the input's color"
 msgstr "Permite ajustar la intensidad del color de origen"
-
-
-msgid "Playback Direction"
-msgstr "Dirección de reproducción"
-
-
-msgid "Play strip forwards or backwards"
-msgstr "Reproduce hacia adelante o hacia atrás"
-
-
-msgid "Forwards"
-msgstr "Adelante"
-
-
-msgid "Play strip forwards"
-msgstr "Reproducir hacia adelante"
-
-
-msgid "Play strip backwards"
-msgstr "Reproducir hacia atrás"
 
 
 msgid "Strobe"
@@ -75977,10 +75795,6 @@ msgid "Active Tool and Workspace settings"
 msgstr "Opciones de la herramienta activa y el espacio de trabajo"
 
 
-msgid "Object visual effects"
-msgstr "Efectos visuales del objeto"
-
-
 msgid "Pin ID"
 msgstr "Fijar ID"
 
@@ -76999,6 +76813,30 @@ msgstr "Mapeo Y"
 
 msgid "Z Mapping"
 msgstr "Mapeo Z"
+
+
+msgid "Maximum value for clipping"
+msgstr "Máximo valor de recorte"
+
+
+msgid "Minimum value for clipping"
+msgstr "Valor mínimo de recorte"
+
+
+msgid "Has Maximum"
+msgstr "Tiene máximo"
+
+
+msgid "Whether to use maximum clipping value"
+msgstr "Define si usar eñ valor máximo de recorte"
+
+
+msgid "Has Minimum"
+msgstr "Tiene mínimo"
+
+
+msgid "Whether to use minimum clipping value"
+msgstr "Define si usar un valor mínimo de recorte"
 
 
 msgid "Texture Paint Slot"
@@ -79466,18 +79304,6 @@ msgid "UV selection and display mode"
 msgstr "Modo de selección y visualización de UV"
 
 
-msgid "Vertex selection mode"
-msgstr "Modo de selección de vértices"
-
-
-msgid "Edge selection mode"
-msgstr "Modo de selección de bordes"
-
-
-msgid "Face selection mode"
-msgstr "Modo de selección de caras"
-
-
 msgid "Island"
 msgstr "Isla"
 
@@ -79866,10 +79692,6 @@ msgid "Canvas grid opacity"
 msgstr "Opacidad de la cuadrícula del lienzo"
 
 
-msgid "Paper opacity"
-msgstr "Opacidad del papel"
-
-
 msgid "Grid Lines"
 msgstr "Líneas de la cuadrícula"
 
@@ -79986,10 +79808,6 @@ msgid "Display UV unwrapping seams"
 msgstr "Mostrar las costuras de despliegue de las UV"
 
 
-msgid "Draw Sharp"
-msgstr "Mostrar definidos"
-
-
 msgid "Display sharp edges, used with the Edge Split modifier"
 msgstr "Mostrar los bordes definidos, usados con el modificador Dividir bordes"
 
@@ -80100,10 +79918,6 @@ msgstr "Muestra las caras marcadas de Freestyle, usadas por el motor de procesam
 
 msgid "Look Dev Preview"
 msgstr "Previsualizar desarrollo visual"
-
-
-msgid "Show look development spheres and palette"
-msgstr "Muestra las esferas y paleta de desarrollo visual"
 
 
 msgid "Show the Motion Paths Overlay"
@@ -80276,14 +80090,6 @@ msgstr "Sólo líneas"
 
 msgid "Only show edit lines for additional frames"
 msgstr "Muestra solamente las líneas de edición para los fotogramas adicionales"
-
-
-msgid "Use Paper"
-msgstr "Usar papel"
-
-
-msgid "Cover all viewport with a full color layer to improve visibility while drawing over complex scenes"
-msgstr "Cubre toda la vista con una capa de color pleno, para mejorar la visibilidad al dibujar sobre escenas complejas"
 
 
 msgid "Vertex Opacity"
@@ -81199,11 +81005,6 @@ msgstr "Modo Objeto"
 
 
 msgctxt "WindowManager"
-msgid "3D View Tool: Select"
-msgstr "3D View Tool: Seleccionar"
-
-
-msgctxt "WindowManager"
 msgid "3D View Tool: Select Box"
 msgstr "3D View Tool: Seleccionar marco"
 
@@ -81857,10 +81658,6 @@ msgstr "%s OA, %s Luz de mallas, %s Translum, %s Volumetría"
 
 msgid "Cull back-faces"
 msgstr "Descartar caras traseras"
-
-
-msgid "Deformation"
-msgstr "Deformación"
 
 
 msgid "Incompatible output node"
@@ -82848,16 +82645,16 @@ msgid "Interpolation U"
 msgstr "Interpolación en U"
 
 
-msgid "Bleed Bias"
-msgstr "Desviación sangrado"
-
-
 msgid "Clipping Start"
 msgstr "Recorte Inicio"
 
 
 msgid "Clipping Offset"
 msgstr "Desplazamiento del recorte"
+
+
+msgid "Bleed Bias"
+msgstr "Desviación sangrado"
 
 
 msgid "Arrow Size"
@@ -83973,10 +83770,6 @@ msgstr "Todos los bordes"
 
 msgid "Align to Vertex Normal"
 msgstr "Alinear a normal de vértice"
-
-
-msgid "Not for Axis-Angle"
-msgstr "No disponible"
 
 
 msgid "Old"
@@ -85218,6 +85011,11 @@ msgstr "Limpiar"
 
 
 msgctxt "Operator"
+msgid "Back"
+msgstr "Trasera"
+
+
+msgctxt "Operator"
 msgid "Toggle Dope Sheet"
 msgstr "Planilla de tiempos"
 
@@ -86194,10 +85992,6 @@ msgid "Unable to find toolbar group"
 msgstr "No fue posible encontrar el grupo de barras de herramientas"
 
 
-msgid "View Axis:"
-msgstr "Eje de la vista:"
-
-
 msgid "Annotation:"
 msgstr "Anotación:"
 
@@ -86845,11 +86639,6 @@ msgstr "Alinear cámara activa a lo seleccionado"
 msgctxt "Operator"
 msgid "Front"
 msgstr "Frontal"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "Trasera"
 
 
 msgctxt "Operator"
@@ -87618,21 +87407,12 @@ msgid "PAINT_GPENCILEDIT_GPENCILSCULPT_GPENCILWEIGHT_GPENCILOBJECTDraw Grease Pe
 msgstr "PINTAR_LCERAEDITAR_LCERAESCULPIR_LCERAINFLUENCIAS_LCERAOBJETODibujar Lápiz de ceraEditar Lápiz de ceraEsculpir Lápiz de ceraInfluencias Lápiz de ceraLápiz de cera"
 
 
-msgid "Fade 3D Objects"
-msgstr "Desvanecer objetos 3D"
-
-
 msgid "Display:"
 msgstr "Visualización:"
 
 
 msgid "Frames:"
 msgstr "Fotogramas:"
-
-
-msgctxt "Operator"
-msgid "Insert Blank"
-msgstr "Insertar en blanco"
 
 
 msgid "Thickness Profile"
@@ -90255,6 +90035,10 @@ msgid "No active color to isolate"
 msgstr "Ninguna color activo que aislar"
 
 
+msgid "No Grease Pencil data"
+msgstr "No hay datos de lápiz de cera"
+
+
 msgid "Unable to add a new Lattice modifier to object"
 msgstr "No es posible agregar un nuevo modificador Jaula al objeto"
 
@@ -90269,10 +90053,6 @@ msgstr "No es posible cambiar a una capa no existente (índice = %d)"
 
 msgid "No active GP data"
 msgstr "No hay datos de lápiz de cera activo"
-
-
-msgid "No Grease Pencil data"
-msgstr "No hay datos de lápiz de cera"
 
 
 msgid "Operator not supported in multiframe edition"
@@ -93141,36 +92921,8 @@ msgid "Average re-projection error: %.3f"
 msgstr "Error promedio de reproyección: %.3f"
 
 
-msgid "Parent Directory"
-msgstr "Directorio superior"
-
-
-msgid "Open Directory"
-msgstr "Abrir directorio"
-
-
-msgid "Cancel"
-msgstr "Cancelar"
-
-
 msgid "File path"
 msgstr "Ruta del archivo"
-
-
-msgid "Decrement the filename number"
-msgstr "Disminuye el número del nombre del archivo"
-
-
-msgid "Increment the filename number"
-msgstr "Incrementa el número del nombre del archivo"
-
-
-msgid "File name, overwrite existing"
-msgstr "Nombre de archivo, sobrescribir existente"
-
-
-msgid "File name"
-msgstr "Nombre de archivo"
 
 
 msgid "File does not exist"
@@ -93195,6 +92947,18 @@ msgstr "No fue posible crear la nueva carpeta: %s"
 
 msgid "Could not delete file: %s"
 msgstr "No fue posible borrar el archivo: %s"
+
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+
+msgid "File name, overwrite existing"
+msgstr "Nombre de archivo, sobrescribir existente"
+
+
+msgid "File name"
+msgstr "Nombre de archivo"
 
 
 msgid "Cursor from Selection"
@@ -95098,20 +94862,20 @@ msgid " along %s Z axis"
 msgstr " a lo largo del eje Z de %s"
 
 
-msgid "Unsupported object type for text-space transform"
-msgstr "Tipo de objeto no soportado para ser transformado en espacio de texto"
-
-
-msgid "Linked data can't text-space transform"
-msgstr "Los datos vinculados no pueden ser transformados en espacio de texto"
-
-
 msgid "Cannot change Pose when 'Rest Position' is enabled"
 msgstr "No es posible cambiar la pose cuando la 'Posición de reposo' está habilitda"
 
 
 msgid "Bone selection count error"
 msgstr "Error de cantidad de selección de huesos"
+
+
+msgid "Linked data can't text-space transform"
+msgstr "Los datos vinculados no pueden ser transformados en espacio de texto"
+
+
+msgid "Unsupported object type for text-space transform"
+msgstr "Tipo de objeto no soportado para ser transformado en espacio de texto"
 
 
 msgid "(Sharp)"

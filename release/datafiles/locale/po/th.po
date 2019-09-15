@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: 2019-06-01 18:12+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -442,6 +442,10 @@ msgid "Head"
 msgstr "หัว"
 
 
+msgid "Full"
+msgstr "เต็ม"
+
+
 msgid "Layers"
 msgstr "ชั้น"
 
@@ -648,6 +652,10 @@ msgstr "กลับค่า Y"
 
 msgid "Invert Z"
 msgstr "กลับค่า Z"
+
+
+msgid "Mix Mode"
+msgstr "โหมดผสม"
 
 
 msgid "Power"
@@ -1194,10 +1202,6 @@ msgstr "ส่วน"
 
 msgid "Dimensions"
 msgstr "มิติ"
-
-
-msgid "Full"
-msgstr "เต็ม"
 
 
 msgid "Resolution U"
@@ -1977,10 +1981,6 @@ msgid "Percent"
 msgstr "ร้อยละ"
 
 
-msgid "Mix Mode"
-msgstr "โหมดผสม"
-
-
 msgid "Ray Radius"
 msgstr "รัศมีรังสี"
 
@@ -2213,6 +2213,10 @@ msgid "Translation"
 msgstr "แปลภาษา"
 
 
+msgid "Open"
+msgstr "เปิด"
+
+
 msgid "Path to file"
 msgstr "ตำแหน่งไปยังไฟล์"
 
@@ -2322,10 +2326,6 @@ msgid "Selection Only"
 msgstr "เลือกเท่านั้น"
 
 
-msgid "!EXPERIMENTAL! Apply Transform"
-msgstr "!การทดลอง! นำการปรับเปลี่ยนไปใช้"
-
-
 msgid "Scene Collections"
 msgstr "คอลเลกชันฉาก"
 
@@ -2357,10 +2357,6 @@ msgstr "+Y ขึ้น"
 msgctxt "Operator"
 msgid "Add Bookmark"
 msgstr "เพิ่มบุ๊คมาร์ค"
-
-
-msgid "Open"
-msgstr "เปิด"
 
 
 msgid "Increment"
@@ -2928,16 +2924,6 @@ msgstr "เล่น"
 
 
 msgctxt "Operator"
-msgid "Link from Library"
-msgstr "ลิ้งค์"
-
-
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "เปิดไฟล์ Blender"
-
-
-msgctxt "Operator"
 msgid "Restore Defaults"
 msgstr "คืนค่าเดิม"
 
@@ -2959,11 +2945,6 @@ msgstr "โหลดการตั้งค่าโรงงาน"
 msgctxt "Operator"
 msgid "Reload Start-Up File"
 msgstr "โหลดไฟล์เริ่มต้นใหม่"
-
-
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "บันทึกเป็นไฟล์ Blender"
 
 
 msgid "Save Copy"
@@ -3874,6 +3855,11 @@ msgstr "%s: %s"
 
 
 msgctxt "Operator"
+msgid "Back"
+msgstr "หลัง"
+
+
+msgctxt "Operator"
 msgid "New"
 msgstr "ใหม่"
 
@@ -3961,10 +3947,6 @@ msgstr "บน"
 msgctxt "Operator"
 msgid "Bottom"
 msgstr "ล่าง"
-
-
-msgid "View Axis:"
-msgstr "แกนมุมมอง:"
 
 
 msgctxt "Operator"
@@ -4211,11 +4193,6 @@ msgstr "ข้อผิดพลาด (ดูที่คอนโซล)"
 msgctxt "Operator"
 msgid "Front"
 msgstr "หน้า"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "หลัง"
 
 
 msgctxt "Operator"

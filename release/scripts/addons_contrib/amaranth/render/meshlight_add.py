@@ -70,7 +70,7 @@ class AMTH_OBJECT_OT_meshlight_add(bpy.types.Operator):
 
         bpy.ops.mesh.primitive_grid_add(
             x_subdivisions=4, y_subdivisions=4,
-            rotation=self.rotation, radius=self.size)
+            rotation=self.rotation, size=self.size)
 
         bpy.context.object.name = meshlight_name
         meshlight = scene.objects[meshlight_name]
@@ -86,7 +86,7 @@ class AMTH_OBJECT_OT_meshlight_add(bpy.types.Operator):
         meshlight.active_material = material
 
         material.use_nodes = True
-        material.diffuse_color = (1, 0.5, 0)
+        material.diffuse_color = (1, 0.5, 0, 1)
         nodes = material.node_tree.nodes
         links = material.node_tree.links
 
@@ -179,16 +179,16 @@ def ui_menu_lamps_add(self, context):
         self.layout.separator()
         self.layout.operator(
             AMTH_OBJECT_OT_meshlight_add.bl_idname,
-            icon="LAMP_AREA", text="Meshlight")
+            icon="LIGHT_AREA", text="Meshlight")
 
 # //FEATURE: Add Meshlight: Single Sided
 
 
 def register():
     bpy.utils.register_class(AMTH_OBJECT_OT_meshlight_add)
-    bpy.types.VIEW3D_MT_mesh_add.append(ui_menu_lamps_add)
+    bpy.types.VIEW3D_MT_light_add.append(ui_menu_lamps_add)
 
 
 def unregister():
     bpy.utils.unregister_class(AMTH_OBJECT_OT_meshlight_add)
-    bpy.types.VIEW3D_MT_mesh_add.remove(ui_menu_lamps_add)
+    bpy.types.VIEW3D_MT_light_add.remove(ui_menu_lamps_add)

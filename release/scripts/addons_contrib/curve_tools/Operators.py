@@ -3,7 +3,9 @@ import threading
 
 import bpy
 from bpy.props import *
-from bpy_extras import object_utils
+from bpy_extras import object_utils, view3d_utils
+from mathutils import  *
+from math import  *
 
 from . import Properties
 from . import Curves
@@ -175,7 +177,7 @@ class OperatorIntersectCurves(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return Util.Selected2Curves()
+        return Util.Selected2OrMoreCurves()
 
 
     def execute(self, context):
@@ -194,14 +196,26 @@ class OperatorIntersectCurves(bpy.types.Operator):
         affect = context.scene.curvetools.IntersectCurvesAffect
         print("-- affect:", affect)
 
+        selected_objects = context.selected_objects
+        lenodjs = len(selected_objects)
+        print('lenodjs:', lenodjs)
+        for i in range(0, lenodjs):
+            for j in range(0, lenodjs):
+                if j != i:
+                    bpy.ops.object.select_all(action='DESELECT')
+                    selected_objects[i].select_set(True)
+                    selected_objects[j].select_set(True)
+        
+                    if selected_objects[i].type == 'CURVE' and selected_objects[j].type == 'CURVE':
+                        curveIntersector = CurveIntersections.CurvesIntersector.FromSelection()
+                        rvIntersectionNrs = curveIntersector.CalcAndApplyIntersections()
 
-        curveIntersector = CurveIntersections.CurvesIntersector.FromSelection()
-        rvIntersectionNrs = curveIntersector.CalcAndApplyIntersections()
-
-        self.report({'INFO'}, "Active curve points: %d; other curve points: %d" % (rvIntersectionNrs[0], rvIntersectionNrs[1]))
-
+                        self.report({'INFO'}, "Active curve points: %d; other curve points: %d" % (rvIntersectionNrs[0], rvIntersectionNrs[1]))
+        
+        for obj in selected_objects:
+            obj.select_set(True)
+        
         return {'FINISHED'}
-
 
 
 class OperatorLoftCurves(bpy.types.Operator):
@@ -398,8 +412,7 @@ def subdivide_cubic_bezier(p1, p2, p3, p4, t):
     return [p12, p123, p1234, p234, p34]
         
 def SurfaceFromBezier(surfacedata, points, center):
-    use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
-
+    
     len_points = len(points) - 1
     
     if len_points % 2 == 0:
@@ -427,8 +440,6 @@ def SurfaceFromBezier(surfacedata, points, center):
         p.select = True
     surfacespline1.use_endpoint_u = True
     surfacespline1.use_endpoint_v = True
-    
-    print(center)
 
     for i in range(0, half):
      
@@ -509,7 +520,7 @@ def SurfaceFromBezier(surfacedata, points, center):
         p.select = True
     surfacespline6.use_endpoint_u = True
     surfacespline6.use_endpoint_v = True
-            
+    
     bpy.ops.object.mode_set(mode = 'EDIT') 
     bpy.ops.curve.make_segment()
         
@@ -520,124 +531,11 @@ def SurfaceFromBezier(surfacedata, points, center):
         s.order_v = 4
         for p in s.points:
             p.select = False
-        
-    bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 
-def SurfaceFrom4point(surfacedata, point1, point2, point3, point4):
-    use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
-
-    # 1
-    surfacespline1 = surfacedata.splines.new(type='NURBS')
-    surfacespline1.points.add(3)
-    surfacespline1.points[0].co = [point1.co.x, point1.co.y, point1.co.z, 1]
-    surfacespline1.points[1].co = [point1.handle_left.x, point1.handle_left.y, point1.handle_left.z, 1]
-    surfacespline1.points[2].co = [point4.handle_right.x, point4.handle_right.y, point4.handle_right.z, 1]
-    surfacespline1.points[3].co = [point4.co.x, point4.co.y, point4.co.z, 1]
-    for p in surfacespline1.points:
-        p.select = True
-    surfacespline1.use_endpoint_u = True
-    surfacespline1.use_endpoint_v = True
-    
-    # 2
-    surfacespline2 = surfacedata.splines.new(type='NURBS')
-    surfacespline2.points.add(3)
-    surfacespline2.points[0].co = [point1.handle_right.x, point1.handle_right.y, point1.handle_right.z, 1]
-    surfacespline2.points[1].co = [(point1.handle_right.x + point4.handle_left.x)/2,
-                                   (point1.handle_right.y + point4.handle_left.y)/2,
-                                   (point1.handle_right.z + point4.handle_left.z)/2, 1]
-    surfacespline2.points[2].co = [(point4.handle_left.x + point1.handle_right.x)/2,
-                                   (point4.handle_left.y + point1.handle_right.y)/2,
-                                   (point4.handle_left.z + point1.handle_right.z)/2, 1]
-    surfacespline2.points[3].co = [point4.handle_left.x, point4.handle_left.y, point4.handle_left.z, 1]
-    for p in surfacespline2.points:
-        p.select = True
-    surfacespline2.use_endpoint_u = True
-    surfacespline2.use_endpoint_v = True
-
-     # 3
-    surfacespline3 = surfacedata.splines.new(type='NURBS')
-    surfacespline3.points.add(3)
-    surfacespline3.points[0].co = [point2.handle_left.x, point2.handle_left.y, point2.handle_left.z, 1]
-    surfacespline3.points[1].co = [(point2.handle_left.x + point3.handle_right.x)/2,
-                                   (point2.handle_left.y + point3.handle_right.y)/2,
-                                   (point2.handle_left.z + point3.handle_right.z)/2, 1]
-    surfacespline3.points[2].co = [(point3.handle_right.x + point2.handle_left.x)/2,
-                                   (point3.handle_right.y + point2.handle_left.y)/2,
-                                   (point3.handle_right.z + point2.handle_left.z)/2, 1]
-    surfacespline3.points[3].co = [point3.handle_right.x, point3.handle_right.y, point3.handle_right.z, 1]
-    for p in surfacespline3.points:
-        p.select = True
-    surfacespline3.use_endpoint_u = True
-    surfacespline3.use_endpoint_v = True
-
-     # 4
-    surfacespline4 = surfacedata.splines.new(type='NURBS')
-    surfacespline4.points.add(3)
-    surfacespline4.points[0].co = [point2.co.x, point2.co.y, point2.co.z, 1]
-    surfacespline4.points[1].co = [point2.handle_right.x, point2.handle_right.y, point2.handle_right.z, 1]
-    surfacespline4.points[2].co = [point3.handle_left.x, point3.handle_left.y, point3.handle_left.z, 1]
-    surfacespline4.points[3].co = [point3.co.x, point3.co.y, point3.co.z, 1]
-    for p in surfacespline4.points:
-        p.select = True
-    surfacespline4.use_endpoint_u = True
-    surfacespline4.use_endpoint_v = True
-        
-    bpy.ops.object.mode_set(mode = 'EDIT') 
-    bpy.ops.curve.make_segment()
-    
-    for s in surfacedata.splines:
-        s.order_u = 4
-        s.order_v = 4
-        s.resolution_u = 4
-        s.resolution_v = 4
-        for p in s.points:
-            p.select = False
-        
-    bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
-
-class ConvertBezierRectangleToSurface(bpy.types.Operator):
-    bl_idname = "curvetools2.convert_bezier_rectangle_to_surface"
-    bl_label = "Convert Bezier Rectangle To Surface"
-    bl_description = "Convert Bezier Rectangle To Surface"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    @classmethod
-    def poll(cls, context):
-        return Util.Selected1Curve()
-
-    def execute(self, context):
-        # main function
-        active_object = context.active_object
-        splines = active_object.data.splines
-        
-        surfacedata = bpy.data.curves.new('Surface', type='SURFACE')
-        surfaceobject = object_utils.object_data_add(context, surfacedata)
-        surfaceobject.matrix_world = active_object.matrix_world
-        surfaceobject.rotation_euler = active_object.rotation_euler
-        surfacedata.dimensions = '3D'
-        
-        n = 0
-        pp = []
-        for s in splines:
-            for p in s.bezier_points:
-                pp.append(p)
-                n += 1
-        
-        SurfaceFrom4point(surfacedata, pp[0], pp[1], pp[2], pp[3])
-                          
-        splines = surfaceobject.data.splines
-        for s in splines:
-            s.order_u = 4
-            s.order_v = 4
-            s.resolution_u = 4
-            s.resolution_v = 4
-
-        return {'FINISHED'}
-
-class ConvertMeshToBezier(bpy.types.Operator):
-    bl_idname = "curvetools2.convert_mesh_to_bezier"
-    bl_label = "Convert Mesh to Bezier"
-    bl_description = "Convert Mesh to Bezier"
+class ConvertSelectedFacesToBezier(bpy.types.Operator):
+    bl_idname = "curvetools2.convert_selected_face_to_bezier"
+    bl_label = "Convert selected faces to Bezier"
+    bl_description = "Convert selected faces to Bezier"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -646,6 +544,7 @@ class ConvertMeshToBezier(bpy.types.Operator):
 
     def execute(self, context):
         # main function
+        bpy.ops.object.mode_set(mode = 'OBJECT')
         active_object = context.active_object
         meshdata = active_object.data
         curvedata = bpy.data.curves.new('Curve' + active_object.name, type='CURVE')
@@ -653,21 +552,22 @@ class ConvertMeshToBezier(bpy.types.Operator):
         curvedata.dimensions = '3D'
         
         for poly in meshdata.polygons:
-            newSpline = curvedata.splines.new(type='BEZIER')
-            newSpline.use_cyclic_u = True
-            newSpline.bezier_points.add(poly.loop_total - 1)
-            npoint = 0
-            for loop_index in range(poly.loop_start, poly.loop_start + poly.loop_total):
-                newSpline.bezier_points[npoint].co = meshdata.vertices[meshdata.loops[loop_index].vertex_index].co
-                newSpline.bezier_points[npoint].handle_left_type = 'VECTOR'
-                newSpline.bezier_points[npoint].handle_right_type = 'VECTOR'
-                newSpline.bezier_points[npoint].select_control_point = True
-                newSpline.bezier_points[npoint].select_left_handle = True
-                newSpline.bezier_points[npoint].select_right_handle = True
-                npoint += 1
+            if poly.select:
+                newSpline = curvedata.splines.new(type='BEZIER')
+                newSpline.use_cyclic_u = True
+                newSpline.bezier_points.add(poly.loop_total - 1)
+                npoint = 0
+                for loop_index in range(poly.loop_start, poly.loop_start + poly.loop_total):
+                    newSpline.bezier_points[npoint].co = meshdata.vertices[meshdata.loops[loop_index].vertex_index].co
+                    newSpline.bezier_points[npoint].handle_left_type = 'VECTOR'
+                    newSpline.bezier_points[npoint].handle_right_type = 'VECTOR'
+                    newSpline.bezier_points[npoint].select_control_point = True
+                    newSpline.bezier_points[npoint].select_left_handle = True
+                    newSpline.bezier_points[npoint].select_right_handle = True
+                    npoint += 1
                                   
         return {'FINISHED'}
-
+        
 class ConvertBezierToSurface(bpy.types.Operator):
     bl_idname = "curvetools2.convert_bezier_to_surface"
     bl_label = "Convert Bezier to Surface"
@@ -680,12 +580,30 @@ class ConvertBezierToSurface(bpy.types.Operator):
             description="Consider center points"
             )
             
+    Resolution_U: IntProperty(
+            name="Resolution_U",
+            default=4,
+            min=1, max=64,
+            soft_min=1,
+            description="Surface resolution U"
+            )
+            
+    Resolution_V: IntProperty(
+            name="Resolution_V",
+            default=4,
+            min=1, max=64,
+            soft_min=1,
+            description="Surface resolution V"
+            )
+            
     def draw(self, context):
         layout = self.layout
 
          # general options
         col = layout.column()
         col.prop(self, 'Center')
+        col.prop(self, 'Resolution_U')
+        col.prop(self, 'Resolution_V')
     
     @classmethod
     def poll(cls, context):
@@ -693,7 +611,7 @@ class ConvertBezierToSurface(bpy.types.Operator):
 
     def execute(self, context):
         # main function
-        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.ops.object.mode_set(mode = 'OBJECT') 
         active_object = context.active_object
         curvedata = active_object.data
         
@@ -702,8 +620,213 @@ class ConvertBezierToSurface(bpy.types.Operator):
         surfaceobject.matrix_world = active_object.matrix_world
         surfaceobject.rotation_euler = active_object.rotation_euler
         surfacedata.dimensions = '3D'
+        surfaceobject.show_wire = True
+        surfaceobject.show_in_front = True
         
         for spline in curvedata.splines:
             SurfaceFromBezier(surfacedata, spline.bezier_points, self.Center)
+            
+        for spline in surfacedata.splines:
+            len_p = len(spline.points)
+            len_devide_4 = round(len_p / 4) + 1
+            len_devide_2 = round(len_p / 2)
+            bpy.ops.object.mode_set(mode = 'EDIT')
+            for point_index in range(len_devide_4, len_p - len_devide_4):
+                if point_index != len_devide_2 and point_index != len_devide_2 - 1:
+                    spline.points[point_index].select = True
+                
+            surfacedata.resolution_u = self.Resolution_U
+            surfacedata.resolution_v = self.Resolution_V
 
         return {'FINISHED'}
+
+
+def draw_annotation_bezier_spline(frame, spline, matrix_world, select):
+    stroke = frame.strokes.new()
+    stroke.display_mode = '3DSPACE'
+    len_points = len(spline.bezier_points)
+    for i in range(0, len_points - 1):
+        stroke.points.add(1)
+        stroke.points[-1].co = matrix_world @ spline.bezier_points[i].co
+        for t in range(0, 100, 2):
+            h = subdivide_cubic_bezier(spline.bezier_points[i].co,
+                                       spline.bezier_points[i].handle_right,
+                                       spline.bezier_points[i + 1].handle_left,
+                                       spline.bezier_points[i + 1].co,
+                                       t/100)
+            stroke.points.add(1)
+            stroke.points[-1].co = matrix_world @ h[2]
+    if spline.use_cyclic_u:
+        stroke.points.add(1)
+        stroke.points[-1].co = matrix_world @ spline.bezier_points[len_points - 1].co
+        for t in range(0, 100, 2):
+            h = subdivide_cubic_bezier(spline.bezier_points[len_points - 1].co,
+                                       spline.bezier_points[len_points - 1].handle_right,
+                                       spline.bezier_points[0].handle_left,
+                                       spline.bezier_points[0].co,
+                                       t/100)
+            stroke.points.add(1)
+            stroke.points[-1].co = matrix_world @ h[2]
+        stroke.points.add(1)
+        stroke.points[-1].co = matrix_world @ spline.bezier_points[0].co
+
+def draw_annotation_spline(frame, spline, matrix_world, select):
+    stroke = frame.strokes.new()
+    stroke.display_mode = '3DSPACE'
+    len_points = len(spline.points)
+    for i in range(0, len_points - 1):
+        stroke.points.add(1)
+        stroke.points[-1].co = matrix_world @ Vector((spline.points[i].co.x, spline.points[i].co.y, spline.points[i].co.z))
+        for t in range(0, 100, 2):
+            x = (spline.points[i].co.x + t / 100 * spline.points[i + 1].co.x) / (1 + t / 100)
+            y = (spline.points[i].co.y + t / 100 * spline.points[i + 1].co.y) / (1 + t / 100)
+            z = (spline.points[i].co.z + t / 100 * spline.points[i + 1].co.z) / (1 + t / 100)
+            stroke.points.add(1)
+            stroke.points[-1].co = matrix_world @ Vector((x, y, z))
+    if spline.use_cyclic_u:
+        stroke.points.add(1)
+        stroke.points[-1].co = matrix_world @ Vector((spline.points[len_points - 1].co.x, spline.points[len_points - 1].co.y, spline.points[len_points - 1].co.z))
+        for t in range(0, 100, 2):
+            x = (spline.points[len_points - 1].co.x + t / 100 * spline.points[0].co.x) / (1 + t / 100)
+            y = (spline.points[len_points - 1].co.y + t / 100 * spline.points[0].co.y) / (1 + t / 100)
+            z = (spline.points[len_points - 1].co.z + t / 100 * spline.points[0].co.z) / (1 + t / 100)
+            stroke.points.add(1)
+            stroke.points[-1].co = matrix_world @ Vector((x, y, z))
+        stroke.points.add(1)
+        stroke.points[-1].co = matrix_world @ Vector((spline.points[0].co.x, spline.points[0].co.y, spline.points[0].co.z))
+
+def click(self, context, event, select):
+    bpy.ops.object.mode_set(mode = 'EDIT')
+    for object in context.selected_objects:
+        matrix_world = object.matrix_world
+        if object.type == 'CURVE':
+            curvedata = object.data
+            
+            radius = bpy.context.scene.curvetools.PathFinderRadius
+            
+            for spline in curvedata.splines:
+                for bezier_point in spline.bezier_points:
+                    factor = 0
+                    co = matrix_world @ bezier_point.co
+                    if co.x > (self.location3D.x - radius):
+                        factor += 1
+                    if co.x < (self.location3D.x + radius):
+                        factor += 1
+                    if co.y > (self.location3D.y - radius):
+                        factor += 1
+                    if co.y < (self.location3D.y + radius):
+                        factor += 1
+                    if co.z > (self.location3D.z - radius):
+                        factor += 1
+                    if co.z < (self.location3D.z + radius):
+                        factor += 1
+                    if factor == 6:
+                        
+                        draw_annotation_bezier_spline(self.frame, spline, matrix_world, select)
+
+                        for bezier_point in spline.bezier_points:
+                            bezier_point.select_control_point = select
+                            bezier_point.select_left_handle = select
+                            bezier_point.select_right_handle = select
+                            
+            for spline in curvedata.splines:
+                for point in spline.points:
+                    factor = 0
+                    co = matrix_world @ Vector((point.co.x, point.co.y, point.co.z))
+                    if co.x > (self.location3D.x - radius):
+                        factor += 1
+                    if co.x < (self.location3D.x + radius):
+                        factor += 1
+                    if co.y > (self.location3D.y - radius):
+                        factor += 1
+                    if co.y < (self.location3D.y + radius):
+                        factor += 1
+                    if co.z > (self.location3D.z - radius):
+                        factor += 1
+                    if co.z < (self.location3D.z + radius):
+                        factor += 1
+                    if factor == 6:
+                        
+                        draw_annotation_spline(self.frame, spline, matrix_world, select)
+                        
+                        for point in spline.points:
+                            point.select = select    
+
+class PathFinder(bpy.types.Operator):
+    bl_idname = "curvetools2.pathfinder"
+    bl_label = "Path Finder"
+    bl_description = "Path Finder"
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    x: IntProperty(name="x", description="x")
+    y: IntProperty(name="y", description="y")
+    location3D: FloatVectorProperty(name = "",
+                description = "Start location",
+                default = (0.0, 0.0, 0.0),
+                subtype = 'XYZ')
+    
+    frame : object
+    gpencil : object
+    layer : object
+    
+    def __init__(self):
+        bpy.context.space_data.overlay.show_curve_handles = False
+        self.report({'INFO'}, "ESC or TAB - cancel")
+        print("Start PathFinder")
+
+    def __del__(self):
+        bpy.context.space_data.overlay.show_curve_handles = True
+        self.layer.clear()
+        self.report({'INFO'}, "PathFinder deactivated")
+        print("End PathFinder")
+        
+    def execute(self, context):
+        bpy.ops.object.mode_set(mode = 'EDIT')
+        
+        self.gpencil = bpy.data.grease_pencils[0]
+
+        self.layer = self.gpencil.layers.new("PathFinder", set_active=True)
+        self.frame = self.layer.frames.new(bpy.context.scene.frame_current)
+    
+    def modal(self, context, event):
+        if event.type in {'DEL', 'X'}:
+            bpy.ops.curve.delete(type='VERT')
+            self.frame.clear()
+        
+        #if event.ctrl and event.type == 'Z':
+        #    bpy.ops.ed.undo()
+
+        #if event.shift and event.type == 'Z':
+        #    bpy.ops.ed.redo()
+
+        elif event.type == 'LEFTMOUSE':
+            click(self, context, event, True)
+                                    
+        #elif event.type == 'RIGHTMOUSE':
+        #   click(self, context, event, False)
+            
+        elif event.type == 'A':
+            bpy.ops.curve.select_all(action='DESELECT')
+            self.frame.clear()
+            
+        elif event.type == 'MOUSEMOVE':  # 
+            self.x = event.mouse_x
+            self.y = event.mouse_y
+            region = bpy.context.region
+            rv3d = bpy.context.space_data.region_3d
+            self.location3D = view3d_utils.region_2d_to_location_3d(
+                region,
+                rv3d,
+                (event.mouse_region_x, event.mouse_region_y),
+                (0.0, 0.0, 0.0)
+                )       
+        
+        elif event.type in {'ESC', 'TAB'}:  # Cancel
+            return {'CANCELLED'}
+
+        return {'RUNNING_MODAL'}
+
+    def invoke(self, context, event):
+        self.execute(context)
+        context.window_manager.modal_handler_add(self)
+        return {'RUNNING_MODAL'}

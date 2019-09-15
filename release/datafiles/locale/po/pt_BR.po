@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Dalai Felinto, Bruno Gonçalves Pirajá, Samuel Arataca, Daniel Tavares, Moraes Junior <ivan.paulos.tome@yandex.com>\n"
@@ -2429,6 +2429,14 @@ msgid "Bone is able to be selected"
 msgstr "Osso está apto a ser selecionado."
 
 
+msgid "Inherit Scale"
+msgstr "Herdar escala"
+
+
+msgid "Full"
+msgstr "Completo"
+
+
 msgid "Layers"
 msgstr "Camadas"
 
@@ -2539,14 +2547,6 @@ msgstr "Herdar rotação"
 
 msgid "Bone inherits rotation or scale from parent bone"
 msgstr "Os ossos herdam as rotações ou escalonamentos a partir dos ossos parentes."
-
-
-msgid "Inherit Scale"
-msgstr "Herdar escala"
-
-
-msgid "Bone inherits scaling from parent bone"
-msgstr "Os ossos herdam os escalonamentos a partir dos ossos parentes."
 
 
 msgid "Local Location"
@@ -4710,8 +4710,8 @@ msgid "Invert the Z rotation"
 msgstr "Inverte a rotação no eixo Z."
 
 
-msgid "Add original rotation into copied rotation"
-msgstr "Adiciona a rotação original para a rotação copiada."
+msgid "Mix Mode"
+msgstr "Modo de mistura"
 
 
 msgid "Copy the target's X rotation"
@@ -9070,22 +9070,6 @@ msgid "Display mode for the file list"
 msgstr "Modo de visualização para a lista de arquivos."
 
 
-msgid "Short List"
-msgstr "Lista curta"
-
-
-msgid "Display files as short list"
-msgstr "Mostra arquivos como uma lista curta."
-
-
-msgid "Long List"
-msgstr "Lista detalhada"
-
-
-msgid "Display files as a detailed list"
-msgstr "Mostra arquivos como uma lista detalhada."
-
-
 msgid "Thumbnails"
 msgstr "Miniaturas"
 
@@ -9354,32 +9338,20 @@ msgid "Sort"
 msgstr "Ordenar"
 
 
-msgid "Sort alphabetically"
-msgstr "Ordenar alfabeticamente"
-
-
 msgid "Sort the file list alphabetically"
 msgstr "Ordena a lista de arquivos alfabeticamente."
 
 
-msgid "Sort by extension"
-msgstr "Ordenar por extensão"
+msgid "Extension"
+msgstr "Extensão"
 
 
 msgid "Sort the file list by extension/type"
 msgstr "Ordena a lista de arquivos pelo tipo ou extensão."
 
 
-msgid "Sort by time"
-msgstr "Ordenar por data"
-
-
 msgid "Sort files by modification time"
 msgstr "Ordena a lista de arquivos por data de modificação."
-
-
-msgid "Sort by size"
-msgstr "Ordenar por tamanho"
 
 
 msgid "Sort files by size"
@@ -12137,6 +12109,10 @@ msgid "Sharper"
 msgstr "Aguçar"
 
 
+msgid "Deformation"
+msgstr "Deformação"
+
+
 msgid "Falloff Angle"
 msgstr "Ângulo de decaimento"
 
@@ -12363,6 +12339,10 @@ msgstr "Cutucar"
 
 msgid "Rotate"
 msgstr "Rotacionar"
+
+
+msgid "Draw Sharp"
+msgstr "Desenhar ressaltos"
 
 
 msgid "Secondary Color"
@@ -13179,10 +13159,6 @@ msgstr "Modo de preenchimento"
 
 msgid "Mode of filling curve"
 msgstr "O modo de preenchimento de curva."
-
-
-msgid "Full"
-msgstr "Completo"
 
 
 msgid "Half"
@@ -14857,22 +14833,6 @@ msgid "Shadow Buffer Bias"
 msgstr "Ajuste fino para sombras contingenciadas"
 
 
-msgid "Shadow Buffer Bleed Bias"
-msgstr "Ajuste fino para sangramento de sombras contingenciadas"
-
-
-msgid "Bias for reducing light-bleed on variance shadow maps"
-msgstr "Ajuste fino para redução de sangramentos de luz em mapas de sombras variante."
-
-
-msgid "Shadow Buffer Clip End"
-msgstr "Limite final das sombras contingenciadas"
-
-
-msgid "Shadow map clip end, beyond which objects will not generate shadows"
-msgstr "O limite final do mapa de sombras (distância), acima do qual os objetos não irão gerar sombras."
-
-
 msgid "Shadow Buffer Clip Start"
 msgstr "Limite inicial das sombras contingenciadas"
 
@@ -14891,14 +14851,6 @@ msgstr "Tamanho do contingenciador de sombras"
 
 msgid "Resolution of the shadow buffer, higher values give crisper shadows but use more memory"
 msgstr "A resolução do contingenciador de sombras, valores mais altos fornecem sombras realçadas mas usam mais memória."
-
-
-msgid "Shadow Buffer Soft"
-msgstr "Suavidade das sombras contingenciadas"
-
-
-msgid "Size of shadow buffer sampling area"
-msgstr "Tamanho da área de amostragem do contingenciador de sombras."
 
 
 msgid "Shadow Color"
@@ -14963,6 +14915,10 @@ msgstr "Intensidade"
 
 msgid "Clipping"
 msgstr "Vinculação"
+
+
+msgid "Bias for reducing light-bleed on variance shadow maps"
+msgstr "Ajuste fino para redução de sangramentos de luz em mapas de sombras variante."
 
 
 msgid "Mask data-block defining mask for compositing"
@@ -18301,10 +18257,6 @@ msgstr "Recorte mínimo em Y"
 
 msgid "Minimum Y value to crop the image"
 msgstr "Valor mínimo em Y para recortar a imagem."
-
-
-msgid "Extension"
-msgstr "Extensão"
 
 
 msgid "How the image is extrapolated past its original bounds"
@@ -24247,10 +24199,6 @@ msgid "Mix Factor"
 msgstr "Fator de mistura"
 
 
-msgid "Mix Mode"
-msgstr "Modo de mistura"
-
-
 msgid "How to affect destination elements with source values"
 msgstr "Permite definir como serão afetados os elementos da destinação com os valores da fonte."
 
@@ -30176,48 +30124,16 @@ msgid "Light Path"
 msgstr "Caminhos de luz"
 
 
-msgid "Maximum value for clipping"
-msgstr "Valor máximo para limitação de corte."
-
-
-msgid "Minimum value for clipping"
-msgstr "Valor mínimo para limitação de corte."
-
-
-msgid "Has Maximum"
-msgstr "Possui máximo"
-
-
-msgid "Whether to use maximum clipping value"
-msgstr "Caso use o valor de corte máximo."
-
-
-msgid "Has Minimum"
-msgstr "Possui mínimo"
-
-
-msgid "Whether to use minimum clipping value"
-msgstr "Caso use o valor de corte mínimo."
-
-
 msgid "Type of vector that the mapping transforms"
 msgstr "Tipo de vetor que o mapeamento transforma."
-
-
-msgid "Transform a texture by inverse mapping the texture coordinate"
-msgstr "Transforma uma textura através do mapeamento inverso das coordenadas da textura."
 
 
 msgid "Transform a point"
 msgstr "Transforma um ponto."
 
 
-msgid "Transform a direction vector"
-msgstr "Transforma um vetor de direção."
-
-
-msgid "Transform a normal vector with unit length"
-msgstr "Transforma o vetor das normais com as unidades de comprimento."
+msgid "Transform a texture by inverse mapping the texture coordinate"
+msgstr "Transforma uma textura através do mapeamento inverso das coordenadas da textura."
 
 
 msgid "MixRGB"
@@ -30766,6 +30682,14 @@ msgstr "Converter para"
 
 msgid "Space to convert to"
 msgstr "Espaço para o qual converter."
+
+
+msgid "Transform a direction vector"
+msgstr "Transforma um vetor de direção."
+
+
+msgid "Transform a normal vector with unit length"
+msgstr "Transforma o vetor das normais com as unidades de comprimento."
 
 
 msgid "Volume Absorption"
@@ -33071,12 +32995,32 @@ msgid "Open a directory browser, Hold Shift to open the file, Alt to browse cont
 msgstr "Abre um navegador de diretórios, mantenha a tecla Shift pressionada para abrir o arquivo, e a tecla Alt para navegar no diretório recipiente."
 
 
+msgid "Open"
+msgstr "Abrir"
+
+
 msgid "Directory of the file"
 msgstr "Diretório do arquivo"
 
 
 msgid "Automatically determine display type for files"
 msgstr "Determina automaticamente o tipo de visualização para arquivos."
+
+
+msgid "Short List"
+msgstr "Lista curta"
+
+
+msgid "Display files as short list"
+msgstr "Mostra arquivos como uma lista curta."
+
+
+msgid "Long List"
+msgstr "Lista detalhada"
+
+
+msgid "Display files as a detailed list"
+msgstr "Mostra arquivos como uma lista detalhada."
 
 
 msgid "File Browser Mode"
@@ -34934,10 +34878,6 @@ msgid "Checker Deselect"
 msgstr "De-selecionar alternadamente"
 
 
-msgid "Skip"
-msgstr "Saltar"
-
-
 msgctxt "Operator"
 msgid "Select Previous"
 msgstr "Selecionar anterior"
@@ -35647,10 +35587,6 @@ msgid "Export each non-muted NLA strip as a separated FBX's AnimStack, if any, i
 msgstr "Caso exista, exporta cada faixa de animação não linear não muda, como uma pilha separada de animação FBX , ao invés de exportar como uma animação global de cena."
 
 
-msgid "!EXPERIMENTAL! Apply Transform"
-msgstr "!EXPERIMENTAL! Aplicar transformações "
-
-
 msgid "Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender's space (WARNING! experimental option, use at own risks, known broken with armatures/animations)"
 msgstr "Gera e grava o espaço de transformação em dados de objeto, evitando rotações indesejadas nos objetos quando o espaço alvo não está alinhado com o espaço Blender (AVISO ! opção experimental, use por conta e risco pois sabe-se que pode haver defeitos com armações e / ou animações)."
 
@@ -35785,34 +35721,6 @@ msgstr "Eixo -Z"
 
 msgid "Secondary Bone Axis"
 msgstr "Eixo secundário do osso"
-
-
-msgid "Export options categories"
-msgstr "Categorias para opções de exportação"
-
-
-msgid "Main"
-msgstr "Principal"
-
-
-msgid "Main basic settings"
-msgstr "Definições básicas principais"
-
-
-msgid "Geometries"
-msgstr "Geometrias"
-
-
-msgid "Geometry-related settings"
-msgstr "Definições relacionadas a geometria."
-
-
-msgid "Armature-related settings"
-msgstr "Definições relacionadas a armações de ossos."
-
-
-msgid "Animation-related settings"
-msgstr "Definições relacionadas a animações."
 
 
 msgid "Only Deform Bones"
@@ -36096,10 +36004,6 @@ msgstr "Cria um novo diretório."
 
 msgid "Name of new directory"
 msgstr "Nome do novo diretório"
-
-
-msgid "Open"
-msgstr "Abrir"
 
 
 msgid "Open new directory"
@@ -37387,16 +37291,16 @@ msgid "Arrange selected strokes up/down in the drawing order of the active layer
 msgstr "Organiza os traços selecionados para cima ou para baixo na ordem de desenho da camada ativa."
 
 
+msgid "Bring to Front"
+msgstr "Trazer para o topo"
+
+
 msgid "Bring Forward"
 msgstr "Trazer para frente"
 
 
 msgid "Send Backward"
 msgstr "Enviar para trás"
-
-
-msgid "Bring to Front"
-msgstr "Trazer para o topo"
 
 
 msgid "Send to Back"
@@ -38373,6 +38277,18 @@ msgstr "Ignora o último osso no final de cada encadeamento (usado para marcar o
 
 msgid "Import options categories"
 msgstr "Categorias para opções de importação"
+
+
+msgid "Main"
+msgstr "Principal"
+
+
+msgid "Main basic settings"
+msgstr "Definições básicas principais"
+
+
+msgid "Armature-related settings"
+msgstr "Definições relacionadas a armações de ossos."
 
 
 msgid "Alpha Decals"
@@ -40850,6 +40766,18 @@ msgstr "Modo de seleção"
 
 msgid "Change selection mode"
 msgstr "Altera o modo de seleção"
+
+
+msgid "Vertex selection mode"
+msgstr "Modo de seleção de vértices"
+
+
+msgid "Edge selection mode"
+msgstr "Modo de seleção de arestas"
+
+
+msgid "Face selection mode"
+msgstr "Modo de seleção de face"
 
 
 msgid "Expand"
@@ -46485,11 +46413,6 @@ msgid "Module name of the add-on to expand"
 msgstr "Nome do módulo de complemento para expandir."
 
 
-msgctxt "Operator"
-msgid "Install Add-on from File..."
-msgstr "Instalar complemento a partir do arquivo..."
-
-
 msgid "Install an add-on"
 msgstr "Permite a instalação de um complemento."
 
@@ -51508,11 +51431,6 @@ msgid "Check imported mesh objects for invalid data (slow)"
 msgstr "Checa os objetos de malha importados para verificar se existem dados inválidos (pouco mais lento)."
 
 
-msgctxt "Operator"
-msgid "Append from Library"
-msgstr "Anexar a partir de uma biblioteca"
-
-
 msgid "Append from a Library .blend file"
 msgstr "Permite anexar a partir de uma biblioteca de arquivo Blender."
 
@@ -52110,11 +52028,6 @@ msgid "Library to relocate"
 msgstr "Biblioteca para realocar"
 
 
-msgctxt "Operator"
-msgid "Link from Library"
-msgstr "Vincular a partir de uma biblioteca"
-
-
 msgid "Link from a Library .blend file"
 msgstr "Permite vincular a partir de uma biblioteca de arquivo Blender."
 
@@ -52126,11 +52039,6 @@ msgstr "Estatísticas de memória"
 
 msgid "Print memory statistics to the console"
 msgstr "Imprime estatísticas de memória no console."
-
-
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "Abrir arquivo Blender"
 
 
 msgid "Open a Blender file"
@@ -52571,11 +52479,6 @@ msgstr "Reverter"
 
 msgid "Reload the saved file"
 msgstr "Recarrega o arquivo salvo."
-
-
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "Salvar como arquivo Blender"
 
 
 msgid "Save the current file in the desired location"
@@ -63773,6 +63676,30 @@ msgid "Z Mapping"
 msgstr "Mapeamento Z"
 
 
+msgid "Maximum value for clipping"
+msgstr "Valor máximo para limitação de corte."
+
+
+msgid "Minimum value for clipping"
+msgstr "Valor mínimo para limitação de corte."
+
+
+msgid "Has Maximum"
+msgstr "Possui máximo"
+
+
+msgid "Whether to use maximum clipping value"
+msgstr "Caso use o valor de corte máximo."
+
+
+msgid "Has Minimum"
+msgstr "Possui mínimo"
+
+
+msgid "Whether to use minimum clipping value"
+msgstr "Caso use o valor de corte mínimo."
+
+
 msgid "Texture Paint Slot"
 msgstr "Compartimento de pintura de textura"
 
@@ -65881,18 +65808,6 @@ msgid "UV selection and display mode"
 msgstr "Tipo de seleção UV e modo de visualização."
 
 
-msgid "Vertex selection mode"
-msgstr "Modo de seleção de vértices"
-
-
-msgid "Edge selection mode"
-msgstr "Modo de seleção de arestas"
-
-
-msgid "Face selection mode"
-msgstr "Modo de seleção de face"
-
-
 msgid "Island"
 msgstr "Ilhas"
 
@@ -66255,10 +66170,6 @@ msgstr "Desenhar costuras"
 
 msgid "Display UV unwrapping seams"
 msgstr "Mostra as costuras de desdobramento UV."
-
-
-msgid "Draw Sharp"
-msgstr "Desenhar ressaltos"
 
 
 msgid "Display sharp edges, used with the Edge Split modifier"
@@ -67369,10 +67280,6 @@ msgstr "Oclusão ambiente %s, Malha de luz %s, Sub-superfície %s, Volume %s."
 
 msgid "Cull back-faces"
 msgstr "Abate das faces posteriores"
-
-
-msgid "Deformation"
-msgstr "Deformação"
 
 
 msgid "Portal"
@@ -68950,10 +68857,6 @@ msgid "Invert"
 msgstr "Inverter"
 
 
-msgid "Not for Axis-Angle"
-msgstr "Não para a combinação eixo e ângulo"
-
-
 msgid "Old"
 msgstr "Antigo(a)"
 
@@ -69509,6 +69412,11 @@ msgstr "Deslizar"
 msgctxt "Operator"
 msgid "Cleanup"
 msgstr "Limpeza"
+
+
+msgctxt "Operator"
+msgid "Back"
+msgstr "Trás"
 
 
 msgctxt "Operator"
@@ -70388,11 +70296,6 @@ msgstr "Alinhar câmera ativa aos selecionados"
 msgctxt "Operator"
 msgid "Front"
 msgstr "Frente"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "Trás"
 
 
 msgctxt "Operator"
@@ -72791,12 +72694,12 @@ msgid "No active color to isolate"
 msgstr "Sem cores ativas para isolar."
 
 
-msgid "Cannot change to non-existent layer (index = %d)"
-msgstr "Não é possível alterar para uma camada não existente (O índice afetado é %d)"
-
-
 msgid "No Grease Pencil data"
 msgstr "Sem dados de lápis de cera"
+
+
+msgid "Cannot change to non-existent layer (index = %d)"
+msgstr "Não é possível alterar para uma camada não existente (O índice afetado é %d)"
 
 
 msgid "No strokes to paste, select and copy some points before trying again"
@@ -75193,36 +75096,8 @@ msgid "Average re-projection error: %.3f"
 msgstr "Média de erro de re-projeção %.3f"
 
 
-msgid "Parent Directory"
-msgstr "Diretório parente"
-
-
-msgid "Open Directory"
-msgstr "Abrir diretório"
-
-
-msgid "Cancel"
-msgstr "Cancelar"
-
-
 msgid "File path"
 msgstr "Caminho de arquivo"
-
-
-msgid "Decrement the filename number"
-msgstr "Decresce o número do nome do arquivo"
-
-
-msgid "Increment the filename number"
-msgstr "Aumenta o número do nome do arquivo"
-
-
-msgid "File name, overwrite existing"
-msgstr "Nome do arquivo, sobrescrever existente"
-
-
-msgid "File name"
-msgstr "Nome do arquivo"
 
 
 msgid "File does not exist"
@@ -75247,6 +75122,18 @@ msgstr "Não é possível criar nova pasta: %s"
 
 msgid "Could not delete file: %s"
 msgstr "Não é possível apagar o arquivo: %s"
+
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+
+msgid "File name, overwrite existing"
+msgstr "Nome do arquivo, sobrescrever existente"
+
+
+msgid "File name"
+msgstr "Nome do arquivo"
 
 
 msgid "Cursor from Selection"
@@ -76718,20 +76605,20 @@ msgid " along %s Z axis"
 msgstr " %s ao longo do eixo Z"
 
 
-msgid "Unsupported object type for text-space transform"
-msgstr "Tipo de objeto não suportado para transformações do espaço de textura."
-
-
-msgid "Linked data can't text-space transform"
-msgstr "Dados vinculados não podem sofrer transformações do espaço de textura."
-
-
 msgid "Cannot change Pose when 'Rest Position' is enabled"
 msgstr "Não é possível alterar a pose quando a \"Posição de descanso\" está habilitada."
 
 
 msgid "Bone selection count error"
 msgstr "Erro de contagem de seleção de ossos."
+
+
+msgid "Linked data can't text-space transform"
+msgstr "Dados vinculados não podem sofrer transformações do espaço de textura."
+
+
+msgid "Unsupported object type for text-space transform"
+msgstr "Tipo de objeto não suportado para transformações do espaço de textura."
 
 
 msgid "(Sharp)"

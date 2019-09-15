@@ -562,18 +562,19 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
             map_node.location = map_loc
             map_node.name = '3DC_' + tile
             map_node.vector_type = 'TEXTURE'
-            map_node.use_min = True
-            map_node.use_max = True
 
             tile_int_x = int(tile[3])
             tile_int_y = int(tile[2])
 
-            map_node.min[0] = tile_int_x - 1
-            map_node.max[0] = tile_int_x
+            min_node = texture_tree.nodes.new('ShaderNodeVectorMath')
+            min_node.operation = "MINIMUM"
+            min_node.inputs[1].default_value[0] = tile_int_x - 1
+            min_node.inputs[1].default_value[1] = tile_int_y
 
-            map_node.min[1] = tile_int_y
-            map_node.max[1] = tile_int_y + 1
-
+            max_node = texture_tree.nodes.new('ShaderNodeVectorMath')
+            max_node.operation = "MAXIMUM"
+            max_node.inputs[1].default_value[0] = tile_int_x
+            max_node.inputs[1].default_value[1] = tile_int_y + 1
 
             if(index == 0):
                 nodes.append(tex_img_node.name)
@@ -624,7 +625,9 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
             map_loc[1] -= 300
 
             texture_tree.links.new(tex_uv_node.outputs[0], map_node.inputs[0])
-            texture_tree.links.new(map_node.outputs[0], tex_img_node.inputs[0])
+            texture_tree.links.new(map_node.outputs[0], min_node.inputs[0])
+            texture_tree.links.new(min_node.outputs['Vector'], max_node.inputs[0])
+            texture_tree.links.new(max_node.outputs['Vector'], tex_img_node.inputs[0])
 
         if(count > 1):
             texture_tree.links.new(mix_node.outputs[0], notegroupend.inputs[0])

@@ -409,23 +409,30 @@ static void rna_construct_wrapper_function_name(
   }
 }
 
+void *rna_alloc_from_buffer(const char *buffer, int buffer_len)
+{
+  AllocDefRNA *alloc = MEM_callocN(sizeof(AllocDefRNA), "AllocDefRNA");
+  alloc->mem = MEM_mallocN(buffer_len, __func__);
+  memcpy(alloc->mem, buffer, buffer_len);
+  rna_addtail(&DefRNA.allocs, alloc);
+  return alloc->mem;
+}
+
+void *rna_calloc(int buffer_len)
+{
+  AllocDefRNA *alloc = MEM_callocN(sizeof(AllocDefRNA), "AllocDefRNA");
+  alloc->mem = MEM_callocN(buffer_len, __func__);
+  rna_addtail(&DefRNA.allocs, alloc);
+  return alloc->mem;
+}
+
 static char *rna_alloc_function_name(const char *structname,
                                      const char *propname,
                                      const char *type)
 {
-  AllocDefRNA *alloc;
   char buffer[2048];
-  char *result;
-
   rna_construct_function_name(buffer, sizeof(buffer), structname, propname, type);
-  result = MEM_callocN(sizeof(char) * strlen(buffer) + 1, "rna_alloc_function_name");
-  strcpy(result, buffer);
-
-  alloc = MEM_callocN(sizeof(AllocDefRNA), "AllocDefRNA");
-  alloc->mem = result;
-  rna_addtail(&DefRNA.allocs, alloc);
-
-  return result;
+  return rna_alloc_from_buffer(buffer, strlen(buffer) + 1);
 }
 
 static StructRNA *rna_find_struct(const char *identifier)
@@ -622,8 +629,8 @@ static char *rna_def_property_get_func(
 
       if (prop->type == PROP_FLOAT) {
         if (IS_DNATYPE_FLOAT_COMPAT(dp->dnatype) == 0) {
-          if (prop->subtype !=
-              PROP_COLOR_GAMMA) { /* colors are an exception. these get translated */
+          /* Colors are an exception. these get translated. */
+          if (prop->subtype != PROP_COLOR_GAMMA) {
             CLOG_ERROR(&LOG,
                        "%s.%s is a '%s' but wrapped as type '%s'.",
                        srna->identifier,
@@ -2531,6 +2538,12 @@ static void rna_def_struct_function_call_impl_cpp(FILE *f, StructRNA *srna, Func
                   rna_parameter_type_name(dp->prop),
                   rna_safe_id(dp->prop->identifier));
         }
+      }
+      else if (dp->prop->flag_parameter & PARM_RNAPTR) {
+        fprintf(f,
+                "(::%s *) &%s",
+                rna_parameter_type_name(dp->prop),
+                rna_safe_id(dp->prop->identifier));
       }
       else {
         fprintf(f,

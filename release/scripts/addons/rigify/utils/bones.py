@@ -198,10 +198,11 @@ def copy_bone(obj, bone_name, assign_name=''):
             and key != "rigify_parameters" \
             and key != "rigify_type":
                 prop1 = rna_idprop_ui_prop_get(pose_bone_1, key, create=False)
-                prop2 = rna_idprop_ui_prop_get(pose_bone_2, key, create=True)
                 pose_bone_2[key] = pose_bone_1[key]
-                for key in prop1.keys():
-                    prop2[key] = prop1[key]
+                if prop1 is not None:
+                    prop2 = rna_idprop_ui_prop_get(pose_bone_2, key, create=True)
+                    for key in prop1.keys():
+                        prop2[key] = prop1[key]
 
         bpy.ops.object.mode_set(mode='EDIT')
 

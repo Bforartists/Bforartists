@@ -42,6 +42,7 @@ extern "C" {
 #include "DNA_material_types.h"
 #include "DNA_text_types.h"
 
+#include "BKE_callbacks.h"
 #include "BKE_context.h"
 #include "BKE_freestyle.h"
 #include "BKE_global.h"
@@ -55,7 +56,6 @@ extern "C" {
 #include "BLI_blenlib.h"
 #include "BLI_math.h"
 #include "BLI_math_color_blend.h"
-#include "BLI_callbacks.h"
 
 #include "BPY_extern.h"
 
@@ -80,7 +80,10 @@ static AppView *view = NULL;
 static FreestyleLineSet lineset_buffer;
 static bool lineset_copied = false;
 
-static void load_post_callback(struct Main * /*main*/, struct ID * /*id*/, void * /*arg*/)
+static void load_post_callback(struct Main * /*main*/,
+                               struct PointerRNA ** /*pointers*/,
+                               const int /*num_pointers*/,
+                               void * /*arg*/)
 {
   lineset_copied = false;
 }
@@ -111,7 +114,7 @@ void FRS_initialize()
   g_freestyle.scene = NULL;
   lineset_copied = false;
 
-  BLI_callback_add(&load_post_callback_funcstore, BLI_CB_EVT_LOAD_POST);
+  BKE_callback_add(&load_post_callback_funcstore, BKE_CB_EVT_LOAD_POST);
 
   freestyle_is_initialized = 1;
 }
@@ -649,7 +652,7 @@ Render *FRS_do_stroke_rendering(Render *re, ViewLayer *view_layer, int render)
   /* Create depsgraph and evaluate scene. */
   ViewLayer *scene_view_layer = (ViewLayer *)BLI_findstring(
       &re->scene->view_layers, view_layer->name, offsetof(ViewLayer, name));
-  Depsgraph *depsgraph = DEG_graph_new(re->scene, scene_view_layer, DAG_EVAL_RENDER);
+  Depsgraph *depsgraph = DEG_graph_new(re->main, re->scene, scene_view_layer, DAG_EVAL_RENDER);
   BKE_scene_graph_update_for_newframe(depsgraph, re->main);
 
   // prepare Freestyle:

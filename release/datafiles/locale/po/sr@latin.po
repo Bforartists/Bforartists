@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -1099,6 +1099,14 @@ msgid "Bone is able to be selected"
 msgstr "Može se izabrati kost"
 
 
+msgid "Inherit Scale"
+msgstr "Nasledi uvećanje"
+
+
+msgid "Full"
+msgstr "Kompletno"
+
+
 msgid "Layers"
 msgstr "Slojevi"
 
@@ -1169,14 +1177,6 @@ msgstr "Nasledi rotaciju"
 
 msgid "Bone inherits rotation or scale from parent bone"
 msgstr "Kost nasleđuje rotaciju i uvećanje sa roditeljske kosti"
-
-
-msgid "Inherit Scale"
-msgstr "Nasledi uvećanje"
-
-
-msgid "Bone inherits scaling from parent bone"
-msgstr "Kost nasleđuje uvećanje sa roditeljske kosti"
 
 
 msgid "Local Location"
@@ -2342,6 +2342,10 @@ msgstr "Kopiraj Z"
 
 msgid "Copy Rotation Constraint"
 msgstr "Umnoži ograničenja rotacije"
+
+
+msgid "Mix Mode"
+msgstr "Režim mešanja"
 
 
 msgid "Power"
@@ -4297,22 +4301,6 @@ msgid "Large"
 msgstr "Veliko"
 
 
-msgid "Short List"
-msgstr "Kratka lista"
-
-
-msgid "Display files as short list"
-msgstr "Prikaži datoteke kao skraćenu listu"
-
-
-msgid "Long List"
-msgstr "Duga lista"
-
-
-msgid "Display files as a detailed list"
-msgstr "Prikaži datoteke kao detaljnu listu"
-
-
 msgid "Thumbnails"
 msgstr "Umanjeni prikazi"
 
@@ -4357,28 +4345,16 @@ msgid "Sort"
 msgstr "Ređanje"
 
 
-msgid "Sort alphabetically"
-msgstr "Poređaj po azbučnom redu"
-
-
 msgid "Sort the file list alphabetically"
 msgstr "Ređa listu datoteka po azbučnom redu"
 
 
-msgid "Sort by extension"
-msgstr "Poređaj po nastavku"
-
-
-msgid "Sort by time"
-msgstr "Poređaj po vremenu"
+msgid "Extension"
+msgstr "Produžetak"
 
 
 msgid "Sort files by modification time"
 msgstr "Ređa listu datoteka po vremenu izmene"
-
-
-msgid "Sort by size"
-msgstr "Poređaj po veličini"
 
 
 msgid "Sort files by size"
@@ -5470,6 +5446,10 @@ msgid "Sharper"
 msgstr "Oštrije"
 
 
+msgid "Deformation"
+msgstr "Deformacija"
+
+
 msgid "Fill Threshold"
 msgstr "Prag ispune"
 
@@ -5584,6 +5564,10 @@ msgstr "Gurkanje"
 
 msgid "Rotate"
 msgstr "Rotiranje"
+
+
+msgid "Draw Sharp"
+msgstr "Crtaj oštro"
 
 
 msgid "Secondary Color"
@@ -5964,10 +5948,6 @@ msgstr "Izvuci"
 
 msgid "Fill Mode"
 msgstr "Popuni rupe"
-
-
-msgid "Full"
-msgstr "Kompletno"
 
 
 msgid "Half"
@@ -8508,10 +8488,6 @@ msgid "Minimum Y value to crop the image"
 msgstr "Postavlja minimalnu X vrednost renderovanog okvira"
 
 
-msgid "Extension"
-msgstr "Produžetak"
-
-
 msgid "How the image is extrapolated past its original bounds"
 msgstr "Kako se slika produžuje van svojih originalnih granica"
 
@@ -10421,10 +10397,6 @@ msgstr "Svi slojevi"
 
 msgid "Mix Factor"
 msgstr "Faktor mešanja"
-
-
-msgid "Mix Mode"
-msgstr "Režim mešanja"
 
 
 msgid "Nearest vertex"
@@ -12494,14 +12466,6 @@ msgid "Light Path"
 msgstr "Putanja svetlosti"
 
 
-msgid "Has Maximum"
-msgstr "Ima maksimum"
-
-
-msgid "Has Minimum"
-msgstr "Ima minimum"
-
-
 msgid "MixRGB"
 msgstr "RGB mešanje"
 
@@ -13720,8 +13684,28 @@ msgid "Accept"
 msgstr "Prihvati"
 
 
+msgid "Open"
+msgstr "Otvori"
+
+
 msgid "Automatically determine display type for files"
 msgstr "Samostalno izaberi vrstu ubrzanja"
+
+
+msgid "Short List"
+msgstr "Kratka lista"
+
+
+msgid "Display files as short list"
+msgstr "Prikaži datoteke kao skraćenu listu"
+
+
+msgid "Long List"
+msgstr "Duga lista"
+
+
+msgid "Display files as a detailed list"
+msgstr "Prikaži datoteke kao detaljnu listu"
 
 
 msgid "Filter .blend files"
@@ -15232,10 +15216,6 @@ msgstr "Pravi novi direktorijum"
 
 msgid "Name of new directory"
 msgstr "Naziv novog direktorijuma"
-
-
-msgid "Open"
-msgstr "Otvori"
 
 
 msgid "Open new directory"
@@ -17316,6 +17296,18 @@ msgstr "Mod izabora"
 
 msgid "Change selection mode"
 msgstr "Promeni mod izbora"
+
+
+msgid "Vertex selection mode"
+msgstr "Mod izbora temena"
+
+
+msgid "Edge selection mode"
+msgstr "Mod izbora ivica"
+
+
+msgid "Face selection mode"
+msgstr "Mod izbora stranica"
 
 
 msgid "Expand"
@@ -22177,11 +22169,6 @@ msgid "Reload the saved file"
 msgstr "Ponovo učitaj sačuvanu datoteku"
 
 
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "Sačuvaj Blender datoteku"
-
-
 msgid "Write compressed .blend file"
 msgstr "Upiši u kompresovanu .blend datoteku"
 
@@ -25917,6 +25904,14 @@ msgid "Z Mapping"
 msgstr "Z mapiranje"
 
 
+msgid "Has Maximum"
+msgstr "Ima maksimum"
+
+
+msgid "Has Minimum"
+msgstr "Ima minimum"
+
+
 msgid "Text Box"
 msgstr "Blok tekta"
 
@@ -26749,18 +26744,6 @@ msgid "UV selection and display mode"
 msgstr "UV izbor i način prikaza"
 
 
-msgid "Vertex selection mode"
-msgstr "Mod izbora temena"
-
-
-msgid "Edge selection mode"
-msgstr "Mod izbora ivica"
-
-
-msgid "Face selection mode"
-msgstr "Mod izbora stranica"
-
-
 msgid "Island"
 msgstr "Ostrvo"
 
@@ -26903,10 +26886,6 @@ msgstr "Prikaži normale 3D krive u režimu izmene"
 
 msgid "Draw Bevel Weights"
 msgstr "Prikaži težinu iskošavanja"
-
-
-msgid "Draw Sharp"
-msgstr "Crtaj oštro"
 
 
 msgid "Draw Edges"
@@ -27281,10 +27260,6 @@ msgstr "Delova X"
 
 msgid "No output node"
 msgstr "Bez izlaznog čvora"
-
-
-msgid "Deformation"
-msgstr "Deformacija"
 
 
 msgid "Curve subdivisions"
@@ -28459,6 +28434,11 @@ msgstr "Klizaj"
 
 
 msgctxt "Operator"
+msgid "Back"
+msgstr "Od pozadi"
+
+
+msgctxt "Operator"
 msgid "Less"
 msgstr "Manje"
 
@@ -28950,11 +28930,6 @@ msgstr "Poravnaj aktivnu kameru sa izborom"
 msgctxt "Operator"
 msgid "Front"
 msgstr "Spreda"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "Od pozadi"
 
 
 msgctxt "Operator"
@@ -30712,28 +30687,8 @@ msgid "Cannot read '%s': %s"
 msgstr "Ne mogu da pročitam '%s': %s"
 
 
-msgid "Cancel"
-msgstr "Odustani"
-
-
 msgid "File path"
 msgstr "Putanja datoteke"
-
-
-msgid "Decrement the filename number"
-msgstr "Umanji broj naziva datoteke"
-
-
-msgid "Increment the filename number"
-msgstr "Uvećaj broj naziva datoteke"
-
-
-msgid "File name, overwrite existing"
-msgstr "Ime datoteke, prepiši postojeće"
-
-
-msgid "File name"
-msgstr "Naziv datoteke"
 
 
 msgid "No parent directory given"
@@ -30742,6 +30697,18 @@ msgstr "Idi na prethodni katalog (PKEY)"
 
 msgid "Could not create new folder name"
 msgstr "Ne mogu da napravim ime novog direktorijuma"
+
+
+msgid "Cancel"
+msgstr "Odustani"
+
+
+msgid "File name, overwrite existing"
+msgstr "Ime datoteke, prepiši postojeće"
+
+
+msgid "File name"
+msgstr "Naziv datoteke"
 
 
 msgid "Cursor from Selection"
