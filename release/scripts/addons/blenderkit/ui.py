@@ -1229,9 +1229,9 @@ class AssetBarOperator(bpy.types.Operator):
 
         update_ui_size(self.area, self.region)
 
-        search.timer_update()
-        download.timer_update()
-        bg_blender.bg_update()
+        # search.timer_update()
+        # download.timer_update()
+        # bg_blender.bg_update()
 
         if context.region != self.region:
             print(time.time(), 'pass trough because of region')

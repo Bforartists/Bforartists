@@ -153,7 +153,7 @@ def update_mirror(self, context):
 
 def update_orientation(self, context):
     try:
-        node_map.rotation[2] = self.orientation
+        node_map.inputs['Rotation'].default_value[2] = self.orientation
         #node_map.rotation[2] = (self.orientation * 0.0174533)
     except:
         pass
@@ -388,7 +388,7 @@ def setup(img_path):
     node_blur_noise = nodes.new('ShaderNodeTexNoise')
     node_blur_noise.location = 0, 800
     node_blur_noise.name = "BLUR_NOISE"
-    node_blur_noise.inputs[1].default_value = 10000
+    node_blur_noise.inputs['Scale'].default_value = 10000
 
     node_blur_mix_1 = nodes.new('ShaderNodeMixRGB')
     node_blur_mix_1.location = 200, 800
@@ -435,7 +435,7 @@ def setup(img_path):
     link15 = links.new(node_reflexion.outputs[0], node_ref_mix.inputs[2])
     link16 = links.new(node_ref_mix.outputs[0], node_out.inputs[0])
     # blur group links
-    link17 = links.new(node_blur_noise.outputs[0], node_blur_mix_1.inputs[2])
+    link17 = links.new(node_blur_noise.outputs['Color'], node_blur_mix_1.inputs[2])
     link18 = links.new(node_blur_mix_1.outputs[0], node_blur_math_add.inputs[1])
     link19 = links.new(node_blur_math_add.outputs[0], node_blur_math_sub.inputs[0])
     link20 = links.new(node_blur_mix_2.outputs[0], node_blur_math_sub.inputs[1])

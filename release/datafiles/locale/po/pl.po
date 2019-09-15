@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -1694,6 +1694,10 @@ msgid "Bone is able to be selected"
 msgstr "Kość może zostać zaznaczona"
 
 
+msgid "Inherit Scale"
+msgstr "Dziedzicz skalę"
+
+
 msgid "Layers"
 msgstr "Warstwy"
 
@@ -1800,14 +1804,6 @@ msgstr "Dziedzicz rotację"
 
 msgid "Bone inherits rotation or scale from parent bone"
 msgstr "Kość dziedziczy rotację lub skalę z kości nadrzędnej"
-
-
-msgid "Inherit Scale"
-msgstr "Dziedzicz skalę"
-
-
-msgid "Bone inherits scaling from parent bone"
-msgstr "Kość dziedziczy skalę z kości nadrzędnej"
 
 
 msgid "Local Location"
@@ -3545,10 +3541,6 @@ msgstr "Odwróć rotację na osi Y"
 
 msgid "Invert the Z rotation"
 msgstr "Odwróć rotację na osi Z"
-
-
-msgid "Add original rotation into copied rotation"
-msgstr "Dodaj oryginalną rotację do skopiowanej rotacji"
 
 
 msgid "Copy the target's X rotation"
@@ -6678,6 +6670,10 @@ msgid "(undocumented operator)"
 msgstr "(operator bez dokumentacji)"
 
 
+msgid "Open"
+msgstr "Otwórz"
+
+
 msgid "History"
 msgstr "Historia"
 
@@ -6701,10 +6697,6 @@ msgstr "Lampa"
 
 msgid "Z Axis"
 msgstr "Oś Z"
-
-
-msgid "Open"
-msgstr "Otwórz"
 
 
 msgid "Limit"
@@ -10137,28 +10129,8 @@ msgid "Average re-projection error: %.3f"
 msgstr "Średni błąd reprojekcji: %.3f"
 
 
-msgid "Cancel"
-msgstr "Rezygnuj"
-
-
 msgid "File path"
 msgstr "Ścieżka pliku"
-
-
-msgid "Decrement the filename number"
-msgstr "Zmniejsz numer w nazwie pliku"
-
-
-msgid "Increment the filename number"
-msgstr "Zwiększ numer w nazwie pliku"
-
-
-msgid "File name, overwrite existing"
-msgstr "Nazwa pliku, nadpisz istniejący"
-
-
-msgid "File name"
-msgstr "Nazwa pliku"
 
 
 msgid "No parent directory given"
@@ -10167,6 +10139,18 @@ msgstr "Nie podano nadrzędnego katalogu"
 
 msgid "Could not create new folder name"
 msgstr "Nie można było utworzyć nowej nazwy folderu"
+
+
+msgid "Cancel"
+msgstr "Rezygnuj"
+
+
+msgid "File name, overwrite existing"
+msgstr "Nazwa pliku, nadpisz istniejący"
+
+
+msgid "File name"
+msgstr "Nazwa pliku"
 
 
 msgid "Cursor from Selection"
@@ -11447,20 +11431,20 @@ msgid " along %s Z axis"
 msgstr " wzdłuż osi Z - %s"
 
 
-msgid "Unsupported object type for text-space transform"
-msgstr "Nieobsługiwany format dla transformacji text-space"
-
-
-msgid "Linked data can't text-space transform"
-msgstr "Zlinkowane dane nie pozwalają na transformację text-space"
-
-
 msgid "Cannot change Pose when 'Rest Position' is enabled"
 msgstr "Nie można zmienić pozy gdy 'Pozycja Spoczynku' jest aktywna"
 
 
 msgid "Bone selection count error"
 msgstr "Błąd ilości kości w selekcji"
+
+
+msgid "Linked data can't text-space transform"
+msgstr "Zlinkowane dane nie pozwalają na transformację text-space"
+
+
+msgid "Unsupported object type for text-space transform"
+msgstr "Nieobsługiwany format dla transformacji text-space"
 
 
 msgid "(Sharp)"

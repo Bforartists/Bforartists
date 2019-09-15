@@ -30,6 +30,7 @@
 #include "DNA_world_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_texture_types.h"
+#include "DNA_defaults.h"
 
 #include "BLI_utildefines.h"
 #include "BLI_listbase.h"
@@ -71,16 +72,7 @@ void BKE_world_init(World *wrld)
 {
   BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(wrld, id));
 
-  wrld->horr = 0.05f;
-  wrld->horg = 0.05f;
-  wrld->horb = 0.05f;
-
-  wrld->aodist = 10.0f;
-  wrld->aoenergy = 1.0f;
-
-  wrld->preview = NULL;
-  wrld->miststa = 5.0f;
-  wrld->mistdist = 25.0f;
+  MEMCPY_STRUCT_AFTER(wrld, DNA_struct_default_get(World), id);
 }
 
 World *BKE_world_add(Main *bmain, const char *name)
@@ -106,10 +98,8 @@ World *BKE_world_add(Main *bmain, const char *name)
  */
 void BKE_world_copy_data(Main *bmain, World *wrld_dst, const World *wrld_src, const int flag)
 {
-  /* We never handle usercount here for own data. */
-  const int flag_subdata = flag | LIB_ID_CREATE_NO_USER_REFCOUNT;
   /* We always need allocation of our private ID data. */
-  const int flag_private_id_data = flag_subdata & ~LIB_ID_CREATE_NO_ALLOCATE;
+  const int flag_private_id_data = flag & ~LIB_ID_CREATE_NO_ALLOCATE;
 
   if (wrld_src->nodetree) {
     BKE_id_copy_ex(

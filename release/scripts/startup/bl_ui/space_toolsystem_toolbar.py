@@ -493,7 +493,7 @@ class _defs_edit_mesh:
 
     @ToolDef.from_fn
     def poly_build():
-        def draw_settings(context, layout, tool):
+        def draw_settings(_context, layout, tool):
             props = tool.operator_properties("mesh.polybuild_face_at_cursor_move")
             props_macro = props.MESH_OT_polybuild_face_at_cursor
             layout.prop(props_macro, "create_quads")
@@ -994,6 +994,23 @@ class _defs_sculpt:
             icon="ops.sculpt.lasso_mask",
             widget=None,
             keymap=(),
+        )
+
+    @ToolDef.from_fn
+    def mesh_filter():
+        def draw_settings(_context, layout, tool):
+            props = tool.operator_properties("sculpt.mesh_filter")
+            layout.prop(props, "type", expand=False)
+            layout.prop(props, "strength")
+            layout.prop(props, "deform_axis")
+
+        return dict(
+            idname="builtin.mesh_filter",
+            label="Mesh Filter",
+            icon="ops.sculpt.mesh_filter",
+            widget=None,
+            keymap=(),
+            draw_settings=draw_settings,
         )
 
 
@@ -1977,6 +1994,13 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
                 _defs_sculpt.mask_lasso,
             ),
             _defs_sculpt.hide_border,
+            None,
+            _defs_sculpt.mesh_filter,
+            None,
+            _defs_transform.translate,
+            _defs_transform.rotate,
+            _defs_transform.scale,
+            _defs_transform.transform,
             None,
             *_tools_annotate,
         ],

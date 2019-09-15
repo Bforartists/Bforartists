@@ -3029,7 +3029,7 @@ static void gpencil_flip_stroke(bGPDstroke *gps)
 static void gpencil_stroke_copy_point(bGPDstroke *gps,
                                       bGPDspoint *point,
                                       int idx,
-                                      float delta[3],
+                                      const float delta[3],
                                       float pressure,
                                       float strength,
                                       float deltatime)
@@ -4497,6 +4497,10 @@ static int gpencil_cutter_lasso_select(bContext *C,
   /* dissolve selected points */
   bGPDstroke *gpsn;
   for (bGPDlayer *gpl = gpd->layers.first; gpl; gpl = gpl->next) {
+    if (gpl->flag & GP_LAYER_LOCKED) {
+      continue;
+    }
+
     bGPDframe *gpf = gpl->actframe;
     if (gpf == NULL) {
       continue;

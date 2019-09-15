@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -698,6 +698,10 @@ msgid "Bone is able to be selected"
 msgstr "Guardar com"
 
 
+msgid "Inherit Scale"
+msgstr "Desparentar"
+
+
 msgid "Layers bone exists in"
 msgstr "Duplicar"
 
@@ -736,10 +740,6 @@ msgstr "Amagar Seleccionats"
 
 msgid "Inherit Rotation"
 msgstr "Esborrar Rotació"
-
-
-msgid "Inherit Scale"
-msgstr "Desparentar"
 
 
 msgid "Local Location"
@@ -1657,6 +1657,10 @@ msgstr "Esborrar Rotació"
 
 msgid "Invert the Z rotation"
 msgstr "Esborrar Rotació"
+
+
+msgid "Mix Mode"
+msgstr "Mode d'Edició"
 
 
 msgid "Copy the target's X rotation"
@@ -3416,6 +3420,10 @@ msgid "Shading"
 msgstr "Esborrar Rotació"
 
 
+msgid "Extension"
+msgstr "Seleccionar connectats"
+
+
 msgid "Filter BlenderBackup files"
 msgstr "Render"
 
@@ -4388,6 +4396,10 @@ msgid "Rotate"
 msgstr "Rotar"
 
 
+msgid "Draw Sharp"
+msgstr "Desparentar"
+
+
 msgid "Smooth Stroke Factor"
 msgstr "Reduir"
 
@@ -5160,16 +5172,8 @@ msgid "Shadow Buffer Bias"
 msgstr "Buffer Z"
 
 
-msgid "Shadow Buffer Bleed Bias"
-msgstr "Buffer Z"
-
-
 msgid "Shadow Buffer Size"
 msgstr "Seleccionar fila"
-
-
-msgid "Shadow Buffer Soft"
-msgstr "Joc"
 
 
 msgid "Shadow Color"
@@ -6846,10 +6850,6 @@ msgid "Crop Minimum Y"
 msgstr "Esborrar Rotació"
 
 
-msgid "Extension"
-msgstr "Seleccionar connectats"
-
-
 msgid "Clip Cube"
 msgstr "Començar Joc"
 
@@ -8262,10 +8262,6 @@ msgstr "Moure a Capa"
 
 msgid "Mix Factor"
 msgstr "Reduir"
-
-
-msgid "Mix Mode"
-msgstr "Mode d'Edició"
 
 
 msgid "Nearest vertex"
@@ -12029,6 +12025,10 @@ msgid "Accept"
 msgstr "Afegir"
 
 
+msgid "Open"
+msgstr "Obrir"
+
+
 msgctxt "Operator"
 msgid "Add Camera Preset"
 msgstr "Render"
@@ -13519,10 +13519,6 @@ msgstr "Esborrar Rotació"
 
 msgid "Name of new directory"
 msgstr "Image Displist"
-
-
-msgid "Open"
-msgstr "Obrir"
 
 
 msgctxt "Operator"
@@ -15506,6 +15502,18 @@ msgstr "Seleccionar fila"
 
 msgid "Change selection mode"
 msgstr "Seleccionar amb límit"
+
+
+msgid "Vertex selection mode"
+msgstr "Amagar Seleccionats"
+
+
+msgid "Edge selection mode"
+msgstr "Seleccionar amb límit"
+
+
+msgid "Face selection mode"
+msgstr "Seleccionar connectats"
 
 
 msgid "Expand"
@@ -20573,11 +20581,6 @@ msgid "Add Keyconfig Preset"
 msgstr "Finestra de Render"
 
 
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "Render"
-
-
 msgid "Load UI"
 msgstr "Carregar la interfície d'usuari"
 
@@ -20749,11 +20752,6 @@ msgstr "Finestra de Render"
 
 msgid "Undo/Redo"
 msgstr "Desfer/Recarregar"
-
-
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "Fixar Límits"
 
 
 msgid "Save Copy"
@@ -25533,18 +25531,6 @@ msgid "UV selection and display mode"
 msgstr "Seleccionar connectats"
 
 
-msgid "Vertex selection mode"
-msgstr "Amagar Seleccionats"
-
-
-msgid "Edge selection mode"
-msgstr "Seleccionar amb límit"
-
-
-msgid "Face selection mode"
-msgstr "Seleccionar connectats"
-
-
 msgid "Island"
 msgstr "Guardar imatge"
 
@@ -25691,10 +25677,6 @@ msgstr "Arxiu"
 
 msgid "Display UV unwrapping seams"
 msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Draw Sharp"
-msgstr "Desparentar"
 
 
 msgid "Draw Edges"
@@ -26378,10 +26360,6 @@ msgid "Invert"
 msgstr "Esborrar"
 
 
-msgid "Not for Axis-Angle"
-msgstr "Mode d'Edició"
-
-
 msgid "Buffer"
 msgstr "Buffer Z"
 
@@ -26651,6 +26629,11 @@ msgstr "Menú Esborrar"
 msgctxt "Operator"
 msgid "Slide"
 msgstr "Costat"
+
+
+msgctxt "Operator"
+msgid "Back"
+msgstr "Negre"
 
 
 msgctxt "Operator"
@@ -27032,11 +27015,6 @@ msgstr "Amagar Seleccionats"
 msgctxt "Operator"
 msgid "Front"
 msgstr "Frontal"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "Negre"
 
 
 msgctxt "Operator"
@@ -28432,16 +28410,16 @@ msgid "File path"
 msgstr "Arxiu"
 
 
-msgid "File name"
-msgstr "Arxiu"
-
-
 msgid "No parent directory given"
 msgstr "Image Displist"
 
 
 msgid "Could not create new folder name"
 msgstr "Esborrar Rotació"
+
+
+msgid "File name"
+msgstr "Arxiu"
 
 
 msgid "Cursor from Selection"

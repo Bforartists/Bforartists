@@ -48,7 +48,7 @@
 		"label": "Noise source",
 		"type": "ShaderNodeTexNoise",
 		"location": [-600, -150],
-		"inputs[1].default_value": "1000.0"
+		"inputs['Scale'].default_value": "1000.0"
 	}
 
 	]

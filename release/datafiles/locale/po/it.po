@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: blend-it <https://developer.blender.org/T42765>\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -2314,6 +2314,14 @@ msgid "Bone is able to be selected"
 msgstr "L'osso può essere selezionato"
 
 
+msgid "Inherit Scale"
+msgstr "Eredita Scala"
+
+
+msgid "Full"
+msgstr "Completo"
+
+
 msgid "Layers"
 msgstr "Livelli"
 
@@ -2424,14 +2432,6 @@ msgstr "Eredita Rotazione"
 
 msgid "Bone inherits rotation or scale from parent bone"
 msgstr "L'osso eredita la rotazione o la scala dall' osso genitore"
-
-
-msgid "Inherit Scale"
-msgstr "Eredita Scala"
-
-
-msgid "Bone inherits scaling from parent bone"
-msgstr "L'osso eredita la scala dall' osso genitore"
 
 
 msgid "Local Location"
@@ -4403,8 +4403,8 @@ msgid "Invert the Z rotation"
 msgstr "Inverti la rotazione Z"
 
 
-msgid "Add original rotation into copied rotation"
-msgstr "Aggiunge la rotazione originaria a quella copiata"
+msgid "Mix Mode"
+msgstr "Modalità Miscela"
 
 
 msgid "Copy the target's X rotation"
@@ -8407,22 +8407,6 @@ msgid "Display mode for the file list"
 msgstr "Modalità di visualizzazione della lista dei file"
 
 
-msgid "Short List"
-msgstr "Lista Breve"
-
-
-msgid "Display files as short list"
-msgstr "Mostra i file come lista breve"
-
-
-msgid "Long List"
-msgstr "Lista lunga"
-
-
-msgid "Display files as a detailed list"
-msgstr "Mostra i file come lista dettagliata"
-
-
 msgid "Thumbnails"
 msgstr "Anteprime"
 
@@ -8675,32 +8659,20 @@ msgid "Sort"
 msgstr "Ordina"
 
 
-msgid "Sort alphabetically"
-msgstr "Ordina alfabeticamente"
-
-
 msgid "Sort the file list alphabetically"
 msgstr "Ordina i file alfabeticamente"
 
 
-msgid "Sort by extension"
-msgstr "Ordina per estensione"
+msgid "Extension"
+msgstr "Estensione"
 
 
 msgid "Sort the file list by extension/type"
 msgstr "Ordina i file per estensione/tipo"
 
 
-msgid "Sort by time"
-msgstr "Ordina per orario"
-
-
 msgid "Sort files by modification time"
 msgstr "Ordina i file per orario di modifica"
-
-
-msgid "Sort by size"
-msgstr "Ordina per dimensione"
 
 
 msgid "Sort files by size"
@@ -10894,6 +10866,10 @@ msgid "Sharper"
 msgstr "Più Nitido"
 
 
+msgid "Deformation"
+msgstr "Deformazione"
+
+
 msgid "Falloff Angle"
 msgstr "Angolo Decadimento"
 
@@ -11056,6 +11032,10 @@ msgstr "Deforma"
 
 msgid "Rotate"
 msgstr "Ruota"
+
+
+msgid "Draw Sharp"
+msgstr "Disegna Netti"
 
 
 msgid "Secondary Color"
@@ -11648,10 +11628,6 @@ msgstr "Modalità Riempimento"
 
 msgid "Mode of filling curve"
 msgstr "Modalità di riempimento della curva"
-
-
-msgid "Full"
-msgstr "Completo"
 
 
 msgid "Half"
@@ -12858,24 +12834,12 @@ msgid "Shadow Buffer Bias"
 msgstr "Influenza Buffer Ombra"
 
 
-msgid "Shadow Buffer Bleed Bias"
-msgstr "Influenza Scolorimento Buffer Ombra"
-
-
-msgid "Shadow Buffer Clip End"
-msgstr "Taglio Finale Buffer Ombra"
-
-
 msgid "Shadow Buffer Clip Start"
 msgstr "Taglio Iniziale Buffer Ombra"
 
 
 msgid "Shadow Buffer Size"
 msgstr "Dimensione Buffer Ombra"
-
-
-msgid "Shadow Buffer Soft"
-msgstr "Buffer Sfumatura Ombra"
 
 
 msgid "Shadow Color"
@@ -15790,10 +15754,6 @@ msgstr "Taglio Y Minimo"
 
 msgid "Minimum Y value to crop the image"
 msgstr "Valore minimo della Y per tagliare l'immagine"
-
-
-msgid "Extension"
-msgstr "Estensione"
 
 
 msgid "How the image is extrapolated past its original bounds"
@@ -20518,10 +20478,6 @@ msgid "Mix Factor"
 msgstr "Fattore Miscela"
 
 
-msgid "Mix Mode"
-msgstr "Modalità Miscela"
-
-
 msgid "How to affect destination elements with source values"
 msgstr "Come vengono influenzati gli elementi di destinazione con i valori sorgente"
 
@@ -25079,28 +25035,12 @@ msgid "Light Path"
 msgstr "Percorso Luce"
 
 
-msgid "Has Maximum"
-msgstr "Ha Massimo"
-
-
-msgid "Has Minimum"
-msgstr "Ha Minimo"
-
-
 msgid "Type of vector that the mapping transforms"
 msgstr "Tipo di vettore che la mappatura trasforma"
 
 
 msgid "Transform a point"
 msgstr "Trasforma un punto"
-
-
-msgid "Transform a direction vector"
-msgstr "Trasforma un vettore direzione"
-
-
-msgid "Transform a normal vector with unit length"
-msgstr "Trasforma un vettore normale con unità di lunghezza"
 
 
 msgid "MixRGB"
@@ -25533,6 +25473,14 @@ msgstr "Converti A"
 
 msgid "Space to convert to"
 msgstr "Spazio a cui convertire"
+
+
+msgid "Transform a direction vector"
+msgstr "Trasforma un vettore direzione"
+
+
+msgid "Transform a normal vector with unit length"
+msgstr "Trasforma un vettore normale con unità di lunghezza"
 
 
 msgid "Volume Absorption"
@@ -27577,12 +27525,32 @@ msgid "Open a directory browser, Hold Shift to open the file, Alt to browse cont
 msgstr "Apre il gestore delle cartelle, Premere Shift per aprire il file, Alt per sfogliare il contenuto della directory"
 
 
+msgid "Open"
+msgstr "Apri"
+
+
 msgid "Directory of the file"
 msgstr "Cartella del file"
 
 
 msgid "Automatically determine display type for files"
 msgstr "Unisce automaticamente i fotogrammi chiave vicini"
+
+
+msgid "Short List"
+msgstr "Lista Breve"
+
+
+msgid "Display files as short list"
+msgstr "Mostra i file come lista breve"
+
+
+msgid "Long List"
+msgstr "Lista lunga"
+
+
+msgid "Display files as a detailed list"
+msgstr "Mostra i file come lista dettagliata"
 
 
 msgid "File Browser Mode"
@@ -29148,10 +29116,6 @@ msgid "Checker Deselect"
 msgstr "Deseleziona a Scacchiera"
 
 
-msgid "Skip"
-msgstr "Salta"
-
-
 msgctxt "Operator"
 msgid "Select Previous"
 msgstr "Seleziona Precedente"
@@ -29737,10 +29701,6 @@ msgid "All Actions"
 msgstr "Tutte le Azioni"
 
 
-msgid "!EXPERIMENTAL! Apply Transform"
-msgstr "SPERIMENTALE! Applica Trasformazione"
-
-
 msgid "Active scene to file"
 msgstr "Scena attiva nel file"
 
@@ -29843,22 +29803,6 @@ msgstr "Asse -Z"
 
 msgid "Secondary Bone Axis"
 msgstr "Asse Secondario Osso"
-
-
-msgid "Main"
-msgstr "Principale"
-
-
-msgid "Main basic settings"
-msgstr "Impostazioni principali di base"
-
-
-msgid "Geometries"
-msgstr "Geometrie"
-
-
-msgid "Armature-related settings"
-msgstr "Impostazioni dell'Armatura"
 
 
 msgid "Only Deform Bones"
@@ -30094,10 +30038,6 @@ msgstr "Crea una nuova cartella"
 
 msgid "Name of new directory"
 msgstr "Nome della nuova cartella"
-
-
-msgid "Open"
-msgstr "Apri"
 
 
 msgid "Open new directory"
@@ -31187,16 +31127,16 @@ msgid "Arrange selected strokes up/down in the drawing order of the active layer
 msgstr "Dispone i tratti selezionati su/giù nell'ordine di disegno del livello attivo"
 
 
+msgid "Bring to Front"
+msgstr "Porta in Primo Piano"
+
+
 msgid "Bring Forward"
 msgstr "Porta Avanti"
 
 
 msgid "Send Backward"
 msgstr "Porta Indietro"
-
-
-msgid "Bring to Front"
-msgstr "Porta in Primo Piano"
 
 
 msgid "Send to Back"
@@ -32028,6 +31968,18 @@ msgstr "Orientamento Automatico Ossa"
 
 msgid "Import options categories"
 msgstr "Categorie opzioni di importazione"
+
+
+msgid "Main"
+msgstr "Principale"
+
+
+msgid "Main basic settings"
+msgstr "Impostazioni principali di base"
+
+
+msgid "Armature-related settings"
+msgstr "Impostazioni dell'Armatura"
 
 
 msgid "Import Animation"
@@ -34185,6 +34137,18 @@ msgstr "Modo Selezione"
 
 msgid "Change selection mode"
 msgstr "Cambia modalità di selezione"
+
+
+msgid "Vertex selection mode"
+msgstr "Modalità Selezione Vertici"
+
+
+msgid "Edge selection mode"
+msgstr "Modalità selezione spigoli"
+
+
+msgid "Face selection mode"
+msgstr "Modalità Selezione Facce"
 
 
 msgid "Expand"
@@ -39284,11 +39248,6 @@ msgid "Module name of the add-on to expand"
 msgstr "Nome del modulo dell'add-on da espandere"
 
 
-msgctxt "Operator"
-msgid "Install Add-on from File..."
-msgstr "Installa Add-on da File..."
-
-
 msgid "Install an add-on"
 msgstr "Installa un add-on"
 
@@ -43643,11 +43602,6 @@ msgid "Check imported mesh objects for invalid data (slow)"
 msgstr "Controlla gli oggetti mesh importati alla ricerca di dati non validi (lento)"
 
 
-msgctxt "Operator"
-msgid "Append from Library"
-msgstr "Incorpora da Libreria"
-
-
 msgid "Append from a Library .blend file"
 msgstr "Incorpora (appendi) da un file Libreria .blend"
 
@@ -44014,11 +43968,6 @@ msgid "Library to relocate"
 msgstr "Libreria da rilocare"
 
 
-msgctxt "Operator"
-msgid "Link from Library"
-msgstr "Collega da Libreria"
-
-
 msgid "Link from a Library .blend file"
 msgstr "Collega da un file Libreria .blend"
 
@@ -44030,11 +43979,6 @@ msgstr "Statistiche Memoria"
 
 msgid "Print memory statistics to the console"
 msgstr "Stampa la statistica della memoria nella console"
-
-
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "Apri File Blender"
 
 
 msgid "Open a Blender file"
@@ -44370,11 +44314,6 @@ msgstr "Ricarica"
 
 msgid "Reload the saved file"
 msgstr "Ricarica il file come salvato"
-
-
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "Salva Come File Blender"
 
 
 msgid "Save the current file in the desired location"
@@ -53152,6 +53091,14 @@ msgid "Z Mapping"
 msgstr "Mappatura Z"
 
 
+msgid "Has Maximum"
+msgstr "Ha Massimo"
+
+
+msgid "Has Minimum"
+msgstr "Ha Minimo"
+
+
 msgid "Texture Paint Slot"
 msgstr "Slot Pittura Texture"
 
@@ -54848,18 +54795,6 @@ msgid "UV selection and display mode"
 msgstr "Modalità seleziona e mostra UV"
 
 
-msgid "Vertex selection mode"
-msgstr "Modalità Selezione Vertici"
-
-
-msgid "Edge selection mode"
-msgstr "Modalità selezione spigoli"
-
-
-msgid "Face selection mode"
-msgstr "Modalità Selezione Facce"
-
-
 msgid "Island"
 msgstr "Isola"
 
@@ -55142,10 +55077,6 @@ msgstr "Disegna Cuciture"
 
 msgid "Display UV unwrapping seams"
 msgstr "Mostra le cuciture di apertura (sviluppo) dell'UV"
-
-
-msgid "Draw Sharp"
-msgstr "Disegna Netti"
 
 
 msgid "Display sharp edges, used with the Edge Split modifier"
@@ -56124,10 +56055,6 @@ msgstr "%s OA, %s Luce Mesh, %s Subsuperficiale, %s Volume"
 
 msgid "Cull back-faces"
 msgstr "Scarta le facce posteriori"
-
-
-msgid "Deformation"
-msgstr "Deformazione"
 
 
 msgid "Portal"
@@ -57636,10 +57563,6 @@ msgid "Invert"
 msgstr "Inverti"
 
 
-msgid "Not for Axis-Angle"
-msgstr "Non per Angolo-Assi"
-
-
 msgid "Old"
 msgstr "Vecchio"
 
@@ -58183,6 +58106,11 @@ msgstr "Scorri"
 msgctxt "Operator"
 msgid "Cleanup"
 msgstr "Ripulisci"
+
+
+msgctxt "Operator"
+msgid "Back"
+msgstr "Posteriore"
 
 
 msgctxt "Operator"
@@ -59057,11 +58985,6 @@ msgstr "Allinea Camera Attiva al Selezionato"
 msgctxt "Operator"
 msgid "Front"
 msgstr "Fronte"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "Posteriore"
 
 
 msgctxt "Operator"
@@ -60933,12 +60856,12 @@ msgid "No active color to isolate"
 msgstr "Nessun colore attivo da isolare"
 
 
-msgid "Cannot change to non-existent layer (index = %d)"
-msgstr "Impossibile cambiare ad un livello inesistente (indice = %d)"
-
-
 msgid "No Grease Pencil data"
 msgstr "Nessun dato Matita"
+
+
+msgid "Cannot change to non-existent layer (index = %d)"
+msgstr "Impossibile cambiare ad un livello inesistente (indice = %d)"
 
 
 msgid "No strokes to paste, select and copy some points before trying again"
@@ -62699,36 +62622,8 @@ msgid "Average re-projection error: %.3f"
 msgstr "Errore medio di riproiezione: %.3f"
 
 
-msgid "Parent Directory"
-msgstr "Cartella Superiore"
-
-
-msgid "Open Directory"
-msgstr "Apri Cartella"
-
-
-msgid "Cancel"
-msgstr "Annulla"
-
-
 msgid "File path"
 msgstr "Percorso file"
-
-
-msgid "Decrement the filename number"
-msgstr "Diminuisce il numero del nome del file"
-
-
-msgid "Increment the filename number"
-msgstr "Aumenta il numero del nome del file"
-
-
-msgid "File name, overwrite existing"
-msgstr "Nome del file, sovrascrive l'esistente"
-
-
-msgid "File name"
-msgstr "Nome file"
 
 
 msgid "File does not exist"
@@ -62753,6 +62648,18 @@ msgstr "Impossibile creare la nuova cartella: %s"
 
 msgid "Could not delete file: %s"
 msgstr "Impossibile cancellare il file: %s"
+
+
+msgid "Cancel"
+msgstr "Annulla"
+
+
+msgid "File name, overwrite existing"
+msgstr "Nome del file, sovrascrive l'esistente"
+
+
+msgid "File name"
+msgstr "Nome file"
 
 
 msgid "Cursor from Selection"

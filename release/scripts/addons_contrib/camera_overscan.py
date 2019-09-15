@@ -20,7 +20,7 @@ bl_info = {
     "name": "Camera Overscan",
     "author": "John Roper, Barnstorm VFX, Luca Scheller",
     "version": (1, 2, 1),
-    "blender": (2, 76, 0),
+    "blender": (2, 80, 0),
     "location": "Render Settings > Camera Overscan",
     "description": "Render Overscan",
     "warning": "",
@@ -173,7 +173,8 @@ class camera_overscan_props(PropertyGroup):
 
 
 def register():
-    bpy.utils.register_module(__name__)
+    bpy.utils.register_class(CODuplicateCamera)
+    bpy.utils.register_class(camera_overscan_props)
     bpy.types.RENDER_PT_dimensions.append(RO_Menu)
     bpy.types.Scene.camera_overscan = PointerProperty(
                                         type=camera_overscan_props
@@ -181,7 +182,8 @@ def register():
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    bpy.utils.unregister_class(CODuplicateCamera)
+    bpy.utils.unregister_class(camera_overscan_props)
     bpy.types.RENDER_PT_dimensions.remove(RO_Menu)
     del bpy.types.Scene.camera_overscan
 

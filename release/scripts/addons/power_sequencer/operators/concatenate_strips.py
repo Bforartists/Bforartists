@@ -84,7 +84,7 @@ class POWER_SEQUENCER_OT_concatenate_strips(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.sequences and context.selected_sequences
+        return context.sequences
 
     def invoke(self, context, event):
         if not context.selected_sequences:

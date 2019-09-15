@@ -23,10 +23,10 @@ bl_info = {
     "name": "Extrude Along Curve",
     "author": "Andrew Hale (TrumanBlending)",
     "version": (0, 1),
-    "blender": (2, 63, 0),
+    "blender": (2, 80, 0),
     "location": "",
     "description": "Extrude a face along a Bezier Curve",
-    "warning": "",
+    "warning": "under construction",
     'wiki_url': "",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Mesh"}
@@ -45,11 +45,11 @@ def eval_bez_tan(mat, points, t):
     lower = floor(t)
     if upper == lower:
         if upper == 0:
-            return (mat * (points[upper].handle_right - points[upper].co)).normalized()
+            return (mat @ (points[upper].handle_right - points[upper].co)).normalized()
         elif upper == num - 1:
-            return (mat * (points[upper].co - points[upper].handle_left)).normalized()
+            return (mat @ (points[upper].co - points[upper].handle_left)).normalized()
         else:
-            return (mat * (points[upper].co - points[upper].handle_left)).normalized()
+            return (mat @ (points[upper].co - points[upper].handle_left)).normalized()
     else:
         t -= lower
         pupper = points[upper]
@@ -66,7 +66,7 @@ def eval_bez(mat, points, t):
     upper = ceil(t)
     lower = floor(t)
     if upper == lower:
-        return mat * points[upper].co
+        return mat @ points[upper].co
     else:
         t -= lower
         pupper = points[upper]
@@ -136,7 +136,7 @@ class ExtrudeAlongCurve(bpy.types.Operator):
         drot = rotation / res
 
         # Get the matrices to convert between spaces
-        cmat = ob.matrix_world.inverted() * cuob.matrix_world
+        cmat = ob.matrix_world.inverted() @ cuob.matrix_world
         ctanmat = cmat.to_3x3().inverted().transposed()
 
         # The list of parameter values to evaluate the bezier curve at
@@ -164,7 +164,7 @@ class ExtrudeAlongCurve(bpy.types.Operator):
             if ang > 0.0:
                 axis = beztan[i - 1].cross(beztan[i])
                 q = Quaternion(axis, ang)
-                bezquat[i] = q * bezquat[i - 1]
+                bezquat[i] = q @ bezquat[i - 1]
             else:
                 bezquat[i] = bezquat[i - 1].copy()
 
@@ -200,13 +200,18 @@ class ExtrudeAlongCurve(bpy.types.Operator):
 
         return {'FINISHED'}
 
+# List The Classes #
+
+classes = (
+    ExtrudeAlongCurve
+    )
 
 def register():
-    bpy.utils.register_module(__name__)
+    bpy.utils.register_class(ExtrudeAlongCurve)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    bpy.utils.unregister_class(ExtrudeAlongCurve)
 
 
 if __name__ == "__main__":

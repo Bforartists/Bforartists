@@ -81,6 +81,8 @@ bool debug_flags_sync_from_scene(BL::Scene b_scene)
   /* Synchronize CUDA flags. */
   flags.cuda.adaptive_compile = get_boolean(cscene, "debug_use_cuda_adaptive_compile");
   flags.cuda.split_kernel = get_boolean(cscene, "debug_use_cuda_split_kernel");
+  /* Synchronize OptiX flags. */
+  flags.optix.cuda_streams = get_int(cscene, "debug_optix_cuda_streams");
   /* Synchronize OpenCL device type. */
   switch (get_enum(cscene, "debug_opencl_device_type")) {
     case 0:
@@ -194,14 +196,15 @@ static PyObject *exit_func(PyObject * /*self*/, PyObject * /*args*/)
 
 static PyObject *create_func(PyObject * /*self*/, PyObject *args)
 {
-  PyObject *pyengine, *pypreferences, *pydata, *pyregion, *pyv3d, *pyrv3d;
+  PyObject *pyengine, *pypreferences, *pydata, *pyscreen, *pyregion, *pyv3d, *pyrv3d;
   int preview_osl;
 
   if (!PyArg_ParseTuple(args,
-                        "OOOOOOi",
+                        "OOOOOOOi",
                         &pyengine,
                         &pypreferences,
                         &pydata,
+                        &pyscreen,
                         &pyregion,
                         &pyv3d,
                         &pyrv3d,
@@ -210,6 +213,8 @@ static PyObject *create_func(PyObject * /*self*/, PyObject *args)
   }
 
   /* RNA */
+  ID *bScreen = (ID *)PyLong_AsVoidPtr(pyscreen);
+
   PointerRNA engineptr;
   RNA_pointer_create(NULL, &RNA_RenderEngine, (void *)PyLong_AsVoidPtr(pyengine), &engineptr);
   BL::RenderEngine engine(engineptr);
@@ -224,15 +229,15 @@ static PyObject *create_func(PyObject * /*self*/, PyObject *args)
   BL::BlendData data(dataptr);
 
   PointerRNA regionptr;
-  RNA_pointer_create(NULL, &RNA_Region, pylong_as_voidptr_typesafe(pyregion), &regionptr);
+  RNA_pointer_create(bScreen, &RNA_Region, pylong_as_voidptr_typesafe(pyregion), &regionptr);
   BL::Region region(regionptr);
 
   PointerRNA v3dptr;
-  RNA_pointer_create(NULL, &RNA_SpaceView3D, pylong_as_voidptr_typesafe(pyv3d), &v3dptr);
+  RNA_pointer_create(bScreen, &RNA_SpaceView3D, pylong_as_voidptr_typesafe(pyv3d), &v3dptr);
   BL::SpaceView3D v3d(v3dptr);
 
   PointerRNA rv3dptr;
-  RNA_pointer_create(NULL, &RNA_RegionView3D, pylong_as_voidptr_typesafe(pyrv3d), &rv3dptr);
+  RNA_pointer_create(bScreen, &RNA_RegionView3D, pylong_as_voidptr_typesafe(pyrv3d), &rv3dptr);
   BL::RegionView3D rv3d(rv3dptr);
 
   /* create session */
@@ -957,14 +962,16 @@ static PyObject *enable_print_stats_func(PyObject * /*self*/, PyObject * /*args*
 static PyObject *get_device_types_func(PyObject * /*self*/, PyObject * /*args*/)
 {
   vector<DeviceType> device_types = Device::available_types();
-  bool has_cuda = false, has_opencl = false;
+  bool has_cuda = false, has_optix = false, has_opencl = false;
   foreach (DeviceType device_type, device_types) {
     has_cuda |= (device_type == DEVICE_CUDA);
+    has_optix |= (device_type == DEVICE_OPTIX);
     has_opencl |= (device_type == DEVICE_OPENCL);
   }
-  PyObject *list = PyTuple_New(2);
+  PyObject *list = PyTuple_New(3);
   PyTuple_SET_ITEM(list, 0, PyBool_FromLong(has_cuda));
-  PyTuple_SET_ITEM(list, 1, PyBool_FromLong(has_opencl));
+  PyTuple_SET_ITEM(list, 1, PyBool_FromLong(has_optix));
+  PyTuple_SET_ITEM(list, 2, PyBool_FromLong(has_opencl));
   return list;
 }
 

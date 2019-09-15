@@ -30,13 +30,14 @@ from .utils.functions import (
 
 
 class POWER_SEQUENCER_OT_trim_to_surrounding_cuts(bpy.types.Operator):
-    """
-    *Brief* Automatically trim to surrounding cuts with some time offset
+    """*Brief* Automatically trim to surrounding cuts with some time offset
 
-    Finds the two cuts closest to the mouse cursor and trims the footage in between, leaving a little time offset. It's useful after you removed some bad audio but you need to keep some video around for a transition.
-    By default, the tool leaves 0.2 a seconds margin on either side of the trim.
-    """
+    Finds the two cuts closest to the mouse cursor and trims the footage in between, leaving a
+    little time offset. It's useful after you removed some bad audio but you need to keep some
+    video around for a transition.
 
+    By default, the tool leaves a 0.2 seconds margin on either side of the trim.
+    """
     doc = {
         "name": doc_name(__qualname__),
         "demo": "",
@@ -77,16 +78,13 @@ class POWER_SEQUENCER_OT_trim_to_surrounding_cuts(bpy.types.Operator):
 
         sequencer = bpy.ops.sequencer
 
-        # Convert mouse position to frame, channel
-        x = context.region.view2d.region_to_view(x=event.mouse_region_x, y=event.mouse_region_y)[0]
-        frame = round(x)
+        frame = context.region.view2d.region_to_view(x=event.mouse_region_x, y=event.mouse_region_y)[0]
+        frame = round(frame)
 
         left_cut_frame, right_cut_frame = find_closest_surrounding_cuts_frames(context, frame)
-        surrounding_cut_frames_duration = abs(left_cut_frame - right_cut_frame)
-
         margin_frame = convert_duration_to_frames(context, self.margin)
 
-        if surrounding_cut_frames_duration <= margin_frame * 2:
+        if abs(left_cut_frame - right_cut_frame) <= margin_frame * 2:
             self.report(
                 {"WARNING"},
                 ("The trim margin is larger than the gap\n" "Use snap trim or reduce the margin"),
@@ -124,13 +122,11 @@ class POWER_SEQUENCER_OT_trim_to_surrounding_cuts(bpy.types.Operator):
             bpy.ops.power_sequencer.gap_remove()
             context.scene.frame_current = trim_start
 
-        # FIXME: Workaround Blender 2.80's audio bug, remove when fixed in Blender
         sequencer_workaround_2_80_audio_bug(context)
-
         return {"FINISHED"}
 
     def find_strips_in_range(
-        self, context, start_frame, end_frame, sequences=None, find_overlapping=True
+        self, context, start_frame, end_frame, sequences=[], find_overlapping=True
     ):
         """
         Returns strips which start and end within a certain frame range, or that overlap a
@@ -149,11 +145,10 @@ class POWER_SEQUENCER_OT_trim_to_surrounding_cuts(bpy.types.Operator):
         """
         strips_in_range = []
         strips_overlapping_range = []
-        if not sequences:
-            sequences = context.sequences
+        sequences = sequences if sequences else context.sequences
         for s in sequences:
-            if start_frame <= s.frame_final_start <= end_frame:
-                if start_frame <= s.frame_final_end <= end_frame:
+            if start_frame < s.frame_final_start <= end_frame:
+                if start_frame <= s.frame_final_end < end_frame:
                     strips_in_range.append(s)
                 elif find_overlapping:
                     strips_overlapping_range.append(s)

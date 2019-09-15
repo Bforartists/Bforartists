@@ -965,11 +965,8 @@ class OBJECT_OT_add_mesh_rock(bpy.types.Operator):
     # Build the presets list for the enum property.
     # This needs to be a for loop as the user might add presets to
     # the XML file and those should show here:
-    for i in range(len(presetsList)):
-        value = str(i)
-        name = presetsList[i][0]
-        description = name + " preset values."
-        presets.append((value, name, description))
+    for i, preset in enumerate(presetsList):
+        presets.append((str(i), preset[0], preset[0] + " preset values"))
 
     preset_values: EnumProperty(
         name="Presets",
@@ -985,38 +982,38 @@ class OBJECT_OT_add_mesh_rock(bpy.types.Operator):
 
     scale_X: FloatVectorProperty(
         name="X scale",
-        description="X axis scaling range.",
+        description="X axis scaling range",
         min=0.0, max=256.0, step=1,
         default=defaults[1], size=2)
     skew_X: FloatProperty(
         name="X skew",
-        description="X Skew ratio. 0.5 is no skew.",
+        description="X Skew ratio. 0.5 is no skew",
         min=-1.0, max=1.0, default=defaults[4])
     scale_Y: FloatVectorProperty(
         name="Y scale",
-        description="Y axis scaling range.",
+        description="Y axis scaling range",
         min=.0, max=256.0, step=1,
         default=defaults[2], size=2)
     skew_Y: FloatProperty(
         name="Y skew",
-        description="Y Skew ratio. 0.5 is no skew.",
+        description="Y Skew ratio. 0.5 is no skew",
         min=-1.0, max=1.0, default=defaults[5])
     scale_Z: FloatVectorProperty(
         name="Z scale",
-        description="Z axis scaling range.",
+        description="Z axis scaling range",
         min=0.0, max=256.0, step=1,
         default=defaults[3], size=2)
     skew_Z: FloatProperty(
         name="Z skew",
-        description="Z Skew ratio. 0.5 is no skew.",
+        description="Z Skew ratio. 0.5 is no skew",
         min=-1.0, max=1.0, default=defaults[6])
     use_scale_dis: BoolProperty(
         name="Scale displace textures",
-        description="Scale displacement textures with dimensions.  May cause streched textures.",
+        description="Scale displacement textures with dimensions.  May cause streched textures",
         default=defaults[7])
     scale_fac: FloatVectorProperty(
         name="Scaling Factor",
-        description="XYZ scaling factor.  1: no scaling.",
+        description="XYZ scaling factor.  1: no scaling",
         min=0.0001, max=256.0, step=0.1,
         default=defaults[8], size=3)
 
@@ -1035,28 +1032,28 @@ class OBJECT_OT_add_mesh_rock(bpy.types.Operator):
         min=1, max=1024, default=defaults[11])
     display_detail: IntProperty(
         name="Display Detail",
-        description="Display detail.  Use a lower value for high numbers of rocks.",
+        description="Display detail.  Use a lower value for high numbers of rocks",
         min=1, max=128, default=defaults[12])
     smooth_fac: FloatProperty(
         name="Smooth Factor",
-        description="Smoothing factor.  A value of 0 disables.",
+        description="Smoothing factor.  A value of 0 disables",
         min=0.0, max=128.0, default=defaults[13])
     smooth_it: IntProperty(
         name="Smooth Iterations",
-        description="Smoothing iterations.  A value of 0 disables.",
+        description="Smoothing iterations.  A value of 0 disables",
         min=0, max=128, default=defaults[14])
 
     use_generate: BoolProperty(
         name="Generate Rocks",
-        description="Enable actual generation.",
+        description="Enable actual generation",
         default=defaults[15])
     use_random_seed: BoolProperty(
         name="Use a random seed",
-        description="Create a seed based on time. Causes user seed to be ignored.",
+        description="Create a seed based on time. Causes user seed to be ignored",
         default=defaults[16])
     user_seed: IntProperty(
         name="User seed",
-        description="Use a specific seed for the generator.",
+        description="Use a specific seed for the generator",
         min=0, max=1048576, default=defaults[17])
 
     def draw(self, context):
