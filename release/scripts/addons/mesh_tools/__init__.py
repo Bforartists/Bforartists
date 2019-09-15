@@ -42,7 +42,7 @@ if "bpy" in locals():
     importlib.reload(mesh_filletplus)
     importlib.reload(mesh_vertex_chamfer)
     importlib.reload(random_vertices)
-    importlib.reload(mesh_extrude_and_reshape)
+#    importlib.reload(mesh_extrude_and_reshape)
     importlib.reload(mesh_edge_roundifier)
     importlib.reload(mesh_edgetools)
     importlib.reload(mesh_edges_floor_plan)
@@ -56,7 +56,7 @@ else:
     from . import mesh_filletplus
     from . import mesh_vertex_chamfer
     from . import random_vertices
-    from . import mesh_extrude_and_reshape
+#    from . import mesh_extrude_and_reshape
     from . import mesh_edge_roundifier
     from . import mesh_edgetools
     from . import mesh_edges_floor_plan
@@ -889,8 +889,8 @@ class VIEW3D_MT_edit_mesh_tools(Menu):
         layout.operator('mesh.fillet_plus', text="Fillet Edges")
         layout.operator("mesh.face_inset_fillet",
                             text="Face Inset Fillet")
-        layout.operator("mesh.extrude_reshape",
-                        text="Push/Pull Faces")
+#        layout.operator("mesh.extrude_reshape",
+#                        text="Push/Pull Faces")
         layout.operator("object.mextrude",
                         text="Multi Extrude")
         layout.operator('mesh.split_solidify', text="Split Solidify")
@@ -975,8 +975,8 @@ class VIEW3D_PT_edit_mesh_tools(Panel):
             row.operator("mesh.ext_cut_faces",
                             text="Cut Faces")
             row = col_top.row(align=True)
-            row.operator("mesh.extrude_reshape",
-                            text="Push/Pull Faces")
+#            row.operator("mesh.extrude_reshape",
+#                            text="Push/Pull Faces")
             row = col_top.row(align=True)
             row.operator("object.mextrude",
                             text="Multi Extrude")
@@ -1127,7 +1127,7 @@ def register():
     split_solidify.register()
     mesh_vertex_chamfer.register()
     random_vertices.register()
-    mesh_extrude_and_reshape.register()
+#    mesh_extrude_and_reshape.register()
     mesh_edge_roundifier.register()
     mesh_edgetools.register()
     mesh_edges_floor_plan.register()
@@ -1152,7 +1152,7 @@ def unregister():
     split_solidify.unregister()
     mesh_vertex_chamfer.unregister()
     random_vertices.unregister()
-    mesh_extrude_and_reshape.unregister()
+#    mesh_extrude_and_reshape.unregister()
     mesh_edge_roundifier.unregister()
     mesh_edgetools.unregister()
     mesh_edges_floor_plan.unregister()

@@ -978,7 +978,7 @@ class RenderPovSettingsMaterial(PropertyGroup):
             name="Specular Shader Model",
             description="Method to use for rendering transparency",   
             items=(("MASK", "Mask", "Mask the background"),
-                   ("Z_TRANSPARENCY", "Z Transparency", "Use alpha buffer for transparent faces"),#TO DEPRECATE
+                   ("Z_TRANSPARENCY", "Z Transparency", "Use alpha buffer for transparent faces"),
                    ("RAYTRACE", "Raytrace", "Use raytracing for transparent refraction rendering")),
             default="MASK")
             

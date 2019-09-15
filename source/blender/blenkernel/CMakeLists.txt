@@ -50,6 +50,9 @@ set(INC
   ../../../intern/opensubdiv
   ../../../extern/curve_fit_nd
   ../../../intern/smoke/extern
+
+  # dna_type_offsets.h
+  ${CMAKE_CURRENT_BINARY_DIR}/../makesdna/intern
 )
 
 set(INC_SYS
@@ -83,6 +86,7 @@ set(SRC
   intern/brush.c
   intern/bvhutils.c
   intern/cachefile.c
+  intern/callbacks.c
   intern/camera.c
   intern/cdderivedmesh.c
   intern/cloth.c
@@ -184,6 +188,7 @@ set(SRC
   intern/scene.c
   intern/screen.c
   intern/seqcache.c
+  intern/seqprefetch.c
   intern/seqeffects.c
   intern/seqmodifier.c
   intern/sequencer.c
@@ -243,6 +248,7 @@ set(SRC
   BKE_brush.h
   BKE_bvhutils.h
   BKE_cachefile.h
+  BKE_callbacks.h
   BKE_camera.h
   BKE_ccg.h
   BKE_cdderivedmesh.h
@@ -615,9 +621,22 @@ if(WITH_OPENVDB)
   endif()
 endif()
 
+if(WITH_QUADRIFLOW)
+  list(APPEND INC
+     ../../../intern/quadriflow
+  )
+  list(APPEND LIB
+     bf_intern_quadriflow
+  )
+  add_definitions(-DWITH_QUADRIFLOW)
+endif()
+
 ## Warnings as errors, this is too strict!
 #if(MSVC)
 #   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /WX")
 #endif()
 
 blender_add_lib(bf_blenkernel "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+
+# Needed so we can use dna_type_offsets.h for defaults initialization.
+add_dependencies(bf_blenkernel bf_dna)

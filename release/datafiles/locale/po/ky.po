@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -263,6 +263,10 @@ msgstr "Кокустугу"
 
 msgid "Volume"
 msgstr "Көлөм"
+
+
+msgid "Full"
+msgstr "Толук"
 
 
 msgid "Angle"
@@ -942,10 +946,6 @@ msgstr "Өлчөмдөр"
 
 msgid "Fill Mode"
 msgstr "Толтуруу режими"
-
-
-msgid "Full"
-msgstr "Толук"
 
 
 msgid "Half"
@@ -1738,6 +1738,10 @@ msgid "Accept"
 msgstr "Кабыл алуу"
 
 
+msgid "Open"
+msgstr "Ачуу"
+
+
 msgctxt "Operator"
 msgid "Add Marker"
 msgstr "Маркерди кошуу"
@@ -1986,10 +1990,6 @@ msgstr "Жаңы каталогду жаратуу"
 
 msgid "Name of new directory"
 msgstr "Жаңы каталогдун аты"
-
-
-msgid "Open"
-msgstr "Ачуу"
 
 
 msgid "Increment"
@@ -2740,11 +2740,6 @@ msgstr "Ойнотуу"
 msgctxt "Operator"
 msgid "Memory Statistics"
 msgstr "Эс статистикасы"
-
-
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "Blender файлын ачуу"
 
 
 msgid "Open a Blender file"
@@ -3541,6 +3536,11 @@ msgstr "Дубал"
 
 
 msgctxt "Operator"
+msgid "Back"
+msgstr "Артынан"
+
+
+msgctxt "Operator"
 msgid "New"
 msgstr "Жаңы"
 
@@ -3726,11 +3726,6 @@ msgstr "Камера"
 msgctxt "Operator"
 msgid "Front"
 msgstr "Алдынан"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "Артынан"
 
 
 msgctxt "Operator"
@@ -4105,12 +4100,12 @@ msgid "OK"
 msgstr "ООБА"
 
 
-msgid "Cancel"
-msgstr "Жокко чыгаруу"
-
-
 msgid "File path"
 msgstr "Файлга жол"
+
+
+msgid "Cancel"
+msgstr "Жокко чыгаруу"
 
 
 msgid "File name"

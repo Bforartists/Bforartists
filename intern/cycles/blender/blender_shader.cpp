@@ -590,6 +590,12 @@ static ShaderNode *add_node(Scene *scene,
   else if (b_node.is_a(&RNA_ShaderNodeVolumeInfo)) {
     node = new VolumeInfoNode();
   }
+  else if (b_node.is_a(&RNA_ShaderNodeVertexColor)) {
+    BL::ShaderNodeVertexColor b_vertex_color_node(b_node);
+    VertexColorNode *vertex_color_node = new VertexColorNode();
+    vertex_color_node->layer_name = b_vertex_color_node.layer_name();
+    node = vertex_color_node;
+  }
   else if (b_node.is_a(&RNA_ShaderNodeBump)) {
     BL::ShaderNodeBump b_bump_node(b_node);
     BumpNode *bump = new BumpNode();
@@ -733,9 +739,9 @@ static ShaderNode *add_node(Scene *scene,
   else if (b_node.is_a(&RNA_ShaderNodeTexVoronoi)) {
     BL::ShaderNodeTexVoronoi b_voronoi_node(b_node);
     VoronoiTextureNode *voronoi = new VoronoiTextureNode();
-    voronoi->coloring = (NodeVoronoiColoring)b_voronoi_node.coloring();
-    voronoi->metric = (NodeVoronoiDistanceMetric)b_voronoi_node.distance();
+    voronoi->dimensions = b_voronoi_node.voronoi_dimensions();
     voronoi->feature = (NodeVoronoiFeature)b_voronoi_node.feature();
+    voronoi->metric = (NodeVoronoiDistanceMetric)b_voronoi_node.distance();
     BL::TexMapping b_texture_mapping(b_voronoi_node.texture_mapping());
     get_tex_mapping(&voronoi->tex_mapping, b_texture_mapping);
     node = voronoi;
@@ -785,11 +791,12 @@ static ShaderNode *add_node(Scene *scene,
   }
   else if (b_node.is_a(&RNA_ShaderNodeTexMusgrave)) {
     BL::ShaderNodeTexMusgrave b_musgrave_node(b_node);
-    MusgraveTextureNode *musgrave = new MusgraveTextureNode();
-    musgrave->type = (NodeMusgraveType)b_musgrave_node.musgrave_type();
+    MusgraveTextureNode *musgrave_node = new MusgraveTextureNode();
+    musgrave_node->type = (NodeMusgraveType)b_musgrave_node.musgrave_type();
+    musgrave_node->dimensions = b_musgrave_node.musgrave_dimensions();
     BL::TexMapping b_texture_mapping(b_musgrave_node.texture_mapping());
-    get_tex_mapping(&musgrave->tex_mapping, b_texture_mapping);
-    node = musgrave;
+    get_tex_mapping(&musgrave_node->tex_mapping, b_texture_mapping);
+    node = musgrave_node;
   }
   else if (b_node.is_a(&RNA_ShaderNodeTexCoord)) {
     BL::ShaderNodeTexCoord b_tex_coord_node(b_node);
@@ -1164,8 +1171,10 @@ static void add_nodes(Scene *scene,
   BL::NodeTree::links_iterator b_link;
 
   for (b_ntree.links.begin(b_link); b_link != b_ntree.links.end(); ++b_link) {
-    /* Ignore invalid links to avoid unwanted cycles created in graph. */
-    if (!b_link->is_valid()) {
+    /* Ignore invalid links to avoid unwanted cycles created in graph.
+     * Also ignore links with unavailable sockets. */
+    if (!(b_link->is_valid() && b_link->from_socket().enabled() &&
+          b_link->to_socket().enabled())) {
       continue;
     }
     /* get blender link data */

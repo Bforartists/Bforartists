@@ -52,8 +52,8 @@
 #include "BLI_blenlib.h"
 #include "BLI_linklist.h"
 #include "BLI_utildefines.h"
+#include "BLI_timer.h"
 #include "BLI_threads.h"
-#include "BLI_callbacks.h"
 #include "BLI_system.h"
 #include BLI_SYSTEM_PID_H
 
@@ -73,7 +73,7 @@
 #include "BKE_autoexec.h"
 #include "BKE_blender.h"
 #include "BKE_blendfile.h"
-#include "BKE_blender_undo.h"
+#include "BKE_callbacks.h"
 #include "BKE_context.h"
 #include "BKE_global.h"
 #include "BKE_idprop.h"
@@ -113,8 +113,6 @@
 #include "UI_interface.h"
 #include "UI_resources.h"
 #include "UI_view2d.h"
-
-#include "GPU_draw.h"
 
 /* only to report a missing engine */
 #include "RE_engine.h"
@@ -536,16 +534,16 @@ static void wm_file_read_post(bContext *C,
 
   if (use_userdef) {
     if (is_factory_startup) {
-      BLI_callback_exec(bmain, NULL, BLI_CB_EVT_LOAD_FACTORY_USERDEF_POST);
+      BKE_callback_exec_null(bmain, BKE_CB_EVT_LOAD_FACTORY_USERDEF_POST);
     }
   }
 
   if (use_data) {
     /* important to do before NULL'ing the context */
-    BLI_callback_exec(bmain, NULL, BLI_CB_EVT_VERSION_UPDATE);
-    BLI_callback_exec(bmain, NULL, BLI_CB_EVT_LOAD_POST);
+    BKE_callback_exec_null(bmain, BKE_CB_EVT_VERSION_UPDATE);
+    BKE_callback_exec_null(bmain, BKE_CB_EVT_LOAD_POST);
     if (is_factory_startup) {
-      BLI_callback_exec(bmain, NULL, BLI_CB_EVT_LOAD_FACTORY_STARTUP_POST);
+      BKE_callback_exec_null(bmain, BKE_CB_EVT_LOAD_FACTORY_STARTUP_POST);
     }
   }
 
@@ -608,7 +606,8 @@ bool WM_file_read(bContext *C, const char *filepath, ReportList *reports)
 
   WM_cursor_wait(1);
 
-  BLI_callback_exec(CTX_data_main(C), NULL, BLI_CB_EVT_LOAD_PRE);
+  BKE_callback_exec_null(CTX_data_main(C), BKE_CB_EVT_LOAD_PRE);
+  BLI_timer_on_file_load();
 
   UI_view2d_zoom_cache_reset();
 
@@ -805,7 +804,8 @@ void wm_homefile_read(bContext *C,
   }
 
   if (use_data) {
-    BLI_callback_exec(CTX_data_main(C), NULL, BLI_CB_EVT_LOAD_PRE);
+    BKE_callback_exec_null(CTX_data_main(C), BKE_CB_EVT_LOAD_PRE);
+    BLI_timer_on_file_load();
 
     G.relbase_valid = 0;
 
@@ -1365,7 +1365,7 @@ static bool wm_file_write(bContext *C, const char *filepath, int fileflags, Repo
 
   /* Call pre-save callbacks before writing preview,
    * that way you can generate custom file thumbnail. */
-  BLI_callback_exec(bmain, NULL, BLI_CB_EVT_SAVE_PRE);
+  BKE_callback_exec_null(bmain, BKE_CB_EVT_SAVE_PRE);
 
   /* Enforce full override check/generation on file save. */
   BKE_main_override_library_operations_create(bmain, true);
@@ -1418,7 +1418,7 @@ static bool wm_file_write(bContext *C, const char *filepath, int fileflags, Repo
       wm_history_file_update();
     }
 
-    BLI_callback_exec(bmain, NULL, BLI_CB_EVT_SAVE_POST);
+    BKE_callback_exec_null(bmain, BKE_CB_EVT_SAVE_POST);
 
     /* run this function after because the file cant be written before the blend is */
     if (ibuf_thumb) {
@@ -1643,7 +1643,7 @@ static int wm_homefile_write_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  BLI_callback_exec(bmain, NULL, BLI_CB_EVT_SAVE_PRE);
+  BKE_callback_exec_null(bmain, BKE_CB_EVT_SAVE_PRE);
 
   /* check current window and close it if temp */
   if (win && WM_window_is_temp_screen(win)) {
@@ -1671,7 +1671,7 @@ static int wm_homefile_write_exec(bContext *C, wmOperator *op)
 
   G.save_over = 0;
 
-  BLI_callback_exec(bmain, NULL, BLI_CB_EVT_SAVE_POST);
+  BKE_callback_exec_null(bmain, BKE_CB_EVT_SAVE_POST);
 
   return OPERATOR_FINISHED;
 }
@@ -2244,6 +2244,7 @@ static int wm_open_mainfile__open(bContext *C, wmOperator *op)
     if (G.fileflags & G_FILE_NO_UI) {
       ED_outliner_select_sync_from_all_tag(C);
     }
+    ED_view3d_local_collections_reset(C, (G.fileflags & G_FILE_NO_UI) != 0);
     return OPERATOR_FINISHED;
   }
   else {

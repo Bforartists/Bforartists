@@ -218,7 +218,7 @@ void EEVEE_lightcache_info_update(SceneEEVEE *eevee)
     }
 
     char formatted_mem[15];
-    BLI_str_format_byte_unit(formatted_mem, eevee_lightcache_memsize_get(lcache), true);
+    BLI_str_format_byte_unit(formatted_mem, eevee_lightcache_memsize_get(lcache), false);
 
     int irr_samples = eevee_lightcache_irradiance_sample_count(lcache);
 
@@ -561,7 +561,7 @@ wmJob *EEVEE_lightbake_job_create(struct wmWindowManager *wm,
     /* Cannot reuse depsgraph for now because we cannot get the update from the
      * main database directly. TODO reuse depsgraph and only update positions. */
     /* lbake->depsgraph = old_lbake->depsgraph; */
-    lbake->depsgraph = DEG_graph_new(scene, view_layer, DAG_EVAL_RENDER);
+    lbake->depsgraph = DEG_graph_new(bmain, scene, view_layer, DAG_EVAL_RENDER);
 
     lbake->mutex = BLI_mutex_alloc();
 
@@ -612,7 +612,7 @@ void *EEVEE_lightbake_job_data_alloc(struct Main *bmain,
 
   EEVEE_LightBake *lbake = MEM_callocN(sizeof(EEVEE_LightBake), "EEVEE_LightBake");
 
-  lbake->depsgraph = DEG_graph_new(scene, view_layer, DAG_EVAL_RENDER);
+  lbake->depsgraph = DEG_graph_new(bmain, scene, view_layer, DAG_EVAL_RENDER);
   lbake->scene = scene;
   lbake->bmain = bmain;
   lbake->view_layer_input = view_layer;

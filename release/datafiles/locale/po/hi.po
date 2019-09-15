@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 4) (b'a6816bf5db0c')\n"
+"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-02 00:00:00\n"
+"POT-Creation-Date: 2019-09-09 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -545,6 +545,10 @@ msgstr "सिर"
 
 msgid "Selectable"
 msgstr "चयनयोग्य"
+
+
+msgid "Full"
+msgstr "पूर्ण"
 
 
 msgid "Layers"
@@ -1441,14 +1445,6 @@ msgid "Display Mode"
 msgstr "प्रदर्शित रूप"
 
 
-msgid "Short List"
-msgstr "संक्षिप्त सूची"
-
-
-msgid "Long List"
-msgstr "लंबी सूची"
-
-
 msgid "File Name"
 msgstr "संचिका का नाम"
 
@@ -1984,10 +1980,6 @@ msgstr "आयाम"
 
 msgid "Extrude"
 msgstr "बिहर्वेधन"
-
-
-msgid "Full"
-msgstr "पूर्ण"
 
 
 msgid "Half"
@@ -3717,6 +3709,18 @@ msgid "Round"
 msgstr "दौर"
 
 
+msgid "Open"
+msgstr "खोलें"
+
+
+msgid "Short List"
+msgstr "संक्षिप्त सूची"
+
+
+msgid "Long List"
+msgstr "लंबी सूची"
+
+
 msgid "File Browser Mode"
 msgstr "संचिका विचरक रूप"
 
@@ -3938,10 +3942,6 @@ msgstr "बंद/बुझ स्मृति प्रदर्शित क�
 msgctxt "Operator"
 msgid "Create New Directory"
 msgstr "नया निर्देशिका बनाएँ"
-
-
-msgid "Open"
-msgstr "खोलें"
 
 
 msgid "Dir"
@@ -4778,11 +4778,6 @@ msgid "View Documentation"
 msgstr "देखें प्रलेखन"
 
 
-msgctxt "Operator"
-msgid "Open Blender File"
-msgstr "ब्लेंडर संचिका खोलें"
-
-
 msgid "Open a Blender file"
 msgstr "एक ब्लेंडर संचिका खोलें"
 
@@ -4862,11 +4857,6 @@ msgstr "अनुप्राणन चलाएँ"
 
 msgid "Undo/Redo"
 msgstr "पूर्ववत करें/फिर से करें"
-
-
-msgctxt "Operator"
-msgid "Save As Blender File"
-msgstr "ब्लेंडर संचिका के रूप में सहेजें"
 
 
 msgid "Save the current file in the desired location"
@@ -6381,6 +6371,11 @@ msgstr "सरकाएँ"
 
 
 msgctxt "Operator"
+msgid "Back"
+msgstr "पार्श्व"
+
+
+msgctxt "Operator"
 msgid "Less"
 msgstr "कम"
 
@@ -6614,11 +6609,6 @@ msgstr "प्रतिबिंबक"
 msgctxt "Operator"
 msgid "Front"
 msgstr "सामने"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "पार्श्व"
 
 
 msgctxt "Operator"
@@ -7634,12 +7624,12 @@ msgid "Cannot read '%s': %s"
 msgstr "पढ़ा नहीं कर सकता: '%s': %s"
 
 
-msgid "Cancel"
-msgstr "रद्द करें"
-
-
 msgid "File path"
 msgstr "संचिका पथ"
+
+
+msgid "Cancel"
+msgstr "रद्द करें"
 
 
 msgid "File name"

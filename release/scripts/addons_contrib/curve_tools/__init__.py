@@ -20,7 +20,7 @@ bl_info = {
     "name": "Curve Tools 2",
     "description": "Adds some functionality for bezier/nurbs curve/surface modeling",
     "author": "Mackraken, guy lateur, Spivak Vladimir (cwolf3d)",
-    "version": (0, 3, 1),
+    "version": (0, 3, 2),
     "blender": (2, 80, 0),
     "location": "View3D > Tool Shelf > Addons Tab",
     "warning": "WIP",
@@ -59,7 +59,7 @@ from bpy.types import (
 def UpdateDummy(object, context):
     scene = context.scene
     SINGLEDROP = scene.UTSingleDrop
-    DOUBLEDROP = scene.UTDoubleDrop
+    MOREDROP = scene.UTMOREDROP
     LOFTDROP = scene.UTLoftDrop
     TRIPLEDROP = scene.UTTripleDrop
     UTILSDROP = scene.UTUtilsDrop
@@ -95,13 +95,6 @@ class CurveTools2Settings(PropertyGroup):
             description="Number of selected objects",
             update=UpdateDummy
             )
-    """
-    NrSelectedObjects = IntProperty(
-            name="NrSelectedObjects",
-            default=0,
-            description="Number of selected objects"
-            )
-    """
     # curve
     CurveLength: FloatProperty(
             name="CurveLength",
@@ -184,6 +177,12 @@ class CurveTools2Settings(PropertyGroup):
             description="Determines which of the selected curves will be affected by the operation",
             default='Both'
             )
+    PathFinderRadius: FloatProperty(
+            name="PathFinder detection radius",
+            default=0.2,
+            precision=6,
+            description="PathFinder detection radius"
+            )
 
 
 class VIEW3D_PT_CurvePanel(Panel):
@@ -200,7 +199,7 @@ class VIEW3D_PT_CurvePanel(Panel):
     def draw(self, context):
         scene = context.scene
         SINGLEDROP = scene.UTSingleDrop
-        DOUBLEDROP = scene.UTDoubleDrop
+        MOREDROP = scene.UTMOREDROP
         LOFTDROP = scene.UTLoftDrop
         TRIPLEDROP = scene.UTTripleDrop
         UTILSDROP = scene.UTUtilsDrop
@@ -213,8 +212,6 @@ class VIEW3D_PT_CurvePanel(Panel):
         row.prop(scene, "UTSingleDrop", icon="TRIA_DOWN")
         if SINGLEDROP:
             # A. 1 curve
-            row = col.row(align=True)
-            row.label(text="Single Curve:")
             row = col.row(align=True)
 
             # A.1 curve info/length
@@ -239,12 +236,11 @@ class VIEW3D_PT_CurvePanel(Panel):
         box2 = self.layout.box()
         col = box2.column(align=True)
         row = col.row(align=True)
-        row.prop(scene, "UTDoubleDrop", icon="TRIA_DOWN")
+        row.prop(scene, "UTMOREDROP", icon="TRIA_DOWN")
 
-        if DOUBLEDROP:
+        if MOREDROP:
             # B. 2 curves
             row = col.row(align=True)
-            row.label(text="2 curves:")
 
             # B.1 curve intersections
             row = col.row(align=True)
@@ -300,12 +296,12 @@ class VIEW3D_PT_CurvePanel(Panel):
             row = col.row(align=True)
             row.operator("curve.bezier_spline_divide", text='Divide')
             row = col.row(align=True)
-            row.operator("curvetools2.operatorbirail", text="Birail")
+            row.operator("curve.scale_reset", text='Scale Reset')
             row = col.row(align=True)
-            row.operator("curvetools2.convert_bezier_rectangle_to_surface", text="Convert Bezier Rectangle To Surface")
+            row.operator("curvetools2.operatorbirail", text="Birail")
             row = col.row(align=True)        
-            row.operator("curvetools2.convert_mesh_to_bezier", text="Convert Mesh to Bezier")
-            row = col.row(align=True)        
+            row.operator("curvetools2.convert_selected_face_to_bezier", text="Convert selected faces to Bezier")
+            row = col.row(align=True)
             row.operator("curvetools2.convert_bezier_to_surface", text="Convert Bezier to Surface")
         # Utils Curve options
         box1 = self.layout.box()
@@ -341,6 +337,26 @@ class VIEW3D_PT_CurvePanel(Panel):
 
             row = col.row(align=True)
             row.prop(context.scene.curvetools, "SplineJoinMode", text="Join mode")
+            
+            row = col.row(align=True)
+            row.prop(context.scene.curvetools, "PathFinderRadius", text="PathFinder Radius")
+            row = col.row(align=True)
+            row.operator("curvetools2.pathfinder", text="Path Finder")
+            row = col.row(align=True)
+            row.label(text="ESC or TAB - exit from PathFinder")
+            row = col.row(align=True)
+            row.label(text="X or DEL - delete")
+            row = col.row(align=True)
+            row.label(text="left mouse click - select spline")
+            row = col.row(align=True)
+            row.label(text="right mouse click - deselect spline")
+            row = col.row(align=True)
+            row.label(text="A - deselect all")
+            #row = col.row(align=True)
+            #row.label(text="Ctrl + Z - undo")
+            #row = col.row(align=True)
+            #row.label(text="Shift + Z - redo")
+            
 
 # Add-ons Preferences Update Panel
 
@@ -406,21 +422,21 @@ classes = (
     Operators.OperatorSplinesJoinNeighbouring,
     VIEW3D_PT_CurvePanel,
     SeparateOutline,
-    Operators.ConvertBezierRectangleToSurface,
-    Operators.ConvertMeshToBezier,
+    Operators.ConvertSelectedFacesToBezier,
     Operators.ConvertBezierToSurface,
+    Operators.PathFinder,
     )
 
 def register():
     bpy.types.Scene.UTSingleDrop = BoolProperty(
-            name="Single Curve",
+            name="Curve",
             default=False,
-            description="Single Curve"
+            description="Curve"
             )
-    bpy.types.Scene.UTDoubleDrop = BoolProperty(
-            name="Two Curves",
+    bpy.types.Scene.UTMOREDROP = BoolProperty(
+            name="Curves",
             default=False,
-            description="Two Curves"
+            description="Curves"
             )
     bpy.types.Scene.UTLoftDrop = BoolProperty(
             name="Two Curves Loft",
@@ -429,12 +445,12 @@ def register():
             )
     bpy.types.Scene.UTTripleDrop = BoolProperty(
             name="Advanced",
-            default=False,
+            default=True,
             description="Advanced"
             )
     bpy.types.Scene.UTUtilsDrop = BoolProperty(
             name="Curves Utils",
-            default=False,
+            default=True,
             description="Curves Utils"
             )
     
@@ -452,12 +468,10 @@ def register():
 
 def unregister():
     del bpy.types.Scene.UTSingleDrop
-    del bpy.types.Scene.UTDoubleDrop
+    del bpy.types.Scene.UTMOREDROP
     del bpy.types.Scene.UTLoftDrop
     del bpy.types.Scene.UTTripleDrop
     del bpy.types.Scene.UTUtilsDrop
-
-    # bpy.app.handlers.scene_update_pre.remove(SceneUpdatePreHandler)
     
     auto_loft.unregister()
     
