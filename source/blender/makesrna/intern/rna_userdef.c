@@ -4044,6 +4044,43 @@ static void rna_def_userdef_view(BlenderRNA *brna)
       {0, NULL, 0, NULL, NULL},
   };
 
+  static const EnumPropertyItem render_display_types[] = {
+      {USER_RENDER_DISPLAY_NONE,
+       "NONE",
+       0,
+       "Keep User Interface",
+       "Images are rendered without changing the user interface"},
+      {USER_RENDER_DISPLAY_SCREEN,
+       "SCREEN",
+       0,
+       "Full Screen",
+       "Images are rendered in a maximized Image Editor"},
+      {USER_RENDER_DISPLAY_AREA,
+       "AREA",
+       0,
+       "Image Editor",
+       "Images are rendered in an Image Editor"},
+      {USER_RENDER_DISPLAY_WINDOW,
+       "WINDOW",
+       0,
+       "New Window",
+       "Images are rendered in a new window"},
+      {0, NULL, 0, NULL, NULL},
+  };
+  static const EnumPropertyItem temp_space_display_types[] = {
+      {USER_TEMP_SPACE_DISPLAY_FULLSCREEN,
+       "SCREEN", /* Could be FULLSCREEN, but keeping it consistent with render_display_types */
+       0,
+       "Full Screen",
+       "Open the temporary editor in a maximized screen"},
+      {USER_TEMP_SPACE_DISPLAY_WINDOW,
+       "WINDOW",
+       0,
+       "New Window",
+       "Open the temporary editor in a new window"},
+      {0, NULL, 0, NULL, NULL},
+  };
+
   PropertyRNA *prop;
   StructRNA *srna;
 
@@ -4172,7 +4209,7 @@ static void rna_def_userdef_view(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_MENUOPENAUTO);
   RNA_def_property_ui_text(
       prop,
-      "Open On Mouse Over",
+      "Open on Mouse Over",
       "Open menu buttons and pulldowns automatically when the mouse is hovering");
 
   prop = RNA_def_property(srna, "open_toplevel_delay", PROP_INT, PROP_NONE);
@@ -4268,6 +4305,17 @@ static void rna_def_userdef_view(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Header Position", "Default header position for new space-types");
   RNA_def_property_update(prop, 0, "rna_userdef_screen_update_header_default");
 
+  prop = RNA_def_property(srna, "render_display_type", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, render_display_types);
+  RNA_def_property_ui_text(
+      prop, "Render Display Type", "Default location where rendered images will be displayed in");
+
+  prop = RNA_def_property(srna, "filebrowser_display_type", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, temp_space_display_types);
+  RNA_def_property_ui_text(prop,
+                           "File Browser Display Type",
+                           "Default location where the File Editor will be displayed in");
+
   static const EnumPropertyItem text_hinting_items[] = {
       {0, "AUTO", 0, "Auto", ""},
       {USER_TEXT_HINTING_NONE, "NONE", 0, "None", ""},
@@ -4360,7 +4408,7 @@ static void rna_def_userdef_view(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, zoom_frame_modes);
   RNA_def_property_enum_sdna(prop, NULL, "view_frame_type");
   RNA_def_property_ui_text(
-      prop, "Zoom To Frame Type", "How zooming to frame focuses around current frame");
+      prop, "Zoom to Frame Type", "How zooming to frame focuses around current frame");
 
   prop = RNA_def_property(srna, "view_frame_keyframes", PROP_INT, PROP_NONE);
   RNA_def_property_range(prop, 1, 500);
@@ -5204,7 +5252,7 @@ static void rna_def_userdef_input(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_zoom_to_mouse", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_ZOOM_TO_MOUSEPOS);
   RNA_def_property_ui_text(prop,
-                           "Zoom To Mouse Position",
+                           "Zoom to Mouse Position",
                            "Zoom in towards the mouse pointer's position in the 3D view, "
                            "rather than the 2D window center");
 
