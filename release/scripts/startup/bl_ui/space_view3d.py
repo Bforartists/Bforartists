@@ -408,6 +408,8 @@ class VIEW3D_HT_tool_header(Header):
         if mode_string == 'EDIT_MESH':
             _row, sub = row_for_mirror()
             sub.prop(context.object.data, "use_mirror_x", text="X", toggle=True)
+            sub.prop(context.object.data, "use_mirror_y", text="Y", toggle=True)
+            sub.prop(context.object.data, "use_mirror_z", text="Z", toggle=True)
             tool_settings = context.tool_settings
             layout.prop(tool_settings, "use_mesh_automerge", text="")
         elif mode_string == 'EDIT_ARMATURE':
@@ -418,7 +420,10 @@ class VIEW3D_HT_tool_header(Header):
             sub.prop(context.object.pose, "use_mirror_x", text="X", toggle=True)
         elif mode_string == 'PAINT_WEIGHT':
             row, sub = row_for_mirror()
-            sub.prop(context.object.data, "use_mirror_x", text="X", toggle=True)
+            wpaint = context.tool_settings.weight_paint
+            sub.prop(wpaint, "use_symmetry_x", text="X", toggle=True)
+            sub.prop(wpaint, "use_symmetry_y", text="Y", toggle=True)
+            sub.prop(wpaint, "use_symmetry_z", text="Z", toggle=True)
             row.popover(panel="VIEW3D_PT_tools_weightpaint_symmetry_for_topbar", text="")
         elif mode_string == 'SCULPT':
             row, sub = row_for_mirror()
@@ -3740,14 +3745,37 @@ class VIEW3D_MT_sculpt(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        tool_settings = context.tool_settings
-        sculpt = tool_settings.sculpt
+        props = layout.operator("paint.hide_show", text="Show All")
+        props.action = 'SHOW'
+        props.area = 'ALL'
 
-        layout.operator("sculpt.dynamic_topology_toggle", text="Toggle Dynamic Topology", icon = "SCULPT_DYNTOPO")
+        props = layout.operator("paint.hide_show", text="Hide Bounding Box")
+        props.action = 'HIDE'
+        props.area = 'INSIDE'
+
+        props = layout.operator("paint.hide_show", text="Show Bounding Box")
+        props.action = 'SHOW'
+        props.area = 'INSIDE'
+
+        props = layout.operator("paint.hide_show", text="Hide Masked")
+        props.action = 'HIDE'
+        props.area = 'MASKED'
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_subdivision_set")
+        props = layout.operator("paint.mask_flood_fill", text="Invert Mask")
+        props.mode = 'INVERT'
+
+        props = layout.operator("paint.mask_flood_fill", text="Fill Mask")
+        props.mode = 'VALUE'
+        props.value = 1
+
+        props = layout.operator("paint.mask_flood_fill", text="Clear Mask")
+        props.mode = 'VALUE'
+        props.value = 0
+
+        props = layout.operator("view3d.select_box", text="Box Mask")
+        props = layout.operator("paint.mask_lasso_gesture", text="Lasso Mask")
 
         layout.separator()
 
@@ -3796,7 +3824,6 @@ class VIEW3D_MT_sculpt(Menu):
         layout.separator()
 
         props = layout.operator("sculpt.dirty_mask", text='Dirty Mask')
-
 
 
 class VIEW3D_MT_sculpt_specials(Menu):
@@ -4455,9 +4482,11 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             col.operator("mesh.loopcut_slide")
             col.operator("mesh.offset_edge_loops_slide")
+
+            col.separator()
+
             col.operator("mesh.knife_tool")
             col.operator("mesh.bisect")
-            col.operator("mesh.bridge_edge_loops", text="Bridge Edge Loops")
 
             col.separator()
 

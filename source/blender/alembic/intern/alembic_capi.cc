@@ -173,9 +173,11 @@ static bool gather_objects_paths(const IObject &object, ListBase *object_paths)
   return parent_is_part_of_this_object;
 }
 
-AbcArchiveHandle *ABC_create_handle(const char *filename, ListBase *object_paths)
+AbcArchiveHandle *ABC_create_handle(struct Main *bmain,
+                                    const char *filename,
+                                    ListBase *object_paths)
 {
-  ArchiveReader *archive = new ArchiveReader(filename);
+  ArchiveReader *archive = new ArchiveReader(bmain, filename);
 
   if (!archive->valid()) {
     delete archive;
@@ -222,6 +224,7 @@ static void find_iobject(const IObject &object, IObject &ret, const std::string 
 struct ExportJobData {
   ViewLayer *view_layer;
   Main *bmain;
+  wmWindowManager *wm;
 
   char filename[1024];
   ExportSettings settings;
@@ -246,8 +249,7 @@ static void export_startjob(void *customdata, short *stop, short *do_update, flo
    * scene frame in separate threads
    */
   G.is_rendering = true;
-  BKE_spacedata_draw_locks(true);
-
+  WM_set_locked_interface(data->wm, true);
   G.is_break = false;
 
   DEG_graph_build_from_view_layer(
@@ -261,7 +263,7 @@ static void export_startjob(void *customdata, short *stop, short *do_update, flo
     const int orig_frame = CFRA;
 
     data->was_canceled = false;
-    exporter(*data->progress, data->was_canceled);
+    exporter(do_update, progress, &data->was_canceled);
 
     if (CFRA != orig_frame) {
       CFRA = orig_frame;
@@ -296,7 +298,7 @@ static void export_endjob(void *customdata)
   }
 
   G.is_rendering = false;
-  BKE_spacedata_draw_locks(false);
+  WM_set_locked_interface(data->wm, false);
 }
 
 bool ABC_export(Scene *scene,
@@ -310,6 +312,7 @@ bool ABC_export(Scene *scene,
 
   job->view_layer = CTX_data_view_layer(C);
   job->bmain = CTX_data_main(C);
+  job->wm = CTX_wm_manager(C);
   job->export_ok = false;
   BLI_strncpy(job->filename, filepath, 1024);
 
@@ -649,7 +652,7 @@ static void import_startjob(void *user_data, short *stop, short *do_update, floa
 
   WM_set_locked_interface(data->wm, true);
 
-  ArchiveReader *archive = new ArchiveReader(data->filename);
+  ArchiveReader *archive = new ArchiveReader(data->bmain, data->filename);
 
   if (!archive->valid()) {
 #ifndef WITH_ALEMBIC_HDF5
