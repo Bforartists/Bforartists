@@ -1506,14 +1506,11 @@ void file_draw_check_cb(bContext *C, void *UNUSED(arg1), void *UNUSED(arg2))
 bool file_draw_check_exists(SpaceFile *sfile)
 {
   if (sfile->op) { /* fails on reload */
-    PropertyRNA *prop;
-    if ((prop = RNA_struct_find_property(sfile->op->ptr, "check_existing"))) {
-      if (RNA_property_boolean_get(sfile->op->ptr, prop)) {
-        char filepath[FILE_MAX];
-        BLI_join_dirfile(filepath, sizeof(filepath), sfile->params->dir, sfile->params->file);
-        if (BLI_is_file(filepath)) {
-          return true;
-        }
+    if (sfile->params && (sfile->params->flag & FILE_CHECK_EXISTING)) {
+      char filepath[FILE_MAX];
+      BLI_join_dirfile(filepath, sizeof(filepath), sfile->params->dir, sfile->params->file);
+      if (BLI_is_file(filepath)) {
+        return true;
       }
     }
   }
@@ -2152,6 +2149,10 @@ void file_directory_enter_handle(bContext *C, void *UNUSED(arg_unused), void *UN
   SpaceFile *sfile = CTX_wm_space_file(C);
 
   if (sfile->params) {
+    char old_dir[sizeof(sfile->params->dir)];
+
+    BLI_strncpy(old_dir, sfile->params->dir, sizeof(old_dir));
+
     file_expand_directory(C);
 
     /* special case, user may have pasted a filepath into the directory */
@@ -2185,8 +2186,10 @@ void file_directory_enter_handle(bContext *C, void *UNUSED(arg_unused), void *UN
     BLI_cleanup_dir(BKE_main_blendfile_path(bmain), sfile->params->dir);
 
     if (filelist_is_dir(sfile->files, sfile->params->dir)) {
-      /* if directory exists, enter it immediately */
-      ED_file_change_dir(C);
+      if (!STREQ(sfile->params->dir, old_dir)) { /* Avoids flickering when nothing's changed. */
+        /* if directory exists, enter it immediately */
+        ED_file_change_dir(C);
+      }
 
       /* don't do for now because it selects entire text instead of
        * placing cursor at the end */
@@ -2318,78 +2321,6 @@ void FILE_OT_hidedot(struct wmOperatorType *ot)
   ot->poll = ED_operator_file_active; /* <- important, handler is on window level */
 }
 
-ARegion *file_tools_region(ScrArea *sa)
-{
-  ARegion *ar, *arnew;
-
-  if ((ar = BKE_area_find_region_type(sa, RGN_TYPE_TOOLS)) != NULL) {
-    return ar;
-  }
-
-  /* add subdiv level; after header */
-  ar = BKE_area_find_region_type(sa, RGN_TYPE_HEADER);
-
-  /* is error! */
-  if (ar == NULL) {
-    return NULL;
-  }
-
-  arnew = MEM_callocN(sizeof(ARegion), "tools for file");
-  BLI_insertlinkafter(&sa->regionbase, ar, arnew);
-  arnew->regiontype = RGN_TYPE_TOOLS;
-  arnew->alignment = RGN_ALIGN_LEFT;
-
-  return arnew;
-}
-
-ARegion *file_tool_props_region(ScrArea *sa)
-{
-  ARegion *ar, *arnew;
-
-  if ((ar = BKE_area_find_region_type(sa, RGN_TYPE_TOOL_PROPS)) != NULL) {
-    return ar;
-  }
-
-  /* add subdiv level; after execute region */
-  ar = BKE_area_find_region_type(sa, RGN_TYPE_EXECUTE);
-
-  /* is error! */
-  if (ar == NULL) {
-    return NULL;
-  }
-
-  arnew = MEM_callocN(sizeof(ARegion), "tool props for file");
-  BLI_insertlinkafter(&sa->regionbase, ar, arnew);
-  arnew->regiontype = RGN_TYPE_TOOL_PROPS;
-  arnew->alignment = RGN_ALIGN_RIGHT;
-
-  return arnew;
-}
-
-static int file_bookmark_toggle_exec(bContext *C, wmOperator *UNUSED(unused))
-{
-  ScrArea *sa = CTX_wm_area(C);
-  ARegion *ar = file_tools_region(sa);
-
-  if (ar) {
-    ED_region_toggle_hidden(C, ar);
-  }
-
-  return OPERATOR_FINISHED;
-}
-
-void FILE_OT_bookmark_toggle(struct wmOperatorType *ot)
-{
-  /* identifiers */
-  ot->name = "Toggle Bookmarks";
-  ot->description = "Toggle bookmarks display";
-  ot->idname = "FILE_OT_bookmark_toggle";
-
-  /* api callbacks */
-  ot->exec = file_bookmark_toggle_exec;
-  ot->poll = ED_operator_file_active; /* <- important, handler is on window level */
-}
-
 static bool file_filenum_poll(bContext *C)
 {
   SpaceFile *sfile = CTX_wm_space_file(C);
@@ -2398,7 +2329,7 @@ static bool file_filenum_poll(bContext *C)
     return false;
   }
 
-  return sfile->params && (sfile->params->action_type == FILE_SAVE);
+  return sfile->params && (sfile->params->flag & FILE_CHECK_EXISTING);
 }
 
 /**

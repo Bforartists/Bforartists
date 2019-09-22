@@ -46,7 +46,6 @@
 #include "BKE_image.h"
 #include "BKE_material.h"
 #include "BKE_mesh_runtime.h"
-#include "BKE_object.h"
 #include "BKE_paint.h"
 #include "BKE_report.h"
 
@@ -506,7 +505,7 @@ void paint_sample_color(
       unsigned int totpoly = me->totpoly;
 
       if (CustomData_has_layer(&me_eval->ldata, CD_MLOOPUV)) {
-        ED_view3d_viewcontext_init(C, &vc);
+        ED_view3d_viewcontext_init(C, &vc, depsgraph);
 
         view3d_operator_needs_opengl(C);
 
