@@ -3779,7 +3779,6 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
             ARegion *ar_header = do_versions_find_region(regionbase, RGN_TYPE_HEADER);
             ARegion *ar_toolprops = do_versions_find_region_or_null(regionbase,
                                                                     RGN_TYPE_TOOL_PROPS);
-            ARegion *ar_execute = do_versions_find_region_or_null(regionbase, RGN_TYPE_EXECUTE);
 
             /* Reinsert UI region so that it spawns entire area width */
             BLI_remlink(regionbase, ar_ui);
@@ -3794,15 +3793,6 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
               BLI_assert(sfile->op == NULL);
               BKE_area_region_free(stype, ar_toolprops);
               BLI_freelinkN(regionbase, ar_toolprops);
-            }
-
-            if (!ar_execute) {
-              ARegion *ar_main = do_versions_find_region(regionbase, RGN_TYPE_WINDOW);
-              ar_execute = MEM_callocN(sizeof(ARegion), "versioning execute region for file");
-              BLI_insertlinkbefore(regionbase, ar_main, ar_execute);
-              ar_execute->regiontype = RGN_TYPE_EXECUTE;
-              ar_execute->alignment = RGN_ALIGN_BOTTOM;
-              ar_execute->flag |= RGN_FLAG_DYNAMIC_SIZE;
             }
 
             if (sfile->params) {
@@ -3856,13 +3846,56 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
   {
     /* Versioning code until next subversion bump goes here. */
-
     if (!DNA_struct_elem_find(
             fd->filesdna, "LayerCollection", "short", "local_collections_bits")) {
       LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
         LISTBASE_FOREACH (ViewLayer *, view_layer, &scene->view_layers) {
           LISTBASE_FOREACH (LayerCollection *, layer_collection, &view_layer->layer_collections) {
             do_versions_local_collection_bits_set(layer_collection);
+          }
+        }
+      }
+    }
+
+    /* Fix wrong 3D viewport copying causing corrupt pointers (T69974). */
+    for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
+      for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
+        for (SpaceLink *sl = sa->spacedata.first; sl; sl = sl->next) {
+          if (sl->spacetype == SPACE_VIEW3D) {
+            View3D *v3d = (View3D *)sl;
+
+            for (ScrArea *sa_other = screen->areabase.first; sa_other; sa_other = sa_other->next) {
+              for (SpaceLink *sl_other = sa_other->spacedata.first; sl_other;
+                   sl_other = sl_other->next) {
+                if (sl != sl_other && sl_other->spacetype == SPACE_VIEW3D) {
+                  View3D *v3d_other = (View3D *)sl_other;
+
+                  if (v3d->shading.prop == v3d_other->shading.prop) {
+                    v3d_other->shading.prop = NULL;
+                  }
+                }
+              }
+            }
+          }
+          else if (sl->spacetype == SPACE_FILE) {
+            ListBase *regionbase = (sl == sa->spacedata.first) ? &sa->regionbase : &sl->regionbase;
+            ARegion *ar_tools = do_versions_find_region_or_null(regionbase, RGN_TYPE_TOOLS);
+
+            if (ar_tools) {
+              ARegion *ar_next = ar_tools->next;
+
+              /* We temporarily had two tools regions, get rid of the second one. */
+              if (ar_next && ar_next->regiontype == RGN_TYPE_TOOLS) {
+                do_versions_remove_region(regionbase, RGN_TYPE_TOOLS);
+              }
+            }
+            else {
+              ARegion *ar_ui = do_versions_find_region(regionbase, RGN_TYPE_UI);
+
+              ar_tools = do_versions_add_region(RGN_TYPE_TOOLS, "versioning file tools region");
+              BLI_insertlinkafter(regionbase, ar_ui, ar_tools);
+              ar_tools->alignment = RGN_ALIGN_LEFT;
+            }
           }
         }
       }

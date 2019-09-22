@@ -196,8 +196,8 @@ void ED_view3d_smooth_view_ex(
     sms.to_camera = true; /* restore view3d values in end */
   }
 
-  /* skip smooth viewing for render engine draw */
-  if (smooth_viewtx && v3d->shading.type != OB_RENDER) {
+  /* skip smooth viewing for external render engine draw */
+  if (smooth_viewtx && !(v3d->shading.type == OB_RENDER && rv3d->render_engine)) {
     bool changed = false; /* zero means no difference */
 
     if (sview->camera_old != sview->camera) {
@@ -508,7 +508,7 @@ static bool view3d_camera_to_view_poll(bContext *C)
 void VIEW3D_OT_camera_to_view(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Align Camera To View";
+  ot->name = "Align Camera to View";
   ot->description = "Set camera view to active view";
   ot->idname = "VIEW3D_OT_camera_to_view";
 

@@ -992,9 +992,23 @@ static void sculptsession_free_pbvh(Object *object)
 {
   SculptSession *ss = object->sculpt;
 
-  if (ss && ss->pbvh) {
+  if (!ss) {
+    return;
+  }
+
+  if (ss->pbvh) {
     BKE_pbvh_free(ss->pbvh);
     ss->pbvh = NULL;
+  }
+
+  if (ss->pmap) {
+    MEM_freeN(ss->pmap);
+    ss->pmap = NULL;
+  }
+
+  if (ss->pmap_mem) {
+    MEM_freeN(ss->pmap_mem);
+    ss->pmap_mem = NULL;
   }
 }
 
@@ -1090,6 +1104,12 @@ MultiresModifierData *BKE_sculpt_multires_active(Scene *scene, Object *ob)
     return NULL;
   }
 
+  /* Weight paint operates on original vertices, and needs to treat multires as regular modifier
+   * to make it so that PBVH vertices are at the multires surface. */
+  if ((ob->mode & OB_MODE_SCULPT) == 0) {
+    return NULL;
+  }
+
   for (md = modifiers_getVirtualModifierList(ob, &virtualModifierData); md; md = md->next) {
     if (md->type == eModifierType_Multires) {
       MultiresModifierData *mmd = (MultiresModifierData *)md;
@@ -1135,7 +1155,10 @@ static bool sculpt_modifiers_active(Scene *scene, Sculpt *sd, Object *ob)
     if (!modifier_isEnabled(scene, md, eModifierMode_Realtime)) {
       continue;
     }
-    if (ELEM(md->type, eModifierType_ShapeKey, eModifierType_Multires)) {
+    if (md->type == eModifierType_Multires && (ob->mode & OB_MODE_SCULPT)) {
+      continue;
+    }
+    if (md->type == eModifierType_ShapeKey) {
       continue;
     }
 
@@ -1185,8 +1208,9 @@ static void sculpt_update_object(
 
   ss->kb = (mmd == NULL) ? BKE_keyblock_from_object(ob) : NULL;
 
-  /* VWPaint require mesh info for loop lookup, so require sculpt mode here */
-  if (mmd && ob->mode & OB_MODE_SCULPT) {
+  /* NOTE: Weight pPaint require mesh info for loop lookup, but it never uses multires code path,
+   * so no extra checks is needed here. */
+  if (mmd) {
     ss->multires = mmd;
     ss->totvert = me_eval->totvert;
     ss->totpoly = me_eval->totpoly;
@@ -1210,9 +1234,7 @@ static void sculpt_update_object(
   BLI_assert(pbvh == ss->pbvh);
   UNUSED_VARS_NDEBUG(pbvh);
 
-  MEM_SAFE_FREE(ss->pmap);
-  MEM_SAFE_FREE(ss->pmap_mem);
-  if (need_pmap && ob->type == OB_MESH) {
+  if (need_pmap && ob->type == OB_MESH && !ss->pmap) {
     BKE_mesh_vert_poly_map_create(
         &ss->pmap, &ss->pmap_mem, me->mpoly, me->mloop, me->totvert, me->totpoly, me->totloop);
   }
