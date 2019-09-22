@@ -3676,7 +3676,7 @@ void uiTemplateWaveform(uiLayout *layout, PointerRNA *ptr, const char *propname)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Vectorscope Template
+/** \name Vector-Scope Template
  * \{ */
 
 void uiTemplateVectorscope(uiLayout *layout, PointerRNA *ptr, const char *propname)

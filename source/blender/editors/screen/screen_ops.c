@@ -38,7 +38,6 @@
 #include "DNA_lattice_types.h"
 #include "DNA_object_types.h"
 #include "DNA_curve_types.h"
-#include "DNA_gpencil_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_meta_types.h"
 #include "DNA_mesh_types.h"
@@ -48,7 +47,6 @@
 #include "DNA_userdef_types.h"
 
 #include "BKE_context.h"
-#include "BKE_customdata.h"
 #include "BKE_editmesh.h"
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
@@ -3848,10 +3846,7 @@ static int region_quadview_exec(bContext *C, wmOperator *op)
     for (ar = sa->regionbase.first; ar; ar = arn) {
       arn = ar->next;
       if (ar->alignment == RGN_ALIGN_QSPLIT) {
-        ED_region_exit(C, ar);
-        BKE_area_region_free(sa->type, ar);
-        BLI_remlink(&sa->regionbase, ar);
-        MEM_freeN(ar);
+        ED_region_remove(C, sa, ar);
       }
     }
     ED_area_tag_redraw(sa);
@@ -5159,7 +5154,9 @@ static int userpref_show_invoke(bContext *C, wmOperator *op, const wmEvent *even
   int sizey = 520 * UI_DPI_FAC;
 
   /* changes context! */
-  if (WM_window_open_temp(C, event->x, event->y, sizex, sizey, WM_WINDOW_USERPREFS) != NULL) {
+  if (WM_window_open_temp(
+          C, IFACE_("Blender Preferences"), event->x, event->y, sizex, sizey, SPACE_USERPREF) !=
+      NULL) {
     /* The header only contains the editor switcher and looks empty.
      * So hiding in the temp window makes sense. */
     ScrArea *area = CTX_wm_area(C);
@@ -5208,7 +5205,11 @@ static int drivers_editor_show_invoke(bContext *C, wmOperator *op, const wmEvent
   but = UI_context_active_but_prop_get(C, &ptr, &prop, &index);
 
   /* changes context! */
-  if (WM_window_open_temp(C, event->x, event->y, sizex, sizey, WM_WINDOW_DRIVERS) != NULL) {
+  if (WM_window_open_temp(
+          C, IFACE_("Blender Drivers Editor"), event->x, event->y, sizex, sizey, SPACE_GRAPH) !=
+      NULL) {
+    ED_drivers_editor_init(C, CTX_wm_area(C));
+
     /* activate driver F-Curve for the property under the cursor */
     if (but) {
       FCurve *fcu;
@@ -5264,7 +5265,9 @@ static int info_log_show_invoke(bContext *C, wmOperator *op, const wmEvent *even
   int shift_y = 480;
 
   /* changes context! */
-  if (WM_window_open_temp(C, event->x, event->y + shift_y, sizex, sizey, WM_WINDOW_INFO) != NULL) {
+  if (WM_window_open_temp(
+          C, IFACE_("Blender Info Log"), event->x, event->y + shift_y, sizex, sizey, SPACE_INFO) !=
+      NULL) {
     return OPERATOR_FINISHED;
   }
   else {

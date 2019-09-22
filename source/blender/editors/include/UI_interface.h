@@ -524,6 +524,7 @@ bool UI_but_is_tool(const uiBut *but);
 bool UI_but_is_utf8(const uiBut *but);
 #define UI_but_is_decorator(but) ((but)->func == ui_but_anim_decorate_cb)
 
+bool UI_block_is_empty_ex(const uiBlock *block, const bool skip_title);
 bool UI_block_is_empty(const uiBlock *block);
 bool UI_block_can_add_separator(const uiBlock *block);
 
@@ -1810,6 +1811,7 @@ void uiLayoutSetActivateInit(uiLayout *layout, bool active);
 void uiLayoutSetEnabled(uiLayout *layout, bool enabled);
 void uiLayoutSetRedAlert(uiLayout *layout, bool redalert);
 void uiLayoutSetAlignment(uiLayout *layout, char alignment);
+void uiLayoutSetFixedSize(uiLayout *layout, bool fixed_size);
 void uiLayoutSetKeepAspect(uiLayout *layout, bool keepaspect);
 void uiLayoutSetScaleX(uiLayout *layout, float scale);
 void uiLayoutSetScaleY(uiLayout *layout, float scale);
@@ -1827,6 +1829,7 @@ bool uiLayoutGetActivateInit(uiLayout *layout);
 bool uiLayoutGetEnabled(uiLayout *layout);
 bool uiLayoutGetRedAlert(uiLayout *layout);
 int uiLayoutGetAlignment(uiLayout *layout);
+bool uiLayoutGetFixedSize(uiLayout *layout);
 bool uiLayoutGetKeepAspect(uiLayout *layout);
 int uiLayoutGetWidth(uiLayout *layout);
 float uiLayoutGetScaleX(uiLayout *layout);
