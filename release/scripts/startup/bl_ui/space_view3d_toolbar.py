@@ -457,7 +457,10 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             # crease_pinch_factor
             if capabilities.has_pinch_factor:
                 row = col.row(align=True)
-                row.prop(brush, "crease_pinch_factor", slider=True, text="Pinch")
+                if (brush.sculpt_tool in ('BLOB', 'SNAKE_HOOK')):
+                    row.prop(brush, "crease_pinch_factor", slider=True, text="Magnify")
+                else:
+                    row.prop(brush, "crease_pinch_factor", slider=True, text="Pinch")
 
             # rake_factor
             if capabilities.has_rake_factor:
@@ -649,6 +652,7 @@ class VIEW3D_PT_tools_brush_options(Panel, View3DPaintPanel):
                 col.prop(brush, "sculpt_plane")
                 col.use_property_split = False
                 col.prop(brush, "use_original_normal")
+                col.prop(brush, "use_original_plane")
                 
             col.use_property_split = False
             col.prop(brush, "use_frontface", text="Front Faces Only")
