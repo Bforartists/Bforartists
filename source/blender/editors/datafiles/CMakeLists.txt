@@ -46,8 +46,8 @@ tria_up
 arrow_leftright
 plus
 
-disclosure_tri_down
 disclosure_tri_right
+disclosure_tri_down
 radiobut_off
 radiobut_on
 menu_panel
@@ -201,7 +201,7 @@ particlebrush_weight
 particlebrush_length
 mod_mesh_cache
 add
-#def_icon_blank(218
+file_3d
 align_center
 
 # ------------------------- row 4 --------------------------*/
@@ -379,7 +379,7 @@ light_area
 
 scene_data
 renderlayers
-#def_icon_blank(396
+file_blank
 object_data
 mesh_data
 curve_data
@@ -388,7 +388,7 @@ lattice_data
 apply_rotscale
 material_data
 
-#def_icon_blank(405
+outliner_data_camera
 anim_data
 camera_data
 particle_data
@@ -985,8 +985,8 @@ select_sharpedges
 
 node_direcitonalblur
 #def_icon_blank(1001
-#def_icon_blank(1002
-#def_icon_blank(1003
+seq_strip_duplicate
+seq_strip_meta
 node_doubleedgemask
 node_editgroup
 node_ellipsemask
@@ -1042,8 +1042,8 @@ angle
 
 node_exiteditgroup
 node_fileoutput
-#def_icon_blank(1059
-#def_icon_blank(1060
+snap_midpoint
+snap_perpendicular
 node_frame
 node_fresnel
 node_gamma
@@ -1343,10 +1343,10 @@ select_intersect
 select_set
 select_subtract
 fcurve_snapshot
-#def_icon_blank(1360
-#def_icon_blank(1361
+external_drive
+network_drive
 object_hidden
-#def_icon_blank(1363
+desktop
 
 # ------------------------- row 24 --------------------------*/
 
@@ -1407,10 +1407,10 @@ con_rotlimit
 
 # ------------------------- row 25 --------------------------*/
 
-#def_icon_blank(1424
-#def_icon_blank(1425
-#def_icon_blank(1426
-#def_icon_blank(1427
+checkmark
+file_archive
+snap_face_center
+transform_origins
 #def_icon_blank(1428
 transfer_uv
 ortho
