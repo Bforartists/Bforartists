@@ -3643,16 +3643,16 @@ class VIEW3D_MT_gpencil_vertex_group(Menu):
         layout.operator_context = 'EXEC_AREA'
         ob = context.active_object
 
-        layout.operator("object.vertex_group_add", text="Add New Group")
+        layout.operator("object.vertex_group_add", text="Add New Group", icon = "GROUP_VERTEX")
         ob = context.active_object
         if ob.vertex_groups.active:
             layout.separator()
 
-            layout.operator("gpencil.vertex_group_assign", text="Assign")
-            layout.operator("gpencil.vertex_group_remove_from", text="Remove")
+            layout.operator("gpencil.vertex_group_assign", text="Assign", icon = "ADD_TO_ACTIVE")
+            layout.operator("gpencil.vertex_group_remove_from", text="Remove", icon = "REMOVE_SELECTED_FROM_ACTIVE_GROUP")
 
-            layout.operator("gpencil.vertex_group_select", text="Select")
-            layout.operator("gpencil.vertex_group_deselect", text="Deselect")
+            layout.operator("gpencil.vertex_group_select", text="Select", icon = "SELECT_ALL" )
+            layout.operator("gpencil.vertex_group_deselect", text="Deselect", icon = "SELECT_NONE" )
 
 
 class VIEW3D_MT_paint_weight(Menu):
@@ -5863,13 +5863,13 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
 
         layout.menu("GPENCIL_MT_move_to_layer")
         layout.menu("VIEW3D_MT_assign_material")
-        layout.operator("gpencil.set_active_material", text="Set as Active Material")
-        layout.operator_menu_enum("gpencil.stroke_arrange", "direction", text="Arrange Strokes")
+        layout.operator("gpencil.set_active_material", text="Set as Active Material", icon = "MATERIAL")
+        layout.menu("VIEW3D_MT_edit_gpencil_arrange_strokes")
 
         layout.separator()
 
         # Convert
-        op = layout.operator("gpencil.stroke_cyclical_set", text="Close")
+        op = layout.operator("gpencil.stroke_cyclical_set", text="Close", icon = 'TOGGLE_CYCLIC')
         op.type = 'CLOSE'
         op.geometry = True
         layout.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
@@ -5882,7 +5882,7 @@ class VIEW3D_MT_edit_gpencil_point(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("gpencil.extrude_move", text="Extrude Points")
+        layout.operator("gpencil.extrude_move", text="Extrude Points", icon = "EXTRUDE_REGION")
 
         layout.separator()
 
@@ -5943,19 +5943,18 @@ class VIEW3D_MT_gpencil_animation(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("gpencil.blank_frame_add", text="Insert Blank Keyframe (Active Layer)")
-        layout.operator("gpencil.blank_frame_add", text="Insert Blank Keyframe (All Layers)").all_layers = True
-        layout.operator("gpencil.active_frames_delete_all", text="Delete Frame(s)")
+        layout.operator("gpencil.blank_frame_add", text="Insert Blank Keyframe (Active Layer)", icon = "ADD")
+        layout.operator("gpencil.blank_frame_add", text="Insert Blank Keyframe (All Layers)", icon = "ADD").all_layers = True
 
         layout.separator()
 
-        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Keyframe (Active Layer)")
-        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Keyframe (All Layers)").mode = 'ALL'
+        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Keyframe (Active Layer)", icon = "DUPLICATE")
+        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Keyframe (All Layers)", icon = "DUPLICATE").mode = 'ALL'
 
         layout.separator()
 
-        layout.operator("gpencil.delete", text="Delete Active Keyframe (Active Layer)").type = 'FRAME'
-        layout.operator("gpencil.active_frames_delete_all", text="Delete Active Keyframes (All Layers)")
+        layout.operator("gpencil.delete", text="Delete Active Keyframe (Active Layer)", icon = "DELETE").type = 'FRAME'
+        layout.operator("gpencil.active_frames_delete_all", text="Delete Active Keyframes (All Layers)", icon = "DELETE")
 
 
 class VIEW3D_MT_edit_gpencil_transform(Menu):
@@ -7736,7 +7735,7 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
             col.operator("gpencil.duplicate_move", text="Duplicate")
             col.operator("gpencil.copy", text="Copy", icon='COPYDOWN')
             col.operator("gpencil.paste", text="Paste", icon='PASTEDOWN').type = 'ACTIVE'
-            col.operator("gpencil.paste", text="Paste by Layer").type = 'LAYER'
+            col.operator("gpencil.paste", text="Paste by Layer", icon='PASTEDOWN').type = 'LAYER'
 
             col.separator()
 
