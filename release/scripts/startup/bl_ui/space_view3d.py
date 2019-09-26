@@ -5097,10 +5097,6 @@ class VIEW3D_MT_edit_gpencil_delete(Menu):
 
         layout.separator()
 
-        layout.operator_enum("gpencil.dissolve", "type")
-
-        layout.separator()
-
         layout.operator("gpencil.delete", text="Delete Active Keyframe (Active Layer)", icon = 'DELETE').type = 'FRAME'
         layout.operator("gpencil.active_frames_delete_all", text="Delete Active Keyframes (All Layers)", icon = 'DELETE')
 
@@ -5789,15 +5785,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.operator("gpencil.interpolate", text="Interpolate", icon = "INTERPOLATE")
         layout.operator("gpencil.interpolate_sequence", text="Sequence", icon = "SEQUENCE")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_gpencil_copy_layer")
-        layout.menu("VIEW3D_MT_gpencil_simplify")
-
-        layout.separator()
-
-        layout.operator("gpencil.blank_frame_add", icon = "ADD")
+        layout.menu("VIEW3D_MT_gpencil_animation")
 
         layout.separator()
 
@@ -5817,26 +5805,19 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("gpencil.convert", "type", text="Convert to Geometry")
-
-        layout.separator()
-
         layout.menu("VIEW3D_MT_edit_gpencil_delete")
         layout.operator_menu_enum("gpencil.dissolve", "type")
 
         layout.separator()
 
         layout.menu("GPENCIL_MT_cleanup")
-        layout.menu("VIEW3D_MT_edit_gpencil_hide")
+        layout.menu("VIEW3D_MT_edit_gpencil_hide", text = "Show/Hide")
 
         layout.menu("VIEW3D_MT_weight_gpencil")
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_gpencil_showhide")
-
         layout.operator_menu_enum("gpencil.stroke_separate", "mode")
-        layout.menu("GPENCIL_MT_cleanup")
 
 
 class VIEW3D_MT_edit_gpencil_hide(Menu):
@@ -5936,34 +5917,22 @@ class VIEW3D_MT_weight_gpencil(Menu):
         layout.operator("gpencil.vertex_group_invert", text="Invert", icon='WEIGHT_INVERT')
         layout.operator("gpencil.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH')
 
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_assign_material")
-
-        layout.separator()
-
-        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon = "DUPLICATE")
-        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame All Layers", icon = "DUPLICATE").mode = 'ALL'
-
-        layout.separator()
-
-        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
-        layout.operator("gpencil.stroke_simplify_fixed", text="Simplify", icon = "MOD_SIMPLIFY")
-        layout.operator("gpencil.stroke_simplify", text="Simplify Adaptative", icon = "MOD_SIMPLIFY")
+        layout.menu("VIEW3D_MT_gpencil_autoweights")
 
         if context.mode == 'WEIGHT_GPENCIL':
             layout.separator()
             layout.menu("VIEW3D_MT_gpencil_autoweights")
 
-        layout.separator()
+            layout.separator()
 
-        #radial control button brush size
-        myvar = layout.operator("wm.radial_control", text = "Brush Radius", icon = "BRUSHSIZE")
-        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.size'
+            #radial control button brush size
+            myvar = layout.operator("wm.radial_control", text = "Brush Radius", icon = "BRUSHSIZE")
+            myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.size'
 
-        #radial control button brush strength
-        myvar = layout.operator("wm.radial_control", text = "Brush Strength", icon = "BRUSHSTRENGTH")
-        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.strength'
+            #radial control button brush strength
+            myvar = layout.operator("wm.radial_control", text = "Brush Strength", icon = "BRUSHSTRENGTH")
+            myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.strength'
+
 
 class VIEW3D_MT_gpencil_animation(Menu):
     bl_label = "Animation"
@@ -6008,23 +5977,6 @@ class VIEW3D_MT_edit_gpencil_transform(Menu):
         layout.operator("transform.tosphere", text="To Sphere", icon = "TOSPHERE")
         layout.operator("transform.transform", text="Shrink Fatten", icon = 'SHRINK_FATTEN').mode = 'GPENCIL_SHRINKFATTEN'
 
-        layout.separator()
-
-        layout.operator("transform.mirror", text="Mirror", icon = "TRANSFORM_MIRROR")
-
-
-class VIEW3D_MT_edit_gpencil_showhide(Menu):
-    bl_label = "Show/hide"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("gpencil.reveal", text="Show All Layers")
-
-        layout.separator()
-
-        layout.operator("gpencil.hide", text="Hide Active Layer").unselected = False
-        layout.operator("gpencil.hide", text="Hide Inactive Layers").unselected = True
 
 class VIEW3D_MT_object_mode_pie(Menu):
     bl_label = "Mode"
@@ -8249,7 +8201,6 @@ classes = (
     VIEW3D_MT_edit_gpencil_hide,
     VIEW3D_MT_edit_gpencil_arrange_strokes,
     VIEW3D_MT_edit_gpencil_delete,
-    VIEW3D_MT_edit_gpencil_showhide,
     VIEW3D_MT_weight_gpencil,
     VIEW3D_MT_gpencil_simplify,
     VIEW3D_MT_gpencil_copy_layer,
