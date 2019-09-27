@@ -843,7 +843,9 @@ class VIEW3D_MT_transform_base(Menu):
         if context.mode != 'OBJECT':
             layout.operator("transform.vertex_warp", text="Warp", icon = "MOD_WARP")
             layout.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE')
-            layout.operator("transform.skin_resize", text="Skin Resize", icon = "MOD_SKIN")
+
+            if context.edit_object.type in 'MESH':   
+                layout.operator("transform.skin_resize", text="Skin Resize", icon = "MOD_SKIN")
 
 
 # Generic transform menu - geometry types
