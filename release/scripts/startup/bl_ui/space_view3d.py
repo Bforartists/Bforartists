@@ -5154,7 +5154,7 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
         edit_object = context.edit_object
 
         if edit_object.type in {'CURVE', 'SURFACE'}:
-            layout.operator("curve.extrude_move", icon = 'EXTRUDE_REGION')
+            layout.operator("curve.extrude_move", text = "Extrude Curve", icon = 'EXTRUDE_REGION')
 
             layout.separator()
 
