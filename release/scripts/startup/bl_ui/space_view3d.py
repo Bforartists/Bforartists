@@ -5918,10 +5918,6 @@ class VIEW3D_MT_weight_gpencil(Menu):
         layout.menu("VIEW3D_MT_gpencil_autoweights")
 
         if context.mode == 'WEIGHT_GPENCIL':
-            layout.separator()
-            layout.menu("VIEW3D_MT_gpencil_autoweights")
-
-            layout.separator()
 
             #radial control button brush size
             myvar = layout.operator("wm.radial_control", text = "Brush Radius", icon = "BRUSHSIZE")
