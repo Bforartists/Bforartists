@@ -5409,7 +5409,7 @@ class VIEW3D_MT_edit_meta(Menu):
 
         layout.separator()
 
-        layout.operator("mball.duplicate_metaelems", icon = "DUPLICATE")
+        layout.operator("mball.duplicate_metaelems", text = "Duplicate", icon = "DUPLICATE")
 
         layout.separator()
 
