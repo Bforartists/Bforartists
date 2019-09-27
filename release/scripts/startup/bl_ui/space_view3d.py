@@ -5101,13 +5101,16 @@ class VIEW3D_MT_edit_gpencil_delete(Menu):
 def draw_curve(self, _context):
     layout = self.layout
 
+    edit_object = _context.edit_object
+
     layout.menu("VIEW3D_MT_transform")
     layout.menu("VIEW3D_MT_mirror")
     layout.menu("VIEW3D_MT_snap")
 
     layout.separator()
 
-    layout.operator("curve.spin", icon = 'SPIN')
+    if edit_object.type == 'SURFACE':
+        layout.operator("curve.spin", icon = 'SPIN')
     layout.operator("curve.duplicate_move", text = "Duplicate", icon = "DUPLICATE")
 
     layout.separator()
@@ -5115,19 +5118,21 @@ def draw_curve(self, _context):
     layout.operator("curve.split", icon = "SPLIT")
     layout.operator("curve.separate", icon = "SEPARATE")
     layout.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
-    layout.operator("curve.decimate", icon = "DECIMATE")
-    layout.operator_menu_enum("curve.spline_type_set", "type")
+    if edit_object.type == 'CURVE':
+        layout.operator("curve.decimate", icon = "DECIMATE")
+        layout.operator_menu_enum("curve.spline_type_set", "type")
 
     layout.separator()
 
-    layout.operator("transform.tilt", icon = "TILT")
-    layout.operator("curve.tilt_clear", icon = "CLEAR_TILT")
+    if edit_object.type == 'CURVE':
+        layout.operator("transform.tilt", icon = "TILT")
+        layout.operator("curve.tilt_clear", icon = "CLEAR_TILT")
 
     layout.separator()
-
-    layout.menu("VIEW3D_MT_edit_curve_handle_type_set")
-   
-    layout.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS')
+    
+    if edit_object.type == 'CURVE':
+        layout.menu("VIEW3D_MT_edit_curve_handle_type_set")
+        layout.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS')
 
     layout.separator()
 
@@ -5136,7 +5141,8 @@ def draw_curve(self, _context):
     layout.separator()
 
     layout.menu("VIEW3D_MT_edit_curve_delete")
-    layout.operator("curve.dissolve_verts", icon='DISSOLVE_VERTS')
+    if edit_object.type == 'CURVE':
+        layout.operator("curve.dissolve_verts", icon='DISSOLVE_VERTS')
 
 
 class VIEW3D_MT_edit_curve(Menu):
