@@ -1856,11 +1856,6 @@ class VIEW3D_MT_select_edit_text(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-
-        layout.separator()
-
         layout.operator("font.text_cut", text="Cut", icon = "CUT")
         layout.operator("font.text_copy", text="Copy", icon='COPYDOWN')
         layout.operator("font.text_paste", text="Paste", icon='PASTEDOWN')
