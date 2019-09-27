@@ -962,7 +962,7 @@ class VIEW3D_MT_mirror(Menu):
         props.constraint_axis = (False, False, True)
         props.orient_type = 'LOCAL'
 
-        if _context.edit_object:            
+        if _context.edit_object and _context.edit_object.type in {'MESH', 'SURFACE'}:            
 
             layout.separator()
 
