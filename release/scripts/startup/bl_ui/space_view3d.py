@@ -5813,8 +5813,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.menu("GPENCIL_MT_cleanup")
         layout.menu("VIEW3D_MT_edit_gpencil_hide", text = "Show/Hide")
 
-        layout.menu("VIEW3D_MT_weight_gpencil")
-
         layout.separator()
 
         layout.operator_menu_enum("gpencil.stroke_separate", "mode")
