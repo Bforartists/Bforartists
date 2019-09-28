@@ -2317,13 +2317,12 @@ class VIEW3D_MT_surface_add(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("surface.primitive_nurbs_surface_curve_add", text="Nurbs Curve", icon='SURFACE_NCURVE')
-        layout.operator("surface.primitive_nurbs_surface_circle_add", text="Nurbs Circle", icon='SURFACE_NCIRCLE')
-        layout.operator("surface.primitive_nurbs_surface_surface_add", text="Nurbs Surface", icon='SURFACE_NSURFACE')
-        layout.operator("surface.primitive_nurbs_surface_cylinder_add",
-                        text="Nurbs Cylinder", icon='SURFACE_NCYLINDER')
-        layout.operator("surface.primitive_nurbs_surface_sphere_add", text="Nurbs Sphere", icon='SURFACE_NSPHERE')
-        layout.operator("surface.primitive_nurbs_surface_torus_add", text="Nurbs Torus", icon='SURFACE_NTORUS')
+        layout.operator("surface.primitive_nurbs_surface_curve_add", text="Surface Curve", icon='SURFACE_NCURVE')
+        layout.operator("surface.primitive_nurbs_surface_circle_add", text="Surface Circle", icon='SURFACE_NCIRCLE')
+        layout.operator("surface.primitive_nurbs_surface_surface_add", text="Surface Patch", icon='SURFACE_NSURFACE')
+        layout.operator("surface.primitive_nurbs_surface_cylinder_add", text="Surface Cylinder", icon='SURFACE_NCYLINDER')
+        layout.operator("surface.primitive_nurbs_surface_sphere_add", text="Surface Sphere", icon='SURFACE_NSPHERE')
+        layout.operator("surface.primitive_nurbs_surface_torus_add", text="Surface Torus", icon='SURFACE_NTORUS')
 
 
 class VIEW3D_MT_edit_metaball_context_menu(Menu):
