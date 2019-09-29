@@ -70,6 +70,7 @@ static const EnumPropertyItem sculpt_stroke_method_items[] = {
 
 const EnumPropertyItem rna_enum_brush_sculpt_tool_items[] = {
     {SCULPT_TOOL_DRAW, "DRAW", ICON_BRUSH_SCULPT_DRAW, "Draw", ""},
+    {SCULPT_TOOL_DRAW_SHARP, "DRAW_SHARP", ICON_BRUSH_SCULPT_DRAW, "Draw Sharp", ""},
     {SCULPT_TOOL_CLAY, "CLAY", ICON_BRUSH_CLAY, "Clay", ""},
     {SCULPT_TOOL_CLAY_STRIPS, "CLAY_STRIPS", ICON_BRUSH_CLAY_STRIPS, "Clay Strips", ""},
     {SCULPT_TOOL_LAYER, "LAYER", ICON_BRUSH_LAYER, "Layer", ""},
@@ -84,16 +85,15 @@ const EnumPropertyItem rna_enum_brush_sculpt_tool_items[] = {
     {SCULPT_TOOL_PINCH, "PINCH", ICON_BRUSH_PINCH, "Pinch", ""},
     {0, "", 0, NULL, NULL},
     {SCULPT_TOOL_GRAB, "GRAB", ICON_BRUSH_GRAB, "Grab", ""},
+    {SCULPT_TOOL_ELASTIC_DEFORM, "ELASTIC_DEFORM", ICON_BRUSH_GRAB, "Elastic Deform", ""},
     {SCULPT_TOOL_SNAKE_HOOK, "SNAKE_HOOK", ICON_BRUSH_SNAKE_HOOK, "Snake Hook", ""},
     {SCULPT_TOOL_THUMB, "THUMB", ICON_BRUSH_THUMB, "Thumb", ""},
+    {SCULPT_TOOL_POSE, "POSE", ICON_BRUSH_GRAB, "Pose", ""},
     {SCULPT_TOOL_NUDGE, "NUDGE", ICON_BRUSH_NUDGE, "Nudge", ""},
     {SCULPT_TOOL_ROTATE, "ROTATE", ICON_BRUSH_ROTATE, "Rotate", ""},
     {0, "", 0, NULL, NULL},
     {SCULPT_TOOL_SIMPLIFY, "SIMPLIFY", ICON_BRUSH_DATA, "Simplify", ""},
     {SCULPT_TOOL_MASK, "MASK", ICON_BRUSH_MASK, "Mask", ""},
-    {SCULPT_TOOL_DRAW_SHARP, "DRAW_SHARP", ICON_BRUSH_SCULPT_DRAW, "Draw Sharp", ""},
-    {SCULPT_TOOL_ELASTIC_DEFORM, "ELASTIC_DEFORM", ICON_BRUSH_GRAB, "Elastic Deform", ""},
-    {SCULPT_TOOL_POSE, "POSE", ICON_BRUSH_GRAB, "Pose", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -1298,7 +1298,7 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
   prop = RNA_def_property(srna, "active_smooth_factor", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_float_sdna(prop, NULL, "active_smooth");
   RNA_def_property_range(prop, 0.0f, 1.0f);
-  RNA_def_property_ui_text(prop, "Active Smooth", "Amount of smoothing while drawing ");
+  RNA_def_property_ui_text(prop, "Active Smooth", "Amount of smoothing while drawing");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, NULL);
 
@@ -1306,7 +1306,7 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, NULL, "era_strength_f");
   RNA_def_property_range(prop, 0.0, 100.0);
   RNA_def_property_ui_range(prop, 0.0, 100.0, 10, 1);
-  RNA_def_property_ui_text(prop, "Affect Stroke Strength", "Amount of erasing for strength ");
+  RNA_def_property_ui_text(prop, "Affect Stroke Strength", "Amount of erasing for strength");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, NULL);
 
@@ -1314,7 +1314,7 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, NULL, "era_thickness_f");
   RNA_def_property_range(prop, 0.0, 100.0);
   RNA_def_property_ui_range(prop, 0.0, 100.0, 10, 1);
-  RNA_def_property_ui_text(prop, "Affect Stroke Thickness", "Amount of erasing for thickness ");
+  RNA_def_property_ui_text(prop, "Affect Stroke Thickness", "Amount of erasing for thickness");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, NULL);
 
@@ -1861,6 +1861,13 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, NULL, "crease_pinch_factor");
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_ui_text(prop, "Crease Brush Pinch Factor", "How much the crease brush pinches");
+  RNA_def_property_update(prop, 0, "rna_Brush_update");
+
+  prop = RNA_def_property(srna, "pose_offset", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_float_sdna(prop, NULL, "pose_offset");
+  RNA_def_property_range(prop, 0.0f, 2.0f);
+  RNA_def_property_ui_text(
+      prop, "Pose Origin Offset", "Offset of the pose origin in relation to the brush radius");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 
   prop = RNA_def_property(srna, "auto_smooth_factor", PROP_FLOAT, PROP_FACTOR);

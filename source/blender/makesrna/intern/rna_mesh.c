@@ -503,9 +503,7 @@ static void rna_Mesh_texspace_size_get(PointerRNA *ptr, float values[3])
 {
   Mesh *me = (Mesh *)ptr->data;
 
-  if (me->bb == NULL || (me->bb->flag & BOUNDBOX_DIRTY)) {
-    BKE_mesh_texspace_calc(me);
-  }
+  BKE_mesh_texspace_ensure(me);
 
   copy_v3_v3(values, me->size);
 }
@@ -514,9 +512,7 @@ static void rna_Mesh_texspace_loc_get(PointerRNA *ptr, float values[3])
 {
   Mesh *me = (Mesh *)ptr->data;
 
-  if (me->bb == NULL || (me->bb->flag & BOUNDBOX_DIRTY)) {
-    BKE_mesh_texspace_calc(me);
-  }
+  BKE_mesh_texspace_ensure(me);
 
   copy_v3_v3(values, me->loc);
 }
@@ -547,7 +543,7 @@ static void rna_MeshVertex_undeformed_co_get(PointerRNA *ptr, float values[3])
     /* orco is normalized to 0..1, we do inverse to match mvert->co */
     float loc[3], size[3];
 
-    BKE_mesh_texspace_get(me->texcomesh ? me->texcomesh : me, loc, NULL, size);
+    BKE_mesh_texspace_get(me->texcomesh ? me->texcomesh : me, loc, size);
     madd_v3_v3v3v3(values, loc, orco[(mvert - me->mvert)], size);
   }
   else {
@@ -2211,15 +2207,6 @@ void rna_def_texmat_common(StructRNA *srna, const char *texspace_editable)
   RNA_def_property_editable_func(prop, texspace_editable);
   RNA_def_property_update(prop, 0, "rna_Mesh_update_data");
 
-  /* not supported yet */
-#  if 0
-  prop = RNA_def_property(srna, "texspace_rot", PROP_FLOAT, PROP_EULER);
-  RNA_def_property_float(prop, NULL, "rot");
-  RNA_def_property_ui_text(prop, "Texture Space Rotation", "Texture space rotation");
-  RNA_def_property_editable_func(prop, texspace_editable);
-  RNA_def_property_update(prop, 0, "rna_Mesh_update_data");
-#  endif
-
   /* materials */
   prop = RNA_def_property(srna, "materials", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, NULL, "mat", "totcol");
@@ -3008,9 +2995,33 @@ static void rna_def_mesh(BlenderRNA *brna)
                            "values preserve finer details");
   RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
 
+  prop = RNA_def_property(srna, "remesh_voxel_adaptivity", PROP_FLOAT, PROP_DISTANCE);
+  RNA_def_property_float_sdna(prop, NULL, "remesh_voxel_adaptivity");
+  RNA_def_property_range(prop, 0.0f, 1.0f);
+  RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.01, 4);
+  RNA_def_property_ui_text(
+      prop,
+      "Adaptivity",
+      "Reduces the final face count by simplifying geometry where detail is not needed, "
+      "generating triangles. A value greater than 0 disables Fix Poles");
+  RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
+
   prop = RNA_def_property(srna, "remesh_smooth_normals", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", ME_REMESH_SMOOTH_NORMALS);
   RNA_def_property_ui_text(prop, "Smooth Normals", "Smooth the normals of the remesher result");
+  RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
+
+  prop = RNA_def_property(srna, "remesh_fix_poles", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "flag", ME_REMESH_FIX_POLES);
+  RNA_def_property_ui_text(prop, "Fix Poles", "Produces less poles and a better topology flow");
+  RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
+
+  prop = RNA_def_property(srna, "remesh_preserve_volume", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "flag", ME_REMESH_REPROJECT_VOLUME);
+  RNA_def_property_ui_text(
+      prop,
+      "Preserve Volume",
+      "Projects the mesh to preserve the volume and details of the original mesh");
   RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
 
   prop = RNA_def_property(srna, "remesh_preserve_paint_mask", PROP_BOOLEAN, PROP_NONE);
@@ -3081,15 +3092,6 @@ static void rna_def_mesh(BlenderRNA *brna)
   RNA_def_property_editable_func(prop, "rna_Mesh_texspace_editable");
   RNA_def_property_float_funcs(
       prop, "rna_Mesh_texspace_loc_get", "rna_Mesh_texspace_loc_set", NULL);
-  RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
-#  endif
-
-  /* not supported yet */
-#  if 0
-  prop = RNA_def_property(srna, "texspace_rot", PROP_FLOAT, PROP_EULER);
-  RNA_def_property_float(prop, NULL, "rot");
-  RNA_def_property_ui_text(prop, "Texture Space Rotation", "Texture space rotation");
-  RNA_def_property_editable_func(prop, texspace_editable);
   RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
 #  endif
 

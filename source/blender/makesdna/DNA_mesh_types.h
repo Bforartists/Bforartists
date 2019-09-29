@@ -116,8 +116,6 @@ typedef struct Mesh {
   /** Animation data (must be immediately after id for utilities to use it). */
   struct AnimData *adt;
 
-  struct BoundBox *bb;
-
   /** Old animation system, deprecated for 2.5. */
   struct Ipo *ipo DNA_DEPRECATED;
   struct Key *key;
@@ -177,7 +175,6 @@ typedef struct Mesh {
   /* texture space, copied as one block in editobject.c */
   float loc[3];
   float size[3];
-  float rot[3];
 
   short texflag, flag;
   float smoothresh;
@@ -193,6 +190,7 @@ typedef struct Mesh {
   short totcol;
 
   float remesh_voxel_size;
+  float remesh_voxel_adaptivity;
   char remesh_mode;
   char _pad1[3];
   /** Deprecated multiresolution modeling data, only keep for loading old files. */
@@ -218,6 +216,7 @@ typedef struct TFace {
 /* texflag */
 enum {
   ME_AUTOSPACE = 1,
+  ME_AUTOSPACE_EVALUATED = 2,
 };
 
 /* me->editflag */
@@ -253,6 +252,8 @@ enum {
   ME_SCULPT_DYNAMIC_TOPOLOGY = 1 << 10,
   ME_REMESH_SMOOTH_NORMALS = 1 << 11,
   ME_REMESH_REPROJECT_PAINT_MASK = 1 << 12,
+  ME_REMESH_FIX_POLES = 1 << 13,
+  ME_REMESH_REPROJECT_VOLUME = 1 << 14,
 };
 
 /* me->cd_flag */

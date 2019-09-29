@@ -1788,7 +1788,7 @@ class CYCLES_RENDER_PT_bake(CyclesButtonsPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        return not use_optix(context)
+        return CyclesButtonsPanel.poll(context) and not use_optix(context)
 
     def draw(self, context):
         layout = self.layout

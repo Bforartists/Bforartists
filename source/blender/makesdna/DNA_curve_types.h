@@ -32,7 +32,6 @@
 #define MAXTEXTBOX 256 /* used in readfile.c and editfont.c */
 
 struct AnimData;
-struct BoundBox;
 struct EditFont;
 struct GHash;
 struct Ipo;
@@ -212,8 +211,6 @@ typedef struct Curve {
   /** Animation data (must be immediately after id for utilities to use it). */
   struct AnimData *adt;
 
-  struct BoundBox *bb;
-
   /** Actual data, called splines in rna. */
   ListBase nurb;
 
@@ -229,14 +226,13 @@ typedef struct Curve {
   /* texture space, copied as one block in editobject.c */
   float loc[3];
   float size[3];
-  float rot[3];
 
   /** Creation-time type of curve datablock. */
   short type;
 
   /** Keep a short because of BKE_object_obdata_texspace_get(). */
   short texflag;
-  char _pad0[2];
+  char _pad0[6];
   short twist_mode;
   float twist_smooth, smallcaps_scale;
 
@@ -308,6 +304,7 @@ typedef struct Curve {
 /* Curve.texflag */
 enum {
   CU_AUTOSPACE = 1,
+  CU_AUTOSPACE_EVALUATED = 2,
 };
 
 #if 0 /* Moved to overlay options in 2.8 */
