@@ -3821,6 +3821,31 @@ class VIEW3D_MT_sculpt(Menu):
 
         props = layout.operator("sculpt.dirty_mask", text='Dirty Mask')
 
+        layout.separator()
+        layout.menu("VIEW3D_MT_sculpt_set_pivot", text="Set Pivot")
+
+
+class VIEW3D_MT_sculpt_set_pivot(Menu):
+    bl_label = "Sculpt Set Pivot"
+
+    def draw(self, context):
+        layout = self.layout
+
+        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Origin")
+        props.mode = 'ORIGIN'
+
+        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Unmasked")
+        props.mode = 'UNMASKED'
+
+        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Mask Border")
+        props.mode = 'BORDER'
+
+        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Active Vertex")
+        props.mode = 'ACTIVE'
+
+        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Surface Under Cursor")
+        props.mode = 'SURFACE'
+
 
 class VIEW3D_MT_sculpt_specials(Menu):
     bl_label = "Sculpt Context Menu"
@@ -8135,6 +8160,7 @@ classes = (
     VIEW3D_MT_subdivision_set,
     VIEW3D_MT_sculpt_specials,
     VIEW3D_MT_sculpt,
+    VIEW3D_MT_sculpt_set_pivot,
     VIEW3D_MT_hide_mask,
     VIEW3D_MT_particle,
     VIEW3D_MT_particle_context_menu,

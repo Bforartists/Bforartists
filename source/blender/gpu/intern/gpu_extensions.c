@@ -355,6 +355,15 @@ void gpu_extensions_init(void)
   GG.glew_arb_base_instance_is_supported = GLEW_ARB_base_instance;
   gpu_detect_mip_render_workaround();
 
+  /* XXX TODO a nasty nvidia driver bug on GTX & RTX 10X0 / 20X0 is breaking instancing when using
+   * indirect drawcall. (see T70011) */
+  if (GPU_type_matches(GPU_DEVICE_NVIDIA, GPU_OS_ANY, GPU_DRIVER_ANY)) {
+    if (strstr(renderer, "RTX 10") || strstr(renderer, "RTX 20") || strstr(renderer, "GTX 10") ||
+        strstr(renderer, "GTX 20")) {
+      GG.glew_arb_base_instance_is_supported = false;
+    }
+  }
+
   if (G.debug & G_DEBUG_GPU_FORCE_WORKAROUNDS) {
     printf("\n");
     printf("GPU: Bypassing workaround detection.\n");
@@ -395,6 +404,17 @@ void gpu_extensions_init(void)
       GG.glew_arb_base_instance_is_supported = false;
       GG.context_local_shaders_workaround = true;
     }
+
+    if (strstr(version, "Build 20.19.15.4285")) {
+      /* Somehow fixes armature display issues (see T69743). */
+      GG.context_local_shaders_workaround = true;
+    }
+  }
+  else if ((GG.device == GPU_DEVICE_ATI) && (GG.os == GPU_OS_UNIX) &&
+           (GG.driver == GPU_DRIVER_OPENSOURCE)) {
+    /* See T70187: merging vertices fail. This has been tested from 18.2.2 till 19.3.0~dev of the
+     * Mesa driver */
+    GG.unused_fb_slot_workaround = true;
   }
 
   GPU_invalid_tex_init();

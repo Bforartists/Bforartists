@@ -1402,7 +1402,7 @@ static bool gpsculpt_brush_init(bContext *C, wmOperator *op)
   gpsculpt_brush_header_set(C, gso);
 
   /* setup cursor drawing */
-  // WM_cursor_modal_set(CTX_wm_window(C), BC_CROSSCURSOR);
+  // WM_cursor_modal_set(CTX_wm_window(C), WM_CURSOR_CROSS);
   if (gso->sa->spacetype != SPACE_VIEW3D) {
     ED_gpencil_toggle_brush_cursor(C, true, NULL);
   }
@@ -1666,8 +1666,8 @@ static bool gpsculpt_brush_do_stroke(tGP_BrushEditData *gso,
           if (i + 1 == gps->totpoints - 1) {
             pt = &gps->points[i + 1];
             pt_active = (!is_multiedit) ? pt->runtime.pt_orig : pt;
-            index = (!is_multiedit) ? pt->runtime.idx_orig : i;
-            if (pt->runtime.pt_orig != NULL) {
+            index = (!is_multiedit) ? pt->runtime.idx_orig : i + 1;
+            if (pt_active != NULL) {
               rot_eval = gpsculpt_rotation_eval_get(gso, gps, pt, i + 1);
               ok |= apply(gso, gps_active, rot_eval, index, radius, pc2);
               include_last = false;
@@ -1688,7 +1688,7 @@ static bool gpsculpt_brush_do_stroke(tGP_BrushEditData *gso,
           pt = &gps->points[i];
           pt_active = (!is_multiedit) ? pt->runtime.pt_orig : pt;
           index = (!is_multiedit) ? pt->runtime.idx_orig : i;
-          if (pt->runtime.pt_orig != NULL) {
+          if (pt_active != NULL) {
             rot_eval = gpsculpt_rotation_eval_get(gso, gps, pt, i);
             changed |= apply(gso, gps_active, rot_eval, index, radius, pc1);
             include_last = false;
