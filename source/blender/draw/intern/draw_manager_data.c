@@ -65,8 +65,9 @@ static void draw_call_sort(DRWCommand *array, DRWCommand *array_tmp, int array_l
 
   for (int i = 0; i < array_len; i++) {
     /* Early out if nothing to sort. */
-    if (++idx[KEY(array[i])] == array_len)
+    if (++idx[KEY(array[i])] == array_len) {
       return;
+    }
   }
   /* Cumulate batch indices */
   for (int i = 1; i < ARRAY_SIZE(idx); i++) {
@@ -446,13 +447,11 @@ static void drw_call_calc_orco(Object *ob, float (*r_orcofacs)[4])
   if (ob_data != NULL) {
     switch (GS(ob_data->name)) {
       case ID_ME:
-        BKE_mesh_texspace_get_reference((Mesh *)ob_data, NULL, &texcoloc, NULL, &texcosize);
+        BKE_mesh_texspace_get_reference((Mesh *)ob_data, NULL, &texcoloc, &texcosize);
         break;
       case ID_CU: {
         Curve *cu = (Curve *)ob_data;
-        if (cu->bb == NULL || (cu->bb->flag & BOUNDBOX_DIRTY)) {
-          BKE_curve_texspace_calc(cu);
-        }
+        BKE_curve_texspace_ensure(cu);
         texcoloc = cu->loc;
         texcosize = cu->size;
         break;
@@ -808,8 +807,7 @@ void DRW_shgroup_call_instances_with_attribs(DRWShadingGroup *shgroup,
   drw_command_draw(shgroup, batch, handle);
 }
 
-// #define SCULPT_DEBUG_BUFFERS
-
+#define SCULPT_DEBUG_BUFFERS (G.debug_value == 889)
 typedef struct DRWSculptCallbackData {
   Object *ob;
   DRWShadingGroup **shading_groups;
@@ -817,13 +815,11 @@ typedef struct DRWSculptCallbackData {
   bool use_mats;
   bool use_mask;
   bool fast_mode; /* Set by draw manager. Do not init. */
-#ifdef SCULPT_DEBUG_BUFFERS
-  int node_nr;
-#endif
+
+  int debug_node_nr;
 } DRWSculptCallbackData;
 
-#ifdef SCULPT_DEBUG_BUFFERS
-#  define SCULPT_DEBUG_COLOR(id) (sculpt_debug_colors[id % 9])
+#define SCULPT_DEBUG_COLOR(id) (sculpt_debug_colors[id % 9])
 static float sculpt_debug_colors[9][4] = {
     {1.0f, 0.2f, 0.2f, 1.0f},
     {0.2f, 1.0f, 0.2f, 1.0f},
@@ -835,7 +831,6 @@ static float sculpt_debug_colors[9][4] = {
     {0.2f, 1.0f, 0.7f, 1.0f},
     {0.7f, 0.2f, 1.0f, 1.0f},
 };
-#endif
 
 static void sculpt_draw_cb(DRWSculptCallbackData *scd, GPU_PBVH_Buffers *buffers)
 {
@@ -853,41 +848,55 @@ static void sculpt_draw_cb(DRWSculptCallbackData *scd, GPU_PBVH_Buffers *buffers
 
   DRWShadingGroup *shgrp = scd->shading_groups[index];
   if (geom != NULL && shgrp != NULL) {
-#ifdef SCULPT_DEBUG_BUFFERS
-    /* Color each buffers in different colors. Only work in solid/Xray mode. */
-    shgrp = DRW_shgroup_create_sub(shgrp);
-    DRW_shgroup_uniform_vec3(shgrp, "materialDiffuseColor", SCULPT_DEBUG_COLOR(scd->node_nr++), 1);
-#endif
+    if (SCULPT_DEBUG_BUFFERS) {
+      /* Color each buffers in different colors. Only work in solid/Xray mode. */
+      shgrp = DRW_shgroup_create_sub(shgrp);
+      DRW_shgroup_uniform_vec3(
+          shgrp, "materialDiffuseColor", SCULPT_DEBUG_COLOR(scd->debug_node_nr++), 1);
+    }
     /* DRW_shgroup_call_no_cull reuses matrices calculations for all the drawcalls of this
      * object. */
     DRW_shgroup_call_no_cull(shgrp, geom, scd->ob);
   }
 }
 
-#ifdef SCULPT_DEBUG_BUFFERS
 static void sculpt_debug_cb(void *user_data,
                             const float bmin[3],
                             const float bmax[3],
                             PBVHNodeFlags flag)
 {
-  int *node_nr = (int *)user_data;
+  int *debug_node_nr = (int *)user_data;
   BoundBox bb;
   BKE_boundbox_init_from_minmax(&bb, bmin, bmax);
 
-#  if 0 /* Nodes hierarchy. */
+#if 0 /* Nodes hierarchy. */
   if (flag & PBVH_Leaf) {
     DRW_debug_bbox(&bb, (float[4]){0.0f, 1.0f, 0.0f, 1.0f});
   }
   else {
     DRW_debug_bbox(&bb, (float[4]){0.5f, 0.5f, 0.5f, 0.6f});
   }
-#  else /* Color coded leaf bounds. */
+#else /* Color coded leaf bounds. */
   if (flag & PBVH_Leaf) {
-    DRW_debug_bbox(&bb, SCULPT_DEBUG_COLOR((*node_nr)++));
+    DRW_debug_bbox(&bb, SCULPT_DEBUG_COLOR((*debug_node_nr)++));
   }
-#  endif
-}
 #endif
+}
+
+static void drw_sculpt_get_frustum_planes(Object *ob, float planes[6][4])
+{
+  /* TODO: take into account partial redraw for clipping planes. */
+  DRW_view_frustum_planes_get(DRW_view_default_get(), planes);
+
+  /* Transform clipping planes to object space. Transforming a plane with a
+   * 4x4 matrix is done by multiplying with the tranpose inverse. The inverse
+   * cancels out here since we transform by inverse(obmat). */
+  float tmat[4][4];
+  transpose_m4_m4(tmat, ob->obmat);
+  for (int i = 0; i < 6; i++) {
+    mul_m4_v4(tmat, planes[i]);
+  }
+}
 
 static void drw_sculpt_generate_calls(DRWSculptCallbackData *scd, bool use_vcol)
 {
@@ -897,7 +906,10 @@ static void drw_sculpt_generate_calls(DRWSculptCallbackData *scd, bool use_vcol)
     return;
   }
 
-  float(*planes)[4] = NULL; /* TODO proper culling. */
+  float planes[6][4];
+  drw_sculpt_get_frustum_planes(scd->ob, planes);
+  PBVHFrustumPlanes frustum = {.planes = planes, .num_planes = 6};
+
   scd->fast_mode = false;
 
   const DRWContextState *drwctx = DRW_context_state_get();
@@ -912,16 +924,17 @@ static void drw_sculpt_generate_calls(DRWSculptCallbackData *scd, bool use_vcol)
   BKE_pbvh_update_normals(pbvh, mesh->runtime.subdiv_ccg);
   BKE_pbvh_update_draw_buffers(pbvh, use_vcol);
 
-  BKE_pbvh_draw_cb(pbvh, planes, (void (*)(void *, GPU_PBVH_Buffers *))sculpt_draw_cb, scd);
+  BKE_pbvh_draw_cb(pbvh, &frustum, (void (*)(void *, GPU_PBVH_Buffers *))sculpt_draw_cb, scd);
 
-#ifdef SCULPT_DEBUG_BUFFERS
-  int node_nr = 0;
-  DRW_debug_modelmat(scd->ob->obmat);
-  BKE_pbvh_draw_debug_cb(
-      pbvh,
-      (void (*)(void *d, const float min[3], const float max[3], PBVHNodeFlags f))sculpt_debug_cb,
-      &node_nr);
-#endif
+  if (SCULPT_DEBUG_BUFFERS) {
+    int debug_node_nr = 0;
+    DRW_debug_modelmat(scd->ob->obmat);
+    BKE_pbvh_draw_debug_cb(
+        pbvh,
+        (void (*)(
+            void *d, const float min[3], const float max[3], PBVHNodeFlags f))sculpt_debug_cb,
+        &debug_node_nr);
+  }
 }
 
 void DRW_shgroup_call_sculpt(

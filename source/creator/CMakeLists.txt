@@ -133,7 +133,7 @@ if(WIN32 AND NOT UNIX)
   string(SUBSTRING ${BLENDER_VERSION} 2 1 bver2)
   string(SUBSTRING ${BLENDER_VERSION} 3 1 bver3)
   add_definitions(
-    -DBLEN_VER_RC_STR=${BLENDER_VERSION}
+    -DBLEN_VER_RC_STR="${BLENDER_VERSION}"
     -DBLEN_VER_RC_1=${bver1}
     -DBLEN_VER_RC_2=${bver2}
     -DBLEN_VER_RC_3=${bver3}
@@ -748,13 +748,13 @@ elseif(WIN32)
 
       if(WINDOWS_PYTHON_DEBUG)
         install(
-          FILES ${LIBDIR}/python/lib/python${_PYTHON_VERSION_NO_DOTS}.pdb
+          FILES ${LIBDIR}/python/37/libs/python${_PYTHON_VERSION_NO_DOTS}.pdb
           DESTINATION "."
           CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
         )
 
         install(
-          FILES ${LIBDIR}/python/lib/python${_PYTHON_VERSION_NO_DOTS}_d.pdb
+          FILES ${LIBDIR}/python/37/libs/python${_PYTHON_VERSION_NO_DOTS}_d.pdb
           DESTINATION "."
           CONFIGURATIONS Debug
         )
