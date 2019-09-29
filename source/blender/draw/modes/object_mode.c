@@ -2732,6 +2732,7 @@ static void DRW_shgroup_lightprobe(OBJECT_Shaders *sh_data,
       int outline_id = shgroup_theme_id_to_outline_id(theme_id, ob->base_flag);
       uint cell_count = prb->grid_resolution_x * prb->grid_resolution_y * prb->grid_resolution_z;
       DRWShadingGroup *grp = DRW_shgroup_create(sh_data->lightprobe_grid, psl->lightprobes);
+      DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
       DRW_shgroup_uniform_int_copy(grp, "outlineId", outline_id);
       DRW_shgroup_uniform_vec3_copy(grp, "corner", corner);
       DRW_shgroup_uniform_vec3_copy(grp, "increment_x", increment[0]);
@@ -3019,13 +3020,11 @@ static void DRW_shgroup_texture_space(OBJECT_ShadingGroupList *sgl, Object *ob, 
 
   switch (GS(ob_data->name)) {
     case ID_ME:
-      BKE_mesh_texspace_get_reference((Mesh *)ob_data, NULL, &texcoloc, NULL, &texcosize);
+      BKE_mesh_texspace_get_reference((Mesh *)ob_data, NULL, &texcoloc, &texcosize);
       break;
     case ID_CU: {
       Curve *cu = (Curve *)ob_data;
-      if (cu->bb == NULL || (cu->bb->flag & BOUNDBOX_DIRTY)) {
-        BKE_curve_texspace_calc(cu);
-      }
+      BKE_curve_texspace_ensure(cu);
       texcoloc = cu->loc;
       texcosize = cu->size;
       break;

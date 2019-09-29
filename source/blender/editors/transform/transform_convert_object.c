@@ -501,8 +501,12 @@ static void set_trans_object_base_deps_flag_cb(ID *id,
 static void flush_trans_object_base_deps_flag(Depsgraph *depsgraph, Object *object)
 {
   object->id.tag |= LIB_TAG_DOIT;
-  DEG_foreach_dependent_ID_component(
-      depsgraph, &object->id, DEG_OB_COMP_TRANSFORM, set_trans_object_base_deps_flag_cb, NULL);
+  DEG_foreach_dependent_ID_component(depsgraph,
+                                     &object->id,
+                                     DEG_OB_COMP_TRANSFORM,
+                                     DEG_FOREACH_COMPONENT_IGNORE_TRANSFORM_SOLVERS,
+                                     set_trans_object_base_deps_flag_cb,
+                                     NULL);
 }
 
 static void trans_object_base_deps_flag_finish(const TransInfo *t, ViewLayer *view_layer)
@@ -930,10 +934,12 @@ void createTransTexspace(TransInfo *t)
   normalize_m3(td->axismtx);
   pseudoinverse_m3_m3(td->smtx, td->mtx, PSEUDOINVERSE_EPSILON);
 
-  if (BKE_object_obdata_texspace_get(ob, &texflag, &td->loc, &td->ext->size, &td->ext->rot)) {
+  if (BKE_object_obdata_texspace_get(ob, &texflag, &td->loc, &td->ext->size)) {
     ob->dtx |= OB_TEXSPACE;
     *texflag &= ~ME_AUTOSPACE;
   }
+
+  zero_v3(td->ext->rot);
 
   copy_v3_v3(td->iloc, td->loc);
   copy_v3_v3(td->ext->irot, td->ext->rot);
