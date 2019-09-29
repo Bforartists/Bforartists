@@ -2237,9 +2237,10 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
     /* Update motion paths once for all transformed bones in an object. */
     GSetIterator gs_iter;
     GSET_ITER (gs_iter, motionpath_updates) {
-      bool current_frame_only = canceled;
+      const ePosePathCalcRange range = canceled ? POSE_PATH_CALC_RANGE_CURRENT_FRAME :
+                                                  POSE_PATH_CALC_RANGE_CHANGED;
       ob = BLI_gsetIterator_getKey(&gs_iter);
-      ED_pose_recalculate_paths(C, t->scene, ob, current_frame_only);
+      ED_pose_recalculate_paths(C, t->scene, ob, range);
     }
     BLI_gset_free(motionpath_updates, NULL);
   }
@@ -2250,7 +2251,7 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
     /* pass */
   }
   else if ((t->view_layer->basact) && (ob = t->view_layer->basact->object) &&
-           (ob->mode & OB_MODE_PARTICLE_EDIT) && PE_get_current(t->scene, ob)) {
+           (ob->mode & OB_MODE_PARTICLE_EDIT) && PE_get_current(t->depsgraph, t->scene, ob)) {
     /* do nothing */
   }
   else if (t->flag & T_CURSOR) {
@@ -2320,8 +2321,9 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
 
     if (motionpath_update) {
       /* Update motion paths once for all transformed objects. */
-      bool current_frame_only = canceled;
-      ED_objects_recalculate_paths(C, t->scene, current_frame_only);
+      const eObjectPathCalcRange range = canceled ? OBJECT_PATH_CALC_RANGE_CURRENT_FRAME :
+                                                    OBJECT_PATH_CALC_RANGE_CHANGED;
+      ED_objects_recalculate_paths(C, t->scene, range);
     }
   }
 
@@ -2666,7 +2668,8 @@ void createTransData(bContext *C, TransInfo *t)
       }
     }
   }
-  else if (ob && (ob->mode & OB_MODE_PARTICLE_EDIT) && PE_start_edit(PE_get_current(scene, ob))) {
+  else if (ob && (ob->mode & OB_MODE_PARTICLE_EDIT) &&
+           PE_start_edit(PE_get_current(t->depsgraph, scene, ob))) {
     createTransParticleVerts(C, t);
     countAndCleanTransDataContainer(t);
     t->flag |= T_POINTS;
