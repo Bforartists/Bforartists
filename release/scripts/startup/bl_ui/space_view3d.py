@@ -4780,14 +4780,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.loopcut_slide", icon = "LOOP_CUT_AND_SLIDE")
-        layout.operator("mesh.offset_edge_loops_slide", icon = "OFFSET_EDGE_SLIDE")
-        layout.operator("mesh.knife_tool", icon = "KNIFE")
-        layout.operator("mesh.bisect", icon = "BISECT")
-        layout.operator("mesh.bridge_edge_loops", text="Bridge Edge Loops", icon = "BRIDGE_EDGELOOPS")
-
-        layout.separator()
-
         layout.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
         layout.operator("mesh.edge_rotate", text="Rotate Edge CCW", icon = "ROTATECW").use_ccw = True
 
