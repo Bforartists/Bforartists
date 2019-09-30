@@ -5532,7 +5532,7 @@ keyconfig_data = \
     ("wm.call_menu",
      {"type": 'RIGHTMOUSE', "value": 'PRESS', "any": True},
      {"properties":
-      [("name", 'TEXT_MT_toolbox'),
+      [("name", 'TEXT_MT_context_menu'),
        ],
       },
      ),
