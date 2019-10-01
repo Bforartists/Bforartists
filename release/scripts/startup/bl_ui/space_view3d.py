@@ -4448,7 +4448,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             if selected_verts_len > 1:
                 col.separator()
-                col.operator("mesh.edge_face_add", text="New Edge/Face from Vertices")
+                col.operator("mesh.edge_face_add", text="Make Edge/Face")
                 col.operator("mesh.vert_connect_path", text="Connect Vertex Path")
                 col.operator("mesh.vert_connect", text="Connect Vertex Pairs")
 
@@ -4495,7 +4495,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             if selected_edges_len >= 2:
                 col.operator("mesh.bridge_edge_loops")
             if selected_edges_len >= 1:
-                col.operator("mesh.edge_face_add", text="New Face from Edges")
+                col.operator("mesh.edge_face_add", text="Make Edge/Face")
             if selected_edges_len >= 2:
                 col.operator("mesh.fill")
 
@@ -4686,7 +4686,7 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.edge_face_add", text="New Edge/Face from Vertices", icon='MAKE_EDGEFACE')
+        layout.operator("mesh.edge_face_add", text="Make Edge/Face", icon='MAKE_EDGEFACE')
         layout.operator("mesh.vert_connect_path", text = "Connect Vertex Path", icon = "VERTEXCONNECTPATH")
         layout.operator("mesh.vert_connect", text = "Connect Vertex Pairs", icon = "VERTEXCONNECT")
 
