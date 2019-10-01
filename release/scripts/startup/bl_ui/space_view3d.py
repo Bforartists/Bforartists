@@ -5019,7 +5019,6 @@ class VIEW3D_MT_edit_mesh_clean(Menu):
 
         layout.operator("mesh.vert_connect_nonplanar", icon = "SPLIT_NONPLANAR")
         layout.operator("mesh.vert_connect_concave", icon = "SPLIT_CONCAVE")
-        layout.operator("mesh.remove_doubles", icon = "REMOVE_DOUBLES")
         layout.operator("mesh.fill_holes", icon = "FILL_HOLE")
 
 
