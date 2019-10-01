@@ -4681,7 +4681,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.extrude_vertices_move", text="Extrude Vertices", icon = 'EXTRUDE_REGION')
         layout.operator("mesh.bevel", text="Bevel Vertices", icon='BEVEL').vertex_only = True
 
         layout.separator()
@@ -4768,7 +4767,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.extrude_edges_move", text="Extrude Edges", icon = 'EXTRUDE_REGION')
         layout.operator("mesh.bevel", text="Bevel Edges", icon='BEVEL').vertex_only = False
         layout.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
 
@@ -4844,15 +4842,8 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("view3d.edit_mesh_extrude_move_normal", text="Extrude Faces", icon = 'EXTRUDE_REGION')
-        layout.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Extrude Faces Along Normals", icon = 'EXTRUDE_REGION')
-        layout.operator("mesh.extrude_faces_move", text="Extrude Individual Faces", icon = 'EXTRUDE_REGION')
-
-        layout.separator()
-
         layout.operator("mesh.inset", icon='INSET_FACES')
         layout.operator("mesh.poke", icon = "POKEFACES")
-        layout.operator("mesh.bridge_edge_loops", text="Bridge Faces", icon = "BRIDGE_EDGELOOPS")
 
         layout.separator()
 
