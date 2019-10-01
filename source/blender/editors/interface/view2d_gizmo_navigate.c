@@ -211,7 +211,7 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
   navgroup->state.rect_visible = *rect_visible;
 
   const float icon_size = GIZMO_SIZE;
-  const float icon_offset_mini = icon_size * GIZMO_MINI_OFFSET_FAC * UI_DPI_FAC;
+  const float icon_offset_mini = 10 + icon_size * GIZMO_MINI_OFFSET_FAC * UI_DPI_FAC; /*bfa - 10 px offset for not overlapping sidebar button*/
   const float co[2] = {
       rect_visible->xmax - (icon_offset_mini * 0.75f),
       rect_visible->ymax - (icon_offset_mini * 0.75f),
@@ -227,13 +227,13 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
   int icon_mini_slot = 0;
 
   gz = navgroup->gz_array[GZ_INDEX_ZOOM];
-  gz->matrix_basis[3][0] = co[0];
-  gz->matrix_basis[3][1] = co[1] - (icon_offset_mini * icon_mini_slot++);
+  gz->matrix_basis[3][0] = co[0] - 10 - (icon_offset_mini * icon_mini_slot++); /* bfa- changed back navigation buttons to horizontal, 10 px offset*/
+  gz->matrix_basis[3][1] = co[1]; /* bfa- changed back navigation buttons to horizontal*/
   WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
 
   gz = navgroup->gz_array[GZ_INDEX_MOVE];
-  gz->matrix_basis[3][0] = co[0];
-  gz->matrix_basis[3][1] = co[1] - (icon_offset_mini * icon_mini_slot++);
+  gz->matrix_basis[3][0] = co[0] - (icon_offset_mini * icon_mini_slot++); /* bfa- changed back navigation buttons to horizontal*/
+  gz->matrix_basis[3][1] = co[1]; /* bfa- changed back navigation buttons to horizontal*/
   WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
 }
 
