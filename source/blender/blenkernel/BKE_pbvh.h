@@ -40,6 +40,7 @@ struct MVert;
 struct PBVH;
 struct PBVHNode;
 struct SubdivCCG;
+struct TaskParallelSettings;
 
 typedef struct PBVH PBVH;
 typedef struct PBVHNode PBVHNode;
@@ -49,18 +50,21 @@ typedef struct {
 } PBVHProxyNode;
 
 typedef enum {
-  PBVH_Leaf = 1,
+  PBVH_Leaf = 1 << 0,
 
-  PBVH_UpdateNormals = 2,
-  PBVH_UpdateBB = 4,
-  PBVH_UpdateOriginalBB = 8,
-  PBVH_UpdateDrawBuffers = 16,
-  PBVH_UpdateRedraw = 32,
+  PBVH_UpdateNormals = 1 << 1,
+  PBVH_UpdateBB = 1 << 2,
+  PBVH_UpdateOriginalBB = 1 << 3,
+  PBVH_UpdateDrawBuffers = 1 << 4,
+  PBVH_UpdateRedraw = 1 << 5,
+  PBVH_UpdateMask = 1 << 6,
 
-  PBVH_RebuildDrawBuffers = 64,
-  PBVH_FullyHidden = 128,
+  PBVH_RebuildDrawBuffers = 1 << 7,
+  PBVH_FullyHidden = 1 << 8,
+  PBVH_FullyMasked = 1 << 9,
+  PBVH_FullyUnmasked = 1 << 10,
 
-  PBVH_UpdateTopology = 256,
+  PBVH_UpdateTopology = 1 << 11,
 } PBVHNodeFlags;
 
 typedef struct PBVHFrustumPlanes {
@@ -172,6 +176,8 @@ bool BKE_pbvh_node_find_nearest_to_ray(PBVH *bvh,
 /* Drawing */
 
 void BKE_pbvh_draw_cb(PBVH *bvh,
+                      bool show_vcol,
+                      bool update_only_visible,
                       PBVHFrustumPlanes *frustum,
                       void (*draw_fn)(void *user_data, struct GPU_PBVH_Buffers *buffers),
                       void *user_data);
@@ -226,11 +232,16 @@ bool BKE_pbvh_bmesh_update_topology(PBVH *bvh,
 /* Node Access */
 
 void BKE_pbvh_node_mark_update(PBVHNode *node);
+void BKE_pbvh_node_mark_update_mask(PBVHNode *node);
 void BKE_pbvh_node_mark_rebuild_draw(PBVHNode *node);
 void BKE_pbvh_node_mark_redraw(PBVHNode *node);
 void BKE_pbvh_node_mark_normals_update(PBVHNode *node);
 void BKE_pbvh_node_mark_topology_update(PBVHNode *node);
 void BKE_pbvh_node_fully_hidden_set(PBVHNode *node, int fully_hidden);
+void BKE_pbvh_node_fully_masked_set(PBVHNode *node, int fully_masked);
+bool BKE_pbvh_node_fully_masked_get(PBVHNode *node);
+void BKE_pbvh_node_fully_unmasked_set(PBVHNode *node, int fully_masked);
+bool BKE_pbvh_node_fully_unmasked_get(PBVHNode *node);
 
 void BKE_pbvh_node_get_grids(PBVH *bvh,
                              PBVHNode *node,
@@ -264,8 +275,8 @@ void BKE_pbvh_bmesh_after_stroke(PBVH *bvh);
 /* Update Bounding Box/Redraw and clear flags */
 
 void BKE_pbvh_update_bounds(PBVH *bvh, int flags);
+void BKE_pbvh_update_vertex_data(PBVH *bvh, int flags);
 void BKE_pbvh_update_normals(PBVH *bvh, struct SubdivCCG *subdiv_ccg);
-void BKE_pbvh_update_draw_buffers(PBVH *bvh, bool show_vcol);
 void BKE_pbvh_redraw_BB(PBVH *bvh, float bb_min[3], float bb_max[3]);
 void BKE_pbvh_get_grid_updates(PBVH *bvh, bool clear, void ***r_gridfaces, int *r_totface);
 void BKE_pbvh_grids_update(PBVH *bvh,
@@ -412,6 +423,10 @@ void BKE_pbvh_node_get_bm_orco_data(PBVHNode *node,
                                     float (**r_orco_coords)[3]);
 
 bool BKE_pbvh_node_vert_update_check_any(PBVH *bvh, PBVHNode *node);
+
+void BKE_pbvh_parallel_range_settings(struct TaskParallelSettings *settings,
+                                      bool use_threading,
+                                      int totnode);
 
 // void BKE_pbvh_node_BB_reset(PBVHNode *node);
 // void BKE_pbvh_node_BB_expand(PBVHNode *node, float co[3]);
