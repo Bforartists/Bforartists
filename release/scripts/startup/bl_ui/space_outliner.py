@@ -406,11 +406,9 @@ class OUTLINER_PT_filter(Panel):
         if display_mode != 'DATA_API':
             col = layout.column(align=True)
             col.prop(space, "use_sort_alpha")
-            layout.separator()
 
         row = layout.row(align=True)
         row.prop(space, "use_sync_select", text="Sync Selection")
-        layout.separator()
 
         col = layout.column(align=True)
         col.label(text="Search:")
@@ -419,8 +417,6 @@ class OUTLINER_PT_filter(Panel):
 
         if display_mode != 'VIEW_LAYER':
             return
-
-        layout.separator()
 
         layout.label(text="Filter:")
 
