@@ -137,7 +137,15 @@ class NODES_PT_Input_input_shader(bpy.types.Panel):
               
             props = col.operator("node.add_node", text=" Environment    ", icon = "NODE_ENVIRONMENT")
             props.use_transform = True
-            props.type = "ShaderNodeTexEnvironment"         
+            props.type = "ShaderNodeTexEnvironment"
+            
+            props = col.operator("node.add_node", text=" Volume Info    ", icon = "FILE_IMAGE")
+            props.use_transform = True
+            props.type = "ShaderNodeVolumeInfo"
+            
+            props = col.operator("node.add_node", text=" Vertex Color    ", icon = "FILE_IMAGE")
+            props.use_transform = True
+            props.type = "ShaderNodeVertexColor"           
 
         #### Icon Buttons
 
@@ -154,6 +162,14 @@ class NODES_PT_Input_input_shader(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "NODE_ENVIRONMENT")
             props.use_transform = True
             props.type = "ShaderNodeTexEnvironment"
+            
+            props = col.operator("node.add_node", text="", icon = "FILE_IMAGE")
+            props.use_transform = True
+            props.type = "ShaderNodeVolumeInfo"
+            
+            props = col.operator("node.add_node", text="", icon = "FILE_IMAGE")
+            props.use_transform = True
+            props.type = "ShaderNodeVertexColor"           
 
 
 #Input nodes tab, textures common panel. Compositing mode
@@ -816,8 +832,12 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexVoronoi"
 
+            props = col.operator("node.add_node", text = " White Noise             ", icon = "VORONI_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexWhiteNoise"
+            
+            
         #### Icon Buttons
-
         else:
         
             row = layout.row()
@@ -868,6 +888,10 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "VORONI_TEX")
             props.use_transform = True
             props.type = "ShaderNodeTexVoronoi"
+            
+            props = col.operator("node.add_node", text = "", icon = "VORONI_TEX")
+            props.use_transform = True
+            props.type = "ShaderNodeTexWhiteNoise"
 
 
 #Input nodes tab, Input panel. Just in texture and compositing mode
@@ -1763,6 +1787,10 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Sunbeams        ", icon = "NODE_SUNBEAMS") 
             props.use_transform = True
             props.type = "CompositorNodeSunBeams"
+            
+            props = col.operator("node.add_node", text=" Denoise        ", icon = "NODE_SUNBEAMS") 
+            props.use_transform = True
+            props.type = "CompositorNodeDenoise"
 
         #### Icon Buttons
 
@@ -1832,8 +1860,9 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeSunBeams"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            props = col.operator("node.add_node", text = "", icon = "NODE_SUNBEAMS") 
+            props.use_transform = True
+            props.type = "CompositorNodeDenoise"
 
 #Modify nodes tab, Input panel. Just in shader mode
 class NODES_PT_Modify_input(bpy.types.Panel):
@@ -2094,10 +2123,17 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Wavelength     ", icon = "NODE_WAVELENGTH")
             props.use_transform = True
             props.type = "ShaderNodeWavelength"
+            
+            props = col.operator("node.add_node", text=" Map Range     ", icon = "NODE_WAVELENGTH")
+            props.use_transform = True
+            props.type = "ShaderNodeMapRange"
+            
+            props = col.operator("node.add_node", text=" Node Clamp     ", icon = "NODE_WAVELENGTH")
+            props.use_transform = True
+            props.type = "ShaderNodeClamp"
         
 
         ##### Icon Buttons 
-
         else: 
 
             row = layout.row()
@@ -2159,6 +2195,14 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "NODE_WAVELENGTH")
             props.use_transform = True
             props.type = "ShaderNodeWavelength"
+            
+            props = col.operator("node.add_node", text="", icon = "NODE_WAVELENGTH")
+            props.use_transform = True
+            props.type = "ShaderNodeMapRange"
+            
+            props = col.operator("node.add_node", text="", icon = "NODE_WAVELENGTH")
+            props.use_transform = True
+            props.type = "ShaderNodeClamp"
             
 
 #Modify nodes tab, converter panel. Just in compositing mode
