@@ -6498,9 +6498,9 @@ class VIEW3D_PT_shading_lighting(Panel):
                 row = col.row()
                 row.prop(shading, "use_world_space_lighting", text="", icon='WORLD', toggle=True)
                 row = row.row()
-                row.active = shading.use_world_space_lighting
-                row.prop(shading, "studiolight_rotate_z", text="Rotation")
-                col = split.column()  # to align properly with above
+                if shading.use_world_space_lighting:
+                    row.prop(shading, "studiolight_rotate_z", text="Rotation")
+                    col = split.column()  # to align properly with above
 
             elif shading.light == 'MATCAP':
                 sub.scale_y = 0.6  # smaller matcap preview
@@ -6634,20 +6634,22 @@ class VIEW3D_PT_shading_options(Panel):
                 # X-ray mode is off when alpha is 1.0
                 xray_active = shading.show_xray and shading.xray_alpha != 1
 
-            row = col.row(align=True)
-            row.prop(shading, "show_shadows")
-            row.active = not shading.show_xray
-            
-            sub = row.row(align=True)
-            if shading.show_shadows:
-                sub.prop(shading, "shadow_intensity", text="")
-                sub.popover(panel="VIEW3D_PT_shading_options_shadow", icon='PREFERENCES', text="")
+            else:
 
-            col = layout.column()
+                row = col.row(align=True)
+                row.prop(shading, "show_shadows")
+                row.active = not shading.show_xray
+                
+                sub = row.row(align=True)
+                if shading.show_shadows:
+                    sub.prop(shading, "shadow_intensity", text="")
+                    sub.popover(panel="VIEW3D_PT_shading_options_shadow", icon='PREFERENCES', text="")
 
-            row = col.row()
-            row.active = not shading.show_xray
-            row.prop(shading, "show_cavity")
+                col = layout.column()
+
+                row = col.row()
+                row.active = not shading.show_xray
+                row.prop(shading, "show_cavity")
 
             if shading.show_cavity and not shading.show_xray:
                 row.prop(shading, "cavity_type", text="Type")
