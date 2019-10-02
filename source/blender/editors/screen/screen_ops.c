@@ -4357,7 +4357,7 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *UN
   if (!ELEM(sa->spacetype, SPACE_TOPBAR)) {
     uiItemS(layout);
 
-    uiItemO(layout, but_flip_str, ICON_NONE, "SCREEN_OT_region_flip");
+    uiItemO(layout, but_flip_str, ICON_FLIP, "SCREEN_OT_region_flip");
   }
 
   // bfa - show hide the editortypemenu
@@ -4373,7 +4373,7 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *UN
     uiItemS(layout);
 
     const char *but_str = sa->full ? IFACE_("Tile Area") : IFACE_("Maximize Area");
-    uiItemO(layout, but_str, ICON_NONE, "SCREEN_OT_screen_full_area");
+    uiItemO(layout, but_str, ICON_MAXIMIZE_AREA, "SCREEN_OT_screen_full_area");
   }
 }
 
@@ -4479,7 +4479,7 @@ void ED_screens_footer_tools_menu_create(bContext *C, uiLayout *layout, void *UN
   /* default is WM_OP_INVOKE_REGION_WIN, which we don't want here. */
   uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
 
-  uiItemO(layout, but_flip_str, ICON_NONE, "SCREEN_OT_region_flip");
+  uiItemO(layout, but_flip_str, ICON_FLIP, "SCREEN_OT_region_flip");
 
   /* file browser should be fullscreen all the time, topbar should
    * never be. But other regions can be maximized/restored... */
@@ -4487,7 +4487,7 @@ void ED_screens_footer_tools_menu_create(bContext *C, uiLayout *layout, void *UN
     uiItemS(layout);
 
     const char *but_str = sa->full ? IFACE_("Tile Area") : IFACE_("Maximize Area");
-    uiItemO(layout, but_str, ICON_NONE, "SCREEN_OT_screen_full_area");
+    uiItemO(layout, but_str, ICON_MAXIMIZE_AREA, "SCREEN_OT_screen_full_area");
   }
 }
 
@@ -4500,7 +4500,7 @@ void ED_screens_navigation_bar_tools_menu_create(bContext *C, uiLayout *layout, 
   /* default is WM_OP_INVOKE_REGION_WIN, which we don't want here. */
   uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
 
-  uiItemO(layout, but_flip_str, ICON_NONE, "SCREEN_OT_region_flip");
+  uiItemO(layout, but_flip_str, ICON_FLIP, "SCREEN_OT_region_flip");
 }
 
 static int screen_context_menu_invoke(bContext *C,
