@@ -1142,7 +1142,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
         uiItemFullO(layout,
                     "WM_OT_doc_view",
                     CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Online Python Reference"),
-                    ICON_NONE,
+                    ICON_URL,
                     NULL,
                     WM_OP_EXEC_DEFAULT,
                     0,
@@ -1153,14 +1153,14 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
   }
 
   if (but->optype && U.flag & USER_DEVELOPER_UI) {
-    uiItemO(layout, NULL, ICON_NONE, "UI_OT_copy_python_command_button");
+    uiItemO(layout, NULL, ICON_TEXT, "UI_OT_copy_python_command_button");
   }
 
   /* perhaps we should move this into (G.debug & G_DEBUG) - campbell */
   if (U.flag & USER_DEVELOPER_UI) {
     if (ui_block_is_menu(but->block) == false) {
       uiItemFullO(
-          layout, "UI_OT_editsource", NULL, ICON_NONE, NULL, WM_OP_INVOKE_DEFAULT, 0, NULL);
+          layout, "UI_OT_editsource", NULL, ICON_TEXT, NULL, WM_OP_INVOKE_DEFAULT, 0, NULL);
     }
   }
 
@@ -1168,7 +1168,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
     uiItemFullO(layout,
                 "UI_OT_edittranslation_init",
                 NULL,
-                ICON_NONE,
+                ICON_TEXT,
                 NULL,
                 WM_OP_INVOKE_DEFAULT,
                 0,
