@@ -592,7 +592,7 @@ class TOPBAR_MT_workspace_menu(Menu):
 
         layout.operator("workspace.duplicate", text="Duplicate", icon='DUPLICATE')
         if len(bpy.data.workspaces) > 1:
-            layout.operator("workspace.delete", text="Delete", icon='REMOVE')
+            layout.operator("workspace.delete", text="Delete", icon='DELETE')
 
         layout.separator()
 
@@ -602,9 +602,9 @@ class TOPBAR_MT_workspace_menu(Menu):
         layout.separator()
 
         # For key binding discoverability.
-        props = layout.operator("screen.workspace_cycle", text="Previous Workspace")
+        props = layout.operator("screen.workspace_cycle", text="Previous Workspace", icon='BACK')
         props.direction = 'PREV'
-        props = layout.operator("screen.workspace_cycle", text="Next Workspace")
+        props = layout.operator("screen.workspace_cycle", text="Next Workspace", icon='FORWARD')
         props.direction = 'NEXT'
 
 
