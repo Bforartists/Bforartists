@@ -633,7 +633,7 @@ class SEQUENCER_MT_strip_input(Menu):
         layout.operator("sequencer.reload", text="Reload Strips", icon = "SEQ_RELOAD_STRIPS")
         layout.operator("sequencer.reload", text="Reload Strips and Adjust Length", icon = "SEQ_RELOAD_ADJUST_LENGTH").adjust_length = True
         prop = layout.operator("sequencer.change_path", text="Change Path/Files", icon = "FILE_MOVIE")
-        layout.operator("sequencer.swap_data", text="Swap Data", icon = "SEQ_SWAP_DATA")
+        layout.operator("sequencer.swap_data", text="Swap Data", icon = "SWAP")
 
         if strip:
             strip_type = strip.type
