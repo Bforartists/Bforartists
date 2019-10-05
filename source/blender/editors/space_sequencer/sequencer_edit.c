@@ -85,7 +85,7 @@ EnumPropertyItem sequencer_prop_effect_types[] = {
     {SEQ_TYPE_MUL, "MULTIPLY", ICON_SEQ_MULTIPLY, "Multiply", "Multiply effect strip type"},
     {SEQ_TYPE_OVERDROP, "OVER_DROP", ICON_SEQ_ALPHA_OVER, "Alpha Over Drop", "Alpha Over Drop effect strip type"},
     {SEQ_TYPE_WIPE, "WIPE", ICON_NODE_VECTOR_TRANSFORM, "Wipe", "Wipe effect strip type"},
-    {SEQ_TYPE_GLOW, "GLOW", ICON_LAMP_SUN, "Glow", "Glow effect strip type"},
+    {SEQ_TYPE_GLOW, "GLOW", ICON_LIGHT_SUN, "Glow", "Glow effect strip type"},
     {SEQ_TYPE_TRANSFORM, "TRANSFORM", ICON_TRANSFORM_MOVE, "Transform", "Transform effect strip type"},
     {SEQ_TYPE_COLOR, "COLOR", ICON_COLOR, "Color", "Color effect strip type"},
     {SEQ_TYPE_SPEED, "SPEED", ICON_NODE_CURVE_TIME, "Speed", "Color effect strip type"},

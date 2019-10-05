@@ -185,7 +185,7 @@ class SunPos_Panel(bpy.types.Panel):
         toprow2 = box.row()
         row2 = toprow2.row(align=False)
         row2.alignment = 'CENTER'
-        row2.prop(sp, "ShowHdr", text="Sync Sun to Texture", toggle=True, icon='LAMP_SUN')
+        row2.prop(sp, "ShowHdr", text="Sync Sun to Texture", toggle=True, icon='LIGHT_SUN')
         if have_texture == False:
             row2.enabled = False
         elif sp.BindToSun:
@@ -322,7 +322,7 @@ class SunPos_Panel(bpy.types.Panel):
                 ss = format_hms(Sun.Sunset.time)
                 tsr = "Sunrise: " + sr
                 tss = " Sunset: " + ss
-            col.label(text=tsr, icon='LAMP_SUN')
+            col.label(text=tsr, icon='LIGHT_SUN')
             col.label(text=tss, icon='SOLO_ON')
 
         if p.ShowDST:
