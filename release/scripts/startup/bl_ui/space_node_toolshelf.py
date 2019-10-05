@@ -1367,7 +1367,7 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
                 
             if context.space_data.shader_type == 'OBJECT':
         
-                props = col.operator("node.add_node", text=" Material Output", icon = "NODE_MATERIALOUTPUT")
+                props = col.operator("node.add_node", text=" Material Output", icon = "NODE_MATERIAL")
                 props.use_transform = True
                 props.type = "ShaderNodeOutputMaterial"
         
@@ -1397,7 +1397,7 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
 
             if context.space_data.shader_type == 'OBJECT':
         
-                props = row.operator("node.add_node", text = "", icon = "NODE_MATERIALOUTPUT")
+                props = row.operator("node.add_node", text = "", icon = "NODE_MATERIAL")
                 props.use_transform = True
                 props.type = "ShaderNodeOutputMaterial"
 
