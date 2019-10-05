@@ -1214,7 +1214,7 @@ extend_vertices
 
 node_mapping
 #def_icon_blank(1230
-node_materialoutput
+#def_icon_blank(1231
 node_math
 node_mixrgb
 node_mixshader
