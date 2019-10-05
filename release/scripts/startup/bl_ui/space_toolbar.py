@@ -619,10 +619,10 @@ class TOOLBAR_MT_primitives(Menu):
 
                 row = layout.row(align=True)
 
-                row.operator("object.light_add", text="", icon='LAMP_POINT').type= 'POINT'
-                row.operator("object.light_add", text="", icon='LAMP_SUN').type= 'SUN' 
-                row.operator("object.light_add", text="", icon='LAMP_SPOT').type= 'SPOT' 
-                row.operator("object.light_add", text="", icon='LAMP_AREA').type= 'AREA' 
+                row.operator("object.light_add", text="", icon='LIGHT_POINT').type= 'POINT'
+                row.operator("object.light_add", text="", icon='LIGHT_SUN').type= 'SUN' 
+                row.operator("object.light_add", text="", icon='LIGHT_SPOT').type= 'SPOT' 
+                row.operator("object.light_add", text="", icon='LIGHT_AREA').type= 'AREA' 
 
             if addon_prefs.primitives_other: 
 
@@ -751,10 +751,10 @@ class TOOLBAR_MT_primitives(Menu):
 
                     row = layout.row(align=True)
 
-                    row.operator("object.light_add", text="", icon='LAMP_POINT').type= 'POINT'
-                    row.operator("object.light_add", text="", icon='LAMP_SUN').type= 'SUN' 
-                    row.operator("object.light_add", text="", icon='LAMP_SPOT').type= 'SPOT' 
-                    row.operator("object.light_add", text="", icon='LAMP_AREA').type= 'AREA' 
+                    row.operator("object.light_add", text="", icon='LIGHT_POINT').type= 'POINT'
+                    row.operator("object.light_add", text="", icon='LIGHT_SUN').type= 'SUN' 
+                    row.operator("object.light_add", text="", icon='LIGHT_SPOT').type= 'SPOT' 
+                    row.operator("object.light_add", text="", icon='LIGHT_AREA').type= 'AREA' 
 
                 if addon_prefs.primitives_other: 
 
