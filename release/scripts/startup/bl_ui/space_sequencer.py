@@ -599,7 +599,7 @@ class SEQUENCER_MT_add_effect(Menu):
 
         col.separator()
 
-        col.operator("sequencer.effect_strip_add", text="Glow", icon='LAMP_SUN').type = 'GLOW'
+        col.operator("sequencer.effect_strip_add", text="Glow", icon='LIGHT_SUN').type = 'GLOW'
         col.operator("sequencer.effect_strip_add", text="Gaussian Blur", icon='NODE_BLUR').type = 'GAUSSIAN_BLUR'
         col.enabled = selected_sequences_len(context) != 0
 
