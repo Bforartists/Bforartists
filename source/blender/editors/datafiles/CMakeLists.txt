@@ -206,7 +206,7 @@ align_center
 
 # ------------------------- row 4 --------------------------*/
 
-lamp
+#def_icon_blank(226
 material
 texture
 normal_multiply
@@ -610,7 +610,7 @@ outliner_data_mesh
 outliner_data_curve
 outliner_data_lattice
 outliner_data_meta
-outliner_data_lamp
+#def_icon_blank(627
 #def_icon_blank(628
 outliner_data_armature
 outliner_data_font
