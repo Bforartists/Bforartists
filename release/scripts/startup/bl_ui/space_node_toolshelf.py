@@ -1446,7 +1446,7 @@ class NODES_PT_Input_output_comp(bpy.types.Panel):
 
             col = layout.column(align=True)  
          
-            props = col.operator("node.add_node", text=" Composite      ", icon = "NODE_COMPOSITE_OUTPUT")
+            props = col.operator("node.add_node", text=" Composite      ", icon = "NODE_COMPOSITING")
             props.use_transform = True
             props.type = "CompositorNodeComposite"
             
@@ -1475,7 +1475,7 @@ class NODES_PT_Input_output_comp(bpy.types.Panel):
             row = layout.row()
             row.alignment = 'LEFT'  
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_COMPOSITE_OUTPUT")
+            props = row.operator("node.add_node", text = "", icon = "NODE_COMPOSITING")
             props.use_transform = True
             props.type = "CompositorNodeComposite"
             
