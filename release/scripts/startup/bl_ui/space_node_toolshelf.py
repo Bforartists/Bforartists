@@ -1372,7 +1372,7 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
                 props.type = "ShaderNodeOutputMaterial"
         
         
-                props = col.operator("node.add_node", text=" Lamp Output    ", icon = "LAMP_SUN")
+                props = col.operator("node.add_node", text=" Lamp Output    ", icon = "LIGHT_SUN")
                 props.use_transform = True
                 props.type = "ShaderNodeOutputLamp"
 
@@ -1401,7 +1401,7 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "ShaderNodeOutputMaterial"
 
-                props = row.operator("node.add_node", text = "", icon = "LAMP_SUN")
+                props = row.operator("node.add_node", text = "", icon = "LIGHT_SUN")
                 props.use_transform = True
                 props.type = "ShaderNodeOutputLamp"
 

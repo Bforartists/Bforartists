@@ -676,11 +676,11 @@ mesh_cone
 
 mesh_capsule
 intersect
-lamp_point
-lamp_sun
-lamp_spot
-#def_icon_blank(695
-lamp_area
+#def_icon_blank(696
+#def_icon_blank(697
+#def_icon_blank(698
+#def_icon_blank(699
+#def_icon_blank(700
 markfsface
 clearfsface
 meta_empty
