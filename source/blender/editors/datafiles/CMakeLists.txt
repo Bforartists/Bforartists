@@ -1745,7 +1745,7 @@ seq_move_extend
 seq_slip_contents
 seq_remove_gaps
 seq_insert_gaps
-seq_swap_data
+#def_icon_blank(1765
 )
 
 # This section is maintained by the updating script, keep BEGIN/END comments.
