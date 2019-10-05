@@ -928,7 +928,7 @@ select_edgering
 
 node_combineycbcra
 node_combineyuva
-node_composite_output
+#def_icon_blank(948
 node_cornerpin
 node_crop
 node_curve_time
