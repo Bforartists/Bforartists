@@ -565,7 +565,7 @@ empty_circle
 empty_cone
 empty_cube
 empty_image
-empty_singlearrow
+#def_icon_blank(585
 empty_sphere
 restrict_color_off
 restrict_color_on

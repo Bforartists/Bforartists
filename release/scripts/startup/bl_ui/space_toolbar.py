@@ -643,7 +643,7 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.empty_add", text="", icon='EMPTY_CIRCLE').type = 'CIRCLE'
                 row.operator("object.empty_add", text="", icon='EMPTY_CONE').type = 'CONE'
                 row.operator("object.empty_add", text="", icon='EMPTY_CUBE').type = 'CUBE'      
-                row.operator("object.empty_add", text="", icon='EMPTY_SINGLEARROW').type = 'SINGLE_ARROW'       
+                row.operator("object.empty_add", text="", icon='EMPTY_SINGLE_ARROW').type = 'SINGLE_ARROW'       
                 row.operator("object.empty_add", text="", icon='EMPTY_ARROWS').type = 'ARROWS'
                 row.operator("object.empty_add", text="", icon='EMPTY_IMAGE').type = 'IMAGE'
 
