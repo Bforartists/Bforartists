@@ -1896,7 +1896,7 @@ class NODES_PT_Modify_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeAttribute"
         
-            props = col.operator("node.add_node", text=" Camera Data   ", icon = "NODE_CAMERADATA")
+            props = col.operator("node.add_node", text=" Camera Data   ", icon = "CAMERA_DATA")
             props.use_transform = True
             props.type = "ShaderNodeCameraData"
         
@@ -1973,7 +1973,7 @@ class NODES_PT_Modify_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeAttribute"
    
-            props = row.operator("node.add_node", text = "", icon = "NODE_CAMERADATA")
+            props = row.operator("node.add_node", text = "", icon = "CAMERA_DATA")
             props.use_transform = True
             props.type = "ShaderNodeCameraData"
         

@@ -820,9 +820,9 @@ node_boxmask
 node_brick
 node_bright_contrast
 node_bump
-node_cameradata
-node_channel
 
+node_channel
+#def_icon_blank(840
 view_pan
 view_perspective
 view_zoom
