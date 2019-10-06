@@ -2352,7 +2352,8 @@ static int wm_handler_fileselect_do(bContext *C,
                                             U.file_space_data.temp_win_sizex * UI_DPI_FAC,
                                             U.file_space_data.temp_win_sizey * UI_DPI_FAC,
                                             SPACE_FILE,
-                                            U.filebrowser_display_type))) {
+                                            U.filebrowser_display_type,
+                                            true))) {
         ARegion *region_header = BKE_area_find_region_type(area, RGN_TYPE_HEADER);
 
         BLI_assert(area->spacetype == SPACE_FILE);
@@ -2737,7 +2738,10 @@ static int wm_handlers_do_intern(bContext *C, wmEvent *event, ListBase *handlers
         /* Clear the tool-tip whenever a key binding is handled, without this tool-tips
          * are kept when a modal operators starts (annoying but otherwise harmless). */
         if (action & WM_HANDLER_BREAK) {
-          WM_tooltip_clear(C, CTX_wm_window(C));
+          /* Window may be gone after file read. */
+          if (CTX_wm_window(C) != NULL) {
+            WM_tooltip_clear(C, CTX_wm_window(C));
+          }
         }
       }
       else if (handler_base->type == WM_HANDLER_TYPE_UI) {
@@ -4210,19 +4214,31 @@ static void wm_eventemulation(wmEvent *event, bool test_only)
   if (U.flag & USER_TWOBUTTONMOUSE) {
 
     if (event->type == LEFTMOUSE) {
-      if (event->val == KM_PRESS && event->alt) {
-        event->type = MIDDLEMOUSE;
-        event->alt = 0;
+      short *mod = (
+#if !defined(WIN32)
+          (U.mouse_emulate_3_button_modifier == USER_EMU_MMB_MOD_OSKEY) ? &event->oskey :
+                                                                          &event->alt
+#else
+          /* Disable for WIN32 for now because it accesses the start menu. */
+          &event->alt
+#endif
+      );
 
-        if (!test_only) {
-          emulating_event = MIDDLEMOUSE;
+      if (event->val == KM_PRESS) {
+        if (*mod) {
+          *mod = 0;
+          event->type = MIDDLEMOUSE;
+
+          if (!test_only) {
+            emulating_event = MIDDLEMOUSE;
+          }
         }
       }
       else if (event->val == KM_RELEASE) {
         /* only send middle-mouse release if emulated */
         if (emulating_event == MIDDLEMOUSE) {
           event->type = MIDDLEMOUSE;
-          event->alt = 0;
+          *mod = 0;
         }
 
         if (!test_only) {

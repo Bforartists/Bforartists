@@ -241,12 +241,16 @@ static int node_group_ungroup(Main *bmain, bNodeTree *ntree, bNode *gnode)
     node->flag |= NODE_SELECT;
   }
 
+  bNodeLink *glinks_first = ntree->links.last;
+
   /* Add internal links to the ntree */
   for (link = wgroup->links.first; link; link = linkn) {
     linkn = link->next;
     BLI_remlink(&wgroup->links, link);
     BLI_addtail(&ntree->links, link);
   }
+
+  bNodeLink *glinks_last = ntree->links.last;
 
   /* and copy across the animation,
    * note that the animation data's action can be NULL here */
@@ -280,70 +284,64 @@ static int node_group_ungroup(Main *bmain, bNodeTree *ntree, bNode *gnode)
   BKE_id_free(bmain, wgroup);
 
   /* restore external links to and from the gnode */
-  /* note: the nodes have been copied to intermediate wgroup first (so need to use new_node),
-   *       then transferred to ntree (new_node pointers remain valid).
-   */
 
   /* input links */
-  for (link = ngroup->links.first; link; link = link->next) {
-    if (link->fromnode->type == NODE_GROUP_INPUT) {
-      const char *identifier = link->fromsock->identifier;
-      int num_external_links = 0;
+  if (glinks_first != NULL) {
+    for (link = glinks_first->next; link != glinks_last->next; link = link->next) {
+      if (link->fromnode->type == NODE_GROUP_INPUT) {
+        const char *identifier = link->fromsock->identifier;
+        int num_external_links = 0;
 
-      /* find external links to this input */
-      for (tlink = ntree->links.first; tlink; tlink = tlink->next) {
-        if (tlink->tonode == gnode && STREQ(tlink->tosock->identifier, identifier)) {
-          nodeAddLink(ntree,
-                      tlink->fromnode,
-                      tlink->fromsock,
-                      link->tonode->new_node,
-                      link->tosock->new_sock);
-          num_external_links++;
-        }
-      }
-
-      /* if group output is not externally linked,
-       * convert the constant input value to ensure somewhat consistent behavior */
-      if (num_external_links == 0) {
-        /* XXX TODO bNodeSocket *sock = node_group_find_input_socket(gnode, identifier);
-        BLI_assert(sock);*/
-
-        /* XXX TODO
-         * nodeSocketCopy(ntree, link->tosock->new_sock, link->tonode->new_node,
-         *                ntree, sock, gnode);*/
-      }
-    }
-  }
-
-  /* output links */
-  for (link = ntree->links.first; link; link = link->next) {
-    if (link->fromnode == gnode) {
-      const char *identifier = link->fromsock->identifier;
-      int num_internal_links = 0;
-
-      /* find internal links to this output */
-      for (tlink = ngroup->links.first; tlink; tlink = tlink->next) {
-        /* only use active output node */
-        if (tlink->tonode->type == NODE_GROUP_OUTPUT && (tlink->tonode->flag & NODE_DO_OUTPUT)) {
-          if (STREQ(tlink->tosock->identifier, identifier)) {
-            nodeAddLink(ntree,
-                        tlink->fromnode->new_node,
-                        tlink->fromsock->new_sock,
-                        link->tonode,
-                        link->tosock);
-            num_internal_links++;
+        /* find external links to this input */
+        for (tlink = ntree->links.first; tlink != glinks_first->next; tlink = tlink->next) {
+          if (tlink->tonode == gnode && STREQ(tlink->tosock->identifier, identifier)) {
+            nodeAddLink(ntree, tlink->fromnode, tlink->fromsock, link->tonode, link->tosock);
+            num_external_links++;
           }
         }
+
+        /* if group output is not externally linked,
+         * convert the constant input value to ensure somewhat consistent behavior */
+        if (num_external_links == 0) {
+          /* XXX TODO bNodeSocket *sock = node_group_find_input_socket(gnode, identifier);
+          BLI_assert(sock);*/
+
+          /* XXX TODO
+           * nodeSocketCopy(ntree, link->tosock->new_sock, link->tonode->new_node,
+           *                ntree, sock, gnode);*/
+        }
       }
+    }
 
-      /* if group output is not internally linked,
-       * convert the constant output value to ensure somewhat consistent behavior */
-      if (num_internal_links == 0) {
-        /* XXX TODO bNodeSocket *sock = node_group_find_output_socket(gnode, identifier);
-        BLI_assert(sock);*/
+    /* Also iterate over new links to cover passthrough links. */
+    glinks_last = ntree->links.last;
 
-        /* XXX TODO
-         * nodeSocketCopy(ntree, link->tosock, link->tonode, ntree, sock, gnode); */
+    /* output links */
+    for (link = ntree->links.first; link != glinks_first->next; link = link->next) {
+      if (link->fromnode == gnode) {
+        const char *identifier = link->fromsock->identifier;
+        int num_internal_links = 0;
+
+        /* find internal links to this output */
+        for (tlink = glinks_first->next; tlink != glinks_last->next; tlink = tlink->next) {
+          /* only use active output node */
+          if (tlink->tonode->type == NODE_GROUP_OUTPUT && (tlink->tonode->flag & NODE_DO_OUTPUT)) {
+            if (STREQ(tlink->tosock->identifier, identifier)) {
+              nodeAddLink(ntree, tlink->fromnode, tlink->fromsock, link->tonode, link->tosock);
+              num_internal_links++;
+            }
+          }
+        }
+
+        /* if group output is not internally linked,
+         * convert the constant output value to ensure somewhat consistent behavior */
+        if (num_internal_links == 0) {
+          /* XXX TODO bNodeSocket *sock = node_group_find_output_socket(gnode, identifier);
+          BLI_assert(sock);*/
+
+          /* XXX TODO
+           * nodeSocketCopy(ntree, link->tosock, link->tonode, ntree, sock, gnode); */
+        }
       }
     }
   }
@@ -717,7 +715,7 @@ static void node_group_make_insert_selected(const bContext *C, bNodeTree *ntree,
   ListBase anim_basepaths = {NULL, NULL};
   float min[2], max[2], center[2];
   int totselect;
-  bool expose_all = false;
+  bool expose_visible = false;
   bNode *input_node, *output_node;
 
   /* XXX rough guess, not nice but we don't have access to UI constants here ... */
@@ -735,7 +733,7 @@ static void node_group_make_insert_selected(const bContext *C, bNodeTree *ntree,
 
   /* auto-add interface for "solo" nodes */
   if (totselect == 1) {
-    expose_all = true;
+    expose_visible = true;
   }
 
   /* move nodes over */
@@ -879,8 +877,8 @@ static void node_group_make_insert_selected(const bContext *C, bNodeTree *ntree,
     }
   }
 
-  /* expose all unlinked sockets too */
-  if (expose_all) {
+  /* expose all unlinked sockets too but only the visible ones*/
+  if (expose_visible) {
     for (node = ngroup->nodes.first; node; node = node->next) {
       if (node_group_make_use_node(node, gnode)) {
         for (sock = node->inputs.first; sock; sock = sock->next) {
@@ -891,6 +889,9 @@ static void node_group_make_insert_selected(const bContext *C, bNodeTree *ntree,
               skip = true;
               break;
             }
+          }
+          if (sock->flag & (SOCK_HIDDEN | SOCK_UNAVAIL)) {
+              skip = true;
           }
           if (skip) {
             continue;
@@ -912,6 +913,9 @@ static void node_group_make_insert_selected(const bContext *C, bNodeTree *ntree,
             if (link->fromsock == sock) {
               skip = true;
             }
+          }
+          if (sock->flag & (SOCK_HIDDEN | SOCK_UNAVAIL)) {
+              skip = true;
           }
           if (skip) {
             continue;
