@@ -305,8 +305,8 @@ class MASK_MT_visibility(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mask.hide_view_clear", text = "Show Hidden", icon = "RESTRICT_VIEW_OFF")
-        layout.operator("mask.hide_view_set", text = "Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("mask.hide_view_clear", text = "Show Hidden", icon = "HIDE_OFF")
+        layout.operator("mask.hide_view_set", text = "Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("mask.hide_view_set", text = "Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 

@@ -420,10 +420,10 @@ class NODE_MT_node_toggle(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("node.hide_toggle", icon = "RESTRICT_VIEW_ON")
+        layout.operator("node.hide_toggle", icon = "HIDE_ON")
         layout.operator("node.mute_toggle", icon = "TOGGLE_NODE_MUTE")
         layout.operator("node.preview_toggle", icon = "TOGGLE_NODE_PREVIEW")
-        layout.operator("node.hide_socket_toggle", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("node.hide_socket_toggle", icon = "HIDE_OFF")
         layout.operator("node.options_toggle", icon = "TOGGLE_NODE_OPTIONS")
         layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
 
