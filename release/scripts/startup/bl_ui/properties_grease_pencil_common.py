@@ -868,7 +868,7 @@ class GreasePencilMaterialsPanel:
 
                 sub = col.column(align=True)
                 sub.operator("gpencil.color_isolate", icon='LOCKED', text="").affect_visibility = False
-                sub.operator("gpencil.color_isolate", icon='RESTRICT_VIEW_ON', text="").affect_visibility = True
+                sub.operator("gpencil.color_isolate", icon='HIDE_ON', text="").affect_visibility = True
 
             if show_full_ui:
                 row = layout.row()

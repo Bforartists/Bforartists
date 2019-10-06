@@ -88,8 +88,8 @@ class GPENCIL_MT_layer_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.reveal", icon='RESTRICT_VIEW_OFF', text="Show All")
-        layout.operator("gpencil.hide", icon='RESTRICT_VIEW_ON', text="Hide Others").unselected = True
+        layout.operator("gpencil.reveal", icon='HIDE_OFF', text="Show All")
+        layout.operator("gpencil.hide", icon='HIDE_ON', text="Hide Others").unselected = True
 
         layout.separator()
 
@@ -151,7 +151,7 @@ class DATA_PT_gpencil_layers(DataButtonsPanel, Panel):
 
                 sub = col.column(align=True)
                 sub.operator("gpencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False
-                sub.operator("gpencil.layer_isolate", icon='RESTRICT_VIEW_ON', text="").affect_visibility = True
+                sub.operator("gpencil.layer_isolate", icon='HIDE_ON', text="").affect_visibility = True
 
         # Layer main properties
         row = layout.row()

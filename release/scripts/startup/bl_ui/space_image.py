@@ -367,8 +367,8 @@ class IMAGE_MT_uvs_showhide(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("uv.reveal", icon = "RESTRICT_VIEW_OFF")
-        layout.operator("uv.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("uv.reveal", icon = "HIDE_OFF")
+        layout.operator("uv.hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("uv.hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
@@ -1349,7 +1349,7 @@ class IMAGE_PT_tools_brush_display(BrushButtonsPanel, Panel):
             "use_cursor_overlay",
             text="",
             toggle=True,
-            icon='RESTRICT_VIEW_ON' if brush.use_cursor_overlay else 'RESTRICT_VIEW_OFF',
+            icon='HIDE_ON' if brush.use_cursor_overlay else 'HIDE_OFF',
         )
 
         sub = row.row(align=True)
@@ -1373,7 +1373,7 @@ class IMAGE_PT_tools_brush_display(BrushButtonsPanel, Panel):
                 "use_primary_overlay",
                 text="",
                 toggle=True,
-                icon='RESTRICT_VIEW_ON' if brush.use_primary_overlay else 'RESTRICT_VIEW_OFF',
+                icon='HIDE_ON' if brush.use_primary_overlay else 'HIDE_OFF',
             )
 
         sub = row.row(align=True)
@@ -1393,7 +1393,7 @@ class IMAGE_PT_tools_brush_display(BrushButtonsPanel, Panel):
                 "use_secondary_overlay",
                 text="",
                 toggle=True,
-                icon='RESTRICT_VIEW_ON' if brush.use_secondary_overlay else 'RESTRICT_VIEW_OFF',
+                icon='HIDE_ON' if brush.use_secondary_overlay else 'HIDE_OFF',
             )
 
 

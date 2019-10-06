@@ -298,7 +298,7 @@ class DATA_PT_camera_background_image(CameraButtonsPanel, Panel):
                 "show_background_image",
                 text="",
                 emboss=False,
-                icon='RESTRICT_VIEW_OFF' if bg.show_background_image else 'RESTRICT_VIEW_ON',
+                icon='HIDE_OFF' if bg.show_background_image else 'HIDE_ON',
             )
 
             row.operator("view3d.background_image_remove", text="", emboss=False, icon='X').index = i
