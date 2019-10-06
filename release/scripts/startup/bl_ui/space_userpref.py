@@ -585,6 +585,7 @@ class USERPREF_PT_animation_fcurves(PreferencePanel, Panel):
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
         flow.prop(edit, "fcurve_unselected_alpha", text="F-Curve Visibility")
+        flow.prop(edit, "fcurve_new_auto_smoothing", text="Default Smoothing Mode")
         flow.prop(edit, "keyframe_new_interpolation_type", text="Default Interpolation")
         flow.prop(edit, "keyframe_new_handle_type", text="Default Handles")
         flow.use_property_split = False
@@ -1508,6 +1509,7 @@ class USERPREF_PT_input_mouse(PreferencePanel, Panel):
         return (prefs.active_section == 'INPUT')
 
     def draw_props(self, context, layout):
+        import sys
         prefs = context.preferences
         inputs = prefs.inputs
 
@@ -1515,6 +1517,10 @@ class USERPREF_PT_input_mouse(PreferencePanel, Panel):
         
         flow.use_property_split = False
         flow.prop(inputs, "use_mouse_emulate_3_button")
+        if sys.platform[:3] != "win":
+            rowsub = flow.row()
+            rowsub.active = inputs.use_mouse_emulate_3_button
+            rowsub.prop(inputs, "mouse_emulate_3_button_modifier")
         flow.prop(inputs, "use_mouse_continuous")
         flow.prop(inputs, "use_drag_immediately")
         

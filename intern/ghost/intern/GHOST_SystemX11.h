@@ -146,7 +146,8 @@ class GHOST_SystemX11 : public GHOST_System {
                               GHOST_TDrawingContextType type,
                               GHOST_GLSettings glSettings,
                               const bool exclusive = false,
-                              const GHOST_TEmbedderWindowID parentWindow = 0);
+                              const bool is_dialog = false,
+                              const GHOST_IWindow *parentWindow = 0);
 
   /**
    * Create a new offscreen context.
@@ -232,6 +233,17 @@ class GHOST_SystemX11 : public GHOST_System {
    */
   void putClipboard(GHOST_TInt8 *buffer, bool selection) const;
 
+  /**
+   * Show a system message box
+   * \param title                   The title of the message box
+   * \param message                 The message to display
+   * \param link                    An optional hyperlink
+   * \param dialog_options Options  how to display the message
+   */
+  GHOST_TSuccess showMessageBox(const char *title,
+                                const char *message,
+                                const char *link,
+                                GHOST_DialogOptions dialog_options) const;
 #ifdef WITH_XDND
   /**
    * Creates a drag'n'drop event and pushes it immediately onto the event queue.

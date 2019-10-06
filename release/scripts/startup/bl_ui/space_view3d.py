@@ -802,6 +802,8 @@ class VIEW3D_MT_editor_menus(Menu):
         elif obj:
             if mode_string != 'PAINT_TEXTURE':
                 layout.menu("VIEW3D_MT_%s" % mode_string.lower())
+            if mode_string == 'SCULPT':
+                layout.menu("VIEW3D_MT_mask")
 
         else:
             layout.menu("VIEW3D_MT_object")
@@ -3745,12 +3747,12 @@ class VIEW3D_MT_sculpt(Menu):
         props.action = 'SHOW'
         props.area = 'ALL'
 
-        props = layout.operator("paint.hide_show", text="Hide Bounding Box")
-        props.action = 'HIDE'
-        props.area = 'INSIDE'
-
         props = layout.operator("paint.hide_show", text="Show Bounding Box")
         props.action = 'SHOW'
+        props.area = 'INSIDE'
+
+        props = layout.operator("paint.hide_show", text="Hide Bounding Box")
+        props.action = 'HIDE'
         props.area = 'INSIDE'
 
         props = layout.operator("paint.hide_show", text="Hide Masked")
@@ -3758,6 +3760,15 @@ class VIEW3D_MT_sculpt(Menu):
         props.area = 'MASKED'
 
         layout.separator()
+
+        layout.menu("VIEW3D_MT_sculpt_set_pivot", text="Set Pivot")
+
+
+class VIEW3D_MT_mask(Menu):
+    bl_label = "Mask"
+
+    def draw(self, _context):
+        layout = self.layout
 
         props = layout.operator("paint.mask_flood_fill", text="Invert Mask")
         props.mode = 'INVERT'
@@ -3820,9 +3831,6 @@ class VIEW3D_MT_sculpt(Menu):
         layout.separator()
 
         props = layout.operator("sculpt.dirty_mask", text='Dirty Mask')
-
-        layout.separator()
-        layout.menu("VIEW3D_MT_sculpt_set_pivot", text="Set Pivot")
 
 
 class VIEW3D_MT_sculpt_set_pivot(Menu):
@@ -8145,6 +8153,7 @@ classes = (
     VIEW3D_MT_sculpt_specials,
     VIEW3D_MT_sculpt,
     VIEW3D_MT_sculpt_set_pivot,
+    VIEW3D_MT_mask,
     VIEW3D_MT_hide_mask,
     VIEW3D_MT_particle,
     VIEW3D_MT_particle_context_menu,

@@ -324,7 +324,7 @@ void GHOST_SystemX11::getAllDisplayDimensions(GHOST_TUns32 &width, GHOST_TUns32 
  * \param   type    The type of drawing context installed in this window.
  * \param glSettings: Misc OpenGL settings.
  * \param exclusive: Use to show the window ontop and ignore others (used fullscreen).
- * \param   parentWindow    Parent (embedder) window
+ * \param   parentWindow    Parent window
  * \return  The new window (or 0 if creation failed).
  */
 GHOST_IWindow *GHOST_SystemX11::createWindow(const STR_String &title,
@@ -336,7 +336,8 @@ GHOST_IWindow *GHOST_SystemX11::createWindow(const STR_String &title,
                                              GHOST_TDrawingContextType type,
                                              GHOST_GLSettings glSettings,
                                              const bool exclusive,
-                                             const GHOST_TEmbedderWindowID parentWindow)
+                                             const bool is_dialog,
+                                             const GHOST_IWindow *parentWindow)
 {
   GHOST_WindowX11 *window = NULL;
 
@@ -351,8 +352,9 @@ GHOST_IWindow *GHOST_SystemX11::createWindow(const STR_String &title,
                                width,
                                height,
                                state,
-                               parentWindow,
+                               (GHOST_WindowX11 *)parentWindow,
                                type,
+                               is_dialog,
                                ((glSettings.flags & GHOST_glStereoVisual) != 0),
                                exclusive,
                                ((glSettings.flags & GHOST_glAlphaBackground) != 0),
@@ -2143,6 +2145,216 @@ void GHOST_SystemX11::putClipboard(GHOST_TInt8 *buffer, bool selection) const
   }
 }
 
+/** \name Message Box
+ * \{ */
+class DialogData {
+ public:
+  /* Width of the dialog */
+  uint width;
+  /* Heigth of the dialog */
+  uint height;
+  /* Default padding (x direction) between controls and edge of dialog */
+  uint padding_x;
+  /* Default padding (y direction) between controls and edge of dialog */
+  uint padding_y;
+  /* Width of a single button */
+  uint button_width;
+  /* Height of a single button */
+  uint button_height;
+  /* Inset of a button to its text */
+  uint button_inset_x;
+  /* Size of the border of the button */
+  uint button_border_size;
+  /* Height of a line of text */
+  uint line_height;
+  /* offset of the text inside the button */
+  uint button_text_offset_y;
+
+  /* Construct a new DialogData with the default settings */
+  DialogData()
+      : width(640),
+        height(175),
+        padding_x(10),
+        padding_y(5),
+        button_width(50),
+        button_height(24),
+        button_inset_x(10),
+        button_border_size(1),
+        line_height(16)
+  {
+    button_text_offset_y = button_height - line_height;
+  }
+
+  void drawButton(Display *display,
+                  Window &window,
+                  GC &borderGC,
+                  GC &buttonGC,
+                  uint button_num,
+                  const char *label)
+  {
+    XFillRectangle(display,
+                   window,
+                   borderGC,
+                   width - (padding_x + button_width) * button_num,
+                   height - padding_y - button_height,
+                   button_width,
+                   button_height);
+
+    XFillRectangle(display,
+                   window,
+                   buttonGC,
+                   width - (padding_x + button_width) * button_num + button_border_size,
+                   height - padding_y - button_height + button_border_size,
+                   button_width - button_border_size * 2,
+                   button_height - button_border_size * 2);
+
+    XDrawString(display,
+                window,
+                borderGC,
+                width - (padding_x + button_width) * button_num + button_inset_x,
+                height - padding_y - button_text_offset_y,
+                label,
+                strlen(label));
+  }
+
+  /* Is the mouse inside the given button */
+  bool isInsideButton(XEvent &e, uint button_num)
+  {
+    return ((e.xmotion.y > height - padding_y - button_height) &&
+            (e.xmotion.y < height - padding_y) &&
+            (e.xmotion.x > width - (padding_x + button_width) * button_num) &&
+            (e.xmotion.x < width - padding_x - (padding_x + button_width) * (button_num - 1)));
+  }
+};
+
+static void split(const char *text, const char *seps, char ***str, int *count)
+{
+  char *tok, *data;
+  int i;
+  *count = 0;
+
+  data = strdup(text);
+  for (tok = strtok(data, seps); tok != NULL; tok = strtok(NULL, seps))
+    (*count)++;
+  free(data);
+
+  data = strdup(text);
+  *str = (char **)malloc((size_t)(*count) * sizeof(char *));
+  for (i = 0, tok = strtok(data, seps); tok != NULL; tok = strtok(NULL, seps), i++)
+    (*str)[i] = strdup(tok);
+  free(data);
+}
+
+GHOST_TSuccess GHOST_SystemX11::showMessageBox(const char *title,
+                                               const char *message,
+                                               const char *link,
+                                               GHOST_DialogOptions) const
+{
+  char **text_splitted = NULL;
+  int textLines = 0;
+  split(message, "\n", &text_splitted, &textLines);
+
+  DialogData dialog_data;
+  XSizeHints hints;
+
+  Window window;
+  XEvent e;
+  int screen = DefaultScreen(m_display);
+  window = XCreateSimpleWindow(m_display,
+                               RootWindow(m_display, screen),
+                               0,
+                               0,
+                               dialog_data.width,
+                               dialog_data.height,
+                               1,
+                               BlackPixel(m_display, screen),
+                               WhitePixel(m_display, screen));
+
+  /* Window Should not be resizable */
+  {
+    hints.flags = PSize | PMinSize | PMaxSize;
+    hints.min_width = hints.max_width = hints.base_width = dialog_data.width;
+    hints.min_height = hints.max_height = hints.base_height = dialog_data.height;
+    XSetWMNormalHints(m_display, window, &hints);
+  }
+
+  /* Set title */
+  {
+    Atom wm_Name = XInternAtom(m_display, "_NET_WM_NAME", False);
+    Atom utf8Str = XInternAtom(m_display, "UTF8_STRING", False);
+
+    Atom winType = XInternAtom(m_display, "_NET_WM_WINDOW_TYPE", False);
+    Atom typeDialog = XInternAtom(m_display, "_NET_WM_WINDOW_TYPE_DIALOG", False);
+
+    XChangeProperty(m_display,
+                    window,
+                    wm_Name,
+                    utf8Str,
+                    8,
+                    PropModeReplace,
+                    (const unsigned char *)title,
+                    (int)strlen(title));
+
+    XChangeProperty(
+        m_display, window, winType, XA_ATOM, 32, PropModeReplace, (unsigned char *)&typeDialog, 1);
+  }
+
+  /* Create buttons GC */
+  XGCValues buttonBorderGCValues;
+  buttonBorderGCValues.foreground = BlackPixel(m_display, screen);
+  buttonBorderGCValues.background = WhitePixel(m_display, screen);
+  XGCValues buttonGCValues;
+  buttonGCValues.foreground = WhitePixel(m_display, screen);
+  buttonGCValues.background = BlackPixel(m_display, screen);
+
+  GC buttonBorderGC = XCreateGC(m_display, window, GCForeground, &buttonBorderGCValues);
+  GC buttonGC = XCreateGC(m_display, window, GCForeground, &buttonGCValues);
+
+  XSelectInput(m_display, window, ExposureMask | ButtonPressMask | ButtonReleaseMask);
+  XMapWindow(m_display, window);
+
+  while (1) {
+    XNextEvent(m_display, &e);
+    if (e.type == Expose) {
+      for (int i = 0; i < textLines; i++) {
+        XDrawString(m_display,
+                    window,
+                    DefaultGC(m_display, screen),
+                    dialog_data.padding_x,
+                    dialog_data.padding_x + (i + 1) * dialog_data.line_height,
+                    text_splitted[i],
+                    (int)strlen(text_splitted[i]));
+      }
+      dialog_data.drawButton(m_display, window, buttonBorderGC, buttonGC, 1, "Ok");
+      if (strlen(link)) {
+        dialog_data.drawButton(m_display, window, buttonBorderGC, buttonGC, 2, "Help");
+      }
+    }
+    else if (e.type == ButtonRelease) {
+      if (dialog_data.isInsideButton(e, 1)) {
+        break;
+      }
+      else if (strlen(link) && dialog_data.isInsideButton(e, 2)) {
+        string cmd = "xdg-open \"" + string(link) + "\"";
+        if (system(cmd.c_str()) != 0) {
+          GHOST_PRINTF("GHOST_SystemX11::showMessageBox: Unable to run system command [%s]", cmd);
+        }
+      }
+    }
+  }
+
+  for (int i = 0; i < textLines; i++) {
+    free(text_splitted[i]);
+  }
+  free(text_splitted);
+
+  XDestroyWindow(m_display, window);
+  XFreeGC(m_display, buttonBorderGC);
+  XFreeGC(m_display, buttonGC);
+  return GHOST_kSuccess;
+}
+/* \} */
+
 #ifdef WITH_XDND
 GHOST_TSuccess GHOST_SystemX11::pushDragDropEvent(GHOST_TEventType eventType,
                                                   GHOST_TDragnDropTypes draggedObjectType,
@@ -2303,26 +2515,30 @@ void GHOST_SystemX11::refreshXInputDevices()
           /* Find how many pressure levels tablet has */
           XAnyClassPtr ici = device_info[i].inputclassinfo;
 
-          for (int j = 0; j < xtablet.Device->num_classes; ++j) {
-            if (ici->c_class == ValuatorClass) {
-              XValuatorInfo *xvi = (XValuatorInfo *)ici;
-              xtablet.PressureLevels = xvi->axes[2].max_value;
+          if (ici != NULL) {
+            for (int j = 0; j < xtablet.Device->num_classes; ++j) {
+              if (ici->c_class == ValuatorClass) {
+                XValuatorInfo *xvi = (XValuatorInfo *)ici;
+                if (xvi->axes != NULL) {
+                  xtablet.PressureLevels = xvi->axes[2].max_value;
 
-              if (xvi->num_axes > 3) {
-                /* this is assuming that the tablet has the same tilt resolution in both
-                 * positive and negative directions. It would be rather weird if it didn't.. */
-                xtablet.XtiltLevels = xvi->axes[3].max_value;
-                xtablet.YtiltLevels = xvi->axes[4].max_value;
-              }
-              else {
-                xtablet.XtiltLevels = 0;
-                xtablet.YtiltLevels = 0;
+                  if (xvi->num_axes > 3) {
+                    /* this is assuming that the tablet has the same tilt resolution in both
+                     * positive and negative directions. It would be rather weird if it didn't.. */
+                    xtablet.XtiltLevels = xvi->axes[3].max_value;
+                    xtablet.YtiltLevels = xvi->axes[4].max_value;
+                  }
+                  else {
+                    xtablet.XtiltLevels = 0;
+                    xtablet.YtiltLevels = 0;
+                  }
+
+                  break;
+                }
               }
 
-              break;
+              ici = (XAnyClassPtr)(((char *)ici) + ici->length);
             }
-
-            ici = (XAnyClassPtr)(((char *)ici) + ici->length);
           }
 
           m_xtablets.push_back(xtablet);
