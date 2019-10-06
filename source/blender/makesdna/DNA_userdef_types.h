@@ -394,6 +394,8 @@ typedef struct ThemeSpace {
   /** NLA - warning color for duplicate instances of tweaking strip. */
   unsigned char nla_tweakdupli[4];
 
+  /** NLA "Track" */
+  unsigned char nla_track[4];
   /** NLA "Transition" strips. */
   unsigned char nla_transition[4], nla_transition_sel[4];
   /** NLA "Meta" strips. */
@@ -414,7 +416,6 @@ typedef struct ThemeSpace {
   unsigned char metadatabg[4];
   unsigned char metadatatext[4];
 
-  char _pad2[4];
 } ThemeSpace;
 
 /* set of colors for use as a custom color set for Objects/Bones wire drawing */
@@ -607,7 +608,8 @@ typedef struct UserDef {
   /** #eUserPref_PrefFlag preferences for the preferences. */
   char pref_flag;
   char savetime;
-  char _pad4[4];
+  char mouse_emulate_3_button_modifier;
+  char _pad4[3];
   /** FILE_MAXDIR length. */
   char tempdir[768];
   char fontdir[768];
@@ -727,11 +729,13 @@ typedef struct UserDef {
   short curssize;
   /** #eColorPicker_Types. */
   short color_picker_type;
+  /** Curve smoothing type for newly added F-Curves. */
+  char auto_smoothing_new;
   /** Interpolation mode for newly added F-Curves. */
   char ipo_new;
   /** Handle types for newly added keyframes. */
   char keyhandles_new;
-  char _pad11[3];
+  char _pad11[2];
   /** #eZoomFrame_Mode. */
   char view_frame_type;
 
@@ -1240,6 +1244,11 @@ typedef enum eUserpref_TempSpaceDisplayType {
   USER_TEMP_SPACE_DISPLAY_FULLSCREEN,
   USER_TEMP_SPACE_DISPLAY_WINDOW,
 } eUserpref_TempSpaceDisplayType;
+
+typedef enum eUserpref_EmulateMMBMod {
+  USER_EMU_MMB_MOD_ALT = 0,
+  USER_EMU_MMB_MOD_OSKEY = 1,
+} eUserpref_EmulateMMBMod;
 
 #ifdef __cplusplus
 }

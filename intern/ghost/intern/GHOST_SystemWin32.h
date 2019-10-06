@@ -112,7 +112,7 @@ class GHOST_SystemWin32 : public GHOST_System {
    * \param   type    The type of drawing context installed in this window.
    * \param glSettings: Misc OpenGL settings.
    * \param exclusive: Use to show the window ontop and ignore others (used fullscreen).
-   * \param   parentWindow    Parent (embedder) window
+   * \param   parentWindow    Parent window
    * \return  The new window (or 0 if creation failed).
    */
   GHOST_IWindow *createWindow(const STR_String &title,
@@ -124,7 +124,8 @@ class GHOST_SystemWin32 : public GHOST_System {
                               GHOST_TDrawingContextType type,
                               GHOST_GLSettings glSettings,
                               const bool exclusive = false,
-                              const GHOST_TEmbedderWindowID parentWindow = 0);
+                              const bool is_dialog = false,
+                              const GHOST_IWindow *parentWindow = 0);
 
   /**
    * Create a new offscreen context.
@@ -202,6 +203,18 @@ class GHOST_SystemWin32 : public GHOST_System {
    * \return              No return
    */
   void putClipboard(GHOST_TInt8 *buffer, bool selection) const;
+
+  /**
+   * Show a system message box
+   * \param title                   The title of the message box
+   * \param message                 The message to display
+   * \param link                    An optional hyperlink
+   * \param dialog_options Options  how to display the message
+   */
+  GHOST_TSuccess showMessageBox(const char *title,
+                                const char *message,
+                                const char *link,
+                                GHOST_DialogOptions dialog_options) const;
 
   /**
    * Creates a drag'n'drop event and pushes it immediately onto the event queue.

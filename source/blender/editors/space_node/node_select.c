@@ -430,11 +430,9 @@ void node_select_single(bContext *C, bNode *node)
 }
 
 static int node_mouse_select(bContext *C,
+                             wmOperator *op,
                              const int mval[2],
-                             const bool extend,
-                             const bool socket_select,
-                             const bool deselect_all,
-                             const bool wait_to_deselect_others)
+                             bool wait_to_deselect_others)
 {
   Main *bmain = CTX_data_main(C);
   SpaceNode *snode = CTX_wm_space_node(C);
@@ -445,8 +443,15 @@ static int node_mouse_select(bContext *C,
   float cursor[2];
   int ret_value = OPERATOR_CANCELLED;
 
-  /* Waiting to deselect others is only allowed for basic selection. */
-  BLI_assert(!(extend || socket_select) || !wait_to_deselect_others);
+  const bool extend = RNA_boolean_get(op->ptr, "extend");
+  /* always do socket_select when extending selection. */
+  const bool socket_select = extend || RNA_boolean_get(op->ptr, "socket_select");
+  const bool deselect_all = RNA_boolean_get(op->ptr, "deselect_all");
+
+  /* These cases are never modal. */
+  if (extend || socket_select) {
+    wait_to_deselect_others = false;
+  }
 
   /* get mouse coordinates in view2d space */
   UI_view2d_region_to_view(&ar->v2d, mval[0], mval[1], &cursor[0], &cursor[1]);
@@ -552,115 +557,40 @@ static int node_mouse_select(bContext *C,
 
 static int node_select_exec(bContext *C, wmOperator *op)
 {
-  int mval[2];
+  const bool wait_to_deselect_others = RNA_boolean_get(op->ptr, "wait_to_deselect_others");
 
   /* get settings from RNA properties for operator */
+  int mval[2];
   mval[0] = RNA_int_get(op->ptr, "mouse_x");
   mval[1] = RNA_int_get(op->ptr, "mouse_y");
 
-  const bool extend = RNA_boolean_get(op->ptr, "extend");
-  /* always do socket_select when extending selection. */
-  const bool socket_select = extend || RNA_boolean_get(op->ptr, "socket_select");
-  const bool deselect_all = RNA_boolean_get(op->ptr, "deselect_all");
-
   /* perform the select */
-  const int ret_value = node_mouse_select(C, mval, extend, socket_select, deselect_all, false);
+  const int ret_value = node_mouse_select(C, op, mval, wait_to_deselect_others);
 
   /* allow tweak event to work too */
   return ret_value | OPERATOR_PASS_THROUGH;
 }
 
-static int node_select_modal(bContext *C, wmOperator *op, const wmEvent *event)
-{
-  const short init_event_type = (short)POINTER_AS_INT(op->customdata);
-
-  /* get settings from RNA properties for operator */
-  int mval[2];
-  mval[0] = RNA_int_get(op->ptr, "mouse_x");
-  mval[1] = RNA_int_get(op->ptr, "mouse_y");
-
-  const bool extend = RNA_boolean_get(op->ptr, "extend");
-  /* always do socket_select when extending selection. */
-  const bool socket_select = extend || RNA_boolean_get(op->ptr, "socket_select");
-  const bool deselect_all = RNA_boolean_get(op->ptr, "deselect_all");
-
-  /* These cases are never modal. */
-  if (extend || socket_select) {
-    return node_select_exec(C, op);
-  }
-
-  if (init_event_type == 0) {
-    if (event->val == KM_PRESS) {
-      const int ret_value = node_mouse_select(C, mval, extend, socket_select, deselect_all, true);
-
-      op->customdata = POINTER_FROM_INT((int)event->type);
-      if (ret_value & OPERATOR_RUNNING_MODAL) {
-        WM_event_add_modal_handler(C, op);
-      }
-      return ret_value | OPERATOR_PASS_THROUGH;
-    }
-    else {
-      /* If we are in init phase, and cannot validate init of modal operations,
-       * just fall back to basic exec.
-       */
-      return node_select_exec(C, op);
-    }
-  }
-  else if (event->type == init_event_type && event->val == KM_RELEASE) {
-    const int ret_value = node_mouse_select(C, mval, extend, socket_select, deselect_all, false);
-    return ret_value | OPERATOR_PASS_THROUGH;
-  }
-  else if (ELEM(event->type, MOUSEMOVE, INBETWEEN_MOUSEMOVE)) {
-    const int drag_delta[2] = {
-        mval[0] - event->mval[0],
-        mval[1] - event->mval[1],
-    };
-    /* If user moves mouse more than defined threshold, we consider select operator as
-     * finished. Otherwise, it is still running until we get an 'release' event. In any
-     * case, we pass through event, but select op is not finished yet. */
-    if (WM_event_drag_test_with_delta(event, drag_delta)) {
-      return OPERATOR_FINISHED | OPERATOR_PASS_THROUGH;
-    }
-    else {
-      /* Important not to return anything other than PASS_THROUGH here,
-       * otherwise it prevents underlying tweak detection code to work properly. */
-      return OPERATOR_PASS_THROUGH;
-    }
-  }
-
-  return OPERATOR_FINISHED | OPERATOR_PASS_THROUGH;
-}
-
-static int node_select_invoke(bContext *C, wmOperator *op, const wmEvent *event)
-{
-  RNA_int_set(op->ptr, "mouse_x", event->mval[0]);
-  RNA_int_set(op->ptr, "mouse_y", event->mval[1]);
-
-  op->customdata = POINTER_FROM_INT(0);
-
-  return node_select_modal(C, op, event);
-}
-
 void NODE_OT_select(wmOperatorType *ot)
 {
+  PropertyRNA *prop;
+
   /* identifiers */
   ot->name = "Select";
   ot->idname = "NODE_OT_select";
   ot->description = "Select the node under the cursor";
 
   /* api callbacks */
-  ot->invoke = node_select_invoke;
   ot->exec = node_select_exec;
-  ot->modal = node_select_modal;
+  ot->invoke = WM_generic_select_invoke;
+  ot->modal = WM_generic_select_modal;
   ot->poll = ED_operator_node_active;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* properties */
-  PropertyRNA *prop;
-  RNA_def_int(ot->srna, "mouse_x", 0, INT_MIN, INT_MAX, "Mouse X", "", INT_MIN, INT_MAX);
-  RNA_def_int(ot->srna, "mouse_y", 0, INT_MIN, INT_MAX, "Mouse Y", "", INT_MIN, INT_MAX);
+  WM_operator_properties_generic_select(ot);
   RNA_def_boolean(ot->srna, "extend", false, "Extend", "");
   RNA_def_boolean(ot->srna, "socket_select", false, "Socket Select", "");
   prop = RNA_def_boolean(ot->srna,
