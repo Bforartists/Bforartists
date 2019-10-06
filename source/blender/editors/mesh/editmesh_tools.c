@@ -3162,7 +3162,7 @@ static int edbm_remove_doubles_exec(bContext *C, wmOperator *op)
   }
   MEM_freeN(objects);
 
-  BKE_reportf(op->reports, RPT_INFO, "Removed %d vertices", count_multi);
+  BKE_reportf(op->reports, RPT_INFO, "Removed %d vertice(s)", count_multi);
 
   return OPERATOR_FINISHED;
 }

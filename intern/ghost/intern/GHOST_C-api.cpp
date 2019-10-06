@@ -47,6 +47,16 @@ GHOST_TSuccess GHOST_DisposeSystem(GHOST_SystemHandle systemhandle)
   return system->disposeSystem();
 }
 
+void GHOST_ShowMessageBox(GHOST_SystemHandle systemhandle,
+                          const char *title,
+                          const char *message,
+                          const char *link,
+                          GHOST_DialogOptions dialog_options)
+{
+  GHOST_ISystem *system = (GHOST_ISystem *)systemhandle;
+  system->showMessageBox(title, message, link, dialog_options);
+}
+
 GHOST_EventConsumerHandle GHOST_CreateEventConsumer(GHOST_EventCallbackProcPtr eventCallback,
                                                     GHOST_TUserDataPtr userdata)
 {
@@ -140,7 +150,33 @@ GHOST_WindowHandle GHOST_CreateWindow(GHOST_SystemHandle systemhandle,
   GHOST_ISystem *system = (GHOST_ISystem *)systemhandle;
 
   return (GHOST_WindowHandle)system->createWindow(
-      title, left, top, width, height, state, type, glSettings, false);
+      title, left, top, width, height, state, type, glSettings, false, false);
+}
+
+GHOST_WindowHandle GHOST_CreateDialogWindow(GHOST_SystemHandle systemhandle,
+                                            GHOST_WindowHandle parent_windowhandle,
+                                            const char *title,
+                                            GHOST_TInt32 left,
+                                            GHOST_TInt32 top,
+                                            GHOST_TUns32 width,
+                                            GHOST_TUns32 height,
+                                            GHOST_TWindowState state,
+                                            GHOST_TDrawingContextType type,
+                                            GHOST_GLSettings glSettings)
+{
+  GHOST_ISystem *system = (GHOST_ISystem *)systemhandle;
+
+  return (GHOST_WindowHandle)system->createWindow(title,
+                                                  left,
+                                                  top,
+                                                  width,
+                                                  height,
+                                                  state,
+                                                  type,
+                                                  glSettings,
+                                                  false,
+                                                  true,
+                                                  (GHOST_IWindow *)parent_windowhandle);
 }
 
 GHOST_TUserDataPtr GHOST_GetWindowUserData(GHOST_WindowHandle windowhandle)
@@ -154,6 +190,13 @@ void GHOST_SetWindowUserData(GHOST_WindowHandle windowhandle, GHOST_TUserDataPtr
   GHOST_IWindow *window = (GHOST_IWindow *)windowhandle;
 
   window->setUserData(userdata);
+}
+
+int GHOST_IsDialogWindow(GHOST_WindowHandle windowhandle)
+{
+  GHOST_IWindow *window = (GHOST_IWindow *)windowhandle;
+
+  return (int)window->isDialog();
 }
 
 GHOST_TSuccess GHOST_DisposeWindow(GHOST_SystemHandle systemhandle,
@@ -618,8 +661,13 @@ GHOST_TSuccess GHOST_ActivateWindowDrawingContext(GHOST_WindowHandle windowhandl
 GHOST_TSuccess GHOST_ActivateOpenGLContext(GHOST_ContextHandle contexthandle)
 {
   GHOST_IContext *context = (GHOST_IContext *)contexthandle;
-
-  return context->activateDrawingContext();
+  if (context) {
+    return context->activateDrawingContext();
+  }
+  else {
+    GHOST_PRINT("GHOST_ActivateOpenGLContext: Context not valid");
+    return GHOST_kFailure;
+  }
 }
 
 GHOST_TSuccess GHOST_ReleaseOpenGLContext(GHOST_ContextHandle contexthandle)

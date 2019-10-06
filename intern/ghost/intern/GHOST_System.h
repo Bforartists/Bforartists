@@ -105,14 +105,6 @@ class GHOST_System : public GHOST_ISystem {
    ***************************************************************************************/
 
   /**
-   * Inherited from GHOST_ISystem but left pure virtual
-   *
-   * virtual  GHOST_TUns8 getNumDisplays() const = 0;
-   * virtual void getMainDisplayDimensions(...) const = 0;
-   * virtual GHOST_IWindow* createWindow(..)
-   */
-
-  /**
    * Dispose a window.
    * \param   window Pointer to the window to be disposed.
    * \return  Indication of success.
@@ -316,6 +308,21 @@ class GHOST_System : public GHOST_ISystem {
    * \param selection The clipboard to copy too only used on X11
    */
   virtual void putClipboard(GHOST_TInt8 *buffer, bool selection) const = 0;
+
+  /**
+   * Show a system message box
+   * \param title                   The title of the message box
+   * \param message                 The message to display
+   * \param link                    An optional hyperlink
+   * \param dialog_options Options  how to display the message
+   */
+  virtual GHOST_TSuccess showMessageBox(const char * /*title*/,
+                                        const char * /*message*/,
+                                        const char * /*link*/,
+                                        GHOST_DialogOptions /*dialog_options*/) const
+  {
+    return GHOST_kFailure;
+  };
 
  protected:
   /**
