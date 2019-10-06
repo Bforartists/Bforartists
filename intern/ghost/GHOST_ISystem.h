@@ -236,6 +236,7 @@ class GHOST_ISystem {
    * \param type: The type of drawing context installed in this window.
    * \param glSettings: Misc OpenGL settings.
    * \param exclusive: Use to show the window on top and ignore others (used fullscreen).
+   * \param is_dialog: Stay on top of parent window, no icon in taskbar, not minimizable.
    * \param parentWindow: Parent (embedder) window
    * \return The new window (or 0 if creation failed).
    */
@@ -248,7 +249,8 @@ class GHOST_ISystem {
                                       GHOST_TDrawingContextType type,
                                       GHOST_GLSettings glSettings,
                                       const bool exclusive = false,
-                                      const GHOST_TEmbedderWindowID parentWindow = 0) = 0;
+                                      const bool is_dialog = false,
+                                      const GHOST_IWindow *parentWindow = NULL) = 0;
 
   /**
    * Dispose a window.
@@ -434,6 +436,23 @@ class GHOST_ISystem {
    * Put data to the Clipboard
    */
   virtual void putClipboard(GHOST_TInt8 *buffer, bool selection) const = 0;
+
+  /***************************************************************************************
+   * System Message Box.
+   ***************************************************************************************/
+
+  /**
+   * Show a system message box
+   *
+   * \param title                   The title of the message box
+   * \param message                 The message to display
+   * \param link                    An optional hyperlink
+   * \param dialog_options Options  how to display the message
+   */
+  virtual GHOST_TSuccess showMessageBox(const char * /*title*/,
+                                        const char * /*message*/,
+                                        const char * /*link*/,
+                                        GHOST_DialogOptions /*dialog_options*/) const = 0;
 
  protected:
   /**

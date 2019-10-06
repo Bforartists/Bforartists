@@ -1673,15 +1673,13 @@ void blo_do_versions_250(FileData *fd, Library *lib, Main *bmain)
     }
 
     for (scene = bmain->scenes.first; scene; scene = scene->id.next) {
-      if (scene) {
-        Sequence *seq;
-        SEQ_BEGIN (scene->ed, seq) {
-          if (seq->sat == 0.0f) {
-            seq->sat = 1.0f;
-          }
+      Sequence *seq;
+      SEQ_BEGIN (scene->ed, seq) {
+        if (seq->sat == 0.0f) {
+          seq->sat = 1.0f;
         }
-        SEQ_END;
       }
+      SEQ_END;
     }
 
     /* GSOC 2010 Sculpt - New settings for Brush */
@@ -1696,7 +1694,7 @@ void blo_do_versions_250(FileData *fd, Library *lib, Main *bmain)
 
       /* will have no effect */
       if (brush->alpha == 0) {
-        brush->alpha = 0.5f;
+        brush->alpha = 1.0f;
       }
 
       /* bad radius */

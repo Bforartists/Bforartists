@@ -22,6 +22,10 @@
 #define __GPU_PRIVATE_H__
 
 /* call this before running any of the functions below */
+void gpu_platform_init(void);
+void gpu_platform_exit(void);
+
+/* call this before running any of the functions below */
 void gpu_extensions_init(void);
 void gpu_extensions_exit(void);
 
