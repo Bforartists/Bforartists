@@ -329,9 +329,9 @@ class GRAPH_MT_channel(Menu):
 
         layout.separator()
 
-        layout.operator("graph.hide", text="Hide Selected Curves", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("graph.reveal", icon = "HIDE_OFF")
+        layout.operator("graph.hide", text="Hide Selected Curves", icon = "HIDE_ON").unselected = False 
         layout.operator("graph.hide_unselected_curves", text="Hide Unselected Curves", icon = "HIDE_UNSELECTED")
-        layout.operator("graph.reveal", icon = "RESTRICT_VIEW_OFF")
 
         layout.separator()
 

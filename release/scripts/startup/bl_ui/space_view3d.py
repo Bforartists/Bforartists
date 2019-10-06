@@ -822,8 +822,8 @@ class ShowHideMenu:
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("%s.reveal" % self._operator_name, text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
-        layout.operator("%s.hide" % self._operator_name, text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("%s.reveal" % self._operator_name, text="Show Hidden", icon = "HIDE_OFF")
+        layout.operator("%s.hide" % self._operator_name, text="Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("%s.hide" % self._operator_name, text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
@@ -3191,11 +3191,11 @@ class VIEW3D_MT_object_showhide(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.hide_view_clear", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("object.hide_view_clear", text="Show Hidden", icon = "HIDE_OFF")
 
         layout.separator()
 
-        layout.operator("object.hide_view_set", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("object.hide_view_set", text="Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("object.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
 
 
@@ -3539,8 +3539,8 @@ class VIEW3D_MT_facemask_showhide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("paint.face_select_reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
-        layout.operator("paint.face_select_hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("paint.face_select_reveal", text="Show Hidden", icon = "HIDE_OFF")
+        layout.operator("paint.face_select_hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("paint.face_select_hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
@@ -3871,19 +3871,19 @@ class VIEW3D_MT_hide_mask(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        props = layout.operator("paint.hide_show", text="Show All", icon = "RESTRICT_VIEW_OFF")
+        props = layout.operator("paint.hide_show", text="Show All", icon = "HIDE_OFF")
         props.action = 'SHOW'
         props.area = 'ALL'
 
-        props = layout.operator("paint.hide_show", text="Hide Bounding Box", icon = "RESTRICT_VIEW_ON")
+        props = layout.operator("paint.hide_show", text="Hide Bounding Box", icon = "HIDE_ON")
         props.action = 'HIDE'
         props.area = 'INSIDE'
 
-        props = layout.operator("paint.hide_show", text="Show Bounding Box", icon = "RESTRICT_VIEW_OFF")
+        props = layout.operator("paint.hide_show", text="Show Bounding Box", icon = "HIDE_OFF")
         props.action = 'SHOW'
         props.area = 'INSIDE'
 
-        props = layout.operator("paint.hide_show", text="Hide Masked", icon = "RESTRICT_VIEW_ON")
+        props = layout.operator("paint.hide_show", text="Hide Masked", icon = "HIDE_ON")
         props.area = 'MASKED'
         props.action = 'HIDE'
 
@@ -4019,8 +4019,8 @@ class VIEW3D_MT_particle_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("particle.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
-        layout.operator("particle.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("particle.reveal", text="Show Hidden", icon = "HIDE_OFF")
+        layout.operator("particle.hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("particle.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
 
 class VIEW3D_MT_pose(Menu):
@@ -4226,8 +4226,8 @@ class VIEW3D_MT_pose_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
-        layout.operator("pose.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("pose.reveal", text="Show Hidden", icon = "HIDE_OFF")
+        layout.operator("pose.hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("pose.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
 
 
@@ -5093,8 +5093,8 @@ class VIEW3D_MT_edit_mesh_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mesh.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
-        layout.operator("mesh.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("mesh.reveal", text="Show Hidden", icon = "HIDE_OFF")
+        layout.operator("mesh.hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("mesh.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
 
 
@@ -5316,8 +5316,8 @@ class VIEW3D_MT_edit_curve_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("curve.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
-        layout.operator("curve.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("curve.reveal", text="Show Hidden", icon = "HIDE_OFF")
+        layout.operator("curve.hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("curve.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
 
 
@@ -5459,8 +5459,8 @@ class VIEW3D_MT_edit_meta_showhide(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mball.reveal_metaelems", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
-        layout.operator("mball.hide_metaelems", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("mball.reveal_metaelems", text="Show Hidden", icon = "HIDE_OFF")
+        layout.operator("mball.hide_metaelems", text="Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("mball.hide_metaelems_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED")
 
 
@@ -5580,8 +5580,8 @@ class VIEW3D_MT_armature_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("armature.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
-        layout.operator("armature.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("armature.reveal", text="Show Hidden", icon = "HIDE_OFF")
+        layout.operator("armature.hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("armature.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED")
 
 
@@ -5839,13 +5839,13 @@ class VIEW3D_MT_edit_gpencil_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.reveal", text="Show Hidden Layer", icon = "RESTRICT_VIEW_OFF")
-        layout.operator("gpencil.hide", text="Hide selected Layer", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("gpencil.reveal", text="Show Hidden Layer", icon = "HIDE_OFF")
+        layout.operator("gpencil.hide", text="Hide selected Layer", icon = "HIDE_ON").unselected = False
         layout.operator("gpencil.hide", text="Hide unselected Layer", icon = "HIDE_UNSELECTED").unselected = True
 
         layout.separator()
 
-        layout.operator("gpencil.selection_opacity_toggle", text="Toggle Opacity", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("gpencil.selection_opacity_toggle", text="Toggle Opacity", icon = "HIDE_OFF")
 
 
 class VIEW3D_MT_edit_gpencil_arrange_strokes(Menu):
