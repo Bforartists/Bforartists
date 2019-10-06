@@ -29,6 +29,7 @@
 #include "GPU_batch.h"
 #include "GPU_batch_presets.h"
 #include "GPU_extensions.h"
+#include "GPU_platform.h"
 #include "GPU_matrix.h"
 #include "GPU_shader.h"
 
@@ -718,8 +719,11 @@ void GPU_draw_primitive(GPUPrimType prim_type, int v_count)
 #if 0
 #  define USE_MULTI_DRAW_INDIRECT 0
 #else
+/* TODO: partial workaround for NVIDIA driver bug on recent GTX/RTX cards,
+ * that breaks instancing when using indirect draw-call (see T70011). */
 #  define USE_MULTI_DRAW_INDIRECT \
-    (GL_ARB_multi_draw_indirect && GPU_arb_base_instance_is_supported())
+    (GL_ARB_multi_draw_indirect && GPU_arb_base_instance_is_supported() && \
+     !GPU_type_matches(GPU_DEVICE_NVIDIA, GPU_OS_ANY, GPU_DRIVER_OFFICIAL))
 #endif
 
 typedef struct GPUDrawCommand {
@@ -852,16 +856,19 @@ void GPU_draw_list_submit(GPUDrawList *list)
   uintptr_t offset = list->cmd_offset;
   uint cmd_len = list->cmd_len;
   size_t bytes_used = cmd_len * sizeof(GPUDrawCommandIndexed);
-  list->cmd_offset += bytes_used;
   list->cmd_len = 0; /* Avoid reuse. */
 
-  if (USE_MULTI_DRAW_INDIRECT) {
+  /* Only do multidraw indirect if doing more than 2 drawcall.
+   * This avoids the overhead of buffer mapping if scene is
+   * not very instance friendly. */
+  if (USE_MULTI_DRAW_INDIRECT && cmd_len > 2) {
     GLenum prim = batch->gl_prim_type;
 
     glBindBuffer(GL_DRAW_INDIRECT_BUFFER, list->buffer_id);
     glFlushMappedBufferRange(GL_DRAW_INDIRECT_BUFFER, 0, bytes_used);
     glUnmapBuffer(GL_DRAW_INDIRECT_BUFFER);
     list->commands = NULL; /* Unmapped */
+    list->cmd_offset += bytes_used;
 
     if (batch->elem) {
       glMultiDrawElementsIndirect(prim, INDEX_TYPE(batch->elem), (void *)offset, cmd_len, 0);
@@ -875,6 +882,8 @@ void GPU_draw_list_submit(GPUDrawList *list)
     if (batch->elem) {
       GPUDrawCommandIndexed *cmd = list->commands_indexed;
       for (int i = 0; i < cmd_len; i++, cmd++) {
+        /* Index start was added by Draw manager. Avoid counting it twice. */
+        cmd->v_first -= batch->elem->index_start;
         GPU_batch_draw_advanced(batch, cmd->v_first, cmd->v_count, cmd->i_first, cmd->i_count);
       }
     }

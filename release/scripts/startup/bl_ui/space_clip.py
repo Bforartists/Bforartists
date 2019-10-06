@@ -1347,6 +1347,7 @@ class CLIP_MT_view(Menu):
             layout.operator("clip.view_selected", icon = "VIEW_SELECTED")
             layout.operator("clip.view_all", icon = "VIEWALL")
             layout.operator("clip.view_all", text="View Fit", icon = "VIEW_FIT").fit_view = True
+            layout.operator("clip.view_center_cursor", icon = "CENTERTOCURSOR")
 
             layout.separator()
 

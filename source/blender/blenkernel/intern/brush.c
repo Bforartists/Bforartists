@@ -895,6 +895,10 @@ void BKE_brush_sculpt_reset(Brush *br)
   /* Use the curve presets by default */
   br->curve_preset = BRUSH_CURVE_SMOOTH;
 
+  /* Note that sculpt defaults where set when 0.5 was the default (now it's 1.0)
+   * assign this so logic below can remain the same. */
+  br->alpha = 0.5f;
+
   /* Brush settings */
   switch (br->sculpt_tool) {
     case SCULPT_TOOL_DRAW_SHARP:
@@ -904,6 +908,13 @@ void BKE_brush_sculpt_reset(Brush *br)
       break;
     case SCULPT_TOOL_CLAY:
       br->flag |= BRUSH_FRONTFACE;
+      break;
+    case SCULPT_TOOL_CLAY_STRIPS:
+      br->flag |= BRUSH_ACCUMULATE;
+      br->alpha = 0.7f;
+      br->normal_radius_factor = 1.7f;
+      br->curve_preset = BRUSH_CURVE_SPHERE;
+      br->spacing = 6;
       break;
     case SCULPT_TOOL_CREASE:
       br->flag |= BRUSH_DIR_IN;
@@ -964,12 +975,12 @@ void BKE_brush_sculpt_reset(Brush *br)
     case SCULPT_TOOL_INFLATE:
     case SCULPT_TOOL_BLOB:
     case SCULPT_TOOL_CREASE:
-      br->add_col[0] = 0.65f;
-      br->add_col[1] = 0.85f;
-      br->add_col[2] = 0.9f;
-      br->sub_col[0] = 0.65f;
-      br->sub_col[1] = 0.85f;
-      br->sub_col[2] = 0.9f;
+      br->add_col[0] = 0.5f;
+      br->add_col[1] = 0.7f;
+      br->add_col[2] = 0.875f;
+      br->sub_col[0] = 0.5f;
+      br->sub_col[1] = 0.7f;
+      br->sub_col[2] = 0.875f;
       break;
 
     case SCULPT_TOOL_SMOOTH:

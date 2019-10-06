@@ -47,7 +47,7 @@
 
 #include "GPU_batch.h"
 #include "GPU_batch_presets.h"
-#include "GPU_extensions.h"
+#include "GPU_platform.h"
 #include "GPU_immediate.h"
 #include "GPU_matrix.h"
 #include "GPU_state.h"
@@ -816,51 +816,8 @@ static void node_shader_buts_tex_environment(uiLayout *layout, bContext *C, Poin
 
 static void node_shader_buts_tex_environment_ex(uiLayout *layout, bContext *C, PointerRNA *ptr)
 {
-  PointerRNA imaptr = RNA_pointer_get(ptr, "image");
   PointerRNA iuserptr = RNA_pointer_get(ptr, "image_user");
-  Image *ima = imaptr.data;
-
-  uiLayoutSetContextPointer(layout, "image_user", &iuserptr);
-  uiTemplateID(layout,
-               C,
-               ptr,
-               "image",
-               "IMAGE_OT_new",
-               "IMAGE_OT_open",
-               NULL,
-               UI_TEMPLATE_ID_FILTER_ALL,
-               false);
-
-  if (!ima) {
-    return;
-  }
-
-  uiItemR(layout, &imaptr, "source", 0, IFACE_("Source"), ICON_NONE);
-
-  if (!(ELEM(ima->source, IMA_SRC_GENERATED, IMA_SRC_VIEWER))) {
-    uiLayout *row = uiLayoutRow(layout, true);
-    const bool is_packed = BKE_image_has_packedfile(ima);
-
-    if (is_packed) {
-      uiItemO(row, "", ICON_PACKAGE, "image.unpack");
-    }
-    else {
-      uiItemO(row, "", ICON_UGLYPACKAGE, "image.pack");
-    }
-
-    row = uiLayoutRow(row, true);
-    uiLayoutSetEnabled(row, !is_packed);
-    uiItemR(row, &imaptr, "filepath", 0, "", ICON_NONE);
-    uiItemO(row, "", ICON_FILE_REFRESH, "image.reload");
-  }
-
-  /* multilayer? */
-  if (ima->type == IMA_TYPE_MULTILAYER && ima->rr) {
-    uiTemplateImageLayers(layout, C, ima, iuserptr.data);
-  }
-  else if (ima->source != IMA_SRC_GENERATED) {
-    uiTemplateImageInfo(layout, C, ima, iuserptr.data);
-  }
+  uiTemplateImage(layout, C, ptr, "image", &iuserptr, 0, 0);
 
   uiItemR(layout, ptr, "interpolation", 0, IFACE_("Interpolation"), ICON_NONE);
   uiItemR(layout, ptr, "projection", 0, IFACE_("Projection"), ICON_NONE);
@@ -3890,9 +3847,7 @@ static void nodelink_batch_draw(SpaceNode *snode)
 
 void nodelink_batch_start(SpaceNode *UNUSED(snode))
 {
-  /* TODO: partial workaround for NVIDIA driver bug on recent GTX/RTX cards,
-   * that breaks instancing when using indirect draw-call (see T70011). */
-  g_batch_link.enabled = !GPU_type_matches(GPU_DEVICE_NVIDIA, GPU_OS_ANY, GPU_DRIVER_ANY);
+  g_batch_link.enabled = true;
 }
 
 void nodelink_batch_end(SpaceNode *snode)
