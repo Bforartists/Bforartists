@@ -658,8 +658,8 @@ class SEQUENCER_MT_strip_lock_mute(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.mute", icon='RESTRICT_VIEW_ON').unselected = False
-        layout.operator("sequencer.unmute", icon='RESTRICT_VIEW_OFF').unselected = False
+        layout.operator("sequencer.mute", icon='HIDE_ON').unselected = False
+        layout.operator("sequencer.unmute", icon='HIDE_OFF').unselected = False
         layout.operator("sequencer.mute", text="Mute Unselected Strips", icon='HIDE_UNSELECTED').unselected = True
         layout.operator("sequencer.unmute", text="Unmute Deselected Strips", icon='SHOW_UNSELECTED').unselected = True
 
