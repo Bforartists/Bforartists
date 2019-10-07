@@ -3743,19 +3743,19 @@ class VIEW3D_MT_sculpt(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        props = layout.operator("paint.hide_show", text="Show All")
+        props = layout.operator("paint.hide_show", text="Show All", icon = "HIDE_OFF")
         props.action = 'SHOW'
         props.area = 'ALL'
 
-        props = layout.operator("paint.hide_show", text="Show Bounding Box")
+        props = layout.operator("paint.hide_show", text="Show Bounding Box", icon = "HIDE_ON")
         props.action = 'SHOW'
         props.area = 'INSIDE'
 
-        props = layout.operator("paint.hide_show", text="Hide Bounding Box")
+        props = layout.operator("paint.hide_show", text="Hide Bounding Box", icon = "HIDE_OFF")
         props.action = 'HIDE'
         props.area = 'INSIDE'
 
-        props = layout.operator("paint.hide_show", text="Hide Masked")
+        props = layout.operator("paint.hide_show", text="Hide Masked", icon = "HIDE_ON")
         props.action = 'HIDE'
         props.area = 'MASKED'
 
@@ -3770,55 +3770,55 @@ class VIEW3D_MT_mask(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        props = layout.operator("paint.mask_flood_fill", text="Invert Mask")
+        props = layout.operator("paint.mask_flood_fill", text="Invert Mask", icon = "INVERT_MASK")
         props.mode = 'INVERT'
 
-        props = layout.operator("paint.mask_flood_fill", text="Fill Mask")
+        props = layout.operator("paint.mask_flood_fill", text="Fill Mask", icon = "FILL_MASK")
         props.mode = 'VALUE'
         props.value = 1
 
-        props = layout.operator("paint.mask_flood_fill", text="Clear Mask")
+        props = layout.operator("paint.mask_flood_fill", text="Clear Mask", icon = "CLEAR_MASK")
         props.mode = 'VALUE'
         props.value = 0
 
-        props = layout.operator("view3d.select_box", text="Box Mask")
-        props = layout.operator("paint.mask_lasso_gesture", text="Lasso Mask")
+        props = layout.operator("view3d.select_box", text="Box Mask", icon = "BOX_MASK")
+        props = layout.operator("paint.mask_lasso_gesture", text="Lasso Mask", icon = "LASSO_MASK")
 
         layout.separator()
 
-        props = layout.operator("sculpt.mask_filter", text='Smooth Mask')
+        props = layout.operator("sculpt.mask_filter", text='Smooth Mask', icon = "PARTICLEBRUSH_SMOOTH")
         props.filter_type = 'SMOOTH'
         props.auto_iteration_count = True
 
-        props = layout.operator("sculpt.mask_filter", text='Sharpen Mask')
+        props = layout.operator("sculpt.mask_filter", text='Sharpen Mask', icon = "SHARPEN")
         props.filter_type = 'SHARPEN'
         props.auto_iteration_count = True
 
-        props = layout.operator("sculpt.mask_filter", text='Grow Mask')
+        props = layout.operator("sculpt.mask_filter", text='Grow Mask', icon = "SELECTMORE")
         props.filter_type = 'GROW'
         props.auto_iteration_count = True
 
-        props = layout.operator("sculpt.mask_filter", text='Shrink Mask')
+        props = layout.operator("sculpt.mask_filter", text='Shrink Mask', icon = "SELECTLESS")
         props.filter_type = 'SHRINK'
         props.auto_iteration_count = True
 
-        props = layout.operator("sculpt.mask_filter", text='Increase Contrast')
+        props = layout.operator("sculpt.mask_filter", text='Increase Contrast', icon = "INC_CONTRAST")
         props.filter_type = 'CONTRAST_INCREASE'
         props.auto_iteration_count = False
 
-        props = layout.operator("sculpt.mask_filter", text='Decrease Contrast')
+        props = layout.operator("sculpt.mask_filter", text='Decrease Contrast', icon = "DEC_CONTRAST")
         props.filter_type = 'CONTRAST_DECREASE'
         props.auto_iteration_count = False
 
         layout.separator()
 
-        props = layout.operator("sculpt.mask_expand", text="Expand Mask By Topology")
+        props = layout.operator("sculpt.mask_expand", text="Expand Mask By Topology", icon = "MESH_DATA")
         props.use_normals = False
         props.keep_previous_mask = False
         props.invert = True
         props.smooth_iterations = 2
 
-        props = layout.operator("sculpt.mask_expand", text="Expand Mask By Curvature")
+        props = layout.operator("sculpt.mask_expand", text="Expand Mask By Curvature", icon = "CURVE_DATA")
         props.use_normals = True
         props.keep_previous_mask = True
         props.invert = False
@@ -3826,11 +3826,11 @@ class VIEW3D_MT_mask(Menu):
 
         layout.separator()
 
-        props = layout.operator("mesh.paint_mask_extract", text="Mask Extract")
+        props = layout.operator("mesh.paint_mask_extract", text="Mask Extract", icon = "PACKAGE")
 
         layout.separator()
 
-        props = layout.operator("sculpt.dirty_mask", text='Dirty Mask')
+        props = layout.operator("sculpt.dirty_mask", text='Dirty Mask', icon = "DIRTY_VERTEX")
 
 
 class VIEW3D_MT_sculpt_set_pivot(Menu):
@@ -3839,19 +3839,19 @@ class VIEW3D_MT_sculpt_set_pivot(Menu):
     def draw(self, context):
         layout = self.layout
 
-        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Origin")
+        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Origin", icon = "PIVOT_TO_ORIGIN")
         props.mode = 'ORIGIN'
 
-        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Unmasked")
+        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Unmasked", icon = "PIVOT_TO_UNMASKED")
         props.mode = 'UNMASKED'
 
-        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Mask Border")
+        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Mask Border", icon = "PIVOT_TO_MASKBORDER")
         props.mode = 'BORDER'
 
-        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Active Vertex")
+        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Active Vertex", icon = "PIVOT_TO_ACTIVE_VERT")
         props.mode = 'ACTIVE'
 
-        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Surface Under Cursor")
+        props = layout.operator("sculpt.set_pivot_position", text="Pivot to Surface Under Cursor", icon = "PIVOT_TO_SURFACE")
         props.mode = 'SURFACE'
 
 
