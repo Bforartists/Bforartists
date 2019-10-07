@@ -206,7 +206,7 @@ align_center
 
 # ------------------------- row 4 --------------------------*/
 
-#def_icon_blank(226
+sharpen
 material
 texture
 normal_multiply
@@ -610,8 +610,8 @@ outliner_data_mesh
 outliner_data_curve
 outliner_data_lattice
 outliner_data_meta
-#def_icon_blank(627
-#def_icon_blank(628
+inc_contrast
+dec_contrast
 outliner_data_armature
 outliner_data_font
 outliner_data_surface
@@ -676,11 +676,11 @@ mesh_cone
 
 mesh_capsule
 intersect
-#def_icon_blank(696
-#def_icon_blank(697
-#def_icon_blank(698
-#def_icon_blank(699
-#def_icon_blank(700
+pivot_to_active_vert
+pivot_to_maskborder
+pivot_to_origin
+pivot_to_surface
+pivot_to_unmasked
 markfsface
 clearfsface
 meta_empty
@@ -818,7 +818,7 @@ node_bokeh_blur
 node_bokeh_image
 node_boxmask
 node_brick
-node_bright_contrast
+#def_icon_blank(838
 node_bump
 
 node_channel

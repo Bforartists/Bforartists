@@ -1103,7 +1103,7 @@ class NODES_PT_Input_color_comp(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeAlphaOver"
 
-            props = col.operator("node.add_node", text=" Bright / Contrast", icon = "NODE_BRIGHT_CONTRAST")
+            props = col.operator("node.add_node", text=" Bright / Contrast", icon = "BRIGHTNESS_CONTRAST")
             props.use_transform = True
             props.type = "CompositorNodeBrightContrast" 
         
