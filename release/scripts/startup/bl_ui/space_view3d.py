@@ -3747,11 +3747,11 @@ class VIEW3D_MT_sculpt(Menu):
         props.action = 'SHOW'
         props.area = 'ALL'
 
-        props = layout.operator("paint.hide_show", text="Show Bounding Box", icon = "HIDE_ON")
+        props = layout.operator("paint.hide_show", text="Show Bounding Box", icon = "HIDE_OFF")
         props.action = 'SHOW'
         props.area = 'INSIDE'
 
-        props = layout.operator("paint.hide_show", text="Hide Bounding Box", icon = "HIDE_OFF")
+        props = layout.operator("paint.hide_show", text="Hide Bounding Box", icon = "HIDE_ON")
         props.action = 'HIDE'
         props.area = 'INSIDE'
 
