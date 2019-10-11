@@ -63,6 +63,7 @@
 #include "ED_view3d.h"
 
 #include "UI_interface.h"
+#include "UI_resources.h" /*bfa - we need icons here, so added the resources*/
 
 #include "curve_intern.h"
 
@@ -1107,16 +1108,16 @@ void FONT_OT_text_paste(wmOperatorType *ot)
  * \{ */
 
 static const EnumPropertyItem move_type_items[] = {
-    {LINE_BEGIN, "LINE_BEGIN", 0, "Line Begin", ""},
-    {LINE_END, "LINE_END", 0, "Line End", ""},
-    {PREV_CHAR, "PREVIOUS_CHARACTER", 0, "Previous Character", ""},
-    {NEXT_CHAR, "NEXT_CHARACTER", 0, "Next Character", ""},
-    {PREV_WORD, "PREVIOUS_WORD", 0, "Previous Word", ""},
-    {NEXT_WORD, "NEXT_WORD", 0, "Next Word", ""},
-    {PREV_LINE, "PREVIOUS_LINE", 0, "Previous Line", ""},
-    {NEXT_LINE, "NEXT_LINE", 0, "Next Line", ""},
-    {PREV_PAGE, "PREVIOUS_PAGE", 0, "Previous Page", ""},
-    {NEXT_PAGE, "NEXT_PAGE", 0, "Next Page", ""},
+    {LINE_BEGIN, "LINE_BEGIN", ICON_CARET_NEXT_CHAR, "Line Begin", ""},
+    {LINE_END, "LINE_END", ICON_CARET_NEXT_CHAR, "Line End", ""},
+    {PREV_CHAR, "PREVIOUS_CHARACTER", ICON_CARET_NEXT_CHAR, "Previous Character", ""},
+    {NEXT_CHAR, "NEXT_CHARACTER", ICON_CARET_NEXT_CHAR, "Next Character", ""},
+    {PREV_WORD, "PREVIOUS_WORD", ICON_CARET_NEXT_CHAR, "Previous Word", ""},
+    {NEXT_WORD, "NEXT_WORD", ICON_CARET_NEXT_CHAR, "Next Word", ""},
+    {PREV_LINE, "PREVIOUS_LINE", ICON_CARET_NEXT_CHAR, "Previous Line", ""},
+    {NEXT_LINE, "NEXT_LINE", ICON_CARET_NEXT_CHAR, "Next Line", ""},
+    {PREV_PAGE, "PREVIOUS_PAGE", ICON_CARET_NEXT_CHAR, "Previous Page", ""},
+    {NEXT_PAGE, "NEXT_PAGE", ICON_CARET_NEXT_CHAR, "Next Page", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
