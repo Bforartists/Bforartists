@@ -5341,7 +5341,8 @@ class VIEW3D_MT_edit_font(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_font_move_select")
-
+        layout.menu("VIEW3D_MT_edit_font_move")
+        
         layout.separator()
 
         layout.operator("font.style_toggle", text="Toggle Bold", icon = 'BOLD').style = 'BOLD'
@@ -5360,8 +5361,16 @@ class VIEW3D_MT_edit_font(Menu):
         layout.separator()
 
         layout.operator("font.delete", icon = "DELETE").type = 'NEXT_OR_SELECTION'
+        
 
+class VIEW3D_MT_edit_font_move(Menu):
+    bl_label = "Move Cursor"
 
+    def draw(self, _context):
+        layout = self.layout
+        
+        layout.operator_enum("font.move", "type")
+   
 
 # move_select submenu
 class VIEW3D_MT_edit_font_move_select(Menu):
@@ -8222,6 +8231,7 @@ classes = (
     VIEW3D_MT_edit_curve_show_hide,
     VIEW3D_MT_edit_surface,
     VIEW3D_MT_edit_font,
+    VIEW3D_MT_edit_font_move,
     VIEW3D_MT_edit_font_move_select,
     VIEW3D_MT_edit_text_chars,
     VIEW3D_MT_edit_meta,
