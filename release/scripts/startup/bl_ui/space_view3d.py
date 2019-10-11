@@ -837,6 +837,8 @@ class VIEW3D_MT_transform_base(Menu):
     def draw(self, context):
         layout = self.layout
 
+        obj = context.object
+
         layout.operator("transform.tosphere", text="To Sphere", icon = "TOSPHERE")
         layout.operator("transform.shear", text="Shear", icon = "SHEAR")
         layout.operator("transform.bend", text="Bend", icon = "BEND")
@@ -846,7 +848,7 @@ class VIEW3D_MT_transform_base(Menu):
             layout.operator("transform.vertex_warp", text="Warp", icon = "MOD_WARP")
             layout.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE')
 
-            if context.edit_object.type in 'MESH':   
+            if obj.type == 'MESH':
                 layout.operator("transform.skin_resize", text="Skin Resize", icon = "MOD_SKIN")
 
 
