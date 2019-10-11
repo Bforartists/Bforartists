@@ -4238,7 +4238,7 @@ class VIEW3D_MT_pose_apply(Menu):
         layout = self.layout
 
         layout.operator("pose.armature_apply", icon = "MOD_ARMATURE")
-        layout.operator("pose.armature_apply", text="Apply Selected as Rest Pose").selected = True
+        layout.operator("pose.armature_apply", text="Apply Selected as Rest Pose", icon = "MOD_ARMATURE").selected = True
         layout.operator("pose.visual_transform_apply", icon = "APPLYMOVE")
 
         layout.separator()
