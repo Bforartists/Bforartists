@@ -4111,8 +4111,8 @@ class VIEW3D_MT_pose_slide(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("pose.push_rest")
-        layout.operator("pose.relax_rest")
+        layout.operator("pose.push_rest", icon = 'PUSH_POSE')
+        layout.operator("pose.relax_rest", icon = 'RELAX_POSE')
         layout.operator("pose.push", icon = 'PUSH_POSE')
         layout.operator("pose.relax", icon = 'RELAX_POSE')
         layout.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE')
