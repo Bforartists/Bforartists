@@ -5362,7 +5362,7 @@ keyconfig_data = \
      ),
     ("text.indent", {"type": 'TAB', "value": 'PRESS'}, None),
     ("text.unindent", {"type": 'TAB', "value": 'PRESS', "shift": True}, None),
-    ("text.uncomment", {"type": 'D', "value": 'PRESS', "shift": True, "ctrl": True}, None),
+    ("text.comment_toggle", {"type": 'D', "value": 'PRESS', "shift": True, "ctrl": True}, None),
     ("text.move",
      {"type": 'HOME', "value": 'PRESS'},
      {"properties":
