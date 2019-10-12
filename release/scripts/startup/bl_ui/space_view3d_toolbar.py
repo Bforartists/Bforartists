@@ -186,9 +186,11 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
         col = split.column()
 
         row = col.row(align=True)
-        row.prop(mesh, "use_mirror_x", text="X", toggle=True)
-        row.prop(mesh, "use_mirror_y", text="Y", toggle=True)
-        row.prop(mesh, "use_mirror_z", text="Z", toggle=True)
+        row.prop(mesh, "use_mirror_x", text="    X", toggle=True)
+        row.prop(mesh, "use_mirror_y", text="    Y", toggle=True)
+        row.prop(mesh, "use_mirror_z", text="    Z", toggle=True)
+        
+        layout.use_property_split = False
 
         row = layout.row(align=True)
         row.active = ob.data.use_mirror_x or ob.data.use_mirror_y or ob.data.use_mirror_z
@@ -216,12 +218,14 @@ class VIEW3D_PT_tools_meshedit_options_automerge(View3DPanel, Panel):
 
         tool_settings = context.tool_settings
 
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         col = layout.column(align=True)
         col.active = tool_settings.use_mesh_automerge
         col.prop(tool_settings, "use_mesh_automerge_and_split", toggle=False)
+        
+        col.use_property_split = True
         col.prop(tool_settings, "double_threshold", text="Threshold")
 
 
