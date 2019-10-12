@@ -447,35 +447,6 @@ class VIEW3D_HT_tool_header(Header):
             sub.prop(vpaint, "use_symmetry_z", text="Z", toggle=True)
             row.popover(panel="VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar", text="")
 
-        # Expand panels from the side-bar as popovers.
-        popover_kw = {"space_type": 'VIEW_3D', "region_type": 'UI', "category": "Tool"}
-
-        if mode_string == 'SCULPT':
-            layout.popover_group(context=".sculpt_mode", **popover_kw)
-        elif mode_string == 'PAINT_VERTEX':
-            layout.popover_group(context=".vertexpaint", **popover_kw)
-        elif mode_string == 'PAINT_WEIGHT':
-            layout.popover_group(context=".weightpaint", **popover_kw)
-        elif mode_string == 'PAINT_TEXTURE':
-            layout.popover_group(context=".imagepaint", **popover_kw)
-        elif mode_string == 'EDIT_TEXT':
-            layout.popover_group(context=".text_edit", **popover_kw)
-        elif mode_string == 'EDIT_ARMATURE':
-            layout.popover_group(context=".armature_edit", **popover_kw)
-        elif mode_string == 'EDIT_METABALL':
-            layout.popover_group(context=".mball_edit", **popover_kw)
-        elif mode_string == 'EDIT_LATTICE':
-            layout.popover_group(context=".lattice_edit", **popover_kw)
-        elif mode_string == 'EDIT_CURVE':
-            layout.popover_group(context=".curve_edit", **popover_kw)
-        elif mode_string == 'EDIT_MESH':
-            layout.popover_group(context=".mesh_edit", **popover_kw)
-        elif mode_string == 'POSE':
-            layout.popover_group(context=".posemode", **popover_kw)
-        elif mode_string == 'PARTICLE':
-            layout.popover_group(context=".particlemode", **popover_kw)
-        elif mode_string == 'OBJECT':
-            layout.popover_group(context=".objectmode", **popover_kw)
         elif mode_string in {'PAINT_GPENCIL', 'EDIT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL'}:
             # Grease pencil layer.
             gpl = context.active_gpencil_layer
@@ -5525,8 +5496,6 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.operator("transform.transform", text="Set Bone Roll", icon = "SET_ROLL").mode = 'BONE_ROLL'
         layout.operator("armature.roll_clear", text="Clear Bone Roll", icon = "CLEAR_ROLL")
 
-
-
         layout.separator()
 
         layout.operator("armature.extrude_move", icon = 'EXTRUDE_REGION')
@@ -5558,7 +5527,8 @@ class VIEW3D_MT_edit_armature(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_armature_parent")
+        layout.operator("armature.parent_set", text="Make Parent", icon='PARENT_SET')
+        layout.operator("armature.parent_clear", text="Clear Parent", icon='PARENT_CLEAR')
 
         layout.separator()
 
@@ -5627,7 +5597,8 @@ class VIEW3D_MT_armature_context_menu(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_armature_parent")
+        layout.operator("armature.parent_set", text="Make Parent", icon='PARENT_SET')
+        layout.operator("armature.parent_clear", text="Clear Parent", icon='PARENT_CLEAR')
 
         layout.separator()
 
@@ -5649,16 +5620,6 @@ class VIEW3D_MT_edit_armature_names(Menu):
         layout.operator("armature.autoside_names", text="AutoName Front/Back", icon = "STRING").type = 'YAXIS'
         layout.operator("armature.autoside_names", text="AutoName Top/Bottom", icon = "STRING").type = 'ZAXIS'
         layout.operator("armature.flip_names", text="Flip Names", icon = "FLIP")
-
-
-class VIEW3D_MT_edit_armature_parent(Menu):
-    bl_label = "Parent"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("armature.parent_set", text="Make", icon='PARENT_SET')
-        layout.operator("armature.parent_clear", text="Clear", icon='PARENT_CLEAR')
 
 
 class VIEW3D_MT_edit_armature_roll(Menu):
@@ -8240,7 +8201,6 @@ classes = (
     VIEW3D_armature_hide_unselected,
     VIEW3D_MT_armature_show_hide,
     VIEW3D_MT_armature_context_menu,
-    VIEW3D_MT_edit_armature_parent,
     VIEW3D_MT_edit_armature_roll,
     VIEW3D_MT_edit_armature_names,
     VIEW3D_MT_edit_armature_delete,
