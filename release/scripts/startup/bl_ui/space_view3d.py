@@ -5825,7 +5825,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.operator("gpencil.copy", text="Copy", icon='COPYDOWN')
         layout.operator("gpencil.paste", text="Paste", icon='PASTEDOWN').type = 'ACTIVE'
-        layout.operator("gpencil.paste", text="Paste by Layer").type = 'LAYER'
+        layout.operator("gpencil.paste", text="Paste by Layer", icon='PASTEDOWN').type = 'LAYER'
 
         layout.separator()
 
