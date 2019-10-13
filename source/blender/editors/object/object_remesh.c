@@ -117,8 +117,13 @@ static int voxel_remesh_exec(bContext *C, wmOperator *op)
     ED_sculpt_undo_geometry_begin(ob);
   }
 
+  float isovalue = 0.0f;
+  if (mesh->flag & ME_REMESH_REPROJECT_VOLUME) {
+    isovalue = mesh->remesh_voxel_size * 0.3f;
+  }
+
   new_mesh = BKE_mesh_remesh_voxel_to_mesh_nomain(
-      mesh, mesh->remesh_voxel_size, mesh->remesh_voxel_adaptivity);
+      mesh, mesh->remesh_voxel_size, mesh->remesh_voxel_adaptivity, isovalue);
 
   if (!new_mesh) {
     return OPERATOR_CANCELLED;
@@ -219,7 +224,6 @@ static bool mesh_is_manifold_consistent(Mesh *mesh)
 
   bool is_manifold_consistent = true;
   const MLoop *mloop = mesh->mloop;
-  const MPoly *mpoly = mesh->mpoly;
   char *edge_faces = (char *)MEM_callocN(mesh->totedge * sizeof(char), "remesh_manifold_check");
   int *edge_vert = (int *)MEM_malloc_arrayN(
       mesh->totedge, sizeof(unsigned int), "remesh_consistent_check");
@@ -228,25 +232,21 @@ static bool mesh_is_manifold_consistent(Mesh *mesh)
     edge_vert[i] = -1;
   }
 
-  for (unsigned int poly_index = 0; poly_index < mesh->totpoly && is_manifold_consistent;
-       poly_index++) {
-    const MPoly *poly = &mpoly[poly_index];
-    for (unsigned int corner = 0; corner < poly->totloop; corner++) {
-      const MLoop *loop = &mloop[poly->loopstart + corner];
-      edge_faces[loop->e] += 1;
-      if (edge_faces[loop->e] > 2) {
-        is_manifold_consistent = false;
-        break;
-      }
+  for (unsigned int loop_idx = 0; loop_idx < mesh->totloop; loop_idx++) {
+    const MLoop *loop = &mloop[loop_idx];
+    edge_faces[loop->e] += 1;
+    if (edge_faces[loop->e] > 2) {
+      is_manifold_consistent = false;
+      break;
+    }
 
-      if (edge_vert[loop->e] == -1) {
-        edge_vert[loop->e] = loop->v;
-      }
-      else if (edge_vert[loop->e] == loop->v) {
-        /* Mesh has flips in the surface so it is non consistent */
-        is_manifold_consistent = false;
-        break;
-      }
+    if (edge_vert[loop->e] == -1) {
+      edge_vert[loop->e] = loop->v;
+    }
+    else if (edge_vert[loop->e] == loop->v) {
+      /* Mesh has flips in the surface so it is non consistent */
+      is_manifold_consistent = false;
+      break;
     }
   }
 

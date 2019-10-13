@@ -163,6 +163,7 @@ class VIEW3D_PT_PanelLinkedEdit(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_category = "Item"
     bl_context = 'objectmode'
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context: bpy.context):
@@ -173,14 +174,14 @@ class VIEW3D_PT_PanelLinkedEdit(bpy.types.Panel):
         props.use_instance = scene.use_instance
 
         layout.prop(scene, "use_autosave")
-        layout.prop(scene, "use_instance")
+#        layout.prop(scene, "use_instance")
 
     def draw(self, context: bpy.context):
         scene = context.scene
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
-        icon = "OUTLINER_DATA_" + context.active_object.type
+        icon = "OUTLINER_DATA_" + context.active_object.type.replace("LIGHT_PROBE", "LIGHTPROBE")
 
         target = None
 
@@ -279,16 +280,7 @@ def register():
     # add the function to the file menu
     bpy.types.TOPBAR_MT_file_external_data.append(TOPBAR_MT_edit_linked_submenu.draw) 
 
-    # Keymapping (deactivated by default; activated when a library object is selected)
-    kc = bpy.context.window_manager.keyconfigs.addon 
-    if kc: # don't register keymaps from command line
-        km = kc.keymaps.new(name="3D View", space_type='VIEW_3D')
-        kmi = km.keymap_items.new("object.edit_linked", 'NUMPAD_SLASH', 'PRESS', shift=True)
-        kmi.active = True
-        addon_keymaps.append((km, kmi))
-        kmi = km.keymap_items.new("wm.return_to_original", 'NUMPAD_SLASH', 'PRESS', shift=True)
-        kmi.active = True
-        addon_keymaps.append((km, kmi))
+
 
 
 def unregister():
@@ -299,10 +291,6 @@ def unregister():
     del bpy.types.Scene.use_autosave
     del bpy.types.Scene.use_instance
 
-    # handle the keymap
-    for km, kmi in addon_keymaps:
-        km.keymap_items.remove(kmi)
-    addon_keymaps.clear()
 
     for c in reversed(classes):
         bpy.utils.unregister_class(c)

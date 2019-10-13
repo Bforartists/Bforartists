@@ -46,8 +46,8 @@ class XEDIT_PT_ui_pan(bpy.types.Panel):
     bl_idname = 'XEDIT_PT_base_panel'
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    #bl_context = 'objectmode'
     bl_category = 'Edit'
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         row = self.layout.row(align=True)

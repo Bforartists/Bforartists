@@ -15,7 +15,7 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (0, 9, 61),
+    "version": (1, 0, 3),
     'blender': (2, 81, 6),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -60,7 +60,6 @@ from bpy.props import (StringProperty,
                        IntProperty)
 from bpy.types import Operator
 from bpy_extras.io_utils import ImportHelper, ExportHelper
-from io_scene_gltf2.io.exp import gltf2_io_draco_compression_extension
 
 
 #
@@ -72,6 +71,7 @@ class ExportGLTF2_Base:
     # TODO: refactor to avoid boilerplate
 
     def __init__(self):
+        from io_scene_gltf2.io.exp import gltf2_io_draco_compression_extension
         self.is_draco_available = gltf2_io_draco_compression_extension.dll_exists()
 
     bl_options = {'UNDO', 'PRESET'}
@@ -219,7 +219,8 @@ class ExportGLTF2_Base:
 
     export_apply: BoolProperty(
         name='Apply Modifiers',
-        description='Apply modifiers (excluding Armatures) to mesh objects',
+        description='Apply modifiers (excluding Armatures) to mesh objects -'
+                    'WARNING: prevents exporting shape keys',
         default=False
     )
 
@@ -246,7 +247,13 @@ class ExportGLTF2_Base:
     export_force_sampling: BoolProperty(
         name='Always Sample Animations',
         description='Apply sampling to all animations',
-        default=False
+        default=True
+    )
+
+    export_nla_strips: BoolProperty(
+        name='NLA Strips',
+        description='Export NLA Strip animations',
+        default=True
     )
 
     export_current_frame: BoolProperty(
@@ -382,6 +389,7 @@ class ExportGLTF2_Base:
         if self.export_animations:
             export_settings['gltf_frame_range'] = self.export_frame_range
             export_settings['gltf_force_sampling'] = self.export_force_sampling
+            export_settings['gltf_nla_strips'] = self.export_nla_strips
         else:
             export_settings['gltf_frame_range'] = False
             export_settings['gltf_move_keyframes'] = False
@@ -543,6 +551,7 @@ class GLTF_PT_export_geometry_compression(bpy.types.Panel):
     bl_options = {'DEFAULT_CLOSED'}
 
     def __init__(self):
+        from io_scene_gltf2.io.exp import gltf2_io_draco_compression_extension
         self.is_draco_available = gltf2_io_draco_compression_extension.dll_exists()
 
     @classmethod
@@ -631,6 +640,7 @@ class GLTF_PT_export_animation_export(bpy.types.Panel):
         layout.prop(operator, 'export_frame_range')
         layout.prop(operator, 'export_frame_step')
         layout.prop(operator, 'export_force_sampling')
+        layout.prop(operator, 'export_nla_strips')
 
 
 class GLTF_PT_export_animation_shapekeys(bpy.types.Panel):

@@ -123,7 +123,10 @@ def add_tooth(a, t, d, radius, Ad, De, base, p_angle, rack=0, crown=0.0):
 
     # Pressure angle calc
     O = Ad * tan(p_angle)
-    p_angle = atan(O / Ra)
+    if Ra != 0:
+        p_angle = atan(O / Ra)
+    else:
+        p_angle = atan(O)
 
     if radius < 0:
         p_angle = -p_angle
@@ -250,7 +253,10 @@ def add_gear(teethNum, radius, Ad, De, base, p_angle,
         teethNum = 1
 
     #print(radius, width, conangle)
-    scale = (radius - 2 * width * tan(conangle)) / radius
+    if radius != 0:
+        scale = (radius - 2 * width * tan(conangle)) / radius
+    else:
+        scale = radius - 2 * width * tan(conangle)
 
     verts = []
     faces = []
@@ -580,69 +586,69 @@ class AddGear(Operator):
     number_of_teeth: IntProperty(name="Number of Teeth",
             description="Number of teeth on the gear",
             min=2,
-            max=265,
+            soft_max=1000,
             default=12
             )
     radius: FloatProperty(name="Radius",
             description="Radius of the gear, negative for crown gear",
-            min=-100.0,
-            max=100.0,
+            soft_min=-1000.0,
+            soft_max=1000.0,
             unit='LENGTH',
             default=1.0
             )
     addendum: FloatProperty(name="Addendum",
             description="Addendum, extent of tooth above radius",
-            min=0.01,
-            max=100.0,
+            soft_min=-1000.0,
+            soft_max=1000.0,
             unit='LENGTH',
             default=0.1
             )
     dedendum: FloatProperty(name="Dedendum",
             description="Dedendum, extent of tooth below radius",
-            min=0.0,
-            max=100.0,
+            soft_min=-1000.0,
+            soft_max=1000.0,
             unit='LENGTH',
             default=0.1
             )
     angle: FloatProperty(name="Pressure Angle",
             description="Pressure angle, skewness of tooth tip",
-            min=0.0,
-            max=radians(45.0),
+            soft_min=radians(-45.0),
+            soft_max=radians(45.0),
             unit='ROTATION',
             default=radians(20.0)
             )
     base: FloatProperty(name="Base",
             description="Base, extent of gear below radius",
-            min=0.0,
-            max=100.0,
+            soft_min=-1000.0,
+            soft_max=1000.0,
             unit='LENGTH',
             default=0.2
             )
     width: FloatProperty(name="Width",
             description="Width, thickness of gear",
-            min=0.05,
-            max=100.0,
+            soft_min=-1000.0,
+            soft_max=1000.0,
             unit='LENGTH',
             default=0.2
             )
     skew: FloatProperty(name="Skewness",
             description="Skew of teeth",
-            min=radians(-90.0),
-            max=radians(90.0),
+            soft_min=radians(-360.0),
+            soft_max=radians(360.0),
             unit='ROTATION',
             default=radians(0.0)
             )
     conangle: FloatProperty(name="Conical angle",
             description="Conical angle of gear",
-            min=0.0,
-            max=radians(90.0),
+            soft_min=radians(-360.0),
+            soft_max=radians(360.0),
             unit='ROTATION',
             default=radians(0.0)
             )
     crown: FloatProperty(name="Crown",
             description="Inward pointing extend of crown teeth",
-            min=0.0,
-            max=100.0,
+            soft_min=-1000.0,
+            soft_max=1000.0,
             unit='LENGTH',
             default=0.0
             )
@@ -682,6 +688,10 @@ class AddGear(Operator):
                         bpy.ops.object.vertex_group_remove(all=True)
                     except:
                         pass
+                    
+                    for material in oldmesh.materials:
+                        obj.data.materials.append(material)
+                    
                     bpy.data.meshes.remove(oldmesh)
                     obj.data.name = oldmeshname
                 else:
@@ -780,70 +790,70 @@ class AddWormGear(Operator):
     number_of_teeth: IntProperty(
             name="Number of Teeth",
             description="Number of teeth on the gear",
-            min=2,
-            max=265,
+            min=1,
+            soft_max=1000,
             default=12
             )
     number_of_rows: IntProperty(
             name="Number of Rows",
             description="Number of rows on the worm gear",
-            min=2,
-            max=265,
+            min=0,
+            soft_max=1000,
             default=32
             )
     radius: FloatProperty(
             name="Radius",
             description="Radius of the gear, negative for crown gear",
-            min=-100.0,
-            max=100.0,
+            soft_min=-1000.0,
+            soft_max=1000.0,
             unit='LENGTH',
             default=1.0
             )
     addendum: FloatProperty(
             name="Addendum",
             description="Addendum, extent of tooth above radius",
-            min=0.01,
-            max=100.0,
+            soft_min=-1000.0,
+            soft_max=1000.0,
             unit='LENGTH',
             default=0.1
             )
     dedendum: FloatProperty(
             name="Dedendum",
             description="Dedendum, extent of tooth below radius",
-            min=0.0,
-            max=100.0,
+            soft_min=-1000.0,
+            soft_max=1000.0,
             unit='LENGTH',
             default=0.1
             )
     angle: FloatProperty(
             name="Pressure Angle",
             description="Pressure angle, skewness of tooth tip",
-            min=0.0,
-            max=radians(45.0),
+            soft_min=radians(-45.0),
+            soft_max=radians(45.0),
             default=radians(20.0),
             unit='ROTATION'
             )
     row_height: FloatProperty(
             name="Row Height",
             description="Height of each Row",
-            min=0.05,
-            max=100.0,
+            soft_min=-1000.0,
+            soft_max=1000.0,
             unit='LENGTH',
             default=0.2
             )
     skew: FloatProperty(
             name="Skewness per Row",
             description="Skew of each row",
-            min=radians(-90.0),
-            max=radians(90.0),
+            soft_min=radians(-360.0),
+            soft_max=radians(360.0),
             default=radians(11.25),
             unit='ROTATION'
             )
     crown: FloatProperty(
             name="Crown",
             description="Inward pointing extend of crown teeth",
-            min=0.0,
-            max=100.0,
+            soft_min=-1000.0,
+            soft_max=1000.0,
             unit='LENGTH',
             default=0.0
             )
@@ -873,12 +883,17 @@ class AddWormGear(Operator):
                 if 'WormGear' in obj.data.keys():
                     oldmesh = obj.data
                     oldmeshname = obj.data.name
+
                     mesh, verts_tip, verts_valley = AddWormGearMesh(self, context)
                     obj.data = mesh
                     try:
                         bpy.ops.object.vertex_group_remove(all=True)
                     except:
                         pass
+                    
+                    for material in oldmesh.materials:
+                        obj.data.materials.append(material)
+                        
                     bpy.data.meshes.remove(oldmesh)
                     obj.data.name = oldmeshname
                 else:

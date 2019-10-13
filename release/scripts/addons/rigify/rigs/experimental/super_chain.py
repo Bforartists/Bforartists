@@ -3,9 +3,9 @@ from mathutils import Vector
 from ...utils import copy_bone, put_bone, org, align_bone_y_axis, align_bone_x_axis, align_bone_z_axis
 from ...utils import strip_org, make_deformer_name, connected_children_names
 from ...utils import create_chain_widget
-from ...utils import make_mechanism_name, create_cube_widget
+from ...utils import make_mechanism_name
 from ...utils import ControlLayersOption
-from ...utils.mechanism import make_property, make_driver
+from rna_prop_ui import rna_idprop_ui_prop_get
 from ..limbs.limb_utils import get_bone_name
 
 
@@ -14,7 +14,7 @@ class Rig:
     def __init__(self, obj, bone_name, params):
         """ Chain with pivot Rig """
 
-        eb = obj.data.edit_bones
+        eb = obj.data.bones
 
         self.obj = obj
         self.org_bones = [bone_name] + connected_children_names(obj, bone_name)
@@ -114,7 +114,13 @@ class Rig:
             self.obj.data.bones[def_bones[-1]].bbone_easeout = 1.0
         bpy.ops.object.mode_set(mode='EDIT')
 
-        return def_bones
+        conv_def = ""
+        if self.params.conv_bone and self.params.conv_def:
+            b = org(self.params.conv_bone)
+            conv_def = make_deformer_name(strip_org(b))
+            conv_def = copy_bone(self.obj, b, conv_def)
+
+        return def_bones, conv_def
 
     def create_chain(self):
         org_bones = self.org_bones
@@ -147,28 +153,23 @@ class Rig:
                 eb[mch_name].length /= 4
                 put_bone(self.obj, mch_name, eb[b].head - (eb[mch_name].tail - eb[mch_name].head))
                 align_bone_z_axis(self.obj, mch_name, eb[b].z_axis)
-                if '.' in mch_name:
-                    mch_rev_name = mch_name.split('.')[0] + '_reverse.' + mch_name.split('.')[1]
-                else:
-                    mch_rev_name = mch_name + '_reverse'
-                mch_rev_name = copy_bone(self.obj, org(b), mch_rev_name)
-                eb[mch_rev_name].length /= 4
-                eb[mch_rev_name].tail = eb[mch_name].head
-                align_bone_z_axis(self.obj, mch_rev_name, eb[b].z_axis)
                 mch += [mch_name]
-                mch += [mch_rev_name]
-                break
-
-            mch_name = copy_bone(self.obj, org(b), make_mechanism_name(strip_org(b)))
-            eb[mch_name].length /= 4
-
-            mch += [mch_name]
-
-            if b == org_bones[-1]:  # Add extra
                 mch_name = copy_bone(self.obj, org(b), make_mechanism_name(strip_org(b)))
                 eb[mch_name].length /= 4
                 put_bone(self.obj, mch_name, eb[b].tail)
                 mch += [mch_name]
+                break
+            else:
+                mch_name = copy_bone(self.obj, org(b), make_mechanism_name(strip_org(b)))
+                eb[mch_name].length /= 4
+
+                mch += [mch_name]
+
+                if b == org_bones[-1]:  # Add extra
+                    mch_name = copy_bone(self.obj, org(b), make_mechanism_name(strip_org(b)))
+                    eb[mch_name].length /= 4
+                    put_bone(self.obj, mch_name, eb[b].tail)
+                    mch += [mch_name]
 
         # Tweak & Ctrl bones
         v = eb[org_bones[-1]].tail - eb[org_bones[0]].head  # Create a vector from head of first ORG to tail of last
@@ -193,7 +194,7 @@ class Rig:
                 align_bone_x_axis(self.obj, name, eb[org(b)].x_axis)
                 ctrl += [name]
             else:
-                name = get_bone_name(b, 'ctrl', 'tweak')
+                name = 'tweak_' + strip_org(b)
                 name = copy_bone(self.obj, org(b), name)
                 twk += [name]
 
@@ -238,12 +239,16 @@ class Rig:
         conv_twk = ''
         # Convergence tweak
         if self.params.conv_bone:
-            conv_twk = get_bone_name(self.params.conv_bone, 'ctrl', 'tweak')
+            conv_twk = 'tweak_' + strip_org(self.params.conv_bone)
 
             if not(conv_twk in eb.keys()):
                 conv_twk = copy_bone(self.obj, org(self.params.conv_bone), conv_twk)
 
         for b in org_bones:
+
+            if self.SINGLE_BONE:
+                break
+
             # Mch controls
             suffix = ''
             if '.L' in b:
@@ -252,7 +257,7 @@ class Rig:
                 suffix = '.R'
 
             mch_ctrl_name = "MCH-CTRL-" + strip_org(b).split('.')[0] + suffix
-            mch_ctrl_name = copy_bone(self.obj, twk[0], mch_ctrl_name)
+            mch_ctrl_name = copy_bone(self.obj, twk[0] if twk else ctrl[0], mch_ctrl_name)
 
             eb[mch_ctrl_name].length /= 6
 
@@ -262,7 +267,7 @@ class Rig:
 
             if b == org_bones[-1]:  # Add extra
                 mch_ctrl_name = "MCH-CTRL-" + strip_org(b).split('.')[0] + suffix
-                mch_ctrl_name = copy_bone(self.obj, twk[0], mch_ctrl_name)
+                mch_ctrl_name = copy_bone(self.obj, twk[0] if twk else ctrl[0], mch_ctrl_name)
 
                 eb[mch_ctrl_name].length /= 6
 
@@ -289,21 +294,24 @@ class Rig:
             if i > 0:   # For all bones but the first (which has no parent)
                 eb[b].parent = eb[bones['def'][i-1]]  # to previous
                 eb[b].use_connect = True
+            elif self.SINGLE_BONE:
+                eb[b].parent = eb[bones['chain']['mch'][0]]
+                eb[b].use_connect = True
 
         # Todo check case when sup_chain is in bigger rig
         eb[bones['def'][0]].parent = eb[bones['chain']['mch'][0]]
 
         for i, twk in enumerate(bones['chain']['tweak']):
             eb[twk].parent = eb[bones['chain']['mch_ctrl'][i+1]]
-            eb[twk].use_inherit_scale = False
+            eb[twk].inherit_scale = 'NONE'
 
-        eb[bones['chain']['ctrl'][0]].parent = eb[bones['chain']['mch_ctrl'][0]]
-        eb[bones['chain']['ctrl'][0]].use_inherit_scale = False
-        eb[bones['chain']['ctrl'][1]].parent = eb[bones['chain']['mch_ctrl'][-1]]
-        eb[bones['chain']['ctrl'][1]].use_inherit_scale = False
+        eb[bones['chain']['ctrl'][0]].parent = eb[bones['chain']['mch_ctrl'][0]] if bones['chain']['mch_ctrl'] else None
+        eb[bones['chain']['ctrl'][0]].inherit_scale = 'NONE'
+        eb[bones['chain']['ctrl'][1]].parent = eb[bones['chain']['mch_ctrl'][-1]] if bones['chain']['mch_ctrl'] else None
+        eb[bones['chain']['ctrl'][1]].inherit_scale = 'NONE'
 
         if 'pivot' in bones.keys():
-            eb[bones['pivot']['ctrl']].use_inherit_scale = False
+            eb[bones['pivot']['ctrl']].inherit_scale = 'NONE'
 
         for i, mch in enumerate(bones['chain']['mch']):
             if mch == bones['chain']['mch'][0]:
@@ -314,9 +322,13 @@ class Rig:
                 eb[mch].parent = eb[bones['chain']['tweak'][i-1]]
 
         if 'parent' in bones.keys():
-            eb[bones['chain']['mch_auto']].parent = eb[bones['parent']]
-            eb[bones['chain']['mch_ctrl'][0]].parent = eb[bones['parent']]
-            eb[bones['chain']['mch_ctrl'][-1]].parent = eb[bones['parent']]
+            if self.SINGLE_BONE:
+                eb[bones['chain']['ctrl'][0]].parent = eb[bones['parent']]
+                eb[bones['chain']['ctrl'][-1]].parent = eb[bones['parent']]
+            else:
+                eb[bones['chain']['mch_auto']].parent = eb[bones['parent']]
+                eb[bones['chain']['mch_ctrl'][0]].parent = eb[bones['parent']]
+                eb[bones['chain']['mch_ctrl'][-1]].parent = eb[bones['parent']]
 
         for i, mch_ctrl in enumerate(bones['chain']['mch_ctrl'][1:-1]):
             eb[mch_ctrl].parent = eb[bones['chain']['mch_auto']]
@@ -326,14 +338,11 @@ class Rig:
 
         if bones['chain']['conv']:
             eb[bones['chain']['ctrl'][-1]].parent = eb[bones['chain']['conv']]
+            eb[bones['chain']['conv']].parent = eb[bones['chain']['conv']].parent
 
         if self.SINGLE_BONE:
-            eb[bones['chain']['ctrl'][0]].parent = None
-            eb[bones['chain']['ctrl'][-1]].parent = None
-            eb[bones['chain']['mch_ctrl'][0]].parent = eb[bones['chain']['ctrl'][0]]
-            eb[bones['chain']['mch_ctrl'][-1]].parent = eb[bones['chain']['ctrl'][-1]]
-            eb[bones['chain']['mch'][0]].parent = eb[bones['chain']['mch'][1]]
-            eb[bones['chain']['mch'][1]].parent = eb[bones['chain']['mch_ctrl'][0]]
+            eb[bones['chain']['mch'][0]].parent = eb[bones['chain']['ctrl'][0]]
+            eb[bones['chain']['mch'][1]].parent = eb[bones['chain']['ctrl'][1]]
 
         return
 
@@ -351,13 +360,23 @@ class Rig:
             setattr(const, p, constraint[p])
 
     def constrain_bones(self, bones):
-        # DEF bones
 
         deform = bones['def']
         mch = bones['chain']['mch']
         mch_ctrl = bones['chain']['mch_ctrl']
         ctrls = bones['chain']['ctrl']
         tweaks = [ctrls[0]] + bones['chain']['tweak'] + [ctrls[-1]]
+
+        # ORG bones
+        for i, org_bone in enumerate(self.org_bones):
+            self.make_constraint(org_bone, {
+                'constraint': 'COPY_TRANSFORMS',
+                'subtarget': tweaks[i],
+                'owner_space': 'WORLD',
+                'target_space': 'WORLD'
+            })
+
+        # DEF bones
 
         for i, d in enumerate(deform):
 
@@ -372,6 +391,14 @@ class Rig:
             self.make_constraint(d, {
                 'constraint': 'STRETCH_TO',
                 'subtarget': tweaks[i+1]
+            })
+
+        if bones['conv_def']:
+            self.make_constraint(bones['conv_def'], {
+                'constraint': 'COPY_TRANSFORMS',
+                'subtarget': bones['chain']['conv'],
+                'owner_space': 'POSE',
+                'target_space': 'POSE'
             })
 
         if 'pivot' in bones.keys():
@@ -441,7 +468,7 @@ class Rig:
         ctrl_start = pb[bones['chain']['ctrl'][0]]
         ctrl_end = pb[bones['chain']['ctrl'][-1]]
         mch_start = pb[bones['chain']['mch'][0]]
-        mch_end = pb[bones['chain']['mch_ctrl'][-1]]
+        mch_end = pb[bones['chain']['mch_ctrl'][-1]] if bones['chain']['mch_ctrl'] else pb[bones['chain']['mch'][-1]]
 
         if 'bbone_custom_handle_start' in dir(def_pb) and 'bbone_custom_handle_end' in dir(def_pb):
             if not self.SINGLE_BONE:
@@ -498,19 +525,25 @@ class Rig:
 
         # Assigning a widget to main ctrl bone
         if 'pivot' in bones.keys():
-            create_cube_widget(
+            create_chain_widget(
                 self.obj,
                 bones['pivot']['ctrl'],
+                cube=True,
                 radius=0.15,
-                bone_transform_name=None
+                bone_transform_name=None,
+                axis=self.params.wgt_align_axis,
+                offset=self.params.wgt_offset*pb[bones['chain']['ctrl'][0]].length
             )
 
         for bone in bones['chain']['tweak']:
-            create_cube_widget(
+            create_chain_widget(
                 self.obj,
                 bone,
+                cube=True,
                 radius=0.2,
-                bone_transform_name=None
+                bone_transform_name=None,
+                axis=self.params.wgt_align_axis,
+                offset=self.params.wgt_offset*pb[bones['chain']['ctrl'][0]].length
             )
 
         create_chain_widget(
@@ -518,29 +551,73 @@ class Rig:
             bones['chain']['ctrl'][0],
             invert=False,
             radius=0.3,
-            bone_transform_name=None
+            bone_transform_name=None,
+            axis=self.params.wgt_align_axis,
+            offset=self.params.wgt_offset*pb[bones['chain']['ctrl'][0]].length
         )
+
+        invert_last = True
+        if self.params.wgt_align_axis is not 'y' or '-y':
+            invert_last = False
 
         create_chain_widget(
             self.obj,
             bones['chain']['ctrl'][-1],
-            invert=True,
+            invert=invert_last,
             radius=0.3,
-            bone_transform_name=None
+            bone_transform_name=None,
+            axis=self.params.wgt_align_axis,
+            offset=self.params.wgt_offset*pb[bones['chain']['ctrl'][0]].length
         )
 
         if bones['chain']['conv']:
-            create_cube_widget(
+            create_chain_widget(
                 self.obj,
                 bones['chain']['conv'],
+                cube=True,
                 radius=0.5,
-                bone_transform_name=None
+                bone_transform_name=None,
+                axis=self.params.wgt_align_axis,
+                offset=self.params.wgt_offset*pb[bones['chain']['ctrl'][0]].length
             )
 
         # Assigning layers to tweaks and ctrls
         ControlLayersOption.TWEAK.assign(self.params, pb, bones['chain']['tweak'])
 
         return
+
+    def aggregate_ctrls(self, bones):
+
+        if not self.params.cluster_ctrls:
+            return
+
+        other_ctrls = []
+        all_ctrls = []
+        eb = self.obj.data.edit_bones
+
+        head_start = eb[bones['chain']['ctrl'][0]].head
+        head_tip = eb[bones['chain']['ctrl'][-1]].head
+
+        all_ctrls.extend(bones['chain']['ctrl'])
+        all_ctrls.extend(bones['chain']['tweak'])
+        all_ctrls.extend(bones['chain']['conv'])
+        for bname in eb.keys():
+            if bname not in all_ctrls and (bname.startswith('tweak') or 'ctrl' in bname):
+                other_ctrls.append(bname)
+
+        for bname in other_ctrls:
+            if eb[bname].head == head_start:
+                for child in eb[bones['chain']['ctrl'][0]].children:
+                    child.parent = eb[bname]
+                eb.remove(eb[bones['chain']['ctrl'][0]])
+                bones['chain']['ctrl'][0] = bname
+                break
+
+        for bname in other_ctrls:
+            if eb[bname].head == head_tip:
+                eb.remove(eb[bones['chain']['ctrl'][-1]])
+                bones['chain']['ctrl'][-1] = bname
+                break
 
     def generate(self):
 
@@ -549,19 +626,27 @@ class Rig:
 
         bones = {}
         if eb[self.org_bones[0]].parent:
-            bones['parent'] = eb[self.org_bones[0]].parent.name
+            def_name = make_deformer_name(strip_org(eb[self.org_bones[0]].parent.name))
+            if self.params.def_parenting and def_name in eb.keys():
+                bones['parent'] = def_name
+            else:
+                bones['parent'] = eb[self.org_bones[0]].parent.name
 
         # Clear parents for org bones
         for bone in self.org_bones[0:]:
             eb[bone].use_connect = False
             eb[bone].parent = None
 
-        bones['def'] = self.create_deform()
+        bones['def'], bones['conv_def'] = self.create_deform()
         if len(self.org_bones) > 2:
             bones['pivot'] = self.create_pivot()
         bones['chain'] = self.create_chain()
 
         self.parent_bones(bones)
+
+        # ctrls snapping pass
+        self.aggregate_ctrls(bones)
+
         self.constrain_bones(bones)
         self.stick_to_bendy_bones(bones)
         self.locks_and_widgets(bones)
@@ -576,15 +661,32 @@ def add_parameters(params):
 
     items = [
         ('auto', 'Auto', ''),
-        ('x', 'X', ''),
-        ('y', 'Y', ''),
-        ('z', 'Z', '')
+        ('x', 'X-Global', ''),
+        ('y', 'Y-Global', ''),
+        ('z', 'Z-Global', '')
     ]
 
     params.tweak_axis = bpy.props.EnumProperty(
         items=items,
-        name="Tweak Axis",
+        name="Orient y-axis to",
+        description="Targets all ctrls y-axis to defined axis (global space)",
         default='auto'
+    )
+
+    axes = [
+        ('x', 'X', ''),
+        ('y', 'Y', ''),
+        ('z', 'Z', ''),
+        ('-x', '-X', ''),
+        ('-y', '-Y', ''),
+        ('-z', '-Z', '')
+    ]
+
+    params.wgt_align_axis = bpy.props.EnumProperty(
+        items=axes,
+        name="Custom Widget orient",
+        description="Targets custom WGTs to defined axis (global space)",
+        default='y'
     )
 
     params.conv_bone = bpy.props.StringProperty(
@@ -592,11 +694,36 @@ def add_parameters(params):
         default=''
     )
 
+    params.conv_def = bpy.props.BoolProperty(
+        name="Add DEF on convergence",
+        default=False,
+        description=""
+        )
+
+    params.def_parenting = bpy.props.BoolProperty(
+        name="Prefer DEF parenting",
+        default=False,
+        description=""
+        )
+
+    params.cluster_ctrls = bpy.props.BoolProperty(
+        name="Cluster controls",
+        default=False,
+        description="Clusterize controls in the same position"
+        )
+
     params.bbones = bpy.props.IntProperty(
         name='bbone segments',
         default=10,
         min=1,
         description='Number of segments'
+    )
+
+    params.wgt_offset = bpy.props.FloatProperty(
+        name='Widget Offset',
+        default=0.0,
+        min=-10.0,
+        max=10.0
     )
 
     ControlLayersOption.TWEAK.add_parameters(params)
@@ -613,10 +740,25 @@ def parameters_ui(layout, params):
     row.prop(params, "tweak_axis")
 
     r = layout.row()
+    r.prop(params, "wgt_align_axis")
+
+    r = layout.row()
+    r.prop(params, "wgt_offset")
+
+    r = layout.row()
     r.prop(params, "bbones")
 
     r = layout.row()
     r.prop_search(params, 'conv_bone', pb, "bones", text="Convergence Bone")
+
+    r = layout.row()
+    r.prop(params, 'conv_def')
+
+    r = layout.row()
+    r.prop(params, 'def_parenting')
+
+    r = layout.row()
+    r.prop(params, 'cluster_ctrls')
 
     ControlLayersOption.TWEAK.parameters_ui(layout, params)
 

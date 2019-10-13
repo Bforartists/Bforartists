@@ -182,7 +182,7 @@ class SlabGenerator(CutAblePolygon, CutAbleGenerator):
                 manipulators[1].prop2_name = "radius"
                 manipulators[1].set_pts([f.c.to_3d(), v0, v1])
 
-            # snap manipulator, dont change index !
+            # snap manipulator, don't change index !
             manipulators[2].set_pts([p0, p1, (1, 0, 0)])
             # dumb segment id
             manipulators[3].set_pts([p0, p1, (1, 0, 0)])

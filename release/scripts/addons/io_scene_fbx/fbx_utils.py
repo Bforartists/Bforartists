@@ -1007,6 +1007,12 @@ class ObjectWrapper(metaclass=MetaObjectWrapper):
             return ObjectWrapper(self.bdata.parent, self._ref) or ObjectWrapper(self._ref)
     parent = property(get_parent)
 
+    def get_bdata_pose_bone(self):
+        if self._tag == 'BO':
+            return self._ref.pose.bones[self.bdata.name]
+        return None
+    bdata_pose_bone = property(get_bdata_pose_bone)
+
     def get_matrix_local(self):
         if self._tag == 'OB':
             return self.bdata.matrix_local.copy()

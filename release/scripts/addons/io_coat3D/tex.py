@@ -482,7 +482,7 @@ def createnodes(active_mat,texcoat, create_group_node, tile_list, objekti, ind, 
 
         # READ DATA.JSON FILE
 
-        json_address = os.path.dirname(bpy.app.binary_path) + os.sep + '2.80' + os.sep + 'scripts' + os.sep + 'addons' + os.sep + 'io_coat3D' + os.sep + 'data.json'
+        json_address = os.path.dirname(bpy.app.binary_path) + os.sep + str(bpy.app.version[0]) + '.' + str(bpy.app.version[1]) + os.sep + 'scripts' + os.sep + 'addons' + os.sep + 'io_coat3D' + os.sep + 'data.json'
         with open(json_address, encoding='utf-8') as data_file:
             data = json.loads(data_file.read())
 
@@ -565,16 +565,17 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
 
             tile_int_x = int(tile[3])
             tile_int_y = int(tile[2])
-
+            
             min_node = texture_tree.nodes.new('ShaderNodeVectorMath')
             min_node.operation = "MINIMUM"
             min_node.inputs[1].default_value[0] = tile_int_x - 1
             min_node.inputs[1].default_value[1] = tile_int_y
-
+ 
             max_node = texture_tree.nodes.new('ShaderNodeVectorMath')
             max_node.operation = "MAXIMUM"
             max_node.inputs[1].default_value[0] = tile_int_x
             max_node.inputs[1].default_value[1] = tile_int_y + 1
+
 
             if(index == 0):
                 nodes.append(tex_img_node.name)

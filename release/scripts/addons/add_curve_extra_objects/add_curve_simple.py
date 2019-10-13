@@ -675,6 +675,8 @@ def main(context, self, align_matrix, use_enter_edit_mode):
                         p1.handle_right = v1
                         p2.handle_left = v2
                 i += 1
+            all_points[0].handle_left_type = 'VECTOR'
+            all_points[-1].handle_right_type = 'VECTOR'
     
         if self.Simple_Type == 'Sector':
             i = 0
@@ -713,6 +715,10 @@ def main(context, self, align_matrix, use_enter_edit_mode):
                         p1.handle_right = v1
                         p2.handle_left = v2
                 i += 1
+            all_points[0].handle_left_type = 'VECTOR'
+            all_points[0].handle_right_type = 'VECTOR'
+            all_points[1].handle_left_type = 'VECTOR'
+            all_points[-1].handle_right_type = 'VECTOR'
     
         if self.Simple_Type == 'Segment':
             i = 0
@@ -809,21 +815,6 @@ def main(context, self, align_matrix, use_enter_edit_mode):
         Curve.data.fill_mode = 'FULL'
     else:
         Curve.data.fill_mode = 'BOTH'
-
-# ### MENU append ###
-def Simple_curve_edit_menu(self, context):
-    bl_label = 'Simple edit'
-   
-    self.layout.operator("curve.bezier_points_fillet", text="Fillet")
-    self.layout.operator("curve.bezier_spline_divide", text="Divide")
-    self.layout.separator()
-    
-def Simple_curve_object_menu(self, context):
-    bl_label = 'Simple edit'
-   
-    if context.active_object.type == "CURVE":
-        self.layout.operator("curve.scale_reset", text="Scale Reset")
-        self.layout.separator()
 
 def menu(self, context):
     oper1 = self.layout.operator(Simple.bl_idname, text="Angle", icon="MOD_CURVE")
@@ -1081,6 +1072,11 @@ class Simple(Operator, object_utils.AddObjectHelper):
             ('VECTOR', "Vector", "Vector type Bezier handles"),
             ('AUTO', "Auto", "Automatic type Bezier handles")]
             )
+    edit_mode : BoolProperty(
+            name="Show in edit mode",
+            default=True,
+            description="Show in edit mode"
+            )
 
     def draw(self, context):
         layout = self.layout
@@ -1270,6 +1266,9 @@ class Simple(Operator, object_utils.AddObjectHelper):
         col = layout.column()
         col.row().prop(self, "use_cyclic_u", expand=True)
         
+        col = layout.column()
+        col.row().prop(self, "edit_mode", expand=True)
+        
         box = layout.box()
         box.label(text="Location:")
         box.prop(self, "Simple_startlocation")
@@ -1306,285 +1305,17 @@ class Simple(Operator, object_utils.AddObjectHelper):
         
         # restore pre operator state
         bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
-
-        return {'FINISHED'}
-
-# ------------------------------------------------------------
-# Fillet
-
-class BezierPointsFillet(Operator):
-    bl_idname = "curve.bezier_points_fillet"
-    bl_label = "Bezier points Fillet"
-    bl_description = "Bezier points Fillet"
-    bl_options = {'REGISTER', 'UNDO', 'PRESET'}
-
-    Fillet_radius : FloatProperty(
-            name="Radius",
-            default=0.25,
-            unit='LENGTH',
-            description="Radius"
-            )
-    Types = [('Round', "Round", "Round"),
-             ('Chamfer', "Chamfer", "Chamfer")]
-    Fillet_Type : EnumProperty(
-            name="Type",
-            description="Fillet type",
-            items=Types
-            )
-
-    def draw(self, context):
-        layout = self.layout
-
-        # general options
-        col = layout.column()
-        col.prop(self, "Fillet_radius")
-        col.prop(self, "Fillet_Type", expand=True)
-
-    @classmethod
-    def poll(cls, context):
-        return context.scene is not None
-
-    def execute(self, context):
-        # main function
-        if bpy.ops.object.mode_set.poll():
-            bpy.ops.object.mode_set(mode='EDIT')
         
-        splines = bpy.context.object.data.splines
-        bpy.ops.curve.spline_type_set(type='BEZIER')
-            
-        bpy.ops.curve.handle_type_set(type='VECTOR')
-        s = []
-        for spline in splines:
-            n = 0
-            ii = []
-            for p in spline.bezier_points:
-                if p.select_control_point:
-                    ii.append(n)
-                    n += 1
-                else:
-                    n += 1
-            s.append(ii)
-
-        sn = 0
-        for spline in splines:
-            ii = s[sn]
-            n = len(spline.bezier_points)
-            if n > 2:
-                jn = 0
-                for j in ii:
-    
-                    j += jn
-    
-                    selected_all = [p for p in spline.bezier_points]
-    
-                    bpy.ops.curve.select_all(action='DESELECT')
-    
-                    if j != 0 and j != n - 1:
-                        selected_all[j].select_control_point = True
-                        selected_all[j + 1].select_control_point = True
-                        bpy.ops.curve.subdivide()
-                        selected_all = [p for p in spline.bezier_points]
-                        selected4 = [selected_all[j - 1], selected_all[j],
-                                     selected_all[j + 1], selected_all[j + 2]]
-                        jn += 1
-                        n += 1
-    
-                    elif j == 0:
-                        selected_all[j].select_control_point = True
-                        selected_all[j + 1].select_control_point = True
-                        bpy.ops.curve.subdivide()
-                        selected_all = [p for p in spline.bezier_points]
-                        selected4 = [selected_all[n], selected_all[0],
-                                     selected_all[1], selected_all[2]]
-                        jn += 1
-                        n += 1
-    
-                    elif j == n - 1:
-                        selected_all[j].select_control_point = True
-                        selected_all[j - 1].select_control_point = True
-                        bpy.ops.curve.subdivide()
-                        selected_all = [p for p in spline.bezier_points]
-                        selected4 = [selected_all[0], selected_all[n],
-                                     selected_all[n - 1], selected_all[n - 2]]
-    
-                    selected4[2].co = selected4[1].co
-                    s1 = Vector(selected4[0].co) - Vector(selected4[1].co)
-                    s2 = Vector(selected4[3].co) - Vector(selected4[2].co)
-                    s1.normalize()
-                    s11 = Vector(selected4[1].co) + s1 * self.Fillet_radius
-                    selected4[1].co = s11
-                    s2.normalize()
-                    s22 = Vector(selected4[2].co) + s2 * self.Fillet_radius
-                    selected4[2].co = s22
-    
-                    if self.Fillet_Type == 'Round':
-                        if j != n - 1:
-                            selected4[2].handle_right_type = 'VECTOR'
-                            selected4[1].handle_left_type = 'VECTOR'
-                            selected4[1].handle_right_type = 'ALIGNED'
-                            selected4[2].handle_left_type = 'ALIGNED'
-                        else:
-                            selected4[1].handle_right_type = 'VECTOR'
-                            selected4[2].handle_left_type = 'VECTOR'
-                            selected4[2].handle_right_type = 'ALIGNED'
-                            selected4[1].handle_left_type = 'ALIGNED'
-                    if self.Fillet_Type == 'Chamfer':
-                        selected4[2].handle_right_type = 'VECTOR'
-                        selected4[1].handle_left_type = 'VECTOR'
-                        selected4[1].handle_right_type = 'VECTOR'
-                        selected4[2].handle_left_type = 'VECTOR'
-            sn += 1
-
-        return {'FINISHED'}
-
-def subdivide_cubic_bezier(p1, p2, p3, p4, t):
-    p12 = (p2 - p1) * t + p1
-    p23 = (p3 - p2) * t + p2
-    p34 = (p4 - p3) * t + p3
-    p123 = (p23 - p12) * t + p12
-    p234 = (p34 - p23) * t + p23
-    p1234 = (p234 - p123) * t + p123
-    return [p12, p123, p1234, p234, p34]
-
-
-# ------------------------------------------------------------
-# BezierDivide Operator
-
-class BezierDivide(Operator):
-    bl_idname = "curve.bezier_spline_divide"
-    bl_label = "Bezier Spline Divide"
-    bl_description = "Bezier Divide (enters edit mode) for Fillet Curves"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    # align_matrix for the invoke
-    align_matrix : Matrix()
-
-    Bezier_t : FloatProperty(
-            name="t (0% - 100%)",
-            default=50.0,
-            min=0.0, soft_min=0.0,
-            max=100.0, soft_max=100.0,
-            description="t (0% - 100%)"
-            )
-
-    @classmethod
-    def poll(cls, context):
-        return context.scene is not None
-
-    def execute(self, context):
-        # main function
-        if bpy.ops.object.mode_set.poll():
-            bpy.ops.object.mode_set(mode='EDIT')
-
-        splines = bpy.context.object.data.splines
-        s = []
-        for spline in splines:
-            bpy.ops.curve.spline_type_set(type='BEZIER')
-
-            n = 0
-            ii = []
-            for p in spline.bezier_points:
-                if p.select_control_point:
-                    ii.append(n)
-                    n += 1
-                else:
-                    n += 1
-            s.append(ii)
-
-        sn = 0
-        for spline in splines:
-            ii = s[sn]
-            n = len(spline.bezier_points)
-            if n > 2:
-                jn = 0
-                for j in ii:
-    
-                    selected_all = [p for p in spline.bezier_points]
-    
-                    bpy.ops.curve.select_all(action='DESELECT')
-    
-                    if (j in ii) and (j + 1 in ii):
-                        selected_all[j + jn].select_control_point = True
-                        selected_all[j + 1 + jn].select_control_point = True
-                        h = subdivide_cubic_bezier(
-                            selected_all[j + jn].co, selected_all[j + jn].handle_right,
-                            selected_all[j + 1 + jn].handle_left, selected_all[j + 1 + jn].co, self.Bezier_t / 100
-                            )
-                        bpy.ops.curve.subdivide(1)
-                        selected_all = [p for p in spline.bezier_points]
-                        selected_all[j + jn].handle_right_type = 'FREE'
-                        selected_all[j + jn].handle_right = h[0]
-                        selected_all[j + 1 + jn].co = h[2]
-                        selected_all[j + 1 + jn].handle_left_type = 'FREE'
-                        selected_all[j + 1 + jn].handle_left = h[1]
-                        selected_all[j + 1 + jn].handle_right_type = 'FREE'
-                        selected_all[j + 1 + jn].handle_right = h[3]
-                        selected_all[j + 2 + jn].handle_left_type = 'FREE'
-                        selected_all[j + 2 + jn].handle_left = h[4]
-                        jn += 1
-                    
-                    if j == n - 1 and (0 in ii) and spline.use_cyclic_u:
-                        selected_all[j + jn].select_control_point = True
-                        selected_all[0].select_control_point = True
-                        h = subdivide_cubic_bezier(
-                            selected_all[j + jn].co, selected_all[j + jn].handle_right,
-                            selected_all[0].handle_left, selected_all[0].co, self.Bezier_t / 100
-                            )
-                        bpy.ops.curve.subdivide(1)
-                        selected_all = [p for p in spline.bezier_points]
-                        selected_all[j + jn].handle_right_type = 'FREE'
-                        selected_all[j + jn].handle_right = h[0]
-                        selected_all[j + 1 + jn].co = h[2]
-                        selected_all[j + 1 + jn].handle_left_type = 'FREE'
-                        selected_all[j + 1 + jn].handle_left = h[1]
-                        selected_all[j + 1 + jn].handle_right_type = 'FREE'
-                        selected_all[j + 1 + jn].handle_right = h[3]
-                        selected_all[0].handle_left_type = 'FREE'
-                        selected_all[0].handle_left = h[4]                
-
-            sn += 1
-
-        return {'FINISHED'}
-        
-# ------------------------------------------------------------
-# CurveScaleReset Operator
-
-class CurveScaleReset(Operator):
-    bl_idname = "curve.scale_reset"
-    bl_label = "Curve Scale Reset"
-    bl_description = "Curve Scale Reset"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    @classmethod
-    def poll(cls, context):
-        return context.scene is not None
-
-    def execute(self, context):
-        # main function
-        oldCurve = context.active_object
-        oldCurveName = oldCurve.name
-        
-        bpy.ops.object.duplicate_move(OBJECT_OT_duplicate=None, TRANSFORM_OT_translate=None)
-        newCurve = context.active_object
-        newCurve.data.splines.clear()
-        newCurve.scale = (1.0, 1.0, 1.0)
-        
-        oldCurve.select_set(True)
-        newCurve.select_set(True)
-        bpy.context.view_layer.objects.active = newCurve
-        bpy.ops.object.join()
-        
-        joinCurve = context.active_object
-        joinCurve.name = oldCurveName
+        if self.edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+        else:
+            bpy.ops.object.mode_set(mode = 'OBJECT')
 
         return {'FINISHED'}
 
 # Register
 classes = [
     Simple,
-    BezierDivide,
-    BezierPointsFillet,
-    CurveScaleReset
 ]
 
 def register():
@@ -1593,8 +1324,6 @@ def register():
         register_class(cls)
 
     bpy.types.VIEW3D_MT_curve_add.append(menu)
-    bpy.types.VIEW3D_MT_edit_curve_context_menu.prepend(Simple_curve_edit_menu)
-    bpy.types.VIEW3D_MT_object_context_menu.prepend(Simple_curve_object_menu)
 
 def unregister():
     from bpy.utils import unregister_class
@@ -1602,8 +1331,6 @@ def unregister():
         unregister_class(cls)
 
     bpy.types.VIEW3D_MT_curve_add.remove(menu)
-    bpy.types.VIEW3D_MT_edit_curve_context_menu.remove(Simple_curve_edit_menu)
-    bpy.types.VIEW3D_MT_object_context_menu.remove(Simple_curve_object_menu)
 
 if __name__ == "__main__":
     register()

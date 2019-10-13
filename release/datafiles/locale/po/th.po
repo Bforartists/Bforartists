@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
+"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-09 00:00:00\n"
+"POT-Creation-Date: 2019-10-03 09:27:21\n"
 "PO-Revision-Date: 2019-06-01 18:12+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -448,6 +448,10 @@ msgstr "เต็ม"
 
 msgid "Layers"
 msgstr "ชั้น"
+
+
+msgid "Length"
+msgstr "ความยาว"
 
 
 msgid "Parent"
@@ -1057,10 +1061,6 @@ msgid "Vertex Group"
 msgstr "กลุ่มจุดยอด"
 
 
-msgid "Length"
-msgstr "ความยาว"
-
-
 msgctxt "Curve"
 msgid "Curve"
 msgstr "เส้นโค้ง"
@@ -1166,6 +1166,10 @@ msgstr "ทำซ้ำ"
 
 msgid "Sculpt Tool"
 msgstr "เครื่องแกะสลัก"
+
+
+msgid "Pose"
+msgstr "ท่าทาง"
 
 
 msgid "Rotate"
@@ -1552,10 +1556,6 @@ msgstr "วาดน้ำหนัก"
 
 msgid "Texture Paint"
 msgstr "วาดพื้นผิว"
-
-
-msgid "Pose"
-msgstr "ท่าทาง"
 
 
 msgid "Euler Rotation"
@@ -2130,10 +2130,6 @@ msgid "Object Info"
 msgstr "ข้อมูลวัตถุ"
 
 
-msgid "Closest"
-msgstr "ใกล้ชิดที่สุด"
-
-
 msgctxt "Operator"
 msgid "New Action"
 msgstr "การกระทำใหม่"
@@ -2211,10 +2207,6 @@ msgstr "มน"
 
 msgid "Translation"
 msgstr "แปลภาษา"
-
-
-msgid "Open"
-msgstr "เปิด"
 
 
 msgid "Path to file"
@@ -2357,6 +2349,10 @@ msgstr "+Y ขึ้น"
 msgctxt "Operator"
 msgid "Add Bookmark"
 msgstr "เพิ่มบุ๊คมาร์ค"
+
+
+msgid "Open"
+msgstr "เปิด"
 
 
 msgid "Increment"
@@ -2569,10 +2565,6 @@ msgid "Add Torus"
 msgstr "เพิ่มทอรัส"
 
 
-msgid "Add a torus mesh"
-msgstr "เพิ่มเมชทอรัส"
-
-
 msgctxt "Operator"
 msgid "Add UV Sphere"
 msgstr "เพิ่มทรงกลม UV"
@@ -2686,6 +2678,10 @@ msgstr "   โดยน้ำหนักเยื่อหุ้ม"
 
 msgid "Vertex (Triangle)"
 msgstr "จุดยอด (สามเหลี่ยม)"
+
+
+msgid "Edge Length"
+msgstr "ความยาวของเส้นขอบ"
 
 
 msgid "View %"
@@ -2840,6 +2836,10 @@ msgstr "บันทึก"
 msgctxt "Operator"
 msgid "Save As"
 msgstr "บันทึกเป็น"
+
+
+msgid "Closest"
+msgstr "ใกล้ชิดที่สุด"
 
 
 msgid "Transformation orientation"
@@ -3200,6 +3200,10 @@ msgid "UI Line Width"
 msgstr "ความหนาเส้น UI"
 
 
+msgid "New Window"
+msgstr "หน้าต่างใหม่"
+
+
 msgid "Interface Font"
 msgstr "ฟอนต์อินเตอร์เฟส"
 
@@ -3270,10 +3274,6 @@ msgstr "ขวาไปซ้าย"
 
 msgid "View layer name"
 msgstr "แสดงชื่อชั้น"
-
-
-msgid "New Window"
-msgstr "หน้าต่างใหม่"
 
 
 msgid "Engine"
@@ -3599,10 +3599,6 @@ msgstr "แสดงแกน Z"
 
 msgid "Draw Edges"
 msgstr "วาดเส้นขอบ"
-
-
-msgid "Edge Length"
-msgstr "ความยาวของเส้นขอบ"
 
 
 msgid "Display Grid Floor"
@@ -4525,6 +4521,14 @@ msgid "| Full Sample %d "
 msgstr "| ตัวอย่างแบบเต็ม %d "
 
 
+msgid "Blender Render"
+msgstr "ตัวเรนเดอร์ของ Blender"
+
+
+msgid "Blender Preferences"
+msgstr "การตั้งค่า Blender"
+
+
 msgid "OK"
 msgstr "ตกลง"
 
@@ -4820,14 +4824,6 @@ msgstr "ปิด"
 
 msgid "%s '%s' not found"
 msgstr "ไม่พบ %s '%s'"
-
-
-msgid "Blender Render"
-msgstr "ตัวเรนเดอร์ของ Blender"
-
-
-msgid "Blender Preferences"
-msgstr "การตั้งค่า Blender"
 
 
 msgid "Add Curve"

@@ -164,7 +164,7 @@ def get_download_filenames(asset_data):
     file_names = []
     # fn = asset_data['file_name'].replace('blend_', '')
     if asset_data.get('url') is not None:
-        # this means asset is already in scene and we don't nedd to check
+        # this means asset is already in scene and we don't need to check
 
         fn = extract_filename_from_url(asset_data['url'])
         fn.replace('_blend', '')

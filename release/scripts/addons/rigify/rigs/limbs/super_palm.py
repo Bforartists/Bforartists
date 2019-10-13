@@ -18,21 +18,22 @@
 
 # <pep8 compliant>
 
-import re
-from math import cos, pi
-
 import bpy
+import re
 
-from ...utils import MetarigError
-from ...utils import copy_bone
-from ...utils import strip_org, deformer
-from ...utils import create_widget
+from math import cos, pi
+from itertools import count, repeat
+
+from rigify.utils.naming import strip_org, make_derived_name
+from rigify.utils.widgets import create_widget
+from rigify.utils.misc import map_list
+
+from rigify.base_rig import BaseRig, stage
 
 
 def bone_siblings(obj, bone):
     """ Returns a list of the siblings of the given bone.
         This requires that the bones has a parent.
-
     """
     parent = obj.data.bones[bone].parent
 
@@ -48,133 +49,96 @@ def bone_siblings(obj, bone):
     return bones
 
 
-def bone_distance(obj, bone1, bone2):
-    """ Returns the distance between two bones.
-
-    """
-    vec = obj.data.bones[bone1].head - obj.data.bones[bone2].head
-    return vec.length
-
-
-class Rig:
+class Rig(BaseRig):
     """ A "palm" rig.  A set of sibling bones that bend with each other.
         This is a control and deformation rig.
-
     """
-    def __init__(self, obj, bone, params):
-        """ Gather and validate data about the rig.
-        """
-        self.obj = obj
-        self.params = params
 
-        siblings = bone_siblings(obj, bone)
-
-        if len(siblings) == 0:
-            raise MetarigError(
-                    "RIGIFY ERROR: Bone '%s': must have a parent and at least one sibling" %
-                    (strip_org(bone)))
+    def find_org_bones(self, bone):
+        base_head = bone.bone.head
+        siblings = bone_siblings(self.obj, bone.name)
 
         # Sort list by name and distance
         siblings.sort()
-        siblings.sort(key=lambda b: bone_distance(obj, bone, b))
+        siblings.sort(key=lambda b: (self.get_bone(b).bone.head - base_head).length)
 
-        self.org_bones = [bone] + siblings
+        return [bone.name] + siblings
 
-        # Get rig parameters
-        self.palm_rotation_axis = params.palm_rotation_axis
+    def initialize(self):
+        if len(self.bones.org) <= 1:
+            self.raise_error('The palm rig must have a parent and at least one sibling')
 
-    def generate(self):
-        """ Generate the rig.
-            Do NOT modify any of the original bones, except for adding constraints.
-            The main armature should be selected and active before this is called.
+        self.palm_rotation_axis = self.params.palm_rotation_axis
+        self.make_secondary = self.params.palm_both_sides
 
-        """
-        bpy.ops.object.mode_set(mode='EDIT')
+        self.order = 'YXZ' if 'X' in self.palm_rotation_axis else 'YZX'
 
         # Figure out the name for the control bone (remove the last .##)
-        last_bone = self.org_bones[-1:][0]
-        ctrl_name = re.sub("([0-9]+\.)", "", strip_org(last_bone)[::-1], count=1)[::-1]
+        self.ctrl_name = re.sub("([0-9]+\.)", "", strip_org(self.bones.org[-1])[::-1], count=1)[::-1]
 
-        # Make control bone
-        ctrl = copy_bone(self.obj, last_bone, ctrl_name)
+    def parent_bones(self):
+        self.rig_parent_bone = self.get_bone_parent(self.bones.org[0])
 
-        # Make deformation bones
-        def_bones = []
-        for bone in self.org_bones:
-            b = copy_bone(self.obj, bone, deformer(strip_org(bone)))
-            def_bones += [b]
+        # Parent to the deform bone of the parent if exists
+        def_bone = make_derived_name(self.rig_parent_bone, 'def')
 
-        # Parenting
-        eb = self.obj.data.edit_bones
+        if def_bone in self.obj.data.bones:
+            self.rig_parent_bone = def_bone
 
-        # turn off inherit scale for all ORG-bones to prevent undesired transformations
+    ####################################################
+    # BONES
+    #
+    # org[]:
+    #   Original bones in order of distance.
+    # ctrl:
+    #   master:
+    #     Main control.
+    #   secondary:
+    #     Control for the other side.
+    # deform[]:
+    #   DEF bones
+    #
+    ####################################################
 
-        for o in self.org_bones:
-            eb[o].use_inherit_scale = False
+    ####################################################
+    # Master control
 
-        for d, b in zip(def_bones, self.org_bones):
-            eb[d].use_connect = False
-            eb[d].parent = eb[b]
+    @stage.generate_bones
+    def make_master_control(self):
+        orgs = self.bones.org
 
-        # Get ORG parent bone
-        org_parent = eb[self.org_bones[0]].parent.name
+        self.bones.ctrl.master = self.copy_bone(orgs[-1], self.ctrl_name, parent=True)
 
-        # Get DEF parent from ORG parent
-        def_parent = deformer(strip_org(org_parent))
+        if self.make_secondary:
+            second_name = make_derived_name(orgs[0], 'ctrl')
+            self.bones.ctrl.secondary = self.copy_bone(orgs[0], second_name, parent=True)
 
-        # Switch parent
-        if def_parent in eb.keys():
-            parent_to = def_parent
-        else:
-            parent_to = org_parent
-        for o in self.org_bones:
-            eb[o].parent = eb[parent_to]
-        eb[ctrl].parent = eb[parent_to]
+    @stage.parent_bones
+    def parent_master_control(self):
+        self.set_bone_parent(self.bones.ctrl.master, self.rig_parent_bone, inherit_scale='AVERAGE')
 
-        # Constraints
-        bpy.ops.object.mode_set(mode='OBJECT')
-        pb = self.obj.pose.bones
+        if self.make_secondary:
+            self.set_bone_parent(self.bones.ctrl.secondary, self.rig_parent_bone, inherit_scale='AVERAGE')
 
-        i = 0
-        div = len(self.org_bones) - 1
-        for b in self.org_bones:
-            con = pb[b].constraints.new('COPY_TRANSFORMS')
-            con.name = "copy_transforms"
-            con.target = self.obj
-            con.subtarget = ctrl
-            con.target_space = 'LOCAL'
-            con.owner_space = 'LOCAL'
-            con.influence = i / div
+    @stage.configure_bones
+    def configure_master_control(self):
+        self.configure_control_bone(self.bones.ctrl.master, self.bones.org[-1])
 
-            con = pb[b].constraints.new('COPY_SCALE')
-            con.name = "copy_scale"
-            con.target = self.obj
-            con.subtarget = parent_to
-            con.target_space = 'WORLD'
-            con.owner_space = 'WORLD'
-            con.influence = 1
+        if self.make_secondary:
+            self.configure_control_bone(self.bones.ctrl.secondary, self.bones.org[0])
 
-            con = pb[b].constraints.new('COPY_ROTATION')
-            con.name = "copy_rotation"
-            con.target = self.obj
-            con.subtarget = ctrl
-            con.target_space = 'LOCAL'
-            con.owner_space = 'LOCAL'
-            if 'X' in self.palm_rotation_axis:
-                con.invert_x = True
-                con.use_x = True
-                con.use_z = False
-            else:
-                con.invert_z = True
-                con.use_x = False
-                con.use_z = True
-            con.use_y = False
+    def configure_control_bone(self, ctrl, org):
+        self.copy_bone_properties(org, ctrl)
+        self.get_bone(ctrl).lock_scale = (True, True, True)
 
-            con.influence = (i / div) - (1 - cos((i * pi / 2) / div))
+    @stage.generate_widgets
+    def make_master_control_widgets(self):
+        self.make_control_widget(self.bones.ctrl.master)
 
-            i += 1
+        if self.make_secondary:
+            self.make_control_widget(self.bones.ctrl.secondary)
 
-        # Create control widget
+    def make_control_widget(self, ctrl):
         w = create_widget(self.obj, ctrl)
         if w is not None:
             mesh = w.data
@@ -213,27 +177,109 @@ class Rig:
             mod = w.modifiers.new("subsurf", 'SUBSURF')
             mod.levels = 2
 
+    ####################################################
+    # ORG bones
 
-def add_parameters(params):
-    """ Add the parameters of this rig type to the
-        RigifyParameters PropertyGroup
+    @stage.parent_bones
+    def parent_org_chain(self):
+        for org in self.bones.org:
+            self.set_bone_parent(org, self.rig_parent_bone, inherit_scale='NONE')
 
-    """
-    items = [('X', 'X', ''), ('Z', 'Z', '')]
-    params.palm_rotation_axis = bpy.props.EnumProperty(
-            items=items,
-            name="Palm Rotation Axis",
-            default='X',
+    @stage.rig_bones
+    def rig_org_chain(self):
+        orgs = self.bones.org
+        ctrl = self.bones.ctrl
+
+        for args in zip(count(0), orgs, repeat(len(orgs))):
+            self.rig_org_bone(*args)
+
+    def rig_org_bone(self, i, org, num_orgs):
+        ctrl = self.bones.ctrl
+        fac = i / (num_orgs - 1)
+
+        if fac > 0:
+            self.make_constraint(
+                org, 'COPY_TRANSFORMS', ctrl.master, space='LOCAL',
+                influence=fac
             )
 
+            if self.make_secondary and fac < 1:
+                self.make_constraint(
+                    org, 'COPY_LOCATION', ctrl.secondary, space='LOCAL',
+                    use_offset=True, influence=1-fac
+                )
+                self.make_constraint(
+                    org, 'COPY_ROTATION', ctrl.secondary, space='LOCAL',
+                    euler_order=self.order, mix_mode='ADD', influence=1-fac
+                )
 
-def parameters_ui(layout, params):
-    """ Create the ui for the rig parameters.
+        elif self.make_secondary:
+            self.make_constraint(
+                org, 'COPY_TRANSFORMS', ctrl.secondary, space='LOCAL'
+            )
 
-    """
-    r = layout.row()
-    r.label(text="Primary rotation axis:")
-    r.prop(params, "palm_rotation_axis", text="")
+        self.make_constraint(org, 'COPY_SCALE', self.rig_parent_bone)
+
+        self.rig_org_back_rotation(org, ctrl.master, fac)
+
+        if self.make_secondary:
+            self.rig_org_back_rotation(org, ctrl.secondary, 1 - fac)
+
+    def rig_org_back_rotation(self, org, ctrl, fac):
+        if 0 < fac < 1:
+            inf = (fac + 1) * (fac + cos(fac * pi / 2) - 1)
+
+            if 'X' in self.palm_rotation_axis:
+                self.make_constraint(
+                    org, 'COPY_ROTATION', ctrl, space='LOCAL',
+                    invert_x=True, use_xyz=(True,False,False),
+                    euler_order=self.order, mix_mode='ADD', influence=inf
+                )
+            else:
+                self.make_constraint(
+                    org, 'COPY_ROTATION', ctrl, space='LOCAL',
+                    invert_z=True, use_xyz=(False,False,True),
+                    euler_order=self.order, mix_mode='ADD', influence=inf
+                )
+
+    ####################################################
+    # DEF bones
+
+    @stage.generate_bones
+    def make_def_chain(self):
+        self.bones.deform = map_list(self.make_deform_bone, self.bones.org)
+
+    def make_deform_bone(self, org):
+        return self.copy_bone(org, make_derived_name(org, 'def'))
+
+    @stage.parent_bones
+    def parent_deform_chain(self):
+        for deform, org in zip(self.bones.deform, self.bones.org):
+            self.set_bone_parent(deform, org, use_connect=False)
+
+    ####################################################
+    # Settings
+
+    @classmethod
+    def add_parameters(cls, params):
+        items = [('X', 'X', ''), ('Z', 'Z', '')]
+        params.palm_rotation_axis = bpy.props.EnumProperty(
+                items=items,
+                name="Palm Rotation Axis",
+                default='X',
+                )
+        params.palm_both_sides = bpy.props.BoolProperty(
+                name="Both Sides",
+                default=False,
+                description="Create controls for both sides of the palm"
+                )
+
+    @classmethod
+    def parameters_ui(cls, layout, params):
+        r = layout.row()
+        r.label(text="Primary rotation axis:")
+        r.prop(params, "palm_rotation_axis", text="")
+        layout.prop(params, "palm_both_sides")
 
 
 def create_sample(obj):

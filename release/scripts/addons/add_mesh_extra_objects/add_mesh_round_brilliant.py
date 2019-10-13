@@ -433,6 +433,8 @@ class MESH_OT_primitive_brilliant_add(Operator):
                           self.keep_lga, self.g_real_smooth
                           )
                     obj.data = mesh
+                    for material in oldmesh.materials:
+                        obj.data.materials.append(material)
                     bpy.data.meshes.remove(oldmesh)
                     obj.data.name = oldmeshname
                 else:

@@ -381,9 +381,8 @@ classes = (CLASS_ImportCluster,
 
 
 def register():
-    from bpy.utils import register_class    
     for cls in classes:
-        register_class(cls)
+        bpy.utils.register_class(cls)
         
     bpy.types.Scene.atom_cluster = bpy.props.PointerProperty(type=
                                                   CLASS_atom_cluster_Properties)
@@ -391,12 +390,12 @@ def register():
     
 
 def unregister():
-    from bpy.utils import register_class
-    for cls in classes:
-        unregister_class(cls)
-        
     bpy.types.VIEW3D_MT_mesh_add.remove(DEF_menu_func)
-
+    
+    del bpy.types.Scene.atom_cluster
+    
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
 
 if __name__ == "__main__":
 

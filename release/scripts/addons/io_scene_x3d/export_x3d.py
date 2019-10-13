@@ -583,7 +583,7 @@ def export(file,
             # Py dict are sorted now, so we can use directly polygons_groups.items()
             # and still get consistent reproducible outputs.
 
-            is_col = (mesh.vertex_colors.active and (material is None or material.use_vertex_color_paint))
+            is_col = mesh.vertex_colors.active
             mesh_loops_col = mesh.vertex_colors.active.data if is_col else None
 
             # Check if vertex colors can be exported in per-vertex mode.
