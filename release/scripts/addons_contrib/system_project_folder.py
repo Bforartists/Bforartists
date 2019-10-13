@@ -23,7 +23,7 @@ bl_info = {
     "name": "Project Folder",
     "author": "Dany Lebel (Axon_D), Spirou4D",
     "version": (0, 3, 1),
-    "blender": (2, 61, 0),
+    "blender": (2, 80, 0),
     "location": "Info -> File Menu -> Project Folder",
     "description": "Open the project folder in a file browser",
     "warning": "",

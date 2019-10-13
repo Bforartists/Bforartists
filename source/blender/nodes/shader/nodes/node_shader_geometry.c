@@ -48,20 +48,28 @@ static int node_shader_gpu_geometry(GPUMaterial *mat,
   GPUNodeLink *orco_link = (!out[2].hasoutput) ? GPU_constant(val) : GPU_attribute(CD_ORCO, "");
 
   const bool success = GPU_stack_link(mat,
-                        node,
-                        "node_geometry",
-                        in,
-                        out,
-                        GPU_builtin(GPU_VIEW_POSITION),
-                        GPU_builtin(GPU_WORLD_NORMAL),
-                        orco_link,
-                        GPU_builtin(GPU_OBJECT_MATRIX),
-                        GPU_builtin(GPU_INVERSE_VIEW_MATRIX),
-                        bary_link);
+                                      node,
+                                      "node_geometry",
+                                      in,
+                                      out,
+                                      GPU_builtin(GPU_VIEW_POSITION),
+                                      GPU_builtin(GPU_WORLD_NORMAL),
+                                      orco_link,
+                                      GPU_builtin(GPU_OBJECT_MATRIX),
+                                      GPU_builtin(GPU_INVERSE_VIEW_MATRIX),
+                                      bary_link);
 
   /* for each output */
   for (int i = 0; sh_node_geometry_out[i].type != -1; i++) {
     node_shader_gpu_bump_tex_coord(mat, node, &out[i].link);
+    /* Normalize some vectors after dFdx/dFdy offsets.
+     * This is the case for interpolated, non linear functions.
+     * The resulting vector can still be a bit wrong but not as much.
+     * (see T70644) */
+    if (node->branch_tag != 0 && ELEM(i, 1, 2, 4)) {
+      GPU_link(
+          mat, "vector_math_normalize", out[i].link, out[i].link, out[i].link, &out[i].link, NULL);
+    }
   }
 
   return success;

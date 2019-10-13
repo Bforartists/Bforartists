@@ -22,7 +22,7 @@ bl_info = {
     "author": "scorpion81",
     "version": (1, 2, 2),
     "blender": (2, 80, 0),
-    "location": "Text Editor > Edit > Edit Operator",
+    "location": "Text Editor > Sidebar > Edit Operator",
     "description": "Opens source file of chosen operator or call locations, if source not available",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
@@ -300,6 +300,7 @@ class TEXT_PT_EditOperatorPanel(Panel):
     bl_region_type = 'UI'
     bl_label = "Edit Operator"
     bl_category = "Text"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout

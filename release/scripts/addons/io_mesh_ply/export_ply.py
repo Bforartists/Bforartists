@@ -45,10 +45,6 @@ def save_mesh(
     file = open(filepath, "w", encoding="utf8", newline="\n")
     fw = file.write
 
-    # Be sure tessellated loop trianlges are available!
-    if not mesh.loop_triangles and mesh.polygons:
-        mesh.calc_loop_triangles()
-
     has_uv = bool(mesh.uv_layers)
     has_vcol = bool(mesh.vertex_colors)
 
@@ -85,9 +81,9 @@ def save_mesh(
     ply_verts = []  # list of dictionaries
     # vdict = {} # (index, normal, uv) -> new index
     vdict = [{} for i in range(len(mesh_verts))]
-    ply_faces = [[] for f in range(len(mesh.loop_triangles))]
+    ply_faces = [[] for f in range(len(mesh.polygons))]
     vert_count = 0
-    for i, f in enumerate(mesh.loop_triangles):
+    for i, f in enumerate(mesh.polygons):
 
         smooth = not use_normals or f.use_smooth
         if not smooth:
@@ -95,9 +91,15 @@ def save_mesh(
             normal_key = rvec3d(normal)
 
         if has_uv:
-            uv = [active_uv_layer[l].uv[:] for l in f.loops]
+            uv = [
+                active_uv_layer[l].uv[:]
+                for l in range(f.loop_start, f.loop_start + f.loop_total)
+            ]
         if has_vcol:
-            col = [active_col_layer[l].color[:] for l in f.loops]
+            col = [
+                active_col_layer[l].color[:]
+                for l in range(f.loop_start, f.loop_start + f.loop_total)
+            ]
 
         pf = ply_faces[i]
         for j, vidx in enumerate(f.vertices):
@@ -156,7 +158,7 @@ def save_mesh(
            "property uchar blue\n"
            "property uchar alpha\n")
 
-    fw("element face %d\n" % len(mesh.loop_triangles))
+    fw("element face %d\n" % len(mesh.polygons))
     fw("property list uchar uint vertex_indices\n")
     fw("end_header\n")
 
@@ -171,10 +173,11 @@ def save_mesh(
         fw("\n")
 
     for pf in ply_faces:
-        if len(pf) == 3:
-            fw("3 %d %d %d\n" % tuple(pf))
-        else:
-            fw("4 %d %d %d %d\n" % tuple(pf))
+        # fw(f"{len(pf)} {' '.join(str(x) for x in pf)}\n")
+        fw("%d" % len(pf))
+        for v in pf:
+            fw(" %d" % v)
+        fw("\n")
 
     file.close()
     print("writing %r done" % filepath)

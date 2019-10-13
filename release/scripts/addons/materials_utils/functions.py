@@ -140,7 +140,7 @@ def mu_assign_material(self, material_name = "Default", override_type = 'APPEND_
             obj.material_slots[0].material = target
 
             if obj.type == 'META':
-                self.report({'INFO'}, "Meta balls only support one material, all other materials overriden!")
+                self.report({'INFO'}, "Meta balls only support one material, all other materials overridden!")
 
         # If we should override each material slot
         elif override_type == 'OVERRIDE_SLOTS':
@@ -626,7 +626,7 @@ def mu_change_material_link(self, link, affect, override_data_material = False):
             elif not override_data_material:
                 self.report({'INFO'},
                             'The object Data for object ' + object.name_full + ' already had a material assigned ' +
-                            'to slot #' + str(index) + ' (' + slot.material.name + '), it was not overriden!')
+                            'to slot #' + str(index) + ' (' + slot.material.name + '), it was not overridden!')
 
             if override_data_material:
                 slot.material = present_material

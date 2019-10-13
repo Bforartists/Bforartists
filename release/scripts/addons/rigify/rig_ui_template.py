@@ -18,12 +18,28 @@
 
 # <pep8 compliant>
 
+import bpy
+
+from collections import OrderedDict
+
+from .utils.animation import SCRIPT_REGISTER_BAKE, SCRIPT_UTILITIES_BAKE
+from .utils.layers import get_layers
+from .utils.rig import attach_persistent_script
+
+from . import base_generate
+
+from rna_prop_ui import rna_idprop_quote_path
+
+
 UI_IMPORTS = [
     'import bpy',
-    'from bpy.props import StringProperty',
     'import math',
+    'import json',
+    'import collections',
     'from math import pi',
+    'from bpy.props import StringProperty',
     'from mathutils import Euler, Matrix, Quaternion, Vector',
+    'from rna_prop_ui import rna_idprop_quote_path',
 ]
 
 UI_BASE_UTILITIES = '''
@@ -63,42 +79,21 @@ def rotation_difference(mat1, mat2):
         angle = -angle + (2*pi)
     return angle
 
-def tail_distance(angle,bone_ik,bone_fk):
-    """ Returns the distance between the tails of two bones
-        after rotating bone_ik in AXIS_ANGLE mode.
-    """
-    rot_mod=bone_ik.rotation_mode
-    if rot_mod != 'AXIS_ANGLE':
-        bone_ik.rotation_mode = 'AXIS_ANGLE'
-    bone_ik.rotation_axis_angle[0] = angle
-    bpy.context.view_layer.update()
-
-    dv = (bone_fk.tail - bone_ik.tail).length
-
-    bone_ik.rotation_mode = rot_mod
-    return dv
-
-def find_min_range(bone_ik,bone_fk,f=tail_distance,delta=pi/8):
+def find_min_range(f,start_angle,delta=pi/8):
     """ finds the range where lies the minimum of function f applied on bone_ik and bone_fk
         at a certain angle.
     """
-    rot_mod=bone_ik.rotation_mode
-    if rot_mod != 'AXIS_ANGLE':
-        bone_ik.rotation_mode = 'AXIS_ANGLE'
-
-    start_angle = bone_ik.rotation_axis_angle[0]
     angle = start_angle
     while (angle > (start_angle - 2*pi)) and (angle < (start_angle + 2*pi)):
-        l_dist = f(angle-delta,bone_ik,bone_fk)
-        c_dist = f(angle,bone_ik,bone_fk)
-        r_dist = f(angle+delta,bone_ik,bone_fk)
+        l_dist = f(angle-delta)
+        c_dist = f(angle)
+        r_dist = f(angle+delta)
         if min((l_dist,c_dist,r_dist)) == c_dist:
-            bone_ik.rotation_mode = rot_mod
             return (angle-delta,angle+delta)
         else:
             angle=angle+delta
 
-def ternarySearch(f, left, right, bone_ik, bone_fk, absolutePrecision):
+def ternarySearch(f, left, right, absolutePrecision):
     """
     Find minimum of unimodal function f() within [left, right]
     To find the maximum, revert the if/else statement or revert the comparison.
@@ -111,11 +106,13 @@ def ternarySearch(f, left, right, bone_ik, bone_fk, absolutePrecision):
         leftThird = left + (right - left)/3
         rightThird = right - (right - left)/3
 
-        if f(leftThird, bone_ik, bone_fk) > f(rightThird, bone_ik, bone_fk):
+        if f(leftThird) > f(rightThird):
             left = leftThird
         else:
             right = rightThird
+'''
 
+UTILITIES_FUNC_COMMON_IKFK = ['''
 #########################################
 ## "Visual Transform" helper functions ##
 #########################################
@@ -125,28 +122,8 @@ def get_pose_matrix_in_other_space(mat, pose_bone):
         transform space.  In other words, presuming that mat is in
         armature space, slapping the returned matrix onto pose_bone
         should give it the armature-space transforms of mat.
-        TODO: try to handle cases with axis-scaled parents better.
     """
-    rest = pose_bone.bone.matrix_local.copy()
-    rest_inv = rest.inverted()
-    if pose_bone.parent:
-        par_mat = pose_bone.parent.matrix.copy()
-        par_inv = par_mat.inverted()
-        par_rest = pose_bone.parent.bone.matrix_local.copy()
-    else:
-        par_mat = Matrix()
-        par_inv = Matrix()
-        par_rest = Matrix()
-
-    # Get matrix in bone's current transform space
-    smat = rest_inv @ (par_rest @ (par_inv @ mat))
-
-    # Compensate for non-local location
-    #if not pose_bone.bone.use_local_location:
-    #    loc = smat.to_translation() @ (par_rest.inverted() @ rest).to_quaternion()
-    #    smat.translation = loc
-
-    return smat
+    return pose_bone.id_data.convert_space(matrix=mat, pose_bone=pose_bone, from_space='POSE', to_space='LOCAL')
 
 
 def get_local_pose_matrix(pose_bone):
@@ -159,19 +136,7 @@ def set_pose_translation(pose_bone, mat):
     """ Sets the pose bone's translation to the same translation as the given matrix.
         Matrix should be given in bone's local space.
     """
-    if pose_bone.bone.use_local_location == True:
-        pose_bone.location = mat.to_translation()
-    else:
-        loc = mat.to_translation()
-
-        rest = pose_bone.bone.matrix_local.copy()
-        if pose_bone.bone.parent:
-            par_rest = pose_bone.bone.parent.matrix_local.copy()
-        else:
-            par_rest = Matrix()
-
-        q = (par_rest.inverted() @ rest).to_quaternion()
-        pose_bone.location = q @ loc
+    pose_bone.location = mat.to_translation()
 
 
 def set_pose_rotation(pose_bone, mat):
@@ -205,8 +170,6 @@ def match_pose_translation(pose_bone, target_bone):
     """
     mat = get_pose_matrix_in_other_space(target_bone.matrix, pose_bone)
     set_pose_translation(pose_bone, mat)
-    bpy.ops.object.mode_set(mode='OBJECT')
-    bpy.ops.object.mode_set(mode='POSE')
 
 
 def match_pose_rotation(pose_bone, target_bone):
@@ -216,8 +179,6 @@ def match_pose_rotation(pose_bone, target_bone):
     """
     mat = get_pose_matrix_in_other_space(target_bone.matrix, pose_bone)
     set_pose_rotation(pose_bone, mat)
-    bpy.ops.object.mode_set(mode='OBJECT')
-    bpy.ops.object.mode_set(mode='POSE')
 
 
 def match_pose_scale(pose_bone, target_bone):
@@ -227,27 +188,55 @@ def match_pose_scale(pose_bone, target_bone):
     """
     mat = get_pose_matrix_in_other_space(target_bone.matrix, pose_bone)
     set_pose_scale(pose_bone, mat)
-    bpy.ops.object.mode_set(mode='OBJECT')
-    bpy.ops.object.mode_set(mode='POSE')
 
-def correct_rotation(bone_ik, bone_fk):
-    """ Corrects the ik rotation in ik2fk snapping functions
-    """
-
-    alfarange = find_min_range(bone_ik,bone_fk)
-    alfamin = ternarySearch(tail_distance,alfarange[0],alfarange[1],bone_ik,bone_fk,0.1)
-
-    rot_mod = bone_ik.rotation_mode
-    if rot_mod != 'AXIS_ANGLE':
-        bone_ik.rotation_mode = 'AXIS_ANGLE'
-    bone_ik.rotation_axis_angle[0] = alfamin
-    bone_ik.rotation_mode = rot_mod
 
 ##############################
 ## IK/FK snapping functions ##
 ##############################
 
-def match_pole_target(ik_first, ik_last, pole, match_bone, length):
+def correct_rotation(view_layer, bone_ik, target_matrix):
+    """ Corrects the ik rotation in ik2fk snapping functions
+    """
+
+    axis = target_matrix.to_3x3().col[1].normalized()
+
+    def distance(angle):
+        # Rotate the bone and return the actual angle between bones
+        bone_ik.rotation_euler[1] = angle
+        view_layer.update()
+
+        return -(bone_ik.vector.normalized().dot(axis))
+
+    if bone_ik.rotation_mode in {'QUATERNION', 'AXIS_ANGLE'}:
+        bone_ik.rotation_mode = 'ZXY'
+
+    start_angle = bone_ik.rotation_euler[1]
+
+    alfarange = find_min_range(distance, start_angle)
+    alfamin = ternarySearch(distance, alfarange[0], alfarange[1], pi / 180)
+
+    bone_ik.rotation_euler[1] = alfamin
+    view_layer.update()
+
+
+def correct_scale(view_layer, bone_ik, target_matrix):
+    """ Correct the scale of the base IK bone. """
+    input_scale = target_matrix.to_scale()
+
+    for i in range(3):
+        cur_scale = bone_ik.matrix.to_scale()
+
+        bone_ik.scale = [
+            v * i / c for v, i, c in zip(bone_ik.scale, input_scale, cur_scale)
+        ]
+
+        view_layer.update()
+
+        if all(abs((c - i)/i) < 0.01 for i, c in zip(input_scale, cur_scale)):
+            break
+
+
+def match_pole_target(view_layer, ik_first, ik_last, pole, match_bone_matrix, length):
     """ Places an IK chain's pole target to match ik_first's
         transforms to match_bone.  All bones should be given as pose bones.
         You need to be in pose mode on the relevant armature object.
@@ -278,22 +267,21 @@ def match_pole_target(ik_first, ik_last, pole, match_bone, length):
         mat = get_pose_matrix_in_other_space(Matrix.Translation(ploc), pole)
         set_pose_translation(pole, mat)
 
-        bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.ops.object.mode_set(mode='POSE')
+        view_layer.update()
 
     set_pole(pv)
 
     # Get the rotation difference between ik_first and match_bone
-    angle = rotation_difference(ik_first.matrix, match_bone.matrix)
+    angle = rotation_difference(ik_first.matrix, match_bone_matrix)
 
     # Try compensating for the rotation difference in both directions
     pv1 = Matrix.Rotation(angle, 4, ikv) @ pv
     set_pole(pv1)
-    ang1 = rotation_difference(ik_first.matrix, match_bone.matrix)
+    ang1 = rotation_difference(ik_first.matrix, match_bone_matrix)
 
     pv2 = Matrix.Rotation(-angle, 4, ikv) @ pv
     set_pole(pv2)
-    ang2 = rotation_difference(ik_first.matrix, match_bone.matrix)
+    ang2 = rotation_difference(ik_first.matrix, match_bone_matrix)
 
     # Do the one with the smaller angle
     if ang1 < ang2:
@@ -309,9 +297,9 @@ def parse_bone_names(names_string):
     else:
         return names_string
 
-'''
+''']
 
-UTILITIES_FUNC_ARM_FKIK = ['''
+UTILITIES_FUNC_OLD_ARM_FKIK = ['''
 ######################
 ## IK Arm functions ##
 ######################
@@ -322,6 +310,7 @@ def fk2ik_arm(obj, fk, ik):
         fk:  list of fk bone names
         ik:  list of ik bone names
     """
+    view_layer = bpy.context.view_layer
     uarm  = obj.pose.bones[fk[0]]
     farm  = obj.pose.bones[fk[1]]
     hand  = obj.pose.bones[fk[2]]
@@ -341,29 +330,35 @@ def fk2ik_arm(obj, fk, ik):
         # Upper arm position
         match_pose_rotation(uarm, uarmi)
         match_pose_scale(uarm, uarmi)
+        view_layer.update()
 
         # Forearm position
         match_pose_rotation(farm, farmi)
         match_pose_scale(farm, farmi)
+        view_layer.update()
 
         # Hand position
         match_pose_rotation(hand, handi)
         match_pose_scale(hand, handi)
+        view_layer.update()
     else:
         # Upper arm position
         match_pose_translation(uarm, uarmi)
         match_pose_rotation(uarm, uarmi)
         match_pose_scale(uarm, uarmi)
+        view_layer.update()
 
         # Forearm position
         #match_pose_translation(hand, handi)
         match_pose_rotation(farm, farmi)
         match_pose_scale(farm, farmi)
+        view_layer.update()
 
         # Hand position
         match_pose_translation(hand, handi)
         match_pose_rotation(hand, handi)
         match_pose_scale(hand, handi)
+        view_layer.update()
 
 
 def ik2fk_arm(obj, fk, ik):
@@ -372,6 +367,7 @@ def ik2fk_arm(obj, fk, ik):
         fk:  list of fk bone names
         ik:  list of ik bone names
     """
+    view_layer = bpy.context.view_layer
     uarm  = obj.pose.bones[fk[0]]
     farm  = obj.pose.bones[fk[1]]
     hand  = obj.pose.bones[fk[2]]
@@ -395,24 +391,32 @@ def ik2fk_arm(obj, fk, ik):
         match_pose_translation(handi, hand)
         match_pose_rotation(handi, hand)
         match_pose_scale(handi, hand)
+        view_layer.update()
+
         # Pole target position
-        match_pole_target(uarmi, farmi, pole, uarm, (uarmi.length + farmi.length))
+        match_pole_target(view_layer, uarmi, farmi, pole, uarm.matrix, (uarmi.length + farmi.length))
 
     else:
         # Hand position
         match_pose_translation(handi, hand)
         match_pose_rotation(handi, hand)
         match_pose_scale(handi, hand)
+        view_layer.update()
 
         # Upper Arm position
         match_pose_translation(uarmi, uarm)
-        match_pose_rotation(uarmi, uarm)
+        #match_pose_rotation(uarmi, uarm)
+        set_pose_rotation(uarmi, Matrix())
         match_pose_scale(uarmi, uarm)
+        view_layer.update()
+
         # Rotation Correction
-        correct_rotation(uarmi, uarm)
+        correct_rotation(view_layer, uarmi, uarm.matrix)
+
+    correct_scale(view_layer, uarmi, uarm.matrix)
 ''']
 
-UTILITIES_FUNC_LEG_FKIK = ['''
+UTILITIES_FUNC_OLD_LEG_FKIK = ['''
 ######################
 ## IK Leg functions ##
 ######################
@@ -423,6 +427,7 @@ def fk2ik_leg(obj, fk, ik):
         fk:  list of fk bone names
         ik:  list of ik bone names
     """
+    view_layer = bpy.context.view_layer
     thigh  = obj.pose.bones[fk[0]]
     shin   = obj.pose.bones[fk[1]]
     foot   = obj.pose.bones[fk[2]]
@@ -444,36 +449,38 @@ def fk2ik_leg(obj, fk, ik):
         # Thigh position
         match_pose_rotation(thigh, thighi)
         match_pose_scale(thigh, thighi)
+        view_layer.update()
 
         # Shin position
         match_pose_rotation(shin, shini)
         match_pose_scale(shin, shini)
+        view_layer.update()
 
         # Foot position
         mat = mfoot.bone.matrix_local.inverted() @ foot.bone.matrix_local
         footmat = get_pose_matrix_in_other_space(mfooti.matrix, foot) @ mat
         set_pose_rotation(foot, footmat)
         set_pose_scale(foot, footmat)
-        bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.ops.object.mode_set(mode='POSE')
+        view_layer.update()
 
     else:
         # Thigh position
         match_pose_translation(thigh, thighi)
         match_pose_rotation(thigh, thighi)
         match_pose_scale(thigh, thighi)
+        view_layer.update()
 
         # Shin position
         match_pose_rotation(shin, shini)
         match_pose_scale(shin, shini)
+        view_layer.update()
 
         # Foot position
         mat = mfoot.bone.matrix_local.inverted() @ foot.bone.matrix_local
         footmat = get_pose_matrix_in_other_space(mfooti.matrix, foot) @ mat
         set_pose_rotation(foot, footmat)
         set_pose_scale(foot, footmat)
-        bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.ops.object.mode_set(mode='POSE')
+        view_layer.update()
 
 
 def ik2fk_leg(obj, fk, ik):
@@ -482,6 +489,7 @@ def ik2fk_leg(obj, fk, ik):
         fk:  list of fk bone names
         ik:  list of ik bone names
     """
+    view_layer = bpy.context.view_layer
     thigh    = obj.pose.bones[fk[0]]
     shin     = obj.pose.bones[fk[1]]
     mfoot    = obj.pose.bones[fk[2]]
@@ -506,6 +514,7 @@ def ik2fk_leg(obj, fk, ik):
 
         # Clear footroll
         set_pose_rotation(footroll, Matrix())
+        view_layer.update()
 
         # Foot position
         mat = mfooti.bone.matrix_local.inverted() @ footi.bone.matrix_local
@@ -513,16 +522,17 @@ def ik2fk_leg(obj, fk, ik):
         set_pose_translation(footi, footmat)
         set_pose_rotation(footi, footmat)
         set_pose_scale(footi, footmat)
-        bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.ops.object.mode_set(mode='POSE')
+        view_layer.update()
 
         # Thigh position
         match_pose_translation(thighi, thigh)
-        match_pose_rotation(thighi, thigh)
+        #match_pose_rotation(thighi, thigh)
+        set_pose_rotation(thighi, Matrix())
         match_pose_scale(thighi, thigh)
+        view_layer.update()
 
         # Rotation Correction
-        correct_rotation(thighi,thigh)
+        correct_rotation(view_layer, thighi, thigh.matrix)
 
     else:
         # Stretch
@@ -532,6 +542,7 @@ def ik2fk_leg(obj, fk, ik):
 
         # Clear footroll
         set_pose_rotation(footroll, Matrix())
+        view_layer.update()
 
         # Foot position
         mat = mfooti.bone.matrix_local.inverted() @ footi.bone.matrix_local
@@ -539,14 +550,15 @@ def ik2fk_leg(obj, fk, ik):
         set_pose_translation(footi, footmat)
         set_pose_rotation(footi, footmat)
         set_pose_scale(footi, footmat)
-        bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.ops.object.mode_set(mode='POSE')
+        view_layer.update()
 
         # Pole target position
-        match_pole_target(thighi, shini, pole, thigh, (thighi.length + shini.length))
+        match_pole_target(view_layer, thighi, shini, pole, thigh.matrix, (thighi.length + shini.length))
+
+    correct_scale(view_layer, thighi, thigh.matrix)
 ''']
 
-UTILITIES_FUNC_POLE = ['''
+UTILITIES_FUNC_OLD_POLE = ['''
 ################################
 ## IK Rotation-Pole functions ##
 ################################
@@ -611,9 +623,9 @@ def rotPoleToggle(rig, limb_type, controls, ik_ctrl, fk_ctrl, parent, pole):
             bpy.ops.pose.select_all(action='DESELECT')
 ''']
 
-REGISTER_OP_ARM_FKIK = ['Rigify_Arm_FK2IK', 'Rigify_Arm_IK2FK']
+REGISTER_OP_OLD_ARM_FKIK = ['Rigify_Arm_FK2IK', 'Rigify_Arm_IK2FK']
 
-UTILITIES_OP_ARM_FKIK = ['''
+UTILITIES_OP_OLD_ARM_FKIK = ['''
 ##################################
 ## IK/FK Arm snapping operators ##
 ##################################
@@ -669,9 +681,9 @@ class Rigify_Arm_IK2FK(bpy.types.Operator):
         return {'FINISHED'}
 ''']
 
-REGISTER_OP_LEG_FKIK = ['Rigify_Leg_FK2IK', 'Rigify_Leg_IK2FK']
+REGISTER_OP_OLD_LEG_FKIK = ['Rigify_Leg_FK2IK', 'Rigify_Leg_IK2FK']
 
-UTILITIES_OP_LEG_FKIK = ['''
+UTILITIES_OP_OLD_LEG_FKIK = ['''
 ##################################
 ## IK/FK Leg snapping operators ##
 ##################################
@@ -731,9 +743,9 @@ class Rigify_Leg_IK2FK(bpy.types.Operator):
         return {'FINISHED'}
 ''']
 
-REGISTER_OP_POLE = ['Rigify_Rot2PoleSwitch']
+REGISTER_OP_OLD_POLE = ['Rigify_Rot2PoleSwitch']
 
-UTILITIES_OP_POLE = ['''
+UTILITIES_OP_OLD_POLE = ['''
 ###########################
 ## IK Rotation Pole Snap ##
 ###########################
@@ -762,22 +774,24 @@ class Rigify_Rot2PoleSwitch(bpy.types.Operator):
         return {'FINISHED'}
 ''']
 
-REGISTER_RIG_ARM = REGISTER_OP_ARM_FKIK + REGISTER_OP_POLE
+REGISTER_RIG_OLD_ARM = REGISTER_OP_OLD_ARM_FKIK + REGISTER_OP_OLD_POLE
 
-UTILITIES_RIG_ARM = [
-    *UTILITIES_FUNC_ARM_FKIK,
-    *UTILITIES_FUNC_POLE,
-    *UTILITIES_OP_ARM_FKIK,
-    *UTILITIES_OP_POLE,
+UTILITIES_RIG_OLD_ARM = [
+    *UTILITIES_FUNC_COMMON_IKFK,
+    *UTILITIES_FUNC_OLD_ARM_FKIK,
+    *UTILITIES_FUNC_OLD_POLE,
+    *UTILITIES_OP_OLD_ARM_FKIK,
+    *UTILITIES_OP_OLD_POLE,
 ]
 
-REGISTER_RIG_LEG = REGISTER_OP_LEG_FKIK + REGISTER_OP_POLE
+REGISTER_RIG_OLD_LEG = REGISTER_OP_OLD_LEG_FKIK + REGISTER_OP_OLD_POLE
 
-UTILITIES_RIG_LEG = [
-    *UTILITIES_FUNC_LEG_FKIK,
-    *UTILITIES_FUNC_POLE,
-    *UTILITIES_OP_LEG_FKIK,
-    *UTILITIES_OP_POLE,
+UTILITIES_RIG_OLD_LEG = [
+    *UTILITIES_FUNC_COMMON_IKFK,
+    *UTILITIES_FUNC_OLD_LEG_FKIK,
+    *UTILITIES_FUNC_OLD_POLE,
+    *UTILITIES_OP_OLD_LEG_FKIK,
+    *UTILITIES_OP_OLD_POLE,
 ]
 
 ##############################
@@ -787,17 +801,9 @@ UTILITIES_RIG_LEG = [
 UI_REGISTER = [
     'RigUI',
     'RigLayers',
-    *REGISTER_OP_ARM_FKIK,
-    *REGISTER_OP_LEG_FKIK,
 ]
 
-# Include arm and leg utilities for now in case somebody wants to use
-# legacy limb rigs, which expect these to be available by default.
 UI_UTILITIES = [
-    *UTILITIES_FUNC_ARM_FKIK,
-    *UTILITIES_FUNC_LEG_FKIK,
-    *UTILITIES_OP_ARM_FKIK,
-    *UTILITIES_OP_LEG_FKIK,
 ]
 
 UI_SLIDERS = '''
@@ -825,24 +831,44 @@ class RigUI(bpy.types.Panel):
         layout = self.layout
         pose_bones = context.active_object.pose.bones
         try:
-            selected_bones = [bone.name for bone in context.selected_pose_bones]
-            selected_bones += [context.active_pose_bone.name]
+            selected_bones = set(bone.name for bone in context.selected_pose_bones)
+            selected_bones.add(context.active_pose_bone.name)
         except (AttributeError, TypeError):
             return
 
         def is_selected(names):
             # Returns whether any of the named bones are selected.
-            if type(names) == list:
-                for name in names:
-                    if name in selected_bones:
-                        return True
+            if isinstance(names, list) or isinstance(names, set):
+                return not selected_bones.isdisjoint(names)
             elif names in selected_bones:
                 return True
             return False
 
+        num_rig_separators = [-1]
 
+        def emit_rig_separator():
+            if num_rig_separators[0] >= 0:
+                layout.separator()
+            num_rig_separators[0] += 1
 '''
 
+UI_REGISTER_BAKE_SETTINGS = ['RigBakeSettings']
+
+UI_BAKE_SETTINGS = '''
+class RigBakeSettings(bpy.types.Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_label = "Rig Bake Settings"
+    bl_idname = "VIEW3D_PT_rig_bake_settings_" + rig_id
+    bl_category = 'Item'
+
+    @classmethod
+    def poll(self, context):
+        return RigUI.poll(context) and find_action(context.active_object) is not None
+
+    def draw(self, context):
+        RigifyBakeKeyframesMixin.draw_common_bake_ui(context, self.layout)
+'''
 
 def layers_ui(layers, layout):
     """ Turn a list of booleans + a list of names into a layer UI.
@@ -896,3 +922,321 @@ class RigLayers(bpy.types.Panel):
     code += "        row.prop(context.active_object.data, 'layers', index=28, toggle=True, text='Root')\n"
 
     return code
+
+
+def quote_parameters(positional, named):
+    """Quote the given positional and named parameters as a code string."""
+    positional_list = [ repr(v) for v in positional ]
+    named_list = [ "%s=%r" % (k, v) for k, v in named.items() ]
+    return ', '.join(positional_list + named_list)
+
+def indent_lines(lines, indent=4):
+    if indent > 0:
+        prefix = ' ' * indent
+        return [ prefix + line for line in lines ]
+    else:
+        return lines
+
+
+class PanelLayout(object):
+    """Utility class that builds code for creating a layout."""
+
+    def __init__(self, parent, index=0):
+        if isinstance(parent, PanelLayout):
+            self.parent = parent
+            self.script = parent.script
+        else:
+            self.parent = None
+            self.script = parent
+
+        self.header = []
+        self.items = []
+        self.indent = 0
+        self.index = index
+        self.layout = self._get_layout_var(index)
+        self.is_empty = True
+
+    @staticmethod
+    def _get_layout_var(index):
+        return 'layout' if index == 0 else 'group' + str(index)
+
+    def clear_empty(self):
+        self.is_empty = False
+
+        if self.parent:
+            self.parent.clear_empty()
+
+    def get_lines(self):
+        lines = []
+
+        for item in self.items:
+            if isinstance(item, PanelLayout):
+                lines += item.get_lines()
+            else:
+                lines.append(item)
+
+        if len(lines) > 0:
+            return self.wrap_lines(lines)
+        else:
+            return []
+
+    def wrap_lines(self, lines):
+        return self.header + indent_lines(lines, self.indent)
+
+    def add_line(self, line):
+        assert isinstance(line, str)
+
+        self.items.append(line)
+
+        if self.is_empty:
+            self.clear_empty()
+
+    def use_bake_settings(self):
+        """This panel contains operators that need the common Bake settings."""
+        self.parent.use_bake_settings()
+
+    def custom_prop(self, bone_name, prop_name, **params):
+        """Add a custom property input field to the panel."""
+        param_str = quote_parameters([ rna_idprop_quote_path(prop_name) ], params)
+        self.add_line(
+            "%s.prop(pose_bones[%r], %s)" % (self.layout, bone_name, param_str)
+        )
+
+    def operator(self, operator_name, *, properties=None, **params):
+        """Add an operator call button to the panel."""
+        name = operator_name.format_map(self.script.format_args)
+        param_str = quote_parameters([ name ], params)
+        call_str = "%s.operator(%s)" % (self.layout, param_str)
+        if properties:
+            self.add_line("props = " + call_str)
+            for k, v in properties.items():
+                self.add_line("props.%s = %r" % (k,v))
+        else:
+            self.add_line(call_str)
+
+    def add_nested_layout(self, name, params):
+        param_str = quote_parameters([], params)
+        sub_panel = PanelLayout(self, self.index + 1)
+        sub_panel.header.append('%s = %s.%s(%s)' % (sub_panel.layout, self.layout, name, param_str))
+        self.items.append(sub_panel)
+        return sub_panel
+
+    def row(self, **params):
+        """Add a nested row layout to the panel."""
+        return self.add_nested_layout('row', params)
+
+    def column(self, **params):
+        """Add a nested column layout to the panel."""
+        return self.add_nested_layout('column', params)
+
+    def split(self, **params):
+        """Add a split layout to the panel."""
+        return self.add_nested_layout('split', params)
+
+
+class BoneSetPanelLayout(PanelLayout):
+    """Panel restricted to a certain set of bones."""
+
+    def __init__(self, rig_panel, bones):
+        assert isinstance(bones, frozenset)
+        super().__init__(rig_panel)
+        self.bones = bones
+        self.show_bake_settings = False
+
+    def clear_empty(self):
+        self.parent.bones |= self.bones
+
+        super().clear_empty()
+
+    def wrap_lines(self, lines):
+        if self.bones != self.parent.bones:
+            header = ["if is_selected(%r):" % (set(self.bones))]
+            return header + indent_lines(lines)
+        else:
+            return lines
+
+    def use_bake_settings(self):
+        self.show_bake_settings = True
+        if not self.script.use_bake_settings:
+            self.script.use_bake_settings = True
+            self.script.add_utilities(SCRIPT_UTILITIES_BAKE)
+            self.script.register_classes(SCRIPT_REGISTER_BAKE)
+
+
+class RigPanelLayout(PanelLayout):
+    """Panel owned by a certain rig."""
+
+    def __init__(self, script, rig):
+        super().__init__(script)
+        self.bones = set()
+        self.subpanels = OrderedDict()
+
+    def wrap_lines(self, lines):
+        header = [ "if is_selected(%r):" % (set(self.bones)) ]
+        prefix = [ "emit_rig_separator()" ]
+        return header + indent_lines(prefix + lines)
+
+    def panel_with_selected_check(self, control_names):
+        selected_set = frozenset(control_names)
+
+        if selected_set in self.subpanels:
+            return self.subpanels[selected_set]
+        else:
+            panel = BoneSetPanelLayout(self, selected_set)
+            self.subpanels[selected_set] = panel
+            self.items.append(panel)
+            return panel
+
+
+class ScriptGenerator(base_generate.GeneratorPlugin):
+    """Generator plugin that builds the python script attached to the rig."""
+
+    priority = -100
+
+    def __init__(self, generator):
+        super().__init__(generator)
+
+        self.ui_scripts = []
+        self.ui_imports = UI_IMPORTS.copy()
+        self.ui_utilities = UI_UTILITIES.copy()
+        self.ui_register = UI_REGISTER.copy()
+        self.ui_register_drivers = []
+        self.ui_register_props = []
+
+        self.ui_rig_panels = OrderedDict()
+
+        self.use_bake_settings = False
+
+    # Structured panel code generation
+    def panel_with_selected_check(self, rig, control_names):
+        """Add a panel section with restricted selection."""
+        rig_key = id(rig)
+
+        if rig_key in self.ui_rig_panels:
+            panel = self.ui_rig_panels[rig_key]
+        else:
+            panel = RigPanelLayout(self, rig)
+            self.ui_rig_panels[rig_key] = panel
+
+        return panel.panel_with_selected_check(control_names)
+
+    # Raw output
+    def add_panel_code(self, str_list):
+        """Add raw code to the panel."""
+        self.ui_scripts += str_list
+
+    def add_imports(self, str_list):
+        self.ui_imports += str_list
+
+    def add_utilities(self, str_list):
+        self.ui_utilities += str_list
+
+    def register_classes(self, str_list):
+        self.ui_register += str_list
+
+    def register_driver_functions(self, str_list):
+        self.ui_register_drivers += str_list
+
+    def register_property(self, name, definition):
+        self.ui_register_props.append((name, definition))
+
+    def initialize(self):
+        self.format_args = {
+            'rig_id': self.generator.rig_id,
+        }
+
+    def finalize(self):
+        metarig = self.generator.metarig
+        id_store = self.generator.id_store
+        rig_id = self.generator.rig_id
+
+        vis_layers = self.obj.data.layers
+
+        # Ensure the collection of layer names exists
+        for i in range(1 + len(metarig.data.rigify_layers), 29):
+            metarig.data.rigify_layers.add()
+
+        # Create list of layer name/row pairs
+        layer_layout = []
+        for l in metarig.data.rigify_layers:
+            layer_layout += [(l.name, l.row)]
+
+        # Generate the UI script
+        if id_store.rigify_generate_mode == 'overwrite':
+            rig_ui_name = id_store.rigify_rig_ui or 'rig_ui.py'
+        else:
+            rig_ui_name = 'rig_ui.py'
+
+        if id_store.rigify_generate_mode == 'overwrite' and rig_ui_name in bpy.data.texts.keys():
+            script = bpy.data.texts[rig_ui_name]
+            script.clear()
+        else:
+            script = bpy.data.texts.new("rig_ui.py")
+
+        rig_ui_old_name = ""
+        if id_store.rigify_rig_basename:
+            rig_ui_old_name = script.name
+            script.name = id_store.rigify_rig_basename + "_rig_ui.py"
+
+        id_store.rigify_rig_ui = script.name
+
+        for s in OrderedDict.fromkeys(self.ui_imports):
+            script.write(s + "\n")
+
+        script.write(UI_BASE_UTILITIES % rig_id)
+
+        for s in OrderedDict.fromkeys(self.ui_utilities):
+            script.write(s + "\n")
+
+        script.write(UI_SLIDERS)
+
+        for s in self.ui_scripts:
+            script.write("\n        " + s.replace("\n", "\n        ") + "\n")
+
+        if len(self.ui_scripts) > 0:
+            script.write("\n        num_rig_separators[0] = 0\n")
+
+        for panel in self.ui_rig_panels.values():
+            lines = panel.get_lines()
+            if len(lines) > 1:
+                script.write("\n        ".join([''] + lines) + "\n")
+
+        if self.use_bake_settings:
+            self.ui_register = UI_REGISTER_BAKE_SETTINGS + self.ui_register
+            script.write(UI_BAKE_SETTINGS)
+
+        script.write(layers_ui(vis_layers, layer_layout))
+
+        script.write("\ndef register():\n")
+
+        ui_register = OrderedDict.fromkeys(self.ui_register)
+        for s in ui_register:
+            script.write("    bpy.utils.register_class("+s+")\n")
+
+        ui_register_drivers = OrderedDict.fromkeys(self.ui_register_drivers)
+        for s in ui_register_drivers:
+            script.write("    bpy.app.driver_namespace['"+s+"'] = "+s+"\n")
+
+        ui_register_props = OrderedDict.fromkeys(self.ui_register_props)
+        for s in ui_register_props:
+            script.write("    bpy.types.%s = %s\n " % (*s,))
+
+        script.write("\ndef unregister():\n")
+
+        for s in ui_register_props:
+            script.write("    del bpy.types.%s\n" % s[0])
+
+        for s in ui_register:
+            script.write("    bpy.utils.unregister_class("+s+")\n")
+
+        for s in ui_register_drivers:
+            script.write("    del bpy.app.driver_namespace['"+s+"']\n")
+
+        script.write("\nregister()\n")
+        script.use_module = True
+
+        # Run UI script
+        exec(script.as_string(), {})
+
+        # Attach the script to the rig
+        attach_persistent_script(self.obj, script)

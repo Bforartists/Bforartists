@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
+"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-09 00:00:00\n"
+"POT-Creation-Date: 2019-10-03 09:27:21\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -678,10 +678,6 @@ msgid "(undocumented operator)"
 msgstr "(Dokumentatu gabeko operadorea)"
 
 
-msgid "Open"
-msgstr "Ireki"
-
-
 msgctxt "Operator"
 msgid "Set Origin"
 msgstr "Jatorria Ezarri"
@@ -971,6 +967,10 @@ msgid "Name of new directory"
 msgstr "Direktorio berriaren izena"
 
 
+msgid "Open"
+msgstr "Ireki"
+
+
 msgid "Open new directory"
 msgstr "Direktorio berria ireki"
 
@@ -1067,10 +1067,6 @@ msgstr "Fitxategia edo Direktorioa berrizendatu"
 
 msgid "Rename file or file directory"
 msgstr "Fitxategia edo fitxategi direktorioa berrizendatu"
-
-
-msgid "Activate/select file"
-msgstr "Aktibatu/hautatu fitxategia"
 
 
 msgid "Open a directory when selecting it"
@@ -1823,6 +1819,10 @@ msgid "Continue"
 msgstr "Jarraitu"
 
 
+msgid "Speed Factor"
+msgstr "Azelerazio-faktorea"
+
+
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Mota"
@@ -1905,10 +1905,6 @@ msgstr "Bozgorailua"
 
 msgid "3D"
 msgstr "3D"
-
-
-msgid "Speed Factor"
-msgstr "Azelerazio-faktorea"
 
 
 msgctxt "WindowManager"
@@ -2589,6 +2585,10 @@ msgid "Paste name"
 msgstr "Izena itsatsi"
 
 
+msgid "Blender File View"
+msgstr "Blender Fitxategi Bista"
+
+
 msgid "unable to open the file"
 msgstr "Ezin izan da fitxategia ireki"
 
@@ -2639,10 +2639,6 @@ msgstr "Euskarri gabeko formatua"
 
 msgid "Cannot read %s '%s': %s"
 msgstr "Ezin da irakurri %s '%s': %s"
-
-
-msgid "Blender File View"
-msgstr "Blender Fitxategi Bista"
 
 
 msgid "Add Curve"

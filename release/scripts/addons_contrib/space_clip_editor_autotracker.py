@@ -25,7 +25,7 @@ bl_info = {
     "description": "Motion Tracking with automatic feature detection.",
     "warning": "",
     "wiki_url": "https://github.com/miikapuustinen/blender_autotracker",
-    "category": "Motion Tracking",
+    "category": "Video Tools",
     }
 
 import bpy

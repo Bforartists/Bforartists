@@ -224,6 +224,8 @@ class AddElbowJoint(Operator):
                 oldmeshname = obj.data.name
                 mesh = create_mesh(context, verts, [], faces, "Elbow Joint")
                 obj.data = mesh
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
                 bpy.data.meshes.remove(oldmesh)
                 obj.data.name = oldmeshname
             else:
@@ -469,6 +471,8 @@ class AddTeeJoint(Operator):
                 oldmeshname = obj.data.name
                 mesh = create_mesh(context, verts, [], faces, "Tee Joint")
                 obj.data = mesh
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
                 bpy.data.meshes.remove(oldmesh)
                 obj.data.name = oldmeshname
             else:
@@ -731,6 +735,8 @@ class AddWyeJoint(Operator):
                 oldmeshname = obj.data.name
                 mesh = create_mesh(context, verts, [], faces, "Wye Joint")
                 obj.data = mesh
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
                 bpy.data.meshes.remove(oldmesh)
                 obj.data.name = oldmeshname
             else:
@@ -1057,6 +1063,8 @@ class AddCrossJoint(Operator):
                 oldmeshname = obj.data.name
                 mesh = create_mesh(context, verts, [], faces, "Cross Joint")
                 obj.data = mesh
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
                 bpy.data.meshes.remove(oldmesh)
                 obj.data.name = oldmeshname
             else:
@@ -1280,6 +1288,8 @@ class AddNJoint(Operator):
                 oldmeshname = obj.data.name
                 mesh = create_mesh(context, verts, [], faces, "N Joint")
                 obj.data = mesh
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
                 bpy.data.meshes.remove(oldmesh)
                 obj.data.name = oldmeshname
             else:

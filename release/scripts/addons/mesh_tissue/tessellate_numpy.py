@@ -2689,10 +2689,10 @@ class update_tessellate(Operator):
 
 class TISSUE_PT_tessellate(Panel):
     bl_label = "Tissue Tools"
-    bl_category = "Tissue"
+    bl_category = "Edit"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    #bl_options = {'DEFAULT_OPEN'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):

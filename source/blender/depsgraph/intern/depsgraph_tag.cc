@@ -462,7 +462,8 @@ const char *update_source_as_string(eUpdateSource source)
 
 int deg_recalc_flags_for_legacy_zero()
 {
-  return ID_RECALC_ALL & ~(ID_RECALC_PSYS_ALL | ID_RECALC_ANIMATION | ID_RECALC_SOURCE);
+  return ID_RECALC_ALL &
+         ~(ID_RECALC_PSYS_ALL | ID_RECALC_ANIMATION | ID_RECALC_SOURCE | ID_RECALC_TIME);
 }
 
 int deg_recalc_flags_effective(Depsgraph *graph, int flags)
@@ -510,6 +511,14 @@ void deg_graph_on_visible_update(Main *bmain, Depsgraph *graph, const bool do_ti
    * to evaluation though) with `do_time=true`. This means early output checks should be aware of
    * this. */
   for (DEG::IDNode *id_node : graph->id_nodes) {
+    const ID_Type id_type = GS(id_node->id_orig->name);
+    if (id_type == ID_OB) {
+      Object *object_orig = reinterpret_cast<Object *>(id_node->id_orig);
+      if (object_orig->proxy != NULL) {
+        object_orig->proxy->proxy_from = object_orig;
+      }
+    }
+
     if (!id_node->visible_components_mask) {
       /* ID has no components which affects anything visible.
        * No need bother with it to tag or anything. */
@@ -536,7 +545,6 @@ void deg_graph_on_visible_update(Main *bmain, Depsgraph *graph, const bool do_ti
      * other type of cache).
      *
      * TODO(sergey): Need to generalize this somehow. */
-    const ID_Type id_type = GS(id_node->id_orig->name);
     if (id_type == ID_OB) {
       flag |= ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY;
     }
@@ -614,6 +622,12 @@ void graph_id_tag_update(
     Main *bmain, Depsgraph *graph, ID *id, int flag, eUpdateSource update_source)
 {
   const int debug_flags = (graph != NULL) ? DEG_debug_flags_get((::Depsgraph *)graph) : G.debug;
+  if (graph != NULL && graph->is_evaluating) {
+    if (debug_flags & G_DEBUG_DEPSGRAPH) {
+      printf("ID tagged for update during dependency graph evaluation.");
+    }
+    return;
+  }
   if (debug_flags & G_DEBUG_DEPSGRAPH_TAG) {
     printf("%s: id=%s flags=%s source=%s\n",
            __func__,
@@ -808,24 +822,6 @@ static void deg_graph_clear_id_recalc_flags(ID *id)
   }
 }
 
-static void deg_graph_clear_id_node_func(void *__restrict data_v,
-                                         const int i,
-                                         const TaskParallelTLS *__restrict /*tls*/)
-{
-  /* TODO: we clear original ID recalc flags here, but this may not work
-   * correctly when there are multiple depsgraph with others still using
-   * the recalc flag. */
-  DEG::Depsgraph *deg_graph = reinterpret_cast<DEG::Depsgraph *>(data_v);
-  DEG::IDNode *id_node = deg_graph->id_nodes[i];
-
-  id_node->is_user_modified = false;
-
-  deg_graph_clear_id_recalc_flags(id_node->id_cow);
-  if (deg_graph->is_active) {
-    deg_graph_clear_id_recalc_flags(id_node->id_orig);
-  }
-}
-
 void DEG_ids_clear_recalc(Main *UNUSED(bmain), Depsgraph *depsgraph)
 {
   DEG::Depsgraph *deg_graph = reinterpret_cast<DEG::Depsgraph *>(depsgraph);
@@ -835,10 +831,15 @@ void DEG_ids_clear_recalc(Main *UNUSED(bmain), Depsgraph *depsgraph)
     return;
   }
   /* Go over all ID nodes nodes, clearing tags. */
-  const int num_id_nodes = deg_graph->id_nodes.size();
-  TaskParallelSettings settings;
-  BLI_parallel_range_settings_defaults(&settings);
-  settings.min_iter_per_thread = 1024;
-  BLI_task_parallel_range(0, num_id_nodes, deg_graph, deg_graph_clear_id_node_func, &settings);
+  for (DEG::IDNode *id_node : deg_graph->id_nodes) {
+    /* TODO: we clear original ID recalc flags here, but this may not work
+     * correctly when there are multiple depsgraph with others still using
+     * the recalc flag. */
+    id_node->is_user_modified = false;
+    deg_graph_clear_id_recalc_flags(id_node->id_cow);
+    if (deg_graph->is_active) {
+      deg_graph_clear_id_recalc_flags(id_node->id_orig);
+    }
+  }
   memset(deg_graph->id_type_updated, 0, sizeof(deg_graph->id_type_updated));
 }

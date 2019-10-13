@@ -23,7 +23,7 @@ bl_info = {
     "author": "Ivo Grigull (loolarge), Tal Trachtman", "Tokikake"
     "version": (1, 1, 1),
     "blender": (2, 80, 0),
-    "location": "Object Data > Shape Keys (Search: corrective) ",
+    "location": "Object Data > Shape Keys Specials or Search",
     "description": "Creates a corrective shape key for the current pose",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Animation/Corrective_Shape_Key",

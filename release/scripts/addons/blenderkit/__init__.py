@@ -1167,11 +1167,11 @@ class BlenderKitModelSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
     append_method: EnumProperty(
         name="Import Method",
         items=(
-            ('LINK_GROUP', 'Link Group', ''),
+            ('LINK_COLLECTION', 'Link Collection', ''),
             ('APPEND_OBJECTS', 'Append Objects', ''),
         ),
         description="choose if the assets will be linked or appended",
-        default="LINK_GROUP"
+        default="LINK_COLLECTION"
     )
     append_link: EnumProperty(
         name="How to Attach",
@@ -1271,6 +1271,24 @@ class BlenderKitAddonPreferences(AddonPreferences):
         description="API key used to refresh the token regularly.",
         default="",
         subtype="PASSWORD",
+    )
+
+    api_key_timeout: IntProperty(
+        name = 'api key timeout',
+        description = 'time where the api key will need to be refreshed',
+        default = 0,
+    )
+
+    api_key_life: IntProperty(
+        name='api key life time',
+        description='maximum lifetime of the api key, in seconds',
+        default=0,
+    )
+
+    refresh_in_progress: BoolProperty(
+        name="Api key refresh in progress",
+        description="Api key is currently being refreshed. Don't refresh it again.",
+        default=False
     )
 
     login_attempt: BoolProperty(

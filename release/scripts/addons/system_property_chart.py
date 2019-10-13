@@ -192,6 +192,7 @@ class View3DEditProps(Panel):
     bl_category = "Item"
     bl_label = "Property Chart"
     bl_context = "objectmode"
+    bl_options = {'DEFAULT_CLOSED'}
 
     _PROP_STORAGE_ID = "view3d_edit_props"
     _PROP_STORAGE_ID_DESCR = "Properties of objects in the context"
@@ -210,6 +211,7 @@ class SequencerEditProps(Panel):
     bl_region_type = 'UI'
     bl_category = "Item"
     bl_label = "Property Chart"
+    bl_options = {'DEFAULT_CLOSED'}
 
     _PROP_STORAGE_ID = "sequencer_edit_props"
     _PROP_STORAGE_ID_DESCR = "Properties of sequencer strips in the context"

@@ -21,7 +21,7 @@ bl_info = {
     "description": "Useful and time-saving tools for rendering workflow",
     "author": "Campbell Barton",
     "version": (1, 1),
-    "blender": (2, 69, 0),
+    "blender": (2, 80, 0),
     "location": "Node > Add Template",
     "description": "Adds node presets",
     "warning": "",

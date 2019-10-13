@@ -63,7 +63,7 @@ verification_icons = {
     'ready': 'vs_ready.png',
     'deleted': 'vs_deleted.png',
     'uploaded': 'vs_uploaded.png',
-    'uploading': None,
+    'uploading': 'vs_uploading.png',
     'on_hold': 'vs_on_hold.png',
     'validated': None,
     'rejected': None
@@ -271,7 +271,7 @@ def draw_ratings_bgl():
             ui_img_name = 'rating_ui.png'
         else:
             ui_img_name = 'rating_ui_empty.png'
-            text = 'Try to estimate how many hours it would take to a proffesional artist to create this asset:'
+            text = 'Try to estimate how many hours it would take for a professional artist to create this asset:'
             tx = ui.rating_x + ui.workhours_bar_x
             # draw_text_block(x=tx, y=ui.rating_y, width=80, font_size=20, line_height=15, text=text, color=colors.TEXT)
 

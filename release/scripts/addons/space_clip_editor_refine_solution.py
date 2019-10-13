@@ -32,7 +32,7 @@ bl_info = {
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/"
                 "Motion_Tracking/Refine_Track",
-    "category": "Motion Tracking",
+    "category": "Video Tools",
 }
 
 import bpy

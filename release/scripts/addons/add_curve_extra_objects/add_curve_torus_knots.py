@@ -562,6 +562,11 @@ class torus_knot_plus(Operator, AddObjectHelper):
             default=False,
             description="Auto adjust curve resolution based on TK length",
             )
+    edit_mode : BoolProperty(
+            name="Show in edit mode",
+            default=True,
+            description="Show in edit mode"
+            )
 
     def draw(self, context):
         layout = self.layout
@@ -664,6 +669,9 @@ class torus_knot_plus(Operator, AddObjectHelper):
             box.prop(self, "colorSet")
             box.prop(self, "random_colors")
             box.prop(self, "saturation")
+            
+        col = layout.column()
+        col.row().prop(self, "edit_mode", expand=True)
 
         # TRANSFORM options
         col = layout.column()
@@ -719,6 +727,11 @@ class torus_knot_plus(Operator, AddObjectHelper):
         
         # restore pre operator state
         bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
+
+        if self.edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+        else:
+            bpy.ops.object.mode_set(mode = 'OBJECT')
 
         return {'FINISHED'}
 
