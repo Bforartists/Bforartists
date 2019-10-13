@@ -1335,7 +1335,7 @@ class VIEW3D_MT_select_by_type(Menu):
         layout.separator()
 
         layout.operator("object.select_by_type", text= "Camera", icon = "OUTLINER_OB_CAMERA").type = 'CAMERA'
-        layout.operator("object.select_by_type", text= "Light", icon = "OUTLINER_OB_LAMP").type = 'LIGHT'
+        layout.operator("object.select_by_type", text= "Light", icon = "OUTLINER_OB_LIGHT").type = 'LIGHT'
         layout.operator("object.select_by_type", text= "Speaker", icon = "OUTLINER_OB_SPEAKER").type = 'SPEAKER'
         layout.operator("object.select_by_type", text= "Probe", icon = "OUTLINER_OB_LIGHTPROBE").type = 'LIGHT_PROBE'
 
