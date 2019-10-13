@@ -553,7 +553,7 @@ outliner_ob_mesh
 outliner_ob_curve
 outliner_ob_lattice
 outliner_ob_meta
-outliner_ob_lamp
+#def_icon_blank(573
 outliner_ob_camera
 outliner_ob_armature
 outliner_ob_font
