@@ -104,7 +104,7 @@ class Keymaps:
 
     def dump_keys(self, context, filename="/tmp/keymap.txt"):
         """
-            Utility for developpers :
+            Utility for developers :
             Dump all keymaps to a file
             filename : string a file path to dump keymaps
         """

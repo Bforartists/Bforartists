@@ -1,40 +1,25 @@
 Useful 3D printing tools
 ========================
 
-Statistics
-----------
-
-- volume
-- surface area
-  *(if you gold plate for eg, or use expensive paint :))*
-
 
 Checks
 ------
 
 - *degenerate geometry*
-- - zero area faces
-- - zero length edges
 - - bow-tie quads.
 - *solid geometry*
 - - self intersections
-- - non-manifold
-- - non-contiguous normals (bad flipping)
 
 
 Mesh Cleanup
 ------------
 
-- basics - stray verts, loose edges
 - degenerate faces, bow-tie quads
 
 
 Visualisation
 -------------
 
-- visualize areas of low wall thickness.
-- visualize overhangs (some printers have this as s limit).
-- areas of low wall thickness.
 - sharp/pointy surface.
 
 

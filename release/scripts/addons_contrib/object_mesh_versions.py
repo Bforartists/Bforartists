@@ -114,6 +114,8 @@ class KTXMESHVERSIONS_PT_mainPanel(bpy.types.Panel):
     bl_idname = "KTXMESHVERSIONS_PT_mainPanel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
+    bl_category = 'Edit'
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         scene = context.scene

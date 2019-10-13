@@ -20,7 +20,13 @@
 
 # <pep8 compliant>
 
-from .svg_util import parse_array_of_floats
+
+# XXX Not really nice, but that hack is needed to allow execution of that test
+#     from both automated CTest and by directly running the file manually...
+if __name__ == '__main__':
+    from svg_util import (parse_array_of_floats, read_float, parse_coord,)
+else:
+    from .svg_util import (parse_array_of_floats, read_float, parse_coord,)
 import unittest
 
 
@@ -71,6 +77,77 @@ class ParseArrayOfFloatsTest(unittest.TestCase):
 
     def test_comma_separated_values_with_decimal_separator(self):
         self.assertEqual(parse_array_of_floats("2.75,8.5"), [2.75, 8.5])
+
+
+class ReadFloatTest(unittest.TestCase):
+    def test_empty(self):
+        value, endptr = read_float("", 0)
+        self.assertEqual(value, "0")
+        self.assertEqual(endptr, 0)
+
+    def test_empty_spaces(self):
+        value, endptr = read_float("    ", 0)
+        self.assertEqual(value, "0")
+        self.assertEqual(endptr, 4)
+
+    def test_single_value(self):
+        value, endptr = read_float("1.2", 0)
+        self.assertEqual(value, "1.2")
+        self.assertEqual(endptr, 3)
+
+    def test_scientific_value(self):
+        value, endptr = read_float("1.2e+3", 0)
+        self.assertEqual(value, "1.2e+3")
+        self.assertEqual(endptr, 6)
+
+    def test_scientific_value_no_sign(self):
+        value, endptr = read_float("1.2e3", 0)
+        self.assertEqual(value, "1.2e3")
+        self.assertEqual(endptr, 5)
+
+    def test_middle(self):
+        value, endptr = read_float("1.2  3.4  5.6", 3)
+        self.assertEqual(value, "3.4")
+        self.assertEqual(endptr, 8)
+
+    def test_comma(self):
+        value, endptr = read_float("1.2  ,,3.4  5.6", 3)
+        self.assertEqual(value, "3.4")
+        self.assertEqual(endptr, 10)
+
+    def test_not_a_number(self):
+        # TODO(sergey): Make this more concrete.
+        with self.assertRaises(Exception):
+            read_float("1.2eV", 3)
+
+    def test_missing_fractional(self):
+        value, endptr = read_float("1.", 0)
+        self.assertEqual(value, "1.")
+        self.assertEqual(endptr, 2)
+
+        value, endptr = read_float("2. 3", 0)
+        self.assertEqual(value, "2.")
+        self.assertEqual(endptr, 2)
+
+
+class ParseCoordTest(unittest.TestCase):
+    def test_empty(self):
+        self.assertEqual(parse_coord("", 200), 0)
+
+    def test_empty_spaces(self):
+        self.assertEqual(parse_coord("    ", 200), 0)
+
+    def test_no_units(self):
+        self.assertEqual(parse_coord("1.2", 200), 1.2)
+
+    def test_unit_cm(self):
+        self.assertAlmostEqual(parse_coord("1.2cm", 200), 42.51968503937008)
+
+    def test_unit_ex(self):
+        self.assertAlmostEqual(parse_coord("1.2ex", 200), 1.2)
+
+    def test_unit_percentage(self):
+        self.assertEqual(parse_coord("1.2%", 200), 2.4)
 
 
 if __name__ == '__main__':

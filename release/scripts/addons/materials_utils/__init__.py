@@ -116,7 +116,7 @@ from bpy.types import (
     )
 
 
-# All classes used by Material Utilities, that need to be registred
+# All classes used by Material Utilities, that need to be registered
 classes = (
     VIEW3D_OT_materialutilities_assign_material_object,
     VIEW3D_OT_materialutilities_assign_material_edit,

@@ -1,17 +1,14 @@
 import bpy
 
 from .paw import Rig as pawRig
-from .paw import parameters_ui
-from .paw import add_parameters
+
 
 IMPLEMENTATION = True   # Include and set True if Rig is just an implementation for a wrapper class
                         # add_parameters and parameters_ui are unused for implementation classes
 
 
 class Rig(pawRig):
-
-    def __init__(self, obj, bone_name, params):
-        super(Rig, self).__init__(obj, bone_name, params)
+    pass
 
 
 def create_sample(obj):
@@ -135,7 +132,7 @@ def create_sample(obj):
 
     bpy.ops.object.mode_set(mode='OBJECT')
     pbone = obj.pose.bones[bones['thigh.L']]
-    pbone.rigify_type = 'limbs.super_limb'
+    pbone.rigify_type = 'limbs.paw'
     pbone.lock_location = (False, False, False)
     pbone.lock_rotation = (False, False, False)
     pbone.lock_rotation_w = False

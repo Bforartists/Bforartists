@@ -25,7 +25,7 @@ bl_info = {
     "author": "roaoao",
     "version": (1, 4, 0),
     "blender": (2, 80, 0),
-    "location": "Search Menu > Icon Viewer, Text Editor > Properties",
+    "location": "Text Editor > Dev Tab > Icon Viewer",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6"
                 "/Py/Scripts/Development/Display_All_Icons",
     "category": "Development"
@@ -248,7 +248,8 @@ class IV_PT_icons(bpy.types.Panel):
     bl_space_type = "TEXT_EDITOR"
     bl_region_type = "UI"
     bl_label = "Icon Viewer"
-    bl_category = "Icon Viewer"
+    bl_category = "Dev"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @staticmethod
     def tag_redraw():

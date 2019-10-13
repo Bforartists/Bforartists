@@ -62,7 +62,7 @@ def filenames_group_by_ext(line, ext):
     """
     Splits material libraries supporting spaces, so:
     b'foo bar.mtl baz spam.MTL' -> (b'foo bar.mtl', b'baz spam.MTL')
-    Also handle " chars (some softwares use those to protect filenames with spaces, see T67266... sic).
+    Also handle " chars (some software use those to protect filenames with spaces, see T67266... sic).
     """
     # Note that we assume that if there are some " in that line,
     # then all filenames are properly enclosed within those...
@@ -93,7 +93,7 @@ def obj_image_load(context_imagepath_map, line, DIR, recursive, relpath):
     But we try all space-separated items from current line when file is not found with last one
     (users keep generating/using image files with spaces in a format that does not support them, sigh...)
     Also tries to replace '_' with ' ' for Max's exporter replaces spaces with underscores.
-    Also handle " chars (some softwares use those to protect filenames with spaces, see T67266... sic).
+    Also handle " chars (some software use those to protect filenames with spaces, see T67266... sic).
     """
     filepath_parts = line.split(b' ')
 
@@ -187,8 +187,7 @@ def create_materials(filepath, relpath,
             _generic_tex_set(mat_wrap.specular_texture, image, 'UV', map_offset, map_scale)
 
         elif type == 'Ke':
-            # XXX Not supported?
-            print("WARNING, currently unsupported emit texture, skipped.")
+            _generic_tex_set(mat_wrap.emission_color_texture, image, 'UV', map_offset, map_scale)
 
         elif type == 'Bump':
             bump_mult = map_options.get(b'-bm')
@@ -218,7 +217,7 @@ def create_materials(filepath, relpath,
         else:
             raise Exception("invalid type %r" % type)
 
-    def finalize_material(context_material, context_material_vars, spec_colors, emit_colors,
+    def finalize_material(context_material, context_material_vars, spec_colors,
                           do_highlight, do_reflection, do_transparency, do_glass):
         # Finalize previous mat, if any.
         if context_material:
@@ -236,14 +235,6 @@ def create_materials(filepath, relpath,
                 context_mat_wrap.specular_tint = 0.0
                 if "roughness" not in context_material_vars:
                     context_mat_wrap.roughness = 0.0
-
-
-            emit_value = sum(emit_colors) / 3.0
-            if emit_value > 1e-6:
-                print("WARNING, emit value unsupported by Principled BSDF shader, skipped.")
-                # We have to adapt it to diffuse color too...
-                emit_value /= sum(tuple(context_material.diffuse_color)[:3]) / 3.0
-            # ~ context_material.emit = emit_value
 
             # FIXME, how else to use this?
             if do_highlight:
@@ -303,7 +294,6 @@ def create_materials(filepath, relpath,
             do_transparency = False
             do_glass = False
             spec_colors = [0.0, 0.0, 0.0]
-            emit_colors = [0.0, 0.0, 0.0]
 
             # print('\t\tloading mtl: %e' % mtlpath)
             context_material = None
@@ -319,7 +309,7 @@ def create_materials(filepath, relpath,
 
                 if line_id == b'newmtl':
                     # Finalize previous mat, if any.
-                    finalize_material(context_material, context_material_vars, spec_colors, emit_colors,
+                    finalize_material(context_material, context_material_vars, spec_colors,
                                       do_highlight, do_reflection, do_transparency, do_glass)
 
                     context_material_name = line_value(line_split)
@@ -328,8 +318,7 @@ def create_materials(filepath, relpath,
                         context_mat_wrap = nodal_material_wrap_map[context_material]
                     context_material_vars.clear()
 
-                    spec_colors = [0.0, 0.0, 0.0]
-                    emit_colors[:] = [0.0, 0.0, 0.0]
+                    spec_colors[:] = [0.0, 0.0, 0.0]
                     do_highlight = False
                     do_reflection = False
                     do_transparency = False
@@ -352,8 +341,8 @@ def create_materials(filepath, relpath,
                     elif line_id == b'ke':
                         # We cannot set context_material.emit right now, we need final diffuse color as well for this.
                         # XXX Unsupported currently
-                        emit_colors[:] = [
-                            float_func(line_split[1]), float_func(line_split[2]), float_func(line_split[3])]
+                        col = (float_func(line_split[1]), float_func(line_split[2]), float_func(line_split[3]))
+                        context_mat_wrap.emission_color = col
                     elif line_id == b'ns':
                         # XXX Totally empirical conversion, trying to adapt it
                         #     (from 0.0 - 900.0 OBJ specular exponent range to 1.0 - 0.0 Principled BSDF range)...
@@ -469,7 +458,7 @@ def create_materials(filepath, relpath,
                         print("WARNING: %r:%r (ignored)" % (filepath, line))
 
             # Finalize last mat, if any.
-            finalize_material(context_material, context_material_vars, spec_colors, emit_colors,
+            finalize_material(context_material, context_material_vars, spec_colors,
                               do_highlight, do_reflection, do_transparency, do_glass)
             mtl.close()
 

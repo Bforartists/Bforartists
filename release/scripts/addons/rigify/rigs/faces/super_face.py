@@ -44,7 +44,7 @@ class Rig:
             grand_children += connected_children_names( self.obj, child )
 
         self.org_bones   = [bone_name] + children + grand_children
-        self.face_length = obj.data.edit_bones[ self.org_bones[0] ].length
+        self.face_length = obj.data.bones[ self.org_bones[0] ].length
         self.params      = params
 
         if params.primary_layers_extra:
@@ -716,7 +716,7 @@ class Rig:
             const = owner_pb.constraints.new( 'COPY_ROTATION' )
             const.target       = self.obj
             const.subtarget    = subtarget
-            const.use_offset   = True
+            const.mix_mode     = 'OFFSET'
             const.target_space = 'LOCAL'
             const.owner_space  = 'LOCAL'
 

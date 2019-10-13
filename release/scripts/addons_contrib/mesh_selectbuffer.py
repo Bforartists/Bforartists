@@ -31,7 +31,7 @@ bl_info = {
     "warning": "",
     "wiki_url": "https://github.com/kostex/blenderscripts/",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
-    "category": "3D View"}
+    "category": "Mesh"}
 
 
 class Oldbuffer:
@@ -96,6 +96,9 @@ class KTXSELECTBUFFER_PT_Panel(bpy.types.Panel):
     bl_idname = "KTXSELECTBUFFER_PT_Panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
+    bl_category = 'Edit'
+    bl_context = "mesh_edit"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         obj = bpy.context.object

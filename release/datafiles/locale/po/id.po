@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
+"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-09 00:00:00\n"
+"POT-Creation-Date: 2019-10-03 09:27:21\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -815,10 +815,6 @@ msgid "Fonts"
 msgstr "Huruf:"
 
 
-msgid "Filter BlenderBackup files"
-msgstr "Situs Blender"
-
-
 msgid "Cache Offset"
 msgstr "Kamera"
 
@@ -845,10 +841,6 @@ msgstr "Rangkaian Simulasi"
 
 msgid "Tracer Particles"
 msgstr "Partikel"
-
-
-msgid "Remove air bubbles"
-msgstr "Induk"
 
 
 msgid "Particle Influence"
@@ -1235,23 +1227,7 @@ msgid "Store Edge Bevel Weight"
 msgstr "Objek"
 
 
-msgid "Clone UV loop layer"
-msgstr "Tekstur"
-
-
-msgid "Clone UV loop layer Index"
-msgstr "Tekstur"
-
-
 msgid "Clone UV loop layer index"
-msgstr "Tekstur"
-
-
-msgid "Mask UV loop layer"
-msgstr "Tekstur"
-
-
-msgid "Mask UV loop layer Index"
 msgstr "Tekstur"
 
 
@@ -1667,14 +1643,6 @@ msgid "Solver"
 msgstr "Kamera"
 
 
-msgid "Min step"
-msgstr "Ukurang"
-
-
-msgid "Auto step"
-msgstr "Penyimpanan Otomatis"
-
-
 msgid "Color Depth"
 msgstr "Warna"
 
@@ -1943,6 +1911,10 @@ msgstr "Baru"
 
 msgid "Cast Type"
 msgstr "Tipe"
+
+
+msgid "Use Transform"
+msgstr "Orientasi Transformasi"
 
 
 msgid "Use edge collapsing"
@@ -2230,10 +2202,6 @@ msgid "Correlation"
 msgstr "lokasi"
 
 
-msgid "Motion model"
-msgstr "Gerakan"
-
-
 msgid "Default motion model to use for tracking"
 msgstr "lokasi"
 
@@ -2324,10 +2292,6 @@ msgstr "Suara"
 
 msgid "Box Mask"
 msgstr "Hapus"
-
-
-msgid "Mask type"
-msgstr "Grup"
 
 
 msgid "Bright/Contrast"
@@ -3197,10 +3161,6 @@ msgid "Reset Transform"
 msgstr "Ubah-bentuk ke muasal"
 
 
-msgid "Open"
-msgstr "Buka"
-
-
 msgctxt "Operator"
 msgid "Add Camera Preset"
 msgstr "Kamera"
@@ -3315,16 +3275,6 @@ msgstr "Hapus"
 
 msgid "Join selected tracks"
 msgstr "Hapus"
-
-
-msgctxt "Operator"
-msgid "Delete keyframe"
-msgstr "Hapus keyframe"
-
-
-msgctxt "Operator"
-msgid "Insert keyframe"
-msgstr "Sisipkan keyframe"
 
 
 msgctxt "Operator"
@@ -3713,6 +3663,10 @@ msgstr "Hapus Berkas Terpilih"
 
 msgid "Delete selected files"
 msgstr "Hapus berkas terpilih"
+
+
+msgid "Open"
+msgstr "Buka"
 
 
 msgctxt "Operator"
@@ -4753,10 +4707,6 @@ msgid "Node type"
 msgstr "Tekstur"
 
 
-msgid "Use Transform"
-msgstr "Orientasi Transformasi"
-
-
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Tambah Baru"
@@ -5678,11 +5628,6 @@ msgstr "Situs Blender"
 msgctxt "Operator"
 msgid "Cancel Render View"
 msgstr "Partikel"
-
-
-msgctxt "Operator"
-msgid "Bake To Keyframes"
-msgstr "Tekstur"
 
 
 msgid "Material Preset"
@@ -6780,6 +6725,10 @@ msgid "Progressive Refine"
 msgstr "Proses"
 
 
+msgid "Glossy Color"
+msgstr "Warna"
+
+
 msgid "Map Resolution"
 msgstr "Gerakan"
 
@@ -6802,10 +6751,6 @@ msgstr "Kamera"
 
 msgid "Camera Zoom"
 msgstr "Kamera"
-
-
-msgid "Glossy Color"
-msgstr "Warna"
 
 
 msgid "Deliver transmission color pass"
@@ -8979,6 +8924,10 @@ msgid "Paste name"
 msgstr "Tekstur"
 
 
+msgid "Blender File View"
+msgstr "Menampilkan Berkas Blender"
+
+
 msgid "unable to open the file"
 msgstr "Tidak dapat membuka dokumen"
 
@@ -9002,10 +8951,6 @@ msgstr "Kamera"
 msgctxt "Operator"
 msgid "Toggle System Console"
 msgstr "Kamera"
-
-
-msgid "Blender File View"
-msgstr "Menampilkan Berkas Blender"
 
 
 msgid "Add Mesh"

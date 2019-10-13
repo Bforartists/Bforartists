@@ -22,7 +22,7 @@ bl_info = {
     "name": "UI Classes Overview",
     "author": "lijenstina",
     "version": (1, 0, 2),
-    "blender": (2, 78, 0),
+    "blender": (2, 80, 0),
     "location": "Text Editor > Properties",
     "description": "Print the UI classes in a text-block",
     "warning": "",
@@ -48,6 +48,7 @@ class TEXT_PT_ui_cheat_sheet(Panel):
     bl_space_type = "TEXT_EDITOR"
     bl_region_type = "UI"
     bl_label = "UI Cheat Sheet"
+    bl_category = 'Dev'
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):

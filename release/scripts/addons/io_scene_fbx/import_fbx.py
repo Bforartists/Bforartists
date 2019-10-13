@@ -1117,6 +1117,8 @@ def blen_read_geom_layer_smooth(fbx_obj, mesh):
         return False
 
 def blen_read_geom_layer_edge_crease(fbx_obj, mesh):
+    from math import sqrt
+
     fbx_layer = elem_find_first(fbx_obj, b'LayerElementEdgeCrease')
 
     if fbx_layer is None:
@@ -1151,6 +1153,9 @@ def blen_read_geom_layer_edge_crease(fbx_obj, mesh):
             fbx_layer_data, None,
             fbx_layer_mapping, fbx_layer_ref,
             1, 1, layer_id,
+            # Blender squares those values before sending them to OpenSubdiv, when other softwares don't,
+            # so we need to compensate that to get similar results through FBX...
+            xform=sqrt,
             )
     else:
         print("warning layer %r mapping type unsupported: %r" % (fbx_layer.id, fbx_layer_mapping))
@@ -1422,6 +1427,10 @@ def blen_read_material(fbx_tmpl, fbx_obj, settings):
     # elem_props_get_color_rgb(fbx_props, b'ReflectionColor', const_color_white)
     # (x / 7.142) is only a guess, cycles usable range is (0.0 -> 0.5)
     ma_wrap.normalmap_strength = elem_props_get_number(fbx_props, b'BumpFactor', 2.5) / 7.142
+    # For emission color we can take into account the factor, but only for default values, not in case of texture.
+    emission_factor = elem_props_get_number(fbx_props, b'EmissiveFactor', 1.0)
+    ma_wrap.emission_color = [c * emission_factor
+                              for c in elem_props_get_color_rgb(fbx_props, b'EmissiveColor', const_color_black)]
 
     nodal_material_wrap_map[ma] = ma_wrap
 
@@ -1898,7 +1907,11 @@ class FbxImportHelperNode:
 
             meshes = set()
             for child in self.children:
-                child.collect_skeleton_meshes(meshes)
+                # Children meshes may be linked to children armatures, in which case we do not want to link them
+                # to a parent one. See T70244.
+                child.collect_armature_meshes()
+                if not child.meshes:
+                    child.collect_skeleton_meshes(meshes)
             for m in meshes:
                 old_matrix = m.matrix
                 m.matrix = armature_matrix_inv @ m.get_world_matrix()
@@ -3102,6 +3115,9 @@ def load(operator, context, filepath="",
                     elif lnk_type == b'Bump':
                         # TODO displacement...
                         """
+                    elif lnk_type in {b'EmissiveColor'}:
+                        ma_wrap.emission_color_texture.image = image
+                        texture_mapping_set(fbx_lnk, ma_wrap.emission_color_texture)
                     else:
                         print("WARNING: material link %r ignored" % lnk_type)
 

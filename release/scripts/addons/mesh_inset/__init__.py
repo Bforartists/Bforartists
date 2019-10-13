@@ -317,9 +317,13 @@ def remove_dups(vs):
     seen = set()
     return [x for x in vs if not (x in seen or seen.add(x))]
 
+def menu(self, context):
+    self.layout.operator("mesh.insetstraightskeleton", text="Inset Straight Skeleton")
 
 def register():
     bpy.utils.register_class(MESH_OT_InsetStraightSkeleton)
+    bpy.types.VIEW3D_MT_edit_mesh_faces.append(menu)
 
 def unregister():
     bpy.utils.unregister_class(MESH_OT_InsetStraightSkeleton)
+    bpy.types.VIEW3D_MT_edit_mesh_faces.remove(menu)

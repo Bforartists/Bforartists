@@ -2574,7 +2574,7 @@ class OBJECT_PT_povray_obj_sphere(PovDataButtonsPanel, Panel):
                 col.active = obj.pov.unlock_parameters
 
 
-                layout.operator("pov.sphere_update", text="Update",icon="SOLID")
+                layout.operator("pov.sphere_update", text="Update",icon="SHADING_RENDERED")
 
                 #col.label(text="Parameters:")
                 col.prop(obj.pov, "sphere_radius", text="Radius of Sphere")
@@ -2868,7 +2868,7 @@ class BasicShapesMenu(bpy.types.Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("pov.addplane", text="Infinite Plane",icon = 'MESH_PLANE')
         layout.operator("pov.addbox", text="Box",icon = 'MESH_CUBE')
-        layout.operator("pov.addsphere", text="Sphere",icon = 'SOLID')
+        layout.operator("pov.addsphere", text="Sphere",icon = 'SHADING_RENDERED')
         layout.operator("pov.addcylinder", text="Cylinder",icon="MESH_CYLINDER")
         layout.operator("pov.cone_add", text="Cone",icon="MESH_CONE")
         layout.operator("pov.addtorus", text="Torus",icon = 'MESH_TORUS')

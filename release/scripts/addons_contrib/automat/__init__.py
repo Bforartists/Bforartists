@@ -3,7 +3,7 @@
 bl_info = {
 	"name": "Cycles Automatic Materials",
 	"author": "Théo Friberg",
-	"blender": (2, 70, 0),
+	"blender": (2, 80, 0),
 	"version": (0, 39),
 	"location": "Space > Automatic / Adjustable Material from Image",
 	"description": "One-click material setup from texture for Cycles. Blur from b°wide node pack.",

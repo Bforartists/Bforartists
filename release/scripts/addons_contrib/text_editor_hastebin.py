@@ -20,13 +20,13 @@ bl_info = {
     "name": "hastebin",
     "author": "Dalai Felinto (dfelinto)",
     "version": (0, 8),
-    "blender": (2, 78, 0),
+    "blender": (2, 80, 0),
     "location": "Text editor > Properties panel",
     "description": "Send your selection or text to hastebin.com",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
         "Scripts/Text_Editor/hastebin",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
-    "category": "Text Editor"}
+    "category": "Development"}
 
 
 import bpy
@@ -35,6 +35,8 @@ class TEXT_PT_hastebin(bpy.types.Panel):
     bl_space_type = 'TEXT_EDITOR'
     bl_region_type = 'UI'
     bl_label = "hastebin.com"
+    bl_category = 'Dev'
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -156,12 +158,14 @@ def register():
         description='Opens the page with the submitted text',
         default=True)
 
-    bpy.utils.register_module(__name__)
+    bpy.utils.register_class(TEXT_PT_hastebin)
+    bpy.utils.register_class(TEXT_OT_hastebin)
 
 
 def unregister():
     del bpy.types.Scene.use_webbrowser
-    bpy.utils.unregister_module(__name__)
+    bpy.utils.unregister_class(TEXT_PT_hastebin)
+    bpy.utils.unregister_class(TEXT_OT_hastebin)
 
 if __name__ == "__main__":
     register()

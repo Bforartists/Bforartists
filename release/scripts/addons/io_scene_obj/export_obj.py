@@ -91,8 +91,7 @@ def write_mtl(scene, filepath, path_mode, copy_set, mtl_dict):
                 # XXX TODO Find a way to handle tint and diffuse color, in a consistent way with import...
                 fw('Ks %.6f %.6f %.6f\n' % (mat_wrap.specular, mat_wrap.specular, mat_wrap.specular))  # Specular
                 # Emission, not in original MTL standard but seems pretty common, see T45766.
-                # XXX Not supported by current Principled-based shader.
-                fw('Ke 0.0 0.0 0.0\n')
+                fw('Ke %.6f %.6f %.6f\n' % mat_wrap.emission_color[:3])
                 fw('Ni %.6f\n' % mat_wrap.ior)  # Refraction index
                 fw('d %.6f\n' % mat_wrap.alpha)  # Alpha (obj uses 'd' for dissolve)
 
@@ -121,7 +120,7 @@ def write_mtl(scene, filepath, path_mode, copy_set, mtl_dict):
                         "map_Bump": "normalmap_texture",
                         "disp": None,  # displacement...
                         "refl": "metallic_texture",
-                        "map_Ke": None  # emission...
+                        "map_Ke": "emission_color_texture",
                         }
 
                 for key, mat_wrap_key in sorted(image_map.items()):

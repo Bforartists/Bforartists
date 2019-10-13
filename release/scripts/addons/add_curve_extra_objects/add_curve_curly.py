@@ -17,6 +17,7 @@ bl_info = {
 import bpy
 from bpy.types import Operator
 from bpy.props import (
+        BoolProperty,
         FloatProperty,
         EnumProperty,
         IntProperty,
@@ -486,17 +487,17 @@ class add_curlycurve(Operator, AddObjectHelper):
             ('3D', "3D", "3D")
             ]
             )
+            
+    edit_mode : BoolProperty(
+            name="Show in edit mode",
+            default=True,
+            description="Show in edit mode"
+            )
 
     def draw(self, context):
         layout = self.layout
 
         col = layout.column(align=True)
-        # AddObjectHelper props
-        col.prop(self, "align")
-        col.prop(self, "location")
-        col.prop(self, "rotation")
-
-        col = layout.column()
         col.label(text = "Curve:")
         col.prop(self, "types")
 
@@ -507,6 +508,15 @@ class add_curlycurve(Operator, AddObjectHelper):
         
         row = layout.row()
         row.prop(self, "shape", expand=True)
+        
+        col = layout.column(align=True)
+        col.row().prop(self, "edit_mode", expand=True)
+        
+        col = layout.column(align=True)
+        # AddObjectHelper props
+        col.prop(self, "align")
+        col.prop(self, "location")
+        col.prop(self, "rotation")
 
     def execute(self, context):
         # turn off 'Enter Edit Mode'
@@ -539,6 +549,11 @@ class add_curlycurve(Operator, AddObjectHelper):
         
         # restore pre operator state
         bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
+
+        if self.edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+        else:
+            bpy.ops.object.mode_set(mode = 'OBJECT')
 
         return {'FINISHED'}
 

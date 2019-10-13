@@ -235,8 +235,8 @@ class GHOST_ISystem {
    * \param state: The state of the window when opened.
    * \param type: The type of drawing context installed in this window.
    * \param glSettings: Misc OpenGL settings.
-   * \param exclusive: Use to show the window on top and ignore others (used fullscreen).
-   * \param is_dialog: Stay on top of parent window, no icon in taskbar, not minimizable.
+   * \param exclusive: Use to show the window on top and ignore others (used full-screen).
+   * \param is_dialog: Stay on top of parent window, no icon in taskbar, can't be minimized.
    * \param parentWindow: Parent (embedder) window
    * \return The new window (or 0 if creation failed).
    */
@@ -446,11 +446,15 @@ class GHOST_ISystem {
    *
    * \param title                   The title of the message box
    * \param message                 The message to display
+   * \param help_label              Help button label
+   * \param continue_label          Continue button label
    * \param link                    An optional hyperlink
    * \param dialog_options Options  how to display the message
    */
   virtual GHOST_TSuccess showMessageBox(const char * /*title*/,
                                         const char * /*message*/,
+                                        const char * /*help_label*/,
+                                        const char * /*continue_label*/,
                                         const char * /*link*/,
                                         GHOST_DialogOptions /*dialog_options*/) const = 0;
 

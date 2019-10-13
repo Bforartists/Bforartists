@@ -85,7 +85,7 @@ def append_scene(file_name, scenename=None, link=False, fake_user=False):
     return scene
 
 
-def link_group(file_name, obnames=[], location=(0, 0, 0), link=False, parent = None, **kwargs):
+def link_collection(file_name, obnames=[], location=(0, 0, 0), link=False, parent = None, **kwargs):
     '''link an instanced group - model type asset'''
     sel = utils.selection_get()
 

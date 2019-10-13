@@ -21,9 +21,9 @@
 bl_info = {
     "name": "Motion Capture Tools",
     "author": "Benjy Cook",
-    "blender": (2, 73, 0),
-    "version": (1, 1, 1),
-    "location": "Active Armature > Object Properties > Mocap tools",
+    "blender": (2, 80, 0),
+    "version": (1, 1, 2),
+    "location": "Active Armature > Object Properties > Mocap Tools",
     "description": "Various tools for working with motion capture animation",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -264,10 +264,12 @@ def hasIKConstraint(pose_bone):
 
 class MocapPanel(bpy.types.Panel):
     # Motion capture retargeting panel
-    bl_label = "Mocap tools"
+    bl_idname = 'MOCAP_PT_Tools'
+    bl_label = "Mocap Tools"
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
     bl_context = "object"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -305,6 +307,7 @@ class MocapPanel(bpy.types.Panel):
             if performer_obj.data and enduser_obj.data:
                 if performer_obj.data.name in bpy.data.armatures and enduser_obj.data.name in bpy.data.armatures:
                     perf = performer_obj.data
+                    perf_root = performer_obj.pose.bones[0].name
                     enduser_arm = enduser_obj.data
                     perf_pose_bones = enduser_obj.pose.bones
                     MappingRow = layout.row(align=True)
@@ -315,13 +318,16 @@ class MocapPanel(bpy.types.Panel):
                     mapCol.scale_x = 2
                     selectCol = MappingRow.column(align=True)
                     twistCol = MappingRow.column(align=True)
+                    twistCol.scale_x = 0.3
+                    spaceCol = MappingRow.column(align=True)
+                    spaceCol.scale_x = 0.3
                     IKCol = MappingRow.column(align=True)
-                    IKCol.scale_x = 0.3
+                    IKCol.scale_x = 0.5
                     IKLabel = MappingRow.column(align=True)
-                    IKLabel.scale_x = 0.2
+                    IKLabel.scale_x = 0.5
                     for bone in perf.bones:
-                        footCol.prop(data=bone, property='foot', text='', icon='POSE_DATA')
-                        nameCol.label(bone.name)
+                        footCol.prop(data=bone, property='foot', text='', icon='CON_FLOOR')
+                        nameCol.label(text=bone.name)
                         mapCol.prop_search(bone, "map", enduser_arm, "bones", text='')
                         selectCol.operator("mocap.selectmap", text='', icon='CURSOR').perf_bone = bone.name
                         label_mod = "FK"
@@ -333,10 +339,16 @@ class MocapPanel(bpy.types.Panel):
                                 label_mod = "ik end"
                             end_bone = enduser_obj.data.bones[bone.map]
                             twistCol.prop(data=end_bone, property='twistFix', text='', icon='RNA')
+                            #if (not end_bone.use_connect) and (pose_bone.name != perf_root):
+                            if pose_bone.name != perf_root: # use_connect dont return correct value...
+                                spaceCol.prop(data=end_bone, property='poseSpace', text='', icon='POSE_HLT')
+                            else:
+                                spaceCol.label(text=" ")
                             IKCol.prop(pose_bone, 'IKRetarget')
-                            IKLabel.label(label_mod)
+                            IKLabel.label(text=label_mod)
                         else:
                             twistCol.label(text=" ")
+                            spaceCol.label(text=" ")
                             IKCol.label(text=" ")
                             IKLabel.label(text=" ")
                     mapRow = layout.row()
@@ -352,6 +364,7 @@ class MocapPanel(bpy.types.Panel):
 
 class MocapConstraintsPanel(bpy.types.Panel):
     #Motion capture constraints panel
+    bl_idname = 'MOCAP_PT_Constraints'
     bl_label = "Mocap Fixes"
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
@@ -416,6 +429,7 @@ class MocapConstraintsPanel(bpy.types.Panel):
 
 class ExtraToolsPanel(bpy.types.Panel):
     # Motion capture retargeting panel
+    bl_idname = 'MOCAP_PT_ExtraTools'
     bl_label = "Extra Mocap Tools"
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
@@ -453,7 +467,7 @@ class ExtraToolsPanel(bpy.types.Panel):
             stitchBox.operator('mocap.animstitch', text="Stitch Animations")
 
 
-class OBJECT_OT_RetargetButton(bpy.types.Operator):
+class RetargetOperator(bpy.types.Operator):
     #Retargeting operator. Assumes selected and active armatures, where the performer (the selected one)
     # has an action for retargeting
     """Retarget animation from selected armature to active armature"""
@@ -492,7 +506,7 @@ class OBJECT_OT_RetargetButton(bpy.types.Operator):
             return False
 
 
-class OBJECT_OT_SaveMappingButton(bpy.types.Operator):
+class SaveMappingOperator(bpy.types.Operator):
     #Operator for saving mapping to enduser armature
     """Save mapping to active armature (for future retargets)"""
     bl_idname = "mocap.savemapping"
@@ -515,7 +529,7 @@ class OBJECT_OT_SaveMappingButton(bpy.types.Operator):
             return False
 
 
-class OBJECT_OT_LoadMappingButton(bpy.types.Operator):
+class LoadMappingOperator(bpy.types.Operator):
     """Load saved mapping from active armature"""
     #Operator for loading mapping to enduser armature
     bl_idname = "mocap.loadmapping"
@@ -538,7 +552,7 @@ class OBJECT_OT_LoadMappingButton(bpy.types.Operator):
             return False
 
 
-class OBJECT_OT_SelectMapBoneButton(bpy.types.Operator):
+class SelectMapBoneOperator(bpy.types.Operator):
     #Operator for setting selected bone in enduser armature to the performer mapping
     """Select a bone for faster mapping"""
     bl_idname = "mocap.selectmap"
@@ -570,7 +584,7 @@ class OBJECT_OT_SelectMapBoneButton(bpy.types.Operator):
             return False
 
 
-class OBJECT_OT_ConvertSamplesButton(bpy.types.Operator):
+class ConvertSamplesOperator(bpy.types.Operator):
     #Operator to convert samples to beziers on the selected object
     """Convert active armature's sampled keyframed to beziers"""
     bl_idname = "mocap.samples"
@@ -585,7 +599,7 @@ class OBJECT_OT_ConvertSamplesButton(bpy.types.Operator):
         return context.active_object.animation_data
 
 
-class OBJECT_OT_LooperButton(bpy.types.Operator):
+class LooperOperator(bpy.types.Operator):
     #Operator to trim fcurves which contain a few loops to a single one on the selected object
     """Trim active armature's animation to a single cycle, given """ \
     """a cyclic animation (such as a walk cycle)"""
@@ -601,7 +615,7 @@ class OBJECT_OT_LooperButton(bpy.types.Operator):
         return context.active_object.animation_data
 
 
-class OBJECT_OT_DenoiseButton(bpy.types.Operator):
+class DenoiseOperator(bpy.types.Operator):
     #Operator to denoise impluse noise on the active object's fcurves
     """Removes spikes from all fcurves on the selected object"""
     bl_idname = "mocap.denoise"
@@ -618,7 +632,7 @@ class OBJECT_OT_DenoiseButton(bpy.types.Operator):
         return obj and obj.animation_data and obj.animation_data.action
 
 
-class OBJECT_OT_LimitDOFButton(bpy.types.Operator):
+class LimitDOFOperator(bpy.types.Operator):
     #Operator to analyze performer armature and apply rotation constraints on the enduser armature
     """Create limit constraints on the active armature from """ \
     """the selected armature's animation's range of motion"""
@@ -641,7 +655,7 @@ class OBJECT_OT_LimitDOFButton(bpy.types.Operator):
             return False
 
 
-class OBJECT_OT_RemoveLimitDOFButton(bpy.types.Operator):
+class RemoveLimitDOFOperator(bpy.types.Operator):
     #Removes constraints created by above operator
     """Remove previously created limit constraints on the active armature"""
     bl_idname = "mocap.removelimitdof"
@@ -659,7 +673,7 @@ class OBJECT_OT_RemoveLimitDOFButton(bpy.types.Operator):
         return activeIsArmature
 
 
-class OBJECT_OT_RotateFixArmature(bpy.types.Operator):
+class RotateFixArmatureOperator(bpy.types.Operator):
     #Operator to fix common imported Mocap data issue of wrong axis system on active object
     """Realign the active armature's axis system to match Blender """ \
     """(commonly needed after bvh import)"""
@@ -676,7 +690,7 @@ class OBJECT_OT_RotateFixArmature(bpy.types.Operator):
             return isinstance(context.active_object.data, bpy.types.Armature)
 
 
-class OBJECT_OT_ScaleFixArmature(bpy.types.Operator):
+class ScaleFixArmatureOperator(bpy.types.Operator):
     #Operator to scale down the selected armature to match the active one
     """Rescale selected armature to match the active animation, """ \
     """for convenience"""
@@ -700,7 +714,7 @@ class OBJECT_OT_ScaleFixArmature(bpy.types.Operator):
             return False
 
 
-class MOCAP_OT_AddMocapFix(bpy.types.Operator):
+class AddMocapFixOperator(bpy.types.Operator):
     #Operator to add a post-retarget fix
     """Add a post-retarget fix - useful for fixing certain """ \
     """artifacts following the retarget"""
@@ -726,7 +740,7 @@ class MOCAP_OT_AddMocapFix(bpy.types.Operator):
             return isinstance(context.active_object.data, bpy.types.Armature)
 
 
-class OBJECT_OT_RemoveMocapConstraint(bpy.types.Operator):
+class RemoveMocapConstraintOperator(bpy.types.Operator):
     #Operator to remove a post-retarget fix
     """Remove this post-retarget fix"""
     bl_idname = "mocap.removeconstraint"
@@ -751,7 +765,7 @@ class OBJECT_OT_RemoveMocapConstraint(bpy.types.Operator):
             return isinstance(context.active_object.data, bpy.types.Armature)
 
 
-class OBJECT_OT_BakeMocapConstraints(bpy.types.Operator):
+class BakeMocapConstraintsOperator(bpy.types.Operator):
     #Operator to bake all post-retarget fixes
     """Bake all post-retarget fixes to the Retarget Fixes NLA Track"""
     bl_idname = "mocap.bakeconstraints"
@@ -767,7 +781,7 @@ class OBJECT_OT_BakeMocapConstraints(bpy.types.Operator):
             return isinstance(context.active_object.data, bpy.types.Armature)
 
 
-class OBJECT_OT_UnbakeMocapConstraints(bpy.types.Operator):
+class UnbakeMocapConstraintsOperator(bpy.types.Operator):
     #Operator to unbake all post-retarget fixes
     """Unbake all post-retarget fixes - removes the baked data """ \
     """from the Retarget Fixes NLA Track"""
@@ -784,7 +798,7 @@ class OBJECT_OT_UnbakeMocapConstraints(bpy.types.Operator):
             return isinstance(context.active_object.data, bpy.types.Armature)
 
 
-class OBJECT_OT_UpdateMocapConstraints(bpy.types.Operator):
+class UpdateMocapConstraintsOperator(bpy.types.Operator):
     #Operator to update all post-retarget fixes, similar to update dependencies on drivers
     #Needed because python properties lack certain callbacks and some fixes take a while to recalculate.
     """Update all post-retarget fixes (necessary to take under """ \
@@ -802,7 +816,7 @@ class OBJECT_OT_UpdateMocapConstraints(bpy.types.Operator):
             return isinstance(context.active_object.data, bpy.types.Armature)
 
 
-class OBJECT_OT_GuessHierachyMapping(bpy.types.Operator):
+class GuessHierachyMappingOperator(bpy.types.Operator):
     #Operator which calls heurisitic function to guess mapping between 2 armatures
     """Attempt to auto figure out hierarchy mapping"""
     bl_idname = "mocap.guessmapping"
@@ -825,7 +839,7 @@ class OBJECT_OT_GuessHierachyMapping(bpy.types.Operator):
             return False
 
 
-class OBJECT_OT_PathEditing(bpy.types.Operator):
+class PathEditingOperator(bpy.types.Operator):
     #Operator which calls path editing function, making active object follow the selected curve.
     """Set active object (stride object) to follow the selected curve"""
     bl_idname = "mocap.pathediting"
@@ -845,7 +859,7 @@ class OBJECT_OT_PathEditing(bpy.types.Operator):
             return False
 
 
-class OBJECT_OT_AnimationStitchingButton(bpy.types.Operator):
+class AnimationStitchingOperator(bpy.types.Operator):
     #Operator which calls stitching function, combining 2 animations onto the NLA.
     """Stitch two defined animations into a single one via alignment of NLA Tracks"""
     bl_idname = "mocap.animstitch"
@@ -866,7 +880,7 @@ class OBJECT_OT_AnimationStitchingButton(bpy.types.Operator):
         return False
 
 
-class OBJECT_OT_GuessAnimationStitchingButton(bpy.types.Operator):
+class GuessAnimationStitchingOperator(bpy.types.Operator):
     #Operator which calls stitching function heuristic, setting good values for above operator.
     """Guess the stitch frame and second offset for animation stitch"""
     bl_idname = "mocap.animstitchguess"
@@ -886,11 +900,42 @@ class OBJECT_OT_GuessAnimationStitchingButton(bpy.types.Operator):
                 return (stitch_settings.first_action and stitch_settings.second_action)
         return False
 
+classes = (
+    MocapConstraint,
+    MocapMapping,
+    MocapNLATracks,
+    AnimationStitchSettings,
+    MocapPanel,
+    MocapConstraintsPanel,
+    ExtraToolsPanel,
+    AddMocapFixOperator,
+    AnimationStitchingOperator,
+    BakeMocapConstraintsOperator,
+    ConvertSamplesOperator,
+    DenoiseOperator,
+    GuessAnimationStitchingOperator,
+    GuessHierachyMappingOperator,
+    LimitDOFOperator,
+    LoadMappingOperator,
+    LooperOperator,
+    PathEditingOperator,
+    RemoveLimitDOFOperator,
+    RemoveMocapConstraintOperator,
+    RetargetOperator,
+    RotateFixArmatureOperator,
+    SaveMappingOperator,
+    ScaleFixArmatureOperator,
+    SelectMapBoneOperator,
+    UnbakeMocapConstraintsOperator,
+    UpdateMocapConstraintsOperator
+)
 
 def register():
-    bpy.utils.register_class(MocapConstraint)
+    for i in classes:
+        bpy.utils.register_class(i)
+
     bpy.types.Armature.mocap_constraints = CollectionProperty(type=MocapConstraint)
-    bpy.utils.register_class(MocapMapping)
+
     #string property for storing performer->enduser mapping
     bpy.types.Bone.map = StringProperty()
     #Collection Property for storing enduser->performer mapping
@@ -904,12 +949,15 @@ def register():
     bpy.types.Bone.twistFix = BoolProperty(name="Twist Fix",
         description="Fix Twist on this bone",
         default=False)
+    #Boolean property for retarget constrants,
+    # copy location on pose space instead of local space
+    bpy.types.Bone.poseSpace = BoolProperty(name="Pose Space",
+        description="copy location in pose space",
+        default=False)
     #Boolean property for toggling ik retargeting for this bone
     bpy.types.PoseBone.IKRetarget = BoolProperty(name="IK",
         description="Toggle IK Retargeting method for given bone",
         update=toggleIKBone, default=False)
-    bpy.utils.register_class(AnimationStitchSettings)
-    bpy.utils.register_class(MocapNLATracks)
     #Animation Stitch Settings Property
     bpy.types.Armature.stitch_settings = PointerProperty(type=AnimationStitchSettings)
     #Current/Active retargeted animation on the armature
@@ -923,11 +971,26 @@ def register():
             default=1,
             description="Number of frames to skip - for previewing retargets quickly (1 is fully sampled)",
             min=1)
-    bpy.utils.register_module(__name__)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    del bpy.types.Bone.map
+    del bpy.types.Bone.reverseMap
+    del bpy.types.Bone.foot
+    del bpy.types.Bone.twistFix
+    del bpy.types.Bone.poseSpace
+    del bpy.types.PoseBone.IKRetarget
+    del bpy.types.Armature.mocap_constraints
+    del bpy.types.Armature.stitch_settings
+    del bpy.types.Armature.active_mocap
+    del bpy.types.Armature.mocapNLATracks
+    #Advanced retargeting boolean property
+    del bpy.types.Armature.advancedRetarget
+    #frame step - frequency of frames to retarget. Skipping is useful for previewing, faster work etc.
+    del bpy.types.Armature.frameStep
+
+    for i in classes:
+        bpy.utils.unregister_class(i)
 
 if __name__ == "__main__":
     register()

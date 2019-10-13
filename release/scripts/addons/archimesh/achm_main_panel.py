@@ -394,6 +394,7 @@ class ARCHIMESH_PT_Main(Panel):
     bl_region_type = "UI"
     bl_category = "Create"
     bl_context = "objectmode"
+    bl_options = {'DEFAULT_CLOSED'}
 
     # ------------------------------
     # Draw UI

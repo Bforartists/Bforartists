@@ -1,267 +1,118 @@
+#====================== BEGIN GPL LICENSE BLOCK ======================
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+#======================= END GPL LICENSE BLOCK ========================
+
+# <pep8 compliant>
+
 import bpy
-from ...utils import copy_bone
-from ...utils import strip_org, make_deformer_name, connected_children_names
-from ...utils import put_bone, create_sphere_widget
-from ...utils import create_circle_widget, align_bone_x_axis
-from ...utils import MetarigError
-from ...utils import ControlLayersOption
+
+from itertools import count
+
+from ...utils.bones import align_chain_x_axis
+from ...utils.widgets_basic import create_circle_widget
+from ...utils.layers import ControlLayersOption
+from ...utils.misc import map_list
+
+from ...base_rig import stage
+
+from ..chain_rigs import TweakChainRig
 
 
-class Rig:
+class Rig(TweakChainRig):
+    def initialize(self):
+        super().initialize()
 
-    def __init__(self, obj, bone_name, params):
-        self.obj = obj
-        self.org_bones = [bone_name] + connected_children_names(obj, bone_name)
-        self.params = params
+        self.copy_rotation_axes = self.params.copy_rotation_axes
 
-        self.copy_rotation_axes = params.copy_rotation_axes
-
-        if len(self.org_bones) <= 1:
-            raise MetarigError(
-                "RIGIFY ERROR: invalid rig structure on bone: %s" % (strip_org(bone_name))
-            )
-
-    def orient_org_bones(self):
-
-        bpy.ops.object.mode_set(mode='EDIT')
-        eb = self.obj.data.edit_bones
-
+    # Prepare
+    def prepare_bones(self):
         if self.params.roll_alignment == "automatic":
+            align_chain_x_axis(self.obj, self.bones.org)
 
-            first_bone = eb[self.org_bones[0]]
-            last_bone = eb[self.org_bones[-1]]
+    # Parent
+    @stage.parent_bones
+    def parent_control_chain(self):
+        # use_connect=False for backward compatibility
+        self.parent_bone_chain(self.bones.ctrl.fk, use_connect=False)
 
-            # Orient uarm farm bones
-            chain_y_axis = last_bone.tail - first_bone.head
-            chain_rot_axis = first_bone.y_axis.cross(chain_y_axis)  # ik-plane normal axis (rotation)
-            if chain_rot_axis.length < first_bone.length/100:
-                chain_rot_axis = first_bone.x_axis.normalized()
-            else:
-                chain_rot_axis = chain_rot_axis.normalized()
+    # Configure
+    @stage.configure_bones
+    def configure_tweak_chain(self):
+        super().configure_tweak_chain()
 
-            for bone in self.org_bones:
-                align_bone_x_axis(self.obj, bone, chain_rot_axis)
+        ControlLayersOption.TWEAK.assign(self.params, self.obj, self.bones.ctrl.tweak)
 
-    def make_controls(self):
+    def configure_tweak_bone(self, i, tweak):
+        super().configure_tweak_bone(i, tweak)
 
-        bpy.ops.object.mode_set(mode='EDIT')
-        org_bones = self.org_bones
+        # Backward compatibility
+        self.get_bone(tweak).rotation_mode = 'QUATERNION'
 
-        ctrl_chain = []
-        for i in range(len(org_bones)):
-            name = org_bones[i]
+    # Rig
+    @stage.rig_bones
+    def rig_control_chain(self):
+        ctrls = self.bones.ctrl.fk
+        for args in zip(count(0), ctrls, [None] + ctrls):
+            self.rig_control_bone(*args)
 
-            ctrl_bone = copy_bone(
-                self.obj,
-                name,
-                strip_org(name)
+    def rig_control_bone(self, i, ctrl, prev_ctrl):
+        if prev_ctrl:
+            self.make_constraint(
+                ctrl, 'COPY_ROTATION', prev_ctrl,
+                use_xyz=self.copy_rotation_axes,
+                space='LOCAL', mix_mode='BEFORE',
             )
 
-            ctrl_chain.append(ctrl_bone)
+    # Widgets
+    def make_control_widget(self, ctrl):
+        create_circle_widget(self.obj, ctrl, radius=0.3, head_tail=0.5)
 
-        # Make widgets
-        bpy.ops.object.mode_set(mode='OBJECT')
 
-        for ctrl in ctrl_chain:
-            create_circle_widget(self.obj, ctrl, radius=0.3, head_tail=0.5)
-
-        return ctrl_chain
-
-    def make_tweaks(self):
-
-        bpy.ops.object.mode_set(mode ='EDIT')
-        eb = self.obj.data.edit_bones
-        org_bones = self.org_bones
-
-        tweak_chain = []
-        for i in range(len(org_bones) + 1):
-            if i == len(org_bones):
-                # Make final tweak at the tip of the tentacle
-                name = org_bones[i-1]
-            else:
-                name = org_bones[i]
-
-            tweak_bone = copy_bone(
-                self.obj,
-                name,
-                "tweak_" + strip_org(name)
+    @classmethod
+    def add_parameters(self, params):
+        """ Add the parameters of this rig type to the
+            RigifyParameters PropertyGroup
+        """
+        params.copy_rotation_axes = bpy.props.BoolVectorProperty(
+            size=3,
+            description="Automation axes",
+            default=tuple([i == 0 for i in range(0, 3)])
             )
 
-            tweak_e = eb[tweak_bone]
+        # Setting up extra tweak layers
+        ControlLayersOption.TWEAK.add_parameters(params)
 
-            tweak_e.length /= 2     # Set size to half
-
-            if i == len( org_bones ):
-                # Position final tweak at the tip
-                put_bone(self.obj, tweak_bone, eb[org_bones[-1]].tail)
-
-            tweak_chain.append(tweak_bone)
-
-        # Make widgets
-        bpy.ops.object.mode_set(mode='OBJECT')
-
-        for tweak in tweak_chain:
-            create_sphere_widget(self.obj, tweak)
-
-            tweak_pb = self.obj.pose.bones[tweak]
-
-            # Set locks
-            if tweak_chain.index(tweak) != len(tweak_chain) - 1:
-                tweak_pb.lock_rotation = (True, False, True)
-                tweak_pb.lock_scale = (False, True, False)
-            else:
-                tweak_pb.lock_rotation_w = True
-                tweak_pb.lock_rotation = (True, True, True)
-                tweak_pb.lock_scale = (True, True, True)
-
-        ControlLayersOption.TWEAK.assign(self.params, self.obj.pose.bones, tweak_chain)
-
-        return tweak_chain
-
-    def make_deform(self):
-
-        bpy.ops.object.mode_set(mode='EDIT')
-        org_bones = self.org_bones
-
-        def_chain = []
-        for i in range(len(org_bones)):
-            name = org_bones[i]
-
-            def_bone = copy_bone(
-                self.obj,
-                name,
-                make_deformer_name(strip_org(name))
-            )
-
-            def_chain.append(def_bone)
-
-        return def_chain
-
-    def parent_bones(self, all_bones):
-
-        bpy.ops.object.mode_set(mode='EDIT')
-        org_bones = self.org_bones
-        eb = self.obj.data.edit_bones
-
-        # Parent control bones
-        for bone in all_bones['control'][1:]:
-            previous_index = all_bones['control'].index(bone) - 1
-            eb[bone].parent = eb[all_bones['control'][previous_index]]
-
-        # Parent tweak bones
-        tweaks = all_bones['tweak']
-        for tweak in all_bones['tweak']:
-            parent = ''
-            if tweaks.index(tweak) == len(tweaks) - 1:
-                parent = all_bones['control'][-1]
-            else:
-                parent = all_bones['control'][tweaks.index(tweak)]
-
-            eb[tweak].parent = eb[parent]
-
-        # Parent deform bones
-        for bone in all_bones['deform'][1:]:
-            previous_index = all_bones['deform'].index(bone) - 1
-
-            eb[bone].parent = eb[all_bones['deform'][previous_index]]
-            eb[bone].use_connect = True
-
-        # Parent org bones ( to tweaks by default, or to the controls )
-        for org, tweak in zip(org_bones, all_bones['tweak']):
-            eb[org].parent = eb[tweak]
-
-    def make_constraints(self, all_bones):
-
-        bpy.ops.object.mode_set(mode='OBJECT')
-        pb = self.obj.pose.bones
-
-        # Deform bones' constraints
-        ctrls = all_bones['control']
-        tweaks = all_bones['tweak']
-        deforms = all_bones['deform']
-
-        for deform, tweak, ctrl in zip( deforms, tweaks, ctrls ):
-            con = pb[deform].constraints.new('COPY_TRANSFORMS')
-            con.target = self.obj
-            con.subtarget = tweak
-
-            con = pb[deform].constraints.new('DAMPED_TRACK')
-            con.target = self.obj
-            con.subtarget = tweaks[tweaks.index(tweak) + 1]
-
-            con = pb[deform].constraints.new('STRETCH_TO')
-            con.target = self.obj
-            con.subtarget = tweaks[tweaks.index(tweak) + 1]
-
-            # Control bones' constraints
-            if ctrl != ctrls[0]:
-                con = pb[ctrl].constraints.new('COPY_ROTATION')
-                con.target = self.obj
-                con.subtarget = ctrls[ctrls.index(ctrl) - 1]
-                for i, prop in enumerate(['use_x', 'use_y', 'use_z']):
-                    if self.copy_rotation_axes[i]:
-                        setattr(con, prop, True)
-                    else:
-                        setattr(con, prop, False)
-                con.use_offset = True
-                con.target_space = 'LOCAL'
-                con.owner_space = 'LOCAL'
-
-    def generate(self):
-        bpy.ops.object.mode_set(mode='EDIT')
-        eb = self.obj.data.edit_bones
-
-        self.orient_org_bones()
-
-        # Clear all initial parenting
-        for bone in self.org_bones:
-            # eb[ bone ].parent = None
-            eb[bone].use_connect = False
-
-        # Creating all bones
-        ctrl_chain = self.make_controls()
-        tweak_chain = self.make_tweaks()
-        def_chain = self.make_deform()
-
-        all_bones = {
-            'control': ctrl_chain,
-            'tweak': tweak_chain,
-            'deform': def_chain
-        }
-
-        self.make_constraints(all_bones)
-        self.parent_bones(all_bones)
+        items = [('automatic', 'Automatic', ''), ('manual', 'Manual', '')]
+        params.roll_alignment = bpy.props.EnumProperty(items=items, name="Bone roll alignment", default='automatic')
 
 
-def add_parameters(params):
-    """ Add the parameters of this rig type to the
-        RigifyParameters PropertyGroup
-    """
-    params.copy_rotation_axes = bpy.props.BoolVectorProperty(
-        size=3,
-        description="Automation axes",
-        default=tuple([i == 0 for i in range(0, 3)])
-        )
+    @classmethod
+    def parameters_ui(self, layout, params):
+        """ Create the ui for the rig parameters.
+        """
 
-    # Setting up extra tweak layers
-    ControlLayersOption.TWEAK.add_parameters(params)
+        r = layout.row()
+        r.prop(params, "roll_alignment")
 
-    items = [('automatic', 'Automatic', ''), ('manual', 'Manual', '')]
-    params.roll_alignment = bpy.props.EnumProperty(items=items, name="Bone roll alignment", default='automatic')
+        row = layout.row(align=True)
+        for i, axis in enumerate(['x', 'y', 'z']):
+            row.prop(params, "copy_rotation_axes", index=i, toggle=True, text=axis)
 
-
-def parameters_ui(layout, params):
-    """ Create the ui for the rig parameters.
-    """
-
-    r = layout.row()
-    r.prop(params, "roll_alignment")
-
-    row = layout.row(align=True)
-    for i, axis in enumerate(['x', 'y', 'z']):
-        row.prop(params, "copy_rotation_axes", index=i, toggle=True, text=axis)
-
-    ControlLayersOption.TWEAK.parameters_ui(layout, params)
+        ControlLayersOption.TWEAK.parameters_ui(layout, params)
 
 
 def create_sample(obj):

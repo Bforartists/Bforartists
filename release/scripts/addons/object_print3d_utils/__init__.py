@@ -19,16 +19,16 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "3D Print Toolbox",
+    "name": "3D-Print Toolbox",
     "author": "Campbell Barton",
     "blender": (2, 80, 0),
-    "location": "3D View > Toolbox",
+    "location": "3D View > Sidebar",
     "description": "Utilities for 3D printing",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Modeling/PrintToolbox",
+    # TODO
+    # "wiki_url": "",
     "support": 'OFFICIAL',
     "category": "Mesh",
-    }
+}
 
 
 if "bpy" in locals():
@@ -40,25 +40,22 @@ else:
     import math
 
     import bpy
+    from bpy.types import PropertyGroup
     from bpy.props import (
-            StringProperty,
-            BoolProperty,
-            FloatProperty,
-            EnumProperty,
-            PointerProperty,
-            )
-    from bpy.types import (
-            AddonPreferences,
-            PropertyGroup,
-            )
+        StringProperty,
+        BoolProperty,
+        FloatProperty,
+        EnumProperty,
+        PointerProperty,
+    )
 
     from . import (
-            ui,
-            operators,
-            )
+        ui,
+        operators,
+    )
 
 
-class Print3D_Scene_Props(PropertyGroup):
+class SceneProperties(PropertyGroup):
     export_format: EnumProperty(
         name="Format",
         description="Format type to export to",
@@ -84,72 +81,75 @@ class Print3D_Scene_Props(PropertyGroup):
     export_path: StringProperty(
         name="Export Directory",
         description="Path to directory where the files are created",
-        default="//", maxlen=1024, subtype="DIR_PATH",
+        default="//",
+        maxlen=1024,
+        subtype="DIR_PATH",
     )
     thickness_min: FloatProperty(
         name="Thickness",
         description="Minimum thickness",
         subtype='DISTANCE',
         default=0.001,  # 1mm
-        min=0.0, max=10.0,
+        min=0.0,
+        max=10.0,
     )
     threshold_zero: FloatProperty(
         name="Threshold",
         description="Limit for checking zero area/length",
         default=0.0001,
         precision=5,
-        min=0.0, max=0.2,
+        min=0.0,
+        max=0.2,
     )
     angle_distort: FloatProperty(
         name="Angle",
         description="Limit for checking distorted faces",
         subtype='ANGLE',
         default=math.radians(45.0),
-        min=0.0, max=math.radians(180.0),
+        min=0.0,
+        max=math.radians(180.0),
     )
     angle_sharp: FloatProperty(
         name="Angle",
         subtype='ANGLE',
         default=math.radians(160.0),
-        min=0.0, max=math.radians(180.0),
+        min=0.0,
+        max=math.radians(180.0),
     )
     angle_overhang: FloatProperty(
         name="Angle",
         subtype='ANGLE',
         default=math.radians(45.0),
-        min=0.0, max=math.radians(90.0),
+        min=0.0,
+        max=math.radians(90.0),
     )
 
 
 classes = (
-    ui.VIEW3D_PT_Print3D_Object,
-    ui.VIEW3D_PT_Print3D_Mesh,
+    SceneProperties,
 
-    operators.MESH_OT_Print3D_Info_Volume,
-    operators.MESH_OT_Print3D_Info_Area,
+    ui.VIEW3D_PT_print3d_analyze,
+    ui.VIEW3D_PT_print3d_cleanup,
+    ui.VIEW3D_PT_print3d_transform,
+    ui.VIEW3D_PT_print3d_export,
 
-    operators.MESH_OT_Print3D_Check_Degenerate,
-    operators.MESH_OT_Print3D_Check_Distorted,
-    operators.MESH_OT_Print3D_Check_Solid,
-    operators.MESH_OT_Print3D_Check_Intersections,
-    operators.MESH_OT_Print3D_Check_Thick,
-    operators.MESH_OT_Print3D_Check_Sharp,
-    operators.MESH_OT_Print3D_Check_Overhang,
-    operators.MESH_OT_Print3D_Check_All,
-
-    operators.MESH_OT_Print3D_Clean_Isolated,
-    operators.MESH_OT_Print3D_Clean_Distorted,
-    # operators.MESH_OT_Print3D_Clean_Thin,
-    operators.MESH_OT_Print3D_Clean_Non_Manifold,
-
-    operators.MESH_OT_Print3D_Select_Report,
-
-    operators.MESH_OT_Print3D_Scale_To_Volume,
-    operators.MESH_OT_Print3D_Scale_To_Bounds,
-
-    operators.MESH_OT_Print3D_Export,
-
-    Print3D_Scene_Props,
+    operators.MESH_OT_print3d_info_volume,
+    operators.MESH_OT_print3d_info_area,
+    operators.MESH_OT_print3d_check_degenerate,
+    operators.MESH_OT_print3d_check_distorted,
+    operators.MESH_OT_print3d_check_solid,
+    operators.MESH_OT_print3d_check_intersections,
+    operators.MESH_OT_print3d_check_thick,
+    operators.MESH_OT_print3d_check_sharp,
+    operators.MESH_OT_print3d_check_overhang,
+    operators.MESH_OT_print3d_check_all,
+    operators.MESH_OT_print3d_clean_distorted,
+    # operators.MESH_OT_print3d_clean_thin,
+    operators.MESH_OT_print3d_clean_non_manifold,
+    operators.MESH_OT_print3d_select_report,
+    operators.MESH_OT_print3d_scale_to_volume,
+    operators.MESH_OT_print3d_scale_to_bounds,
+    operators.MESH_OT_print3d_export,
 )
 
 
@@ -157,7 +157,7 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.Scene.print_3d = PointerProperty(type=Print3D_Scene_Props)
+    bpy.types.Scene.print_3d = PointerProperty(type=SceneProperties)
 
 
 def unregister():

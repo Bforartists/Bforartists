@@ -194,7 +194,7 @@ class Rig:
                         setattr( con, prop, True )
                     else:
                         setattr( con, prop, False )
-                con.use_offset   = True
+                con.mix_mode     = 'OFFSET'
                 con.target_space = 'LOCAL'
                 con.owner_space  = 'LOCAL'
 

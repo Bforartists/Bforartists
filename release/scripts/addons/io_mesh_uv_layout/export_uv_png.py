@@ -83,7 +83,7 @@ def draw_background_colors(face_data, opacity):
     batch.draw(shader)
 
 def tessellate_uvs(uvs):
-    return tessellate_polygon([[Vector(uv) for uv in uvs]])
+    return tessellate_polygon([uvs])
 
 def draw_lines(face_data):
     coords = []

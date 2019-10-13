@@ -33,15 +33,17 @@ def create_line_widget(rig, bone_name, bone_transform_name=None):
         mesh.update()
 
 
-def create_circle_widget(rig, bone_name, radius=1.0, head_tail=0.0, with_line=False, bone_transform_name=None):
+def create_circle_widget(rig, bone_name, radius=1.0, head_tail=0.0, head_tail_x=None, with_line=False, bone_transform_name=None):
     """ Creates a basic circle widget, a circle around the y-axis.
         radius: the radius of the circle
         head_tail: where along the length of the bone the circle is (0.0=head, 1.0=tail)
+        head_tail_x: if not None, specifies a different value along the X axis to create a deformed circle
     """
     obj = create_widget(rig, bone_name, bone_transform_name)
     if obj != None:
         v = [(0.7071068286895752, 2.980232238769531e-07, -0.7071065306663513), (0.8314696550369263, 2.980232238769531e-07, -0.5555699467658997), (0.9238795042037964, 2.682209014892578e-07, -0.3826831877231598), (0.9807852506637573, 2.5331974029541016e-07, -0.19509011507034302), (1.0, 2.365559055306221e-07, 1.6105803979371558e-07), (0.9807853698730469, 2.2351741790771484e-07, 0.19509044289588928), (0.9238796234130859, 2.086162567138672e-07, 0.38268351554870605), (0.8314696550369263, 1.7881393432617188e-07, 0.5555704236030579), (0.7071068286895752, 1.7881393432617188e-07, 0.7071070075035095), (0.5555702447891235, 1.7881393432617188e-07, 0.8314698934555054), (0.38268327713012695, 1.7881393432617188e-07, 0.923879861831665), (0.19509008526802063, 1.7881393432617188e-07, 0.9807855486869812), (-3.2584136988589307e-07, 1.1920928955078125e-07, 1.000000238418579), (-0.19509072601795197, 1.7881393432617188e-07, 0.9807854294776917), (-0.3826838731765747, 1.7881393432617188e-07, 0.9238795638084412), (-0.5555707216262817, 1.7881393432617188e-07, 0.8314695358276367), (-0.7071071863174438, 1.7881393432617188e-07, 0.7071065902709961), (-0.8314700126647949, 1.7881393432617188e-07, 0.5555698871612549), (-0.923879861831665, 2.086162567138672e-07, 0.3826829195022583), (-0.9807853698730469, 2.2351741790771484e-07, 0.1950896978378296), (-1.0, 2.365559907957504e-07, -7.290432222362142e-07), (-0.9807850122451782, 2.5331974029541016e-07, -0.195091113448143), (-0.9238790273666382, 2.682209014892578e-07, -0.38268423080444336), (-0.831468939781189, 2.980232238769531e-07, -0.5555710196495056), (-0.7071058750152588, 2.980232238769531e-07, -0.707107424736023), (-0.555569052696228, 2.980232238769531e-07, -0.8314701318740845), (-0.38268208503723145, 2.980232238769531e-07, -0.923879861831665), (-0.19508881866931915, 2.980232238769531e-07, -0.9807853102684021), (1.6053570561780361e-06, 2.980232238769531e-07, -0.9999997615814209), (0.19509197771549225, 2.980232238769531e-07, -0.9807847142219543), (0.3826850652694702, 2.980232238769531e-07, -0.9238786101341248), (0.5555717945098877, 2.980232238769531e-07, -0.8314683437347412)]
-        verts = [(a[0] * radius, head_tail, a[2] * radius) for a in v]
+        delta = (head_tail_x - head_tail) if head_tail_x is not None else 0
+        verts = [(a[0] * radius, head_tail + delta * a[0] * a[0], a[2] * radius) for a in v]
         if with_line:
             edges = [(28, 12), (0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7), (7, 8), (8, 9), (9, 10), (10, 11), (11, 12), (12, 13), (13, 14), (14, 15), (15, 16), (16, 17), (17, 18), (18, 19), (19, 20), (20, 21), (21, 22), (22, 23), (23, 24), (24, 25), (25, 26), (26, 27), (27, 28), (28, 29), (29, 30), (30, 31), (0, 31)]
         else:
@@ -67,13 +69,16 @@ def create_cube_widget(rig, bone_name, radius=0.5, bone_transform_name=None):
         mesh.update()
 
 
-def create_chain_widget(rig, bone_name, radius=0.5, invert=False, bone_transform_name=None):
+def create_chain_widget(rig, bone_name, cube=False, radius=0.5, invert=False, bone_transform_name=None, axis="y", offset=0.0):
     """Creates a basic chain widget
     """
     obj = create_widget(rig, bone_name, bone_transform_name)
-    if obj != None:
+    if obj is not None:
         r = radius
-        rh = radius/2
+        if cube:
+            rh = r
+        else:
+            rh = radius/2
         if invert:
             verts = [(rh, rh, rh), (r, -r, r), (-r, -r, r), (-rh, rh, rh), (rh, rh, -rh), (r, -r, -r), (-r, -r, -r), (-rh, rh, -rh)]
         else:
@@ -82,6 +87,9 @@ def create_chain_widget(rig, bone_name, radius=0.5, invert=False, bone_transform
         mesh = obj.data
         mesh.from_pydata(verts, edges, [])
         mesh.update()
+        from .widgets import adjust_widget_axis
+        adjust_widget_axis(obj, axis=axis, offset=offset)
+        return obj
 
 
 def create_sphere_widget(rig, bone_name, bone_transform_name=None):
@@ -109,15 +117,47 @@ def create_limb_widget(rig, bone_name, bone_transform_name=None):
         mesh.update()
 
 
-def create_bone_widget(rig, bone_name, bone_transform_name=None):
+def create_bone_widget(rig, bone_name, r1=0.1, l1=0.0, r2=0.04, l2=1.0, bone_transform_name=None):
     """ Creates a basic bone widget, a simple obolisk-esk shape.
     """
     obj = create_widget(rig, bone_name, bone_transform_name)
     if obj != None:
-        verts = [(0.04, 1.0, -0.04), (0.1, 0.0, -0.1), (-0.1, 0.0, -0.1), (-0.04, 1.0, -0.04), (0.04, 1.0, 0.04), (0.1, 0.0, 0.1), (-0.1, 0.0, 0.1), (-0.04, 1.0, 0.04)]
+        verts = [(r2, l2, -r2), (r1, l1, -r1), (-r1, l1, -r1), (-r2, l2, -r2), (r2, l2, r2), (r1, l1, r1), (-r1, l1, r1), (-r2, l2, r2)]
         edges = [(1, 2), (0, 1), (0, 3), (2, 3), (4, 5), (5, 6), (6, 7), (4, 7), (1, 5), (0, 4), (2, 6), (3, 7)]
         mesh = obj.data
         mesh.from_pydata(verts, edges, [])
         mesh.update()
 
 
+def create_pivot_widget(rig, bone_name, axis_size=1.0, cap_size=1.0, square=False, bone_transform_name=None):
+    """Creates a widget similar to Plain Axes empty, but with a cross or
+       a square on the end of each axis line.
+    """
+    obj = create_widget(rig, bone_name, bone_transform_name)
+    if obj is not None:
+        axis = 0.5 * axis_size
+        cap = 0.05 * cap_size
+        if square:
+            verts = [(0, 0, -axis), (-axis, 0, 0), (0, 0, axis), (axis, 0, 0), (axis, cap, -cap), (axis, cap, cap),
+                     (0, -axis, 0), (0, axis, 0), (cap, axis, cap), (cap, axis, -cap), (axis, -cap, -cap), (axis, -cap, cap),
+                     (-cap, axis, cap), (-cap, axis, -cap), (-axis, cap, cap), (-axis, cap, -cap), (-axis, -cap, cap), (-axis, -cap, -cap),
+                     (-cap, -axis, cap), (-cap, -axis, -cap), (cap, -axis, cap), (cap, -axis, -cap), (-cap, -cap, -axis), (-cap, cap, -axis),
+                     (cap, -cap, -axis), (cap, cap, -axis), (-cap, cap, axis), (-cap, -cap, axis), (cap, cap, axis), (cap, -cap, axis) ]
+            edges = [(10, 4), (4, 5), (8, 9), (0, 2), (12, 8), (6, 7), (11, 10), (13, 12), (5, 11), (9, 13),
+                     (3, 1), (14, 15), (16, 14), (17, 16), (15, 17), (18, 19), (20, 18), (21, 20), (19, 21), (22, 23),
+                     (24, 22), (25, 24), (23, 25), (26, 27), (28, 26), (29, 28), (27, 29) ]
+        else:
+            verts = [(0, 0, -axis), (-axis, 0, 0), (0, 0, axis), (axis, 0, 0), (-cap, 0, -axis), (-axis, 0, -cap),
+                     (-axis, 0, cap), (-cap, 0, axis), (cap, 0, axis), (axis, 0, cap), (axis, 0, -cap), (cap, 0, -axis),
+                     (0, -axis, 0), (0, axis, 0), (0, -cap, -axis), (0, -axis, -cap), (0, -axis, cap), (0, -cap, axis),
+                     (0, cap, axis), (0, axis, cap), (0, axis, -cap), (0, cap, -axis), (-axis, -cap, 0), (-cap, -axis, 0),
+                     (cap, -axis, 0), (axis, -cap, 0), (axis, cap, 0), (cap, axis, 0), (-cap, axis, 0), (-axis, cap, 0) ]
+            edges = [(4, 0), (6, 1), (8, 2), (10, 3), (1, 5), (2, 7), (3, 9), (0, 11), (16, 12), (0, 21),
+                     (2, 17), (20, 13), (12, 15), (0, 2), (18, 2), (13, 19), (12, 13), (1, 29), (22, 1), (3, 25),
+                     (13, 27), (14, 0), (26, 3), (28, 13), (24, 12), (12, 23), (3, 1) ]
+        mesh = obj.data
+        mesh.from_pydata(verts, edges, [])
+        mesh.update()
+        return obj
+    else:
+        return None

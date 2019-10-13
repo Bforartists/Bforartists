@@ -57,7 +57,7 @@ def rerequest(method, url, **kwargs):
                 if user_preferences.enable_oauth:
                     tasks_queue.add_task((ui.add_report, ('refreshing token.',)))
                     refresh_url = paths.get_bkit_url()
-                    auth_token, refresh_token = bkit_oauth.refresh_token(user_preferences.api_key_refresh, refresh_url)
+                    auth_token, refresh_token, oauth_response = bkit_oauth.refresh_token(user_preferences.api_key_refresh, refresh_url)
 
                     # utils.p(auth_token, refresh_token)
                     if auth_token is not None:

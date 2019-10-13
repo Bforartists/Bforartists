@@ -190,8 +190,8 @@ def copy_bone(obj, bone_name, assign_name=''):
         edit_bone_2.roll = edit_bone_1.roll
 
         edit_bone_2.use_inherit_rotation = edit_bone_1.use_inherit_rotation
-        edit_bone_2.use_inherit_scale = edit_bone_1.use_inherit_scale
         edit_bone_2.use_local_location = edit_bone_1.use_local_location
+        edit_bone_2.inherit_scale = edit_bone_1.inherit_scale
 
         edit_bone_2.use_deform = edit_bone_1.use_deform
         edit_bone_2.bbone_segments = edit_bone_1.bbone_segments
@@ -395,7 +395,7 @@ def create_widget(rig, bone_name, bone_transform_name=None):
 
     obj_name = WGT_PREFIX + bone_name
     scene = bpy.context.scene
-    collection = bpy.context.collection
+    collection = ensure_widget_collection(bpy.context)
 
     # Check if it already exists in the scene
     if obj_name in scene.objects:
