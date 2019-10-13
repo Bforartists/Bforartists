@@ -40,18 +40,9 @@
 
 import os
 import sphobjinv as soi
-import urllib.request
 
-# Download the objects.inv file
-urlretrieve = urllib.request.urlretrieve
-urlretrieve("https://docs.blender.org/manual/en/dev/objects.inv", "objects.inv")
-
-# Decode objects.inv
-
-inv = soi.Inventory('objects.inv')
-objects_data = inv.data_file()
-soi.writebytes('objects.tmp', objects_data)  # TODO leave in memory
-os.remove("objects.inv")
+# Download and decode objects.inv
+inv = soi.Inventory(url="https://docs.blender.org/manual/en/dev/objects.inv")
 
 # Write the fire
 filepath = os.path.join("rna_manual_reference.py")
@@ -104,14 +95,11 @@ fw("    url_manual_prefix = url_manual_prefix.replace(\"manual/en\", \"manual/\"
 fw("url_manual_mapping = (\n")
 
 # Logic to manipulate strings from objects.inv
-with open("objects.tmp", encoding="utf8") as obj_tmp:
-    lines = [l for l in obj_tmp if (l.startswith("bpy.types") or l.startswith("bpy.ops"))]
-    # Finding first space will return length of rna path
-    lines.sort(key=lambda l: l.find(" "), reverse=True)
-    for line in lines:
-        split = line.split(" ")
-        fw("\t(\"" + split[0] + "*\", \"" + split[3] + "\"),\n")
+lines = [o.data_line() for o in inv.objects if o.name.startswith("bpy.types") or o.name.startswith("bpy.ops")]
+# Finding first space will return length of rna path
+lines.sort(key=lambda l: l.find(" "), reverse=True)
+for line in lines:
+    split = line.split(" ")
+    fw("\t(\"" + split[0] + "*\", \"" + split[3] + "\"),\n")
 
 fw(")\n")
-
-os.remove("objects.tmp")

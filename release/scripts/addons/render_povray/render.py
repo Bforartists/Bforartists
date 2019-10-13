@@ -34,7 +34,7 @@ from imghdr import what #imghdr is a python lib to identify image file types
 from bpy.utils import register_class
 
 from . import df3 # for smoke rendering
-from . import shading # for BI POV haders emulation
+from . import shading # for BI POV shaders emulation
 from . import primitives # for import and export of POV specific primitives
 from . import nodes # for POV specific nodes
 ##############################SF###########################

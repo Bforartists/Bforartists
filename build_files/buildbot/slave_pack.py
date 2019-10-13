@@ -32,8 +32,9 @@ def get_package_name(builder, platform=None):
     package_name = 'blender-' + info.full_version
     if platform:
       package_name += '-' + platform
-    if builder.branch != 'master' and info.is_development_build:
-        package_name = builder.branch + "-" + package_name
+    if not (builder.branch == 'master' or builder.is_release_branch):
+        if info.is_development_build:
+            package_name = builder.branch + "-" + package_name
 
     return package_name
 
@@ -47,6 +48,7 @@ def create_buildbot_upload_zip(builder, package_files):
     try:
         z = zipfile.ZipFile(buildbot_upload_zip, "w", compression=zipfile.ZIP_STORED)
         for filepath, filename in package_files:
+            print("Packaged", filename)
             z.write(filepath, arcname=filename)
         z.close()
     except Exception as ex:
@@ -146,20 +148,6 @@ def pack_linux(builder):
     print("Stripping python...")
     py_target = os.path.join(builder.install_dir, info.version)
     buildbot_utils.call(builder.command_prefix + ['find', py_target, '-iname', '*.so', '-exec', 'strip', '-s', '{}', ';'])
-
-    # Copy all specific files which are too specific to be copied by
-    # the CMake rules themselves
-    print("Copying extra scripts and libs...")
-
-    extra = '/' + os.path.join('home', 'sources', 'release-builder', 'extra')
-    mesalibs = os.path.join(extra, 'mesalibs' + str(builder.bits) + '.tar.bz2')
-    software_gl = os.path.join(builder.blender_dir, 'release', 'bin', 'blender-softwaregl')
-    icons = os.path.join(builder.blender_dir, 'release', 'freedesktop', 'icons')
-
-    os.system('tar -xpf %s -C %s' % (mesalibs, builder.install_dir))
-    os.system('cp %s %s' % (software_gl, builder.install_dir))
-    os.system('cp -r %s %s' % (icons, builder.install_dir))
-    os.system('chmod 755 %s' % (os.path.join(builder.install_dir, 'blender-softwaregl')))
 
     # Construct package name
     platform_name = 'linux-' + blender_glibc + '-' + blender_arch

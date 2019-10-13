@@ -298,26 +298,31 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
         downloaders = kwargs.get('downloaders')
         s = bpy.context.scene
         sprops = s.blenderkit_models
-        # TODO this is here because combinations of linking objects or appending groups are rather not-userfull
-        if sprops.append_method == 'LINK_GROUP':
+        # TODO this is here because combinations of linking objects or appending groups are rather not-usefull
+        if sprops.append_method == 'LINK_COLLECTION':
             sprops.append_link = 'LINK'
             sprops.import_as = 'GROUP'
         else:
             sprops.append_link = 'APPEND'
             sprops.import_as = 'INDIVIDUAL'
 
+        #copy for override
+        al = sprops.append_link
+        import_as = sprops.import_as
         # set consistency for objects already in scene, otherwise this literally breaks blender :)
         ain = asset_in_scene(asset_data)
+        #override based on history
         if ain is not False:
             if ain == 'LINKED':
-                sprops.append_link = 'LINK'
-                sprops.import_as = 'GROUP'
+                al = 'LINK'
+                import_as = 'GROUP'
             else:
-                sprops.append_link = 'APPEND'
-                sprops.import_as = 'INDIVIDUAL'
+                al = 'APPEND'
+                import_as = 'INDIVIDUAL'
+
 
         # first get conditions for append link
-        link = sprops.append_link == 'LINK'
+        link = al == 'LINK'
         # then append link
         if downloaders:
             for downloader in downloaders:
@@ -332,7 +337,7 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
                     return
 
                 if sprops.import_as == 'GROUP':
-                    parent, newobs = append_link.link_group(file_names[-1],
+                    parent, newobs = append_link.link_collection(file_names[-1],
                                                             location=downloader['location'],
                                                             rotation=downloader['rotation'],
                                                             link=link,
@@ -354,7 +359,7 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
 
         elif kwargs.get('model_location') is not None:
             if sprops.import_as == 'GROUP':
-                parent, newobs = append_link.link_group(file_names[-1],
+                parent, newobs = append_link.link_collection(file_names[-1],
                                                         location=kwargs['model_location'],
                                                         rotation=kwargs['model_rotation'],
                                                         link=link,
@@ -869,7 +874,7 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
         s = bpy.context.scene
         sr = s['search results']
 
-        asset_data = sr[self.asset_index].to_dict()  # TODO CHECK ALL OCCURANCES OF PASSING BLENDER ID PROPS TO THREADS!
+        asset_data = sr[self.asset_index].to_dict()  # TODO CHECK ALL OCCURRENCES OF PASSING BLENDER ID PROPS TO THREADS!
         au = s.get('assets used')
         if au == None:
             s['assets used'] = {}

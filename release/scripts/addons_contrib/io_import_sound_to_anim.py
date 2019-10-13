@@ -68,14 +68,14 @@ def _Interna_Globals(BytesDadosTotProcess, context):
     bl_label = "Import Movement From Wav File"
     bl_options = {'DEFAULT_CLOSED'}"""
     
-class VIEW3D_PT_CustomMenuPanel(bpy.types.Panel):
+class VIEW3D_PT_SoundPanel(bpy.types.Panel):
     bl_idname = "IMPORTWAVTOOL_PT_tools"
     bl_space_type = "VIEW_3D"
     bl_context = "objectmode"
     bl_region_type = "UI"
     bl_label = "Import Tool"
-    bl_category = "Import Movement From Wav File"
-    #bl_options = {'DEFAULT_CLOSED'}
+    bl_category = "Animate"
+    bl_options = {'DEFAULT_CLOSED'}
     
     def draw(self, context):
         layout = self.layout
@@ -1513,7 +1513,7 @@ class ModalTimerOperator(bpy.types.Operator):
 # ------------------------------------------------------------
 # Register:
 classes = (
-    VIEW3D_PT_CustomMenuPanel,
+    VIEW3D_PT_SoundPanel,
     ModalTimerOperator,
     OBJECT_OT_Botao_Cancel,
     OBJECT_OT_Botao_Go,

@@ -94,7 +94,7 @@ bl_info = {
     "warning": "",
     "wiki_url": "https://pablovazquez.art/amaranth",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
-    "category": "Scene",
+    "category": "Interface",
 }
 
 

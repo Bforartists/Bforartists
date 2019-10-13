@@ -23,9 +23,9 @@ bl_info = {
     "name": "Motion Trail",
     "author": "Bart Crouch",
     "version": (3, 1, 3),
-    "blender": (2, 65, 4),
+    "blender": (2, 80, 0),
     "location": "View3D > Toolbar > Motion Trail tab",
-    "warning": "",
+    "warning": "Needs bgl draw update",
     "description": "Display and edit motion trails in the 3D View",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Animation/Motion_Trail",
@@ -1611,7 +1611,7 @@ class MotionTrailOperator(bpy.types.Operator):
 class MotionTrailPanel(bpy.types.Panel):
     bl_category = "Animation"
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_label = "Motion Trail"
     bl_options = {'DEFAULT_CLOSED'}
 

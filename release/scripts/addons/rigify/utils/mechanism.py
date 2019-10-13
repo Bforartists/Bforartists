@@ -32,9 +32,13 @@ _TRACK_AXIS_MAP =  {
     'Z': 'TRACK_Z', '-Z': 'TRACK_NEGATIVE_Z',
 }
 
+def _set_default_attr(obj, options, attr, value):
+    if hasattr(obj, attr):
+        options.setdefault(attr, value)
+
 def make_constraint(
-        owner, type, target=None, subtarget=None, *,
-        space=None, track_axis=None, use_xyz=None,
+        owner, type, target=None, subtarget=None, *, insert_index=None,
+        space=None, track_axis=None, use_xyz=None, use_limit_xyz=None, invert_xyz=None,
         **options):
     """
     Creates and initializes constraint of the specified type for the owner bone.
@@ -42,15 +46,21 @@ def make_constraint(
     Specially handled keyword arguments:
 
       target, subtarget: if both not None, passed through to the constraint
+      insert_index     : insert at the specified index in the stack, instead of at the end
       space            : assigned to both owner_space and target_space
       track_axis       : allows shorter X, Y, Z, -X, -Y, -Z notation
       use_xyz          : list of 3 items is assigned to use_x, use_y and use_z options
-      min/max_x/y/z    : a corresponding use_min/max_x/y/z option is set to True
+      use_limit_xyz    : list of 3 items is assigned to use_limit_x/y/z options
+      invert_xyz       : list of 3 items is assigned to invert_x, invert_y and invert_z options
+      min/max_x/y/z    : a corresponding use_(min/max/limit)_(x/y/z) option is set to True
 
     Other keyword arguments are directly assigned to the constraint options.
     Returns the newly created constraint.
     """
     con = owner.constraints.new(type)
+
+    if insert_index is not None:
+        owner.constraints.move(len(owner.constraints)-1, insert_index)
 
     if target is not None and hasattr(con, 'target'):
         con.target = target
@@ -59,7 +69,8 @@ def make_constraint(
         con.subtarget = subtarget
 
     if space is not None:
-        con.owner_space = con.target_space = space
+        _set_default_attr(con, options, 'owner_space', space)
+        _set_default_attr(con, options, 'target_space', space)
 
     if track_axis is not None:
         con.track_axis = _TRACK_AXIS_MAP.get(track_axis, track_axis)
@@ -67,9 +78,16 @@ def make_constraint(
     if use_xyz is not None:
         con.use_x, con.use_y, con.use_z = use_xyz[0:3]
 
+    if use_limit_xyz is not None:
+        con.use_limit_x, con.use_limit_y, con.use_limit_z = use_limit_xyz[0:3]
+
+    if invert_xyz is not None:
+        con.invert_x, con.invert_y, con.invert_z = invert_xyz[0:3]
+
     for key in ['min_x', 'max_x', 'min_y', 'max_y', 'min_z', 'max_z']:
-        if key in options and 'use_'+key not in options:
-            options['use_'+key] = True
+        if key in options:
+            _set_default_attr(con, options, 'use_'+key, True)
+            _set_default_attr(con, options, 'use_limit_'+key[-1], True)
 
     for p, v in options.items():
         setattr(con, p, v)
@@ -125,7 +143,10 @@ def _init_driver_target(drv_target, var_info, target_id):
             # Use ".foo" type path items verbatim, otherwise quote
             path = subtarget.path_from_id()
             for item in refs:
-                path += item if item[0] == '.' else '["'+item+'"]'
+                if isinstance(item, str):
+                    path += item if item[0] == '.' else '["'+item+'"]'
+                else:
+                    path += '[%r]' % (item)
 
         drv_target.id = target_id
         drv_target.data_path = path
@@ -223,6 +244,14 @@ def make_driver(owner, prop, *, index=-1, type='SUM', expression=None, variables
     else:
         drv.type = type
 
+    # In case the driver already existed, remove contents
+    for var in list(drv.variables):
+        drv.variables.remove(var)
+
+    for mod in list(fcu.modifiers):
+        fcu.modifiers.remove(mod)
+
+    # Fill in new data
     if isinstance(variables, list):
         # variables = [ info, ... ]
         for i, var_info in enumerate(variables):
@@ -234,7 +263,7 @@ def make_driver(owner, prop, *, index=-1, type='SUM', expression=None, variables
             _add_driver_variable(drv, var_name, var_info, target_id)
 
     if polynomial is not None:
-        drv_modifier = fcu.modifiers[0]
+        drv_modifier = fcu.modifiers.new('GENERATOR')
         drv_modifier.mode = 'POLYNOMIAL'
         drv_modifier.poly_order = len(polynomial)-1
         for i,v in enumerate(polynomial):
@@ -243,7 +272,7 @@ def make_driver(owner, prop, *, index=-1, type='SUM', expression=None, variables
     return fcu
 
 
-def driver_var_transform(target, bone=None, *, type='LOC_X', space='WORLD'):
+def driver_var_transform(target, bone=None, *, type='LOC_X', space='WORLD', rotation_mode='AUTO'):
     """
     Create a Transform Channel driver variable specification.
 
@@ -257,6 +286,7 @@ def driver_var_transform(target, bone=None, *, type='LOC_X', space='WORLD'):
         'id': target,
         'transform_type': type,
         'transform_space': space + '_SPACE',
+        'rotation_mode': rotation_mode,
     }
 
     if bone is not None:

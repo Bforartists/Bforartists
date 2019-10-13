@@ -1,3 +1,21 @@
+### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 # -*- coding: utf-8 -*-
 
 import bpy
@@ -8,8 +26,8 @@ import os
 import datetime
 import math
 
-from . sun_calc import degToRad, format_hms
-from . properties import Display, Sun
+from math import radians
+from . sun_calc import format_hms, sun
 
 # ---------------------------------------------------------------------------
 
@@ -24,16 +42,16 @@ class MapObject:
         self.type = t
         self.width = w
         self.height = h
-        self.heightFactor = .50
+        self.height_factor = .50
         self.opacity = 1.0
         self.focused = False
         self.view3d_area = None
-        self.colorStyle = 'N'
+        self.color_style = 'N'
         self.origin = self.Origin()
 
     def set_dimensions(self, width):
         self.width = width
-        self.height = int(width * self.heightFactor)
+        self.height = int(width * self.height_factor)
 
     def check_focus(self, context, event):
         self.focused = self.is_focused(context, event)
@@ -132,16 +150,16 @@ class MapClass:
     def reset(self, location):
         self.init(location)
         self.action = None
-        self.isActive = False
+        self.is_active = False
         self.start = False
         self.stop = False
-        self.lockCrosshair = True
-        self.showInfo = False
+        self.lock_crosshair = True
+        self.show_info = False
         self.latitude = 0.0
         self.longitude = 0.0
-        self.ctrlPress = False
-        self.altPress = False
-        self.lineWidth = 1.0
+        self.ctrl_press = False
+        self.alt_press = False
+        self.line_width = 1.0
         self.textureless = False
         self.mouse.x = 0
         self.mouse.y = 0
@@ -199,13 +217,13 @@ class MapClass:
             self.start = True
             if self.mapLocation == 'PANEL':
                 self.handler1 = bpy.types.SpaceProperties.draw_handler_add(
-                    Map_load_callback,
-                    (self, context), 'WINDOW', 'POST_PIXEL')
+                                   Map_load_callback,
+                                   (self, context), 'WINDOW', 'POST_PIXEL')
             else:
                 self.handler1 = bpy.types.SpaceView3D.draw_handler_add(
-                    Map_load_callback,
-                    (self, context), 'WINDOW', 'POST_PIXEL')
-            self.isActive = True
+                                   Map_load_callback,
+                                   (self, context), 'WINDOW', 'POST_PIXEL')
+            self.is_active = True
             return True
         else:
             return False
@@ -213,12 +231,12 @@ class MapClass:
     def activateBGLcallback(self, context):
         if self.mapLocation == 'PANEL':
             self.handler2 = bpy.types.SpaceProperties.draw_handler_add(
-                Draw_map_callback,
-                (self, context), 'WINDOW', 'POST_PIXEL')
+                                Draw_map_callback,
+                                (self, context), 'WINDOW', 'POST_PIXEL')
         else:
             self.handler2 = bpy.types.SpaceView3D.draw_handler_add(
-                Draw_map_callback,
-                (self, context), 'WINDOW', 'POST_PIXEL')
+                                Draw_map_callback,
+                                (self, context), 'WINDOW', 'POST_PIXEL')
         self.view3d_area = context.area
         self.set_view3d_area(self.view3d_area)
         bpy.ops.sunpos.map('INVOKE_DEFAULT')
@@ -238,34 +256,33 @@ class MapClass:
         self.image.free_it = False
         self.glImage = None
         self.image.bindcode = 0
-        self.isActive = False
-        if Sun.SP:
-            Sun.SP.ShowMap = False
+        self.is_active = False
+        sun.sp.show_map = False
 
     def load_blender_image(self, file_name):
         if file_name == "None":
             self.textureless = True
-            self.object[0].heightFactor = .5
+            self.object[0].height_factor = .5
             return True
         else:
             self.textureless = False
-
-        # S.L. fix to use any relative path
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.image.name = dir_path + os.path.sep + file_name
-        if os.path.exists(self.image.name):
-            try:
-                self.glImage = bpy.data.images.load(self.image.name)
-                if self.glImage is not None:
-                    self.image.loaded = True
-                    self.glImage.user_clear()
-                    self.object[0].heightFactor = \
-                        self.glImage.size[1] / self.glImage.size[0]
-                    return True
-                else:
-                    return False
-            except:
-                pass
+        for path in sys.path:
+            if path.endswith("addons"):
+                fn = path + "\\sun_position\\" + file_name
+                self.image.name = fn.replace("\\", "/")
+                if os.path.exists(self.image.name):
+                    try:
+                        self.glImage = bpy.data.images.load(self.image.name)
+                        if self.glImage is not None:
+                            self.image.loaded = True
+                            self.glImage.user_clear()
+                            self.object[0].height_factor = \
+                                self.glImage.size[1] / self.glImage.size[0]
+                            return True
+                        else:
+                            return False
+                    except:
+                        pass
         return False
 
     def load_gl_image(self):
@@ -286,7 +303,7 @@ class MapClass:
                 fy -= 20
             return fy
 
-        if text.colorStyle == 'N':
+        if text.color_style == 'N':
             tColor = (0.8, 0.8, 0.8, 1.0)
             vColor = (1.0, 1.0, 1.0, 1.0)
         else:
@@ -296,31 +313,31 @@ class MapClass:
         blf.size(0, 14, 72)
         fx = text.origin.x
         fy = text.origin.y + 140
-        fy = text_line(fx + 10, fy, True, tColor, str(Sun.SP.Month) +
-                       " / " + str(Sun.SP.Day) +
-                       " / " + str(Sun.SP.Year))
+        fy = text_line(fx + 10, fy, True, tColor, str(sun.sp.month) +
+                      " / " + str(sun.sp.day) +
+                      " / " + str(sun.sp.year))
 
         fy = text_line(fx, fy, False, tColor, "  Day: ")
-        fy = text_line(fx + 40, fy, True, vColor, str(Sun.SP.Day_of_year))
+        fy = text_line(fx + 40, fy, True, vColor, str(sun.sp.day_of_year))
         fy = text_line(fx, fy, False, tColor, "Time: ")
-        fy = text_line(fx + 40, fy, True, vColor, format_hms(Sun.SP.Time))
+        fy = text_line(fx + 40, fy, True, vColor, format_hms(sun.sp.time))
 
-        if Sun.ShowRiseSet:
+        if sun.ShowRiseSet:
             fy -= 10
             fy = text_line(fx, fy, True, tColor, "Solar Noon:")
             fy = text_line(fx + 14, fy, True, vColor,
-                           format_hms(Sun.SolarNoon.time))
+                           format_hms(sun.SolarNoon.time))
             fy -= 10
             fy = text_line(fx, fy, False, tColor, "Rise: ")
-            if Sun.RiseSetOK:
+            if sun.RiseSetOK:
                 fy = text_line(fx + 40, fy, True, vColor,
-                               format_hms(Sun.Sunrise.time))
+                               format_hms(sun.Sunrise.time))
             else:
                 fy = text_line(fx + 40, fy, True, vColor, "--------")
             fy = text_line(fx, fy, False, tColor, " Set: ")
-            if Sun.RiseSetOK:
+            if sun.RiseSetOK:
                 fy = text_line(fx + 40, fy, True, vColor,
-                               format_hms(Sun.Sunset.time))
+                               format_hms(sun.sunset.time))
             else:
                 fy = text_line(fx + 40, fy, True, vColor, "--------")
 
@@ -337,7 +354,7 @@ class MapClass:
 
     def event_controller(self, context, event):
 
-        if not Sun.SP.ShowMap or event.type == 'TIMER':
+        if not sun.sp.show_map or event.type == 'TIMER':
             return {'PASS_THROUGH'}
 
         mapInFocus = self.object[0].check_focus(context, event)
@@ -365,7 +382,7 @@ class MapClass:
             if val:
                 return val
         elif event.type in ('RIGHTMOUSE', 'ESC',
-                            'T', 'D', 'X', 'Y', 'R', 'S', 'E', 'A', 'O', 'C', 'H', 'F1'):
+                    'T', 'D', 'X', 'Y', 'R', 'S', 'E', 'A', 'O', 'C', 'H', 'F1'):
             Display.refresh()
             return Key_function[event.type](event)
 
@@ -488,7 +505,7 @@ def key_MiddleMouse(context, event):
 def key_A(event):
     if event.value == 'PRESS':
         if Map.object[0].focused:
-            Sun.SP.ObjectGroup = 'ANALEMMA'
+            sun.sp.object_group = 'ANALEMMA'
         else:
             return {'PASS_THROUGH'}
     return {'RUNNING_MODAL'}
@@ -497,10 +514,10 @@ def key_A(event):
 def key_C(event):
     if event.value == 'PRESS':
         if Map.object[0].focused or Map.object[1].focused:
-            if Map.object[1].colorStyle == 'N':
-                Map.object[1].colorStyle = 'R'
+            if Map.object[1].color_style == 'N':
+                Map.object[1].color_style = 'R'
             else:
-                Map.object[1].colorStyle = 'N'
+                Map.object[1].color_style = 'N'
         else:
             return {'PASS_THROUGH'}
     return {'RUNNING_MODAL'}
@@ -509,7 +526,7 @@ def key_C(event):
 def key_E(event):
     if event.value == 'PRESS':
         if Map.object[0].focused:
-            Sun.SP.ObjectGroup = 'ECLIPTIC'
+            sun.sp.object_group = 'ECLIPTIC'
         else:
             return {'PASS_THROUGH'}
     return {'RUNNING_MODAL'}
@@ -556,8 +573,8 @@ def key_S(event):
     if event.value == 'PRESS':
         if Map.object[0].focused:
             Map.showInfo = True if not Map.showInfo else False
-            Sun.PP.ShowRiseSet = True
-            Sun.ShowRiseSet = True
+            sun.PP.ShowRiseSet = True
+            sun.ShowRiseSet = True
         else:
             return {'PASS_THROUGH'}
     return {'RUNNING_MODAL'}
@@ -680,15 +697,15 @@ def map_Y(event):
 ############################################################################
 
 Key_function = dict([('LEFT_CTRL', key_Ctrl), ('LEFT_ALT', key_Alt),
-                     ('RIGHT_CTRL', key_Ctrl), ('RIGHT_ALT', key_Alt),
-                     ('MIDDLEMOUSE', key_MiddleMouse),
-                     ('LEFTMOUSE', key_LeftMouse),
-                     ('RIGHTMOUSE', key_Esc), ('ESC', key_Esc),
-                     ('A', key_A), ('E', key_E), ('G', key_G), ('C', key_C),
-                     ('H', key_H), ('F1', key_H),
-                     ('R', key_R), ('S', key_S),
-                     ('T', key_TDOXY), ('D', key_TDOXY), ('O', key_TDOXY),
-                     ('X', key_TDOXY), ('Y', key_TDOXY)])
+                    ('RIGHT_CTRL', key_Ctrl), ('RIGHT_ALT', key_Alt),
+                    ('MIDDLEMOUSE', key_MiddleMouse),
+                    ('LEFTMOUSE', key_LeftMouse),
+                    ('RIGHTMOUSE', key_Esc), ('ESC', key_Esc),
+                    ('A', key_A), ('E', key_E), ('G', key_G), ('C', key_C),
+                    ('H', key_H), ('F1', key_H),
+                    ('R', key_R), ('S', key_S),
+                    ('T', key_TDOXY), ('D', key_TDOXY), ('O', key_TDOXY),
+                    ('X', key_TDOXY), ('Y', key_TDOXY)])
 
 # ---------------------------------------------------------------------------
 
@@ -749,10 +766,10 @@ def mouse_zoom():
 
 
 def check_time_boundary():
-    if Sun.SP.Time > 24.0:
-        Sun.SP.Time += -24.0
-    elif Sun.SP.Time < 0.0:
-        Sun.SP.Time += 24.0
+    if sun.sp.time > 24.0:
+        sun.sp.time += -24.0
+    elif sun.sp.time < 0.0:
+        sun.sp.time += 24.0
     Display.refresh()
 
 
@@ -762,7 +779,7 @@ def time_change_wheel(action):
     else:
         val = -1.0 if not Map.altPress else -0.0166
     mf = 1.5 if Map.ctrlPress else 1.0
-    Sun.SP.Time += mf * val
+    sun.sp.time += mf * val
     check_time_boundary()
 
 
@@ -774,7 +791,7 @@ def time_change():
         sx = 0.0001 if Map.mouse.x > Map.grab.spot.x else -0.0001
     else:
         sx = (Map.mouse.x - Map.grab.spot.x) / mf
-    Sun.SP.Time += sx
+    sun.sp.time += sx
     Map.grab.spot.x = Map.mouse.x
     check_time_boundary()
 
@@ -799,18 +816,18 @@ def day_change():
 
 
 def day_change_bounds(wf):
-    if Sun.SP.Day_of_year + wf > 366:
-        Sun.SP.Day_of_year = 1
-        Sun.SP.Year += 1
-    elif Sun.SP.Day_of_year + wf < 1:
-        Sun.SP.Day_of_year = 366
-        Sun.SP.Year -= 1
+    if sun.sp.day_of_year + wf > 366:
+        sun.sp.day_of_year = 1
+        sun.sp.year += 1
+    elif sun.sp.day_of_year + wf < 1:
+        sun.sp.day_of_year = 366
+        sun.sp.year -= 1
     else:
-        Sun.SP.Day_of_year += wf
-    dt = (datetime.date(Sun.SP.Year, 1, 1) +
-          datetime.timedelta(Sun.SP.Day_of_year - 1))
-    Sun.SP.Day = dt.day
-    Sun.SP.Month = dt.month
+        sun.sp.day_of_year += wf
+    dt = (datetime.date(sun.sp.year, 1, 1) +
+             datetime.timedelta(sun.sp.day_of_year - 1))
+    sun.sp.day = dt.day
+    sun.sp.month = dt.month
     Display.refresh()
 
 # ---------------------------------------------------------------------------
@@ -861,22 +878,22 @@ def opacity_change_bounds(obj):
 
 def X_change_wheel(action):
     wf = wheel_factor(action)
-    if Sun.SP.Longitude + wf > 180.0:
-        Sun.SP.Longitude = -180.0
-    elif Sun.SP.Longitude + wf < -180.0:
-        Sun.SP.Longitude = 180.0
+    if sun.sp.longitude + wf > 180.0:
+        sun.sp.longitude = -180.0
+    elif sun.sp.longitude + wf < -180.0:
+        sun.sp.longitude = 180.0
     else:
-        Sun.SP.Longitude += wf
+        sun.sp.longitude += wf
 
 
 def Y_change_wheel(action):
     wf = wheel_factor(action)
-    if Sun.SP.Latitude + wf > 90.0:
-        Sun.SP.Latitude = -90.0
-    elif Sun.SP.Latitude + wf < -90.0:
-        Sun.SP.Latitude = 90.0
+    if sun.sp.latitude + wf > 90.0:
+        sun.sp.latitude = -90.0
+    elif sun.sp.latitude + wf < -90.0:
+        sun.sp.latitude = 90.0
     else:
-        Sun.SP.Latitude += wf
+        sun.sp.latitude += wf
 
 
 def wheel_factor(action):
@@ -892,11 +909,11 @@ def wheel_factor(action):
 
 def Map_load_callback(self, context):
 
-    if Sun.SP.ShowMap and not Map.image.loaded:
+    if sun.sp.show_map and not Map.image.loaded:
         Map.glImage = None
-        if not Map.load_blender_image(Sun.MapName):
+        if not Map.load_blender_image(sun.MapName):
             print("Could not load image file: ", Map.image.name)
-            Sun.SP.ShowMap = False
+            sun.SP.ShowMap = False
 
     if Map.start:
         def set_region_data():
@@ -933,13 +950,13 @@ def Map_load_callback(self, context):
             print("Could not get texture in gl_load()")
             Map.glImage = None
             Map.image.bindcode = 0
-            Sun.SP.ShowMap = False
+            sun.sp.show_map = False
 
         elif Map.textureless:
             set_region_data()
             return
         else:
-            Sun.SP.ShowMap = False
+            sun.sp.show_map = False
         return
 
     if Map.stop:
@@ -992,10 +1009,10 @@ def Draw_map_callback(self, context):
     # cylindrical projection with lat/long 0/0 exactly
     # in the middle of the image.
 
-    zLong = theMap.width / 2
-    longFac = zLong / 180
-    zLat = theMap.height / 2
-    latFac = zLat / 90
+    zLong = the_map.width / 2
+    longFac = z_long / 180
+    zLat = the_map.height / 2
+    latFac = z_lat / 90
     crossChange = True
 
     if not Map.action == 'PAN':
@@ -1092,8 +1109,8 @@ def Draw_map_callback(self, context):
     x = theMap.width / 2.0
     if crossChange and not Map.lockCrosshair:
         if Map.action != 'Y':
-            Sun.SP.Longitude = newLongitude
-    longitude = (Sun.SP.Longitude * x / 180.0) + x
+            sun.sp.longitude = newLongitude
+    longitude = (sun.sp.longitude * x / 180.0) + x
 
     bgl.glEnable(bgl.GL_BLEND)
     bgl.glEnable(bgl.GL_LINES)
@@ -1109,8 +1126,8 @@ def Draw_map_callback(self, context):
     y = theMap.height / 2.0
     if crossChange and not Map.lockCrosshair:
         if Map.action != 'X':
-            Sun.SP.Latitude = newLatitude
-    latitude = (Sun.SP.Latitude * y / 90.0) + y
+            sun.sp.latitude = newLatitude
+    latitude = (sun.sp.latitude * y / 90.0) + y
 
     alpha = 1.0 if Map.action == 'X' else 0.5
     color = (0.894, 0.741, .510, alpha)
@@ -1134,7 +1151,7 @@ def Draw_map_callback(self, context):
     bgl.glVertex2f(Lx, Ly)
     bgl.glEnd()
 
-    if not Sun.ShowRiseSet or not Map.lineWidth:
+    if not sun.ShowRiseSet or not Map.lineWidth:
         bgl.glDisable(bgl.GL_LINES)
         bgl.glFlush()
         return
@@ -1159,14 +1176,14 @@ def Draw_map_callback(self, context):
     py = Ly + latitude
 
     radius = 30 + Map.lineWidth * 10
-    if Sun.RiseSetOK and Map.lineWidth:
+    if sun.RiseSetOK and Map.lineWidth:
         color = (0.2, 0.6, 1.0, 0.9)
-        angle = -(degToRad(Sun.Sunrise.azimuth) - math.pi / 2)
+        angle = -(radians(sun.sunrise.azimuth) - math.pi / 2)
         bgl.glLineWidth(Map.lineWidth)
         draw_angled_line(color, angle, px, py)
 
         color = (0.86, 0.18, 0.18, 0.9)
-        angle = -(degToRad(Sun.Sunset.azimuth) - math.pi / 2)
+        angle = -(radians(sun.sunset.azimuth) - math.pi / 2)
         draw_angled_line(color, angle, px, py)
 
     # ------------------------
@@ -1174,18 +1191,18 @@ def Draw_map_callback(self, context):
     # ------------------------
 
     if Map.textureless:
-        phi = degToRad(Sun.AzNorth) * -1
+        phi = radians(sun.AzNorth) * -1
     else:
-        phi = degToRad(Sun.Azimuth) * -1
-    x = math.sin(phi) * math.sin(-Sun.Theta) * (radius + 10)
-    y = math.sin(Sun.Theta) * math.cos(phi) * (radius + 10)
+        phi = radians(sun.Azimuth) * -1
+    x = math.sin(phi) * math.sin(-sun.Theta) * (radius + 10)
+    y = math.sin(sun.Theta) * math.cos(phi) * (radius + 10)
     night = (0.24, 0.29, 0.94, 0.9)
     day = (0.85, 0.77, 0.60, 0.9)
-    if Sun.SolarNoon.elevation < 0.0:
+    if sun.SolarNoon.elevation < 0.0:
         color = night
-    elif Sun.Elevation >= Sun.Sunrise.elevation:
-        if Sun.Time >= Sun.Sunset.time and \
-                Sun.Elevation <= Sun.Sunset.elevation:
+    elif sun.Elevation >= sun.Sunrise.elevation:
+        if sun.Time >= sun.Sunset.time and \
+                sun.Elevation <= sun.Sunset.elevation:
             color = night
         else:
             color = day
@@ -1248,16 +1265,16 @@ class SunPos_Help(bpy.types.Operator):
         colL.label(text="Left Mouse")
         colR.label(text="Move crosshair.")
         colL.label(text="G or MiddleMouse")
-        colR.label("Pan mode. Grab and move map or text.")
+        colR.label(text="Pan mode. Grab and move map or text.")
         colL.label(text="Ctrl Middlemouse")
         colR.label(text="Mouse zoom to point.")
         colL.label(text="C")
-        colR.label("Invert text color.")
+        colR.label(text="Invert text color.")
         colL.label(text="R")
         colR.label(text="Toggle through thickness of the radiating rise/set lines.")
         colL.label(text="S")
         colR.label(text="Show statistics data. Move with pan command.")
-        self.layout.label("----- The following are changed by moving " +
+        self.layout.label(text="----- The following are changed by moving " +
                           "the mouse or using the scroll wheel.")
         self.layout.label(text="----- Use Ctrl for coarse increments or Alt for fine.")
         row = self.layout.row()

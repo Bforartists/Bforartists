@@ -601,28 +601,7 @@ class _draw_tool_settings_context_mode:
         from bl_ui.properties_paint_common import (
             brush_basic_gpencil_paint_settings,
         )
-        brush_basic_gpencil_paint_settings(layout, context, brush, compact=True)
-
-        # FIXME: tools must use their own UI drawing!
-        if tool.idname in {"builtin.arc", "builtin.curve", "builtin.line", "builtin.box", "builtin.circle"}:
-            settings = context.tool_settings.gpencil_sculpt
-            row = layout.row(align=True)
-            row.prop(settings, "use_thickness_curve", text="", icon='CURVE_DATA')
-            sub = row.row(align=True)
-            sub.active = settings.use_thickness_curve
-            sub.popover(
-                panel="TOPBAR_PT_gpencil_primitive",
-                text="Thickness Profile",
-            )
-
-        if brush.gpencil_tool == 'FILL':
-            settings = context.tool_settings.gpencil_sculpt
-            row = layout.row(align=True)
-            sub = row.row(align=True)
-            sub.popover(
-                panel="TOPBAR_PT_gpencil_fill",
-                text="Fill Options",
-            )
+        brush_basic_gpencil_paint_settings(layout, context, brush, tool, compact=True, is_toolbar=True)
 
     @staticmethod
     def SCULPT_GPENCIL(context, layout, tool):
@@ -6321,11 +6300,8 @@ class VIEW3D_PT_collections(Panel):
             if not use_local_collections:
                 subrow.active = collection.is_visible  # Parent collection runtime visibility
                 subrow.prop(child, "hide_viewport", text="", emboss=False)
-            elif not child.is_visible:
-                subrow.active = False
-                subrow.label(text="", icon='REMOVE')
             else:
-                subrow.active = collection.visible_get() # Parent collection runtime visibility
+                subrow.active = collection.visible_get()  # Parent collection runtime visibility
                 icon = 'HIDE_OFF' if child.visible_get() else 'HIDE_ON'
                 props = subrow.operator("object.hide_collection", text="", icon=icon, emboss=False)
                 props.collection_index = index

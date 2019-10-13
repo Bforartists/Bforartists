@@ -307,7 +307,7 @@ class Rig:
                     con = pb[ctrl].constraints.new('COPY_ROTATION')
                     con.target       = self.obj
                     con.subtarget    = ctrls[ ctrls.index(ctrl) - 1 ]
-                    con.use_offset   = True
+                    con.mix_mode     = 'OFFSET'
                     con.target_space = 'LOCAL'
                     con.owner_space  = 'LOCAL'
 

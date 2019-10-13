@@ -64,7 +64,7 @@ class property_spec(object):
                 ans = []
                 for i in range(count):
                     s = stream[i]
-                    if len(s) < 2 or s[0] != '"' or s[-1] != '"':
+                    if not (len(s) >= 2 and s.startswith(b'"') and s.endswith(b'"')):
                         print('Invalid string', s)
                         print('Note: ply_import.py does not handle whitespace in strings')
                         return None
@@ -318,13 +318,7 @@ def load_ply_mesh(filepath, ply_name):
     if b'face' in obj:
         for f in obj[b'face']:
             ind = f[findex]
-            len_ind = len(ind)
-            if len_ind <= 4:
-                add_face(verts, ind, uvindices, colindices)
-            else:
-                # Fan fill the face
-                for j in range(len_ind - 2):
-                    add_face(verts, (ind[0], ind[j + 1], ind[j + 2]), uvindices, colindices)
+            add_face(verts, ind, uvindices, colindices)
 
     if b'tristrips' in obj:
         for t in obj[b'tristrips']:

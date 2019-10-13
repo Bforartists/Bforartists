@@ -15,7 +15,7 @@ __________________
 
 ### OK, what's this all about?
 
-Dedicated CAD software speeds up drafting significantly with functions like: `Extend`, `Trim`,  `Intersect`, `Fillet /w radius` and `Offset /w distance`. At the moment of this writing many of these functions aren't included by default in regular distributions on Blender.org, so i've coded scripts to perform a few of the main features that I missed most. 
+Dedicated CAD software speeds up drafting significantly with functions like: `Extend`, `Trim`,  `Intersect`, `Fillet /w radius` and `Offset /w distance`. At the moment of this writing many of these functions aren't included by default in regular distributions on Blender.org, so I've coded scripts to perform a few of the main features that I missed most.
   
 My scripts have shortnames: `VTX, V2X, XALL, BIX, CCEN` and are described separately in sections below. `Fillet` and `Offset` are written by zmj100 and can be found [here](http://blenderartists.org/forum/showthread.php?179375).
 
@@ -45,7 +45,7 @@ Expect full freedom of orientation, but stuff must really intersect within error
 
 ### X ALL
 
-Intersect all, it programatically goes through all selected edges and slices them all using any found intersections, then welds them.
+Intersect all, it programmatically goes through all selected edges and slices them all using any found intersections, then welds them.
 
   - XALL is fast!  
   ![Imgur](http://i.imgur.com/1I7totI.gif)

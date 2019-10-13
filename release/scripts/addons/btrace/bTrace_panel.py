@@ -4,7 +4,7 @@ from bpy.types import Panel
 # Draw Brush panel in Toolbar
 class addTracerObjectPanel(Panel):
     bl_idname = "BTRACE_PT_object_brush"
-    bl_label = "Btrace"
+    bl_label = "BTracer"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_context = "objectmode"

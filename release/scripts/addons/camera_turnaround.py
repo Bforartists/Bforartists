@@ -25,7 +25,7 @@ bl_info = {
     "description": "Add a camera rotation around selected object",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Animation/TurnaroundCamera",
-    "category": "Camera"}
+    "category": "Animation"}
 
 
 import bpy
@@ -266,7 +266,9 @@ class CAMERATURN_PT_ui(Panel):
     bl_label = "Turnaround Camera"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "View"
+    bl_category = "Animate"
+    bl_context = "objectmode"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout

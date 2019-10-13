@@ -23,7 +23,7 @@ bl_info = {
     "name": "Show Vertex Groups/Weights",
     "author": "Jason van Gumster (Fweeb), Bartius Crouch, CoDEmanX",
     "version": (0, 7, 2),
-    "blender": (2, 65, 4),
+    "blender": (2, 80, 4),
     "location": "3D View > Properties Region > Show Weights",
     "description": "Finds the vertex groups of a selected vertex "
         "and displays the corresponding weights",
@@ -58,7 +58,7 @@ def calc_callback(self, context):
     # get matrices
     view_mat = context.space_data.region_3d.perspective_matrix
     ob_mat = context.active_object.matrix_world
-    total_mat = view_mat * ob_mat
+    total_mat = view_mat @ ob_mat
 
     # calculate location info
     texts = []
@@ -103,7 +103,7 @@ def calc_callback(self, context):
 
 
     for loc in locs:
-        vec = total_mat * loc[4] # order is important
+        vec = total_mat @ loc[4] # order is important
         # dehomogenise
         vec = mathutils.Vector((vec[0] / vec[3], vec[1] / vec[3], vec[2] / vec[3]))
         x = int(mid_x + vec[0] * width / 2.0)
@@ -354,10 +354,11 @@ class AddToVertexGroup(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class PanelShowWeights(bpy.types.Panel):
+class MESH_PT_ShowWeights(bpy.types.Panel):
     bl_label = "Show Weights"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
+    bl_category = "Edit"
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
@@ -373,9 +374,9 @@ class PanelShowWeights(bpy.types.Panel):
 
         row = layout.row(align=True)
 
-        text = "Show" if not context.scene.show_vgroups_weights else "Hide"
-        row.operator(ShowVGroupWeights.bl_idname, text=text)
-        row.prop(context.scene, "show_vgroups_weights_limit")
+#        text = "Show" if not context.scene.show_vgroups_weights else "Hide"
+#        row.operator(ShowVGroupWeights.bl_idname, text=text)
+#        row.prop(context.scene, "show_vgroups_weights_limit")
 
         if len(ob.vertex_groups) > 0:
             # Active vertex
@@ -495,14 +496,28 @@ def clear_properties(full=True):
         del bpy.types.Scene.show_vgroups_weights
         del bpy.types.Scene.show_vgroups_weights_limit
 
+
+classes = (
+    ShowVGroupWeights,
+    VGroupsWeights,
+    AssignVertexWeight,
+    RemoveFromVertexGroup,
+    AddToVertexGroup,
+    MESH_PT_ShowWeights
+)
+
 def register():
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
     create_properties()
 
 def unregister():
     ShowVGroupWeights.handle_remove()
-    bpy.utils.unregister_module(__name__)
     clear_properties()
+
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
 
 if __name__ == "__main__":
     register()

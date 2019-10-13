@@ -33,7 +33,7 @@ import bpy
 
 import threading
 import requests
-
+import time
 
 from bpy.props import (
     BoolProperty,
@@ -44,44 +44,52 @@ PORTS = [62485, 65425, 55428, 49452]
 
 active_authenticator = None
 
+
 def login_thread(signup=False):
     global active_authenticator
     r_url = paths.get_oauth_landing_url()
     url = paths.get_bkit_url()
     authenticator = oauth.SimpleOAuthAuthenticator(server_url=url, client_id=CLIENT_ID, ports=PORTS)
-    #we store authenticator globally to be able to ping the server if connection fails.
+    # we store authenticator globally to be able to ping the server if connection fails.
     active_authenticator = authenticator
     thread = threading.Thread(target=login, args=([signup, url, r_url, authenticator]), daemon=True)
     thread.start()
 
 
 def login(signup, url, r_url, authenticator):
-    auth_token, refresh_token = authenticator.get_new_token(register=signup, redirect_url=r_url)
+    auth_token, refresh_token, oauth_response = authenticator.get_new_token(register=signup, redirect_url=r_url)
     utils.p('tokens retrieved')
-    tasks_queue.add_task((write_tokens, (auth_token, refresh_token)))
+    tasks_queue.add_task((write_tokens, (auth_token, refresh_token, oauth_response)))
 
 
 def refresh_token_thread():
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    if len(preferences.api_key_refresh) > 0:
+    if len(preferences.api_key_refresh) > 0 and preferences.refresh_in_progress == False:
+        preferences.refresh_in_progress = True
         url = paths.get_bkit_url()
         thread = threading.Thread(target=refresh_token, args=([preferences.api_key_refresh, url]), daemon=True)
         thread.start()
+    else:
+        ui.add_report('Already Refreshing token, will be ready soon.')
 
 
 def refresh_token(api_key_refresh, url):
     authenticator = oauth.SimpleOAuthAuthenticator(server_url=url, client_id=CLIENT_ID, ports=PORTS)
-    auth_token, refresh_token = authenticator.get_refreshed_token(api_key_refresh)
+    auth_token, refresh_token, oauth_response = authenticator.get_refreshed_token(api_key_refresh)
     if auth_token is not None and refresh_token is not None:
-        tasks_queue.add_task((write_tokens, (auth_token, refresh_token)))
+        tasks_queue.add_task((write_tokens, (auth_token, refresh_token, oauth_response)))
     return auth_token, refresh_token
 
-def write_tokens(auth_token, refresh_token):
+
+def write_tokens(auth_token, refresh_token, oauth_response):
     utils.p('writing tokens')
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     preferences.api_key_refresh = refresh_token
     preferences.api_key = auth_token
+    preferences.api_key_timeout = time.time() + oauth_response['expires_in']
+    preferences.api_key_life = oauth_response['expires_in']
     preferences.login_attempt = False
+    preferences.refresh_in_progress = False
     props = utils.get_search_props()
     if props is not None:
         props.report = ''
@@ -96,7 +104,6 @@ class RegisterLoginOnline(bpy.types.Operator):
     bl_idname = "wm.blenderkit_login"
     bl_label = "BlenderKit login or signup"
     bl_options = {'REGISTER', 'UNDO'}
-
 
     signup: BoolProperty(
         name="create a new account",

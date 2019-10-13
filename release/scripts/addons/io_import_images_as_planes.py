@@ -1004,6 +1004,8 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
             material = bpy.data.materials.new(name=name_compat)
 
         material.use_nodes = True
+        if self.use_transparency:
+            material.blend_method = 'BLEND'
         node_tree = material.node_tree
         out_node = clean_node_tree(node_tree)
 

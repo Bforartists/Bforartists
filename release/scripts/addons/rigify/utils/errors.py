@@ -32,3 +32,14 @@ class MetarigError(Exception):
     def __str__(self):
         return repr(self.message)
 
+
+class RaiseErrorMixin(object):
+    def raise_error(self, message, *args, **kwargs):
+        from .naming import strip_org
+
+        message = message.format(*args, **kwargs)
+
+        if hasattr(self, 'base_bone'):
+            message = "Bone '%s': %s" % (strip_org(self.base_bone), message)
+
+        raise MetarigError("RIGIFY ERROR: " + message)
