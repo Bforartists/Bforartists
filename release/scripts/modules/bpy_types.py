@@ -184,6 +184,27 @@ class WindowManager(bpy_types.ID):
                 self.piemenu_end__internal(pie)
 
 
+class WorkSpace(bpy_types.ID):
+    __slots__ = ()
+
+    def status_text_set(self, text):
+        """
+        Set the status text or None to clear,
+        When text is a function, this will be called with the (header, context) arguments.
+        """
+        from bl_ui.space_statusbar import STATUSBAR_HT_header
+        draw_fn = getattr(STATUSBAR_HT_header, "_draw_orig", None)
+        if draw_fn is None:
+            draw_fn = STATUSBAR_HT_header._draw_orig = STATUSBAR_HT_header.draw
+
+        if not (text is None or isinstance(text, str)):
+            draw_fn = text
+            text = None
+
+        self.status_text_set_internal(text)
+        STATUSBAR_HT_header.draw = draw_fn
+
+
 class _GenericBone:
     """
     functions for bones, common between Armature/Pose/Edit bones.
@@ -418,6 +439,8 @@ class Mesh(bpy_types.ID):
            int pairs, each pair contains two indices to the
            *vertices* argument. eg: [(1, 2), ...]
 
+           When an empty iterable is passed in, the edges are inferred from the polygons.
+
         :type edges: iterable object
         :arg faces:
 
@@ -453,11 +476,15 @@ class Mesh(bpy_types.ID):
         self.polygons.foreach_set("loop_start", loop_starts)
         self.polygons.foreach_set("vertices", vertex_indices)
 
-        # if no edges - calculate them
-        if faces and (not edges):
-            self.update(calc_edges=True)
-        elif edges:
-            self.update(calc_edges_loose=True)
+        if edges or faces:
+            self.update(
+                # Needed to either:
+                # - Calculate edges that don't exist for polygons.
+                # - Assign edges to polygon loops.
+                calc_edges=bool(faces),
+                # Flag loose edges.
+                calc_edges_loose=bool(edges),
+            )
 
     @property
     def edge_keys(self):

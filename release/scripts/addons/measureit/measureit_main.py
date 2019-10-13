@@ -613,6 +613,7 @@ class MEASUREIT_PT_Main(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category= 'View'
+    bl_options = {'DEFAULT_CLOSED'}
 
     # ------------------------------
     # Draw UI

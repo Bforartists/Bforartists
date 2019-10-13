@@ -84,6 +84,7 @@ class AntLandscapeAddPanel(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_context = "objectmode"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         col = self.layout.column()

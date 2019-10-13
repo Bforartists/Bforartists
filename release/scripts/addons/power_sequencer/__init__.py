@@ -38,7 +38,7 @@ bl_info = {
     "author": "Nathan Lovato",
     "version": (1, 4, 0),
     "blender": (2, 80, 0),
-    "location": "Sequencer",
+    "location": "Video Tools",
     "tracker_url": "https://github.com/GDquest/Blender-power-sequencer/issues",
     "wiki_url": "https://www.youtube.com/playlist?list=PLhqJJNjsQ7KFjp88Cu57Zb9_wFt7nlkEI",
     "support": "COMMUNITY",

@@ -1300,6 +1300,13 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
             min=0,
             description="Random Seed"
             )
+
+    edit_mode : BoolProperty(
+            name="Show in edit mode",
+            default=True,
+            description="Show in edit mode"
+            )
+
     # Line properties
     startlocation : FloatVectorProperty(
             name="",
@@ -1448,6 +1455,9 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
         col = layout.column()
         col.row().prop(self, "use_cyclic_u", expand=True)
 
+        col = layout.column()
+        col.row().prop(self, "edit_mode", expand=True)
+        
         box = layout.box()
         box.label(text="Location:")
         box.prop(self, "startlocation")
@@ -1473,6 +1483,11 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
         
         # restore pre operator state
         bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
+
+        if self.edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+        else:
+            bpy.ops.object.mode_set(mode = 'OBJECT')
         
         return {'FINISHED'}
         

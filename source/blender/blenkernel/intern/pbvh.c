@@ -27,6 +27,7 @@
 #include "BLI_ghash.h"
 #include "BLI_task.h"
 
+#include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 
 #include "BKE_pbvh.h"
@@ -533,6 +534,7 @@ static void pbvh_build(PBVH *bvh, BB *cb, BBC *prim_bbc, int totprim)
  * (which means it may rewrite it if needed, see #BKE_pbvh_vert_coords_apply().
  */
 void BKE_pbvh_build_mesh(PBVH *bvh,
+                         const Mesh *mesh,
                          const MPoly *mpoly,
                          const MLoop *mloop,
                          MVert *verts,
@@ -545,6 +547,7 @@ void BKE_pbvh_build_mesh(PBVH *bvh,
   BBC *prim_bbc = NULL;
   BB cb;
 
+  bvh->mesh = mesh;
   bvh->type = PBVH_FACES;
   bvh->mpoly = mpoly;
   bvh->mloop = mloop;
@@ -1093,12 +1096,11 @@ static void pbvh_faces_update_normals(PBVH *bvh, PBVHNode **nodes, int totnode)
       .vnors = vnors,
   };
 
-  TaskParallelSettings settings;
+  PBVHParallelSettings settings;
   BKE_pbvh_parallel_range_settings(&settings, true, totnode);
 
-  BLI_task_parallel_range(0, totnode, &data, pbvh_update_normals_accum_task_cb, &settings);
-
-  BLI_task_parallel_range(0, totnode, &data, pbvh_update_normals_store_task_cb, &settings);
+  BKE_pbvh_parallel_range(0, totnode, &data, pbvh_update_normals_accum_task_cb, &settings);
+  BKE_pbvh_parallel_range(0, totnode, &data, pbvh_update_normals_store_task_cb, &settings);
 
   MEM_freeN(vnors);
 }
@@ -1148,9 +1150,9 @@ static void pbvh_update_mask_redraw(PBVH *bvh, PBVHNode **nodes, int totnode, in
       .flag = flag,
   };
 
-  TaskParallelSettings settings;
+  PBVHParallelSettings settings;
   BKE_pbvh_parallel_range_settings(&settings, true, totnode);
-  BLI_task_parallel_range(0, totnode, &data, pbvh_update_mask_redraw_task_cb, &settings);
+  BKE_pbvh_parallel_range(0, totnode, &data, pbvh_update_mask_redraw_task_cb, &settings);
 }
 
 static void pbvh_update_BB_redraw_task_cb(void *__restrict userdata,
@@ -1186,9 +1188,9 @@ void pbvh_update_BB_redraw(PBVH *bvh, PBVHNode **nodes, int totnode, int flag)
       .flag = flag,
   };
 
-  TaskParallelSettings settings;
+  PBVHParallelSettings settings;
   BKE_pbvh_parallel_range_settings(&settings, true, totnode);
-  BLI_task_parallel_range(0, totnode, &data, pbvh_update_BB_redraw_task_cb, &settings);
+  BKE_pbvh_parallel_range(0, totnode, &data, pbvh_update_BB_redraw_task_cb, &settings);
 }
 
 static int pbvh_get_buffers_update_flags(PBVH *bvh, bool show_vcol)
@@ -1222,7 +1224,8 @@ static void pbvh_update_draw_buffer_cb(void *__restrict userdata,
                                                          bvh->looptri,
                                                          bvh->verts,
                                                          node->prim_indices,
-                                                         node->totprim);
+                                                         node->totprim,
+                                                         bvh->mesh);
         break;
       case PBVH_BMESH:
         node->draw_buffers = GPU_pbvh_bmesh_buffers_build(bvh->flags &
@@ -1295,9 +1298,9 @@ static void pbvh_update_draw_buffers(
       .show_vcol = show_vcol,
   };
 
-  TaskParallelSettings settings;
+  PBVHParallelSettings settings;
   BKE_pbvh_parallel_range_settings(&settings, true, totnode);
-  BLI_task_parallel_range(0, totnode, &data, pbvh_update_draw_buffer_cb, &settings);
+  BKE_pbvh_parallel_range(0, totnode, &data, pbvh_update_draw_buffer_cb, &settings);
 }
 
 static int pbvh_flush_bb(PBVH *bvh, PBVHNode *node, int flag)
@@ -1905,14 +1908,11 @@ static bool pbvh_faces_node_raycast(PBVH *bvh,
   const MVert *vert = bvh->verts;
   const MLoop *mloop = bvh->mloop;
   const int *faces = node->prim_indices;
-  int i, totface = node->totprim;
+  int totface = node->totprim;
   bool hit = false;
-  float min_depth = FLT_MAX;
-  float location[3] = {0.0f};
-  float nearest_vertex_co[3];
-  copy_v3_fl(nearest_vertex_co, 0.0f);
+  float nearest_vertex_co[3] = {0.0f};
 
-  for (i = 0; i < totface; i++) {
+  for (int i = 0; i < totface; i++) {
     const MLoopTri *lt = &bvh->looptri[faces[i]];
     const int *face_verts = node->face_vert_indices[i];
 
@@ -1920,35 +1920,33 @@ static bool pbvh_faces_node_raycast(PBVH *bvh,
       continue;
     }
 
+    const float *co[3];
     if (origco) {
       /* intersect with backuped original coordinates */
-      hit |= ray_face_intersection_tri(ray_start,
-                                       isect_precalc,
-                                       origco[face_verts[0]],
-                                       origco[face_verts[1]],
-                                       origco[face_verts[2]],
-                                       depth);
+      co[0] = origco[face_verts[0]];
+      co[1] = origco[face_verts[1]];
+      co[2] = origco[face_verts[2]];
     }
     else {
       /* intersect with current coordinates */
-      hit |= ray_face_intersection_tri(ray_start,
-                                       isect_precalc,
-                                       vert[mloop[lt->tri[0]].v].co,
-                                       vert[mloop[lt->tri[1]].v].co,
-                                       vert[mloop[lt->tri[2]].v].co,
-                                       depth);
+      co[0] = vert[mloop[lt->tri[0]].v].co;
+      co[1] = vert[mloop[lt->tri[1]].v].co;
+      co[2] = vert[mloop[lt->tri[2]].v].co;
+    }
 
-      if (hit && *depth < min_depth) {
-        min_depth = *depth;
-        normal_tri_v3(r_face_normal,
-                      vert[mloop[lt->tri[0]].v].co,
-                      vert[mloop[lt->tri[1]].v].co,
-                      vert[mloop[lt->tri[2]].v].co);
+    if (ray_face_intersection_tri(ray_start, isect_precalc, co[0], co[1], co[2], depth)) {
+      hit = true;
+
+      if (r_face_normal) {
+        normal_tri_v3(r_face_normal, co[0], co[1], co[2]);
+      }
+
+      if (r_active_vertex_index) {
+        float location[3] = {0.0f};
         madd_v3_v3v3fl(location, ray_start, ray_normal, *depth);
         for (int j = 0; j < 3; j++) {
-          if (len_squared_v3v3(location, vert[mloop[lt->tri[j]].v].co) <
-              len_squared_v3v3(location, nearest_vertex_co)) {
-            copy_v3_v3(nearest_vertex_co, vert[mloop[lt->tri[j]].v].co);
+          if (len_squared_v3v3(location, co[j]) < len_squared_v3v3(location, nearest_vertex_co)) {
+            copy_v3_v3(nearest_vertex_co, co[j]);
             *r_active_vertex_index = mloop[lt->tri[j]].v;
           }
         }
@@ -1963,22 +1961,28 @@ static bool pbvh_grids_node_raycast(PBVH *bvh,
                                     PBVHNode *node,
                                     float (*origco)[3],
                                     const float ray_start[3],
+                                    const float ray_normal[3],
                                     struct IsectRayPrecalc *isect_precalc,
-                                    float *depth)
+                                    float *depth,
+                                    int *r_active_vertex_index,
+                                    float *r_face_normal)
 {
   const int totgrid = node->totprim;
   const int gridsize = bvh->gridkey.grid_size;
   bool hit = false;
+  float nearest_vertex_co[3] = {0.0};
+  const CCGKey *gridkey = &bvh->gridkey;
 
   for (int i = 0; i < totgrid; i++) {
-    CCGElem *grid = bvh->grids[node->prim_indices[i]];
+    const int grid_index = node->prim_indices[i];
+    CCGElem *grid = bvh->grids[grid_index];
     BLI_bitmap *gh;
 
     if (!grid) {
       continue;
     }
 
-    gh = bvh->grid_hidden[node->prim_indices[i]];
+    gh = bvh->grid_hidden[grid_index];
 
     for (int y = 0; y < gridsize - 1; y++) {
       for (int x = 0; x < gridsize - 1; x++) {
@@ -1989,23 +1993,40 @@ static bool pbvh_grids_node_raycast(PBVH *bvh,
           }
         }
 
+        const float *co[4];
         if (origco) {
-          hit |= ray_face_intersection_quad(ray_start,
-                                            isect_precalc,
-                                            origco[y * gridsize + x],
-                                            origco[y * gridsize + x + 1],
-                                            origco[(y + 1) * gridsize + x + 1],
-                                            origco[(y + 1) * gridsize + x],
-                                            depth);
+          co[0] = origco[y * gridsize + x];
+          co[1] = origco[y * gridsize + x + 1];
+          co[2] = origco[(y + 1) * gridsize + x + 1];
+          co[3] = origco[(y + 1) * gridsize + x];
         }
         else {
-          hit |= ray_face_intersection_quad(ray_start,
-                                            isect_precalc,
-                                            CCG_grid_elem_co(&bvh->gridkey, grid, x, y),
-                                            CCG_grid_elem_co(&bvh->gridkey, grid, x + 1, y),
-                                            CCG_grid_elem_co(&bvh->gridkey, grid, x + 1, y + 1),
-                                            CCG_grid_elem_co(&bvh->gridkey, grid, x, y + 1),
-                                            depth);
+          co[0] = CCG_grid_elem_co(gridkey, grid, x, y);
+          co[1] = CCG_grid_elem_co(gridkey, grid, x + 1, y);
+          co[2] = CCG_grid_elem_co(gridkey, grid, x + 1, y + 1);
+          co[3] = CCG_grid_elem_co(gridkey, grid, x, y + 1);
+        }
+
+        if (ray_face_intersection_quad(
+                ray_start, isect_precalc, co[0], co[1], co[2], co[3], depth)) {
+          hit = true;
+
+          if (r_face_normal) {
+            normal_quad_v3(r_face_normal, co[0], co[1], co[2], co[3]);
+          }
+
+          if (r_active_vertex_index) {
+            float location[3] = {0.0};
+            madd_v3_v3v3fl(location, ray_start, ray_normal, *depth);
+            for (int j = 0; j < 4; j++) {
+              if (len_squared_v3v3(location, co[j]) <
+                  len_squared_v3v3(location, nearest_vertex_co)) {
+                copy_v3_v3(nearest_vertex_co, co[j]);
+                *r_active_vertex_index = gridkey->grid_area * grid_index + y * gridkey->grid_size +
+                                         x;
+              }
+            }
+          }
         }
       }
     }
@@ -2048,7 +2069,15 @@ bool BKE_pbvh_node_raycast(PBVH *bvh,
                                      face_normal);
       break;
     case PBVH_GRIDS:
-      hit |= pbvh_grids_node_raycast(bvh, node, origco, ray_start, isect_precalc, depth);
+      hit |= pbvh_grids_node_raycast(bvh,
+                                     node,
+                                     origco,
+                                     ray_start,
+                                     ray_normal,
+                                     isect_precalc,
+                                     depth,
+                                     active_vertex_index,
+                                     face_normal);
       break;
     case PBVH_BMESH:
       BM_mesh_elem_index_ensure(bvh->bm, BM_VERT);
@@ -2712,13 +2741,10 @@ void pbvh_show_mask_set(PBVH *bvh, bool show_mask)
   bvh->show_mask = show_mask;
 }
 
-void BKE_pbvh_parallel_range_settings(TaskParallelSettings *settings,
+void BKE_pbvh_parallel_range_settings(PBVHParallelSettings *settings,
                                       bool use_threading,
                                       int totnode)
 {
-  const int threaded_limit = 1;
-  BLI_parallel_range_settings_defaults(settings);
-  settings->use_threading = use_threading && (totnode > threaded_limit);
-  settings->min_iter_per_thread = 1;
-  settings->scheduling_mode = TASK_SCHEDULING_DYNAMIC;
+  memset(settings, 0, sizeof(*settings));
+  settings->use_threading = use_threading && totnode > 1;
 }

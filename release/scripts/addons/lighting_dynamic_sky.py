@@ -461,6 +461,7 @@ class Dynapanel(Panel):
     bl_region_type = 'UI'
     bl_context = "objectmode"
     bl_category = "Create"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout

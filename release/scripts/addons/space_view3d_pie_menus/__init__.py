@@ -41,7 +41,7 @@ bl_info = {
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/3D_interaction/viewport_pies",
-    "category": "Pie Menu"
+    "category": "Interface"
     }
 
 sub_modules_names = (

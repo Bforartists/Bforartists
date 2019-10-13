@@ -26,7 +26,8 @@ from collections import defaultdict
 
 import bpy
 
-from . import utils
+from .utils.rig import METARIG_DIR, get_resource
+
 from . import feature_set_list
 
 
@@ -70,11 +71,11 @@ def get_metarigs(metarigs, base_dir, base_path, *, path=[], nested=False):
         elif f.endswith(".py"):
             # Check straight-up python files
             f = f[:-3]
-            module = utils.get_resource('.'.join([*base_path, *path, f]))
+            module = get_resource('.'.join([*base_path, *path, f]))
             if nested:
                 metarigs[f] = module
             else:
-                metarigs[utils.METARIG_DIR][f] = module
+                metarigs[METARIG_DIR][f] = module
 
 
 def make_metarig_add_execute(m):
@@ -120,7 +121,7 @@ def get_internal_metarigs():
     BASE_RIGIFY_DIR = os.path.dirname(__file__)
     BASE_RIGIFY_PATH = __name__.split('.')[:-1]
 
-    get_metarigs(metarigs, os.path.join(BASE_RIGIFY_DIR, utils.METARIG_DIR), [*BASE_RIGIFY_PATH, utils.METARIG_DIR])
+    get_metarigs(metarigs, os.path.join(BASE_RIGIFY_DIR, METARIG_DIR), [*BASE_RIGIFY_PATH, METARIG_DIR])
 
 def infinite_defaultdict():
     return defaultdict(infinite_defaultdict)
@@ -129,8 +130,6 @@ metarigs = infinite_defaultdict()
 metarig_ops = {}
 armature_submenus = []
 menu_funcs = []
-
-get_internal_metarigs()
 
 def create_metarig_ops(dic=metarigs):
     """Create metarig add Operators"""
@@ -154,7 +153,7 @@ def create_metarig_ops(dic=metarigs):
 
 def create_menu_funcs():
     global menu_funcs
-    for mop, name in metarig_ops[utils.METARIG_DIR]:
+    for mop, name in metarig_ops[METARIG_DIR]:
         text = capwords(name.replace("_", " ")) + " (Meta-Rig)"
         menu_funcs += [make_metarig_menu_func(mop.bl_idname, text)]
 
@@ -167,7 +166,7 @@ def create_armature_submenus(dic=metarigs):
         if metarig_category == "external":
             create_armature_submenus(dic=metarigs["external"])
             continue
-        if metarig_category == utils.METARIG_DIR:
+        if metarig_category == METARIG_DIR:
             continue
 
         armature_submenus.append(type('Class_' + metarig_category + '_submenu', (ArmatureSubMenu,), {}))
@@ -180,10 +179,11 @@ def create_armature_submenus(dic=metarigs):
             arm_sub = next((e for e in armature_submenus if e.bl_label == metarig_category + ' (submenu)'), '')
             arm_sub.operators.append((mop.bl_idname, name,))
 
-create_metarig_ops()
-create_menu_funcs()
-create_armature_submenus()
-
+def init_metarig_menu():
+    get_internal_metarigs()
+    create_metarig_ops()
+    create_menu_funcs()
+    create_armature_submenus()
 
 ### Registering ###
 
@@ -224,7 +224,7 @@ def get_external_metarigs(set_list):
 
     for feature_set in set_list:
         try:
-            base_dir, base_path = feature_set_list.get_dir_path(feature_set, utils.METARIG_DIR)
+            base_dir, base_path = feature_set_list.get_dir_path(feature_set, METARIG_DIR)
 
             get_metarigs(metarigs['external'], base_dir, base_path)
         except Exception:

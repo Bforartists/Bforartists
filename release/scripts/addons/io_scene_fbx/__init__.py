@@ -21,7 +21,7 @@
 bl_info = {
     "name": "FBX format",
     "author": "Campbell Barton, Bastien Montagne, Jens Restemeier",
-    "version": (4, 17, 0),
+    "version": (4, 20, 0),
     "blender": (2, 81, 6),
     "location": "File > Import-Export",
     "description": "FBX IO meshes, UV's, vertex colors, materials, textures, cameras, lamps and actions",
@@ -48,6 +48,7 @@ from bpy.props import (
         BoolProperty,
         FloatProperty,
         EnumProperty,
+        CollectionProperty,
         )
 from bpy_extras.io_utils import (
         ImportHelper,
@@ -69,6 +70,11 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
 
     filename_ext = ".fbx"
     filter_glob: StringProperty(default="*.fbx", options={'HIDDEN'})
+
+    files: CollectionProperty(
+            name="File Path",
+            type=bpy.types.OperatorFileListElement,
+            )
 
     ui_tab: EnumProperty(
             items=(('MAIN', "Main", "Main basic settings"),
@@ -197,10 +203,21 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
         pass
 
     def execute(self, context):
-        keywords = self.as_keywords(ignore=("filter_glob", "directory", "ui_tab"))
+        keywords = self.as_keywords(ignore=("filter_glob", "directory", "ui_tab", "filepath", "files"))
 
         from . import import_fbx
-        return import_fbx.load(self, context, **keywords)
+        import os
+
+        if self.files:
+            ret = {'CANCELLED'}
+            dirname = os.path.dirname(self.filepath)
+            for file in self.files:
+                path = os.path.join(dirname, file.name)
+                if import_fbx.load(self, context, filepath=path, **keywords) == {'FINISHED'}:
+                    ret = {'FINISHED'}
+            return ret
+        else:
+            return import_fbx.load(self, context, filepath=self.filepath, **keywords)
 
 
 class FBX_PT_import_include(bpy.types.Panel):
@@ -671,8 +688,11 @@ class FBX_PT_export_include(bpy.types.Panel):
         sfile = context.space_data
         operator = sfile.active_operator
 
-        layout.prop(operator, "use_selection")
-        layout.prop(operator, "use_active_collection")
+        sublayout = layout.column()
+        sublayout.enabled = (operator.batch_mode == 'OFF')
+        sublayout.prop(operator, "use_selection")
+        sublayout.prop(operator, "use_active_collection")
+
         layout.column().prop(operator, "object_types")
         layout.prop(operator, "use_custom_props")
 

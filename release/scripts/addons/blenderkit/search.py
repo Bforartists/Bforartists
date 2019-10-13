@@ -82,11 +82,13 @@ reports = ''
 
 
 def refresh_token_timer():
-    ''' this timer gets run every 20 hours. It refreshes tokens and categories.'''
-    print('refresh timer')
+    ''' this timer gets run every time the token needs refresh. It refreshes tokens and also categories.'''
+    utils.p('refresh timer')
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     fetch_server_data()
     categories.load_categories()
-    return 72000
+
+    return max(3600, user_preferences.api_key_life - 3600)
 
 
 @persistent
@@ -97,7 +99,7 @@ def scene_load(context):
     # wm['bkit_update'] = version_checker.compare_versions(blenderkit)
     categories.load_categories()
     if not bpy.app.timers.is_registered(refresh_token_timer):
-        bpy.app.timers.register(refresh_token_timer, persistent=True, first_interval=72000)
+        bpy.app.timers.register(refresh_token_timer, persistent=True, first_interval=36000)
 
 
 def fetch_server_data():
@@ -106,8 +108,10 @@ def fetch_server_data():
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
         url = paths.BLENDERKIT_ADDON_URL
         api_key = user_preferences.api_key
-        # version_checker.check_version_thread(url, api_key, blenderkit)
-        if user_preferences.enable_oauth:
+        # Only refresh new type of tokens(by length), and only one hour before the token timeouts.
+        if user_preferences.enable_oauth and \
+                len(user_preferences.api_key)<38 and \
+                user_preferences.api_key_timeout<time.time()+ 3600:
             bkit_oauth.refresh_token_thread()
         if api_key != '':
             get_profile()
@@ -122,11 +126,9 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff.
     # causing a lot of throuble literally.
     if len(search_threads) == 0 or bpy.context.scene.blenderkitUI.dragging:
         return 1
-    for thread in search_threads:  # TODO this doesn't check all processess when one gets removed, but most time only
-        # one is running anyway
-
+    for thread in search_threads:  # TODO this doesn't check all processes when one gets removed,
+                                   # but most of the time only one is running anyway
         if not thread[0].is_alive():
-            print('parsing')
             search_threads.remove(thread)  #
             icons_dir = thread[1]
             scene = bpy.context.scene
@@ -808,7 +810,7 @@ class Searcher(threading.Thread):
         full_thbs = zip(thumb_full_filepaths, thumb_full_urls)
 
         # we save here because a missing thumbnail check is in the previous loop
-        # we can also prepend previous results. These have already thumbnails downloaded...
+        # we can also prepend previous results. These have downloaded thumbnails already...
         if params['get_next']:
             rdata['results'][0:0] = origdata['results']
 
@@ -1099,6 +1101,7 @@ class SearchOperator(Operator):
     """Tooltip"""
     bl_idname = "view3d.blenderkit_search"
     bl_label = "BlenderKit asset search"
+    bl_description = "Search online for assets"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
     own: BoolProperty(name="own assets only",
                       description="Find all own assets",
@@ -1107,21 +1110,29 @@ class SearchOperator(Operator):
     category: StringProperty(
         name="category",
         description="search only subtree of this category",
-        default="")
+        default="",
+        options = {'SKIP_SAVE'}
+    )
 
     author_id: StringProperty(
         name="Author ID",
         description="Author ID - search only assets by this author",
-        default="")
+        default="",
+        options = {'SKIP_SAVE'}
+    )
 
     get_next: BoolProperty(name="next page",
                            description="get next page from previous search",
-                           default=False)
+                           default=False,
+        options = {'SKIP_SAVE'}
+    )
 
     keywords: StringProperty(
         name="Keywords",
         description="Keywords",
-        default="")
+        default="",
+        options = {'SKIP_SAVE'}
+    )
 
     @classmethod
     def poll(cls, context):

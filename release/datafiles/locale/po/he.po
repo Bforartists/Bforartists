@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
+"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-09 00:00:00\n"
+"POT-Creation-Date: 2019-10-03 09:27:21\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
 "Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -476,11 +476,6 @@ msgstr "תופיפצ"
 msgctxt "Operator"
 msgid "Move"
 msgstr "טרס"
-
-
-msgctxt "Operator"
-msgid "Copy To Selected"
-msgstr "רחבנל קתעה"
 
 
 msgid "Operation Mode"

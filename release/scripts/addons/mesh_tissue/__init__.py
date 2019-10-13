@@ -35,7 +35,7 @@ bl_info = {
     "author": "Alessandro Zomparelli (Co-de-iT)",
     "version": (0, 3, 25),
     "blender": (2, 80, 0),
-    "location": "",
+    "location": "Sidebar > Edit Tab",
     "description": "Tools for Computational Design",
     "warning": "",
     "wiki_url": "https://github.com/alessandro-zomparelli/tissue/wiki",

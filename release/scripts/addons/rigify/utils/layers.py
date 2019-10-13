@@ -21,6 +21,12 @@
 import bpy
 
 
+ORG_LAYER = [n == 31 for n in range(0, 32)]  # Armature layer that original bones should be moved to.
+MCH_LAYER = [n == 30 for n in range(0, 32)]  # Armature layer that mechanism bones should be moved to.
+DEF_LAYER = [n == 29 for n in range(0, 32)]  # Armature layer that deformation bones should be moved to.
+ROOT_LAYER = [n == 28 for n in range(0, 32)]  # Armature layer that root bone should be moved to.
+
+
 def get_layers(layers):
     """ Does its best to extract a set of layers from any data thrown at it.
     """
@@ -46,6 +52,13 @@ def get_layers(layers):
             return [x in layers for x in range(0, 32)]
 
 
+def set_bone_layers(bone, layers, combine=False):
+    if combine:
+        bone.layers = [ a or b for a, b in zip(bone.layers, layers) ]
+    else:
+        bone.layers = layers
+
+
 #=============================================
 # UI utilities
 #=============================================
@@ -66,8 +79,11 @@ class ControlLayersOption:
         else:
             return None
 
-    def assign(self, params, bone_set, bone_list):
+    def assign(self, params, bone_set, bone_list, combine=False):
         layers = self.get(params)
+
+        if isinstance(bone_set, bpy.types.Object):
+            bone_set = bone_set.data.bones
 
         if layers:
             for name in bone_list:
@@ -75,7 +91,18 @@ class ControlLayersOption:
                 if isinstance(bone, bpy.types.PoseBone):
                     bone = bone.bone
 
-                bone.layers = layers
+                set_bone_layers(bone, layers, combine)
+
+    def assign_rig(self, rig, bone_list, combine=False, priority=None):
+        layers = self.get(rig.params)
+        bone_set = rig.obj.data.bones
+
+        if layers:
+            for name in bone_list:
+                set_bone_layers(bone_set[name], layers, combine)
+
+                if priority is not None:
+                    rig.generator.set_layer_group_priority(name, layers, priority)
 
     def add_parameters(self, params):
         prop_toggle = bpy.props.BoolProperty(

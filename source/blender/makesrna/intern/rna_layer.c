@@ -123,18 +123,13 @@ static IDProperty *rna_ViewLayer_idprops(PointerRNA *ptr, bool create)
 static bool rna_LayerCollection_visible_get(LayerCollection *layer_collection, bContext *C)
 {
   View3D *v3d = CTX_wm_view3d(C);
-  const bool runtime_visible = (layer_collection->runtime_flag & LAYER_COLLECTION_VISIBLE) != 0;
 
-  if (v3d == NULL) {
-    return runtime_visible;
-  }
-
-  if ((v3d->flag & V3D_LOCAL_COLLECTIONS) == 0) {
-    return runtime_visible;
+  if ((v3d == NULL) || ((v3d->flag & V3D_LOCAL_COLLECTIONS) == 0)) {
+    return (layer_collection->runtime_flag & LAYER_COLLECTION_VISIBLE_VIEW_LAYER) != 0;
   }
 
   if (v3d->local_collections_uuid & layer_collection->local_collections_bits) {
-    return true;
+    return (layer_collection->runtime_flag & LAYER_COLLECTION_RESTRICT_VIEWPORT) == 0;
   }
 
   return false;
@@ -192,15 +187,24 @@ static void rna_LayerObjects_selected_begin(CollectionPropertyIterator *iter, Po
       iter, &view_layer->object_bases, rna_ViewLayer_objects_selected_skip);
 }
 
-static void rna_ViewLayer_update_tagged(ID *id_ptr, ViewLayer *view_layer, Main *bmain)
+static void rna_ViewLayer_update_tagged(ID *id_ptr,
+                                        ViewLayer *view_layer,
+                                        Main *bmain,
+                                        ReportList *reports)
 {
+  Scene *scene = (Scene *)id_ptr;
+  Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, view_layer, true);
+
+  if (DEG_is_evaluating(depsgraph)) {
+    BKE_report(reports, RPT_ERROR, "Dependency graph update requested during evaluation");
+    return;
+  }
+
 #  ifdef WITH_PYTHON
   /* Allow drivers to be evaluated */
   BPy_BEGIN_ALLOW_THREADS;
 #  endif
 
-  Scene *scene = (Scene *)id_ptr;
-  Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, view_layer, true);
   /* NOTE: This is similar to CTX_data_depsgraph_pointer(). Ideally such access would be
    * de-duplicated across all possible cases, but for now this is safest and easiest way to go.
    *
@@ -415,12 +419,12 @@ static void rna_def_layer_collection(BlenderRNA *brna)
 
   /* Run-time flags. */
   prop = RNA_def_property(srna, "is_visible", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, NULL, "runtime_flag", LAYER_COLLECTION_VISIBLE);
+  RNA_def_property_boolean_sdna(prop, NULL, "runtime_flag", LAYER_COLLECTION_VISIBLE_VIEW_LAYER);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-  RNA_def_property_ui_text(
-      prop,
-      "Visible",
-      "Whether this collection is visible, take into account the collection parent");
+  RNA_def_property_ui_text(prop,
+                           "Visible",
+                           "Whether this collection is visible for the viewlayer, take into "
+                           "account the collection parent");
 
   func = RNA_def_function(srna, "has_objects", "rna_LayerCollection_has_objects");
   RNA_def_function_ui_description(func, "");
@@ -573,7 +577,7 @@ void RNA_def_view_layer(BlenderRNA *brna)
 
   /* debug update routine */
   func = RNA_def_function(srna, "update", "rna_ViewLayer_update_tagged");
-  RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN);
+  RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN | FUNC_USE_REPORTS);
   RNA_def_function_ui_description(
       func, "Update data tagged to be updated from previous access to data or operators");
 

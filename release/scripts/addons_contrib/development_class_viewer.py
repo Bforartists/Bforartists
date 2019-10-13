@@ -20,7 +20,7 @@ bl_info = {
     "name": "Class Viewer",
     "author": "Mackraken", "batFinger"
     "version": (0, 1, 3),
-    "blender": (2, 58, 0),
+    "blender": (2, 80, 0),
     "location": "Text Editor > Toolbar, Text Editor > Right Click",
     "warning": "",
     "description": "List classes and definitions of a text block",

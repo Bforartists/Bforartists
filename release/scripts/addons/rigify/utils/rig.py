@@ -50,6 +50,12 @@ outdated_types = {"pitchipoy.limbs.super_limb": "limbs.super_limb",
                   "spine": ""
                   }
 
+def get_rigify_type(pose_bone):
+    return pose_bone.rigify_type.replace(" ", "")
+
+def is_rig_base_bone(obj, name):
+    return bool(get_rigify_type(obj.pose.bones[name]))
+
 def upgradeMetarigTypes(metarig, revert=False):
     """Replaces rigify_type properties from old versions with their current names
 
@@ -89,6 +95,34 @@ def get_resource(resource_name):
     return module
 
 
+def attach_persistent_script(obj, script):
+    """Make sure the ui script always follows the rig around"""
+    skip = False
+    driver = None
+
+    if not obj.animation_data:
+        obj.animation_data_create()
+
+    for fcurve in obj.animation_data.drivers:
+        if fcurve.data_path == 'pass_index':
+            driver = fcurve.driver
+            for variable in driver.variables:
+                if variable.name == script.name:
+                    skip = True
+                    break
+            break
+
+    if not skip:
+        if not driver:
+            fcurve = obj.driver_add("pass_index")
+            driver = fcurve.driver
+
+        variable = driver.variables.new()
+        variable.name = script.name
+        variable.targets[0].id_type = 'TEXT'
+        variable.targets[0].id = script
+
+
 def connected_children_names(obj, bone_name):
     """ Returns a list of bone names (in order) of the bones that form a single
         connected chain starting with the given bone as a parent.
@@ -122,6 +156,23 @@ def has_connected_children(bone):
     for b in bone.children:
         t = t or b.use_connect
     return t
+
+
+def _list_bone_names_depth_first_sorted_rec(result_list, bone):
+    result_list.append(bone.name)
+
+    for child in sorted(list(bone.children), key=lambda b: b.name):
+        _list_bone_names_depth_first_sorted_rec(result_list, child)
+
+def list_bone_names_depth_first_sorted(obj):
+    """Returns a list of bone names in depth first name sorted order."""
+    result_list = []
+
+    for bone in sorted(list(obj.data.bones), key=lambda b: b.name):
+        if bone.parent is None:
+            _list_bone_names_depth_first_sorted_rec(result_list, bone)
+
+    return result_list
 
 
 def write_metarig(obj, layers=False, func_name="create", groups=False):
@@ -184,8 +235,8 @@ def write_metarig(obj, layers=False, func_name="create", groups=False):
     for bone_name in bones:
         bone = arm.edit_bones[bone_name]
         code.append("    bone = arm.edit_bones.new(%r)" % bone.name)
-        code.append("    bone.head[:] = %.4f, %.4f, %.4f" % bone.head.to_tuple(4))
-        code.append("    bone.tail[:] = %.4f, %.4f, %.4f" % bone.tail.to_tuple(4))
+        code.append("    bone.head = %.4f, %.4f, %.4f" % bone.head.to_tuple(4))
+        code.append("    bone.tail = %.4f, %.4f, %.4f" % bone.tail.to_tuple(4))
         code.append("    bone.roll = %.4f" % bone.roll)
         code.append("    bone.use_connect = %s" % str(bone.use_connect))
         if bone.parent:
@@ -247,6 +298,8 @@ def write_metarig(obj, layers=False, func_name="create", groups=False):
         active_layers.sort()
 
         code.append("\n    arm.layers = [(x in " + str(active_layers) + ") for x in range(" + str(len(arm.layers)) + ")]")
+
+    code.append("\n    return bones")
 
     code.append('\nif __name__ == "__main__":')
     code.append("    " + func_name + "(bpy.context.active_object)\n")

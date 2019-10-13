@@ -50,10 +50,10 @@ bl_info = {
     "name": "Cube Map",
     "author": "Dalai Felinto",
     "version": (1, 0),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "Render Panel",
     "description": "",
-    "warning": "",
+    "warning": "Needs Updating",
     "wiki_url": "https://github.com/dfelinto/render_cube_map",
     "tracker_url": "",
     "category": "Render"}
@@ -273,7 +273,7 @@ def cube_map_render_init(scene, use_force=False):
     for view in views:
         # create a scene per view
         # XXX : line below crashes Blender 2.80
-        bpy.ops.scene.new(type='LINK_OBJECTS')
+        bpy.ops.scene.new(type='LINK_COPY')
         scene = [
                 scene for scene in bpy.data.scenes if
                 hash(scene) not in hashes][0]

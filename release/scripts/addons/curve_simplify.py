@@ -378,17 +378,17 @@ def fcurves_simplify(context, obj, options, fcurves):
 # ### MENU append ###
 
 def menu_func(self, context):
-    self.layout.operator("graph.simplify")
+    self.layout.operator("graph.simplifya")
 
 
 def menu(self, context):
-    self.layout.operator("curve.simplify", text="Curve Simplify", icon="CURVE_DATA")
+    self.layout.operator("curve.simplifya", text="Curve Simplify", icon="CURVE_DATA")
 
 
 # ### ANIMATION CURVES OPERATOR ###
 
-class GRAPH_OT_simplify(Operator):
-    bl_idname = "graph.simplify"
+class GRAPH_OT_simplifya(Operator):
+    bl_idname = "graph.simplifya"
     bl_label = "Simplify F-Curves"
     bl_description = ("Simplify selected Curves\n"
                       "Does not operate on short Splines (less than 6 points)")
@@ -479,8 +479,8 @@ class GRAPH_OT_simplify(Operator):
 
 
 # ### Curves OPERATOR ###
-class CURVE_OT_simplify(Operator):
-    bl_idname = "curve.simplify"
+class CURVE_OT_simplifya(Operator):
+    bl_idname = "curve.simplifya"
     bl_label = "Simplify Curves"
     bl_description = ("Simplify the existing Curve based upon the chosen settings\n"
                       "Notes: Needs an existing Curve object,\n"
@@ -581,7 +581,7 @@ class CURVE_OT_simplify(Operator):
 
             main(context, obj, options, curve_dimension)
         except Exception as e:
-            error_handlers(self, "curve.simplify", e, "Simplify Curves")
+            error_handlers(self, "curve.simplifya", e, "Simplify Curves")
             return {'CANCELLED'}
 
         return {'FINISHED'}
@@ -645,9 +645,9 @@ def main_rd(context, distance = 0.01):
 
 
 
-class Curve_OT_CurveRemvDbs(bpy.types.Operator):
+class Curve_OT_CurveRemvDbsa(bpy.types.Operator):
     """Merge consecutive points that are near to each other"""
-    bl_idname = 'curve.remove_doubles'
+    bl_idname = 'curve.remove_doublesa'
     bl_label = 'Merge By Distance'
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -664,13 +664,13 @@ class Curve_OT_CurveRemvDbs(bpy.types.Operator):
         return {'FINISHED'}
 
 def menu_func_rd(self, context):
-    self.layout.operator(Curve_OT_CurveRemvDbs.bl_idname, text='Merge By Distance')
+    self.layout.operator(Curve_OT_CurveRemvDbsa.bl_idname, text='Merge By Distance')
 
 # Register
 classes = [
-    GRAPH_OT_simplify,
-    CURVE_OT_simplify,
-    Curve_OT_CurveRemvDbs,
+    GRAPH_OT_simplifya,
+    CURVE_OT_simplifya,
+    Curve_OT_CurveRemvDbsa,
 ]
 
 

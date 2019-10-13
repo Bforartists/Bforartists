@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
+"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-09 00:00:00\n"
+"POT-Creation-Date: 2019-10-03 09:27:21\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -1248,7 +1248,7 @@ msgid "Paint"
 msgstr "रंगलेप"
 
 
-msgid "Anti-aliasing"
+msgid "Anti-Aliasing"
 msgstr "प्रित-उपघटन"
 
 
@@ -1886,6 +1886,10 @@ msgid "Thumb"
 msgstr "अंगूठा"
 
 
+msgid "Pose"
+msgstr "मुद्रा"
+
+
 msgid "Rotate"
 msgstr "घूर्णन"
 
@@ -2274,24 +2278,12 @@ msgid "UV loop layer to be used as cloning source"
 msgstr "यूवी कुण्डली परत  प्रतिरूपी स्रोत के रूप में इस्तेमाल किया जाए"
 
 
-msgid "Clone UV loop layer Index"
-msgstr "प्रतिरूप यूवी कुण्डली परत सूचकांक"
-
-
 msgid "Clone UV loop layer index"
 msgstr "प्रतिरूप यूवी कुण्डली परत सूचकांक"
 
 
-msgid "Mask UV loop layer"
-msgstr "आवरण यूवी कुण्डली परत"
-
-
 msgid "UV loop layer to mask the painted area"
 msgstr "यूवी कुण्डली परत चित्रित क्षेत्र आवरण करने के लिए"
-
-
-msgid "Mask UV loop layer Index"
-msgstr "आवरण यूवी कुण्डली परत सूचकांक"
 
 
 msgid "Mask UV loop layer index"
@@ -2396,10 +2388,6 @@ msgstr "शिल्प रूप"
 
 msgid "Motion Path"
 msgstr "गति पथ"
-
-
-msgid "Pose"
-msgstr "मुद्रा"
 
 
 msgid "Proxy"
@@ -2757,6 +2745,14 @@ msgstr "धुंध"
 
 msgid "Animation"
 msgstr "अनुप्राणन"
+
+
+msgid "Max Step"
+msgstr "अधिकतम कदम"
+
+
+msgid "Min Step"
+msgstr "न्यूनतम कदम"
 
 
 msgid "B"
@@ -3402,10 +3398,6 @@ msgid "Shadow"
 msgstr "छाया"
 
 
-msgid "Anti-Aliasing"
-msgstr "प्रित-उपघटन"
-
-
 msgid "Straight Alpha Output"
 msgstr "सीधे पारदर्शिता उत्पादित"
 
@@ -3500,10 +3492,6 @@ msgstr "Z अक्ष"
 
 msgid "Projection"
 msgstr "प्रक्षेपण"
-
-
-msgid "Cells"
-msgstr "कक्ष"
 
 
 msgid "At"
@@ -3707,10 +3695,6 @@ msgstr "रेखा"
 msgctxt "Curve"
 msgid "Round"
 msgstr "दौर"
-
-
-msgid "Open"
-msgstr "खोलें"
 
 
 msgid "Short List"
@@ -3931,17 +3915,12 @@ msgstr "मिलान"
 
 
 msgctxt "Operator"
-msgid "Toggle Bookmarks"
-msgstr "बंद/बुझ स्मृति"
-
-
-msgid "Toggle bookmarks display"
-msgstr "बंद/बुझ स्मृति प्रदर्शित करें"
-
-
-msgctxt "Operator"
 msgid "Create New Directory"
 msgstr "नया निर्देशिका बनाएँ"
+
+
+msgid "Open"
+msgstr "खोलें"
 
 
 msgid "Dir"
@@ -4258,11 +4237,6 @@ msgid "Modifier"
 msgstr "संशोधक"
 
 
-msgctxt "Operator"
-msgid "Add Empty Image/Drop Image To Empty"
-msgstr "खाली करने के लिए रिक्त छवि/ड्रॉप छवि जोड़ें"
-
-
 msgid "Add an empty image type to scene with data"
 msgstr "डेटा के साथ दृश्य के लिए एक रिक्त छवि प्रकार जोड़ें"
 
@@ -4389,11 +4363,6 @@ msgstr "सभी भौतिकी भर्जन"
 msgctxt "Operator"
 msgid "Render"
 msgstr " प्रतिपादन"
-
-
-msgctxt "Operator"
-msgid "Bake To Keyframes"
-msgstr "अनुबोधक चिन्हों को भर्जन"
 
 
 msgid "Hinge"
@@ -5004,6 +4973,10 @@ msgid "Bone Color Sets"
 msgstr "हड्डी रंग समूह"
 
 
+msgid "Shaded"
+msgstr "छायांकित"
+
+
 msgid "Video Sequence Editor"
 msgstr "वीडियो अनुक्रम संपादक"
 
@@ -5111,6 +5084,14 @@ msgid "16x"
 msgstr "१६ x"
 
 
+msgid "New Window"
+msgstr "नई खिडकी"
+
+
+msgid "Glossy Color"
+msgstr "चमकदार रंग"
+
+
 msgid "Manual"
 msgstr "नियम पुस्तिका"
 
@@ -5163,10 +5144,6 @@ msgid "All Z"
 msgstr "सभी z"
 
 
-msgid "Glossy Color"
-msgstr "चमकदार रंग"
-
-
 msgid "Sky"
 msgstr "आकाश"
 
@@ -5181,10 +5158,6 @@ msgstr "पूर्वाग्रह"
 
 msgid "Bake displacement"
 msgstr "विस्थापन भर्जन"
-
-
-msgid "New Window"
-msgstr "नई खिडकी"
 
 
 msgid "FPS"
@@ -5257,10 +5230,6 @@ msgstr "कारक शेष लंबाई"
 
 msgid "Blend Opacity"
 msgstr "मिश्रण अपारदर्शिता"
-
-
-msgid "Speed factor"
-msgstr "गति कारक"
 
 
 msgctxt "Sequence"
@@ -5353,6 +5322,10 @@ msgid "Energy"
 msgstr "ऊर्जा"
 
 
+msgid "Collision Type"
+msgstr "टक्कर प्रकार"
+
+
 msgid "Rigid"
 msgstr "कठोर"
 
@@ -5385,10 +5358,6 @@ msgid "Choke"
 msgstr "रोधन"
 
 
-msgid "Collision Type"
-msgstr "टक्कर प्रकार"
-
-
 msgid "Choose Collision Type"
 msgstr "टक्कर प्रकार चुनें"
 
@@ -5407,14 +5376,6 @@ msgstr "त्रुटि सीमा"
 
 msgid "Pull"
 msgstr "खिंचाव"
-
-
-msgid "Max Step"
-msgstr "अधिकतम कदम"
-
-
-msgid "Min Step"
-msgstr "न्यूनतम कदम"
 
 
 msgid "Spring Vertex Group"
@@ -5578,10 +5539,6 @@ msgstr "तार"
 
 msgid "Inner"
 msgstr "भीतरी"
-
-
-msgid "Shaded"
-msgstr "छायांकित"
 
 
 msgid "Mask Non-Group Vertices"
@@ -6558,6 +6515,10 @@ msgstr "नियम पुस्तिका"
 msgctxt "Operator"
 msgid "Python API Reference"
 msgstr "पाइथन एपीआई संदर्भ"
+
+
+msgid "Anti-aliasing"
+msgstr "प्रित-उपघटन"
 
 
 msgid "Description:"
@@ -7596,6 +7557,10 @@ msgid "Scene has no camera"
 msgstr "दृश्य में कोई प्रतिबिंबक नहीं"
 
 
+msgid "Blender Render"
+msgstr "ब्लेंडर  प्रतिपादन"
+
+
 msgid "No active camera set"
 msgstr "कोई सक्रिय प्रतिबिंबक नहीं"
 
@@ -7895,6 +7860,10 @@ msgid "Paste name"
 msgstr "नाम चिपकाएँ"
 
 
+msgid "Blender File View"
+msgstr "ब्लेंडर संचिका दृश्य"
+
+
 msgid "ON"
 msgstr "ऑन"
 
@@ -7906,14 +7875,6 @@ msgstr "बंद"
 msgctxt "Operator"
 msgid "Toggle System Console"
 msgstr "बंद/बुझ प्रणाली कंसोल"
-
-
-msgid "Blender Render"
-msgstr "ब्लेंडर  प्रतिपादन"
-
-
-msgid "Blender File View"
-msgstr "ब्लेंडर संचिका दृश्य"
 
 
 msgid "Add Mesh"

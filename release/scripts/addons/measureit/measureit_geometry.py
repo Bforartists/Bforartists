@@ -818,7 +818,7 @@ def draw_text(myobj, pos2d, display_text, rgba, fsize, align='L', text_rot=0.0):
     x_pos, y_pos = pos2d
     font_id = 0
     ui_scale = bpy.context.preferences.system.ui_scale
-    blf.size(font_id, round(fsize * ui_scale), bpy.context.preferences.system.dpi)
+    blf.size(font_id, round(fsize * ui_scale), 72)
     # blf.size(font_id, fsize, dpi)
     # height of one line
     mwidth, mheight = blf.dimensions(font_id, "Tp")  # uses high/low letters

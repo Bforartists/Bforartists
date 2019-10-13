@@ -139,8 +139,9 @@ def delete_key(data, key):
 class VIEW3D_PT_animall(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "Animation"
+    bl_category = "Animate"
     bl_label = 'AnimAll'
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(self, context):
@@ -551,7 +552,7 @@ class AnimallAddonPreferences(AddonPreferences):
     category: StringProperty(
         name="Tab Category",
         description="Choose a name for the category of the panel",
-        default="Animation",
+        default="Animate",
         update=update_panel
     )
 
@@ -564,15 +565,6 @@ class AnimallAddonPreferences(AddonPreferences):
         col.prop(self, "category", text="")
 
 
-@persistent
-def animall_update_handler(scene):
-    '''Force data refresh on frame change.
-    To be removed when T68666 is fixed, probably.'''
-    for obj in scene.objects:
-        if obj.data is not None and obj.data.animation_data is not None:
-            obj.update_tag(refresh={'DATA'})
-
-
 def register():
     bpy.utils.register_class(AnimallProperties)
     bpy.types.WindowManager.animall_properties = bpy.props.PointerProperty(type=AnimallProperties)
@@ -582,7 +574,6 @@ def register():
     bpy.utils.register_class(ANIM_OT_clear_animation_animall)
     bpy.utils.register_class(AnimallAddonPreferences)
     update_panel(None, bpy.context)
-    bpy.app.handlers.frame_change_post.append(animall_update_handler)
 
 
 def unregister():
@@ -593,7 +584,6 @@ def unregister():
     bpy.utils.unregister_class(ANIM_OT_delete_keyframe_animall)
     bpy.utils.unregister_class(ANIM_OT_clear_animation_animall)
     bpy.utils.unregister_class(AnimallAddonPreferences)
-    bpy.app.handlers.frame_change_post.remove(animall_update_handler)
 
 if __name__ == "__main__":
     register()

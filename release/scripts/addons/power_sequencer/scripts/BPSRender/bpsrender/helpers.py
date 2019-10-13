@@ -48,7 +48,7 @@ def checktools(tools):
         msg += [
             (
                 "Check if you have them properly installed and available in the PATH"
-                " environemnt variable."
+                " environment variable."
             ),
             "Exiting...",
         ]

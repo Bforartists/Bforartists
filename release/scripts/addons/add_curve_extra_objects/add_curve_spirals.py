@@ -430,6 +430,11 @@ class CURVE_OT_spirals(Operator):
             ('VECTOR', "Vector", "Vector type Bezier handles"),
             ('AUTO', "Auto", "Automatic type Bezier handles")]
             )
+    edit_mode : BoolProperty(
+            name="Show in edit mode",
+            default=True,
+            description="Show in edit mode"
+            )
     startlocation : FloatVectorProperty(
             name="",
             description="Start location",
@@ -521,6 +526,9 @@ class CURVE_OT_spirals(Operator):
 
         col = layout.column()
         col.row().prop(self, "use_cyclic_u", expand=True)
+
+        col = layout.column()
+        col.row().prop(self, "edit_mode", expand=True)
         
         box = layout.box()
         box.label(text="Location:")
@@ -547,6 +555,11 @@ class CURVE_OT_spirals(Operator):
         
         # restore pre operator state
         bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
+        
+        if self.edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+        else:
+            bpy.ops.object.mode_set(mode = 'OBJECT')
 
         #self.report({'INFO'},
                     #"Drawing Spiral Finished: %.4f sec" % (time.time() - time_start))

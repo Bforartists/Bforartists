@@ -53,9 +53,11 @@ class SimpleOAuthAuthenticator(object):
             print("error retrieving refresh tokens %s" % response.status_code)
             print(response.content)
             return None, None
-        refresh_token = json.loads(response.content)['refresh_token']
-        access_token = json.loads(response.content)['access_token']
-        return access_token, refresh_token
+
+        response_json = json.loads(response.content)
+        refresh_token = response_json ['refresh_token']
+        access_token = response_json ['access_token']
+        return access_token, refresh_token, response_json
 
     def get_new_token(self, register=True, redirect_url=None):
         class HTTPServerHandler(BaseHTTPRequestHandler):
