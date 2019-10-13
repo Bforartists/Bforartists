@@ -102,7 +102,7 @@ class ARCHIPACK_OT_render_thumbs(Operator):
         presets_path = bpy.utils.user_resource('SCRIPTS',
                                               target_path,
                                               create=True)
-        # files from factory not found in user dosent require a recompute
+        # files from factory not found in user doesn't require a recompute
         skipfiles = []
         for f in file_list:
             # copy python/txt preset

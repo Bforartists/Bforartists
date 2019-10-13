@@ -18,7 +18,7 @@
 
 
 bl_info = {
-    "name": "Btrace",
+    "name": "BTracer",
     "author": "liero, crazycourier, Atom, Meta-Androcto, MacKracken",
     "version": (1, 2, 3),
     "blender": (2, 80, 0),

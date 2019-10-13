@@ -221,6 +221,7 @@ class VIEW3D_PT_3dnavigationPanel(Panel):
     bl_region_type = "UI"
     bl_label = "3D Nav"
     bl_category = "View"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout

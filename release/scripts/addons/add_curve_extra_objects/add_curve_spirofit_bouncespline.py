@@ -954,7 +954,7 @@ class SplinePanel(Panel):
     bl_region_type = "UI"
     bl_context = "objectmode"
     bl_category = "Create"
-    #bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         col = self.layout.column(align=True)

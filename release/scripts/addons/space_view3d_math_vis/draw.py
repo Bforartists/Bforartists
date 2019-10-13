@@ -82,7 +82,7 @@ def draw_callback_px():
 
     font_id = 0
     ui_scale = context.preferences.system.ui_scale
-    blf.size(font_id, round(12 * ui_scale), context.preferences.system.dpi)
+    blf.size(font_id, round(12 * ui_scale), 72)
 
     data_matrix, data_quat, data_euler, data_vector, data_vector_array = utils.console_math_data()
     if not data_matrix and not data_quat and not data_euler and not data_vector and not data_vector_array:

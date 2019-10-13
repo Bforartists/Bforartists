@@ -263,7 +263,7 @@ class Manipulator():
 
     def exit(self):
         """
-            Modal exit, DONT EVEN TRY TO OVERRIDE
+            Modal exit, DON'T EVEN TRY TO OVERRIDE
         """
         if self._handle is not None:
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
@@ -2184,7 +2184,7 @@ class Manipulable():
         """
             call this in operator invoke()
             NB:
-            if override dont forget to call:
+            if override don't forget to call:
                 _manipulable_invoke(context)
 
         """

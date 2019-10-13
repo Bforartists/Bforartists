@@ -311,6 +311,7 @@ class TOOLS_PT_Archipack_Create(Panel):
     bl_region_type = "UI"
     bl_category = "Create"
     bl_context = "objectmode"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(self, context):

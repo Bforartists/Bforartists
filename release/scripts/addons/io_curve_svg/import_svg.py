@@ -26,92 +26,16 @@ import bpy
 from mathutils import Vector, Matrix
 
 from . import svg_colors
-from .svg_util import (srgb_to_linearrgb,
+from .svg_util import (units,
+                       srgb_to_linearrgb,
                        check_points_equal,
-                       parse_array_of_floats)
+                       parse_array_of_floats,
+                       read_float)
 
 #### Common utilities ####
 
-# TODO: "em" and "ex" aren't actually supported
-SVGUnits = {"": 1.0,
-            "px": 1.0,
-            "in": 90.0,
-            "mm": 90.0 / 25.4,
-            "cm": 90.0 / 2.54,
-            "pt": 1.25,
-            "pc": 15.0,
-            "em": 1.0,
-            "ex": 1.0,
-            "INVALID": 1.0,  # some DocBook files contain this
-            }
-
 SVGEmptyStyles = {'useFill': None,
                   'fill': None}
-
-def SVGParseFloat(s, i=0):
-    """
-    Parse first float value from string
-
-    Returns value as string
-    """
-
-    start = i
-    n = len(s)
-    token = ''
-
-    # Skip leading whitespace characters
-    while i < n and (s[i].isspace() or s[i] == ','):
-        i += 1
-
-    if i == n:
-        return None, i
-
-    # Read sign
-    if s[i] == '-':
-        token += '-'
-        i += 1
-    elif s[i] == '+':
-        i += 1
-
-    # Read integer part
-    if s[i].isdigit():
-        while i < n and s[i].isdigit():
-            token += s[i]
-            i += 1
-
-    # Fractional part
-    if i < n and s[i] == '.':
-        token += '.'
-        i += 1
-
-        if s[i].isdigit():
-            while i < n and s[i].isdigit():
-                token += s[i]
-                i += 1
-        elif s[i].isspace() or s[i] == ',':
-            # Inkscape sometimes uses weird float format with missed
-            # fractional part after dot. Suppose zero fractional part
-            # for this case
-            pass
-        else:
-            raise Exception('Invalid float value near ' + s[start:start + 10])
-
-    # Degree
-    if i < n and (s[i] == 'e' or s[i] == 'E'):
-        token += s[i]
-        i += 1
-        if s[i] == '+' or s[i] == '-':
-            token += s[i]
-            i += 1
-
-        if s[i].isdigit():
-            while i < n and s[i].isdigit():
-                token += s[i]
-                i += 1
-        else:
-            raise Exception('Invalid float value near ' + s[start:start + 10])
-
-    return token, i
 
 
 def SVGCreateCurve(context):
@@ -150,17 +74,17 @@ def SVGParseCoord(coord, size):
     """
     Parse coordinate component to common basis
 
-    Needed to handle coordinates set in cm, mm, iches..
+    Needed to handle coordinates set in cm, mm, inches.
     """
 
-    token, last_char = SVGParseFloat(coord)
+    token, last_char = read_float(coord)
     val = float(token)
     unit = coord[last_char:].strip()  # strip() in case there is a space
 
     if unit == '%':
         return float(size) / 100.0 * val
     else:
-        return val * SVGUnits[unit]
+        return val * units[unit]
 
     return val
 
@@ -493,7 +417,7 @@ class SVGPathData:
             elif c.lower() in commands:
                 tokens.append(c)
             elif c in ['-', '.'] or c.isdigit():
-                token, last_char = SVGParseFloat(d, i)
+                token, last_char = read_float(d, i)
                 tokens.append(token)
 
                 # in most cases len(token) and (last_char - i) are the same
@@ -1816,12 +1740,36 @@ class SVGGeometrySVG(SVGGeometryContainer):
 
         matrix = self.getNodeMatrix()
 
-        # Better Inkscape compatibility: match document origin with
-        # 3D space origin.
-        if self._node.getAttribute('inkscape:version'):
+        # Better SVG compatibility: match svg-document units
+        # with blender units    
+       
+        viewbox = []
+        unit = ''
+         
+        if self._node.getAttribute('height'):
             raw_height = self._node.getAttribute('height')
-            document_height = SVGParseCoord(raw_height, 1.0)
-            matrix = matrix @ matrix.Translation([0.0, -document_height , 0.0])
+            token, last_char = read_float(raw_height)
+            document_height = float(token)
+            unit = raw_height[last_char:].strip() 
+       
+        if self._node.getAttribute('viewBox'):
+            viewbox = parse_array_of_floats(self._node.getAttribute('viewBox'))
+            
+        if len(viewbox) == 4 and unit in ('cm', 'mm', 'in', 'pt', 'pc'):
+
+            #convert units to BU: 
+            unitscale = units[unit] / 90 * 1000 / 39.3701 
+            
+            #apply blender unit scale: 
+            unitscale = unitscale / bpy.context.scene.unit_settings.scale_length
+        
+            matrix = matrix @ Matrix.Scale(unitscale, 4, Vector((1.0, 0.0, 0.0)))
+            matrix = matrix @ Matrix.Scale(unitscale, 4, Vector((0.0, 1.0, 0.0)))    
+
+        # match document origin with 3D space origin.
+        if self._node.getAttribute('viewBox'):
+            viewbox = parse_array_of_floats(self._node.getAttribute('viewBox'))
+            matrix = matrix @ matrix.Translation([0.0, - viewbox[1] - viewbox[3], 0.0])
 
         self._pushMatrix(matrix)
         self._pushRect(rect)

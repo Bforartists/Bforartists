@@ -204,6 +204,11 @@ class Braid(Operator):
             description="Switch between round and sharp corners",
             default=False
             )
+    edit_mode : BoolProperty(
+            name="Show in edit mode",
+            default=True,
+            description="Show in edit mode"
+            )
 
     def draw(self, context):
         layout = self.layout
@@ -227,6 +232,9 @@ class Braid(Operator):
         col.label(text="Geometry Options:")
         col.prop(self, "strandsize")
         col.prop(self, "resolution")
+        
+        col = layout.column()
+        col.row().prop(self, "edit_mode", expand=True)
 
     def execute(self, context):
          # turn off 'Enter Edit Mode'
@@ -256,6 +264,11 @@ class Braid(Operator):
         
         # restore pre operator state
         bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
+
+        if self.edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+        else:
+            bpy.ops.object.mode_set(mode = 'OBJECT')
 
         return {'FINISHED'}
 

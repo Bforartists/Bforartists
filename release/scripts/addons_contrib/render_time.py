@@ -22,7 +22,7 @@ bl_info = {
     "name": "Render Time Estimation",
     "author": "Jason van Gumster (Fweeb)",
     "version": (0, 5, 2),
-    "blender": (2, 65, 4),
+    "blender": (2, 80, 4),
     "location": "UV/Image Editor > Properties > Image",
     "description": "Estimates the time to complete rendering on animations",
     "warning": "Does not work on OpenGL renders.",

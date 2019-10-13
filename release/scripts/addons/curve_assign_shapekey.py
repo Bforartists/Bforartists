@@ -23,10 +23,10 @@ from bpy.types import Panel, Operator, AddonPreferences
 bl_info = {
     "name": "Assign Shape Keys",
     "author": "Shrinivas Kulkarni",
-    "version": (1, 0, 0),
+    "version": (1, 0, 1),
     "location": "View 3D > Sidebar > Edit Tab",
     "description": "Assigns one or more Bezier curves as shape keys to another Bezier curve",
-    "category": "Object",
+    "category": "Add Curve",
     "wiki_url": "https://github.com/Shriinivas/assignshapekey/blob/master/README.md",
     "blender": (2, 80, 0),
 }
@@ -1036,11 +1036,12 @@ class AssignShapeKeyParams(bpy.types.PropertyGroup):
 
 class AssignShapeKeysPanel(Panel):
 
-    bl_label = "Assign Shape Keys"
+    bl_label = "Curve Shape Keys"
     bl_idname = "CURVE_PT_assign_shape_keys"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Edit"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -1049,6 +1050,7 @@ class AssignShapeKeysPanel(Panel):
     def draw(self, context):
 
         layout = self.layout
+        layout.label(text='Morph Curves:')		
         col = layout.column()
         params = context.window_manager.AssignShapeKeyParams
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
+"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-09 00:00:00\n"
+"POT-Creation-Date: 2019-10-03 09:27:21\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -1246,10 +1246,6 @@ msgid "How fast velocity's direction is randomized"
 msgstr "Jak szybko losowany jest kierunek prędkości"
 
 
-msgid "Fear factor"
-msgstr "Czynnik strachu"
-
-
 msgid "Avoid object if danger from it is above this threshold"
 msgstr "Unikaj obiektu jeżeli niebezpieczeństwo od niego jest wyższe niż ta granica"
 
@@ -1264,10 +1260,6 @@ msgstr "Przewiduj"
 
 msgid "Predict target movement"
 msgstr "Przewiduj ruchy swojego celu"
-
-
-msgid "Look ahead"
-msgstr "Przewiduj"
 
 
 msgid "Time to look ahead in seconds"
@@ -1744,10 +1736,6 @@ msgstr "Kość jest zawsze rysowana jako siatka niezależnie od ustawień rysowa
 
 msgid "Tail"
 msgstr "Koniec"
-
-
-msgid "Location of tail end of the bone"
-msgstr "Położenie końca kości"
 
 
 msgid "Armature-Relative Tail"
@@ -5419,6 +5407,10 @@ msgid "Tail Select"
 msgstr "Zaznacz koniec"
 
 
+msgid "Location of tail end of the bone"
+msgstr "Położenie końca kości"
+
+
 msgid "Effector weights for physics simulation"
 msgstr "Wagi efektorów wpływających na symulacje fizyczne"
 
@@ -6670,10 +6662,6 @@ msgid "(undocumented operator)"
 msgstr "(operator bez dokumentacji)"
 
 
-msgid "Open"
-msgstr "Otwórz"
-
-
 msgid "History"
 msgstr "Historia"
 
@@ -6697,6 +6685,10 @@ msgstr "Lampa"
 
 msgid "Z Axis"
 msgstr "Oś Z"
+
+
+msgid "Open"
+msgstr "Otwórz"
 
 
 msgid "Limit"
@@ -7100,10 +7092,6 @@ msgstr "Nie można spakować pliku, nie odnaleziono ścieżki źródłowej '%s'"
 
 msgid "Image '%s' skipped, movies and image sequences not supported"
 msgstr "Obraz '%s' pominięty, filmy i sekwencje obrazów nie są obsługiwane"
-
-
-msgid "Packed %d files"
-msgstr "Spakowano %d plików"
 
 
 msgid "Error creating file '%s'"
@@ -8855,10 +8843,6 @@ msgid "Removed: %d vertices, %d edges, %d faces"
 msgstr "Usunięto: %d wierzchołków, %d krawędzi, %d ścian"
 
 
-msgid "Removed %d vertices"
-msgstr "Usunięto %d wierzchołków"
-
-
 msgid "%d already symmetrical, %d pairs mirrored, %d failed"
 msgstr "%d już symetrycznych, %d par odbito, %d nie powiodło się"
 
@@ -9423,10 +9407,6 @@ msgstr "Wypalanie nie powiodło się: nie odnaleziono modyfikatora Dynamiczne Ma
 
 msgid "Bake failed: invalid canvas"
 msgstr "Wypalanie nie powiodło się: nieprawidłowa kanwa"
-
-
-msgid "Removed %d double particles"
-msgstr "Usunięto %d podwójnych cząstek"
 
 
 msgid "Copy particle systems to selected: %d done, %d failed"
@@ -12602,6 +12582,10 @@ msgid "Paste name"
 msgstr "Wklej nazwę"
 
 
+msgid "Blender File View"
+msgstr "Widok plików"
+
+
 msgid "Missing 'window' in context"
 msgstr "Brakuje \"Okna\" w kontekście"
 
@@ -12753,10 +12737,6 @@ msgstr "Właściwość ze ścieżki '%s' nie jest typu float"
 
 msgid "Property from path '%s' has length %d instead of %d"
 msgstr "Właściwość ze ścieżki '%s' ma długość %d zamiast %d"
-
-
-msgid "Blender File View"
-msgstr "Widok plików"
 
 
 msgid "All Add-ons"

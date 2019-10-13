@@ -22,7 +22,7 @@ bl_info = {
     "name": "Demo Mode",
     "author": "Campbell Barton",
     "blender": (2, 80, 0),
-    "location": "Demo Menu",
+    "location": "File > Demo Menu",
     "description": "Demo mode lets you select multiple blend files and loop over them.",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"

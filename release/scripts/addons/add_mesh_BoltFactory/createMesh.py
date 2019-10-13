@@ -31,9 +31,7 @@ from bpy_extras.object_utils import AddObjectHelper, object_data_add
 NARROW_UI = 180
 MAX_INPUT_NUMBER = 50
 
-# Global_Scale = 0.001   # 1 blender unit = X mm
-GLOBAL_SCALE = 0.1       # 1 blender unit = X mm
-# Global_Scale = 1.0     # 1 blender unit = X mm
+GLOBAL_SCALE = 1       # 1 blender unit = X mm
 
 
 # next two utility functions are stolen from import_obj.py
@@ -2001,7 +1999,6 @@ def Create_New_Mesh(props, context):
     is_not_mesh_valid = mesh.validate()
 
     if is_not_mesh_valid:
-        print("\n[BoltFactory]\nFunction: create_mesh_object\n"
-              "Mesh is not Valid, correcting\n")
+        props.report({'INFO'}, "Mesh is not Valid, correcting")
 
-    object_data_add(context, mesh, operator=props)
+    return mesh

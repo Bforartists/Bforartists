@@ -469,9 +469,12 @@ def preAdvancedRetargeting(performer_obj, enduser_obj):
             cons.use_x = True
             cons.use_y = True
             cons.use_z = True
-            cons.target_space = 'LOCAL'
-            cons.owner_space = 'LOCAL'
-
+            if bone.bone.poseSpace:
+                cons.target_space = 'POSE'
+                cons.owner_space  = 'POSE'
+            else:
+                cons.target_space = 'LOCAL'
+                cons.owner_space  = 'LOCAL'
 
 def prepareForBake(enduser_obj):
     bones = enduser_obj.pose.bones

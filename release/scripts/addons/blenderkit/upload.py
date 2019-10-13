@@ -120,8 +120,6 @@ def get_missing_data_model(props):
         write_to_report(props, 'Add thumbnail:')
 
         props.report += props.thumbnail_generating_state + '\n'
-    # if props.work_hours == 0.0:
-    #     write_to_report(props, 'Fill in work hours')
     if props.engine == 'NONE':
         write_to_report(props, 'Set at least one rendering/output engine')
     if not any(props.dimensions):
@@ -140,8 +138,6 @@ def get_missing_data_scene(props):
         write_to_report(props, 'Add thumbnail:')
 
         props.report += props.thumbnail_generating_state + '\n'
-    # if props.work_hours == 0.0:
-    #     write_to_report(props, 'Fill in work hours')
     if props.engine == 'NONE':
         write_to_report(props, 'Set at least one rendering/output engine')
 
@@ -475,8 +471,8 @@ def verification_status_change(self, context, asset_id, state):
     headers = utils.get_headers(user_preferences.api_key)
     try:
         r = rerequests.patch(url, json=upload_data, headers=headers, verify=True)  # files = files,
-        #print('changed status ')
-        #print(r.text)
+        # print('changed status ')
+        # print(r.text)
     except requests.exceptions.RequestException as e:
         print(e)
         return {'CANCELLED'}
@@ -511,7 +507,7 @@ def check_storage_quota(props):
         preferences = bpy.context.preferences.addons['blenderkit'].preferences
         adata = search.request_profile(preferences.api_key)
         if adata is None:
-            props.report = 'User profile not retrieved.'
+            props.report = 'Please log-in first.'
             return False
         search.write_profile(adata)
         profile = adata
@@ -614,7 +610,7 @@ def start_upload(self, context, asset_type, reupload, upload_set):
     global reports
     if props.asset_base_id == '':
         try:
-            r = rerequests.post(url, json=json_metadata, headers=headers, verify=True, immediate = True)  # files = files,
+            r = rerequests.post(url, json=json_metadata, headers=headers, verify=True, immediate=True)  # files = files,
             ui.add_report('uploaded metadata')
             utils.p(r.text)
         except requests.exceptions.RequestException as e:
@@ -628,7 +624,7 @@ def start_upload(self, context, asset_type, reupload, upload_set):
         try:
             if upload_set != ['METADATA']:
                 json_metadata["verificationStatus"] = "uploading"
-            r = rerequests.put(url, json=json_metadata, headers=headers, verify=True , immediate = True)  # files = files,
+            r = rerequests.put(url, json=json_metadata, headers=headers, verify=True, immediate=True)  # files = files,
             ui.add_report('uploaded metadata')
             # parse the request
             # print('uploaded metadata')
@@ -812,15 +808,16 @@ class AssetVerificationStatusChange(Operator):
 
     state: StringProperty(
         name="verification_status",
-        default = 'uploaded'
+        default='uploaded'
     )
+
     @classmethod
     def poll(cls, context):
         return True
 
     def draw(self, context):
         layout = self.layout
-        #if self.state == 'deleted':
+        # if self.state == 'deleted':
         layout.label(text='Really delete asset from BlenderKit online storage?')
         # layout.prop(self, 'state')
 
@@ -830,7 +827,7 @@ class AssetVerificationStatusChange(Operator):
 
     def invoke(self, context, event):
         print(self.state)
-        if self.state =='deleted':
+        if self.state == 'deleted':
             wm = context.window_manager
             return wm.invoke_props_dialog(self)
 

@@ -21,7 +21,7 @@ bl_info = {
     "author": "Albert Makac (karab44)",
     "version": (0, 11, 0),
     "blender": (2, 80, 0),
-    "location": "Properties > Bone > Skinify Rig (visible on pose mode only)",
+    "location": "Pose Mode > Sidebar > Create Tab",
     "description": "Creates a mesh object from selected bones",
     "warning": "Work in progress",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
@@ -674,9 +674,10 @@ class BONE_OT_custom_shape(Operator):
 class BONE_PT_custom_shape(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "Object"
+    bl_category = "Create"
 #    bl_context = "bone"
     bl_label = "Skinify Rig"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):

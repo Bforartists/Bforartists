@@ -698,7 +698,7 @@ class Rig:
             const = owner_pb.constraints.new( 'COPY_ROTATION' )
             const.target       = self.obj
             const.subtarget    = subtarget
-            const.use_offset   = True
+            const.mix_mode     = 'OFFSET'
             const.target_space = 'LOCAL'
             const.owner_space  = 'LOCAL'
 

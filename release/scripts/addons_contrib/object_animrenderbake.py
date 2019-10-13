@@ -20,7 +20,7 @@ bl_info = {
     "name": "Animated Render Baker",
     "author": "Janne Karhu (jahka)",
     "version": (2, 0),
-    "blender": (2, 75, 0),
+    "blender": (2, 80, 0),
     "location": "Properties > Render > Bake Panel",
     "description": "Renderbakes a series of frames",
     "category": "Render",
@@ -177,9 +177,14 @@ def draw(self, context):
     rowsub.prop(scene, "animrenderbake_start")
     rowsub.prop(scene, "animrenderbake_end")
 
+classes = [
+    OBJECT_OT_animrenderbake,
+]
 
 def register():
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
 
     bpy.types.Scene.animrenderbake_start = IntProperty(
             name="Start",
@@ -191,24 +196,25 @@ def register():
             description="End frame of the animated bake",
             default=250)
 
-    bpy.types.RENDER_PT_bake.prepend(draw)
+    bpy.types.CYCLES_RENDER_PT_bake.prepend(draw)
     cycles_panel = getattr(bpy.types, "CYCLES_RENDER_PT_bake", None)
-    if cycles_panel:
-        cycles_panel.prepend(draw)
+#    if cycles_panel:
+#        cycles_panel.prepend(draw)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
-
     # restore original panel draw function
     del bpy.types.Scene.animrenderbake_start
     del bpy.types.Scene.animrenderbake_end
 
-    bpy.types.RENDER_PT_bake.remove(draw)
+    bpy.types.CYCLES_RENDER_PT_bake.remove(draw)
     cycles_panel = getattr(bpy.types, "CYCLES_RENDER_PT_bake", None)
     if cycles_panel:
         cycles_panel.remove(draw)
 
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
 
 if __name__ == "__main__":
     register()

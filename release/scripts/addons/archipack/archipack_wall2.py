@@ -275,7 +275,7 @@ class WallGenerator():
                 manipulators[1].prop2_name = "radius"
                 manipulators[1].set_pts([wall.c.to_3d(), scale * v0, scale * v1])
 
-            # snap manipulator, dont change index !
+            # snap manipulator, don't change index !
             manipulators[2].set_pts([p0, p1, (1, 0, 0)])
 
             # dumb, segment index
@@ -436,7 +436,7 @@ def update_t_part(self, context):
             # 2 o has parent
             # 3 w has parent
             # 4 o and w share same parent already
-            # 5 o and w dosent share parent
+            # 5 o and w doesn't share parent
             link_to_parent = False
 
             # when both walls do have a reference point, we may delete one of them
@@ -1620,7 +1620,7 @@ class archipack_wall2(ArchipackObject, Manipulable, PropertyGroup):
         self.setup_childs(o, g)
         # store gl points
         self.update_childs(context, o, g)
-        # dont do anything ..
+        # don't do anything ..
         # self.manipulable_release(context)
         # self.manipulate_mode = True
         self.manipulable_setup(context)
@@ -1639,8 +1639,10 @@ class archipack_wall2(ArchipackObject, Manipulable, PropertyGroup):
             # prevent self intersect
             o.hide_viewport = True
             res, pos, normal, face_index, r, matrix_world = context.scene.ray_cast(
-                p,
-                up)
+                view_layer=context.view_layer,
+                origin=p,
+                direction=up)
+
             o.hide_viewport = False
             # print("res:%s" % res)
             if res and r.data is not None and "archipack_roof" in r.data:
@@ -1667,7 +1669,7 @@ class ARCHIPACK_OT_wall2_throttle_update(Operator):
     def modal(self, context, event):
         global update_timer_updating
         if event.type == 'TIMER' and not update_timer_updating:
-            # cant rely on TIMER event as another timer may run
+            # can't rely on TIMER event as another timer may run
             if time.time() - throttle_start > throttle_delay:
                 update_timer_updating = True
                 o = context.scene.objects.get(self.name.strip())

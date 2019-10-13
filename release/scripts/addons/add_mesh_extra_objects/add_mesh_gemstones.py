@@ -278,6 +278,7 @@ class AddDiamond(Operator):
                 if 'Diamond' in obj.data.keys():
                     oldmesh = obj.data
                     oldmeshname = obj.data.name
+
                     verts, faces = add_diamond(self.segments,
                         self.girdle_radius,
                         self.table_radius,
@@ -287,6 +288,10 @@ class AddDiamond(Operator):
                     mesh.from_pydata(verts, [], faces)
                     mesh.update()
                     obj.data = mesh
+                    
+                    for material in oldmesh.materials:
+                        obj.data.materials.append(material)
+
                     bpy.data.meshes.remove(oldmesh)
                     obj.data.name = oldmeshname
                 else:
@@ -423,6 +428,8 @@ class AddGem(Operator):
                     mesh.from_pydata(verts, [], faces)
                     mesh.update()
                     obj.data = mesh
+                    for material in oldmesh.materials:
+                        obj.data.materials.append(material)
                     bpy.data.meshes.remove(oldmesh)
                     obj.data.name = oldmeshname
                 else:

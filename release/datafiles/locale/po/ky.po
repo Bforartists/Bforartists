@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
+"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-09 00:00:00\n"
+"POT-Creation-Date: 2019-10-03 09:27:21\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -614,7 +614,7 @@ msgid "Vertex"
 msgstr "Чоку"
 
 
-msgid "Anti-aliasing"
+msgid "Anti-Aliasing"
 msgstr "Тегиздөө"
 
 
@@ -1635,10 +1635,6 @@ msgid "Shadow"
 msgstr "Көлөкө"
 
 
-msgid "Anti-Aliasing"
-msgstr "Тегиздөө"
-
-
 msgid "RGB"
 msgstr "RGB"
 
@@ -1736,10 +1732,6 @@ msgstr "Режим"
 msgctxt "Operator"
 msgid "Accept"
 msgstr "Кабыл алуу"
-
-
-msgid "Open"
-msgstr "Ачуу"
 
 
 msgctxt "Operator"
@@ -1992,6 +1984,10 @@ msgid "Name of new directory"
 msgstr "Жаңы каталогдун аты"
 
 
+msgid "Open"
+msgstr "Ачуу"
+
+
 msgid "Increment"
 msgstr "Өсүү"
 
@@ -2209,10 +2205,6 @@ msgstr "Тегиздикти кошуу"
 msgctxt "Operator"
 msgid "Add Torus"
 msgstr "Торду кошуу"
-
-
-msgid "Add a torus mesh"
-msgstr "Тор политорун жаратуу"
 
 
 msgid "Construct a UV sphere mesh"
@@ -2999,6 +2991,10 @@ msgid "Memory Cache Limit"
 msgstr "Эс кэшинин чектөөсү"
 
 
+msgid "New Window"
+msgstr "Жаңы терезе"
+
+
 msgid "Translate Interface"
 msgstr "Интерфейсти которуу"
 
@@ -3029,10 +3025,6 @@ msgstr "Асман"
 
 msgid "Bake normals"
 msgstr "Нормалдарды бышыруу"
-
-
-msgid "New Window"
-msgstr "Жаңы терезе"
 
 
 msgid "Engine"
@@ -3666,6 +3658,10 @@ msgstr "Python API маалымдамасы"
 msgctxt "Operator"
 msgid "Report a Bug"
 msgstr "Ката жөнүндө маалымдоо"
+
+
+msgid "Anti-aliasing"
+msgstr "Тегиздөө"
 
 
 msgid "New Data"

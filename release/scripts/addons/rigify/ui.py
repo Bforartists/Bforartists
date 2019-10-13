@@ -28,13 +28,21 @@ from bpy.props import (
 
 from mathutils import Color
 
-from .utils import MetarigError
-from .utils import write_metarig, write_widget
-from .utils import unique_name
-from .utils import upgradeMetarigTypes, outdated_types
-from .utils import get_keyed_frames, bones_in_frame
-from .utils import overwrite_prop_animation
+from .utils.errors import MetarigError
+from .utils.rig import write_metarig
+from .utils.widgets import write_widget
+from .utils.naming import unique_name
+from .utils.rig import upgradeMetarigTypes, outdated_types
+
 from .rigs.utils import get_limb_generated_names
+
+from .utils.animation import get_keyed_frames_in_range, bones_in_frame, overwrite_prop_animation
+from .utils.animation import RIGIFY_OT_get_frame_range
+
+from .utils.animation import register as animation_register
+from .utils.animation import unregister as animation_unregister
+
+from . import base_rig
 from . import rig_lists
 from . import generate
 from . import rot_mode
@@ -613,6 +621,8 @@ class BONE_PT_rigify_buttons(bpy.types.Panel):
                 box = row.box()
                 box.label(text="ALERT: type \"%s\" does not exist!" % rig_name)
             else:
+                if hasattr(rig.Rig, 'parameters_ui'):
+                    rig = rig.Rig
                 try:
                     rig.parameters_ui
                 except AttributeError:
@@ -662,8 +672,15 @@ class VIEW3D_PT_rigify_animation_tools(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.object and context.object.type == 'ARMATURE'\
-               and context.active_object.data.get("rig_id") is not None
+        obj = context.active_object
+        if obj and obj.type == 'ARMATURE':
+            rig_id = obj.data.get("rig_id")
+            if rig_id is not None:
+                has_arm = hasattr(bpy.types, 'POSE_OT_rigify_arm_ik2fk_' + rig_id)
+                has_leg = hasattr(bpy.types, 'POSE_OT_rigify_leg_ik2fk_' + rig_id)
+                return has_arm or has_leg
+
+        return False
 
     def draw(self, context):
         obj = context.active_object
@@ -699,20 +716,19 @@ class VIEW3D_PT_rigify_animation_tools(bpy.types.Panel):
             op.value = False
             op.toggle = False
             op.bake = True
-            row = self.layout.row(align=True)
-            row.prop(id_store, 'rigify_transfer_start_frame')
-            row.prop(id_store, 'rigify_transfer_end_frame')
-            row.operator("rigify.get_frame_range", icon='TIME', text='')
+            RIGIFY_OT_get_frame_range.draw_range_ui(context, self.layout)
 
 
 def rigify_report_exception(operator, exception):
     import traceback
     import sys
     import os
-    # find the module name where the error happened
+    # find the non-utils module name where the error happened
     # hint, this is the metarig type!
     exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
-    fn = traceback.extract_tb(exceptionTraceback)[-1][0]
+    fns = [ item.filename for item in traceback.extract_tb(exceptionTraceback) ]
+    fns_rig = [ fn for fn in fns if os.path.basename(os.path.dirname(fn)) != 'utils' ]
+    fn = fns_rig[-1]
     fn = os.path.basename(fn)
     fn = os.path.splitext(fn)[0]
     message = []
@@ -753,12 +769,12 @@ class Generate(bpy.types.Operator):
     bl_description = 'Generates a rig from the active metarig armature'
 
     def execute(self, context):
-        import importlib
-        importlib.reload(generate)
-
         try:
             generate.generate_rig(context, context.object)
         except MetarigError as rig_exception:
+            import traceback
+            traceback.print_exc()
+
             rigify_report_exception(self, rig_exception)
 
         return {'FINISHED'}
@@ -905,21 +921,6 @@ class EncodeWidget(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class OBJECT_OT_GetFrameRange(bpy.types.Operator):
-    """Get start and end frame range"""
-    bl_idname = "rigify.get_frame_range"
-    bl_label = "Get Frame Range"
-
-    def execute(self, context):
-        scn = context.scene
-        id_store = context.window_manager
-
-        id_store.rigify_transfer_start_frame = scn.frame_start
-        id_store.rigify_transfer_end_frame = scn.frame_end
-
-        return {'FINISHED'}
-
-
 def FktoIk(rig, window='ALL'):
 
     scn = bpy.context.scene
@@ -931,8 +932,7 @@ def FktoIk(rig, window='ALL'):
     limb_generated_names = get_limb_generated_names(rig)
 
     if window == 'ALL':
-        frames = get_keyed_frames(rig)
-        frames = [f for f in frames if f in range(id_store.rigify_transfer_start_frame, id_store.rigify_transfer_end_frame+1)]
+        frames = get_keyed_frames_in_range(bpy.context, rig)
     elif window == 'CURRENT':
         frames = [scn.frame_current]
     else:
@@ -1009,8 +1009,7 @@ def IktoFk(rig, window='ALL'):
     limb_generated_names = get_limb_generated_names(rig)
 
     if window == 'ALL':
-        frames = get_keyed_frames(rig)
-        frames = [f for f in frames if f in range(id_store.rigify_transfer_start_frame, id_store.rigify_transfer_end_frame+1)]
+        frames = get_keyed_frames_in_range(bpy.context, rig)
     elif window == 'CURRENT':
         frames = [scn.frame_current]
     else:
@@ -1122,8 +1121,7 @@ def rotPoleToggle(rig, window='ALL', value=False, toggle=False, bake=False):
     limb_generated_names = get_limb_generated_names(rig)
 
     if window == 'ALL':
-        frames = get_keyed_frames(rig)
-        frames = [f for f in frames if f in range(id_store.rigify_transfer_start_frame, id_store.rigify_transfer_end_frame+1)]
+        frames = get_keyed_frames_in_range(bpy.context, rig)
     elif window == 'CURRENT':
         frames = [scn.frame_current]
     else:
@@ -1340,7 +1338,6 @@ classes = (
     EncodeMetarig,
     EncodeMetarigSample,
     EncodeWidget,
-    OBJECT_OT_GetFrameRange,
     OBJECT_OT_FK2IK,
     OBJECT_OT_IK2FK,
     OBJECT_OT_TransferFKtoIK,
@@ -1352,6 +1349,8 @@ classes = (
 
 def register():
     from bpy.utils import register_class
+
+    animation_register()
 
     # Classes.
     for cls in classes:
@@ -1370,3 +1369,5 @@ def unregister():
     # Classes.
     for cls in classes:
         unregister_class(cls)
+
+    animation_unregister()

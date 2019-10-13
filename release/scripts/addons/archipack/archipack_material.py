@@ -149,7 +149,7 @@ class MatlibsManager():
         """
             Add material library to list
             only store name of lib
-            reloading here dosent make sense
+            reloading here doesn't make sense
         """
         loaded_path = self.loaded_path
 

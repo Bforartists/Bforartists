@@ -144,7 +144,7 @@ class CutterGenerator():
             manipulators[1].prop1_name = "length"
             manipulators[1].set_pts([p0, p1, (side, 0, 0)])
 
-            # snap manipulator, dont change index !
+            # snap manipulator, don't change index !
             manipulators[2].set_pts([p0, p1, (side, 0, 0)])
             # dumb segment id
             manipulators[3].set_pts([p0, p1, (side, 0, 0)])

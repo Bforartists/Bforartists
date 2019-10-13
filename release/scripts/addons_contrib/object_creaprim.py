@@ -49,10 +49,10 @@ bl_info = {
     "name": "CreaPrim",
     "author": "Gert De Roost",
     "version": (0, 3, 11),
-    "blender": (2, 64, 0),
+    "blender": (2, 80, 0),
     "location": "View3D > Object Tools",
     "description": "Create primitive addon",
-    "warning": "",
+    "warning": "under construction",
     "wiki_url": "",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Object"}
@@ -121,7 +121,7 @@ class CreaPrim(bpy.types.Operator):
             if not os.path.exists(addondir):
                 os.makedirs(addondir)
 
-        actobj = bpy.context.active_object
+        actobj = context.view_layer.objects.active
         txtlist = []
         namelist = []
         for selobj in objlist:
@@ -133,9 +133,9 @@ class CreaPrim(bpy.types.Operator):
                 objname = objname.replace(".", "")
                 objname = objname.replace(" ", "_")
                 namelist.append(objname)
-            mesh = selobj.to_mesh(scn, True, "PREVIEW")
+            mesh = selobj.to_mesh(preserve_all_data_layers=False, depsgraph=None)
             oldname = selobj.name
-            scn.objects.active = selobj
+            context.view_layer.objects.active = selobj
 
             if scn.Creaprim_Apply:
                 bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
@@ -147,7 +147,7 @@ class CreaPrim(bpy.types.Operator):
             txtlist.append(txt)
 
         oldname = actobj.name
-        scn.objects.active = actobj
+        context.view_layer.objects.active = actobj
 
         if len(txtlist) > 1:
             makeinit(txtlist, namelist, groupname, addondir)
@@ -257,7 +257,7 @@ def do_creaprim(self, mesh, objname, addondir):
     strlist.append("    \"name\": \"" + objname + "\",\n")
     strlist.append("    \"author\": \"Gert De Roost\",\n")
     strlist.append("    \"version\": (1, 0, 0),\n")
-    strlist.append("    \"blender\": (2, 65, 0),\n")
+    strlist.append("    \"blender\": (2, 80, 0),\n")
     strlist.append("    \"location\": \"Add > Mesh\",\n")
     strlist.append("    \"description\": \"Create " + objname + " primitive\",\n")
     strlist.append("    \"warning\": \"\",\n")
@@ -353,12 +353,12 @@ def do_creaprim(self, mesh, objname, addondir):
     strlist.append("\n")
     strlist.append("\n")
     strlist.append("def register():\n")
-    strlist.append("    bpy.utils.register_module(__name__)\n")
+    strlist.append("    bpy.utils.register_class(__name__)\n")
     strlist.append("    bpy.types.VIEW3D_MT_mesh_add.append(menu_item)\n")
     strlist.append("\n")
     strlist.append("\n")
     strlist.append("def unregister():\n")
-    strlist.append("    bpy.utils.unregister_module(__name__)\n")
+    strlist.append("    bpy.utils.unregister_class(__name__)\n")
     strlist.append("    bpy.types.VIEW3D_MT_mesh_add.remove(menu_item)\n")
     strlist.append("\n")
     strlist.append("\n")

@@ -23,7 +23,7 @@ bl_info = {
     "author": "Antonio Vazquez (antonioya)",
     "version": (1, 1, 2),
     "blender": (2, 80, 0),
-    "location": "Text Editor > Props Shelf (Ctrl/t > IsKeyFree Tools",
+    "location": "Text Editor > Sidebar > Dev Tab",
     "description": "Find free shortcuts, inform about used and print a key list",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6"
                 "/Py/Scripts/Development/IsKeyFree",
@@ -216,6 +216,7 @@ class UIControlPanel(Panel):
     bl_region_type = "UI"
     bl_label = "Is Key Free"
     bl_category = 'Dev'
+    bl_options = {'DEFAULT_CLOSED'}
 
     # noinspection PyUnusedLocal
     def draw(self, context):

@@ -22,7 +22,7 @@ bl_info = {
 	"description": "Multiple tools to carve or to create objects",
 	"version": (1, 2, 0),
 	"blender": (2, 80, 0),
-	"location": "3D View",
+	"location": "3D View > Ctrl/Shift/x",
 	"warning": "",
 	"wiki_url": "",
 	"support": 'COMMUNITY',

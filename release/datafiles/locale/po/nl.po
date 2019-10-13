@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 9) (b'55245ed6ad72')\n"
+"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-09 00:00:00\n"
+"POT-Creation-Date: 2019-10-03 09:27:21\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -1999,16 +1999,6 @@ msgstr "Koppel Banen"
 
 
 msgctxt "Operator"
-msgid "Delete keyframe"
-msgstr "Verwijder Sleutelframe"
-
-
-msgctxt "Operator"
-msgid "Insert keyframe"
-msgstr "Invoegen Sleutelframe"
-
-
-msgctxt "Operator"
 msgid "Lock Tracks"
 msgstr "Vergrendel Banen"
 
@@ -2249,11 +2239,6 @@ msgstr "Verwijder Boekenlegger"
 msgctxt "Operator"
 msgid "Move Bookmark"
 msgstr "Verplaats Boekenlegger"
-
-
-msgctxt "Operator"
-msgid "Toggle Bookmarks"
-msgstr "Boekenleggers Aan/Uit"
 
 
 msgctxt "Operator"
@@ -4027,22 +4012,12 @@ msgstr "Transformeer"
 
 
 msgctxt "Operator"
-msgid "Copy To Selected"
-msgstr "Kopieer naar Geselecteerd"
-
-
-msgctxt "Operator"
 msgid "Edit Source"
 msgstr "Bewerk Bron"
 
 
 msgid "Select All"
 msgstr "Selecteer Alles"
-
-
-msgctxt "Operator"
-msgid "Unset property"
-msgstr "Maak Eigenschap Leeg"
 
 
 msgctxt "Operator"
@@ -4408,10 +4383,6 @@ msgid "Image Editor"
 msgstr "Afbeelding Editor"
 
 
-msgid "Show Thumbnails"
-msgstr "Toon Ikoontjes"
-
-
 msgid "Show Navigation Guide"
 msgstr "Toon Navigatie Gids"
 
@@ -4442,10 +4413,6 @@ msgstr "Pas Schaal Toe"
 
 msgid "Copy Textures"
 msgstr "Kopieer Texturen"
-
-
-msgid "Select where rendered images will be displayed"
-msgstr "Selecteer waar gerenderde afbeeldingen worden weergegeven"
 
 
 msgid "Engine"
@@ -5959,6 +5926,10 @@ msgid "Without Targets"
 msgstr "Zonder Doelen"
 
 
+msgid "Blender Render"
+msgstr "Blender Render"
+
+
 msgid "Active Keyframe"
 msgstr "Actieve Sleutelframe"
 
@@ -6089,10 +6060,6 @@ msgstr "Geen operatie in context"
 
 msgid "Property cannot be both boolean and float"
 msgstr "Eigenschap kan niet boolean en float tegelijkertijd zijn"
-
-
-msgid "Blender Render"
-msgstr "Blender Render"
 
 
 msgid "Add Curve"

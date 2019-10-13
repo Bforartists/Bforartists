@@ -1,140 +1,110 @@
+### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
 import bgl
 import math
-
-from . properties import Sun
-
-
-class NorthClass:
-
-    def __init__(self):
-        self.handler = None
-        self.isActive = False
-
-    def refresh_screen(self):
-        bpy.context.scene.cursor.location.x += 0.0
-
-    def activate(self, context):
-
-        if context.area.type == 'PROPERTIES':
-            self.handler = bpy.types.SpaceView3D.draw_handler_add(
-                DrawNorth_callback,
-                (self, context), 'WINDOW', 'POST_PIXEL')
-            self.isActive = True
-            self.refresh_screen()
-            return True
-        return False
-
-    def deactivate(self):
-        if self.handler is not None:
-            bpy.types.SpaceView3D.draw_handler_remove(self.handler, 'WINDOW')
-            self.handler = None
-        self.isActive = False
-        self.refresh_screen()
-        if Sun.SP:
-            Sun.SP.ShowNorth = False
-        Sun.ShowNorth = False
+import gpu
+from gpu_extras.batch import batch_for_shader
+from mathutils import Vector
 
 
-North = NorthClass()
+if bpy.app.background:  # ignore north line in background mode
+    def north_update(self, context):
+        pass
+else:
+    vertex_shader = '''
+        uniform mat4 u_ViewProjectionMatrix;
+
+        in vec3 position;
+
+        flat out vec2 v_StartPos;
+        out vec4 v_VertPos;
+
+        void main()
+        {
+            vec4 pos    = u_ViewProjectionMatrix * vec4(position, 1.0f);
+            gl_Position = pos;
+            v_StartPos    = (pos / pos.w).xy;
+            v_VertPos     = pos;
+        }
+    '''
+
+    fragment_shader = '''
+        uniform vec4 u_Color;
+
+        flat in vec2 v_StartPos;
+        in vec4 v_VertPos;
+
+        uniform vec2 u_Resolution;
+
+        void main()
+        {
+            vec4 vertPos_2d = v_VertPos / v_VertPos.w;
+            vec2 dir  = (vertPos_2d.xy - v_StartPos.xy) * u_Resolution;
+            float dist = length(dir);
+
+            if (step(sin(dist / 5.0f), 0.0) == 1) discard;
+
+            gl_FragColor = u_Color;
+        }
+    '''
+
+    shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
+
+    def draw_north_callback():
+        # ------------------------------------------------------------------
+        # Set up the compass needle using the current north offset angle
+        # less 90 degrees.  This forces the unit circle to begin at the
+        # 12 O'clock instead of 3 O'clock position.
+        # ------------------------------------------------------------------
+        sun_props = bpy.context.scene.sun_pos_properties
+
+        color = (0.2, 0.6, 1.0, 0.7)
+        radius = 100
+        angle = -(sun_props.north_offset - math.pi / 2)
+        x = math.cos(angle) * radius
+        y = math.sin(angle) * radius
+
+        coords = Vector((x, y, 0)), Vector((0, 0, 0))   # Start & end of needle
+
+        batch = batch_for_shader(
+            shader, 'LINE_STRIP',
+            {"position": coords},
+        )
+        shader.bind()
+
+        matrix = bpy.context.region_data.perspective_matrix
+        shader.uniform_float("u_ViewProjectionMatrix", matrix)
+        shader.uniform_float("u_Resolution", (bpy.context.region.width, bpy.context.region.height))
+        shader.uniform_float("u_Color", color)
+        bgl.glLineWidth(2.0)
+        batch.draw(shader)
 
 
-def DrawNorth_callback(self, context):
+    _handle = None
 
-    if not Sun.SP.ShowNorth and North.isActive:
-        North.deactivate()
-        return
 
-    # ------------------------------------------------------------------
-    # Set up the compass needle using the current north offset angle
-    # less 90 degrees.  This forces the unit circle to begin at the
-    # 12 O'clock instead of 3 O'clock position.
-    # ------------------------------------------------------------------
-    color = (0.2, 0.6, 1.0, 0.7)
-    radius = 100
-    angle = -(Sun.NorthOffset - math.pi / 2)
-    x = math.cos(angle) * radius
-    y = math.sin(angle) * radius
-
-    p1, p2 = (0, 0, 0), (x, y, 0)   # Start & end of needle
-
-    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    # Thanks to Buerbaum Martin for the following which draws openGL
-    # lines.  ( From his script space_view3d_panel_measure.py )
-    #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    # ------------------------------------------------------------------
-    # Convert the Perspective Matrix of the current view/region.
-    # ------------------------------------------------------------------
-    view3d = bpy.context
-    region = view3d.region_data
-    perspMatrix = region.perspective_matrix
-    tempMat = [perspMatrix[j][i] for i in range(4) for j in range(4)]
-    perspBuff = bgl.Buffer(bgl.GL_FLOAT, 16, tempMat)
-
-    # ---------------------------------------------------------
-    # Store previous OpenGL settings.
-    # ---------------------------------------------------------
-    MatrixMode_prev = bgl.Buffer(bgl.GL_INT, [1])
-    bgl.glGetIntegerv(bgl.GL_MATRIX_MODE, MatrixMode_prev)
-    MatrixMode_prev = MatrixMode_prev[0]
-
-    # Store projection matrix
-    ProjMatrix_prev = bgl.Buffer(bgl.GL_DOUBLE, [16])
-    bgl.glGetFloatv(bgl.GL_PROJECTION_MATRIX, ProjMatrix_prev)
-
-    # Store Line width
-    lineWidth_prev = bgl.Buffer(bgl.GL_FLOAT, [1])
-    bgl.glGetFloatv(bgl.GL_LINE_WIDTH, lineWidth_prev)
-    lineWidth_prev = lineWidth_prev[0]
-
-    # Store GL_BLEND
-    blend_prev = bgl.Buffer(bgl.GL_BYTE, [1])
-    bgl.glGetFloatv(bgl.GL_BLEND, blend_prev)
-    blend_prev = blend_prev[0]
-
-    line_stipple_prev = bgl.Buffer(bgl.GL_BYTE, [1])
-    bgl.glGetFloatv(bgl.GL_LINE_STIPPLE, line_stipple_prev)
-    line_stipple_prev = line_stipple_prev[0]
-
-    # Store glColor4f
-    color_prev = bgl.Buffer(bgl.GL_FLOAT, [4])
-    bgl.glGetFloatv(bgl.GL_COLOR, color_prev)
-
-    # ---------------------------------------------------------
-    # Prepare for 3D drawing
-    # ---------------------------------------------------------
-    bgl.glLoadIdentity()
-    bgl.glMatrixMode(bgl.GL_PROJECTION)
-    bgl.glLoadMatrixf(perspBuff)
-
-    bgl.glEnable(bgl.GL_BLEND)
-    bgl.glEnable(bgl.GL_LINE_STIPPLE)
-
-    # ------------------
-    # and draw the line
-    # ------------------
-    width = 2
-    bgl.glLineWidth(width)
-    bgl.glColor4f(color[0], color[1], color[2], color[3])
-    bgl.glBegin(bgl.GL_LINE_STRIP)
-    bgl.glVertex3f(p1[0], p1[1], p1[2])
-    bgl.glVertex3f(p2[0], p2[1], p2[2])
-    bgl.glEnd()
-
-    # ---------------------------------------------------------
-    # Restore previous OpenGL settings
-    # ---------------------------------------------------------
-    bgl.glLoadIdentity()
-    bgl.glMatrixMode(MatrixMode_prev)
-    bgl.glLoadMatrixf(ProjMatrix_prev)
-    bgl.glLineWidth(lineWidth_prev)
-
-    if not blend_prev:
-        bgl.glDisable(bgl.GL_BLEND)
-    if not line_stipple_prev:
-        bgl.glDisable(bgl.GL_LINE_STIPPLE)
-
-    bgl.glColor4f(color_prev[0],
-                  color_prev[1],
-                  color_prev[2],
-                  color_prev[3])
+    def north_update(self, context):
+        global _handle
+        if self.show_north and _handle is None:
+            _handle = bpy.types.SpaceView3D.draw_handler_add(draw_north_callback, (), 'WINDOW', 'POST_VIEW')
+        elif _handle is not None:
+            bpy.types.SpaceView3D.draw_handler_remove(_handle, 'WINDOW')
+            _handle = None
+        context.area.tag_redraw()

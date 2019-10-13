@@ -226,7 +226,7 @@ class FenceGenerator():
                 manipulators[1].prop2_name = "radius"
                 manipulators[1].set_pts([f.c.to_3d(), v0, v1])
 
-            # snap manipulator, dont change index !
+            # snap manipulator, don't change index !
             manipulators[2].set_pts([p0, p1, (1, 0, 0)])
 
         f = self.segs[-1]
@@ -450,7 +450,7 @@ class FenceGenerator():
                     f = self.segs[i]
                     if f.t_end < t_end:
                         if type(f).__name__ == 'CurvedFence':
-                            # cant end after segment
+                            # can't end after segment
                             t0 = max(0, (t_cur - f.t_start) / f.t_diff)
                             t1 = min(1, (t_end - f.t_start) / f.t_diff)
                             n_s = int(max(1, abs(f.da) * (5) / pi - 1))
@@ -471,7 +471,7 @@ class FenceGenerator():
                 f = self.segs[i]
                 # last section
                 if type(f).__name__ == 'CurvedFence':
-                    # cant start before segment
+                    # can't start before segment
                     t0 = max(0, (t_cur - f.t_start) / f.t_diff)
                     t1 = min(1, (t_end - f.t_start) / f.t_diff)
                     n_s = int(max(1, abs(f.da) * (5) / pi - 1))
