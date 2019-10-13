@@ -5670,22 +5670,15 @@ class VIEW3D_MT_paint_gpencil(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_gpencil_animation")
+
         layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon = "DUPLICATE")
         layout.operator("gpencil.frame_duplicate", text="Duplicate All Layers", icon = "DUPLICATE").mode = 'ALL'
 
         layout.separator()
 
-        layout.operator("gpencil.blank_frame_add", icon = "ADD")
         layout.menu("VIEW3D_MT_edit_gpencil_showhide")
         layout.menu("GPENCIL_MT_cleanup")
-
-        layout.separator()
-
-        layout.operator("gpencil.primitive", text="Line", icon='IPO_CONSTANT').type = 'LINE'
-        layout.operator("gpencil.primitive", text="Rectangle", icon='UV_FACESEL').type = 'BOX'
-        layout.operator("gpencil.primitive", text="Circle", icon='ANTIALIASED').type = 'CIRCLE'
-        layout.operator("gpencil.primitive", text="Arc", icon='SPHERECURVE').type = 'ARC'
-        layout.operator("gpencil.primitive", text="Curve", icon='CURVE_BEZCURVE').type = 'CURVE'
 
         layout.separator()
 
@@ -5700,6 +5693,20 @@ class VIEW3D_MT_paint_gpencil(Menu):
         #radial control button brush strength
         myvar = layout.operator("wm.radial_control", text = "Eraser Radius (Old Toolsystem)", icon = "BRUSHSIZE")
         myvar.data_path_primary = 'preferences.edit.grease_pencil_eraser_radius'
+
+
+class VIEW3D_MT_edit_gpencil_showhide(Menu):
+    bl_label = "Show/hide"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("gpencil.reveal", text="Show All Layers", icon = "HIDE_OFF")
+
+        layout.separator()
+
+        layout.operator("gpencil.hide", text="Hide Active Layer", icon = "HIDE_ON").unselected = False
+        layout.operator("gpencil.hide", text="Hide Inactive Layers", icon = "HIDE_UNSELECTED").unselected = True
 
 
 class VIEW3D_MT_assign_material(Menu):
@@ -8146,6 +8153,7 @@ classes = (
     VIEW3D_curve_hide_unselected,
     VIEW3D_MT_edit_mesh_show_hide,
     VIEW3D_MT_paint_gpencil,
+    VIEW3D_MT_edit_gpencil_showhide,
     VIEW3D_MT_assign_material,
     VIEW3D_MT_edit_gpencil,
     VIEW3D_MT_edit_gpencil_stroke,
