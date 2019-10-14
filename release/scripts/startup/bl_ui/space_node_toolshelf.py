@@ -2880,7 +2880,7 @@ class NODES_PT_Modify_color(bpy.types.Panel):
                 
             col = layout.column(align=True)
 
-            props = col.operator("node.add_node", text=" Bright / Contrast ", icon = "NODE_BRIGHT_CONTRAST")
+            props = col.operator("node.add_node", text=" Bright / Contrast ", icon = "BRIGHTNESS_CONTRAST")
             props.use_transform = True
             props.type = "ShaderNodeBrightContrast"       
         
