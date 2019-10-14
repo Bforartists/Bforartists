@@ -5672,9 +5672,6 @@ class VIEW3D_MT_paint_gpencil(Menu):
 
         layout.menu("VIEW3D_MT_gpencil_animation")
 
-        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon = "DUPLICATE")
-        layout.operator("gpencil.frame_duplicate", text="Duplicate All Layers", icon = "DUPLICATE").mode = 'ALL'
-
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_gpencil_showhide")
