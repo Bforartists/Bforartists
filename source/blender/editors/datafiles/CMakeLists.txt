@@ -1472,7 +1472,7 @@ load_obj
 load_ply
 load_stl
 load_svg
-load_wrl
+load_x3d
 save_3ds
 
 save_bvh
@@ -1481,7 +1481,7 @@ save_fbx
 save_obj
 save_ply
 save_stl
-save_wrl
+save_x3d
 load_abc
 save_abc
 rotate_minus_90
