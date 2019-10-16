@@ -1230,15 +1230,15 @@ DEF_ICON_COLOR(Z_ICON)
 DEF_ICON_COLOR(EXTEND_VERTICES)
 
 DEF_ICON_COLOR(NODE_MAPPING)
-DEF_ICON_BLANK(1230)
-DEF_ICON_BLANK(1231)
+DEF_ICON_COLOR(NODE_CLAMP)
+DEF_ICON_COLOR(NODE_DENOISE)
 DEF_ICON_COLOR(NODE_MATH)
 DEF_ICON_COLOR(NODE_MIXRGB)
 DEF_ICON_COLOR(NODE_MIXSHADER)
-DEF_ICON_BLANK(1235)
-DEF_ICON_BLANK(1236)
+DEF_ICON_COLOR(NODE_MAP_RANGE)
+DEF_ICON_COLOR(NODE_VERTEX_COLOR)
 DEF_ICON_COLOR(NODE_MOVIEDISTORT)
-DEF_ICON_BLANK(1238)
+DEF_ICON_COLOR(NODE_VOLUME_INFO)
 
 DEF_ICON_COLOR(MOUSE_LMB)      /*bfa- don't change the order of the mouse icons*/
 DEF_ICON_COLOR(MOUSE_MMB)      /*bfa- don't change the order of the mouse icons*/
@@ -1249,7 +1249,7 @@ DEF_ICON_COLOR(MOUSE_MMB_DRAG) /*bfa- don't change the order of the mouse icons*
 DEF_ICON_COLOR(MOUSE_RMB_DRAG) /*bfa- don't change the order of the mouse icons*/
 DEF_ICON_COLOR(AUTOMERGE_OFF)  /*bfa- don't change the order of the automerge icons*/
 DEF_ICON_COLOR(AUTOMERGE_ON)   /*bfa- don't change the order of the automerge icons*/
-DEF_ICON_BLANK(1249)
+DEF_ICON_COLOR(NODE_WHITE_NOISE)
 
 /* ------------------------- Row 22 --------------------------*/
 
