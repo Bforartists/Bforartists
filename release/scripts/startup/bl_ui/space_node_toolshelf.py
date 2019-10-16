@@ -139,11 +139,11 @@ class NODES_PT_Input_input_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexEnvironment"
             
-            props = col.operator("node.add_node", text=" Volume Info    ", icon = "FILE_IMAGE")
+            props = col.operator("node.add_node", text=" Volume Info    ", icon = "NODE_VOLUME_INFO")
             props.use_transform = True
             props.type = "ShaderNodeVolumeInfo"
             
-            props = col.operator("node.add_node", text=" Vertex Color    ", icon = "FILE_IMAGE")
+            props = col.operator("node.add_node", text=" Vertex Color    ", icon = "NODE_VERTEX_COLOR")
             props.use_transform = True
             props.type = "ShaderNodeVertexColor"           
 
@@ -163,11 +163,11 @@ class NODES_PT_Input_input_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexEnvironment"
             
-            props = col.operator("node.add_node", text="", icon = "FILE_IMAGE")
+            props = col.operator("node.add_node", text="", icon = "NODE_VOLUME_INFO")
             props.use_transform = True
             props.type = "ShaderNodeVolumeInfo"
             
-            props = col.operator("node.add_node", text="", icon = "FILE_IMAGE")
+            props = col.operator("node.add_node", text="", icon = "NODE_VERTEX_COLOR")
             props.use_transform = True
             props.type = "ShaderNodeVertexColor"           
 
@@ -832,7 +832,7 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexVoronoi"
 
-            props = col.operator("node.add_node", text = " White Noise             ", icon = "VORONI_TEX")
+            props = col.operator("node.add_node", text = " White Noise             ", icon = "NODE_WHITE_NOISE")
             props.use_transform = True
             props.type = "ShaderNodeTexWhiteNoise"
             
@@ -889,7 +889,7 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexVoronoi"
             
-            props = col.operator("node.add_node", text = "", icon = "VORONI_TEX")
+            props = col.operator("node.add_node", text = "", icon = "NODE_WHITE_NOISE")
             props.use_transform = True
             props.type = "ShaderNodeTexWhiteNoise"
 
@@ -1788,7 +1788,7 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeSunBeams"
             
-            props = col.operator("node.add_node", text=" Denoise        ", icon = "NODE_SUNBEAMS") 
+            props = col.operator("node.add_node", text=" Denoise        ", icon = "NODE_DENOISE") 
             props.use_transform = True
             props.type = "CompositorNodeDenoise"
 
@@ -1860,7 +1860,7 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeSunBeams"
 
-            props = col.operator("node.add_node", text = "", icon = "NODE_SUNBEAMS") 
+            props = col.operator("node.add_node", text = "", icon = "NODE_DENOISE") 
             props.use_transform = True
             props.type = "CompositorNodeDenoise"
 
@@ -2124,11 +2124,11 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeWavelength"
             
-            props = col.operator("node.add_node", text=" Map Range     ", icon = "NODE_WAVELENGTH")
+            props = col.operator("node.add_node", text=" Map Range     ", icon = "NODE_MAP_RANGE")
             props.use_transform = True
             props.type = "ShaderNodeMapRange"
             
-            props = col.operator("node.add_node", text=" Node Clamp     ", icon = "NODE_WAVELENGTH")
+            props = col.operator("node.add_node", text=" Node Clamp     ", icon = "NODE_CLAMP")
             props.use_transform = True
             props.type = "ShaderNodeClamp"
         
@@ -2196,11 +2196,11 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeWavelength"
             
-            props = col.operator("node.add_node", text="", icon = "NODE_WAVELENGTH")
+            props = col.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
             props.use_transform = True
             props.type = "ShaderNodeMapRange"
             
-            props = col.operator("node.add_node", text="", icon = "NODE_WAVELENGTH")
+            props = col.operator("node.add_node", text="", icon = "NODE_CLAMP")
             props.use_transform = True
             props.type = "ShaderNodeClamp"
             
