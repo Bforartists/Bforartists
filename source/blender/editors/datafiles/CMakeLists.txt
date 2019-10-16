@@ -1213,15 +1213,15 @@ z_icon
 extend_vertices
 
 node_mapping
-#def_icon_blank(1230
-#def_icon_blank(1231
+node_clamp
+node_denoise
 node_math
 node_mixrgb
 node_mixshader
-#def_icon_blank(1235
-#def_icon_blank(1236
+node_map_range
+node_vertex_color
 node_moviedistort
-#def_icon_blank(1238
+node_volume_info
 
 mouse_lmb      
 mouse_mmb      
@@ -1232,7 +1232,7 @@ mouse_mmb_drag
 mouse_rmb_drag 
 automerge_off
 automerge_on
-#def_icon_blank(1249
+node_white_noise
 
 # ------------------------- row 22 --------------------------*/
 
