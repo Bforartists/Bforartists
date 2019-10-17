@@ -229,23 +229,6 @@ class OUTLINER_MT_edit_datablocks(Menu):
         layout.operator("outliner.drivers_delete_selected", icon = "DELETE")
 
 
-class OUTLINER_MT_collection_view_layer(Menu):
-    bl_label = "View Layer"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("outliner.collection_exclude_set", icon='RENDERLAYERS')
-        layout.operator("outliner.collection_exclude_clear", icon='CLEAR')
-
-        if context.engine == 'CYCLES':
-            layout.operator("outliner.collection_indirect_only_set", icon='RENDERLAYERS')
-            layout.operator("outliner.collection_indirect_only_clear", icon='CLEAR')
-
-            layout.operator("outliner.collection_holdout_set", icon='RENDERLAYERS')
-            layout.operator("outliner.collection_holdout_clear", icon='CLEAR')
-
-
 class OUTLINER_MT_collection_visibility(Menu):
     bl_label = "Visibility"
 
@@ -308,10 +291,6 @@ class OUTLINER_MT_collection(Menu):
         layout.separator()
 
         layout.menu("OUTLINER_MT_collection_visibility")
-
-        if space.display_mode == 'VIEW_LAYER':
-            layout.separator()
-            layout.menu("OUTLINER_MT_collection_view_layer")
 
         layout.separator()
 
@@ -487,7 +466,6 @@ classes = (
     OUTLINER_MT_collection,
     OUTLINER_MT_collection_new,
     OUTLINER_MT_collection_visibility,
-    OUTLINER_MT_collection_view_layer,
     OUTLINER_MT_object,
     OUTLINER_PT_filter,
 
