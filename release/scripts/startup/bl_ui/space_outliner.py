@@ -239,20 +239,8 @@ class OUTLINER_MT_collection_visibility(Menu):
 
         layout.separator()
 
-        layout.operator("outliner.collection_show", text="Show", icon="HIDE_OFF")
         layout.operator("outliner.collection_show_inside", text="Show All Inside", icon="HIDE_OFF")
-        layout.operator("outliner.collection_hide", text="Hide", icon="HIDE_ON")
         layout.operator("outliner.collection_hide_inside", text="Hide All Inside", icon="HIDE_ON")
-
-        layout.separator()
-
-        layout.operator("outliner.collection_enable", text="Enable in Viewports", icon="RESTRICT_VIEW_OFF")
-        layout.operator("outliner.collection_disable", text="Disable in Viewports", icon="HIDE_ON")
-
-        layout.separator()
-
-        layout.operator("outliner.collection_enable_render", text="Enable in Render", icon="RESTRICT_RENDER_OFF")
-        layout.operator("outliner.collection_disable_render", text="Disable in Render", icon="RESTRICT_RENDER_ON")
 
 
 class OUTLINER_MT_collection(Menu):
