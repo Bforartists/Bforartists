@@ -235,7 +235,7 @@ class OUTLINER_MT_collection_visibility(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("outliner.collection_isolate", text="Isolate")
+        layout.operator("outliner.collection_isolate", text="Isolate", icon="HIDE_UNSELECTED")
 
         layout.separator()
 
