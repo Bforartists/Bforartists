@@ -552,7 +552,7 @@ class CLIP_PT_tracking_settings_extras(CLIP_PT_tracking_panel, Panel):
 class CLIP_PT_tools_tracking(CLIP_PT_tracking_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'TOOLS'
-    bl_label = "Track"
+    bl_label = "Track Tools"
     bl_category = "Track"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -1024,7 +1024,7 @@ class CLIP_PT_marker(CLIP_PT_tracking_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Track"
-    bl_label = "Marker"
+    bl_label = "Marker Options"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
