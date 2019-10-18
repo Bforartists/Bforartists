@@ -506,7 +506,8 @@ class CLIP_PT_tracking_settings(CLIP_PT_tracking_panel, Panel):
 
         col.prop(settings, "default_motion_model")
         col.prop(settings, "default_pattern_match", text="Match")
-
+        
+        col.use_property_split = False
         col.prop(settings, "use_default_brute")
         col.prop(settings, "use_default_normalization")
 
@@ -543,6 +544,8 @@ class CLIP_PT_tracking_settings_extras(CLIP_PT_tracking_panel, Panel):
         col = layout.column(align=True)
         col.prop(settings, "default_correlation_min")
         col.prop(settings, "default_margin")
+        
+        col.use_property_split = False
         col.prop(settings, "use_default_mask")
 
 
@@ -628,12 +631,13 @@ class CLIP_PT_tools_solve(CLIP_PT_tracking_panel, Panel):
         tracking = clip.tracking
         settings = tracking.settings
         tracking_object = tracking.objects.active
-
-        col = layout.column()
+        
+        
+        col = layout.column()     
+        col.use_property_split = False
         col.prop(settings, "use_tripod_solver", text="Tripod")
-        col = layout.column()
         col.active = not settings.use_tripod_solver
-        col.prop(settings, "use_keyframe_selection", text="Keyframe")
+        col.prop(settings, "use_keyframe_selection", text="Keyframe")      
 
         col = layout.column(align=True)
         col.active = (not settings.use_tripod_solver and
@@ -899,7 +903,8 @@ class CLIP_PT_track_settings(CLIP_PT_tracking_panel, Panel):
         if active:
             col.prop(active, "motion_model")
             col.prop(active, "pattern_match", text="Match")
-
+            
+            col.use_property_split = False
             col.prop(active, "use_brute")
             col.prop(active, "use_normalization")
 
@@ -926,7 +931,9 @@ class CLIP_PT_track_settings_extras(CLIP_PT_tracking_panel, Panel):
         col.prop(active, "margin")
 
         col = layout.column()
+        col.use_property_split = False
         col.prop(active, "use_mask")
+        col.use_property_split = True
         col.prop(active, "frames_limit")
         col.prop(settings, "speed")
 
@@ -1180,10 +1187,12 @@ class CLIP_PT_proxy(CLIP_PT_clip_view_panel, Panel):
         layout.use_property_decorate = False
         col = layout.column()
         col.prop(clip.proxy, "quality")
-
+        
+        col.use_property_split = False
         col.prop(clip, "use_proxy_custom_directory")
         if clip.use_proxy_custom_directory:
             col.prop(clip.proxy, "directory")
+        col.use_property_split = True
 
         col.operator("clip.rebuild_proxy", text="Build Proxy / Timecode" if clip.source == 'MOVIE' else "Build Proxy", icon = "MAKE_PROXY")
         col.operator("clip.delete_proxy", text="Delete Proxy", icon = "DELETE")
