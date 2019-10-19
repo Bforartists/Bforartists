@@ -112,6 +112,7 @@ class MASK_PT_layers:
             layout.prop(active_layer, "falloff")
 
             col = layout.column()
+            col.use_property_split = False
             col.prop(active_layer, "use_fill_overlap", text="Overlap")
             col.prop(active_layer, "use_fill_holes", text="Holes")
 
@@ -144,10 +145,10 @@ class MASK_PT_spline:
         col = layout.column()
         col.prop(spline, "offset_mode")
         col.prop(spline, "weight_interpolation", text="Interpolation")
-
+        
+        col.use_property_split = False
         col.prop(spline, "use_cyclic")
         col.prop(spline, "use_fill")
-
         col.prop(spline, "use_self_intersection_check")
 
 
