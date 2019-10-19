@@ -247,25 +247,25 @@ class MASK_PT_tools:
 
         col = layout.column(align=True)
         col.label(text="Spline:")
-        col.operator("mask.delete")
-        col.operator("mask.cyclic_toggle")
-        col.operator("mask.switch_direction")
-        col.operator("mask.handle_type_set").type = 'VECTOR'
-        col.operator("mask.feather_weight_clear")
+        col.operator("mask.delete", icon = "DELETE")
+        col.operator("mask.cyclic_toggle", icon = "TOGGLE_CYCLIC")
+        col.operator("mask.switch_direction", icon = "SWITCH_DIRECTION")
+        col.operator("mask.handle_type_set", icon = "HANDLE_VECTOR").type = 'VECTOR'
+        col.operator("mask.feather_weight_clear", icon = "CLEAR")
 
         col = layout.column(align=True)
         col.label(text="Parenting:")
         row = col.row(align=True)
-        row.operator("mask.parent_set", text="Parent")
-        row.operator("mask.parent_clear", text="Clear")
+        row.operator("mask.parent_set", text="Parent", icon = "PARENT_SET")
+        row.operator("mask.parent_clear", text="Clear", icon = "PARENT_CLEAR")
 
         col = layout.column(align=True)
         col.label(text="Animation:")
         row = col.row(align=True)
-        row.operator("mask.shape_key_insert", text="Insert Key")
-        row.operator("mask.shape_key_clear", text="Clear Key")
-        col.operator("mask.shape_key_feather_reset", text="Reset Feather Animation")
-        col.operator("mask.shape_key_rekey", text="Re-Key Shape Points")
+        row.operator("mask.shape_key_insert", text="Insert Key", icon = "KEYFRAME")
+        row.operator("mask.shape_key_clear", text="Clear Key", icon = "KEYFRAMES_CLEAR")
+        col.operator("mask.shape_key_feather_reset", text="Reset Feather Animation", icon = "RESET")
+        col.operator("mask.shape_key_rekey", text="Re-Key Shape Points", icon = "SHAPEKEY_DATA")
 
 
 class MASK_MT_mask(Menu):
