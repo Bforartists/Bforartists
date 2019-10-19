@@ -228,8 +228,8 @@ class MASK_PT_display:
         row = layout.row(align=True)
         row.prop(space_data, "show_mask_overlay", text="Overlay")
         sub = row.row()
-        sub.active = space_data.show_mask_overlay
-        sub.prop(space_data, "mask_overlay_mode", text="")
+        if space_data.show_mask_overlay:
+            sub.prop(space_data, "mask_overlay_mode", text="")
 
 
 class MASK_PT_tools:
