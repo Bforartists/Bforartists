@@ -140,6 +140,10 @@ float min_v3(vec3 v)
 {
   return min(v.x, min(v.y, v.z));
 }
+float min_v4(vec4 v)
+{
+  return min(min(v.x, v.y), min(v.z, v.w));
+}
 float max_v2(vec2 v)
 {
   return max(v.x, v.y);
@@ -147,6 +151,10 @@ float max_v2(vec2 v)
 float max_v3(vec3 v)
 {
   return max(v.x, max(v.y, v.z));
+}
+float max_v4(vec4 v)
+{
+  return max(max(v.x, v.y), max(v.z, v.w));
 }
 
 float sum(vec2 v)
@@ -957,7 +965,8 @@ void main()
 
 #    ifndef USE_ALPHA_BLEND
   float alpha_div = 1.0 / max(1e-8, alpha);
-  outRadiance *= alpha_div;
+  outRadiance.rgb *= alpha_div;
+  outRadiance.a = 1.0;
   ssrData.rgb *= alpha_div;
 #      ifdef USE_SSS
   sssAlbedo.rgb *= alpha_div;
