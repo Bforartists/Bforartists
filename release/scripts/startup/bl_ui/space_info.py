@@ -26,9 +26,8 @@ class INFO_HT_header(Header):
 
     def draw(self, context):
         layout = self.layout
-        layout.template_header()
 
-        ALL_MT_editormenu.draw_hidden(_context, layout) # bfa - show hide the editormenu
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         INFO_MT_editor_menus.draw_collapsible(context, layout)
 
 class INFO_MT_editor_menus(Menu):
