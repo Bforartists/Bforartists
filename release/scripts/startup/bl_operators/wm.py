@@ -80,10 +80,6 @@ rna_module_prop = StringProperty(
 
 
 def context_path_validate(context, data_path):
-    # Silently ignore invalid data paths created by T65397.
-    if "(null)" in data_path:
-        return Ellipsis
-
     try:
         value = eval("context.%s" % data_path) if data_path else Ellipsis
     except AttributeError as ex:
@@ -1108,7 +1104,7 @@ class WM_OT_doc_view(Operator):
     bl_label = "View Documentation"
 
     doc_id: doc_id
-    if bpy.app.version_cycle in {"release", "rc"}:
+    if bpy.app.version_cycle in {"release", "rc", "beta"}:
         _prefix = ("https://docs.blender.org/api/%d.%d%s" %
                    (bpy.app.version[0], bpy.app.version[1], bpy.app.version_char))
     else:
