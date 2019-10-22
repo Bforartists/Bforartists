@@ -173,6 +173,7 @@ class _defs_annotate:
                     panel="TOPBAR_PT_annotation_layers",
                     text=text,
                 )
+                layout.prop(gpl, "thickness")
 
         tool_settings = context.tool_settings
         space_type = tool.space_type
