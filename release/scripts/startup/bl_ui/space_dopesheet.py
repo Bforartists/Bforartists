@@ -188,6 +188,60 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
             DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
 
             layout.prop(st.dopesheet, "use_multi_word_filter", text="Multi-word Match Search")
+            
+################################ Switch between the editors ##########################################
+
+class ANIM_OT_switch_editors_to_dopesheet(bpy.types.Operator):
+    """Switch to Dopesheet Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_dopesheet"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to Dopesheet Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.wm.context_set_enum(data_path="area.type", value="DOPESHEET_EDITOR")
+        return {'FINISHED'}
+
+
+class ANIM_OT_switch_editors_to_graph(bpy.types.Operator):
+    """Switch to Graph editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_graph"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to Graph Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.wm.context_set_enum(data_path="area.ui_type", value="FCURVES") # area.ui_type, not area.type. Subeditor ...
+        return {'FINISHED'}
+
+
+class ANIM_OT_switch_editors_to_driver(bpy.types.Operator):
+    """Switch to Driver editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_driver"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to Driver Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.wm.context_set_enum(data_path="area.ui_type", value="DRIVERS") # area.ui_type, not area.type. Subeditor ...
+        return {'FINISHED'}
+
+
+class ANIM_OT_switch_editors_to_nla(bpy.types.Operator):
+    """Switch to NLA editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_nla"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to NLA Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.wm.context_set_enum(data_path="area.type", value="NLA_EDITOR")
+        return {'FINISHED'}
+
+			
+# The blank button, we don't want to switch to the editor in which we are already.
+
+class ANIM_OT_switch_editors_in_dopesheet(bpy.types.Operator):
+    """You are in Dopesheet Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_dopesheet"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Dopesheet Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
 
 #######################################
@@ -211,6 +265,19 @@ class DOPESHEET_HT_header(Header):
             TIME_MT_editor_menus.draw_collapsible(context, layout)
             TIME_HT_editor_buttons.draw_header(context, layout)
         else:
+                    
+            ########################### Switch between the editors
+
+            # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
+            row = layout.row(align=True)
+            
+            row.operator("wm.switch_editor_in_dopesheet", text="", icon='DOPESHEET_ACTIVE')
+            row.operator("wm.switch_editor_to_graph", text="", icon='GRAPH')
+            row.operator("wm.switch_editor_to_driver", text="", icon='DRIVER')
+            row.operator("wm.switch_editor_to_nla", text="", icon='NLA')  
+            
+            ###########################
+            
             layout.prop(st, "ui_mode", text="")
 
             DOPESHEET_MT_editor_menus.draw_collapsible(context, layout)
@@ -332,16 +399,10 @@ class DOPESHEET_MT_view(Menu):
         layout.operator("action.view_selected", icon = "VIEW_SELECTED")
         layout.operator("action.view_frame", icon = "VIEW_FRAME" )
 
-        # Add this to show key-binding (reverse action in dope-sheet).
-        layout.separator()
-
-        props = layout.operator("wm.context_set_enum", text="Toggle Graph Editor", icon='GRAPH')
-        props.data_path = "area.type"
-        props.value = 'GRAPH_EDITOR'
-
         layout.separator()
 
         layout.menu("INFO_MT_area")
+
 
 # Workaround to separate the tooltips
 class DOPESHEET_MT_select_before_current_frame(bpy.types.Operator):
@@ -352,7 +413,8 @@ class DOPESHEET_MT_select_before_current_frame(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.action.select_leftright(extend = False, mode = 'LEFT')
-        return {'FINISHED'}  
+        return {'FINISHED'}
+
 
 # Workaround to separate the tooltips
 class DOPESHEET_MT_select_after_current_frame(bpy.types.Operator):
@@ -363,6 +425,7 @@ class DOPESHEET_MT_select_after_current_frame(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.action.select_leftright(extend = False, mode = 'RIGHT')
+
 
 # Workaround to separate the tooltips
 class DOPESHEET_MT_select_inverse(bpy.types.Operator):
@@ -375,6 +438,7 @@ class DOPESHEET_MT_select_inverse(bpy.types.Operator):
         bpy.ops.action.select_all(action = 'INVERT')
         return {'FINISHED'}
 
+
 # Workaround to separate the tooltips
 class DOPESHEET_MT_select_none(bpy.types.Operator):
     """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
@@ -385,6 +449,7 @@ class DOPESHEET_MT_select_none(bpy.types.Operator):
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.action.select_all(action = 'DESELECT')
         return {'FINISHED'}
+
 
 class DOPESHEET_MT_select(Menu):
     bl_label = "Select"
@@ -808,6 +873,11 @@ class DOPESHEET_MT_snap_pie(Menu):
 
 classes = (
     ALL_MT_editormenu,
+    ANIM_OT_switch_editors_to_dopesheet,
+    ANIM_OT_switch_editors_to_graph,  
+    ANIM_OT_switch_editors_to_driver,
+    ANIM_OT_switch_editors_to_nla,
+    ANIM_OT_switch_editors_in_dopesheet,
     DOPESHEET_HT_header,
     DOPESHEET_HT_editor_buttons,
     DOPESHEET_MT_editor_menus,
