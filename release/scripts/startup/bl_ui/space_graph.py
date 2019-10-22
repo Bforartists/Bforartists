@@ -25,6 +25,26 @@ from bl_ui.space_dopesheet import (
     dopesheet_filter,
 )
 
+################################ Switch between the editors ##########################################
+
+# The blank button, we don't want to switch to the editor in which we are already.
+
+class ANIM_OT_switch_editor_in_graph(bpy.types.Operator):
+    """You are in Graph Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_graph"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Graph Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+
+class ANIM_OT_switch_editor_in_driver(bpy.types.Operator):
+    """You are in Driver Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_driver"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Driver Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+
+##########################################
+
 
 class GRAPH_HT_header(Header):
     bl_space_type = 'GRAPH_EDITOR'
@@ -39,6 +59,30 @@ class GRAPH_HT_header(Header):
 
         # Now a exposed as a sub-space type
         # layout.prop(st, "mode", text="")
+        
+        ############################ Switch between the editors
+
+        if context.space_data.mode == 'FCURVES':
+        
+            # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
+            row = layout.row(align=True)
+
+            row.operator("wm.switch_editor_to_dopesheet", text="", icon='ACTION')
+            row.operator("wm.switch_editor_in_graph", text="", icon='GRAPH_ACTIVE')
+            row.operator("wm.switch_editor_to_driver", text="", icon='DRIVER')
+            row.operator("wm.switch_editor_to_nla", text="", icon='NLA')
+
+        elif context.space_data.mode == 'DRIVERS':
+        
+            # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
+            row = layout.row(align=True)
+
+            row.operator("wm.switch_editor_to_dopesheet", text="", icon='ACTION')
+            row.operator("wm.switch_editor_to_graph", text="", icon='GRAPH')
+            row.operator("wm.switch_editor_in_driver", text="", icon='DRIVER_ACTIVE')
+            row.operator("wm.switch_editor_to_nla", text="", icon='NLA')
+            
+        #############################
 
         GRAPH_MT_editor_menus.draw_collapsible(context, layout)
 
@@ -188,13 +232,6 @@ class GRAPH_MT_view(Menu):
         layout.operator("graph.view_all", icon = "VIEWALL")
         layout.operator("graph.view_selected", icon = "VIEW_SELECTED")
         layout.operator("graph.view_frame", icon = "VIEW_FRAME" )
-
-        # Add this to show key-binding (reverse action in dope-sheet).
-        layout.separator()
-
-        props = layout.operator("wm.context_set_enum", text="Toggle Dope Sheet")
-        props.data_path = "area.type"
-        props.value = 'DOPESHEET_EDITOR'
 
         layout.separator()
 
@@ -591,6 +628,8 @@ class GRAPH_MT_channel_context_menu(Menu):
 
 
 classes = (
+    ANIM_OT_switch_editor_in_graph,
+    ANIM_OT_switch_editor_in_driver,
     ALL_MT_editormenu,
     GRAPH_HT_header,
     GRAPH_PT_properties_Marker_options,

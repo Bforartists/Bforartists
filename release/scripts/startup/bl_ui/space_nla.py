@@ -27,6 +27,18 @@ from bl_ui.space_dopesheet import (
     dopesheet_filter,
 )
 
+################################ Switch between the editors ##########################################
+
+# The blank button, we don't want to switch to the editor in which we are already.
+
+class ANIM_OT_switch_editors_in_nla(bpy.types.Operator):
+    """You are in Nonlinear Animation Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_nla"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Nonlinear Animation Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+##########################################
+		
 
 class NLA_HT_header(Header):
     bl_space_type = 'NLA_EDITOR'
@@ -37,6 +49,18 @@ class NLA_HT_header(Header):
         st = context.space_data
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+
+        ########################### Switch between the editors
+
+        # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py    
+        row = layout.row(align=True)
+        
+        row.operator("wm.switch_editor_to_dopesheet", text="", icon='ACTION')
+        row.operator("wm.switch_editor_to_graph", text="", icon='GRAPH')
+        row.operator("wm.switch_editor_to_driver", text="", icon='DRIVER')
+        row.operator("wm.switch_editor_in_nla", text="", icon='NLA_ACTIVE')
+        
+        ###########################
 
         NLA_MT_editor_menus.draw_collapsible(context, layout)
 
@@ -356,6 +380,7 @@ class NLA_MT_channel_context_menu(Menu):
 
 
 classes = (
+    ANIM_OT_switch_editors_in_nla,
     ALL_MT_editormenu,
     NLA_HT_header,
     NLA_MT_edit,
