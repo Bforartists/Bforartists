@@ -213,9 +213,9 @@ static int gp_data_unlink_exec(bContext *C, wmOperator *op)
 void GPENCIL_OT_data_unlink(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Annotation Unlink";
+  ot->name = "Remove Annotation";
   ot->idname = "GPENCIL_OT_data_unlink";
-  ot->description = "Unlink active Annotation data-block";
+  ot->description = "Remove the active Annotation";
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* callbacks */
