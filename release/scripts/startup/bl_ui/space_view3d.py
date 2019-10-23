@@ -3088,7 +3088,7 @@ class VIEW3D_MT_object_collection(Menu):
 
         layout.separator()
 
-        layout.operator("collection.create", icon='GROUP')
+        layout.operator("collection.create", icon='COLLECTION_NEW')
         # layout.operator_menu_enum("collection.objects_remove", "collection")  # BUGGY
         layout.operator("collection.objects_remove", icon = "DELETE")
         layout.operator("collection.objects_remove_all", icon = "DELETE")

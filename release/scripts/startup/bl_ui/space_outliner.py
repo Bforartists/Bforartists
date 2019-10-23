@@ -251,8 +251,8 @@ class OUTLINER_MT_collection(Menu):
 
         space = context.space_data
 
-        layout.operator("outliner.collection_new", text="New", icon='GROUP')
-        layout.operator("outliner.collection_new", text="New Nested", icon='GROUP').nested = True
+        layout.operator("outliner.collection_new", text="New", icon='COLLECTION_NEW')
+        layout.operator("outliner.collection_new", text="New Nested", icon='COLLECTION_NEW').nested = True
         layout.operator("outliner.collection_duplicate", text="Duplicate Collection", icon = "DUPLICATE")
         layout.operator("outliner.collection_duplicate_linked", text="Duplicate Linked", icon = "DUPLICATE")
         layout.operator("outliner.id_copy", text="Copy", icon='COPYDOWN')
@@ -291,8 +291,8 @@ class OUTLINER_MT_collection_new(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("outliner.collection_new", text="New", icon='GROUP')
-        layout.operator("outliner.collection_new", text="New Nested", icon='GROUP').nested = True
+        layout.operator("outliner.collection_new", text="New", icon='COLLECTION_NEW')
+        layout.operator("outliner.collection_new", text="New Nested", icon='COLLECTION_NEW').nested = True
         layout.operator("outliner.id_paste", text="Paste", icon='PASTEDOWN')
 
 
