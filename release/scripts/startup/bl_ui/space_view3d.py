@@ -400,51 +400,51 @@ class VIEW3D_HT_tool_header(Header):
 
         def row_for_mirror():
             row = layout.row(align=True)
-            row.label(icon='MOD_MIRROR')
+            #row.label(icon='MOD_MIRROR')
             sub = row.row(align=True)
             sub.scale_x = 0.6
             return row, sub
 
         if mode_string == 'EDIT_MESH':
             _row, sub = row_for_mirror()
-            sub.prop(context.object.data, "use_mirror_x", text="X", toggle=True)
-            sub.prop(context.object.data, "use_mirror_y", text="Y", toggle=True)
-            sub.prop(context.object.data, "use_mirror_z", text="Z", toggle=True)
+            sub.prop(context.object.data, "use_mirror_x", text="    ", icon='MIRROR_X', toggle=True)
+            sub.prop(context.object.data, "use_mirror_y", text="    ", icon='MIRROR_Y', toggle=True)
+            sub.prop(context.object.data, "use_mirror_z", text="    ", icon='MIRROR_Z', toggle=True)
             tool_settings = context.tool_settings
             layout.prop(tool_settings, "use_mesh_automerge", text="")
         elif mode_string == 'EDIT_ARMATURE':
             _row, sub = row_for_mirror()
-            sub.prop(context.object.data, "use_mirror_x", text="X", toggle=True)
+            sub.prop(context.object.data, "use_mirror_x", text="    ", icon='MIRROR_X', toggle=True)
         elif mode_string == 'POSE':
             _row, sub = row_for_mirror()
-            sub.prop(context.object.pose, "use_mirror_x", text="X", toggle=True)
+            sub.prop(context.object.pose, "use_mirror_x", text="    ", icon='MIRROR_X', toggle=True)
         elif mode_string == 'PAINT_WEIGHT':
             row, sub = row_for_mirror()
             wpaint = context.tool_settings.weight_paint
-            sub.prop(wpaint, "use_symmetry_x", text="X", toggle=True)
-            sub.prop(wpaint, "use_symmetry_y", text="Y", toggle=True)
-            sub.prop(wpaint, "use_symmetry_z", text="Z", toggle=True)
+            sub.prop(wpaint, "use_symmetry_x", text="    ", icon='MIRROR_X', toggle=True)
+            sub.prop(wpaint, "use_symmetry_y", text="    ", icon='MIRROR_Y', toggle=True)
+            sub.prop(wpaint, "use_symmetry_z", text="    ", icon='MIRROR_X', toggle=True)
             row.popover(panel="VIEW3D_PT_tools_weightpaint_symmetry_for_topbar", text="")
         elif mode_string == 'SCULPT':
             row, sub = row_for_mirror()
             sculpt = context.tool_settings.sculpt
-            sub.prop(sculpt, "use_symmetry_x", text="X", toggle=True)
-            sub.prop(sculpt, "use_symmetry_y", text="Y", toggle=True)
-            sub.prop(sculpt, "use_symmetry_z", text="Z", toggle=True)
+            sub.prop(sculpt, "use_symmetry_x", text="    ", icon='MIRROR_X', toggle=True)
+            sub.prop(sculpt, "use_symmetry_y", text="    ", icon='MIRROR_Y', toggle=True)
+            sub.prop(sculpt, "use_symmetry_z", text="    ", icon='MIRROR_Z', toggle=True)
             row.popover(panel="VIEW3D_PT_sculpt_symmetry_for_topbar", text="")
         elif mode_string == 'PAINT_TEXTURE':
             _row, sub = row_for_mirror()
             ipaint = context.tool_settings.image_paint
-            sub.prop(ipaint, "use_symmetry_x", text="X", toggle=True)
-            sub.prop(ipaint, "use_symmetry_y", text="Y", toggle=True)
-            sub.prop(ipaint, "use_symmetry_z", text="Z", toggle=True)
+            sub.prop(ipaint, "use_symmetry_x", text="    ", icon='MIRROR_X', toggle=True)
+            sub.prop(ipaint, "use_symmetry_y", text="    ", icon='MIRROR_Y', toggle=True)
+            sub.prop(ipaint, "use_symmetry_z", text="    ", icon='MIRROR_Z', toggle=True)
             # No need for a popover, the panel only has these options.
         elif mode_string == 'PAINT_VERTEX':
             row, sub = row_for_mirror()
             vpaint = context.tool_settings.vertex_paint
-            sub.prop(vpaint, "use_symmetry_x", text="X", toggle=True)
-            sub.prop(vpaint, "use_symmetry_y", text="Y", toggle=True)
-            sub.prop(vpaint, "use_symmetry_z", text="Z", toggle=True)
+            sub.prop(vpaint, "use_symmetry_x", text="    ", icon='MIRROR_X', toggle=True)
+            sub.prop(vpaint, "use_symmetry_y", text="    ", icon='MIRROR_Y', toggle=True)
+            sub.prop(vpaint, "use_symmetry_z", text="    ", icon='MIRROR_Z', toggle=True)
             row.popover(panel="VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar", text="")
 
         elif mode_string in {'PAINT_GPENCIL', 'EDIT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL'}:
