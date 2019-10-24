@@ -2356,7 +2356,7 @@ static void rna_def_userdef_theme_space_userpref(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "ThemePreferences", NULL);
   RNA_def_struct_sdna(srna, "ThemeSpace");
   RNA_def_struct_clear_flag(srna, STRUCT_UNDO);
-  RNA_def_struct_ui_text(srna, "Theme Preferences", "Theme settings for the Blender Preferences");
+  RNA_def_struct_ui_text(srna, "Theme Preferences", "Theme settings for the Preferences");
 
   rna_def_userdef_theme_spaces_main(srna);
 }
