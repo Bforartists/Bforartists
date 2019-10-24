@@ -5155,7 +5155,7 @@ static int userpref_show_invoke(bContext *C, wmOperator *op, const wmEvent *even
 
   /* changes context! */
   if (WM_window_open_temp(C,
-                          IFACE_("Blender Preferences"),
+                          IFACE_("Preferences"),
                           event->x,
                           event->y,
                           sizex,
