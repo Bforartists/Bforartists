@@ -204,7 +204,7 @@ class TOPBAR_MT_file(Menu):
 
 
 class TOPBAR_MT_file_new(Menu):
-    bl_label = "New File"
+    bl_label = "New File from Template"
 
     @staticmethod
     def app_template_paths():
