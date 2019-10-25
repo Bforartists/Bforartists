@@ -2030,7 +2030,7 @@ static void read_homefile_props(wmOperatorType *ot)
 void WM_OT_read_homefile(wmOperatorType *ot)
 {
   PropertyRNA *prop;
-  ot->name = "Reload Start-Up File";
+  ot->name = "File New";
   ot->idname = "WM_OT_read_homefile";
   ot->description = "Open the default file (doesn't save the current file)";
 
