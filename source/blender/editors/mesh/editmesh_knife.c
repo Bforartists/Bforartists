@@ -284,7 +284,8 @@ static void knife_update_header(bContext *C, wmOperator *op, KnifeTool_OpData *k
                     "%s: start/define cut, %s: close cut, %s: new cut, "
                     "%s: midpoint snap (%s), %s: ignore snap (%s), "
                     "%s: angle constraint (%s), %s: cut through (%s), "
-                    "%s: panning"),
+                    "%s: panning, "
+                    "Rotate: Alt + MMB"), /* bfa, added hardcoded tooltip for rotation*/
                WM_MODALKEY(KNF_MODAL_CONFIRM),
                WM_MODALKEY(KNF_MODAL_CANCEL),
                WM_MODALKEY(KNF_MODAL_ADD_CUT),
