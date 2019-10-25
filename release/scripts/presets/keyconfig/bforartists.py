@@ -5085,6 +5085,13 @@ keyconfig_data = \
     ("file.delete", {"type": 'DEL', "value": 'PRESS'}, None),
     ("file.smoothscroll", {"type": 'TIMER1', "value": 'ANY', "any": True}, None),
     ("file.bookmark_toggle", {"type": 'T', "value": 'PRESS'}, None),
+    ("wm.call_menu",
+     {"type": 'RIGHTMOUSE', "value": 'PRESS'},
+     {"properties":
+      [("name", 'FILEBROWSER_MT_context_menu'),
+       ],
+      },
+     ),
     ],
    },
   ),
