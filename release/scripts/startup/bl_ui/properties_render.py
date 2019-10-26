@@ -490,7 +490,6 @@ class RENDER_PT_eevee_film(RenderButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(rd, "filter_size")
-        col.prop(rd, "film_transparent", text="Transparent")
 
 
 class RENDER_PT_eevee_film_overscan(RenderButtonsPanel, Panel):
@@ -557,18 +556,18 @@ class RENDER_PT_opengl_sampling(RenderButtonsPanel, Panel):
         col.prop(props, "viewport_aa", text="Viewport Render")
 
 
-class RENDER_PT_opengl_film(RenderButtonsPanel, Panel):
-    bl_label = "Film"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_WORKBENCH'}
+#class RENDER_PT_opengl_film(RenderButtonsPanel, Panel):
+#    bl_label = "Film"
+#    bl_options = {'DEFAULT_CLOSED'}
+#    COMPAT_ENGINES = {'BLENDER_WORKBENCH'}
 
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
+#    def draw(self, context):
+#        layout = self.layout
+#        layout.use_property_split = True
+#        layout.use_property_decorate = False  # No animation.
 
-        rd = context.scene.render
-        layout.prop(rd, "film_transparent", text="Transparent")
+#        rd = context.scene.render
+#        layout.prop(rd, "film_transparent", text="Transparent")
 
 
 class RENDER_PT_opengl_lighting(RenderButtonsPanel, Panel):
@@ -696,7 +695,7 @@ classes = (
     RENDER_PT_opengl_lighting,
     RENDER_PT_opengl_color,
     RENDER_PT_opengl_options,
-    RENDER_PT_opengl_film,
+    #RENDER_PT_opengl_film,
     RENDER_PT_color_management,
     RENDER_PT_color_management_curves,
     RENDER_PT_simplify,
