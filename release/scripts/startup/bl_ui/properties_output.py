@@ -304,10 +304,17 @@ class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
 
         rd = context.scene.render
         image_settings = rd.image_settings
+        is_eevee = context.scene.render.engine == 'BLENDER_EEVEE'
+        is_workbench = context.scene.render.engine == 'BLENDER_WORKBENCH'
 
         layout.prop(rd, "filepath", text="")
 
         layout.template_image_settings(image_settings, color_management=False)
+        
+        if is_eevee or is_workbench:
+            layout.use_property_split = True
+            layout.use_property_decorate = True       
+            layout.prop(rd, "film_transparent", text="Transparent")
 
 # Options subpanel for the output panel
 class RENDER_PT_output_options(RenderOutputButtonsPanel, Panel):
