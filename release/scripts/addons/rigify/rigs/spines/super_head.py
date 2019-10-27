@@ -322,7 +322,7 @@ class Rig(BaseHeadTailRig):
     def register_parent_bones(self):
         rig = self.rigify_parent or self
         builder = SwitchParentBuilder(self.generator)
-        builder.register_parent(rig, self.bones.org[-1], name='Head', exclude_self=True)
+        builder.register_parent(rig, self.bones.org[-1], name='Head', exclude_self=True, tags={'head'})
 
     @stage.configure_bones
     def configure_bbone_chain(self):

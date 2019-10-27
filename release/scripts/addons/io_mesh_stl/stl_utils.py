@@ -26,13 +26,8 @@ Used as a blender script, it load all the stl files in the scene:
 blender --python stl_utils.py -- file1.stl file2.stl file3.stl ...
 """
 
-import os
-import struct
-import contextlib
-import itertools
-from mathutils.geometry import normal
-
 # TODO: endien
+
 
 class ListDict(dict):
     """
@@ -88,6 +83,10 @@ def _is_ascii_file(data):
     represents a binary file. It can be a (very *RARE* in real life, but
     can easily be forged) ascii file.
     """
+
+    import os
+    import struct
+
     # Skip header...
     data.seek(BINARY_HEADER)
     size = struct.unpack('<I', data.read(4))[0]
@@ -106,6 +105,10 @@ def _is_ascii_file(data):
 
 def _binary_read(data):
     # Skip header...
+
+    import os
+    import struct
+
     data.seek(BINARY_HEADER)
     size = struct.unpack('<I', data.read(4))[0]
 
@@ -164,6 +167,10 @@ def _ascii_read(data):
 
 
 def _binary_write(filepath, faces):
+    import struct
+    import itertools
+    from mathutils.geometry import normal
+
     with open(filepath, 'wb') as data:
         fw = data.write
         # header
@@ -191,6 +198,8 @@ def _binary_write(filepath, faces):
 
 
 def _ascii_write(filepath, faces):
+    from mathutils.geometry import normal
+
     with open(filepath, 'w') as data:
         fw = data.write
         header = _header_version()
@@ -206,10 +215,7 @@ def _ascii_write(filepath, faces):
         fw('endsolid %s\n' % header)
 
 
-def write_stl(filepath="",
-              faces=(),
-              ascii=False,
-              ):
+def write_stl(filepath="", faces=(), ascii=False):
     """
     Write a stl file from faces,
 

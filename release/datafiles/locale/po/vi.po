@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -9162,8 +9162,16 @@ msgid "Algorithm used to compute automatic handles"
 msgstr "Giải thuật để tính tay cằm tự động"
 
 
+msgid "Automatic handles only take immediately adjacent keys into account"
+msgstr "Tay cằm tự động chỉ quan tâm các bức mẫu kề"
+
+
 msgid "Continuous Acceleration"
 msgstr "Giá Tốc Liên Tiếp"
+
+
+msgid "Automatic handles are adjusted to avoid jumps in acceleration, resulting in smoother curves. However, key changes may affect interpolation over a larger stretch of the curve"
+msgstr "Tay cằm tự động được chỉnh để tránh làm gia tốc nhảy, kết qủa là đường cong mịn hơn. Nhưng, đổi bức mẫu có thể mở rộng sự ảnh hưởng của suy nội trên một khúc đường cong"
 
 
 msgid "Color of the F-Curve in the Graph Editor"
@@ -12208,62 +12216,6 @@ msgid "Keep the computed view map and avoid re-calculating it if mesh geometry i
 msgstr "Giữ bàn đồ màn và tránh tính lại nó nếu hình dạng mạng lưới không thay đổi"
 
 
-msgid "GPU FX Settings"
-msgstr "Cài đặt Hiệu Ứng GPU"
-
-
-msgid "Settings for GPU based compositing"
-msgstr "Cài đặt cho ghép ảnh cơ sở GPU"
-
-
-msgid "Screen Space Ambient Occlusion settings"
-msgstr "Cài đặt Che Khuất Quanh Không Gian Màn"
-
-
-msgid "SSAO"
-msgstr "Che Khuất Bao Quanh Không Gian"
-
-
-msgid "Use screen space ambient occlusion of field on viewport"
-msgstr "Dùng độ sâu trường che khuất bao quang không gian màn cho màn chiếu"
-
-
-msgid "GPU SSAO"
-msgstr "Che Khuất Bao Quanh Không Gian GPU"
-
-
-msgid "Settings for GPU based screen space ambient occlusion"
-msgstr "Cài đặt cho che khuất bao quanh trong không gian màn cơ sở GPU"
-
-
-msgid "Attenuation"
-msgstr "Độ Giảm"
-
-
-msgid "Attenuation constant"
-msgstr "Hằng Số Giảm"
-
-
-msgid "Color for screen space ambient occlusion effect"
-msgstr "Màu cho hiệu ứng che khuất bao quanh không gian màn"
-
-
-msgid "Distance of object that contribute to the SSAO effect"
-msgstr "Khoảng cách của vật thể được góp phần cho hiệu ứng che khuất bao quanh không gian"
-
-
-msgid "Strength of the SSAO effect"
-msgstr "Sức của hiệu ứng che khuất bao quanh không gian"
-
-
-msgid "Samples"
-msgstr "Mẫu Vật"
-
-
-msgid "Number of samples"
-msgstr "Số lượng mẫu vật"
-
-
 msgid "Grease Pencil Frame"
 msgstr "Bức Bút Sáp"
 
@@ -12570,6 +12522,14 @@ msgstr "Có Phụ Huynh"
 
 msgid "True when the layer parent object is set"
 msgstr "Đúng khi vật thể phụ huynh lớp được đặt"
+
+
+msgid "Ruler"
+msgstr "Cây Thước"
+
+
+msgid "This is a special ruler layer"
+msgstr "Cái này là một lớp cây thước đặc biệt"
 
 
 msgid "Thickness Change"
@@ -14881,28 +14841,120 @@ msgid "Brush blending mode"
 msgstr "Chế độ pha trộn bút"
 
 
+msgid "Use Mix blending mode while painting"
+msgstr "Dùng chế độ Pha Trộn khi sơn"
+
+
+msgid "Use Darken blending mode while painting"
+msgstr "Dùng chế độ pha trộn Tối Hóa khi sơn"
+
+
+msgid "Use Multiply blending mode while painting"
+msgstr "Dùng chế độ pha trộn Nhân khi sơn"
+
+
 msgid "Color Burn"
 msgstr "Cháy Màu"
+
+
+msgid "Use Color Burn blending mode while painting"
+msgstr "Dùng chế độ pha trộn Cháy màu khi sơn"
 
 
 msgid "Linear Burn"
 msgstr "Cháy Bậc Một"
 
 
+msgid "Use Linear Burn blending mode while painting"
+msgstr "Dùng chế độ pha trộn Cháy Bậc Một khi sơn"
+
+
+msgid "Use Lighten blending mode while painting"
+msgstr "Dùng chế độ pha trộn Sáng Hóa khi sơn"
+
+
+msgid "Use Screen blending mode while painting"
+msgstr "Dùng chế độ pha trộn Che khi sơn"
+
+
+msgid "Color Dodge"
+msgstr "Né Màu"
+
+
+msgid "Use Color Dodge blending mode while painting"
+msgstr "Dùng chế độ pha trộn Né Màu khi sơn"
+
+
+msgid "Use Add blending mode while painting"
+msgstr "Dùng chế độ pha trộn Cộng khi sơn"
+
+
+msgid "Use Overlay blending mode while painting"
+msgstr "Dùng chế độ pha trộn Lớp Che khi sơn"
+
+
+msgid "Use Soft Light blending mode while painting"
+msgstr "Dùng chế độ pha trộn Ánh Sáng Mềm khi sơn"
+
+
 msgid "Hard Light"
 msgstr "Ánh Sáng Cứng"
+
+
+msgid "Use Hard Light blending mode while painting"
+msgstr "Dùng chế độ pha trộn Ánh Sáng Cứng khi sơn"
 
 
 msgid "Vivid Light"
 msgstr "Ánh Sáng Rực Rỡ"
 
 
+msgid "Use Vivid Light blending mode while painting"
+msgstr "Dùng chế độ pha trộn Ánh Sáng Rực Rỡ khi sơn"
+
+
+msgid "Use Linear Light blending mode while painting"
+msgstr "Dùng chế độ pha trộn Ánh Sáng Bậc Một khi sơn"
+
+
 msgid "Pin Light"
 msgstr "Ánh Sáng Tiêu Điểm"
 
 
+msgid "Use Pin Light blending mode while painting"
+msgstr "Dùng chế độ pha trộn Ánh Sáng Tiêu Điểm khi sơn"
+
+
+msgid "Use Difference blending mode while painting"
+msgstr "Dùng chế độ pha trộn Sự Khác khi sơn"
+
+
 msgid "Exclusion"
 msgstr "Trừ Loại"
+
+
+msgid "Use Exclusion blending mode while painting"
+msgstr "Dùng chế độ pha trộn Trừ Loại khi sơn"
+
+
+msgid "Use Subtract blending mode while painting"
+msgstr "Dùng chế độ pha trộn Trừ khi sơn"
+
+
+msgid "Use Hue blending mode while painting"
+msgstr "Dùng chế độ pha trộn Màu Sắc khi sơn"
+
+
+msgid "Use Saturation blending mode while painting"
+msgstr "Dùng chế độ pha trộn Độ Tươi khi sơn"
+
+
+msgid "Use Color blending mode while painting"
+msgstr "Dùng chế độ pha trộn Màu khi sơn"
+
+
+msgid "Use Value blending mode while painting"
+msgstr "Dùng chế độ pha trộn Độ Xám khi sơn"
 
 
 msgid "Erase Alpha"
@@ -18433,6 +18485,10 @@ msgstr "Đệm Bóng Tối Cắt Gần"
 
 msgid "Shadow map clip start, below which objects will not generate shadows"
 msgstr "Bản đồ bóng tối không thể thấy vật thể gần hơn này và không chế tạo bóng tối"
+
+
+msgid "Samples"
+msgstr "Mẫu Vật"
 
 
 msgid "Number of shadow buffer samples"
@@ -22169,6 +22225,10 @@ msgid "Speaker data-block for 3D audio speaker objects"
 msgstr "Cục dữ liệu loa cho vật thể loa 3D"
 
 
+msgid "Attenuation"
+msgstr "Độ Giảm"
+
+
 msgid "How strong the distance affects volume, depending on distance model"
 msgstr "Sự ảnh hưởng của cách xa với âm lượng, tùy mô hình khoảng cách"
 
@@ -22349,6 +22409,14 @@ msgstr "Dòng Cuối Sự Lựa Chọn"
 
 msgid "End line of selection"
 msgstr "Dòng cuối của sự lựa chọn"
+
+
+msgid "Select End Line Index"
+msgstr "Chọn Chỉ Số Dòng Cuối"
+
+
+msgid "Index of last TextLine in selection"
+msgstr "Chỉ số của DòngVănBản cuối trong sự lựa chọn"
 
 
 msgid "Register"
@@ -25955,8 +26023,8 @@ msgid "Objects in collection only contribute indirectly (through shadows and ref
 msgstr "Vật thể trong sưu tập chỉ góp gián tiếp (bằng bóng tối và phản xạ ánh sáng)"
 
 
-msgid "Whether this collection is visible, take into account the collection parent"
-msgstr "Sưu tập này đang hiển thị hay không, kể phụ huynh sưu tập"
+msgid "Whether this collection is visible for the viewlayer, take into account the collection parent"
+msgstr "Sưu tập này đang hiển thị hay không cho lớp màn này, quan tâm đến phụ huynh của sưu tập"
 
 
 msgid "Name of this view layer (same as its collection one)"
@@ -37449,6 +37517,18 @@ msgid "Toggle keyframe selection instead of leaving newly selected keyframes onl
 msgstr "Bật/tắt lựa chọn bức mẫu thay thế chỉ bỏ lại bức mới chọn"
 
 
+msgid "Mouse X"
+msgstr "Chuột X"
+
+
+msgid "Mouse Y"
+msgstr "Chuột Y"
+
+
+msgid "Wait to Deselect Others"
+msgstr "Đợi để Thả Các Cái Khác"
+
+
 msgctxt "Operator"
 msgid "Copy Keyframes"
 msgstr "Chép Bức Mẫu"
@@ -42221,10 +42301,6 @@ msgid "Export each non-muted NLA strip as a separated FBX's AnimStack, if any, i
 msgstr "Xuất mỗi trình tự NLA không bị tắt tiếng làm một AnimStack (XếpĐốngHoạtHình) được chẻ  FBX, nếu có, thay thế hoạt hình cảnh toàn cầu"
 
 
-msgid "Apply Transform"
-msgstr "Áp Dụng Biến Hóa"
-
-
 msgid "Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender's space (WARNING! experimental option, use at own risks, known broken with armatures/animations)"
 msgstr "Nướng biến hóa không gian vào dữ liệu vật thể, giúp tránh vật thể xoay kiểu không muốn khi không gian mục tiêu không sắp xếp với không gian của Blender (CẢNH BÁO! đây là tùy chọn đồ thử nghiệm, có thể có kết qủa không theo ý, biết trước ncốt/hoạt hình hư) "
 
@@ -42976,8 +43052,8 @@ msgid "Delete Selected Files"
 msgstr "Xóa Tệp Được Chọn"
 
 
-msgid "Delete selected files"
-msgstr "Xóa tệp được chọn"
+msgid "Move selected files to the trash or recycle bin"
+msgstr "Di chuyển các tệp được chọn vào thùng rác hay thùng tái tạo"
 
 
 msgctxt "Operator"
@@ -45630,6 +45706,15 @@ msgstr "Thay Ảnh"
 
 msgid "Replace current image by another one from disk"
 msgstr "Thay ảnh hiện tại bằng ảnh khác từ đĩa"
+
+
+msgctxt "Operator"
+msgid "Resize Image"
+msgstr "Chỉnh Khổ Ảnh"
+
+
+msgid "Resize the image"
+msgstr "Chỉnh khổ ảnh"
 
 
 msgctxt "Operator"
@@ -48838,7 +48923,7 @@ msgstr "Xây mạng lưới hình cầu UV (kinh/vĩ tuyến)"
 
 
 msgctxt "Operator"
-msgid "Print3D Check All"
+msgid "3D-Print Check All"
 msgstr "In 3D - Kiểm Tra Hết"
 
 
@@ -48847,7 +48932,7 @@ msgstr "Chạy tất cả các kiểm tra "
 
 
 msgctxt "Operator"
-msgid "Print3D Check Degenerate"
+msgid "3D-Print Check Degenerate"
 msgstr "In 3D - Kiểm Tra Thoái Hóa"
 
 
@@ -48856,16 +48941,16 @@ msgstr "Kiểm tra có hình dạng thoái hóa có thể in không đúng (mặ
 
 
 msgctxt "Operator"
-msgid "Print3D Check Distorted Faces"
-msgstr "In 3D - Kiểm Tra Mặt Méo"
+msgid "3D-Print Check Distorted Faces"
+msgstr "In 3D - Kiểm Tra Mặt Bị Méo"
 
 
-msgid "Check for non-flat faces "
+msgid "Check for non-flat faces"
 msgstr "Kiểm tra có mặt không bằng phẳng"
 
 
 msgctxt "Operator"
-msgid "Print3D Check Intersections"
+msgid "3D-Print Check Intersections"
 msgstr "In 3D - Kiêm Tra Tự Cắt"
 
 
@@ -48874,16 +48959,16 @@ msgstr "Kiểm tra có hình dạng tự cắt"
 
 
 msgctxt "Operator"
-msgid "Print3D Check Overhang"
+msgid "3D-Print Check Overhang"
 msgstr "In 3D - Nhô Ra"
 
 
 msgid "Check faces don't overhang past a certain angle"
-msgstr "Kiểm tra mặt cho không nhô ra ngoài hơn một góc xác định"
+msgstr "Kiểm tra mặt cho không nhô ra ngoài hơn một góc được xác định"
 
 
 msgctxt "Operator"
-msgid "Print3D Check Sharp"
+msgid "3D-Print Check Sharp"
 msgstr "In 3D - Kiểm Tra Bén"
 
 
@@ -48892,25 +48977,25 @@ msgstr "Kiểm tra cạnh có độ bén thấp hơn ngưỡng tùy chọn"
 
 
 msgctxt "Operator"
-msgid "Print3D Check Solid"
-msgstr "In 3D - Xem Rắn "
+msgid "3D-Print Check Solid"
+msgstr "In 3D - Kiềm Tra Rắn "
 
 
 msgid "Check for geometry is solid (has valid inside/outside) and correct normals"
-msgstr "Xem nếu hình dạng rắn (có bên trong/ngoài bên hợp lệ) và pháp tuyến đúng hướng"
+msgstr "Kiểm tra hình dạng rắn (có bên trong/bên ngoài hợp lệ) và pháp tuyến đúng"
 
 
 msgctxt "Operator"
-msgid "Print3D Check Thickness"
+msgid "3D-Print Check Thickness"
 msgstr "In 3D - Kiểm Tra Bề Dày"
 
 
 msgid "Check geometry is above the minimum thickness preference (relies on correct normals)"
-msgstr "Kiểm tra bề dày vật thể hơn ngưỡng từy chọn (kiểm tra này nhờ pháp tuyến đúng hướng)"
+msgstr "Kiểm tra bề dày vật thể hơn ngưỡng từy chọn (kiểm tra này nhờ pháp tuyến đúng)"
 
 
 msgctxt "Operator"
-msgid "Print3D Clean Distorted"
+msgid "3D-Print Clean Distorted"
 msgstr "In 3D - Làm Sạch Bị Méo"
 
 
@@ -48918,26 +49003,17 @@ msgid "Tessellate distorted faces"
 msgstr "Tam giác hóa mặt bị méo"
 
 
-msgctxt "Operator"
-msgid "Print3D Clean Isolated "
-msgstr "In 3D - Xóa Cô Lập"
-
-
-msgid "Cleanup isolated vertices and edges"
-msgstr "Xóa các đỉnh và cạnh cô lập"
+msgid "Limit for checking distorted faces"
+msgstr "Giới hạn cho kiểm tra mặt bị méo hóa"
 
 
 msgctxt "Operator"
-msgid "Print3D Clean Non-Manifold and Inverted"
-msgstr "In 3D - Xóa Không Đa Tập Và Đảo Nhịch"
+msgid "3D-Print Clean Non-Manifold"
+msgstr "In 3D - Làm Sạch Vô Đa Tập"
 
 
-msgid "Cleanup problems, like holes, non-manifold vertices, and inverted normals"
-msgstr "Xóa vấn đề như lỗ, đỉnh không đa tập, và pháp tuyến nghịch hướng"
-
-
-msgid "Number of sides in hole required to fill"
-msgstr "Yêu cầu có số lượng cạnh để đầy lỗ"
+msgid "Cleanup problems, like holes, non-manifold vertices and inverted normals"
+msgstr "Xóa các vấn đề, như lỗ, đỉnh vô đa tập, và pháp tuyến nghịch hướng"
 
 
 msgid "Minimum distance between elements to merge"
@@ -48945,17 +49021,17 @@ msgstr "Khoảng cách cực tiểu cho gồm phần tử"
 
 
 msgctxt "Operator"
-msgid "Print3D Export"
+msgid "3D-Print Export"
 msgstr "In 3D - Xuất"
 
 
-msgid "Export active object using print3d settings"
-msgstr "Xuất vật thể hoạt động bằng cài đặt in 3D"
+msgid "Export selected objects using 3D-Print settings"
+msgstr "Xuất các vật thể được chọn bằng cài đặt In 3D"
 
 
 msgctxt "Operator"
-msgid "Print3D Info Area"
-msgstr "In 3D - Diện Tích"
+msgid "3D-Print Info Area"
+msgstr "In 3D - Thông Tin Diện Tích"
 
 
 msgid "Report the surface area of the active mesh"
@@ -48963,8 +49039,8 @@ msgstr "Báo diện tích của mạng lưới hoạt động"
 
 
 msgctxt "Operator"
-msgid "Print3D Info Volume"
-msgstr "In 3D - Thôn Tin Thể Tích"
+msgid "3D-Print Info Volume"
+msgstr "In 3D - Thông Tin Thể Tích"
 
 
 msgid "Report the volume of the active mesh"
@@ -48994,7 +49070,7 @@ msgstr "Phóng to mạng lưới biên tập hay vật thể được chọn đ�
 
 
 msgctxt "Operator"
-msgid "Print3D Select Report"
+msgid "3D-Print Select Report"
 msgstr "In 3D - Chọn Biên Bản"
 
 
@@ -50792,14 +50868,6 @@ msgstr "Chỉnh kích cỡ giao điểm"
 
 msgid "Select the node under the cursor"
 msgstr "Chọn giao điểm ở dưới con trỏ"
-
-
-msgid "Mouse X"
-msgstr "Chuột X"
-
-
-msgid "Mouse Y"
-msgstr "Chuột Y"
 
 
 msgid "Socket Select"
@@ -65780,12 +65848,8 @@ msgid "3D-Print"
 msgstr "In-3D"
 
 
-msgid "Print3D"
-msgstr "In 3D"
-
-
-msgid "Cleanup & Modify"
-msgstr "Làm Sạch & Sửa Đổi"
+msgid "Analyze"
+msgstr "Phân Tích"
 
 
 msgid "Quad View"
@@ -67436,6 +67500,14 @@ msgid "Add/Replace"
 msgstr "Thêm/Thay Thế"
 
 
+msgid "New Curve Smoothing Mode"
+msgstr "Chế Độ Mịn Hóa Đường Cong Mới"
+
+
+msgid "Auto Handle Smoothing mode used for newly added F-Curves"
+msgstr "Chế độ tự động mịn hóa được sử dụng cho các Cong-F mới thêm"
+
+
 msgid "Unselected F-Curve Visibility"
 msgstr "Hiển Thị Cong-F Không Chưa Chọn"
 
@@ -68018,6 +68090,18 @@ msgstr "Thời Hạn Nhận Bấm 2 Lần"
 
 msgid "Time/delay (in ms) for a double click"
 msgstr "Thời gian/chậm lại (ms) cho sự kiện bấm hai lần"
+
+
+msgid "Emulate 3 Button Modifier"
+msgstr "Cụ Sửa Đổi Giả Bộ Chuột 3 Nút"
+
+
+msgid "Hold this modifier to emulate the middle mouse button"
+msgstr "Giữ cụ sửa đổi này để giả bộ nút chuột giữa"
+
+
+msgid "OS-Key"
+msgstr "Phím Hệ Điều Hành"
 
 
 msgid "Motion Threshold"
@@ -71273,7 +71357,11 @@ msgstr "Áp Suất Bảng Vẽ"
 
 
 msgid "Brush Size"
-msgstr "Cớ Kích Bút Lông"
+msgstr "Khổ Bút Lông"
+
+
+msgid "Brush size in screen space"
+msgstr "Khổ bút lông trong không gian màn"
 
 
 msgid "Implements the properties for the SVG exporter"
@@ -71281,7 +71369,7 @@ msgstr "Thực hành đặc tính cho bộ xuất SVG"
 
 
 msgid "Linejoin"
-msgstr "Nối Nét"
+msgstr "KếtNốiNét"
 
 
 msgid "Miter"
@@ -71330,10 +71418,6 @@ msgstr "Xuất SVG"
 
 msgid "Export Freestyle edges to an .svg format"
 msgstr "Xuất cảnh Nệt Tự Do vào một tệp định dạng .svg"
-
-
-msgid "Limit for checking distorted faces"
-msgstr "Giới hạn cho kiểm tra mặt bị méo hóa"
 
 
 msgid "Format type to export to"
@@ -73268,8 +73352,16 @@ msgid "Direction of the light for shadows and highlights"
 msgstr "Hướng của ánh sáng cho bóng tối và cao quang"
 
 
+msgid "Attenuation constant"
+msgstr "Hằng Số Giảm"
+
+
 msgid "Distance of object that contribute to the Cavity/Edge effect"
 msgstr "Khoảng cách của vật thể được góp phần cho hiệu ứng Hang/Cạnh"
+
+
+msgid "Number of samples"
+msgstr "Số lượng mẫu vật"
 
 
 msgid "Render Anti-Aliasing"
@@ -78313,14 +78405,6 @@ msgid "3D View near clipping distance (perspective view only)"
 msgstr "Khoảng cách cắt gần cho Màn 3D (chỉ cho phép chiếu phối cảnh)"
 
 
-msgid "FX Options"
-msgstr "Tùy Chọn Hiệu Ứng"
-
-
-msgid "Options used for real time compositing"
-msgstr "Tùy chọn được dùng cho ghép ảnh thời gian thật"
-
-
 msgid "Visibility Icon"
 msgstr "Biểu Tượng Hiển Thị"
 
@@ -80113,6 +80197,10 @@ msgid "Animation data-block doesn't have active action"
 msgstr "Cục dữ liệu hành động không có hành động hoạt động"
 
 
+msgid "Nonlinear Animation Channel"
+msgstr "Kênh Hoạt Hình Không Bậc Một"
+
+
 msgid "Meta Strips"
 msgstr "Siêu Đoạn"
 
@@ -80127,6 +80215,10 @@ msgstr "Siêu Đoạn Được Chọn"
 
 msgid "Meta Strip - Selected (for grouping related strips)"
 msgstr "Siêu Được - Được Chọn (cho nhóm lại dãy liên quan)"
+
+
+msgid "Nonlinear Animation Track"
+msgstr "Lằn Hoạt Hình Không Bậc Một"
 
 
 msgid "Sound Strips"
@@ -84110,16 +84202,12 @@ msgid "Multiple selected objects. Only the active one will be evaluated"
 msgstr "Được chọn nhiều vật thể. Chỉ sẽ đánh giá vật thể hoạt động"
 
 
-msgid "Removed Verts: , Edges: , Faces: "
-msgstr "Đã Xóa Đỉnh: , Cạnh: , Mặt: "
+msgid "Triangulated  faces"
+msgstr "Các mặt được tam giác hóa"
 
 
-msgid "Triangulated Faces: "
-msgstr "Các Mặt Đã Tam Giác Hoá: "
-
-
-msgid "Modified Verts:+, Edges:+, Faces:+"
-msgstr "Đã Sửa Đổi Đỉnh:+, Cạnh:+, Mặt:+"
+msgid "Modified: + vertices, + edges, + faces"
+msgstr "Được Sửa Đổi: + đỉnh, + cạnh, + mặt"
 
 
 msgid "Scaled by "
@@ -84191,15 +84279,6 @@ msgid "Check All"
 msgstr "Kiểm Tra Hết"
 
 
-msgid "Cleanup"
-msgstr "Dọn Dẹp"
-
-
-msgctxt "Operator"
-msgid "Isolated"
-msgstr "Cô Lập"
-
-
 msgctxt "Operator"
 msgid "Make Manifold"
 msgstr "Đa Tập Hóa"
@@ -84217,6 +84296,10 @@ msgstr "Ràng Giới"
 msgctxt "Operator"
 msgid "Export"
 msgstr "Xuất"
+
+
+msgid "Result"
+msgstr "Kết Qủa"
 
 
 msgid "Select objects to scatter and a target object."
@@ -88925,6 +89008,10 @@ msgid "F-Curve Visibility"
 msgstr "Hiển Thị Cong-F"
 
 
+msgid "Default Smoothing Mode"
+msgstr "Chế Độ Mịn Hóa Mặc Định"
+
+
 msgid "Default Interpolation"
 msgstr "Suy Nội Mặc Định"
 
@@ -89636,18 +89723,22 @@ msgstr "Sửa Méo Hóa"
 
 
 msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "Ẩn Hộp Bao Quanh"
-
-
-msgctxt "Operator"
 msgid "Show Bounding Box"
 msgstr "Hiện Hộp Bao Quanh"
 
 
 msgctxt "Operator"
+msgid "Hide Bounding Box"
+msgstr "Ẩn Hộp Bao Quanh"
+
+
+msgctxt "Operator"
 msgid "Hide Masked"
 msgstr "Ẩn Được Mặt Nạ"
+
+
+msgid "Set Pivot"
+msgstr "Đặt Điểm Tựa"
 
 
 msgctxt "Operator"
@@ -89703,10 +89794,6 @@ msgstr "Mở Rộng Mặt Nạ Bằng Hình Dạng Học"
 msgctxt "Operator"
 msgid "Expand Mask By Curvature"
 msgstr "Mở Rộng Mặt Nạ Bằng Độ Cong"
-
-
-msgid "Set Pivot"
-msgstr "Đặt Điểm Tựa"
 
 
 msgctxt "Operator"
@@ -91400,6 +91487,10 @@ msgstr "Không được gói lại tệp, không kiếm được đường dẫn
 
 msgid "Image '%s' skipped, movies and image sequences not supported"
 msgstr "Đã bỏ qua ảnh '%s', vì không hỗ trợ phim và trình tứ ảnh"
+
+
+msgid "Packed %d file(s)"
+msgstr "Được gói lại %d tệp"
 
 
 msgid "Error creating file '%s'"
@@ -94142,11 +94233,15 @@ msgstr "Chỉ có thể chép lại một pháp tuyến tùy chọn, pháp tuy�
 
 
 msgid "Removed: %d vertices, %d edges, %d faces"
-msgstr "Xóa được: %d đỉnh, %d cạnh, %d mặt"
+msgstr "Đã xóa: %d đỉnh, %d cạnh, %d mặt"
 
 
 msgid "Unable to rotate %d edge(s)"
 msgstr "Không thể xoay %d cạnh"
+
+
+msgid "Removed %d vertice(s)"
+msgstr "Đã xóa %d đỉnh"
 
 
 msgid "%d already symmetrical, %d pairs mirrored, %d failed"
@@ -94161,24 +94256,20 @@ msgid "Parse error in %s"
 msgstr "Sai lầm ngữ pháp trong: %s"
 
 
-msgid "Cannot add geometry in edit mode"
-msgstr "Không thể thêm hình dạng trong chế độ biên tập"
+msgid "Cannot add vertices in edit mode"
+msgstr "Không thể thêm đỉnh trong chế độ biên tập"
 
 
 msgid "Cannot add edges in edit mode"
 msgstr "Không thể thêm cạnh trong chế độ biên tập"
 
 
-msgid "Cannot add vertices in edit mode"
-msgstr "Không thể thêm đỉnh trong chế độ biên tập"
+msgid "Cannot add loops in edit mode"
+msgstr "Không thể thêm lặp vòng trong chế độ biên tập"
 
 
-msgid "Cannot remove edges in edit mode"
-msgstr "Không thể xóa cạnh trong chế độ biên tập"
-
-
-msgid "Cannot remove more edges than the mesh contains"
-msgstr "Không thể xóa số lượng cạnh hơn thì có trong mạng lưới"
+msgid "Cannot add polygons in edit mode"
+msgstr "Không thể thêm đa giác trong chế độ biên tập"
 
 
 msgid "Cannot remove vertices in edit mode"
@@ -94189,12 +94280,12 @@ msgid "Cannot remove more vertices than the mesh contains"
 msgstr "Không thể xóa số lượng đỉnh hơn thì có trong lưới"
 
 
-msgid "Cannot add loops in edit mode"
-msgstr "Không thể thêm lặp vòng trong chế độ biên tập"
+msgid "Cannot remove edges in edit mode"
+msgstr "Không thể xóa cạnh trong chế độ biên tập"
 
 
-msgid "Cannot add polygons in edit mode"
-msgstr "Không thể thêm đa giác trong chế độ biên tập"
+msgid "Cannot remove more edges than the mesh contains"
+msgstr "Không thể xóa số lượng cạnh hơn thì có trong mạng lưới"
 
 
 msgid "%d %s mirrored, %d failed"
@@ -94795,6 +94886,10 @@ msgid "The remesher cannot run with dyntopo activated."
 msgstr "Bộ mạng lưới lại không thể chạy khi hình dạng học động lý đang hoạt động"
 
 
+msgid "The remesher cannot run with a Multires modifier in the modifier stack."
+msgstr "Bộ mạng lưới lại không thể chạy nếu có một cụ sửa đổi Đa Phân Giải trong xếp đồng cụ sửa đổi"
+
+
 msgid "Select Collection"
 msgstr "Chọn Sưu Tập"
 
@@ -94933,6 +95028,10 @@ msgstr "Nướng thất bại: không tìm được cụ sửa đổi Sơn Độ
 
 msgid "Bake failed: invalid canvas"
 msgstr "Nướng bị thất bại: mặt sơn không hợp lệ"
+
+
+msgid "Removed %d double particle(s)"
+msgstr "Đã xóa %d hạt đôi"
 
 
 msgid "No hair connected (can't connect hair if particle system modifier is disabled)"
@@ -95900,8 +95999,8 @@ msgid "Could not create new folder: %s"
 msgstr "Không chế tạo được hồ sơ mới: %s"
 
 
-msgid "Could not delete file: %s"
-msgstr "Không xóa được ảnh: %s"
+msgid "Could not delete file or directory: %s"
+msgstr "Không xóa được tệp hay thư mục: %s"
 
 
 msgid "Cancel"
@@ -96901,12 +97000,24 @@ msgid "Old ID '%s' is linked from a library, indirect usages of this data-block 
 msgstr "ID cũ '%s' được liên kết từ một thư viện, nếu dùng cục dữ liệu này kiểu gián tiếp nó sẽ không được ánh xạ lại"
 
 
+msgid "Copied %d selected data-block(s)"
+msgstr "Đã chép lại %d cục dữ liệu được chọn"
+
+
+msgid "%d data-block(s) pasted"
+msgstr "Đã dán %d cục dữ liệu"
+
+
 msgid "Cannot relocate indirectly linked library '%s'"
 msgstr "Không thể di chuyển thư viện được liên kết gián tiếp '%s'"
 
 
 msgid "Not found: %s"
 msgstr "Không tìm được: %s"
+
+
+msgid "Deleted %d data-block(s)"
+msgstr "Đã xóa %d cục dữ liệu"
 
 
 msgid "Mixed selection"
@@ -97395,6 +97506,14 @@ msgstr "Lựa chọn mặt - Shift-Bấm cho nhiều chế độ, Ctrl-Bấm rú
 
 msgid "No objects to paste"
 msgstr "Không có vật thể để dán"
+
+
+msgid "Copied %d selected object(s)"
+msgstr "Đã chép lại %d vật thể được chọn"
+
+
+msgid "%d object(s) pasted"
+msgstr "Đã dán %d vật thể"
 
 
 msgid "No active element found!"
@@ -98180,6 +98299,10 @@ msgstr "Chỉ có thể thêm mẫu cong Bezier"
 
 msgid "Curve '%s' does not contain spline given"
 msgstr "Đường cong '%s' không chứa mẫu cong được xác định"
+
+
+msgid "Dependency graph update requested during evaluation"
+msgstr "Đã nhận được lệnh nâng cấp biểu đồ nhờ trong khi đang tính toán"
 
 
 msgid "Variable does not exist in this driver"
@@ -99284,10 +99407,6 @@ msgid "View Distance"
 msgstr "Tấm Nhìn"
 
 
-msgid "Result"
-msgstr "Kết Qủa"
-
-
 msgid "Emissive Color"
 msgstr "Màu Phát Xạ"
 
@@ -99909,6 +100028,41 @@ msgid "%d x %s: %.4f ms, average: %.8f ms"
 msgstr "%d x %s: %.4f ms,  trung bình: %.8f ms"
 
 
+msgctxt "WindowManager"
+msgid "Limited Platform Support"
+msgstr "Sự Hỗ Trợ Của Dòng Bị Hạn Chế"
+
+
+msgctxt "WindowManager"
+msgid "Your graphics card or driver has limited support. It may work, but with issues."
+msgstr "Mạch đồ họa hay đồ dắt chỉ hỗ trợ một phần. Có lẻ nó chạy nhưng có vấn đề"
+
+
+msgctxt "WindowManager"
+msgid "Newer graphics drivers may be available to improve Blender support."
+msgstr "Có lẻ có đồ dắt mới hơn có thể hỗ trợ Blender tốt hơn"
+
+
+msgctxt "WindowManager"
+msgid "Graphics card:"
+msgstr "Mạch Đồ Họa:"
+
+
+msgctxt "WindowManager"
+msgid "Platform Unsupported"
+msgstr "Không Hỗ Trợ Dòng"
+
+
+msgctxt "WindowManager"
+msgid "Your graphics card or driver is not supported."
+msgstr "Mạch đồ họa hay đồ dắt của bạn không được hỗ trợ"
+
+
+msgctxt "WindowManager"
+msgid "The program will now close."
+msgstr "Bây giờ chương trình sẽ đóng"
+
+
 msgid "Failed to create a window without quad-buffer support, you may experience flickering"
 msgstr "Chế tạo một cửa sổ tư đệm bị thất bại, bạn có thể thấy ảnh nhảy chấp"
 
@@ -100151,6 +100305,10 @@ msgstr "Tiếng Abkhaz (Аԥсуа бызшәа)"
 
 msgid "Thai (ภาษาไทย)"
 msgstr "Tiếng Thái (ภาษาไทย)"
+
+
+msgid "Slovak (Slovenčina)"
+msgstr "Tiếng Slovakia (Slovenčina)"
 
 
 msgid "Complete"

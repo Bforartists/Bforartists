@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -875,10 +875,6 @@ msgid "Sphere Radius"
 msgstr "Radius Bola"
 
 
-msgid "Attenuation"
-msgstr "lokasi"
-
-
 msgid "Parent Object"
 msgstr "Sunting Objek"
 
@@ -1513,6 +1509,10 @@ msgstr "Penyunting Teks"
 
 msgid "Top-Left 3D Editor"
 msgstr "Penyunting Teks"
+
+
+msgid "Attenuation"
+msgstr "lokasi"
 
 
 msgid "Sound"
@@ -3659,10 +3659,6 @@ msgstr "Batal"
 msgctxt "Operator"
 msgid "Delete Selected Files"
 msgstr "Hapus Berkas Terpilih"
-
-
-msgid "Delete selected files"
-msgstr "Hapus berkas terpilih"
 
 
 msgid "Open"
@@ -7763,12 +7759,12 @@ msgstr "Saluran"
 
 
 msgctxt "Operator"
-msgid "Hide Bounding Box"
+msgid "Show Bounding Box"
 msgstr "Suara"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
+msgid "Hide Bounding Box"
 msgstr "Suara"
 
 
@@ -8300,7 +8296,7 @@ msgid "Nothing selected"
 msgstr "Hapus"
 
 
-msgid "Cannot add geometry in edit mode"
+msgid "Cannot add vertices in edit mode"
 msgstr "Penyunting Teks"
 
 
@@ -8308,11 +8304,11 @@ msgid "Cannot add edges in edit mode"
 msgstr "Penyunting Teks"
 
 
-msgid "Cannot add vertices in edit mode"
+msgid "Cannot add loops in edit mode"
 msgstr "Penyunting Teks"
 
 
-msgid "Cannot remove edges in edit mode"
+msgid "Cannot add polygons in edit mode"
 msgstr "Penyunting Teks"
 
 
@@ -8324,11 +8320,7 @@ msgid "Cannot remove more vertices than the mesh contains"
 msgstr "Penyunting Teks"
 
 
-msgid "Cannot add loops in edit mode"
-msgstr "Penyunting Teks"
-
-
-msgid "Cannot add polygons in edit mode"
+msgid "Cannot remove edges in edit mode"
 msgstr "Penyunting Teks"
 
 

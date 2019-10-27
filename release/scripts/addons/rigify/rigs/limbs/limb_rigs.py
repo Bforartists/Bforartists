@@ -23,12 +23,12 @@ import json
 
 from ...utils.animation import add_generic_snap_fk_to_ik, add_fk_ik_snap_buttons
 from ...utils.rig import connected_children_names
-from ...utils.bones import BoneDict, put_bone, compute_chain_x_axis, align_bone_orientation
-from ...utils.bones import align_bone_x_axis, align_bone_y_axis, align_bone_z_axis
+from ...utils.bones import BoneDict, put_bone, compute_chain_x_axis, align_bone_orientation, set_bone_widget_transform
 from ...utils.naming import strip_org, make_derived_name
 from ...utils.layers import ControlLayersOption
 from ...utils.misc import pairwise_nozip, padnone, map_list
 from ...utils.switch_parent import SwitchParentBuilder
+from ...utils.components import CustomPivotControl
 
 from ...base_rig import stage, BaseRig
 
@@ -64,6 +64,7 @@ class BaseLimbRig(BaseRig):
 
         self.segments = self.params.segments
         self.bbone_segments = self.params.bbones
+        self.use_ik_pivot = self.params.make_custom_pivot
 
         rot_axis = self.params.rotation_axis
 
@@ -124,15 +125,6 @@ class BaseLimbRig(BaseRig):
         bone = self.get_bone(org)
         return bone.head + bone.vector * (seg / self.segments)
 
-    def align_roll_bone(self, org, name, y_axis):
-        if y_axis:
-            align_bone_y_axis(self.obj, name, y_axis)
-
-        if self.main_axis == 'x':
-            align_bone_x_axis(self.obj, name, self.get_bone(org).x_axis)
-        else:
-            align_bone_z_axis(self.obj, name, self.get_bone(org).z_axis)
-
     @staticmethod
     def vector_without_z(vector):
         return Vector((vector[0], vector[1], 0))
@@ -154,6 +146,8 @@ class BaseLimbRig(BaseRig):
     #     IK controls
     #   ik_vispole
     #     IK pole visualization.
+    #   ik_pivot
+    #     Custom IK pivot (optional).
     # mch:
     #   master:
     #     Parent of the master control.
@@ -161,6 +155,8 @@ class BaseLimbRig(BaseRig):
     #     FK follow behavior.
     #   fk[]:
     #     FK chain parents (or None)
+    #   ik_pivot
+    #     Custom IK pivot result (optional).
     #   ik_stretch
     #     IK stretch switch implementation.
     #   ik_target
@@ -328,21 +324,29 @@ class BaseLimbRig(BaseRig):
     # IK controls
 
     def get_extra_ik_controls(self):
-        return []
+        if self.component_ik_pivot:
+            return [self.component_ik_pivot.control]
+        else:
+            return []
 
     def get_all_ik_controls(self):
         ctrl = self.bones.ctrl
-        return [ctrl.ik_base, ctrl.ik_pole, ctrl.ik] + self.get_extra_ik_controls()
+        controls = [ctrl.ik_base, ctrl.ik_pole, ctrl.ik]
+        return controls + self.get_extra_ik_controls()
 
     @stage.generate_bones
     def make_ik_controls(self):
         orgs = self.bones.org.main
 
-        self.bones.ctrl.ik_base = self.copy_bone(orgs[0], make_derived_name(orgs[0], 'ctrl', '_ik'))
+        self.bones.ctrl.ik_base = self.make_ik_base_bone(orgs)
         self.bones.ctrl.ik_pole = self.make_ik_pole_bone(orgs)
-        self.bones.ctrl.ik = self.make_ik_control_bone(orgs)
+        self.bones.ctrl.ik = ik_name = self.make_ik_control_bone(orgs)
 
+        self.component_ik_pivot = self.build_ik_pivot(ik_name)
         self.build_ik_parent_switch(SwitchParentBuilder(self.generator))
+
+    def make_ik_base_bone(self, orgs):
+        return self.copy_bone(orgs[0], make_derived_name(orgs[0], 'ctrl', '_ik'))
 
     def make_ik_pole_bone(self, orgs):
         name = self.copy_bone(orgs[0], make_derived_name(orgs[0], 'ctrl', '_ik_target'))
@@ -357,9 +361,24 @@ class BaseLimbRig(BaseRig):
     def make_ik_control_bone(self, orgs):
         return self.copy_bone(orgs[2], make_derived_name(orgs[2], 'ctrl', '_ik'))
 
+    def build_ik_pivot(self, ik_name, **args):
+        if self.use_ik_pivot:
+            return CustomPivotControl(self, 'ik_pivot', ik_name, parent=ik_name, **args)
+
+    def get_ik_control_output(self):
+        if self.component_ik_pivot:
+            return self.component_ik_pivot.output
+        else:
+            return self.bones.ctrl.ik
+
     def register_switch_parents(self, pbuilder):
         if self.rig_parent_bone:
             pbuilder.register_parent(self, self.rig_parent_bone)
+
+        pbuilder.register_parent(
+            self, self.get_ik_control_output(), name=self.bones.ctrl.ik,
+            exclude_self=True, tags={'limb_ik'},
+        )
 
     def build_ik_parent_switch(self, pbuilder):
         ctrl = self.bones.ctrl
@@ -398,9 +417,13 @@ class BaseLimbRig(BaseRig):
 
     @stage.generate_widgets
     def make_ik_control_widgets(self):
-        self.make_ik_base_widget(self.bones.ctrl.ik_base)
-        self.make_ik_pole_widget(self.bones.ctrl.ik_pole)
-        self.make_ik_ctrl_widget(self.bones.ctrl.ik)
+        ctrl = self.bones.ctrl
+
+        set_bone_widget_transform(self.obj, ctrl.ik, self.get_ik_control_output())
+
+        self.make_ik_base_widget(ctrl.ik_base)
+        self.make_ik_pole_widget(ctrl.ik_pole)
+        self.make_ik_ctrl_widget(ctrl.ik)
 
     def make_ik_base_widget(self, ctrl):
         if self.main_axis == 'x':
@@ -453,7 +476,7 @@ class BaseLimbRig(BaseRig):
     ik_input_head_tail = 0.0
 
     def get_ik_input_bone(self):
-        return self.bones.ctrl.ik
+        return self.get_ik_control_output()
 
     def get_ik_output_chain(self):
         return [self.bones.ctrl.ik_base, self.bones.mch.ik_end, self.bones.mch.ik_target]
@@ -799,6 +822,12 @@ class BaseLimbRig(BaseRig):
             description = 'Number of segments'
         )
 
+        params.make_custom_pivot = bpy.props.BoolProperty(
+            name        = "Custom Pivot Control",
+            default     = False,
+            description = "Create a rotation pivot control that can be repositioned arbitrarily"
+        )
+
         # Setting up extra layers for the FK and tweak
         ControlLayersOption.FK.add_parameters(params)
         ControlLayersOption.TWEAK.add_parameters(params)
@@ -819,6 +848,8 @@ class BaseLimbRig(BaseRig):
 
         r = layout.row()
         r.prop(params, "bbones")
+
+        layout.prop(params, 'make_custom_pivot', text="Custom IK Pivot")
 
         ControlLayersOption.FK.parameters_ui(layout, params)
         ControlLayersOption.TWEAK.parameters_ui(layout, params)
@@ -842,8 +873,6 @@ class RigifyLimbIk2FkBase:
     ik_bones:     StringProperty(name="IK Result Bone Chain")
     ctrl_bones:   StringProperty(name="IK Controls")
     extra_ctrls:  StringProperty(name="Extra IK Controls")
-
-    keyflags = None
 
     def init_execute(self, context):
         if self.fk_bones:
@@ -921,13 +950,11 @@ class RigifyLimbIk2FkBase:
 class POSE_OT_rigify_limb_ik2fk(RigifyLimbIk2FkBase, RigifySingleUpdateMixin, bpy.types.Operator):
     bl_idname = "pose.rigify_limb_ik2fk_" + rig_id
     bl_label = "Snap IK->FK"
-    bl_options = {'UNDO', 'INTERNAL'}
     bl_description = "Snap the IK chain to FK result"
 
 class POSE_OT_rigify_limb_ik2fk_bake(RigifyLimbIk2FkBase, RigifyBakeKeyframesMixin, bpy.types.Operator):
     bl_idname = "pose.rigify_limb_ik2fk_bake_" + rig_id
     bl_label = "Apply Snap IK->FK To Keyframes"
-    bl_options = {'UNDO', 'INTERNAL'}
     bl_description = "Snap the IK chain keyframes to FK result"
 
     def execute_scan_curves(self, context, obj):
@@ -968,8 +995,6 @@ SCRIPT_UTILITIES_OP_TOGGLE_POLE = SCRIPT_UTILITIES_OP_SNAP_IK_FK + ['''
 class RigifyLimbTogglePoleBase(RigifyLimbIk2FkBase):
     use_pole: bpy.props.BoolProperty(name="Use Pole Vector")
 
-    keyflags_switch = None
-
     def save_frame_state(self, context, obj):
         return get_chain_transform_matrices(obj, self.ik_bone_list)
 
@@ -1007,13 +1032,11 @@ class RigifyLimbTogglePoleBase(RigifyLimbIk2FkBase):
 class POSE_OT_rigify_limb_toggle_pole(RigifyLimbTogglePoleBase, RigifySingleUpdateMixin, bpy.types.Operator):
     bl_idname = "pose.rigify_limb_toggle_pole_" + rig_id
     bl_label = "Toggle Pole"
-    bl_options = {'UNDO', 'INTERNAL'}
     bl_description = "Switch the IK chain between pole and rotation"
 
 class POSE_OT_rigify_limb_toggle_pole_bake(RigifyLimbTogglePoleBase, RigifyBakeKeyframesMixin, bpy.types.Operator):
     bl_idname = "pose.rigify_limb_toggle_pole_bake_" + rig_id
     bl_label = "Apply Toggle Pole To Keyframes"
-    bl_options = {'UNDO', 'INTERNAL'}
     bl_description = "Switch the IK chain between pole and rotation over a frame range"
 
     def execute_scan_curves(self, context, obj):

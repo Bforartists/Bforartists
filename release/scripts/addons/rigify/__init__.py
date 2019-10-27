@@ -20,7 +20,7 @@
 
 bl_info = {
     "name": "Rigify",
-    "version": (0, 6, 0),
+    "version": (0, 6, 1),
     "author": "Nathan Vegdahl, Lucio Rossi, Ivan Cappiello, Alexander Gavrilov",
     "blender": (2, 81, 0),
     "description": "Automatic rigging from building-block components",
@@ -520,7 +520,7 @@ def register():
     IDStore.rigify_types = CollectionProperty(type=RigifyName)
     IDStore.rigify_active_type = IntProperty(name="Rigify Active Type", description="The selected rig type")
 
-    IDStore.rigify_advanced_generation = BoolProperty(name="Advanced Options",
+    bpy.types.Armature.rigify_advanced_generation = BoolProperty(name="Advanced Options",
         description="Enables/disables advanced options for Rigify rig generation",
         default=False)
 
@@ -528,27 +528,26 @@ def register():
         if self.rigify_generate_mode == 'new':
             self.rigify_force_widget_update = False
 
-    IDStore.rigify_generate_mode = EnumProperty(name="Rigify Generate Rig Mode",
+    bpy.types.Armature.rigify_generate_mode = EnumProperty(name="Rigify Generate Rig Mode",
         description="'Generate Rig' mode. In 'overwrite' mode the features of the target rig will be updated as defined by the metarig. In 'new' mode a new rig will be created as defined by the metarig. Current mode",
         update=update_mode,
         items=( ('overwrite', 'overwrite', ''),
                 ('new', 'new', '')))
 
-    IDStore.rigify_force_widget_update = BoolProperty(name="Force Widget Update",
+    bpy.types.Armature.rigify_force_widget_update = BoolProperty(name="Force Widget Update",
         description="Forces Rigify to delete and rebuild all the rig widgets. if unset, only missing widgets will be created",
         default=False)
 
-    IDStore.rigify_target_rigs = CollectionProperty(type=RigifyName)
-    IDStore.rigify_target_rig = StringProperty(name="Rigify Target Rig",
+    bpy.types.Armature.rigify_target_rig = PointerProperty(type=bpy.types.Object,
+        name="Rigify Target Rig",
         description="Defines which rig to overwrite. If unset, a new one called 'rig' will be created",
-        default="")
+        poll=lambda self, obj: obj.type == 'ARMATURE' and obj.data is not self)
 
-    IDStore.rigify_rig_uis = CollectionProperty(type=RigifyName)
-    IDStore.rigify_rig_ui = StringProperty(name="Rigify Target Rig UI",
-        description="Defines the UI to overwrite. It should always be the same as the target rig. If unset, 'rig_ui.py' will be used",
-        default="")
+    bpy.types.Armature.rigify_rig_ui = PointerProperty(type=bpy.types.Text,
+        name="Rigify Target Rig UI",
+        description="Defines the UI to overwrite. If unset, 'rig_ui.py' will be used")
 
-    IDStore.rigify_rig_basename = StringProperty(name="Rigify Rig Name",
+    bpy.types.Armature.rigify_rig_basename = StringProperty(name="Rigify Rig Name",
         description="Defines the name of the Rig. If unset, in 'new' mode 'rig' will be used, in 'overwrite' mode the target rig name will be used",
         default="")
 
@@ -602,19 +601,17 @@ def unregister():
     del ArmStore.rigify_colors_index
     del ArmStore.rigify_colors_lock
     del ArmStore.rigify_theme_to_add
+    del ArmStore.rigify_advanced_generation
+    del ArmStore.rigify_generate_mode
+    del ArmStore.rigify_force_widget_update
+    del ArmStore.rigify_target_rig
+    del ArmStore.rigify_rig_ui
+    del ArmStore.rigify_rig_basename
 
     IDStore = bpy.types.WindowManager
     del IDStore.rigify_collection
     del IDStore.rigify_types
     del IDStore.rigify_active_type
-    del IDStore.rigify_advanced_generation
-    del IDStore.rigify_generate_mode
-    del IDStore.rigify_force_widget_update
-    del IDStore.rigify_target_rig
-    del IDStore.rigify_target_rigs
-    del IDStore.rigify_rig_uis
-    del IDStore.rigify_rig_ui
-    del IDStore.rigify_rig_basename
     del IDStore.rigify_transfer_only_selected
 
     # Classes.

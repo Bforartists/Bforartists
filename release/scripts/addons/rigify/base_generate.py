@@ -27,7 +27,7 @@ from .utils.errors import MetarigError, RaiseErrorMixin
 from .utils.naming import random_id
 from .utils.metaclass import SingletonPluginMetaclass
 from .utils.rig import list_bone_names_depth_first_sorted, get_rigify_type
-from .utils.misc import assign_parameters
+from .utils.misc import clone_parameters, assign_parameters
 
 from . import base_rig
 
@@ -78,6 +78,7 @@ class SubstitutionRig(RaiseErrorMixin):
         self.obj = generator.obj
         self.base_bone = pose_bone.name
         self.params = pose_bone.rigify_parameters
+        self.params_copy = clone_parameters(self.params)
 
     def substitute(self):
         # return [rig1, rig2...]

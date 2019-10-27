@@ -21,11 +21,10 @@
 bl_info = {
     "name": "Stanford PLY format",
     "author": "Bruce Merry, Campbell Barton",
-    "version": (1, 0, 0),
-    "blender": (2, 81, 6),
+    "version": (1, 1, 0),
+    "blender": (2, 82, 0),
     "location": "File > Import-Export",
-    "description": "Import-Export PLY mesh data with UV's and vertex colors",
-    "warning": "",
+    "description": "Import-Export PLY mesh data with UVs and vertex colors",
     "wiki_url": "https://docs.blender.org/manual/en/latest/addons/io_mesh_ply.html",
     "support": 'OFFICIAL',
     "category": "Import-Export",
@@ -34,8 +33,6 @@ bl_info = {
 # Copyright (C) 2004, 2005: Bruce Merry, bmerry@cs.uct.ac.za
 # Contributors: Bruce Merry, Campbell Barton
 
-# To support reload properly, try to access a package var,
-# if it's there, reload everything
 if "bpy" in locals():
     import importlib
     if "export_ply" in locals():
@@ -44,13 +41,11 @@ if "bpy" in locals():
         importlib.reload(import_ply)
 
 
-import os
 import bpy
 from bpy.props import (
     CollectionProperty,
     StringProperty,
     BoolProperty,
-    EnumProperty,
     FloatProperty,
 )
 from bpy_extras.io_utils import (
@@ -81,6 +76,8 @@ class ImportPLY(bpy.types.Operator, ImportHelper):
     filter_glob: StringProperty(default="*.ply", options={'HIDDEN'})
 
     def execute(self, context):
+        import os
+
         paths = [os.path.join(self.directory, name.name)
                  for name in self.files]
         if not paths:
@@ -96,14 +93,18 @@ class ImportPLY(bpy.types.Operator, ImportHelper):
 
 @orientation_helper(axis_forward='Y', axis_up='Z')
 class ExportPLY(bpy.types.Operator, ExportHelper):
-    """Export a single object as a Stanford PLY with normals, """ \
-    """colors and texture coordinates"""
     bl_idname = "export_mesh.ply"
     bl_label = "Export PLY"
+    bl_description = "Export as a Stanford PLY with normals, vertex colors and texture coordinates"
 
     filename_ext = ".ply"
     filter_glob: StringProperty(default="*.ply", options={'HIDDEN'})
 
+    use_selection: BoolProperty(
+        name="Selection Only",
+        description="Export selected objects only",
+        default=False,
+    )
     use_mesh_modifiers: BoolProperty(
         name="Apply Modifiers",
         description="Apply Modifiers to the exported mesh",
@@ -136,10 +137,6 @@ class ExportPLY(bpy.types.Operator, ExportHelper):
         default=1.0,
     )
 
-    @classmethod
-    def poll(cls, context):
-        return context.active_object is not None
-
     def execute(self, context):
         from . import export_ply
 
@@ -167,6 +164,30 @@ class ExportPLY(bpy.types.Operator, ExportHelper):
 
     def draw(self, context):
         pass
+
+
+class PLY_PT_export_include(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Include"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_MESH_OT_ply"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, "use_selection")
 
 
 class PLY_PT_export_transform(bpy.types.Panel):
@@ -233,6 +254,7 @@ def menu_func_export(self, context):
 classes = (
     ImportPLY,
     ExportPLY,
+    PLY_PT_export_include,
     PLY_PT_export_transform,
     PLY_PT_export_geometry,
 )
@@ -252,6 +274,7 @@ def unregister():
 
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
+
 
 if __name__ == "__main__":
     register()

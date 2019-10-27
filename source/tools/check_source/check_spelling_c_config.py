@@ -76,6 +76,7 @@ dict_custom = {
     "precalculate",
     "prefetch", "prefetching",
     "probabilistically",
+    "profiler",
     "psudocode",
     "rasterizer",
     "rasterizing",
@@ -107,7 +108,7 @@ dict_custom = {
     "func",
     "repr",
 
-    # Accepted abbreviations/concatinations.
+    # Accepted abbreviations/concatenations.
     "addon", "addons",
     "autocomplete",
     "colospace",
