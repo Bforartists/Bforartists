@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -4784,11 +4784,6 @@ msgstr "Gebied"
 
 
 msgctxt "Operator"
-msgid "Isolated"
-msgstr "Geïsoleerd"
-
-
-msgctxt "Operator"
 msgid "Export"
 msgstr "Exporteren"
 
@@ -5519,13 +5514,13 @@ msgstr "Maak Schoon"
 
 
 msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "Verberg Passende Doos"
+msgid "Show Bounding Box"
+msgstr "Toon Passende Doos"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "Toon Passende Doos"
+msgid "Hide Bounding Box"
+msgstr "Verberg Passende Doos"
 
 
 msgctxt "Operator"

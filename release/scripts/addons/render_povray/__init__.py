@@ -19,13 +19,14 @@
 # <pep8 compliant>
 
 bl_info = {
+    #coming soon: "name": "POV-3.8",
     "name": "POV-3.7",
     "author": "Campbell Barton, Maurice Raybaud, Leonid Desyatkov, "
               "Bastien Montagne, Constantin Rahn, Silvio Falcinelli",
     "version": (0, 1, 0),
     "blender": (2, 80, 0),
-    "location": "Render > Engine > POV-Ray 3.7",
-    "description": "POV-Ray 3.7 integration for blender",
+    "location": "Render > Engine > Persistence Of Vision",
+    "description": "POV-Ray integration for blender",
     "wiki_url": "https://archive.blender.org/wiki/index.php/"
                 "Extensions:2.6/Py/Scripts/Render/POV-Ray/",
     "category": "Render",
@@ -68,6 +69,28 @@ else:
 
 def string_strip_hyphen(name):
     return name.replace("-", "")
+
+def active_texture_name_from_uilist(self,context):
+    mat = context.scene.view_layers["View Layer"].objects.active.active_material
+    index = mat.pov.active_texture_index
+    name = mat.pov_texture_slots[index].name
+    newname = mat.pov_texture_slots[index].texture
+    tex = bpy.data.textures[name]
+    tex.name = newname
+    mat.pov_texture_slots[index].name = newname
+
+
+def active_texture_name_from_search(self,context):
+    mat = context.scene.view_layers["View Layer"].objects.active.active_material
+    index = mat.pov.active_texture_index
+    name = mat.pov_texture_slots[index].texture_search
+    try:
+        tex = bpy.data.textures[name]
+        mat.pov_texture_slots[index].name = name
+        mat.pov_texture_slots[index].texture = name
+    except:
+        pass
+
 ###############################################################################
 # Scene POV properties.
 ###############################################################################
@@ -557,6 +580,11 @@ class RenderPovSettingsScene(PropertyGroup):
 # Material POV properties.
 ###############################################################################
 class MaterialTextureSlot(PropertyGroup):
+    bl_idname="povray_texture_slots",
+    bl_description="Texture_slots from Blender-2.79",
+    
+    texture : StringProperty(update=active_texture_name_from_uilist)
+    texture_search : StringProperty(update=active_texture_name_from_search)
 
     alpha_factor: FloatProperty(
             name="Alpha",
@@ -4293,6 +4321,29 @@ for i in range(18):  # length of world texture slots
     world.texture_slots.add()
 '''
 
+class MATERIAL_TEXTURE_SLOTS_UL_layerlist(bpy.types.UIList):
+#    texture_slots:
+    index: bpy.props.IntProperty(name='index')
+    #foo  = random prop
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
+        ob = data
+        slot = item
+        #ma = slot.name
+        # draw_item must handle the three layout types... Usually 'DEFAULT' and 'COMPACT' can share the same code.
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            # You should always start your row layout by a label (icon + text), or a non-embossed text field,
+            # this will also make the row easily selectable in the list! The later also enables ctrl-click rename.
+            # We use icon_value of label, as our given icon is an integer value, not an enum ID.
+            # Note "data" names should never be translated!
+            if slot:
+                layout.prop(item, "texture", text="", emboss=False, icon='TEXTURE')
+            else:
+                layout.label(text="New", translate=False, icon_value=icon)
+        # 'GRID' layout type should be as compact as possible (typically a single icon!).
+        elif self.layout_type in {'GRID'}:
+            layout.alignment = 'CENTER'
+            layout.label(text="", icon_value=icon)    
+    
 
 ###############################################################################
 # Text POV properties.
@@ -4344,6 +4395,7 @@ classes = (
     RenderPovSettingsCamera,
     RenderPovSettingsLight,    
     RenderPovSettingsWorld,
+    MATERIAL_TEXTURE_SLOTS_UL_layerlist,
     MaterialTextureSlot,
     WorldTextureSlot,
     RenderPovSettingsMaterial,
@@ -4397,7 +4449,7 @@ def register():
     bpy.types.Camera.pov = PointerProperty(type=RenderPovSettingsCamera)
     bpy.types.Light.pov = PointerProperty(type=RenderPovSettingsLight)
     bpy.types.World.pov = PointerProperty(type=RenderPovSettingsWorld)
-    bpy.types.Material.texture_slots = CollectionProperty(type = MaterialTextureSlot)
+    bpy.types.Material.pov_texture_slots = CollectionProperty(type=MaterialTextureSlot)
     bpy.types.World.texture_slots = CollectionProperty(type = WorldTextureSlot)
     bpy.types.Text.pov = PointerProperty(type=RenderPovSettingsText)
 
@@ -4415,7 +4467,8 @@ def unregister():
     del bpy.types.Object.pov
     del bpy.types.Camera.pov
     del bpy.types.Light.pov
-    del bpy.types.World.pov    
+    del bpy.types.World.pov
+    del bpy.types.Material.pov_texture_slots    
     del bpy.types.Text.pov
 
     nodeitems_utils.unregister_node_categories("POVRAYNODES")

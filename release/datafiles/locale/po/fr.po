@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.3"
+"X-Generator: Poedit 2.2.4"
 
 
 msgid "Action F-Curves"
@@ -2626,6 +2626,34 @@ msgid "Full"
 msgstr "Full"
 
 
+msgid "Inherit all effects of parent scaling"
+msgstr "Hériter de tous les effets de redimensionnement du parent"
+
+
+msgid "Fix Shear"
+msgstr "Résoudre cisaillement"
+
+
+msgid "Inherit scaling, but remove shearing of the child in the rest orientation"
+msgstr "Hériter le redimensionnement, mais supprimer le cisaillement de l’enfant en position de repos"
+
+
+msgid "Inherit uniform scaling representing the overall change in the volume of the parent"
+msgstr "Hériter un redimensionnement uniforme représentant le changement global dans le volume du parent"
+
+
+msgid "Completely ignore parent scaling"
+msgstr "Totalement ignorer le redimensionnement du parent"
+
+
+msgid "None (Legacy)"
+msgstr "Aucun (ancien comportement)"
+
+
+msgid "Ignore parent scaling without compensating for parent shear. Replicates the effect of disabling the original Inherit Scale checkbox"
+msgstr "Ignorer le redimensionnement du parent sans compenser pour son cisaillement (reproduit l’effet de désactiver l’ancienne case à cocher “Hériter Taille”)"
+
+
 msgid "Layers"
 msgstr "Calques"
 
@@ -2926,6 +2954,10 @@ msgid "Active Smooth"
 msgstr "Adoucissement actif"
 
 
+msgid "Amount of smoothing while drawing"
+msgstr "Quantité d’adoucissement durant le dessin"
+
+
 msgid "Angle"
 msgstr "Angle"
 
@@ -3002,8 +3034,16 @@ msgid "Affect Stroke Strength"
 msgstr "Affecte force du trait"
 
 
+msgid "Amount of erasing for strength"
+msgstr "Quantité d’effacement pour la force"
+
+
 msgid "Affect Stroke Thickness"
 msgstr "Affecte épaisseur du trait"
+
+
+msgid "Amount of erasing for thickness"
+msgstr "Quantité d’effacement pour l’épaisseur"
 
 
 msgid "Mode to draw boundary limits"
@@ -3096,6 +3136,10 @@ msgstr "Marqueur"
 
 msgid "Airbrush"
 msgstr "Aérographe"
+
+
+msgid "Chisel"
+msgstr "Ciseau"
 
 
 msgid "Fill"
@@ -3248,6 +3292,10 @@ msgstr "Afficher lasso"
 
 msgid "Do not draw fill color while drawing the stroke"
 msgstr "Ne pas afficher la couleur de remplissage durant le dessin du trait"
+
+
+msgid "Factor of Simplify using adaptive algorithm"
+msgstr "Facteur de simplification avec l’algorithme adaptatif"
 
 
 msgid "Trim Stroke Ends"
@@ -5431,28 +5479,60 @@ msgid "Copy the rotation of the target"
 msgstr "Copier la rotation de la cible"
 
 
+msgid "Explicitly specify the euler rotation order"
+msgstr "Spécifier explicitement l’ordre de rotation Euler"
+
+
+msgid "Euler using the default rotation order"
+msgstr "Euler utilisant l’ordre de rotation par défaut"
+
+
 msgid "XYZ Euler"
 msgstr "Euler XYZ"
+
+
+msgid "Euler using the XYZ rotation order"
+msgstr "Euler utilisant l’ordre de rotation XYZ"
 
 
 msgid "XZY Euler"
 msgstr "Euler XZY"
 
 
+msgid "Euler using the XZY rotation order"
+msgstr "Euler utilisant l’ordre de rotation XZY"
+
+
 msgid "YXZ Euler"
 msgstr "Euler YXZ"
+
+
+msgid "Euler using the YXZ rotation order"
+msgstr "Euler utilisant l’ordre de rotation YXZ"
 
 
 msgid "YZX Euler"
 msgstr "Euler YZX"
 
 
+msgid "Euler using the YZX rotation order"
+msgstr "Euler utilisant l’ordre de rotation YZX"
+
+
 msgid "ZXY Euler"
 msgstr "Euler ZXY"
 
 
+msgid "Euler using the ZXY rotation order"
+msgstr "Euler utilisant l’ordre de rotation ZXY"
+
+
 msgid "ZYX Euler"
 msgstr "Euler ZYX"
+
+
+msgid "Euler using the ZYX rotation order"
+msgstr "Euler utilisant l’ordre de rotation ZYX"
 
 
 msgid "Invert the X rotation"
@@ -5469,6 +5549,38 @@ msgstr "Inverser la rotation Z"
 
 msgid "Mix Mode"
 msgstr "Mode de mélange"
+
+
+msgid "Specify how the copied and existing rotations are combined"
+msgstr "Spécifier comment les rotations copiées et existantes sont combinées"
+
+
+msgid "Replace the original rotation with copied"
+msgstr "Remplacer la rotation originale par celle copiée"
+
+
+msgid "Add euler component values together"
+msgstr "Ajouter les composantes Euler les unes aux autres"
+
+
+msgid "Apply copied rotation before original, as if the constraint target is a parent"
+msgstr "Appliquer la rotation copiée avant l’originale, comme si la cible de la contrainte était un parent"
+
+
+msgid "After Original"
+msgstr "Après original"
+
+
+msgid "Apply copied rotation after original, as if the constraint target is a child"
+msgstr "Appliquer la rotation copiée après l’originale, comme si la cible de la contrainte était un enfant"
+
+
+msgid "Offset (Legacy)"
+msgstr "Décalage (ancien comportement)"
+
+
+msgid "Combine rotations like the original Offset checkbox. Does not work well for multiple axis rotations"
+msgstr "Combiner les rotations comme avec l’ancienne case à cocher “Décalage” (ne fonctionne pas bien avec les rotations sur plusieurs axes)"
 
 
 msgid "Copy the target's X rotation"
@@ -5507,6 +5619,14 @@ msgid "Use addition instead of multiplication to combine scale (2.7 compatibilit
 msgstr "Utiliser l’addition au lieu de la multiplication pour combiner les échelles (compatibilité 2.7)"
 
 
+msgid "Make Uniform"
+msgstr "Rendre uniforme"
+
+
+msgid "Redistribute the copied change in volume equally between the three axes of the owner"
+msgstr "Redistribuer les changements copiés en volume de façon égale sur les trois axes du propriétaire"
+
+
 msgid "Combine original scale with copied scale"
 msgstr "Combiner la taille originale à la taille copiée"
 
@@ -5529,6 +5649,22 @@ msgstr "Contrainte Copier transformations"
 
 msgid "Copy all the transforms of the target"
 msgstr "Copier toutes les transformations de la cible"
+
+
+msgid "Specify how the copied and existing transformations are combined"
+msgstr "Spécifier comment les transformations existantes et copiées sont combinées"
+
+
+msgid "Replace the original transformation with copied"
+msgstr "Remplacer la transformation originale par celle copiée"
+
+
+msgid "Apply copied transformation before original, as if the constraint target is a parent. Scale is handled specially to avoid creating shear"
+msgstr "Appliquer la transformation copiée avant l’originale, comme si la cible de la contrainte était un parent (le redimensionnement est géré à part pour éviter la création de cisaillement)"
+
+
+msgid "Apply copied transformation after original, as if the constraint target is a child. Scale is handled specially to avoid creating shear"
+msgstr "Appliquer la transformation copiée après l’originale, comme si la cible de la contrainte était un enfant (le redimensionnement est géré à part pour éviter la création de cisaillement)"
 
 
 msgid "Damped Track Constraint"
@@ -6655,8 +6791,44 @@ msgid "Bottom range of Z axis source motion"
 msgstr "Intervalle inférieur du mouvement de la source le long de l’axe Z"
 
 
+msgid "Specify the type of rotation channels to use"
+msgstr "Spécifier le type de canaux de rotation à utiliser"
+
+
+msgid "Auto Euler"
+msgstr "Euler auto"
+
+
+msgid "Euler using the rotation order of the target"
+msgstr "Euler utilisant l’ordre de rotation de la cible"
+
+
 msgid "Quaternion"
 msgstr "Quaternion"
+
+
+msgid "Swing and X Twist"
+msgstr "Balancement et torsion X"
+
+
+msgid "Decompose into a swing rotation to aim the X axis, followed by twist around it"
+msgstr "Décomposer en une rotation de balancement pour pointer vers l’axe X, suivie par une torsion autour de celui-ci"
+
+
+msgid "Swing and Y Twist"
+msgstr "Balancement et torsion Y"
+
+
+msgid "Decompose into a swing rotation to aim the Y axis, followed by twist around it"
+msgstr "Décomposer en une rotation de balancement pour pointer vers l’axe Y, suivie par une torsion autour de celui-ci"
+
+
+msgid "Swing and Z Twist"
+msgstr "Balancement et torsion Z"
+
+
+msgid "Decompose into a swing rotation to aim the Z axis, followed by twist around it"
+msgstr "Décomposer en une rotation de balancement pour pointer vers l’axe Z, suivie par une torsion autour de celui-ci"
 
 
 msgid "Map From"
@@ -6705,6 +6877,46 @@ msgstr "Appliquer/convertir vers Z depuis"
 
 msgid "The source axis constrained object's Z axis uses"
 msgstr "L’axe de la source que l’axe Z de l’objet contraint utilise"
+
+
+msgid "Location Mix Mode"
+msgstr "Mode de mélange de position"
+
+
+msgid "Specify how to combine the new location with original"
+msgstr "Spécifier comment combiner la nouvelle position avec l’originale"
+
+
+msgid "Replace component values"
+msgstr "Remplacer les valeurs de composantes"
+
+
+msgid "Add component values together"
+msgstr "Additionner les valeurs de composantes ensemble"
+
+
+msgid "Specify how to combine the new rotation with original"
+msgstr "Spécifier comment combiner la nouvelle rotation avec l’originale"
+
+
+msgid "Apply new rotation before original, as if it was on a parent"
+msgstr "Appliquer la nouvelle rotation avant l’originale, comme si c’était sur un parent"
+
+
+msgid "Apply new rotation after original, as if it was on a child"
+msgstr "Appliquer la nouvelle rotation après l’originale, comme si c’était sur un enfant"
+
+
+msgid "Specify how to combine the new scale with original"
+msgstr "Spécifier comment combiner la nouvelle dimension avec l’originale"
+
+
+msgid "Multiply component values together"
+msgstr "Multiplier les valeurs de composantes ensemble"
+
+
+msgid "Explicitly specify the output euler rotation order"
+msgstr "Spécifier explicitement l’ordre de rotation Euler de sortie"
 
 
 msgid "To Maximum X"
@@ -7886,6 +8098,10 @@ msgid "Rotation Mode"
 msgstr "Mode de rotation"
 
 
+msgid "Mode for calculating rotation channel values"
+msgstr "Mode de calcul des valeurs des canaux de rotation"
+
+
 msgid "Transform Space"
 msgstr "Espace de transformation"
 
@@ -8654,6 +8870,10 @@ msgid "Bone is not visible when in Edit Mode"
 msgstr "L’os est invisible en mode Edit"
 
 
+msgid "Length of the bone. Changing moves the tail end"
+msgstr "Longueur de l’os (la modifier déplace l’extrémité de queue)"
+
+
 msgid "Bone is not able to be transformed when in Edit Mode"
 msgstr "L'os ne peut pas être transformé en mode Edit"
 
@@ -8884,6 +9104,10 @@ msgstr "Algorithme utilisé pour calculer automatiquement les poignées"
 
 msgid "Continuous Acceleration"
 msgstr "Accélération continue"
+
+
+msgid "Automatic handles are adjusted to avoid jumps in acceleration, resulting in smoother curves. However, key changes may affect interpolation over a larger stretch of the curve"
+msgstr "Les poignées automatiques sont ajustées pour éviter les sauts d’accélération, donnant des courbes plus douces. Cependant, les modifications d’images clé peuvent affecter l’interpolation sur une plus grande partie de la courbe"
 
 
 msgid "Color of the F-Curve in the Graph Editor"
@@ -9130,6 +9354,10 @@ msgid "Disables audio output, for video-only renders"
 msgstr "Désactiver la sortie audio, pour des rendus vidéo uniquement"
 
 
+msgid "Opus"
+msgstr "Opus"
+
+
 msgid "Vorbis"
 msgstr "Vorbis"
 
@@ -9313,6 +9541,10 @@ msgstr "Matroska"
 
 msgid "Flash"
 msgstr "Flash"
+
+
+msgid "WebM"
+msgstr "WebM"
 
 
 msgid "Distance between key frames, also known as GOP size; influences file size and seekability"
@@ -10232,6 +10464,10 @@ msgid "Create a force along a curve object"
 msgstr "Créer une force le long d’un objet courbe"
 
 
+msgid "Create a force that acts as a boid's predators or target"
+msgstr "Créer une force agissant comme un prédateur ou une cible des “boids”"
+
+
 msgid "Create turbulence with a noise field"
 msgstr "Créer des turbulences avec un champ de bruit"
 
@@ -10688,6 +10924,18 @@ msgid "List all sub-directories' content, three levels of recursion"
 msgstr "Lister tout le contenu des sous-dossiers, trois niveaux de récursion"
 
 
+msgid "File Modification Date"
+msgstr "Date de modification de fichier"
+
+
+msgid "Draw a column listing the date and time of modification for each file"
+msgstr "Afficher une colonne listant les date et heure de modification de chaque fichier"
+
+
+msgid "Draw a column listing the size of each file"
+msgstr "Afficher une colonne listant la taille de chaque fichier"
+
+
 msgid "Show Hidden"
 msgstr "Afficher cachés"
 
@@ -10818,6 +11066,14 @@ msgstr "Navigateur de bibliothèque"
 
 msgid "Whether we may browse blender files' content or not"
 msgstr "Si l’on peut naviguer dans le contenu des fichiers blender ou pas"
+
+
+msgid "Reverse Sorting"
+msgstr "Inverser ordre de tris"
+
+
+msgid "Sort items descending, from highest value to lowest"
+msgstr "Trier les éléments de façon descendante, de la plus forte valeur à la plus faible"
 
 
 msgid "Fluid Simulation Settings"
@@ -11832,62 +12088,6 @@ msgid "Keep the computed view map and avoid re-calculating it if mesh geometry i
 msgstr "Conserver la carte de vue calculée et éviter de la re-calculer si la géométrie du mesh demeure inchangée"
 
 
-msgid "GPU FX Settings"
-msgstr "Réglages d’effets GPU"
-
-
-msgid "Settings for GPU based compositing"
-msgstr "Réglages pour le compositing par GPU"
-
-
-msgid "Screen Space Ambient Occlusion settings"
-msgstr "Réglages d’occlusion ambiante en espace écran"
-
-
-msgid "SSAO"
-msgstr "SSAO"
-
-
-msgid "Use screen space ambient occlusion of field on viewport"
-msgstr "Utiliser l’occlusion ambiante de champ dans l’espace écran de la vue"
-
-
-msgid "GPU SSAO"
-msgstr "SSAO GPU"
-
-
-msgid "Settings for GPU based screen space ambient occlusion"
-msgstr "Réglages pour l’occlusion ambiante en espace écran par GPU"
-
-
-msgid "Attenuation"
-msgstr "Atténuation"
-
-
-msgid "Attenuation constant"
-msgstr "Constante  d’atténuation"
-
-
-msgid "Color for screen space ambient occlusion effect"
-msgstr "Couleur de l’effet d’occlusion ambiante en espace écran"
-
-
-msgid "Distance of object that contribute to the SSAO effect"
-msgstr "Distance de l’objet qui contribue à l’effet SSAO"
-
-
-msgid "Strength of the SSAO effect"
-msgstr "Force de l’effet SSAO"
-
-
-msgid "Samples"
-msgstr "Échantillons"
-
-
-msgid "Number of samples"
-msgstr "Nombre d’échantillons"
-
-
 msgid "Grease Pencil Frame"
 msgstr "Frame de crayon gras"
 
@@ -12194,6 +12394,10 @@ msgstr "Est apparenté"
 
 msgid "True when the layer parent object is set"
 msgstr "Vrai quand l’objet parent du calque est défini"
+
+
+msgid "This is a special ruler layer"
+msgstr "Ceci est un calque de règle spécial"
 
 
 msgid "Thickness Change"
@@ -12510,6 +12714,10 @@ msgstr "Grille"
 
 msgid "Grid allows horizontal and vertical lines"
 msgstr "La grille permet des lignes horizontales et verticales"
+
+
+msgid "Isometric"
+msgstr "Isométrique"
 
 
 msgid "Use Guides"
@@ -13626,6 +13834,10 @@ msgid "Falloff Curve"
 msgstr "Courbe d’atténuation"
 
 
+msgid "Custom light falloff curve"
+msgstr "Courbe d’atténuation lumineuse personnalisée"
+
+
 msgid "If not zero, the distance from the hook where influence ends"
 msgstr "Si non nulle, la distance au crochet à laquelle l’influence disparaît"
 
@@ -13836,6 +14048,18 @@ msgid "Factor of Opacity"
 msgstr "Facteur d’opacité"
 
 
+msgid "Set what mode used to define opacity"
+msgstr "Définir le mode utilisé pour définir l’opacité"
+
+
+msgid "Modify opacity using alpha channel of material"
+msgstr "Modifier l’opacité avec le canal alpha du matériau"
+
+
+msgid "Modify opacity using point strength"
+msgstr "Modifier l’opacité avec la force du point"
+
+
 msgid "Simplify Modifier"
 msgstr "Modificateur Simplifier"
 
@@ -13860,8 +14084,16 @@ msgid "Adaptive"
 msgstr "Adaptatif"
 
 
+msgid "Resample the stroke with segments of the specified length"
+msgstr "Ré-échantillonner le trait avec des segments de la longueur spécifiée"
+
+
 msgid "Merge"
 msgstr "Fusionner"
+
+
+msgid "Simplify the stroke by merging vertices closer than a given distance"
+msgstr "Simplifier le trait en fusionnant les vertices plus proches que la distance donnée"
 
 
 msgid "Number of times to apply simplify"
@@ -14497,6 +14729,18 @@ msgid "Clone Offset"
 msgstr "Cloner décalage"
 
 
+msgid "Use single color or gradient when painting"
+msgstr "Utiliser une couleur unique ou un dégradé lors de la peinture"
+
+
+msgid "Paint with a single color"
+msgstr "Peindre avec une seule couleur"
+
+
+msgid "Paint with a gradient"
+msgstr "Peindre avec un dégradé"
+
+
 msgid "Crease Brush Pinch Factor"
 msgstr "Facteur de pincement de la brosse plier"
 
@@ -14545,6 +14789,22 @@ msgid "Deformation"
 msgstr "Déformation"
 
 
+msgid "Deformation type that is used in the brush"
+msgstr "Type de déformation utilisée par la brosse"
+
+
+msgid "Bi-scale Grab"
+msgstr "Bi-scale Grab"
+
+
+msgid "Tri-scale Grab"
+msgstr "Tri-scale Grab"
+
+
+msgid "Poisson ratio for elastic deformation. Higher values preserve volume more, but also lead to more bulging"
+msgstr "Coefficient de Poisson pour la déformation élastique. De plus fortes valeurs préservent mieux le volume, mais conduisent aussi à plus de gonflement"
+
+
 msgid "Falloff Angle"
 msgstr "Angle d’affaiblissement"
 
@@ -14565,12 +14825,28 @@ msgid "Gpencil Settings"
 msgstr "Réglages de crayon gras"
 
 
+msgid "Category of the brush"
+msgstr "Catégorie de la brosse"
+
+
 msgid "Draw"
 msgstr "Dessiner"
 
 
+msgid "The brush is of type used for drawing strokes"
+msgstr "La brosse est du type utilisé pour dessiner des traits"
+
+
+msgid "The brush is of type used for filling areas"
+msgstr "La brosse est du type utilisé pour remplir des zones"
+
+
 msgid "Erase"
 msgstr "Effacer"
+
+
+msgid "The brush is used for erasing strokes"
+msgstr "La brosse est du type utilisé pour effacer des traits"
 
 
 msgid "Gradient Spacing"
@@ -14665,6 +14941,10 @@ msgid "Mask Tool"
 msgstr "Outils de masque"
 
 
+msgid "Ratio between the brush radius and the radius that is going to be used to sample the normal"
+msgstr "Proportion entre le rayon de la brosse et le rayon qui va être utilisé pour échantillonner la normale"
+
+
 msgid "Normal Weight"
 msgstr "Poids de la normale"
 
@@ -14695,6 +14975,10 @@ msgstr "Ajustage de plan"
 
 msgid "If a vertex is further away from offset plane than this, then it is not affected"
 msgstr "Si un vertex est plus éloigné du plan de décalage que cela, alors il n’est pas affecté"
+
+
+msgid "Offset of the pose origin in relation to the brush radius"
+msgstr "Décalage de l’origine de la pose en relation au rayon de la brosse"
 
 
 msgid "Rake"
@@ -14909,6 +15193,10 @@ msgid "Topology Rake"
 msgstr "Inclinaison de topologie"
 
 
+msgid "Automatically align edges to the brush direction to generate cleaner topology and define sharp features. Best used on low-poly meshes as it has a performance impact"
+msgstr "Aligner automatiquement les arêtes dans la direction de la brosse pour générer une topologie plus propre et définir des détails précis. À utiliser de préférence sur des meshes low-poly car ça a un impact sur les performances"
+
+
 msgid "Unprojected Radius"
 msgstr "Rayon non-projeté"
 
@@ -14939,6 +15227,14 @@ msgstr "Affecter alpha"
 
 msgid "When this is disabled, lock alpha while painting"
 msgstr "Quand c’est désactivé, verrouiller l’alpha pendant la peinture"
+
+
+msgid "Topology Automasking"
+msgstr "Auto-masquage de topologie"
+
+
+msgid "Affect only vertices connected to the active vertex under the brush"
+msgstr "N’affecter que les vertices connectés à l’actif sous la brosse"
 
 
 msgid "Use Cursor Overlay"
@@ -14993,6 +15289,14 @@ msgid "Blend brush influence by how much they face the front"
 msgstr "Affecter l’influence de la brosse par leur angle avec l’écran"
 
 
+msgid "Grab Active Vertex"
+msgstr "Capturer vertex actif"
+
+
+msgid "Apply the maximum grab strength to the active vertex instead of the cursor location"
+msgstr "Appliquer la plus forte force de capture au vertex actif au lieu de la position du curseur"
+
+
 msgid "Inverse Smooth Pressure"
 msgstr "Pression douce inverse"
 
@@ -15003,6 +15307,18 @@ msgstr "Une pression plus légère fait que plus d’adoucissement est appliqué
 
 msgid "Radius Unit"
 msgstr "Unité de rayon"
+
+
+msgid "Measure brush size relative to the view or the scene"
+msgstr "Mesurer la taille de la brosse relativement à la vue ou à la scène"
+
+
+msgid "Measure brush size relative to the view"
+msgstr "Mesurer la taille de la brosse relativement à la vue"
+
+
+msgid "Measure brush size relative to the scene"
+msgstr "Mesurer la taille de la brosse relativement à la scène"
 
 
 msgid "Plane Offset Pressure"
@@ -15149,12 +15465,28 @@ msgid "Allow a single dot to be carefully positioned"
 msgstr "Permettre à un simple point d’être précisément positionné"
 
 
+msgid "Calculate the brush spacing using view or scene distance"
+msgstr "Calculer l’espacement de la brosse en utilisant la distance de vue ou de scène"
+
+
+msgid "Calculate brush spacing relative to the view"
+msgstr "Calculer l’espacement de la brosse relativement à la vue"
+
+
+msgid "Calculate brush spacing relative to the scene using the stroke location"
+msgstr "Calculer l’espacement de la brosse relativement à la scène en utilisant la position du trait"
+
+
 msgid "Smooth Stroke"
 msgstr "Traits doux"
 
 
 msgid "Brush lags behind mouse and follows a smoother path"
 msgstr "La brosse traîne derrière la souris et suit un chemin plus lissé"
+
+
+msgid "Adjust Strength for Spacing"
+msgstr "Ajuster force pour espacement"
 
 
 msgid "Automatically adjust strength to give consistent results for different spacings"
@@ -15409,28 +15741,64 @@ msgid "Display reference images behind objects in the 3D View"
 msgstr "Afficher des images de référence derrière les objets dans la vue 3D"
 
 
+msgid "Display center composition guide inside the camera view"
+msgstr "Afficher le guide de composition central dans la vue caméra"
+
+
 msgid "Center Diagonal"
 msgstr "Centre diagonal"
+
+
+msgid "Display diagonal center composition guide inside the camera view"
+msgstr "Afficher le guide de composition diagonal central dans la vue caméra"
+
+
+msgid "Golden Ratio"
+msgstr "Nombre d’or"
+
+
+msgid "Display golden ratio composition guide inside the camera view"
+msgstr "Afficher le guide de composition basé sur le nombre d’or dans la vue caméra"
 
 
 msgid "Golden Triangle A"
 msgstr "Triangle d’or A"
 
 
+msgid "Display golden triangle A composition guide inside the camera view"
+msgstr "Afficher le guide de composition basé sur le nombre d’or dans la vue caméra"
+
+
 msgid "Golden Triangle B"
 msgstr "Triangle d’or B"
+
+
+msgid "Display golden triangle B composition guide inside the camera view"
+msgstr "Afficher le guide de composition du triangle d’or B dans la vue caméra"
 
 
 msgid "Harmonious Triangle A"
 msgstr "Triangle harmonieux A"
 
 
+msgid "Display harmony A composition guide inside the camera view"
+msgstr "Afficher le guide de composition harmonique A dans la vue caméra"
+
+
 msgid "Harmonious Triangle B"
 msgstr "Triangle harmonieux B"
 
 
+msgid "Display harmony B composition guide inside the camera view"
+msgstr "Afficher le guide de composition harmonique B dans la vue caméra"
+
+
 msgid "Thirds"
 msgstr "Tiers"
+
+
+msgid "Display rule of thirds composition guide inside the camera view"
+msgstr "Afficher le guide de composition de la règle des tiers dans la vue caméra"
 
 
 msgid "Show Limits"
@@ -15513,8 +15881,20 @@ msgid "All Objects"
 msgstr "Tous les objets"
 
 
+msgid "Objects that are in this collection and its child collections"
+msgstr "Objets dans cette collection et ses collections enfant"
+
+
+msgid "Collections that are immediate children of this collection"
+msgstr "Collections qui sont les enfants immédiats de cette collection"
+
+
 msgid "Disable in Renders"
 msgstr "Désactiver dans les rendus"
+
+
+msgid "Globally disable in renders"
+msgstr "Désactiver globalement au rendu"
 
 
 msgid "Disable Selection"
@@ -15529,12 +15909,20 @@ msgid "Disable in Viewports"
 msgstr "Désactiver dans les vues"
 
 
+msgid "Globally disable in viewports"
+msgstr "Désactiver globalement dans les vues 3D"
+
+
 msgid "Instance Offset"
 msgstr "Décalage d’instance"
 
 
 msgid "Offset from the origin to use when instancing"
 msgstr "Décalage depuis l’origine à utiliser lors de l’instanciation"
+
+
+msgid "Objects that are directly in this collection"
+msgstr "Objets qui sont directement dans cette collection"
 
 
 msgid "Curve data-block storing curves, splines and NURBS"
@@ -16021,8 +16409,36 @@ msgid "Vertical offset from the object origin"
 msgstr "Décalage vertical depuis l’origine de l’objet"
 
 
+msgid "Textbox Overflow"
+msgstr "Débordement de boîte texte"
+
+
+msgid "Handle the text behavior when it doesn't fit in the text boxes"
+msgstr "Définit le comportement du texte quand il ne tient pas dans les boîtes de texte"
+
+
+msgid "Overflow"
+msgstr "Déborder"
+
+
+msgid "Let the text overflow outside the text boxes"
+msgstr "Laisser le texte déborder hors des boîtes de texte"
+
+
 msgid "Scale to Fit"
 msgstr "Redimensionner pour remplir"
+
+
+msgid "Scale down the text to fit inside the text boxes"
+msgstr "Rapetisser le texte pour qu’il tienne dans les boîtes de texte"
+
+
+msgid "Truncate"
+msgstr "Tronquer"
+
+
+msgid "Truncate the text that would go outside the text boxes"
+msgstr "Tronquer le texte qui dépasserait des boîtes de texte"
 
 
 msgid "Shear"
@@ -16505,12 +16921,24 @@ msgid "Base Color"
 msgstr "Couleur de base"
 
 
+msgid "Use the linestyle's base color"
+msgstr "Utiliser la couleur de base du style de ligne"
+
+
 msgid "First Vertex"
 msgstr "Premier vertex"
 
 
+msgid "Use the color of a stroke's first vertex"
+msgstr "Utiliser la couleur du premier vertex d’un trait"
+
+
 msgid "Final Vertex"
 msgstr "Vertex final"
+
+
+msgid "Use the color of a stroke's final vertex"
+msgstr "Utiliser la couleur du vertex final d’un trait"
 
 
 msgid "Texture slots defining the mapping and influence of textures"
@@ -16715,6 +17143,10 @@ msgstr "Mode peinture de poids"
 
 msgid "Grease Pencil weight paint"
 msgstr "Peinture de poids de crayon gras"
+
+
+msgid "Filter by Type"
+msgstr "Filtrer par type"
 
 
 msgid "All Types"
@@ -17537,6 +17969,10 @@ msgstr "Limite proche du tampon d’ombrage"
 
 msgid "Shadow map clip start, below which objects will not generate shadows"
 msgstr "Limite éloignée de la carte d’ombrage, au-delà de laquelle les objets ne généreront pas d’ombre"
+
+
+msgid "Samples"
+msgstr "Échantillons"
 
 
 msgid "Number of shadow buffer samples"
@@ -20763,6 +21199,10 @@ msgstr "Si le fichier contient plusieurs canaux audio, ils sont rendus comme un 
 
 msgid "Speaker data-block for 3D audio speaker objects"
 msgstr "Bloc de données haut-parleur, pour les objets haut-parleurs audio 3D"
+
+
+msgid "Attenuation"
+msgstr "Atténuation"
 
 
 msgid "How strong the distance affects volume, depending on distance model"
@@ -24020,28 +24460,56 @@ msgid "RotScale"
 msgstr "RotTaille"
 
 
+msgid "Insert a keyframe on each of the location channels, taking into account effects of constraints and relationships"
+msgstr "Insérer une image clé sur chacun des canaux de position, en prenant en compte les effets des contraintes et relations"
+
+
 msgid "Visual Location"
 msgstr "Position visuelle"
+
+
+msgid "Insert a keyframe on each of the location and rotation channels, taking into account effects of constraints and relationships"
+msgstr "Insérer une image clé sur chacun des canaux de position et rotation, en prenant en compte les effets des contraintes et relations"
 
 
 msgid "Visual LocRot"
 msgstr "PosRot visuelles"
 
 
+msgid "Insert a keyframe on each of the location, rotation and scaling channels, taking into account effects of constraints and relationships"
+msgstr "Insérer une image clé sur chacun des canaux de position, rotation et taille, en prenant en compte les effets des contraintes et relations"
+
+
 msgid "Visual LocRotScale"
 msgstr "PosRotTaille visuelles"
+
+
+msgid "Insert a keyframe on each of the location and scaling channels, taking into account effects of constraints and relationships"
+msgstr "Insérer une image clé sur chacun des canaux de position et taille, en prenant en compte les effets des contraintes et relations"
 
 
 msgid "Visual LocScale"
 msgstr "PosTaille visuelles"
 
 
+msgid "Insert a keyframe on each of the rotation channels, taking into account effects of constraints and relationships"
+msgstr "Insérer une image clé sur chacun des canaux de rotation, en prenant en compte les effets des contraintes et relations"
+
+
 msgid "Visual Rotation"
 msgstr "Rotation visuelle"
 
 
+msgid "Insert a keyframe on each of the rotation and scaling channels, taking into account effects of constraints and relationships"
+msgstr "Insérer une image clé sur chacun des canaux de rotation et taille, en prenant en compte les effets des contraintes et relations"
+
+
 msgid "Visual RotScale"
 msgstr "RotTaille visuelles"
+
+
+msgid "Insert a keyframe on each of the scale channels, taking into account effects of constraints and relationships"
+msgstr "Insérer une image clé sur chacun des canaux de taille, en prenant en compte les effets des contraintes et relations"
 
 
 msgid "Visual Scaling"
@@ -24072,8 +24540,16 @@ msgid "Scaling"
 msgstr "Taille"
 
 
+msgid "Insert a keyframe for all properties that are likely to get animated in a character rig (useful when blocking out a shot)"
+msgstr "Insérer une image clé pour toutes les propriétés qui sont susceptibles d’être animées dans un système d’animation de personnage (utile pour 'bloquer' une séquence)"
+
+
 msgid "Whole Character"
 msgstr "Tout le caractère"
+
+
+msgid "Insert a keyframe for all properties that are likely to get animated in a character rig (only selected bones)"
+msgstr "Insérer une image clé pour toutes les propriétés qui sont susceptibles d’être animées dans un système d’animation de personnage (os sélectionnés uniquement)"
 
 
 msgid "Whole Character (Selected bones only)"
@@ -34668,6 +35144,14 @@ msgid "Toggle keyframe selection instead of leaving newly selected keyframes onl
 msgstr "Inverser la sélection d’images clé au lieu de ne conserver que les nouvelles images clé de sélectionnées"
 
 
+msgid "Mouse X"
+msgstr "Souris X"
+
+
+msgid "Mouse Y"
+msgstr "Souris Y"
+
+
 msgctxt "Operator"
 msgid "Copy Keyframes"
 msgstr "Copier images clé"
@@ -39698,10 +40182,6 @@ msgid "Delete Selected Files"
 msgstr "Supprimer fichiers sélectionnés"
 
 
-msgid "Delete selected files"
-msgstr "Supprimer les fichiers sélectionnés"
-
-
 msgctxt "Operator"
 msgid "Create New Directory"
 msgstr "Créer nouveau dossier"
@@ -44636,134 +45116,52 @@ msgid "Construct a UV sphere mesh"
 msgstr "Créer un mesh de sphère UV"
 
 
-msgctxt "Operator"
-msgid "Print3D Check All"
-msgstr "Print3D Tout vérifier"
-
-
 msgid "Run all checks"
 msgstr "Lancer toutes les vérifications"
-
-
-msgctxt "Operator"
-msgid "Print3D Check Degenerate"
-msgstr "Print3D Vérifier dégénérés"
 
 
 msgid "Check for degenerate geometry that may not print properly (zero area faces, zero length edges)"
 msgstr "Vérifier les géométries dégénérées qui pourraient ne pas être imprimées correctement (faces de surface nulle, arêtes de longueur nulle…)"
 
 
-msgctxt "Operator"
-msgid "Print3D Check Distorted Faces"
-msgstr "Print3D Vérifier faces distordues"
-
-
-msgid "Check for non-flat faces "
-msgstr "Vérifier les faces non-planes "
-
-
-msgctxt "Operator"
-msgid "Print3D Check Intersections"
-msgstr "Print3D Vérifier intersections"
+msgid "Check for non-flat faces"
+msgstr "Vérifier les faces non-planes"
 
 
 msgid "Check geometry for self intersections"
 msgstr "Vérifier les géométries pour les auto-intersections"
 
 
-msgctxt "Operator"
-msgid "Print3D Check Overhang"
-msgstr "Print3D Vérifier saillies"
-
-
 msgid "Check faces don't overhang past a certain angle"
 msgstr "Vérifier que les faces ne saillent pas au-delà d’un angle donné"
-
-
-msgctxt "Operator"
-msgid "Print3D Check Sharp"
-msgstr "Print3D Vérifier aigu"
 
 
 msgid "Check edges are below the sharpness preference"
 msgstr "Vérifier que les arêtes restent en-deçà de la préférence de dureté"
 
 
-msgctxt "Operator"
-msgid "Print3D Check Solid"
-msgstr "Print3D Vérifier solide"
-
-
 msgid "Check for geometry is solid (has valid inside/outside) and correct normals"
 msgstr "Vérifier que la géométrie est solide (a un intérieur/extérieur valides) et des normales correctes"
-
-
-msgctxt "Operator"
-msgid "Print3D Check Thickness"
-msgstr "Print3D Vérifier épaisseur"
 
 
 msgid "Check geometry is above the minimum thickness preference (relies on correct normals)"
 msgstr "Vérifier que la géométrie reste au-dessus de la préférence d’épaisseur minimum (dépend de normales correctes)"
 
 
-msgctxt "Operator"
-msgid "Print3D Clean Distorted"
-msgstr "Print3D Nettoyer distordus"
-
-
 msgid "Tessellate distorted faces"
 msgstr "Tessellater les faces distordues"
 
 
-msgctxt "Operator"
-msgid "Print3D Clean Isolated "
-msgstr "Print3D Nettoyer isolés "
-
-
-msgid "Cleanup isolated vertices and edges"
-msgstr "Supprimer les vertices et arêtes isolés"
-
-
-msgctxt "Operator"
-msgid "Print3D Clean Non-Manifold and Inverted"
-msgstr "Print3D Nettoyer non-manifold et inversées"
-
-
-msgid "Cleanup problems, like holes, non-manifold vertices, and inverted normals"
-msgstr "Supprimer les problèmes, comme les trous, vertices non-manifold, ou normales inversées"
-
-
-msgid "Number of sides in hole required to fill"
-msgstr "Nombre de côtés au trou requis pour combler"
+msgid "Limit for checking distorted faces"
+msgstr "Limite de vérification des faces distordues"
 
 
 msgid "Minimum distance between elements to merge"
 msgstr "Distance minimum entre éléments à fusionner"
 
 
-msgctxt "Operator"
-msgid "Print3D Export"
-msgstr "Print3D Exporter"
-
-
-msgid "Export active object using print3d settings"
-msgstr "Exporter l’objet actif en utilisant les réglages d’impression 3D"
-
-
-msgctxt "Operator"
-msgid "Print3D Info Area"
-msgstr "Print3D Info surface"
-
-
 msgid "Report the surface area of the active mesh"
 msgstr "Rapporte l’aire de la surface du mesh actif"
-
-
-msgctxt "Operator"
-msgid "Print3D Info Volume"
-msgstr "Print3D Info volume"
 
 
 msgid "Report the volume of the active mesh"
@@ -44790,11 +45188,6 @@ msgstr "Redimensionner au volume"
 
 msgid "Scale edit-mesh or selected-objects to a set volume"
 msgstr "Redimensionner le mesh édité, ou les objets sélectionnés, à un volume donné"
-
-
-msgctxt "Operator"
-msgid "Print3D Select Report"
-msgstr "Print3D Sélectionner rapport"
 
 
 msgid "Select the data associated with this report"
@@ -46508,14 +46901,6 @@ msgstr "Redimensionner un nœud"
 
 msgid "Select the node under the cursor"
 msgstr "Sélectionner le nœud sous le curseur"
-
-
-msgid "Mouse X"
-msgstr "Souris X"
-
-
-msgid "Mouse Y"
-msgstr "Souris Y"
 
 
 msgid "Socket Select"
@@ -59267,10 +59652,6 @@ msgid "Weights Context Menu"
 msgstr "Menu contextuel de poids"
 
 
-msgid "Print3D"
-msgstr "Impression 3D"
-
-
 msgid "Dyntopo"
 msgstr "Dyntopo"
 
@@ -63919,10 +64300,6 @@ msgid "Export an animation"
 msgstr "Export une animation"
 
 
-msgid "Limit for checking distorted faces"
-msgstr "Limite de vérification des faces distordues"
-
-
 msgid "Format type to export to"
 msgstr "Type de format vers lequel exporter"
 
@@ -65553,6 +65930,14 @@ msgstr "Limite d’élasticité"
 
 msgid "How much the spring has to be stretched/compressed in order to change it's rest length"
 msgstr "De combien l'élasticité doit être accentuée/réduite pour changer la longueur de repos"
+
+
+msgid "Attenuation constant"
+msgstr "Constante  d’atténuation"
+
+
+msgid "Number of samples"
+msgstr "Nombre d’échantillons"
 
 
 msgid "Factor for ambient occlusion blending"
@@ -68959,6 +69344,18 @@ msgid "Properties space data"
 msgstr "Données de l’espace des propriétés"
 
 
+msgid "Object Constraint Properties"
+msgstr "Propriétés de contrainte d’objet"
+
+
+msgid "Modifier Properties"
+msgstr "Propriétés de modificateur"
+
+
+msgid "Bone Constraint Properties"
+msgstr "Propriétés de contrainte d’os"
+
+
 msgid "Pin ID"
 msgstr "Épingler ID"
 
@@ -69277,14 +69674,6 @@ msgstr "Distance limite lointaine de la vue 3D"
 
 msgid "3D View near clipping distance (perspective view only)"
 msgstr "Distance limite proche de la vue 3D (vue en perspective uniquement)"
-
-
-msgid "FX Options"
-msgstr "Options FX"
-
-
-msgid "Options used for real time compositing"
-msgstr "Options utilisées pour le compositing temps réel"
 
 
 msgid "Viewport lens angle"
@@ -73424,6 +73813,10 @@ msgid "Multiple selected objects. Only the active one will be evaluated"
 msgstr "Objets sélectionnés multiples (seul l’actif sera évalué)"
 
 
+msgid "Scaled by "
+msgstr "Redimensionné par "
+
+
 msgid "Object has zero volume"
 msgstr "L’objet a un volume nul"
 
@@ -73444,6 +73837,10 @@ msgstr "Volume"
 msgctxt "Operator"
 msgid "Area"
 msgstr "Aire"
+
+
+msgid "Checks"
+msgstr "Vérifications"
 
 
 msgctxt "Operator"
@@ -73482,13 +73879,12 @@ msgstr "Tout vérifier"
 
 
 msgctxt "Operator"
-msgid "Isolated"
-msgstr "Isolés"
-
-
-msgctxt "Operator"
 msgid "Make Manifold"
 msgstr "Rendre “manifold”"
+
+
+msgid "Scale To"
+msgstr "Redimensionner"
 
 
 msgctxt "Operator"
@@ -76121,6 +76517,11 @@ msgstr "Deux pistes ou plus sont nécessaires sous cette bande"
 
 
 msgctxt "Operator"
+msgid "Find & Replace..."
+msgstr "Chercher & remplacer…"
+
+
+msgctxt "Operator"
 msgid "Top"
 msgstr "De dessus"
 
@@ -76897,13 +77298,13 @@ msgstr "Corriger déformations"
 
 
 msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "Cacher boîte englobante"
+msgid "Show Bounding Box"
+msgstr "Afficher boîte englobante"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "Afficher boîte englobante"
+msgid "Hide Bounding Box"
+msgstr "Cacher boîte englobante"
 
 
 msgctxt "Operator"
@@ -79271,6 +79672,10 @@ msgid "Menu \"%s\" not found"
 msgstr "Menu “%s” introuvable"
 
 
+msgid "Internal error!"
+msgstr "Erreur interne !"
+
+
 msgid "Shortcut: %s"
 msgstr "Raccourcis : %s"
 
@@ -79329,6 +79734,22 @@ msgstr "Pos"
 
 msgid "Use Clipping"
 msgstr "Utiliser troncature"
+
+
+msgid "Min X:"
+msgstr "Min X :"
+
+
+msgid "Min Y:"
+msgstr "Min Y :"
+
+
+msgid "Max X:"
+msgstr "Max X :"
+
+
+msgid "Max Y:"
+msgstr "Max Y :"
 
 
 msgid "Reset View"
@@ -79956,24 +80377,20 @@ msgid "Parse error in %s"
 msgstr "Erreur de parsing dans %s"
 
 
-msgid "Cannot add geometry in edit mode"
-msgstr "Impossible d’ajouter de la géométrie en mode Edit"
+msgid "Cannot add vertices in edit mode"
+msgstr "Impossible d’ajouter des vertices en mode Edit"
 
 
 msgid "Cannot add edges in edit mode"
 msgstr "Impossible d’ajouter des arêtes en mode Edit"
 
 
-msgid "Cannot add vertices in edit mode"
-msgstr "Impossible d’ajouter des vertices en mode Edit"
+msgid "Cannot add loops in edit mode"
+msgstr "Impossible d’ajouter des boucles en mode Edit"
 
 
-msgid "Cannot remove edges in edit mode"
-msgstr "Impossible d’enlever des arêtes en mode Edit"
-
-
-msgid "Cannot remove more edges than the mesh contains"
-msgstr "Impossible d’enlever plus d’arêtes que le mesh n’en a"
+msgid "Cannot add polygons in edit mode"
+msgstr "Impossible d’ajouter des polygones en mode Edit"
 
 
 msgid "Cannot remove vertices in edit mode"
@@ -79984,12 +80401,12 @@ msgid "Cannot remove more vertices than the mesh contains"
 msgstr "Impossible d’enlever plus de vertices que le mesh n’en a"
 
 
-msgid "Cannot add loops in edit mode"
-msgstr "Impossible d’ajouter des boucles en mode Edit"
+msgid "Cannot remove edges in edit mode"
+msgstr "Impossible d’enlever des arêtes en mode Edit"
 
 
-msgid "Cannot add polygons in edit mode"
-msgstr "Impossible d’ajouter des polygones en mode Edit"
+msgid "Cannot remove more edges than the mesh contains"
+msgstr "Impossible d’enlever plus d’arêtes que le mesh n’en a"
 
 
 msgid "%d %s mirrored, %d failed"
@@ -81412,10 +81829,6 @@ msgstr "Le chemin donné “%s” n’est pas valide pour l’OS, “%s” est c
 
 msgid "Could not create new folder: %s"
 msgstr "Impossible de créer un nouveau dossier : %s"
-
-
-msgid "Could not delete file: %s"
-msgstr "Impossible de supprimer le fichier : %s"
 
 
 msgid "Cancel"

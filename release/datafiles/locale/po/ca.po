@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -3780,14 +3780,6 @@ msgid "Use"
 msgstr "Començar Joc"
 
 
-msgid "Attenuation"
-msgstr "Esborrar Rotació"
-
-
-msgid "Samples"
-msgstr "Esborrar"
-
-
 msgid "Grease Pencil Frame"
 msgstr "Començar Joc"
 
@@ -5154,6 +5146,10 @@ msgstr "Esborrar Rotació"
 
 msgid "Shadow Buffer Bias"
 msgstr "Buffer Z"
+
+
+msgid "Samples"
+msgstr "Esborrar"
 
 
 msgid "Shadow Buffer Size"
@@ -6582,6 +6578,10 @@ msgstr "Image Displist"
 
 msgid "Caching"
 msgstr "Moure a Capa"
+
+
+msgid "Attenuation"
+msgstr "Esborrar Rotació"
 
 
 msgid "Inner Cone Angle"
@@ -27074,12 +27074,12 @@ msgstr "Esborrar Rotació"
 
 
 msgctxt "Operator"
-msgid "Hide Bounding Box"
+msgid "Show Bounding Box"
 msgstr "Autotangents"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
+msgid "Hide Bounding Box"
 msgstr "Autotangents"
 
 
@@ -27966,7 +27966,7 @@ msgid "Selection not supported in object mode"
 msgstr "Esborrar"
 
 
-msgid "Cannot add geometry in edit mode"
+msgid "Cannot add vertices in edit mode"
 msgstr "Seleccionar connectats"
 
 
@@ -27974,16 +27974,12 @@ msgid "Cannot add edges in edit mode"
 msgstr "Seleccionar connectats"
 
 
-msgid "Cannot add vertices in edit mode"
+msgid "Cannot add loops in edit mode"
 msgstr "Seleccionar connectats"
 
 
-msgid "Cannot remove edges in edit mode"
-msgstr "Finestra de Render"
-
-
-msgid "Cannot remove more edges than the mesh contains"
-msgstr "Finestra de Render"
+msgid "Cannot add polygons in edit mode"
+msgstr "Seleccionar connectats"
 
 
 msgid "Cannot remove vertices in edit mode"
@@ -27994,12 +27990,12 @@ msgid "Cannot remove more vertices than the mesh contains"
 msgstr "Image Displist"
 
 
-msgid "Cannot add loops in edit mode"
-msgstr "Seleccionar connectats"
+msgid "Cannot remove edges in edit mode"
+msgstr "Finestra de Render"
 
 
-msgid "Cannot add polygons in edit mode"
-msgstr "Seleccionar connectats"
+msgid "Cannot remove more edges than the mesh contains"
+msgstr "Finestra de Render"
 
 
 msgid "Cannot join while in edit mode"

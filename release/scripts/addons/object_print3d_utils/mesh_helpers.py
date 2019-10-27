@@ -20,6 +20,7 @@
 
 # Generic helper functions, to be used by any modules.
 
+
 import bmesh
 
 
@@ -190,66 +191,6 @@ def bmesh_check_thick_object(obj, thickness):
     layer.update()
 
     return array.array('i', faces_error)
-
-
-def object_merge(context, objects):
-    """Caller must remove."""
-
-    import bpy
-
-    def cd_remove_all_but_active(seq):
-        tot = len(seq)
-        if tot > 1:
-            act = seq.active_index
-            for i in range(tot - 1, -1, -1):
-                if i != act:
-                    seq.remove(seq[i])
-
-    scene = context.scene
-    layer = context.view_layer
-    scene_collection = context.layer_collection.collection
-
-    # deselect all
-    for obj in scene.objects:
-        obj.select_set(False)
-
-    # add empty object
-    mesh_tmp = bpy.data.meshes.new(name="~tmp~")
-    obj_tmp = bpy.data.objects.new(name="~tmp~", object_data=mesh_tmp)
-    scene_collection.objects.link(obj_tmp)
-    obj_tmp.select_set(True)
-
-    depsgraph = context.evaluated_depsgraph_get()
-
-    # loop over all meshes
-    for obj in objects:
-        if obj.type != 'MESH':
-            continue
-
-        # convert each to a mesh
-        obj_eval = obj.evaluated_get(depsgraph)
-        mesh_new = obj_eval.to_mesh()
-
-        # remove non-active uvs/vcols
-        cd_remove_all_but_active(mesh_new.vertex_colors)
-        cd_remove_all_but_active(mesh_new.uv_layers)
-
-        # join into base mesh
-        obj_new = bpy.data.objects.new(name="~tmp-new~", object_data=mesh_new)
-        scene_collection.objects.link(obj_new)
-        obj_new.matrix_world = obj.matrix_world
-
-        override = context.copy()
-        override["active_object"] = obj_tmp
-        override["selected_editable_objects"] = [obj_tmp, obj_new]
-
-        bpy.ops.object.join(override)
-
-        obj_eval.to_mesh_clear()
-
-    layer.update()
-
-    return obj_tmp
 
 
 def face_is_distorted(ele, angle_distort):

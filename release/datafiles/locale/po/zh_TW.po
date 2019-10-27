@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: 2018-09-23 13:23+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -9205,62 +9205,6 @@ msgid "Keep the computed view map and avoid re-calculating it if mesh geometry i
 msgstr "保留計算的視圖映射，若網格幾何未改變時則可避免重新計算"
 
 
-msgid "GPU FX Settings"
-msgstr "GPU FX 設定"
-
-
-msgid "Settings for GPU based compositing"
-msgstr "以 GPU 為基礎的合成設定"
-
-
-msgid "Screen Space Ambient Occlusion settings"
-msgstr "螢幕空間周遭遮擋設定"
-
-
-msgid "SSAO"
-msgstr "SSAO"
-
-
-msgid "Use screen space ambient occlusion of field on viewport"
-msgstr "於視接口使用場域的螢幕空間周遭遮擋"
-
-
-msgid "GPU SSAO"
-msgstr "GPU SSAO"
-
-
-msgid "Settings for GPU based screen space ambient occlusion"
-msgstr "以 GPU 為基礎的螢幕空間周遭遮擋 (SSAO) 設定"
-
-
-msgid "Attenuation"
-msgstr "衰減"
-
-
-msgid "Attenuation constant"
-msgstr "衰減常數"
-
-
-msgid "Color for screen space ambient occlusion effect"
-msgstr "螢幕空間周遭遮擋效果的色彩"
-
-
-msgid "Distance of object that contribute to the SSAO effect"
-msgstr "影響 SSAO 效果的物體距離"
-
-
-msgid "Strength of the SSAO effect"
-msgstr "SSAO 效果的強度"
-
-
-msgid "Samples"
-msgstr "取樣"
-
-
-msgid "Number of samples"
-msgstr "取樣數"
-
-
 msgid "Grease Pencil Frame"
 msgstr "蠟筆框幀"
 
@@ -12762,6 +12706,10 @@ msgid "Shadow map clip start, below which objects will not generate shadows"
 msgstr "陰影映射剪輯結束，沒到這裡物體不會生成陰影"
 
 
+msgid "Samples"
+msgstr "取樣"
+
+
 msgid "Number of shadow buffer samples"
 msgstr "陰影緩衝取樣的數量"
 
@@ -15396,6 +15344,10 @@ msgstr "聲音檔被解碼並載入 RAM 中"
 
 msgid "If the file contains multiple audio channels they are rendered to a single one"
 msgstr "如果該檔案包含多個聲道，它們會被算錄為單聲道"
+
+
+msgid "Attenuation"
+msgstr "衰減"
 
 
 msgid "How strong the distance affects volume, depending on distance model"
@@ -25817,6 +25769,14 @@ msgid "Extend Select"
 msgstr "擴展選取"
 
 
+msgid "Mouse X"
+msgstr "滑鼠 X"
+
+
+msgid "Mouse Y"
+msgstr "滑鼠 Y"
+
+
 msgctxt "Operator"
 msgid "Copy Keyframes"
 msgstr "複製鍵幀"
@@ -29904,10 +29864,6 @@ msgid "Delete Selected Files"
 msgstr "刪除所選的檔案"
 
 
-msgid "Delete selected files"
-msgstr "刪除所選的檔案"
-
-
 msgctxt "Operator"
 msgid "Create New Directory"
 msgstr "建立新的資料夾"
@@ -33164,134 +33120,48 @@ msgid "Construct a UV sphere mesh"
 msgstr "建立一個 UV 球體網格"
 
 
-msgctxt "Operator"
-msgid "Print3D Check All"
-msgstr "Print3D 檢驗全部"
-
-
 msgid "Run all checks"
 msgstr "執行所有檢驗"
-
-
-msgctxt "Operator"
-msgid "Print3D Check Degenerate"
-msgstr "Print3D 檢驗退化"
 
 
 msgid "Check for degenerate geometry that may not print properly (zero area faces, zero length edges)"
 msgstr "檢查是否有可能無法正常印出 (零面積面、零長度邊線) 的退化幾何"
 
 
-msgctxt "Operator"
-msgid "Print3D Check Distorted Faces"
-msgstr "Print3D 檢驗扭曲面"
-
-
-msgid "Check for non-flat faces "
-msgstr "檢驗是否有非扁平的面"
-
-
-msgctxt "Operator"
-msgid "Print3D Check Intersections"
-msgstr "Print3D 檢驗交錯"
-
-
 msgid "Check geometry for self intersections"
 msgstr "檢查幾何是否有自我交錯情況"
-
-
-msgctxt "Operator"
-msgid "Print3D Check Overhang"
-msgstr "Print3D 檢驗懸凸"
 
 
 msgid "Check faces don't overhang past a certain angle"
 msgstr "檢查面是否懸凸出特定角度"
 
 
-msgctxt "Operator"
-msgid "Print3D Check Sharp"
-msgstr "Print3D 檢驗銳利"
-
-
 msgid "Check edges are below the sharpness preference"
 msgstr "檢查邊線是否低於銳利度偏好"
-
-
-msgctxt "Operator"
-msgid "Print3D Check Solid"
-msgstr "Print3D 檢驗實心"
 
 
 msgid "Check for geometry is solid (has valid inside/outside) and correct normals"
 msgstr "檢查幾何是否是實心的 (具有效的內部/外部)，並校正法線"
 
 
-msgctxt "Operator"
-msgid "Print3D Check Thickness"
-msgstr "Print3D 檢驗厚度"
-
-
 msgid "Check geometry is above the minimum thickness preference (relies on correct normals)"
 msgstr "檢查幾何是否高於最小厚度偏好 (依賴校正法線作業)"
-
-
-msgctxt "Operator"
-msgid "Print3D Clean Distorted"
-msgstr "Print3D 清理扭曲"
 
 
 msgid "Tessellate distorted faces"
 msgstr "鑲嵌扭曲面"
 
 
-msgctxt "Operator"
-msgid "Print3D Clean Isolated "
-msgstr "Print3D 清理孤獨"
-
-
-msgid "Cleanup isolated vertices and edges"
-msgstr "清理孤獨的頂點和邊線"
-
-
-msgctxt "Operator"
-msgid "Print3D Clean Non-Manifold and Inverted"
-msgstr "Print3D 清理非流形和反轉"
-
-
-msgid "Cleanup problems, like holes, non-manifold vertices, and inverted normals"
-msgstr "清理問題，如空洞、非流形頂點、反轉的法線等"
-
-
-msgid "Number of sides in hole required to fill"
-msgstr "需要填補的空洞邊線數"
+msgid "Limit for checking distorted faces"
+msgstr "檢查扭曲面的限制"
 
 
 msgid "Minimum distance between elements to merge"
 msgstr "要合併的元素之間的最小距離"
 
 
-msgctxt "Operator"
-msgid "Print3D Export"
-msgstr "Print3D 匯出"
-
-
-msgid "Export active object using print3d settings"
-msgstr "使用 print3d 設定來匯出作用中的物體"
-
-
-msgctxt "Operator"
-msgid "Print3D Info Area"
-msgstr "Print3D 資訊面積"
-
-
 msgid "Report the surface area of the active mesh"
 msgstr "報告作用中網格的表面面積"
-
-
-msgctxt "Operator"
-msgid "Print3D Info Volume"
-msgstr "Print3D 資訊體積"
 
 
 msgid "Report the volume of the active mesh"
@@ -33318,11 +33188,6 @@ msgstr "縮放至體積"
 
 msgid "Scale edit-mesh or selected-objects to a set volume"
 msgstr "將編輯網格或選取網格縮放成設定體積"
-
-
-msgctxt "Operator"
-msgid "Print3D Select Report"
-msgstr "Print3D 選取報告"
 
 
 msgid "Select the data associated with this report"
@@ -34819,14 +34684,6 @@ msgstr "重新調整節點的大小"
 
 msgid "Select the node under the cursor"
 msgstr "選取游標下的節點"
-
-
-msgid "Mouse X"
-msgstr "滑鼠 X"
-
-
-msgid "Mouse Y"
-msgstr "滑鼠 Y"
 
 
 msgid "(De)select all nodes"
@@ -44232,10 +44089,6 @@ msgid "Motion Tracking"
 msgstr "運動跟蹤"
 
 
-msgid "Print3D"
-msgstr "Print3D"
-
-
 msgid "Dyntopo"
 msgstr "Dyntopo"
 
@@ -47406,10 +47259,6 @@ msgid "Brush Size"
 msgstr "筆刷大小"
 
 
-msgid "Limit for checking distorted faces"
-msgstr "檢查扭曲面的限制"
-
-
 msgid "Format type to export to"
 msgstr "要匯出的格式類型"
 
@@ -48680,6 +48529,14 @@ msgstr "彈性限度"
 
 msgid "How much the spring has to be stretched/compressed in order to change it's rest length"
 msgstr "彈簧要延伸/壓縮多少以改變其靜止長度"
+
+
+msgid "Attenuation constant"
+msgstr "衰減常數"
+
+
+msgid "Number of samples"
+msgstr "取樣數"
 
 
 msgid "Factor for ambient occlusion blending"
@@ -51693,14 +51550,6 @@ msgstr "3D 視圖的遠方剪輯距離"
 
 msgid "3D View near clipping distance (perspective view only)"
 msgstr "3D 視圖的近處剪輯距離 (僅限透視法檢視)"
-
-
-msgid "FX Options"
-msgstr "FX 選項"
-
-
-msgid "Options used for real time compositing"
-msgstr "實時合成用的選項"
 
 
 msgid "Viewport lens angle"
@@ -55100,11 +54949,6 @@ msgstr "檢查全部"
 
 
 msgctxt "Operator"
-msgid "Isolated"
-msgstr "孤獨"
-
-
-msgctxt "Operator"
 msgid "Bounds"
 msgstr "邊界"
 
@@ -57845,13 +57689,13 @@ msgstr "修正變形"
 
 
 msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "隱藏邊界方塊"
+msgid "Show Bounding Box"
+msgstr "顯示邊界方塊"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "顯示邊界方塊"
+msgid "Hide Bounding Box"
+msgstr "隱藏邊界方塊"
 
 
 msgctxt "Operator"
@@ -60198,24 +60042,20 @@ msgid "Parse error in %s"
 msgstr "解析錯誤位於 %s"
 
 
-msgid "Cannot add geometry in edit mode"
-msgstr "編輯模式中無法添加幾何"
+msgid "Cannot add vertices in edit mode"
+msgstr "無法在編輯模式中添加頂點"
 
 
 msgid "Cannot add edges in edit mode"
 msgstr "無法在編輯模式中添加邊線"
 
 
-msgid "Cannot add vertices in edit mode"
-msgstr "無法在編輯模式中添加頂點"
+msgid "Cannot add loops in edit mode"
+msgstr "無法在編輯中添加線圈"
 
 
-msgid "Cannot remove edges in edit mode"
-msgstr "無法在編輯模式中移除邊線"
-
-
-msgid "Cannot remove more edges than the mesh contains"
-msgstr "無法移除超過該網格所含的邊線數"
+msgid "Cannot add polygons in edit mode"
+msgstr "無法在編輯模式中添加多角形"
 
 
 msgid "Cannot remove vertices in edit mode"
@@ -60226,12 +60066,12 @@ msgid "Cannot remove more vertices than the mesh contains"
 msgstr "無法移除超過該網格所含的頂點數"
 
 
-msgid "Cannot add loops in edit mode"
-msgstr "無法在編輯中添加線圈"
+msgid "Cannot remove edges in edit mode"
+msgstr "無法在編輯模式中移除邊線"
 
 
-msgid "Cannot add polygons in edit mode"
-msgstr "無法在編輯模式中添加多角形"
+msgid "Cannot remove more edges than the mesh contains"
+msgstr "無法移除超過該網格所含的邊線數"
 
 
 msgid "%d %s mirrored, %d failed"
@@ -61082,10 +60922,6 @@ msgstr "無法建立新的資料夾名稱"
 
 msgid "Could not create new folder: %s"
 msgstr "無法建立新的資料夾：%s"
-
-
-msgid "Could not delete file: %s"
-msgstr "無法刪除檔案：%s"
 
 
 msgid "Cancel"

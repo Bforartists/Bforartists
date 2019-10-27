@@ -19,13 +19,16 @@
 # <pep8 compliant>
 
 import bpy
+import math
 
 from itertools import count, repeat
+from mathutils import Matrix
 
 from ...utils.errors import MetarigError
 from ...utils.layers import ControlLayersOption
-from ...utils.naming import strip_org, make_deformer_name, make_mechanism_name
-from ...utils.bones import BoneDict, put_bone, align_bone_to_axis
+from ...utils.naming import strip_org, make_deformer_name, make_mechanism_name, make_derived_name
+from ...utils.bones import BoneDict, put_bone, align_bone_to_axis, align_bone_orientation, set_bone_widget_transform
+from ...utils.widgets import adjust_widget_transform_mesh
 from ...utils.widgets_basic import create_circle_widget
 from ...utils.misc import map_list
 
@@ -43,6 +46,7 @@ class Rig(BaseSpineRig):
 
         # Check if user provided the pivot position
         self.pivot_pos = self.params.pivot_pos
+        self.use_fk = self.params.make_fk_controls
 
         if not (0 < self.pivot_pos < len(self.bones.org)):
             self.raise_error("Please specify a valid pivot bone position.")
@@ -55,6 +59,9 @@ class Rig(BaseSpineRig):
     # ctrl:
     #   master, hips, chest:
     #     Main controls.
+    #   fk:
+    #     chest[], hips[]:
+    #       FK controls.
     #   tweak[]:
     #     Tweak control chain.
     # mch:
@@ -73,19 +80,15 @@ class Rig(BaseSpineRig):
     ####################################################
     # Master control bone
 
-    @stage.generate_bones
-    def make_master_control(self):
-        super().make_master_control()
-
-        # Put the main control in the middle of the hip bone
-        base_bone = self.get_bone(self.bones.org[0])
-        put_bone(self.obj, self.bones.ctrl.master, (base_bone.head + base_bone.tail) / 2)
+    def get_master_control_pos(self, orgs):
+        base_bone = self.get_bone(orgs[0])
+        return (base_bone.head + base_bone.tail) / 2
 
     ####################################################
     # Main control bones
 
     @stage.generate_bones
-    def make_control_chain(self):
+    def make_end_control_bones(self):
         orgs = self.bones.org
         pivot = self.pivot_pos
 
@@ -103,32 +106,89 @@ class Rig(BaseSpineRig):
         return name
 
     @stage.parent_bones
-    def parent_control_chain(self):
+    def parent_end_control_bones(self):
         ctrl = self.bones.ctrl
-        self.set_bone_parent(ctrl.hips, ctrl.master)
-        self.set_bone_parent(ctrl.chest, ctrl.master)
-
-    @stage.configure_bones
-    def configure_control_chain(self):
-        pass
+        pivot = self.get_master_control_output()
+        self.set_bone_parent(ctrl.hips, pivot)
+        self.set_bone_parent(ctrl.chest, pivot)
 
     @stage.generate_widgets
-    def make_control_widgets(self):
+    def make_end_control_widgets(self):
         ctrl = self.bones.ctrl
         mch = self.bones.mch
-        self.make_control_widget(ctrl.hips, mch.wgt_hips)
-        self.make_control_widget(ctrl.chest, mch.wgt_chest)
+        self.make_end_control_widget(ctrl.hips, mch.wgt_hips)
+        self.make_end_control_widget(ctrl.chest, mch.wgt_chest)
 
-    def make_control_widget(self, ctrl, wgt_mch):
-        self.get_bone(ctrl).custom_shape_transform = self.get_bone(wgt_mch)
+    def make_end_control_widget(self, ctrl, wgt_mch):
+        shape_bone = self.get_bone(wgt_mch)
+        is_horizontal = abs(shape_bone.z_axis.normalized().y) < 0.7
 
-        create_circle_widget(
+        set_bone_widget_transform(self.obj, ctrl, wgt_mch)
+
+        obj = create_circle_widget(
             self.obj, ctrl,
-            radius=1.0,
+            radius=1.2 if is_horizontal else 1.1,
             head_tail=0.0,
             head_tail_x=1.0,
             with_line=False,
         )
+
+        if is_horizontal:
+            # Tilt the widget toward the ground for horizontal (animal) spines
+            angle = math.copysign(28, shape_bone.x_axis.x)
+            rotmat = Matrix.Rotation(math.radians(angle), 4, 'X')
+            adjust_widget_transform_mesh(obj, rotmat, local=True)
+
+    ####################################################
+    # FK control bones
+
+    @stage.generate_bones
+    def make_control_chain(self):
+        if self.use_fk:
+            orgs = self.bones.org
+            self.bones.ctrl.fk = self.fk_result = BoneDict(
+                hips = map_list(self.make_control_bone, count(0), orgs[0:self.pivot_pos], repeat(True)),
+                chest = map_list(self.make_control_bone, count(self.pivot_pos), orgs[self.pivot_pos:], repeat(False)),
+            )
+
+    def make_control_bone(self, i, org, is_hip):
+        name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_fk'), parent=False)
+        if is_hip:
+            put_bone(self.obj, name, self.get_bone(name).tail)
+        return name
+
+    @stage.parent_bones
+    def parent_control_chain(self):
+        if self.use_fk:
+            chain = self.bones.mch.chain
+            fk = self.bones.ctrl.fk
+            for child, parent in zip(fk.hips, chain.hips):
+                self.set_bone_parent(child, parent)
+            for child, parent in zip(fk.chest, chain.chest):
+                self.set_bone_parent(child, parent)
+
+    @stage.configure_bones
+    def configure_control_chain(self):
+        if self.use_fk:
+            fk = self.bones.ctrl.fk
+            for args in zip(count(0), fk.hips + fk.chest, self.bones.org):
+                self.configure_control_bone(*args)
+
+            ControlLayersOption.FK.assign_rig(self, fk.hips + fk.chest)
+
+    @stage.generate_widgets
+    def make_control_widgets(self):
+        if self.use_fk:
+            fk = self.bones.ctrl.fk
+            for ctrl in fk.hips:
+                self.make_control_widget(ctrl, True)
+            for ctrl in fk.chest:
+                self.make_control_widget(ctrl, False)
+
+    def make_control_widget(self, ctrl, is_hip):
+        obj = create_circle_widget(self.obj, ctrl, radius=1.0, head_tail=0.5)
+        if is_hip:
+            adjust_widget_transform_mesh(obj, Matrix.Diagonal((1, -1, 1, 1)), local=True)
 
     ####################################################
     # MCH bones associated with main controls
@@ -153,16 +213,16 @@ class Rig(BaseSpineRig):
     @stage.parent_bones
     def parent_mch_control_bones(self):
         mch = self.bones.mch
-        self.set_bone_parent(mch.pivot, mch.chain.chest[0])
-        self.set_bone_parent(mch.wgt_hips, mch.chain.hips[0])
-        self.set_bone_parent(mch.wgt_chest, mch.chain.chest[-1])
+        fk = self.fk_result
+        self.set_bone_parent(mch.pivot, fk.chest[0])
+        self.set_bone_parent(mch.wgt_hips, fk.hips[0])
+        self.set_bone_parent(mch.wgt_chest, fk.chest[-1])
+        align_bone_orientation(self.obj, mch.pivot, fk.hips[-1])
 
     @stage.rig_bones
     def rig_mch_control_bones(self):
         mch = self.bones.mch
-        # Is it actually intending to compute average of these, or is this really intentional?
-        # This effectively adds rotations of the hip and chest controls.
-        self.make_constraint(mch.pivot, 'COPY_TRANSFORMS', mch.chain.hips[-1], space='LOCAL')
+        self.make_constraint(mch.pivot, 'COPY_TRANSFORMS', self.fk_result.hips[-1], influence=0.5)
 
     ####################################################
     # MCH chain for distributing hip & chest transform
@@ -174,6 +234,8 @@ class Rig(BaseSpineRig):
             hips = map_list(self.make_mch_bone, orgs[0:self.pivot_pos], repeat(True)),
             chest = map_list(self.make_mch_bone, orgs[self.pivot_pos:], repeat(False)),
         )
+        if not self.use_fk:
+            self.fk_result = self.bones.mch.chain
 
     def make_mch_bone(self, org, is_hip):
         name = self.copy_bone(org, make_mechanism_name(strip_org(org)), parent=False)
@@ -182,10 +244,13 @@ class Rig(BaseSpineRig):
 
     @stage.parent_bones
     def parent_mch_chain(self):
-        master = self.bones.ctrl.master
+        master = self.get_master_control_output()
         chain = self.bones.mch.chain
-        self.parent_bone_chain([master, *reversed(chain.hips)])
-        self.parent_bone_chain([master, *chain.chest])
+        fk = self.fk_result
+        for child, parent in zip(reversed(chain.hips), [master, *reversed(fk.hips)]):
+            self.set_bone_parent(child, parent)
+        for child, parent in zip(chain.chest, [master, *fk.chest]):
+            self.set_bone_parent(child, parent)
 
     @stage.rig_bones
     def rig_mch_chain(self):
@@ -205,7 +270,7 @@ class Rig(BaseSpineRig):
     @stage.parent_bones
     def parent_tweak_chain(self):
         mch = self.bones.mch
-        chain = mch.chain
+        chain = self.fk_result
         parents = [chain.hips[0], *chain.hips[0:-1], mch.pivot, *chain.chest[1:], chain.chest[-1]]
         for args in zip(self.bones.ctrl.tweak, parents):
             self.set_bone_parent(*args)
@@ -224,12 +289,24 @@ class Rig(BaseSpineRig):
 
         super().add_parameters(params)
 
+        params.make_fk_controls = bpy.props.BoolProperty(
+            name="FK Controls", default=True,
+            description="Generate an FK control chain"
+        )
+
+        ControlLayersOption.FK.add_parameters(params)
+
     @classmethod
     def parameters_ui(self, layout, params):
         r = layout.row()
         r.prop(params, "pivot_pos")
 
         super().parameters_ui(layout, params)
+
+        layout.prop(params, 'make_fk_controls')
+
+        if params.make_fk_controls:
+            ControlLayersOption.FK.parameters_ui(layout, params)
 
 
 def create_sample(obj):

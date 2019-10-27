@@ -22,6 +22,7 @@ import bpy
 
 from ...base_rig import BaseRig
 
+from ...utils.layers import DEF_LAYER
 from ...utils.naming import strip_org, make_deformer_name
 from ...utils.widgets_basic import create_bone_widget, create_circle_widget
 
@@ -43,7 +44,12 @@ class Rig(BaseRig):
 
         self.make_control = self.params.make_control
         self.make_widget  = self.params.make_widget
-        self.make_deform  = self.params.make_deform
+
+        deform = self.params.make_deform
+        rename = self.params.rename_to_deform
+
+        self.make_deform  = deform and not rename
+        self.rename_deform = deform and rename
 
 
     def generate_bones(self):
@@ -91,6 +97,15 @@ class Rig(BaseRig):
                 create_bone_widget(self.obj, bones.ctrl)
 
 
+    def finalize(self):
+        if self.rename_deform:
+            new_name = self.rename_bone(self.bones.org, make_deformer_name(self.org_name))
+
+            bone = self.get_bone(new_name).bone
+            bone.use_deform = True
+            bone.layers = DEF_LAYER
+
+
     @classmethod
     def add_parameters(self, params):
         """ Add the parameters of this rig type to the
@@ -114,6 +129,12 @@ class Rig(BaseRig):
             description = "Create a deform bone for the copy"
         )
 
+        params.rename_to_deform = bpy.props.BoolProperty(
+            name        = "Rename To Deform",
+            default     = False,
+            description = "Rename the original bone itself to use as deform bone (advanced feature)"
+        )
+
 
     @classmethod
     def parameters_ui(self, layout, params):
@@ -126,6 +147,10 @@ class Rig(BaseRig):
         r.enabled = params.make_control
         r = layout.row()
         r.prop(params, "make_deform")
+
+        if params.make_deform:
+            r = layout.row()
+            r.prop(params, "rename_to_deform")
 
 
 def create_sample(obj):

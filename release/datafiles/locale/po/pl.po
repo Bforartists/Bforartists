@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -8855,24 +8855,20 @@ msgid "Parse error in %s"
 msgstr "Błąd parse w %s"
 
 
-msgid "Cannot add geometry in edit mode"
-msgstr "Nie można dodać geometrii w trybie edycji"
+msgid "Cannot add vertices in edit mode"
+msgstr "Nie można dodać wierzchołków w trybie edycji"
 
 
 msgid "Cannot add edges in edit mode"
 msgstr "Nie można dodać krawędzi w trybie edycji"
 
 
-msgid "Cannot add vertices in edit mode"
-msgstr "Nie można dodać wierzchołków w trybie edycji"
+msgid "Cannot add loops in edit mode"
+msgstr "Nie można dodać pętli w trybie edycji"
 
 
-msgid "Cannot remove edges in edit mode"
-msgstr "Nie można usunąć krawędzi w trybie edycji"
-
-
-msgid "Cannot remove more edges than the mesh contains"
-msgstr "Nie można usunąć większej ilości krawędzi niż występuje w siatce"
+msgid "Cannot add polygons in edit mode"
+msgstr "Nie można dodać poligonów w trybie edycji"
 
 
 msgid "Cannot remove vertices in edit mode"
@@ -8883,12 +8879,12 @@ msgid "Cannot remove more vertices than the mesh contains"
 msgstr "Nie można usunąć większej ilości wierzchołków niż występuje w siatce"
 
 
-msgid "Cannot add loops in edit mode"
-msgstr "Nie można dodać pętli w trybie edycji"
+msgid "Cannot remove edges in edit mode"
+msgstr "Nie można usunąć krawędzi w trybie edycji"
 
 
-msgid "Cannot add polygons in edit mode"
-msgstr "Nie można dodać poligonów w trybie edycji"
+msgid "Cannot remove more edges than the mesh contains"
+msgstr "Nie można usunąć większej ilości krawędzi niż występuje w siatce"
 
 
 msgid "%d %s mirrored, %d failed"
