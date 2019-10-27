@@ -15,6 +15,8 @@
 import bpy
 from math import pi
 
+from ..com.gltf2_blender_extras import set_extras
+
 
 class BlenderLight():
     """Blender Light."""
@@ -44,6 +46,8 @@ class BlenderLight():
             bpy.data.collections[gltf.blender_active_collection].objects.link(obj)
         else:
             bpy.data.scenes[gltf.blender_scene].collection.objects.link(obj)
+
+        set_extras(obj.data, pylight.get('extras'))
 
         return obj
 

@@ -24,8 +24,8 @@ bl_info = {
     "location": "3D View, Dopesheet & Graph Editors",
     "description": "Simplify Curves: 3dview, Dopesheet, Graph. Distance Merge: 3d view curve edit",
     "warning": "",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Curve/Curve_Simplify",
+    "wiki_url": "https://docs.blender.org/manual/nb/dev/addons/"
+                "add_curve/simplify_curves.html",
     "category": "Add Curve",
 }
 

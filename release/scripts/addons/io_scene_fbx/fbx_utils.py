@@ -594,10 +594,12 @@ def _elem_props_flags(animatable, animated, custom):
                 return b"A+U"
             return b"A+"
         if custom:
-            return b"AU"
+            # Seems that customprops always need those 'flags', see T69554. Go figure...
+            return b"A+U"
         return b"A"
     if custom:
-        return b"U"
+        # Seems that customprops always need those 'flags', see T69554. Go figure...
+        return b"A+U"
     return b""
 
 

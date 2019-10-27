@@ -18,16 +18,16 @@
 
 # <pep8 compliant>
 
-import bpy
-import array
-from itertools import chain
-
 
 def create_and_link_mesh(name, faces, face_nors, points, global_matrix):
     """
     Create a blender mesh and object called name from a list of
     *points* and *faces* and link it in the current scene.
     """
+
+    import array
+    from itertools import chain
+    import bpy
 
     mesh = bpy.data.meshes.new(name)
     mesh.from_pydata(points, [], faces)
@@ -76,6 +76,8 @@ def faces_from_mesh(ob, global_matrix, use_mesh_modifiers=False):
     triangulate
         Split the quad into two triangles
     """
+
+    import bpy
 
     # get the editmode data
     ob.update_from_editmode()

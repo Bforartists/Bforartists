@@ -377,20 +377,24 @@ TRANSFORM_PROPS_ROTATION = frozenset(['rotation_euler', 'rotation_quaternion', '
 TRANSFORM_PROPS_SCALE = frozenset(['scale'])
 TRANSFORM_PROPS_ALL = frozenset(TRANSFORM_PROPS_LOCATION | TRANSFORM_PROPS_ROTATION | TRANSFORM_PROPS_SCALE)
 
-class ActionCurveTable(object):
+def transform_props_with_locks(lock_location, lock_rotation, lock_scale):
+    props = set()
+    if not lock_location:
+        props |= TRANSFORM_PROPS_LOCATION
+    if not lock_rotation:
+        props |= TRANSFORM_PROPS_ROTATION
+    if not lock_scale:
+        props |= TRANSFORM_PROPS_SCALE
+    return props
+
+class FCurveTable(object):
     "Table for efficient lookup of FCurves by properties."
 
-    def __init__(self, action):
-        from collections import defaultdict
-        self.action = find_action(action)
-        self.curve_map = defaultdict(dict)
-        self.index_action()
+    def __init__(self):
+        self.curve_map = collections.defaultdict(dict)
 
-    def index_action(self):
-        if not self.action:
-            return
-
-        for curve in self.action.fcurves:
+    def index_curves(self, curves):
+        for curve in curves:
             index = curve.array_index
             if index < 0:
                 index = 0
@@ -412,6 +416,24 @@ class ActionCurveTable(object):
 
     def get_custom_prop_curves(self, ptr, prop):
         return self.get_prop_curves(ptr, rna_idprop_quote_path(prop))
+
+class ActionCurveTable(FCurveTable):
+    "Table for efficient lookup of Action FCurves by properties."
+
+    def __init__(self, action):
+        super().__init__()
+        self.action = find_action(action)
+        if self.action:
+            self.index_curves(self.action.fcurves)
+
+class DriverCurveTable(FCurveTable):
+    "Table for efficient lookup of Driver FCurves by properties."
+
+    def __init__(self, object):
+        super().__init__()
+        self.anim_data = object.animation_data
+        if self.anim_data:
+            self.index_curves(self.anim_data.drivers)
 ''']
 
 exec(SCRIPT_UTILITIES_CURVES[-1])
@@ -495,7 +517,23 @@ SCRIPT_UTILITIES_BAKE = SCRIPT_UTILITIES_KEYING + SCRIPT_UTILITIES_CURVES + ['''
 # Keyframe baking operator framework ##
 #######################################
 
-class RigifyBakeKeyframesMixin:
+class RigifyOperatorMixinBase:
+    bl_options = {'UNDO', 'INTERNAL'}
+
+    def init_invoke(self, context):
+        "Override to initialize the operator before invoke."
+
+    def init_execute(self, context):
+        "Override to initialize the operator before execute."
+
+    def before_save_state(self, context, rig):
+        "Override to prepare for saving state."
+
+    def after_save_state(self, context, rig):
+        "Override to undo before_save_state."
+
+
+class RigifyBakeKeyframesMixin(RigifyOperatorMixinBase):
     """Basic framework for an operator that updates a set of keyed frames."""
 
     # Utilities
@@ -566,6 +604,7 @@ class RigifyBakeKeyframesMixin:
         self.bake_state = dict()
 
         self.keyflags = get_keying_flags(context)
+        self.keyflags_switch = None
 
         if context.window_manager.rigify_transfer_use_all_keys:
             self.bake_add_curve_frames(self.bake_curve_table.curve_map)
@@ -604,9 +643,15 @@ class RigifyBakeKeyframesMixin:
         scene = context.scene
         saved_state = self.bake_state
 
-        for frame in self.bake_frames:
-            scene.frame_set(frame)
-            saved_state[frame] = self.save_frame_state(context, rig)
+        try:
+            self.before_save_state(context, rig)
+
+            for frame in self.bake_frames:
+                scene.frame_set(frame)
+                saved_state[frame] = self.save_frame_state(context, rig)
+
+        finally:
+            self.after_save_state(context, rig)
 
     def bake_clean_curves_in_range(self, context, curves):
         "Deletes all keys from the given curves in the bake range."
@@ -648,10 +693,6 @@ class RigifyBakeKeyframesMixin:
         "Override to execute code one time before the bake apply frame scan."
         pass
 
-    def init_execute(self, context):
-        "Override to initialize the operator."
-        pass
-
     def execute(self, context):
         self.init_execute(context)
         self.bake_init(context)
@@ -661,18 +702,20 @@ class RigifyBakeKeyframesMixin:
         if self.report_bake_empty():
             return {'CANCELLED'}
 
-        self.bake_save_state(context)
+        try:
+            self.bake_save_state(context)
 
-        range, range_raw = self.bake_clean_curves_in_range(context, curves)
+            range, range_raw = self.bake_clean_curves_in_range(context, curves)
 
-        self.execute_before_apply(context, self.bake_rig, range, range_raw)
+            self.execute_before_apply(context, self.bake_rig, range, range_raw)
 
-        self.bake_apply_state(context)
+            self.bake_apply_state(context)
+
+        except Exception as e:
+            traceback.print_exc()
+            self.report({'ERROR'}, 'Exception: ' + str(e))
+
         return {'FINISHED'}
-
-    def init_invoke(self, context):
-        "Override to initialize the operator."
-        pass
 
     def invoke(self, context, event):
         self.init_invoke(context)
@@ -683,22 +726,29 @@ class RigifyBakeKeyframesMixin:
             return context.window_manager.invoke_confirm(self, event)
 
 
-class RigifySingleUpdateMixin:
+class RigifySingleUpdateMixin(RigifyOperatorMixinBase):
     """Basic framework for an operator that updates only the current frame."""
-
-    def init_execute(self, context):
-        pass
 
     def execute(self, context):
         self.init_execute(context)
         obj = context.active_object
         self.keyflags = get_autokey_flags(context, ignore_keyset=True)
         self.keyflags_switch = add_flags_if_set(self.keyflags, {'INSERTKEY_AVAILABLE'})
-        self.apply_frame_state(context, obj, self.save_frame_state(context, obj))
-        return {'FINISHED'}
 
-    def init_invoke(self, context):
-        pass
+        try:
+            try:
+                self.before_save_state(context, obj)
+                state = self.save_frame_state(context, obj)
+            finally:
+                self.after_save_state(context, obj)
+
+            self.apply_frame_state(context, obj, state)
+
+        except Exception as e:
+            traceback.print_exc()
+            self.report({'ERROR'}, 'Exception: ' + str(e))
+
+        return {'FINISHED'}
 
     def invoke(self, context, event):
         self.init_invoke(context)
@@ -773,51 +823,59 @@ def add_clear_keyframes_button(panel, *, bones=[], label='', text=''):
 # Generic Snap FK to IK operator ##
 ###################################
 
-SCRIPT_REGISTER_OP_SNAP_FK_IK = ['POSE_OT_rigify_generic_fk2ik', 'POSE_OT_rigify_generic_fk2ik_bake']
+SCRIPT_REGISTER_OP_SNAP = ['POSE_OT_rigify_generic_snap', 'POSE_OT_rigify_generic_snap_bake']
 
-SCRIPT_UTILITIES_OP_SNAP_FK_IK = ['''
-###########################
-## Generic Snap FK to IK ##
-###########################
+SCRIPT_UTILITIES_OP_SNAP = ['''
+#############################
+## Generic Snap (FK to IK) ##
+#############################
 
-class RigifyGenericFk2IkBase:
-    fk_bones:     StringProperty(name="FK Bone Chain")
-    ik_bones:     StringProperty(name="IK Result Bone Chain")
-    ctrl_bones:   StringProperty(name="IK Controls")
+class RigifyGenericSnapBase:
+    input_bones:   StringProperty(name="Input Chain")
+    output_bones:  StringProperty(name="Output Chain")
+    ctrl_bones:    StringProperty(name="Input Controls")
 
+    tooltip:         StringProperty(name="Tooltip", default="FK to IK")
+    locks:           bpy.props.BoolVectorProperty(name="Locked", size=3, default=[False,False,False])
     undo_copy_scale: bpy.props.BoolProperty(name="Undo Copy Scale", default=False)
 
-    keyflags = None
-
     def init_execute(self, context):
-        self.fk_bone_list = json.loads(self.fk_bones)
-        self.ik_bone_list = json.loads(self.ik_bones)
+        self.input_bone_list = json.loads(self.input_bones)
+        self.output_bone_list = json.loads(self.output_bones)
         self.ctrl_bone_list = json.loads(self.ctrl_bones)
 
     def save_frame_state(self, context, obj):
-        return get_chain_transform_matrices(obj, self.ik_bone_list)
+        return get_chain_transform_matrices(obj, self.input_bone_list)
 
     def apply_frame_state(self, context, obj, matrices):
         set_chain_transforms_from_matrices(
-            context, obj, self.fk_bone_list, matrices,
-            undo_copy_scale=self.undo_copy_scale, keyflags=self.keyflags
+            context, obj, self.output_bone_list, matrices,
+            undo_copy_scale=self.undo_copy_scale, keyflags=self.keyflags,
+            no_loc=self.locks[0], no_rot=self.locks[1], no_scale=self.locks[2],
         )
 
-class POSE_OT_rigify_generic_fk2ik(RigifyGenericFk2IkBase, RigifySingleUpdateMixin, bpy.types.Operator):
-    bl_idname = "pose.rigify_generic_fk2ik_" + rig_id
-    bl_label = "Snap FK->IK"
-    bl_options = {'UNDO', 'INTERNAL'}
-    bl_description = "Snap the FK chain to IK result"
+class POSE_OT_rigify_generic_snap(RigifyGenericSnapBase, RigifySingleUpdateMixin, bpy.types.Operator):
+    bl_idname = "pose.rigify_generic_snap_" + rig_id
+    bl_label = "Snap Bones"
+    bl_description = "Snap on the current frame"
 
-class POSE_OT_rigify_generic_fk2ik_bake(RigifyGenericFk2IkBase, RigifyBakeKeyframesMixin, bpy.types.Operator):
-    bl_idname = "pose.rigify_generic_fk2ik_bake_" + rig_id
-    bl_label = "Apply Snap FK->IK To Keyframes"
-    bl_options = {'UNDO', 'INTERNAL'}
-    bl_description = "Snap the FK chain keyframes to IK result"
+    @classmethod
+    def description(cls, context, props):
+        return "Snap " + props.tooltip + " on the current frame"
+
+class POSE_OT_rigify_generic_snap_bake(RigifyGenericSnapBase, RigifyBakeKeyframesMixin, bpy.types.Operator):
+    bl_idname = "pose.rigify_generic_snap_bake_" + rig_id
+    bl_label = "Apply Snap To Keyframes"
+    bl_description = "Apply snap to keyframes"
+
+    @classmethod
+    def description(cls, context, props):
+        return "Apply snap " + props.tooltip + " to keyframes"
 
     def execute_scan_curves(self, context, obj):
+        props = transform_props_with_locks(*self.locks)
         self.bake_add_bone_frames(self.ctrl_bone_list, TRANSFORM_PROPS_ALL)
-        return self.bake_get_all_bone_curves(self.fk_bone_list, TRANSFORM_PROPS_ALL)
+        return self.bake_get_all_bone_curves(self.output_bone_list, props)
 ''']
 
 def add_fk_ik_snap_buttons(panel, op_single, op_bake, *, label=None, rig_name='', properties=None, clear_bones=None, compact=None):
@@ -840,23 +898,35 @@ def add_fk_ik_snap_buttons(panel, op_single, op_bake, *, label=None, rig_name=''
         row.operator(op_bake, text='Action', icon='ACTION_TWEAK', properties=properties)
         add_clear_keyframes_button(row, bones=clear_bones, text='Clear')
 
-def add_generic_snap_fk_to_ik(panel, *, fk_bones=[], ik_bones=[], ik_ctrl_bones=[], label='FK->IK', rig_name='', undo_copy_scale=False, compact=None, clear=True):
+def add_generic_snap(panel, *, output_bones=[], input_bones=[], input_ctrl_bones=[], label='Snap', rig_name='', undo_copy_scale=False, compact=None, clear=True, locks=None, tooltip=None):
     panel.use_bake_settings()
-    panel.script.add_utilities(SCRIPT_UTILITIES_OP_SNAP_FK_IK)
-    panel.script.register_classes(SCRIPT_REGISTER_OP_SNAP_FK_IK)
+    panel.script.add_utilities(SCRIPT_UTILITIES_OP_SNAP)
+    panel.script.register_classes(SCRIPT_REGISTER_OP_SNAP)
 
     op_props = {
-        'fk_bones': json.dumps(fk_bones),
-        'ik_bones': json.dumps(ik_bones),
-        'ctrl_bones': json.dumps(ik_ctrl_bones),
-        'undo_copy_scale': undo_copy_scale,
+        'output_bones': json.dumps(output_bones),
+        'input_bones': json.dumps(input_bones),
+        'ctrl_bones': json.dumps(input_ctrl_bones or input_bones),
     }
 
-    clear_bones = fk_bones if clear else None
+    if undo_copy_scale:
+        op_props['undo_copy_scale'] = undo_copy_scale
+    if locks is not None:
+        op_props['locks'] = tuple(locks[0:3])
+    if tooltip is not None:
+        op_props['tooltip'] = tooltip
+
+    clear_bones = output_bones if clear else None
 
     add_fk_ik_snap_buttons(
-        panel, 'pose.rigify_generic_fk2ik_{rig_id}', 'pose.rigify_generic_fk2ik_bake_{rig_id}',
+        panel, 'pose.rigify_generic_snap_{rig_id}', 'pose.rigify_generic_snap_bake_{rig_id}',
         label=label, rig_name=rig_name, properties=op_props, clear_bones=clear_bones, compact=compact,
+    )
+
+def add_generic_snap_fk_to_ik(panel, *, fk_bones=[], ik_bones=[], ik_ctrl_bones=[], label='FK->IK', rig_name='', undo_copy_scale=False, compact=None, clear=True):
+    add_generic_snap(
+        panel, output_bones=fk_bones, input_bones=ik_bones, input_ctrl_bones=ik_ctrl_bones,
+        label=label, rig_name=rig_name, undo_copy_scale=undo_copy_scale, compact=compact, clear=clear
     )
 
 ###############################

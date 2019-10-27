@@ -24,9 +24,10 @@ from itertools import count
 
 from ...utils.layers import ControlLayersOption
 from ...utils.naming import make_derived_name
-from ...utils.bones import align_bone_orientation, align_bone_to_axis
+from ...utils.bones import align_bone_orientation, align_bone_to_axis, put_bone, set_bone_widget_transform
 from ...utils.widgets_basic import create_cube_widget
 from ...utils.switch_parent import SwitchParentBuilder
+from ...utils.components import CustomPivotControl
 
 from ...base_rig import stage
 
@@ -44,6 +45,7 @@ class BaseSpineRig(TweakChainRig):
         if len(self.bones.org) < 3:
             self.raise_error("Input to rig type must be a chain of 3 or more bones.")
 
+        self.use_torso_pivot = self.params.make_custom_pivot
         self.length = sum([self.get_bone(b).length for b in self.bones.org])
 
     ####################################################
@@ -52,6 +54,11 @@ class BaseSpineRig(TweakChainRig):
     # ctrl:
     #   master
     #     Main control.
+    #   master_pivot
+    #     Custom pivot under the master control.
+    # mch:
+    #   master_pivot
+    #     Final output of the custom pivot.
     #
     ####################################################
 
@@ -60,17 +67,42 @@ class BaseSpineRig(TweakChainRig):
 
     @stage.generate_bones
     def make_master_control(self):
-        self.bones.ctrl.master = name = self.copy_bone(self.bones.org[0], 'torso')
+        self.bones.ctrl.master = name = self.make_master_control_bone(self.bones.org)
 
-        align_bone_to_axis(self.obj, name, 'y', length=self.length * 0.6)
-
+        self.component_torso_pivot = self.build_master_pivot(name)
         self.build_parent_switch(name)
+
+    def get_master_control_pos(self, orgs):
+        return self.get_bone(orgs[0]).head
+
+    def make_master_control_bone(self, orgs):
+        name = self.copy_bone(orgs[0], 'torso')
+        put_bone(self.obj, name, self.get_master_control_pos(orgs))
+        align_bone_to_axis(self.obj, name, 'y', length=self.length * 0.6)
+        return name
+
+    def build_master_pivot(self, master_name, **args):
+        if self.use_torso_pivot:
+            return CustomPivotControl(
+                self, 'master_pivot', master_name, parent=master_name, **args
+            )
+
+    def get_master_control_output(self):
+        if self.component_torso_pivot:
+            return self.component_torso_pivot.output
+        else:
+            return self.bones.ctrl.master
 
     def build_parent_switch(self, master_name):
         pbuilder = SwitchParentBuilder(self.generator)
-        pbuilder.register_parent(self, master_name, name='Torso')
+
+        org_parent = self.get_bone_parent(self.bones.org[0])
+        parents = [org_parent] if org_parent else []
+
+        pbuilder.register_parent(self, self.get_master_control_output, name='Torso', tags={'torso'})
         pbuilder.build_child(
             self, master_name, exclude_self=True,
+            extra_parents=parents, select_parent=org_parent,
             prop_id='torso_parent', prop_name='Torso Parent',
             controls=lambda: self.bones.flatten('ctrl'),
         )
@@ -78,8 +110,8 @@ class BaseSpineRig(TweakChainRig):
         self.register_parent_bones(pbuilder)
 
     def register_parent_bones(self, pbuilder):
-        pbuilder.register_parent(self, self.bones.org[0], name='Hips', exclude_self=True)
-        pbuilder.register_parent(self, self.bones.org[-1], name='Chest', exclude_self=True)
+        pbuilder.register_parent(self, self.bones.org[0], name='Hips', exclude_self=True, tags={'hips'})
+        pbuilder.register_parent(self, self.bones.org[-1], name='Chest', exclude_self=True, tags={'chest'})
 
     @stage.parent_bones
     def parent_master_control(self):
@@ -91,10 +123,9 @@ class BaseSpineRig(TweakChainRig):
 
     @stage.generate_widgets
     def make_master_control_widget(self):
-        create_cube_widget(
-            self.obj, self.bones.ctrl.master,
-            radius=0.5,
-        )
+        master = self.bones.ctrl.master
+        set_bone_widget_transform(self.obj, master, self.get_master_control_output())
+        create_cube_widget(self.obj, master, radius=0.5)
 
     ####################################################
     # Tweak bones
@@ -117,11 +148,19 @@ class BaseSpineRig(TweakChainRig):
 
     @classmethod
     def add_parameters(self, params):
+        params.make_custom_pivot = bpy.props.BoolProperty(
+            name        = "Custom Pivot Control",
+            default     = False,
+            description = "Create a rotation pivot control that can be repositioned arbitrarily"
+        )
+
         # Setting up extra layers for the FK and tweak
         ControlLayersOption.TWEAK.add_parameters(params)
 
     @classmethod
     def parameters_ui(self, layout, params):
+        layout.prop(params, 'make_custom_pivot')
+
         ControlLayersOption.TWEAK.parameters_ui(layout, params)
 
 

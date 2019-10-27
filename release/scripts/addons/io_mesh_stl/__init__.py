@@ -23,9 +23,8 @@ bl_info = {
     "author": "Guillaume Bouchard (Guillaum)",
     "version": (1, 1, 3),
     "blender": (2, 81, 6),
-    "location": "File > Import-Export > Stl",
+    "location": "File > Import-Export",
     "description": "Import-Export STL files",
-    "warning": "",
     "wiki_url": "https://docs.blender.org/manual/en/latest/addons/io_mesh_stl.html",
     "support": 'OFFICIAL',
     "category": "Import-Export",
@@ -53,75 +52,70 @@ if "bpy" in locals():
     if "blender_utils" in locals():
         importlib.reload(blender_utils)
 
-import os
-
 import bpy
 from bpy.props import (
-        StringProperty,
-        BoolProperty,
-        CollectionProperty,
-        EnumProperty,
-        FloatProperty,
-        )
+    StringProperty,
+    BoolProperty,
+    CollectionProperty,
+    EnumProperty,
+    FloatProperty,
+)
 from bpy_extras.io_utils import (
-        ImportHelper,
-        ExportHelper,
-        orientation_helper,
-        axis_conversion,
-        )
+    ImportHelper,
+    ExportHelper,
+    orientation_helper,
+    axis_conversion,
+)
 from bpy.types import (
-        Operator,
-        OperatorFileListElement,
-        )
+    Operator,
+    OperatorFileListElement,
+)
 
 
 @orientation_helper(axis_forward='Y', axis_up='Z')
 class ImportSTL(Operator, ImportHelper):
-    """Load STL triangle mesh data"""
     bl_idname = "import_mesh.stl"
     bl_label = "Import STL"
+    bl_description = "Load STL triangle mesh data"
     bl_options = {'UNDO'}
 
     filename_ext = ".stl"
 
     filter_glob: StringProperty(
-            default="*.stl",
-            options={'HIDDEN'},
-            )
+        default="*.stl",
+        options={'HIDDEN'},
+    )
     files: CollectionProperty(
-            name="File Path",
-            type=OperatorFileListElement,
-            )
+        name="File Path",
+        type=OperatorFileListElement,
+    )
     directory: StringProperty(
-            subtype='DIR_PATH',
-            )
-
+        subtype='DIR_PATH',
+    )
     global_scale: FloatProperty(
-            name="Scale",
-            soft_min=0.001, soft_max=1000.0,
-            min=1e-6, max=1e6,
-            default=1.0,
-            )
-
+        name="Scale",
+        soft_min=0.001, soft_max=1000.0,
+        min=1e-6, max=1e6,
+        default=1.0,
+    )
     use_scene_unit: BoolProperty(
-            name="Scene Unit",
-            description="Apply current scene's unit (as defined by unit scale) to imported data",
-            default=False,
-            )
-
+        name="Scene Unit",
+        description="Apply current scene's unit (as defined by unit scale) to imported data",
+        default=False,
+    )
     use_facet_normal: BoolProperty(
-            name="Facet Normals",
-            description="Use (import) facet normals (note that this will still give flat shading)",
-            default=False,
-            )
+        name="Facet Normals",
+        description="Use (import) facet normals (note that this will still give flat shading)",
+        default=False,
+    )
 
     def execute(self, context):
+        import os
+        from mathutils import Matrix
         from . import stl_utils
         from . import blender_utils
-        from mathutils import Matrix
 
-        paths = [os.path.join(self.directory, name.name)
-                 for name in self.files]
+        paths = [os.path.join(self.directory, name.name) for name in self.files]
 
         scene = context.scene
 
@@ -130,9 +124,10 @@ class ImportSTL(Operator, ImportHelper):
         if scene.unit_settings.system != 'NONE' and self.use_scene_unit:
             global_scale /= scene.unit_settings.scale_length
 
-        global_matrix = axis_conversion(from_forward=self.axis_forward,
-                                        from_up=self.axis_up,
-                                        ).to_4x4() @ Matrix.Scale(global_scale, 4)
+        global_matrix = axis_conversion(
+            from_forward=self.axis_forward,
+            from_up=self.axis_up,
+        ).to_4x4() @ Matrix.Scale(global_scale, 4)
 
         if not paths:
             paths.append(self.filepath)
@@ -209,64 +204,70 @@ class STL_PT_import_geometry(bpy.types.Panel):
 
 @orientation_helper(axis_forward='Y', axis_up='Z')
 class ExportSTL(Operator, ExportHelper):
-    """Save STL triangle mesh data from the active object"""
     bl_idname = "export_mesh.stl"
     bl_label = "Export STL"
+    bl_description = """Save STL triangle mesh data"""
 
     filename_ext = ".stl"
     filter_glob: StringProperty(default="*.stl", options={'HIDDEN'})
 
     use_selection: BoolProperty(
-            name="Selection Only",
-            description="Export selected objects only",
-            default=False,
-            )
+        name="Selection Only",
+        description="Export selected objects only",
+        default=False,
+    )
     global_scale: FloatProperty(
-            name="Scale",
-            min=0.01, max=1000.0,
-            default=1.0,
-            )
-
+        name="Scale",
+        min=0.01, max=1000.0,
+        default=1.0,
+    )
     use_scene_unit: BoolProperty(
-            name="Scene Unit",
-            description="Apply current scene's unit (as defined by unit scale) to exported data",
-            default=False,
-            )
+        name="Scene Unit",
+        description="Apply current scene's unit (as defined by unit scale) to exported data",
+        default=False,
+    )
     ascii: BoolProperty(
-            name="Ascii",
-            description="Save the file in ASCII file format",
-            default=False,
-            )
+        name="Ascii",
+        description="Save the file in ASCII file format",
+        default=False,
+    )
     use_mesh_modifiers: BoolProperty(
-            name="Apply Modifiers",
-            description="Apply the modifiers before saving",
-            default=True,
-            )
+        name="Apply Modifiers",
+        description="Apply the modifiers before saving",
+        default=True,
+    )
     batch_mode: EnumProperty(
-            name="Batch Mode",
-            items=(('OFF', "Off", "All data in one file"),
-                   ('OBJECT', "Object", "Each object as a file"),
-                   ))
+        name="Batch Mode",
+        items=(
+            ('OFF', "Off", "All data in one file"),
+            ('OBJECT', "Object", "Each object as a file"),
+        ),
+    )
 
     @property
     def check_extension(self):
         return self.batch_mode == 'OFF'
 
     def execute(self, context):
-        from . import stl_utils
-        from . import blender_utils
+        import os
         import itertools
         from mathutils import Matrix
-        keywords = self.as_keywords(ignore=("axis_forward",
-                                            "axis_up",
-                                            "use_selection",
-                                            "global_scale",
-                                            "check_existing",
-                                            "filter_glob",
-                                            "use_scene_unit",
-                                            "use_mesh_modifiers",
-                                            "batch_mode"
-                                            ))
+        from . import stl_utils
+        from . import blender_utils
+
+        keywords = self.as_keywords(
+            ignore=(
+                "axis_forward",
+                "axis_up",
+                "use_selection",
+                "global_scale",
+                "check_existing",
+                "filter_glob",
+                "use_scene_unit",
+                "use_mesh_modifiers",
+                "batch_mode"
+            ),
+        )
 
         scene = context.scene
         if self.use_selection:
@@ -279,9 +280,10 @@ class ExportSTL(Operator, ExportHelper):
         if scene.unit_settings.system != 'NONE' and self.use_scene_unit:
             global_scale *= scene.unit_settings.scale_length
 
-        global_matrix = axis_conversion(to_forward=self.axis_forward,
-                                        to_up=self.axis_up,
-                                        ).to_4x4() @ Matrix.Scale(global_scale, 4)
+        global_matrix = axis_conversion(
+            to_forward=self.axis_forward,
+            to_up=self.axis_up,
+        ).to_4x4() @ Matrix.Scale(global_scale, 4)
 
         if self.batch_mode == 'OFF':
             faces = itertools.chain.from_iterable(
@@ -423,6 +425,7 @@ classes = (
     STL_PT_export_transform,
     STL_PT_export_geometry,
 )
+
 
 def register():
     for cls in classes:
