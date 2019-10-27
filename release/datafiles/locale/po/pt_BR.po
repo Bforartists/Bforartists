@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Dalai Felinto, Bruno Gonçalves Pirajá, Samuel Arataca, Daniel Tavares, Moraes Junior <ivan.paulos.tome@yandex.com>\n"
@@ -10406,62 +10406,6 @@ msgid "Keep the computed view map and avoid re-calculating it if mesh geometry i
 msgstr "Mantém o mapa de visualização computado e evita o recálculo do mesmo se a geometria da malha não for alterada."
 
 
-msgid "GPU FX Settings"
-msgstr "Configurações de efeitos usando a GPU"
-
-
-msgid "Settings for GPU based compositing"
-msgstr "Configurações para a composição usando o processador da placa gráfica (GPU)."
-
-
-msgid "Screen Space Ambient Occlusion settings"
-msgstr "Configurações para a oclusão ambiente em espaço de tela."
-
-
-msgid "SSAO"
-msgstr "Oclusão ambiente em espaço de tela"
-
-
-msgid "Use screen space ambient occlusion of field on viewport"
-msgstr "Permite o uso de oclusão ambiente em espaço de tela usando a profundidade de campo da porta de visão."
-
-
-msgid "GPU SSAO"
-msgstr "Oclusão ambiente em espaço de tela via GPU"
-
-
-msgid "Settings for GPU based screen space ambient occlusion"
-msgstr "Configurações para a oclusão ambiente em espaço de tela com base no processador da placa gráfica (GPU)."
-
-
-msgid "Attenuation"
-msgstr "Atenuação"
-
-
-msgid "Attenuation constant"
-msgstr "Constante de atenuação."
-
-
-msgid "Color for screen space ambient occlusion effect"
-msgstr "Cor para o efeito de oclusão ambiente em espaço de tela."
-
-
-msgid "Distance of object that contribute to the SSAO effect"
-msgstr "Distância com relação aos objetos que irá contribuir para o efeito de oclusão ambiente em espaço de tela."
-
-
-msgid "Strength of the SSAO effect"
-msgstr "A força do efeito de oclusão ambiente em espaço de tela."
-
-
-msgid "Samples"
-msgstr "Amostras"
-
-
-msgid "Number of samples"
-msgstr "Número de amostras."
-
-
 msgid "Grease Pencil Frame"
 msgstr "Quadro de lápis de cera"
 
@@ -14677,6 +14621,10 @@ msgid "Shadow map clip start, below which objects will not generate shadows"
 msgstr "O limite inicial do mapa de sombras (distância), abaixo do qual os objetos não irão gerar sombras."
 
 
+msgid "Samples"
+msgstr "Amostras"
+
+
 msgid "Number of shadow buffer samples"
 msgstr "Número de amostras de contingenciamento de sombras."
 
@@ -17515,6 +17463,10 @@ msgstr "Caso o arquivo tenha múltiplos canais de áudio eles serão renderizado
 
 msgid "Speaker data-block for 3D audio speaker objects"
 msgstr "Blocos de dados de auto-falante para objetos de áudio 3D."
+
+
+msgid "Attenuation"
+msgstr "Atenuação"
 
 
 msgid "How strong the distance affects volume, depending on distance model"
@@ -30941,6 +30893,14 @@ msgid "Toggle keyframe selection instead of leaving newly selected keyframes onl
 msgstr "Alterna a seleção de quadros-chave ao invés de deixar somente os novos quadros-chave selecionados."
 
 
+msgid "Mouse X"
+msgstr "Mouse X"
+
+
+msgid "Mouse Y"
+msgstr "Mouse Y"
+
+
 msgctxt "Operator"
 msgid "Copy Keyframes"
 msgstr "Copiar quadros-chave"
@@ -35710,10 +35670,6 @@ msgid "Delete Selected Files"
 msgstr "Apagar os arquivos selecionados"
 
 
-msgid "Delete selected files"
-msgstr "Apaga os arquivos selecionados."
-
-
 msgctxt "Operator"
 msgid "Create New Directory"
 msgstr "Criar novo diretório"
@@ -40090,134 +40046,48 @@ msgid "Construct a UV sphere mesh"
 msgstr "Constrói uma malha de esfera UV."
 
 
-msgctxt "Operator"
-msgid "Print3D Check All"
-msgstr "Impressora 3D - Verificar tudo"
-
-
 msgid "Run all checks"
 msgstr "Executa todas as verificações"
-
-
-msgctxt "Operator"
-msgid "Print3D Check Degenerate"
-msgstr "Impressora 3D - Verificar degeneração"
 
 
 msgid "Check for degenerate geometry that may not print properly (zero area faces, zero length edges)"
 msgstr "Verifica por geometria degenerada que pode não ser impressa corretamente (áreas com faces zero, e arestas com comprimento zero)."
 
 
-msgctxt "Operator"
-msgid "Print3D Check Distorted Faces"
-msgstr "Impressora 3D - Verificar faces distorcidas"
-
-
-msgid "Check for non-flat faces "
-msgstr "Verifica por faces que não são lisas ou achatadas."
-
-
-msgctxt "Operator"
-msgid "Print3D Check Intersections"
-msgstr "Impressora 3D - Verificar intersecções"
-
-
 msgid "Check geometry for self intersections"
 msgstr "Verifica geometria por intersecções consigo."
-
-
-msgctxt "Operator"
-msgid "Print3D Check Overhang"
-msgstr "Impressora 3D - Verificar saliências"
 
 
 msgid "Check faces don't overhang past a certain angle"
 msgstr "Verifica por faces que não se sobressaem após um determinado ângulo."
 
 
-msgctxt "Operator"
-msgid "Print3D Check Sharp"
-msgstr "Impressora 3D - Verificar prominências"
-
-
 msgid "Check edges are below the sharpness preference"
 msgstr "Verifica por arestas que estão abaixo das preferências de prominência."
-
-
-msgctxt "Operator"
-msgid "Print3D Check Solid"
-msgstr "Impressora 3D - Verificar sólidos"
 
 
 msgid "Check for geometry is solid (has valid inside/outside) and correct normals"
 msgstr "Verifica por geometria que é sólida (que possui lados internos e externos válidos) e corrige as normais."
 
 
-msgctxt "Operator"
-msgid "Print3D Check Thickness"
-msgstr "Impressora 3D - Verificar espessura"
-
-
 msgid "Check geometry is above the minimum thickness preference (relies on correct normals)"
 msgstr "Verifica se a geometria está acima da preferência mínima de espessura (depende de correção de normais)."
-
-
-msgctxt "Operator"
-msgid "Print3D Clean Distorted"
-msgstr "Impressora 3D - Limpar distorções"
 
 
 msgid "Tessellate distorted faces"
 msgstr "Tessela as faces distorcidas."
 
 
-msgctxt "Operator"
-msgid "Print3D Clean Isolated "
-msgstr "Impressora 3D - Limpar isoladas"
-
-
-msgid "Cleanup isolated vertices and edges"
-msgstr "Limpa os vértices e arestas isoladas."
-
-
-msgctxt "Operator"
-msgid "Print3D Clean Non-Manifold and Inverted"
-msgstr "Impressão 3D - Conserto para descontinuidades"
-
-
-msgid "Cleanup problems, like holes, non-manifold vertices, and inverted normals"
-msgstr "Procura eliminar problemas como orifícios nas faces, vértices não contínuos, e normais das faces não contíguas ou invertidas."
-
-
-msgid "Number of sides in hole required to fill"
-msgstr "Número de lados requeridos no orifício para o preenchimento."
+msgid "Limit for checking distorted faces"
+msgstr "Limite para verificação de faces distorcidas."
 
 
 msgid "Minimum distance between elements to merge"
 msgstr "Distância mínima entre os elementos para fusão."
 
 
-msgctxt "Operator"
-msgid "Print3D Export"
-msgstr "Impressora 3D - Exportar "
-
-
-msgid "Export active object using print3d settings"
-msgstr "Exporta o objeto ativo usando configurações de impressora 3D."
-
-
-msgctxt "Operator"
-msgid "Print3D Info Area"
-msgstr "Impressora 3D - Informações de área "
-
-
 msgid "Report the surface area of the active mesh"
 msgstr "Informa a área de superfície da malha ativa."
-
-
-msgctxt "Operator"
-msgid "Print3D Info Volume"
-msgstr "Impressora 3D - Informações de volume "
 
 
 msgid "Report the volume of the active mesh"
@@ -40244,11 +40114,6 @@ msgstr "Escalonar para volume"
 
 msgid "Scale edit-mesh or selected-objects to a set volume"
 msgstr "Escalona a malha de edição ou objetos selecionados para configurar um volume."
-
-
-msgctxt "Operator"
-msgid "Print3D Select Report"
-msgstr "Impressora 3D - Seleção para relatório"
 
 
 msgid "Select the data associated with this report"
@@ -41910,14 +41775,6 @@ msgstr "Redimensiona um nó."
 
 msgid "Select the node under the cursor"
 msgstr "Seleciona o nó abaixo do cursor."
-
-
-msgid "Mouse X"
-msgstr "Mouse X"
-
-
-msgid "Mouse Y"
-msgstr "Mouse Y"
 
 
 msgid "(De)select all nodes"
@@ -53312,10 +53169,6 @@ msgid "Motion Tracking"
 msgstr "Captura de movimentos"
 
 
-msgid "Print3D"
-msgstr "Impressora 3D"
-
-
 msgid "Dyntopo"
 msgstr "Topologia dinâmica"
 
@@ -57474,10 +57327,6 @@ msgid "Brush Size"
 msgstr "Tamanho do pincel"
 
 
-msgid "Limit for checking distorted faces"
-msgstr "Limite para verificação de faces distorcidas."
-
-
 msgid "Format type to export to"
 msgstr "Tipo de formato para o qual exportar."
 
@@ -59108,6 +58957,14 @@ msgstr "Limite elástico"
 
 msgid "How much the spring has to be stretched/compressed in order to change it's rest length"
 msgstr "Define quanto a mola deverá ser esticada ou comprimida de maneira a alterar sua posição de descanso."
+
+
+msgid "Attenuation constant"
+msgstr "Constante de atenuação."
+
+
+msgid "Number of samples"
+msgstr "Número de amostras."
 
 
 msgid "Factor for ambient occlusion blending"
@@ -62772,14 +62629,6 @@ msgstr "Limite de corte da visibilidade na redução da porta de visão na janel
 
 msgid "3D View near clipping distance (perspective view only)"
 msgstr "Limite de corte de visibilidade na ampliação da porta de visão na janela de visualização 3D (somente para visão em perspectiva)."
-
-
-msgid "FX Options"
-msgstr "Opções de efeitos"
-
-
-msgid "Options used for real time compositing"
-msgstr "Opções utilizadas para a composição em tempo real."
 
 
 msgid "Viewport lens angle"
@@ -66940,11 +66789,6 @@ msgstr "Verificar tudo"
 
 
 msgctxt "Operator"
-msgid "Isolated"
-msgstr "Isolado"
-
-
-msgctxt "Operator"
 msgid "Make Manifold"
 msgstr "Tornar contíguo"
 
@@ -70112,13 +69956,13 @@ msgstr "Consertar deformações"
 
 
 msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "Ocultar a caixa circundante"
+msgid "Show Bounding Box"
+msgstr "Revelar a caixa circundante"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "Revelar a caixa circundante"
+msgid "Hide Bounding Box"
+msgstr "Ocultar a caixa circundante"
 
 
 msgctxt "Operator"
@@ -73127,24 +72971,20 @@ msgid "Parse error in %s"
 msgstr "Erro de análise dentro de %s"
 
 
-msgid "Cannot add geometry in edit mode"
-msgstr "Não é possível adicionar geometria no modo de edição."
+msgid "Cannot add vertices in edit mode"
+msgstr "Não é possível adicionar vértices no modo de edição."
 
 
 msgid "Cannot add edges in edit mode"
 msgstr "Não é possível adicionar arestas no modo de edição."
 
 
-msgid "Cannot add vertices in edit mode"
-msgstr "Não é possível adicionar vértices no modo de edição."
+msgid "Cannot add loops in edit mode"
+msgstr "Não é possível adicionar anéis no modo de edição."
 
 
-msgid "Cannot remove edges in edit mode"
-msgstr "Não é possível remover arestas no modo de edição."
-
-
-msgid "Cannot remove more edges than the mesh contains"
-msgstr "Não é possível remover mais arestas do que a malha contém."
+msgid "Cannot add polygons in edit mode"
+msgstr "Não é possível adicionar polígonos no modo de edição."
 
 
 msgid "Cannot remove vertices in edit mode"
@@ -73155,12 +72995,12 @@ msgid "Cannot remove more vertices than the mesh contains"
 msgstr "Não é possível remover mais vértices do que a malha contém."
 
 
-msgid "Cannot add loops in edit mode"
-msgstr "Não é possível adicionar anéis no modo de edição."
+msgid "Cannot remove edges in edit mode"
+msgstr "Não é possível remover arestas no modo de edição."
 
 
-msgid "Cannot add polygons in edit mode"
-msgstr "Não é possível adicionar polígonos no modo de edição."
+msgid "Cannot remove more edges than the mesh contains"
+msgstr "Não é possível remover mais arestas do que a malha contém."
 
 
 msgid "%d %s mirrored, %d failed"
@@ -74575,10 +74415,6 @@ msgstr "O caminho fornecido '%s' é inválido no sistema operacional, criando o 
 
 msgid "Could not create new folder: %s"
 msgstr "Não é possível criar nova pasta: %s"
-
-
-msgid "Could not delete file: %s"
-msgstr "Não é possível apagar o arquivo: %s"
 
 
 msgid "Cancel"

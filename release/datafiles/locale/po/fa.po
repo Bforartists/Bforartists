@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -2450,10 +2450,6 @@ msgid "Visible"
 msgstr "ﯽﺋﺮﻣ"
 
 
-msgid "Attenuation"
-msgstr "ﺖﻬﺟ"
-
-
 msgid "Frames"
 msgstr "ﺎﻫ‌ﻢﯾﺮﻓ"
 
@@ -3920,6 +3916,10 @@ msgstr "ﺲﻧﺎﮑﺳ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
 msgid "Top-Left 3D Editor"
 msgstr "ﻦﺘﻣ ﺮﮕﺸﯾﺍﺮﯾﻭ"
+
+
+msgid "Attenuation"
+msgstr "ﺖﻬﺟ"
 
 
 msgid "Inner Cone Angle"
@@ -14599,12 +14599,12 @@ msgstr "ﺲﻧﺎﺠﺗ ﻥﺩﺮﮐ ﺩﻭﺪﺤﻣ"
 
 
 msgctxt "Operator"
-msgid "Hide Bounding Box"
+msgid "Show Bounding Box"
 msgstr "ﻩﺩﺮﺘﺴﮔ ﺶﯾﺎﻤﻧ"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
+msgid "Hide Bounding Box"
 msgstr "ﻩﺩﺮﺘﺴﮔ ﺶﯾﺎﻤﻧ"
 
 
@@ -15577,7 +15577,7 @@ msgid "Nothing selected"
 msgstr "ﻩﺪﺸﻧ ﺏﺎﺨﺘﻧﺍ ﺰﯿﭼ ﭻﯿﻫ"
 
 
-msgid "Cannot add geometry in edit mode"
+msgid "Cannot add vertices in edit mode"
 msgstr "ﻩﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
 
@@ -15585,11 +15585,11 @@ msgid "Cannot add edges in edit mode"
 msgstr "ﻩﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
 
-msgid "Cannot add vertices in edit mode"
+msgid "Cannot add loops in edit mode"
 msgstr "ﻩﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
 
-msgid "Cannot remove edges in edit mode"
+msgid "Cannot add polygons in edit mode"
 msgstr "ﻩﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
 
@@ -15601,11 +15601,7 @@ msgid "Cannot remove more vertices than the mesh contains"
 msgstr "ﻩﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
 
-msgid "Cannot add loops in edit mode"
-msgstr "ﻩﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
-
-
-msgid "Cannot add polygons in edit mode"
+msgid "Cannot remove edges in edit mode"
 msgstr "ﻩﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
 

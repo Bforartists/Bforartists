@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -4733,30 +4733,6 @@ msgid "Face Smoothness"
 msgstr "Umekšavanje stranice"
 
 
-msgid "SSAO"
-msgstr "SSAO"
-
-
-msgid "GPU SSAO"
-msgstr "GPU SSAO"
-
-
-msgid "Attenuation"
-msgstr "Pažnja"
-
-
-msgid "Color for screen space ambient occlusion effect"
-msgstr "Boja ekranskog efekta ambijentalnog senčenja"
-
-
-msgid "Samples"
-msgstr "Uzoraka"
-
-
-msgid "Number of samples"
-msgstr "Broj uzoraka"
-
-
 msgid "Grease Pencil Frame"
 msgstr "Skicirani kadar"
 
@@ -6646,6 +6622,10 @@ msgid "Falloff Type"
 msgstr "Vrsta opadanja"
 
 
+msgid "Samples"
+msgstr "Uzoraka"
+
+
 msgid "Number of shadow buffer samples"
 msgstr "Broj uzoraka umekšane senke"
 
@@ -8152,6 +8132,10 @@ msgstr "Uređivač teksta"
 
 msgid "Caching"
 msgstr "Keširanje"
+
+
+msgid "Attenuation"
+msgstr "Pažnja"
 
 
 msgid "Inner Cone Angle"
@@ -12755,6 +12739,14 @@ msgid "Extend Select"
 msgstr "Proširi izbor"
 
 
+msgid "Mouse X"
+msgstr "Miš X"
+
+
+msgid "Mouse Y"
+msgstr "Miš Y"
+
+
 msgctxt "Operator"
 msgid "Copy Keyframes"
 msgstr "Umnoži ključni kadar"
@@ -15111,10 +15103,6 @@ msgid "Delete Selected Files"
 msgstr "Izbriši izabrane datoteke"
 
 
-msgid "Delete selected files"
-msgstr "Izbriši izabrane datoteke"
-
-
 msgctxt "Operator"
 msgid "Create New Directory"
 msgstr "Napravi novi direktorijum"
@@ -17073,17 +17061,8 @@ msgid "Run all checks"
 msgstr "Pokreni sve provere"
 
 
-msgid "Cleanup isolated vertices and edges"
-msgstr "Očisti izolovana temena i ivice"
-
-
 msgid "Minimum distance between elements to merge"
 msgstr "Minimalno rastojanje među elementima za spajanje"
-
-
-msgctxt "Operator"
-msgid "Print3D Select Report"
-msgstr "Izaberi Print3D izveštaj"
 
 
 msgid "Merge selected to other unselected vertices"
@@ -17822,14 +17801,6 @@ msgstr "Izbriši izabrane čvorove"
 msgctxt "Operator"
 msgid "Render Changed Layer"
 msgstr "Renderuj izmenjene slojeve"
-
-
-msgid "Mouse X"
-msgstr "Miš X"
-
-
-msgid "Mouse Y"
-msgstr "Miš Y"
 
 
 msgid "(De)select all nodes"
@@ -22555,10 +22526,6 @@ msgid "Motion Tracking"
 msgstr "Praćenje pokreta"
 
 
-msgid "Print3D"
-msgstr "3D štampa"
-
-
 msgid "Dyntopo"
 msgstr "Dinamičko vajanje"
 
@@ -24429,6 +24396,10 @@ msgstr "Gustina se računa kao faktor početne gustine (zavisi od veličine čes
 
 msgid "Factor Radius"
 msgstr "Faktor poluprečnika"
+
+
+msgid "Number of samples"
+msgstr "Broj uzoraka"
 
 
 msgid "YCbCr (ITU 601)"
@@ -27144,11 +27115,6 @@ msgstr "Proveri sve"
 
 
 msgctxt "Operator"
-msgid "Isolated"
-msgstr "Izolovano"
-
-
-msgctxt "Operator"
 msgid "Bounds"
 msgstr "Odbijanja"
 
@@ -29023,13 +28989,13 @@ msgstr "Očisti"
 
 
 msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "Sakrij graničnu kocku"
+msgid "Show Bounding Box"
+msgstr "Prikaži graničnu kocku"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "Prikaži graničnu kocku"
+msgid "Hide Bounding Box"
+msgstr "Sakrij graničnu kocku"
 
 
 msgctxt "Operator"

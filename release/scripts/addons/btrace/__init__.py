@@ -25,7 +25,8 @@ bl_info = {
     "location": "View3D > Sidebar > Create Tab",
     "description": "Tools for converting/animating objects/particles into curves",
     "warning": "",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Curve/Btrace",
+    "wiki_url": "https://docs.blender.org/manual/nb/dev/addons/"
+                "add_curve/btracer.html",
     "category": "Add Curve"}
 
 import bpy

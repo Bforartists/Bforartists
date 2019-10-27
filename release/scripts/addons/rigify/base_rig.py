@@ -258,6 +258,16 @@ class RigUtility(BoneUtilityMixin, MechanismUtilityMixin):
         self.owner.register_new_bone(new_name, old_name)
 
 
+class RigComponent(GenerateCallbackHost, RigUtility):
+    """Base class for utility classes that generate part of a rig using callbacks."""
+    def __init__(self, owner):
+        super().__init__(owner)
+
+        self.owner.rigify_sub_objects = objects = self.owner.rigify_sub_objects or []
+
+        objects.append(self)
+
+
 #=============================================
 # Rig Stage Decorators
 #=============================================

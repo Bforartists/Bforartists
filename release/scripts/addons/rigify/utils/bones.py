@@ -657,3 +657,17 @@ def align_bone_to_axis(obj, bone_name, axis, *, length=None, roll=0, flip=False)
         bone_e.tail = bone_e.head + vec
 
     bone_e.roll = roll
+
+
+def set_bone_widget_transform(obj, bone_name, transform_bone, use_size=True, scale=1.0):
+    assert obj.mode != 'EDIT'
+
+    bone = obj.pose.bones[bone_name]
+
+    if transform_bone and transform_bone != bone_name:
+        bone.custom_shape_transform = obj.pose.bones[transform_bone]
+    else:
+        bone.custom_shape_transform = None
+
+    bone.use_custom_shape_bone_size = use_size
+    bone.custom_shape_scale = scale

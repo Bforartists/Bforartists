@@ -19,7 +19,7 @@ from io_scene_gltf2.io.com.gltf2_io_debug import print_console
 from io_scene_gltf2.blender.exp import gltf2_blender_gather_nodes
 from io_scene_gltf2.blender.exp import gltf2_blender_gather_animations
 from io_scene_gltf2.blender.exp.gltf2_blender_gather_cache import cached
-from io_scene_gltf2.blender.exp import gltf2_blender_generate_extras
+from ..com.gltf2_blender_extras import generate_extras
 from io_scene_gltf2.blender.exp import gltf2_blender_export_keys
 
 
@@ -97,6 +97,14 @@ def __gather_animations(blender_scene, export_settings):
 
             to_delete_idx.append(anim_idx)
 
+            # Merging extras
+            # Warning, some values can be overwritten if present in multiple merged animations
+            if animations[anim_idx].extras is not None:
+                for k in animations[anim_idx].extras.keys():
+                    if animations[base_animation_idx].extras is None:
+                        animations[base_animation_idx].extras = {}
+                    animations[base_animation_idx].extras[k] = animations[anim_idx].extras[k]
+
             offset_sampler = len(animations[base_animation_idx].samplers)
             for sampler in animations[anim_idx].samplers:
                 animations[base_animation_idx].samplers.append(sampler)
@@ -124,6 +132,6 @@ def __gather_animations(blender_scene, export_settings):
 
 def __gather_extras(blender_object, export_settings):
     if export_settings[gltf2_blender_export_keys.EXTRAS]:
-        return gltf2_blender_generate_extras.generate_extras(blender_object)
+        return generate_extras(blender_object)
     return None
 
