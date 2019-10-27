@@ -15,7 +15,7 @@
 # not, see <https://www.gnu.org/licenses/>.
 #
 """
-Add-on preferences and interface in the Preferences window.
+Add-on preferences and interface in the Blender preferences window.
 """
 import bpy
 

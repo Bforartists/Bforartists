@@ -3784,6 +3784,7 @@ def write_pov_ini(scene, filename_ini, filename_log, filename_pov, filename_imag
 class PovrayRender(bpy.types.RenderEngine):
     bl_idname = 'POVRAY_RENDER'
     bl_label = "Persitence Of Vision"
+    bl_use_shading_nodes_custom = False
     DELAY = 0.5
 
     @staticmethod

@@ -19,7 +19,7 @@
 bl_info = {
     "name": "LoopTools",
     "author": "Bart Crouch",
-    "version": (4, 6, 7),
+    "version": (4, 6, 8),
     "blender": (2, 80, 0),
     "location": "View3D > Sidebar > Edit Tab / Edit Mode Context Menu",
     "warning": "",
@@ -290,8 +290,10 @@ def calculate_plane(bm_mod, loop, method="best_fit", object=False):
             for i in range(itermax):
                 vec = vec2
                 vec2 = mat @ vec
-                if vec2.length != 0:
-                    vec2 /= vec2.length
+                # Calculate length with double precision to avoid problems with `inf`
+                vec2_length = math.sqrt(vec2[0] ** 2 + vec2[1] ** 2 + vec2[2] ** 2)
+                if vec2_length != 0:
+                    vec2 /= vec2_length
                 if vec2 == vec:
                     break
             if vec2.length == 0:

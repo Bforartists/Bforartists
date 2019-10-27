@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: \n"
 "Last-Translator: blend-it <https://developer.blender.org/T42765>\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -9395,62 +9395,6 @@ msgid "Keep the computed view map and avoid re-calculating it if mesh geometry i
 msgstr "Mantiene la mappa vista calcolata, evitando di rigenerarla se la geometria della mesh non viene cambiata"
 
 
-msgid "GPU FX Settings"
-msgstr "Impostazioni GPU FX"
-
-
-msgid "Settings for GPU based compositing"
-msgstr "Impostazioni per il composting su GPU"
-
-
-msgid "Screen Space Ambient Occlusion settings"
-msgstr "Impostazioni Occlusione Ambientale in Spazio Schermo"
-
-
-msgid "SSAO"
-msgstr "OASS"
-
-
-msgid "Use screen space ambient occlusion of field on viewport"
-msgstr "Usa Occlusione Ambientale in Spazio Schermo del campo nella vista"
-
-
-msgid "GPU SSAO"
-msgstr "GPU OASS"
-
-
-msgid "Settings for GPU based screen space ambient occlusion"
-msgstr "Impostazioni per calcolo Occlusione Ambientale in Spazio Schermo su GPU"
-
-
-msgid "Attenuation"
-msgstr "Attenuazione"
-
-
-msgid "Attenuation constant"
-msgstr "Costante di attenuazione"
-
-
-msgid "Color for screen space ambient occlusion effect"
-msgstr "Colore per l'effetto Occlusione Ambientale in Spazio Schermo"
-
-
-msgid "Distance of object that contribute to the SSAO effect"
-msgstr "Distanza dell'oggetto che contribuisce all'effetto Occlusione Ambientale in Spazio Schermo"
-
-
-msgid "Strength of the SSAO effect"
-msgstr "Intensità dell'effetto Occlusione Ambientale in Spazio Schermo"
-
-
-msgid "Samples"
-msgstr "Campioni"
-
-
-msgid "Number of samples"
-msgstr "Numero di campioni"
-
-
 msgid "Grease Pencil Frame"
 msgstr "Fotogramma Matita"
 
@@ -12682,6 +12626,10 @@ msgid "Shadow Buffer Clip Start"
 msgstr "Taglio Iniziale Buffer Ombra"
 
 
+msgid "Samples"
+msgstr "Campioni"
+
+
 msgid "Shadow Buffer Size"
 msgstr "Dimensione Buffer Ombra"
 
@@ -15052,6 +15000,10 @@ msgstr "Se il file contienecanali audio multipli sono renderizzati come uno sing
 
 msgid "Speaker data-block for 3D audio speaker objects"
 msgstr "Blocco-dati Altoparlante per oggetti altoparlanti audio 3D"
+
+
+msgid "Attenuation"
+msgstr "Attenuazione"
 
 
 msgid "How strong the distance affects volume, depending on distance model"
@@ -25580,6 +25532,14 @@ msgid "Extend Select"
 msgstr "Estendi Selezione"
 
 
+msgid "Mouse X"
+msgstr "Mouse X"
+
+
+msgid "Mouse Y"
+msgstr "Mouse Y"
+
+
 msgctxt "Operator"
 msgid "Copy Keyframes"
 msgstr "Copia Fotogrammi Chiave"
@@ -29760,10 +29720,6 @@ msgid "Delete Selected Files"
 msgstr "Cancella i File Selezionati"
 
 
-msgid "Delete selected files"
-msgstr "Cancella i file selezionati"
-
-
 msgctxt "Operator"
 msgid "Create New Directory"
 msgstr "Crea Nuova Cartella"
@@ -33550,26 +33506,12 @@ msgid "Construct a UV sphere mesh"
 msgstr "Crea una mesh sfera UV"
 
 
-msgctxt "Operator"
-msgid "Print3D Check All"
-msgstr "Print3D Controlla Tutto"
-
-
 msgid "Run all checks"
 msgstr "Esegue tutti i controlli"
 
 
-msgctxt "Operator"
-msgid "Print3D Check Degenerate"
-msgstr "Controllo Degenerati di Print3D"
-
-
 msgid "Check for degenerate geometry that may not print properly (zero area faces, zero length edges)"
 msgstr "Controlla la presenza di geometrie degenerate che non possono essere stampate (facce con area zero, spigoli con lunghezza zero)"
-
-
-msgid "Check for non-flat faces "
-msgstr "Controlla la presenza di facce non piane "
 
 
 msgid "Check geometry for self intersections"
@@ -33588,11 +33530,6 @@ msgid "Check for geometry is solid (has valid inside/outside) and correct normal
 msgstr "Controlla che la geometria sia solida (con un interno/esterno valido) e normali corrette"
 
 
-msgctxt "Operator"
-msgid "Print3D Check Thickness"
-msgstr "Controllo Spessore di Print3D"
-
-
 msgid "Check geometry is above the minimum thickness preference (relies on correct normals)"
 msgstr "Controlla che la geometria abbia uno spessore minimo (basato sulla correttezza delle normali)"
 
@@ -33601,30 +33538,12 @@ msgid "Tessellate distorted faces"
 msgstr "Tassella le facce distorte"
 
 
-msgctxt "Operator"
-msgid "Print3D Clean Isolated "
-msgstr "Pulisci Isolati di Print3D "
-
-
-msgid "Cleanup isolated vertices and edges"
-msgstr "Pulisce vertici e spigoli isolati"
-
-
-msgctxt "Operator"
-msgid "Print3D Clean Non-Manifold and Inverted"
-msgstr "Pulisci Non-Manifold e Invertiti di Print3D"
-
-
-msgid "Cleanup problems, like holes, non-manifold vertices, and inverted normals"
-msgstr "Rimuove i problemi, come buchi, vertici non-manifold, e normali invertite"
+msgid "Limit for checking distorted faces"
+msgstr "Limite di controllo facce distorte"
 
 
 msgid "Minimum distance between elements to merge"
 msgstr "Distanza minima tra gli elementi per effettuare l'unione"
-
-
-msgid "Export active object using print3d settings"
-msgstr "Esporta l'oggetto attivo usando le impostazioni stampa 3D"
 
 
 msgid "Report the surface area of the active mesh"
@@ -33647,11 +33566,6 @@ msgstr "Limite Lunghezza"
 msgctxt "Operator"
 msgid "Scale to Volume"
 msgstr "Scala al Volume"
-
-
-msgctxt "Operator"
-msgid "Print3D Select Report"
-msgstr "Seleziona Rapporto Print3D"
 
 
 msgctxt "Operator"
@@ -35121,14 +35035,6 @@ msgstr "Ridimensiona un nodo"
 
 msgid "Select the node under the cursor"
 msgstr "Seleziona il nodo sotto il cursore"
-
-
-msgid "Mouse X"
-msgstr "Mouse X"
-
-
-msgid "Mouse Y"
-msgstr "Mouse Y"
 
 
 msgid "(De)select all nodes"
@@ -45009,10 +44915,6 @@ msgid "Motion Tracking"
 msgstr "Tracciatura Movimento"
 
 
-msgid "Print3D"
-msgstr "Stampa3D"
-
-
 msgid "Dyntopo"
 msgstr "Topologia Dinamica"
 
@@ -48423,10 +48325,6 @@ msgid "Brush Size"
 msgstr "Dimensione Pennello"
 
 
-msgid "Limit for checking distorted faces"
-msgstr "Limite di controllo facce distorte"
-
-
 msgid "Format type to export to"
 msgstr "Tipo formato in cui esportare"
 
@@ -49689,6 +49587,14 @@ msgstr "Limite Elastico"
 
 msgid "How much the spring has to be stretched/compressed in order to change it's rest length"
 msgstr "Quanto la molla deve essere allungata / compressa al fine di modificare la sua lunghezza a riposo"
+
+
+msgid "Attenuation constant"
+msgstr "Costante di attenuazione"
+
+
+msgid "Number of samples"
+msgstr "Numero di campioni"
 
 
 msgid "Factor for ambient occlusion blending"
@@ -52307,10 +52213,6 @@ msgstr "Distanza di taglio lontano nella Vista 3D"
 
 msgid "3D View near clipping distance (perspective view only)"
 msgstr "Distanza di taglio vicino nella Vista 3D"
-
-
-msgid "FX Options"
-msgstr "Opzioni FX"
 
 
 msgid "Viewport lens angle"
@@ -55707,11 +55609,6 @@ msgstr "Controlla Tutto"
 
 
 msgctxt "Operator"
-msgid "Isolated"
-msgstr "Isolati"
-
-
-msgctxt "Operator"
 msgid "Make Manifold"
 msgstr "Rendi Manifold"
 
@@ -58830,13 +58727,13 @@ msgstr "Correggi Deformazione"
 
 
 msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "Nascondi Casella Delimitazione"
+msgid "Show Bounding Box"
+msgstr "Mostra Casella Delimitazione"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "Mostra Casella Delimitazione"
+msgid "Hide Bounding Box"
+msgstr "Nascondi Casella Delimitazione"
 
 
 msgctxt "Operator"
@@ -61242,24 +61139,20 @@ msgid "Parse error in %s"
 msgstr "Errore analisi in %s"
 
 
-msgid "Cannot add geometry in edit mode"
-msgstr "Impossibile aggiungere geometria in Modalità Modifica"
+msgid "Cannot add vertices in edit mode"
+msgstr "Impossibile aggiungere vertici in Modalità Modifica"
 
 
 msgid "Cannot add edges in edit mode"
 msgstr "Impossibile aggiungere spigoli in Modalità Modifica"
 
 
-msgid "Cannot add vertices in edit mode"
-msgstr "Impossibile aggiungere vertici in Modalità Modifica"
+msgid "Cannot add loops in edit mode"
+msgstr "Impossibile aggiungere anelli (loops) in edit mode"
 
 
-msgid "Cannot remove edges in edit mode"
-msgstr "Impossibile rimuovere spigoli in Modalità Modifica"
-
-
-msgid "Cannot remove more edges than the mesh contains"
-msgstr "Impossibile rimuovere più spigolo di quelli contenuti nella mesh"
+msgid "Cannot add polygons in edit mode"
+msgstr "Impossibile aggiungere poligoni in Modalità Modifica"
 
 
 msgid "Cannot remove vertices in edit mode"
@@ -61270,12 +61163,12 @@ msgid "Cannot remove more vertices than the mesh contains"
 msgstr "Impossibile rimuovere più vertici di quelli contenuti nella mesh"
 
 
-msgid "Cannot add loops in edit mode"
-msgstr "Impossibile aggiungere anelli (loops) in edit mode"
+msgid "Cannot remove edges in edit mode"
+msgstr "Impossibile rimuovere spigoli in Modalità Modifica"
 
 
-msgid "Cannot add polygons in edit mode"
-msgstr "Impossibile aggiungere poligoni in Modalità Modifica"
+msgid "Cannot remove more edges than the mesh contains"
+msgstr "Impossibile rimuovere più spigolo di quelli contenuti nella mesh"
 
 
 msgid "%d %s mirrored, %d failed"
@@ -62134,10 +62027,6 @@ msgstr "il percorso dato '%s' non è valido per il sistema operativo, è stato c
 
 msgid "Could not create new folder: %s"
 msgstr "Impossibile creare la nuova cartella: %s"
-
-
-msgid "Could not delete file: %s"
-msgstr "Impossibile cancellare il file: %s"
 
 
 msgid "Cancel"

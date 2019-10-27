@@ -19,7 +19,7 @@ from io_scene_gltf2.io.com import gltf2_io
 from io_scene_gltf2.blender.exp.gltf2_blender_gather_cache import cached
 from io_scene_gltf2.blender.exp import gltf2_blender_gather_nodes
 from io_scene_gltf2.blender.exp import gltf2_blender_gather_joints
-
+from io_scene_gltf2.blender.exp import gltf2_blender_gather_skins
 
 @cached
 def gather_animation_channel_target(channels: typing.Tuple[bpy.types.FCurve],
@@ -66,7 +66,12 @@ def __gather_node(channels: typing.Tuple[bpy.types.FCurve],
             blender_bone = blender_object.path_resolve(channels[0].data_path.rsplit('.', 1)[0])
 
         if isinstance(blender_bone, bpy.types.PoseBone):
-            return gltf2_blender_gather_joints.gather_joint(blender_bone, export_settings)
+            if export_settings["gltf_def_bones"] is False:
+                return gltf2_blender_gather_joints.gather_joint(blender_bone, export_settings)
+            else:
+                bones, _, _ = gltf2_blender_gather_skins.get_bone_tree(None, blender_object)
+                if blender_bone.name in [b.name for b in bones]:
+                    return gltf2_blender_gather_joints.gather_joint(blender_bone, export_settings)
 
     return gltf2_blender_gather_nodes.gather_node(blender_object, None, export_settings)
 
@@ -78,7 +83,8 @@ def __gather_path(channels: typing.Tuple[bpy.types.FCurve],
                   bake_channel: typing.Union[str, None]
                   ) -> str:
     if bake_channel is None:
-        target = channels[0].data_path.split('.')[-1]
+        # Note: channels has some None items only for SK if some SK are not animated
+        target = [c for c in channels if c is not None][0].data_path.split('.')[-1]
     else:
         target = bake_channel
     path = {

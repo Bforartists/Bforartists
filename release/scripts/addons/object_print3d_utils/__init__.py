@@ -21,11 +21,10 @@
 bl_info = {
     "name": "3D-Print Toolbox",
     "author": "Campbell Barton",
-    "blender": (2, 80, 0),
+    "blender": (2, 82, 0),
     "location": "3D View > Sidebar",
     "description": "Utilities for 3D printing",
-    # TODO
-    # "wiki_url": "",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/mesh/3d_print_toolbox.html",
     "support": 'OFFICIAL',
     "category": "Mesh",
 }
@@ -36,6 +35,8 @@ if "bpy" in locals():
     importlib.reload(ui)
     importlib.reload(operators)
     importlib.reload(mesh_helpers)
+    if "export" in locals():
+        importlib.reload(export)
 else:
     import math
 
@@ -62,7 +63,6 @@ class SceneProperties(PropertyGroup):
         items=(
             ('STL', "STL", ""),
             ('PLY', "PLY", ""),
-            ('WRL', "VRML2", ""),
             ('X3D', "X3D", ""),
             ('OBJ', "OBJ", ""),
         ),

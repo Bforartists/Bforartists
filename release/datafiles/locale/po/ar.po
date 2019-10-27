@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -8901,62 +8901,6 @@ msgid "Keep the computed view map and avoid re-calculating it if mesh geometry i
 msgstr "ﻢﺴﺠﻤﻟﺍ ﺔﺳﺪﻨﻫ ﺮﻴﻐﺘﺗ ﻢﻟ ﺍﺫﺍ ﺎﻬﺑﺎﺴﺣ ﺓﺩﺎﻋﺇ ﺐﻨﺠﺗ ﻭ ﺔﺑﻮﺴﺤﻤﻟﺍ ﺮﻈﻨﻤﻟﺍ ﺔﻄﻳﺮﺧ ﻖﺑﺍ"
 
 
-msgid "GPU FX Settings"
-msgstr "GPU ﺕﺍﺮﺛﺆﻣ ﺕﺍﺩﺍﺪﻋﺇ"
-
-
-msgid "Settings for GPU based compositing"
-msgstr "GPU ـﻟﺍ ﻰﻠﻋ ﻢﺋﺎﻘﻟﺍ ﺐﻴﻛﺮﺘﻠﻟ ﺕﺍﺩﺍﺪﻋﺇ"
-
-
-msgid "Screen Space Ambient Occlusion settings"
-msgstr "ﺔﺷﺎﺸﻟﺍ ءﺎﻀﻓ ﻂﻴﺤﻣ ﺱﺎﺒﺤﻧﺍ ﺕﺍﺩﺍﺪﻋﺇ"
-
-
-msgid "SSAO"
-msgstr "SSAO"
-
-
-msgid "Use screen space ambient occlusion of field on viewport"
-msgstr "ﺽﺮﻌﻟﺍ ﺬﻔﻨﻣ ﻲﻓ ﺔﺷﺎﺸﻟﺍ ءﺎﻀﻔﻟ ﻂﻴﺤﻣ ﺱﺎﺒﺤﻧﺍ ﻡﺪﺨﺘﺳﺍ"
-
-
-msgid "GPU SSAO"
-msgstr "GPU SSAO"
-
-
-msgid "Settings for GPU based screen space ambient occlusion"
-msgstr "GPU ـﻟﺍ ﻰﻠﻋ ﻢﺋﺎﻘﻟﺍ ﺔﺷﺎﺸﻟﺍ ءﺎﻀﻓ ﻂﻴﺤﻣ ﺱﺎﺒﺤﻧﺍ ﺕﺍﺩﺍﺪﻋﺇ"
-
-
-msgid "Attenuation"
-msgstr "ﻒﻴﻔﺨﺘﻟﺍ"
-
-
-msgid "Attenuation constant"
-msgstr "ﻝﺅﺎﻀﺘﻟﺍ ﺖﺑﺎﺛ"
-
-
-msgid "Color for screen space ambient occlusion effect"
-msgstr "ﺔﺷﺎﺸﻟﺍ ءﺎﻀﻓ ﻂﻴﺤﻣ ﺱﺎﺒﺤﻧﺍ ﻥﻮﻟ"
-
-
-msgid "Distance of object that contribute to the SSAO effect"
-msgstr "SSAO ﺮﻴﺛﺄﺗ ﻲﻓ ﻢﻫﺎﺴﻤﻟﺍ ﻦﺋﺎﻜﻟﺍ ﺪﻌﺑ"
-
-
-msgid "Strength of the SSAO effect"
-msgstr "ﻲﻘﺒﻃ ﺖﺤﺘﻟﺍ ﻂﻴﺤﻤﻟﺍ ﺱﺎﺒﺤﻧﻻ﻿ﺍ ﺮﻴﺛﺄﺗ ﺓﺪﺷ"
-
-
-msgid "Samples"
-msgstr "ﺕﺎﻨﻴﻋ"
-
-
-msgid "Number of samples"
-msgstr "ﺕﺎﻨﻴﻌﻟﺍ ﺩﺪﻋ"
-
-
 msgid "Grease Pencil Frame"
 msgstr "ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻗ ﺭﺎﻃﺇ"
 
@@ -12415,6 +12359,10 @@ msgid "Shadow map clip start, below which objects will not generate shadows"
 msgstr "ﻝﻼ﻿ﻇ ﺎﻬﻠﺒﻗ ﺪﻟﻮﺘﻳ ﻦﻟ ﻲﺘﻟﺍ ﻭ ,ﻞﻈﻟﺍ ﺔﻄﻳﺮﺧ ﻢﻴﻠﻘﺗ ﺔﻳﺍﺪﺑ"
 
 
+msgid "Samples"
+msgstr "ﺕﺎﻨﻴﻋ"
+
+
 msgid "Number of shadow buffer samples"
 msgstr "ﻞﻈﻟﺍ ﺔﻜﺒﺷ ﺕﺎﻨﻴﻋ ﺩﺪﻋ"
 
@@ -15105,6 +15053,10 @@ msgstr "ﺓﺮﻛﺍﺬﻠﻟ ﻪﻠﻴﻤﺤﺗ ﻭ ﺕﻮﺼﻟﺍ ﻒﻠﻣ �
 
 msgid "If the file contains multiple audio channels they are rendered to a single one"
 msgstr "ﺓﺩﺮﻔﻨﻣ ﺓﺪﺣﺍﻭ ﻰﻟﺍ ﺮﻴّﺼﺗ ﺕﻮﺻ ﺕﺍﻮﻨﻗ ﺓﺪﻋ ﻰﻠﻋ ﻒﻠﻤﻟﺍ ﻯﻮﺘﺣﺍ ﺍﺫﺍ"
+
+
+msgid "Attenuation"
+msgstr "ﻒﻴﻔﺨﺘﻟﺍ"
 
 
 msgid "How strong the distance affects volume, depending on distance model"
@@ -25316,10 +25268,6 @@ msgid "Delete Selected Files"
 msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺕﺎﻔﻠﻤﻟﺍ ﻑﺬﺣﺍ"
 
 
-msgid "Delete selected files"
-msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺕﺎﻔﻠﻤﻟﺍ ﻑﺬﺣﺍ"
-
-
 msgctxt "Operator"
 msgid "Create New Directory"
 msgstr "ﺪﻳﺪﺟ ﺭﺎﺴﻣ ﺊﺸﻧﺍ"
@@ -27247,11 +27195,6 @@ msgstr "ﺮﺻﺎﻨﻌﻟﺍ ﻦﻴﺑ ﺞﻣﺪﻠﻟ ﺔﻓﺎﺴﻣ ﻞﻗ�
 msgctxt "Operator"
 msgid "Scale to Bounds"
 msgstr "ﺩﻭﺪﺤﻟﺍ ﻰﺘﺣ ﻢﺠّﺣ"
-
-
-msgctxt "Operator"
-msgid "Print3D Select Report"
-msgstr "ﻲﺛﻼ﻿ﺜﻟﺍ ﻊﺒﻄﻟﺍ ﺭﺎﻴﺘﺧﺍ ﺮﻳﺮﻘﺗ"
 
 
 msgctxt "Operator"
@@ -36984,6 +36927,14 @@ msgid "How much the spring has to be stretched/compressed in order to change it'
 msgstr "ﺎﻨﻛﺎﺳ ﻪﻟﻮﻃ ﺮﻴﻴﻐﺗ ﻑﺪﻬﺑ ﻂﻐﻀﻳ ﻭﺃ ﺾﺑﺎﻨﻟﺍ ﺩﺪﻤﺘﻳ ﻥﺃ ﻦﻤﻜﻳ ﻢﻛ ﻰﻟﺇ"
 
 
+msgid "Attenuation constant"
+msgstr "ﻝﺅﺎﻀﺘﻟﺍ ﺖﺑﺎﺛ"
+
+
+msgid "Number of samples"
+msgstr "ﺕﺎﻨﻴﻌﻟﺍ ﺩﺪﻋ"
+
+
 msgid "Factor for ambient occlusion blending"
 msgstr "ﻂﻴﺤﻤﻟﺍ ﺱﺎﺒﺤﻧﻻ﻿ﺍ ﺝﺰﻣ ﻞﻣﺎﻋ"
 
@@ -38211,10 +38162,6 @@ msgstr "ﻲﺛﻼ﻿ﺜﻟﺍ ﺮﻈﻨﻤﻟ ﺓﺪﻴﻌﺒﻟﺍ ﺺﻘﻟﺍ
 
 msgid "3D View near clipping distance (perspective view only)"
 msgstr "ﻲﺛﻼ﻿ﺜﻟﺍ ﺮﻈﻨﻤﻟ ﺓﺪﻴﻌﺒﻟﺍ ﺺﻘﻟﺍ ﺔﻓﺎﺴﻣ"
-
-
-msgid "FX Options"
-msgstr "ﺕﺍﺮﺛﺆﻤﻟﺍ ﺕﺍﺭﺎﻴﺧ"
 
 
 msgid "3D View center is locked to this bone's position"
@@ -42690,13 +42637,13 @@ msgstr "ﺕﺎﻫﻮﺸﺘﻟﺍ ﺢﻠﺻﺃ"
 
 
 msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "ﺩﻭﺪﺤﻟﺍ ﻕﻭﺪﻨﺻ ﻲﻔﺧﺍ"
+msgid "Show Bounding Box"
+msgstr "ﺩﻭﺪﺤﻟﺍ ﻕﻭﺪﻨﺻ ﺮﻬﻇﺍ"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "ﺩﻭﺪﺤﻟﺍ ﻕﻭﺪﻨﺻ ﺮﻬﻇﺍ"
+msgid "Hide Bounding Box"
+msgstr "ﺩﻭﺪﺤﻟﺍ ﻕﻭﺪﻨﺻ ﻲﻔﺧﺍ"
 
 
 msgctxt "Operator"
@@ -44296,7 +44243,7 @@ msgid "No edges selected"
 msgstr "ﺓﺭﺎﺘﺨﻣ ﻑﺍﻮﺣ ﺪﺟﻮﻳ ﻻ﻿"
 
 
-msgid "Cannot add geometry in edit mode"
+msgid "Cannot add vertices in edit mode"
 msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺍﺬﻫ ﻲﻔﺧﺍ"
 
 
@@ -44304,16 +44251,12 @@ msgid "Cannot add edges in edit mode"
 msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺍﺬﻫ ﻲﻔﺧﺍ"
 
 
-msgid "Cannot add vertices in edit mode"
+msgid "Cannot add loops in edit mode"
 msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺍﺬﻫ ﻲﻔﺧﺍ"
 
 
-msgid "Cannot remove edges in edit mode"
-msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺾﺑﺎﻘﻣ ﺮﻬﻇﺍ"
-
-
-msgid "Cannot remove more edges than the mesh contains"
-msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺾﺑﺎﻘﻣ ﺮﻬﻇﺍ"
+msgid "Cannot add polygons in edit mode"
+msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺍﺬﻫ ﻲﻔﺧﺍ"
 
 
 msgid "Cannot remove vertices in edit mode"
@@ -44324,12 +44267,12 @@ msgid "Cannot remove more vertices than the mesh contains"
 msgstr "ءﻱﺰﺠﻟﺍ ﺮﻳﺮﺤﺗ ﻊﺿﻭ ﺐﻠﻗﺍ"
 
 
-msgid "Cannot add loops in edit mode"
-msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺍﺬﻫ ﻲﻔﺧﺍ"
+msgid "Cannot remove edges in edit mode"
+msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺾﺑﺎﻘﻣ ﺮﻬﻇﺍ"
 
 
-msgid "Cannot add polygons in edit mode"
-msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺍﺬﻫ ﻲﻔﺧﺍ"
+msgid "Cannot remove more edges than the mesh contains"
+msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺾﺑﺎﻘﻣ ﺮﻬﻇﺍ"
 
 
 msgid "Cannot join while in edit mode"

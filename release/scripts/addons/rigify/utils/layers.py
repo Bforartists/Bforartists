@@ -71,7 +71,7 @@ class ControlLayersOption:
 
         self.toggle_option = self.name+'_layers_extra'
         self.layers_option = self.name+'_layers'
-        self.toggle_name = toggle_name if toggle_name else self.toggle_option
+        self.toggle_name = toggle_name if toggle_name else "Assign " + self.name.title() + " Layers"
 
     def get(self, params):
         if getattr(params, self.toggle_option):
@@ -122,10 +122,15 @@ class ControlLayersOption:
         setattr(params, self.layers_option, prop_layers)
 
     def parameters_ui(self, layout, params):
-        r = layout.row()
-        r.prop(params, self.toggle_option)
-        r.active = getattr(params, self.toggle_option)
+        box = layout.box()
+        box.prop(params, self.toggle_option)
 
+        active = getattr(params, self.toggle_option)
+
+        if not active:
+            return
+
+        r = box.row()
         col = r.column(align=True)
         row = col.row(align=True)
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -1565,10 +1565,6 @@ msgid "Line Sets"
 msgstr "रेखा खंड"
 
 
-msgid "Attenuation"
-msgstr "क्षीणन"
-
-
 msgid "Grease Pencil Frame"
 msgstr "तैलीय पेंसिल गठन"
 
@@ -2568,6 +2564,10 @@ msgstr "जगत"
 
 msgid "Areas"
 msgstr "क्षेत्रों"
+
+
+msgid "Attenuation"
+msgstr "क्षीणन"
 
 
 msgid "Inner Cone Angle"

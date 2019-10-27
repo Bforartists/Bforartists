@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -1967,10 +1967,6 @@ msgid "Hierarchy"
 msgstr "Иерархия"
 
 
-msgid "Delete selected files"
-msgstr "Тандалган файлдарды өчүрүү"
-
-
 msgctxt "Operator"
 msgid "Create New Directory"
 msgstr "Жаңы каталогду жаратуу"
@@ -2891,10 +2887,6 @@ msgstr "Стилдер"
 
 msgid "3D View"
 msgstr "3D-көрүнүш"
-
-
-msgid "Print3D"
-msgstr "3D-басма"
 
 
 msgctxt "Operator"

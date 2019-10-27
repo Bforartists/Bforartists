@@ -129,7 +129,7 @@ def create_bone_widget(rig, bone_name, r1=0.1, l1=0.0, r2=0.04, l2=1.0, bone_tra
         mesh.update()
 
 
-def create_pivot_widget(rig, bone_name, axis_size=1.0, cap_size=1.0, square=False, bone_transform_name=None):
+def create_pivot_widget(rig, bone_name, axis_size=1.0, cap_size=1.0, square=True, bone_transform_name=None):
     """Creates a widget similar to Plain Axes empty, but with a cross or
        a square on the end of each axis line.
     """

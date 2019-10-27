@@ -22,13 +22,14 @@ import bpy
 import math
 
 from itertools import count
-from mathutils import Vector
+from mathutils import Vector, Matrix
 
 from ...utils.rig import is_rig_base_bone
 from ...utils.bones import align_chain_x_axis, align_bone_x_axis, align_bone_y_axis, align_bone_z_axis
 from ...utils.bones import align_bone_to_axis, flip_bone, put_bone, align_bone_orientation
 from ...utils.naming import make_derived_name
-from ...utils.misc import map_list
+from ...utils.misc import map_list, matrix_from_axis_roll, matrix_from_axis_pair
+from ...utils.widgets import adjust_widget_transform_mesh
 
 from ..widgets import create_foot_widget, create_ballsocket_widget
 
@@ -62,10 +63,18 @@ class Rig(BaseLimbRig):
 
         super().initialize()
 
+        self.pivot_type = self.params.foot_pivot_type
+        self.heel_euler_order = 'ZXY' if self.main_axis == 'x' else 'XZY'
+
+        assert self.pivot_type in {'ANKLE', 'TOE', 'ANKLE_TOE'}
+
     def prepare_bones(self):
         orgs = self.bones.org.main
+        foot = self.get_bone(orgs[2])
 
-        foot_x = self.vector_without_z(self.get_bone(orgs[2]).y_axis).cross((0, 0, -1))
+        ik_y_axis = (0, 1, 0)
+        foot_y_axis = -self.vector_without_z(foot.y_axis)
+        foot_x = foot_y_axis.cross((0, 0, 1))
 
         if self.params.rotation_axis == 'automatic':
             align_chain_x_axis(self.obj, orgs[0:2])
@@ -84,6 +93,12 @@ class Rig(BaseLimbRig):
                 align_bone_z_axis(self.obj, orgs[2], foot_x)
                 align_bone_z_axis(self.obj, orgs[3], -foot_x)
 
+        else:
+            ik_y_axis = foot_y_axis
+
+        # Orientation of the IK main and roll control bones
+        self.ik_matrix = matrix_from_axis_roll(ik_y_axis, 0)
+        self.roll_matrix = matrix_from_axis_pair(ik_y_axis, foot_x, self.main_axis)
 
     ####################################################
     # EXTRA BONES
@@ -92,6 +107,8 @@ class Rig(BaseLimbRig):
     #   heel:
     #     Heel location marker bone
     # ctrl:
+    #   ik_spin:
+    #     Toe spin control.
     #   heel:
     #     Foot roll control
     # mch:
@@ -104,31 +121,69 @@ class Rig(BaseLimbRig):
     # IK controls
 
     def get_extra_ik_controls(self):
-        return [self.bones.ctrl.heel]
+        controls = super().get_extra_ik_controls() + [self.bones.ctrl.heel]
+        if self.pivot_type == 'ANKLE_TOE':
+            controls += [self.bones.ctrl.ik_spin]
+        return controls
 
     def make_ik_control_bone(self, orgs):
         name = self.copy_bone(orgs[2], make_derived_name(orgs[2], 'ctrl', '_ik'))
-
-        if self.params.rotation_axis == 'automatic' or self.params.auto_align_extremity:
-            align_bone_to_axis(self.obj, name, 'y', flip=True)
-
+        if self.pivot_type == 'TOE':
+            put_bone(self.obj, name, self.get_bone(name).tail, matrix=self.ik_matrix)
         else:
-            flip_bone(self.obj, name)
-
-            bone = self.get_bone(name)
-            bone.tail[2] = bone.head[2]
-            bone.roll = 0
-
+            put_bone(self.obj, name, None, matrix=self.ik_matrix)
         return name
+
+    def build_ik_pivot(self, ik_name, **args):
+        heel_bone = self.get_bone(self.bones.org.heel)
+        args = {
+            'position': (heel_bone.head + heel_bone.tail)/2,
+            **args
+        }
+        return super().build_ik_pivot(ik_name, **args)
 
     def register_switch_parents(self, pbuilder):
         super().register_switch_parents(pbuilder)
 
-        pbuilder.register_parent(self, self.bones.org.main[2], exclude_self=True)
+        pbuilder.register_parent(self, self.bones.org.main[2], exclude_self=True, tags={'limb_end'})
 
     def make_ik_ctrl_widget(self, ctrl):
-        create_foot_widget(self.obj, ctrl)
+        obj = create_foot_widget(self.obj, ctrl)
 
+        if self.pivot_type != 'TOE':
+            org = self.get_bone(self.bones.org.main[2])
+            adjust_widget_transform_mesh(obj, Matrix.Translation(org.vector))
+
+    ####################################################
+    # IK pivot controls
+
+    def get_ik_pivot_output(self):
+        if self.pivot_type == 'ANKLE_TOE':
+            return self.bones.ctrl.ik_spin
+        else:
+            return self.get_ik_control_output()
+
+    @stage.generate_bones
+    def make_ik_pivot_controls(self):
+        if self.pivot_type == 'ANKLE_TOE':
+            self.bones.ctrl.ik_spin = self.make_ik_spin_bone(self.bones.org.main)
+
+    def make_ik_spin_bone(self, orgs):
+        name = self.copy_bone(orgs[2], make_derived_name(orgs[2], 'ctrl', '_spin_ik'))
+        put_bone(self.obj, name, self.get_bone(orgs[3]).head, matrix=self.ik_matrix, scale=0.5)
+        return name
+
+    @stage.parent_bones
+    def parent_ik_pivot_controls(self):
+        if self.pivot_type == 'ANKLE_TOE':
+            self.set_bone_parent(self.bones.ctrl.ik_spin, self.get_ik_control_output())
+
+    @stage.generate_widgets
+    def make_ik_spin_control_widget(self):
+        if self.pivot_type == 'ANKLE_TOE':
+            obj = create_ballsocket_widget(self.obj, self.bones.ctrl.ik_spin, size=0.75)
+            rotfix = Matrix.Rotation(math.pi/2, 4, self.main_axis.upper())
+            adjust_widget_transform_mesh(obj, rotfix, local=True)
 
     ####################################################
     # Heel control
@@ -136,25 +191,19 @@ class Rig(BaseLimbRig):
     @stage.generate_bones
     def make_heel_control_bone(self):
         org = self.bones.org.main[2]
-        name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_heel_ik'), scale=1/2)
+        name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_heel_ik'))
+        put_bone(self.obj, name, None, matrix=self.roll_matrix, scale=0.5)
         self.bones.ctrl.heel = name
-
-        self.align_roll_bone(org, name, -self.vector_without_z(self.get_bone(org).vector))
 
     @stage.parent_bones
     def parent_heel_control_bone(self):
-        self.set_bone_parent(self.bones.ctrl.heel, self.bones.ctrl.ik)
+        self.set_bone_parent(self.bones.ctrl.heel, self.get_ik_pivot_output(), inherit_scale='AVERAGE')
 
     @stage.configure_bones
     def configure_heel_control_bone(self):
         bone = self.get_bone(self.bones.ctrl.heel)
         bone.lock_location = True, True, True
-
-        if self.main_axis == 'x':
-            bone.lock_rotation = False, False, True
-        else:
-            bone.lock_rotation = True, False, False
-
+        bone.rotation_mode = self.heel_euler_order
         bone.lock_scale = True, True, True
 
     @stage.generate_widgets
@@ -173,34 +222,27 @@ class Rig(BaseLimbRig):
     def make_roll_mch_bones(self, foot, toe, heel):
         foot_bone = self.get_bone(foot)
         heel_bone = self.get_bone(heel)
-        axis = -self.vector_without_z(foot_bone.vector)
 
-        roll1 = self.copy_bone(foot, make_derived_name(heel, 'mch', '_roll1'))
+        heel_middle = (heel_bone.head + heel_bone.tail) / 2
 
-        flip_bone(self.obj, roll1)
-        self.align_roll_bone(foot, roll1, -foot_bone.vector)
+        result = self.copy_bone(foot, make_derived_name(foot, 'mch', '_roll'), scale=0.25)
 
-        roll2 = self.copy_bone(toe, make_derived_name(heel, 'mch', '_roll2'), scale=1/4)
-
-        put_bone(self.obj, roll2, (heel_bone.head + heel_bone.tail) / 2)
-        self.align_roll_bone(foot, roll2, -axis)
-
+        roll1 = self.copy_bone(toe, make_derived_name(heel, 'mch', '_roll1'), scale=0.3)
+        roll2 = self.copy_bone(toe, make_derived_name(heel, 'mch', '_roll2'), scale=0.3)
         rock1 = self.copy_bone(heel, make_derived_name(heel, 'mch', '_rock1'))
-
-        align_bone_to_axis(self.obj, rock1, 'y', roll=0, length=heel_bone.length/2, flip=True)
-        align_bone_y_axis(self.obj, rock1, axis)
-
         rock2 = self.copy_bone(heel, make_derived_name(heel, 'mch', '_rock2'))
 
-        align_bone_to_axis(self.obj, rock2, 'y', roll=0, length=heel_bone.length/2)
-        align_bone_y_axis(self.obj, rock2, axis)
+        put_bone(self.obj, roll1, None, matrix=self.roll_matrix)
+        put_bone(self.obj, roll2, heel_middle, matrix=self.roll_matrix)
+        put_bone(self.obj, rock1, heel_bone.tail, matrix=self.roll_matrix, scale=0.5)
+        put_bone(self.obj, rock2, heel_bone.head, matrix=self.roll_matrix, scale=0.5)
 
-        return [ rock2, rock1, roll2, roll1 ]
+        return [ rock2, rock1, roll2, roll1, result ]
 
     @stage.parent_bones
     def parent_roll_mch_chain(self):
         chain = self.bones.mch.heel
-        self.set_bone_parent(chain[0], self.bones.ctrl.ik)
+        self.set_bone_parent(chain[0], self.get_ik_pivot_output())
         self.parent_bone_chain(chain)
 
     @stage.rig_bones
@@ -208,28 +250,37 @@ class Rig(BaseLimbRig):
         self.rig_roll_mch_bones(self.bones.mch.heel, self.bones.ctrl.heel, self.bones.org.heel)
 
     def rig_roll_mch_bones(self, chain, heel, org_heel):
-        rock2, rock1, roll2, roll1 = chain
+        rock2, rock1, roll2, roll1, result = chain
 
-        self.make_constraint(roll1, 'COPY_ROTATION', heel, space='LOCAL')
-        self.make_constraint(roll2, 'COPY_ROTATION', heel, space='LOCAL')
+        # This order is required for correct working of the constraints
+        for bone in chain:
+            self.get_bone(bone).rotation_mode = self.heel_euler_order
+
+        self.make_constraint(roll1, 'COPY_ROTATION', heel, space='POSE')
 
         if self.main_axis == 'x':
-            self.make_constraint(roll1, 'LIMIT_ROTATION', use_limit_x=True, max_x=DEG_360, space='LOCAL')
-            self.make_constraint(roll2, 'LIMIT_ROTATION', use_limit_xyz=ALL_TRUE, min_x=-DEG_360, space='LOCAL')
+            self.make_constraint(roll2, 'COPY_ROTATION', heel, space='LOCAL', use_xyz=(True, False, False))
+            self.make_constraint(roll2, 'LIMIT_ROTATION', min_x=-DEG_360, space='LOCAL')
         else:
-            self.make_constraint(roll1, 'LIMIT_ROTATION', use_limit_z=True, max_z=DEG_360, space='LOCAL')
-            self.make_constraint(roll2, 'LIMIT_ROTATION', use_limit_xyz=ALL_TRUE, min_z=-DEG_360, space='LOCAL')
+            self.make_constraint(roll2, 'COPY_ROTATION', heel, space='LOCAL', use_xyz=(False, False, True))
+            self.make_constraint(roll2, 'LIMIT_ROTATION', min_z=-DEG_360, space='LOCAL')
 
         direction = self.get_main_axis(self.get_bone(heel)).dot(self.get_bone(org_heel).vector)
 
         if direction < 0:
             rock2, rock1 = rock1, rock2
 
-        self.make_constraint(rock1, 'COPY_ROTATION', heel, space='LOCAL')
-        self.make_constraint(rock2, 'COPY_ROTATION', heel, space='LOCAL')
+        self.make_constraint(
+            rock1, 'COPY_ROTATION', heel, space='LOCAL',
+            use_xyz=(False, True, False),
+        )
+        self.make_constraint(
+            rock2, 'COPY_ROTATION', heel, space='LOCAL',
+            use_xyz=(False, True, False),
+        )
 
-        self.make_constraint(rock1, 'LIMIT_ROTATION', use_limit_xyz=ALL_TRUE, max_y=DEG_360, space='LOCAL')
-        self.make_constraint(rock2, 'LIMIT_ROTATION', use_limit_xyz=ALL_TRUE, min_y=-DEG_360, space='LOCAL')
+        self.make_constraint(rock1, 'LIMIT_ROTATION', max_y=DEG_360, space='LOCAL')
+        self.make_constraint(rock2, 'LIMIT_ROTATION', min_y=-DEG_360, space='LOCAL')
 
 
     ####################################################
@@ -237,7 +288,7 @@ class Rig(BaseLimbRig):
 
     def parent_fk_parent_bone(self, i, parent_mch, prev_ctrl, org, prev_org):
         if i == 3:
-            align_bone_orientation(self.obj, parent_mch, self.bones.mch.heel[-2])
+            align_bone_orientation(self.obj, parent_mch, self.bones.mch.heel[2])
 
             self.set_bone_parent(parent_mch, prev_org, use_connect=True)
 
@@ -246,7 +297,7 @@ class Rig(BaseLimbRig):
 
     def rig_fk_parent_bone(self, i, parent_mch, org):
         if i == 3:
-            con = self.make_constraint(parent_mch, 'COPY_TRANSFORMS', self.bones.mch.heel[-2])
+            con = self.make_constraint(parent_mch, 'COPY_TRANSFORMS', self.bones.mch.heel[2])
 
             self.make_driver(con, 'influence', variables=[(self.prop_bone, 'IK_FK')], polynomial=[1.0, -1.0])
 
@@ -257,8 +308,6 @@ class Rig(BaseLimbRig):
     ####################################################
     # IK system MCH
 
-    ik_input_head_tail = 1.0
-
     def get_ik_input_bone(self):
         return self.bones.mch.heel[-1]
 
@@ -266,14 +315,35 @@ class Rig(BaseLimbRig):
     def parent_ik_mch_chain(self):
         super().parent_ik_mch_chain()
 
-        self.set_bone_parent(self.bones.mch.ik_target, self.bones.ctrl.heel)
+        self.set_bone_parent(self.bones.mch.ik_target, self.bones.mch.heel[-1])
 
 
     ####################################################
     # Settings
 
     @classmethod
+    def add_parameters(self, params):
+        super().add_parameters(params)
+
+        items = [
+            ('ANKLE', 'Ankle',
+             'The foots pivots at the ankle'),
+            ('TOE', 'Toe',
+             'The foot pivots around the base of the toe'),
+            ('ANKLE_TOE', 'Ankle and Toe',
+             'The foots pivots at the ankle, with extra toe pivot'),
+        ]
+
+        params.foot_pivot_type = bpy.props.EnumProperty(
+            items   = items,
+            name    = "Foot Pivot",
+            default = 'ANKLE_TOE'
+        )
+
+    @classmethod
     def parameters_ui(self, layout, params):
+        layout.prop(params, 'foot_pivot_type')
+
         super().parameters_ui(layout, params, 'Foot')
 
 
