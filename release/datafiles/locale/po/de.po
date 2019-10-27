@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -5948,14 +5948,6 @@ msgid "Take face smoothness into account in view map calculation"
 msgstr "Nimmt die Flächenglättung mit in die Berechnung der Ansichtskalkulation"
 
 
-msgid "Attenuation"
-msgstr "Abschwächung"
-
-
-msgid "Samples"
-msgstr "Abtastwerte"
-
-
 msgid "Grease Pencil Frame"
 msgstr "Wachsstift-Rahmen"
 
@@ -8137,6 +8129,10 @@ msgid "Shadow Buffer Bias"
 msgstr "Schattenpuffer-Tendenz"
 
 
+msgid "Samples"
+msgstr "Abtastwerte"
+
+
 msgid "Shadow Buffer Size"
 msgstr "Schattenpuffer Größe"
 
@@ -9763,6 +9759,10 @@ msgstr "3D-Editor oben links"
 
 msgid "Caching"
 msgstr "Puffern"
+
+
+msgid "Attenuation"
+msgstr "Abschwächung"
 
 
 msgid "Inner Cone Angle"
@@ -15539,6 +15539,14 @@ msgid "Column Select"
 msgstr "Spalte auswählen"
 
 
+msgid "Mouse X"
+msgstr "Maus X"
+
+
+msgid "Mouse Y"
+msgstr "Maus Y"
+
+
 msgctxt "Operator"
 msgid "Copy Keyframes"
 msgstr "Schlüsselbilder kopieren"
@@ -18049,10 +18057,6 @@ msgid "Delete Selected Files"
 msgstr "Ausgewählte Datei löschen"
 
 
-msgid "Delete selected files"
-msgstr "Ausgewählte Datei löschen"
-
-
 msgctxt "Operator"
 msgid "Create New Directory"
 msgstr "Neues Verzeichnis erstellen"
@@ -20019,11 +20023,6 @@ msgstr "Skalieren bis Volumen"
 
 
 msgctxt "Operator"
-msgid "Print3D Select Report"
-msgstr "3D Druck Auswahlbericht"
-
-
-msgctxt "Operator"
 msgid "Triangulate Faces"
 msgstr "Dreieckige Flächen"
 
@@ -20927,14 +20926,6 @@ msgstr "Einen Knoten skalieren"
 
 msgid "Select the node under the cursor"
 msgstr "Wählt einen Knoten unter dem Cursor aus"
-
-
-msgid "Mouse X"
-msgstr "Maus X"
-
-
-msgid "Mouse Y"
-msgstr "Maus Y"
 
 
 msgid "(De)select all nodes"
@@ -34399,13 +34390,13 @@ msgstr "Verformung fixieren"
 
 
 msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "Begrenzungsrahmen ausblenden"
+msgid "Show Bounding Box"
+msgstr "Begrenzungsrahmen zeigen"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "Begrenzungsrahmen zeigen"
+msgid "Hide Bounding Box"
+msgstr "Begrenzungsrahmen ausblenden"
 
 
 msgctxt "Operator"

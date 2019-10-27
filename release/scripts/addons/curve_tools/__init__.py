@@ -30,7 +30,8 @@ bl_info = {
     "location": "View3D > Tool Shelf > Edit Tab",
     "warning": "WIP",
     "wiki_url": "",
-    "tracker_url": "",
+    "wiki_url": "https://docs.blender.org/manual/nb/dev/addons/"
+                "add_curve/curve_tools.html",
     "category": "Add Curve"}
 
 

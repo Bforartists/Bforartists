@@ -21,6 +21,12 @@ shows up if the file is saved.
 
 import bpy
 
+# From space_filebrowser.py
+def panel_poll_is_upper_region(region):
+    # The upper region is left-aligned, the lower is split into it then.
+    # Note that after "Flip Regions" it's right-aligned.
+    return region.alignment in {'LEFT', 'RIGHT'}
+
 
 class AMTH_FILE_OT_directory_current_blend(bpy.types.Operator):
 
@@ -33,19 +39,42 @@ class AMTH_FILE_OT_directory_current_blend(bpy.types.Operator):
         return {"FINISHED"}
 
 
-def button_directory_current_blend(self, context):
-    if bpy.data.filepath:
-        self.layout.operator(
-            AMTH_FILE_OT_directory_current_blend.bl_idname,
-            text="Current Blend's Folder",
-            icon="APPEND_BLEND")
+class FILEBROWSER_PT_amaranth(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOLS'
+    bl_category = "Bookmarks"
+    bl_label = "Amaranth"
+    bl_options = {'HIDE_HEADER'}
 
+    @classmethod
+    def poll(cls, context):
+        return panel_poll_is_upper_region(context.region)
+
+    def draw(self, context):
+      layout = self.layout
+      layout.scale_x = 1.3
+      layout.scale_y = 1.3
+
+      if bpy.data.filepath:
+          row = layout.row()
+          flow = row.grid_flow(row_major=False, columns=0, even_columns=False, even_rows=False, align=True)
+
+          subrow = flow.row()
+          subsubrow = subrow.row(align=True)
+          subsubrow.operator(
+              AMTH_FILE_OT_directory_current_blend.bl_idname,
+              icon="DESKTOP")
+
+
+classes = (
+    AMTH_FILE_OT_directory_current_blend,
+    FILEBROWSER_PT_amaranth
+)
 
 def register():
-    bpy.utils.register_class(AMTH_FILE_OT_directory_current_blend)
-    bpy.types.FILEBROWSER_HT_header.append(button_directory_current_blend)
-
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
 def unregister():
-    bpy.utils.unregister_class(AMTH_FILE_OT_directory_current_blend)
-    bpy.types.FILEBROWSER_HT_header.remove(button_directory_current_blend)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)

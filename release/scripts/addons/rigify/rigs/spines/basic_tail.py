@@ -23,7 +23,8 @@ import bpy
 from itertools import count
 
 from ...utils.naming import strip_org, make_derived_name
-from ...utils.bones import put_bone, flip_bone, is_same_position, connect_bbone_chain_handles, align_bone_orientation
+from ...utils.bones import put_bone, flip_bone, is_same_position, connect_bbone_chain_handles
+from ...utils.bones import align_bone_orientation, set_bone_widget_transform
 from ...utils.widgets_basic import create_circle_widget
 from ...utils.layers import ControlLayersOption
 from ...utils.misc import map_list
@@ -69,7 +70,7 @@ class Rig(BaseHeadTailRig):
     @stage.generate_widgets
     def make_master_control_widget(self):
         bone = self.bones.ctrl.master
-        self.get_bone(bone).custom_shape_transform = self.get_bone(self.bones.ctrl.tweak[-1])
+        set_bone_widget_transform(self.obj, bone, self.bones.ctrl.tweak[-1])
         create_ballsocket_widget(self.obj, bone, size=0.7)
 
     ####################################################

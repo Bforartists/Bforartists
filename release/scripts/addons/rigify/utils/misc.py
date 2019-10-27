@@ -24,6 +24,7 @@ import collections
 
 from itertools import tee, chain, islice, repeat
 from mathutils import Vector, Matrix, Color
+from rna_prop_ui import rna_idprop_value_to_python
 
 
 #=============================================
@@ -155,6 +156,14 @@ def map_apply(func, *inputs):
 # Misc
 #=============================================
 
+
+def force_lazy(value):
+    if callable(value):
+        return value()
+    else:
+        return value
+
+
 def copy_attributes(a, b):
     keys = dir(a)
     for key in keys:
@@ -170,8 +179,30 @@ def copy_attributes(a, b):
                 pass
 
 
+def property_to_python(value):
+    value = rna_idprop_value_to_python(value)
+
+    if isinstance(value, dict):
+        return { k: property_to_python(v) for k, v in value.items() }
+    elif isinstance(value, list):
+        return map_list(property_to_python, value)
+    else:
+        return value
+
+
+def clone_parameters(target):
+    return property_to_python(dict(target))
+
+
 def assign_parameters(target, val_dict=None, **params):
-    data = { **val_dict, **params } if val_dict else params
+    if val_dict is not None:
+        for key in list(target.keys()):
+            del target[key]
+
+        data = { **val_dict, **params }
+    else:
+        data = params
+
     for key, value in data.items():
         try:
             target[key] = value

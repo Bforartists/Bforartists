@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -4371,14 +4371,6 @@ msgid "Use"
 msgstr "Använd"
 
 
-msgid "Attenuation"
-msgstr "Rensa Rotation"
-
-
-msgid "Samples"
-msgstr "Samplar"
-
-
 msgid "Grease Pencil Frame"
 msgstr "Starta Spel"
 
@@ -5993,6 +5985,10 @@ msgstr "Rensa Rotation"
 
 msgid "Shadow Buffer Bias"
 msgstr "Z-Buffer"
+
+
+msgid "Samples"
+msgstr "Samplar"
 
 
 msgid "Number of shadow buffer samples"
@@ -7621,6 +7617,10 @@ msgstr "Textredigerare"
 
 msgid "Caching"
 msgstr "Cache"
+
+
+msgid "Attenuation"
+msgstr "Rensa Rotation"
 
 
 msgid "Inner Cone Angle"
@@ -12618,6 +12618,14 @@ msgstr "Markera Rad"
 
 msgid "Extend Select"
 msgstr "Markera Rad"
+
+
+msgid "Mouse X"
+msgstr "Packa Data"
+
+
+msgid "Mouse Y"
+msgstr "Packa Data"
 
 
 msgctxt "Operator"
@@ -18616,14 +18624,6 @@ msgstr "Buffertstorlek"
 
 msgid "Select the node under the cursor"
 msgstr "Rendera"
-
-
-msgid "Mouse X"
-msgstr "Packa Data"
-
-
-msgid "Mouse Y"
-msgstr "Packa Data"
 
 
 msgid "(De)select all nodes"
@@ -31275,12 +31275,12 @@ msgstr "Fyll deformerad"
 
 
 msgctxt "Operator"
-msgid "Hide Bounding Box"
+msgid "Show Bounding Box"
 msgstr "Auto Handtag"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
+msgid "Hide Bounding Box"
 msgstr "Auto Handtag"
 
 
@@ -32243,7 +32243,7 @@ msgid "Selection not supported in object mode"
 msgstr "Antal uppdelningar mellan rutnätets linjer"
 
 
-msgid "Cannot add geometry in edit mode"
+msgid "Cannot add vertices in edit mode"
 msgstr "Markera Länkad"
 
 
@@ -32251,16 +32251,12 @@ msgid "Cannot add edges in edit mode"
 msgstr "Markera Länkad"
 
 
-msgid "Cannot add vertices in edit mode"
+msgid "Cannot add loops in edit mode"
 msgstr "Markera Länkad"
 
 
-msgid "Cannot remove edges in edit mode"
-msgstr "Visa ytors normaler som linjer"
-
-
-msgid "Cannot remove more edges than the mesh contains"
-msgstr "Visa ytors normaler som linjer"
+msgid "Cannot add polygons in edit mode"
+msgstr "Markera Länkad"
 
 
 msgid "Cannot remove vertices in edit mode"
@@ -32271,12 +32267,12 @@ msgid "Cannot remove more vertices than the mesh contains"
 msgstr "Bild Displist"
 
 
-msgid "Cannot add loops in edit mode"
-msgstr "Markera Länkad"
+msgid "Cannot remove edges in edit mode"
+msgstr "Visa ytors normaler som linjer"
 
 
-msgid "Cannot add polygons in edit mode"
-msgstr "Markera Länkad"
+msgid "Cannot remove more edges than the mesh contains"
+msgstr "Visa ytors normaler som linjer"
 
 
 msgid "Cannot join while in edit mode"

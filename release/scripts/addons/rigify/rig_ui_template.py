@@ -36,6 +36,7 @@ UI_IMPORTS = [
     'import math',
     'import json',
     'import collections',
+    'import traceback',
     'from math import pi',
     'from bpy.props import StringProperty',
     'from mathutils import Euler, Matrix, Quaternion, Vector',
@@ -1147,7 +1148,6 @@ class ScriptGenerator(base_generate.GeneratorPlugin):
 
     def finalize(self):
         metarig = self.generator.metarig
-        id_store = self.generator.id_store
         rig_id = self.generator.rig_id
 
         vis_layers = self.obj.data.layers
@@ -1162,23 +1162,27 @@ class ScriptGenerator(base_generate.GeneratorPlugin):
             layer_layout += [(l.name, l.row)]
 
         # Generate the UI script
-        if id_store.rigify_generate_mode == 'overwrite':
-            rig_ui_name = id_store.rigify_rig_ui or 'rig_ui.py'
+        if metarig.data.rigify_rig_basename:
+            rig_ui_name = metarig.data.rigify_rig_basename + '_rig_ui.py'
         else:
             rig_ui_name = 'rig_ui.py'
 
-        if id_store.rigify_generate_mode == 'overwrite' and rig_ui_name in bpy.data.texts.keys():
-            script = bpy.data.texts[rig_ui_name]
-            script.clear()
-        else:
-            script = bpy.data.texts.new("rig_ui.py")
+        script = None
 
-        rig_ui_old_name = ""
-        if id_store.rigify_rig_basename:
-            rig_ui_old_name = script.name
-            script.name = id_store.rigify_rig_basename + "_rig_ui.py"
+        if metarig.data.rigify_generate_mode == 'overwrite':
+            script = metarig.data.rigify_rig_ui
 
-        id_store.rigify_rig_ui = script.name
+            if not script and rig_ui_name in bpy.data.texts:
+                script = bpy.data.texts[rig_ui_name]
+
+            if script:
+                script.clear()
+                script.name = rig_ui_name
+
+        if script is None:
+            script = bpy.data.texts.new(rig_ui_name)
+
+        metarig.data.rigify_rig_ui = script
 
         for s in OrderedDict.fromkeys(self.ui_imports):
             script.write(s + "\n")

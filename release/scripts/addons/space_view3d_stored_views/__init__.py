@@ -24,8 +24,8 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "View3D > Sidebar > View > Stored Views",
     "warning": "",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.5/"
-                "Py/Scripts/3D_interaction/stored_views",
+    "wiki_url": "https://docs.blender.org/manual/nb/dev/addons/"
+                "3d_view/stored_views.html",
     "category": "3D View"
 }
 

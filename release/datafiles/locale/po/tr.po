@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 13) (b'f6a90f018cfa')\n"
+"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 09:27:21\n"
+"POT-Creation-Date: 2019-10-21 08:03:35\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -9996,6 +9996,14 @@ msgid "Extend Select"
 msgstr "Ters Seçim"
 
 
+msgid "Mouse X"
+msgstr "Sol Fare"
+
+
+msgid "Mouse Y"
+msgstr "Sol Fare"
+
+
 msgctxt "Operator"
 msgid "Copy Keyframes"
 msgstr "Anahtar Kareyi Göster"
@@ -14602,14 +14610,6 @@ msgstr "Düğüm Editörü"
 
 msgid "Resize a node"
 msgstr "Düğüm Editörü"
-
-
-msgid "Mouse X"
-msgstr "Sol Fare"
-
-
-msgid "Mouse Y"
-msgstr "Sol Fare"
 
 
 msgid "(De)select all nodes"
@@ -25076,13 +25076,13 @@ msgstr "Güzelce Kapla"
 
 
 msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "Sınır Kutucuğunu Gizle"
+msgid "Show Bounding Box"
+msgstr "Sınır Kutucuğunu Göster"
 
 
 msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "Sınır Kutucuğunu Göster"
+msgid "Hide Bounding Box"
+msgstr "Sınır Kutucuğunu Gizle"
 
 
 msgctxt "Operator"
@@ -26170,7 +26170,7 @@ msgid "Selection not supported in object mode"
 msgstr "Aynı Tip Nesneler"
 
 
-msgid "Cannot add geometry in edit mode"
+msgid "Cannot add vertices in edit mode"
 msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
 
 
@@ -26178,15 +26178,11 @@ msgid "Cannot add edges in edit mode"
 msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
 
 
-msgid "Cannot add vertices in edit mode"
+msgid "Cannot add loops in edit mode"
 msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
 
 
-msgid "Cannot remove edges in edit mode"
-msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
-
-
-msgid "Cannot remove more edges than the mesh contains"
+msgid "Cannot add polygons in edit mode"
 msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
 
 
@@ -26198,11 +26194,11 @@ msgid "Cannot remove more vertices than the mesh contains"
 msgstr "Dzn. moduna Gir"
 
 
-msgid "Cannot add loops in edit mode"
+msgid "Cannot remove edges in edit mode"
 msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
 
 
-msgid "Cannot add polygons in edit mode"
+msgid "Cannot remove more edges than the mesh contains"
 msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
 
 
