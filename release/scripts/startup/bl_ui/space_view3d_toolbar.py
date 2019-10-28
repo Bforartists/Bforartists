@@ -480,10 +480,13 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                 col.separator()
 
                 row = col.row()
+                row.use_property_split = False
                 row.prop(brush, "use_plane_trim", text="Plane Trim")
+                row.use_property_split = True
+                
                 row = col.row()
-                row.active = brush.use_plane_trim
-                row.prop(brush, "plane_trim", slider=True, text="Distance")
+                if brush.use_plane_trim:
+                    row.prop(brush, "plane_trim", slider=True, text="Distance")
 
             # height
             if capabilities.has_height:
