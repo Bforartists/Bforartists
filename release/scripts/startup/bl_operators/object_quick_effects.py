@@ -327,7 +327,7 @@ def grid_location(x, y):
 
 
 class QuickSmoke(ObjectModeOperator, Operator):
-    """Use selected objects as smoke emitters"""
+    """Use selected objects as smoke emitters\nSaving scene and baking the simulation is required for rendering\nBake button is in Physics Properties - Smoke Panel - Cache Subtab"""
     bl_idname = "object.quick_smoke"
     bl_label = "Quick Smoke"
     bl_options = {'REGISTER', 'UNDO'}
