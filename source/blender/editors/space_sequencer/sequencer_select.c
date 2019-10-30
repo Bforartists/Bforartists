@@ -45,6 +45,8 @@
 #include "ED_screen.h"
 #include "ED_sequencer.h"
 #include "ED_select_utils.h"
+#include "UI_interface.h" /*bfa - needed for the icons*/
+#include "UI_resources.h" /*bfa - needed for the icons*/
 
 #include "UI_view2d.h"
 
@@ -1054,26 +1056,26 @@ enum {
 };
 
 static const EnumPropertyItem sequencer_prop_select_grouped_types[] = {
-    {SEQ_SELECT_GROUP_TYPE, "TYPE", 0, "Type", "Shared strip type"},
+    {SEQ_SELECT_GROUP_TYPE, "TYPE", ICON_TYPE, "Type", "Shared strip type"},
     {SEQ_SELECT_GROUP_TYPE_BASIC,
      "TYPE_BASIC",
-     0,
+     ICON_TYPE,
      "Global Type",
      "All strips of same basic type (Graphical or Sound)"},
     {SEQ_SELECT_GROUP_TYPE_EFFECT,
      "TYPE_EFFECT",
-     0,
+     ICON_TYPE,
      "Effect Type",
      "Shared strip effect type (if active strip is not an effect one, select all non-effect "
      "strips)"},
-    {SEQ_SELECT_GROUP_DATA, "DATA", 0, "Data", "Shared data (scene, image, sound, etc.)"},
-    {SEQ_SELECT_GROUP_EFFECT, "EFFECT", 0, "Effect", "Shared effects"},
+    {SEQ_SELECT_GROUP_DATA, "DATA", ICON_TEXT, "Data", "Shared data (scene, image, sound, etc.)"},
+    {SEQ_SELECT_GROUP_EFFECT, "EFFECT", ICON_PHYSICS, "Effect", "Shared effects"},
     {SEQ_SELECT_GROUP_EFFECT_LINK,
      "EFFECT_LINK",
-     0,
+     ICON_LINKED,
      "Effect/Linked",
      "Other strips affected by the active one (sharing some time, and below or effect-assigned)"},
-    {SEQ_SELECT_GROUP_OVERLAP, "OVERLAP", 0, "Overlap", "Overlapping time"},
+    {SEQ_SELECT_GROUP_OVERLAP, "OVERLAP", ICON_LAYER, "Overlap", "Overlapping time"},
     {0, NULL, 0, NULL, NULL},
 };
 
