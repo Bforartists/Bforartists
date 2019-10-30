@@ -401,7 +401,7 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
         if not self.is_popover:
             row = layout.row()
             row.column().template_ID_preview(settings, "brush", new="brush.add", rows=3, cols=8)
-            row.menu("VIEW3D_MT_brush_context_menu", icon='DOWNARROW_HLT', text="")
+            #row.menu("VIEW3D_MT_brush_context_menu", icon='DOWNARROW_HLT', text="")
 
         # Sculpt Mode #
         if context.sculpt_object and brush:
@@ -662,6 +662,7 @@ class VIEW3D_PT_tools_brush_options(Panel, View3DPaintPanel):
             col.use_property_split = False
             col.prop(brush, "use_frontface", text="Front Faces Only")
             col.prop(brush, "use_projected")
+            layout.operator("brush.reset")
 
         elif context.weight_paint_object and brush:
 
