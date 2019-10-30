@@ -336,9 +336,9 @@ class SEQUENCER_MT_select_handle(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("sequencer.select_handles", text="Both").side = 'BOTH'
-        layout.operator("sequencer.select_handles", text="Left").side = 'LEFT'
-        layout.operator("sequencer.select_handles", text="Right").side = 'RIGHT'
+        layout.operator("sequencer.select_handles", text="Both", icon = "RESTRICT_SELECT_OFF").side = 'BOTH'
+        layout.operator("sequencer.select_handles", text="Left", icon = "RESTRICT_SELECT_OFF").side = 'LEFT'
+        layout.operator("sequencer.select_handles", text="Right", icon = "RESTRICT_SELECT_OFF").side = 'RIGHT'
 
 
 class SEQUENCER_MT_select_channel(Menu):
@@ -347,8 +347,8 @@ class SEQUENCER_MT_select_channel(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("sequencer.select_active_side", text="Left").side = 'LEFT'
-        layout.operator("sequencer.select_active_side", text="Right").side = 'RIGHT'
+        layout.operator("sequencer.select_active_side", text="Left", icon = "RESTRICT_SELECT_OFF").side = 'LEFT'
+        layout.operator("sequencer.select_active_side", text="Right", icon = "RESTRICT_SELECT_OFF").side = 'RIGHT'
 
 
 class SEQUENCER_MT_select_linked(Menu):
@@ -357,9 +357,9 @@ class SEQUENCER_MT_select_linked(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("sequencer.select_linked", text="All")
-        layout.operator("sequencer.select_less", text="Less")
-        layout.operator("sequencer.select_more", text="More")
+        layout.operator("sequencer.select_linked", text="All", icon='SELECT_ALL')
+        layout.operator("sequencer.select_less", text="Less", icon = "SELECTLESS")
+        layout.operator("sequencer.select_more", text="More", icon = "SELECTMORE")
 
 
 class SEQUENCER_MT_select_playhead(Menu):
@@ -368,10 +368,10 @@ class SEQUENCER_MT_select_playhead(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        props = layout.operator("sequencer.select", text="Left")
+        props = layout.operator("sequencer.select", text="Left", icon = "BEFORE_CURRENT_FRAME")
         props.left_right = 'LEFT'
         props.linked_time = True
-        props = layout.operator("sequencer.select", text="Right")
+        props = layout.operator("sequencer.select", text="Right", icon = "AFTER_CURRENT_FRAME")
         props.left_right = 'RIGHT'
         props.linked_time = True
 
@@ -387,7 +387,7 @@ class SEQUENCER_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.select_box", text="Box Select")
+        layout.operator("sequencer.select_box", text="Box Select", icon='BORDER_RECT')
 
         layout.separator()
 
