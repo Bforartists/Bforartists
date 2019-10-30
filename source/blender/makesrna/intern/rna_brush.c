@@ -1704,7 +1704,7 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_int_funcs(prop, NULL, "rna_Brush_set_size", NULL);
   RNA_def_property_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS * 10);
   RNA_def_property_ui_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS, 1, -1);
-  RNA_def_property_ui_text(prop, "Radius", "Radius of the brush in pixels");
+  RNA_def_property_ui_text(prop, "Radius", "Radius of the brush in pixels\nHotkey in the default keymap: F");
   RNA_def_property_update(prop, 0, "rna_Brush_size_update");
 
   prop = RNA_def_property(srna, "unprojected_radius", PROP_FLOAT, PROP_DISTANCE);
@@ -1785,7 +1785,7 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_range(prop, 0.0f, 10.0f);
   RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.001, 3);
   RNA_def_property_ui_text(
-      prop, "Strength", "How powerful the effect of the brush is when applied");
+      prop, "Strength", "How powerful the effect of the brush is when applied\nHotkey in the default keymap: Shift F");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 
   prop = RNA_def_property(srna, "plane_offset", PROP_FLOAT, PROP_DISTANCE);
