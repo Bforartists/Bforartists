@@ -759,6 +759,8 @@ class VIEW3D_MT_editor_menus(Menu):
         elif obj:
             if mode_string != 'PAINT_TEXTURE':
                 layout.menu("VIEW3D_MT_%s" % mode_string.lower())
+            if mode_string in {'SCULPT', 'PAINT_VERTEX', 'PAINT_WEIGHT', 'PAINT_TEXTURE'}:
+                layout.menu("VIEW3D_MT_brush")
             if mode_string == 'SCULPT':
                 layout.menu("VIEW3D_MT_mask")
 
