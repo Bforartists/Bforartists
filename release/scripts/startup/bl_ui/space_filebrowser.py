@@ -452,31 +452,29 @@ class FILEBROWSER_MT_context_menu(Menu):
         st = context.space_data
         params = st.params
 
-        layout.operator("file.previous", text="Back")
-        layout.operator("file.next", text="Forward")
-        layout.operator("file.parent", text="Go to Parent")
-        layout.operator("file.refresh", text="Refresh")
+        layout.operator("file.previous", text="Back", icon='BACK')
+        layout.operator("file.next", text="Forward", icon='FORWARD')
+        layout.operator("file.parent", text="Go to Parent", icon='FILE_PARENT')
+        layout.operator("file.refresh", text="Refresh", icon='FILE_REFRESH')
 
         layout.separator()
 
-        layout.operator("file.filenum", text="Increase Number",
-                        icon='ADD').increment = 1
-        layout.operator("file.filenum", text="Decrease Number",
-                        icon='REMOVE').increment = -1
+        layout.operator("file.filenum", text="Increase Number", icon='ADD').increment = 1
+        layout.operator("file.filenum", text="Decrease Number", icon='REMOVE').increment = -1
 
         layout.separator()
 
-        layout.operator("file.rename", text="Rename")
+        layout.operator("file.rename", text="Rename", icon='RENAME')
         sub = layout.row()
         sub.operator_context = 'EXEC_DEFAULT'
-        sub.operator("file.delete", text="Delete")
+        sub.operator("file.delete", text="Delete", icon='DELETE')
 
         layout.separator()
 
         sub = layout.row()
         sub.operator_context = 'EXEC_DEFAULT'
-        sub.operator("file.directory_new", text="New Folder")
-        layout.operator("file.bookmark_add", text="Add Bookmark")
+        sub.operator("file.directory_new", text="New Folder", icon='FILE_FOLDER')
+        layout.operator("file.bookmark_add", text="Add Bookmark", icon='BOOKMARKS')
 
         layout.separator()
 
