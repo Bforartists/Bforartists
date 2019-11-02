@@ -547,15 +547,15 @@ class GRAPH_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("graph.keyframe_insert").type = 'SEL'
-        layout.operator("graph.duplicate_move")
+        layout.operator("graph.keyframe_insert", icon = "KEYFRAMES_INSERT").type = 'SEL'
+        layout.operator("graph.duplicate_move", icon = "DUPLICATE")
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("graph.delete")
+        layout.operator("graph.delete", icon = "DELETE")
 
         layout.separator()
 
-        layout.operator_menu_enum("graph.mirror", "type", text="Mirror")
-        layout.operator_menu_enum("graph.snap", "type", text="Snap")
+        layout.operator_menu_enum("graph.mirror", "type", text="Mirror", icon = "TRANSFORM_MIRROR")
+        layout.operator_menu_enum("graph.snap", "type", text="Snap", icon = "SNAP_ON")
 
 
 
@@ -594,37 +594,37 @@ class GRAPH_MT_channel_context_menu(Menu):
         st = context.space_data
 
         layout.separator()
-        layout.operator("anim.channels_setting_enable", text="Mute Channels").type = 'MUTE'
-        layout.operator("anim.channels_setting_disable", text="Unmute Channels").type = 'MUTE'
+        layout.operator("anim.channels_setting_enable", text="Mute Channels", icon='MUTE_IPO_ON').type = 'MUTE'
+        layout.operator("anim.channels_setting_disable", text="Unmute Channels", icon='MUTE_IPO_OFF').type = 'MUTE'
         layout.separator()
-        layout.operator("anim.channels_setting_enable", text="Protect Channels").type = 'PROTECT'
-        layout.operator("anim.channels_setting_disable", text="Unprotect Channels").type = 'PROTECT'
+        layout.operator("anim.channels_setting_enable", text="Protect Channels", icon = "LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon = "UNLOCKED").type = 'PROTECT'
 
         layout.separator()
-        layout.operator("anim.channels_group")
-        layout.operator("anim.channels_ungroup")
+        layout.operator("anim.channels_group", icon = "NEW_GROUP")
+        layout.operator("anim.channels_ungroup", icon = "REMOVE_FROM_ALL_GROUPS")
 
         layout.separator()
-        layout.operator("anim.channels_editable_toggle")
+        layout.operator("anim.channels_editable_toggle", icon='RESTRICT_SELECT_ON')
         layout.operator_menu_enum("graph.extrapolation_type", "type", text="Extrapolation Mode")
 
         layout.separator()
-        layout.operator("graph.hide", text="Hide Selected Curves").unselected = False
-        layout.operator("graph.hide", text="Hide Unselected Curves").unselected = True
-        layout.operator("graph.reveal")
+        layout.operator("graph.hide", text="Hide Selected Curves", icon='HIDE_ON').unselected = False
+        layout.operator("graph.hide", text="Hide Unselected Curves", icon='HIDE_UNSELECTED').unselected = True
+        layout.operator("graph.reveal", icon='HIDE_OFF')
 
         layout.separator()
-        layout.operator("anim.channels_expand")
-        layout.operator("anim.channels_collapse")
+        layout.operator("anim.channels_expand", icon = "EXPANDMENU")
+        layout.operator("anim.channels_collapse", icon = "COLLAPSEMENU")
 
         layout.separator()
         layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
 
         layout.separator()
 
-        layout.operator("anim.channels_delete")
+        layout.operator("anim.channels_delete", icon = "DELETE")
         if st.mode == 'DRIVERS':
-            layout.operator("graph.driver_delete_invalid")
+            layout.operator("graph.driver_delete_invalid", icon = "DELETE")
 
 
 classes = (

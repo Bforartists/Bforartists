@@ -1801,13 +1801,13 @@ class VIEW3D_MT_edit_text_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_DEFAULT'
 
-        layout.operator("font.text_cut", text="Cut")
+        layout.operator("font.text_cut", text="Cut", icon = "CUT")
         layout.operator("font.text_copy", text="Copy", icon='COPYDOWN')
         layout.operator("font.text_paste", text="Paste", icon='PASTEDOWN')
 
         layout.separator()
 
-        layout.operator("font.select_all")
+        layout.operator("font.select_all", icon = "SELECT_ALL")
 
         layout.separator()
 
@@ -1931,7 +1931,7 @@ class VIEW3D_MT_edit_lattice_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("lattice.make_regular")
+        layout.operator("lattice.make_regular", icon = 'MAKE_REGULAR')
 
 
 class VIEW3D_MT_select_edit_lattice(Menu):
@@ -2297,7 +2297,7 @@ class VIEW3D_MT_edit_metaball_context_menu(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         # Add
-        layout.operator("mball.duplicate_move")
+        layout.operator("mball.duplicate_move", icon = "DUPLICATE")
 
         layout.separator()
 
@@ -2309,7 +2309,7 @@ class VIEW3D_MT_edit_metaball_context_menu(Menu):
 
         # Remove
         layout.operator_context = 'EXEC_DEFAULT'
-        layout.operator("mball.delete_metaelems", text="Delete")
+        layout.operator("mball.delete_metaelems", text="Delete", icon = "DELETE")
 
 
 class VIEW3D_MT_metaball_add(Menu):
@@ -2834,8 +2834,8 @@ class VIEW3D_MT_object_context_menu(Menu):
             pass
         elif obj.type == 'MESH':
 
-            layout.operator("object.shade_smooth", text="Shade Smooth")
-            layout.operator("object.shade_flat", text="Shade Flat")
+            layout.operator("object.shade_smooth", text="Shade Smooth", icon ='SHADING_SMOOTH')
+            layout.operator("object.shade_flat", text="Shade Flat", icon ='SHADING_FLAT')
 
             layout.separator()
 
@@ -2845,7 +2845,7 @@ class VIEW3D_MT_object_context_menu(Menu):
             layout.operator_context = 'INVOKE_DEFAULT'
             # If more than one object is selected
             if selected_objects_len > 1:
-                layout.operator("object.join")
+                layout.operator("object.join", icon = "JOIN")
 
             layout.separator()
 
@@ -2853,7 +2853,7 @@ class VIEW3D_MT_object_context_menu(Menu):
             layout.operator_context = 'INVOKE_REGION_WIN'
 
             if obj.data.type == 'PERSP':
-                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle")
+                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle", icon = "LENS_ANGLE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.lens"
                 props.input_scale = 0.1
@@ -2863,7 +2863,7 @@ class VIEW3D_MT_object_context_menu(Menu):
                     props.header_text = "Camera Lens Angle: %.1f\u00B0"
 
             else:
-                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Scale")
+                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Scale", icon = "LENS_SCALE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.ortho_scale"
                 props.input_scale = 0.01
@@ -2871,9 +2871,9 @@ class VIEW3D_MT_object_context_menu(Menu):
 
             if not obj.data.dof_object:
                 if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
-                    props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)")
+                    props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)", icon = "DOF")
                 else:
-                    props = layout.operator("wm.context_modal_mouse", text="DOF Distance")
+                    props = layout.operator("wm.context_modal_mouse", text="DOF Distance", icon = "DOF")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.dof_distance"
                     props.input_scale = 0.02
@@ -2884,13 +2884,13 @@ class VIEW3D_MT_object_context_menu(Menu):
         elif obj.type in {'CURVE', 'FONT'}:
             layout.operator_context = 'INVOKE_REGION_WIN'
 
-            props = layout.operator("wm.context_modal_mouse", text="Extrude Size")
+            props = layout.operator("wm.context_modal_mouse", text="Extrude Size", icon = "EXTRUDESIZE")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "data.extrude"
             props.input_scale = 0.01
             props.header_text = "Extrude Size: %.3f"
 
-            props = layout.operator("wm.context_modal_mouse", text="Width Size")
+            props = layout.operator("wm.context_modal_mouse", text="Width Size", icon = "WIDTH_SIZE")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "data.offset"
             props.input_scale = 0.01
@@ -2898,16 +2898,16 @@ class VIEW3D_MT_object_context_menu(Menu):
 
             layout.separator()
 
-            layout.operator("object.convert", text="Convert to Mesh").target = 'MESH'
-            layout.operator("object.convert", text="Convert to Grease Pencil").target = 'GPENCIL'
-            layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
+            layout.operator("object.convert", text="Convert to Mesh", icon = "MESH_DATA").target = 'MESH'
+            layout.operator("object.convert", text="Convert to Grease Pencil", icon ="GREASEPENCIL").target = 'GPENCIL'
+            layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type", icon ="ORIGIN")
 
             layout.separator()
 
         elif obj.type == 'GPENCIL':
-            layout.operator("gpencil.convert", text="Convert to Path").type = 'PATH'
-            layout.operator("gpencil.convert", text="Convert to Bezier Curves").type = 'CURVE'
-            layout.operator("gpencil.convert", text="Convert to Mesh").type = 'POLY'
+            layout.operator("gpencil.convert", text="Convert to Path", icon ="CURVE_PATH").type = 'PATH'
+            layout.operator("gpencil.convert", text="Convert to Bezier Curves", icon ="OUTLINER_DATA_CURVE").type = 'CURVE'
+            layout.operator("gpencil.convert", text="Convert to Mesh", icon ="OUTLINER_DATA_MESH").type = 'POLY'
 
             layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
 
@@ -2916,7 +2916,7 @@ class VIEW3D_MT_object_context_menu(Menu):
         elif obj.type == 'EMPTY':
             layout.operator_context = 'INVOKE_REGION_WIN'
 
-            props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size")
+            props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size", icon = "DRAWSIZE")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "empty_display_size"
             props.input_scale = 0.01
@@ -2929,31 +2929,31 @@ class VIEW3D_MT_object_context_menu(Menu):
 
             layout.operator_context = 'INVOKE_REGION_WIN'
 
-            props = layout.operator("wm.context_modal_mouse", text="Power")
+            props = layout.operator("wm.context_modal_mouse", text="Power", icon = "LIGHT_STRENGTH")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "data.energy"
             props.header_text = "Light Power: %.3f"
 
             if light.type == 'AREA':
-                props = layout.operator("wm.context_modal_mouse", text="Size X")
+                props = layout.operator("wm.context_modal_mouse", text="Size X", icon = "LIGHT_SIZE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.size"
                 props.header_text = "Light Size X: %.3f"
 
                 if light.shape in {'RECTANGLE', 'ELLIPSE'}:
-                    props = layout.operator("wm.context_modal_mouse", text="Size Y")
+                    props = layout.operator("wm.context_modal_mouse", text="Size Y", icon = "LIGHT_SIZE")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.size_y"
                     props.header_text = "Light Size Y: %.3f"
 
             elif light.type in {'SPOT', 'POINT'}:
-                props = layout.operator("wm.context_modal_mouse", text="Radius")
+                props = layout.operator("wm.context_modal_mouse", text="Radius", icon = "RADIUS")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.shadow_soft_size"
                 props.header_text = "Light Radius: %.3f"
 
             elif light.type == 'SUN':
-                props = layout.operator("wm.context_modal_mouse", text="Angle")
+                props = layout.operator("wm.context_modal_mouse", text="Angle", icon = "ANGLE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.angle"
                 props.header_text = "Light Angle: %.3f"
@@ -2961,13 +2961,13 @@ class VIEW3D_MT_object_context_menu(Menu):
             if light.type == 'SPOT':
                 layout.separator()
 
-                props = layout.operator("wm.context_modal_mouse", text="Spot Size")
+                props = layout.operator("wm.context_modal_mouse", text="Spot Size", icon = "LIGHT_SIZE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.spot_size"
                 props.input_scale = 0.01
                 props.header_text = "Spot Size: %.2f"
 
-                props = layout.operator("wm.context_modal_mouse", text="Spot Blend")
+                props = layout.operator("wm.context_modal_mouse", text="Spot Blend", icon = "SPOT_BLEND")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.spot_blend"
                 props.input_scale = -0.01
@@ -2985,7 +2985,7 @@ class VIEW3D_MT_object_context_menu(Menu):
 
         layout.separator()
 
-        props = layout.operator("wm.call_panel", text="Rename Active Object...")
+        props = layout.operator("wm.call_panel", text="Rename Active Object", icon='RENAME')
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
 
@@ -2997,18 +2997,18 @@ class VIEW3D_MT_object_context_menu(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         if view and view.local_view:
-            layout.operator("view3d.localview_remove_from")
+            layout.operator("view3d.localview_remove_from", icon= 'VIEW_REMOVE_LOCAL')
         else:
-            layout.operator("object.move_to_collection")
+            layout.operator("object.move_to_collection", icon= 'GROUP')
 
         layout.separator()
 
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe")
+        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe", icon= 'KEYFRAMES_INSERT')
 
         layout.separator()
 
         layout.operator_context = 'EXEC_DEFAULT'
-        layout.operator("object.delete", text="Delete").use_global = False
+        layout.operator("object.delete", text="Delete", icon = "DELETE").use_global = False
 
 
 class VIEW3D_MT_object_shading(Menu):
@@ -3017,8 +3017,8 @@ class VIEW3D_MT_object_shading(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("object.shade_smooth", text="Smooth")
-        layout.operator("object.shade_flat", text="Flat")
+        layout.operator("object.shade_smooth", text="Smooth", icon = "SHADING_SMOOTH")
+        layout.operator("object.shade_flat", text="Flat", icon = "SHADING_FLAT")
 
 
 class VIEW3D_MT_object_apply(Menu):
@@ -3530,9 +3530,9 @@ class VIEW3D_MT_paint_vertex_specials(Menu):
     def draw(self, context):
         layout = self.layout
         # TODO: populate with useful items.
-        layout.operator("paint.vertex_color_set")
+        layout.operator("paint.vertex_color_set", icon = "COLOR")
         layout.separator()
-        layout.operator("paint.vertex_color_smooth")
+        layout.operator("paint.vertex_color_smooth", icon = "PARTICLEBRUSH_SMOOTH")
 
 
 class VIEW3D_MT_paint_texture_specials(Menu):
@@ -3541,7 +3541,7 @@ class VIEW3D_MT_paint_texture_specials(Menu):
     def draw(self, context):
         layout = self.layout
         # TODO: populate with useful items.
-        layout.operator("image.save_dirty")
+        layout.operator("image.save_dirty", icon = "FILE_TICK")
 
 
 class VIEW3D_MT_hook(Menu):
@@ -3693,9 +3693,9 @@ class VIEW3D_MT_paint_weight_specials(Menu):
         # TODO: populate with useful items.
         layout.operator("paint.weight_set")
         layout.separator()
-        layout.operator("object.vertex_group_normalize", text="Normalize")
-        layout.operator("object.vertex_group_clean", text="Clean")
-        layout.operator("object.vertex_group_smooth", text="Smooth")
+        layout.operator("object.vertex_group_normalize", text="Normalize", icon='WEIGHT_NORMALIZE')
+        layout.operator("object.vertex_group_clean", text="Clean", icon='WEIGHT_CLEAN')
+        layout.operator("object.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH')
 
 
 class VIEW3D_MT_sculpt(Menu):
@@ -3822,8 +3822,8 @@ class VIEW3D_MT_sculpt_specials(Menu):
     def draw(self, context):
         layout = self.layout
         # TODO: populate with useful items.
-        layout.operator("object.shade_smooth")
-        layout.operator("object.shade_flat")
+        layout.operator("object.shade_smooth", icon = 'SHADING_SMOOTH')
+        layout.operator("object.shade_flat", icon = 'SHADING_FLAT')
 
 
 class VIEW3D_MT_hide_mask(Menu):
@@ -3916,21 +3916,21 @@ class VIEW3D_MT_particle_context_menu(Menu):
 
         particle_edit = tool_settings.particle_edit
 
-        layout.operator("particle.rekey")
+        layout.operator("particle.rekey", icon = "KEY_HLT")
 
         layout.separator()
 
-        layout.operator("particle.delete")
+        layout.operator("particle.delete", icon = "DELETE")
 
         layout.separator()
 
-        layout.operator("particle.remove_doubles")
-        layout.operator("particle.unify_length")
+        layout.operator("particle.remove_doubles", icon='REMOVE_DOUBLES')
+        layout.operator("particle.unify_length", icon = "RULER")
 
         if particle_edit.select_mode == 'POINT':
             layout.operator("particle.subdivide", icon = "SUBDIVIDE_EDGES")
 
-        layout.operator("particle.weight_set")
+        layout.operator("particle.weight_set", icon = "MOD_VERTEX_WEIGHT")
 
         layout.separator()
 
@@ -3945,8 +3945,8 @@ class VIEW3D_MT_particle_context_menu(Menu):
 
             layout.separator()
 
-            layout.operator("particle.select_roots")
-            layout.operator("particle.select_tips")
+            layout.operator("particle.select_roots", icon = "SELECT_ROOT")
+            layout.operator("particle.select_tips", icon = "SELECT_TIP")
 
             layout.separator()
 
@@ -4214,7 +4214,7 @@ class VIEW3D_MT_pose_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe")
+        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe", icon= 'KEYFRAMES_INSERT')
 
         layout.separator()
 
@@ -4224,29 +4224,29 @@ class VIEW3D_MT_pose_context_menu(Menu):
 
         layout.separator()
 
-        props = layout.operator("wm.call_panel", text="Rename Active Bone...")
+        props = layout.operator("wm.call_panel", text="Rename Active Bone...", icon = "STRING")
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
 
         layout.separator()
 
-        layout.operator("pose.push")
-        layout.operator("pose.relax")
-        layout.operator("pose.breakdown")
+        layout.operator("pose.push", icon = 'PUSH_POSE')
+        layout.operator("pose.relax", icon = 'RELAX_POSE')
+        layout.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE')
 
         layout.separator()
 
-        layout.operator("pose.paths_calculate", text="Calculate Motion Paths")
-        layout.operator("pose.paths_clear", text="Clear Motion Paths")
+        layout.operator("pose.paths_calculate", text="Calculate Motion Paths", icon ='MOTIONPATHS_CALCULATE')
+        layout.operator("pose.paths_clear", text="Clear Motion Paths", icon ='MOTIONPATHS_CLEAR')
 
         layout.separator()
 
-        layout.operator("pose.hide").unselected = False
-        layout.operator("pose.reveal")
+        layout.operator("pose.hide", icon = "HIDE_ON").unselected = False
+        layout.operator("pose.reveal", icon = "HIDE_OFF")
 
         layout.separator()
 
-        layout.operator("pose.user_transforms_clear")
+        layout.operator("pose.user_transforms_clear", icon = "CLEAR")
 
 
 class BoneOptions:
@@ -4411,39 +4411,39 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()
 
             col.operator("mesh.extrude_vertices_move", text="Extrude Vertices", icon='EXTRUDE_REGION')
-            col.operator("mesh.bevel", text="Bevel Vertices").vertex_only = True
+            col.operator("mesh.bevel", text="Bevel Vertices", icon='BEVEL').vertex_only = True
 
             if selected_verts_len > 1:
                 col.separator()
-                col.operator("mesh.edge_face_add", text="Make Edge/Face")
-                col.operator("mesh.vert_connect_path", text="Connect Vertex Path")
-                col.operator("mesh.vert_connect", text="Connect Vertex Pairs")
+                col.operator("mesh.edge_face_add", text="Make Edge/Face", icon='MAKE_EDGEFACE')
+                col.operator("mesh.vert_connect_path", text="Connect Vertex Path", icon = "VERTEXCONNECTPATH")
+                col.operator("mesh.vert_connect", text="Connect Vertex Pairs", icon = "VERTEXCONNECT")
 
             col.separator()
 
             # Deform Operators
-            col.operator("transform.push_pull", text="Push/Pull")
-            col.operator("transform.shrink_fatten", text="Shrink/Fatten")
-            col.operator("transform.shear", text="Shear")
-            col.operator("transform.vert_slide", text="Slide Vertices")
+            col.operator("transform.push_pull", text="Push/Pull", icon = 'PUSH_PULL')
+            col.operator("transform.shrink_fatten", text="Shrink/Fatten", icon = 'SHRINK_FATTEN')
+            col.operator("transform.shear", text="Shear", icon = "SHEAR")
+            col.operator("transform.vert_slide", text="Slide Vertices", icon = 'SLIDE_VERTEX')
             col.operator("transform.vertex_random", text="Randomize Vertices")
-            col.operator("mesh.vertices_smooth", text="Smooth Vertices")
+            col.operator("mesh.vertices_smooth", text="Smooth Vertices", icon = 'SMOOTH_VERTEX')
             col.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
 
             col.separator()
 
             col.menu("VIEW3D_MT_snap", text="Snap Vertices")
-            col.operator("transform.mirror", text="Mirror Vertices")
+            col.operator("transform.mirror", text="Mirror Vertices", icon='TRANSFORM_MIRROR')
 
             col.separator()
 
             # Removal Operators
             if selected_verts_len > 1:
                 col.menu("VIEW3D_MT_edit_mesh_merge", text="Merge Vertices")
-            col.operator("mesh.split")
+            col.operator("mesh.split", icon = "SPLIT")
             col.operator_menu_enum("mesh.separate", "type")
-            col.operator("mesh.dissolve_verts")
-            col.operator("mesh.delete", text="Delete Vertices").type = 'VERT'
+            col.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS')
+            col.operator("mesh.delete", text="Delete Vertices", icon = "DELETE").type = 'VERT'
 
         if is_edge_mode:
             render = context.scene.render
@@ -4458,60 +4458,60 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()
 
             col.operator("mesh.extrude_edges_move", text="Extrude Edges", icon='EXTRUDE_REGION')
-            col.operator("mesh.bevel", text="Bevel Edges").vertex_only = False
+            col.operator("mesh.bevel", text="Bevel Edges", icon = "BEVEL").vertex_only = False
             if selected_edges_len >= 2:
-                col.operator("mesh.bridge_edge_loops")
+                col.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
             if selected_edges_len >= 1:
-                col.operator("mesh.edge_face_add", text="Make Edge/Face")
+                col.operator("mesh.edge_face_add", text="Make Edge/Face", icon='MAKE_EDGEFACE')
             if selected_edges_len >= 2:
-                col.operator("mesh.fill")
+                col.operator("mesh.fill", icon = "FILL")
 
             col.separator()
 
-            col.operator("mesh.loopcut_slide")
-            col.operator("mesh.offset_edge_loops_slide")
+            col.operator("mesh.loopcut_slide", icon = "LOOP_CUT_AND_SLIDE")
+            col.operator("mesh.offset_edge_loops_slide", icon = "SLIDE_EDGE")
 
             col.separator()
 
-            col.operator("mesh.knife_tool")
-            col.operator("mesh.bisect")
+            col.operator("mesh.knife_tool", icon = 'KNIFE')
+            col.operator("mesh.bisect", icon = 'BISECT')
 
             col.separator()
 
             # Deform Operators
-            col.operator("mesh.edge_rotate", text="Rotate Edge CW").use_ccw = False
-            col.operator("transform.edge_slide")
-            col.operator("mesh.edge_split")
+            col.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
+            col.operator("transform.edge_slide", icon='SLIDE_EDGE')
+            col.operator("mesh.edge_split", icon = "SPLITEDGE")
 
             col.separator()
 
             # Edge Flags
-            col.operator("transform.edge_crease")
-            col.operator("transform.edge_bevelweight")
+            col.operator("transform.edge_crease", icon = "CREASE")
+            col.operator("transform.edge_bevelweight", icon = "BEVEL")
 
             col.separator()
 
-            col.operator("mesh.mark_seam").clear = False
-            col.operator("mesh.mark_seam", text="Clear Seam").clear = True
+            col.operator("mesh.mark_seam", icon = "MARK_SEAM").clear = False
+            col.operator("mesh.mark_seam", text="Clear Seam", icon = 'CLEAR_SEAM').clear = True
 
             col.separator()
 
-            col.operator("mesh.mark_sharp")
-            col.operator("mesh.mark_sharp", text="Clear Sharp").clear = True
+            col.operator("mesh.mark_sharp", icon = "MARKSHARPEDGES")
+            col.operator("mesh.mark_sharp", text="Clear Sharp", icon = "CLEARSHARPEDGES").clear = True
 
             if render.use_freestyle:
                 col.separator()
 
-                col.operator("mesh.mark_freestyle_edge").clear = False
-                col.operator("mesh.mark_freestyle_edge", text="Clear Freestyle Edge").clear = True
+                col.operator("mesh.mark_freestyle_edge", icon = "MARK_FS_EDGE").clear = False
+                col.operator("mesh.mark_freestyle_edge", text="Clear Freestyle Edge", icon = "CLEAR_FS_EDGE").clear = True
 
             col.separator()
 
             # Removal Operators
-            col.operator("mesh.unsubdivide")
-            col.operator("mesh.split")
+            col.operator("mesh.unsubdivide", icon = "UNSUBDIVIDE")
+            col.operator("mesh.split", icon = "SPLIT")
             col.operator_menu_enum("mesh.separate", "type")
-            col.operator("mesh.dissolve_edges")
+            col.operator("mesh.dissolve_edges", icon='DISSOLVE_EDGES')
             col.operator("mesh.delete", text="Delete Edges", icon = "DELETE").type = 'EDGE'
 
         if is_face_mode:
@@ -4529,11 +4529,11 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Extrude Faces Along Normals", icon = 'EXTRUDE_REGION')
             col.operator("mesh.extrude_faces_move", text="Extrude Individual Faces", icon = 'EXTRUDE_REGION')
 
-            col.operator("mesh.inset")
-            col.operator("mesh.poke")
+            col.operator("mesh.inset", icon='INSET_FACES')
+            col.operator("mesh.poke", icon = "POKEFACES")
 
             if selected_faces_len >= 2:
-                col.operator("mesh.bridge_edge_loops", text="Bridge Faces")
+                col.operator("mesh.bridge_edge_loops", text="Bridge Faces", icon = "BRIDGE_EDGELOOPS")
 
             col.separator()
 
@@ -4542,22 +4542,22 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             col.separator()
 
-            props = col.operator("mesh.quads_convert_to_tris")
+            props = col.operator("mesh.quads_convert_to_tris", icon = "TRIANGULATE")
             props.quad_method = props.ngon_method = 'BEAUTY'
-            col.operator("mesh.tris_convert_to_quads")
+            col.operator("mesh.tris_convert_to_quads", icon = "TRISTOQUADS")
 
             col.separator()
 
-            col.operator("mesh.faces_shade_smooth")
-            col.operator("mesh.faces_shade_flat")
+            col.operator("mesh.faces_shade_smooth", icon = 'SHADING_SMOOTH')
+            col.operator("mesh.faces_shade_flat", icon = 'SHADING_FLAT')
 
             col.separator()
 
             # Removal Operators
-            col.operator("mesh.unsubdivide")
-            col.operator("mesh.split")
+            col.operator("mesh.unsubdivide", icon = "UNSUBDIVIDE")
+            col.operator("mesh.split", icon = "SPLIT")
             col.operator_menu_enum("mesh.separate", "type")
-            col.operator("mesh.dissolve_faces")
+            col.operator("mesh.dissolve_faces", icon='DISSOLVE_FACES')
             col.operator("mesh.delete", text="Delete Faces", icon = "DELETE").type = 'FACE'
 
 
@@ -5205,34 +5205,34 @@ class VIEW3D_MT_edit_curve_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_DEFAULT'
 
-        layout.operator("curve.subdivide")
-        layout.operator("curve.switch_direction")
+        layout.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES')
+        layout.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION')
 
         layout.separator()
 
         layout.operator("curve.duplicate_move", icon = "DUPLICATE")
-        layout.operator("curve.split")
-        layout.operator("curve.cyclic_toggle")
+        layout.operator("curve.split", icon = "SPLIT")
+        layout.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
         layout.operator_menu_enum("curve.spline_type_set", "type")
 
         layout.separator()
 
-        layout.operator("curve.make_segment")
+        layout.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT")
 
         layout.separator()
 
-        layout.operator("transform.tilt")
-        layout.operator("curve.tilt_clear")
+        layout.operator("transform.tilt", icon = 'TILT')
+        layout.operator("curve.tilt_clear", icon = "CLEAR_TILT")
 
         layout.separator()
 
         layout.operator_menu_enum("curve.handle_type_set", "type")
-        layout.operator("curve.normals_make_consistent")
+        layout.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS')
 
         layout.separator()
 
-        layout.operator("curve.spline_weight_set")
-        layout.operator("curve.radius_set")
+        layout.operator("curve.spline_weight_set", icon = "MOD_VERTEX_WEIGHT")
+        layout.operator("curve.radius_set", icon = "RADIUS")
 
         layout.separator()
 
@@ -5241,10 +5241,10 @@ class VIEW3D_MT_edit_curve_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("curve.decimate")
-        layout.operator("curve.delete", text="Delete Point").type = 'VERT'
-        layout.operator("curve.delete", text="Delete Segment").type = 'SEGMENT'
-        layout.operator("curve.dissolve_verts")
+        layout.operator("curve.decimate", icon = "DECIMATE")
+        layout.operator("curve.delete", text="Delete Point", icon = "DELETE").type = 'VERT'
+        layout.operator("curve.delete", text="Delete Segment", icon = "DELETE").type = 'SEGMENT'
+        layout.operator("curve.dissolve_verts", icon='DISSOLVE_VERTS')
 
 
 class VIEW3D_MT_edit_curve_delete(Menu):
@@ -5572,15 +5572,15 @@ class VIEW3D_MT_armature_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("armature.fill")
+        layout.operator("armature.fill", icon = "FILLBETWEEN")
 
         layout.separator()
 
         # Modify
         layout.menu("VIEW3D_MT_mirror")
         layout.menu("VIEW3D_MT_snap")
-        layout.operator("armature.switch_direction", text="Switch Direction")
-        layout.operator("armature.symmetrize")
+        layout.operator("armature.switch_direction", text="Switch Direction", icon = "SWITCH_DIRECTION")
+        layout.operator("armature.symmetrize", icon = "SYMMETRIZE")
         layout.menu("VIEW3D_MT_edit_armature_names")
 
         layout.separator()
@@ -5591,10 +5591,10 @@ class VIEW3D_MT_armature_context_menu(Menu):
         layout.separator()
 
         # Remove
-        layout.operator("armature.split")
-        layout.operator("armature.merge")
-        layout.operator("armature.dissolve")
-        layout.operator("armature.delete")
+        layout.operator("armature.split", icon = "SPLIT")
+        layout.operator("armature.merge", icon = "MERGE")
+        layout.operator("armature.dissolve", icon = "DELETE")
+        layout.operator("armature.delete", icon = "DELETE")
 
 
 class VIEW3D_MT_edit_armature_names(Menu):
@@ -7686,11 +7686,11 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
             col.separator()
 
             # Deform Operators
-            col.operator("gpencil.stroke_smooth", text="Smooth Points").only_selected = True
-            col.operator("transform.bend", text="Bend")
-            col.operator("transform.shear", text="Shear")
-            col.operator("transform.tosphere", text="To Sphere")
-            col.operator("transform.transform", text="Shrink Fatten").mode = 'GPENCIL_SHRINKFATTEN'
+            col.operator("gpencil.stroke_smooth", text="Smooth Points", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
+            col.operator("transform.bend", text="Bend", icon = "BEND")
+            col.operator("transform.shear", text="Shear", icon = "SHEAR")
+            col.operator("transform.tosphere", text="To Sphere", icon = "TOSPHERE")
+            col.operator("transform.transform", text="Shrink Fatten", icon = 'SHRINK_FATTEN').mode = 'GPENCIL_SHRINKFATTEN'
 
             col.separator()
 
@@ -7700,7 +7700,7 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
             col.separator()
 
             # Duplicate operators
-            col.operator("gpencil.duplicate_move", text="Duplicate")
+            col.operator("gpencil.duplicate_move", text="Duplicate", icon='DUPLICATE')
             col.operator("gpencil.copy", text="Copy", icon='COPYDOWN')
             col.operator("gpencil.paste", text="Paste", icon='PASTEDOWN').type = 'ACTIVE'
             col.operator("gpencil.paste", text="Paste by Layer", icon='PASTEDOWN').type = 'LAYER'
@@ -7708,17 +7708,17 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
             col.separator()
 
             # Removal Operators
-            col.operator("gpencil.stroke_merge", text="Merge Points")
-            col.operator("gpencil.stroke_merge_by_distance").use_unselected = False
-            col.operator("gpencil.stroke_split", text="Split")
-            col.operator("gpencil.stroke_separate", text="Separate").mode = 'POINT'
+            col.operator("gpencil.stroke_merge", text="Merge Points", icon = "MERGE")
+            col.operator("gpencil.stroke_merge_by_distance", icon = "MERGE").use_unselected = False
+            col.operator("gpencil.stroke_split", text="Split", icon = "SPLIT")
+            col.operator("gpencil.stroke_separate", text="Separate", icon = "SEPARATE").mode = 'POINT'
 
             col.separator()
 
-            col.operator("gpencil.delete", text="Delete Points").type = 'POINTS'
-            col.operator("gpencil.dissolve", text="Dissolve Points").type = 'POINTS'
-            col.operator("gpencil.dissolve", text="Dissolve Between").type = 'BETWEEN'
-            col.operator("gpencil.dissolve", text="Dissolve Unselected").type = 'UNSELECT'
+            col.operator("gpencil.delete", text="Delete Points", icon = "DELETE").type = 'POINTS'
+            col.operator("gpencil.dissolve", text="Dissolve Points", icon = "DELETE").type = 'POINTS'
+            col.operator("gpencil.dissolve", text="Dissolve Between", icon = "DELETE").type = 'BETWEEN'
+            col.operator("gpencil.dissolve", text="Dissolve Unselected", icon = "DELETE").type = 'UNSELECT'
 
         if is_stroke_mode:
 
@@ -7727,21 +7727,21 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
             col.separator()
 
             # Main Strokes Operators
-            col.operator("gpencil.stroke_subdivide", text="Subdivide").only_selected = False
+            col.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES").only_selected = False
             col.menu("VIEW3D_MT_gpencil_simplify")
-            col.operator("gpencil.stroke_trim", text="Trim")
+            col.operator("gpencil.stroke_trim", text="Trim", icon = "CUT")
 
             col.separator()
 
-            col.operator("gpencil.stroke_smooth", text="Smooth Stroke").only_selected = False
-            col.operator("transform.transform", text="Shrink Fatten").mode = 'GPENCIL_SHRINKFATTEN'
+            col.operator("gpencil.stroke_smooth", text="Smooth Stroke", icon = "PARTICLEBRUSH_SMOOTH").only_selected = False
+            col.operator("transform.transform", text="Shrink Fatten", icon = 'SHRINK_FATTEN').mode = 'GPENCIL_SHRINKFATTEN'
 
             col.separator()
 
             # Layer and Materials operators
             col.menu("GPENCIL_MT_move_to_layer")
             col.menu("VIEW3D_MT_assign_material")
-            col.operator("gpencil.set_active_material", text="Set as Active Material")
+            col.operator("gpencil.set_active_material", text="Set as Active Material", icon = "MATERIAL_DATA")
             col.operator_menu_enum("gpencil.stroke_arrange", "direction", text="Arrange Strokes")
 
             col.separator()
@@ -7752,22 +7752,22 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
             col.separator()
 
             # Duplicate operators
-            col.operator("gpencil.duplicate_move", text="Duplicate")
+            col.operator("gpencil.duplicate_move", text="Duplicate", icon='DUPLICATE')
             col.operator("gpencil.copy", text="Copy", icon='COPYDOWN')
             col.operator("gpencil.paste", text="Paste", icon='PASTEDOWN').type = 'ACTIVE'
-            col.operator("gpencil.paste", text="Paste by Layer").type = 'LAYER'
+            col.operator("gpencil.paste", text="Paste by Layer", icon='PASTEDOWN').type = 'LAYER'
 
             col.separator()
 
             # Removal Operators
-            col.operator("gpencil.stroke_merge_by_distance").use_unselected = True
-            col.operator_menu_enum("gpencil.stroke_join", "type", text="Join")
-            col.operator("gpencil.stroke_split", text="Split")
-            col.operator("gpencil.stroke_separate", text="Separate").mode = 'STROKE'
+            col.operator("gpencil.stroke_merge_by_distance", icon = "MERGE").use_unselected = True
+            col.operator_menu_enum("gpencil.stroke_join", "type", text="Join", icon ='JOIN')
+            col.operator("gpencil.stroke_split", text="Split", icon = "SPLIT")
+            col.operator("gpencil.stroke_separate", text="Separate", icon = "SEPARATE").mode = 'STROKE'
 
             col.separator()
 
-            col.operator("gpencil.delete", text="Delete Strokes").type = 'STROKES'
+            col.operator("gpencil.delete", text="Delete Strokes", icon = "DELETE").type = 'STROKES'
 
             col.separator()
 
