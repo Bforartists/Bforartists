@@ -542,19 +542,19 @@ class IMAGE_MT_uvs_context_menu(Menu):
         # UV Edit Mode
         if sima.show_uvedit:
             # Add
-            layout.operator("uv.unwrap")
-            layout.operator("uv.follow_active_quads")
+            layout.operator("uv.unwrap", icon='UNWRAP_ABF')
+            layout.operator("uv.follow_active_quads", icon = "FOLLOWQUADS")
 
             layout.separator()
 
             # Modify
-            layout.operator("uv.pin").clear = False
-            layout.operator("uv.pin", text="Unpin").clear = True
+            layout.operator("uv.pin", icon = "PINNED").clear = False
+            layout.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
 
             layout.separator()
 
-            layout.operator("uv.weld")
-            layout.operator("uv.stitch")
+            layout.operator("uv.weld", icon='WELD')
+            layout.operator("uv.stitch", icon = "STITCH")
 
             layout.separator()
 
@@ -562,8 +562,8 @@ class IMAGE_MT_uvs_context_menu(Menu):
 
             layout.separator()
 
-            layout.operator("transform.mirror", text="Mirror X").constraint_axis[0] = True
-            layout.operator("transform.mirror", text="Mirror Y").constraint_axis[1] = True
+            layout.operator("transform.mirror", text="Mirror X", icon = "MIRROR_X").constraint_axis[0] = True
+            layout.operator("transform.mirror", text="Mirror Y", icon = "MIRROR_Y").constraint_axis[1] = True
 
             layout.separator()
 
@@ -892,14 +892,14 @@ class IMAGE_MT_mask_context_menu(Menu):
         sima = context.space_data
 
         if not sima.mask:
-            layout.operator("mask.new")
+            layout.operator("mask.new", icon='MOD_MASK')
             layout.separator()
             layout.operator("mask.primitive_circle_add", icon='MESH_CIRCLE')
             layout.operator("mask.primitive_square_add", icon='MESH_PLANE')
         else:
             layout.operator_menu_enum("mask.handle_type_set", "type")
-            layout.operator("mask.switch_direction")
-            layout.operator("mask.cyclic_toggle")
+            layout.operator("mask.switch_direction", icon='SWITCH_DIRECTION')
+            layout.operator("mask.cyclic_toggle", icon='TOGGLE_CYCLIC')
 
             layout.separator()
             layout.operator("mask.primitive_circle_add", icon='MESH_CIRCLE')
@@ -911,18 +911,18 @@ class IMAGE_MT_mask_context_menu(Menu):
 
             layout.separator()
 
-            layout.operator("mask.shape_key_rekey", text="Re-key Shape Points")
-            layout.operator("mask.feather_weight_clear")
-            layout.operator("mask.shape_key_feather_reset", text="Reset Feather Animation")
+            layout.operator("mask.shape_key_rekey", text="Re-key Shape Points", icon = "SHAPEKEY_DATA")
+            layout.operator("mask.feather_weight_clear", icon='CLEAR')
+            layout.operator("mask.shape_key_feather_reset", text="Reset Feather Animation", icon='RESET')
 
             layout.separator()
 
-            layout.operator("mask.parent_set")
-            layout.operator("mask.parent_clear")
+            layout.operator("mask.parent_set", icon='PARENT')
+            layout.operator("mask.parent_clear", icon='PARENT_CLEAR')
 
             layout.separator()
 
-            layout.operator("mask.delete")
+            layout.operator("mask.delete", icon='DELETE')
 
 # -----------------------------------------------------------------------------
 # Mask (similar code in space_clip.py, keep in sync)
