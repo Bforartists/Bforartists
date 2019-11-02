@@ -344,25 +344,25 @@ class NLA_MT_context_menu(Menu):
         scene = context.scene
 
         if scene.is_nla_tweakmode:
-            layout.operator("nla.tweakmode_exit", text="Stop Editing Stashed Action").isolate_action = True
-            layout.operator("nla.tweakmode_exit", text="Stop Tweaking Strip Actions")
+            layout.operator("nla.tweakmode_exit", text="Stop Editing Stashed Action", icon = "ACTION_TWEAK").isolate_action = True
+            layout.operator("nla.tweakmode_exit", text="Stop Tweaking Strip Actions", icon = "ACTION_TWEAK")
         else:
-            layout.operator("nla.tweakmode_enter", text="Start Editing Stashed Action").isolate_action = True
-            layout.operator("nla.tweakmode_enter", text="Start Tweaking Strip Actions")
+            layout.operator("nla.tweakmode_enter", text="Start Editing Stashed Action", icon = "ACTION_TWEAK").isolate_action = True
+            layout.operator("nla.tweakmode_enter", text="Start Tweaking Strip Actions", icon = "ACTION_TWEAK")
 
         layout.separator()
 
-        layout.operator("nla.duplicate", text="Duplicate").linked = False
-        layout.operator("nla.duplicate", text="Linked Duplicate").linked = True
+        layout.operator("nla.duplicate", text="Duplicate", icon = "DUPLICATE").linked = False
+        layout.operator("nla.duplicate", text="Linked Duplicate", icon = "DUPLICATE").linked = True
 
         layout.separator()
 
-        layout.operator("nla.split")
-        layout.operator("nla.delete")
+        layout.operator("nla.split", icon = "SPLIT")
+        layout.operator("nla.delete", icon = "DELETE")
 
         layout.separator()
 
-        layout.operator("nla.swap")
+        layout.operator("nla.swap", icon = "SWAP")
 
         layout.separator()
 
@@ -376,7 +376,7 @@ class NLA_MT_channel_context_menu(Menu):
         layout = self.layout
 
         layout.operator_menu_enum("anim.channels_move", "direction", text="Track Ordering...")
-        layout.operator("anim.channels_clean_empty")
+        layout.operator("anim.channels_clean_empty", icon = "CLEAN_CHANNELS")
 
 
 classes = (
