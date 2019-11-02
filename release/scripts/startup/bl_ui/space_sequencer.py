@@ -813,7 +813,7 @@ class SEQUENCER_MT_context_menu(Menu):
             if selected_sequences_count >= 1:
                 col = layout.column()
                 col.operator_menu_enum("sequencer.fades_add", "type", text="Fade")
-                layout.operator("sequencer.fades_clear", text="Clear Fade")
+                layout.operator("sequencer.fades_clear", text="Clear Fade", icon="IPO_EASE_IN_OUT")
 
             if strip_type in {
                     'CROSS', 'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',

@@ -1543,12 +1543,12 @@ class CLIP_MT_tracking_context_menu(Menu):
 
         if mode == 'TRACKING':
 
-            layout.operator("clip.track_settings_to_track")
-            layout.operator("clip.track_settings_as_default")
+            layout.operator("clip.track_settings_to_track", icon='COPYDOWN')
+            layout.operator("clip.track_settings_as_default", icon='SETTINGS')
 
             layout.separator()
 
-            layout.operator("clip.track_copy_color")
+            layout.operator("clip.track_copy_color", icon='COPY_ID')
 
             layout.separator()
 
@@ -1557,35 +1557,32 @@ class CLIP_MT_tracking_context_menu(Menu):
 
             layout.separator()
 
-            layout.operator("clip.disable_markers",
-                            text="Disable Markers").action = 'DISABLE'
-            layout.operator("clip.disable_markers",
-                            text="Enable Markers").action = 'ENABLE'
+            layout.operator("clip.disable_markers", text="Disable Markers", icon='HIDE_ON').action = 'DISABLE'
+            layout.operator("clip.disable_markers", text="Enable Markers", icon='HIDE_OFF').action = 'ENABLE'
 
             layout.separator()
 
-            layout.operator("clip.hide_tracks")
-            layout.operator("clip.hide_tracks_clear", text="Show Tracks")
+            layout.operator("clip.hide_tracks", icon = "HIDE_ON")
+            layout.operator("clip.hide_tracks_clear", text="Show Tracks", icon = "HIDE_OFF")
 
             layout.separator()
 
-            layout.operator("clip.lock_tracks", text="Lock Tracks").action = 'LOCK'
-            layout.operator("clip.lock_tracks",
-                            text="Unlock Tracks").action = 'UNLOCK'
+            layout.operator("clip.lock_tracks", text="Lock Tracks", icon = "LOCKED").action = 'LOCK'
+            layout.operator("clip.lock_tracks", text="Unlock Tracks", icon = "UNLOCKED").action = 'UNLOCK'
 
             layout.separator()
 
-            layout.operator("clip.join_tracks")
+            layout.operator("clip.join_tracks", icon = "JOIN")
 
             layout.separator()
 
-            layout.operator("clip.delete_track")
+            layout.operator("clip.delete_track", icon = "DELETE")
 
         elif mode == 'MASK':
 
             layout.menu("CLIP_MT_mask_handle_type_menu")
-            layout.operator("mask.switch_direction")
-            layout.operator("mask.cyclic_toggle")
+            layout.operator("mask.switch_direction", icon='SWITCH_DIRECTION')
+            layout.operator("mask.cyclic_toggle", icon='TOGGLE_CYCLIC')
 
             layout.separator()
 
@@ -1594,18 +1591,18 @@ class CLIP_MT_tracking_context_menu(Menu):
 
             layout.separator()
 
-            layout.operator("mask.shape_key_rekey", text="Re-key Shape Points")
-            layout.operator("mask.feather_weight_clear")
-            layout.operator("mask.shape_key_feather_reset", text="Reset Feather Animation")
+            layout.operator("mask.shape_key_rekey", text="Re-key Shape Points", icon = "SHAPEKEY_DATA")
+            layout.operator("mask.feather_weight_clear", icon = "CLEAR")
+            layout.operator("mask.shape_key_feather_reset", text="Reset Feather Animation", icon = "RESET")
 
             layout.separator()
 
-            layout.operator("mask.parent_set")
-            layout.operator("mask.parent_clear")
+            layout.operator("mask.parent_set", icon = "PARENT")
+            layout.operator("mask.parent_clear", icon = "PARENT_CLEAR")
 
             layout.separator()
 
-            layout.operator("mask.delete")
+            layout.operator("mask.delete", icon='DELETE')
 
 
 class CLIP_PT_camera_presets(PresetPanel, Panel):

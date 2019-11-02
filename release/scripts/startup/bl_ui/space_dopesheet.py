@@ -815,10 +815,10 @@ class DOPESHEET_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("action.keyframe_insert").type = 'SEL'
-        layout.operator("action.duplicate_move")
+        layout.operator("action.keyframe_insert", icon='COPYDOWN').type = 'SEL'
+        layout.operator("action.duplicate_move", icon='DUPLICATE')
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("action.delete")
+        layout.operator("action.delete", icon='DELETE')
 
         layout.separator()
 
@@ -832,30 +832,30 @@ class DOPESHEET_MT_channel_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("anim.channels_setting_enable", text="Mute Channels").type = 'MUTE'
-        layout.operator("anim.channels_setting_disable", text="Unmute Channels").type = 'MUTE'
+        layout.operator("anim.channels_setting_enable", text="Mute Channels", icon='MUTE_IPO_ON').type = 'MUTE'
+        layout.operator("anim.channels_setting_disable", text="Unmute Channels", icon='MUTE_IPO_OFF').type = 'MUTE'
         layout.separator()
-        layout.operator("anim.channels_setting_enable", text="Protect Channels").type = 'PROTECT'
-        layout.operator("anim.channels_setting_disable", text="Unprotect Channels").type = 'PROTECT'
+        layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
+        layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
 
         layout.separator()
-        layout.operator("anim.channels_group")
-        layout.operator("anim.channels_ungroup")
+        layout.operator("anim.channels_group", icon='NEW_GROUP')
+        layout.operator("anim.channels_ungroup", icon='REMOVE_ALL_GROUPS')
 
         layout.separator()
-        layout.operator("anim.channels_editable_toggle")
+        layout.operator("anim.channels_editable_toggle", icon='RESTRICT_SELECT_ON')
         layout.operator_menu_enum("action.extrapolation_type", "type", text="Extrapolation Mode")
 
         layout.separator()
-        layout.operator("anim.channels_expand")
-        layout.operator("anim.channels_collapse")
+        layout.operator("anim.channels_expand", icon='EXPANDMENU')
+        layout.operator("anim.channels_collapse", icon='COLLAPSEMENU')
 
         layout.separator()
         layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
 
         layout.separator()
 
-        layout.operator("anim.channels_delete")
+        layout.operator("anim.channels_delete", icon='DELETE')
 
 
 class DOPESHEET_MT_snap_pie(Menu):

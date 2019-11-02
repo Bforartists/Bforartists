@@ -514,39 +514,39 @@ class NODE_MT_context_menu(Menu):
 
         # If something is selected
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("node.duplicate_move")
-        props = layout.operator("wm.call_panel", text="Rename...")
+        layout.operator("node.duplicate_move", icon = "DUPLICATE")
+        props = layout.operator("wm.call_panel", text="Rename...", icon = "RENAME")
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
-        layout.operator("node.delete")
-        layout.operator("node.clipboard_copy", text="Copy")
-        layout.operator("node.clipboard_paste", text="Paste")
+        layout.operator("node.delete", icon='DELETE')
+        layout.operator("node.clipboard_copy", text="Copy", icon='COPYDOWN')
+        layout.operator("node.clipboard_paste", text="Paste", icon='PASTEDOWN')
         layout.operator_context = 'EXEC_DEFAULT'
 
-        layout.operator("node.delete_reconnect")
+        layout.operator("node.delete_reconnect", icon='DELETE')
 
         if selected_nodes_len > 1:
             layout.separator()
 
-            layout.operator("node.link_make").replace = False
-            layout.operator("node.link_make", text="Make and Replace Links").replace = True
-            layout.operator("node.links_detach")
+            layout.operator("node.link_make", icon = "LINK_DATA").replace = False
+            layout.operator("node.link_make", text="Make and Replace Links", icon = "LINK_DATA").replace = True
+            layout.operator("node.links_detach", icon = "DETACH_LINKS")
 
             layout.separator()
 
-            layout.operator("node.group_make", text="Group")
+            layout.operator("node.group_make", text="Group", icon = "NODE_MAKEGROUP")
 
-        layout.operator("node.group_ungroup", text="Ungroup")
-        layout.operator("node.group_edit").exit = False
+        layout.operator("node.group_ungroup", text="Ungroup", icon = "NODE_UNGROUP")
+        layout.operator("node.group_edit", icon = "NODE_EDITGROUP").exit = False
 
         layout.separator()
 
-        layout.operator("node.hide_toggle")
-        layout.operator("node.mute_toggle")
-        layout.operator("node.preview_toggle")
-        layout.operator("node.hide_socket_toggle")
-        layout.operator("node.options_toggle")
-        layout.operator("node.collapse_hide_unused_toggle")
+        layout.operator("node.hide_toggle", icon = "HIDE_ON")
+        layout.operator("node.mute_toggle", icon = "TOGGLE_NODE_MUTE")
+        layout.operator("node.preview_toggle", icon = "TOGGLE_NODE_PREVIEW")
+        layout.operator("node.hide_socket_toggle", icon = "HIDE_OFF")
+        layout.operator("node.options_toggle", icon = "TOGGLE_NODE_OPTIONS")
+        layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
 
 
 class NODE_PT_active_node_generic(Panel):

@@ -132,8 +132,8 @@ class INFO_MT_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("info.report_copy", text="Copy")
-        layout.operator("info.report_delete", text="Delete")
+        layout.operator("info.report_copy", text="Copy", icon='COPYDOWN')
+        layout.operator("info.report_delete", text="Delete", icon='DELETE')
 
 
 classes = (
