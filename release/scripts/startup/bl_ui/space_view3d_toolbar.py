@@ -458,7 +458,7 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             # crease_pinch_factor
             if capabilities.has_pinch_factor:
                 row = col.row(align=True)
-                if (brush.sculpt_tool in ('BLOB', 'SNAKE_HOOK')):
+                if brush.sculpt_tool in {'BLOB', 'SNAKE_HOOK'}:
                     row.prop(brush, "crease_pinch_factor", slider=True, text="Magnify")
                 else:
                     row.prop(brush, "crease_pinch_factor", slider=True, text="Pinch")
@@ -511,7 +511,7 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
         # Texture Paint Mode #
 
         elif context.image_paint_object and brush:
-            brush_texpaint_common(self, context, layout, brush, settings, True)
+            brush_texpaint_common(self, context, layout, brush, settings, projpaint=True)
 
         # Weight Paint Mode #
         elif context.weight_paint_object and brush:
@@ -559,15 +559,15 @@ class VIEW3D_PT_tools_brush_color(Panel, View3DPaintPanel):
         brush = settings.brush
 
         if context.vertex_paint_object:
-            brush_texpaint_common_color(self, context, layout, brush, settings, True)
+            brush_texpaint_common_color(self, context, layout, brush, settings, projpaint=True)
 
         else:
             layout.prop(brush, "color_type", expand=True)
 
             if brush.color_type == 'COLOR':
-                brush_texpaint_common_color(self, context, layout, brush, settings, True)
+                brush_texpaint_common_color(self, context, layout, brush, settings, projpaint=True)
             elif brush.color_type == 'GRADIENT':
-                brush_texpaint_common_gradient(self, context, layout, brush, settings, True)
+                brush_texpaint_common_gradient(self, context, layout, brush, settings, projpaint=True)
 
 
 class VIEW3D_PT_tools_brush_swatches(Panel, View3DPaintPanel):
@@ -621,7 +621,7 @@ class VIEW3D_PT_tools_brush_clone(Panel, View3DPaintPanel):
 
         layout.active = settings.use_clone_layer
 
-        brush_texpaint_common_clone(self, context, layout, brush, settings, True)
+        brush_texpaint_common_clone(self, context, layout, brush, settings, projpaint=True)
 
 
 class VIEW3D_PT_tools_brush_options(Panel, View3DPaintPanel):
@@ -643,7 +643,7 @@ class VIEW3D_PT_tools_brush_options(Panel, View3DPaintPanel):
         col = layout.column()
 
         if context.image_paint_object and brush:
-            brush_texpaint_common_options(self, context, layout, brush, settings, True)
+            brush_texpaint_common_options(self, context, layout, brush, settings, projpaint=True)
 
         elif context.sculpt_object and brush:
             col.prop(brush, "use_automasking_topology")
@@ -1252,10 +1252,10 @@ class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
         mesh = context.active_object.data
         col.prop(mesh, "remesh_voxel_size")
         col.prop(mesh, "remesh_voxel_adaptivity")
-        col.prop(mesh, "remesh_fix_poles")
-        col.prop(mesh, "remesh_smooth_normals")
-        col.prop(mesh, "remesh_preserve_volume")
-        col.prop(mesh, "remesh_preserve_paint_mask")
+        col.prop(mesh, "use_remesh_fix_poles")
+        col.prop(mesh, "use_remesh_smooth_normals")
+        col.prop(mesh, "use_remesh_preserve_volume")
+        col.prop(mesh, "use_remesh_preserve_paint_mask")
         col.operator("object.voxel_remesh", text="Remesh")
 
 

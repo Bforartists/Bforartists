@@ -57,14 +57,16 @@ class TEXT_HT_header(Header):
         syntax.prop(st, "show_syntax_highlight", text="")
 
         if text:
-            is_osl = text.name.endswith((".osl", ".osl"))
-            
+            text_name = text.name
+            is_osl = text_name.endswith((".osl", ".oso"))
+
+            row = layout.row()
             if is_osl:
                 row = layout.row()
                 row.operator("node.shader_script_update")
             else:
                 row = layout.row()
-                row.active = text.name.endswith(".py")
+                row.active = text_name.endswith(".py")
                 row.prop(text, "use_module")
 
                 row = layout.row()

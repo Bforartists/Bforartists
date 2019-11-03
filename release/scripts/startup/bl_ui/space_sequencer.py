@@ -188,12 +188,14 @@ class SEQUENCER_MT_range(Menu):
         layout = self.layout
 
         layout.operator("anim.previewrange_set", text="Set Preview Range")
+        layout.operator("sequencer.set_range_to_strips", text="Set Preview Range to Strips").preview = True
         layout.operator("anim.previewrange_clear", text="Clear Preview Range")
 
         layout.separator()
 
         layout.operator("anim.start_frame_set", text="Set Start Frame")
         layout.operator("anim.end_frame_set", text="Set End Frame")
+        layout.operator("sequencer.set_range_to_strips", text="Set Frame Range to Strips")
 
 class SEQUENCER_MT_preview_zoom(Menu):
     bl_label = "Fractional Zoom"
@@ -279,6 +281,7 @@ class SEQUENCER_MT_view(Menu):
             layout.separator()
             layout.operator_context = 'INVOKE_DEFAULT'
 
+            layout.prop(st, "show_seconds")
             layout.prop(st, "show_strip_offset")
             layout.prop(st, "show_marker_lines")
 
@@ -349,6 +352,11 @@ class SEQUENCER_MT_select_channel(Menu):
 
         layout.operator("sequencer.select_active_side", text="Left", icon = "RESTRICT_SELECT_OFF").side = 'LEFT'
         layout.operator("sequencer.select_active_side", text="Right", icon = "RESTRICT_SELECT_OFF").side = 'RIGHT'
+
+        layout.operator("sequencer.select_side", text="Left", icon = "RESTRICT_SELECT_OFF").side = 'LEFT'
+        layout.operator("sequencer.select_side", text="Right", icon = "RESTRICT_SELECT_OFF").side = 'RIGHT'
+        layout.separator()
+        layout.operator("sequencer.select_side", text="Both Sides", icon = "RESTRICT_SELECT_OFF").side = 'BOTH'
 
 
 class SEQUENCER_MT_select_linked(Menu):
@@ -785,6 +793,10 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.separator()
 
+        layout.operator("sequencer.set_range_to_strips", text="Set Preview Range to Strips").preview = True
+
+        layout.separator()
+
         layout.operator("sequencer.gap_remove", icon = "SEQ_REMOVE_GAPS").all = False
         layout.operator("sequencer.gap_insert", icon = "SEQ_INSERT_GAPS")
 
@@ -1038,10 +1050,8 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
             flow.prop(strip, "clamp", slider=True)
             flow.prop(strip, "boost_factor")
             flow.prop(strip, "blur_radius")
-
-            row = layout.row()
-            row.prop(strip, "quality", slider=True)
-            row.prop(strip, "use_only_boost")
+            flow.prop(strip, "quality", slider=True)
+            flow.prop(strip, "use_only_boost")
 
         elif strip_type == 'SPEED':
             layout.prop(strip, "use_default_fade", text="Stretch to input strip length")
