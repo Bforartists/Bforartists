@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: 2019-10-09 01:05+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -15116,10 +15116,6 @@ msgstr "채우기가 전파되지 않는 임계 값"
 
 msgid "Gpencil Settings"
 msgstr "GPencil 설정"
-
-
-msgid "Category of the brush"
-msgstr "브러시의 카테고리"
 
 
 msgid "Draw"
@@ -67557,14 +67553,6 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "커브 데이터가 오브젝트와 함께 복제되도록 합니다"
 
 
-msgid "Duplicate F-Curve"
-msgstr "F-커브를 복제"
-
-
-msgid "Causes F-curve data to be duplicated with the object"
-msgstr "F-커브 데이터가 오브젝트와 함께 복제되도록 합니다"
-
-
 msgid "Duplicate GPencil"
 msgstr "그리스 펜슬을 복제"
 
@@ -67635,14 +67623,6 @@ msgstr "텍스트를 복제"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "텍스트 데이터가 오브젝트와 함께 복제되도록 합니다"
-
-
-msgid "Duplicate Texture"
-msgstr "텍스처를 복제"
-
-
-msgid "Causes texture data to be duplicated with the object"
-msgstr "텍스처 데이터가 오브젝트와 함께 복제되도록 합니다"
 
 
 msgid "Enter Edit Mode"
@@ -90836,11 +90816,6 @@ msgstr "그리스 펜슬로 변환"
 msgctxt "Operator"
 msgid "Convert to Path"
 msgstr "경로로 변환"
-
-
-msgctxt "Operator"
-msgid "Convert to Bezier Curves"
-msgstr "베지어 커브으로 변환"
 
 
 msgctxt "Operator"

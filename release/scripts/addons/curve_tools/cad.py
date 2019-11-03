@@ -66,7 +66,7 @@ class Boolean(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return util.Selected1OrMoreCurves()
+        return util.Selected1Curve()
 
     def execute(self, context):
         current_mode = bpy.context.object.mode
@@ -80,7 +80,7 @@ class Boolean(bpy.types.Operator):
         if len(splines) != 2:
             self.report({'WARNING'}, 'Invalid selection. Only work to selected two spline.')
             return {'CANCELLED'}
-        bpy.ops.curvetools.spline_type_set(type='BEZIER')
+        bpy.ops.curve.spline_type_set(type='BEZIER')
         splineA = bpy.context.object.data.splines.active
         splineB = splines[0] if (splines[1] == splineA) else splines[1]
         if not internal.bezierBooleanGeometry(splineA, splineB, self.operation):
@@ -169,13 +169,13 @@ class MergeEnds(bpy.types.Operator):
             points[0].handle_left = handle
         points[0].co = new_co
 
-        bpy.ops.curvetools.select_all(action='DESELECT')
+        bpy.ops.curve.select_all(action='DESELECT')
         points[1].select_control_point = True
-        bpy.ops.curvetools.delete()
+        bpy.ops.curve.delete()
         selected_splines[0].bezier_points[-1 if is_last_point[0] else 0].select_control_point = True
         selected_splines[1].bezier_points[-1 if is_last_point[1] else 0].select_control_point = True
-        bpy.ops.curvetools.make_segment()
-        bpy.ops.curvetools.select_all(action='DESELECT')
+        bpy.ops.curve.make_segment()
+        bpy.ops.curve.select_all(action='DESELECT')
         return {'FINISHED'}
 
 class Subdivide(bpy.types.Operator):

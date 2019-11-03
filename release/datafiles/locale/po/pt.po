@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Inês Almeida, João Brandão (ULISBOA), Paulo Martins <ivan.paulos.tome@yandex.com>\n"
@@ -54230,14 +54230,6 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "Faz com que os dados de curva sejam duplicados com o objeto."
 
 
-msgid "Duplicate F-Curve"
-msgstr "Duplicar curvas-f"
-
-
-msgid "Causes F-curve data to be duplicated with the object"
-msgstr "Faz com que os dados das curvas-f sejam duplicados com o objeto."
-
-
 msgid "Duplicate Material"
 msgstr "Duplicar material"
 
@@ -54284,14 +54276,6 @@ msgstr "Duplicar texto"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "Faz com que os dados de texto sejam duplicados com o objeto."
-
-
-msgid "Duplicate Texture"
-msgstr "Duplicar textura"
-
-
-msgid "Causes texture data to be duplicated with the object"
-msgstr "Faz com que os dados da textura sejam duplicados com o objeto."
 
 
 msgid "Enter Edit Mode"

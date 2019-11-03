@@ -283,6 +283,7 @@ def write_metarig(obj, layers=False, func_name="create", groups=False):
     code.append("        bone.select = True")
     code.append("        bone.select_head = True")
     code.append("        bone.select_tail = True")
+    code.append("        bone.bbone_x = bone.bbone_z = bone.length * 0.05")
     code.append("        arm.edit_bones.active = bone")
 
     # Set appropriate layers visible

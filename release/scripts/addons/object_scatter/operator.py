@@ -318,6 +318,8 @@ def scatter_from_source_point(bvhtree, point, seed, settings):
     assert location is not None
     normal.normalize()
 
+    up_direction = normal if settings.use_normal_rotation else Vector((0, 0, 1))
+
     # Scale
     min_scale = settings.scale * (1 - settings.random_scale)
     max_scale = settings.scale
@@ -328,9 +330,9 @@ def scatter_from_source_point(bvhtree, point, seed, settings):
 
     # Rotation
     z_rotation = Euler((0, 0, random_uniform(sub_seed(seed, 3), 0, 2 * math.pi))).to_matrix()
-    normal_rotation = normal.to_track_quat('Z', 'X').to_matrix()
+    up_rotation = up_direction.to_track_quat('Z', 'X').to_matrix()
     local_rotation = random_euler(sub_seed(seed, 3), settings.rotation).to_matrix()
-    rotation = local_rotation @ normal_rotation @ z_rotation
+    rotation = local_rotation @ up_rotation @ z_rotation
 
     return Matrix.Translation(location) @ rotation.to_4x4() @ scale_matrix(scale)
 

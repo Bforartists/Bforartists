@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -14511,10 +14511,6 @@ msgstr "Порг, вище від якого заповнення не поши�
 
 msgid "Gpencil Settings"
 msgstr "Устави Нарисного Олівця"
-
-
-msgid "Category of the brush"
-msgstr "Категорія пензля"
 
 
 msgid "Draw"
@@ -65092,14 +65088,6 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "Спричиняє дублювання разом з об'єктом даних про криві"
 
 
-msgid "Duplicate F-Curve"
-msgstr "Дублювати Ф-криву"
-
-
-msgid "Causes F-curve data to be duplicated with the object"
-msgstr "Спричиняє дублювання разом з об'єктом даних про Ф-криві"
-
-
 msgid "Duplicate GPencil"
 msgstr "Дублювати НарОлівець"
 
@@ -65170,14 +65158,6 @@ msgstr "Дублювати текст"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "Спричиняє дублювання разом з об'єктом текстових даних"
-
-
-msgid "Duplicate Texture"
-msgstr "Дублювати текстуру"
-
-
-msgid "Causes texture data to be duplicated with the object"
-msgstr "Спричиняє дублювання разом з об'єктом даних про текстури"
 
 
 msgid "Enter Edit Mode"
@@ -87035,11 +87015,6 @@ msgstr "Конвертувати у Сіть"
 msgctxt "Operator"
 msgid "Convert to Path"
 msgstr "Конвертувати у Шлях"
-
-
-msgctxt "Operator"
-msgid "Convert to Bezier Curves"
-msgstr "Конвертувати у Криві Безьє"
 
 
 msgctxt "Operator"

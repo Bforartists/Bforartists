@@ -96,7 +96,7 @@ def draw_bezier_points(self, context, spline, matrix_world, path_color, path_thi
     points = get_bezier_points(spline, matrix_world)
     
     shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-    batch = batch_for_shader(shader, 'LINES', {"pos": points})
+    batch = batch_for_shader(shader, 'POINTS', {"pos": points})
     
     shader.bind()
     shader.uniform_float("color", path_color)
@@ -109,7 +109,7 @@ def draw_points(self, context, spline, matrix_world, path_color, path_thickness)
     points = get_points(spline, matrix_world)
     
     shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-    batch = batch_for_shader(shader, 'LINES', {"pos": points})
+    batch = batch_for_shader(shader, 'POINTS', {"pos": points})
     
     shader.bind()
     shader.uniform_float("color", path_color)

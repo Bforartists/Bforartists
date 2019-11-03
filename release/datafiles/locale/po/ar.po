@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -34363,14 +34363,6 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﻊﻣ ﺭﺮﻜﺘﺗ ﻰﻨﺤﻨﻤﻟﺍ ﺕﺎﻧﺎﻴﺑ ﻞﻌﺠﻳ"
 
 
-msgid "Duplicate F-Curve"
-msgstr "ﻞﻤﻌﻟﺍ ﻰﻨﺤﻨﻣ ﺦﺴﻧﺍ"
-
-
-msgid "Causes F-curve data to be duplicated with the object"
-msgstr "ﻦﺋﺎﻜﻟﺍ ﻊﻣ ﻞﻤﻌﻟﺍ ﻰﻨﺤﻨﻣ ﺕﺎﻧﺎﻴﺑ ﺦﺴﻧ ﻰﻟﺇ ﻱﺩﺆﻳ"
-
-
 msgid "Duplicate Material"
 msgstr "ﺔﻣﺎﺨﻟﺍ ﺦﺴﻧﺍ"
 
@@ -34417,14 +34409,6 @@ msgstr "ﺺﻨﻟﺍ ﺦﺴﻧﺍ"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﻊﻣ ﺺﻨﻟﺍ ﺕﺎﻧﺎﻴﺑ ﺦﺴﻧ ﻰﻟﺇ ﻱﺩﺆﻳ"
-
-
-msgid "Duplicate Texture"
-msgstr "ﺞﻴﺴﻨﻟﺍ ﺦﺴﻧﺍ"
-
-
-msgid "Causes texture data to be duplicated with the object"
-msgstr "ﻦﺋﺎﻜﻟﺍ ﻊﻣ ﺞﻴﺴﻨﻟﺍ ﺕﺎﻧﺎﻴﺑ ﺦﺴﻧ ﻰﻟﺇ ﻱﺩﺆﻳ"
 
 
 msgid "Enter Edit Mode"
