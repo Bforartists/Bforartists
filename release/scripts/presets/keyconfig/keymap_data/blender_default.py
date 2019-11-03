@@ -409,9 +409,12 @@ def km_window(params):
         items.extend([
             ("wm.doc_view_manual_ui_context", {"type": 'F1', "value": 'PRESS'}, None),
             op_panel("TOPBAR_PT_name", {"type": 'F2', "value": 'PRESS'}, [("keep_open", False)]),
-            ("wm.batch_rename", {"type": 'F2', "value": 'PRESS', "alt": True}, None),
+            ("wm.batch_rename", {"type": 'F2', "value": 'PRESS', "ctrl": True}, None),
             ("wm.search_menu", {"type": 'F3', "value": 'PRESS'}, None),
             op_menu("TOPBAR_MT_file_context_menu", {"type": 'F4', "value": 'PRESS'}),
+            # Alt as "Leader-Key".
+            ("wm.toolbar_prompt", {"type": 'LEFT_ALT', "value": 'CLICK'}, None),
+            ("wm.toolbar_prompt", {"type": 'RIGHT_ALT', "value": 'CLICK'}, None),
         ])
 
         if params.spacebar_action == 'TOOL':
@@ -2856,6 +2859,17 @@ def km_animation(params):
         {"items": items},
     )
 
+    if not params.legacy:
+        items.extend([
+            ("anim.start_frame_set", {"type": 'HOME', "value": 'PRESS', "ctrl": True}, None),
+            ("anim.end_frame_set", {"type": 'END', "value": 'PRESS', "ctrl": True}, None),
+        ])
+    else:
+        items.extend([
+            ("anim.start_frame_set", {"type": 'S', "value": 'PRESS'}, None),
+            ("anim.end_frame_set", {"type": 'E', "value": 'PRESS'}, None),
+        ])
+
     items.extend([
         # Frame management.
         ("wm.context_toggle", {"type": 'T', "value": 'PRESS', "ctrl": True},
@@ -2863,8 +2877,6 @@ def km_animation(params):
         # Preview range.
         ("anim.previewrange_set", {"type": 'P', "value": 'PRESS'}, None),
         ("anim.previewrange_clear", {"type": 'P', "value": 'PRESS', "alt": True}, None),
-        ("anim.start_frame_set", {"type": 'HOME', "value": 'PRESS', "ctrl": True}, None),
-        ("anim.end_frame_set", {"type": 'END', "value": 'PRESS', "ctrl": True}, None),
     ])
 
     if params.select_mouse == 'LEFTMOUSE' and not params.legacy:
@@ -4949,6 +4961,7 @@ def km_popup_toolbar(_params):
         "Toolbar Popup",
         {"space_type": 'EMPTY', "region_type": 'TEMPORARY'},
         {"items": [
+            op_tool("builtin.cursor", {"type": 'SPACE', "value": 'PRESS'}),
             op_tool("builtin.select", {"type": 'W', "value": 'PRESS'}),
             op_tool("builtin.select_lasso", {"type": 'L', "value": 'PRESS'}),
             op_tool("builtin.transform", {"type": 'T', "value": 'PRESS'}),

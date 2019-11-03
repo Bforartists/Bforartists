@@ -313,7 +313,7 @@ decorate_override
 decorate_unlocked
 decorate_locked
 face_maps
-#def_icon_blank(330
+documents
 file_new
 filebrowser
 smooth_laplacian
@@ -553,7 +553,7 @@ outliner_ob_mesh
 outliner_ob_curve
 outliner_ob_lattice
 outliner_ob_meta
-#def_icon_blank(573
+options
 outliner_ob_camera
 outliner_ob_armature
 outliner_ob_font
@@ -565,7 +565,7 @@ empty_circle
 empty_cone
 empty_cube
 empty_image
-#def_icon_blank(585
+temp
 empty_sphere
 restrict_color_off
 restrict_color_on
@@ -587,8 +587,8 @@ detach_links
 toggle_node_mute
 toggle_node_options
 toggle_node_preview
-#def_icon_blank(602
-#def_icon_blank(603
+statusbar
+topbar
 caret_line_begin
 caret_line_end
 
@@ -755,7 +755,7 @@ roll_right
 layer
 
 node_add_shader
-#def_icon_blank(772
+disc
 node_alphaconvert
 node_ambient_occlusion
 node_anisotopic
@@ -798,7 +798,7 @@ recalc_normals_inside
 flip_normals
 mark_seam
 clear_seam
-#def_icon_blank(814
+home
 push_pose
 
 relax_pose
@@ -812,7 +812,7 @@ child
 child_recursive
 siblings
 
-#def_icon_blank(829
+memory
 node_blur
 node_bokeh_blur
 node_bokeh_image
@@ -1833,6 +1833,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.gpencil.primitive_circle
   ops.gpencil.primitive_curve
   ops.gpencil.primitive_line
+  ops.gpencil.primitive_polyline
   ops.gpencil.radius
   ops.gpencil.sculpt_clone
   ops.gpencil.sculpt_grab
@@ -1868,6 +1869,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.mesh.spin.duplicate
   ops.mesh.vertices_smooth
   ops.node.links_cut
+  ops.paint.eyedropper_add
   ops.paint.vertex_color_fill
   ops.paint.weight_fill
   ops.paint.weight_gradient
@@ -1917,20 +1919,20 @@ if(WITH_BLENDER)
     data_to_c_simple(../../../../release/datafiles/splash.png SRC)
     data_to_c_simple(../../../../release/datafiles/splash_2x.png SRC)
     # XXX These are handy, but give nasty "false changes" in svn :/
-    #svg_to_png(../../../../release/datafiles/blender_icons.svg
-               #../../../../release/datafiles/blender_icons16.png
-               #90 SRC)
+    # svg_to_png(../../../../release/datafiles/blender_icons.svg
+    #            ../../../../release/datafiles/blender_icons16.png
+    #            90 SRC)
 
     data_to_c_simple_icons(../../../../release/datafiles/blender_icons16 "icon16_" "${ICON_NAMES}" SRC)
-    #data_to_c_simple(../../../../release/datafiles/blender_icons16.png SRC)
-    #svg_to_png(../../../../release/datafiles/blender_icons.svg
-               #../../../../release/datafiles/blender_icons32.png
-               #180 SRC)
+    # data_to_c_simple(../../../../release/datafiles/blender_icons16.png SRC)
+    # svg_to_png(../../../../release/datafiles/blender_icons.svg
+    #            ../../../../release/datafiles/blender_icons32.png
+    #            180 SRC)
     data_to_c_simple_icons(../../../../release/datafiles/blender_icons32 "icon32_" "${ICON_NAMES}" SRC)
-    #data_to_c_simple(../../../../release/datafiles/blender_icons32.png SRC)
-    #svg_to_png(../../../../release/datafiles/prvicons.svg
-               #../../../../release/datafiles/prvicons.png
-               #90 SRC)
+    # data_to_c_simple(../../../../release/datafiles/blender_icons32.png SRC)
+    # svg_to_png(../../../../release/datafiles/prvicons.svg
+    #            ../../../../release/datafiles/prvicons.png
+    #            90 SRC)
     data_to_c_simple(../../../../release/datafiles/prvicons.png SRC)
 
     # brushes
