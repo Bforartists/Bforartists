@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: \n"
 "Last-Translator: blend-it <https://developer.blender.org/T42765>\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -46077,14 +46077,6 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "Fa sì che i dati della mesh siano duplicati con l'oggetto"
 
 
-msgid "Duplicate F-Curve"
-msgstr "Duplica Curva-F"
-
-
-msgid "Causes F-curve data to be duplicated with the object"
-msgstr "Fa sì che i dati della Curva Funzione siano duplicati con l'oggetto"
-
-
 msgid "Duplicate Material"
 msgstr "Duplica Materiale"
 
@@ -46131,14 +46123,6 @@ msgstr "Duplica Testo"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "Fa sì che i dati del testo siano duplicati con l'oggetto"
-
-
-msgid "Duplicate Texture"
-msgstr "Duplica Texture"
-
-
-msgid "Causes texture data to be duplicated with the object"
-msgstr "Fa sì che i dati della texture siano duplicati con l'oggetto"
 
 
 msgid "Enter Edit Mode"

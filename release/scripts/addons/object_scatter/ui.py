@@ -22,6 +22,7 @@ import math
 from collections import namedtuple
 
 from bpy.props import (
+    BoolProperty,
     IntProperty,
     FloatProperty,
     PointerProperty
@@ -30,7 +31,7 @@ from bpy.props import (
 
 ScatterSettings = namedtuple("ScatterSettings",
     ["seed", "density", "radius", "scale", "random_scale",
-     "rotation", "normal_offset"])
+     "rotation", "normal_offset", "use_normal_rotation"])
 
 class ObjectScatterProperties(bpy.types.PropertyGroup):
     seed: IntProperty(
@@ -94,6 +95,12 @@ class ObjectScatterProperties(bpy.types.PropertyGroup):
         description="Distance from the surface",
     )
 
+    use_normal_rotation: BoolProperty(
+        name="Use Normal Rotation",
+        default=True,
+        description="Rotate the instances according to the surface normals",
+    )
+
     def to_settings(self):
         return ScatterSettings(
             seed=self.seed,
@@ -103,6 +110,7 @@ class ObjectScatterProperties(bpy.types.PropertyGroup):
             random_scale=self.random_scale_percentage / 100,
             rotation=self.rotation,
             normal_offset=self.normal_offset,
+            use_normal_rotation=self.use_normal_rotation,
         )
 
 
@@ -125,6 +133,7 @@ class ObjectScatterPanel(bpy.types.Panel):
         col.prop(scatter, "scale", slider=True)
         col.prop(scatter, "random_scale_percentage", text="Randomness", slider=True)
 
+        layout.prop(scatter, "use_normal_rotation")
         layout.prop(scatter, "rotation", slider=True)
         layout.prop(scatter, "normal_offset", text="Offset", slider=True)
         layout.prop(scatter, "seed")

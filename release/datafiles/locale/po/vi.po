@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -15123,10 +15123,6 @@ msgstr "Ngưỡng cho tô đầy, hơn giá trị này không truyền tô"
 
 msgid "Gpencil Settings"
 msgstr "Cài Đặt Bút Sáp"
-
-
-msgid "Category of the brush"
-msgstr "Loại của bút"
 
 
 msgid "Draw"
@@ -67668,14 +67664,6 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "Chép lại dữ liệu đường cong với vật thể"
 
 
-msgid "Duplicate F-Curve"
-msgstr "Soa Chép Cong-F"
-
-
-msgid "Causes F-curve data to be duplicated with the object"
-msgstr "Sao chép dữ liệu Cong-F với vật thể"
-
-
 msgid "Duplicate GPencil"
 msgstr "Sao Chép Bút Sáp"
 
@@ -67746,14 +67734,6 @@ msgstr "Sao Chép Văn Bản"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "Chép lại dữ liệu văn bản với vật thể"
-
-
-msgid "Duplicate Texture"
-msgstr "Sao Chép Họa Tiết"
-
-
-msgid "Causes texture data to be duplicated with the object"
-msgstr "Chép lại dữ liệu họa tiết với vật thể"
 
 
 msgid "Enter Edit Mode"
@@ -90955,11 +90935,6 @@ msgstr "Biến Đổi thành Bút Sáp"
 msgctxt "Operator"
 msgid "Convert to Path"
 msgstr "Biến Đổi sang Đường Đi"
-
-
-msgctxt "Operator"
-msgid "Convert to Bezier Curves"
-msgstr "Biến Đổi sang Cong Bezier"
 
 
 msgctxt "Operator"

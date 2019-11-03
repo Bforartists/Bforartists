@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -14823,10 +14823,6 @@ msgstr "Limite au-dessus de laquelle le remplissage n’est plus propagé"
 
 msgid "Gpencil Settings"
 msgstr "Réglages de crayon gras"
-
-
-msgid "Category of the brush"
-msgstr "Catégorie de la brosse"
 
 
 msgid "Draw"
@@ -61336,14 +61332,6 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "Fait que les données de courbe seront dupliquées avec l’objet"
 
 
-msgid "Duplicate F-Curve"
-msgstr "Dupliquer F-courbe"
-
-
-msgid "Causes F-curve data to be duplicated with the object"
-msgstr "Fait que les données de F-courbe seront dupliquées avec l’objet"
-
-
 msgid "Causes grease pencil data to be duplicated with the object"
 msgstr "Fait que les données de crayon gras seront dupliquées avec l’objet"
 
@@ -61410,14 +61398,6 @@ msgstr "Dupliquer texte"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "Fait que les données de texte seront dupliquées avec l’objet"
-
-
-msgid "Duplicate Texture"
-msgstr "Dupliquer texture"
-
-
-msgid "Causes texture data to be duplicated with the object"
-msgstr "Fait que les données de texture seront dupliquées avec l’objet"
 
 
 msgid "Enter Edit Mode"

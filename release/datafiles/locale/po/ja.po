@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
 "Last-Translator: \n"
 "Language-Team: Japanese Translation Team (https://sites.google.com/site/blugjp/blender-translators)\n"
@@ -15183,10 +15183,6 @@ msgstr "しきい値より上の場合、フィルが広がりません"
 
 msgid "Gpencil Settings"
 msgstr "グリースペンシル設定"
-
-
-msgid "Category of the brush"
-msgstr "ブラシのカテゴリー"
 
 
 msgid "Draw"
@@ -67891,14 +67887,6 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "カーブデータがオブジェクトと一緒に複製されるようになります"
 
 
-msgid "Duplicate F-Curve"
-msgstr "Fカーブを複製"
-
-
-msgid "Causes F-curve data to be duplicated with the object"
-msgstr "Fカーブデータがオブジェクトと一緒に複製されるようになります"
-
-
 msgid "Duplicate GPencil"
 msgstr "グリースペンシルを複製"
 
@@ -67969,14 +67957,6 @@ msgstr "テキストを複製"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "テキストデータがオブジェクトと一緒に複製されるようになります"
-
-
-msgid "Duplicate Texture"
-msgstr "テクスチャを複製"
-
-
-msgid "Causes texture data to be duplicated with the object"
-msgstr "テクスチャデータがオブジェクトと一緒に複製されるようになります"
 
 
 msgid "Enter Edit Mode"
@@ -91264,11 +91244,6 @@ msgstr "グリースペンシルに変換"
 msgctxt "Operator"
 msgid "Convert to Path"
 msgstr "パスに変換"
-
-
-msgctxt "Operator"
-msgid "Convert to Bezier Curves"
-msgstr "ベジエカーブに変換"
 
 
 msgctxt "Operator"
