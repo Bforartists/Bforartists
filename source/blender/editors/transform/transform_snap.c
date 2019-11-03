@@ -57,6 +57,7 @@
 #include "WM_types.h"
 
 #include "ED_image.h"
+#include "ED_markers.h"
 #include "ED_node.h"
 #include "ED_uvedit.h"
 #include "ED_view3d.h"
@@ -70,13 +71,16 @@
 #include "MEM_guardedalloc.h"
 
 #include "transform.h"
+#include "transform_snap.h"
 
 /* this should be passed as an arg for use in snap functions */
 #undef BASACT
 
 /* use half of flt-max so we can scale up without an exception */
 
-/********************* PROTOTYPES ***********************/
+/* -------------------------------------------------------------------- */
+/** \name Prototypes
+ * \{ */
 
 static void setSnappingCallback(TransInfo *t);
 
@@ -96,7 +100,11 @@ static float RotationBetween(TransInfo *t, const float p1[3], const float p2[3])
 static float TranslationBetween(TransInfo *t, const float p1[3], const float p2[3]);
 static float ResizeBetween(TransInfo *t, const float p1[3], const float p2[3]);
 
-/****************** IMPLEMENTATIONS *********************/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Implementations
+ * \{ */
 
 static bool snapNodeTest(View2D *v2d, bNode *node, eSnapSelect snap_select);
 static NodeBorder snapNodeBorder(int snap_node_mode);
@@ -371,6 +379,8 @@ void applyProject(TransInfo *t)
                       .snap_select = t->tsnap.modeSelect,
                       .use_object_edit_cage = (t->flag & T_EDIT) != 0,
                       .use_occlusion_test = false,
+                      .use_backface_culling = (t->scene->toolsettings->snap_flag &
+                                               SCE_SNAP_BACKFACE_CULLING) != 0,
                   },
                   mval_fl,
                   NULL,
@@ -900,7 +910,11 @@ void getSnapPoint(const TransInfo *t, float vec[3])
   }
 }
 
-/********************** APPLY **************************/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Apply Snap
+ * \{ */
 
 static void ApplySnapTranslation(TransInfo *t, float vec[3])
 {
@@ -950,7 +964,11 @@ static void ApplySnapResize(TransInfo *t, float vec[3])
   }
 }
 
-/********************** DISTANCE **************************/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Distance
+ * \{ */
 
 static float TranslationBetween(TransInfo *UNUSED(t), const float p1[3], const float p2[3])
 {
@@ -1031,7 +1049,11 @@ static float ResizeBetween(TransInfo *t, const float p1[3], const float p2[3])
   return len_d1 != 0.0f ? len_v3(d2) / len_d1 : TRANSFORM_DIST_INVALID;
 }
 
-/********************** CALC **************************/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Calc Snap (Generic)
+ * \{ */
 
 static void UNUSED_FUNCTION(CalcSnapGrid)(TransInfo *t, float *UNUSED(vec))
 {
@@ -1122,7 +1144,11 @@ static void CalcSnapGeometry(TransInfo *t, float *UNUSED(vec))
   }
 }
 
-/********************** TARGET **************************/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Target
+ * \{ */
 
 static void TargetSnapOffset(TransInfo *t, TransData *td)
 {
@@ -1324,6 +1350,12 @@ static void TargetSnapClosest(TransInfo *t)
   }
 }
 
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Snap Objects
+ * \{ */
+
 short snapObjectsTransform(
     TransInfo *t, const float mval[2], float *dist_px, float r_loc[3], float r_no[3])
 {
@@ -1334,6 +1366,8 @@ short snapObjectsTransform(
           .snap_select = t->tsnap.modeSelect,
           .use_object_edit_cage = (t->flag & T_EDIT) != 0,
           .use_occlusion_test = t->scene->toolsettings->snap_mode != SCE_SNAP_MODE_FACE,
+          .use_backface_culling = (t->scene->toolsettings->snap_flag &
+                                   SCE_SNAP_BACKFACE_CULLING) != 0,
       },
       mval,
       t->tsnap.snapTarget,
@@ -1345,7 +1379,11 @@ short snapObjectsTransform(
       NULL);
 }
 
-/******************** PEELING *********************************/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Peeling
+ * \{ */
 
 bool peelObjectsSnapContext(SnapObjectContext *sctx,
                             const float mval[2],
@@ -1433,7 +1471,11 @@ bool peelObjectsTransform(TransInfo *t,
                                 r_thickness);
 }
 
-/******************** NODES ***********************************/
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name snap Nodes
+ * \{ */
 
 static bool snapNodeTest(View2D *v2d, bNode *node, eSnapSelect snap_select)
 {
@@ -1551,6 +1593,50 @@ bool snapNodesTransform(
                    r_loc,
                    r_dist_px,
                    r_node_border);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name snap Frames
+ * \{ */
+
+/* This function is used by Animation Editor specific transform functions to do
+ * the Snap Keyframe to Nearest Frame/Marker
+ */
+void snapFrameTransform(TransInfo *t,
+                        const eAnimEdit_AutoSnap autosnap,
+                        const bool is_frame_value,
+                        const float delta,
+                        float *r_val)
+{
+  double val = delta;
+  switch (autosnap) {
+    case SACTSNAP_STEP:
+    case SACTSNAP_FRAME:
+      val = floor(val + 0.5);
+      break;
+    case SACTSNAP_MARKER:
+      /* snap to nearest marker */
+      // TODO: need some more careful checks for where data comes from
+      val = ED_markers_find_nearest_marker_time(&t->scene->markers, (float)val);
+      break;
+    case SACTSNAP_SECOND:
+    case SACTSNAP_TSTEP: {
+      /* second step */
+      const Scene *scene = t->scene;
+      const double secf = FPS;
+      val = floor((val / secf) + 0.5);
+      if (is_frame_value) {
+        val *= secf;
+      }
+      break;
+    }
+    case SACTSNAP_OFF: {
+      break;
+    }
+  }
+  *r_val = (float)val;
 }
 
 /*================================================================*/
@@ -1714,3 +1800,5 @@ static void applyGridIncrement(
     }
   }
 }
+
+/** \} */
