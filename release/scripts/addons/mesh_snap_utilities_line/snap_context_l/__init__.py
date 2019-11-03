@@ -331,8 +331,10 @@ class SnapContext():
             if index < num_tris:
                 tri_verts = gpu_data.get_tri_verts(index)
                 tri_co = [snap_obj.mat @ Vector(v) for v in gpu_data.get_tri_co(index)]
-                nor = (tri_co[1] - tri_co[0]).cross(tri_co[2] - tri_co[0])
-                return _Internal.intersect_line_plane(self.last_ray[1], self.last_ray[1] + self.last_ray[0], tri_co[0], nor), tri_verts, tri_co
+                #loc = _Internal.intersect_ray_tri(*tri_co, self.last_ray[0], self.last_ray[1], False)
+                nor = (tri_co[1] - tri_co[0]).cross(tri_co[2] - tri_co[0]).normalized()
+                loc = _Internal.intersect_line_plane(self.last_ray[1], self.last_ray[1] + self.last_ray[0], tri_co[0], nor)
+                return loc, tri_verts, tri_co
 
             index -= num_tris
 

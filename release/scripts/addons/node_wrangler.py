@@ -1027,7 +1027,7 @@ class NWPrincipledPreferences(bpy.types.PropertyGroup):
         description='Naming Components for roughness maps')
     gloss: StringProperty(
         name='Gloss',
-        default='gloss glossy glossyness',
+        default='gloss glossy glossiness',
         description='Naming Components for glossy maps')
     displacement: StringProperty(
         name='Displacement',

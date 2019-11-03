@@ -52,7 +52,7 @@ class SnapUtilitiesPreferences(bpy.types.AddonPreferences):
         default=False)
 
     auto_constrain : BoolProperty(name="Automatic Constraint",
-        description="Detects a direction to constrain depending on the position of the mouse.",
+        description="Detects a direction to constrain depending on the position of the mouse",
         default=False)
 
     incremental : FloatProperty(name="Incremental",

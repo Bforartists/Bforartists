@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"

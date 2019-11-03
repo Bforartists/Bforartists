@@ -817,60 +817,60 @@ def main(context, self, align_matrix, use_enter_edit_mode):
         Curve.data.fill_mode = 'BOTH'
 
 def menu(self, context):
-    oper1 = self.layout.operator(Simple.bl_idname, text="Angle", icon="MOD_CURVE")
+    oper1 = self.layout.operator(Simple.bl_idname, text="Angle", icon="DRIVER_ROTATIONAL_DIFFERENCE")
     oper1.Simple_Type = "Angle"
     oper1.use_cyclic_u = False
 
-    oper2 = self.layout.operator(Simple.bl_idname, text="Arc", icon="MOD_CURVE")
+    oper2 = self.layout.operator(Simple.bl_idname, text="Arc", icon="MOD_THICKNESS")
     oper2.Simple_Type = "Arc"
     oper2.use_cyclic_u = False
 
-    oper3 = self.layout.operator(Simple.bl_idname, text="Circle", icon="MOD_CURVE")
+    oper3 = self.layout.operator(Simple.bl_idname, text="Circle", icon="ANTIALIASED")
     oper3.Simple_Type = "Circle"
     oper3.use_cyclic_u = True
 
-    oper4 = self.layout.operator(Simple.bl_idname, text="Distance", icon="MOD_CURVE")
+    oper4 = self.layout.operator(Simple.bl_idname, text="Distance", icon="DRIVER_DISTANCE")
     oper4.Simple_Type = "Distance"
     oper4.use_cyclic_u = False
 
-    oper5 = self.layout.operator(Simple.bl_idname, text="Ellipse", icon="MOD_CURVE")
+    oper5 = self.layout.operator(Simple.bl_idname, text="Ellipse", icon="MESH_TORUS")
     oper5.Simple_Type = "Ellipse"
     oper5.use_cyclic_u = True
 
-    oper6 = self.layout.operator(Simple.bl_idname, text="Line", icon="MOD_CURVE")
+    oper6 = self.layout.operator(Simple.bl_idname, text="Line", icon="MOD_SIMPLIFY")
     oper6.Simple_Type = "Line"
     oper6.use_cyclic_u = False
     oper6.shape = '3D'
 
-    oper7 = self.layout.operator(Simple.bl_idname, text="Point", icon="MOD_CURVE")
+    oper7 = self.layout.operator(Simple.bl_idname, text="Point", icon="LAYER_ACTIVE")
     oper7.Simple_Type = "Point"
     oper7.use_cyclic_u = False
 
-    oper8 = self.layout.operator(Simple.bl_idname, text="Polygon", icon="MOD_CURVE")
+    oper8 = self.layout.operator(Simple.bl_idname, text="Polygon", icon="SEQ_CHROMA_SCOPE")
     oper8.Simple_Type = "Polygon"
     oper8.use_cyclic_u = True
 
-    oper9 = self.layout.operator(Simple.bl_idname, text="Polygon ab", icon="MOD_CURVE")
+    oper9 = self.layout.operator(Simple.bl_idname, text="Polygon ab", icon="SEQ_CHROMA_SCOPE")
     oper9.Simple_Type = "Polygon_ab"
     oper9.use_cyclic_u = True
 
-    oper10 = self.layout.operator(Simple.bl_idname, text="Rectangle", icon="MOD_CURVE")
+    oper10 = self.layout.operator(Simple.bl_idname, text="Rectangle", icon="MESH_PLANE")
     oper10.Simple_Type = "Rectangle"
     oper10.use_cyclic_u = True
 
-    oper11 = self.layout.operator(Simple.bl_idname, text="Rhomb", icon="MOD_CURVE")
+    oper11 = self.layout.operator(Simple.bl_idname, text="Rhomb", icon="DECORATE_ANIMATE")
     oper11.Simple_Type = "Rhomb"
     oper11.use_cyclic_u = True
 
-    oper12 = self.layout.operator(Simple.bl_idname, text="Sector", icon="MOD_CURVE")
+    oper12 = self.layout.operator(Simple.bl_idname, text="Sector", icon="CON_SHRINKWRAP")
     oper12.Simple_Type = "Sector"
     oper12.use_cyclic_u = True
 
-    oper13 = self.layout.operator(Simple.bl_idname, text="Segment", icon="MOD_CURVE")
+    oper13 = self.layout.operator(Simple.bl_idname, text="Segment", icon="MOD_SIMPLEDEFORM")
     oper13.Simple_Type = "Segment"
     oper13.use_cyclic_u = True
 
-    oper14 = self.layout.operator(Simple.bl_idname, text="Trapezoid", icon="MOD_CURVE")
+    oper14 = self.layout.operator(Simple.bl_idname, text="Trapezoid", icon="MOD_EDGESPLIT")
     oper14.Simple_Type = "Trapezoid"
     oper14.use_cyclic_u = True
     

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: \n"
 "Last-Translator: DeathBlood\n"
 "Language-Team: \n"
@@ -14850,10 +14850,6 @@ msgstr "高于该阈值，不传递填充"
 
 msgid "Gpencil Settings"
 msgstr "蜡笔设置"
-
-
-msgid "Category of the brush"
-msgstr "笔刷类别"
 
 
 msgid "Draw"
@@ -40042,6 +40038,10 @@ msgid "Key All Bones"
 msgstr "对所有骨骼插帧"
 
 
+msgid "!EXPERIMENTAL! Apply Transform"
+msgstr "!实验性! 应用变换"
+
+
 msgid "Active scene to file"
 msgstr "激活场景至文件"
 
@@ -64372,14 +64372,6 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "使曲线数据可随物体一同被复制"
 
 
-msgid "Duplicate F-Curve"
-msgstr "重复的函数曲线"
-
-
-msgid "Causes F-curve data to be duplicated with the object"
-msgstr "使函数曲线数据可随物体一同被复制"
-
-
 msgid "Duplicate GPencil"
 msgstr "复制蜡笔"
 
@@ -64450,14 +64442,6 @@ msgstr "复制文本"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "使文本数据可随物体一同被复制"
-
-
-msgid "Duplicate Texture"
-msgstr "复制纹理"
-
-
-msgid "Causes texture data to be duplicated with the object"
-msgstr "使纹理数据可随物体一同被复制"
 
 
 msgid "Enter Edit Mode"
@@ -87116,11 +87100,6 @@ msgstr "转换为路径"
 
 
 msgctxt "Operator"
-msgid "Convert to Bezier Curves"
-msgstr "转换为贝塞尔曲线"
-
-
-msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "空物体显示尺寸"
 
@@ -90303,11 +90282,11 @@ msgstr "语法错误位于 %s"
 
 
 msgid "Cannot add vertices in edit mode"
-msgstr "编辑模式下所选顶点的计数值"
+msgstr "无法在编辑模式下添加顶点"
 
 
 msgid "Cannot add edges in edit mode"
-msgstr "编辑模式下所选边线的计数"
+msgstr "无法在编辑模式下添加边"
 
 
 msgid "Cannot add loops in edit mode"
@@ -90319,19 +90298,35 @@ msgstr "无法在编辑模式下添加多边形"
 
 
 msgid "Cannot remove vertices in edit mode"
-msgstr "切换粒子编辑模式"
+msgstr "无法在编辑模式下移除顶点"
 
 
 msgid "Cannot remove more vertices than the mesh contains"
-msgstr "切换粒子编辑模式"
+msgstr "无法移除顶点, 超出网格所包含的顶点数"
 
 
 msgid "Cannot remove edges in edit mode"
-msgstr "在编辑模式中显示贝塞尔控制柄"
+msgstr "无法在编辑模式下移除边线"
 
 
 msgid "Cannot remove more edges than the mesh contains"
-msgstr "在编辑模式中显示贝塞尔控制柄"
+msgstr "无法移除边线, 超出网格所包含的边线数量"
+
+
+msgid "Cannot remove loops in edit mode"
+msgstr "无法在编辑模式下移除循环"
+
+
+msgid "Cannot remove more loops than the mesh contains"
+msgstr "无法移除循环, 超出网格所包含的循环数"
+
+
+msgid "Cannot remove polys in edit mode"
+msgstr "无法在编辑模式下移除多边形"
+
+
+msgid "Cannot remove more polys than the mesh contains"
+msgstr "无法移除多边形, 超出网格所包含的多边形数量"
 
 
 msgid "%d %s mirrored, %d failed"

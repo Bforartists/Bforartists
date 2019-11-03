@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzan <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -15123,10 +15123,6 @@ msgstr "Umbral por encima del cual no se propagará el relleno"
 
 msgid "Gpencil Settings"
 msgstr "Opciones de lápiz de cera"
-
-
-msgid "Category of the brush"
-msgstr "Categoría del pincel"
 
 
 msgid "Draw"
@@ -42301,6 +42297,10 @@ msgid "Export each non-muted NLA strip as a separated FBX's AnimStack, if any, i
 msgstr "Exportar cada clip no silenciado de ANL como un AnimStack individual de FBX, en vez de como animación global de la escena"
 
 
+msgid "!EXPERIMENTAL! Apply Transform"
+msgstr "¡EXPERIMENTAL! Aplicar transformación"
+
+
 msgid "Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender's space (WARNING! experimental option, use at own risks, known broken with armatures/animations)"
 msgstr "Capturar las transformaciones espaciales en los datos del objeto, previene rotaciones no deseadas cuando las coordenadas de destino no se encuentran alineadas con las de Blender (¡ADVERTENCIA! opción experimental, usar a riesgo propio, se sabe que no funciona con esqueletos/animaciones)"
 
@@ -67668,14 +67668,6 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "Los datos de curva serán duplicados junto al objeto"
 
 
-msgid "Duplicate F-Curve"
-msgstr "Duplicar curva-f"
-
-
-msgid "Causes F-curve data to be duplicated with the object"
-msgstr "Los datos de curvas-f serán duplicados junto al objeto"
-
-
 msgid "Duplicate GPencil"
 msgstr "Duplicar lápiz de cera"
 
@@ -67746,14 +67738,6 @@ msgstr "Duplicar texto"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "Los datos de texto serán duplicados junto al objeto"
-
-
-msgid "Duplicate Texture"
-msgstr "Duplicar textura"
-
-
-msgid "Causes texture data to be duplicated with the object"
-msgstr "Los datos de textura serán duplicados junto al objeto"
 
 
 msgid "Enter Edit Mode"
@@ -90958,11 +90942,6 @@ msgstr "Convertir a trayectoria"
 
 
 msgctxt "Operator"
-msgid "Convert to Bezier Curves"
-msgstr "Convertir a curvas Bézier"
-
-
-msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "Ajustar tamaño del objeto Vacío"
 
@@ -94286,6 +94265,22 @@ msgstr "No es posible eliminar bordes en modo edición"
 
 msgid "Cannot remove more edges than the mesh contains"
 msgstr "No es posible eliminar más bordes que los que contiene la malla"
+
+
+msgid "Cannot remove loops in edit mode"
+msgstr "No es posible eliminar bucles en modo edición"
+
+
+msgid "Cannot remove more loops than the mesh contains"
+msgstr "No es posible eliminar más bucles que los que contiene la malla"
+
+
+msgid "Cannot remove polys in edit mode"
+msgstr "No es posible eliminar polígonos en modo edición"
+
+
+msgid "Cannot remove more polys than the mesh contains"
+msgstr "No es posible eliminar más polígonos que los que contiene la malla"
 
 
 msgid "%d %s mirrored, %d failed"

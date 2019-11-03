@@ -143,6 +143,8 @@ def get_snap_bm_geom(sctx, main_snap_obj, mcursor):
                             if l.link_loop_next.vert == tri[i] or l.link_loop_prev.vert == tri[i - 2]:
                                 r_bm_geom = l.face
                                 break
+        if r_loc is None:
+            r_loc = r_elem_co[0]
 
     return r_snp_obj, r_loc, r_elem, r_elem_co, r_view_vector, r_orig, r_bm, r_bm_geom
 
