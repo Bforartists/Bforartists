@@ -2906,8 +2906,8 @@ class VIEW3D_MT_object_context_menu(Menu):
 
         elif obj.type == 'GPENCIL':
             layout.operator("gpencil.convert", text="Convert to Path", icon ="CURVE_PATH").type = 'PATH'
-            layout.operator("gpencil.convert", text="Convert to Bezier Curves", icon ="OUTLINER_DATA_CURVE").type = 'CURVE'
-            layout.operator("gpencil.convert", text="Convert to Mesh", icon ="OUTLINER_DATA_MESH").type = 'POLY'
+            layout.operator("gpencil.convert", text="Convert to Bezier Curve", icon ="OUTLINER_DATA_CURVE").type = 'CURVE'
+            layout.operator("gpencil.convert", text="Convert to Polygon Curve", icon ="OUTLINER_DATA_MESH").type = 'POLY'
 
             layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
 
@@ -3061,9 +3061,15 @@ class VIEW3D_MT_object_parent(Menu):
 
     def draw(self, _context):
         layout = self.layout
+        operator_context_default = layout.operator_context
 
         layout.operator_enum("object.parent_set", "type")
-        layout.operator("object.parent_no_inverse_set", text = "Object (Without Inverse)", icon = "PARENT" )
+
+        layout.separator()
+
+        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator("object.parent_no_inverse_set")
+        layout.operator_context = operator_context_default
 
         layout.separator()
 
@@ -5721,11 +5727,13 @@ class VIEW3D_MT_assign_material(Menu):
     def draw(self, context):
         layout = self.layout
         ob = context.active_object
+        mat_active = ob.active_material
 
         for slot in ob.material_slots:
             mat = slot.material
             if mat:
-                layout.operator("gpencil.stroke_change_color", text=mat.name, icon = "COLOR").material = mat.name
+                layout.operator("gpencil.stroke_change_color", text=mat.name,
+                                icon='LAYER_ACTIVE' if mat == mat_active else 'BLANK1').material = mat.name
 
 
 class VIEW3D_MT_gpencil_copy_layer(Menu):
@@ -7300,6 +7308,8 @@ class VIEW3D_PT_snapping(Panel):
             col.label(text="Snap with")
             row = col.row(align=True)
             row.prop(tool_settings, "snap_target", expand=True)
+
+            col.prop(tool_settings, "use_snap_backface_culling")
 
             if obj:
                 if object_mode == 'EDIT':
