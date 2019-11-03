@@ -25,12 +25,12 @@ bl_info = {
     "name": "Curve Tools",
     "description": "Adds some functionality for bezier/nurbs curve/surface modeling",
     "author": "Mackraken",
-    "version": (0, 4, 0),
+    "version": (0, 4, 3),
     "blender": (2, 80, 0),
     "location": "View3D > Tool Shelf > Edit Tab",
     "warning": "WIP",
     "wiki_url": "",
-    "wiki_url": "https://docs.blender.org/manual/nb/dev/addons/"
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
                 "add_curve/curve_tools.html",
     "category": "Add Curve"}
 
@@ -333,6 +333,8 @@ class VIEW3D_PT_CurvePanel(Panel):
             row.operator("curvetools.outline", text="Curve Outline")
             row = col.row(align=True)
             row.operator("curvetools.sep_outline", text="Separate Outline or selected")
+            row = col.row(align=True)
+            row.operator("curvetools.bezier_curve_boolean", text="2D Curve Boolean")
             row = col.row(align=True)
             row.operator("curvetools.bezier_points_fillet", text='Fillet')
             row = col.row(align=True)

@@ -23,12 +23,11 @@ bl_info = {
     "name": "Dynamic Brush Menus",
     "description": "Fast access to brushes & tools in Sculpt and Paint Modes",
     "author": "Ryan Inch (Imaginer)",
-    "version": (1, 1, 7),
+    "version": (1, 1, 8),
     "blender": (2, 80, 0),
     "location": "Spacebar in Sculpt/Paint Modes",
     "warning": '',
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/3D_interaction/Advanced_UI_Menus",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/interface/brush_menus.html",
     "category": "Interface"}
 
 

@@ -13,6 +13,7 @@ from . import intersections
 from . import util
 from . import surfaces
 from . import mathematics
+from . import internal
 
 # 1 CURVE SELECTED
 # ################
@@ -1020,6 +1021,133 @@ class SeparateOutline(bpy.types.Operator):
         bpy.ops.curve.separate()
 
         return {'FINISHED'}
+        
+class CurveBoolean(bpy.types.Operator):
+    bl_idname = "curvetools.bezier_curve_boolean"
+    bl_description = "Curve Boolean"
+    bl_label = "Curve Boolean"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    operation: bpy.props.EnumProperty(name='Type', items=[
+        ('UNION', 'Union', 'Boolean OR', 0),
+        ('INTERSECTION', 'Intersection', 'Boolean AND', 1),
+        ('DIFFERENCE', 'Difference', 'Active minus Selected', 2),
+    ])
+    number : IntProperty(
+            name="Spline Number",
+            default=1,
+            min=1,
+            description="Spline Number"
+            )
+
+    @classmethod
+    def poll(cls, context):
+        return util.Selected1OrMoreCurves()
+        
+    def draw(self, context):
+        layout = self.layout
+
+        # general options
+        col = layout.column()
+        col.prop(self, "operation")
+        if self.operation == 'DIFFERENCE':
+            col.prop(self, "number")
+
+    def execute(self, context):
+        current_mode = bpy.context.object.mode
+        
+        if bpy.ops.object.mode_set.poll():
+            bpy.ops.object.mode_set(mode = 'OBJECT')
+        
+        selected_Curves = util.GetSelectedCurves()
+        len_selected_curves = len(selected_Curves)
+        if len_selected_curves < 2:
+            return {'FINISHED'}
+        
+        min_number = 1
+        
+        max_number = 0
+        for iCurve in range(0, len_selected_curves):
+            len_splines = len(selected_Curves[iCurve].data.splines)
+            max_number += len_splines
+            
+        if self.number < min_number:
+            self.number = min_number
+        if self.number > max_number:
+            self.number = max_number
+            
+        j = 0
+        first_curve = 0
+        first_spline = 0
+        for iCurve in range(0, len_selected_curves):
+            len_splines = len(selected_Curves[iCurve].data.splines)
+            for iSpline in range(0, len_splines):
+                if j == self.number:
+                    first_curve = iCurve
+                    first_spline = iSpline
+                j += 1
+        
+        bpy.ops.object.select_all(action='DESELECT')
+        
+        spline1 = selected_Curves[first_curve].data.splines[first_spline]
+        matrix_world1 = selected_Curves[first_curve].matrix_world
+        
+        len_spline1 = len(spline1.bezier_points)
+                
+        dataCurve = bpy.data.curves.new(self.operation, type='CURVE')
+        dataCurve.dimensions = '2D'
+        newSpline1 = dataCurve.splines.new(type='BEZIER')
+        newSpline1.use_cyclic_u = True
+        newSpline1.bezier_points.add(len_spline1 - 1)
+        for n in range(0, len_spline1):
+            newSpline1.bezier_points[n].co = matrix_world1 @ spline1.bezier_points[n].co
+            newSpline1.bezier_points[n].handle_left_type = spline1.bezier_points[n].handle_left_type
+            newSpline1.bezier_points[n].handle_left = matrix_world1 @ spline1.bezier_points[n].handle_left
+            newSpline1.bezier_points[n].handle_right_type = spline1.bezier_points[n].handle_right_type
+            newSpline1.bezier_points[n].handle_right = matrix_world1 @ spline1.bezier_points[n].handle_right
+            
+        Curve = object_utils.object_data_add(context, dataCurve)
+        bpy.context.view_layer.objects.active = Curve
+        Curve.select_set(True)
+        Curve.location = (0.0, 0.0, 0.0)
+
+        j = 0
+        for iCurve in range(0, len_selected_curves):
+            matrix_world = selected_Curves[iCurve].matrix_world
+            len_splines = len(selected_Curves[iCurve].data.splines)
+            for iSpline in range(0, len_splines):
+                if iCurve == first_curve and iSpline == first_spline:
+                    continue
+                spline = selected_Curves[iCurve].data.splines[iSpline]
+                len_spline = len(spline.bezier_points)
+                newSpline = dataCurve.splines.new(type='BEZIER')
+                newSpline.use_cyclic_u = True
+                newSpline.bezier_points.add(len_spline - 1)
+                for n in range(0, len_spline):
+                    newSpline.bezier_points[n].co = matrix_world @ spline.bezier_points[n].co
+                    newSpline.bezier_points[n].handle_left_type = spline.bezier_points[n].handle_left_type
+                    newSpline.bezier_points[n].handle_left = matrix_world @ spline.bezier_points[n].handle_left
+                    newSpline.bezier_points[n].handle_right_type = spline.bezier_points[n].handle_right_type
+                    newSpline.bezier_points[n].handle_right = matrix_world @ spline.bezier_points[n].handle_right
+                
+                bpy.ops.object.mode_set(mode = 'EDIT')
+                bpy.ops.curve.select_all(action='SELECT')
+                splines = internal.getSelectedSplines(True, True)
+                if len(splines) < 2:
+                   continue
+                splineA = splines[0]
+                splineB = splines[1]
+                dataCurve.splines.active = newSpline1
+                
+                if not internal.bezierBooleanGeometry(splineA, splineB, self.operation):
+                    self.report({'WARNING'}, 'Invalid selection.')
+                    return {'CANCELLED'}
+                
+                j += 1
+                    
+        bpy.ops.object.mode_set (mode = current_mode)
+        
+        return {'FINISHED'}
 
 def register():
     for cls in classes:
@@ -1053,4 +1181,5 @@ operators = [
     CurveScaleReset,
     Split,
     SeparateOutline,
+    CurveBoolean,
     ]

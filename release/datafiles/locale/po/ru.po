@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
 "Last-Translator: Lockal <lockalsash@gmail.com>, 2019\n"
 "Language-Team: Russian (https://www.transifex.com/translateblender/teams/82039/ru/)\n"
@@ -15123,10 +15123,6 @@ msgstr "Порог, выше которого заливка не распрос
 
 msgid "Gpencil Settings"
 msgstr "Настройки Grease Pencil"
-
-
-msgid "Category of the brush"
-msgstr "Категория кисти"
 
 
 msgid "Draw"
@@ -67383,14 +67379,6 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "Дублировать кривые вместе с объектом"
 
 
-msgid "Duplicate F-Curve"
-msgstr "Дублировать F-кривые"
-
-
-msgid "Causes F-curve data to be duplicated with the object"
-msgstr "Дублировать F-кривые вместе с объектом"
-
-
 msgid "Duplicate GPencil"
 msgstr "Дублировать Grease Pencil"
 
@@ -67461,14 +67449,6 @@ msgstr "Дублировать текст"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "Дублировать данные текста вместе с объектом"
-
-
-msgid "Duplicate Texture"
-msgstr "Дублировать текстуры"
-
-
-msgid "Causes texture data to be duplicated with the object"
-msgstr "Дублировать данные текстур вместе с объектом"
 
 
 msgid "Enter Edit Mode"
@@ -89830,11 +89810,6 @@ msgstr "Преобразовать в меш"
 msgctxt "Operator"
 msgid "Convert to Path"
 msgstr "Преобразовать в путь"
-
-
-msgctxt "Operator"
-msgid "Convert to Bezier Curves"
-msgstr "Преобразовать в кривую Безье"
 
 
 msgctxt "Operator"
