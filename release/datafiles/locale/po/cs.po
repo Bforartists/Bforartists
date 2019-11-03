@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -26990,10 +26990,6 @@ msgid "Duplicate Armature"
 msgstr "Zdvojit kostru"
 
 
-msgid "Duplicate F-Curve"
-msgstr "Zdvojit F-křivku"
-
-
 msgid "Duplicate Material"
 msgstr "Zdvojit materiál"
 
@@ -27016,10 +27012,6 @@ msgstr "Zdvojit povrch"
 
 msgid "Duplicate Text"
 msgstr "Zdvojit text"
-
-
-msgid "Duplicate Texture"
-msgstr "Zdvojit texturu"
 
 
 msgid "Enter Edit Mode"

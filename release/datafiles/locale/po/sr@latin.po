@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -23078,10 +23078,6 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "Omogućava kopiranje krivih pomoću Shift+D"
 
 
-msgid "Duplicate F-Curve"
-msgstr "Dupliraj F-krivu"
-
-
 msgid "Duplicate Material"
 msgstr "Dupliraj materijal"
 
@@ -23124,14 +23120,6 @@ msgstr "Dupliraj tekst"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "Omogućava kopiranje teksta pomoću Shift+D"
-
-
-msgid "Duplicate Texture"
-msgstr "Dupliraj teksturu"
-
-
-msgid "Causes texture data to be duplicated with the object"
-msgstr "Omogućava kopiranje tekstura pomoću Shift+D"
 
 
 msgid "Enter Edit Mode"

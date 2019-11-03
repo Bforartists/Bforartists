@@ -151,8 +151,10 @@ class Rig(BaseLimbRig):
         obj = create_foot_widget(self.obj, ctrl)
 
         if self.pivot_type != 'TOE':
+            ctrl = self.get_bone(ctrl)
             org = self.get_bone(self.bones.org.main[2])
-            adjust_widget_transform_mesh(obj, Matrix.Translation(org.vector))
+            offset = org.tail - (ctrl.custom_shape_transform or ctrl).head
+            adjust_widget_transform_mesh(obj, Matrix.Translation(offset))
 
     ####################################################
     # IK pivot controls

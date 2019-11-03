@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: 2019-09-18 15:13+0200\n"
 "Language-Team: pegas923\n"
 "MIME-Version: 1.0\n"
@@ -14582,10 +14582,6 @@ msgstr "Prahová hodnota, nad ktorou sa vyplnenie nerozširuje"
 
 msgid "Gpencil Settings"
 msgstr "Nastavenia pastelky"
-
-
-msgid "Category of the brush"
-msgstr "Kategória štetca"
 
 
 msgid "Draw"
@@ -65439,14 +65435,6 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "Spôsobí vytváranie údajov krivky spolu s objektom"
 
 
-msgid "Duplicate F-Curve"
-msgstr "Vytvárať kópiu krivky funkcie"
-
-
-msgid "Causes F-curve data to be duplicated with the object"
-msgstr "Spôsobí vytváranie údajov krivky funkcie spolu s objektom"
-
-
 msgid "Duplicate GPencil"
 msgstr "Vytvárať kópie pastelky"
 
@@ -65517,14 +65505,6 @@ msgstr "Vytvárať kópiu textu"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "Spôsobí vytváranie údajov textu spolu s objektom"
-
-
-msgid "Duplicate Texture"
-msgstr "Vytvárať kópiu textúry"
-
-
-msgid "Causes texture data to be duplicated with the object"
-msgstr "Spôsobí vytváranie údajov textúry spolu s objektom"
 
 
 msgid "Enter Edit Mode"
@@ -87704,11 +87684,6 @@ msgstr "Konvertovať na povrchovú sieť"
 msgctxt "Operator"
 msgid "Convert to Path"
 msgstr "Konvertovať na cestu"
-
-
-msgctxt "Operator"
-msgid "Convert to Bezier Curves"
-msgstr "Konvertovať na Bézierove krivky"
 
 
 msgctxt "Operator"

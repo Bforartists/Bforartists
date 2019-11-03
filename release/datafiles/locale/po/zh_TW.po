@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 15) (b'41ec25d27bac')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-21 08:03:35\n"
+"POT-Creation-Date: 2019-10-29 10:43:51\n"
 "PO-Revision-Date: 2018-09-23 13:23+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -45343,14 +45343,6 @@ msgid "Causes curve data to be duplicated with the object"
 msgstr "使曲線資料隨物體一同製作出複本"
 
 
-msgid "Duplicate F-Curve"
-msgstr "製作 F 曲線複本"
-
-
-msgid "Causes F-curve data to be duplicated with the object"
-msgstr "使 F 曲線資料隨物體一同製作出複本"
-
-
 msgid "Duplicate Material"
 msgstr "製作材質複本"
 
@@ -45397,14 +45389,6 @@ msgstr "製作文字複本"
 
 msgid "Causes text data to be duplicated with the object"
 msgstr "使文字資料可隨物體一同製作出複本"
-
-
-msgid "Duplicate Texture"
-msgstr "製作紋理複本"
-
-
-msgid "Causes texture data to be duplicated with the object"
-msgstr "使紋理資料可隨物體一同製作出複本"
 
 
 msgid "Enter Edit Mode"
