@@ -27,22 +27,29 @@ bl_info = {
     "location": "View 3D > Sidebar > Edit Tab",
     "description": "Assigns one or more Bezier curves as shape keys to another Bezier curve",
     "category": "Add Curve",
-    "wiki_url": "https://docs.blender.org/manual/nb/dev/addons/"
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
                 "add_curve/assign_shape_keys.html",
     "blender": (2, 80, 0),
 }
+
+alignList = [('minX', 'Min X', 'Align vertices with Min X'),
+            ('maxX', 'Max X', 'Align vertices with Max X'),
+            ('minY', 'Min Y', 'Align vertices with Min Y'),
+            ('maxY', 'Max Y', 'Align vertices with Max Y'),
+            ('minZ', 'Min Z', 'Align vertices with Min Z'),
+            ('maxZ', 'Max Z', 'Align vertices with Max Z')]
 
 matchList = [('vCnt', 'Vertex Count', 'Match by vertex count'),
             ('bbArea', 'Area', 'Match by surface area of the bounding box'), \
             ('bbHeight', 'Height', 'Match by bounding box height'), \
             ('bbWidth', 'Width', 'Match by bounding box width'),
             ('bbDepth', 'Depth', 'Match by bounding box depth'),
-            ('minX', 'Min X', 'Match by  bounding bon Min X'),
-            ('maxX', 'Max X', 'Match by  bounding bon Max X'),
-            ('minY', 'Min Y', 'Match by  bounding bon Min Y'),
-            ('maxY', 'Max Y', 'Match by  bounding bon Max Y'),
-            ('minZ', 'Min Z', 'Match by  bounding bon Min Z'),
-            ('maxZ', 'Max Z', 'Match by  bounding bon Max Z')]
+            ('minX', 'Min X', 'Match by bounding box Min X'),
+            ('maxX', 'Max X', 'Match by bounding box Max X'),
+            ('minY', 'Min Y', 'Match by bounding box Min Y'),
+            ('maxY', 'Max Y', 'Match by bounding box Max Y'),
+            ('minZ', 'Min Z', 'Match by bounding box Min Z'),
+            ('maxZ', 'Max Z', 'Match by bounding box Max Z')]
 
 DEF_ERR_MARGIN = 0.0001
 
@@ -779,7 +786,7 @@ class AssignShapeKeysOp(Operator):
         matchCri2 = params.matchCri2
         matchCri3 = params.matchCri3
 
-        alignBy = params.alignList
+        alignBy = params.alignCos
         alignVal1 = params.alignVal1
         alignVal2 = params.alignVal2
         alignVal3 = params.alignVal3
@@ -1000,20 +1007,20 @@ class AssignShapeKeyParams(bpy.types.PropertyGroup):
                  ('localspace', 'Local Space', 'localspace')], \
         description = 'Space that shape keys are evluated in')
 
-    alignList : EnumProperty(name="Vertex Alignment", items = \
+    alignCos : EnumProperty(name="Vertex Alignment", items = \
         [("-None-", 'Manual Alignment', "Align curve segments based on starting vertex"), \
          ('vertCo', 'Vertex Coordinates', 'Align curve segments based on vertex coordinates')], \
         description = 'Start aligning the vertices of target and shape keys from',
         default = '-None-')
 
     alignVal1 : EnumProperty(name="Value 1",
-        items = matchList, default = 'minX', description='First align criterion')
+        items = alignList, default = 'minX', description='First align criterion')
 
     alignVal2 : EnumProperty(name="Value 2",
-        items = matchList, default = 'maxY', description='Second align criterion')
+        items = alignList, default = 'maxY', description='Second align criterion')
 
     alignVal3 : EnumProperty(name="Value 3",
-        items = matchList, default = 'minZ', description='Third align criterion')
+        items = alignList, default = 'minZ', description='Third align criterion')
 
     matchParts : EnumProperty(name="Match Parts", items = \
         [("-None-", 'None', "Don't match parts"), \
@@ -1063,9 +1070,9 @@ class AssignShapeKeysPanel(Panel):
             row.prop(params, "space")
 
             row = col.row()
-            row.prop(params, "alignList")
+            row.prop(params, "alignCos")
 
-            if(params.alignList == 'vertCo'):
+            if(params.alignCos == 'vertCo'):
                 row = col.row()
                 row.prop(params, "alignVal1")
                 row.prop(params, "alignVal2")

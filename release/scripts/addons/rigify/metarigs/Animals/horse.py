@@ -1371,6 +1371,7 @@ def create(obj):
         bone.select = True
         bone.select_head = True
         bone.select_tail = True
+        bone.bbone_x = bone.bbone_z = bone.length * 0.05
         arm.edit_bones.active = bone
 
     arm.layers = [(x in [0, 3, 4, 7, 10, 13, 16, 19, 21]) for x in range(32)]

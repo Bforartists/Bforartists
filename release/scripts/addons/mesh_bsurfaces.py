@@ -20,11 +20,12 @@
 bl_info = {
     "name": "Bsurfaces GPL Edition",
     "author": "Eclectiel, Spivak Vladimir(cwolf3d)",
-    "version": (1, 7, 4),
+    "version": (1, 7, 5),
     "blender": (2, 80, 0),
     "location": "View3D EditMode > Sidebar > Edit Tab",
     "description": "Modeling and retopology tool",
-    "wiki_url": "https://wiki.blender.org/index.php/Dev:Ref/Release_Notes/2.64/Bsurfaces_1.5",
+    "wiki_url": "https://docs.blender.org/manual/nb/dev/addons/"
+                "mesh/bsurfaces.html",
     "category": "Mesh",
 }
 
@@ -62,9 +63,11 @@ from bpy.types import (
 
 # ----------------------------
 # GLOBAL
-global_color = [1.0, 0.0, 0.0, 1.0]
+global_color = [1.0, 0.0, 0.0, 0.3]
 global_offset = 0.01
 global_in_front = False
+global_shade_smooth = False
+global_show_wire = True
 global_mesh_object = ""
 global_gpencil_object = ""
 global_curve_object = ""
@@ -92,6 +95,8 @@ class VIEW3D_PT_tools_SURFSK_mesh(Panel):
         col.prop(scn, "SURFSK_mesh_color")
         col.prop(scn, "SURFSK_Shrinkwrap_offset")
         col.prop(scn, "SURFSK_in_front")
+        col.prop(scn, "SURFSK_shade_smooth")
+        col.prop(scn, "SURFSK_show_wire")
         
         col.label(text="Guide strokes:")
         col.row().prop(scn, "SURFSK_guide", expand=True)
@@ -1056,6 +1061,8 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
         bpy.ops.object.mode_set('INVOKE_REGION_WIN', mode='EDIT')
         bpy.ops.mesh.normals_make_consistent(inside=False)
         bpy.ops.object.mode_set('INVOKE_REGION_WIN', mode='OBJECT')
+        
+        self.update()
 
         return num_faces_created
 
@@ -1396,6 +1403,8 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
         if len(self.main_object.modifiers) > 0:
             for m_idx in range(len(self.main_object.modifiers)):
                 self.main_object.modifiers[m_idx].show_viewport = self.modifiers_prev_viewport_state[m_idx]
+
+        self.update()
 
         return
 
@@ -1766,6 +1775,8 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
         if len(self.main_object.modifiers) > 0:
             for m_idx in range(len(self.main_object.modifiers)):
                 self.main_object.modifiers[m_idx].show_viewport = self.modifiers_prev_viewport_state[m_idx]
+        
+        self.update()
         
         return {'FINISHED'}
 
@@ -3068,6 +3079,8 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
         bpy.ops.mesh.normals_make_consistent('INVOKE_REGION_WIN', inside=False)
         bpy.ops.mesh.select_all('INVOKE_REGION_WIN', action='DESELECT')
         
+        self.update()
+        
         return{'FINISHED'}
 
     def update(self):
@@ -3087,10 +3100,30 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
             else:
                 self.main_object.data.materials.append(material)
             bpy.context.scene.bsurfaces.SURFSK_mesh_color = global_color
+        except:
+            pass
             
+        try:   
             global global_in_front
             self.main_object.show_in_front = global_in_front
             bpy.context.scene.bsurfaces.SURFSK_in_front = global_in_front
+        except:
+            pass
+            
+        try:   
+            global global_show_wire
+            self.main_object.show_wire = global_show_wire
+            bpy.context.scene.bsurfaces.SURFSK_show_wire = global_show_wire
+        except:
+            pass
+            
+        try:
+            global global_shade_smooth
+            if global_shade_smooth:
+                bpy.ops.object.shade_smooth()
+            else:
+                bpy.ops.object.shade_flat()
+            bpy.context.scene.bsurfaces.SURFSK_shade_smooth = global_shade_smooth
         except:
             pass
         
@@ -3162,6 +3195,14 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
                 self.rectangular_surface(context)
             elif strokes_for_crosshatch:
                 self.crosshatch_surface_execute(context)
+                
+            #Set Shade smooth to new polygons
+            bpy.ops.object.mode_set('INVOKE_REGION_WIN', mode='OBJECT')
+            global global_shade_smooth
+            if global_shade_smooth:
+                bpy.ops.object.shade_smooth()
+            else:
+                bpy.ops.object.shade_flat() 
 
             # Delete main splines
             bpy.ops.object.mode_set('INVOKE_REGION_WIN', mode='OBJECT')
@@ -3498,6 +3539,8 @@ class GPENCIL_OT_SURFSK_init(Operator):
         global global_color
         global global_offset
         global global_in_front
+        global global_show_wire
+        global global_shade_smooth
         global global_mesh_object
         global global_gpencil_object
         
@@ -3513,6 +3556,15 @@ class GPENCIL_OT_SURFSK_init(Operator):
             mesh_object.show_in_front = global_in_front
             mesh_object.display_type = 'SOLID'
             mesh_object.show_wire = True
+            
+            global_shade_smooth = bpy.context.scene.bsurfaces.SURFSK_shade_smooth
+            if global_shade_smooth:
+                bpy.ops.object.shade_smooth()
+            else:
+                bpy.ops.object.shade_flat()
+                
+            global_show_wire = bpy.context.scene.bsurfaces.SURFSK_show_wire
+            mesh_object.show_wire = global_show_wire
             
             global_color = bpy.context.scene.bsurfaces.SURFSK_mesh_color
             material = makeMaterial("BSurfaceMesh", global_color)
@@ -4405,6 +4457,41 @@ def update_in_front(self, context):
         bpy.data.objects[global_mesh_object].show_in_front = global_in_front
     except Exception as e:
         print("Select mesh object")
+
+def update_show_wire(self, context):
+    try:
+        global global_show_wire
+        global_show_wire = bpy.context.scene.bsurfaces.SURFSK_show_wire
+        global global_mesh_object
+        bpy.data.objects[global_mesh_object].show_wire = global_show_wire
+    except Exception as e:
+        print("Select mesh object")
+        
+def update_shade_smooth(self, context):
+    try:
+        global global_shade_smooth
+        global_shade_smooth = bpy.context.scene.bsurfaces.SURFSK_shade_smooth
+        
+        contex_mode = bpy.context.mode
+        
+        if bpy.ops.object.mode_set.poll():
+            bpy.ops.object.mode_set('INVOKE_REGION_WIN', mode='OBJECT')
+        
+        bpy.ops.object.select_all(action='DESELECT')
+        global global_mesh_object
+        global_mesh_object = bpy.context.scene.bsurfaces.SURFSK_mesh.name
+        bpy.data.objects[global_mesh_object].select_set(True)
+        
+        if global_shade_smooth:
+            bpy.ops.object.shade_smooth()
+        else:
+            bpy.ops.object.shade_flat()
+        
+        if contex_mode == "EDIT_MESH":
+            bpy.ops.object.editmode_toggle('INVOKE_REGION_WIN')
+        
+    except Exception as e:
+        print("Select mesh object")
     
 
 class BsurfPreferences(AddonPreferences):
@@ -4505,7 +4592,7 @@ class BsurfacesProps(PropertyGroup):
                 )
     SURFSK_mesh_color: FloatVectorProperty(
                 name="Mesh color",
-                default=(1.0, 0.0, 0.0, 1.0),
+                default=(1.0, 0.0, 0.0, 0.3),
                 size=4,
                 subtype="COLOR",
                 min=0,
@@ -4525,6 +4612,18 @@ class BsurfacesProps(PropertyGroup):
                 description="Make the object draw in front of others",
                 default=False,
                 update=update_in_front,
+                )
+    SURFSK_show_wire: BoolProperty(
+                name="Show wire",
+                description="Add the object’s wireframe over solid drawing",
+                default=False,
+                update=update_show_wire,
+                )
+    SURFSK_shade_smooth: BoolProperty(
+                name="Shade smooth",
+                description="Render and display faces smooth, using interpolated Vertex Normals",
+                default=False,
+                update=update_shade_smooth,
                 )
 
 classes = (

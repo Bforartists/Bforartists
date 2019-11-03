@@ -109,7 +109,7 @@ class CurveRemvDbs(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return util.Selected1Curve()
+        return util.Selected1OrMoreCurves()
 
     def execute(self, context):
         removed=main(context, self.distance)
