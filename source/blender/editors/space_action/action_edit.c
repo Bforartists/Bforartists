@@ -54,6 +54,8 @@
 #include "BKE_report.h"
 
 #include "UI_view2d.h"
+#include "UI_interface.h" /*bfa - needed for the icons*/
+#include "UI_resources.h" /*bfa - needed for the icons*/
 
 #include "ED_anim_api.h"
 #include "ED_gpencil.h"
@@ -1663,23 +1665,23 @@ void ACTION_OT_frame_jump(wmOperatorType *ot)
 static const EnumPropertyItem prop_actkeys_snap_types[] = {
     {ACTKEYS_SNAP_CFRA,
      "CFRA",
-     0,
+     ICON_SNAP_CURRENTFRAME,
      "Current Frame",
      "Snap selected keyframes to the current frame"},
     {ACTKEYS_SNAP_NEAREST_FRAME,
      "NEAREST_FRAME",
-     0,
+     ICON_SNAP_NEARESTFRAME,
      "Nearest Frame",
      "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame "
      "offsets)"},
     {ACTKEYS_SNAP_NEAREST_SECOND,
      "NEAREST_SECOND",
-     0,
+     ICON_SNAP_NEARESTSECOND,
      "Nearest Second",
      "Snap selected keyframes to the nearest second"},
     {ACTKEYS_SNAP_NEAREST_MARKER,
      "NEAREST_MARKER",
-     0,
+     ICON_SNAP_NEARESTMARKER,
      "Nearest Marker",
      "Snap selected keyframes to the nearest marker"},
     {0, NULL, 0, NULL, NULL},
@@ -1789,17 +1791,17 @@ void ACTION_OT_snap(wmOperatorType *ot)
 static const EnumPropertyItem prop_actkeys_mirror_types[] = {
     {ACTKEYS_MIRROR_CFRA,
      "CFRA",
-     0,
+     ICON_MIRROR_TIME,
      "By Times Over Current Frame",
      "Flip times of selected keyframes using the current frame as the mirror line"},
     {ACTKEYS_MIRROR_XAXIS,
      "XAXIS",
-     0,
+     ICON_MIRROR_CURSORVALUE,
      "By Values Over Value=0",
      "Flip values of selected keyframes (i.e. negative values become positive, and vice versa)"},
     {ACTKEYS_MIRROR_MARKER,
      "MARKER",
-     0,
+     ICON_MIRROR_MARKER,
      "By Times Over First Selected Marker",
      "Flip times of selected keyframes using the first selected marker as the reference point"},
     {0, NULL, 0, NULL, NULL},
