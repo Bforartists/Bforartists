@@ -161,7 +161,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS'},
+     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
      {"properties":
       [("name", 'VIEW3D_MT_gpencil_edit_context_menu'),
        ],
@@ -192,7 +192,7 @@ keyconfig_data = \
     ("lattice.select_more", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "ctrl": True}, None),
     ("lattice.select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True}, None),
     ("wm.call_menu",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS'},
+     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
      {"properties":
       [("name", 'VIEW3D_MT_edit_lattice_context_menu'),
        ],
