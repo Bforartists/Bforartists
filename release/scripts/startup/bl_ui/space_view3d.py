@@ -1926,7 +1926,7 @@ class VIEW3D_MT_edit_lattice_context_menu(Menu):
         layout = self.layout
 
         layout.menu("VIEW3D_MT_mirror")
-        layout.operator_menu_enum("lattice.flip", "axis")
+        layout.menu("VIEW3D_MT_edit_lattice_flip")
         layout.menu("VIEW3D_MT_snap")
 
         layout.separator()
