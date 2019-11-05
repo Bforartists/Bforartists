@@ -3269,8 +3269,8 @@ static int gp_stroke_join_exec(bContext *C, wmOperator *op)
 void GPENCIL_OT_stroke_join(wmOperatorType *ot)
 {
   static const EnumPropertyItem join_type[] = {
-      {GP_STROKE_JOIN, "JOIN", 0, "Join", ""},
-      {GP_STROKE_JOINCOPY, "JOINCOPY", 0, "Join and Copy", ""},
+      {GP_STROKE_JOIN, "JOIN", ICON_JOIN, "Join", ""},
+      {GP_STROKE_JOINCOPY, "JOINCOPY", ICON_JOIN, "Join and Copy", ""},
       {0, NULL, 0, NULL, NULL},
   };
 
