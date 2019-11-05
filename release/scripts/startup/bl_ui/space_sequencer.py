@@ -188,14 +188,14 @@ class SEQUENCER_MT_range(Menu):
         layout = self.layout
 
         layout.operator("anim.previewrange_set", text="Set Preview Range")
-        layout.operator("sequencer.set_range_to_strips", text="Set Preview Range to Strips").preview = True
+        layout.operator("sequencer.set_range_to_strips", text="Set Preview Range to Strips", icon = "PREVIEW_RANGE").preview = True
         layout.operator("anim.previewrange_clear", text="Clear Preview Range")
 
         layout.separator()
 
         layout.operator("anim.start_frame_set", text="Set Start Frame")
         layout.operator("anim.end_frame_set", text="Set End Frame")
-        layout.operator("sequencer.set_range_to_strips", text="Set Frame Range to Strips")
+        layout.operator("sequencer.set_range_to_strips", text="Set Frame Range to Strips", icon = "PREVIEW_RANGE")
 
 class SEQUENCER_MT_preview_zoom(Menu):
     bl_label = "Fractional Zoom"
@@ -793,7 +793,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.set_range_to_strips", text="Set Preview Range to Strips").preview = True
+        layout.operator("sequencer.set_range_to_strips", text="Set Preview Range to Strips", icon = "PREVIEW_RANGE").preview = True
 
         layout.separator()
 
