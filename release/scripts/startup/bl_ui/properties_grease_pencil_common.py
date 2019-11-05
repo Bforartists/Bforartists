@@ -155,29 +155,29 @@ class GreasePencilStrokeEditPanel:
             layout.label(text="Select:")
             col = layout.column(align=True)
             col.operator("gpencil.select_all", text="Select All")
-            col.operator("gpencil.select_box")
-            col.operator("gpencil.select_circle")
+            col.operator("gpencil.select_box", icon='BORDER_RECT')
+            col.operator("gpencil.select_circle", icon = 'CIRCLE_SELECT')
 
             layout.separator()
 
             col = layout.column(align=True)
-            col.operator("gpencil.select_linked")
-            col.operator("gpencil.select_more")
-            col.operator("gpencil.select_less")
-            col.operator("gpencil.select_alternate")
+            col.operator("gpencil.select_linked", icon = "LINKED")
+            col.operator("gpencil.select_more", icon = "SELECTMORE")
+            col.operator("gpencil.select_less", icon = "SELECTLESS")
+            col.operator("gpencil.select_alternate", icon = "ALTERNATED")
 
         layout.label(text="Edit:")
         row = layout.row(align=True)
-        row.operator("gpencil.copy", text="Copy")
-        row.operator("gpencil.paste", text="Paste").type = 'ACTIVE'
-        row.operator("gpencil.paste", text="Paste by Layer").type = 'LAYER'
+        row.operator("gpencil.copy", text="Copy", icon='COPYDOWN')
+        row.operator("gpencil.paste", text="Paste", icon='PASTEDOWN').type = 'ACTIVE'
+        row.operator("gpencil.paste", text="Paste by Layer", icon='PASTEDOWN').type = 'LAYER'
 
         col = layout.column(align=True)
-        col.operator("gpencil.delete")
-        col.operator("gpencil.duplicate_move", text="Duplicate")
+        col.operator("gpencil.delete", icon = "DELETE")
+        col.operator("gpencil.duplicate_move", text="Duplicate", icon = "DUPLICATE")
         if is_3d_view:
-            col.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic").type = 'TOGGLE'
-            col.operator_menu_enum("gpencil.stroke_caps_set", text="Toggle Caps...", property="type")
+            col.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
+            col.operator_menu_enum("gpencil.stroke_caps_set", text="Toggle Caps", property="type")
 
         layout.separator()
 
@@ -191,38 +191,38 @@ class GreasePencilStrokeEditPanel:
 
         layout.separator()
         col = layout.column(align=True)
-        col.operator_menu_enum("gpencil.stroke_arrange", text="Arrange Strokes...", property="direction")
-        col.operator("gpencil.stroke_change_color", text="Assign Material")
+        col.operator_menu_enum("gpencil.stroke_arrange", text="Arrange Strokes", property="direction")
+        col.operator("gpencil.stroke_change_color", text="Assign Material", icon = "MATERIAL")
 
-        layout.separator()
+
         col = layout.column(align=True)
-        col.operator("gpencil.stroke_subdivide", text="Subdivide")
+        col.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
         row = col.row(align=True)
-        row.operator("gpencil.stroke_simplify_fixed", text="Simplify")
-        row.operator("gpencil.stroke_simplify", text="Adaptive")
-        row.operator("gpencil.stroke_trim", text="Trim")
+        row.operator("gpencil.stroke_simplify_fixed", text="Simplify", icon = "MOD_SIMPLIFY")
+        row.operator("gpencil.stroke_simplify", text="Adaptive", icon = "MOD_SIMPLIFY")
+        row.operator("gpencil.stroke_trim", text="Trim", icon = "CUT")
 
         col.separator()
 
         row = col.row(align=True)
-        row.operator("gpencil.stroke_merge", text="Merge")
-        row.operator("gpencil.stroke_join", text="Join").type = 'JOIN'
-        row.operator("gpencil.stroke_join", text="& Copy").type = 'JOINCOPY'
+        row.operator("gpencil.stroke_merge", text="Merge", icon = "MERGE")
+        row.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
+        row.operator("gpencil.stroke_join", text="& Copy", icon = "JOIN").type = 'JOINCOPY'
 
-        col.operator("gpencil.stroke_flip", text="Flip Direction")
+        col.operator("gpencil.stroke_flip", text="Flip Direction", icon = "FLIP")
 
         if is_3d_view:
             layout.separator()
 
             col = layout.column(align=True)
-            col.operator_menu_enum("gpencil.stroke_separate", text="Separate...", property="mode")
+            col.operator_menu_enum("gpencil.stroke_separate", text="Separate", property="mode")
             col.menu("GPENCIL_MT_separate")
             col.operator("gpencil.stroke_split", text="Split", icon = "SPLIT")
 
             col = layout.column(align=True)
             col.label(text="Cleanup:")
-            col.operator_menu_enum("gpencil.reproject", text="Reproject Strokes...", property="type")
-            col.operator_menu_enum("gpencil.frame_clean_fill", text="Clean Boundary Strokes...", property="mode")
+            col.operator_menu_enum("gpencil.reproject", text="Reproject Strokes", property="type")
+            col.operator_menu_enum("gpencil.frame_clean_fill", text="Clean Boundary Strokes", property="mode")
 
 
 class GreasePencilStrokeSculptPanel:
@@ -482,8 +482,8 @@ class GPENCIL_MT_pie_settings_palette(Menu):
             col = pie.column(align=True)
             col.label(text="Join Strokes")
             row = col.row()
-            row.operator("gpencil.stroke_join", text="Join").type = 'JOIN'
-            row.operator("gpencil.stroke_join", text="Join & Copy").type = 'JOINCOPY'
+            row.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
+            row.operator("gpencil.stroke_join", text="Join & Copy", icon = "JOIN").type = 'JOINCOPY'
             col.operator("gpencil.stroke_flip", text="Flip Direction")
 
             col.prop(gpd, "show_stroke_direction", text="Show Drawing Direction")
