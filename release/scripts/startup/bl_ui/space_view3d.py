@@ -7781,7 +7781,7 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
 
             col.separator()
 
-            col.operator("gpencil.reproject", text="Reproject Strokes")
+            col.operator("gpencil.reproject", text="Reproject Strokes", icon = "REPROJECT")
 
 
 class VIEW3D_PT_gpencil_draw_context_menu(Panel):
