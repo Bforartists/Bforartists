@@ -420,27 +420,28 @@ class TEXT_MT_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_DEFAULT'
 
-        layout.operator("text.cut")
-        layout.operator("text.copy")
-        layout.operator("text.paste")
+        layout.operator("text.cut", icon = "CUT")
+        layout.operator("text.copy", icon = "COPYDOWN")
+        layout.operator("text.paste", icon = "PASTEDOWN")
 
         layout.separator()
 
-        layout.operator("text.move_lines", text="Move Line(s) Up").direction = 'UP'
-        layout.operator("text.move_lines", text="Move Line(s) Down").direction = 'DOWN'
+        layout.operator("text.move_lines", text="Move Line(s) Up", icon = "MOVE_UP").direction = 'UP'
+        layout.operator("text.move_lines", text="Move Line(s) Down", icon = "MOVE_DOWN").direction = 'DOWN'
 
         layout.separator()
 
-        layout.operator("text.indent")
-        layout.operator("text.unindent")
+        layout.operator("text.indent", icon = "INDENT")
+        layout.operator("text.unindent", icon = "UNINDENT")
 
         layout.separator()
 
-        layout.operator("text.comment_toggle")
+        layout.operator("text.comment_toggle", icon = "COMMENT")
 
         layout.separator()
 
-        layout.operator("text.autocomplete")
+        layout.operator("text.autocomplete", icon = "AUTOCOMPLETE")
+
 
 class TEXT_MT_edit_delete(Menu):
     bl_label = "Delete"

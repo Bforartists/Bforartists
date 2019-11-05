@@ -154,6 +154,38 @@ class CONSOLE_MT_edit_delete(Menu):
         layout.operator("console.delete", text = "Previous Word", icon = "DELETE").type = 'PREVIOUS_WORD'
 
 
+class CONSOLE_MT_context_menu(Menu):
+    bl_label = "Console Context Menu"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("console.clear", icon = "DELETE")
+        layout.operator("console.clear_line", icon = "DELETE")
+        layout.operator("console.delete", text="Delete Previous Word", icon = "DELETE").type = 'PREVIOUS_WORD'
+        layout.operator("console.delete", text="Delete Next Word", icon = "DELETE").type = 'NEXT_WORD'
+
+        layout.separator()
+
+        layout.operator("console.copy_as_script", text="Copy as Script", icon = "COPYDOWN")
+        layout.operator("console.copy", text="Copy", icon = "COPYDOWN")
+        layout.operator("console.paste", text="Paste", icon = "PASTEDOWN")
+
+        layout.separator()
+
+        layout.operator("console.indent", icon = "INDENT")
+        layout.operator("console.unindent", icon = "UNINDENT")
+
+        layout.separator()
+
+        layout.operator("console.history_cycle", text="Backward in History", icon = "HISTORY_CYCLE_BACK").reverse = True
+        layout.operator("console.history_cycle", text="Forward in History", icon = "HISTORY_CYCLE_FORWARD").reverse = False
+
+        layout.separator()
+
+        layout.operator("console.autocomplete", text="Autocomplete", icon = "AUTOCOMPLETE")
+
+
 def add_scrollback(text, text_type):
     for l in text.split("\n"):
         bpy.ops.console.scrollback_append(text=l.expandtabs(4),
@@ -168,6 +200,7 @@ classes = (
     CONSOLE_MT_console,
     CONSOLE_MT_language,
     CONSOLE_MT_edit_delete,
+    CONSOLE_MT_context_menu,
 )
 
 if __name__ == "__main__":  # only for live edit.
