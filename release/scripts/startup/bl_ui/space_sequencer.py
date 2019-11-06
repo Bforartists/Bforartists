@@ -238,9 +238,6 @@ class SEQUENCER_MT_view(Menu):
         layout.prop(st, "show_region_ui")
         layout.operator_context = 'INVOKE_DEFAULT'
 
-        if st.view_type == 'SEQUENCER':
-            layout.prop(st, "show_backdrop", text="Preview as Backdrop")
-
         layout.separator()
 
         if is_sequencer_view:
@@ -278,28 +275,7 @@ class SEQUENCER_MT_view(Menu):
             layout.operator_context = 'INVOKE_REGION_WIN'
             layout.operator("sequencer.refresh_all", icon='FILE_REFRESH', text="Refresh All")
 
-            layout.separator()
-            layout.operator_context = 'INVOKE_DEFAULT'
-
-            layout.prop(st, "show_seconds")
-            layout.prop(st, "show_strip_offset")
-            layout.prop(st, "show_marker_lines")
-
-        if is_preview:
-            layout.separator()
-            if st.display_mode == 'IMAGE':
-                layout.prop(ed, "show_overlay", text="Show Frame Overlay")
-                layout.prop(st, "show_safe_areas", text="Show Safe Areas")
-                layout.prop(st, "show_metadata", text="Show Metadata")
-                layout.prop(st, "show_annotation", text="Show Annotations")
-            elif st.display_mode == 'WAVEFORM':
-                layout.prop(st, "show_separate_color", text="Show Separate Color Channels")
-
-        if is_sequencer_view:
-            layout.separator()
-
-            layout.menu("SEQUENCER_MT_view_cache")
-            layout.prop_menu_enum(st, "waveform_display_type")
+        layout.separator()
 
         layout.operator("render.opengl", text="Sequence Render Image", icon='RENDER_STILL').sequencer = True
         props = layout.operator("render.opengl", text="Sequence Render Animation", icon='RENDER_ANIMATION')
@@ -1978,6 +1954,12 @@ class SEQUENCER_PT_frame_overlay(SequencerButtonsPanel_Output, Panel):
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
+        scene = context.scene
+        ed = scene.sequence_editor
+
+        self.layout.prop(ed, "show_overlay", text="")
+        
+    def draw_header(self, context):
         scene = context.scene
         ed = scene.sequence_editor
 
