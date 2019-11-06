@@ -1681,14 +1681,14 @@ planetrack
 
 seq_swap_left
 seq_swap_right
-seq_reload_strips
-seq_reload_adjust_length
+#def_icon_blank(1701
+#def_icon_blank(1702
 toggle_meta
 seq_snap_strip
-#def_icon_blank(1702
-#def_icon_blank(1703
-#def_icon_blank(1704
 #def_icon_blank(1705
+#def_icon_blank(1706
+#def_icon_blank(1707
+#def_icon_blank(1708
 
 # ------------------------- row 30 --------------------------*/
 
@@ -1738,8 +1738,8 @@ trademark
 
 seq_snap_to_frame
 seq_clear_offset
-seq_cut_hard_at_frame
-seq_cut_soft_at_frame
+#def_icon_blank(1758
+#def_icon_blank(1759
 seq_deinterlace
 seq_move_extend
 seq_slip_contents
