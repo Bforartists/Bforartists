@@ -406,8 +406,6 @@ class SEQUENCER_MT_marker(Menu):
         from bl_ui.space_time import marker_menu_generic
         marker_menu_generic(layout, context)
 
-        if is_sequencer_view:
-            layout.prop(st, "use_marker_sync")
 
 
 class SEQUENCER_MT_change(Menu):
@@ -1953,8 +1951,10 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
             col.prop(st, "show_overexposed")
 
         elif st.display_mode == 'WAVEFORM':
-            col.prop(st, "show_separate_color")     
-
+            col.use_property_split = False
+            col.prop(st, "show_separate_color")
+        
+        col.use_property_split = True
         col.prop(st, "proxy_render_size")
         
         col.use_property_split = False
@@ -2194,7 +2194,6 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             layout.prop(st, "show_strip_offset")
             layout.prop(st, "show_marker_lines")
             layout.menu("SEQUENCER_MT_view_cache")
-            layout.prop(st, "show_seconds")
 
             layout.use_property_split = True
             layout.prop(st, "waveform_display_type")
@@ -2202,10 +2201,7 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
         if is_preview:
             layout.use_property_split = False
             if st.display_mode == 'IMAGE':
-                layout.prop(st, "show_safe_areas")
                 layout.prop(st, "show_metadata")
-            elif st.display_mode == 'WAVEFORM':
-                layout.prop(st, "show_separate_color")
 
 
 classes = (
