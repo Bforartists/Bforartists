@@ -1930,6 +1930,7 @@ class SEQUENCER_PT_preview(SequencerButtonsPanel_Output, Panel):
         col.prop(render, "sequencer_gl_preview", text="Preview Shading")
 
         if render.sequencer_gl_preview in {'SOLID', 'WIREFRAME'}:
+            col.use_property_split = False
             col.prop(render, "use_sequencer_override_scene_strip")
 
 
@@ -1952,9 +1953,11 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
             col.prop(st, "show_overexposed")
 
         elif st.display_mode == 'WAVEFORM':
-            col.prop(st, "show_separate_color")
+            col.prop(st, "show_separate_color")     
 
         col.prop(st, "proxy_render_size")
+        
+        col.use_property_split = False
         col.prop(ed, "use_prefetch")
 
 
@@ -1994,6 +1997,7 @@ class SEQUENCER_PT_frame_overlay(SequencerButtonsPanel_Output, Panel):
         col = layout.column()
         col.prop(ed, "overlay_frame", text="Frame Offset")
         col.prop(st, "overlay_type")
+        col.use_property_split = False
         col.prop(ed, "use_overlay_lock")
 
 
