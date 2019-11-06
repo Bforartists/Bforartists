@@ -2177,7 +2177,6 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             if st.view_type == 'SEQUENCER':
                 layout.prop(st, "show_backdrop", text="Preview as Backdrop")
             layout.prop(st, "show_seconds")
-            layout.prop(st, "show_frame_indicator")
             layout.prop(st, "show_strip_offset")
             layout.prop(st, "show_marker_lines")
             layout.menu("SEQUENCER_MT_view_cache")
