@@ -638,8 +638,8 @@ class SEQUENCER_MT_strip_input(Menu):
         layout = self.layout
         strip = act_strip(context)
 
-        layout.operator("sequencer.reload", text="Reload Strips", icon = "SEQ_RELOAD_STRIPS")
-        layout.operator("sequencer.reload", text="Reload Strips and Adjust Length", icon = "SEQ_RELOAD_ADJUST_LENGTH").adjust_length = True
+        layout.operator("sequencer.reload", text="Reload Strips", icon = "FILE_REFRESH")
+        layout.operator("sequencer.reload", text="Reload Strips and Adjust Length", icon = "FILE_REFRESH").adjust_length = True
         prop = layout.operator("sequencer.change_path", text="Change Path/Files", icon = "FILE_MOVIE")
         layout.operator("sequencer.swap_data", text="Swap Data", icon = "SWAP")
 
@@ -708,8 +708,8 @@ class SEQUENCER_MT_strip(Menu):
         layout.operator("sequencer.offset_clear", icon = "SEQ_CLEAR_OFFSET")
 
         layout.separator()
-        layout.operator("sequencer.cut", text="Cut", icon='SEQ_CUT_HARD_AT_FRAME').type = 'SOFT'
-        layout.operator("sequencer.cut", text="Hold Cut", icon='SEQ_CUT_SOFT_AT_FRAME').type = 'HARD'
+        layout.operator("sequencer.cut", text="Cut", icon='CUT').type = 'SOFT'
+        layout.operator("sequencer.cut", text="Hold Cut", icon='CUT').type = 'HARD'
 
         layout.separator()
         layout.operator("sequencer.copy", text="Copy", icon='COPYDOWN')
