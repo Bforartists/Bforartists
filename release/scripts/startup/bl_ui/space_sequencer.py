@@ -143,6 +143,7 @@ class SEQUENCER_MT_editor_menus(Menu):
         st = context.space_data
 
         layout.menu("SEQUENCER_MT_view")
+        layout.menu("SEQUENCER_MT_export")
 
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             layout.menu("SEQUENCER_MT_select")
@@ -285,6 +286,15 @@ class SEQUENCER_MT_view(Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
+
+
+class SEQUENCER_MT_export(Menu):
+    bl_label = "Export"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("sequencer.export_subtitles", text="Export Subtitles", icon="EXPORT")
 
 
 # Workaround to separate the tooltips
@@ -2201,6 +2211,7 @@ classes = (
     SEQUENCER_MT_editor_menus,
     SEQUENCER_MT_range,
     SEQUENCER_MT_view,
+    SEQUENCER_MT_export,
     SEQUENCER_MT_view_cache,
     SEQUENCER_MT_view_toggle,
     SEQUENCER_MT_preview_zoom,
