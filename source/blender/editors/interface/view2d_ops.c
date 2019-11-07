@@ -333,7 +333,7 @@ static void VIEW2D_OT_pan(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Pan View";
-  ot->description = "Pan View\nPan the view";
+  ot->description = "Pan the view";
   ot->idname = "VIEW2D_OT_pan";
 
   /* api callbacks */
@@ -384,7 +384,7 @@ static void VIEW2D_OT_scroll_right(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Scroll Right";
-  ot->description = "Scroll Right\nScroll the view right";
+  ot->description = "Scroll the view right";
   ot->idname = "VIEW2D_OT_scroll_right";
 
   /* api callbacks */
@@ -427,7 +427,7 @@ static void VIEW2D_OT_scroll_left(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Scroll Left";
-  ot->description = "Scroll Left\nScroll the view left";
+  ot->description = "Scroll the view left";
   ot->idname = "VIEW2D_OT_scroll_left";
 
   /* api callbacks */
@@ -476,7 +476,7 @@ static void VIEW2D_OT_scroll_down(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Scroll Down";
-  ot->description = "Scroll Down\nScroll the view down";
+  ot->description = "Scroll the view down";
   ot->idname = "VIEW2D_OT_scroll_down";
 
   /* api callbacks */
@@ -526,7 +526,7 @@ static void VIEW2D_OT_scroll_up(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Scroll Up";
-  ot->description = "Scroll Up\nScroll the view up";
+  ot->description = "SScroll the view up";
   ot->idname = "VIEW2D_OT_scroll_up";
 
   /* api callbacks */
@@ -831,7 +831,7 @@ static void VIEW2D_OT_zoom_in(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Zoom In";
-  ot->description = "Zoom In\nZoom in the view";
+  ot->description = "Zoom in the view";
   ot->idname = "VIEW2D_OT_zoom_in";
 
   /* api callbacks */
@@ -898,7 +898,7 @@ static void VIEW2D_OT_zoom_out(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Zoom Out";
-  ot->description = "Zoom Out\nZoom out the view";
+  ot->description = "Zoom out the view";
   ot->idname = "VIEW2D_OT_zoom_out";
 
   /* api callbacks */
@@ -1275,7 +1275,7 @@ static void VIEW2D_OT_zoom(wmOperatorType *ot)
   PropertyRNA *prop;
   /* identifiers */
   ot->name = "Zoom 2D View";
-  ot->description = "Zoom 2D View\nZoom in/out the view";
+  ot->description = "Zoom in/out the view";
   ot->idname = "VIEW2D_OT_zoom";
 
   /* api callbacks */
@@ -1383,7 +1383,7 @@ static void VIEW2D_OT_zoom_border(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Zoom Border";
   ot->description =
-      "Zoom Border\nDrawing rectangle with LMB zooms in. Drawing rectangle with MMB zooms out";
+      "Drawing rectangle with LMB zooms in. Drawing rectangle with MMB zooms out";
   ot->idname = "VIEW2D_OT_zoom_border";
 
   /* api callbacks */
@@ -1462,7 +1462,7 @@ static void VIEW2D_OT_ndof(wmOperatorType *ot)
   /* identifiers */
   ot->name = "NDOF Pan/Zoom";
   ot->idname = "VIEW2D_OT_ndof";
-  ot->description = "NDOF Pan/Zoom\nUse a 3D mouse device to pan/zoom the view";
+  ot->description = "Use a 3D mouse device to pan/zoom the view";
 
   /* api callbacks */
   ot->invoke = view2d_ndof_invoke;
@@ -2145,7 +2145,7 @@ static void VIEW2D_OT_scroller_activate(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Scroller Activate";
-  ot->description = "Scroller Activate\nScroll view by mouse click and drag";
+  ot->description = "Scroll view by mouse click and drag";
   ot->idname = "VIEW2D_OT_scroller_activate";
 
   /* flags */
@@ -2225,7 +2225,7 @@ static void VIEW2D_OT_reset(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Reset View";
-  ot->description = "Reset View\nReset the view";
+  ot->description = "Reset the view";
   ot->idname = "VIEW2D_OT_reset";
 
   /* api callbacks */
