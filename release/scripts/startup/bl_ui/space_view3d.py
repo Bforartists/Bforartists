@@ -4116,7 +4116,7 @@ class VIEW3D_MT_pose_library(Menu):
         layout.separator()
 
         layout.operator("poselib.pose_add", text="Add Pose", icon = "LIBRARY")
-        layout.operator("poselib.pose_rename", text="Rename Pose", icon = "STRING")
+        layout.operator("poselib.pose_rename", text="Rename Pose", icon='RENAME')
         layout.operator("poselib.pose_remove", text="Remove Pose", icon = "DELETE")
 
 
@@ -4230,7 +4230,7 @@ class VIEW3D_MT_pose_context_menu(Menu):
 
         layout.separator()
 
-        props = layout.operator("wm.call_panel", text="Rename Active Bone...", icon = "STRING")
+        props = layout.operator("wm.call_panel", text="Rename Active Bone...", icon='RENAME')
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
 
