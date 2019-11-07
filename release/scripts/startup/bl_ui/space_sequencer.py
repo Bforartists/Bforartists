@@ -213,7 +213,7 @@ class SEQUENCER_MT_preview_zoom(Menu):
 
             layout.operator(
                 "sequencer.view_zoom_ratio",
-                text=iface_("Zoom %d:%d") % (a, b),
+                text=iface_("Zoom %d:%d") % (a, b), icon = "ZOOM_SET", 
                 translate=False,
             ).ratio = a / b
         layout.operator_context = 'INVOKE_DEFAULT'
@@ -246,19 +246,19 @@ class SEQUENCER_MT_view(Menu):
             layout.operator("sequencer.view_all", text="View all Sequences", icon = "VIEWALL" )
             layout.operator("sequencer.view_selected", text = "View Selected", icon='VIEW_SELECTED')
             layout.operator("sequencer.view_frame", icon = "VIEW_FRAME" )
-            layout.operator("view2d.zoom_border", text = "Zoom")
+            layout.operator("view2d.zoom_border", text = "Zoom", icon = "ZOOM_BORDER")
 
         if is_preview:
             layout.operator_context = 'INVOKE_REGION_PREVIEW'
 
             layout.separator()
 
-            layout.operator("sequencer.view_all_preview", text="Fit Preview in window")          
+            layout.operator("sequencer.view_all_preview", text="Fit Preview in window", icon = "VIEW_FIT")     
 
             if is_sequencer_view:
                 layout.menu("SEQUENCER_MT_preview_zoom", text="Fractional Preview Zoom")
             else:
-                layout.operator("view2d.zoom_border", text="Zoom")
+                layout.operator("view2d.zoom_border", text="Zoom", icon = "ZOOM_BORDER")
                 layout.menu("SEQUENCER_MT_preview_zoom")
 
             layout.operator_context = 'INVOKE_DEFAULT'
