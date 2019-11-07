@@ -146,6 +146,7 @@ class SEQUENCER_MT_editor_menus(Menu):
         layout.menu("SEQUENCER_MT_export")
 
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
+            layout.menu("SEQUENCER_MT_navigation")
             layout.menu("SEQUENCER_MT_select")
             layout.menu("SEQUENCER_MT_marker")
             layout.menu("SEQUENCER_MT_add")
@@ -188,14 +189,14 @@ class SEQUENCER_MT_range(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("anim.previewrange_set", text="Set Preview Range")
+        layout.operator("anim.previewrange_set", text="Set Preview Range", icon = "PREVIEW_RANGE")
         layout.operator("sequencer.set_range_to_strips", text="Set Preview Range to Strips", icon = "PREVIEW_RANGE").preview = True
-        layout.operator("anim.previewrange_clear", text="Clear Preview Range")
+        layout.operator("anim.previewrange_clear", text="Clear Preview Range", icon = "CLEAR")
 
         layout.separator()
 
-        layout.operator("anim.start_frame_set", text="Set Start Frame")
-        layout.operator("anim.end_frame_set", text="Set End Frame")
+        layout.operator("anim.start_frame_set", text="Set Start Frame", icon = "AFTER_CURRENT_FRAME")
+        layout.operator("anim.end_frame_set", text="Set End Frame", icon = "BEFORE_CURRENT_FRAME")
         layout.operator("sequencer.set_range_to_strips", text="Set Frame Range to Strips", icon = "PREVIEW_RANGE")
 
 class SEQUENCER_MT_preview_zoom(Menu):
@@ -269,8 +270,6 @@ class SEQUENCER_MT_view(Menu):
             layout.separator()
 
             layout.operator_context = 'INVOKE_DEFAULT'
-            layout.menu("SEQUENCER_MT_navigation")
-            layout.menu("SEQUENCER_MT_range")
 
             layout.separator()
             layout.operator_context = 'INVOKE_REGION_WIN'
@@ -433,34 +432,38 @@ class SEQUENCER_MT_change(Menu):
 
 
 class SEQUENCER_MT_navigation(Menu):
-    bl_label = "Navigation"
+    bl_label = "Navi"
 
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("screen.animation_play")
+        layout.operator("screen.animation_play", icon='PLAY')
 
         layout.separator()
 
-        layout.operator("sequencer.view_frame", text="Go to Playhead")
+        layout.operator("sequencer.view_frame", text="Go to Playhead", icon='CENTER')
 
         layout.separator()
 
-        props = layout.operator("sequencer.strip_jump", text="Jump to Previous Strip")
+        props = layout.operator("sequencer.strip_jump", text="Jump to Previous Strip", icon='PREVIOUSACTIVE')
         props.next = False
         props.center = False
-        props = layout.operator("sequencer.strip_jump", text="Jump to Next Strip")
+        props = layout.operator("sequencer.strip_jump", text="Jump to Next Strip", icon='NEXTACTIVE')
         props.next = True
         props.center = False
 
         layout.separator()
 
-        props = layout.operator("sequencer.strip_jump", text="Jump to Previous Strip (Center)")
+        props = layout.operator("sequencer.strip_jump", text="Jump to Previous Strip (Center)", icon='PREVIOUSACTIVE')
         props.next = False
         props.center = True
-        props = layout.operator("sequencer.strip_jump", text="Jump to Next Strip (Center)")
+        props = layout.operator("sequencer.strip_jump", text="Jump to Next Strip (Center)", icon='NEXTACTIVE')
         props.next = True
         props.center = True
+
+        layout.separator()
+
+        layout.menu("SEQUENCER_MT_range")
 
 
 class SEQUENCER_MT_add(Menu):
