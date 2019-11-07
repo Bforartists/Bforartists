@@ -230,7 +230,7 @@ if(WITH_BUILDINFO)
   add_dependencies(buildinfoobj buildinfo)
 endif()
 
-add_cc_flags_custom_test(blender)
+add_cc_flags_custom_test(bforartists)
 
 # message(STATUS "Configuring blender")
 if(WITH_PYTHON_MODULE)
@@ -329,7 +329,7 @@ if(UNIX AND NOT APPLE)
     if(WITH_INSTALL_PORTABLE)
       set(TARGETDIR_VER ${BLENDER_VERSION})
     else()
-      set(TARGETDIR_VER share/blender/${BLENDER_VERSION})
+      set(TARGETDIR_VER share/bforartists/${BLENDER_VERSION})
     endif()
   endif()
 
@@ -466,9 +466,9 @@ if(UNIX AND NOT APPLE)
     if(WITH_DOC_MANPAGE)
       add_custom_target(
         bforartists_man_page ALL
-        COMMAND ${CMAKE_SOURCE_DIR}/doc/manpage/blender.1.py
+        COMMAND ${CMAKE_SOURCE_DIR}/doc/manpage/bforartists.1.py
                 ${EXECUTABLE_OUTPUT_PATH}/bforartists
-                ${CMAKE_CURRENT_BINARY_DIR}/blender.1)
+                ${CMAKE_CURRENT_BINARY_DIR}/bforartists.1)
       add_dependencies(bforartists_man_page bforartists)
     endif()
   endif()
@@ -495,21 +495,21 @@ if(UNIX AND NOT APPLE)
 
     if(WITH_DOC_MANPAGE)
       install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/blender.1
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/bforartists.1
         DESTINATION "."
       )
     endif()
     install(
       FILES
-        ${CMAKE_SOURCE_DIR}/release/freedesktop/blender.desktop
-        ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/blender.svg
-        ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/blender-symbolic.svg
+        ${CMAKE_SOURCE_DIR}/release/freedesktop/bforartists.desktop
+        ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/bforartists.svg
+        ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/bforartists-symbolic.svg
       DESTINATION "."
     )
 
     install(
       PROGRAMS
-      ${CMAKE_SOURCE_DIR}/release/bin/blender-thumbnailer.py
+      ${CMAKE_SOURCE_DIR}/release/bin/bforartists-thumbnailer.py
       DESTINATION "."
     )
 
@@ -518,7 +518,7 @@ if(UNIX AND NOT APPLE)
 
       install(
         PROGRAMS
-        ${CMAKE_SOURCE_DIR}/release/bin/blender-softwaregl
+        ${CMAKE_SOURCE_DIR}/release/bin/bforartists-softwaregl
         DESTINATION "."
       )
     endif()
@@ -533,29 +533,29 @@ if(UNIX AND NOT APPLE)
     if(WITH_DOC_MANPAGE)
       # manpage only with 'blender' binary
       install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/blender.1
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/bforartists.1
         DESTINATION share/man/man1
       )
     endif()
 
     # misc files
     install(
-      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/blender.desktop
+      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/bforartists.desktop
       DESTINATION share/applications
     )
     install(
-      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/blender.svg
+      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/bforartists.svg
       DESTINATION share/icons/hicolor/scalable/apps
     )
     install(
-      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/blender-symbolic.svg
+      FILES ${CMAKE_SOURCE_DIR}/release/freedesktop/icons/symbolic/apps/bforartists-symbolic.svg
       DESTINATION share/icons/hicolor/symbolic/apps
     )
     install(
-      PROGRAMS ${CMAKE_SOURCE_DIR}/release/bin/blender-thumbnailer.py
+      PROGRAMS ${CMAKE_SOURCE_DIR}/release/bin/bforartists-thumbnailer.py
       DESTINATION bin
     )
-    set(BLENDER_TEXT_FILES_DESTINATION share/doc/blender)
+    set(BLENDER_TEXT_FILES_DESTINATION share/doc/bforartists)
   endif()
 
   if(WITH_PYTHON)
@@ -856,7 +856,7 @@ elseif(WIN32)
 elseif(APPLE)
 if(NOT WITH_PYTHON_MODULE)
   # Uppercase name for app bundle
-  set_target_properties(blender PROPERTIES OUTPUT_NAME Blender)
+  set_target_properties(bforartists PROPERTIES OUTPUT_NAME Bforartists)
 endif()
 
   # handy install macro to exclude files, we use \$ escape for the "to"
@@ -1052,12 +1052,12 @@ endif()
 if(WIN32 AND NOT WITH_PYTHON_MODULE)
   install(
     TARGETS bforartists
-    COMPONENT Blender
+    COMPONENT Bforartists
     DESTINATION "."
   )
   set_target_properties(
     bforartists
     PROPERTIES
-      VS_USER_PROPS "blender.Cpp.user.props"
+      VS_USER_PROPS "bforartists.Cpp.user.props"
   )
 endif()
