@@ -180,7 +180,7 @@ def marker_menu_generic(layout, context):
 
     layout.separator()
 
-    layout.operator("marker.rename", text="Rename Marker", icon = "STRING")
+    layout.operator("marker.rename", text="Rename Marker", icon = "RENAME")
     layout.operator("marker.move", text="Grab/Move Marker", icon = "TRANSFORM_MOVE")
 
     layout.separator()
