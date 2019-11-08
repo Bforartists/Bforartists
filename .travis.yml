@@ -36,6 +36,7 @@ matrix:
           - g++-7
           - cmake
           - doxygen
+          - libpython3.6-dev
     install: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm --no-build
     before_deploy:
       - export RELEASE_FILE=$(ls *.deb)
@@ -68,6 +69,7 @@ matrix:
           - g++-5
           - cmake
           - doxygen
+          - libpython3-dev
     install: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm --no-build
     before_deploy:
       - export RELEASE_FILE=$(ls *.deb)
