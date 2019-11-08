@@ -21,8 +21,8 @@ compiler:
 matrix:
   include:
   - os: linux
-    dist: trusty
-    compiler: gcc-4.4
+    dist: bionic
+    compiler: gcc-7
     addons:
       apt:
         sources:
@@ -31,12 +31,12 @@ matrix:
           - nvidia-cuda-dev
           - libcuda1-384
           - build-essential
-          - gcc-4.4-multilib
-          - gcc-4.4
-          - g++-4.4
+          - gcc-7-multilib
+          - gcc-7
+          - g++-7
           - cmake
           - doxygen
-    install: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm
+    install: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm --no-build
     before_deploy:
       - export RELEASE_FILE=$(ls *.deb)
       - echo "Deploying $RELEASE_FILE to GitHub"
@@ -68,7 +68,7 @@ matrix:
           - g++-5
           - cmake
           - doxygen
-    install: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm
+    install: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm --no-build
     before_deploy:
       - export RELEASE_FILE=$(ls *.deb)
       - echo "Deploying $RELEASE_FILE to GitHub"
