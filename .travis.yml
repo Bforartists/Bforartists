@@ -37,6 +37,8 @@ matrix:
           - cmake
           - doxygen
           - libpython3.6-dev
+          - libopenimageio-dev
+          - libopenimageio1.7
     install: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm --no-build
     before_deploy:
       - export RELEASE_FILE=$(ls *.deb)
@@ -70,6 +72,8 @@ matrix:
           - cmake
           - doxygen
           - libpython3-dev
+          - libopenimageio-dev
+          - libopenimageio1.6
     install: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm --no-build
     before_deploy:
       - export RELEASE_FILE=$(ls *.deb)
