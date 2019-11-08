@@ -707,6 +707,7 @@ class VIEW3D_MT_editor_menus(Menu):
                      ts.use_gpencil_select_mask_stroke or
                      ts.use_gpencil_select_mask_segment):
                     layout.menu("VIEW3D_MT_select_gpencil")
+                    layout.menu("VIEW3D_MT_sculpt_gpencil_copy")
                 elif mode_string == 'EDIT_GPENCIL':
                     layout.menu("VIEW3D_MT_select_gpencil")
 
@@ -5077,6 +5078,15 @@ class VIEW3D_MT_edit_gpencil_delete(Menu):
         layout.operator("gpencil.active_frames_delete_all", text="Delete Active Keyframes (All Layers)", icon = 'DELETE')
 
 
+class VIEW3D_MT_sculpt_gpencil_copy(Menu):
+    bl_label = "Copy"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("gpencil.copy", text="Copy", icon='COPYDOWN')
+
+
 # Edit Curve
 # draw_curve is used by VIEW3D_MT_edit_curve and VIEW3D_MT_edit_surface
 def draw_curve(self, _context):
@@ -8173,6 +8183,7 @@ classes = (
     VIEW3D_MT_edit_gpencil_hide,
     VIEW3D_MT_edit_gpencil_arrange_strokes,
     VIEW3D_MT_edit_gpencil_delete,
+    VIEW3D_MT_sculpt_gpencil_copy,
     VIEW3D_MT_weight_gpencil,
     VIEW3D_MT_gpencil_simplify,
     VIEW3D_MT_gpencil_copy_layer,
