@@ -5870,6 +5870,11 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
         layout.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
         layout.operator_menu_enum("gpencil.stroke_caps_set", text="Toggle Caps", property="type")
         layout.operator("gpencil.stroke_flip", text="Switch Direction", icon = "FLIP")
+        
+        layout.separator()
+        
+        layout.operator("gpencil.reproject", text="Reproject Strokes", icon = "REPROJECT")
+        
 
 class VIEW3D_MT_edit_gpencil_point(Menu):
     bl_label = "Point"
