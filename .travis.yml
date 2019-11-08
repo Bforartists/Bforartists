@@ -37,7 +37,7 @@ matrix:
           - cmake
           - doxygen
           - libpython3.6-dev
-    install: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm --no-build --build-oiio
+    install: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm --no-build --build-oiio --force-oiio
     before_deploy:
       - export RELEASE_FILE=$(ls *.deb)
       - echo "Deploying $RELEASE_FILE to GitHub"
