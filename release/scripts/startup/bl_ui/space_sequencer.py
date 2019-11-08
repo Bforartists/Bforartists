@@ -761,7 +761,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("sequencer.cut", text="Cut", icon='SEQ_CUT_HARD_AT_FRAME').type = 'SOFT'
+        layout.operator("sequencer.cut", text="Cut", icon='CUT').type = 'SOFT'
 
         layout.separator()
 
