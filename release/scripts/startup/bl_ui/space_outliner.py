@@ -99,7 +99,8 @@ class OUTLINER_HT_header(Header):
             sub.active = space.use_filter_id_type
             sub.prop(space, "filter_id_type", text="", icon_only=True)
 
-        if display_mode == 'VIEW_LAYER':
+        if display_mode == 'VIEW_LAYER':                  
+            layout.menu("OUTLINER_MT_object_collection", text = "", icon = "DOWNARROW_HLT")       
             layout.operator("outliner.collection_new", text="", icon='COLLECTION_NEW')
 
         elif display_mode == 'ORPHAN_DATA':
@@ -118,6 +119,24 @@ class OUTLINER_HT_header(Header):
             else:
                 row = layout.row()
                 row.label(text="No Keying Set Active")
+
+class   OUTLINER_MT_object_collection(Menu):
+    bl_label = "Collection"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("object.move_to_collection", icon='GROUP')
+        layout.operator("object.link_to_collection", icon='GROUP')
+
+        layout.separator()
+
+        layout.operator("collection.objects_remove_all", icon = "DELETE")
+
+        layout.separator()
+
+        layout.operator("collection.objects_add_active", icon='GROUP')
+        layout.operator("collection.objects_remove_active", icon = "DELETE")
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
@@ -444,6 +463,7 @@ classes = (
     OUTLINER_OT_switch_editors_to_properties,
     OUTLINER_OT_switch_editors_to_outliner,
     OUTLINER_HT_header,
+    OUTLINER_MT_object_collection,
     ALL_MT_editormenu,
     OUTLINER_MT_editor_menus,
     OUTLINER_MT_view_hide_one_level,
