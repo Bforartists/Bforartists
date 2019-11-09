@@ -33,20 +33,20 @@ class GPENCIL_MT_color_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("gpencil.color_reveal", icon='HIDE_OFF', text="Show All")
-        layout.operator("gpencil.color_hide", icon='HIDE_ON', text="Hide Others").unselected = True
+        layout.operator("gpencil.color_reveal", text="Show All", icon='HIDE_OFF')
+        layout.operator("gpencil.color_hide", text="Hide Others", icon='HIDE_ON').unselected = True
 
         layout.separator()
 
-        layout.operator("gpencil.color_lock_all", icon='LOCKED', text="Lock All")
-        layout.operator("gpencil.color_unlock_all", icon='UNLOCKED', text="UnLock All")
+        layout.operator("gpencil.color_lock_all", text="Lock All", icon='LOCKED')
+        layout.operator("gpencil.color_unlock_all", text="UnLock All", icon='UNLOCKED')
 
-        layout.operator("gpencil.stroke_lock_color", text="Lock Unselected")
-        layout.operator("gpencil.lock_layer", text="Lock Unused")
+        layout.operator("gpencil.stroke_lock_color", text="Lock Unselected", icon='LOCKED')
+        layout.operator("gpencil.lock_layer", text="Lock Unused", icon='LOCKED')
 
         layout.separator()
 
-        layout.operator("object.material_slot_remove_unused")
+        layout.operator("object.material_slot_remove_unused", icon='DELETE')
 
 
 class GPENCIL_UL_matslots(UIList):
