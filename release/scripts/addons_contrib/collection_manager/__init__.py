@@ -23,9 +23,9 @@ bl_info = {
     "name": "Collection Manager",
     "description": "Manage collections and their objects",
     "author": "Ryan Inch",
-    "version": (1,0),
+    "version": (1,1,2),
     "blender": (2, 80, 0),
-    "location": "View3D - Object Mode",
+    "location": "View3D - Object Mode (Shortcut - M)",
     "warning": '',  # used for warning icon and text in addons panel
     "wiki_url": "",
     "category": "User Interface"}

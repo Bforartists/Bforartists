@@ -24,11 +24,12 @@ import re
 from itertools import count
 
 from ...utils.errors import MetarigError
-from ...utils.bones import flip_bone, align_chain_x_axis
+from ...utils.bones import put_bone, flip_bone, align_chain_x_axis, set_bone_widget_transform
 from ...utils.naming import make_derived_name
 from ...utils.widgets import create_widget
 from ...utils.widgets_basic import create_circle_widget
 from ...utils.misc import map_list
+from ...utils.layers import ControlLayersOption
 
 from ...base_rig import stage
 
@@ -40,7 +41,7 @@ class Rig(SimpleChainRig):
     def initialize(self):
         super().initialize()
 
-        self.bbone_segments = 8
+        self.bbone_segments = self.params.bbones
         self.first_parent = self.get_bone_parent(self.bones.org[0])
 
     def prepare_bones(self):
@@ -116,6 +117,8 @@ class Rig(SimpleChainRig):
         for args in zip(count(0), self.bones.ctrl.fk, self.bones.org + [None]):
             self.configure_control_bone(*args)
 
+        ControlLayersOption.TWEAK.assign(self.params, self.obj, self.bones.ctrl.fk)
+
     def configure_control_bone(self, i, ctrl, org):
         if org:
             self.copy_bone_properties(org, ctrl)
@@ -125,11 +128,13 @@ class Rig(SimpleChainRig):
             bone.lock_rotation = (True, True, True)
             bone.lock_scale = (True, True, True)
 
-    def make_control_widget(self, ctrl):
+    def make_control_widget(self, i, ctrl):
         if ctrl == self.bones.ctrl.fk[-1]:
             # Tip control
             create_circle_widget(self.obj, ctrl, radius=0.3, head_tail=0.0)
         else:
+            set_bone_widget_transform(self.obj, ctrl, self.bones.org[i])
+
             create_circle_widget(self.obj, ctrl, radius=0.3, head_tail=0.5)
 
     ##############################
@@ -234,11 +239,12 @@ class Rig(SimpleChainRig):
     def configure_master_properties(self):
         master = self.bones.ctrl.master
 
-        self.make_property(master, 'finger_curve', 0.0, description="Rubber hose finger cartoon effect")
+        if self.bbone_segments > 1:
+            self.make_property(master, 'finger_curve', 0.0, description="Rubber hose finger cartoon effect")
 
-        # Create UI
-        panel = self.script.panel_with_selected_check(self, self.bones.ctrl.flatten())
-        panel.custom_prop(master, 'finger_curve', text="Curvature", slider=True)
+            # Create UI
+            panel = self.script.panel_with_selected_check(self, self.bones.ctrl.flatten())
+            panel.custom_prop(master, 'finger_curve', text="Curvature", slider=True)
 
     def rig_deform_bone(self, i, deform, org):
         master = self.bones.ctrl.master
@@ -246,8 +252,9 @@ class Rig(SimpleChainRig):
 
         self.make_constraint(deform, 'COPY_TRANSFORMS', org)
 
-        self.make_driver(bone.bone, 'bbone_easein', variables=[(master, 'finger_curve')])
-        self.make_driver(bone.bone, 'bbone_easeout', variables=[(master, 'finger_curve')])
+        if self.bbone_segments > 1:
+            self.make_driver(bone.bone, 'bbone_easein', variables=[(master, 'finger_curve')])
+            self.make_driver(bone.bone, 'bbone_easeout', variables=[(master, 'finger_curve')])
 
     ###############
     # OPTIONS
@@ -261,6 +268,15 @@ class Rig(SimpleChainRig):
                 ('-X', '-X manual', ''), ('-Y', '-Y manual', ''), ('-Z', '-Z manual', '')]
         params.primary_rotation_axis = bpy.props.EnumProperty(items=items, name="Primary Rotation Axis", default='automatic')
 
+        params.bbones = bpy.props.IntProperty(
+            name        = 'B-Bone Segments',
+            default     = 10,
+            min         = 1,
+            description = 'Number of B-Bone segments'
+        )
+
+        ControlLayersOption.TWEAK.add_parameters(params)
+
     @classmethod
     def parameters_ui(self, layout, params):
         """ Create the ui for the rig parameters.
@@ -268,6 +284,10 @@ class Rig(SimpleChainRig):
         r = layout.row()
         r.label(text="Bend rotation axis:")
         r.prop(params, "primary_rotation_axis", text="")
+
+        layout.prop(params, 'bbones')
+
+        ControlLayersOption.TWEAK.parameters_ui(layout, params)
 
 
 def create_sample(obj):
@@ -320,10 +340,6 @@ def create_sample(obj):
     pbone.lock_rotation_w = False
     pbone.lock_scale = (False, False, False)
     pbone.rotation_mode = 'QUATERNION'
-    try:
-        pbone.rigify_parameters.separate_extra_layers = True
-    except AttributeError:
-        pass
     try:
         pbone.rigify_parameters.extra_layers = [False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
     except AttributeError:

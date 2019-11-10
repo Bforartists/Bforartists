@@ -193,6 +193,9 @@ typedef struct TextBox {
   float x, y, w, h;
 } TextBox;
 
+/* These two Lines with # tell makesdna this struct can be excluded. */
+#
+#
 typedef struct EditNurb {
   /* base of nurbs' list (old Curve->editnurb) */
   ListBase nurbs;
@@ -203,7 +206,12 @@ typedef struct EditNurb {
   /* shape key being edited */
   int shapenr;
 
-  char _pad[4];
+  /**
+   * ID data is older than edit-mode data.
+   * Set #Main.is_memfile_undo_flush_needed when enabling.
+   */
+  char needs_flush_to_id;
+
 } EditNurb;
 
 typedef struct Curve {
