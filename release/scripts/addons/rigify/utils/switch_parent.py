@@ -51,7 +51,7 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
     ##############################
     # API
 
-    def register_parent(self, rig, bone, *, name=None, is_global=False, exclude_self=False, tags=None):
+    def register_parent(self, rig, bone, *, name=None, is_global=False, exclude_self=False, inject_into=None, tags=None):
         """
         Registers a bone of the specified rig as a possible parent.
 
@@ -61,6 +61,7 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
           name              Name of the parent for mouse-over hint.
           is_global         The parent is accessible to all rigs, instead of just children of owner.
           exclude_self      The parent is invisible to the owner rig itself.
+          inject_into       Make this parent available to children of the specified rig.
           tags              Set of tags to use for default parent selection.
 
         Lazy creation:
@@ -70,10 +71,19 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
 
         assert not self.frozen
         assert isinstance(bone, str) or callable(bone)
+        assert callable(bone) or _rig_is_child(rig, self.generator.bone_owners[bone])
+        assert _rig_is_child(rig, inject_into)
+
+        real_rig = rig
+
+        if inject_into and inject_into is not rig:
+            rig = inject_into
+            tags = (tags or set()) | {'injected'}
 
         entry = {
             'rig': rig, 'bone': bone, 'name': name, 'tags': tags,
-            'is_global': is_global, 'exclude_self': exclude_self, 'used': False,
+            'is_global': is_global, 'exclude_self': exclude_self,
+            'real_rig': real_rig, 'used': False,
         }
 
         if is_global:
@@ -95,7 +105,10 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
           select_tags       List of parent tags to try for default selection.
           ignore_global     Ignore the is_global flag of potential parents.
           exclude_self      Ignore parents registered by the rig itself.
-          context_rig       Rig to use for selecting parents.
+          allow_self        Ignore the 'exclude_self' setting of the parent.
+          context_rig       Rig to use for selecting parents; defaults to rig.
+          no_implicit       Only use parents listed as extra_parents.
+          only_selected     Like no_implicit, but allow the 'default' selected parent.
 
           prop_bone         Name of the bone to add the property to.
           prop_id           Actual name of the control property.
@@ -157,8 +170,10 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
     child_option_table = {
         'extra_parents': None,
         'prop_bone': None, 'prop_id': None, 'prop_name': None, 'controls': None,
-        'select_parent': None, 'ignore_global': False, 'exclude_self': False,
+        'select_parent': None, 'ignore_global': False,
+        'exclude_self': False, 'allow_self': False,
         'context_rig': None, 'select_tags': None,
+        'no_implicit': False, 'only_selected': False,
         'ctrl_bone': None,
         'no_fix_location': False, 'no_fix_rotation': False, 'no_fix_scale': False,
         'copy_location': None, 'copy_rotation': None, 'copy_scale': None,
@@ -197,16 +212,23 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
             parents = []
 
             for parent in self.get_rig_parent_candidates(child_rig):
+                parent_rig = parent['rig']
+
+                # Exclude injected parents
+                if parent['real_rig'] is not parent_rig:
+                    if _rig_is_child(parent_rig, child_rig):
+                        continue
+
                 if parent['rig'] is child_rig:
-                    if parent['exclude_self'] or child['exclude_self']:
+                    if (parent['exclude_self'] and not child['allow_self']) or child['exclude_self']:
                         continue
                 elif parent['is_global'] and not child['ignore_global']:
                     # Can't use parents from own children, even if global (cycle risk)
-                    if _rig_is_child(parent['rig'], child_rig):
+                    if _rig_is_child(parent_rig, child_rig):
                         continue
                 else:
                     # Required to be a child of the parent's rig
-                    if not _rig_is_child(child_rig, parent['rig']):
+                    if not _rig_is_child(child_rig, parent_rig):
                         continue
 
                 parent['used'] = True
@@ -255,32 +277,56 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
                 parent_tags[parent['bone']] |= parent['tags']
 
         last_main_parent_bone = child['parents'][-1]['bone']
-        num_main_parents = len(parent_map.items())
+        extra_parents = set()
 
         for parent in force_lazy(child['extra_parents'] or []):
             if not isinstance(parent, tuple):
                 parent = (parent, None)
+            extra_parents.add(parent[0])
             if parent[0] not in parent_map:
                 parent_map[parent[0]] = parent[1]
 
+        for parent in parent_map:
+            if parent in self.child_map:
+                parent_tags[parent] |= {'child'}
+
         parent_bones = list(parent_map.items())
-        child['parent_bones'] = parent_bones
 
         # Find which bone to select
         select_bone = force_lazy(child['select_parent']) or last_main_parent_bone
         select_tags = force_lazy(child['select_tags']) or []
-        select_index = num_main_parents
+
+        if child['no_implicit']:
+            assert len(extra_parents) > 0
+            parent_bones = [ item for item in parent_bones if item[0] in extra_parents ]
+            if last_main_parent_bone not in extra_parents:
+                last_main_parent_bone = parent_bones[-1][0]
+
+        for tag in select_tags:
+            tag_set = tag if isinstance(tag, set) else {tag}
+            matching = [
+                bone for (bone, _) in parent_bones
+                if not tag_set.isdisjoint(parent_tags[bone])
+            ]
+            if len(matching) > 0:
+                select_bone = matching[-1]
+                break
+
+        if select_bone not in parent_map:
+            print("RIGIFY ERROR: Can't find bone '%s' to select as default parent of '%s'\n" % (select_bone, bone))
+            select_bone = last_main_parent_bone
+
+        if child['only_selected']:
+            filter_set = { select_bone, *extra_parents }
+            parent_bones = [ item for item in parent_bones if item[0] in filter_set ]
 
         try:
             select_index = 1 + next(i for i, (bone, _) in enumerate(parent_bones) if bone == select_bone)
         except StopIteration:
-            print("RIGIFY ERROR: Can't find bone '%s' to select as default parent of '%s'\n" % (select_bone, bone))
+            select_index = len(parent_bones)
+            print("RIGIFY ERROR: Invalid default parent '%s' of '%s'\n" % (select_bone, bone))
 
-        for tag in select_tags:
-            matching = [ i for i, (bone, _) in enumerate(parent_bones) if tag in parent_tags[bone] ]
-            if len(matching) > 0:
-                select_index = 1 + matching[-1]
-                break
+        child['parent_bones'] = parent_bones
 
         # Create the controlling property
         prop_bone = child['prop_bone'] = force_lazy(child['prop_bone']) or bone

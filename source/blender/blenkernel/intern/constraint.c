@@ -255,7 +255,7 @@ void BKE_constraints_clear_evalob(bConstraintOb *cob)
  * For now, this is only implemented for Objects and PoseChannels.
  */
 void BKE_constraint_mat_convertspace(
-    Object *ob, bPoseChannel *pchan, float mat[4][4], short from, short to, const bool keep_scale)
+    Object *ob, bPoseChannel *pchan, float mat[4][4], short from, short to)
 {
   float diff_mat[4][4];
   float imat[4][4];
@@ -282,7 +282,7 @@ void BKE_constraint_mat_convertspace(
         /* use pose-space as stepping stone for other spaces... */
         if (ELEM(to, CONSTRAINT_SPACE_LOCAL, CONSTRAINT_SPACE_PARLOCAL)) {
           /* call self with slightly different values */
-          BKE_constraint_mat_convertspace(ob, pchan, mat, CONSTRAINT_SPACE_POSE, to, keep_scale);
+          BKE_constraint_mat_convertspace(ob, pchan, mat, CONSTRAINT_SPACE_POSE, to);
         }
         break;
       }
@@ -318,7 +318,7 @@ void BKE_constraint_mat_convertspace(
         /* use pose-space as stepping stone for other spaces */
         if (ELEM(to, CONSTRAINT_SPACE_WORLD, CONSTRAINT_SPACE_PARLOCAL)) {
           /* call self with slightly different values */
-          BKE_constraint_mat_convertspace(ob, pchan, mat, CONSTRAINT_SPACE_POSE, to, keep_scale);
+          BKE_constraint_mat_convertspace(ob, pchan, mat, CONSTRAINT_SPACE_POSE, to);
         }
         break;
       }
@@ -332,7 +332,7 @@ void BKE_constraint_mat_convertspace(
         /* use pose-space as stepping stone for other spaces */
         if (ELEM(to, CONSTRAINT_SPACE_WORLD, CONSTRAINT_SPACE_LOCAL)) {
           /* call self with slightly different values */
-          BKE_constraint_mat_convertspace(ob, pchan, mat, CONSTRAINT_SPACE_POSE, to, keep_scale);
+          BKE_constraint_mat_convertspace(ob, pchan, mat, CONSTRAINT_SPACE_POSE, to);
         }
         break;
       }
@@ -348,46 +348,12 @@ void BKE_constraint_mat_convertspace(
         invert_m4_m4_safe(imat, diff_mat);
         mul_m4_m4m4(mat, imat, mat);
       }
-      else {
-        /* Local space in this case will have to be defined as local to the owner's
-         * transform-property-rotated axes. So subtract this rotation component.
-         */
-        /* XXX This is actually an ugly hack, local space of a parent-less object *is* the same as
-         *     global space!
-         *     Think what we want actually here is some kind of 'Final Space', i.e
-         *     . once transformations are applied - users are often confused about this too,
-         *     this is not consistent with bones
-         *     local space either... Meh :|
-         *     --mont29
-         */
-        BKE_object_to_mat4(ob, diff_mat);
-        if (!keep_scale) {
-          normalize_m4(diff_mat);
-        }
-        zero_v3(diff_mat[3]);
-
-        invert_m4_m4_safe(imat, diff_mat);
-        mul_m4_m4m4(mat, imat, mat);
-      }
     }
     else if (from == CONSTRAINT_SPACE_LOCAL && to == CONSTRAINT_SPACE_WORLD) {
       /* check that object has a parent - otherwise this won't work */
       if (ob->parent) {
         /* 'add' parent's effect back to owner */
         mul_m4_m4m4(diff_mat, ob->parent->obmat, ob->parentinv);
-        mul_m4_m4m4(mat, diff_mat, mat);
-      }
-      else {
-        /* Local space in this case will have to be defined as local to the owner's
-         * transform-property-rotated axes. So add back this rotation component.
-         */
-        /* XXX See comment above for world->local case... */
-        BKE_object_to_mat4(ob, diff_mat);
-        if (!keep_scale) {
-          normalize_m4(diff_mat);
-        }
-        zero_v3(diff_mat[3]);
-
         mul_m4_m4m4(mat, diff_mat, mat);
       }
     }
@@ -575,7 +541,7 @@ static void constraint_target_to_mat4(Object *ob,
   /* Case OBJECT */
   if (substring[0] == '\0') {
     copy_m4_m4(mat, ob->obmat);
-    BKE_constraint_mat_convertspace(ob, NULL, mat, from, to, false);
+    BKE_constraint_mat_convertspace(ob, NULL, mat, from, to);
   }
   /*  Case VERTEXGROUP */
   /* Current method just takes the average location of all the points in the
@@ -588,11 +554,11 @@ static void constraint_target_to_mat4(Object *ob,
    */
   else if (ob->type == OB_MESH) {
     contarget_get_mesh_mat(ob, substring, mat);
-    BKE_constraint_mat_convertspace(ob, NULL, mat, from, to, false);
+    BKE_constraint_mat_convertspace(ob, NULL, mat, from, to);
   }
   else if (ob->type == OB_LATTICE) {
     contarget_get_lattice_mat(ob, substring, mat);
-    BKE_constraint_mat_convertspace(ob, NULL, mat, from, to, false);
+    BKE_constraint_mat_convertspace(ob, NULL, mat, from, to);
   }
   /* Case BONE */
   else {
@@ -656,7 +622,7 @@ static void constraint_target_to_mat4(Object *ob,
     }
 
     /* convert matrix space as required */
-    BKE_constraint_mat_convertspace(ob, pchan, mat, from, to, false);
+    BKE_constraint_mat_convertspace(ob, pchan, mat, from, to);
   }
 }
 
@@ -3274,29 +3240,28 @@ static void stretchto_evaluate(bConstraint *con, bConstraintOb *cob, ListBase *t
   /* only evaluate if there is a target */
   if (VALID_CONS_TARGET(ct)) {
     float size[3], scale[3], vec[3], xx[3], zz[3], orth[3];
-    float totmat[3][3];
     float dist, bulge;
 
+    /* Remove shear if using the Damped Track mode; the other modes
+     * do it as a side effect, which is relied on by rigs. */
+    if (data->plane == SWING_Y) {
+      orthogonalize_m4_stable(cob->matrix, 1, false);
+    }
+
     /* store scaling before destroying obmat */
-    mat4_to_size(size, cob->matrix);
+    normalize_m4_ex(cob->matrix, size);
 
     /* store X orientation before destroying obmat */
-    normalize_v3_v3(xx, cob->matrix[0]);
+    copy_v3_v3(xx, cob->matrix[0]);
 
     /* store Z orientation before destroying obmat */
-    normalize_v3_v3(zz, cob->matrix[2]);
+    copy_v3_v3(zz, cob->matrix[2]);
 
-    /* XXX That makes the constraint buggy with asymmetrically scaled objects, see #29940. */
-#if 0
-    sub_v3_v3v3(vec, cob->matrix[3], ct->matrix[3]);
-    vec[0] /= size[0];
-    vec[1] /= size[1];
-    vec[2] /= size[2];
+    /* Compute distance and direction to target. */
+    sub_v3_v3v3(vec, ct->matrix[3], cob->matrix[3]);
 
     dist = normalize_v3(vec);
-#endif
 
-    dist = len_v3v3(cob->matrix[3], ct->matrix[3]);
     /* Only Y constrained object axis scale should be used, to keep same length when scaling it. */
     dist /= size[1];
 
@@ -3366,52 +3331,49 @@ static void stretchto_evaluate(bConstraint *con, bConstraintOb *cob, ListBase *t
         return;
     } /* switch (data->volmode) */
 
-    /* Clear the object's rotation and scale */
-    cob->matrix[0][0] = size[0] * scale[0];
-    cob->matrix[0][1] = 0;
-    cob->matrix[0][2] = 0;
-    cob->matrix[1][0] = 0;
-    cob->matrix[1][1] = size[1] * scale[1];
-    cob->matrix[1][2] = 0;
-    cob->matrix[2][0] = 0;
-    cob->matrix[2][1] = 0;
-    cob->matrix[2][2] = size[2] * scale[2];
+    /* Compute final scale. */
+    mul_v3_v3(size, scale);
 
-    sub_v3_v3v3(vec, cob->matrix[3], ct->matrix[3]);
-    normalize_v3(vec);
-
-    /* new Y aligns  object target connection*/
-    negate_v3_v3(totmat[1], vec);
     switch (data->plane) {
+      case SWING_Y:
+        /* Point the Y axis using Damped Track math. */
+        damptrack_do_transform(cob->matrix, vec, TRACK_Y);
+        break;
       case PLANE_X:
+        /* new Y aligns  object target connection*/
+        copy_v3_v3(cob->matrix[1], vec);
+
         /* build new Z vector */
         /* othogonal to "new Y" "old X! plane */
-        cross_v3_v3v3(orth, vec, xx);
+        cross_v3_v3v3(orth, xx, vec);
         normalize_v3(orth);
 
         /* new Z*/
-        copy_v3_v3(totmat[2], orth);
+        copy_v3_v3(cob->matrix[2], orth);
 
         /* we decided to keep X plane*/
-        cross_v3_v3v3(xx, orth, vec);
-        normalize_v3_v3(totmat[0], xx);
+        cross_v3_v3v3(xx, vec, orth);
+        normalize_v3_v3(cob->matrix[0], xx);
         break;
       case PLANE_Z:
+        /* new Y aligns  object target connection*/
+        copy_v3_v3(cob->matrix[1], vec);
+
         /* build new X vector */
         /* othogonal to "new Y" "old Z! plane */
-        cross_v3_v3v3(orth, vec, zz);
+        cross_v3_v3v3(orth, zz, vec);
         normalize_v3(orth);
 
         /* new X */
-        negate_v3_v3(totmat[0], orth);
+        negate_v3_v3(cob->matrix[0], orth);
 
         /* we decided to keep Z */
-        cross_v3_v3v3(zz, orth, vec);
-        normalize_v3_v3(totmat[2], zz);
+        cross_v3_v3v3(zz, vec, orth);
+        normalize_v3_v3(cob->matrix[2], zz);
         break;
     } /* switch (data->plane) */
 
-    mul_m4_m3m4(cob->matrix, totmat, cob->matrix);
+    rescale_m4(cob->matrix, size);
   }
 }
 
@@ -4095,12 +4057,9 @@ static void shrinkwrap_get_tarmat(struct Depsgraph *UNUSED(depsgraph),
           }
 
           /* Transform normal into requested space */
-          /* Note that in this specific case, we need to keep scaling in non-parented 'local2world'
-           * object case, because SpaceTransform also takes it into account when handling normals.
-           * See T42447. */
           unit_m4(mat);
           BKE_constraint_mat_convertspace(
-              cob->ob, cob->pchan, mat, CONSTRAINT_SPACE_LOCAL, scon->projAxisSpace, true);
+              cob->ob, cob->pchan, mat, CONSTRAINT_SPACE_LOCAL, scon->projAxisSpace);
           invert_m4(mat);
           mul_mat3_m4_v3(mat, no);
 
@@ -5834,7 +5793,7 @@ void BKE_constraints_solve(struct Depsgraph *depsgraph,
 
     /* move owner matrix into right space */
     BKE_constraint_mat_convertspace(
-        cob->ob, cob->pchan, cob->matrix, CONSTRAINT_SPACE_WORLD, con->ownspace, false);
+        cob->ob, cob->pchan, cob->matrix, CONSTRAINT_SPACE_WORLD, con->ownspace);
 
     /* prepare targets for constraint solving */
     BKE_constraint_targets_for_solving_get(depsgraph, con, cob, &targets, ctime);
@@ -5853,7 +5812,7 @@ void BKE_constraints_solve(struct Depsgraph *depsgraph,
     /* move owner back into worldspace for next constraint/other business */
     if ((con->flag & CONSTRAINT_SPACEONCE) == 0) {
       BKE_constraint_mat_convertspace(
-          cob->ob, cob->pchan, cob->matrix, con->ownspace, CONSTRAINT_SPACE_WORLD, false);
+          cob->ob, cob->pchan, cob->matrix, con->ownspace, CONSTRAINT_SPACE_WORLD);
     }
 
     /* Interpolate the enforcement, to blend result of constraint into final owner transform
