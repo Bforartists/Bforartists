@@ -138,6 +138,8 @@ class CMExcludeOperator(bpy.types.Operator):
         
         if event.shift:
             # isolate/de-isolate exclusion of collections
+            
+            # get active layer collections
             active_layer_collections = [x for x in layer_collections.values() \
                                           if x["ptr"].exclude == False]
             
@@ -145,8 +147,8 @@ class CMExcludeOperator(bpy.types.Operator):
             if len(active_layer_collections) == 1 and active_layer_collections[0]["name"] == self.name:
                 if len(exclude_history) > 1:
                     # restore previous state
-                    for item in exclude_history:
-                        item["ptr"].exclude = False
+                    for x, item in enumerate(layer_collections.values()):
+                        item["ptr"].exclude = exclude_history[x]
                 
                 else:
                     # enable all collections
@@ -154,8 +156,21 @@ class CMExcludeOperator(bpy.types.Operator):
                         item["ptr"].exclude = False
             
             else:
+                # isolate collection
+                
+                # reset exclude history
+                exclude_history.clear()
+                
                 # save state
-                exclude_history = active_layer_collections
+                keep_history = -1
+                for item in layer_collections.values():
+                    exclude_history.append(item["ptr"].exclude)
+                    if item["ptr"].exclude == False:
+                        keep_history += 1
+                
+                if not keep_history:
+                    exclude_history.clear()
+                
                 
                 # isolate collection
                 for item in layer_collections.values():
@@ -178,11 +193,34 @@ class CMExcludeOperator(bpy.types.Operator):
                             
         
         else:
+            # toggle exclusion
+            
             # reset exclude history
             exclude_history.clear()
             
+            
+            # get current child exclusion state
+            child_exclusion = []
+            
+            laycol_iter_list = [laycol_ptr.children]
+            while len(laycol_iter_list) > 0:
+                new_laycol_iter_list = []
+                for laycol_iter in laycol_iter_list:
+                    for layer_collection in laycol_iter:
+                        child_exclusion.append([layer_collection, layer_collection.exclude])
+                        if len(layer_collection.children) > 0:
+                            new_laycol_iter_list.append(layer_collection.children)
+                
+                laycol_iter_list = new_laycol_iter_list
+            
+            
             # toggle exclusion of collection
             laycol_ptr.exclude = not laycol_ptr.exclude
+            
+            
+            # set correct state for all children
+            for laycol in child_exclusion:
+                laycol[0].exclude = laycol[1]
             
         
         # reset exclude all history
@@ -713,7 +751,7 @@ class CMRemoveCollectionOperator(bpy.types.Operator):
         
         return {'FINISHED'}
 
-
+rename = [False]
 class CMNewCollectionOperator(bpy.types.Operator):
     '''Add New Collection'''
     bl_label = "Add New Collection"
@@ -735,16 +773,30 @@ class CMNewCollectionOperator(bpy.types.Operator):
                 laycol["ptr"].collection.children.link(new_collection)
                 expanded.append(laycol["name"])
                 
+                # update tree view property
+                update_property_group(context)
+                
+                scn.CMListIndex = layer_collections[new_collection.name]["row_index"]
+                
             else:
                 laycol["parent"]["ptr"].collection.children.link(new_collection)
+                
+                # update tree view property
+                update_property_group(context)
+                
+                scn.CMListIndex = layer_collections[new_collection.name]["row_index"]
                 
         # if no collections add top level collection and select it
         else:
             scn.collection.children.link(new_collection)
+            
+            # update tree view property
+            update_property_group(context)
+            
             scn.CMListIndex = 0
         
-        # update tree view
-        update_property_group(context)
+        global rename
+        rename[0] = True
         
         # reset history
         exclude_history.clear()
