@@ -82,10 +82,10 @@ class SimpleChainRig(BaseRig):
 
     @stage.generate_widgets
     def make_control_widgets(self):
-        for ctrl in self.bones.ctrl.fk:
-            self.make_control_widget(ctrl)
+        for args in zip(count(0), self.bones.ctrl.fk):
+            self.make_control_widget(*args)
 
-    def make_control_widget(self, ctrl):
+    def make_control_widget(self, i, ctrl):
         create_bone_widget(self.obj, ctrl)
 
     ##############################
