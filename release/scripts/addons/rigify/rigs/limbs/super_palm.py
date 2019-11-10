@@ -24,6 +24,7 @@ import re
 from math import cos, pi
 from itertools import count, repeat
 
+from rigify.utils.rig import is_rig_base_bone
 from rigify.utils.naming import strip_org, make_derived_name
 from rigify.utils.widgets import create_widget
 from rigify.utils.misc import map_list
@@ -43,7 +44,7 @@ def bone_siblings(obj, bone):
     bones = []
 
     for b in parent.children:
-        if b.name != bone:
+        if b.name != bone and not is_rig_base_bone(obj, b.name):
             bones += [b.name]
 
     return bones

@@ -12,6 +12,7 @@ from .operators import (
     hideall_history,
     disableviewall_history,
     disablerenderall_history,
+    rename,
     )
 
 
@@ -118,15 +119,14 @@ class CollectionManager(Operator):
         #disablerenderall_history.clear()
         
         
-        context.scene.CMListIndex = 0
+        #context.scene.CMListIndex = 0
         update_property_group(context)
         
-        if get_max_lvl() > 5:
-            lvl = get_max_lvl() - 5
+        lvl = get_max_lvl()
         
         if lvl > 25:
             lvl = 25
-        
+
         self.view_layer = context.view_layer.name
         
         return wm.invoke_popup(self, width=(400+(lvl*20)))
@@ -142,7 +142,8 @@ class CM_UL_items(UIList):
         laycol = layer_collections[item.name]
         collection = laycol["ptr"].collection
         
-        row = layout.row(align=True)
+        split = layout.split(factor=0.96)
+        row = split.row(align=True)
         row.alignment = 'LEFT'
         
         # indent child items
@@ -170,7 +171,13 @@ class CM_UL_items(UIList):
         
         row.label(icon='GROUP')
         
-        row.prop(collection, "name", text="", expand=True)
+        name_row = row.row()
+        
+        #if rename[0] and index == scn.CMListIndex:
+            #name_row.activate_init = True
+            #rename[0] = False
+            
+        name_row.prop(collection, "name", text="", expand=True)
         
         # used as a separator (actual separator not wide enough)
         row.label()
@@ -214,7 +221,9 @@ class CM_UL_items(UIList):
             row.operator("view3d.disable_render_collection", text="", icon=icon, emboss=False).name = item.name
         
         
-        row.operator("view3d.remove_collection", text="", icon='X', emboss=False).collection_name = item.name
+        rm_op = split.row()
+        rm_op.alignment = 'RIGHT'
+        rm_op.operator("view3d.remove_collection", text="", icon='X', emboss=False).collection_name = item.name
     
     
     def filter_items(self, context, data, propname):
