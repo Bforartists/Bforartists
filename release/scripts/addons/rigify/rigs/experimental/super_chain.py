@@ -713,10 +713,10 @@ def add_parameters(params):
         )
 
     params.bbones = bpy.props.IntProperty(
-        name='bbone segments',
-        default=10,
-        min=1,
-        description='Number of segments'
+        name        = 'B-Bone Segments',
+        default     = 10,
+        min         = 1,
+        description = 'Number of B-Bone segments'
     )
 
     params.wgt_offset = bpy.props.FloatProperty(
