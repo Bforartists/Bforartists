@@ -2560,7 +2560,7 @@ class VIEW3D_MT_object(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_object_parent")
-        layout.menu("VIEW3D_MT_object_collection")
+        #layout.menu("VIEW3D_MT_object_collection") # bfa, turned off
         layout.menu("VIEW3D_MT_object_relations")
         layout.menu("VIEW3D_MT_object_constraints")
         layout.menu("VIEW3D_MT_object_track")
