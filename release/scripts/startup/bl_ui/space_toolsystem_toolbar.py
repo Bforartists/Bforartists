@@ -1909,11 +1909,9 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         'POSE': [
             *_tools_default,
             None,
-            (
-                _defs_pose.breakdown,
-                _defs_pose.push,
-                _defs_pose.relax,
-            ),
+            _defs_pose.breakdown,
+            _defs_pose.push,
+            _defs_pose.relax,
         ],
         'EDIT_ARMATURE': [
             *_tools_default,
