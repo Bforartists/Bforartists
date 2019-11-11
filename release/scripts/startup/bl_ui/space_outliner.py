@@ -130,7 +130,7 @@ class   OUTLINER_MT_object_collection(Menu):
         layout.operator("object.link_to_collection", icon='GROUP')
 
         layout.separator()
-
+        layout.operator("collection.objects_remove", icon = "DELETE")
         layout.operator("collection.objects_remove_all", icon = "DELETE")
 
         layout.separator()
