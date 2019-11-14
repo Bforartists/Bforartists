@@ -4041,7 +4041,7 @@ void IMAGE_OT_render_border(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Render Region";
-  ot->description = "Set the boundaries of the render region and enable render region";
+  ot->description = "Box select an area to render a part of the image";
   ot->idname = "IMAGE_OT_render_border";
 
   /* api callbacks */
@@ -4078,7 +4078,7 @@ void IMAGE_OT_clear_render_border(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Render Region";
   ot->description =
-      "Removes an existing Render border";  // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
+      "Removes an existing Render Region rectangle";  // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
   ot->idname = "IMAGE_OT_clear_render_border";
 
   /* api callbacks */
