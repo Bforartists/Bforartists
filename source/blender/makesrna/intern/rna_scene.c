@@ -5733,7 +5733,7 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "mode", R_BORDER);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(
-      prop, "Render Region", "Render a user-defined render region, within the frame size");
+      prop, "Render Region", "Box select an area to render a part of the image");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "border_min_x", PROP_FLOAT, PROP_NONE);
