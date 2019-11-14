@@ -3421,9 +3421,9 @@ static int render_border_exec(bContext *C, wmOperator *op)
 void VIEW3D_OT_render_border(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Set Render Region";
+  ot->name = "Render Region";
   ot->description =
-      "Draw a rectangle to render a portion of the Viewport / Cameraview";
+      "Box select a portion of the Viewport to render a part of it\nRequires Viewport shading rendered \nViewport and Camera Render Region rectangle are independant\nWorks in Viewport just with Cycles.";
   ot->idname = "VIEW3D_OT_render_border";
 
   /* api callbacks */
@@ -3484,7 +3484,7 @@ void VIEW3D_OT_clear_render_border(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Render Region";
   ot->description =
-      "Removes an existing Render border";  // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
+      "Removes an existing Render Region rectangle";  // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
   ot->idname = "VIEW3D_OT_clear_render_border";
 
   /* api callbacks */
