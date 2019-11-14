@@ -728,9 +728,13 @@ class VIEW3D_PT_slots_projectpaint(View3DPanel, Panel):
         ob = context.active_object
 
         layout.prop(settings, "mode", text="Mode")
+        
         layout.separator()
 
         if settings.mode == 'MATERIAL':
+                       
+            layout.operator_menu_enum("paint.add_texture_paint_slot", "type", icon='ADD', text="Add Texture Paint Slot")
+            
             if len(ob.material_slots) > 1:
                 layout.template_list("MATERIAL_UL_matslots", "layers",
                                      ob, "material_slots",
@@ -753,10 +757,9 @@ class VIEW3D_PT_slots_projectpaint(View3DPanel, Panel):
 
                 box = row.box()
                 box.label(text="No Textures")
+                box.label(text="Add a Texture Paint Slot")
                 have_image = False
-
-            sub = row.column(align=True)
-            sub.operator_menu_enum("paint.add_texture_paint_slot", "type", icon='ADD', text="")
+            
 
         elif settings.mode == 'IMAGE':
             mesh = ob.data
