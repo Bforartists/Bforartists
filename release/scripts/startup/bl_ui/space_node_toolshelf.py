@@ -2997,6 +2997,15 @@ class NODES_PT_Modify_script(bpy.types.Panel):
 
 
 # ------------- Relations tab -------------------------------
+
+
+# Workaround to separate the tooltips
+class NODE_PT_exit_edit_group(bpy.types.Operator):
+    """Exit edit node group"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "node.group_edit_exit"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Group Edit Exit"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+    
             
 #Relations tab, Relations Panel
 class NODES_PT_Relations_group(bpy.types.Panel):
@@ -3019,16 +3028,16 @@ class NODES_PT_Relations_group(bpy.types.Panel):
         ##### Textbuttons
 
         if not addon_prefs.Node_text_or_icon:
-
-            col = layout.column(align=True)  
-
-            col.operator("node.group_edit", text=" Edit Group         ", icon = "NODE_EDITGROUP").exit = False
-            col.operator("node.group_edit", text = "Exit Edit Group ", icon = "NODE_EXITEDITGROUP").exit = True
-            col.operator("node.group_insert", text = " Group Insert      ", icon = "NODE_GROUPINSERT")
+            
+            col = layout.column(align=True)            
             col.operator("node.group_make", text = " Make Group      ", icon = "NODE_MAKEGROUP")
+            col.operator("node.group_insert", text = " Group Insert      ", icon = "NODE_GROUPINSERT")
 
             col = layout.column(align=True)  
+            col.operator("node.group_edit", text=" Edit Group         ", icon = "NODE_EDITGROUP").exit = False
+            col.operator("node.group_edit_exit", text = "Exit Edit Group ", icon = "NODE_EXITEDITGROUP") #bfa - separated tooltip
 
+            col = layout.column(align=True)  
             col.operator("node.group_ungroup", text = " Ungroup           ", icon = "NODE_UNGROUP")
 
         #### Icon Buttons
@@ -3036,13 +3045,17 @@ class NODES_PT_Relations_group(bpy.types.Panel):
         else: 
 
             row = layout.row()
-            row.alignment = 'LEFT'        
+            row.alignment = 'LEFT'
+            
+            row.operator("node.group_make", text = "", icon = "NODE_MAKEGROUP")
+            row.operator("node.group_insert", text = "", icon = "NODE_GROUPINSERT")
+            
+            row = layout.row()
+            row.alignment = 'LEFT'   
 
             row.operator("node.group_edit", text = "", icon = "NODE_EDITGROUP").exit = False
-            row.operator("node.group_edit", text = "", icon = "NODE_EXITEDITGROUP").exit = True
-            row.operator("node.group_insert", text = "", icon = "NODE_GROUPINSERT")
-            row.operator("node.group_make", text = "", icon = "NODE_MAKEGROUP")
-
+            row.operator("node.group_edit_exit", text = "", icon = "NODE_EXITEDITGROUP") #bfa - separated tooltip
+          
             row = layout.row()
             row.alignment = 'LEFT'
 
@@ -3140,6 +3153,7 @@ classes = (
     NODES_PT_Modify_distort_tex,
     NODES_PT_Modify_distort_comp,
     NODES_PT_Modify_script,
+    NODE_PT_exit_edit_group, # BFA - separated tooltip
     NODES_PT_Relations_group,
     NODES_PT_Relations_layout, 
 )
