@@ -378,7 +378,6 @@ class NODE_MT_node(Menu):
 
         layout.separator()
 
-        layout.menu("NODE_MT_node_group")
         layout.menu("NODE_MT_node_group_separate")
 
         layout.separator()
@@ -402,17 +401,6 @@ class NODE_MT_node_links(Menu):
         layout.operator("node.links_detach", icon = "DETACH_LINKS")
         layout.operator("node.move_detach_links", text = "Detach Links Move", icon = "DETACH_LINKS")
 
-class NODE_MT_node_group(Menu):
-    bl_label = "Group"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("node.group_edit", icon = "NODE_EDITGROUP").exit = False
-        layout.operator("node.group_edit_exit", text="Exit Edit Group", icon = "NODE_EXITEDITGROUP") # bfa - separated tooltip
-        layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
-        layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
-        layout.operator("node.group_insert", icon = "NODE_GROUPINSERT")
 
 class NODE_MT_node_toggle(Menu):
     bl_label = "Hide/Toggle"
@@ -779,12 +767,7 @@ def node_draw_tree_view(_layout, _context):
     pass
 
 
-# Workaround to separate the tooltips for Show Hide for Armature in Edit Mode
-class NODE_MT_exit_edit_group(bpy.types.Operator):
-    """Exit edit node group"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "node.group_edit_exit"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Group Edit Exit"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
 
 # Adapt properties editor panel to display in node editor. We have to
 # copy the class rather than inherit due to the way bpy registration works.
@@ -836,7 +819,6 @@ classes = (
     NODE_MT_node_group_separate,
     NODE_MT_node,
     NODE_MT_node_links,
-    NODE_MT_node_group,
     NODE_MT_node_toggle,
     NODE_MT_node_color_context_menu,
     NODE_MT_context_menu,
@@ -857,7 +839,6 @@ classes = (
     node_panel(WORLD_PT_viewport_display),
     node_panel(DATA_PT_light),
     node_panel(DATA_PT_EEVEE_light),
-    NODE_MT_exit_edit_group, # BFA - Draise
     NODE_PT_view,
 )
 
