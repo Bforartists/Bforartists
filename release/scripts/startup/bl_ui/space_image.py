@@ -330,16 +330,16 @@ class IMAGE_MT_image(Menu):
             layout.separator()
 
             layout.menu("IMAGE_MT_image_invert")
-            layout.operator("image.resize", text="Resize")
+            layout.operator("image.resize", text="Resize", icon = "MAN_SCALE")
 
         if ima and not show_render:
             if ima.packed_file:
                 if len(ima.filepath):
                     layout.separator()
-                    layout.operator("image.unpack", text="Unpack")
+                    layout.operator("image.unpack", text="Unpack", icon = "PACKAGE")
             else:
                 layout.separator()
-                layout.operator("image.pack", text="Pack")
+                layout.operator("image.pack", text="Pack", icon = "PACKAGE")
 
 
 class IMAGE_MT_image_invert(Menu):
