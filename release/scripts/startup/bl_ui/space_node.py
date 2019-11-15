@@ -717,6 +717,7 @@ class NODE_PT_quality(bpy.types.Panel):
         col.prop(tree, "chunk_size")
 
         col = layout.column()
+        col.use_property_split = False
         col.prop(tree, "use_opencl")
         col.prop(tree, "use_groupnode_buffer")
         col.prop(tree, "use_two_pass")
