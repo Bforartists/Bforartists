@@ -40,5 +40,9 @@ Desktop.ini
 
 # in-source lib downloads
 /build_files/build_environment/downloads
+
+#bfa - we don't have sub modules
 /.gitmodules
-/.gitmodules
+
+# in-source buildbot signing configuration
+/build_files/buildbot/codesign/config_server.py
