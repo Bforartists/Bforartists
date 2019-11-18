@@ -229,6 +229,10 @@ class GRAPH_MT_view(Menu):
 
         layout.separator()
 
+        layout.operator("view2d.zoom_border", icon = "ZOOM_BORDER")
+
+        layout.separator()
+
         layout.operator("graph.view_all", icon = "VIEWALL")
         layout.operator("graph.view_selected", icon = "VIEW_SELECTED")
         layout.operator("graph.view_frame", icon = "VIEW_FRAME" )
