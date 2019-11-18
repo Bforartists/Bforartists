@@ -395,6 +395,10 @@ class DOPESHEET_MT_view(Menu):
 
         layout.separator()
 
+        layout.operator("view2d.zoom_border", icon = "ZOOM_BORDER")
+
+        layout.separator()
+
         layout.operator("action.view_all", icon = "VIEWALL")
         layout.operator("action.view_selected", icon = "VIEW_SELECTED")
         layout.operator("action.view_frame", icon = "VIEW_FRAME" )

@@ -133,6 +133,10 @@ class NLA_MT_view(Menu):
 
         layout.separator()
 
+        layout.operator("view2d.zoom_border", icon = "ZOOM_BORDER")
+
+        layout.separator()
+
         layout.operator("nla.view_all", icon = "VIEWALL")
         layout.operator("nla.view_selected", icon = "VIEW_SELECTED")
         layout.operator("nla.view_frame", icon = "VIEW_FRAME" )
