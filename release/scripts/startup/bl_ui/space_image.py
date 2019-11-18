@@ -110,7 +110,7 @@ class IMAGE_MT_view(Menu):
         layout.operator("image.view_all", icon = "VIEWALL" )
         layout.operator("image.view_all_fit", text="View Fit", icon = "VIEW_FIT") # bfa - separated tooltip
 
-        layout.operator("image.view_center_cursor", text="Center View to Cursor")
+        layout.operator("image.view_center_cursor", text="Center View to Cursor", icon = "CENTERTOCURSOR")
 
         layout.separator()
 
@@ -142,7 +142,7 @@ class IMAGE_MT_view_zoom(Menu):
 
             layout.operator(
                 "image.view_zoom_ratio",
-                text=iface_("Zoom %d:%d") % (a, b),
+                text=iface_("Zoom %d:%d") % (a, b), icon = "ZOOM_SET",
                 translate=False,
             ).ratio = a / b
 
