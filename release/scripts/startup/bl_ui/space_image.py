@@ -110,7 +110,11 @@ class IMAGE_MT_view(Menu):
         layout.operator("image.view_all", icon = "VIEWALL" )
         layout.operator("image.view_all_fit", text="View Fit", icon = "VIEW_FIT") # bfa - separated tooltip
 
-        layout.operator("image.view_center_cursor", text="Center View to Cursor", icon = "CENTERTOCURSOR")
+        if sima.mode != 'UV':
+            if sima.ui_mode == 'MASK':
+                layout.operator("image.view_center_cursor", text="Center View to Cursor", icon = "CENTERTOCURSOR")
+        elif sima.mode == 'UV':
+            layout.operator("image.view_center_cursor", text="Center View to Cursor", icon = "CENTERTOCURSOR")
 
         layout.separator()
 
