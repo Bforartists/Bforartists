@@ -4112,7 +4112,7 @@ static void SCREEN_OT_header_toggle_editortypemenu(wmOperatorType *ot)
   ot->name = "Hide Editortype menu";
   ot->idname = "SCREEN_OT_header_toggle_editortypemenu";
   ot->description =
-      "Hide Editortype menu\nShows or hides the Editortype menu to change the editor type";
+      "Shows or hides the Editortype menu to change the editor type";
 
   /* api callbacks */
   ot->exec = header_toggle_editortypemenu_exec;
