@@ -6787,7 +6787,7 @@ static void def_cmp_zcombine(StructRNA *srna)
   RNA_def_property_ui_text(
       prop,
       "Anti-Alias Z",
-      "Anti-alias the z-buffer to try to avoid artifacts, mostly useful for Blender renders");
+      "Anti-alias the z-buffer to try to avoid artifacts");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
