@@ -1772,7 +1772,7 @@ void MASK_OT_delete(wmOperatorType *ot)
   ot->idname = "MASK_OT_delete";
 
   /* api callbacks */
-  ot->invoke = WM_operator_confirm;
+  /* ot->invoke = WM_operator_confirm; *//*bfa - we don't confirm delete*/
   ot->exec = delete_exec;
   ot->poll = ED_maskedit_mask_poll;
 
