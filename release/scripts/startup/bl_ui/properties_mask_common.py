@@ -379,12 +379,12 @@ class MASK_MT_select(Menu):
         
         layout.separator()
 
-        layout.operator("mask.select_linked", text = "Select Linked", icon = "LINKED")
+        layout.operator("mask.select_linked", text = "Linked", icon = "LINKED")
 
         layout.separator()
 
-        layout.operator("mask.select_more", icon = "SELECTMORE")
-        layout.operator("mask.select_less", icon = "SELECTLESS")
+        layout.operator("mask.select_more", text = "More", icon = "SELECTMORE")
+        layout.operator("mask.select_less", text = "Less", icon = "SELECTLESS")
 
 
 classes = (

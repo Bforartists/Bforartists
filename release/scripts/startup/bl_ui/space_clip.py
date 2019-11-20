@@ -1502,7 +1502,7 @@ class CLIP_MT_select(Menu):
 
         layout.separator()
 
-        layout.menu("CLIP_MT_select_grouped")
+        layout.menu("CLIP_MT_select_grouped", text = "Grouped")
 
 
 class CLIP_MT_select_grouped(Menu):
