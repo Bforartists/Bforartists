@@ -818,7 +818,7 @@ node_bokeh_blur
 node_bokeh_image
 node_boxmask
 node_brick
-#def_icon_blank(838
+overlap
 node_bump
 
 node_channel
