@@ -333,8 +333,8 @@ class MASK_MT_animation(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mask.shape_key_clear", icon = "CLEAR")
         layout.operator("mask.shape_key_insert", icon = "KEYFRAMES_INSERT")
+        layout.operator("mask.shape_key_clear", icon = "CLEAR")
         layout.operator("mask.shape_key_feather_reset", icon = "RESET")
         layout.operator("mask.shape_key_rekey", icon = 'KEY_HLT')
 
