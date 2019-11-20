@@ -872,7 +872,7 @@ checker_deselect
 node_checker
 node_chroma
 node_clouds
-#def_icon_blank(889
+handle_align_single
 node_colorbalance
 node_colorcorrection
 node_colorramp
