@@ -223,7 +223,7 @@ class IMAGE_MT_select(Menu):
 
         layout.operator("uv.select_pinned", text = "Pinned", icon = "PINNED")
         layout.operator("uv.select_split", text = "Split", icon = "SPLIT")
-        layout.operator("uv.select_overlap")
+        layout.operator("uv.select_overlap", text = "Overlap")
 
         layout.separator()
 
