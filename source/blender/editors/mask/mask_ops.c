@@ -52,6 +52,9 @@
 
 #include "mask_intern.h" /* own include */
 
+#include "UI_interface.h" /*bfa - for the icons*/
+#include "UI_resources.h" /*bfa - for the icons*/
+
 /******************** utility functions *********************/
 
 static void mask_point_scaled_handle(/*const*/ MaskSplinePoint *point,
@@ -1956,11 +1959,11 @@ static int set_handle_type_exec(bContext *C, wmOperator *op)
 void MASK_OT_handle_type_set(wmOperatorType *ot)
 {
   static const EnumPropertyItem editcurve_handle_type_items[] = {
-      {HD_AUTO, "AUTO", 0, "Auto", ""},
-      {HD_VECT, "VECTOR", 0, "Vector", ""},
-      {HD_ALIGN, "ALIGNED", 0, "Aligned Single", ""},
-      {HD_ALIGN_DOUBLESIDE, "ALIGNED_DOUBLESIDE", 0, "Aligned", ""},
-      {HD_FREE, "FREE", 0, "Free", ""},
+      {HD_AUTO, "AUTO", ICON_HANDLE_AUTO, "Auto", ""},
+      {HD_VECT, "VECTOR", ICON_HANDLE_VECTOR, "Vector", ""},
+      {HD_ALIGN, "ALIGNED", ICON_HANDLE_ALIGN_SINGLE, "Aligned Single", ""},
+      {HD_ALIGN_DOUBLESIDE, "ALIGNED_DOUBLESIDE", ICON_HANDLE_ALIGN, "Aligned", ""},
+      {HD_FREE, "FREE", ICON_HANDLE_FREE, "Free", ""},
       {0, NULL, 0, NULL, NULL},
   };
 

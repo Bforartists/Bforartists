@@ -282,7 +282,7 @@ class MASK_MT_mask(Menu):
         layout.operator("mask.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
         layout.operator("mask.switch_direction", icon = 'SWITCH_DIRECTION')
         layout.operator("mask.normals_make_consistent", icon = "RECALC_NORMALS")
-        layout.operator("mask.handle_type_set", icon = 'HANDLE_AUTO')
+        layout.operator_menu_enum("mask.handle_type_set", "type")
 
         layout.separator()
 
