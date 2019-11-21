@@ -40,7 +40,7 @@
 /** Optionally set to 1,2,... for example to to get alpha1 or rc2. */
 #define BLENDER_VERSION_CYCLE_NUMBER
 
-#define BFORARTISTS_VERSION 070
+#define BFORARTISTS_VERSION 080
 
 /** Defined in from blender.c */
 extern char versionstr[];
