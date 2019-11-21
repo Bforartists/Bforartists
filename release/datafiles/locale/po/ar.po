@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-11-20 13:23:12\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -25403,6 +25403,10 @@ msgid "Write files to original location (overwrite existing files)"
 msgstr "(ﺓﺩﻮﺟﻮﻤﻟﺍ ﺕﺎﻔﻠﻤﻟﺍ ﻝﺪﺒﺘﺳﺍ) ﻲﻠﺻﻻ﻿ﺍ ﻊﻗﻮﻤﻟﺍ ﻲﻓ ﺕﺎﻔﻠﻤﻟﺍ ﺐﺘﻛﺍ"
 
 
+msgid "Remove Pack"
+msgstr "ﻥﺰّﺨﻤﻟﺍ ﻑﺬﺣﺍ"
+
+
 msgctxt "Operator"
 msgid "Unpack Item"
 msgstr "ﺓﺭﻮﺼﻟﺍ ﻦﻳﺰﺨﺗ ﻍﺮﻓ"
@@ -27450,10 +27454,6 @@ msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺮﺻﺎﻨﻌﻟﺍ ﺎﻴﺋﺍﻮﺸﻋ ﺐ
 
 msgid "Reverse current order of selected elements"
 msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺮﺻﺎﻨﻌﻠﻟ ﻲﻟﺎﺤﻟﺍ ﺐﻴﺗﺮﺘﻟﺍ ﺲﻜﻋﺍ"
-
-
-msgid "Make Duplicates"
-msgstr "ﺦﺴﻧ ﻞﻌﺟﺇ"
 
 
 msgid "Fractal"
@@ -45308,10 +45308,6 @@ msgstr "ءﺎﻀﻓ"
 
 msgid "Unpack File"
 msgstr "ﻒﻠﻤﻟﺍ ﻍﺮّﻓ"
-
-
-msgid "Remove Pack"
-msgstr "ﻥﺰّﺨﻤﻟﺍ ﻑﺬﺣﺍ"
 
 
 msgid "Overwrite %s"

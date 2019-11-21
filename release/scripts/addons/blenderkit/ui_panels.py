@@ -463,6 +463,8 @@ def draw_panel_material_upload(self, context):
     layout.prop(props, 'tags')
     # layout.prop(props,'shaders')#TODO autofill on upload
     # row = layout.row()
+    layout.prop(props, 'is_free')
+
     layout.prop(props, 'pbr')
     layout.prop(props, 'uv')
     layout.prop(props, 'animated')
