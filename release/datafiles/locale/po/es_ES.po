@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-11-20 13:23:12\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzan <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -19167,14 +19167,6 @@ msgid "Polygons of the mesh"
 msgstr "Polígonos de la malla"
 
 
-msgid "Fix Poles"
-msgstr "Corregir polos"
-
-
-msgid "Produces less poles and a better topology flow"
-msgstr "Produce menos polos y un mejor flujo en la topología"
-
-
 msgid "Remesh Mode"
 msgstr "Modo de rehacer malla"
 
@@ -19193,26 +19185,6 @@ msgstr "Cuadriláteros"
 
 msgid "Use the quad remesher"
 msgstr "Usa el método de rehacer mallas para obtener cuadriláteros"
-
-
-msgid "Preserve Paint Mask"
-msgstr "Preservar máscara de pintura"
-
-
-msgid "Keep the current mask on the new mesh"
-msgstr "Mantiene la máscara actual en la nueva malla"
-
-
-msgid "Projects the mesh to preserve the volume and details of the original mesh"
-msgstr "Proyecta la malla para preservar el volumen y los detalles de la malla original"
-
-
-msgid "Smooth Normals"
-msgstr "Suavizar normales"
-
-
-msgid "Smooth the normals of the remesher result"
-msgstr "Suaviza las normales al rehacer la malla"
 
 
 msgid "Adaptivity"
@@ -19345,6 +19317,34 @@ msgstr "Selección de vértices"
 
 msgid "Vertex selection masking for painting"
 msgstr "Permite enmascarar las áreas a pintar, mediante la selección de vértices"
+
+
+msgid "Fix Poles"
+msgstr "Corregir polos"
+
+
+msgid "Produces less poles and a better topology flow"
+msgstr "Produce menos polos y un mejor flujo en la topología"
+
+
+msgid "Preserve Paint Mask"
+msgstr "Preservar máscara de pintura"
+
+
+msgid "Keep the current mask on the new mesh"
+msgstr "Mantiene la máscara actual en la nueva malla"
+
+
+msgid "Projects the mesh to preserve the volume and details of the original mesh"
+msgstr "Proyecta la malla para preservar el volumen y los detalles de la malla original"
+
+
+msgid "Smooth Normals"
+msgstr "Suavizar normales"
+
+
+msgid "Smooth the normals of the remesher result"
+msgstr "Suaviza las normales al rehacer la malla"
 
 
 msgid "Clone UV Loop Layer"
@@ -43368,6 +43368,10 @@ msgid "Disable Auto-pack, keep all packed files"
 msgstr "Deshabilitar empaque automático, mantener todos los archivos empacados"
 
 
+msgid "Remove Pack"
+msgstr "Eliminar paquete"
+
+
 msgctxt "Operator"
 msgid "Unpack Item"
 msgstr "Desempacar elemento"
@@ -49648,10 +49652,6 @@ msgstr "Extruye los vértices seleccionados en círculo alrededor del cursor en 
 
 msgid "Rotation for each step"
 msgstr "Rotación para cada intervalo"
-
-
-msgid "Make Duplicates"
-msgstr "Crear duplicados"
 
 
 msgid "Auto Merge"
@@ -74434,14 +74434,6 @@ msgid "Sequence strip creating text"
 msgstr "Clip de la secuencia para crear un texto"
 
 
-msgid "Align the text along the X axis, relative to the text midpoint"
-msgstr "Alinea el texto a lo largo del eje X, relativo al punto medio del texto"
-
-
-msgid "Align the image along the Y axis, relative to the text midpoint"
-msgstr "Alinea el texto a lo largo del eje Y, relativo al punto medio del texto"
-
-
 msgid "Text color"
 msgstr "Color del texto"
 
@@ -98026,10 +98018,6 @@ msgstr "Deshacer deshabilitado al inicio"
 
 msgid "Unpack File"
 msgstr "Desempacar archivo"
-
-
-msgid "Remove Pack"
-msgstr "Eliminar paquete"
 
 
 msgid "Create %s"

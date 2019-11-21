@@ -1053,7 +1053,7 @@ class POVRAY_OT_rainbow_add(bpy.types.Operator):
         ob = context.object
         ob.data.show_cone = False
         ob.data.spot_blend = 0.5
-        ob.data.shadow_buffer_clip_end = 0
+        # ob.data.shadow_buffer_clip_end = 0 # deprecated in 2.8
         ob.data.shadow_buffer_clip_start = 4*cam.location.length
         ob.data.distance = cam.location.length
         ob.data.energy = 0

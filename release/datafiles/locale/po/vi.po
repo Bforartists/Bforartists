@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-11-20 13:23:12\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -15125,6 +15125,10 @@ msgid "Gpencil Settings"
 msgstr "Cài Đặt Bút Sáp"
 
 
+msgid "Grease Pencil Draw Tool"
+msgstr "Dụng Cụ Vẽ Bút Sáp"
+
+
 msgid "Draw"
 msgstr "Vẽ"
 
@@ -15651,6 +15655,14 @@ msgstr "Góc Tọa Độ Mặt Phẳng"
 
 msgid "When locked keep using the plane origin of surface where stroke was initiated"
 msgstr "Khi bị khóa lại vẫn dùng góc tọa độ mặt phẳng của bề mặt tại chổ nét được khởi động"
+
+
+msgid "Antialasing"
+msgstr "Chống Răng Cưa"
+
+
+msgid "Smooths the edges of the strokes"
+msgstr "Mịn hóa ranh của các nét"
 
 
 msgid "Use Sculpt"
@@ -19167,14 +19179,6 @@ msgid "Polygons of the mesh"
 msgstr "Đa giác của mạng lưới"
 
 
-msgid "Fix Poles"
-msgstr "Sửa Cực"
-
-
-msgid "Produces less poles and a better topology flow"
-msgstr "Nó gỉm tạo cực và có lưu vòng hình dạng học tốt hơn"
-
-
 msgid "Remesh Mode"
 msgstr "Chế Độ Làm Lại Mạng Lưới"
 
@@ -19193,26 +19197,6 @@ msgstr "Tư Giác"
 
 msgid "Use the quad remesher"
 msgstr "Dùng làm mạng lưới tư giác"
-
-
-msgid "Preserve Paint Mask"
-msgstr "Giữ Lại Mặt Nạ Sơn"
-
-
-msgid "Keep the current mask on the new mesh"
-msgstr "Giữ lại mặt nạ hiện tại trên mạng lưới mới"
-
-
-msgid "Projects the mesh to preserve the volume and details of the original mesh"
-msgstr "Chiếu mạng lưới để giữ nguêyn thể tích và chi tiết của mạng lưới ban đầu"
-
-
-msgid "Smooth Normals"
-msgstr "Mịn Hóa Pháp Tuyến"
-
-
-msgid "Smooth the normals of the remesher result"
-msgstr "Mịn hóa pháp tuyến của kết qủa từ làm lại mạng lưới"
 
 
 msgid "Adaptivity"
@@ -19345,6 +19329,34 @@ msgstr "Sự Lựa Chọn Đỉnh"
 
 msgid "Vertex selection masking for painting"
 msgstr "Mặt nạ để lựa chọn đỉnh cho sơn"
+
+
+msgid "Fix Poles"
+msgstr "Sửa Cực"
+
+
+msgid "Produces less poles and a better topology flow"
+msgstr "Nó gỉm tạo cực và có lưu vòng hình dạng học tốt hơn"
+
+
+msgid "Preserve Paint Mask"
+msgstr "Giữ Lại Mặt Nạ Sơn"
+
+
+msgid "Keep the current mask on the new mesh"
+msgstr "Giữ lại mặt nạ hiện tại trên mạng lưới mới"
+
+
+msgid "Projects the mesh to preserve the volume and details of the original mesh"
+msgstr "Chiếu mạng lưới để giữ nguêyn thể tích và chi tiết của mạng lưới ban đầu"
+
+
+msgid "Smooth Normals"
+msgstr "Mịn Hóa Pháp Tuyến"
+
+
+msgid "Smooth the normals of the remesher result"
+msgstr "Mịn hóa pháp tuyến của kết qủa từ làm lại mạng lưới"
 
 
 msgid "Clone UV Loop Layer"
@@ -42297,6 +42309,10 @@ msgid "Export each non-muted NLA strip as a separated FBX's AnimStack, if any, i
 msgstr "Xuất mỗi trình tự NLA không bị tắt tiếng làm một AnimStack (XếpĐốngHoạtHình) được chẻ  FBX, nếu có, thay thế hoạt hình cảnh toàn cầu"
 
 
+msgid "!EXPERIMENTAL! Apply Transform"
+msgstr "¡ĐỒ THỬ NGHIỆM! Ạp Dụng Biến Hóa"
+
+
 msgid "Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender's space (WARNING! experimental option, use at own risks, known broken with armatures/animations)"
 msgstr "Nướng biến hóa không gian vào dữ liệu vật thể, giúp tránh vật thể xoay kiểu không muốn khi không gian mục tiêu không sắp xếp với không gian của Blender (CẢNH BÁO! đây là tùy chọn đồ thử nghiệm, có thể có kết qủa không theo ý, biết trước ncốt/hoạt hình hư) "
 
@@ -43362,6 +43378,10 @@ msgstr "Lưu tệp vào vị trí ban đầu (ghi trên tệp có sẵn)"
 
 msgid "Disable Auto-pack, keep all packed files"
 msgstr "Tắt Gói-Tự Động, giữ hết tệp được gói"
+
+
+msgid "Remove Pack"
+msgstr "Xoá Gói"
 
 
 msgctxt "Operator"
@@ -49646,8 +49666,8 @@ msgid "Rotation for each step"
 msgstr "Xoay cho mỗi bước"
 
 
-msgid "Make Duplicates"
-msgstr "Sao Chép"
+msgid "Use Duplicates"
+msgstr "Dùng Các Sao Chép"
 
 
 msgid "Auto Merge"
@@ -74430,12 +74450,12 @@ msgid "Sequence strip creating text"
 msgstr "Đoạn trình tự cho chế tạo văn bản"
 
 
-msgid "Align the text along the X axis, relative to the text midpoint"
-msgstr "Sắp xếp văn bản theo trục X, tương đối với điểm trung của văn bản"
+msgid "Align the text along the X axis, relative to the text bounds"
+msgstr "Sắp xếp văn bản theo trục X, tương đối với ranh giới của văn bản"
 
 
-msgid "Align the image along the Y axis, relative to the text midpoint"
-msgstr "Sắp xếp văn bản theo trục Y, tương đối với điểm trung của văn bản"
+msgid "Align the text along the Y axis, relative to the text bounds"
+msgstr "Sắp xếp văn bản theo trục Y, tương đối với ranh giới của văn bản"
 
 
 msgid "Text color"
@@ -90938,6 +90958,16 @@ msgstr "Biến Đổi sang Đường Đi"
 
 
 msgctxt "Operator"
+msgid "Convert to Bezier Curve"
+msgstr "Biến Đổi sang Cong Bezier"
+
+
+msgctxt "Operator"
+msgid "Convert to Polygon Curve"
+msgstr "Biến Đổi thành Đường Cong Đa Giác"
+
+
+msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "Kích Cỡ Vẽ Vật Rỗng"
 
@@ -94263,6 +94293,22 @@ msgid "Cannot remove more edges than the mesh contains"
 msgstr "Không thể xóa số lượng cạnh hơn thì có trong mạng lưới"
 
 
+msgid "Cannot remove loops in edit mode"
+msgstr "Không thể xóa vòng lặp trong chế độ biên tập"
+
+
+msgid "Cannot remove more loops than the mesh contains"
+msgstr "Không thể xóa số lượng vòng lặp hơn có trong mạng lưới"
+
+
+msgid "Cannot remove polys in edit mode"
+msgstr "Không thể xóa đa giác trong chế độ biên tập"
+
+
+msgid "Cannot remove more polys than the mesh contains"
+msgstr "Không thể xóa số lượng đa giác hơn có trong mạng lưới"
+
+
 msgid "%d %s mirrored, %d failed"
 msgstr "%d %s được gương lại, %d thất bại"
 
@@ -97095,6 +97141,10 @@ msgid "No subtitles (text strips) to export"
 msgstr "Không có phụ để (đoạn chữ) để xuất"
 
 
+msgid "Could not build proxy for strip %s"
+msgstr "Không thể xây được đái lý cho đoạn %s"
+
+
 msgid "No active sequence!"
 msgstr "Không có trình tự hoạt động!"
 
@@ -97982,10 +98032,6 @@ msgstr "Hủy bước được tắt khi khởi động"
 
 msgid "Unpack File"
 msgstr "Gỡ Gói Tệp"
-
-
-msgid "Remove Pack"
-msgstr "Xoá Gói"
 
 
 msgid "Create %s"
