@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-11-20 13:23:12\n"
 "PO-Revision-Date: 2019-10-09 01:05+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -19160,14 +19160,6 @@ msgid "Polygons of the mesh"
 msgstr "메쉬의 폴리곤"
 
 
-msgid "Fix Poles"
-msgstr "폴을 고치기"
-
-
-msgid "Produces less poles and a better topology flow"
-msgstr "적은 폴과 더 나은 토폴로지 흐름을 생성합니다"
-
-
 msgid "Remesh Mode"
 msgstr "리메쉬 모드"
 
@@ -19186,26 +19178,6 @@ msgstr "쿼드"
 
 msgid "Use the quad remesher"
 msgstr "쿼드 리메쉬를 사용"
-
-
-msgid "Preserve Paint Mask"
-msgstr "페인트 마스크를 보존"
-
-
-msgid "Keep the current mask on the new mesh"
-msgstr "현재 마스크를 새로운 메쉬에서 유지합니다"
-
-
-msgid "Projects the mesh to preserve the volume and details of the original mesh"
-msgstr "원래 메쉬의 볼륨과 디테일을 유지하기 위해 메쉬를 투영합니다"
-
-
-msgid "Smooth Normals"
-msgstr "스무스 노멀"
-
-
-msgid "Smooth the normals of the remesher result"
-msgstr "리메셔 결과의 노멀을 부드럽게합니다"
 
 
 msgid "Adaptivity"
@@ -19338,6 +19310,34 @@ msgstr "버텍스 선택"
 
 msgid "Vertex selection masking for painting"
 msgstr "페인팅을 위한 버텍스 선택 마스킹"
+
+
+msgid "Fix Poles"
+msgstr "폴을 고치기"
+
+
+msgid "Produces less poles and a better topology flow"
+msgstr "적은 폴과 더 나은 토폴로지 흐름을 생성합니다"
+
+
+msgid "Preserve Paint Mask"
+msgstr "페인트 마스크를 보존"
+
+
+msgid "Keep the current mask on the new mesh"
+msgstr "현재 마스크를 새로운 메쉬에서 유지합니다"
+
+
+msgid "Projects the mesh to preserve the volume and details of the original mesh"
+msgstr "원래 메쉬의 볼륨과 디테일을 유지하기 위해 메쉬를 투영합니다"
+
+
+msgid "Smooth Normals"
+msgstr "스무스 노멀"
+
+
+msgid "Smooth the normals of the remesher result"
+msgstr "리메셔 결과의 노멀을 부드럽게합니다"
 
 
 msgid "Clone UV Loop Layer"
@@ -43339,6 +43339,10 @@ msgid "Disable Auto-pack, keep all packed files"
 msgstr "자동 포장 사용을 중지, 포장된 파일을 모두 유지합니다"
 
 
+msgid "Remove Pack"
+msgstr "포장을 제거"
+
+
 msgctxt "Operator"
 msgid "Unpack Item"
 msgstr "항목을 포장 해제"
@@ -49537,10 +49541,6 @@ msgstr "지정된 뷰포트에서 커서 주위의 원형에서 선택된 버텍
 
 msgid "Rotation for each step"
 msgstr "각 단계별 회전"
-
-
-msgid "Make Duplicates"
-msgstr "중복를 만들기"
 
 
 msgid "Auto Merge"
@@ -74319,14 +74319,6 @@ msgid "Sequence strip creating text"
 msgstr "텍스트를 만드는 시퀀스 스트립"
 
 
-msgid "Align the text along the X axis, relative to the text midpoint"
-msgstr "텍스트 중간점을 기준으로 X 축을 따라 텍스트를 정렬합니다"
-
-
-msgid "Align the image along the Y axis, relative to the text midpoint"
-msgstr "텍스트 중간점을 기준으로 Y 축을 따라 이미지를 정렬합니다"
-
-
 msgid "Text color"
 msgstr "텍스트 컬러"
 
@@ -97871,10 +97863,6 @@ msgstr "시작시 실행 취소가 해제되었습니다"
 
 msgid "Unpack File"
 msgstr "파일을 포장 해제"
-
-
-msgid "Remove Pack"
-msgstr "포장을 제거"
 
 
 msgid "Create %s"

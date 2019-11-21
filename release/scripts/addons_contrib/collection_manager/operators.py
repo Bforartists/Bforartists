@@ -12,6 +12,7 @@ class ExpandAllOperator(bpy.types.Operator):
     '''Expand/Collapse all collections'''
     bl_label = "Expand All Items"
     bl_idname = "view3d.expand_all_items"
+    bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
         if len(expanded) > 0:
@@ -21,8 +22,7 @@ class ExpandAllOperator(bpy.types.Operator):
                 if laycol["ptr"].children:
                     expanded.append(laycol["name"])
         
-        # set selected row to the first row and update tree view
-        context.scene.CMListIndex = 0
+        # update tree view
         update_property_group(context)
         
         return {'FINISHED'}
@@ -32,6 +32,7 @@ class ExpandSublevelOperator(bpy.types.Operator):
     '''Expand/Collapse sublevel. Shift-Click to expand/collapse all sublevels'''
     bl_label = "Expand Sublevel Items"
     bl_idname = "view3d.expand_sublevel"
+    bl_options = {'REGISTER', 'UNDO'}
     
     expand: BoolProperty()
     name: StringProperty()
@@ -84,6 +85,7 @@ class CMSetCollectionOperator(bpy.types.Operator):
     '''Click moves object to collection.  Shift-Click adds/removes from collection'''
     bl_label = "Set Collection"
     bl_idname = "view3d.set_collection"
+    bl_options = {'REGISTER', 'UNDO'}
     
     collection_index: IntProperty()
     collection_name: StringProperty()
@@ -128,6 +130,7 @@ class CMExcludeOperator(bpy.types.Operator):
     '''Exclude collection. Shift-Click to isolate/restore collection'''
     bl_label = "Exclude Collection"
     bl_idname = "view3d.exclude_collection"
+    bl_options = {'REGISTER', 'UNDO'}
     
     name: StringProperty()
     
@@ -233,6 +236,7 @@ class CMUnExcludeAllOperator(bpy.types.Operator):
     '''Toggle excluded status of all collections'''
     bl_label = "Toggle Exclude Collections"
     bl_idname = "view3d.un_exclude_all_collections"
+    bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
         global excludeall_history
@@ -267,6 +271,7 @@ class CMRestrictSelectOperator(bpy.types.Operator):
     '''Change selectability. Shift-Click to isolate/restore selectability'''
     bl_label = "Change Collection Selectability"
     bl_idname = "view3d.restrict_select_collection"
+    bl_options = {'REGISTER', 'UNDO'}
     
     name: StringProperty()
     
@@ -323,6 +328,7 @@ class CMUnRestrictSelectAllOperator(bpy.types.Operator):
     '''Toggle selectable status of all collections'''
     bl_label = "Toggle Selectable Collections"
     bl_idname = "view3d.un_restrict_select_all_collections"
+    bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
         global restrictselectall_history
@@ -355,6 +361,7 @@ class CMHideOperator(bpy.types.Operator):
     '''Hide collection. Shift-Click to isolate/restore collection chain'''
     bl_label = "Hide Collection"
     bl_idname = "view3d.hide_collection"
+    bl_options = {'REGISTER', 'UNDO'}
     
     name: StringProperty()
     
@@ -423,6 +430,7 @@ class CMUnHideAllOperator(bpy.types.Operator):
     '''Toggle hidden status of all collections'''
     bl_label = "Toggle Hidden Collections"
     bl_idname = "view3d.un_hide_all_collections"
+    bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
         global hideall_history
@@ -455,6 +463,7 @@ class CMDisableViewportOperator(bpy.types.Operator):
     '''Disable collection in viewport. Shift-Click to isolate/restore collection chain'''
     bl_label = "Disable Collection in Viewport"
     bl_idname = "view3d.disable_viewport_collection"
+    bl_options = {'REGISTER', 'UNDO'}
     
     name: StringProperty()
     
@@ -523,6 +532,7 @@ class CMUnDisableViewportAllOperator(bpy.types.Operator):
     '''Toggle viewport status of all collections'''
     bl_label = "Toggle Viewport Display of Collections"
     bl_idname = "view3d.un_disable_viewport_all_collections"
+    bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
         global disableviewall_history
@@ -555,6 +565,7 @@ class CMDisableRenderOperator(bpy.types.Operator):
     '''Disable collection in renders. Shift-Click to isolate/restore collection chain'''
     bl_label = "Disable Collection in Render"
     bl_idname = "view3d.disable_render_collection"
+    bl_options = {'REGISTER', 'UNDO'}
     
     name: StringProperty()
     
@@ -623,6 +634,7 @@ class CMUnDisableRenderAllOperator(bpy.types.Operator):
     '''Toggle render status of all collections'''
     bl_label = "Toggle Render Display of Collections"
     bl_idname = "view3d.un_disable_render_all_collections"
+    bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
         global disablerenderall_history
@@ -654,6 +666,7 @@ class CMRemoveCollectionOperator(bpy.types.Operator):
     '''Remove Collection'''
     bl_label = "Remove Collection"
     bl_idname = "view3d.remove_collection"
+    bl_options = {'UNDO'}
     
     collection_name: StringProperty()
     
@@ -756,6 +769,7 @@ class CMNewCollectionOperator(bpy.types.Operator):
     '''Add New Collection'''
     bl_label = "Add New Collection"
     bl_idname = "view3d.add_collection"
+    bl_options = {'UNDO'}
     
     child: BoolProperty()
     
@@ -809,5 +823,121 @@ class CMNewCollectionOperator(bpy.types.Operator):
         hideall_history.clear()
         disableviewall_history.clear()
         disablerenderall_history.clear()
+        
+        return {'FINISHED'}
+    
+
+phantom_history = {"view_layer": "",
+                   "initial_state": {},
+                   
+                   "excludeall_history": [],
+                   "restrictselectall_history": [],
+                   "hideall_history": [],
+                   "disableviewall_history": [],
+                   "disablerenderall_history": [],
+                   
+                   "exclude_history": [],
+                   "restrictselect_history": [],
+                   "hide_history": [],
+                   "disableview_history": [],
+                   "disablerender_history": []
+                   }
+
+phantom_view_layer = []
+class CMPhantomModeOperator(bpy.types.Operator):
+    '''Toggle Phantom Mode'''
+    bl_label = "Toggle Phantom Mode"
+    bl_idname = "view3d.toggle_phantom_mode"
+    
+    def execute(self, context):
+        global phantom_history
+        
+        scn = context.scene
+        
+        # enter Phantom Mode
+        if not scn.CM_Phantom_Mode:
+            
+            scn.CM_Phantom_Mode = True
+            
+            # save current visibility state
+            phantom_history["view_layer"] = context.view_layer.name
+            
+            laycol_iter_list = [context.view_layer.layer_collection.children]
+            while len(laycol_iter_list) > 0:
+                new_laycol_iter_list = []
+                for laycol_iter in laycol_iter_list:
+                    for layer_collection in laycol_iter:
+                        phantom_history["initial_state"][layer_collection.name] = {
+                            "exclude": layer_collection.exclude,
+                            "selectable": layer_collection.collection.hide_select,
+                            "hide_viewport": layer_collection.hide_viewport,
+                            "disable_viewport": layer_collection.collection.hide_viewport,
+                            "renderable": layer_collection.collection.hide_render,
+                                }
+                        
+                        if len(layer_collection.children) > 0:
+                            new_laycol_iter_list.append(layer_collection.children)
+                
+                laycol_iter_list = new_laycol_iter_list
+            
+            
+            phantom_history["excludeall_history"] = excludeall_history[:]
+            phantom_history["restrictselectall_history"] = restrictselectall_history[:]
+            phantom_history["hideall_history"] = hideall_history[:]
+            phantom_history["disableviewall_history"] = disableviewall_history[:]
+            phantom_history["disablerenderall_history"] = disablerenderall_history[:]
+            
+            phantom_history["exclude_history"] = exclude_history[:]
+            phantom_history["restrictselect_history"] = restrictselect_history[:]
+            phantom_history["hide_history"] = hide_history[:]
+            phantom_history["disableview_history"] = disableview_history[:]
+            phantom_history["disablerender_history"] = disablerender_history[:]
+        
+        
+        # return to normal mode
+        else:
+            laycol_iter_list = [context.view_layer.layer_collection.children]
+            while len(laycol_iter_list) > 0:
+                new_laycol_iter_list = []
+                for laycol_iter in laycol_iter_list:
+                    for layer_collection in laycol_iter:
+                        phantom_laycol = phantom_history["initial_state"][layer_collection.name]
+                        
+                        layer_collection.exclude = \
+                            phantom_laycol["exclude"]
+                        
+                        layer_collection.collection.hide_select = \
+                            phantom_laycol["selectable"]
+                        
+                        layer_collection.hide_viewport = \
+                            phantom_laycol["hide_viewport"]
+                        
+                        layer_collection.collection.hide_viewport = \
+                            phantom_laycol["disable_viewport"]
+                        
+                        layer_collection.collection.hide_render = \
+                            phantom_laycol["renderable"]
+                                
+                        
+                        if len(layer_collection.children) > 0:
+                            new_laycol_iter_list.append(layer_collection.children)
+                
+                laycol_iter_list = new_laycol_iter_list
+                
+            
+            clone_list(excludeall_history, phantom_history["excludeall_history"])
+            clone_list(restrictselectall_history, phantom_history["restrictselectall_history"])
+            clone_list(hideall_history,phantom_history["hideall_history"])
+            clone_list(disableviewall_history, phantom_history["disableviewall_history"])
+            clone_list(disablerenderall_history, phantom_history["disablerenderall_history"])
+            
+            clone_list(exclude_history, phantom_history["exclude_history"])
+            clone_list(restrictselect_history, phantom_history["restrictselect_history"])
+            clone_list(hide_history, phantom_history["hide_history"])
+            clone_list(disableview_history, phantom_history["disableview_history"])
+            clone_list(disablerender_history, phantom_history["disablerender_history"])
+            
+            scn.CM_Phantom_Mode = False
+            
         
         return {'FINISHED'}

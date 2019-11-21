@@ -497,6 +497,16 @@ class AddXYZFunctionSurface(Operator):
                 description="Equation for h=F(u,v). Also available: n, a, b, c",
                 default="0"
                 )
+    show_wire : BoolProperty(
+            name="Show wireframe",
+            default=True,
+            description="Add the object’s wireframe over solid drawing"
+            )
+    edit_mode : BoolProperty(
+            name="Show in edit mode",
+            default=True,
+            description="Show in edit mode"
+            )
 
     def execute(self, context):
         for n in range(0, self.n_eq):
@@ -526,5 +536,13 @@ class AddXYZFunctionSurface(Operator):
                 return {'CANCELLED'}
 
             obj = create_mesh_object(context, verts, [], faces, "XYZ Function")
+            
+            if self.show_wire:
+                obj.show_wire = True
+                
+        if self.edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+        else:
+            bpy.ops.object.mode_set(mode = 'OBJECT')    
 
         return {'FINISHED'}

@@ -113,10 +113,6 @@ static int voxel_remesh_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  if (ob->mode == OB_MODE_SCULPT) {
-    ED_sculpt_undo_geometry_begin(ob);
-  }
-
   float isovalue = 0.0f;
   if (mesh->flag & ME_REMESH_REPROJECT_VOLUME) {
     isovalue = mesh->remesh_voxel_size * 0.3f;
@@ -126,7 +122,12 @@ static int voxel_remesh_exec(bContext *C, wmOperator *op)
       mesh, mesh->remesh_voxel_size, mesh->remesh_voxel_adaptivity, isovalue);
 
   if (!new_mesh) {
+    BKE_report(op->reports, RPT_ERROR, "Voxel remesher failed to create mesh.");
     return OPERATOR_CANCELLED;
+  }
+
+  if (ob->mode == OB_MODE_SCULPT) {
+    ED_sculpt_undo_geometry_begin(ob, op->type->name);
   }
 
   if (mesh->flag & ME_REMESH_FIX_POLES && mesh->remesh_voxel_adaptivity <= 0.0f) {
@@ -421,7 +422,7 @@ static void quadriflow_start_job(void *customdata, short *stop, short *do_update
   new_mesh = remesh_symmetry_mirror(qj->owner, new_mesh, qj->symmetry_axes);
 
   if (ob->mode == OB_MODE_SCULPT) {
-    ED_sculpt_undo_geometry_begin(ob);
+    ED_sculpt_undo_geometry_begin(ob, "QuadriFlow Remesh");
   }
 
   if (qj->preserve_paint_mask) {

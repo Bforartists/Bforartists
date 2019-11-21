@@ -1,17 +1,17 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-11-20 13:23:12\n"
 "PO-Revision-Date: \n"
-"Last-Translator: blend-it <https://developer.blender.org/T42765>\n"
+"Last-Translator: blend-it\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.5"
+"X-Generator: Poedit 2.0.6"
 
 
 msgid "Action F-Curves"
@@ -674,6 +674,10 @@ msgid "Editor for node-based shading and compositing tools"
 msgstr "Modifica ombreggiatori e compositori basati su nodi"
 
 
+msgid "Video Sequencer"
+msgstr "Editor Sequenze Video"
+
+
 msgid "Video editing tools"
 msgstr "Strumenti modifica video (Sequencer)"
 
@@ -722,6 +726,14 @@ msgid "Info"
 msgstr "Info"
 
 
+msgid "Top Bar"
+msgstr "Barra Superiore"
+
+
+msgid "Status Bar"
+msgstr "Barra di Stato"
+
+
 msgid "Outliner"
 msgstr "Struttura (Outliner)"
 
@@ -744,6 +756,10 @@ msgstr "File Browser"
 
 msgid "Browse for files and assets"
 msgstr "Esplora files e risorse"
+
+
+msgid "Preferences"
+msgstr "Preferenze"
 
 
 msgid "Edit persistent configuration settings"
@@ -1194,6 +1210,14 @@ msgid "Camera data-blocks"
 msgstr "Blocchi-dati Camera"
 
 
+msgid "Collections"
+msgstr "Raccolte"
+
+
+msgid "Collection data-blocks"
+msgstr "Blocchi-dati Raccolta"
+
+
 msgid "Curves"
 msgstr "Curve"
 
@@ -1260,6 +1284,10 @@ msgstr "Blocchi-dati Libreria"
 
 msgid "Lights"
 msgstr "Luci"
+
+
+msgid "Light data-blocks"
+msgstr "Blocchi-dati Luce"
 
 
 msgid "Line Styles"
@@ -1430,6 +1458,10 @@ msgid "Window manager data-blocks"
 msgstr "Blocchi-dati Gestori Finestre"
 
 
+msgid "Workspace data-blocks"
+msgstr "Blocchi-dati Spazio di Lavoro"
+
+
 msgid "Worlds"
 msgstr "Mondi"
 
@@ -1478,6 +1510,14 @@ msgid "Collection of cameras"
 msgstr "Raccolta di camere"
 
 
+msgid "Main Collections"
+msgstr "Principale Raccolte"
+
+
+msgid "Collection of collections"
+msgstr "Raccolta di Raccolte"
+
+
 msgid "Main Curves"
 msgstr "Principale Curve"
 
@@ -1524,6 +1564,14 @@ msgstr "Principale Librerie"
 
 msgid "Collection of libraries"
 msgstr "Raccolta di librerie"
+
+
+msgid "Main Lights"
+msgstr "Principale Luci"
+
+
+msgid "Collection of lights"
+msgstr "Raccolta di luci"
 
 
 msgid "Main Line Styles"
@@ -1802,6 +1850,10 @@ msgid "How fast velocity's direction is randomized"
 msgstr "Quanto velocemente la direzione della velocità è resa casuale"
 
 
+msgid "Fear Factor"
+msgstr "Fattore Paura"
+
+
 msgid "Avoid object if danger from it is above this threshold"
 msgstr "Evitare l'oggetto se la sua pericolosità supera questa soglia"
 
@@ -1816,6 +1868,10 @@ msgstr "Predire"
 
 msgid "Predict target movement"
 msgstr "Predice il movimento dell'oggetto"
+
+
+msgid "Look Ahead"
+msgstr "Guarda Avanti"
 
 
 msgid "Time to look ahead in seconds"
@@ -2194,6 +2250,10 @@ msgid "Length of second Bezier Handle (for B-Bones only)"
 msgstr "Lunghezza della seconda Maniglia Bezier (solo per Ossa-Bezier)"
 
 
+msgid "B-Bone End Handle Type"
+msgstr "Tipo Maniglia Finale Osso-B"
+
+
 msgid "Automatic"
 msgstr "Automatico"
 
@@ -2204,6 +2264,10 @@ msgstr "Assoluto"
 
 msgid "Relative"
 msgstr "Relativo"
+
+
+msgid "B-Bone Start Handle Type"
+msgstr "Tipo Maniglia Iniziale Osso-B"
 
 
 msgid "Roll In"
@@ -2220,6 +2284,14 @@ msgstr "Rollio Finale"
 
 msgid "Roll offset for the end of the B-Bone, adjusts twist"
 msgstr "Scostamento Rollio per la fine dell'Osso-B, regola la torsione"
+
+
+msgid "Scale In X"
+msgstr "Scala In X"
+
+
+msgid "Scale In Y"
+msgstr "Scala In Y"
 
 
 msgid "B-Bone Segments"
@@ -2324,6 +2396,10 @@ msgstr "Livelli in cui esiste l'osso"
 
 msgid "Length"
 msgstr "Lunghezza"
+
+
+msgid "Length of the bone"
+msgstr "Lunghezza dell'osso"
 
 
 msgid "Bone Matrix"
@@ -14958,6 +15034,10 @@ msgid "An area is maximized, filling this screen"
 msgstr "Un'area è massimizzata, riempiendo questo schermo"
 
 
+msgid "Show Status Bar"
+msgstr "Mostra Barra di Stato"
+
+
 msgid "Animation Editors"
 msgstr "Editors delle Animazioni"
 
@@ -18782,8 +18862,20 @@ msgid "Text"
 msgstr "Testo"
 
 
+msgid "About"
+msgstr "A proposito di"
+
+
+msgid "Support Blender"
+msgstr "Supporta Blender"
+
+
 msgid "File"
 msgstr "File"
+
+
+msgid "Defaults"
+msgstr "Predefiniti"
 
 
 msgid "Export"
@@ -18802,6 +18894,10 @@ msgid "Data Previews"
 msgstr "Anteprime Dati"
 
 
+msgid "Recover"
+msgstr "Recupera"
+
+
 msgid "Help"
 msgstr "Aiuto"
 
@@ -18812,6 +18908,10 @@ msgstr "Preimpostazioni"
 
 msgid "3D Mouse Settings"
 msgstr "Impostazioni Mouse 3D"
+
+
+msgid "Save & Load"
+msgstr "Salva & Carica:"
 
 
 msgid "Angle Control"
@@ -19651,7 +19751,7 @@ msgstr "Angolo al di sotto del quale smussare gli spigoli"
 
 
 msgid "New"
-msgstr "Nuova"
+msgstr "Nuovo"
 
 
 msgid "Limit Method"
@@ -25868,6 +25968,11 @@ msgid "Invert selection of all elements"
 msgstr "Inverte la selezione di tutti gli elementi"
 
 
+msgctxt "Operator"
+msgid "Box Select"
+msgstr "Selezione Rettangolare"
+
+
 msgid "Select all keyframes within the specified region"
 msgstr "Seleziona tutti i keyframe all'interno della regione specificata"
 
@@ -28176,6 +28281,11 @@ msgid "Print a message when the terminal initializes"
 msgstr "Mostra un messaggio quando il terminale viene inizializzato"
 
 
+msgctxt "Operator"
+msgid "Clear All"
+msgstr "Cancella Tutto"
+
+
 msgid "Clear text by type"
 msgstr "Cancella il testo per tipo"
 
@@ -29992,6 +30102,10 @@ msgstr "Scrivi i files nella posizione originale (sovrascrive gli esistenti)"
 
 msgid "Disable Auto-pack, keep all packed files"
 msgstr "Disabilita Auto-impacchettamento, mantieni tutti i file impacchettati"
+
+
+msgid "Remove Pack"
+msgstr "Rimuovi File Incorporato"
 
 
 msgctxt "Operator"
@@ -34049,10 +34163,6 @@ msgstr "Estrude i vertici selezionati con una rotazione circolare attorno al cur
 
 msgid "Rotation for each step"
 msgstr "Rotazione per ogni passo"
-
-
-msgid "Make Duplicates"
-msgstr "Crea Duplicati"
 
 
 msgid "Split off selected geometry from connected unselected geometry"
@@ -38865,6 +38975,11 @@ msgid "Module name of the add-on to expand"
 msgstr "Nome del modulo dell'add-on da espandere"
 
 
+msgctxt "Operator"
+msgid "Install Add-on"
+msgstr "Installa Add-on"
+
+
 msgid "Install an add-on"
 msgstr "Installa un add-on"
 
@@ -38901,6 +39016,10 @@ msgstr "Cancella l'add-on dal file system"
 
 msgid "Module name of the add-on to remove"
 msgstr "Nome del modulo dell'add-on da rimuovere"
+
+
+msgid "Show add-on preferences"
+msgstr "Mostra le preferenze dell'Add-on"
 
 
 msgctxt "Operator"
@@ -39033,6 +39152,14 @@ msgstr "Riporta al Tema Predefinito"
 
 msgid "Reset to the default theme colors"
 msgstr "Riporta ai colori del tema predefinito"
+
+
+msgid "MatCap"
+msgstr "CatMat"
+
+
+msgid "Show light preferences"
+msgstr "Mostra le preferenze della luce"
 
 
 msgctxt "Operator"
@@ -39917,6 +40044,16 @@ msgstr "Pulisce lo Spazio-dati"
 
 msgid "Remove unused settings for invisible editors"
 msgstr "Rimuove le impostazioni inutilizzate per gli editor invisibili"
+
+
+msgctxt "Operator"
+msgid "Show Preferences"
+msgstr "Mostra Preferenze Utente"
+
+
+msgctxt "Operator"
+msgid "Cycle Workspace"
+msgstr "Cicla Spazi di Lavoro"
 
 
 msgctxt "Operator"
@@ -41508,6 +41645,11 @@ msgstr "Ruota gli elementi selezionati"
 
 
 msgctxt "Operator"
+msgid "Rotate Normals"
+msgstr "Ruota Normali"
+
+
+msgctxt "Operator"
 msgid "Select Orientation"
 msgstr "Seleziona Orientamento"
 
@@ -42657,6 +42799,11 @@ msgstr "Elimina i confini del bordo di render e disabilita l'area di render parz
 
 
 msgctxt "Operator"
+msgid "Copy Objects"
+msgstr "Copia Oggetti"
+
+
+msgctxt "Operator"
 msgid "Set 3D Cursor"
 msgstr "Imposta Cursore 3D"
 
@@ -42739,6 +42886,11 @@ msgid "Set the active object as the active camera for this view or scene"
 msgstr "Imposta l'oggetto attivo come camera attiva per questa vista o scena"
 
 
+msgctxt "Operator"
+msgid "Paste Objects"
+msgstr "Incolla Oggetti"
+
+
 msgid "Select pasted objects"
 msgstr "Seleziona oggetti incollati"
 
@@ -42770,6 +42922,10 @@ msgstr "Elenca gli oggetti sotto il mouse (solo in modalità oggetto)."
 
 msgid "Use object selection (editmode only)"
 msgstr "Usa la selezione dell'oggetto (solo in modalità modifica)"
+
+
+msgid "Select items using box selection"
+msgstr "Seleziona gli elementi usando la selezione rettangolare"
 
 
 msgid "Select items using circle selection"
@@ -44095,6 +44251,20 @@ msgstr "Alterna la finestra corrente a pieno schermo"
 
 
 msgctxt "Operator"
+msgid "New Window"
+msgstr "Nuova Finestra"
+
+
+msgid "Create a new window"
+msgstr "Crea una nuova immagine"
+
+
+msgctxt "Operator"
+msgid "New Main Window"
+msgstr "Nuova Finestra Principale"
+
+
+msgctxt "Operator"
 msgid "New World"
 msgstr "Nuovo Mondo"
 
@@ -44849,6 +45019,10 @@ msgstr "Linea Temporale"
 
 msgid "Development"
 msgstr "Sviluppo"
+
+
+msgid "Open on Mouse Over"
+msgstr "Apri Al Passaggio del Mouse"
 
 
 msgid "Walk"
@@ -45883,6 +46057,10 @@ msgstr "Raccolta di vincoli ossa di posa"
 
 msgid "Active Section"
 msgstr "Sezione Attiva"
+
+
+msgid "Active section of the preferences shown in the user interface"
+msgstr "Sezione attiva delle preferenze utente mostrata nell'interfaccia utente"
 
 
 msgid "Editing"
@@ -46985,6 +47163,14 @@ msgid "Path to interface mono-space Font"
 msgstr "Percorso carattere a larghezza fissa per l'interfaccia"
 
 
+msgid "Gizmo Size"
+msgstr "Dimensione Gizmo"
+
+
+msgid "Diameter of the gizmo"
+msgstr "Diametro del manipolatore"
+
+
 msgid "Language used for translation"
 msgstr "Lingua usata per la traduzione"
 
@@ -47049,12 +47235,20 @@ msgid "Use a column layout for toolbox"
 msgstr "Una una impostazione a colonne per lo Scaffale Attrezzi"
 
 
+msgid "Developer Extras"
+msgstr "Extra per Sviluppatori"
+
+
 msgid "Large Cursors"
 msgstr "Cursori Grandi"
 
 
 msgid "Use large mouse cursors when available"
 msgstr "Usa cursori del mouse grandi quando sono disponibili"
+
+
+msgid "Navigation Controls"
+msgstr "Controlli di Navigazione"
 
 
 msgid "Display Object Info"
@@ -47111,6 +47305,10 @@ msgstr "Vista Levigata"
 
 msgid "Time to animate the view in milliseconds, zero to disable"
 msgstr "Tempo in millisecondi per animare la vista, zero per disabilitarlo"
+
+
+msgid "Text Hinting"
+msgstr "Crenatura Testo"
 
 
 msgid "TimeCode Style"
@@ -47187,6 +47385,10 @@ msgstr "Contenuto Ordinato per Direzione Apertura"
 
 msgid "Otherwise menus, etc will always be top to bottom, left to right, no matter opening direction"
 msgstr "Altrimenti menu ecc. sono sempre dall'alto in basso, da sinistra a destra, indipendentemente dalla direzione di apertura"
+
+
+msgid "Translate UI"
+msgstr "Traduzione UI"
 
 
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
@@ -51222,6 +51424,10 @@ msgstr "Mostra il nome del tracciatore e lo stato"
 
 msgid "Show Red Channel"
 msgstr "Mostra Canale Rosso"
+
+
+msgid "Toolbar"
+msgstr "Barra Strumenti"
 
 
 msgid "Show Seconds"
@@ -57877,6 +58083,14 @@ msgid "Swap Data"
 msgstr "Scambia Dati"
 
 
+msgid "Position X"
+msgstr "Posizione X"
+
+
+msgid "Alignment X"
+msgstr "Allineamento X"
+
+
 msgid "Convert to Float"
 msgstr "Converti in Float"
 
@@ -58000,6 +58214,14 @@ msgid "Unpack"
 msgstr "Estrai"
 
 
+msgid "Pack"
+msgstr "Comprimi"
+
+
+msgid "Add Transition"
+msgstr "Aggiungi Transizione"
+
+
 msgid "Effect Fader"
 msgstr "Dissolvenza Effetto"
 
@@ -58017,6 +58239,11 @@ msgstr "Due o più canali sono necessari sotto questo spezzone"
 
 
 msgctxt "Operator"
+msgid "Find & Replace..."
+msgstr "Trova & Sostituisci..."
+
+
+msgctxt "Operator"
 msgid "Top"
 msgstr "Alto"
 
@@ -58027,6 +58254,36 @@ msgstr "Basso"
 
 
 msgctxt "Operator"
+msgid "Line Begin"
+msgstr "Inizio Linea"
+
+
+msgctxt "Operator"
+msgid "Line End"
+msgstr "Fine Linea"
+
+
+msgctxt "Operator"
+msgid "Previous Line"
+msgstr "Linea Precedente"
+
+
+msgctxt "Operator"
+msgid "Next Line"
+msgstr "Linea Successiva"
+
+
+msgctxt "Operator"
+msgid "Previous Word"
+msgstr "Parola Precedente"
+
+
+msgctxt "Operator"
+msgid "Next Word"
+msgstr "Parola Successiva"
+
+
+msgctxt "Operator"
 msgid "One Object"
 msgstr "Un Oggetto"
 
@@ -58034,6 +58291,16 @@ msgstr "Un Oggetto"
 msgctxt "Operator"
 msgid "One Object Per Line"
 msgstr "Un Oggetto Per Linea"
+
+
+msgctxt "Operator"
+msgid "Move Line(s) Up"
+msgstr "Sposta Linee Su"
+
+
+msgctxt "Operator"
+msgid "Move Line(s) Down"
+msgstr "Sposta Linee Giù"
 
 
 msgid "File: %s"
@@ -58051,6 +58318,11 @@ msgstr "Testo: Interno"
 msgctxt "Operator"
 msgid "Duplicate Marker"
 msgstr "Duplica Marcatore"
+
+
+msgctxt "Operator"
+msgid "Move Marker"
+msgstr "Muovi Marcatore"
 
 
 msgctxt "Operator"
@@ -58073,8 +58345,22 @@ msgid "Jump to Previous Marker"
 msgstr "Salta al Marcatore Precedente"
 
 
+msgid "Active Keying Set:"
+msgstr "Gruppo Chiavi Attivo:"
+
+
 msgid "Auto Keyframing:"
 msgstr "Fotogramma Chiave Automatico:"
+
+
+msgctxt "Operator"
+msgid "Link..."
+msgstr "Collega..."
+
+
+msgctxt "Operator"
+msgid "Append..."
+msgstr "Incorpora..."
 
 
 msgctxt "Operator"
@@ -58083,8 +58369,38 @@ msgstr "Esci"
 
 
 msgctxt "Operator"
+msgid "Last Session"
+msgstr "Ultima Sessione"
+
+
+msgctxt "Operator"
+msgid "Auto Save..."
+msgstr "Salvataggio Automatico..."
+
+
+msgctxt "Operator"
 msgid "Render Animation"
 msgstr "Renderizza Animazione"
+
+
+msgctxt "Operator"
+msgid "Undo History..."
+msgstr "Cronologia Annullamenti..."
+
+
+msgctxt "Operator"
+msgid "Repeat History..."
+msgstr "Ripeti Cronologia..."
+
+
+msgctxt "Operator"
+msgid "Preferences..."
+msgstr "Preferenze..."
+
+
+msgctxt "Operator"
+msgid "Previous Workspace"
+msgstr "Spazio di Lavoro Precedente"
 
 
 msgctxt "Operator"
@@ -58098,8 +58414,33 @@ msgstr "Salva una Copia..."
 
 
 msgctxt "Operator"
+msgid "General"
+msgstr "Generale"
+
+
+msgctxt "Operator"
+msgid "Release Notes"
+msgstr "Note di Rilascio"
+
+
+msgctxt "Operator"
 msgid "Blender Website"
 msgstr "Sito Web di Blender"
+
+
+msgctxt "Operator"
+msgid "Credits"
+msgstr "Riconoscimenti"
+
+
+msgctxt "Operator"
+msgid "License"
+msgstr "Licenza"
+
+
+msgctxt "Operator"
+msgid "Development Fund"
+msgstr "Fondo per lo Sviluppo"
 
 
 msgctxt "Operator"
@@ -58128,6 +58469,21 @@ msgstr "Manuale"
 
 
 msgctxt "Operator"
+msgid "Tutorials"
+msgstr "Guide"
+
+
+msgctxt "Operator"
+msgid "Support"
+msgstr "Supporto"
+
+
+msgctxt "Operator"
+msgid "User Communities"
+msgstr "Comunità Utenti"
+
+
+msgctxt "Operator"
 msgid "Developer Community"
 msgstr "Comunità Sviluppatori"
 
@@ -58140,6 +58496,10 @@ msgstr "Riferimenti API Python"
 msgctxt "Operator"
 msgid "Report a Bug"
 msgstr "Segnala un Baco"
+
+
+msgid "Splash Screen"
+msgstr "Schermata Iniziale"
 
 
 msgid "Anti-aliasing"
@@ -58222,6 +58582,43 @@ msgid "Limit Size"
 msgstr "Limita Dimensioni"
 
 
+msgctxt "Operator"
+msgid "Install..."
+msgstr "Installa..."
+
+
+msgid "Axis X"
+msgstr "Asse X"
+
+
+msgid "Shadow Offset X"
+msgstr "Offset X Ombra"
+
+
+msgid "Panel Title"
+msgstr "Titolo Pannello"
+
+
+msgid "Widget Label"
+msgstr "Etichetta Widget"
+
+
+msgid "Scripts"
+msgstr "Scripts"
+
+
+msgid "Temporary Files"
+msgstr "File Temporanei"
+
+
+msgid "Render Output"
+msgstr "Output Render"
+
+
+msgid "Render Cache"
+msgstr "Cache Render"
+
+
 msgid "Excluded Paths:"
 msgstr "Percorsi Esclusi:"
 
@@ -58238,12 +58635,25 @@ msgid "Zoom Options"
 msgstr "Opzioni Zoom"
 
 
+msgid "Double Click Speed"
+msgstr "Velocità Doppio Click"
+
+
 msgid "Invert Wheel Zoom Direction"
 msgstr "Inverti Direzione Zoom Rotella"
 
 
 msgid "Pan Sensitivity"
 msgstr "Sensibilità Pan"
+
+
+msgid "Use Light"
+msgstr "Usa Luce"
+
+
+msgctxt "Operator"
+msgid "Save Preferences{:s}"
+msgstr "Salva Preferenze{:s}"
 
 
 msgid "Orbit Style"
@@ -63295,10 +63705,6 @@ msgid "Unpack File"
 msgstr "Estrai File"
 
 
-msgid "Remove Pack"
-msgstr "Rimuovi File Incorporato"
-
-
 msgid "Create %s"
 msgstr "Crea %s"
 
@@ -64157,6 +64563,10 @@ msgid "Can't read alternative start-up file: '%s'"
 msgstr "Impossibile leggere il file d'avvio alternativo: '%s'"
 
 
+msgid "Saved \"%s\""
+msgstr "Salvato \"%s\""
+
+
 msgid "Not a library"
 msgstr "Non è una libreria"
 
@@ -64183,6 +64593,14 @@ msgstr "'%s': impossibile usare il file corrente come libreria"
 
 msgid "'%s' is not a valid library filepath"
 msgstr "'%s' non è un percorso file libreria valido"
+
+
+msgid "Win"
+msgstr "Win"
+
+
+msgid "Esc"
+msgstr "Esc"
 
 
 msgid "dbl-"

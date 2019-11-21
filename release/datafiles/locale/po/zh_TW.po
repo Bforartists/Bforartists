@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-11-20 13:23:12\n"
 "PO-Revision-Date: 2018-09-23 13:23+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -30133,6 +30133,10 @@ msgid "Disable Auto-pack, keep all packed files"
 msgstr "停用自動打包，保留所有打包的檔案"
 
 
+msgid "Remove Pack"
+msgstr "移除包裝"
+
+
 msgctxt "Operator"
 msgid "Unpack Item"
 msgstr "解包項目"
@@ -33627,10 +33631,6 @@ msgstr "反轉所選元素的目前順序"
 
 msgid "Extrude selected vertices in a circle around the cursor in indicated viewport"
 msgstr "在指示的視接口中圍以繞游標的圓擠出所選的點"
-
-
-msgid "Make Duplicates"
-msgstr "創建複本"
 
 
 msgid "Split off selected geometry from connected unselected geometry"
@@ -62244,10 +62244,6 @@ msgstr "無法使用零面積的面"
 
 msgid "Unpack File"
 msgstr "解包檔案"
-
-
-msgid "Remove Pack"
-msgstr "移除包裝"
 
 
 msgid "Create %s"

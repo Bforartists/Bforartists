@@ -45,7 +45,7 @@ class Rig(BaseLimbRig):
 
         super().initialize()
 
-        self.make_palm_pivot = self.params.make_ik_palm_pivot
+        self.make_wrist_pivot = self.params.make_ik_wrist_pivot
 
     def prepare_bones(self):
         orgs = self.bones.org.main
@@ -76,40 +76,40 @@ class Rig(BaseLimbRig):
     # Palm Pivot
 
     def get_ik_input_bone(self):
-        if self.make_palm_pivot:
-            return self.bones.mch.ik_palm
+        if self.make_wrist_pivot:
+            return self.bones.mch.ik_wrist
         else:
             return self.get_ik_control_output()
 
     def get_extra_ik_controls(self):
         controls = super().get_extra_ik_controls()
-        if self.make_palm_pivot:
-            controls += [self.bones.ctrl.ik_palm]
+        if self.make_wrist_pivot:
+            controls += [self.bones.ctrl.ik_wrist]
         return controls
 
     @stage.generate_bones
-    def make_palm_pivot_control(self):
-        if self.make_palm_pivot:
+    def make_wrist_pivot_control(self):
+        if self.make_wrist_pivot:
             org = self.bones.org.main[2]
-            self.bones.ctrl.ik_palm = self.make_palm_pivot_bone(org)
-            self.bones.mch.ik_palm = self.copy_bone(org, make_derived_name(org, 'mch'), scale=0.25)
+            self.bones.ctrl.ik_wrist = self.make_wrist_pivot_bone(org)
+            self.bones.mch.ik_wrist = self.copy_bone(org, make_derived_name(org, 'mch', '_ik_wrist'), scale=0.25)
 
-    def make_palm_pivot_bone(self, org):
-        name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_ik_palm'), scale=0.5)
+    def make_wrist_pivot_bone(self, org):
+        name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_ik_wrist'), scale=0.5)
         put_bone(self.obj, name, self.get_bone(org).tail)
         return name
 
     @stage.parent_bones
-    def parent_palm_pivot_control(self):
-        if self.make_palm_pivot:
-            ctrl = self.bones.ctrl.ik_palm
+    def parent_wrist_pivot_control(self):
+        if self.make_wrist_pivot:
+            ctrl = self.bones.ctrl.ik_wrist
             self.set_bone_parent(ctrl, self.get_ik_control_output())
-            self.set_bone_parent(self.bones.mch.ik_palm, ctrl)
+            self.set_bone_parent(self.bones.mch.ik_wrist, ctrl)
 
     @stage.generate_widgets
-    def make_palm_pivot_widget(self):
-        if self.make_palm_pivot:
-            ctrl = self.bones.ctrl.ik_palm
+    def make_wrist_pivot_widget(self):
+        if self.make_wrist_pivot:
+            ctrl = self.bones.ctrl.ik_wrist
 
             if self.main_axis == 'x':
                 obj = create_circle_widget(self.obj, ctrl, head_tail=-0.3, head_tail_x=0.5)
@@ -128,14 +128,14 @@ class Rig(BaseLimbRig):
     def add_parameters(self, params):
         super().add_parameters(params)
 
-        params.make_ik_palm_pivot = bpy.props.BoolProperty(
-            name="IK Palm Pivot", default=False,
+        params.make_ik_wrist_pivot = bpy.props.BoolProperty(
+            name="IK Wrist Pivot", default=False,
             description="Make an extra IK hand control pivoting around the tip of the hand"
         )
 
     @classmethod
     def parameters_ui(self, layout, params):
-        layout.prop(params, "make_ik_palm_pivot")
+        layout.prop(params, "make_ik_wrist_pivot")
 
         super().parameters_ui(layout, params, 'Hand')
 

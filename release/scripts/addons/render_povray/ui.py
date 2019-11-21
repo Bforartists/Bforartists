@@ -27,7 +27,13 @@ from bpy.utils import register_class, unregister_class
 from bpy.types import (
         Operator,
         UIList,
-        Panel
+        Panel,
+        # Brush,
+        Material,
+        Light,
+        World,
+        ParticleSettings,
+        FreestyleLineStyle
         )
 # Example of wrapping every class 'as is'
 from bl_ui import properties_output
@@ -185,9 +191,9 @@ from bl_ui import properties_material
 for member in dir(properties_material):
     subclass = getattr(properties_material, member)
     try:
-        #mat=context.material
-        #if mat and mat.pov.type == "SURFACE" and (engine in cls.COMPAT_ENGINES) and not (mat.pov.material_use_nodes or mat.use_nodes):
-        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+        mat=bpy.context.active_object.active_material
+        if mat and mat.pov.type == "SURFACE" and (engine in cls.COMPAT_ENGINES) and not (mat.pov.material_use_nodes or mat.use_nodes):
+            subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
     except:
         pass
 del properties_material
@@ -224,18 +230,18 @@ for member in dir(properties_output):
         pass
 del properties_output
 
-class POV_WORLD_MT_presets(bpy.types.Menu):
+class WORLD_MT_POV_presets(bpy.types.Menu):
     bl_label = "World Presets"
     preset_subdir = "pov/world"
     preset_operator = "script.execute_preset"
     draw = bpy.types.Menu.draw_preset
 
 
-class AddPresetWorld(AddPresetBase, Operator):
+class WORLD_OT_POV_add_preset(AddPresetBase, Operator):
     '''Add a World Preset'''
     bl_idname = "object.world_preset_add"
     bl_label = "Add World Preset"
-    preset_menu = "POV_WORLD_MT_presets"
+    preset_menu = "WORLD_MT_POV_presets"
 
     # variable used for all preset values
     preset_defines = [
@@ -318,23 +324,21 @@ def locate_docpath():
     return ""
 
 def pov_context_tex_datablock(context):
-    idblock = context.material
-    if idblock:
-        return active_node_mat(idblock)
 
-    idblock = context.light
+    idblock = context.brush
+    if idblock:
+        return idblock
+
+    # idblock = bpy.context.active_object.active_material
+    idblock = bpy.context.scene.view_layers["View Layer"].objects.active.active_material
     if idblock:
         return idblock
 
     idblock = context.world
     if idblock:
         return idblock
-
-    idblock = context.brush
-    if idblock:
-        return idblock
-
-    idblock = context.line_style
+        
+    idblock = context.light
     if idblock:
         return idblock
 
@@ -343,6 +347,10 @@ def pov_context_tex_datablock(context):
 
     return idblock
 
+    idblock = context.line_style
+    if idblock:
+        return idblock
+        
 class RenderButtonsPanel():
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -567,18 +575,18 @@ class LIGHT_PT_POV_light(PovLampButtonsPanel, Panel):
 
     draw = properties_data_light.DATA_PT_light.draw
 
-class POV_LIGHT_MT_presets(bpy.types.Menu):
+class LIGHT_MT_POV_presets(bpy.types.Menu):
     bl_label = "Lamp Presets"
     preset_subdir = "pov/lamp"
     preset_operator = "script.execute_preset"
     draw = bpy.types.Menu.draw_preset
 
 
-class AddPresetLamp(AddPresetBase, Operator):
+class LIGHT_OT_POV_add_preset(AddPresetBase, Operator):
     '''Add a Lamp Preset'''
     bl_idname = "object.light_preset_add"
     bl_label = "Add Lamp Preset"
-    preset_menu = "POV_LIGHT_MT_presets"
+    preset_menu = "LIGHT_MT_POV_presets"
 
     # variable used for all preset values
     preset_defines = [
@@ -603,9 +611,9 @@ def light_panel_func(self, context):
     layout = self.layout
 
     row = layout.row(align=True)
-    row.menu(POV_LIGHT_MT_presets.__name__, text=POV_LIGHT_MT_presets.bl_label)
-    row.operator(AddPresetLamp.bl_idname, text="", icon='ADD')
-    row.operator(AddPresetLamp.bl_idname, text="", icon='REMOVE').remove_active = True
+    row.menu(LIGHT_MT_POV_presets.__name__, text=LIGHT_MT_POV_presets.bl_label)
+    row.operator(LIGHT_OT_POV_add_preset.bl_idname, text="", icon='ADD')
+    row.operator(LIGHT_OT_POV_add_preset.bl_idname, text="", icon='REMOVE').remove_active = True
 
 '''#TORECREATE##DEPRECATED#
 class LIGHT_PT_POV_sunsky(PovLampButtonsPanel, Panel):
@@ -832,7 +840,7 @@ class LIGHT_PT_POV_falloff_curve(PovLampButtonsPanel, Panel):
         return (lamp and lamp.type in {'POINT', 'SPOT'} and lamp.falloff_type == 'CUSTOM_CURVE') and (engine in cls.COMPAT_ENGINES)
     draw = properties_data_light.DATA_PT_falloff_curve.draw
 
-class OBJECT_PT_povray_obj_rainbow(PovLampButtonsPanel, Panel):
+class OBJECT_PT_POV_rainbow(PovLampButtonsPanel, Panel):
     bl_label = "POV-Ray Rainbow"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     #bl_options = {'HIDE_HEADER'}
@@ -885,9 +893,9 @@ class WORLD_PT_POV_world(WorldButtonsPanel, Panel):
         world = context.world.pov
 
         row = layout.row(align=True)
-        row.menu(POV_WORLD_MT_presets.__name__, text=POV_WORLD_MT_presets.bl_label)
-        row.operator(AddPresetWorld.bl_idname, text="", icon='ADD')
-        row.operator(AddPresetWorld.bl_idname, text="", icon='REMOVE').remove_active = True
+        row.menu(WORLD_MT_POV_presets.__name__, text=WORLD_MT_POV_presets.bl_label)
+        row.operator(WORLD_OT_POV_add_preset.bl_idname, text="", icon='ADD')
+        row.operator(WORLD_OT_POV_add_preset.bl_idname, text="", icon='REMOVE').remove_active = True
 
         row = layout.row()
         row.prop(world, "use_sky_paper")
@@ -934,7 +942,7 @@ class WORLD_PT_POV_mist(WorldButtonsPanel, Panel):
 
         layout.prop(world.mist_settings, "falloff")
         
-class RENDER_PT_povray_export_settings(RenderButtonsPanel, Panel):
+class RENDER_PT_POV_export_settings(RenderButtonsPanel, Panel):
     bl_label = "Start Options"
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'POVRAY_RENDER'}
@@ -981,7 +989,7 @@ class RENDER_PT_povray_export_settings(RenderButtonsPanel, Panel):
         row.prop(scene.pov, "list_lf_enable", text="Line breaks in lists")
 
 
-class RENDER_PT_povray_render_settings(RenderButtonsPanel, Panel):
+class RENDER_PT_POV_render_settings(RenderButtonsPanel, Panel):
     bl_label = "Global Settings"
     bl_icon = 'SETTINGS'
     bl_options = {'DEFAULT_CLOSED'}
@@ -1030,7 +1038,7 @@ class RENDER_PT_povray_render_settings(RenderButtonsPanel, Panel):
         row.prop(scene.pov, "use_shadows")
         row.prop(scene.pov, "alpha_mode") 
         
-class RENDER_PT_povray_photons(RenderButtonsPanel, Panel):
+class RENDER_PT_POV_photons(RenderButtonsPanel, Panel):
     bl_label = "Photons"
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'POVRAY_RENDER'}
@@ -1074,7 +1082,7 @@ class RENDER_PT_povray_photons(RenderButtonsPanel, Panel):
             box.prop(scene.pov, "photon_map_file")
         #end main photons
 
-class RENDER_PT_povray_antialias(RenderButtonsPanel, Panel):
+class RENDER_PT_POV_antialias(RenderButtonsPanel, Panel):
     bl_label = "Anti-Aliasing"
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'POVRAY_RENDER'}
@@ -1134,7 +1142,7 @@ class RENDER_PT_povray_antialias(RenderButtonsPanel, Panel):
 
 
 
-class RENDER_PT_povray_radiosity(RenderButtonsPanel, Panel):
+class RENDER_PT_POV_radiosity(RenderButtonsPanel, Panel):
     bl_label = "Diffuse Radiosity"
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'POVRAY_RENDER'}
@@ -1196,7 +1204,7 @@ class POV_RADIOSITY_MT_presets(bpy.types.Menu):
     draw = bpy.types.Menu.draw_preset
 
 
-class AddPresetRadiosity(AddPresetBase, Operator):
+class RENDER_OT_POV_radiosity_add_preset(AddPresetBase, Operator):
     '''Add a Radiosity Preset'''
     bl_idname = "scene.radiosity_preset_add"
     bl_label = "Add Radiosity Preset"
@@ -1241,10 +1249,10 @@ def rad_panel_func(self, context):
 
     row = layout.row(align=True)
     row.menu(POV_RADIOSITY_MT_presets.__name__, text=POV_RADIOSITY_MT_presets.bl_label)
-    row.operator(AddPresetRadiosity.bl_idname, text="", icon='ADD')
-    row.operator(AddPresetRadiosity.bl_idname, text="", icon='REMOVE').remove_active = True
+    row.operator(RENDER_OT_POV_radiosity_add_preset.bl_idname, text="", icon='ADD')
+    row.operator(RENDER_OT_POV_radiosity_add_preset.bl_idname, text="", icon='REMOVE').remove_active = True
 
-class RENDER_PT_povray_media(WorldButtonsPanel, Panel):
+class RENDER_PT_POV_media(WorldButtonsPanel, Panel):
     bl_label = "Atmosphere Media"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
@@ -1293,7 +1301,7 @@ class RENDER_PT_povray_media(WorldButtonsPanel, Panel):
 ##
 ##        layout.active = scene.pov.baking_enable
 
-class MODIFIERS_PT_povray_modifiers(ModifierButtonsPanel, Panel):
+class MODIFIERS_PT_POV_modifiers(ModifierButtonsPanel, Panel):
     bl_label = "POV-Ray"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
@@ -1328,7 +1336,7 @@ class MATERIAL_MT_POV_sss_presets(bpy.types.Menu):
     preset_operator = "script.execute_preset"
     draw = bpy.types.Menu.draw_preset
 
-class AddPresetSSS(AddPresetBase, Operator):
+class MATERIAL_OT_POV_sss_add_preset(AddPresetBase, Operator):
     '''Add an SSS Preset'''
     bl_idname = "material.sss_preset_add"
     bl_label = "Add SSS Preset"
@@ -1378,8 +1386,8 @@ class MATERIAL_PT_POV_sss(MaterialButtonsPanel, Panel):
         row = layout.row().split()
         sub = row.row(align=True).split(align=True, factor=0.75)
         sub.menu(MATERIAL_MT_POV_sss_presets.__name__, text=MATERIAL_MT_POV_sss_presets.bl_label)
-        sub.operator(AddPresetSSS.bl_idname, text="", icon='ADD')
-        sub.operator(AddPresetSSS.bl_idname, text="", icon='REMOVE').remove_active = True
+        sub.operator(MATERIAL_OT_POV_sss_add_preset.bl_idname, text="", icon='ADD')
+        sub.operator(MATERIAL_OT_POV_sss_add_preset.bl_idname, text="", icon='REMOVE').remove_active = True
 
         split = layout.split()
 
@@ -1400,7 +1408,7 @@ class MATERIAL_PT_POV_sss(MaterialButtonsPanel, Panel):
         col.separator()
         col.prop(sss, "error_threshold", text="Error")
         
-class MATERIAL_PT_povray_activate_node(MaterialButtonsPanel, Panel):
+class MATERIAL_PT_POV_activate_node(MaterialButtonsPanel, Panel):
     bl_label = "Activate Node Settings"
     bl_context = "material"
     bl_options = {'HIDE_HEADER'}
@@ -1420,7 +1428,7 @@ class MATERIAL_PT_povray_activate_node(MaterialButtonsPanel, Panel):
         layout.operator("WM_OT_context_toggle", text="Use POV-Ray Nodes", icon='NODETREE').data_path = \
                         "material.pov.material_use_nodes"
 
-class MATERIAL_PT_povray_active_node(MaterialButtonsPanel, Panel):
+class MATERIAL_PT_POV_active_node(MaterialButtonsPanel, Panel):
     bl_label = "Active Node Settings"
     bl_context = "material"
     bl_options = {'HIDE_HEADER'}
@@ -1596,7 +1604,7 @@ class MATERIAL_PT_POV_transp(MaterialButtonsPanel, Panel):
             sub.prop(rayt, "gloss_threshold", text="Threshold")
             sub.prop(rayt, "gloss_samples", text="Samples")
         
-class MATERIAL_PT_povray_reflection(MaterialButtonsPanel, Panel):
+class MATERIAL_PT_POV_reflection(MaterialButtonsPanel, Panel):
     bl_label = "POV-Ray Reflection"
     bl_parent_id = "MATERIAL_PT_POV_raytrace_mirror"    
     COMPAT_ENGINES = {'POVRAY_RENDER'}
@@ -1649,7 +1657,7 @@ class MATERIAL_PT_POV_interior(MaterialButtonsPanel, Panel):
         mat = context.material
 '''   
 
-class MATERIAL_PT_povray_fade_color(MaterialButtonsPanel, Panel):
+class MATERIAL_PT_POV_fade_color(MaterialButtonsPanel, Panel):
     bl_label = "POV-Ray Absorption"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     #bl_parent_id = "material.pov_interior" 
@@ -1679,7 +1687,7 @@ class MATERIAL_PT_povray_fade_color(MaterialButtonsPanel, Panel):
         pass
 
 
-class MATERIAL_PT_povray_caustics(MaterialButtonsPanel, Panel):
+class MATERIAL_PT_POV_caustics(MaterialButtonsPanel, Panel):
     bl_label = "Caustics"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
@@ -1766,11 +1774,11 @@ class MATERIAL_PT_strand(MaterialButtonsPanel, Panel):
         col.separator()
         sub = col.column()
         sub.active = (not mat.pov.use_shadeless)
-        sub.label("Surface diffuse:")
+        sub.label(text="Surface diffuse:")
         sub = col.column()
         sub.prop(tan, "blend_distance", text="Distance")
         
-class MATERIAL_PT_povray_replacement_text(MaterialButtonsPanel, Panel):
+class MATERIAL_PT_POV_replacement_text(MaterialButtonsPanel, Panel):
     bl_label = "Custom POV Code"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
@@ -1784,7 +1792,7 @@ class MATERIAL_PT_povray_replacement_text(MaterialButtonsPanel, Panel):
         col.label(text="Replace properties with:")
         col.prop(mat.pov, "replacement_text", text="")
 
-class TEXTURE_MT_specials(bpy.types.Menu):
+class TEXTURE_MT_POV_specials(bpy.types.Menu):
     bl_label = "Texture Specials"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
@@ -1794,7 +1802,7 @@ class TEXTURE_MT_specials(bpy.types.Menu):
         layout.operator("texture.slot_copy", icon='COPYDOWN')
         layout.operator("texture.slot_paste", icon='PASTEDOWN')
 
-class TEXTURE_UL_texture_slots(bpy.types.UIList):
+class TEXTURE_UL_POV_texture_slots(bpy.types.UIList):
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
         ob = data
@@ -1859,6 +1867,29 @@ class WORLD_TEXTURE_SLOTS_UL_List(UIList):
             layout.alignment = 'CENTER'
             layout.label("", icon = custom_icon)
             
+class MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist(bpy.types.UIList):
+#    texture_slots:
+    index: bpy.props.IntProperty(name='index')
+    #foo  = random prop
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
+        ob = data
+        slot = item
+        #ma = slot.name
+        # draw_item must handle the three layout types... Usually 'DEFAULT' and 'COMPACT' can share the same code.
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            # You should always start your row layout by a label (icon + text), or a non-embossed text field,
+            # this will also make the row easily selectable in the list! The later also enables ctrl-click rename.
+            # We use icon_value of label, as our given icon is an integer value, not an enum ID.
+            # Note "data" names should never be translated!
+            if slot:
+                layout.prop(item, "texture", text="", emboss=False, icon='TEXTURE')
+            else:
+                layout.label(text="New", translate=False, icon_value=icon)
+        # 'GRID' layout type should be as compact as possible (typically a single icon!).
+        elif self.layout_type in {'GRID'}:
+            layout.alignment = 'CENTER'
+            layout.label(text="", icon_value=icon)
+            
 class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
     bl_label = ""
     bl_options = {'HIDE_HEADER'}
@@ -1888,7 +1919,7 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
         if scene.texture_context == 'MATERIAL':
             mat = context.scene.view_layers["View Layer"].objects.active.active_material
             row = layout.row()
-            row.template_list("MATERIAL_TEXTURE_SLOTS_UL_layerlist", "", mat, "pov_texture_slots", mat.pov, "active_texture_index")
+            row.template_list("MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist", "", mat, "pov_texture_slots", mat.pov, "active_texture_index")
             col = row.column(align=True)
             col.operator("pov.textureslotadd",icon='ADD',text='')
             col.operator("pov.textureslotremove",icon='REMOVE',text='')
@@ -1990,7 +2021,7 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
             col = row.column(align=True)
             col.operator("texture.slot_move", text="", icon='TRIA_UP').type = 'UP'
             col.operator("texture.slot_move", text="", icon='TRIA_DOWN').type = 'DOWN'
-            col.menu("TEXTURE_MT_specials", icon='DOWNARROW_HLT', text="")
+            col.menu("TEXTURE_MT_POV_specials", icon='DOWNARROW_HLT', text="")
 
         if tex_collection:
             layout.template_ID(idblock, "active_texture", new="texture.new")
@@ -2046,7 +2077,7 @@ class TEXTURE_PT_colors(TextureButtonsPanel, Panel):
 # Texture Slot Panels #
 
 
-class POV_OT_texture_slot_add(Operator):
+class MATERIAL_OT_POV_texture_slot_add(Operator):
     bl_idname = "pov.textureslotadd"
     bl_label = "Add"
     bl_description = "Add texture_slot"
@@ -2065,7 +2096,7 @@ class POV_OT_texture_slot_add(Operator):
         return {'FINISHED'}
 
 
-class POV_OT_texture_slot_remove(Operator):
+class MATERIAL_OT_POV_texture_slot_remove(Operator):
     bl_idname = "pov.textureslotremove"
     bl_label = "Remove"
     bl_description = "Remove texture_slot"
@@ -2091,8 +2122,8 @@ class TextureSlotPanel(TextureButtonsPanel):
         engine = context.scene.render.engine
         return TextureButtonsPanel.poll(cls, context) and (engine in cls.COMPAT_ENGINES)
 
-class TEXTURE_PT_povray_type(TextureButtonsPanel, Panel):
-    bl_label = "POV-ray Textures"
+class TEXTURE_PT_POV_type(TextureButtonsPanel, Panel):
+    bl_label = "POV Textures"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     bl_options = {'HIDE_HEADER'}
 
@@ -2110,7 +2141,7 @@ class TEXTURE_PT_povray_type(TextureButtonsPanel, Panel):
                           # world.texture_slots, world, "active_texture_index")
         
         
-class TEXTURE_PT_povray_preview(TextureButtonsPanel, Panel):
+class TEXTURE_PT_POV_preview(TextureButtonsPanel, Panel):
     bl_label = "Preview"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     bl_options = {'HIDE_HEADER'}
@@ -2121,7 +2152,7 @@ class TEXTURE_PT_povray_preview(TextureButtonsPanel, Panel):
         if not hasattr(context, "pov_texture_slot"):
             return False
         tex=context.texture
-        mat=context.material
+        mat=bpy.context.active_object.active_material
         return (tex and (tex.pov.tex_pattern_type != 'emulator') and (engine in cls.COMPAT_ENGINES))
 
     def draw(self, context):
@@ -2137,11 +2168,11 @@ class TEXTURE_PT_povray_preview(TextureButtonsPanel, Panel):
             layout.template_preview(tex, slot=slot)
 
 
-class TEXTURE_PT_povray_parameters(TextureButtonsPanel, Panel):
-    bl_label = "POV-ray Pattern Options"
+class TEXTURE_PT_POV_parameters(TextureButtonsPanel, Panel):
+    bl_label = "POV Pattern Options"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     def draw(self, context):
-        mat = context.material
+        mat = bpy.context.active_object.active_material
         layout = self.layout
         tex = context.texture
         align=True
@@ -2345,14 +2376,16 @@ class TEXTURE_PT_povray_parameters(TextureButtonsPanel, Panel):
             row.prop(tex.pov, "warp_turbulence_z", text="Z")
             row.prop(tex.pov, "modifier_omega", text="Omega")
 
-class TEXTURE_PT_influence(TextureSlotPanel, Panel):
+class TEXTURE_PT_POV_influence(TextureSlotPanel, Panel):
     bl_label = "Influence"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
-
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    # bl_context = 'texture'
     @classmethod
     def poll(cls, context):
         idblock = pov_context_tex_datablock(context)
-        if isinstance(idblock, Brush):
+        if (isinstance(idblock, Brush) and bpy.context.scene.texture_context == 'OTHER'): #XXX replace by bpy.types.Brush?
             return False
 
         if not getattr(context, "pov_texture_slot", None):
@@ -2368,19 +2401,23 @@ class TEXTURE_PT_influence(TextureSlotPanel, Panel):
         idblock = pov_context_tex_datablock(context)
 
         # tex = context.pov_texture_slot
-        mat = context.material
-        tex = bpy.data.textures[mat.pov_texture_slots[mat.pov.active_texture_index]]
-
+        mat = bpy.context.active_object.active_material
+        texslot = mat.pov_texture_slots[mat.active_texture_index] #bpy.data.textures[mat.active_texture_index]
+        tex = bpy.data.textures[mat.pov_texture_slots[mat.active_texture_index].texture]
         def factor_but(layout, toggle, factor, name):
             row = layout.row(align=True)
-            row.prop(tex, toggle, text="")
+            row.prop(texslot, toggle, text="")
             sub = row.row(align=True)
-            sub.active = getattr(tex, toggle)
-            sub.prop(tex, factor, text=name, slider=True)
+            sub.active = getattr(texslot, toggle)
+            sub.prop(texslot, factor, text=name, slider=True)
             return sub  # XXX, temp. use_map_normal needs to override.
 
         if isinstance(idblock, Material):
+            split = layout.split()
+
+            col = split.column()       
             if idblock.pov.type in {'SURFACE', 'WIRE'}:
+
                 split = layout.split()
 
                 col = split.column()
@@ -2405,15 +2442,15 @@ class TEXTURE_PT_influence(TextureSlotPanel, Panel):
                 col.label(text="Geometry:")
                 # XXX replace 'or' when displacement is fixed to not rely on normal influence value.
                 sub_tmp = factor_but(col, "use_map_normal", "normal_factor", "Normal")
-                sub_tmp.active = (tex.use_map_normal or tex.use_map_displacement)
+                sub_tmp.active = (texslot.use_map_normal or texslot.use_map_displacement)
                 # END XXX
 
                 factor_but(col, "use_map_warp", "warp_factor", "Warp")
                 factor_but(col, "use_map_displacement", "displacement_factor", "Displace")
 
                 # ~ sub = col.column()
-                # ~ sub.active = tex.use_map_translucency or tex.map_emit or tex.map_alpha or tex.map_raymir or tex.map_hardness or tex.map_ambient or tex.map_specularity or tex.map_reflection or tex.map_mirror
-                #~ sub.prop(tex, "default_value", text="Amount", slider=True)
+                # ~ sub.active = texslot.use_map_translucency or texslot.map_emit or texslot.map_alpha or texslot.map_raymir or texslot.map_hardness or texslot.map_ambient or texslot.map_specularity or texslot.map_reflection or texslot.map_mirror
+                #~ sub.prop(texslot, "default_value", text="Amount", slider=True)
             elif idblock.pov.type == 'HALO':
                 layout.label(text="Halo:")
 
@@ -2454,7 +2491,7 @@ class TEXTURE_PT_influence(TextureSlotPanel, Panel):
                 col = split.column()
                 factor_but(col, "use_map_displacement", "displacement_factor", "Displace")
 
-        elif isinstance(idblock, Lamp):
+        elif isinstance(idblock, Light):
             split = layout.split()
 
             col = split.column()
@@ -2518,44 +2555,20 @@ class TEXTURE_PT_influence(TextureSlotPanel, Panel):
             split = layout.split()
 
             col = split.column()
-            col.prop(tex, "blend_type", text="Blend")
-            col.prop(tex, "use_rgb_to_intensity")
+            # col.prop(tex, "blend_type", text="Blend") #deprecated since 2.8
+            # col.prop(tex, "use_rgb_to_intensity") #deprecated since 2.8
             # color is used on gray-scale textures even when use_rgb_to_intensity is disabled.
-            col.prop(tex, "color", text="")
+            # col.prop(tex, "color", text="") #deprecated since 2.8
 
             col = split.column()
-            col.prop(tex, "invert", text="Negative")
-            col.prop(tex, "use_stencil")
+            # col.prop(tex, "invert", text="Negative") #deprecated since 2.8
+            # col.prop(tex, "use_stencil") #deprecated since 2.8
 
-        if isinstance(idblock, (Material, World)):
-            col.prop(tex, "default_value", text="DVar", slider=True)
+        #if isinstance(idblock, (Material, World)):
+            #col.prop(tex, "default_value", text="DVar", slider=True)
 
-        if isinstance(idblock, Material):
-            layout.label(text="Bump Mapping:")
 
-            # only show bump settings if activated but not for normal-map images
-            row = layout.row()
-
-            sub = row.row()
-            sub.active = (
-                (tex.use_map_normal or tex.use_map_warp) and
-                not (tex.texture.type == 'IMAGE' and
-                     (tex.texture.use_normal_map or tex.texture.use_derivative_map))
-            )
-            sub.prop(tex, "bump_method", text="Method")
-
-            # the space setting is supported for: derivative-maps + bump-maps
-            # (DEFAULT,BEST_QUALITY), not for normal-maps
-            sub = row.row()
-            sub.active = (
-                (tex.use_map_normal or tex.use_map_warp) and
-                not (tex.texture.type == 'IMAGE' and tex.texture.use_normal_map) and
-                ((tex.bump_method in {'BUMP_LOW_QUALITY', 'BUMP_MEDIUM_QUALITY', 'BUMP_BEST_QUALITY'}) or
-                 (tex.texture.type == 'IMAGE' and tex.texture.use_derivative_map))
-            )
-            sub.prop(tex, "bump_objectspace", text="Space")
-
-class TEXTURE_PT_povray_tex_gamma(TextureButtonsPanel, Panel):
+class TEXTURE_PT_POV_tex_gamma(TextureButtonsPanel, Panel):
     bl_label = "Image Gamma"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
@@ -2587,8 +2600,8 @@ class TEXTURE_PT_povray_tex_gamma(TextureButtonsPanel, Panel):
         # col.prop(tex.pov, "replacement_text", text="")
 
 
-class OBJECT_PT_povray_obj_parameters(ObjectButtonsPanel, Panel):
-    bl_label = "POV-Ray"
+class OBJECT_PT_POV_obj_parameters(ObjectButtonsPanel, Panel):
+    bl_label = "POV"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     @classmethod
@@ -2637,8 +2650,8 @@ class OBJECT_PT_povray_obj_parameters(ObjectButtonsPanel, Panel):
                 # text = "Bounded by"
             # col.prop(obj.pov,"addboundorclip",text=text)
 
-class OBJECT_PT_povray_obj_sphere(PovDataButtonsPanel, Panel):
-    bl_label = "POV-Ray Sphere"
+class OBJECT_PT_POV_obj_sphere(PovDataButtonsPanel, Panel):
+    bl_label = "POV Sphere"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     #bl_options = {'HIDE_HEADER'}
     @classmethod
@@ -2670,8 +2683,8 @@ class OBJECT_PT_povray_obj_sphere(PovDataButtonsPanel, Panel):
                 col.prop(obj.pov, "sphere_radius", text="Radius of Sphere")
 
 
-class OBJECT_PT_povray_obj_cylinder(PovDataButtonsPanel, Panel):
-    bl_label = "POV-Ray Cylinder"
+class OBJECT_PT_POV_obj_cylinder(PovDataButtonsPanel, Panel):
+    bl_label = "POV Cylinder"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     #bl_options = {'HIDE_HEADER'}
     @classmethod
@@ -2704,8 +2717,8 @@ class OBJECT_PT_povray_obj_cylinder(PovDataButtonsPanel, Panel):
                 col.prop(obj.pov, "cylinder_radius")
                 col.prop(obj.pov, "cylinder_location_cap")
 
-class OBJECT_PT_povray_obj_cone(PovDataButtonsPanel, Panel):
-    bl_label = "POV-Ray Cone"
+class OBJECT_PT_POV_obj_cone(PovDataButtonsPanel, Panel):
+    bl_label = "POV Cone"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     #bl_options = {'HIDE_HEADER'}
     @classmethod
@@ -2741,8 +2754,8 @@ class OBJECT_PT_povray_obj_cone(PovDataButtonsPanel, Panel):
                 col.prop(obj.pov, "cone_segments", text="Segmentation of Cone proxy")
                 col.prop(obj.pov, "cone_height", text="Height of the cone")
 
-class OBJECT_PT_povray_obj_superellipsoid(PovDataButtonsPanel, Panel):
-    bl_label = "POV-Ray Superquadric ellipsoid"
+class OBJECT_PT_POV_obj_superellipsoid(PovDataButtonsPanel, Panel):
+    bl_label = "POV Superquadric ellipsoid"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     #bl_options = {'HIDE_HEADER'}
     @classmethod
@@ -2781,8 +2794,8 @@ class OBJECT_PT_povray_obj_superellipsoid(PovDataButtonsPanel, Panel):
                 col.prop(obj.pov, "se_edit")
 
 
-class OBJECT_PT_povray_obj_torus(PovDataButtonsPanel, Panel):
-    bl_label = "POV-Ray Torus"
+class OBJECT_PT_POV_obj_torus(PovDataButtonsPanel, Panel):
+    bl_label = "POV Torus"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     #bl_options = {'HIDE_HEADER'}
     @classmethod
@@ -2818,8 +2831,8 @@ class OBJECT_PT_povray_obj_torus(PovDataButtonsPanel, Panel):
                 col.prop(obj.pov, "torus_major_segments")
                 col.prop(obj.pov, "torus_minor_segments")
 
-class OBJECT_PT_povray_obj_supertorus(PovDataButtonsPanel, Panel):
-    bl_label = "POV-Ray SuperTorus"
+class OBJECT_PT_POV_obj_supertorus(PovDataButtonsPanel, Panel):
+    bl_label = "POV SuperTorus"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     #bl_options = {'HIDE_HEADER'}
     @classmethod
@@ -2870,8 +2883,8 @@ class OBJECT_PT_povray_obj_supertorus(PovDataButtonsPanel, Panel):
                 col.prop(obj.pov, "st_accuracy")
                 col.prop(obj.pov, "st_max_gradient")
 
-class OBJECT_PT_povray_obj_parametric(PovDataButtonsPanel, Panel):
-    bl_label = "POV-Ray Parametric surface"
+class OBJECT_PT_POV_obj_parametric(PovDataButtonsPanel, Panel):
+    bl_label = "POV Parametric surface"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     #bl_options = {'HIDE_HEADER'}
     @classmethod
@@ -2932,9 +2945,9 @@ class OBJECT_PT_povray_replacement_text(ObjectButtonsPanel, Panel):
 ###############################################################################
 
 
-class POVRAY_MT_primitives_add_menu(bpy.types.Menu):
+class VIEW_MT_POV_primitives_add(bpy.types.Menu):
     """Define the menu with presets"""
-    bl_idname = "POVRAY_MT_primitives_add_menu"
+    bl_idname = "VIEW_MT_POV_primitives_add"
     bl_label = "Povray"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
@@ -2946,10 +2959,10 @@ class POVRAY_MT_primitives_add_menu(bpy.types.Menu):
     def draw(self,context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.menu(BasicShapesMenu.bl_idname, text = "Primitives",icon="GROUP")
-        layout.menu(ImportMenu.bl_idname, text = "Import",icon="IMPORT")
+        layout.menu(VIEW_MT_POV_Basic_Shapes.bl_idname, text = "Primitives",icon="GROUP")
+        layout.menu(VIEW_MT_POV_import.bl_idname, text = "Import",icon="IMPORT")
 
-class BasicShapesMenu(bpy.types.Menu):
+class VIEW_MT_POV_Basic_Shapes(bpy.types.Menu):
     bl_idname = "POVRAY_MT_basic_shape_tools"
     bl_label = "Basic_shapes"
 
@@ -2978,7 +2991,7 @@ class BasicShapesMenu(bpy.types.Menu):
         layout.operator("pov.addsupertorus", text="Supertorus",icon="SURFACE_NTORUS")
         layout.separator()
         layout.label(text = "Macro based")
-        layout.operator("pov.addpolygontocircle", text="Polygon To Circle Blending",icon="RETOPO")
+        layout.operator("pov.addpolygontocircle", text="Polygon To Circle Blending",icon="MOD_CAST")
         layout.operator("pov.addloft", text="Loft",icon="SURFACE_NSURFACE")
         layout.separator()
         # Warning if the Add Advanced Objects addon containing
@@ -2996,7 +3009,7 @@ class BasicShapesMenu(bpy.types.Menu):
         else:
             layout.operator("pov.addparametric", text="Parametric",icon = 'SCRIPTPLUGINS')
 
-class ImportMenu(bpy.types.Menu):
+class VIEW_MT_POV_import(bpy.types.Menu):
     bl_idname = "POVRAY_MT_import_tools"
     bl_label = "Import"
 
@@ -3008,7 +3021,7 @@ class ImportMenu(bpy.types.Menu):
 def menu_func_add(self, context):
     engine = context.scene.render.engine
     if engine == 'POVRAY_RENDER':
-        self.layout.menu("POVRAY_MT_primitives_add_menu", icon="PLUGIN")
+        self.layout.menu("VIEW_MT_POV_primitives_add", icon="PLUGIN")
 
 def menu_func_import(self, context):
     engine = context.scene.render.engine
@@ -3042,7 +3055,7 @@ def menu_func_import(self, context):
 
     # return True
 
-class NodeMapCreateMenu(bpy.types.Menu):
+class NODE_MT_POV_map_create(bpy.types.Menu):
     """Create maps"""
     bl_idname = "POVRAY_MT_node_map_create"
     bl_label = "Create map"
@@ -3057,7 +3070,7 @@ def menu_func_nodes(self, context):
         mat=context.object.active_material
         if mat and context.space_data.tree_type == 'ObjectNodeTree':
             self.layout.prop(mat.pov,"material_use_nodes")
-            self.layout.menu(NodeMapCreateMenu.bl_idname)
+            self.layout.menu(NODE_MT_POV_map_create.bl_idname)
             self.layout.operator("wm.updatepreviewkey")
         if hasattr(mat,'active_texture') and context.scene.render.engine == 'POVRAY_RENDER':
             tex=mat.active_texture
@@ -3068,8 +3081,8 @@ def menu_func_nodes(self, context):
 ###############################################################################
 # Camera Povray Settings
 ###############################################################################
-class CAMERA_PT_povray_cam_dof(CameraDataButtonsPanel, Panel):
-    bl_label = "POV-Ray Aperture"
+class CAMERA_PT_POV_cam_dof(CameraDataButtonsPanel, Panel):
+    bl_label = "POV Aperture"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     bl_parent_id = "DATA_PT_camera_dof_aperture"
     bl_options = {'HIDE_HEADER'}
@@ -3090,7 +3103,7 @@ class CAMERA_PT_povray_cam_dof(CameraDataButtonsPanel, Panel):
 
         col = flow.column()
         col.label(text="F-Stop value will export as")
-        col.label(text="POV-Ray aperture : " + "%.3f" % (1/cam.dof.aperture_fstop*1000))
+        col.label(text="POV aperture : " + "%.3f" % (1/cam.dof.aperture_fstop*1000))
         
         col = flow.column()
         col.prop(cam.pov, "dof_samples_min")
@@ -3100,8 +3113,8 @@ class CAMERA_PT_povray_cam_dof(CameraDataButtonsPanel, Panel):
 
 
 
-class CAMERA_PT_povray_cam_nor(CameraDataButtonsPanel, Panel):
-    bl_label = "POV-Ray Perturbation"
+class CAMERA_PT_POV_cam_nor(CameraDataButtonsPanel, Panel):
+    bl_label = "POV Perturbation"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     def draw_header(self, context):
@@ -3122,7 +3135,7 @@ class CAMERA_PT_povray_cam_nor(CameraDataButtonsPanel, Panel):
         layout.prop(cam.pov,"scale")
 
 
-class CAMERA_PT_povray_replacement_text(CameraDataButtonsPanel, Panel):
+class CAMERA_PT_POV_replacement_text(CameraDataButtonsPanel, Panel):
     bl_label = "Custom POV Code"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
@@ -3139,7 +3152,7 @@ class CAMERA_PT_povray_replacement_text(CameraDataButtonsPanel, Panel):
 # Text Povray Settings
 ###############################################################################
 
-class TEXT_OT_povray_insert(Operator):
+class TEXT_OT_POV_insert(Operator):
     """Tooltip"""
     bl_idname = "text.povray_insert"
     bl_label = "Insert"
@@ -3164,9 +3177,9 @@ class TEXT_OT_povray_insert(Operator):
 def validinsert(ext):
 	return ext in {".txt",".inc",".pov"}
 
-class TEXT_MT_insert(bpy.types.Menu):
+class TEXT_MT_POV_insert(bpy.types.Menu):
     bl_label = "Insert"
-    bl_idname = "TEXT_MT_insert"
+    bl_idname = "TEXT_MT_POV_insert"
 
     def draw(self, context):
         pov_documents = locate_docpath()
@@ -3184,8 +3197,8 @@ class TEXT_MT_insert(bpy.types.Menu):
 					   filter_ext= validinsert
                        )
 
-class TEXT_PT_povray_custom_code(TextButtonsPanel, Panel):
-    bl_label = "POV-Ray"
+class TEXT_PT_POV_custom_code(TextButtonsPanel, Panel):
+    bl_label = "POV"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     def draw(self, context):
@@ -3200,13 +3213,13 @@ class TEXT_PT_povray_custom_code(TextButtonsPanel, Panel):
             layout.label(text="in addon preferences")
             #layout.separator()
             layout.operator("preferences.addon_show",
-                         text="Go to Render: POV-Ray addon",
+                         text="Go to Render: Persistence of Vision addon",
                          icon="PREFERENCES").module = "render_povray"
 
             #layout.separator()
         else:
             #print(pov_documents)
-            layout.menu(TEXT_MT_insert.bl_idname)
+            layout.menu(TEXT_MT_POV_insert.bl_idname)
 
         if text:
             box = layout.box()
@@ -3230,8 +3243,8 @@ class TEXT_PT_povray_custom_code(TextButtonsPanel, Panel):
 ###############################################
 # Text editor templates from header menu
 
-class TEXT_MT_templates_pov(bpy.types.Menu):
-    bl_label = "POV-Ray"
+class TEXT_MT_POV_templates(bpy.types.Menu):
+    bl_label = "POV"
 
     # We list templates on file evaluation, we can assume they are static data,
     # and better avoid running this on every draw call.
@@ -3246,13 +3259,13 @@ class TEXT_MT_templates_pov(bpy.types.Menu):
         )
 
 def menu_func_templates(self, context):
-    # Do not depend on POV-Ray being active renderer here...
-    self.layout.menu("TEXT_MT_templates_pov")
+    # Do not depend on POV being active renderer here...
+    self.layout.menu("TEXT_MT_POV_templates")
 
 classes = (
     WORLD_PT_POV_world,
-    POV_WORLD_MT_presets,
-    AddPresetWorld,
+    WORLD_MT_POV_presets,
+    WORLD_OT_POV_add_preset,
     WORLD_TEXTURE_SLOTS_UL_List,
     WORLD_PT_POV_mist,    
     #RenderButtonsPanel,
@@ -3274,63 +3287,64 @@ classes = (
     #PovLampButtonsPanel,
     LIGHT_PT_POV_preview,
     LIGHT_PT_POV_light,
-    POV_LIGHT_MT_presets,
-    AddPresetLamp,
-    OBJECT_PT_povray_obj_rainbow,
-    RENDER_PT_povray_export_settings,
-    RENDER_PT_povray_render_settings,
-    RENDER_PT_povray_photons,
-    RENDER_PT_povray_antialias,
-    RENDER_PT_povray_radiosity,
+    LIGHT_MT_POV_presets,
+    LIGHT_OT_POV_add_preset,
+    OBJECT_PT_POV_rainbow,
+    RENDER_PT_POV_export_settings,
+    RENDER_PT_POV_render_settings,
+    RENDER_PT_POV_photons,
+    RENDER_PT_POV_antialias,
+    RENDER_PT_POV_radiosity,
     POV_RADIOSITY_MT_presets,
-    AddPresetRadiosity,
-    RENDER_PT_povray_media,
-    MODIFIERS_PT_povray_modifiers,
+    RENDER_OT_POV_radiosity_add_preset,
+    RENDER_PT_POV_media,
+    MODIFIERS_PT_POV_modifiers,
     MATERIAL_PT_POV_sss,
     MATERIAL_MT_POV_sss_presets,
-    AddPresetSSS,
+    MATERIAL_OT_POV_sss_add_preset,
     MATERIAL_PT_strand,
-    MATERIAL_PT_povray_activate_node,
-    MATERIAL_PT_povray_active_node,
+    MATERIAL_PT_POV_activate_node,
+    MATERIAL_PT_POV_active_node,
     MATERIAL_PT_POV_mirror,
     MATERIAL_PT_POV_transp,
-    MATERIAL_PT_povray_reflection,
+    MATERIAL_PT_POV_reflection,
     #MATERIAL_PT_POV_interior,
-    MATERIAL_PT_povray_fade_color,
-    MATERIAL_PT_povray_caustics,
-    MATERIAL_PT_povray_replacement_text,
-    TEXTURE_MT_specials,
+    MATERIAL_PT_POV_fade_color,
+    MATERIAL_PT_POV_caustics,
+    MATERIAL_PT_POV_replacement_text,
+    TEXTURE_MT_POV_specials,
     TEXTURE_PT_POV_context_texture,    
-    TEXTURE_PT_povray_type,
-    TEXTURE_PT_povray_preview,
-    TEXTURE_PT_povray_parameters,
-    TEXTURE_PT_povray_tex_gamma,
-    OBJECT_PT_povray_obj_parameters,
-    OBJECT_PT_povray_obj_sphere,
-    OBJECT_PT_povray_obj_cylinder,
-    OBJECT_PT_povray_obj_cone,
-    OBJECT_PT_povray_obj_superellipsoid,
-    OBJECT_PT_povray_obj_torus,
-    OBJECT_PT_povray_obj_supertorus,
-    OBJECT_PT_povray_obj_parametric,
+    TEXTURE_PT_POV_type,
+    TEXTURE_PT_POV_preview,
+    TEXTURE_PT_POV_parameters,
+    TEXTURE_PT_POV_tex_gamma,
+    OBJECT_PT_POV_obj_parameters,
+    OBJECT_PT_POV_obj_sphere,
+    OBJECT_PT_POV_obj_cylinder,
+    OBJECT_PT_POV_obj_cone,
+    OBJECT_PT_POV_obj_superellipsoid,
+    OBJECT_PT_POV_obj_torus,
+    OBJECT_PT_POV_obj_supertorus,
+    OBJECT_PT_POV_obj_parametric,
     OBJECT_PT_povray_replacement_text,
-    POVRAY_MT_primitives_add_menu,
-    BasicShapesMenu,
-    ImportMenu,
-    NodeMapCreateMenu,
-    CAMERA_PT_povray_cam_dof,
-    CAMERA_PT_povray_cam_nor,
-    CAMERA_PT_povray_replacement_text,
-    TEXT_OT_povray_insert,
-    TEXT_MT_insert,
-    TEXT_PT_povray_custom_code,
-    TEXT_MT_templates_pov,
+    VIEW_MT_POV_primitives_add,
+    VIEW_MT_POV_Basic_Shapes,
+    VIEW_MT_POV_import,
+    NODE_MT_POV_map_create,
+    CAMERA_PT_POV_cam_dof,
+    CAMERA_PT_POV_cam_nor,
+    CAMERA_PT_POV_replacement_text,
+    TEXT_OT_POV_insert,
+    TEXT_MT_POV_insert,
+    TEXT_PT_POV_custom_code,
+    TEXT_MT_POV_templates,
     # TEXTURE_PT_context,
     #TEXTURE_PT_POV_povray_texture_slots,
-    TEXTURE_UL_texture_slots,
-    POV_OT_texture_slot_add,
-    POV_OT_texture_slot_remove,
-    TEXTURE_PT_influence
+    TEXTURE_UL_POV_texture_slots,
+    MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist,    
+    MATERIAL_OT_POV_texture_slot_add,
+    MATERIAL_OT_POV_texture_slot_remove,
+    TEXTURE_PT_POV_influence
 )
 
 
@@ -3343,23 +3357,23 @@ def register():
     bpy.types.VIEW3D_MT_add.prepend(menu_func_add)
     bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
     bpy.types.TEXT_MT_templates.append(menu_func_templates)
-    bpy.types.RENDER_PT_povray_radiosity.prepend(rad_panel_func)
+    bpy.types.RENDER_PT_POV_radiosity.prepend(rad_panel_func)
     bpy.types.LIGHT_PT_POV_light.prepend(light_panel_func)
     #bpy.types.WORLD_PT_POV_world.prepend(world_panel_func)
     # was used for parametric objects but made the other addon unreachable on
     # unregister for other tools to use created a user action call instead
     #addon_utils.enable("add_mesh_extra_objects", default_set=False, persistent=True)
 
-    #bpy.types.TEXTURE_PT_context_texture.prepend(TEXTURE_PT_povray_type)
+    #bpy.types.TEXTURE_PT_context_texture.prepend(TEXTURE_PT_POV_type)
 
 def unregister():
     #from bpy.utils import unregister_class
 
-    #bpy.types.TEXTURE_PT_context_texture.remove(TEXTURE_PT_povray_type)
+    #bpy.types.TEXTURE_PT_context_texture.remove(TEXTURE_PT_POV_type)
     #addon_utils.disable("add_mesh_extra_objects", default_set=False)
     #bpy.types.WORLD_PT_POV_world.remove(world_panel_func)
     bpy.types.LIGHT_PT_POV_light.remove(light_panel_func)
-    bpy.types.RENDER_PT_povray_radiosity.remove(rad_panel_func)
+    bpy.types.RENDER_PT_POV_radiosity.remove(rad_panel_func)
     bpy.types.TEXT_MT_templates.remove(menu_func_templates)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
     bpy.types.VIEW3D_MT_add.remove(menu_func_add)

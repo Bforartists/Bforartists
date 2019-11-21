@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-11-20 13:23:12\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzan <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -15125,6 +15125,10 @@ msgid "Gpencil Settings"
 msgstr "Opciones de lápiz de cera"
 
 
+msgid "Grease Pencil Draw Tool"
+msgstr "Herramienta dibujar de lápiz de cera"
+
+
 msgid "Draw"
 msgstr "Dibujar"
 
@@ -15651,6 +15655,14 @@ msgstr "Plano original"
 
 msgid "When locked keep using the plane origin of surface where stroke was initiated"
 msgstr "Al estar bloqueado, sigue usando el plano original de la superficie donde se inició el trazo"
+
+
+msgid "Antialasing"
+msgstr "Suavizado de bordes"
+
+
+msgid "Smooths the edges of the strokes"
+msgstr "Suaviza los bordes de los trazos"
 
 
 msgid "Use Sculpt"
@@ -19167,14 +19179,6 @@ msgid "Polygons of the mesh"
 msgstr "Polígonos de la malla"
 
 
-msgid "Fix Poles"
-msgstr "Corregir polos"
-
-
-msgid "Produces less poles and a better topology flow"
-msgstr "Produce menos polos y un mejor flujo en la topología"
-
-
 msgid "Remesh Mode"
 msgstr "Modo de rehacer malla"
 
@@ -19193,26 +19197,6 @@ msgstr "Cuadriláteros"
 
 msgid "Use the quad remesher"
 msgstr "Usa el método de rehacer mallas para obtener cuadriláteros"
-
-
-msgid "Preserve Paint Mask"
-msgstr "Preservar máscara de pintura"
-
-
-msgid "Keep the current mask on the new mesh"
-msgstr "Mantiene la máscara actual en la nueva malla"
-
-
-msgid "Projects the mesh to preserve the volume and details of the original mesh"
-msgstr "Proyecta la malla para preservar el volumen y los detalles de la malla original"
-
-
-msgid "Smooth Normals"
-msgstr "Suavizar normales"
-
-
-msgid "Smooth the normals of the remesher result"
-msgstr "Suaviza las normales al rehacer la malla"
 
 
 msgid "Adaptivity"
@@ -19345,6 +19329,34 @@ msgstr "Selección de vértices"
 
 msgid "Vertex selection masking for painting"
 msgstr "Permite enmascarar las áreas a pintar, mediante la selección de vértices"
+
+
+msgid "Fix Poles"
+msgstr "Corregir polos"
+
+
+msgid "Produces less poles and a better topology flow"
+msgstr "Produce menos polos y un mejor flujo en la topología"
+
+
+msgid "Preserve Paint Mask"
+msgstr "Preservar máscara de pintura"
+
+
+msgid "Keep the current mask on the new mesh"
+msgstr "Mantiene la máscara actual en la nueva malla"
+
+
+msgid "Projects the mesh to preserve the volume and details of the original mesh"
+msgstr "Proyecta la malla para preservar el volumen y los detalles de la malla original"
+
+
+msgid "Smooth Normals"
+msgstr "Suavizar normales"
+
+
+msgid "Smooth the normals of the remesher result"
+msgstr "Suaviza las normales al rehacer la malla"
 
 
 msgid "Clone UV Loop Layer"
@@ -19844,35 +19856,35 @@ msgstr "Datos del objeto"
 
 
 msgid "Delta Location"
-msgstr "Posición rel."
+msgstr "Posición relativa"
 
 
 msgid "Extra translation added to the location of the object"
-msgstr "Traslación adicionada a la posición actual del objeto"
+msgstr "Traslación extra, adicionada a la posición del objeto"
 
 
 msgid "Delta Rotation (Euler)"
-msgstr "Rotación rel. (Euler)"
+msgstr "Rotación relativa (Euler)"
 
 
 msgid "Extra rotation added to the rotation of the object (when using Euler rotations)"
-msgstr "Rotación adicionada al ángulo actual del objeto (al utilizar rotaciones Euler)"
+msgstr "Rotación extra, adicionada a la rotación del objeto (al utilizar rotaciones de tipo Euler)"
 
 
 msgid "Delta Rotation (Quaternion)"
-msgstr "Rotación rel. (Cuaternio)"
+msgstr "Rotación relativa (Cuaternio)"
 
 
 msgid "Extra rotation added to the rotation of the object (when using Quaternion rotations)"
-msgstr "Rotación extra agregada a la rotación del objeto (al usar rotaciones de tipo Cuaternio)"
+msgstr "Rotación extra, adicionada a la rotación del objeto (al usar rotaciones de tipo Cuaternio)"
 
 
 msgid "Delta Scale"
-msgstr "Escala rel."
+msgstr "Escala relativa"
 
 
 msgid "Extra scaling added to the scale of the object"
-msgstr "Escala adicionada al tamaño actual del objeto"
+msgstr "Redimensionamiento extra, adicionado al tamaño actual del objeto"
 
 
 msgid "Absolute bounding box dimensions of the object (WARNING: assigning to it or its members multiple consecutive times will not work correctly, as this needs up-to-date evaluated data)"
@@ -25712,19 +25724,19 @@ msgstr "Forma del hueso flexible"
 
 
 msgid "Insert keyframes for additional location offset"
-msgstr "Inserta fotogramas clave de desplazamiento adicional de posición"
+msgstr "Inserta fotogramas clave para un desplazamiento adicional de la posición"
 
 
 msgid "Insert keyframes for additional rotation offset"
-msgstr "Inserta fotogramas clave de desplazamiento adicional de rotación"
+msgstr "Inserta fotogramas clave para un desplazamiento adicional de la rotación"
 
 
 msgid "Delta Rotation"
-msgstr "Rotación rel."
+msgstr "Rotación relativa"
 
 
 msgid "Insert keyframes for additional scaling factor"
-msgstr "Inserta fotogramas clave de factor adicional de escala"
+msgstr "Inserta fotogramas clave para un desplazamiento adicional de la escala"
 
 
 msgid "Insert a keyframe on each of the location and rotation channels"
@@ -29514,7 +29526,7 @@ msgstr "Transferir marcas de costuras UV"
 
 
 msgid "Subsurf Crease"
-msgstr "Pliegues Subdiv."
+msgstr "Pliegues subdiv."
 
 
 msgid "Transfer crease values"
@@ -38390,7 +38402,7 @@ msgstr "Borra controladores para todos los elementos de la matriz"
 
 msgctxt "Operator"
 msgid "Set End Frame"
-msgstr "Definir fotograma final"
+msgstr "Definir fot. final"
 
 
 msgid "Set the current frame as the preview or scene end frame"
@@ -38640,7 +38652,7 @@ msgstr "Define interactivamente el rango de fotogramas usado para la reproducci�
 
 msgctxt "Operator"
 msgid "Set Start Frame"
-msgstr "Definir fotograma inicial"
+msgstr "Definir fot. inicial"
 
 
 msgid "Set the current frame as the preview or scene start frame"
@@ -43314,7 +43326,7 @@ msgstr "Prev"
 
 
 msgid "Next"
-msgstr "Sig."
+msgstr "Siguiente"
 
 
 msgctxt "Operator"
@@ -43366,6 +43378,10 @@ msgstr "Guarda los archivos en la ubicación original (sobreescribiendo los arch
 
 msgid "Disable Auto-pack, keep all packed files"
 msgstr "Deshabilitar empaque automático, mantener todos los archivos empacados"
+
+
+msgid "Remove Pack"
+msgstr "Eliminar paquete"
 
 
 msgctxt "Operator"
@@ -49650,8 +49666,8 @@ msgid "Rotation for each step"
 msgstr "Rotación para cada intervalo"
 
 
-msgid "Make Duplicates"
-msgstr "Crear duplicados"
+msgid "Use Duplicates"
+msgstr "Usar duplicados"
 
 
 msgid "Auto Merge"
@@ -74434,12 +74450,12 @@ msgid "Sequence strip creating text"
 msgstr "Clip de la secuencia para crear un texto"
 
 
-msgid "Align the text along the X axis, relative to the text midpoint"
-msgstr "Alinea el texto a lo largo del eje X, relativo al punto medio del texto"
+msgid "Align the text along the X axis, relative to the text bounds"
+msgstr "Alinea el texto a lo largo del eje X, relativo a los límites del texto"
 
 
-msgid "Align the image along the Y axis, relative to the text midpoint"
-msgstr "Alinea el texto a lo largo del eje Y, relativo al punto medio del texto"
+msgid "Align the text along the Y axis, relative to the text bounds"
+msgstr "Alinea el texto a lo largo del eje X, relativo a los límites del texto"
 
 
 msgid "Text color"
@@ -81403,7 +81419,7 @@ msgstr "Inserción automática de fotogramas clave para objetos y huesos"
 
 
 msgid "Auto Keyframe Insert Keying Set"
-msgstr "Claves automáticos en conjunto claves"
+msgstr "Claves automáticos en conjunto de claves"
 
 
 msgid "Automatic keyframe insertion using active Keying Set only"
@@ -90942,6 +90958,16 @@ msgstr "Convertir a trayectoria"
 
 
 msgctxt "Operator"
+msgid "Convert to Bezier Curve"
+msgstr "Convertir a curva Bézier"
+
+
+msgctxt "Operator"
+msgid "Convert to Polygon Curve"
+msgstr "Convertir a curva poligonal"
+
+
+msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "Ajustar tamaño del objeto Vacío"
 
@@ -97139,6 +97165,10 @@ msgid "No subtitles (text strips) to export"
 msgstr "No hay subtítulos (cadenas de texto) para exportar"
 
 
+msgid "Could not build proxy for strip %s"
+msgstr "No fue posible crear reemplazo para el clip %s"
+
+
 msgid "No active sequence!"
 msgstr "No hay secuencia activa!"
 
@@ -98026,10 +98056,6 @@ msgstr "Deshacer deshabilitado al inicio"
 
 msgid "Unpack File"
 msgstr "Desempacar archivo"
-
-
-msgid "Remove Pack"
-msgstr "Eliminar paquete"
 
 
 msgid "Create %s"
