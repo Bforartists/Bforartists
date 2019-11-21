@@ -13,8 +13,27 @@ row_index = 0
 def get_max_lvl():
     return max_lvl
 
+def clone_list(l1, l2):
+    l1.clear()
+    for x in l2:
+        l1.append(x)
+
+def update_col_name(self, context):
+    if self.name != self.last_name:
+        if self.name == '':
+            self.name = self.last_name
+            return
+        
+        if self.last_name != '':
+            layer_collections[self.last_name]["ptr"].collection.name = self.name
+            
+            update_property_group(context)
+        
+        self.last_name = self.name
+
 class CMListCollection(PropertyGroup):
-    name: StringProperty()
+    name: StringProperty(update=update_col_name)
+    last_name: StringProperty()
 
 
 def update_collection_tree(context):

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-11-20 13:23:12\n"
 "PO-Revision-Date: 2019-09-18 15:13+0200\n"
 "Language-Team: pegas923\n"
 "MIME-Version: 1.0\n"
@@ -42099,6 +42099,10 @@ msgid "Disable Auto-pack, keep all packed files"
 msgstr "Zakázať automatické rozbalenie, zachová všetky zbalené súbory"
 
 
+msgid "Remove Pack"
+msgstr "Odstrániť zbalené"
+
+
 msgctxt "Operator"
 msgid "Unpack Item"
 msgstr "Rozbaliť položku"
@@ -48140,10 +48144,6 @@ msgstr "Vytiahnuť vybrané vrcholy v kruhu okolo kurzora v indikovanom výreze"
 
 msgid "Rotation for each step"
 msgstr "Otočiť po každom kroku"
-
-
-msgid "Make Duplicates"
-msgstr "Vytvorí kópie"
 
 
 msgid "Auto Merge"
@@ -94547,10 +94547,6 @@ msgstr "Späť zakázané pri štarte"
 
 msgid "Unpack File"
 msgstr "Rozbaliť súbor"
-
-
-msgid "Remove Pack"
-msgstr "Odstrániť zbalené"
 
 
 msgid "Create %s"

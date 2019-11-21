@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-11-20 13:23:12\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -18215,6 +18215,10 @@ msgstr "Wie entpackt werden soll"
 
 msgid "Write files to current directory (overwrite existing files)"
 msgstr "Dateien in aktuelles Verzeichnis schreiben (existierende Dateien überschreiben)"
+
+
+msgid "Remove Pack"
+msgstr "Paket entfernen"
 
 
 msgctxt "Operator"
@@ -36982,10 +36986,6 @@ msgstr "Freiraum"
 
 msgid "Unpack File"
 msgstr "Dateien auspacken"
-
-
-msgid "Remove Pack"
-msgstr "Paket entfernen"
 
 
 msgid "Overwrite %s"
