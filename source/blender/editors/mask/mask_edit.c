@@ -496,7 +496,7 @@ void ED_operatormacros_mask(void)
 
   ot = WM_operatortype_append_macro("MASK_OT_add_vertex_slide",
                                     "Add Vertex and Slide",
-                                    "Add new vertex and slide it",
+                                    "Add new vertex and slide it\nHotkey only tool!",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   ot->description = "Add new vertex and slide it";
   WM_operatortype_macro_define(ot, "MASK_OT_add_vertex");
@@ -505,7 +505,7 @@ void ED_operatormacros_mask(void)
 
   ot = WM_operatortype_append_macro("MASK_OT_add_feather_vertex_slide",
                                     "Add Feather Vertex and Slide",
-                                    "Add new vertex to feather and slide it",
+                                    "Add new vertex to feather and slide it\nHotkey only tool!",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   ot->description = "Add new feather vertex and slide it";
   WM_operatortype_macro_define(ot, "MASK_OT_add_feather_vertex");

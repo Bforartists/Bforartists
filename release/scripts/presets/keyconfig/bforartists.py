@@ -183,8 +183,8 @@ keyconfig_data = \
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
    [("mask.new", {"type": 'N', "value": 'PRESS', "alt": True}, None),
-    ("mask.add_vertex_slide", {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True}, None),
-    ("mask.add_feather_vertex_slide", {"type": 'RIGHTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True}, None),
+    ("mask.add_vertex_slide", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True}, None),
+    ("mask.add_feather_vertex_slide", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True}, None),
     ("mask.delete", {"type": 'DEL', "value": 'PRESS'}, None),
     ("mask.select",
      {"type": 'LEFTMOUSE', "value": 'CLICK'},

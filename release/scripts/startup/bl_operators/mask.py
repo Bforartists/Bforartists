@@ -34,6 +34,11 @@ class MASK_MT_add(Menu):
         layout.operator("mask.primitive_circle_add", text="Circle", icon='MESH_CIRCLE')
         layout.operator("mask.primitive_square_add", text="Square", icon='MESH_PLANE')
 
+        layout.separator()
+
+        layout.operator("mask.add_vertex_slide", text="Vertex Slide", icon='CURVE_DATA')
+        layout.operator("mask.add_feather_vertex_slide", text="Feather Vertex Slide", icon='CURVE_DATA')
+        
 
 classes = (
     MASK_MT_add,
