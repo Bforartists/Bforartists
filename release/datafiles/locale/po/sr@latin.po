@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-11-20 13:23:12\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -15299,6 +15299,10 @@ msgid "How to unpack"
 msgstr "Kako raspakovati"
 
 
+msgid "Remove Pack"
+msgstr "Ukloni paket"
+
+
 msgctxt "Operator"
 msgid "Unpack Item"
 msgstr "Raspakuj sliku"
@@ -17276,10 +17280,6 @@ msgstr "Obrnuti redosled izabranih elemenata"
 
 msgid "Extrude selected vertices in a circle around the cursor in indicated viewport"
 msgstr "Izvlači izabrana temena u krug oko kursora prema trenutnom pogledu"
-
-
-msgid "Make Duplicates"
-msgstr "Nampravi duplikate"
 
 
 msgid "Subdivide selected edges"
@@ -30982,10 +30982,6 @@ msgstr "Prostor"
 
 msgid "Unpack File"
 msgstr "Raspakuj datoteku"
-
-
-msgid "Remove Pack"
-msgstr "Ukloni paket"
 
 
 msgid "Create %s"

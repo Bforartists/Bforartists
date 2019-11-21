@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-11-20 13:23:12\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
 "Last-Translator: \n"
 "Language-Team: Japanese Translation Team (https://sites.google.com/site/blugjp/blender-translators)\n"
@@ -9212,6 +9212,12 @@ msgid "Continuous Acceleration"
 msgstr "連続的な加速"
 
 
+msgid "Automatic handles are adjusted to avoid jumps in acceleration, resulting in smoother curves. However, key changes may affect interpolation over a larger stretch of the curve"
+msgstr ""
+"加速によるジャンプを回避し、スムーズな結果になるよう調整された自動ハンドル\n"
+"ただしキーの変更が、より大きく引き延ばされたカーブでの補間に影響する可能性があります"
+
+
 msgid "Color of the F-Curve in the Graph Editor"
 msgstr "グラフエディターでの F カーブの色"
 
@@ -15185,6 +15191,10 @@ msgid "Gpencil Settings"
 msgstr "グリースペンシル設定"
 
 
+msgid "Grease Pencil Draw Tool"
+msgstr "グリースペンシルドローツール"
+
+
 msgid "Draw"
 msgstr "ドロー"
 
@@ -15714,6 +15724,14 @@ msgstr "オリジナル平面"
 
 msgid "When locked keep using the plane origin of surface where stroke was initiated"
 msgstr "ロック時、ストローク開始位置の表面のオリジナル平面を使用し続けます"
+
+
+msgid "Antialasing"
+msgstr "アンチエイリアシング"
+
+
+msgid "Smooths the edges of the strokes"
+msgstr "ストロークのふちをスムーズにします"
 
 
 msgid "Use Sculpt"
@@ -19248,14 +19266,6 @@ msgid "Polygons of the mesh"
 msgstr "メッシュのポリゴン"
 
 
-msgid "Fix Poles"
-msgstr "ポールを修正"
-
-
-msgid "Produces less poles and a better topology flow"
-msgstr "ポールの少ない、綺麗なトポロジーフローを生成します"
-
-
 msgid "Remesh Mode"
 msgstr "リメッシュモード"
 
@@ -19274,26 +19284,6 @@ msgstr "四角面"
 
 msgid "Use the quad remesher"
 msgstr "四角面リメッシャーを使用します"
-
-
-msgid "Preserve Paint Mask"
-msgstr "ペイントマスクを維持"
-
-
-msgid "Keep the current mask on the new mesh"
-msgstr "新規メッシュ上で現在のマスクを維持します"
-
-
-msgid "Projects the mesh to preserve the volume and details of the original mesh"
-msgstr "メッシュを投影し、ボリュームとオリジナルメッシュの細部を維持します"
-
-
-msgid "Smooth Normals"
-msgstr "法線をスムーズに"
-
-
-msgid "Smooth the normals of the remesher result"
-msgstr "リメッシャーの結果の法線をスムージングします"
 
 
 msgid "Adaptivity"
@@ -19428,6 +19418,34 @@ msgstr "頂点で選択"
 
 msgid "Vertex selection masking for painting"
 msgstr "頂点で選択した部分のみペイント可能になります"
+
+
+msgid "Fix Poles"
+msgstr "ポールを修正"
+
+
+msgid "Produces less poles and a better topology flow"
+msgstr "ポールの少ない、綺麗なトポロジーフローを生成します"
+
+
+msgid "Preserve Paint Mask"
+msgstr "ペイントマスクを維持"
+
+
+msgid "Keep the current mask on the new mesh"
+msgstr "新規メッシュ上で現在のマスクを維持します"
+
+
+msgid "Projects the mesh to preserve the volume and details of the original mesh"
+msgstr "メッシュを投影し、ボリュームとオリジナルメッシュの細部を維持します"
+
+
+msgid "Smooth Normals"
+msgstr "法線をスムーズに"
+
+
+msgid "Smooth the normals of the remesher result"
+msgstr "リメッシャーの結果の法線をスムージングします"
 
 
 msgid "Clone UV Loop Layer"
@@ -22489,12 +22507,20 @@ msgid "Selection End Character"
 msgstr "選択の最終文字"
 
 
+msgid "Index of character after end of selection in the selection end line"
+msgstr "選択の最終行内の、選択の最後以降の文字のインデックス"
+
+
 msgid "Selection End Line"
 msgstr "選択の最終行"
 
 
 msgid "End line of selection"
 msgstr "選択の最終行"
+
+
+msgid "Select End Line Index"
+msgstr "選択の最終行のインデックス"
 
 
 msgid "Index of last TextLine in selection"
@@ -42442,6 +42468,10 @@ msgstr ""
 "別々の AnimStack としてエクスポートします"
 
 
+msgid "!EXPERIMENTAL! Apply Transform"
+msgstr "!実験的機能! トランスフォーム適用"
+
+
 msgid "Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender's space (WARNING! experimental option, use at own risks, known broken with armatures/animations)"
 msgstr ""
 "空間の変換をオブジェクトデータにベイクし、ターゲットの空間が Blender の空間と合致しない時の、オブジェクトの思わぬ回転を回避します\n"
@@ -43525,6 +43555,10 @@ msgstr "オリジナルのディレクトリに（ファイルがあれば上書
 
 msgid "Disable Auto-pack, keep all packed files"
 msgstr "自動パックを無効にします。パック中のファイルはすべて保持します"
+
+
+msgid "Remove Pack"
+msgstr "パックを削除"
 
 
 msgctxt "Operator"
@@ -48444,7 +48478,7 @@ msgstr "シームをマーク"
 
 
 msgid "(Un)mark selected edges as a seam"
-msgstr "選択したエッジをシームとしてマーク(解除)します"
+msgstr "選択中の辺をシームとしてマーク(解除)します"
 
 
 msgctxt "Operator"
@@ -48453,7 +48487,7 @@ msgstr "シャープをマーク"
 
 
 msgid "(Un)mark selected edges as sharp"
-msgstr "選択したエッジをシャープとしてマーク(解除)します"
+msgstr "選択中の辺をシャープとしてマーク(解除)します"
 
 
 msgid "Consider vertices instead of edges to select which edges to (un)tag as sharp"
@@ -49819,8 +49853,8 @@ msgid "Rotation for each step"
 msgstr "ステップごとの回転"
 
 
-msgid "Make Duplicates"
-msgstr "複製を作成"
+msgid "Use Duplicates"
+msgstr "複製を使用"
 
 
 msgid "Auto Merge"
@@ -70097,11 +70131,11 @@ msgstr "煙・火炎のボリュームに使用される補間方法"
 
 
 msgid "Good smoothness and speed"
-msgstr "滑らかさと速度が良好"
+msgstr "スムーズさと速度のバランスが良好"
 
 
 msgid "Smoothed high quality interpolation, but slower"
-msgstr "スムーズな高品質の補間、低速"
+msgstr "低速だがスムーズで高品質な補間"
 
 
 msgid "Volume Sampling"
@@ -74719,12 +74753,12 @@ msgid "Sequence strip creating text"
 msgstr "テキストを作成するシーケンスストリップ"
 
 
-msgid "Align the text along the X axis, relative to the text midpoint"
-msgstr "テキストの中心を基準にした、X 軸方向の揃え"
+msgid "Align the text along the X axis, relative to the text bounds"
+msgstr "テキストの境界を基準にした、X 軸方向の揃え"
 
 
-msgid "Align the image along the Y axis, relative to the text midpoint"
-msgstr "テキストの中心を基準にした、Y 軸方向の揃え"
+msgid "Align the text along the Y axis, relative to the text bounds"
+msgstr "テキストの境界を基準にした、Y 軸方向の揃え"
 
 
 msgid "Text color"
@@ -81606,7 +81640,7 @@ msgstr "メッシュ統計の視覚化"
 
 
 msgid "Transform Pivot Point"
-msgstr "ピボットポイントをトランスフォーム"
+msgstr "トランスフォームピボットポイント"
 
 
 msgid "Unified Paint Settings"
@@ -91247,6 +91281,16 @@ msgstr "パスに変換"
 
 
 msgctxt "Operator"
+msgid "Convert to Bezier Curve"
+msgstr "ベジエカーブに変換"
+
+
+msgctxt "Operator"
+msgid "Convert to Polygon Curve"
+msgstr "ポリゴンカーブに変換"
+
+
+msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "エンプティの描画サイズ"
 
@@ -94565,7 +94609,7 @@ msgstr "編集モードで頂点が削除できません"
 
 
 msgid "Cannot remove more vertices than the mesh contains"
-msgstr "メッシュ中の数より多くの頂点を削除できません"
+msgstr "メッシュ中の数より多くの頂点は削除できません"
 
 
 msgid "Cannot remove edges in edit mode"
@@ -94573,7 +94617,23 @@ msgstr "編集モードで辺が削除できません"
 
 
 msgid "Cannot remove more edges than the mesh contains"
-msgstr "メッシュ中の数より多くの辺を削除できません"
+msgstr "メッシュ中の数より多くの辺は削除できません"
+
+
+msgid "Cannot remove loops in edit mode"
+msgstr "編集モードでループが削除できません"
+
+
+msgid "Cannot remove more loops than the mesh contains"
+msgstr "メッシュ内の数より多くのループは削除できません"
+
+
+msgid "Cannot remove polys in edit mode"
+msgstr "編集モードでポリゴンが削除できません"
+
+
+msgid "Cannot remove more polys than the mesh contains"
+msgstr "メッシュ中の数より多くのポリゴンは削除できません"
 
 
 msgid "%d %s mirrored, %d failed"
@@ -97434,6 +97494,10 @@ msgid "No subtitles (text strips) to export"
 msgstr "エクスポートする字幕（テキストストリップ）がありません"
 
 
+msgid "Could not build proxy for strip %s"
+msgstr "ストリップ「%s」のプロキシが構築できませんでした"
+
+
 msgid "No active sequence!"
 msgstr "アクティブシーケンスがありません！"
 
@@ -98321,10 +98385,6 @@ msgstr "起動時は「取り消し」できません"
 
 msgid "Unpack File"
 msgstr "ファイルにパック解除"
-
-
-msgid "Remove Pack"
-msgstr "パックを削除"
 
 
 msgid "Create %s"

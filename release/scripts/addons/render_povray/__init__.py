@@ -19,14 +19,17 @@
 # <pep8 compliant>
 
 bl_info = {
-    #coming soon: "name": "POV-3.8",
-    "name": "POV-3.7",
-    "author": "Campbell Barton, Maurice Raybaud, Leonid Desyatkov, "
-              "Bastien Montagne, Constantin Rahn, Silvio Falcinelli",
+    "name": "Persistence of Vision",
+    "author": "Campbell Barton, "
+              "Maurice Raybaud, "
+              "Leonid Desyatkov, "
+              "Bastien Montagne, "
+              "Constantin Rahn, "
+              "Silvio Falcinelli",
     "version": (0, 1, 0),
     "blender": (2, 80, 0),
-    "location": "Render > Engine > Persistence Of Vision",
-    "description": "POV-Ray integration for blender",
+    "location": "Render Properties > Render Engine > Persistence of Vision",
+    "description": "Persistence of Vision integration for blender",
     "wiki_url": "https://archive.blender.org/wiki/index.php/"
                 "Extensions:2.6/Py/Scripts/Render/POV-Ray/",
     "category": "Render",
@@ -103,7 +106,7 @@ class RenderPovSettingsScene(PropertyGroup):
     # File Options
     text_block: StringProperty(
             name="Text Scene Name",
-            description="Name of POV-Ray scene to use. "
+            description="Name of POV scene to use. "
                         "Set when clicking Run to render current text only",
             maxlen=1024)
     tempfiles_enable: BoolProperty(
@@ -112,8 +115,8 @@ class RenderPovSettingsScene(PropertyGroup):
                         " to save the files",
             default=True)
     pov_editor: BoolProperty(
-            name="POV-Ray editor",
-            description="Don't Close POV-Ray editor after rendering (Overridden"
+            name="POV editor",
+            description="Don't Close POV editor after rendering (Overridden"
                         " by /EXIT command)",
             default=False)
     deletefiles_enable: BoolProperty(
@@ -123,7 +126,7 @@ class RenderPovSettingsScene(PropertyGroup):
             default=True)
     scene_name: StringProperty(
             name="Scene Name",
-            description="Name of POV-Ray scene to create. Empty name will use "
+            description="Name of POV scene to create. Empty name will use "
                         "the name of the blend file",
             maxlen=1024)
     scene_path: StringProperty(
@@ -147,7 +150,7 @@ class RenderPovSettingsScene(PropertyGroup):
     # Not a real pov option, just to know if we should write
     radio_enable: BoolProperty(
             name="Enable Radiosity",
-            description="Enable POV-Rays radiosity calculation",
+            description="Enable POV radiosity calculation",
             default=True)
 
     radio_display_advanced: BoolProperty(
@@ -157,7 +160,7 @@ class RenderPovSettingsScene(PropertyGroup):
 
     media_enable: BoolProperty(
             name="Enable Media",
-            description="Enable POV-Rays atmospheric media",
+            description="Enable POV atmospheric media",
             default=False)
 
     media_samples: IntProperty(
@@ -243,7 +246,7 @@ class RenderPovSettingsScene(PropertyGroup):
 
     baking_enable: BoolProperty(
             name="Enable Baking",
-            description="Enable POV-Rays texture baking",
+            description="Enable POV texture baking",
             default=False)
     indentation_character: EnumProperty(
             name="Indentation",
@@ -280,9 +283,9 @@ class RenderPovSettingsScene(PropertyGroup):
                         "non-recursive, super-sampling method. Type 2 is an "
                         "adaptive and recursive super-sampling method. Type 3 "
                         "is a stochastic halton based super-sampling method",
-            items=(("0", "non-recursive AA", "Type 1 Sampling in POV-Ray"),
-                   ("1", "recursive AA", "Type 2 Sampling in POV-Ray"),
-                   ("2", "stochastic AA", "Type 3 Sampling in UberPOV")),
+            items=(("0", "non-recursive AA", "Type 1 Sampling in POV"),
+                   ("1", "recursive AA", "Type 2 Sampling in POV"),
+                   ("2", "stochastic AA", "Type 3 Sampling in POV")),
             default="1")
 
     antialias_confidence: FloatProperty(
@@ -580,7 +583,7 @@ class RenderPovSettingsScene(PropertyGroup):
 # Material POV properties.
 ###############################################################################
 class MaterialTextureSlot(PropertyGroup):
-    bl_idname="povray_texture_slots",
+    bl_idname="pov_texture_slots",
     bl_description="Texture_slots from Blender-2.79",
     
     texture : StringProperty(update=active_texture_name_from_uilist)
@@ -970,7 +973,7 @@ bpy.types.ID.texture_context = EnumProperty(
         description="Type of texture data to display and edit",
         items=(('MATERIAL', "", "Show material textures", "MATERIAL",0), #"Show material textures"
                ('WORLD', "", "Show world textures", "WORLD",1), #"Show world textures"
-               ('LAMP', "", "Show lamp textures", "LIGHT",2), #"Show lamp textures"
+               ('LIGHT', "", "Show lamp textures", "LIGHT",2), #"Show lamp textures"
                ('PARTICLES', "", "Show particles textures", "PARTICLES",3), #"Show particles textures"
                ('LINESTYLE', "", "Show linestyle textures", "LINE_DATA",4), #"Show linestyle textures"
                ('OTHER', "", "Show other data textures", "TEXTURE_DATA",5)), #"Show other data textures"
@@ -3140,7 +3143,7 @@ class RenderPovSettingsTexture(PropertyGroup):
 
     tex_pattern_type: EnumProperty(
             name="Texture_Type",
-            description="Choose between Blender or POV-Ray parameters to specify texture",
+            description="Choose between Blender or POV parameters to specify texture",
             items= (('agate', 'Agate', '','PLUGIN', 0),
                    ('aoi', 'Aoi', '', 'PLUGIN', 1),
                    ('average', 'Average', '', 'PLUGIN', 2),
@@ -3655,7 +3658,7 @@ class RenderPovSettingsObject(PropertyGroup):
                         "it points at. Any POV shape expected e.g: isosurface {}",
             default="")
 
-    #############POV-Ray specific object properties.############################
+    #############POV specific object properties.############################
     object_as: StringProperty(maxlen=1024)
 
     imported_loc: FloatVectorProperty(
@@ -4071,7 +4074,7 @@ class RenderPovSettingsObject(PropertyGroup):
             description="Choose the type of calculation for Boolean modifier",
             items=(("BMESH", "Use the BMesh Boolean Solver", ""),
                    ("CARVE", "Use the Carve Boolean Solver", ""),
-                   ("POV", "Use Pov-Ray Constructive Solid Geometry", "")),
+                   ("POV", "Use POV Constructive Solid Geometry", "")),
             default="BMESH")
 
 #################Avogadro
@@ -4088,7 +4091,7 @@ class RenderPovSettingsObject(PropertyGroup):
 class RenderPovSettingsCamera(PropertyGroup):
     #DOF Toggle
     dof_enable: BoolProperty(
-            name="Depth Of Field", description="EnablePOV-Ray Depth Of Field ",
+            name="Depth Of Field", description="Enable POV Depth Of Field ",
             default=False)
 
     # Aperture (Intensity of the Blur)
@@ -4321,7 +4324,7 @@ for i in range(18):  # length of world texture slots
     world.texture_slots.add()
 '''
 
-class MATERIAL_TEXTURE_SLOTS_UL_layerlist(bpy.types.UIList):
+class MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist(bpy.types.UIList):
 #    texture_slots:
     index: bpy.props.IntProperty(name='index')
     #foo  = random prop
@@ -4352,7 +4355,7 @@ class RenderPovSettingsText(PropertyGroup):
     custom_code: EnumProperty(
             name="Custom Code",
             description="rendered source: Both adds text at the "
-                        "top of the exported POV-Ray file",
+                        "top of the exported POV file",
             items=(("3dview", "View", ""),
                    ("text", "Text", ""),
                    ("both", "Both", "")),
@@ -4395,7 +4398,6 @@ classes = (
     RenderPovSettingsCamera,
     RenderPovSettingsLight,    
     RenderPovSettingsWorld,
-    MATERIAL_TEXTURE_SLOTS_UL_layerlist,
     MaterialTextureSlot,
     WorldTextureSlot,
     RenderPovSettingsMaterial,
@@ -4426,7 +4428,7 @@ def register():
         bpy.types.VIEW3D_MT_add.prepend(ui.menu_func_add)
         bpy.types.TOPBAR_MT_file_import.append(ui.menu_func_import)
         bpy.types.TEXT_MT_templates.append(ui.menu_func_templates)
-        bpy.types.RENDER_PT_povray_radiosity.prepend(ui.rad_panel_func)
+        bpy.types.RENDER_PT_POV_radiosity.prepend(ui.rad_panel_func)
         bpy.types.LIGHT_PT_POV_light.prepend(ui.light_panel_func)
         bpy.types.WORLD_PT_world.prepend(ui.world_panel_func)
         # was used for parametric objects but made the other addon unreachable on
@@ -4478,7 +4480,7 @@ def unregister():
     #addon_utils.disable("add_mesh_extra_objects", default_set=False)
     bpy.types.WORLD_PT_POV_world.remove(ui.world_panel_func)
     bpy.types.LIGHT_PT_POV_light.remove(ui.light_panel_func)
-    bpy.types.RENDER_PT_povray_radiosity.remove(ui.rad_panel_func)
+    bpy.types.RENDER_PT_POV_radiosity.remove(ui.rad_panel_func)
     bpy.types.TEXT_MT_templates.remove(ui.menu_func_templates)
     bpy.types.TOPBAR_MT_file_import.remove(ui.menu_func_import)
     bpy.types.VIEW3D_MT_add.remove(ui.menu_func_add)

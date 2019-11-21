@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-11-20 13:23:12\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Inês Almeida, João Brandão (ULISBOA), Paulo Martins <ivan.paulos.tome@yandex.com>\n"
@@ -35728,6 +35728,10 @@ msgid "Disable Auto-pack, keep all packed files"
 msgstr "Desativa o empacotamento automático, mantém todos os ficheiros empacotados."
 
 
+msgid "Remove Pack"
+msgstr "Remover pacote"
+
+
 msgctxt "Operator"
 msgid "Unpack Item"
 msgstr "Desempacotar item"
@@ -40375,10 +40379,6 @@ msgstr "Executa uma extrusão dos vértices selecionados dentro de um círculo e
 
 msgid "Rotation for each step"
 msgstr "Rotação para cada passo."
-
-
-msgid "Make Duplicates"
-msgstr "Criar duplicatas"
 
 
 msgid "Split off selected geometry from connected unselected geometry"
@@ -75324,10 +75324,6 @@ msgstr "Não é possível usar faces com área zero."
 
 msgid "Unpack File"
 msgstr "Desempacotar ficheiro"
-
-
-msgid "Remove Pack"
-msgstr "Remover pacote"
 
 
 msgid "Create %s"
