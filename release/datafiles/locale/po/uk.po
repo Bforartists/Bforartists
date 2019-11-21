@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-11-20 13:23:12\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -41911,6 +41911,10 @@ msgid "Disable Auto-pack, keep all packed files"
 msgstr "Відключити автопакування, зберегти всі упаковані файли"
 
 
+msgid "Remove Pack"
+msgstr "Вилучити пакунок"
+
+
 msgctxt "Operator"
 msgid "Unpack Item"
 msgstr "Розпакувати елемент"
@@ -47882,10 +47886,6 @@ msgstr "Витиснути вибрані вершини в кола навко�
 
 msgid "Rotation for each step"
 msgstr "Поворот на кожен крок"
-
-
-msgid "Make Duplicates"
-msgstr "Зробити дублікати"
 
 
 msgid "Auto Merge"
@@ -93851,10 +93851,6 @@ msgstr "Касування вимкнене при запуску"
 
 msgid "Unpack File"
 msgstr "Розпакувати файл"
-
-
-msgid "Remove Pack"
-msgstr "Вилучити пакунок"
 
 
 msgid "Create %s"
