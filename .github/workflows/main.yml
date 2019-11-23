@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install Deps
-      run: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm --no-build
+      run: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm
     - name: Configure
       run: make lite
     - name: Pack
