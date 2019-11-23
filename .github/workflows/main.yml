@@ -5,15 +5,13 @@ on: [push]
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
 
     steps:
     - uses: actions/checkout@v1
     - name: Install Deps
-      run: |
-        apt install clang-6.0 clang-format-6.0 -y;
-        ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm
+      run: ./build_files/build_environment/install_deps.sh --build-all --no-confirm
     - name: Configure
-      run: make lite
+      run: make -f GNUmakefile
     - name: Pack
       run: cpack
