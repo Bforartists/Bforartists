@@ -505,7 +505,9 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                         break
 
                 if do_persistent:
+                    col.use_property_split = False
                     col.prop(brush, "use_persistent")
+                    col.use_property_split = True
                     col.operator("sculpt.set_persistent_base")
 
         # Texture Paint Mode #
