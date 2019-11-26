@@ -417,7 +417,7 @@ class VIEW3D_HT_tool_header(Header):
             wpaint = context.tool_settings.weight_paint
             sub.prop(wpaint, "use_symmetry_x", text="    ", icon='MIRROR_X', toggle=True)
             sub.prop(wpaint, "use_symmetry_y", text="    ", icon='MIRROR_Y', toggle=True)
-            sub.prop(wpaint, "use_symmetry_z", text="    ", icon='MIRROR_X', toggle=True)
+            sub.prop(wpaint, "use_symmetry_z", text="    ", icon='MIRROR_Z', toggle=True)
             row.popover(panel="VIEW3D_PT_tools_weightpaint_symmetry_for_topbar", text="")
         elif mode_string == 'SCULPT':
             row, sub = row_for_mirror()
