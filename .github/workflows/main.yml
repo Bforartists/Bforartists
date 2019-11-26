@@ -1,0 +1,17 @@
+name: BFA CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-16.04
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Deps
+      run: ./build_files/build_environment/install_deps.sh --build-all --no-confirm
+    - name: Configure
+      run: make -f GNUmakefile
+    - name: Pack
+      run: cpack
