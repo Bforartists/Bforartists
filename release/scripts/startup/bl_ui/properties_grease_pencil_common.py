@@ -268,6 +268,8 @@ class GreasePencilSculptOptionsPanel:
         brush = settings.brush
 
         if tool in {'SMOOTH', 'RANDOMIZE'}:
+            
+            layout.use_property_split = False         
             layout.prop(settings, "use_edit_position", text="Affect Position")
             layout.prop(settings, "use_edit_strength", text="Affect Strength")
             layout.prop(settings, "use_edit_thickness", text="Affect Thickness")
