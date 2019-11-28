@@ -1504,7 +1504,7 @@ static const EnumPropertyItem prop_id_op_types[] = {
      "OVERRIDE_LIBRARY",
      ICON_LIBRARY_DATA_OVERRIDE,
      "Add Library Override",
-     "Add a local override of this linked data-block"},
+     "Add a local override of this linked data-block\nJust for this object. It does not interate through the hierarchy"},
     {OUTLINER_IDOP_SINGLE, "SINGLE", ICON_MAKE_SINGLE_USER, "Make Single User", ""},
     {OUTLINER_IDOP_DELETE, "DELETE", ICON_DELETE, "Delete", ""},
     {OUTLINER_IDOP_REMAP,
