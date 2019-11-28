@@ -5867,7 +5867,7 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
         
         layout.separator()
         
-        layout.operator("gpencil.reproject", text="Reproject Strokes", icon = "REPROJECT")
+        layout.operator_menu_enum("gpencil.reproject", property="type", text="Reproject Strokes")
         
 
 class VIEW3D_MT_edit_gpencil_point(Menu):
