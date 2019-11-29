@@ -548,7 +548,7 @@ class CYCLES_RENDER_PT_film(CyclesButtonsPanel, Panel):
 
 class CYCLES_RENDER_PT_film_transparency(CyclesButtonsPanel, Panel):
     bl_label = "Transparent"
-    bl_parent_id = "CYCLES_RENDER_PT_film"
+    bl_parent_id = "RENDER_PT_output" # bfa - display transparency in output
 
     def draw_header(self, context):
         layout = self.layout
