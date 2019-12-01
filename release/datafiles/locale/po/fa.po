@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -858,10 +858,6 @@ msgstr "ﯽﺟﺭﺎﺧ ﯼﻭﺮﯿﻧ ﺭﺍﺩﺮﺑ ﺎﯾ ﺶﯾﺍﺮﮔ"
 
 msgid "Internal Friction"
 msgstr "ﯽﻠﺧﺍﺩ ﮎﺎﮑﻄﺻﺍ"
-
-
-msgid "Mass"
-msgstr "ﻢﺠﺣ"
 
 
 msgid "Pin Stiffness"
@@ -1787,14 +1783,6 @@ msgstr "ءﺎﯿﺷﺍ ﯼﺎﻫ‌ﺖﯾﺩﻭﺪﺤﻣ"
 
 msgid "Keep Axis"
 msgstr "ﺮﯾﻮﺼﺗ ﺭﻮﺤﻣ"
-
-
-msgid "Keep X Axis"
-msgstr "ﺭﻮﺤﻣ x ﺩﻮﺷ ﺲﮑﻋﺮﺑ"
-
-
-msgid "Keep Z Axis"
-msgstr "ﺭﻮﺤﻣ x ﺩﻮﺷ ﺲﮑﻋﺮﺑ"
 
 
 msgid "Original Length"
@@ -3620,6 +3608,10 @@ msgstr "ﯽﻓﺩﺎﺼﺗ ﺖﯿﻌﻗﻮﻣ"
 
 msgid "Constrain boids to a surface"
 msgstr "ﻩﺪﺷ ﺩﻭﺪﺤﻣ ﻥﺍﻮﺨﺘﺳﺍ"
+
+
+msgid "Mass"
+msgstr "ﻢﺠﺣ"
 
 
 msgid "Mass of the particles"
@@ -11048,11 +11040,6 @@ msgstr "ﻪﻨﺤﺻ ﻩﺯﺍﺪﻧﺍ"
 
 
 msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "ﻝﺎﻌﻓ ﻩﻭﺮﮔ ﻢﯿﻈﻨﺗ"
-
-
-msgctxt "Operator"
 msgid "Select Handles"
 msgstr "ﺭﻮﺘﮐﻭ ﻪٔﺘﺳﺩ"
 
@@ -12326,6 +12313,10 @@ msgid "File Paths"
 msgstr "ﻞﯾﺎﻓ ﯼﺎﻫﺮﯿﺴﻣ"
 
 
+msgid "Experimental"
+msgstr "ﯽﺸﯾﺎﻣﺯﺁ"
+
+
 msgid "Unselected F-Curve Visibility"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
@@ -12520,10 +12511,6 @@ msgstr "ﯽﮔﮋﯾﻭ ﻪﻋﻮﻤﺠﻣ"
 
 msgid "Supported"
 msgstr "ﻩﺪﺷ ﯽﻧﺎﺒﯿﺘﺸﭘ"
-
-
-msgid "Experimental"
-msgstr "ﯽﺸﯾﺎﻣﺯﺁ"
 
 
 msgid "Box filter"
@@ -13658,10 +13645,6 @@ msgid "Cache path:"
 msgstr "ﺶﮐ ﻪﻈﻓﺎﺣ ﺮﯿﺴﻣ:"
 
 
-msgid "Crease:"
-msgstr "ﻦﯿﭼ:"
-
-
 msgctxt "Operator"
 msgid "Create Armature"
 msgstr "ﺮﭽﯿﻣﺭﺁ"
@@ -13694,6 +13677,10 @@ msgstr "ﮓﻧﺭ:"
 msgctxt "Operator"
 msgid "Recenter"
 msgstr "ﺮﯿﺧﺍ"
+
+
+msgid "Crease:"
+msgstr "ﻦﯿﭼ:"
 
 
 msgid "Render:"

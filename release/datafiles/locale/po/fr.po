@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -3994,14 +3994,6 @@ msgid "Internal Friction"
 msgstr "Friction interne"
 
 
-msgid "Mass"
-msgstr "Masse"
-
-
-msgid "Mass of cloth material"
-msgstr "Masse du matériau du tissu"
-
-
 msgid "Pin Stiffness"
 msgstr "Raideur d’épinglage"
 
@@ -6675,16 +6667,8 @@ msgid "Keep Axis"
 msgstr "Conserver axe"
 
 
-msgid "Axis to maintain during stretch"
-msgstr "Axis à conserver durant l’étirement"
-
-
-msgid "Keep X Axis"
-msgstr "Conserver axe X"
-
-
-msgid "Keep Z Axis"
-msgstr "Conserver axe Z"
+msgid "XZ"
+msgstr "XZ"
 
 
 msgid "Original Length"
@@ -6697,10 +6681,6 @@ msgstr "Longueur à la position de repos"
 
 msgid "Maintain the object's volume as it stretches"
 msgstr "Conserver le volume de l’objet lors de l’étirement"
-
-
-msgid "XZ"
-msgstr "XZ"
 
 
 msgid "Track To Constraint"
@@ -7285,6 +7265,14 @@ msgstr "Premier uniquement"
 
 msgid "Use the start of the stroke for the depth"
 msgstr "Utiliser le début du trait pour la profondeur"
+
+
+msgid "Steps"
+msgstr "Étapes"
+
+
+msgid "Segments"
+msgstr "Segments"
 
 
 msgid "Curve Splines"
@@ -15077,6 +15065,10 @@ msgid "Rotate"
 msgstr "Tourner"
 
 
+msgid "Topology"
+msgstr "Topologie"
+
+
 msgid "Secondary Color"
 msgstr "Couleur secondaire"
 
@@ -15963,10 +15955,6 @@ msgstr "Détermine comment le facteur de biseautage est plaqué à la fin de la 
 
 msgid "Map the bevel factor to the number of subdivisions of a spline (U resolution)"
 msgstr "Plaquer le facteur de biseautage au nombre de subdivisions de la courbe (résolution U)"
-
-
-msgid "Segments"
-msgstr "Segments"
 
 
 msgid "Map the bevel factor to the length of a segment and to the number of subdivisions of a segment"
@@ -20489,10 +20477,6 @@ msgid "Size of particles on viewport in BU"
 msgstr "Taille des particules dans les vues 3D, en UB"
 
 
-msgid "Steps"
-msgstr "Étapes"
-
-
 msgid "How many steps paths are drawn with (power of 2)"
 msgstr "En combien d’étapes/pas sont dessinés les chemins (puissance de 2)"
 
@@ -20739,6 +20723,10 @@ msgstr "Boïds 2D"
 
 msgid "Constrain boids to a surface"
 msgstr "Contraindre les boïds sur une surface"
+
+
+msgid "Mass"
+msgstr "Masse"
 
 
 msgid "Mass of the particles"
@@ -26623,6 +26611,10 @@ msgid "Clean Up"
 msgstr "Nettoyer"
 
 
+msgid "Material Specials"
+msgstr "Matériau – Spécialités"
+
+
 msgid "GP Vertex Groups"
 msgstr "CG Groupes de vertices"
 
@@ -26682,10 +26674,6 @@ msgstr "Souder/aligner"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Ajouter"
-
-
-msgid "Material Specials"
-msgstr "Matériau – Spécialités"
 
 
 msgid "Shape Key Specials"
@@ -28048,8 +28036,8 @@ msgid "Patch"
 msgstr "Pièce"
 
 
-msgid "Amount Type"
-msgstr "Type de quantité"
+msgid "Width Type"
+msgstr "Type de largeur"
 
 
 msgid "What distance Width measures"
@@ -28490,10 +28478,6 @@ msgstr "Correspondance d’arête"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Méthode utilisée pour faire correspondre les arêtes source avec celles de destination"
-
-
-msgid "Topology"
-msgstr "Topologie"
 
 
 msgid "Copy from identical topology meshes"
@@ -30227,10 +30211,6 @@ msgstr "Cache de point de corps souple"
 
 msgid "Solidify Modifier"
 msgstr "Modificateur solidifier"
-
-
-msgid "Create a solid skin by extruding, compensating for sharp angles"
-msgstr "Créer une peau solide par extrusion, avec compensation des angles aigus"
 
 
 msgid "Inner Crease"
@@ -40054,10 +40034,6 @@ msgid "Export PLY"
 msgstr "Exporter PLY"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "Exporte un objet unique comme Stanford PLY, avec normales, couleurs et coordonnées de texture"
-
-
 msgid "X Forward"
 msgstr "X vers l’avant"
 
@@ -40122,6 +40098,14 @@ msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will b
 msgstr "Exporter les normales pour les faces à l’ombrage lissé et dure (à facettes – les faces à ombrage dur seront exportées comme faces individuelles)"
 
 
+msgid "Selection Only"
+msgstr "Sélection uniquement"
+
+
+msgid "Export selected objects only"
+msgstr "N’exporter que les objets sélectionnés"
+
+
 msgid "Export the active UV layer"
 msgstr "Exporter le calque UV actif"
 
@@ -40129,10 +40113,6 @@ msgstr "Exporter le calque UV actif"
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "Exporter STL"
-
-
-msgid "Save STL triangle mesh data from the active object"
-msgstr "Enregistrer les données de mesh triangulé STL depuis l’objet actif"
 
 
 msgid "Ascii"
@@ -40165,14 +40145,6 @@ msgstr "Unité de scène"
 
 msgid "Apply current scene's unit (as defined by unit scale) to exported data"
 msgstr "Appliquer l’unité (telle que définie par l’échelle d’unité) de la scène courante aux données exportées"
-
-
-msgid "Selection Only"
-msgstr "Sélection uniquement"
-
-
-msgid "Export selected objects only"
-msgstr "N’exporter que les objets sélectionnés"
 
 
 msgctxt "Operator"
@@ -44287,16 +44259,8 @@ msgid "Face Strength Mode"
 msgstr "Mode force de face"
 
 
-msgid "Prefer slide along edge to even widths"
-msgstr "Préférer glisser le long des arêtes plutôt que des largeurs égales"
-
-
 msgid "Material for bevel faces (-1 means use adjacent faces)"
 msgstr "Matériau pour les faces chanfreinées (-1 pour utiliser celui des faces adjacentes)"
-
-
-msgid "Width Type"
-msgstr "Type de largeur"
 
 
 msgid "Controls profile shape (0.5 = round)"
@@ -45449,6 +45413,10 @@ msgid "Offset Edge Loop"
 msgstr "Décaler boucle d’arêtes"
 
 
+msgid "Fill Holes"
+msgstr "Remplir trous"
+
+
 msgid "Spherize"
 msgstr "Sphériser"
 
@@ -46282,6 +46250,10 @@ msgstr "Sélectionner le chemin le plus court entre deux vertices/arêtes/faces"
 msgctxt "Operator"
 msgid "Solidify"
 msgstr "Solidifier"
+
+
+msgid "Create a solid skin by extruding, compensating for sharp angles"
+msgstr "Créer une peau solide par extrusion, avec compensation des angles aigus"
 
 
 msgctxt "Operator"
@@ -54096,19 +54068,6 @@ msgid "Select other strips at the same time"
 msgstr "Sélectionner d’autres bandes au même temps"
 
 
-msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "Sélectionner côté actif"
-
-
-msgid "Select strips on the nominated side of the active strip"
-msgstr "Sélectionner les bandes sur le côté donné de la bande active"
-
-
-msgid "The side of the handle that is selected"
-msgstr "Le côté de la poignée qui est sélectionné"
-
-
 msgid "Select or deselect all strips"
 msgstr "(Dé)sélectionner toutes les bandes"
 
@@ -54180,6 +54139,10 @@ msgstr "Sélectionner poignées"
 
 msgid "Select gizmo handles on the sides of the selected strip"
 msgstr "Sélectionner les poignées de manipulation sur les côtés de la bande sélectionnée"
+
+
+msgid "The side of the handle that is selected"
+msgstr "Le côté de la poignée qui est sélectionné"
 
 
 msgid "Shrink the current selection of adjacent selected strips"
@@ -54954,10 +54917,6 @@ msgstr "Sélectionner le mot sous le curseur"
 
 msgid "Set cursor selection"
 msgstr "Définir curseur de sélection"
-
-
-msgid "Set selection end rather than cursor"
-msgstr "Définir la fin de la sélection plutôt que le curseur"
 
 
 msgctxt "Operator"
@@ -56159,10 +56118,6 @@ msgstr "Réduire l’étirement UV en détendant les angles"
 
 msgid "Blend factor between stretch minimized and original"
 msgstr "Facteur de mélange entre étirement minimisé et original"
-
-
-msgid "Fill Holes"
-msgstr "Remplir trous"
 
 
 msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
@@ -61772,6 +61727,10 @@ msgid "Settings for interacting with Blender data"
 msgstr "Réglages pour l’interaction avec le données de Blender"
 
 
+msgid "Experimental"
+msgstr "Expérimentales"
+
+
 msgid "Default paths for external files"
 msgstr "Chemins par défaut pour les fichiers externes"
 
@@ -64216,10 +64175,6 @@ msgid "Only use finished and supported features"
 msgstr "N’utiliser que les fonctionnalités finies et supportées"
 
 
-msgid "Experimental"
-msgstr "Expérimentales"
-
-
 msgid "Use experimental and incomplete features that might be broken or change in the future"
 msgstr "Utiliser les fonctionnalités expérimentales et incomplètes, qui pourraient être cassées ou modifiées dans le futur"
 
@@ -64910,10 +64865,6 @@ msgstr "Export une animation"
 
 msgid "Format type to export to"
 msgstr "Type de format vers lequel exporter"
-
-
-msgid "VRML2"
-msgstr "VRML2"
 
 
 msgid "Export Directory"
@@ -74781,10 +74732,6 @@ msgid "Volume:"
 msgstr "Volume :"
 
 
-msgid "Plane:"
-msgstr "Plan :"
-
-
 msgid "Min/Max:"
 msgstr "Min/Max :"
 
@@ -75112,12 +75059,12 @@ msgid "UVs:"
 msgstr "UVs :"
 
 
+msgid "Outer"
+msgstr "Externe"
+
+
 msgid "Limit Method:"
 msgstr "Méthode de limitation :"
-
-
-msgid "Width Method:"
-msgstr "Méthode de largeur :"
 
 
 msgid "Operation:"
@@ -75297,20 +75244,12 @@ msgid "Deform:"
 msgstr "Déformer :"
 
 
-msgid "Crease:"
-msgstr "Plis :"
-
-
-msgid "Outer"
-msgstr "Externe"
+msgid "Material Index Offset:"
+msgstr "Décalage de l’indice de matériau :"
 
 
 msgid "Rim"
 msgstr "Bordure"
-
-
-msgid "Material Index Offset:"
-msgstr "Décalage de l’indice de matériau :"
 
 
 msgid "Aspect X"
@@ -75506,6 +75445,10 @@ msgstr "Compilé sans le modificateur Océan"
 
 msgid "Cull Faces:"
 msgstr "Suppression des faces :"
+
+
+msgid "Crease:"
+msgstr "Plis :"
 
 
 msgid "Render:"

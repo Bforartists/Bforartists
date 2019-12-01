@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -2491,14 +2491,6 @@ msgid "Internal Friction"
 msgstr "ﻲﻠﺧﺍﺪﻟﺍ ﻙﺎﻜﺘﺣﻻ﻿ﺍ"
 
 
-msgid "Mass"
-msgstr "ﺔﻠﺘﻜﻟﺍ"
-
-
-msgid "Mass of cloth material"
-msgstr "ﺵﺎﻤﻘﻟﺍ ﺔﻣﺎﺧ ﺔﻠﺘﻛ"
-
-
 msgid "Pin Stiffness"
 msgstr "ﺖﻴﺒﺜﺘﻟﺍ ﺔﺑﻼ﻿ﺻ"
 
@@ -4712,16 +4704,8 @@ msgid "Keep Axis"
 msgstr "ﺭﻮﺤﻤﻟﺍ ءﺎﻘﺑﺍ"
 
 
-msgid "Axis to maintain during stretch"
-msgstr "ﺩﺪّﻤﺘﻟﺍ ﻝﻼ﻿ﺧ ﻊﺒﺘﻤﻟﺍ ﺭﻮﺤﻤﻟﺍ"
-
-
-msgid "Keep X Axis"
-msgstr "X ﺭﻮﺤﻣ ﻲﻘﺑﺍ"
-
-
-msgid "Keep Z Axis"
-msgstr "Z ﺭﻮﺤﻣ ﻲﻘﺑﺍ"
+msgid "XZ"
+msgstr "XZ"
 
 
 msgid "Original Length"
@@ -4734,10 +4718,6 @@ msgstr "ﺔﺣﺍﺮﻟﺍ ﻊﺿﻭ ﻲﻓ ﻝﻮﻄﻟﺍ"
 
 msgid "Maintain the object's volume as it stretches"
 msgstr "ﺩﺪﻤﻳ ﺎﻤﻨﻴﺑ ﻦﺋﺎﻜﻟﺍ ﻢﺠﺣ ﻰﻠﻋ ﻆﻓﺎﺣ"
-
-
-msgid "XZ"
-msgstr "XZ"
 
 
 msgid "Track To Constraint"
@@ -5062,6 +5042,14 @@ msgstr "ﺢﻄﺳ"
 
 msgid "View"
 msgstr "ﺮﻈﻨﻣ"
+
+
+msgid "Steps"
+msgstr "ﺕﺍﻮﻄﺧ"
+
+
+msgid "Segments"
+msgstr "ﺢﺋﺍﺮﺷ"
 
 
 msgid "Active Spline"
@@ -10751,10 +10739,6 @@ msgid "Map the bevel factor to the number of subdivisions of a spline (U resolut
 msgstr "(U ﺔﻗﺪﻟﺍ) ﻰﻨﺤﻨﻤﻠﻟ ﺕﺎﻤﻴﺴﻘﺘﻟﺍ ﺩﺪﻌﺑ ﺔﻔﻄﺸﻟﺍ ﻞﻣﺎﻌﻣ ﻂﺑﺭﺍ"
 
 
-msgid "Segments"
-msgstr "ﺢﺋﺍﺮﺷ"
-
-
 msgid "Map the bevel factor to the length of a segment and to the number of subdivisions of a segment"
 msgstr "ﺎﻬﺗﺎﻤﻴﺴﻘﺗ ﺩﺪﻌﺑ ﻭ ﺔﻤﻴﺴﻘﺘﻟﺍ ﻝﻮﻄﺑ ﺔﻔﻄﺸﻟﺍ ﻞﻣﺎﻌﻣ ﻂﺑﺭﺇ"
 
@@ -13907,10 +13891,6 @@ msgid "Draw Size"
 msgstr "ﻢﺳﺮﻟﺍ ﻢﺠﺣ"
 
 
-msgid "Steps"
-msgstr "ﺕﺍﻮﻄﺧ"
-
-
 msgid "How many steps paths are drawn with (power of 2)"
 msgstr "(2 ـﻟﺍ ﺕﺎﻔﻋﺎﻀﻣ) ﺕﺍﺭﺎﺴﻤﻟﺍ ﻢﺳﺮﺗ ﺓﻮﻄﺧ ﻢﻜﺑ"
 
@@ -14137,6 +14117,10 @@ msgstr "2D ﺪﻳﻮﺑ"
 
 msgid "Constrain boids to a surface"
 msgstr "ﺢﻄﺴﻟ ﺕﺍﺪﻳﻮﺒﻟﺍ ﺪﻴﻗ"
+
+
+msgid "Mass"
+msgstr "ﺔﻠﺘﻜﻟﺍ"
 
 
 msgid "Mass of the particles"
@@ -18171,6 +18155,10 @@ msgid "Snap"
 msgstr "ﻱﺫﺎﺣ"
 
 
+msgid "Material Specials"
+msgstr "ﺕﺎﻣﺎﺨﻟﺍ ﺕﺎﻓﺎﺿﺇ"
+
+
 msgid "Grease Pencil Tools"
 msgstr "ﺕﺎﻈﺣﻼ﻿ﻣ ﻢﻠﻗ ﺕﺍﻭﺩﺃ"
 
@@ -18194,10 +18182,6 @@ msgstr "ﻱﺫﺎﺣ/ﻢﺤﻟﺍ"
 msgctxt "Operator"
 msgid "Add"
 msgstr "ﻒﺿﺃ"
-
-
-msgid "Material Specials"
-msgstr "ﺕﺎﻣﺎﺨﻟﺍ ﺕﺎﻓﺎﺿﺇ"
 
 
 msgid "Shape Key Specials"
@@ -25091,10 +25075,6 @@ msgid "Export PLY"
 msgstr "PLY ﺭﺪّﺻ"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "ﺔﺠﺴﻧﻻ﻿ﺍ ﺕﺎﻴﺛﺍﺪﺣﺍ ﻭ ﻥﺍﻮﻟﻷ﻿ﺍ ,ﻢﻇﺍﻮﻨﻟﺎﺑ ﻲﺟﺫﻮﻤﻧ PLY ـﻛ ﺩﺮﻔﻨﻤﻟﺍ ﻦﺋﺎﻜﻟﺍ ﺭﺪّﺻ"
-
-
 msgid "Z Forward"
 msgstr "Z ﻡﺎﻣﻸ﻿ﻟ"
 
@@ -25122,10 +25102,6 @@ msgstr "ﺔﻟﺎﻌّﻔﻟﺍ UV ـﻟﺍ ﺔﻘﺒﻃ ﺭﺪّﺻ"
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "STL ﺭﺪّﺻ"
-
-
-msgid "Save STL triangle mesh data from the active object"
-msgstr "ﻝﺎﻌﻔﻟﺍ ﻦﺋﺎﻜﻟﺍ ﻦﻣ ﻲﺜﻠﺜﻤﻟﺍ STL ﻢﺴﺠﻤﻟﺍ ﺕﺎﻧﺎﻴﺑ ﻆﻔﺣﺍ"
 
 
 msgctxt "Operator"
@@ -30813,15 +30789,6 @@ msgid "Linked Time"
 msgstr "ﻂﺒﺗﺮﻤﻟﺍ ﻦﻣﺰﻟﺍ"
 
 
-msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "ﻝﺎﻌﻔﻟﺍ ﺐﻧﺎﺠﻟﺍ ﺮﺘﺧﺍ"
-
-
-msgid "The side of the handle that is selected"
-msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﺾﺒﻘﻤﻟﺍ ﺐﻧﺎﺟ"
-
-
 msgid "All strips of same basic type (Graphical or Sound)"
 msgstr "(ﻲﺗﻮﺻ ﻡﺍ ﻱﺭﻮﺻ) ﻲﺴﻴﺋﺮﻟﺍ ﻉﻮﻨﻟﺍ ﺲﻔﻧ ﻦﻣ ﺔﻃﺮﺷﻻ﻿ﺍ ﻞﻛ"
 
@@ -30833,6 +30800,10 @@ msgstr "(ﺕﺍﺮﺛﺆﻤﻟﺍ ﺮﻴﻏ ﻂﺋﺍﺮﺸﻟﺍ ﻞﻛ ﺮﺘ�
 msgctxt "Operator"
 msgid "Select Handles"
 msgstr "ﺾﺑﺎﻘﻤﻟﺍ ﺮﺘﺧﺍ"
+
+
+msgid "The side of the handle that is selected"
+msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﺾﺒﻘﻤﻟﺍ ﺐﻧﺎﺟ"
 
 
 msgctxt "Operator"
@@ -34203,6 +34174,10 @@ msgid "Settings for interacting with Blender data"
 msgstr "ﺭﺪﻨﻠﺑ ﺕﺎﻧﺎﻴﺑ ﻊﻣ ﻞﻋﺎﻔﺘﻠﻟ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
+msgid "Experimental"
+msgstr "ﻲﺑﺮﺠﺗ"
+
+
 msgid "Default paths for external files"
 msgstr "ﺔﻴﺟﺭﺎﺨﻟﺍ ﺕﺎﻔﻠﻤﻠﻟ ﺔﻴﺿﺍﺮﺘﻓﻹ﻿ﺍ ﺕﺍﺭﺎﺴﻤﻟﺍ"
 
@@ -35657,10 +35632,6 @@ msgstr "ﺮﻴﻴﺼﺘﻠﻟ ﺔﻣﺪﺨﺘﺴﻤﻟﺍ ﺕﺍﺰﻴﻤﻟﺍ 
 
 msgid "Only use finished and supported features"
 msgstr "ﺔﻣﻮﻋﺪﻤﻟﺍ ﻭ ﺔﻴﻬﺘﻨﻤﻟﺍ ﺕﺍﺰﻴﻤﻟﺍ ﻂﻘﻓ ﻡﺪﺨﺘﺳﺍ"
-
-
-msgid "Experimental"
-msgstr "ﻲﺑﺮﺠﺗ"
 
 
 msgid "Use experimental and incomplete features that might be broken or change in the future"
@@ -40446,10 +40417,6 @@ msgid "Volume:"
 msgstr ":ﻢﺠﺤﻟﺍ"
 
 
-msgid "Plane:"
-msgstr ":ﺢﻄﺴﻟﺍ"
-
-
 msgid "Min/Max:"
 msgstr ":ﻰﺼﻗﻷ﻿ﺍ/ﻰﻧﺩﺃ"
 
@@ -40709,12 +40676,12 @@ msgid "UVs:"
 msgstr "UVs:"
 
 
+msgid "Outer"
+msgstr "ﻲﺟﺭﺎﺧ"
+
+
 msgid "Limit Method:"
 msgstr ":ﺪﺤﻟﺍ ﺔﻘﻳﺮﻃ"
-
-
-msgid "Width Method:"
-msgstr ":ﺽﺮﻌﻟﺍ ﺔﻘﻳﺮﻃ"
 
 
 msgid "Operation:"
@@ -40866,20 +40833,12 @@ msgid "Deform:"
 msgstr ":ﻉﻮّﻃ"
 
 
-msgid "Crease:"
-msgstr ":ﺪﻌﺠﺘﻟﺍ"
-
-
-msgid "Outer"
-msgstr "ﻲﺟﺭﺎﺧ"
+msgid "Material Index Offset:"
+msgstr ":ﺔﻣﺎﺨﻟﺍ ﺮﺷﺆﻣ ﺔﺣﺍﺯﺇ"
 
 
 msgid "Rim"
 msgstr "ﺔﻓﺎﺣ"
-
-
-msgid "Material Index Offset:"
-msgstr ":ﺔﻣﺎﺨﻟﺍ ﺮﺷﺆﻣ ﺔﺣﺍﺯﺇ"
 
 
 msgid "Aspect X"
@@ -41050,6 +41009,10 @@ msgstr "ﻂﻴﺤﻤﻟﺍ ﻲﻛﺎﺤﻣ ﺮﻴﻐﻣ ﻥﻭﺪﺑ ﺖﻴﻨ�
 
 msgid "Cull Faces:"
 msgstr ":ﺔﻴﻔﺨﻣ ﻩﻮﺟﻭ"
+
+
+msgid "Crease:"
+msgstr ":ﺪﻌﺠﺘﻟﺍ"
 
 
 msgid "Render:"

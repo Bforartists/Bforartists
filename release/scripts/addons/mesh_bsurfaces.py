@@ -19,7 +19,7 @@
 
 bl_info = {
     "name": "Bsurfaces GPL Edition",
-    "author": "Eclectiel, Spivak Vladimir(cwolf3d)",
+    "author": "Eclectiel, Vladimir Spivak (cwolf3d)",
     "version": (1, 7, 5),
     "blender": (2, 80, 0),
     "location": "View3D EditMode > Sidebar > Edit Tab",
@@ -87,7 +87,7 @@ class VIEW3D_PT_tools_SURFSK_mesh(Panel):
         col = layout.column(align=True)
         row = layout.row()
         row.separator()
-        col.operator("gpencil.surfsk_init", text="Initialize")
+        col.operator("gpencil.surfsk_init", text="Initialize (Add BSurface mesh)")
         col.operator("gpencil.surfsk_add_modifiers", text="Add Mirror and others modifiers")
         
         col.label(text="Mesh of BSurface:")
@@ -3524,7 +3524,7 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
 class GPENCIL_OT_SURFSK_init(Operator):
     bl_idname = "gpencil.surfsk_init"
     bl_label = "Bsurfaces initialize"
-    bl_description = "Bsurfaces initialize"
+    bl_description = "Add an empty mesh object with useful settings"
     bl_options = {'REGISTER', 'UNDO'}
 
     active_object: PointerProperty(type=bpy.types.Object)

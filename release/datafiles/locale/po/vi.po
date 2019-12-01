@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -4018,14 +4018,6 @@ msgid "Internal Friction"
 msgstr "Ma Sát Nội Bộ"
 
 
-msgid "Mass"
-msgstr "Khối Lượng"
-
-
-msgid "Mass of cloth material"
-msgstr "Khối lượng của vật liệu vải"
-
-
 msgid "Pin Stiffness"
 msgstr "Độ Cứng Đóng Đinh"
 
@@ -6711,16 +6703,8 @@ msgid "Keep Axis"
 msgstr "Giữ Nguyên Trục"
 
 
-msgid "Axis to maintain during stretch"
-msgstr "Trục để giữ nguyên khi kéo dài"
-
-
-msgid "Keep X Axis"
-msgstr "Giữ Trục X"
-
-
-msgid "Keep Z Axis"
-msgstr "Giữ Trục Z"
+msgid "XZ"
+msgstr "XZ"
 
 
 msgid "Original Length"
@@ -6733,10 +6717,6 @@ msgstr "Độ dài khi nghỉ ngơi"
 
 msgid "Maintain the object's volume as it stretches"
 msgstr "Giữ nguyên thể tích của vật thể khi nó bị kéo dài"
-
-
-msgid "XZ"
-msgstr "XZ"
 
 
 msgid "Track To Constraint"
@@ -7341,6 +7321,14 @@ msgstr "Chỉ Đầu"
 
 msgid "Use the start of the stroke for the depth"
 msgstr "Sử dụng điểm đầu của nét cho độ sâu"
+
+
+msgid "Steps"
+msgstr "Bước"
+
+
+msgid "Segments"
+msgstr "Khúc Cong"
 
 
 msgid "Curve Splines"
@@ -15289,6 +15277,10 @@ msgid "Offset of the pose origin in relation to the brush radius"
 msgstr "Dịch của góc toạ độ dạng đứng tương đối với bán kính bút"
 
 
+msgid "Smooth Iterations"
+msgstr "Lặp Lại Mịn"
+
+
 msgid "Rake"
 msgstr "Càu"
 
@@ -15383,6 +15375,10 @@ msgstr "Dời Chút"
 
 msgid "Rotate"
 msgstr "Xoay"
+
+
+msgid "Topology"
+msgstr "Hình Dạng Học"
 
 
 msgid "Secondary Color"
@@ -16287,10 +16283,6 @@ msgstr "Được xác định làm sao hệ số kết thúc xiên được ánh
 
 msgid "Map the bevel factor to the number of subdivisions of a spline (U resolution)"
 msgstr "Ánh xạ hệ số xiên đến số lượng phân hóa của một mẫu cong (độ phân giải U)"
-
-
-msgid "Segments"
-msgstr "Khúc Cong"
 
 
 msgid "Map the bevel factor to the length of a segment and to the number of subdivisions of a segment"
@@ -20873,10 +20865,6 @@ msgid "Size of particles on viewport in BU"
 msgstr "Kích cỡ của hạt trong màn chiếu giao diện Blender"
 
 
-msgid "Steps"
-msgstr "Bước"
-
-
 msgid "How many steps paths are drawn with (power of 2)"
 msgstr "Số lượng bước đường đi được vẽ (mũ 2)"
 
@@ -21127,6 +21115,10 @@ msgstr "Quần Thể 2D"
 
 msgid "Constrain boids to a surface"
 msgstr "Ràng buộc đản thể ở trên mặt"
+
+
+msgid "Mass"
+msgstr "Khối Lượng"
 
 
 msgid "Mass of the particles"
@@ -27530,6 +27522,10 @@ msgid "Clean Up"
 msgstr "Làm Sạch"
 
 
+msgid "Material Specials"
+msgstr "Đồ Đặc Biệt Vật Liệu"
+
+
 msgid "GP Vertex Groups"
 msgstr "Bút Sáp Nhóm Đỉnh"
 
@@ -27610,10 +27606,6 @@ msgstr "MẶTNẠ_MT_thêm"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Cộng"
-
-
-msgid "Material Specials"
-msgstr "Đồ Đặc Biệt Vật Liệu"
 
 
 msgid "Shape Key Specials"
@@ -29133,24 +29125,16 @@ msgid "Pattern to use for inside of miters"
 msgstr "Gương mẫu để dùng cho bên trong mũ tế"
 
 
-msgid "Default sharp miter"
-msgstr "Mũ tế bén mặc định"
-
-
-msgid "Patch"
-msgstr "Vá"
-
-
-msgid "Miter with extra corner"
-msgstr "Mũ tế có thêm một góc"
+msgid "Inside of miter is sharp"
+msgstr "Trong mũ tế là bén"
 
 
 msgid "Arc"
 msgstr "Hình Cung"
 
 
-msgid "Miter with curved arc"
-msgstr "Mũ tế có cong hình cung"
+msgid "Inside of miter is arc"
+msgstr "Trong mũ tế là hình cung"
 
 
 msgid "Outer Miter"
@@ -29161,8 +29145,24 @@ msgid "Pattern to use for outside of miters"
 msgstr "Gương mẫu để dùng cho bên ngoài mũ tế"
 
 
-msgid "Amount Type"
-msgstr "Loại Mức"
+msgid "Outside of miter is sharp"
+msgstr "Ngoài mũ tế là bén"
+
+
+msgid "Patch"
+msgstr "Vá"
+
+
+msgid "Outside of miter is squared-off patch"
+msgstr "Ngoài mũ tế là vá vuông"
+
+
+msgid "Outside of miter is arc"
+msgstr "Ngoài mũ tế là hình cung"
+
+
+msgid "Width Type"
+msgstr "Loại Bề Rộng"
 
 
 msgid "What distance Width measures"
@@ -29615,10 +29615,6 @@ msgstr "Ánh Xạ Cạnh"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Phương pháp cho ánh xạ cạnh nguồn đến cạnh đích"
-
-
-msgid "Topology"
-msgstr "Hình Dạng Học"
 
 
 msgid "Copy from identical topology meshes"
@@ -31468,10 +31464,6 @@ msgstr "Đệm Chứa Điểm Thân Mềm"
 
 msgid "Solidify Modifier"
 msgstr "Cụ Sửa Đổi Chất Rắn"
-
-
-msgid "Create a solid skin by extruding, compensating for sharp angles"
-msgstr "Chế tạo một da chất rắn bằng kéo ra và bù cho góc nhọn"
 
 
 msgid "Inner Crease"
@@ -42047,10 +42039,6 @@ msgid "Export PLY"
 msgstr "Xuất PLY"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "Xuất một vật thể trong tệp PLY Stanford có pháp tuyến, màu, và tọa độ họa tiết"
-
-
 msgid "X Forward"
 msgstr "X Trước"
 
@@ -42115,6 +42103,14 @@ msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will b
 msgstr "Xuất Pháp Tuyến cho bề mặt được tô sắc mịn và đều (mặt tô sấc đều sẽ được xuất thành mặt riêng)"
 
 
+msgid "Selection Only"
+msgstr "Chỉ Vật Chọn"
+
+
+msgid "Export selected objects only"
+msgstr "Chỉ xuất vật thể được chọn"
+
+
 msgid "Export the active UV layer"
 msgstr "Xuất lớp UV hoạt động"
 
@@ -42122,10 +42118,6 @@ msgstr "Xuất lớp UV hoạt động"
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "Xuất STL"
-
-
-msgid "Save STL triangle mesh data from the active object"
-msgstr "Lưu dữ liệu mạng lưới bằng tam giác STL từ vật thể hoạt động"
 
 
 msgid "Ascii"
@@ -42158,14 +42150,6 @@ msgstr "Đơn Vị Cảnh"
 
 msgid "Apply current scene's unit (as defined by unit scale) to exported data"
 msgstr "Áp dụng đơn vị của cảnh (tùy chỉ định bằng phóng to đơn vị) với dữ liệu xuất"
-
-
-msgid "Selection Only"
-msgstr "Chỉ Vật Chọn"
-
-
-msgid "Export selected objects only"
-msgstr "Chỉ xuất vật thể được chọn"
 
 
 msgctxt "Operator"
@@ -47177,10 +47161,6 @@ msgid "Bevel"
 msgstr "Xiên"
 
 
-msgid "Cut into selected items at an angle to create flat or rounded bevel or chamfer"
-msgstr "Cắt các mặt hàng được chọn tại một góc để tạo xiên bằng phẳng hay tròn hay mặt vạt cạnh"
-
-
 msgid "Do not allow beveled edges/vertices to overlap each other"
 msgstr "Không cho cạnh/đỉnh xiên lấn trên nhau"
 
@@ -47197,36 +47177,8 @@ msgid "Set face strength on new and modified faces only"
 msgstr "Chỉ đặt sức mặt cho mặt mới và mặt được sửa đổi"
 
 
-msgid "Prefer slide along edge to even widths"
-msgstr "Ưa trượt theo cạnh cho giữ bề rộng đều"
-
-
 msgid "Material for bevel faces (-1 means use adjacent faces)"
 msgstr "Vật liệu cho xiên mặt (-1 nghĩa là dùng mặt kề)"
-
-
-msgid "Inside of miter is sharp"
-msgstr "Trong mũ tế là bén"
-
-
-msgid "Inside of miter is arc"
-msgstr "Trong mũ tế là hình cung"
-
-
-msgid "Outside of miter is sharp"
-msgstr "Ngoài mũ tế là bén"
-
-
-msgid "Outside of miter is squared-off patch"
-msgstr "Ngoài mũ tế là vá vuông"
-
-
-msgid "Outside of miter is arc"
-msgstr "Ngoài mũ tế là hình cung"
-
-
-msgid "Width Type"
-msgstr "Loại Bề Rộng"
 
 
 msgid "Controls profile shape (0.5 = round)"
@@ -48521,12 +48473,12 @@ msgid "Minimum mask value to consider the vertex valid to extract a face from th
 msgstr "Giá trị mặt nạ cực tiểu để chấp nhận đỉnh là hợp lệ cho rút được một mặt từ mạng lưới ban đầu"
 
 
-msgid "Smooth Iterations"
-msgstr "Lặp Lại Mịn"
-
-
 msgid "Smooth iterations applied to the extracted mesh"
 msgstr "Áp dụng lặp lại mịn đến mặng lưới được rút ra"
+
+
+msgid "Fill Holes"
+msgstr "Đầy Lỗ"
 
 
 msgctxt "Operator"
@@ -49591,6 +49543,10 @@ msgstr "Cho xác định quyền lượng của pháp tuyến mịn hoá đối 
 msgctxt "Operator"
 msgid "Solidify"
 msgstr "Rắn Hóa"
+
+
+msgid "Create a solid skin by extruding, compensating for sharp angles"
+msgstr "Chế tạo một da chất rắn bằng kéo ra và bù cho góc nhọn"
 
 
 msgctxt "Operator"
@@ -58646,19 +58602,6 @@ msgid "Select other strips at the same time"
 msgstr "Chọn các đoạn khác cùng một lượt"
 
 
-msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "Chọn Bên Hoạt Động"
-
-
-msgid "Select strips on the nominated side of the active strip"
-msgstr "Chọn các đoạn ở bên được lựa chọn của đoạn hoạt động"
-
-
-msgid "The side of the handle that is selected"
-msgstr "Bên của tay cầm được chọn"
-
-
 msgid "Select or deselect all strips"
 msgstr "Chọn hay thả hết đoạn"
 
@@ -58730,6 +58673,10 @@ msgstr "Chọn Tay Cầm"
 
 msgid "Select gizmo handles on the sides of the selected strip"
 msgstr "Chọn tay cầm đồ đạc ở hai bên của đoạn được chọn"
+
+
+msgid "The side of the handle that is selected"
+msgstr "Bên của tay cầm được chọn"
 
 
 msgid "Shrink the current selection of adjacent selected strips"
@@ -59525,10 +59472,6 @@ msgstr "Chọn chữ ở đưới con trỏ"
 
 msgid "Set cursor selection"
 msgstr "Đặt sự lựa chọn con trỏ"
-
-
-msgid "Set selection end rather than cursor"
-msgstr "Đặt kết thúc sự lựa chọn thay con trỏ"
 
 
 msgctxt "Operator"
@@ -60873,10 +60816,6 @@ msgstr "Giảm kéo dài UV bằng buồng thả góc"
 
 msgid "Blend factor between stretch minimized and original"
 msgstr "Hệ số pha trộn giữa giảm kéo dài và ban đầu"
-
-
-msgid "Fill Holes"
-msgstr "Đầy Lỗ"
 
 
 msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
@@ -67460,6 +67399,10 @@ msgid "Settings for interacting with Blender data"
 msgstr "Cài đặt cho tương tác với thông tin Blender"
 
 
+msgid "Experimental"
+msgstr "Thí Nghiệm"
+
+
 msgid "Default paths for external files"
 msgstr "Đường dẫn mặc định cho tệp ngoài"
 
@@ -70456,10 +70399,6 @@ msgid "Only use finished and supported features"
 msgstr "Chỉ dùng tính năng hoàn thành và hỗ trợ"
 
 
-msgid "Experimental"
-msgstr "Thí Nghiệm"
-
-
 msgid "Use experimental and incomplete features that might be broken or change in the future"
 msgstr "Dùng tính năng thí nghiệm và chưa hoàn thành mà có lẻ bị hư hay sẽ đổi trong tương lại"
 
@@ -71422,10 +71361,6 @@ msgstr "Xuất cảnh Nệt Tự Do vào một tệp định dạng .svg"
 
 msgid "Format type to export to"
 msgstr "Xuất bằng loại định dạng nào"
-
-
-msgid "VRML2"
-msgstr "VRML2"
 
 
 msgid "Export Directory"
@@ -84607,10 +84542,6 @@ msgid "Volume:"
 msgstr "Thể Thích:"
 
 
-msgid "Plane:"
-msgstr "Mặt Phẳng:"
-
-
 msgid "Min/Max:"
 msgstr "Cức Tiểu/Đại"
 
@@ -85156,20 +85087,12 @@ msgid "UVs:"
 msgstr "Các UV:"
 
 
+msgid "Outer"
+msgstr "Ngoài"
+
+
 msgid "Limit Method:"
 msgstr "Phương pháp Giới Hạn:"
-
-
-msgid "Width Method:"
-msgstr "Phương Pháp Bề Rộng:"
-
-
-msgid "Set Face Strength Mode"
-msgstr "Đặt Chế Độ Sức Mặt"
-
-
-msgid "Miter Patterns"
-msgstr "Gương Mẫu Mũ Tế"
 
 
 msgid "Operation:"
@@ -85361,20 +85284,12 @@ msgid "Deform:"
 msgstr "Méo Hóa:"
 
 
-msgid "Crease:"
-msgstr "Nhăn:"
-
-
-msgid "Outer"
-msgstr "Ngoài"
+msgid "Material Index Offset:"
+msgstr "Dịch Chỉ Số Vật Thể:"
 
 
 msgid "Rim"
 msgstr "Vành"
-
-
-msgid "Material Index Offset:"
-msgstr "Dịch Chỉ Số Vật Thể:"
 
 
 msgid "Aspect X"
@@ -85582,6 +85497,10 @@ msgstr "Xây mà không có cụ sửa đổi MôPhỏngĐạiDương"
 
 msgid "Cull Faces:"
 msgstr "Hủy Diệt Mặt:"
+
+
+msgid "Crease:"
+msgstr "Nhăn:"
 
 
 msgid "Render:"
@@ -86262,8 +86181,20 @@ msgid "Source Clone UV Map"
 msgstr "Bản Đồ UV Bản Sao Nguồn"
 
 
+msgid "Thickness Profile"
+msgstr "Trình Bày Bề Rộng"
+
+
 msgid "Mask Value"
 msgstr "Giá Trị Mặt Nạ"
+
+
+msgid "Fill Options"
+msgstr "Tùy Chọn Tô Đầy"
+
+
+msgid "Ignore Transparent Strokes"
+msgstr "Không Quan Tâm Nét Trong Suốt"
 
 
 msgctxt "Operator"
@@ -88882,10 +88813,6 @@ msgid "Report a Bug"
 msgstr "Báo Cáo Sai Lầm"
 
 
-msgid "Ignore Transparent Strokes"
-msgstr "Không Quan Tâm Nét Trong Suốt"
-
-
 msgid "Sequence Strip Name"
 msgstr "Tên Đoạn Trình Tự"
 
@@ -90219,14 +90146,6 @@ msgstr "Sao Chép Lớp Hoạt Động"
 msgctxt "Operator"
 msgid "Delete All Layers"
 msgstr "Xóa Hết Lớp"
-
-
-msgid "Thickness Profile"
-msgstr "Trình Bày Bề Rộng"
-
-
-msgid "Fill Options"
-msgstr "Tùy Chọn Tô Đầy"
 
 
 msgctxt "Operator"
@@ -94047,10 +93966,6 @@ msgstr "Hình Cầu"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "Hình Cầu Diện"
-
-
-msgid "%s: confirm, %s: cancel, %s: mode (%s), %s: width (%s), %s: segments (%d), %s: profile (%.3f), %s: clamp overlap (%s), %s: vertex only (%s), %s: outer miter (%s), %s: inner miter (%s), %s: harden normals (%s), %s: mark seam (%s), %s: mark sharp (%s)"
-msgstr "%s: xác nhận, %s: hủy, %s: chế độ (%s), %s: bề rộng (%s), %s: số lượng khúc (%d), %s: trình bày (%.3f), %s: kẹp lấn trên (%s), %s: chỉ định (%s), %s: mũ tế ngoại (%s), %s: mũ tế nội (%s), %s: cứng hóa phap tuyến (%s), %s: ký dấu vết sẹo (%s), %s: ký dấu bén (%s)"
 
 
 msgid "LMB: Click and drag to draw cut line"

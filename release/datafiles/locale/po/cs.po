@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -1463,14 +1463,6 @@ msgid "Internal Friction"
 msgstr "Font rozhraní:  "
 
 
-msgid "Mass"
-msgstr "Hmotnost"
-
-
-msgid "Mass of cloth material"
-msgstr "Zobrazit nastavení vláken pro statické částice"
-
-
 msgid "Pin Stiffness"
 msgstr "Vyhladit"
 
@@ -2896,14 +2888,6 @@ msgid "Keep Axis"
 msgstr "Osa X"
 
 
-msgid "Keep X Axis"
-msgstr "Vybrat propojení"
-
-
-msgid "Keep Z Axis"
-msgstr "Osa Z"
-
-
 msgid "Original Length"
 msgstr "Uchovat originál"
 
@@ -3130,6 +3114,14 @@ msgstr "Plocha"
 
 msgid "View"
 msgstr "Pohled"
+
+
+msgid "Steps"
+msgstr "Kroky:"
+
+
+msgid "Segments"
+msgstr "Segmenty"
 
 
 msgid "Active Spline"
@@ -6209,10 +6201,6 @@ msgid "End Bevel Factor"
 msgstr "Činitel"
 
 
-msgid "Segments"
-msgstr "Segmenty"
-
-
 msgid "Start Bevel Factor"
 msgstr "Činitel"
 
@@ -7841,10 +7829,6 @@ msgid "Draw Size"
 msgstr "Daždicové okno"
 
 
-msgid "Steps"
-msgstr "Kroky:"
-
-
 msgid "Distribution"
 msgstr "Historie vracení"
 
@@ -7975,6 +7959,10 @@ msgstr "Hejno"
 
 msgid "Constrain boids to a surface"
 msgstr "Cíl vazby"
+
+
+msgid "Mass"
+msgstr "Hmotnost"
 
 
 msgid "Mass of the particles"
@@ -9908,6 +9896,10 @@ msgid "Snap"
 msgstr "Zarovnat"
 
 
+msgid "Material Specials"
+msgstr "Materiál"
+
+
 msgid "UV Select Mode"
 msgstr "UV výběrový mód"
 
@@ -9923,10 +9915,6 @@ msgstr "Zarovnaný"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Přidat"
-
-
-msgid "Material Specials"
-msgstr "Materiál"
 
 
 msgid "Shape Key Specials"
@@ -11383,10 +11371,6 @@ msgstr "Označit okraje"
 
 msgid "Solidify Modifier"
 msgstr "Kopírovat modifikátor"
-
-
-msgid "Create a solid skin by extruding, compensating for sharp angles"
-msgstr "Vytvoří pevný povrch (tj. přidá tloušťku) pomocí vytažení, nahrazení ostrých úhlů"
 
 
 msgid "Inner Crease"
@@ -16580,10 +16564,6 @@ msgid "Export PLY"
 msgstr "Exportovat"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "Použít souřadnice označených vertexů i pro souřadnice uv mapování"
-
-
 msgid "X Forward"
 msgstr "Dopředu:"
 
@@ -16632,6 +16612,14 @@ msgid "Apply Modifiers to the exported mesh"
 msgstr "Vazby objektu"
 
 
+msgid "Selection Only"
+msgstr "Pouze vybrané"
+
+
+msgid "Export selected objects only"
+msgstr "Ostranit označené Objekt(y) Globálně"
+
+
 msgid "Export the active UV layer"
 msgstr "Renderovvat animaci"
 
@@ -16639,10 +16627,6 @@ msgstr "Renderovvat animaci"
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "Exportovat"
-
-
-msgid "Save STL triangle mesh data from the active object"
-msgstr "Přidat vazbu aktivní kosti"
 
 
 msgid "Save the file in ASCII file format"
@@ -16655,14 +16639,6 @@ msgstr "Pózy kostí"
 
 msgid "Apply the modifiers before saving"
 msgstr "Před kreslením aplikovat normály vertexů"
-
-
-msgid "Selection Only"
-msgstr "Pouze vybrané"
-
-
-msgid "Export selected objects only"
-msgstr "Ostranit označené Objekt(y) Globálně"
 
 
 msgctxt "Operator"
@@ -18864,6 +18840,10 @@ msgid "At Cursor"
 msgstr "Na kurzoru"
 
 
+msgid "Fill Holes"
+msgstr "Vyplnit díry"
+
+
 msgid "Median"
 msgstr "Medián Z:"
 
@@ -19282,6 +19262,10 @@ msgstr "Zaoblit"
 msgctxt "Operator"
 msgid "Solidify"
 msgstr "Rozšířit"
+
+
+msgid "Create a solid skin by extruding, compensating for sharp angles"
+msgstr "Vytvoří pevný povrch (tj. přidá tloušťku) pomocí vytažení, nahrazení ostrých úhlů"
 
 
 msgctxt "Operator"
@@ -23407,15 +23391,6 @@ msgid "Select other strips at the same time"
 msgstr "Vybrat nový font pro uživatelské rozhraní"
 
 
-msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "Pridat objekt do nové skupiny"
-
-
-msgid "Select strips on the nominated side of the active strip"
-msgstr "Vybrat nový font pro uživatelské rozhraní"
-
-
 msgid "Select or deselect all strips"
 msgstr "Vše/nic"
 
@@ -23979,10 +23954,6 @@ msgid "Set cursor selection"
 msgstr "Kurzor -> výběr"
 
 
-msgid "Set selection end rather than cursor"
-msgstr "Zarovnat výběr na kurzor"
-
-
 msgctxt "Operator"
 msgid "Find"
 msgstr "Nalézt"
@@ -24490,10 +24461,6 @@ msgstr "Zrušit šev"
 msgctxt "Operator"
 msgid "Minimize Stretch"
 msgstr "Síla: "
-
-
-msgid "Fill Holes"
-msgstr "Vyplnit díry"
 
 
 msgctxt "Operator"
@@ -26902,6 +26869,10 @@ msgid "Edit Methods"
 msgstr "Editační metody"
 
 
+msgid "Experimental"
+msgstr "Protáhnout Horizontálně"
+
+
 msgid "Default paths for external files"
 msgstr "Přidat vazbu aktivní kosti"
 
@@ -27608,10 +27579,6 @@ msgstr "Spustit renderovani"
 
 msgid "Supported"
 msgstr "Ještě není podporováno"
-
-
-msgid "Experimental"
-msgstr "Protáhnout Horizontálně"
 
 
 msgid "Image brightness scale"
@@ -31823,10 +31790,6 @@ msgid "Volume:"
 msgstr "Objem: "
 
 
-msgid "Plane:"
-msgstr "Plocha:"
-
-
 msgid "Min/Max:"
 msgstr "Min/Max:"
 
@@ -32150,16 +32113,12 @@ msgid "Deform:"
 msgstr "Deformace"
 
 
-msgid "Crease:"
-msgstr "Ostrost: "
+msgid "Material Index Offset:"
+msgstr "Materiálové uzly"
 
 
 msgid "Rim"
 msgstr "Nahoře"
-
-
-msgid "Material Index Offset:"
-msgstr "Materiálové uzly"
 
 
 msgid "Aspect X"
@@ -32301,6 +32260,10 @@ msgstr "Uložit hru..."
 
 msgid "Cull Faces:"
 msgstr "Pouze plošky"
+
+
+msgid "Crease:"
+msgstr "Ostrost: "
 
 
 msgid "Render:"
