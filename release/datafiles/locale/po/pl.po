@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -2254,14 +2254,6 @@ msgid "Internal Friction"
 msgstr "Wewnętrzne tarcie"
 
 
-msgid "Mass"
-msgstr "Masa"
-
-
-msgid "Mass of cloth material"
-msgstr "Masa materiału tkaniny"
-
-
 msgid "Pin Stiffness"
 msgstr "Sztywność przypinania"
 
@@ -4419,16 +4411,8 @@ msgid "Keep Axis"
 msgstr "Zachowaj oś"
 
 
-msgid "Axis to maintain during stretch"
-msgstr "Oś do utrzymania podczas rozciągania"
-
-
-msgid "Keep X Axis"
-msgstr "Utrzymaj oś X"
-
-
-msgid "Keep Z Axis"
-msgstr "Utrzymaj oś Z"
+msgid "XZ"
+msgstr "XZ"
 
 
 msgid "Original Length"
@@ -4441,10 +4425,6 @@ msgstr "Długość w pozycji spoczynkowej"
 
 msgid "Maintain the object's volume as it stretches"
 msgstr "Utrzymuj objętość obiektu podczas rozciągania"
-
-
-msgid "XZ"
-msgstr "XZ"
 
 
 msgid "Track To Constraint"
@@ -6434,6 +6414,10 @@ msgstr "Prędkość kątowa"
 
 msgid "Distribution"
 msgstr "Rozkład"
+
+
+msgid "Mass"
+msgstr "Masa"
 
 
 msgid "World"

@@ -800,7 +800,9 @@ class VIEW3D_MT_transform_base(Menu):
 
         if context.mode != 'OBJECT':
             layout.operator("transform.vertex_warp", text="Warp", icon = "MOD_WARP")
+            layout.operator_context = 'EXEC_DEFAULT'
             layout.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE')
+            layout.operator_context = 'INVOKE_REGION_WIN'
 
             if obj.type == 'MESH':
                 layout.operator("transform.skin_resize", text="Skin Resize", icon = "MOD_SKIN")
@@ -3792,6 +3794,16 @@ class VIEW3D_MT_mask(Menu):
 
         layout.separator()
 
+        props = layout.operator("mesh.paint_mask_slice", text="Mask Slice", icon = "MOD_MASK")
+        props.fill_holes = False
+        props.new_object = False
+        props = layout.operator("mesh.paint_mask_slice", text="Mask Slice and Fill Holes", icon = "MOD_MASK")
+        props.new_object = False
+        props = layout.operator("mesh.paint_mask_slice", text="Mask Slice to New Object", icon = "MOD_MASK")
+
+        layout.separator()
+
+
         props = layout.operator("sculpt.dirty_mask", text='Dirty Mask', icon = "DIRTY_VERTEX")
 
 
@@ -4427,8 +4439,10 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("transform.shrink_fatten", text="Shrink/Fatten", icon = 'SHRINK_FATTEN')
             col.operator("transform.shear", text="Shear", icon = "SHEAR")
             col.operator("transform.vert_slide", text="Slide Vertices", icon = 'SLIDE_VERTEX')
+            col.operator_context = 'EXEC_DEFAULT'
             col.operator("transform.vertex_random", text="Randomize Vertices")
             col.operator("mesh.vertices_smooth", text="Smooth Vertices", icon = 'SMOOTH_VERTEX')
+            col.operator_context = 'INVOKE_REGION_WIN'
             col.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
 
             col.separator()
@@ -4668,7 +4682,9 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout.separator()
 
         layout.operator("transform.vert_slide", text="Slide Vertices", icon = 'SLIDE_VERTEX')
+        layout.operator_context = 'EXEC_DEFAULT'
         layout.operator("mesh.vertices_smooth", text="Smooth Vertices", icon = 'SMOOTH_VERTEX')
+        layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
 
         layout.separator()
@@ -6701,6 +6717,26 @@ class VIEW3D_PT_shading_options_ssao(Panel):
         col.prop(scene.display, "matcap_ssao_attenuation")
 
 
+class VIEW3D_PT_shading_render_pass(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Render Pass"
+    bl_parent_id = 'VIEW3D_PT_shading'
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.shading.type == 'MATERIAL'
+            or (context.engine in cls.COMPAT_ENGINES
+                and context.space_data.shading.type == 'RENDERED'))
+
+    def draw(self, context):
+        shading = context.space_data.shading
+
+        layout = self.layout
+        layout.prop(shading, "render_pass", text="")
+
+
 class VIEW3D_PT_gizmo_display(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
@@ -8229,6 +8265,7 @@ classes = (
     VIEW3D_PT_shading_options,
     VIEW3D_PT_shading_options_shadow,
     VIEW3D_PT_shading_options_ssao,
+    VIEW3D_PT_shading_render_pass,
     VIEW3D_PT_gizmo_display,
     VIEW3D_PT_overlay,
     VIEW3D_PT_overlay_guides,

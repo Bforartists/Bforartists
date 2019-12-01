@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -387,10 +387,6 @@ msgstr "Кездеме ырастоолору"
 
 msgid "Gravity"
 msgstr "Тартыш"
-
-
-msgid "Mass"
-msgstr "Масса"
 
 
 msgid "Curve"
@@ -1150,6 +1146,10 @@ msgstr "Прокси"
 
 msgid "Draw Size"
 msgstr "Тартуу өлчөмү"
+
+
+msgid "Mass"
+msgstr "Масса"
 
 
 msgid "Normal"
@@ -3007,10 +3007,6 @@ msgid "Languages"
 msgstr "Тилдер"
 
 
-msgid "VRML2"
-msgstr "VRML2"
-
-
 msgid "Sky"
 msgstr "Асман"
 
@@ -3387,10 +3383,6 @@ msgstr "Жайгашкан жери:"
 
 msgid "Scale:"
 msgstr "Масштаб:"
-
-
-msgid "Plane:"
-msgstr "Тегиздик:"
 
 
 msgid "Source:"

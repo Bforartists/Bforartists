@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
 "Last-Translator: Lockal <lockalsash@gmail.com>, 2019\n"
 "Language-Team: Russian (https://www.transifex.com/translateblender/teams/82039/ru/)\n"
@@ -4018,14 +4018,6 @@ msgid "Internal Friction"
 msgstr "Внутреннее трение"
 
 
-msgid "Mass"
-msgstr "Масса"
-
-
-msgid "Mass of cloth material"
-msgstr "Масса материала ткани"
-
-
 msgid "Pin Stiffness"
 msgstr "Жёсткость закрепления"
 
@@ -6711,16 +6703,8 @@ msgid "Keep Axis"
 msgstr "Сохранять ось"
 
 
-msgid "Axis to maintain during stretch"
-msgstr "Поддерживаемая ось при растяжении"
-
-
-msgid "Keep X Axis"
-msgstr "Поддержание оси X"
-
-
-msgid "Keep Z Axis"
-msgstr "Поддержание оси Z"
+msgid "XZ"
+msgstr "XZ"
 
 
 msgid "Original Length"
@@ -6733,10 +6717,6 @@ msgstr "Длина в состоянии покоя"
 
 msgid "Maintain the object's volume as it stretches"
 msgstr "Сохранять объём объекта при растяжении"
-
-
-msgid "XZ"
-msgstr "XZ"
 
 
 msgid "Track To Constraint"
@@ -7341,6 +7321,14 @@ msgstr "Только начало"
 
 msgid "Use the start of the stroke for the depth"
 msgstr "Использовать начало штрихов для глубины"
+
+
+msgid "Steps"
+msgstr "Шаги"
+
+
+msgid "Segments"
+msgstr "Сегменты"
 
 
 msgid "Curve Splines"
@@ -15289,6 +15277,10 @@ msgid "Offset of the pose origin in relation to the brush radius"
 msgstr "Величина смещения точки начала кости в соотношении с размером кисти"
 
 
+msgid "Smooth Iterations"
+msgstr "Итераций сглаживания"
+
+
 msgid "Rake"
 msgstr "Выравнивание"
 
@@ -15383,6 +15375,10 @@ msgstr "Сдвиг"
 
 msgid "Rotate"
 msgstr "Вращение"
+
+
+msgid "Topology"
+msgstr "Топология"
 
 
 msgid "Secondary Color"
@@ -16287,10 +16283,6 @@ msgstr "Способ установки соответствия между фа
 
 msgid "Map the bevel factor to the number of subdivisions of a spline (U resolution)"
 msgstr "Сопоставлять коэффициент фаски по количеству подразделений сегмента (разрешение U)"
-
-
-msgid "Segments"
-msgstr "Сегменты"
 
 
 msgid "Map the bevel factor to the length of a segment and to the number of subdivisions of a segment"
@@ -20873,10 +20865,6 @@ msgid "Size of particles on viewport in BU"
 msgstr "Размер частиц в во вьюпорте в единицах Blender"
 
 
-msgid "Steps"
-msgstr "Шаги"
-
-
 msgid "How many steps paths are drawn with (power of 2)"
 msgstr "Количество шагов на рисование пути (степень двойки)"
 
@@ -21127,6 +21115,10 @@ msgstr "2D-рой"
 
 msgid "Constrain boids to a surface"
 msgstr "Ограничить нахождение роя на поверхности"
+
+
+msgid "Mass"
+msgstr "Масса"
 
 
 msgid "Mass of the particles"
@@ -27530,6 +27522,10 @@ msgid "Clean Up"
 msgstr "Очистка"
 
 
+msgid "Material Specials"
+msgstr "Настройки материала"
+
+
 msgid "GP Vertex Groups"
 msgstr "Группы вершин Grease Pencil"
 
@@ -27610,10 +27606,6 @@ msgstr "MASK_MT_add"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Добавить"
-
-
-msgid "Material Specials"
-msgstr "Настройки материала"
 
 
 msgid "Shape Key Specials"
@@ -29133,24 +29125,16 @@ msgid "Pattern to use for inside of miters"
 msgstr "Шаблон, используемый для внутренних соединений"
 
 
-msgid "Default sharp miter"
-msgstr "Стандартный острый угол"
-
-
-msgid "Patch"
-msgstr "Заплатка"
-
-
-msgid "Miter with extra corner"
-msgstr "Соединение с дополнительным углом"
+msgid "Inside of miter is sharp"
+msgstr "Внутреннее соединение острое"
 
 
 msgid "Arc"
 msgstr "Дуга"
 
 
-msgid "Miter with curved arc"
-msgstr "Соединение в виде дуги"
+msgid "Inside of miter is arc"
+msgstr "Внутреннее соединение дугообразное"
 
 
 msgid "Outer Miter"
@@ -29161,8 +29145,24 @@ msgid "Pattern to use for outside of miters"
 msgstr "Шаблон, используемый для внешних соединений"
 
 
-msgid "Amount Type"
-msgstr "Способ измерения величины"
+msgid "Outside of miter is sharp"
+msgstr "Внешнее соединение острое"
+
+
+msgid "Patch"
+msgstr "Заплатка"
+
+
+msgid "Outside of miter is squared-off patch"
+msgstr "Внешнее соединение в виде квадратной заплатки"
+
+
+msgid "Outside of miter is arc"
+msgstr "Внешнее соединение дугообразное"
+
+
+msgid "Width Type"
+msgstr "Тип ширины"
 
 
 msgid "What distance Width measures"
@@ -29615,10 +29615,6 @@ msgstr "Сопоставление рёбер"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Способ сопоставления рёбер источника и рёбер получателя"
-
-
-msgid "Topology"
-msgstr "Топология"
 
 
 msgid "Copy from identical topology meshes"
@@ -31468,10 +31464,6 @@ msgstr "Кэш точек мягкого тела"
 
 msgid "Solidify Modifier"
 msgstr "Модификатор объёмности"
-
-
-msgid "Create a solid skin by extruding, compensating for sharp angles"
-msgstr "Создание цельной оболочки методом экструзии с корректировкой для острых углов"
 
 
 msgid "Inner Crease"
@@ -42047,10 +42039,6 @@ msgid "Export PLY"
 msgstr "Экспортировать PLY"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "Экспортировать одиночный объект в формате Stanford PLY с нормалями, цветами и текстурными координатами"
-
-
 msgid "X Forward"
 msgstr "Вперёд по X"
 
@@ -42115,6 +42103,14 @@ msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will b
 msgstr "Экспортировать нормали для граней с гладким и плоским типами затенений (грани с плоским типом затенения будут экспортированы в виде отдельных граней)"
 
 
+msgid "Selection Only"
+msgstr "Только выделенное"
+
+
+msgid "Export selected objects only"
+msgstr "Экспортировать только выделенные объекты"
+
+
 msgid "Export the active UV layer"
 msgstr "Экспортировать активный UV-слой"
 
@@ -42122,10 +42118,6 @@ msgstr "Экспортировать активный UV-слой"
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "Экспортировать STL"
-
-
-msgid "Save STL triangle mesh data from the active object"
-msgstr "Сохранить данные треугольников меша из активного объекта в STL"
 
 
 msgid "Ascii"
@@ -42158,14 +42150,6 @@ msgstr "Единицы сцены"
 
 msgid "Apply current scene's unit (as defined by unit scale) to exported data"
 msgstr "Применить текущие единицы сцены (заданные масштабом единиц) к экспортируемым данным"
-
-
-msgid "Selection Only"
-msgstr "Только выделенное"
-
-
-msgid "Export selected objects only"
-msgstr "Экспортировать только выделенные объекты"
 
 
 msgctxt "Operator"
@@ -47177,10 +47161,6 @@ msgid "Bevel"
 msgstr "Фаска"
 
 
-msgid "Cut into selected items at an angle to create flat or rounded bevel or chamfer"
-msgstr "Срезать у выделенных элементов часть угла, чтобы создать скругление или фаску"
-
-
 msgid "Do not allow beveled edges/vertices to overlap each other"
 msgstr "Запретить перекрытие рёбер/вершин при создании фаски"
 
@@ -47197,36 +47177,8 @@ msgid "Set face strength on new and modified faces only"
 msgstr "Установить твёрдость граней только на новые и модифицированные грани"
 
 
-msgid "Prefer slide along edge to even widths"
-msgstr "Предпочитать сдвиг вдоль рёбер вместо равных ширин"
-
-
 msgid "Material for bevel faces (-1 means use adjacent faces)"
 msgstr "Материал для граней фаски (−1 для материала прилежащих граней)"
-
-
-msgid "Inside of miter is sharp"
-msgstr "Внутреннее соединение острое"
-
-
-msgid "Inside of miter is arc"
-msgstr "Внутреннее соединение дугообразное"
-
-
-msgid "Outside of miter is sharp"
-msgstr "Внешнее соединение острое"
-
-
-msgid "Outside of miter is squared-off patch"
-msgstr "Внешнее соединение в виде квадратной заплатки"
-
-
-msgid "Outside of miter is arc"
-msgstr "Внешнее соединение дугообразное"
-
-
-msgid "Width Type"
-msgstr "Тип ширины"
 
 
 msgid "Controls profile shape (0.5 = round)"
@@ -48521,12 +48473,12 @@ msgid "Minimum mask value to consider the vertex valid to extract a face from th
 msgstr "Минимальное значение маски, чтобы считать вершину действительной для выделения грани из исходного меша"
 
 
-msgid "Smooth Iterations"
-msgstr "Итераций сглаживания"
-
-
 msgid "Smooth iterations applied to the extracted mesh"
 msgstr "Количество итераций сглаживания на извлекаемый меш"
+
+
+msgid "Fill Holes"
+msgstr "Заполнить дыры"
 
 
 msgctxt "Operator"
@@ -49591,6 +49543,10 @@ msgstr "Указывает степень сглаженности или исп
 msgctxt "Operator"
 msgid "Solidify"
 msgstr "Придать объёмность"
+
+
+msgid "Create a solid skin by extruding, compensating for sharp angles"
+msgstr "Создание цельной оболочки методом экструзии с корректировкой для острых углов"
 
 
 msgctxt "Operator"
@@ -58646,19 +58602,6 @@ msgid "Select other strips at the same time"
 msgstr "Выделить другие дорожки в том же времени"
 
 
-msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "Выделить активную сторону"
-
-
-msgid "Select strips on the nominated side of the active strip"
-msgstr "Выделить дорожки с определённой стороны относительно активной дорожки"
-
-
-msgid "The side of the handle that is selected"
-msgstr "Выделенная сторона рукоятки"
-
-
 msgid "Select or deselect all strips"
 msgstr "Установить или снять выделение для всех дорожек"
 
@@ -58730,6 +58673,10 @@ msgstr "Выделить рукоятки"
 
 msgid "Select gizmo handles on the sides of the selected strip"
 msgstr "Выделить управляющие элементы выделенной дорожки"
+
+
+msgid "The side of the handle that is selected"
+msgstr "Выделенная сторона рукоятки"
 
 
 msgid "Shrink the current selection of adjacent selected strips"
@@ -59525,10 +59472,6 @@ msgstr "Выделить слово под курсором"
 
 msgid "Set cursor selection"
 msgstr "Установить выделение по курсору"
-
-
-msgid "Set selection end rather than cursor"
-msgstr "Установить конец выделения, а не курсор"
 
 
 msgctxt "Operator"
@@ -60873,10 +60816,6 @@ msgstr "Уменьшить растяжения участков UV-карты �
 
 msgid "Blend factor between stretch minimized and original"
 msgstr "Коэффициент смешения между развёрткой с минимизированным растяжением и исходной развёрткой"
-
-
-msgid "Fill Holes"
-msgstr "Заполнить дыры"
 
 
 msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
@@ -67460,6 +67399,10 @@ msgid "Settings for interacting with Blender data"
 msgstr "Параметры для взаимодействия с данными Blender"
 
 
+msgid "Experimental"
+msgstr "Экспериментальный"
+
+
 msgid "Default paths for external files"
 msgstr "Путь по умолчанию для внешних файлов"
 
@@ -70456,10 +70399,6 @@ msgid "Only use finished and supported features"
 msgstr "Использовать только завершённые и поддерживаемые возможности"
 
 
-msgid "Experimental"
-msgstr "Экспериментальный"
-
-
 msgid "Use experimental and incomplete features that might be broken or change in the future"
 msgstr "Использовать экспериментальные и незавершённые возможности, которые могут изменить своё поведение или перестать работать в последующих версиях"
 
@@ -71422,10 +71361,6 @@ msgstr "Экспортировать рёбра Freestyle в формат .svg"
 
 msgid "Format type to export to"
 msgstr "Тип формата, в который осуществляется экспорт"
-
-
-msgid "VRML2"
-msgstr "VRML2"
 
 
 msgid "Export Directory"
@@ -84607,10 +84542,6 @@ msgid "Volume:"
 msgstr "Объём:"
 
 
-msgid "Plane:"
-msgstr "Плоскость:"
-
-
 msgid "Min/Max:"
 msgstr "Минимум/Максимум:"
 
@@ -85156,20 +85087,12 @@ msgid "UVs:"
 msgstr "UV-координаты:"
 
 
+msgid "Outer"
+msgstr "Снаружи"
+
+
 msgid "Limit Method:"
 msgstr "Метод ограничения:"
-
-
-msgid "Width Method:"
-msgstr "Тип ширины:"
-
-
-msgid "Set Face Strength Mode"
-msgstr "Режим установки твёрдости граней"
-
-
-msgid "Miter Patterns"
-msgstr "Шаблоны соединений"
 
 
 msgid "Operation:"
@@ -85361,20 +85284,12 @@ msgid "Deform:"
 msgstr "Деформация:"
 
 
-msgid "Crease:"
-msgstr "Складка:"
-
-
-msgid "Outer"
-msgstr "Снаружи"
+msgid "Material Index Offset:"
+msgstr "Смещение индекса материала:"
 
 
 msgid "Rim"
 msgstr "Обод"
-
-
-msgid "Material Index Offset:"
-msgstr "Смещение индекса материала:"
 
 
 msgid "Aspect X"
@@ -85582,6 +85497,10 @@ msgstr "Построено без модификатора океана"
 
 msgid "Cull Faces:"
 msgstr "Скрытие граней:"
+
+
+msgid "Crease:"
+msgstr "Складка:"
 
 
 msgid "Render:"
@@ -86262,8 +86181,20 @@ msgid "Source Clone UV Map"
 msgstr "UV-карта источника клонирования"
 
 
+msgid "Thickness Profile"
+msgstr "Профиль толщины"
+
+
 msgid "Mask Value"
 msgstr "Значение маски"
+
+
+msgid "Fill Options"
+msgstr "Опции заливки"
+
+
+msgid "Ignore Transparent Strokes"
+msgstr "Игнорировать прозрачные штрихи"
 
 
 msgctxt "Operator"
@@ -88882,10 +88813,6 @@ msgid "Report a Bug"
 msgstr "Сообщить об ошибке"
 
 
-msgid "Ignore Transparent Strokes"
-msgstr "Игнорировать прозрачные штрихи"
-
-
 msgid "Sequence Strip Name"
 msgstr "Название дорожки последовательности"
 
@@ -90219,14 +90146,6 @@ msgstr "Дублировать активный слой"
 msgctxt "Operator"
 msgid "Delete All Layers"
 msgstr "Удалить все слои"
-
-
-msgid "Thickness Profile"
-msgstr "Профиль толщины"
-
-
-msgid "Fill Options"
-msgstr "Опции заливки"
 
 
 msgctxt "Operator"
@@ -94047,10 +93966,6 @@ msgstr "Сфера"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "Икосфера"
-
-
-msgid "%s: confirm, %s: cancel, %s: mode (%s), %s: width (%s), %s: segments (%d), %s: profile (%.3f), %s: clamp overlap (%s), %s: vertex only (%s), %s: outer miter (%s), %s: inner miter (%s), %s: harden normals (%s), %s: mark seam (%s), %s: mark sharp (%s)"
-msgstr "%s: подтвердить, %s: отменить, %s: режим (%s), %s: ширина (%s), %s: сегментов (%d), %s: профиль (%.3f), %s: не допускать наложения (%s), %s: только точки (%s), %s: внешнее соединение (%s), %s: внутреннее соединение (%s), %s: резкость нормалей (%s), %s: пометить разрез (%s), %s: пометить острым (%s)"
 
 
 msgid "LMB: Click and drag to draw cut line"

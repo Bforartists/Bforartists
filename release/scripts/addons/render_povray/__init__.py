@@ -27,7 +27,7 @@ bl_info = {
               "Constantin Rahn, "
               "Silvio Falcinelli",
     "version": (0, 1, 0),
-    "blender": (2, 80, 0),
+    "blender": (2, 81, 0),
     "location": "Render Properties > Render Engine > Persistence of Vision",
     "description": "Persistence of Vision integration for blender",
     "wiki_url": "https://archive.blender.org/wiki/index.php/"
