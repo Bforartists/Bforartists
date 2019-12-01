@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -986,14 +986,6 @@ msgid "Internal Friction"
 msgstr "Dahili Blender"
 
 
-msgid "Mass"
-msgstr "Kütle"
-
-
-msgid "Mass of cloth material"
-msgstr "Bağlı Malzemeler:"
-
-
 msgid "Pin Stiffness"
 msgstr "H.Paneli iğnele"
 
@@ -1951,14 +1943,6 @@ msgid "Keep Axis"
 msgstr "Yatay Eksen"
 
 
-msgid "Keep X Axis"
-msgstr "Yatay Eksen"
-
-
-msgid "Keep Z Axis"
-msgstr "Yatay Eksen"
-
-
 msgid "Original Length"
 msgstr "Kenar Uzunluğu"
 
@@ -2157,6 +2141,10 @@ msgstr "Düzlem"
 
 msgid "View"
 msgstr "Görünüş"
+
+
+msgid "Steps"
+msgstr "Adımlar"
 
 
 msgid "Active Spline"
@@ -5572,10 +5560,6 @@ msgid "Draw Size"
 msgstr "Ekstrüzyon Boyutu"
 
 
-msgid "Steps"
-msgstr "Adımlar"
-
-
 msgid "Jittered"
 msgstr "Sabit, Değişmez"
 
@@ -5642,6 +5626,10 @@ msgstr "Satır numaralarını göster"
 
 msgid "Constrain boids to a surface"
 msgstr "Nurbs Yüzeyi buna çevir"
+
+
+msgid "Mass"
+msgstr "Kütle"
 
 
 msgid "Material Slot"
@@ -6990,6 +6978,10 @@ msgid "Snap"
 msgstr "Yakala"
 
 
+msgid "Material Specials"
+msgstr "Ekstra Kenar Özellikleri"
+
+
 msgid "UV"
 msgstr "UV "
 
@@ -7009,10 +7001,6 @@ msgstr "Görüntü Hizalama"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Ekle"
-
-
-msgid "Material Specials"
-msgstr "Ekstra Kenar Özellikleri"
 
 
 msgid "Shape Key Specials"
@@ -11989,6 +11977,14 @@ msgid "Apply Modifiers"
 msgstr "Nesne Değiştiricileri"
 
 
+msgid "Selection Only"
+msgstr "Yalnız Kenarlar"
+
+
+msgid "Export selected objects only"
+msgstr "Seçili Nesne ve Bilgileri"
+
+
 msgid "Export the active UV layer"
 msgstr "Yeni bir UV doku katmanı Oluştur"
 
@@ -11999,14 +11995,6 @@ msgstr "İşlenen görüntünün kaydedileceği biçimi seç"
 
 msgid "Batch Mode"
 msgstr "Düzenleme Modu"
-
-
-msgid "Selection Only"
-msgstr "Yalnız Kenarlar"
-
-
-msgid "Export selected objects only"
-msgstr "Seçili Nesne ve Bilgileri"
 
 
 msgid "Null"
@@ -13736,6 +13724,10 @@ msgstr "Merkezde"
 
 msgid "At Cursor"
 msgstr "İmleçte"
+
+
+msgid "Fill Holes"
+msgstr "Güzelce Kapla"
 
 
 msgid "Median"
@@ -17099,11 +17091,6 @@ msgid "Linked Time"
 msgstr "Bitiş Zamanı"
 
 
-msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "Aktif pozisyonu sil"
-
-
 msgid "Shared strip type"
 msgstr "Nesne Tipini Değiştir..."
 
@@ -17883,10 +17870,6 @@ msgstr "Space Handler Scripts"
 
 msgid "Clear Seams"
 msgstr "Dikişi Temizle"
-
-
-msgid "Fill Holes"
-msgstr "Güzelce Kapla"
 
 
 msgctxt "Operator"
@@ -19589,6 +19572,10 @@ msgid "Edit Methods"
 msgstr "Düzenleme Metotları"
 
 
+msgid "Experimental"
+msgstr "Deneysel"
+
+
 msgid "Settings for input devices"
 msgstr "Durağan saç-iplik tarzındaki parçacıklar için boyut ve şekil ayarları."
 
@@ -20335,10 +20322,6 @@ msgstr "Özellik Seti"
 
 msgid "Supported"
 msgstr "Desteklenen"
-
-
-msgid "Experimental"
-msgstr "Deneysel"
 
 
 msgid "Image brightness scale"
@@ -23530,10 +23513,6 @@ msgid "Clamp Region:"
 msgstr "Döngü Alana"
 
 
-msgid "Plane:"
-msgstr "Düzlem:"
-
-
 msgid "Linked Collision"
 msgstr "Bağlantılı Çoğalt"
 
@@ -23688,6 +23667,10 @@ msgid "First Last"
 msgstr "İlk Büyük"
 
 
+msgid "Outer"
+msgstr "Select Outer"
+
+
 msgid "Limit Method:"
 msgstr "Kontur Metodu:"
 
@@ -23793,14 +23776,6 @@ msgstr "Yeni dosya oluştur"
 
 msgid "Target:"
 msgstr "Hedef değişkeni sil"
-
-
-msgid "Crease:"
-msgstr "Kırışıklık:"
-
-
-msgid "Outer"
-msgstr "Select Outer"
 
 
 msgid "Material Index Offset:"
@@ -23938,6 +23913,10 @@ msgstr "Harici Düzenleme:"
 
 msgid "Cull Faces:"
 msgstr "Yüzeyleri Vurgula"
+
+
+msgid "Crease:"
+msgstr "Kırışıklık:"
 
 
 msgid "Render:"

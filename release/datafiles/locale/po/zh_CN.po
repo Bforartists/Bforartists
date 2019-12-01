@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: \n"
 "Last-Translator: DeathBlood\n"
 "Language-Team: \n"
@@ -3993,14 +3993,6 @@ msgid "Internal Friction"
 msgstr "内部摩擦"
 
 
-msgid "Mass"
-msgstr "质量"
-
-
-msgid "Mass of cloth material"
-msgstr "布料材质的重量"
-
-
 msgid "Pin Stiffness"
 msgstr "钉硬度"
 
@@ -6570,16 +6562,8 @@ msgid "Keep Axis"
 msgstr "保持坐标轴"
 
 
-msgid "Axis to maintain during stretch"
-msgstr "拉伸时的维持轴"
-
-
-msgid "Keep X Axis"
-msgstr "选择 X 轴向"
-
-
-msgid "Keep Z Axis"
-msgstr "选择 Z 轴向"
+msgid "XZ"
+msgstr "XZ"
 
 
 msgid "Original Length"
@@ -6592,10 +6576,6 @@ msgstr "初始位置的间距"
 
 msgid "Maintain the object's volume as it stretches"
 msgstr "在拉伸时保持物体体积"
-
-
-msgid "XZ"
-msgstr "XZ"
 
 
 msgid "Track To Constraint"
@@ -7188,6 +7168,14 @@ msgstr "仅第一点"
 
 msgid "Use the start of the stroke for the depth"
 msgstr "使用笔画起点确定绘制平面深度"
+
+
+msgid "Steps"
+msgstr "步数"
+
+
+msgid "Segments"
+msgstr "段数"
 
 
 msgid "Curve Splines"
@@ -15012,6 +15000,10 @@ msgid "Offset of the pose origin in relation to the brush radius"
 msgstr "相对于画笔半径的姿势原点偏移"
 
 
+msgid "Smooth Iterations"
+msgstr "平滑迭代"
+
+
 msgid "Rake"
 msgstr "变向"
 
@@ -15106,6 +15098,10 @@ msgstr "推移"
 
 msgid "Rotate"
 msgstr "旋转"
+
+
+msgid "Topology"
+msgstr "拓扑"
 
 
 msgid "Secondary Color"
@@ -15926,10 +15922,6 @@ msgstr "决定倒角终点系数映射到样条线的方式"
 
 msgid "Map the bevel factor to the number of subdivisions of a spline (U resolution)"
 msgstr "将倒角系数映射到样条线的细分级数 (U 向解析度)"
-
-
-msgid "Segments"
-msgstr "段数"
 
 
 msgid "Map the bevel factor to the length of a segment and to the number of subdivisions of a segment"
@@ -19944,10 +19936,6 @@ msgid "Size of particles on viewport in BU"
 msgstr "粒子在视图中的大小，单位BU"
 
 
-msgid "Steps"
-msgstr "步数"
-
-
 msgid "How many steps paths are drawn with (power of 2)"
 msgstr "路径的显示步数 (2的幂次值)"
 
@@ -20190,6 +20178,10 @@ msgstr "2D 群体"
 
 msgid "Constrain boids to a surface"
 msgstr "将 boids 约束到表面"
+
+
+msgid "Mass"
+msgstr "质量"
 
 
 msgid "Mass of the particles"
@@ -26097,6 +26089,10 @@ msgid "Clean Up"
 msgstr "清理"
 
 
+msgid "Material Specials"
+msgstr "特殊材质"
+
+
 msgid "GP Vertex Groups"
 msgstr "蜡笔顶点组"
 
@@ -26177,10 +26173,6 @@ msgstr "MASK_MT_add"
 msgctxt "Operator"
 msgid "Add"
 msgstr "添加"
-
-
-msgid "Material Specials"
-msgstr "特殊材质"
 
 
 msgid "Shape Key Specials"
@@ -27644,24 +27636,16 @@ msgid "Pattern to use for inside of miters"
 msgstr "内斜接使用的模式"
 
 
-msgid "Default sharp miter"
-msgstr "默认锐边斜接"
-
-
-msgid "Patch"
-msgstr "补块"
-
-
-msgid "Miter with extra corner"
-msgstr "使用三个顶点替换斜接外侧顶点，以四边形补齐拐角"
+msgid "Inside of miter is sharp"
+msgstr "内斜接类型为锐边"
 
 
 msgid "Arc"
 msgstr "圆弧"
 
 
-msgid "Miter with curved arc"
-msgstr "使用弯曲圆弧代替斜接角"
+msgid "Inside of miter is arc"
+msgstr "内斜接类型为圆弧"
 
 
 msgid "Outer Miter"
@@ -27672,8 +27656,24 @@ msgid "Pattern to use for outside of miters"
 msgstr "外斜接使用的模式"
 
 
-msgid "Amount Type"
-msgstr "量级类型"
+msgid "Outside of miter is sharp"
+msgstr "外斜接类型为锐边"
+
+
+msgid "Patch"
+msgstr "补块"
+
+
+msgid "Outside of miter is squared-off patch"
+msgstr "外斜接类型为方形补块"
+
+
+msgid "Outside of miter is arc"
+msgstr "外斜接类型为圆弧"
+
+
+msgid "Width Type"
+msgstr "宽度类型"
 
 
 msgid "What distance Width measures"
@@ -28082,10 +28082,6 @@ msgstr "边映射"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "映射源连线至目标的方法"
-
-
-msgid "Topology"
-msgstr "拓扑"
 
 
 msgid "Copy from identical topology meshes"
@@ -29687,10 +29683,6 @@ msgstr "软体点缓存"
 
 msgid "Solidify Modifier"
 msgstr "实体化修改器"
-
-
-msgid "Create a solid skin by extruding, compensating for sharp angles"
-msgstr "通过挤压创建出实体外壳, 补偿锐角"
 
 
 msgid "Inner Crease"
@@ -39872,10 +39864,6 @@ msgid "Export PLY"
 msgstr "导出PLY"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "将单个物体的法线,色彩和贴图坐标均输出为标准PLY"
-
-
 msgid "X Forward"
 msgstr "X 前进"
 
@@ -39940,6 +39928,14 @@ msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will b
 msgstr "导出用于平滑着色面及锐利着色面的法线数据 (锐利着色面将以多个独立面的形式导出)"
 
 
+msgid "Selection Only"
+msgstr "仅导出选中的物体"
+
+
+msgid "Export selected objects only"
+msgstr "仅导出选择的物体"
+
+
 msgid "Export the active UV layer"
 msgstr "输出活动UV 层"
 
@@ -39947,10 +39943,6 @@ msgstr "输出活动UV 层"
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "导出STL"
-
-
-msgid "Save STL triangle mesh data from the active object"
-msgstr "保存活动物体的 STL 三角网格数据"
 
 
 msgid "Ascii"
@@ -39979,14 +39971,6 @@ msgstr "保存前应用修改器"
 
 msgid "Scene Unit"
 msgstr "场景单位"
-
-
-msgid "Selection Only"
-msgstr "仅导出选中的物体"
-
-
-msgid "Export selected objects only"
-msgstr "仅导出选择的物体"
 
 
 msgctxt "Operator"
@@ -44661,30 +44645,6 @@ msgid "Material for bevel faces (-1 means use adjacent faces)"
 msgstr "倒角面材质(-1表示借用相邻面材质)"
 
 
-msgid "Inside of miter is sharp"
-msgstr "内斜接类型为锐边"
-
-
-msgid "Inside of miter is arc"
-msgstr "内斜接类型为圆弧"
-
-
-msgid "Outside of miter is sharp"
-msgstr "外斜接类型为锐边"
-
-
-msgid "Outside of miter is squared-off patch"
-msgstr "外斜接类型为方形补块"
-
-
-msgid "Outside of miter is arc"
-msgstr "外斜接类型为圆弧"
-
-
-msgid "Width Type"
-msgstr "宽度类型"
-
-
 msgid "Controls profile shape (0.5 = round)"
 msgstr "控制轮廓形状 (0.5 = 圆形)"
 
@@ -45933,12 +45893,12 @@ msgid "Minimum mask value to consider the vertex valid to extract a face from th
 msgstr "最小遮罩值，以考虑从原始网格中提取面的顶点有效"
 
 
-msgid "Smooth Iterations"
-msgstr "平滑迭代"
-
-
 msgid "Smooth iterations applied to the extracted mesh"
 msgstr "应用于提取网格的平滑迭代次数"
+
+
+msgid "Fill Holes"
+msgstr "填充洞面"
 
 
 msgctxt "Operator"
@@ -46971,6 +46931,10 @@ msgstr "平滑法向矢量"
 msgctxt "Operator"
 msgid "Solidify"
 msgstr "生成厚度"
+
+
+msgid "Create a solid skin by extruding, compensating for sharp angles"
+msgstr "通过挤压创建出实体外壳, 补偿锐角"
 
 
 msgctxt "Operator"
@@ -55555,19 +55519,6 @@ msgid "Select other strips at the same time"
 msgstr "选择同一时间段上的其他片段"
 
 
-msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "选定激活的片段段"
-
-
-msgid "Select strips on the nominated side of the active strip"
-msgstr "在活动片段的指定一侧进行片段选择"
-
-
-msgid "The side of the handle that is selected"
-msgstr "控制柄被选中的一侧"
-
-
 msgid "Select or deselect all strips"
 msgstr "选择或取消选择全部片段"
 
@@ -55639,6 +55590,10 @@ msgstr "选择控制柄"
 
 msgid "Select gizmo handles on the sides of the selected strip"
 msgstr "选择所选片段两侧的gizmo控制柄"
+
+
+msgid "The side of the handle that is selected"
+msgstr "控制柄被选中的一侧"
 
 
 msgid "Shrink the current selection of adjacent selected strips"
@@ -56434,10 +56389,6 @@ msgstr "选定光标位置的文字"
 
 msgid "Set cursor selection"
 msgstr "设置光标选择"
-
-
-msgid "Set selection end rather than cursor"
-msgstr "设置选择的终点而不是光标"
 
 
 msgctxt "Operator"
@@ -57778,10 +57729,6 @@ msgstr "根据松弛限角减少 UV 的拉伸量"
 
 msgid "Blend factor between stretch minimized and original"
 msgstr "伸展最小值和原始尺寸见的混合系数"
-
-
-msgid "Fill Holes"
-msgstr "填充洞面"
 
 
 msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
@@ -64168,6 +64115,10 @@ msgid "Settings for interacting with Blender data"
 msgstr "Blender 的数据交互设置"
 
 
+msgid "Experimental"
+msgstr "试验特性"
+
+
 msgid "Default paths for external files"
 msgstr "外置文件的默认路径"
 
@@ -67018,10 +66969,6 @@ msgid "Only use finished and supported features"
 msgstr "仅使用完善且支持的功能特性"
 
 
-msgid "Experimental"
-msgstr "试验特性"
-
-
 msgid "Use experimental and incomplete features that might be broken or change in the future"
 msgstr "使用体验且未完善的功能特性, 这些特性可能会在日后失效或变更"
 
@@ -67840,10 +67787,6 @@ msgstr "SVG导出"
 
 msgid "Format type to export to"
 msgstr "要导出的目标格式"
-
-
-msgid "VRML2"
-msgstr "VRML2"
 
 
 msgid "Export Directory"
@@ -80777,10 +80720,6 @@ msgid "Volume:"
 msgstr "体积:"
 
 
-msgid "Plane:"
-msgstr "平面:"
-
-
 msgid "Min/Max:"
 msgstr "最小 / 最大:"
 
@@ -81318,20 +81257,12 @@ msgid "UVs:"
 msgstr "UV:"
 
 
+msgid "Outer"
+msgstr "外表面"
+
+
 msgid "Limit Method:"
 msgstr "限定方式:"
-
-
-msgid "Width Method:"
-msgstr "宽度方法:"
-
-
-msgid "Set Face Strength Mode"
-msgstr "设置面强度模式"
-
-
-msgid "Miter Patterns"
-msgstr "斜接模式"
 
 
 msgid "Operation:"
@@ -81523,20 +81454,12 @@ msgid "Deform:"
 msgstr "形变:"
 
 
-msgid "Crease:"
-msgstr "折痕:"
-
-
-msgid "Outer"
-msgstr "外表面"
+msgid "Material Index Offset:"
+msgstr "材质编号偏移:"
 
 
 msgid "Rim"
 msgstr "框"
-
-
-msgid "Material Index Offset:"
-msgstr "材质编号偏移:"
 
 
 msgid "Aspect X"
@@ -81744,6 +81667,10 @@ msgstr "不使用洋面修改器进行构建"
 
 msgid "Cull Faces:"
 msgstr "剔除面:"
+
+
+msgid "Crease:"
+msgstr "折痕:"
 
 
 msgid "Render:"
@@ -82424,8 +82351,20 @@ msgid "Source Clone UV Map"
 msgstr "UV 贴图克隆源"
 
 
+msgid "Thickness Profile"
+msgstr "厚度轮廓"
+
+
 msgid "Mask Value"
 msgstr "遮罩值"
+
+
+msgid "Fill Options"
+msgstr "填充选项"
+
+
+msgid "Ignore Transparent Strokes"
+msgstr "忽略透明笔画"
 
 
 msgctxt "Operator"
@@ -85044,10 +84983,6 @@ msgid "Report a Bug"
 msgstr "报告问题"
 
 
-msgid "Ignore Transparent Strokes"
-msgstr "忽略透明笔画"
-
-
 msgid "Sequence Strip Name"
 msgstr "序列片段名称"
 
@@ -86381,14 +86316,6 @@ msgstr "复制活动层"
 msgctxt "Operator"
 msgid "Delete All Layers"
 msgstr "删除全部层"
-
-
-msgid "Thickness Profile"
-msgstr "厚度轮廓"
-
-
-msgid "Fill Options"
-msgstr "填充选项"
 
 
 msgctxt "Operator"
@@ -90097,10 +90024,6 @@ msgstr "球体"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "棱角球"
-
-
-msgid "%s: confirm, %s: cancel, %s: mode (%s), %s: width (%s), %s: segments (%d), %s: profile (%.3f), %s: clamp overlap (%s), %s: vertex only (%s), %s: outer miter (%s), %s: inner miter (%s), %s: harden normals (%s), %s: mark seam (%s), %s: mark sharp (%s)"
-msgstr "%s: 确认, %s: 取消, %s: 模式 (%s), %s: 宽度 (%s), %s: 段数 (%d), %s: 配置 (%.3f), %s: 钳制重叠 (%s), %s: 仅顶点 (%s), %s: 外部衔接 (%s), %s: 内部衔接 (%s), %s: 硬化法线 (%s), %s: 标记缝合边 (%s), %s: 标记锐边 (%s)"
 
 
 msgid "LMB: Click and drag to draw cut line"

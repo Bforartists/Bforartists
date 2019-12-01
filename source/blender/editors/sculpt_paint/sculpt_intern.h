@@ -206,6 +206,9 @@ typedef struct SculptThreadedTaskData {
   float *pose_factor;
   float (*transform_rot)[4], (*transform_trans)[4], (*transform_trans_inv)[4];
 
+  float multiplane_scrape_angle;
+  float multiplane_scrape_planes[2][4];
+
   float max_distance_squared;
   float nearest_vertex_search_co[3];
 
@@ -315,6 +318,10 @@ typedef struct StrokeCache {
   float true_last_location[3];
   float location[3];
   float last_location[3];
+
+  /* This radius variable is not affected by pressure curves */
+  float dyntopo_radius;
+
   bool is_last_valid;
 
   bool pen_flip;
@@ -391,6 +398,9 @@ typedef struct StrokeCache {
   float gravity_direction[3];
 
   float *automask;
+
+  float stroke_local_mat[4][4];
+  float multiplane_scrape_sampled_angle;
 
   rcti previous_r; /* previous redraw rectangle */
   rcti current_r;  /* current redraw rectangle */

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: 2019-10-09 01:05+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -4019,14 +4019,6 @@ msgid "Internal Friction"
 msgstr "내부 마찰"
 
 
-msgid "Mass"
-msgstr "질량"
-
-
-msgid "Mass of cloth material"
-msgstr "옷감 매테리얼의 질량"
-
-
 msgid "Pin Stiffness"
 msgstr "고정 강성"
 
@@ -6712,16 +6704,8 @@ msgid "Keep Axis"
 msgstr "축을 유지"
 
 
-msgid "Axis to maintain during stretch"
-msgstr "늘이기 하는 동안 유지하는 축"
-
-
-msgid "Keep X Axis"
-msgstr "X 축을 유지"
-
-
-msgid "Keep Z Axis"
-msgstr "Z 축을 유지"
+msgid "XZ"
+msgstr "XZ"
 
 
 msgid "Original Length"
@@ -6734,10 +6718,6 @@ msgstr "휴식 위치에서 길이"
 
 msgid "Maintain the object's volume as it stretches"
 msgstr "오브젝를 늘일 때 볼륨을 유지하기"
-
-
-msgid "XZ"
-msgstr "XZ"
 
 
 msgid "Track To Constraint"
@@ -7342,6 +7322,14 @@ msgstr "첫 번째 만"
 
 msgid "Use the start of the stroke for the depth"
 msgstr "깊이에 대해 스트로크의 시작을 사용"
+
+
+msgid "Steps"
+msgstr "단계"
+
+
+msgid "Segments"
+msgstr "부분"
 
 
 msgid "Curve Splines"
@@ -15278,6 +15266,10 @@ msgid "Offset of the pose origin in relation to the brush radius"
 msgstr "브러시 반경과 관련된 포즈 오리진의 오프셋"
 
 
+msgid "Smooth Iterations"
+msgstr "스무스 반복"
+
+
 msgid "Rake"
 msgstr "경사"
 
@@ -15372,6 +15364,10 @@ msgstr "넛지"
 
 msgid "Rotate"
 msgstr "회전"
+
+
+msgid "Topology"
+msgstr "토폴로지"
 
 
 msgid "Secondary Color"
@@ -16268,10 +16264,6 @@ msgstr "종료 베벨 팩터가 스플라인에 매핑되는 방법을 결정합
 
 msgid "Map the bevel factor to the number of subdivisions of a spline (U resolution)"
 msgstr "베벨 팩터를 스플라인의 섭디비젼 수에 맵합니다 (U 해상도)"
-
-
-msgid "Segments"
-msgstr "부분"
 
 
 msgid "Map the bevel factor to the length of a segment and to the number of subdivisions of a segment"
@@ -20854,10 +20846,6 @@ msgid "Size of particles on viewport in BU"
 msgstr "BU의 뷰포트에 있는 파티클의 크기"
 
 
-msgid "Steps"
-msgstr "단계"
-
-
 msgid "How many steps paths are drawn with (power of 2)"
 msgstr "얼마나 많은 단계 경로가 그려지는지 (2의 거듭 제곱)"
 
@@ -21108,6 +21096,10 @@ msgstr "보이드 2D"
 
 msgid "Constrain boids to a surface"
 msgstr "표면에 보이드를 제약하기"
+
+
+msgid "Mass"
+msgstr "질량"
 
 
 msgid "Mass of the particles"
@@ -27501,6 +27493,10 @@ msgid "Clean Up"
 msgstr "정리"
 
 
+msgid "Material Specials"
+msgstr "매테리얼 지정"
+
+
 msgid "GP Vertex Groups"
 msgstr "GP 버텍스 그룹"
 
@@ -27581,10 +27577,6 @@ msgstr "MASK_MT_add"
 msgctxt "Operator"
 msgid "Add"
 msgstr "추가"
-
-
-msgid "Material Specials"
-msgstr "매테리얼 지정"
 
 
 msgid "Shape Key Specials"
@@ -29104,24 +29096,16 @@ msgid "Pattern to use for inside of miters"
 msgstr "마이터의 내부에 사용할 패턴"
 
 
-msgid "Default sharp miter"
-msgstr "기본 샤프 마이터"
-
-
-msgid "Patch"
-msgstr "패치"
-
-
-msgid "Miter with extra corner"
-msgstr "여분의 코너가있는 마이터"
+msgid "Inside of miter is sharp"
+msgstr "마이터의 안쪽이 샤프"
 
 
 msgid "Arc"
 msgstr "아크"
 
 
-msgid "Miter with curved arc"
-msgstr "곡선 아크가 있는 마이터"
+msgid "Inside of miter is arc"
+msgstr "마이터의 안쪽이 아크"
 
 
 msgid "Outer Miter"
@@ -29132,8 +29116,24 @@ msgid "Pattern to use for outside of miters"
 msgstr "마이터 외부에 사용할 패턴"
 
 
-msgid "Amount Type"
-msgstr "총액 유형"
+msgid "Outside of miter is sharp"
+msgstr "마이터의 바깥쪽이 샤프"
+
+
+msgid "Patch"
+msgstr "패치"
+
+
+msgid "Outside of miter is squared-off patch"
+msgstr "마이터의 바깥 쪽은 제곱된 오프 패치입니다"
+
+
+msgid "Outside of miter is arc"
+msgstr "마이터의 바깥쪽이 아크"
+
+
+msgid "Width Type"
+msgstr "폭 유형"
 
 
 msgid "What distance Width measures"
@@ -29586,10 +29586,6 @@ msgstr "에지 맵핑"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "목적지들에 소스 에지를 맵하는 데 사용된 메서드"
-
-
-msgid "Topology"
-msgstr "토폴로지"
 
 
 msgid "Copy from identical topology meshes"
@@ -31439,10 +31435,6 @@ msgstr "소프트 바디 포인트 캐시"
 
 msgid "Solidify Modifier"
 msgstr "솔리디파이 모디파이어"
-
-
-msgid "Create a solid skin by extruding, compensating for sharp angles"
-msgstr "돌출하기로 솔리드 스킨을 만들기, 샤프 각도를 보상하기"
 
 
 msgid "Inner Crease"
@@ -42014,10 +42006,6 @@ msgid "Export PLY"
 msgstr "PLY를 내보내기"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "하나의 오브젝트를 Stanford PLY 포맷으로 내보내기 (노멀, 컬러, 텍스쳐좌표 포함)"
-
-
 msgid "X Forward"
 msgstr "X 앞으로"
 
@@ -42082,6 +42070,14 @@ msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will b
 msgstr "스무스 및 하드 셰이드된 페이스의 노멀을 내보내기 ( 각진 셰이드 페이스들은 개별 페이스로 내보내집니다. )"
 
 
+msgid "Selection Only"
+msgstr "선택 만"
+
+
+msgid "Export selected objects only"
+msgstr "선택된 오브젝트 만 내보내기"
+
+
 msgid "Export the active UV layer"
 msgstr "활성 UV 레이어를 내보내기"
 
@@ -42089,10 +42085,6 @@ msgstr "활성 UV 레이어를 내보내기"
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "STL을 내보내기"
-
-
-msgid "Save STL triangle mesh data from the active object"
-msgstr "활성 오브젝트에서 STL 삼각 메쉬 데이터를 저장"
 
 
 msgid "Ascii"
@@ -42125,14 +42117,6 @@ msgstr "씬 단위"
 
 msgid "Apply current scene's unit (as defined by unit scale) to exported data"
 msgstr "내보내기된 데이터로 현재 씬의 단위(단위 축적으로 한정된)를 적용"
-
-
-msgid "Selection Only"
-msgstr "선택 만"
-
-
-msgid "Export selected objects only"
-msgstr "선택된 오브젝트 만 내보내기"
 
 
 msgctxt "Operator"
@@ -47136,10 +47120,6 @@ msgid "Bevel"
 msgstr "베벨"
 
 
-msgid "Cut into selected items at an angle to create flat or rounded bevel or chamfer"
-msgstr "평면 또는 둥근 베벨 또는 모따기를 만들기 위해 각도로 선택된 항목을 자릅니다"
-
-
 msgid "Do not allow beveled edges/vertices to overlap each other"
 msgstr "베벨된 에지/버텍스가 서로 중첩되지 않도록 합니다"
 
@@ -47156,36 +47136,8 @@ msgid "Set face strength on new and modified faces only"
 msgstr "새 페이스및 수정된 페이스에만 페이스 강도를 설정합니다"
 
 
-msgid "Prefer slide along edge to even widths"
-msgstr "균일한 폭으로 에지를 따라 슬라이드를 선호"
-
-
 msgid "Material for bevel faces (-1 means use adjacent faces)"
 msgstr "베벨 페이스에 대한 매테리얼 (-1 방법 인접한 페이스를 사용)"
-
-
-msgid "Inside of miter is sharp"
-msgstr "마이터의 안쪽이 샤프"
-
-
-msgid "Inside of miter is arc"
-msgstr "마이터의 안쪽이 아크"
-
-
-msgid "Outside of miter is sharp"
-msgstr "마이터의 바깥쪽이 샤프"
-
-
-msgid "Outside of miter is squared-off patch"
-msgstr "마이터의 바깥 쪽은 제곱된 오프 패치입니다"
-
-
-msgid "Outside of miter is arc"
-msgstr "마이터의 바깥쪽이 아크"
-
-
-msgid "Width Type"
-msgstr "폭 유형"
 
 
 msgid "Controls profile shape (0.5 = round)"
@@ -48480,12 +48432,12 @@ msgid "Minimum mask value to consider the vertex valid to extract a face from th
 msgstr "원래 메쉬에서 페이스를 추출하는 데 유효 버텍스를 고려하기 위한 최소 마스크 값"
 
 
-msgid "Smooth Iterations"
-msgstr "스무스 반복"
-
-
 msgid "Smooth iterations applied to the extracted mesh"
 msgstr "추출된 메쉬에 적용된 스무스 반복"
+
+
+msgid "Fill Holes"
+msgstr "구멍을 채우기"
 
 
 msgctxt "Operator"
@@ -49468,6 +49420,10 @@ msgstr "매끄러운 vs 원래 노멀의 웨이트를 지정합니다"
 msgctxt "Operator"
 msgid "Solidify"
 msgstr "솔리디파이"
+
+
+msgid "Create a solid skin by extruding, compensating for sharp angles"
+msgstr "돌출하기로 솔리드 스킨을 만들기, 샤프 각도를 보상하기"
 
 
 msgctxt "Operator"
@@ -58519,19 +58475,6 @@ msgid "Select other strips at the same time"
 msgstr "동시에 다른 스트립을 선택"
 
 
-msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "활성 측면을 선택"
-
-
-msgid "Select strips on the nominated side of the active strip"
-msgstr "활성 스트립의 지명 측면에서 스트립을 선택"
-
-
-msgid "The side of the handle that is selected"
-msgstr "선택한 핸들의 측면"
-
-
 msgid "Select or deselect all strips"
 msgstr "모든 스트립을 선택 또는 해제"
 
@@ -58603,6 +58546,10 @@ msgstr "핸들을 선택"
 
 msgid "Select gizmo handles on the sides of the selected strip"
 msgstr "선택한 스트립의 측면에 있는 기즈모 핸들을 선택"
+
+
+msgid "The side of the handle that is selected"
+msgstr "선택한 핸들의 측면"
 
 
 msgid "Shrink the current selection of adjacent selected strips"
@@ -59398,10 +59345,6 @@ msgstr "커서 아래의 단어를 선택"
 
 msgid "Set cursor selection"
 msgstr "커서 선택을 설정"
-
-
-msgid "Set selection end rather than cursor"
-msgstr "커서 대신 선택 종료를 설정"
 
 
 msgctxt "Operator"
@@ -60746,10 +60689,6 @@ msgstr "각도를 릴렉스하여 UV 늘이기를 감소"
 
 msgid "Blend factor between stretch minimized and original"
 msgstr "원본과 최소화된 늘이기 사이의 혼합 팩터"
-
-
-msgid "Fill Holes"
-msgstr "구멍을 채우기"
 
 
 msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
@@ -67329,6 +67268,10 @@ msgid "Settings for interacting with Blender data"
 msgstr "블렌더 데이터와 함께 상호 작용에 대한 설정"
 
 
+msgid "Experimental"
+msgstr "실험적"
+
+
 msgid "Default paths for external files"
 msgstr "외부 파일에 대한 기본 경로"
 
@@ -70325,10 +70268,6 @@ msgid "Only use finished and supported features"
 msgstr "지원된 특성 및 마무리된 만을 사용"
 
 
-msgid "Experimental"
-msgstr "실험적"
-
-
 msgid "Use experimental and incomplete features that might be broken or change in the future"
 msgstr "나중에 깨지거나 변경될 수 있는 실험적 기능과 불완전한 기능을 사용합니다"
 
@@ -71291,10 +71230,6 @@ msgstr "프리스타일 에지를 .svg 형식으로 내보내기"
 
 msgid "Format type to export to"
 msgstr "다음으로 내보내는 형식 유형"
-
-
-msgid "VRML2"
-msgstr "VRML2"
 
 
 msgid "Export Directory"
@@ -84460,10 +84395,6 @@ msgid "Volume:"
 msgstr "볼륨:"
 
 
-msgid "Plane:"
-msgstr "평면:"
-
-
 msgid "Min/Max:"
 msgstr "최소/최대:"
 
@@ -85009,20 +84940,12 @@ msgid "UVs:"
 msgstr "UV:"
 
 
+msgid "Outer"
+msgstr "바깥"
+
+
 msgid "Limit Method:"
 msgstr "제한 메서드:"
-
-
-msgid "Width Method:"
-msgstr "폭 메서드:"
-
-
-msgid "Set Face Strength Mode"
-msgstr "페이스 강도 모드를 설정"
-
-
-msgid "Miter Patterns"
-msgstr "마이터 패턴"
 
 
 msgid "Operation:"
@@ -85214,20 +85137,12 @@ msgid "Deform:"
 msgstr "변형:"
 
 
-msgid "Crease:"
-msgstr "크리스:"
-
-
-msgid "Outer"
-msgstr "바깥"
+msgid "Material Index Offset:"
+msgstr "매테리얼 인댁스 오프셋:"
 
 
 msgid "Rim"
 msgstr "가장자리"
-
-
-msgid "Material Index Offset:"
-msgstr "매테리얼 인댁스 오프셋:"
 
 
 msgid "Aspect X"
@@ -85435,6 +85350,10 @@ msgstr "오션심 모디파이어 없이 작성"
 
 msgid "Cull Faces:"
 msgstr "페이스를 추려내기:"
+
+
+msgid "Crease:"
+msgstr "크리스:"
 
 
 msgid "Render:"
@@ -86115,8 +86034,20 @@ msgid "Source Clone UV Map"
 msgstr "소스 클론 UV 맵"
 
 
+msgid "Thickness Profile"
+msgstr "두께 프로파일"
+
+
 msgid "Mask Value"
 msgstr "마스크 값"
+
+
+msgid "Fill Options"
+msgstr "채우기 옵션"
+
+
+msgid "Ignore Transparent Strokes"
+msgstr "투명한 스트로크를 무시"
 
 
 msgctxt "Operator"
@@ -88735,10 +88666,6 @@ msgid "Report a Bug"
 msgstr "버그 신고"
 
 
-msgid "Ignore Transparent Strokes"
-msgstr "투명한 스트로크를 무시"
-
-
 msgid "Sequence Strip Name"
 msgstr "시퀀스 스트립 이름"
 
@@ -90072,14 +89999,6 @@ msgstr "활성 레이어를 복제"
 msgctxt "Operator"
 msgid "Delete All Layers"
 msgstr "모든 레이어를 삭제"
-
-
-msgid "Thickness Profile"
-msgstr "두께 프로파일"
-
-
-msgid "Fill Options"
-msgstr "채우기 옵션"
 
 
 msgctxt "Operator"
@@ -93882,10 +93801,6 @@ msgstr "구체"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "아이코스피어"
-
-
-msgid "%s: confirm, %s: cancel, %s: mode (%s), %s: width (%s), %s: segments (%d), %s: profile (%.3f), %s: clamp overlap (%s), %s: vertex only (%s), %s: outer miter (%s), %s: inner miter (%s), %s: harden normals (%s), %s: mark seam (%s), %s: mark sharp (%s)"
-msgstr "%s: 확인, %s: 취소, %s: 모드 (%s), %s: 폭 (%s), %s: 부분 (%d), %s: 윤곽 (%.3f), %s: 클램프 오버랩 (%s), %s: 버텍스만 (%s), %s: 외곽 마이터 (%s), %s: 내부 마이터 (%s), %s: 노멀을 강화 (%s), %s: 씨임을 마크 (%s), %s: 새플르 마크 (%s)"
 
 
 msgid "LMB: Click and drag to draw cut line"

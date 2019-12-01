@@ -44,7 +44,7 @@
 #include "BKE_main.h"
 #include "BKE_mesh.h"
 #include "BKE_mesh_runtime.h"
-#include "BKE_mirror.h"
+#include "BKE_mesh_mirror.h"
 #include "BKE_modifier.h"
 #include "BKE_object.h"
 #include "BKE_paint.h"
@@ -142,7 +142,7 @@ static int voxel_remesh_exec(bContext *C, wmOperator *op)
 
   if (mesh->flag & ME_REMESH_REPROJECT_PAINT_MASK) {
     BKE_mesh_runtime_clear_geometry(mesh);
-    BKE_remesh_reproject_paint_mask(new_mesh, mesh);
+    BKE_mesh_remesh_reproject_paint_mask(new_mesh, mesh);
   }
 
   BKE_mesh_nomain_to_mesh(new_mesh, mesh, ob, &CD_MASK_MESH, true);
@@ -328,7 +328,8 @@ static Mesh *remesh_symmetry_bisect(Main *bmain, Mesh *mesh, eSymmetryAxes symme
       zero_v3(plane_no);
       plane_no[axis] = -1.0f;
       mesh_bisect_temp = mesh_bisect;
-      mesh_bisect = BKE_mirror_bisect_on_mirror_plane(&mmd, mesh_bisect, axis, plane_co, plane_no);
+      mesh_bisect = BKE_mesh_mirror_bisect_on_mirror_plane(
+          &mmd, mesh_bisect, axis, plane_co, plane_no);
       if (mesh_bisect_temp != mesh_bisect) {
         BKE_id_free(bmain, mesh_bisect_temp);
       }
@@ -357,7 +358,7 @@ static Mesh *remesh_symmetry_mirror(Object *ob, Mesh *mesh, eSymmetryAxes symmet
       mmd.flag = 0;
       mmd.flag &= MOD_MIR_AXIS_X << i;
       mesh_mirror_temp = mesh_mirror;
-      mesh_mirror = BKE_mirror_apply_mirror_on_axis(&mmd, NULL, ob, mesh_mirror, axis);
+      mesh_mirror = BKE_mesh_mirror_apply_mirror_on_axis(&mmd, NULL, ob, mesh_mirror, axis);
       if (mesh_mirror_temp != mesh_mirror) {
         BKE_id_free(NULL, mesh_mirror_temp);
       }
@@ -427,7 +428,7 @@ static void quadriflow_start_job(void *customdata, short *stop, short *do_update
 
   if (qj->preserve_paint_mask) {
     BKE_mesh_runtime_clear_geometry(mesh);
-    BKE_remesh_reproject_paint_mask(new_mesh, mesh);
+    BKE_mesh_remesh_reproject_paint_mask(new_mesh, mesh);
   }
 
   BKE_mesh_nomain_to_mesh(new_mesh, mesh, ob, &CD_MASK_MESH, true);

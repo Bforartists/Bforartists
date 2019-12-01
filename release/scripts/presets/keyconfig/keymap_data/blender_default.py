@@ -392,7 +392,7 @@ def km_window(params):
         ),
 
         # NDOF settings
-        op_menu("USERPREF_MT_ndof_settings", {"type": 'NDOF_BUTTON_MENU', "value": 'PRESS'}),
+        op_panel("USERPREF_PT_ndof_settings", {"type": 'NDOF_BUTTON_MENU', "value": 'PRESS'}),
         ("wm.context_scale_float", {"type": 'NDOF_BUTTON_PLUS', "value": 'PRESS'},
          {"properties": [("data_path", 'preferences.inputs.ndof_sensitivity'), ("value", 1.1)]}),
         ("wm.context_scale_float", {"type": 'NDOF_BUTTON_MINUS', "value": 'PRESS'},
@@ -1411,13 +1411,9 @@ def km_graph_editor(params):
          {"properties": [("mode", 'RIGHT'), ("extend", False)]}),
         *_template_items_select_actions(params, "graph.select_all"),
         ("graph.select_box", {"type": 'B', "value": 'PRESS'},
-         {"properties": [("axis_range", False), ("include_handles", False)]}),
+         {"properties": [("axis_range", False)]}),
         ("graph.select_box", {"type": 'B', "value": 'PRESS', "alt": True},
-         {"properties": [("axis_range", True), ("include_handles", False)]}),
-        ("graph.select_box", {"type": 'B', "value": 'PRESS', "ctrl": True},
-         {"properties": [("axis_range", False), ("include_handles", True)]}),
-        ("graph.select_box", {"type": 'B', "value": 'PRESS', "ctrl": True, "alt": True},
-         {"properties": [("axis_range", True), ("include_handles", True)]}),
+         {"properties": [("axis_range", True)]}),
         ("graph.select_box", {"type": params.select_tweak, "value": 'ANY'},
          {"properties": [("tweak", True), ("mode", 'SET')]}),
         ("graph.select_box", {"type": params.select_tweak, "value": 'ANY', "shift": True},
@@ -2225,7 +2221,7 @@ def km_text(params):
          {"properties": [("direction", 'UP')]}),
         ("text.move_lines", {"type": 'DOWN_ARROW', "value": 'PRESS', "shift": True, "ctrl": True},
          {"properties": [("direction", 'DOWN')]}),
-        ("text.indent", {"type": 'TAB', "value": 'PRESS'}, None),
+        ("text.indent_or_autocomplete", {"type": 'TAB', "value": 'PRESS'}, None),
         ("text.unindent", {"type": 'TAB', "value": 'PRESS', "shift": True}, None),
         ("text.comment_toggle", {"type": 'SLASH', "value": 'PRESS', "ctrl": True}, None),
         ("text.move", {"type": 'HOME', "value": 'PRESS'},
@@ -2297,15 +2293,12 @@ def km_text(params):
         ("text.scroll", {"type": 'TRACKPADPAN', "value": 'ANY'}, None),
         ("text.selection_set", {"type": 'EVT_TWEAK_L', "value": 'ANY'}, None),
         ("text.cursor_set", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
-        ("text.selection_set", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-         {"properties": [("select", True)]}),
         ("text.scroll", {"type": 'WHEELUPMOUSE', "value": 'PRESS'},
          {"properties": [("lines", -1)]}),
         ("text.scroll", {"type": 'WHEELDOWNMOUSE', "value": 'PRESS'},
          {"properties": [("lines", 1)]}),
         ("text.line_break", {"type": 'RET', "value": 'PRESS'}, None),
         ("text.line_break", {"type": 'NUMPAD_ENTER', "value": 'PRESS'}, None),
-        ("text.autocomplete", {"type": 'SPACE', "value": 'PRESS', "ctrl": True}, None),
         ("text.line_number", {"type": 'TEXTINPUT', "value": 'ANY', "any": True}, None),
         op_menu("TEXT_MT_context_menu", {"type": 'RIGHTMOUSE', "value": 'PRESS'}),
         ("text.insert", {"type": 'TEXTINPUT', "value": 'ANY', "any": True}, None),
@@ -2535,7 +2528,6 @@ def km_console(params):
          {"properties": [("interactive", True)]}),
         ("console.execute", {"type": 'NUMPAD_ENTER', "value": 'PRESS'},
          {"properties": [("interactive", True)]}),
-        ("console.autocomplete", {"type": 'SPACE', "value": 'PRESS', "ctrl": True}, None),
         ("console.copy_as_script", {"type": 'C', "value": 'PRESS', "shift": True, "ctrl": True}, None),
         ("console.copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
         ("console.paste", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
@@ -2543,7 +2535,7 @@ def km_console(params):
         ("console.select_word", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
         ("console.insert", {"type": 'TAB', "value": 'PRESS', "ctrl": True},
          {"properties": [("text", '\t')]}),
-        ("console.indent", {"type": 'TAB', "value": 'PRESS'}, None),
+        ("console.indent_or_autocomplete", {"type": 'TAB', "value": 'PRESS'}, None),
         ("console.unindent", {"type": 'TAB', "value": 'PRESS', "shift": True}, None),
         op_menu("CONSOLE_MT_context_menu", {"type": 'RIGHTMOUSE', "value": 'PRESS'}),
         ("console.insert", {"type": 'TEXTINPUT', "value": 'ANY', "any": True}, None),
@@ -5527,7 +5519,7 @@ def km_3d_view_tool_edit_mesh_smooth(params):
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
         {"items": [
             ("mesh.vertices_smooth", {"type": params.tool_tweak, "value": 'ANY'},
-             {"properties": [("factor", 0.0)]}),
+             {"properties": [("factor", 0.0), ("wait_for_input", False)]}),
         ]},
     )
 
@@ -5538,7 +5530,7 @@ def km_3d_view_tool_edit_mesh_randomize(params):
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
         {"items": [
             ("transform.vertex_random", {"type": params.tool_tweak, "value": 'ANY'},
-             {"properties": [("offset", 0.0)]}),
+             {"properties": [("offset", 0.0), ("wait_for_input", False)]}),
         ]},
     )
 
@@ -5678,7 +5670,7 @@ def km_3d_view_tool_edit_curve_randomize(params):
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
         {"items": [
             ("transform.vertex_random", {"type": params.tool_tweak, "value": 'ANY'},
-             {"properties": [("offset", 0.0)]}),
+             {"properties": [("offset", 0.0), ("wait_for_input", False)]}),
         ]},
     )
 
