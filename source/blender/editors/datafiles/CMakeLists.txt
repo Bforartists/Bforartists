@@ -1423,10 +1423,10 @@ tilt
 axis_side
 axis_front
 axis_top
-ndof_dom
-ndof_turn
-ndof_fly
-ndof_trans
+#def_icon_blank(1443
+#def_icon_blank(1444
+#def_icon_blank(1445
+#def_icon_blank(1446
 
 layer_used
 layer_active

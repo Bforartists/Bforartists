@@ -430,11 +430,26 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             elif brush.sculpt_tool == 'POSE':
                 row = col.row()
                 row.prop(brush, "pose_offset")
+                row = col.row()
+                row.prop(brush, "pose_smooth_iterations")
+            elif brush.sculpt_tool == 'SCRAPE':
+                row = col.row()
+                row.prop(brush, "invert_to_scrape_fill", text = "Invert to Fill")
+            elif brush.sculpt_tool == 'FILL':
+                row = col.row()
+                row.prop(brush, "invert_to_scrape_fill", text = "Invert to Scrape")
             elif brush.sculpt_tool == 'GRAB':
                 col.separator()
                 row = col.row()
                 row.use_property_split = False
                 row.prop(brush, "use_grab_active_vertex")
+            elif brush.sculpt_tool == 'MULTIPLANE_SCRAPE':
+                row = col.row()
+                row.prop(brush, "multiplane_scrape_angle")
+                row = col.row()
+                row.prop(brush, "use_multiplane_scrape_dynamic")
+                row = col.row()
+                row.prop(brush, "show_multiplane_scrape_planes_preview")
 
             # topology_rake_factor
             if (
@@ -991,10 +1006,14 @@ class VIEW3D_PT_tools_brush_stroke(Panel, View3DPaintPanel):
             row = col.row(align=True)
             row.prop(brush, "spacing", text="Spacing")
             row.prop(brush, "use_pressure_spacing", toggle=True, text="")
+            col.prop(brush, "dash_ratio")
+            col.prop(brush, "dash_samples")
 
         if brush.use_line or brush.use_curve:
             row = col.row(align=True)
             row.prop(brush, "spacing", text="Spacing")
+            col.prop(brush, "dash_ratio")
+            col.prop(brush, "dash_samples")
 
         if brush.use_curve:
             col.template_ID(brush, "paint_curve", new="paintcurve.new")
@@ -1195,7 +1214,8 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         if sculpt.detail_type_method in {'CONSTANT', 'MANUAL'}:
             row = sub.row(align=True)
             row.prop(sculpt, "constant_detail_resolution")
-            row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
+            props = row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
+            props.mode = 'DYNTOPO'
         elif (sculpt.detail_type_method == 'BRUSH'):
             sub.prop(sculpt, "detail_percent")
         else:
@@ -1255,7 +1275,10 @@ class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
 
         col = layout.column()
         mesh = context.active_object.data
-        col.prop(mesh, "remesh_voxel_size")
+        row = col.row(align=True)
+        row.prop(mesh, "remesh_voxel_size")
+        props = row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
+        props.mode = 'VOXEL'
         col.prop(mesh, "remesh_voxel_adaptivity")
         col.prop(mesh, "use_remesh_fix_poles")
         col.prop(mesh, "use_remesh_smooth_normals")

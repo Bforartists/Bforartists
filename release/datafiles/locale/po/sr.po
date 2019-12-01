@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -1563,14 +1563,6 @@ msgid "Internal Friction"
 msgstr "Унутрашње трење"
 
 
-msgid "Mass"
-msgstr "Маса"
-
-
-msgid "Mass of cloth material"
-msgstr "Маса тканине"
-
-
 msgid "Pin Stiffness"
 msgstr "Крутост качења"
 
@@ -2712,16 +2704,12 @@ msgid "Keep Axis"
 msgstr "Задржи осе"
 
 
-msgid "Keep Z Axis"
-msgstr "Задржи Z осу"
+msgid "XZ"
+msgstr "XZ"
 
 
 msgid "Original Length"
 msgstr "Оригинална дужина"
-
-
-msgid "XZ"
-msgstr "XZ"
 
 
 msgid "Aim the constrained object toward the target"
@@ -2914,6 +2902,14 @@ msgstr "Плоча"
 
 msgid "View"
 msgstr "Поглед"
+
+
+msgid "Steps"
+msgstr "Корака"
+
+
+msgid "Segments"
+msgstr "Сегмената"
 
 
 msgid "Active Spline"
@@ -5874,10 +5870,6 @@ msgid "Map the bevel factor to the number of subdivisions of a spline (U resolut
 msgstr "Мапира фактор искошења на број подела криве (U резолуција)"
 
 
-msgid "Segments"
-msgstr "Сегмената"
-
-
 msgid "Spline"
 msgstr "Крива"
 
@@ -7550,10 +7542,6 @@ msgid "Draw Size"
 msgstr "Величина приказа"
 
 
-msgid "Steps"
-msgstr "Корака"
-
-
 msgid "Distribution"
 msgstr "Расподела"
 
@@ -7644,6 +7632,10 @@ msgstr "Насумична дужина"
 
 msgid "Lifetime"
 msgstr "Животни век"
+
+
+msgid "Mass"
+msgstr "Маса"
 
 
 msgid "Index of material slot used for rendering particles"
@@ -9582,6 +9574,10 @@ msgid "Snap"
 msgstr "Лепљење"
 
 
+msgid "Material Specials"
+msgstr "Специјални материјали"
+
+
 msgid "Grease Pencil Tools"
 msgstr "Алатке скицирања"
 
@@ -9605,10 +9601,6 @@ msgstr "Прикажи/сакриј странице"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Додај"
-
-
-msgid "Material Specials"
-msgstr "Специјални материјали"
 
 
 msgid "Vertex Group Specials"
@@ -14879,10 +14871,6 @@ msgid "Export PLY"
 msgstr "Извоз PLY"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "Користи глобалне координате за координате текстуре"
-
-
 msgid "Y Up"
 msgstr "Горе по Y"
 
@@ -14903,6 +14891,10 @@ msgid "-Z Up"
 msgstr "Горе по -Z"
 
 
+msgid "Selection Only"
+msgstr "Само изабрано"
+
+
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "Извоз у STL"
@@ -14910,10 +14902,6 @@ msgstr "Извоз у STL"
 
 msgid "Ascii"
 msgstr "Ascii"
-
-
-msgid "Selection Only"
-msgstr "Само изабрано"
 
 
 msgctxt "Operator"
@@ -16886,6 +16874,10 @@ msgstr "У центар"
 
 msgid "At Cursor"
 msgstr "За курсор"
+
+
+msgid "Fill Holes"
+msgstr "Попуни рупе"
 
 
 msgid "Median"
@@ -21140,10 +21132,6 @@ msgid "Minimize Stretch"
 msgstr "Минимизирај развлачење"
 
 
-msgid "Fill Holes"
-msgstr "Попуни рупе"
-
-
 msgctxt "Operator"
 msgid "Pack Islands"
 msgstr "Спакуј острва"
@@ -23014,6 +23002,10 @@ msgid "Edit Methods"
 msgstr "Методе уређивања"
 
 
+msgid "Experimental"
+msgstr "Прошири водоравно"
+
+
 msgid "Default paths for external files"
 msgstr "Стандардна акција за средњи тастер миша"
 
@@ -23806,10 +23798,6 @@ msgid "Supported"
 msgstr "Подржани слој"
 
 
-msgid "Experimental"
-msgstr "Прошири водоравно"
-
-
 msgid "Total maximum number of bounces"
 msgstr "Укупан максимални број одбијања"
 
@@ -23948,10 +23936,6 @@ msgstr "Путања до датотека"
 
 msgid "Is Stroke Start"
 msgstr "Самостални почетак"
-
-
-msgid "VRML2"
-msgstr "VRML2"
 
 
 msgid "Apply Scale"
@@ -27284,10 +27268,6 @@ msgid "Volume:"
 msgstr "Јачина:"
 
 
-msgid "Plane:"
-msgstr "Плоча:"
-
-
 msgid "Min/Max:"
 msgstr "Мин/Макс:"
 
@@ -27475,6 +27455,10 @@ msgid "UVs:"
 msgstr "UV-и:"
 
 
+msgid "Outer"
+msgstr "Спољашње"
+
+
 msgid "Operation:"
 msgstr "Операција:"
 
@@ -27599,20 +27583,12 @@ msgid "Deform:"
 msgstr "Деформација:"
 
 
-msgid "Crease:"
-msgstr "Набор:"
-
-
-msgid "Outer"
-msgstr "Спољашње"
+msgid "Material Index Offset:"
+msgstr "Одстојање индекса материјала:"
 
 
 msgid "Rim"
 msgstr "Обод"
-
-
-msgid "Material Index Offset:"
-msgstr "Одстојање индекса материјала:"
 
 
 msgid "From:"
@@ -27737,6 +27713,10 @@ msgstr "Сачувај екстерно ..."
 
 msgid "Cull Faces:"
 msgstr "Одабери странице:"
+
+
+msgid "Crease:"
+msgstr "Набор:"
 
 
 msgid "Render:"

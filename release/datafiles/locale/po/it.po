@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: \n"
 "Last-Translator: blend-it\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -3242,14 +3242,6 @@ msgid "Internal Friction"
 msgstr "Attrito Interno"
 
 
-msgid "Mass"
-msgstr "Massa"
-
-
-msgid "Mass of cloth material"
-msgstr "Massa del materiale del tessuto"
-
-
 msgid "Pin Stiffness"
 msgstr "Appunta Rigidità"
 
@@ -5375,16 +5367,8 @@ msgid "Keep Axis"
 msgstr "Mantieni Asse"
 
 
-msgid "Axis to maintain during stretch"
-msgstr "Asse da mantenere durante lo stiramento"
-
-
-msgid "Keep X Axis"
-msgstr "Mantiene Asse X"
-
-
-msgid "Keep Z Axis"
-msgstr "Mantiene Asse Z"
+msgid "XZ"
+msgstr "XZ"
 
 
 msgid "Original Length"
@@ -5397,10 +5381,6 @@ msgstr "Lunghezza in posizione di riposo"
 
 msgid "Maintain the object's volume as it stretches"
 msgstr "Mantiene il volume dell'oggetto quando lo si stira"
-
-
-msgid "XZ"
-msgstr "XZ"
 
 
 msgid "Track To Constraint"
@@ -5813,6 +5793,14 @@ msgstr "Solo Primo"
 
 msgid "Use the start of the stroke for the depth"
 msgstr "Usa la parte iniziale del tratto per la profondità"
+
+
+msgid "Steps"
+msgstr "Passi"
+
+
+msgid "Segments"
+msgstr "Segmenti"
 
 
 msgid "Curve Splines"
@@ -10910,6 +10898,10 @@ msgid "Rotate"
 msgstr "Ruota"
 
 
+msgid "Topology"
+msgstr "Topologia"
+
+
 msgid "Secondary Color"
 msgstr "Colore Secondario"
 
@@ -11428,10 +11420,6 @@ msgstr "Profondità Smusso"
 
 msgid "End Bevel Factor"
 msgstr "Fattore Smusso Fine"
-
-
-msgid "Segments"
-msgstr "Segmenti"
 
 
 msgid "Spline"
@@ -14038,10 +14026,6 @@ msgid "Draw Size"
 msgstr "Dimensione Disegno"
 
 
-msgid "Steps"
-msgstr "Passi"
-
-
 msgid "Distribution"
 msgstr "Distribuzione"
 
@@ -14260,6 +14244,10 @@ msgstr "Boid 2D"
 
 msgid "Constrain boids to a surface"
 msgstr "Vincola i boids ad una superficie"
+
+
+msgid "Mass"
+msgstr "Massa"
 
 
 msgid "Mass of the particles"
@@ -18721,6 +18709,10 @@ msgid "Clean Up"
 msgstr "Ripulisci"
 
 
+msgid "Material Specials"
+msgstr "Materiali Speciali"
+
+
 msgid "Grease Pencil Sculpt"
 msgstr "Scultura Matita"
 
@@ -18752,10 +18744,6 @@ msgstr "Salda/Allinea"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Aggiungi"
-
-
-msgid "Material Specials"
-msgstr "Materiali Speciali"
 
 
 msgid "Shape Key Specials"
@@ -19794,10 +19782,6 @@ msgid "Material index of generated faces, -1 for automatic"
 msgstr "Indice materiale per le facce generate, -1 per automatico"
 
 
-msgid "Amount Type"
-msgstr "Tipo Quantità"
-
-
 msgid "What distance Width measures"
 msgstr "Quale distanza è definita con Larghezza"
 
@@ -20184,10 +20168,6 @@ msgstr "Mappatura Spigolo"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Metodo usato per mappare gli spigoli di origine a quelli di destinazione"
-
-
-msgid "Topology"
-msgstr "Topologia"
 
 
 msgid "Copy from identical topology meshes"
@@ -21684,10 +21664,6 @@ msgstr "Modificatore per la simulazione di un corpo morbido"
 
 msgid "Solidify Modifier"
 msgstr "Modificatore Solidifica"
-
-
-msgid "Create a solid skin by extruding, compensating for sharp angles"
-msgstr "Crea una pelle solida per estrusione, compensando per gli angoli netti"
 
 
 msgid "Inner Crease"
@@ -29355,10 +29331,6 @@ msgid "Export PLY"
 msgstr "Esporta PLY"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "Esporta un oggetto singolo come uno stanford PLY con normali, colori e coordinate textures"
-
-
 msgid "X Forward"
 msgstr "X In Avanti"
 
@@ -29419,6 +29391,14 @@ msgid "Apply Modifiers to the exported mesh"
 msgstr "Applica i modificatori alle mesh esportate"
 
 
+msgid "Selection Only"
+msgstr "Solo Selezione"
+
+
+msgid "Export selected objects only"
+msgstr "Esporta solo gli oggetti selezionati"
+
+
 msgid "Export the active UV layer"
 msgstr "Esporta il livello UV attivo"
 
@@ -29426,10 +29406,6 @@ msgstr "Esporta il livello UV attivo"
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "Esporta STL"
-
-
-msgid "Save STL triangle mesh data from the active object"
-msgstr "Usa i dati trasformati della Mesh per ogni oggetto"
 
 
 msgid "Ascii"
@@ -29458,14 +29434,6 @@ msgstr "Applica i modificatori prima di salvare"
 
 msgid "Scene Unit"
 msgstr "Unità Scena"
-
-
-msgid "Selection Only"
-msgstr "Solo Selezione"
-
-
-msgid "Export selected objects only"
-msgstr "Esporta solo gli oggetti selezionati"
 
 
 msgctxt "Operator"
@@ -33358,6 +33326,10 @@ msgid "Offset Edge Loop"
 msgstr "Scostamento Anello di Spigoli"
 
 
+msgid "Fill Holes"
+msgstr "Colma i Buchi"
+
+
 msgctxt "Operator"
 msgid "Poke Faces"
 msgstr "Pizzica Facce"
@@ -34094,6 +34066,10 @@ msgstr "Seleziona Percorso Più Breve"
 msgctxt "Operator"
 msgid "Solidify"
 msgstr "Solidifica"
+
+
+msgid "Create a solid skin by extruding, compensating for sharp angles"
+msgstr "Crea una pelle solida per estrusione, compensando per gli angoli netti"
 
 
 msgctxt "Operator"
@@ -40646,19 +40622,6 @@ msgid "Select other strips at the same time"
 msgstr "Seleziona altri spezzoni allo stesso tempo"
 
 
-msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "Seleziona Lato Attivo"
-
-
-msgid "Select strips on the nominated side of the active strip"
-msgstr "Seleziona gli spezzoni sul lato indicato dello spezzone attivo"
-
-
-msgid "The side of the handle that is selected"
-msgstr "Il lato della maniglia che è selezionato"
-
-
 msgid "Select or deselect all strips"
 msgstr "Seleziona o deseleziona tutti gli spezzoni"
 
@@ -40722,6 +40685,10 @@ msgstr "Considera solo gli spezzoni sullo stesso canale come quello attivo"
 msgctxt "Operator"
 msgid "Select Handles"
 msgstr "Seleziona Maniglie"
+
+
+msgid "The side of the handle that is selected"
+msgstr "Il lato della maniglia che è selezionato"
 
 
 msgid "Shrink the current selection of adjacent selected strips"
@@ -41439,10 +41406,6 @@ msgstr "Seleziona la parola sotto il cursore"
 
 msgid "Set cursor selection"
 msgstr "Imposta la selezione del cursore"
-
-
-msgid "Set selection end rather than cursor"
-msgstr "Dispone la fine della selezione invece che il cursore"
 
 
 msgctxt "Operator"
@@ -42345,10 +42308,6 @@ msgstr "Riduce lo stiramento delle UV distendendo gli angoli"
 
 msgid "Blend factor between stretch minimized and original"
 msgstr "Fattore di fusione tra lo stiramento minimizzato e l'originale"
-
-
-msgid "Fill Holes"
-msgstr "Colma i Buchi"
 
 
 msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
@@ -46087,6 +46046,10 @@ msgid "Settings for interacting with Blender data"
 msgstr "Impostazioni per l'interazione con i dati Blender"
 
 
+msgid "Experimental"
+msgstr "Sperimentale"
+
+
 msgid "Default paths for external files"
 msgstr "Percorso predefinito per i file esterni"
 
@@ -47999,10 +47962,6 @@ msgid "Only use finished and supported features"
 msgstr "Solo funzionalità completate e supportate"
 
 
-msgid "Experimental"
-msgstr "Sperimentale"
-
-
 msgid "Use experimental and incomplete features that might be broken or change in the future"
 msgstr "Usa funzioni incomplete e sperimentali che possono essere modificate o rimosse in futuro"
 
@@ -48513,10 +48472,6 @@ msgstr "Dimensione Pennello"
 
 msgid "Format type to export to"
 msgstr "Tipo formato in cui esportare"
-
-
-msgid "VRML2"
-msgstr "VRML2"
 
 
 msgid "Export Directory"
@@ -56061,10 +56016,6 @@ msgid "Volume:"
 msgstr "Volume:"
 
 
-msgid "Plane:"
-msgstr "Piano:"
-
-
 msgid "Min/Max:"
 msgstr "Min/Max:"
 
@@ -56384,12 +56335,12 @@ msgid "UVs:"
 msgstr "UVs:"
 
 
+msgid "Outer"
+msgstr "Esterno"
+
+
 msgid "Limit Method:"
 msgstr "Metodo Limite:"
-
-
-msgid "Width Method:"
-msgstr "Metodo Larghezza:"
 
 
 msgid "Operation:"
@@ -56561,20 +56512,12 @@ msgid "Deform:"
 msgstr "Deforma:"
 
 
-msgid "Crease:"
-msgstr "Piega:"
-
-
-msgid "Outer"
-msgstr "Esterno"
+msgid "Material Index Offset:"
+msgstr "Scostamento Indice Materiale:"
 
 
 msgid "Rim"
 msgstr "Orlo"
-
-
-msgid "Material Index Offset:"
-msgstr "Scostamento Indice Materiale:"
 
 
 msgid "Aspect X"
@@ -56758,6 +56701,10 @@ msgstr "Compilato senza modificatore Oceano"
 
 msgid "Cull Faces:"
 msgstr "Scarto Selettivo Facce:"
+
+
+msgid "Crease:"
+msgstr "Piega:"
 
 
 msgid "Render:"

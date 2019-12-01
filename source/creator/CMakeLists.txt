@@ -38,18 +38,15 @@ blender_include_dirs(
 )
 
 set(LIB
-  bf_blenloader
   bf_blenkernel
-  bf_blenlib
+  bf_blenloader
   bf_depsgraph
   bf_dna
-  bf_editor_datafiles
   bf_imbuf
   bf_intern_clog
   bf_intern_guardedalloc
   bf_intern_memutil
   bf_intern_opencolorio
-  bf_python
   bf_render
   bf_rna
   bf_windowmanager
@@ -89,6 +86,9 @@ endif()
 
 if(WITH_PYTHON)
   blender_include_dirs(../blender/python)
+  list(APPEND LIB
+    bf_python
+  )
   add_definitions(-DWITH_PYTHON)
 
   if(WITH_PYTHON_SECURITY)
@@ -277,7 +277,6 @@ if(WITH_PYTHON_MODULE)
 
 else()
   add_executable(bforartists ${EXETYPE} ${SRC})
-  WINDOWS_SIGN_TARGET(bforartists)
 endif()
 
 if(WITH_BUILDINFO)
@@ -877,10 +876,10 @@ elseif(WIN32)
     )
   endif()
 elseif(APPLE)
-if(NOT WITH_PYTHON_MODULE)
-  # Uppercase name for app bundle
-  set_target_properties(bforartists PROPERTIES OUTPUT_NAME Bforartists)
-endif()
+  if(NOT WITH_PYTHON_MODULE)
+    # Uppercase name for app bundle
+    set_target_properties(bforartists PROPERTIES OUTPUT_NAME Bforartists)
+  endif()
 
   # handy install macro to exclude files, we use \$ escape for the "to"
   # argument when calling so ${BUILD_TYPE} does not get expanded
