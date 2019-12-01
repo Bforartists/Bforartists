@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -314,10 +314,6 @@ msgid "Linear"
 msgstr "Lineair"
 
 
-msgid "Mass"
-msgstr "Massa"
-
-
 msgid "Curve"
 msgstr "Kromme"
 
@@ -409,6 +405,10 @@ msgstr "Vlak"
 
 msgid "View"
 msgstr "Weergave"
+
+
+msgid "Segments"
+msgstr "Segmenten"
 
 
 msgid "Render"
@@ -706,10 +706,6 @@ msgid "Panoramic"
 msgstr "Panoramisch"
 
 
-msgid "Segments"
-msgstr "Segmenten"
-
-
 msgid "Dimensions"
 msgstr "Dimensie"
 
@@ -868,6 +864,10 @@ msgstr "Weegave"
 
 msgid "Distribution"
 msgstr "Verdeling"
+
+
+msgid "Mass"
+msgstr "Massa"
 
 
 msgid "Material Slot"

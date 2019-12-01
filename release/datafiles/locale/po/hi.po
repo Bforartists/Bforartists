@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -763,10 +763,6 @@ msgid "Internal Friction"
 msgstr "आंतरिक घर्षण"
 
 
-msgid "Mass"
-msgstr "द्रव्यमान"
-
-
 msgid "Quality"
 msgstr "गुणवत्ता"
 
@@ -972,12 +968,12 @@ msgid "Keep Axis"
 msgstr "अक्ष रखें"
 
 
-msgid "Original Length"
-msgstr "मूल लंबाई"
-
-
 msgid "XZ"
 msgstr "XZ"
+
+
+msgid "Original Length"
+msgstr "मूल लंबाई"
 
 
 msgid "Loc"
@@ -1022,6 +1018,10 @@ msgstr "समतल"
 
 msgid "View"
 msgstr "दृश्य"
+
+
+msgid "Steps"
+msgstr "कदम"
 
 
 msgid "Render"
@@ -2434,16 +2434,16 @@ msgid "Display"
 msgstr "प्रदर्शित करें"
 
 
-msgid "Steps"
-msgstr "कदम"
-
-
 msgid "Stiffness"
 msgstr "कठोरता"
 
 
 msgid "Euler"
 msgstr "यूलर"
+
+
+msgid "Mass"
+msgstr "द्रव्यमान"
 
 
 msgid "Dummy"
@@ -5879,10 +5879,6 @@ msgid "Volume:"
 msgstr "मात्रा:"
 
 
-msgid "Plane:"
-msgstr "समतल:"
-
-
 msgid "Display Pivot"
 msgstr "धुरी प्रदर्शित करें"
 
@@ -6009,6 +6005,10 @@ msgid "Object:"
 msgstr "वस्तु"
 
 
+msgid "Outer"
+msgstr "बाहरी"
+
+
 msgid "Operation:"
 msgstr "कार्य:"
 
@@ -6060,10 +6060,6 @@ msgstr "लक्ष्य:"
 
 msgid "Deform:"
 msgstr "विरूपण:"
-
-
-msgid "Outer"
-msgstr "बाहरी"
 
 
 msgid "Rim"

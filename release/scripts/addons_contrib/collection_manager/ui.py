@@ -7,11 +7,7 @@ from bpy.types import (
 
 from .internals import *
 from .operators import (
-    excludeall_history,
-    restrictselectall_history,
-    hideall_history,
-    disableviewall_history,
-    disablerenderall_history,
+    rto_history,
     rename,
     phantom_history,
     )
@@ -21,15 +17,16 @@ class CollectionManager(Operator):
     bl_label = "Collection Manager"
     bl_idname = "view3d.collection_manager"
     
-    view_layer = ""
+    last_view_layer = ""
     
     def draw(self, context):
         layout = self.layout
         scn = context.scene
+        view_layer = context.view_layer.name
         
-        if context.view_layer.name != self.view_layer:
+        if view_layer != self.last_view_layer:
             update_collection_tree(context)
-            self.view_layer = context.view_layer.name
+            self.last_view_layer = view_layer
         
         title_row = layout.split(factor=0.5)
         main = title_row.row()
@@ -80,23 +77,33 @@ class CollectionManager(Operator):
         sec2.alignment = 'RIGHT'
         
         if scn.show_exclude:
-            depress = True if len(excludeall_history) else False
+            exclude_all_history = rto_history["exclude_all"].get(view_layer, [])
+            depress = True if len(exclude_all_history) else False
+            
             sec2.operator("view3d.un_exclude_all_collections", text="", icon='CHECKBOX_HLT', depress=depress)
         
         if scn.show_selectable:
-            depress = True if len(restrictselectall_history) else False
+            select_all_history = rto_history["select_all"].get(view_layer, [])
+            depress = True if len(select_all_history) else False
+            
             sec2.operator("view3d.un_restrict_select_all_collections", text="", icon='RESTRICT_SELECT_OFF', depress=depress)
         
         if scn.show_hideviewport:
-            depress = True if len(hideall_history) else False
+            hide_all_history = rto_history["hide_all"].get(view_layer, [])
+            depress = True if len(hide_all_history) else False
+            
             sec2.operator("view3d.un_hide_all_collections", text="", icon='HIDE_OFF', depress=depress)
         
         if scn.show_disableviewport:
-            depress = True if len(disableviewall_history) else False
+            disable_all_history = rto_history["disable_all"].get(view_layer, [])
+            depress = True if len(disable_all_history) else False
+            
             sec2.operator("view3d.un_disable_viewport_all_collections", text="", icon='RESTRICT_VIEW_OFF', depress=depress)
         
         if scn.show_render:
-            depress = True if len(disablerenderall_history) else False
+            render_all_history = rto_history["render_all"].get(view_layer, [])
+            depress = True if len(render_all_history) else False
+            
             sec2.operator("view3d.un_disable_render_all_collections", text="", icon='RESTRICT_RENDER_OFF', depress=depress)
         
         layout.row().template_list("CM_UL_items", "", context.scene, "CMListCollection", context.scene, "CMListIndex", rows=15, sort_lock=True)

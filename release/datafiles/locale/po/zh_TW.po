@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: 2018-09-23 13:23+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -2708,14 +2708,6 @@ msgid "Internal Friction"
 msgstr "內部摩擦"
 
 
-msgid "Mass"
-msgstr "質量"
-
-
-msgid "Mass of cloth material"
-msgstr "布料材質的質量"
-
-
 msgid "Pin Stiffness"
 msgstr "釘剛度"
 
@@ -4953,16 +4945,8 @@ msgid "Keep Axis"
 msgstr "保持軸"
 
 
-msgid "Axis to maintain during stretch"
-msgstr "拉伸過程中要維持的軸"
-
-
-msgid "Keep X Axis"
-msgstr "保持 X 軸"
-
-
-msgid "Keep Z Axis"
-msgstr "保持 Z 軸"
+msgid "XZ"
+msgstr "XZ"
 
 
 msgid "Original Length"
@@ -4975,10 +4959,6 @@ msgstr "靜止位置的長度"
 
 msgid "Maintain the object's volume as it stretches"
 msgstr "當物體拉伸時仍維持物體的體積"
-
-
-msgid "XZ"
-msgstr "XZ"
 
 
 msgid "Track To Constraint"
@@ -5327,6 +5307,14 @@ msgstr "檢視"
 
 msgid "Detect Corners"
 msgstr "偵測角落"
+
+
+msgid "Steps"
+msgstr "步數"
+
+
+msgid "Segments"
+msgstr "分段"
 
 
 msgid "Active Spline"
@@ -10494,6 +10482,10 @@ msgid "Rotate"
 msgstr "旋轉"
 
 
+msgid "Topology"
+msgstr "拓樸"
+
+
 msgid "Secondary Color"
 msgstr "次色"
 
@@ -11128,10 +11120,6 @@ msgstr "決定結束倒角係數映射到樣條的方法"
 
 msgid "Map the bevel factor to the number of subdivisions of a spline (U resolution)"
 msgstr "倒角係數映射至樣條的細分數 (U 解析度)"
-
-
-msgid "Segments"
-msgstr "分段"
 
 
 msgid "Map the bevel factor to the length of a segment and to the number of subdivisions of a segment"
@@ -14250,10 +14238,6 @@ msgid "Draw Size"
 msgstr "描繪大小"
 
 
-msgid "Steps"
-msgstr "步數"
-
-
 msgid "How many steps paths are drawn with (power of 2)"
 msgstr "路徑以 (2 的次方) 多少步描繪"
 
@@ -14456,6 +14440,10 @@ msgstr "群集 2D"
 
 msgid "Constrain boids to a surface"
 msgstr "將群集約束至表面"
+
+
+msgid "Mass"
+msgstr "質量"
 
 
 msgid "Mass of the particles"
@@ -18311,6 +18299,10 @@ msgid "Snap"
 msgstr "吸附"
 
 
+msgid "Material Specials"
+msgstr "材質特殊項"
+
+
 msgid "A pie menu for quick access to Grease Pencil settings"
 msgstr "可快速存取蠟筆設定的圓派選單"
 
@@ -18350,10 +18342,6 @@ msgstr "焊接/對齊"
 msgctxt "Operator"
 msgid "Add"
 msgstr "添加"
-
-
-msgid "Material Specials"
-msgstr "材質特殊項"
 
 
 msgid "Shape Key Specials"
@@ -19324,10 +19312,6 @@ msgid "Material index of generated faces, -1 for automatic"
 msgstr "生成面的材質索引，-1 為自動"
 
 
-msgid "Amount Type"
-msgstr "量的類型"
-
-
 msgid "What distance Width measures"
 msgstr "寬度測量何距離"
 
@@ -19630,10 +19614,6 @@ msgstr "傳輸作用中的或所有的頂點群組"
 
 msgid "Edge Mapping"
 msgstr "邊線映射"
-
-
-msgid "Topology"
-msgstr "拓樸"
 
 
 msgid "Copy from identical topology meshes"
@@ -20942,10 +20922,6 @@ msgstr "柔體點快取"
 
 msgid "Solidify Modifier"
 msgstr "實體化修改器"
-
-
-msgid "Create a solid skin by extruding, compensating for sharp angles"
-msgstr "透過擠出建立實體皮膚，補償銳角"
 
 
 msgid "Inner Crease"
@@ -29459,10 +29435,6 @@ msgid "Export PLY"
 msgstr "匯出 PLY"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "將單一物體透過法線、色彩、紋理座標軸匯出為 Stanford PLY"
-
-
 msgid "X Forward"
 msgstr "X 前進"
 
@@ -29527,6 +29499,14 @@ msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will b
 msgstr "為平滑與硬著色的面匯出法線 (硬著色的面會被匯出為獨立面)"
 
 
+msgid "Selection Only"
+msgstr "僅所選項"
+
+
+msgid "Export selected objects only"
+msgstr "僅匯出選取的物體"
+
+
 msgid "Export the active UV layer"
 msgstr "匯出作用中 UV 分層"
 
@@ -29534,10 +29514,6 @@ msgstr "匯出作用中 UV 分層"
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "匯出 STL"
-
-
-msgid "Save STL triangle mesh data from the active object"
-msgstr "從作用中物體儲存 STL 三角網格資料"
 
 
 msgid "Ascii"
@@ -29562,14 +29538,6 @@ msgstr "場景單位"
 
 msgid "Apply current scene's unit (as defined by unit scale) to exported data"
 msgstr "將目前場景的單位 (如單位規模所定義) 套用至匯出資料中"
-
-
-msgid "Selection Only"
-msgstr "僅所選項"
-
-
-msgid "Export selected objects only"
-msgstr "僅匯出選取的物體"
 
 
 msgctxt "Operator"
@@ -32870,6 +32838,10 @@ msgid "Make face and vertex normals point either outside or inside the mesh"
 msgstr "讓面與頂點法線點都在網格的外面或是內面"
 
 
+msgid "Fill Holes"
+msgstr "充填孔洞"
+
+
 msgctxt "Operator"
 msgid "Poke Faces"
 msgstr "戳裂面"
@@ -33562,6 +33534,10 @@ msgstr "選取最短路徑"
 msgctxt "Operator"
 msgid "Solidify"
 msgstr "實體化"
+
+
+msgid "Create a solid skin by extruding, compensating for sharp angles"
+msgstr "透過擠出建立實體皮膚，補償銳角"
 
 
 msgctxt "Operator"
@@ -39836,19 +39812,6 @@ msgid "Select other strips at the same time"
 msgstr "選取相同時間的其他片段"
 
 
-msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "選取作用側"
-
-
-msgid "Select strips on the nominated side of the active strip"
-msgstr "選取作用中片段的任命片段"
-
-
-msgid "The side of the handle that is selected"
-msgstr "選取的控制桿側"
-
-
 msgid "Select or deselect all strips"
 msgstr "選取或取消選取全部片段"
 
@@ -39904,6 +39867,10 @@ msgstr "覆蓋時間"
 msgctxt "Operator"
 msgid "Select Handles"
 msgstr "選取控制桿"
+
+
+msgid "The side of the handle that is selected"
+msgstr "選取的控制桿側"
 
 
 msgid "Shrink the current selection of adjacent selected strips"
@@ -40576,10 +40543,6 @@ msgstr "所選游標位置的單詞"
 
 msgid "Set cursor selection"
 msgstr "設定游標選取"
-
-
-msgid "Set selection end rather than cursor"
-msgstr "設定選取終點，而不是游標"
 
 
 msgctxt "Operator"
@@ -41551,10 +41514,6 @@ msgstr "透過放鬆角度來降低 UV 拉伸"
 
 msgid "Blend factor between stretch minimized and original"
 msgstr "在伸展最小化與原始之間的混合因子"
-
-
-msgid "Fill Holes"
-msgstr "充填孔洞"
 
 
 msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
@@ -45183,6 +45142,10 @@ msgid "Settings for interacting with Blender data"
 msgstr "Blender 資料的互動設定"
 
 
+msgid "Experimental"
+msgstr "實驗中"
+
+
 msgid "Default paths for external files"
 msgstr "外部檔案的預設路徑"
 
@@ -46851,10 +46814,6 @@ msgid "Only use finished and supported features"
 msgstr "僅使用完成的與支援的功能"
 
 
-msgid "Experimental"
-msgstr "實驗中"
-
-
 msgid "Use experimental and incomplete features that might be broken or change in the future"
 msgstr "使用實驗中與未完成的功能，可能導致失敗，或是未來有所更動"
 
@@ -47245,10 +47204,6 @@ msgstr "筆刷大小"
 
 msgid "Format type to export to"
 msgstr "要匯出的格式類型"
-
-
-msgid "VRML2"
-msgstr "VRML2"
 
 
 msgid "Export Directory"
@@ -55198,10 +55153,6 @@ msgid "Volume:"
 msgstr "音量："
 
 
-msgid "Plane:"
-msgstr "平面："
-
-
 msgid "Min/Max:"
 msgstr "最小/最大："
 
@@ -55490,12 +55441,12 @@ msgid "UVs:"
 msgstr "UV："
 
 
+msgid "Outer"
+msgstr "外部"
+
+
 msgid "Limit Method:"
 msgstr "限制方法："
-
-
-msgid "Width Method:"
-msgstr "寬度方法："
 
 
 msgid "Operation:"
@@ -55651,20 +55602,12 @@ msgid "Deform:"
 msgstr "變形："
 
 
-msgid "Crease:"
-msgstr "硬邊："
-
-
-msgid "Outer"
-msgstr "外部"
+msgid "Material Index Offset:"
+msgstr "材質索引偏移："
 
 
 msgid "Rim"
 msgstr "邊框"
-
-
-msgid "Material Index Offset:"
-msgstr "材質索引偏移："
 
 
 msgid "Aspect X"
@@ -55848,6 +55791,10 @@ msgstr "建置時忽略海洋模擬修改器"
 
 msgid "Cull Faces:"
 msgstr "淘選面："
+
+
+msgid "Crease:"
+msgstr "硬邊："
 
 
 msgid "Render:"

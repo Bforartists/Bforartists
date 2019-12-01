@@ -99,6 +99,7 @@ set(SRC
   intern/crazyspace.c
   intern/curve.c
   intern/curve_decimate.c
+  intern/curveprofile.c
   intern/customdata.c
   intern/customdata_file.c
   intern/data_transfer.c
@@ -128,6 +129,7 @@ set(SRC
   intern/image_gen.c
   intern/image_save.c
   intern/ipo.c
+  intern/kelvinlet.c
   intern/key.c
   intern/keyconfig.c
   intern/lattice.c
@@ -154,12 +156,12 @@ set(SRC
   intern/mesh_iterators.c
   intern/mesh_mapping.c
   intern/mesh_merge.c
+  intern/mesh_mirror.c
   intern/mesh_remap.c
   intern/mesh_remesh_voxel.c
   intern/mesh_runtime.c
   intern/mesh_tangent.c
   intern/mesh_validate.c
-  intern/mirror.c
   intern/modifier.c
   intern/movieclip.c
   intern/multires.c
@@ -185,7 +187,6 @@ set(SRC
   intern/pbvh_bmesh.c
   intern/pbvh_parallel.cc
   intern/pointcache.c
-  intern/curveprofile.c
   intern/report.c
   intern/rigidbody.c
   intern/scene.c
@@ -217,8 +218,8 @@ set(SRC
   intern/subdiv_stats.c
   intern/subdiv_topology.c
   intern/subsurf_ccg.c
-  intern/suggestions.c
   intern/text.c
+  intern/text_suggestions.c
   intern/texture.c
   intern/tracking.c
   intern/tracking_auto.c
@@ -266,6 +267,7 @@ set(SRC
   BKE_context.h
   BKE_crazyspace.h
   BKE_curve.h
+  BKE_curveprofile.h
   BKE_customdata.h
   BKE_customdata_file.h
   BKE_data_transfer.h
@@ -291,6 +293,7 @@ set(SRC
   BKE_image.h
   BKE_image_save.h
   BKE_ipo.h
+  BKE_kelvinlet.h
   BKE_key.h
   BKE_keyconfig.h
   BKE_lattice.h
@@ -311,11 +314,11 @@ set(SRC
   BKE_mesh.h
   BKE_mesh_iterators.h
   BKE_mesh_mapping.h
+  BKE_mesh_mirror.h
   BKE_mesh_remap.h
   BKE_mesh_remesh_voxel.h
   BKE_mesh_runtime.h
   BKE_mesh_tangent.h
-  BKE_mirror.h
   BKE_modifier.h
   BKE_movieclip.h
   BKE_multires.h
@@ -331,7 +334,6 @@ set(SRC
   BKE_particle.h
   BKE_pbvh.h
   BKE_pointcache.h
-  BKE_curveprofile.h
   BKE_report.h
   BKE_rigidbody.h
   BKE_scene.h
@@ -352,8 +354,8 @@ set(SRC
   BKE_subdiv_mesh.h
   BKE_subdiv_topology.h
   BKE_subsurf.h
-  BKE_suggestions.h
   BKE_text.h
+  BKE_text_suggestions.h
   BKE_texture.h
   BKE_tracking.h
   BKE_undo_system.h
@@ -396,8 +398,6 @@ set(LIB
   bf_modifiers
   bf_nodes
   bf_physics
-  bf_python
-  bf_python_bmesh
   bf_rna
   bf_shader_fx
 )
@@ -441,14 +441,6 @@ if(WITH_BULLET)
   )
   add_definitions(-DWITH_BULLET)
 endif()
-
-# if(WITH_MOD_CLOTH_ELTOPO)
-#   list(APPEND INC
-#     ../../../extern/eltopo
-#     ../../../extern/eltopo/eltopo3d
-#   )
-#   add_definitions(-DWITH_ELTOPO)
-# endif()
 
 if(WITH_IMAGE_OPENEXR)
   add_definitions(-DWITH_OPENEXR)
@@ -510,6 +502,10 @@ endif()
 if(WITH_PYTHON)
   list(APPEND INC
     ../python
+  )
+  list(APPEND LIB
+    bf_python
+    bf_python_bmesh
   )
   add_definitions(-DWITH_PYTHON)
 

@@ -148,7 +148,8 @@ class SEQUENCER_MT_editor_menus(Menu):
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             layout.menu("SEQUENCER_MT_navigation")
             layout.menu("SEQUENCER_MT_select")
-            layout.menu("SEQUENCER_MT_marker")
+            if st.show_markers:
+                layout.menu("SEQUENCER_MT_marker")
             layout.menu("SEQUENCER_MT_add")
             layout.menu("SEQUENCER_MT_strip")
 
@@ -2196,11 +2197,14 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 layout.prop(st, "show_backdrop", text="Preview as Backdrop")
             layout.prop(st, "show_seconds")
             layout.prop(st, "show_strip_offset")
-            layout.prop(st, "show_marker_lines")
             layout.menu("SEQUENCER_MT_view_cache")
 
             layout.use_property_split = True
             layout.prop(st, "waveform_display_type")
+
+            layout.separator()
+
+            layout.prop(st, "show_markers")
 
         if is_preview:
             layout.use_property_split = False
