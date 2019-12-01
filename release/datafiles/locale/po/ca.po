@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'99640d062234')\n"
+"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 13:23:12\n"
+"POT-Creation-Date: 2019-11-25 10:53:41\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -1008,10 +1008,6 @@ msgstr "Eines"
 
 msgid "Internal Friction"
 msgstr "Esborrar Rotació"
-
-
-msgid "Mass of cloth material"
-msgstr "Començar a renderitzar una seqüència"
 
 
 msgid "Rest Shape Key"
@@ -2207,14 +2203,6 @@ msgid "Keep Axis"
 msgstr "Ampliar"
 
 
-msgid "Keep X Axis"
-msgstr "Deseleccionar Enllaçats"
-
-
-msgid "Keep Z Axis"
-msgstr "Ampliar"
-
-
 msgid "Original Length"
 msgstr "Esborrar Origen"
 
@@ -2353,6 +2341,10 @@ msgstr "Pla"
 
 msgid "View"
 msgstr "Vista"
+
+
+msgid "Segments"
+msgstr "Crea Segment"
 
 
 msgid "Active Spline"
@@ -4638,10 +4630,6 @@ msgstr "Autotangents"
 
 msgid "End Bevel Factor"
 msgstr "Desparentar"
-
-
-msgid "Segments"
-msgstr "Crea Segment"
 
 
 msgid "Start Bevel Factor"
@@ -7619,6 +7607,10 @@ msgid "Snap"
 msgstr "Menu Snap"
 
 
+msgid "Material Specials"
+msgstr "Guardar com"
+
+
 msgid "UV Select Mode"
 msgstr "Seleccionar fila"
 
@@ -7634,10 +7626,6 @@ msgstr "Duplicar"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Afegir"
-
-
-msgid "Material Specials"
-msgstr "Guardar com"
 
 
 msgid "Shape Key Specials"
@@ -13241,10 +13229,6 @@ msgid "Export PLY"
 msgstr "Seleccionar fila"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "Texte"
-
-
 msgid "Export the active vertex color layer"
 msgstr "Render"
 
@@ -13257,6 +13241,14 @@ msgid "Apply Modifiers to the exported mesh"
 msgstr "Duplicar"
 
 
+msgid "Selection Only"
+msgstr "Amagar Seleccionats"
+
+
+msgid "Export selected objects only"
+msgstr "Seleccionar connectats"
+
+
 msgid "Export the active UV layer"
 msgstr "Seleccionar fila"
 
@@ -13266,20 +13258,8 @@ msgid "Export STL"
 msgstr "Seleccionar fila"
 
 
-msgid "Save STL triangle mesh data from the active object"
-msgstr "Seleccionar connectats"
-
-
 msgid "Batch Mode"
 msgstr "Comprimir Dades"
-
-
-msgid "Selection Only"
-msgstr "Amagar Seleccionats"
-
-
-msgid "Export selected objects only"
-msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
@@ -15153,6 +15133,10 @@ msgstr "Centre"
 
 msgid "At Cursor"
 msgstr "Seleccionar connectats"
+
+
+msgid "Fill Holes"
+msgstr "Omplir els forats"
 
 
 msgid "Median"
@@ -18957,15 +18941,6 @@ msgid "Select other strips at the same time"
 msgstr "Comprimir Dades"
 
 
-msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "Finestra de Render"
-
-
-msgid "Select strips on the nominated side of the active strip"
-msgstr "Seleccionar connectats"
-
-
 msgid "Select or deselect all strips"
 msgstr "(De)Seleccionar Tot"
 
@@ -19387,10 +19362,6 @@ msgid "Set cursor selection"
 msgstr "Seleccionar connectats"
 
 
-msgid "Set selection end rather than cursor"
-msgstr "Seleccionar connectats"
-
-
 msgctxt "Operator"
 msgid "Find"
 msgstr "Mostrar Tot"
@@ -19809,10 +19780,6 @@ msgstr "Desparentar"
 msgctxt "Operator"
 msgid "Minimize Stretch"
 msgstr "Guardar preferències"
-
-
-msgid "Fill Holes"
-msgstr "Omplir els forats"
 
 
 msgctxt "Operator"
@@ -21651,6 +21618,10 @@ msgid "File Paths"
 msgstr "Arxiu"
 
 
+msgid "Experimental"
+msgstr "Seleccionar fila"
+
+
 msgid "Default paths for external files"
 msgstr "Seleccionar connectats"
 
@@ -22145,10 +22116,6 @@ msgstr "Dreta"
 
 msgid "Feature set to use for rendering"
 msgstr "Guardar com"
-
-
-msgid "Experimental"
-msgstr "Seleccionar fila"
 
 
 msgid "Pixel filter type"
@@ -25703,10 +25670,6 @@ msgid "Clamp Region:"
 msgstr "Seleccionar fila"
 
 
-msgid "Plane:"
-msgstr "Pla"
-
-
 msgid "Display Pivot"
 msgstr "Mostrar propietats de les arestes"
 
@@ -25964,12 +25927,12 @@ msgid "Deform:"
 msgstr "Esborrar Rotació"
 
 
-msgid "Rim"
-msgstr "Superior"
-
-
 msgid "Material Index Offset:"
 msgstr "Guardar com"
+
+
+msgid "Rim"
+msgstr "Superior"
 
 
 msgid "Aspect X"
