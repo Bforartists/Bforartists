@@ -30,7 +30,6 @@
 4:Italian (Italiano):it_IT
 32:Brazilian Portuguese (Português do Brasil):pt_BR
 12:Portuguese (Português):pt_PT
-7:Swedish (Svenska):sv_SE
 14:Traditional Chinese (繁體中文):zh_TW
 #
 0:Starting:
@@ -58,6 +57,7 @@
 # No translation yet! #20:Romanian (Român):ro_RO
 17:Serbian (Српски):sr_RS
 28:Serbian Latin (Srpski latinica):sr_RS@latin
+7:Swedish (Svenska):sv_SE
 46:Thai (ภาษาไทย):th_TH
 30:Turkish (Türkçe):tr_TR
 # No translation yet! #38:Uzbek (Oʻzbek):uz_UZ

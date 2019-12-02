@@ -268,6 +268,8 @@ class GreasePencilSculptOptionsPanel:
         brush = settings.brush
 
         if tool in {'SMOOTH', 'RANDOMIZE'}:
+            
+            layout.use_property_split = False         
             layout.prop(settings, "use_edit_position", text="Affect Position")
             layout.prop(settings, "use_edit_strength", text="Affect Strength")
             layout.prop(settings, "use_edit_thickness", text="Affect Thickness")
@@ -855,6 +857,8 @@ class GreasePencilMaterialsPanel:
             if show_full_ui:
                 col.operator("object.material_slot_add", icon='ADD', text="")
                 col.operator("object.material_slot_remove", icon='REMOVE', text="")
+
+            col.separator()
 
             col.menu("GPENCIL_MT_color_context_menu", icon='DOWNARROW_HLT', text="")
 

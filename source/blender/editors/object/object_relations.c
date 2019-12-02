@@ -2588,7 +2588,7 @@ void OBJECT_OT_make_override_library(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Make Library Override";
-  ot->description = "Make a local override of this library linked data-block";
+  ot->description = "Make a local override of this library linked data-block\nIterates through the hierarchy of objects and collections based on the selection";
   ot->idname = "OBJECT_OT_make_override_library";
 
   /* api callbacks */

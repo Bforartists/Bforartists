@@ -60,6 +60,7 @@
 #include "BKE_mesh_mapping.h"
 #include "BKE_mesh_runtime.h"
 #include "BKE_modifier.h"
+#include "BKE_multires.h"
 #include "BKE_object.h"
 #include "BKE_paint.h"
 #include "BKE_pbvh.h"
@@ -654,19 +655,19 @@ bool BKE_paint_select_elem_test(Object *ob)
 
 void BKE_paint_cavity_curve_preset(Paint *p, int preset)
 {
-  CurveMap *cm = NULL;
+  CurveMapping *cumap = NULL;
+  CurveMap *cuma = NULL;
 
   if (!p->cavity_curve) {
     p->cavity_curve = BKE_curvemapping_add(1, 0, 0, 1, 1);
   }
+  cumap = p->cavity_curve;
+  cumap->flag &= ~CUMA_EXTEND_EXTRAPOLATE;
+  cumap->preset = preset;
 
-  cm = p->cavity_curve->cm;
-  cm->flag &= ~CUMA_EXTEND_EXTRAPOLATE;
-
-  p->cavity_curve->preset = preset;
-  BKE_curvemap_reset(
-      cm, &p->cavity_curve->clipr, p->cavity_curve->preset, CURVEMAP_SLOPE_POSITIVE);
-  BKE_curvemapping_changed(p->cavity_curve, false);
+  cuma = cumap->cm;
+  BKE_curvemap_reset(cuma, &cumap->clipr, cumap->preset, CURVEMAP_SLOPE_POSITIVE);
+  BKE_curvemapping_changed(cumap, false);
 }
 
 eObjectMode BKE_paint_object_mode_from_paintmode(ePaintMode mode)
@@ -1117,7 +1118,7 @@ MultiresModifierData *BKE_sculpt_multires_active(Scene *scene, Object *ob)
         continue;
       }
 
-      if (mmd->sculptlvl > 0) {
+      if (BKE_multires_sculpt_level_get(mmd) > 0) {
         return mmd;
       }
       else {
@@ -1360,7 +1361,7 @@ int BKE_sculpt_mask_layers_ensure(Object *ob, MultiresModifierData *mmd)
    * isn't one already */
   if (mmd && !CustomData_has_layer(&me->ldata, CD_GRID_PAINT_MASK)) {
     GridPaintMask *gmask;
-    int level = max_ii(1, mmd->sculptlvl);
+    int level = max_ii(1, BKE_multires_sculpt_level_get(mmd));
     int gridsize = BKE_ccg_gridsize(level);
     int gridarea = gridsize * gridsize;
     int i, j;

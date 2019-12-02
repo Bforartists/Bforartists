@@ -517,17 +517,6 @@ if(WITH_ALEMBIC)
   set(ALEMBIC_FOUND 1)
 endif()
 
-if(WITH_MOD_CLOTH_ELTOPO)
-  set(LAPACK ${LIBDIR}/lapack)
-  # set(LAPACK_INCLUDE_DIR ${LAPACK}/include)
-  set(LAPACK_LIBPATH ${LAPACK}/lib)
-  set(LAPACK_LIBRARIES
-    ${LIBDIR}/lapack/lib/libf2c.lib
-    ${LIBDIR}/lapack/lib/clapack_nowrap.lib
-    ${LIBDIR}/lapack/lib/BLAS_nowrap.lib
-  )
-endif()
-
 if(WITH_IMAGE_OPENJPEG)
   set(OPENJPEG ${LIBDIR}/openjpeg)
   set(OPENJPEG_INCLUDE_DIRS ${OPENJPEG}/include/openjpeg-2.3)
@@ -573,6 +562,9 @@ if(WITH_TBB)
   set(TBB_LIBRARIES optimized ${LIBDIR}/tbb/lib/tbb.lib debug ${LIBDIR}/tbb/lib/tbb_debug.lib)
   set(TBB_INCLUDE_DIR ${LIBDIR}/tbb/include)
   set(TBB_INCLUDE_DIRS ${TBB_INCLUDE_DIR})
+  if(WITH_TBB_MALLOC_PROXY)
+    add_definitions(-DWITH_TBB_MALLOC)
+  endif()
 else()
   if(WITH_OPENIMAGEDENOISE)
     message(STATUS "TBB disabled, also disabling OpenImageDenoise")
@@ -587,17 +579,6 @@ endif()
 # used in many places so include globally, like OpenGL
 blender_include_dirs_sys("${PTHREADS_INCLUDE_DIRS}")
 
-# Find signtool.
-set(ProgramFilesX86_NAME "ProgramFiles(x86)") #env dislikes the ( )
-find_program(SIGNTOOL_EXE signtool
-  HINTS
-    "$ENV{${ProgramFilesX86_NAME}}/Windows Kits/10/bin/x86/"
-    "$ENV{ProgramFiles}/Windows Kits/10/bin/x86/"
-    "$ENV{${ProgramFilesX86_NAME}}/Windows Kits/8.1/bin/x86/"
-    "$ENV{ProgramFiles}/Windows Kits/8.1/bin/x86/"
-    "$ENV{${ProgramFilesX86_NAME}}/Windows Kits/8.0/bin/x86/"
-    "$ENV{ProgramFiles}/Windows Kits/8.0/bin/x86/"
-)
 set(WINTAB_INC ${LIBDIR}/wintab/include)
 
 if(WITH_OPENAL)
@@ -618,10 +599,6 @@ if(WITH_CODEC_SNDFILE)
   set(LIBSNDFILE_INCLUDE_DIRS ${LIBSNDFILE}/include)
   set(LIBSNDFILE_LIBPATH ${LIBSNDFILE}/lib) # TODO, deprecate
   set(LIBSNDFILE_LIBRARIES ${LIBSNDFILE_LIBPATH}/libsndfile-1.lib)
-endif()
-
-if(WITH_RAYOPTIMIZATION AND SUPPORT_SSE_BUILD)
-  add_definitions(-D__SSE__ -D__MMX__)
 endif()
 
 if(WITH_CYCLES_OSL)
