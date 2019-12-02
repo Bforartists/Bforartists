@@ -2633,6 +2633,7 @@ keyconfig_data = \
        ],
       },
      ),
+     ("paint.grab_clone", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
     ],
    },
   ),
