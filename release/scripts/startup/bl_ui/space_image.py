@@ -94,8 +94,8 @@ class IMAGE_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("image.view_zoom_in", icon = "ZOOM_IN")
-        layout.operator("image.view_zoom_out", icon = "ZOOM_OUT")
+        layout.operator("image.view_zoom_in", text = "Zoom In", icon = "ZOOM_IN")
+        layout.operator("image.view_zoom_out", text = "Zoom Out", icon = "ZOOM_OUT")
         layout.operator("image.view_zoom_border", icon = "ZOOM_BORDER")
 
         layout.separator()
@@ -110,7 +110,11 @@ class IMAGE_MT_view(Menu):
         layout.operator("image.view_all", icon = "VIEWALL" )
         layout.operator("image.view_all_fit", text="View Fit", icon = "VIEW_FIT") # bfa - separated tooltip
 
-        layout.operator("image.view_center_cursor", text="Center View to Cursor")
+        if sima.mode != 'UV':
+            if sima.ui_mode == 'MASK':
+                layout.operator("image.view_center_cursor", text="Center View to Cursor", icon = "CENTERTOCURSOR")
+        elif sima.mode == 'UV':
+            layout.operator("image.view_center_cursor", text="Center View to Cursor", icon = "CENTERTOCURSOR")
 
         layout.separator()
 
@@ -142,7 +146,7 @@ class IMAGE_MT_view_zoom(Menu):
 
             layout.operator(
                 "image.view_zoom_ratio",
-                text=iface_("Zoom %d:%d") % (a, b),
+                text=iface_("Zoom %d:%d") % (a, b), icon = "ZOOM_SET",
                 translate=False,
             ).ratio = a / b
 
@@ -219,7 +223,7 @@ class IMAGE_MT_select(Menu):
 
         layout.operator("uv.select_pinned", text = "Pinned", icon = "PINNED")
         layout.operator("uv.select_split", text = "Split", icon = "SPLIT")
-        layout.operator("uv.select_overlap")
+        layout.operator("uv.select_overlap", text = "Overlap", icon = "OVERLAP")
 
         layout.separator()
 
@@ -330,16 +334,16 @@ class IMAGE_MT_image(Menu):
             layout.separator()
 
             layout.menu("IMAGE_MT_image_invert")
-            layout.operator("image.resize", text="Resize")
+            layout.operator("image.resize", text="Resize", icon = "MAN_SCALE")
 
         if ima and not show_render:
             if ima.packed_file:
                 if len(ima.filepath):
                     layout.separator()
-                    layout.operator("image.unpack", text="Unpack")
+                    layout.operator("image.unpack", text="Unpack", icon = "PACKAGE")
             else:
                 layout.separator()
-                layout.operator("image.pack", text="Pack")
+                layout.operator("image.pack", text="Pack", icon = "PACKAGE")
 
 
 class IMAGE_MT_image_invert(Menu):
@@ -1364,16 +1368,7 @@ class IMAGE_PT_tools_brush_display(BrushButtonsPanel, Panel):
 
         col = layout.column()
 
-        col.label(text="Curve:")
-
         row = col.row(align=True)
-        row.prop(
-            brush,
-            "use_cursor_overlay",
-            text="",
-            toggle=True,
-            icon='HIDE_ON' if brush.use_cursor_overlay else 'HIDE_OFF',
-        )
 
         sub = row.row(align=True)
         sub.prop(brush, "cursor_overlay_alpha", text="Curve Alpha")
@@ -1384,7 +1379,7 @@ class IMAGE_PT_tools_brush_display(BrushButtonsPanel, Panel):
         )
 
         col.active = brush.brush_capabilities.has_overlay
-        col.label(text="Texture:")
+
         row = col.row(align=True)
 
         sub = row.row(align=True)
@@ -1392,18 +1387,9 @@ class IMAGE_PT_tools_brush_display(BrushButtonsPanel, Panel):
         sub.prop(brush, "use_primary_overlay_override", toggle=True, text="", icon='BRUSH_DATA')
         if tex_slot.map_mode != 'STENCIL':
             row.prop(
-                brush,
-                "use_primary_overlay",
-                text="",
-                toggle=True,
-                icon='HIDE_ON' if brush.use_primary_overlay else 'HIDE_OFF',
+                brush, "use_primary_overlay", text="", toggle=True,
+                icon='HIDE_OFF' if brush.use_primary_overlay else 'HIDE_ON',
             )
-
-        sub = row.row(align=True)
-        sub.prop(brush, "texture_overlay_alpha", text="Alpha")
-        sub.prop(brush, "use_primary_overlay_override", toggle=True, text="", icon='BRUSH_DATA')
-
-        col.label(text="Mask Texture:")
 
         row = col.row(align=True)
 
@@ -1412,11 +1398,8 @@ class IMAGE_PT_tools_brush_display(BrushButtonsPanel, Panel):
         sub.prop(brush, "use_secondary_overlay_override", toggle=True, text="", icon='BRUSH_DATA')
         if tex_slot_mask.map_mode != 'STENCIL':
             row.prop(
-                brush,
-                "use_secondary_overlay",
-                text="",
-                toggle=True,
-                icon='HIDE_ON' if brush.use_secondary_overlay else 'HIDE_OFF',
+                brush, "use_secondary_overlay", text="", toggle=True,
+                icon='HIDE_OFF' if brush.use_secondary_overlay else 'HIDE_ON',
             )
 
 
@@ -1566,7 +1549,6 @@ class IMAGE_PT_paint_stroke(BrushButtonsPanel, Panel):
         col.separator()
 
         row = col.row(align=True)
-        row.prop(brush, "use_relative_jitter", icon_only=True)
         if brush.use_relative_jitter:
             row.prop(brush, "jitter", slider=True)
         else:

@@ -1844,6 +1844,13 @@ class WM_OT_toolbar_prompt(Operator):
             context.workspace.status_text_set(None)
             return {'FINISHED'}
 
+        # Pressing entry even again exists, as long as it's not mapped to a key (for convenience).
+        if event_type == self._init_event_type:
+            if event_value == 'RELEASE':
+                if not (event.ctrl or event.alt or event.shift or event.oskey):
+                    context.workspace.status_text_set(None)
+                    return {'CANCELLED'}
+
         return {'RUNNING_MODAL'}
 
     def invoke(self, context, event):
@@ -2490,7 +2497,7 @@ class WM_MT_splash(Menu):
 
         layout.separator()
         
-        layout.label(text = "Bforartists 2 Alpha 0.7.0 is based on Blender 2.81 Alpha")
+        layout.label(text = "Bforartists 2 Alpha 0.8.0 is based on Blender 2.81 final / 2.82 Alpha")
 
         layout.separator()
 

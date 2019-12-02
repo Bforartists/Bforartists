@@ -2401,13 +2401,9 @@ static int wm_handler_fileselect_do(bContext *C,
 
           if (screen->temp && (file_sa->spacetype == SPACE_FILE)) {
             int win_size[2];
-
-            /* Get DPI/pixelsize independent size to be stored in preferences. */
-            WM_window_set_dpi(temp_win); /* Ensure the DPI is taken from the right window. */
-            win_size[0] = WM_window_pixels_x(temp_win) / UI_DPI_FAC;
-            win_size[1] = WM_window_pixels_y(temp_win) / UI_DPI_FAC;
-
-            ED_fileselect_params_to_userdef(file_sa->spacedata.first, win_size);
+            bool is_maximized;
+            ED_fileselect_window_params_get(temp_win, win_size, &is_maximized);
+            ED_fileselect_params_to_userdef(file_sa->spacedata.first, win_size, is_maximized);
 
             if (BLI_listbase_is_single(&file_sa->spacedata)) {
               BLI_assert(ctx_win != temp_win);
@@ -2437,7 +2433,7 @@ static int wm_handler_fileselect_do(bContext *C,
         }
 
         if (!temp_win && ctx_sa->full) {
-          ED_fileselect_params_to_userdef(ctx_sa->spacedata.first, NULL);
+          ED_fileselect_params_to_userdef(ctx_sa->spacedata.first, NULL, false);
           ED_screen_full_prevspace(C, ctx_sa);
         }
       }
@@ -2854,7 +2850,7 @@ static int wm_handlers_do_intern(bContext *C, wmEvent *event, ListBase *handlers
           if (wm_gizmomap_highlight_set(gzmap, C, gz, part)) {
             if (gz != NULL) {
               if (U.flag & USER_TOOLTIPS) {
-                WM_tooltip_timer_init(C, CTX_wm_window(C), region, WM_gizmomap_tooltip_init);
+                WM_tooltip_timer_init(C, CTX_wm_window(C), area, region, WM_gizmomap_tooltip_init);
               }
             }
           }

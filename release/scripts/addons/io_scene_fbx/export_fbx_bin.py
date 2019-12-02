@@ -1328,10 +1328,10 @@ def fbx_data_material_elements(root, ma, scene_data):
     elem_props_template_set(tmpl, props, "p_number", b"TransparencyFactor", 1.0 - ma_wrap.alpha)
     elem_props_template_set(tmpl, props, "p_number", b"Opacity", ma_wrap.alpha)
     elem_props_template_set(tmpl, props, "p_vector_3d", b"NormalMap", (0.0, 0.0, 0.0))
+    elem_props_template_set(tmpl, props, "p_double", b"BumpFactor", ma_wrap.normalmap_strength)
     # Not sure about those...
     """
     b"Bump": ((0.0, 0.0, 0.0), "p_vector_3d"),
-    b"BumpFactor": (1.0, "p_double"),
     b"DisplacementColor": ((0.0, 0.0, 0.0), "p_color_rgb"),
     b"DisplacementFactor": (0.0, "p_double"),
     """

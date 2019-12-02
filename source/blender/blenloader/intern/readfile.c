@@ -74,6 +74,7 @@
 #include "DNA_object_types.h"
 #include "DNA_packedFile_types.h"
 #include "DNA_particle_types.h"
+#include "DNA_curveprofile_types.h"
 #include "DNA_lightprobe_types.h"
 #include "DNA_rigidbody_types.h"
 #include "DNA_text_types.h"
@@ -132,6 +133,7 @@
 #include "BKE_paint.h"
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
+#include "BKE_curveprofile.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
@@ -156,6 +158,9 @@
 #include "readfile.h"
 
 #include <errno.h>
+
+/* Make preferences read-only. */
+#define U (*((const UserDef *)&U))
 
 /**
  * READ
@@ -2666,6 +2671,7 @@ static void direct_link_id(FileData *fd, ID *id)
   if (id->override_library) {
     id->override_library = newdataadr(fd, id->override_library);
     link_list_ex(fd, &id->override_library->properties, direct_link_id_override_property_cb);
+    id->override_library->runtime = NULL;
   }
 
   DrawDataList *drawdata = DRW_drawdatalist_from_id(id);
@@ -2693,6 +2699,19 @@ static void direct_link_curvemapping(FileData *fd, CurveMapping *cumap)
     cumap->cm[a].table = NULL;
     cumap->cm[a].premultable = NULL;
   }
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Read CurveProfile
+ * \{ */
+
+static void direct_link_curveprofile(FileData *fd, CurveProfile *profile)
+{
+  profile->path = newdataadr(fd, profile->path);
+  profile->table = NULL;
+  profile->segments = NULL;
 }
 
 /** \} */
@@ -5802,6 +5821,13 @@ static void direct_link_modifiers(FileData *fd, ListBase *lb)
         }
       }
     }
+    else if (md->type == eModifierType_Bevel) {
+      BevelModifierData *bmd = (BevelModifierData *)md;
+      bmd->custom_profile = newdataadr(fd, bmd->custom_profile);
+      if (bmd->custom_profile) {
+        direct_link_curveprofile(fd, bmd->custom_profile);
+      }
+    }
   }
 }
 
@@ -6758,6 +6784,13 @@ static void direct_link_scene(FileData *fd, Scene *sce)
     if (sce->toolsettings->gp_sculpt.cur_primitive) {
       direct_link_curvemapping(fd, sce->toolsettings->gp_sculpt.cur_primitive);
     }
+
+    /* Relink toolsettings curve profile */
+    sce->toolsettings->custom_bevel_profile_preset = newdataadr(
+        fd, sce->toolsettings->custom_bevel_profile_preset);
+    if (sce->toolsettings->custom_bevel_profile_preset) {
+      direct_link_curveprofile(fd, sce->toolsettings->custom_bevel_profile_preset);
+    }
   }
 
   if (sce->ed) {
@@ -7343,10 +7376,7 @@ static void direct_link_area(FileData *fd, ScrArea *area)
     }
     else if (sl->spacetype == SPACE_TEXT) {
       SpaceText *st = (SpaceText *)sl;
-
-      st->drawcache = NULL;
-      st->scroll_accum[0] = 0.0f;
-      st->scroll_accum[1] = 0.0f;
+      memset(&st->runtime, 0, sizeof(st->runtime));
     }
     else if (sl->spacetype == SPACE_SEQ) {
       SpaceSeq *sseq = (SpaceSeq *)sl;

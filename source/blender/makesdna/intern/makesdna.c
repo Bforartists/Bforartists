@@ -131,6 +131,7 @@ static const char *includefiles[] = {
     "DNA_layer_types.h",
     "DNA_workspace_types.h",
     "DNA_lightprobe_types.h",
+    "DNA_curveprofile_types.h",
 
     /* see comment above before editing! */
 
@@ -158,7 +159,8 @@ static short *types_size_native;
 static short *types_size_32;
 /** Contains sizes as they are calculated on 64 bit systems. */
 static short *types_size_64;
-/** At `sp = structs[a]` is the first address of a struct definition:
+/**
+ * At `sp = structs[a]` is the first address of a struct definition:
  * - `sp[0]` is type number.
  * - `sp[1]` is the length of the element array (next).
  * - `sp[2]` sp[3] is [(type_index, name_index), ..] (number of pairs is defined by `sp[1]`),
@@ -1590,6 +1592,7 @@ int main(int argc, char **argv)
 #include "DNA_layer_types.h"
 #include "DNA_workspace_types.h"
 #include "DNA_lightprobe_types.h"
+#include "DNA_curveprofile_types.h"
 
 /* end of list */
 

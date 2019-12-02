@@ -4112,7 +4112,7 @@ static void SCREEN_OT_header_toggle_editortypemenu(wmOperatorType *ot)
   ot->name = "Hide Editortype menu";
   ot->idname = "SCREEN_OT_header_toggle_editortypemenu";
   ot->description =
-      "Hide Editortype menu\nShows or hides the Editortype menu to change the editor type";
+      "Shows or hides the Editortype menu to change the editor type";
 
   /* api callbacks */
   ot->exec = header_toggle_editortypemenu_exec;
@@ -4589,8 +4589,7 @@ static int match_region_with_redraws(int spacetype,
         break;
       case SPACE_ACTION:
         /* if only 1 window or 3d windows, we do timeline too
-         * NOTE: Now we do do action editor in all these cases, since timeline is here
-         */
+         * NOTE: Now we do action editor in all these cases, since timeline is here. */
         if ((redraws & (TIME_ALL_ANIM_WIN | TIME_REGION | TIME_ALL_3D_WIN)) || from_anim_edit) {
           return 1;
         }

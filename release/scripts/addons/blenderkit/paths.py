@@ -50,6 +50,7 @@ def get_bkit_url():
         url = BLENDERKIT_MAIN
     return url
 
+
 def find_in_local(text=''):
     fs = []
     for p, d, f in os.walk('.'):
@@ -58,8 +59,10 @@ def find_in_local(text=''):
                 fs.append(file)
     return fs
 
+
 def get_api_url():
     return get_bkit_url() + BLENDERKIT_API
+
 
 def get_oauth_landing_url():
     return get_bkit_url() + BLENDERKIT_OAUTH_LANDING_URL
@@ -86,7 +89,7 @@ def get_temp_dir(subdir=None):
     if not os.path.exists(tempdir):
         os.makedirs(tempdir)
     if subdir is not None:
-        tempdir = tempdir + os.sep + subdir
+        tempdir = os.path.join(tempdir, subdir)
         if not os.path.exists(tempdir):
             os.makedirs(tempdir)
     return tempdir
@@ -108,7 +111,7 @@ def get_download_dirs(asset_type):
 
         subdirs = ['brushes', 'textures', 'models', 'scenes', 'materials']
         for subd in subdirs:
-            subdir = ddir + os.sep + subd
+            subdir = os.path.join(ddir, subd)
             if not os.path.exists(subdir):
                 os.makedirs(subdir)
             if subdmapping[asset_type] == subd:
@@ -123,7 +126,7 @@ def get_download_dirs(asset_type):
 
         subdirs = ['textures', 'models', 'scenes', 'materials']  # brushes get stored only globally.
         for subd in subdirs:
-            subdir = ddir + os.sep + subd
+            subdir = os.path.join(ddir, subd)
             if not os.path.exists(subdir):
                 os.makedirs(subdir)
             if subdmapping[asset_type] == subd:

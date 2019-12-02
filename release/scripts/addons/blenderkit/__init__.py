@@ -91,6 +91,17 @@ def scene_load(context):
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     preferences.login_attempt = False
 
+def check_timers_timer():
+    ''' checks if all timers are registered regularly. Prevents possible bugs from stopping the addon.'''
+    if not bpy.app.timers.is_registered(search.timer_update):
+        bpy.app.timers.register(search.timer_update)
+    if not bpy.app.timers.is_registered(download.timer_update):
+        bpy.app.timers.register(download.timer_update)
+    if not (bpy.app.timers.is_registered(tasks_queue.queue_worker)):
+        bpy.app.timers.register(tasks_queue.queue_worker)
+    if not bpy.app.timers.is_registered(bg_blender.bg_update):
+        bpy.app.timers.register(bg_blender.bg_update)
+    return 5.0
 
 licenses = (
     ('royalty_free', 'Royalty Free', 'royalty free commercial license'),
@@ -399,7 +410,19 @@ def update_tags(self, context):
     if props.tags != ns:
         props.tags = ns
 
+def update_free(self, context):
+    if self.is_free == False:
+        self.is_free = True
+        title = "All BlenderKit materials are free"
+        message = "Any material uploaded to BlenderKit is free." \
+                  " However, it can still earn money for the author," \
+                  " based on our fair share system. " \
+                  "Part of subscription is sent to artists based on usage by paying users."
 
+        def draw_message(self, context):
+            ui_panels.label_multiline(self.layout, text=message, icon='NONE', width=-1)
+
+        bpy.context.window_manager.popup_menu(draw_message, title=title, icon='INFO')
 
 class BlenderKitCommonUploadProps(object):
     id: StringProperty(
@@ -598,6 +621,10 @@ class BlenderKitMaterialUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
         description="shaders used in asset, autofilled",
         default="",
     )
+    is_free: BoolProperty(name="Free for Everyone",
+                          description="You consent you want to release this asset as free for everyone",
+                          default=True, update=update_free
+                          )
 
     uv: BoolProperty(name="Needs UV", description="needs an UV set", default=False)
     # printable_3d : BoolProperty( name = "3d printable", description = "can be 3d printed", default = False)
@@ -1481,10 +1508,15 @@ def register():
     bkit_oauth.register()
     tasks_queue.register()
 
+    bpy.app.timers.register(check_timers_timer)
+
     bpy.app.handlers.load_post.append(scene_load)
 
 
 def unregister():
+
+    bpy.app.timers.unregister(check_timers_timer)
+
     ui.unregister_ui()
     search.unregister_search()
     asset_inspector.unregister_asset_inspector()
