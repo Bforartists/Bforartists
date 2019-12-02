@@ -19,7 +19,7 @@
 bl_info = {
     "name": "Simplify Curves+",
     "author": "testscreenings, Michael Soluyanov",
-    "version": (1, 1, 1),
+    "version": (1, 1, 2),
     "blender": (2, 80, 0),
     "location": "3D View, Dopesheet & Graph Editors",
     "description": "Simplify Curves: 3dview, Dopesheet, Graph. Distance Merge: 3d view curve edit",
@@ -262,7 +262,7 @@ def main(context, obj, options, curve_dimension):
     # go through splines
     for spline_i, spline in enumerate(splines):
         # test if spline is a long enough
-        if len(spline.points) >= 7 or keepShort:
+        if len(spline.points) >= 3 or keepShort:
             # check what type of spline to create
             if output == 'INPUT':
                 splineType = spline.type
@@ -351,7 +351,7 @@ def fcurves_simplify(context, obj, options, fcurves):
     # go through fcurves
     for fcurve_i, fcurve in enumerate(fcurves):
         # test if fcurve is long enough
-        if len(fcurve) >= 7:
+        if len(fcurve) >= 3:
             # simplify spline according to mode
             if mode == 'DISTANCE':
                 newVerts = simplify_RDP(fcurve, options)
@@ -378,20 +378,21 @@ def fcurves_simplify(context, obj, options, fcurves):
 # ### MENU append ###
 
 def menu_func(self, context):
-    self.layout.operator("graph.simplifya")
+    self.layout.operator("graph.simplify")
 
 
 def menu(self, context):
-    self.layout.operator("curve.simplifya", text="Curve Simplify", icon="CURVE_DATA")
+    self.layout.operator("curve.simplify", text="Curve Simplify", icon="CURVE_DATA")
+
 
 
 # ### ANIMATION CURVES OPERATOR ###
 
-class GRAPH_OT_simplifya(Operator):
-    bl_idname = "graph.simplifya"
+class GRAPH_OT_simplify(Operator):
+    bl_idname = "graph.simplify"
     bl_label = "Simplify F-Curves"
     bl_description = ("Simplify selected Curves\n"
-                      "Does not operate on short Splines (less than 6 points)")
+                      "Does not operate on short Splines (less than 3 points)")
     bl_options = {'REGISTER', 'UNDO'}
 
     # Properties
@@ -406,7 +407,7 @@ class GRAPH_OT_simplifya(Operator):
     k_thresh: FloatProperty(
             name="k",
             min=0, soft_min=0,
-            default=0, precision=3,
+            default=0, precision=5,
             description="Threshold"
             )
     pointsNr: IntProperty(
@@ -420,7 +421,8 @@ class GRAPH_OT_simplifya(Operator):
             name="Error",
             description="Maximum allowed distance error",
             min=0.0, soft_min=0.0,
-            default=0, precision=3
+            default=0, precision=5,
+            step = 0.1
             )
     degreeOut: IntProperty(
             name="Degree",
@@ -433,7 +435,7 @@ class GRAPH_OT_simplifya(Operator):
             name="Distance error",
             description="Maximum allowed distance error in Blender Units",
             min=0, soft_min=0,
-            default=0.0, precision=3
+            default=0.0, precision=5
             )
     fcurves = []
 
@@ -479,8 +481,8 @@ class GRAPH_OT_simplifya(Operator):
 
 
 # ### Curves OPERATOR ###
-class CURVE_OT_simplifya(Operator):
-    bl_idname = "curve.simplifya"
+class CURVE_OT_simplify(Operator):
+    bl_idname = "curve.simplify"
     bl_label = "Simplify Curves"
     bl_description = ("Simplify the existing Curve based upon the chosen settings\n"
                       "Notes: Needs an existing Curve object,\n"
@@ -511,7 +513,7 @@ class CURVE_OT_simplifya(Operator):
     k_thresh: FloatProperty(
             name="k",
             min=0, soft_min=0,
-            default=0, precision=3,
+            default=0, precision=5,
             description="Threshold"
             )
     pointsNr: IntProperty(
@@ -525,7 +527,8 @@ class CURVE_OT_simplifya(Operator):
             name="Error",
             description="Maximum allowed distance error in Blender Units",
             min=0, soft_min=0,
-            default=0.0, precision=3
+            default=0.0, precision=5,
+            step = 0.1
             )
     degreeOut: IntProperty(
             name="Degree",
@@ -542,7 +545,7 @@ class CURVE_OT_simplifya(Operator):
             )
     keepShort: BoolProperty(
             name="Keep short splines",
-            description="Keep short splines (less than 7 points)",
+            description="Keep short splines (less than 3 points)",
             default=True
             )
 
@@ -581,7 +584,7 @@ class CURVE_OT_simplifya(Operator):
 
             main(context, obj, options, curve_dimension)
         except Exception as e:
-            error_handlers(self, "curve.simplifya", e, "Simplify Curves")
+            error_handlers(self, "curve.simplify", e, "Simplify Curves")
             return {'CANCELLED'}
 
         return {'FINISHED'}
@@ -590,68 +593,99 @@ class CURVE_OT_simplifya(Operator):
 
 def main_rd(context, distance = 0.01):
 
-    obj = context.active_object
-    dellist = []
-
-    for spline in obj.data.splines:
-        if len(spline.bezier_points) > 1:
-            for i in range(0, len(spline.bezier_points)):
-
-                if i == 0:
-                    ii = len(spline.bezier_points) - 1
-                else:
-                    ii = i - 1
-
-                dot = spline.bezier_points[i];
-                dot1 = spline.bezier_points[ii];
-
-                while dot1 in dellist and i != ii:
-                    ii -= 1
-                    if ii < 0:
-                        ii = len(spline.bezier_points)-1
-                    dot1 = spline.bezier_points[ii]
-
-                if dot.select_control_point and dot1.select_control_point and (i!=0 or spline.use_cyclic_u):
-
-                    if (dot.co-dot1.co).length < distance:
-                        # remove points and recreate hangles
-                        dot1.handle_right_type = "FREE"
-                        dot1.handle_right = dot.handle_right
-                        dot1.co = (dot.co + dot1.co) / 2
-                        dellist.append(dot)
-
-                    else:
-                        # Handles that are on main point position converts to vector,
-                        # if next handle are also vector
-                        if dot.handle_left_type == 'VECTOR' and (dot1.handle_right - dot1.co).length < distance:
-                            dot1.handle_right_type = "VECTOR"
-                        if dot1.handle_right_type == 'VECTOR' and (dot.handle_left - dot.co).length < distance:
-                            dot.handle_left_type = "VECTOR"
-
-
+    selected_Curves = context.selected_objects
+    if bpy.ops.object.mode_set.poll():
+        bpy.ops.object.mode_set(mode='EDIT')
+        
+    for curve in selected_Curves:
+        bezier_dellist = []
+        dellist = []
+    
+        for spline in curve.data.splines: 
+            if spline.type == 'BEZIER':
+                if len(spline.bezier_points) > 1:
+                    for i in range(0, len(spline.bezier_points)): 
+                        
+                        if i == 0:
+                            ii = len(spline.bezier_points) - 1
+                        else:        
+                            ii = i - 1
+                            
+                        dot = spline.bezier_points[i];
+                        dot1 = spline.bezier_points[ii];   
+                            
+                        while dot1 in bezier_dellist and i != ii:
+                            ii -= 1
+                            if ii < 0: 
+                                ii = len(spline.bezier_points)-1
+                            dot1 = spline.bezier_points[ii]
+                            
+                        if dot.select_control_point and dot1.select_control_point and (i!=0 or spline.use_cyclic_u):   
+                    
+                            if (dot.co-dot1.co).length < distance:
+                                # remove points and recreate hangles
+                                dot1.handle_right_type = "FREE"
+                                dot1.handle_right = dot.handle_right
+                                dot1.co = (dot.co + dot1.co) / 2
+                                bezier_dellist.append(dot)
+                                
+                            else:
+                                # Handles that are on main point position converts to vector,
+                                # if next handle are also vector
+                                if dot.handle_left_type == 'VECTOR' and (dot1.handle_right - dot1.co).length < distance:
+                                    dot1.handle_right_type = "VECTOR"
+                                if dot1.handle_right_type == 'VECTOR' and (dot.handle_left - dot.co).length < distance:
+                                    dot.handle_left_type = "VECTOR"  
+            else:
+                if len(spline.points) > 1:
+                    for i in range(0, len(spline.points)): 
+                        
+                        if i == 0:
+                            ii = len(spline.points) - 1
+                        else:        
+                            ii = i - 1
+                            
+                        dot = spline.points[i];
+                        dot1 = spline.points[ii];   
+                            
+                        while dot1 in dellist and i != ii:
+                            ii -= 1
+                            if ii < 0: 
+                                ii = len(spline.points)-1
+                            dot1 = spline.points[ii]
+                            
+                        if dot.select and dot1.select and (i!=0 or spline.use_cyclic_u):   
+                    
+                            if (dot.co-dot1.co).length < distance:
+                                dot1.co = (dot.co + dot1.co) / 2
+                                dellist.append(dot)
 
     bpy.ops.curve.select_all(action = 'DESELECT')
 
-    for dot in dellist:
+    for dot in bezier_dellist:
         dot.select_control_point = True
-
+    
+    for dot in dellist:
+        dot.select = True
+    
+    bezier_count = len(bezier_dellist)
     count = len(dellist)
-
+    
     bpy.ops.curve.delete(type = 'VERT')
+    
+    bpy.ops.curve.select_all(action = 'DESELECT')
+    
+    return bezier_count + count
 
-    bpy.ops.curve.select_all(action = 'SELECT')
-
-    return count
 
 
-
-class Curve_OT_CurveRemvDbsa(bpy.types.Operator):
+class Curve_OT_CurveRemvDbs(bpy.types.Operator):
     """Merge consecutive points that are near to each other"""
-    bl_idname = 'curve.remove_doublesa'
+    bl_idname = 'curve.remove_double'
     bl_label = 'Merge By Distance'
     bl_options = {'REGISTER', 'UNDO'}
 
-    distance: bpy.props.FloatProperty(name = 'Distance', default = 0.01, min = 0.0001, max = 10.0, step = 1)
+    distance: bpy.props.FloatProperty(name = 'Distance', default = 0.01, soft_min = 0.001, step = 0.1)
 
     @classmethod
     def poll(cls, context):
@@ -664,13 +698,13 @@ class Curve_OT_CurveRemvDbsa(bpy.types.Operator):
         return {'FINISHED'}
 
 def menu_func_rd(self, context):
-    self.layout.operator(Curve_OT_CurveRemvDbsa.bl_idname, text='Merge By Distance')
+    self.layout.operator(Curve_OT_CurveRemvDbs.bl_idname, text='Merge By Distance')
 
 # Register
 classes = [
-    GRAPH_OT_simplifya,
-    CURVE_OT_simplifya,
-    Curve_OT_CurveRemvDbsa,
+    GRAPH_OT_simplify,
+    CURVE_OT_simplify,
+    Curve_OT_CurveRemvDbs,
 ]
 
 
@@ -679,8 +713,8 @@ def register():
     for cls in classes:
         register_class(cls)
 
-    bpy.types.GRAPH_MT_channel.append(menu_func)
-    bpy.types.DOPESHEET_MT_channel.append(menu_func)
+    #bpy.types.GRAPH_MT_channel.append(menu_func)
+    #bpy.types.DOPESHEET_MT_channel.append(menu_func)
     bpy.types.VIEW3D_MT_curve_add.append(menu)
     bpy.types.VIEW3D_MT_edit_curve_context_menu.prepend(menu)
     bpy.types.VIEW3D_MT_edit_curve_context_menu.prepend(menu_func_rd)
@@ -691,8 +725,8 @@ def unregister():
     for cls in reversed(classes):
         unregister_class(cls)
 
-    bpy.types.GRAPH_MT_channel.remove(menu_func)
-    bpy.types.DOPESHEET_MT_channel.remove(menu_func)
+    #bpy.types.GRAPH_MT_channel.remove(menu_func)
+    #bpy.types.DOPESHEET_MT_channel.remove(menu_func)
     bpy.types.VIEW3D_MT_curve_add.remove(menu)
     bpy.types.VIEW3D_MT_edit_curve_context_menu.remove(menu)
     bpy.types.VIEW3D_MT_edit_curve_context_menu.remove(menu_func_rd)

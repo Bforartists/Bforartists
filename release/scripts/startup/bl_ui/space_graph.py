@@ -176,8 +176,9 @@ class GRAPH_PT_properties_view_options(Panel):
         st = context.space_data
 
         layout.prop(st, "use_realtime_update")
-        layout.prop(st, "show_marker_lines")
-        
+        if st.mode != 'DRIVERS':
+            layout.separator()
+            layout.prop(st, "show_markers")
         layout.separator()
         
         layout.prop(st, "show_seconds")
@@ -203,10 +204,12 @@ class GRAPH_MT_editor_menus(Menu):
     bl_label = ""
 
     def draw(self, _context):
+        st = _context.space_data
         layout = self.layout
         layout.menu("GRAPH_MT_view")
         layout.menu("GRAPH_MT_select")
-        layout.menu("GRAPH_MT_marker")
+        if st.mode != 'DRIVERS' and st.show_markers:
+            layout.menu("GRAPH_MT_marker")
         layout.menu("GRAPH_MT_channel")
         layout.menu("GRAPH_MT_key")
 
@@ -226,6 +229,12 @@ class GRAPH_MT_view(Menu):
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
         layout.operator("anim.previewrange_clear", icon = "CLEAR")
         layout.operator("graph.previewrange_set", icon='BORDER_RECT')
+
+        layout.separator()
+        
+        layout.operator("view2d.zoom_in", text = "Zoom In", icon = "ZOOM_IN")
+        layout.operator("view2d.zoom_out", text = "Zoom Out", icon = "ZOOM_OUT")
+        layout.operator("view2d.zoom_border", icon = "ZOOM_BORDER")
 
         layout.separator()
 
@@ -463,6 +472,7 @@ class GRAPH_MT_key(Menu):
 
         layout.separator()
 
+        layout.operator("graph.decimate", icon = "DECIMATE")
         layout.operator("graph.clean", icon = "CLEAN_KEYS").channels = False
         layout.operator("graph.clean", text="Clean Channels", icon = "CLEAN_CHANNELS").channels = True
         layout.operator("graph.smooth", icon = "SMOOTH_KEYFRAMES")

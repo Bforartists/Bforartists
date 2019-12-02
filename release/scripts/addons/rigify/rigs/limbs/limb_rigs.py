@@ -693,7 +693,13 @@ class BaseLimbRig(BaseRig):
 
     @stage.parent_bones
     def parent_tweak_mch_chain(self):
-        for mch, entry in zip(self.bones.mch.tweak, self.segment_table_tweak):
+        for args in zip(count(0), self.bones.mch.tweak, self.segment_table_tweak):
+            self.parent_tweak_mch_bone(*args)
+
+    def parent_tweak_mch_bone(self, i, mch, entry):
+        if i == 0:
+            self.set_bone_parent(mch, self.rig_parent_bone, inherit_scale='FIX_SHEAR')
+        else:
             self.set_bone_parent(mch, entry.org)
 
     @stage.rig_bones
@@ -716,6 +722,10 @@ class BaseLimbRig(BaseRig):
 
         elif entry.seg_idx is not None:
             self.make_constraint(tweak, 'COPY_SCALE', 'root', use_make_uniform=True)
+
+        if i == 0:
+            self.make_constraint(tweak, 'COPY_LOCATION', entry.org)
+            self.make_constraint(tweak, 'DAMPED_TRACK', entry.org, head_tail=1)
 
 
     ####################################################
