@@ -1368,16 +1368,7 @@ class IMAGE_PT_tools_brush_display(BrushButtonsPanel, Panel):
 
         col = layout.column()
 
-        col.label(text="Curve:")
-
         row = col.row(align=True)
-        row.prop(
-            brush,
-            "use_cursor_overlay",
-            text="",
-            toggle=True,
-            icon='HIDE_ON' if brush.use_cursor_overlay else 'HIDE_OFF',
-        )
 
         sub = row.row(align=True)
         sub.prop(brush, "cursor_overlay_alpha", text="Curve Alpha")
@@ -1388,7 +1379,7 @@ class IMAGE_PT_tools_brush_display(BrushButtonsPanel, Panel):
         )
 
         col.active = brush.brush_capabilities.has_overlay
-        col.label(text="Texture:")
+
         row = col.row(align=True)
 
         sub = row.row(align=True)
@@ -1396,18 +1387,9 @@ class IMAGE_PT_tools_brush_display(BrushButtonsPanel, Panel):
         sub.prop(brush, "use_primary_overlay_override", toggle=True, text="", icon='BRUSH_DATA')
         if tex_slot.map_mode != 'STENCIL':
             row.prop(
-                brush,
-                "use_primary_overlay",
-                text="",
-                toggle=True,
-                icon='HIDE_ON' if brush.use_primary_overlay else 'HIDE_OFF',
+                brush, "use_primary_overlay", text="", toggle=True,
+                icon='HIDE_OFF' if brush.use_primary_overlay else 'HIDE_ON',
             )
-
-        sub = row.row(align=True)
-        sub.prop(brush, "texture_overlay_alpha", text="Alpha")
-        sub.prop(brush, "use_primary_overlay_override", toggle=True, text="", icon='BRUSH_DATA')
-
-        col.label(text="Mask Texture:")
 
         row = col.row(align=True)
 
@@ -1416,11 +1398,8 @@ class IMAGE_PT_tools_brush_display(BrushButtonsPanel, Panel):
         sub.prop(brush, "use_secondary_overlay_override", toggle=True, text="", icon='BRUSH_DATA')
         if tex_slot_mask.map_mode != 'STENCIL':
             row.prop(
-                brush,
-                "use_secondary_overlay",
-                text="",
-                toggle=True,
-                icon='HIDE_ON' if brush.use_secondary_overlay else 'HIDE_OFF',
+                brush, "use_secondary_overlay", text="", toggle=True,
+                icon='HIDE_OFF' if brush.use_secondary_overlay else 'HIDE_ON',
             )
 
 
