@@ -818,7 +818,7 @@ node_bokeh_blur
 node_bokeh_image
 node_boxmask
 node_brick
-#def_icon_blank(838
+overlap
 node_bump
 
 node_channel
@@ -872,7 +872,7 @@ checker_deselect
 node_checker
 node_chroma
 node_clouds
-#def_icon_blank(889
+handle_align_single
 node_colorbalance
 node_colorcorrection
 node_colorramp
@@ -1423,10 +1423,10 @@ tilt
 axis_side
 axis_front
 axis_top
-ndof_dom
-ndof_turn
-ndof_fly
-ndof_trans
+#def_icon_blank(1443
+#def_icon_blank(1444
+#def_icon_blank(1445
+#def_icon_blank(1446
 
 layer_used
 layer_active

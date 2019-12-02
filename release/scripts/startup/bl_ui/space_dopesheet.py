@@ -364,7 +364,8 @@ class DOPESHEET_MT_editor_menus(Menu):
 
         layout.menu("DOPESHEET_MT_view")
         layout.menu("DOPESHEET_MT_select")
-        layout.menu("DOPESHEET_MT_marker")
+        if st.show_markers:
+            layout.menu("DOPESHEET_MT_marker")
 
         if st.mode == 'DOPESHEET' or (st.mode == 'ACTION' and st.action is not None):
             layout.menu("DOPESHEET_MT_channel")
@@ -392,6 +393,12 @@ class DOPESHEET_MT_view(Menu):
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
         layout.operator("anim.previewrange_clear", icon = "CLEAR")
         layout.operator("action.previewrange_set", icon='BORDER_RECT')
+
+        layout.separator()
+
+        layout.operator("view2d.zoom_in", text = "Zoom In", icon = "ZOOM_IN")
+        layout.operator("view2d.zoom_out", text = "Zoom Out", icon = "ZOOM_OUT")
+        layout.operator("view2d.zoom_border", icon = "ZOOM_BORDER")
 
         layout.separator()
 
@@ -670,7 +677,7 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
         st = context.space_data
 
         layout.prop(st, "use_realtime_update")
-        layout.prop(st, "show_marker_lines")
+        layout.prop(st, "show_markers")
 
         layout.separator()
 
@@ -684,8 +691,6 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
         layout.prop(st, "show_interpolation")
         layout.prop(st, "show_extremes")       
         layout.prop(st, "use_auto_merge_keyframes")
-
-
 
 
 class DOPESHEET_MT_key_transform(Menu):

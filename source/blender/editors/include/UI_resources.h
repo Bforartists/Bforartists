@@ -136,6 +136,7 @@ typedef enum ThemeColorID {
   TH_SYNTAX_D,
   TH_SYNTAX_N,
   TH_SYNTAX_S,
+  TH_LINENUMBERS,
 
   TH_BONE_SOLID,
   TH_BONE_POSE,
@@ -292,7 +293,7 @@ typedef enum ThemeColorID {
   TH_NLA_SOUND_SEL,
 
   TH_WIDGET_EMBOSS,
-
+  TH_WIDGET_TEXT_CURSOR,
   TH_EDITOR_OUTLINE,
 
   TH_AXIS_X, /* X/Y/Z Axis */

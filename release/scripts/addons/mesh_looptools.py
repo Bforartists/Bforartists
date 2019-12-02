@@ -19,7 +19,7 @@
 bl_info = {
     "name": "LoopTools",
     "author": "Bart Crouch",
-    "version": (4, 6, 8),
+    "version": (4, 6, 9),
     "blender": (2, 80, 0),
     "location": "View3D > Sidebar > Edit Tab / Edit Mode Context Menu",
     "warning": "",
@@ -538,6 +538,10 @@ def get_derived_bmesh(object, bm):
         for mod in object.modifiers:
             if mod.type != 'MIRROR':
                 mod.show_viewport = False
+            #leave the merge points untouched
+            if mod.type == 'MIRROR':
+                merge = mod.use_mirror_merge
+                mod.use_mirror_merge = False
         # get derived mesh
         bm_mod = bmesh.new()
         depsgraph = bpy.context.evaluated_depsgraph_get()
@@ -548,6 +552,8 @@ def get_derived_bmesh(object, bm):
         # re-enable other modifiers
         for mod_name in show_viewport:
             object.modifiers[mod_name].show_viewport = True
+            if mod.type == 'MIRROR':
+                mod.use_mirror_merge = merge
     # no mirror modifiers, so no derived mesh necessary
     else:
         derived = False

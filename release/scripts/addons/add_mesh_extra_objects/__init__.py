@@ -20,18 +20,19 @@
 # dreampainter, cotejrp1, liero, Kayo Phoenix, sugiany, dommetysk, Jambay   #
 # Phymec, Anthony D'Agostino, Pablo Vazquez, Richard Wilks, lijenstina,     #
 # Sjaak-de-Draak, Phil Cote, cotejrp1, xyz presets by elfnor, revolt_randy, #
+# Vladimir Spivak (cwolf3d), #
 
 
 bl_info = {
     "name": "Extra Objects",
     "author": "Multiple Authors",
-    "version": (0, 3, 4),
+    "version": (0, 3, 5),
     "blender": (2, 80, 0),
     "location": "View3D > Add > Mesh",
     "description": "Add extra mesh object types",
     "warning": "",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
-                "Py/Scripts/Add_Mesh/Add_Extra",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "add_mesh/mesh_extra_objects.html",
     "category": "Add Mesh",
 }
 
@@ -114,10 +115,10 @@ class VIEW3D_MT_mesh_gears_add(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("mesh.primitive_gear",
-                        text="Gear")
-        layout.operator("mesh.primitive_worm_gear",
-                        text="Worm")
+        oper = layout.operator("mesh.primitive_gear", text="Gear")
+        oper.change = False
+        oper = layout.operator("mesh.primitive_worm_gear", text="Worm")
+        oper.change = False
 
 
 class VIEW3D_MT_mesh_diamonds_add(Menu):
@@ -128,12 +129,12 @@ class VIEW3D_MT_mesh_diamonds_add(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("mesh.primitive_brilliant_add",
-                        text="Brilliant Diamond")
-        layout.operator("mesh.primitive_diamond_add",
-                        text="Diamond")
-        layout.operator("mesh.primitive_gem_add",
-                        text="Gem")
+        oper = layout.operator("mesh.primitive_brilliant_add", text="Brilliant Diamond")
+        oper.change = False
+        oper = layout.operator("mesh.primitive_diamond_add", text="Diamond")
+        oper.change = False
+        oper = layout.operator("mesh.primitive_gem_add", text="Gem")
+        oper.change = False
 
 
 class VIEW3D_MT_mesh_math_add(Menu):
@@ -160,21 +161,16 @@ class VIEW3D_MT_mesh_extras_add(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("mesh.add_beam",
-                        text="Beam Builder")
-        layout.operator("mesh.wall_add",
-                        text="Wall Factory")
+        oper = layout.operator("mesh.add_beam", text="Beam Builder")
+        oper.change = False
+        oper = layout.operator("mesh.wall_add", text="Wall Factory")
+        oper.change = False
         layout.separator()
-        layout.operator("mesh.primitive_star_add",
-                        text="Simple Star")
-        layout.operator("mesh.primitive_steppyramid_add",
-                        text="Step Pyramid")
-        layout.operator("mesh.honeycomb_add",
-                        text="Honeycomb")
-        layout.operator("mesh.primitive_teapot_add",
-                        text="Teapot+")
-        layout.operator("mesh.menger_sponge_add",
-                        text="Menger Sponge")
+        oper = layout.operator("mesh.primitive_star_add", text="Simple Star")
+        oper = layout.operator("mesh.primitive_steppyramid_add", text="Step Pyramid")
+        oper = layout.operator("mesh.honeycomb_add", text="Honeycomb")
+        oper = layout.operator("mesh.primitive_teapot_add", text="Teapot+")
+        oper = layout.operator("mesh.menger_sponge_add", text="Menger Sponge")
 
 
 class VIEW3D_MT_mesh_torus_add(Menu):
@@ -185,12 +181,9 @@ class VIEW3D_MT_mesh_torus_add(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("mesh.primitive_twisted_torus_add",
-                        text="Twisted Torus")
-        layout.operator("mesh.primitive_supertoroid_add",
-                        text="Supertoroid")
-        layout.operator("mesh.primitive_torusknot_add",
-                        text="Torus Knot")
+        layout.operator("mesh.primitive_twisted_torus_add", text="Twisted Torus")
+        layout.operator("mesh.primitive_supertoroid_add", text="Supertoroid")
+        layout.operator("mesh.primitive_torusknot_add", text="Torus Knot")
 
 
 class VIEW3D_MT_mesh_pipe_joints_add(Menu):
@@ -201,16 +194,11 @@ class VIEW3D_MT_mesh_pipe_joints_add(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("mesh.primitive_elbow_joint_add",
-                        text="Pipe Elbow")
-        layout.operator("mesh.primitive_tee_joint_add",
-                        text="Pipe T-Joint")
-        layout.operator("mesh.primitive_wye_joint_add",
-                        text="Pipe Y-Joint")
-        layout.operator("mesh.primitive_cross_joint_add",
-                        text="Pipe Cross-Joint")
-        layout.operator("mesh.primitive_n_joint_add",
-                        text="Pipe N-Joint")
+        layout.operator("mesh.primitive_elbow_joint_add", text="Pipe Elbow")
+        layout.operator("mesh.primitive_tee_joint_add", text="Pipe T-Joint")
+        layout.operator("mesh.primitive_wye_joint_add", text="Pipe Y-Joint")
+        layout.operator("mesh.primitive_cross_joint_add", text="Pipe Cross-Joint")
+        layout.operator("mesh.primitive_n_joint_add", text="Pipe N-Joint")
 
 # Register all operators and panels
 

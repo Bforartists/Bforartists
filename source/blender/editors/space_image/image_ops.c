@@ -973,7 +973,7 @@ void IMAGE_OT_view_zoom_in(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View Zoom In";
   ot->idname = "IMAGE_OT_view_zoom_in";
-  ot->description = "Zoom in the image (centered around 2D cursor)";
+  ot->description = "Zoom in the image";
 
   /* api callbacks */
   ot->invoke = image_view_zoom_in_invoke;
@@ -1031,7 +1031,7 @@ void IMAGE_OT_view_zoom_out(wmOperatorType *ot)
   /* identifiers */
   ot->name = "View Zoom Out";
   ot->idname = "IMAGE_OT_view_zoom_out";
-  ot->description = "Zoom out the image (centered around 2D cursor)";
+  ot->description = "Zoom out the image";
 
   /* api callbacks */
   ot->invoke = image_view_zoom_out_invoke;
@@ -1147,8 +1147,9 @@ static int image_view_zoom_border_exec(bContext *C, wmOperator *op)
 void IMAGE_OT_view_zoom_border(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Zoom to Border";
-  ot->description = "Zoom in the view to the nearest item contained in the border";
+  ot->name = "Zoom Border";
+  ot->description =
+      "Drawing a rectangle with LMB zooms in. Drawing a rectangle with MMB zooms out";
   ot->idname = "IMAGE_OT_view_zoom_border";
 
   /* api callbacks */
@@ -4041,7 +4042,7 @@ void IMAGE_OT_render_border(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Render Region";
-  ot->description = "Set the boundaries of the render region and enable render region";
+  ot->description = "Box select an area to render a part of the image";
   ot->idname = "IMAGE_OT_render_border";
 
   /* api callbacks */
@@ -4078,7 +4079,7 @@ void IMAGE_OT_clear_render_border(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Render Region";
   ot->description =
-      "Removes an existing Render border";  // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
+      "Removes an existing Render Region rectangle";  // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
   ot->idname = "IMAGE_OT_clear_render_border";
 
   /* api callbacks */

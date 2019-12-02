@@ -86,9 +86,9 @@ set(HDF5_VERSION 1.8.17)
 set(HDF5_URI https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-${HDF5_VERSION}/src/hdf5-${HDF5_VERSION}.tar.gz)
 set(HDF5_HASH 7d572f8f3b798a628b8245af0391a0ca)
 
-set(ALEMBIC_VERSION 1.7.8)
+set(ALEMBIC_VERSION 1.7.12)
 set(ALEMBIC_URI https://github.com/alembic/alembic/archive/${ALEMBIC_VERSION}.tar.gz)
-set(ALEMBIC_MD5 d095c2feb5e183b824904db7b63c1d30)
+set(ALEMBIC_MD5 e2b3777f23c5c09481a008cc6f0f8a40)
 
 # hash is for 3.1.2
 set(GLFW_GIT_UID 30306e54705c3adae9fe082c816a3be71963485c)
@@ -149,9 +149,9 @@ set(PYTHON_SHORT_VERSION_NO_DOTS 37)
 set(PYTHON_URI https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tar.xz)
 set(PYTHON_HASH d33e4aae66097051c2eca45ee3604803)
 
-set(TBB_VERSION 2018_U5)
+set(TBB_VERSION 2019_U9)
 set(TBB_URI https://github.com/01org/tbb/archive/${TBB_VERSION}.tar.gz)
-set(TBB_HASH ff3ae09f8c23892fbc3008c39f78288f)
+set(TBB_HASH 584edbec127c508f2cd5b6e79ad200fc)
 
 set(OPENVDB_VERSION 5.1.0)
 set(OPENVDB_URI https://github.com/dreamworksanimation/openvdb/archive/v${OPENVDB_VERSION}.tar.gz)
