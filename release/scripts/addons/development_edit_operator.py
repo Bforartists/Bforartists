@@ -25,8 +25,8 @@ bl_info = {
     "location": "Text Editor > Sidebar > Edit Operator",
     "description": "Opens source file of chosen operator or call locations, if source not available",
     "warning": "",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
-                "Py/Scripts/Development/Edit_Operator_Source",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "development/edit_operator.html",
     "category": "Development"}
 
 import bpy

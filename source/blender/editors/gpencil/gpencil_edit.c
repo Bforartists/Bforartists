@@ -3526,23 +3526,31 @@ static int gp_strokes_reproject_exec(bContext *C, wmOperator *op)
 void GPENCIL_OT_reproject(wmOperatorType *ot)
 {
   static const EnumPropertyItem reproject_type[] = {
-      {GP_REPROJECT_FRONT, "FRONT", 0, "Front", "Reproject the strokes using the X-Z plane"},
-      {GP_REPROJECT_SIDE, "SIDE", 0, "Side", "Reproject the strokes using the Y-Z plane"},
-      {GP_REPROJECT_TOP, "TOP", 0, "Top", "Reproject the strokes using the X-Y plane"},
+      {GP_REPROJECT_FRONT,
+       "FRONT",
+       ICON_VIEW_FRONT,
+       "Front",
+       "Reproject the strokes using the X-Z plane"},
+      {GP_REPROJECT_SIDE,
+       "SIDE",
+       ICON_VIEW_LEFT,
+       "Side",
+       "Reproject the strokes using the Y-Z plane"},
+      {GP_REPROJECT_TOP, "TOP", ICON_VIEW_TOP, "Top", "Reproject the strokes using the X-Y plane"},
       {GP_REPROJECT_VIEW,
        "VIEW",
-       0,
+       ICON_VIEW,
        "View",
        "Reproject the strokes to end up on the same plane, as if drawn from the current viewpoint "
        "using 'Cursor' Stroke Placement"},
       {GP_REPROJECT_SURFACE,
        "SURFACE",
-       0,
+       ICON_REPROJECT,
        "Surface",
        "Reproject the strokes on to the scene geometry, as if drawn using 'Surface' placement"},
       {GP_REPROJECT_CURSOR,
        "CURSOR",
-       0,
+       ICON_CURSOR,
        "Cursor",
        "Reproject the strokes using the orientation of 3D cursor"},
       {0, NULL, 0, NULL, NULL},
@@ -3551,10 +3559,7 @@ void GPENCIL_OT_reproject(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Reproject Strokes";
   ot->idname = "GPENCIL_OT_reproject";
-  ot->description =
-      "Reproject the selected strokes from the current viewpoint as if they had been newly drawn "
-      "(e.g. to fix problems from accidental 3D cursor movement or accidental viewport changes, "
-      "or for matching deforming geometry)";
+  ot->description = "Reproject the selected strokes from the current viewpoint as if they had been newly drawn ";
 
   /* callbacks */
   ot->invoke = WM_menu_invoke;
