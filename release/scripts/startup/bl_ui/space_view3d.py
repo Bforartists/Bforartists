@@ -417,7 +417,7 @@ class VIEW3D_HT_tool_header(Header):
             wpaint = context.tool_settings.weight_paint
             sub.prop(wpaint, "use_symmetry_x", text="    ", icon='MIRROR_X', toggle=True)
             sub.prop(wpaint, "use_symmetry_y", text="    ", icon='MIRROR_Y', toggle=True)
-            sub.prop(wpaint, "use_symmetry_z", text="    ", icon='MIRROR_X', toggle=True)
+            sub.prop(wpaint, "use_symmetry_z", text="    ", icon='MIRROR_Z', toggle=True)
             row.popover(panel="VIEW3D_PT_tools_weightpaint_symmetry_for_topbar", text="")
         elif mode_string == 'SCULPT':
             row, sub = row_for_mirror()
@@ -800,7 +800,9 @@ class VIEW3D_MT_transform_base(Menu):
 
         if context.mode != 'OBJECT':
             layout.operator("transform.vertex_warp", text="Warp", icon = "MOD_WARP")
+            layout.operator_context = 'EXEC_DEFAULT'
             layout.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE')
+            layout.operator_context = 'INVOKE_REGION_WIN'
 
             if obj.type == 'MESH':
                 layout.operator("transform.skin_resize", text="Skin Resize", icon = "MOD_SKIN")
@@ -1076,8 +1078,8 @@ class VIEW3D_MT_view(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("view3d.clip_border", text="Clipping Border", icon = "CLIPPINGBORDER")
-        layout.operator("view3d.render_border", text="Render Border", icon = "RENDERBORDER")
-        layout.operator("view3d.clear_render_border", text="Clear Render Border", icon = "RENDERBORDER_CLEAR")
+        layout.operator("view3d.render_border", icon = "RENDERBORDER")
+        layout.operator("view3d.clear_render_border", icon = "RENDERBORDER_CLEAR")
 
         layout.separator()
 
@@ -1139,7 +1141,7 @@ class VIEW3D_MT_view_navigation(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.zoom_border", text="Zoom Region", icon = "ZOOM_BORDER")
+        layout.operator("view3d.zoom_border", text="Zoom Border", icon = "ZOOM_BORDER")
         layout.operator("view3d.zoom", text="Zoom In", icon = "ZOOM_IN").delta = 1
         layout.operator("view3d.zoom", text="Zoom Out", icon = "ZOOM_OUT").delta = -1
         layout.operator("view3d.zoom_camera_1_to_1", text="Zoom Camera 1:1", icon = "ZOOM_CAMERA")
@@ -3792,6 +3794,16 @@ class VIEW3D_MT_mask(Menu):
 
         layout.separator()
 
+        props = layout.operator("mesh.paint_mask_slice", text="Mask Slice", icon = "MOD_MASK")
+        props.fill_holes = False
+        props.new_object = False
+        props = layout.operator("mesh.paint_mask_slice", text="Mask Slice and Fill Holes", icon = "MOD_MASK")
+        props.new_object = False
+        props = layout.operator("mesh.paint_mask_slice", text="Mask Slice to New Object", icon = "MOD_MASK")
+
+        layout.separator()
+
+
         props = layout.operator("sculpt.dirty_mask", text='Dirty Mask', icon = "DIRTY_VERTEX")
 
 
@@ -4427,8 +4439,10 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("transform.shrink_fatten", text="Shrink/Fatten", icon = 'SHRINK_FATTEN')
             col.operator("transform.shear", text="Shear", icon = "SHEAR")
             col.operator("transform.vert_slide", text="Slide Vertices", icon = 'SLIDE_VERTEX')
+            col.operator_context = 'EXEC_DEFAULT'
             col.operator("transform.vertex_random", text="Randomize Vertices")
             col.operator("mesh.vertices_smooth", text="Smooth Vertices", icon = 'SMOOTH_VERTEX')
+            col.operator_context = 'INVOKE_REGION_WIN'
             col.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
 
             col.separator()
@@ -4668,7 +4682,9 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout.separator()
 
         layout.operator("transform.vert_slide", text="Slide Vertices", icon = 'SLIDE_VERTEX')
+        layout.operator_context = 'EXEC_DEFAULT'
         layout.operator("mesh.vertices_smooth", text="Smooth Vertices", icon = 'SMOOTH_VERTEX')
+        layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
 
         layout.separator()
@@ -5867,7 +5883,7 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
         
         layout.separator()
         
-        layout.operator("gpencil.reproject", text="Reproject Strokes", icon = "REPROJECT")
+        layout.operator_menu_enum("gpencil.reproject", property="type", text="Reproject Strokes")
         
 
 class VIEW3D_MT_edit_gpencil_point(Menu):
@@ -6699,6 +6715,26 @@ class VIEW3D_PT_shading_options_ssao(Panel):
         col.prop(scene.display, "matcap_ssao_samples")
         col.prop(scene.display, "matcap_ssao_distance")
         col.prop(scene.display, "matcap_ssao_attenuation")
+
+
+class VIEW3D_PT_shading_render_pass(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Render Pass"
+    bl_parent_id = 'VIEW3D_PT_shading'
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.shading.type == 'MATERIAL'
+            or (context.engine in cls.COMPAT_ENGINES
+                and context.space_data.shading.type == 'RENDERED'))
+
+    def draw(self, context):
+        shading = context.space_data.shading
+
+        layout = self.layout
+        layout.prop(shading, "render_pass", text="")
 
 
 class VIEW3D_PT_gizmo_display(Panel):
@@ -8229,6 +8265,7 @@ classes = (
     VIEW3D_PT_shading_options,
     VIEW3D_PT_shading_options_shadow,
     VIEW3D_PT_shading_options_ssao,
+    VIEW3D_PT_shading_render_pass,
     VIEW3D_PT_gizmo_display,
     VIEW3D_PT_overlay,
     VIEW3D_PT_overlay_guides,

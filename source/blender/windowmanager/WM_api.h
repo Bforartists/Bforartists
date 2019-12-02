@@ -110,7 +110,8 @@ int WM_window_pixels_x(const struct wmWindow *win);
 int WM_window_pixels_y(const struct wmWindow *win);
 void WM_window_rect_calc(const struct wmWindow *win, struct rcti *r_rect);
 void WM_window_screen_rect_calc(const struct wmWindow *win, struct rcti *r_rect);
-bool WM_window_is_fullscreen(struct wmWindow *win);
+bool WM_window_is_fullscreen(const struct wmWindow *win);
+bool WM_window_is_maximized(const struct wmWindow *win);
 
 void WM_windows_scene_data_sync(const ListBase *win_lb, struct Scene *scene) ATTR_NONNULL();
 struct Scene *WM_windows_scene_get_from_screen(const struct wmWindowManager *wm,
@@ -164,7 +165,7 @@ struct wmWindow *WM_window_open_temp(struct bContext *C,
                                      int sizey,
                                      int space_type,
                                      bool dialog);
-void WM_window_set_dpi(wmWindow *win);
+void WM_window_set_dpi(const wmWindow *win);
 
 bool WM_stereo3d_enabled(struct wmWindow *win, bool only_fullscreen_test);
 
@@ -561,6 +562,9 @@ char *WM_operatortype_description(struct bContext *C,
                                   struct wmOperatorType *ot,
                                   struct PointerRNA *properties);
 
+/* wm_operator_utils.c */
+void WM_operator_type_modal_from_exec_for_object_edit_coords(struct wmOperatorType *ot);
+
 /* wm_uilist_type.c */
 void WM_uilisttype_init(void);
 struct uiListType *WM_uilisttype_find(const char *idname, bool quiet);
@@ -619,6 +623,7 @@ void WM_gesture_straightline_cancel(struct bContext *C, struct wmOperator *op);
 struct wmGesture *WM_gesture_new(struct bContext *C, const struct wmEvent *event, int type);
 void WM_gesture_end(struct bContext *C, struct wmGesture *gesture);
 void WM_gestures_remove(struct bContext *C);
+void WM_gestures_free_all(struct wmWindow *win);
 bool WM_gesture_is_modal_first(const struct wmGesture *gesture);
 
 /* fileselecting support */
@@ -671,8 +676,10 @@ enum {
   WM_JOB_PROGRESS = (1 << 2),
 };
 
-/** Identifying jobs by owner alone is unreliable, this isnt saved,
- * order can change (keep 0 for 'any'). */
+/**
+ * Identifying jobs by owner alone is unreliable, this isnt saved,
+ * order can change (keep 0 for 'any').
+ */
 enum {
   WM_JOB_TYPE_ANY = 0,
   WM_JOB_TYPE_COMPOSITE,
@@ -814,15 +821,18 @@ typedef struct ARegion *(*wmTooltipInitFn)(struct bContext *C,
 
 void WM_tooltip_immediate_init(struct bContext *C,
                                struct wmWindow *win,
+                               struct ScrArea *sa,
                                struct ARegion *ar,
                                wmTooltipInitFn init);
 void WM_tooltip_timer_init_ex(struct bContext *C,
                               struct wmWindow *win,
+                              struct ScrArea *sa,
                               struct ARegion *ar,
                               wmTooltipInitFn init,
                               double delay);
 void WM_tooltip_timer_init(struct bContext *C,
                            struct wmWindow *win,
+                           struct ScrArea *sa,
                            struct ARegion *ar,
                            wmTooltipInitFn init);
 void WM_tooltip_timer_clear(struct bContext *C, struct wmWindow *win);

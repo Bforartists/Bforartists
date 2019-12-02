@@ -484,7 +484,7 @@ static void ui_but_menu_add_path_operators(uiLayout *layout, PointerRNA *ptr, Pr
     uiItemFullO_ptr(layout,
                     ot,
                     CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Open File Externally"),
-                    ICON_NONE,
+                    ICON_FILE_FOLDER,
                     NULL,
                     WM_OP_INVOKE_DEFAULT,
                     0,
@@ -495,7 +495,7 @@ static void ui_but_menu_add_path_operators(uiLayout *layout, PointerRNA *ptr, Pr
   uiItemFullO_ptr(layout,
                   ot,
                   CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Open Location Externally"),
-                  ICON_NONE,
+                  ICON_FILE_FOLDER,
                   NULL,
                   WM_OP_INVOKE_DEFAULT,
                   0,
@@ -580,19 +580,19 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
                        1);
         uiItemBooleanO(layout,
                        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Replace Single Keyframe"),
-                       ICON_NONE,
+                       ICON_KEY_HLT,
                        "ANIM_OT_keyframe_insert_button",
                        "all",
                        0);
         uiItemBooleanO(layout,
                        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Delete Keyframes"),
-                       ICON_NONE,
+                       ICON_KEYFRAMES_REMOVE,
                        "ANIM_OT_keyframe_delete_button",
                        "all",
                        1);
         uiItemBooleanO(layout,
                        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Delete Single Keyframe"),
-                       ICON_NONE,
+                       ICON_KEYFRAMES_REMOVE,
                        "ANIM_OT_keyframe_delete_button",
                        "all",
                        0);
@@ -606,7 +606,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
                        1);
         uiItemBooleanO(layout,
                        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Delete Keyframe"),
-                       ICON_NONE,
+                       ICON_KEYFRAMES_REMOVE,
                        "ANIM_OT_keyframe_delete_button",
                        "all",
                        1);
@@ -628,7 +628,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
                        1);
         uiItemBooleanO(layout,
                        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Insert Single Keyframe"),
-                       ICON_NONE,
+                       ICON_KEY_HLT,
                        "ANIM_OT_keyframe_insert_button",
                        "all",
                        0);
@@ -653,7 +653,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
                        1);
         uiItemBooleanO(layout,
                        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Clear Single Keyframes"),
-                       ICON_NONE,
+                       ICON_KEY_DEHLT,
                        "ANIM_OT_keyframe_clear_button",
                        "all",
                        0);
@@ -675,13 +675,13 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
       if (is_array_component) {
         uiItemBooleanO(layout,
                        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Delete Drivers"),
-                       ICON_X,
+                       ICON_DELETE,
                        "ANIM_OT_driver_button_remove",
                        "all",
                        1);
         uiItemBooleanO(layout,
                        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Delete Single Driver"),
-                       ICON_NONE,
+                       ICON_DELETE,
                        "ANIM_OT_driver_button_remove",
                        "all",
                        0);
@@ -689,7 +689,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
       else {
         uiItemBooleanO(layout,
                        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Delete Driver"),
-                       ICON_X,
+                       ICON_DELETE,
                        "ANIM_OT_driver_button_remove",
                        "all",
                        1);
@@ -698,12 +698,12 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
       if (!is_whole_array) {
         uiItemO(layout,
                 CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Driver"),
-                ICON_NONE,
+                ICON_COPYDOWN,
                 "ANIM_OT_copy_driver_button");
         if (ANIM_driver_can_paste()) {
           uiItemO(layout,
                   CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Paste Driver"),
-                  ICON_NONE,
+                  ICON_PASTEDOWN,
                   "ANIM_OT_paste_driver_button");
         }
 
@@ -715,7 +715,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
 
       uiItemO(layout,
               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Open Drivers Editor"),
-              ICON_NONE,
+              ICON_DRIVER,
               "SCREEN_OT_drivers_editor_show");
     }
     else if (but->flag & (UI_BUT_ANIMATED_KEY | UI_BUT_ANIMATED)) {
@@ -733,14 +733,14 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
         if (ANIM_driver_can_paste()) {
           uiItemO(layout,
                   CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Paste Driver"),
-                  ICON_NONE,
+                  ICON_PASTEDOWN,
                   "ANIM_OT_paste_driver_button");
         }
       }
 
       uiItemO(layout,
               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Open Drivers Editor"),
-              ICON_NONE,
+              ICON_DRIVER,
               "SCREEN_OT_drivers_editor_show");
     }
 
@@ -758,13 +758,13 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
                        1);
         uiItemBooleanO(layout,
                        CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Add Single to Keying Set"),
-                       ICON_NONE,
+                       ICON_KEYINGSET,
                        "ANIM_OT_keyingset_button_add",
                        "all",
                        0);
         uiItemO(layout,
                 CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Remove from Keying Set"),
-                ICON_NONE,
+                ICON_DELETE,
                 "ANIM_OT_keyingset_button_remove");
       }
       else {
@@ -776,7 +776,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
                        1);
         uiItemO(layout,
                 CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Remove from Keying Set"),
-                ICON_NONE,
+                ICON_DELETE,
                 "ANIM_OT_keyingset_button_remove");
       }
     }
@@ -806,13 +806,13 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
 #endif
           uiItemBooleanO(layout,
                          CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Remove Overrides"),
-                         ICON_X,
+                         ICON_DELETE,
                          "UI_OT_override_remove_button",
                          "all",
                          true);
           uiItemBooleanO(layout,
                          CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Remove Single Override"),
-                         ICON_X,
+                         ICON_DELETE,
                          "UI_OT_override_remove_button",
                          "all",
                          false);
@@ -831,7 +831,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
 #endif
           uiItemBooleanO(layout,
                          CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Remove Override"),
-                         ICON_X,
+                         ICON_DELETE,
                          "UI_OT_override_remove_button",
                          "all",
                          true);
@@ -883,7 +883,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
                      1);
       uiItemBooleanO(layout,
                      CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Reset Single to Default Value"),
-                     ICON_NONE,
+                     ICON_LOOP_BACK,
                      "UI_OT_reset_default_button",
                      "all",
                      0);
@@ -899,14 +899,14 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
     if (is_editable /*&& is_idprop*/ && is_set) {
       uiItemO(layout,
               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Unset"),
-              ICON_NONE,
+              ICON_RESET,
               "UI_OT_unset_property_button");
     }
 
     if (is_idprop && !is_array && ELEM(type, PROP_INT, PROP_FLOAT)) {
       uiItemO(layout,
               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Assign Value as Default"),
-              ICON_NONE,
+              ICON_NODE_VALUE,
               "UI_OT_assign_default_button");
 
       uiItemS(layout);
@@ -915,13 +915,13 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
     if (is_array_component) {
       uiItemBooleanO(layout,
                      CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy All to Selected"),
-                     ICON_NONE,
+                     ICON_COPYDOWN,
                      "UI_OT_copy_to_selected_button",
                      "all",
                      true);
       uiItemBooleanO(layout,
                      CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Single to Selected"),
-                     ICON_NONE,
+                     ICON_COPYDOWN,
                      "UI_OT_copy_to_selected_button",
                      "all",
                      false);
@@ -929,7 +929,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
     else {
       uiItemBooleanO(layout,
                      CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy to Selected"),
-                     ICON_NONE,
+                     ICON_COPYDOWN,
                      "UI_OT_copy_to_selected_button",
                      "all",
                      true);
@@ -937,14 +937,14 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
 
     uiItemO(layout,
             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy Data Path"),
-            ICON_NONE,
+            ICON_COPYDOWN,
             "UI_OT_copy_data_path_button");
 
     if (ptr->owner_id && !is_whole_array &&
         ELEM(type, PROP_BOOLEAN, PROP_INT, PROP_FLOAT, PROP_ENUM)) {
       uiItemO(layout,
               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy as New Driver"),
-              ICON_NONE,
+              ICON_COPYDOWN,
               "UI_OT_copy_as_driver_button");
     }
 
@@ -1103,7 +1103,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
       but2 = uiDefIconTextBut(block,
                               UI_BTYPE_BUT,
                               0,
-                              ICON_BLANK1,
+                              ICON_DELETE,
                               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Remove Shortcut"),
                               0,
                               0,

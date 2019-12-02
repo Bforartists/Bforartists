@@ -865,6 +865,7 @@ class CLIP_PT_plane_track(CLIP_PT_tracking_panel, Panel):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
 
         clip = context.space_data.clip
         active_track = clip.tracking.plane_tracks.active
@@ -876,7 +877,8 @@ class CLIP_PT_plane_track(CLIP_PT_tracking_panel, Panel):
 
         layout.prop(active_track, "name")
         layout.prop(active_track, "use_auto_keying")
-        layout.prop(active_track, "image")
+        layout.template_ID(
+            active_track, "image", new="image.new", open="image.open")
 
         row = layout.row()
         row.active = active_track.image is not None
@@ -1360,8 +1362,8 @@ class CLIP_MT_view(Menu):
 
             layout.separator()
 
-            layout.operator("clip.view_zoom_in", icon = "ZOOM_IN")
-            layout.operator("clip.view_zoom_out", icon = "ZOOM_OUT")
+            layout.operator("clip.view_zoom_in", text = "Zoom In", icon = "ZOOM_IN")
+            layout.operator("clip.view_zoom_out", text = "Zoom Out", icon = "ZOOM_OUT")
 
             layout.separator()
 
@@ -1502,7 +1504,7 @@ class CLIP_MT_select(Menu):
 
         layout.separator()
 
-        layout.menu("CLIP_MT_select_grouped")
+        layout.menu("CLIP_MT_select_grouped", text = "Grouped")
 
 
 class CLIP_MT_select_grouped(Menu):

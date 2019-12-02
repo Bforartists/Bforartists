@@ -81,6 +81,9 @@
 
 #include "MEM_guardedalloc.h"
 
+/* Make preferences read-only, use versioning_userdef.c. */
+#define U (*((const UserDef *)&U))
+
 /* ************************************************** */
 /* GP Palettes API (Deprecated) */
 
@@ -1747,8 +1750,8 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
       for (Brush *br = bmain->brushes.first; br; br = br->id.next) {
         br->falloff_angle = DEG2RADF(80);
         /* These flags are used for new feautres. They are not related to falloff_angle */
-        br->flag &= ~(BRUSH_FLAG_UNUSED_1 | BRUSH_ORIGINAL_PLANE | BRUSH_GRAB_ACTIVE_VERTEX |
-                      BRUSH_SCENE_SPACING | BRUSH_FRONTFACE_FALLOFF);
+        br->flag &= ~(BRUSH_INVERT_TO_SCRAPE_FILL | BRUSH_ORIGINAL_PLANE |
+                      BRUSH_GRAB_ACTIVE_VERTEX | BRUSH_SCENE_SPACING | BRUSH_FRONTFACE_FALLOFF);
       }
 
       for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {

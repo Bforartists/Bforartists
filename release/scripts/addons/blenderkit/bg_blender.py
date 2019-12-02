@@ -237,5 +237,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(KillBgProcess)
-    bpy.app.timers.unregister(bg_update)
+    if bpy.app.timers.is_registered(bg_update):
+        bpy.app.timers.unregister(bg_update)
 

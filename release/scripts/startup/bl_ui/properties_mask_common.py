@@ -282,7 +282,7 @@ class MASK_MT_mask(Menu):
         layout.operator("mask.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
         layout.operator("mask.switch_direction", icon = 'SWITCH_DIRECTION')
         layout.operator("mask.normals_make_consistent", icon = "RECALC_NORMALS")
-        layout.operator("mask.handle_type_set", icon = 'HANDLE_AUTO')
+        layout.operator_menu_enum("mask.handle_type_set", "type")
 
         layout.separator()
 
@@ -333,8 +333,8 @@ class MASK_MT_animation(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mask.shape_key_clear", icon = "CLEAR")
         layout.operator("mask.shape_key_insert", icon = "KEYFRAMES_INSERT")
+        layout.operator("mask.shape_key_clear", icon = "CLEAR")
         layout.operator("mask.shape_key_feather_reset", icon = "RESET")
         layout.operator("mask.shape_key_rekey", icon = 'KEY_HLT')
 
@@ -379,12 +379,12 @@ class MASK_MT_select(Menu):
         
         layout.separator()
 
-        layout.operator("mask.select_linked", text = "Select Linked", icon = "LINKED")
+        layout.operator("mask.select_linked", text = "Linked", icon = "LINKED")
 
         layout.separator()
 
-        layout.operator("mask.select_more", icon = "SELECTMORE")
-        layout.operator("mask.select_less", icon = "SELECTLESS")
+        layout.operator("mask.select_more", text = "More", icon = "SELECTMORE")
+        layout.operator("mask.select_less", text = "Less", icon = "SELECTLESS")
 
 
 classes = (
