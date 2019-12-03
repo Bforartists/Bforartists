@@ -1861,8 +1861,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
     )
 
     _tools_select = (
-        (
-            _defs_view3d_select.select,
+        (           
             _defs_view3d_select.box,
             _defs_view3d_select.circle,
             _defs_view3d_select.lasso,
@@ -1888,6 +1887,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
     )
 
     _tools_default = (
+        _defs_view3d_select.select,
         *_tools_select,
         _defs_view3d_generic.cursor,
         None,
