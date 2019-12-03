@@ -1683,7 +1683,7 @@ class _defs_node_edit:
             widget=None,
             keymap="Node Tool: Links Cut",
         )
-
+# ------------------------------------------------- Image editor  -------------------------------------------------------
 
 class IMAGE_PT_tools_active(ToolSelectPanelHelper, Panel):
     bl_space_type = 'IMAGE_EDITOR'
@@ -1722,6 +1722,7 @@ class IMAGE_PT_tools_active(ToolSelectPanelHelper, Panel):
 
     _tools_select = (
         (
+            _defs_image_uv_select.select,
             _defs_image_uv_select.box,
             _defs_image_uv_select.circle,
             _defs_image_uv_select.lasso,
@@ -1746,7 +1747,6 @@ class IMAGE_PT_tools_active(ToolSelectPanelHelper, Panel):
             *_tools_annotate,
         ],
         'UV': [
-            _defs_image_uv_select.select,
             *_tools_select,
             _defs_image_generic.cursor,
             None,
@@ -1767,7 +1767,7 @@ class IMAGE_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_texture_paint.generate_from_brushes,
         ],
     }
-
+# ------------------------------------------------- shader editor, compositor, texture node editor  -------------------------------------------------------
 
 class NODE_PT_tools_active(ToolSelectPanelHelper, Panel):
     bl_space_type = 'NODE_EDITOR'
@@ -1797,7 +1797,7 @@ class NODE_PT_tools_active(ToolSelectPanelHelper, Panel):
         yield from cls._tools.items()
 
     _tools_select = (
-        (       
+        (        
             _defs_node_select.box,
             _defs_node_select.lasso,
             _defs_node_select.circle,
@@ -1823,7 +1823,7 @@ class NODE_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_node_edit.links_cut,
         ],
     }
-
+# ------------------------------------------------- 3d view -------------------------------------------------------
 
 class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
     bl_space_type = 'VIEW_3D'
@@ -1862,6 +1862,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
 
     _tools_select = (
         (
+            _defs_view3d_select.select,
             _defs_view3d_select.box,
             _defs_view3d_select.circle,
             _defs_view3d_select.lasso,
@@ -1879,6 +1880,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
 
     _tools_gpencil_select = (
         (
+            _defs_gpencil_edit.select,
             _defs_gpencil_edit.box_select,
             _defs_gpencil_edit.circle_select,
             _defs_gpencil_edit.lasso_select,
@@ -1886,7 +1888,6 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
     )
 
     _tools_default = (
-        _defs_view3d_select.select,
         *_tools_select,
         _defs_view3d_generic.cursor,
         None,
@@ -1908,9 +1909,11 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         'POSE': [
             *_tools_default,
             None,
-            _defs_pose.breakdown,
-            _defs_pose.push,
-            _defs_pose.relax,
+            (
+                _defs_pose.breakdown,
+                _defs_pose.push,
+                _defs_pose.relax,
+            ),
         ],
         'EDIT_ARMATURE': [
             *_tools_default,
@@ -2001,7 +2004,6 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_view3d_generic.ruler,
         ],
         'PARTICLE': [
-            _defs_view3d_select.select,
             *_tools_select,
             _defs_view3d_generic.cursor,
             None,
@@ -2028,7 +2030,6 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         'PAINT_TEXTURE': [
             _defs_texture_paint.generate_from_brushes,
             None,
-            _defs_view3d_select.select,
             lambda context: (
                 VIEW3D_PT_tools_active._tools_select
                 if _defs_texture_paint.poll_select_mask(context)
@@ -2039,7 +2040,6 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         'PAINT_VERTEX': [
             _defs_vertex_paint.generate_from_brushes,
             None,
-            _defs_view3d_select.select,
             lambda context: (
                 VIEW3D_PT_tools_active._tools_select
                 if _defs_vertex_paint.poll_select_mask(context)
@@ -2062,7 +2062,6 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
                 else ()
             ),
             None,
-            _defs_view3d_select.select,
             lambda context: (
                 VIEW3D_PT_tools_active._tools_select
                 if _defs_weight_paint.poll_select_mask(context)
@@ -2086,7 +2085,6 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_gpencil_paint.circle,
         ],
         'EDIT_GPENCIL': [
-            _defs_gpencil_edit.select,
             *_tools_gpencil_select,
             _defs_view3d_generic.cursor,
             None,
@@ -2104,7 +2102,6 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         'SCULPT_GPENCIL': [
             _defs_gpencil_sculpt.generate_from_brushes,
             None,
-            _defs_gpencil_edit.select,
             lambda context: (
                 VIEW3D_PT_tools_active._tools_gpencil_select
                 if _defs_gpencil_sculpt.poll_select_mask(context)
