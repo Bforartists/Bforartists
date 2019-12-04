@@ -1367,7 +1367,7 @@ class VIEW3D_MT_select_grouped(Menu):
         layout.operator("object.select_grouped", text= "Pass", icon = "PASS").type = 'PASS'
         layout.operator("object.select_grouped", text= "Color", icon = "COLOR").type = 'COLOR'
         layout.operator("object.select_grouped", text= "Keying Set", icon = "KEYINGSET").type = 'KEYINGSET'
-        layout.operator("object.select_grouped", text= "Light Type", icon = "LAMP").type = 'LIGHT_TYPE'
+        layout.operator("object.select_grouped", text= "Light Type", icon = "LIGHT").type = 'LIGHT_TYPE'
 
 
 class VIEW3D_MT_select_linked(Menu):
