@@ -1296,12 +1296,6 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-
         layout.menu ("VIEW3D_MT_select_grouped")
         layout.menu ("VIEW3D_MT_select_linked")
         layout.menu ("VIEW3D_MT_select_by_type")
@@ -1367,7 +1361,7 @@ class VIEW3D_MT_select_grouped(Menu):
         layout.operator("object.select_grouped", text= "Pass", icon = "PASS").type = 'PASS'
         layout.operator("object.select_grouped", text= "Color", icon = "COLOR").type = 'COLOR'
         layout.operator("object.select_grouped", text= "Keying Set", icon = "KEYINGSET").type = 'KEYINGSET'
-        layout.operator("object.select_grouped", text= "Light Type", icon = "LAMP").type = 'LIGHT_TYPE'
+        layout.operator("object.select_grouped", text= "Light Type", icon = "LIGHT").type = 'LIGHT_TYPE'
 
 
 class VIEW3D_MT_select_linked(Menu):
@@ -1416,12 +1410,6 @@ class VIEW3D_MT_select_pose(Menu):
         layout.operator("pose.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("pose.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("pose.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
-
-        layout.separator()
-
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
@@ -1490,12 +1478,6 @@ class VIEW3D_MT_select_particle(Menu):
         layout.operator("particle.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("particle.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("particle.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
-
-        layout.separator()
-
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
@@ -1615,12 +1597,6 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-
         layout.operator("mesh.select_linked", text="Linked", icon = "LINKED")
         layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces", icon = "LINKED")
         layout.operator("mesh.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
@@ -1710,12 +1686,6 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-
 
         layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
         layout.operator("curve.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
@@ -1763,12 +1733,6 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.operator("curve.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("curve.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("curve.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
-
-        layout.separator()
-
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
@@ -1866,12 +1830,6 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-
         layout.menu("VIEW3D_MT_select_edit_metaball_select_similar")
 
         layout.separator()
@@ -1943,12 +1901,6 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-
         layout.operator("lattice.select_mirror", text = "Mirror", icon = "TRANSFORM_MIRROR")
         layout.operator("lattice.select_random", text = "Random", icon = "RANDOMIZE")
 
@@ -1994,12 +1946,6 @@ class VIEW3D_MT_select_edit_armature(Menu):
         layout.operator("armature.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("armature.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("armature.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
-
-        layout.separator()
-
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
@@ -2136,11 +2082,6 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout.operator("paint.face_select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon = 'BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
 
         layout.operator("paint.face_select_linked", text="Linked", icon = "LINKED")
         layout.operator("paint.face_select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
@@ -2179,12 +2120,6 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
         layout.operator("paint.vert_select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("paint.vert_select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("paint.vert_select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
-
-        layout.separator()
-
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
