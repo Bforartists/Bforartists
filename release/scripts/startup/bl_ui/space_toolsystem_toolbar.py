@@ -1878,8 +1878,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
     )
 
     _tools_gpencil_select = (
-        (
-            _defs_gpencil_edit.select,
+        (           
             _defs_gpencil_edit.box_select,
             _defs_gpencil_edit.circle_select,
             _defs_gpencil_edit.lasso_select,
@@ -2085,6 +2084,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_gpencil_paint.circle,
         ],
         'EDIT_GPENCIL': [
+            _defs_gpencil_edit.select,
             *_tools_gpencil_select,
             _defs_view3d_generic.cursor,
             None,
