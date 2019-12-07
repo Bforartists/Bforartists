@@ -283,7 +283,7 @@ const bTheme U_theme_default = {
     .panelcolors = {
       .header = RGBA(0x333333ff),
       .back = RGBA(0x464646ff),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x00000024),
     },
     .vertex_size = 3,
     .outline_width = 1,
@@ -390,16 +390,15 @@ const bTheme U_theme_default = {
     .tab_active = RGBA(0x5680c2ff),
     .tab_inactive = RGBA(0x333333ff),
     .tab_back = RGBA(0x333333ff),
-    .tab_outline = RGBA(0x232323ff),
+    .tab_outline = RGBA(0x000000ff),
     .button = RGBA(0x4040407f),
     .button_title = RGBA(0xccccccff),
     .button_text = RGBA(0xffffffff),
     .button_text_hi = RGBA(0xffffffff),
-    .execution_buts = RGBA(0x444444ff),
     .panelcolors = {
       .header = RGBA(0x333333ff),
       .back = RGBA(0x464646ff),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x0000003e),
     },
     .hilite = RGBA(0xff8c19ff),
     .vertex_size = 3,
@@ -429,7 +428,7 @@ const bTheme U_theme_default = {
     .panelcolors = {
       .header = RGBA(0x33333302),
       .back = RGBA(0x464646ff),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x0000003e),
     },
     .shade1 = RGBA(0x96969600),
     .shade2 = RGBA(0x70707064),
@@ -476,7 +475,7 @@ const bTheme U_theme_default = {
     .panelcolors = {
       .header = RGBA(0x333333ff),
       .back = RGBA(0x464646ff),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x0000003e),
     },
     .vertex_size = 3,
     .outline_width = 1,
@@ -514,7 +513,7 @@ const bTheme U_theme_default = {
     .panelcolors = {
       .header = RGBA(0x00000002),
       .back = RGBA(0x464646ff),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x0000003e),
     },
     .shade1 = RGBA(0x96969600),
     .shade2 = RGBA(0x70707010),
@@ -569,16 +568,15 @@ const bTheme U_theme_default = {
     .list_text = RGBA(0x000000ff),
     .list_text_hi = RGBA(0xffffffff),
     .panelcolors = {
-      .header = RGBA(0x333333cc),
-      .back = RGBA(0x464646b3),
-      .sub_back = RGBA(0x00000026),
+      .header = RGBA(0x333333ff),
+      .back = RGBA(0x464646ff),
+      .sub_back = RGBA(0x0000003e),
     },
     .shade1 = RGBA(0x96969600),
     .grid = RGBA(0x5e5e5eff),
     .strip = RGBA(0x0c0a0a80),
     .strip_select = RGBA(0xff8c00ff),
-    .cframe = RGBA(0x5680c2ff),
-    .time_scrub_background = RGBA(0x292929e6),
+    .cframe = RGBA(0x60c040ff),
     .ds_channel = RGBA(0x5a85b2ff),
     .ds_subchannel = RGBA(0x7d98b3ff),
     .keyborder = RGBA(0x000000ff),
@@ -619,7 +617,7 @@ const bTheme U_theme_default = {
     .panelcolors = {
       .header = RGBA(0x333333ff),
       .back = RGBA(0x464646ff),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x0000003e),
     },
     .shade1 = RGBA(0xa0a0a000),
     .grid = RGBA(0x404040ff),
@@ -662,7 +660,7 @@ const bTheme U_theme_default = {
     .panelcolors = {
       .header = RGBA(0x333333ff),
       .back = RGBA(0x464646ff),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x0000003e),
     },
     .wire_edit = RGBA(0xc0c0c0ff),
     .vertex_select = RGBA(0xff8500ff),
@@ -716,7 +714,7 @@ const bTheme U_theme_default = {
     .panelcolors = {
       .header = RGBA(0x333333ff),
       .back = RGBA(0x464646ff),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x0000003e),
     },
     .shade2 = RGBA(0xc67777ff),
     .hilite = RGBA(0xff0000ff),
@@ -732,6 +730,7 @@ const bTheme U_theme_default = {
     .syntaxc = RGBA(0x006432ff),
     .syntaxd = RGBA(0x32008cff),
     .syntaxr = RGBA(0x8c3c00ff),
+    .line_numbers = RGBA(0x000000ff),
   },
   .space_outliner = {
     .back = RGBA(0x40404000),
@@ -752,7 +751,7 @@ const bTheme U_theme_default = {
     .panelcolors = {
       .header = RGBA(0x333333ff),
       .back = RGBA(0x464646ff),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x0000003e),
     },
     .active = RGBA(0x3b568900),
     .vertex_size = 3,
@@ -788,7 +787,7 @@ const bTheme U_theme_default = {
     .panelcolors = {
       .header = RGBA(0x333333ff),
       .back = RGBA(0x464646ff),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x0000003e),
     },
     .shade2 = RGBA(0x7f707064),
     .wire = RGBA(0x808080ff),
@@ -842,7 +841,7 @@ const bTheme U_theme_default = {
     .panelcolors = {
       .header = RGBA(0x42424200),
       .back = RGBA(0x333333b3),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x0000003e),
     },
     .vertex_size = 3,
     .outline_width = 1,
@@ -866,7 +865,7 @@ const bTheme U_theme_default = {
     .panelcolors = {
       .header = RGBA(0x333333ff),
       .back = RGBA(0x464646ff),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x0000003e),
     },
     .console_output = RGBA(0x6080ffff),
     .console_input = RGBA(0xffffffff),
@@ -900,7 +899,7 @@ const bTheme U_theme_default = {
     .panelcolors = {
       .header = RGBA(0x333333ff),
       .back = RGBA(0x464646ff),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x0000003e),
     },
     .strip = RGBA(0x0c0a0a80),
     .strip_select = RGBA(0xff8c00ff),
@@ -1035,7 +1034,7 @@ const bTheme U_theme_default = {
     .panelcolors = {
       .header = RGBA(0x424242cc),
       .back = RGBA(0x333333b3),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x0000003e),
     },
     .vertex_size = 3,
     .outline_width = 1,
@@ -1059,7 +1058,7 @@ const bTheme U_theme_default = {
     .panelcolors = {
       .header = RGBA(0x424242cc),
       .back = RGBA(0x333333b3),
-      .sub_back = RGBA(0x00000026),
+      .sub_back = RGBA(0x0000003e),
     },
     .vertex_size = 3,
     .outline_width = 1,
