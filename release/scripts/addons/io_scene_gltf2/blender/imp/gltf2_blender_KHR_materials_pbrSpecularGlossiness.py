@@ -62,7 +62,7 @@ class BlenderKHR_materials_pbrSpecularGlossiness():
             else:
                 # Create vertexcolor node to get COLOR_0 data
                 vertexcolor_node = node_tree.nodes.new('ShaderNodeVertexColor')
-                vertexcolor_node.layer_name = 'COLOR_0'
+                vertexcolor_node.layer_name = 'Col'
                 vertexcolor_node.location = -500, 0
 
                 # links
@@ -75,7 +75,7 @@ class BlenderKHR_materials_pbrSpecularGlossiness():
                 # TODO tree locations
                 # Create vertexcolor / separate / math nodes
                 vertexcolor_node = node_tree.nodes.new('ShaderNodeVertexColor')
-                vertexcolor_node.layer_name = 'COLOR_0'
+                vertexcolor_node.layer_name = 'Col'
 
                 separate_vertex_color = node_tree.nodes.new('ShaderNodeSeparateRGB')
                 math_vc_R = node_tree.nodes.new('ShaderNodeMath')
@@ -151,7 +151,7 @@ class BlenderKHR_materials_pbrSpecularGlossiness():
             if vertex_color:
                 # Create vertexcolor / separate / math nodes
                 vertexcolor_node = node_tree.nodes.new('ShaderNodeVertexColor')
-                vertexcolor_node.layer_name = 'COLOR_0'
+                vertexcolor_node.layer_name = 'Col'
                 vertexcolor_node.location = -2000, 250
 
                 separate_vertex_color = node_tree.nodes.new('ShaderNodeSeparateRGB')

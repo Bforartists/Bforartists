@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -2531,6 +2531,10 @@ msgid "Max amount to shrink cloth by"
 msgstr "ﺎﻬﺑ ﺵﺎﻤﻘﻟﺍ ﺺﻴﻠﻘﺘﻟ ﺔﻴﻤﻛ ﺮﺜﻛﺃ"
 
 
+msgid "Pressure"
+msgstr "ﻂﻌﻀﻟﺍ"
+
+
 msgid "Sew Cloth"
 msgstr "ﺵﺎﻤﻘﻟﺍ ﻚﺒﺣﺍ"
 
@@ -4912,22 +4916,6 @@ msgid "Curve in a curve mapping"
 msgstr "ﻰﻨﺤﻨﻣ ءﺎﺴﻛﺇ ﻲﻓ ﻰﻨﺤﻨﻣ"
 
 
-msgid "Extend"
-msgstr "ﺪﻣُ"
-
-
-msgid "Extrapolate the curve or extend it horizontally"
-msgstr "ﺎﻴﻘﻓﺃ ﻩﺪﻳﺪﻤﺗ ﻭﺃ ﻰﻨﺤﻨﻤﻟﺍ ﻁﺎﺒﻨﺘﺳﺍ"
-
-
-msgid "Horizontal"
-msgstr "ﻲﻘﻓﺃ"
-
-
-msgid "Extrapolated"
-msgstr "ﻂﺒﻨﺘﺴﻣ"
-
-
 msgid "Points"
 msgstr "ﻂﻘﻧ"
 
@@ -4990,6 +4978,22 @@ msgstr "ﻲﻘﻓﻷ﻿ﺍ ﻢﻴﻠﻘﺘﻟﺍ ﻰﻧﺩﺃ"
 
 msgid "Clip Min Y"
 msgstr "ﻱﺩﻮﻣﺎﻌﻟﺍ ﻢﻴﻠﻘﺘﻟﺍ ﻰﻧﺩﺃ"
+
+
+msgid "Extend"
+msgstr "ﺪﻣُ"
+
+
+msgid "Extrapolate the curve or extend it horizontally"
+msgstr "ﺎﻴﻘﻓﺃ ﻩﺪﻳﺪﻤﺗ ﻭﺃ ﻰﻨﺤﻨﻤﻟﺍ ﻁﺎﺒﻨﺘﺳﺍ"
+
+
+msgid "Horizontal"
+msgstr "ﻲﻘﻓﺃ"
+
+
+msgid "Extrapolated"
+msgstr "ﻂﺒﻨﺘﺴﻣ"
 
 
 msgid "Standard"
@@ -9243,10 +9247,6 @@ msgstr "ﺮﺤﻟﺍ ﺔﺒﻄﺸﻟﺍ ﻰﻨﺤﻨﻤﻠﻟ ﺕﺎﻧﺎﻴﺑ
 
 msgid "Coordinates"
 msgstr "ﺕﺎﻴﺛﺍﺪﺣﺇ"
-
-
-msgid "Pressure"
-msgstr "ﻂﻌﻀﻟﺍ"
 
 
 msgid "Pressure of tablet at point when drawing it"
@@ -18298,10 +18298,6 @@ msgstr "ﺓﺪﻋﺎﺴﻣ"
 
 msgid "Presets"
 msgstr "ﺔﻘﺒﺴﻣ ﺕﺍﺩﺍﺪﻋﺇ"
-
-
-msgid "3D Mouse Settings"
-msgstr "ﺩﺎﻌﺑﻻ﻿ﺍ ﺔﻴﺛﻼ﻿ﺜﻟﺍ ﺓﺭﺄﻔﻟﺍ ﺕﺍﺩﺍﺪﻋﺍ"
 
 
 msgid "Enabled Modes"
@@ -33063,6 +33059,10 @@ msgstr "ﺔﻴﻤﻨﺘﻟﺍ"
 
 msgid "Walk"
 msgstr "ﺶﻣﺇ"
+
+
+msgid "3D Mouse Settings"
+msgstr "ﺩﺎﻌﺑﻻ﻿ﺍ ﺔﻴﺛﻼ﻿ﺜﻟﺍ ﺓﺭﺄﻔﻟﺍ ﺕﺍﺩﺍﺪﻋﺍ"
 
 
 msgid "Auto Run Python Scripts"

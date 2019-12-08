@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
