@@ -29,8 +29,8 @@ bl_info = {
     "location": "View3D > Sidebar > Edit Tab / Edit Mode Context Menu",
     "warning": "",
     "description": "Mesh modelling toolkit. Several tools to aid modelling",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
-                "Py/Scripts/Modeling/Extra_Tools",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "mesh/edit_mesh_tools.html",
     "category": "Mesh",
 }
 
@@ -49,6 +49,7 @@ if "bpy" in locals():
     importlib.reload(mesh_edges_length)
     importlib.reload(pkhg_faces)
     importlib.reload(mesh_cut_faces)
+    importlib.reload(mesh_relax)
 
 else:
     from . import mesh_offset_edges
@@ -63,6 +64,7 @@ else:
     from . import mesh_edges_length
     from . import pkhg_faces
     from . import mesh_cut_faces
+    from . import mesh_relax
 
 
 import bmesh
@@ -1013,6 +1015,8 @@ class VIEW3D_PT_edit_mesh_tools(Panel):
             props.quad_method = props.ngon_method = 'BEAUTY'
             row = col_top.row(align=True)
             row.operator("mesh.tris_convert_to_quads")
+            row = col_top.row(align=True)
+            row.operator("mesh.relax")
             
 # property group containing all properties for the gui in the panel
 class EditToolsProps(PropertyGroup):
@@ -1134,6 +1138,7 @@ def register():
     mesh_edges_length.register()
     pkhg_faces.register()
     mesh_cut_faces.register()
+    mesh_relax.register()
 
 
 # unregistering and removing menus
@@ -1159,6 +1164,7 @@ def unregister():
     mesh_edges_length.unregister()
     pkhg_faces.unregister()
     mesh_cut_faces.unregister()
+    mesh_relax.unregister()
 
 
 if __name__ == "__main__":

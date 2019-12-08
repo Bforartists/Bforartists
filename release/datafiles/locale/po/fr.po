@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -2638,6 +2638,10 @@ msgid "Inherit scaling, but remove shearing of the child in the rest orientation
 msgstr "Hériter le redimensionnement, mais supprimer le cisaillement de l’enfant en position de repos"
 
 
+msgid "Rotate non-uniform parent scaling to align with the child, applying parent X scale to child X axis, and so forth"
+msgstr "Faire tourner le redimensionnement non-uniforme du parent pour l’aligner avec l’enfant, en appliquant l’échelle en X du parent le long de l’axe X de l’enfant, et ainsi de suite"
+
+
 msgid "Inherit uniform scaling representing the overall change in the volume of the parent"
 msgstr "Hériter un redimensionnement uniforme représentant le changement global dans le volume du parent"
 
@@ -3994,6 +3998,14 @@ msgid "Internal Friction"
 msgstr "Friction interne"
 
 
+msgid "Vertex Mass"
+msgstr "Masse de vertex"
+
+
+msgid "The mass of each vertex on the cloth material"
+msgstr "La masse de chaque vertex dans le matériau tissu"
+
+
 msgid "Pin Stiffness"
 msgstr "Raideur d’épinglage"
 
@@ -4092,6 +4104,10 @@ msgstr "Valeur maximale de la raideur de tension"
 
 msgid "Cloth speed is multiplied by this value"
 msgstr "La vitesse du tissu est multipliée par cette valeur"
+
+
+msgid "Pressure"
+msgstr "Pression"
 
 
 msgid "Dynamic Base Mesh"
@@ -6667,8 +6683,28 @@ msgid "Keep Axis"
 msgstr "Conserver axe"
 
 
+msgid "The rotation type and axis order to use"
+msgstr "Le type de rotation et l’ordre d’axes à utiliser"
+
+
 msgid "XZ"
 msgstr "XZ"
+
+
+msgid "Rotate around local X, then Z"
+msgstr "Faire tourner autour du X local, puis Z"
+
+
+msgid "ZX"
+msgstr "ZX"
+
+
+msgid "Rotate around local Z, then X"
+msgstr "Faire tourner autour du Z local, puis X"
+
+
+msgid "Use the smallest single axis rotation, similar to Damped Track"
+msgstr "Utiliser la rotation d’axe minimale, similaire au Suivi amorti"
 
 
 msgid "Original Length"
@@ -6991,22 +7027,6 @@ msgid "Curve in a curve mapping"
 msgstr "Courbe dans une conversion par courbe"
 
 
-msgid "Extend"
-msgstr "Étendre"
-
-
-msgid "Extrapolate the curve or extend it horizontally"
-msgstr "Extrapoler la courbe ou l’étendre horizontalement"
-
-
-msgid "Horizontal"
-msgstr "Horizontal"
-
-
-msgid "Extrapolated"
-msgstr "Extrapolée"
-
-
 msgid "Points"
 msgstr "Points"
 
@@ -7081,6 +7101,22 @@ msgstr "Min X troncature"
 
 msgid "Clip Min Y"
 msgstr "Min Y troncature"
+
+
+msgid "Extend"
+msgstr "Étendre"
+
+
+msgid "Extrapolate the curve or extend it horizontally"
+msgstr "Extrapoler la courbe ou l’étendre horizontalement"
+
+
+msgid "Horizontal"
+msgstr "Horizontal"
+
+
+msgid "Extrapolated"
+msgstr "Extrapolée"
 
 
 msgid "Tone"
@@ -7267,12 +7303,60 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Utiliser le début du trait pour la profondeur"
 
 
+msgid "Profile Path editor used to build a profile path"
+msgstr "Éditeur de chemin de profil utilisé pour créer un chemin de profil"
+
+
+msgid "Support Loops"
+msgstr "Supporter boucles"
+
+
+msgid "Loops on each side of the profile"
+msgstr "Boucle de chaque côté du profil"
+
+
+msgid "Cornice Moulding"
+msgstr "Moulure en corniche"
+
+
+msgid "Crown Moulding"
+msgstr "Moulure couronnée"
+
+
 msgid "Steps"
 msgstr "Étapes"
 
 
+msgid "A number of steps defined by the segments"
+msgstr "Un nombre d’étapes défini par les segments"
+
+
 msgid "Segments"
 msgstr "Segments"
+
+
+msgid "Segments sampled from control points"
+msgstr "Segments échantillonnés à partir des points de contrôle"
+
+
+msgid "Sample Even Lengths"
+msgstr "Échantillonner longueur égale"
+
+
+msgid "Sample edges with even lengths"
+msgstr "Échantillonner les arêtes avec une longueur constante"
+
+
+msgid "Sample Straight Edges"
+msgstr "Échantillonner arêtes droites"
+
+
+msgid "Sample edges with vector handles"
+msgstr "Échantillonner les arêtes avec des poignées vectorielles"
+
+
+msgid "Point of a path used to define a profile"
+msgstr "Point d’un chemin utilisé pour définir un profil"
 
 
 msgid "Curve Splines"
@@ -13040,10 +13124,6 @@ msgid "Coordinates"
 msgstr "Coordonnées"
 
 
-msgid "Pressure"
-msgstr "Pression"
-
-
 msgid "Pressure of tablet at point when drawing it"
 msgstr "Pression sur la tablette au point lors de son dessin"
 
@@ -13436,6 +13516,10 @@ msgstr "Subdiviser"
 
 msgid "Subdivide stroke adding more control points"
 msgstr "Subdiviser le trait en ajoutant des points de contrôle"
+
+
+msgid "Produce multiple strokes along one stroke"
+msgstr "Produire plusieurs traits le long d’un seul"
 
 
 msgid "Deform stroke points using armature object"
@@ -13946,6 +14030,46 @@ msgstr "Élaguer points"
 
 msgid "Mirror this axis"
 msgstr "Faire un miroir sur cet axe"
+
+
+msgid "Generate multiple strokes from one stroke"
+msgstr "Générer plusieurs traits à partir d’un seul"
+
+
+msgid "Distance of duplications"
+msgstr "Distance de duplication"
+
+
+msgid "How many copies of strokes be displayed"
+msgstr "Combien de copies du trait sont affichées"
+
+
+msgid "Enable angle splitting"
+msgstr "Activer la division angulaire"
+
+
+msgid "Enable fading"
+msgstr "Activer le fondu"
+
+
+msgid "Fade center"
+msgstr "Centre de fondu"
+
+
+msgid "Fade influence of stroke's opacity"
+msgstr "Atténuer l’influence de l’opacité du trait"
+
+
+msgid "Fade influence of stroke's thickness"
+msgstr "Atténuer l’influence de l’épaisseur du trait"
+
+
+msgid "Offset of duplications. -1 to 1: inner to outer"
+msgstr "Décalage des copies, de -1 à 1 : de l’intérieur vers l’extérieur"
+
+
+msgid "Split angle for segments"
+msgstr "Angle de division pour les segments"
 
 
 msgid "Noise Modifier"
@@ -26850,10 +26974,6 @@ msgstr "Pré-réglages"
 
 msgid "KeyPresets"
 msgstr "Pré-réglages touches"
-
-
-msgid "3D Mouse Settings"
-msgstr "Paramètres de souris 3D"
 
 
 msgid "Save & Load"
@@ -53497,6 +53617,10 @@ msgid "Screen Coordinates of sampling"
 msgstr "Coordonnées d’écran de l’échantillonnage"
 
 
+msgid "Dyntopo"
+msgstr "Dyntopo"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Mode sculpture"
@@ -57307,14 +57431,6 @@ msgid "Export vertex colors"
 msgstr "Exporter les couleurs de vertices"
 
 
-msgid "Visible Layers Only"
-msgstr "Calques visibles uniquement"
-
-
-msgid "Export only objects in visible layers"
-msgstr "N’exporter que les objets sur les calques visibles"
-
-
 msgid "Transform Samples"
 msgstr "Échantillons de transformation"
 
@@ -60055,6 +60171,10 @@ msgid "Walk"
 msgstr "Marcher"
 
 
+msgid "3D Mouse Settings"
+msgstr "Paramètres de souris 3D"
+
+
 msgid "Save Preferences"
 msgstr "Enregistrer préférences"
 
@@ -60229,10 +60349,6 @@ msgstr "Suivit de mouvement (motion tracking)"
 
 msgid "Weights Context Menu"
 msgstr "Menu contextuel de poids"
-
-
-msgid "Dyntopo"
-msgstr "Dyntopo"
 
 
 msgid "Shadow Settings"
@@ -74174,6 +74290,10 @@ msgid "DEM data (.hgt) as Mesh and/or Image"
 msgstr "Données DEM (.hgt) vers mesh et/ou image"
 
 
+msgid "Order by:"
+msgstr "Trier par :"
+
+
 msgid "OSL shader compilation succeeded"
 msgstr "La compilation du shader OSL a réussi"
 
@@ -75059,12 +75179,24 @@ msgid "UVs:"
 msgstr "UVs :"
 
 
+msgid "Miter Type:"
+msgstr "Type d’anglet :"
+
+
 msgid "Outer"
 msgstr "Externe"
 
 
 msgid "Limit Method:"
 msgstr "Méthode de limitation :"
+
+
+msgid "Face Strength Mode:"
+msgstr "Mode force de face :"
+
+
+msgid "Intersection Type:"
+msgstr "Type d’intersection :"
 
 
 msgid "Operation:"
@@ -76765,6 +76897,11 @@ msgstr "Joindre dans une nouvelle frame"
 msgctxt "Operator"
 msgid "Remove from Frame"
 msgstr "Enlever de la frame"
+
+
+msgctxt "Operator"
+msgid "Rename..."
+msgstr "Renommer…"
 
 
 msgctxt "Operator"
