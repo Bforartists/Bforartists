@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -1477,6 +1477,10 @@ msgstr "Předchozí klíč pro tvar"
 
 msgid "Shear Stiffness"
 msgstr "Vyhladit"
+
+
+msgid "Pressure"
+msgstr "Načíst:"
 
 
 msgid "Bending Stiffness Vertex Group"
@@ -3008,18 +3012,6 @@ msgid "Target object for multi-target constraints"
 msgstr "Poslední frame animace"
 
 
-msgid "Extend"
-msgstr "Přidat"
-
-
-msgid "Horizontal"
-msgstr "Horizontální"
-
-
-msgid "Extrapolated"
-msgstr "Rotace"
-
-
 msgid "Points"
 msgstr "Bod"
 
@@ -3070,6 +3062,18 @@ msgstr "Ořezání Min X"
 
 msgid "Clip Min Y"
 msgstr "Ořezání Min Y"
+
+
+msgid "Extend"
+msgstr "Přidat"
+
+
+msgid "Horizontal"
+msgstr "Horizontální"
+
+
+msgid "Extrapolated"
+msgstr "Rotace"
 
 
 msgid "Standard"
@@ -5255,10 +5259,6 @@ msgstr "Bod tahu skicovací tužky"
 
 msgid "Coordinates"
 msgstr "Souřadnice"
-
-
-msgid "Pressure"
-msgstr "Načíst:"
 
 
 msgid "Basis Matrix"
@@ -10023,10 +10023,6 @@ msgstr "Předvolby"
 
 msgid "KeyPresets"
 msgstr "Načíst:"
-
-
-msgid "3D Mouse Settings"
-msgstr "Nastavení 3D myši"
 
 
 msgid "Disable Bone Options"
@@ -26028,6 +26024,10 @@ msgstr "Přehrávka"
 
 msgid "Timeline"
 msgstr "Časová osa"
+
+
+msgid "3D Mouse Settings"
+msgstr "Nastavení 3D myši"
 
 
 msgid "Auto Run Python Scripts"

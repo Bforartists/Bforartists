@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -1012,6 +1012,10 @@ msgstr "Esborrar Rotació"
 
 msgid "Rest Shape Key"
 msgstr "Moure a Capa"
+
+
+msgid "Pressure"
+msgstr "Render"
 
 
 msgid "Bending Stiffness Vertex Group"
@@ -2275,10 +2279,6 @@ msgid "Constraint Target"
 msgstr "Afegir Tira"
 
 
-msgid "Extrapolated"
-msgstr "Esborrar Rotació"
-
-
 msgid "Points"
 msgstr "Seleccionar fila"
 
@@ -2316,6 +2316,10 @@ msgstr "Esborrar Rotació"
 
 
 msgid "Clip Min Y"
+msgstr "Esborrar Rotació"
+
+
+msgid "Extrapolated"
 msgstr "Esborrar Rotació"
 
 
@@ -3942,10 +3946,6 @@ msgstr "Començar Joc"
 
 msgid "Coordinates"
 msgstr "Arxiu"
-
-
-msgid "Pressure"
-msgstr "Render"
 
 
 msgid "Basis Matrix"
@@ -7702,10 +7702,6 @@ msgstr "Arxiu"
 
 msgid "KeyPresets"
 msgstr "Render"
-
-
-msgid "3D Mouse Settings"
-msgstr "Eines"
 
 
 msgid "Disable Bone Options"
@@ -20969,6 +20965,10 @@ msgstr "Render"
 
 msgid "Playback"
 msgstr "Finestra de Render"
+
+
+msgid "3D Mouse Settings"
+msgstr "Eines"
 
 
 msgid "Bone Color Sets"

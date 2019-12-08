@@ -25,6 +25,8 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "View3D > Sidebar > Edit Tab",
     "description": "Bool Tool Hotkey: Ctrl Shift B",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "object/bool_tools.html",
     "category": "Object",
 }
 
