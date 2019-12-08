@@ -101,41 +101,6 @@ typedef char DRWViewportEmptyList;
         DRW_VIEWPORT_LIST_SIZE(*(((ty *)NULL)->stl)), \
   }
 
-/* Use of multisample framebuffers. */
-#define MULTISAMPLE_SYNC_ENABLE(dfbl, dtxl) \
-  { \
-    if (dfbl->multisample_fb != NULL && DRW_state_is_fbo()) { \
-      DRW_stats_query_start("Multisample Blit"); \
-      GPU_framebuffer_bind(dfbl->multisample_fb); \
-      /* TODO clear only depth but need to do alpha to coverage for transparencies. */ \
-      GPU_framebuffer_clear_color_depth(dfbl->multisample_fb, (const float[4]){0.0f}, 1.0f); \
-      DRW_stats_query_end(); \
-    } \
-  } \
-  ((void)0)
-
-#define MULTISAMPLE_SYNC_DISABLE(dfbl, dtxl) \
-  { \
-    if (dfbl->multisample_fb != NULL && DRW_state_is_fbo()) { \
-      DRW_stats_query_start("Multisample Resolve"); \
-      GPU_framebuffer_bind(dfbl->default_fb); \
-      DRW_multisamples_resolve(dtxl->multisample_depth, dtxl->multisample_color, true); \
-      DRW_stats_query_end(); \
-    } \
-  } \
-  ((void)0)
-
-#define MULTISAMPLE_SYNC_DISABLE_NO_DEPTH(dfbl, dtxl) \
-  { \
-    if (dfbl->multisample_fb != NULL && DRW_state_is_fbo()) { \
-      DRW_stats_query_start("Multisample Resolve"); \
-      GPU_framebuffer_bind(dfbl->default_fb); \
-      DRW_multisamples_resolve(dtxl->multisample_depth, dtxl->multisample_color, false); \
-      DRW_stats_query_end(); \
-    } \
-  } \
-  ((void)0)
-
 typedef struct DrawEngineDataSize {
   int fbl_len;
   int txl_len;
@@ -173,16 +138,15 @@ typedef struct DrawEngineType {
 /* Buffer and textures used by the viewport by default */
 typedef struct DefaultFramebufferList {
   struct GPUFrameBuffer *default_fb;
+  struct GPUFrameBuffer *in_front_fb;
   struct GPUFrameBuffer *color_only_fb;
   struct GPUFrameBuffer *depth_only_fb;
-  struct GPUFrameBuffer *multisample_fb;
 } DefaultFramebufferList;
 
 typedef struct DefaultTextureList {
   struct GPUTexture *color;
   struct GPUTexture *depth;
-  struct GPUTexture *multisample_color;
-  struct GPUTexture *multisample_depth;
+  struct GPUTexture *depth_in_front;
 } DefaultTextureList;
 #endif
 
@@ -344,9 +308,11 @@ typedef enum {
   /** Use dual source blending. WARNING: Only one color buffer allowed. */
   DRW_STATE_BLEND_CUSTOM = (1 << 23),
 
+  DRW_STATE_IN_FRONT_SELECT = (1 << 25),
+  DRW_STATE_LOGIC_INVERT = (1 << 26),
   DRW_STATE_SHADOW_OFFSET = (1 << 27),
   DRW_STATE_CLIP_PLANES = (1 << 28),
-  DRW_STATE_WIRE_SMOOTH = (1 << 29),
+  // DRW_STATE_WIRE_SMOOTH = (1 << 29), /* UNUSED */
   DRW_STATE_FIRST_VERTEX_CONVENTION = (1 << 30),
   /** DO NOT USE. Assumed always enabled. Only used internally. */
   DRW_STATE_PROGRAM_POINT_SIZE = (1u << 31),
@@ -429,11 +395,12 @@ void DRW_shgroup_call_range(DRWShadingGroup *shgroup,
 void DRW_shgroup_call_procedural_points(DRWShadingGroup *sh, Object *ob, uint point_ct);
 void DRW_shgroup_call_procedural_lines(DRWShadingGroup *sh, Object *ob, uint line_ct);
 void DRW_shgroup_call_procedural_triangles(DRWShadingGroup *sh, Object *ob, uint tri_ct);
-
+/* Warning: Only use with Shaders that have IN_PLACE_INSTANCES defined. */
 void DRW_shgroup_call_instances(DRWShadingGroup *shgroup,
                                 Object *ob,
                                 struct GPUBatch *geom,
                                 uint count);
+/* Warning: Only use with Shaders that have INSTANCED_ATTRIB defined. */
 void DRW_shgroup_call_instances_with_attribs(DRWShadingGroup *shgroup,
                                              Object *ob,
                                              struct GPUBatch *geom,
@@ -449,6 +416,7 @@ DRWCallBuffer *DRW_shgroup_call_buffer_instance(DRWShadingGroup *shading_group,
                                                 struct GPUVertFormat *format,
                                                 struct GPUBatch *geom);
 
+void DRW_buffer_add_entry_struct(DRWCallBuffer *callbuf, const void *data);
 void DRW_buffer_add_entry_array(DRWCallBuffer *buffer, const void *attr[], uint attr_len);
 
 #define DRW_buffer_add_entry(buffer, ...) \
@@ -548,6 +516,7 @@ void DRW_pass_foreach_shgroup(DRWPass *pass,
                               void (*callback)(void *userData, DRWShadingGroup *shgrp),
                               void *userData);
 void DRW_pass_sort_shgroup_z(DRWPass *pass);
+void DRW_pass_sort_shgroup_reverse(DRWPass *pass);
 
 bool DRW_pass_is_empty(DRWPass *pass);
 

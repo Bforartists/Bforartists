@@ -24,8 +24,8 @@ bl_info = {
     "location": "View3D > Sidebar > Edit Tab / Edit Mode Context Menu",
     "warning": "",
     "description": "Mesh modelling toolkit. Several tools to aid modelling",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Modeling/LoopTools",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "mesh/looptools.html",
     "category": "Mesh",
 }
 
