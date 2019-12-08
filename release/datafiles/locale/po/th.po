@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2019-06-01 18:12+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -1893,10 +1893,6 @@ msgid "Presets"
 msgstr "รูปแบบล่วงหน้า"
 
 
-msgid "3D Mouse Settings"
-msgstr "การตั้งค่าเมาส์ 3D"
-
-
 msgid "Save & Load"
 msgstr "บันทึกและโหลด"
 
@@ -3075,6 +3071,10 @@ msgstr "เรนเดอร์ข้อความ"
 msgctxt "WindowManager"
 msgid "Translation"
 msgstr "แปลภาษา"
+
+
+msgid "3D Mouse Settings"
+msgstr "การตั้งค่าเมาส์ 3D"
 
 
 msgid "Save Preferences"

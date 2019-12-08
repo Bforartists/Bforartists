@@ -24,10 +24,6 @@
 # freely by the public as outlined in their policies at
 #               www.nws.noaa.gov/disclaimer.php
 # --------------------------------------------------------------------------
-# The world map images have been composited from two NASA images.
-# NASA's image use policy can be found at:
-# http://www.nasa.gov/audience/formedia/features/MP_Photo_Guidelines.html
-# --------------------------------------------------------------------------
 # The geo parser script is by Maximilian Högner, released
 # under the GNU GPL license:
 # http://hoegners.de/Maxi/geo/
@@ -52,11 +48,10 @@ if "bpy" in locals():
     import importlib
     importlib.reload(properties)
     importlib.reload(ui_sun)
-    # importlib.reload(map)
     importlib.reload(hdr)
 
 else:
-    from . import properties, ui_sun, hdr#, map
+    from . import properties, ui_sun, hdr
 
 import bpy
 
@@ -73,13 +68,11 @@ def register():
     bpy.utils.register_class(ui_sun.SUNPOS_MT_Presets)
     bpy.utils.register_class(ui_sun.SUNPOS_PT_Panel)
     bpy.utils.register_class(hdr.SUNPOS_OT_ShowHdr)
-    # bpy.utils.register_class(map.SunPos_Help)
 
     bpy.app.handlers.frame_change_post.append(sun_calc.sun_handler)
 
 
 def unregister():
-    # bpy.utils.unregister_class(map.SunPos_Help)
     bpy.utils.unregister_class(hdr.SUNPOS_OT_ShowHdr)
     bpy.utils.unregister_class(ui_sun.SUNPOS_PT_Panel)
     bpy.utils.unregister_class(ui_sun.SUNPOS_MT_Presets)

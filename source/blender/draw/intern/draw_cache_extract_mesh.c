@@ -634,20 +634,10 @@ static void extract_lines_ledge_mesh(const MeshRenderData *mr,
   GPU_indexbuf_set_line_restart(elb, edge_idx);
 }
 
-static void extract_lines_finish(const MeshRenderData *mr, void *ibo, void *elb)
+static void extract_lines_finish(const MeshRenderData *UNUSED(mr), void *ibo, void *elb)
 {
   GPU_indexbuf_build_in_place(elb, ibo);
   MEM_freeN(elb);
-  /* HACK Create ibo subranges and assign them to GPUBatch. */
-  if (mr->use_final_mesh && mr->cache->batch.loose_edges) {
-    BLI_assert(mr->cache->batch.loose_edges->elem == ibo);
-    /* Multiply by 2 because these are edges indices. */
-    int start = mr->edge_len * 2;
-    int len = mr->edge_loose_len * 2;
-    GPUIndexBuf *sub_ibo = GPU_indexbuf_create_subrange(ibo, start, len);
-    /* WARNING: We modify the GPUBatch here! */
-    GPU_batch_elembuf_set(mr->cache->batch.loose_edges, sub_ibo, true);
-  }
 }
 
 static const MeshExtract extract_lines = {
@@ -661,6 +651,56 @@ static const MeshExtract extract_lines = {
     NULL,
     NULL,
     extract_lines_finish,
+    0,
+    false,
+};
+
+/** \} */
+
+/* ---------------------------------------------------------------------- */
+/** \name Extract Loose Edges Indices
+ * \{ */
+
+static void *extract_lines_loose_init(const MeshRenderData *UNUSED(mr), void *UNUSED(buf))
+{
+  return NULL;
+}
+
+static void extract_lines_loose_ledge_mesh(const MeshRenderData *UNUSED(mr),
+                                           int UNUSED(e),
+                                           const MEdge *UNUSED(medge),
+                                           void *UNUSED(elb))
+{
+  /* This function is intentionally empty. The existence of this functions ensures that
+   * `iter_type` `MR_ITER_LVERT` is set when initializing the `MeshRenderData` (See
+   * `mesh_extract_iter_type`). This flag ensures that `mr->edge_loose_len` field is filled. This
+   * field we use in the `extract_lines_loose_finish` function to create a subrange from the
+   * `ibo.lines`. */
+}
+
+static void extract_lines_loose_finish(const MeshRenderData *mr,
+                                       void *UNUSED(ibo),
+                                       void *UNUSED(elb))
+{
+  /* Multiply by 2 because these are edges indices. */
+  const int start = mr->edge_len * 2;
+  const int len = mr->edge_loose_len * 2;
+  GPU_indexbuf_create_subrange_in_place(
+      mr->cache->final.ibo.lines_loose, mr->cache->final.ibo.lines, start, len);
+  mr->cache->no_loose_wire = (len == 0);
+}
+
+static const MeshExtract extract_lines_loose = {
+    extract_lines_loose_init,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_lines_loose_ledge_mesh,
+    NULL,
+    NULL,
+    extract_lines_loose_finish,
     0,
     false,
 };
@@ -4369,6 +4409,7 @@ void mesh_buffer_cache_create_requested(MeshBatchCache *cache,
   TEST_ASSIGN(IBO, ibo, fdots);
   TEST_ASSIGN(IBO, ibo, lines_paint_mask);
   TEST_ASSIGN(IBO, ibo, lines_adjacency);
+  TEST_ASSIGN(IBO, ibo, lines_loose);
   TEST_ASSIGN(IBO, ibo, edituv_tris);
   TEST_ASSIGN(IBO, ibo, edituv_lines);
   TEST_ASSIGN(IBO, ibo, edituv_points);
@@ -4442,14 +4483,22 @@ void mesh_buffer_cache_create_requested(MeshBatchCache *cache,
   EXTRACT(ibo, edituv_points);
   EXTRACT(ibo, edituv_fdots);
 
-#undef EXTRACT
-
   /* TODO(fclem) Ideally, we should have one global pool for all
    * objects and wait for finish only before drawing when buffers
    * need to be ready. */
   BLI_task_pool_work_and_wait(task_pool);
-  BLI_task_pool_free(task_pool);
 
+  /* The next task(s) rely on the result of the tasks above. */
+
+  /* The `lines_loose` is a sub buffer from `ibo.lines`.
+   * We schedule it here due to potential synchronization issues.*/
+  EXTRACT(ibo, lines_loose);
+
+  BLI_task_pool_work_and_wait(task_pool);
+
+#undef EXTRACT
+
+  BLI_task_pool_free(task_pool);
   MEM_freeN(task_counters);
 
   mesh_render_data_free(mr);

@@ -68,6 +68,23 @@ class TOPBAR_HT_upper_bar(Header):
             layout.template_running_jobs()
 
 
+class TOPBAR_PT_tool_fallback(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Layers"
+    bl_ui_units_x = 8
+
+    def draw(self, context):
+        from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        ToolSelectPanelHelper.draw_fallback_tool_items(layout, context)
+        if tool_settings.workspace_tool_type == 'FALLBACK':
+            tool = context.tool
+            ToolSelectPanelHelper.draw_active_tool_fallback(context, layout, tool)
+
+
 class TOPBAR_PT_gpencil_layers(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
@@ -136,8 +153,8 @@ class TOPBAR_PT_gpencil_layers(Panel):
                 col.separator()
 
                 sub = col.column(align=True)
-                sub.operator("gpencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False
                 sub.operator("gpencil.layer_isolate", icon='HIDE_OFF', text="").affect_visibility = True
+                sub.operator("gpencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False
 
 
 class TOPBAR_MT_editor_menus(Menu):
@@ -727,6 +744,7 @@ classes = (
     TOPBAR_MT_opengl_render,
     TOPBAR_MT_window,
     TOPBAR_MT_help,
+    TOPBAR_PT_tool_fallback,
     TOPBAR_PT_gpencil_layers,
     TOPBAR_PT_gpencil_primitive,
     TOPBAR_PT_gpencil_fill,
