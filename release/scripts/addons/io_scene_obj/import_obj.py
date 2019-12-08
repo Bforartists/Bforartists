@@ -510,9 +510,9 @@ def split_mesh(verts_loc, faces, unique_materials, filepath, SPLIT_OB_OR_GROUP):
          face_vert_nor_indices,
          face_vert_tex_indices,
          context_material,
-         context_smooth_group,
+         _context_smooth_group,
          context_object_key,
-         face_invalid_blenpoly,
+         _face_invalid_blenpoly,
          ) = face
         key = context_object_key
 
@@ -956,8 +956,6 @@ def load(context,
         if use_split_objects or use_split_groups:
             use_groups_as_vgroups = False
 
-        time_main = time.time()
-
         verts_loc = []
         verts_nor = []
         verts_tex = []
@@ -1245,7 +1243,6 @@ def load(context,
         if bpy.ops.object.select_all.poll():
             bpy.ops.object.select_all(action='DESELECT')
 
-        scene = context.scene
         new_objects = []  # put new objects here
 
         # Split the mesh by objects/materials, may

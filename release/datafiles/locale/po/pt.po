@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Inês Almeida, João Brandão (ULISBOA), Paulo Martins <ivan.paulos.tome@yandex.com>\n"
@@ -3381,6 +3381,10 @@ msgid "Cloth speed is multiplied by this value"
 msgstr "A velocidade do tecido é multiplicada por este valor."
 
 
+msgid "Pressure"
+msgstr "Pressão"
+
+
 msgid "Dynamic Base Mesh"
 msgstr "Malha dinâmica como base"
 
@@ -5842,22 +5846,6 @@ msgid "Curve in a curve mapping"
 msgstr "Curva dentro de um mapeamento de curva."
 
 
-msgid "Extend"
-msgstr "Estender"
-
-
-msgid "Extrapolate the curve or extend it horizontally"
-msgstr "Extrapolar a curva ou estendê-la horizontalmente."
-
-
-msgid "Horizontal"
-msgstr "Horizontal"
-
-
-msgid "Extrapolated"
-msgstr "Extrapolado"
-
-
 msgid "Points"
 msgstr "Pontos"
 
@@ -5932,6 +5920,22 @@ msgstr "Limite mínimo X"
 
 msgid "Clip Min Y"
 msgstr "Limite mínimo Y"
+
+
+msgid "Extend"
+msgstr "Estender"
+
+
+msgid "Extrapolate the curve or extend it horizontally"
+msgstr "Extrapolar a curva ou estendê-la horizontalmente."
+
+
+msgid "Horizontal"
+msgstr "Horizontal"
+
+
+msgid "Extrapolated"
+msgstr "Extrapolado"
 
 
 msgid "Standard"
@@ -11040,10 +11044,6 @@ msgstr "Ponto de dados para a curva de traço a mão livre."
 
 msgid "Coordinates"
 msgstr "Coordenadas"
-
-
-msgid "Pressure"
-msgstr "Pressão"
 
 
 msgid "Pressure of tablet at point when drawing it"
@@ -22161,10 +22161,6 @@ msgstr "Predefinições"
 
 msgid "KeyPresets"
 msgstr "Predefinições de chave"
-
-
-msgid "3D Mouse Settings"
-msgstr "Definições de rato 3D"
 
 
 msgid "Angle Control"
@@ -46964,6 +46960,10 @@ msgid "Screen Coordinates of sampling"
 msgstr "Coordenadas da amostragem da tela."
 
 
+msgid "Dyntopo"
+msgstr "Topologia dinâmica"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Modo de escultura"
@@ -50531,14 +50531,6 @@ msgid "Export vertex colors"
 msgstr "Exporta as cores dos vértices."
 
 
-msgid "Visible Layers Only"
-msgstr "Somente as camadas visíveis"
-
-
-msgid "Export only objects in visible layers"
-msgstr "Exporta somente os objetos presentes nas camadas visíveis"
-
-
 msgid "Transform Samples"
 msgstr "Amostras de transformações"
 
@@ -52731,6 +52723,10 @@ msgid "Walk"
 msgstr "Caminhada"
 
 
+msgid "3D Mouse Settings"
+msgstr "Definições de rato 3D"
+
+
 msgid "Auto Run Python Scripts"
 msgstr "Executar scripts Python automaticamente"
 
@@ -52789,10 +52785,6 @@ msgstr "Cores da gradiente"
 
 msgid "Motion Tracking"
 msgstr "Captura de movimentos"
-
-
-msgid "Dyntopo"
-msgstr "Topologia dinâmica"
 
 
 msgctxt "Operator"

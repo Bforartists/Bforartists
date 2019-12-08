@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -1263,6 +1263,10 @@ msgstr "Flytta Till Lager"
 
 msgid "Shear Stiffness"
 msgstr "Styvhet"
+
+
+msgid "Pressure"
+msgstr "Rendera"
 
 
 msgid "Bending Stiffness Vertex Group"
@@ -2646,14 +2650,6 @@ msgid "Constraint Target"
 msgstr "Lägg till Stripp"
 
 
-msgid "Extend"
-msgstr "Utvidga"
-
-
-msgid "Extrapolated"
-msgstr "Extrapolera"
-
-
 msgid "Points"
 msgstr "Markera Rad"
 
@@ -2696,6 +2692,14 @@ msgstr "Klippning"
 
 msgid "Clip Min Y"
 msgstr "Klippning"
+
+
+msgid "Extend"
+msgstr "Utvidga"
+
+
+msgid "Extrapolated"
+msgstr "Extrapolera"
 
 
 msgid "White Level"
@@ -4573,10 +4577,6 @@ msgstr "Starta Spel"
 
 msgid "Coordinates"
 msgstr "Arkiv"
-
-
-msgid "Pressure"
-msgstr "Rendera"
 
 
 msgid "Basis Matrix"
@@ -8965,10 +8965,6 @@ msgstr "Förinställningar"
 
 msgid "KeyPresets"
 msgstr "Rendera"
-
-
-msgid "3D Mouse Settings"
-msgstr "Inställningar för 3D-mus"
 
 
 msgid "Disable Bone Options"
@@ -24494,6 +24490,10 @@ msgstr "Lägg till renderingsförinställning"
 
 msgid "Playback"
 msgstr "Uppspelning"
+
+
+msgid "3D Mouse Settings"
+msgstr "Inställningar för 3D-mus"
 
 
 msgid "Bone Color Sets"
