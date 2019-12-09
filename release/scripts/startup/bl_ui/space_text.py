@@ -152,19 +152,24 @@ class TEXT_PT_properties(Panel):
         st = context.space_data
 
         flow = layout.column_flow()
+        flow.use_property_split = False
         flow.prop(st, "show_line_highlight")
         flow.prop(st, "use_live_edit")
+        layout.use_property_split = True
 
         flow = layout.column_flow()
+        
         flow.prop(st, "font_size")
-        flow.prop(st, "tab_width")
+        flow.prop(st, "tab_width")      
 
         text = st.text
         if text:
             layout.prop(text, "indentation")
-
+        flow.use_property_split = False
         flow.prop(st, "show_margin")
+        flow.use_property_split = True
         if st.show_margin:
+            
             col = flow.column()
             col.active = st.show_margin
             col.prop(st, "margin_column")
