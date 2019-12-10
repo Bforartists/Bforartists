@@ -335,8 +335,8 @@ class MASK_MT_animation(Menu):
 
         layout.operator("mask.shape_key_insert", icon = "KEYFRAMES_INSERT")
         layout.operator("mask.shape_key_clear", icon = "CLEAR")
-        layout.operator("mask.shape_key_feather_reset", icon = "RESET")
-        layout.operator("mask.shape_key_rekey", icon = 'KEY_HLT')
+        layout.operator("mask.shape_key_feather_reset", text="Reset Feather Animation", icon='RESET')
+        layout.operator("mask.shape_key_rekey", text="Re-key Shape Points", icon = "SHAPEKEY_DATA")
 
 
 # Workaround to separate the tooltips
