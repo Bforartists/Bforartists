@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -4118,6 +4118,10 @@ msgid "Cloth speed is multiplied by this value"
 msgstr "Tốc độ vải được nhân với giá trị này"
 
 
+msgid "Pressure"
+msgstr "Áp Suất"
+
+
 msgid "Dynamic Base Mesh"
 msgstr "Mạng Lưới Cơ Sở Động Lý"
 
@@ -7047,22 +7051,6 @@ msgid "Curve in a curve mapping"
 msgstr "Đường cong cho một ánh xạ đường cong"
 
 
-msgid "Extend"
-msgstr "Kéo Dài"
-
-
-msgid "Extrapolate the curve or extend it horizontally"
-msgstr "Suy ngoại đường cong hay kéo dài nó ngang"
-
-
-msgid "Horizontal"
-msgstr "Ngang"
-
-
-msgid "Extrapolated"
-msgstr "Suy Ngoại"
-
-
 msgid "Points"
 msgstr "Điểm"
 
@@ -7137,6 +7125,22 @@ msgstr "Cắt Cực Tiểu X"
 
 msgid "Clip Min Y"
 msgstr "Cắt Cực Tiểu Y"
+
+
+msgid "Extend"
+msgstr "Kéo Dài"
+
+
+msgid "Extrapolate the curve or extend it horizontally"
+msgstr "Suy ngoại đường cong hay kéo dài nó ngang"
+
+
+msgid "Horizontal"
+msgstr "Ngang"
+
+
+msgid "Extrapolated"
+msgstr "Suy Ngoại"
 
 
 msgid "Tone"
@@ -13174,10 +13178,6 @@ msgstr "Điểm dữ liệu cho cong nét tự do"
 
 msgid "Coordinates"
 msgstr "Tọa Độ"
-
-
-msgid "Pressure"
-msgstr "Áp Suất"
 
 
 msgid "Pressure of tablet at point when drawing it"
@@ -27822,10 +27822,6 @@ msgstr "Đặt Sẵn"
 
 msgid "KeyPresets"
 msgstr "Phím Đặt Sẵn"
-
-
-msgid "3D Mouse Settings"
-msgstr "Cài Đặt Chuột 3D"
 
 
 msgid "Save & Load"
@@ -57908,6 +57904,10 @@ msgid "Screen Coordinates of sampling"
 msgstr "Tọa Độ Màn của mẫu vật"
 
 
+msgid "Dyntopo"
+msgstr "Hình Dạng Học Động Lý"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Chế Độ Khắc"
@@ -62164,14 +62164,6 @@ msgid "Export vertex colors"
 msgstr "Xuất màu đỉnh"
 
 
-msgid "Visible Layers Only"
-msgstr "Chỉ Lớp Hiển Thị"
-
-
-msgid "Export only objects in visible layers"
-msgstr "Chỉ xuất vật thể trong các lớp hiển thị"
-
-
 msgid "Transform Samples"
 msgstr "Biến Hóa Mẫu Vật"
 
@@ -65579,6 +65571,10 @@ msgid "Orbit & Pan"
 msgstr "Quay & Dời"
 
 
+msgid "3D Mouse Settings"
+msgstr "Cài Đặt Chuột 3D"
+
+
 msgid "Save Preferences"
 msgstr "Lưu Tùy Chọn"
 
@@ -65809,10 +65805,6 @@ msgstr "Phân Tích"
 
 msgid "Quad View"
 msgstr "Tư Phân Màn"
-
-
-msgid "Dyntopo"
-msgstr "Hình Dạng Học Động Lý"
 
 
 msgid "Unified Brush"
@@ -77075,14 +77067,6 @@ msgid "Display keyframe handle types and non-bezier interpolation modes"
 msgstr "Hiện loại của tay cầm bức mẫu và chế độ suy nội vô bezier"
 
 
-msgid "Show Marker Lines"
-msgstr "Hiện Đường Ký Hiệu"
-
-
-msgid "Show a vertical line for every marker"
-msgstr "Hiện một đường dọc cho mỗi ký hiệu"
-
-
 msgid "Show Pose Markers"
 msgstr "Hiện Ký Hiệu Dạng Đứng"
 
@@ -84890,10 +84874,6 @@ msgid "Autolock Inactive Layers"
 msgstr "Tự Động Khóa Lớp Không Hoạt Động"
 
 
-msgid "Show Only On Keyframed"
-msgstr "Chỉ Hiện Trên Có Bức Mẫu"
-
-
 msgid "Before"
 msgstr "Trước"
 
@@ -85794,6 +85774,10 @@ msgstr "Chỉ Hát Lại"
 
 msgid "ShaderFX"
 msgstr "Hiệu Ứng Bộ Tô Sắc"
+
+
+msgid "Show Only On Keyframed"
+msgstr "Chỉ Hiện Trên Có Bức Mẫu"
 
 
 msgctxt "Operator"
@@ -89102,6 +89086,10 @@ msgid "Orbit Style"
 msgstr "Phong Cách Quay"
 
 
+msgid "Navigate"
+msgstr "Chuyển Hướng"
+
+
 msgid "Orbit Options"
 msgstr "Tùy Chọn Quay"
 
@@ -90050,10 +90038,6 @@ msgstr "Sự Hiển Thị Loại Vật Thể"
 
 msgid "Viewport Gizmos"
 msgstr "Đồ Đạc Màn Chiếu"
-
-
-msgid "Navigate"
-msgstr "Chuyển Hướng"
 
 
 msgid "Active Tools"
@@ -91919,62 +91903,6 @@ msgstr "Chọn ID"
 
 msgid "Workbench"
 msgstr "Bàn Công Việc"
-
-
-msgid "MotionPath"
-msgstr "ĐườngChuyểnĐộng"
-
-
-msgid "EditArmatureMode"
-msgstr "ChếĐộBiênTậpCốt"
-
-
-msgid "EditCurveMode"
-msgstr "ChếĐộBiênTậpĐườngCong"
-
-
-msgid "EditLatticeMode"
-msgstr "ChếĐộBiênTậpLướiRào"
-
-
-msgid "EditMeshMode"
-msgstr "ChếĐộBiênTậpMạngLưới"
-
-
-msgid "EditMetaballMode"
-msgstr "ChếĐộBiênTậpSiêuCầu"
-
-
-msgid "EditTextMode"
-msgstr "ChếĐộBiênTậpVănBản"
-
-
-msgid "ObjectMode"
-msgstr "ChếĐộVậtThể"
-
-
-msgid "OverlayEngine"
-msgstr "ĐộngCơLớpChe"
-
-
-msgid "PaintTextureMode"
-msgstr "ChếĐộSơnHọaTiết"
-
-
-msgid "PaintVertexMode"
-msgstr "ChếĐộSơnĐỉnh"
-
-
-msgid "Particle Mode"
-msgstr "ChếĐộHạt"
-
-
-msgid "PoseMode"
-msgstr "ChếĐộDạngĐứng"
-
-
-msgid "SculptMode"
-msgstr "ChếĐộKhắc"
 
 
 msgid "NLA Strip Controls"

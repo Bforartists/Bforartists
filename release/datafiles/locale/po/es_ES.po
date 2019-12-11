@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzan <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -4118,6 +4118,10 @@ msgid "Cloth speed is multiplied by this value"
 msgstr "La velocidad de la ropa es multiplicada por este valor"
 
 
+msgid "Pressure"
+msgstr "Presión"
+
+
 msgid "Dynamic Base Mesh"
 msgstr "Malla dinámica de base"
 
@@ -7047,22 +7051,6 @@ msgid "Curve in a curve mapping"
 msgstr "Curva de mapeo"
 
 
-msgid "Extend"
-msgstr "Extender"
-
-
-msgid "Extrapolate the curve or extend it horizontally"
-msgstr "Extrapolar la curva o extenderla horizontalmente"
-
-
-msgid "Horizontal"
-msgstr "Horizontal"
-
-
-msgid "Extrapolated"
-msgstr "Extrapolado"
-
-
 msgid "Points"
 msgstr "Puntos"
 
@@ -7137,6 +7125,22 @@ msgstr "Recorte mín X"
 
 msgid "Clip Min Y"
 msgstr "Recorte mín Y"
+
+
+msgid "Extend"
+msgstr "Extender"
+
+
+msgid "Extrapolate the curve or extend it horizontally"
+msgstr "Extrapolar la curva o extenderla horizontalmente"
+
+
+msgid "Horizontal"
+msgstr "Horizontal"
+
+
+msgid "Extrapolated"
+msgstr "Extrapolado"
 
 
 msgid "Tone"
@@ -13174,10 +13178,6 @@ msgstr "Punto de un trazo curvo a mano alzada"
 
 msgid "Coordinates"
 msgstr "Coordenadas"
-
-
-msgid "Pressure"
-msgstr "Presión"
 
 
 msgid "Pressure of tablet at point when drawing it"
@@ -27810,10 +27810,6 @@ msgstr "Ajustes"
 
 msgid "KeyPresets"
 msgstr "Ajustes de claves"
-
-
-msgid "3D Mouse Settings"
-msgstr "Opciones ratón 3D"
 
 
 msgid "Save & Load"
@@ -57892,6 +57888,10 @@ msgid "Screen Coordinates of sampling"
 msgstr "Coordenadas de pantalla de muestreo"
 
 
+msgid "Dyntopo"
+msgstr "Topología dinámica"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Modo de escultura"
@@ -62148,14 +62148,6 @@ msgid "Export vertex colors"
 msgstr "Exporta colores de los vértices"
 
 
-msgid "Visible Layers Only"
-msgstr "Sólo capas visibles"
-
-
-msgid "Export only objects in visible layers"
-msgstr "Exportar sólo los objetos de las capas visibles"
-
-
 msgid "Transform Samples"
 msgstr "Muestras de transformaciones"
 
@@ -65563,6 +65555,10 @@ msgid "Orbit & Pan"
 msgstr "Orbitar y desplazar"
 
 
+msgid "3D Mouse Settings"
+msgstr "Opciones ratón 3D"
+
+
 msgid "Save Preferences"
 msgstr "Guardar preferencias"
 
@@ -65793,10 +65789,6 @@ msgstr "Analizar"
 
 msgid "Quad View"
 msgstr "Vista cuádruple"
-
-
-msgid "Dyntopo"
-msgstr "Topología dinámica"
 
 
 msgid "Unified Brush"
@@ -77051,14 +77043,6 @@ msgid "Display keyframe handle types and non-bezier interpolation modes"
 msgstr "Muestra los tipos de asas de los claves y los modos de interpolación distintos al Bézier"
 
 
-msgid "Show Marker Lines"
-msgstr "Mostrar líneas de marcadores"
-
-
-msgid "Show a vertical line for every marker"
-msgstr "Muestra una línea vertical para cada marcador"
-
-
 msgid "Show Pose Markers"
 msgstr "Mostrar marcadores de posición"
 
@@ -84866,10 +84850,6 @@ msgid "Autolock Inactive Layers"
 msgstr "Autobloquear capas inactivas"
 
 
-msgid "Show Only On Keyframed"
-msgstr "Mostrar sólo lo animado"
-
-
 msgid "Before"
 msgstr "Antes"
 
@@ -85770,6 +85750,10 @@ msgstr "Sólo reproducción"
 
 msgid "ShaderFX"
 msgstr "Efectos visuales"
+
+
+msgid "Show Only On Keyframed"
+msgstr "Mostrar sólo lo animado"
 
 
 msgctxt "Operator"
@@ -89078,6 +89062,10 @@ msgid "Orbit Style"
 msgstr "Estilo de órbita"
 
 
+msgid "Navigate"
+msgstr "Navegación"
+
+
 msgid "Orbit Options"
 msgstr "Opciones de órbita"
 
@@ -90026,10 +90014,6 @@ msgstr "Visibilidad por tipo"
 
 msgid "Viewport Gizmos"
 msgstr "Manipuladores"
-
-
-msgid "Navigate"
-msgstr "Navegación"
 
 
 msgid "Active Tools"
@@ -91885,62 +91869,6 @@ msgstr "Seleccionar ID"
 
 msgid "Workbench"
 msgstr "Workbench"
-
-
-msgid "MotionPath"
-msgstr "Trayectoria de movimiento"
-
-
-msgid "EditArmatureMode"
-msgstr "Modo Edición de esqueleto"
-
-
-msgid "EditCurveMode"
-msgstr "Modo Edición de curva"
-
-
-msgid "EditLatticeMode"
-msgstr "Modo Edición de jaula"
-
-
-msgid "EditMeshMode"
-msgstr "Modo Edición de malla"
-
-
-msgid "EditMetaballMode"
-msgstr "Modo Edición de metabola"
-
-
-msgid "EditTextMode"
-msgstr "Modo Edición de texto"
-
-
-msgid "ObjectMode"
-msgstr "Modo Objeto"
-
-
-msgid "OverlayEngine"
-msgstr "MotorDeSuperposición"
-
-
-msgid "PaintTextureMode"
-msgstr "Modo de pintura de texturas"
-
-
-msgid "PaintVertexMode"
-msgstr "Modo de pintura de vértices"
-
-
-msgid "Particle Mode"
-msgstr "Modo Partículas"
-
-
-msgid "PoseMode"
-msgstr "Modo Pose"
-
-
-msgid "SculptMode"
-msgstr "Modo Escultura"
 
 
 msgid "NLA Strip Controls"

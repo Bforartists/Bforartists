@@ -57,8 +57,8 @@ void main()
 
 
 def draw_callback_px(self, context):
-    nt = bpy.context.scene.world.node_tree.nodes
-    env_tex_node = nt.get(bpy.context.scene.sun_pos_properties.hdr_texture)
+    nt = context.scene.world.node_tree.nodes
+    env_tex_node = nt.get(context.scene.sun_pos_properties.hdr_texture)
     image = env_tex_node.image
 
     if self.area != context.area:
@@ -120,6 +120,11 @@ class SUNPOS_OT_ShowHdr(bpy.types.Operator):
     bl_label = "Sync Sun to Texture"
 
     exposure = 1.0
+
+    @classmethod
+    def poll(self, context):
+        sun_props = context.scene.sun_pos_properties
+        return sun_props.hdr_texture and sun_props.sun_object is not None
 
     def update(self, context, event):
         sun_props = context.scene.sun_pos_properties
@@ -274,6 +279,12 @@ class SUNPOS_OT_ShowHdr(bpy.types.Operator):
 
         if area_3d is None:
             self.report({'ERROR'}, 'Could not find 3D View')
+            return {'CANCELLED'}
+
+        nt = context.scene.world.node_tree.nodes
+        env_tex_node = nt.get(context.scene.sun_pos_properties.hdr_texture)
+        if env_tex_node.type != "TEX_ENVIRONMENT":
+            self.report({'ERROR'}, 'Please select an Environment Texture node')
             return {'CANCELLED'}
 
         self.area = context.area
