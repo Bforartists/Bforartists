@@ -208,9 +208,7 @@ class IMAGE_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("uv.select_box", icon='BORDER_RECT').pinned = False
         layout.operator("uv.select_box", text = "Box Select Pinned", icon='BORDER_RECT').pinned = True
-        layout.operator("uv.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
       
