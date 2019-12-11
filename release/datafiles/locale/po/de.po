@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -4431,22 +4431,6 @@ msgid "Target object for multi-target constraints"
 msgstr "Zielobjekt für Mehrfach-Ziel Beschränkungen"
 
 
-msgid "Extend"
-msgstr "Erweitern"
-
-
-msgid "Extrapolate the curve or extend it horizontally"
-msgstr "Kurve extrapolieren oder horizontal erweitern"
-
-
-msgid "Horizontal"
-msgstr "Horizontal"
-
-
-msgid "Extrapolated"
-msgstr "Hochrechnen"
-
-
 msgid "Points"
 msgstr "Punkte"
 
@@ -4477,6 +4461,22 @@ msgstr "Schwarzpegel"
 
 msgid "For RGB curves, the color that black is mapped to"
 msgstr "Für RGB-Kurven die Farbe, auf die Schwarz abgebildet wird"
+
+
+msgid "Extend"
+msgstr "Erweitern"
+
+
+msgid "Extrapolate the curve or extend it horizontally"
+msgstr "Kurve extrapolieren oder horizontal erweitern"
+
+
+msgid "Horizontal"
+msgstr "Horizontal"
+
+
+msgid "Extrapolated"
+msgstr "Hochrechnen"
 
 
 msgid "Clip"
@@ -12781,10 +12781,6 @@ msgstr "Voreinstellungen"
 
 msgid "KeyPresets"
 msgstr "Tastenbelegung"
-
-
-msgid "3D Mouse Settings"
-msgstr "3D-Maus Einstellungen"
 
 
 msgid "Save & Load"
@@ -28216,6 +28212,10 @@ msgstr "Fliegen & Gehen"
 
 msgid "Walk"
 msgstr "Gehen"
+
+
+msgid "3D Mouse Settings"
+msgstr "3D-Maus Einstellungen"
 
 
 msgid "Auto Run Python Scripts"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -4046,6 +4046,10 @@ msgid "Cloth speed is multiplied by this value"
 msgstr "Швидкість тканини множиться на це значення"
 
 
+msgid "Pressure"
+msgstr "Натиск"
+
+
 msgid "Dynamic Base Mesh"
 msgstr "Динамічна базова сіть"
 
@@ -6779,22 +6783,6 @@ msgid "Curve in a curve mapping"
 msgstr "Крива у розкладці кривою"
 
 
-msgid "Extend"
-msgstr "Розширити"
-
-
-msgid "Extrapolate the curve or extend it horizontally"
-msgstr "Екстраполювати криву або продовжити її горизонтально"
-
-
-msgid "Horizontal"
-msgstr "Горизонтально"
-
-
-msgid "Extrapolated"
-msgstr "Екстрапольовано"
-
-
 msgid "Points"
 msgstr "Точки"
 
@@ -6869,6 +6857,22 @@ msgstr "Мін. X відсікання"
 
 msgid "Clip Min Y"
 msgstr "Мін. Y відсікання"
+
+
+msgid "Extend"
+msgstr "Розширити"
+
+
+msgid "Extrapolate the curve or extend it horizontally"
+msgstr "Екстраполювати криву або продовжити її горизонтально"
+
+
+msgid "Horizontal"
+msgstr "Горизонтально"
+
+
+msgid "Extrapolated"
+msgstr "Екстрапольовано"
 
 
 msgid "Tone"
@@ -12766,10 +12770,6 @@ msgstr "Точка даних для мальованої кривої"
 
 msgid "Coordinates"
 msgstr "Координати"
-
-
-msgid "Pressure"
-msgstr "Натиск"
 
 
 msgid "Pressure of tablet at point when drawing it"
@@ -26845,10 +26845,6 @@ msgstr "Передустави"
 
 msgid "KeyPresets"
 msgstr "Передустави Клавіш"
-
-
-msgid "3D Mouse Settings"
-msgstr "Устави 3D-миші"
 
 
 msgid "Save & Load"
@@ -55701,6 +55697,10 @@ msgid "Screen Coordinates of sampling"
 msgstr "Екранні координати відбору"
 
 
+msgid "Dyntopo"
+msgstr "Динамічна топологія"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Режим Ліплення"
@@ -59754,14 +59754,6 @@ msgid "Export vertex colors"
 msgstr "Експортувати кольори вершин"
 
 
-msgid "Visible Layers Only"
-msgstr "Лише видимі шари"
-
-
-msgid "Export only objects in visible layers"
-msgstr "Експортувати об'єкти з лише виділених шарів"
-
-
 msgid "Transform Samples"
 msgstr "Вибірки трансформацій"
 
@@ -63031,6 +63023,10 @@ msgid "Orbit & Pan"
 msgstr "Обліт і Панорама"
 
 
+msgid "3D Mouse Settings"
+msgstr "Устави 3D-миші"
+
+
 msgid "Save Preferences"
 msgstr "Зберегти Уподобання"
 
@@ -63253,10 +63249,6 @@ msgstr "Контекстне Меню Вагомостей"
 
 msgid "Quad View"
 msgstr "Чотирибічний Огляд"
-
-
-msgid "Dyntopo"
-msgstr "Динамічна топологія"
 
 
 msgid "Unified Brush"
@@ -73991,14 +73983,6 @@ msgid "Display keyframe handle types and non-bezier interpolation modes"
 msgstr "Показувати типи держаків ключкадрів та не-безьє режими інтерполяції"
 
 
-msgid "Show Marker Lines"
-msgstr "Показ Ліній Міток"
-
-
-msgid "Show a vertical line for every marker"
-msgstr "Показувати вертикальну лінію для кожної мітки"
-
-
 msgid "Show Pose Markers"
 msgstr "Показати мітки пози"
 
@@ -81487,10 +81471,6 @@ msgid "Autolock Inactive Layers"
 msgstr "Автоблокувати Неактивні Шари"
 
 
-msgid "Show Only On Keyframed"
-msgstr "Показати Лише На Ключкадрованому"
-
-
 msgid "Before"
 msgstr "Перед"
 
@@ -82371,6 +82351,10 @@ msgstr "Лише Програвання"
 
 msgid "ShaderFX"
 msgstr "ShaderFX"
+
+
+msgid "Show Only On Keyframed"
+msgstr "Показати Лише На Ключкадрованому"
 
 
 msgctxt "Operator"
@@ -85378,6 +85362,10 @@ msgid "Orbit Style"
 msgstr "Стиль обльоту"
 
 
+msgid "Navigate"
+msgstr "Навігація"
+
+
 msgid "Orbit Options"
 msgstr "Опції обльоту"
 
@@ -86227,10 +86215,6 @@ msgstr "Видимість Типів Об'єктів"
 
 msgid "Viewport Gizmos"
 msgstr "Гізмо вікна огляду"
-
-
-msgid "Navigate"
-msgstr "Навігація"
 
 
 msgid "Active Tools"
@@ -87939,62 +87923,6 @@ msgstr "Режим Нарисного Олівця"
 
 msgid "Workbench"
 msgstr "Workbench"
-
-
-msgid "MotionPath"
-msgstr "Шлях Руху"
-
-
-msgid "EditArmatureMode"
-msgstr "Режим Редагування Арматури"
-
-
-msgid "EditCurveMode"
-msgstr "Режим Редагування Кривої"
-
-
-msgid "EditLatticeMode"
-msgstr "Режим Редагування Решітки"
-
-
-msgid "EditMeshMode"
-msgstr "Режим Редагування Сіті"
-
-
-msgid "EditMetaballMode"
-msgstr "Режим Редагування Метакулі"
-
-
-msgid "EditTextMode"
-msgstr "Режим Редагування Тексту"
-
-
-msgid "ObjectMode"
-msgstr "Режим Об'єкта"
-
-
-msgid "OverlayEngine"
-msgstr "Рушій Перекриву"
-
-
-msgid "PaintTextureMode"
-msgstr "Режим Малювання Текстур"
-
-
-msgid "PaintVertexMode"
-msgstr "Режим Малювання Вершин"
-
-
-msgid "Particle Mode"
-msgstr "Режим Частинки"
-
-
-msgid "PoseMode"
-msgstr "Режим Пози"
-
-
-msgid "SculptMode"
-msgstr "Режим Ліплення"
 
 
 msgid "NLA Strip Controls"

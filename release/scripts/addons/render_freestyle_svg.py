@@ -26,7 +26,7 @@ bl_info = {
     "location": "Properties > Render > Freestyle SVG Export",
     "description": "Exports Freestyle's stylized edges in SVG format",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/latest/addons/render_freestyle_svg.html",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/render/render_freestyle_svg.html",
     "support": 'OFFICIAL',
     "category": "Render",
     }

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
 "Last-Translator: \n"
 "Language-Team: Japanese Translation Team (https://sites.google.com/site/blugjp/blender-translators)\n"
@@ -4131,6 +4131,10 @@ msgid "Cloth speed is multiplied by this value"
 msgstr "クロスの速度はこの値と乗算されます"
 
 
+msgid "Pressure"
+msgstr "筆圧"
+
+
 msgid "Dynamic Base Mesh"
 msgstr "ダイナミックベースメッシュ"
 
@@ -7083,22 +7087,6 @@ msgid "Curve in a curve mapping"
 msgstr "カーブマッピング内のカーブ"
 
 
-msgid "Extend"
-msgstr "拡張"
-
-
-msgid "Extrapolate the curve or extend it horizontally"
-msgstr "カーブを外挿、もしくは水平に延長します"
-
-
-msgid "Horizontal"
-msgstr "水平"
-
-
-msgid "Extrapolated"
-msgstr "外挿"
-
-
 msgid "Points"
 msgstr "ポイント"
 
@@ -7173,6 +7161,22 @@ msgstr "クリップ最小値X"
 
 msgid "Clip Min Y"
 msgstr "クリップ最小値Y"
+
+
+msgid "Extend"
+msgstr "拡張"
+
+
+msgid "Extrapolate the curve or extend it horizontally"
+msgstr "カーブを外挿、もしくは水平に延長します"
+
+
+msgid "Horizontal"
+msgstr "水平"
+
+
+msgid "Extrapolated"
+msgstr "外挿"
 
 
 msgid "Tone"
@@ -13226,10 +13230,6 @@ msgstr "フリーハンド曲線用のデータ点"
 
 msgid "Coordinates"
 msgstr "座標"
-
-
-msgid "Pressure"
-msgstr "筆圧"
 
 
 msgid "Pressure of tablet at point when drawing it"
@@ -27938,10 +27938,6 @@ msgstr "プリセット"
 
 msgid "KeyPresets"
 msgstr "キープリセット"
-
-
-msgid "3D Mouse Settings"
-msgstr "3Dマウス設定"
 
 
 msgid "Save & Load"
@@ -58119,6 +58115,10 @@ msgid "Screen Coordinates of sampling"
 msgstr "サンプリングのスクリーン座標"
 
 
+msgid "Dyntopo"
+msgstr "Dyntopo"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "スカルプトモード"
@@ -62383,14 +62383,6 @@ msgid "Export vertex colors"
 msgstr "頂点カラーをエクスポート"
 
 
-msgid "Visible Layers Only"
-msgstr "可視レイヤーのみ"
-
-
-msgid "Export only objects in visible layers"
-msgstr "可視レイヤーのオブジェクトのみエクスポートします"
-
-
 msgid "Transform Samples"
 msgstr "トランスフォームサンプル数"
 
@@ -65814,6 +65806,10 @@ msgid "Orbit & Pan"
 msgstr "周回とパン"
 
 
+msgid "3D Mouse Settings"
+msgstr "3Dマウス設定"
+
+
 msgid "Save Preferences"
 msgstr "プリファレンスを保存"
 
@@ -66044,10 +66040,6 @@ msgstr "分析"
 
 msgid "Quad View"
 msgstr "四分割表示"
-
-
-msgid "Dyntopo"
-msgstr "Dyntopo"
 
 
 msgid "Unified Brush"
@@ -77380,14 +77372,6 @@ msgid "Display keyframe handle types and non-bezier interpolation modes"
 msgstr "キーフレームのハンドルタイプと非ベジエ補間モードを表示します"
 
 
-msgid "Show Marker Lines"
-msgstr "マーカーラインを表示"
-
-
-msgid "Show a vertical line for every marker"
-msgstr "マーカー毎に縦のラインを表示します"
-
-
 msgid "Show Pose Markers"
 msgstr "ポーズマーカーを表示"
 
@@ -85213,10 +85197,6 @@ msgid "Autolock Inactive Layers"
 msgstr "非アクティブレイヤーを自動ロック"
 
 
-msgid "Show Only On Keyframed"
-msgstr "キーフレーム付のみ表示"
-
-
 msgid "Before"
 msgstr "前"
 
@@ -86117,6 +86097,10 @@ msgstr "再生のみ"
 
 msgid "ShaderFX"
 msgstr "シェーダーFX"
+
+
+msgid "Show Only On Keyframed"
+msgstr "キーフレーム付のみ表示"
 
 
 msgctxt "Operator"
@@ -89425,6 +89409,10 @@ msgid "Orbit Style"
 msgstr "周回スタイル"
 
 
+msgid "Navigate"
+msgstr "ナビゲート"
+
+
 msgid "Orbit Options"
 msgstr "周回オプション"
 
@@ -90373,10 +90361,6 @@ msgstr "オブジェクトタイプの可視性"
 
 msgid "Viewport Gizmos"
 msgstr "ビューポートギズモ"
-
-
-msgid "Navigate"
-msgstr "ナビゲート"
 
 
 msgid "Active Tools"
@@ -92244,62 +92228,6 @@ msgstr "選択ID"
 
 msgid "Workbench"
 msgstr "Workbench"
-
-
-msgid "MotionPath"
-msgstr "モーションパス"
-
-
-msgid "EditArmatureMode"
-msgstr "アーマチュア編集モード"
-
-
-msgid "EditCurveMode"
-msgstr "カーブ編集モード"
-
-
-msgid "EditLatticeMode"
-msgstr "ラティス編集モード"
-
-
-msgid "EditMeshMode"
-msgstr "メッシュ編集モード"
-
-
-msgid "EditMetaballMode"
-msgstr "メタボール編集モード"
-
-
-msgid "EditTextMode"
-msgstr "テキスト編集モード"
-
-
-msgid "ObjectMode"
-msgstr "オブジェクトモード"
-
-
-msgid "OverlayEngine"
-msgstr "オーバレイエンジン"
-
-
-msgid "PaintTextureMode"
-msgstr "テクスチャペイントモード"
-
-
-msgid "PaintVertexMode"
-msgstr "頂点ペイントモード"
-
-
-msgid "Particle Mode"
-msgstr "パーティクルモード"
-
-
-msgid "PoseMode"
-msgstr "ポーズモード"
-
-
-msgid "SculptMode"
-msgstr "スカルプトモード"
 
 
 msgid "NLA Strip Controls"

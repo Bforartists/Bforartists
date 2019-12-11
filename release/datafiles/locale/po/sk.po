@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2019-09-18 15:13+0200\n"
 "Language-Team: pegas923\n"
 "MIME-Version: 1.0\n"
@@ -4049,6 +4049,10 @@ msgid "Cloth speed is multiplied by this value"
 msgstr "Rýchlosť plášťa sa vynásobí touto hodnotou"
 
 
+msgid "Pressure"
+msgstr "Tlak"
+
+
 msgid "Dynamic Base Mesh"
 msgstr "Dynamika základnej povrchovej siete"
 
@@ -6782,22 +6786,6 @@ msgid "Curve in a curve mapping"
 msgstr "Krivka v mapovaní krivky"
 
 
-msgid "Extend"
-msgstr "Roztiahnutý"
-
-
-msgid "Extrapolate the curve or extend it horizontally"
-msgstr "Extrapóluje krivku alebo ju rozšíri vodorovne"
-
-
-msgid "Horizontal"
-msgstr "Horizontálne"
-
-
-msgid "Extrapolated"
-msgstr "Extrapólované"
-
-
 msgid "Points"
 msgstr "Body"
 
@@ -6872,6 +6860,22 @@ msgstr "Klip min X"
 
 msgid "Clip Min Y"
 msgstr "Klip min Y"
+
+
+msgid "Extend"
+msgstr "Roztiahnutý"
+
+
+msgid "Extrapolate the curve or extend it horizontally"
+msgstr "Extrapóluje krivku alebo ju rozšíri vodorovne"
+
+
+msgid "Horizontal"
+msgstr "Horizontálne"
+
+
+msgid "Extrapolated"
+msgstr "Extrapólované"
 
 
 msgid "Tone"
@@ -12785,10 +12789,6 @@ msgstr "Údaje bodu pre ťah krivky voľnou rukou"
 
 msgid "Coordinates"
 msgstr "Súradnice"
-
-
-msgid "Pressure"
-msgstr "Tlak"
 
 
 msgid "Pressure of tablet at point when drawing it"
@@ -27015,10 +27015,6 @@ msgstr "Predvoľby"
 
 msgid "KeyPresets"
 msgstr "Predvoľby kláves"
-
-
-msgid "3D Mouse Settings"
-msgstr "Nastavenia 3D myši"
 
 
 msgid "Save & Load"
@@ -55978,6 +55974,10 @@ msgid "Screen Coordinates of sampling"
 msgstr "Súradnice obrazovky snímania"
 
 
+msgid "Dyntopo"
+msgstr "Dynamická topológia"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Režim sochárstva"
@@ -60065,14 +60065,6 @@ msgid "Export vertex colors"
 msgstr "Exportuje farby vrcholov"
 
 
-msgid "Visible Layers Only"
-msgstr "Iba viditeľné vrstvy"
-
-
-msgid "Export only objects in visible layers"
-msgstr "Exportuje iba objekty viditeľných vrstiev"
-
-
 msgid "Transform Samples"
 msgstr "Transformácia vzoriek"
 
@@ -63374,6 +63366,10 @@ msgid "Orbit & Pan"
 msgstr "Obiehanie a posúvanie"
 
 
+msgid "3D Mouse Settings"
+msgstr "Nastavenia 3D myši"
+
+
 msgid "Save Preferences"
 msgstr "Uložiť predvoľby"
 
@@ -63596,10 +63592,6 @@ msgstr "Kontextová ponuka váh"
 
 msgid "Quad View"
 msgstr "Štvornásobné zobrazenie"
-
-
-msgid "Dyntopo"
-msgstr "Dynamická topológia"
 
 
 msgid "Unified Brush"
@@ -74506,14 +74498,6 @@ msgid "Display keyframe handle types and non-bezier interpolation modes"
 msgstr "Zobrazí typy ovládania kľúčových snímok a nebézierových interpolačných režimov"
 
 
-msgid "Show Marker Lines"
-msgstr "Zobraziť čiary značiek"
-
-
-msgid "Show a vertical line for every marker"
-msgstr "Zobrazí zvislú čiaru pre každú značku"
-
-
 msgid "Show Pose Markers"
 msgstr "Zobraziť značky pózy"
 
@@ -81955,10 +81939,6 @@ msgid "Autolock Inactive Layers"
 msgstr "Automatické zamknutie neaktívnych vrstiev"
 
 
-msgid "Show Only On Keyframed"
-msgstr "Zobraziť iba kľúčové snímky"
-
-
 msgid "Before"
 msgstr "Pred"
 
@@ -82844,6 +82824,10 @@ msgstr "Iba prehrávanie"
 
 msgid "ShaderFX"
 msgstr "FX shader"
+
+
+msgid "Show Only On Keyframed"
+msgstr "Zobraziť iba kľúčové snímky"
 
 
 msgctxt "Operator"
@@ -86018,6 +86002,10 @@ msgid "Orbit Style"
 msgstr "Štýl obiehania"
 
 
+msgid "Navigate"
+msgstr "Navigácia"
+
+
 msgid "Orbit Options"
 msgstr "Možnosti obiehania"
 
@@ -86882,10 +86870,6 @@ msgstr "Viditeľnosť typov objektov"
 
 msgid "Viewport Gizmos"
 msgstr "Manipulačné prvky výrezu"
-
-
-msgid "Navigate"
-msgstr "Navigácia"
 
 
 msgid "Active Tools"
@@ -88608,62 +88592,6 @@ msgstr "Vybrať ID"
 
 msgid "Workbench"
 msgstr "Pracovný stôl"
-
-
-msgid "MotionPath"
-msgstr "Cesta pohybu"
-
-
-msgid "EditArmatureMode"
-msgstr "Režim úpravy kostry"
-
-
-msgid "EditCurveMode"
-msgstr "Režim úpravy krivky"
-
-
-msgid "EditLatticeMode"
-msgstr "Režim úpravy mriežky"
-
-
-msgid "EditMeshMode"
-msgstr "Režim úpravy povrchovej siete"
-
-
-msgid "EditMetaballMode"
-msgstr "Režim úpravy meta gule"
-
-
-msgid "EditTextMode"
-msgstr "Režim úpravy textu"
-
-
-msgid "ObjectMode"
-msgstr "Režim objektu"
-
-
-msgid "OverlayEngine"
-msgstr "Mechanizmus prekrývania"
-
-
-msgid "PaintTextureMode"
-msgstr "Režim maľovania textúry"
-
-
-msgid "PaintVertexMode"
-msgstr "Režim maľovania vrcholov"
-
-
-msgid "Particle Mode"
-msgstr "Režim častíc"
-
-
-msgid "PoseMode"
-msgstr "Režim pózy"
-
-
-msgid "SculptMode"
-msgstr "Režim sochárstva"
 
 
 msgid "NLA Strip Controls"

@@ -60,7 +60,7 @@ class VIEW3D_PT_print3d_analyze(View3DPrintPanel, Panel):
 
             for i, (text, data) in enumerate(info):
                 if is_edit and data and data[1]:
-                    bm_type, bm_array = data
+                    bm_type, _bm_array = data
                     col.operator("mesh.print3d_select_report", text=text, icon=self._type_to_icon[bm_type],).index = i
                 else:
                     col.label(text=text)
