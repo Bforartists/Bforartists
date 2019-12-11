@@ -392,7 +392,6 @@ class NODE_MT_node_links(Menu):
 
         layout.operator("node.link_make", icon = "LINK_DATA").replace = False
         layout.operator("node.link_make", text="Make and Replace Links", icon = "LINK_DATA").replace = True
-        layout.operator("node.links_cut", icon = "CUT_LINKS")
         layout.operator("node.links_detach", icon = "DETACH_LINKS")
         layout.operator("node.move_detach_links", text = "Detach Links Move", icon = "DETACH_LINKS")
 
