@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -4615,22 +4615,6 @@ msgid "Curve in a curve mapping"
 msgstr "Krzywa w mapowaniu krzywych"
 
 
-msgid "Extend"
-msgstr "Rozszerz"
-
-
-msgid "Extrapolate the curve or extend it horizontally"
-msgstr "Ekstrapoluj krzywą lub rozszerz ją poziomo"
-
-
-msgid "Horizontal"
-msgstr "Poziomo"
-
-
-msgid "Extrapolated"
-msgstr "Rozszerzona"
-
-
 msgid "Points"
 msgstr "Punkty"
 
@@ -4693,6 +4677,22 @@ msgstr "Przytnij min X"
 
 msgid "Clip Min Y"
 msgstr "Przytnij min Y"
+
+
+msgid "Extend"
+msgstr "Rozszerz"
+
+
+msgid "Extrapolate the curve or extend it horizontally"
+msgstr "Ekstrapoluj krzywą lub rozszerz ją poziomo"
+
+
+msgid "Horizontal"
+msgstr "Poziomo"
+
+
+msgid "Extrapolated"
+msgstr "Rozszerzona"
 
 
 msgid "Clip"

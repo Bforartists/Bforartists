@@ -223,6 +223,7 @@ class GRAPH_MT_view(Menu):
         st = context.space_data
 
         layout.prop(st, "show_region_ui")
+        layout.prop(st, "show_region_hud")
 
         layout.separator()
 
@@ -472,7 +473,14 @@ class GRAPH_MT_key(Menu):
 
         layout.separator()
 
-        layout.operator("graph.decimate", icon = "DECIMATE")
+        operator_context = layout.operator_context
+
+        layout.operator("graph.decimate", text="Decimate (Ratio)").mode = 'RATIO'
+        # Using the modal operation doesn't make sense for this variant as we do not have a modal mode for it, so just execute it.
+        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator("graph.decimate", text="Decimate (Allowed Change)").mode = 'ERROR'
+        layout.operator_context = operator_context
+        
         layout.operator("graph.clean", icon = "CLEAN_KEYS").channels = False
         layout.operator("graph.clean", text="Clean Channels", icon = "CLEAN_CHANNELS").channels = True
         layout.operator("graph.smooth", icon = "SMOOTH_KEYFRAMES")

@@ -110,7 +110,7 @@ def write_mesh(context, report_cb):
 
     def addon_ensure(addon_id):
         # Enable the addon, dont change preferences.
-        default_state, loaded_state = addon_utils.check(addon_id)
+        _default_state, loaded_state = addon_utils.check(addon_id)
         if not loaded_state:
             addon_utils.enable(addon_id, default_set=False)
 
