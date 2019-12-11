@@ -662,8 +662,16 @@ static uiTooltipData *ui_tooltip_data_from_button(bContext *C, uiBut *but)
                                                .style = UI_TIP_STYLE_HEADER,
                                                .color_id = UI_TIP_LC_NORMAL,
                                            });
-    field->text = BLI_sprintfN("%s.", but_label.strinfo);
-  } // bfa - turned off the check. add the prefix everywhere!
+    /*bfa - some buttons does not have a explicit button title. Like the properties editor tab button */
+    /*It just shows a dot then where the title should be. So we check for those buttons, and skip adding the button title*/
+    if (STRPREFIX(but->drawstr, but_label.strinfo))
+      {
+      field->text = BLI_sprintfN(but_label.strinfo);
+    }
+    else if (!STRPREFIX(but->drawstr, but_label.strinfo)) {
+      field->text = BLI_sprintfN("%s.", but_label.strinfo);
+    }
+  }
 
   /* Tip */
   if (but_tip.strinfo) {
