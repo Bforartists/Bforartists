@@ -166,11 +166,24 @@ class AMTH_MESH_OT_make_symmetric(bpy.types.Operator):
         return {"FINISHED"}
 
 
+def ui_symmetry_tools(self, context):
+    if bpy.context.mode == 'EDIT_MESH':
+     self.layout.separator()
+     self.layout.operator(
+     AMTH_MESH_OT_find_asymmetric.bl_idname,
+     icon="ALIGN_CENTER", text="Find Asymmetric")
+     self.layout.operator(
+     AMTH_MESH_OT_make_symmetric.bl_idname,
+     icon="ALIGN_JUSTIFY", text="Make Symmetric")
+
+
 def register():
     bpy.utils.register_class(AMTH_MESH_OT_find_asymmetric)
     bpy.utils.register_class(AMTH_MESH_OT_make_symmetric)
-
+    bpy.types.VIEW3D_MT_edit_mesh.append(ui_symmetry_tools)
+    
 
 def unregister():
     bpy.utils.unregister_class(AMTH_MESH_OT_find_asymmetric)
     bpy.utils.unregister_class(AMTH_MESH_OT_make_symmetric)
+    bpy.types.VIEW3D_MT_edit_mesh.remove(ui_symmetry_tools)

@@ -138,7 +138,7 @@ class CMSetCollectionOperator(bpy.types.Operator):
 
 
 class CMExcludeOperator(bpy.types.Operator):
-    '''  * Shift-Click to isolate/restore previous state'''
+    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children'''
     bl_label = "Exclude Collection from View Layer"
     bl_idname = "view3d.exclude_collection"
     bl_options = {'REGISTER', 'UNDO'}
@@ -212,6 +212,15 @@ class CMExcludeOperator(bpy.types.Operator):
                     
                     laycol_iter_list = new_laycol_iter_list
                             
+        
+        elif event.ctrl:
+            # toggle children
+            
+            # reset exclude history
+            del rto_history["exclude"][view_layer]
+            
+            # toggle exclusion of collection (this propagates to children)
+            laycol_ptr.exclude = not laycol_ptr.exclude
         
         else:
             # toggle exclusion
@@ -305,7 +314,7 @@ class CMUnExcludeAllOperator(bpy.types.Operator):
 
 
 class CMRestrictSelectOperator(bpy.types.Operator):
-    '''  * Shift-Click to isolate/restore previous state'''
+    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children'''
     bl_label = "Disable Selection of Collection"
     bl_idname = "view3d.restrict_select_collection"
     bl_options = {'REGISTER', 'UNDO'}
@@ -325,6 +334,8 @@ class CMRestrictSelectOperator(bpy.types.Operator):
         
         if event.shift:
             # isolate/de-isolate selectability of collections
+            
+            # get active collections
             active_layer_collections = [x for x in layer_collections.values() \
                                           if x["ptr"].collection.hide_select == False]
             
@@ -362,6 +373,28 @@ class CMRestrictSelectOperator(bpy.types.Operator):
                 
                 laycol_ptr.collection.hide_select = False
                             
+        
+        elif event.ctrl:
+            # toggle children
+            
+            # reset selectable history
+            del rto_history["select"][view_layer]
+            
+            # toggle selectability of collection
+            state = not laycol_ptr.collection.hide_select
+            laycol_ptr.collection.hide_select = state
+            
+            # pass state to children
+            laycol_iter_list = [laycol_ptr.children]
+            while len(laycol_iter_list) > 0:
+                new_laycol_iter_list = []
+                for laycol_iter in laycol_iter_list:
+                    for layer_collection in laycol_iter:
+                        layer_collection.collection.hide_select = state
+                        if len(layer_collection.children) > 0:
+                            new_laycol_iter_list.append(layer_collection.children)
+                
+                laycol_iter_list = new_laycol_iter_list
         
         else:
             # reset selectable history
@@ -424,7 +457,7 @@ class CMUnRestrictSelectAllOperator(bpy.types.Operator):
 
 
 class CMHideOperator(bpy.types.Operator):
-    '''  * Shift-Click to isolate/restore previous state'''
+    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children'''
     bl_label = "Hide Collection"
     bl_idname = "view3d.hide_collection"
     bl_options = {'REGISTER', 'UNDO'}
@@ -444,6 +477,8 @@ class CMHideOperator(bpy.types.Operator):
         
         if event.shift:
             # isolate/de-isolate view of collections
+            
+            # get active collections
             active_layer_collections = [x for x in layer_collections.values() \
                                           if x["ptr"].hide_viewport == False]
             
@@ -493,6 +528,28 @@ class CMHideOperator(bpy.types.Operator):
                 while laycol["id"] != 0:
                     laycol["ptr"].hide_viewport = False
                     laycol = laycol["parent"]
+        
+        elif event.ctrl:
+            # toggle children
+            
+            # reset hide history
+            del rto_history["hide"][view_layer]
+            
+            # toggle view of collection
+            state = not laycol_ptr.hide_viewport
+            laycol_ptr.hide_viewport = state
+            
+            # pass state to children
+            laycol_iter_list = [laycol_ptr.children]
+            while len(laycol_iter_list) > 0:
+                new_laycol_iter_list = []
+                for laycol_iter in laycol_iter_list:
+                    for layer_collection in laycol_iter:
+                        layer_collection.hide_viewport = state
+                        if len(layer_collection.children) > 0:
+                            new_laycol_iter_list.append(layer_collection.children)
+                
+                laycol_iter_list = new_laycol_iter_list
         
         else:
             # reset hide history
@@ -555,7 +612,7 @@ class CMUnHideAllOperator(bpy.types.Operator):
 
 
 class CMDisableViewportOperator(bpy.types.Operator):
-    '''  * Shift-Click to isolate/restore previous state'''
+    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children'''
     bl_label = "Disable Collection in Viewport"
     bl_idname = "view3d.disable_viewport_collection"
     bl_options = {'REGISTER', 'UNDO'}
@@ -575,6 +632,8 @@ class CMDisableViewportOperator(bpy.types.Operator):
         
         if event.shift:
             # isolate/de-isolate disablement of collections in viewport
+            
+            # get active collections
             active_layer_collections = [x for x in layer_collections.values() \
                                           if x["ptr"].collection.hide_viewport == False]
             
@@ -624,6 +683,28 @@ class CMDisableViewportOperator(bpy.types.Operator):
                 while laycol["id"] != 0:
                     laycol["ptr"].collection.hide_viewport = False
                     laycol = laycol["parent"]
+        
+        elif event.ctrl:
+            # toggle children
+            
+            # reset viewport history
+            del rto_history["disable"][view_layer]
+            
+            # toggle view of collection
+            state = not laycol_ptr.collection.hide_viewport
+            laycol_ptr.collection.hide_viewport = state
+            
+            # pass state to children
+            laycol_iter_list = [laycol_ptr.children]
+            while len(laycol_iter_list) > 0:
+                new_laycol_iter_list = []
+                for laycol_iter in laycol_iter_list:
+                    for layer_collection in laycol_iter:
+                        layer_collection.collection.hide_viewport = state
+                        if len(layer_collection.children) > 0:
+                            new_laycol_iter_list.append(layer_collection.children)
+                
+                laycol_iter_list = new_laycol_iter_list
         
         else:
             # reset viewport history
@@ -687,7 +768,7 @@ class CMUnDisableViewportAllOperator(bpy.types.Operator):
 
 
 class CMDisableRenderOperator(bpy.types.Operator):
-    '''  * Shift-Click to isolate/restore previous state'''
+    '''  * Shift-Click to isolate/restore previous state\n  * Shift-Click to invert viewport display of all collections'''
     bl_label = "Disable Collection in Render"
     bl_idname = "view3d.disable_render_collection"
     bl_options = {'REGISTER', 'UNDO'}
@@ -707,6 +788,8 @@ class CMDisableRenderOperator(bpy.types.Operator):
         
         if event.shift:
             # isolate/de-isolate render of collections
+            
+            # get active collections
             active_layer_collections = [x for x in layer_collections.values() \
                                           if x["ptr"].collection.hide_render == False]
             
@@ -756,6 +839,28 @@ class CMDisableRenderOperator(bpy.types.Operator):
                 while laycol["id"] != 0:
                     laycol["ptr"].collection.hide_render = False
                     laycol = laycol["parent"]
+        
+        elif event.ctrl:
+            # toggle children
+            
+            # reset render history
+            del rto_history["render"][view_layer]
+            
+            # toggle view of collection
+            state = not laycol_ptr.collection.hide_render
+            laycol_ptr.collection.hide_render = state
+            
+            # pass state to children
+            laycol_iter_list = [laycol_ptr.children]
+            while len(laycol_iter_list) > 0:
+                new_laycol_iter_list = []
+                for laycol_iter in laycol_iter_list:
+                    for layer_collection in laycol_iter:
+                        layer_collection.collection.hide_render = state
+                        if len(layer_collection.children) > 0:
+                            new_laycol_iter_list.append(layer_collection.children)
+                
+                laycol_iter_list = new_laycol_iter_list
         
         else:
             # reset render history

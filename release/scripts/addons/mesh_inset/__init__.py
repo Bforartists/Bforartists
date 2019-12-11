@@ -26,8 +26,8 @@ bl_info = {
     "location": "3DView Operator",
     "description": "Make an inset inside selection using straight skeleton algorithm.",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Modeling/Inset-Polygon",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "mesh/inset_straight_skeleton.html",
     "category": "Mesh"}
 
 

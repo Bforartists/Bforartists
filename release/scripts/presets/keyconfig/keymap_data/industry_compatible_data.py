@@ -128,15 +128,15 @@ def _template_items_gizmo_tweak_value_drag():
 
 def _template_items_basic_tools(*, connected=False):
     return [
-        op_tool("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
-        op_tool("builtin.move", {"type": 'W', "value": 'PRESS'}),
-        op_tool("builtin.rotate", {"type": 'E', "value": 'PRESS'}),
-        op_tool("builtin.scale", {"type": 'R', "value": 'PRESS'}),
-        op_tool("builtin.transform", {"type": 'T', "value": 'PRESS'}),
-        op_tool("builtin.scale_cage", {"type": 'R', "value": 'PRESS', "shift": True}),
-        op_tool("builtin.annotate", {"type": 'D', "value": 'PRESS'}),
-        op_tool("builtin.measure", {"type": 'M', "value": 'PRESS'}),
-        op_tool("builtin.cursor", {"type": 'C', "value": 'PRESS'}),
+        op_tool_cycle("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
+        op_tool_cycle("builtin.move", {"type": 'W', "value": 'PRESS'}),
+        op_tool_cycle("builtin.rotate", {"type": 'E', "value": 'PRESS'}),
+        op_tool_cycle("builtin.scale", {"type": 'R', "value": 'PRESS'}),
+        op_tool_cycle("builtin.transform", {"type": 'T', "value": 'PRESS'}),
+        op_tool_cycle("builtin.scale_cage", {"type": 'R', "value": 'PRESS', "shift": True}),
+        op_tool_cycle("builtin.annotate", {"type": 'D', "value": 'PRESS'}),
+        op_tool_cycle("builtin.measure", {"type": 'M', "value": 'PRESS'}),
+        op_tool_cycle("builtin.cursor", {"type": 'C', "value": 'PRESS'}),
     ]
 
 def _template_items_tool_select(params, operator, cursor_operator):
@@ -325,6 +325,8 @@ def km_view2d(params):
         # Zoom with single step
         ("view2d.zoom_out", {"type": 'WHEELOUTMOUSE', "value": 'PRESS'}, None),
         ("view2d.zoom_in", {"type": 'WHEELINMOUSE', "value": 'PRESS'}, None),
+        ("view2d.zoom_out", {"type": 'WHEELOUTMOUSE', "value": 'PRESS', "alt": True}, None),
+        ("view2d.zoom_in", {"type": 'WHEELINMOUSE', "value": 'PRESS', "alt": True}, None),
         ("view2d.zoom_out", {"type": 'NUMPAD_MINUS', "value": 'PRESS'}, None),
         ("view2d.zoom_in", {"type": 'NUMPAD_PLUS', "value": 'PRESS'}, None),
         ("view2d.zoom", {"type": 'TRACKPADPAN', "value": 'ANY', "ctrl": True}, None),
@@ -529,11 +531,20 @@ def km_uv_editor(params):
         op_panel("TOPBAR_PT_name", {"type": 'RET', "value": 'PRESS'}, [("keep_open", False)]),
         ("wm.search_menu", {"type": 'TAB', "value": 'PRESS'}, None),
         # Selection modes.
+        ("wm.context_set_enum", {"type": 'ONE', "value": 'PRESS'},
+         {"properties": [("data_path", 'tool_settings.uv_select_mode'), ("value", 'VERTEX')]}),
+        ("wm.context_set_enum", {"type": 'TWO', "value": 'PRESS'},
+         {"properties": [("data_path", 'tool_settings.uv_select_mode'), ("value", 'EDGE')]}),
+        ("wm.context_set_enum", {"type": 'THREE', "value": 'PRESS'},
+         {"properties": [("data_path", 'tool_settings.uv_select_mode'), ("value", 'FACE')]}),
+        ("wm.context_set_enum", {"type": 'FOUR', "value": 'PRESS'},
+         {"properties": [("data_path", 'tool_settings.uv_select_mode'), ("value", 'ISLAND')]}),
+  
         ("uv.select", {"type": 'LEFTMOUSE', "value": 'CLICK'},
          {"properties": [("extend", False), ("deselect_all", True)]}),
         ("uv.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
          {"properties": [("extend", True), ("deselect_all", False)]}),
-        ("uv.select_box", {"type": 'EVT_TWEAK_L', "value": 'ANY'}, None),
+        ("transform.translate", {"type": "EVT_TWEAK_L", "value": 'ANY'}, None),
         ("uv.select_loop", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True},
          {"properties": [("extend", True)]}),
         ("uv.select_loop", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'},
@@ -550,20 +561,19 @@ def km_uv_editor(params):
          {"properties": [("unselected", True)]}),
         ("uv.reveal", {"type": 'H', "value": 'PRESS', "alt": True}, None),
         op_menu_pie("IMAGE_MT_uvs_snap_pie", {"type": 'X', "value": 'PRESS', "shift": True}),
-        op_menu("IMAGE_MT_uvs_select_mode", {"type": 'TAB', "value": 'PRESS', "ctrl": True}),
         op_menu("IMAGE_MT_uvs_context_menu", {"type": 'RIGHTMOUSE', "value": 'PRESS'}),
         ("wm.context_toggle", {"type": 'B', "value": 'PRESS'},
          {"properties": [("data_path", 'tool_settings.use_proportional_edit')]}),
         ("wm.context_toggle", {"type": 'X', "value": 'PRESS'},
          {"properties": [("data_path", 'tool_settings.use_snap')]}),
         # Tools
-        op_tool("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
-        op_tool("builtin.move", {"type": 'W', "value": 'PRESS'}),
-        op_tool("builtin.rotate", {"type": 'E', "value": 'PRESS'}),
-        op_tool("builtin.scale", {"type": 'R', "value": 'PRESS'}),
-        op_tool("builtin.transform", {"type": 'T', "value": 'PRESS'}),
-        op_tool("builtin.cursor", {"type": 'C', "value": 'PRESS'}),
-        op_tool("builtin.annotate", {"type": 'D', "value": 'PRESS'}),
+        op_tool_cycle("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
+        op_tool_cycle("builtin.move", {"type": 'W', "value": 'PRESS'}),
+        op_tool_cycle("builtin.rotate", {"type": 'E', "value": 'PRESS'}),
+        op_tool_cycle("builtin.scale", {"type": 'R', "value": 'PRESS'}),
+        op_tool_cycle("builtin.transform", {"type": 'T', "value": 'PRESS'}),
+        op_tool_cycle("builtin.cursor", {"type": 'C', "value": 'PRESS'}),
+        op_tool_cycle("builtin.annotate", {"type": 'D', "value": 'PRESS'}),
     ])
 
     return keymap
@@ -625,6 +635,10 @@ def km_view3d(params):
         ("view3d.zoom", {"type": 'WHEELINMOUSE', "value": 'PRESS'},
          {"properties": [("delta", 1)]}),
         ("view3d.zoom", {"type": 'WHEELOUTMOUSE', "value": 'PRESS'},
+         {"properties": [("delta", -1)]}),
+        ("view3d.zoom", {"type": 'WHEELINMOUSE', "value": 'PRESS', "alt": True},
+         {"properties": [("delta", 1)]}),
+        ("view3d.zoom", {"type": 'WHEELOUTMOUSE', "value": 'PRESS', "alt": True},
          {"properties": [("delta", -1)]}),
         ("view3d.dolly", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "shift": True},
          {"properties": [("delta", 1)]}),
@@ -946,6 +960,8 @@ def km_image(params):
         ("image.view_ndof", {"type": 'NDOF_MOTION', "value": 'ANY'}, None),
         ("image.view_zoom_in", {"type": 'WHEELINMOUSE', "value": 'PRESS'}, None),
         ("image.view_zoom_out", {"type": 'WHEELOUTMOUSE', "value": 'PRESS'}, None),
+        ("image.view_zoom_in", {"type": 'WHEELINMOUSE', "value": 'PRESS', "alt": True}, None),
+        ("image.view_zoom_out", {"type": 'WHEELOUTMOUSE', "value": 'PRESS', "alt": True}, None),
         ("image.view_zoom_in", {"type": 'NUMPAD_PLUS', "value": 'PRESS'}, None),
         ("image.view_zoom_out", {"type": 'NUMPAD_MINUS', "value": 'PRESS'}, None),
         ("image.view_zoom", {"type": 'RIGHTMOUSE', "value": 'PRESS', "alt": True}, None),
@@ -988,13 +1004,13 @@ def km_image(params):
          {"properties": [("mode", 'OBJECT')]}),
         op_menu_pie("IMAGE_MT_pivot_pie", {"type": 'PERIOD', "value": 'PRESS'}),
         # Tools
-        op_tool("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
-        op_tool("builtin.transform", {"type": 'W', "value": 'PRESS'}),
-        op_tool("builtin.transform", {"type": 'E', "value": 'PRESS'}),
-        op_tool("builtin.transform", {"type": 'R', "value": 'PRESS'}),
-        op_tool("builtin.cursor", {"type": 'C', "value": 'PRESS'}),
-        op_tool("builtin.annotate", {"type": 'D', "value": 'PRESS'}),
-        op_tool("builtin.sample", {"type": 'I', "value": 'PRESS'}),
+        op_tool_cycle("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
+        op_tool_cycle("builtin.transform", {"type": 'W', "value": 'PRESS'}),
+        op_tool_cycle("builtin.transform", {"type": 'E', "value": 'PRESS'}),
+        op_tool_cycle("builtin.transform", {"type": 'R', "value": 'PRESS'}),
+        op_tool_cycle("builtin.cursor", {"type": 'C', "value": 'PRESS'}),
+        op_tool_cycle("builtin.annotate", {"type": 'D', "value": 'PRESS'}),
+        op_tool_cycle("builtin.sample", {"type": 'I', "value": 'PRESS'}),
 
     ])
 
@@ -1934,6 +1950,8 @@ def km_clip_editor(params):
         ("clip.view_zoom", {"type": 'TRACKPADPAN', "value": 'ANY', "ctrl": True}, None),
         ("clip.view_zoom_in", {"type": 'WHEELINMOUSE', "value": 'PRESS'}, None),
         ("clip.view_zoom_out", {"type": 'WHEELOUTMOUSE', "value": 'PRESS'}, None),
+        ("clip.view_zoom_in", {"type": 'WHEELINMOUSE', "value": 'PRESS', "alt": True}, None),
+        ("clip.view_zoom_out", {"type": 'WHEELOUTMOUSE', "value": 'PRESS', "alt": True}, None),
         ("clip.view_zoom_in", {"type": 'NUMPAD_PLUS', "value": 'PRESS'}, None),
         ("clip.view_zoom_out", {"type": 'NUMPAD_MINUS', "value": 'PRESS'}, None),
         ("clip.view_zoom_ratio", {"type": 'NUMPAD_8', "value": 'PRESS', "ctrl": True},
@@ -2342,11 +2360,11 @@ def km_grease_pencil_stroke_paint_mode(params):
         op_menu("GPENCIL_MT_gpencil_draw_delete", {"type": 'BACK_SPACE', "value": 'PRESS'}),
         op_menu("GPENCIL_MT_gpencil_draw_delete", {"type": 'DEL', "value": 'PRESS'}),
         # Tools
-        op_tool("builtin_brush.Draw", {"type": 'D', "value": 'PRESS'}),
-        op_tool("builtin_brush.Fill", {"type": 'F', "value": 'PRESS'}),
-        op_tool("builtin_brush.Erase", {"type": 'E', "value": 'PRESS'}),
-        op_tool("builtin.cutter", {"type": 'K', "value": 'PRESS'}),
-        op_tool("builtin.cursor", {"type": 'C', "value": 'PRESS'}),
+        op_tool_cycle("builtin_brush.Draw", {"type": 'D', "value": 'PRESS'}),
+        op_tool_cycle("builtin_brush.Fill", {"type": 'F', "value": 'PRESS'}),
+        op_tool_cycle("builtin_brush.Erase", {"type": 'E', "value": 'PRESS'}),
+        op_tool_cycle("builtin.cutter", {"type": 'K', "value": 'PRESS'}),
+        op_tool_cycle("builtin.cursor", {"type": 'C', "value": 'PRESS'}),
     ])
 
     return keymap
@@ -2609,13 +2627,13 @@ def km_pose(params):
         ("anim.keying_set_active_set", {"type": 'S', "value": 'PRESS', "shift": True, "ctrl": True, "alt": True}, None),
         op_menu("VIEW3D_MT_pose_context_menu", {"type": 'RIGHTMOUSE', "value": 'PRESS'}),
         # Tools
-        op_tool("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
-        op_tool("builtin.move", {"type": 'W', "value": 'PRESS'}),
-        op_tool("builtin.rotate", {"type": 'E', "value": 'PRESS'}),
-        op_tool("builtin.scale", {"type": 'R', "value": 'PRESS'}),
-        op_tool("builtin.scale_cage", {"type": 'R', "value": 'PRESS', "shift": True}),
-        op_tool("builtin.transform", {"type": 'T', "value": 'PRESS'}),
-        op_tool("builtin.measure", {"type": 'M', "value": 'PRESS'}),
+        op_tool_cycle("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
+        op_tool_cycle("builtin.move", {"type": 'W', "value": 'PRESS'}),
+        op_tool_cycle("builtin.rotate", {"type": 'E', "value": 'PRESS'}),
+        op_tool_cycle("builtin.scale", {"type": 'R', "value": 'PRESS'}),
+        op_tool_cycle("builtin.scale_cage", {"type": 'R', "value": 'PRESS', "shift": True}),
+        op_tool_cycle("builtin.transform", {"type": 'T', "value": 'PRESS'}),
+        op_tool_cycle("builtin.measure", {"type": 'M', "value": 'PRESS'}),
     ])
 
 
@@ -2762,9 +2780,9 @@ def km_curve(params):
          {"properties": [("data_path", 'tool_settings.use_proportional_edit')]}),
         # Tools
         *_template_items_basic_tools(),
-        op_tool("builtin.extrude", {"type": 'E', "value": 'PRESS', "ctrl": True}),
-        op_tool("builtin.tilt", {"type": 'Y', "value": 'PRESS'}),
-        op_tool("builtin.radius", {"type": 'U', "value": 'PRESS'}),
+        op_tool_cycle("builtin.extrude", {"type": 'E', "value": 'PRESS', "ctrl": True}),
+        op_tool_cycle("builtin.tilt", {"type": 'Y', "value": 'PRESS'}),
+        op_tool_cycle("builtin.radius", {"type": 'U', "value": 'PRESS'}),
 
     ])
 
@@ -2867,7 +2885,7 @@ def km_image_paint(params):
          {"properties": [("image_tool", 'SOFTEN')]}),
         ("paint.brush_select", {"type": 'G', "value": 'PRESS'},
          {"properties": [("image_tool", 'FILL')]}),
-        op_tool("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
+        op_tool_cycle("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
     ])
 
     return keymap
@@ -2915,7 +2933,7 @@ def km_vertex_paint(params):
          {"properties": [("vertex_tool", 'DRAW')]}),
         ("paint.brush_select", {"type": 'B', "value": 'PRESS'},
          {"properties": [("vertex_tool", 'BLUR')]}),
-        op_tool("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
+        op_tool_cycle("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
     ])
 
     return keymap
@@ -2951,8 +2969,8 @@ def km_weight_paint(params):
          {"properties": [("weight_tool", 'DRAW')]}),
         ("paint.brush_select", {"type": 'B', "value": 'PRESS'},
          {"properties": [("weight_tool", 'BLUR')]}),
-        op_tool("builtin.sample_weight", {"type": 'I', "value": 'PRESS'}),
-        op_tool("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
+        op_tool_cycle("builtin.sample_weight", {"type": 'I', "value": 'PRESS'}),
+        op_tool_cycle("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
     ])
 
     return keymap
@@ -2988,8 +3006,10 @@ def km_sculpt(params):
         ("object.subdivision_set", {"type": 'PAGE_DOWN', "value": 'PRESS'},
          {"properties": [("level", -1), ("relative", True)]}),
         # Mask
-        ("paint.mask_flood_fill", {"type": 'M', "value": 'PRESS', "alt": True},
+        ("paint.mask_flood_fill", {"type": 'A', "value": 'PRESS', "ctrl": True},
          {"properties": [("mode", 'VALUE'), ("value", 0.0)]}),
+        ("paint.mask_flood_fill", {"type": 'A', "value": 'PRESS', "ctrl": True, "shift": True},
+         {"properties": [("mode", 'VALUE'), ("value", 1.0)]}),
         ("paint.mask_flood_fill", {"type": 'I', "value": 'PRESS', "ctrl": True},
          {"properties": [("mode", 'INVERT')]}),
         ("paint.mask_lasso_gesture", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True}, None),
@@ -3108,11 +3128,11 @@ def km_mesh(params):
         op_menu("VIEW3D_MT_edit_mesh_context_menu", {"type": 'RIGHTMOUSE', "value": 'PRESS'}),
         #Tools
         *_template_items_basic_tools(),
-        op_tool("builtin.bevel", {"type": 'B', "value": 'PRESS', "ctrl": True}),
-        op_tool("builtin.inset_faces", {"type": 'I', "value": 'PRESS'}),
-        op_tool("builtin.extrude_region", {"type": 'E', "value": 'PRESS', "ctrl": True}),
-        op_tool("builtin.knife", {"type": 'K', "value": 'PRESS'}),
-        op_tool("builtin.loop_cut", {"type": 'C', "value": 'PRESS', "alt": True}),
+        op_tool_cycle("builtin.bevel", {"type": 'B', "value": 'PRESS', "ctrl": True}),
+        op_tool_cycle("builtin.inset_faces", {"type": 'I', "value": 'PRESS'}),
+        op_tool_cycle("builtin.extrude_region", {"type": 'E', "value": 'PRESS', "ctrl": True}),
+        op_tool_cycle("builtin.knife", {"type": 'K', "value": 'PRESS'}),
+        op_tool_cycle("builtin.loop_cut", {"type": 'C', "value": 'PRESS', "alt": True}),
 
     ])
 
@@ -3171,8 +3191,8 @@ def km_armature(params):
         op_menu("VIEW3D_MT_armature_context_menu", {"type": 'RIGHTMOUSE', "value": 'PRESS'}),
         # Tools.
         *_template_items_basic_tools(),
-        op_tool("builtin.roll", {"type": 'Y', "value": 'PRESS'}),
-        op_tool("builtin.extrude", {"type": 'E', "value": 'PRESS', "ctrl": True}),
+        op_tool_cycle("builtin.roll", {"type": 'Y', "value": 'PRESS'}),
+        op_tool_cycle("builtin.extrude", {"type": 'E', "value": 'PRESS', "ctrl": True}),
 
     ])
 
@@ -3232,13 +3252,13 @@ def km_lattice(params):
         ("wm.context_toggle", {"type": 'B', "value": 'PRESS'},
          {"properties": [("data_path", 'tool_settings.use_proportional_edit')]}),
             # Tools
-        op_tool("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
-        op_tool("builtin.move", {"type": 'W', "value": 'PRESS'}),
-        op_tool("builtin.rotate", {"type": 'E', "value": 'PRESS'}),
-        op_tool("builtin.scale", {"type": 'R', "value": 'PRESS'}),
-        op_tool("builtin.scale_cage", {"type": 'R', "value": 'PRESS', "shift": True}),
-        op_tool("builtin.transform", {"type": 'T', "value": 'PRESS'}),
-        op_tool("builtin.measure", {"type": 'M', "value": 'PRESS'}),
+        op_tool_cycle("builtin.select_box", {"type": 'Q', "value": 'PRESS'}),
+        op_tool_cycle("builtin.move", {"type": 'W', "value": 'PRESS'}),
+        op_tool_cycle("builtin.rotate", {"type": 'E', "value": 'PRESS'}),
+        op_tool_cycle("builtin.scale", {"type": 'R', "value": 'PRESS'}),
+        op_tool_cycle("builtin.scale_cage", {"type": 'R', "value": 'PRESS', "shift": True}),
+        op_tool_cycle("builtin.transform", {"type": 'T', "value": 'PRESS'}),
+        op_tool_cycle("builtin.measure", {"type": 'M', "value": 'PRESS'}),
     ])
 
     return keymap
