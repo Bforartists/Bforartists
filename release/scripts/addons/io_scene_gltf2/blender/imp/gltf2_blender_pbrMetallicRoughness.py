@@ -73,7 +73,7 @@ class BlenderPbr():
             else:
                 # Create attribute node to get COLOR_0 data
                 vertexcolor_node = node_tree.nodes.new('ShaderNodeVertexColor')
-                vertexcolor_node.layer_name = 'COLOR_0'
+                vertexcolor_node.layer_name = 'Col'
                 vertexcolor_node.location = -500, 0
 
                 if nodetype == "principled":
@@ -96,7 +96,7 @@ class BlenderPbr():
                 # TODO tree locations
                 # Create attribute / separate / math nodes
                 vertexcolor_node = node_tree.nodes.new('ShaderNodeVertexColor')
-                vertexcolor_node.layer_name = 'COLOR_0'
+                vertexcolor_node.layer_name = 'Col'
 
                 vc_mult_node = node_tree.nodes.new('ShaderNodeMixRGB')
                 vc_mult_node.blend_type = 'MULTIPLY'
@@ -140,7 +140,7 @@ class BlenderPbr():
             if vertex_color:
                 # Create attribute / separate / math nodes
                 vertexcolor_node = node_tree.nodes.new('ShaderNodeVertexColor')
-                vertexcolor_node.layer_name = 'COLOR_0'
+                vertexcolor_node.layer_name = 'Col'
                 vertexcolor_node.location = -2000, 250
 
                 vc_mult_node = node_tree.nodes.new('ShaderNodeMixRGB')

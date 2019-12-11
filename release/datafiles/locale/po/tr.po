@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -2047,18 +2047,6 @@ msgid "Curve in a curve mapping"
 msgstr "Eğriyi buna Çevir"
 
 
-msgid "Extend"
-msgstr "Tahmini Uzat"
-
-
-msgid "Horizontal"
-msgstr "Yatay"
-
-
-msgid "Extrapolated"
-msgstr "Tahmini Uzat"
-
-
 msgid "Points"
 msgstr "Kontrol Noktaları:"
 
@@ -2101,6 +2089,18 @@ msgstr "Film Klibi"
 
 msgid "Clip Min Y"
 msgstr "Film Klibi"
+
+
+msgid "Extend"
+msgstr "Tahmini Uzat"
+
+
+msgid "Horizontal"
+msgstr "Yatay"
+
+
+msgid "Extrapolated"
+msgstr "Tahmini Uzat"
 
 
 msgid "Standard"
@@ -7101,10 +7101,6 @@ msgstr "İçe Aktar"
 
 msgid "Help"
 msgstr "Yardım"
-
-
-msgid "3D Mouse Settings"
-msgstr "Fabrika Ayarlarını Yükle"
 
 
 msgid "Disable Bone Options"
@@ -19039,6 +19035,10 @@ msgstr "Animasyonu Oynat"
 
 msgid "Timeline"
 msgstr "Zaman Çizelgesi"
+
+
+msgid "3D Mouse Settings"
+msgstr "Fabrika Ayarlarını Yükle"
 
 
 msgid "Themes"

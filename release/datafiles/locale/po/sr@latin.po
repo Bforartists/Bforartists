@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -1591,6 +1591,10 @@ msgid "Max amount to shrink cloth by"
 msgstr "Najveći faktor skupljanja tkanine"
 
 
+msgid "Pressure"
+msgstr "Pritisak"
+
+
 msgid "Bending Stiffness Vertex Group"
 msgstr "Krutost savijanja grupe temena"
 
@@ -2788,14 +2792,6 @@ msgid "Curve in a curve mapping"
 msgstr "Kriva u mapiranju krive"
 
 
-msgid "Extend"
-msgstr "Produži"
-
-
-msgid "Horizontal"
-msgstr "Vodoravno"
-
-
 msgid "Points"
 msgstr "Tačke"
 
@@ -2854,6 +2850,14 @@ msgstr "Min X isečka"
 
 msgid "Clip Min Y"
 msgstr "Min Y isečka"
+
+
+msgid "Extend"
+msgstr "Produži"
+
+
+msgid "Horizontal"
+msgstr "Vodoravno"
 
 
 msgid "Standard"
@@ -4991,10 +4995,6 @@ msgstr "Tačka skiciranog poteza"
 
 msgid "Coordinates"
 msgstr "Koordinate"
-
-
-msgid "Pressure"
-msgstr "Pritisak"
 
 
 msgid "Basis Matrix"
@@ -19979,6 +19979,10 @@ msgid "Sample Detail Size"
 msgstr "Jednostavna detaljnost"
 
 
+msgid "Dyntopo"
+msgstr "Dinamičko vajanje"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Režim vajanja"
@@ -22512,10 +22516,6 @@ msgstr "Boje prelaza"
 
 msgid "Motion Tracking"
 msgstr "Praćenje pokreta"
-
-
-msgid "Dyntopo"
-msgstr "Dinamičko vajanje"
 
 
 msgctxt "Operator"
