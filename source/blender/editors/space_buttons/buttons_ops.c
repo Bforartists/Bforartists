@@ -244,9 +244,9 @@ static int file_browse_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 void BUTTONS_OT_file_browse(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Accept";
+  ot->name = "Load File";
   ot->description =
-      "Open a file browser, Hold Shift to open the file, Alt to browse containing directory";
+      "Opens a file browser to load a file.\nWhen a file is already loaded, hold Shift to open the file browser at the file, Alt to browse containing directory in explorer";
   ot->idname = "BUTTONS_OT_file_browse";
 
   /* api callbacks */
@@ -271,9 +271,9 @@ void BUTTONS_OT_file_browse(wmOperatorType *ot)
 void BUTTONS_OT_directory_browse(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Accept";
+  ot->name = "Load Directory";
   ot->description =
-      "Open a directory browser, Hold Shift to open the file, Alt to browse containing directory";
+      "Open a directory browser to set a directory\nWhen a directory is already loaded, hold Shift to open the directory browser at the folder, Alt to browse containing directory in explorer";
   ot->idname = "BUTTONS_OT_directory_browse";
 
   /* api callbacks */

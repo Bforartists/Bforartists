@@ -50,7 +50,7 @@ class AMTH_OBJECT_OT_select_meshlights(bpy.types.Operator):
 
 def button_select_meshlights(self, context):
     if utils.cycles_exists() and utils.cycles_active(context):
-        self.layout.operator('object.select_meshlights', icon="LAMP_SUN")
+        self.layout.operator('object.select_meshlights', icon="LIGHT_SUN")
 
 
 def register():

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 1) (b'693d89170315')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 10:53:41\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2019-10-09 01:05+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -4119,6 +4119,10 @@ msgid "Cloth speed is multiplied by this value"
 msgstr "옷감 속력은 이 값을 곱한 값"
 
 
+msgid "Pressure"
+msgstr "압력"
+
+
 msgid "Dynamic Base Mesh"
 msgstr "다이나믹 베이스 메쉬"
 
@@ -7048,22 +7052,6 @@ msgid "Curve in a curve mapping"
 msgstr "커브 맵핑에서 커브"
 
 
-msgid "Extend"
-msgstr "연장"
-
-
-msgid "Extrapolate the curve or extend it horizontally"
-msgstr "수평으로 확장된 또는 커브를 외삽법"
-
-
-msgid "Horizontal"
-msgstr "수평"
-
-
-msgid "Extrapolated"
-msgstr "외삽됨"
-
-
 msgid "Points"
 msgstr "포인트"
 
@@ -7138,6 +7126,22 @@ msgstr "클립 최소 X"
 
 msgid "Clip Min Y"
 msgstr "클립 최소 Y"
+
+
+msgid "Extend"
+msgstr "연장"
+
+
+msgid "Extrapolate the curve or extend it horizontally"
+msgstr "수평으로 확장된 또는 커브를 외삽법"
+
+
+msgid "Horizontal"
+msgstr "수평"
+
+
+msgid "Extrapolated"
+msgstr "외삽됨"
 
 
 msgid "Tone"
@@ -13167,10 +13171,6 @@ msgstr "자유형 스트로크 커브에 대한 데이터 포인트"
 
 msgid "Coordinates"
 msgstr "좌표"
-
-
-msgid "Pressure"
-msgstr "압력"
 
 
 msgid "Pressure of tablet at point when drawing it"
@@ -27793,10 +27793,6 @@ msgstr "프리셋"
 
 msgid "KeyPresets"
 msgstr "키 프리셋"
-
-
-msgid "3D Mouse Settings"
-msgstr "3D 마우스 설정"
 
 
 msgid "Save & Load"
@@ -57781,6 +57777,10 @@ msgid "Screen Coordinates of sampling"
 msgstr "화면 샘플링의 좌표"
 
 
+msgid "Dyntopo"
+msgstr "다인토포"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "스컬프트 모드"
@@ -62037,14 +62037,6 @@ msgid "Export vertex colors"
 msgstr "버텍스 컬러를 내보내기"
 
 
-msgid "Visible Layers Only"
-msgstr "보이는 레이어 만"
-
-
-msgid "Export only objects in visible layers"
-msgstr "보이는 레이어에 오브젝트 만을 내보내기"
-
-
 msgid "Transform Samples"
 msgstr "변환 샘플"
 
@@ -65452,6 +65444,10 @@ msgid "Orbit & Pan"
 msgstr "오비트 & 팬"
 
 
+msgid "3D Mouse Settings"
+msgstr "3D 마우스 설정"
+
+
 msgid "Save Preferences"
 msgstr "환경 설정을 저장"
 
@@ -65678,10 +65674,6 @@ msgstr "3D 프린트"
 
 msgid "Quad View"
 msgstr "쿼드 뷰"
-
-
-msgid "Dyntopo"
-msgstr "다인토포"
 
 
 msgid "Unified Brush"
@@ -76936,14 +76928,6 @@ msgid "Display keyframe handle types and non-bezier interpolation modes"
 msgstr "키 프레임 핸들 유형 및 베지어 비보간 모드를 표시"
 
 
-msgid "Show Marker Lines"
-msgstr "마커 라인을 표시"
-
-
-msgid "Show a vertical line for every marker"
-msgstr "모든 마커에 수직선을 표시"
-
-
 msgid "Show Pose Markers"
 msgstr "포즈 마커를 표시"
 
@@ -84743,10 +84727,6 @@ msgid "Autolock Inactive Layers"
 msgstr "비활성 레이어를 자동 잠금"
 
 
-msgid "Show Only On Keyframed"
-msgstr "키 프레임에 만 표시"
-
-
 msgid "Before"
 msgstr "이전"
 
@@ -85647,6 +85627,10 @@ msgstr "재생 만"
 
 msgid "ShaderFX"
 msgstr "셰이더FX"
+
+
+msgid "Show Only On Keyframed"
+msgstr "키 프레임에 만 표시"
 
 
 msgctxt "Operator"
@@ -88955,6 +88939,10 @@ msgid "Orbit Style"
 msgstr "오비트 스타일"
 
 
+msgid "Navigate"
+msgstr "네비게이트"
+
+
 msgid "Orbit Options"
 msgstr "오비트 옵션"
 
@@ -89903,10 +89891,6 @@ msgstr "오브젝트 유형 가시성"
 
 msgid "Viewport Gizmos"
 msgstr "뷰 기즈모"
-
-
-msgid "Navigate"
-msgstr "네비게이트"
 
 
 msgid "Active Tools"
@@ -91762,62 +91746,6 @@ msgstr "ID를 선택"
 
 msgid "Workbench"
 msgstr "Workbench"
-
-
-msgid "MotionPath"
-msgstr "모션경로"
-
-
-msgid "EditArmatureMode"
-msgstr "에디트아마튜어모드"
-
-
-msgid "EditCurveMode"
-msgstr "에디트커브모드"
-
-
-msgid "EditLatticeMode"
-msgstr "에디트레티스모드"
-
-
-msgid "EditMeshMode"
-msgstr "에디트메쉬모드"
-
-
-msgid "EditMetaballMode"
-msgstr "에디트메타볼모드"
-
-
-msgid "EditTextMode"
-msgstr "에디트텍스트모드"
-
-
-msgid "ObjectMode"
-msgstr "오브젝트모드"
-
-
-msgid "OverlayEngine"
-msgstr "오버레이엔진"
-
-
-msgid "PaintTextureMode"
-msgstr "페인트텍스쳐모드"
-
-
-msgid "PaintVertexMode"
-msgstr "페인트벡터모드"
-
-
-msgid "Particle Mode"
-msgstr "파티클모드"
-
-
-msgid "PoseMode"
-msgstr "포즈모드"
-
-
-msgid "SculptMode"
-msgstr "스컬프트모드"
 
 
 msgid "NLA Strip Controls"
