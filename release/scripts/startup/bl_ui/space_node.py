@@ -314,11 +314,6 @@ class NODE_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("node.select_box", icon = 'BORDER_RECT').tweak = False
-        layout.operator("node.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-
         layout.operator("node.select_linked_from", text = "Linked From", icon = "LINKED")
         layout.operator("node.select_linked_to", text = "Linked To", icon = "LINKED")
 
