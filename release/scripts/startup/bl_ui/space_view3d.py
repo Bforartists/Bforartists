@@ -4598,10 +4598,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.bevel", text="Bevel Vertices", icon='BEVEL').vertex_only = True
-
-        layout.separator()
-
         layout.operator("mesh.edge_face_add", text="Make Edge/Face", icon='MAKE_EDGEFACE')
         layout.operator("mesh.vert_connect_path", text = "Connect Vertex Path", icon = "VERTEXCONNECTPATH")
         layout.operator("mesh.vert_connect", text = "Connect Vertex Pairs", icon = "VERTEXCONNECT")
@@ -4686,7 +4682,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.bevel", text="Bevel Edges", icon='BEVEL').vertex_only = False
         layout.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
 
         layout.separator()
