@@ -4553,12 +4553,6 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
             layout.operator("mesh.extrude_vertices_move", text="Extrude Vertices", icon='EXTRUDE_REGION'),
         'EDGE': lambda layout:
             layout.operator("mesh.extrude_edges_move", text="Extrude Edges", icon='EXTRUDE_REGION'),
-        'REGION': lambda layout:
-            layout.operator("view3d.edit_mesh_extrude_move_normal", text="Extrude Faces", icon='EXTRUDE_REGION'),
-        'REGION_VERT_NORMAL': lambda layout:
-            layout.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Extrude Faces Along Normals", icon='EXTRUDE_REGION'),
-        'FACE': lambda layout:
-            layout.operator("mesh.extrude_faces_move", text="Extrude Individual Faces", icon='EXTRUDE_REGION'),
         'DUPLI_EXTRUDE': lambda layout:
             layout.operator("mesh.dupli_extrude_cursor_norotate", text="Dupli Extrude", icon='DUPLI_EXTRUDE'),
         'DUPLI_EX_ROTATE': lambda layout:
@@ -4572,8 +4566,6 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
         mesh = context.object.data
 
         menu = []
-        if mesh.total_face_sel:
-            menu += ['REGION', 'REGION_VERT_NORMAL', 'FACE']
         if mesh.total_edge_sel and (select_mode[0] or select_mode[1]):
             menu += ['EDGE']
         if mesh.total_vert_sel and select_mode[0]:
