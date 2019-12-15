@@ -67,6 +67,43 @@ class TOPBAR_HT_upper_bar(Header):
             layout.template_reports_banner()
             layout.template_running_jobs()
 
+        # Active workspace view-layer is retrieved through window, not through workspace.
+        layout.template_ID(window, "scene", new="scene.new",
+                           unlink="scene.delete")
+
+        row = layout.row(align=True)
+        row.template_search(
+            window, "view_layer",
+            scene, "view_layers",
+            new="scene.view_layer_add",
+            unlink="scene.view_layer_remove")
+
+
+class TOPBAR_PT_tool_settings_extra(Panel):
+    """
+    Popover panel for adding extra options that don't fit in the tool settings header
+    """
+    bl_idname = "TOPBAR_PT_tool_settings_extra"
+    bl_region_type = 'HEADER'
+    bl_space_type = 'TOPBAR'
+    bl_label = "Extra Options"
+
+    def draw(self, context):
+        from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
+        layout = self.layout
+
+        # Get the active tool
+        space_type, mode = ToolSelectPanelHelper._tool_key_from_context(
+            context)
+        cls = ToolSelectPanelHelper._tool_class_from_space_type(space_type)
+        item, tool, _ = cls._tool_get_active(
+            context, space_type, mode, with_icon=True)
+        if item is None:
+            return
+
+        # Draw the extra settings
+        item.draw_settings(context, layout, tool, extra=True)
+
 
 class TOPBAR_PT_tool_fallback(Panel):
     bl_space_type = 'VIEW_3D'
@@ -365,7 +402,9 @@ class TOPBAR_MT_file_export(Menu):
             self.layout.operator("wm.collada_export", text="Collada (Default) (.dae)", icon = "SAVE_DAE")
         if bpy.app.build_options.alembic:
             self.layout.operator("wm.alembic_export", text="Alembic (.abc)", icon = "SAVE_ABC")
-
+        if bpy.app.build_options.usd and context.preferences.experimental.use_usd_exporter:
+            self.layout.operator(
+                "wm.usd_export", text="Universal Scene Description (.usd, .usdc, .usda)")
 
 class TOPBAR_MT_file_external_data(Menu):
     bl_label = "External Data"
@@ -640,28 +679,6 @@ class TOPBAR_PT_gpencil_primitive(Panel):
         layout.template_curve_mapping(settings, "thickness_primitive_curve", brush=True)
 
 
-# Grease Pencil Fill
-class TOPBAR_PT_gpencil_fill(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'HEADER'
-    bl_label = "Advanced"
-
-    def draw(self, context):
-        paint = context.tool_settings.gpencil_paint
-        brush = paint.brush
-        gp_settings = brush.gpencil_settings
-
-        layout = self.layout
-        # Fill
-        row = layout.row(align=True)
-        row.prop(gp_settings, "fill_factor", text="Resolution")
-        if gp_settings.fill_draw_mode != 'STROKE':
-            row = layout.row(align=True)
-            row.prop(gp_settings, "show_fill", text="Ignore Transparent Strokes")
-            row = layout.row(align=True)
-            row.prop(gp_settings, "fill_threshold", text="Threshold")
-
-
 # Only a popover
 class TOPBAR_PT_name(Panel):
     bl_space_type = 'TOPBAR'  # dummy
@@ -745,9 +762,9 @@ classes = (
     TOPBAR_MT_window,
     TOPBAR_MT_help,
     TOPBAR_PT_tool_fallback,
+    TOPBAR_PT_tool_settings_extra,
     TOPBAR_PT_gpencil_layers,
     TOPBAR_PT_gpencil_primitive,
-    TOPBAR_PT_gpencil_fill,
     TOPBAR_PT_name,
 )
 
