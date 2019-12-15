@@ -38,19 +38,14 @@ blender_include_dirs(
 )
 
 set(LIB
-  bf_blenkernel
-  bf_blenloader
-  bf_depsgraph
-  bf_dna
-  bf_imbuf
-  bf_intern_clog
-  bf_intern_guardedalloc
-  bf_intern_memutil
-  bf_intern_opencolorio
-  bf_render
-  bf_rna
   bf_windowmanager
 )
+
+# Note: this should not be needed, but causes issues in some situations:
+# See reply to daf290dcc80c.
+if(WITH_TBB AND WITH_OPENIMAGEDENOISE)
+  list(INSERT LIB 0 bf_blenkernel)
+endif()
 
 add_definitions(${GL_DEFINITIONS})
 blender_include_dirs("${GLEW_INCLUDE_PATH}")
@@ -69,9 +64,6 @@ if(WITH_CYCLES)
     blender_include_dirs(../../intern/cycles/blender)
     add_definitions(-DWITH_CYCLES_LOGGING)
   endif()
-  list(APPEND LIB
-    bf_intern_cycles
-  )
 endif()
 
 if(WITH_CODEC_FFMPEG)
@@ -86,9 +78,6 @@ endif()
 
 if(WITH_PYTHON)
   blender_include_dirs(../blender/python)
-  list(APPEND LIB
-    bf_python
-  )
   add_definitions(-DWITH_PYTHON)
 
   if(WITH_PYTHON_SECURITY)
@@ -110,17 +99,11 @@ endif()
 
 if(WITH_BINRELOC)
   blender_include_dirs(${BINRELOC_INCLUDE_DIRS})
-  list(APPEND LIB
-    extern_binreloc
-  )
   add_definitions(-DWITH_BINRELOC)
 endif()
 
 if(WITH_FREESTYLE)
   blender_include_dirs(../blender/freestyle)
-  list(APPEND LIB
-    bf_freestyle
-  )
   add_definitions(-DWITH_FREESTYLE)
 endif()
 
@@ -1061,6 +1044,19 @@ target_link_libraries(bforartists ${LIB})
 unset(LIB)
 
 setup_liblinks(bforartists)
+
+# -----------------------------------------------------------------------------
+# USD registry.
+# USD requires a set of JSON files that define the standard schemas. These
+# files are required at runtime.
+if (WITH_USD)
+  add_definitions(-DWITH_USD)
+  install(DIRECTORY
+    ${LIBDIR}/usd/lib/usd
+    DESTINATION "${TARGETDIR_VER}/datafiles"
+  )
+endif()
+
 
 # vcpkg substitutes our libs with theirs, which will cause issues when you
 # you run these builds on other systems due to missing dlls. So we opt out
