@@ -142,9 +142,9 @@ void BlenderSession::create_session()
   scene->image_manager->builtin_image_info_cb = function_bind(
       &BlenderSession::builtin_image_info, this, _1, _2, _3);
   scene->image_manager->builtin_image_pixels_cb = function_bind(
-      &BlenderSession::builtin_image_pixels, this, _1, _2, _3, _4, _5, _6);
+      &BlenderSession::builtin_image_pixels, this, _1, _2, _3, _4, _5, _6, _7);
   scene->image_manager->builtin_image_float_pixels_cb = function_bind(
-      &BlenderSession::builtin_image_float_pixels, this, _1, _2, _3, _4, _5, _6);
+      &BlenderSession::builtin_image_float_pixels, this, _1, _2, _3, _4, _5, _6, _7);
 
   session->scene = scene;
 
@@ -793,18 +793,13 @@ void BlenderSession::do_write_update_render_result(BL::RenderLayer &b_rlay,
 
     for (b_rlay.passes.begin(b_iter); b_iter != b_rlay.passes.end(); ++b_iter) {
       BL::RenderPass b_pass(*b_iter);
-
-      /* find matching pass type */
-      PassType pass_type = BlenderSync::get_pass_type(b_pass);
       int components = b_pass.channels();
 
-      bool read = false;
-      if (pass_type != PASS_NONE) {
-        /* copy pixels */
-        read = buffers->get_pass_rect(
-            pass_type, exposure, sample, components, &pixels[0], b_pass.name());
-      }
-      else {
+      /* Copy pixels from regular render passes. */
+      bool read = buffers->get_pass_rect(b_pass.name(), exposure, sample, components, &pixels[0]);
+
+      /* If denoising pass, */
+      if (!read) {
         int denoising_offset = BlenderSync::get_denoising_pass(b_pass);
         if (denoising_offset >= 0) {
           read = buffers->get_denoising_pass_rect(
@@ -822,7 +817,7 @@ void BlenderSession::do_write_update_render_result(BL::RenderLayer &b_rlay,
   else {
     /* copy combined pass */
     BL::RenderPass b_combined_pass(b_rlay.passes.find_by_name("Combined", b_rview_name.c_str()));
-    if (buffers->get_pass_rect(PASS_COMBINED, exposure, sample, 4, &pixels[0], "Combined"))
+    if (buffers->get_pass_rect("Combined", exposure, sample, 4, &pixels[0]))
       b_combined_pass.rect(&pixels[0]);
   }
 }
@@ -1215,6 +1210,7 @@ void BlenderSession::builtin_image_info(const string &builtin_name,
 
 bool BlenderSession::builtin_image_pixels(const string &builtin_name,
                                           void *builtin_data,
+                                          int tile,
                                           unsigned char *pixels,
                                           const size_t pixels_size,
                                           const bool associate_alpha,
@@ -1234,7 +1230,7 @@ bool BlenderSession::builtin_image_pixels(const string &builtin_name,
   const int height = b_image.size()[1];
   const int channels = b_image.channels();
 
-  unsigned char *image_pixels = image_get_pixels_for_frame(b_image, frame);
+  unsigned char *image_pixels = image_get_pixels_for_frame(b_image, frame, tile);
   const size_t num_pixels = ((size_t)width) * height;
 
   if (image_pixels && num_pixels * channels == pixels_size) {
@@ -1281,6 +1277,7 @@ bool BlenderSession::builtin_image_pixels(const string &builtin_name,
 
 bool BlenderSession::builtin_image_float_pixels(const string &builtin_name,
                                                 void *builtin_data,
+                                                int tile,
                                                 float *pixels,
                                                 const size_t pixels_size,
                                                 const bool,
@@ -1304,7 +1301,7 @@ bool BlenderSession::builtin_image_float_pixels(const string &builtin_name,
     const int channels = b_image.channels();
 
     float *image_pixels;
-    image_pixels = image_get_float_pixels_for_frame(b_image, frame);
+    image_pixels = image_get_float_pixels_for_frame(b_image, frame, tile);
     const size_t num_pixels = ((size_t)width) * height;
 
     if (image_pixels && num_pixels * channels == pixels_size) {
