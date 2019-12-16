@@ -4619,14 +4619,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         layout.separator()
 
-        props = layout.operator("mesh.rip_move", text="Rip Vertices", icon = "RIP")
-        props.MESH_OT_rip.use_fill = False
-        props = layout.operator("mesh.rip_move", text="Rip Vertices and Fill", icon = "RIP_FILL")
-        props.MESH_OT_rip.use_fill = True
-        layout.operator("mesh.rip_edge_move", text="Rip Vertices and Extend", icon = "EXTEND_VERTICES")
-
-        layout.separator()
-
         layout.operator_context = 'EXEC_DEFAULT'
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
