@@ -4508,7 +4508,6 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Extrude Faces Along Normals", icon = 'EXTRUDE_REGION')
             col.operator("mesh.extrude_faces_move", text="Extrude Individual Faces", icon = 'EXTRUDE_REGION')
 
-            col.operator("mesh.inset", icon='INSET_FACES')
             col.operator("mesh.poke", icon = "POKEFACES")
 
             if selected_faces_len >= 2:
@@ -4777,7 +4776,6 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.inset", icon='INSET_FACES')
         layout.operator("mesh.poke", icon = "POKEFACES")
 
         layout.separator()
