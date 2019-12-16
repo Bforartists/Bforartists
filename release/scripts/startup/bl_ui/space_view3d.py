@@ -4291,7 +4291,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.operator("mesh.duplicate_move", text="Duplicate", icon = "DUPLICATE")
         layout.menu("VIEW3D_MT_edit_mesh_extrude")
         layout.operator("mesh.split", icon = "SPLIT")
-        layout.operator("mesh.bisect", icon = 'BISECT')
         layout.operator("mesh.knife_project", icon='KNIFE_PROJECT')
 
         if with_bullet:
@@ -4453,7 +4452,6 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()
 
             col.operator("mesh.knife_tool", icon = 'KNIFE')
-            col.operator("mesh.bisect", icon = 'BISECT')
 
             col.separator()
 
