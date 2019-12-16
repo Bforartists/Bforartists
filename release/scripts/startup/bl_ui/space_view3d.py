@@ -4401,7 +4401,6 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("transform.push_pull", text="Push/Pull", icon = 'PUSH_PULL')
             col.operator("transform.shrink_fatten", text="Shrink/Fatten", icon = 'SHRINK_FATTEN')
             col.operator("transform.shear", text="Shear", icon = "SHEAR")
-            col.operator("transform.vert_slide", text="Slide Vertices", icon = 'SLIDE_VERTEX')
             col.operator_context = 'EXEC_DEFAULT'
             col.operator("transform.vertex_random", text="Randomize Vertices")
             col.operator("mesh.vertices_smooth", text="Smooth Vertices", icon = 'SMOOTH_VERTEX')
@@ -4457,7 +4456,6 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             # Deform Operators
             col.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
-            col.operator("transform.edge_slide", icon='SLIDE_EDGE')
             col.operator("mesh.edge_split", icon = "SPLITEDGE")
 
             col.separator()
@@ -4630,7 +4628,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         layout.separator()
 
-        layout.operator("transform.vert_slide", text="Slide Vertices", icon = 'SLIDE_VERTEX')
         layout.operator_context = 'EXEC_DEFAULT'
         layout.operator("mesh.vertices_smooth", text="Smooth Vertices", icon = 'SMOOTH_VERTEX')
         layout.operator_context = 'INVOKE_REGION_WIN'
@@ -4715,7 +4712,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.separator()
 
-        layout.operator("transform.edge_slide", icon='SLIDE_EDGE')
         layout.operator("mesh.edge_split", icon = "SPLITEDGE")
 
         layout.separator()
