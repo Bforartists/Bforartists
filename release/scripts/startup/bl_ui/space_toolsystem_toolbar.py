@@ -1844,8 +1844,9 @@ class NODE_PT_tools_active(ToolSelectPanelHelper, Panel):
     _tools_select = (
         (        
             _defs_node_select.box,
-            _defs_node_select.lasso,
             _defs_node_select.circle,
+            _defs_node_select.lasso,
+            
         ),
     )
 
