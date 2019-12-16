@@ -1764,7 +1764,6 @@ class IMAGE_PT_tools_active(ToolSelectPanelHelper, Panel):
 
     _tools_select = (
         (
-            _defs_image_uv_select.select,
             _defs_image_uv_select.box,
             _defs_image_uv_select.circle,
             _defs_image_uv_select.lasso,
@@ -1789,6 +1788,7 @@ class IMAGE_PT_tools_active(ToolSelectPanelHelper, Panel):
             *_tools_annotate,
         ],
         'UV': [
+            _defs_image_uv_select.select,
             *_tools_select,
             _defs_image_generic.cursor,
             None,
