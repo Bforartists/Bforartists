@@ -602,17 +602,14 @@ typedef struct UserDef_FileSpaceData {
 } UserDef_FileSpaceData;
 
 typedef struct UserDef_Experimental {
-  /** #eUserPref_Experimental_Flag options. */
-  int flag;
-
   char use_tool_fallback;
+  char use_usd_exporter;
 
-  char _pad0[3];
+  char _pad0[6];
 } UserDef_Experimental;
 
-#define USER_EXPEREMENTAL_TEST(userdef, member) \
-  (((userdef)->flag & USER_DEVELOPER_UI) && \
-   (((userdef)->experimental.flag & USER_EXPERIMENTAL_ALL) || ((userdef)->experimental).member))
+#define USER_EXPERIMENTAL_TEST(userdef, member) \
+  (((userdef)->flag & USER_DEVELOPER_UI) && ((userdef)->experimental).member)
 
 typedef struct UserDef {
   /** UserDef has separate do-version handling, and can be read from other files. */
@@ -908,11 +905,6 @@ typedef enum eUserPref_SpaceData_Flag {
   USER_SPACEDATA_INPUT_HIDE_UI_KEYCONFIG = (1 << 0),
   USER_SPACEDATA_ADDONS_SHOW_ONLY_ENABLED = (1 << 1),
 } eUserPref_SpaceData_Flag;
-
-/** #UserDef_Experimental.flag. */
-typedef enum eUserPref_Experimental_Flag {
-  USER_EXPERIMENTAL_ALL = (1 << 0),
-} eUserPref_Experimental_Flag;
 
 /** #UserDef.flag */
 typedef enum eUserPref_Flag {

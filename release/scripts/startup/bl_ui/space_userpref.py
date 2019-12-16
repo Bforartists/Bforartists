@@ -2199,6 +2199,8 @@ class ExperimentalPanel:
     bl_space_type = 'PREFERENCES'
     bl_region_type = 'WINDOW'
 
+    url_prefix = "https://developer.blender.org/"
+
     @classmethod
     def poll(cls, context):
         prefs = context.preferences
@@ -2213,19 +2215,19 @@ class ExperimentalPanel:
         self.draw_props(context, layout)
 
 
-class USERPREF_PT_experimental_all(ExperimentalPanel, Panel):
-    bl_label = "All"
-    bl_options = {'HIDE_HEADER'}
+class USERPREF_PT_experimental_ui(ExperimentalPanel, Panel):
+    bl_label = "User Interface"
 
     def draw_props(self, context, layout):
         prefs = context.preferences
         experimental = prefs.experimental
 
-        col = layout.column()
-        col.prop(experimental, "use_experimental_all")
-
-        # For the other settings create new panels
-        # and make sure they are disabled if use_experimental_all is True
+        task = "T66304"
+        split = layout.split(factor=0.66)
+        col = split.column()
+        col.prop(experimental, "use_tool_fallback", text="Use Tool Fallback")
+        col = split.column()
+        col.operator("wm.url_open", text=task, icon='URL').url = self.url_prefix + task
 
 
 """
@@ -2254,6 +2256,19 @@ class USERPREF_PT_experimental_virtual_reality(ExperimentalPanel, Panel):
         col = split.column()
         col.operator("wm.url_open", text=task, icon='URL').url = "https://developer.blender.org/" + task
 """
+
+class USERPREF_PT_experimental_usd(ExperimentalPanel, Panel):
+    bl_label = "Universal Scene Description"
+
+    def draw_props(self, context, layout):
+        prefs = context.preferences
+
+        split = layout.split(factor=0.66)
+        col = split.split()
+        col.prop(prefs.experimental, "use_usd_exporter", text="USD Exporter")
+        col = split.split()
+        url = "https://devtalk.blender.org/t/universal-scene-description-usd-exporter-feedback/10920"
+        col.operator("wm.url_open", text='Give Feedback', icon='URL').url = url
 
 
 # Order of registration defines order in UI,
@@ -2337,7 +2352,8 @@ classes = (
     USERPREF_PT_studiolight_matcaps,
     USERPREF_PT_studiolight_world,
 
-    USERPREF_PT_experimental_all,
+    USERPREF_PT_experimental_ui,
+    USERPREF_PT_experimental_usd,
 
     # Popovers.
     USERPREF_PT_ndof_settings,
