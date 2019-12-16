@@ -74,7 +74,7 @@ static void OVERLAY_engine_init(void *vedata)
   }
 
   pd->wireframe_mode = (v3d->shading.type == OB_WIRE);
-  pd->clipping_state = (rv3d->rflag & RV3D_CLIPPING) ? DRW_STATE_CLIP_PLANES : 0;
+  pd->clipping_state = RV3D_CLIPPING_ENABLED(v3d, rv3d) ? DRW_STATE_CLIP_PLANES : 0;
   pd->xray_enabled = XRAY_ACTIVE(v3d);
   pd->xray_enabled_and_not_wire = pd->xray_enabled && v3d->shading.type > OB_WIRE;
   pd->clear_in_front = (v3d->shading.type != OB_SOLID);
@@ -224,7 +224,7 @@ static void OVERLAY_cache_populate(void *vedata, Object *ob)
     OVERLAY_pose_cache_populate(vedata, ob);
   }
 
-  if (in_edit_mode) {
+  if (in_edit_mode && !pd->hide_overlays) {
     switch (ob->type) {
       case OB_MESH:
         OVERLAY_edit_mesh_cache_populate(vedata, ob);
@@ -281,20 +281,22 @@ static void OVERLAY_cache_populate(void *vedata, Object *ob)
     OVERLAY_motion_path_cache_populate(vedata, ob);
   }
 
-  switch (ob->type) {
-    case OB_ARMATURE:
-      if (draw_bones && (is_select || (!in_edit_mode && !in_pose_mode))) {
-        OVERLAY_armature_cache_populate(vedata, ob);
-      }
-      break;
-    case OB_MBALL:
-      if (!in_edit_mode) {
-        OVERLAY_metaball_cache_populate(vedata, ob);
-      }
-      break;
-    case OB_GPENCIL:
-      OVERLAY_gpencil_cache_populate(vedata, ob);
-      break;
+  if (!pd->hide_overlays) {
+    switch (ob->type) {
+      case OB_ARMATURE:
+        if (draw_bones && (is_select || (!in_edit_mode && !in_pose_mode))) {
+          OVERLAY_armature_cache_populate(vedata, ob);
+        }
+        break;
+      case OB_MBALL:
+        if (!in_edit_mode) {
+          OVERLAY_metaball_cache_populate(vedata, ob);
+        }
+        break;
+      case OB_GPENCIL:
+        OVERLAY_gpencil_cache_populate(vedata, ob);
+        break;
+    }
   }
   /* Non-Meshes */
   if (draw_extras) {

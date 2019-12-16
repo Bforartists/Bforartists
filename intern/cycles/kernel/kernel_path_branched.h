@@ -55,7 +55,7 @@ ccl_device_inline void kernel_branched_path_ao(KernelGlobals *kg,
 
       if (!shadow_blocked(kg, sd, emission_sd, state, &light_ray, &ao_shadow)) {
         path_radiance_accum_ao(
-            L, state, throughput * num_samples_inv, ao_alpha, ao_bsdf, ao_shadow);
+            kg, L, state, throughput * num_samples_inv, ao_alpha, ao_bsdf, ao_shadow);
       }
       else {
         path_radiance_accum_total_ao(L, state, throughput * num_samples_inv, ao_bsdf);
@@ -146,7 +146,7 @@ ccl_device_forceinline void kernel_branched_path_volume(KernelGlobals *kg,
 
     /* emission and transmittance */
     if (volume_segment.closure_flag & SD_EMISSION)
-      path_radiance_accum_emission(L, state, *throughput, volume_segment.accum_emission);
+      path_radiance_accum_emission(kg, L, state, *throughput, volume_segment.accum_emission);
     *throughput *= volume_segment.accum_transmittance;
 
     /* free cached steps */
@@ -376,7 +376,7 @@ ccl_device void kernel_branched_path_integrate(KernelGlobals *kg,
   /* initialize */
   float3 throughput = make_float3(1.0f, 1.0f, 1.0f);
 
-  path_radiance_init(L, kernel_data.film.use_light_pass);
+  path_radiance_init(kg, L);
 
   /* shader data memory used for both volumes and surfaces, saves stack space */
   ShaderData sd;
@@ -405,7 +405,7 @@ ccl_device void kernel_branched_path_integrate(KernelGlobals *kg,
 
     /* Shade background. */
     if (!hit) {
-      kernel_path_background(kg, &state, &ray, throughput, &sd, L);
+      kernel_path_background(kg, &state, &ray, throughput, &sd, buffer, L);
       break;
     }
 
@@ -417,7 +417,7 @@ ccl_device void kernel_branched_path_integrate(KernelGlobals *kg,
     if (!(sd.flag & SD_HAS_ONLY_VOLUME)) {
 #    endif
 
-      shader_eval_surface(kg, &sd, &state, state.flag);
+      shader_eval_surface(kg, &sd, &state, buffer, state.flag);
       shader_merge_closures(&sd);
 
       /* Apply shadow catcher, holdout, emission. */

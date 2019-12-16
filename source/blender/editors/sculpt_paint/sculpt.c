@@ -108,6 +108,7 @@ static void sculpt_vertex_random_access_init(SculptSession *ss)
 {
   if (BKE_pbvh_type(ss->pbvh) == PBVH_BMESH) {
     BM_mesh_elem_index_ensure(ss->bm, BM_VERT);
+    BM_mesh_elem_table_ensure(ss->bm, BM_VERT);
   }
 }
 
@@ -1012,6 +1013,7 @@ void ED_sculpt_redraw_planes_get(float planes[4][4], ARegion *ar, Object *ob)
 void sculpt_brush_test_init(SculptSession *ss, SculptBrushTest *test)
 {
   RegionView3D *rv3d = ss->cache ? ss->cache->vc->rv3d : ss->rv3d;
+  View3D *v3d = ss->cache ? ss->cache->vc->v3d : ss->v3d;
 
   test->radius_squared = ss->cache ? ss->cache->radius_squared :
                                      ss->cursor_radius * ss->cursor_radius;
@@ -1032,7 +1034,7 @@ void sculpt_brush_test_init(SculptSession *ss, SculptBrushTest *test)
 
   test->mirror_symmetry_pass = ss->cache ? ss->cache->mirror_symmetry_pass : 0;
 
-  if (rv3d->rflag & RV3D_CLIPPING) {
+  if (RV3D_CLIPPING_ENABLED(v3d, rv3d)) {
     test->clip_rv3d = rv3d;
   }
   else {
@@ -2788,8 +2790,13 @@ static void do_mask_brush_draw_task_cb_ex(void *__restrict userdata,
       const float fade = tex_strength(
           ss, brush, vd.co, sqrtf(test.dist), vd.no, vd.fno, 0.0f, vd.index, tls->thread_id);
 
-      (*vd.mask) += fade * bstrength;
-      CLAMP(*vd.mask, 0, 1);
+      if (bstrength > 0.0f) {
+        (*vd.mask) += fade * bstrength * (1.0f - *vd.mask);
+      }
+      else {
+        (*vd.mask) += fade * bstrength * (*vd.mask);
+      }
+      CLAMP(*vd.mask, 0.0f, 1.0f);
 
       if (vd.mvert) {
         vd.mvert->flag |= ME_VERT_PBVH_UPDATE;
@@ -3072,7 +3079,12 @@ static void sculpt_relax_vertex(SculptSession *ss,
   float plane[4];
   float smooth_closest_plane[3];
   float vno[3];
-  normal_short_to_float_v3(vno, vd->no);
+  if (vd->no) {
+    normal_short_to_float_v3(vno, vd->no);
+  }
+  else {
+    copy_v3_v3(vno, vd->fno);
+  }
   plane_from_point_normal_v3(plane, vd->co, vno);
   closest_to_plane_v3(smooth_closest_plane, plane, smooth_pos);
   sub_v3_v3v3(final_disp, smooth_closest_plane, vd->co);
@@ -4604,6 +4616,10 @@ static void calc_clay_surface_task_cb(void *__restrict userdata,
   test_radius *= brush->normal_radius_factor;
   test.radius_squared = test_radius * test_radius;
   plane_from_point_normal_v3(plane, area_co, area_no);
+
+  if (is_zero_v4(plane)) {
+    return;
+  }
 
   BKE_pbvh_vertex_iter_begin(ss->pbvh, data->nodes[n], vd, PBVH_ITER_UNIQUE)
   {
@@ -6725,11 +6741,12 @@ static void sculpt_update_cache_variants(bContext *C, Sculpt *sd, Object *ob, Po
   if (BKE_brush_use_size_pressure(brush) &&
       paint_supports_dynamic_size(brush, PAINT_MODE_SCULPT)) {
     cache->radius = sculpt_brush_dynamic_size_get(brush, cache, cache->initial_radius);
-    cache->dyntopo_radius = cache->initial_radius * cache->pressure;
+    cache->dyntopo_pixel_radius = sculpt_brush_dynamic_size_get(
+        brush, cache, ups->initial_pixel_radius);
   }
   else {
     cache->radius = cache->initial_radius;
-    cache->dyntopo_radius = cache->initial_radius;
+    cache->dyntopo_pixel_radius = ups->initial_pixel_radius;
   }
 
   cache->radius_squared = cache->radius * cache->radius;
@@ -6880,6 +6897,7 @@ static float sculpt_raycast_init(ViewContext *vc,
   float dist;
   Object *ob = vc->obact;
   RegionView3D *rv3d = vc->ar->regiondata;
+  View3D *v3d = vc->v3d;
 
   /* TODO: what if the segment is totally clipped? (return == 0) */
   ED_view3d_win_to_segment_clipped(
@@ -6894,7 +6912,7 @@ static float sculpt_raycast_init(ViewContext *vc,
 
   if ((rv3d->is_persp == false) &&
       /* if the ray is clipped, don't adjust its start/end */
-      ((rv3d->rflag & RV3D_CLIPPING) == 0)) {
+      RV3D_CLIPPING_ENABLED(v3d, rv3d)) {
     BKE_pbvh_raycast_project_ray_root(ob->sculpt->pbvh, original, ray_start, ray_end, ray_normal);
 
     /* recalculate the normal */
@@ -6989,6 +7007,7 @@ bool sculpt_cursor_geometry_info_update(bContext *C,
   copy_v3_v3(ss->cursor_normal, srd.face_normal);
   copy_v3_v3(ss->cursor_location, out->location);
   ss->rv3d = vc.rv3d;
+  ss->v3d = vc.v3d;
 
   if (!BKE_brush_use_locked_size(scene, brush)) {
     radius = paint_calc_object_space_radius(&vc, out->location, BKE_brush_size_get(scene, brush));
@@ -7340,12 +7359,11 @@ static void sculpt_stroke_update_step(bContext *C,
     BKE_pbvh_bmesh_detail_size_set(ss->pbvh, object_space_constant_detail);
   }
   else if (sd->flags & SCULPT_DYNTOPO_DETAIL_BRUSH) {
-    BKE_pbvh_bmesh_detail_size_set(ss->pbvh,
-                                   ss->cache->dyntopo_radius * sd->detail_percent / 100.0f);
+    BKE_pbvh_bmesh_detail_size_set(ss->pbvh, ss->cache->radius * sd->detail_percent / 100.0f);
   }
   else {
     BKE_pbvh_bmesh_detail_size_set(ss->pbvh,
-                                   (ss->cache->dyntopo_radius / (float)ups->pixel_radius) *
+                                   (ss->cache->radius / ss->cache->dyntopo_pixel_radius) *
                                        (float)(sd->detail_size * U.pixelsize) / 0.4f);
   }
 
@@ -8913,8 +8931,7 @@ static void mesh_filter_task_cb(void *__restrict userdata,
   }
   BKE_pbvh_vertex_iter_end;
 
-  BKE_pbvh_node_mark_redraw(node);
-  BKE_pbvh_node_mark_normals_update(node);
+  BKE_pbvh_node_mark_update(node);
 }
 
 static int sculpt_mesh_filter_modal(bContext *C, wmOperator *op, const wmEvent *event)
@@ -8960,6 +8977,11 @@ static int sculpt_mesh_filter_modal(bContext *C, wmOperator *op, const wmEvent *
 
   if (ss->deform_modifiers_active || ss->shapekey_active) {
     sculpt_flush_stroke_deform(sd, ob, true);
+  }
+
+  /* The relax mesh filter needs the updated normals of the modified mesh after each iteration */
+  if (filter_type == MESH_FILTER_RELAX) {
+    BKE_pbvh_update_normals(ss->pbvh, ss->subdiv_ccg);
   }
 
   sculpt_flush_update_step(C, SCULPT_UPDATE_COORDS);

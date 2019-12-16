@@ -410,7 +410,7 @@ class _defs_edit_armature:
             idname="builtin.roll",
             label="Roll",
             icon="ops.armature.bone.roll",
-            widget=None,
+            widget="VIEW3D_GGT_tool_generic_handle_free",
             keymap=(),
         )
 
@@ -420,7 +420,7 @@ class _defs_edit_armature:
             idname="builtin.bone_envelope",
             label="Bone Envelope",
             icon="ops.transform.bone_envelope",
-            widget=None,
+            widget="VIEW3D_GGT_tool_generic_handle_free",
             keymap=(),
         )
 
@@ -430,7 +430,7 @@ class _defs_edit_armature:
             idname="builtin.bone_size",
             label="Bone Size",
             icon="ops.transform.bone_size",
-            widget=None,
+            widget="VIEW3D_GGT_tool_generic_handle_free",
             keymap=(),
         )
 
@@ -494,7 +494,7 @@ class _defs_edit_mesh:
             idname="builtin.rip_edge",
             label="Rip Edge",
             icon="ops.mesh.rip_edge",
-            widget=None,
+            widget="VIEW3D_GGT_tool_generic_handle_free",
             keymap=(),
         )
 
@@ -599,13 +599,53 @@ class _defs_edit_mesh:
 
     @ToolDef.from_fn
     def bevel():
-        def draw_settings(_context, layout, tool):
+        def draw_settings(context, layout, tool, *, extra=False):
             props = tool.operator_properties("mesh.bevel")
-            layout.prop(props, "offset_type")
-            layout.prop(props, "segments")
-            layout.prop(props, "profile", slider=True)
-            layout.use_property_split = False
-            layout.prop(props, "vertex_only")
+            region_type = context.region.type
+
+            if extra == False:
+                if props.offset_type == 'PERCENT':
+                    layout.prop(props, "offset_pct")
+                else:
+                    offset_text = "Width"
+                    if props.offset_type == 'DEPTH':
+                        offset_text = "Depth"
+                    elif props.offset_type == 'OFFSET':
+                        offset_text = "Offset"
+                    layout.prop(props, "offset", text=offset_text)
+                if region_type == 'TOOL_HEADER':
+                    layout.prop(props, "offset_type", text="")
+                else:
+                    layout.prop(props, "offset_type")
+
+                layout.prop(props, "segments")
+                layout.prop(props, "profile", slider=True)
+
+                if region_type == 'TOOL_HEADER':
+                    layout.popover("TOPBAR_PT_tool_settings_extra", text="...")
+                else:
+                    extra = True
+
+            if extra or region_type != 'TOOL_HEADER':
+                layout.prop(props, "vertex_only")
+                layout.prop(props, "clamp_overlap")
+                layout.prop(props, "loop_slide")
+                layout.prop(props, "mark_seam")
+                layout.prop(props, "mark_sharp")
+                layout.prop(props, "harden_normals")
+
+                layout.prop(props, "material")
+
+                layout.prop(props, "miter_outer", text="Outer Miter")
+                layout.prop(props, "miter_inner", text="Inner Miter")
+                if props.miter_inner == 'ARC':
+                    layout.prop(props, "spread")
+
+                layout.prop(props, "use_custom_profile")
+                if props.use_custom_profile:
+                    tool_settings = context.tool_settings
+                    layout.template_curveprofile(tool_settings, "custom_bevel_profile_preset")
+
 
         return dict(
             idname="builtin.bevel",
@@ -881,7 +921,7 @@ class _defs_edit_curve:
             idname="builtin.tilt",
             label="Tilt",
             icon="ops.transform.tilt",
-            widget=None,
+            widget="VIEW3D_GGT_tool_generic_handle_free",
             keymap=(),
         )
 
@@ -894,7 +934,7 @@ class _defs_edit_curve:
                 "Expand or contract the radius of the selected curve points"
             ),
             icon="ops.curve.radius",
-            widget=None,
+            widget="VIEW3D_GGT_tool_generic_handle_free",
             keymap=(),
         )
 
@@ -1110,11 +1150,10 @@ class _defs_weight_paint:
         def draw_settings(context, layout, tool):
             brush = context.tool_settings.weight_paint.brush
             if brush is not None:
-                from bl_ui.properties_paint_common import UnifiedPaintPanel
-                UnifiedPaintPanel.prop_unified_weight(layout, context, brush, "weight", slider=True)
-                UnifiedPaintPanel.prop_unified_strength(layout, context, brush, "strength", slider=True)
+                layout.prop(brush, "weight", slider=True)
+                layout.prop(brush, "strength", slider=True)
             props = tool.operator_properties("paint.weight_gradient")
-            layout.prop(props, "type")
+            layout.prop(props, "type", expand=True)
 
         return dict(
             idname="builtin.gradient",
@@ -1178,7 +1217,7 @@ class _defs_image_uv_transform:
             idname="builtin.move",
             label="Move",
             icon="ops.transform.translate",
-            # widget="VIEW3D_GGT_xform_gizmo",
+            widget="IMAGE_GGT_gizmo2d_translate",
             operator="transform.translate",
             keymap="Image Editor Tool: Uv, Move",
         )
@@ -1189,7 +1228,7 @@ class _defs_image_uv_transform:
             idname="builtin.rotate",
             label="Rotate",
             icon="ops.transform.rotate",
-            # widget="VIEW3D_GGT_xform_gizmo",
+            widget="IMAGE_GGT_gizmo2d_rotate",
             operator="transform.rotate",
             keymap="Image Editor Tool: Uv, Rotate",
         )
@@ -1200,7 +1239,7 @@ class _defs_image_uv_transform:
             idname="builtin.scale",
             label="Scale",
             icon="ops.transform.resize",
-            # widget="VIEW3D_GGT_xform_gizmo",
+            widget="IMAGE_GGT_gizmo2d_resize",
             operator="transform.resize",
             keymap="Image Editor Tool: Uv, Scale",
         )
@@ -1223,15 +1262,12 @@ class _defs_image_uv_select:
 
     @ToolDef.from_fn
     def select():
-        def draw_settings(_context, _layout, _tool):
-            pass
         return dict(
             idname="builtin.select",
             label="Tweak",
             icon="ops.generic.select",
             widget=None,
             keymap=(),
-            draw_settings=draw_settings,
         )
 
     @ToolDef.from_fn
@@ -1609,15 +1645,12 @@ class _defs_node_select:
 
     @ToolDef.from_fn
     def select():
-        def draw_settings(_context, _layout, _tool):
-            pass
         return dict(
             idname="builtin.select",
             label="Tweak",
             icon="ops.generic.select",
             widget=None,
             keymap="Node Tool: Tweak",
-            draw_settings=draw_settings,
         )
 
     @ToolDef.from_fn
@@ -1627,7 +1660,6 @@ class _defs_node_select:
             row = layout.row()
             row.use_property_split = False
             row.prop(props, "mode", text="", expand=True, icon_only=True)
-            pass
         return dict(
             idname="builtin.select_box",
             label="Select Box",
