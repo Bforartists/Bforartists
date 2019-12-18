@@ -1187,13 +1187,6 @@ class VIEW3D_MT_view_navigation(Menu):
 
         layout.operator("screen.animation_play", text="Playback Animation", icon = "TRIA_RIGHT")
 
-        layout.separator()
-
-        layout.operator("transform.translate", icon='TRANSFORM_MOVE')
-        layout.operator("transform.rotate", icon='TRANSFORM_ROTATE')
-        layout.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
-
-
 
 class VIEW3D_MT_view_align(Menu):
     bl_label = "Align View"
