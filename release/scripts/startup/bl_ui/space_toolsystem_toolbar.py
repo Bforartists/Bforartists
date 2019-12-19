@@ -1908,13 +1908,17 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         ),
         _defs_transform.transform,
     )
-
+    # select tools group
     _tools_select = (
         (           
             _defs_view3d_select.box,
             _defs_view3d_select.circle,
             _defs_view3d_select.lasso,
         ),
+    )
+    # single tweak tool
+    _tools_select_tweak = (
+            _defs_view3d_select.select,
     )
 
     _tools_annotate = (
@@ -2078,6 +2082,13 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         'PAINT_TEXTURE': [
             _defs_texture_paint.generate_from_brushes,
             None,
+            # single tweak tool
+            lambda context: (
+                VIEW3D_PT_tools_active._tools_select_tweak
+                if _defs_vertex_paint.poll_select_mask(context)
+                else ()
+            ),
+            # select tools group
             lambda context: (
                 VIEW3D_PT_tools_active._tools_select
                 if _defs_texture_paint.poll_select_mask(context)
@@ -2088,6 +2099,13 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         'PAINT_VERTEX': [
             _defs_vertex_paint.generate_from_brushes,
             None,
+            # single tweak tool
+            lambda context: (
+                VIEW3D_PT_tools_active._tools_select_tweak
+                if _defs_vertex_paint.poll_select_mask(context)
+                else ()
+            ),
+            # select tools group
             lambda context: (
                 VIEW3D_PT_tools_active._tools_select
                 if _defs_vertex_paint.poll_select_mask(context)
@@ -2110,6 +2128,13 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
                 else ()
             ),
             None,
+            # single tweak tool
+            lambda context: (
+                VIEW3D_PT_tools_active._tools_select_tweak
+                if _defs_vertex_paint.poll_select_mask(context)
+                else ()
+            ),
+            # select tools group
             lambda context: (
                 VIEW3D_PT_tools_active._tools_select
                 if _defs_weight_paint.poll_select_mask(context)
