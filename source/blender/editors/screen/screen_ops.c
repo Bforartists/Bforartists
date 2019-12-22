@@ -4555,19 +4555,6 @@ static void SCREEN_OT_region_context_menu(wmOperatorType *ot)
  * Animation Step.
  * \{ */
 
-static int match_area_with_refresh(int spacetype, int refresh)
-{
-  switch (spacetype) {
-    case SPACE_TIME:
-      if (refresh & SPACE_TIME) {
-        return 1;
-      }
-      break;
-  }
-
-  return 0;
-}
-
 static int match_region_with_redraws(int spacetype,
                                      int regiontype,
                                      int redraws,
@@ -4849,10 +4836,6 @@ static int screen_animation_step(bContext *C, wmOperator *UNUSED(op), const wmEv
               }
             }
           }
-        }
-
-        if (match_area_with_refresh(sa->spacetype, sad->refresh)) {
-          ED_area_tag_refresh(sa);
         }
       }
     }

@@ -70,19 +70,17 @@ static bool WIDGETGROUP_tool_generic_poll(const bContext *C, wmGizmoGroupType *g
 
 static wmGizmo *tool_generic_create_gizmo(const bContext *C, wmGizmoGroup *gzgroup)
 {
-  wmGizmo *gz;
+  wmGizmo *gz = WM_gizmo_new("GIZMO_GT_button_2d", gzgroup, NULL);
+  gz->flag |= WM_GIZMO_OPERATOR_TOOL_INIT;
+
+  UI_GetThemeColor3fv(TH_GIZMO_PRIMARY, gz->color);
+  UI_GetThemeColor3fv(TH_GIZMO_HI, gz->color_hi);
+
+  unit_m4(gz->matrix_offset);
+
+  RNA_enum_set(gz->ptr, "icon", ICON_NONE);
 
   if (gzgroup->type->idname == handle_normal_id) {
-    gz = WM_gizmo_new("GIZMO_GT_button_2d", gzgroup, NULL);
-
-    UI_GetThemeColor3fv(TH_GIZMO_PRIMARY, gz->color);
-    UI_GetThemeColor3fv(TH_GIZMO_HI, gz->color_hi);
-
-    unit_m4(gz->matrix_offset);
-
-    PropertyRNA *prop = RNA_struct_find_property(gz->ptr, "icon");
-    RNA_property_enum_set(gz->ptr, prop, ICON_NONE);
-
     gz->scale_basis = 0.12f;
     gz->matrix_offset[3][2] -= 12.0;
     RNA_enum_set(gz->ptr,
@@ -91,16 +89,7 @@ static wmGizmo *tool_generic_create_gizmo(const bContext *C, wmGizmoGroup *gzgro
                   ED_GIZMO_BUTTON_SHOW_OUTLINE));
   }
   else {
-    gz = WM_gizmo_new("GIZMO_GT_button_2d", gzgroup, NULL);
-
-    UI_GetThemeColor3fv(TH_GIZMO_PRIMARY, gz->color);
-    UI_GetThemeColor3fv(TH_GIZMO_HI, gz->color_hi);
-
-    unit_m4(gz->matrix_offset);
     gz->scale_basis = 0.16f * 3;
-
-    PropertyRNA *prop = RNA_struct_find_property(gz->ptr, "icon");
-    RNA_property_enum_set(gz->ptr, prop, ICON_NONE);
 
     RNA_enum_set(gz->ptr, "draw_options", ED_GIZMO_BUTTON_SHOW_BACKDROP);
 
@@ -206,7 +195,8 @@ void VIEW3D_GGT_tool_generic_handle_normal(wmGizmoGroupType *gzgt)
   gzgt->name = "Generic Tool Widget Normal";
   gzgt->idname = handle_normal_id;
 
-  gzgt->flag |= (WM_GIZMOGROUPTYPE_3D | WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP);
+  gzgt->flag |= (WM_GIZMOGROUPTYPE_3D | WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP |
+                 WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK);
 
   gzgt->gzmap_params.spaceid = SPACE_VIEW3D;
   gzgt->gzmap_params.regionid = RGN_TYPE_WINDOW;
@@ -222,6 +212,8 @@ void VIEW3D_GGT_tool_generic_handle_free(wmGizmoGroupType *gzgt)
   gzgt->name = "Generic Tool Widget Free";
   gzgt->idname = handle_free_id;
 
+  /* Don't use 'WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK' here since this style of gizmo
+   * is better suited to being activated immediately. */
   gzgt->flag |= (WM_GIZMOGROUPTYPE_3D | WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP);
 
   gzgt->gzmap_params.spaceid = SPACE_VIEW3D;

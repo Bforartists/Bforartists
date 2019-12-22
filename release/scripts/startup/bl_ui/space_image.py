@@ -346,7 +346,7 @@ class IMAGE_MT_image(Menu):
 
         if ima and not show_render:
             if ima.packed_file:
-                if len(ima.filepath):
+                if ima.filepath:
                     layout.separator()
                     layout.operator("image.unpack", text="Unpack", icon = "PACKAGE")
             else:
@@ -705,8 +705,8 @@ class _draw_tool_settings_context_mode:
                 brush = uv_sculpt.brush
                 if brush:
                     # NOTE: We don't draw UnifiedPaintSettings in the header to reduce clutter. D5928#136281
-                    UnifiedPaintPanel.prop_unified(layout, context, brush, "size", pressure_name="use_pressure_size", slider=True)
-                    UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", pressure_name="use_pressure_strength", slider=True)
+                    UnifiedPaintPanel.prop_unified(layout, context, brush, "size", pressure_name="use_pressure_size", slider=True,)
+                    UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", pressure_name="use_pressure_strength", slider=True,)
 
     @staticmethod
     def PAINT(context, layout, tool):
@@ -862,7 +862,6 @@ class MASK_MT_editor_menus(Menu):
 
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
-        show_paint = sima.show_paint
 
         layout.menu("IMAGE_MT_view")
 
@@ -889,44 +888,14 @@ class IMAGE_MT_mask_context_menu(Menu):
     @classmethod
     def poll(cls, context):
         sima = context.space_data
-        return (sima.show_maskedit)
+        return sima.show_maskedit
 
     def draw(self, context):
         layout = self.layout
+        from .properties_mask_common import draw_mask_context_menu
+        draw_mask_context_menu(layout, context)
         sima = context.space_data
 
-        if not sima.mask:
-            layout.operator("mask.new", icon='MOD_MASK')
-            layout.separator()
-            layout.operator("mask.primitive_circle_add", icon='MESH_CIRCLE')
-            layout.operator("mask.primitive_square_add", icon='MESH_PLANE')
-        else:
-            layout.operator_menu_enum("mask.handle_type_set", "type")
-            layout.operator("mask.switch_direction", icon='SWITCH_DIRECTION')
-            layout.operator("mask.cyclic_toggle", icon='TOGGLE_CYCLIC')
-
-            layout.separator()
-            layout.operator("mask.primitive_circle_add", icon='MESH_CIRCLE')
-            layout.operator("mask.primitive_square_add", icon='MESH_PLANE')
-
-            layout.separator()
-            layout.operator("mask.copy_splines", icon='COPYDOWN')
-            layout.operator("mask.paste_splines", icon='PASTEDOWN')
-
-            layout.separator()
-
-            layout.operator("mask.shape_key_rekey", text="Re-key Shape Points", icon = "SHAPEKEY_DATA")
-            layout.operator("mask.feather_weight_clear", icon='CLEAR')
-            layout.operator("mask.shape_key_feather_reset", text="Reset Feather Animation", icon='RESET')
-
-            layout.separator()
-
-            layout.operator("mask.parent_set", icon='PARENT')
-            layout.operator("mask.parent_clear", icon='PARENT_CLEAR')
-
-            layout.separator()
-
-            layout.operator("mask.delete", icon='DELETE')
 
 # -----------------------------------------------------------------------------
 # Mask (similar code in space_clip.py, keep in sync)
@@ -1218,7 +1187,7 @@ class IMAGE_PT_render_slots(Panel):
 
 
 class IMAGE_UL_udim_tiles(UIList):
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+    def draw_item(self, _context, layout, _data, item, _icon, _active_data, _active_propname, _index):
         tile = item
         layout.prop(tile, "label", text="", emboss=False)
 
@@ -1254,6 +1223,7 @@ class IMAGE_PT_udim_tiles(Panel):
             col = layout.column(align=True)
             col.operator("image.tile_fill")
 
+
 class IMAGE_PT_paint_select(Panel, ImagePaintPanel, BrushSelectPanel):
     bl_label = "Brushes"
     bl_context = ".paint_common_2d"
@@ -1281,6 +1251,7 @@ class IMAGE_PT_paint_settings(Panel, ImagePaintPanel):
 class IMAGE_PT_paint_settings_advanced(Panel, ImagePaintPanel):
     bl_context = ".paint_common_2d"
     bl_parent_id = "IMAGE_PT_paint_settings"
+    bl_category = "Tool"
     bl_label = "Advanced"
 
     def draw(self, context):
@@ -1437,7 +1408,9 @@ class IMAGE_PT_uv_sculpt_brush_settings(Panel, ImagePaintPanel, UVSculptPanel):
 
         if brush:
             if brush.uv_sculpt_tool == 'RELAX':
-                # Although this settings is stored in the scene, it is only used by a single tool, so it doesn't make sense from a user perspective to move it to the Options panel.
+                # Although this settings is stored in the scene,
+                # it is only used by a single tool,
+                # so it doesn't make sense from a user perspective to move it to the Options panel.
                 layout.prop(tool_settings, "uv_relax_method")
 
 
