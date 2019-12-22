@@ -326,6 +326,7 @@ class VIEW3D_PT_tools_posemode_options(View3DPanel, Panel):
 
 # ********** default tools for paint modes ****************
 
+
 class TEXTURE_UL_texpaintslots(UIList):
     def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, _index):
         # mat = data
@@ -335,6 +336,7 @@ class TEXTURE_UL_texpaintslots(UIList):
         elif self.layout_type == 'GRID':
             layout.alignment = 'CENTER'
             layout.label(text="")
+
 
 class View3DPaintPanel(View3DPanel, UnifiedPaintPanel):
     bl_category = "Tool"
@@ -403,6 +405,11 @@ class VIEW3D_PT_tools_brush_settings(Panel, View3DPaintBrushPanel):
     bl_context = ".paint_common"
     bl_label = "Brush Settings"
 
+    @classmethod
+    def poll(cls, context):
+        settings = cls.paint_settings(context)
+        return settings and settings.brush is not None
+
     def draw(self, context):
         layout = self.layout
 
@@ -442,20 +449,22 @@ class VIEW3D_PT_tools_brush_color(Panel, View3DPaintPanel):
     def poll(cls, context):
         settings = cls.paint_settings(context)
         brush = settings.brush
+
         if context.image_paint_object:
             capabilities = brush.image_paint_capabilities
             return capabilities.has_color
-
         elif context.vertex_paint_object:
             capabilities = brush.vertex_paint_capabilities
             return capabilities.has_color
+
+        return False
 
     def draw(self, context):
         layout = self.layout
         settings = self.paint_settings(context)
         brush = settings.brush
 
-        draw_color_settings(context, layout, brush, color_type = not context.vertex_paint_object)
+        draw_color_settings(context, layout, brush, color_type=not context.vertex_paint_object)
 
 
 class VIEW3D_PT_tools_brush_swatches(Panel, View3DPaintPanel, ColorPalettePanel):
@@ -492,8 +501,7 @@ class VIEW3D_PT_slots_projectpaint(View3DPanel, Panel):
     @classmethod
     def poll(cls, context):
         brush = context.tool_settings.image_paint.brush
-        ob = context.active_object
-        return (brush is not None and ob is not None)
+        return (brush is not None and context.active_object is not None)
 
     def draw(self, context):
         layout = self.layout
@@ -1061,11 +1069,11 @@ class VIEW3D_PT_tools_vertexpaint_options(Panel, View3DPaintPanel):
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
-    def poll(self, context):
+    def poll(self, _context):
         # This is currently unused, since there aren't any Vertex Paint mode specific options.
         return False
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
@@ -1222,12 +1230,12 @@ class VIEW3D_PT_imagepaint_options(View3DPaintPanel):
     bl_label = "Options"
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, _context):
         # This is currently unused, since there aren't any Vertex Paint mode specific options.
-        return False 
-        return (context.image_paint_object and context.tool_settings.image_paint)
+        return False
+        # return (context.image_paint_object and context.tool_settings.image_paint)
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
@@ -1289,6 +1297,8 @@ class VIEW3D_PT_tools_particlemode_options(View3DPanel, Panel):
         col.active = pe.is_editable
         col.use_property_split = False
         col.prop(ob.data, "use_mirror_x")
+        if pe.tool == 'ADD':
+          col.prop(ob.data, "use_mirror_topology")
         col.separator()
         col.prop(pe, "use_preserve_length", text="Preserve Strand Lengths")
         col.prop(pe, "use_preserve_root", text="Preserve Root Positions")
@@ -1358,7 +1368,7 @@ class GreasePencilPanel:
 
     @classmethod
     def poll(cls, context):
-        if context.space_data.type in ('VIEW_3D', 'PROPERTIES'):
+        if context.space_data.type in {'VIEW_3D', 'PROPERTIES'}:
             if context.gpencil_data is None:
                 return False
 
@@ -1387,14 +1397,13 @@ class VIEW3D_PT_tools_grease_pencil_brush_select(Panel, View3DPanel, GreasePenci
 
         if context.mode == 'PAINT_GPENCIL':
             brush = tool_settings.gpencil_paint.brush
-            gp_settings = brush.gpencil_settings
+            if brush is not None:
+                gp_settings = brush.gpencil_settings
 
-            col.prop(brush, "use_custom_icon", toggle=True, icon='FILE_IMAGE', text="")
+                col.prop(brush, "use_custom_icon", toggle=True, icon='FILE_IMAGE', text="")
 
-            if(brush.use_custom_icon):
-                layout.row().prop(brush, "icon_filepath", text="")
-            else:
-                layout.row().prop(gp_settings, "gp_icon", text="Icon")
+                if brush.use_custom_icon:
+                    layout.row().prop(brush, "icon_filepath", text="")
 
 
 class VIEW3D_PT_tools_grease_pencil_brush_settings(Panel, View3DPanel, GreasePencilPanel):
@@ -1484,15 +1493,34 @@ class VIEW3D_PT_tools_grease_pencil_brush_advanced(View3DPanel, Panel):
                 subcol.prop(gp_settings, "gradient_shape")
 
             elif brush.gpencil_tool == 'FILL':
+                row = col.row(align=True)
+                row.prop(gp_settings, "fill_draw_mode", text="Boundary")
+                row.prop(gp_settings, "show_fill_boundary", text="", icon='GRID')
+                col.separator()
                 col.prop(gp_settings, "fill_factor", text="Resolution")
                 if gp_settings.fill_draw_mode != 'STROKE':
                     col.prop(gp_settings, "show_fill", text="Ignore Transparent Strokes")
                     col.prop(gp_settings, "fill_threshold", text="Threshold")
 
+class VIEW3D_PT_tools_grease_pencil_brush_stroke(Panel, View3DPanel):
+    bl_context = ".greasepencil_paint"
+    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_settings'
+    bl_label = "Stroke"
+    bl_category = "Tool"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        brush = context.tool_settings.gpencil_paint.brush
+        return brush is not None and brush.gpencil_tool == 'DRAW'
+
+    def draw(self, context):
+        layout = self.layout
+
 
 class VIEW3D_PT_tools_grease_pencil_brush_stabilizer(Panel, View3DPanel):
     bl_context = ".greasepencil_paint"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_settings'
+    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_stroke'
     bl_label = "Stabilize Stroke"
     bl_category = "Tool"
     bl_options = {'DEFAULT_CLOSED'}
@@ -1503,7 +1531,8 @@ class VIEW3D_PT_tools_grease_pencil_brush_stabilizer(Panel, View3DPanel):
         return brush is not None and brush.gpencil_tool == 'DRAW'
 
     def draw_header(self, context):
-        if self.is_popover: return
+        if self.is_popover:
+            return
 
         brush = context.tool_settings.gpencil_paint.brush
         gp_settings = brush.gpencil_settings
@@ -1531,7 +1560,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_stabilizer(Panel, View3DPanel):
 
 class VIEW3D_PT_tools_grease_pencil_brush_post_processing(View3DPanel, Panel):
     bl_context = ".greasepencil_paint"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_settings'
+    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_stroke'
     bl_label = "Post-Processing"
     bl_category = "Tool"
     bl_options = {'DEFAULT_CLOSED'}
@@ -1539,10 +1568,11 @@ class VIEW3D_PT_tools_grease_pencil_brush_post_processing(View3DPanel, Panel):
     @classmethod
     def poll(cls, context):
         brush = context.tool_settings.gpencil_paint.brush
-        return brush is not None and brush.gpencil_tool not in ('ERASE', 'FILL')
+        return brush is not None and brush.gpencil_tool not in {'ERASE', 'FILL'}
 
     def draw_header(self, context):
-        if self.is_popover: return
+        if self.is_popover:
+            return
 
         brush = context.tool_settings.gpencil_paint.brush
         gp_settings = brush.gpencil_settings
@@ -1585,7 +1615,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_post_processing(View3DPanel, Panel):
 
 class VIEW3D_PT_tools_grease_pencil_brush_random(View3DPanel, Panel):
     bl_context = ".greasepencil_paint"
-    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_settings'
+    bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_stroke'
     bl_label = "Randomize"
     bl_category = "Tool"
     bl_options = {'DEFAULT_CLOSED'}
@@ -1593,10 +1623,11 @@ class VIEW3D_PT_tools_grease_pencil_brush_random(View3DPanel, Panel):
     @classmethod
     def poll(cls, context):
         brush = context.tool_settings.gpencil_paint.brush
-        return brush is not None and brush.gpencil_tool not in ('ERASE', 'FILL')
+        return brush is not None and brush.gpencil_tool not in {'ERASE', 'FILL'}
 
     def draw_header(self, context):
-        if self.is_popover: return
+        if self.is_popover:
+            return
 
         brush = context.tool_settings.gpencil_paint.brush
         gp_settings = brush.gpencil_settings
@@ -1755,7 +1786,6 @@ class VIEW3D_PT_tools_grease_pencil_sculpt_select(Panel, View3DPanel):
         layout.use_property_decorate = False
 
         settings = context.tool_settings.gpencil_sculpt
-        brush = settings.brush
 
         layout.template_icon_view(settings, "sculpt_tool", show_labels=True)
 
@@ -1782,6 +1812,7 @@ class VIEW3D_PT_tools_grease_pencil_sculpt_settings(Panel, View3DPanel):
 
 # Grease Pencil weight painting tools
 
+
 class VIEW3D_PT_tools_grease_pencil_weight_paint_select(View3DPanel, Panel):
     bl_context = ".greasepencil_weight"
     bl_label = "Brushes"
@@ -1793,7 +1824,6 @@ class VIEW3D_PT_tools_grease_pencil_weight_paint_select(View3DPanel, Panel):
         layout.use_property_decorate = False
 
         settings = context.tool_settings.gpencil_sculpt
-        brush = settings.brush
 
         layout.template_icon_view(settings, "weight_tool", show_labels=True)
 
@@ -1810,7 +1840,6 @@ class VIEW3D_PT_tools_grease_pencil_weight_paint_settings(Panel, View3DPanel):
 
         settings = context.tool_settings.gpencil_sculpt
         brush = settings.brush
-
 
         if not self.is_popover:
             from bl_ui.properties_paint_common import (
@@ -1868,7 +1897,7 @@ classes = (
     VIEW3D_PT_tools_posemode_options,
 
     VIEW3D_PT_slots_projectpaint,
-    VIEW3D_PT_tools_brush_select, 
+    VIEW3D_PT_tools_brush_select,
     VIEW3D_PT_tools_brush_settings,
     VIEW3D_PT_tools_brush_color,
     VIEW3D_PT_tools_brush_swatches,
@@ -1917,9 +1946,10 @@ classes = (
     VIEW3D_PT_tools_grease_pencil_brush_select,
     VIEW3D_PT_tools_grease_pencil_brush_settings,
     VIEW3D_PT_tools_grease_pencil_brush_advanced,
+    VIEW3D_PT_tools_grease_pencil_brush_stroke,
     VIEW3D_PT_tools_grease_pencil_brush_post_processing,
-    VIEW3D_PT_tools_grease_pencil_brush_stabilizer,
     VIEW3D_PT_tools_grease_pencil_brush_random,
+    VIEW3D_PT_tools_grease_pencil_brush_stabilizer,
     VIEW3D_PT_tools_grease_pencil_brushcurves,
     VIEW3D_PT_tools_grease_pencil_brushcurves_sensitivity,
     VIEW3D_PT_tools_grease_pencil_brushcurves_strength,

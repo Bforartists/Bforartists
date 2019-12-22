@@ -350,7 +350,7 @@ class VIEW3D_HT_tool_header(Header):
         # (obviously separated for from the users POV)
         draw_fn = getattr(_draw_tool_settings_context_mode, tool_mode, None)
         if draw_fn is not None:
-            draw_fn(context, layout, tool)
+            is_valid_context = draw_fn(context, layout, tool)
 
         def draw_3d_brush_settings(layout, tool_mode):
             layout.popover("VIEW3D_PT_tools_brush_settings_advanced", text="Brush")
@@ -364,16 +364,16 @@ class VIEW3D_HT_tool_header(Header):
 
         # Note: general mode options should be added to 'draw_mode_settings'.
         if tool_mode == 'SCULPT':
-            if (tool is not None) and tool.has_datablock:
+            if is_valid_context:
                 draw_3d_brush_settings(layout, tool_mode)
         elif tool_mode == 'PAINT_VERTEX':
-            if (tool is not None) and tool.has_datablock:
+            if is_valid_context:
                 draw_3d_brush_settings(layout, tool_mode)
         elif tool_mode == 'PAINT_WEIGHT':
-            if (tool is not None) and tool.has_datablock:
+            if is_valid_context:
                 draw_3d_brush_settings(layout, tool_mode)
         elif tool_mode == 'PAINT_TEXTURE':
-            if (tool is not None) and tool.has_datablock:
+            if is_valid_context:
                 draw_3d_brush_settings(layout, tool_mode)
         elif tool_mode == 'EDIT_ARMATURE':
             pass
@@ -389,21 +389,20 @@ class VIEW3D_HT_tool_header(Header):
             #     layout.popover_group(context=".paint_common", **popover_kw)
             pass
         elif tool_mode == 'PAINT_GPENCIL':
-            if (tool is not None) and tool.has_datablock:
+            if is_valid_context:
                 brush = context.tool_settings.gpencil_paint.brush
                 if brush.gpencil_tool != 'ERASE':
                     layout.popover("VIEW3D_PT_tools_grease_pencil_brush_advanced")
 
                     if brush.gpencil_tool != 'FILL':
-                        layout.popover("VIEW3D_PT_tools_grease_pencil_brush_stabilizer")
-                        layout.popover("VIEW3D_PT_tools_grease_pencil_brush_random")
+                        layout.popover("VIEW3D_PT_tools_grease_pencil_brush_stroke")
                         layout.popover("VIEW3D_PT_tools_grease_pencil_brushcurves")
 
                     layout.popover("VIEW3D_PT_tools_grease_pencil_paint_appearance")
         elif tool_mode == 'SCULPT_GPENCIL':
             settings = context.tool_settings.gpencil_sculpt
             tool = settings.sculpt_tool
-            if tool in ('SMOOTH', 'RANDOMIZE', 'SMOOTH'):
+            if tool in {'SMOOTH', 'RANDOMIZE', 'SMOOTH'}:
                 layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_options")
             layout.popover("VIEW3D_PT_tools_grease_pencil_sculpt_appearance")
         elif tool_mode == 'WEIGHT_GPENCIL':
@@ -486,14 +485,14 @@ class _draw_tool_settings_context_mode:
     @staticmethod
     def SCULPT(context, layout, tool):
         if (tool is None) or (not tool.has_datablock):
-            return
+            return False
 
         paint = context.tool_settings.sculpt
         layout.template_ID_preview(paint, "brush", rows=3, cols=8, hide_buttons=True)
 
         brush = paint.brush
         if brush is None:
-            return
+            return False
 
         tool_settings = context.tool_settings
         capabilities = brush.sculpt_capabilities
@@ -506,68 +505,74 @@ class _draw_tool_settings_context_mode:
             size = "unprojected_radius"
 
         # NOTE: We don't draw UnifiedPaintSettings in the header to reduce clutter. D5928#136281
-        UnifiedPaintPanel.prop_unified(layout, context, brush, size, pressure_name="use_pressure_size", text="Radius", slider=True)
+        UnifiedPaintPanel.prop_unified(layout, context, brush, size, pressure_name="use_pressure_size", text="Radius", slider=True,)
 
         # strength, use_strength_pressure
         pressure_name = "use_pressure_strength" if capabilities.has_strength_pressure else None
-        UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", pressure_name=pressure_name, text="Strength")
+        UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", pressure_name=pressure_name, text="Strength",)
 
         # direction
         if not capabilities.has_direction:
             layout.row().prop(brush, "direction", expand=True, text="")
 
+        return True
+
     @staticmethod
     def PAINT_TEXTURE(context, layout, tool):
         if (tool is None) or (not tool.has_datablock):
-            return
+            return False
 
         paint = context.tool_settings.image_paint
         layout.template_ID_preview(paint, "brush", rows=3, cols=8, hide_buttons=True)
 
         brush = paint.brush
         if brush is None:
-            return
+            return False
 
         brush_basic_texpaint_settings(layout, context, brush, compact=True)
+
+        return True
 
     @staticmethod
     def PAINT_VERTEX(context, layout, tool):
         if (tool is None) or (not tool.has_datablock):
-            return
+            return False
 
         paint = context.tool_settings.vertex_paint
         layout.template_ID_preview(paint, "brush", rows=3, cols=8, hide_buttons=True)
 
         brush = paint.brush
         if brush is None:
-            return
+            return False
 
         brush_basic_texpaint_settings(layout, context, brush, compact=True)
 
     @staticmethod
     def PAINT_WEIGHT(context, layout, tool):
         if (tool is None) or (not tool.has_datablock):
-            return
+            return False
 
         paint = context.tool_settings.weight_paint
         layout.template_ID_preview(paint, "brush", rows=3, cols=8, hide_buttons=True)
         brush = paint.brush
         if brush is None:
-            return
+            return False
 
         # NOTE: We don't draw UnifiedPaintSettings in the header to reduce clutter. D5928#136281
         capabilities = brush.weight_paint_capabilities
         if capabilities.has_weight:
             UnifiedPaintPanel.prop_unified(layout, context, brush, "weight", slider=True)
 
-        UnifiedPaintPanel.prop_unified(layout, context, brush, "size", pressure_name="use_pressure_size", slider=True, text="Radius")
-        UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", pressure_name="use_pressure_strength")
+        UnifiedPaintPanel.prop_unified(layout, context, brush, "size", pressure_name="use_pressure_size", slider=True, text="Radius",)
+        UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", pressure_name="use_pressure_strength",)
+
+        return True
 
 
     @staticmethod
     def PAINT_GPENCIL(context, layout, tool):
         if tool is None:
-            return
+            return False
 
         # is_paint = True
         # FIXME: tools must use their own UI drawing!
@@ -584,14 +589,14 @@ class _draw_tool_settings_context_mode:
         elif tool.idname == "Cutter":
             row = layout.row(align=True)
             row.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
-            return
+            return False
         elif not tool.has_datablock:
-            return
+            return False
 
         paint = context.tool_settings.gpencil_paint
         brush = paint.brush
         if brush is None:
-            return
+            return False
 
         gp_settings = brush.gpencil_settings
 
@@ -633,10 +638,12 @@ class _draw_tool_settings_context_mode:
         )
         brush_basic_gpencil_paint_settings(layout, context, brush, compact=True)
 
+        return True
+
     @staticmethod
     def SCULPT_GPENCIL(context, layout, tool):
         if (tool is None) or (not tool.has_datablock):
-            return
+            return False
         tool_settings = context.tool_settings
         settings = tool_settings.gpencil_sculpt
         brush = settings.brush
@@ -646,10 +653,12 @@ class _draw_tool_settings_context_mode:
         )
         brush_basic_gpencil_sculpt_settings(layout, context, brush, compact=True)
 
+        return True
+
     @staticmethod
     def WEIGHT_GPENCIL(context, layout, tool):
         if (tool is None) or (not tool.has_datablock):
-            return
+            return False
         tool_settings = context.tool_settings
         settings = tool_settings.gpencil_sculpt
         brush = settings.brush
@@ -659,38 +668,44 @@ class _draw_tool_settings_context_mode:
         )
         brush_basic_gpencil_weight_settings(layout, context, brush, compact=True)
 
+        return True
+
     @staticmethod
     def PARTICLE(context, layout, tool):
         if (tool is None) or (not tool.has_datablock):
-            return
+            return False
 
         # See: 'VIEW3D_PT_tools_brush', basically a duplicate
         settings = context.tool_settings.particle_edit
         brush = settings.brush
         tool = settings.tool
-        if tool != 'NONE':
-            layout.prop(brush, "size", slider=True)
-            if tool == 'ADD':
-                layout.prop(brush, "count")
+        if tool == 'NONE':
+            return False
 
-                layout.prop(settings, "use_default_interpolate")
-                layout.prop(brush, "steps", slider=True)
-                layout.prop(settings, "default_key_count", slider=True)
-            else:
-                layout.prop(brush, "strength", slider=True)
+        layout.prop(brush, "size", slider=True)
+        if tool == 'ADD':
+            layout.prop(brush, "count")
 
-                if tool == 'LENGTH':
-                    layout.row().prop(brush, "length_mode", expand=True)
-                elif tool == 'PUFF':
-                    layout.row().prop(brush, "puff_mode", expand=True)
-                    layout.prop(brush, "use_puff_volume")
-                elif tool == 'COMB':
-                    row = layout.row()
-                    row.active = settings.is_editable
-                    row.prop(settings, "use_emitter_deflect", text="Deflect Emitter")
-                    sub = row.row(align=True)
-                    sub.active = settings.use_emitter_deflect
-                    sub.prop(settings, "emitter_distance", text="Distance")
+            layout.prop(settings, "use_default_interpolate")
+            layout.prop(brush, "steps", slider=True)
+            layout.prop(settings, "default_key_count", slider=True)
+        else:
+            layout.prop(brush, "strength", slider=True)
+
+            if tool == 'LENGTH':
+                layout.row().prop(brush, "length_mode", expand=True)
+            elif tool == 'PUFF':
+                layout.row().prop(brush, "puff_mode", expand=True)
+                layout.prop(brush, "use_puff_volume")
+            elif tool == 'COMB':
+                row = layout.row()
+                row.active = settings.is_editable
+                row.prop(settings, "use_emitter_deflect", text="Deflect Emitter")
+                sub = row.row(align=True)
+                sub.active = settings.use_emitter_deflect
+                sub.prop(settings, "emitter_distance", text="Distance")
+
+        return True
 
 
 # bfa - show hide the editormenu
@@ -1102,6 +1117,9 @@ class VIEW3D_MT_view(Menu):
 
         layout.operator("render.opengl", text="OpenGL Render Image", icon='RENDER_STILL') #BFA - by Draise
         layout.operator("render.opengl", text="OpenGL Render Animation", icon='RENDER_ANIMATION').animation = True
+        props = layout.operator("render.opengl", text="OpenGL Render Keyframes", icon='RENDER_ANIMATION')
+        props.animation = True
+        props.render_keyed_only = True
 
         layout.separator()
 
@@ -3163,7 +3181,7 @@ class VIEW3D_MT_object_quick_effects(Menu):
         layout.operator("object.quick_fur", icon = "HAIR")
         layout.operator("object.quick_explode", icon = "MOD_EXPLODE")
         layout.operator("object.quick_smoke", icon = "MOD_SMOKE")
-        layout.operator("object.quick_fluid", icon = "MOD_FLUIDSIM")
+        layout.operator("object.quick_liquid", icon = "MOD_FLUIDSIM")
 
 
 # Workaround to separate the tooltips for Show Hide
@@ -6755,9 +6773,10 @@ class VIEW3D_PT_shading_render_pass(Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.shading.type == 'MATERIAL'
-            or (context.engine in cls.COMPAT_ENGINES
-                and context.space_data.shading.type == 'RENDERED'))
+        return (
+            (context.space_data.shading.type == 'MATERIAL') or
+            (context.engine in cls.COMPAT_ENGINES and context.space_data.shading.type == 'RENDERED')
+        )
 
     def draw(self, context):
         shading = context.space_data.shading
@@ -7901,8 +7920,8 @@ class VIEW3D_PT_paint_vertex_context_menu(Panel):
             UnifiedPaintPanel.prop_unified_color_picker(split, context, brush, "color", value_slider=True)
             layout.prop(brush, "blend", text="")
 
-        UnifiedPaintPanel.prop_unified(layout, context, brush, "size", unified_name="use_unified_size", pressure_name="use_pressure_size", slider=True)
-        UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", unified_name="use_unified_strength", pressure_name="use_pressure_strength", slider=True)
+        UnifiedPaintPanel.prop_unified(layout, context, brush, "size", unified_name="use_unified_size", pressure_name="use_pressure_size", slider=True,)
+        UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", unified_name="use_unified_strength", pressure_name="use_pressure_strength", slider=True,)
 
 
 class VIEW3D_PT_paint_texture_context_menu(Panel):
@@ -7924,8 +7943,8 @@ class VIEW3D_PT_paint_texture_context_menu(Panel):
             layout.prop(brush, "blend", text="")
 
         if capabilities.has_radius:
-            UnifiedPaintPanel.prop_unified(layout, context, brush, "size", unified_name="use_unified_size", pressure_name="use_pressure_size", slider=True)
-            UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", unified_name="use_unified_strength", pressure_name="use_pressure_strength", slider=True)
+            UnifiedPaintPanel.prop_unified(layout, context, brush, "size", unified_name="use_unified_size", pressure_name="use_pressure_size", slider=True,)
+            UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", unified_name="use_unified_strength", pressure_name="use_pressure_strength", slider=True,)
 
 
 class VIEW3D_PT_paint_weight_context_menu(Panel):
@@ -7938,8 +7957,8 @@ class VIEW3D_PT_paint_weight_context_menu(Panel):
         layout = self.layout
 
         brush = context.tool_settings.weight_paint.brush
-        UnifiedPaintPanel.prop_unified(layout, context, brush, "weight", unified_name="use_unified_weight", slider=True)
-        UnifiedPaintPanel.prop_unified(layout, context, brush, "size", unified_name="use_unified_size", pressure_name="use_pressure_size", slider=True)
+        UnifiedPaintPanel.prop_unified(layout, context, brush, "weight", unified_name="use_unified_weight", slider=True,)
+        UnifiedPaintPanel.prop_unified(layout, context, brush, "size", unified_name="use_unified_size", pressure_name="use_pressure_size", slider=True,)
         UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", unified_name="use_unified_strength", pressure_name="use_pressure_strength", slider=True)
 
 
@@ -8034,8 +8053,8 @@ class VIEW3D_PT_sculpt_context_menu(Panel):
         brush = context.tool_settings.sculpt.brush
         capabilities = brush.sculpt_capabilities
 
-        UnifiedPaintPanel.prop_unified(layout, context, brush, "size", unified_name="use_unified_size", pressure_name="use_pressure_size", slider=True)
-        UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", unified_name="use_unified_strength", pressure_name="use_pressure_strength", slider=True)
+        UnifiedPaintPanel.prop_unified(layout, context, brush, "size", unified_name="use_unified_size", pressure_name="use_pressure_size", slider=True,)
+        UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", unified_name="use_unified_strength", pressure_name="use_pressure_strength", slider=True,)
 
         if capabilities.has_auto_smooth:
             layout.prop(brush, "auto_smooth_factor", slider=True)
