@@ -1414,6 +1414,8 @@ static void decimate_exit(bContext *C, wmOperator *op)
   if (dgo == NULL) {
     return;
   }
+
+  ScrArea *sa = dgo->sa;
   LinkData *link;
 
   for (link = dgo->bezt_arr_list.first; link != NULL; link = link->next) {
@@ -1427,7 +1429,7 @@ static void decimate_exit(bContext *C, wmOperator *op)
 
   /* Return to normal cursor and header status. */
   WM_cursor_modal_restore(win);
-  ED_area_status_text(dgo->sa, NULL);
+  ED_area_status_text(sa, NULL);
 
   /* cleanup */
   op->customdata = NULL;
