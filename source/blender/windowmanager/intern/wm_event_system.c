@@ -2265,9 +2265,18 @@ static int wm_handler_operator_call(bContext *C,
       bool use_last_properties = true;
       PointerRNA tool_properties = {0};
 
-      bToolRef *keymap_tool = ((handler_base->type == WM_HANDLER_TYPE_KEYMAP) ?
-                                   ((wmEventHandler_Keymap *)handler_base)->keymap_tool :
-                                   NULL);
+      bToolRef *keymap_tool = NULL;
+      if (handler_base->type == WM_HANDLER_TYPE_KEYMAP) {
+        keymap_tool = ((wmEventHandler_Keymap *)handler_base)->keymap_tool;
+      }
+      else if (handler_base->type == WM_HANDLER_TYPE_GIZMO) {
+        wmGizmoMap *gizmo_map = ((wmEventHandler_Gizmo *)handler_base)->gizmo_map;
+        wmGizmo *gz = wm_gizmomap_highlight_get(gizmo_map);
+        if (gz && (gz->flag & WM_GIZMO_OPERATOR_TOOL_INIT)) {
+          keymap_tool = WM_toolsystem_ref_from_context(C);
+        }
+      }
+
       const bool is_tool = (keymap_tool != NULL);
       const bool use_tool_properties = is_tool;
 
@@ -2801,6 +2810,12 @@ static int wm_handlers_do_intern(bContext *C, wmEvent *event, ListBase *handlers
         wmGizmoMap *gzmap = handler->gizmo_map;
         BLI_assert(gzmap != NULL);
         wmGizmo *gz = wm_gizmomap_highlight_get(gzmap);
+
+        /* Special case, needed so postponed refresh can respond to events,
+         * see #WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK for details. */
+        if (WM_gizmomap_tag_refresh_check(gzmap)) {
+          ED_region_tag_redraw(region);
+        }
 
         if (region->gizmo_map != handler->gizmo_map) {
           WM_gizmomap_tag_refresh(handler->gizmo_map);
@@ -3721,44 +3736,82 @@ wmEventHandler_Keymap *WM_event_add_keymap_handler(ListBase *handlers, wmKeyMap 
   return handler;
 }
 
-/** Follow #wmEventHandler_KeymapDynamicFn signature. */
-wmKeyMap *WM_event_get_keymap_from_toolsystem(wmWindowManager *wm, wmEventHandler_Keymap *handler)
+/**
+ * Implements fallback tool when enabled by:
+ * #SCE_WORKSPACE_TOOL_FALLBACK, #WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP.
+ *
+ * This runs before #WM_event_get_keymap_from_toolsystem,
+ * allowing both the fallback-tool and active-tool to be activated
+ * providing the key-map is configured so the keys don't conflict.
+ * For example one mouse button can run the active-tool, another button for the fallback-tool.
+ * See T72567.
+ *
+ * Follow #wmEventHandler_KeymapDynamicFn signature.
+ */
+wmKeyMap *WM_event_get_keymap_from_toolsystem_fallback(wmWindowManager *wm,
+                                                       wmEventHandler_Keymap *handler)
 {
+  if (!USER_EXPERIMENTAL_TEST(&U, use_tool_fallback)) {
+    return NULL;
+  }
+
   ScrArea *sa = handler->dynamic.user_data;
   handler->keymap_tool = NULL;
   bToolRef_Runtime *tref_rt = sa->runtime.tool ? sa->runtime.tool->runtime : NULL;
-  if (tref_rt && (tref_rt->keymap[0] || tref_rt->keymap_fallback[0])) {
-    const char *keymap_id = tref_rt->keymap;
+  if (tref_rt && tref_rt->keymap_fallback[0]) {
+    const char *keymap_id = NULL;
 
     /* Support for the gizmo owning the tool keymap. */
-    if (USER_EXPERIMENTAL_TEST(&U, use_tool_fallback)) {
-      if (tref_rt->gizmo_group[0] != '\0' && tref_rt->keymap_fallback[0] != '\n') {
-        wmGizmoMap *gzmap = NULL;
-        wmGizmoGroup *gzgroup = NULL;
-        for (ARegion *ar = sa->regionbase.first; ar; ar = ar->next) {
-          if (ar->gizmo_map != NULL) {
-            gzmap = ar->gizmo_map;
-            gzgroup = WM_gizmomap_group_find(gzmap, tref_rt->gizmo_group);
-            if (gzgroup != NULL) {
-              break;
-            }
+    if (tref_rt->gizmo_group[0] != '\0' && tref_rt->keymap_fallback[0] != '\n') {
+      wmGizmoMap *gzmap = NULL;
+      wmGizmoGroup *gzgroup = NULL;
+      for (ARegion *ar = sa->regionbase.first; ar; ar = ar->next) {
+        if (ar->gizmo_map != NULL) {
+          gzmap = ar->gizmo_map;
+          gzgroup = WM_gizmomap_group_find(gzmap, tref_rt->gizmo_group);
+          if (gzgroup != NULL) {
+            break;
           }
         }
-        if (gzgroup != NULL) {
-          if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP) {
-            /* If all are hidden, don't override. */
-            if (gzgroup->use_fallback_keymap) {
-              wmGizmo *highlight = wm_gizmomap_highlight_get(gzmap);
-              if (highlight == NULL) {
-                keymap_id = tref_rt->keymap_fallback;
-              }
+      }
+      if (gzgroup != NULL) {
+        if (gzgroup->type->flag & WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP) {
+          /* If all are hidden, don't override. */
+          if (gzgroup->use_fallback_keymap) {
+            wmGizmo *highlight = wm_gizmomap_highlight_get(gzmap);
+            if (highlight == NULL) {
+              keymap_id = tref_rt->keymap_fallback;
             }
           }
         }
       }
     }
 
-    if (keymap_id[0]) {
+    if (keymap_id && keymap_id[0]) {
+      wmKeyMap *km = WM_keymap_list_find_spaceid_or_empty(
+          &wm->userconf->keymaps, keymap_id, sa->spacetype, RGN_TYPE_WINDOW);
+      /* We shouldn't use keymaps from unrelated spaces. */
+      if (km != NULL) {
+        handler->keymap_tool = sa->runtime.tool;
+        return km;
+      }
+      else {
+        printf(
+            "Keymap: '%s' not found for tool '%s'\n", tref_rt->keymap, sa->runtime.tool->idname);
+      }
+    }
+  }
+  return NULL;
+}
+
+wmKeyMap *WM_event_get_keymap_from_toolsystem(wmWindowManager *wm, wmEventHandler_Keymap *handler)
+{
+  ScrArea *sa = handler->dynamic.user_data;
+  handler->keymap_tool = NULL;
+  bToolRef_Runtime *tref_rt = sa->runtime.tool ? sa->runtime.tool->runtime : NULL;
+  if (tref_rt && tref_rt->keymap[0]) {
+    const char *keymap_id = tref_rt->keymap;
+    {
       wmKeyMap *km = WM_keymap_list_find_spaceid_or_empty(
           &wm->userconf->keymaps, keymap_id, sa->spacetype, RGN_TYPE_WINDOW);
       /* We shouldn't use keymaps from unrelated spaces. */
