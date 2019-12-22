@@ -178,16 +178,18 @@ class GreasePencilDisplayPanel:
             else:
                 # GP Sculpt and Weight Paint always have Brush Tip panel.
                 return True
+        return False
 
     def draw_header(self, context):
-        if self.is_popover: return
+        if self.is_popover:
+            return
 
         if context.mode == 'PAINT_GPENCIL':
             brush = context.tool_settings.gpencil_paint.brush
             gp_settings = brush.gpencil_settings
 
             self.layout.prop(gp_settings, "use_cursor", text="")
-        elif context.mode in ('SCULPT_GPENCIL', 'WEIGHT_GPENCIL'):
+        elif context.mode in {'SCULPT_GPENCIL', 'WEIGHT_GPENCIL'}:
             settings = context.tool_settings.gpencil_sculpt
             brush = settings.brush
 
@@ -232,17 +234,9 @@ class GreasePencilDisplayPanel:
             col = layout.column(align=True)
             col.active = brush.use_cursor
 
-            if tool in {'THICKNESS', 'STRENGTH'}:
-                col.prop(brush, "cursor_color_add", text="Add Cursor Color")
-                col.prop(brush, "cursor_color_sub", text="Subtract Cursor Color")
-            elif tool == 'PINCH':
-                col.prop(brush, "cursor_color_add", text="Pinch Cursor Color")
-                col.prop(brush, "cursor_color_sub", text="Inflate Cursor Color")
-            elif tool == 'TWIST':
-                col.prop(brush, "cursor_color_add", text="CCW Cursor Color")
-                col.prop(brush, "cursor_color_sub", text="CW Cursor Color")
-            else:
-                col.prop(brush, "cursor_color_add", text="Cursor Color")
+            col.prop(brush, "cursor_color_add", text="Cursor Color")
+            if tool in {'THICKNESS', 'STRENGTH', 'PINCH', 'TWIST'}:
+                col.prop(brush, "cursor_color_sub", text="Inverse Cursor Color")
 
 
 class GPENCIL_MT_pie_tool_palette(Menu):
@@ -509,7 +503,7 @@ class GPENCIL_MT_move_to_layer(Menu):
             gpl_active = context.active_gpencil_layer
             tot_layers = len(gpd.layers)
             i = tot_layers - 1
-            while(i >= 0):
+            while i >= 0:
                 gpl = gpd.layers[i]
                 if gpl.info == gpl_active.info:
                     icon = 'GREASEPENCIL'
@@ -719,11 +713,10 @@ class GreasePencilToolsPanel:
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, _context):
         # XXX - disabled in 2.8 branch.
+        # return (context.gpencil_data is not None)
         return False
-
-        return (context.gpencil_data is not None)
 
     def draw(self, context):
         layout = self.layout
