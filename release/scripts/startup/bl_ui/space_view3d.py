@@ -133,11 +133,21 @@ class VIEW3D_HT_header(Header):
                 else:
                     kw["icon"] = 'PROP_OFF'
 
-            row.prop(tool_settings, attr, icon_only=True, **kw)
-            if tool_settings.use_proportional_edit_objects or tool_settings.use_proportional_edit is True:
+            row.prop(tool_settings, attr, icon_only=True, **kw) # proportional editing button
+            
+            # We can have the proportional editing on in the editing modes but off in object mode and vice versa. 
+            # So two separated lines to display the settings, just when it is on.
+            
+            # proportional editing settings, editing modes
+            if object_mode != 'OBJECT' and tool_settings.use_proportional_edit is True:
                 sub = row.row(align=True)
                 sub.prop_with_popover(tool_settings,"proportional_edit_falloff",text="", icon_only=True, panel="VIEW3D_PT_proportional_edit")
-
+            
+            # proportional editing settings, just in object mode
+            if object_mode == 'OBJECT' and tool_settings.use_proportional_edit_objects is True:
+                sub = row.row(align=True)
+                sub.prop_with_popover(tool_settings,"proportional_edit_falloff",text="", icon_only=True, panel="VIEW3D_PT_proportional_edit")
+                
 
     def draw(self, context):
         layout = self.layout
