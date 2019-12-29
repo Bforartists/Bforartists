@@ -514,12 +514,30 @@ class _draw_tool_settings_context_mode:
         if size_owner.use_locked_size == 'SCENE':
             size = "unprojected_radius"
 
-        # NOTE: We don't draw UnifiedPaintSettings in the header to reduce clutter. D5928#136281
-        UnifiedPaintPanel.prop_unified(layout, context, brush, size, pressure_name="use_pressure_size", text="Radius", slider=True,)
+        UnifiedPaintPanel.prop_unified(
+            layout,
+            context,
+            brush,
+            size,
+            pressure_name="use_pressure_size",
+            unified_name="use_unified_size",
+            text="Radius",
+            slider=True,
+            header=True
+        )
 
         # strength, use_strength_pressure
         pressure_name = "use_pressure_strength" if capabilities.has_strength_pressure else None
-        UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", pressure_name=pressure_name, text="Strength",)
+        UnifiedPaintPanel.prop_unified(
+            layout,
+            context,
+            brush,
+            "strength",
+            pressure_name=pressure_name,
+            unified_name="use_unified_strength",
+            text="Strength",
+            header=True
+        )
 
         # direction
         if not capabilities.has_direction:
@@ -568,13 +586,38 @@ class _draw_tool_settings_context_mode:
         if brush is None:
             return False
 
-        # NOTE: We don't draw UnifiedPaintSettings in the header to reduce clutter. D5928#136281
         capabilities = brush.weight_paint_capabilities
         if capabilities.has_weight:
-            UnifiedPaintPanel.prop_unified(layout, context, brush, "weight", slider=True)
+            UnifiedPaintPanel.prop_unified(
+                layout,
+                context,
+                brush,
+                "weight",
+                unified_name="use_unified_weight",
+                slider=True,
+                header=True
+            )
 
-        UnifiedPaintPanel.prop_unified(layout, context, brush, "size", pressure_name="use_pressure_size", slider=True, text="Radius",)
-        UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", pressure_name="use_pressure_strength",)
+        UnifiedPaintPanel.prop_unified(
+            layout,
+            context,
+            brush,
+            "size",
+            pressure_name="use_pressure_size",
+            unified_name="use_unified_size",
+            slider=True,
+            text="Radius",
+            header=True
+        )
+        UnifiedPaintPanel.prop_unified(
+            layout,
+            context,
+            brush,
+            "strength",
+            pressure_name="use_pressure_strength",
+            unified_name="use_unified_strength",
+            header=True
+        )
 
         return True
 
