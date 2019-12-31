@@ -513,32 +513,27 @@ class IMAGE_MT_uvs_select_mode(Menu):
         # Do smart things depending on whether uv_select_sync is on.
 
         if tool_settings.use_uv_select_sync:
-            props = layout.operator("wm.context_set_value", text="Vertex", icon='VERTEXSEL')
-            props.value = "(True, False, False)"
-            props.data_path = "tool_settings.mesh_select_mode"
 
-            props = layout.operator("wm.context_set_value", text="Edge", icon='EDGESEL')
-            props.value = "(False, True, False)"
-            props.data_path = "tool_settings.mesh_select_mode"
-
-            props = layout.operator("wm.context_set_value", text="Face", icon='FACESEL')
-            props.value = "(False, False, True)"
-            props.data_path = "tool_settings.mesh_select_mode"
+            layout.operator_context = 'INVOKE_REGION_WIN'
+            layout.operator("mesh.select_mode", text="Vertex", icon='VERTEXSEL').type = 'VERT'
+            layout.operator("mesh.select_mode", text="Edge", icon='EDGESEL').type = 'EDGE'
+            layout.operator("mesh.select_mode", text="Face", icon='FACESEL').type = 'FACE'
 
         else:
-            props = layout.operator("wm.context_set_string", text="Vertex", icon='UV_VERTEXSEL')
+            #layout.operator_context = 'INVOKE_REGION_WIN'
+            props = layout.operator("wm.context_set_enum", text="Vertex", icon='UV_VERTEXSEL')
             props.value = 'VERTEX'
             props.data_path = "tool_settings.uv_select_mode"
 
-            props = layout.operator("wm.context_set_string", text="Edge", icon='UV_EDGESEL')
+            props = layout.operator("wm.context_set_enum", text="Edge", icon='UV_EDGESEL')
             props.value = 'EDGE'
             props.data_path = "tool_settings.uv_select_mode"
 
-            props = layout.operator("wm.context_set_string", text="Face", icon='UV_FACESEL')
+            props = layout.operator("wm.context_set_enum", text="Face", icon='UV_FACESEL')
             props.value = 'FACE'
             props.data_path = "tool_settings.uv_select_mode"
 
-            props = layout.operator("wm.context_set_string", text="Island", icon='UV_ISLANDSEL')
+            props = layout.operator("wm.context_set_enum", text="Island", icon='UV_ISLANDSEL')
             props.value = 'ISLAND'
             props.data_path = "tool_settings.uv_select_mode"
 
