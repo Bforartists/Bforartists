@@ -1156,9 +1156,7 @@ class MATLIB_PT_vxPanel(Panel):
  #       row = layout.row()
         #operators
         col.operator("matlib.operator", icon="ADD", text="Add To Library").cmd="ADD"
-        col.operator("matlib.operator", icon="MATERIAL", text="Apply To Selected").cmd="APPLY"
         col.operator("matlib.operator", icon="FILE_REFRESH", text="Reload Material").cmd="RELOAD"
-        col.operator("matlib.operator", icon="COLOR", text="Preview Material").cmd="PREVIEW"
         col.operator("matlib.operator", icon="GHOST_DISABLED", text="Remove Preview").cmd="FLUSH"
         col.operator("matlib.operator", icon="REMOVE", text="Remove Material").cmd="REMOVE"
         col.prop(matlib, "show_prefs", icon="MODIFIER", text="Settings")
