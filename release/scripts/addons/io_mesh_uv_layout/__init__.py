@@ -229,7 +229,7 @@ class ExportUVLayout(bpy.types.Operator):
 
 
 def menu_func(self, context):
-    self.layout.operator(ExportUVLayout.bl_idname)
+    self.layout.operator(ExportUVLayout.bl_idname, icon = "FILE_TICK")
 
 
 def register():
