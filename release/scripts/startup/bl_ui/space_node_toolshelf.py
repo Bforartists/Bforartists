@@ -163,11 +163,11 @@ class NODES_PT_Input_input_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexEnvironment"
             
-            props = col.operator("node.add_node", text="", icon = "NODE_VOLUME_INFO")
+            props = row.operator("node.add_node", text="", icon = "NODE_VOLUME_INFO")
             props.use_transform = True
             props.type = "ShaderNodeVolumeInfo"
             
-            props = col.operator("node.add_node", text="", icon = "NODE_VERTEX_COLOR")
+            props = row.operator("node.add_node", text="", icon = "NODE_VERTEX_COLOR")
             props.use_transform = True
             props.type = "ShaderNodeVertexColor"           
 
@@ -889,7 +889,7 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexVoronoi"
             
-            props = col.operator("node.add_node", text = "", icon = "NODE_WHITE_NOISE")
+            props = row.operator("node.add_node", text = "", icon = "NODE_WHITE_NOISE")
             props.use_transform = True
             props.type = "ShaderNodeTexWhiteNoise"
 
@@ -2096,6 +2096,10 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ" 
 
+            props = col.operator("node.add_node", text=" Shader to RGB   ", icon = "NODE_RGB")
+            props.use_transform = True
+            props.type = "ShaderNodeShaderToRGB" 
+
             col = layout.column(align=True)       
         
             props = col.operator("node.add_node", text=" Blackbody        ", icon = "NODE_BLACKBODY")
@@ -2164,7 +2168,11 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
         
             props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
-            props.type = "ShaderNodeSeparateXYZ"     
+            props.type = "ShaderNodeSeparateXYZ"
+
+            props = row.operator("node.add_node", text="", icon = "NODE_RGB")
+            props.use_transform = True
+            props.type = "ShaderNodeShaderToRGB" 
                 
             row = layout.row()
             row.alignment = 'LEFT'      
@@ -2196,11 +2204,11 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeWavelength"
             
-            props = col.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
+            props = row.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
             props.use_transform = True
             props.type = "ShaderNodeMapRange"
             
-            props = col.operator("node.add_node", text="", icon = "NODE_CLAMP")
+            props = row.operator("node.add_node", text="", icon = "NODE_CLAMP")
             props.use_transform = True
             props.type = "ShaderNodeClamp"
             
@@ -2918,7 +2926,7 @@ class NODES_PT_Modify_color(bpy.types.Panel):
             row = layout.row()
             row.alignment = 'LEFT'        
         
-            props = row.operator("node.add_node", text = "", icon = "NODE_BRIGHT_CONTRAST")
+            props = row.operator("node.add_node", text = "", icon = "BRIGHTNESS_CONTRAST")
             props.use_transform = True
             props.type = "ShaderNodeBrightContrast"
         
