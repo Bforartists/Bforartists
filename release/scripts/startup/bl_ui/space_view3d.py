@@ -898,7 +898,7 @@ class VIEW3D_MT_transform_base(Menu):
         if context.mode != 'OBJECT':
             layout.operator("transform.vertex_warp", text="Warp", icon = "MOD_WARP")
             layout.operator_context = 'EXEC_DEFAULT'
-            layout.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE')
+            layout.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE').offset = 0.1
             layout.operator_context = 'INVOKE_REGION_WIN'
 
             if obj.type == 'MESH':
