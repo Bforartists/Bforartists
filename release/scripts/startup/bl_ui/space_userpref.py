@@ -2170,6 +2170,46 @@ class USERPREF_PT_experimental_virtual_reality(ExperimentalPanel, Panel):
         col.operator("wm.url_open", text=task, icon='URL').url = self.url_prefix + task
 """
 
+# -----------------------------------------------------------------------------
+# Experimental Panels
+
+class ExperimentalPanel:
+    bl_space_type = 'PREFERENCES'
+    bl_region_type = 'WINDOW'
+    bl_context = "experimental"
+
+    url_prefix = "https://developer.blender.org/"
+
+"""
+# Example panel, leave it here so we always have a template to follow even
+# after the features are gone from the experimental panel.
+
+class USERPREF_PT_experimental_virtual_reality(ExperimentalPanel, Panel):
+    bl_label = "Virtual Reality"
+
+    def draw(self, context):
+        prefs = context.preferences
+        experimental = prefs.experimental
+
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        task = "T71347"
+        split = layout.split(factor=0.66)
+        col = split.split()
+        col.prop(experimental, "use_virtual_reality_scene_inspection", text="Scene Inspection")
+        col = split.split()
+        col.operator("wm.url_open", text=task, icon='URL').url = self.url_prefix + task
+
+        task = "T71348"
+        split = layout.split(factor=0.66)
+        col = split.column()
+        col.prop(experimental, "use_virtual_reality_immersive_drawing", text="Continuous Immersive Drawing")
+        col = split.column()
+        col.operator("wm.url_open", text=task, icon='URL').url = self.url_prefix + task
+"""
+
 
 class USERPREF_PT_experimental_usd(ExperimentalPanel, Panel):
     bl_label = "Universal Scene Description"
@@ -2279,7 +2319,6 @@ classes = (
     USERPREF_PT_studiolight_matcaps,
     USERPREF_PT_studiolight_world,
 
-    USERPREF_PT_experimental_ui,
     USERPREF_PT_experimental_usd,
 
     # Popovers.
