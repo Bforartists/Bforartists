@@ -83,7 +83,7 @@
 #include "DNA_sdna_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_sequence_types.h"
-#include "DNA_smoke_types.h"
+#include "DNA_fluid_types.h"
 #include "DNA_speaker_types.h"
 #include "DNA_sound_types.h"
 #include "DNA_space_types.h"
@@ -113,6 +113,7 @@
 #include "BKE_curve.h"
 #include "BKE_effect.h"
 #include "BKE_fcurve.h"
+#include "BKE_fluid.h"
 #include "BKE_global.h"  // for G
 #include "BKE_gpencil_modifier.h"
 #include "BKE_idcode.h"
@@ -239,7 +240,7 @@
 /* local prototypes */
 static void read_libraries(FileData *basefd, ListBase *mainlist);
 static void *read_struct(FileData *fd, BHead *bh, const char *blockname);
-static void direct_link_modifiers(FileData *fd, ListBase *lb);
+static void direct_link_modifiers(FileData *fd, ListBase *lb, Object *ob);
 static BHead *find_bhead_from_code_name(FileData *fd, const short idcode, const char *name);
 static BHead *find_bhead_from_idname(FileData *fd, const char *idname);
 
@@ -4636,7 +4637,7 @@ static void lib_link_particlesettings(FileData *fd, Main *main)
 
       part->instance_object = newlibadr(fd, part->id.lib, part->instance_object);
       part->instance_collection = newlibadr_us(fd, part->id.lib, part->instance_collection);
-      part->eff_group = newlibadr(fd, part->id.lib, part->eff_group);
+      part->force_group = newlibadr(fd, part->id.lib, part->force_group);
       part->bb_ob = newlibadr(fd, part->id.lib, part->bb_ob);
       part->collision_group = newlibadr(fd, part->id.lib, part->collision_group);
 
@@ -4647,7 +4648,7 @@ static void lib_link_particlesettings(FileData *fd, Main *main)
         part->effector_weights->group = newlibadr(fd, part->id.lib, part->effector_weights->group);
       }
       else {
-        part->effector_weights = BKE_effector_add_weights(part->eff_group);
+        part->effector_weights = BKE_effector_add_weights(part->force_group);
       }
 
       if (part->instance_weights.first && part->instance_collection) {
@@ -4729,7 +4730,7 @@ static void direct_link_particlesettings(FileData *fd, ParticleSettings *part)
 
   part->effector_weights = newdataadr(fd, part->effector_weights);
   if (!part->effector_weights) {
-    part->effector_weights = BKE_effector_add_weights(part->eff_group);
+    part->effector_weights = BKE_effector_add_weights(part->force_group);
   }
 
   link_list(fd, &part->instance_weights);
@@ -5372,12 +5373,12 @@ static void lib_link_object(FileData *fd, Main *main)
       }
 
       {
-        SmokeModifierData *smd = (SmokeModifierData *)modifiers_findByType(ob,
-                                                                           eModifierType_Smoke);
+        FluidModifierData *mmd = (FluidModifierData *)modifiers_findByType(ob,
+                                                                           eModifierType_Fluid);
 
-        if (smd && (smd->type == MOD_SMOKE_TYPE_DOMAIN) && smd->domain) {
-          /* Flag for refreshing the simulation after loading. */
-          smd->domain->flags |= MOD_SMOKE_FILE_LOAD;
+        if (mmd && (mmd->type == MOD_FLUID_TYPE_DOMAIN) && mmd->domain) {
+          /* Flag for refreshing the simulation after loading */
+          mmd->domain->flags |= FLUID_DOMAIN_FILE_LOAD;
         }
       }
 
@@ -5485,7 +5486,121 @@ static void direct_link_pose(FileData *fd, bPose *pose)
   }
 }
 
-static void direct_link_modifiers(FileData *fd, ListBase *lb)
+/* TODO(sergey): Find a better place for this.
+ *
+ * Unfortunately, this can not be done as a regular do_versions() since the modifier type is
+ * set to NONE, so the do_versions code wouldn't know where the modifier came from.
+ *
+ * The best approach seems to have the functionality in versioning_280.c but still call the
+ * function from #direct_link_modifiers().
+ */
+
+/* Domain, inflow, ... */
+static void modifier_ensure_type(FluidModifierData *fluid_modifier_data, int type)
+{
+  fluid_modifier_data->type = type;
+  BKE_fluid_modifier_free(fluid_modifier_data);
+  BKE_fluid_modifier_create_type_data(fluid_modifier_data);
+}
+
+/**
+ * \note The old_modifier_data is NOT linked.
+ * This means that in order to access sub-data pointers #newdataadr is to be used.
+ */
+static ModifierData *modifier_replace_with_fluid(FileData *fd,
+                                                 Object *object,
+                                                 ListBase *modifiers,
+                                                 ModifierData *old_modifier_data)
+{
+  ModifierData *new_modifier_data = modifier_new(eModifierType_Fluid);
+  FluidModifierData *fluid_modifier_data = (FluidModifierData *)new_modifier_data;
+
+  if (old_modifier_data->type == eModifierType_Fluidsim) {
+    FluidsimModifierData *old_fluidsim_modifier_data = (FluidsimModifierData *)old_modifier_data;
+    FluidsimSettings *old_fluidsim_settings = newdataadr(fd, old_fluidsim_modifier_data->fss);
+    switch (old_fluidsim_settings->type) {
+      case OB_FLUIDSIM_ENABLE:
+        modifier_ensure_type(fluid_modifier_data, 0);
+        break;
+      case OB_FLUIDSIM_DOMAIN:
+        modifier_ensure_type(fluid_modifier_data, MOD_FLUID_TYPE_DOMAIN);
+        BKE_fluid_domain_type_set(object, fluid_modifier_data->domain, FLUID_DOMAIN_TYPE_LIQUID);
+        break;
+      case OB_FLUIDSIM_FLUID:
+        modifier_ensure_type(fluid_modifier_data, MOD_FLUID_TYPE_FLOW);
+        BKE_fluid_flow_type_set(object, fluid_modifier_data->flow, FLUID_FLOW_TYPE_LIQUID);
+        /* No need to emit liquid far away from surface. */
+        fluid_modifier_data->flow->surface_distance = 0.0f;
+        break;
+      case OB_FLUIDSIM_OBSTACLE:
+        modifier_ensure_type(fluid_modifier_data, MOD_FLUID_TYPE_EFFEC);
+        BKE_fluid_effector_type_set(
+            object, fluid_modifier_data->effector, FLUID_EFFECTOR_TYPE_COLLISION);
+        break;
+      case OB_FLUIDSIM_INFLOW:
+        modifier_ensure_type(fluid_modifier_data, MOD_FLUID_TYPE_FLOW);
+        BKE_fluid_flow_type_set(object, fluid_modifier_data->flow, FLUID_FLOW_TYPE_LIQUID);
+        BKE_fluid_flow_behavior_set(object, fluid_modifier_data->flow, FLUID_FLOW_BEHAVIOR_INFLOW);
+        /* No need to emit liquid far away from surface. */
+        fluid_modifier_data->flow->surface_distance = 0.0f;
+        break;
+      case OB_FLUIDSIM_OUTFLOW:
+        modifier_ensure_type(fluid_modifier_data, MOD_FLUID_TYPE_FLOW);
+        BKE_fluid_flow_type_set(object, fluid_modifier_data->flow, FLUID_FLOW_TYPE_LIQUID);
+        BKE_fluid_flow_behavior_set(
+            object, fluid_modifier_data->flow, FLUID_FLOW_BEHAVIOR_OUTFLOW);
+        break;
+      case OB_FLUIDSIM_PARTICLE:
+        /* "Particle" type objects not being used by Mantaflow fluid simulations.
+         * Skip this object, secondary particles can only be enabled through the domain object. */
+        break;
+      case OB_FLUIDSIM_CONTROL:
+        /* "Control" type objects not being used by Mantaflow fluid simulations.
+         * Use guiding type instead which is similar. */
+        modifier_ensure_type(fluid_modifier_data, MOD_FLUID_TYPE_EFFEC);
+        BKE_fluid_effector_type_set(
+            object, fluid_modifier_data->effector, FLUID_EFFECTOR_TYPE_GUIDE);
+        break;
+    }
+  }
+  else if (old_modifier_data->type == eModifierType_Smoke) {
+    SmokeModifierData *old_smoke_modifier_data = (SmokeModifierData *)old_modifier_data;
+    modifier_ensure_type(fluid_modifier_data, old_smoke_modifier_data->type);
+    if (fluid_modifier_data->type == MOD_FLUID_TYPE_DOMAIN) {
+      BKE_fluid_domain_type_set(object, fluid_modifier_data->domain, FLUID_DOMAIN_TYPE_GAS);
+    }
+    else if (fluid_modifier_data->type == MOD_FLUID_TYPE_FLOW) {
+      BKE_fluid_flow_type_set(object, fluid_modifier_data->flow, FLUID_FLOW_TYPE_SMOKE);
+    }
+    else if (fluid_modifier_data->type == MOD_FLUID_TYPE_EFFEC) {
+      BKE_fluid_effector_type_set(
+          object, fluid_modifier_data->effector, FLUID_EFFECTOR_TYPE_COLLISION);
+    }
+  }
+
+  /* Replace modifier data in the stack. */
+  new_modifier_data->next = old_modifier_data->next;
+  new_modifier_data->prev = old_modifier_data->prev;
+  if (new_modifier_data->prev != NULL) {
+    new_modifier_data->prev->next = new_modifier_data;
+  }
+  if (new_modifier_data->next != NULL) {
+    new_modifier_data->next->prev = new_modifier_data;
+  }
+  if (modifiers->first == old_modifier_data) {
+    modifiers->first = new_modifier_data;
+  }
+  if (modifiers->last == old_modifier_data) {
+    modifiers->last = new_modifier_data;
+  }
+
+  /* Free old modifier data. */
+  MEM_freeN(old_modifier_data);
+
+  return new_modifier_data;
+}
+
+static void direct_link_modifiers(FileData *fd, ListBase *lb, Object *ob)
 {
   ModifierData *md;
 
@@ -5495,12 +5610,41 @@ static void direct_link_modifiers(FileData *fd, ListBase *lb)
     md->error = NULL;
     md->runtime = NULL;
 
+    /* Modifier data has been allocated as a part of data migration process and
+     * no reading of nested fields from file is needed. */
+    bool is_allocated = false;
+
+    if (md->type == eModifierType_Fluidsim) {
+      blo_reportf_wrap(
+          fd->reports,
+          RPT_WARNING,
+          TIP_(
+              "Possible data loss when saving this file! %s modifier is deprecated (Object: %s)."),
+          md->name,
+          ob->id.name + 2);
+      md = modifier_replace_with_fluid(fd, ob, lb, md);
+      is_allocated = true;
+    }
+    else if (md->type == eModifierType_Smoke) {
+      blo_reportf_wrap(
+          fd->reports,
+          RPT_WARNING,
+          TIP_(
+              "Possible data loss when saving this file! %s modifier is deprecated (Object: %s)."),
+          md->name,
+          ob->id.name + 2);
+      md = modifier_replace_with_fluid(fd, ob, lb, md);
+      is_allocated = true;
+    }
     /* if modifiers disappear, or for upward compatibility */
     if (NULL == modifierType_getInfo(md->type)) {
       md->type = eModifierType_None;
     }
 
-    if (md->type == eModifierType_Subsurf) {
+    if (is_allocated) {
+      /* All the fields has been properly allocated. */
+    }
+    else if (md->type == eModifierType_Subsurf) {
       SubsurfModifierData *smd = (SubsurfModifierData *)md;
 
       smd->emCache = smd->mCache = NULL;
@@ -5537,91 +5681,82 @@ static void direct_link_modifiers(FileData *fd, ListBase *lb)
 
       clmd->solver_result = NULL;
     }
-    else if (md->type == eModifierType_Fluidsim) {
-      FluidsimModifierData *fluidmd = (FluidsimModifierData *)md;
+    else if (md->type == eModifierType_Fluid) {
 
-      fluidmd->fss = newdataadr(fd, fluidmd->fss);
-      if (fluidmd->fss) {
-        fluidmd->fss->fmd = fluidmd;
-        fluidmd->fss->meshVelocities = NULL;
-      }
-    }
-    else if (md->type == eModifierType_Smoke) {
-      SmokeModifierData *smd = (SmokeModifierData *)md;
+      FluidModifierData *mmd = (FluidModifierData *)md;
 
-      if (smd->type == MOD_SMOKE_TYPE_DOMAIN) {
-        smd->flow = NULL;
-        smd->coll = NULL;
-        smd->domain = newdataadr(fd, smd->domain);
-        smd->domain->smd = smd;
+      if (mmd->type == MOD_FLUID_TYPE_DOMAIN) {
+        mmd->flow = NULL;
+        mmd->effector = NULL;
+        mmd->domain = newdataadr(fd, mmd->domain);
+        mmd->domain->mmd = mmd;
 
-        smd->domain->fluid = NULL;
-        smd->domain->fluid_mutex = BLI_rw_mutex_alloc();
-        smd->domain->wt = NULL;
-        smd->domain->shadow = NULL;
-        smd->domain->tex = NULL;
-        smd->domain->tex_shadow = NULL;
-        smd->domain->tex_flame = NULL;
-        smd->domain->tex_flame_coba = NULL;
-        smd->domain->tex_coba = NULL;
-        smd->domain->tex_field = NULL;
-        smd->domain->tex_velocity_x = NULL;
-        smd->domain->tex_velocity_y = NULL;
-        smd->domain->tex_velocity_z = NULL;
-        smd->domain->tex_wt = NULL;
-        smd->domain->coba = newdataadr(fd, smd->domain->coba);
+        mmd->domain->fluid = NULL;
+        mmd->domain->fluid_mutex = BLI_rw_mutex_alloc();
+        mmd->domain->tex = NULL;
+        mmd->domain->tex_shadow = NULL;
+        mmd->domain->tex_flame = NULL;
+        mmd->domain->tex_flame_coba = NULL;
+        mmd->domain->tex_coba = NULL;
+        mmd->domain->tex_field = NULL;
+        mmd->domain->tex_velocity_x = NULL;
+        mmd->domain->tex_velocity_y = NULL;
+        mmd->domain->tex_velocity_z = NULL;
+        mmd->domain->tex_wt = NULL;
+        mmd->domain->mesh_velocities = NULL;
+        mmd->domain->coba = newdataadr(fd, mmd->domain->coba);
 
-        smd->domain->effector_weights = newdataadr(fd, smd->domain->effector_weights);
-        if (!smd->domain->effector_weights) {
-          smd->domain->effector_weights = BKE_effector_add_weights(NULL);
+        mmd->domain->effector_weights = newdataadr(fd, mmd->domain->effector_weights);
+        if (!mmd->domain->effector_weights) {
+          mmd->domain->effector_weights = BKE_effector_add_weights(NULL);
         }
 
         direct_link_pointcache_list(
-            fd, &(smd->domain->ptcaches[0]), &(smd->domain->point_cache[0]), 1);
+            fd, &(mmd->domain->ptcaches[0]), &(mmd->domain->point_cache[0]), 1);
 
-        /* Smoke uses only one cache from now on, so store pointer convert */
-        if (smd->domain->ptcaches[1].first || smd->domain->point_cache[1]) {
-          if (smd->domain->point_cache[1]) {
-            PointCache *cache = newdataadr(fd, smd->domain->point_cache[1]);
+        /* Manta sim uses only one cache from now on, so store pointer convert */
+        if (mmd->domain->ptcaches[1].first || mmd->domain->point_cache[1]) {
+          if (mmd->domain->point_cache[1]) {
+            PointCache *cache = newdataadr(fd, mmd->domain->point_cache[1]);
             if (cache->flag & PTCACHE_FAKE_SMOKE) {
-              /* Smoke was already saved in "new format" and this cache is a fake one. */
+              /* Manta-sim/smoke was already saved in "new format" and this cache is a fake one. */
             }
             else {
               printf(
-                  "High resolution smoke cache not available due to pointcache update. Please "
+                  "High resolution manta cache not available due to pointcache update. Please "
                   "reset the simulation.\n");
             }
             BKE_ptcache_free(cache);
           }
-          BLI_listbase_clear(&smd->domain->ptcaches[1]);
-          smd->domain->point_cache[1] = NULL;
+          BLI_listbase_clear(&mmd->domain->ptcaches[1]);
+          mmd->domain->point_cache[1] = NULL;
         }
       }
-      else if (smd->type == MOD_SMOKE_TYPE_FLOW) {
-        smd->domain = NULL;
-        smd->coll = NULL;
-        smd->flow = newdataadr(fd, smd->flow);
-        smd->flow->smd = smd;
-        smd->flow->mesh = NULL;
-        smd->flow->verts_old = NULL;
-        smd->flow->numverts = 0;
-        smd->flow->psys = newdataadr(fd, smd->flow->psys);
+      else if (mmd->type == MOD_FLUID_TYPE_FLOW) {
+        mmd->domain = NULL;
+        mmd->effector = NULL;
+        mmd->flow = newdataadr(fd, mmd->flow);
+        mmd->flow->mmd = mmd;
+        mmd->flow->mesh = NULL;
+        mmd->flow->verts_old = NULL;
+        mmd->flow->numverts = 0;
+        mmd->flow->psys = newdataadr(fd, mmd->flow->psys);
       }
-      else if (smd->type == MOD_SMOKE_TYPE_COLL) {
-        smd->flow = NULL;
-        smd->domain = NULL;
-        smd->coll = newdataadr(fd, smd->coll);
-        if (smd->coll) {
-          smd->coll->smd = smd;
-          smd->coll->verts_old = NULL;
-          smd->coll->numverts = 0;
-          smd->coll->mesh = NULL;
+      else if (mmd->type == MOD_FLUID_TYPE_EFFEC) {
+        mmd->flow = NULL;
+        mmd->domain = NULL;
+        mmd->effector = newdataadr(fd, mmd->effector);
+        if (mmd->effector) {
+          mmd->effector->mmd = mmd;
+          mmd->effector->verts_old = NULL;
+          mmd->effector->numverts = 0;
+          mmd->effector->mesh = NULL;
         }
         else {
-          smd->type = 0;
-          smd->flow = NULL;
-          smd->domain = NULL;
-          smd->coll = NULL;
+          mmd->type = 0;
+          mmd->flow = NULL;
+          mmd->domain = NULL;
+          mmd->effector = NULL;
         }
       }
     }
@@ -5944,7 +6079,7 @@ static void direct_link_object(FileData *fd, Object *ob)
   ob->matbits = newdataadr(fd, ob->matbits);
 
   /* do it here, below old data gets converted */
-  direct_link_modifiers(fd, &ob->modifiers);
+  direct_link_modifiers(fd, &ob->modifiers, ob);
   direct_link_gpencil_modifiers(fd, &ob->greasepencil_modifiers);
   direct_link_shaderfxs(fd, &ob->shader_fx);
 
@@ -9055,7 +9190,7 @@ static ID *create_placeholder(Main *mainvar, const short idcode, const char *idn
   ph_id->icon_id = 0;
 
   BLI_addtail(lb, ph_id);
-  id_sort_by_name(lb, ph_id);
+  id_sort_by_name(lb, ph_id, NULL);
 
   return ph_id;
 }
@@ -10383,7 +10518,7 @@ static void expand_particlesettings(FileData *fd, Main *mainvar, ParticleSetting
 
   expand_doit(fd, mainvar, part->instance_object);
   expand_doit(fd, mainvar, part->instance_collection);
-  expand_doit(fd, mainvar, part->eff_group);
+  expand_doit(fd, mainvar, part->force_group);
   expand_doit(fd, mainvar, part->bb_ob);
   expand_doit(fd, mainvar, part->collision_group);
 
@@ -11456,7 +11591,7 @@ static ID *link_named_part(
       if (id) {
         /* sort by name in list */
         ListBase *lb = which_libbase(mainl, idcode);
-        id_sort_by_name(lb, id);
+        id_sort_by_name(lb, id, NULL);
       }
     }
     else {
@@ -11513,7 +11648,7 @@ int BLO_library_link_copypaste(Main *mainl, BlendHandle *bh, const unsigned int 
     if (id) {
       /* sort by name in list */
       ListBase *lb = which_libbase(mainl, GS(id->name));
-      id_sort_by_name(lb, id);
+      id_sort_by_name(lb, id, NULL);
 
       if (bhead->code == ID_OB) {
         /* Instead of instancing Base's directly, postpone until after collections are loaded

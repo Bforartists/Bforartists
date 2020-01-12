@@ -79,7 +79,7 @@ const char PAINT_CURSOR_VERTEX_PAINT[3] = {255, 255, 255};
 const char PAINT_CURSOR_WEIGHT_PAINT[3] = {200, 200, 255};
 const char PAINT_CURSOR_TEXTURE_PAINT[3] = {255, 255, 255};
 
-static eOverlayControlFlags overlay_flags = 0;
+static ePaintOverlayControlFlags overlay_flags = 0;
 
 void BKE_paint_invalidate_overlay_tex(Scene *scene, ViewLayer *view_layer, const Tex *tex)
 {
@@ -120,7 +120,7 @@ void BKE_paint_invalidate_overlay_all(void)
                     PAINT_OVERLAY_INVALID_TEXTURE_PRIMARY | PAINT_OVERLAY_INVALID_CURVE);
 }
 
-eOverlayControlFlags BKE_paint_get_overlay_flags(void)
+ePaintOverlayControlFlags BKE_paint_get_overlay_flags(void)
 {
   return overlay_flags;
 }
@@ -143,7 +143,7 @@ void BKE_paint_set_overlay_override(eOverlayFlags flags)
   }
 }
 
-void BKE_paint_reset_overlay_invalid(eOverlayControlFlags flag)
+void BKE_paint_reset_overlay_invalid(ePaintOverlayControlFlags flag)
 {
   overlay_flags &= ~(flag);
 }
@@ -1094,6 +1094,14 @@ void BKE_sculptsession_free(Object *ob)
 
     if (ss->preview_vert_index_list) {
       MEM_freeN(ss->preview_vert_index_list);
+    }
+
+    if (ss->pose_ik_chain_preview) {
+      for (int i = 0; i < ss->pose_ik_chain_preview->tot_segments; i++) {
+        MEM_SAFE_FREE(ss->pose_ik_chain_preview->segments[i].weights);
+      }
+      MEM_SAFE_FREE(ss->pose_ik_chain_preview->segments);
+      MEM_SAFE_FREE(ss->pose_ik_chain_preview);
     }
 
     BKE_sculptsession_free_vwpaint_data(ob->sculpt);

@@ -950,11 +950,16 @@ static float rna_PartSetting_linelenhead_get(struct PointerRNA *ptr)
   return settings->draw_line[1];
 }
 
-static bool rna_PartSettings_is_fluid_get(PointerRNA *ptr)
+static int rna_PartSettings_is_fluid_get(PointerRNA *ptr)
 {
-  ParticleSettings *part = (ParticleSettings *)ptr->data;
-
-  return part->type == PART_FLUID;
+  ParticleSettings *part = ptr->data;
+  return (ELEM(part->type,
+               PART_FLUID,
+               PART_FLUID_FLIP,
+               PART_FLUID_FOAM,
+               PART_FLUID_SPRAY,
+               PART_FLUID_BUBBLE,
+               PART_FLUID_TRACER));
 }
 
 static void rna_ParticleSettings_use_clump_curve_update(Main *bmain, Scene *scene, PointerRNA *ptr)
@@ -3414,7 +3419,7 @@ static void rna_def_particle_settings(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, NULL, "rad_root");
   RNA_def_property_range(prop, 0.0f, FLT_MAX);
   RNA_def_property_ui_range(prop, 0.0f, 10.0f, 0.1, 2);
-  RNA_def_property_ui_text(prop, "Root", "Strand width at the root");
+  RNA_def_property_ui_text(prop, "Root Diameter", "Strand diameter width at the root");
   RNA_def_property_update(
       prop, 0, "rna_Particle_redo"); /* TODO: Only need to tell the render engine to update. */
 
@@ -3422,7 +3427,7 @@ static void rna_def_particle_settings(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, NULL, "rad_tip");
   RNA_def_property_range(prop, 0.0f, FLT_MAX);
   RNA_def_property_ui_range(prop, 0.0f, 10.0f, 0.1, 2);
-  RNA_def_property_ui_text(prop, "Tip", "Strand width at the tip");
+  RNA_def_property_ui_text(prop, "Tip Diameter", "Strand diameter width at the tip");
   RNA_def_property_update(
       prop, 0, "rna_Particle_redo"); /* TODO: Only need to tell the render engine to update. */
 
