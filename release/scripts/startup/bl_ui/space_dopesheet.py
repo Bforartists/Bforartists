@@ -776,8 +776,8 @@ class DOPESHEET_MT_gpencil_channel(Menu):
         # layout.operator("anim.channels_expand")
         # layout.operator("anim.channels_collapse")
 
-        # layout.separator()
-        #layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
+        layout.separator()
+        layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
 
 
 class DOPESHEET_MT_gpencil_frame(Menu):
@@ -892,6 +892,7 @@ class DOPESHEET_MT_snap_pie(Menu):
         pie.operator("action.snap", text="Nearest Frame").type = 'NEAREST_FRAME'
         pie.operator("action.snap", text="Nearest Second").type = 'NEAREST_SECOND'
         pie.operator("action.snap", text="Nearest Marker").type = 'NEAREST_MARKER'
+
 
 class LayersDopeSheetPanel:
     bl_space_type = 'DOPESHEET_EDITOR'
