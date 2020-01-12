@@ -336,6 +336,8 @@ typedef struct bActionConstraint {
   float min;
   float max;
   int flag;
+  char mix_mode;
+  char _pad[7];
   struct bAction *act;
   /** MAX_ID_NAME-2. */
   char subtarget[64];
@@ -755,7 +757,7 @@ typedef enum eCopyRotation_Flags {
   ROTLIKE_X_INVERT = (1 << 4),
   ROTLIKE_Y_INVERT = (1 << 5),
   ROTLIKE_Z_INVERT = (1 << 6),
-#ifdef DNA_DEPRECATED
+#ifdef DNA_DEPRECATED_ALLOW
   ROTLIKE_OFFSET = (1 << 7),
 #endif
 } eCopyRotation_Flags;
@@ -864,6 +866,16 @@ typedef enum eActionConstraint_Flags {
   /* Bones use "object" part of target action, instead of "same bone name" part */
   ACTCON_BONE_USE_OBJECT_ACTION = (1 << 0),
 } eActionConstraint_Flags;
+
+/* bActionConstraint.mix_mode */
+typedef enum eActionConstraint_MixMode {
+  /* Multiply the action transformation on the right. */
+  ACTCON_MIX_AFTER_FULL = 0,
+  /* Multiply the action transformation on the right, with anti-shear scale handling. */
+  ACTCON_MIX_AFTER,
+  /* Multiply the action transformation on the left, with anti-shear scale handling. */
+  ACTCON_MIX_BEFORE,
+} eActionConstraint_MixMode;
 
 /* Locked-Axis Values (Locked Track) */
 typedef enum eLockAxis_Modes {
@@ -976,7 +988,7 @@ typedef enum eSplineIK_Flags {
   CONSTRAINT_SPLINEIK_BOUND = (1 << 0),
   /* root of chain is not influenced by the constraint */
   CONSTRAINT_SPLINEIK_NO_ROOT = (1 << 1),
-#ifdef DNA_DEPRECATED
+#ifdef DNA_DEPRECATED_ALLOW
   /* bones in the chain should not scale to fit the curve */
   CONSTRAINT_SPLINEIK_SCALE_LIMITED = (1 << 2),
 #endif

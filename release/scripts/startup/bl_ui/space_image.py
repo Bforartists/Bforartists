@@ -181,28 +181,6 @@ class IMAGE_MT_select_none(bpy.types.Operator):
         bpy.ops.uv.select_all(action = 'DESELECT')
         return {'FINISHED'}
 
-# Workaround to separate the tooltips
-class IMAGE_MT_select_linked_pick_extend(bpy.types.Operator):
-    """Select all UV vertices under the mouse with extend method\nHotkey Only tool! """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "uv.select_linked_pick_extend"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Linked Pick Extend"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.uv.select_linked_pick(extend = True)
-        return {'FINISHED'} 
-
-# Workaround to separate the tooltips
-class IMAGE_MT_select_linked_extend(bpy.types.Operator):
-    """Select all UV vertices linked to the active keymap extended"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "uv.select_linked_extend"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Linked Extend"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.uv.select_linked(extend = True)
-        return {'FINISHED'}
-
 
 class IMAGE_MT_select(Menu):
     bl_label = "Select"
@@ -221,9 +199,9 @@ class IMAGE_MT_select(Menu):
         layout.separator()
       
         layout.operator("uv.select_linked", text = "Linked", icon = "LINKED")
-        layout.operator("uv.select_linked_extend", text = "Linked Extend", icon = "LINKED") # bfa - separated tooltip
-        layout.operator("uv.select_linked_pick", text="Linked Pick", icon = "LINKED").extend = False
-        layout.operator("uv.select_linked_pick_extend", text="Linked Pick Extend", icon = "LINKED") # bfa - separated tooltip
+        myop = layout.operator("uv.select_linked_pick", text="Linked Pick", icon = "LINKED")
+        myop.extend = True
+        myop.deselect = False
 
         layout.separator()
 
@@ -344,7 +322,7 @@ class IMAGE_MT_image(Menu):
 
         if ima and not show_render:
             if ima.packed_file:
-                if len(ima.filepath):
+                if ima.filepath:
                     layout.separator()
                     layout.operator("image.unpack", text="Unpack", icon = "PACKAGE")
             else:
@@ -467,8 +445,8 @@ class IMAGE_MT_uvs(Menu):
         layout.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
         layout.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
         layout.operator("uv.follow_active_quads", icon = "FOLLOWQUADS")
-        layout.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
         layout.operator("uv.pin", icon = "PINNED").clear = False
+        layout.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True      
 
         layout.separator()
 
@@ -505,32 +483,27 @@ class IMAGE_MT_uvs_select_mode(Menu):
         # Do smart things depending on whether uv_select_sync is on.
 
         if tool_settings.use_uv_select_sync:
-            props = layout.operator("wm.context_set_value", text="Vertex", icon='VERTEXSEL')
-            props.value = "(True, False, False)"
-            props.data_path = "tool_settings.mesh_select_mode"
 
-            props = layout.operator("wm.context_set_value", text="Edge", icon='EDGESEL')
-            props.value = "(False, True, False)"
-            props.data_path = "tool_settings.mesh_select_mode"
-
-            props = layout.operator("wm.context_set_value", text="Face", icon='FACESEL')
-            props.value = "(False, False, True)"
-            props.data_path = "tool_settings.mesh_select_mode"
+            layout.operator_context = 'INVOKE_REGION_WIN'
+            layout.operator("mesh.select_mode", text="Vertex", icon='VERTEXSEL').type = 'VERT'
+            layout.operator("mesh.select_mode", text="Edge", icon='EDGESEL').type = 'EDGE'
+            layout.operator("mesh.select_mode", text="Face", icon='FACESEL').type = 'FACE'
 
         else:
-            props = layout.operator("wm.context_set_string", text="Vertex", icon='UV_VERTEXSEL')
+            #layout.operator_context = 'INVOKE_REGION_WIN'
+            props = layout.operator("wm.context_set_enum", text="Vertex", icon='UV_VERTEXSEL')
             props.value = 'VERTEX'
             props.data_path = "tool_settings.uv_select_mode"
 
-            props = layout.operator("wm.context_set_string", text="Edge", icon='UV_EDGESEL')
+            props = layout.operator("wm.context_set_enum", text="Edge", icon='UV_EDGESEL')
             props.value = 'EDGE'
             props.data_path = "tool_settings.uv_select_mode"
 
-            props = layout.operator("wm.context_set_string", text="Face", icon='UV_FACESEL')
+            props = layout.operator("wm.context_set_enum", text="Face", icon='UV_FACESEL')
             props.value = 'FACE'
             props.data_path = "tool_settings.uv_select_mode"
 
-            props = layout.operator("wm.context_set_string", text="Island", icon='UV_ISLANDSEL')
+            props = layout.operator("wm.context_set_enum", text="Island", icon='UV_ISLANDSEL')
             props.value = 'ISLAND'
             props.data_path = "tool_settings.uv_select_mode"
 
@@ -696,9 +669,26 @@ class _draw_tool_settings_context_mode:
                 uv_sculpt = tool_settings.uv_sculpt
                 brush = uv_sculpt.brush
                 if brush:
-                    # NOTE: We don't draw UnifiedPaintSettings in the header to reduce clutter. D5928#136281
-                    UnifiedPaintPanel.prop_unified(layout, context, brush, "size", pressure_name="use_pressure_size", slider=True)
-                    UnifiedPaintPanel.prop_unified(layout, context, brush, "strength", pressure_name="use_pressure_strength", slider=True)
+                    UnifiedPaintPanel.prop_unified(
+                        layout,
+                        context,
+                        brush,
+                        "size",
+                        pressure_name="use_pressure_size",
+                        unified_name="use_unified_size",
+                        slider=True,
+                        header=True
+                    )
+                    UnifiedPaintPanel.prop_unified(
+                        layout,
+                        context,
+                        brush,
+                        "strength",
+                        pressure_name="use_pressure_strength",
+                        unified_name="use_unified_strength",
+                        slider=True,
+                        header=True
+                    )
 
     @staticmethod
     def PAINT(context, layout, tool):
@@ -854,7 +844,6 @@ class MASK_MT_editor_menus(Menu):
 
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
-        show_paint = sima.show_paint
 
         layout.menu("IMAGE_MT_view")
 
@@ -881,44 +870,14 @@ class IMAGE_MT_mask_context_menu(Menu):
     @classmethod
     def poll(cls, context):
         sima = context.space_data
-        return (sima.show_maskedit)
+        return sima.show_maskedit
 
     def draw(self, context):
         layout = self.layout
+        from .properties_mask_common import draw_mask_context_menu
+        draw_mask_context_menu(layout, context)
         sima = context.space_data
 
-        if not sima.mask:
-            layout.operator("mask.new", icon='MOD_MASK')
-            layout.separator()
-            layout.operator("mask.primitive_circle_add", icon='MESH_CIRCLE')
-            layout.operator("mask.primitive_square_add", icon='MESH_PLANE')
-        else:
-            layout.operator_menu_enum("mask.handle_type_set", "type")
-            layout.operator("mask.switch_direction", icon='SWITCH_DIRECTION')
-            layout.operator("mask.cyclic_toggle", icon='TOGGLE_CYCLIC')
-
-            layout.separator()
-            layout.operator("mask.primitive_circle_add", icon='MESH_CIRCLE')
-            layout.operator("mask.primitive_square_add", icon='MESH_PLANE')
-
-            layout.separator()
-            layout.operator("mask.copy_splines", icon='COPYDOWN')
-            layout.operator("mask.paste_splines", icon='PASTEDOWN')
-
-            layout.separator()
-
-            layout.operator("mask.shape_key_rekey", text="Re-key Shape Points", icon = "SHAPEKEY_DATA")
-            layout.operator("mask.feather_weight_clear", icon='CLEAR')
-            layout.operator("mask.shape_key_feather_reset", text="Reset Feather Animation", icon='RESET')
-
-            layout.separator()
-
-            layout.operator("mask.parent_set", icon='PARENT')
-            layout.operator("mask.parent_clear", icon='PARENT_CLEAR')
-
-            layout.separator()
-
-            layout.operator("mask.delete", icon='DELETE')
 
 # -----------------------------------------------------------------------------
 # Mask (similar code in space_clip.py, keep in sync)
@@ -1210,7 +1169,7 @@ class IMAGE_PT_render_slots(Panel):
 
 
 class IMAGE_UL_udim_tiles(UIList):
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+    def draw_item(self, _context, layout, _data, item, _icon, _active_data, _active_propname, _index):
         tile = item
         layout.prop(tile, "label", text="", emboss=False)
 
@@ -1246,6 +1205,7 @@ class IMAGE_PT_udim_tiles(Panel):
             col = layout.column(align=True)
             col.operator("image.tile_fill")
 
+
 class IMAGE_PT_paint_select(Panel, ImagePaintPanel, BrushSelectPanel):
     bl_label = "Brushes"
     bl_context = ".paint_common_2d"
@@ -1273,6 +1233,7 @@ class IMAGE_PT_paint_settings(Panel, ImagePaintPanel):
 class IMAGE_PT_paint_settings_advanced(Panel, ImagePaintPanel):
     bl_context = ".paint_common_2d"
     bl_parent_id = "IMAGE_PT_paint_settings"
+    bl_category = "Tool"
     bl_label = "Advanced"
 
     def draw(self, context):
@@ -1429,7 +1390,9 @@ class IMAGE_PT_uv_sculpt_brush_settings(Panel, ImagePaintPanel, UVSculptPanel):
 
         if brush:
             if brush.uv_sculpt_tool == 'RELAX':
-                # Although this settings is stored in the scene, it is only used by a single tool, so it doesn't make sense from a user perspective to move it to the Options panel.
+                # Although this settings is stored in the scene,
+                # it is only used by a single tool,
+                # so it doesn't make sense from a user perspective to move it to the Options panel.
                 layout.prop(tool_settings, "uv_relax_method")
 
 
@@ -1630,8 +1593,6 @@ classes = (
     IMAGE_MT_view_view_fit,
     IMAGE_MT_view,
     IMAGE_MT_view_zoom,
-    IMAGE_MT_select_linked_pick_extend,
-    IMAGE_MT_select_linked_extend,
     IMAGE_MT_select_inverse,
     IMAGE_MT_select_none,
     IMAGE_MT_select,

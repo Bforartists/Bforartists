@@ -44,7 +44,7 @@ set(DEFSRC
   rna_depsgraph.c
   rna_dynamicpaint.c
   rna_fcurve.c
-  rna_fluidsim.c
+  rna_fluid.c
   rna_gpencil.c
   rna_gpencil_modifier.c
   rna_image.c
@@ -77,7 +77,6 @@ set(DEFSRC
   rna_sculpt_paint.c
   rna_sequencer.c
   rna_shader_fx.c
-  rna_smoke.c
   rna_sound.c
   rna_space.c
   rna_speaker.c
@@ -241,16 +240,12 @@ if(WITH_CODEC_FFMPEG)
   add_definitions(-DWITH_FFMPEG)
 endif()
 
-if(WITH_MOD_FLUID)
-  add_definitions(-DWITH_MOD_FLUID)
-endif()
-
 if(WITH_FFTW3)
   add_definitions(-DWITH_FFTW3)
 endif()
 
-if(WITH_MOD_SMOKE)
-  add_definitions(-DWITH_SMOKE)
+if(WITH_MOD_FLUID)
+  add_definitions(-DWITH_FLUID)
 endif()
 
 if(WITH_MOD_OCEANSIM)
@@ -348,7 +343,7 @@ blender_include_dirs(
   ../../../../intern/glew-mx
   ../../../../intern/guardedalloc
   ../../../../intern/memutil
-  ../../../../intern/smoke/extern
+  ../../../../intern/mantaflow/extern
 )
 
 blender_include_dirs_sys(
