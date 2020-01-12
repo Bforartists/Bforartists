@@ -44,7 +44,9 @@
 #include "WM_api.h"
 #include "WM_types.h"
 #include "wm.h" /* XXX */
+#include "WM_message.h"
 
+#include "ED_gizmo_utils.h"
 #include "ED_image.h"
 #include "ED_screen.h"
 #include "ED_uvedit.h"
@@ -53,14 +55,79 @@
 #include "transform.h" /* own include */
 
 /* -------------------------------------------------------------------- */
+/** \name Shared Callback's
+ */
+
+static bool gizmo2d_generic_poll(const bContext *C, wmGizmoGroupType *gzgt)
+{
+  if (!ED_gizmo_poll_or_unlink_delayed_from_tool(C, gzgt)) {
+    return false;
+  }
+
+  if ((U.gizmo_flag & USER_GIZMO_DRAW) == 0) {
+    return false;
+  }
+
+  ScrArea *sa = CTX_wm_area(C);
+  switch (sa->spacetype) {
+    case SPACE_IMAGE: {
+      SpaceImage *sima = sa->spacedata.first;
+      Object *obedit = CTX_data_edit_object(C);
+      if (!ED_space_image_show_uvedit(sima, obedit)) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+static void gizmo2d_pivot_point_message_subscribe(struct wmGizmoGroup *gzgroup,
+                                                  struct wmMsgBus *mbus,
+                                                  /* Additional args. */
+                                                  bScreen *screen,
+                                                  ScrArea *sa,
+                                                  ARegion *ar)
+{
+  wmMsgSubscribeValue msg_sub_value_gz_tag_refresh = {
+      .owner = ar,
+      .user_data = gzgroup->parent_gzmap,
+      .notify = WM_gizmo_do_msg_notify_tag_refresh,
+  };
+
+  switch (sa->spacetype) {
+    case SPACE_IMAGE: {
+      SpaceImage *sima = sa->spacedata.first;
+      PointerRNA ptr;
+      RNA_pointer_create(&screen->id, &RNA_SpaceImageEditor, sima, &ptr);
+      {
+        extern PropertyRNA rna_SpaceImageEditor_pivot_point;
+        extern PropertyRNA rna_SpaceImageEditor_cursor_location;
+        const PropertyRNA *props[] = {
+            &rna_SpaceImageEditor_pivot_point,
+            (sima->around == V3D_AROUND_CURSOR) ? &rna_SpaceImageEditor_cursor_location : NULL,
+        };
+        for (int i = 0; i < ARRAY_SIZE(props); i++) {
+          if (props[i] == NULL) {
+            continue;
+          }
+          WM_msg_subscribe_rna(mbus, &ptr, props[i], &msg_sub_value_gz_tag_refresh, __func__);
+        }
+      }
+      break;
+    }
+  }
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Arrow / Cage Gizmo Group
  *
  * Defines public functions, not the gizmo it's self:
  *
- * - #ED_widgetgroup_gizmo2d_xform_setup
- * - #ED_widgetgroup_gizmo2d_xform_refresh
- * - #ED_widgetgroup_gizmo2d_xform_draw_prepare
- * - #ED_widgetgroup_gizmo2d_xform_poll
+ * - #ED_widgetgroup_gizmo2d_xform_callbacks_set
+ * - #ED_widgetgroup_gizmo2d_xform_no_cage_callbacks_set
  *
  * \{ */
 
@@ -115,7 +182,7 @@ static void gizmo2d_get_axis_color(const int axis_idx, float *r_col, float *r_co
 
 static GizmoGroup2D *gizmogroup2d_init(wmGizmoGroup *gzgroup)
 {
-  const wmGizmoType *gzt_arrow = WM_gizmotype_find("GIZMO_GT_arrow_2d", true);
+  const wmGizmoType *gzt_arrow = WM_gizmotype_find("GIZMO_GT_arrow_3d", true);
   const wmGizmoType *gzt_cage = WM_gizmotype_find("GIZMO_GT_cage_2d", true);
   const wmGizmoType *gzt_button = WM_gizmotype_find("GIZMO_GT_button_2d", true);
 
@@ -137,7 +204,7 @@ static GizmoGroup2D *gizmogroup2d_init(wmGizmoGroup *gzgroup)
 /**
  * Calculates origin in view space, use with #gizmo2d_origin_to_region.
  */
-static void gizmo2d_calc_bounds(const bContext *C, float *r_center, float *r_min, float *r_max)
+static bool gizmo2d_calc_bounds(const bContext *C, float *r_center, float *r_min, float *r_max)
 {
   float min_buf[2], max_buf[2];
   if (r_min == NULL) {
@@ -148,24 +215,42 @@ static void gizmo2d_calc_bounds(const bContext *C, float *r_center, float *r_min
   }
 
   ScrArea *sa = CTX_wm_area(C);
+  bool changed = false;
   if (sa->spacetype == SPACE_IMAGE) {
     SpaceImage *sima = sa->spacedata.first;
+    Scene *scene = CTX_data_scene(C);
     ViewLayer *view_layer = CTX_data_view_layer(C);
     Image *ima = ED_space_image(sima);
     uint objects_len = 0;
     Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
         view_layer, NULL, &objects_len);
-    if (!ED_uvedit_minmax_multi(CTX_data_scene(C), ima, objects, objects_len, r_min, r_max)) {
-      zero_v2(r_min);
-      zero_v2(r_max);
+    if (ED_uvedit_minmax_multi(scene, ima, objects, objects_len, r_min, r_max)) {
+      changed = true;
     }
     MEM_freeN(objects);
   }
-  else {
+
+  if (changed == false) {
     zero_v2(r_min);
     zero_v2(r_max);
   }
+
   mid_v2_v2v2(r_center, r_min, r_max);
+  return changed;
+}
+
+static bool gizmo2d_calc_center(const bContext *C, float r_center[2])
+{
+  ScrArea *sa = CTX_wm_area(C);
+  bool has_select = false;
+  zero_v2(r_center);
+  if (sa->spacetype == SPACE_IMAGE) {
+    SpaceImage *sima = sa->spacedata.first;
+    Scene *scene = CTX_data_scene(C);
+    ViewLayer *view_layer = CTX_data_view_layer(C);
+    ED_uvedit_center_from_pivot_ex(sima, scene, view_layer, r_center, sima->around, &has_select);
+  }
+  return has_select;
 }
 
 /**
@@ -187,7 +272,7 @@ static int gizmo2d_modal(bContext *C,
   ARegion *ar = CTX_wm_region(C);
   float origin[3];
 
-  gizmo2d_calc_bounds(C, origin, NULL, NULL);
+  gizmo2d_calc_center(C, origin);
   gizmo2d_origin_to_region(ar, origin);
   WM_gizmo_set_matrix_location(widget, origin);
 
@@ -196,7 +281,7 @@ static int gizmo2d_modal(bContext *C,
   return OPERATOR_RUNNING_MODAL;
 }
 
-void ED_widgetgroup_gizmo2d_xform_setup(const bContext *UNUSED(C), wmGizmoGroup *gzgroup)
+static void gizmo2d_xform_setup(const bContext *UNUSED(C), wmGizmoGroup *gzgroup)
 {
   wmOperatorType *ot_translate = WM_operatortype_find("TRANSFORM_OT_translate", true);
   GizmoGroup2D *ggd = gizmogroup2d_init(gzgroup);
@@ -204,23 +289,30 @@ void ED_widgetgroup_gizmo2d_xform_setup(const bContext *UNUSED(C), wmGizmoGroup 
 
   for (int i = 0; i < ARRAY_SIZE(ggd->translate_xy); i++) {
     wmGizmo *gz = ggd->translate_xy[i];
-    const float offset[3] = {0.0f, 0.2f};
 
     /* custom handler! */
     WM_gizmo_set_fn_custom_modal(gz, gizmo2d_modal);
-    WM_gizmo_set_scale(gz, U.gizmo_size);
 
     if (i < 2) {
       float color[4], color_hi[4];
       gizmo2d_get_axis_color(i, color, color_hi);
 
       /* set up widget data */
-      RNA_float_set(gz->ptr, "angle", -M_PI_2 * i);
       RNA_float_set(gz->ptr, "length", 0.8f);
+      float axis[3] = {0.0f};
+      axis[(i + 1) % 2] = 1.0f;
+      WM_gizmo_set_matrix_rotation_from_z_axis(gz, axis);
+
+      float offset[3] = {0, 0, 0};
+      offset[2] = 0.18f;
       WM_gizmo_set_matrix_offset_location(gz, offset);
+      gz->flag |= WM_GIZMO_DRAW_OFFSET_SCALE;
+
       WM_gizmo_set_line_width(gz, GIZMO_AXIS_LINE_WIDTH);
       WM_gizmo_set_color(gz, color);
       WM_gizmo_set_color_highlight(gz, color_hi);
+
+      WM_gizmo_set_scale(gz, 1.0f);
     }
     else {
       PropertyRNA *prop = RNA_struct_find_property(gz->ptr, "icon");
@@ -230,6 +322,9 @@ void ED_widgetgroup_gizmo2d_xform_setup(const bContext *UNUSED(C), wmGizmoGroup 
       /* Make the center low alpha. */
       WM_gizmo_set_line_width(gz, 2.0f);
       RNA_float_set(gz->ptr, "backdrop_fill_alpha", 0.0);
+      WM_gizmo_set_color(gz, (const float[4]){1, 1, 1, 0.6});
+
+      WM_gizmo_set_scale(gz, 0.2f);
     }
 
     /* Assign operator. */
@@ -289,18 +384,24 @@ void ED_widgetgroup_gizmo2d_xform_setup(const bContext *UNUSED(C), wmGizmoGroup 
   }
 }
 
-void ED_widgetgroup_gizmo2d_xform_setup_no_cage(const bContext *C, wmGizmoGroup *gzgroup)
+static void gizmo2d_xform_setup_no_cage(const bContext *C, wmGizmoGroup *gzgroup)
 {
-  ED_widgetgroup_gizmo2d_xform_setup(C, gzgroup);
+  gizmo2d_xform_setup(C, gzgroup);
   GizmoGroup2D *ggd = gzgroup->customdata;
   ggd->no_cage = true;
 }
 
-void ED_widgetgroup_gizmo2d_xform_refresh(const bContext *C, wmGizmoGroup *gzgroup)
+static void gizmo2d_xform_refresh(const bContext *C, wmGizmoGroup *gzgroup)
 {
   GizmoGroup2D *ggd = gzgroup->customdata;
   float origin[3];
-  gizmo2d_calc_bounds(C, origin, ggd->min, ggd->max);
+  bool has_select;
+  if (ggd->no_cage) {
+    has_select = gizmo2d_calc_center(C, origin);
+  }
+  else {
+    has_select = gizmo2d_calc_bounds(C, origin, ggd->min, ggd->max);
+  }
   copy_v2_v2(ggd->origin, origin);
   bool show_cage = !ggd->no_cage && !equals_v2v2(ggd->min, ggd->max);
 
@@ -314,62 +415,70 @@ void ED_widgetgroup_gizmo2d_xform_refresh(const bContext *C, wmGizmoGroup *gzgro
     }
   }
 
-  if (show_cage) {
-    ggd->cage->flag &= ~WM_GIZMO_HIDDEN;
+  if (has_select == false) {
     for (int i = 0; i < ARRAY_SIZE(ggd->translate_xy); i++) {
-      wmGizmo *gz = ggd->translate_xy[i];
-      gz->flag |= WM_GIZMO_HIDDEN;
+      ggd->translate_xy[i]->flag |= WM_GIZMO_HIDDEN;
     }
+    ggd->cage->flag |= WM_GIZMO_HIDDEN;
   }
   else {
-    ggd->cage->flag |= WM_GIZMO_HIDDEN;
-    for (int i = 0; i < ARRAY_SIZE(ggd->translate_xy); i++) {
-      wmGizmo *gz = ggd->translate_xy[i];
-      gz->flag &= ~WM_GIZMO_HIDDEN;
+    if (show_cage) {
+      ggd->cage->flag &= ~WM_GIZMO_HIDDEN;
+      for (int i = 0; i < ARRAY_SIZE(ggd->translate_xy); i++) {
+        wmGizmo *gz = ggd->translate_xy[i];
+        gz->flag |= WM_GIZMO_HIDDEN;
+      }
     }
-  }
+    else {
+      ggd->cage->flag |= WM_GIZMO_HIDDEN;
+      for (int i = 0; i < ARRAY_SIZE(ggd->translate_xy); i++) {
+        wmGizmo *gz = ggd->translate_xy[i];
+        gz->flag &= ~WM_GIZMO_HIDDEN;
+      }
+    }
 
-  if (show_cage) {
-    wmGizmoOpElem *gzop;
-    float mid[2];
-    const float *min = ggd->min;
-    const float *max = ggd->max;
-    mid_v2_v2v2(mid, min, max);
+    if (show_cage) {
+      wmGizmoOpElem *gzop;
+      float mid[2];
+      const float *min = ggd->min;
+      const float *max = ggd->max;
+      mid_v2_v2v2(mid, min, max);
 
-    gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MIN_X);
-    PropertyRNA *prop_center_override = RNA_struct_find_property(&gzop->ptr, "center_override");
-    RNA_property_float_set_array(
-        &gzop->ptr, prop_center_override, (float[3]){max[0], mid[1], 0.0f});
-    gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MAX_X);
-    RNA_property_float_set_array(
-        &gzop->ptr, prop_center_override, (float[3]){min[0], mid[1], 0.0f});
-    gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MIN_Y);
-    RNA_property_float_set_array(
-        &gzop->ptr, prop_center_override, (float[3]){mid[0], max[1], 0.0f});
-    gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MAX_Y);
-    RNA_property_float_set_array(
-        &gzop->ptr, prop_center_override, (float[3]){mid[0], min[1], 0.0f});
+      gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MIN_X);
+      PropertyRNA *prop_center_override = RNA_struct_find_property(&gzop->ptr, "center_override");
+      RNA_property_float_set_array(
+          &gzop->ptr, prop_center_override, (float[3]){max[0], mid[1], 0.0f});
+      gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MAX_X);
+      RNA_property_float_set_array(
+          &gzop->ptr, prop_center_override, (float[3]){min[0], mid[1], 0.0f});
+      gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MIN_Y);
+      RNA_property_float_set_array(
+          &gzop->ptr, prop_center_override, (float[3]){mid[0], max[1], 0.0f});
+      gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MAX_Y);
+      RNA_property_float_set_array(
+          &gzop->ptr, prop_center_override, (float[3]){mid[0], min[1], 0.0f});
 
-    gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MIN_X_MIN_Y);
-    RNA_property_float_set_array(
-        &gzop->ptr, prop_center_override, (float[3]){max[0], max[1], 0.0f});
-    gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MIN_X_MAX_Y);
-    RNA_property_float_set_array(
-        &gzop->ptr, prop_center_override, (float[3]){max[0], min[1], 0.0f});
-    gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MAX_X_MIN_Y);
-    RNA_property_float_set_array(
-        &gzop->ptr, prop_center_override, (float[3]){min[0], max[1], 0.0f});
-    gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MAX_X_MAX_Y);
-    RNA_property_float_set_array(
-        &gzop->ptr, prop_center_override, (float[3]){min[0], min[1], 0.0f});
+      gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MIN_X_MIN_Y);
+      RNA_property_float_set_array(
+          &gzop->ptr, prop_center_override, (float[3]){max[0], max[1], 0.0f});
+      gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MIN_X_MAX_Y);
+      RNA_property_float_set_array(
+          &gzop->ptr, prop_center_override, (float[3]){max[0], min[1], 0.0f});
+      gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MAX_X_MIN_Y);
+      RNA_property_float_set_array(
+          &gzop->ptr, prop_center_override, (float[3]){min[0], max[1], 0.0f});
+      gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_SCALE_MAX_X_MAX_Y);
+      RNA_property_float_set_array(
+          &gzop->ptr, prop_center_override, (float[3]){min[0], min[1], 0.0f});
 
-    gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_ROTATE);
-    RNA_property_float_set_array(
-        &gzop->ptr, prop_center_override, (float[3]){mid[0], mid[1], 0.0f});
+      gzop = WM_gizmo_operator_get(ggd->cage, ED_GIZMO_CAGE2D_PART_ROTATE);
+      RNA_property_float_set_array(
+          &gzop->ptr, prop_center_override, (float[3]){mid[0], mid[1], 0.0f});
+    }
   }
 }
 
-void ED_widgetgroup_gizmo2d_xform_draw_prepare(const bContext *C, wmGizmoGroup *gzgroup)
+static void gizmo2d_xform_draw_prepare(const bContext *C, wmGizmoGroup *gzgroup)
 {
   ARegion *ar = CTX_wm_region(C);
   GizmoGroup2D *ggd = gzgroup->customdata;
@@ -389,44 +498,30 @@ void ED_widgetgroup_gizmo2d_xform_draw_prepare(const bContext *C, wmGizmoGroup *
   ggd->cage->matrix_offset[1][1] = (ggd->max[1] - ggd->min[1]);
 }
 
-/* TODO (Julian)
- * - Called on every redraw, better to do a more simple poll and check for selection in _refresh
- * - UV editing only, could be expanded for other things.
- */
-bool ED_widgetgroup_gizmo2d_xform_poll(const bContext *C, wmGizmoGroupType *UNUSED(gzgt))
+static void gizmo2d_xform_no_cage_message_subscribe(const struct bContext *C,
+                                                    struct wmGizmoGroup *gzgroup,
+                                                    struct wmMsgBus *mbus)
 {
-  if ((U.gizmo_flag & USER_GIZMO_DRAW) == 0) {
-    return false;
-  }
+  bScreen *screen = CTX_wm_screen(C);
+  ScrArea *sa = CTX_wm_area(C);
+  ARegion *ar = CTX_wm_region(C);
+  gizmo2d_pivot_point_message_subscribe(gzgroup, mbus, screen, sa, ar);
+}
 
-  SpaceImage *sima = CTX_wm_space_image(C);
-  Object *obedit = CTX_data_edit_object(C);
+void ED_widgetgroup_gizmo2d_xform_callbacks_set(wmGizmoGroupType *gzgt)
+{
+  gzgt->poll = gizmo2d_generic_poll;
+  gzgt->setup = gizmo2d_xform_setup;
+  gzgt->setup_keymap = WM_gizmogroup_setup_keymap_generic_maybe_drag;
+  gzgt->refresh = gizmo2d_xform_refresh;
+  gzgt->draw_prepare = gizmo2d_xform_draw_prepare;
+}
 
-  if (ED_space_image_show_uvedit(sima, obedit)) {
-    Image *ima = ED_space_image(sima);
-    Scene *scene = CTX_data_scene(C);
-    BMEditMesh *em = BKE_editmesh_from_object(obedit);
-    BMFace *efa;
-    BMLoop *l;
-    BMIter iter, liter;
-
-    const int cd_loop_uv_offset = CustomData_get_offset(&em->bm->ldata, CD_MLOOPUV);
-
-    /* check if there's a selected poly */
-    BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-      if (!uvedit_face_visible_test(scene, obedit, ima, efa)) {
-        continue;
-      }
-
-      BM_ITER_ELEM (l, &liter, efa, BM_LOOPS_OF_FACE) {
-        if (uvedit_uv_select_test(scene, l, cd_loop_uv_offset)) {
-          return true;
-        }
-      }
-    }
-  }
-
-  return false;
+void ED_widgetgroup_gizmo2d_xform_no_cage_callbacks_set(wmGizmoGroupType *gzgt)
+{
+  ED_widgetgroup_gizmo2d_xform_callbacks_set(gzgt);
+  gzgt->setup = gizmo2d_xform_setup_no_cage;
+  gzgt->message_subscribe = gizmo2d_xform_no_cage_message_subscribe;
 }
 
 /** \} */
@@ -436,10 +531,7 @@ bool ED_widgetgroup_gizmo2d_xform_poll(const bContext *C, wmGizmoGroupType *UNUS
  *
  * Defines public functions, not the gizmo it's self:
  *
- * - #ED_widgetgroup_gizmo2d_resize_setup
- * - #ED_widgetgroup_gizmo2d_resize_refresh
- * - #ED_widgetgroup_gizmo2d_resize_draw_prepare
- * - #ED_widgetgroup_gizmo2d_resize_poll
+ * - #ED_widgetgroup_gizmo2d_resize_callbacks_set
  *
  * \{ */
 
@@ -450,7 +542,7 @@ typedef struct GizmoGroup_Resize2D {
 
 static GizmoGroup_Resize2D *gizmogroup2d_resize_init(wmGizmoGroup *gzgroup)
 {
-  const wmGizmoType *gzt_arrow = WM_gizmotype_find("GIZMO_GT_arrow_2d", true);
+  const wmGizmoType *gzt_arrow = WM_gizmotype_find("GIZMO_GT_arrow_3d", true);
   const wmGizmoType *gzt_button = WM_gizmotype_find("GIZMO_GT_button_2d", true);
 
   GizmoGroup_Resize2D *ggd = MEM_callocN(sizeof(GizmoGroup_Resize2D), __func__);
@@ -462,15 +554,26 @@ static GizmoGroup_Resize2D *gizmogroup2d_resize_init(wmGizmoGroup *gzgroup)
   return ggd;
 }
 
-void ED_widgetgroup_gizmo2d_resize_refresh(const bContext *C, wmGizmoGroup *gzgroup)
+static void gizmo2d_resize_refresh(const bContext *C, wmGizmoGroup *gzgroup)
 {
   GizmoGroup_Resize2D *ggd = gzgroup->customdata;
   float origin[3];
-  gizmo2d_calc_bounds(C, origin, NULL, NULL);
-  copy_v2_v2(ggd->origin, origin);
+  const bool has_select = gizmo2d_calc_center(C, origin);
+
+  if (has_select == false) {
+    for (int i = 0; i < ARRAY_SIZE(ggd->gizmo_xy); i++) {
+      ggd->gizmo_xy[i]->flag |= WM_GIZMO_HIDDEN;
+    }
+  }
+  else {
+    for (int i = 0; i < ARRAY_SIZE(ggd->gizmo_xy); i++) {
+      ggd->gizmo_xy[i]->flag &= ~WM_GIZMO_HIDDEN;
+    }
+    copy_v2_v2(ggd->origin, origin);
+  }
 }
 
-void ED_widgetgroup_gizmo2d_resize_draw_prepare(const bContext *C, wmGizmoGroup *gzgroup)
+static void gizmo2d_resize_draw_prepare(const bContext *C, wmGizmoGroup *gzgroup)
 {
   ARegion *ar = CTX_wm_region(C);
   GizmoGroup_Resize2D *ggd = gzgroup->customdata;
@@ -494,12 +597,7 @@ void ED_widgetgroup_gizmo2d_resize_draw_prepare(const bContext *C, wmGizmoGroup 
   }
 }
 
-bool ED_widgetgroup_gizmo2d_resize_poll(const bContext *C, wmGizmoGroupType *UNUSED(gzgt))
-{
-  return ED_widgetgroup_gizmo2d_xform_poll(C, NULL);
-}
-
-void ED_widgetgroup_gizmo2d_resize_setup(const bContext *UNUSED(C), wmGizmoGroup *gzgroup)
+static void gizmo2d_resize_setup(const bContext *UNUSED(C), wmGizmoGroup *gzgroup)
 {
 
   wmOperatorType *ot_resize = WM_operatortype_find("TRANSFORM_OT_resize", true);
@@ -511,22 +609,24 @@ void ED_widgetgroup_gizmo2d_resize_setup(const bContext *UNUSED(C), wmGizmoGroup
 
     /* custom handler! */
     WM_gizmo_set_fn_custom_modal(gz, gizmo2d_modal);
-    WM_gizmo_set_scale(gz, U.gizmo_size);
 
     if (i < 2) {
-      const float offset[3] = {0.0f, 0.2f};
       float color[4], color_hi[4];
       gizmo2d_get_axis_color(i, color, color_hi);
 
       /* set up widget data */
-      RNA_float_set(gz->ptr, "angle", -M_PI_2 * i);
-      RNA_float_set(gz->ptr, "length", 0.8f);
+      RNA_float_set(gz->ptr, "length", 1.0f);
+      float axis[3] = {0.0f};
+      axis[(i + 1) % 2] = 1.0f;
+      WM_gizmo_set_matrix_rotation_from_z_axis(gz, axis);
+
       RNA_enum_set(gz->ptr, "draw_style", ED_GIZMO_ARROW_STYLE_BOX);
 
-      WM_gizmo_set_matrix_offset_location(gz, offset);
       WM_gizmo_set_line_width(gz, GIZMO_AXIS_LINE_WIDTH);
       WM_gizmo_set_color(gz, color);
       WM_gizmo_set_color_highlight(gz, color_hi);
+
+      WM_gizmo_set_scale(gz, 1.0f);
     }
     else {
       PropertyRNA *prop = RNA_struct_find_property(gz->ptr, "icon");
@@ -536,6 +636,9 @@ void ED_widgetgroup_gizmo2d_resize_setup(const bContext *UNUSED(C), wmGizmoGroup
       /* Make the center low alpha. */
       WM_gizmo_set_line_width(gz, 2.0f);
       RNA_float_set(gz->ptr, "backdrop_fill_alpha", 0.0);
+      WM_gizmo_set_color(gz, (const float[4]){1, 1, 1, 0.6});
+
+      WM_gizmo_set_scale(gz, 1.2f);
     }
 
     /* Assign operator. */
@@ -551,6 +654,26 @@ void ED_widgetgroup_gizmo2d_resize_setup(const bContext *UNUSED(C), wmGizmoGroup
   }
 }
 
+static void gizmo2d_resize_message_subscribe(const struct bContext *C,
+                                             struct wmGizmoGroup *gzgroup,
+                                             struct wmMsgBus *mbus)
+{
+  bScreen *screen = CTX_wm_screen(C);
+  ScrArea *sa = CTX_wm_area(C);
+  ARegion *ar = CTX_wm_region(C);
+  gizmo2d_pivot_point_message_subscribe(gzgroup, mbus, screen, sa, ar);
+}
+
+void ED_widgetgroup_gizmo2d_resize_callbacks_set(wmGizmoGroupType *gzgt)
+{
+  gzgt->poll = gizmo2d_generic_poll;
+  gzgt->setup = gizmo2d_resize_setup;
+  gzgt->setup_keymap = WM_gizmogroup_setup_keymap_generic_maybe_drag;
+  gzgt->refresh = gizmo2d_resize_refresh;
+  gzgt->draw_prepare = gizmo2d_resize_draw_prepare;
+  gzgt->message_subscribe = gizmo2d_resize_message_subscribe;
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -559,9 +682,6 @@ void ED_widgetgroup_gizmo2d_resize_setup(const bContext *UNUSED(C), wmGizmoGroup
  * Defines public functions, not the gizmo it's self:
  *
  * - #ED_widgetgroup_gizmo2d_rotate_setup
- * - #ED_widgetgroup_gizmo2d_rotate_refresh
- * - #ED_widgetgroup_gizmo2d_rotate_draw_prepare
- * - #ED_widgetgroup_gizmo2d_rotate_poll
  *
  * \{ */
 
@@ -581,15 +701,22 @@ static GizmoGroup_Rotate2D *gizmogroup2d_rotate_init(wmGizmoGroup *gzgroup)
   return ggd;
 }
 
-void ED_widgetgroup_gizmo2d_rotate_refresh(const bContext *C, wmGizmoGroup *gzgroup)
+static void gizmo2d_rotate_refresh(const bContext *C, wmGizmoGroup *gzgroup)
 {
   GizmoGroup_Rotate2D *ggd = gzgroup->customdata;
   float origin[3];
-  gizmo2d_calc_bounds(C, origin, NULL, NULL);
-  copy_v2_v2(ggd->origin, origin);
+  const bool has_select = gizmo2d_calc_center(C, origin);
+
+  if (has_select == false) {
+    ggd->gizmo->flag |= WM_GIZMO_HIDDEN;
+  }
+  else {
+    ggd->gizmo->flag &= ~WM_GIZMO_HIDDEN;
+    copy_v2_v2(ggd->origin, origin);
+  }
 }
 
-void ED_widgetgroup_gizmo2d_rotate_draw_prepare(const bContext *C, wmGizmoGroup *gzgroup)
+static void gizmo2d_rotate_draw_prepare(const bContext *C, wmGizmoGroup *gzgroup)
 {
   ARegion *ar = CTX_wm_region(C);
   GizmoGroup_Rotate2D *ggd = gzgroup->customdata;
@@ -611,12 +738,7 @@ void ED_widgetgroup_gizmo2d_rotate_draw_prepare(const bContext *C, wmGizmoGroup 
   WM_gizmo_set_matrix_location(gz, origin);
 }
 
-bool ED_widgetgroup_gizmo2d_rotate_poll(const bContext *C, wmGizmoGroupType *UNUSED(gzgt))
-{
-  return ED_widgetgroup_gizmo2d_xform_poll(C, NULL);
-}
-
-void ED_widgetgroup_gizmo2d_rotate_setup(const bContext *UNUSED(C), wmGizmoGroup *gzgroup)
+static void gizmo2d_rotate_setup(const bContext *UNUSED(C), wmGizmoGroup *gzgroup)
 {
 
   wmOperatorType *ot_resize = WM_operatortype_find("TRANSFORM_OT_rotate", true);
@@ -629,7 +751,7 @@ void ED_widgetgroup_gizmo2d_rotate_setup(const bContext *UNUSED(C), wmGizmoGroup
 
     /* custom handler! */
     WM_gizmo_set_fn_custom_modal(gz, gizmo2d_modal);
-    WM_gizmo_set_scale(gz, U.gizmo_size);
+    WM_gizmo_set_scale(gz, 1.2f);
 
     {
       PropertyRNA *prop = RNA_struct_find_property(gz->ptr, "icon");
@@ -639,12 +761,33 @@ void ED_widgetgroup_gizmo2d_rotate_setup(const bContext *UNUSED(C), wmGizmoGroup
       /* Make the center low alpha. */
       WM_gizmo_set_line_width(gz, 2.0f);
       RNA_float_set(gz->ptr, "backdrop_fill_alpha", 0.0);
+      WM_gizmo_set_color(gz, (const float[4]){1, 1, 1, 0.6});
     }
 
     /* Assign operator. */
     PointerRNA *ptr = WM_gizmo_operator_set(gz, 0, ot_resize, NULL);
     RNA_boolean_set(ptr, "release_confirm", true);
   }
+}
+
+static void gizmo2d_rotate_message_subscribe(const struct bContext *C,
+                                             struct wmGizmoGroup *gzgroup,
+                                             struct wmMsgBus *mbus)
+{
+  bScreen *screen = CTX_wm_screen(C);
+  ScrArea *sa = CTX_wm_area(C);
+  ARegion *ar = CTX_wm_region(C);
+  gizmo2d_pivot_point_message_subscribe(gzgroup, mbus, screen, sa, ar);
+}
+
+void ED_widgetgroup_gizmo2d_rotate_callbacks_set(wmGizmoGroupType *gzgt)
+{
+  gzgt->poll = gizmo2d_generic_poll;
+  gzgt->setup = gizmo2d_rotate_setup;
+  gzgt->setup_keymap = WM_gizmogroup_setup_keymap_generic_maybe_drag;
+  gzgt->refresh = gizmo2d_rotate_refresh;
+  gzgt->draw_prepare = gizmo2d_rotate_draw_prepare;
+  gzgt->message_subscribe = gizmo2d_rotate_message_subscribe;
 }
 
 /** \} */
