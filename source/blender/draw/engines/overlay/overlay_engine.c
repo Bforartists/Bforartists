@@ -185,7 +185,7 @@ static void OVERLAY_cache_populate(void *vedata, Object *ob)
   const bool is_select = DRW_state_is_select();
   const bool renderable = DRW_object_is_renderable(ob);
   const bool in_pose_mode = ob->type == OB_ARMATURE && OVERLAY_armature_is_pose_mode(ob, draw_ctx);
-  const bool in_edit_mode = BKE_object_is_in_editmode(ob);
+  const bool in_edit_mode = (ob->mode & OB_MODE_EDIT) && BKE_object_is_in_editmode(ob);
   const bool in_particle_edit_mode = ob->mode == OB_MODE_PARTICLE_EDIT;
   const bool in_paint_mode = (ob == draw_ctx->obact) &&
                              (draw_ctx->object_mode & OB_MODE_ALL_PAINT);
@@ -202,9 +202,10 @@ static void OVERLAY_cache_populate(void *vedata, Object *ob)
   const bool draw_bone_selection = (ob->type == OB_MESH) && pd->armature.do_pose_fade_geom &&
                                    !is_select;
   const bool draw_extras =
-      ((pd->overlay.flag & V3D_OVERLAY_HIDE_OBJECT_XTRAS) == 0) ||
-      /* Show if this is the camera we're looking through since it's useful for selecting. */
-      ((draw_ctx->rv3d->persp == RV3D_CAMOB) && ((ID *)draw_ctx->v3d->camera == ob->id.orig_id));
+      (!pd->hide_overlays) &&
+      (((pd->overlay.flag & V3D_OVERLAY_HIDE_OBJECT_XTRAS) == 0) ||
+       /* Show if this is the camera we're looking through since it's useful for selecting. */
+       ((draw_ctx->rv3d->persp == RV3D_CAMOB) && ((ID *)draw_ctx->v3d->camera == ob->id.orig_id)));
 
   const bool draw_motion_paths = (pd->overlay.flag & V3D_OVERLAY_HIDE_MOTION_PATHS) == 0;
 

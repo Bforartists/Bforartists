@@ -178,16 +178,18 @@ class GreasePencilDisplayPanel:
             else:
                 # GP Sculpt and Weight Paint always have Brush Tip panel.
                 return True
+        return False
 
     def draw_header(self, context):
-        if self.is_popover: return
+        if self.is_popover:
+            return
 
         if context.mode == 'PAINT_GPENCIL':
             brush = context.tool_settings.gpencil_paint.brush
             gp_settings = brush.gpencil_settings
 
             self.layout.prop(gp_settings, "use_cursor", text="")
-        elif context.mode in ('SCULPT_GPENCIL', 'WEIGHT_GPENCIL'):
+        elif context.mode in {'SCULPT_GPENCIL', 'WEIGHT_GPENCIL'}:
             settings = context.tool_settings.gpencil_sculpt
             brush = settings.brush
 
@@ -232,17 +234,9 @@ class GreasePencilDisplayPanel:
             col = layout.column(align=True)
             col.active = brush.use_cursor
 
-            if tool in {'THICKNESS', 'STRENGTH'}:
-                col.prop(brush, "cursor_color_add", text="Add Cursor Color")
-                col.prop(brush, "cursor_color_sub", text="Subtract Cursor Color")
-            elif tool == 'PINCH':
-                col.prop(brush, "cursor_color_add", text="Pinch Cursor Color")
-                col.prop(brush, "cursor_color_sub", text="Inflate Cursor Color")
-            elif tool == 'TWIST':
-                col.prop(brush, "cursor_color_add", text="CCW Cursor Color")
-                col.prop(brush, "cursor_color_sub", text="CW Cursor Color")
-            else:
-                col.prop(brush, "cursor_color_add", text="Cursor Color")
+            col.prop(brush, "cursor_color_add", text="Cursor Color")
+            if tool in {'THICKNESS', 'STRENGTH', 'PINCH', 'TWIST'}:
+                col.prop(brush, "cursor_color_sub", text="Inverse Cursor Color")
 
 
 class GPENCIL_MT_pie_tool_palette(Menu):
@@ -509,7 +503,7 @@ class GPENCIL_MT_move_to_layer(Menu):
             gpl_active = context.active_gpencil_layer
             tot_layers = len(gpd.layers)
             i = tot_layers - 1
-            while(i >= 0):
+            while i >= 0:
                 gpl = gpd.layers[i]
                 if gpl.info == gpl_active.info:
                     icon = 'GREASEPENCIL'
@@ -589,9 +583,9 @@ class AnnotationDataPanel:
     def poll(cls, context):
         # Show this panel as long as someone that might own this exists
         # AND the owner isn't an object (e.g. GP Object)
-        if context.gpencil_data_owner is None:
+        if context.annotation_data_owner is None:
             return False
-        elif type(context.gpencil_data_owner) is bpy.types.Object:
+        elif type(context.annotation_data_owner) is bpy.types.Object:
             return False
         else:
             return True
@@ -605,14 +599,14 @@ class AnnotationDataPanel:
         layout.use_property_decorate = False
 
         # Grease Pencil owner.
-        gpd_owner = context.gpencil_data_owner
-        gpd = context.gpencil_data
+        gpd_owner = context.annotation_data_owner
+        gpd = context.annotation_data
 
         # Owner selector.
         if context.space_data.type == 'CLIP_EDITOR':
             layout.row().prop(context.space_data, "grease_pencil_source", expand=True)
 
-        layout.template_ID(gpd_owner, "grease_pencil", new="gpencil.data_add", unlink="gpencil.data_unlink")
+        layout.template_ID(gpd_owner, "grease_pencil", new="gpencil.annotation_add", unlink="gpencil.data_unlink")
 
         # List of layers/notes.
         if gpd and gpd.layers:
@@ -632,17 +626,17 @@ class AnnotationDataPanel:
         col = row.column()
 
         sub = col.column(align=True)
-        sub.operator("gpencil.layer_add", icon='ADD', text="")
-        sub.operator("gpencil.layer_remove", icon='REMOVE', text="")
+        sub.operator("gpencil.layer_annotation_add", icon='ADD', text="")
+        sub.operator("gpencil.layer_annotation_remove", icon='REMOVE', text="")
 
-        gpl = context.active_gpencil_layer
+        gpl = context.active_annotation_layer
         if gpl:
             if len(gpd.layers) > 1:
                 col.separator()
 
                 sub = col.column(align=True)
-                sub.operator("gpencil.layer_move", icon='TRIA_UP', text="").type = 'UP'
-                sub.operator("gpencil.layer_move", icon='TRIA_DOWN', text="").type = 'DOWN'
+                sub.operator("gpencil.layer_annotation_move", icon='TRIA_UP', text="").type = 'UP'
+                sub.operator("gpencil.layer_annotation_move", icon='TRIA_DOWN', text="").type = 'DOWN'
 
         tool_settings = context.tool_settings
         if gpd and gpl:
@@ -661,7 +655,7 @@ class AnnotationDataPanel:
             else:
                 lock_label = iface_("Lock Frame")
             row.prop(gpl, "lock_frame", text=lock_label, icon='UNLOCKED')
-            row.operator("gpencil.active_frame_delete", text="", icon='X')
+            row.operator("gpencil.annotation_active_frame_delete", text="", icon='X')
 
 
 class AnnotationOnionSkin:
@@ -673,26 +667,26 @@ class AnnotationOnionSkin:
     def poll(cls, context):
         # Show this panel as long as someone that might own this exists
         # AND the owner isn't an object (e.g. GP Object)
-        if context.gpencil_data_owner is None:
+        if context.annotation_data_owner is None:
             return False
-        elif type(context.gpencil_data_owner) is bpy.types.Object:
+        elif type(context.annotation_data_owner) is bpy.types.Object:
             return False
         else:
-            gpl = context.active_gpencil_layer
+            gpl = context.active_annotation_layer
             if gpl is None:
                 return False
 
             return True
 
     def draw_header(self, context):
-        gpl = context.active_gpencil_layer
+        gpl = context.active_annotation_layer
         self.layout.prop(gpl, "use_annotation_onion_skinning", text="")
 
     def draw(self, context):
         layout = self.layout
         layout.use_property_decorate = False
 
-        gpl = context.active_gpencil_layer
+        gpl = context.active_annotation_layer
         col = layout.column()
         split = col.split(factor=0.5)
         split.active = gpl.use_annotation_onion_skinning
@@ -719,11 +713,10 @@ class GreasePencilToolsPanel:
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, _context):
         # XXX - disabled in 2.8 branch.
+        # return (context.gpencil_data is not None)
         return False
-
-        return (context.gpencil_data is not None)
 
     def draw(self, context):
         layout = self.layout

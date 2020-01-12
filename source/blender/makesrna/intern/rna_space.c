@@ -3492,7 +3492,7 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   prop = RNA_def_property(srna, "show_look_dev", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "overlay.flag", V3D_OVERLAY_LOOK_DEV);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(prop, "Look Dev Preview", "Show look development spheres");
+  RNA_def_property_ui_text(prop, "HDRI Preview", "Show HDRI preview spheres");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_wireframes", PROP_BOOLEAN, PROP_NONE);
@@ -3503,8 +3503,10 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "wireframe_threshold", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_float_sdna(prop, NULL, "overlay.wireframe_threshold");
-  RNA_def_property_ui_text(
-      prop, "Wireframe Threshold", "Adjust the number of wires displayed (1 for all wires)");
+  RNA_def_property_ui_text(prop,
+                           "Wireframe Threshold",
+                           "Adjust the angle threshold for displaying edges "
+                           "(1.0 for all)");
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
@@ -3677,7 +3679,7 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   prop = RNA_def_property(srna, "vertex_paint_mode_opacity", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_float_sdna(prop, NULL, "overlay.vertex_paint_mode_opacity");
   RNA_def_property_ui_text(
-      prop, "Vertex Paint Opacity", "Opacity of the vertex paint mode overlay");
+      prop, "Stencil Opacity", "Opacity of the texture paint mode stencil mask overlay");
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 

@@ -67,17 +67,6 @@ class TOPBAR_HT_upper_bar(Header):
             layout.template_reports_banner()
             layout.template_running_jobs()
 
-        # Active workspace view-layer is retrieved through window, not through workspace.
-        layout.template_ID(window, "scene", new="scene.new",
-                           unlink="scene.delete")
-
-        row = layout.row(align=True)
-        row.template_search(
-            window, "view_layer",
-            scene, "view_layers",
-            new="scene.view_layer_add",
-            unlink="scene.view_layer_remove")
-
 
 class TOPBAR_PT_tool_settings_extra(Panel):
     """
@@ -210,6 +199,16 @@ class TOPBAR_MT_editor_menus(Menu):
         layout.menu("TOPBAR_MT_help")
 
 
+class TOPBAR_MT_file_cleanup(Menu):
+    bl_label = "Clean Up"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.separator()
+
+        layout.operator("outliner.orphans_purge")
+
+
 class TOPBAR_MT_file(Menu):
     bl_label = "File"
 
@@ -251,6 +250,7 @@ class TOPBAR_MT_file(Menu):
         layout.separator()
 
         layout.menu("TOPBAR_MT_file_external_data")
+        layout.menu("TOPBAR_MT_file_cleanup")
 
         layout.separator()
 
@@ -402,7 +402,7 @@ class TOPBAR_MT_file_export(Menu):
             self.layout.operator("wm.collada_export", text="Collada (Default) (.dae)", icon = "SAVE_DAE")
         if bpy.app.build_options.alembic:
             self.layout.operator("wm.alembic_export", text="Alembic (.abc)", icon = "SAVE_ABC")
-        if bpy.app.build_options.usd and context.preferences.experimental.use_usd_exporter:
+        if bpy.app.build_options.usd:
             self.layout.operator(
                 "wm.usd_export", text="Universal Scene Description (.usd, .usdc, .usda)")
 
@@ -755,6 +755,7 @@ classes = (
     TOPBAR_MT_file_import,
     TOPBAR_MT_file_export,
     TOPBAR_MT_file_external_data,
+    TOPBAR_MT_file_cleanup,
     TOPBAR_MT_file_previews,
     TOPBAR_MT_edit,
     TOPBAR_MT_render,
