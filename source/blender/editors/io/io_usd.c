@@ -32,6 +32,8 @@
 #  include "BLI_string.h"
 #  include "BLI_utildefines.h"
 
+#  include "BLT_translation.h"
+
 #  include "MEM_guardedalloc.h"
 
 #  include "RNA_access.h"
@@ -111,7 +113,6 @@ static int wm_usd_export_exec(bContext *C, wmOperator *op)
   MEM_SAFE_FREE(op->customdata);
 
   const bool selected_objects_only = RNA_boolean_get(op->ptr, "selected_objects_only");
-  const bool visible_objects_only = RNA_boolean_get(op->ptr, "visible_objects_only");
   const bool export_animation = RNA_boolean_get(op->ptr, "export_animation");
   const bool export_hair = RNA_boolean_get(op->ptr, "export_hair");
   const bool export_uvmaps = RNA_boolean_get(op->ptr, "export_uvmaps");
@@ -127,7 +128,6 @@ static int wm_usd_export_exec(bContext *C, wmOperator *op)
       export_normals,
       export_materials,
       selected_objects_only,
-      visible_objects_only,
       use_instancing,
       evaluation_mode,
   };
@@ -147,7 +147,6 @@ static void wm_usd_export_draw(bContext *UNUSED(C), wmOperator *op)
 
   col = uiLayoutColumn(layout, true);
   uiItemR(col, ptr, "selected_objects_only", 0, NULL, ICON_NONE);
-  uiItemR(col, ptr, "visible_objects_only", 0, NULL, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   uiItemR(col, ptr, "export_animation", 0, NULL, ICON_NONE);
@@ -155,10 +154,13 @@ static void wm_usd_export_draw(bContext *UNUSED(C), wmOperator *op)
   uiItemR(col, ptr, "export_uvmaps", 0, NULL, ICON_NONE);
   uiItemR(col, ptr, "export_normals", 0, NULL, ICON_NONE);
   uiItemR(col, ptr, "export_materials", 0, NULL, ICON_NONE);
-  uiItemR(col, ptr, "use_instancing", 0, NULL, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
   uiItemR(col, ptr, "evaluation_mode", 0, NULL, ICON_NONE);
+
+  uiLayout *box = uiLayoutBox(layout);
+  uiItemL(box, IFACE_("Experimental:"), ICON_NONE);
+  uiItemR(box, ptr, "use_instancing", 0, NULL, ICON_NONE);
 }
 
 void WM_OT_usd_export(struct wmOperatorType *ot)
@@ -183,58 +185,49 @@ void WM_OT_usd_export(struct wmOperatorType *ot)
   RNA_def_boolean(ot->srna,
                   "selected_objects_only",
                   false,
-                  "Only Export Selected Objects",
+                  "Selection Only",
                   "Only selected objects are exported. Unselected parents of selected objects are "
-                  "exported as empty transform");
-
-  RNA_def_boolean(ot->srna,
-                  "visible_objects_only",
-                  true,
-                  "Only Export Visible Objects",
-                  "Only visible objects are exported. Invisible parents of visible objects are "
                   "exported as empty transform");
 
   RNA_def_boolean(ot->srna,
                   "export_animation",
                   false,
-                  "Export Animation",
+                  "Animation",
                   "When checked, the render frame range is exported. When false, only the current "
                   "frame is exported");
-  RNA_def_boolean(ot->srna,
-                  "export_hair",
-                  false,
-                  "Export Hair",
-                  "When checked, hair is exported as USD curves");
+  RNA_def_boolean(
+      ot->srna, "export_hair", false, "Hair", "When checked, hair is exported as USD curves");
   RNA_def_boolean(ot->srna,
                   "export_uvmaps",
                   true,
-                  "Export UV Maps",
+                  "UV Maps",
                   "When checked, all UV maps of exported meshes are included in the export");
   RNA_def_boolean(ot->srna,
                   "export_normals",
                   true,
-                  "Export Normals",
+                  "Normals",
                   "When checked, normals of exported meshes are included in the export");
   RNA_def_boolean(ot->srna,
                   "export_materials",
                   true,
-                  "Export Materials",
+                  "Materials",
                   "When checked, the viewport settings of materials are exported as USD preview "
                   "materials, and material assignments are exported as geometry subsets");
 
   RNA_def_boolean(ot->srna,
                   "use_instancing",
                   false,
-                  "Use Instancing (EXPERIMENTAL)",
-                  "When true, dupli-objects are written as instances of the original in USD. "
-                  "Experimental feature, not working perfectly");
+                  "Instancing",
+                  "When checked, instanced objects are exported as references in USD. "
+                  "When unchecked, instanced objects are exported as real objects");
 
   RNA_def_enum(ot->srna,
                "evaluation_mode",
                rna_enum_usd_export_evaluation_mode_items,
                DAG_EVAL_RENDER,
-               "Evaluation Mode",
-               "Determines visibility of objects and modifier settings");
+               "Use Settings for",
+               "Determines visibility of objects, modifier settings, and other areas where there "
+               "are different settings for viewport and rendering");
 }
 
 #endif /* WITH_USD */

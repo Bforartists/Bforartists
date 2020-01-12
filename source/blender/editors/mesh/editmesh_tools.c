@@ -133,7 +133,7 @@ static int edbm_subdivide_exec(bContext *C, wmOperator *op)
                        false,
                        seed);
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
 
   MEM_freeN(objects);
@@ -325,7 +325,7 @@ static int edbm_subdivide_edge_ring_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
 
   MEM_freeN(objects);
@@ -385,7 +385,7 @@ static int edbm_unsubdivide_exec(bContext *C, wmOperator *op)
     }
     EDBM_selectmode_flush(em);
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -411,10 +411,10 @@ void MESH_OT_unsubdivide(wmOperatorType *ot)
       ot->srna, "iterations", 2, 1, 1000, "Iterations", "Number of times to unsubdivide", 1, 100);
 }
 
-void EDBM_project_snap_verts(bContext *C, Depsgraph *depsgraph, ARegion *ar, BMEditMesh *em)
+void EDBM_project_snap_verts(
+    bContext *C, Depsgraph *depsgraph, ARegion *ar, Object *obedit, BMEditMesh *em)
 {
   Main *bmain = CTX_data_main(C);
-  Object *obedit = em->ob;
   BMIter iter;
   BMVert *eve;
 
@@ -534,7 +534,7 @@ static int edbm_delete_exec(bContext *C, wmOperator *op)
 
     EDBM_flag_disable_all(em, BM_ELEM_SELECT);
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
 
     DEG_id_tag_update(obedit->data, ID_RECALC_SELECT);
     WM_event_add_notifier(C, NC_GEOM | ND_SELECT, obedit->data);
@@ -663,7 +663,7 @@ static int edbm_delete_loose_exec(bContext *C, wmOperator *op)
 
     EDBM_flag_disable_all(em, BM_ELEM_SELECT);
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
 
   int totelem_new[3];
@@ -721,7 +721,7 @@ static int edbm_collapse_edge_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -1004,7 +1004,7 @@ static int edbm_add_edge_face_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
     changed_multi = true;
   }
   MEM_freeN(objects);
@@ -1080,8 +1080,7 @@ static int edbm_mark_seam_exec(bContext *C, wmOperator *op)
 
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
     Object *obedit = objects[ob_index];
-    BMEditMesh *em = BKE_editmesh_from_object(obedit);
-    EDBM_update_generic(em, true, false);
+    EDBM_update_generic(obedit->data, true, false);
   }
 
   MEM_freeN(objects);
@@ -1151,7 +1150,7 @@ static int edbm_mark_sharp_exec(bContext *C, wmOperator *op)
       BM_elem_flag_set(eed, BM_ELEM_SMOOTH, clear);
     }
 
-    EDBM_update_generic(em, true, false);
+    EDBM_update_generic(obedit->data, true, false);
   }
   MEM_freeN(objects);
 
@@ -1185,7 +1184,7 @@ void MESH_OT_mark_sharp(wmOperatorType *ot)
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
-static bool edbm_connect_vert_pair(BMEditMesh *em, wmOperator *op)
+static bool edbm_connect_vert_pair(BMEditMesh *em, struct Mesh *me, wmOperator *op)
 {
   BMesh *bm = em->bm;
   BMOperator bmop;
@@ -1264,7 +1263,7 @@ static bool edbm_connect_vert_pair(BMEditMesh *em, wmOperator *op)
       /* so newly created edges get the selection state from the vertex */
       EDBM_selectmode_flush(em);
 
-      EDBM_update_generic(em, true, true);
+      EDBM_update_generic(me, true, true);
     }
   }
   MEM_freeN(verts);
@@ -1284,7 +1283,7 @@ static int edbm_vert_connect_exec(bContext *C, wmOperator *op)
     Object *obedit = objects[ob_index];
     BMEditMesh *em = BKE_editmesh_from_object(obedit);
 
-    if (!edbm_connect_vert_pair(em, op)) {
+    if (!edbm_connect_vert_pair(em, obedit->data, op)) {
       failed_objects_len++;
     }
   }
@@ -1541,7 +1540,7 @@ static int edbm_vert_connect_path_exec(bContext *C, wmOperator *op)
 
     /* when there is only 2 vertices, we can ignore selection order */
     if (is_pair) {
-      if (!edbm_connect_vert_pair(em, op)) {
+      if (!edbm_connect_vert_pair(em, obedit->data, op)) {
         failed_connect_len++;
       }
       continue;
@@ -1558,7 +1557,7 @@ static int edbm_vert_connect_path_exec(bContext *C, wmOperator *op)
 
     if (bm_vert_connect_select_history(bm)) {
       EDBM_selectmode_flush(em);
-      EDBM_update_generic(em, true, true);
+      EDBM_update_generic(obedit->data, true, true);
     }
     else {
       failed_selection_order_len++;
@@ -1617,7 +1616,7 @@ static int edbm_vert_connect_concave_exec(bContext *C, wmOperator *op)
             em, op, "faces.out", true, "connect_verts_concave faces=%hf", BM_ELEM_SELECT)) {
       continue;
     }
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
 
   MEM_freeN(objects);
@@ -1671,7 +1670,7 @@ static int edbm_vert_connect_nonplaner_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -1740,7 +1739,7 @@ static int edbm_face_make_planar_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -1794,7 +1793,7 @@ static int edbm_edge_split_exec(bContext *C, wmOperator *op)
       EDBM_select_flush(em);
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -1863,7 +1862,7 @@ static int edbm_duplicate_exec(bContext *C, wmOperator *op)
     if (!EDBM_op_finish(em, &bmop, op, true)) {
       continue;
     }
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -1920,7 +1919,7 @@ static int edbm_flip_normals_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, false);
+    EDBM_update_generic(obedit->data, true, false);
   }
 
   MEM_freeN(objects);
@@ -2031,7 +2030,7 @@ static int edbm_edge_rotate_selected_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -2117,7 +2116,7 @@ static int edbm_hide_exec(bContext *C, wmOperator *op)
     }
 
     if (EDBM_mesh_hide(em, unselected)) {
-      EDBM_update_generic(em, true, false);
+      EDBM_update_generic(obedit->data, true, false);
       changed = true;
     }
   }
@@ -2168,7 +2167,7 @@ static int edbm_reveal_exec(bContext *C, wmOperator *op)
     BMEditMesh *em = BKE_editmesh_from_object(obedit);
 
     if (EDBM_mesh_reveal(em, select)) {
-      EDBM_update_generic(em, true, false);
+      EDBM_update_generic(obedit->data, true, false);
     }
   }
   MEM_freeN(objects);
@@ -2221,7 +2220,7 @@ static int edbm_normals_make_consistent_exec(bContext *C, wmOperator *op)
       EDBM_op_callf(em, op, "reverse_faces faces=%hf flip_multires=%b", BM_ELEM_SELECT, true);
     }
 
-    EDBM_update_generic(em, true, false);
+    EDBM_update_generic(obedit->data, true, false);
   }
   MEM_freeN(objects);
 
@@ -2336,7 +2335,7 @@ static int edbm_do_smooth_vertex_exec(bContext *C, wmOperator *op)
       EDBM_verts_mirror_cache_end(em);
     }
 
-    EDBM_update_generic(em, true, false);
+    EDBM_update_generic(obedit->data, true, false);
   }
   MEM_freeN(objects);
 
@@ -2460,7 +2459,7 @@ static int edbm_do_smooth_laplacian_vertex_exec(bContext *C, wmOperator *op)
       EDBM_verts_mirror_cache_end(em);
     }
 
-    EDBM_update_generic(em, true, false);
+    EDBM_update_generic(obedit->data, true, false);
   }
   MEM_freeN(objects);
 
@@ -2553,7 +2552,7 @@ static int edbm_faces_shade_smooth_exec(bContext *C, wmOperator *UNUSED(op))
     }
 
     mesh_set_smooth_faces(em, 1);
-    EDBM_update_generic(em, false, false);
+    EDBM_update_generic(obedit->data, false, false);
   }
   MEM_freeN(objects);
 
@@ -2596,7 +2595,7 @@ static int edbm_faces_shade_flat_exec(bContext *C, wmOperator *UNUSED(op))
     }
 
     mesh_set_smooth_faces(em, 0);
-    EDBM_update_generic(em, false, false);
+    EDBM_update_generic(obedit->data, false, false);
   }
   MEM_freeN(objects);
 
@@ -2653,7 +2652,7 @@ static int edbm_rotate_uvs_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, false, false);
+    EDBM_update_generic(obedit->data, false, false);
   }
 
   MEM_freeN(objects);
@@ -2686,7 +2685,7 @@ static int edbm_reverse_uvs_exec(bContext *C, wmOperator *op)
     if (!EDBM_op_finish(em, &bmop, op, true)) {
       continue;
     }
-    EDBM_update_generic(em, false, false);
+    EDBM_update_generic(obedit->data, false, false);
   }
 
   MEM_freeN(objects);
@@ -2724,7 +2723,7 @@ static int edbm_rotate_colors_exec(bContext *C, wmOperator *op)
     }
 
     /* dependencies graph and notification stuff */
-    EDBM_update_generic(em, false, false);
+    EDBM_update_generic(ob->data, false, false);
   }
 
   MEM_freeN(objects);
@@ -2740,8 +2739,8 @@ static int edbm_reverse_colors_exec(bContext *C, wmOperator *op)
       view_layer, CTX_wm_view3d(C), &objects_len);
 
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
-    Object *ob = objects[ob_index];
-    BMEditMesh *em = BKE_editmesh_from_object(ob);
+    Object *obedit = objects[ob_index];
+    BMEditMesh *em = BKE_editmesh_from_object(obedit);
 
     if (em->bm->totfacesel == 0) {
       continue;
@@ -2760,7 +2759,7 @@ static int edbm_reverse_colors_exec(bContext *C, wmOperator *op)
       return OPERATOR_CANCELLED;
     }
 
-    EDBM_update_generic(em, false, false);
+    EDBM_update_generic(obedit->data, false, false);
   }
   MEM_freeN(objects);
 
@@ -3004,7 +3003,7 @@ static int edbm_merge_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
 
     /* once collapsed, we can't have edge/face selection */
     if ((em->selectmode & SCE_SELECT_VERTEX) == 0) {
@@ -3177,7 +3176,7 @@ static int edbm_remove_doubles_exec(bContext *C, wmOperator *op)
 
     if (count) {
       count_multi += count;
-      EDBM_update_generic(em, true, true);
+      EDBM_update_generic(obedit->data, true, true);
     }
   }
   MEM_freeN(objects);
@@ -3271,7 +3270,7 @@ static int edbm_shape_propagate_to_all_exec(bContext *C, wmOperator *op)
       tot_shapekeys++;
     }
 
-    EDBM_update_generic(em, false, false);
+    EDBM_update_generic(me, false, false);
   }
   MEM_freeN(objects);
 
@@ -3397,7 +3396,7 @@ static int edbm_blend_from_shape_exec(bContext *C, wmOperator *op)
           interp_v3_v3v3(eve->co, eve->co, co, blend);
         }
       }
-      EDBM_update_generic(em, true, false);
+      EDBM_update_generic(me, true, false);
     }
   }
   MEM_freeN(objects);
@@ -3533,7 +3532,7 @@ static int edbm_solidify_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
 
   MEM_freeN(objects);
@@ -3862,7 +3861,7 @@ static int edbm_knife_cut_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  EDBM_update_generic(em, true, true);
+  EDBM_update_generic(obedit->data, true, true);
 
   return OPERATOR_FINISHED;
 }
@@ -4260,7 +4259,7 @@ static int edbm_separate_exec(bContext *C, wmOperator *op)
       }
 
       if (retval) {
-        EDBM_update_generic(em, true, true);
+        EDBM_update_generic(base->object->data, true, true);
       }
     }
     MEM_freeN(bases);
@@ -4407,7 +4406,7 @@ static int edbm_fill_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -4680,7 +4679,7 @@ static int edbm_fill_grid_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
 
   MEM_freeN(objects);
@@ -4752,7 +4751,7 @@ static int edbm_fill_holes_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -4835,7 +4834,7 @@ static int edbm_beautify_fill_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
 
   MEM_freeN(objects);
@@ -4921,7 +4920,7 @@ static int edbm_poke_face_exec(bContext *C, wmOperator *op)
 
     EDBM_mesh_normals_update(em);
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -5019,7 +5018,7 @@ static int edbm_quads_convert_to_tris_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
 
   MEM_freeN(objects);
@@ -5127,7 +5126,7 @@ static int edbm_tris_convert_to_quads_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -5311,7 +5310,7 @@ static int edbm_decimate_exec(bContext *C, wmOperator *op)
       }
       EDBM_selectmode_flush_ex(em, selectmode);
     }
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -5447,7 +5446,7 @@ static int edbm_dissolve_verts_exec(bContext *C, wmOperator *op)
                        use_boundary_tear)) {
       continue;
     }
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
 
   MEM_freeN(objects);
@@ -5504,7 +5503,7 @@ static int edbm_dissolve_edges_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
 
   MEM_freeN(objects);
@@ -5561,7 +5560,7 @@ static int edbm_dissolve_faces_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -5704,7 +5703,7 @@ static int edbm_dissolve_limited_exec(bContext *C, wmOperator *op)
         use_dissolve_boundaries,
         delimit);
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -5791,7 +5790,7 @@ static int edbm_dissolve_degenerate_exec(bContext *C, wmOperator *op)
     /* tricky to maintain correct selection here, so just flush up from verts */
     EDBM_select_flush(em);
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
 
     totelem_new[0] += bm->totvert;
     totelem_new[1] += bm->totedge;
@@ -5882,7 +5881,7 @@ static int edbm_delete_edgeloop_exec(bContext *C, wmOperator *op)
 
     EDBM_selectmode_flush_ex(em, SCE_SELECT_VERTEX);
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
 
   MEM_freeN(objects);
@@ -5942,7 +5941,7 @@ static int edbm_split_exec(bContext *C, wmOperator *op)
     /* Geometry has changed, need to recalc normals and looptris */
     EDBM_mesh_normals_update(em);
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
   MEM_freeN(objects);
 
@@ -6684,6 +6683,7 @@ static int edbm_bridge_tag_boundary_edges(BMesh *bm)
 
 static int edbm_bridge_edge_loops_for_single_editmesh(wmOperator *op,
                                                       BMEditMesh *em,
+                                                      struct Mesh *me,
                                                       const bool use_pairs,
                                                       const bool use_cyclic,
                                                       const bool use_merge,
@@ -6785,7 +6785,7 @@ static int edbm_bridge_edge_loops_for_single_editmesh(wmOperator *op,
   }
 
   if (EDBM_op_finish(em, &bmop, op, true)) {
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(me, true, true);
   }
 
   /* Always return finished so the user can select different options. */
@@ -6814,7 +6814,7 @@ static int edbm_bridge_edge_loops_exec(bContext *C, wmOperator *op)
     }
 
     edbm_bridge_edge_loops_for_single_editmesh(
-        op, em, use_pairs, use_cyclic, use_merge, merge_factor, twist_offset);
+        op, em, obedit->data, use_pairs, use_cyclic, use_merge, merge_factor, twist_offset);
   }
   MEM_freeN(objects);
   return OPERATOR_FINISHED;
@@ -6920,7 +6920,7 @@ static int edbm_wireframe_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
   }
 
   MEM_freeN(objects);
@@ -7031,7 +7031,7 @@ static int edbm_offset_edgeloop_exec(bContext *C, wmOperator *op)
       continue;
     }
     else {
-      EDBM_update_generic(em, true, true);
+      EDBM_update_generic(obedit->data, true, true);
       ret = OPERATOR_FINISHED;
     }
   }
@@ -7148,7 +7148,7 @@ static int edbm_convex_hull_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    EDBM_update_generic(em, true, true);
+    EDBM_update_generic(obedit->data, true, true);
     EDBM_selectmode_flush(em);
   }
 
@@ -7237,7 +7237,7 @@ static int mesh_symmetrize_exec(bContext *C, wmOperator *op)
       continue;
     }
     else {
-      EDBM_update_generic(em, true, true);
+      EDBM_update_generic(obedit->data, true, true);
       EDBM_selectmode_flush(em);
     }
   }
@@ -7380,7 +7380,7 @@ static int mesh_symmetry_snap_exec(bContext *C, wmOperator *op)
         }
       }
     }
-    EDBM_update_generic(em, false, false);
+    EDBM_update_generic(obedit->data, false, false);
 
     /* No need to end cache, just free the array. */
     MEM_freeN(index);
@@ -7727,8 +7727,8 @@ static int point_normals_init(bContext *C, wmOperator *op, const wmEvent *UNUSED
   BMEditMesh *em = BKE_editmesh_from_object(obedit);
   BMesh *bm = em->bm;
 
-  BKE_editmesh_ensure_autosmooth(em);
-  BKE_editmesh_lnorspace_update(em);
+  BKE_editmesh_ensure_autosmooth(em, obedit->data);
+  BKE_editmesh_lnorspace_update(em, obedit->data);
   BMLoopNorEditDataArray *lnors_ed_arr = BM_loop_normal_editdata_array_init(bm, false);
 
   op->customdata = lnors_ed_arr;
@@ -8028,7 +8028,7 @@ static int edbm_point_normals_modal(bContext *C, wmOperator *op, const wmEvent *
       RNA_property_float_set_array(op->ptr, prop_target, target);
     }
     point_normals_apply(C, op, target, do_reset);
-    EDBM_update_generic(em, true, false); /* Recheck bools. */
+    EDBM_update_generic(obedit->data, true, false); /* Recheck bools. */
 
     point_normals_update_header(C, op);
   }
@@ -8059,7 +8059,6 @@ static int edbm_point_normals_invoke(bContext *C, wmOperator *op, const wmEvent 
 static int edbm_point_normals_exec(bContext *C, wmOperator *op)
 {
   Object *obedit = CTX_data_edit_object(C);
-  BMEditMesh *em = BKE_editmesh_from_object(obedit);
 
   if (!point_normals_init(C, op, NULL)) {
     point_normals_free(C, op);
@@ -8074,7 +8073,7 @@ static int edbm_point_normals_exec(bContext *C, wmOperator *op)
 
   point_normals_apply(C, op, target, false);
 
-  EDBM_update_generic(em, true, false);
+  EDBM_update_generic(obedit->data, true, false);
   point_normals_free(C, op);
 
   return OPERATOR_FINISHED;
@@ -8294,8 +8293,8 @@ static int normals_split_merge(bContext *C, const bool do_merge)
     BMEdge *e;
     BMIter eiter;
 
-    BKE_editmesh_ensure_autosmooth(em);
-    BKE_editmesh_lnorspace_update(em);
+    BKE_editmesh_ensure_autosmooth(em, obedit->data);
+    BKE_editmesh_lnorspace_update(em, obedit->data);
 
     /* Note that we need temp lnor editing data for all loops of all affected vertices, since by
      * setting some faces/edges as smooth we are going to change clnors spaces... See also T65809.
@@ -8313,7 +8312,7 @@ static int normals_split_merge(bContext *C, const bool do_merge)
     }
 
     bm->spacearr_dirty |= BM_SPACEARR_DIRTY_ALL;
-    BKE_editmesh_lnorspace_update(em);
+    BKE_editmesh_lnorspace_update(em, obedit->data);
 
     if (do_merge) {
       normals_merge(bm, lnors_ed_arr);
@@ -8326,7 +8325,7 @@ static int normals_split_merge(bContext *C, const bool do_merge)
       BM_loop_normal_editdata_array_free(lnors_ed_arr);
     }
 
-    EDBM_update_generic(em, true, false);
+    EDBM_update_generic(obedit->data, true, false);
   }
 
   MEM_freeN(objects);
@@ -8418,9 +8417,9 @@ static int edbm_average_normals_exec(bContext *C, wmOperator *op)
     BMLoop *l, *l_curr, *l_first;
     BMIter fiter;
 
-    BKE_editmesh_ensure_autosmooth(em);
+    BKE_editmesh_ensure_autosmooth(em, obedit->data);
     bm->spacearr_dirty |= BM_SPACEARR_DIRTY_ALL;
-    BKE_editmesh_lnorspace_update(em);
+    BKE_editmesh_lnorspace_update(em, obedit->data);
 
     const int cd_clnors_offset = CustomData_get_offset(&bm->ldata, CD_CUSTOMLOOPNORMAL);
 
@@ -8532,7 +8531,7 @@ static int edbm_average_normals_exec(bContext *C, wmOperator *op)
     }
 
     BLI_heapsimple_free(loop_weight, NULL);
-    EDBM_update_generic(em, true, false);
+    EDBM_update_generic(obedit->data, true, false);
   }
 
   MEM_freeN(objects);
@@ -8657,8 +8656,8 @@ static int edbm_normals_tools_exec(bContext *C, wmOperator *op)
       continue;
     }
 
-    BKE_editmesh_ensure_autosmooth(em);
-    BKE_editmesh_lnorspace_update(em);
+    BKE_editmesh_ensure_autosmooth(em, obedit->data);
+    BKE_editmesh_lnorspace_update(em, obedit->data);
     BMLoopNorEditDataArray *lnors_ed_arr = BM_loop_normal_editdata_array_init(bm, false);
     BMLoopNorEditData *lnor_ed = lnors_ed_arr->lnor_editdata;
 
@@ -8779,7 +8778,7 @@ static int edbm_normals_tools_exec(bContext *C, wmOperator *op)
 
     BM_loop_normal_editdata_array_free(lnors_ed_arr);
 
-    EDBM_update_generic(em, true, false);
+    EDBM_update_generic(obedit->data, true, false);
   }
 
   MEM_freeN(objects);
@@ -8863,8 +8862,8 @@ static int edbm_set_normals_from_faces_exec(bContext *C, wmOperator *op)
 
     const bool keep_sharp = RNA_boolean_get(op->ptr, "keep_sharp");
 
-    BKE_editmesh_ensure_autosmooth(em);
-    BKE_editmesh_lnorspace_update(em);
+    BKE_editmesh_ensure_autosmooth(em, obedit->data);
+    BKE_editmesh_lnorspace_update(em, obedit->data);
 
     float(*vnors)[3] = MEM_callocN(sizeof(*vnors) * bm->totvert, __func__);
     BM_ITER_MESH (f, &fiter, bm, BM_FACES_OF_MESH) {
@@ -8927,7 +8926,7 @@ static int edbm_set_normals_from_faces_exec(bContext *C, wmOperator *op)
 
     MEM_freeN(loop_set);
     MEM_freeN(vnors);
-    EDBM_update_generic(em, true, false);
+    EDBM_update_generic(obedit->data, true, false);
   }
 
   MEM_freeN(objects);
@@ -8966,8 +8965,8 @@ static int edbm_smoothen_normals_exec(bContext *C, wmOperator *op)
     BMLoop *l;
     BMIter fiter, liter;
 
-    BKE_editmesh_ensure_autosmooth(em);
-    BKE_editmesh_lnorspace_update(em);
+    BKE_editmesh_ensure_autosmooth(em, obedit->data);
+    BKE_editmesh_lnorspace_update(em, obedit->data);
     BMLoopNorEditDataArray *lnors_ed_arr = BM_loop_normal_editdata_array_init(bm, false);
 
     float(*smooth_normal)[3] = MEM_callocN(sizeof(*smooth_normal) * lnors_ed_arr->totloop,
@@ -9029,7 +9028,7 @@ static int edbm_smoothen_normals_exec(bContext *C, wmOperator *op)
     BM_loop_normal_editdata_array_free(lnors_ed_arr);
     MEM_freeN(smooth_normal);
 
-    EDBM_update_generic(em, true, false);
+    EDBM_update_generic(obedit->data, true, false);
   }
 
   MEM_freeN(objects);
@@ -9118,7 +9117,7 @@ static int edbm_mod_weighted_strength_exec(bContext *C, wmOperator *op)
       }
     }
 
-    EDBM_update_generic(em, false, false);
+    EDBM_update_generic(obedit->data, false, false);
   }
 
   MEM_freeN(objects);
