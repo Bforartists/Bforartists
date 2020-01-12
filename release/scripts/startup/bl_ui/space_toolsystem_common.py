@@ -218,49 +218,27 @@ class ToolSelectPanelHelper:
 
     @staticmethod
     def _tools_flatten(tools):
-        """
-        Flattens, skips None and calls generators.
-        """
         for item in tools:
-            if item is None:
-                yield None
-            elif type(item) is tuple:
-                for sub_item in item:
-                    if sub_item is None:
-                        yield None
-                    elif _item_is_fn(sub_item):
-                        yield from sub_item(context)
-                    else:
-                        yield sub_item
+            if type(item) is tuple:
+                yield from item
             else:
-                if _item_is_fn(item):
-                    yield from item(context)
-                else:
-                    yield item
+                # May be None.
+                yield item
 
     @staticmethod
     def _tools_flatten_with_tool_index(tools):
         for item in tools:
-            if item is None:
-                yield None, -1
-            elif type(item) is tuple:
+            if type(item) is tuple:
                 i = 0
                 for sub_item in item:
                     if sub_item is None:
                         yield None, -1
-                    elif _item_is_fn(sub_item):
-                        for item_dyn in sub_item(context):
-                            yield item_dyn, i
-                            i += 1
                     else:
                         yield sub_item, i
                         i += 1
             else:
-                if _item_is_fn(item):
-                    for item_dyn in item(context):
-                        yield item_dyn, -1
-                else:
-                    yield item, -1
+                # May be None.
+                yield item, -1
 
     @classmethod
     def _tool_get_active(cls, context, space_type, mode, with_icon=False):
@@ -376,9 +354,19 @@ class ToolSelectPanelHelper:
                 i += 1
         return None, -1
 
+    @classmethod
+    def _tool_group_active_set_by_id(cls, context, idname_group, idname):
+        item_group = cls._tool_get_group_by_id(context, idname_group, coerce=True)
+        if item_group:
+            for i, item in enumerate(item_group):
+                if item and item.idname == idname:
+                    cls._tool_group_active[item_group[0].idname] = i
+                    return True
+        return False
+
     @staticmethod
     def _tool_active_from_context(context, space_type, mode=None, create=False):
-        if space_type in ('VIEW_3D', 'PROPERTIES'):
+        if space_type in {'VIEW_3D', 'PROPERTIES'}:
             if mode is None:
                 mode = context.mode
             tool = context.workspace.tools.from_space_view3d_mode(mode, create=create)
@@ -678,17 +666,16 @@ class ToolSelectPanelHelper:
         space_type = context.space_data.type
         return ToolSelectPanelHelper._tool_active_from_context(context, space_type)
 
-
     @staticmethod
     def draw_active_tool_fallback(
             context, layout, tool,
             *,
             is_horizontal_layout=False,
     ):
-        tool_fallback = tool.tool_fallback
+        idname_fallback = tool.idname_fallback
         space_type = tool.space_type
         cls = ToolSelectPanelHelper._tool_class_from_space_type(space_type)
-        item_fallback, _index = cls._tool_get_by_id(context, tool_fallback)
+        item_fallback, _index = cls._tool_get_by_id(context, idname_fallback)
         if item_fallback is not None:
             draw_settings = item_fallback.draw_settings
             if draw_settings is not None:
@@ -724,12 +711,8 @@ class ToolSelectPanelHelper:
         if draw_settings is not None:
             draw_settings(context, layout, tool)
 
-        if context.preferences.experimental.use_tool_fallback:
-            tool_fallback = tool.tool_fallback
-        else:
-            tool_fallback = None
-
-        if tool_fallback and tool_fallback != item.idname:
+        idname_fallback = tool.idname_fallback
+        if idname_fallback and idname_fallback != item.idname:
             tool_settings = context.tool_settings
 
             # Show popover which looks like an enum but isn't one.
@@ -887,6 +870,7 @@ class WM_MT_toolsystem_submenu(Menu):
 
 def _activate_by_item(context, space_type, item, index, *, as_fallback=False):
     cls = ToolSelectPanelHelper._tool_class_from_space_type(space_type)
+    tool = ToolSelectPanelHelper._tool_active_from_context(context, space_type, create=True)
     tool_fallback_id = cls.tool_fallback_id
 
     if as_fallback:
@@ -914,6 +898,12 @@ def _activate_by_item(context, space_type, item, index, *, as_fallback=False):
         # Done, now get the current tool to replace the item & index.
         tool_active = ToolSelectPanelHelper._tool_active_from_context(context, space_type)
         item, index = cls._tool_get_by_id(context, getattr(tool_active, "idname", None))
+    else:
+        # Ensure the active fallback tool is read from saved state (even if the fallback tool is not in use).
+        stored_idname_fallback = tool.idname_fallback
+        if stored_idname_fallback:
+            cls._tool_group_active_set_by_id(context, tool_fallback_id, stored_idname_fallback)
+        del stored_idname_fallback
 
     # Find fallback keymap.
     item_fallback = None
@@ -922,7 +912,6 @@ def _activate_by_item(context, space_type, item, index, *, as_fallback=False):
         item_fallback, _index = cls._tool_get_active_by_index(context, select_index)
     # End calculating fallback.
 
-    tool = ToolSelectPanelHelper._tool_active_from_context(context, space_type, create=True)
     tool.setup(
         idname=item.idname,
         keymap=item.keymap[0] if item.keymap is not None else "",

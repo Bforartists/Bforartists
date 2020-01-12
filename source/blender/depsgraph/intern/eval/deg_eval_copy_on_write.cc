@@ -610,7 +610,7 @@ void update_lattice_edit_mode_pointers(const Depsgraph * /*depsgraph*/,
   lt_cow->editlatt = lt_orig->editlatt;
 }
 
-void update_mesh_edit_mode_pointers(const Depsgraph *depsgraph, const ID *id_orig, ID *id_cow)
+void update_mesh_edit_mode_pointers(const ID *id_orig, ID *id_cow)
 {
   /* For meshes we need to update edit_mesh to make it to point
    * to the CoW version of object.
@@ -624,7 +624,6 @@ void update_mesh_edit_mode_pointers(const Depsgraph *depsgraph, const ID *id_ori
     return;
   }
   mesh_cow->edit_mesh = (BMEditMesh *)MEM_dupallocN(mesh_orig->edit_mesh);
-  mesh_cow->edit_mesh->ob = (Object *)depsgraph->get_cow_id(&mesh_orig->edit_mesh->ob->id);
   mesh_cow->edit_mesh->mesh_eval_cage = NULL;
   mesh_cow->edit_mesh->mesh_eval_final = NULL;
 }
@@ -639,7 +638,7 @@ void update_edit_mode_pointers(const Depsgraph *depsgraph, const ID *id_orig, ID
       update_armature_edit_mode_pointers(depsgraph, id_orig, id_cow);
       break;
     case ID_ME:
-      update_mesh_edit_mode_pointers(depsgraph, id_orig, id_cow);
+      update_mesh_edit_mode_pointers(id_orig, id_cow);
       break;
     case ID_CU:
       update_curve_edit_mode_pointers(depsgraph, id_orig, id_cow);
@@ -759,17 +758,17 @@ void update_animation_data_after_copy(const ID *id_orig, ID *id_cow)
 /* Some builders (like motion path one) will ignore proxies from being built. This code makes it so
  * proxy and proxy_group pointers never point to an original objects, preventing evaluation code
  * from assign evaluated pointer to an original proxy->proxy_from. */
-void update_proxy_pointers_after_copy(const Depsgraph * /*depsgraph*/,
-                                      const Object * /*object_orig*/,
+void update_proxy_pointers_after_copy(const Depsgraph *depsgraph,
+                                      const Object *object_orig,
                                       Object *object_cow)
 {
   if (object_cow->proxy != NULL) {
-    if ((object_cow->proxy->id.tag & LIB_TAG_COPIED_ON_WRITE) == 0) {
+    if (!deg_check_id_in_depsgraph(depsgraph, &object_orig->proxy->id)) {
       object_cow->proxy = NULL;
     }
   }
   if (object_cow->proxy_group != NULL) {
-    if ((object_cow->proxy_group->id.tag & LIB_TAG_COPIED_ON_WRITE) == 0) {
+    if (!deg_check_id_in_depsgraph(depsgraph, &object_orig->proxy_group->id)) {
       object_cow->proxy_group = NULL;
     }
   }
