@@ -3419,7 +3419,7 @@ static void rna_def_particle_settings(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, NULL, "rad_root");
   RNA_def_property_range(prop, 0.0f, FLT_MAX);
   RNA_def_property_ui_range(prop, 0.0f, 10.0f, 0.1, 2);
-  RNA_def_property_ui_text(prop, "Root", "Strand width at the root");
+  RNA_def_property_ui_text(prop, "Root Diameter", "Strand diameter width at the root");
   RNA_def_property_update(
       prop, 0, "rna_Particle_redo"); /* TODO: Only need to tell the render engine to update. */
 
@@ -3427,7 +3427,7 @@ static void rna_def_particle_settings(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, NULL, "rad_tip");
   RNA_def_property_range(prop, 0.0f, FLT_MAX);
   RNA_def_property_ui_range(prop, 0.0f, 10.0f, 0.1, 2);
-  RNA_def_property_ui_text(prop, "Tip", "Strand width at the tip");
+  RNA_def_property_ui_text(prop, "Tip Diameter", "Strand diameter width at the tip");
   RNA_def_property_update(
       prop, 0, "rna_Particle_redo"); /* TODO: Only need to tell the render engine to update. */
 

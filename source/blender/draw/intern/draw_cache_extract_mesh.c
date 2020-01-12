@@ -95,6 +95,9 @@ typedef struct MeshRenderData {
   bool use_subsurf_fdots;
   bool use_final_mesh;
 
+  /** Use for #MeshStatVis calculation which use world-space coords. */
+  float obmat[4][4];
+
   const ToolSettings *toolsettings;
   /* HACK not supposed to be there but it's needed. */
   struct MeshBatchCache *cache;
@@ -125,6 +128,8 @@ typedef struct MeshRenderData {
 } MeshRenderData;
 
 static MeshRenderData *mesh_render_data_create(Mesh *me,
+                                               const bool is_editmode,
+                                               const float obmat[4][4],
                                                const bool do_final,
                                                const bool do_uvedit,
                                                const eMRIterType iter_type,
@@ -136,10 +141,12 @@ static MeshRenderData *mesh_render_data_create(Mesh *me,
   mr->toolsettings = ts;
   mr->mat_len = mesh_render_mat_len_get(me);
 
+  copy_m4_m4(mr->obmat, obmat);
+
   const bool is_auto_smooth = (me->flag & ME_AUTOSMOOTH) != 0;
   const float split_angle = is_auto_smooth ? me->smoothresh : (float)M_PI;
 
-  if (me->edit_mesh) {
+  if (is_editmode) {
     BLI_assert(me->edit_mesh->mesh_eval_cage && me->edit_mesh->mesh_eval_final);
     mr->bm = me->edit_mesh->bm;
     mr->edit_bmesh = me->edit_mesh;
@@ -2664,6 +2671,7 @@ static void extract_edituv_data_loop_bmesh(const MeshRenderData *mr,
   EditLoopData *eldata = data->vbo_data + l;
   memset(eldata, 0x0, sizeof(*eldata));
   mesh_render_data_loop_flag(mr, loop, data->cd_ofs, eldata);
+  mesh_render_data_face_flag(mr, loop->f, data->cd_ofs, eldata);
   mesh_render_data_loop_edge_flag(mr, loop, data->cd_ofs, eldata);
 }
 
@@ -3102,11 +3110,9 @@ static void statvis_calc_overhang(const MeshRenderData *mr, float *r_overhang)
 
   axis_from_enum_v3(dir, axis);
 
-  if (em && LIKELY(em->ob)) {
-    /* now convert into global space */
-    mul_transposed_mat3_m4_v3(em->ob->obmat, dir);
-    normalize_v3(dir);
-  }
+  /* now convert into global space */
+  mul_transposed_mat3_m4_v3(mr->obmat, dir);
+  normalize_v3(dir);
 
   if (mr->extract_type == MR_EXTRACT_BMESH) {
     int l = 0;
@@ -3164,7 +3170,7 @@ static void statvis_calc_thickness(const MeshRenderData *mr, float *r_thickness)
   /* cheating to avoid another allocation */
   float *face_dists = r_thickness + (mr->loop_len - mr->poly_len);
   BMEditMesh *em = mr->edit_bmesh;
-  const float scale = 1.0f / mat4_to_scale(em->ob->obmat);
+  const float scale = 1.0f / mat4_to_scale(mr->obmat);
   const MeshStatVis *statvis = &mr->toolsettings->statvis;
   const float min = statvis->thickness_min * scale;
   const float max = statvis->thickness_max * scale;
@@ -4374,6 +4380,8 @@ static void extract_task_create(TaskPool *task_pool,
 void mesh_buffer_cache_create_requested(MeshBatchCache *cache,
                                         MeshBufferCache mbc,
                                         Mesh *me,
+                                        const bool is_editmode,
+                                        const float obmat[4][4],
                                         const bool do_final,
                                         const bool do_uvedit,
                                         const bool use_subsurf_fdots,
@@ -4434,7 +4442,7 @@ void mesh_buffer_cache_create_requested(MeshBatchCache *cache,
 #endif
 
   MeshRenderData *mr = mesh_render_data_create(
-      me, do_final, do_uvedit, iter_flag, data_flag, cd_layer_used, ts);
+      me, is_editmode, obmat, do_final, do_uvedit, iter_flag, data_flag, cd_layer_used, ts);
   mr->cache = cache; /* HACK */
   mr->use_hide = use_hide;
   mr->use_subsurf_fdots = use_subsurf_fdots;
