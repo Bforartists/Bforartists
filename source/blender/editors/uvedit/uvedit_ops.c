@@ -81,6 +81,7 @@
 
 #include "WM_api.h"
 #include "WM_types.h"
+#include "WM_message.h"
 
 #include "UI_interface.h"
 #include "UI_resources.h"
@@ -729,14 +730,6 @@ static bool ED_uvedit_median_multi(
   return (sel != 0);
 }
 
-static bool UNUSED_FUNCTION(ED_uvedit_median)(Scene *scene,
-                                              Image *ima,
-                                              Object *obedit,
-                                              float co[2])
-{
-  return ED_uvedit_median_multi(scene, ima, &obedit, 1, co);
-}
-
 bool ED_uvedit_center_multi(const Scene *scene,
                             Image *ima,
                             Object **objects_edit,
@@ -762,9 +755,46 @@ bool ED_uvedit_center_multi(const Scene *scene,
   return changed;
 }
 
-bool ED_uvedit_center(const Scene *scene, Image *ima, Object *obedit, float cent[2], char mode)
+bool ED_uvedit_center_from_pivot_ex(SpaceImage *sima,
+                                    Scene *scene,
+                                    ViewLayer *view_layer,
+                                    float r_center[2],
+                                    char mode,
+                                    bool *r_has_select)
 {
-  return ED_uvedit_center_multi(scene, ima, &obedit, 1, cent, mode);
+  bool changed = false;
+  switch (mode) {
+    case V3D_AROUND_CURSOR: {
+      copy_v2_v2(r_center, sima->cursor);
+      changed = true;
+      if (r_has_select != NULL) {
+        uint objects_len = 0;
+        Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
+            view_layer, ((View3D *)NULL), &objects_len);
+        *r_has_select = uv_select_is_any_selected_multi(scene, sima->image, objects, objects_len);
+        MEM_freeN(objects);
+      }
+      break;
+    }
+    default: {
+      uint objects_len = 0;
+      Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
+          view_layer, ((View3D *)NULL), &objects_len);
+      changed = ED_uvedit_center_multi(scene, sima->image, objects, objects_len, r_center, mode);
+      MEM_freeN(objects);
+      if (r_has_select != NULL) {
+        *r_has_select = changed;
+      }
+      break;
+    }
+  }
+  return changed;
+}
+
+bool ED_uvedit_center_from_pivot(
+    SpaceImage *sima, Scene *scene, ViewLayer *view_layer, float r_center[2], char mode)
+{
+  return ED_uvedit_center_from_pivot_ex(sima, scene, view_layer, r_center, mode, NULL);
 }
 
 /** \} */
@@ -3485,6 +3515,7 @@ static int uv_box_select_exec(bContext *C, wmOperator *op)
 
   const eSelectOp sel_op = RNA_enum_get(op->ptr, "mode");
   const bool select = (sel_op != SEL_OP_SUB);
+  const bool use_pre_deselect = SEL_OP_USE_PRE_DESELECT(sel_op);
 
   pinned = RNA_boolean_get(op->ptr, "pinned");
 
@@ -3494,7 +3525,7 @@ static int uv_box_select_exec(bContext *C, wmOperator *op)
   Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
       view_layer, ((View3D *)NULL), &objects_len);
 
-  if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
+  if (use_pre_deselect) {
     uv_select_all_perform_multi(scene, ima, objects, objects_len, SEL_DESELECT);
   }
 
@@ -3511,8 +3542,6 @@ static int uv_box_select_exec(bContext *C, wmOperator *op)
     if (use_face_center && !pinned) {
       /* handle face selection mode */
       float cent[2];
-
-      changed = false;
 
       BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
         /* assume not touched */
@@ -3566,7 +3595,7 @@ static int uv_box_select_exec(bContext *C, wmOperator *op)
       }
     }
 
-    if (changed) {
+    if (changed || use_pre_deselect) {
       changed_multi = true;
 
       uv_select_sync_flush(ts, em, select);
@@ -3662,9 +3691,10 @@ static int uv_circle_select_exec(bContext *C, wmOperator *op)
   const eSelectOp sel_op = ED_select_op_modal(RNA_enum_get(op->ptr, "mode"),
                                               WM_gesture_is_modal_first(op->customdata));
   const bool select = (sel_op != SEL_OP_SUB);
-  if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
+  const bool use_pre_deselect = SEL_OP_USE_PRE_DESELECT(sel_op);
+
+  if (use_pre_deselect) {
     uv_select_all_perform_multi(scene, ima, objects, objects_len, SEL_DESELECT);
-    changed_multi = true;
   }
 
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
@@ -3677,7 +3707,6 @@ static int uv_circle_select_exec(bContext *C, wmOperator *op)
 
     /* do selection */
     if (use_face_center) {
-      changed = false;
       BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
         BM_elem_flag_disable(efa, BM_ELEM_TAG);
         /* assume not touched */
@@ -3715,7 +3744,7 @@ static int uv_circle_select_exec(bContext *C, wmOperator *op)
       }
     }
 
-    if (changed) {
+    if (changed || use_pre_deselect) {
       changed_multi = true;
 
       uv_select_sync_flush(ts, em, select);
@@ -3771,6 +3800,7 @@ static bool do_lasso_select_mesh_uv(bContext *C,
                                     (ts->selectmode == SCE_SELECT_FACE) :
                                     (ts->uv_selectmode == UV_SELECT_FACE));
   const bool select = (sel_op != SEL_OP_SUB);
+  const bool use_pre_deselect = SEL_OP_USE_PRE_DESELECT(sel_op);
 
   BMIter iter, liter;
 
@@ -3786,7 +3816,7 @@ static bool do_lasso_select_mesh_uv(bContext *C,
   Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
       view_layer, ((View3D *)NULL), &objects_len);
 
-  if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
+  if (use_pre_deselect) {
     uv_select_all_perform_multi(scene, ima, objects, objects_len, SEL_DESELECT);
   }
 
@@ -3851,7 +3881,7 @@ static bool do_lasso_select_mesh_uv(bContext *C,
       }
     }
 
-    if (changed) {
+    if (changed || use_pre_deselect) {
       changed_multi = true;
 
       uv_select_sync_flush(ts, em, select);
@@ -4658,7 +4688,7 @@ static int uv_hide_exec(bContext *C, wmOperator *op)
 
   if (ts->uv_flag & UV_SYNC_SELECTION) {
     if (EDBM_mesh_hide(em, swap)) {
-      EDBM_update_generic(em, true, false);
+      EDBM_update_generic(obedit->data, true, false);
     }
     return OPERATOR_FINISHED;
   }
@@ -4786,7 +4816,7 @@ static int uv_reveal_exec(bContext *C, wmOperator *op)
   /* call the mesh function if we are in mesh sync sel */
   if (ts->uv_flag & UV_SYNC_SELECTION) {
     if (EDBM_mesh_reveal(em, select)) {
-      EDBM_update_generic(em, true, false);
+      EDBM_update_generic(obedit->data, true, false);
     }
     return OPERATOR_FINISHED;
   }
@@ -4911,6 +4941,12 @@ static int uv_set_2d_cursor_exec(bContext *C, wmOperator *op)
   }
 
   RNA_float_get_array(op->ptr, "location", sima->cursor);
+
+  {
+    struct wmMsgBus *mbus = CTX_wm_message_bus(C);
+    bScreen *screen = CTX_wm_screen(C);
+    WM_msg_publish_rna_prop(mbus, &screen->id, sima, SpaceImageEditor, cursor_location);
+  }
 
   WM_event_add_notifier(C, NC_SPACE | ND_SPACE_IMAGE, NULL);
 

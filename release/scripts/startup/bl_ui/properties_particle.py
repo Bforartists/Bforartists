@@ -1967,7 +1967,7 @@ class PARTICLE_PT_hair_shape(ParticleButtonsPanel, Panel):
         layout.prop(part, "shape", text="Strand Shape")
 
         col = layout.column(align=True)
-        col.prop(part, "root_radius", text="Radius Root")
+        col.prop(part, "root_radius", text="Diameter Root")
         col.prop(part, "tip_radius", text="Tip")
 
         col = layout.column()
