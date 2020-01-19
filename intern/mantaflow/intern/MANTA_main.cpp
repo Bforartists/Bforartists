@@ -1438,6 +1438,7 @@ int MANTA::readMesh(FluidModifierData *mmd, int framenr)
   targetFile[0] = '\0';
 
   std::string mformat = getCacheFileEnding(mmd->domain->cache_mesh_format);
+  std::string dformat = getCacheFileEnding(mmd->domain->cache_data_format);
 
   BLI_path_join(cacheDirMesh,
                 sizeof(cacheDirMesh),
@@ -1463,7 +1464,7 @@ int MANTA::readMesh(FluidModifierData *mmd, int framenr)
     if (mUsingMVel) {
       ss.str("");
       ss << "liquid_load_meshvel_" << mCurrentID << "('" << escapeSlashes(cacheDirMesh) << "', "
-         << framenr << ", '" << mformat << "')";
+         << framenr << ", '" << dformat << "')";
       pythonCommands.push_back(ss.str());
     }
   }
@@ -2522,10 +2523,6 @@ void MANTA::updatePointers()
 
   std::vector<std::tuple<int **, std::string, std::string, bool>> mantaIntObjects;
   mantaIntObjects.push_back(std::make_tuple(&mObstacle, "flags" + solver_ext, func, true));
-  mantaIntObjects.push_back(
-      std::make_tuple(&mNumObstacle, "numObs" + solver_ext, func, mUsingObstacle));
-  mantaIntObjects.push_back(
-      std::make_tuple(&mNumGuide, "numGuides" + solver_ext, func, mUsingGuiding));
 
   std::vector<std::tuple<float **, std::string, std::string, bool>> mantaFloatObjects;
   mantaFloatObjects.push_back(std::make_tuple(&mPhiIn, "phiIn" + solver_ext, func, true));
@@ -2559,6 +2556,10 @@ void MANTA::updatePointers()
       std::make_tuple(&mInVelocityY, "y_invel" + solver_ext, func, mUsingInvel));
   mantaFloatObjects.push_back(
       std::make_tuple(&mInVelocityZ, "z_invel" + solver_ext, func, mUsingInvel));
+  mantaFloatObjects.push_back(
+      std::make_tuple(&mNumObstacle, "numObs" + solver_ext, func, mUsingObstacle));
+  mantaFloatObjects.push_back(
+      std::make_tuple(&mNumGuide, "numGuides" + solver_ext, func, mUsingGuiding));
 
   mantaFloatObjects.push_back(std::make_tuple(&mPhi, "phi" + solver_ext, func, mUsingLiquid));
 
@@ -2621,7 +2622,7 @@ void MANTA::updatePointers()
   mantaFloatObjects.push_back(std::make_tuple(
       &mColorGHigh, "color_g" + noise_ext, func, mUsingSmoke & mUsingNoise & mUsingColors));
   mantaFloatObjects.push_back(std::make_tuple(
-      &mColorRHigh, "color_b" + noise_ext, func, mUsingSmoke & mUsingNoise & mUsingColors));
+      &mColorBHigh, "color_b" + noise_ext, func, mUsingSmoke & mUsingNoise & mUsingColors));
 
   std::vector<std::tuple<std::vector<pData> **, std::string, std::string, bool>> mantaPDataObjects;
   mantaPDataObjects.push_back(
