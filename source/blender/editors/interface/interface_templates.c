@@ -6865,7 +6865,6 @@ static char *progress_tooltip_func(bContext *UNUSED(C), void *argN, const char *
 
 void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
 {
-  bScreen *screen = CTX_wm_screen(C);
   wmWindowManager *wm = CTX_wm_manager(C);
   ScrArea *sa = CTX_wm_area(C);
   uiBlock *block;
@@ -7047,7 +7046,7 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
     }
   }
 
-  if (screen->animtimer) {
+  if (ED_screen_animation_no_scrub(wm)) {
     uiDefIconTextBut(block,
                      UI_BTYPE_BUT,
                      B_STOPANIM,
