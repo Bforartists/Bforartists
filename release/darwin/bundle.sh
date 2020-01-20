@@ -15,7 +15,7 @@ done
 _script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 _volume_name="Bforartists"
 _tmp_dir="$(mktemp -d)"
-_tmp_dmg="/tmp/blender-tmp.dmg"
+_tmp_dmg="/tmp/bforartists-tmp.dmg"
 _background_image="${_script_dir}/background.tif"
 _mount_dir="/Volumes/${_volume_name}"
 _entitlements="${_script_dir}/entitlements.plist"
@@ -142,8 +142,8 @@ if [ ! -z "${C_CERT}" ]; then
         codesign --remove-signature "${f}"
         codesign --timestamp --options runtime --entitlements="${_entitlements}" --sign "${C_CERT}" "${f}"
     done
-    echo ; echo -n "Codesigning Blender.app"
-    codesign --remove-signature "${_mount_dir}/Blender.app"
+    echo ; echo -n "Codesigning Bforartists.app"
+    codesign --remove-signature "${_mount_dir}/Bforartists.app"
     codesign --timestamp --options runtime --entitlements="${_entitlements}" --sign "${C_CERT}" "${_mount_dir}/Bforartists.app"
     echo
 else
