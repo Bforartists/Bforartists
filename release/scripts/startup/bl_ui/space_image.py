@@ -194,9 +194,7 @@ class IMAGE_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("uv.select_box", icon='BORDER_RECT').pinned = False
         layout.operator("uv.select_box", text = "Box Select Pinned", icon='BORDER_RECT').pinned = True
-        layout.operator("uv.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
       
@@ -367,12 +365,6 @@ class IMAGE_MT_uvs_transform(Menu):
 
     def draw(self, _context):
         layout = self.layout
-
-        layout.operator("transform.translate", icon ='TRANSFORM_MOVE')
-        layout.operator("transform.rotate", icon ='TRANSFORM_ROTATE')
-        layout.operator("transform.resize", icon ='TRANSFORM_SCALE')
-
-        layout.separator()
 
         layout.operator("transform.shear", icon = 'SHEAR')
 

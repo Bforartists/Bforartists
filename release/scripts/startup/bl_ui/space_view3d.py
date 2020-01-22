@@ -1258,13 +1258,6 @@ class VIEW3D_MT_view_navigation(Menu):
 
         layout.operator("screen.animation_play", text="Playback Animation", icon = "TRIA_RIGHT")
 
-        layout.separator()
-
-        layout.operator("transform.translate", icon='TRANSFORM_MOVE')
-        layout.operator("transform.rotate", icon='TRANSFORM_ROTATE')
-        layout.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
-
-
 
 class VIEW3D_MT_view_align(Menu):
     bl_label = "Align View"
@@ -1396,12 +1389,6 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-
         layout.menu ("VIEW3D_MT_select_grouped")
         layout.menu ("VIEW3D_MT_select_linked")
         layout.menu ("VIEW3D_MT_select_by_type")
@@ -1519,12 +1506,6 @@ class VIEW3D_MT_select_pose(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-
         layout.operator_menu_enum("pose.select_grouped", "type", text="Grouped")
         layout.operator("pose.select_linked", text="Linked", icon = "LINKED")
         layout.operator("pose.select_constraint_target", text="Constraint Target", icon = "CONSTRAINT_BONE")
@@ -1590,12 +1571,6 @@ class VIEW3D_MT_select_particle(Menu):
         layout.operator("particle.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("particle.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("particle.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
-
-        layout.separator()
-
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
@@ -1715,12 +1690,6 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-
         layout.operator("mesh.select_linked", text="Linked", icon = "LINKED")
         layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces", icon = "LINKED")
         layout.operator("mesh.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
@@ -1810,12 +1779,6 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-
 
         layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
         layout.operator("curve.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
@@ -1863,12 +1826,6 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.operator("curve.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("curve.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("curve.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
-
-        layout.separator()
-
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
@@ -1966,12 +1923,6 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-
         layout.menu("VIEW3D_MT_select_edit_metaball_select_similar")
 
         layout.separator()
@@ -2043,12 +1994,6 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-
         layout.operator("lattice.select_mirror", text = "Mirror", icon = "TRANSFORM_MIRROR")
         layout.operator("lattice.select_random", text = "Random", icon = "RANDOMIZE")
 
@@ -2094,12 +2039,6 @@ class VIEW3D_MT_select_edit_armature(Menu):
         layout.operator("armature.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("armature.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("armature.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
-
-        layout.separator()
-
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
@@ -2236,11 +2175,6 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout.operator("paint.face_select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon = 'BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
 
         layout.operator("paint.face_select_linked", text="Linked", icon = "LINKED")
         layout.operator("paint.face_select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
@@ -2279,12 +2213,6 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
         layout.operator("paint.vert_select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("paint.vert_select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("paint.vert_select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
-
-        layout.separator()
-
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("view3d.select_box", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
@@ -4427,7 +4355,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.operator("mesh.duplicate_move", text="Duplicate", icon = "DUPLICATE")
         layout.menu("VIEW3D_MT_edit_mesh_extrude")
         layout.operator("mesh.split", icon = "SPLIT")
-        layout.operator("mesh.bisect", icon = 'BISECT')
         layout.operator("mesh.knife_project", icon='KNIFE_PROJECT')
 
         if with_bullet:
@@ -4538,10 +4465,8 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("transform.push_pull", text="Push/Pull", icon = 'PUSH_PULL')
             col.operator("transform.shrink_fatten", text="Shrink/Fatten", icon = 'SHRINK_FATTEN')
             col.operator("transform.shear", text="Shear", icon = "SHEAR")
-            col.operator("transform.vert_slide", text="Slide Vertices", icon = 'SLIDE_VERTEX')
             col.operator_context = 'EXEC_DEFAULT'
             col.operator("transform.vertex_random", text="Randomize Vertices")
-            col.operator("mesh.vertices_smooth", text="Smooth Vertices", icon = 'SMOOTH_VERTEX')
             col.operator_context = 'INVOKE_REGION_WIN'
             col.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
 
@@ -4589,13 +4514,11 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()
 
             col.operator("mesh.knife_tool", icon = 'KNIFE')
-            col.operator("mesh.bisect", icon = 'BISECT')
 
             col.separator()
 
             # Deform Operators
             col.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
-            col.operator("transform.edge_slide", icon='SLIDE_EDGE')
             col.operator("mesh.edge_split", icon = "SPLITEDGE")
 
             col.separator()
@@ -4644,7 +4567,6 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Extrude Faces Along Normals", icon = 'EXTRUDE_REGION')
             col.operator("mesh.extrude_faces_move", text="Extrude Individual Faces", icon = 'EXTRUDE_REGION')
 
-            col.operator("mesh.inset", icon='INSET_FACES')
             col.operator("mesh.poke", icon = "POKEFACES")
 
             if selected_faces_len >= 2:
@@ -4718,12 +4640,6 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
             layout.operator("mesh.extrude_vertices_move", text="Extrude Vertices", icon='EXTRUDE_REGION'),
         'EDGE': lambda layout:
             layout.operator("mesh.extrude_edges_move", text="Extrude Edges", icon='EXTRUDE_REGION'),
-        'REGION': lambda layout:
-            layout.operator("view3d.edit_mesh_extrude_move_normal", text="Extrude Faces", icon='EXTRUDE_REGION'),
-        'REGION_VERT_NORMAL': lambda layout:
-            layout.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Extrude Faces Along Normals", icon='EXTRUDE_REGION'),
-        'FACE': lambda layout:
-            layout.operator("mesh.extrude_faces_move", text="Extrude Individual Faces", icon='EXTRUDE_REGION'),
         'DUPLI_EXTRUDE': lambda layout:
             layout.operator("mesh.dupli_extrude_cursor_norotate", text="Dupli Extrude", icon='DUPLI_EXTRUDE'),
         'DUPLI_EX_ROTATE': lambda layout:
@@ -4737,8 +4653,6 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
         mesh = context.object.data
 
         menu = []
-        if mesh.total_face_sel:
-            menu += ['REGION', 'REGION_VERT_NORMAL', 'FACE']
         if mesh.total_edge_sel and (select_mode[0] or select_mode[1]):
             menu += ['EDGE']
         if mesh.total_vert_sel and select_mode[0]:
@@ -4763,27 +4677,13 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.bevel", text="Bevel Vertices", icon='BEVEL').vertex_only = True
-
-        layout.separator()
-
         layout.operator("mesh.edge_face_add", text="Make Edge/Face", icon='MAKE_EDGEFACE')
         layout.operator("mesh.vert_connect_path", text = "Connect Vertex Path", icon = "VERTEXCONNECTPATH")
         layout.operator("mesh.vert_connect", text = "Connect Vertex Pairs", icon = "VERTEXCONNECT")
 
         layout.separator()
 
-        props = layout.operator("mesh.rip_move", text="Rip Vertices", icon = "RIP")
-        props.MESH_OT_rip.use_fill = False
-        props = layout.operator("mesh.rip_move", text="Rip Vertices and Fill", icon = "RIP_FILL")
-        props.MESH_OT_rip.use_fill = True
-        layout.operator("mesh.rip_edge_move", text="Rip Vertices and Extend", icon = "EXTEND_VERTICES")
-
-        layout.separator()
-
-        layout.operator("transform.vert_slide", text="Slide Vertices", icon = 'SLIDE_VERTEX')
         layout.operator_context = 'EXEC_DEFAULT'
-        layout.operator("mesh.vertices_smooth", text="Smooth Vertices", icon = 'SMOOTH_VERTEX')
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
 
@@ -4851,7 +4751,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.bevel", text="Bevel Edges", icon='BEVEL').vertex_only = False
         layout.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
 
         layout.separator()
@@ -4867,7 +4766,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.separator()
 
-        layout.operator("transform.edge_slide", icon='SLIDE_EDGE')
         layout.operator("mesh.edge_split", icon = "SPLITEDGE")
 
         layout.separator()
@@ -4926,7 +4824,6 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.inset", icon='INSET_FACES')
         layout.operator("mesh.poke", icon = "POKEFACES")
 
         layout.separator()
