@@ -1394,7 +1394,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_select(Panel, View3DPanel, GreasePenci
         row.column().template_ID_preview(gpencil_paint, "brush", new="brush.add_gpencil", rows=3, cols=8)
 
         col = row.column()
-        col.operator("gpencil.brush_presets_create", icon='PRESET_NEW', text="")
+        col.operator("gpencil.brush_presets_create", icon='PRESET', text="")
 
         if context.mode == 'PAINT_GPENCIL':
             brush = tool_settings.gpencil_paint.brush
