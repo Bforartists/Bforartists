@@ -409,15 +409,15 @@ class MASK_MT_select(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mask.select_box", icon = 'CIRCLE_SELECT')
-        layout.operator("mask.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-
-        layout.operator("mask.select_all", icon = 'SELECT_ALL').action = 'SELECT'
+        layout.operator("mask.select_all", text = "All", icon = 'SELECT_ALL').action = 'SELECT'
         layout.operator("mask.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("mask.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
         
+        layout.separator()
+
+        layout.operator("mask.select_box", icon = 'BORDER_RECT')
+        layout.operator("mask.select_circle", icon = 'CIRCLE_SELECT')
+ 
         layout.separator()
 
         layout.operator("mask.select_linked", text = "Linked", icon = "LINKED")
