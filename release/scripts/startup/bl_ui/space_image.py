@@ -1469,11 +1469,14 @@ class IMAGE_PT_view_waveform(ImageScopesPanel, Panel):
         layout = self.layout
 
         sima = context.space_data
+        
+        layout.use_property_split = True
 
         layout.template_waveform(sima, "scopes")
-        row = layout.split(factor=0.75)
-        row.prop(sima.scopes, "waveform_alpha")
-        row.prop(sima.scopes, "waveform_mode", text="")
+        row = layout.split(factor=0.5)
+        row.label(text = "Opacity")
+        row.prop(sima.scopes, "waveform_alpha", text = "")
+        layout.prop(sima.scopes, "waveform_mode", text="")
 
 
 class IMAGE_PT_view_vectorscope(ImageScopesPanel, Panel):
@@ -1484,10 +1487,15 @@ class IMAGE_PT_view_vectorscope(ImageScopesPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        
+        layout.use_property_split = True
 
         sima = context.space_data
         layout.template_vectorscope(sima, "scopes")
-        layout.prop(sima.scopes, "vectorscope_alpha")
+        
+        row = layout.split(factor=0.5)
+        row.label(text = "Opacity")
+        row.prop(sima.scopes, "vectorscope_alpha", text = "")
 
 
 class IMAGE_PT_sample_line(ImageScopesPanel, Panel):
@@ -1525,6 +1533,7 @@ class IMAGE_PT_scope_sample(ImageScopesPanel, Panel):
         sima = context.space_data
 
         col = flow.column()
+        col.use_property_split = False
         col.prop(sima.scopes, "use_full_resolution")
 
         col = flow.column()
