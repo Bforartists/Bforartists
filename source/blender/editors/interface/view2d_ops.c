@@ -526,7 +526,7 @@ static void VIEW2D_OT_scroll_up(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Scroll Up";
-  ot->description = "SScroll the view up";
+  ot->description = "Scroll the view up";
   ot->idname = "VIEW2D_OT_scroll_up";
 
   /* api callbacks */

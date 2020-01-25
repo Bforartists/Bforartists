@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
 "Last-Translator: \n"
 "Language-Team: Japanese Translation Team (https://sites.google.com/site/blugjp/blender-translators)\n"
@@ -4031,14 +4031,6 @@ msgid "Internal Friction"
 msgstr "内部摩擦"
 
 
-msgid "Mass"
-msgstr "重さ"
-
-
-msgid "Mass of cloth material"
-msgstr "クロスの素材の質量"
-
-
 msgid "Pin Stiffness"
 msgstr "ピン止めの剛性"
 
@@ -4137,6 +4129,10 @@ msgstr "引っ張られにくさの最大値"
 
 msgid "Cloth speed is multiplied by this value"
 msgstr "クロスの速度はこの値と乗算されます"
+
+
+msgid "Pressure"
+msgstr "筆圧"
 
 
 msgid "Dynamic Base Mesh"
@@ -6747,16 +6743,8 @@ msgid "Keep Axis"
 msgstr "軸を保持"
 
 
-msgid "Axis to maintain during stretch"
-msgstr "ストレッチ中に維持する軸"
-
-
-msgid "Keep X Axis"
-msgstr "X軸を保持"
-
-
-msgid "Keep Z Axis"
-msgstr "Z軸を保持"
+msgid "XZ"
+msgstr "XZ"
 
 
 msgid "Original Length"
@@ -6769,10 +6757,6 @@ msgstr "レストポジションでの長さ"
 
 msgid "Maintain the object's volume as it stretches"
 msgstr "ストレッチ時に維持するオブジェクトのボリューム"
-
-
-msgid "XZ"
-msgstr "XZ"
 
 
 msgid "Track To Constraint"
@@ -7103,22 +7087,6 @@ msgid "Curve in a curve mapping"
 msgstr "カーブマッピング内のカーブ"
 
 
-msgid "Extend"
-msgstr "拡張"
-
-
-msgid "Extrapolate the curve or extend it horizontally"
-msgstr "カーブを外挿、もしくは水平に延長します"
-
-
-msgid "Horizontal"
-msgstr "水平"
-
-
-msgid "Extrapolated"
-msgstr "外挿"
-
-
 msgid "Points"
 msgstr "ポイント"
 
@@ -7193,6 +7161,22 @@ msgstr "クリップ最小値X"
 
 msgid "Clip Min Y"
 msgstr "クリップ最小値Y"
+
+
+msgid "Extend"
+msgstr "拡張"
+
+
+msgid "Extrapolate the curve or extend it horizontally"
+msgstr "カーブを外挿、もしくは水平に延長します"
+
+
+msgid "Horizontal"
+msgstr "水平"
+
+
+msgid "Extrapolated"
+msgstr "外挿"
 
 
 msgid "Tone"
@@ -7377,6 +7361,14 @@ msgstr "最初のみ"
 
 msgid "Use the start of the stroke for the depth"
 msgstr "深度にストロークの最初を使用します"
+
+
+msgid "Steps"
+msgstr "ステップ数"
+
+
+msgid "Segments"
+msgstr "セグメント"
 
 
 msgid "Curve Splines"
@@ -9210,6 +9202,12 @@ msgstr "すぐ隣のキーのみ考慮した自動ハンドル（従来のモー
 
 msgid "Continuous Acceleration"
 msgstr "連続的な加速"
+
+
+msgid "Automatic handles are adjusted to avoid jumps in acceleration, resulting in smoother curves. However, key changes may affect interpolation over a larger stretch of the curve"
+msgstr ""
+"加速によるジャンプを回避し、スムーズな結果になるよう調整された自動ハンドル\n"
+"ただしキーの変更が、より大きく引き延ばされたカーブでの補間に影響する可能性があります"
 
 
 msgid "Color of the F-Curve in the Graph Editor"
@@ -13234,10 +13232,6 @@ msgid "Coordinates"
 msgstr "座標"
 
 
-msgid "Pressure"
-msgstr "筆圧"
-
-
 msgid "Pressure of tablet at point when drawing it"
 msgstr "描くときのタブレットの筆圧"
 
@@ -15185,6 +15179,10 @@ msgid "Gpencil Settings"
 msgstr "グリースペンシル設定"
 
 
+msgid "Grease Pencil Draw Tool"
+msgstr "グリースペンシルドローツール"
+
+
 msgid "Draw"
 msgstr "ドロー"
 
@@ -15345,6 +15343,10 @@ msgid "Offset of the pose origin in relation to the brush radius"
 msgstr "ブラシ半径に関するポーズ原点のオフセット"
 
 
+msgid "Smooth Iterations"
+msgstr "スムージング反復数"
+
+
 msgid "Rake"
 msgstr "レーキ"
 
@@ -15439,6 +15441,10 @@ msgstr "ナッジ"
 
 msgid "Rotate"
 msgstr "回転"
+
+
+msgid "Topology"
+msgstr "トポロジー"
 
 
 msgid "Secondary Color"
@@ -15714,6 +15720,14 @@ msgstr "オリジナル平面"
 
 msgid "When locked keep using the plane origin of surface where stroke was initiated"
 msgstr "ロック時、ストローク開始位置の表面のオリジナル平面を使用し続けます"
+
+
+msgid "Antialasing"
+msgstr "アンチエイリアシング"
+
+
+msgid "Smooths the edges of the strokes"
+msgstr "ストロークのふちをスムーズにします"
 
 
 msgid "Use Sculpt"
@@ -16346,10 +16360,6 @@ msgstr "最後のベベル係数をスプラインにマップする方法を決
 
 msgid "Map the bevel factor to the number of subdivisions of a spline (U resolution)"
 msgstr "ベベル係数をスプラインの分割数（U 解像度）にマップします"
-
-
-msgid "Segments"
-msgstr "セグメント"
 
 
 msgid "Map the bevel factor to the length of a segment and to the number of subdivisions of a segment"
@@ -19248,14 +19258,6 @@ msgid "Polygons of the mesh"
 msgstr "メッシュのポリゴン"
 
 
-msgid "Fix Poles"
-msgstr "ポールを修正"
-
-
-msgid "Produces less poles and a better topology flow"
-msgstr "ポールの少ない、綺麗なトポロジーフローを生成します"
-
-
 msgid "Remesh Mode"
 msgstr "リメッシュモード"
 
@@ -19274,26 +19276,6 @@ msgstr "四角面"
 
 msgid "Use the quad remesher"
 msgstr "四角面リメッシャーを使用します"
-
-
-msgid "Preserve Paint Mask"
-msgstr "ペイントマスクを維持"
-
-
-msgid "Keep the current mask on the new mesh"
-msgstr "新規メッシュ上で現在のマスクを維持します"
-
-
-msgid "Projects the mesh to preserve the volume and details of the original mesh"
-msgstr "メッシュを投影し、ボリュームとオリジナルメッシュの細部を維持します"
-
-
-msgid "Smooth Normals"
-msgstr "法線をスムーズに"
-
-
-msgid "Smooth the normals of the remesher result"
-msgstr "リメッシャーの結果の法線をスムージングします"
 
 
 msgid "Adaptivity"
@@ -19428,6 +19410,34 @@ msgstr "頂点で選択"
 
 msgid "Vertex selection masking for painting"
 msgstr "頂点で選択した部分のみペイント可能になります"
+
+
+msgid "Fix Poles"
+msgstr "ポールを修正"
+
+
+msgid "Produces less poles and a better topology flow"
+msgstr "ポールの少ない、綺麗なトポロジーフローを生成します"
+
+
+msgid "Preserve Paint Mask"
+msgstr "ペイントマスクを維持"
+
+
+msgid "Keep the current mask on the new mesh"
+msgstr "新規メッシュ上で現在のマスクを維持します"
+
+
+msgid "Projects the mesh to preserve the volume and details of the original mesh"
+msgstr "メッシュを投影し、ボリュームとオリジナルメッシュの細部を維持します"
+
+
+msgid "Smooth Normals"
+msgstr "法線をスムーズに"
+
+
+msgid "Smooth the normals of the remesher result"
+msgstr "リメッシャーの結果の法線をスムージングします"
 
 
 msgid "Clone UV Loop Layer"
@@ -20951,10 +20961,6 @@ msgid "Size of particles on viewport in BU"
 msgstr "ビューポートでのパーティクルのサイズ（Blender単位）"
 
 
-msgid "Steps"
-msgstr "ステップ数"
-
-
 msgid "How many steps paths are drawn with (power of 2)"
 msgstr "3Dビューで描画するパスのステップ数(2の累乗)"
 
@@ -21207,6 +21213,10 @@ msgstr "ボイド 2D"
 
 msgid "Constrain boids to a surface"
 msgstr "パーティクルの動きを面の表面に制限します"
+
+
+msgid "Mass"
+msgstr "重さ"
 
 
 msgid "Mass of the particles"
@@ -22489,12 +22499,20 @@ msgid "Selection End Character"
 msgstr "選択の最終文字"
 
 
+msgid "Index of character after end of selection in the selection end line"
+msgstr "選択の最終行内の、選択の最後以降の文字のインデックス"
+
+
 msgid "Selection End Line"
 msgstr "選択の最終行"
 
 
 msgid "End line of selection"
 msgstr "選択の最終行"
+
+
+msgid "Select End Line Index"
+msgstr "選択の最終行のインデックス"
 
 
 msgid "Index of last TextLine in selection"
@@ -27620,6 +27638,10 @@ msgid "Clean Up"
 msgstr "クリーンアップ"
 
 
+msgid "Material Specials"
+msgstr "マテリアルスペシャル"
+
+
 msgid "GP Vertex Groups"
 msgstr "グリペン頂点グループ"
 
@@ -27700,10 +27722,6 @@ msgstr "MASK_MT_add"
 msgctxt "Operator"
 msgid "Add"
 msgstr "追加"
-
-
-msgid "Material Specials"
-msgstr "マテリアルスペシャル"
 
 
 msgid "Shape Key Specials"
@@ -27920,10 +27938,6 @@ msgstr "プリセット"
 
 msgid "KeyPresets"
 msgstr "キープリセット"
-
-
-msgid "3D Mouse Settings"
-msgstr "3Dマウス設定"
 
 
 msgid "Save & Load"
@@ -29227,24 +29241,16 @@ msgid "Pattern to use for inside of miters"
 msgstr "留め継ぎの内側に使用されるパターン"
 
 
-msgid "Default sharp miter"
-msgstr "デフォルトのシャープな留め継ぎ"
-
-
-msgid "Patch"
-msgstr "パッチ"
-
-
-msgid "Miter with extra corner"
-msgstr "追加のコーナーのある留め継ぎ"
+msgid "Inside of miter is sharp"
+msgstr "留め継ぎの内側がシャープ"
 
 
 msgid "Arc"
 msgstr "弧"
 
 
-msgid "Miter with curved arc"
-msgstr "弧のある留め継ぎ"
+msgid "Inside of miter is arc"
+msgstr "留め継ぎの内側が弧"
 
 
 msgid "Outer Miter"
@@ -29255,8 +29261,24 @@ msgid "Pattern to use for outside of miters"
 msgstr "留め継ぎの外側に使用されるパターン"
 
 
-msgid "Amount Type"
-msgstr "変形量の種類"
+msgid "Outside of miter is sharp"
+msgstr "留め継ぎの外側がシャープ"
+
+
+msgid "Patch"
+msgstr "パッチ"
+
+
+msgid "Outside of miter is squared-off patch"
+msgstr "留め継ぎの外側が四角いパッチ"
+
+
+msgid "Outside of miter is arc"
+msgstr "留め継ぎの外側が弧"
+
+
+msgid "Width Type"
+msgstr "幅のタイプ"
 
 
 msgid "What distance Width measures"
@@ -29709,10 +29731,6 @@ msgstr "辺マッピング"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "転送元の辺を対象の辺にマッピングするのに使用する方法"
-
-
-msgid "Topology"
-msgstr "トポロジー"
 
 
 msgid "Copy from identical topology meshes"
@@ -31562,10 +31580,6 @@ msgstr "ソフトボディポイントキャッシュ"
 
 msgid "Solidify Modifier"
 msgstr "ソリッド化モディファイアー"
-
-
-msgid "Create a solid skin by extruding, compensating for sharp angles"
-msgstr "鋭角を補正し、押し出しで薄いソリッドを作成します"
 
 
 msgid "Inner Crease"
@@ -42171,10 +42185,6 @@ msgid "Export PLY"
 msgstr "PLYをエクスポート"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "単一オブジェクトを、法線・色・テクスチャ座標付きのスタンフォードPLYとしてエクスポートします"
-
-
 msgid "X Forward"
 msgstr "Xが前方"
 
@@ -42239,6 +42249,14 @@ msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will b
 msgstr "面のスムーズ・ハードシェーディング用にノーマルをエクスポートします（ハードシェード面は個別の面としてエクスポート）"
 
 
+msgid "Selection Only"
+msgstr "選択物のみ"
+
+
+msgid "Export selected objects only"
+msgstr "選択されたオブジェクトのみエクスポートします"
+
+
 msgid "Export the active UV layer"
 msgstr "アクティブなUVレイヤーをエクスポート"
 
@@ -42246,10 +42264,6 @@ msgstr "アクティブなUVレイヤーをエクスポート"
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "STLをエクスポート"
-
-
-msgid "Save STL triangle mesh data from the active object"
-msgstr "アクティブオブジェクトからSTL三角メッシュデータを保存します"
 
 
 msgid "Ascii"
@@ -42282,14 +42296,6 @@ msgstr "シーンの単位"
 
 msgid "Apply current scene's unit (as defined by unit scale) to exported data"
 msgstr "現在のシーンの単位（「単位の倍率」で定義）をエクスポートするデータに適用します"
-
-
-msgid "Selection Only"
-msgstr "選択物のみ"
-
-
-msgid "Export selected objects only"
-msgstr "選択されたオブジェクトのみエクスポートします"
 
 
 msgctxt "Operator"
@@ -42440,6 +42446,10 @@ msgstr ""
 "ミュートではない各 NLA ストリップがあれば、\n"
 "グローバルシーンアニメーションではなく、\n"
 "別々の AnimStack としてエクスポートします"
+
+
+msgid "!EXPERIMENTAL! Apply Transform"
+msgstr "!実験的機能! トランスフォーム適用"
 
 
 msgid "Bake space transform into object data, avoids getting unwanted rotations to objects when target space is not aligned with Blender's space (WARNING! experimental option, use at own risks, known broken with armatures/animations)"
@@ -43525,6 +43535,10 @@ msgstr "オリジナルのディレクトリに（ファイルがあれば上書
 
 msgid "Disable Auto-pack, keep all packed files"
 msgstr "自動パックを無効にします。パック中のファイルはすべて保持します"
+
+
+msgid "Remove Pack"
+msgstr "パックを削除"
 
 
 msgctxt "Operator"
@@ -47328,10 +47342,6 @@ msgid "Bevel"
 msgstr "ベベル"
 
 
-msgid "Cut into selected items at an angle to create flat or rounded bevel or chamfer"
-msgstr "選択中のアイテムを一定の角度でカットし、フラットまたは丸みを帯びた、ベベルまたは溝を作成します"
-
-
 msgid "Do not allow beveled edges/vertices to overlap each other"
 msgstr "お互いに重なる辺や頂点のベベルを禁止します"
 
@@ -47348,36 +47358,8 @@ msgid "Set face strength on new and modified faces only"
 msgstr "面の強さを新規と変更された面のみ設定します"
 
 
-msgid "Prefer slide along edge to even widths"
-msgstr "同じ幅を持つ辺に沿ってスライドさせます"
-
-
 msgid "Material for bevel faces (-1 means use adjacent faces)"
 msgstr "ベベル面用のマテリアル（－1で隣の面の物を使用）"
-
-
-msgid "Inside of miter is sharp"
-msgstr "留め継ぎの内側がシャープ"
-
-
-msgid "Inside of miter is arc"
-msgstr "留め継ぎの内側が弧"
-
-
-msgid "Outside of miter is sharp"
-msgstr "留め継ぎの外側がシャープ"
-
-
-msgid "Outside of miter is squared-off patch"
-msgstr "留め継ぎの外側が四角いパッチ"
-
-
-msgid "Outside of miter is arc"
-msgstr "留め継ぎの外側が弧"
-
-
-msgid "Width Type"
-msgstr "幅のタイプ"
 
 
 msgid "Controls profile shape (0.5 = round)"
@@ -48444,7 +48426,7 @@ msgstr "シームをマーク"
 
 
 msgid "(Un)mark selected edges as a seam"
-msgstr "選択したエッジをシームとしてマーク(解除)します"
+msgstr "選択中の辺をシームとしてマーク(解除)します"
 
 
 msgctxt "Operator"
@@ -48453,7 +48435,7 @@ msgstr "シャープをマーク"
 
 
 msgid "(Un)mark selected edges as sharp"
-msgstr "選択したエッジをシャープとしてマーク(解除)します"
+msgstr "選択中の辺をシャープとしてマーク(解除)します"
 
 
 msgid "Consider vertices instead of edges to select which edges to (un)tag as sharp"
@@ -48674,12 +48656,12 @@ msgstr ""
 "有効な頂点と見なす最小マスク値"
 
 
-msgid "Smooth Iterations"
-msgstr "スムージング反復数"
-
-
 msgid "Smooth iterations applied to the extracted mesh"
 msgstr "抽出メッシュに適用されるスムージング回数"
+
+
+msgid "Fill Holes"
+msgstr "穴を埋める"
 
 
 msgctxt "Operator"
@@ -49746,6 +49728,10 @@ msgid "Solidify"
 msgstr "ソリッド化"
 
 
+msgid "Create a solid skin by extruding, compensating for sharp angles"
+msgstr "鋭角を補正し、押し出しで薄いソリッドを作成します"
+
+
 msgctxt "Operator"
 msgid "Sort Mesh Elements"
 msgstr "メッシュ要素をソート"
@@ -49819,8 +49805,8 @@ msgid "Rotation for each step"
 msgstr "ステップごとの回転"
 
 
-msgid "Make Duplicates"
-msgstr "複製を作成"
+msgid "Use Duplicates"
+msgstr "複製を使用"
 
 
 msgid "Auto Merge"
@@ -58129,6 +58115,10 @@ msgid "Screen Coordinates of sampling"
 msgstr "サンプリングのスクリーン座標"
 
 
+msgid "Dyntopo"
+msgstr "Dyntopo"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "スカルプトモード"
@@ -58825,19 +58815,6 @@ msgid "Select other strips at the same time"
 msgstr "同じ時間にある他のストリップを選択します"
 
 
-msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "アクティブな側を選択"
-
-
-msgid "Select strips on the nominated side of the active strip"
-msgstr "アクティブストリップの指定した側にあるストリップを選択します"
-
-
-msgid "The side of the handle that is selected"
-msgstr "選択中のハンドルサイド"
-
-
 msgid "Select or deselect all strips"
 msgstr "すべてのストリップの選択・選択解除"
 
@@ -58909,6 +58886,10 @@ msgstr "ハンドルを選択"
 
 msgid "Select gizmo handles on the sides of the selected strip"
 msgstr "選択中のストリップ両端のギズモのハンドルを選択します"
+
+
+msgid "The side of the handle that is selected"
+msgstr "選択中のハンドルサイド"
 
 
 msgid "Shrink the current selection of adjacent selected strips"
@@ -59704,10 +59685,6 @@ msgstr "カーソル下の単語を選択します"
 
 msgid "Set cursor selection"
 msgstr "カーソル選択を設定"
-
-
-msgid "Set selection end rather than cursor"
-msgstr "カーソルではなく選択の末尾を設定します"
 
 
 msgctxt "Operator"
@@ -61054,10 +61031,6 @@ msgstr "角度のリラックスによりUVが伸びるのを軽減します"
 
 msgid "Blend factor between stretch minimized and original"
 msgstr "オリジナルと最小ストレッチ間をブレンドする要素"
-
-
-msgid "Fill Holes"
-msgstr "穴を埋める"
 
 
 msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
@@ -62408,14 +62381,6 @@ msgstr "UVをエクスポート"
 
 msgid "Export vertex colors"
 msgstr "頂点カラーをエクスポート"
-
-
-msgid "Visible Layers Only"
-msgstr "可視レイヤーのみ"
-
-
-msgid "Export only objects in visible layers"
-msgstr "可視レイヤーのオブジェクトのみエクスポートします"
 
 
 msgid "Transform Samples"
@@ -65841,6 +65806,10 @@ msgid "Orbit & Pan"
 msgstr "周回とパン"
 
 
+msgid "3D Mouse Settings"
+msgstr "3Dマウス設定"
+
+
 msgid "Save Preferences"
 msgstr "プリファレンスを保存"
 
@@ -66071,10 +66040,6 @@ msgstr "分析"
 
 msgid "Quad View"
 msgstr "四分割表示"
-
-
-msgid "Dyntopo"
-msgstr "Dyntopo"
 
 
 msgid "Unified Brush"
@@ -67659,6 +67624,10 @@ msgstr "編集"
 
 msgid "Settings for interacting with Blender data"
 msgstr "Blenderデータを操作するための設定"
+
+
+msgid "Experimental"
+msgstr "実験的"
 
 
 msgid "Default paths for external files"
@@ -70097,11 +70066,11 @@ msgstr "煙・火炎のボリュームに使用される補間方法"
 
 
 msgid "Good smoothness and speed"
-msgstr "滑らかさと速度が良好"
+msgstr "スムーズさと速度のバランスが良好"
 
 
 msgid "Smoothed high quality interpolation, but slower"
-msgstr "スムーズな高品質の補間、低速"
+msgstr "低速だがスムーズで高品質な補間"
 
 
 msgid "Volume Sampling"
@@ -70711,10 +70680,6 @@ msgstr "標準"
 
 msgid "Only use finished and supported features"
 msgstr "完成もしくはサポートされている機能のみ使用"
-
-
-msgid "Experimental"
-msgstr "実験的"
 
 
 msgid "Use experimental and incomplete features that might be broken or change in the future"
@@ -71687,10 +71652,6 @@ msgstr "Freestyle の辺を .svg フォーマットでエクスポートしま�
 
 msgid "Format type to export to"
 msgstr "エクスポートするフォーマットタイプ"
-
-
-msgid "VRML2"
-msgstr "VRML2"
 
 
 msgid "Export Directory"
@@ -74719,12 +74680,12 @@ msgid "Sequence strip creating text"
 msgstr "テキストを作成するシーケンスストリップ"
 
 
-msgid "Align the text along the X axis, relative to the text midpoint"
-msgstr "テキストの中心を基準にした、X 軸方向の揃え"
+msgid "Align the text along the X axis, relative to the text bounds"
+msgstr "テキストの境界を基準にした、X 軸方向の揃え"
 
 
-msgid "Align the image along the Y axis, relative to the text midpoint"
-msgstr "テキストの中心を基準にした、Y 軸方向の揃え"
+msgid "Align the text along the Y axis, relative to the text bounds"
+msgstr "テキストの境界を基準にした、Y 軸方向の揃え"
 
 
 msgid "Text color"
@@ -77409,14 +77370,6 @@ msgstr "ハンドルと補間を表示"
 
 msgid "Display keyframe handle types and non-bezier interpolation modes"
 msgstr "キーフレームのハンドルタイプと非ベジエ補間モードを表示します"
-
-
-msgid "Show Marker Lines"
-msgstr "マーカーラインを表示"
-
-
-msgid "Show a vertical line for every marker"
-msgstr "マーカー毎に縦のラインを表示します"
 
 
 msgid "Show Pose Markers"
@@ -81606,7 +81559,7 @@ msgstr "メッシュ統計の視覚化"
 
 
 msgid "Transform Pivot Point"
-msgstr "ピボットポイントをトランスフォーム"
+msgstr "トランスフォームピボットポイント"
 
 
 msgid "Unified Paint Settings"
@@ -84896,10 +84849,6 @@ msgid "Volume:"
 msgstr "ボリューム:"
 
 
-msgid "Plane:"
-msgstr "平面:"
-
-
 msgid "Min/Max:"
 msgstr "最小/最大:"
 
@@ -85248,10 +85197,6 @@ msgid "Autolock Inactive Layers"
 msgstr "非アクティブレイヤーを自動ロック"
 
 
-msgid "Show Only On Keyframed"
-msgstr "キーフレーム付のみ表示"
-
-
 msgid "Before"
 msgstr "前"
 
@@ -85445,20 +85390,12 @@ msgid "UVs:"
 msgstr "UV:"
 
 
+msgid "Outer"
+msgstr "外側"
+
+
 msgid "Limit Method:"
 msgstr "制限方法:"
-
-
-msgid "Width Method:"
-msgstr "幅の計算方法:"
-
-
-msgid "Set Face Strength Mode"
-msgstr "面の強さ設定モード"
-
-
-msgid "Miter Patterns"
-msgstr "留め継ぎパターン"
 
 
 msgid "Operation:"
@@ -85650,20 +85587,12 @@ msgid "Deform:"
 msgstr "変形:"
 
 
-msgid "Crease:"
-msgstr "クリース:"
-
-
-msgid "Outer"
-msgstr "外側"
+msgid "Material Index Offset:"
+msgstr "マテリアルインデックスオフセット:"
 
 
 msgid "Rim"
 msgstr "ふち"
-
-
-msgid "Material Index Offset:"
-msgstr "マテリアルインデックスオフセット:"
 
 
 msgid "Aspect X"
@@ -85871,6 +85800,10 @@ msgstr "OceanSimモディファイアーなしでビルドされています"
 
 msgid "Cull Faces:"
 msgstr "投影しない面:"
+
+
+msgid "Crease:"
+msgstr "クリース:"
 
 
 msgid "Render:"
@@ -86164,6 +86097,10 @@ msgstr "再生のみ"
 
 msgid "ShaderFX"
 msgstr "シェーダーFX"
+
+
+msgid "Show Only On Keyframed"
+msgstr "キーフレーム付のみ表示"
 
 
 msgctxt "Operator"
@@ -86551,8 +86488,20 @@ msgid "Source Clone UV Map"
 msgstr "クローン元UVマップ"
 
 
+msgid "Thickness Profile"
+msgstr "幅のプロファイル"
+
+
 msgid "Mask Value"
 msgstr "マスクの値"
+
+
+msgid "Fill Options"
+msgstr "フィルオプション"
+
+
+msgid "Ignore Transparent Strokes"
+msgstr "透過ストロークを無視"
 
 
 msgctxt "Operator"
@@ -89171,10 +89120,6 @@ msgid "Report a Bug"
 msgstr "バグを報告"
 
 
-msgid "Ignore Transparent Strokes"
-msgstr "透過ストロークを無視"
-
-
 msgid "Sequence Strip Name"
 msgstr "シーケンスストリップ名"
 
@@ -89462,6 +89407,10 @@ msgstr "プレイヤー"
 
 msgid "Orbit Style"
 msgstr "周回スタイル"
+
+
+msgid "Navigate"
+msgstr "ナビゲート"
 
 
 msgid "Orbit Options"
@@ -90414,10 +90363,6 @@ msgid "Viewport Gizmos"
 msgstr "ビューポートギズモ"
 
 
-msgid "Navigate"
-msgstr "ナビゲート"
-
-
 msgid "Active Tools"
 msgstr "アクティブツール"
 
@@ -90508,14 +90453,6 @@ msgstr "アクティブレイヤーを複製"
 msgctxt "Operator"
 msgid "Delete All Layers"
 msgstr "全レイヤーを削除"
-
-
-msgid "Thickness Profile"
-msgstr "幅のプロファイル"
-
-
-msgid "Fill Options"
-msgstr "フィルオプション"
 
 
 msgctxt "Operator"
@@ -91244,6 +91181,16 @@ msgstr "グリースペンシルに変換"
 msgctxt "Operator"
 msgid "Convert to Path"
 msgstr "パスに変換"
+
+
+msgctxt "Operator"
+msgid "Convert to Bezier Curve"
+msgstr "ベジエカーブに変換"
+
+
+msgctxt "Operator"
+msgid "Convert to Polygon Curve"
+msgstr "ポリゴンカーブに変換"
 
 
 msgctxt "Operator"
@@ -92281,62 +92228,6 @@ msgstr "選択ID"
 
 msgid "Workbench"
 msgstr "Workbench"
-
-
-msgid "MotionPath"
-msgstr "モーションパス"
-
-
-msgid "EditArmatureMode"
-msgstr "アーマチュア編集モード"
-
-
-msgid "EditCurveMode"
-msgstr "カーブ編集モード"
-
-
-msgid "EditLatticeMode"
-msgstr "ラティス編集モード"
-
-
-msgid "EditMeshMode"
-msgstr "メッシュ編集モード"
-
-
-msgid "EditMetaballMode"
-msgstr "メタボール編集モード"
-
-
-msgid "EditTextMode"
-msgstr "テキスト編集モード"
-
-
-msgid "ObjectMode"
-msgstr "オブジェクトモード"
-
-
-msgid "OverlayEngine"
-msgstr "オーバレイエンジン"
-
-
-msgid "PaintTextureMode"
-msgstr "テクスチャペイントモード"
-
-
-msgid "PaintVertexMode"
-msgstr "頂点ペイントモード"
-
-
-msgid "Particle Mode"
-msgstr "パーティクルモード"
-
-
-msgid "PoseMode"
-msgstr "ポーズモード"
-
-
-msgid "SculptMode"
-msgstr "スカルプトモード"
 
 
 msgid "NLA Strip Controls"
@@ -94332,10 +94223,6 @@ msgid "Icosphere"
 msgstr "ICO球"
 
 
-msgid "%s: confirm, %s: cancel, %s: mode (%s), %s: width (%s), %s: segments (%d), %s: profile (%.3f), %s: clamp overlap (%s), %s: vertex only (%s), %s: outer miter (%s), %s: inner miter (%s), %s: harden normals (%s), %s: mark seam (%s), %s: mark sharp (%s)"
-msgstr "%s: 確定、%s: キャンセル、%s: モード(%s)、%s: 幅(%s)、%s: セグメント(%d)、%s: 輪郭(%.3f)、%s: オーバーラップを制限(%s)、%s: 頂点のみ(%s)、%s: 外側の留め継ぎ(%s)、%s: 内側の留め継ぎ(%s)、%s: 頂点のハード化(%s)、%s: シームをマーク(%s)、%s: シャープをマーク(%s)"
-
-
 msgid "LMB: Click and drag to draw cut line"
 msgstr "LMB: クリック＆ドラッグでカットライン設定"
 
@@ -94565,7 +94452,7 @@ msgstr "編集モードで頂点が削除できません"
 
 
 msgid "Cannot remove more vertices than the mesh contains"
-msgstr "メッシュ中の数より多くの頂点を削除できません"
+msgstr "メッシュ中の数より多くの頂点は削除できません"
 
 
 msgid "Cannot remove edges in edit mode"
@@ -94573,7 +94460,23 @@ msgstr "編集モードで辺が削除できません"
 
 
 msgid "Cannot remove more edges than the mesh contains"
-msgstr "メッシュ中の数より多くの辺を削除できません"
+msgstr "メッシュ中の数より多くの辺は削除できません"
+
+
+msgid "Cannot remove loops in edit mode"
+msgstr "編集モードでループが削除できません"
+
+
+msgid "Cannot remove more loops than the mesh contains"
+msgstr "メッシュ内の数より多くのループは削除できません"
+
+
+msgid "Cannot remove polys in edit mode"
+msgstr "編集モードでポリゴンが削除できません"
+
+
+msgid "Cannot remove more polys than the mesh contains"
+msgstr "メッシュ中の数より多くのポリゴンは削除できません"
 
 
 msgid "%d %s mirrored, %d failed"
@@ -97434,6 +97337,10 @@ msgid "No subtitles (text strips) to export"
 msgstr "エクスポートする字幕（テキストストリップ）がありません"
 
 
+msgid "Could not build proxy for strip %s"
+msgstr "ストリップ「%s」のプロキシが構築できませんでした"
+
+
 msgid "No active sequence!"
 msgstr "アクティブシーケンスがありません！"
 
@@ -98321,10 +98228,6 @@ msgstr "起動時は「取り消し」できません"
 
 msgid "Unpack File"
 msgstr "ファイルにパック解除"
-
-
-msgid "Remove Pack"
-msgstr "パックを削除"
 
 
 msgid "Create %s"

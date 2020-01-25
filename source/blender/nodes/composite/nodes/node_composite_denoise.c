@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -19,13 +17,9 @@
  * All rights reserved.
  *
  * The Original Code is: all of this file.
- *
- * Contributor(s): Stefan Werner
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
-/** \file blender/nodes/composite/nodes/node_composite_denoise.c
+/** \file
  *  \ingroup cmpnodes
  */
 
@@ -33,8 +27,18 @@
 
 static bNodeSocketTemplate cmp_node_denoise_in[] = {
     {SOCK_RGBA, 1, N_("Image"), 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
-    {SOCK_VECTOR, 0, N_("Normal"), 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f},
-    {SOCK_RGBA, 1, N_("Albedo"), 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f},
+    {SOCK_VECTOR,
+     1,
+     N_("Normal"),
+     0.0f,
+     0.0f,
+     0.0f,
+     0.0f,
+     -1.0f,
+     1.0f,
+     PROP_NONE,
+     SOCK_HIDE_VALUE},
+    {SOCK_RGBA, 1, N_("Albedo"), 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, PROP_NONE, SOCK_HIDE_VALUE},
     {-1, 0, ""}};
 static bNodeSocketTemplate cmp_node_denoise_out[] = {{SOCK_RGBA, 0, N_("Image")}, {-1, 0, ""}};
 

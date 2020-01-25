@@ -99,7 +99,8 @@ class BaseSpineRig(TweakChainRig):
         org_parent = self.get_bone_parent(self.bones.org[0])
         parents = [org_parent] if org_parent else []
 
-        pbuilder.register_parent(self, self.get_master_control_output, name='Torso', tags={'torso'})
+        pbuilder.register_parent(self, self.get_master_control_output, name='Torso', tags={'torso', 'child'})
+
         pbuilder.build_child(
             self, master_name, exclude_self=True,
             extra_parents=parents, select_parent=org_parent,

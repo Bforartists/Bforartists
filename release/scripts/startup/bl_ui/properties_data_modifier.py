@@ -133,43 +133,55 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         layout.prop(md, "end_cap")
 
     def BEVEL(self, layout, ob, md):
-        split = layout.split()
-
-        col = split.column()
-        if md.offset_type == 'PERCENT':
-            col.prop(md, "width_pct")
+        offset_type = md.offset_type
+        if offset_type == 'PERCENT':
+            layout.prop(md, "width_pct")
         else:
-            col.prop(md, "width")
-        col.prop(md, "segments")
-        col.prop(md, "profile")
-        col.prop(md, "material")
+            offset_text = "Width"
+            if offset_type == 'DEPTH':
+                offset_text = "Depth"
+            elif offset_type == 'OFFSET':
+                offset_text = "Offset"
+            layout.prop(md, "width", text=offset_text)
+        layout.row().prop(md, "offset_type", expand=True)
 
+        split = layout.split()
         col = split.column()
         col.prop(md, "use_only_vertices")
         col.prop(md, "use_clamp_overlap")
         col.prop(md, "loop_slide")
+        col = split.column()
         col.prop(md, "mark_seam")
         col.prop(md, "mark_sharp")
         col.prop(md, "harden_normals")
+
+        layout.row().prop(md, "segments")
+        layout.row().prop(md, "profile")
+        layout.row().prop(md, "material")
+
+        layout.label(text="Miter Type:")
+        layout.row().prop(md, "miter_outer", text="Outer")
+        layout.row().prop(md, "miter_inner", text="Inner")
+        if md.miter_inner in {'MITER_PATCH', 'MITER_ARC'}:
+            layout.row().prop(md, "spread")
 
         layout.label(text="Limit Method:")
         layout.row().prop(md, "limit_method", expand=True)
         if md.limit_method == 'ANGLE':
             layout.prop(md, "angle_limit")
         elif md.limit_method == 'VGROUP':
-            layout.label(text="Vertex Group:")
             layout.prop_search(md, "vertex_group", ob, "vertex_groups", text="")
 
-        layout.label(text="Width Method:")
-        layout.row().prop(md, "offset_type", expand=True)
-
-        layout.label(text="Set Face Strength Mode")
+        layout.label(text="Face Strength Mode:")
         layout.row().prop(md, "face_strength_mode", expand=True)
 
-        layout.label(text="Miter Patterns")
-        layout.row().prop(md, "miter_outer")
-        layout.row().prop(md, "miter_inner")
-        layout.row().prop(md, "spread")
+        layout.label(text="Intersection Type:")
+        layout.row().prop(md, "vmesh_method", expand=True)
+        layout.row().prop(md, "use_custom_profile")
+        row = layout.row()
+        row.enabled = md.use_custom_profile
+        if md.use_custom_profile:
+            layout.template_curveprofile(md, "custom_profile")
 
     def BOOLEAN(self, layout, _ob, md):
         split = layout.split()
@@ -645,7 +657,8 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         split = layout.split()
         col = split.column()
         col.prop(md, "levels", text="Preview")
-        col.prop(md, "sculpt_levels", text="Sculpt")
+        # TODO(sergey): Expose it again after T58473 is solved.
+        # col.prop(md, "sculpt_levels", text="Sculpt")
         col.prop(md, "render_levels", text="Render")
         col.prop(md, "quality")
 
@@ -932,7 +945,7 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
             col.prop(md, "angle")
         col.prop(md, "limits", slider=True)
 
-    def SMOKE(self, layout, _ob, _md):
+    def FLUID(self, layout, _ob, _md):
         layout.label(text="Settings are inside the Physics tab")
 
     def SMOOTH(self, layout, ob, md):
@@ -954,11 +967,23 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         layout.label(text="Settings are inside the Physics tab")
 
     def SOLIDIFY(self, layout, ob, md):
+
+        layout.row().prop(md, "solidify_mode")
+
+        solidify_mode = md.solidify_mode
+
+        if solidify_mode == 'NON_MANIFOLD':
+            layout.prop(md, "nonmanifold_thickness_mode")
+            layout.prop(md, "nonmanifold_boundary_mode")
+
         split = layout.split()
 
         col = split.column()
         col.prop(md, "thickness")
         col.prop(md, "thickness_clamp")
+        row = col.row()
+        row.active = md.thickness_clamp > 0.0
+        row.prop(md, "use_thickness_angle_clamp")
 
         col.separator()
 
@@ -972,18 +997,22 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         sub.active = bool(md.vertex_group)
         sub.prop(md, "thickness_vertex_group", text="Factor")
 
-        col.label(text="Crease:")
-        col.prop(md, "edge_crease_inner", text="Inner")
-        col.prop(md, "edge_crease_outer", text="Outer")
-        col.prop(md, "edge_crease_rim", text="Rim")
+        if solidify_mode == 'EXTRUDE':
+            col.label(text="Crease:")
+            col.prop(md, "edge_crease_inner", text="Inner")
+            col.prop(md, "edge_crease_outer", text="Outer")
+            col.prop(md, "edge_crease_rim", text="Rim")
 
         col = split.column()
 
         col.prop(md, "offset")
+
         col.prop(md, "use_flip_normals")
 
-        col.prop(md, "use_even_offset")
-        col.prop(md, "use_quality_normals")
+        if solidify_mode == 'EXTRUDE':
+            col.prop(md, "use_even_offset")
+            col.prop(md, "use_quality_normals")
+
         col.prop(md, "use_rim")
         col_rim = col.column()
         col_rim.active = md.use_rim
@@ -1451,6 +1480,11 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         col.prop(md, "use_replace", text="Replace Original")
 
         col.prop(md, "material_offset", text="Material Offset")
+
+    def WELD(self, layout, ob, md):
+        layout.prop(md, "merge_threshold", text="Distance")
+        layout.prop(md, "max_interactions")
+        layout.prop_search(md, "vertex_group", ob, "vertex_groups")
 
     def DATA_TRANSFER(self, layout, ob, md):
         row = layout.row(align=True)
@@ -2333,6 +2367,52 @@ class DATA_PT_gpencil_modifiers(ModifierButtonsPanel, Panel):
         sub = row.row(align=True)
         sub.active = bool(md.vertex_group)
         sub.prop(md, "invert_vertex_group", text="", icon='ARROW_LEFTRIGHT')
+
+    def GP_MULTIPLY(self, layout, ob, md):
+        gpd = ob.data
+        col = layout.column()
+
+        col.prop(md, "duplications")
+        subcol = col.column()
+        subcol.enabled = md.duplications > 0
+        subcol.prop(md, "distance")
+        subcol.prop(md, "offset", slider=True)
+
+        subcol.separator()
+
+        subcol.prop(md, "enable_fading")
+        if md.enable_fading:
+            subcol.prop(md, "fading_center")
+            subcol.prop(md, "fading_thickness", slider=True)
+            subcol.prop(md, "fading_opacity", slider=True)
+
+        subcol.separator()
+
+        col.prop(md, "enable_angle_splitting")
+        if md.enable_angle_splitting:
+            col.prop(md, "split_angle")
+
+        col = layout.column()
+        col.separator()
+
+        col.label(text="Material:")
+        row = col.row(align=True)
+        row.prop_search(md, "material", gpd, "materials", text="", icon='SHADING_TEXTURE')
+        row.prop(md, "invert_materials", text="", icon='ARROW_LEFTRIGHT')
+        row = layout.row(align=True)
+        row.prop(md, "pass_index", text="Pass")
+        row.prop(md, "invert_material_pass", text="", icon='ARROW_LEFTRIGHT')
+
+        col = layout.column()
+        col.separator()
+
+        col.label(text="Layer:")
+        row = col.row(align=True)
+        row.prop_search(md, "layer", gpd, "layers", text="", icon='GREASEPENCIL')
+        row.prop(md, "invert_layers", text="", icon='ARROW_LEFTRIGHT')
+        row = layout.row(align=True)
+        row.prop(md, "layer_pass", text="Pass")
+        row.prop(md, "invert_layer_pass", text="", icon='ARROW_LEFTRIGHT')
 
 
 classes = (

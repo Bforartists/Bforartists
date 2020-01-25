@@ -99,25 +99,21 @@ static int bpy_bmloopuv_flag_set(BPy_BMLoopUV *self, PyObject *value, void *flag
 
 static PyGetSetDef bpy_bmloopuv_getseters[] = {
     /* attributes match rna_def_mloopuv  */
-    {(char *)"uv",
-     (getter)bpy_bmloopuv_uv_get,
-     (setter)bpy_bmloopuv_uv_set,
-     (char *)bpy_bmloopuv_uv_doc,
-     NULL},
-    {(char *)"pin_uv",
+    {"uv", (getter)bpy_bmloopuv_uv_get, (setter)bpy_bmloopuv_uv_set, bpy_bmloopuv_uv_doc, NULL},
+    {"pin_uv",
      (getter)bpy_bmloopuv_flag_get,
      (setter)bpy_bmloopuv_flag_set,
-     (char *)bpy_bmloopuv_flag__pin_uv_doc,
+     bpy_bmloopuv_flag__pin_uv_doc,
      (void *)MLOOPUV_PINNED},
-    {(char *)"select",
+    {"select",
      (getter)bpy_bmloopuv_flag_get,
      (setter)bpy_bmloopuv_flag_set,
-     (char *)bpy_bmloopuv_flag__select_doc,
+     bpy_bmloopuv_flag__select_doc,
      (void *)MLOOPUV_VERTSEL},
-    {(char *)"select_edge",
+    {"select_edge",
      (getter)bpy_bmloopuv_flag_get,
      (setter)bpy_bmloopuv_flag_set,
-     (char *)bpy_bmloopuv_flag__select_edge_doc,
+     bpy_bmloopuv_flag__select_edge_doc,
      (void *)MLOOPUV_EDGESEL},
 
     {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
@@ -219,20 +215,20 @@ static int bpy_bmvertskin_flag_set(BPy_BMVertSkin *self, PyObject *value, void *
 
 static PyGetSetDef bpy_bmvertskin_getseters[] = {
     /* attributes match rna_mesh_gen  */
-    {(char *)"radius",
+    {"radius",
      (getter)bpy_bmvertskin_radius_get,
      (setter)bpy_bmvertskin_radius_set,
-     (char *)bpy_bmvertskin_radius_doc,
+     bpy_bmvertskin_radius_doc,
      NULL},
-    {(char *)"use_root",
+    {"use_root",
      (getter)bpy_bmvertskin_flag_get,
      (setter)bpy_bmvertskin_flag_set,
-     (char *)bpy_bmvertskin_flag__use_root_doc,
+     bpy_bmvertskin_flag__use_root_doc,
      (void *)MVERT_SKIN_ROOT},
-    {(char *)"use_loose",
+    {"use_loose",
      (getter)bpy_bmvertskin_flag_get,
      (setter)bpy_bmvertskin_flag_set,
-     (char *)bpy_bmvertskin_flag__use_loose_doc,
+     bpy_bmvertskin_flag__use_loose_doc,
      (void *)MVERT_SKIN_LOOSE},
 
     {NULL, NULL, NULL, NULL, NULL} /* Sentinel */
@@ -384,19 +380,21 @@ PyObject *BPy_BMLoopColor_CreatePyObject(struct MLoopCol *data)
  * This is python type wraps a deform vert as a python dictionary,
  * hiding the #MDeformWeight on access, since the mapping is very close, eg:
  *
- * C:
- *     weight = defvert_find_weight(dv, group_nr);
- *     defvert_remove_group(dv, dw)
+ * \code{.c}
+ * weight = defvert_find_weight(dv, group_nr);
+ * defvert_remove_group(dv, dw)
+ * \endcode
  *
- * Py:
- *     weight = dv[group_nr]
- *     del dv[group_nr]
+ * \code{.py}
+ * weight = dv[group_nr]
+ * del dv[group_nr]
+ * \endcode
  *
- * \note: there is nothing BMesh specific here,
+ * \note There is nothing BMesh specific here,
  * its only that BMesh is the only part of blender that uses a hand written api like this.
  * This type could eventually be used to access lattice weights.
  *
- * \note: Many of blender-api's dict-like-wrappers act like ordered dicts,
+ * \note Many of blender-api's dict-like-wrappers act like ordered dicts,
  * This is intentionally _not_ ordered, the weights can be in any order and it won't matter,
  * the order should not be used in the api in any meaningful way (as with a python dict)
  * only expose as mapping, not a sequence.

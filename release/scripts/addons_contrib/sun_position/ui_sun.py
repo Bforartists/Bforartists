@@ -70,15 +70,13 @@ class SUNPOS_OT_DefaultPresets(Operator):
 
     def execute(self, context):
         preset_dirpath = bpy.utils.user_resource('SCRIPTS', path="presets/operator/sun_position", create=True)
-        # Why these in particular?
-        presets = {"north_pole.py": [6, 21, 12.0, 0, 90.000, 0.0000, False],
-                   "equator_vernal_equinox.py":   [3, 20, 12.0, 0, 0.0000, 0.0000, False],
-                   "rio_de_janeiro_may_10th.py":  [5, 10, 12.0, 3, -22.9002, -43.2334, False],
-                   "tokyo_august_20th.py":        [8, 20, 12.0, 9, 35.7002, 139.7669, False],
-                   "boston_autumnal_equinox.py":  [9, 22, 12.0, 5, 42.3502, -71.0500, True],
-                   "boston_vernal_equinox.py":    [3, 20, 12.0, 5, 42.3502, -71.0500, True],
-                   "honolulu_winter_solstice.py": [12, 21, 12.0, 10, 21.3001, -157.850, False],
-                   "honolulu_summer_solstice.py": [6, 21, 12.0, 10, 21.3001, -157.850, False]}
+        #                       [month, day, time, UTC, lat, lon, dst]
+        presets = {"chongqing.py": [10, 1,  7.18,  8, 29.5583,  106.567, False],
+                   "sao_paulo.py": [9,  7,  12.0, -3,  -23.55, -46.6333, False],
+                   "kinshasa.py":  [6,  30, 12.0,  1,  -4.325,  15.3222, False],
+                   "london.py":    [6,  11, 12.0,  0, 51.5072,  -0.1275, True],
+                   "new_york.py":  [7,  4,  12.0, -5, 40.6611, -73.9439, True],
+                   "sydney.py":    [1,  26, 17.6, 10, -33.865,  151.209, False]}
 
         script = '''import bpy
 sun_props = bpy.context.scene.sun_pos_properties
@@ -199,7 +197,6 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
                         col.prop(sp, "time_spread")
 
         box = self.layout.box()
-        # box.prop(sp, "show_map", text="Show Map", toggle=True, icon='WORLD')
 
         col = box.column(align=True)
         col.label(text="Enter coordinates:")
@@ -266,78 +263,31 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
         col.separator()
 
         col = flow.column(align=True)
-        lt, ut = format_time(sp.time,
-                             sp.UTC_zone,
-                             p.show_daylight_savings and sp.use_daylight_savings,
-                             sp.longitude)
         col.prop(sp, "time")
         col.prop(sp, "UTC_zone")
         if p.show_daylight_savings:
             col.prop(sp, "use_daylight_savings", text="Daylight Savings")
         col.separator()
 
+        lt = format_time(sp.time,
+                         p.show_daylight_savings and sp.use_daylight_savings,
+                         sp.longitude)
+        ut = format_time(sp.time,
+                         p.show_daylight_savings and sp.use_daylight_savings,
+                         sp.longitude,
+                         sp.UTC_zone)
         col = flow.column(align=True)
         col.alignment = 'CENTER'
-        col.label(text=lt, icon='TIME')
-        col.label(text="  " + ut, icon='PREVIEW_RANGE')
+        col.label(text="Local: " + lt, icon='TIME')
+        col.label(text="  UTC: " + ut, icon='PREVIEW_RANGE')
         col.separator()
 
         col = flow.column(align=True)
         col.alignment = 'CENTER'
         if p.show_rise_set:
-            if (sun.sunrise.time == sun.sunset.time
-                    or sun.sunrise.elevation > -0.4
-                    or sun.sunset.elevation  > -0.4):
-                sun.rise_set_ok = False
-                tsr = "sunrise: --------"
-                tss = " sunset: --------"
-            else:
-                sun.rise_set_ok = True
-                sr = format_hms(sun.sunrise.time)
-                ss = format_hms(sun.sunset.time)
-                tsr = "Sunrise: " + sr
-                tss = " Sunset: " + ss
+            sr = format_hms(sun.sunrise.time)
+            ss = format_hms(sun.sunset.time)
+            tsr = "Sunrise: " + sr
+            tss = " Sunset: " + ss
             col.label(text=tsr, icon='LIGHT_SUN')
             col.label(text=tss, icon='SOLO_ON')
-
-
-# -------------------------------------------------------------------
-# Choice List of world maps
-#
-# Uncomment this if you add other map images
-# -------------------------------------------------------------------
-
-
-# class SUNPOS_OT_MapChoice(bpy.types.Operator):
-#     bl_idname = "world.wmp_operator"
-#     bl_label = "World map files"
-#     """
-#     wmp = [["1536 x 768", "WorldMap.jpg"],
-#            ["768 x 384", "WorldMapLR.jpg"],
-#            ["512 x 256", "WorldMapLLR.jpg"],
-#            ["Textureless", "None"]]
-#     """
-#     # S.L. provide one single optimized map < 100k
-#     wmp = [["1536 x 768", "World.jpg"],
-#            ["Textureless", "None"]]
-#     from bpy.props import EnumProperty
-
-#     mapPresets: EnumProperty(
-#         name="World map presets",
-#         description="world map files",
-#         items=(
-#             # ("3", wmp[3][0], ""),
-#             #("2", wmp[2][0], ""),
-#             ("1", wmp[1][0], ""),
-#             ("0", wmp[0][0], ""),
-#         ),
-#         default="1")
-
-#     def execute(self, context):
-#         sp = context.scene.sun_pos_properties
-#         wmp = self.wmp
-#         i = int(self.properties.mapPresets)
-#         sp.map_name = wmp[i]
-#         Sun.MapName = wmp[i][1]
-
-#         return {'FINISHED'}

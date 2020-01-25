@@ -106,11 +106,13 @@ class NLA_MT_editor_menus(Menu):
     bl_idname = "NLA_MT_editor_menus"
     bl_label = ""
 
-    def draw(self, _context):
+    def draw(self, context):
+        st = context.space_data
         layout = self.layout
         layout.menu("NLA_MT_view")
         layout.menu("NLA_MT_select")
-        layout.menu("NLA_MT_marker")
+        if st.show_markers:
+            layout.menu("NLA_MT_marker")
         layout.menu("NLA_MT_edit")
         layout.menu("NLA_MT_add")
 
@@ -130,6 +132,12 @@ class NLA_MT_view(Menu):
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
         layout.operator("anim.previewrange_clear", icon = "CLEAR")
         layout.operator("nla.previewrange_set", icon='BORDER_RECT')
+
+        layout.separator()
+        
+        layout.operator("view2d.zoom_in", text = "Zoom In", icon = "ZOOM_IN")
+        layout.operator("view2d.zoom_out", text = "Zoom Out", icon = "ZOOM_OUT")
+        layout.operator("view2d.zoom_border", icon = "ZOOM_BORDER")
 
         layout.separator()
 
@@ -255,6 +263,7 @@ class NLA_MT_edit(Menu):
         layout.operator("nla.duplicate", text="Linked Duplicate", icon = "DUPLICATE").linked = True
         layout.operator("nla.split", icon = "SPLIT")
         layout.operator("nla.delete", icon = "DELETE")
+        layout.operator("nla.tracks_delete", icon = "DELETE")
 
         layout.separator()
         layout.operator("nla.mute_toggle", icon = "MUTE_IPO_ON")

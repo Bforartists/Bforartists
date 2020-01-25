@@ -578,7 +578,8 @@ static int sequencer_add_generic_strip_exec(bContext *C, wmOperator *op, SeqLoad
     ED_sequencer_deselect_all(scene);
   }
 
-  if (RNA_struct_property_is_set(op->ptr, "files")) {
+  if (RNA_struct_property_is_set(op->ptr, "files") &&
+      RNA_struct_property_is_set(op->ptr, "directory")) {
     tot_files = RNA_property_collection_length(op->ptr,
                                                RNA_struct_find_property(op->ptr, "files"));
   }
@@ -591,7 +592,7 @@ static int sequencer_add_generic_strip_exec(bContext *C, wmOperator *op, SeqLoad
     char dir_only[FILE_MAX];
     char file_only[FILE_MAX];
 
-    BLI_split_dir_part(seq_load.path, dir_only, sizeof(dir_only));
+    RNA_string_get(op->ptr, "directory", dir_only);
 
     RNA_BEGIN (op->ptr, itemptr, "files") {
       Sequence *seq;
@@ -759,7 +760,8 @@ void SEQUENCER_OT_movie_strip_add(struct wmOperatorType *ot)
                                  FILE_TYPE_FOLDER | FILE_TYPE_MOVIE,
                                  FILE_SPECIAL,
                                  FILE_OPENFILE,
-                                 WM_FILESEL_FILEPATH | WM_FILESEL_RELPATH | WM_FILESEL_FILES,
+                                 WM_FILESEL_FILEPATH | WM_FILESEL_RELPATH | WM_FILESEL_FILES |
+                                     WM_FILESEL_SHOW_PROPS,
                                  FILE_DEFAULTDISPLAY,
                                  FILE_SORT_ALPHA);
   sequencer_generic_props__internal(ot, SEQPROP_STARTFRAME);
@@ -818,7 +820,8 @@ void SEQUENCER_OT_sound_strip_add(struct wmOperatorType *ot)
                                  FILE_TYPE_FOLDER | FILE_TYPE_SOUND,
                                  FILE_SPECIAL,
                                  FILE_OPENFILE,
-                                 WM_FILESEL_FILEPATH | WM_FILESEL_RELPATH | WM_FILESEL_FILES,
+                                 WM_FILESEL_FILEPATH | WM_FILESEL_RELPATH | WM_FILESEL_FILES |
+                                     WM_FILESEL_SHOW_PROPS,
                                  FILE_DEFAULTDISPLAY,
                                  FILE_SORT_ALPHA);
   sequencer_generic_props__internal(ot, SEQPROP_STARTFRAME);
@@ -1021,7 +1024,8 @@ void SEQUENCER_OT_image_strip_add(struct wmOperatorType *ot)
                                  FILE_TYPE_FOLDER | FILE_TYPE_IMAGE,
                                  FILE_SPECIAL,
                                  FILE_OPENFILE,
-                                 WM_FILESEL_DIRECTORY | WM_FILESEL_RELPATH | WM_FILESEL_FILES,
+                                 WM_FILESEL_DIRECTORY | WM_FILESEL_RELPATH | WM_FILESEL_FILES |
+                                     WM_FILESEL_SHOW_PROPS,
                                  FILE_DEFAULTDISPLAY,
                                  FILE_SORT_ALPHA);
   sequencer_generic_props__internal(ot, SEQPROP_STARTFRAME | SEQPROP_ENDFRAME);

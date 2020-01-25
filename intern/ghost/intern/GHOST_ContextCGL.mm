@@ -17,7 +17,7 @@
  * All rights reserved.
  */
 
-/** \file ghost/intern/GHOST_ContextCGL.mm
+/** \file
  *  \ingroup GHOST
  *
  * Definition of GHOST_ContextCGL class.
@@ -226,8 +226,6 @@ static void makeAttribList(std::vector<NSOpenGLPixelFormatAttribute> &attribs,
     attribs.push_back(NSOpenGLPFAAccelerated);
     attribs.push_back(NSOpenGLPFANoRecovery);
   }
-
-  attribs.push_back(NSOpenGLPFAAllowOfflineRenderers);  // for automatic GPU switching
 
   if (stereoVisual)
     attribs.push_back(NSOpenGLPFAStereo);

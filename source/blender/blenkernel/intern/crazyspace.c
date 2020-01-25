@@ -251,8 +251,10 @@ void BKE_crazyspace_set_quats_mesh(Mesh *me,
   }
 }
 
-/** returns an array of deform matrices for crazyspace correction, and the
- * number of modifiers left */
+/**
+ * Returns an array of deform matrices for crazyspace correction,
+ * and the number of modifiers left.
+ */
 int BKE_crazyspace_get_first_deform_matrices_editbmesh(struct Depsgraph *depsgraph,
                                                        Scene *scene,
                                                        Object *ob,
@@ -385,7 +387,7 @@ int BKE_sculpt_get_first_deform_matrices(struct Depsgraph *depsgraph,
   crazyspace_init_object_for_eval(depsgraph, object, &object_eval);
   MultiresModifierData *mmd = get_multires_modifier(scene, &object_eval, 0);
   const bool is_sculpt_mode = (object->mode & OB_MODE_SCULPT) != 0;
-  const bool has_multires = mmd != NULL && mmd->sculptlvl > 0;
+  const bool has_multires = mmd != NULL && BKE_multires_sculpt_level_get(mmd) > 0;
   const ModifierEvalContext mectx = {depsgraph, &object_eval, 0};
 
   if (is_sculpt_mode && has_multires) {
@@ -415,11 +417,11 @@ int BKE_sculpt_get_first_deform_matrices(struct Depsgraph *depsgraph,
         mti->deformMatrices(md, &mectx, me_eval, deformedVerts, defmats, me_eval->totvert);
       }
       else {
+        /* More complex handling will continue in BKE_crazyspace_build_sculpt.
+         * Exiting the loop on a non-deform modifier causes issues - T71213. */
+        BLI_assert(crazyspace_modifier_supports_deform(md));
         break;
       }
-    }
-    else {
-      break;
     }
   }
 

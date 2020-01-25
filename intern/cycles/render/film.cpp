@@ -41,7 +41,34 @@ static bool compare_pass_order(const Pass &a, const Pass &b)
 void Pass::add(PassType type, vector<Pass> &passes, const char *name)
 {
   for (size_t i = 0; i < passes.size(); i++) {
-    if (passes[i].type == type && (name ? (passes[i].name == name) : passes[i].name.empty())) {
+    if (passes[i].type != type) {
+      continue;
+    }
+
+    /* An empty name is used as a placeholder to signal that any pass of
+     * that type is fine (because the content always is the same).
+     * This is important to support divide_type: If the pass that has a
+     * divide_type is added first, a pass for divide_type with an empty
+     * name will be added. Then, if a matching pass with a name is later
+     * requested, the existing placeholder will be renamed to that.
+     * If the divide_type is explicitly allocated with a name first and
+     * then again as part of another pass, the second one will just be
+     * skipped because that type already exists. */
+
+    /* If no name is specified, any pass of the correct type will match. */
+    if (name == NULL) {
+      return;
+    }
+
+    /* If we already have a placeholder pass, rename that one. */
+    if (passes[i].name.empty()) {
+      passes[i].name = name;
+      return;
+    }
+
+    /* If neither existing nor requested pass have placeholder name, they
+     * must match. */
+    if (name == passes[i].name) {
       return;
     }
   }
@@ -163,6 +190,12 @@ void Pass::add(PassType type, vector<Pass> &passes, const char *name)
     case PASS_CRYPTOMATTE:
       pass.components = 4;
       break;
+    case PASS_AOV_COLOR:
+      pass.components = 4;
+      break;
+    case PASS_AOV_VALUE:
+      pass.components = 1;
+      break;
     default:
       assert(false);
       break;
@@ -281,8 +314,6 @@ NODE_DEFINE(Film)
   SOCKET_FLOAT(mist_depth, "Mist Depth", 100.0f);
   SOCKET_FLOAT(mist_falloff, "Mist Falloff", 1.0f);
 
-  SOCKET_BOOLEAN(use_sample_clamp, "Use Sample Clamp", false);
-
   SOCKET_BOOLEAN(denoising_data_pass, "Generate Denoising Data Pass", false);
   SOCKET_BOOLEAN(denoising_clean_pass, "Generate Denoising Clean Pass", false);
   SOCKET_BOOLEAN(denoising_prefiltered_pass, "Generate Denoising Prefiltered Pass", false);
@@ -325,9 +356,9 @@ void Film::device_update(Device *device, DeviceScene *dscene, Scene *scene)
 
   kfilm->light_pass_flag = 0;
   kfilm->pass_stride = 0;
-  kfilm->use_light_pass = use_light_visibility || use_sample_clamp;
+  kfilm->use_light_pass = use_light_visibility;
 
-  bool have_cryptomatte = false;
+  bool have_cryptomatte = false, have_aov_color = false, have_aov_value = false;
 
   for (size_t i = 0; i < passes.size(); i++) {
     Pass &pass = passes[i];
@@ -464,6 +495,18 @@ void Film::device_update(Device *device, DeviceScene *dscene, Scene *scene)
                                       kfilm->pass_stride;
         have_cryptomatte = true;
         break;
+      case PASS_AOV_COLOR:
+        if (!have_aov_color) {
+          kfilm->pass_aov_color = kfilm->pass_stride;
+          have_aov_color = true;
+        }
+        break;
+      case PASS_AOV_VALUE:
+        if (!have_aov_value) {
+          kfilm->pass_aov_value = kfilm->pass_stride;
+          have_aov_value = true;
+        }
+        break;
       default:
         assert(false);
         break;
@@ -567,6 +610,29 @@ void Film::tag_passes_update(Scene *scene, const vector<Pass> &passes_, bool upd
 void Film::tag_update(Scene * /*scene*/)
 {
   need_update = true;
+}
+
+int Film::get_aov_offset(string name, bool &is_color)
+{
+  int num_color = 0, num_value = 0;
+  foreach (const Pass &pass, passes) {
+    if (pass.type == PASS_AOV_COLOR) {
+      num_color++;
+    }
+    else if (pass.type == PASS_AOV_VALUE) {
+      num_value++;
+    }
+    else {
+      continue;
+    }
+
+    if (pass.name == name) {
+      is_color = (pass.type == PASS_AOV_COLOR);
+      return (is_color ? num_color : num_value) - 1;
+    }
+  }
+
+  return -1;
 }
 
 CCL_NAMESPACE_END

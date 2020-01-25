@@ -326,23 +326,30 @@ def create_materials(filepath, relpath,
 
 
                 elif context_material:
+                    def _get_colors(line_split):
+                        # OBJ 'allows' one or two components values, treat single component as greyscale, and two as blue = 0.0.
+                        ln = len(line_split)
+                        if ln == 2:
+                            return [float_func(line_split[1])] * 3
+                        elif ln == 3:
+                            return [float_func(line_split[1]), float_func(line_split[2]), 0.0]
+                        else:
+                            return [float_func(line_split[1]), float_func(line_split[2]), float_func(line_split[3])]
+
                     # we need to make a material to assign properties to it.
                     if line_id == b'ka':
-                        refl = (float_func(line_split[1]) + float_func(line_split[2]) + float_func(line_split[3])) / 3.0
+                        refl =  sum(_get_colors(line_split)) / 3.0
                         context_mat_wrap.metallic = refl
                         context_material_vars.add("metallic")
                     elif line_id == b'kd':
-                        col = (float_func(line_split[1]), float_func(line_split[2]), float_func(line_split[3]))
-                        context_mat_wrap.base_color = col
+                        context_mat_wrap.base_color = _get_colors(line_split)
                     elif line_id == b'ks':
-                        spec_colors[:] = [
-                            float_func(line_split[1]), float_func(line_split[2]), float_func(line_split[3])]
+                        spec_colors[:] = _get_colors(line_split)
                         context_material_vars.add("specular")
                     elif line_id == b'ke':
                         # We cannot set context_material.emit right now, we need final diffuse color as well for this.
                         # XXX Unsupported currently
-                        col = (float_func(line_split[1]), float_func(line_split[2]), float_func(line_split[3]))
-                        context_mat_wrap.emission_color = col
+                        context_mat_wrap.emission_color = _get_colors(line_split)
                     elif line_id == b'ns':
                         # XXX Totally empirical conversion, trying to adapt it
                         #     (from 0.0 - 900.0 OBJ specular exponent range to 1.0 - 0.0 Principled BSDF range)...
@@ -503,9 +510,9 @@ def split_mesh(verts_loc, faces, unique_materials, filepath, SPLIT_OB_OR_GROUP):
          face_vert_nor_indices,
          face_vert_tex_indices,
          context_material,
-         context_smooth_group,
+         _context_smooth_group,
          context_object_key,
-         face_invalid_blenpoly,
+         _face_invalid_blenpoly,
          ) = face
         key = context_object_key
 
@@ -949,8 +956,6 @@ def load(context,
         if use_split_objects or use_split_groups:
             use_groups_as_vgroups = False
 
-        time_main = time.time()
-
         verts_loc = []
         verts_nor = []
         verts_tex = []
@@ -1238,7 +1243,6 @@ def load(context,
         if bpy.ops.object.select_all.poll():
             bpy.ops.object.select_all(action='DESELECT')
 
-        scene = context.scene
         new_objects = []  # put new objects here
 
         # Split the mesh by objects/materials, may

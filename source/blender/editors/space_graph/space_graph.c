@@ -81,7 +81,7 @@ static SpaceLink *graph_new(const ScrArea *UNUSED(sa), const Scene *scene)
 
   /* settings for making it easier by default to just see what you're interested in tweaking */
   sipo->ads->filterflag |= ADS_FILTER_ONLYSEL;
-  sipo->flag |= SIPO_SELVHANDLESONLY | SIPO_MARKER_LINES;
+  sipo->flag |= SIPO_SELVHANDLESONLY | SIPO_SHOW_MARKERS;
 
   /* header */
   ar = MEM_callocN(sizeof(ARegion), "header for graphedit");
@@ -296,10 +296,9 @@ static void graph_main_region_draw(const bContext *C, ARegion *ar)
   if (sipo->mode != SIPO_MODE_DRIVERS) {
     UI_view2d_view_orthoSpecial(ar, v2d, 1);
     int marker_draw_flag = DRAW_MARKERS_MARGIN;
-    if (sipo->flag & SIPO_MARKER_LINES) {
-      marker_draw_flag |= DRAW_MARKERS_LINES;
+    if (sipo->flag & SIPO_SHOW_MARKERS) {
+      ED_markers_draw(C, marker_draw_flag);
     }
-    ED_markers_draw(C, marker_draw_flag);
   }
 
   /* preview range */
@@ -327,11 +326,7 @@ static void graph_main_region_draw(const bContext *C, ARegion *ar)
   /* scale numbers */
   {
     rcti rect;
-    BLI_rcti_init(&rect,
-                  0,
-                  15 * UI_DPI_FAC,
-                  15 * UI_DPI_FAC,
-                  UI_DPI_FAC * ar->sizey - UI_TIME_SCRUB_MARGIN_Y);
+    BLI_rcti_init(&rect, 0, 15 * UI_DPI_FAC, 15 * UI_DPI_FAC, ar->winy - UI_TIME_SCRUB_MARGIN_Y);
     UI_view2d_draw_scale_y__values(ar, v2d, &rect, TH_SCROLL_TEXT);
   }
 }
@@ -796,6 +791,9 @@ static void graph_refresh(const bContext *C, ScrArea *sa)
     ED_area_tag_redraw(sa);
   }
 
+  sipo->runtime.flag &= ~(SIPO_RUNTIME_FLAG_TWEAK_HANDLES_LEFT |
+                          SIPO_RUNTIME_FLAG_TWEAK_HANDLES_RIGHT);
+
   /* init/adjust F-Curve colors */
   graph_refresh_fcurve_colors(C);
 }
@@ -902,6 +900,9 @@ void ED_spacetype_ipo(void)
   BLI_addhead(&st->regiontypes, art);
 
   graph_buttons_register(art);
+
+  art = ED_area_type_hud(st->spaceid);
+  BLI_addhead(&st->regiontypes, art);
 
   BKE_spacetype_register(st);
 }

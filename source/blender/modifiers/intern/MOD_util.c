@@ -279,12 +279,11 @@ void modifier_type_init(ModifierTypeInfo *types[])
   INIT_TYPE(ParticleInstance);
   INIT_TYPE(Explode);
   INIT_TYPE(Shrinkwrap);
-  INIT_TYPE(Fluidsim);
   INIT_TYPE(Mask);
   INIT_TYPE(SimpleDeform);
   INIT_TYPE(Multires);
   INIT_TYPE(Surface);
-  INIT_TYPE(Smoke);
+  INIT_TYPE(Fluid);
   INIT_TYPE(ShapeKey);
   INIT_TYPE(Solidify);
   INIT_TYPE(Screw);
@@ -301,6 +300,7 @@ void modifier_type_init(ModifierTypeInfo *types[])
   INIT_TYPE(MeshCache);
   INIT_TYPE(LaplacianDeform);
   INIT_TYPE(Wireframe);
+  INIT_TYPE(Weld);
   INIT_TYPE(DataTransfer);
   INIT_TYPE(NormalEdit);
   INIT_TYPE(CorrectiveSmooth);

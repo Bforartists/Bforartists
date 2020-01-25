@@ -36,7 +36,6 @@ config = [
 
 import bpy
 import time
-import tempfile
 import os
 
 DEMO_CFG = "demo.py"

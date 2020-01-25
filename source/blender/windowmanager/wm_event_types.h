@@ -202,6 +202,8 @@ enum {
   MEDIAFIRST = 0x00b0, /* 176 */
   MEDIALAST = 0x00b1,  /* 177 */
 
+  APPKEY = 0x00b2, /* 178 */
+
   F1KEY = 0x012c,  /* 300 */
   F2KEY = 0x012d,  /* 301 */
   F3KEY = 0x012e,  /* 302 */
@@ -221,6 +223,11 @@ enum {
   F17KEY = 0x013c, /* 316 */
   F18KEY = 0x013d, /* 317 */
   F19KEY = 0x013e, /* 318 */
+  F20KEY = 0x013f, /* 319 */
+  F21KEY = 0x0140, /* 320 */
+  F22KEY = 0x0141, /* 321 */
+  F23KEY = 0x0142, /* 322 */
+  F24KEY = 0x0143, /* 323 */
 
   /* *** End of keyboard codes. *** */
 
@@ -315,7 +322,7 @@ enum {
   EVT_TWEAK_L = 0x5002,
   EVT_TWEAK_M = 0x5003,
   EVT_TWEAK_R = 0x5004,
-  EVT_GESTURE = 0x5010,
+  /* 0x5010 (and lower) should be left to add other tweak types in the future. */
 
   /* 0x5011 is taken, see EVT_ACTIONZONE_FULLSCREEN */
 
@@ -345,7 +352,7 @@ enum {
 /* test whether the event is a key on the keyboard */
 #define ISKEYBOARD(event_type) \
   (((event_type) >= 0x0020 && (event_type) <= 0x00ff) || \
-   ((event_type) >= 0x012c && (event_type) <= 0x013f))
+   ((event_type) >= 0x012c && (event_type) <= 0x0143))
 
 /* test whether the event is a modifier key */
 #define ISKEYMODIFIER(event_type) \
@@ -367,7 +374,7 @@ enum {
         BUTTON7MOUSE))
 
 /* test whether the event is tweak event */
-#define ISTWEAK(event_type) ((event_type) >= EVT_TWEAK_L && (event_type) <= EVT_GESTURE)
+#define ISTWEAK(event_type) ((event_type) >= EVT_TWEAK_L && (event_type) <= EVT_TWEAK_R)
 
 /* test whether the event is a NDOF event */
 #define ISNDOF(event_type) ((event_type) >= NDOF_MOTION && (event_type) < NDOF_LAST)

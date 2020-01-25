@@ -388,7 +388,7 @@ OPENVDB_FORCE_REBUILD=false
 OPENVDB_SKIP=false
 
 # Alembic needs to be compiled for now
-ALEMBIC_VERSION="1.7.8"
+ALEMBIC_VERSION="1.7.12"
 ALEMBIC_VERSION_MIN=$ALEMBIC_VERSION
 ALEMBIC_FORCE_BUILD=false
 ALEMBIC_FORCE_REBUILD=false
@@ -767,7 +767,7 @@ while true; do
     ;;
     *)
       PRINT ""
-      ERROR "Wrong parameter! Usage:"
+      ERROR "Wrong parameter '$1'; Usage:"
       PRINT ""
       PRINT "`eval _echo "$COMMON_INFO"`"
       PRINT ""
@@ -2353,7 +2353,7 @@ compile_ALEMBIC() {
 
     prepare_opt
 
-    if [ ! -d $_src -o true ]; then
+    if [ ! -d $_src ]; then
       mkdir -p $SRC
       download ALEMBIC_SOURCE[@] "$_src.tar.gz"
 
