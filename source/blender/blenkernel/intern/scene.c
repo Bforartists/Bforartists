@@ -29,6 +29,7 @@
 
 #include "DNA_anim_types.h"
 #include "DNA_collection_types.h"
+#include "DNA_curveprofile_types.h"
 #include "DNA_linestyle_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_node_types.h"
@@ -80,6 +81,7 @@
 #include "BKE_node.h"
 #include "BKE_object.h"
 #include "BKE_paint.h"
+#include "BKE_curveprofile.h"
 #include "BKE_rigidbody.h"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
@@ -182,6 +184,8 @@ ToolSettings *BKE_toolsettings_copy(ToolSettings *toolsettings, const int flag)
   /* duplicate Grease Pencil multiframe fallof */
   ts->gp_sculpt.cur_falloff = BKE_curvemapping_copy(ts->gp_sculpt.cur_falloff);
   ts->gp_sculpt.cur_primitive = BKE_curvemapping_copy(ts->gp_sculpt.cur_primitive);
+
+  ts->custom_bevel_profile_preset = BKE_curveprofile_copy(ts->custom_bevel_profile_preset);
   return ts;
 }
 
@@ -222,6 +226,10 @@ void BKE_toolsettings_free(ToolSettings *toolsettings)
   }
   if (toolsettings->gp_sculpt.cur_primitive) {
     BKE_curvemapping_free(toolsettings->gp_sculpt.cur_primitive);
+  }
+
+  if (toolsettings->custom_bevel_profile_preset) {
+    BKE_curveprofile_free(toolsettings->custom_bevel_profile_preset);
   }
 
   MEM_freeN(toolsettings);
@@ -729,6 +737,9 @@ void BKE_scene_init(Scene *sce)
     copy_v3_v3(gp_brush->curcolor_sub, curcolor_sub);
   }
 
+  /* Curve Profile */
+  sce->toolsettings->custom_bevel_profile_preset = BKE_curveprofile_add(PROF_PRESET_LINE);
+
   for (int i = 0; i < ARRAY_SIZE(sce->orientation_slots); i++) {
     sce->orientation_slots[i].index_custom = -1;
   }
@@ -971,14 +982,16 @@ Object *BKE_scene_camera_switch_find(Scene *scene)
     return NULL;
   }
 
-  TimeMarker *m;
-  int cfra = scene->r.cfra;
+  const int cfra = ((scene->r.images == scene->r.framapto) ?
+                        scene->r.cfra :
+                        (int)(scene->r.cfra *
+                              ((float)scene->r.framapto / (float)scene->r.images)));
   int frame = -(MAXFRAME + 1);
   int min_frame = MAXFRAME + 1;
   Object *camera = NULL;
   Object *first_camera = NULL;
 
-  for (m = scene->markers.first; m; m = m->next) {
+  for (TimeMarker *m = scene->markers.first; m; m = m->next) {
     if (m->camera && (m->camera->restrictflag & OB_RESTRICT_RENDER) == 0) {
       if ((m->frame <= cfra) && (m->frame > frame)) {
         camera = m->camera;
@@ -1273,6 +1286,7 @@ static void prepare_mesh_for_viewport_render(Main *bmain, const ViewLayer *view_
                          mesh,
                          (&(struct BMeshToMeshParams){
                              .calc_object_remap = true,
+                             .update_shapekey_indices = true,
                          }));
         DEG_id_tag_update(&mesh->id, 0);
       }
@@ -1341,6 +1355,19 @@ static void scene_graph_update_tagged(Depsgraph *depsgraph, Main *bmain, bool on
     if (run_callbacks) {
       BKE_callback_exec_id_depsgraph(
           bmain, &scene->id, depsgraph, BKE_CB_EVT_DEPSGRAPH_UPDATE_POST);
+
+      /* It is possible that the custom callback modified scene and removed some IDs from the main
+       * database. In this case DEG_ids_clear_recalc() will crash because it iterates over all IDs
+       * which depsgraph was built for.
+       *
+       * The solution is to update relations prior to this call, avoiding access to freed IDs.
+       * Should be safe because relations update is supposed to preserve flags of all IDs which are
+       * still a part of the dependency graph. If an ID is kicked out of the dependency graph it
+       * should also be fine because when/if it's added to another dependency graph it will need to
+       * be tagged for an update anyway.
+       *
+       * If there are no relations changed by the callback this call will do nothing. */
+      DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
     }
     /* Inform editors about possible changes. */
     DEG_ids_check_recalc(bmain, depsgraph, scene, view_layer, false);
@@ -1406,6 +1433,10 @@ void BKE_scene_graph_update_for_newframe(Depsgraph *depsgraph, Main *bmain)
     /* Notify editors and python about recalc. */
     if (pass == 0) {
       BKE_callback_exec_id_depsgraph(bmain, &scene->id, depsgraph, BKE_CB_EVT_FRAME_CHANGE_POST);
+
+      /* NOTE: Similar to this case in scene_graph_update_tagged(). Need to ensure that
+       * DEG_ids_clear_recalc() doesn't access freed memory of possibly removed ID. */
+      DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
     }
 
     /* Inform editors about possible changes. */
@@ -1422,7 +1453,8 @@ void BKE_scene_graph_update_for_newframe(Depsgraph *depsgraph, Main *bmain)
   }
 }
 
-/** Ensures given scene/view_layer pair has a valid, up-to-date depsgraph.
+/**
+ * Ensures given scene/view_layer pair has a valid, up-to-date depsgraph.
  *
  * \warning Sets matching depsgraph as active,
  * so should only be called from the active editing context (usually, from operators).
@@ -2181,7 +2213,16 @@ void BKE_scene_cursor_mat3_to_rot(View3DCursor *cursor, const float mat[3][3], b
 
   switch (cursor->rotation_mode) {
     case ROT_MODE_QUAT: {
-      mat3_normalized_to_quat(cursor->rotation_quaternion, mat);
+      float quat[4];
+      mat3_normalized_to_quat(quat, mat);
+      if (use_compat) {
+        float quat_orig[4];
+        copy_v4_v4(quat_orig, cursor->rotation_quaternion);
+        quat_to_compatible_quat(cursor->rotation_quaternion, quat, quat_orig);
+      }
+      else {
+        copy_v4_v4(cursor->rotation_quaternion, quat);
+      }
       break;
     }
     case ROT_MODE_AXISANGLE: {
@@ -2207,7 +2248,14 @@ void BKE_scene_cursor_quat_to_rot(View3DCursor *cursor, const float quat[4], boo
 
   switch (cursor->rotation_mode) {
     case ROT_MODE_QUAT: {
-      copy_qt_qt(cursor->rotation_quaternion, quat);
+      if (use_compat) {
+        float quat_orig[4];
+        copy_v4_v4(quat_orig, cursor->rotation_quaternion);
+        quat_to_compatible_quat(cursor->rotation_quaternion, quat, quat_orig);
+      }
+      else {
+        copy_qt_qt(cursor->rotation_quaternion, quat);
+      }
       break;
     }
     case ROT_MODE_AXISANGLE: {

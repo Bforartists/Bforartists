@@ -249,11 +249,17 @@ def bake_action_iter(
     if action is None:
         action = bpy.data.actions.new("Action")
 
-    # Leave tweak mode before trying to modify the action (T48397)
-    if atd.use_tweak_mode:
-        atd.use_tweak_mode = False
+    # Only leave tweak mode if we actually need to modify the action (T57159)
+    if action != atd.action:
+        # Leave tweak mode before trying to modify the action (T48397)
+        if atd.use_tweak_mode:
+            atd.use_tweak_mode = False
 
-    atd.action = action
+        atd.action = action
+
+    # Baking the action only makes sense in Replace mode, so force it (T69105)
+    if not atd.use_tweak_mode:
+        atd.action_blend_type = 'REPLACE'
 
     # -------------------------------------------------------------------------
     # Apply transformations to action
@@ -268,8 +274,9 @@ def bake_action_iter(
                 while pbone.constraints:
                     pbone.constraints.remove(pbone.constraints[0])
 
-            # create compatible eulers
+            # Create compatible eulers, quats.
             euler_prev = None
+            quat_prev = None
 
             for (f, matrix, bbones) in pose_info:
                 pbone.matrix_basis = matrix[name].copy()
@@ -278,6 +285,14 @@ def bake_action_iter(
 
                 rotation_mode = pbone.rotation_mode
                 if rotation_mode == 'QUATERNION':
+                    if quat_prev is not None:
+                        quat = pbone.rotation_quaternion.copy()
+                        quat.make_compatible(quat_prev)
+                        pbone.rotation_quaternion = quat
+                        quat_prev = quat
+                        del quat
+                    else:
+                        quat_prev = pbone.rotation_quaternion.copy()
                     pbone.keyframe_insert("rotation_quaternion", index=-1, frame=f, group=name, options=options)
                 elif rotation_mode == 'AXIS_ANGLE':
                     pbone.keyframe_insert("rotation_axis_angle", index=-1, frame=f, group=name, options=options)
@@ -308,8 +323,9 @@ def bake_action_iter(
             while obj.constraints:
                 obj.constraints.remove(obj.constraints[0])
 
-        # create compatible eulers
+        # Create compatible eulers, quats.
         euler_prev = None
+        quat_prev = None
 
         for (f, matrix) in obj_info:
             name = "Action Bake"  # XXX: placeholder
@@ -319,6 +335,15 @@ def bake_action_iter(
 
             rotation_mode = obj.rotation_mode
             if rotation_mode == 'QUATERNION':
+                if quat_prev is not None:
+                    quat = obj.rotation_quaternion.copy()
+                    quat.make_compatible(quat_prev)
+                    obj.rotation_quaternion = quat
+                    quat_prev = quat
+                    del quat
+                    print ("quat_prev", quat_prev)
+                else:
+                    quat_prev = obj.rotation_quaternion.copy()
                 obj.keyframe_insert("rotation_quaternion", index=-1, frame=f, group=name, options=options)
             elif rotation_mode == 'AXIS_ANGLE':
                 obj.keyframe_insert("rotation_axis_angle", index=-1, frame=f, group=name, options=options)

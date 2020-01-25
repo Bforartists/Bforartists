@@ -33,7 +33,8 @@
 extern "C" {
 #endif
 
-#include "DNA_color_types.h"      /* color management */
+#include "DNA_color_types.h" /* color management */
+#include "DNA_curveprofile_types.h"
 #include "DNA_customdata_types.h" /* Scene's runtime cddata masks. */
 #include "DNA_vec_types.h"
 #include "DNA_listBase.h"
@@ -50,6 +51,7 @@ struct Brush;
 struct Collection;
 struct ColorSpace;
 struct CurveMapping;
+struct CurveProfile;
 struct CustomData_MeshMasks;
 struct Editing;
 struct Image;
@@ -99,7 +101,7 @@ typedef struct AviCodecData {
 typedef enum eFFMpegPreset {
   FFM_PRESET_NONE,
 
-#ifdef DNA_DEPRECATED
+#ifdef DNA_DEPRECATED_ALLOW
   /* Previously used by h.264 to control encoding speed vs. file size. */
   FFM_PRESET_ULTRAFAST, /* DEPRECATED */
   FFM_PRESET_SUPERFAST, /* DEPRECATED */
@@ -398,7 +400,7 @@ typedef enum eStereo3dInterlaceType {
 typedef struct ImageFormatData {
   /**
    * R_IMF_IMTYPE_PNG, R_...
-   * \note, video types should only ever be set from this structure when used from RenderData.
+   * \note Video types should only ever be set from this structure when used from #RenderData.
    */
   char imtype;
   /**
@@ -481,13 +483,23 @@ typedef struct ImageFormatData {
 #define R_IMF_FLAG_PREVIEW_JPG (1 << 1) /* was R_PREVIEW_JPG */
 
 /* return values from BKE_imtype_valid_depths, note this is depts per channel */
-#define R_IMF_CHAN_DEPTH_1 (1 << 0)  /* 1bits  (unused) */
-#define R_IMF_CHAN_DEPTH_8 (1 << 1)  /* 8bits  (default) */
-#define R_IMF_CHAN_DEPTH_10 (1 << 2) /* 10bits (uncommon, Cineon/DPX support) */
-#define R_IMF_CHAN_DEPTH_12 (1 << 3) /* 12bits (uncommon, jp2/DPX support) */
-#define R_IMF_CHAN_DEPTH_16 (1 << 4) /* 16bits (tiff, halff float exr) */
-#define R_IMF_CHAN_DEPTH_24 (1 << 5) /* 24bits (unused) */
-#define R_IMF_CHAN_DEPTH_32 (1 << 6) /* 32bits (full float exr) */
+/* ImageFormatData.depth */
+typedef enum eImageFormatDepth {
+  /* 1bits  (unused) */
+  R_IMF_CHAN_DEPTH_1 = (1 << 0),
+  /* 8bits  (default) */
+  R_IMF_CHAN_DEPTH_8 = (1 << 1),
+  /* 10bits (uncommon, Cineon/DPX support) */
+  R_IMF_CHAN_DEPTH_10 = (1 << 2),
+  /* 12bits (uncommon, jp2/DPX support) */
+  R_IMF_CHAN_DEPTH_12 = (1 << 3),
+  /* 16bits (tiff, half float exr) */
+  R_IMF_CHAN_DEPTH_16 = (1 << 4),
+  /* 24bits (unused) */
+  R_IMF_CHAN_DEPTH_24 = (1 << 5),
+  /* 32bits (full float exr) */
+  R_IMF_CHAN_DEPTH_32 = (1 << 6),
+} eImageFormatDepth;
 
 /* ImageFormatData.planes */
 #define R_IMF_PLANES_RGB 24
@@ -1265,6 +1277,9 @@ typedef struct UnifiedPaintSettings {
   /* radius of brush, premultiplied with pressure.
    * In case of anchored brushes contains the anchored radius */
   float pixel_radius;
+  float initial_pixel_radius;
+
+  char _pad[4];
 
   /* drawing pressure */
   float size_pressure_value;
@@ -1286,14 +1301,11 @@ typedef enum {
   UNIFIED_PAINT_WEIGHT = (1 << 5),
   UNIFIED_PAINT_COLOR = (1 << 6),
 
-  /* only used if unified size is enabled, mirrors the brush flags
-   * BRUSH_LOCK_SIZE and BRUSH_SIZE_PRESSURE */
+  /* only used if unified size is enabled, mirrors the brush flag BRUSH_LOCK_SIZE */
   UNIFIED_PAINT_BRUSH_LOCK_SIZE = (1 << 2),
-  UNIFIED_PAINT_BRUSH_SIZE_PRESSURE = (1 << 3),
+  UNIFIED_PAINT_FLAG_UNUSED_0 = (1 << 3),
 
-  /* only used if unified alpha is enabled, mirrors the brush flag
-   * BRUSH_ALPHA_PRESSURE */
-  UNIFIED_PAINT_BRUSH_ALPHA_PRESSURE = (1 << 4),
+  UNIFIED_PAINT_FLAG_UNUSED_1 = (1 << 4),
 } eUnifiedPaintSettingsFlags;
 
 typedef struct CurvePaintSettings {
@@ -1500,7 +1512,10 @@ typedef struct ToolSettings {
   /* XXX: these sculpt_paint_* fields are deprecated, use the
    * unified_paint_settings field instead! */
   short sculpt_paint_settings DNA_DEPRECATED;
-  char _pad5[2];
+
+  char workspace_tool_type;
+
+  char _pad5[1];
   int sculpt_paint_unified_size DNA_DEPRECATED;
   float sculpt_paint_unified_unprojected_radius DNA_DEPRECATED;
   float sculpt_paint_unified_alpha DNA_DEPRECATED;
@@ -1515,6 +1530,11 @@ typedef struct ToolSettings {
   /* Normal Editing */
   float normal_vector[3];
   char _pad6[4];
+
+  /* Custom Curve Profile for bevel tool:
+   * Temporary until there is a proper preset system that stores the profiles or maybe stores
+   * entire bevel configurations. */
+  struct CurveProfile *custom_bevel_profile_preset;
 } ToolSettings;
 
 /* *************************************************************** */
@@ -1909,7 +1929,7 @@ enum {
   R_COLOR_MANAGEMENT_UNUSED_1 = (1 << 1),
 };
 
-#ifdef DNA_DEPRECATED
+#ifdef DNA_DEPRECATED_ALLOW
 /* RenderData.subimtype flag options for imtype */
 enum {
   R_OPENEXR_HALF = (1 << 0), /*deprecated*/
@@ -2028,6 +2048,12 @@ enum {
   SCE_OBJECT_MODE_LOCK = (1 << 0),
 };
 
+/* ToolSettings.workspace_tool_flag */
+enum {
+  SCE_WORKSPACE_TOOL_FALLBACK = 0,
+  SCE_WORKSPACE_TOOL_DEFAULT = 1,
+};
+
 /* ToolSettings.snap_flag */
 #define SCE_SNAP (1 << 0)
 #define SCE_SNAP_ROTATE (1 << 1)
@@ -2143,7 +2169,7 @@ typedef enum eVGroupSelect {
 
 /* FFMpegCodecData.flags */
 enum {
-#ifdef DNA_DEPRECATED
+#ifdef DNA_DEPRECATED_ALLOW
   FFMPEG_MULTIPLEX_AUDIO = (1 << 0), /* deprecated, you can choose none as audiocodec now */
 #endif
   FFMPEG_AUTOSPLIT_OUTPUT = (1 << 1),

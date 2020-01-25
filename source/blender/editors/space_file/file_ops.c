@@ -45,6 +45,8 @@
 #include "ED_select_utils.h"
 
 #include "UI_interface.h"
+#include "UI_interface_icons.h"
+#include "UI_resources.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -320,7 +322,7 @@ static FileSelect file_select(
   if (select != FILE_SEL_ADD && !file_is_any_selected(sfile->files)) {
     sfile->params->active_file = -1;
   }
-  else {
+  else if (sel.last >= 0) {
     ARegion *ar = CTX_wm_region(C);
     const FileLayout *layout = ED_fileselect_get_layout(sfile, ar);
 
@@ -952,7 +954,8 @@ static int bookmark_add_exec(bContext *C, wmOperator *UNUSED(op))
   if (params->dir[0] != '\0') {
     char name[FILE_MAX];
 
-    fsmenu_insert_entry(fsmenu, FS_CATEGORY_BOOKMARKS, params->dir, NULL, FS_INSERT_SAVE);
+    fsmenu_insert_entry(
+        fsmenu, FS_CATEGORY_BOOKMARKS, params->dir, NULL, ICON_FILE_FOLDER, FS_INSERT_SAVE);
     BLI_make_file_string(
         "/", name, BKE_appdir_folder_id_create(BLENDER_USER_CONFIG, NULL), BLENDER_BOOKMARK_FILE);
     fsmenu_write_file(fsmenu, name);
@@ -1572,6 +1575,7 @@ int file_exec(bContext *C, wmOperator *exec_op)
                           FS_CATEGORY_RECENT,
                           sfile->params->dir,
                           NULL,
+                          ICON_FILE_FOLDER,
                           FS_INSERT_SAVE | FS_INSERT_FIRST);
     }
 
@@ -2468,7 +2472,7 @@ static bool file_delete_poll(bContext *C)
       poll = 0;
     }
     for (i = 0; i < numfiles; i++) {
-      if (filelist_entry_select_index_get(sfile->files, i, CHECK_FILES)) {
+      if (filelist_entry_select_index_get(sfile->files, i, CHECK_ALL)) {
         num_selected++;
       }
     }
@@ -2498,7 +2502,7 @@ int file_delete_exec(bContext *C, wmOperator *op)
   bool report_error = false;
   errno = 0;
   for (i = 0; i < numfiles; i++) {
-    if (filelist_entry_select_index_get(sfile->files, i, CHECK_FILES)) {
+    if (filelist_entry_select_index_get(sfile->files, i, CHECK_ALL)) {
       file = filelist_file(sfile->files, i);
       BLI_make_file_string(BKE_main_blendfile_path(bmain), str, sfile->params->dir, file->relpath);
       if (BLI_delete_soft(str, &error_message) != 0 || BLI_exists(str)) {

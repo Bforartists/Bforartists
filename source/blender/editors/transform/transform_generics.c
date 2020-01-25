@@ -31,6 +31,7 @@
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
 #include "DNA_brush_types.h"
+#include "DNA_constraint_types.h"
 #include "DNA_gpencil_types.h"
 #include "DNA_lattice_types.h"
 #include "DNA_screen_types.h"
@@ -448,7 +449,7 @@ static void recalcData_graphedit(TransInfo *t)
       dosort++;
     }
     else {
-      calchandles_fcurve(fcu);
+      calchandles_fcurve_ex(fcu, BEZT_FLAG_TEMP_TAG);
     }
 
     /* set refresh tags for objects using this animation,
@@ -785,50 +786,61 @@ static void recalcData_spaceclip(TransInfo *t)
  * if pose bone (partial) selected, copy data.
  * context; posemode armature, with mirror editing enabled.
  *
- * \param pid: Optional, apply relative transform when set.
+ * \param pid: Optional, apply relative transform when set (has no effect on mirrored bones).
  */
-static void pose_transform_mirror_update(Object *ob, PoseInitData_Mirror *pid)
+static void pose_transform_mirror_update(TransInfo *t,
+                                         TransDataContainer *tc,
+                                         Object *ob,
+                                         PoseInitData_Mirror *pid)
 {
   float flip_mtx[4][4];
   unit_m4(flip_mtx);
   flip_mtx[0][0] = -1;
 
-  for (bPoseChannel *pchan_orig = ob->pose->chanbase.first; pchan_orig;
-       pchan_orig = pchan_orig->next) {
-    /* Clear the MIRROR flag from previous runs */
-    pchan_orig->bone->flag &= ~BONE_TRANSFORM_MIRROR;
-  }
+  TransData *td = tc->data;
+  for (int i = tc->data_len; i--; td++) {
+    bPoseChannel *pchan_orig = td->extra;
+    BLI_assert(pchan_orig->bone->flag & BONE_TRANSFORM);
+    /* No layer check, correct mirror is more important. */
+    bPoseChannel *pchan = BKE_pose_channel_get_mirrored(ob->pose, pchan_orig->name);
+    if (pchan == NULL) {
+      continue;
+    }
 
-  for (bPoseChannel *pchan_orig = ob->pose->chanbase.first; pchan_orig;
-       pchan_orig = pchan_orig->next) {
-    /* no layer check, correct mirror is more important */
-    if (pchan_orig->bone->flag & BONE_TRANSFORM) {
-      bPoseChannel *pchan = BKE_pose_channel_get_mirrored(ob->pose, pchan_orig->name);
+    /* Also do bbone scaling. */
+    pchan->bone->xwidth = pchan_orig->bone->xwidth;
+    pchan->bone->zwidth = pchan_orig->bone->zwidth;
 
-      if (pchan) {
-        /* also do bbone scaling */
-        pchan->bone->xwidth = pchan_orig->bone->xwidth;
-        pchan->bone->zwidth = pchan_orig->bone->zwidth;
+    /* We assume X-axis flipping for now. */
+    pchan->curve_in_x = pchan_orig->curve_in_x * -1;
+    pchan->curve_out_x = pchan_orig->curve_out_x * -1;
+    pchan->roll1 = pchan_orig->roll1 * -1;  // XXX?
+    pchan->roll2 = pchan_orig->roll2 * -1;  // XXX?
 
-        /* we assume X-axis flipping for now */
-        pchan->curve_in_x = pchan_orig->curve_in_x * -1;
-        pchan->curve_out_x = pchan_orig->curve_out_x * -1;
-        pchan->roll1 = pchan_orig->roll1 * -1;  // XXX?
-        pchan->roll2 = pchan_orig->roll2 * -1;  // XXX?
+    float pchan_mtx_final[4][4];
+    BKE_pchan_to_mat4(pchan_orig, pchan_mtx_final);
+    mul_m4_m4m4(pchan_mtx_final, pchan_mtx_final, flip_mtx);
+    mul_m4_m4m4(pchan_mtx_final, flip_mtx, pchan_mtx_final);
+    if (pid) {
+      mul_m4_m4m4(pchan_mtx_final, pid->offset_mtx, pchan_mtx_final);
+    }
+    BKE_pchan_apply_mat4(pchan, pchan_mtx_final, false);
 
-        float pchan_mtx_final[4][4];
-        BKE_pchan_to_mat4(pchan_orig, pchan_mtx_final);
-        mul_m4_m4m4(pchan_mtx_final, pchan_mtx_final, flip_mtx);
-        mul_m4_m4m4(pchan_mtx_final, flip_mtx, pchan_mtx_final);
-        if (pid) {
-          mul_m4_m4m4(pchan_mtx_final, pid->offset_mtx, pchan_mtx_final);
-          pid++;
-        }
-        BKE_pchan_apply_mat4(pchan, pchan_mtx_final, false);
-
-        /* set flag to let autokeyframe know to keyframe the mirrred bone */
-        pchan->bone->flag |= BONE_TRANSFORM_MIRROR;
+    /* In this case we can do target-less IK grabbing. */
+    if (t->mode == TFM_TRANSLATION) {
+      bKinematicConstraint *data = has_targetless_ik(pchan);
+      if (data == NULL) {
+        continue;
       }
+      mul_v3_m4v3(data->grabtarget, flip_mtx, td->loc);
+      if (pid) {
+        /* TODO(germano): Realitve Mirror support */
+      }
+      data->flag |= CONSTRAINT_IK_AUTO;
+    }
+
+    if (pid) {
+      pid++;
     }
   }
 }
@@ -1007,6 +1019,9 @@ static void recalcData_objects(TransInfo *t)
             restoreBones(tc);
           }
         }
+
+        /* Tag for redraw/invalidate overlay cache. */
+        DEG_id_tag_update(&arm->id, ID_RECALC_SELECT);
       }
     }
     else {
@@ -1042,7 +1057,7 @@ static void recalcData_objects(TransInfo *t)
         DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
         bPose *pose = ob->pose;
         if (arm->flag & ARM_MIRROR_EDIT || pose->flag & POSE_MIRROR_EDIT) {
-          pose_transform_mirror_update(ob, NULL);
+          pose_transform_mirror_update(t, tc, ob, NULL);
         }
       }
     }
@@ -1060,7 +1075,7 @@ static void recalcData_objects(TransInfo *t)
           if (pose->flag & POSE_MIRROR_RELATIVE) {
             pid = tc->custom.type.data;
           }
-          pose_transform_mirror_update(ob, pid);
+          pose_transform_mirror_update(t, tc, ob, pid);
         }
         else {
           restoreMirrorPoseBones(tc);
@@ -1416,8 +1431,8 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
 {
   Scene *sce = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  const eObjectMode object_mode = OBACT(view_layer) ? OBACT(view_layer)->mode : OB_MODE_OBJECT;
-  const short object_type = OBACT(view_layer) ? OBACT(view_layer)->type : -1;
+  Object *obact = OBACT(view_layer);
+  const eObjectMode object_mode = obact ? obact->mode : OB_MODE_OBJECT;
   ToolSettings *ts = CTX_data_tool_settings(C);
   ARegion *ar = CTX_wm_region(C);
   ScrArea *sa = CTX_wm_area(C);
@@ -1437,9 +1452,13 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
 
   t->flag = 0;
 
-  t->obedit_type = ((object_mode == OB_MODE_EDIT) || (object_mode == OB_MODE_EDIT_GPENCIL)) ?
-                       object_type :
-                       -1;
+  if (obact && !(t->options & (CTX_CURSOR | CTX_TEXTURE)) &&
+      ELEM(object_mode, OB_MODE_EDIT, OB_MODE_EDIT_GPENCIL)) {
+    t->obedit_type = obact->type;
+  }
+  else {
+    t->obedit_type = -1;
+  }
 
   /* Many kinds of transform only use a single handle. */
   if (t->data_container == NULL) {
@@ -1673,7 +1692,7 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
       ((prop = RNA_struct_find_property(op->ptr, "orient_matrix")) &&
        RNA_property_is_set(op->ptr, prop)) &&
       ((t->flag & T_MODAL) ||
-       /* When using redo, don't use the the custom constraint matrix
+       /* When using redo, don't use the custom constraint matrix
         * if the user selects a different orientation. */
        (RNA_enum_get(op->ptr, "orient_type") == RNA_enum_get(op->ptr, "orient_matrix_type")))) {
     RNA_property_float_get_array(op->ptr, prop, &t->spacemtx[0][0]);
@@ -1776,7 +1795,7 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
               }
             }
           }
-          else if ((t->obedit_type == -1) && ts->proportional_objects) {
+          else if (!(t->options & CTX_CURSOR) && ts->proportional_objects) {
             t->flag |= T_PROP_EDIT;
           }
         }

@@ -470,14 +470,15 @@ class Rig:
         mch_start = pb[bones['chain']['mch'][0]]
         mch_end = pb[bones['chain']['mch_ctrl'][-1]] if bones['chain']['mch_ctrl'] else pb[bones['chain']['mch'][-1]]
 
-        if 'bbone_custom_handle_start' in dir(def_pb) and 'bbone_custom_handle_end' in dir(def_pb):
-            if not self.SINGLE_BONE:
-                def_pb.bbone_custom_handle_start = ctrl_start
-                def_pb.bbone_custom_handle_end = ctrl_end
-            else:
-                def_pb.bbone_custom_handle_start = mch_start
-                def_pb.bbone_custom_handle_end = mch_end
-            def_pb.use_bbone_custom_handles = True
+        if not self.SINGLE_BONE:
+            def_pb.bone.bbone_custom_handle_start = ctrl_start.bone
+            def_pb.bone.bbone_custom_handle_end = ctrl_end.bone
+        else:
+            def_pb.bone.bbone_custom_handle_start = mch_start.bone
+            def_pb.bone.bbone_custom_handle_end = mch_end.bone
+
+        def_pb.bone.bbone_handle_type_start = 'ABSOLUTE'
+        def_pb.bone.bbone_handle_type_end = 'ABSOLUTE'
 
     def create_drivers(self, bones):
         bpy.ops.object.mode_set(mode='OBJECT')
@@ -645,7 +646,7 @@ class Rig:
         self.parent_bones(bones)
 
         # ctrls snapping pass
-        self.aggregate_ctrls(bones)
+        #self.aggregate_ctrls(bones)
 
         self.constrain_bones(bones)
         self.stick_to_bendy_bones(bones)
@@ -713,10 +714,10 @@ def add_parameters(params):
         )
 
     params.bbones = bpy.props.IntProperty(
-        name='bbone segments',
-        default=10,
-        min=1,
-        description='Number of segments'
+        name        = 'B-Bone Segments',
+        default     = 10,
+        min         = 1,
+        description = 'Number of B-Bone segments'
     )
 
     params.wgt_offset = bpy.props.FloatProperty(
@@ -757,8 +758,8 @@ def parameters_ui(layout, params):
     r = layout.row()
     r.prop(params, 'def_parenting')
 
-    r = layout.row()
-    r.prop(params, 'cluster_ctrls')
+    #r = layout.row()
+    #r.prop(params, 'cluster_ctrls')
 
     ControlLayersOption.TWEAK.parameters_ui(layout, params)
 

@@ -32,7 +32,7 @@ set(INC
   ../../windowmanager
   ../../../../intern/glew-mx
   ../../../../intern/guardedalloc
-  ../../../../intern/smoke/extern
+  ../../../../intern/mantaflow/extern
 
   # dna_type_offsets.h
   ${CMAKE_CURRENT_BINARY_DIR}/../../makesdna/intern
@@ -61,6 +61,7 @@ set(SRC
   view3d_gizmo_preselect.c
   view3d_gizmo_preselect_type.c
   view3d_gizmo_ruler.c
+  view3d_gizmo_tool_generic.c
   view3d_header.c
   view3d_iterators.c
   view3d_ops.c
@@ -94,8 +95,8 @@ if(WITH_FREESTYLE)
   add_definitions(-DWITH_FREESTYLE)
 endif()
 
-if(WITH_MOD_SMOKE)
-  add_definitions(-DWITH_SMOKE)
+if(WITH_MOD_FLUID)
+  add_definitions(-DWITH_FLUID)
 endif()
 
 blender_add_lib(bf_editor_space_view3d "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

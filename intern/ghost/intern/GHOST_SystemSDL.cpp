@@ -59,7 +59,7 @@ GHOST_IWindow *GHOST_SystemSDL::createWindow(const STR_String &title,
                                              GHOST_GLSettings glSettings,
                                              const bool exclusive,
                                              const bool /* is_dialog */,
-                                             const GHOST_TEmbedderWindowID parentWindow)
+                                             const GHOST_IWindow *parentWindow)
 {
   GHOST_WindowSDL *window = NULL;
 
@@ -70,10 +70,10 @@ GHOST_IWindow *GHOST_SystemSDL::createWindow(const STR_String &title,
                                width,
                                height,
                                state,
-                               parentWindow,
                                type,
                                ((glSettings.flags & GHOST_glStereoVisual) != 0),
-                               exclusive);
+                               exclusive,
+                               parentWindow);
 
   if (window) {
     if (GHOST_kWindowStateFullScreen == state) {
@@ -234,6 +234,7 @@ static GHOST_TKey convertSDLKey(SDL_Scancode key)
       GXMAP(type, SDL_SCANCODE_RALT, GHOST_kKeyRightAlt);
       GXMAP(type, SDL_SCANCODE_LGUI, GHOST_kKeyOS);
       GXMAP(type, SDL_SCANCODE_RGUI, GHOST_kKeyOS);
+      GXMAP(type, SDL_SCANCODE_APPLICATION, GHOST_kKeyApp);
 
       GXMAP(type, SDL_SCANCODE_INSERT, GHOST_kKeyInsert);
       GXMAP(type, SDL_SCANCODE_DELETE, GHOST_kKeyDelete);

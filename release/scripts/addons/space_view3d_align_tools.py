@@ -26,10 +26,9 @@ bl_info = {
     "location": "View3D > Sidebar > Item Tab",
     "description": "Align Selected Objects to Active Object",
     "warning": "",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/3D interaction/Align_Tools",
-    "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
-    "category": "Interface",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "object/align_tools.html",
+    "category": "Object",
 }
 
 import bpy

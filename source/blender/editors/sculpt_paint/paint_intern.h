@@ -45,6 +45,7 @@ struct wmOperator;
 struct wmOperatorType;
 struct wmWindowManager;
 enum ePaintMode;
+enum ePaintSymmetryFlags;
 
 typedef struct CoNo {
   float co[3];
@@ -186,6 +187,7 @@ bool image_texture_paint_poll(struct bContext *C);
 void imapaint_image_update(struct SpaceImage *sima,
                            struct Image *image,
                            struct ImBuf *ibuf,
+                           struct ImageUser *iuser,
                            short texpaint);
 struct ImagePaintPartialRedraw *get_imapaintpartial(void);
 void set_imapaintpartial(struct ImagePaintPartialRedraw *ippr);
@@ -206,6 +208,7 @@ void paint_2d_bucket_fill(const struct bContext *C,
                           const float color[3],
                           struct Brush *br,
                           const float mouse_init[2],
+                          const float mouse_final[2],
                           void *ps);
 void paint_2d_gradient_fill(const struct bContext *C,
                             struct Brush *br,
@@ -304,8 +307,8 @@ bool mask_paint_poll(struct bContext *C);
 bool paint_curve_poll(struct bContext *C);
 
 bool facemask_paint_poll(struct bContext *C);
-void flip_v3_v3(float out[3], const float in[3], const char symm);
-void flip_qt_qt(float out[3], const float in[3], const char symm);
+void flip_v3_v3(float out[3], const float in[3], const enum ePaintSymmetryFlags symm);
+void flip_qt_qt(float out[3], const float in[3], const enum ePaintSymmetryFlags symm);
 
 /* stroke operator */
 typedef enum BrushStrokeMode {

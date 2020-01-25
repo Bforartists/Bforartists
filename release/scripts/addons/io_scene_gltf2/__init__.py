@@ -15,12 +15,12 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (1, 1, 0),
+    "version": (1, 1, 22),
     'blender': (2, 81, 6),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
     'warning': '',
-    'wiki_url': "https://docs.blender.org/manual/en/latest/addons/io_scene_gltf2.html",
+    'wiki_url': "https://docs.blender.org/manual/en/dev/addons/import_export/io_scene_gltf2.html",
     'tracker_url': "https://github.com/KhronosGroup/glTF-Blender-IO/issues/",
     'support': 'OFFICIAL',
     'category': 'Import-Export',
@@ -171,6 +171,14 @@ class ExportGLTF2_Base:
     export_draco_texcoord_quantization: IntProperty(
         name='Texcoord quantization bits',
         description='Quantization bits for texture coordinate values (0 = no quantization)',
+        default=12,
+        min=0,
+        max=30
+    )
+
+    export_draco_generic_quantization: IntProperty(
+        name='Generic quantization bits',
+        description='Quantization bits for generic coordinate values like weights or joints (0 = no quantization)',
         default=12,
         min=0,
         max=30
@@ -380,6 +388,7 @@ class ExportGLTF2_Base:
             export_settings['gltf_draco_position_quantization'] = self.export_draco_position_quantization
             export_settings['gltf_draco_normal_quantization'] = self.export_draco_normal_quantization
             export_settings['gltf_draco_texcoord_quantization'] = self.export_draco_texcoord_quantization
+            export_settings['gltf_draco_generic_quantization'] = self.export_draco_generic_quantization
         else:
             export_settings['gltf_draco_mesh_compression'] = False
 
@@ -564,7 +573,7 @@ class GLTF_PT_export_geometry_compression(bpy.types.Panel):
 
     def __init__(self):
         from io_scene_gltf2.io.exp import gltf2_io_draco_compression_extension
-        self.is_draco_available = gltf2_io_draco_compression_extension.dll_exists()
+        self.is_draco_available = gltf2_io_draco_compression_extension.dll_exists(quiet=True)
 
     @classmethod
     def poll(cls, context):
@@ -593,6 +602,7 @@ class GLTF_PT_export_geometry_compression(bpy.types.Panel):
         col.prop(operator, 'export_draco_position_quantization', text="Quantize Position")
         col.prop(operator, 'export_draco_normal_quantization', text="Normal")
         col.prop(operator, 'export_draco_texcoord_quantization', text="Tex Coords")
+        col.prop(operator, 'export_draco_generic_quantization', text="Generic")
 
 
 class GLTF_PT_export_animation(bpy.types.Panel):

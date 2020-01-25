@@ -126,30 +126,29 @@ class BlenderPrimitive():
                 )
                 break
 
-            layer_name = 'COLOR_%d' % set_num
+            layer_name = 'Col' if set_num == 0 else 'Col.%03d' % set_num
             layer = BlenderPrimitive.get_layer(bme.loops.layers.color, layer_name)
 
-            colors = BinaryData.get_data_from_accessor(gltf, attributes[layer_name], cache=True)
+            colors = BinaryData.get_data_from_accessor(gltf, attributes['COLOR_%d' % set_num], cache=True)
 
             # Check whether Blender takes RGB or RGBA colors (old versions only take RGB)
-            num_components = len(colors[0])
+            is_rgba = len(colors[0]) == 4
             blender_num_components = len(bme_verts[0].link_loops[0][layer])
-            if num_components == 3 and blender_num_components == 4:
-                # RGB -> RGBA
-                colors = [color+(1,) for color in colors]
-            if num_components == 4 and blender_num_components == 3:
-                # RGBA -> RGB
-                colors = [color[:3] for color in colors]
+            if is_rgba and blender_num_components == 3:
                 gltf2_io_debug.print_console("WARNING",
                     "this Blender doesn't support RGBA vertex colors; dropping A"
                 )
 
             for bidx, pidx in vert_idxs:
                 for loop in bme_verts[bidx].link_loops:
-                    loop[layer] = tuple(
-                        color_linear_to_srgb(c)
-                        for c in colors[pidx]
+                    color = colors[pidx]
+                    col = (
+                        color_linear_to_srgb(color[0]),
+                        color_linear_to_srgb(color[1]),
+                        color_linear_to_srgb(color[2]),
+                        color[3] if is_rgba else 1.0,
                     )
+                    loop[layer] = col[:blender_num_components]
 
             set_num += 1
 
@@ -162,12 +161,10 @@ class BlenderPrimitive():
                 )
                 break
 
-            layer_name = 'TEXCOORD_%d' % set_num
+            layer_name = 'UVMap' if set_num == 0 else 'UVMap.%03d' % set_num
             layer = BlenderPrimitive.get_layer(bme.loops.layers.uv, layer_name)
 
-            pyprimitive.blender_texcoord[set_num] = layer_name
-
-            uvs = BinaryData.get_data_from_accessor(gltf, attributes[layer_name], cache=True)
+            uvs = BinaryData.get_data_from_accessor(gltf, attributes['TEXCOORD_%d' % set_num], cache=True)
 
             for bidx, pidx in vert_idxs:
                 # UV transform
@@ -292,35 +289,4 @@ class BlenderPrimitive():
             raise Exception('primitive mode unimplemented: %d' % mode)
 
         return es, fs
-
-    @staticmethod
-    def set_UV_in_mat(gltf, pyprimitive, obj, vertex_color):
-        """After nodetree creation, set UVMap in nodes."""
-        if pyprimitive.material is None:
-            return
-        if gltf.data.materials[pyprimitive.material].extensions \
-                and "KHR_materials_pbrSpecularGlossiness" in \
-                    gltf.data.materials[pyprimitive.material].extensions.keys():
-            if pyprimitive.material is not None \
-                    and gltf.data.materials[pyprimitive.material].extensions[
-                        'KHR_materials_pbrSpecularGlossiness'
-                    ]['diffuse_type'] in [gltf.TEXTURE, gltf.TEXTURE_FACTOR]:
-                BlenderMaterial.set_uvmap(gltf, pyprimitive.material, pyprimitive, obj, vertex_color)
-            else:
-                if pyprimitive.material is not None \
-                        and gltf.data.materials[pyprimitive.material].extensions[
-                            'KHR_materials_pbrSpecularGlossiness'
-                        ]['specgloss_type'] in [gltf.TEXTURE, gltf.TEXTURE_FACTOR]:
-                    BlenderMaterial.set_uvmap(gltf, pyprimitive.material, pyprimitive, obj, vertex_color)
-
-        else:
-            if pyprimitive.material is not None \
-                    and gltf.data.materials[pyprimitive.material].pbr_metallic_roughness.color_type in \
-                    [gltf.TEXTURE, gltf.TEXTURE_FACTOR]:
-                BlenderMaterial.set_uvmap(gltf, pyprimitive.material, pyprimitive, obj, vertex_color)
-            else:
-                if pyprimitive.material is not None \
-                        and gltf.data.materials[pyprimitive.material].pbr_metallic_roughness.metallic_type in \
-                        [gltf.TEXTURE, gltf.TEXTURE_FACTOR]:
-                    BlenderMaterial.set_uvmap(gltf, pyprimitive.material, pyprimitive, obj, vertex_color)
 

@@ -23,6 +23,8 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "Properties > Object Buttons",
     "description": "Rules for assigning object color (for object & wireframe colors).",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "object/color_rules.html",
     "category": "Object",
 }
 

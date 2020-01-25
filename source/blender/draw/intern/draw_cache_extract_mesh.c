@@ -95,6 +95,9 @@ typedef struct MeshRenderData {
   bool use_subsurf_fdots;
   bool use_final_mesh;
 
+  /** Use for #MeshStatVis calculation which use world-space coords. */
+  float obmat[4][4];
+
   const ToolSettings *toolsettings;
   /* HACK not supposed to be there but it's needed. */
   struct MeshBatchCache *cache;
@@ -125,6 +128,8 @@ typedef struct MeshRenderData {
 } MeshRenderData;
 
 static MeshRenderData *mesh_render_data_create(Mesh *me,
+                                               const bool is_editmode,
+                                               const float obmat[4][4],
                                                const bool do_final,
                                                const bool do_uvedit,
                                                const eMRIterType iter_type,
@@ -136,10 +141,12 @@ static MeshRenderData *mesh_render_data_create(Mesh *me,
   mr->toolsettings = ts;
   mr->mat_len = mesh_render_mat_len_get(me);
 
+  copy_m4_m4(mr->obmat, obmat);
+
   const bool is_auto_smooth = (me->flag & ME_AUTOSMOOTH) != 0;
   const float split_angle = is_auto_smooth ? me->smoothresh : (float)M_PI;
 
-  if (me->edit_mesh) {
+  if (is_editmode) {
     BLI_assert(me->edit_mesh->mesh_eval_cage && me->edit_mesh->mesh_eval_final);
     mr->bm = me->edit_mesh->bm;
     mr->edit_bmesh = me->edit_mesh;
@@ -484,7 +491,7 @@ static void *extract_tris_init(const MeshRenderData *mr, void *UNUSED(ibo))
   return data;
 }
 
-static void extract_tris_looptri_bmesh(const MeshRenderData *UNUSED(mr),
+static void extract_tris_looptri_bmesh(const MeshRenderData *mr,
                                        int UNUSED(t),
                                        BMLoop **elt,
                                        void *_data)
@@ -492,8 +499,9 @@ static void extract_tris_looptri_bmesh(const MeshRenderData *UNUSED(mr),
   if (!BM_elem_flag_test(elt[0]->f, BM_ELEM_HIDDEN)) {
     MeshExtract_Tri_Data *data = _data;
     int *mat_tri_ofs = data->tri_mat_end;
+    int mat = min_ii(elt[0]->f->mat_nr, mr->mat_len - 1);
     GPU_indexbuf_set_tri_verts(&data->elb,
-                               mat_tri_ofs[elt[0]->f->mat_nr]++,
+                               mat_tri_ofs[mat]++,
                                BM_elem_index_get(elt[0]),
                                BM_elem_index_get(elt[1]),
                                BM_elem_index_get(elt[2]));
@@ -633,20 +641,10 @@ static void extract_lines_ledge_mesh(const MeshRenderData *mr,
   GPU_indexbuf_set_line_restart(elb, edge_idx);
 }
 
-static void extract_lines_finish(const MeshRenderData *mr, void *ibo, void *elb)
+static void extract_lines_finish(const MeshRenderData *UNUSED(mr), void *ibo, void *elb)
 {
   GPU_indexbuf_build_in_place(elb, ibo);
   MEM_freeN(elb);
-  /* HACK Create ibo subranges and assign them to GPUBatch. */
-  if (mr->use_final_mesh && mr->cache->batch.loose_edges) {
-    BLI_assert(mr->cache->batch.loose_edges->elem == ibo);
-    /* Multiply by 2 because these are edges indices. */
-    int start = mr->edge_len * 2;
-    int len = mr->edge_loose_len * 2;
-    GPUIndexBuf *sub_ibo = GPU_indexbuf_create_subrange(ibo, start, len);
-    /* WARNING: We modify the GPUBatch here! */
-    GPU_batch_elembuf_set(mr->cache->batch.loose_edges, sub_ibo, true);
-  }
 }
 
 static const MeshExtract extract_lines = {
@@ -660,6 +658,68 @@ static const MeshExtract extract_lines = {
     NULL,
     NULL,
     extract_lines_finish,
+    0,
+    false,
+};
+
+/** \} */
+
+/* ---------------------------------------------------------------------- */
+/** \name Extract Loose Edges Indices
+ * \{ */
+
+static void *extract_lines_loose_init(const MeshRenderData *UNUSED(mr), void *UNUSED(buf))
+{
+  return NULL;
+}
+
+static void extract_lines_loose_ledge_mesh(const MeshRenderData *UNUSED(mr),
+                                           int UNUSED(e),
+                                           const MEdge *UNUSED(medge),
+                                           void *UNUSED(elb))
+{
+  /* This function is intentionally empty. The existence of this functions ensures that
+   * `iter_type` `MR_ITER_LVERT` is set when initializing the `MeshRenderData` (See
+   * `mesh_extract_iter_type`). This flag ensures that `mr->edge_loose_len` field is filled. This
+   * field we use in the `extract_lines_loose_finish` function to create a subrange from the
+   * `ibo.lines`. */
+}
+
+static void extract_lines_loose_ledge_bmesh(const MeshRenderData *UNUSED(mr),
+                                            int UNUSED(e),
+                                            BMEdge *UNUSED(eed),
+                                            void *UNUSED(elb))
+{
+  /* This function is intentionally empty. The existence of this functions ensures that
+   * `iter_type` `MR_ITER_LVERT` is set when initializing the `MeshRenderData` (See
+   * `mesh_extract_iter_type`). This flag ensures that `mr->edge_loose_len` field is filled. This
+   * field we use in the `extract_lines_loose_finish` function to create a subrange from the
+   * `ibo.lines`. */
+}
+
+static void extract_lines_loose_finish(const MeshRenderData *mr,
+                                       void *UNUSED(ibo),
+                                       void *UNUSED(elb))
+{
+  /* Multiply by 2 because these are edges indices. */
+  const int start = mr->edge_len * 2;
+  const int len = mr->edge_loose_len * 2;
+  GPU_indexbuf_create_subrange_in_place(
+      mr->cache->final.ibo.lines_loose, mr->cache->final.ibo.lines, start, len);
+  mr->cache->no_loose_wire = (len == 0);
+}
+
+static const MeshExtract extract_lines_loose = {
+    extract_lines_loose_init,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    extract_lines_loose_ledge_bmesh,
+    extract_lines_loose_ledge_mesh,
+    NULL,
+    NULL,
+    extract_lines_loose_finish,
     0,
     false,
 };
@@ -1868,7 +1928,7 @@ static void *extract_vcol_init(const MeshRenderData *mr, void *buf)
       GPU_vertformat_safe_attrib_name(layer_name, attr_safe_name, GPU_MAX_SAFE_ATTRIB_NAME);
 
       BLI_snprintf(attr_name, sizeof(attr_name), "c%s", attr_safe_name);
-      GPU_vertformat_attr_add(&format, attr_name, GPU_COMP_U8, 4, GPU_FETCH_INT_TO_FLOAT_UNIT);
+      GPU_vertformat_attr_add(&format, attr_name, GPU_COMP_U16, 4, GPU_FETCH_INT_TO_FLOAT_UNIT);
 
       if (i == CustomData_get_render_layer(cd_ldata, CD_MLOOPCOL)) {
         GPU_vertformat_alias_add(&format, "c");
@@ -1888,12 +1948,20 @@ static void *extract_vcol_init(const MeshRenderData *mr, void *buf)
   GPU_vertbuf_init_with_format(vbo, &format);
   GPU_vertbuf_data_alloc(vbo, mr->loop_len);
 
-  MLoopCol *vcol_data = (MLoopCol *)vbo->data;
+  typedef struct gpuMeshVcol {
+    ushort r, g, b, a;
+  } gpuMeshVcol;
+
+  gpuMeshVcol *vcol_data = (gpuMeshVcol *)vbo->data;
   for (int i = 0; i < 8; i++) {
     if (vcol_layers & (1 << i)) {
-      void *layer_data = CustomData_get_layer_n(cd_ldata, CD_MLOOPCOL, i);
-      memcpy(vcol_data, layer_data, sizeof(*vcol_data) * mr->loop_len);
-      vcol_data += mr->loop_len;
+      MLoopCol *mcol = (MLoopCol *)CustomData_get_layer_n(cd_ldata, CD_MLOOPCOL, i);
+      for (int l = 0; l < mr->loop_len; l++, mcol++, vcol_data++) {
+        vcol_data->r = unit_float_to_ushort_clamp(BLI_color_from_srgb_table[mcol->r]);
+        vcol_data->g = unit_float_to_ushort_clamp(BLI_color_from_srgb_table[mcol->g]);
+        vcol_data->b = unit_float_to_ushort_clamp(BLI_color_from_srgb_table[mcol->b]);
+        vcol_data->a = unit_float_to_ushort_clamp(mcol->a * (1.0f / 255.0f));
+      }
     }
   }
   return NULL;
@@ -2611,6 +2679,7 @@ static void extract_edituv_data_loop_bmesh(const MeshRenderData *mr,
   EditLoopData *eldata = data->vbo_data + l;
   memset(eldata, 0x0, sizeof(*eldata));
   mesh_render_data_loop_flag(mr, loop, data->cd_ofs, eldata);
+  mesh_render_data_face_flag(mr, loop->f, data->cd_ofs, eldata);
   mesh_render_data_loop_edge_flag(mr, loop, data->cd_ofs, eldata);
 }
 
@@ -2680,7 +2749,7 @@ static void *extract_stretch_area_init(const MeshRenderData *mr, void *buf)
 {
   static GPUVertFormat format = {0};
   if (format.attr_len == 0) {
-    GPU_vertformat_attr_add(&format, "ratio", GPU_COMP_U16, 1, GPU_FETCH_INT_TO_FLOAT_UNIT);
+    GPU_vertformat_attr_add(&format, "ratio", GPU_COMP_I16, 1, GPU_FETCH_INT_TO_FLOAT_UNIT);
   }
 
   GPUVertBuf *vbo = buf;
@@ -2747,7 +2816,7 @@ static void mesh_stretch_area_finish(const MeshRenderData *mr, void *buf, void *
   /* Convert in place to avoid an extra allocation */
   uint16_t *poly_stretch = (uint16_t *)area_ratio;
   for (int p = 0; p < mr->poly_len; p++) {
-    poly_stretch[p] = area_ratio[p] * 65534.0f;
+    poly_stretch[p] = area_ratio[p] * SHRT_MAX;
   }
 
   /* Copy face data for each loop. */
@@ -3049,11 +3118,9 @@ static void statvis_calc_overhang(const MeshRenderData *mr, float *r_overhang)
 
   axis_from_enum_v3(dir, axis);
 
-  if (em && LIKELY(em->ob)) {
-    /* now convert into global space */
-    mul_transposed_mat3_m4_v3(em->ob->obmat, dir);
-    normalize_v3(dir);
-  }
+  /* now convert into global space */
+  mul_transposed_mat3_m4_v3(mr->obmat, dir);
+  normalize_v3(dir);
 
   if (mr->extract_type == MR_EXTRACT_BMESH) {
     int l = 0;
@@ -3111,7 +3178,7 @@ static void statvis_calc_thickness(const MeshRenderData *mr, float *r_thickness)
   /* cheating to avoid another allocation */
   float *face_dists = r_thickness + (mr->loop_len - mr->poly_len);
   BMEditMesh *em = mr->edit_bmesh;
-  const float scale = 1.0f / mat4_to_scale(em->ob->obmat);
+  const float scale = 1.0f / mat4_to_scale(mr->obmat);
   const MeshStatVis *statvis = &mr->toolsettings->statvis;
   const float min = statvis->thickness_min * scale;
   const float max = statvis->thickness_max * scale;
@@ -3708,6 +3775,7 @@ static const MeshExtract extract_fdots_nor = {
 typedef struct MeshExtract_FdotUV_Data {
   float (*vbo_data)[2];
   MLoopUV *uv_data;
+  int cd_ofs;
 } MeshExtract_FdotUV_Data;
 
 static void *extract_fdots_uv_init(const MeshRenderData *mr, void *buf)
@@ -3727,22 +3795,27 @@ static void *extract_fdots_uv_init(const MeshRenderData *mr, void *buf)
     memset(vbo->data, 0x0, mr->poly_len * vbo->format.stride);
   }
 
-  CustomData *cd_ldata = &mr->me->ldata;
-
   MeshExtract_FdotUV_Data *data = MEM_callocN(sizeof(*data), __func__);
   data->vbo_data = (float(*)[2])vbo->data;
-  data->uv_data = CustomData_get_layer(cd_ldata, CD_MLOOPUV);
+
+  if (mr->extract_type == MR_EXTRACT_BMESH) {
+    data->cd_ofs = CustomData_get_offset(&mr->bm->ldata, CD_MLOOPUV);
+  }
+  else {
+    data->uv_data = CustomData_get_layer(&mr->me->ldata, CD_MLOOPUV);
+  }
   return data;
 }
 
 static void extract_fdots_uv_loop_bmesh(const MeshRenderData *UNUSED(mr),
-                                        int l,
+                                        int UNUSED(l),
                                         BMLoop *loop,
                                         void *_data)
 {
   MeshExtract_FdotUV_Data *data = (MeshExtract_FdotUV_Data *)_data;
   float w = 1.0f / (float)loop->f->len;
-  madd_v2_v2fl(data->vbo_data[BM_elem_index_get(loop->f)], data->uv_data[l].uv, w);
+  const MLoopUV *luv = BM_ELEM_CD_GET_VOID_P(loop, data->cd_ofs);
+  madd_v2_v2fl(data->vbo_data[BM_elem_index_get(loop->f)], luv->uv, w);
 }
 
 static void extract_fdots_uv_loop_mesh(
@@ -4315,6 +4388,8 @@ static void extract_task_create(TaskPool *task_pool,
 void mesh_buffer_cache_create_requested(MeshBatchCache *cache,
                                         MeshBufferCache mbc,
                                         Mesh *me,
+                                        const bool is_editmode,
+                                        const float obmat[4][4],
                                         const bool do_final,
                                         const bool do_uvedit,
                                         const bool use_subsurf_fdots,
@@ -4362,6 +4437,7 @@ void mesh_buffer_cache_create_requested(MeshBatchCache *cache,
   TEST_ASSIGN(IBO, ibo, fdots);
   TEST_ASSIGN(IBO, ibo, lines_paint_mask);
   TEST_ASSIGN(IBO, ibo, lines_adjacency);
+  TEST_ASSIGN(IBO, ibo, lines_loose);
   TEST_ASSIGN(IBO, ibo, edituv_tris);
   TEST_ASSIGN(IBO, ibo, edituv_lines);
   TEST_ASSIGN(IBO, ibo, edituv_points);
@@ -4374,7 +4450,7 @@ void mesh_buffer_cache_create_requested(MeshBatchCache *cache,
 #endif
 
   MeshRenderData *mr = mesh_render_data_create(
-      me, do_final, do_uvedit, iter_flag, data_flag, cd_layer_used, ts);
+      me, is_editmode, obmat, do_final, do_uvedit, iter_flag, data_flag, cd_layer_used, ts);
   mr->cache = cache; /* HACK */
   mr->use_hide = use_hide;
   mr->use_subsurf_fdots = use_subsurf_fdots;
@@ -4435,14 +4511,22 @@ void mesh_buffer_cache_create_requested(MeshBatchCache *cache,
   EXTRACT(ibo, edituv_points);
   EXTRACT(ibo, edituv_fdots);
 
-#undef EXTRACT
-
   /* TODO(fclem) Ideally, we should have one global pool for all
    * objects and wait for finish only before drawing when buffers
    * need to be ready. */
   BLI_task_pool_work_and_wait(task_pool);
-  BLI_task_pool_free(task_pool);
 
+  /* The next task(s) rely on the result of the tasks above. */
+
+  /* The `lines_loose` is a sub buffer from `ibo.lines`.
+   * We schedule it here due to potential synchronization issues.*/
+  EXTRACT(ibo, lines_loose);
+
+  BLI_task_pool_work_and_wait(task_pool);
+
+#undef EXTRACT
+
+  BLI_task_pool_free(task_pool);
   MEM_freeN(task_counters);
 
   mesh_render_data_free(mr);

@@ -59,6 +59,7 @@ typedef enum {
   GPU_NODE_LINK_COLORBAND,
   GPU_NODE_LINK_CONSTANT,
   GPU_NODE_LINK_IMAGE_BLENDER,
+  GPU_NODE_LINK_IMAGE_TILEMAP,
   GPU_NODE_LINK_OUTPUT,
   GPU_NODE_LINK_UNIFORM,
 } GPUNodeLinkType;
@@ -95,7 +96,7 @@ struct GPUNodeLink {
       const char *attr_name;
       CustomDataType attr_type;
     };
-    /* GPU_NODE_LINK_IMAGE_BLENDER */
+    /* GPU_NODE_LINK_IMAGE_BLENDER | GPU_NODE_LINK_IMAGE_TILEMAP */
     struct {
       struct Image *ima;
       struct ImageUser *iuser;

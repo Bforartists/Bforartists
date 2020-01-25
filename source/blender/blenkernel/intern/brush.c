@@ -58,7 +58,11 @@ void BKE_brush_system_init(void)
 
 void BKE_brush_system_exit(void)
 {
+  if (brush_rng == NULL) {
+    return;
+  }
   BLI_rng_free(brush_rng);
+  brush_rng = NULL;
 }
 
 static void brush_defaults(Brush *brush)
@@ -889,9 +893,11 @@ void BKE_brush_debug_print_state(Brush *br)
   BR_TEST(add_col[0], f);
   BR_TEST(add_col[1], f);
   BR_TEST(add_col[2], f);
+  BR_TEST(add_col[3], f);
   BR_TEST(sub_col[0], f);
   BR_TEST(sub_col[1], f);
   BR_TEST(sub_col[2], f);
+  BR_TEST(sub_col[3], f);
 
   printf("\n");
 
@@ -922,24 +928,42 @@ void BKE_brush_sculpt_reset(Brush *br)
       br->curve_preset = BRUSH_CURVE_POW4;
       br->spacing = 5;
       break;
+    case SCULPT_TOOL_TOPOLOGY:
+      br->spacing = 10;
+      br->alpha = 1.0f;
+      break;
     case SCULPT_TOOL_CLAY:
-      br->flag |= BRUSH_FRONTFACE;
+      br->flag |= BRUSH_SIZE_PRESSURE;
+      br->spacing = 3;
+      br->autosmooth_factor = 0.25f;
+      br->normal_radius_factor = 0.75f;
       break;
     case SCULPT_TOOL_CLAY_STRIPS:
-      br->flag |= BRUSH_ACCUMULATE;
-      br->alpha = 0.7f;
-      br->normal_radius_factor = 1.7f;
+      br->flag |= BRUSH_ACCUMULATE | BRUSH_SIZE_PRESSURE;
+      br->flag &= ~BRUSH_SPACE_ATTEN;
+      br->alpha = 0.6f;
+      br->normal_radius_factor = 1.55f;
       br->curve_preset = BRUSH_CURVE_SPHERE;
       br->spacing = 6;
+      break;
+    case SCULPT_TOOL_MULTIPLANE_SCRAPE:
+      br->flag2 |= BRUSH_MULTIPLANE_SCRAPE_DYNAMIC | BRUSH_MULTIPLANE_SCRAPE_PLANES_PREVIEW;
+      br->alpha = 0.7f;
+      br->normal_radius_factor = 0.70f;
+      br->multiplane_scrape_angle = 60;
+      br->curve_preset = BRUSH_CURVE_SMOOTH;
+      br->spacing = 5;
       break;
     case SCULPT_TOOL_CREASE:
       br->flag |= BRUSH_DIR_IN;
       br->alpha = 0.25;
       break;
     case SCULPT_TOOL_SCRAPE:
+    case SCULPT_TOOL_FILL:
       br->alpha = 1.0f;
       br->spacing = 7;
       br->flag |= BRUSH_ACCUMULATE;
+      br->flag |= BRUSH_INVERT_TO_SCRAPE_FILL;
       break;
     case SCULPT_TOOL_ROTATE:
       br->alpha = 1.0;
@@ -967,6 +991,8 @@ void BKE_brush_sculpt_reset(Brush *br)
       br->flag &= ~BRUSH_SPACE_ATTEN;
       break;
     case SCULPT_TOOL_POSE:
+      br->pose_smooth_iterations = 4;
+      br->pose_ik_segments = 1;
       br->flag &= ~BRUSH_ALPHA_PRESSURE;
       br->flag &= ~BRUSH_SPACE;
       br->flag &= ~BRUSH_SPACE_ATTEN;
@@ -983,6 +1009,11 @@ void BKE_brush_sculpt_reset(Brush *br)
   }
 
   /* Cursor colors */
+
+  /* Default Alpha */
+  br->add_col[3] = 0.90f;
+  br->sub_col[3] = 0.90f;
+
   switch (br->sculpt_tool) {
     case SCULPT_TOOL_DRAW:
     case SCULPT_TOOL_DRAW_SHARP:
@@ -992,24 +1023,25 @@ void BKE_brush_sculpt_reset(Brush *br)
     case SCULPT_TOOL_INFLATE:
     case SCULPT_TOOL_BLOB:
     case SCULPT_TOOL_CREASE:
-      br->add_col[0] = 0.5f;
-      br->add_col[1] = 0.7f;
-      br->add_col[2] = 0.875f;
-      br->sub_col[0] = 0.5f;
-      br->sub_col[1] = 0.7f;
-      br->sub_col[2] = 0.875f;
+      br->add_col[0] = 0.0f;
+      br->add_col[1] = 0.5f;
+      br->add_col[2] = 1.0f;
+      br->sub_col[0] = 0.0f;
+      br->sub_col[1] = 0.5f;
+      br->sub_col[2] = 1.0f;
       break;
 
     case SCULPT_TOOL_SMOOTH:
     case SCULPT_TOOL_FLATTEN:
     case SCULPT_TOOL_FILL:
     case SCULPT_TOOL_SCRAPE:
+    case SCULPT_TOOL_MULTIPLANE_SCRAPE:
       br->add_col[0] = 1.0f;
-      br->add_col[1] = 0.39f;
-      br->add_col[2] = 0.39f;
+      br->add_col[1] = 0.05f;
+      br->add_col[2] = 0.01f;
       br->sub_col[0] = 1.0f;
-      br->sub_col[1] = 0.39f;
-      br->sub_col[2] = 0.39f;
+      br->sub_col[1] = 0.05f;
+      br->sub_col[2] = 0.01f;
       break;
 
     case SCULPT_TOOL_PINCH:
@@ -1021,11 +1053,11 @@ void BKE_brush_sculpt_reset(Brush *br)
     case SCULPT_TOOL_ELASTIC_DEFORM:
     case SCULPT_TOOL_POSE:
       br->add_col[0] = 1.0f;
-      br->add_col[1] = 1.0f;
-      br->add_col[2] = 0.39f;
+      br->add_col[1] = 0.95f;
+      br->add_col[2] = 0.005f;
       br->sub_col[0] = 1.0f;
-      br->sub_col[1] = 1.0f;
-      br->sub_col[2] = 0.39f;
+      br->sub_col[1] = 0.95f;
+      br->sub_col[2] = 0.005f;
       break;
 
     case SCULPT_TOOL_SIMPLIFY:
@@ -1047,18 +1079,19 @@ void BKE_brush_sculpt_reset(Brush *br)
  */
 void BKE_brush_curve_preset(Brush *b, eCurveMappingPreset preset)
 {
-  CurveMap *cm = NULL;
+  CurveMapping *cumap = NULL;
+  CurveMap *cuma = NULL;
 
   if (!b->curve) {
     b->curve = BKE_curvemapping_add(1, 0, 0, 1, 1);
   }
+  cumap = b->curve;
+  cumap->flag &= ~CUMA_EXTEND_EXTRAPOLATE;
+  cumap->preset = preset;
 
-  cm = b->curve->cm;
-  cm->flag &= ~CUMA_EXTEND_EXTRAPOLATE;
-
-  b->curve->preset = preset;
-  BKE_curvemap_reset(cm, &b->curve->clipr, b->curve->preset, CURVEMAP_SLOPE_NEGATIVE);
-  BKE_curvemapping_changed(b->curve, false);
+  cuma = b->curve->cm;
+  BKE_curvemap_reset(cuma, &cumap->clipr, cumap->preset, CURVEMAP_SLOPE_NEGATIVE);
+  BKE_curvemapping_changed(cumap, false);
 }
 
 /* Generic texture sampler for 3D painting systems. point has to be either in
@@ -1376,20 +1409,14 @@ bool BKE_brush_use_locked_size(const Scene *scene, const Brush *brush)
                                           (brush->flag & BRUSH_LOCK_SIZE);
 }
 
-bool BKE_brush_use_size_pressure(const Scene *scene, const Brush *brush)
+bool BKE_brush_use_size_pressure(const Brush *brush)
 {
-  const short us_flag = scene->toolsettings->unified_paint_settings.flag;
-
-  return (us_flag & UNIFIED_PAINT_SIZE) ? (us_flag & UNIFIED_PAINT_BRUSH_SIZE_PRESSURE) :
-                                          (brush->flag & BRUSH_SIZE_PRESSURE);
+  return brush->flag & BRUSH_SIZE_PRESSURE;
 }
 
-bool BKE_brush_use_alpha_pressure(const Scene *scene, const Brush *brush)
+bool BKE_brush_use_alpha_pressure(const Brush *brush)
 {
-  const short us_flag = scene->toolsettings->unified_paint_settings.flag;
-
-  return (us_flag & UNIFIED_PAINT_ALPHA) ? (us_flag & UNIFIED_PAINT_BRUSH_ALPHA_PRESSURE) :
-                                           (brush->flag & BRUSH_ALPHA_PRESSURE);
+  return brush->flag & BRUSH_ALPHA_PRESSURE;
 }
 
 bool BKE_brush_sculpt_has_secondary_color(const Brush *brush)
@@ -1553,6 +1580,9 @@ float BKE_brush_curve_strength(const Brush *br, float p, const float len)
       break;
     case BRUSH_CURVE_SMOOTH:
       strength = 3.0f * p * p - 2.0f * p * p * p;
+      break;
+    case BRUSH_CURVE_SMOOTHER:
+      strength = pow3f(p) * (p * (p * 6.0f - 15.0f) + 10.0f);
       break;
     case BRUSH_CURVE_ROOT:
       strength = sqrtf(p);

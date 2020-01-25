@@ -35,6 +35,7 @@
 #include "DNA_texture_types.h"
 #include "DNA_gpencil_modifier_types.h"
 #include "DNA_shader_fx_types.h"
+#include "DNA_curveprofile_types.h"
 
 #include "BLI_utildefines.h"
 #include "BLI_alloca.h"
@@ -69,6 +70,7 @@
 #include "BKE_packedFile.h"
 #include "BKE_paint.h"
 #include "BKE_particle.h"
+#include "BKE_curveprofile.h"
 #include "BKE_report.h"
 #include "BKE_screen.h"
 #include "BKE_shader_fx.h"
@@ -91,6 +93,7 @@
 
 #include "UI_interface.h"
 #include "UI_interface_icons.h"
+#include "UI_view2d.h"
 #include "interface_intern.h"
 
 #include "PIL_time.h"
@@ -153,6 +156,13 @@ static void template_add_button_search_menu(const bContext *C,
     const bool use_preview_icon = use_big_size || (id && (GS(id->name) != ID_SCR));
     const short width = UI_UNIT_X * (use_big_size ? 6 : 1.6f);
     const short height = UI_UNIT_Y * (use_big_size ? 6 : 1);
+    uiLayout *col = NULL;
+
+    if (use_big_size) {
+      /* Assume column layout here. To be more correct, we should check if the layout passed to
+       * template_id is a column one, but this should work well in practice. */
+      col = uiLayoutColumn(layout, true);
+    }
 
     but = uiDefBlockButN(block, block_func, block_argN, "", 0, 0, width, height, tip);
     if (use_preview_icon) {
@@ -168,7 +178,7 @@ static void template_add_button_search_menu(const bContext *C,
       UI_but_flag_enable(but, UI_BUT_DISABLED);
     }
     if (use_big_size) {
-      uiLayoutRow(layout, true);
+      uiLayoutRow(col ? col : layout, true);
     }
   }
   else {
@@ -779,6 +789,7 @@ static void template_ID(bContext *C,
                         const char *newop,
                         const char *openop,
                         const char *unlinkop,
+                        const char *text,
                         const bool live_icon,
                         const bool hide_buttons)
 {
@@ -800,6 +811,11 @@ static void template_ID(bContext *C,
 
   if (idptr.type) {
     type = idptr.type;
+  }
+
+  if (text) {
+    /* Add label resepecting the seperated layout property split state. */
+    layout = uiItemL_respect_property_split(layout, text, ICON_NONE);
   }
 
   if (flag & UI_ID_BROWSE) {
@@ -1186,6 +1202,7 @@ static void ui_template_id(uiLayout *layout,
                            const char *newop,
                            const char *openop,
                            const char *unlinkop,
+                           const char *text,
                            int flag,
                            int prv_rows,
                            int prv_cols,
@@ -1238,13 +1255,22 @@ static void ui_template_id(uiLayout *layout,
    */
   if (template_ui->idlb) {
     if (use_tabs) {
-      uiLayoutRow(layout, true);
+      layout = uiLayoutRow(layout, true);
       template_ID_tabs(C, layout, template_ui, type, flag, newop, unlinkop);
     }
     else {
-      uiLayoutRow(layout, true);
-      template_ID(
-          C, layout, template_ui, type, flag, newop, openop, unlinkop, live_icon, hide_buttons);
+      layout = uiLayoutRow(layout, true);
+      template_ID(C,
+                  layout,
+                  template_ui,
+                  type,
+                  flag,
+                  newop,
+                  openop,
+                  unlinkop,
+                  text,
+                  live_icon,
+                  hide_buttons);
     }
   }
 
@@ -1259,7 +1285,8 @@ void uiTemplateID(uiLayout *layout,
                   const char *openop,
                   const char *unlinkop,
                   int filter,
-                  const bool live_icon)
+                  const bool live_icon,
+                  const char *text)
 {
   ui_template_id(layout,
                  C,
@@ -1268,6 +1295,7 @@ void uiTemplateID(uiLayout *layout,
                  newop,
                  openop,
                  unlinkop,
+                 text,
                  UI_ID_BROWSE | UI_ID_RENAME | UI_ID_DELETE,
                  0,
                  0,
@@ -1285,7 +1313,8 @@ void uiTemplateIDBrowse(uiLayout *layout,
                         const char *newop,
                         const char *openop,
                         const char *unlinkop,
-                        int filter)
+                        int filter,
+                        const char *text)
 {
   ui_template_id(layout,
                  C,
@@ -1294,6 +1323,7 @@ void uiTemplateIDBrowse(uiLayout *layout,
                  newop,
                  openop,
                  unlinkop,
+                 text,
                  UI_ID_BROWSE | UI_ID_RENAME,
                  0,
                  0,
@@ -1323,6 +1353,7 @@ void uiTemplateIDPreview(uiLayout *layout,
                  newop,
                  openop,
                  unlinkop,
+                 NULL,
                  UI_ID_BROWSE | UI_ID_RENAME | UI_ID_DELETE | UI_ID_PREVIEWS,
                  rows,
                  cols,
@@ -1346,6 +1377,7 @@ void uiTemplateGpencilColorPreview(uiLayout *layout,
                  C,
                  ptr,
                  propname,
+                 NULL,
                  NULL,
                  NULL,
                  NULL,
@@ -1377,6 +1409,7 @@ void uiTemplateIDTabs(uiLayout *layout,
                  newop,
                  NULL,
                  unlinkop,
+                 NULL,
                  UI_ID_BROWSE | UI_ID_RENAME,
                  0,
                  0,
@@ -1788,11 +1821,13 @@ static int modifier_can_delete(ModifierData *md)
 {
   /* fluid particle modifier can't be deleted here */
   if (md->type == eModifierType_ParticleSystem) {
-    if (((ParticleSystemModifierData *)md)->psys->part->type == PART_FLUID) {
+    short particle_type = ((ParticleSystemModifierData *)md)->psys->part->type;
+    if (particle_type == PART_FLUID || particle_type == PART_FLUID_FLIP ||
+        particle_type == PART_FLUID_FOAM || particle_type == PART_FLUID_SPRAY ||
+        particle_type == PART_FLUID_BUBBLE || particle_type == PART_FLUID_TRACER) {
       return 0;
     }
   }
-
   return 1;
 }
 
@@ -1805,7 +1840,7 @@ static int modifier_is_simulation(ModifierData *md)
            eModifierType_Cloth,
            eModifierType_Collision,
            eModifierType_Fluidsim,
-           eModifierType_Smoke,
+           eModifierType_Fluid,
            eModifierType_Softbody,
            eModifierType_Surface,
            eModifierType_DynamicPaint)) {
@@ -2038,7 +2073,7 @@ static uiLayout *draw_modifier(uiLayout *layout,
                 eModifierType_Softbody,
                 eModifierType_ParticleSystem,
                 eModifierType_Cloth,
-                eModifierType_Smoke)) {
+                eModifierType_Fluid)) {
         uiItemO(row,
                 CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy"),
                 ICON_NONE,
@@ -3961,11 +3996,11 @@ static void curvemap_tools_dofunc(bContext *C, void *cumap_v, int event)
       BKE_curvemapping_changed(cumap, false);
       break;
     case UICURVE_FUNC_EXTEND_HOZ: /* extend horiz */
-      cuma->flag &= ~CUMA_EXTEND_EXTRAPOLATE;
+      cumap->flag &= ~CUMA_EXTEND_EXTRAPOLATE;
       BKE_curvemapping_changed(cumap, false);
       break;
     case UICURVE_FUNC_EXTEND_EXP: /* extend extrapolate */
-      cuma->flag |= CUMA_EXTEND_EXTRAPOLATE;
+      cumap->flag |= CUMA_EXTEND_EXTRAPOLATE;
       BKE_curvemapping_changed(cumap, false);
       break;
   }
@@ -3986,7 +4021,7 @@ static uiBlock *curvemap_tools_func(
     uiDefIconTextBut(block,
                      UI_BTYPE_BUT_MENU,
                      1,
-                     ICON_BLANK1,
+                     ICON_VIEW_RESET,
                      IFACE_("Reset View"),
                      0,
                      yco -= UI_UNIT_Y,
@@ -4001,7 +4036,7 @@ static uiBlock *curvemap_tools_func(
     uiDefIconTextBut(block,
                      UI_BTYPE_BUT_MENU,
                      1,
-                     ICON_BLANK1,
+                     ICON_HANDLE_VECTOR,
                      IFACE_("Vector Handle"),
                      0,
                      yco -= UI_UNIT_Y,
@@ -4016,7 +4051,7 @@ static uiBlock *curvemap_tools_func(
     uiDefIconTextBut(block,
                      UI_BTYPE_BUT_MENU,
                      1,
-                     ICON_BLANK1,
+                     ICON_HANDLE_AUTO,
                      IFACE_("Auto Handle"),
                      0,
                      yco -= UI_UNIT_Y,
@@ -4031,7 +4066,7 @@ static uiBlock *curvemap_tools_func(
     uiDefIconTextBut(block,
                      UI_BTYPE_BUT_MENU,
                      1,
-                     ICON_BLANK1,
+                     ICON_HANDLE_AUTO_CLAMPED,
                      IFACE_("Auto Clamped Handle"),
                      0,
                      yco -= UI_UNIT_Y,
@@ -4049,7 +4084,7 @@ static uiBlock *curvemap_tools_func(
     uiDefIconTextBut(block,
                      UI_BTYPE_BUT_MENU,
                      1,
-                     ICON_BLANK1,
+                     ICON_EXTRAPOLATION_CONSTANT,
                      IFACE_("Extend Horizontal"),
                      0,
                      yco -= UI_UNIT_Y,
@@ -4064,7 +4099,7 @@ static uiBlock *curvemap_tools_func(
     uiDefIconTextBut(block,
                      UI_BTYPE_BUT_MENU,
                      1,
-                     ICON_BLANK1,
+                     ICON_EXTRAPOLATION_LINEAR,
                      IFACE_("Extend Extrapolated"),
                      0,
                      yco -= UI_UNIT_Y,
@@ -4082,7 +4117,7 @@ static uiBlock *curvemap_tools_func(
     uiDefIconTextBut(block,
                      UI_BTYPE_BUT_MENU,
                      1,
-                     ICON_BLANK1,
+                     ICON_RESET,
                      IFACE_("Reset Curve"),
                      0,
                      yco -= UI_UNIT_Y,
@@ -4498,6 +4533,614 @@ void uiTemplateCurveMapping(uiLayout *layout,
   UI_block_lock_set(block, (id && ID_IS_LINKED(id)), ERROR_LIBDATA_MESSAGE);
 
   curvemap_buttons_layout(layout, &cptr, type, levels, brush, neg_slope, tone, cb);
+
+  UI_block_lock_clear(block);
+
+  MEM_freeN(cb);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Curve Profile Template
+ * \{ */
+
+static void CurveProfile_presets_dofunc(bContext *C, void *profile_v, int event)
+{
+  CurveProfile *profile = profile_v;
+
+  profile->preset = event;
+  BKE_curveprofile_reset(profile);
+  BKE_curveprofile_update(profile, false);
+
+  ED_undo_push(C, "CurveProfile tools");
+  ED_region_tag_redraw(CTX_wm_region(C));
+}
+
+static uiBlock *CurveProfile_presets_func(bContext *C, ARegion *ar, CurveProfile *profile)
+{
+  uiBlock *block;
+  short yco = 0;
+  short menuwidth = 12 * UI_UNIT_X;
+  menuwidth = 0;
+
+  block = UI_block_begin(C, ar, __func__, UI_EMBOSS);
+  UI_block_func_butmenu_set(block, CurveProfile_presets_dofunc, profile);
+
+  uiDefIconTextBut(block,
+                   UI_BTYPE_BUT_MENU,
+                   1,
+                   ICON_BLANK1,
+                   IFACE_("Default"),
+                   0,
+                   yco -= UI_UNIT_Y,
+                   menuwidth,
+                   UI_UNIT_Y,
+                   NULL,
+                   0.0,
+                   0.0,
+                   0,
+                   PROF_PRESET_LINE,
+                   "");
+  uiDefIconTextBut(block,
+                   UI_BTYPE_BUT_MENU,
+                   1,
+                   ICON_BLANK1,
+                   IFACE_("Support Loops"),
+                   0,
+                   yco -= UI_UNIT_Y,
+                   menuwidth,
+                   UI_UNIT_Y,
+                   NULL,
+                   0.0,
+                   0.0,
+                   0,
+                   PROF_PRESET_SUPPORTS,
+                   "");
+  uiDefIconTextBut(block,
+                   UI_BTYPE_BUT_MENU,
+                   1,
+                   ICON_BLANK1,
+                   IFACE_("Cornice Moulding"),
+                   0,
+                   yco -= UI_UNIT_Y,
+                   menuwidth,
+                   UI_UNIT_Y,
+                   NULL,
+                   0.0,
+                   0.0,
+                   0,
+                   PROF_PRESET_CORNICE,
+                   "");
+  uiDefIconTextBut(block,
+                   UI_BTYPE_BUT_MENU,
+                   1,
+                   ICON_BLANK1,
+                   IFACE_("Crown Moulding"),
+                   0,
+                   yco -= UI_UNIT_Y,
+                   menuwidth,
+                   UI_UNIT_Y,
+                   NULL,
+                   0.0,
+                   0.0,
+                   0,
+                   PROF_PRESET_CROWN,
+                   "");
+  uiDefIconTextBut(block,
+                   UI_BTYPE_BUT_MENU,
+                   1,
+                   ICON_BLANK1,
+                   IFACE_("Steps"),
+                   0,
+                   yco -= UI_UNIT_Y,
+                   menuwidth,
+                   UI_UNIT_Y,
+                   NULL,
+                   0.0,
+                   0.0,
+                   0,
+                   PROF_PRESET_STEPS,
+                   "");
+
+  UI_block_direction_set(block, UI_DIR_DOWN);
+  UI_block_bounds_set_text(block, (int)(3.0f * UI_UNIT_X));
+
+  return block;
+}
+
+static uiBlock *CurveProfile_buttons_presets(bContext *C, ARegion *ar, void *profile_v)
+{
+  return CurveProfile_presets_func(C, ar, (CurveProfile *)profile_v);
+}
+
+/* Only for CurveProfile tools block */
+enum {
+  UIPROFILE_FUNC_RESET,
+  UIPROFILE_FUNC_RESET_VIEW,
+};
+
+static void CurveProfile_tools_dofunc(bContext *C, void *profile_v, int event)
+{
+  CurveProfile *profile = profile_v;
+
+  switch (event) {
+    case UIPROFILE_FUNC_RESET: /* reset */
+      BKE_curveprofile_reset(profile);
+      BKE_curveprofile_update(profile, false);
+      break;
+    case UIPROFILE_FUNC_RESET_VIEW: /* reset view to clipping rect */
+      profile->view_rect = profile->clip_rect;
+      break;
+  }
+  ED_undo_push(C, "CurveProfile tools");
+  ED_region_tag_redraw(CTX_wm_region(C));
+}
+
+static uiBlock *CurveProfile_tools_func(bContext *C, ARegion *ar, CurveProfile *profile)
+{
+  uiBlock *block;
+  short yco = 0;
+  short menuwidth = 10 * UI_UNIT_X;
+
+  block = UI_block_begin(C, ar, __func__, UI_EMBOSS);
+  UI_block_func_butmenu_set(block, CurveProfile_tools_dofunc, profile);
+
+  uiDefIconTextBut(block,
+                   UI_BTYPE_BUT_MENU,
+                   1,
+                   ICON_BLANK1,
+                   IFACE_("Reset View"),
+                   0,
+                   yco -= UI_UNIT_Y,
+                   menuwidth,
+                   UI_UNIT_Y,
+                   NULL,
+                   0.0,
+                   0.0,
+                   0,
+                   UIPROFILE_FUNC_RESET_VIEW,
+                   "");
+  uiDefIconTextBut(block,
+                   UI_BTYPE_BUT_MENU,
+                   1,
+                   ICON_BLANK1,
+                   IFACE_("Reset Curve"),
+                   0,
+                   yco -= UI_UNIT_Y,
+                   menuwidth,
+                   UI_UNIT_Y,
+                   NULL,
+                   0.0,
+                   0.0,
+                   0,
+                   UIPROFILE_FUNC_RESET,
+                   "");
+
+  UI_block_direction_set(block, UI_DIR_DOWN);
+  UI_block_bounds_set_text(block, (int)(3.0f * UI_UNIT_X));
+
+  return block;
+}
+
+static uiBlock *CurveProfile_buttons_tools(bContext *C, ARegion *ar, void *profile_v)
+{
+  return CurveProfile_tools_func(C, ar, (CurveProfile *)profile_v);
+}
+
+static void CurveProfile_buttons_zoom_in(bContext *C, void *profile_v, void *UNUSED(arg))
+{
+  CurveProfile *profile = profile_v;
+  float d;
+
+  /* we allow 20 times zoom */
+  if (BLI_rctf_size_x(&profile->view_rect) > 0.04f * BLI_rctf_size_x(&profile->clip_rect)) {
+    d = 0.1154f * BLI_rctf_size_x(&profile->view_rect);
+    profile->view_rect.xmin += d;
+    profile->view_rect.xmax -= d;
+    d = 0.1154f * BLI_rctf_size_y(&profile->view_rect);
+    profile->view_rect.ymin += d;
+    profile->view_rect.ymax -= d;
+  }
+
+  ED_region_tag_redraw(CTX_wm_region(C));
+}
+
+static void CurveProfile_buttons_zoom_out(bContext *C, void *profile_v, void *UNUSED(arg))
+{
+  CurveProfile *profile = profile_v;
+  float d, d1;
+
+  /* Allow 20 times zoom, but don't view outside clip */
+  if (BLI_rctf_size_x(&profile->view_rect) < 20.0f * BLI_rctf_size_x(&profile->clip_rect)) {
+    d = d1 = 0.15f * BLI_rctf_size_x(&profile->view_rect);
+
+    if (profile->flag & PROF_USE_CLIP) {
+      if (profile->view_rect.xmin - d < profile->clip_rect.xmin) {
+        d1 = profile->view_rect.xmin - profile->clip_rect.xmin;
+      }
+    }
+    profile->view_rect.xmin -= d1;
+
+    d1 = d;
+    if (profile->flag & PROF_USE_CLIP) {
+      if (profile->view_rect.xmax + d > profile->clip_rect.xmax) {
+        d1 = -profile->view_rect.xmax + profile->clip_rect.xmax;
+      }
+    }
+    profile->view_rect.xmax += d1;
+
+    d = d1 = 0.15f * BLI_rctf_size_y(&profile->view_rect);
+
+    if (profile->flag & PROF_USE_CLIP) {
+      if (profile->view_rect.ymin - d < profile->clip_rect.ymin) {
+        d1 = profile->view_rect.ymin - profile->clip_rect.ymin;
+      }
+    }
+    profile->view_rect.ymin -= d1;
+
+    d1 = d;
+    if (profile->flag & PROF_USE_CLIP) {
+      if (profile->view_rect.ymax + d > profile->clip_rect.ymax) {
+        d1 = -profile->view_rect.ymax + profile->clip_rect.ymax;
+      }
+    }
+    profile->view_rect.ymax += d1;
+  }
+
+  ED_region_tag_redraw(CTX_wm_region(C));
+}
+
+static void CurveProfile_clipping_toggle(bContext *C, void *cb_v, void *profile_v)
+{
+  CurveProfile *profile = profile_v;
+
+  profile->flag ^= PROF_USE_CLIP;
+
+  BKE_curveprofile_update(profile, false);
+  rna_update_cb(C, cb_v, NULL);
+}
+
+static void CurveProfile_buttons_reverse(bContext *C, void *cb_v, void *profile_v)
+{
+  CurveProfile *profile = profile_v;
+
+  BKE_curveprofile_reverse(profile);
+  BKE_curveprofile_update(profile, false);
+  rna_update_cb(C, cb_v, NULL);
+}
+
+static void CurveProfile_buttons_delete(bContext *C, void *cb_v, void *profile_v)
+{
+  CurveProfile *profile = profile_v;
+
+  BKE_curveprofile_remove_by_flag(profile, SELECT);
+  BKE_curveprofile_update(profile, false);
+
+  rna_update_cb(C, cb_v, NULL);
+}
+
+static void CurveProfile_buttons_setsharp(bContext *C, void *cb_v, void *profile_v)
+{
+  CurveProfile *profile = profile_v;
+
+  BKE_curveprofile_selected_handle_set(profile, HD_VECT, HD_VECT);
+  BKE_curveprofile_update(profile, false);
+
+  rna_update_cb(C, cb_v, NULL);
+}
+
+static void CurveProfile_buttons_setcurved(bContext *C, void *cb_v, void *profile_v)
+{
+  CurveProfile *profile = profile_v;
+
+  BKE_curveprofile_selected_handle_set(profile, HD_AUTO, HD_AUTO);
+  BKE_curveprofile_update(profile, false);
+
+  rna_update_cb(C, cb_v, NULL);
+}
+
+static void CurveProfile_buttons_update(bContext *C, void *arg1_v, void *profile_v)
+{
+  CurveProfile *profile = profile_v;
+  BKE_curveprofile_update(profile, true);
+  rna_update_cb(C, arg1_v, NULL);
+}
+
+static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUpdateCb *cb)
+{
+  CurveProfile *profile = ptr->data;
+  CurveProfilePoint *point = NULL;
+  uiLayout *row, *sub;
+  uiBlock *block;
+  uiBut *bt;
+  int i, icon, path_width, path_height;
+  bool point_last_or_first = false;
+  rctf bounds;
+
+  block = uiLayoutGetBlock(layout);
+
+  UI_block_emboss_set(block, UI_EMBOSS);
+
+  uiLayoutRow(layout, false);
+
+  /* Preset selector */
+  /* There is probably potential to use simpler "uiItemR" functions here, but automatic updating
+   * after a preset is selected would be more complicated. */
+  bt = uiDefBlockBut(
+      block, CurveProfile_buttons_presets, profile, "Preset", 0, 0, UI_UNIT_X, UI_UNIT_X, "");
+  UI_but_funcN_set(bt, rna_update_cb, MEM_dupallocN(cb), NULL);
+
+  row = uiLayoutRow(layout, false);
+
+  /* (Left aligned) */
+  sub = uiLayoutRow(row, true);
+  uiLayoutSetAlignment(sub, UI_LAYOUT_ALIGN_LEFT);
+
+  /* Zoom in */
+  bt = uiDefIconBut(block,
+                    UI_BTYPE_BUT,
+                    0,
+                    ICON_ZOOM_IN,
+                    0,
+                    0,
+                    UI_UNIT_X,
+                    UI_UNIT_X,
+                    NULL,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    TIP_("Zoom in"));
+  UI_but_func_set(bt, CurveProfile_buttons_zoom_in, profile, NULL);
+
+  /* Zoom out */
+  bt = uiDefIconBut(block,
+                    UI_BTYPE_BUT,
+                    0,
+                    ICON_ZOOM_OUT,
+                    0,
+                    0,
+                    UI_UNIT_X,
+                    UI_UNIT_X,
+                    NULL,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    TIP_("Zoom out"));
+  UI_but_func_set(bt, CurveProfile_buttons_zoom_out, profile, NULL);
+
+  /* (Right aligned) */
+  sub = uiLayoutRow(row, true);
+  uiLayoutSetAlignment(sub, UI_LAYOUT_ALIGN_RIGHT);
+
+  /* Reset view, reset curve */
+  bt = uiDefIconBlockBut(
+      block, CurveProfile_buttons_tools, profile, 0, 0, 0, 0, UI_UNIT_X, UI_UNIT_X, TIP_("Tools"));
+  UI_but_funcN_set(bt, rna_update_cb, MEM_dupallocN(cb), NULL);
+
+  /* Flip path */
+  bt = uiDefIconBut(block,
+                    UI_BTYPE_BUT,
+                    0,
+                    ICON_ARROW_LEFTRIGHT,
+                    0,
+                    0,
+                    UI_UNIT_X,
+                    UI_UNIT_X,
+                    NULL,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    TIP_("Reverse Path"));
+  UI_but_funcN_set(bt, CurveProfile_buttons_reverse, MEM_dupallocN(cb), profile);
+
+  /* Clipping toggle */
+  icon = (profile->flag & PROF_USE_CLIP) ? ICON_CLIPUV_HLT : ICON_CLIPUV_DEHLT;
+  bt = uiDefIconBut(block,
+                    UI_BTYPE_BUT,
+                    0,
+                    icon,
+                    0,
+                    0,
+                    UI_UNIT_X,
+                    UI_UNIT_X,
+                    NULL,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    TIP_("Toggle Profile Clipping"));
+  UI_but_funcN_set(bt, CurveProfile_clipping_toggle, MEM_dupallocN(cb), profile);
+
+  UI_block_funcN_set(block, rna_update_cb, MEM_dupallocN(cb), NULL);
+
+  /* The path itself */
+  path_width = max_ii(uiLayoutGetWidth(layout), UI_UNIT_X);
+  path_width = min_ii(path_width, (int)(16.0f * UI_UNIT_X));
+  path_height = path_width;
+  uiLayoutRow(layout, false);
+  uiDefBut(block,
+           UI_BTYPE_CURVEPROFILE,
+           0,
+           "",
+           0,
+           0,
+           (short)path_width,
+           (short)path_height,
+           profile,
+           0.0f,
+           1.0f,
+           -1,
+           0,
+           "");
+
+  /* Position sliders for (first) selected point */
+  for (i = 0; i < profile->path_len; i++) {
+    if (profile->path[i].flag & PROF_SELECT) {
+      point = &profile->path[i];
+      break;
+    }
+  }
+  if (i == 0 || i == profile->path_len - 1) {
+    point_last_or_first = true;
+  }
+
+  /* Selected point data */
+  if (point) {
+    if (profile->flag & PROF_USE_CLIP) {
+      bounds = profile->clip_rect;
+    }
+    else {
+      bounds.xmin = bounds.ymin = -1000.0;
+      bounds.xmax = bounds.ymax = 1000.0;
+    }
+
+    uiLayoutRow(layout, true);
+    UI_block_funcN_set(block, CurveProfile_buttons_update, MEM_dupallocN(cb), profile);
+
+    /* Sharp / Smooth */
+    bt = uiDefIconBut(block,
+                      UI_BTYPE_BUT,
+                      0,
+                      ICON_LINCURVE,
+                      0,
+                      0,
+                      UI_UNIT_X,
+                      UI_UNIT_X,
+                      NULL,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      TIP_("Set the point's handle type to sharp"));
+    if (point_last_or_first) {
+      UI_but_flag_enable(bt, UI_BUT_DISABLED);
+    }
+    UI_but_funcN_set(bt, CurveProfile_buttons_setsharp, MEM_dupallocN(cb), profile);
+    bt = uiDefIconBut(block,
+                      UI_BTYPE_BUT,
+                      0,
+                      ICON_SMOOTHCURVE,
+                      0,
+                      0,
+                      UI_UNIT_X,
+                      UI_UNIT_X,
+                      NULL,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      TIP_("Set the point's handle type to smooth"));
+    UI_but_funcN_set(bt, CurveProfile_buttons_setcurved, MEM_dupallocN(cb), profile);
+    if (point_last_or_first) {
+      UI_but_flag_enable(bt, UI_BUT_DISABLED);
+    }
+
+    /* Position */
+    bt = uiDefButF(block,
+                   UI_BTYPE_NUM,
+                   0,
+                   "X:",
+                   0,
+                   2 * UI_UNIT_Y,
+                   UI_UNIT_X * 10,
+                   UI_UNIT_Y,
+                   &point->x,
+                   bounds.xmin,
+                   bounds.xmax,
+                   1,
+                   5,
+                   "");
+    if (point_last_or_first) {
+      UI_but_flag_enable(bt, UI_BUT_DISABLED);
+    }
+
+    bt = uiDefButF(block,
+                   UI_BTYPE_NUM,
+                   0,
+                   "Y:",
+                   0,
+                   1 * UI_UNIT_Y,
+                   UI_UNIT_X * 10,
+                   UI_UNIT_Y,
+                   &point->y,
+                   bounds.ymin,
+                   bounds.ymax,
+                   1,
+                   5,
+                   "");
+    if (point_last_or_first) {
+      UI_but_flag_enable(bt, UI_BUT_DISABLED);
+    }
+
+    /* Delete points */
+    bt = uiDefIconBut(block,
+                      UI_BTYPE_BUT,
+                      0,
+                      ICON_X,
+                      0,
+                      0,
+                      UI_UNIT_X,
+                      UI_UNIT_X,
+                      NULL,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      TIP_("Delete points"));
+    UI_but_funcN_set(bt, CurveProfile_buttons_delete, MEM_dupallocN(cb), profile);
+    if (point_last_or_first) {
+      UI_but_flag_enable(bt, UI_BUT_DISABLED);
+    }
+  }
+
+  uiItemR(layout, ptr, "use_sample_straight_edges", 0, NULL, ICON_NONE);
+  uiItemR(layout, ptr, "use_sample_even_lengths", 0, NULL, ICON_NONE);
+
+  UI_block_funcN_set(block, NULL, NULL, NULL);
+}
+
+/**
+ * Template for a path creation widget intended for custom bevel profiles.
+ * This section is quite similar to #uiTemplateCurveMapping, but with reduced complexity.
+ */
+void uiTemplateCurveProfile(uiLayout *layout, PointerRNA *ptr, const char *propname)
+{
+  RNAUpdateCb *cb;
+  PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
+  PointerRNA cptr;
+  ID *id;
+  uiBlock *block = uiLayoutGetBlock(layout);
+
+  if (!prop) {
+    RNA_warning(
+        "Curve Profile property not found: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    return;
+  }
+
+  if (RNA_property_type(prop) != PROP_POINTER) {
+    RNA_warning(
+        "Curve Profile is not a pointer: %s.%s", RNA_struct_identifier(ptr->type), propname);
+    return;
+  }
+
+  cptr = RNA_property_pointer_get(ptr, prop);
+  if (!cptr.data || !RNA_struct_is_a(cptr.type, &RNA_CurveProfile)) {
+    return;
+  }
+
+  /* Share update functionality with the CurveMapping widget template. */
+  cb = MEM_callocN(sizeof(RNAUpdateCb), "RNAUpdateCb");
+  cb->ptr = *ptr;
+  cb->prop = prop;
+
+  id = cptr.owner_id;
+  UI_block_lock_set(block, (id && ID_IS_LINKED(id)), ERROR_LIBDATA_MESSAGE);
+
+  CurveProfile_buttons_layout(layout, &cptr, cb);
 
   UI_block_lock_clear(block);
 
@@ -5583,7 +6226,7 @@ void uiTemplateList(uiLayout *layout,
                   "",
                   0,
                   0,
-                  UI_UNIT_X * 0.75,
+                  V2D_SCROLL_WIDTH,
                   UI_UNIT_Y * dyn_data->visual_height,
                   &ui_list->list_scroll,
                   0,
@@ -5723,7 +6366,7 @@ void uiTemplateList(uiLayout *layout,
                   "",
                   0,
                   0,
-                  UI_UNIT_X * 0.75,
+                  V2D_SCROLL_WIDTH,
                   UI_UNIT_Y * dyn_data->visual_height,
                   &ui_list->list_scroll,
                   0,
@@ -6222,7 +6865,6 @@ static char *progress_tooltip_func(bContext *UNUSED(C), void *argN, const char *
 
 void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
 {
-  bScreen *screen = CTX_wm_screen(C);
   wmWindowManager *wm = CTX_wm_manager(C);
   ScrArea *sa = CTX_wm_area(C);
   uiBlock *block;
@@ -6404,7 +7046,7 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
     }
   }
 
-  if (screen->animtimer) {
+  if (ED_screen_animation_no_scrub(wm)) {
     uiDefIconTextBut(block,
                      UI_BTYPE_BUT,
                      B_STOPANIM,
@@ -6876,8 +7518,16 @@ void uiTemplateCacheFile(uiLayout *layout, bContext *C, PointerRNA *ptr, const c
 
   uiLayoutSetContextPointer(layout, "edit_cachefile", &fileptr);
 
-  uiTemplateID(
-      layout, C, ptr, propname, NULL, "CACHEFILE_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL, false);
+  uiTemplateID(layout,
+               C,
+               ptr,
+               propname,
+               NULL,
+               "CACHEFILE_OT_open",
+               NULL,
+               UI_TEMPLATE_ID_FILTER_ALL,
+               false,
+               NULL);
 
   if (!file) {
     return;

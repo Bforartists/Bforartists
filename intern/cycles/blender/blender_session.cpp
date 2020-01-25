@@ -142,9 +142,9 @@ void BlenderSession::create_session()
   scene->image_manager->builtin_image_info_cb = function_bind(
       &BlenderSession::builtin_image_info, this, _1, _2, _3);
   scene->image_manager->builtin_image_pixels_cb = function_bind(
-      &BlenderSession::builtin_image_pixels, this, _1, _2, _3, _4, _5, _6);
+      &BlenderSession::builtin_image_pixels, this, _1, _2, _3, _4, _5, _6, _7);
   scene->image_manager->builtin_image_float_pixels_cb = function_bind(
-      &BlenderSession::builtin_image_float_pixels, this, _1, _2, _3, _4, _5, _6);
+      &BlenderSession::builtin_image_float_pixels, this, _1, _2, _3, _4, _5, _6, _7);
 
   session->scene = scene;
 
@@ -478,23 +478,24 @@ void BlenderSession::render(BL::Depsgraph &b_depsgraph_)
   buffer_params.passes = passes;
 
   PointerRNA crl = RNA_pointer_get(&b_view_layer.ptr, "cycles");
-  bool full_denoising = get_boolean(crl, "use_denoising");
+  bool use_denoising = get_boolean(crl, "use_denoising");
+  bool use_optix_denoising = get_boolean(crl, "use_optix_denoising");
   bool write_denoising_passes = get_boolean(crl, "denoising_store_passes");
 
-  bool run_denoising = full_denoising || write_denoising_passes;
-
-  session->tile_manager.schedule_denoising = run_denoising;
-  buffer_params.denoising_data_pass = run_denoising;
+  buffer_params.denoising_data_pass = use_denoising || write_denoising_passes;
   buffer_params.denoising_clean_pass = (scene->film->denoising_flags & DENOISING_CLEAN_ALL_PASSES);
-  buffer_params.denoising_prefiltered_pass = write_denoising_passes;
+  buffer_params.denoising_prefiltered_pass = write_denoising_passes && !use_optix_denoising;
 
-  session->params.run_denoising = run_denoising;
-  session->params.full_denoising = full_denoising;
-  session->params.write_denoising_passes = write_denoising_passes;
+  session->params.run_denoising = use_denoising || write_denoising_passes;
+  session->params.full_denoising = use_denoising && !use_optix_denoising;
+  session->params.optix_denoising = use_denoising && use_optix_denoising;
+  session->params.write_denoising_passes = write_denoising_passes && !use_optix_denoising;
   session->params.denoising.radius = get_int(crl, "denoising_radius");
   session->params.denoising.strength = get_float(crl, "denoising_strength");
   session->params.denoising.feature_strength = get_float(crl, "denoising_feature_strength");
   session->params.denoising.relative_pca = get_boolean(crl, "denoising_relative_pca");
+  session->params.denoising.optix_input_passes = get_enum(crl, "denoising_optix_input_passes");
+  session->tile_manager.schedule_denoising = session->params.run_denoising;
 
   scene->film->denoising_data_pass = buffer_params.denoising_data_pass;
   scene->film->denoising_clean_pass = buffer_params.denoising_clean_pass;
@@ -793,18 +794,13 @@ void BlenderSession::do_write_update_render_result(BL::RenderLayer &b_rlay,
 
     for (b_rlay.passes.begin(b_iter); b_iter != b_rlay.passes.end(); ++b_iter) {
       BL::RenderPass b_pass(*b_iter);
-
-      /* find matching pass type */
-      PassType pass_type = BlenderSync::get_pass_type(b_pass);
       int components = b_pass.channels();
 
-      bool read = false;
-      if (pass_type != PASS_NONE) {
-        /* copy pixels */
-        read = buffers->get_pass_rect(
-            pass_type, exposure, sample, components, &pixels[0], b_pass.name());
-      }
-      else {
+      /* Copy pixels from regular render passes. */
+      bool read = buffers->get_pass_rect(b_pass.name(), exposure, sample, components, &pixels[0]);
+
+      /* If denoising pass, */
+      if (!read) {
         int denoising_offset = BlenderSync::get_denoising_pass(b_pass);
         if (denoising_offset >= 0) {
           read = buffers->get_denoising_pass_rect(
@@ -822,7 +818,7 @@ void BlenderSession::do_write_update_render_result(BL::RenderLayer &b_rlay,
   else {
     /* copy combined pass */
     BL::RenderPass b_combined_pass(b_rlay.passes.find_by_name("Combined", b_rview_name.c_str()));
-    if (buffers->get_pass_rect(PASS_COMBINED, exposure, sample, 4, &pixels[0], "Combined"))
+    if (buffers->get_pass_rect("Combined", exposure, sample, 4, &pixels[0]))
       b_combined_pass.rect(&pixels[0]);
   }
 }
@@ -1163,7 +1159,7 @@ void BlenderSession::builtin_image_info(const string &builtin_name,
   else if (b_id.is_a(&RNA_Object)) {
     /* smoke volume data */
     BL::Object b_ob(b_id);
-    BL::SmokeDomainSettings b_domain = object_smoke_domain_find(b_ob);
+    BL::FluidDomainSettings b_domain = object_fluid_domain_find(b_ob);
 
     metadata.is_float = true;
     metadata.depth = 1;
@@ -1185,7 +1181,7 @@ void BlenderSession::builtin_image_info(const string &builtin_name,
       return;
 
     int3 resolution = get_int3(b_domain.domain_resolution());
-    int amplify = (b_domain.use_high_resolution()) ? b_domain.amplify() + 1 : 1;
+    int amplify = (b_domain.use_noise()) ? b_domain.noise_scale() : 1;
 
     /* Velocity and heat data is always low-resolution. */
     if (builtin_name == Attribute::standard_name(ATTR_STD_VOLUME_VELOCITY) ||
@@ -1215,6 +1211,7 @@ void BlenderSession::builtin_image_info(const string &builtin_name,
 
 bool BlenderSession::builtin_image_pixels(const string &builtin_name,
                                           void *builtin_data,
+                                          int tile,
                                           unsigned char *pixels,
                                           const size_t pixels_size,
                                           const bool associate_alpha,
@@ -1234,7 +1231,7 @@ bool BlenderSession::builtin_image_pixels(const string &builtin_name,
   const int height = b_image.size()[1];
   const int channels = b_image.channels();
 
-  unsigned char *image_pixels = image_get_pixels_for_frame(b_image, frame);
+  unsigned char *image_pixels = image_get_pixels_for_frame(b_image, frame, tile);
   const size_t num_pixels = ((size_t)width) * height;
 
   if (image_pixels && num_pixels * channels == pixels_size) {
@@ -1281,6 +1278,7 @@ bool BlenderSession::builtin_image_pixels(const string &builtin_name,
 
 bool BlenderSession::builtin_image_float_pixels(const string &builtin_name,
                                                 void *builtin_data,
+                                                int tile,
                                                 float *pixels,
                                                 const size_t pixels_size,
                                                 const bool,
@@ -1304,7 +1302,7 @@ bool BlenderSession::builtin_image_float_pixels(const string &builtin_name,
     const int channels = b_image.channels();
 
     float *image_pixels;
-    image_pixels = image_get_float_pixels_for_frame(b_image, frame);
+    image_pixels = image_get_float_pixels_for_frame(b_image, frame, tile);
     const size_t num_pixels = ((size_t)width) * height;
 
     if (image_pixels && num_pixels * channels == pixels_size) {
@@ -1342,14 +1340,14 @@ bool BlenderSession::builtin_image_float_pixels(const string &builtin_name,
   else if (b_id.is_a(&RNA_Object)) {
     /* smoke volume data */
     BL::Object b_ob(b_id);
-    BL::SmokeDomainSettings b_domain = object_smoke_domain_find(b_ob);
+    BL::FluidDomainSettings b_domain = object_fluid_domain_find(b_ob);
 
     if (!b_domain) {
       return false;
     }
 
     int3 resolution = get_int3(b_domain.domain_resolution());
-    int length, amplify = (b_domain.use_high_resolution()) ? b_domain.amplify() + 1 : 1;
+    int length, amplify = (b_domain.use_noise()) ? b_domain.noise_scale() : 1;
 
     /* Velocity and heat data is always low-resolution. */
     if (builtin_name == Attribute::standard_name(ATTR_STD_VOLUME_VELOCITY) ||
@@ -1363,47 +1361,47 @@ bool BlenderSession::builtin_image_float_pixels(const string &builtin_name,
     const size_t num_pixels = ((size_t)width) * height * depth;
 
     if (builtin_name == Attribute::standard_name(ATTR_STD_VOLUME_DENSITY)) {
-      SmokeDomainSettings_density_grid_get_length(&b_domain.ptr, &length);
+      FluidDomainSettings_density_grid_get_length(&b_domain.ptr, &length);
       if (length == num_pixels) {
-        SmokeDomainSettings_density_grid_get(&b_domain.ptr, pixels);
+        FluidDomainSettings_density_grid_get(&b_domain.ptr, pixels);
         return true;
       }
     }
     else if (builtin_name == Attribute::standard_name(ATTR_STD_VOLUME_FLAME)) {
       /* this is in range 0..1, and interpreted by the OpenGL smoke viewer
        * as 1500..3000 K with the first part faded to zero density */
-      SmokeDomainSettings_flame_grid_get_length(&b_domain.ptr, &length);
+      FluidDomainSettings_flame_grid_get_length(&b_domain.ptr, &length);
       if (length == num_pixels) {
-        SmokeDomainSettings_flame_grid_get(&b_domain.ptr, pixels);
+        FluidDomainSettings_flame_grid_get(&b_domain.ptr, pixels);
         return true;
       }
     }
     else if (builtin_name == Attribute::standard_name(ATTR_STD_VOLUME_COLOR)) {
       /* the RGB is "premultiplied" by density for better interpolation results */
-      SmokeDomainSettings_color_grid_get_length(&b_domain.ptr, &length);
+      FluidDomainSettings_color_grid_get_length(&b_domain.ptr, &length);
       if (length == num_pixels * 4) {
-        SmokeDomainSettings_color_grid_get(&b_domain.ptr, pixels);
+        FluidDomainSettings_color_grid_get(&b_domain.ptr, pixels);
         return true;
       }
     }
     else if (builtin_name == Attribute::standard_name(ATTR_STD_VOLUME_VELOCITY)) {
-      SmokeDomainSettings_velocity_grid_get_length(&b_domain.ptr, &length);
+      FluidDomainSettings_velocity_grid_get_length(&b_domain.ptr, &length);
       if (length == num_pixels * 3) {
-        SmokeDomainSettings_velocity_grid_get(&b_domain.ptr, pixels);
+        FluidDomainSettings_velocity_grid_get(&b_domain.ptr, pixels);
         return true;
       }
     }
     else if (builtin_name == Attribute::standard_name(ATTR_STD_VOLUME_HEAT)) {
-      SmokeDomainSettings_heat_grid_get_length(&b_domain.ptr, &length);
+      FluidDomainSettings_heat_grid_get_length(&b_domain.ptr, &length);
       if (length == num_pixels) {
-        SmokeDomainSettings_heat_grid_get(&b_domain.ptr, pixels);
+        FluidDomainSettings_heat_grid_get(&b_domain.ptr, pixels);
         return true;
       }
     }
     else if (builtin_name == Attribute::standard_name(ATTR_STD_VOLUME_TEMPERATURE)) {
-      SmokeDomainSettings_temperature_grid_get_length(&b_domain.ptr, &length);
+      FluidDomainSettings_temperature_grid_get_length(&b_domain.ptr, &length);
       if (length == num_pixels) {
-        SmokeDomainSettings_temperature_grid_get(&b_domain.ptr, pixels);
+        FluidDomainSettings_temperature_grid_get(&b_domain.ptr, pixels);
         return true;
       }
     }

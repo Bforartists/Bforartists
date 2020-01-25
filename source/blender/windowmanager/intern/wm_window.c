@@ -257,6 +257,8 @@ void wm_window_free(bContext *C, wmWindowManager *wm, wmWindow *win)
     MEM_freeN(win->cursor_keymap_status);
   }
 
+  WM_gestures_free_all(win);
+
   wm_event_free_all(win);
 
   wm_ghostwindow_destroy(wm, win);
@@ -494,7 +496,7 @@ void wm_window_title(wmWindowManager *wm, wmWindow *win)
   }
 }
 
-void WM_window_set_dpi(wmWindow *win)
+void WM_window_set_dpi(const wmWindow *win)
 {
   float auto_dpi = GHOST_GetDPIHint(win->ghostwin);
 
@@ -700,6 +702,8 @@ static void wm_window_ghostwindow_ensure(wmWindowManager *wm, wmWindow *win, boo
 
     /* happens after fileread */
     wm_window_ensure_eventstate(win);
+
+    WM_window_set_dpi(win);
   }
 
   /* add keymap handlers (1 handler for all keys in map!) */
@@ -1638,6 +1642,7 @@ void wm_ghost_init(bContext *C)
     }
 
     g_system = GHOST_CreateSystem();
+    GHOST_SystemInitDebug(g_system, G.debug & G_DEBUG_GHOST);
 
     if (C != NULL) {
       GHOST_AddEventConsumer(g_system, consumer);
@@ -1882,12 +1887,17 @@ void WM_clipboard_text_set(const char *buf, bool selection)
 
 void WM_progress_set(wmWindow *win, float progress)
 {
-  GHOST_SetProgressBar(win->ghostwin, progress);
+  /* In background mode we may have windows, but not actual GHOST windows. */
+  if (win->ghostwin) {
+    GHOST_SetProgressBar(win->ghostwin, progress);
+  }
 }
 
 void WM_progress_clear(wmWindow *win)
 {
-  GHOST_EndProgressBar(win->ghostwin);
+  if (win->ghostwin) {
+    GHOST_EndProgressBar(win->ghostwin);
+  }
 }
 
 /** \} */
@@ -2181,14 +2191,19 @@ void WM_window_screen_rect_calc(const wmWindow *win, rcti *r_rect)
     }
   }
 
-  BLI_assert(screen_rect.xmin < screen_rect.xmax);
-  BLI_assert(screen_rect.ymin < screen_rect.ymax);
+  BLI_assert(BLI_rcti_is_valid(&screen_rect));
+
   *r_rect = screen_rect;
 }
 
-bool WM_window_is_fullscreen(wmWindow *win)
+bool WM_window_is_fullscreen(const wmWindow *win)
 {
   return win->windowstate == GHOST_kWindowStateFullScreen;
+}
+
+bool WM_window_is_maximized(const wmWindow *win)
+{
+  return win->windowstate == GHOST_kWindowStateMaximized;
 }
 
 /** \} */

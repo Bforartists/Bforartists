@@ -70,7 +70,11 @@ void RE_texture_rng_init(void)
 
 void RE_texture_rng_exit(void)
 {
+  if (random_tex_array == NULL) {
+    return;
+  }
   BLI_rng_threaded_free(random_tex_array);
+  random_tex_array = NULL;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -1215,7 +1219,7 @@ static int multitex(Tex *tex,
               tex, tex->ima, NULL, texvec, dxt, dyt, texres, pool, skip_load_image);
         }
         else {
-          retval = imagewrap(tex, tex->ima, NULL, texvec, texres, pool, skip_load_image);
+          retval = imagewrap(tex, tex->ima, texvec, texres, pool, skip_load_image);
         }
         if (tex->ima) {
           BKE_image_tag_time(tex->ima);

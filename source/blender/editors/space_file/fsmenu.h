@@ -33,7 +33,8 @@ enum FSMenuInsert;
 struct FSMenu;
 struct FSMenuEntry;
 
-/** Inserts a new fsmenu entry with the given \a path.
+/**
+ * Inserts a new fsmenu entry with the given \a path.
  * Duplicate entries are not added.
  * \param flag: Options for inserting the entry.
  */
@@ -41,6 +42,7 @@ void fsmenu_insert_entry(struct FSMenu *fsmenu,
                          enum FSMenuCategory category,
                          const char *path,
                          const char *name,
+                         const int icon,
                          const enum FSMenuInsert flag);
 
 /** Refresh 'valid' status of given menu entry */

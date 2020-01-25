@@ -24,8 +24,8 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "Render Settings > Performance",
     "warning": "",
-    "wiki_url": "https://wiki.blender.org/index.php?title=Extensions:2.6/Py/"
-                "Scripts/Render/Auto_Tile_Size",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "render/auto_tile_size.html",
     "category": "Render",
 }
 

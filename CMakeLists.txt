@@ -131,68 +131,6 @@ get_blender_version()
 
 
 #-----------------------------------------------------------------------------
-# Platform Specific Defaults
-
-# list of var-names
-set(_init_vars)
-
-# initialize to ON
-macro(option_defaults_init)
-  foreach(_var ${ARGV})
-    set(${_var} ON)
-    list(APPEND _init_vars "${_var}")
-  endforeach()
-  unset(_var)
-endmacro()
-
-# remove from namespace
-macro(option_defaults_clear)
-  foreach(_var ${_init_vars})
-    unset(${_var})
-  endforeach()
-  unset(_var)
-  unset(_init_vars)
-endmacro()
-
-
-# values to initialize WITH_****
-option_defaults_init(
-  _init_BUILDINFO
-  _init_CODEC_FFMPEG
-  _init_CYCLES_OSL
-  _init_IMAGE_OPENEXR
-  _init_INPUT_NDOF
-  _init_JACK
-  _init_OPENCOLLADA
-  _init_OPENCOLORIO
-  _init_SDL
-  _init_FFTW3
-  _init_OPENSUBDIV
-)
-
-# customize...
-if(UNIX AND NOT APPLE)
-  # some of these libraries are problematic on Linux
-  # disable less important dependencies by default
-  set(_init_CODEC_FFMPEG                   OFF)
-  set(_init_CYCLES_OSL                     OFF)
-  set(_init_IMAGE_OPENEXR                  OFF)
-  set(_init_JACK                           OFF)
-  set(_init_OPENCOLLADA                    OFF)
-  set(_init_OPENCOLORIO                    OFF)
-  set(_init_SDL                            OFF)
-  set(_init_FFTW3                          OFF)
-  set(_init_OPENSUBDIV                     OFF)
-  set(_init_OPENVDB                        OFF)
-  set(_init_OPENIMAGEDENOISE               OFF)
-elseif(WIN32)
-  set(_init_JACK                           OFF)
-elseif(APPLE)
-  set(_init_JACK                           OFF)
-endif()
-
-
-#-----------------------------------------------------------------------------
 # Options
 
 # First platform specific non-cached vars
@@ -218,7 +156,7 @@ if(APPLE)
   option(WITH_PYTHON_FRAMEWORK "Enable building using the Python available in the framework (OSX only)" OFF)
 endif()
 
-option(WITH_BUILDINFO     "Include extra build details (only disable for development & faster builds)" ${_init_BUILDINFO})
+option(WITH_BUILDINFO     "Include extra build details (only disable for development & faster builds)" ON)
 if(${CMAKE_VERSION} VERSION_LESS 2.8.8)
   # add_library OBJECT arg unsupported
   set(WITH_BUILDINFO OFF)
@@ -232,20 +170,20 @@ mark_as_advanced(BUILDINFO_OVERRIDE_TIME)
 
 option(WITH_IK_ITASC      "Enable ITASC IK solver (only disable for development & for incompatible C++ compilers)" ON)
 option(WITH_IK_SOLVER     "Enable Legacy IK solver (only disable for development)" ON)
-option(WITH_FFTW3         "Enable FFTW3 support (Used for smoke, ocean sim, and audio effects)" ${_init_FFTW3})
+option(WITH_FFTW3         "Enable FFTW3 support (Used for smoke, ocean sim, and audio effects)" ON)
 option(WITH_BULLET        "Enable Bullet (Physics Engine)" ON)
 option(WITH_SYSTEM_BULLET "Use the systems bullet library (currently unsupported due to missing features in upstream!)" )
 mark_as_advanced(WITH_SYSTEM_BULLET)
-option(WITH_OPENCOLORIO   "Enable OpenColorIO color management" ${_init_OPENCOLORIO})
+option(WITH_OPENCOLORIO   "Enable OpenColorIO color management" ON)
 
 # Compositor
 option(WITH_COMPOSITOR         "Enable the tile based nodal compositor" ON)
-option(WITH_OPENIMAGEDENOISE   "Enable the OpenImageDenoise compositing node" ${_init_OPENIMAGEDENOISE})
+option(WITH_OPENIMAGEDENOISE   "Enable the OpenImageDenoise compositing node" ON)
 
-option(WITH_OPENSUBDIV    "Enable OpenSubdiv for surface subdivision" ${_init_OPENSUBDIV})
+option(WITH_OPENSUBDIV    "Enable OpenSubdiv for surface subdivision" ON)
 
-option(WITH_OPENVDB       "Enable features relying on OpenVDB" ${_init_OPENVDB})
-option(WITH_OPENVDB_BLOSC "Enable blosc compression for OpenVDB, only enable if OpenVDB was built with blosc support" ${_init_OPENVDB})
+option(WITH_OPENVDB       "Enable features relying on OpenVDB" ON)
+option(WITH_OPENVDB_BLOSC "Enable blosc compression for OpenVDB, only enable if OpenVDB was built with blosc support" ON)
 option(WITH_OPENVDB_3_ABI_COMPATIBLE "Assume OpenVDB library has been compiled with version 3 ABI compatibility" OFF)
 mark_as_advanced(WITH_OPENVDB_3_ABI_COMPATIBLE)
 
@@ -304,16 +242,13 @@ endif()
 
 
 # Modifiers
-option(WITH_MOD_FLUID           "Enable Elbeem Modifier (Fluid Simulation)" ON)
-option(WITH_MOD_SMOKE           "Enable Smoke Modifier (Smoke Simulation)" ON)
+option(WITH_MOD_FLUID           "Enable Mantaflow Fluid Simulation Framework" ON)
 option(WITH_MOD_REMESH          "Enable Remesh Modifier" ON)
-# option(WITH_MOD_CLOTH_ELTOPO    "Enable Experimental cloth solver" OFF)  # this is now only available in a branch
-# mark_as_advanced(WITH_MOD_CLOTH_ELTOPO)
-option(WITH_MOD_OCEANSIM        "Enable Ocean Modifier" OFF)
+option(WITH_MOD_OCEANSIM        "Enable Ocean Modifier" ON)
 
 # Image format support
 option(WITH_OPENIMAGEIO         "Enable OpenImageIO Support (http://www.openimageio.org)" ON)
-option(WITH_IMAGE_OPENEXR       "Enable OpenEXR Support (http://www.openexr.com)" ${_init_IMAGE_OPENEXR})
+option(WITH_IMAGE_OPENEXR       "Enable OpenEXR Support (http://www.openexr.com)" ON)
 option(WITH_IMAGE_OPENJPEG      "Enable OpenJpeg Support (http://www.openjpeg.org)" ON)
 option(WITH_IMAGE_TIFF          "Enable LibTIFF Support" ON)
 option(WITH_IMAGE_DDS           "Enable DDS Image Support" ON)
@@ -322,23 +257,28 @@ option(WITH_IMAGE_HDR           "Enable HDR Image Support" ON)
 
 # Audio/Video format support
 option(WITH_CODEC_AVI           "Enable Bforartists own AVI file support (raw/jpeg)" ON)
-option(WITH_CODEC_FFMPEG        "Enable FFMPeg Support (http://ffmpeg.org)" ${_init_CODEC_FFMPEG})
-option(WITH_CODEC_SNDFILE       "Enable libsndfile Support (http://www.mega-nerd.com/libsndfile)" OFF)
+option(WITH_CODEC_FFMPEG        "Enable FFMPeg Support (http://ffmpeg.org)" ON)
+option(WITH_CODEC_SNDFILE       "Enable libsndfile Support (http://www.mega-nerd.com/libsndfile)" ON)
 
 # Alembic support
 option(WITH_ALEMBIC             "Enable Alembic Support" ON)
 option(WITH_ALEMBIC_HDF5        "Enable Legacy Alembic Support (not officially supported)" OFF)
 
+# Universal Scene Description support
+option(WITH_USD                 "Enable Universal Scene Description (USD) Support" OFF)
+
 # 3D format support
 # Disable opencollada when we don't have precompiled libs
-option(WITH_OPENCOLLADA   "Enable OpenCollada Support (http://www.opencollada.org)" ${_init_OPENCOLLADA})
+option(WITH_OPENCOLLADA   "Enable OpenCollada Support (http://www.opencollada.org)" ON)
 
 # Sound output
-option(WITH_SDL           "Enable SDL for sound and joystick support" ${_init_SDL})
+option(WITH_SDL           "Enable SDL for sound and joystick support" ON)
 option(WITH_OPENAL        "Enable OpenAL Support (http://www.openal.org)" ON)
-option(WITH_JACK          "Enable JACK Support (http://www.jackaudio.org)" ${_init_JACK})
-if(UNIX AND NOT APPLE)
-  option(WITH_JACK_DYNLOAD  "Enable runtime dynamic JACK libraries loading" OFF)
+if(NOT WIN32)
+  option(WITH_JACK          "Enable JACK Support (http://www.jackaudio.org)" ON)
+  if(UNIX AND NOT APPLE)
+    option(WITH_JACK_DYNLOAD  "Enable runtime dynamic JACK libraries loading" OFF)
+  endif()
 endif()
 if(UNIX AND NOT APPLE)
   option(WITH_SDL_DYNLOAD  "Enable runtime dynamic SDL libraries loading" OFF)
@@ -354,7 +294,7 @@ option(WITH_DRACO         "Enable Draco mesh compression Python module (used for
 
 # Camera/motion tracking
 option(WITH_LIBMV         "Enable Libmv structure from motion library" ON)
-option(WITH_LIBMV_SCHUR_SPECIALIZATIONS "Enable fixed-size schur specializations." OFF)
+option(WITH_LIBMV_SCHUR_SPECIALIZATIONS "Enable fixed-size schur specializations." ON)
 mark_as_advanced(WITH_LIBMV_SCHUR_SPECIALIZATIONS)
 
 # Logging/unbit test libraries.
@@ -370,8 +310,7 @@ option(WITH_FREESTYLE     "Enable Freestyle (advanced edges rendering)" ON)
 if(WIN32)
   option(WITH_INPUT_IME "Enable Input Method Editor (IME) for complex Asian character input" ON)
 endif()
-option(WITH_INPUT_NDOF "Enable NDOF input devices (SpaceNavigator and friends)" ${_init_INPUT_NDOF})
-option(WITH_RAYOPTIMIZATION "Enable use of SIMD (SSE) optimizations for the raytracer" ON)
+option(WITH_INPUT_NDOF "Enable NDOF input devices (SpaceNavigator and friends)" ON)
 if(UNIX AND NOT APPLE)
   option(WITH_INSTALL_PORTABLE "Install redistributeable runtime, otherwise install into CMAKE_INSTALL_PREFIX" ON)
   option(WITH_STATIC_LIBS "Try to link with static libraries, as much as possible, to make bforartists more portable across distributions" OFF)
@@ -391,7 +330,7 @@ elseif(WITH_PYTHON_INSTALL OR (WITH_AUDASPACE AND NOT WITH_SYSTEM_AUDASPACE))
   mark_as_advanced(PYTHON_NUMPY_INCLUDE_DIRS)
 endif()
 if(WITH_PYTHON_INSTALL)
-	option(WITH_PYTHON_INSTALL_NUMPY "Copy system numpy into the bforartists install folder"  ON)
+  option(WITH_PYTHON_INSTALL_NUMPY "Copy system numpy into the bforartists install folder"  ON)
 
   if(UNIX AND NOT APPLE)
     option(WITH_PYTHON_INSTALL_REQUESTS "Copy system requests into the bforartists install folder" ON)
@@ -407,7 +346,7 @@ mark_as_advanced(WITH_CPU_SSE)
 option(WITH_CYCLES                  "Enable Cycles Render Engine" ON)
 option(WITH_CYCLES_STANDALONE       "Build Cycles standalone application" OFF)
 option(WITH_CYCLES_STANDALONE_GUI   "Build Cycles standalone with GUI" OFF)
-option(WITH_CYCLES_OSL              "Build Cycles with OSL support" ${_init_CYCLES_OSL})
+option(WITH_CYCLES_OSL              "Build Cycles with OSL support" ON)
 option(WITH_CYCLES_EMBREE           "Build Cycles with Embree support" OFF)
 option(WITH_CYCLES_CUDA_BINARIES    "Build Cycles CUDA binaries" OFF)
 option(WITH_CYCLES_CUBIN_COMPILER   "Build cubins with nvrtc based compiler instead of nvcc" OFF)
@@ -463,6 +402,11 @@ mark_as_advanced(WITH_ASSERT_ABORT)
 
 option(WITH_BOOST "Enable features depending on boost" ON)
 option(WITH_TBB   "Enable features depending on TBB (OpenVDB, OpenImageDenoise, sculpt multithreading)" ON)
+
+# TBB malloc is only supported on for windows currently
+if(WIN32)
+  option(WITH_TBB_MALLOC_PROXY "Enable the TBB malloc replacement" ON)
+endif()
 
 # Unit testsing
 option(WITH_GTESTS "Enable GTest unit testing" OFF)
@@ -558,15 +502,6 @@ if(WIN32)
   option(WITH_WINDOWS_FIND_MODULES "Use find_package to locate libraries" OFF)
   mark_as_advanced(WITH_WINDOWS_FIND_MODULES)
 
-  option(WITH_WINDOWS_CODESIGN "Use signtool to sign the final binary." OFF)
-  mark_as_advanced(WITH_WINDOWS_CODESIGN)
-
-  set(WINDOWS_CODESIGN_PFX CACHE FILEPATH  "Path to pfx file to use for codesigning.")
-  mark_as_advanced(WINDOWS_CODESIGN_PFX)
-
-  set(WINDOWS_CODESIGN_PFX_PASSWORD CACHE STRING  "password for pfx file used for codesigning.")
-  mark_as_advanced(WINDOWS_CODESIGN_PFX_PASSWORD)
-
   option(WINDOWS_USE_VISUAL_STUDIO_PROJECT_FOLDERS "Organize the visual studio projects according to source folder structure." ON)
   mark_as_advanced(WINDOWS_USE_VISUAL_STUDIO_PROJECT_FOLDERS)
 
@@ -575,6 +510,10 @@ if(WIN32)
 
   option(WINDOWS_PYTHON_DEBUG "Include the files needed for debugging python scripts with visual studio 2017+." OFF)
   mark_as_advanced(WINDOWS_PYTHON_DEBUG)
+
+  option(WITH_WINDOWS_BUNDLE_CRT "Bundle the C runtime for install free distribution." ON)
+  mark_as_advanced(WITH_WINDOWS_BUNDLE_CRT)
+
 endif()
 
 # The following only works with the Ninja generator in CMake >= 3.0.
@@ -590,8 +529,9 @@ if(UNIX AND NOT APPLE)
   mark_as_advanced(WITH_CXX11_ABI)
 endif()
 
-# avoid using again
-option_defaults_clear()
+# Installation process.
+option(POSTINSTALL_SCRIPT "Run given CMake script after installation process" OFF)
+mark_as_advanced(POSTINSTALL_SCRIPT)
 
 # end option(...)
 
@@ -1189,6 +1129,7 @@ if(WITH_SYSTEM_GLEW)
     message(FATAL_ERROR "GLEW is required to build bforartists. Install it or disable WITH_SYSTEM_GLEW.")
   endif()
 
+  set(GLEW_INCLUDE_PATH "${GLEW_INCLUDE_DIR}")
   set(BLENDER_GLEW_LIBRARIES ${GLEW_LIBRARY})
 else()
   if(WITH_GLEW_ES)
@@ -1789,11 +1730,11 @@ if(FIRST_RUN)
   info_cfg_option(WITH_OPENVDB)
   info_cfg_option(WITH_ALEMBIC)
   info_cfg_option(WITH_QUADRIFLOW)
+  info_cfg_option(WITH_USD)
 
   info_cfg_text("Compiler Options:")
   info_cfg_option(WITH_BUILDINFO)
   info_cfg_option(WITH_OPENMP)
-  info_cfg_option(WITH_RAYOPTIMIZATION)
 
   info_cfg_text("System Options:")
   info_cfg_option(WITH_INSTALL_PORTABLE)

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -3946,14 +3946,6 @@ msgid "Internal Friction"
 msgstr "Внутрішнє тертя"
 
 
-msgid "Mass"
-msgstr "Маса"
-
-
-msgid "Mass of cloth material"
-msgstr "Маса матеріалу тканини"
-
-
 msgid "Pin Stiffness"
 msgstr "Тугість шпильки"
 
@@ -4052,6 +4044,10 @@ msgstr "Максимальне значення тугості натягува�
 
 msgid "Cloth speed is multiplied by this value"
 msgstr "Швидкість тканини множиться на це значення"
+
+
+msgid "Pressure"
+msgstr "Натиск"
 
 
 msgid "Dynamic Base Mesh"
@@ -6539,16 +6535,8 @@ msgid "Keep Axis"
 msgstr "Зберегти вісь"
 
 
-msgid "Axis to maintain during stretch"
-msgstr "Вісь, що зберігається при розтягуванні"
-
-
-msgid "Keep X Axis"
-msgstr "Зберегти вісь X"
-
-
-msgid "Keep Z Axis"
-msgstr "Зберегти вісь Z"
+msgid "XZ"
+msgstr "XZ"
 
 
 msgid "Original Length"
@@ -6561,10 +6549,6 @@ msgstr "Довжина у позиції спокою"
 
 msgid "Maintain the object's volume as it stretches"
 msgstr "Зберігати об'єм об'єкта при розтягуванні"
-
-
-msgid "XZ"
-msgstr "XZ"
 
 
 msgid "Track To Constraint"
@@ -6799,22 +6783,6 @@ msgid "Curve in a curve mapping"
 msgstr "Крива у розкладці кривою"
 
 
-msgid "Extend"
-msgstr "Розширити"
-
-
-msgid "Extrapolate the curve or extend it horizontally"
-msgstr "Екстраполювати криву або продовжити її горизонтально"
-
-
-msgid "Horizontal"
-msgstr "Горизонтально"
-
-
-msgid "Extrapolated"
-msgstr "Екстрапольовано"
-
-
 msgid "Points"
 msgstr "Точки"
 
@@ -6889,6 +6857,22 @@ msgstr "Мін. X відсікання"
 
 msgid "Clip Min Y"
 msgstr "Мін. Y відсікання"
+
+
+msgid "Extend"
+msgstr "Розширити"
+
+
+msgid "Extrapolate the curve or extend it horizontally"
+msgstr "Екстраполювати криву або продовжити її горизонтально"
+
+
+msgid "Horizontal"
+msgstr "Горизонтально"
+
+
+msgid "Extrapolated"
+msgstr "Екстрапольовано"
 
 
 msgid "Tone"
@@ -7073,6 +7057,14 @@ msgstr "Лише перше"
 
 msgid "Use the start of the stroke for the depth"
 msgstr "Використати старт штриха для глибини"
+
+
+msgid "Steps"
+msgstr "Кроки"
+
+
+msgid "Segments"
+msgstr "Сегменти"
 
 
 msgid "Curve Splines"
@@ -12780,10 +12772,6 @@ msgid "Coordinates"
 msgstr "Координати"
 
 
-msgid "Pressure"
-msgstr "Натиск"
-
-
 msgid "Pressure of tablet at point when drawing it"
 msgstr "Натиск на планшет при малюванні точки"
 
@@ -14749,6 +14737,10 @@ msgid "Rotate"
 msgstr "Оберт"
 
 
+msgid "Topology"
+msgstr "Топологія"
+
+
 msgid "Secondary Color"
 msgstr "Вторинний колір"
 
@@ -15599,10 +15591,6 @@ msgstr "Визначає, як кінцевий коефіцієнт обвед�
 
 msgid "Map the bevel factor to the number of subdivisions of a spline (U resolution)"
 msgstr "Зіставити коефіцієнт фаски з кількістю поділів сегмента (роздільність U)"
-
-
-msgid "Segments"
-msgstr "Сегменти"
 
 
 msgid "Map the bevel factor to the length of a segment and to the number of subdivisions of a segment"
@@ -20017,10 +20005,6 @@ msgid "Size of particles on viewport in BU"
 msgstr "Розмір в одиницях Blender'а BU частинок у вікні огляду"
 
 
-msgid "Steps"
-msgstr "Кроки"
-
-
 msgid "How many steps paths are drawn with (power of 2)"
 msgstr "Кількість кроків малювання шляху (степінь двійки)"
 
@@ -20267,6 +20251,10 @@ msgstr "2D-рій"
 
 msgid "Constrain boids to a surface"
 msgstr "Обмежити рій поверхнею"
+
+
+msgid "Mass"
+msgstr "Маса"
 
 
 msgid "Mass of the particles"
@@ -26570,6 +26558,10 @@ msgid "Clean Up"
 msgstr "Вичищення"
 
 
+msgid "Material Specials"
+msgstr "Параметри матеріалу"
+
+
 msgid "GP Vertex Groups"
 msgstr "Групи Вершин Нарисного Олівця"
 
@@ -26637,10 +26629,6 @@ msgstr "Зчепити/вирівняти"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Додати"
-
-
-msgid "Material Specials"
-msgstr "Параметри матеріалу"
 
 
 msgid "Shape Key Specials"
@@ -26857,10 +26845,6 @@ msgstr "Передустави"
 
 msgid "KeyPresets"
 msgstr "Передустави Клавіш"
-
-
-msgid "3D Mouse Settings"
-msgstr "Устави 3D-миші"
 
 
 msgid "Save & Load"
@@ -28144,24 +28128,16 @@ msgid "Pattern to use for inside of miters"
 msgstr "Патерн, що вживається для ізсередини мітерів"
 
 
-msgid "Default sharp miter"
-msgstr "Стандартний гострий мітер"
-
-
-msgid "Patch"
-msgstr "Латка"
-
-
-msgid "Miter with extra corner"
-msgstr "Мітер з додатковим кутком"
+msgid "Inside of miter is sharp"
+msgstr "Ізсередини мітер є гострим"
 
 
 msgid "Arc"
 msgstr "Дуга"
 
 
-msgid "Miter with curved arc"
-msgstr "Мітер з вигнутою дугою"
+msgid "Inside of miter is arc"
+msgstr "Ізсередини мітер є дугою"
 
 
 msgid "Outer Miter"
@@ -28172,8 +28148,24 @@ msgid "Pattern to use for outside of miters"
 msgstr "Патерн, що вживається для зовні мітерів"
 
 
-msgid "Amount Type"
-msgstr "Тип величини"
+msgid "Outside of miter is sharp"
+msgstr "Зовні мітер є гострим"
+
+
+msgid "Patch"
+msgstr "Латка"
+
+
+msgid "Outside of miter is squared-off patch"
+msgstr "Зовні мітер є квадратовою латкою"
+
+
+msgid "Outside of miter is arc"
+msgstr "Зовні мітер є дугою"
+
+
+msgid "Width Type"
+msgstr "Тип Ширини"
 
 
 msgid "What distance Width measures"
@@ -28626,10 +28618,6 @@ msgstr "Розкладка ребер"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Метод, використовуваний для розкладки ребер джерела на об'єкті призначення"
-
-
-msgid "Topology"
-msgstr "Топологія"
 
 
 msgid "Copy from identical topology meshes"
@@ -30471,10 +30459,6 @@ msgstr "Кеш Точок М'якого Тіла"
 
 msgid "Solidify Modifier"
 msgstr "Модифікатор Потовщення"
-
-
-msgid "Create a solid skin by extruding, compensating for sharp angles"
-msgstr "Створити суцільну оболонку шляхом видавлювання, компенсуючи гострі кути"
 
 
 msgid "Inner Crease"
@@ -40611,10 +40595,6 @@ msgid "Export PLY"
 msgstr "Експорт PLY"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "Експортувати одиничний об'єкт у форматі Stanford PLY з нормалями, кольорами та координатами текстур"
-
-
 msgid "X Forward"
 msgstr "X вперед"
 
@@ -40679,6 +40659,14 @@ msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will b
 msgstr "Експортувати нормалі для граней з м'яким і плоским відтіненням (грані з плоским відтіненням будуть експортовані як окремі грані)"
 
 
+msgid "Selection Only"
+msgstr "Лише вибране"
+
+
+msgid "Export selected objects only"
+msgstr "Експортувати лише вибрані об'єкти"
+
+
 msgid "Export the active UV layer"
 msgstr "Експорт активного UV-шару"
 
@@ -40686,10 +40674,6 @@ msgstr "Експорт активного UV-шару"
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "Експорт STL"
-
-
-msgid "Save STL triangle mesh data from the active object"
-msgstr "Зберегти дані трикутникової сіті з активного об'єкта до STL"
 
 
 msgid "Ascii"
@@ -40722,14 +40706,6 @@ msgstr "Одиниці сцени"
 
 msgid "Apply current scene's unit (as defined by unit scale) to exported data"
 msgstr "Застосувати до експортованих даних поточні одиниці сцени (як вказує масштаб одиниць)"
-
-
-msgid "Selection Only"
-msgstr "Лише вибране"
-
-
-msgid "Export selected objects only"
-msgstr "Експортувати лише вибрані об'єкти"
 
 
 msgctxt "Operator"
@@ -41909,6 +41885,10 @@ msgstr "Записати файли в оригінальній локації (
 
 msgid "Disable Auto-pack, keep all packed files"
 msgstr "Відключити автопакування, зберегти всі упаковані файли"
+
+
+msgid "Remove Pack"
+msgstr "Вилучити пакунок"
 
 
 msgctxt "Operator"
@@ -45566,10 +45546,6 @@ msgid "Bevel"
 msgstr "Фаска"
 
 
-msgid "Cut into selected items at an angle to create flat or rounded bevel or chamfer"
-msgstr "Нарізати у вибраних елементах у куті для створення плоского чи округлого скосу або фаски"
-
-
 msgid "Do not allow beveled edges/vertices to overlap each other"
 msgstr "Не допускати перекриття ребер і вершин фаски"
 
@@ -45586,36 +45562,8 @@ msgid "Set face strength on new and modified faces only"
 msgstr "Задати силу грані лише на нових та модифікованих гранях"
 
 
-msgid "Prefer slide along edge to even widths"
-msgstr "Надати перевагу ковзанню уздовж ребра для отримання рівних ширин"
-
-
 msgid "Material for bevel faces (-1 means use adjacent faces)"
 msgstr "Матеріал для граней фаски (-1 - використати суміжні грані)"
-
-
-msgid "Inside of miter is sharp"
-msgstr "Ізсередини мітер є гострим"
-
-
-msgid "Inside of miter is arc"
-msgstr "Ізсередини мітер є дугою"
-
-
-msgid "Outside of miter is sharp"
-msgstr "Зовні мітер є гострим"
-
-
-msgid "Outside of miter is squared-off patch"
-msgstr "Зовні мітер є квадратовою латкою"
-
-
-msgid "Outside of miter is arc"
-msgstr "Зовні мітер є дугою"
-
-
-msgid "Width Type"
-msgstr "Тип Ширини"
 
 
 msgid "Controls profile shape (0.5 = round)"
@@ -46865,6 +46813,10 @@ msgid "Offset Edge Loop"
 msgstr "Зсув петлі ребер"
 
 
+msgid "Fill Holes"
+msgstr "Заповнити отвори"
+
+
 msgctxt "Operator"
 msgid "Point Normals to Target"
 msgstr "Спрямувати Нормалі на Ціль"
@@ -47811,6 +47763,10 @@ msgid "Solidify"
 msgstr "Потовщення"
 
 
+msgid "Create a solid skin by extruding, compensating for sharp angles"
+msgstr "Створити суцільну оболонку шляхом видавлювання, компенсуючи гострі кути"
+
+
 msgctxt "Operator"
 msgid "Sort Mesh Elements"
 msgstr "Сортувати елементи сіті"
@@ -47882,10 +47838,6 @@ msgstr "Витиснути вибрані вершини в кола навко�
 
 msgid "Rotation for each step"
 msgstr "Поворот на кожен крок"
-
-
-msgid "Make Duplicates"
-msgstr "Зробити дублікати"
 
 
 msgid "Auto Merge"
@@ -55745,6 +55697,10 @@ msgid "Screen Coordinates of sampling"
 msgstr "Екранні координати відбору"
 
 
+msgid "Dyntopo"
+msgstr "Динамічна топологія"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Режим Ліплення"
@@ -56316,19 +56272,6 @@ msgid "Select other strips at the same time"
 msgstr "Вибрати інші смужки в той же час"
 
 
-msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "Вибрати активний бік"
-
-
-msgid "Select strips on the nominated side of the active strip"
-msgstr "Вибрати смужки з зазначеного боку від активної смужки"
-
-
-msgid "The side of the handle that is selected"
-msgstr "Вибраний бік ручки"
-
-
 msgid "Select or deselect all strips"
 msgstr "Вибрати або зняти вибір з усіх смужок"
 
@@ -56400,6 +56343,10 @@ msgstr "Вибрати ручки"
 
 msgid "Select gizmo handles on the sides of the selected strip"
 msgstr "Вибрати держаки гізмо на боках вибраної смужки"
+
+
+msgid "The side of the handle that is selected"
+msgstr "Вибраний бік ручки"
 
 
 msgid "Shrink the current selection of adjacent selected strips"
@@ -57174,10 +57121,6 @@ msgstr "Вибрати слово під курсором"
 
 msgid "Set cursor selection"
 msgstr "Задати вибір за курсором"
-
-
-msgid "Set selection end rather than cursor"
-msgstr "Встановити кінець вибору, а не курсор"
 
 
 msgctxt "Operator"
@@ -58477,10 +58420,6 @@ msgstr "Зменшити розтяг UV-карти шляхом пом'якше
 
 msgid "Blend factor between stretch minimized and original"
 msgstr "Коефіцієнт змішування між розгорткою з мінімізованим розтягом та початковою розгорткою"
-
-
-msgid "Fill Holes"
-msgstr "Заповнити отвори"
 
 
 msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
@@ -59813,14 +59752,6 @@ msgstr "Експортувати UV-ти"
 
 msgid "Export vertex colors"
 msgstr "Експортувати кольори вершин"
-
-
-msgid "Visible Layers Only"
-msgstr "Лише видимі шари"
-
-
-msgid "Export only objects in visible layers"
-msgstr "Експортувати об'єкти з лише виділених шарів"
 
 
 msgid "Transform Samples"
@@ -63092,6 +63023,10 @@ msgid "Orbit & Pan"
 msgstr "Обліт і Панорама"
 
 
+msgid "3D Mouse Settings"
+msgstr "Устави 3D-миші"
+
+
 msgid "Save Preferences"
 msgstr "Зберегти Уподобання"
 
@@ -63314,10 +63249,6 @@ msgstr "Контекстне Меню Вагомостей"
 
 msgid "Quad View"
 msgstr "Чотирибічний Огляд"
-
-
-msgid "Dyntopo"
-msgstr "Динамічна топологія"
 
 
 msgid "Unified Brush"
@@ -64874,6 +64805,10 @@ msgstr "Методи редагування"
 
 msgid "Settings for interacting with Blender data"
 msgstr "Параметри для взаємодії з даними Blender"
+
+
+msgid "Experimental"
+msgstr "Експериментальні"
 
 
 msgid "Default paths for external files"
@@ -67696,10 +67631,6 @@ msgid "Only use finished and supported features"
 msgstr "Використовувати лише завершені і підтримувані функції"
 
 
-msgid "Experimental"
-msgstr "Експериментальні"
-
-
 msgid "Use experimental and incomplete features that might be broken or change in the future"
 msgstr "Використовувати експериментальні та незавершені функції, які можуть порушити роботу або змінитися в майбутньому"
 
@@ -68438,10 +68369,6 @@ msgstr "Розмір пензля"
 
 msgid "Format type to export to"
 msgstr "Тип формату, в який експортувати"
-
-
-msgid "VRML2"
-msgstr "VRML2"
 
 
 msgid "Export Directory"
@@ -74054,14 +73981,6 @@ msgstr "Показ Держаків Та Інтерполяції"
 
 msgid "Display keyframe handle types and non-bezier interpolation modes"
 msgstr "Показувати типи держаків ключкадрів та не-безьє режими інтерполяції"
-
-
-msgid "Show Marker Lines"
-msgstr "Показ Ліній Міток"
-
-
-msgid "Show a vertical line for every marker"
-msgstr "Показувати вертикальну лінію для кожної мітки"
 
 
 msgid "Show Pose Markers"
@@ -81208,10 +81127,6 @@ msgid "Volume:"
 msgstr "Об'єм:"
 
 
-msgid "Plane:"
-msgstr "Площина:"
-
-
 msgid "Min/Max:"
 msgstr "Мін/Макс:"
 
@@ -81556,10 +81471,6 @@ msgid "Autolock Inactive Layers"
 msgstr "Автоблокувати Неактивні Шари"
 
 
-msgid "Show Only On Keyframed"
-msgstr "Показати Лише На Ключкадрованому"
-
-
 msgid "Before"
 msgstr "Перед"
 
@@ -81743,20 +81654,12 @@ msgid "UVs:"
 msgstr "UV:"
 
 
+msgid "Outer"
+msgstr "Назовні"
+
+
 msgid "Limit Method:"
 msgstr "Метод обмеження:"
-
-
-msgid "Width Method:"
-msgstr "Тип ширини:"
-
-
-msgid "Set Face Strength Mode"
-msgstr "Задати Режим Сили Грані"
-
-
-msgid "Miter Patterns"
-msgstr "Патерни Мітерів"
 
 
 msgid "Operation:"
@@ -81948,20 +81851,12 @@ msgid "Deform:"
 msgstr "Деформація:"
 
 
-msgid "Crease:"
-msgstr "Складка:"
-
-
-msgid "Outer"
-msgstr "Назовні"
+msgid "Material Index Offset:"
+msgstr "Зсув Індексу Матеріалу:"
 
 
 msgid "Rim"
 msgstr "Обідок"
-
-
-msgid "Material Index Offset:"
-msgstr "Зсув Індексу Матеріалу:"
 
 
 msgid "Aspect X"
@@ -82169,6 +82064,10 @@ msgstr "Побудовано без модифікатора Океан"
 
 msgid "Cull Faces:"
 msgstr "Відкинуті грані:"
+
+
+msgid "Crease:"
+msgstr "Складка:"
 
 
 msgid "Render:"
@@ -82452,6 +82351,10 @@ msgstr "Лише Програвання"
 
 msgid "ShaderFX"
 msgstr "ShaderFX"
+
+
+msgid "Show Only On Keyframed"
+msgstr "Показати Лише На Ключкадрованому"
 
 
 msgctxt "Operator"
@@ -82813,8 +82716,20 @@ msgid "Source Clone UV Map"
 msgstr "UV-карта джерела клонування"
 
 
+msgid "Thickness Profile"
+msgstr "Профіль Товщини"
+
+
 msgid "Mask Value"
 msgstr "Значення маски"
+
+
+msgid "Fill Options"
+msgstr "Опції Заповнення"
+
+
+msgid "Ignore Transparent Strokes"
+msgstr "Ігнорувати Прозорі Штрихи"
 
 
 msgctxt "Operator"
@@ -85176,10 +85091,6 @@ msgid "Report a Bug"
 msgstr "Повідомити про Ваду"
 
 
-msgid "Ignore Transparent Strokes"
-msgstr "Ігнорувати Прозорі Штрихи"
-
-
 msgid "Sequence Strip Name"
 msgstr "Ім'я Смужки Послідовності"
 
@@ -85449,6 +85360,10 @@ msgstr "Програвач"
 
 msgid "Orbit Style"
 msgstr "Стиль обльоту"
+
+
+msgid "Navigate"
+msgstr "Навігація"
 
 
 msgid "Orbit Options"
@@ -86302,10 +86217,6 @@ msgid "Viewport Gizmos"
 msgstr "Гізмо вікна огляду"
 
 
-msgid "Navigate"
-msgstr "Навігація"
-
-
 msgid "Active Tools"
 msgstr "Активні Засоби"
 
@@ -86377,14 +86288,6 @@ msgstr "Показувати:"
 
 msgid "Frames:"
 msgstr "Кадри:"
-
-
-msgid "Thickness Profile"
-msgstr "Профіль Товщини"
-
-
-msgid "Fill Options"
-msgstr "Опції Заповнення"
 
 
 msgctxt "Operator"
@@ -88020,62 +87923,6 @@ msgstr "Режим Нарисного Олівця"
 
 msgid "Workbench"
 msgstr "Workbench"
-
-
-msgid "MotionPath"
-msgstr "Шлях Руху"
-
-
-msgid "EditArmatureMode"
-msgstr "Режим Редагування Арматури"
-
-
-msgid "EditCurveMode"
-msgstr "Режим Редагування Кривої"
-
-
-msgid "EditLatticeMode"
-msgstr "Режим Редагування Решітки"
-
-
-msgid "EditMeshMode"
-msgstr "Режим Редагування Сіті"
-
-
-msgid "EditMetaballMode"
-msgstr "Режим Редагування Метакулі"
-
-
-msgid "EditTextMode"
-msgstr "Режим Редагування Тексту"
-
-
-msgid "ObjectMode"
-msgstr "Режим Об'єкта"
-
-
-msgid "OverlayEngine"
-msgstr "Рушій Перекриву"
-
-
-msgid "PaintTextureMode"
-msgstr "Режим Малювання Текстур"
-
-
-msgid "PaintVertexMode"
-msgstr "Режим Малювання Вершин"
-
-
-msgid "Particle Mode"
-msgstr "Режим Частинки"
-
-
-msgid "PoseMode"
-msgstr "Режим Пози"
-
-
-msgid "SculptMode"
-msgstr "Режим Ліплення"
 
 
 msgid "NLA Strip Controls"
@@ -90013,10 +89860,6 @@ msgstr "Сфера"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "Iкосфера"
-
-
-msgid "%s: confirm, %s: cancel, %s: mode (%s), %s: width (%s), %s: segments (%d), %s: profile (%.3f), %s: clamp overlap (%s), %s: vertex only (%s), %s: outer miter (%s), %s: inner miter (%s), %s: harden normals (%s), %s: mark seam (%s), %s: mark sharp (%s)"
-msgstr "%s: підтвердження, %s: касування, %s: режим (%s), %s: ширина (%s), %s: сегменти (%d), %s: профіль (%.3f), %s: перекрив затиску (%s), %s: лише вершина (%s), %s: мітер зовні (%s), %s: мітер ізсередини (%s), %s: отверділі нормалі (%s), %s: позначити шов (%s), %s: позначити гостроту (%s)"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -93851,10 +93694,6 @@ msgstr "Касування вимкнене при запуску"
 
 msgid "Unpack File"
 msgstr "Розпакувати файл"
-
-
-msgid "Remove Pack"
-msgstr "Вилучити пакунок"
 
 
 msgid "Create %s"

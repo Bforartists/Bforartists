@@ -633,6 +633,23 @@ static void rna_ArmatureConstraint_target_clear(ID *id, bConstraint *con, Main *
   ED_object_constraint_dependency_tag_update(bmain, (Object *)id, con);
 }
 
+static void rna_ActionConstraint_mix_mode_set(PointerRNA *ptr, int value)
+{
+  bConstraint *con = (bConstraint *)ptr->data;
+  bActionConstraint *acon = (bActionConstraint *)con->data;
+
+  acon->mix_mode = value;
+
+  /* The After mode can be computed in world space for efficiency
+   * and backward compatibility, while Before requires Local. */
+  if (ELEM(value, ACTCON_MIX_AFTER, ACTCON_MIX_AFTER_FULL)) {
+    con->ownspace = CONSTRAINT_SPACE_WORLD;
+  }
+  else {
+    con->ownspace = CONSTRAINT_SPACE_LOCAL;
+  }
+}
+
 static void rna_ActionConstraint_minmax_range(
     PointerRNA *ptr, float *min, float *max, float *UNUSED(softmin), float *UNUSED(softmax))
 {
@@ -1618,6 +1635,29 @@ static void rna_def_constraint_action(BlenderRNA *brna)
       {0, NULL, 0, NULL, NULL},
   };
 
+  static const EnumPropertyItem mix_mode_items[] = {
+      {ACTCON_MIX_BEFORE,
+       "BEFORE",
+       0,
+       "Before Original",
+       "Apply the action channels before the original transformation, "
+       "as if applied to an imaginary parent with Aligned Inherit Scale"},
+      {ACTCON_MIX_AFTER,
+       "AFTER",
+       0,
+       "After Original",
+       "Apply the action channels after the original transformation, "
+       "as if applied to an imaginary child with Aligned Inherit Scale"},
+      {ACTCON_MIX_AFTER_FULL,
+       "AFTER_FULL",
+       0,
+       "After Original (Full Scale)",
+       "Apply the action channels after the original transformation, as if "
+       "applied to an imaginary child with Full Inherit Scale. This mode "
+       "can create shear and is provided only for backward compatibility"},
+      {0, NULL, 0, NULL, NULL},
+  };
+
   srna = RNA_def_struct(brna, "ActionConstraint", "Constraint");
   RNA_def_struct_ui_text(
       srna, "Action Constraint", "Map an action to the transform axes of a bone");
@@ -1625,6 +1665,16 @@ static void rna_def_constraint_action(BlenderRNA *brna)
   RNA_def_struct_ui_icon(srna, ICON_ACTION);
 
   rna_def_constraint_target_common(srna);
+
+  prop = RNA_def_property(srna, "mix_mode", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, NULL, "mix_mode");
+  RNA_def_property_enum_items(prop, mix_mode_items);
+  RNA_def_property_enum_funcs(prop, NULL, "rna_ActionConstraint_mix_mode_set", NULL);
+  RNA_def_property_ui_text(
+      prop,
+      "Mix Mode",
+      "Specify how existing transformations and the action channels are combined");
+  RNA_def_property_update(prop, NC_OBJECT | ND_CONSTRAINT, "rna_Constraint_update");
 
   prop = RNA_def_property(srna, "transform_channel", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "type");
@@ -1811,8 +1861,13 @@ static void rna_def_constraint_stretch_to(BlenderRNA *brna)
   };
 
   static const EnumPropertyItem plane_items[] = {
-      {PLANE_X, "PLANE_X", 0, "X", "Keep X Axis"},
-      {PLANE_Z, "PLANE_Z", 0, "Z", "Keep Z Axis"},
+      {PLANE_X, "PLANE_X", 0, "XZ", "Rotate around local X, then Z"},
+      {PLANE_Z, "PLANE_Z", 0, "ZX", "Rotate around local Z, then X"},
+      {SWING_Y,
+       "SWING_Y",
+       0,
+       "Swing",
+       "Use the smallest single axis rotation, similar to Damped Track"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -1836,7 +1891,7 @@ static void rna_def_constraint_stretch_to(BlenderRNA *brna)
   prop = RNA_def_property(srna, "keep_axis", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "plane");
   RNA_def_property_enum_items(prop, plane_items);
-  RNA_def_property_ui_text(prop, "Keep Axis", "Axis to maintain during stretch");
+  RNA_def_property_ui_text(prop, "Keep Axis", "The rotation type and axis order to use");
   RNA_def_property_update(prop, NC_OBJECT | ND_CONSTRAINT, "rna_Constraint_update");
 
   prop = RNA_def_property(srna, "rest_length", PROP_FLOAT, PROP_DISTANCE);

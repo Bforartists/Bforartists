@@ -30,8 +30,8 @@
 
 #include "BKE_context.h"
 #include "BKE_text.h"
+#include "BKE_text_suggestions.h"
 #include "BKE_screen.h"
-#include "BKE_suggestions.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -46,7 +46,8 @@
 #include "text_intern.h" /* own include */
 
 /* -------------------------------------------------------------------- */
-/* Public API */
+/** \name Public API
+ * \{ */
 
 int text_do_suggest_select(SpaceText *st, ARegion *ar)
 {
@@ -82,16 +83,11 @@ int text_do_suggest_select(SpaceText *st, ARegion *ar)
 
   text_update_character_width(st);
 
-  if (st->showlinenrs) {
-    x = st->cwidth * (st->text->curc - st->left) + TXT_OFFSET + TEXTXLOC - 4;
-  }
-  else {
-    x = st->cwidth * (st->text->curc - st->left) + TXT_OFFSET - 4;
-  }
-  y = ar->winy - st->lheight_dpi * l - 2;
+  x = TXT_BODY_LEFT(st) + (st->runtime.cwidth_px * (st->text->curc - st->left));
+  y = ar->winy - st->runtime.lheight_px * l - 2;
 
-  w = SUGG_LIST_WIDTH * st->cwidth + U.widget_unit;
-  h = SUGG_LIST_SIZE * st->lheight_dpi + 0.4f * U.widget_unit;
+  w = SUGG_LIST_WIDTH * st->runtime.cwidth_px + U.widget_unit;
+  h = SUGG_LIST_SIZE * st->runtime.lheight_px + 0.4f * U.widget_unit;
 
   // XXX getmouseco_areawin(mval);
 
@@ -105,7 +101,7 @@ int text_do_suggest_select(SpaceText *st, ARegion *ar)
   }
 
   /* Work out the target item index in the visible list */
-  tgti = (y - mval[1] - 4) / st->lheight_dpi;
+  tgti = (y - mval[1] - 4) / st->runtime.lheight_px;
   if (tgti < 0 || tgti > SUGG_LIST_SIZE) {
     return 1;
   }
@@ -141,8 +137,11 @@ void text_pop_suggest_list(void)
   }
 }
 
+/** \} */
+
 /* -------------------------------------------------------------------- */
-/* Private API */
+/** \name Private API
+ * \{ */
 
 static void text_autocomplete_free(bContext *C, wmOperator *op);
 
@@ -293,7 +292,12 @@ static void confirm_suggestion(Text *text)
   texttool_text_clear();
 }
 
-/* -- */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Auto Complete Operator
+ *
+ * \{ */
 
 static int text_autocomplete_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
 {
@@ -630,3 +634,5 @@ void TEXT_OT_autocomplete(wmOperatorType *ot)
   /* Undo is handled conditionally by this operator. */
   ot->flag = OPTYPE_BLOCKING;
 }
+
+/** \} */

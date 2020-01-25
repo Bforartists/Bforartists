@@ -23,8 +23,8 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "View3D > Sidebar > View Tab > Turnaround Camera",
     "description": "Add a camera rotation around selected object",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Animation/TurnaroundCamera",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "animation/turnaround_camera.html",
     "category": "Animation"}
 
 

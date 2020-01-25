@@ -134,6 +134,9 @@ static SpaceLink *image_new(const ScrArea *UNUSED(area), const Scene *UNUSED(sce
   BKE_scopes_new(&simage->scopes);
   simage->sample_line_hist.height = 100;
 
+  simage->tile_grid_shape[0] = 1;
+  simage->tile_grid_shape[1] = 1;
+
   /* tool header */
   ar = MEM_callocN(sizeof(ARegion), "tool header for image");
 
@@ -246,6 +249,10 @@ static void image_operatortypes(void)
   WM_operatortype_append(IMAGE_OT_read_viewlayers);
   WM_operatortype_append(IMAGE_OT_render_border);
   WM_operatortype_append(IMAGE_OT_clear_render_border);
+
+  WM_operatortype_append(IMAGE_OT_tile_add);
+  WM_operatortype_append(IMAGE_OT_tile_remove);
+  WM_operatortype_append(IMAGE_OT_tile_fill);
 }
 
 static void image_keymap(struct wmKeyConfig *keyconf)
@@ -457,14 +464,55 @@ static void IMAGE_GGT_gizmo2d(wmGizmoGroupType *gzgt)
   gzgt->name = "UV Transform Gizmo";
   gzgt->idname = "IMAGE_GGT_gizmo2d";
 
+  gzgt->flag |= (WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP |
+                 WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK);
+
   gzgt->gzmap_params.spaceid = SPACE_IMAGE;
   gzgt->gzmap_params.regionid = RGN_TYPE_WINDOW;
 
-  gzgt->poll = ED_widgetgroup_gizmo2d_poll;
-  gzgt->setup = ED_widgetgroup_gizmo2d_setup;
-  gzgt->setup_keymap = WM_gizmogroup_setup_keymap_generic_maybe_drag;
-  gzgt->refresh = ED_widgetgroup_gizmo2d_refresh;
-  gzgt->draw_prepare = ED_widgetgroup_gizmo2d_draw_prepare;
+  ED_widgetgroup_gizmo2d_xform_callbacks_set(gzgt);
+}
+
+static void IMAGE_GGT_gizmo2d_translate(wmGizmoGroupType *gzgt)
+{
+  gzgt->name = "UV Translate Gizmo";
+  gzgt->idname = "IMAGE_GGT_gizmo2d_translate";
+
+  gzgt->flag |= (WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP |
+                 WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK);
+
+  gzgt->gzmap_params.spaceid = SPACE_IMAGE;
+  gzgt->gzmap_params.regionid = RGN_TYPE_WINDOW;
+
+  ED_widgetgroup_gizmo2d_xform_no_cage_callbacks_set(gzgt);
+}
+
+static void IMAGE_GGT_gizmo2d_resize(wmGizmoGroupType *gzgt)
+{
+  gzgt->name = "UV Transform Gizmo Resize";
+  gzgt->idname = "IMAGE_GGT_gizmo2d_resize";
+
+  gzgt->flag |= (WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP |
+                 WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK);
+
+  gzgt->gzmap_params.spaceid = SPACE_IMAGE;
+  gzgt->gzmap_params.regionid = RGN_TYPE_WINDOW;
+
+  ED_widgetgroup_gizmo2d_resize_callbacks_set(gzgt);
+}
+
+static void IMAGE_GGT_gizmo2d_rotate(wmGizmoGroupType *gzgt)
+{
+  gzgt->name = "UV Transform Gizmo Resize";
+  gzgt->idname = "IMAGE_GGT_gizmo2d_rotate";
+
+  gzgt->flag |= (WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP |
+                 WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK);
+
+  gzgt->gzmap_params.spaceid = SPACE_IMAGE;
+  gzgt->gzmap_params.regionid = RGN_TYPE_WINDOW;
+
+  ED_widgetgroup_gizmo2d_rotate_callbacks_set(gzgt);
 }
 
 static void IMAGE_GGT_navigate(wmGizmoGroupType *gzgt)
@@ -478,6 +526,9 @@ static void image_widgets(void)
       &(const struct wmGizmoMapType_Params){SPACE_IMAGE, RGN_TYPE_WINDOW});
 
   WM_gizmogrouptype_append(IMAGE_GGT_gizmo2d);
+  WM_gizmogrouptype_append(IMAGE_GGT_gizmo2d_translate);
+  WM_gizmogrouptype_append(IMAGE_GGT_gizmo2d_resize);
+  WM_gizmogrouptype_append(IMAGE_GGT_gizmo2d_rotate);
 
   WM_gizmogrouptype_append_and_link(gzmap_type, IMAGE_GGT_navigate);
 }
@@ -783,7 +834,8 @@ static void image_buttons_region_draw(const bContext *C, ARegion *ar)
   SpaceImage *sima = CTX_wm_space_image(C);
   Scene *scene = CTX_data_scene(C);
   void *lock;
-  ImBuf *ibuf = ED_space_image_acquire_buffer(sima, &lock);
+  /* TODO(lukas): Support tiles in scopes? */
+  ImBuf *ibuf = ED_space_image_acquire_buffer(sima, &lock, 0);
   /* XXX performance regression if name of scopes category changes! */
   PanelCategoryStack *category = UI_panel_category_active_find(ar, "Scopes");
 

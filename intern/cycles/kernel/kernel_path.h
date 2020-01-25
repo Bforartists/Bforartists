@@ -27,6 +27,7 @@
 #include "kernel/geom/geom.h"
 #include "kernel/bvh/bvh.h"
 
+#include "kernel/kernel_write_passes.h"
 #include "kernel/kernel_accumulate.h"
 #include "kernel/kernel_shader.h"
 #include "kernel/kernel_light.h"
@@ -103,10 +104,7 @@ ccl_device_forceinline void kernel_path_lamp_emission(KernelGlobals *kg,
     light_ray.dP = ray->dP;
 
     /* intersect with lamp */
-    float3 emission = make_float3(0.0f, 0.0f, 0.0f);
-
-    if (indirect_lamp_emission(kg, emission_sd, state, &light_ray, &emission))
-      path_radiance_accum_emission(L, state, throughput, emission);
+    indirect_lamp_emission(kg, emission_sd, state, L, &light_ray, throughput);
   }
 #endif /* __LAMP_MIS__ */
 }
@@ -116,6 +114,7 @@ ccl_device_forceinline void kernel_path_background(KernelGlobals *kg,
                                                    ccl_addr_space Ray *ray,
                                                    float3 throughput,
                                                    ShaderData *sd,
+                                                   ccl_global float *buffer,
                                                    PathRadiance *L)
 {
   /* eval background shader if nothing hit */
@@ -136,8 +135,8 @@ ccl_device_forceinline void kernel_path_background(KernelGlobals *kg,
 
 #ifdef __BACKGROUND__
   /* sample background shader */
-  float3 L_background = indirect_background(kg, sd, state, ray);
-  path_radiance_accum_background(L, state, throughput, L_background);
+  float3 L_background = indirect_background(kg, sd, state, buffer, ray);
+  path_radiance_accum_background(kg, L, state, throughput, L_background);
 #endif /* __BACKGROUND__ */
 }
 
@@ -187,7 +186,7 @@ ccl_device_forceinline VolumeIntegrateResult kernel_path_volume(KernelGlobals *k
 
     /* emission */
     if (volume_segment.closure_flag & SD_EMISSION)
-      path_radiance_accum_emission(L, state, *throughput, volume_segment.accum_emission);
+      path_radiance_accum_emission(kg, L, state, *throughput, volume_segment.accum_emission);
 
     /* scattering */
     VolumeIntegrateResult result = VOLUME_PATH_ATTENUATED;
@@ -267,7 +266,7 @@ ccl_device_forceinline bool kernel_path_shader_apply(KernelGlobals *kg,
 
       float3 bg = make_float3(0.0f, 0.0f, 0.0f);
       if (!kernel_data.background.transparent) {
-        bg = indirect_background(kg, emission_sd, state, ray);
+        bg = indirect_background(kg, emission_sd, state, NULL, ray);
       }
       path_radiance_accum_shadowcatcher(L, throughput, bg);
     }
@@ -319,7 +318,7 @@ ccl_device_forceinline bool kernel_path_shader_apply(KernelGlobals *kg,
   if (sd->flag & SD_EMISSION) {
     float3 emission = indirect_primitive_emission(
         kg, sd, sd->ray_length, state->flag, state->ray_pdf);
-    path_radiance_accum_emission(L, state, throughput, emission);
+    path_radiance_accum_emission(kg, L, state, throughput, emission);
   }
 #endif /* __EMISSION__ */
 
@@ -367,7 +366,7 @@ ccl_device_noinline
     light_ray.dD = differential3_zero();
 
     if (!shadow_blocked(kg, sd, emission_sd, state, &light_ray, &ao_shadow)) {
-      path_radiance_accum_ao(L, state, throughput, ao_alpha, ao_bsdf, ao_shadow);
+      path_radiance_accum_ao(kg, L, state, throughput, ao_alpha, ao_bsdf, ao_shadow);
     }
     else {
       path_radiance_accum_total_ao(L, state, throughput, ao_bsdf);
@@ -418,7 +417,7 @@ ccl_device void kernel_path_indirect(KernelGlobals *kg,
 
       /* Shade background. */
       if (!hit) {
-        kernel_path_background(kg, state, ray, throughput, sd, L);
+        kernel_path_background(kg, state, ray, throughput, sd, NULL, L);
         break;
       }
       else if (path_state_ao_bounce(kg, state)) {
@@ -434,7 +433,7 @@ ccl_device void kernel_path_indirect(KernelGlobals *kg,
 #    endif
 
         /* Evaluate shader. */
-        shader_eval_surface(kg, sd, state, state->flag);
+        shader_eval_surface(kg, sd, state, NULL, state->flag);
         shader_prepare_closures(sd, state);
 
         /* Apply shadow catcher, holdout, emission. */
@@ -556,7 +555,7 @@ ccl_device_forceinline void kernel_path_integrate(KernelGlobals *kg,
 
       /* Shade background. */
       if (!hit) {
-        kernel_path_background(kg, state, ray, throughput, &sd, L);
+        kernel_path_background(kg, state, ray, throughput, &sd, buffer, L);
         break;
       }
       else if (path_state_ao_bounce(kg, state)) {
@@ -572,7 +571,7 @@ ccl_device_forceinline void kernel_path_integrate(KernelGlobals *kg,
 #  endif
 
         /* Evaluate shader. */
-        shader_eval_surface(kg, &sd, state, state->flag);
+        shader_eval_surface(kg, &sd, state, buffer, state->flag);
         shader_prepare_closures(&sd, state);
 
         /* Apply shadow catcher, holdout, emission. */
@@ -673,7 +672,7 @@ ccl_device void kernel_path_trace(
   float3 throughput = make_float3(1.0f, 1.0f, 1.0f);
 
   PathRadiance L;
-  path_radiance_init(&L, kernel_data.film.use_light_pass);
+  path_radiance_init(kg, &L);
 
   ShaderDataTinyStorage emission_sd_storage;
   ShaderData *emission_sd = AS_SHADER_DATA(&emission_sd_storage);

@@ -549,9 +549,6 @@ typedef struct wmEvent {
   char check_drag;
   char is_motion_absolute;
 
-  /** Keymap item, set by handler (weak?). */
-  const char *keymap_idname;
-
   /** Tablet info, only use when the tablet is active. */
   const struct wmTabletData *tablet_data;
 
@@ -895,6 +892,8 @@ typedef struct wmDropBox {
 typedef struct wmTooltipState {
   /** Create tooltip on this event. */
   struct wmTimer *timer;
+  /** The area the tooltip is created in. */
+  struct ScrArea *area_from;
   /** The region the tooltip is created in. */
   struct ARegion *region_from;
   /** The tooltip region. */

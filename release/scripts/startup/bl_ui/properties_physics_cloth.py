@@ -93,7 +93,7 @@ class PHYSICS_PT_cloth_physical_properties(PhysicButtonsPanel, Panel):
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=True)
 
         col = flow.column()
-        col.prop(cloth, "mass", text="Mass")
+        col.prop(cloth, "mass", text="Vertex Mass")
         col = flow.column()
         col.prop(cloth, "air_damping", text="Air Viscosity")
         col = flow.column()
@@ -160,6 +160,88 @@ class PHYSICS_PT_cloth_damping(PhysicButtonsPanel, Panel):
         col.prop(cloth, "shear_damping", text="Shear")
         col = flow.column()
         col.prop(cloth, "bending_damping", text="Bending")
+
+
+class PHYSICS_PT_cloth_internal_springs(PhysicButtonsPanel, Panel):
+    bl_label = "Internal Springs"
+    bl_parent_id = 'PHYSICS_PT_cloth_physical_properties'
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    def draw_header(self, context):
+        cloth = context.cloth.settings
+
+        self.layout.active = cloth_panel_enabled(context.cloth)
+        self.layout.prop(cloth, "use_internal_springs", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        cloth = context.cloth.settings
+        md = context.cloth
+        ob = context.object
+
+        layout.active = cloth.use_internal_springs and cloth_panel_enabled(md)
+
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=True)
+
+        col = flow.column()
+        col.prop(cloth, "internal_spring_max_length", text="Max Spring Creation Length")
+        col = flow.column()
+        col.prop(cloth, "internal_spring_max_diversion", text="Max Creation Diversion")
+        col = flow.column()
+        col.prop(cloth, "internal_spring_normal_check", text="Check Surface Normals")
+        col = flow.column()
+        col.prop(cloth, "internal_tension_stiffness", text="Tension")
+        col = flow.column()
+        col.prop(cloth, "internal_compression_stiffness", text="Compression")
+
+        col = flow.column()
+        col.prop_search(cloth, "vertex_group_intern", ob, "vertex_groups", text="Vertex Group")
+        col = flow.column()
+        col.prop(cloth, "internal_tension_stiffness_max", text="Max Tension")
+        col = flow.column()
+        col.prop(cloth, "internal_compression_stiffness_max", text="Max Compression")
+
+
+class PHYSICS_PT_cloth_pressure(PhysicButtonsPanel, Panel):
+    bl_label = "Pressure"
+    bl_parent_id = 'PHYSICS_PT_cloth_physical_properties'
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    def draw_header(self, context):
+        cloth = context.cloth.settings
+
+        self.layout.active = cloth_panel_enabled(context.cloth)
+        self.layout.prop(cloth, "use_pressure", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        cloth = context.cloth.settings
+        md = context.cloth
+        ob = context.object
+
+        layout.active = cloth.use_pressure and cloth_panel_enabled(md)
+
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=True)
+
+        col = flow.column()
+        col.prop(cloth, "uniform_pressure_force")
+
+        col = flow.column()
+        col.prop(cloth, "use_pressure_volume", text="Custom volume")
+
+        col = flow.column()
+        col.active = cloth.use_pressure_volume
+        col.prop(cloth, "target_volume")
+
+        col = flow.column()
+        col.prop(cloth, "pressure_factor", text="Factor")
+
+        col = flow.column()
+        col.prop_search(cloth, "vertex_group_pressure", ob, "vertex_groups", text="Vertex Group")
 
 
 class PHYSICS_PT_cloth_cache(PhysicButtonsPanel, Panel):
@@ -383,6 +465,8 @@ classes = (
     PHYSICS_PT_cloth_physical_properties,
     PHYSICS_PT_cloth_stiffness,
     PHYSICS_PT_cloth_damping,
+    PHYSICS_PT_cloth_internal_springs,
+    PHYSICS_PT_cloth_pressure,
     PHYSICS_PT_cloth_cache,
     PHYSICS_PT_cloth_shape,
     PHYSICS_PT_cloth_collision,

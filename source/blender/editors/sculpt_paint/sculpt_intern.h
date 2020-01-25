@@ -37,6 +37,7 @@ struct KeyBlock;
 struct Object;
 struct SculptUndoNode;
 struct bContext;
+struct SculptPoseIKChainSegment;
 
 bool sculpt_mode_poll(struct bContext *C);
 bool sculpt_mode_poll_view3d(struct bContext *C);
@@ -73,6 +74,15 @@ void sculpt_pose_calc_pose_data(struct Sculpt *sd,
                                 float pose_offset,
                                 float *r_pose_origin,
                                 float *r_pose_factor);
+
+struct SculptPoseIKChain *sculpt_pose_ik_chain_init(struct Sculpt *sd,
+                                                    struct Object *ob,
+                                                    struct SculptSession *ss,
+                                                    struct Brush *br,
+                                                    const float initial_location[3],
+                                                    const float radius);
+
+void sculpt_pose_ik_chain_free(struct SculptPoseIKChain *ik_chain);
 
 /* Sculpt PBVH abstraction API */
 const float *sculpt_vertex_co_get(struct SculptSession *ss, int index);
@@ -201,10 +211,12 @@ typedef struct SculptThreadedTaskData {
 
   float *prev_mask;
 
-  float *pose_origin;
-  float *pose_initial_co;
   float *pose_factor;
-  float (*transform_rot)[4], (*transform_trans)[4], (*transform_trans_inv)[4];
+  float *pose_initial_co;
+  int pose_chain_segment;
+
+  float multiplane_scrape_angle;
+  float multiplane_scrape_planes[2][4];
 
   float max_distance_squared;
   float nearest_vertex_search_co[3];
@@ -247,7 +259,7 @@ typedef struct {
   struct Sculpt *sd;
   struct SculptSession *ss;
   float radius_squared;
-  float *center;
+  const float *center;
   bool original;
   bool ignore_fully_masked;
 } SculptSearchSphereData;
@@ -315,6 +327,10 @@ typedef struct StrokeCache {
   float true_last_location[3];
   float location[3];
   float last_location[3];
+
+  /* Original pixel radius with the pressure curve applied for dyntopo detail size */
+  float dyntopo_pixel_radius;
+
   bool is_last_valid;
 
   bool pen_flip;
@@ -372,9 +388,7 @@ typedef struct StrokeCache {
   float anchored_location[3];
 
   /* Pose brush */
-  float *pose_factor;
-  float pose_initial_co[3];
-  float pose_origin[3];
+  struct SculptPoseIKChain *pose_ik_chain;
 
   float vertex_rotation; /* amount to rotate the vertices when using rotate brush */
   struct Dial *dial;
@@ -391,6 +405,9 @@ typedef struct StrokeCache {
   float gravity_direction[3];
 
   float *automask;
+
+  float stroke_local_mat[4][4];
+  float multiplane_scrape_sampled_angle;
 
   rcti previous_r; /* previous redraw rectangle */
   rcti current_r;  /* current redraw rectangle */

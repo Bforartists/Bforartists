@@ -1461,7 +1461,8 @@ static bool point_is_visible(KnifeTool_OpData *kcd,
   BMFace *f_hit;
 
   /* If box clipping on, make sure p is not clipped */
-  if (kcd->vc.rv3d->rflag & RV3D_CLIPPING && ED_view3d_clipping_test(kcd->vc.rv3d, p, true)) {
+  if (RV3D_CLIPPING_ENABLED(kcd->vc.v3d, kcd->vc.rv3d) &&
+      ED_view3d_clipping_test(kcd->vc.rv3d, p, true)) {
     return false;
   }
 
@@ -1485,7 +1486,7 @@ static bool point_is_visible(KnifeTool_OpData *kcd,
       dist = kcd->vc.v3d->clip_end * 2.0f;
     }
 
-    if (kcd->vc.rv3d->rflag & RV3D_CLIPPING) {
+    if (RV3D_CLIPPING_ENABLED(kcd->vc.v3d, kcd->vc.rv3d)) {
       float view_clip[2][3];
       /* note: view_clip[0] should never get clipped */
       copy_v3_v3(view_clip[0], p_ofs);
@@ -1613,7 +1614,9 @@ static void knife_find_line_hits(KnifeTool_OpData *kcd)
   mul_m4_v3(kcd->ob->imat, v3);
   mul_m4_v3(kcd->ob->imat, v4);
 
-  /* numeric error, 'v1' -> 'v2', 'v2' -> 'v4' can end up being ~2000 units apart in otho mode
+  /* Numeric error, 'v1' -> 'v2', 'v2' -> 'v4'
+   * can end up being ~2000 units apart with an orthogonal perspective.
+   *
    * (from ED_view3d_win_to_segment_clipped() above)
    * this gives precision error; rather then solving properly
    * (which may involve using doubles everywhere!),
@@ -1934,7 +1937,7 @@ static int knife_sample_screen_density(KnifeTool_OpData *kcd, const float radius
 
         dis_sq = len_squared_v2v2(kfv->sco, sco);
         if (dis_sq < radius_sq) {
-          if (kcd->vc.rv3d->rflag & RV3D_CLIPPING) {
+          if (RV3D_CLIPPING_ENABLED(kcd->vc.v3d, kcd->vc.rv3d)) {
             if (ED_view3d_clipping_test(kcd->vc.rv3d, kfv->cageco, true) == 0) {
               c++;
             }
@@ -2044,7 +2047,7 @@ static KnifeEdge *knife_find_closest_edge(
       /* now we have 'lambda' calculated (in screen-space) */
       knife_interp_v3_v3v3(kcd, test_cagep, kfe->v1->cageco, kfe->v2->cageco, lambda);
 
-      if (kcd->vc.rv3d->rflag & RV3D_CLIPPING) {
+      if (RV3D_CLIPPING_ENABLED(kcd->vc.v3d, kcd->vc.rv3d)) {
         /* check we're in the view */
         if (ED_view3d_clipping_test(kcd->vc.rv3d, test_cagep, true)) {
           continue;
@@ -2151,7 +2154,7 @@ static KnifeVert *knife_find_closest_vert(
 
         dis_sq = len_squared_v2v2(kfv->sco, sco);
         if (dis_sq < curdis_sq && dis_sq < maxdist_sq) {
-          if (kcd->vc.rv3d->rflag & RV3D_CLIPPING) {
+          if (RV3D_CLIPPING_ENABLED(kcd->vc.v3d, kcd->vc.rv3d)) {
             if (ED_view3d_clipping_test(kcd->vc.rv3d, kfv->cageco, true) == 0) {
               curv = kfv;
               curdis_sq = dis_sq;
@@ -2562,7 +2565,7 @@ static void knifetool_finish_ex(KnifeTool_OpData *kcd)
 
   EDBM_selectmode_flush(kcd->em);
   EDBM_mesh_normals_update(kcd->em);
-  EDBM_update_generic(kcd->em, true, true);
+  EDBM_update_generic(kcd->ob->data, true, true);
 
   /* re-tessellating makes this invalid, dont use again by accident */
   knifetool_free_bmbvh(kcd);
@@ -2656,11 +2659,11 @@ static void knifetool_init_bmbvh(KnifeTool_OpData *kcd)
   BM_mesh_elem_index_ensure(kcd->em->bm, BM_VERT);
 
   Scene *scene_eval = (Scene *)DEG_get_evaluated_id(kcd->vc.depsgraph, &kcd->scene->id);
-  Object *obedit_eval = (Object *)DEG_get_evaluated_id(kcd->vc.depsgraph, &kcd->em->ob->id);
+  Object *obedit_eval = (Object *)DEG_get_evaluated_id(kcd->vc.depsgraph, &kcd->ob->id);
   BMEditMesh *em_eval = BKE_editmesh_from_object(obedit_eval);
 
   kcd->cagecos = (const float(*)[3])BKE_editmesh_vert_coords_alloc(
-      kcd->vc.depsgraph, em_eval, scene_eval, NULL);
+      kcd->vc.depsgraph, em_eval, scene_eval, obedit_eval, NULL);
 
   kcd->bmbvh = BKE_bmbvh_new_from_editmesh(
       kcd->em,
