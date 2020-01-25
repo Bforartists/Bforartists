@@ -83,6 +83,7 @@ void EDBM_mesh_clear(struct BMEditMesh *em);
 void EDBM_selectmode_to_scene(struct bContext *C);
 void EDBM_mesh_make(struct Object *ob, const int select_mode, const bool add_key_index);
 void EDBM_mesh_free(struct BMEditMesh *em);
+void EDBM_mesh_load_ex(struct Main *bmain, struct Object *ob, bool free_data);
 void EDBM_mesh_load(struct Main *bmain, struct Object *ob);
 
 /* flushes based on the current select mode.  if in vertex select mode,
@@ -103,12 +104,12 @@ bool EDBM_vert_color_check(struct BMEditMesh *em);
 bool EDBM_mesh_hide(struct BMEditMesh *em, bool swap);
 bool EDBM_mesh_reveal(struct BMEditMesh *em, bool select);
 
-void EDBM_update_generic(struct BMEditMesh *em,
-                         const bool do_tessellation,
-                         const bool is_destructive);
+void EDBM_update_generic(struct Mesh *me, const bool do_tessellation, const bool is_destructive);
 
 struct UvElementMap *BM_uv_element_map_create(struct BMesh *bm,
-                                              const bool selected,
+                                              const struct Scene *scene,
+                                              const bool face_selected,
+                                              const bool uv_selected,
                                               const bool use_winding,
                                               const bool do_islands);
 void BM_uv_element_map_free(struct UvElementMap *vmap);
@@ -141,9 +142,9 @@ bool BMBVH_EdgeVisible(struct BMBVHTree *tree,
 /* editmesh_automerge.c */
 void EDBM_automerge(struct Object *ob, bool update, const char hflag, const float dist);
 void EDBM_automerge_and_split(struct Object *ob,
-                              bool split_edges,
-                              bool split_faces,
-                              bool update,
+                              const bool split_edges,
+                              const bool split_faces,
+                              const bool update,
                               const char hflag,
                               const float dist);
 
@@ -151,8 +152,12 @@ void EDBM_automerge_and_split(struct Object *ob,
 void ED_mesh_undosys_type(struct UndoType *ut);
 
 /* editmesh_select.c */
-void EDBM_select_mirrored(
-    struct BMEditMesh *em, const int axis, const bool extend, int *r_totmirr, int *r_totfail);
+void EDBM_select_mirrored(struct BMEditMesh *em,
+                          const struct Mesh *me,
+                          const int axis,
+                          const bool extend,
+                          int *r_totmirr,
+                          int *r_totfail);
 
 struct BMVert *EDBM_vert_find_nearest_ex(struct ViewContext *vc,
                                          float *r_dist,
@@ -236,6 +241,14 @@ void em_setup_viewcontext(struct bContext *C, struct ViewContext *vc); /* rename
 
 bool EDBM_mesh_deselect_all_multi_ex(struct Base **bases, const uint bases_len);
 bool EDBM_mesh_deselect_all_multi(struct bContext *C);
+bool EDBM_selectmode_disable_multi_ex(struct Scene *scene,
+                                      struct Base **bases,
+                                      const uint bases_len,
+                                      const short selectmode_disable,
+                                      const short selectmode_fallback);
+bool EDBM_selectmode_disable_multi(struct bContext *C,
+                                   const short selectmode_disable,
+                                   const short selectmode_fallback);
 
 /* editmesh_preselect_edgering.c */
 struct EditMesh_PreSelEdgeRing;
@@ -284,6 +297,7 @@ void ED_keymap_mesh(struct wmKeyConfig *keyconf);
 void EDBM_project_snap_verts(struct bContext *C,
                              struct Depsgraph *depsgraph,
                              struct ARegion *ar,
+                             struct Object *obedit,
                              struct BMEditMesh *em);
 
 /* editface.c */
@@ -320,11 +334,11 @@ typedef struct MirrTopoStore_t {
   bool prev_is_editmode;
 } MirrTopoStore_t;
 
-bool ED_mesh_mirrtopo_recalc_check(struct Mesh *me,
-                                   struct Mesh *me_eval,
+bool ED_mesh_mirrtopo_recalc_check(struct BMEditMesh *em,
+                                   struct Mesh *me,
                                    MirrTopoStore_t *mesh_topo_store);
-void ED_mesh_mirrtopo_init(struct Mesh *me,
-                           struct Mesh *me_eval,
+void ED_mesh_mirrtopo_init(struct BMEditMesh *em,
+                           struct Mesh *me,
                            MirrTopoStore_t *mesh_topo_store,
                            const bool skip_em_vert_array_init);
 void ED_mesh_mirrtopo_free(MirrTopoStore_t *mesh_topo_store);

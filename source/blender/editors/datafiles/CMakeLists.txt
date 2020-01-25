@@ -818,7 +818,7 @@ node_bokeh_blur
 node_bokeh_image
 node_boxmask
 node_brick
-#def_icon_blank(838
+overlap
 node_bump
 
 node_channel
@@ -872,7 +872,7 @@ checker_deselect
 node_checker
 node_chroma
 node_clouds
-#def_icon_blank(889
+handle_align_single
 node_colorbalance
 node_colorcorrection
 node_colorramp
@@ -1069,7 +1069,7 @@ mod_cloth
 mod_explode
 mod_fluidsim
 mod_multires
-mod_smoke
+mod_fluid
 mod_solidify
 mod_screw
 mod_vertex_weight
@@ -1423,10 +1423,10 @@ tilt
 axis_side
 axis_front
 axis_top
-ndof_dom
-ndof_turn
-ndof_fly
-ndof_trans
+#def_icon_blank(1443
+#def_icon_blank(1444
+#def_icon_blank(1445
+#def_icon_blank(1446
 
 layer_used
 layer_active
@@ -1793,6 +1793,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   brush.sculpt.inflate
   brush.sculpt.layer
   brush.sculpt.mask
+  brush.sculpt.multiplane_scrape
   brush.sculpt.nudge
   brush.sculpt.pinch
   brush.sculpt.pose
@@ -1802,6 +1803,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   brush.sculpt.smooth
   brush.sculpt.snake_hook
   brush.sculpt.thumb
+  brush.sculpt.topology
   brush.uv_sculpt.grab
   brush.uv_sculpt.pinch
   brush.uv_sculpt.relax

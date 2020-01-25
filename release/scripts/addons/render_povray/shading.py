@@ -242,7 +242,7 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
 
     if material:
         special_texture_found = False
-        for t in material.texture_slots:
+        for t in material.pov_texture_slots:
             if t and t.use and t.texture is not None:
                 if (t.texture.type == 'IMAGE' and t.texture.image) or t.texture.type != 'IMAGE':
                     #validPath
@@ -766,7 +766,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
     texturesNorm = ""
     texturesAlpha = ""
     #proceduralFlag=False
-    for t in mater.texture_slots:
+    for t in mater.pov_texture_slots:
         if t and (t.use and (t.texture is not None)):
             # 'NONE' ('NONE' type texture is different from no texture covered above)
             if (t.texture.type == 'NONE' and t.texture.pov.tex_pattern_type == 'emulator'):
@@ -1154,7 +1154,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
     # Write another layered texture using invisible diffuse and metallic trick
     # to emulate colored specular highlights
     special_texture_found = False
-    for t in mater.texture_slots:
+    for t in mater.pov_texture_slots:
         if(t and t.use and ((t.texture.type == 'IMAGE' and t.texture.image) or t.texture.type != 'IMAGE') and
            (t.use_map_specular or t.use_map_raymir)):
             # Specular mapped textures would conflict with colored specular
@@ -1173,7 +1173,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
         tabWrite("finish {%s}\n" % (safety(material_finish, Level=2))) # Level 2 is translated spec
 
         texturesNorm = ""
-        for t in mater.texture_slots:
+        for t in mater.pov_texture_slots:
 
             if t and t.texture.pov.tex_pattern_type != 'emulator':
                 proceduralFlag=True

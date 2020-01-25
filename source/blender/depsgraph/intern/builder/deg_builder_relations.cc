@@ -146,7 +146,8 @@ bool python_driver_exression_depends_on_time(const char *expression)
 
 bool driver_target_depends_on_time(const DriverTarget *target)
 {
-  if (target->idtype == ID_SCE && STREQ(target->rna_path, "frame_current")) {
+  if (target->idtype == ID_SCE &&
+      (target->rna_path != NULL && STREQ(target->rna_path, "frame_current"))) {
     return true;
   }
   return false;
@@ -1402,9 +1403,11 @@ void DepsgraphRelationBuilder::build_action(bAction *action)
   if (built_map_.checkIsBuiltAndTag(action)) {
     return;
   }
-  TimeSourceKey time_src_key;
-  ComponentKey animation_key(&action->id, NodeType::ANIMATION);
-  add_relation(time_src_key, animation_key, "TimeSrc -> Animation");
+  if (!BLI_listbase_is_empty(&action->curves)) {
+    TimeSourceKey time_src_key;
+    ComponentKey animation_key(&action->id, NodeType::ANIMATION);
+    add_relation(time_src_key, animation_key, "TimeSrc -> Animation");
+  }
 }
 
 void DepsgraphRelationBuilder::build_driver(ID *id, FCurve *fcu)
@@ -2671,6 +2674,26 @@ void DepsgraphRelationBuilder::build_copy_on_write_relations(IDNode *id_node)
       BLI_assert(object->type == OB_EMPTY);
     }
   }
+
+#if 0
+  /* NOTE: Relation is disabled since AnimationBackup() is disabled.
+   * See comment in  AnimationBackup:init_from_id(). */
+
+  /* Copy-on-write of write will iterate over f-curves to store current values corresponding
+   * to their RNA path. This means that action must be copied prior to the ID's copy-on-write,
+   * otherwise depsgraph might try to access freed data. */
+  AnimData *animation_data = BKE_animdata_from_id(id_orig);
+  if (animation_data != NULL) {
+    if (animation_data->action != NULL) {
+      OperationKey action_copy_on_write_key(
+          &animation_data->action->id, NodeType::COPY_ON_WRITE, OperationCode::COPY_ON_WRITE);
+      add_relation(action_copy_on_write_key,
+                   copy_on_write_key,
+                   "Eval Order",
+                   RELATION_FLAG_GODMODE | RELATION_FLAG_NO_FLUSH);
+    }
+  }
+#endif
 }
 
 /* **** ID traversal callbacks functions **** */

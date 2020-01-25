@@ -51,7 +51,7 @@ DefNode(ShaderNode,     SH_NODE_CURVE_VEC,       def_vector_curve,       "CURVE_
 DefNode(ShaderNode,     SH_NODE_CURVE_RGB,       def_rgb_curve,          "CURVE_RGB",      RGBCurve,         "RGB Curves",        ""              )
 DefNode(ShaderNode,     SH_NODE_CAMERA,          0,                      "CAMERA",         CameraData,       "Camera Data",       ""              )
 DefNode(ShaderNode,     SH_NODE_MAP_RANGE,       def_map_range,          "MAP_RANGE",      MapRange,         "Map Range",         ""              )
-DefNode(ShaderNode,     SH_NODE_CLAMP,           0,                      "CLAMP",          Clamp,            "Clamp",             ""              )
+DefNode(ShaderNode,     SH_NODE_CLAMP,           def_clamp,              "CLAMP",          Clamp,            "Clamp",             ""              )
 DefNode(ShaderNode,     SH_NODE_MATH,            def_math,               "MATH",           Math,             "Math",              ""              )
 DefNode(ShaderNode,     SH_NODE_VECTOR_MATH,     def_vector_math,        "VECT_MATH",      VectorMath,       "Vector Math",       ""              )
 DefNode(ShaderNode,     SH_NODE_SQUEEZE,         0,                      "SQUEEZE",        Squeeze,          "Squeeze Value",     ""              )
@@ -130,6 +130,7 @@ DefNode(ShaderNode,     SH_NODE_DISPLACEMENT,       def_sh_displacement,    "DIS
 DefNode(ShaderNode,     SH_NODE_VECTOR_DISPLACEMENT,def_sh_vector_displacement,"VECTOR_DISPLACEMENT",VectorDisplacement,"Vector Displacement",""  )
 DefNode(ShaderNode,     SH_NODE_TEX_IES,            def_sh_tex_ies,         "TEX_IES",            TexIES,           "IES Texture",       ""       )
 DefNode(ShaderNode,     SH_NODE_TEX_WHITE_NOISE,    def_sh_tex_white_noise, "TEX_WHITE_NOISE",    TexWhiteNoise,    "White Noise",       ""       )
+DefNode(ShaderNode,     SH_NODE_OUTPUT_AOV,         def_sh_output_aov,      "OUTPUT_AOV",         OutputAOV,        "AOV Output",        ""       )
 
 DefNode(CompositorNode, CMP_NODE_VIEWER,         def_cmp_viewer,         "VIEWER",         Viewer,           "Viewer",            ""              )
 DefNode(CompositorNode, CMP_NODE_RGB,            0,                      "RGB",            RGB,              "RGB",               ""              )

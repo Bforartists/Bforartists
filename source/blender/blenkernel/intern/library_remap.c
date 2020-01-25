@@ -636,7 +636,8 @@ void BKE_libblock_unlink(Main *bmain,
   BKE_main_unlock(bmain);
 }
 
-/** Similar to libblock_remap, but only affects IDs used by given \a idv ID.
+/**
+ * Similar to libblock_remap, but only affects IDs used by given \a idv ID.
  *
  * \param old_idv: Unlike BKE_libblock_remap, can be NULL,
  * in which case all ID usages by given \a idv will be cleared.
@@ -677,7 +678,8 @@ void BKE_libblock_relink_ex(
    * Maybe we should do a per-ID callback for this instead?
    */
   switch (GS(id->name)) {
-    case ID_SCE: {
+    case ID_SCE:
+    case ID_GR: {
       if (old_id) {
         switch (GS(old_id->name)) {
           case ID_OB:
@@ -707,6 +709,8 @@ void BKE_libblock_relink_ex(
     default:
       break;
   }
+
+  DEG_relations_tag_update(bmain);
 }
 
 static int id_relink_to_newid_looper(void *UNUSED(user_data),

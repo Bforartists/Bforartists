@@ -79,6 +79,22 @@ typedef struct SpaceLink {
   char _pad0[6];
 } SpaceLink;
 
+/* SpaceLink.link_flag */
+enum {
+  /**
+   * The space is not a regular one opened through the editor menu (for example) but spawned by an
+   * operator to fulfill some task and then disappear again.
+   * Can typically be cancelled using Escape, but that is handled on the editor level. */
+  SPACE_FLAG_TYPE_TEMPORARY = (1 << 0),
+  /**
+   * Used to mark a space as active but "overlapped" by temporary full-screen spaces. Without this
+   * we wouldn't be able to restore the correct active space after closing temp full-screens
+   * reliably if the same space type is opened twice in a full-screen stack (see T19296). We don't
+   * actually open the same space twice, we have to pretend it is by managing area order carefully.
+   */
+  SPACE_FLAG_TYPE_WAS_ACTIVE = (1 << 1),
+};
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -450,8 +466,8 @@ typedef enum eGraphEdit_Flag {
   /* normalize curves on display */
   SIPO_NORMALIZE = (1 << 14),
   SIPO_NORMALIZE_FREEZE = (1 << 15),
-  /* show vertical line for every marker */
-  SIPO_MARKER_LINES = (1 << 16),
+  /* show markers region */
+  SIPO_SHOW_MARKERS = (1 << 16),
 } eGraphEdit_Flag;
 
 /* SpaceGraph.mode (Graph Editor Mode) */
@@ -467,6 +483,13 @@ typedef enum eGraphEdit_Runtime_Flag {
   SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC = (1 << 0),
   /** Temporary flag to force fcurves to recalculate colors. */
   SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC_COLOR = (1 << 1),
+
+  /**
+   * These flags are for the mouse-select code to communicate with the transform code. Click
+   * dragging (tweaking) a handle sets the according left/right flag which transform code uses then
+   * to limit translation to this side. */
+  SIPO_RUNTIME_FLAG_TWEAK_HANDLES_LEFT = (1 << 2),
+  SIPO_RUNTIME_FLAG_TWEAK_HANDLES_RIGHT = (1 << 3),
 } eGraphEdit_Runtime_Flag;
 
 /** \} */
@@ -509,8 +532,8 @@ typedef enum eSpaceNla_Flag {
   SNLA_NOREALTIMEUPDATES = (1 << 6),
   /* don't show local strip marker indications */
   SNLA_NOLOCALMARKERS = (1 << 7),
-  /* show vertical line for every marker */
-  SNLA_SHOW_MARKER_LINES = (1 << 8),
+  /* show markers region */
+  SNLA_SHOW_MARKERS = (1 << 8),
 } eSpaceNla_Flag;
 
 /** \} */
@@ -592,7 +615,7 @@ typedef enum eSpaceSeq_Flag {
   SEQ_NO_WAVEFORMS = (1 << 8),  /* draw no waveforms */
   SEQ_SHOW_SAFE_CENTER = (1 << 9),
   SEQ_SHOW_METADATA = (1 << 10),
-  SEQ_SHOW_MARKER_LINES = (1 << 11),
+  SEQ_SHOW_MARKERS = (1 << 11), /* show markers region */
 } eSpaceSeq_Flag;
 
 /* SpaceSeq.view */
@@ -836,6 +859,7 @@ typedef enum eFileSel_File_Types {
   FILE_TYPE_ALEMBIC = (1 << 16),
   /** For all kinds of recognized import/export formats. No need for specialized types. */
   FILE_TYPE_OBJECT_IO = (1 << 17),
+  FILE_TYPE_USD = (1 << 18),
 
   /** An FS directory (i.e. S_ISDIR on its path is true). */
   FILE_TYPE_DIR = (1 << 30),
@@ -950,7 +974,8 @@ typedef struct FileDirEntry {
   int act_variant;
 } FileDirEntry;
 
-/** Array of direntries.
+/**
+ * Array of direntries.
  *
  * This struct is used in various, different contexts.
  *
@@ -1045,6 +1070,8 @@ typedef struct SpaceImage {
 
   char pixel_snap_mode;
   char _pad2[3];
+
+  int tile_grid_shape[2];
 
   MaskSpaceInfo mask_info;
 } SpaceImage;
@@ -1143,6 +1170,41 @@ typedef enum eSpaceImage_OtherUVFilter {
 /** \name Text Editor
  * \{ */
 
+typedef struct SpaceText_Runtime {
+
+  /** Actual line height, scaled by dpi. */
+  int lheight_px;
+
+  /** Runtime computed, character width. */
+  int cwidth_px;
+
+  /** The handle of the scroll-bar which can be clicked and dragged. */
+  struct rcti scroll_region_handle;
+  /** The region for selected text to show in the scrolling area. */
+  struct rcti scroll_region_select;
+
+  /** Number of digits to show in the line numbers column (when enabled). */
+  int line_number_display_digits;
+
+  /** Number of lines this window can display (even when they aren't used). */
+  int viewlines;
+
+  /** Use for drawing scroll-bar & calculating scroll operator motion scaling. */
+  float scroll_px_per_line;
+
+  /**
+   * Run-time for scroll increments smaller than a line (smooth scroll).
+   * Values must be between zero and the line, column width: (cwidth, TXT_LINE_HEIGHT(st)).
+   */
+  int scroll_ofs_px[2];
+
+  char _pad1[4];
+
+  /** Cache for faster drawing. */
+  void *drawcache;
+
+} SpaceText_Runtime;
+
 /* Text Editor */
 typedef struct SpaceText {
   SpaceLink *next, *prev;
@@ -1155,30 +1217,26 @@ typedef struct SpaceText {
 
   struct Text *text;
 
-  int top, viewlines;
-  short flags, menunr;
+  int top, left;
+  char _pad1[4];
+
+  short flags;
 
   /** User preference, is font_size! */
   short lheight;
-  /**
-   * Runtime computed, character width
-   * and the number of chars to use when showing line numbers.
-   */
-  char cwidth, linenrs_tot;
-  int left;
-  int showlinenrs;
+
   int tabnumber;
 
-  short showsyntax;
-  short line_hlight;
-  short overwrite;
+  /* Booleans */
+  char wordwrap;
+  char doplugins;
+  char showlinenrs;
+  char showsyntax;
+  char line_hlight;
+  char overwrite;
   /** Run python while editing, evil. */
-  short live_edit;
-  float pix_per_line;
-
-  struct rcti txtscroll, txtbar;
-
-  int wordwrap, doplugins;
+  char live_edit;
+  char _pad2[1];
 
   /** ST_MAX_FIND_STR. */
   char findstr[256];
@@ -1187,23 +1245,18 @@ typedef struct SpaceText {
 
   /** Column number to show right margin at. */
   short margin_column;
-  /** Actual lineheight, dpi controlled. */
-  short lheight_dpi;
-  char _pad[4];
+  char _pad3[2];
 
-  /** Cache for faster drawing. */
-  void *drawcache;
-
-  /** Runtime, for scroll increments smaller than a line. */
-  float scroll_accum[2];
+  /** Keep last. */
+  SpaceText_Runtime runtime;
 } SpaceText;
 
 /* SpaceText flags (moved from DNA_text_types.h) */
 typedef enum eSpaceText_Flags {
   /* scrollable */
   ST_SCROLL_SELECT = (1 << 0),
-  /* clear namespace after script execution (BPY_main.c) */
-  ST_CLEAR_NAMESPACE = (1 << 4),
+
+  ST_FLAG_UNUSED_4 = (1 << 4), /* dirty */
 
   ST_FIND_WRAP = (1 << 5),
   ST_FIND_ALL = (1 << 6),
@@ -1442,6 +1495,7 @@ typedef struct SpaceConsole {
   /** Multiple consoles are possible, not just python. */
   char language[32];
 
+  /** Selection offset in bytes. */
   int sel_start;
   int sel_end;
 } SpaceConsole;
@@ -1652,7 +1706,7 @@ typedef enum eSpace_Type {
   SPACE_INFO = 7,
   SPACE_SEQ = 8,
   SPACE_TEXT = 9,
-#ifdef DNA_DEPRECATED
+#ifdef DNA_DEPRECATED_ALLOW
   SPACE_IMASEL = 10, /* Deprecated */
   SPACE_SOUND = 11,  /* Deprecated */
 #endif
@@ -1660,11 +1714,11 @@ typedef enum eSpace_Type {
   SPACE_NLA = 13,
   /* TODO: fully deprecate */
   SPACE_SCRIPT = 14, /* Deprecated */
-#ifdef DNA_DEPRECATED
+#ifdef DNA_DEPRECATED_ALLOW
   SPACE_TIME = 15, /* Deprecated */
 #endif
   SPACE_NODE = 16,
-#ifdef DNA_DEPRECATED
+#ifdef DNA_DEPRECATED_ALLOW
   SPACE_LOGIC = 17, /* Deprecated */
 #endif
   SPACE_CONSOLE = 18,

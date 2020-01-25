@@ -218,7 +218,8 @@ class AddElbowJoint(Operator):
         faces.extend(createFaces(loop2, loop3, closed=True))
         
         if bpy.context.mode == "OBJECT":
-            if self.change == True and self.change != None:
+            if (context.selected_objects != []) and context.active_object and \
+            ('ElbowJoint' in context.active_object.data.keys()) and (self.change == True):
                 obj = context.active_object
                 oldmesh = obj.data
                 oldmeshname = obj.data.name
@@ -465,7 +466,8 @@ class AddTeeJoint(Operator):
         faces.extend(createFaces(loopJoint3, loopMainEnd, closed=True))
         
         if bpy.context.mode == "OBJECT":
-            if self.change == True and self.change != None:
+            if (context.selected_objects != []) and context.active_object and \
+            ('TeeJoint' in context.active_object.data.keys()) and (self.change == True):
                 obj = context.active_object
                 oldmesh = obj.data
                 oldmeshname = obj.data.name
@@ -729,7 +731,8 @@ class AddWyeJoint(Operator):
         faces.extend(createFaces(loopJoint3, loopArm2, closed=True))
         
         if bpy.context.mode == "OBJECT":
-            if self.change == True and self.change != None:
+            if (context.selected_objects != []) and context.active_object and \
+            ('WyeJoint' in context.active_object.data.keys()) and (self.change == True):
                 obj = context.active_object
                 oldmesh = obj.data
                 oldmeshname = obj.data.name
@@ -1057,7 +1060,8 @@ class AddCrossJoint(Operator):
         faces.extend(createFaces(loopJoint4, loopArm3, closed=True))
         
         if bpy.context.mode == "OBJECT":
-            if self.change == True and self.change != None:
+            if (context.selected_objects != []) and context.active_object and \
+            ('CrossJoint' in context.active_object.data.keys()) and (self.change == True):
                 obj = context.active_object
                 oldmesh = obj.data
                 oldmeshname = obj.data.name
@@ -1282,7 +1286,8 @@ class AddNJoint(Operator):
                 loopsEndCircles[loopIdx], closed=True))
         
         if bpy.context.mode == "OBJECT":
-            if self.change == True and self.change != None:
+            if (context.selected_objects != []) and context.active_object and \
+            ('NJoint' in context.active_object.data.keys()) and (self.change == True):
                 obj = context.active_object
                 oldmesh = obj.data
                 oldmeshname = obj.data.name

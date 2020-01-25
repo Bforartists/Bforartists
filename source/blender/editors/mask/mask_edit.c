@@ -371,7 +371,6 @@ void ED_mask_cursor_location_get(ScrArea *sa, float cursor[2])
 bool ED_mask_selected_minmax(const bContext *C, float min[2], float max[2])
 {
   Mask *mask = CTX_data_edit_mask(C);
-  MaskLayer *mask_layer;
   bool ok = false;
 
   if (mask == NULL) {
@@ -379,15 +378,14 @@ bool ED_mask_selected_minmax(const bContext *C, float min[2], float max[2])
   }
 
   INIT_MINMAX2(min, max);
-  for (mask_layer = mask->masklayers.first; mask_layer != NULL; mask_layer = mask_layer->next) {
-    MaskSpline *spline;
+  for (MaskLayer *mask_layer = mask->masklayers.first; mask_layer != NULL;
+       mask_layer = mask_layer->next) {
     if (mask_layer->restrictflag & (MASK_RESTRICT_VIEW | MASK_RESTRICT_SELECT)) {
       continue;
     }
-    for (spline = mask_layer->splines.first; spline != NULL; spline = spline->next) {
+    for (MaskSpline *spline = mask_layer->splines.first; spline != NULL; spline = spline->next) {
       MaskSplinePoint *points_array = BKE_mask_spline_point_array(spline);
-      int i;
-      for (i = 0; i < spline->tot_point; i++) {
+      for (int i = 0; i < spline->tot_point; i++) {
         MaskSplinePoint *point = &spline->points[i];
         MaskSplinePoint *deform_point = &points_array[i];
         BezTriple *bezt = &point->bezt;
@@ -498,7 +496,7 @@ void ED_operatormacros_mask(void)
 
   ot = WM_operatortype_append_macro("MASK_OT_add_vertex_slide",
                                     "Add Vertex and Slide",
-                                    "Add new vertex and slide it",
+                                    "Add new vertex and slide it\nHotkey only tool!",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   ot->description = "Add new vertex and slide it";
   WM_operatortype_macro_define(ot, "MASK_OT_add_vertex");
@@ -507,7 +505,7 @@ void ED_operatormacros_mask(void)
 
   ot = WM_operatortype_append_macro("MASK_OT_add_feather_vertex_slide",
                                     "Add Feather Vertex and Slide",
-                                    "Add new vertex to feather and slide it",
+                                    "Add new vertex to feather and slide it\nHotkey only tool!",
                                     OPTYPE_UNDO | OPTYPE_REGISTER);
   ot->description = "Add new feather vertex and slide it";
   WM_operatortype_macro_define(ot, "MASK_OT_add_feather_vertex");

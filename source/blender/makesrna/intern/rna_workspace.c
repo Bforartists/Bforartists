@@ -258,6 +258,10 @@ static void rna_def_workspace_tool(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Identifier", "");
   RNA_def_struct_name_property(srna, prop);
 
+  prop = RNA_def_property(srna, "idname_fallback", PROP_STRING, PROP_NONE);
+  RNA_def_property_ui_text(prop, "Identifier Fallback", "");
+  RNA_def_struct_name_property(srna, prop);
+
   prop = RNA_def_property(srna, "index", PROP_INT, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_ui_text(prop, "Index", "");
@@ -288,7 +292,6 @@ static void rna_def_workspace_tool(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Widget", "");
   RNA_def_property_string_funcs(
       prop, "rna_WorkSpaceTool_widget_get", "rna_WorkSpaceTool_widget_length", NULL);
-  RNA_define_verify_sdna(1);
 
   RNA_api_workspace_tool(srna);
 }

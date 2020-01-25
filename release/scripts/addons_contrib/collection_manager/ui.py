@@ -7,11 +7,9 @@ from bpy.types import (
 
 from .internals import *
 from .operators import (
-    excludeall_history,
-    restrictselectall_history,
-    hideall_history,
-    disableviewall_history,
-    disablerenderall_history,
+    rto_history,
+    rename,
+    phantom_history,
     )
 
 
@@ -19,15 +17,16 @@ class CollectionManager(Operator):
     bl_label = "Collection Manager"
     bl_idname = "view3d.collection_manager"
     
-    view_layer = ""
+    last_view_layer = ""
     
     def draw(self, context):
         layout = self.layout
         scn = context.scene
+        view_layer = context.view_layer.name
         
-        if context.view_layer.name != self.view_layer:
+        if view_layer != self.last_view_layer:
             update_collection_tree(context)
-            self.view_layer = context.view_layer.name
+            self.last_view_layer = view_layer
         
         title_row = layout.split(factor=0.5)
         main = title_row.row()
@@ -78,23 +77,33 @@ class CollectionManager(Operator):
         sec2.alignment = 'RIGHT'
         
         if scn.show_exclude:
-            depress = True if len(excludeall_history) else False
+            exclude_all_history = rto_history["exclude_all"].get(view_layer, [])
+            depress = True if len(exclude_all_history) else False
+            
             sec2.operator("view3d.un_exclude_all_collections", text="", icon='CHECKBOX_HLT', depress=depress)
         
         if scn.show_selectable:
-            depress = True if len(restrictselectall_history) else False
+            select_all_history = rto_history["select_all"].get(view_layer, [])
+            depress = True if len(select_all_history) else False
+            
             sec2.operator("view3d.un_restrict_select_all_collections", text="", icon='RESTRICT_SELECT_OFF', depress=depress)
         
         if scn.show_hideviewport:
-            depress = True if len(hideall_history) else False
+            hide_all_history = rto_history["hide_all"].get(view_layer, [])
+            depress = True if len(hide_all_history) else False
+            
             sec2.operator("view3d.un_hide_all_collections", text="", icon='HIDE_OFF', depress=depress)
         
         if scn.show_disableviewport:
-            depress = True if len(disableviewall_history) else False
+            disable_all_history = rto_history["disable_all"].get(view_layer, [])
+            depress = True if len(disable_all_history) else False
+            
             sec2.operator("view3d.un_disable_viewport_all_collections", text="", icon='RESTRICT_VIEW_OFF', depress=depress)
         
         if scn.show_render:
-            depress = True if len(disablerenderall_history) else False
+            render_all_history = rto_history["render_all"].get(view_layer, [])
+            depress = True if len(render_all_history) else False
+            
             sec2.operator("view3d.un_disable_render_all_collections", text="", icon='RESTRICT_RENDER_OFF', depress=depress)
         
         layout.row().template_list("CM_UL_items", "", context.scene, "CMListCollection", context.scene, "CMListIndex", rows=15, sort_lock=True)
@@ -103,6 +112,14 @@ class CollectionManager(Operator):
         addcollec_row.operator("view3d.add_collection", text="Add Collection", icon='COLLECTION_NEW').child = False
         
         addcollec_row.operator("view3d.add_collection", text="Add SubCollection", icon='COLLECTION_NEW').child = True
+        
+        phantom_row = layout.row()
+        toggle_text = "Disable " if scn.CM_Phantom_Mode else "Enable "
+        phantom_row.operator("view3d.toggle_phantom_mode", text=toggle_text+"Phantom Mode")
+        
+        if scn.CM_Phantom_Mode:
+            view.enabled = False
+            addcollec_row.enabled = False
         
         
     def execute(self, context):
@@ -116,20 +133,75 @@ class CollectionManager(Operator):
         #hideall_history.clear()
         #disableviewall_history.clear()
         #disablerenderall_history.clear()
-        
-        
-        context.scene.CMListIndex = 0
+
         update_property_group(context)
         
-        if get_max_lvl() > 5:
-            lvl = get_max_lvl() - 5
+        lvl = get_max_lvl()
         
         if lvl > 25:
             lvl = 25
-        
+
         self.view_layer = context.view_layer.name
         
+        # sync selection in ui list with active layer collection
+        try:
+            active_laycol_name = context.view_layer.active_layer_collection.name
+            active_laycol_row_index = layer_collections[active_laycol_name]["row_index"]
+            context.scene.CMListIndex = active_laycol_row_index
+        except:
+            context.scene.CMListIndex = 0
+        
+        if context.scene.CM_Phantom_Mode:
+            if set(layer_collections.keys()) != set(phantom_history["initial_state"].keys()):
+                context.scene.CM_Phantom_Mode = False
+            
+            if context.view_layer.name != phantom_history["view_layer"]:
+                context.scene.CM_Phantom_Mode = False
+        
         return wm.invoke_popup(self, width=(400+(lvl*20)))
+
+
+def update_selection(self, context):
+    selected_item = context.scene.CMListCollection[context.scene.CMListIndex]
+    layer_collection = layer_collections[selected_item.name]["ptr"]
+    
+    context.view_layer.active_layer_collection = layer_collection
+
+
+def filter_items_by_name_insensitive(pattern, bitflag, items, propname="name", flags=None, reverse=False):
+        """
+        Set FILTER_ITEM for items which name matches filter_name one (case-insensitive).
+        pattern is the filtering pattern.
+        propname is the name of the string property to use for filtering.
+        flags must be a list of integers the same length as items, or None!
+        return a list of flags (based on given flags if not None),
+        or an empty list if no flags were given and no filtering has been done.
+        """
+        import fnmatch
+
+        if not pattern or not items:  # Empty pattern or list = no filtering!
+            return flags or []
+
+        if flags is None:
+            flags = [0] * len(items)
+        
+        # Make pattern case-insensitive
+        pattern = pattern.lower()
+
+        # Implicitly add heading/trailing wildcards.
+        pattern = "*" + pattern + "*"
+
+        for i, item in enumerate(items):
+            name = getattr(item, propname, None)
+            
+            # Make name case-insensitive
+            name = name.lower()
+            
+            # This is similar to a logical xor
+            if bool(name and fnmatch.fnmatch(name, pattern)) is not bool(reverse):
+                flags[i] |= bitflag
+            
+        return flags
 
 
 class CM_UL_items(UIList):
@@ -142,7 +214,8 @@ class CM_UL_items(UIList):
         laycol = layer_collections[item.name]
         collection = laycol["ptr"].collection
         
-        row = layout.row(align=True)
+        split = layout.split(factor=0.96)
+        row = split.row(align=True)
         row.alignment = 'LEFT'
         
         # indent child items
@@ -170,7 +243,13 @@ class CM_UL_items(UIList):
         
         row.label(icon='GROUP')
         
-        row.prop(collection, "name", text="", expand=True)
+        name_row = row.row()
+        
+        #if rename[0] and index == scn.CMListIndex:
+            #name_row.activate_init = True
+            #rename[0] = False
+            
+        name_row.prop(item, "name", text="", expand=True)
         
         # used as a separator (actual separator not wide enough)
         row.label()
@@ -214,7 +293,14 @@ class CM_UL_items(UIList):
             row.operator("view3d.disable_render_collection", text="", icon=icon, emboss=False).name = item.name
         
         
-        row.operator("view3d.remove_collection", text="", icon='X', emboss=False).collection_name = item.name
+        rm_op = split.row()
+        rm_op.alignment = 'RIGHT'
+        rm_op.operator("view3d.remove_collection", text="", icon='X', emboss=False).collection_name = item.name
+        
+        if scn.CM_Phantom_Mode:
+            name_row.enabled = False
+            row_setcol.enabled = False
+            rm_op.enabled = False
     
     
     def filter_items(self, context, data, propname):
@@ -224,7 +310,7 @@ class CM_UL_items(UIList):
         list_items = getattr(data, propname)
         
         if self.filter_name:
-            flt_flags = UI_UL_list.filter_items_by_name(self.filter_name, self.bitflag_filter_item, list_items)
+            flt_flags = filter_items_by_name_insensitive(self.filter_name, self.bitflag_filter_item, list_items)
         
         else:
             flt_flags = [self.bitflag_filter_item] * len(list_items)

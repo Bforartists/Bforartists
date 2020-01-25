@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -1563,14 +1563,6 @@ msgid "Internal Friction"
 msgstr "Unutrašnje trenje"
 
 
-msgid "Mass"
-msgstr "Masa"
-
-
-msgid "Mass of cloth material"
-msgstr "Masa tkanine"
-
-
 msgid "Pin Stiffness"
 msgstr "Krutost kačenja"
 
@@ -1597,6 +1589,10 @@ msgstr "Maks. faktor skupljanja"
 
 msgid "Max amount to shrink cloth by"
 msgstr "Najveći faktor skupljanja tkanine"
+
+
+msgid "Pressure"
+msgstr "Pritisak"
 
 
 msgid "Bending Stiffness Vertex Group"
@@ -2712,16 +2708,12 @@ msgid "Keep Axis"
 msgstr "Zadrži ose"
 
 
-msgid "Keep Z Axis"
-msgstr "Zadrži Z osu"
+msgid "XZ"
+msgstr "XZ"
 
 
 msgid "Original Length"
 msgstr "Originalna dužina"
-
-
-msgid "XZ"
-msgstr "XZ"
 
 
 msgid "Aim the constrained object toward the target"
@@ -2800,14 +2792,6 @@ msgid "Curve in a curve mapping"
 msgstr "Kriva u mapiranju krive"
 
 
-msgid "Extend"
-msgstr "Produži"
-
-
-msgid "Horizontal"
-msgstr "Vodoravno"
-
-
 msgid "Points"
 msgstr "Tačke"
 
@@ -2868,6 +2852,14 @@ msgid "Clip Min Y"
 msgstr "Min Y isečka"
 
 
+msgid "Extend"
+msgstr "Produži"
+
+
+msgid "Horizontal"
+msgstr "Vodoravno"
+
+
 msgid "Standard"
 msgstr "Uobičajeno"
 
@@ -2914,6 +2906,14 @@ msgstr "Ploča"
 
 msgid "View"
 msgstr "Pogled"
+
+
+msgid "Steps"
+msgstr "Koraka"
+
+
+msgid "Segments"
+msgstr "Segmenata"
 
 
 msgid "Active Spline"
@@ -4997,10 +4997,6 @@ msgid "Coordinates"
 msgstr "Koordinate"
 
 
-msgid "Pressure"
-msgstr "Pritisak"
-
-
 msgid "Basis Matrix"
 msgstr "Osnovna matrica"
 
@@ -5872,10 +5868,6 @@ msgstr "Dubina iskošavanje"
 
 msgid "Map the bevel factor to the number of subdivisions of a spline (U resolution)"
 msgstr "Mapira faktor iskošenja na broj podela krive (U rezolucija)"
-
-
-msgid "Segments"
-msgstr "Segmenata"
 
 
 msgid "Spline"
@@ -7550,10 +7542,6 @@ msgid "Draw Size"
 msgstr "Veličina prikaza"
 
 
-msgid "Steps"
-msgstr "Koraka"
-
-
 msgid "Distribution"
 msgstr "Raspodela"
 
@@ -7644,6 +7632,10 @@ msgstr "Nasumična dužina"
 
 msgid "Lifetime"
 msgstr "Životni vek"
+
+
+msgid "Mass"
+msgstr "Masa"
 
 
 msgid "Index of material slot used for rendering particles"
@@ -9582,6 +9574,10 @@ msgid "Snap"
 msgstr "Lepljenje"
 
 
+msgid "Material Specials"
+msgstr "Specijalni materijali"
+
+
 msgid "Grease Pencil Tools"
 msgstr "Alatke skiciranja"
 
@@ -9605,10 +9601,6 @@ msgstr "Prikaži/sakrij stranice"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Dodaj"
-
-
-msgid "Material Specials"
-msgstr "Specijalni materijali"
 
 
 msgid "Vertex Group Specials"
@@ -14879,10 +14871,6 @@ msgid "Export PLY"
 msgstr "Izvoz PLY"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "Koristi globalne koordinate za koordinate teksture"
-
-
 msgid "Y Up"
 msgstr "Gore po Y"
 
@@ -14903,6 +14891,10 @@ msgid "-Z Up"
 msgstr "Gore po -Z"
 
 
+msgid "Selection Only"
+msgstr "Samo izabrano"
+
+
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "Izvoz u STL"
@@ -14910,10 +14902,6 @@ msgstr "Izvoz u STL"
 
 msgid "Ascii"
 msgstr "Ascii"
-
-
-msgid "Selection Only"
-msgstr "Samo izabrano"
 
 
 msgctxt "Operator"
@@ -15297,6 +15285,10 @@ msgstr "Raspakuj sve datoteke zapakovane u ovoj .blend datoteci kao spoljne dato
 
 msgid "How to unpack"
 msgstr "Kako raspakovati"
+
+
+msgid "Remove Pack"
+msgstr "Ukloni paket"
 
 
 msgctxt "Operator"
@@ -16884,6 +16876,10 @@ msgid "At Cursor"
 msgstr "Za kursor"
 
 
+msgid "Fill Holes"
+msgstr "Popuni rupe"
+
+
 msgid "Median"
 msgstr "Središte"
 
@@ -17276,10 +17272,6 @@ msgstr "Obrnuti redosled izabranih elemenata"
 
 msgid "Extrude selected vertices in a circle around the cursor in indicated viewport"
 msgstr "Izvlači izabrana temena u krug oko kursora prema trenutnom pogledu"
-
-
-msgid "Make Duplicates"
-msgstr "Nampravi duplikate"
 
 
 msgid "Subdivide selected edges"
@@ -19987,6 +19979,10 @@ msgid "Sample Detail Size"
 msgstr "Jednostavna detaljnost"
 
 
+msgid "Dyntopo"
+msgstr "Dinamičko vajanje"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Režim vajanja"
@@ -21138,10 +21134,6 @@ msgstr "Označave izabrane UV ivice kao šavove"
 msgctxt "Operator"
 msgid "Minimize Stretch"
 msgstr "Minimiziraj razvlačenje"
-
-
-msgid "Fill Holes"
-msgstr "Popuni rupe"
 
 
 msgctxt "Operator"
@@ -22526,10 +22518,6 @@ msgid "Motion Tracking"
 msgstr "Praćenje pokreta"
 
 
-msgid "Dyntopo"
-msgstr "Dinamičko vajanje"
-
-
 msgctxt "Operator"
 msgid "Erase"
 msgstr "Obriši"
@@ -23012,6 +23000,10 @@ msgstr "Putanje datoteke"
 
 msgid "Edit Methods"
 msgstr "Metode uređivanja"
+
+
+msgid "Experimental"
+msgstr "Proširi vodoravno"
 
 
 msgid "Default paths for external files"
@@ -23806,10 +23798,6 @@ msgid "Supported"
 msgstr "Podržani sloj"
 
 
-msgid "Experimental"
-msgstr "Proširi vodoravno"
-
-
 msgid "Total maximum number of bounces"
 msgstr "Ukupan maksimalni broj odbijanja"
 
@@ -23948,10 +23936,6 @@ msgstr "Putanja do datoteka"
 
 msgid "Is Stroke Start"
 msgstr "Samostalni početak"
-
-
-msgid "VRML2"
-msgstr "VRML2"
 
 
 msgid "Apply Scale"
@@ -27284,10 +27268,6 @@ msgid "Volume:"
 msgstr "Jačina:"
 
 
-msgid "Plane:"
-msgstr "Ploča:"
-
-
 msgid "Min/Max:"
 msgstr "Min/Maks:"
 
@@ -27475,6 +27455,10 @@ msgid "UVs:"
 msgstr "UV-i:"
 
 
+msgid "Outer"
+msgstr "Spoljašnje"
+
+
 msgid "Operation:"
 msgstr "Operacija:"
 
@@ -27599,20 +27583,12 @@ msgid "Deform:"
 msgstr "Deformacija:"
 
 
-msgid "Crease:"
-msgstr "Nabor:"
-
-
-msgid "Outer"
-msgstr "Spoljašnje"
+msgid "Material Index Offset:"
+msgstr "Odstojanje indeksa materijala:"
 
 
 msgid "Rim"
 msgstr "Obod"
-
-
-msgid "Material Index Offset:"
-msgstr "Odstojanje indeksa materijala:"
 
 
 msgid "From:"
@@ -27737,6 +27713,10 @@ msgstr "Sačuvaj eksterno ..."
 
 msgid "Cull Faces:"
 msgstr "Odaberi stranice:"
+
+
+msgid "Crease:"
+msgstr "Nabor:"
 
 
 msgid "Render:"
@@ -30982,10 +30962,6 @@ msgstr "Prostor"
 
 msgid "Unpack File"
 msgstr "Raspakuj datoteku"
-
-
-msgid "Remove Pack"
-msgstr "Ukloni paket"
 
 
 msgid "Create %s"

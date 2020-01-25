@@ -789,14 +789,6 @@ static void add_orco_mesh(Object *ob, BMEditMesh *em, Mesh *mesh, Mesh *mesh_orc
   }
 }
 
-static void editmesh_update_statvis_color(const Scene *scene, Object *ob)
-{
-  BMEditMesh *em = BKE_editmesh_from_object(ob);
-  Mesh *me = ob->data;
-  BKE_mesh_runtime_ensure_edit_data(me);
-  BKE_editmesh_statvis_calc(em, me->runtime.edit_data, &scene->toolsettings->statvis);
-}
-
 static void mesh_calc_modifier_final_normals(const Mesh *mesh_input,
                                              const CustomData_MeshMasks *final_datamask,
                                              const bool sculpt_dyntopo,
@@ -807,7 +799,7 @@ static void mesh_calc_modifier_final_normals(const Mesh *mesh_input,
                                 (final_datamask->lmask & CD_MASK_NORMAL) != 0);
   /* Some modifiers may need this info from their target (other) object,
    * simpler to generate it here as well.
-   * Note that they will always be generated when no loop normals are comptuted,
+   * Note that they will always be generated when no loop normals are computed,
    * since they are needed by drawing code. */
   const bool do_poly_normals = ((final_datamask->pmask & CD_MASK_NORMAL) != 0);
 
@@ -918,7 +910,7 @@ static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
 
   /* Sculpt can skip certain modifiers. */
   MultiresModifierData *mmd = get_multires_modifier(scene, ob, 0);
-  const bool has_multires = (mmd && mmd->sculptlvl != 0);
+  const bool has_multires = (mmd && BKE_multires_sculpt_level_get(mmd) != 0);
   bool multires_applied = false;
   const bool sculpt_mode = ob->mode & OB_MODE_SCULPT && ob->sculpt && !use_render;
   const bool sculpt_dyntopo = (sculpt_mode && ob->sculpt->bm) && !use_render;
@@ -1015,6 +1007,7 @@ static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
   }
 
   /* Apply all remaining constructive and deforming modifiers. */
+  bool have_non_onlydeform_modifiers_appled = false;
   for (; md; md = md->next, md_datamask = md_datamask->next) {
     const ModifierTypeInfo *mti = modifierType_getInfo(md->type);
 
@@ -1026,7 +1019,8 @@ static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
       continue;
     }
 
-    if ((mti->flags & eModifierTypeFlag_RequiresOriginalData) && mesh_final) {
+    if ((mti->flags & eModifierTypeFlag_RequiresOriginalData) &&
+        have_non_onlydeform_modifiers_appled) {
       modifier_setError(md, "Modifier requires original data, bad stack position");
       continue;
     }
@@ -1034,7 +1028,8 @@ static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
     if (sculpt_mode && (!has_multires || multires_applied || sculpt_dyntopo)) {
       bool unsupported = false;
 
-      if (md->type == eModifierType_Multires && ((MultiresModifierData *)md)->sculptlvl == 0) {
+      if (md->type == eModifierType_Multires &&
+          BKE_multires_sculpt_level_get((MultiresModifierData *)md) == 0) {
         /* If multires is on level 0 skip it silently without warning message. */
         if (!sculpt_dyntopo) {
           continue;
@@ -1101,15 +1096,17 @@ static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
       /* if this is not the last modifier in the stack then recalculate the normals
        * to avoid giving bogus normals to the next modifier see: [#23673] */
       else if (isPrevDeform && mti->dependsOnNormals && mti->dependsOnNormals(md)) {
-        /* XXX, this covers bug #23673, but we may need normal calc for other types */
-        if (mesh_final) {
-          BKE_mesh_vert_coords_apply(mesh_final, deformed_verts);
+        if (mesh_final == NULL) {
+          mesh_final = BKE_mesh_copy_for_eval(mesh_input, true);
+          ASSERT_IS_VALID_MESH(mesh_final);
         }
+        BKE_mesh_vert_coords_apply(mesh_final, deformed_verts);
       }
-
       modwrap_deformVerts(md, &mectx, mesh_final, deformed_verts, num_deformed_verts);
     }
     else {
+      have_non_onlydeform_modifiers_appled = true;
+
       /* determine which data layers are needed by following modifiers */
       CustomData_MeshMasks nextmask;
       if (md_datamask->next) {
@@ -1489,7 +1486,6 @@ static void editbmesh_calc_modifiers(struct Depsgraph *depsgraph,
 
   /* Modifier evaluation modes. */
   const int required_mode = eModifierMode_Realtime | eModifierMode_Editmode;
-  const bool do_init_statvis = false; /* FIXME: use V3D_OVERLAY_EDIT_STATVIS. */
 
   /* Modifier evaluation contexts for different types of modifiers. */
   const ModifierEvalContext mectx = {depsgraph, ob, MOD_APPLY_USECACHE};
@@ -1698,22 +1694,12 @@ static void editbmesh_calc_modifiers(struct Depsgraph *depsgraph,
   else if (!deformed_verts && mesh_cage) {
     /* cage should already have up to date normals */
     mesh_final = mesh_cage;
-
-    /* In this case, we should never have weight-modifying modifiers in stack... */
-    if (do_init_statvis) {
-      editmesh_update_statvis_color(scene, ob);
-    }
   }
   else {
     /* this is just a copy of the editmesh, no need to calc normals */
     mesh_final = BKE_mesh_from_editmesh_with_coords_thin_wrap(
         em_input, &final_datamask, deformed_verts, mesh_input);
     deformed_verts = NULL;
-
-    /* In this case, we should never have weight-modifying modifiers in stack... */
-    if (do_init_statvis) {
-      editmesh_update_statvis_color(scene, ob);
-    }
   }
 
   if (deformed_verts) {
@@ -1853,7 +1839,7 @@ static void editbmesh_build_data(struct Depsgraph *depsgraph,
                                  BMEditMesh *em,
                                  CustomData_MeshMasks *dataMask)
 {
-  BLI_assert(em->ob->id.tag & LIB_TAG_COPIED_ON_WRITE);
+  BLI_assert(obedit->id.tag & LIB_TAG_COPIED_ON_WRITE);
 
   BKE_object_free_derived_caches(obedit);
   if (DEG_is_active(depsgraph)) {

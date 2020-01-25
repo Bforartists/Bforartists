@@ -677,26 +677,23 @@ class AddGear(Operator):
     def execute(self, context):
         
         if bpy.context.mode == "OBJECT":
-            if self.change == True and self.change != None:
+            if context.selected_objects != [] and context.active_object and \
+            ('Gear' in context.active_object.data.keys()) and (self.change == True):
                 obj = context.active_object
-                if 'Gear' in obj.data.keys():
-                    oldmesh = obj.data
-                    oldmeshname = obj.data.name
-                    mesh, verts_tip, verts_valley = AddGearMesh(self, context)
-                    obj.data = mesh
-                    try:
-                        bpy.ops.object.vertex_group_remove(all=True)
-                    except:
-                        pass
-                    
-                    for material in oldmesh.materials:
-                        obj.data.materials.append(material)
-                    
-                    bpy.data.meshes.remove(oldmesh)
-                    obj.data.name = oldmeshname
-                else:
-                    mesh, verts_tip, verts_valley = AddGearMesh(self, context)
-                    obj = object_utils.object_data_add(context, mesh, operator=None)
+                oldmesh = obj.data
+                oldmeshname = obj.data.name
+                mesh, verts_tip, verts_valley = AddGearMesh(self, context)
+                obj.data = mesh
+                try:
+                    bpy.ops.object.vertex_group_remove(all=True)
+                except:
+                    pass
+                
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
+                
+                bpy.data.meshes.remove(oldmesh)
+                obj.data.name = oldmeshname
             else:
                 mesh, verts_tip, verts_valley = AddGearMesh(self, context)
                 obj = object_utils.object_data_add(context, mesh, operator=None)
@@ -878,27 +875,24 @@ class AddWormGear(Operator):
     def execute(self, context):
 
         if bpy.context.mode == "OBJECT":
-            if self.change == True and self.change != None:
+            if context.selected_objects != [] and context.active_object and \
+            ('WormGear' in context.active_object.data.keys()) and (self.change == True):
                 obj = context.active_object
-                if 'WormGear' in obj.data.keys():
-                    oldmesh = obj.data
-                    oldmeshname = obj.data.name
+                oldmesh = obj.data
+                oldmeshname = obj.data.name
 
-                    mesh, verts_tip, verts_valley = AddWormGearMesh(self, context)
-                    obj.data = mesh
-                    try:
-                        bpy.ops.object.vertex_group_remove(all=True)
-                    except:
-                        pass
+                mesh, verts_tip, verts_valley = AddWormGearMesh(self, context)
+                obj.data = mesh
+                try:
+                    bpy.ops.object.vertex_group_remove(all=True)
+                except:
+                    pass
+                
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
                     
-                    for material in oldmesh.materials:
-                        obj.data.materials.append(material)
-                        
-                    bpy.data.meshes.remove(oldmesh)
-                    obj.data.name = oldmeshname
-                else:
-                    mesh, verts_tip, verts_valley = AddWormGearMesh(self, context)
-                    obj = object_utils.object_data_add(context, mesh, operator=None)
+                bpy.data.meshes.remove(oldmesh)
+                obj.data.name = oldmeshname
             else:
                 mesh, verts_tip, verts_valley = AddWormGearMesh(self, context)
                 obj = object_utils.object_data_add(context, mesh, operator=None)

@@ -164,6 +164,7 @@ CCL_NAMESPACE_END
 #include "kernel/svm/svm_math_util.h"
 #include "kernel/svm/svm_mapping_util.h"
 
+#include "kernel/svm/svm_aov.h"
 #include "kernel/svm/svm_attribute.h"
 #include "kernel/svm/svm_gradient.h"
 #include "kernel/svm/svm_blackbody.h"
@@ -214,13 +215,11 @@ CCL_NAMESPACE_END
 
 CCL_NAMESPACE_BEGIN
 
-#define NODES_GROUP(group) ((group) <= __NODES_MAX_GROUP__)
-#define NODES_FEATURE(feature) ((__NODES_FEATURES__ & (feature)) != 0)
-
 /* Main Interpreter Loop */
 ccl_device_noinline void svm_eval_nodes(KernelGlobals *kg,
                                         ShaderData *sd,
                                         ccl_addr_space PathState *state,
+                                        ccl_global float *buffer,
                                         ShaderType type,
                                         int path_flag)
 {
@@ -312,7 +311,7 @@ ccl_device_noinline void svm_eval_nodes(KernelGlobals *kg,
 #  endif /* NODES_FEATURE(NODE_FEATURE_BUMP) */
 #  ifdef __TEXTURES__
       case NODE_TEX_IMAGE:
-        svm_node_tex_image(kg, sd, stack, node);
+        svm_node_tex_image(kg, sd, stack, node, &offset);
         break;
       case NODE_TEX_IMAGE_BOX:
         svm_node_tex_image_box(kg, sd, stack, node);
@@ -470,6 +469,17 @@ ccl_device_noinline void svm_eval_nodes(KernelGlobals *kg,
       case NODE_IES:
         svm_node_ies(kg, sd, stack, node, &offset);
         break;
+      case NODE_AOV_START:
+        if (!svm_node_aov_check(state, buffer)) {
+          return;
+        }
+        break;
+      case NODE_AOV_COLOR:
+        svm_node_aov_color(kg, sd, stack, node, buffer);
+        break;
+      case NODE_AOV_VALUE:
+        svm_node_aov_value(kg, sd, stack, node, buffer);
+        break;
 #  endif /* __EXTRA_NODES__ */
 #endif   /* NODES_GROUP(NODE_GROUP_LEVEL_2) */
 
@@ -544,9 +554,6 @@ ccl_device_noinline void svm_eval_nodes(KernelGlobals *kg,
     }
   }
 }
-
-#undef NODES_GROUP
-#undef NODES_FEATURE
 
 CCL_NAMESPACE_END
 

@@ -68,6 +68,49 @@ class TOPBAR_HT_upper_bar(Header):
             layout.template_running_jobs()
 
 
+class TOPBAR_PT_tool_settings_extra(Panel):
+    """
+    Popover panel for adding extra options that don't fit in the tool settings header
+    """
+    bl_idname = "TOPBAR_PT_tool_settings_extra"
+    bl_region_type = 'HEADER'
+    bl_space_type = 'TOPBAR'
+    bl_label = "Extra Options"
+
+    def draw(self, context):
+        from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
+        layout = self.layout
+
+        # Get the active tool
+        space_type, mode = ToolSelectPanelHelper._tool_key_from_context(
+            context)
+        cls = ToolSelectPanelHelper._tool_class_from_space_type(space_type)
+        item, tool, _ = cls._tool_get_active(
+            context, space_type, mode, with_icon=True)
+        if item is None:
+            return
+
+        # Draw the extra settings
+        item.draw_settings(context, layout, tool, extra=True)
+
+
+class TOPBAR_PT_tool_fallback(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Layers"
+    bl_ui_units_x = 8
+
+    def draw(self, context):
+        from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        ToolSelectPanelHelper.draw_fallback_tool_items(layout, context)
+        if tool_settings.workspace_tool_type == 'FALLBACK':
+            tool = context.tool
+            ToolSelectPanelHelper.draw_active_tool_fallback(context, layout, tool)
+
+
 class TOPBAR_PT_gpencil_layers(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
@@ -136,8 +179,8 @@ class TOPBAR_PT_gpencil_layers(Panel):
                 col.separator()
 
                 sub = col.column(align=True)
-                sub.operator("gpencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False
                 sub.operator("gpencil.layer_isolate", icon='HIDE_OFF', text="").affect_visibility = True
+                sub.operator("gpencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False
 
 
 class TOPBAR_MT_editor_menus(Menu):
@@ -154,6 +197,16 @@ class TOPBAR_MT_editor_menus(Menu):
 
         layout.menu("TOPBAR_MT_window")
         layout.menu("TOPBAR_MT_help")
+
+
+class TOPBAR_MT_file_cleanup(Menu):
+    bl_label = "Clean Up"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.separator()
+
+        layout.operator("outliner.orphans_purge")
 
 
 class TOPBAR_MT_file(Menu):
@@ -197,6 +250,7 @@ class TOPBAR_MT_file(Menu):
         layout.separator()
 
         layout.menu("TOPBAR_MT_file_external_data")
+        layout.menu("TOPBAR_MT_file_cleanup")
 
         layout.separator()
 
@@ -348,7 +402,9 @@ class TOPBAR_MT_file_export(Menu):
             self.layout.operator("wm.collada_export", text="Collada (Default) (.dae)", icon = "SAVE_DAE")
         if bpy.app.build_options.alembic:
             self.layout.operator("wm.alembic_export", text="Alembic (.abc)", icon = "SAVE_ABC")
-
+        if bpy.app.build_options.usd:
+            self.layout.operator(
+                "wm.usd_export", text="Universal Scene Description (.usd, .usdc, .usda)")
 
 class TOPBAR_MT_file_external_data(Menu):
     bl_label = "External Data"
@@ -623,28 +679,6 @@ class TOPBAR_PT_gpencil_primitive(Panel):
         layout.template_curve_mapping(settings, "thickness_primitive_curve", brush=True)
 
 
-# Grease Pencil Fill
-class TOPBAR_PT_gpencil_fill(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'HEADER'
-    bl_label = "Advanced"
-
-    def draw(self, context):
-        paint = context.tool_settings.gpencil_paint
-        brush = paint.brush
-        gp_settings = brush.gpencil_settings
-
-        layout = self.layout
-        # Fill
-        row = layout.row(align=True)
-        row.prop(gp_settings, "fill_factor", text="Resolution")
-        if gp_settings.fill_draw_mode != 'STROKE':
-            row = layout.row(align=True)
-            row.prop(gp_settings, "show_fill", text="Ignore Transparent Strokes")
-            row = layout.row(align=True)
-            row.prop(gp_settings, "fill_threshold", text="Threshold")
-
-
 # Only a popover
 class TOPBAR_PT_name(Panel):
     bl_space_type = 'TOPBAR'  # dummy
@@ -721,15 +755,17 @@ classes = (
     TOPBAR_MT_file_import,
     TOPBAR_MT_file_export,
     TOPBAR_MT_file_external_data,
+    TOPBAR_MT_file_cleanup,
     TOPBAR_MT_file_previews,
     TOPBAR_MT_edit,
     TOPBAR_MT_render,
     TOPBAR_MT_opengl_render,
     TOPBAR_MT_window,
     TOPBAR_MT_help,
+    TOPBAR_PT_tool_fallback,
+    TOPBAR_PT_tool_settings_extra,
     TOPBAR_PT_gpencil_layers,
     TOPBAR_PT_gpencil_primitive,
-    TOPBAR_PT_gpencil_fill,
     TOPBAR_PT_name,
 )
 

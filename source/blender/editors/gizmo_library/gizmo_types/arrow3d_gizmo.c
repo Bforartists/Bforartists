@@ -22,17 +22,18 @@
  *
  * \name Arrow Gizmo
  *
- * 3D Gizmo
+ * 2D/3D Gizmo
  *
  * \brief Simple arrow gizmo which is dragged into a certain direction.
  * The arrow head can have varying shapes, e.g. cone, box, etc.
  *
  * - `matrix[0]` is derived from Y and Z.
  * - `matrix[1]` is 'up' for gizmo types that have an up.
- * - `matrix[2]` is the arrow direction (for all arrowes).
+ * - `matrix[2]` is the arrow direction (for all arrows).
  */
 
 #include "BLI_math.h"
+#include "BLI_utildefines.h"
 
 #include "DNA_view3d_types.h"
 
@@ -55,6 +56,8 @@
 #include "ED_view3d.h"
 #include "ED_screen.h"
 #include "ED_gizmo_library.h"
+
+#include "UI_interface.h"
 
 /* own includes */
 #include "../gizmo_geometry.h"
@@ -214,6 +217,50 @@ static void gizmo_arrow_draw(const bContext *UNUSED(C), wmGizmo *gz)
 }
 
 /**
+ * Selection for 2D views.
+ */
+static int gizmo_arrow_test_select(bContext *UNUSED(C), wmGizmo *gz, const int mval[2])
+{
+  /* Project into 2D space since it simplifies pixel threshold tests. */
+  ArrowGizmo3D *arrow = (ArrowGizmo3D *)gz;
+  const float arrow_length = RNA_float_get(arrow->gizmo.ptr, "length");
+
+  float matrix_final[4][4];
+  WM_gizmo_calc_matrix_final(gz, matrix_final);
+
+  /* Arrow in pixel space. */
+  float arrow_start[2] = {matrix_final[3][0], matrix_final[3][1]};
+  float arrow_end[2];
+  {
+    float co[3] = {0, 0, arrow_length};
+    mul_m4_v3(matrix_final, co);
+    copy_v2_v2(arrow_end, co);
+  }
+
+  const float mval_fl[2] = {UNPACK2(mval)};
+  const float arrow_stem_threshold_px = 5 * UI_DPI_FAC;
+  const float arrow_head_threshold_px = 12 * UI_DPI_FAC;
+
+  /* Distance to arrow head. */
+  if (len_squared_v2v2(mval_fl, arrow_end) < SQUARE(arrow_head_threshold_px)) {
+    return 0;
+  }
+
+  /* Distance to arrow stem. */
+  float co_isect[2];
+  const float lambda = closest_to_line_v2(co_isect, mval_fl, arrow_start, arrow_end);
+  /* Clamp inside the line, to avoid overlapping with other gizmos,
+   * especially around the start of the arrow. */
+  if (lambda >= 0.0 && lambda <= 1.0) {
+    if (len_squared_v2v2(mval_fl, co_isect) < SQUARE(arrow_stem_threshold_px)) {
+      return 0;
+    }
+  }
+
+  return -1;
+}
+
+/**
  * Calculate arrow offset independent from prop min value,
  * meaning the range will not be offset by min value first.
  */
@@ -361,7 +408,14 @@ static void gizmo_arrow_exit(bContext *C, wmGizmo *gz, const bool cancel)
   wmGizmoProperty *gz_prop = WM_gizmo_target_property_find(gz, "offset");
   const bool is_prop_valid = WM_gizmo_target_property_is_valid(gz_prop);
 
-  if (!cancel) {
+  if (cancel) {
+    GizmoInteraction *inter = gz->interaction_data;
+    if (is_prop_valid) {
+      gizmo_property_value_reset(C, gz, inter, gz_prop);
+    }
+    data->offset = inter->init_offset;
+  }
+  else {
     /* Assign in case applying the operation needs an updated offset
      * edit-mesh bisect needs this. */
     if (is_prop_valid) {
@@ -371,14 +425,13 @@ static void gizmo_arrow_exit(bContext *C, wmGizmo *gz, const bool cancel)
       const float value = WM_gizmo_target_property_float_get(gz, gz_prop);
       data->offset = gizmo_offset_from_value(data, value, constrained, inverted);
     }
-    return;
   }
 
-  GizmoInteraction *inter = gz->interaction_data;
-  if (is_prop_valid) {
-    gizmo_property_value_reset(C, gz, inter, gz_prop);
+  if (!cancel) {
+    if (is_prop_valid) {
+      WM_gizmo_target_property_anim_autokey(C, gz, gz_prop);
+    }
   }
-  data->offset = inter->init_offset;
 }
 
 /* -------------------------------------------------------------------- */
@@ -427,6 +480,7 @@ static void GIZMO_GT_arrow_3d(wmGizmoType *gzt)
   /* api callbacks */
   gzt->draw = gizmo_arrow_draw;
   gzt->draw_select = gizmo_arrow_draw_select;
+  gzt->test_select = gizmo_arrow_test_select;
   gzt->matrix_basis_get = gizmo_arrow_matrix_basis_get;
   gzt->modal = gizmo_arrow_modal;
   gzt->setup = gizmo_arrow_setup;

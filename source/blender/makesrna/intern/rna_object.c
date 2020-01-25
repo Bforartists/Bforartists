@@ -25,6 +25,7 @@
 #include "DNA_brush_types.h"
 #include "DNA_collection_types.h"
 #include "DNA_customdata_types.h"
+#include "DNA_lightprobe_types.h"
 #include "DNA_material_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_object_force_types.h"
@@ -145,9 +146,9 @@ static const EnumPropertyItem rna_enum_object_empty_image_depth_items[] = {
 };
 
 const EnumPropertyItem rna_enum_object_gpencil_type_items[] = {
-    {GP_EMPTY, "EMPTY", ICON_EMPTY_AXIS, "Blank", "Create an empty grease pencil object"},
-    {GP_STROKE, "STROKE", ICON_STROKE, "Stroke", "Create a simple stroke with basic colors"},
-    {GP_MONKEY, "MONKEY", ICON_MONKEY, "Monkey", "Construct a Suzanne grease pencil object"},
+    {GP_EMPTY, "EMPTY", ICON_EMPTY_AXIS, "Blank", "Create an empty grease pencil object\nSwitch to Draw mode to draw grease pencil strokes"},
+    {GP_STROKE, "STROKE", ICON_STROKE, "Stroke", "Create a simple stroke with basic colors\nSwitch to Draw mode to draw grease pencil strokes"},
+    {GP_MONKEY, "MONKEY", ICON_MONKEY, "Monkey", "Construct a Suzanne grease pencil object\nSwitch to Draw mode to draw grease pencil strokes"},
     {0, NULL, 0, NULL, NULL}};
 
 static const EnumPropertyItem parent_type_items[] = {
@@ -193,6 +194,13 @@ const EnumPropertyItem rna_enum_metaelem_type_items[] = {
     /* NOTE: typo at original definition! */
     {MB_ELIPSOID, "ELLIPSOID", ICON_META_ELLIPSOID, "Ellipsoid", ""},
     {MB_CUBE, "CUBE", ICON_META_CUBE, "Cube", ""},
+    {0, NULL, 0, NULL, NULL},
+};
+
+const EnumPropertyItem rna_enum_lightprobes_type_items[] = {
+    {LIGHTPROBE_TYPE_CUBE, "CUBE", ICON_LIGHTPROBE_CUBEMAP, "Cube", ""},
+    {LIGHTPROBE_TYPE_PLANAR, "PLANAR", ICON_LIGHTPROBE_PLANAR, "Planar", ""},
+    {LIGHTPROBE_TYPE_GRID, "GRID", ICON_LIGHTPROBE_GRID, "Grid", ""},
     {0, NULL, 0, NULL, NULL},
 };
 

@@ -18,7 +18,7 @@
 # Contributed to by guy lateur, Alexander Meißner (Lichtso),
 # Dealga McArdle (zeffii), Marvin.K.Breuer (MKB),
 # Spivak Vladimir (cwolf3d)
-# Origunally an addon by Mackraken
+# Originally an addon by Mackraken
 
 
 bl_info = {

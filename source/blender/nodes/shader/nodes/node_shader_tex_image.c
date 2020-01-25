@@ -74,6 +74,12 @@ static int node_shader_gpu_tex_image(GPUMaterial *mat,
       "node_tex_image_cubic",
       "node_tex_image_smart",
   };
+  static const char *names_tiled[] = {
+      "node_tex_tile_linear",
+      "node_tex_tile_nearest",
+      "node_tex_tile_cubic",
+      "node_tex_tile_smart",
+  };
   static const char *names_box[] = {
       "tex_box_sample_linear",
       "tex_box_sample_nearest",
@@ -123,60 +129,87 @@ static int node_shader_gpu_tex_image(GPUMaterial *mat,
 
   node_shader_gpu_tex_mapping(mat, node, in, out);
 
-  switch (tex->projection) {
-    case SHD_PROJ_FLAT:
-      if (do_texco_clip) {
-        GPU_link(mat, "set_rgb", *texco, &input_coords);
-      }
-      if (do_texco_extend) {
-        GPU_link(mat, "point_texco_clamp", *texco, GPU_image(ima, iuser), texco);
-      }
-      GPU_stack_link(mat, node, gpu_node_name, in, out, GPU_image(ima, iuser));
-      break;
-
-    case SHD_PROJ_BOX:
-      vnor = GPU_builtin(GPU_WORLD_NORMAL);
-      ob_mat = GPU_builtin(GPU_OBJECT_MATRIX);
-      blend = GPU_uniform(&tex->projection_blend);
-      gpu_image = GPU_image(ima, iuser);
-
-      /* equivalent to normal_world_to_object */
-      GPU_link(mat, "normal_transform_transposed_m4v3", vnor, ob_mat, &norm);
-      GPU_link(mat, gpu_node_name, *texco, norm, GPU_image(ima, iuser), &col1, &col2, &col3);
-      GPU_stack_link(
-          mat, node, "node_tex_image_box", in, out, norm, col1, col2, col3, gpu_image, blend);
-      break;
-
-    case SHD_PROJ_SPHERE:
-      GPU_link(mat, "point_texco_remap_square", *texco, texco);
-      GPU_link(mat, "point_map_to_sphere", *texco, texco);
-      if (do_texco_clip) {
-        GPU_link(mat, "set_rgb", *texco, &input_coords);
-      }
-      if (do_texco_extend) {
-        GPU_link(mat, "point_texco_clamp", *texco, GPU_image(ima, iuser), texco);
-      }
-      GPU_stack_link(mat, node, gpu_node_name, in, out, GPU_image(ima, iuser));
-      break;
-
-    case SHD_PROJ_TUBE:
-      GPU_link(mat, "point_texco_remap_square", *texco, texco);
-      GPU_link(mat, "point_map_to_tube", *texco, texco);
-      if (do_texco_clip) {
-        GPU_link(mat, "set_rgb", *texco, &input_coords);
-      }
-      if (do_texco_extend) {
-        GPU_link(mat, "point_texco_clamp", *texco, GPU_image(ima, iuser), texco);
-      }
-      GPU_stack_link(mat, node, gpu_node_name, in, out, GPU_image(ima, iuser));
-      break;
+  if (ima->source == IMA_SRC_TILED) {
+    /* The tiled shader needs both the tile array itself as well as the mapping from tile to array
+     * position. Which of these to allocate is automatically decided based on the shader argument
+     * type, so here the first GPU_image(ima, iuser) will resolve to the array and the second to
+     * the mapping since the third argument in the shader has type sampler2DArray while
+     * the fourth is sampler1DArray.
+     */
+    GPU_stack_link(mat,
+                   node,
+                   names_tiled[tex->interpolation],
+                   in,
+                   out,
+                   GPU_image(ima, iuser),
+                   GPU_image(ima, iuser));
   }
+  else {
+    switch (tex->projection) {
+      case SHD_PROJ_FLAT:
+        if (do_texco_clip) {
+          /* This seems redundant, but is required to ensure the texco link
+           * is not freed by GPU_link, as it is still needed for GPU_stack_link.
+           * Intermediate links like this can only be used once and are then
+           * freed immediately, but if we make it the output link of a set_rgb
+           * node it will be kept and can be used multiple times. */
+          GPU_link(mat, "set_rgb", *texco, texco);
+          GPU_link(mat, "set_rgb", *texco, &input_coords);
+        }
+        if (do_texco_extend) {
+          GPU_link(mat, "point_texco_clamp", *texco, GPU_image(ima, iuser), texco);
+        }
+        GPU_stack_link(mat, node, gpu_node_name, in, out, GPU_image(ima, iuser));
+        break;
 
-  if (tex->projection != SHD_PROJ_BOX) {
-    if (do_texco_clip) {
-      gpu_node_name = names_clip[tex->interpolation];
-      in[0].link = input_coords;
-      GPU_stack_link(mat, node, gpu_node_name, in, out, GPU_image(ima, iuser), out[0].link);
+      case SHD_PROJ_BOX:
+        vnor = GPU_builtin(GPU_WORLD_NORMAL);
+        ob_mat = GPU_builtin(GPU_OBJECT_MATRIX);
+        blend = GPU_uniform(&tex->projection_blend);
+        gpu_image = GPU_image(ima, iuser);
+
+        /* equivalent to normal_world_to_object */
+        GPU_link(mat, "normal_transform_transposed_m4v3", vnor, ob_mat, &norm);
+        GPU_link(mat, gpu_node_name, *texco, norm, GPU_image(ima, iuser), &col1, &col2, &col3);
+        GPU_stack_link(
+            mat, node, "node_tex_image_box", in, out, norm, col1, col2, col3, gpu_image, blend);
+        break;
+
+      case SHD_PROJ_SPHERE:
+        GPU_link(mat, "point_texco_remap_square", *texco, texco);
+        GPU_link(mat, "point_map_to_sphere", *texco, texco);
+        if (do_texco_clip) {
+          /* See SHD_PROJ_FLAT for explanation. */
+          GPU_link(mat, "set_rgb", *texco, texco);
+          GPU_link(mat, "set_rgb", *texco, &input_coords);
+        }
+        if (do_texco_extend) {
+          GPU_link(mat, "point_texco_clamp", *texco, GPU_image(ima, iuser), texco);
+        }
+        GPU_stack_link(mat, node, gpu_node_name, in, out, GPU_image(ima, iuser));
+        break;
+
+      case SHD_PROJ_TUBE:
+        GPU_link(mat, "point_texco_remap_square", *texco, texco);
+        GPU_link(mat, "point_map_to_tube", *texco, texco);
+        if (do_texco_clip) {
+          /* See SHD_PROJ_FLAT for explanation. */
+          GPU_link(mat, "set_rgb", *texco, texco);
+          GPU_link(mat, "set_rgb", *texco, &input_coords);
+        }
+        if (do_texco_extend) {
+          GPU_link(mat, "point_texco_clamp", *texco, GPU_image(ima, iuser), texco);
+        }
+        GPU_stack_link(mat, node, gpu_node_name, in, out, GPU_image(ima, iuser));
+        break;
+    }
+
+    if (tex->projection != SHD_PROJ_BOX) {
+      if (do_texco_clip) {
+        gpu_node_name = names_clip[tex->interpolation];
+        in[0].link = input_coords;
+        GPU_stack_link(mat, node, gpu_node_name, in, out, GPU_image(ima, iuser), out[0].link);
+      }
     }
   }
 

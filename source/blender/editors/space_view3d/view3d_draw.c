@@ -796,7 +796,7 @@ void ED_view3d_draw_depth(Depsgraph *depsgraph, ARegion *ar, View3D *v3d, bool a
 
   GPU_clear(GPU_DEPTH_BIT);
 
-  if (rv3d->rflag & RV3D_CLIPPING) {
+  if (RV3D_CLIPPING_ENABLED(v3d, rv3d)) {
     ED_view3d_clipping_set(rv3d);
   }
   /* get surface depth without bias */
@@ -817,7 +817,7 @@ void ED_view3d_draw_depth(Depsgraph *depsgraph, ARegion *ar, View3D *v3d, bool a
 
   WM_draw_region_viewport_unbind(ar);
 
-  if (rv3d->rflag & RV3D_CLIPPING) {
+  if (RV3D_CLIPPING_ENABLED(v3d, rv3d)) {
     ED_view3d_clipping_disable();
   }
   rv3d->rflag &= ~RV3D_ZOFFSET_DISABLED;
@@ -1121,13 +1121,6 @@ static void draw_rotation_guide(const RegionView3D *rv3d)
   immEnd();
   immUnbindProgram();
 
-#  if 0
-  /* find screen coordinates for rotation center, then draw pretty icon */
-  mul_m4_v3(rv3d->persinv, rot_center);
-  UI_icon_draw(rot_center[0], rot_center[1], ICON_NDOF_TURN);
-  /* ^^ just playing around, does not work */
-#  endif
-
   GPU_blend(false);
   glDepthMask(GL_TRUE);
 }
@@ -1287,8 +1280,8 @@ static void draw_viewport_name(ARegion *ar, View3D *v3d, int xoffset, int *yoffs
 }
 
 /**
- * draw info beside axes in bottom left-corner:
- * framenum, collection, object name, bone name (if available), marker name (if available)
+ * Draw info beside axes in bottom left-corner:
+ * frame-number, collection, object name, bone name (if available), marker name (if available).
  */
 
 static void draw_selected_name(
@@ -1695,7 +1688,6 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(Depsgraph *depsgraph,
                                       int sizey,
                                       uint flag,
                                       int alpha_mode,
-                                      int samples,
                                       const char *viewname,
                                       /* output vars */
                                       GPUOffScreen *ofs,
@@ -1724,7 +1716,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(Depsgraph *depsgraph,
 
   if (own_ofs) {
     /* bind */
-    ofs = GPU_offscreen_create(sizex, sizey, samples, true, false, err_out);
+    ofs = GPU_offscreen_create(sizex, sizey, 0, true, false, err_out);
     if (ofs == NULL) {
       DRW_opengl_context_disable();
       return NULL;
@@ -1842,7 +1834,6 @@ ImBuf *ED_view3d_draw_offscreen_imbuf_simple(Depsgraph *depsgraph,
                                              uint flag,
                                              uint draw_flags,
                                              int alpha_mode,
-                                             int samples,
                                              const char *viewname,
                                              GPUOffScreen *ofs,
                                              char err_out[256])
@@ -1866,9 +1857,11 @@ ImBuf *ED_view3d_draw_offscreen_imbuf_simple(Depsgraph *depsgraph,
 
   if (drawtype == OB_MATERIAL) {
     v3d.shading.flag = V3D_SHADING_SCENE_WORLD | V3D_SHADING_SCENE_LIGHTS;
+    v3d.shading.render_pass = SCE_PASS_COMBINED;
   }
   else if (drawtype == OB_RENDER) {
     v3d.shading.flag = V3D_SHADING_SCENE_WORLD_RENDER | V3D_SHADING_SCENE_LIGHTS_RENDER;
+    v3d.shading.render_pass = SCE_PASS_COMBINED;
   }
 
   v3d.flag2 = V3D_HIDE_OVERLAYS;
@@ -1914,7 +1907,6 @@ ImBuf *ED_view3d_draw_offscreen_imbuf_simple(Depsgraph *depsgraph,
                                         height,
                                         flag,
                                         alpha_mode,
-                                        samples,
                                         viewname,
                                         ofs,
                                         err_out);

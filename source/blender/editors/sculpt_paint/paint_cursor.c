@@ -252,14 +252,14 @@ static int load_tex(Brush *br, ViewContext *vc, float zoom, bool col, bool prima
   TexSnapshot *target;
 
   MTex *mtex = (primary) ? &br->mtex : &br->mask_mtex;
-  eOverlayControlFlags overlay_flags = BKE_paint_get_overlay_flags();
+  ePaintOverlayControlFlags overlay_flags = BKE_paint_get_overlay_flags();
   GLubyte *buffer = NULL;
 
   int size;
   bool refresh;
-  eOverlayControlFlags invalid = ((primary) ?
-                                      (overlay_flags & PAINT_OVERLAY_INVALID_TEXTURE_PRIMARY) :
-                                      (overlay_flags & PAINT_OVERLAY_INVALID_TEXTURE_SECONDARY));
+  ePaintOverlayControlFlags invalid =
+      ((primary) ? (overlay_flags & PAINT_OVERLAY_INVALID_TEXTURE_PRIMARY) :
+                   (overlay_flags & PAINT_OVERLAY_INVALID_TEXTURE_SECONDARY));
   target = (primary) ? &primary_snap : &secondary_snap;
 
   refresh = !target->overlay_texture || (invalid != 0) ||
@@ -422,7 +422,7 @@ static int load_tex_cursor(Brush *br, ViewContext *vc, float zoom)
 {
   bool init;
 
-  eOverlayControlFlags overlay_flags = BKE_paint_get_overlay_flags();
+  ePaintOverlayControlFlags overlay_flags = BKE_paint_get_overlay_flags();
   GLubyte *buffer = NULL;
 
   int size;
@@ -648,7 +648,7 @@ static bool paint_draw_tex_overlay(UnifiedPaintSettings *ups,
       GPU_matrix_translate_2f(-x, -y);
 
       /* scale based on tablet pressure */
-      if (primary && ups->stroke_active && BKE_brush_use_size_pressure(vc->scene, brush)) {
+      if (primary && ups->stroke_active && BKE_brush_use_size_pressure(brush)) {
         const float scale = ups->size_pressure_value;
         GPU_matrix_translate_2f(x, y);
         GPU_matrix_scale_2f(scale, scale);
@@ -778,7 +778,7 @@ static bool paint_draw_cursor_overlay(
     }
 
     /* scale based on tablet pressure */
-    if (ups->stroke_active && BKE_brush_use_size_pressure(vc->scene, brush)) {
+    if (ups->stroke_active && BKE_brush_use_size_pressure(brush)) {
       do_pop = true;
       GPU_matrix_push();
       GPU_matrix_translate_2fv(center);
@@ -836,7 +836,7 @@ static bool paint_draw_alpha_overlay(UnifiedPaintSettings *ups,
 
   bool alpha_overlay_active = false;
 
-  eOverlayControlFlags flags = BKE_paint_get_overlay_flags();
+  ePaintOverlayControlFlags flags = BKE_paint_get_overlay_flags();
   gpuPushAttr(GPU_DEPTH_BUFFER_BIT | GPU_BLEND_BIT);
 
   /* Translate to region. */
@@ -1075,7 +1075,7 @@ static void paint_cursor_on_hit(UnifiedPaintSettings *ups,
     unprojected_radius = paint_calc_object_space_radius(vc, location, projected_radius);
 
     /* scale 3D brush radius by pressure */
-    if (ups->stroke_active && BKE_brush_use_size_pressure(vc->scene, brush)) {
+    if (ups->stroke_active && BKE_brush_use_size_pressure(brush)) {
       unprojected_radius *= ups->size_pressure_value;
     }
 
@@ -1214,6 +1214,70 @@ static void sculpt_geometry_preview_lines_draw(const uint gpuattr, SculptSession
   }
 }
 
+static void sculpt_multiplane_scrape_preview_draw(const uint gpuattr,
+                                                  SculptSession *ss,
+                                                  const float outline_col[3],
+                                                  float outline_alpha)
+{
+  float local_mat_inv[4][4];
+  invert_m4_m4(local_mat_inv, ss->cache->stroke_local_mat);
+  GPU_matrix_mul(local_mat_inv);
+  float angle = ss->cache->multiplane_scrape_sampled_angle;
+  if (ss->cache->pen_flip || ss->cache->invert) {
+    angle = -angle;
+  }
+
+  float offset = ss->cache->radius * 0.25f;
+
+  float p[3] = {0.0f, 0.0f, ss->cache->radius};
+  float y_axis[3] = {0.0f, 1.0f, 0.0f};
+  float p_l[3];
+  float p_r[3];
+  float area_center[3] = {0.0f, 0.0f, 0.0f};
+  rotate_v3_v3v3fl(p_r, p, y_axis, DEG2RADF((angle + 180) * 0.5f));
+  rotate_v3_v3v3fl(p_l, p, y_axis, DEG2RADF(-(angle + 180) * 0.5f));
+
+  immBegin(GPU_PRIM_LINES, 14);
+  immVertex3f(gpuattr, area_center[0], area_center[1] + offset, area_center[2]);
+  immVertex3f(gpuattr, p_r[0], p_r[1] + offset, p_r[2]);
+  immVertex3f(gpuattr, area_center[0], area_center[1] + offset, area_center[2]);
+  immVertex3f(gpuattr, p_l[0], p_l[1] + offset, p_l[2]);
+
+  immVertex3f(gpuattr, area_center[0], area_center[1] - offset, area_center[2]);
+  immVertex3f(gpuattr, p_r[0], p_r[1] - offset, p_r[2]);
+  immVertex3f(gpuattr, area_center[0], area_center[1] - offset, area_center[2]);
+  immVertex3f(gpuattr, p_l[0], p_l[1] - offset, p_l[2]);
+
+  immVertex3f(gpuattr, area_center[0], area_center[1] - offset, area_center[2]);
+  immVertex3f(gpuattr, area_center[0], area_center[1] + offset, area_center[2]);
+
+  immVertex3f(gpuattr, p_r[0], p_r[1] - offset, p_r[2]);
+  immVertex3f(gpuattr, p_r[0], p_r[1] + offset, p_r[2]);
+
+  immVertex3f(gpuattr, p_l[0], p_l[1] - offset, p_l[2]);
+  immVertex3f(gpuattr, p_l[0], p_l[1] + offset, p_l[2]);
+
+  immEnd();
+
+  immUniformColor3fvAlpha(outline_col, outline_alpha * 0.1f);
+  immBegin(GPU_PRIM_TRIS, 12);
+  immVertex3f(gpuattr, area_center[0], area_center[1] + offset, area_center[2]);
+  immVertex3f(gpuattr, p_r[0], p_r[1] + offset, p_r[2]);
+  immVertex3f(gpuattr, p_r[0], p_r[1] - offset, p_r[2]);
+  immVertex3f(gpuattr, area_center[0], area_center[1] + offset, area_center[2]);
+  immVertex3f(gpuattr, area_center[0], area_center[1] - offset, area_center[2]);
+  immVertex3f(gpuattr, p_r[0], p_r[1] - offset, p_r[2]);
+
+  immVertex3f(gpuattr, area_center[0], area_center[1] + offset, area_center[2]);
+  immVertex3f(gpuattr, p_l[0], p_l[1] + offset, p_l[2]);
+  immVertex3f(gpuattr, p_l[0], p_l[1] - offset, p_l[2]);
+  immVertex3f(gpuattr, area_center[0], area_center[1] + offset, area_center[2]);
+  immVertex3f(gpuattr, area_center[0], area_center[1] - offset, area_center[2]);
+  immVertex3f(gpuattr, p_l[0], p_l[1] - offset, p_l[2]);
+
+  immEnd();
+}
+
 static bool paint_use_2d_cursor(ePaintMode mode)
 {
   if (mode >= PAINT_MODE_TEXTURE_3D) {
@@ -1265,7 +1329,7 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
 
   /* set various defaults */
   const float *outline_col = brush->add_col;
-  const float outline_alpha = 0.7f;
+  const float outline_alpha = brush->add_col[3];
   float translation[2] = {x, y};
   float final_radius = (BKE_brush_size_get(scene, brush) * zoomx);
 
@@ -1298,7 +1362,7 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
     immUniformColor3fvAlpha(outline_col, outline_alpha);
 
     /* draw brush outline */
-    if (ups->stroke_active && BKE_brush_use_size_pressure(scene, brush)) {
+    if (ups->stroke_active && BKE_brush_use_size_pressure(brush)) {
       imm_draw_circle_wire_2d(
           pos, translation[0], translation[1], final_radius * ups->size_pressure_value, 40);
       /* outer at half alpha */
@@ -1343,7 +1407,7 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
 
     immUniformColor3fvAlpha(outline_col, outline_alpha);
 
-    if (ups->stroke_active && BKE_brush_use_size_pressure(scene, brush)) {
+    if (ups->stroke_active && BKE_brush_use_size_pressure(brush) && mode != PAINT_MODE_SCULPT) {
       imm_draw_circle_wire_3d(
           pos, translation[0], translation[1], final_radius * ups->size_pressure_value, 40);
       /* outer at half alpha */
@@ -1397,15 +1461,30 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
             cursor_draw_point_with_symmetry(pos, ar, gi.active_vertex_co, sd, vc.obact, rds);
           }
 
-          /* Draw pose brush origin */
+          /* Draw pose brush origins. */
           if (brush->sculpt_tool == SCULPT_TOOL_POSE) {
             immUniformColor4f(1.0f, 1.0f, 1.0f, 0.8f);
             if (update_previews) {
               BKE_sculpt_update_object_for_edit(depsgraph, vc.obact, true, false);
-              sculpt_pose_calc_pose_data(
-                  sd, vc.obact, ss, gi.location, rds, brush->pose_offset, ss->pose_origin, NULL);
+
+              /* Free the previous pose brush preview. */
+              if (ss->pose_ik_chain_preview) {
+                sculpt_pose_ik_chain_free(ss->pose_ik_chain_preview);
+              }
+
+              /* Generate a new pose brush preview from the current cursor location. */
+              ss->pose_ik_chain_preview = sculpt_pose_ik_chain_init(
+                  sd, vc.obact, ss, brush, gi.location, rds);
             }
-            cursor_draw_point_screen_space(pos, ar, ss->pose_origin, vc.obact->obmat, 5);
+
+            /* Draw the pose brush rotation origins. */
+            for (int i = 0; i < ss->pose_ik_chain_preview->tot_segments; i++) {
+              cursor_draw_point_screen_space(pos,
+                                             ar,
+                                             ss->pose_ik_chain_preview->segments[i].initial_orig,
+                                             vc.obact->obmat,
+                                             3);
+            }
           }
 
           /* Draw 3D brush cursor */
@@ -1454,9 +1533,13 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
           if (brush->sculpt_tool == SCULPT_TOOL_POSE) {
             immUniformColor4f(1.0f, 1.0f, 1.0f, 0.8f);
             GPU_line_width(2.0f);
-            immBegin(GPU_PRIM_LINES, 2);
-            immVertex3fv(pos, ss->pose_origin);
-            immVertex3fv(pos, gi.location);
+
+            immBegin(GPU_PRIM_LINES, ss->pose_ik_chain_preview->tot_segments * 2);
+            for (int i = 0; i < ss->pose_ik_chain_preview->tot_segments; i++) {
+              immVertex3fv(pos, ss->pose_ik_chain_preview->segments[i].initial_orig);
+              immVertex3fv(pos, ss->pose_ik_chain_preview->segments[i].initial_head);
+            }
+
             immEnd();
           }
 
@@ -1483,16 +1566,7 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
       }
       else {
         if (vc.obact->sculpt->cache && !vc.obact->sculpt->cache->first_time) {
-          /* Draw cursor location preview when the stroke is active using the data from StrokeCache
-           */
-          float cursor_location[3];
           wmViewport(&ar->winrct);
-          copy_v3_v3(cursor_location, ss->cache->true_location);
-          if (ss->cache->brush->sculpt_tool == SCULPT_TOOL_GRAB) {
-            add_v3_v3(cursor_location, ss->cache->grab_delta);
-          }
-          cursor_draw_point_with_symmetry(
-              pos, ar, cursor_location, sd, vc.obact, ss->cache->radius);
 
           /* Draw cached dynamic mesh preview lines */
           if (brush->sculpt_tool == SCULPT_TOOL_GRAB && (brush->flag & BRUSH_GRAB_ACTIVE_VERTEX) &&
@@ -1513,6 +1587,24 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
               GPU_matrix_pop();
               GPU_matrix_pop_projection();
             }
+          }
+
+          if (brush->sculpt_tool == SCULPT_TOOL_MULTIPLANE_SCRAPE &&
+              brush->flag2 & BRUSH_MULTIPLANE_SCRAPE_PLANES_PREVIEW && !ss->cache->first_time) {
+            GPU_matrix_push_projection();
+            ED_view3d_draw_setup_view(CTX_wm_window(C),
+                                      CTX_data_depsgraph_pointer(C),
+                                      CTX_data_scene(C),
+                                      ar,
+                                      CTX_wm_view3d(C),
+                                      NULL,
+                                      NULL,
+                                      NULL);
+            GPU_matrix_push();
+            GPU_matrix_mul(vc.obact->obmat);
+            sculpt_multiplane_scrape_preview_draw(pos, ss, outline_col, outline_alpha);
+            GPU_matrix_pop();
+            GPU_matrix_pop_projection();
           }
 
           wmWindowViewport(win);

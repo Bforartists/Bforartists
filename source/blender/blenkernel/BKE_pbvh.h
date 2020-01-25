@@ -40,15 +40,14 @@ struct CustomData;
 struct DMFlagMat;
 struct GPU_PBVH_Buffers;
 struct IsectRayPrecalc;
-struct Mesh;
 struct MLoop;
 struct MLoopTri;
 struct MPoly;
 struct MVert;
+struct Mesh;
 struct PBVH;
 struct PBVHNode;
 struct SubdivCCG;
-struct TaskParallelSettings;
 struct TaskParallelTLS;
 
 typedef struct PBVH PBVH;
@@ -280,7 +279,7 @@ bool BKE_pbvh_node_frustum_exclude_AABB(PBVHNode *node, void *frustum);
 struct GSet *BKE_pbvh_bmesh_node_unique_verts(PBVHNode *node);
 struct GSet *BKE_pbvh_bmesh_node_other_verts(PBVHNode *node);
 struct GSet *BKE_pbvh_bmesh_node_faces(PBVHNode *node);
-void BKE_pbvh_bmesh_node_save_orig(PBVHNode *node);
+void BKE_pbvh_bmesh_node_save_orig(struct BMesh *bm, PBVHNode *node);
 void BKE_pbvh_bmesh_after_stroke(PBVH *bvh);
 
 /* Update Bounding Box/Redraw and clear flags */

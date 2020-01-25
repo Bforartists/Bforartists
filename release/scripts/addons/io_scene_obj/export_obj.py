@@ -47,9 +47,6 @@ def mesh_triangulate(me):
 
 
 def write_mtl(scene, filepath, path_mode, copy_set, mtl_dict):
-    world = scene.world
-    world_amb = Color((0.8, 0.8, 0.8))
-
     source_dir = os.path.dirname(bpy.data.filepath)
     dest_dir = os.path.dirname(filepath)
 

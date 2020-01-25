@@ -716,21 +716,6 @@ def NoiseCurve(type=0, number=100, length=2.0, size=0.5,
     return newpoints
 
 
-# ------------------------------------------------------------
-# calculates the matrix for the new object
-# depending on user pref
-def align_matrix(context, location):
-    loc = Matrix.Translation(location)
-    obj_align = context.preferences.edit.object_align
-    if (context.space_data.type == 'VIEW_3D' and
-            obj_align == 'VIEW'):
-        rot = context.space_data.region_3d.view_matrix.to_3x3().inverted().to_4x4()
-    else:
-        rot = Matrix()
-    align_matrix = loc @ rot
-
-    return align_matrix
-
 # get array of vertcoordinates according to splinetype
 def vertsToPoints(Verts, splineType):
 
@@ -756,7 +741,7 @@ def vertsToPoints(Verts, splineType):
 
 
 # create new CurveObject from vertarray and splineType
-def createCurve(context, vertArray, self, align_matrix):
+def createCurve(context, vertArray, self):
     # output splineType 'POLY' 'NURBS' 'BEZIER'
     splineType = self.outputType
     
@@ -774,8 +759,6 @@ def createCurve(context, vertArray, self, align_matrix):
         
         # create object with newCurve
         Curve = object_utils.object_data_add(context, dataCurve, operator=self)  # place in active scene
-        Curve.matrix_world = align_matrix  # apply matrix
-        Curve.rotation_euler = self.rotation_euler
         
     # set newSpline Options
     newSpline.use_cyclic_u = self.use_cyclic_u
@@ -819,17 +802,35 @@ def createCurve(context, vertArray, self, align_matrix):
             
     # move and rotate spline in edit mode
     if bpy.context.mode == 'EDIT_CURVE':
-        bpy.ops.transform.translate(value = self.startlocation)
-        bpy.ops.transform.rotate(value = self.rotation_euler[0], orient_axis = 'X')
-        bpy.ops.transform.rotate(value = self.rotation_euler[1], orient_axis = 'Y')
-        bpy.ops.transform.rotate(value = self.rotation_euler[2], orient_axis = 'Z')
+        if self.align == "WORLD":
+            location = self.location - context.active_object.location
+            bpy.ops.transform.translate(value = location, orient_type='GLOBAL')
+            bpy.ops.transform.rotate(value = self.rotation[0], orient_axis = 'X', orient_type='GLOBAL')
+            bpy.ops.transform.rotate(value = self.rotation[1], orient_axis = 'Y', orient_type='GLOBAL')
+            bpy.ops.transform.rotate(value = self.rotation[2], orient_axis = 'Z', orient_type='GLOBAL')
+            
+        elif self.align == "VIEW":
+            bpy.ops.transform.translate(value = self.location)
+            bpy.ops.transform.rotate(value = self.rotation[0], orient_axis = 'X')
+            bpy.ops.transform.rotate(value = self.rotation[1], orient_axis = 'Y')
+            bpy.ops.transform.rotate(value = self.rotation[2], orient_axis = 'Z')
+
+        elif self.align == "CURSOR":
+            location = context.active_object.location
+            self.location = bpy.context.scene.cursor.location - location
+            self.rotation = bpy.context.scene.cursor.rotation_euler
+
+            bpy.ops.transform.translate(value = self.location)
+            bpy.ops.transform.rotate(value = self.rotation[0], orient_axis = 'X')
+            bpy.ops.transform.rotate(value = self.rotation[1], orient_axis = 'Y')
+            bpy.ops.transform.rotate(value = self.rotation[2], orient_axis = 'Z')
 
     return
 
 
 # ------------------------------------------------------------
 # Main Function
-def main(context, self, align_matrix):
+def main(context, self):
     # options
     proType = self.ProfileType
     splineType = self.outputType
@@ -935,7 +936,7 @@ def main(context, self, align_matrix):
     vertArray = vertsToPoints(verts, splineType)
 
     # create object
-    createCurve(context, vertArray, self, align_matrix)
+    createCurve(context, vertArray, self)
 
     return
 
@@ -945,9 +946,6 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
     bl_label = "Curve Profiles"
     bl_description = "Construct many types of curves"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
-
-    # align_matrix for the invoke
-    align_matrix : Matrix()
 
     # general properties
     ProfileType : EnumProperty(
@@ -1307,20 +1305,6 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
             description="Show in edit mode"
             )
 
-    # Line properties
-    startlocation : FloatVectorProperty(
-            name="",
-            description="Start location",
-            default=(0.0, 0.0, 0.0),
-            subtype='TRANSLATION'
-            )
-    rotation_euler : FloatVectorProperty(
-            name="",
-            description="Rotation",
-            default=(0.0, 0.0, 0.0),
-            subtype='EULER'
-            )
-
     def draw(self, context):
         layout = self.layout
 
@@ -1458,12 +1442,11 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
         col = layout.column()
         col.row().prop(self, "edit_mode", expand=True)
         
-        box = layout.box()
-        box.label(text="Location:")
-        box.prop(self, "startlocation")
-        box = layout.box()
-        box.label(text="Rotation:")
-        box.prop(self, "rotation_euler")
+        col = layout.column()
+        # AddObjectHelper props
+        col.prop(self, "align")
+        col.prop(self, "location")
+        col.prop(self, "rotation")
 
     @classmethod
     def poll(cls, context):
@@ -1475,8 +1458,7 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
         bpy.context.preferences.edit.use_enter_edit_mode = False
         
         # main function
-        self.align_matrix = align_matrix(context, self.startlocation)
-        main(context, self, self.align_matrix or Matrix())
+        main(context, self)
         
         if use_enter_edit_mode:
             bpy.ops.object.mode_set(mode = 'EDIT')

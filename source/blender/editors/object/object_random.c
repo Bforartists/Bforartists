@@ -159,7 +159,7 @@ void TRANSFORM_OT_vertex_random(struct wmOperatorType *ot)
 
   /* props */
   ot->prop = RNA_def_float_distance(
-      ot->srna, "offset", 0.1f, -FLT_MAX, FLT_MAX, "Amount", "Distance to offset", -10.0f, 10.0f);
+      ot->srna, "offset", 0.0f, -FLT_MAX, FLT_MAX, "Amount", "Distance to offset", -10.0f, 10.0f);
   RNA_def_float_factor(ot->srna,
                        "uniform",
                        0.0f,
@@ -180,4 +180,7 @@ void TRANSFORM_OT_vertex_random(struct wmOperatorType *ot)
                        1.0f);
   RNA_def_int(
       ot->srna, "seed", 0, 0, 10000, "Random Seed", "Seed for the random number generator", 0, 50);
+
+  /* Set generic modal callbacks. */
+  WM_operator_type_modal_from_exec_for_object_edit_coords(ot);
 }
