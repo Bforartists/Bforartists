@@ -1,5 +1,12 @@
 keyconfig_data = \
-[("Outliner",
+[("Generic Gizmo Maybe Drag",
+  {"space_type": 'EMPTY', "region_type": 'WINDOW'},
+  {"items":
+   [("gizmogroup.gizmo_tweak", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG', "any": True}, None),
+    ],
+   },
+  ),
+ ("Outliner",
   {"space_type": 'OUTLINER', "region_type": 'WINDOW'},
   {"items":
    [("outliner.highlight_update", {"type": 'MOUSEMOVE', "value": 'ANY', "any": True}, None),
