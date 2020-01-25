@@ -41,6 +41,7 @@
 #include "BKE_report.h"
 #include "BKE_editmesh.h"
 #include "BKE_editmesh_bvh.h"
+#include "BKE_global.h"
 
 #include "DEG_depsgraph.h"
 
@@ -51,6 +52,7 @@
 
 #include "ED_mesh.h"
 #include "ED_screen.h"
+#include "ED_uvedit.h"
 #include "ED_view3d.h"
 
 #include "mesh_intern.h" /* own include */
@@ -159,14 +161,27 @@ bool EDBM_op_finish(BMEditMesh *em, BMOperator *bmop, wmOperator *op, const bool
     em->emcopyusers = 0;
     em->emcopy = NULL;
 
+    /**
+     * Note, we could pass in the mesh, however this is an exceptional case, allow a slow lookup.
+     *
+     * This is needed because the COW mesh makes a full copy of the #BMEditMesh
+     * instead of sharing the pointer, tagging since this has been freed above,
+     * the #BMEditMesh.emcopy needs to be flushed to the COW edit-mesh, see T55457.
+     */
+    {
+      Main *bmain = G_MAIN;
+      for (Mesh *mesh = bmain->meshes.first; mesh; mesh = mesh->id.next) {
+        if (mesh->edit_mesh == em) {
+          DEG_id_tag_update(&mesh->id, ID_RECALC_COPY_ON_WRITE);
+          break;
+        }
+      }
+    }
+
     /* when copying, tessellation isn't to for faster copying,
      * but means we need to re-tessellate here */
     if (em->looptris == NULL) {
       BKE_editmesh_looptri_calc(em);
-    }
-
-    if (em->ob) {
-      DEG_id_tag_update(&((Mesh *)em->ob->data)->id, ID_RECALC_COPY_ON_WRITE);
     }
 
     return false;
@@ -315,7 +330,6 @@ void EDBM_mesh_make(Object *ob, const int select_mode, const bool add_key_index)
 
   me->edit_mesh->selectmode = me->edit_mesh->bm->selectmode = select_mode;
   me->edit_mesh->mat_nr = (ob->actcol > 0) ? ob->actcol - 1 : 0;
-  me->edit_mesh->ob = ob;
 
   /* we need to flush selection because the mode may have changed from when last in editmode */
   EDBM_selectmode_flush(me->edit_mesh);
@@ -325,7 +339,7 @@ void EDBM_mesh_make(Object *ob, const int select_mode, const bool add_key_index)
  * \warning This can invalidate the #Mesh runtime cache of other objects (for linked duplicates).
  * Most callers should run #DEG_id_tag_update on \a ob->data, see: T46738, T46913
  */
-void EDBM_mesh_load(Main *bmain, Object *ob)
+void EDBM_mesh_load_ex(Main *bmain, Object *ob, bool free_data)
 {
   Mesh *me = ob->data;
   BMesh *bm = me->edit_mesh->bm;
@@ -341,6 +355,7 @@ void EDBM_mesh_load(Main *bmain, Object *ob)
                    me,
                    (&(struct BMeshToMeshParams){
                        .calc_object_remap = true,
+                       .update_shapekey_indices = !free_data,
                    }));
 
   /* Free derived mesh. usually this would happen through depsgraph but there
@@ -378,6 +393,11 @@ void EDBM_mesh_clear(BMEditMesh *em)
     MEM_freeN(em->looptris);
     em->looptris = NULL;
   }
+}
+
+void EDBM_mesh_load(Main *bmain, Object *ob)
+{
+  EDBM_mesh_load_ex(bmain, ob, true);
 }
 
 /**
@@ -656,7 +676,9 @@ UvMapVert *BM_uv_vert_map_at_index(UvVertMap *vmap, unsigned int v)
 
 /* A specialized vert map used by stitch operator */
 UvElementMap *BM_uv_element_map_create(BMesh *bm,
-                                       const bool selected,
+                                       const Scene *scene,
+                                       const bool face_selected,
+                                       const bool uv_selected,
                                        const bool use_winding,
                                        const bool do_islands)
 {
@@ -683,8 +705,17 @@ UvElementMap *BM_uv_element_map_create(BMesh *bm,
 
   /* generate UvElement array */
   BM_ITER_MESH (efa, &iter, bm, BM_FACES_OF_MESH) {
-    if (!selected || BM_elem_flag_test(efa, BM_ELEM_SELECT)) {
-      totuv += efa->len;
+    if (!face_selected || BM_elem_flag_test(efa, BM_ELEM_SELECT)) {
+      if (!uv_selected) {
+        totuv += efa->len;
+      }
+      else {
+        BM_ITER_ELEM (l, &liter, efa, BM_LOOPS_OF_FACE) {
+          if (uvedit_uv_select_test(scene, l, cd_loop_uv_offset)) {
+            totuv++;
+          }
+        }
+      }
     }
   }
 
@@ -709,7 +740,7 @@ UvElementMap *BM_uv_element_map_create(BMesh *bm,
       winding[j] = false;
     }
 
-    if (!selected || BM_elem_flag_test(efa, BM_ELEM_SELECT)) {
+    if (!face_selected || BM_elem_flag_test(efa, BM_ELEM_SELECT)) {
       float(*tf_uv)[2] = NULL;
 
       if (use_winding) {
@@ -717,6 +748,10 @@ UvElementMap *BM_uv_element_map_create(BMesh *bm,
       }
 
       BM_ITER_ELEM_INDEX (l, &liter, efa, BM_LOOPS_OF_FACE, i) {
+        if (uv_selected && !uvedit_uv_select_test(scene, l, cd_loop_uv_offset)) {
+          continue;
+        }
+
         buf->l = l;
         buf->separate = 0;
         buf->island = INVALID_ISLAND;
@@ -826,6 +861,10 @@ UvElementMap *BM_uv_element_map_create(BMesh *bm,
           efa = stack[--stacksize];
 
           BM_ITER_ELEM (l, &liter, efa, BM_LOOPS_OF_FACE) {
+            if (uv_selected && !uvedit_uv_select_test(scene, l, cd_loop_uv_offset)) {
+              continue;
+            }
+
             UvElement *element, *initelement = element_map->vert[BM_elem_index_get(l->v)];
 
             for (element = initelement; element; element = element->next) {
@@ -1035,7 +1074,6 @@ void EDBM_verts_mirror_cache_begin_ex(BMEditMesh *em,
                                       float maxdist,
                                       int *r_index)
 {
-  Mesh *me = (Mesh *)em->ob->data;
   BMesh *bm = em->bm;
   BMIter iter;
   BMVert *v;
@@ -1068,7 +1106,7 @@ void EDBM_verts_mirror_cache_begin_ex(BMEditMesh *em,
   BM_mesh_elem_index_ensure(bm, BM_VERT);
 
   if (use_topology) {
-    ED_mesh_mirrtopo_init(me, NULL, &mesh_topo_store, true);
+    ED_mesh_mirrtopo_init(em, NULL, &mesh_topo_store, true);
   }
   else {
     tree = BLI_kdtree_3d_new(bm->totvert);
@@ -1389,12 +1427,12 @@ void EDBM_stats_update(BMEditMesh *em)
 
 /* so many tools call these that we better make it a generic function.
  */
-void EDBM_update_generic(BMEditMesh *em, const bool do_tessellation, const bool is_destructive)
+void EDBM_update_generic(Mesh *mesh, const bool do_tessellation, const bool is_destructive)
 {
-  Object *ob = em->ob;
-  /* order of calling isn't important */
-  DEG_id_tag_update(ob->data, ID_RECALC_GEOMETRY);
-  WM_main_add_notifier(NC_GEOM | ND_DATA, ob->data);
+  BMEditMesh *em = mesh->edit_mesh;
+  /* Order of calling isn't important. */
+  DEG_id_tag_update(&mesh->id, ID_RECALC_GEOMETRY);
+  WM_main_add_notifier(NC_GEOM | ND_DATA, &mesh->id);
 
   if (do_tessellation) {
     BKE_editmesh_looptri_calc(em);

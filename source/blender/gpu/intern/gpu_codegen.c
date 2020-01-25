@@ -279,6 +279,9 @@ static void gpu_parse_material_library(GHash *hash, GPUMaterialLibrary *library)
       if (!type && gpu_str_prefix(code, "sampler1DArray")) {
         type = GPU_TEX1D_ARRAY;
       }
+      if (!type && gpu_str_prefix(code, "sampler2DArray")) {
+        type = GPU_TEX2D_ARRAY;
+      }
       if (!type && gpu_str_prefix(code, "sampler2D")) {
         type = GPU_TEX2D;
       }
@@ -581,17 +584,19 @@ const char *GPU_builtin_name(eGPUBuiltin builtin)
 }
 
 /* assign only one texid per buffer to avoid sampling the same texture twice */
-static void codegen_set_texid(GHash *bindhash, GPUInput *input, int *texid, void *key)
+static void codegen_set_texid(GHash *bindhash, GPUInput *input, int *texid, void *key1, int key2)
 {
-  if (BLI_ghash_haskey(bindhash, key)) {
+  GHashPair pair = {key1, POINTER_FROM_INT(key2)};
+  if (BLI_ghash_haskey(bindhash, &pair)) {
     /* Reuse existing texid */
-    input->texid = POINTER_AS_INT(BLI_ghash_lookup(bindhash, key));
+    input->texid = POINTER_AS_INT(BLI_ghash_lookup(bindhash, &pair));
   }
   else {
     /* Allocate new texid */
     input->texid = *texid;
     (*texid)++;
     input->bindtex = true;
+    void *key = BLI_ghashutil_pairalloc(key1, POINTER_FROM_INT(key2));
     BLI_ghash_insert(bindhash, key, POINTER_FROM_INT(input->texid));
   }
 }
@@ -604,7 +609,7 @@ static void codegen_set_unique_ids(ListBase *nodes)
   GPUOutput *output;
   int id = 1, texid = 0;
 
-  bindhash = BLI_ghash_ptr_new("codegen_set_unique_ids1 gh");
+  bindhash = BLI_ghash_pair_new("codegen_set_unique_ids1 gh");
 
   for (node = nodes->first; node; node = node->next) {
     for (input = node->inputs.first; input; input = input->next) {
@@ -616,11 +621,11 @@ static void codegen_set_unique_ids(ListBase *nodes)
         input->bindtex = false;
         if (input->ima) {
           /* input is texture from image */
-          codegen_set_texid(bindhash, input, &texid, input->ima);
+          codegen_set_texid(bindhash, input, &texid, input->ima, input->type);
         }
         else if (input->coba) {
           /* input is color band texture, check coba pointer */
-          codegen_set_texid(bindhash, input, &texid, input->coba);
+          codegen_set_texid(bindhash, input, &texid, input->coba, 0);
         }
         else {
           /* Either input->ima or input->coba should be non-NULL. */
@@ -635,7 +640,7 @@ static void codegen_set_unique_ids(ListBase *nodes)
     }
   }
 
-  BLI_ghash_free(bindhash, NULL, NULL);
+  BLI_ghash_free(bindhash, BLI_ghashutil_pairfree, NULL);
 }
 
 /**
@@ -655,10 +660,18 @@ static int codegen_process_uniforms_functions(GPUMaterial *material, DynStr *ds,
       if (input->source == GPU_SOURCE_TEX) {
         /* create exactly one sampler for each texture */
         if (codegen_input_has_texture(input) && input->bindtex) {
-          BLI_dynstr_appendf(ds,
-                             "uniform %s samp%d;\n",
-                             (input->coba) ? "sampler1DArray" : "sampler2D",
-                             input->texid);
+          const char *type;
+          if (input->coba || input->type == GPU_TEX1D_ARRAY) {
+            type = "sampler1DArray";
+          }
+          else if (input->type == GPU_TEX2D_ARRAY) {
+            type = "sampler2DArray";
+          }
+          else {
+            BLI_assert(input->type == GPU_TEX2D);
+            type = "sampler2D";
+          }
+          BLI_dynstr_appendf(ds, "uniform %s samp%d;\n", type, input->texid);
         }
       }
       else if (input->source == GPU_SOURCE_BUILTIN) {
@@ -1029,12 +1042,6 @@ static char *code_generate_vertex(ListBase *nodes, const char *vert_code, bool u
                              input->attr_id,
                              attr_prefix_get(input->attr_type),
                              attr_safe_name);
-          /* Auto attribute can be vertex color byte buffer.
-           * We need to know and convert them to linear space in VS. */
-          if (input->attr_type == CD_AUTO_FROM_NAME) {
-            BLI_dynstr_appendf(ds, "uniform bool ba%s;\n", attr_safe_name);
-            BLI_dynstr_appendf(ds, "#define att%d_is_srgb ba%s\n", input->attr_id, attr_safe_name);
-          }
         }
         BLI_dynstr_appendf(ds,
                            "out %s var%d%s;\n",
@@ -1087,24 +1094,6 @@ static char *code_generate_vertex(ListBase *nodes, const char *vert_code, bool u
   BLI_dynstr_append(ds, "\n");
 
   BLI_dynstr_append(ds, use_geom ? "RESOURCE_ID_VARYING_GEOM\n" : "RESOURCE_ID_VARYING\n");
-
-  BLI_dynstr_append(ds,
-                    "#define USE_ATTR\n"
-                    "vec3 srgb_to_linear_attr(vec3 c) {\n"
-                    "\tc = max(c, vec3(0.0));\n"
-                    "\tvec3 c1 = c * (1.0 / 12.92);\n"
-                    "\tvec3 c2 = pow((c + 0.055) * (1.0 / 1.055), vec3(2.4));\n"
-                    "\treturn mix(c1, c2, step(vec3(0.04045), c));\n"
-                    "}\n\n");
-
-  BLI_dynstr_append(ds,
-                    "vec4 srgba_to_linear_attr(vec4 c) {\n"
-                    "\tc = max(c, vec4(0.0));\n"
-                    "\tvec4 c1 = c * (1.0 / 12.92);\n"
-                    "\tvec4 c2 = pow((c + 0.055) * (1.0 / 1.055), vec4(2.4));\n"
-                    "\tvec4 final = mix(c1, c2, step(vec4(0.04045), c));"
-                    "\treturn vec4(final.xyz, c.a);\n"
-                    "}\n\n");
 
   /* Prototype because defined later. */
   BLI_dynstr_append(ds,
@@ -1211,22 +1200,6 @@ static char *code_generate_vertex(ListBase *nodes, const char *vert_code, bool u
                              input->attr_id,
                              use_geom ? "g" : "");
         }
-        else if (input->attr_type == CD_MCOL) {
-          BLI_dynstr_appendf(ds,
-                             "\tvar%d%s = srgba_to_linear_attr(att%d);\n",
-                             input->attr_id,
-                             use_geom ? "g" : "",
-                             input->attr_id);
-        }
-        else if (input->attr_type == CD_AUTO_FROM_NAME) {
-          BLI_dynstr_appendf(ds,
-                             "\tvar%d%s = (att%d_is_srgb) ? srgb_to_linear_attr(att%d) : att%d;\n",
-                             input->attr_id,
-                             use_geom ? "g" : "",
-                             input->attr_id,
-                             input->attr_id,
-                             input->attr_id);
-        }
         else {
           BLI_dynstr_appendf(
               ds, "\tvar%d%s = att%d;\n", input->attr_id, use_geom ? "g" : "", input->attr_id);
@@ -1327,17 +1300,12 @@ static char *code_generate_geometry(ListBase *nodes, const char *geom_code, cons
                           "barycentricPosg[2]);\n");
       }
 
-      BLI_dynstr_append(ds, "\tgl_Position = gl_in[0].gl_Position;\n");
-      BLI_dynstr_append(ds, "\tpass_attr(0);\n");
-      BLI_dynstr_append(ds, "\tEmitVertex();\n");
-
-      BLI_dynstr_append(ds, "\tgl_Position = gl_in[1].gl_Position;\n");
-      BLI_dynstr_append(ds, "\tpass_attr(1);\n");
-      BLI_dynstr_append(ds, "\tEmitVertex();\n");
-
-      BLI_dynstr_append(ds, "\tgl_Position = gl_in[2].gl_Position;\n");
-      BLI_dynstr_append(ds, "\tpass_attr(2);\n");
-      BLI_dynstr_append(ds, "\tEmitVertex();\n");
+      for (int i = 0; i < 3; i++) {
+        BLI_dynstr_appendf(ds, "\tgl_Position = gl_in[%d].gl_Position;\n", i);
+        BLI_dynstr_appendf(ds, "\tgl_ClipDistance[0] = gl_in[%d].gl_ClipDistance[0];\n", i);
+        BLI_dynstr_appendf(ds, "\tpass_attr(%d);\n", i);
+        BLI_dynstr_append(ds, "\tEmitVertex();\n");
+      }
       BLI_dynstr_append(ds, "}\n");
     }
   }
@@ -1542,6 +1510,7 @@ static void gpu_node_input_link(GPUNode *node, GPUNodeLink *link, const eGPUType
       input->coba = link->coba;
       break;
     case GPU_NODE_LINK_IMAGE_BLENDER:
+    case GPU_NODE_LINK_IMAGE_TILEMAP:
       input->source = GPU_SOURCE_TEX;
       input->ima = link->ima;
       input->iuser = link->iuser;
@@ -2127,8 +2096,10 @@ GPUPass *GPU_generate_pass(GPUMaterial *material,
 static int count_active_texture_sampler(GPUShader *shader, char *source)
 {
   char *code = source;
-  int samplers_id[64]; /* Remember this is per stage. */
-  int sampler_len = 0;
+
+  /* Remember this is per stage. */
+  GSet *sampler_ids = BLI_gset_int_new(__func__);
+  int num_samplers = 0;
 
   while ((code = strstr(code, "uniform "))) {
     /* Move past "uniform". */
@@ -2163,22 +2134,16 @@ static int count_active_texture_sampler(GPUShader *shader, char *source)
           continue;
         }
         /* Catch duplicates. */
-        bool is_duplicate = false;
-        for (int i = 0; i < sampler_len; i++) {
-          if (samplers_id[i] == id) {
-            is_duplicate = true;
-          }
-        }
-
-        if (!is_duplicate) {
-          samplers_id[sampler_len] = id;
-          sampler_len++;
+        if (BLI_gset_add(sampler_ids, POINTER_FROM_INT(id))) {
+          num_samplers++;
         }
       }
     }
   }
 
-  return sampler_len;
+  BLI_gset_free(sampler_ids, NULL);
+
+  return num_samplers;
 }
 
 static bool gpu_pass_shader_validate(GPUPass *pass, GPUShader *shader)

@@ -34,6 +34,7 @@
 #include "BLI_blenlib.h"
 #include "BLI_utildefines.h"
 #include "BLI_math_vector.h"
+#include "BLI_polyfill_2d.h"
 #include "BLI_string_utils.h"
 
 #include "BLT_translation.h"
@@ -493,7 +494,7 @@ bGPDstroke *BKE_gpencil_add_stroke(bGPDframe *gpf, int mat_idx, int totpoints, s
   gps->points = MEM_callocN(sizeof(bGPDspoint) * gps->totpoints, "gp_stroke_points");
 
   /* initialize triangle memory to dummy data */
-  gps->triangles = MEM_callocN(sizeof(bGPDtriangle), "GP Stroke triangulation");
+  gps->triangles = NULL;
   gps->flag |= GP_STROKE_RECALC_GEOMETRY;
   gps->tot_triangles = 0;
 
@@ -502,6 +503,18 @@ bGPDstroke *BKE_gpencil_add_stroke(bGPDframe *gpf, int mat_idx, int totpoints, s
   /* add to frame */
   BLI_addtail(&gpf->strokes, gps);
 
+  return gps;
+}
+
+/* Add a stroke and copy the temporary drawing color value from one of the existing stroke */
+bGPDstroke *BKE_gpencil_add_stroke_existing_style(
+    bGPDframe *gpf, bGPDstroke *existing, int mat_idx, int totpoints, short thickness)
+{
+  bGPDstroke *gps = BKE_gpencil_add_stroke(gpf, mat_idx, totpoints, thickness);
+  /* Copy run-time color data so that strokes added in the modifier has the style.
+   * There are depsgraph reference pointers inside,
+   * change the copy function if interfere with future drawing implementation. */
+  memcpy(&gps->runtime, &existing->runtime, sizeof(bGPDstroke_Runtime));
   return gps;
 }
 
@@ -1128,7 +1141,8 @@ int BKE_gpencil_object_material_ensure(Main *bmain, Object *ob, Material *materi
   return index;
 }
 
-/** Creates a new gpencil material and assigns it to object.
+/**
+ * Creates a new gpencil material and assigns it to object.
  *
  * \param *r_index: value is set to zero based index of the new material if r_index is not NULL
  */
@@ -1753,6 +1767,237 @@ bool BKE_gpencil_sample_stroke(bGPDstroke *gps, const float dist, const bool sel
 }
 
 /**
+ * Backbone stretch similar to Freestyle.
+ * \param gps: Stroke to sample
+ * \param dist: Distance of one segment
+ * \param tip_length: Ignore tip jittering, set zero to use default value.
+ */
+bool BKE_gpencil_stretch_stroke(bGPDstroke *gps, const float dist, const float tip_length)
+{
+  bGPDspoint *pt = gps->points, *last_pt, *second_last, *next_pt;
+  int i;
+  float threshold = (tip_length == 0 ? 0.001f : tip_length);
+
+  if (gps->totpoints < 2 || dist < FLT_EPSILON) {
+    return false;
+  }
+
+  last_pt = &pt[gps->totpoints - 1];
+  second_last = &pt[gps->totpoints - 2];
+  next_pt = &pt[1];
+
+  float len1 = 0.0f;
+  float len2 = 0.0f;
+
+  i = 1;
+  while (len1 < threshold && gps->totpoints > i) {
+    next_pt = &pt[i];
+    len1 = len_v3v3(&next_pt->x, &pt->x);
+    i++;
+  }
+
+  i = 2;
+  while (len2 < threshold && gps->totpoints >= i) {
+    second_last = &pt[gps->totpoints - i];
+    len2 = len_v3v3(&last_pt->x, &second_last->x);
+    i++;
+  }
+
+  float extend1 = (len1 + dist) / len1;
+  float extend2 = (len2 + dist) / len2;
+
+  float result1[3], result2[3];
+
+  interp_v3_v3v3(result1, &next_pt->x, &pt->x, extend1);
+  interp_v3_v3v3(result2, &second_last->x, &last_pt->x, extend2);
+
+  copy_v3_v3(&pt->x, result1);
+  copy_v3_v3(&last_pt->x, result2);
+
+  return true;
+}
+
+/**
+ * Trim stroke to needed segments
+ * \param gps: Target stroke
+ * \param index_from: the index of the first point to be used in the trimmed result
+ * \param index_to: the index of the last point to be used in the trimmed result
+ */
+bool BKE_gpencil_trim_stroke_points(bGPDstroke *gps, const int index_from, const int index_to)
+{
+  bGPDspoint *pt = gps->points, *new_pt;
+  MDeformVert *dv, *new_dv;
+
+  const int new_count = index_to - index_from + 1;
+
+  if (new_count >= gps->totpoints) {
+    return false;
+  }
+
+  if (new_count == 1) {
+    BKE_gpencil_free_stroke_weights(gps);
+    MEM_freeN(gps->points);
+    gps->points = NULL;
+    gps->dvert = NULL;
+    gps->totpoints = 0;
+    return false;
+  }
+
+  new_pt = MEM_callocN(sizeof(bGPDspoint) * new_count, "gp_stroke_points_trimmed");
+
+  for (int i = 0; i < new_count; i++) {
+    memcpy(&new_pt[i], &pt[i + index_from], sizeof(bGPDspoint));
+  }
+
+  if (gps->dvert) {
+    new_dv = MEM_callocN(sizeof(MDeformVert) * new_count, "gp_stroke_dverts_trimmed");
+    for (int i = 0; i < new_count; i++) {
+      dv = &gps->dvert[i + index_from];
+      new_dv[i].flag = dv->flag;
+      new_dv[i].totweight = dv->totweight;
+      new_dv[i].dw = MEM_callocN(sizeof(MDeformWeight) * dv->totweight,
+                                 "gp_stroke_dverts_dw_trimmed");
+      for (int j = 0; j < dv->totweight; j++) {
+        new_dv[i].dw[j].weight = dv->dw[j].weight;
+        new_dv[i].dw[j].def_nr = dv->dw[j].def_nr;
+      }
+    }
+    MEM_freeN(gps->dvert);
+    gps->dvert = new_dv;
+  }
+
+  MEM_freeN(gps->points);
+  gps->points = new_pt;
+  gps->totpoints = new_count;
+
+  return true;
+}
+
+bool BKE_gpencil_split_stroke(bGPDframe *gpf,
+                              bGPDstroke *gps,
+                              const int before_index,
+                              bGPDstroke **remaining_gps)
+{
+  bGPDstroke *new_gps;
+  bGPDspoint *pt = gps->points, *new_pt;
+  MDeformVert *dv, *new_dv;
+
+  if (before_index >= gps->totpoints || before_index == 0) {
+    return false;
+  }
+
+  const int new_count = gps->totpoints - before_index;
+  const int old_count = before_index;
+
+  /* Handle remaining segments first. */
+
+  new_gps = BKE_gpencil_add_stroke_existing_style(
+      gpf, gps, gps->mat_nr, new_count, gps->thickness);
+
+  new_pt = new_gps->points; /* Allocated from above. */
+
+  for (int i = 0; i < new_count; i++) {
+    memcpy(&new_pt[i], &pt[i + before_index], sizeof(bGPDspoint));
+  }
+
+  if (gps->dvert) {
+    new_dv = MEM_callocN(sizeof(MDeformVert) * new_count, "gp_stroke_dverts_remaining");
+    for (int i = 0; i < new_count; i++) {
+      dv = &gps->dvert[i + before_index];
+      new_dv[i].flag = dv->flag;
+      new_dv[i].totweight = dv->totweight;
+      new_dv[i].dw = MEM_callocN(sizeof(MDeformWeight) * dv->totweight,
+                                 "gp_stroke_dverts_dw_remaining");
+      for (int j = 0; j < dv->totweight; j++) {
+        new_dv[i].dw[j].weight = dv->dw[j].weight;
+        new_dv[i].dw[j].def_nr = dv->dw[j].def_nr;
+      }
+    }
+    new_gps->dvert = new_dv;
+  }
+
+  (*remaining_gps) = new_gps;
+
+  /* Trim the original stroke into a shorter one.
+   * Keep the end point. */
+
+  BKE_gpencil_trim_stroke_points(gps, 0, old_count);
+
+  return true;
+}
+
+/**
+ * Shrink the stroke by length.
+ * \param gps: Stroke to shrink
+ * \param dist: delta length
+ */
+bool BKE_gpencil_shrink_stroke(bGPDstroke *gps, const float dist)
+{
+  bGPDspoint *pt = gps->points, *second_last;
+  int i;
+
+  if (gps->totpoints < 2 || dist < FLT_EPSILON) {
+    return false;
+  }
+
+  second_last = &pt[gps->totpoints - 2];
+
+  float len1, this_len1, cut_len1;
+  float len2, this_len2, cut_len2;
+  int index_start, index_end;
+
+  len1 = len2 = this_len1 = this_len2 = cut_len1 = cut_len2 = 0.0f;
+
+  i = 1;
+  while (len1 < dist && gps->totpoints > i - 1) {
+    this_len1 = len_v3v3(&pt[i].x, &pt[i + 1].x);
+    len1 += this_len1;
+    cut_len1 = len1 - dist;
+    i++;
+  }
+  index_start = i - 2;
+
+  i = 2;
+  while (len2 < dist && gps->totpoints >= i) {
+    second_last = &pt[gps->totpoints - i];
+    this_len2 = len_v3v3(&second_last[1].x, &second_last->x);
+    len2 += this_len2;
+    cut_len2 = len2 - dist;
+    i++;
+  }
+  index_end = gps->totpoints - i + 2;
+
+  if (len1 < dist || len2 < dist || index_end <= index_start) {
+    index_start = index_end = 0; /* empty stroke */
+  }
+
+  if ((index_end == index_start + 1) && (cut_len1 + cut_len2 > 1.0f)) {
+    index_start = index_end = 0; /* no length left to cut */
+  }
+
+  BKE_gpencil_trim_stroke_points(gps, index_start, index_end);
+
+  if (gps->totpoints == 0) {
+    return false;
+  }
+
+  pt = gps->points;
+
+  float cut1 = cut_len1 / this_len1;
+  float cut2 = cut_len2 / this_len2;
+
+  float result1[3], result2[3];
+
+  interp_v3_v3v3(result1, &pt[1].x, &pt[0].x, cut1);
+  interp_v3_v3v3(result2, &pt[gps->totpoints - 2].x, &pt[gps->totpoints - 1].x, cut2);
+
+  copy_v3_v3(&pt[0].x, result1);
+  copy_v3_v3(&pt[gps->totpoints - 1].x, result2);
+
+  return true;
+}
+
+/**
  * Apply smooth to stroke point
  * \param gps: Stroke to smooth
  * \param i: Point index
@@ -2271,6 +2516,156 @@ void BKE_gpencil_stroke_2d_flat_ref(const bGPDspoint *ref_points,
 
   /* Concave (-1), Convex (1), or Autodetect (0)? */
   *r_direction = (int)locy[2];
+}
+
+/* calc bounding box in 2d using flat projection data */
+static void gpencil_calc_2d_bounding_box(const float (*points2d)[2],
+                                         int totpoints,
+                                         float minv[2],
+                                         float maxv[2])
+{
+  minv[0] = points2d[0][0];
+  minv[1] = points2d[0][1];
+  maxv[0] = points2d[0][0];
+  maxv[1] = points2d[0][1];
+
+  for (int i = 1; i < totpoints; i++) {
+    /* min */
+    if (points2d[i][0] < minv[0]) {
+      minv[0] = points2d[i][0];
+    }
+    if (points2d[i][1] < minv[1]) {
+      minv[1] = points2d[i][1];
+    }
+    /* max */
+    if (points2d[i][0] > maxv[0]) {
+      maxv[0] = points2d[i][0];
+    }
+    if (points2d[i][1] > maxv[1]) {
+      maxv[1] = points2d[i][1];
+    }
+  }
+  /* use a perfect square */
+  if (maxv[0] > maxv[1]) {
+    maxv[1] = maxv[0];
+  }
+  else {
+    maxv[0] = maxv[1];
+  }
+}
+
+/* calc texture coordinates using flat projected points */
+static void gpencil_calc_stroke_fill_uv(const float (*points2d)[2],
+                                        int totpoints,
+                                        const float minv[2],
+                                        float maxv[2],
+                                        float (*r_uv)[2])
+{
+  float d[2];
+  d[0] = maxv[0] - minv[0];
+  d[1] = maxv[1] - minv[1];
+  for (int i = 0; i < totpoints; i++) {
+    r_uv[i][0] = (points2d[i][0] - minv[0]) / d[0];
+    r_uv[i][1] = (points2d[i][1] - minv[1]) / d[1];
+  }
+}
+
+/* Triangulate stroke for high quality fill (this is done only if cache is null or stroke was
+ * modified) */
+void BKE_gpencil_triangulate_stroke_fill(bGPdata *gpd, bGPDstroke *gps)
+{
+  BLI_assert(gps->totpoints >= 3);
+
+  /* allocate memory for temporary areas */
+  gps->tot_triangles = gps->totpoints - 2;
+  uint(*tmp_triangles)[3] = MEM_mallocN(sizeof(*tmp_triangles) * gps->tot_triangles,
+                                        "GP Stroke temp triangulation");
+  float(*points2d)[2] = MEM_mallocN(sizeof(*points2d) * gps->totpoints,
+                                    "GP Stroke temp 2d points");
+  float(*uv)[2] = MEM_mallocN(sizeof(*uv) * gps->totpoints, "GP Stroke temp 2d uv data");
+
+  int direction = 0;
+
+  /* convert to 2d and triangulate */
+  BKE_gpencil_stroke_2d_flat(gps->points, gps->totpoints, points2d, &direction);
+  BLI_polyfill_calc(points2d, (uint)gps->totpoints, direction, tmp_triangles);
+
+  /* calc texture coordinates automatically */
+  float minv[2];
+  float maxv[2];
+  /* first needs bounding box data */
+  if (gpd->flag & GP_DATA_UV_ADAPTIVE) {
+    gpencil_calc_2d_bounding_box(points2d, gps->totpoints, minv, maxv);
+  }
+  else {
+    ARRAY_SET_ITEMS(minv, -1.0f, -1.0f);
+    ARRAY_SET_ITEMS(maxv, 1.0f, 1.0f);
+  }
+
+  /* calc uv data */
+  gpencil_calc_stroke_fill_uv(points2d, gps->totpoints, minv, maxv, uv);
+
+  /* Number of triangles */
+  gps->tot_triangles = gps->totpoints - 2;
+  /* save triangulation data in stroke cache */
+  if (gps->tot_triangles > 0) {
+    if (gps->triangles == NULL) {
+      gps->triangles = MEM_callocN(sizeof(*gps->triangles) * gps->tot_triangles,
+                                   "GP Stroke triangulation");
+    }
+    else {
+      gps->triangles = MEM_recallocN(gps->triangles, sizeof(*gps->triangles) * gps->tot_triangles);
+    }
+
+    for (int i = 0; i < gps->tot_triangles; i++) {
+      bGPDtriangle *stroke_triangle = &gps->triangles[i];
+      memcpy(gps->triangles[i].verts, tmp_triangles[i], sizeof(uint[3]));
+      /* copy texture coordinates */
+      copy_v2_v2(stroke_triangle->uv[0], uv[tmp_triangles[i][0]]);
+      copy_v2_v2(stroke_triangle->uv[1], uv[tmp_triangles[i][1]]);
+      copy_v2_v2(stroke_triangle->uv[2], uv[tmp_triangles[i][2]]);
+    }
+  }
+  else {
+    /* No triangles needed - Free anything allocated previously */
+    if (gps->triangles) {
+      MEM_freeN(gps->triangles);
+    }
+
+    gps->triangles = NULL;
+  }
+
+  /* disable recalculation flag */
+  if (gps->flag & GP_STROKE_RECALC_GEOMETRY) {
+    gps->flag &= ~GP_STROKE_RECALC_GEOMETRY;
+  }
+
+  /* clear memory */
+  MEM_SAFE_FREE(tmp_triangles);
+  MEM_SAFE_FREE(points2d);
+  MEM_SAFE_FREE(uv);
+}
+
+float BKE_gpencil_stroke_length(const bGPDstroke *gps, bool use_3d)
+{
+  if (!gps->points || gps->totpoints < 2) {
+    return 0.0f;
+  }
+  float *last_pt = &gps->points[0].x;
+  int i;
+  bGPDspoint *pt;
+  float total_length = 0.0f;
+  for (i = 1; i < gps->totpoints; i++) {
+    pt = &gps->points[i];
+    if (use_3d) {
+      total_length += len_v3v3(&pt->x, last_pt);
+    }
+    else {
+      total_length += len_v2v2(&pt->x, last_pt);
+    }
+    last_pt = &pt->x;
+  }
+  return total_length;
 }
 
 /**

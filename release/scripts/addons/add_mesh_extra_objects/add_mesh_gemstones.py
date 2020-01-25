@@ -273,35 +273,27 @@ class AddDiamond(Operator):
     def execute(self, context):
         
         if bpy.context.mode == "OBJECT":
-            if self.change == True and self.change != None:
+            if context.selected_objects != [] and context.active_object and \
+            ('Diamond' in context.active_object.data.keys()) and (self.change == True):
                 obj = context.active_object
-                if 'Diamond' in obj.data.keys():
-                    oldmesh = obj.data
-                    oldmeshname = obj.data.name
+                oldmesh = obj.data
+                oldmeshname = obj.data.name
 
-                    verts, faces = add_diamond(self.segments,
-                        self.girdle_radius,
-                        self.table_radius,
-                        self.crown_height,
-                        self.pavilion_height)
-                    mesh = bpy.data.meshes.new("TMP")
-                    mesh.from_pydata(verts, [], faces)
-                    mesh.update()
-                    obj.data = mesh
-                    
-                    for material in oldmesh.materials:
-                        obj.data.materials.append(material)
+                verts, faces = add_diamond(self.segments,
+                    self.girdle_radius,
+                    self.table_radius,
+                    self.crown_height,
+                    self.pavilion_height)
+                mesh = bpy.data.meshes.new("TMP")
+                mesh.from_pydata(verts, [], faces)
+                mesh.update()
+                obj.data = mesh
+                
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
 
-                    bpy.data.meshes.remove(oldmesh)
-                    obj.data.name = oldmeshname
-                else:
-                    verts, faces = add_diamond(self.segments,
-                        self.girdle_radius,
-                        self.table_radius,
-                        self.crown_height,
-                        self.pavilion_height)
-
-                    obj = create_mesh_object(context, verts, [], faces, "Diamond")
+                bpy.data.meshes.remove(oldmesh)
+                obj.data.name = oldmeshname
             else:
                 verts, faces = add_diamond(self.segments,
                     self.girdle_radius,
@@ -413,34 +405,25 @@ class AddGem(Operator):
     def execute(self, context):
         
         if bpy.context.mode == "OBJECT":
-            if self.change == True and self.change != None:
+            if context.selected_objects != [] and context.active_object and \
+            ('Gem' in context.active_object.data.keys()) and (self.change == True):
                 obj = context.active_object
-                if 'Gem' in obj.data.keys():
-                    oldmesh = obj.data
-                    oldmeshname = obj.data.name
-                    verts, faces = add_gem(
-                        self.pavilion_radius,
-                        self.crown_radius,
-                        self.segments,
-                        self.pavilion_height,
-                        self.crown_height)
-                    mesh = bpy.data.meshes.new("TMP")
-                    mesh.from_pydata(verts, [], faces)
-                    mesh.update()
-                    obj.data = mesh
-                    for material in oldmesh.materials:
-                        obj.data.materials.append(material)
-                    bpy.data.meshes.remove(oldmesh)
-                    obj.data.name = oldmeshname
-                else:
-                    verts, faces = add_gem(
-                        self.pavilion_radius,
-                        self.crown_radius,
-                        self.segments,
-                        self.pavilion_height,
-                        self.crown_height)
-
-                    obj = create_mesh_object(context, verts, [], faces, "Gem")
+                oldmesh = obj.data
+                oldmeshname = obj.data.name
+                verts, faces = add_gem(
+                    self.pavilion_radius,
+                    self.crown_radius,
+                    self.segments,
+                    self.pavilion_height,
+                    self.crown_height)
+                mesh = bpy.data.meshes.new("TMP")
+                mesh.from_pydata(verts, [], faces)
+                mesh.update()
+                obj.data = mesh
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
+                bpy.data.meshes.remove(oldmesh)
+                obj.data.name = oldmeshname
             else:
                 verts, faces = add_gem(
                     self.pavilion_radius,

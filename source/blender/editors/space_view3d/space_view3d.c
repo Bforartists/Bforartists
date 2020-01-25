@@ -626,6 +626,8 @@ static void view3d_widgets(void)
   WM_gizmogrouptype_append(VIEW3D_GGT_xform_extrude);
   WM_gizmogrouptype_append(VIEW3D_GGT_mesh_preselect_elem);
   WM_gizmogrouptype_append(VIEW3D_GGT_mesh_preselect_edgering);
+  WM_gizmogrouptype_append(VIEW3D_GGT_tool_generic_handle_normal);
+  WM_gizmogrouptype_append(VIEW3D_GGT_tool_generic_handle_free);
 
   WM_gizmogrouptype_append(VIEW3D_GGT_ruler);
   WM_gizmotype_append(VIEW3D_GT_ruler_item);
@@ -795,6 +797,9 @@ static void view3d_main_region_listener(
           ATTR_FALLTHROUGH;
         }
         case ND_DATA:
+          ED_region_tag_redraw(ar);
+          WM_gizmomap_tag_refresh(gzmap);
+          break;
         case ND_VERTEX_GROUP:
           ED_region_tag_redraw(ar);
           break;

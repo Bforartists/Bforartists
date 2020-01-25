@@ -25,6 +25,12 @@ from bpy.types import (
     Panel,
 )
 
+from bl_ui.properties_grease_pencil_common import (
+    GreasePencilLayerAdjustmentsPanel,
+    GreasePencilLayerRelationsPanel,
+    GreasePencilLayerDisplayPanel,
+)
+
 #######################################
 # DopeSheet Filtering - Header Buttons
 
@@ -325,6 +331,18 @@ class DOPESHEET_HT_editor_buttons(Header):
 
             layout.template_ID(st, "action", new="action.new", unlink="action.unlink")
 
+        # Layer management
+        if st.mode == 'GPENCIL':
+            row = layout.row(align=True)
+            row.operator("gpencil.layer_move", icon='TRIA_UP', text="").type = 'UP'
+            row.operator("gpencil.layer_move", icon='TRIA_DOWN', text="").type = 'DOWN'
+
+            row = layout.row(align=True)
+            row.operator("gpencil.layer_add", icon='ADD', text="")
+            row.operator("gpencil.layer_remove", icon='REMOVE', text="")
+
+            layout.separator_spacer()
+
         layout.separator_spacer()
 
 
@@ -364,7 +382,8 @@ class DOPESHEET_MT_editor_menus(Menu):
 
         layout.menu("DOPESHEET_MT_view")
         layout.menu("DOPESHEET_MT_select")
-        layout.menu("DOPESHEET_MT_marker")
+        if st.show_markers:
+            layout.menu("DOPESHEET_MT_marker")
 
         if st.mode == 'DOPESHEET' or (st.mode == 'ACTION' and st.action is not None):
             layout.menu("DOPESHEET_MT_channel")
@@ -392,6 +411,12 @@ class DOPESHEET_MT_view(Menu):
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
         layout.operator("anim.previewrange_clear", icon = "CLEAR")
         layout.operator("action.previewrange_set", icon='BORDER_RECT')
+
+        layout.separator()
+
+        layout.operator("view2d.zoom_in", text = "Zoom In", icon = "ZOOM_IN")
+        layout.operator("view2d.zoom_out", text = "Zoom Out", icon = "ZOOM_OUT")
+        layout.operator("view2d.zoom_border", icon = "ZOOM_BORDER")
 
         layout.separator()
 
@@ -670,7 +695,7 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
         st = context.space_data
 
         layout.prop(st, "use_realtime_update")
-        layout.prop(st, "show_marker_lines")
+        layout.prop(st, "show_markers")
 
         layout.separator()
 
@@ -684,8 +709,6 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
         layout.prop(st, "show_interpolation")
         layout.prop(st, "show_extremes")       
         layout.prop(st, "use_auto_merge_keyframes")
-
-
 
 
 class DOPESHEET_MT_key_transform(Menu):
@@ -753,8 +776,8 @@ class DOPESHEET_MT_gpencil_channel(Menu):
         # layout.operator("anim.channels_expand")
         # layout.operator("anim.channels_collapse")
 
-        # layout.separator()
-        #layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
+        layout.separator()
+        layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
 
 
 class DOPESHEET_MT_gpencil_frame(Menu):
@@ -871,6 +894,66 @@ class DOPESHEET_MT_snap_pie(Menu):
         pie.operator("action.snap", text="Nearest Marker").type = 'NEAREST_MARKER'
 
 
+class LayersDopeSheetPanel:
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "View"
+
+    @classmethod
+    def poll(cls, context):
+        st = context.space_data
+        ob = context.object
+        if st.mode != 'GPENCIL' or ob is None or ob.type != 'GPENCIL':
+            return False
+
+        gpd = ob.data
+        gpl = gpd.layers.active
+        if gpl:
+            return True
+
+        return False
+
+
+class DOPESHEET_PT_gpencil_mode(LayersDopeSheetPanel, Panel):
+    # bl_space_type = 'DOPESHEET_EDITOR'
+    # bl_region_type = 'UI'
+    # bl_category = "View"
+    bl_label = "Layer"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        ob = context.object
+        gpd = ob.data
+        gpl = gpd.layers.active
+        if gpl:
+            row = layout.row(align=True)
+            row.prop(gpl, "blend_mode", text="Blend")
+
+            row = layout.row(align=True)
+            row.prop(gpl, "opacity", text="Opacity", slider=True)
+
+
+class DOPESHEET_PT_gpencil_layer_adjustments(LayersDopeSheetPanel, GreasePencilLayerAdjustmentsPanel, Panel):
+    bl_label = "Adjustments"
+    bl_parent_id = 'DOPESHEET_PT_gpencil_mode'
+    bl_options = {'DEFAULT_CLOSED'}
+
+
+class DOPESHEET_PT_gpencil_layer_relations(LayersDopeSheetPanel, GreasePencilLayerRelationsPanel, Panel):
+    bl_label = "Relations"
+    bl_parent_id = 'DOPESHEET_PT_gpencil_mode'
+    bl_options = {'DEFAULT_CLOSED'}
+
+
+class DOPESHEET_PT_gpencil_layer_display(LayersDopeSheetPanel, GreasePencilLayerDisplayPanel, Panel):
+    bl_label = "Display"
+    bl_parent_id = 'DOPESHEET_PT_gpencil_mode'
+    bl_options = {'DEFAULT_CLOSED'}
+
+
 classes = (
     ALL_MT_editormenu,
     ANIM_OT_switch_editors_to_dopesheet,
@@ -904,6 +987,10 @@ classes = (
     DOPESHEET_MT_channel_context_menu,
     DOPESHEET_MT_snap_pie,
     DOPESHEET_PT_filters,
+    DOPESHEET_PT_gpencil_mode,
+    DOPESHEET_PT_gpencil_layer_adjustments,
+    DOPESHEET_PT_gpencil_layer_relations,
+    DOPESHEET_PT_gpencil_layer_display,
 )
 
 if __name__ == "__main__":  # only for live edit.

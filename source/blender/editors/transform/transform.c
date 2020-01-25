@@ -95,6 +95,7 @@
 
 #include "transform.h"
 #include "transform_convert.h"
+#include "transform_draw_cursors.h"
 #include "transform_snap.h"
 
 /* Disabling, since when you type you know what you are doing,
@@ -855,7 +856,7 @@ static bool transform_modal_item_poll(const wmOperator *op, int value)
       if (t->spacetype != SPACE_VIEW3D) {
         return false;
       }
-      else if (t->tsnap.mode & (SCE_SNAP_MODE_INCREMENT | SCE_SNAP_MODE_GRID)) {
+      else if ((t->tsnap.mode & ~(SCE_SNAP_MODE_INCREMENT | SCE_SNAP_MODE_GRID)) == 0) {
         return false;
       }
       else if (!validSnap(t)) {
@@ -1684,285 +1685,6 @@ bool calculateTransformCenter(bContext *C, int centerMode, float cent3d[3], floa
   return success;
 }
 
-typedef enum {
-  UP,
-  DOWN,
-  LEFT,
-  RIGHT,
-} ArrowDirection;
-
-#define POS_INDEX 0
-/* NOTE: this --^ is a bit hackish, but simplifies GPUVertFormat usage among functions
- * private to this file  - merwin
- */
-
-static void drawArrow(ArrowDirection d, short offset, short length, short size)
-{
-  immBegin(GPU_PRIM_LINES, 6);
-
-  switch (d) {
-    case LEFT:
-      offset = -offset;
-      length = -length;
-      size = -size;
-      ATTR_FALLTHROUGH;
-    case RIGHT:
-      immVertex2f(POS_INDEX, offset, 0);
-      immVertex2f(POS_INDEX, offset + length, 0);
-      immVertex2f(POS_INDEX, offset + length, 0);
-      immVertex2f(POS_INDEX, offset + length - size, -size);
-      immVertex2f(POS_INDEX, offset + length, 0);
-      immVertex2f(POS_INDEX, offset + length - size, size);
-      break;
-
-    case DOWN:
-      offset = -offset;
-      length = -length;
-      size = -size;
-      ATTR_FALLTHROUGH;
-    case UP:
-      immVertex2f(POS_INDEX, 0, offset);
-      immVertex2f(POS_INDEX, 0, offset + length);
-      immVertex2f(POS_INDEX, 0, offset + length);
-      immVertex2f(POS_INDEX, -size, offset + length - size);
-      immVertex2f(POS_INDEX, 0, offset + length);
-      immVertex2f(POS_INDEX, size, offset + length - size);
-      break;
-  }
-
-  immEnd();
-}
-
-static void drawArrowHead(ArrowDirection d, short size)
-{
-  immBegin(GPU_PRIM_LINES, 4);
-
-  switch (d) {
-    case LEFT:
-      size = -size;
-      ATTR_FALLTHROUGH;
-    case RIGHT:
-      immVertex2f(POS_INDEX, 0, 0);
-      immVertex2f(POS_INDEX, -size, -size);
-      immVertex2f(POS_INDEX, 0, 0);
-      immVertex2f(POS_INDEX, -size, size);
-      break;
-
-    case DOWN:
-      size = -size;
-      ATTR_FALLTHROUGH;
-    case UP:
-      immVertex2f(POS_INDEX, 0, 0);
-      immVertex2f(POS_INDEX, -size, -size);
-      immVertex2f(POS_INDEX, 0, 0);
-      immVertex2f(POS_INDEX, size, -size);
-      break;
-  }
-
-  immEnd();
-}
-
-static void drawArc(float size, float angle_start, float angle_end, int segments)
-{
-  float delta = (angle_end - angle_start) / segments;
-  float angle;
-  int a;
-
-  immBegin(GPU_PRIM_LINE_STRIP, segments + 1);
-
-  for (angle = angle_start, a = 0; a < segments; angle += delta, a++) {
-    immVertex2f(POS_INDEX, cosf(angle) * size, sinf(angle) * size);
-  }
-  immVertex2f(POS_INDEX, cosf(angle_end) * size, sinf(angle_end) * size);
-
-  immEnd();
-}
-
-static bool helpline_poll(bContext *C)
-{
-  ARegion *ar = CTX_wm_region(C);
-
-  if (ar && ar->regiontype == RGN_TYPE_WINDOW) {
-    return 1;
-  }
-  return 0;
-}
-
-static void drawHelpline(bContext *UNUSED(C), int x, int y, void *customdata)
-{
-  TransInfo *t = (TransInfo *)customdata;
-
-  if (t->helpline != HLP_NONE) {
-    float cent[2];
-    const float mval[3] = {
-        x,
-        y,
-        0.0f,
-    };
-    float tmval[2] = {
-        (float)t->mval[0],
-        (float)t->mval[1],
-    };
-
-    projectFloatViewEx(t, t->center_global, cent, V3D_PROJ_TEST_CLIP_ZERO);
-    /* Offset the values for the area region. */
-    const float offset[2] = {
-        t->ar->winrct.xmin,
-        t->ar->winrct.ymin,
-    };
-
-    for (int i = 0; i < 2; i++) {
-      cent[i] += offset[i];
-      tmval[i] += offset[i];
-    }
-
-    GPU_matrix_push();
-
-    /* Dashed lines first. */
-    if (ELEM(t->helpline, HLP_SPRING, HLP_ANGLE)) {
-      const uint shdr_pos = GPU_vertformat_attr_add(
-          immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
-
-      UNUSED_VARS_NDEBUG(shdr_pos); /* silence warning */
-      BLI_assert(shdr_pos == POS_INDEX);
-
-      GPU_line_width(1.0f);
-
-      immBindBuiltinProgram(GPU_SHADER_2D_LINE_DASHED_UNIFORM_COLOR);
-
-      float viewport_size[4];
-      GPU_viewport_size_get_f(viewport_size);
-      immUniform2f("viewport_size", viewport_size[2], viewport_size[3]);
-
-      immUniform1i("colors_len", 0); /* "simple" mode */
-      immUniformThemeColor(TH_VIEW_OVERLAY);
-      immUniform1f("dash_width", 6.0f);
-      immUniform1f("dash_factor", 0.5f);
-
-      immBegin(GPU_PRIM_LINES, 2);
-      immVertex2fv(POS_INDEX, cent);
-      immVertex2f(POS_INDEX, tmval[0], tmval[1]);
-      immEnd();
-
-      immUnbindProgram();
-    }
-
-    /* And now, solid lines. */
-    uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
-    UNUSED_VARS_NDEBUG(pos); /* silence warning */
-    BLI_assert(pos == POS_INDEX);
-    immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
-
-    switch (t->helpline) {
-      case HLP_SPRING:
-        immUniformThemeColor(TH_VIEW_OVERLAY);
-
-        GPU_matrix_translate_3fv(mval);
-        GPU_matrix_rotate_axis(-RAD2DEGF(atan2f(cent[0] - tmval[0], cent[1] - tmval[1])), 'Z');
-
-        GPU_line_width(3.0f);
-        drawArrow(UP, 5, 10, 5);
-        drawArrow(DOWN, 5, 10, 5);
-        break;
-      case HLP_HARROW:
-        immUniformThemeColor(TH_VIEW_OVERLAY);
-        GPU_matrix_translate_3fv(mval);
-
-        GPU_line_width(3.0f);
-        drawArrow(RIGHT, 5, 10, 5);
-        drawArrow(LEFT, 5, 10, 5);
-        break;
-      case HLP_VARROW:
-        immUniformThemeColor(TH_VIEW_OVERLAY);
-
-        GPU_matrix_translate_3fv(mval);
-
-        GPU_line_width(3.0f);
-        drawArrow(UP, 5, 10, 5);
-        drawArrow(DOWN, 5, 10, 5);
-        break;
-      case HLP_CARROW: {
-        /* Draw arrow based on direction defined by custom-points. */
-        immUniformThemeColor(TH_VIEW_OVERLAY);
-
-        GPU_matrix_translate_3fv(mval);
-
-        GPU_line_width(3.0f);
-
-        const int *data = t->mouse.data;
-        const float dx = data[2] - data[0], dy = data[3] - data[1];
-        const float angle = -atan2f(dx, dy);
-
-        GPU_matrix_push();
-
-        GPU_matrix_rotate_axis(RAD2DEGF(angle), 'Z');
-
-        drawArrow(UP, 5, 10, 5);
-        drawArrow(DOWN, 5, 10, 5);
-
-        GPU_matrix_pop();
-        break;
-      }
-      case HLP_ANGLE: {
-        float dx = tmval[0] - cent[0], dy = tmval[1] - cent[1];
-        float angle = atan2f(dy, dx);
-        float dist = hypotf(dx, dy);
-        float delta_angle = min_ff(15.0f / dist, (float)M_PI / 4.0f);
-        float spacing_angle = min_ff(5.0f / dist, (float)M_PI / 12.0f);
-
-        immUniformThemeColor(TH_VIEW_OVERLAY);
-
-        GPU_matrix_translate_3f(cent[0] - tmval[0] + mval[0], cent[1] - tmval[1] + mval[1], 0);
-
-        GPU_line_width(3.0f);
-        drawArc(dist, angle - delta_angle, angle - spacing_angle, 10);
-        drawArc(dist, angle + spacing_angle, angle + delta_angle, 10);
-
-        GPU_matrix_push();
-
-        GPU_matrix_translate_3f(
-            cosf(angle - delta_angle) * dist, sinf(angle - delta_angle) * dist, 0);
-        GPU_matrix_rotate_axis(RAD2DEGF(angle - delta_angle), 'Z');
-
-        drawArrowHead(DOWN, 5);
-
-        GPU_matrix_pop();
-
-        GPU_matrix_translate_3f(
-            cosf(angle + delta_angle) * dist, sinf(angle + delta_angle) * dist, 0);
-        GPU_matrix_rotate_axis(RAD2DEGF(angle + delta_angle), 'Z');
-
-        drawArrowHead(UP, 5);
-        break;
-      }
-      case HLP_TRACKBALL: {
-        unsigned char col[3], col2[3];
-        UI_GetThemeColor3ubv(TH_GRID, col);
-
-        GPU_matrix_translate_3fv(mval);
-
-        GPU_line_width(3.0f);
-
-        UI_make_axis_color(col, col2, 'X');
-        immUniformColor3ubv(col2);
-
-        drawArrow(RIGHT, 5, 10, 5);
-        drawArrow(LEFT, 5, 10, 5);
-
-        UI_make_axis_color(col, col2, 'Y');
-        immUniformColor3ubv(col2);
-
-        drawArrow(UP, 5, 10, 5);
-        drawArrow(DOWN, 5, 10, 5);
-        break;
-      }
-    }
-
-    immUnbindProgram();
-    GPU_matrix_pop();
-  }
-}
-
 static bool transinfo_show_overlay(const struct bContext *C, TransInfo *t, ARegion *ar)
 {
   /* Don't show overlays when not the active view and when overlay is disabled: T57139 */
@@ -2133,7 +1855,7 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
         else if (t->options & CTX_MASK) {
           ts->proportional_mask = proportional != 0;
         }
-        else {
+        else if ((t->options & CTX_CURSOR) == 0) {
           ts->proportional_objects = proportional != 0;
         }
       }
@@ -2359,6 +2081,7 @@ bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
 
   /* Needed to translate tweak events to mouse buttons. */
   t->launch_event = event ? WM_userdef_event_type_from_keymap_type(event->type) : -1;
+  t->is_launch_event_tweak = event ? ISTWEAK(event->type) : false;
 
   /* XXX Remove this when wm_operator_call_internal doesn't use window->eventstate
    * (which can have type = 0) */
@@ -2379,43 +2102,67 @@ bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
         t->ar->type, drawTransformView, t, REGION_DRAW_POST_VIEW);
     t->draw_handle_pixel = ED_region_draw_cb_activate(
         t->ar->type, drawTransformPixel, t, REGION_DRAW_POST_PIXEL);
-    t->draw_handle_cursor = WM_paint_cursor_activate(
-        CTX_wm_manager(C), SPACE_TYPE_ANY, RGN_TYPE_ANY, helpline_poll, drawHelpline, t);
+    t->draw_handle_cursor = WM_paint_cursor_activate(CTX_wm_manager(C),
+                                                     SPACE_TYPE_ANY,
+                                                     RGN_TYPE_ANY,
+                                                     transform_draw_cursor_poll,
+                                                     transform_draw_cursor_draw,
+                                                     t);
   }
   else if (t->spacetype == SPACE_IMAGE) {
     t->draw_handle_view = ED_region_draw_cb_activate(
         t->ar->type, drawTransformView, t, REGION_DRAW_POST_VIEW);
-    t->draw_handle_cursor = WM_paint_cursor_activate(
-        CTX_wm_manager(C), SPACE_TYPE_ANY, RGN_TYPE_ANY, helpline_poll, drawHelpline, t);
+    t->draw_handle_cursor = WM_paint_cursor_activate(CTX_wm_manager(C),
+                                                     SPACE_TYPE_ANY,
+                                                     RGN_TYPE_ANY,
+                                                     transform_draw_cursor_poll,
+                                                     transform_draw_cursor_draw,
+                                                     t);
   }
   else if (t->spacetype == SPACE_CLIP) {
     t->draw_handle_view = ED_region_draw_cb_activate(
         t->ar->type, drawTransformView, t, REGION_DRAW_POST_VIEW);
-    t->draw_handle_cursor = WM_paint_cursor_activate(
-        CTX_wm_manager(C), SPACE_TYPE_ANY, RGN_TYPE_ANY, helpline_poll, drawHelpline, t);
+    t->draw_handle_cursor = WM_paint_cursor_activate(CTX_wm_manager(C),
+                                                     SPACE_TYPE_ANY,
+                                                     RGN_TYPE_ANY,
+                                                     transform_draw_cursor_poll,
+                                                     transform_draw_cursor_draw,
+                                                     t);
   }
   else if (t->spacetype == SPACE_NODE) {
     t->draw_handle_view = ED_region_draw_cb_activate(
         t->ar->type, drawTransformView, t, REGION_DRAW_POST_VIEW);
-    t->draw_handle_cursor = WM_paint_cursor_activate(
-        CTX_wm_manager(C), SPACE_TYPE_ANY, RGN_TYPE_ANY, helpline_poll, drawHelpline, t);
+    t->draw_handle_cursor = WM_paint_cursor_activate(CTX_wm_manager(C),
+                                                     SPACE_TYPE_ANY,
+                                                     RGN_TYPE_ANY,
+                                                     transform_draw_cursor_poll,
+                                                     transform_draw_cursor_draw,
+                                                     t);
   }
   else if (t->spacetype == SPACE_GRAPH) {
     t->draw_handle_view = ED_region_draw_cb_activate(
         t->ar->type, drawTransformView, t, REGION_DRAW_POST_VIEW);
-    t->draw_handle_cursor = WM_paint_cursor_activate(
-        CTX_wm_manager(C), SPACE_TYPE_ANY, RGN_TYPE_ANY, helpline_poll, drawHelpline, t);
+    t->draw_handle_cursor = WM_paint_cursor_activate(CTX_wm_manager(C),
+                                                     SPACE_TYPE_ANY,
+                                                     RGN_TYPE_ANY,
+                                                     transform_draw_cursor_poll,
+                                                     transform_draw_cursor_draw,
+                                                     t);
   }
   else if (t->spacetype == SPACE_ACTION) {
     t->draw_handle_view = ED_region_draw_cb_activate(
         t->ar->type, drawTransformView, t, REGION_DRAW_POST_VIEW);
-    t->draw_handle_cursor = WM_paint_cursor_activate(
-        CTX_wm_manager(C), SPACE_TYPE_ANY, RGN_TYPE_ANY, helpline_poll, drawHelpline, t);
+    t->draw_handle_cursor = WM_paint_cursor_activate(CTX_wm_manager(C),
+                                                     SPACE_TYPE_ANY,
+                                                     RGN_TYPE_ANY,
+                                                     transform_draw_cursor_poll,
+                                                     transform_draw_cursor_draw,
+                                                     t);
   }
 
   createTransData(C, t);  // make TransData structs from selection
 
-  if (t->options & CTX_SCULPT) {
+  if ((t->options & CTX_SCULPT) && !(t->options & CTX_PAINT_CURVE)) {
     ED_sculpt_init_transform(C);
   }
 
@@ -2732,7 +2479,7 @@ bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
           else if (!do_skip) {
             const bool preserve_clnor = RNA_property_boolean_get(op->ptr, prop);
             if (preserve_clnor) {
-              BKE_editmesh_lnorspace_update(em);
+              BKE_editmesh_lnorspace_update(em, tc->obedit->data);
               t->flag |= T_CLNOR_REBUILD;
             }
             BM_lnorspace_invalidate(em->bm, true);
@@ -3523,10 +3270,29 @@ static void Bend(TransInfo *t, const int UNUSED(mval[2]))
 static void initShear_mouseInputMode(TransInfo *t)
 {
   float dir[3];
+  bool dir_flip = false;
   copy_v3_v3(dir, t->orient_matrix[t->orient_axis_ortho]);
+
+  /* Needed for axis aligned view gizmo. */
+  if (t->orientation.user == V3D_ORIENT_VIEW) {
+    if (t->orient_axis_ortho == 0) {
+      if (t->center2d[1] > t->mouse.imval[1]) {
+        dir_flip = !dir_flip;
+      }
+    }
+    else if (t->orient_axis_ortho == 1) {
+      if (t->center2d[0] > t->mouse.imval[0]) {
+        dir_flip = !dir_flip;
+      }
+    }
+  }
 
   /* Without this, half the gizmo handles move in the opposite direction. */
   if ((t->orient_axis_ortho + 1) % 3 != t->orient_axis) {
+    dir_flip = !dir_flip;
+  }
+
+  if (dir_flip) {
     negate_v3(dir);
   }
 
@@ -4891,8 +4657,8 @@ static void initNormalRotation(TransInfo *t)
     BMEditMesh *em = BKE_editmesh_from_object(tc->obedit);
     BMesh *bm = em->bm;
 
-    BKE_editmesh_ensure_autosmooth(em);
-    BKE_editmesh_lnorspace_update(em);
+    BKE_editmesh_ensure_autosmooth(em, tc->obedit->data);
+    BKE_editmesh_lnorspace_update(em, tc->obedit->data);
 
     storeCustomLNorValue(tc, bm);
   }
@@ -5261,11 +5027,11 @@ static void applyTranslationValue(TransInfo *t, const float vec[3])
         copy_v3_v3(tvec, vec);
       }
 
+      mul_m3_v3(td->smtx, tvec);
+
       if (use_rotate_offset) {
         add_v3_v3(tvec, rotate_offset);
       }
-
-      mul_m3_v3(td->smtx, tvec);
 
       if (t->options & CTX_GPENCIL_STROKES) {
         /* grease pencil multiframe falloff */
@@ -7576,20 +7342,27 @@ static void drawEdgeSlide(TransInfo *t)
         }
         immEnd();
 
-        immUniformThemeColorShadeAlpha(TH_SELECT, -30, alpha_shade);
-        GPU_point_size(ctrl_size);
-        immBegin(GPU_PRIM_POINTS, 1);
-        if (slp->flipped) {
-          if (curr_sv->v_side[1]) {
-            immVertex3fv(pos, curr_sv->v_side[1]->co);
+        {
+          float *co_test = NULL;
+          if (slp->flipped) {
+            if (curr_sv->v_side[1]) {
+              co_test = curr_sv->v_side[1]->co;
+            }
+          }
+          else {
+            if (curr_sv->v_side[0]) {
+              co_test = curr_sv->v_side[0]->co;
+            }
+          }
+
+          if (co_test != NULL) {
+            immUniformThemeColorShadeAlpha(TH_SELECT, -30, alpha_shade);
+            GPU_point_size(ctrl_size);
+            immBegin(GPU_PRIM_POINTS, 1);
+            immVertex3fv(pos, co_test);
+            immEnd();
           }
         }
-        else {
-          if (curr_sv->v_side[0]) {
-            immVertex3fv(pos, curr_sv->v_side[0]->co);
-          }
-        }
-        immEnd();
 
         immUniformThemeColorShadeAlpha(TH_SELECT, 255, alpha_shade);
         GPU_point_size(guide_size);

@@ -26,7 +26,6 @@
 #define __ED_GIZMO_LIBRARY_H__
 
 /* initialize gizmos */
-void ED_gizmotypes_arrow_2d(void);
 void ED_gizmotypes_arrow_3d(void);
 void ED_gizmotypes_button_2d(void);
 void ED_gizmotypes_cage_2d(void);
@@ -37,10 +36,6 @@ void ED_gizmotypes_facemap_3d(void);
 void ED_gizmotypes_preselect_3d(void);
 void ED_gizmotypes_primitive_3d(void);
 void ED_gizmotypes_blank_3d(void);
-void ED_gizmotypes_value_2d(void);
-
-/* gizmo group types */
-void ED_gizmogrouptypes_value_2d(void);
 
 struct Object;
 struct bContext;
@@ -94,11 +89,6 @@ enum {
 
 void ED_gizmo_arrow3d_set_ui_range(struct wmGizmo *gz, const float min, const float max);
 void ED_gizmo_arrow3d_set_range_fac(struct wmGizmo *gz, const float range_fac);
-
-/* -------------------------------------------------------------------- */
-/* 2D Arrow Gizmo */
-
-/* none */
 
 /* -------------------------------------------------------------------- */
 /* Cage Gizmo */

@@ -1,5 +1,5 @@
 tell application "Finder"
-          tell disk "Blender"
+          tell disk "Bforartists"
                open
                set current view of container window to icon view
                set toolbar visible of container window to false
@@ -10,7 +10,7 @@ tell application "Finder"
                set icon size of theViewOptions to 128
                set background picture of theViewOptions to file ".background:background.tif"
                set position of item " " of container window to {400, 190}
-               set position of item "blender.app" of container window to {135, 190}
+               set position of item "bforartists.app" of container window to {135, 190}
                update without registering applications
                delay 5
                close

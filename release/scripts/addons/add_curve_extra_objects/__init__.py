@@ -23,7 +23,7 @@
 bl_info = {
     "name": "Extra Objects",
     "author": "Multiple Authors",
-    "version": (0, 1, 3),
+    "version": (0, 1, 4),
     "blender": (2, 80, 0),
     "location": "View3D > Add > Curve > Extra Objects",
     "description": "Add extra curve object types",

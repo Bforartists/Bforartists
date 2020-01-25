@@ -176,8 +176,9 @@ class GRAPH_PT_properties_view_options(Panel):
         st = context.space_data
 
         layout.prop(st, "use_realtime_update")
-        layout.prop(st, "show_marker_lines")
-        
+        if st.mode != 'DRIVERS':
+            layout.separator()
+            layout.prop(st, "show_markers")
         layout.separator()
         
         layout.prop(st, "show_seconds")
@@ -202,11 +203,13 @@ class GRAPH_MT_editor_menus(Menu):
     bl_idname = "GRAPH_MT_editor_menus"
     bl_label = ""
 
-    def draw(self, _context):
+    def draw(self, context):
+        st = context.space_data
         layout = self.layout
         layout.menu("GRAPH_MT_view")
         layout.menu("GRAPH_MT_select")
-        layout.menu("GRAPH_MT_marker")
+        if st.mode != 'DRIVERS' and st.show_markers:
+            layout.menu("GRAPH_MT_marker")
         layout.menu("GRAPH_MT_channel")
         layout.menu("GRAPH_MT_key")
 
@@ -220,12 +223,19 @@ class GRAPH_MT_view(Menu):
         st = context.space_data
 
         layout.prop(st, "show_region_ui")
+        layout.prop(st, "show_region_hud")
 
         layout.separator()
 
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
         layout.operator("anim.previewrange_clear", icon = "CLEAR")
         layout.operator("graph.previewrange_set", icon='BORDER_RECT')
+
+        layout.separator()
+        
+        layout.operator("view2d.zoom_in", text = "Zoom In", icon = "ZOOM_IN")
+        layout.operator("view2d.zoom_out", text = "Zoom Out", icon = "ZOOM_OUT")
+        layout.operator("view2d.zoom_border", icon = "ZOOM_BORDER")
 
         layout.separator()
 
@@ -463,6 +473,16 @@ class GRAPH_MT_key(Menu):
 
         layout.separator()
 
+        operator_context = layout.operator_context
+
+        layout.operator("graph.decimate", text="Decimate (Ratio)").mode = 'RATIO'
+
+        # Using the modal operation doesn't make sense for this variant
+        # as we do not have a modal mode for it, so just execute it.
+        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator("graph.decimate", text="Decimate (Allowed Change)").mode = 'ERROR'
+        layout.operator_context = operator_context
+        
         layout.operator("graph.clean", icon = "CLEAN_KEYS").channels = False
         layout.operator("graph.clean", text="Clean Channels", icon = "CLEAN_CHANNELS").channels = True
         layout.operator("graph.smooth", icon = "SMOOTH_KEYFRAMES")

@@ -8,25 +8,43 @@ collection_tree = []
 expanded = []
 
 max_lvl = 0
+row_index = 0
 
 def get_max_lvl():
     return max_lvl
 
+def update_col_name(self, context):
+    if self.name != self.last_name:
+        if self.name == '':
+            self.name = self.last_name
+            return
+        
+        if self.last_name != '':
+            layer_collections[self.last_name]["ptr"].collection.name = self.name
+            
+            update_property_group(context)
+        
+        self.last_name = self.name
+
 class CMListCollection(PropertyGroup):
-    name: StringProperty()
+    name: StringProperty(update=update_col_name)
+    last_name: StringProperty()
 
 
 def update_collection_tree(context):
     global max_lvl
+    global row_index
     collection_tree.clear()
     layer_collections.clear()
     max_lvl = 0
+    row_index = 0
     
     init_laycol_list = context.view_layer.layer_collection.children
     
     master_laycol = {"id": 0,
                      "name": context.view_layer.layer_collection.name,
                      "lvl": -1,
+                     "row_index": -1,
                      "visible": True,
                      "has_children": True,
                      "expanded": True,
@@ -39,10 +57,13 @@ def update_collection_tree(context):
 
 
 def get_all_collections(context, collections, parent, tree, level=0, visible=False):
+    global row_index
+    
     for item in collections:
         laycol = {"id": len(layer_collections) +1,
                   "name": item.name,
                   "lvl": level,
+                  "row_index": row_index,
                   "visible":  visible,
                   "has_children": False,
                   "expanded": False,
@@ -50,6 +71,8 @@ def get_all_collections(context, collections, parent, tree, level=0, visible=Fal
                   "children": [],
                   "ptr": item
                   }
+        
+        row_index += 1
         
         layer_collections[item.name] = laycol
         tree.append(laycol)
@@ -61,7 +84,7 @@ def get_all_collections(context, collections, parent, tree, level=0, visible=Fal
             
             if item.name in expanded and laycol["visible"]:
                 laycol["expanded"] = True
-                get_all_collections(context, item.children, laycol, laycol["children"], level+1, visible=True)
+                get_all_collections(context, item.children, laycol, laycol["children"], level+1,  visible=True)
                 
             else:
                 get_all_collections(context, item.children, laycol, laycol["children"], level+1)

@@ -26,6 +26,7 @@
 #include "BLI_string_utils.h"
 #include "BLI_listbase.h"
 
+#include "BKE_global.h"
 #include "BKE_idprop.h"
 #include "BKE_library.h"
 #include "BKE_main.h"
@@ -202,8 +203,10 @@ WorkSpaceInstanceHook *BKE_workspace_instance_hook_create(const Main *bmain)
 }
 void BKE_workspace_instance_hook_free(const Main *bmain, WorkSpaceInstanceHook *hook)
 {
-  /* workspaces should never be freed before wm (during which we call this function) */
-  BLI_assert(!BLI_listbase_is_empty(&bmain->workspaces));
+  /* workspaces should never be freed before wm (during which we call this function).
+   * However, when running in background mode, loading a blend file may allocate windows (that need
+   * to be freed) without creating workspaces. This happens in BlendfileLoadingBaseTest. */
+  BLI_assert(!BLI_listbase_is_empty(&bmain->workspaces) || G.background);
 
   /* Free relations for this hook */
   for (WorkSpace *workspace = bmain->workspaces.first; workspace; workspace = workspace->id.next) {
@@ -244,8 +247,12 @@ WorkSpaceLayout *BKE_workspace_layout_add(Main *bmain,
 
 void BKE_workspace_layout_remove(Main *bmain, WorkSpace *workspace, WorkSpaceLayout *layout)
 {
-  id_us_min(&layout->screen->id);
-  BKE_id_free(bmain, layout->screen);
+  /* Screen should usually be set, but we call this from file reading to get rid of invalid
+   * layouts. */
+  if (layout->screen) {
+    id_us_min(&layout->screen->id);
+    BKE_id_free(bmain, layout->screen);
+  }
   BLI_freelinkN(&workspace->layouts, layout);
 }
 

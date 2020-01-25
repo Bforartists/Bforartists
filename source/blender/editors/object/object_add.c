@@ -603,27 +603,8 @@ static int lightprobe_add_exec(bContext *C, wmOperator *op)
   copy_v3_fl(ob->scale, radius);
 
   probe = (LightProbe *)ob->data;
-  probe->type = type;
 
-  switch (type) {
-    case LIGHTPROBE_TYPE_GRID:
-      probe->distinf = 0.3f;
-      probe->falloff = 1.0f;
-      probe->clipsta = 0.01f;
-      break;
-    case LIGHTPROBE_TYPE_PLANAR:
-      probe->distinf = 0.1f;
-      probe->falloff = 0.5f;
-      probe->clipsta = 0.001f;
-      ob->empty_drawsize = 0.5f;
-      break;
-    case LIGHTPROBE_TYPE_CUBE:
-      probe->attenuation_type = LIGHTPROBE_SHAPE_ELIPSOID;
-      break;
-    default:
-      BLI_assert(!"LightProbe type not configured.");
-      break;
-  }
+  BKE_lightprobe_configure(probe, type);
 
   DEG_relations_tag_update(CTX_data_main(C));
 
@@ -1714,7 +1695,11 @@ static bool dupliobject_cmp(const void *a_, const void *b_)
     return true;
   }
 
-  if (ELEM(a->type, b->type, OB_DUPLICOLLECTION)) {
+  if (a->type != b->type) {
+    return true;
+  }
+
+  if (a->type == OB_DUPLICOLLECTION) {
     for (int i = 1; (i < MAX_DUPLI_RECUR); i++) {
       if (a->persistent_id[i] != b->persistent_id[i]) {
         return true;
@@ -1798,6 +1783,9 @@ static void make_object_duplilist_real(bContext *C,
     BKE_collection_object_add_from(bmain, scene, base->object, ob_dst);
     base_dst = BKE_view_layer_base_find(view_layer, ob_dst);
     BLI_assert(base_dst != NULL);
+
+    ED_object_base_select(base_dst, BA_SELECT);
+    DEG_id_tag_update(&ob_dst->id, ID_RECALC_SELECT);
 
     BKE_scene_object_base_flag_sync_from_base(base_dst);
 
@@ -1933,6 +1921,9 @@ static void make_object_duplilist_real(bContext *C,
     }
     base->object->instance_collection = NULL;
   }
+
+  ED_object_base_select(base, BA_DESELECT);
+  DEG_id_tag_update(&base->object->id, ID_RECALC_SELECT);
 
   BLI_ghash_free(dupli_gh, NULL, NULL);
   if (parent_gh) {
@@ -2725,7 +2716,7 @@ void OBJECT_OT_duplicate(wmOperatorType *ot)
 /* -------------------------------------------------------------------- */
 /** \name Add Named Object Operator
  *
- * Use for for drag & drop.
+ * Use for drag & drop.
  * \{ */
 
 static int add_named_exec(bContext *C, wmOperator *op)

@@ -22,8 +22,6 @@
 
 #include "workbench_private.h"
 
-#include "BIF_gl.h"
-
 #include "BKE_image.h"
 #include "BKE_node.h"
 
@@ -87,16 +85,28 @@ void workbench_material_update_data(WORKBENCH_PrivateData *wpd,
 char *workbench_material_build_defines(WORKBENCH_PrivateData *wpd,
                                        bool is_uniform_color,
                                        bool is_hair,
-                                       bool is_texture_painting)
+                                       bool is_tiled,
+                                       const WORKBENCH_ColorOverride color_override)
 {
   char *str = NULL;
   bool use_textures = (wpd->shading.color_type == V3D_SHADING_TEXTURE_COLOR) && !is_uniform_color;
   bool use_vertex_colors = (wpd->shading.color_type == V3D_SHADING_VERTEX_COLOR) &&
                            !is_uniform_color;
 
-  if (is_texture_painting) {
-    use_textures = true;
-    use_vertex_colors = false;
+  switch (color_override) {
+    case WORKBENCH_COLOR_OVERRIDE_TEXTURE:
+      use_textures = true;
+      use_vertex_colors = false;
+      is_hair = false;
+      break;
+    case WORKBENCH_COLOR_OVERRIDE_VERTEX:
+      use_textures = false;
+      use_vertex_colors = true;
+      is_hair = false;
+      is_tiled = false;
+      break;
+    case WORKBENCH_COLOR_OVERRIDE_OFF:
+      break;
   }
 
   DynStr *ds = BLI_dynstr_new();
@@ -142,6 +152,9 @@ char *workbench_material_build_defines(WORKBENCH_PrivateData *wpd,
   }
   if (is_hair) {
     BLI_dynstr_append(ds, "#define HAIR_SHADER\n");
+  }
+  if (use_textures && is_tiled) {
+    BLI_dynstr_append(ds, "#define TEXTURE_IMAGE_ARRAY\n");
   }
 
   str = BLI_dynstr_get_cstring(ds);
@@ -203,15 +216,27 @@ int workbench_material_get_composite_shader_index(WORKBENCH_PrivateData *wpd)
 int workbench_material_get_prepass_shader_index(WORKBENCH_PrivateData *wpd,
                                                 bool is_uniform_color,
                                                 bool is_hair,
-                                                bool is_texture_painting)
+                                                bool is_tiled,
+                                                const WORKBENCH_ColorOverride color_override)
 {
   bool use_textures = (wpd->shading.color_type == V3D_SHADING_TEXTURE_COLOR) && !is_uniform_color;
   bool use_vertex_colors = (wpd->shading.color_type == V3D_SHADING_VERTEX_COLOR) &&
                            !is_uniform_color;
-  if (is_texture_painting) {
-    use_textures = true;
-    use_vertex_colors = false;
+
+  switch (color_override) {
+    case WORKBENCH_COLOR_OVERRIDE_TEXTURE:
+      use_textures = true;
+      use_vertex_colors = false;
+      break;
+    case WORKBENCH_COLOR_OVERRIDE_VERTEX:
+      use_textures = false;
+      use_vertex_colors = true;
+      is_tiled = false;
+      break;
+    case WORKBENCH_COLOR_OVERRIDE_OFF:
+      break;
   }
+
   /* NOTE: change MAX_PREPASS_SHADERS accordingly when modifying this function. */
   int index = 0;
   SET_FLAG_FROM_TEST(index, is_hair, 1 << 0);
@@ -221,6 +246,7 @@ int workbench_material_get_prepass_shader_index(WORKBENCH_PrivateData *wpd,
   SET_FLAG_FROM_TEST(index, MATCAP_ENABLED(wpd), 1 << 4);
   SET_FLAG_FROM_TEST(index, use_textures, 1 << 5);
   SET_FLAG_FROM_TEST(index, use_vertex_colors, 1 << 6);
+  SET_FLAG_FROM_TEST(index, is_tiled && use_textures, 1 << 7);
   BLI_assert(index < MAX_PREPASS_SHADERS);
   return index;
 }
@@ -228,15 +254,27 @@ int workbench_material_get_prepass_shader_index(WORKBENCH_PrivateData *wpd,
 int workbench_material_get_accum_shader_index(WORKBENCH_PrivateData *wpd,
                                               bool is_uniform_color,
                                               bool is_hair,
-                                              bool is_texture_painting)
+                                              bool is_tiled,
+                                              const WORKBENCH_ColorOverride color_override)
 {
   bool use_textures = (wpd->shading.color_type == V3D_SHADING_TEXTURE_COLOR) && !is_uniform_color;
   bool use_vertex_colors = (wpd->shading.color_type == V3D_SHADING_VERTEX_COLOR) &&
                            !is_uniform_color;
-  if (is_texture_painting) {
-    use_textures = true;
-    use_vertex_colors = false;
-    is_hair = false;
+
+  switch (color_override) {
+    case WORKBENCH_COLOR_OVERRIDE_TEXTURE:
+      use_textures = true;
+      use_vertex_colors = false;
+      is_hair = false;
+      break;
+    case WORKBENCH_COLOR_OVERRIDE_VERTEX:
+      use_textures = false;
+      use_vertex_colors = true;
+      is_hair = false;
+      is_tiled = false;
+      break;
+    case WORKBENCH_COLOR_OVERRIDE_OFF:
+      break;
   }
 
   /* NOTE: change MAX_ACCUM_SHADERS accordingly when modifying this function. */
@@ -249,6 +287,7 @@ int workbench_material_get_accum_shader_index(WORKBENCH_PrivateData *wpd,
   /* 1 bits SHADOWS (only facing factor) */
   SET_FLAG_FROM_TEST(index, SHADOW_ENABLED(wpd), 1 << 5);
   SET_FLAG_FROM_TEST(index, workbench_is_specular_highlight_enabled(wpd), 1 << 6);
+  SET_FLAG_FROM_TEST(index, is_tiled && use_textures, 1 << 7);
   BLI_assert(index < MAX_ACCUM_SHADERS);
   return index;
 }
@@ -269,12 +308,25 @@ int workbench_material_determine_color_type(WORKBENCH_PrivateData *wpd,
     color_type = V3D_SHADING_OBJECT_COLOR;
   }
 
-  /* Force V3D_SHADING_TEXTURE_COLOR for active object when in texture painting
-   * no matter the shading color that the user has chosen, when there is no
-   * texture we will render the object with the error color */
-  if (workbench_is_object_in_texture_paint_mode(ob)) {
-    color_type = ima ? V3D_SHADING_TEXTURE_COLOR : V3D_SHADING_ERROR_COLOR;
+  switch (workbench_object_color_override_get(ob)) {
+    /* Force V3D_SHADING_TEXTURE_COLOR for active object when in texture painting
+     * no matter the shading color that the user has chosen, when there is no
+     * texture we will render the object with the error color */
+    case WORKBENCH_COLOR_OVERRIDE_TEXTURE:
+      color_type = ima ? V3D_SHADING_TEXTURE_COLOR : V3D_SHADING_ERROR_COLOR;
+      break;
+
+    /* Force V3D_SHADING_VERTEX_COLOR for active object when in vertex painting
+     * no matter the shading color that the user has chosen, when there is no
+     * vertex color we will render the object with the error color */
+    case WORKBENCH_COLOR_OVERRIDE_VERTEX:
+      color_type = V3D_SHADING_VERTEX_COLOR;
+      break;
+
+    case WORKBENCH_COLOR_OVERRIDE_OFF:
+      break;
   }
+
   return color_type;
 }
 
@@ -311,9 +363,10 @@ void workbench_material_shgroup_uniform(WORKBENCH_PrivateData *wpd,
                                         WORKBENCH_MaterialData *material,
                                         Object *ob,
                                         const bool deferred,
+                                        const bool is_tiled,
                                         const int interp)
 {
-  if (!(!deferred || workbench_is_matdata_pass_enabled(wpd))) {
+  if (deferred && !workbench_is_matdata_pass_enabled(wpd)) {
     return;
   }
 
@@ -321,8 +374,18 @@ void workbench_material_shgroup_uniform(WORKBENCH_PrivateData *wpd,
   const bool use_texture = (V3D_SHADING_TEXTURE_COLOR == workbench_material_determine_color_type(
                                                              wpd, material->ima, ob, false));
   if (use_texture) {
-    GPUTexture *tex = GPU_texture_from_blender(material->ima, material->iuser, GL_TEXTURE_2D);
-    DRW_shgroup_uniform_texture(grp, "image", tex);
+    if (is_tiled) {
+      GPUTexture *array_tex = GPU_texture_from_blender(
+          material->ima, material->iuser, GL_TEXTURE_2D_ARRAY);
+      GPUTexture *data_tex = GPU_texture_from_blender(
+          material->ima, material->iuser, GL_TEXTURE_1D_ARRAY);
+      DRW_shgroup_uniform_texture(grp, "image_tile_array", array_tex);
+      DRW_shgroup_uniform_texture(grp, "image_tile_data", data_tex);
+    }
+    else {
+      GPUTexture *tex = GPU_texture_from_blender(material->ima, material->iuser, GL_TEXTURE_2D);
+      DRW_shgroup_uniform_texture(grp, "image", tex);
+    }
     DRW_shgroup_uniform_bool_copy(
         grp, "imagePremultiplied", (material->ima->alpha_mode == IMA_ALPHA_PREMUL));
     DRW_shgroup_uniform_bool_copy(grp, "imageNearest", (interp == SHD_INTERP_CLOSEST));
@@ -332,10 +395,6 @@ void workbench_material_shgroup_uniform(WORKBENCH_PrivateData *wpd,
 
   if (use_highlight) {
     DRW_shgroup_uniform_float(grp, "materialRoughness", &material->roughness, 1);
-  }
-
-  if (WORLD_CLIPPING_ENABLED(wpd)) {
-    DRW_shgroup_state_enable(grp, DRW_STATE_CLIP_PLANES);
   }
 }
 

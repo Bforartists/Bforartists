@@ -298,13 +298,15 @@ static void file_draw_preview(uiBlock *block,
   GPU_blend_set_func_separate(
       GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
 
+  /* bfa - link and append icon handling with thumbnails*/
+
   if (icon && (icon != ICON_FILE_FONT)) {
     /* size of center icon is scaled to fit container and UI scale */
     float icon_x, icon_y;
 
     if (is_icon) {
       const float icon_size = 16.0f / icon_aspect * U.dpi_fac;
-      float icon_opacity = 0.3f;
+      float icon_opacity = 0.8f; /*bfa - changed from 0.3 to 0.8*/
       uchar icon_color[4] = {0, 0, 0, 255};
       float bgcolor[4];
       UI_GetThemeColor4fv(TH_ICON_FOLDER, bgcolor);
@@ -314,7 +316,8 @@ static void file_draw_preview(uiBlock *block,
         icon_color[2] = 255;
       }
       icon_x = xco + (ex / 2.0f) - (icon_size / 2.0f);
-      icon_y = yco + (ey / 2.0f) - (icon_size * ((typeflags & FILE_TYPE_DIR) ? 0.78f : 0.75f));
+      icon_y = yco + (ey / 2.2f) -
+               (icon_size * ((typeflags & FILE_TYPE_DIR) ? 0.78f : 0.75f)); /* bfa - changed mini icon position y from (ey / 2.0f) to (ey / 2.2f)*/
       UI_icon_draw_ex(
           icon_x, icon_y, icon, icon_aspect / U.dpi_fac, icon_opacity, 0.0f, icon_color, false);
     }

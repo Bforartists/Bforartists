@@ -190,11 +190,14 @@ BLI_INLINE unsigned char f_to_char(const float val)
 /* to avoid locking in tile initialization */
 #define TILE_PENDING POINTER_FROM_INT(-1)
 
-/** This is mainly a convenience struct used so we can keep an array of images we use -
+/**
+ * This is mainly a convenience struct used so we can keep an array of images we use -
  * their imbufs, etc, in 1 array, When using threads this array is copied for each thread
- * because 'partRedrawRect' and 'touch' values would not be thread safe */
+ * because 'partRedrawRect' and 'touch' values would not be thread safe.
+ */
 typedef struct ProjPaintImage {
   Image *ima;
+  ImageUser iuser;
   ImBuf *ibuf;
   ImagePaintPartialRedraw *partRedrawRect;
   /** Only used to build undo tiles during painting. */
@@ -528,6 +531,18 @@ BLI_INLINE const MPoly *ps_tri_index_to_mpoly(const ProjPaintState *ps, int tri_
 
 /* Finish projection painting structs */
 
+static int project_paint_face_paint_tile(Image *ima, const float *uv)
+{
+  if (ima == NULL || ima->source != IMA_SRC_TILED) {
+    return 0;
+  }
+
+  /* Currently, faces are assumed to belong to one tile, so checking the first loop is enough. */
+  int tx = (int)uv[0];
+  int ty = (int)uv[1];
+  return 1001 + 10 * ty + tx;
+}
+
 static TexPaintSlot *project_paint_face_paint_slot(const ProjPaintState *ps, int tri_index)
 {
   const MPoly *mp = ps_tri_index_to_mpoly(ps, tri_index);
@@ -727,9 +742,13 @@ static bool project_paint_PickColor(const ProjPaintState *ps,
 
   ima = project_paint_face_paint_image(ps, tri_index);
   /** we must have got the imbuf before getting here. */
-  ibuf = BKE_image_get_first_ibuf(ima);
-  if (!ibuf) {
-    return 0;
+  int tile_number = project_paint_face_paint_tile(ima, lt_tri_uv[0]);
+  ImageUser iuser;
+  BKE_imageuser_default(&iuser);
+  iuser.tile = tile_number;
+  ibuf = BKE_image_acquire_ibuf(ima, &iuser, NULL);
+  if (ibuf == NULL) {
+    return false;
   }
 
   if (interp) {
@@ -885,7 +904,7 @@ static bool project_bucket_point_occluded(const ProjPaintState *ps,
                                           const float pixelScreenCo[4])
 {
   int isect_ret;
-  const bool do_clip = ps->rv3d ? (ps->rv3d->rflag & RV3D_CLIPPING) != 0 : 0;
+  const bool do_clip = RV3D_CLIPPING_ENABLED(ps->v3d, ps->rv3d);
 
   /* we could return 0 for 1 face buckets, as long as this function assumes
    * that the point its testing is only every originated from an existing face */
@@ -1152,6 +1171,8 @@ static bool check_seam(const ProjPaintState *ps,
         const float *lt_tri_uv[3] = {PS_LOOPTRI_AS_UV_3(ps->poly_to_loop_uv, lt)};
         Image *tpage = project_paint_face_paint_image(ps, tri_index);
         Image *orig_tpage = project_paint_face_paint_image(ps, orig_face);
+        int tile = project_paint_face_paint_tile(tpage, lt_tri_uv[0]);
+        int orig_tile = project_paint_face_paint_tile(orig_tpage, orig_lt_tri_uv[0]);
 
         BLI_assert(i1_fidx != -1);
 
@@ -1169,7 +1190,8 @@ static bool check_seam(const ProjPaintState *ps,
         }
 
         /* first test if they have the same image */
-        if ((orig_tpage == tpage) && cmp_uv(orig_lt_tri_uv[orig_i1_fidx], lt_tri_uv[i1_fidx]) &&
+        if ((orig_tpage == tpage) && (orig_tile == tile) &&
+            cmp_uv(orig_lt_tri_uv[orig_i1_fidx], lt_tri_uv[i1_fidx]) &&
             cmp_uv(orig_lt_tri_uv[orig_i2_fidx], lt_tri_uv[i2_fidx])) {
           /* if faces don't have the same winding in uv space,
            * they are on the same side so edge is boundary */
@@ -1815,6 +1837,7 @@ static int project_paint_undo_subtiles(const TileInfo *tinf, int tx, int ty)
                                           pjIma->ima,
                                           pjIma->ibuf,
                                           tinf->tmpibuf,
+                                          pjIma->iuser.tile,
                                           tx,
                                           ty,
                                           &pjIma->maskRect[tile_index],
@@ -1827,6 +1850,7 @@ static int project_paint_undo_subtiles(const TileInfo *tinf, int tx, int ty)
                                           pjIma->ima,
                                           pjIma->ibuf,
                                           tinf->tmpibuf,
+                                          pjIma->iuser.tile,
                                           tx,
                                           ty,
                                           NULL,
@@ -3022,7 +3046,7 @@ static void project_paint_face_init(const ProjPaintState *ps,
   const bool is_ortho = ps->is_ortho;
   const bool is_flip_object = ps->is_flip_object;
   const bool do_backfacecull = ps->do_backfacecull;
-  const bool do_clip = ps->rv3d ? ps->rv3d->rflag & RV3D_CLIPPING : 0;
+  const bool do_clip = RV3D_CLIPPING_ENABLED(ps->v3d, ps->rv3d);
 
   vCo[0] = ps->mvert_eval[lt_vtri[0]].co;
   vCo[1] = ps->mvert_eval[lt_vtri[1]].co;
@@ -3484,6 +3508,7 @@ static void project_bucket_init(const ProjPaintState *ps,
   ImBuf *ibuf = NULL;
   Image *tpage_last = NULL, *tpage;
   ImBuf *tmpibuf = NULL;
+  int tile_last = 0;
 
   if (ps->image_tot == 1) {
     /* Simple loop, no context switching */
@@ -3507,17 +3532,25 @@ static void project_bucket_init(const ProjPaintState *ps,
     for (node = ps->bucketFaces[bucket_index]; node; node = node->next) {
       tri_index = POINTER_AS_INT(node->link);
 
+      const MLoopTri *lt = &ps->mlooptri_eval[tri_index];
+      const float *lt_tri_uv[3] = {PS_LOOPTRI_AS_UV_3(ps->poly_to_loop_uv, lt)};
+
       /* Image context switching */
       tpage = project_paint_face_paint_image(ps, tri_index);
-      if (tpage_last != tpage) {
+      int tile = project_paint_face_paint_tile(tpage, lt_tri_uv[0]);
+      if (tpage_last != tpage || tile_last != tile) {
         tpage_last = tpage;
+        tile_last = tile;
 
+        ibuf = NULL;
         for (image_index = 0; image_index < ps->image_tot; image_index++) {
-          if (ps->projImages[image_index].ima == tpage_last) {
-            ibuf = ps->projImages[image_index].ibuf;
+          ProjPaintImage *projIma = &ps->projImages[image_index];
+          if ((projIma->ima == tpage) && (projIma->iuser.tile == tile)) {
+            ibuf = projIma->ibuf;
             break;
           }
         }
+        BLI_assert(ibuf != NULL);
       }
       /* context switching done */
 
@@ -4230,22 +4263,36 @@ static bool project_paint_winclip(const ProjPaintState *ps, const ProjPaintFaceC
 }
 #endif  // PROJ_DEBUG_WINCLIP
 
+typedef struct PrepareImageEntry {
+  struct PrepareImageEntry *next, *prev;
+  Image *ima;
+  int tile;
+} PrepareImageEntry;
+
 static void project_paint_build_proj_ima(ProjPaintState *ps,
                                          MemArena *arena,
-                                         LinkNode *image_LinkList)
+                                         ListBase *used_images)
 {
   ProjPaintImage *projIma;
-  LinkNode *node;
+  PrepareImageEntry *entry;
   int i;
 
   /* build an array of images we use */
   projIma = ps->projImages = BLI_memarena_alloc(arena, sizeof(ProjPaintImage) * ps->image_tot);
 
-  for (node = image_LinkList, i = 0; node; node = node->next, i++, projIma++) {
+  for (entry = used_images->first, i = 0; entry; entry = entry->next, i++, projIma++) {
+    memset(&projIma->iuser, 0, sizeof(ImageUser));
+    BKE_imageuser_default(&projIma->iuser);
+    projIma->iuser.tile = entry->tile;
     int size;
-    projIma->ima = node->link;
+    projIma->ima = entry->ima;
     projIma->touch = 0;
-    projIma->ibuf = BKE_image_acquire_ibuf(projIma->ima, NULL, NULL);
+    projIma->ibuf = BKE_image_acquire_ibuf(projIma->ima, &projIma->iuser, NULL);
+    if (projIma->ibuf == NULL) {
+      projIma->iuser.tile = 0;
+      projIma->ibuf = BKE_image_acquire_ibuf(projIma->ima, &projIma->iuser, NULL);
+      BLI_assert(projIma->ibuf != NULL);
+    }
     size = sizeof(void **) * ED_IMAGE_UNDO_TILE_NUMBER(projIma->ibuf->x) *
            ED_IMAGE_UNDO_TILE_NUMBER(projIma->ibuf->y);
     projIma->partRedrawRect = BLI_memarena_alloc(
@@ -4268,14 +4315,17 @@ static void project_paint_prepare_all_faces(ProjPaintState *ps,
                                             const bool is_multi_view)
 {
   /* Image Vars - keep track of images we have used */
-  LinkNodePair image_LinkList = {NULL, NULL};
+  ListBase used_images = {NULL};
 
   Image *tpage_last = NULL, *tpage;
   TexPaintSlot *slot_last = NULL;
   TexPaintSlot *slot = NULL;
+  int tile_last = -1, tile;
   const MLoopTri *lt;
   int image_index = -1, tri_index;
   int prev_poly = -1;
+
+  BLI_assert(ps->image_tot == 0);
 
   for (tri_index = 0, lt = ps->mlooptri_eval; tri_index < ps->totlooptri_eval; tri_index++, lt++) {
     bool is_face_sel;
@@ -4318,6 +4368,8 @@ static void project_paint_prepare_all_faces(ProjPaintState *ps,
     }
 
     ps->poly_to_loop_uv[lt->poly] = mloopuv_base;
+
+    tile = project_paint_face_paint_tile(tpage, mloopuv_base[lt->tri[0]].uv);
 
 #ifndef PROJ_DEBUG_NOSEAMBLEED
     project_paint_bleed_add_face_user(ps, arena, lt, tri_index);
@@ -4380,18 +4432,32 @@ static void project_paint_prepare_all_faces(ProjPaintState *ps,
         }
       }
 
-      if (tpage_last != tpage) {
+      if (tpage_last != tpage || tile_last != tile) {
+        image_index = 0;
+        for (PrepareImageEntry *e = used_images.first; e; e = e->next, image_index++) {
+          if (e->ima == tpage && e->tile == tile) {
+            break;
+          }
+        }
 
-        image_index = BLI_linklist_index(image_LinkList.list, tpage);
-
-        if (image_index == -1 && BKE_image_has_ibuf(tpage, NULL)) {
-          /* MemArena doesn't have an append func */
-          BLI_linklist_append(&image_LinkList, tpage);
-          image_index = ps->image_tot;
-          ps->image_tot++;
+        if (image_index == ps->image_tot) {
+          ImageUser iuser;
+          BKE_imageuser_default(&iuser);
+          iuser.tile = tile;
+          if (BKE_image_has_ibuf(tpage, &iuser)) {
+            PrepareImageEntry *e = MEM_callocN(sizeof(PrepareImageEntry), "PrepareImageEntry");
+            e->ima = tpage;
+            e->tile = tile;
+            BLI_addtail(&used_images, e);
+            ps->image_tot++;
+          }
+          else {
+            image_index = -1;
+          }
         }
 
         tpage_last = tpage;
+        tile_last = tile;
       }
 
       if (image_index != -1) {
@@ -4404,11 +4470,11 @@ static void project_paint_prepare_all_faces(ProjPaintState *ps,
 
   /* build an array of images we use*/
   if (ps->is_shared_user == false) {
-    project_paint_build_proj_ima(ps, arena, image_LinkList.list);
+    project_paint_build_proj_ima(ps, arena, &used_images);
   }
 
   /* we have built the array, discard the linked list */
-  BLI_linklist_free(image_LinkList.list, NULL);
+  BLI_freelistN(&used_images);
 }
 
 /* run once per stroke before projection painting */
@@ -4673,7 +4739,7 @@ static bool project_image_refresh_tagged(ProjPaintState *ps)
         pr = &(projIma->partRedrawRect[i]);
         if (pr->x2 != -1) { /* TODO - use 'enabled' ? */
           set_imapaintpartial(pr);
-          imapaint_image_update(NULL, projIma->ima, projIma->ibuf, true);
+          imapaint_image_update(NULL, projIma->ima, projIma->ibuf, &projIma->iuser, true);
           redraw = 1;
         }
 
@@ -6207,7 +6273,6 @@ static int texture_paint_image_from_view_exec(bContext *C, wmOperator *op)
                                         h,
                                         IB_rect,
                                         R_ALPHAPREMUL,
-                                        0,
                                         NULL,
                                         NULL,
                                         err_out);
@@ -6440,7 +6505,8 @@ static Image *proj_paint_image_create(wmOperator *op, Main *bmain, bool is_data)
                                 gen_type,
                                 color,
                                 false,
-                                is_data);
+                                is_data,
+                                false); /* TODO(lukas): Add option */
 
   return ima;
 }

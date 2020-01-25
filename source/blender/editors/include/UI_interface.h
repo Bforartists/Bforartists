@@ -346,6 +346,8 @@ typedef enum {
   /** sphere widget (used to input a unit-vector, aka normal) */
   UI_BTYPE_UNITVEC = 31 << 9,
   UI_BTYPE_CURVE = 32 << 9,
+  /** Profile editing widget */
+  UI_BTYPE_CURVEPROFILE = 33 << 9,
   UI_BTYPE_LISTBOX = 36 << 9,
   UI_BTYPE_LISTROW = 37 << 9,
   UI_BTYPE_HSVCIRCLE = 38 << 9,
@@ -1873,7 +1875,8 @@ void uiTemplateID(uiLayout *layout,
                   const char *openop,
                   const char *unlinkop,
                   int filter,
-                  const bool live_icon);
+                  const bool live_icon,
+                  const char *text);
 void uiTemplateIDBrowse(uiLayout *layout,
                         struct bContext *C,
                         struct PointerRNA *ptr,
@@ -1881,7 +1884,8 @@ void uiTemplateIDBrowse(uiLayout *layout,
                         const char *newop,
                         const char *openop,
                         const char *unlinkop,
-                        int filter);
+                        int filter,
+                        const char *text);
 void uiTemplateIDPreview(uiLayout *layout,
                          struct bContext *C,
                          struct PointerRNA *ptr,
@@ -1973,6 +1977,7 @@ void uiTemplateCurveMapping(uiLayout *layout,
                             bool brush,
                             bool neg_slope,
                             bool tone);
+void uiTemplateCurveProfile(uiLayout *layout, struct PointerRNA *ptr, const char *propname);
 void uiTemplateColorPicker(uiLayout *layout,
                            struct PointerRNA *ptr,
                            const char *propname,
@@ -2267,6 +2272,7 @@ void uiItemsFullEnumO_items(uiLayout *layout,
                             int totitem);
 
 void uiItemL(uiLayout *layout, const char *name, int icon); /* label */
+uiLayout *uiItemL_respect_property_split(uiLayout *layout, const char *text, int icon);
 /* label icon for dragging */
 void uiItemLDrag(uiLayout *layout, struct PointerRNA *ptr, const char *name, int icon);
 /* menu */

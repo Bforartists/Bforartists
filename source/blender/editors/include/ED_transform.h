@@ -27,10 +27,9 @@
 /* ******************* Registration Function ********************** */
 
 struct Object;
-struct SnapObjectContext;
-struct SnapObjectParams;
 struct bContext;
 struct wmKeyConfig;
+struct wmMsgBus;
 struct wmOperatorType;
 
 void ED_keymap_transform(struct wmKeyConfig *keyconf);
@@ -107,7 +106,6 @@ bool calculateTransformCenter(struct bContext *C,
 
 struct Object;
 struct Scene;
-struct TransInfo;
 struct wmGizmoGroup;
 struct wmGizmoGroupType;
 
@@ -168,10 +166,11 @@ void VIEW3D_GGT_xform_shear(struct wmGizmoGroupType *gzgt);
 /* *** transform_gizmo_extrude_3d.c *** */
 void VIEW3D_GGT_xform_extrude(struct wmGizmoGroupType *gzgt);
 
-bool ED_widgetgroup_gizmo2d_poll(const struct bContext *C, struct wmGizmoGroupType *gzgt);
-void ED_widgetgroup_gizmo2d_setup(const struct bContext *C, struct wmGizmoGroup *gzgroup);
-void ED_widgetgroup_gizmo2d_refresh(const struct bContext *C, struct wmGizmoGroup *gzgroup);
-void ED_widgetgroup_gizmo2d_draw_prepare(const struct bContext *C, struct wmGizmoGroup *gzgroup);
+/* Generic 2D transform gizmo callback assignment. */
+void ED_widgetgroup_gizmo2d_xform_callbacks_set(struct wmGizmoGroupType *gzgt);
+void ED_widgetgroup_gizmo2d_xform_no_cage_callbacks_set(struct wmGizmoGroupType *gzgt);
+void ED_widgetgroup_gizmo2d_resize_callbacks_set(struct wmGizmoGroupType *gzgt);
+void ED_widgetgroup_gizmo2d_rotate_callbacks_set(struct wmGizmoGroupType *gzgt);
 
 #define SNAP_INCREMENTAL_ANGLE DEG2RAD(5.0)
 

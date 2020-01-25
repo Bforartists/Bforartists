@@ -173,6 +173,7 @@ set(SRC
   shader/nodes/node_shader_normal.c
   shader/nodes/node_shader_normal_map.c
   shader/nodes/node_shader_object_info.c
+  shader/nodes/node_shader_output_aov.c
   shader/nodes/node_shader_output_light.c
   shader/nodes/node_shader_output_linestyle.c
   shader/nodes/node_shader_output_material.c

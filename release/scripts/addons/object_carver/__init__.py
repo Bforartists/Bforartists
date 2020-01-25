@@ -24,7 +24,8 @@ bl_info = {
 	"blender": (2, 80, 0),
 	"location": "3D View > Ctrl/Shift/x",
 	"warning": "",
-	"wiki_url": "",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "object/carver.html",
 	"support": 'COMMUNITY',
 	"category": "Object"
 	}

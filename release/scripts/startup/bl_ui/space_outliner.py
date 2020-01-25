@@ -73,18 +73,19 @@ class OUTLINER_HT_header(Header):
         OUTLINER_MT_editor_menus.draw_collapsible(context, layout) # Collapsing everything in OUTLINER_MT_editor_menus when ticking collapse menus checkbox
 
         #layout.separator_spacer()
-
+    
+        
+        layout.separator_spacer()
+        
         row = layout.row(align=True)
 
         row.prop(addon_prefs,"outliner_show_search", icon='VIEWZOOM', text = "") # show search text prop
         if addon_prefs.outliner_show_search:
-            row.prop(space, "filter_text", text="")
-
-        layout.separator_spacer()
+            row.prop(space, "filter_text", text="")     
 
         if display_mode == 'SEQUENCE':
             row = layout.row(align=True)
-            row.prop(space, "use_sync_select", icon="UV_SYNC_SELECT", text="")
+            row.prop(space, "use_sync_select", icon='UV_SYNC_SELECT', text="")
 
         row = layout.row(align=True)
         if display_mode in {'SCENES', 'VIEW_LAYER'}:
@@ -96,16 +97,10 @@ class OUTLINER_HT_header(Header):
         elif display_mode in {'LIBRARIES', 'ORPHAN_DATA'}:
             row.prop(space, "use_filter_id_type", text="", icon='FILTER')
             sub = row.row(align=True)
-            sub.active = space.use_filter_id_type
-            sub.prop(space, "filter_id_type", text="", icon_only=True)
+            if space.use_filter_id_type:
+                sub.prop(space, "filter_id_type", text="", icon_only=True)
 
-        if display_mode == 'VIEW_LAYER':
-            layout.operator("outliner.collection_new", text="", icon='COLLECTION_NEW')
-
-        elif display_mode == 'ORPHAN_DATA':
-            layout.operator("outliner.orphans_purge", text="Purge")
-
-        elif space.display_mode == 'DATA_API':
+        if space.display_mode == 'DATA_API':
             layout.separator()
 
             if ks:
@@ -118,6 +113,24 @@ class OUTLINER_HT_header(Header):
             else:
                 row = layout.row()
                 row.label(text="No Keying Set Active")
+
+class   OUTLINER_MT_object_collection(Menu):
+    bl_label = "Collection"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("object.move_to_collection", icon='GROUP')
+        layout.operator("object.link_to_collection", icon='GROUP')
+
+        layout.separator()
+        layout.operator("collection.objects_remove", icon = "DELETE")
+        layout.operator("collection.objects_remove_all", icon = "DELETE")
+
+        layout.separator()
+
+        layout.operator("collection.objects_add_active", icon='GROUP')
+        layout.operator("collection.objects_remove_active", icon = "DELETE")
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
@@ -139,11 +152,26 @@ class OUTLINER_MT_editor_menus(Menu):
     def draw(self, context):
         layout = self.layout
         space = context.space_data
+        
+        space = context.space_data
+        display_mode = space.display_mode
 
         layout.menu("OUTLINER_MT_view") # bfa - view menu
 
-        if space.display_mode == 'DATA_API':
+        if display_mode == 'DATA_API':
             layout.menu("OUTLINER_MT_edit_datablocks")
+            
+        elif display_mode == 'VIEW_LAYER':                  
+            layout.menu("OUTLINER_MT_object_collection", text = "Col")
+            
+            layout.separator()
+            
+            layout.operator("outliner.collection_new", text="", icon='COLLECTION_NEW')
+            
+        elif display_mode == 'ORPHAN_DATA':
+            layout.separator()
+            
+            layout.operator("outliner.orphans_purge", text="Purge")
             
 
 # Workaround to separate the tooltips for Hide one level
@@ -444,6 +472,7 @@ classes = (
     OUTLINER_OT_switch_editors_to_properties,
     OUTLINER_OT_switch_editors_to_outliner,
     OUTLINER_HT_header,
+    OUTLINER_MT_object_collection,
     ALL_MT_editormenu,
     OUTLINER_MT_editor_menus,
     OUTLINER_MT_view_hide_one_level,

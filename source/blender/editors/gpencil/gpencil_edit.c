@@ -770,6 +770,11 @@ static int gp_duplicate_exec(bContext *C, wmOperator *op)
         /* deselect original stroke, or else the originals get moved too
          * (when using the copy + move macro)
          */
+        bGPDspoint *pt;
+        int i;
+        for (i = 0, pt = gps->points; i < gps->totpoints; i++, pt++) {
+          pt->flag &= ~GP_SPOINT_SELECT;
+        }
         gps->flag &= ~GP_STROKE_SELECT;
       }
     }
@@ -1610,6 +1615,8 @@ static int gp_blank_frame_add_exec(bContext *C, wmOperator *op)
 
 void GPENCIL_OT_blank_frame_add(wmOperatorType *ot)
 {
+  PropertyRNA *prop;
+
   /* identifiers */
   ot->name = "Insert Blank Frame";
   ot->idname = "GPENCIL_OT_blank_frame_add";
@@ -1621,13 +1628,15 @@ void GPENCIL_OT_blank_frame_add(wmOperatorType *ot)
   ot->exec = gp_blank_frame_add_exec;
   ot->poll = gp_add_poll;
 
-  /* properties */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-  RNA_def_boolean(ot->srna,
-                  "all_layers",
-                  false,
-                  "All Layers",
-                  "Create blank frame in all layers, not only active");
+
+  /* properties */
+  prop = RNA_def_boolean(ot->srna,
+                         "all_layers",
+                         false,
+                         "All Layers",
+                         "Create blank frame in all layers, not only active");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
 /* ******************* Delete Active Frame ************************ */
@@ -1641,10 +1650,23 @@ static bool gp_actframe_delete_poll(bContext *C)
   return (gpl && gpl->actframe);
 }
 
+static bool gp_annotation_actframe_delete_poll(bContext *C)
+{
+  bGPdata *gpd = ED_annotation_data_get_active(C);
+  bGPDlayer *gpl = BKE_gpencil_layer_getactive(gpd);
+
+  /* only if there's an active layer with an active frame */
+  return (gpl && gpl->actframe);
+}
+
 /* delete active frame - wrapper around API calls */
 static int gp_actframe_delete_exec(bContext *C, wmOperator *op)
 {
-  bGPdata *gpd = ED_gpencil_data_get_active(C);
+  const bool is_annotation = STREQ(op->idname, "GPENCIL_OT_annotation_active_frame_delete");
+
+  bGPdata *gpd = (!is_annotation) ? ED_gpencil_data_get_active(C) :
+                                    ED_annotation_data_get_active(C);
+
   bGPDlayer *gpl = BKE_gpencil_layer_getactive(gpd);
 
   Scene *scene = CTX_data_scene(C);
@@ -1685,6 +1707,19 @@ void GPENCIL_OT_active_frame_delete(wmOperatorType *ot)
   ot->poll = gp_actframe_delete_poll;
 }
 
+void GPENCIL_OT_annotation_active_frame_delete(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Delete Active Frame";
+  ot->idname = "GPENCIL_OT_annotation_active_frame_delete";
+  ot->description = "Delete the active frame for the active Annotation Layer";
+
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  /* callbacks */
+  ot->exec = gp_actframe_delete_exec;
+  ot->poll = gp_annotation_actframe_delete_poll;
+}
 /* **************** Delete All Active Frames ****************** */
 
 static bool gp_actframe_delete_all_poll(bContext *C)
@@ -3526,23 +3561,31 @@ static int gp_strokes_reproject_exec(bContext *C, wmOperator *op)
 void GPENCIL_OT_reproject(wmOperatorType *ot)
 {
   static const EnumPropertyItem reproject_type[] = {
-      {GP_REPROJECT_FRONT, "FRONT", 0, "Front", "Reproject the strokes using the X-Z plane"},
-      {GP_REPROJECT_SIDE, "SIDE", 0, "Side", "Reproject the strokes using the Y-Z plane"},
-      {GP_REPROJECT_TOP, "TOP", 0, "Top", "Reproject the strokes using the X-Y plane"},
+      {GP_REPROJECT_FRONT,
+       "FRONT",
+       ICON_VIEW_FRONT,
+       "Front",
+       "Reproject the strokes using the X-Z plane"},
+      {GP_REPROJECT_SIDE,
+       "SIDE",
+       ICON_VIEW_LEFT,
+       "Side",
+       "Reproject the strokes using the Y-Z plane"},
+      {GP_REPROJECT_TOP, "TOP", ICON_VIEW_TOP, "Top", "Reproject the strokes using the X-Y plane"},
       {GP_REPROJECT_VIEW,
        "VIEW",
-       0,
+       ICON_VIEW,
        "View",
        "Reproject the strokes to end up on the same plane, as if drawn from the current viewpoint "
        "using 'Cursor' Stroke Placement"},
       {GP_REPROJECT_SURFACE,
        "SURFACE",
-       0,
+       ICON_REPROJECT,
        "Surface",
        "Reproject the strokes on to the scene geometry, as if drawn using 'Surface' placement"},
       {GP_REPROJECT_CURSOR,
        "CURSOR",
-       0,
+       ICON_CURSOR,
        "Cursor",
        "Reproject the strokes using the orientation of 3D cursor"},
       {0, NULL, 0, NULL, NULL},
@@ -3551,10 +3594,7 @@ void GPENCIL_OT_reproject(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Reproject Strokes";
   ot->idname = "GPENCIL_OT_reproject";
-  ot->description =
-      "Reproject the selected strokes from the current viewpoint as if they had been newly drawn "
-      "(e.g. to fix problems from accidental 3D cursor movement or accidental viewport changes, "
-      "or for matching deforming geometry)";
+  ot->description = "Reproject the selected strokes from the current viewpoint as if they had been newly drawn ";
 
   /* callbacks */
   ot->invoke = WM_menu_invoke;

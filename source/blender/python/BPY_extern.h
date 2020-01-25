@@ -51,6 +51,7 @@ int BPY_is_pyconstraint(struct Text *text);
 void BPY_python_start(int argc, const char **argv);
 void BPY_python_end(void);
 void BPY_python_reset(struct bContext *C);
+void BPY_python_use_system_env(void);
 
 /* global interpreter lock */
 
@@ -85,6 +86,12 @@ bool BPY_execute_string_as_intptr(struct bContext *C,
                                   const char *expr,
                                   const bool verbose,
                                   intptr_t *r_value);
+bool BPY_execute_string_as_string_and_size(struct bContext *C,
+                                           const char *imports[],
+                                           const char *expr,
+                                           const bool verbose,
+                                           char **r_value,
+                                           size_t *r_value_size);
 bool BPY_execute_string_as_string(struct bContext *C,
                                   const char *imports[],
                                   const char *expr,

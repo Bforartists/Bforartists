@@ -192,8 +192,8 @@ static void editmesh_set_connectivity_distance(BMesh *bm,
             if (e_iter->l) {
               BMLoop *l_iter_radial, *l_first_radial;
               /**
-               * imaginary edge diagonally across quad,
-               * \note, this takes advantage of the rules of winding that we
+               * imaginary edge diagonally across quad.
+               * \note This takes advantage of the rules of winding that we
                * know 2 or more of a verts edges wont reference the same face twice.
                * Also, if the edge is hidden, the face will be hidden too.
                */
@@ -1451,7 +1451,8 @@ void createTransUVs(bContext *C, TransInfo *t)
     if (is_prop_connected || is_island_center) {
       /* create element map with island information */
       const bool use_facesel = (ts->uv_flag & UV_SYNC_SELECTION) == 0;
-      elementmap = BM_uv_element_map_create(em->bm, use_facesel, false, true);
+      const bool use_uvsel = !is_prop_connected;
+      elementmap = BM_uv_element_map_create(em->bm, scene, use_facesel, use_uvsel, false, true);
       if (elementmap == NULL) {
         continue;
       }
@@ -1547,16 +1548,17 @@ void createTransUVs(bContext *C, TransInfo *t)
 
         if (is_prop_connected || is_island_center) {
           UvElement *element = BM_uv_element_get(elementmap, efa, l);
-
-          if (is_prop_connected) {
-            if (!BLI_BITMAP_TEST(island_enabled, element->island)) {
-              count_rejected++;
-              continue;
+          if (element) {
+            if (is_prop_connected) {
+              if (!BLI_BITMAP_TEST(island_enabled, element->island)) {
+                count_rejected++;
+                continue;
+              }
             }
-          }
 
-          if (is_island_center) {
-            center = island_center[element->island].co;
+            if (is_island_center) {
+              center = island_center[element->island].co;
+            }
           }
         }
 

@@ -27,7 +27,8 @@ bl_info = {
     "location": "View3D > Sidebar > Create Tab",
     "description": "Creates Dynamic Sky for Cycles",
     "warning": "",
-    "wiki_url": "http://www.dragoneex.com/downloads/dynamic-skyadd-on",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "lighting/dynamic_sky.html",
     "category": "Lighting",
     }
 

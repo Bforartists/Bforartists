@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzan <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -4018,14 +4018,6 @@ msgid "Internal Friction"
 msgstr "Fricción interna"
 
 
-msgid "Mass"
-msgstr "Masa"
-
-
-msgid "Mass of cloth material"
-msgstr "Masa del material de la ropa"
-
-
 msgid "Pin Stiffness"
 msgstr "Resistencia de fijación"
 
@@ -4124,6 +4116,10 @@ msgstr "Valor máximo de resistencia al estiramiento"
 
 msgid "Cloth speed is multiplied by this value"
 msgstr "La velocidad de la ropa es multiplicada por este valor"
+
+
+msgid "Pressure"
+msgstr "Presión"
 
 
 msgid "Dynamic Base Mesh"
@@ -6711,16 +6707,8 @@ msgid "Keep Axis"
 msgstr "Mantener eje"
 
 
-msgid "Axis to maintain during stretch"
-msgstr "Eje a preservar durante el estiramiento"
-
-
-msgid "Keep X Axis"
-msgstr "Mantener eje X"
-
-
-msgid "Keep Z Axis"
-msgstr "Mantener eje Z"
+msgid "XZ"
+msgstr "XZ"
 
 
 msgid "Original Length"
@@ -6733,10 +6721,6 @@ msgstr "Longitud en la posición de reposo"
 
 msgid "Maintain the object's volume as it stretches"
 msgstr "Mantener el volumen del objeto mientras se estira en"
-
-
-msgid "XZ"
-msgstr "XZ"
 
 
 msgid "Track To Constraint"
@@ -7067,22 +7051,6 @@ msgid "Curve in a curve mapping"
 msgstr "Curva de mapeo"
 
 
-msgid "Extend"
-msgstr "Extender"
-
-
-msgid "Extrapolate the curve or extend it horizontally"
-msgstr "Extrapolar la curva o extenderla horizontalmente"
-
-
-msgid "Horizontal"
-msgstr "Horizontal"
-
-
-msgid "Extrapolated"
-msgstr "Extrapolado"
-
-
 msgid "Points"
 msgstr "Puntos"
 
@@ -7157,6 +7125,22 @@ msgstr "Recorte mín X"
 
 msgid "Clip Min Y"
 msgstr "Recorte mín Y"
+
+
+msgid "Extend"
+msgstr "Extender"
+
+
+msgid "Extrapolate the curve or extend it horizontally"
+msgstr "Extrapolar la curva o extenderla horizontalmente"
+
+
+msgid "Horizontal"
+msgstr "Horizontal"
+
+
+msgid "Extrapolated"
+msgstr "Extrapolado"
 
 
 msgid "Tone"
@@ -7341,6 +7325,14 @@ msgstr "Sólo el inicio"
 
 msgid "Use the start of the stroke for the depth"
 msgstr "Permite usar el inicio del trazo para definir la profundidad"
+
+
+msgid "Steps"
+msgstr "Intervalos"
+
+
+msgid "Segments"
+msgstr "Segmentos"
 
 
 msgid "Curve Splines"
@@ -13188,10 +13180,6 @@ msgid "Coordinates"
 msgstr "Coordenadas"
 
 
-msgid "Pressure"
-msgstr "Presión"
-
-
 msgid "Pressure of tablet at point when drawing it"
 msgstr "Presión de la tableta en un punto al dibujarlo"
 
@@ -15125,6 +15113,10 @@ msgid "Gpencil Settings"
 msgstr "Opciones de lápiz de cera"
 
 
+msgid "Grease Pencil Draw Tool"
+msgstr "Herramienta dibujar de lápiz de cera"
+
+
 msgid "Draw"
 msgstr "Dibujar"
 
@@ -15285,6 +15277,10 @@ msgid "Offset of the pose origin in relation to the brush radius"
 msgstr "Desplazamiento del origen de la pose en relación al radio del pincel"
 
 
+msgid "Smooth Iterations"
+msgstr "Iteraciones de suavizado"
+
+
 msgid "Rake"
 msgstr "Arrastre"
 
@@ -15379,6 +15375,10 @@ msgstr "Empujar"
 
 msgid "Rotate"
 msgstr "Rotar"
+
+
+msgid "Topology"
+msgstr "Topología"
 
 
 msgid "Secondary Color"
@@ -15651,6 +15651,14 @@ msgstr "Plano original"
 
 msgid "When locked keep using the plane origin of surface where stroke was initiated"
 msgstr "Al estar bloqueado, sigue usando el plano original de la superficie donde se inició el trazo"
+
+
+msgid "Antialasing"
+msgstr "Suavizado de bordes"
+
+
+msgid "Smooths the edges of the strokes"
+msgstr "Suaviza los bordes de los trazos"
 
 
 msgid "Use Sculpt"
@@ -16275,10 +16283,6 @@ msgstr "Determina cómo se mapea el factor de biselado final a una curva"
 
 msgid "Map the bevel factor to the number of subdivisions of a spline (U resolution)"
 msgstr "Mapea el factor de biselado a la cantidad de subdivisiones de una curva (Resolución U)"
-
-
-msgid "Segments"
-msgstr "Segmentos"
 
 
 msgid "Map the bevel factor to the length of a segment and to the number of subdivisions of a segment"
@@ -19167,14 +19171,6 @@ msgid "Polygons of the mesh"
 msgstr "Polígonos de la malla"
 
 
-msgid "Fix Poles"
-msgstr "Corregir polos"
-
-
-msgid "Produces less poles and a better topology flow"
-msgstr "Produce menos polos y un mejor flujo en la topología"
-
-
 msgid "Remesh Mode"
 msgstr "Modo de rehacer malla"
 
@@ -19193,26 +19189,6 @@ msgstr "Cuadriláteros"
 
 msgid "Use the quad remesher"
 msgstr "Usa el método de rehacer mallas para obtener cuadriláteros"
-
-
-msgid "Preserve Paint Mask"
-msgstr "Preservar máscara de pintura"
-
-
-msgid "Keep the current mask on the new mesh"
-msgstr "Mantiene la máscara actual en la nueva malla"
-
-
-msgid "Projects the mesh to preserve the volume and details of the original mesh"
-msgstr "Proyecta la malla para preservar el volumen y los detalles de la malla original"
-
-
-msgid "Smooth Normals"
-msgstr "Suavizar normales"
-
-
-msgid "Smooth the normals of the remesher result"
-msgstr "Suaviza las normales al rehacer la malla"
 
 
 msgid "Adaptivity"
@@ -19345,6 +19321,34 @@ msgstr "Selección de vértices"
 
 msgid "Vertex selection masking for painting"
 msgstr "Permite enmascarar las áreas a pintar, mediante la selección de vértices"
+
+
+msgid "Fix Poles"
+msgstr "Corregir polos"
+
+
+msgid "Produces less poles and a better topology flow"
+msgstr "Produce menos polos y un mejor flujo en la topología"
+
+
+msgid "Preserve Paint Mask"
+msgstr "Preservar máscara de pintura"
+
+
+msgid "Keep the current mask on the new mesh"
+msgstr "Mantiene la máscara actual en la nueva malla"
+
+
+msgid "Projects the mesh to preserve the volume and details of the original mesh"
+msgstr "Proyecta la malla para preservar el volumen y los detalles de la malla original"
+
+
+msgid "Smooth Normals"
+msgstr "Suavizar normales"
+
+
+msgid "Smooth the normals of the remesher result"
+msgstr "Suaviza las normales al rehacer la malla"
 
 
 msgid "Clone UV Loop Layer"
@@ -19844,35 +19848,35 @@ msgstr "Datos del objeto"
 
 
 msgid "Delta Location"
-msgstr "Posición rel."
+msgstr "Posición relativa"
 
 
 msgid "Extra translation added to the location of the object"
-msgstr "Traslación adicionada a la posición actual del objeto"
+msgstr "Traslación extra, adicionada a la posición del objeto"
 
 
 msgid "Delta Rotation (Euler)"
-msgstr "Rotación rel. (Euler)"
+msgstr "Rotación relativa (Euler)"
 
 
 msgid "Extra rotation added to the rotation of the object (when using Euler rotations)"
-msgstr "Rotación adicionada al ángulo actual del objeto (al utilizar rotaciones Euler)"
+msgstr "Rotación extra, adicionada a la rotación del objeto (al utilizar rotaciones de tipo Euler)"
 
 
 msgid "Delta Rotation (Quaternion)"
-msgstr "Rotación rel. (Cuaternio)"
+msgstr "Rotación relativa (Cuaternio)"
 
 
 msgid "Extra rotation added to the rotation of the object (when using Quaternion rotations)"
-msgstr "Rotación extra agregada a la rotación del objeto (al usar rotaciones de tipo Cuaternio)"
+msgstr "Rotación extra, adicionada a la rotación del objeto (al usar rotaciones de tipo Cuaternio)"
 
 
 msgid "Delta Scale"
-msgstr "Escala rel."
+msgstr "Escala relativa"
 
 
 msgid "Extra scaling added to the scale of the object"
-msgstr "Escala adicionada al tamaño actual del objeto"
+msgstr "Redimensionamiento extra, adicionado al tamaño actual del objeto"
 
 
 msgid "Absolute bounding box dimensions of the object (WARNING: assigning to it or its members multiple consecutive times will not work correctly, as this needs up-to-date evaluated data)"
@@ -20861,10 +20865,6 @@ msgid "Size of particles on viewport in BU"
 msgstr "Tamaño de las partículas en la vista, en Unidades de Blender"
 
 
-msgid "Steps"
-msgstr "Intervalos"
-
-
 msgid "How many steps paths are drawn with (power of 2)"
 msgstr "Cantidad de intervalos con que son mostradas las trayectorias (potencia de 2)"
 
@@ -21115,6 +21115,10 @@ msgstr "Boids 2D"
 
 msgid "Constrain boids to a surface"
 msgstr "Restringir los boids a una superficie"
+
+
+msgid "Mass"
+msgstr "Masa"
 
 
 msgid "Mass of the particles"
@@ -25712,19 +25716,19 @@ msgstr "Forma del hueso flexible"
 
 
 msgid "Insert keyframes for additional location offset"
-msgstr "Inserta fotogramas clave de desplazamiento adicional de posición"
+msgstr "Inserta fotogramas clave para un desplazamiento adicional de la posición"
 
 
 msgid "Insert keyframes for additional rotation offset"
-msgstr "Inserta fotogramas clave de desplazamiento adicional de rotación"
+msgstr "Inserta fotogramas clave para un desplazamiento adicional de la rotación"
 
 
 msgid "Delta Rotation"
-msgstr "Rotación rel."
+msgstr "Rotación relativa"
 
 
 msgid "Insert keyframes for additional scaling factor"
-msgstr "Inserta fotogramas clave de factor adicional de escala"
+msgstr "Inserta fotogramas clave para un desplazamiento adicional de la escala"
 
 
 msgid "Insert a keyframe on each of the location and rotation channels"
@@ -27518,6 +27522,10 @@ msgid "Clean Up"
 msgstr "Limpiar"
 
 
+msgid "Material Specials"
+msgstr "Especiales de materiales"
+
+
 msgid "GP Vertex Groups"
 msgstr "LC Grupos de vértices"
 
@@ -27598,10 +27606,6 @@ msgstr "MASK_MT_add"
 msgctxt "Operator"
 msgid "Add"
 msgstr "Agregar"
-
-
-msgid "Material Specials"
-msgstr "Especiales de materiales"
 
 
 msgid "Shape Key Specials"
@@ -27818,10 +27822,6 @@ msgstr "Ajustes"
 
 msgid "KeyPresets"
 msgstr "Ajustes de claves"
-
-
-msgid "3D Mouse Settings"
-msgstr "Opciones ratón 3D"
 
 
 msgid "Save & Load"
@@ -29121,24 +29121,16 @@ msgid "Pattern to use for inside of miters"
 msgstr "Patrón a usar para el interior de los ingletes"
 
 
-msgid "Default sharp miter"
-msgstr "Inglete definido"
-
-
-msgid "Patch"
-msgstr "Parche"
-
-
-msgid "Miter with extra corner"
-msgstr "Inglete con una esquina extra"
+msgid "Inside of miter is sharp"
+msgstr "El interior del inglete es definido"
 
 
 msgid "Arc"
 msgstr "Arco"
 
 
-msgid "Miter with curved arc"
-msgstr "Inglete con un arco curvado"
+msgid "Inside of miter is arc"
+msgstr "El interior del inglete es un arco"
 
 
 msgid "Outer Miter"
@@ -29149,8 +29141,24 @@ msgid "Pattern to use for outside of miters"
 msgstr "Patrón a usar para el exterior de los ingletes"
 
 
-msgid "Amount Type"
-msgstr "Tipo de distancia"
+msgid "Outside of miter is sharp"
+msgstr "El exterior del inglete es definido"
+
+
+msgid "Patch"
+msgstr "Parche"
+
+
+msgid "Outside of miter is squared-off patch"
+msgstr "El exterior del inglete es un parche cuadrado"
+
+
+msgid "Outside of miter is arc"
+msgstr "El exterior del inglete es un arco"
+
+
+msgid "Width Type"
+msgstr "Tipo de ancho"
 
 
 msgid "What distance Width measures"
@@ -29514,7 +29522,7 @@ msgstr "Transferir marcas de costuras UV"
 
 
 msgid "Subsurf Crease"
-msgstr "Pliegues Subdiv."
+msgstr "Pliegues subdiv."
 
 
 msgid "Transfer crease values"
@@ -29603,10 +29611,6 @@ msgstr "Mapeo de bordes"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Método usado para mapear los bordes de origen a los de destino"
-
-
-msgid "Topology"
-msgstr "Topología"
 
 
 msgid "Copy from identical topology meshes"
@@ -31456,10 +31460,6 @@ msgstr "Caché de puntos de cuerpos blandos"
 
 msgid "Solidify Modifier"
 msgstr "Modificador Solidificar"
-
-
-msgid "Create a solid skin by extruding, compensating for sharp angles"
-msgstr "Crea una cubierta sólida por medio de una extrusión, compensando ángulos definidos"
 
 
 msgid "Inner Crease"
@@ -38390,7 +38390,7 @@ msgstr "Borra controladores para todos los elementos de la matriz"
 
 msgctxt "Operator"
 msgid "Set End Frame"
-msgstr "Definir fotograma final"
+msgstr "Definir fot. final"
 
 
 msgid "Set the current frame as the preview or scene end frame"
@@ -38640,7 +38640,7 @@ msgstr "Define interactivamente el rango de fotogramas usado para la reproducci�
 
 msgctxt "Operator"
 msgid "Set Start Frame"
-msgstr "Definir fotograma inicial"
+msgstr "Definir fot. inicial"
 
 
 msgid "Set the current frame as the preview or scene start frame"
@@ -42035,10 +42035,6 @@ msgid "Export PLY"
 msgstr "Exportar PLY"
 
 
-msgid "Export a single object as a Stanford PLY with normals, colors and texture coordinates"
-msgstr "Exportar un objeto individual como un PLY de Stanford con normales, colores y coordenadas de texturizado"
-
-
 msgid "X Forward"
 msgstr "+X hacia adelante"
 
@@ -42103,6 +42099,14 @@ msgid "Export Normals for smooth and hard shaded faces (hard shaded faces will b
 msgstr "Exportar normales para caras con sombreado suave y facetado (las caras con sombreado facetado serán exportadas como caras individuales)"
 
 
+msgid "Selection Only"
+msgstr "Sólo lo seleccionado"
+
+
+msgid "Export selected objects only"
+msgstr "Exportar sólo objetos seleccionados"
+
+
 msgid "Export the active UV layer"
 msgstr "Exporta la capa activa de UV"
 
@@ -42110,10 +42114,6 @@ msgstr "Exporta la capa activa de UV"
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "Exportar STL"
-
-
-msgid "Save STL triangle mesh data from the active object"
-msgstr "Guardar datos de malla triangular en STL a partir del objeto activo"
 
 
 msgid "Ascii"
@@ -42146,14 +42146,6 @@ msgstr "Unidades de la escena"
 
 msgid "Apply current scene's unit (as defined by unit scale) to exported data"
 msgstr "Aplicar las unidades de la escena actual a los datos exportados"
-
-
-msgid "Selection Only"
-msgstr "Sólo lo seleccionado"
-
-
-msgid "Export selected objects only"
-msgstr "Exportar sólo objetos seleccionados"
 
 
 msgctxt "Operator"
@@ -43314,7 +43306,7 @@ msgstr "Prev"
 
 
 msgid "Next"
-msgstr "Sig."
+msgstr "Siguiente"
 
 
 msgctxt "Operator"
@@ -43366,6 +43358,10 @@ msgstr "Guarda los archivos en la ubicación original (sobreescribiendo los arch
 
 msgid "Disable Auto-pack, keep all packed files"
 msgstr "Deshabilitar empaque automático, mantener todos los archivos empacados"
+
+
+msgid "Remove Pack"
+msgstr "Eliminar paquete"
 
 
 msgctxt "Operator"
@@ -47161,10 +47157,6 @@ msgid "Bevel"
 msgstr "Biselar"
 
 
-msgid "Cut into selected items at an angle to create flat or rounded bevel or chamfer"
-msgstr "Hace cortes a un cierto ángulo en los elementos seleccionados para crear biseles"
-
-
 msgid "Do not allow beveled edges/vertices to overlap each other"
 msgstr "No permite que los bordes o vértices biselados se superpongan unos con otros"
 
@@ -47181,36 +47173,8 @@ msgid "Set face strength on new and modified faces only"
 msgstr "Sólo definir intensidad de caras para las caras nuevas y las modificadas"
 
 
-msgid "Prefer slide along edge to even widths"
-msgstr "Preferir el deslizamiento a lo largo de los bordes para obtener anchos parejos"
-
-
 msgid "Material for bevel faces (-1 means use adjacent faces)"
 msgstr "Material de caras biseladas (-1 significa usar el de las caras adyacentes)"
-
-
-msgid "Inside of miter is sharp"
-msgstr "El interior del inglete es definido"
-
-
-msgid "Inside of miter is arc"
-msgstr "El interior del inglete es un arco"
-
-
-msgid "Outside of miter is sharp"
-msgstr "El exterior del inglete es definido"
-
-
-msgid "Outside of miter is squared-off patch"
-msgstr "El exterior del inglete es un parche cuadrado"
-
-
-msgid "Outside of miter is arc"
-msgstr "El exterior del inglete es un arco"
-
-
-msgid "Width Type"
-msgstr "Tipo de ancho"
 
 
 msgid "Controls profile shape (0.5 = round)"
@@ -48505,12 +48469,12 @@ msgid "Minimum mask value to consider the vertex valid to extract a face from th
 msgstr "Valor mínimo de la máscara para considerar a un vértice como válido para extraer una cara desde la malla original"
 
 
-msgid "Smooth Iterations"
-msgstr "Iteraciones de suavizado"
-
-
 msgid "Smooth iterations applied to the extracted mesh"
 msgstr "Iteraciones de suavizado aplicadas a la malla extraída"
+
+
+msgid "Fill Holes"
+msgstr "Rellenar huecos"
 
 
 msgctxt "Operator"
@@ -49577,6 +49541,10 @@ msgid "Solidify"
 msgstr "Solidificar"
 
 
+msgid "Create a solid skin by extruding, compensating for sharp angles"
+msgstr "Crea una cubierta sólida por medio de una extrusión, compensando ángulos definidos"
+
+
 msgctxt "Operator"
 msgid "Sort Mesh Elements"
 msgstr "Ordenar elementos de la malla"
@@ -49650,8 +49618,8 @@ msgid "Rotation for each step"
 msgstr "Rotación para cada intervalo"
 
 
-msgid "Make Duplicates"
-msgstr "Crear duplicados"
+msgid "Use Duplicates"
+msgstr "Usar duplicados"
 
 
 msgid "Auto Merge"
@@ -57936,6 +57904,10 @@ msgid "Screen Coordinates of sampling"
 msgstr "Coordenadas de pantalla de muestreo"
 
 
+msgid "Dyntopo"
+msgstr "Topología dinámica"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Modo de escultura"
@@ -58630,19 +58602,6 @@ msgid "Select other strips at the same time"
 msgstr "Selecciona otros clips en el mismo tiempo"
 
 
-msgctxt "Operator"
-msgid "Select Active Side"
-msgstr "Seleccionar lado activo"
-
-
-msgid "Select strips on the nominated side of the active strip"
-msgstr "Selecciona clips que se encuentran en el lado designado del clip activo"
-
-
-msgid "The side of the handle that is selected"
-msgstr "El lado del asa que está seleccionada"
-
-
 msgid "Select or deselect all strips"
 msgstr "Selecciona o deselecciona todos los clips"
 
@@ -58714,6 +58673,10 @@ msgstr "Seleccionar asas"
 
 msgid "Select gizmo handles on the sides of the selected strip"
 msgstr "Selecciona las asas de manipulación en los extremos del clip seleccionado"
+
+
+msgid "The side of the handle that is selected"
+msgstr "El lado del asa que está seleccionada"
 
 
 msgid "Shrink the current selection of adjacent selected strips"
@@ -59509,10 +59472,6 @@ msgstr "Seleccionar palabra bajo el cursor"
 
 msgid "Set cursor selection"
 msgstr "Definir selección de cursor"
-
-
-msgid "Set selection end rather than cursor"
-msgstr "Define el fin de la selección, en vez del cursor"
 
 
 msgctxt "Operator"
@@ -60859,10 +60818,6 @@ msgid "Blend factor between stretch minimized and original"
 msgstr "Factor de fundido entre el estiramiento minimizado y el ángulo original"
 
 
-msgid "Fill Holes"
-msgstr "Rellenar huecos"
-
-
 msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
 msgstr "Rellenar virtualmente los huecos en la malla antes de desplegarla, para evitar superposiciones y preservar mejor la geometría"
 
@@ -62207,14 +62162,6 @@ msgstr "Exportar UV"
 
 msgid "Export vertex colors"
 msgstr "Exporta colores de los vértices"
-
-
-msgid "Visible Layers Only"
-msgstr "Sólo capas visibles"
-
-
-msgid "Export only objects in visible layers"
-msgstr "Exportar sólo los objetos de las capas visibles"
 
 
 msgid "Transform Samples"
@@ -65624,6 +65571,10 @@ msgid "Orbit & Pan"
 msgstr "Orbitar y desplazar"
 
 
+msgid "3D Mouse Settings"
+msgstr "Opciones ratón 3D"
+
+
 msgid "Save Preferences"
 msgstr "Guardar preferencias"
 
@@ -65854,10 +65805,6 @@ msgstr "Analizar"
 
 msgid "Quad View"
 msgstr "Vista cuádruple"
-
-
-msgid "Dyntopo"
-msgstr "Topología dinámica"
 
 
 msgid "Unified Brush"
@@ -67442,6 +67389,10 @@ msgstr "Métodos de edición"
 
 msgid "Settings for interacting with Blender data"
 msgstr "Opciones para interactuar con datos de Blender"
+
+
+msgid "Experimental"
+msgstr "Experimental"
 
 
 msgid "Default paths for external files"
@@ -70440,10 +70391,6 @@ msgid "Only use finished and supported features"
 msgstr "Sólo usar características finalizadas y soportadas"
 
 
-msgid "Experimental"
-msgstr "Experimental"
-
-
 msgid "Use experimental and incomplete features that might be broken or change in the future"
 msgstr "Usar características experimentales e incompletas que pueden no funcionar o cambiar en el futuro"
 
@@ -71406,10 +71353,6 @@ msgstr "Exporta los bordes de Freestyle a formato .svg"
 
 msgid "Format type to export to"
 msgstr "Tipo de formato al cual exportar"
-
-
-msgid "VRML2"
-msgstr "VRML2"
 
 
 msgid "Export Directory"
@@ -74434,12 +74377,12 @@ msgid "Sequence strip creating text"
 msgstr "Clip de la secuencia para crear un texto"
 
 
-msgid "Align the text along the X axis, relative to the text midpoint"
-msgstr "Alinea el texto a lo largo del eje X, relativo al punto medio del texto"
+msgid "Align the text along the X axis, relative to the text bounds"
+msgstr "Alinea el texto a lo largo del eje X, relativo a los límites del texto"
 
 
-msgid "Align the image along the Y axis, relative to the text midpoint"
-msgstr "Alinea el texto a lo largo del eje Y, relativo al punto medio del texto"
+msgid "Align the text along the Y axis, relative to the text bounds"
+msgstr "Alinea el texto a lo largo del eje X, relativo a los límites del texto"
 
 
 msgid "Text color"
@@ -77122,14 +77065,6 @@ msgstr "Mostrar asas e interpolación"
 
 msgid "Display keyframe handle types and non-bezier interpolation modes"
 msgstr "Muestra los tipos de asas de los claves y los modos de interpolación distintos al Bézier"
-
-
-msgid "Show Marker Lines"
-msgstr "Mostrar líneas de marcadores"
-
-
-msgid "Show a vertical line for every marker"
-msgstr "Muestra una línea vertical para cada marcador"
 
 
 msgid "Show Pose Markers"
@@ -81403,7 +81338,7 @@ msgstr "Inserción automática de fotogramas clave para objetos y huesos"
 
 
 msgid "Auto Keyframe Insert Keying Set"
-msgstr "Claves automáticos en conjunto claves"
+msgstr "Claves automáticos en conjunto de claves"
 
 
 msgid "Automatic keyframe insertion using active Keying Set only"
@@ -84591,10 +84526,6 @@ msgid "Volume:"
 msgstr "Volumen:"
 
 
-msgid "Plane:"
-msgstr "Plano:"
-
-
 msgid "Min/Max:"
 msgstr "Mín/Máx:"
 
@@ -84943,10 +84874,6 @@ msgid "Autolock Inactive Layers"
 msgstr "Autobloquear capas inactivas"
 
 
-msgid "Show Only On Keyframed"
-msgstr "Mostrar sólo lo animado"
-
-
 msgid "Before"
 msgstr "Antes"
 
@@ -85140,20 +85067,12 @@ msgid "UVs:"
 msgstr "UV:"
 
 
+msgid "Outer"
+msgstr "Exterior"
+
+
 msgid "Limit Method:"
 msgstr "Método de limitación:"
-
-
-msgid "Width Method:"
-msgstr "Método del ancho:"
-
-
-msgid "Set Face Strength Mode"
-msgstr "Definir modo intensidad de caras"
-
-
-msgid "Miter Patterns"
-msgstr "Patrones de ingletes"
 
 
 msgid "Operation:"
@@ -85345,20 +85264,12 @@ msgid "Deform:"
 msgstr "Deformación:"
 
 
-msgid "Crease:"
-msgstr "Plegado:"
-
-
-msgid "Outer"
-msgstr "Exterior"
+msgid "Material Index Offset:"
+msgstr "Índice del material:"
 
 
 msgid "Rim"
 msgstr "Reborde"
-
-
-msgid "Material Index Offset:"
-msgstr "Índice del material:"
 
 
 msgid "Aspect X"
@@ -85566,6 +85477,10 @@ msgstr "Construido sin el modificador OceanSim"
 
 msgid "Cull Faces:"
 msgstr "Descartar caras:"
+
+
+msgid "Crease:"
+msgstr "Plegado:"
 
 
 msgid "Render:"
@@ -85859,6 +85774,10 @@ msgstr "Sólo reproducción"
 
 msgid "ShaderFX"
 msgstr "Efectos visuales"
+
+
+msgid "Show Only On Keyframed"
+msgstr "Mostrar sólo lo animado"
 
 
 msgctxt "Operator"
@@ -86246,8 +86165,20 @@ msgid "Source Clone UV Map"
 msgstr "Mapa UV a clonar"
 
 
+msgid "Thickness Profile"
+msgstr "Perfil de grosor"
+
+
 msgid "Mask Value"
 msgstr "Valor de máscara"
+
+
+msgid "Fill Options"
+msgstr "Opciones de relleno"
+
+
+msgid "Ignore Transparent Strokes"
+msgstr "Ignorar trazos transparentes"
 
 
 msgctxt "Operator"
@@ -88866,10 +88797,6 @@ msgid "Report a Bug"
 msgstr "Reportar un error"
 
 
-msgid "Ignore Transparent Strokes"
-msgstr "Ignorar trazos transparentes"
-
-
 msgid "Sequence Strip Name"
 msgstr "Nombre clip de secuencia"
 
@@ -89157,6 +89084,10 @@ msgstr "Reproductor"
 
 msgid "Orbit Style"
 msgstr "Estilo de órbita"
+
+
+msgid "Navigate"
+msgstr "Navegación"
 
 
 msgid "Orbit Options"
@@ -90109,10 +90040,6 @@ msgid "Viewport Gizmos"
 msgstr "Manipuladores"
 
 
-msgid "Navigate"
-msgstr "Navegación"
-
-
 msgid "Active Tools"
 msgstr "Herramienta activa"
 
@@ -90203,14 +90130,6 @@ msgstr "Duplicar capa activa"
 msgctxt "Operator"
 msgid "Delete All Layers"
 msgstr "Borrar todas las capas"
-
-
-msgid "Thickness Profile"
-msgstr "Perfil de grosor"
-
-
-msgid "Fill Options"
-msgstr "Opciones de relleno"
 
 
 msgctxt "Operator"
@@ -90939,6 +90858,16 @@ msgstr "Convertir a lápiz de cera"
 msgctxt "Operator"
 msgid "Convert to Path"
 msgstr "Convertir a trayectoria"
+
+
+msgctxt "Operator"
+msgid "Convert to Bezier Curve"
+msgstr "Convertir a curva Bézier"
+
+
+msgctxt "Operator"
+msgid "Convert to Polygon Curve"
+msgstr "Convertir a curva poligonal"
 
 
 msgctxt "Operator"
@@ -91974,62 +91903,6 @@ msgstr "Seleccionar ID"
 
 msgid "Workbench"
 msgstr "Workbench"
-
-
-msgid "MotionPath"
-msgstr "Trayectoria de movimiento"
-
-
-msgid "EditArmatureMode"
-msgstr "Modo Edición de esqueleto"
-
-
-msgid "EditCurveMode"
-msgstr "Modo Edición de curva"
-
-
-msgid "EditLatticeMode"
-msgstr "Modo Edición de jaula"
-
-
-msgid "EditMeshMode"
-msgstr "Modo Edición de malla"
-
-
-msgid "EditMetaballMode"
-msgstr "Modo Edición de metabola"
-
-
-msgid "EditTextMode"
-msgstr "Modo Edición de texto"
-
-
-msgid "ObjectMode"
-msgstr "Modo Objeto"
-
-
-msgid "OverlayEngine"
-msgstr "MotorDeSuperposición"
-
-
-msgid "PaintTextureMode"
-msgstr "Modo de pintura de texturas"
-
-
-msgid "PaintVertexMode"
-msgstr "Modo de pintura de vértices"
-
-
-msgid "Particle Mode"
-msgstr "Modo Partículas"
-
-
-msgid "PoseMode"
-msgstr "Modo Pose"
-
-
-msgid "SculptMode"
-msgstr "Modo Escultura"
 
 
 msgid "NLA Strip Controls"
@@ -94021,10 +93894,6 @@ msgstr "Esfera"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "Esfera geodésica"
-
-
-msgid "%s: confirm, %s: cancel, %s: mode (%s), %s: width (%s), %s: segments (%d), %s: profile (%.3f), %s: clamp overlap (%s), %s: vertex only (%s), %s: outer miter (%s), %s: inner miter (%s), %s: harden normals (%s), %s: mark seam (%s), %s: mark sharp (%s)"
-msgstr "%s: confirmar, %s: cancelar, %s: modo (%s), %s: ancho (%s), %s: segmentos (%d), %s: perfil (%.3f), %s: limitar superposición (%s), %s: sólo vértices (%s), %s: inglete exterior (%s), %s: inglete interior (%s), %s: endurecer normales (%s), %s: marcar costura (%s), %s: marcar definido (%s)"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -97139,6 +97008,10 @@ msgid "No subtitles (text strips) to export"
 msgstr "No hay subtítulos (cadenas de texto) para exportar"
 
 
+msgid "Could not build proxy for strip %s"
+msgstr "No fue posible crear reemplazo para el clip %s"
+
+
 msgid "No active sequence!"
 msgstr "No hay secuencia activa!"
 
@@ -98026,10 +97899,6 @@ msgstr "Deshacer deshabilitado al inicio"
 
 msgid "Unpack File"
 msgstr "Desempacar archivo"
-
-
-msgid "Remove Pack"
-msgstr "Eliminar paquete"
 
 
 msgid "Create %s"

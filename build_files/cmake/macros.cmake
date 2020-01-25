@@ -396,6 +396,7 @@ endfunction()
 
 macro(setup_platform_linker_flags)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PLATFORM_LINKFLAGS}")
+  set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} ${PLATFORM_LINKFLAGS_RELEASE}")
   set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} ${PLATFORM_LINKFLAGS_DEBUG}")
 endmacro()
 
@@ -405,12 +406,26 @@ function(setup_liblinks
 
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PLATFORM_LINKFLAGS}" PARENT_SCOPE)
   set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} ${PLATFORM_LINKFLAGS_DEBUG}" PARENT_SCOPE)
+  set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} ${PLATFORM_LINKFLAGS_RELEASE}" PARENT_SCOPE)
 
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${PLATFORM_LINKFLAGS}" PARENT_SCOPE)
   set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG} ${PLATFORM_LINKFLAGS_DEBUG}" PARENT_SCOPE)
+  set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} ${PLATFORM_LINKFLAGS_RELEASE}" PARENT_SCOPE)
 
   set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${PLATFORM_LINKFLAGS}" PARENT_SCOPE)
   set(CMAKE_MODULE_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} ${PLATFORM_LINKFLAGS_DEBUG}" PARENT_SCOPE)
+  set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "${CMAKE_MODULE_LINKER_FLAGS_RELEASE} ${PLATFORM_LINKFLAGS_RELEASE}" PARENT_SCOPE)
+
+  # Work around undefined reference errors when disabling certain libraries.
+  # Finding the right order for all combinations of options is too hard, so
+  # we use --start-group and --end-group so the linker does not discard symbols
+  # too early. This appears to have no significant performance impact.
+  if(UNIX AND NOT APPLE)
+    target_link_libraries(
+      ${target}
+      -Wl,--start-group
+    )
+  endif()
 
   # jemalloc must be early in the list, to be before pthread (see T57998)
   if(WITH_MEM_JEMALLOC)
@@ -461,6 +476,22 @@ function(setup_liblinks
   endif()
   if(WITH_OPENVDB)
     target_link_libraries(${target} ${OPENVDB_LIBRARIES} ${BLOSC_LIBRARIES})
+  endif()
+  if(WITH_USD)
+    # Source: https://github.com/PixarAnimationStudios/USD/blob/master/BUILDING.md#linking-whole-archives
+    if(WIN32)
+      target_link_libraries(${target} ${USD_LIBRARIES})
+      set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS_DEBUG " /WHOLEARCHIVE:${USD_DEBUG_LIB}")
+      set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS_RELEASE " /WHOLEARCHIVE:${USD_RELEASE_LIB}")
+      set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS_RELWITHDEBINFO " /WHOLEARCHIVE:${USD_RELEASE_LIB}")
+      set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS_MINSIZEREL " /WHOLEARCHIVE:${USD_RELEASE_LIB}")
+    elseif(CMAKE_COMPILER_IS_GNUCXX)
+      target_link_libraries(${target} -Wl,--whole-archive ${USD_LIBRARIES} -Wl,--no-whole-archive)
+    elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+      target_link_libraries(${target} -Wl,-force_load ${USD_LIBRARIES})
+    else()
+      message(FATAL_ERROR "Unknown how to link USD with your compiler ${CMAKE_CXX_COMPILER_ID}")
+    endif()
   endif()
   if(WITH_OPENIMAGEIO)
     target_link_libraries(${target} ${OPENIMAGEIO_LIBRARIES})
@@ -530,9 +561,6 @@ function(setup_liblinks
       )
     endif()
   endif()
-  if(WITH_MOD_CLOTH_ELTOPO)
-    target_link_libraries(${target} ${LAPACK_LIBRARIES})
-  endif()
   if(WITH_LLVM)
     target_link_libraries(${target} ${LLVM_LIBRARY})
   endif()
@@ -575,6 +603,14 @@ function(setup_liblinks
 
   # target_link_libraries(${target} ${PLATFORM_LINKLIBS} ${CMAKE_DL_LIBS})
   target_link_libraries(${target} ${PLATFORM_LINKLIBS})
+
+  # See comments above regarding --start-group.
+  if(UNIX AND NOT APPLE)
+    target_link_libraries(
+      ${target}
+      -Wl,--end-group
+    )
+  endif()
 endfunction()
 
 macro(TEST_SSE_SUPPORT
@@ -1219,35 +1255,12 @@ macro(openmp_delayload
         else()
           set(OPENMP_DLL_NAME "vcomp140")
         endif()
-        SET_TARGET_PROPERTIES(${projectname} PROPERTIES LINK_FLAGS_RELEASE "/DELAYLOAD:${OPENMP_DLL_NAME}.dll delayimp.lib")
-        SET_TARGET_PROPERTIES(${projectname} PROPERTIES LINK_FLAGS_DEBUG "/DELAYLOAD:${OPENMP_DLL_NAME}d.dll delayimp.lib")
-        SET_TARGET_PROPERTIES(${projectname} PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/DELAYLOAD:${OPENMP_DLL_NAME}.dll delayimp.lib")
-        SET_TARGET_PROPERTIES(${projectname} PROPERTIES LINK_FLAGS_MINSIZEREL "/DELAYLOAD:${OPENMP_DLL_NAME}.dll delayimp.lib")
+        set_property(TARGET ${projectname} APPEND_STRING  PROPERTY LINK_FLAGS_RELEASE " /DELAYLOAD:${OPENMP_DLL_NAME}.dll delayimp.lib")
+        set_property(TARGET ${projectname} APPEND_STRING  PROPERTY LINK_FLAGS_DEBUG " /DELAYLOAD:${OPENMP_DLL_NAME}d.dll delayimp.lib")
+        set_property(TARGET ${projectname} APPEND_STRING  PROPERTY LINK_FLAGS_RELWITHDEBINFO " /DELAYLOAD:${OPENMP_DLL_NAME}.dll delayimp.lib")
+        set_property(TARGET ${projectname} APPEND_STRING  PROPERTY LINK_FLAGS_MINSIZEREL " /DELAYLOAD:${OPENMP_DLL_NAME}.dll delayimp.lib")
       endif()
     endif()
-endmacro()
-
-macro(WINDOWS_SIGN_TARGET target)
-  if(WITH_WINDOWS_CODESIGN)
-    if(!SIGNTOOL_EXE)
-      error("Codesigning is enabled, but signtool is not found")
-    else()
-      if(WINDOWS_CODESIGN_PFX_PASSWORD)
-        set(CODESIGNPASSWORD /p ${WINDOWS_CODESIGN_PFX_PASSWORD})
-      else()
-        if($ENV{PFXPASSWORD})
-          set(CODESIGNPASSWORD /p $ENV{PFXPASSWORD})
-        else()
-          message(FATAL_ERROR "WITH_WINDOWS_CODESIGN is on but WINDOWS_CODESIGN_PFX_PASSWORD not set, and environment variable PFXPASSWORD not found, unable to sign code.")
-        endif()
-      endif()
-      add_custom_command(TARGET ${target}
-        POST_BUILD
-        COMMAND ${SIGNTOOL_EXE} sign /f ${WINDOWS_CODESIGN_PFX} ${CODESIGNPASSWORD} $<TARGET_FILE:${target}>
-        VERBATIM
-      )
-    endif()
-  endif()
 endmacro()
 
 macro(blender_precompile_headers target cpp header)

@@ -24,8 +24,8 @@ bl_info = {
     "location": "Pose Mode > Sidebar > Create Tab",
     "description": "Creates a mesh object from selected bones",
     "warning": "Work in progress",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
-                "Py/Scripts/Object/Skinify",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "object/skinify.html",
     "category": "Object"}
 
 import bpy

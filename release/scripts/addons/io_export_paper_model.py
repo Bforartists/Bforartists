@@ -184,7 +184,6 @@ class Unfolder:
         self.do_create_uvmap = False
         bm = bmesh.from_edit_mesh(ob.data)
         self.mesh = Mesh(bm, ob.matrix_world)
-        self.mesh.copy_freestyle_marks(ob.data)
         self.mesh.check_correct()
     
     def __del__(self):
@@ -302,13 +301,18 @@ class Mesh:
             edge.choose_main_faces()
             if edge.main_faces:
                 edge.calculate_angle()
+        self.copy_freestyle_marks()
     
     def delete_uvmap(self):
         self.data.loops.layers.uv.remove(self.looptex) if self.looptex else None
     
-    def copy_freestyle_marks(self, mesh):
+    def copy_freestyle_marks(self):
+        # NOTE: this is a workaround for NotImplementedError on bmesh.edges.layers.freestyle
+        mesh = bpy.data.meshes.new("unfolder_temp")
+        self.data.to_mesh(mesh)
         for bmedge, edge in self.edges.items():
             edge.freestyle = mesh.edges[bmedge.index].use_freestyle_mark
+        bpy.data.meshes.remove(mesh)
     
     def mark_cuts(self):
         for bmedge, edge in self.edges.items():
@@ -318,21 +322,23 @@ class Mesh:
     def check_correct(self, epsilon=1e-6):
         """Check for invalid geometry"""
         def is_twisted(face):
-            if len(face.verts) > 3:
-                center = sum((vertex.co for vertex in face.verts), M.Vector((0, 0, 0))) / len(face.verts)
-                plane_d = center.dot(face.normal)
-                diameter = max((center - vertex.co).length for vertex in face.verts)
-                for vertex in face.verts:
-                    # check coplanarity
-                    if abs(vertex.co.dot(face.normal) - plane_d) > diameter * 0.01:
-                        return True
-            return False
+            if len(face.verts) <= 3:
+                return False
+            center = face.calc_center_median()
+            plane_d = center.dot(face.normal)
+            diameter = max((center - vertex.co).length for vertex in face.verts)
+            threshold = 0.01 * diameter
+            return any(abs(v.co.dot(face.normal) - plane_d) > threshold for v in face.verts)
         
         null_edges = {e for e in self.edges.keys() if e.calc_length() < epsilon and e.link_faces}
         null_faces = {f for f in self.data.faces if f.calc_area() < epsilon}
         twisted_faces = {f for f in self.data.faces if is_twisted(f)}
-        if not (null_edges or null_faces or twisted_faces):
-            return
+        inverted_scale = self.matrix.determinant() <= 0
+        if not (null_edges or null_faces or twisted_faces or inverted_scale):
+            return True
+        if inverted_scale:
+            raise UnfoldError("The object is flipped inside-out.\n"
+            "You can use Object -> Apply -> Scale to fix it. Export failed.")
         disease = [("Remove Doubles", null_edges or null_faces), ("Triangulate", twisted_faces)]
         cure = " and ".join(s for s, k in disease if k)
         raise UnfoldError(
@@ -1041,7 +1047,7 @@ def join(uvedge_a, uvedge_b, size_limit=None, epsilon=1e-6):
         uvedge.vb = phantoms[uvedge.vb]
         uvedge.update()
     if is_merged_mine:
-        for uvedge in island_a.edges:
+        for uvedge in island_a.edges.values():
             uvedge.va = phantoms.get(uvedge.va, uvedge.va)
             uvedge.vb = phantoms.get(uvedge.vb, uvedge.vb)
     island_a.edges.update(island_b.edges)
@@ -2027,7 +2033,7 @@ class ExportPaperModel(bpy.types.Operator):
         ])
     scale: bpy.props.FloatProperty(
         name="Scale", description="Divisor of all dimensions when exporting",
-        default=1, soft_min=1.0, soft_max=10000.0, step=100, subtype='UNSIGNED', precision=1)
+        default=1, soft_min=1.0, soft_max=100.0, subtype='FACTOR', precision=1)
     do_create_uvmap: bpy.props.BoolProperty(
         name="Create UVMap", description="Create a new UV Map showing the islands and page layout",
         default=False, options={'SKIP_SAVE'})
@@ -2109,8 +2115,7 @@ class ExportPaperModel(bpy.types.Operator):
         row.operator("export_mesh.paper_model_preset_add", text="", icon='ADD')
         row.operator("export_mesh.paper_model_preset_add", text="", icon='REMOVE').remove_active = True
 
-        # a little hack: this prints out something like "Scale: 1: 72"
-        layout.prop(self.properties, "scale", text="Scale: 1")
+        layout.prop(self.properties, "scale", text="Scale: 1/")
         scale_ratio = self.get_scale_ratio(context.scene)
         if scale_ratio > 1:
             layout.label(
@@ -2293,10 +2298,10 @@ class AddPresetPaperModel(bl_operators.presets.AddPresetBase, bpy.types.Operator
 
 
 class VIEW3D_PT_paper_model_tools(bpy.types.Panel):
-    bl_label = "Tools"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "Paper Model"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'Paper'
+    bl_label = "Unfold"
 
     def draw(self, context):
         layout = self.layout
@@ -2304,11 +2309,7 @@ class VIEW3D_PT_paper_model_tools(bpy.types.Panel):
         obj = context.active_object
         mesh = obj.data if obj and obj.type == 'MESH' else None
 
-        layout.operator("export_mesh.paper_model")
-
-        col = layout.column(align=True)
-        col.label(text="Customization:")
-        col.operator("mesh.unfold")
+        layout.operator("mesh.unfold")
 
         if context.mode == 'EDIT_MESH':
             row = layout.row(align=True)
@@ -2317,8 +2318,22 @@ class VIEW3D_PT_paper_model_tools(bpy.types.Panel):
         else:
             layout.operator("mesh.clear_all_seams")
 
+
+class VIEW3D_PT_paper_model_settings(bpy.types.Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'Paper'
+    bl_label = "Export"
+
+    def draw(self, context):
+        layout = self.layout
+        sce = context.scene
+        obj = context.active_object
+        mesh = obj.data if obj and obj.type == 'MESH' else None
+
+        layout.operator("export_mesh.paper_model")
         props = sce.paper_model
-        layout.prop(props, "scale", text="Model Scale: 1")
+        layout.prop(props, "scale", text="Model Scale:  1/")
 
         layout.prop(props, "limit_by_page")
         col = layout.column()
@@ -2447,7 +2462,7 @@ class PaperModelSettings(bpy.types.PropertyGroup):
         default=0.29, soft_min=0.148, soft_max=1.189, subtype="UNSIGNED", unit="LENGTH")
     scale: bpy.props.FloatProperty(
         name="Scale", description="Divisor of all dimensions when exporting",
-        default=1, soft_min=1.0, soft_max=10000.0, step=100, subtype='UNSIGNED', precision=1)
+        default=1, soft_min=1.0, soft_max=100.0, subtype='FACTOR', precision=1)
 
 
 module_classes = (
@@ -2461,7 +2476,8 @@ module_classes = (
     PaperModelSettings,
     VIEW3D_MT_paper_model_presets,
     DATA_PT_paper_model_islands,
-    #VIEW3D_PT_paper_model_tools,
+    VIEW3D_PT_paper_model_tools,
+    VIEW3D_PT_paper_model_settings,
 )
 
 

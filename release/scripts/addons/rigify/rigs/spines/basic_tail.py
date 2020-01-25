@@ -95,7 +95,7 @@ class Rig(BaseHeadTailRig):
         )
 
     # Widgets
-    def make_control_widget(self, ctrl):
+    def make_control_widget(self, i, ctrl):
         create_circle_widget(self.obj, ctrl, radius=0.5, head_tail=0.75)
 
     ####################################################
