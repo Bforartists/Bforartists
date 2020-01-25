@@ -992,8 +992,17 @@ void VIEW3D_OT_rotate(wmOperatorType *ot)
  * \{ */
 
 #ifdef WITH_INPUT_NDOF
-#  define NDOF_HAS_TRANSLATE ((!ED_view3d_offset_lock_check(v3d, rv3d)) && !is_zero_v3(ndof->tvec))
-#  define NDOF_HAS_ROTATE (((rv3d->viewlock & RV3D_LOCKED) == 0) && !is_zero_v3(ndof->rvec))
+static bool ndof_has_translate(const wmNDOFMotionData *ndof,
+                               const View3D *v3d,
+                               const RegionView3D *rv3d)
+{
+  return !is_zero_v3(ndof->tvec) && (!ED_view3d_offset_lock_check(v3d, rv3d));
+}
+
+static bool ndof_has_rotate(const wmNDOFMotionData *ndof, const RegionView3D *rv3d)
+{
+  return !is_zero_v3(ndof->rvec) && ((rv3d->viewlock & RV3D_LOCKED) == 0);
+}
 
 /**
  * \param depth_pt: A point to calculate the depth (in perspective mode)
@@ -1189,8 +1198,8 @@ void view3d_ndof_fly(const wmNDOFMotionData *ndof,
                      bool *r_has_translate,
                      bool *r_has_rotate)
 {
-  bool has_translate = NDOF_HAS_TRANSLATE;
-  bool has_rotate = NDOF_HAS_ROTATE;
+  bool has_translate = ndof_has_translate(ndof, v3d, rv3d);
+  bool has_rotate = ndof_has_rotate(ndof, rv3d);
 
   float view_inv[4];
   invert_qt_qt_normalized(view_inv, rv3d->viewquat);
@@ -1338,9 +1347,10 @@ static int ndof_orbit_invoke(bContext *C, wmOperator *op, const wmEvent *event)
   ED_view3d_camera_lock_init_ex(depsgraph, v3d, rv3d, false);
 
   if (ndof->progress != P_FINISHING) {
-    const bool has_rotation = NDOF_HAS_ROTATE;
+    const bool has_rotation = ndof_has_rotate(ndof, rv3d);
     /* if we can't rotate, fallback to translate (locked axis views) */
-    const bool has_translate = NDOF_HAS_TRANSLATE && (rv3d->viewlock & RV3D_LOCKED);
+    const bool has_translate = ndof_has_translate(ndof, v3d, rv3d) &&
+                               (rv3d->viewlock & RV3D_LOCKED);
     const bool has_zoom = (ndof->tvec[2] != 0.0f) && !rv3d->is_persp;
 
     if (has_translate || has_zoom) {
@@ -1423,7 +1433,7 @@ static int ndof_orbit_zoom_invoke(bContext *C, wmOperator *op, const wmEvent *ev
   }
   else if ((rv3d->persp == RV3D_ORTHO) && RV3D_VIEW_IS_AXIS(rv3d->view)) {
     /* if we can't rotate, fallback to translate (locked axis views) */
-    const bool has_translate = NDOF_HAS_TRANSLATE;
+    const bool has_translate = ndof_has_translate(ndof, v3d, rv3d);
     const bool has_zoom = (ndof->tvec[2] != 0.0f) && ED_view3d_offset_lock_check(v3d, rv3d);
 
     if (has_translate || has_zoom) {
@@ -1431,41 +1441,43 @@ static int ndof_orbit_zoom_invoke(bContext *C, wmOperator *op, const wmEvent *ev
       xform_flag |= HAS_TRANSLATE;
     }
   }
-  else if ((U.ndof_flag & NDOF_MODE_ORBIT) || ED_view3d_offset_lock_check(v3d, rv3d)) {
-    const bool has_rotation = NDOF_HAS_ROTATE;
-    const bool has_zoom = (ndof->tvec[2] != 0.0f);
+  else {
+    /* Note: based on feedback from T67579, users want to have pan and orbit enabled at once.
+     * It's arguable that orbit shouldn't pan (since we have a pan only operator),
+     * so if there are users who like to separate orbit/pan operations - it can be a preference. */
+    const bool is_orbit_around_pivot = (U.ndof_flag & NDOF_MODE_ORBIT) ||
+                                       ED_view3d_offset_lock_check(v3d, rv3d);
+    const bool has_rotation = ndof_has_rotate(ndof, rv3d);
+    bool has_translate, has_zoom;
 
-    if (has_zoom) {
-      view3d_ndof_pan_zoom(ndof, vod->sa, vod->ar, false, has_zoom);
-      xform_flag |= HAS_TRANSLATE;
+    if (is_orbit_around_pivot) {
+      /* Orbit preference or forced lock (Z zooms). */
+      has_translate = !is_zero_v2(ndof->tvec) && ndof_has_translate(ndof, v3d, rv3d);
+      has_zoom = (ndof->tvec[2] != 0.0f);
+    }
+    else {
+      /* Free preference (Z translates). */
+      has_translate = ndof_has_translate(ndof, v3d, rv3d);
+      has_zoom = false;
     }
 
+    /* Rotation first because dynamic offset resets offset otherwise (and disables panning). */
     if (has_rotation) {
-      view3d_ndof_orbit(ndof, vod->sa, vod->ar, vod, true);
+      const float dist_backup = rv3d->dist;
+      if (!is_orbit_around_pivot) {
+        ED_view3d_distance_set(rv3d, 0.0f);
+      }
+      view3d_ndof_orbit(ndof, vod->sa, vod->ar, vod, is_orbit_around_pivot);
       xform_flag |= HAS_ROTATE;
+      if (!is_orbit_around_pivot) {
+        ED_view3d_distance_set(rv3d, dist_backup);
+      }
     }
-  }
-  else { /* free/explore (like fly mode) */
-    const bool has_rotation = NDOF_HAS_ROTATE;
-    const bool has_translate = NDOF_HAS_TRANSLATE;
-    const bool has_zoom = (ndof->tvec[2] != 0.0f) && !rv3d->is_persp;
-
-    float dist_backup;
 
     if (has_translate || has_zoom) {
       view3d_ndof_pan_zoom(ndof, vod->sa, vod->ar, has_translate, has_zoom);
       xform_flag |= HAS_TRANSLATE;
     }
-
-    dist_backup = rv3d->dist;
-    ED_view3d_distance_set(rv3d, 0.0f);
-
-    if (has_rotation) {
-      view3d_ndof_orbit(ndof, vod->sa, vod->ar, vod, false);
-      xform_flag |= HAS_ROTATE;
-    }
-
-    ED_view3d_distance_set(rv3d, dist_backup);
   }
 
   ED_view3d_camera_lock_sync(depsgraph, v3d, rv3d);
@@ -1514,7 +1526,7 @@ static int ndof_pan_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent *e
   const wmNDOFMotionData *ndof = event->customdata;
   char xform_flag = 0;
 
-  const bool has_translate = NDOF_HAS_TRANSLATE;
+  const bool has_translate = ndof_has_translate(ndof, v3d, rv3d);
   const bool has_zoom = (ndof->tvec[2] != 0.0f) && !rv3d->is_persp;
 
   /* we're panning here! so erase any leftover rotation from other operators */
@@ -3421,9 +3433,9 @@ static int render_border_exec(bContext *C, wmOperator *op)
 void VIEW3D_OT_render_border(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Set Render Region";
+  ot->name = "Render Region";
   ot->description =
-      "Draw a rectangle to render a portion of the Viewport / Cameraview";
+      "Box select a portion of the Viewport to render a part of it\nRequires Viewport shading rendered \nViewport and Camera Render Region rectangle are independant\nWorks in Viewport just with Cycles";
   ot->idname = "VIEW3D_OT_render_border";
 
   /* api callbacks */
@@ -3484,7 +3496,7 @@ void VIEW3D_OT_clear_render_border(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Render Region";
   ot->description =
-      "Removes an existing Render border";  // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
+      "Removes an existing Render Region rectangle";  // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
   ot->idname = "VIEW3D_OT_clear_render_border";
 
   /* api callbacks */
@@ -4945,6 +4957,7 @@ void ED_view3d_cursor3d_position_rotation(bContext *C,
                                                    &(const struct SnapObjectParams){
                                                        .snap_select = SNAP_ALL,
                                                        .use_object_edit_cage = false,
+                                                       .use_occlusion_test = true,
                                                    },
                                                    mval_fl,
                                                    NULL,
@@ -4958,10 +4971,9 @@ void ED_view3d_cursor3d_position_rotation(bContext *C,
         copy_v3_v3(cursor_co, ray_co);
       }
 
-      float tquat[4];
-
       /* Math normal (Z). */
       {
+        float tquat[4];
         float z_src[3] = {0, 0, 1};
         mul_qt_v3(cursor_quat, z_src);
         rotation_between_vecs_to_quat(tquat, z_src, ray_no);
@@ -4976,13 +4988,34 @@ void ED_view3d_cursor3d_position_rotation(bContext *C,
             dot_v3v3(ray_no, obmat[2]),
         };
         const int ortho_axis = axis_dominant_v3_ortho_single(ortho_axis_dot);
-        float x_src[3] = {1, 0, 0};
-        float x_dst[3];
-        mul_qt_v3(cursor_quat, x_src);
-        project_plane_v3_v3v3(x_dst, obmat[ortho_axis], ray_no);
-        normalize_v3(x_dst);
-        rotation_between_vecs_to_quat(tquat, x_src, x_dst);
-        mul_qt_qtqt(cursor_quat, tquat, cursor_quat);
+
+        float tquat_best[4];
+        float angle_best = -1.0f;
+
+        float tan_dst[3];
+        project_plane_v3_v3v3(tan_dst, obmat[ortho_axis], ray_no);
+        normalize_v3(tan_dst);
+
+        /* As the tangent is arbitrary from the users point of view,
+         * make the cursor 'roll' on the shortest angle.
+         * otherwise this can cause noticeable 'flipping', see T72419. */
+        for (int axis = 0; axis < 2; axis++) {
+          float tan_src[3] = {0, 0, 0};
+          tan_src[axis] = 1.0f;
+          mul_qt_v3(cursor_quat, tan_src);
+
+          for (int axis_sign = 0; axis_sign < 2; axis_sign++) {
+            float tquat_test[4];
+            rotation_between_vecs_to_quat(tquat_test, tan_src, tan_dst);
+            const float angle_test = angle_normalized_qt(tquat_test);
+            if (angle_test < angle_best || angle_best == -1.0f) {
+              angle_best = angle_test;
+              copy_qt_qt(tquat_best, tquat_test);
+            }
+            negate_v3(tan_src);
+          }
+        }
+        mul_qt_qtqt(cursor_quat, tquat_best, cursor_quat);
       }
     }
     ED_transform_snap_object_context_destroy(snap_context);

@@ -963,8 +963,10 @@ static bool drw_select_filter_object_mode_lock(Object *ob, void *user_data)
   return BKE_object_is_mode_compat(ob, obact->mode);
 }
 
-/** Implement #VIEW3D_SELECT_FILTER_WPAINT_POSE_MODE_LOCK for special case when
- * we want to select pose bones (this doesn't switch modes). */
+/**
+ * Implement #VIEW3D_SELECT_FILTER_WPAINT_POSE_MODE_LOCK for special case when
+ * we want to select pose bones (this doesn't switch modes).
+ */
 static bool drw_select_filter_object_mode_lock_for_weight_paint(Object *ob, void *user_data)
 {
   LinkNode *ob_pose_list = user_data;
@@ -1097,7 +1099,7 @@ int view3d_opengl_select(ViewContext *vc,
     GPU_depth_test(true);
   }
 
-  if (vc->rv3d->rflag & RV3D_CLIPPING) {
+  if (RV3D_CLIPPING_ENABLED(vc->v3d, vc->rv3d)) {
     ED_view3d_clipping_set(vc->rv3d);
   }
 
@@ -1165,7 +1167,7 @@ int view3d_opengl_select(ViewContext *vc,
     GPU_depth_test(false);
   }
 
-  if (vc->rv3d->rflag & RV3D_CLIPPING) {
+  if (RV3D_CLIPPING_ENABLED(v3d, vc->rv3d)) {
     ED_view3d_clipping_disable();
   }
 

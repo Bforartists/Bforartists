@@ -126,11 +126,13 @@ typedef struct bArmature {
   /** Active editbone (in editmode). */
   struct EditBone *act_edbone;
 
+  /** ID data is older than edit-mode data (TODO: move to edit-mode struct). */
+  char needs_flush_to_id;
+  char _pad0[7];
+
   int flag;
   int drawtype;
-  /** How vertex deformation is handled in the ge. */
-  int gevertdeformer;
-  char _pad[4];
+
   short deformflag;
   short pathflag;
 
@@ -175,18 +177,12 @@ typedef enum eArmature_Drawtype {
   ARM_WIRE = 4,
 } eArmature_Drawtype;
 
-/* armature->gevertdeformer */
-typedef enum eArmature_VertDeformer {
-  ARM_VDEF_BLENDER = 0,
-  ARM_VDEF_BGE_CPU = 1,
-} eArmature_VertDeformer;
-
 /* armature->deformflag */
 typedef enum eArmature_DeformFlag {
   ARM_DEF_VGROUP = (1 << 0),
   ARM_DEF_ENVELOPE = (1 << 1),
   ARM_DEF_QUATERNION = (1 << 2),
-#ifdef DNA_DEPRECATED
+#ifdef DNA_DEPRECATED_ALLOW
   ARM_DEF_B_BONE_REST = (1 << 3), /* deprecated */
 #endif
   ARM_DEF_INVERT_VGROUP = (1 << 4),
@@ -194,7 +190,7 @@ typedef enum eArmature_DeformFlag {
 
 /* armature->pathflag */
 // XXX deprecated... old animation system (armature only viz)
-#ifdef DNA_DEPRECATED
+#ifdef DNA_DEPRECATED_ALLOW
 typedef enum eArmature_PathFlag {
   ARM_PATH_FNUMS = (1 << 0),
   ARM_PATH_KFRAS = (1 << 1),
@@ -232,7 +228,7 @@ typedef enum eBone_Flag {
   BONE_UNKEYED = (1 << 13),
   /** set to prevent hinge child bones from influencing the transform center */
   BONE_HINGE_CHILD_TRANSFORM = (1 << 14),
-#ifdef DNA_DEPRECATED
+#ifdef DNA_DEPRECATED_ALLOW
   /** No parent scale */
   BONE_NO_SCALE = (1 << 15),
 #endif
@@ -256,7 +252,8 @@ typedef enum eBone_Flag {
   BONE_ADD_PARENT_END_ROLL = (1 << 24),
   /** this bone was transformed by the mirror function */
   BONE_TRANSFORM_MIRROR = (1 << 25),
-
+  /** this bone is associated with a locked vertex group, ONLY USE FOR DRAWING */
+  BONE_DRAW_LOCKED_WEIGHT = (1 << 26),
 } eBone_Flag;
 
 /* bone->inherit_scale_mode */
@@ -271,6 +268,8 @@ typedef enum eBone_InheritScaleMode {
   BONE_INHERIT_SCALE_NONE,
   /* Inherit effects of shear on parent (same as old disabled Inherit Scale). */
   BONE_INHERIT_SCALE_NONE_LEGACY,
+  /* Inherit parent X scale as child X scale etc. */
+  BONE_INHERIT_SCALE_ALIGNED,
 } eBone_InheritScaleMode;
 
 /* bone->bbone_prev_type, bbone_next_type */

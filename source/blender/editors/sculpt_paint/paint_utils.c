@@ -412,7 +412,7 @@ static Image *imapaint_face_image(Object *ob, Mesh *me, int face_index)
 }
 
 /* Uses symm to selectively flip any axis of a coordinate. */
-void flip_v3_v3(float out[3], const float in[3], const char symm)
+void flip_v3_v3(float out[3], const float in[3], const ePaintSymmetryFlags symm)
 {
   if (symm & PAINT_SYMM_X) {
     out[0] = -in[0];
@@ -434,7 +434,7 @@ void flip_v3_v3(float out[3], const float in[3], const char symm)
   }
 }
 
-void flip_qt_qt(float out[4], const float in[4], const char symm)
+void flip_qt_qt(float out[4], const float in[4], const ePaintSymmetryFlags symm)
 {
   float axis[3], angle;
 
@@ -519,13 +519,20 @@ void paint_sample_color(
           }
 
           if (image) {
-            ImBuf *ibuf = BKE_image_acquire_ibuf(image, NULL, NULL);
-            if (ibuf && ibuf->rect) {
-              float uv[2];
-              float u, v;
-              imapaint_pick_uv(me_eval, scene, ob_eval, faceindex, mval, uv);
-              sample_success = true;
+            float uv[2];
+            float u, v;
+            ImageUser iuser;
+            BKE_imageuser_default(&iuser);
 
+            imapaint_pick_uv(me_eval, scene, ob_eval, faceindex, mval, uv);
+
+            if (image->source == IMA_SRC_TILED) {
+              float new_uv[2];
+              iuser.tile = BKE_image_get_tile_from_pos(image, uv, new_uv, NULL);
+              u = new_uv[0];
+              v = new_uv[1];
+            }
+            else {
               u = fmodf(uv[0], 1.0f);
               v = fmodf(uv[1], 1.0f);
 
@@ -535,6 +542,11 @@ void paint_sample_color(
               if (v < 0.0f) {
                 v += 1.0f;
               }
+            }
+
+            ImBuf *ibuf = BKE_image_acquire_ibuf(image, &iuser, NULL);
+            if (ibuf && ibuf->rect) {
+              sample_success = true;
 
               u = u * ibuf->x;
               v = v * ibuf->y;

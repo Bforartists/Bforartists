@@ -154,7 +154,7 @@ static void setup_app_data(bContext *C,
   else if (BLI_listbase_is_empty(&bfd->main->screens)) {
     mode = LOAD_UNDO;
   }
-  else if ((G.fileflags & G_FILE_NO_UI) && (is_startup == false)) {
+  else if (G.fileflags & G_FILE_NO_UI) {
     mode = LOAD_UI_OFF;
   }
   else {
@@ -881,7 +881,7 @@ bool BKE_blendfile_write_partial(Main *bmain_src,
 
     while ((id = BLI_pophead(lb_src))) {
       BLI_addtail(lb_dst, id);
-      id_sort_by_name(lb_dst, id);
+      id_sort_by_name(lb_dst, id, NULL);
     }
   }
 

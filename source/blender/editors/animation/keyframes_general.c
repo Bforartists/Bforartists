@@ -31,12 +31,14 @@
 #include "BLI_blenlib.h"
 #include "BLI_utildefines.h"
 #include "BLI_string_utils.h"
+#include "BLI_math.h"
 
 #include "DNA_anim_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
 #include "BKE_action.h"
+#include "BKE_curve.h"
 #include "BKE_fcurve.h"
 #include "BKE_report.h"
 #include "BKE_main.h"
@@ -322,6 +324,157 @@ void clean_fcurve(struct bAnimContext *ac, bAnimListElem *ale, float thresh, boo
       }
     }
   }
+}
+
+/* ---------------- */
+
+/* Check if the keyframe interpolation type is supported */
+static bool prepare_for_decimate(FCurve *fcu, int i)
+{
+  switch (fcu->bezt[i].ipo) {
+    case BEZT_IPO_BEZ:
+      /* We do not need to do anything here as the keyframe already has the required setting.
+       */
+      return true;
+    case BEZT_IPO_LIN:
+      /* Convert to a linear bezt curve to be able to use the decimation algorithm. */
+      fcu->bezt[i].ipo = BEZT_IPO_BEZ;
+      fcu->bezt[i].h1 = HD_FREE;
+      fcu->bezt[i].h2 = HD_FREE;
+
+      if (i != 0) {
+        float h1[3];
+        sub_v3_v3v3(h1, fcu->bezt[i - 1].vec[1], fcu->bezt[i].vec[1]);
+        mul_v3_fl(h1, 1.0f / 3.0f);
+        add_v3_v3(h1, fcu->bezt[i].vec[1]);
+        copy_v3_v3(fcu->bezt[i].vec[0], h1);
+      }
+
+      if (i + 1 != fcu->totvert) {
+        float h2[3];
+        sub_v3_v3v3(h2, fcu->bezt[i + 1].vec[1], fcu->bezt[i].vec[1]);
+        mul_v3_fl(h2, 1.0f / 3.0f);
+        add_v3_v3(h2, fcu->bezt[i].vec[1]);
+        copy_v3_v3(fcu->bezt[i].vec[2], h2);
+      }
+      return true;
+    default:
+      /* These are unsupported. */
+      return false;
+  }
+}
+
+/* Decimate the given curve segment. */
+static void decimate_fcurve_segment(FCurve *fcu,
+                                    int bezt_segment_start_idx,
+                                    int bezt_segment_len,
+                                    float remove_ratio,
+                                    float error_sq_max)
+{
+  int selected_len = bezt_segment_len;
+
+  /* Make sure that we can remove the start/end point of the segment if they
+   * are not the start/end point of the curve. BKE_curve_decimate_bezt_array
+   * has a check that prevents removal of the first and last index in the
+   * passed array. */
+  if (bezt_segment_len + bezt_segment_start_idx != fcu->totvert &&
+      prepare_for_decimate(fcu, bezt_segment_len + bezt_segment_start_idx)) {
+    bezt_segment_len++;
+  }
+  if (bezt_segment_start_idx != 0 && prepare_for_decimate(fcu, bezt_segment_start_idx - 1)) {
+    bezt_segment_start_idx--;
+    bezt_segment_len++;
+  }
+
+  const int target_fcurve_verts = ceil(bezt_segment_len - selected_len * remove_ratio);
+
+  BKE_curve_decimate_bezt_array(&fcu->bezt[bezt_segment_start_idx],
+                                bezt_segment_len,
+                                12, /* The actual resolution displayed in the viewport is dynamic
+                                       so we just pick a value that preserves the curve shape. */
+                                false,
+                                SELECT,
+                                BEZT_FLAG_TEMP_TAG,
+                                error_sq_max,
+                                target_fcurve_verts);
+}
+
+/**
+ * F-Curve 'decimate' function that removes a certain ratio of curve
+ * points that will affect the curves overall shape the least.
+ * If you want to remove based on a error margin, set remove_ratio to 1 and
+ * simply specify the desired error_sq_max. Otherwise, set the error margin to
+ * FLT_MAX.
+ */
+bool decimate_fcurve(bAnimListElem *ale, float remove_ratio, float error_sq_max)
+{
+  FCurve *fcu = (FCurve *)ale->key_data;
+
+  /* Check if the curve actually has any points  */
+  if (fcu == NULL || fcu->bezt == NULL || fcu->totvert == 0) {
+    return true;
+  }
+
+  BezTriple *old_bezts = fcu->bezt;
+
+  /* Only decimate the individual selected curve segments. */
+  int bezt_segment_start_idx = 0;
+  int bezt_segment_len = 0;
+
+  bool selected;
+  bool can_decimate_all_selected = true;
+  bool in_segment = false;
+
+  for (int i = 0; i < fcu->totvert; i++) {
+    selected = fcu->bezt[i].f2 & SELECT;
+    /* Make sure that the temp flag is unset as we use it to determine what to remove. */
+    fcu->bezt[i].f2 &= ~BEZT_FLAG_TEMP_TAG;
+
+    if (selected && !prepare_for_decimate(fcu, i)) {
+      /* This keyframe is not supported, treat them as if they were unselected. */
+      selected = false;
+      can_decimate_all_selected = false;
+    }
+
+    if (selected) {
+      if (!in_segment) {
+        bezt_segment_start_idx = i;
+        in_segment = true;
+      }
+      bezt_segment_len++;
+    }
+    else if (in_segment) {
+      /* If the curve point is not selected then we have reached the end of the selected curve
+       * segment. */
+      decimate_fcurve_segment(
+          fcu, bezt_segment_start_idx, bezt_segment_len, remove_ratio, error_sq_max);
+      in_segment = false;
+      bezt_segment_len = 0;
+    }
+  }
+
+  /* Did the segment run to the end of the curve? */
+  if (in_segment) {
+    decimate_fcurve_segment(
+        fcu, bezt_segment_start_idx, bezt_segment_len, remove_ratio, error_sq_max);
+  }
+
+  uint old_totvert = fcu->totvert;
+  fcu->bezt = NULL;
+  fcu->totvert = 0;
+
+  for (int i = 0; i < old_totvert; i++) {
+    BezTriple *bezt = (old_bezts + i);
+    if ((bezt->f2 & BEZT_FLAG_TEMP_TAG) == 0) {
+      insert_bezt_fcurve(fcu, bezt, 0);
+    }
+  }
+  /* now free the memory used by the old BezTriples */
+  if (old_bezts) {
+    MEM_freeN(old_bezts);
+  }
+
+  return can_decimate_all_selected;
 }
 
 /* ---------------- */

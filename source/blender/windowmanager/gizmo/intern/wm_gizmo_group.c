@@ -33,6 +33,7 @@
 
 #include "BLI_buffer.h"
 #include "BLI_listbase.h"
+#include "BLI_rect.h"
 #include "BLI_string.h"
 
 #include "BKE_context.h"
@@ -284,25 +285,11 @@ void WM_gizmogroup_ensure_init(const bContext *C, wmGizmoGroup *gzgroup)
   /* Refresh may be called multiple times,
    * this just ensures its called at least once before we draw. */
   if (UNLIKELY((gzgroup->init_flag & WM_GIZMOGROUP_INIT_REFRESH) == 0)) {
-    if (gzgroup->type->refresh) {
-      gzgroup->type->refresh(C, gzgroup);
-    }
+    /* Clear the flag before calling refresh so the callback
+     * can postpone the refresh by clearing this flag. */
     gzgroup->init_flag |= WM_GIZMOGROUP_INIT_REFRESH;
+    WM_gizmo_group_refresh(C, gzgroup);
   }
-}
-
-bool WM_gizmo_group_type_poll(const bContext *C, const struct wmGizmoGroupType *gzgt)
-{
-  /* If we're tagged, only use compatible. */
-  if (gzgt->owner_id[0] != '\0') {
-    const WorkSpace *workspace = CTX_wm_workspace(C);
-    if (BKE_workspace_owner_id_check(workspace, gzgt->owner_id) == false) {
-      return false;
-    }
-  }
-  /* Check for poll function, if gizmo-group belongs to an operator,
-   * also check if the operator is running. */
-  return (!gzgt->poll || gzgt->poll(C, (wmGizmoGroupType *)gzgt));
 }
 
 void WM_gizmo_group_remove_by_tool(bContext *C,
@@ -1136,6 +1123,58 @@ void WM_gizmo_group_unlink_delayed_ptr_from_space(wmGizmoGroupType *gzgt,
         }
       }
     }
+  }
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Gizmo Group Type Callback Wrappers
+ *
+ * \{ */
+
+bool WM_gizmo_group_type_poll(const bContext *C, const wmGizmoGroupType *gzgt)
+{
+  /* If we're tagged, only use compatible. */
+  if (gzgt->owner_id[0] != '\0') {
+    const WorkSpace *workspace = CTX_wm_workspace(C);
+    if (BKE_workspace_owner_id_check(workspace, gzgt->owner_id) == false) {
+      return false;
+    }
+  }
+  /* Check for poll function, if gizmo-group belongs to an operator,
+   * also check if the operator is running. */
+  return (!gzgt->poll || gzgt->poll(C, (wmGizmoGroupType *)gzgt));
+}
+
+void WM_gizmo_group_refresh(const bContext *C, wmGizmoGroup *gzgroup)
+{
+  const wmGizmoGroupType *gzgt = gzgroup->type;
+  if (gzgt->flag & WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK) {
+    wmGizmoMap *gzmap = gzgroup->parent_gzmap;
+    wmGizmo *gz = wm_gizmomap_highlight_get(gzmap);
+    if (!gz || gz->parent_gzgroup != gzgroup) {
+      wmWindow *win = CTX_wm_window(C);
+      ARegion *ar = CTX_wm_region(C);
+      BLI_assert(ar->gizmo_map == gzmap);
+      /* Check if the tweak event originated from this region. */
+      if ((win->tweak != NULL) && BLI_rcti_compare(&ar->winrct, &win->tweak->winrct)) {
+        /* We need to run refresh again. */
+        gzgroup->init_flag &= ~WM_GIZMOGROUP_INIT_REFRESH;
+        WM_gizmomap_tag_refresh_drawstep(gzmap, WM_gizmomap_drawstep_from_gizmo_group(gzgroup));
+        gzgroup->hide.delay_refresh_for_tweak = true;
+        return;
+      }
+    }
+    gzgroup->hide.delay_refresh_for_tweak = false;
+  }
+
+  if (gzgroup->hide.any) {
+    return;
+  }
+
+  if (gzgt->refresh) {
+    gzgt->refresh(C, gzgroup);
   }
 }
 

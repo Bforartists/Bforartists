@@ -169,6 +169,12 @@ MINLINE void copy_v4_v4_short(short r[4], const short a[4])
 }
 
 /* int */
+MINLINE void zero_v2_int(int r[2])
+{
+  r[0] = 0;
+  r[1] = 0;
+}
+
 MINLINE void zero_v3_int(int r[3])
 {
   r[0] = 0;
@@ -1218,6 +1224,11 @@ MINLINE bool equals_v3v3(const float v1[3], const float v2[3])
 MINLINE bool equals_v4v4(const float v1[4], const float v2[4])
 {
   return ((v1[0] == v2[0]) && (v1[1] == v2[1]) && (v1[2] == v2[2]) && (v1[3] == v2[3]));
+}
+
+MINLINE bool equals_v2v2_int(const int v1[2], const int v2[2])
+{
+  return ((v1[0] == v2[0]) && (v1[1] == v2[1]));
 }
 
 MINLINE bool compare_v2v2(const float v1[2], const float v2[2], const float limit)

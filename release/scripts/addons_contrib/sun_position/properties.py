@@ -24,6 +24,9 @@ from bpy.props import (StringProperty, EnumProperty, IntProperty,
 from .sun_calc import sun_update, parse_coordinates
 from .north import north_update
 
+from math import pi
+from datetime import datetime
+TODAY = datetime.today()
 
 ############################################################################
 # Sun panel properties
@@ -41,78 +44,62 @@ class SunPosProperties(PropertyGroup):
         default='NORMAL',
         update=sun_update)
 
-    show_map: BoolProperty(
-        description="Show world map.",
+    use_daylight_savings: BoolProperty(
+        description="Daylight savings time adds 1 hour to standard time",
         default=False,
         update=sun_update)
 
-    use_daylight_savings: BoolProperty(
-        description="Daylight savings time adds 1 hour to standard time.",
-        default=0,
-        update=sun_update)
-
     use_refraction: BoolProperty(
-        description="Show apparent sun position due to refraction.",
-        default=1,
+        description="Show apparent sun position due to refraction",
+        default=True,
         update=sun_update)
 
     show_north: BoolProperty(
-        description="Draws line pointing north.",
-        default=0,
+        description="Draw line pointing north",
+        default=False,
         update=north_update)
 
     north_offset: FloatProperty(
-        attr="",
-        name="",
-        description="North offset in degrees or radians "
-                    "from scene's units settings",
+        name="North Offset",
+        description="Rotate the scene to choose North direction",
         unit="ROTATION",
-        soft_min=-3.14159265, soft_max=3.14159265, step=10.00, default=0.00,
+        soft_min=-pi, soft_max=pi, step=10.0, default=0.0,
         update=sun_update)
 
     latitude: FloatProperty(
-        attr="",
         name="Latitude",
         description="Latitude: (+) Northern (-) Southern",
-        soft_min=-90.000, soft_max=90.000,
+        soft_min=-90.0, soft_max=90.0,
         step=5, precision=3,
-        default=0.000,
+        default=0.0,
         update=sun_update)
 
     longitude: FloatProperty(
-        attr="",
         name="Longitude",
-        description="Longitude: (-) West of Greenwich  (+) East of Greenwich",
-        soft_min=-180.000, soft_max=180.000,
+        description="Longitude: (-) West of Greenwich (+) East of Greenwich",
+        soft_min=-180.0, soft_max=180.0,
         step=5, precision=3,
-        default=0.000,
+        default=0.0,
         update=sun_update)
 
     co_parser: StringProperty(
-        attr="",
         name="Enter coordinates",
         description="Enter coordinates from an online map",
         update=parse_coordinates)
 
     month: IntProperty(
-        attr="",
         name="Month",
-        description="",
-        min=1, max=12, default=6,
+        min=1, max=12, default=TODAY.month,
         update=sun_update)
 
     day: IntProperty(
-        attr="",
         name="Day",
-        description="",
-        min=1, max=31, default=21,
+        min=1, max=31, default=TODAY.day,
         update=sun_update)
 
     year: IntProperty(
-        attr="",
         name="Year",
-        description="",
-        min=1800, max=4000, default=2012,
+        min=1800, max=4000, default=TODAY.year,
         update=sun_update)
 
     use_day_of_year: BoolProperty(
@@ -122,49 +109,44 @@ class SunPosProperties(PropertyGroup):
         update=sun_update)
 
     day_of_year: IntProperty(
-        attr="",
         name="Day of year",
-        description="",
         min=1, max=366, default=1,
         update=sun_update)
 
-    UTC_zone: IntProperty(
-        attr="",
+    UTC_zone: FloatProperty(
         name="UTC zone",
-        description="Time zone: Difference from Greenwich England in hours.",
-        min=-12, max=12, default=0,
+        description="Time zone: Difference from Greenwich, England in hours",
+        precision=1,
+        min=-14.0, max=13, step=50, default=0.0,
         update=sun_update)
 
     time: FloatProperty(
-        attr="",
         name="Time",
-        description="",
+        description="Time of the day",
         precision=4,
-        soft_min=0.00, soft_max=23.9999, step=1.00, default=12.00,
+        soft_min=0.0, soft_max=23.9999, step=1.0, default=12.0,
         update=sun_update)
 
     sun_distance: FloatProperty(
-        attr="",
         name="Distance",
-        description="Distance to sun from XYZ axes intersection.",
+        description="Distance to sun from origin",
         unit="LENGTH",
-        soft_min=1, soft_max=3000.00, step=10.00, default=50.00,
+        min=0.0, soft_max=3000.0, step=10.0, default=50.0,
         update=sun_update)
 
     use_sun_object: BoolProperty(
-        description="Enable sun positioning of named lamp or mesh",
+        description="Enable sun positioning of light object",
         default=False,
         update=sun_update)
 
     sun_object: PointerProperty(
         type=bpy.types.Object,
-        # default="Sun",
         description="Sun object to set in the scene",
         poll=lambda self, obj: obj.type == 'LIGHT',
         update=sun_update)
 
     use_object_collection: BoolProperty(
-        description="Allow a group of objects to be positioned.",
+        description="Allow a collection of objects to be positioned",
         default=False,
         update=sun_update)
 
@@ -186,35 +168,32 @@ class SunPosProperties(PropertyGroup):
     use_sky_texture: BoolProperty(
         description="Enable use of Cycles' "
                     "sky texture. World nodes must be enabled, "
-                    "then set color to Sky Texture.",
+                    "then set color to Sky Texture",
         default=False,
         update=sun_update)
 
     sky_texture: StringProperty(
         default="Sky Texture",
-        name="sunSky",
+        name="Sky Texture",
         description="Name of sky texture to be used",
         update=sun_update)
 
     hdr_texture: StringProperty(
         default="Environment Texture",
-        name="envSky",
+        name="Environment Texture",
         description="Name of texture to use. World nodes must be enabled "
                     "and color set to Environment Texture",
         update=sun_update)
 
     hdr_azimuth: FloatProperty(
-        attr="",
         name="Rotation",
-        description="Rotation angle of sun and environment texture "
-                    "in degrees or radians from scene's units settings",
+        description="Rotation angle of sun and environment texture",
         unit="ROTATION",
         step=10.0,
         default=0.0, precision=3,
         update=sun_update)
 
     hdr_elevation: FloatProperty(
-        attr="",
         name="Elevation",
         description="Elevation angle of sun",
         unit="ROTATION",
@@ -223,16 +202,15 @@ class SunPosProperties(PropertyGroup):
         update=sun_update)
 
     bind_to_sun: BoolProperty(
-        description="If true, Environment texture moves with sun.",
+        description="If true, Environment texture moves with sun",
         default=False,
         update=sun_update)
 
     time_spread: FloatProperty(
-        attr="",
         name="Time Spread",
         description="Time period in which to spread object group",
         precision=4,
-        soft_min=1.00, soft_max=24.00, step=1.00, default=23.00,
+        soft_min=1.0, soft_max=24.0, step=1.0, default=23.0,
         update=sun_update)
 
 
@@ -243,15 +221,6 @@ class SunPosProperties(PropertyGroup):
 
 class SunPosAddonPreferences(AddonPreferences):
     bl_idname = __package__
-
-    # map_location: EnumProperty(
-    #     name="Map location",
-    #     description="Display map in viewport or world panel",
-    #     items=(
-    #         ('VIEWPORT', "Viewport", ""),
-    #         ('PANEL', "Panel", ""),
-    #     ),
-    #     default='VIEWPORT')
 
     show_time_place: BoolProperty(
         description="Show time/place presets",
@@ -289,27 +258,11 @@ class SunPosAddonPreferences(AddonPreferences):
         description="Show sunrise and sunset",
         default=True)
 
-    # Uncomment this if you add other map images
-    # map_name: StringProperty(
-    #     default="WorldMap.jpg",
-    #     name="WorldMap",
-    #     description="Name of world map")
-
     def draw(self, context):
         layout = self.layout
 
         box = layout.box()
         col = box.column()
-
-        # Uncomment this if you add other map images
-        # row = col.row()
-        # row.label(text="World map options:")
-        # row.operator_menu_enum('world.wmp_operator',
-        #                        'map_presets', text=Sun.map_name)
-        # col.separator()
-
-        # col.prop(self, "map_location")
-        # col.separator()
 
         col.label(text="Show or use:")
         flow = col.grid_flow(columns=0, even_columns=True, even_rows=False, align=False)

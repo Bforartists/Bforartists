@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.81 (sub 16) (b'bcac0ed977c9')\n"
+"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-29 10:43:51\n"
+"POT-Creation-Date: 2019-12-04 15:50:16\n"
 "PO-Revision-Date: 2019-06-01 18:12+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -718,6 +718,10 @@ msgid "View"
 msgstr "มุมมอง"
 
 
+msgid "Segments"
+msgstr "ส่วน"
+
+
 msgid "Viewport"
 msgstr "วิวพอร์ต"
 
@@ -1194,10 +1198,6 @@ msgstr "เครื่องวาดน้ำหนัก"
 
 msgid "Depth Of Field"
 msgstr "ระยะชัดลึก"
-
-
-msgid "Segments"
-msgstr "ส่วน"
 
 
 msgid "Dimensions"
@@ -1891,10 +1891,6 @@ msgstr "ช่วยเหลือ"
 
 msgid "Presets"
 msgstr "รูปแบบล่วงหน้า"
-
-
-msgid "3D Mouse Settings"
-msgstr "การตั้งค่าเมาส์ 3D"
 
 
 msgid "Save & Load"
@@ -3075,6 +3071,10 @@ msgstr "เรนเดอร์ข้อความ"
 msgctxt "WindowManager"
 msgid "Translation"
 msgstr "แปลภาษา"
+
+
+msgid "3D Mouse Settings"
+msgstr "การตั้งค่าเมาส์ 3D"
 
 
 msgid "Save Preferences"

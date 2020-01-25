@@ -120,6 +120,25 @@ typedef enum eWM_GizmoFlagGroupTypeFlag {
    * We could even move the options into the key-map item.
    * ~ campbell. */
   WM_GIZMOGROUPTYPE_TOOL_INIT = (1 << 6),
+
+  /**
+   * This gizmo type supports using the fallback tools keymap.
+   * #wmGizmoGroup.use_tool_fallback will need to be set too.
+   *
+   * Often useful in combination with #WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK
+   */
+  WM_GIZMOGROUPTYPE_TOOL_FALLBACK_KEYMAP = (1 << 7),
+
+  /**
+   * Use this from a gizmos refresh callback so we can postpone the refresh operation
+   * until the tweak operation is finished.
+   * Only do this when the group doesn't have a highlighted gizmo.
+   *
+   * The result for the user is tweak events delay the gizmo from flashing under the users cursor,
+   * for selection operations. This means gizmos that use this check don't interfere
+   * with click drag events by popping up under the cursor and catching the tweak event.
+   */
+  WM_GIZMOGROUPTYPE_DELAY_REFRESH_FOR_TWEAK = (1 << 8),
 } eWM_GizmoFlagGroupTypeFlag;
 
 /**
@@ -441,7 +460,19 @@ typedef struct wmGizmoGroup {
   /** Errors and warnings storage. */
   struct ReportList *reports;
 
+  /** Has the same result as hiding all gizmos individually. */
+  union {
+    /** Reasons for hiding. */
+    struct {
+      uint delay_refresh_for_tweak : 1;
+    };
+    /** All, when we only want to check if any are hidden. */
+    uint any;
+  } hide;
+
   bool tag_remove;
+
+  bool use_fallback_keymap;
 
   void *customdata;
   /** For freeing customdata from above. */

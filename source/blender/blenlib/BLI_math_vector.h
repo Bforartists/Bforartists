@@ -139,7 +139,7 @@ MINLINE void mul_v3_v3(float r[3], const float a[3]);
 MINLINE void mul_v3_v3v3(float r[3], const float a[3], const float b[3]);
 MINLINE void mul_v4_fl(float r[4], float f);
 MINLINE void mul_v4_v4(float r[4], const float a[4]);
-MINLINE void mul_v4_v4fl(float r[3], const float a[3], float f);
+MINLINE void mul_v4_v4fl(float r[3], const float a[4], float f);
 MINLINE void mul_v2_v2_cw(float r[2], const float mat[2], const float vec[2]);
 MINLINE void mul_v2_v2_ccw(float r[2], const float mat[2], const float vec[2]);
 MINLINE float mul_project_m4_v3_zfac(const float mat[4][4],
@@ -322,6 +322,8 @@ MINLINE bool is_one_v3(const float a[3]) ATTR_WARN_UNUSED_RESULT;
 MINLINE bool equals_v2v2(const float v1[2], const float v2[2]) ATTR_WARN_UNUSED_RESULT;
 MINLINE bool equals_v3v3(const float a[3], const float b[3]) ATTR_WARN_UNUSED_RESULT;
 MINLINE bool equals_v4v4(const float a[4], const float b[4]) ATTR_WARN_UNUSED_RESULT;
+
+MINLINE bool equals_v2v2_int(const int v1[2], const int v2[2]) ATTR_WARN_UNUSED_RESULT;
 
 MINLINE bool compare_v2v2(const float a[2],
                           const float b[2],

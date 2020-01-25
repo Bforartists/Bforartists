@@ -85,18 +85,32 @@ typedef enum ePaintMode {
 #define PAINT_MODE_HAS_BRUSH(mode) !ELEM(mode, PAINT_MODE_SCULPT_UV)
 
 /* overlay invalidation */
-typedef enum eOverlayControlFlags {
+typedef enum ePaintOverlayControlFlags {
   PAINT_OVERLAY_INVALID_TEXTURE_PRIMARY = 1,
   PAINT_OVERLAY_INVALID_TEXTURE_SECONDARY = (1 << 2),
   PAINT_OVERLAY_INVALID_CURVE = (1 << 3),
   PAINT_OVERLAY_OVERRIDE_CURSOR = (1 << 4),
   PAINT_OVERLAY_OVERRIDE_PRIMARY = (1 << 5),
   PAINT_OVERLAY_OVERRIDE_SECONDARY = (1 << 6),
-} eOverlayControlFlags;
+} ePaintOverlayControlFlags;
 
 #define PAINT_OVERRIDE_MASK \
   (PAINT_OVERLAY_OVERRIDE_SECONDARY | PAINT_OVERLAY_OVERRIDE_PRIMARY | \
    PAINT_OVERLAY_OVERRIDE_CURSOR)
+
+/* Defines 8 areas resulting of splitting the object space by the XYZ axis planes. This is used to
+ * flip or mirror transform values depending on where the vertex is and where the transform
+ * operation started to support XYZ symmetry on those operations in a predictable way. */
+
+#define PAINT_SYMM_AREA_DEFAULT 0
+
+typedef enum ePaintSymmetryAreas {
+  PAINT_SYMM_AREA_X = (1 << 0),
+  PAINT_SYMM_AREA_Y = (1 << 1),
+  PAINT_SYMM_AREA_Z = (1 << 2),
+} ePaintSymmetryAreas;
+
+#define PAINT_SYMM_AREAS 8
 
 void BKE_paint_invalidate_overlay_tex(struct Scene *scene,
                                       struct ViewLayer *view_layer,
@@ -105,8 +119,8 @@ void BKE_paint_invalidate_cursor_overlay(struct Scene *scene,
                                          struct ViewLayer *view_layer,
                                          struct CurveMapping *curve);
 void BKE_paint_invalidate_overlay_all(void);
-eOverlayControlFlags BKE_paint_get_overlay_flags(void);
-void BKE_paint_reset_overlay_invalid(eOverlayControlFlags flag);
+ePaintOverlayControlFlags BKE_paint_get_overlay_flags(void);
+void BKE_paint_reset_overlay_invalid(ePaintOverlayControlFlags flag);
 void BKE_paint_set_overlay_override(enum eOverlayFlags flag);
 
 /* palettes */
@@ -134,7 +148,7 @@ void BKE_paint_curve_copy_data(struct Main *bmain,
 struct PaintCurve *BKE_paint_curve_copy(struct Main *bmain, const struct PaintCurve *pc);
 void BKE_paint_curve_make_local(struct Main *bmain, struct PaintCurve *pc, const bool lib_local);
 
-bool BKE_paint_ensure(const struct ToolSettings *ts, struct Paint **r_paint);
+bool BKE_paint_ensure(struct ToolSettings *ts, struct Paint **r_paint);
 void BKE_paint_init(struct Main *bmain, struct Scene *sce, ePaintMode mode, const char col[3]);
 void BKE_paint_free(struct Paint *p);
 void BKE_paint_copy(struct Paint *src, struct Paint *tar, const int flag);
@@ -211,6 +225,29 @@ struct SculptVertexPaintGeomMap {
   struct MeshElemMap *vert_to_poly;
 };
 
+/* Pose Brush IK Chain */
+typedef struct SculptPoseIKChainSegment {
+  float orig[3];
+  float head[3];
+
+  float initial_orig[3];
+  float initial_head[3];
+  float len;
+  float rot[4];
+  float *weights;
+
+  /* Store a 4x4 transform matrix for each of the possible combinations of enabled XYZ symmetry
+   * axis. */
+  float trans_mat[PAINT_SYMM_AREAS][4][4];
+  float pivot_mat[PAINT_SYMM_AREAS][4][4];
+  float pivot_mat_inv[PAINT_SYMM_AREAS][4][4];
+} SculptPoseIKChainSegment;
+
+typedef struct SculptPoseIKChain {
+  SculptPoseIKChainSegment *segments;
+  int tot_segments;
+} SculptPoseIKChain;
+
 /* Session data (mode-specific) */
 
 typedef struct SculptSession {
@@ -265,12 +302,18 @@ typedef struct SculptSession {
   float cursor_location[3];
   float cursor_normal[3];
   float cursor_view_normal[3];
+
+  /* TODO(jbakker): Replace rv3d adn v3d with ViewContext */
   struct RegionView3D *rv3d;
+  struct View3D *v3d;
 
   /* Dynamic mesh preview */
   int *preview_vert_index_list;
   int preview_vert_index_count;
+
+  /* Pose Brush Preview */
   float pose_origin[3];
+  SculptPoseIKChain *pose_ik_chain_preview;
 
   /* Transform operator */
   float pivot_pos[3];
@@ -306,6 +349,13 @@ typedef struct SculptSession {
 
   /* This flag prevents PBVH from being freed when creating the vp_handle for texture paint. */
   bool building_vp_handle;
+
+  /**
+   * ID data is older than sculpt-mode data.
+   * Set #Main.is_memfile_undo_flush_needed when enabling.
+   */
+  char needs_flush_to_id;
+
 } SculptSession;
 
 void BKE_sculptsession_free(struct Object *ob);

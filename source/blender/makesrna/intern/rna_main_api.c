@@ -250,6 +250,9 @@ static Object *rna_Main_objects_new(Main *bmain, ReportList *reports, const char
       case ID_AR:
         type = OB_ARMATURE;
         break;
+      case ID_LP:
+        type = OB_LIGHTPROBE;
+        break;
       default: {
         const char *idname;
         if (RNA_enum_id_from_value(rna_enum_id_type_items, GS(data->name), &idname) == 0) {
@@ -372,14 +375,24 @@ static Image *rna_Main_images_new(Main *bmain,
                                   bool alpha,
                                   bool float_buffer,
                                   bool stereo3d,
-                                  bool is_data)
+                                  bool is_data,
+                                  bool tiled)
 {
   char safe_name[MAX_ID_NAME - 2];
   rna_idname_validate(name, safe_name);
 
   float color[4] = {0.0, 0.0, 0.0, 1.0};
-  Image *image = BKE_image_add_generated(
-      bmain, width, height, safe_name, alpha ? 32 : 24, float_buffer, 0, color, stereo3d, is_data);
+  Image *image = BKE_image_add_generated(bmain,
+                                         width,
+                                         height,
+                                         safe_name,
+                                         alpha ? 32 : 24,
+                                         float_buffer,
+                                         0,
+                                         color,
+                                         stereo3d,
+                                         is_data,
+                                         tiled);
   id_us_min(&image->id);
   return image;
 }
@@ -655,12 +668,15 @@ static FreestyleLineStyle *rna_Main_linestyles_new(Main *bmain, const char *name
   return linestyle;
 }
 
-static LightProbe *rna_Main_lightprobe_new(Main *bmain, const char *name)
+static LightProbe *rna_Main_lightprobe_new(Main *bmain, const char *name, int type)
 {
   char safe_name[MAX_ID_NAME - 2];
   rna_idname_validate(name, safe_name);
 
   LightProbe *probe = BKE_lightprobe_add(bmain, safe_name);
+
+  BKE_lightprobe_configure(probe, type);
+
   id_us_min(&probe->id);
   return probe;
 }
@@ -1146,6 +1162,7 @@ void RNA_def_main_images(BlenderRNA *brna, PropertyRNA *cprop)
       func, "float_buffer", 0, "Float Buffer", "Create an image with floating point color");
   RNA_def_boolean(func, "stereo3d", 0, "Stereo 3D", "Create left and right views");
   RNA_def_boolean(func, "is_data", 0, "Is Data", "Create image with non-color data color space");
+  RNA_def_boolean(func, "tiled", 0, "Tiled", "Create a tiled image");
   /* return type */
   parm = RNA_def_pointer(func, "image", "Image", "", "New image data-block");
   RNA_def_function_return(func, parm);
@@ -2067,6 +2084,9 @@ void RNA_def_main_lightprobes(BlenderRNA *brna, PropertyRNA *cprop)
   func = RNA_def_function(srna, "new", "rna_Main_lightprobe_new");
   RNA_def_function_ui_description(func, "Add a new probe to the main database");
   parm = RNA_def_string(func, "name", "Probe", 0, "", "New name for the data-block");
+  RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
+  parm = RNA_def_enum(
+      func, "type", rna_enum_lightprobes_type_items, 0, "Type", "The type of lightprobe to add");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
   /* return type */
   parm = RNA_def_pointer(func, "lightprobe", "LightProbe", "", "New light probe data-block");

@@ -8,6 +8,7 @@
         icon_saturation="0.5"
         widget_emboss="#00000005"
         editor_outline="#1f1f1f"
+        widget_text_cursor="#3399e6"
         axis_x="#ff3352"
         axis_y="#8bdc00"
         axis_z="#2890ff"
@@ -22,6 +23,7 @@
         icon_object_data="#89e689ff"
         icon_modifier="#84b8ffff"
         icon_shading="#ff6060ff"
+        icon_folder="#ffffffff"
         icon_border_intensity="0"
         >
         <wcol_regular>
@@ -376,6 +378,8 @@
         face_dot="#ff8500"
         facedot_size="3"
         freestyle_face_mark="#7fff7f33"
+        face_back="#00000000"
+        face_front="#00000000"
         nurb_uline="#909000"
         nurb_vline="#803060"
         nurb_sel_uline="#f0ff40"
@@ -542,7 +546,7 @@
             button_text="#e5e5e5"
             button_text_hi="#ffffff"
             navigation_bar="#00000000"
-            execution_buts="#00000000"
+            execution_buts="#35353500"
             tab_active="#4b4b4b"
             tab_inactive="#2b2b2b"
             tab_back="#232323ff"
@@ -564,6 +568,8 @@
       <ThemeNLAEditor
         grid="#2a2a2a"
         view_sliders="#969696"
+        dopesheet_channel="#5a85b2"
+        nla_track="#333333"
         active_action="#cc701a66"
         active_action_unset="#9987614d"
         preview_range="#a14d0066"
@@ -708,6 +714,8 @@
         face_dot="#ff8500"
         facedot_size="3"
         freestyle_face_mark="#7fff7f33"
+        face_back="#00000000"
+        face_front="#00000000"
         editmesh_active="#ffffff80"
         wire_edit="#c0c0c0"
         edge_select="#ff8500"
@@ -789,6 +797,7 @@
         preview_back="#000000"
         metadatabg="#000000"
         metadatatext="#ffffff"
+        preview_range="#a14d0066"
         >
         <space>
           <ThemeSpaceGeneric
@@ -858,6 +867,7 @@
     </properties>
     <text_editor>
       <ThemeTextEditor
+        line_numbers="#000000"
         line_numbers_background="#202020"
         selected_text="#5680c2"
         cursor="#ff0000"
@@ -974,6 +984,7 @@
       <ThemeOutliner
         match="#337f33"
         selected_highlight="#314e78"
+        active="#3b5689"
         selected_object="#e96a00"
         active_object="#ffaf29"
         edited_object="#00806266"
@@ -1141,6 +1152,8 @@
         locked_marker="#7f7f7f"
         path_before="#ff0000"
         path_after="#0000ff"
+        path_keyframe_before="#ffc4c4"
+        path_keyframe_after="#c4c4ff"
         frame_current="#5680c2"
         time_scrub_background="#292929e6"
         strips="#0c0a0a"

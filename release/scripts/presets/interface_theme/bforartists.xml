@@ -8,6 +8,7 @@
         icon_saturation="0.5"
         widget_emboss="#ffffff05"
         editor_outline="#1f1f1f"
+        widget_text_cursor="#3399e6"
         axis_x="#ff3352"
         axis_y="#00ff00"
         axis_z="#0080dc"
@@ -22,6 +23,7 @@
         icon_object_data="#98cc98ff"
         icon_modifier="#6e98ccff"
         icon_shading="#cc6e6eff"
+        icon_folder="#ffffffff"
         icon_border_intensity="0"
         >
         <wcol_regular>
@@ -376,6 +378,8 @@
         face_dot="#ff8500"
         facedot_size="2"
         freestyle_face_mark="#7fff7f33"
+        face_back="#00000000"
+        face_front="#00000000"
         nurb_uline="#909000"
         nurb_vline="#803060"
         nurb_sel_uline="#f0ff40"
@@ -542,7 +546,7 @@
             button_text="#ffffff"
             button_text_hi="#ffffff"
             navigation_bar="#00000000"
-            execution_buts="#00000000"
+            execution_buts="#50505000"
             tab_active="#5680c2"
             tab_inactive="#333333"
             tab_back="#333333ff"
@@ -564,6 +568,8 @@
       <ThemeNLAEditor
         grid="#5e5e5e"
         view_sliders="#969696"
+        dopesheet_channel="#5a85b2"
+        nla_track="#333333"
         active_action="#cc701a66"
         active_action_unset="#9987614d"
         preview_range="#a14d0066"
@@ -708,6 +714,8 @@
         face_dot="#ff8500"
         facedot_size="3"
         freestyle_face_mark="#7fff7f33"
+        face_back="#00000000"
+        face_front="#00000000"
         editmesh_active="#ffffff80"
         wire_edit="#c0c0c0"
         edge_select="#ff8500"
@@ -789,6 +797,7 @@
         preview_back="#000000"
         metadatabg="#000000"
         metadatatext="#ffffff"
+        preview_range="#a14d0066"
         >
         <space>
           <ThemeSpaceGeneric
@@ -858,6 +867,7 @@
     </properties>
     <text_editor>
       <ThemeTextEditor
+        line_numbers="#000000"
         line_numbers_background="#999999"
         selected_text="#c67777"
         cursor="#ff0000"
@@ -1142,6 +1152,8 @@
         locked_marker="#7f7f7f"
         path_before="#ff0000"
         path_after="#0000ff"
+        path_keyframe_before="#ffc4c4"
+        path_keyframe_after="#c4c4ff"
         frame_current="#60c040"
         time_scrub_background="#00000000"
         strips="#0c0a0a"

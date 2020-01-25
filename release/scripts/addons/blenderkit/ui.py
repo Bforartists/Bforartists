@@ -29,8 +29,9 @@ if "bpy" in locals():
     download = importlib.reload(download)
     bg_blender = importlib.reload(bg_blender)
     colors = importlib.reload(colors)
+    tasks_queue = importlib.reload(tasks_queue)
 else:
-    from blenderkit import paths, ratings, utils, search, upload, ui_bgl, download, bg_blender, colors
+    from blenderkit import paths, ratings, utils, search, upload, ui_bgl, download, bg_blender, colors, tasks_queue
 
 import bpy
 
@@ -1149,6 +1150,8 @@ def update_ui_size(area, region):
 
     ui.rating_x = ui.bar_x
     ui.rating_y = ui.bar_y - ui.bar_height
+
+
 
 
 class AssetBarOperator(bpy.types.Operator):

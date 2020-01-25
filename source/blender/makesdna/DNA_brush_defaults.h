@@ -72,6 +72,10 @@
  \
     .jitter = 0.0f, \
  \
+    /* Dash */ \
+    .dash_ratio = 1.0f, \
+    .dash_samples = 20, \
+ \
     .texture_sample_bias = 0, /* value to added to texture samples */ \
     .texture_overlay_alpha = 33, \
     .mask_overlay_alpha = 33, \
@@ -81,16 +85,17 @@
     /* brush appearance  */ \
  \
     /* add mode color is light red */ \
-    .add_col = {1.0, 0.39, 0.39}, \
+    .add_col = {1.0, 0.39, 0.39, 0.9}, \
  \
     /* subtract mode color is light blue */ \
-    .sub_col = {0.39, 0.39, 1.0}, \
+    .sub_col = {0.39, 0.39, 1.0, 0.9}, \
  \
     .stencil_pos = {256, 256}, \
     .stencil_dimension = {256, 256}, \
  \
     /* sculpting defaults to the draw tool for new brushes */ \
     .sculpt_tool = SCULPT_TOOL_DRAW, \
+    .pose_smooth_iterations = 4, \
  \
     /* A kernel radius of 1 has almost no effect (T63233). */ \
     .blur_kernel_radius = 2, \

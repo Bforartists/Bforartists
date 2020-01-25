@@ -163,11 +163,11 @@ class NODES_PT_Input_input_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexEnvironment"
             
-            props = col.operator("node.add_node", text="", icon = "NODE_VOLUME_INFO")
+            props = row.operator("node.add_node", text="", icon = "NODE_VOLUME_INFO")
             props.use_transform = True
             props.type = "ShaderNodeVolumeInfo"
             
-            props = col.operator("node.add_node", text="", icon = "NODE_VERTEX_COLOR")
+            props = row.operator("node.add_node", text="", icon = "NODE_VERTEX_COLOR")
             props.use_transform = True
             props.type = "ShaderNodeVertexColor"           
 
@@ -889,7 +889,7 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexVoronoi"
             
-            props = col.operator("node.add_node", text = "", icon = "NODE_WHITE_NOISE")
+            props = row.operator("node.add_node", text = "", icon = "NODE_WHITE_NOISE")
             props.use_transform = True
             props.type = "ShaderNodeTexWhiteNoise"
 
@@ -2096,6 +2096,10 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ" 
 
+            props = col.operator("node.add_node", text=" Shader to RGB   ", icon = "NODE_RGB")
+            props.use_transform = True
+            props.type = "ShaderNodeShaderToRGB" 
+
             col = layout.column(align=True)       
         
             props = col.operator("node.add_node", text=" Blackbody        ", icon = "NODE_BLACKBODY")
@@ -2164,7 +2168,11 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
         
             props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
-            props.type = "ShaderNodeSeparateXYZ"     
+            props.type = "ShaderNodeSeparateXYZ"
+
+            props = row.operator("node.add_node", text="", icon = "NODE_RGB")
+            props.use_transform = True
+            props.type = "ShaderNodeShaderToRGB" 
                 
             row = layout.row()
             row.alignment = 'LEFT'      
@@ -2196,11 +2204,11 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeWavelength"
             
-            props = col.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
+            props = row.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
             props.use_transform = True
             props.type = "ShaderNodeMapRange"
             
-            props = col.operator("node.add_node", text="", icon = "NODE_CLAMP")
+            props = row.operator("node.add_node", text="", icon = "NODE_CLAMP")
             props.use_transform = True
             props.type = "ShaderNodeClamp"
             
@@ -2918,7 +2926,7 @@ class NODES_PT_Modify_color(bpy.types.Panel):
             row = layout.row()
             row.alignment = 'LEFT'        
         
-            props = row.operator("node.add_node", text = "", icon = "NODE_BRIGHT_CONTRAST")
+            props = row.operator("node.add_node", text = "", icon = "BRIGHTNESS_CONTRAST")
             props.use_transform = True
             props.type = "ShaderNodeBrightContrast"
         
@@ -2997,6 +3005,15 @@ class NODES_PT_Modify_script(bpy.types.Panel):
 
 
 # ------------- Relations tab -------------------------------
+
+
+# Workaround to separate the tooltips
+class NODE_PT_exit_edit_group(bpy.types.Operator):
+    """Exit edit node group"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "node.group_edit_exit"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Group Edit Exit"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+    
             
 #Relations tab, Relations Panel
 class NODES_PT_Relations_group(bpy.types.Panel):
@@ -3019,16 +3036,16 @@ class NODES_PT_Relations_group(bpy.types.Panel):
         ##### Textbuttons
 
         if not addon_prefs.Node_text_or_icon:
-
-            col = layout.column(align=True)  
-
-            col.operator("node.group_edit", text=" Edit Group         ", icon = "NODE_EDITGROUP").exit = False
-            col.operator("node.group_edit", text = "Exit Edit Group ", icon = "NODE_EXITEDITGROUP").exit = True
-            col.operator("node.group_insert", text = " Group Insert      ", icon = "NODE_GROUPINSERT")
+            
+            col = layout.column(align=True)            
             col.operator("node.group_make", text = " Make Group      ", icon = "NODE_MAKEGROUP")
+            col.operator("node.group_insert", text = " Group Insert      ", icon = "NODE_GROUPINSERT")
 
             col = layout.column(align=True)  
+            col.operator("node.group_edit", text=" Edit Group         ", icon = "NODE_EDITGROUP").exit = False
+            col.operator("node.group_edit_exit", text = "Exit Edit Group ", icon = "NODE_EXITEDITGROUP") #bfa - separated tooltip
 
+            col = layout.column(align=True)  
             col.operator("node.group_ungroup", text = " Ungroup           ", icon = "NODE_UNGROUP")
 
         #### Icon Buttons
@@ -3036,13 +3053,17 @@ class NODES_PT_Relations_group(bpy.types.Panel):
         else: 
 
             row = layout.row()
-            row.alignment = 'LEFT'        
+            row.alignment = 'LEFT'
+            
+            row.operator("node.group_make", text = "", icon = "NODE_MAKEGROUP")
+            row.operator("node.group_insert", text = "", icon = "NODE_GROUPINSERT")
+            
+            row = layout.row()
+            row.alignment = 'LEFT'   
 
             row.operator("node.group_edit", text = "", icon = "NODE_EDITGROUP").exit = False
-            row.operator("node.group_edit", text = "", icon = "NODE_EXITEDITGROUP").exit = True
-            row.operator("node.group_insert", text = "", icon = "NODE_GROUPINSERT")
-            row.operator("node.group_make", text = "", icon = "NODE_MAKEGROUP")
-
+            row.operator("node.group_edit_exit", text = "", icon = "NODE_EXITEDITGROUP") #bfa - separated tooltip
+          
             row = layout.row()
             row.alignment = 'LEFT'
 
@@ -3140,6 +3161,7 @@ classes = (
     NODES_PT_Modify_distort_tex,
     NODES_PT_Modify_distort_comp,
     NODES_PT_Modify_script,
+    NODE_PT_exit_edit_group, # BFA - separated tooltip
     NODES_PT_Relations_group,
     NODES_PT_Relations_layout, 
 )

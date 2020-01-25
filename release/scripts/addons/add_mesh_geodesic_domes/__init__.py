@@ -27,8 +27,8 @@ bl_info = {
     "location": "View3D > Add > Mesh",
     "description": "Create geodesic dome type objects.",
     "warning": "",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Modeling/Geodesic_Domes",
-    "tracker_url": "",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "add_mesh/geodesic_domes.html",
     "category": "Add Mesh"}
 
 if "bpy" in locals():

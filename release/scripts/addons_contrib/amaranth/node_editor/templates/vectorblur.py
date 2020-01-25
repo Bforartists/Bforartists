@@ -41,18 +41,18 @@ class AMTH_NODE_OT_AddTemplateVectorBlur(bpy.types.Operator):
         bpy.ops.node.select_all(action="DESELECT")
 
         act_node = tree.nodes.active
-        rlayer = act_node.scene.render.layers[act_node.layer]
+        #rlayer = act_node.scene.render.layers[act_node.layer]
 
-        if not rlayer.use_pass_vector:
-            rlayer.use_pass_vector = True
+        #if not rlayer.use_pass_vector:
+            #rlayer.use_pass_vector = True
 
         vblur = tree.nodes.new(type="CompositorNodeVecBlur")
         vblur.use_curved = True
         vblur.factor = 0.5
 
         tree.links.new(act_node.outputs["Image"], vblur.inputs["Image"])
-        tree.links.new(act_node.outputs["Z"], vblur.inputs["Z"])
-        tree.links.new(act_node.outputs["Speed"], vblur.inputs["Speed"])
+        tree.links.new(act_node.outputs["Depth"], vblur.inputs["Z"])
+        tree.links.new(act_node.outputs["Vector"], vblur.inputs["Speed"])
 
         if tree.nodes.active:
             vblur.location = tree.nodes.active.location

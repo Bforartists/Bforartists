@@ -54,6 +54,7 @@ set(SRC
   intern/wm_cursors.c
   intern/wm_dragdrop.c
   intern/wm_draw.c
+  intern/wm_event_query.c
   intern/wm_event_system.c
   intern/wm_files.c
   intern/wm_files_link.c
@@ -66,6 +67,7 @@ set(SRC
   intern/wm_menu_type.c
   intern/wm_operator_props.c
   intern/wm_operator_type.c
+  intern/wm_operator_utils.c
   intern/wm_operators.c
   intern/wm_panel_type.c
   intern/wm_platform_support.c

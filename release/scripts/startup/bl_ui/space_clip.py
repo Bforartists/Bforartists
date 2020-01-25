@@ -865,6 +865,7 @@ class CLIP_PT_plane_track(CLIP_PT_tracking_panel, Panel):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
 
         clip = context.space_data.clip
         active_track = clip.tracking.plane_tracks.active
@@ -876,7 +877,8 @@ class CLIP_PT_plane_track(CLIP_PT_tracking_panel, Panel):
 
         layout.prop(active_track, "name")
         layout.prop(active_track, "use_auto_keying")
-        layout.prop(active_track, "image")
+        layout.template_ID(
+            active_track, "image", new="image.new", open="image.open")
 
         row = layout.row()
         row.active = active_track.image is not None
@@ -1360,8 +1362,8 @@ class CLIP_MT_view(Menu):
 
             layout.separator()
 
-            layout.operator("clip.view_zoom_in", icon = "ZOOM_IN")
-            layout.operator("clip.view_zoom_out", icon = "ZOOM_OUT")
+            layout.operator("clip.view_zoom_in", text = "Zoom In", icon = "ZOOM_IN")
+            layout.operator("clip.view_zoom_out", text = "Zoom Out", icon = "ZOOM_OUT")
 
             layout.separator()
 
@@ -1502,7 +1504,7 @@ class CLIP_MT_select(Menu):
 
         layout.separator()
 
-        layout.menu("CLIP_MT_select_grouped")
+        layout.menu("CLIP_MT_select_grouped", text = "Grouped")
 
 
 class CLIP_MT_select_grouped(Menu):
@@ -1518,15 +1520,6 @@ class CLIP_MT_select_grouped(Menu):
         layout.operator("clip.select_grouped", text = "Disabled", icon = "HAND").group = 'DISABLED'
         layout.operator("clip.select_grouped", text = "Same Color", icon = "HAND").group = 'COLOR'
         layout.operator("clip.select_grouped", text = "Failed", icon = "HAND").group = 'FAILED'
-
-
-class CLIP_MT_mask_handle_type_menu(Menu):
-    bl_label = "Set Handle Type"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator_enum("mask.handle_type_set", "type")
 
 
 class CLIP_MT_tracking_context_menu(Menu):
@@ -1579,30 +1572,8 @@ class CLIP_MT_tracking_context_menu(Menu):
             layout.operator("clip.delete_track", icon = "DELETE")
 
         elif mode == 'MASK':
-
-            layout.menu("CLIP_MT_mask_handle_type_menu")
-            layout.operator("mask.switch_direction", icon='SWITCH_DIRECTION')
-            layout.operator("mask.cyclic_toggle", icon='TOGGLE_CYCLIC')
-
-            layout.separator()
-
-            layout.operator("mask.copy_splines", icon='COPYDOWN')
-            layout.operator("mask.paste_splines", icon='PASTEDOWN')
-
-            layout.separator()
-
-            layout.operator("mask.shape_key_rekey", text="Re-key Shape Points", icon = "SHAPEKEY_DATA")
-            layout.operator("mask.feather_weight_clear", icon = "CLEAR")
-            layout.operator("mask.shape_key_feather_reset", text="Reset Feather Animation", icon = "RESET")
-
-            layout.separator()
-
-            layout.operator("mask.parent_set", icon = "PARENT")
-            layout.operator("mask.parent_clear", icon = "PARENT_CLEAR")
-
-            layout.separator()
-
-            layout.operator("mask.delete", icon='DELETE')
+            from .properties_mask_common import draw_mask_context_menu
+            draw_mask_context_menu(layout, context)
 
 
 class CLIP_PT_camera_presets(PresetPanel, Panel):
@@ -1878,7 +1849,6 @@ classes = (
     CLIP_MT_tracking_pie,
     CLIP_MT_reconstruction_pie,
     CLIP_MT_solving_pie,
-    CLIP_MT_mask_handle_type_menu
 )
 
 if __name__ == "__main__":  # only for live edit.

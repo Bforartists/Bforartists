@@ -60,6 +60,7 @@
 #include "BKE_mesh_mapping.h"
 #include "BKE_mesh_runtime.h"
 #include "BKE_modifier.h"
+#include "BKE_multires.h"
 #include "BKE_object.h"
 #include "BKE_paint.h"
 #include "BKE_pbvh.h"
@@ -78,7 +79,7 @@ const char PAINT_CURSOR_VERTEX_PAINT[3] = {255, 255, 255};
 const char PAINT_CURSOR_WEIGHT_PAINT[3] = {200, 200, 255};
 const char PAINT_CURSOR_TEXTURE_PAINT[3] = {255, 255, 255};
 
-static eOverlayControlFlags overlay_flags = 0;
+static ePaintOverlayControlFlags overlay_flags = 0;
 
 void BKE_paint_invalidate_overlay_tex(Scene *scene, ViewLayer *view_layer, const Tex *tex)
 {
@@ -119,7 +120,7 @@ void BKE_paint_invalidate_overlay_all(void)
                     PAINT_OVERLAY_INVALID_TEXTURE_PRIMARY | PAINT_OVERLAY_INVALID_CURVE);
 }
 
-eOverlayControlFlags BKE_paint_get_overlay_flags(void)
+ePaintOverlayControlFlags BKE_paint_get_overlay_flags(void)
 {
   return overlay_flags;
 }
@@ -142,7 +143,7 @@ void BKE_paint_set_overlay_override(eOverlayFlags flags)
   }
 }
 
-void BKE_paint_reset_overlay_invalid(eOverlayControlFlags flag)
+void BKE_paint_reset_overlay_invalid(ePaintOverlayControlFlags flag)
 {
   overlay_flags &= ~(flag);
 }
@@ -151,6 +152,9 @@ bool BKE_paint_ensure_from_paintmode(Scene *sce, ePaintMode mode)
 {
   ToolSettings *ts = sce->toolsettings;
   Paint **paint_ptr = NULL;
+  /* Some paint modes don't store paint settings as pointer, for these this can be set and
+   * referenced by paint_ptr. */
+  Paint *paint_tmp = NULL;
 
   switch (mode) {
     case PAINT_MODE_SCULPT:
@@ -164,6 +168,8 @@ bool BKE_paint_ensure_from_paintmode(Scene *sce, ePaintMode mode)
       break;
     case PAINT_MODE_TEXTURE_2D:
     case PAINT_MODE_TEXTURE_3D:
+      paint_tmp = (Paint *)&ts->imapaint;
+      paint_ptr = &paint_tmp;
       break;
     case PAINT_MODE_SCULPT_UV:
       paint_ptr = (Paint **)&ts->uvsculpt;
@@ -174,7 +180,7 @@ bool BKE_paint_ensure_from_paintmode(Scene *sce, ePaintMode mode)
     case PAINT_MODE_INVALID:
       break;
   }
-  if (paint_ptr && (*paint_ptr == NULL)) {
+  if (paint_ptr) {
     BKE_paint_ensure(ts, paint_ptr);
     return true;
   }
@@ -654,19 +660,19 @@ bool BKE_paint_select_elem_test(Object *ob)
 
 void BKE_paint_cavity_curve_preset(Paint *p, int preset)
 {
-  CurveMap *cm = NULL;
+  CurveMapping *cumap = NULL;
+  CurveMap *cuma = NULL;
 
   if (!p->cavity_curve) {
     p->cavity_curve = BKE_curvemapping_add(1, 0, 0, 1, 1);
   }
+  cumap = p->cavity_curve;
+  cumap->flag &= ~CUMA_EXTEND_EXTRAPOLATE;
+  cumap->preset = preset;
 
-  cm = p->cavity_curve->cm;
-  cm->flag &= ~CUMA_EXTEND_EXTRAPOLATE;
-
-  p->cavity_curve->preset = preset;
-  BKE_curvemap_reset(
-      cm, &p->cavity_curve->clipr, p->cavity_curve->preset, CURVEMAP_SLOPE_POSITIVE);
-  BKE_curvemapping_changed(p->cavity_curve, false);
+  cuma = cumap->cm;
+  BKE_curvemap_reset(cuma, &cumap->clipr, cumap->preset, CURVEMAP_SLOPE_POSITIVE);
+  BKE_curvemapping_changed(cumap, false);
 }
 
 eObjectMode BKE_paint_object_mode_from_paintmode(ePaintMode mode)
@@ -692,26 +698,36 @@ eObjectMode BKE_paint_object_mode_from_paintmode(ePaintMode mode)
 /**
  * Call when entering each respective paint mode.
  */
-bool BKE_paint_ensure(const ToolSettings *ts, struct Paint **r_paint)
+bool BKE_paint_ensure(ToolSettings *ts, struct Paint **r_paint)
 {
   Paint *paint = NULL;
   if (*r_paint) {
-    /* Note: 'ts->imapaint' is ignored, it's not allocated. */
-    BLI_assert(ELEM(*r_paint,
-                    &ts->gp_paint->paint,
-                    &ts->sculpt->paint,
-                    &ts->vpaint->paint,
-                    &ts->wpaint->paint,
-                    &ts->uvsculpt->paint));
+    /* Tool offset should never be 0 for initialized paint settings, so it's a reliable way to
+     * check if already initialized. */
+    if ((*r_paint)->runtime.tool_offset == 0) {
+      /* Currently only image painting is initialized this way, others have to be allocated. */
+      BLI_assert(ELEM(*r_paint, (Paint *)&ts->imapaint));
 
+      BKE_paint_runtime_init(ts, *r_paint);
+    }
+    else {
+      BLI_assert(ELEM(*r_paint,
+                      /* Cast is annoying, but prevent NULL-pointer access. */
+                      (Paint *)ts->gp_paint,
+                      (Paint *)ts->sculpt,
+                      (Paint *)ts->vpaint,
+                      (Paint *)ts->wpaint,
+                      (Paint *)ts->uvsculpt,
+                      (Paint *)&ts->imapaint));
 #ifdef DEBUG
-    struct Paint paint_test = **r_paint;
-    BKE_paint_runtime_init(ts, *r_paint);
-    /* Swap so debug doesn't hide errors when release fails. */
-    SWAP(Paint, **r_paint, paint_test);
-    BLI_assert(paint_test.runtime.ob_mode == (*r_paint)->runtime.ob_mode);
-    BLI_assert(paint_test.runtime.tool_offset == (*r_paint)->runtime.tool_offset);
+      struct Paint paint_test = **r_paint;
+      BKE_paint_runtime_init(ts, *r_paint);
+      /* Swap so debug doesn't hide errors when release fails. */
+      SWAP(Paint, **r_paint, paint_test);
+      BLI_assert(paint_test.runtime.ob_mode == (*r_paint)->runtime.ob_mode);
+      BLI_assert(paint_test.runtime.tool_offset == (*r_paint)->runtime.tool_offset);
 #endif
+    }
     return true;
   }
 
@@ -736,6 +752,9 @@ bool BKE_paint_ensure(const ToolSettings *ts, struct Paint **r_paint)
   else if ((UvSculpt **)r_paint == &ts->uvsculpt) {
     UvSculpt *data = MEM_callocN(sizeof(*data), __func__);
     paint = &data->paint;
+  }
+  else if (*r_paint == &ts->imapaint.paint) {
+    paint = &ts->imapaint.paint;
   }
 
   paint->flags |= PAINT_SHOW_BRUSH;
@@ -1000,15 +1019,12 @@ static void sculptsession_free_pbvh(Object *object)
     ss->pbvh = NULL;
   }
 
-  if (ss->pmap) {
-    MEM_freeN(ss->pmap);
-    ss->pmap = NULL;
-  }
+  MEM_SAFE_FREE(ss->pmap);
 
-  if (ss->pmap_mem) {
-    MEM_freeN(ss->pmap_mem);
-    ss->pmap_mem = NULL;
-  }
+  MEM_SAFE_FREE(ss->pmap_mem);
+
+  MEM_SAFE_FREE(ss->preview_vert_index_list);
+  ss->preview_vert_index_count = 0;
 }
 
 void BKE_sculptsession_bm_to_me_for_render(Object *object)
@@ -1077,6 +1093,14 @@ void BKE_sculptsession_free(Object *ob)
       MEM_freeN(ss->preview_vert_index_list);
     }
 
+    if (ss->pose_ik_chain_preview) {
+      for (int i = 0; i < ss->pose_ik_chain_preview->tot_segments; i++) {
+        MEM_SAFE_FREE(ss->pose_ik_chain_preview->segments[i].weights);
+      }
+      MEM_SAFE_FREE(ss->pose_ik_chain_preview->segments);
+      MEM_SAFE_FREE(ss->pose_ik_chain_preview);
+    }
+
     BKE_sculptsession_free_vwpaint_data(ob->sculpt);
 
     MEM_freeN(ss);
@@ -1117,7 +1141,7 @@ MultiresModifierData *BKE_sculpt_multires_active(Scene *scene, Object *ob)
         continue;
       }
 
-      if (mmd->sculptlvl > 0) {
+      if (BKE_multires_sculpt_level_get(mmd) > 0) {
         return mmd;
       }
       else {
@@ -1360,7 +1384,7 @@ int BKE_sculpt_mask_layers_ensure(Object *ob, MultiresModifierData *mmd)
    * isn't one already */
   if (mmd && !CustomData_has_layer(&me->ldata, CD_GRID_PAINT_MASK)) {
     GridPaintMask *gmask;
-    int level = max_ii(1, mmd->sculptlvl);
+    int level = max_ii(1, BKE_multires_sculpt_level_get(mmd));
     int gridsize = BKE_ccg_gridsize(level);
     int gridarea = gridsize * gridsize;
     int i, j;

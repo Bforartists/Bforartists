@@ -498,7 +498,7 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
   SculptSession *ss = ob->sculpt;
   SubdivCCG *subdiv_ccg = ss->subdiv_ccg;
   SculptUndoNode *unode;
-  bool update = false, rebuild = false, update_mask = false;
+  bool update = false, rebuild = false, update_mask = false, update_visibility = false;
   bool need_mask = false;
 
   for (unode = lb->first; unode; unode = unode->next) {
@@ -575,6 +575,7 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
       case SCULPT_UNDO_HIDDEN:
         if (sculpt_undo_restore_hidden(C, unode)) {
           rebuild = true;
+          update_visibility = true;
         }
         break;
       case SCULPT_UNDO_MASK:
@@ -639,6 +640,11 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
 
       BKE_sculptsession_free_deformMats(ss);
       tag_update |= true;
+    }
+
+    if (BKE_pbvh_type(ss->pbvh) == PBVH_FACES && update_visibility) {
+      Mesh *mesh = ob->data;
+      BKE_mesh_flush_hidden_from_verts(mesh);
     }
 
     if (tag_update) {
@@ -1027,6 +1033,8 @@ SculptUndoNode *sculpt_undo_push_node(Object *ob, PBVHNode *node, SculptUndoType
   /* list is manipulated by multiple threads, so we lock */
   BLI_thread_lock(LOCK_CUSTOM1);
 
+  ss->needs_flush_to_id = 1;
+
   if (ss->bm || ELEM(type, SCULPT_UNDO_DYNTOPO_BEGIN, SCULPT_UNDO_DYNTOPO_END)) {
     /* Dynamic topology stores only one undo node per stroke,
      * regardless of the number of PBVH nodes modified */
@@ -1142,17 +1150,6 @@ typedef struct SculptUndoStep {
   UndoSculpt data;
 } SculptUndoStep;
 
-static bool sculpt_undosys_poll(bContext *C)
-{
-  Object *obact = CTX_data_active_object(C);
-  if (obact && obact->type == OB_MESH) {
-    if (obact && (obact->mode & OB_MODE_SCULPT)) {
-      return true;
-    }
-  }
-  return false;
-}
-
 static void sculpt_undosys_step_encode_init(struct bContext *UNUSED(C), UndoStep *us_p)
 {
   SculptUndoStep *us = (SculptUndoStep *)us_p;
@@ -1161,7 +1158,7 @@ static void sculpt_undosys_step_encode_init(struct bContext *UNUSED(C), UndoStep
 }
 
 static bool sculpt_undosys_step_encode(struct bContext *UNUSED(C),
-                                       struct Main *UNUSED(bmain),
+                                       struct Main *bmain,
                                        UndoStep *us_p)
 {
   /* dummy, encoding is done along the way by adding tiles
@@ -1174,6 +1171,11 @@ static bool sculpt_undosys_step_encode(struct bContext *UNUSED(C),
     us->step.use_memfile_step = true;
   }
   us->step.is_applied = true;
+
+  if (!BLI_listbase_is_empty(&us->data.nodes)) {
+    bmain->is_memfile_undo_flush_needed = true;
+  }
+
   return true;
 }
 
@@ -1256,7 +1258,11 @@ static void sculpt_undosys_step_decode(
         me->flag &= ~ME_SCULPT_DYNAMIC_TOPOLOGY;
         ED_object_sculptmode_enter_ex(bmain, depsgraph, scene, ob, true, NULL);
       }
-      BLI_assert(sculpt_undosys_poll(C));
+
+      if (ob->sculpt) {
+        ob->sculpt->needs_flush_to_id = 1;
+      }
+      bmain->is_memfile_undo_flush_needed = true;
     }
     else {
       BLI_assert(0);
@@ -1279,9 +1285,9 @@ static void sculpt_undosys_step_free(UndoStep *us_p)
   sculpt_undo_free_list(&us->data.nodes);
 }
 
-void ED_sculpt_undo_geometry_begin(struct Object *ob)
+void ED_sculpt_undo_geometry_begin(struct Object *ob, const char *name)
 {
-  sculpt_undo_push_begin("voxel remesh");
+  sculpt_undo_push_begin(name);
   sculpt_undo_push_node(ob, NULL, SCULPT_UNDO_GEOMETRY);
 }
 
@@ -1295,7 +1301,6 @@ void ED_sculpt_undo_geometry_end(struct Object *ob)
 void ED_sculpt_undosys_type(UndoType *ut)
 {
   ut->name = "Sculpt";
-  ut->poll = sculpt_undosys_poll;
   ut->step_encode_init = sculpt_undosys_step_encode_init;
   ut->step_encode = sculpt_undosys_step_encode;
   ut->step_decode = sculpt_undosys_step_decode;

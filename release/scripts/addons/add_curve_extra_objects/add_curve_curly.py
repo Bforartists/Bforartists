@@ -418,10 +418,6 @@ def make_curve(self, context, verts, lh, rh):
             if types == 1 or types == 2 or types == 3:
                 newSpline.bezier_points[3].handle_left.xyz = lh[p][3]
                 
-        bpy.ops.transform.translate(value = self.location)
-        bpy.ops.transform.rotate(value = self.rotation[0], orient_axis = 'X')
-        bpy.ops.transform.rotate(value = self.rotation[1], orient_axis = 'Y')
-        bpy.ops.transform.rotate(value = self.rotation[2], orient_axis = 'Z')
     else:
         # create curve
         dataCurve = bpy.data.curves.new(name='CurlyCurve', type='CURVE')  # curvedatablock
@@ -455,6 +451,31 @@ def make_curve(self, context, verts, lh, rh):
         Curve.data.fill_mode = 'FULL'
     else:
         Curve.data.fill_mode = 'BOTH'
+        
+    # move and rotate spline in edit mode
+    if bpy.context.mode == 'EDIT_CURVE':
+        if self.align == "WORLD":
+            location = self.location - context.active_object.location
+            bpy.ops.transform.translate(value = location, orient_type='GLOBAL')
+            bpy.ops.transform.rotate(value = self.rotation[0], orient_axis = 'X', orient_type='GLOBAL')
+            bpy.ops.transform.rotate(value = self.rotation[1], orient_axis = 'Y', orient_type='GLOBAL')
+            bpy.ops.transform.rotate(value = self.rotation[2], orient_axis = 'Z', orient_type='GLOBAL')
+            
+        elif self.align == "VIEW":
+            bpy.ops.transform.translate(value = self.location)
+            bpy.ops.transform.rotate(value = self.rotation[0], orient_axis = 'X')
+            bpy.ops.transform.rotate(value = self.rotation[1], orient_axis = 'Y')
+            bpy.ops.transform.rotate(value = self.rotation[2], orient_axis = 'Z')
+
+        elif self.align == "CURSOR":
+            location = context.active_object.location
+            self.location = bpy.context.scene.cursor.location - location
+            self.rotation = bpy.context.scene.cursor.rotation_euler
+
+            bpy.ops.transform.translate(value = self.location)
+            bpy.ops.transform.rotate(value = self.rotation[0], orient_axis = 'X')
+            bpy.ops.transform.rotate(value = self.rotation[1], orient_axis = 'Y')
+            bpy.ops.transform.rotate(value = self.rotation[2], orient_axis = 'Z')
 
 class add_curlycurve(Operator, AddObjectHelper):
     bl_idname = "curve.curlycurve"

@@ -48,7 +48,7 @@ def svn_update(args, release_version):
         # Windows checkout is usually handled by bat scripts since python3 to run
         # this script is bundled as part of the precompiled libraries. However it
         # is used by the buildbot.
-        lib_platform = "win64_vc14"
+        lib_platform = "win64_vc15"
     elif args.use_centos_libraries:
         lib_platform = "linux_centos7_x86_64"
     else:
@@ -108,7 +108,7 @@ def svn_update(args, release_version):
             if os.path.exists(svn_dirpath):
                 call(svn_non_interactive + ["cleanup", dirpath])
             # Switch to appropriate branch and update.
-            call(svn_non_interactive + ["switch", svn_url + dirname, dirpath])
+            call(svn_non_interactive + ["switch", svn_url + dirname, dirpath], exit_on_error=False)
             call(svn_non_interactive + ["update", dirpath])
 
 # Test if git repo can be updated.
