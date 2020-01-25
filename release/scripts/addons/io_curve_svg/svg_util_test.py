@@ -29,7 +29,6 @@ else:
     from .svg_util import (parse_array_of_floats, read_float, parse_coord,)
 import unittest
 
-
 class ParseArrayOfFloatsTest(unittest.TestCase):
     def test_empty(self):
         self.assertEqual(parse_array_of_floats(""), [])
@@ -78,6 +77,13 @@ class ParseArrayOfFloatsTest(unittest.TestCase):
     def test_comma_separated_values_with_decimal_separator(self):
         self.assertEqual(parse_array_of_floats("2.75,8.5"), [2.75, 8.5])
 
+    def test_missing_decimal(self):
+        self.assertEqual(parse_array_of_floats(".92"), [0.92])
+        self.assertEqual(parse_array_of_floats(".92e+1"), [9.2])
+
+        self.assertEqual(parse_array_of_floats("-.92"), [-0.92])
+        self.assertEqual(parse_array_of_floats("-.92e+1"), [-9.2])
+
 
 class ReadFloatTest(unittest.TestCase):
     def test_empty(self):
@@ -116,7 +122,7 @@ class ReadFloatTest(unittest.TestCase):
         self.assertEqual(endptr, 10)
 
     def test_not_a_number(self):
-        # TODO(sergey): Make this more concrete.
+        # TODO(sergey): Make this catch more concrete.
         with self.assertRaises(Exception):
             read_float("1.2eV", 3)
 
@@ -128,6 +134,29 @@ class ReadFloatTest(unittest.TestCase):
         value, endptr = read_float("2. 3", 0)
         self.assertEqual(value, "2.")
         self.assertEqual(endptr, 2)
+
+    def test_missing_decimal(self):
+        value, endptr = read_float(".92", 0)
+        self.assertEqual(value, ".92")
+        self.assertEqual(endptr, 3)
+
+        value, endptr = read_float("-.92", 0)
+        self.assertEqual(value, "-.92")
+        self.assertEqual(endptr, 4)
+
+        value, endptr = read_float(".92e+3", 0)
+        self.assertEqual(value, ".92e+3")
+        self.assertEqual(endptr, 6)
+
+        value, endptr = read_float("-.92e+3", 0)
+        self.assertEqual(value, "-.92e+3")
+        self.assertEqual(endptr, 7)
+
+        # TODO(sergey): Make these catch more concrete.
+        with self.assertRaises(Exception):
+            read_float(".", 0)
+        with self.assertRaises(Exception):
+            read_float(".e+1", 0)
 
 
 class ParseCoordTest(unittest.TestCase):

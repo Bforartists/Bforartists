@@ -113,7 +113,7 @@ set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /SAFESEH:NO")
 
 list(APPEND PLATFORM_LINKLIBS
   ws2_32 vfw32 winmm kernel32 user32 gdi32 comdlg32 Comctl32
-  advapi32 shfolder shell32 ole32 oleaut32 uuid psapi Dbghelp
+  advapi32 shfolder shell32 ole32 oleaut32 uuid psapi Dbghelp Shlwapi
 )
 
 if(WITH_INPUT_IME)
@@ -133,14 +133,7 @@ add_definitions(-D_ALLOW_KEYWORD_MACROS)
 
 # We want to support Vista level ABI
 add_definitions(-D_WIN32_WINNT=0x600)
-
-# Make cmake find the msvc redistributables
-set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP FALSE)
-set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
-set(CMAKE_INSTALL_OPENMP_LIBRARIES ${WITH_OPENMP})
-set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
-include(InstallRequiredSystemLibraries)
-
+include(build_files/cmake/platform/platform_win32_bundle_crt.cmake)
 remove_cc_flag("/MDd" "/MD")
 
 if(MSVC_CLANG) # Clangs version of cl doesn't support all flags
@@ -151,14 +144,14 @@ else()
   set(CMAKE_C_FLAGS     "${CMAKE_C_FLAGS} /nologo /J /Gd /MP /bigobj")
 endif()
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd /ZI")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd /ZI")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
-set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /MT")
-set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} /MT")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /MT")
-set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /MT")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd /ZI")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MDd /ZI")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MD")
+set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /MD")
+set(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} /MD")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /MD")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /MD")
 
 # JMC is available on msvc 15.8 (1915) and up
 if(MSVC_VERSION GREATER 1914 AND NOT MSVC_CLANG)
@@ -166,7 +159,8 @@ if(MSVC_VERSION GREATER 1914 AND NOT MSVC_CLANG)
 endif()
 
 set(PLATFORM_LINKFLAGS "${PLATFORM_LINKFLAGS} /SUBSYSTEM:CONSOLE /STACK:2097152 /INCREMENTAL:NO ")
-set(PLATFORM_LINKFLAGS "${PLATFORM_LINKFLAGS} /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:msvcmrt.lib /NODEFAULTLIB:msvcurt.lib /NODEFAULTLIB:msvcrtd.lib ")
+set(PLATFORM_LINKFLAGS_RELEASE "/NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:msvcrtd.lib")
+set(PLATFORM_LINKFLAGS_DEBUG "${PLATFORM_LINKFLAGS_DEBUG} /IGNORE:4099 /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:libcmtd.lib")
 
 # Ignore meaningless for us linker warnings.
 set(PLATFORM_LINKFLAGS "${PLATFORM_LINKFLAGS} /ignore:4049 /ignore:4217 /ignore:4221")
@@ -177,8 +171,6 @@ if(CMAKE_CL_64)
 else()
   set(PLATFORM_LINKFLAGS "/MACHINE:IX86 /LARGEADDRESSAWARE ${PLATFORM_LINKFLAGS}")
 endif()
-
-set(PLATFORM_LINKFLAGS_DEBUG "${PLATFORM_LINKFLAGS_DEBUG} /IGNORE:4099 /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libc.lib")
 
 if(NOT DEFINED LIBDIR)
 
@@ -192,22 +184,19 @@ if(NOT DEFINED LIBDIR)
   # Can be 1910..1912
   if(MSVC_VERSION GREATER 1919)
     message(STATUS "Visual Studio 2019 detected.")
-    set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc14)
+    set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc15)
   elseif(MSVC_VERSION GREATER 1909)
     message(STATUS "Visual Studio 2017 detected.")
-    set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc14)
+    set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc15)
   elseif(MSVC_VERSION EQUAL 1900)
     message(STATUS "Visual Studio 2015 detected.")
-    set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc14)
-  else()
-    message(STATUS "Visual Studio 2013 detected.")
-    set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc12)
+    set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${LIBDIR_BASE}_vc15)
   endif()
 else()
   message(STATUS "Using pre-compiled LIBDIR: ${LIBDIR}")
 endif()
 if(NOT EXISTS "${LIBDIR}/")
-  message(FATAL_ERROR "Windows requires pre-compiled libs at: '${LIBDIR}'")
+  message(FATAL_ERROR "\n\nWindows requires pre-compiled libs at: '${LIBDIR}'. Please run `make update` in the blender source folder to obtain them.")
 endif()
 
 # Mark libdir as system headers with a lower warn level, to resolve some warnings
@@ -397,8 +386,8 @@ if(WITH_BOOST)
     set(BOOST_INCLUDE_DIR ${BOOST}/include)
     set(BOOST_LIBPATH ${BOOST}/lib)
     if(CMAKE_CL_64)
-      set(BOOST_POSTFIX "vc140-mt-s-x64-1_68.lib")
-      set(BOOST_DEBUG_POSTFIX "vc140-mt-sgd-x64-1_68.lib")
+      set(BOOST_POSTFIX "vc141-mt-x64-1_68.lib")
+      set(BOOST_DEBUG_POSTFIX "vc141-mt-gd-x64-1_68.lib")
     endif()
     set(BOOST_LIBRARIES
       optimized ${BOOST_LIBPATH}/libboost_date_time-${BOOST_POSTFIX}
@@ -503,8 +492,12 @@ if(WITH_OPENIMAGEDENOISE)
   set(OPENIMAGEDENOISE_LIBPATH ${LIBDIR}/OpenImageDenoise/lib)
   set(OPENIMAGEDENOISE_INCLUDE_DIRS ${OPENIMAGEDENOISE}/include)
   set(OPENIMAGEDENOISE_LIBRARIES
-    optimized ${OPENIMAGEDENOISE_LIBPATH}/OpenImageDenoise.lib ${OPENIMAGEDENOISE_LIBPATH}/common.lib ${OPENIMAGEDENOISE_LIBPATH}/mkldnn.lib
-    debug ${OPENIMAGEDENOISE_LIBPATH}/OpenImageDenoise_d.lib ${OPENIMAGEDENOISE_LIBPATH}/common_d.lib ${OPENIMAGEDENOISE_LIBPATH}/mkldnn_d.lib)
+    optimized ${OPENIMAGEDENOISE_LIBPATH}/OpenImageDenoise.lib
+    optimized ${OPENIMAGEDENOISE_LIBPATH}/common.lib
+    optimized ${OPENIMAGEDENOISE_LIBPATH}/mkldnn.lib
+    debug ${OPENIMAGEDENOISE_LIBPATH}/OpenImageDenoise_d.lib
+    debug ${OPENIMAGEDENOISE_LIBPATH}/common_d.lib
+    debug ${OPENIMAGEDENOISE_LIBPATH}/mkldnn_d.lib)
   set(OPENIMAGEDENOISE_DEFINITIONS)
 endif()
 
@@ -515,17 +508,6 @@ if(WITH_ALEMBIC)
   set(ALEMBIC_LIBPATH ${ALEMBIC}/lib)
   set(ALEMBIC_LIBRARIES optimized ${ALEMBIC}/lib/Alembic.lib debug ${ALEMBIC}/lib/Alembic_d.lib)
   set(ALEMBIC_FOUND 1)
-endif()
-
-if(WITH_MOD_CLOTH_ELTOPO)
-  set(LAPACK ${LIBDIR}/lapack)
-  # set(LAPACK_INCLUDE_DIR ${LAPACK}/include)
-  set(LAPACK_LIBPATH ${LAPACK}/lib)
-  set(LAPACK_LIBRARIES
-    ${LIBDIR}/lapack/lib/libf2c.lib
-    ${LIBDIR}/lapack/lib/clapack_nowrap.lib
-    ${LIBDIR}/lapack/lib/BLAS_nowrap.lib
-  )
 endif()
 
 if(WITH_IMAGE_OPENJPEG)
@@ -573,6 +555,9 @@ if(WITH_TBB)
   set(TBB_LIBRARIES optimized ${LIBDIR}/tbb/lib/tbb.lib debug ${LIBDIR}/tbb/lib/tbb_debug.lib)
   set(TBB_INCLUDE_DIR ${LIBDIR}/tbb/include)
   set(TBB_INCLUDE_DIRS ${TBB_INCLUDE_DIR})
+  if(WITH_TBB_MALLOC_PROXY)
+    add_definitions(-DWITH_TBB_MALLOC)
+  endif()
 else()
   if(WITH_OPENIMAGEDENOISE)
     message(STATUS "TBB disabled, also disabling OpenImageDenoise")
@@ -582,22 +567,15 @@ else()
     message(STATUS "TBB disabled, also disabling OpenVDB")
     set(WITH_OPENVDB OFF)
   endif()
+  if(WITH_MOD_FLUID)
+    message(STATUS "TBB disabled, disabling Fluid modifier")
+    set(WITH_MOD_FLUID OFF)
+  endif()
 endif()
 
 # used in many places so include globally, like OpenGL
 blender_include_dirs_sys("${PTHREADS_INCLUDE_DIRS}")
 
-# Find signtool.
-set(ProgramFilesX86_NAME "ProgramFiles(x86)") #env dislikes the ( )
-find_program(SIGNTOOL_EXE signtool
-  HINTS
-    "$ENV{${ProgramFilesX86_NAME}}/Windows Kits/10/bin/x86/"
-    "$ENV{ProgramFiles}/Windows Kits/10/bin/x86/"
-    "$ENV{${ProgramFilesX86_NAME}}/Windows Kits/8.1/bin/x86/"
-    "$ENV{ProgramFiles}/Windows Kits/8.1/bin/x86/"
-    "$ENV{${ProgramFilesX86_NAME}}/Windows Kits/8.0/bin/x86/"
-    "$ENV{ProgramFiles}/Windows Kits/8.0/bin/x86/"
-)
 set(WINTAB_INC ${LIBDIR}/wintab/include)
 
 if(WITH_OPENAL)
@@ -618,10 +596,6 @@ if(WITH_CODEC_SNDFILE)
   set(LIBSNDFILE_INCLUDE_DIRS ${LIBSNDFILE}/include)
   set(LIBSNDFILE_LIBPATH ${LIBSNDFILE}/lib) # TODO, deprecate
   set(LIBSNDFILE_LIBRARIES ${LIBSNDFILE_LIBPATH}/libsndfile-1.lib)
-endif()
-
-if(WITH_RAYOPTIMIZATION AND SUPPORT_SSE_BUILD)
-  add_definitions(-D__SSE__ -D__MMX__)
 endif()
 
 if(WITH_CYCLES_OSL)
@@ -678,6 +652,20 @@ if(WITH_CYCLES_EMBREE)
       debug ${LIBDIR}/embree/lib/simd_d.lib
       debug ${LIBDIR}/embree/lib/sys_d.lib
       debug ${LIBDIR}/embree/lib/tasking_d.lib)
+  endif()
+endif()
+
+if(WITH_USD)
+  windows_find_package(USD)
+  if(NOT USD_FOUND)
+    set(USD_FOUND ON)
+    set(USD_INCLUDE_DIRS ${LIBDIR}/usd/include)
+    set(USD_RELEASE_LIB ${LIBDIR}/usd/lib/libusd_m.lib)
+    set(USD_DEBUG_LIB ${LIBDIR}/usd/lib/libusd_m_d.lib)
+    set(USD_LIBRARIES
+        debug ${USD_DEBUG_LIB}
+        optimized ${USD_RELEASE_LIB}
+    )
   endif()
 endif()
 

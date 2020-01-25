@@ -24,6 +24,7 @@
 #include "BLI_listbase.h"
 #include "BLI_utildefines.h"
 #include "BLI_math_vector.h"
+#include "BLI_string.h"
 
 #include "DNA_customdata_types.h"
 #include "DNA_object_types.h"
@@ -42,6 +43,7 @@
 
 #include "WM_api.h"
 #include "WM_types.h"
+#include "WM_toolsystem.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -67,8 +69,8 @@ static int brush_add_exec(bContext *C, wmOperator *UNUSED(op))
   }
   else {
     br = BKE_brush_add(bmain, "Brush", BKE_paint_object_mode_from_paintmode(mode));
-    id_us_min(&br->id); /* fake user only */
   }
+  id_us_min(&br->id); /* fake user only */
 
   BKE_paint_brush_set(paint, br);
 
@@ -96,20 +98,20 @@ static int brush_add_gpencil_exec(bContext *C, wmOperator *UNUSED(op))
   Paint *paint = &ts->gp_paint->paint;
   Brush *br = BKE_paint_brush(paint);
   Main *bmain = CTX_data_main(C);
-  // ePaintMode mode = PAINT_MODE_GPENCIL;
 
   if (br) {
     br = BKE_brush_copy(bmain, br);
   }
   else {
     br = BKE_brush_add(bmain, "Brush", OB_MODE_PAINT_GPENCIL);
-    id_us_min(&br->id); /* fake user only */
+
+    /* Init grease pencil specific data. */
+    BKE_brush_init_gpencil_settings(br);
   }
 
-  BKE_paint_brush_set(paint, br);
+  id_us_min(&br->id); /* fake user only */
 
-  /* init grease pencil specific data */
-  BKE_brush_init_gpencil_settings(br);
+  BKE_paint_brush_set(paint, br);
 
   return OPERATOR_FINISHED;
 }
@@ -182,7 +184,7 @@ static void BRUSH_OT_scale_size(wmOperatorType *ot)
   ot->exec = brush_scale_size_exec;
 
   /* flags */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->flag = 0;
 
   RNA_def_float(ot->srna, "scalar", 1, 0, 2, "Scalar", "Factor to scale brush size by", 0, 2);
 }
@@ -405,12 +407,13 @@ static Brush *brush_tool_toggle(Main *bmain, Paint *paint, Brush *brush_orig, co
   }
 }
 
-static int brush_generic_tool_set(Main *bmain,
-                                  Paint *paint,
-                                  const int tool,
-                                  const char *tool_name,
-                                  const bool create_missing,
-                                  const bool toggle)
+static bool brush_generic_tool_set(bContext *C,
+                                   Main *bmain,
+                                   Paint *paint,
+                                   const int tool,
+                                   const char *tool_name,
+                                   const bool create_missing,
+                                   const bool toggle)
 {
   Brush *brush, *brush_orig = BKE_paint_brush(paint);
 
@@ -433,10 +436,17 @@ static int brush_generic_tool_set(Main *bmain,
     BKE_paint_invalidate_overlay_all();
 
     WM_main_add_notifier(NC_BRUSH | NA_EDITED, brush);
-    return OPERATOR_FINISHED;
+
+    /* Tool System
+     * This is needed for when there is a non-sculpt tool active (transform for e.g.) */
+    char tool_id[MAX_NAME];
+    SNPRINTF(tool_id, "builtin_brush.%s", tool_name);
+    WM_toolsystem_ref_set_by_id(C, tool_id);
+
+    return true;
   }
   else {
-    return OPERATOR_CANCELLED;
+    return false;
   }
 }
 
@@ -475,7 +485,11 @@ static int brush_select_exec(bContext *C, wmOperator *op)
   Paint *paint = BKE_paint_get_active_from_paintmode(scene, paint_mode);
   const EnumPropertyItem *items = BKE_paint_get_tool_enum_from_paintmode(paint_mode);
   RNA_enum_name_from_value(items, tool, &tool_name);
-  return brush_generic_tool_set(bmain, paint, tool, tool_name, create_missing, toggle);
+
+  if (brush_generic_tool_set(C, bmain, paint, tool, tool_name, create_missing, toggle)) {
+    return OPERATOR_FINISHED;
+  }
+  return OPERATOR_CANCELLED;
 }
 
 static void PAINT_OT_brush_select(wmOperatorType *ot)
@@ -491,7 +505,7 @@ static void PAINT_OT_brush_select(wmOperatorType *ot)
   ot->exec = brush_select_exec;
 
   /* flags */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->flag = 0;
 
   /* props */
   /* All properties are hidden, so as not to show the redo panel. */

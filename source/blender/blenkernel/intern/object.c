@@ -39,6 +39,7 @@
 #include "DNA_key_types.h"
 #include "DNA_light_types.h"
 #include "DNA_lattice_types.h"
+#include "DNA_fluid_types.h"
 #include "DNA_material_types.h"
 #include "DNA_meta_types.h"
 #include "DNA_mesh_types.h"
@@ -48,7 +49,6 @@
 #include "DNA_screen_types.h"
 #include "DNA_sequence_types.h"
 #include "DNA_shader_fx_types.h"
-#include "DNA_smoke_types.h"
 #include "DNA_space_types.h"
 #include "DNA_view3d_types.h"
 #include "DNA_world_types.h"
@@ -81,6 +81,7 @@
 #include "BKE_curve.h"
 #include "BKE_displist.h"
 #include "BKE_effect.h"
+#include "BKE_font.h"
 #include "BKE_fcurve.h"
 #include "BKE_gpencil_modifier.h"
 #include "BKE_icons.h"
@@ -121,10 +122,6 @@
 #include "DEG_depsgraph_query.h"
 
 #include "DRW_engine.h"
-
-#ifdef WITH_MOD_FLUID
-#  include "LBM_fluidsim.h"
-#endif
 
 #ifdef WITH_PYTHON
 #  include "BPY_extern.h"
@@ -629,6 +626,54 @@ bool BKE_object_data_is_in_editmode(const ID *id)
   }
 }
 
+char *BKE_object_data_editmode_flush_ptr_get(struct ID *id)
+{
+  const short type = GS(id->name);
+  switch (type) {
+    case ID_ME: {
+      BMEditMesh *em = ((Mesh *)id)->edit_mesh;
+      if (em != NULL) {
+        return &em->needs_flush_to_id;
+      }
+      break;
+    }
+    case ID_CU: {
+      if (((Curve *)id)->vfont != NULL) {
+        EditFont *ef = ((Curve *)id)->editfont;
+        if (ef != NULL) {
+          return &ef->needs_flush_to_id;
+        }
+      }
+      else {
+        EditNurb *editnurb = ((Curve *)id)->editnurb;
+        if (editnurb) {
+          return &editnurb->needs_flush_to_id;
+        }
+      }
+      break;
+    }
+    case ID_MB: {
+      MetaBall *mb = (MetaBall *)id;
+      return &mb->needs_flush_to_id;
+    }
+    case ID_LT: {
+      EditLatt *editlatt = ((Lattice *)id)->editlatt;
+      if (editlatt) {
+        return &editlatt->needs_flush_to_id;
+      }
+      break;
+    }
+    case ID_AR: {
+      bArmature *arm = (bArmature *)id;
+      return &arm->needs_flush_to_id;
+    }
+    default:
+      BLI_assert(0);
+      return NULL;
+  }
+  return NULL;
+}
+
 bool BKE_object_is_in_wpaint_select_vert(const Object *ob)
 {
   if (ob->type == OB_MESH) {
@@ -759,6 +804,8 @@ static const char *get_obdata_defname(int type)
       return DATA_("Empty");
     case OB_GPENCIL:
       return DATA_("GPencil");
+    case OB_LIGHTPROBE:
+      return DATA_("LightProbe");
     default:
       CLOG_ERROR(&LOG, "Internal error, bad type: %d", type);
       return DATA_("Empty");
@@ -1081,13 +1128,13 @@ void BKE_object_copy_particlesystems(Object *ob_dst, const Object *ob_src, const
           }
         }
       }
-      else if (md->type == eModifierType_Smoke) {
-        SmokeModifierData *smd = (SmokeModifierData *)md;
+      else if (md->type == eModifierType_Fluid) {
+        FluidModifierData *mmd = (FluidModifierData *)md;
 
-        if (smd->type == MOD_SMOKE_TYPE_FLOW) {
-          if (smd->flow) {
-            if (smd->flow->psys == psys) {
-              smd->flow->psys = npsys;
+        if (mmd->type == MOD_FLUID_TYPE_FLOW) {
+          if (mmd->flow) {
+            if (mmd->flow->psys == psys) {
+              mmd->flow->psys = npsys;
             }
           }
         }
@@ -1278,7 +1325,7 @@ void BKE_object_transform_copy(Object *ob_tar, const Object *ob_src)
 {
   copy_v3_v3(ob_tar->loc, ob_src->loc);
   copy_v3_v3(ob_tar->rot, ob_src->rot);
-  copy_v3_v3(ob_tar->quat, ob_src->quat);
+  copy_v4_v4(ob_tar->quat, ob_src->quat);
   copy_v3_v3(ob_tar->rotAxis, ob_src->rotAxis);
   ob_tar->rotAngle = ob_src->rotAngle;
   ob_tar->rotmode = ob_src->rotmode;
@@ -1413,7 +1460,8 @@ Object *BKE_object_copy(Main *bmain, const Object *ob)
   return ob_copy;
 }
 
-/** Perform deep-copy of object and its 'children' data-blocks (obdata, materials, actions, etc.).
+/**
+ * Perform deep-copy of object and its 'children' data-blocks (obdata, materials, actions, etc.).
  *
  * \param dupflag: Controls which sub-data are also duplicated
  * (see #eDupli_ID_Flags in DNA_userdef_types.h).
@@ -3713,24 +3761,24 @@ int BKE_object_is_modified(Scene *scene, Object *ob)
  * speed. In combination with checks of modifier stack and real life usage
  * percentage of false-positives shouldn't be that height.
  */
-static bool object_moves_in_time(Object *object)
+bool BKE_object_moves_in_time(const Object *object, bool recurse_parent)
 {
-  AnimData *adt = object->adt;
-  if (adt != NULL) {
-    /* If object has any sort of animation data assume it is moving. */
-    if (adt->action != NULL || !BLI_listbase_is_empty(&adt->nla_tracks) ||
-        !BLI_listbase_is_empty(&adt->drivers) || !BLI_listbase_is_empty(&adt->overrides)) {
-      return true;
-    }
+  /* If object has any sort of animation data assume it is moving. */
+  if (BKE_animdata_id_is_animated(&object->id)) {
+    return true;
   }
   if (!BLI_listbase_is_empty(&object->constraints)) {
     return true;
   }
-  if (object->parent != NULL) {
-    /* TODO(sergey): Do recursive check here? */
-    return true;
+  if (recurse_parent && object->parent != NULL) {
+    return BKE_object_moves_in_time(object->parent, true);
   }
   return false;
+}
+
+static bool object_moves_in_time(const Object *object)
+{
+  return BKE_object_moves_in_time(object, true);
 }
 
 static bool object_deforms_in_time(Object *object)
@@ -3776,7 +3824,7 @@ static bool constructive_modifier_is_deform_modified(ModifierData *md)
   return false;
 }
 
-static bool modifiers_has_animation_check(Object *ob)
+static bool modifiers_has_animation_check(const Object *ob)
 {
   /* TODO(sergey): This is a bit code duplication with depsgraph, but
    * would be nicer to solve this as a part of new dependency graph
@@ -3846,21 +3894,6 @@ int BKE_object_is_deform_modified(Scene *scene, Object *ob)
   }
 
   return flag;
-}
-
-/* See if an object is using an animated modifier */
-bool BKE_object_is_animated(Scene *scene, Object *ob)
-{
-  ModifierData *md;
-  VirtualModifierData virtualModifierData;
-
-  for (md = modifiers_getVirtualModifierList(ob, &virtualModifierData); md; md = md->next) {
-    if (modifier_dependsOnTime(md) && (modifier_isEnabled(scene, md, eModifierMode_Realtime) ||
-                                       modifier_isEnabled(scene, md, eModifierMode_Render))) {
-      return true;
-    }
-  }
-  return false;
 }
 
 /** Return the number of scenes using (instantiating) that object in their collections. */
@@ -4345,10 +4378,10 @@ bool BKE_object_modifier_update_subframe(Depsgraph *depsgraph,
       return true;
     }
   }
-  else if (type == eModifierType_Smoke) {
-    SmokeModifierData *smd = (SmokeModifierData *)md;
+  else if (type == eModifierType_Fluid) {
+    FluidModifierData *mmd = (FluidModifierData *)md;
 
-    if (smd && (smd->type & MOD_SMOKE_TYPE_DOMAIN) != 0) {
+    if (mmd && (mmd->type & MOD_FLUID_TYPE_DOMAIN) != 0) {
       return true;
     }
   }

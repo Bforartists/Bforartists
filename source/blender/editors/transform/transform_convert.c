@@ -450,19 +450,14 @@ int count_set_pose_transflags(Object *ob,
 
   for (pchan = ob->pose->chanbase.first; pchan; pchan = pchan->next) {
     bone = pchan->bone;
+    bone->flag &= ~(BONE_TRANSFORM | BONE_TRANSFORM_MIRROR);
     if (PBONE_VISIBLE(arm, bone)) {
       if ((bone->flag & BONE_SELECTED)) {
         bone->flag |= BONE_TRANSFORM;
       }
-      else {
-        bone->flag &= ~BONE_TRANSFORM;
-      }
 
       bone->flag &= ~BONE_HINGE_CHILD_TRANSFORM;
       bone->flag &= ~BONE_TRANSFORM_CHILD;
-    }
-    else {
-      bone->flag &= ~BONE_TRANSFORM;
     }
   }
 
@@ -921,10 +916,17 @@ typedef struct tRetainedKeyframe {
   size_t del_count; /* number of keyframes of this sort that have been deleted so far */
 } tRetainedKeyframe;
 
-/* Called during special_aftertrans_update to make sure selected keyframes replace
+/**
+ * Called during special_aftertrans_update to make sure selected keyframes replace
  * any other keyframes which may reside on that frame (that is not selected).
+ *
+ * \param sel_flag: The flag (bezt.f1/2/3) value to use to determine selection. Usually `SELECT`,
+ *                  but may want to use a different one at times (if caller does not operate on
+ *                  selection).
  */
-static void posttrans_fcurve_clean(FCurve *fcu, const bool use_handle)
+static void posttrans_fcurve_clean(FCurve *fcu,
+                                   const eBezTriple_Flag sel_flag,
+                                   const bool use_handle)
 {
   /* NOTE: We assume that all keys are sorted */
   ListBase retained_keys = {NULL, NULL};
@@ -1036,7 +1038,7 @@ static void posttrans_fcurve_clean(FCurve *fcu, const bool use_handle)
   }
 
   /* 3) Recalculate handles */
-  testhandles_fcurve(fcu, use_handle);
+  testhandles_fcurve(fcu, sel_flag, use_handle);
 
   /* cleanup */
   BLI_freelistN(&retained_keys);
@@ -1064,11 +1066,11 @@ static void posttrans_action_clean(bAnimContext *ac, bAction *act)
 
     if (adt) {
       ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 0, 0);
-      posttrans_fcurve_clean(ale->key_data, false); /* only use handles in graph editor */
+      posttrans_fcurve_clean(ale->key_data, SELECT, false); /* only use handles in graph editor */
       ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 1, 0);
     }
     else {
-      posttrans_fcurve_clean(ale->key_data, false); /* only use handles in graph editor */
+      posttrans_fcurve_clean(ale->key_data, SELECT, false); /* only use handles in graph editor */
     }
   }
 
@@ -1090,7 +1092,7 @@ typedef struct BeztMap {
 /* This function converts an FCurve's BezTriple array to a BeztMap array
  * NOTE: this allocates memory that will need to get freed later
  */
-static BeztMap *bezt_to_beztmaps(BezTriple *bezts, int totvert, const short UNUSED(use_handle))
+static BeztMap *bezt_to_beztmaps(BezTriple *bezts, int totvert)
 {
   BezTriple *bezt = bezts;
   BezTriple *prevbezt = NULL;
@@ -1118,7 +1120,7 @@ static BeztMap *bezt_to_beztmaps(BezTriple *bezts, int totvert, const short UNUS
 }
 
 /* This function copies the code of sort_time_ipocurve, but acts on BeztMap structs instead */
-static void sort_time_beztmaps(BeztMap *bezms, int totvert, const short UNUSED(use_handle))
+static void sort_time_beztmaps(BeztMap *bezms, int totvert)
 {
   BeztMap *bezm;
   int i, ok = 1;
@@ -1163,8 +1165,7 @@ static void sort_time_beztmaps(BeztMap *bezms, int totvert, const short UNUSED(u
 }
 
 /* This function firstly adjusts the pointers that the transdata has to each BezTriple */
-static void beztmap_to_data(
-    TransInfo *t, FCurve *fcu, BeztMap *bezms, int totvert, const short UNUSED(use_handle))
+static void beztmap_to_data(TransInfo *t, FCurve *fcu, BeztMap *bezms, int totvert)
 {
   BezTriple *bezts = fcu->bezt;
   BeztMap *bezm;
@@ -1270,9 +1271,9 @@ void remake_graph_transdata(TransInfo *t, ListBase *anim_data)
 
       /* adjust transform-data pointers */
       /* note, none of these functions use 'use_handle', it could be removed */
-      bezm = bezt_to_beztmaps(fcu->bezt, fcu->totvert, use_handle);
-      sort_time_beztmaps(bezm, fcu->totvert, use_handle);
-      beztmap_to_data(t, fcu, bezm, fcu->totvert, use_handle);
+      bezm = bezt_to_beztmaps(fcu->bezt, fcu->totvert);
+      sort_time_beztmaps(bezm, fcu->totvert);
+      beztmap_to_data(t, fcu, bezm, fcu->totvert);
 
       /* free mapping stuff */
       MEM_freeN(bezm);
@@ -1281,7 +1282,7 @@ void remake_graph_transdata(TransInfo *t, ListBase *anim_data)
       sort_time_fcurve(fcu);
 
       /* make sure handles are all set correctly */
-      testhandles_fcurve(fcu, use_handle);
+      testhandles_fcurve(fcu, BEZT_FLAG_TEMP_TAG, use_handle);
     }
   }
 }
@@ -1340,6 +1341,15 @@ bool constraints_list_needinv(TransInfo *t, ListBase *list)
           bTransLikeConstraint *data = (bTransLikeConstraint *)con->data;
 
           if (ELEM(data->mix_mode, TRANSLIKE_MIX_BEFORE) &&
+              ELEM(t->mode, TFM_ROTATION, TFM_TRANSLATION)) {
+            return true;
+          }
+        }
+        else if (con->type == CONSTRAINT_TYPE_ACTION) {
+          /* The Action constraint only does this in the Before mode. */
+          bActionConstraint *data = (bActionConstraint *)con->data;
+
+          if (ELEM(data->mix_mode, ACTCON_MIX_BEFORE) &&
               ELEM(t->mode, TFM_ROTATION, TFM_TRANSLATION)) {
             return true;
           }
@@ -1959,11 +1969,11 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
         if ((saction->flag & SACTION_NOTRANSKEYCULL) == 0 && ((canceled == 0) || (duplicate))) {
           if (adt) {
             ANIM_nla_mapping_apply_fcurve(adt, fcu, 0, 0);
-            posttrans_fcurve_clean(fcu, false); /* only use handles in graph editor */
+            posttrans_fcurve_clean(fcu, SELECT, false); /* only use handles in graph editor */
             ANIM_nla_mapping_apply_fcurve(adt, fcu, 1, 0);
           }
           else {
-            posttrans_fcurve_clean(fcu, false); /* only use handles in graph editor */
+            posttrans_fcurve_clean(fcu, SELECT, false); /* only use handles in graph editor */
           }
         }
       }
@@ -2103,11 +2113,11 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
         if ((sipo->flag & SIPO_NOTRANSKEYCULL) == 0 && ((canceled == 0) || (duplicate))) {
           if (adt) {
             ANIM_nla_mapping_apply_fcurve(adt, fcu, 0, 0);
-            posttrans_fcurve_clean(fcu, use_handle);
+            posttrans_fcurve_clean(fcu, BEZT_FLAG_TEMP_TAG, use_handle);
             ANIM_nla_mapping_apply_fcurve(adt, fcu, 1, 0);
           }
           else {
-            posttrans_fcurve_clean(fcu, use_handle);
+            posttrans_fcurve_clean(fcu, BEZT_FLAG_TEMP_TAG, use_handle);
           }
         }
       }
@@ -2391,7 +2401,6 @@ void createTransData(bContext *C, TransInfo *t)
   /* if tests must match recalcData for correct updates */
   if (t->options & CTX_CURSOR) {
     t->flag |= T_CURSOR;
-    t->obedit_type = -1;
 
     if (t->spacetype == SPACE_IMAGE) {
       createTransCursor_image(t);
@@ -2407,7 +2416,6 @@ void createTransData(bContext *C, TransInfo *t)
   }
   else if (t->options & CTX_TEXTURE) {
     t->flag |= T_TEXTURE;
-    t->obedit_type = -1;
 
     createTransTexspace(t);
     countAndCleanTransDataContainer(t);
@@ -2726,6 +2734,9 @@ void createTransData(bContext *C, TransInfo *t)
         if (v3d->camera->id.tag & LIB_TAG_DOIT) {
           t->flag |= T_CAMERA;
         }
+      }
+      else if (v3d->ob_centre && v3d->ob_centre->id.tag & LIB_TAG_DOIT) {
+        t->flag |= T_CAMERA;
       }
     }
   }

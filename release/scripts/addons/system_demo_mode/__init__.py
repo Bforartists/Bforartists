@@ -25,8 +25,8 @@ bl_info = {
     "location": "File > Demo Menu",
     "description": "Demo mode lets you select multiple blend files and loop over them.",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/System/Demo_Mode#Running_Demo_Mode",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "system/demo_mode.html",
     "support": 'OFFICIAL',
     "category": "System",
 }
@@ -143,10 +143,12 @@ class DemoModeSetup(bpy.types.Operator):
         from . import config
 
         keywords = self.as_keywords(ignore=("directory", "random_order", "run", "exit"))
-        cfg_str, dirpath = config.as_string(self.directory,
-                                            self.random_order,
-                                            self.exit,
-                                            **keywords)
+        cfg_str, _dirpath = config.as_string(
+            self.directory,
+            self.random_order,
+            self.exit,
+            **keywords,
+        )
         text = bpy.data.texts.get("demo.py")
         if text:
             text.name += ".back"

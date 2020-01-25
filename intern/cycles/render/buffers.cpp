@@ -55,7 +55,10 @@ bool BufferParams::modified(const BufferParams &params)
 {
   return !(full_x == params.full_x && full_y == params.full_y && width == params.width &&
            height == params.height && full_width == params.full_width &&
-           full_height == params.full_height && Pass::equals(passes, params.passes));
+           full_height == params.full_height && Pass::equals(passes, params.passes) &&
+           denoising_data_pass == params.denoising_data_pass &&
+           denoising_clean_pass == params.denoising_clean_pass &&
+           denoising_prefiltered_pass == params.denoising_prefiltered_pass);
 }
 
 int BufferParams::get_passes_size()
@@ -183,13 +186,28 @@ bool RenderBuffers::get_denoising_pass_rect(
     offset = type + params.get_denoising_offset();
     scale /= sample;
   }
-  else if (type == DENOISING_PASS_PREFILTERED_COLOR && !params.denoising_prefiltered_pass) {
-    /* If we're not saving the prefiltering result, return the original noisy pass. */
-    offset = params.get_denoising_offset() + DENOISING_PASS_COLOR;
-    scale /= sample;
+  else if (params.denoising_prefiltered_pass) {
+    offset = type + params.get_denoising_prefiltered_offset();
   }
   else {
-    offset = type + params.get_denoising_prefiltered_offset();
+    switch (type) {
+      case DENOISING_PASS_PREFILTERED_DEPTH:
+        offset = params.get_denoising_offset() + DENOISING_PASS_DEPTH;
+        break;
+      case DENOISING_PASS_PREFILTERED_NORMAL:
+        offset = params.get_denoising_offset() + DENOISING_PASS_NORMAL;
+        break;
+      case DENOISING_PASS_PREFILTERED_ALBEDO:
+        offset = params.get_denoising_offset() + DENOISING_PASS_ALBEDO;
+        break;
+      case DENOISING_PASS_PREFILTERED_COLOR:
+        /* If we're not saving the prefiltering result, return the original noisy pass. */
+        offset = params.get_denoising_offset() + DENOISING_PASS_COLOR;
+        break;
+      default:
+        return false;
+    }
+    scale /= sample;
   }
 
   int pass_stride = params.get_passes_size();
@@ -234,7 +252,7 @@ bool RenderBuffers::get_denoising_pass_rect(
 }
 
 bool RenderBuffers::get_pass_rect(
-    PassType type, float exposure, int sample, int components, float *pixels, const string &name)
+    const string &name, float exposure, int sample, int components, float *pixels)
 {
   if (buffer.data() == NULL) {
     return false;
@@ -245,18 +263,14 @@ bool RenderBuffers::get_pass_rect(
   for (size_t j = 0; j < params.passes.size(); j++) {
     Pass &pass = params.passes[j];
 
-    if (pass.type != type) {
+    /* Pass is identified by both type and name, multiple of the same type
+     * may exist with a different name. */
+    if (pass.name != name) {
       pass_offset += pass.components;
       continue;
     }
 
-    /* Tell Cryptomatte passes apart by their name. */
-    if (pass.type == PASS_CRYPTOMATTE) {
-      if (pass.name != name) {
-        pass_offset += pass.components;
-        continue;
-      }
-    }
+    PassType type = pass.type;
 
     float *in = buffer.data() + pass_offset;
     int pass_stride = params.get_passes_size();

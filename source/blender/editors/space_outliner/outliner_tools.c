@@ -546,7 +546,8 @@ static void merged_element_search_call_cb(struct bContext *C, void *UNUSED(arg1)
   }
 }
 
-/** Merged element search menu
+/**
+ * Merged element search menu
  * Created on activation of a merged or aggregated icon-row icon.
  */
 static uiBlock *merged_element_search_menu(bContext *C, ARegion *ar, void *data)
@@ -1504,7 +1505,7 @@ static const EnumPropertyItem prop_id_op_types[] = {
      "OVERRIDE_LIBRARY",
      ICON_LIBRARY_DATA_OVERRIDE,
      "Add Library Override",
-     "Add a local override of this linked data-block"},
+     "Add a local override of this linked data-block\nJust for this object. It does not interate through the hierarchy"},
     {OUTLINER_IDOP_SINGLE, "SINGLE", ICON_MAKE_SINGLE_USER, "Make Single User", ""},
     {OUTLINER_IDOP_DELETE, "DELETE", ICON_DELETE, "Delete", ""},
     {OUTLINER_IDOP_REMAP,
@@ -1528,21 +1529,41 @@ static const EnumPropertyItem prop_id_op_types[] = {
     {0, NULL, 0, NULL, NULL},
 };
 
-static const EnumPropertyItem *outliner_id_operation_itemf(bContext *UNUSED(C),
-                                                           PointerRNA *UNUSED(ptr),
-                                                           PropertyRNA *UNUSED(prop),
-                                                           bool *r_free)
+static bool outliner_id_operation_item_poll(bContext *C,
+                                            PointerRNA *UNUSED(ptr),
+                                            PropertyRNA *UNUSED(prop),
+                                            const int enum_value)
 {
-  if (BKE_override_library_is_enabled()) {
-    *r_free = false;
-    return prop_id_op_types;
+  SpaceOutliner *soops = CTX_wm_space_outliner(C);
+
+  switch (enum_value) {
+    case OUTLINER_IDOP_OVERRIDE_LIBRARY:
+      return BKE_override_library_is_enabled();
+    case OUTLINER_IDOP_SINGLE:
+      if (!soops || ELEM(soops->outlinevis, SO_SCENES, SO_VIEW_LAYER)) {
+        return true;
+      }
+      /* TODO (dalai): enable in the few cases where this can be supported
+      (i.e., when we have a valid parent for the tselem). */
+      return false;
   }
 
+  return true;
+}
+
+static const EnumPropertyItem *outliner_id_operation_itemf(bContext *C,
+                                                           PointerRNA *ptr,
+                                                           PropertyRNA *prop,
+                                                           bool *r_free)
+{
   EnumPropertyItem *items = NULL;
   int totitem = 0;
 
+  if (C == NULL) {
+    return prop_id_op_types;
+  }
   for (const EnumPropertyItem *it = prop_id_op_types; it->identifier != NULL; it++) {
-    if (it->value == OUTLINER_IDOP_OVERRIDE_LIBRARY) {
+    if (!outliner_id_operation_item_poll(C, ptr, prop, it->value)) {
       continue;
     }
     RNA_enum_item_add(&items, &totitem, it);

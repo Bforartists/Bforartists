@@ -148,7 +148,8 @@ class SEQUENCER_MT_editor_menus(Menu):
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             layout.menu("SEQUENCER_MT_navigation")
             layout.menu("SEQUENCER_MT_select")
-            layout.menu("SEQUENCER_MT_marker")
+            if st.show_markers:
+                layout.menu("SEQUENCER_MT_marker")
             layout.menu("SEQUENCER_MT_add")
             layout.menu("SEQUENCER_MT_strip")
 
@@ -247,7 +248,7 @@ class SEQUENCER_MT_view(Menu):
             layout.operator("sequencer.view_all", text="View all Sequences", icon = "VIEWALL" )
             layout.operator("sequencer.view_selected", text = "View Selected", icon='VIEW_SELECTED')
             layout.operator("sequencer.view_frame", icon = "VIEW_FRAME" )
-            layout.operator("view2d.zoom_border", text = "Zoom", icon = "ZOOM_BORDER")
+            layout.operator("view2d.zoom_border", text = "Zoom Border", icon = "ZOOM_BORDER")
 
         if is_preview:
             layout.operator_context = 'INVOKE_REGION_PREVIEW'
@@ -259,7 +260,7 @@ class SEQUENCER_MT_view(Menu):
             if is_sequencer_view:
                 layout.menu("SEQUENCER_MT_preview_zoom", text="Fractional Preview Zoom")
             else:
-                layout.operator("view2d.zoom_border", text="Zoom", icon = "ZOOM_BORDER")
+                layout.operator("view2d.zoom_border", text="Zoom Border", icon = "ZOOM_BORDER")
                 layout.menu("SEQUENCER_MT_preview_zoom")
 
             layout.operator_context = 'INVOKE_DEFAULT'
@@ -529,8 +530,9 @@ class SEQUENCER_MT_add(Menu):
         col.enabled = selected_sequences_len(context) >= 2
 
         col = layout.column()
-        col.operator_menu_enum("sequencer.fades_add", "type", text="Fade", icon="IPO_EASE_IN_OUT")
+        col.operator_menu_enum("sequencer.fades_add", "type", text="Fade", icon='IPO_EASE_IN_OUT')
         col.enabled = selected_sequences_len(context) >= 1
+        col.operator("sequencer.fades_clear", text="Clear Fade", icon="CLEAR")
 
 
 class SEQUENCER_MT_add_empty(Menu):
@@ -761,7 +763,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("sequencer.cut", text="Cut", icon='SEQ_CUT_HARD_AT_FRAME').type = 'SOFT'
+        layout.operator("sequencer.cut", text="Cut", icon='CUT').type = 'SOFT'
 
         layout.separator()
 
@@ -812,7 +814,7 @@ class SEQUENCER_MT_context_menu(Menu):
             if selected_sequences_count >= 1:
                 col = layout.column()
                 col.operator_menu_enum("sequencer.fades_add", "type", text="Fade")
-                layout.operator("sequencer.fades_clear", text="Clear Fade", icon="IPO_EASE_IN_OUT")
+                layout.operator("sequencer.fades_clear", text="Clear Fade", icon="CLEAR")
 
             if strip_type in {
                     'CROSS', 'ADD', 'SUBTRACT', 'ALPHA_OVER', 'ALPHA_UNDER',
@@ -2195,11 +2197,14 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 layout.prop(st, "show_backdrop", text="Preview as Backdrop")
             layout.prop(st, "show_seconds")
             layout.prop(st, "show_strip_offset")
-            layout.prop(st, "show_marker_lines")
             layout.menu("SEQUENCER_MT_view_cache")
 
             layout.use_property_split = True
             layout.prop(st, "waveform_display_type")
+
+            layout.separator()
+
+            layout.prop(st, "show_markers")
 
         if is_preview:
             layout.use_property_split = False

@@ -644,11 +644,13 @@ void WM_operator_properties_sanitize(PointerRNA *ptr, const bool no_context)
   RNA_STRUCT_END;
 }
 
-/** set all props to their default,
+/**
+ * Set all props to their default.
+ *
  * \param do_update: Only update un-initialized props.
  *
- * \note, there's nothing specific to operators here.
- * this could be made a general function.
+ * \note There's nothing specific to operators here.
+ * This could be made a general function.
  */
 bool WM_operator_properties_default(PointerRNA *ptr, const bool do_update)
 {
@@ -718,9 +720,121 @@ void WM_operator_properties_free(PointerRNA *ptr)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name Operator Last Properties API
+ * \{ */
+
+#if 1 /* may want to disable operator remembering previous state for testing */
+
+static bool operator_last_properties_init_impl(wmOperator *op, IDProperty *last_properties)
+{
+  bool changed = false;
+  IDPropertyTemplate val = {0};
+  IDProperty *replaceprops = IDP_New(IDP_GROUP, &val, "wmOperatorProperties");
+  PropertyRNA *iterprop;
+
+  CLOG_INFO(WM_LOG_OPERATORS, 1, "loading previous properties for '%s'", op->type->idname);
+
+  iterprop = RNA_struct_iterator_property(op->type->srna);
+
+  RNA_PROP_BEGIN (op->ptr, itemptr, iterprop) {
+    PropertyRNA *prop = itemptr.data;
+    if ((RNA_property_flag(prop) & PROP_SKIP_SAVE) == 0) {
+      if (!RNA_property_is_set(op->ptr, prop)) { /* don't override a setting already set */
+        const char *identifier = RNA_property_identifier(prop);
+        IDProperty *idp_src = IDP_GetPropertyFromGroup(last_properties, identifier);
+        if (idp_src) {
+          IDProperty *idp_dst = IDP_CopyProperty(idp_src);
+
+          /* note - in the future this may need to be done recursively,
+           * but for now RNA doesn't access nested operators */
+          idp_dst->flag |= IDP_FLAG_GHOST;
+
+          /* add to temporary group instead of immediate replace,
+           * because we are iterating over this group */
+          IDP_AddToGroup(replaceprops, idp_dst);
+          changed = true;
+        }
+      }
+    }
+  }
+  RNA_PROP_END;
+
+  IDP_MergeGroup(op->properties, replaceprops, true);
+  IDP_FreeProperty(replaceprops);
+  return changed;
+}
+
+bool WM_operator_last_properties_init(wmOperator *op)
+{
+  bool changed = false;
+  if (op->type->last_properties) {
+    changed |= operator_last_properties_init_impl(op, op->type->last_properties);
+    for (wmOperator *opm = op->macro.first; opm; opm = opm->next) {
+      IDProperty *idp_src = IDP_GetPropertyFromGroup(op->type->last_properties, opm->idname);
+      if (idp_src) {
+        changed |= operator_last_properties_init_impl(opm, idp_src);
+      }
+    }
+  }
+  return changed;
+}
+
+bool WM_operator_last_properties_store(wmOperator *op)
+{
+  if (op->type->last_properties) {
+    IDP_FreeProperty(op->type->last_properties);
+    op->type->last_properties = NULL;
+  }
+
+  if (op->properties) {
+    CLOG_INFO(WM_LOG_OPERATORS, 1, "storing properties for '%s'", op->type->idname);
+    op->type->last_properties = IDP_CopyProperty(op->properties);
+  }
+
+  if (op->macro.first != NULL) {
+    for (wmOperator *opm = op->macro.first; opm; opm = opm->next) {
+      if (opm->properties) {
+        if (op->type->last_properties == NULL) {
+          op->type->last_properties = IDP_New(
+              IDP_GROUP, &(IDPropertyTemplate){0}, "wmOperatorProperties");
+        }
+        IDProperty *idp_macro = IDP_CopyProperty(opm->properties);
+        STRNCPY(idp_macro->name, opm->type->idname);
+        IDP_ReplaceInGroup(op->type->last_properties, idp_macro);
+      }
+    }
+  }
+
+  return (op->type->last_properties != NULL);
+}
+
+#else
+
+bool WM_operator_last_properties_init(wmOperator *UNUSED(op))
+{
+  return false;
+}
+
+bool WM_operator_last_properties_store(wmOperator *UNUSED(op))
+{
+  return false;
+}
+
+#endif
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Default Operator Callbacks
  * \{ */
 
+/**
+ * Helper to get select and tweak-transform to work conflict free and as desired. See
+ * #WM_operator_properties_generic_select() for details.
+ *
+ * To be used together with #WM_generic_select_invoke() and
+ * #WM_operator_properties_generic_select().
+ */
 int WM_generic_select_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
   PropertyRNA *wait_to_deselect_prop = RNA_struct_find_property(op->ptr,
@@ -784,9 +898,16 @@ int WM_generic_select_modal(bContext *C, wmOperator *op, const wmEvent *event)
     }
   }
 
-  return OPERATOR_FINISHED | OPERATOR_PASS_THROUGH;
+  return OPERATOR_RUNNING_MODAL | OPERATOR_PASS_THROUGH;
 }
 
+/**
+ * Helper to get select and tweak-transform to work conflict free and as desired. See
+ * #WM_operator_properties_generic_select() for details.
+ *
+ * To be used together with #WM_generic_select_modal() and
+ * #WM_operator_properties_generic_select().
+ */
 int WM_generic_select_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   RNA_int_set(op->ptr, "mouse_x", event->mval[0]);
@@ -1222,15 +1343,17 @@ static uiBlock *wm_block_create_redo(bContext *C, ARegion *ar, void *arg_op)
     }
   }
 
+  uiLayout *col = uiLayoutColumn(layout, false);
+
   if (op->type->flag & OPTYPE_MACRO) {
     for (op = op->macro.first; op; op = op->next) {
       uiTemplateOperatorPropertyButs(
-          C, layout, op, UI_BUT_LABEL_ALIGN_NONE, UI_TEMPLATE_OP_PROPS_SHOW_TITLE);
+          C, col, op, UI_BUT_LABEL_ALIGN_NONE, UI_TEMPLATE_OP_PROPS_SHOW_TITLE);
     }
   }
   else {
     uiTemplateOperatorPropertyButs(
-        C, layout, op, UI_BUT_LABEL_ALIGN_NONE, UI_TEMPLATE_OP_PROPS_SHOW_TITLE);
+        C, col, op, UI_BUT_LABEL_ALIGN_NONE, UI_TEMPLATE_OP_PROPS_SHOW_TITLE);
   }
 
   UI_block_bounds_set_popup(block, 6 * U.dpi_fac, NULL);
@@ -2193,7 +2316,8 @@ static void radial_control_paint_cursor(bContext *UNUSED(C), int x, int y, void 
   short strdrawlen = 0;
   float strwidth, strheight;
   float r1 = 0.0f, r2 = 0.0f, rmin = 0.0, tex_radius, alpha;
-  float zoom[2], col[3] = {1, 1, 1};
+  float zoom[2], col[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+  float text_color[4];
 
   switch (rc->subtype) {
     case PROP_NONE:
@@ -2320,6 +2444,8 @@ static void radial_control_paint_cursor(bContext *UNUSED(C), int x, int y, void 
   immUnbindProgram();
 
   BLF_size(fontid, 1.75f * fstyle_points * U.pixelsize, U.dpi);
+  UI_GetThemeColor4fv(TH_TEXT_HI, text_color);
+  BLF_color4fv(fontid, text_color);
 
   /* draw value */
   BLF_width_and_height(fontid, str, strdrawlen, &strwidth, &strheight);
@@ -2461,7 +2587,7 @@ static int radial_control_get_properties(bContext *C, wmOperator *op)
   }
 
   if (!radial_control_get_path(
-          &ctx_ptr, op, "color_path", &rc->col_ptr, &rc->col_prop, 3, RC_PROP_REQUIRE_FLOAT)) {
+          &ctx_ptr, op, "color_path", &rc->col_ptr, &rc->col_prop, 4, RC_PROP_REQUIRE_FLOAT)) {
     return 0;
   }
 
@@ -2654,7 +2780,8 @@ static int radial_control_modal(bContext *C, wmOperator *op, const wmEvent *even
 {
   RadialControl *rc = op->customdata;
   float new_value, dist = 0.0f, zoom[2];
-  float delta[2], ret = OPERATOR_RUNNING_MODAL;
+  float delta[2];
+  int ret = OPERATOR_RUNNING_MODAL;
   bool snap;
   float angle_precision = 0.0f;
   const bool has_numInput = hasNumInput(&rc->num_input);
@@ -2856,6 +2983,16 @@ static int radial_control_modal(bContext *C, wmOperator *op, const wmEvent *even
   ED_region_tag_redraw(CTX_wm_region(C));
   radial_control_update_header(op, C);
 
+  if (ret & OPERATOR_FINISHED) {
+    wmWindowManager *wm = CTX_wm_manager(C);
+    if (wm->op_undo_depth == 0) {
+      ID *id = rc->ptr.owner_id;
+      if (ED_undo_is_legacy_compatible_for_property(C, id)) {
+        ED_undo_push(C, op->type->name);
+      }
+    }
+  }
+
   if (ret != OPERATOR_RUNNING_MODAL) {
     radial_control_cancel(C, op);
   }
@@ -2873,7 +3010,7 @@ static void WM_OT_radial_control(wmOperatorType *ot)
   ot->modal = radial_control_modal;
   ot->cancel = radial_control_cancel;
 
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_BLOCKING;
 
   /* all paths relative to the context */
   PropertyRNA *prop;

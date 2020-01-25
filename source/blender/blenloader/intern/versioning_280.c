@@ -36,10 +36,15 @@
 #include "DNA_cloth_types.h"
 #include "DNA_collection_types.h"
 #include "DNA_constraint_types.h"
+#include "DNA_curveprofile_types.h"
+#include "DNA_freestyle_types.h"
 #include "DNA_gpu_types.h"
+#include "DNA_gpencil_types.h"
+#include "DNA_gpencil_modifier_types.h"
 #include "DNA_light_types.h"
 #include "DNA_layer_types.h"
 #include "DNA_lightprobe_types.h"
+#include "DNA_linestyle_types.h"
 #include "DNA_material_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_modifier_types.h"
@@ -49,12 +54,12 @@
 #include "DNA_screen_types.h"
 #include "DNA_view3d_types.h"
 #include "DNA_genfile.h"
-#include "DNA_gpencil_types.h"
 #include "DNA_workspace_types.h"
 #include "DNA_key_types.h"
 #include "DNA_curve_types.h"
 #include "DNA_armature_types.h"
 #include "DNA_text_types.h"
+#include "DNA_texture_types.h"
 #include "DNA_world_types.h"
 
 #include "BKE_animsys.h"
@@ -74,6 +79,7 @@
 #include "BKE_node.h"
 #include "BKE_paint.h"
 #include "BKE_pointcache.h"
+#include "BKE_curveprofile.h"
 #include "BKE_report.h"
 #include "BKE_rigidbody.h"
 #include "BKE_screen.h"
@@ -93,6 +99,9 @@
 #include "readfile.h"
 
 #include "MEM_guardedalloc.h"
+
+/* Make preferences read-only, use versioning_userdef.c. */
+#define U (*((const UserDef *)&U))
 
 static bScreen *screen_parent_find(const bScreen *screen)
 {
@@ -856,6 +865,244 @@ static void do_versions_local_collection_bits_set(LayerCollection *layer_collect
   }
 }
 
+static void do_version_curvemapping_flag_extend_extrapolate(CurveMapping *cumap)
+{
+#define CUMA_EXTEND_EXTRAPOLATE_OLD 1
+  for (int curve_map_index = 0; curve_map_index < 4; curve_map_index++) {
+    CurveMap *cuma = &cumap->cm[curve_map_index];
+    if (cuma->flag & CUMA_EXTEND_EXTRAPOLATE_OLD) {
+      cumap->flag |= CUMA_EXTEND_EXTRAPOLATE;
+      return;
+    }
+  }
+#undef CUMA_EXTEND_EXTRAPOLATE_OLD
+}
+
+/* Util version to walk over all CurveMappings in the given `bmain` */
+static void do_version_curvemapping_walker(Main *bmain, void (*callback)(CurveMapping *cumap))
+{
+  LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+    callback(&scene->r.mblur_shutter_curve);
+
+    if (scene->view_settings.curve_mapping) {
+      callback(scene->view_settings.curve_mapping);
+    }
+
+    if (scene->ed != NULL) {
+      LISTBASE_FOREACH (Sequence *, seq, &scene->ed->seqbase) {
+        LISTBASE_FOREACH (SequenceModifierData *, smd, &seq->modifiers) {
+          const SequenceModifierTypeInfo *smti = BKE_sequence_modifier_type_info_get(smd->type);
+
+          if (smti) {
+            if (smd->type == seqModifierType_Curves) {
+              CurvesModifierData *cmd = (CurvesModifierData *)smd;
+              callback(&cmd->curve_mapping);
+            }
+            else if (smd->type == seqModifierType_HueCorrect) {
+              HueCorrectModifierData *hcmd = (HueCorrectModifierData *)smd;
+              callback(&hcmd->curve_mapping);
+            }
+          }
+        }
+      }
+    }
+
+    // toolsettings
+    ToolSettings *ts = scene->toolsettings;
+    if (ts->vpaint) {
+      callback(ts->vpaint->paint.cavity_curve);
+    }
+    if (ts->wpaint) {
+      callback(ts->wpaint->paint.cavity_curve);
+    }
+    if (ts->sculpt) {
+      callback(ts->sculpt->paint.cavity_curve);
+    }
+    if (ts->uvsculpt) {
+      callback(ts->uvsculpt->paint.cavity_curve);
+    }
+    if (ts->gp_paint) {
+      callback(ts->gp_paint->paint.cavity_curve);
+    }
+    if (ts->gp_interpolate.custom_ipo) {
+      callback(ts->gp_interpolate.custom_ipo);
+    }
+    if (ts->gp_sculpt.cur_falloff) {
+      callback(ts->gp_sculpt.cur_falloff);
+    }
+    if (ts->gp_sculpt.cur_primitive) {
+      callback(ts->gp_sculpt.cur_primitive);
+    }
+    callback(ts->imapaint.paint.cavity_curve);
+  }
+
+  FOREACH_NODETREE_BEGIN (bmain, node_tree, id) {
+    LISTBASE_FOREACH (bNode *, node, &node_tree->nodes) {
+      if (ELEM(node->type,
+               SH_NODE_CURVE_VEC,
+               SH_NODE_CURVE_RGB,
+               CMP_NODE_CURVE_VEC,
+               CMP_NODE_CURVE_RGB,
+               CMP_NODE_TIME,
+               CMP_NODE_HUECORRECT,
+               TEX_NODE_CURVE_RGB,
+               TEX_NODE_CURVE_TIME)) {
+        callback((CurveMapping *)node->storage);
+      }
+    }
+  }
+  FOREACH_NODETREE_END;
+
+  LISTBASE_FOREACH (Light *, light, &bmain->lights) {
+    if (light->curfalloff) {
+      callback(light->curfalloff);
+    }
+  }
+
+  LISTBASE_FOREACH (Brush *, brush, &bmain->brushes) {
+    if (brush->curve) {
+      callback(brush->curve);
+    }
+    if (brush->gpencil_settings) {
+      if (brush->gpencil_settings->curve_sensitivity) {
+        callback(brush->gpencil_settings->curve_sensitivity);
+      }
+      if (brush->gpencil_settings->curve_strength) {
+        callback(brush->gpencil_settings->curve_strength);
+      }
+      if (brush->gpencil_settings->curve_jitter) {
+        callback(brush->gpencil_settings->curve_jitter);
+      }
+    }
+  }
+
+  LISTBASE_FOREACH (ParticleSettings *, part, &bmain->particles) {
+    if (part->clumpcurve) {
+      callback(part->clumpcurve);
+    }
+    if (part->roughcurve) {
+      callback(part->roughcurve);
+    }
+    if (part->twistcurve) {
+      callback(part->twistcurve);
+    }
+  }
+
+  /* Object */
+  LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
+    /* Object modifiers */
+    LISTBASE_FOREACH (ModifierData *, md, &ob->modifiers) {
+      if (md->type == eModifierType_Hook) {
+        HookModifierData *hmd = (HookModifierData *)md;
+
+        if (hmd->curfalloff) {
+          callback(hmd->curfalloff);
+        }
+      }
+      else if (md->type == eModifierType_Warp) {
+        WarpModifierData *tmd = (WarpModifierData *)md;
+        if (tmd->curfalloff) {
+          callback(tmd->curfalloff);
+        }
+      }
+      else if (md->type == eModifierType_WeightVGEdit) {
+        WeightVGEditModifierData *wmd = (WeightVGEditModifierData *)md;
+
+        if (wmd->cmap_curve) {
+          callback(wmd->cmap_curve);
+        }
+      }
+    }
+    /* Grease pencil modifiers */
+    LISTBASE_FOREACH (ModifierData *, md, &ob->greasepencil_modifiers) {
+      if (md->type == eGpencilModifierType_Thick) {
+        ThickGpencilModifierData *gpmd = (ThickGpencilModifierData *)md;
+
+        if (gpmd->curve_thickness) {
+          callback(gpmd->curve_thickness);
+        }
+      }
+      else if (md->type == eGpencilModifierType_Hook) {
+        HookGpencilModifierData *gpmd = (HookGpencilModifierData *)md;
+
+        if (gpmd->curfalloff) {
+          callback(gpmd->curfalloff);
+        }
+      }
+    }
+  }
+
+  /* Free Style */
+  LISTBASE_FOREACH (struct FreestyleLineStyle *, linestyle, &bmain->linestyles) {
+    LISTBASE_FOREACH (LineStyleModifier *, m, &linestyle->alpha_modifiers) {
+      switch (m->type) {
+        case LS_MODIFIER_ALONG_STROKE:
+          callback(((LineStyleAlphaModifier_AlongStroke *)m)->curve);
+          break;
+        case LS_MODIFIER_DISTANCE_FROM_CAMERA:
+          callback(((LineStyleAlphaModifier_DistanceFromCamera *)m)->curve);
+          break;
+        case LS_MODIFIER_DISTANCE_FROM_OBJECT:
+          callback(((LineStyleAlphaModifier_DistanceFromObject *)m)->curve);
+          break;
+        case LS_MODIFIER_MATERIAL:
+          callback(((LineStyleAlphaModifier_Material *)m)->curve);
+          break;
+        case LS_MODIFIER_TANGENT:
+          callback(((LineStyleAlphaModifier_Tangent *)m)->curve);
+          break;
+        case LS_MODIFIER_NOISE:
+          callback(((LineStyleAlphaModifier_Noise *)m)->curve);
+          break;
+        case LS_MODIFIER_CREASE_ANGLE:
+          callback(((LineStyleAlphaModifier_CreaseAngle *)m)->curve);
+          break;
+        case LS_MODIFIER_CURVATURE_3D:
+          callback(((LineStyleAlphaModifier_Curvature_3D *)m)->curve);
+          break;
+      }
+    }
+
+    LISTBASE_FOREACH (LineStyleModifier *, m, &linestyle->thickness_modifiers) {
+      switch (m->type) {
+        case LS_MODIFIER_ALONG_STROKE:
+          callback(((LineStyleThicknessModifier_AlongStroke *)m)->curve);
+          break;
+        case LS_MODIFIER_DISTANCE_FROM_CAMERA:
+          callback(((LineStyleThicknessModifier_DistanceFromCamera *)m)->curve);
+          break;
+        case LS_MODIFIER_DISTANCE_FROM_OBJECT:
+          callback(((LineStyleThicknessModifier_DistanceFromObject *)m)->curve);
+          break;
+        case LS_MODIFIER_MATERIAL:
+          callback(((LineStyleThicknessModifier_Material *)m)->curve);
+          break;
+        case LS_MODIFIER_TANGENT:
+          callback(((LineStyleThicknessModifier_Tangent *)m)->curve);
+          break;
+        case LS_MODIFIER_CREASE_ANGLE:
+          callback(((LineStyleThicknessModifier_CreaseAngle *)m)->curve);
+          break;
+        case LS_MODIFIER_CURVATURE_3D:
+          callback(((LineStyleThicknessModifier_Curvature_3D *)m)->curve);
+          break;
+      }
+    }
+  }
+}
+
+static void do_version_fcurve_hide_viewport_fix(struct ID *UNUSED(id),
+                                                struct FCurve *fcu,
+                                                void *UNUSED(user_data))
+{
+  if (strcmp(fcu->rna_path, "hide")) {
+    return;
+  }
+
+  MEM_freeN(fcu->rna_path);
+  fcu->rna_path = BLI_strdupn("hide_viewport", 13);
+}
+
 void do_versions_after_linking_280(Main *bmain, ReportList *UNUSED(reports))
 {
   bool use_collection_compat_28 = true;
@@ -905,11 +1152,10 @@ void do_versions_after_linking_280(Main *bmain, ReportList *UNUSED(reports))
       }
     }
 
-    /* We need to assign lib pointer to generated hidden collections *after* all have been created,
-     * otherwise we'll end up with several data-blocks sharing same name/library,
-     * which is FORBIDDEN!
-     * Note: we need this to be recursive,
-     * since a child collection may be sorted before its parent in bmain. */
+    /* We need to assign lib pointer to generated hidden collections *after* all have been
+     * created, otherwise we'll end up with several data-blocks sharing same name/library,
+     * which is FORBIDDEN! Note: we need this to be recursive, since a child collection may be
+     * sorted before its parent in bmain. */
     for (Collection *collection = bmain->collections.first; collection != NULL;
          collection = collection->id.next) {
       do_version_collection_propagate_lib_to_children(collection);
@@ -1213,7 +1459,8 @@ void do_versions_after_linking_280(Main *bmain, ReportList *UNUSED(reports))
   }
 
   if (!MAIN_VERSION_ATLEAST(bmain, 280, 38)) {
-    /* Ensure we get valid rigidbody object/constraint data in relevant collections' objects. */
+    /* Ensure we get valid rigidbody object/constraint data in relevant collections' objects.
+     */
     for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
       RigidBodyWorld *rbw = scene->rigidbody_world;
 
@@ -1287,6 +1534,25 @@ void do_versions_after_linking_280(Main *bmain, ReportList *UNUSED(reports))
           }
         }
       }
+    }
+  }
+
+  /**
+   * Versioning code until next subversion bump goes here.
+   *
+   * \note Be sure to check when bumping the version:
+   * - "versioning_userdef.c", #BLO_version_defaults_userpref_blend
+   * - "versioning_userdef.c", #do_versions_theme
+   *
+   * \note Keep this message at the bottom of the function.
+   */
+  {
+    /* Keep this block, even when empty. */
+
+    /* During development of Blender 2.80 the "Object.hide" property was
+     * removed, and reintroduced in 5e968a996a53 as "Object.hide_viewport". */
+    LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
+      BKE_fcurves_id_cb(&ob->id, do_version_fcurve_hide_viewport_fix, NULL);
     }
   }
 }
@@ -1426,7 +1692,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
     if (error & NTREE_DOVERSION_NEED_OUTPUT) {
       BKE_report(fd->reports, RPT_ERROR, "Eevee material conversion problem. Error in console");
       printf(
-          "You need to connect Principled and Eevee Specular shader nodes to new material output "
+          "You need to connect Principled and Eevee Specular shader nodes to new material "
+          "output "
           "nodes.\n");
     }
 
@@ -2561,6 +2828,35 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
       }
     }
 
+    /* Files stored pre 2.5 (possibly re-saved with newer versions) may have non-visible
+     * spaces without a header (visible/active ones are properly versioned).
+     * Multiple version patches below assume there's always a header though. So inserting this
+     * patch in-between older ones to add a header when needed.
+     *
+     * From here on it should be fine to assume there always is a header.
+     */
+    if (!MAIN_VERSION_ATLEAST(bmain, 283, 1)) {
+      for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
+        for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
+          for (SpaceLink *sl = sa->spacedata.first; sl; sl = sl->next) {
+            ListBase *regionbase = (sl == sa->spacedata.first) ? &sa->regionbase : &sl->regionbase;
+            ARegion *ar_header = do_versions_find_region_or_null(regionbase, RGN_TYPE_HEADER);
+
+            if (!ar_header) {
+              /* Headers should always be first in the region list, except if there's also a
+               * tool-header. These were only introduced in later versions though, so should be
+               * fine to always insert headers first. */
+              BLI_assert(!do_versions_find_region_or_null(regionbase, RGN_TYPE_TOOL_HEADER));
+
+              ARegion *ar = do_versions_add_region(RGN_TYPE_HEADER, "header 2.83.1 versioning");
+              ar->alignment = (U.uiflag & USER_HEADER_BOTTOM) ? RGN_ALIGN_BOTTOM : RGN_ALIGN_TOP;
+              BLI_addhead(regionbase, ar);
+            }
+          }
+        }
+      }
+    }
+
     for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
       for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
         for (SpaceLink *sl = sa->spacedata.first; sl; sl = sl->next) {
@@ -3158,19 +3454,6 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
     }
   }
 
-  if (!MAIN_VERSION_ATLEAST(bmain, 280, 45)) {
-    for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
-      for (ScrArea *area = screen->areabase.first; area; area = area->next) {
-        for (SpaceLink *sl = area->spacedata.first; sl; sl = sl->next) {
-          if (sl->spacetype == SPACE_SEQ) {
-            SpaceSeq *sseq = (SpaceSeq *)sl;
-            sseq->flag |= SEQ_SHOW_MARKER_LINES;
-          }
-        }
-      }
-    }
-  }
-
   if (!MAIN_VERSION_ATLEAST(bmain, 280, 46)) {
     /* Add wireframe color. */
     if (!DNA_struct_elem_find(fd->filesdna, "View3DShading", "char", "wire_color_type")) {
@@ -3710,10 +3993,6 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
   }
 
   if (!MAIN_VERSION_ATLEAST(bmain, 281, 3)) {
-    if (U.view_rotate_sensitivity_turntable == 0) {
-      U.view_rotate_sensitivity_turntable = DEG2RADF(0.4f);
-      U.view_rotate_sensitivity_trackball = 1.0f;
-    }
     for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
       for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
         for (SpaceLink *sl = sa->spacedata.first; sl; sl = sl->next) {
@@ -3930,7 +4209,186 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
     }
   }
 
+  if (!MAIN_VERSION_ATLEAST(bmain, 282, 2)) {
+    do_version_curvemapping_walker(bmain, do_version_curvemapping_flag_extend_extrapolate);
+
+    for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
+      for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
+        sa->flag &= ~AREA_FLAG_UNUSED_6;
+      }
+    }
+
+    /* Add custom curve profile to toolsettings for bevel tool */
+    if (!DNA_struct_elem_find(fd->filesdna, "ToolSettings", "CurveProfile", "custom_profile")) {
+      for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
+        ToolSettings *ts = scene->toolsettings;
+        if ((ts) && (ts->custom_bevel_profile_preset == NULL)) {
+          ts->custom_bevel_profile_preset = BKE_curveprofile_add(PROF_PRESET_LINE);
+        }
+      }
+    }
+
+    /* Add custom curve profile to bevel modifier */
+    if (!DNA_struct_elem_find(fd->filesdna, "BevelModifier", "CurveProfile", "custom_profile")) {
+      for (Object *object = bmain->objects.first; object != NULL; object = object->id.next) {
+        for (ModifierData *md = object->modifiers.first; md; md = md->next) {
+          if (md->type == eModifierType_Bevel) {
+            BevelModifierData *bmd = (BevelModifierData *)md;
+            if (!bmd->custom_profile) {
+              bmd->custom_profile = BKE_curveprofile_add(PROF_PRESET_LINE);
+            }
+          }
+        }
+      }
+    }
+
+    /* Dash Ratio and Dash Samples */
+    if (!DNA_struct_elem_find(fd->filesdna, "Brush", "float", "dash_ratio")) {
+      for (Brush *br = bmain->brushes.first; br; br = br->id.next) {
+        br->dash_ratio = 1.0f;
+        br->dash_samples = 20;
+      }
+    }
+
+    /* Pose brush smooth iterations */
+    if (!DNA_struct_elem_find(fd->filesdna, "Brush", "float", "pose_smooth_iterations")) {
+      for (Brush *br = bmain->brushes.first; br; br = br->id.next) {
+        br->pose_smooth_iterations = 4;
+      }
+    }
+
+    /* Cloth pressure */
+    for (Object *ob = bmain->objects.first; ob; ob = ob->id.next) {
+      for (ModifierData *md = ob->modifiers.first; md; md = md->next) {
+        if (md->type == eModifierType_Cloth) {
+          ClothModifierData *clmd = (ClothModifierData *)md;
+
+          clmd->sim_parms->pressure_factor = 1;
+        }
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 282, 3)) {
+    /* Remove Unified pressure/size and pressure/alpha */
+    for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
+      ToolSettings *ts = scene->toolsettings;
+      UnifiedPaintSettings *ups = &ts->unified_paint_settings;
+      ups->flag &= ~(UNIFIED_PAINT_FLAG_UNUSED_0 | UNIFIED_PAINT_FLAG_UNUSED_1);
+    }
+
+    /* Set the default render pass in the viewport to Combined. */
+    if (!DNA_struct_elem_find(fd->filesdna, "View3DShading", "int", "render_pass")) {
+      for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
+        scene->display.shading.render_pass = SCE_PASS_COMBINED;
+      }
+
+      for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
+        for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
+          for (SpaceLink *sl = sa->spacedata.first; sl; sl = sl->next) {
+            if (sl->spacetype == SPACE_VIEW3D) {
+              View3D *v3d = (View3D *)sl;
+              v3d->shading.render_pass = SCE_PASS_COMBINED;
+            }
+          }
+        }
+      }
+    }
+
+    /* Make markers region visible by default. */
+    for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
+      for (ScrArea *area = screen->areabase.first; area; area = area->next) {
+        for (SpaceLink *sl = area->spacedata.first; sl; sl = sl->next) {
+          switch (sl->spacetype) {
+            case SPACE_SEQ: {
+              SpaceSeq *sseq = (SpaceSeq *)sl;
+              sseq->flag |= SEQ_SHOW_MARKERS;
+              break;
+            }
+            case SPACE_ACTION: {
+              SpaceAction *saction = (SpaceAction *)sl;
+              saction->flag |= SACTION_SHOW_MARKERS;
+              break;
+            }
+            case SPACE_GRAPH: {
+              SpaceGraph *sipo = (SpaceGraph *)sl;
+              sipo->flag |= SIPO_SHOW_MARKERS;
+              break;
+            }
+            case SPACE_NLA: {
+              SpaceNla *snla = (SpaceNla *)sl;
+              snla->flag |= SNLA_SHOW_MARKERS;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Versioning code until next subversion bump goes here.
+   *
+   * \note Be sure to check when bumping the version:
+   * - "versioning_userdef.c", #BLO_version_defaults_userpref_blend
+   * - "versioning_userdef.c", #do_versions_theme
+   *
+   * \note Keep this message at the bottom of the function.
+   */
   {
-    /* Versioning code until next subversion bump goes here. */
+    /* Keep this block, even when empty. */
+
+    /* Cloth internal springs */
+    for (Object *ob = bmain->objects.first; ob; ob = ob->id.next) {
+      for (ModifierData *md = ob->modifiers.first; md; md = md->next) {
+        if (md->type == eModifierType_Cloth) {
+          ClothModifierData *clmd = (ClothModifierData *)md;
+
+          clmd->sim_parms->internal_tension = 15.0f;
+          clmd->sim_parms->max_internal_tension = 15.0f;
+          clmd->sim_parms->internal_compression = 15.0f;
+          clmd->sim_parms->max_internal_compression = 15.0f;
+          clmd->sim_parms->internal_spring_max_diversion = M_PI / 4.0f;
+        }
+      }
+    }
+
+    /* Add primary tile to images. */
+    if (!DNA_struct_elem_find(fd->filesdna, "Image", "ListBase", "tiles")) {
+      for (Image *ima = bmain->images.first; ima; ima = ima->id.next) {
+        ImageTile *tile = MEM_callocN(sizeof(ImageTile), "Image Tile");
+        tile->ok = 1;
+        tile->tile_number = 1001;
+        BLI_addtail(&ima->tiles, tile);
+      }
+    }
+
+    /* UDIM Image Editor change. */
+    if (!DNA_struct_elem_find(fd->filesdna, "SpaceImage", "int", "tile_grid_shape[2]")) {
+      for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
+        for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
+          for (SpaceLink *sl = sa->spacedata.first; sl; sl = sl->next) {
+            if (sl->spacetype == SPACE_IMAGE) {
+              SpaceImage *sima = (SpaceImage *)sl;
+              sima->tile_grid_shape[0] = 1;
+              sima->tile_grid_shape[1] = 1;
+            }
+          }
+        }
+      }
+    }
+
+    /* Brush cursor alpha */
+    for (Brush *br = bmain->brushes.first; br; br = br->id.next) {
+      br->add_col[3] = 0.9f;
+      br->sub_col[3] = 0.9f;
+    }
+
+    /* Pose brush IK segments. */
+    if (!DNA_struct_elem_find(fd->filesdna, "Brush", "int", "pose_ik_segments")) {
+      for (Brush *br = bmain->brushes.first; br; br = br->id.next) {
+        br->pose_ik_segments = 1;
+      }
+    }
   }
 }

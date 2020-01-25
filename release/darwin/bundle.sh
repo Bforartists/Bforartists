@@ -13,9 +13,9 @@ done
 
 # Defaults settings.
 _script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-_volume_name="Blender"
+_volume_name="Bforartists"
 _tmp_dir="$(mktemp -d)"
-_tmp_dmg="/tmp/blender-tmp.dmg"
+_tmp_dmg="/tmp/bforartists-tmp.dmg"
 _background_image="${_script_dir}/background.tif"
 _mount_dir="/Volumes/${_volume_name}"
 _entitlements="${_script_dir}/entitlements.plist"
@@ -73,7 +73,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [ ! -d "${SRC_DIR}/Blender.app" ]; then
+if [ ! -d "${SRC_DIR}/Bforartists.app" ]; then
     echo "use --source parameter to set source directory where Blender.app can be found"
     exit 1
 fi
@@ -86,20 +86,20 @@ fi
 # Destroy destination dmg if there is any.
 test -f "${DEST_DMG}" && rm "${DEST_DMG}"
 if [ -d "${_mount_dir}" ]; then
-    echo -n "Ejecting existing blender volume.."
+    echo -n "Ejecting existing bforartists volume.."
     DEV_FILE=$(mount | grep "${_mount_dir}" | awk '{ print $1 }')
     diskutil eject "${DEV_FILE}" || exit 1
     echo
 fi
 
 # Copy dmg contents.
-echo -n "Copying Blender.app..."
-cp -r "${SRC_DIR}/Blender.app" "${_tmp_dir}/" || exit 1
+echo -n "Copying Bforartists.app..."
+cp -r "${SRC_DIR}/Bforartists.app" "${_tmp_dir}/" || exit 1
 echo
 
 # Create the disk image.
 _directory_size=$(du -sh ${_tmp_dir} | awk -F'[^0-9]*' '$0=$1')
-_image_size=$(echo "${_directory_size}" + 200 | bc) # extra 200 need for codesign to work (why on earth?)
+_image_size=$(echo "${_directory_size}" + 400 | bc) # extra 400 need for codesign to work (why on earth?)
 
 echo
 echo -n "Creating disk image of size ${_image_size}M.."
@@ -131,7 +131,7 @@ sleep 5
 if [ ! -z "${C_CERT}" ]; then
     # Codesigning requires all libs and binaries to be signed separately.
     echo -n "Codesigning Python"
-    for f in $(find "${_mount_dir}/Blender.app/Contents/Resources" -name "python*"); do
+    for f in $(find "${_mount_dir}/Bforartists.app/Contents/Resources" -name "python*"); do
         if [ -x ${f} ] && [ ! -d ${f} ]; then
             codesign --remove-signature "${f}"
             codesign --timestamp --options runtime --entitlements="${_entitlements}" --sign "${C_CERT}" "${f}"
@@ -142,9 +142,9 @@ if [ ! -z "${C_CERT}" ]; then
         codesign --remove-signature "${f}"
         codesign --timestamp --options runtime --entitlements="${_entitlements}" --sign "${C_CERT}" "${f}"
     done
-    echo ; echo -n "Codesigning Blender.app"
-    codesign --remove-signature "${_mount_dir}/Blender.app"
-    codesign --timestamp --options runtime --entitlements="${_entitlements}" --sign "${C_CERT}" "${_mount_dir}/Blender.app"
+    echo ; echo -n "Codesigning Bforartists.app"
+    codesign --remove-signature "${_mount_dir}/Bforartists.app"
+    codesign --timestamp --options runtime --entitlements="${_entitlements}" --sign "${C_CERT}" "${_mount_dir}/Bforartists.app"
     echo
 else
     echo "No codesigning cert given, skipping..."
@@ -174,10 +174,10 @@ rm "${_tmp_dmg}"
 # Notarize
 if [ ! -z "${N_USERNAME}" ] && [ ! -z "${N_PASSWORD}" ] && [ ! -z "${N_BUNDLE_ID}" ]; then
     # Send to Apple
-    echo -n "Sending ${DEST_DMG} for notarization..."
+    echo "Sending ${DEST_DMG} for notarization..."
     _tmpout=$(mktemp)
-    echo xcrun altool --notarize-app -f "${DEST_DMG}" --primary-bundle-id "${N_BUNDLE_ID}" --username "${N_USERNAME}" --password "${N_PASSWORD}"
-    xcrun altool --notarize-app -f "${DEST_DMG}" --primary-bundle-id "${N_BUNDLE_ID}" --username "${N_USERNAME}" --password "${N_PASSWORD}" >${_tmpout} 2>&1
+    echo xcrun altool --notarize-app --verbose -f "${DEST_DMG}" --primary-bundle-id "${N_BUNDLE_ID}" --username "${N_USERNAME}" --password "${N_PASSWORD}"
+    xcrun altool --notarize-app --verbose -f "${DEST_DMG}" --primary-bundle-id "${N_BUNDLE_ID}" --username "${N_USERNAME}" --password "${N_PASSWORD}" >${_tmpout} 2>&1
 
     # Parse request uuid
     _requuid=$(cat "${_tmpout}" | grep "RequestUUID" | awk '{ print $3 }')
@@ -202,6 +202,7 @@ if [ ! -z "${N_USERNAME}" ] && [ ! -z "${N_PASSWORD}" ] && [ ! -z "${N_BUNDLE_ID
             echo "Notarization in progress, waiting..."
         done
     else
+        cat ${_tmpout}
         echo "Error getting RequestUUID, notarization unsuccessful"
     fi
 else

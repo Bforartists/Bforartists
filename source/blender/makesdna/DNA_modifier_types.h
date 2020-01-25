@@ -62,7 +62,9 @@ typedef enum ModifierType {
   eModifierType_SimpleDeform = 28,
   eModifierType_Multires = 29,
   eModifierType_Surface = 30,
+#ifdef DNA_DEPRECATED_ALLOW
   eModifierType_Smoke = 31,
+#endif
   eModifierType_ShapeKey = 32,
   eModifierType_Solidify = 33,
   eModifierType_Screw = 34,
@@ -86,6 +88,8 @@ typedef enum ModifierType {
   eModifierType_MeshSequenceCache = 52,
   eModifierType_SurfaceDeform = 53,
   eModifierType_WeightedNormal = 54,
+  eModifierType_Weld = 55,
+  eModifierType_Fluid = 56,
   NUM_MODIFIER_TYPES,
 } ModifierType;
 
@@ -377,10 +381,11 @@ typedef struct BevelModifierData {
   short mat;
   short edge_flags;
   short face_str_mode;
-  /* patterns to use for mitering non-reflex and reflex miter edges */
+  /** Patterns to use for mitering non-reflex and reflex miter edges */
   short miter_inner;
   short miter_outer;
-  char _pad0[2];
+  /** The method to use for creating >2-way intersections */
+  short vmesh_method;
   /** Controls profile shape (0->1, .5 is round). */
   float profile;
   /** if the MOD_BEVEL_ANGLE is set,
@@ -390,6 +395,10 @@ typedef struct BevelModifierData {
   /** if the MOD_BEVEL_VWEIGHT option is set,
    * this will be the name of the vert group, MAX_VGROUP_NAME */
   char defgrp_name[64];
+
+  /** Curve info for the custom profile */
+  struct CurveProfile *custom_profile;
+
 } BevelModifierData;
 
 /* BevelModifierData->flags and BevelModifierData->lim_flags */
@@ -399,8 +408,8 @@ enum {
   MOD_BEVEL_ANGLE = (1 << 3),
   MOD_BEVEL_WEIGHT = (1 << 4),
   MOD_BEVEL_VGROUP = (1 << 5),
-  /*  unused                  = (1 << 7), */
-  /*  unused                  = (1 << 8), */
+  MOD_BEVEL_CUSTOM_PROFILE = (1 << 7),
+  MOD_BEVEL_SAMPLE_STRAIGHT = (1 << 8),
   /*  unused                  = (1 << 9), */
   /*  unused                  = (1 << 10), */
   /*  unused                  = (1 << 11), */
@@ -439,24 +448,30 @@ enum {
   MOD_BEVEL_MITER_ARC,
 };
 
-typedef struct SmokeModifierData {
+/* BevelModifier->vmesh_method */
+enum {
+  MOD_BEVEL_VMESH_ADJ,
+  MOD_BEVEL_VMESH_CUTOFF,
+};
+
+typedef struct FluidModifierData {
   ModifierData modifier;
 
-  struct SmokeDomainSettings *domain;
+  struct FluidDomainSettings *domain;
   /** Inflow, outflow, smoke objects. */
-  struct SmokeFlowSettings *flow;
-  /** Collision objects. */
-  struct SmokeCollSettings *coll;
+  struct FluidFlowSettings *flow;
+  /** Effector objects (collision, guiding). */
+  struct FluidEffectorSettings *effector;
   float time;
   /** Domain, inflow, outflow, .... */
   int type;
-} SmokeModifierData;
+} FluidModifierData;
 
-/* Smoke modifier flags */
+/* Fluid modifier flags */
 enum {
-  MOD_SMOKE_TYPE_DOMAIN = (1 << 0),
-  MOD_SMOKE_TYPE_FLOW = (1 << 1),
-  MOD_SMOKE_TYPE_COLL = (1 << 2),
+  MOD_FLUID_TYPE_DOMAIN = (1 << 0),
+  MOD_FLUID_TYPE_FLOW = (1 << 1),
+  MOD_FLUID_TYPE_EFFEC = (1 << 2),
 };
 
 typedef struct DisplaceModifierData {
@@ -965,12 +980,22 @@ typedef enum {
   eMultiresModifierFlag_UseCrease = (1 << 2),
 } MultiresModifierFlag;
 
+/* DEPRECATED, only used for versioning. */
 typedef struct FluidsimModifierData {
   ModifierData modifier;
 
   /** Definition is in DNA_object_fluidsim_types.h. */
   struct FluidsimSettings *fss;
 } FluidsimModifierData;
+
+/* DEPRECATED, only used for versioning. */
+typedef struct SmokeModifierData {
+  ModifierData modifier;
+
+  /** Domain, inflow, outflow, .... */
+  int type;
+  int _pad;
+} SmokeModifierData;
 
 typedef struct ShrinkwrapModifierData {
   ModifierData modifier;
@@ -1115,7 +1140,13 @@ typedef struct SolidifyModifierData {
   float offset_fac_vg;
   /** Clamp offset based on surrounding geometry. */
   float offset_clamp;
-  char _pad[4];
+  char mode;
+
+  /** Variables for #MOD_SOLIDIFY_MODE_NONMANIFOLD. */
+  char nonmanifold_offset_mode;
+  char nonmanifold_boundary_mode;
+
+  char _pad;
   float crease_inner;
   float crease_outer;
   float crease_rim;
@@ -1124,16 +1155,38 @@ typedef struct SolidifyModifierData {
   short mat_ofs_rim;
 } SolidifyModifierData;
 
+/** #SolidifyModifierData.flag */
 enum {
   MOD_SOLIDIFY_RIM = (1 << 0),
   MOD_SOLIDIFY_EVEN = (1 << 1),
   MOD_SOLIDIFY_NORMAL_CALC = (1 << 2),
   MOD_SOLIDIFY_VGROUP_INV = (1 << 3),
-#ifdef DNA_DEPRECATED
+#ifdef DNA_DEPRECATED_ALLOW
   MOD_SOLIDIFY_RIM_MATERIAL = (1 << 4), /* deprecated, used in do_versions */
 #endif
   MOD_SOLIDIFY_FLIP = (1 << 5),
   MOD_SOLIDIFY_NOSHELL = (1 << 6),
+  MOD_SOLIDIFY_OFFSET_ANGLE_CLAMP = (1 << 7),
+};
+
+/** #SolidifyModifierData.mode */
+enum {
+  MOD_SOLIDIFY_MODE_EXTRUDE = 0,
+  MOD_SOLIDIFY_MODE_NONMANIFOLD = 1,
+};
+
+/** #SolidifyModifierData.nonmanifold_offset_mode */
+enum {
+  MOD_SOLIDIFY_NONMANIFOLD_OFFSET_MODE_FIXED = 0,
+  MOD_SOLIDIFY_NONMANIFOLD_OFFSET_MODE_EVEN = 1,
+  MOD_SOLIDIFY_NONMANIFOLD_OFFSET_MODE_CONSTRAINTS = 2,
+};
+
+/** #SolidifyModifierData.nonmanifold_boundary_mode */
+enum {
+  MOD_SOLIDIFY_NONMANIFOLD_BOUNDARY_MODE_NONE = 0,
+  MOD_SOLIDIFY_NONMANIFOLD_BOUNDARY_MODE_ROUND = 1,
+  MOD_SOLIDIFY_NONMANIFOLD_BOUNDARY_MODE_FLAT = 2,
 };
 
 typedef struct ScrewModifierData {
@@ -1555,7 +1608,7 @@ typedef struct TriangulateModifierData {
 
 /* TriangulateModifierData.flag */
 enum {
-#ifdef DNA_DEPRECATED
+#ifdef DNA_DEPRECATED_ALLOW
   MOD_TRIANGULATE_BEAUTY = (1 << 0), /* deprecated */
 #endif
   MOD_TRIANGULATE_KEEP_CUSTOMLOOP_NORMALS = 1 << 1,
@@ -1770,6 +1823,16 @@ enum {
   MOD_WIREFRAME_OFS_RELATIVE = (1 << 4),
   MOD_WIREFRAME_CREASE = (1 << 5),
 };
+
+typedef struct WeldModifierData {
+  ModifierData modifier;
+
+  /* The limit below which to merge vertices. */
+  float merge_dist;
+  unsigned int max_interactions;
+  /* Name of vertex group to use to mask, MAX_VGROUP_NAME. */
+  char defgrp_name[64];
+} WeldModifierData;
 
 typedef struct DataTransferModifierData {
   ModifierData modifier;

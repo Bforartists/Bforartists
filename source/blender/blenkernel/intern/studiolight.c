@@ -85,7 +85,9 @@ static const char *STUDIOLIGHT_MATCAP_DEFAULT = "basic_1.exr";
 
 /* ITER MACRO */
 
-/** Iter on all pixel giving texel center position and pixel pointer.
+/**
+ * Iter on all pixel giving texel center position and pixel pointer.
+ *
  * Arguments
  *   type : type of src.
  *   src : source buffer.
@@ -1666,7 +1668,8 @@ StudioLight *BKE_studiolight_create(const char *path,
                                     const float light_ambient[3])
 {
   StudioLight *sl = studiolight_create(STUDIOLIGHT_EXTERNAL_FILE | STUDIOLIGHT_USER_DEFINED |
-                                       STUDIOLIGHT_TYPE_STUDIO);
+                                       STUDIOLIGHT_TYPE_STUDIO |
+                                       STUDIOLIGHT_SPECULAR_HIGHLIGHT_PASS);
 
   char filename[FILE_MAXFILE];
   BLI_split_file_part(path, filename, FILE_MAXFILE);
@@ -1686,7 +1689,7 @@ StudioLight *BKE_studiolight_create(const char *path,
 StudioLight *BKE_studiolight_studio_edit_get(void)
 {
   static StudioLight sl = {0};
-  sl.flag = STUDIOLIGHT_TYPE_STUDIO;
+  sl.flag = STUDIOLIGHT_TYPE_STUDIO | STUDIOLIGHT_SPECULAR_HIGHLIGHT_PASS;
 
   memcpy(sl.light, U.light_param, sizeof(*sl.light) * 4);
   memcpy(sl.light_ambient, U.light_ambient, sizeof(*sl.light_ambient) * 3);

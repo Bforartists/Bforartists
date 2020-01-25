@@ -93,7 +93,7 @@ class dual_mesh_tessellated(Operator):
         except:
             me = bpy.data.meshes.new("Dual-Mesh")  # add a new mesh
             me.from_pydata(verts, edges, faces)
-            me.update(calc_edges=True, calc_edges_loose=True, calc_loop_triangles=True)
+            me.update(calc_edges=True, calc_edges_loose=True)
             if self.source_faces == 'QUAD': n_seams = 8
             else: n_seams = 6
             for i in range(n_seams): me.edges[i].use_seam = True

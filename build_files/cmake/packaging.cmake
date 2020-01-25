@@ -80,8 +80,8 @@ if(APPLE)
 endif()
 
 if(WIN32)
-  set(CPACK_PACKAGE_INSTALL_DIRECTORY "Bforartists 2 - 0.7.0")
-  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Bforartists 2 - 0.7.0")
+  set(CPACK_PACKAGE_INSTALL_DIRECTORY "Bforartists 2 - 0.8.0")
+  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Bforartists 2 - 0.8.0")
 
   set(CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/release/windows/icons/winblender.ico)
   set(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
@@ -135,7 +135,7 @@ elseif(UNIX)
 
   add_package_archive(
     "${PROJECT_NAME}-${BLENDER_VERSION}-${BUILD_REV}-${PACKAGE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}"
-    "tar.bz2")
+    "tar.xz")
 endif()
 
 unset(MAJOR_VERSION)

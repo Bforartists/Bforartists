@@ -1173,6 +1173,6 @@ def unregister_search():
 
     for c in classes:
         bpy.utils.unregister_class(c)
-
-    bpy.app.timers.unregister(timer_update)
+    if bpy.app.timers.is_registered(timer_update):
+        bpy.app.timers.unregister(timer_update)
 

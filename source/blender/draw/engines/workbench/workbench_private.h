@@ -37,8 +37,8 @@
 #define WORKBENCH_ENGINE "BLENDER_WORKBENCH"
 #define M_GOLDEN_RATION_CONJUGATE 0.618033988749895
 #define MAX_COMPOSITE_SHADERS (1 << 7)
-#define MAX_PREPASS_SHADERS (1 << 7)
-#define MAX_ACCUM_SHADERS (1 << 7)
+#define MAX_PREPASS_SHADERS (1 << 8)
+#define MAX_ACCUM_SHADERS (1 << 8)
 #define MAX_CAVITY_SHADERS (1 << 3)
 
 #define TEXTURE_DRAWING_ENABLED(wpd) (wpd->shading.color_type == V3D_SHADING_TEXTURE_COLOR)
@@ -207,6 +207,8 @@ typedef struct WORKBENCH_PrivateData {
   struct GPUShader *prepass_uniform_sh;
   struct GPUShader *prepass_uniform_hair_sh;
   struct GPUShader *prepass_textured_sh;
+  struct GPUShader *prepass_textured_array_sh;
+  struct GPUShader *prepass_vertex_sh;
   struct GPUShader *composite_sh;
   struct GPUShader *background_sh;
   struct GPUShader *transparent_accum_sh;
@@ -214,9 +216,16 @@ typedef struct WORKBENCH_PrivateData {
   struct GPUShader *transparent_accum_uniform_sh;
   struct GPUShader *transparent_accum_uniform_hair_sh;
   struct GPUShader *transparent_accum_textured_sh;
+  struct GPUShader *transparent_accum_textured_array_sh;
+  struct GPUShader *transparent_accum_vertex_sh;
   View3DShading shading;
   StudioLight *studio_light;
   const UserDef *preferences;
+  /* Does this instance owns the `world_ubo` field.
+   * Normally the field is borrowed from `WORKBENCH_WorldData`. In case that
+   * there is no World attached to the scene the UBO cannot be cached and should
+   * be freed after using. */
+  bool is_world_ubo_owner;
   struct GPUUniformBuffer *world_ubo;
   struct DRWShadingGroup *shadow_shgrp;
   struct DRWShadingGroup *depth_shgrp;
@@ -307,6 +316,21 @@ typedef struct WORKBENCH_ObjectData {
   bool shadow_bbox_dirty;
 } WORKBENCH_ObjectData;
 
+typedef struct WORKBENCH_WorldData {
+  DrawData dd;
+  /* The cached `GPUUniformBuffer`, that is reused between draw calls. */
+  struct GPUUniformBuffer *world_ubo;
+} WORKBENCH_WorldData;
+
+/* Enumeration containing override options for base color rendering.
+ * This is used to during painting to force the base color to show what you are
+ * painting using the selected lighting model. */
+typedef enum WORKBENCH_ColorOverride {
+  WORKBENCH_COLOR_OVERRIDE_OFF = 0,
+  WORKBENCH_COLOR_OVERRIDE_TEXTURE = CTX_MODE_PAINT_TEXTURE,
+  WORKBENCH_COLOR_OVERRIDE_VERTEX = CTX_MODE_PAINT_VERTEX,
+} WORKBENCH_ColorOverride;
+
 /* inline helper functions */
 BLI_INLINE bool workbench_is_specular_highlight_enabled(WORKBENCH_PrivateData *wpd)
 {
@@ -364,23 +388,35 @@ BLI_INLINE bool workbench_is_in_texture_paint_mode(void)
   return draw_ctx->object_mode == OB_MODE_TEXTURE_PAINT;
 }
 
-/** Is texture paint mode active for the given object */
-BLI_INLINE bool workbench_is_object_in_texture_paint_mode(Object *ob)
+/** Is vertex paint mode enabled (globally) */
+BLI_INLINE bool workbench_is_in_vertex_paint_mode(void)
+{
+  const DRWContextState *draw_ctx = DRW_context_state_get();
+  return draw_ctx->object_mode == OB_MODE_VERTEX_PAINT;
+}
+
+/* Must the `View3DShading.color_type` be overriden for the given object. */
+BLI_INLINE WORKBENCH_ColorOverride workbench_object_color_override_get(Object *ob)
 {
   const DRWContextState *draw_ctx = DRW_context_state_get();
   if (ob->type == OB_MESH && (draw_ctx->obact == ob)) {
     const enum eContextObjectMode mode = CTX_data_mode_enum_ex(
         draw_ctx->object_edit, draw_ctx->obact, draw_ctx->object_mode);
-    return (mode == CTX_MODE_PAINT_TEXTURE);
+    if (mode == CTX_MODE_PAINT_TEXTURE) {
+      return WORKBENCH_COLOR_OVERRIDE_TEXTURE;
+    }
+    else if (mode == CTX_MODE_PAINT_VERTEX) {
+      return WORKBENCH_COLOR_OVERRIDE_VERTEX;
+    }
   }
 
-  return false;
+  return WORKBENCH_COLOR_OVERRIDE_OFF;
 }
 
 BLI_INLINE bool workbench_is_matdata_pass_enabled(WORKBENCH_PrivateData *wpd)
 {
   return (wpd->shading.color_type != V3D_SHADING_SINGLE_COLOR || MATCAP_ENABLED(wpd)) ||
-         workbench_is_in_texture_paint_mode();
+         workbench_is_in_texture_paint_mode() || workbench_is_in_vertex_paint_mode();
 }
 
 /**
@@ -398,7 +434,7 @@ BLI_INLINE eGPUTextureFormat workbench_color_texture_format(const WORKBENCH_Priv
       TEXTURE_DRAWING_ENABLED(wpd)) {
     result = GPU_RGBA16F;
   }
-  else if (VERTEX_COLORS_ENABLED(wpd)) {
+  else if (workbench_is_in_vertex_paint_mode() || VERTEX_COLORS_ENABLED(wpd)) {
     result = GPU_RGBA16;
   }
   else {
@@ -482,7 +518,8 @@ void workbench_material_get_image_and_mat(
 char *workbench_material_build_defines(WORKBENCH_PrivateData *wpd,
                                        bool is_uniform_color,
                                        bool is_hair,
-                                       bool is_texture_painting);
+                                       bool is_tiled,
+                                       const WORKBENCH_ColorOverride color_override);
 void workbench_material_update_data(WORKBENCH_PrivateData *wpd,
                                     Object *ob,
                                     Material *mat,
@@ -493,16 +530,19 @@ int workbench_material_get_composite_shader_index(WORKBENCH_PrivateData *wpd);
 int workbench_material_get_prepass_shader_index(WORKBENCH_PrivateData *wpd,
                                                 bool is_uniform_color,
                                                 bool is_hair,
-                                                bool is_texture_painting);
+                                                bool is_tiled,
+                                                const WORKBENCH_ColorOverride color_override);
 int workbench_material_get_accum_shader_index(WORKBENCH_PrivateData *wpd,
                                               bool is_uniform_color,
                                               bool is_hair,
-                                              bool is_texture_painting);
+                                              bool is_tiled,
+                                              const WORKBENCH_ColorOverride color_override);
 void workbench_material_shgroup_uniform(WORKBENCH_PrivateData *wpd,
                                         DRWShadingGroup *grp,
                                         WORKBENCH_MaterialData *material,
                                         Object *ob,
                                         const bool deferred,
+                                        const bool is_tiled,
                                         const int interp);
 void workbench_material_copy(WORKBENCH_MaterialData *dest_material,
                              const WORKBENCH_MaterialData *source_material);
@@ -526,8 +566,7 @@ bool studiolight_camera_in_object_shadow(WORKBENCH_PrivateData *wpd,
 void workbench_effect_info_init(WORKBENCH_EffectInfo *effect_info);
 void workbench_private_data_init(WORKBENCH_PrivateData *wpd);
 void workbench_private_data_free(WORKBENCH_PrivateData *wpd);
-void workbench_private_data_get_light_direction(WORKBENCH_PrivateData *wpd,
-                                                float r_light_direction[3]);
+void workbench_private_data_get_light_direction(float r_light_direction[3]);
 
 /* workbench_volume.c */
 void workbench_volume_engine_init(void);

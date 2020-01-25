@@ -1010,6 +1010,10 @@ typedef struct NodeShaderTexIES {
   char filepath[1024];
 } NodeShaderTexIES;
 
+typedef struct NodeShaderOutputAOV {
+  char name[64];
+} NodeShaderOutputAOV;
+
 typedef struct NodeSunBeams {
   float source[2];
 
@@ -1215,6 +1219,22 @@ enum {
   NODE_MATH_CEIL = 21,
   NODE_MATH_FRACTION = 22,
   NODE_MATH_SQRT = 23,
+  NODE_MATH_INV_SQRT = 24,
+  NODE_MATH_SIGN = 25,
+  NODE_MATH_EXPONENT = 26,
+  NODE_MATH_RADIANS = 27,
+  NODE_MATH_DEGREES = 28,
+  NODE_MATH_SINH = 29,
+  NODE_MATH_COSH = 30,
+  NODE_MATH_TANH = 31,
+  NODE_MATH_TRUNC = 32,
+  NODE_MATH_SNAP = 33,
+  NODE_MATH_WRAP = 34,
+  NODE_MATH_COMPARE = 35,
+  NODE_MATH_MULTIPLY_ADD = 36,
+  NODE_MATH_PINGPONG = 37,
+  NODE_MATH_SMOOTH_MIN = 38,
+  NODE_MATH_SMOOTH_MAX = 39,
 };
 
 /* Vector Math node operations. */
@@ -1244,13 +1264,27 @@ enum {
   NODE_VECTOR_MATH_MAXIMUM = 19,
 };
 
+/* Clamp node types. */
+enum {
+  NODE_CLAMP_MINMAX = 0,
+  NODE_CLAMP_RANGE = 1,
+};
+
+/* Map range node types. */
+enum {
+  NODE_MAP_RANGE_LINEAR = 0,
+  NODE_MAP_RANGE_STEPPED = 1,
+  NODE_MAP_RANGE_SMOOTHSTEP = 2,
+  NODE_MAP_RANGE_SMOOTHERSTEP = 3,
+};
+
 /* mix rgb node flags */
 #define SHD_MIXRGB_USE_ALPHA 1
 #define SHD_MIXRGB_CLAMP 2
 
 /* subsurface */
 enum {
-#ifdef DNA_DEPRECATED
+#ifdef DNA_DEPRECATED_ALLOW
   SHD_SUBSURFACE_COMPATIBLE = 0,  // Deprecated
 #endif
   SHD_SUBSURFACE_CUBIC = 1,

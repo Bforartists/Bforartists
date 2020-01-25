@@ -208,22 +208,33 @@ def draw_material_settings(self, context):
     layout.use_property_decorate = False
 
     mat = context.material
-
+    
+    layout.use_property_split = False
     layout.prop(mat, "use_backface_culling")
+    layout.use_property_split = True
+    
     layout.prop(mat, "blend_method")
     layout.prop(mat, "shadow_method")
 
     row = layout.row()
-    row.active = ((mat.blend_method == 'CLIP') or (mat.shadow_method == 'CLIP'))
-    row.prop(mat, "alpha_threshold")
+    #row.active = ((mat.blend_method == 'CLIP') or (mat.shadow_method == 'CLIP'))
+    if ((mat.blend_method == 'CLIP') or (mat.shadow_method == 'CLIP')):
+        row.prop(mat, "alpha_threshold")
 
     if mat.blend_method not in {'OPAQUE', 'CLIP', 'HASHED'}:
         layout.prop(mat, "show_transparent_back")
-
-    layout.prop(mat, "use_screen_refraction")
-    layout.prop(mat, "refraction_depth")
-    layout.prop(mat, "use_sss_translucency")
-    layout.prop(mat, "pass_index")
+        
+    row = layout.row()       
+    row.use_property_split = False
+    row.prop(mat, "use_screen_refraction")
+    if mat.use_screen_refraction:
+        row.prop(mat, "refraction_depth", text = "")
+    
+    row = layout.row()  
+    row.use_property_split = False
+    row.prop(mat, "use_sss_translucency")
+    if mat.use_sss_translucency:
+        row.prop(mat, "pass_index", text = "")
 
 
 class EEVEE_MATERIAL_PT_settings(MaterialButtonsPanel, Panel):

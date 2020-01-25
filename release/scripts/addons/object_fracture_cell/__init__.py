@@ -22,10 +22,10 @@ bl_info = {
     "version": (0, 2),
     "blender": (2, 80, 0),
     "location": "Viewport Object Menu -> Quick Effects",
-    "description": "Fractured Object, Bomb, Projectile, Recorder",
+    "description": "Fractured Object Creation",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Object/CellFracture",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "object/cell_fracture.html",
     "category": "Object",
 }
 

@@ -46,14 +46,14 @@ def check_points_equal(point_a, point_b):
             abs(point_a[1] - point_b[1]) < 1e-6)
 
 match_number = r"-?\d+(\.\d+)?([eE][-+]?\d+)?"
-match_number_optional_fractional = r"-?\d+(\.\d*)?([eE][-+]?\d+)?"
 match_first_comma = r"^\s*(?=,)"
 match_comma_pair = r",\s*(?=,)"
 match_last_comma = r",\s*$"
 
-re_match_number_optional_fractional = re.compile(match_number_optional_fractional)
+match_number_optional_parts = r"(-?\d+(\.\d*)?([eE][-+]?\d+)?)|(-?\.\d+([eE][-+]?\d+)?)"
+re_match_number_optional_parts = re.compile(match_number_optional_parts)
 
-array_of_floats_pattern = f"({match_number})|{match_first_comma}|{match_comma_pair}|{match_last_comma}"
+array_of_floats_pattern = f"({match_number_optional_parts})|{match_first_comma}|{match_comma_pair}|{match_last_comma}"
 re_array_of_floats_pattern = re.compile(array_of_floats_pattern)
 
 def parse_array_of_floats(text):
@@ -82,7 +82,7 @@ def read_float(text: str, start_index: int = 0):
         return "0", start_index
 
     text_part = text[start_index:]
-    match = re_match_number_optional_fractional.match(text_part)
+    match = re_match_number_optional_parts.match(text_part)
 
     if match is None:
         raise Exception('Invalid float value near ' + text[start_index:start_index + 10])

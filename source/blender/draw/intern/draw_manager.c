@@ -84,13 +84,13 @@
 /* only for callbacks */
 #include "draw_cache_impl.h"
 
-#include "draw_mode_engines.h"
 #include "engines/eevee/eevee_engine.h"
 #include "engines/basic/basic_engine.h"
 #include "engines/workbench/workbench_engine.h"
 #include "engines/external/external_engine.h"
 #include "engines/gpencil/gpencil_engine.h"
 #include "engines/select/select_engine.h"
+#include "engines/overlay/overlay_engine.h"
 
 #include "GPU_context.h"
 
@@ -584,7 +584,7 @@ static void drw_context_state_init(void)
   }
 
   DST.draw_ctx.sh_cfg = GPU_SHADER_CFG_DEFAULT;
-  if (DST.draw_ctx.rv3d && DST.draw_ctx.rv3d->rflag & RV3D_CLIPPING) {
+  if (RV3D_CLIPPING_ENABLED(DST.draw_ctx.v3d, DST.draw_ctx.rv3d)) {
     DST.draw_ctx.sh_cfg = GPU_SHADER_CFG_CLIPPED;
   }
 }
@@ -603,7 +603,7 @@ static void draw_unit_state_create(void)
 
   infos->ob_index = 0;
   infos->ob_random = 0.0f;
-  infos->ob_neg_scale = 1.0f;
+  infos->ob_flag = 1.0f;
   copy_v3_fl(infos->ob_color, 1.0f);
 
   /* TODO(fclem) get rid of this. */
@@ -1235,7 +1235,7 @@ static void drw_engines_draw_text(void)
     PROFILE_START(stime);
 
     if (data->text_draw_cache) {
-      DRW_text_cache_draw(data->text_draw_cache, DST.draw_ctx.ar);
+      DRW_text_cache_draw(data->text_draw_cache, DST.draw_ctx.ar, DST.draw_ctx.v3d);
     }
 
     PROFILE_END_UPDATE(data->render_time, stime);
@@ -1336,80 +1336,7 @@ static void drw_engines_enable_from_engine(RenderEngineType *engine_type,
   }
 }
 
-static void drw_engines_enable_from_object_mode(void)
-{
-  use_drw_engine(&draw_engine_object_type);
-  /* TODO(fclem) remove this, it does not belong to it's own engine. */
-  use_drw_engine(&draw_engine_motion_path_type);
-}
-
-static void drw_engines_enable_from_paint_mode(int mode)
-{
-  switch (mode) {
-    case CTX_MODE_SCULPT:
-      use_drw_engine(&draw_engine_sculpt_type);
-      break;
-    case CTX_MODE_PAINT_WEIGHT:
-    case CTX_MODE_PAINT_VERTEX:
-      use_drw_engine(&draw_engine_paint_vertex_type);
-      break;
-    case CTX_MODE_PAINT_TEXTURE:
-      use_drw_engine(&draw_engine_paint_texture_type);
-      break;
-    default:
-      break;
-  }
-}
-
-static void drw_engines_enable_from_mode(int mode)
-{
-  switch (mode) {
-    case CTX_MODE_EDIT_MESH:
-      use_drw_engine(&draw_engine_edit_mesh_type);
-      break;
-    case CTX_MODE_EDIT_SURFACE:
-    case CTX_MODE_EDIT_CURVE:
-      use_drw_engine(&draw_engine_edit_curve_type);
-      break;
-    case CTX_MODE_EDIT_TEXT:
-      use_drw_engine(&draw_engine_edit_text_type);
-      break;
-    case CTX_MODE_EDIT_ARMATURE:
-      use_drw_engine(&draw_engine_edit_armature_type);
-      break;
-    case CTX_MODE_EDIT_METABALL:
-      use_drw_engine(&draw_engine_edit_metaball_type);
-      break;
-    case CTX_MODE_EDIT_LATTICE:
-      use_drw_engine(&draw_engine_edit_lattice_type);
-      break;
-    case CTX_MODE_PARTICLE:
-      use_drw_engine(&draw_engine_particle_type);
-      break;
-    case CTX_MODE_POSE:
-    case CTX_MODE_PAINT_WEIGHT:
-      /* The pose engine clears the depth of the default framebuffer
-       * to draw an object with `OB_DRAWXRAY`.
-       * (different of workbench that has its own framebuffer).
-       * So make sure you call its `draw_scene` after all the other engines. */
-      use_drw_engine(&draw_engine_pose_type);
-      break;
-    case CTX_MODE_SCULPT:
-    case CTX_MODE_PAINT_VERTEX:
-    case CTX_MODE_PAINT_TEXTURE:
-    case CTX_MODE_OBJECT:
-    case CTX_MODE_PAINT_GPENCIL:
-    case CTX_MODE_EDIT_GPENCIL:
-    case CTX_MODE_SCULPT_GPENCIL:
-    case CTX_MODE_WEIGHT_GPENCIL:
-      break;
-    default:
-      BLI_assert(!"Draw mode invalid");
-      break;
-  }
-}
-
-static void drw_engines_enable_from_overlays(int UNUSED(overlay_flag))
+static void drw_engines_enable_overlays(void)
 {
   use_drw_engine(&draw_engine_overlay_type);
 }
@@ -1421,36 +1348,19 @@ static void drw_engines_enable_basic(void)
   use_drw_engine(DRW_engine_viewport_basic_type.draw_engine);
 }
 
-static void drw_engines_enable(ViewLayer *view_layer,
+static void drw_engines_enable(ViewLayer *UNUSED(view_layer),
                                RenderEngineType *engine_type,
                                bool gpencil_engine_needed)
 {
-  Object *obact = OBACT(view_layer);
-  const enum eContextObjectMode mode = CTX_data_mode_enum_ex(
-      DST.draw_ctx.object_edit, obact, DST.draw_ctx.object_mode);
   View3D *v3d = DST.draw_ctx.v3d;
   const int drawtype = v3d->shading.type;
   const bool use_xray = XRAY_ENABLED(v3d);
 
   drw_engines_enable_from_engine(engine_type, drawtype, use_xray);
-  /* grease pencil */
   if (gpencil_engine_needed) {
     use_drw_engine(&draw_engine_gpencil_type);
   }
-
-  if (DRW_state_draw_support()) {
-    /* Draw paint modes first so that they are drawn below the wireframes. */
-    drw_engines_enable_from_paint_mode(mode);
-    drw_engines_enable_from_overlays(v3d->overlay.flag);
-    drw_engines_enable_from_object_mode();
-    drw_engines_enable_from_mode(mode);
-  }
-  else {
-    /* Force enable overlays engine for wireframe mode */
-    if (v3d->shading.type == OB_WIRE) {
-      drw_engines_enable_from_overlays(v3d->overlay.flag);
-    }
-  }
+  drw_engines_enable_overlays();
 }
 
 static void drw_engines_disable(void)
@@ -1696,6 +1606,8 @@ void DRW_draw_render_loop_ex(struct Depsgraph *depsgraph,
     drw_draw_background_alpha_under();
   }
 
+  drw_debug_draw();
+
   /* Fix 3D view being "laggy" on macos and win+nvidia. (See T56996, T61474) */
   GPU_flush();
 
@@ -1719,8 +1631,6 @@ void DRW_draw_render_loop_ex(struct Depsgraph *depsgraph,
      * Don't trust them! */
     DRW_state_reset();
   }
-
-  drw_debug_draw();
 
   GPU_depth_test(false);
   drw_engines_draw_text();
@@ -2243,7 +2153,7 @@ void DRW_draw_select_loop(struct Depsgraph *depsgraph,
 
   bool use_obedit = false;
   /* obedit_ctx_mode is used for selecting the right draw engines */
-  eContextObjectMode obedit_ctx_mode;
+  // eContextObjectMode obedit_ctx_mode;
   /* object_mode is used for filtering objects in the depsgraph */
   eObjectMode object_mode;
   int object_type = 0;
@@ -2252,11 +2162,11 @@ void DRW_draw_select_loop(struct Depsgraph *depsgraph,
     object_mode = obedit->mode;
     if (obedit->type == OB_MBALL) {
       use_obedit = true;
-      obedit_ctx_mode = CTX_MODE_EDIT_METABALL;
+      // obedit_ctx_mode = CTX_MODE_EDIT_METABALL;
     }
     else if (obedit->type == OB_ARMATURE) {
       use_obedit = true;
-      obedit_ctx_mode = CTX_MODE_EDIT_ARMATURE;
+      // obedit_ctx_mode = CTX_MODE_EDIT_ARMATURE;
     }
   }
   if (v3d->overlay.flag & V3D_OVERLAY_BONE_SELECT) {
@@ -2278,7 +2188,7 @@ void DRW_draw_select_loop(struct Depsgraph *depsgraph,
         use_obedit = true;
         object_type = obpose->type;
         object_mode = obpose->mode;
-        obedit_ctx_mode = CTX_MODE_POSE;
+        // obedit_ctx_mode = CTX_MODE_POSE;
       }
     }
   }
@@ -2292,23 +2202,21 @@ void DRW_draw_select_loop(struct Depsgraph *depsgraph,
 
   /* Get list of enabled engines */
   if (use_obedit) {
-    drw_engines_enable_from_paint_mode(obedit_ctx_mode);
-    drw_engines_enable_from_mode(obedit_ctx_mode);
+    drw_engines_enable_overlays();
   }
   else if (!draw_surface) {
     /* grease pencil selection */
     use_drw_engine(&draw_engine_gpencil_type);
 
-    drw_engines_enable_from_overlays(v3d->overlay.flag);
-    drw_engines_enable_from_object_mode();
+    drw_engines_enable_overlays();
   }
   else {
+    /* Draw surface for occlusion. */
     drw_engines_enable_basic();
     /* grease pencil selection */
     use_drw_engine(&draw_engine_gpencil_type);
 
-    drw_engines_enable_from_overlays(v3d->overlay.flag);
-    drw_engines_enable_from_object_mode();
+    drw_engines_enable_overlays();
   }
   drw_engines_data_validate();
 
@@ -2346,6 +2254,10 @@ void DRW_draw_select_loop(struct Depsgraph *depsgraph,
       FOREACH_OBJECT_IN_MODE_END;
     }
     else {
+      /* When selecting pose-bones in pose mode, check for visibility not select-ability
+       * as pose-bones have their own selection restriction flag. */
+      const bool use_pose_exception = (DST.draw_ctx.object_pose != NULL);
+
       const int object_type_exclude_select = (v3d->object_type_exclude_viewport |
                                               v3d->object_type_exclude_select);
       bool filter_exclude = false;
@@ -2353,8 +2265,19 @@ void DRW_draw_select_loop(struct Depsgraph *depsgraph,
         if (!BKE_object_is_visible_in_viewport(v3d, ob)) {
           continue;
         }
-        if ((ob->base_flag & BASE_SELECTABLE) &&
-            (object_type_exclude_select & (1 << ob->type)) == 0) {
+
+        if (use_pose_exception && (ob->mode & OB_MODE_POSE)) {
+          if ((ob->base_flag & BASE_VISIBLE_VIEWLAYER) == 0) {
+            continue;
+          }
+        }
+        else {
+          if ((ob->base_flag & BASE_SELECTABLE) == 0) {
+            continue;
+          }
+        }
+
+        if ((object_type_exclude_select & (1 << ob->type)) == 0) {
           if (object_filter_fn != NULL) {
             if (ob->base_flag & BASE_FROM_DUPLI) {
               /* pass (use previous filter_exclude value) */
@@ -2560,9 +2483,12 @@ void DRW_draw_depth_loop(struct Depsgraph *depsgraph,
 
   /* Get list of enabled engines */
   {
+    /* Required by `DRW_state_draw_support()` */
+    DST.draw_ctx.v3d = v3d;
+
     drw_engines_enable_basic();
     if (DRW_state_draw_support()) {
-      drw_engines_enable_from_object_mode();
+      drw_engines_enable_overlays();
     }
   }
 
@@ -2663,11 +2589,14 @@ static void draw_world_clip_planes_from_rv3d(GPUBatch *batch, const float world_
 /**
  * Clears the Depth Buffer and draws only the specified object.
  */
-void DRW_draw_depth_object(ARegion *ar, GPUViewport *viewport, Object *object)
+void DRW_draw_depth_object(ARegion *ar, View3D *v3d, GPUViewport *viewport, Object *object)
 {
   RegionView3D *rv3d = ar->regiondata;
 
   DRW_opengl_context_enable();
+  GPU_matrix_projection_set(rv3d->winmat);
+  GPU_matrix_set(rv3d->viewmat);
+  GPU_matrix_mul(object->obmat);
 
   /* Setup framebuffer */
   DefaultFramebufferList *fbl = GPU_viewport_framebuffer_list_get(viewport);
@@ -2675,10 +2604,9 @@ void DRW_draw_depth_object(ARegion *ar, GPUViewport *viewport, Object *object)
   GPU_framebuffer_bind(fbl->depth_only_fb);
   GPU_framebuffer_clear_depth(fbl->depth_only_fb, 1.0f);
   GPU_depth_test(true);
-  GPU_matrix_mul(object->obmat);
 
   const float(*world_clip_planes)[4] = NULL;
-  if (rv3d->rflag & RV3D_CLIPPING) {
+  if (RV3D_CLIPPING_ENABLED(v3d, rv3d)) {
     ED_view3d_clipping_set(rv3d);
     ED_view3d_clipping_local(rv3d, object->obmat);
     world_clip_planes = rv3d->clip_local;
@@ -2715,7 +2643,7 @@ void DRW_draw_depth_object(ARegion *ar, GPUViewport *viewport, Object *object)
       break;
   }
 
-  if (rv3d->rflag & RV3D_CLIPPING) {
+  if (RV3D_CLIPPING_ENABLED(v3d, rv3d)) {
     ED_view3d_clipping_disable();
   }
 
@@ -2865,21 +2793,9 @@ void DRW_engines_register(void)
   DRW_engine_register(&draw_engine_workbench_solid);
   DRW_engine_register(&draw_engine_workbench_transparent);
 
-  DRW_engine_register(&draw_engine_object_type);
-  DRW_engine_register(&draw_engine_edit_armature_type);
-  DRW_engine_register(&draw_engine_edit_curve_type);
-  DRW_engine_register(&draw_engine_edit_lattice_type);
-  DRW_engine_register(&draw_engine_edit_mesh_type);
-  DRW_engine_register(&draw_engine_edit_metaball_type);
-  DRW_engine_register(&draw_engine_edit_text_type);
-  DRW_engine_register(&draw_engine_motion_path_type);
-  DRW_engine_register(&draw_engine_overlay_type);
-  DRW_engine_register(&draw_engine_paint_texture_type);
-  DRW_engine_register(&draw_engine_paint_vertex_type);
-  DRW_engine_register(&draw_engine_particle_type);
-  DRW_engine_register(&draw_engine_pose_type);
-  DRW_engine_register(&draw_engine_sculpt_type);
   DRW_engine_register(&draw_engine_gpencil_type);
+
+  DRW_engine_register(&draw_engine_overlay_type);
   DRW_engine_register(&draw_engine_select_type);
 
   /* setup callbacks */

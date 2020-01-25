@@ -503,9 +503,6 @@ void wm_gizmo_calculate_scale(wmGizmo *gz, const bContext *C)
       /* Exclude matrix_offset from scale. */
       scale *= ED_view3d_pixel_size_no_ui_scale(rv3d, matrix_world[3]);
     }
-    else {
-      scale *= 0.02f;
-    }
   }
 
   gz->scale_final = gz->scale_basis * scale;
@@ -686,11 +683,13 @@ void WM_gizmo_properties_sanitize(PointerRNA *ptr, const bool no_context)
   RNA_STRUCT_END;
 }
 
-/** set all props to their default,
+/**
+ * Set all props to their default.
+ *
  * \param do_update: Only update un-initialized props.
  *
- * \note, there's nothing specific to gizmos here.
- * this could be made a general function.
+ * \note There's nothing specific to gizmos here.
+ * This could be made a general function.
  */
 bool WM_gizmo_properties_default(PointerRNA *ptr, const bool do_update)
 {

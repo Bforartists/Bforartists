@@ -18,6 +18,7 @@
 
 import bpy
 from bpy.app.handlers import persistent
+from mathutils import Euler
 import math
 from math import degrees, radians, pi
 import datetime
@@ -99,7 +100,8 @@ def sun_handler(scene):
 ############################################################################
 #
 # move_sun() will cycle through all the selected objects
-# and call set_sun_position to place them in the sky.
+# and call set_sun_position and set_sun_rotations
+# to place them in the sky.
 #
 ############################################################################
 
@@ -127,29 +129,25 @@ def move_sun(context):
             sun.theta = math.pi / 2 - sun_props.hdr_elevation
             sun.phi = -sun_props.hdr_azimuth
 
-            locX = math.sin(sun.phi) * math.sin(-sun.theta) * sun_props.sun_distance
-            locY = math.sin(sun.theta) * math.cos(sun.phi) * sun_props.sun_distance
-            locZ = math.cos(sun.theta) * sun_props.sun_distance
-            sun_props.sun_object.location = locX, locY, locZ
-            sun_props.sun_object.rotation_euler = (sun_props.hdr_elevation - pi/2,
-                                                   0, -sun_props.hdr_azimuth)
+            obj = sun_props.sun_object
+            set_sun_position(obj, sun_props.sun_distance)
+            rotation_euler = Euler((sun_props.hdr_elevation - pi/2,
+                                    0, -sun_props.hdr_azimuth))
+
+            set_sun_rotations(obj, rotation_euler)
         return
 
     local_time = sun_props.time
-    if sun_props.longitude > 0.0:
-        zone = sun_props.UTC_zone * -1
-    else:
-        zone = sun_props.UTC_zone
-        sun.use_daylight_savings = (addon_prefs.show_daylight_savings and
-                                    sun_props.use_daylight_savings)
+    zone = -sun_props.UTC_zone
+    sun.use_daylight_savings = sun_props.use_daylight_savings
     if sun.use_daylight_savings:
         zone -= 1
 
     north_offset = degrees(sun_props.north_offset)
 
     if addon_prefs.show_rise_set:
-        calc_sunrise_sunset(1)
-        calc_sunrise_sunset(0)
+        calc_sunrise_sunset(rise=True)
+        calc_sunrise_sunset(rise=False)
 
     get_sun_position(local_time, sun_props.latitude, sun_props.longitude,
             north_offset, zone, sun_props.month, sun_props.day, sun_props.year,
@@ -157,7 +155,7 @@ def move_sun(context):
 
     if sun_props.use_sky_texture and sun_props.sky_texture:
         sky_node = bpy.context.scene.world.node_tree.nodes.get(sun_props.sky_texture)
-        if sky_node is not None:
+        if sky_node is not None and sky_node.type == "TEX_SKY":
             locX = math.sin(sun.phi) * math.sin(-sun.theta)
             locY = math.sin(sun.theta) * math.cos(sun.phi)
             locZ = math.cos(sun.theta)
@@ -170,10 +168,9 @@ def move_sun(context):
             and sun_props.sun_object.name in context.view_layer.objects):
         obj = sun_props.sun_object
         set_sun_position(obj, sun_props.sun_distance)
-        if obj.type == 'LIGHT':
-            obj.rotation_euler = (
-                (math.radians(sun.elevation - 90), 0,
-                 math.radians(-sun.az_north)))
+        rotation_euler = Euler((math.radians(sun.elevation - 90), 0,
+                                math.radians(-sun.az_north)))
+        set_sun_rotations(obj, rotation_euler)
 
     # Sun collection
     if (addon_prefs.show_object_collection
@@ -237,30 +234,25 @@ def update_time(context):
             sun_props.day = dt.day
         if sun_props.month != dt.month:
             sun_props.month = dt.month
+    sun.year = sun_props.year
+    sun.longitude = sun_props.longitude
+    sun.latitude = sun_props.latitude
+    sun.UTC_zone = sun_props.UTC_zone
 
 
-def format_time(the_time, UTC_zone, daylight_savings, longitude):
-    hh = str(int(the_time))
-    min = (the_time - int(the_time)) * 60
-    sec = int((min - int(min)) * 60)
-    mm = "0" + str(int(min)) if min < 10 else str(int(min))
-    ss = "0" + str(sec) if sec < 10 else str(sec)
+def format_time(the_time, daylight_savings, longitude, UTC_zone=None):
+    if UTC_zone is not None:
+        if daylight_savings:
+            UTC_zone += 1
+        the_time -= UTC_zone
 
-    zone = UTC_zone
-    if(longitude < 0):
-        zone *= -1
-    if daylight_savings:
-        zone += 1
-    gt = int(the_time) - zone
+    the_time %= 24
 
-    if gt < 0:
-        gt = 24 + gt
-    elif gt > 23:
-        gt = gt - 24
-    gt = str(gt)
+    hh = int(the_time)
+    mm = (the_time - int(the_time)) * 60
+    ss = int((mm - int(mm)) * 60)
 
-    return ("Local: " + hh + ":" + mm + ":" + ss,
-            "UTC: " + gt + ":" + mm + ":" + ss)
+    return ("%02i:%02i:%02i" % (hh, mm, ss))
 
 
 def format_hms(the_time):
@@ -368,7 +360,7 @@ def get_sun_position(local_time, latitude, longitude, north_offset,
 
     exoatm_elevation = 90.0 - degrees(zenith)
 
-    if addon_prefs.show_refraction and sun_props.use_refraction:
+    if sun_props.use_refraction:
         if exoatm_elevation > 85.0:
             refraction_correction = 0.0
         else:
@@ -391,8 +383,7 @@ def get_sun_position(local_time, latitude, longitude, north_offset,
         solar_elevation = 90.0 - degrees(zenith)
 
     solar_azimuth = azimuth
-    if addon_prefs.show_north:
-        solar_azimuth += north_offset
+    solar_azimuth += north_offset
 
     sun.az_north = solar_azimuth
 
@@ -411,6 +402,20 @@ def set_sun_position(obj, distance):
     # Update selected object in viewport
     #----------------------------------------------
     obj.location = locX, locY, locZ
+
+
+def set_sun_rotations(obj, rotation_euler):
+    rotation_quaternion = rotation_euler.to_quaternion()
+    obj.rotation_quaternion = rotation_quaternion
+
+    if obj.rotation_mode in {'XZY', 'YXZ', 'YZX', 'ZXY','ZYX'}:
+        obj.rotation_euler = rotation_quaternion.to_euler(obj.rotation_mode)
+    else:
+        obj.rotation_euler = rotation_euler
+
+    rotation_axis_angle = obj.rotation_quaternion.to_axis_angle()
+    obj.rotation_axis_angle = (rotation_axis_angle[1],
+                               *rotation_axis_angle[0])
 
 
 def calc_sunrise_set_UTC(rise, jd, latitude, longitude):
@@ -458,10 +463,7 @@ def calc_solar_noon(jd, longitude, timezone, dst):
 
 
 def calc_sunrise_sunset(rise):
-    if sun.longitude > 0:
-        zone = sun.UTC_zone * -1
-    else:
-        zone = sun.UTC_zone
+    zone = -sun.UTC_zone
 
     jd = get_julian_day(sun.year, sun.month, sun.day)
     time_UTC = calc_sunrise_set_UTC(rise, jd, sun.latitude, sun.longitude)
@@ -475,10 +477,7 @@ def calc_sunrise_sunset(rise):
     if sun.use_daylight_savings:
         time_local += 60.0
         tl = time_local / 60.0
-    if tl < 0.0:
-        tl += 24.0
-    elif tl > 24.0:
-        tl -= 24.0
+    tl %= 24.0
     if rise:
         sun.sunrise.time = tl
         sun.sunrise.azimuth = sun.azimuth

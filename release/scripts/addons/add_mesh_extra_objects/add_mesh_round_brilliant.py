@@ -422,27 +422,21 @@ class MESH_OT_primitive_brilliant_add(Operator):
     def execute(self, context):
     
         if bpy.context.mode == "OBJECT":
-            if self.change == True and self.change != None:
+            if context.selected_objects != [] and context.active_object and \
+            ('Brilliant' in context.active_object.data.keys()) and (self.change == True):
                 obj = context.active_object
-                if 'Brilliant' in obj.data.keys():
-                    oldmesh = obj.data
-                    oldmeshname = obj.data.name
-                    mesh = add_mesh_Brilliant(context, self.s, self.table_w, self.crown_h,
-                          self.girdle_t, self.pavi_d, self.bezel_f,
-                          self.pavi_f, self.culet, self.girdle_real,
-                          self.keep_lga, self.g_real_smooth
-                          )
-                    obj.data = mesh
-                    for material in oldmesh.materials:
-                        obj.data.materials.append(material)
-                    bpy.data.meshes.remove(oldmesh)
-                    obj.data.name = oldmeshname
-                else:
-                    obj = addBrilliant(context, self.s, self.table_w, self.crown_h,
-                          self.girdle_t, self.pavi_d, self.bezel_f,
-                          self.pavi_f, self.culet, self.girdle_real,
-                          self.keep_lga, self.g_real_smooth
-                          )
+                oldmesh = obj.data
+                oldmeshname = obj.data.name
+                mesh = add_mesh_Brilliant(context, self.s, self.table_w, self.crown_h,
+                      self.girdle_t, self.pavi_d, self.bezel_f,
+                      self.pavi_f, self.culet, self.girdle_real,
+                      self.keep_lga, self.g_real_smooth
+                      )
+                obj.data = mesh
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
+                bpy.data.meshes.remove(oldmesh)
+                obj.data.name = oldmeshname
             else:
                 obj = addBrilliant(context, self.s, self.table_w, self.crown_h,
                           self.girdle_t, self.pavi_d, self.bezel_f,

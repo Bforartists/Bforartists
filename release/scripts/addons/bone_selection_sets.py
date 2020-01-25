@@ -24,8 +24,8 @@ bl_info = {
     "location": "Properties > Object Data (Armature) > Selection Sets",
     "description": "List of Bone sets for easy selection while animating",
     "warning": "",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Animation/SelectionSets",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "animation/bone_selection_sets.html",
     "category": "Animation",
 }
 

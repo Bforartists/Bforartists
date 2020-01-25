@@ -27,6 +27,8 @@
 #include "BLI_utildefines.h"
 #include "BLI_string.h"
 
+// #define DEBUG_OVERRIDE_TIMEIT
+
 #ifdef DEBUG_OVERRIDE_TIMEIT
 #  include "PIL_time_utildefines.h"
 #endif
@@ -225,7 +227,8 @@ bool RNA_struct_equals(Main *bmain, PointerRNA *ptr_a, PointerRNA *ptr_b, eRNACo
 
 /* Low-level functions, also used by non-override RNA API like copy or equality check. */
 
-/** Generic RNA property diff function.
+/**
+ * Generic RNA property diff function.
  *
  * \note about \a prop and \a prop_a/prop_b parameters:
  * the former is expected to be an 'un-resolved' one,
@@ -595,7 +598,6 @@ bool RNA_struct_override_matches(Main *bmain,
   const bool do_create = (flags & RNA_OVERRIDE_COMPARE_CREATE) != 0;
   const bool do_restore = (flags & RNA_OVERRIDE_COMPARE_RESTORE) != 0;
 
-//#define DEBUG_OVERRIDE_TIMEIT
 #ifdef DEBUG_OVERRIDE_TIMEIT
   static float _sum_time_global = 0.0f;
   static float _num_time_global = 0.0f;
@@ -814,8 +816,10 @@ bool RNA_struct_override_matches(Main *bmain,
   return matching;
 }
 
-/** Store needed second operands into \a storage data-block
- * for differential override operations. */
+/**
+ * Store needed second operands into \a storage data-block
+ * for differential override operations.
+ */
 bool RNA_struct_override_store(Main *bmain,
                                PointerRNA *ptr_local,
                                PointerRNA *ptr_reference,
@@ -890,8 +894,11 @@ static void rna_property_override_apply_ex(Main *bmain,
      * Note that here, src is the local saved ID, and dst is a copy of the linked ID (since we use
      * local ID as storage to apply local changes on top of a clean copy of the linked data). */
     PointerRNA private_ptr_item_dst, private_ptr_item_src, private_ptr_item_storage;
-    if (opop->subitem_local_name != NULL || opop->subitem_reference_name != NULL ||
-        opop->subitem_local_index != -1 || opop->subitem_reference_index != -1) {
+    if ((RNA_property_type(prop_dst) == PROP_COLLECTION &&
+         RNA_property_type(prop_src) == PROP_COLLECTION &&
+         (prop_storage == NULL || RNA_property_type(prop_storage) == PROP_COLLECTION)) &&
+        (opop->subitem_local_name != NULL || opop->subitem_reference_name != NULL ||
+         opop->subitem_local_index != -1 || opop->subitem_reference_index != -1)) {
       RNA_POINTER_INVALIDATE(&private_ptr_item_dst);
       RNA_POINTER_INVALIDATE(&private_ptr_item_src);
       RNA_POINTER_INVALIDATE(&private_ptr_item_storage);
@@ -972,8 +979,10 @@ static void rna_property_override_apply_ex(Main *bmain,
   }
 }
 
-/** Apply given \a override operations on \a ptr_dst, using \a ptr_src
- * (and \a ptr_storage for differential ops) as source. */
+/**
+ * Apply given \a override operations on \a ptr_dst, using \a ptr_src
+ * (and \a ptr_storage for differential ops) as source.
+ */
 void RNA_struct_override_apply(Main *bmain,
                                PointerRNA *ptr_dst,
                                PointerRNA *ptr_src,

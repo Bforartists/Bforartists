@@ -1141,6 +1141,9 @@ static void region_overlap_fix(ScrArea *sa, ARegion *ar)
     }
   }
 
+  /* Guard against flags slipping through that would have to be masked out in usages below. */
+  BLI_assert(align1 == RGN_ALIGN_ENUM_FROM_MASK(align1));
+
   /* translate or close */
   if (ar1) {
     if (align1 == RGN_ALIGN_LEFT) {
@@ -1244,6 +1247,20 @@ static void region_rect_recursive(
     alignment = RGN_ALIGN_NONE;
   }
 
+  /* If both the ARegion.sizex/y and the prefsize are 0, the region is tagged as too small, even
+   * before the layout for dynamic regions is created. #wm_draw_window_offscreen() allows the
+   * layout to be created despite the RGN_FLAG_TOO_SMALL flag being set. But there may still be
+   * regions that don't have a separate ARegionType.layout callback. For those, set a default
+   * prefsize so they can become visible. */
+  if ((ar->flag & RGN_FLAG_DYNAMIC_SIZE) && !(ar->type->layout)) {
+    if ((ar->sizex == 0) && (ar->type->prefsizex == 0)) {
+      ar->type->prefsizex = AREAMINX;
+    }
+    if ((ar->sizey == 0) && (ar->type->prefsizey == 0)) {
+      ar->type->prefsizey = HEADERY;
+    }
+  }
+
   /* prefsize, taking into account DPI */
   int prefsizex = UI_DPI_FAC * ((ar->sizex > 1) ? ar->sizex + 0.5f : ar->type->prefsizex);
   int prefsizey;
@@ -1280,11 +1297,12 @@ static void region_rect_recursive(
      */
     const int size_min[2] = {UI_UNIT_X, UI_UNIT_Y};
     rcti overlap_remainder_margin = *overlap_remainder;
+
     BLI_rcti_resize(&overlap_remainder_margin,
                     max_ii(0, BLI_rcti_size_x(overlap_remainder) - UI_UNIT_X / 2),
                     max_ii(0, BLI_rcti_size_y(overlap_remainder) - UI_UNIT_Y / 2));
-    ar->winrct.xmin = overlap_remainder_margin.xmin;
-    ar->winrct.ymin = overlap_remainder_margin.ymin;
+    ar->winrct.xmin = overlap_remainder_margin.xmin + ar->runtime.offset_x;
+    ar->winrct.ymin = overlap_remainder_margin.ymin + ar->runtime.offset_y;
     ar->winrct.xmax = ar->winrct.xmin + prefsizex - 1;
     ar->winrct.ymax = ar->winrct.ymin + prefsizey - 1;
 
@@ -1322,7 +1340,7 @@ static void region_rect_recursive(
   else if (alignment == RGN_ALIGN_TOP || alignment == RGN_ALIGN_BOTTOM) {
     rcti *winrct = (ar->overlap) ? overlap_remainder : remainder;
 
-    if (rct_fits(winrct, 'v', prefsizey) < 0) {
+    if ((prefsizey == 0) || (rct_fits(winrct, 'v', prefsizey) < 0)) {
       ar->flag |= RGN_FLAG_TOO_SMALL;
     }
     else {
@@ -1347,7 +1365,7 @@ static void region_rect_recursive(
   else if (ELEM(alignment, RGN_ALIGN_LEFT, RGN_ALIGN_RIGHT)) {
     rcti *winrct = (ar->overlap) ? overlap_remainder : remainder;
 
-    if (rct_fits(winrct, 'h', prefsizex) < 0) {
+    if ((prefsizex == 0) || (rct_fits(winrct, 'h', prefsizex) < 0)) {
       ar->flag |= RGN_FLAG_TOO_SMALL;
     }
     else {
@@ -1436,6 +1454,10 @@ static void region_rect_recursive(
         BLI_rcti_init(remainder, 0, 0, 0, 0);
       }
 
+      /* Fix any negative dimensions. This can happen when a quad split 3d view gets to small. (see
+       * T72200). */
+      BLI_rcti_sanitize(&ar->winrct);
+
       quad++;
     }
   }
@@ -1473,11 +1495,16 @@ static void region_rect_recursive(
         ar->winrct.xmin = ar->winrct.xmax;
         break;
       case RGN_ALIGN_LEFT:
+        ar->winrct.xmax = ar->winrct.xmin;
+        break;
       default:
         /* prevent winrct to be valid */
         ar->winrct.xmax = ar->winrct.xmin;
         break;
     }
+
+    /* Size on one axis is now 0, the other axis may still be invalid (negative) though. */
+    BLI_rcti_sanitize(&ar->winrct);
   }
 
   /* restore prev-split exception */
@@ -1494,6 +1521,8 @@ static void region_rect_recursive(
   if (!ar->overlap) {
     *overlap_remainder = *remainder;
   }
+
+  BLI_assert(BLI_rcti_is_valid(&ar->winrct));
 
   region_rect_recursive(sa, ar->next, remainder, overlap_remainder, quad);
 
@@ -1594,6 +1623,8 @@ static void ed_default_handlers(
     }
   }
   if (flag & ED_KEYMAP_TOOL) {
+    WM_event_add_keymap_handler_dynamic(
+        &ar->handlers, WM_event_get_keymap_from_toolsystem_fallback, sa);
     WM_event_add_keymap_handler_dynamic(&ar->handlers, WM_event_get_keymap_from_toolsystem, sa);
   }
   if (flag & ED_KEYMAP_VIEW2D) {
@@ -1947,7 +1978,7 @@ void ED_area_newspace(bContext *C, ScrArea *sa, int type, const bool skip_ar_exi
 
   if (sa->spacetype != type) {
     SpaceType *st;
-    SpaceLink *slold;
+    SpaceLink *slold = sa->spacedata.first;
     SpaceLink *sl;
     /* store sa->type->exit callback */
     void *sa_exit = sa->type ? sa->type->exit : NULL;
@@ -1963,7 +1994,7 @@ void ED_area_newspace(bContext *C, ScrArea *sa, int type, const bool skip_ar_exi
      */
     int header_alignment = ED_area_header_alignment_or_fallback(sa, -1);
     const bool sync_header_alignment = ((header_alignment != -1) &&
-                                        (sa->flag & AREA_FLAG_TEMP_TYPE) == 0);
+                                        ((slold->link_flag & SPACE_FLAG_TYPE_TEMPORARY) == 0));
 
     /* in some cases (opening temp space) we don't want to
      * call area exit callback, so we temporarily unset it */
@@ -1979,7 +2010,6 @@ void ED_area_newspace(bContext *C, ScrArea *sa, int type, const bool skip_ar_exi
     }
 
     st = BKE_spacetype_from_id(type);
-    slold = sa->spacedata.first;
 
     sa->spacetype = type;
     sa->type = st;
@@ -2010,6 +2040,10 @@ void ED_area_newspace(bContext *C, ScrArea *sa, int type, const bool skip_ar_exi
       slold->regionbase = sa->regionbase;
       sa->regionbase = sl->regionbase;
       BLI_listbase_clear(&sl->regionbase);
+      /* SPACE_FLAG_TYPE_WAS_ACTIVE is only used to go back to a previously active space that is
+       * overlapped by temporary ones. It's now properly activated, so the flag should be cleared
+       * at this point. */
+      sl->link_flag &= ~SPACE_FLAG_TYPE_WAS_ACTIVE;
 
       /* put in front of list */
       BLI_remlink(&sa->spacedata, sl);
@@ -2073,23 +2107,45 @@ void ED_area_newspace(bContext *C, ScrArea *sa, int type, const bool skip_ar_exi
   ED_area_tag_redraw(sa);
 }
 
-void ED_area_prevspace(bContext *C, ScrArea *sa)
+static SpaceLink *area_get_prevspace(ScrArea *sa)
 {
   SpaceLink *sl = sa->spacedata.first;
 
-  if (sl && sl->next) {
-    ED_area_newspace(C, sa, sl->next->spacetype, false);
+  /* First toggle to the next temporary space in the list. */
+  for (SpaceLink *sl_iter = sl->next; sl_iter; sl_iter = sl_iter->next) {
+    if (sl_iter->link_flag & SPACE_FLAG_TYPE_TEMPORARY) {
+      return sl_iter;
+    }
+  }
 
-    /* keep old spacedata but move it to end, so calling
-     * ED_area_prevspace once more won't open it again */
-    BLI_remlink(&sa->spacedata, sl);
-    BLI_addtail(&sa->spacedata, sl);
+  /* No temporary space, find the item marked as last active. */
+  for (SpaceLink *sl_iter = sl->next; sl_iter; sl_iter = sl_iter->next) {
+    if (sl_iter->link_flag & SPACE_FLAG_TYPE_WAS_ACTIVE) {
+      return sl_iter;
+    }
+  }
+
+  /* If neither is found, we can just return to the regular previous one. */
+  return sl->next;
+}
+
+void ED_area_prevspace(bContext *C, ScrArea *sa)
+{
+  SpaceLink *sl = sa->spacedata.first;
+  SpaceLink *prevspace = sl ? area_get_prevspace(sa) : NULL;
+
+  if (prevspace) {
+    ED_area_newspace(C, sa, prevspace->spacetype, false);
+    /* We've exited the space, so it can't be considered temporary anymore. */
+    sl->link_flag &= ~SPACE_FLAG_TYPE_TEMPORARY;
   }
   else {
     /* no change */
     return;
   }
-  sa->flag &= ~(AREA_FLAG_STACKED_FULLSCREEN | AREA_FLAG_TEMP_TYPE);
+  /* If this is a stacked fullscreen, changing to previous area exits it (meaning we're still in a
+   * fullscreen, but not in a stacked one). */
+  sa->flag &= ~AREA_FLAG_STACKED_FULLSCREEN;
 
   ED_area_tag_redraw(sa);
 
@@ -2532,7 +2588,7 @@ void ED_region_panels_draw(const bContext *C, ARegion *ar)
   /* scrollers */
   const rcti *mask = NULL;
   rcti mask_buf;
-  if (ar->runtime.category && (ar->alignment == RGN_ALIGN_RIGHT)) {
+  if (ar->runtime.category && (RGN_ALIGN_ENUM_FROM_MASK(ar->alignment) == RGN_ALIGN_RIGHT)) {
     UI_view2d_mask_from_win(v2d, &mask_buf);
     mask_buf.xmax -= UI_PANEL_CATEGORY_MARGIN_WIDTH;
     mask = &mask_buf;
@@ -3186,15 +3242,15 @@ void ED_region_image_metadata_panel_draw(ImBuf *ibuf, uiLayout *layout)
   IMB_metadata_foreach(ibuf, metadata_panel_draw_field, &ctx);
 }
 
-void ED_region_grid_draw(ARegion *ar, float zoomx, float zoomy)
+void ED_region_grid_draw(ARegion *ar, float zoomx, float zoomy, float x0, float y0)
 {
   float gridsize, gridstep = 1.0f / 32.0f;
   float fac, blendfac;
   int x1, y1, x2, y2;
 
-  /* the image is located inside (0, 0), (1, 1) as set by view2d */
-  UI_view2d_view_to_region(&ar->v2d, 0.0f, 0.0f, &x1, &y1);
-  UI_view2d_view_to_region(&ar->v2d, 1.0f, 1.0f, &x2, &y2);
+  /* the image is located inside (x0, y0), (x0+1, y0+1) as set by view2d */
+  UI_view2d_view_to_region(&ar->v2d, x0, y0, &x1, &y1);
+  UI_view2d_view_to_region(&ar->v2d, x0 + 1.0f, y0 + 1.0f, &x2, &y2);
 
   GPUVertFormat *format = immVertexFormat();
   uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
@@ -3294,7 +3350,9 @@ static void region_visible_rect_calc(ARegion *ar, rcti *rect)
   for (; arn; arn = arn->next) {
     if (ar != arn && arn->overlap) {
       if (BLI_rcti_isect(rect, &arn->winrct, NULL)) {
-        if (ELEM(arn->alignment, RGN_ALIGN_LEFT, RGN_ALIGN_RIGHT)) {
+        int alignment = RGN_ALIGN_ENUM_FROM_MASK(arn->alignment);
+
+        if (ELEM(alignment, RGN_ALIGN_LEFT, RGN_ALIGN_RIGHT)) {
           /* Overlap left, also check 1 pixel offset (2 regions on one side). */
           if (ABS(rect->xmin - arn->winrct.xmin) < 2) {
             rect->xmin = arn->winrct.xmax;
@@ -3305,7 +3363,7 @@ static void region_visible_rect_calc(ARegion *ar, rcti *rect)
             rect->xmax = arn->winrct.xmin;
           }
         }
-        else if (ELEM(arn->alignment, RGN_ALIGN_TOP, RGN_ALIGN_BOTTOM)) {
+        else if (ELEM(alignment, RGN_ALIGN_TOP, RGN_ALIGN_BOTTOM)) {
           /* Same logic as above for vertical regions. */
           if (ABS(rect->ymin - arn->winrct.ymin) < 2) {
             rect->ymin = arn->winrct.ymax;
@@ -3314,7 +3372,7 @@ static void region_visible_rect_calc(ARegion *ar, rcti *rect)
             rect->ymax = arn->winrct.ymin;
           }
         }
-        else if (arn->alignment == RGN_ALIGN_FLOAT) {
+        else if (alignment == RGN_ALIGN_FLOAT) {
           /* Skip floating. */
         }
         else {

@@ -113,7 +113,7 @@ def bmesh_face_points_random(f, num_points=1, margin=0.05):
     uniform_args = 0.0 + margin, 1.0 - margin
     vecs = [v.co for v in f.verts]
 
-    for i in range(num_points):
+    for _ in range(num_points):
         u1 = uniform(*uniform_args)
         u2 = uniform(*uniform_args)
         u_tot = u1 + u2
@@ -172,7 +172,7 @@ def bmesh_check_thick_object(obj, thickness):
             p_b = p - no_end
             p_dir = p_b - p_a
 
-            ok, co, no, index = ray_cast(p_a, p_dir, distance=p_dir.length)
+            ok, _co, no, index = ray_cast(p_a, p_dir, distance=p_dir.length)
 
             if ok:
                 # Add the face we hit
