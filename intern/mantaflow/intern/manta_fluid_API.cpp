@@ -372,7 +372,8 @@ void manta_smoke_export(MANTA *smoke,
   if (b)
     *b = smoke->getColorB();
   *obstacle = smoke->getObstacle();
-  *shadow = smoke->getShadow();
+  if (shadow)
+    *shadow = smoke->getShadow();
   *dt = 1;  // dummy value, not needed for smoke
   *dx = 1;  // dummy value, not needed for smoke
 }
@@ -557,9 +558,9 @@ float *manta_smoke_get_flame(MANTA *smoke)
 {
   return smoke->getFlame();
 }
-float *manta_smoke_get_shadow(MANTA *fluid)
+float *manta_smoke_get_shadow(MANTA *smoke)
 {
-  return fluid->getShadow();
+  return smoke->getShadow();
 }
 
 float *manta_smoke_get_color_r(MANTA *smoke)
@@ -863,4 +864,17 @@ float manta_liquid_get_snd_particle_velocity_y_at(MANTA *liquid, int i)
 float manta_liquid_get_snd_particle_velocity_z_at(MANTA *liquid, int i)
 {
   return liquid->getSndParticleVelocityZAt(i);
+}
+
+bool manta_liquid_flip_from_file(MANTA *liquid)
+{
+  return liquid->usingFlipFromFile();
+}
+bool manta_liquid_mesh_from_file(MANTA *liquid)
+{
+  return liquid->usingMeshFromFile();
+}
+bool manta_liquid_particle_from_file(MANTA *liquid)
+{
+  return liquid->usingParticleFromFile();
 }

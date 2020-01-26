@@ -26,7 +26,8 @@ bl_info = {
     "location": "File > Import-Export",
     "description": "Import-Export BVH from armature objects",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/latest/addons/io_anim_bvh.html",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "import_export/io_anim_bvh.html",
     "support": 'OFFICIAL',
     "category": "Import-Export",
 }

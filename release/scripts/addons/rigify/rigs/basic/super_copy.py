@@ -22,14 +22,13 @@ import bpy
 
 from ...base_rig import BaseRig
 
-from ...utils.layers import DEF_LAYER
 from ...utils.naming import strip_org, make_deformer_name
 from ...utils.widgets_basic import create_bone_widget, create_circle_widget
 
-from itertools import repeat
+from .raw_copy import RelinkConstraintsMixin
 
 
-class Rig(BaseRig):
+class Rig(BaseRig, RelinkConstraintsMixin):
     """ A "copy" rig.  All it does is duplicate the original bone and
         constrain it.
         This is a control and deformation rig.
@@ -46,14 +45,7 @@ class Rig(BaseRig):
 
         self.make_control = self.params.make_control
         self.make_widget  = self.params.make_widget
-
-        deform = self.params.make_deform
-        rename = self.params.rename_to_deform
-
-        self.make_deform  = deform and not rename
-        self.rename_deform = deform and rename
-
-        self.relink = self.params.relink_constraints
+        self.make_deform  = self.params.make_deform
 
 
     def generate_bones(self):
@@ -74,17 +66,10 @@ class Rig(BaseRig):
         if self.make_deform:
             self.set_bone_parent(bones.deform, bones.org, use_connect=False)
 
-        if self.relink:
-            self.generator.disable_auto_parent(bones.org)
+        new_parent = self.relink_bone_parent(bones.org)
 
-            parent_spec = self.params.parent_bone
-            if parent_spec:
-                old_parent = self.get_bone_parent(bones.org)
-                new_parent = self.find_relink_target(parent_spec, old_parent or '') or None
-                self.set_bone_parent(bones.org, new_parent)
-
-                if self.make_control:
-                    self.set_bone_parent(bones.ctrl, new_parent)
+        if self.make_control and new_parent:
+            self.set_bone_parent(bones.ctrl, new_parent)
 
 
     def configure_bones(self):
@@ -97,53 +82,11 @@ class Rig(BaseRig):
     def rig_bones(self):
         bones = self.bones
 
-        if self.relink:
-            for con in self.get_bone(bones.org).constraints:
-                parts = con.name.split('@')
-
-                if len(parts) > 1:
-                    self.relink_constraint(con, parts[1:])
+        self.relink_bone_constraints(bones.org)
 
         if self.make_control:
             # Constrain the original bone.
             self.make_constraint(bones.org, 'COPY_TRANSFORMS', bones.ctrl, insert_index=0)
-
-    def relink_constraint(self, con, specs):
-        if con.type == 'ARMATURE':
-            if len(specs) == 1:
-                specs = repeat(specs[0])
-            elif len(specs) != len(con.specs):
-                self.report_error("Constraint {} actually has {} targets", con.name, len(con.targets))
-
-            for tgt, spec in zip(con.targets, specs):
-                tgt.subtarget = self.find_relink_target(spec, tgt.subtarget)
-
-        else:
-            if len(specs) > 1:
-                self.report_error("Only the Armature constraint can have multiple '@' targets: {}", con.name)
-
-            con.subtarget = self.find_relink_target(specs[0], con.subtarget)
-
-    def find_relink_target(self, spec, old_target):
-        if spec == '':
-            return old_target
-        elif spec in {'DEF', 'MCH'}:
-            spec = spec + '-' + strip_org(old_target)
-
-        if spec not in self.obj.pose.bones:
-            # Hack: allow referring to copy rigs using Rename To Deform as DEF
-            if old_target.startswith('ORG-') and spec == make_deformer_name(strip_org(old_target)):
-                from . import copy_chain
-
-                owner = self.generator.bone_owners.get(old_target)
-
-                if ((isinstance(owner, Rig) and owner.rename_deform) or
-                    (isinstance(owner, copy_chain.Rig) and owner.rename_deforms)):
-                    return old_target
-
-            self.report_error("Cannot find bone '{}' for relinking", spec)
-
-        return spec
 
 
     def generate_widgets(self):
@@ -155,15 +98,6 @@ class Rig(BaseRig):
                 create_circle_widget(self.obj, bones.ctrl, radius=0.5)
             else:
                 create_bone_widget(self.obj, bones.ctrl)
-
-
-    def finalize(self):
-        if self.rename_deform:
-            new_name = self.rename_bone(self.bones.org, make_deformer_name(self.org_name))
-
-            bone = self.get_bone(new_name).bone
-            bone.use_deform = True
-            bone.layers = DEF_LAYER
 
 
     @classmethod
@@ -189,23 +123,7 @@ class Rig(BaseRig):
             description = "Create a deform bone for the copy"
         )
 
-        params.rename_to_deform = bpy.props.BoolProperty(
-            name        = "Rename To Deform",
-            default     = False,
-            description = "Rename the original bone itself to use as deform bone (advanced feature)"
-        )
-
-        params.relink_constraints = bpy.props.BoolProperty(
-            name        = "Relink Constraints",
-            default     = False,
-            description = "For constraints with names formed like 'base@bonename', use the part after '@' as the new subtarget after all bones are created. Use '@DEF' or '@MCH' to simply prepend the prefix"
-        )
-
-        params.parent_bone = bpy.props.StringProperty(
-            name        = "Parent",
-            default     = "",
-            description = "Replace the parent with a different bone after all bones are created. Using simply DEF or MCH will prepend the prefix instead"
-        )
+        self.add_relink_constraints_params(params)
 
 
     @classmethod
@@ -220,16 +138,7 @@ class Rig(BaseRig):
         r = layout.row()
         r.prop(params, "make_deform")
 
-        if params.make_deform:
-            r = layout.row()
-            r.prop(params, "rename_to_deform")
-
-        r = layout.row()
-        r.prop(params, "relink_constraints")
-
-        if params.relink_constraints:
-            r = layout.row()
-            r.prop(params, "parent_bone")
+        self.add_relink_constraints_ui(layout, params)
 
 
 def create_sample(obj):

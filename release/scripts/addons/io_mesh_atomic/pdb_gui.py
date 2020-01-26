@@ -115,7 +115,7 @@ class IMPORT_OT_pdb(Operator, ImportHelper):
         name="", default = 1.1, min=1.0, max=3.0,
         description="Distance between sticks measured in stick diameter")
     use_sticks_one_object: BoolProperty(
-        name="One object", default=True,
+        name="One object", default=False,
         description="All sticks are one object")
     use_sticks_one_object_nr: IntProperty(
         name = "No.", default=200, min=10,
@@ -124,7 +124,7 @@ class IMPORT_OT_pdb(Operator, ImportHelper):
         name = "", description="Path to your custom data file",
         maxlen = 256, default = "", subtype='FILE_PATH')
 
-    # This thing here just guarantees that the menu entry is not active when the 
+    # This thing here just guarantees that the menu entry is not active when the
     # check box in the addon preferences is not activated! See __init__.py
     @classmethod
     def poll(cls, context):
@@ -251,7 +251,7 @@ class EXPORT_OT_pdb(Operator, ExportHelper):
                                  " a proper element name")),
                default='1',)
 
-    # This thing here just guarantees that the menu entry is not active when the 
+    # This thing here just guarantees that the menu entry is not active when the
     # check box in the addon preferences is not activated! See __init__.py
     @classmethod
     def poll(cls, context):

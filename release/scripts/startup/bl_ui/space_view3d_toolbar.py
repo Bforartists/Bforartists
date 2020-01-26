@@ -569,12 +569,23 @@ class VIEW3D_PT_slots_projectpaint(View3DPanel, Panel):
             layout.operator("image.save_all_modified", text="Save All Images", icon='FILE_TICK')
 
 
+class VIEW3D_PT_mask(View3DPanel, Panel):
+    bl_category = "Tool"
+    bl_context = ".imagepaint"  # dot on purpose (access from topbar)
+    bl_label = "Masking"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        pass
+
+
 # TODO, move to space_view3d.py
 class VIEW3D_PT_stencil_projectpaint(View3DPanel, Panel):
     bl_category = "Tool"
     bl_context = ".imagepaint"  # dot on purpose (access from topbar)
-    bl_label = "Mask"
+    bl_label = "Stencil Mask"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = "VIEW3D_PT_mask"
     bl_ui_units_x = 14
 
     @classmethod
@@ -1206,6 +1217,7 @@ class VIEW3D_PT_tools_imagepaint_options_cavity(View3DPaintPanel, Panel):
     bl_context = ".imagepaint"  # dot on purpose (access from topbar)
     bl_label = "Cavity Mask"
     bl_parent_id = "VIEW3D_PT_tools_imagepaint_options"
+    bl_parent_id = "VIEW3D_PT_mask"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):
@@ -1896,7 +1908,7 @@ classes = (
     VIEW3D_PT_tools_curveedit_options_stroke,
     VIEW3D_PT_tools_armatureedit_options,
     VIEW3D_PT_tools_posemode_options,
-
+    
     VIEW3D_PT_slots_projectpaint,
     VIEW3D_PT_tools_brush_select,
     VIEW3D_PT_tools_brush_settings,
@@ -1906,7 +1918,6 @@ classes = (
     VIEW3D_PT_tools_brush_clone,
     TEXTURE_UL_texpaintslots,
     VIEW3D_MT_tools_projectpaint_uvlayer,
-    VIEW3D_PT_stencil_projectpaint,
     VIEW3D_PT_tools_brush_texture,
     VIEW3D_PT_tools_mask_texture,
     VIEW3D_PT_tools_brush_stroke,
@@ -1932,9 +1943,13 @@ classes = (
     VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar,
     VIEW3D_PT_tools_vertexpaint_options,
 
+    VIEW3D_PT_mask,
+    VIEW3D_PT_stencil_projectpaint,
+    VIEW3D_PT_tools_imagepaint_options_cavity,
+
     VIEW3D_PT_tools_imagepaint_symmetry,
     VIEW3D_PT_tools_imagepaint_options,
-    VIEW3D_PT_tools_imagepaint_options_cavity,
+    
     VIEW3D_PT_tools_imagepaint_options_external,
     VIEW3D_MT_tools_projectpaint_stencil,
 

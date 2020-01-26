@@ -4,7 +4,7 @@ import bpy
 import bmesh
 from math import acos, pi, sin, cos, atan, tan
 from mathutils import Vector
-from bpy_extras.object_utils import AddObjectHelper, object_data_add
+from bpy_extras.object_utils import AddObjectHelper
 
 # PKHG>DBG change the DBG_info and use extra_DBG_info
 DBG_info = {"MeshInfo": False, "StrutMesh": False, "HubMesh": False}
@@ -37,7 +37,7 @@ def vefm_add_object(selfobj):
     m.from_pydata(v, e, f)
     # useful for development when the mesh may be invalid.
     m.validate(verbose=False)
-    object_data_add(bpy.context, m, operator=None)
+    return m
 
 
 # extra test phase
