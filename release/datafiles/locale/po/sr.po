@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-04 15:50:16\n"
+"POT-Creation-Date: 2020-01-20 09:05:33\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -2160,6 +2160,10 @@ msgid "Minimum value for target channel range"
 msgstr "Поставља минималну Y вредност рендерованог оквира"
 
 
+msgid "Mix Mode"
+msgstr "Режим мешања"
+
+
 msgid "Sub-Target"
 msgstr "Други циљ"
 
@@ -2338,10 +2342,6 @@ msgstr "Копирај Z"
 
 msgid "Copy Rotation Constraint"
 msgstr "Умножи ограничења ротације"
-
-
-msgid "Mix Mode"
-msgstr "Режим мешања"
 
 
 msgid "Power"
@@ -4409,204 +4409,316 @@ msgid "Show image files"
 msgstr "Прикажи датотеке слика"
 
 
-msgid "Fluid Simulation Settings"
-msgstr "Подешавања симулације течности"
+msgid "Additional"
+msgstr "Додатно"
 
 
-msgid "Fluid simulation settings for an object taking part in the simulation"
-msgstr "Подешавања симулације течности за објекат који је део симулације"
+msgid "Density"
+msgstr "Густина"
 
 
-msgid "Type of participation in the fluid simulation"
-msgstr "Врста учешћа у симулацији течности"
+msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
+msgstr "Колико густина утиче на кретање дима (већа вредност утиче да се дим брже диже)"
 
 
-msgid "Domain"
-msgstr "Област"
+msgid "Heat"
+msgstr "Топлота"
 
 
-msgid "Fluid"
-msgstr "Течност"
+msgid "End"
+msgstr "Крај"
 
 
-msgid "Object adds fluid to the simulation"
-msgstr "Објекат додаје течност у симулацију"
+msgid "Frame on which the simulation stops"
+msgstr "Кадар почетка симулације"
 
 
-msgid "Object removes fluid from the simulation"
-msgstr "Објекат уклања течност из симулације"
+msgid "Start"
+msgstr "Почетак"
 
 
-msgid "Particle"
-msgstr "Честица"
-
-
-msgid "Control"
-msgstr "Контролор"
-
-
-msgid "Control Fluid Simulation Settings"
-msgstr "Контролише подешавања симулације течности"
-
-
-msgid "Fluid simulation settings for objects controlling the motion of fluid in the simulation"
-msgstr "Подешавања судара објеката у симулацији физике"
-
-
-msgid "End Time"
-msgstr "Крајње време"
-
-
-msgid "Quality which is used for object sampling (higher = better but slower)"
-msgstr "Квалитет коришћен за узорке објекта (што више то је бољи квалитет, али спорије)"
-
-
-msgid "Start Time"
-msgstr "Одстрани"
-
-
-msgid "Reverse Frames"
-msgstr "Обрнути кадрови"
-
-
-msgid "Reverse control object movement"
-msgstr "Обрнута контрола кретања објекта"
-
-
-msgid "Velocity Radius"
-msgstr "Радиус убрзања"
-
-
-msgid "Velocity Strength"
-msgstr "Јачина убрзања"
-
-
-msgid "Fluid simulation settings for the domain of a fluid simulation"
-msgstr "Подешавања судара објеката у симулацији физике"
-
-
-msgid "Compressibility"
-msgstr "Компресуј"
-
-
-msgid "Fluid Mesh Vertices"
-msgstr "Темена меша течности"
-
-
-msgid "Generate Particles"
-msgstr "Генериши честице"
-
-
-msgid "Preview Resolution"
-msgstr "Резолуција прегледа"
-
-
-msgid "Preview"
-msgstr "Преглед"
+msgid "Frame on which the simulation starts"
+msgstr "Кадар од кога почиње симулација"
 
 
 msgid "Final"
 msgstr "Коначно"
 
 
-msgid "Display final quality results"
-msgstr "Прикажи резултат у најбољем квалитету"
+msgid "Cell Size"
+msgstr "Величина ћелије"
 
 
-msgid "Simulation Speed"
-msgstr "Брзина анимације"
+msgid "Clipping"
+msgstr "Исецање"
 
 
-msgid "Real World Size"
-msgstr "Реална величина света"
+msgid "Red"
+msgstr "Црвена"
 
 
-msgid "Size of the simulation domain in meters"
-msgstr "Физичка величина подручја симулације (m)"
+msgid "Green"
+msgstr "Зелена"
 
 
-msgid "No Slip"
-msgstr "Нема спавања"
+msgid "Blue"
+msgstr "Плава"
 
 
-msgid "Partial Slip"
-msgstr "Брзина честица"
+msgid "Color Grid"
+msgstr "Мрежа боја"
 
 
-msgid "Free Slip"
-msgstr "Слободно"
+msgid "Smoke density grid"
+msgstr "Мрежа густине дима"
 
 
-msgid "Surface Smoothing"
-msgstr "Умекшање површи"
+msgid "Cubic"
+msgstr "Кубично"
 
 
-msgid "Surface Subdivisions"
-msgstr "Издељеност површи"
+msgid "Thickness"
+msgstr "Дебљина"
 
 
-msgid "Reverse fluid frames"
-msgstr "Обрни кадрове течности"
+msgid "Dissolve Speed"
+msgstr "Брзина растапања"
 
 
-msgid "Generate Speed Vectors"
-msgstr "Генериши информације о систему"
+msgid "res"
+msgstr "рез"
 
 
-msgid "How to display the mesh in the viewport"
-msgstr "Боја у зениту"
+msgid "Smoke Grid Resolution"
+msgstr "Резолуција мреже дима"
+
+
+msgid "Ignition"
+msgstr "Паљење"
+
+
+msgid "Minimum temperature of flames"
+msgstr "Најмања температура пламена"
+
+
+msgid "Maximum temperature of flames"
+msgstr "Највећа температура пламена"
+
+
+msgid "Smoke"
+msgstr "Дим"
+
+
+msgid "Smoke Color"
+msgstr "Боја дима"
+
+
+msgid "Color of smoke emitted from burning fuel"
+msgstr "Боја дима који емитује запаљено гориво"
+
+
+msgid "Vorticity"
+msgstr "Брзина"
+
+
+msgid "Domain"
+msgstr "Област"
+
+
+msgid "Emitter"
+msgstr "Емитер"
+
+
+msgid "Method for sampling the high resolution flow"
+msgstr "Метода узорковања тока високе резолуције"
+
+
+msgid "Full Sample"
+msgstr "Цео екран"
+
+
+msgid "Nearest"
+msgstr "Најближе"
+
+
+msgid "Preview"
+msgstr "Преглед"
+
+
+msgid "Radius"
+msgstr "Радиус"
+
+
+msgid "Fluid Mesh Vertices"
+msgstr "Темена меша течности"
+
+
+msgid "Strength of noise"
+msgstr "Јачина шума"
+
+
+msgid "Time"
+msgstr "Време"
+
+
+msgid "Wavelet"
+msgstr "Талас"
+
+
+msgid "Compression"
+msgstr "Компресија"
+
+
+msgid "Compression method to be used"
+msgstr "Избор метода спајања."
+
+
+msgid "Effective but slow compression"
+msgstr "Ефикасна, али спора компресија"
+
+
+msgid "Number"
+msgstr "Број"
+
+
+msgid "Cache Compression"
+msgstr "Компресија"
+
+
+msgid "Heavy"
+msgstr "Тешко"
+
+
+msgid "p0"
+msgstr "п0"
+
+
+msgid "Start point"
+msgstr "Почетна тачка"
+
+
+msgid "Adjust simulation speed"
+msgstr "Подеси брзину симулације"
+
+
+msgid "Adaptive Domain"
+msgstr "Прилагодљиви домен"
+
+
+msgid "Bottom"
+msgstr "Одоздо"
+
+
+msgid "Top"
+msgstr "Одозго"
+
+
+msgid "Dissolve Smoke"
+msgstr "Растапање дима"
+
+
+msgid "Using 1/x "
+msgstr "Користи 1/x "
+
+
+msgid "Tracer"
+msgstr "Стаза"
 
 
 msgid "Viscosity Exponent"
 msgstr "Изложилац"
 
 
+msgid "Amount of turbulence/rotation in fluid"
+msgstr "Вредност турбуленције/ротације у течности"
+
+
+msgid "Smoke collision settings"
+msgstr "Подешавања судара дима"
+
+
+msgid "Collision"
+msgstr "Сударање"
+
+
+msgid "Vertex Group"
+msgstr "Група темена"
+
+
+msgid "Add smoke"
+msgstr "Додај дим"
+
+
+msgid "Fire + Smoke"
+msgstr "Ватра и дим"
+
+
+msgid "Add fire and smoke"
+msgstr "Додај ватру и дим"
+
+
+msgid "Fire"
+msgstr "Ватра"
+
+
+msgid "Add fire"
+msgstr "Додај ватру"
+
+
+msgid "Flame Rate"
+msgstr "Учесталост пламена"
+
+
+msgid "Particle systems emitted from the object"
+msgstr "Систем честица који емитује објекат"
+
+
+msgid "Color of smoke"
+msgstr "Боја дима"
+
+
+msgid "Subframes"
+msgstr "Подкадрови"
+
+
+msgid "Mapping"
+msgstr "Мапирање"
+
+
+msgid "Texture mapping type"
+msgstr "Врста мапирања текстуре"
+
+
+msgid "Generated"
+msgstr "Генерисано"
+
+
+msgid "Use UV layer for texture coordinates"
+msgstr "Користи UV слој за координате текстуре"
+
+
+msgid "Z-offset of texture mapping"
+msgstr "Z одстојање мапе текстуре"
+
+
+msgid "Absolute Density"
+msgstr "Апсолутна густина"
+
+
 msgid "Initial Velocity"
 msgstr "Почетна брзина"
 
 
-msgid "Initial velocity of fluid"
-msgstr "Почетна брзина течности"
+msgid "Use Texture"
+msgstr "Користи текстуру"
 
 
-msgid "Export Animated Mesh"
-msgstr "Извези анимирани меш"
+msgid "Initial"
+msgstr "Почетно"
 
 
-msgid "Shell"
-msgstr "Шкољка"
-
-
-msgid "Use only the outer shell of the mesh"
-msgstr "Користи само спољну шкољку меша"
-
-
-msgid "Both"
-msgstr "Обе"
-
-
-msgid "Local Coordinates"
-msgstr "Локалне координате"
-
-
-msgid "Impact Factor"
-msgstr "Фактор утицаја"
-
-
-msgid "Fluid simulation settings for objects removing fluids from the simulation"
-msgstr "Подешавања судара објеката у симулацији физике"
-
-
-msgid "Fluid simulation settings for objects storing fluid particles generated by the simulation"
-msgstr "Подешавања судара објеката у симулацији физике"
-
-
-msgid "Alpha Influence"
-msgstr "Утицај:"
-
-
-msgid "Tracer"
-msgstr "Стаза"
+msgid "Normal"
+msgstr "Нормално"
 
 
 msgid "Freestyle Line Set"
@@ -4659,14 +4771,6 @@ msgstr "Име збирке линија"
 
 msgid "Line set name"
 msgstr "Име збирке линија"
-
-
-msgid "End"
-msgstr "Крај"
-
-
-msgid "Start"
-msgstr "Почетак"
 
 
 msgid "Selection by Visibility"
@@ -4777,10 +4881,6 @@ msgid "Quadratic"
 msgstr "Квадратна"
 
 
-msgid "Cubic"
-msgstr "Кубично"
-
-
 msgid "Circular"
 msgstr "Кружно"
 
@@ -4885,10 +4985,6 @@ msgid "Show Points"
 msgstr "Прикажи тачке"
 
 
-msgid "Thickness"
-msgstr "Дебљина"
-
-
 msgid "Direction"
 msgstr "Смер"
 
@@ -4899,10 +4995,6 @@ msgstr "Додај ефекат четкице"
 
 msgid "Subtract effect of brush"
 msgstr "Одузми ефекат четкице"
-
-
-msgid "Radius"
-msgstr "Радиус"
 
 
 msgid "Radius of the brush in pixels"
@@ -5089,10 +5181,6 @@ msgid "Use Vertex Groups"
 msgstr "Користи групе темена"
 
 
-msgid "Vertex Group"
-msgstr "Група темена"
-
-
 msgid "Count"
 msgstr "Број"
 
@@ -5119,6 +5207,10 @@ msgstr "Раст"
 
 msgid "Fade"
 msgstr "Нестајање"
+
+
+msgid "Both"
+msgstr "Обе"
 
 
 msgid "Hook Modifier"
@@ -5236,18 +5328,6 @@ msgstr "Активни слој"
 
 msgid "Channels to display when drawing the histogram"
 msgstr "Канали за приказ у хистогрму"
-
-
-msgid "Red"
-msgstr "Црвена"
-
-
-msgid "Green"
-msgstr "Зелена"
-
-
-msgid "Blue"
-msgstr "Плава"
 
 
 msgid "Show Line"
@@ -5626,10 +5706,6 @@ msgid "Use Sculpt"
 msgstr "Користи вајање"
 
 
-msgid "Use Texture"
-msgstr "Користи текстуру"
-
-
 msgid "Use Vertex"
 msgstr "Користи темена"
 
@@ -5992,14 +6068,6 @@ msgstr "Поравнај текст и лево и десно"
 
 msgid "Align to the left and the right, with equal character spacing"
 msgstr "Поравнај текст лево и десно, са истим размаком знакова"
-
-
-msgid "Top"
-msgstr "Одозго"
-
-
-msgid "Bottom"
-msgstr "Одоздо"
 
 
 msgid "Body Text"
@@ -6386,10 +6454,6 @@ msgid "Generated grid to test UV mappings"
 msgstr "Направи мрежу за тестирање UV мапирања"
 
 
-msgid "Color Grid"
-msgstr "Мрежа боја"
-
-
 msgid "Generated improved UV grid to test UV mappings"
 msgstr "Ширина слике"
 
@@ -6466,10 +6530,6 @@ msgid "Movie file"
 msgstr "Датотека филма"
 
 
-msgid "Generated"
-msgstr "Генерисано"
-
-
 msgid "Generated image"
 msgstr "Генерисана слика"
 
@@ -6480,6 +6540,10 @@ msgstr "Погледач"
 
 msgid "Compositing node viewer"
 msgstr "Погледач чвора слагања"
+
+
+msgid "Tiled"
+msgstr "Поплочано"
 
 
 msgid "Settings for stereo 3d"
@@ -6650,10 +6714,6 @@ msgid "Intensity"
 msgstr "Интензитет"
 
 
-msgid "Clipping"
-msgstr "Исецање"
-
-
 msgid "Active Shape Index"
 msgstr "Индекс активног сенчења"
 
@@ -6720,6 +6780,10 @@ msgstr "Нити косе"
 
 msgid "Cloth"
 msgstr "Тканина"
+
+
+msgid "Fluid"
+msgstr "Течност"
 
 
 msgid "Roughness"
@@ -7318,10 +7382,6 @@ msgid "Parent Vertices"
 msgstr "Родитељска темена"
 
 
-msgid "Particle systems emitted from the object"
-msgstr "Систем честица који емитује објекат"
-
-
 msgid "Current pose for armatures"
 msgstr "Текућа поза костура"
 
@@ -7490,10 +7550,6 @@ msgid "Color Maximum"
 msgstr "Максимална боја"
 
 
-msgid "Number"
-msgstr "Број"
-
-
 msgid "Adaptive Subframe Threshold"
 msgstr "Праг спајања"
 
@@ -7654,8 +7710,8 @@ msgid "Dummy"
 msgstr "Лутка"
 
 
-msgid "Normal"
-msgstr "Нормално"
+msgid "Particle"
+msgstr "Честица"
 
 
 msgid "Path End"
@@ -7696,10 +7752,6 @@ msgstr "Реагуј на"
 
 msgid "Death"
 msgstr "Смрт"
-
-
-msgid "Collision"
-msgstr "Сударање"
 
 
 msgid "Reactor"
@@ -7786,24 +7838,12 @@ msgid "Random Size"
 msgstr "Насумична величина"
 
 
-msgid "Subframes"
-msgstr "Подкадрови"
-
-
 msgid "Rotate the surface tangent"
 msgstr "Ротирање тангенте површи"
 
 
-msgid "Tip"
-msgstr "Савет"
-
-
 msgid "Particle Type"
 msgstr "Врста честица"
-
-
-msgid "Emitter"
-msgstr "Емитер"
 
 
 msgid "Automatic Subframes"
@@ -8768,10 +8808,6 @@ msgid "Precision"
 msgstr "Прецизност"
 
 
-msgid "Initial"
-msgstr "Почетно"
-
-
 msgid "Max Step"
 msgstr "Макс. корак"
 
@@ -8834,10 +8870,6 @@ msgstr "Слике се уписују у боји"
 
 msgid "Images are saved with RGB and Alpha data (if supported)"
 msgstr "Слике се уписују у боји са провидношћу (ако је могуће)"
-
-
-msgid "Compression"
-msgstr "Компресија"
 
 
 msgid "Codec"
@@ -9240,10 +9272,6 @@ msgid "Curve used for the curve mapping"
 msgstr "Крива коришћена за мапирање криве"
 
 
-msgid "Mapping"
-msgstr "Мапирање"
-
-
 msgid "Select the mapping type"
 msgstr "Изабери врсту мапирања"
 
@@ -9572,6 +9600,10 @@ msgstr "Кључ"
 
 msgid "Snap"
 msgstr "Лепљење"
+
+
+msgid "Fluid Presets"
+msgstr "Својства течности:"
 
 
 msgid "Material Specials"
@@ -10107,10 +10139,6 @@ msgid "Explode"
 msgstr "Експозиција"
 
 
-msgid "Fluid Simulation"
-msgstr "Симулација течности"
-
-
 msgid "Ocean"
 msgstr "Океан"
 
@@ -10119,8 +10147,8 @@ msgid "Particle Instance"
 msgstr "Честице"
 
 
-msgid "Smoke"
-msgstr "Дим"
+msgid "Fluid Simulation"
+msgstr "Симулација течности"
 
 
 msgid "Soft Body"
@@ -10487,10 +10515,6 @@ msgid "Cut Edges"
 msgstr "Исеци ивице"
 
 
-msgid "Fluid Simulation Modifier"
-msgstr "Модификатор симулације честица"
-
-
 msgid "Fluid simulation modifier"
 msgstr "Модификатор симулације честица"
 
@@ -10585,10 +10609,6 @@ msgstr "Мод времена"
 
 msgid "Use the time from the scene"
 msgstr "Користи време из сцене"
-
-
-msgid "Time"
-msgstr "Време"
 
 
 msgid "Mirror Object"
@@ -11442,10 +11462,6 @@ msgid "Active Track Index"
 msgstr "Активни индекс праћења"
 
 
-msgid "Nearest"
-msgstr "Најближе"
-
-
 msgid "Bilinear"
 msgstr "Билинеарно"
 
@@ -12108,6 +12124,10 @@ msgstr "Мање од"
 
 msgid "Greater Than"
 msgstr "Веће од"
+
+
+msgid "Compare"
+msgstr "Упореди"
 
 
 msgid "Modulo"
@@ -14624,10 +14644,6 @@ msgid "Select Control Point Row"
 msgstr "Изабери низ контролних тачака"
 
 
-msgid "Compare"
-msgstr "Упореди"
-
-
 msgid "Equal"
 msgstr "Једнако"
 
@@ -15558,11 +15574,6 @@ msgstr "Копирај потезе"
 
 msgid "Copy selected Grease Pencil points and strokes"
 msgstr "Копира изабране потезе скице"
-
-
-msgctxt "Operator"
-msgid "Grease Pencil Add New"
-msgstr "Нова скица"
 
 
 msgid "Delete selected Grease Pencil strokes, vertices, or frames"
@@ -18377,33 +18388,12 @@ msgstr "Врста разбијања"
 
 
 msgctxt "Operator"
-msgid "Quick Fluid"
-msgstr "Брза течност"
-
-
-msgid "Keep the fluid objects visible during rendering"
-msgstr "Одређује ниво издељености објекта током рендеринга"
-
-
-msgid "Fluid Style"
-msgstr "Врста течност"
-
-
-msgid "Basic"
-msgstr "Основно"
-
-
-msgctxt "Operator"
 msgid "Quick Fur"
 msgstr "Брзо крзно"
 
 
 msgid "Fur Density"
 msgstr "Густина крзна"
-
-
-msgid "Heavy"
-msgstr "Тешко"
 
 
 msgid "View %"
@@ -18425,10 +18415,6 @@ msgstr "Одређује ниво издељености објекта токо
 
 msgid "Smoke Style"
 msgstr "Начин увећавања"
-
-
-msgid "Fire"
-msgstr "Ватра"
 
 
 msgctxt "Operator"
@@ -19674,10 +19660,6 @@ msgstr "Додаје ограничења крутог тела активном
 msgctxt "Operator"
 msgid "Calculate Mass"
 msgstr "Израчунај путање"
-
-
-msgid "Density"
-msgstr "Густина"
 
 
 msgid "Material Preset"
@@ -22348,10 +22330,6 @@ msgid "System"
 msgstr "Систем"
 
 
-msgid "Fluid Presets"
-msgstr "Својства течности:"
-
-
 msgctxt "Operator"
 msgid "Scale"
 msgstr "Повећај/смањи"
@@ -22402,20 +22380,16 @@ msgid "Movement"
 msgstr "Кретање"
 
 
+msgid "Border Collisions"
+msgstr "Ивица судара"
+
+
 msgid "Force Fields"
 msgstr "Fh сила "
 
 
 msgid "Dynamics"
 msgstr "Динамичко"
-
-
-msgid "Adaptive Domain"
-msgstr "Прилагодљиви домен"
-
-
-msgid "Behavior"
-msgstr "Понашање"
 
 
 msgid "Self Collision"
@@ -22670,6 +22644,10 @@ msgid "Point select mode"
 msgstr "Избор тачака"
 
 
+msgid "Tip"
+msgstr "Савет"
+
+
 msgid "Tip select mode"
 msgstr "Избор врхова"
 
@@ -22798,32 +22776,12 @@ msgid "Target Particle System"
 msgstr "Систем честица мете"
 
 
-msgid "Cache Compression"
-msgstr "Компресија"
-
-
-msgid "Compression method to be used"
-msgstr "Избор метода спајања."
-
-
 msgid "No compression"
 msgstr "Компресија"
 
 
-msgid "Effective but slow compression"
-msgstr "Ефикасна, али спора компресија"
-
-
 msgid "Cache file path"
 msgstr "Путања до складишта"
-
-
-msgid "Frame on which the simulation stops"
-msgstr "Кадар почетка симулације"
-
-
-msgid "Frame on which the simulation starts"
-msgstr "Кадар од кога почиње симулација"
 
 
 msgid "Cache Step"
@@ -22998,12 +22956,12 @@ msgid "File Paths"
 msgstr "Путање датотеке"
 
 
-msgid "Edit Methods"
-msgstr "Методе уређивања"
-
-
 msgid "Experimental"
 msgstr "Прошири водоравно"
+
+
+msgid "Edit Methods"
+msgstr "Методе уређивања"
 
 
 msgid "Default paths for external files"
@@ -24150,10 +24108,6 @@ msgid "Draw stylized strokes using Freestyle"
 msgstr "Цртај слободоручне стилизоване потезе"
 
 
-msgid "Full Sample"
-msgstr "Цео екран"
-
-
 msgid "Save for every anti-aliasing sample the entire RenderLayer results (this solves anti-aliasing issues with compositing)"
 msgstr "Чува за сваки узорак умекшавања целокупан резултат рендерованих слојева (како би избегао проблеме умекшавања приликом слагања)"
 
@@ -24530,6 +24484,10 @@ msgid "Convert input to float data"
 msgstr "Претвори улаз у децимални податак"
 
 
+msgid "Reverse Frames"
+msgstr "Обрнути кадрови"
+
+
 msgid "Use Translation"
 msgstr "Користи премештање"
 
@@ -24802,214 +24760,6 @@ msgid "Point in a shape key"
 msgstr "Тачка у кључу облика"
 
 
-msgid "Smoke collision settings"
-msgstr "Подешавања судара дима"
-
-
-msgid "Collision Type"
-msgstr "Врста судара"
-
-
-msgid "Collision type"
-msgstr "Врста судара"
-
-
-msgid "Static"
-msgstr "Статично"
-
-
-msgid "Non moving obstacle"
-msgstr "Непомична препрека"
-
-
-msgid "Rigid"
-msgstr "Круто"
-
-
-msgid "Rigid obstacle"
-msgstr "Крута пепрека"
-
-
-msgid "Animated"
-msgstr "Анимирано"
-
-
-msgid "Animated obstacle"
-msgstr "Анимирана препрека"
-
-
-msgid "Additional"
-msgstr "Додатно"
-
-
-msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Колико густина утиче на кретање дима (већа вредност утиче да се дим брже диже)"
-
-
-msgid "Amplification"
-msgstr "Дуплирање"
-
-
-msgid "Heat"
-msgstr "Топлота"
-
-
-msgid "Cell Size"
-msgstr "Величина ћелије"
-
-
-msgid "Border Collisions"
-msgstr "Ивица судара"
-
-
-msgid "Vertically Open"
-msgstr "Отвори вертикално"
-
-
-msgid "Collide All"
-msgstr "Сударај све"
-
-
-msgid "Smoke collides with every side"
-msgstr "Дим се судара са свим странама"
-
-
-msgid "Smoke density grid"
-msgstr "Мрежа густине дима"
-
-
-msgid "Dissolve Speed"
-msgstr "Брзина растапања"
-
-
-msgid "res"
-msgstr "рез"
-
-
-msgid "Smoke Grid Resolution"
-msgstr "Резолуција мреже дима"
-
-
-msgid "Ignition"
-msgstr "Паљење"
-
-
-msgid "Minimum temperature of flames"
-msgstr "Најмања температура пламена"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Највећа температура пламена"
-
-
-msgid "Smoke Color"
-msgstr "Боја дима"
-
-
-msgid "Color of smoke emitted from burning fuel"
-msgstr "Боја дима који емитује запаљено гориво"
-
-
-msgid "Vorticity"
-msgstr "Брзина"
-
-
-msgid "Method for sampling the high resolution flow"
-msgstr "Метода узорковања тока високе резолуције"
-
-
-msgid "Wavelet"
-msgstr "Талас"
-
-
-msgid "FFT"
-msgstr "FFT"
-
-
-msgid "p0"
-msgstr "п0"
-
-
-msgid "Start point"
-msgstr "Почетна тачка"
-
-
-msgid "Strength of noise"
-msgstr "Јачина шума"
-
-
-msgid "Adjust simulation speed"
-msgstr "Подеси брзину симулације"
-
-
-msgid "Dissolve Smoke"
-msgstr "Растапање дима"
-
-
-msgid "Using 1/x "
-msgstr "Користи 1/x "
-
-
-msgid "Amount of turbulence/rotation in fluid"
-msgstr "Вредност турбуленције/ротације у течности"
-
-
-msgid "Smoke flow settings"
-msgstr "Подешавање тока дима"
-
-
-msgid "Flame Rate"
-msgstr "Учесталост пламена"
-
-
-msgid "Color of smoke"
-msgstr "Боја дима"
-
-
-msgid "Delete smoke from simulation"
-msgstr "Избриши дим из симулације"
-
-
-msgid "Add smoke"
-msgstr "Додај дим"
-
-
-msgid "Fire + Smoke"
-msgstr "Ватра и дим"
-
-
-msgid "Add fire and smoke"
-msgstr "Додај ватру и дим"
-
-
-msgid "Add fire"
-msgstr "Додај ватру"
-
-
-msgid "Maximum distance from mesh surface to emit smoke"
-msgstr "Поставља максималну X вредност рендерованог оквира"
-
-
-msgid "Texture mapping type"
-msgstr "Врста мапирања текстуре"
-
-
-msgid "Use UV layer for texture coordinates"
-msgstr "Користи UV слој за координате текстуре"
-
-
-msgid "Z-offset of texture mapping"
-msgstr "Z одстојање мапе текстуре"
-
-
-msgid "Absolute Density"
-msgstr "Апсолутна густина"
-
-
-msgid "Only allow given density value in emitter area"
-msgstr "Дозволи само изабрану густину у подручју емитовања"
-
-
 msgid "Aero"
 msgstr "Аеро"
 
@@ -25024,6 +24774,10 @@ msgstr "Величина лопте"
 
 msgid "Bending"
 msgstr "Савијање"
+
+
+msgid "Collision Type"
+msgstr "Врста судара"
 
 
 msgid "Choose Collision Type"
@@ -25741,10 +25495,6 @@ msgid "Brush Texture Slot"
 msgstr "Слот текстуре четкице"
 
 
-msgid "Tiled"
-msgstr "Поплочано"
-
-
 msgid "Stencil"
 msgstr "Матрица"
 
@@ -26375,6 +26125,10 @@ msgstr "Заобљеност"
 
 msgid "Shade Down"
 msgstr "Доња сенка"
+
+
+msgid "Animated"
+msgstr "Анимирано"
 
 
 msgid "Changed"
@@ -27811,15 +27565,6 @@ msgid "Draw:"
 msgstr "Цртај:"
 
 
-msgid "Edit:"
-msgstr "Уреди:"
-
-
-msgctxt "Operator"
-msgid "Flip Direction"
-msgstr "Промени смер"
-
-
 msgid "Active Layer:      "
 msgstr "Активни слој:"
 
@@ -27853,12 +27598,9 @@ msgid "Data Source:"
 msgstr "Извор података:"
 
 
-msgid "Select:"
-msgstr "Изабери:"
-
-
-msgid "Cleanup:"
-msgstr "Очисти:"
+msgctxt "Operator"
+msgid "Flip Direction"
+msgstr "Промени смер"
 
 
 msgctxt "Operator"
@@ -27918,6 +27660,14 @@ msgstr "Датум"
 
 msgid "Buffer"
 msgstr "Бафер"
+
+
+msgid "Front Faces Only"
+msgstr "Само предње странице"
+
+
+msgid "Edge To Edge"
+msgstr "Ивица до ивице"
 
 
 msgid "Roughness 1"
@@ -28001,6 +27751,10 @@ msgstr "Уклони четкицу"
 
 msgid "Color Layer"
 msgstr "Боја слоја"
+
+
+msgid "Real World Size"
+msgstr "Реална величина света"
 
 
 msgid "Bounciness"
@@ -28204,14 +27958,6 @@ msgid "More"
 msgstr "Више"
 
 
-msgid "Unified Size"
-msgstr "Јединствена величина"
-
-
-msgid "Unified Strength"
-msgstr "Јединствена јачина"
-
-
 msgctxt "Operator"
 msgid "New"
 msgstr "Ново"
@@ -28294,10 +28040,6 @@ msgstr "Острво"
 
 msgid "Image*"
 msgstr "Слика*"
-
-
-msgid "Edge To Edge"
-msgstr "Ивица до ивице"
 
 
 msgctxt "Operator"
@@ -29233,6 +28975,14 @@ msgid "Spot Size"
 msgstr "Величина пројекције"
 
 
+msgid "Auto Normalize"
+msgstr "Ауто-нормализација"
+
+
+msgid "Multi-Paint"
+msgstr "Вишеструко бојење"
+
+
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Брза измена"
@@ -29258,18 +29008,6 @@ msgstr "Морате генерисати оставу тачака"
 
 msgid "in memory to enable editing!"
 msgstr "у меморији како би омогућили уређивање!"
-
-
-msgid "Front Faces Only"
-msgstr "Само предње странице"
-
-
-msgid "Auto Normalize"
-msgstr "Ауто-нормализација"
-
-
-msgid "Multi-Paint"
-msgstr "Вишеструко бојење"
 
 
 msgid "Const"
@@ -29408,6 +29146,10 @@ msgstr "Не могу да направим спојену страницу"
 msgctxt "Action"
 msgid "Group"
 msgstr "Група"
+
+
+msgid "Basic"
+msgstr "Основно"
 
 
 msgid "Scene not found"

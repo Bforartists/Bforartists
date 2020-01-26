@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-04 15:50:16\n"
+"POT-Creation-Date: 2020-01-20 09:05:33\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -1493,60 +1493,12 @@ msgid "Filter Text"
 msgstr "निस्पादक पाठ"
 
 
-msgid "Domain"
-msgstr "प्रक्षेत्र"
+msgid "Density"
+msgstr "घनत्व"
 
 
-msgid "Fluid"
-msgstr "तरल पदार्थ"
-
-
-msgid "Attraction Radius"
-msgstr "आकर्षण त्रिज्या"
-
-
-msgid "Attraction Strength"
-msgstr "आकर्षण शक्ति"
-
-
-msgid "End Time"
-msgstr "समाप्त समय"
-
-
-msgid "Start Time"
-msgstr "प्रारंभिक समय"
-
-
-msgid "Velocity Radius"
-msgstr "वेग त्रिज्या"
-
-
-msgid "Velocity Strength"
-msgstr "वेग शक्ति"
-
-
-msgid "Final"
-msgstr "समाप्तिम"
-
-
-msgid "Shell"
-msgstr "कवच"
-
-
-msgid "Both"
-msgstr "दोनों"
-
-
-msgid "Drops"
-msgstr "बूँदें"
-
-
-msgid "Border"
-msgstr "सीमांत"
-
-
-msgid "Contour"
-msgstr "परिरेखा"
+msgid "Heat"
+msgstr "गर्मी"
 
 
 msgid "End"
@@ -1555,6 +1507,98 @@ msgstr "समाप्त"
 
 msgid "Start"
 msgstr "प्रारंभ"
+
+
+msgid "Final"
+msgstr "समाप्तिम"
+
+
+msgid "Red"
+msgstr "लाल"
+
+
+msgid "Green"
+msgstr "हरा"
+
+
+msgid "Blue"
+msgstr "नीला"
+
+
+msgid "Flame"
+msgstr "लौ"
+
+
+msgid "Color Grid"
+msgstr "रंग जालक"
+
+
+msgid "Cubic"
+msgstr "घन"
+
+
+msgid "Smoke"
+msgstr "धुआँ"
+
+
+msgid "Domain"
+msgstr "प्रक्षेत्र"
+
+
+msgid "Full Sample"
+msgstr "पूर्ण नमूना"
+
+
+msgid "Radius"
+msgstr "त्रिज्या"
+
+
+msgid "Time"
+msgstr "समय"
+
+
+msgid "Number"
+msgstr "संख्या"
+
+
+msgid "Heavy"
+msgstr "भारी"
+
+
+msgid "Delete"
+msgstr "मिटाएँ"
+
+
+msgid "Bottom"
+msgstr "नीचे"
+
+
+msgid "Top"
+msgstr "शीर्ष"
+
+
+msgid "Collision"
+msgstr "टक्कर"
+
+
+msgid "Fire"
+msgstr "अग्नि"
+
+
+msgid "Add fire"
+msgstr "अग्नि में जोड़ें"
+
+
+msgid "Generated"
+msgstr "उत्पन्न"
+
+
+msgid "Border"
+msgstr "सीमांत"
+
+
+msgid "Contour"
+msgstr "परिरेखा"
 
 
 msgid "Visibility"
@@ -1567,10 +1611,6 @@ msgstr "रेखा खंड"
 
 msgid "Grease Pencil Frame"
 msgstr "तैलीय पेंसिल गठन"
-
-
-msgid "Cubic"
-msgstr "घन"
 
 
 msgid "Grease Pencil Layer"
@@ -1587,10 +1627,6 @@ msgstr "वस्तु कारण"
 
 msgid "Direction"
 msgstr "दिशा"
-
-
-msgid "Radius"
-msgstr "त्रिज्या"
 
 
 msgid "Grid"
@@ -1693,6 +1729,10 @@ msgid "Fade"
 msgstr "धुंधलापन"
 
 
+msgid "Both"
+msgstr "दोनों"
+
+
 msgctxt "Curve"
 msgid "Curve"
 msgstr "वक्र"
@@ -1736,18 +1776,6 @@ msgstr "जालक प्रंमाण"
 
 msgid "Red Green Blue"
 msgstr "लाल हरा नीला"
-
-
-msgid "Red"
-msgstr "लाल"
-
-
-msgid "Green"
-msgstr "हरा"
-
-
-msgid "Blue"
-msgstr "नीला"
 
 
 msgid "Show Line"
@@ -1902,14 +1930,6 @@ msgid "Use Vertex"
 msgstr "शिरोबिन्दु का उपयोग करें"
 
 
-msgid "Absolute Jitter"
-msgstr "निरपेक्ष घबराना"
-
-
-msgid "Jittering happens in screen space, not relative to brush size"
-msgstr "नहीं तूलिका आकार के सापेक्ष चित्रपट रिक्त स्थान में jittering होता है"
-
-
 msgid "Relax"
 msgstr "शिथिल करो"
 
@@ -2008,14 +2028,6 @@ msgstr "प्रतिचित्रण के लिए यूवी उप�
 
 msgid "Flush"
 msgstr "फ्लश"
-
-
-msgid "Top"
-msgstr "शीर्ष"
-
-
-msgid "Bottom"
-msgstr "नीचे"
 
 
 msgid "Body Text"
@@ -2126,10 +2138,6 @@ msgid "Blank"
 msgstr "रिक्त"
 
 
-msgid "Color Grid"
-msgstr "रंग जालक"
-
-
 msgid "Generated Width"
 msgstr "उत्पन्न चौड़ाई"
 
@@ -2162,16 +2170,16 @@ msgid "Movie file"
 msgstr "चलचित्र संचिका"
 
 
-msgid "Generated"
-msgstr "उत्पन्न"
-
-
 msgid "Generated image"
 msgstr "उत्पन्न छवि"
 
 
 msgid "Viewer"
 msgstr "प्रदर्शक"
+
+
+msgid "Tiled"
+msgstr "खण्ड की गईं"
 
 
 msgid "Multilayer"
@@ -2252,6 +2260,10 @@ msgstr "बाल"
 
 msgid "Cloth"
 msgstr "कपड़ा"
+
+
+msgid "Fluid"
+msgstr "तरल पदार्थ"
 
 
 msgid "Edges"
@@ -2414,10 +2426,6 @@ msgid "Clump"
 msgstr "गुच्छ"
 
 
-msgid "Number"
-msgstr "संख्या"
-
-
 msgid "Damp"
 msgstr "आद्र"
 
@@ -2466,10 +2474,6 @@ msgid "Death"
 msgstr "मृत्यु"
 
 
-msgid "Collision"
-msgstr "टक्कर"
-
-
 msgid "Halo"
 msgstr "तेजोमंडल"
 
@@ -2504,10 +2508,6 @@ msgstr "कण संख्या दिखाएँ"
 
 msgid "Tweak"
 msgstr "सुधार"
-
-
-msgid "Tip"
-msgstr "युक्ति"
 
 
 msgid "Use Count"
@@ -2928,16 +2928,16 @@ msgid "Channel"
 msgstr "सरणि"
 
 
-msgid "Delete"
-msgstr "मिटाएँ"
-
-
 msgid "Key"
 msgstr "कुंजी"
 
 
 msgid "Snap"
 msgstr "स्नैप"
+
+
+msgid "Fluid Presets"
+msgstr "पूर्वनिश्चित द्रव"
 
 
 msgid "UV"
@@ -3125,10 +3125,6 @@ msgid "Ocean"
 msgstr "महासागर"
 
 
-msgid "Smoke"
-msgstr "धुआँ"
-
-
 msgid "Soft Body"
 msgstr "लचीला-पदार्थ"
 
@@ -3195,10 +3191,6 @@ msgstr "बाध्य"
 
 msgid "None "
 msgstr "कोई नहीं "
-
-
-msgid "Time"
-msgstr "समय"
 
 
 msgid "Copy"
@@ -3968,11 +3960,6 @@ msgid "Convert Grease Pencil"
 msgstr "तैलीय पेंसिल में परिवर्तित"
 
 
-msgctxt "Operator"
-msgid "Grease Pencil Add New"
-msgstr "तैलीय पेंसिल नया जोड़ें"
-
-
 msgid "Limit"
 msgstr "सीमा"
 
@@ -4292,18 +4279,6 @@ msgid "Remove the selected particle system"
 msgstr "चयनित कण प्रणाली हटाएँ"
 
 
-msgid "Basic"
-msgstr "बुनियादी"
-
-
-msgid "Heavy"
-msgstr "भारी"
-
-
-msgid "Fire"
-msgstr "अग्नि"
-
-
 msgctxt "Operator"
 msgid "Select Camera"
 msgstr "प्रतिबिंबक का चयन करें"
@@ -4392,10 +4367,6 @@ msgstr "ऑब्जेक्ट को सक्रिय ऑब्जेक्
 msgctxt "Operator"
 msgid "Calculate Mass"
 msgstr "द्रव्यमान गणना"
-
-
-msgid "Density"
-msgstr "घनत्व"
 
 
 msgctxt "Operator"
@@ -4915,10 +4886,6 @@ msgid "Tiles"
 msgstr "खण्ड"
 
 
-msgid "Fluid Presets"
-msgstr "पूर्वनिश्चित द्रव"
-
-
 msgctxt "Operator"
 msgid "Scale"
 msgstr "प्रमाण"
@@ -5026,6 +4993,10 @@ msgstr "चाबियाँ"
 
 msgid "Editable"
 msgstr "संपादन योग्य"
+
+
+msgid "Tip"
+msgstr "युक्ति"
 
 
 msgid "Puff"
@@ -5170,10 +5141,6 @@ msgstr "एकाधिक तन्त्र"
 
 msgid "More than one rendering engine is available"
 msgstr "एक से अधिक  प्रतिपादन तन्त्र उपलब्ध है"
-
-
-msgid "Full Sample"
-msgstr "पूर्ण नमूना"
 
 
 msgid "Max Impulse"
@@ -5322,26 +5289,6 @@ msgid "Energy"
 msgstr "ऊर्जा"
 
 
-msgid "Collision Type"
-msgstr "टक्कर प्रकार"
-
-
-msgid "Rigid"
-msgstr "कठोर"
-
-
-msgid "Heat"
-msgstr "गर्मी"
-
-
-msgid "Flame"
-msgstr "लौ"
-
-
-msgid "Add fire"
-msgstr "अग्नि में जोड़ें"
-
-
 msgid "Aero"
 msgstr "तीर"
 
@@ -5356,6 +5303,10 @@ msgstr "झुकाव"
 
 msgid "Choke"
 msgstr "रोधन"
+
+
+msgid "Collision Type"
+msgstr "टक्कर प्रकार"
 
 
 msgid "Choose Collision Type"
@@ -5487,10 +5438,6 @@ msgstr "वस्तु के लिए तालाबंदी"
 
 msgid "3D"
 msgstr "त्रि-आयाम"
-
-
-msgid "Tiled"
-msgstr "खण्ड की गईं"
 
 
 msgid "Density Factor"
@@ -6143,13 +6090,13 @@ msgstr "चित्रण:"
 
 
 msgctxt "Operator"
-msgid "Flip Direction"
-msgstr "दिशा पलटें"
+msgid "Poly"
+msgstr "बहु"
 
 
 msgctxt "Operator"
-msgid "Poly"
-msgstr "बहु"
+msgid "Flip Direction"
+msgstr "दिशा पलटें"
 
 
 msgctxt "Operator"
@@ -6196,6 +6143,10 @@ msgstr "पुराने"
 
 msgid "Date"
 msgstr "दिनांक"
+
+
+msgid "Edge To Edge"
+msgstr "किनारे किनारे करने के लिए"
 
 
 msgid "Roughness 1"
@@ -6380,10 +6331,6 @@ msgstr "द्वीप"
 
 msgid "Image*"
 msgstr "छवि *"
-
-
-msgid "Edge To Edge"
-msgstr "किनारे किनारे करने के लिए"
 
 
 msgctxt "Operator"
@@ -7010,6 +6957,10 @@ msgid "Group"
 msgstr "समूह"
 
 
+msgid "Basic"
+msgstr "बुनियादी"
+
+
 msgid "Channels are visible in Graph Editor for editing"
 msgstr "सरणिों के लिए संपादन बिंदुरेख संपादक में दिखाई दे रहे हैं"
 
@@ -7387,10 +7338,6 @@ msgstr "दृश्य ढूँढ नहीं सकता"
 
 msgid "Bake failed: invalid canvas"
 msgstr "भर्जन में विफल: अमान्य चित्रपटी"
-
-
-msgid "There should be only one domain object"
-msgstr "एक ही प्रक्षेत्र वस्तु होना चाहिए"
 
 
 msgid "Air"

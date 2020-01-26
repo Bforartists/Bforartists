@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-04 15:50:16\n"
+"POT-Creation-Date: 2020-01-20 09:05:33\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -6252,8 +6252,24 @@ msgid "Shading"
 msgstr "Cieniowanie"
 
 
-msgid "Particle"
-msgstr "Cząstka"
+msgid "Time"
+msgstr "Czas"
+
+
+msgid "Delete"
+msgstr "Usuń"
+
+
+msgid "Bottom"
+msgstr "Dół"
+
+
+msgid "Top"
+msgstr "Góra"
+
+
+msgid "Mapping"
+msgstr "Mapowanie"
 
 
 msgid "Line Style"
@@ -6360,14 +6376,6 @@ msgid "Dimensions"
 msgstr "Wymiary"
 
 
-msgid "Top"
-msgstr "Góra"
-
-
-msgid "Bottom"
-msgstr "Dół"
-
-
 msgid "Font"
 msgstr "Czcionka"
 
@@ -6420,6 +6428,10 @@ msgid "Mass"
 msgstr "Masa"
 
 
+msgid "Particle"
+msgstr "Cząstka"
+
+
 msgid "World"
 msgstr "Świat"
 
@@ -6461,10 +6473,6 @@ msgid "Mouse"
 msgstr "Mysz"
 
 
-msgid "Mapping"
-msgstr "Mapowanie"
-
-
 msgid "Max Angle"
 msgstr "Największy kąt"
 
@@ -6483,10 +6491,6 @@ msgstr "Łącznik Y"
 
 msgid "ID Type"
 msgstr "Typ ID"
-
-
-msgid "Delete"
-msgstr "Usuń"
 
 
 msgid "Key"
@@ -6535,10 +6539,6 @@ msgstr "Lokalnie"
 
 msgid "Overwrite"
 msgstr "Nadpisz"
-
-
-msgid "Time"
-msgstr "Czas"
 
 
 msgid "Copy"
@@ -6785,10 +6785,6 @@ msgid "Dynamics"
 msgstr "Dynamika"
 
 
-msgid "Behavior"
-msgstr "Zachowanie"
-
-
 msgid "Timeline"
 msgstr "Oś czasu"
 
@@ -6821,14 +6817,6 @@ msgid "Sepia"
 msgstr "Sepia"
 
 
-msgid "Static"
-msgstr "Statyczna"
-
-
-msgid "Animated"
-msgstr "Animowana"
-
-
 msgid "Timeline and playback controls"
 msgstr "Oś czasu oraz kontrolki odtwarzania"
 
@@ -6839,6 +6827,10 @@ msgstr "Głośnik"
 
 msgid "3D"
 msgstr "3D"
+
+
+msgid "Animated"
+msgstr "Animowana"
 
 
 msgid "Laplacian"
@@ -7076,10 +7068,6 @@ msgstr "Nie spakowano żadnych nowych plików"
 
 msgid "Unable to pack file, source path '%s' not found"
 msgstr "Nie można spakować pliku, nie odnaleziono ścieżki źródłowej '%s'"
-
-
-msgid "Image '%s' skipped, movies and image sequences not supported"
-msgstr "Obraz '%s' pominięty, filmy i sekwencje obrazów nie są obsługiwane"
 
 
 msgid "Error creating file '%s'"
@@ -7984,10 +7972,6 @@ msgid "Cannot paint stroke"
 msgstr "Nie mogę narysować kreski"
 
 
-msgid "Failed to find Grease Pencil data to draw into"
-msgstr "Nie udało się odnaleźć danych szkicownika w których można zapisać"
-
-
 msgid "Active region not set"
 msgstr "Nie ustawiony aktywny region"
 
@@ -8042,6 +8026,10 @@ msgstr "Brak aktywnej klatki do usunięcia"
 
 msgid "No active area"
 msgstr "Brak aktywnego obszaru"
+
+
+msgid "Failed to find Grease Pencil data to draw into"
+msgstr "Nie udało się odnaleźć danych szkicownika w których można zapisać"
 
 
 msgid "Grease Pencil operator is already active"
@@ -9397,30 +9385,6 @@ msgid "Copy particle systems to selected: %d done, %d failed"
 msgstr "Kopiowanie systemu cząstek na zaznaczone: wykonano %d, nie powiodło się %d"
 
 
-msgid "There should be only one domain object"
-msgstr "Powinien być tylko jeden obiekt domena"
-
-
-msgid "No domain object found"
-msgstr "Nie odnaleziono obiektu domena"
-
-
-msgid "Cannot bake with more than 256 objects"
-msgstr "Nie można wypalić więcej niż 256 obiektów"
-
-
-msgid "No fluid input objects in the scene"
-msgstr "Brak w scenie źródłowego obiektu płyn"
-
-
-msgid "No frames to export (check your animation range settings)"
-msgstr "Brak klatek do eksportu (Sprawdź ustawienia zakresu swojej animacji)"
-
-
-msgid "Invalid object matrix"
-msgstr "Nieprawidłowa macierz obiektu"
-
-
 msgid "No Rigid Body World to add Rigid Body Constraint to"
 msgstr "Brak świata bryły sztywnej, do którego można dodać ogranicznik Bryła Sztywna"
 
@@ -9809,12 +9773,12 @@ msgid "Packed MultiLayer files cannot be painted: %s"
 msgstr "Spakowany plik MultiLayer nie może być malowany: %s"
 
 
-msgid "Image requires 4 color channels to paint"
-msgstr "Obraz wymaga 4 kanałów koloru do malowania"
-
-
 msgid "Packed MultiLayer files cannot be painted"
 msgstr "Spakowane pliki MultiLayer nie mogą być malowane"
+
+
+msgid "Image requires 4 color channels to paint"
+msgstr "Obraz wymaga 4 kanałów koloru do malowania"
 
 
 msgid "No active mesh object"

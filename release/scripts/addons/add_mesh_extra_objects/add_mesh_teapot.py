@@ -32,13 +32,15 @@ class AddTeapot(bpy.types.Operator):
             )
 
     def execute(self, context):
+        cmode = bpy.context.mode
         verts, faces = make_teapot(self.objecttype,
                                    self.resolution)
         # Actually create the mesh object from this geometry data.
         obj = create_mesh_object(context, verts, [], faces, "Teapot")
-        bpy.ops.object.editmode_toggle()
+        bpy.ops.object.mode_set(mode='EDIT')
         bpy.ops.mesh.remove_doubles()
-        bpy.ops.object.editmode_toggle()
+        if cmode != "EDIT_MESH":
+            bpy.ops.object.mode_set(mode=cmode)
         return {'FINISHED'}
 
 

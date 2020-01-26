@@ -33,31 +33,41 @@ RENDER_OBTYPES = ['MESH', 'CURVE', 'SURFACE', 'METABALL', 'TEXT']
 def check_material(props, mat):
     e = bpy.context.scene.render.engine
     shaders = []
+    textures = []
+    props.texture_count = 0
+    props.node_count = 0
+    props.total_megapixels = 0
+    props.is_procedural = True
+
     if e == 'CYCLES':
 
         if mat.node_tree is not None:
             checknodes = mat.node_tree.nodes[:]
             while len(checknodes) > 0:
                 n = checknodes.pop()
+                props.node_count += 1
                 if n.type == 'GROUP':  # dive deeper here.
                     checknodes.extend(n.node_tree.nodes)
                 if len(n.outputs) == 1 and n.outputs[0].type == 'SHADER' and n.type != 'GROUP':
                     if n.type not in shaders:
                         shaders.append(n.type)
                 if n.type == 'TEX_IMAGE':
-                    mattype = 'image based'
+
                     if n.image is not None:
+                        mattype = 'image based'
+                        props.is_procedural = False
+                        if n.image not in textures:
+                            textures.append(n.image)
+                            props.texture_count += 1
+                            props.total_megapixels += (n.image.size[0] * n.image.size[1])
 
-                        maxres = max(n.image.size[0], n.image.size[1])
-
-                        props.texture_resolution_max = max(props.texture_resolution_max, maxres)
-
-                        minres = min(n.image.size[0], n.image.size[1])
-
-                        if props.texture_resolution_min == 0:
-                            props.texture_resolution_min = minres
-                        else:
-                            props.texture_resolution_min = min(props.texture_resolution_min, minres)
+                            maxres = max(n.image.size[0], n.image.size[1])
+                            props.texture_resolution_max = max(props.texture_resolution_max, maxres)
+                            minres = min(n.image.size[0], n.image.size[1])
+                            if props.texture_resolution_min == 0:
+                                props.texture_resolution_min = minres
+                            else:
+                                props.texture_resolution_min = min(props.texture_resolution_min, minres)
 
     props.shaders = ''
     for s in shaders:
@@ -354,7 +364,7 @@ class AutoFillTags(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None
+        return bpy.context.view_layer.objects.active is not None
 
     def execute(self, context):
         get_autotags()

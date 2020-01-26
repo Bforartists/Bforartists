@@ -1,118 +1,108 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
 from bpy.types import Operator
 
 
-def set_scene_camera():
-    '''Makes the camera the active and sets it to the scene camera'''
-    ob = bpy.context.active_object
-    # find the children on the rig (the camera name)
-    active_cam = ob.children[0].name
-    # cam = bpy.data.cameras[bpy.data.objects[active_cam]]
-    scene_cam = bpy.context.scene.camera
+def get_arm_and_cam(obj):
+    if obj.type == 'ARMATURE':
+        cam = None
+        for child in obj.children:
+            if child.type == 'CAMERA':
+                cam = child
+                break
+        if cam is not None:
+            return obj, cam
+    elif (obj.type == 'CAMERA'
+          and obj.parent is not None
+          and "rig_id" in obj.parent
+          and obj.parent["rig_id"].lower() in {"dolly_rig", "crane_rig"}):
+        return obj.parent, obj
+    return None, None
 
-    if active_cam != scene_cam.name:
-        bpy.context.scene.camera = bpy.data.objects[active_cam]
-    else:
-        return None
+
+class CameraRigMixin():
+    @classmethod
+    def poll(cls, context):
+        if context.active_object is not None:
+            return get_arm_and_cam(context.active_object) != (None, None)
+
+        return False
 
 
-class ADD_CAMERA_RIGS_OT_set_scene_camera(Operator):
+class ADD_CAMERA_RIGS_OT_set_scene_camera(Operator, CameraRigMixin):
     bl_idname = "add_camera_rigs.set_scene_camera"
     bl_label = "Make Camera Active"
     bl_description = "Makes the camera parented to this rig the active scene camera"
 
-    @classmethod
-    def poll(cls, context):
-        return context.active_object is not None
-
     def execute(self, context):
-        set_scene_camera()
+        arm, cam = get_arm_and_cam(context.active_object)
+        scene_cam = context.scene.camera
 
-        return {'FINISHED'}
+        if cam is not None and cam is not scene_cam:
+            context.scene.camera = cam
+            return {'FINISHED'}
 
-
-def markerBind():
-    '''Defines the function to add a marker to timeling and bind camera'''
-    rig = bpy.context.active_object  # rig object
-    active_cam = rig.children[0]  # camera object
-
-    # switch area to DOPESHEET to add marker
-    bpy.context.area.type = 'DOPESHEET_EDITOR'
-    # add marker
-    bpy.ops.marker.add()  # it will automatiically have the name of the camera
-    # select rig camera
-    bpy.context.view_layer.objects.active = active_cam
-    # bind marker to selected camera
-    bpy.ops.marker.camera_bind()
-    # make the rig the active object before finishing
-    bpy.context.view_layer.objects.active = rig
-    bpy.data.objects[active_cam.name].select_set(False)
-    bpy.data.objects[rig.name].select_set(True)
-    # switch back to 3d view
-    bpy.context.area.type = 'VIEW_3D'
+        return {'CANCELLED'}
 
 
-class ADD_CAMERA_RIGS_OT_add_marker_bind(Operator):
+class ADD_CAMERA_RIGS_OT_add_marker_bind(Operator, CameraRigMixin):
     bl_idname = "add_camera_rigs.add_marker_bind"
     bl_label = "Add Marker and Bind Camera"
     bl_description = "Add marker to current frame then bind rig camera to it (for camera switching)"
 
-    @classmethod
-    def poll(cls, context):
-        return context.active_object is not None
-
     def execute(self, context):
-        markerBind()
+        arm, cam = get_arm_and_cam(context.active_object)
+
+        marker = context.scene.timeline_markers.new(
+            "cam_" + str(context.scene.frame_current),
+            frame=context.scene.frame_current
+        )
+        marker.camera = cam
 
         return {'FINISHED'}
 
 
-def add_DOF_object():
-    """Define the function to add an Empty as DOF object """
-    smode = bpy.context.mode
-    rig = bpy.context.active_object
-    bone = rig.data.bones['aim_MCH']
-    active_cam = rig.children[0].name
-    cam = bpy.data.cameras[bpy.data.objects[active_cam].data.name]
-
-    bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
-    # Add Empty
-    bpy.ops.object.empty_add()
-    obj = bpy.context.active_object
-
-    obj.name = "Empty_DOF"
-    # parent to aim_MCH
-    obj.parent = rig
-    obj.parent_type = "BONE"
-    obj.parent_bone = "aim_MCH"
-    # clear loc and rot
-    bpy.ops.object.location_clear()
-    bpy.ops.object.rotation_clear()
-    # move to bone head
-    obj.location = bone.head
-
-    # make this new empty the dof_object
-    cam.dof.focus_object = obj
-
-    # make the rig the active object before finishing
-    bpy.context.view_layer.objects.active = rig
-    bpy.data.objects[obj.name].select_set(False)
-    bpy.data.objects[rig.name].select_set(True)
-
-    bpy.ops.object.mode_set(mode=smode, toggle=False)
-
-
-class ADD_CAMERA_RIGS_OT_add_dof_object(Operator):
+class ADD_CAMERA_RIGS_OT_add_dof_object(Operator, CameraRigMixin):
     bl_idname = "add_camera_rigs.add_dof_object"
     bl_label = "Add DOF Object"
     bl_description = "Create Empty and add as DOF Object"
 
-    @classmethod
-    def poll(cls, context):
-        return context.active_object is not None
-
     def execute(self, context):
-        add_DOF_object()
+        arm, cam = get_arm_and_cam(context.active_object)
+        bone = arm.data.bones['Aim_shape_rotation-MCH']
+
+        # Add Empty
+        empty_obj = bpy.data.objects.new("EmptyDOF", None)
+        context.scene.collection.objects.link(empty_obj)
+
+        # Parent to Aim Child bone
+        empty_obj.parent = arm
+        empty_obj.parent_type = "BONE"
+        empty_obj.parent_bone = "Aim_shape_rotation-MCH"
+
+        # Move to bone head
+        empty_obj.location = bone.head
+
+        # Make this new empty the dof_object
+        cam.data.dof.use_dof = True
+        cam.data.dof.focus_object = empty_obj
 
         return {'FINISHED'}
 

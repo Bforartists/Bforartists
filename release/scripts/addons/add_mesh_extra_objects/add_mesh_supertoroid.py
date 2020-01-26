@@ -5,29 +5,11 @@ from bpy.props import (
         FloatProperty,
         BoolProperty,
         IntProperty,
+        StringProperty,
         )
 from math import pi, cos, sin
 from mathutils import Vector
-
-
-# Create a new mesh (object) from verts/edges/faces
-# verts/edges/faces ... List of vertices/edges/faces for the
-#                       new mesh (as used in from_pydata)
-# name ... Name of the new mesh (& object)
-
-def create_mesh_object(context, verts, edges, faces, name):
-
-    # Create new mesh
-    mesh = bpy.data.meshes.new(name)
-
-    # Make a mesh from a list of verts/edges/faces.
-    mesh.from_pydata(verts, edges, faces)
-
-    # Update mesh geometry after adding stuff.
-    mesh.update()
-
-    from bpy_extras import object_utils
-    return object_utils.object_data_add(context, mesh, operator=None)
+from bpy_extras import object_utils
 
 
 # A very simple "bridge" tool
@@ -136,11 +118,18 @@ def supertoroid(R, r, u, v, n1, n2):
     return verts, faces
 
 
-class add_supertoroid(bpy.types.Operator):
+class add_supertoroid(bpy.types.Operator, object_utils.AddObjectHelper):
     bl_idname = "mesh.primitive_supertoroid_add"
     bl_label = "Add SuperToroid"
     bl_description = "Construct a supertoroid mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
+
+    SuperToroid : BoolProperty(name = "SuperToroid",
+                default = True,
+                description = "SuperToroid")
+    change : BoolProperty(name = "Change",
+                default = False,
+                description = "change SuperToroid")
 
     R: FloatProperty(
             name="Big radius",
@@ -190,6 +179,25 @@ class add_supertoroid(bpy.types.Operator):
             options={'HIDDEN'}
             )
 
+    def draw(self, context):
+        layout = self.layout
+
+        layout.prop(self, 'R', expand=True)
+        layout.prop(self, 'r', expand=True)
+        layout.prop(self, 'u', expand=True)
+        layout.prop(self, 'v', expand=True)
+        layout.prop(self, 'n1', expand=True)
+        layout.prop(self, 'n2', expand=True)
+        layout.prop(self, 'ie', expand=True)
+
+        if self.change == False:
+            col = layout.column(align=True)
+            col.prop(self, 'align', expand=True)
+            col = layout.column(align=True)
+            col.prop(self, 'location', expand=True)
+            col = layout.column(align=True)
+            col.prop(self, 'rotation', expand=True)
+
     def execute(self, context):
         props = self.properties
 
@@ -208,16 +216,75 @@ class add_supertoroid(bpy.types.Operator):
             # at least as big as the radius of the tube
             if rad2 > rad1:
                 rad1 = rad2
-
-        # create mesh
-        verts, faces = supertoroid(rad1,
+        
+        if bpy.context.mode == "OBJECT":
+            if context.selected_objects != [] and context.active_object and \
+            ('SuperToroid' in context.active_object.data.keys()) and (self.change == True):
+                obj = context.active_object
+                oldmesh = obj.data
+                oldmeshname = obj.data.name
+                verts, faces = supertoroid(rad1,
                                   rad2,
                                   props.u,
                                   props.v,
                                   props.n1,
                                   props.n2
                                   )
-        # create the object
-        obj = create_mesh_object(context, verts, [], faces, "SuperToroid")
+                mesh = bpy.data.meshes.new('SuperToroid')
+                mesh.from_pydata(verts, [], faces)
+                obj.data = mesh
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
+                bpy.data.meshes.remove(oldmesh)
+                obj.data.name = oldmeshname
+            else:
+                verts, faces = supertoroid(rad1,
+                                  rad2,
+                                  props.u,
+                                  props.v,
+                                  props.n1,
+                                  props.n2
+                                  )
+                mesh = bpy.data.meshes.new('SuperToroid')
+                mesh.from_pydata(verts, [], faces)
+                obj = object_utils.object_data_add(context, mesh, operator=self)
+
+            obj.data["SuperToroid"] = True
+            obj.data["change"] = False
+            for prm in SuperToroidParameters():
+                obj.data[prm] = getattr(self, prm)
+        
+        if bpy.context.mode == "EDIT_MESH":
+            active_object = context.active_object
+            name_active_object = active_object.name
+            bpy.ops.object.mode_set(mode='OBJECT')
+            verts, faces = supertoroid(rad1,
+                                  rad2,
+                                  props.u,
+                                  props.v,
+                                  props.n1,
+                                  props.n2
+                                  )
+            mesh = bpy.data.meshes.new('SuperToroid')
+            mesh.from_pydata(verts, [], faces)
+            obj = object_utils.object_data_add(context, mesh, operator=self)
+            obj.select_set(True)
+            active_object.select_set(True)
+            bpy.ops.object.join()
+            context.active_object.name = name_active_object
+            bpy.ops.object.mode_set(mode='EDIT')
 
         return {'FINISHED'}
+
+def SuperToroidParameters():
+    SuperToroidParameters = [
+        "R",
+        "r",
+        "u",
+        "v",
+        "n1",
+        "n2",
+        "ie",
+        "edit",
+        ]
+    return SuperToroidParameters

@@ -18,8 +18,8 @@ bl_info = {
     "warning": "",
     "description": "Export printable net of the active mesh",
     "category": "Import-Export",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Import-Export/Paper_Model"
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "import_export/paper_model.html",
 }
 
 # Task: split into four files (SVG and PDF separately)

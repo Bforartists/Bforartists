@@ -20,13 +20,14 @@
 
 bl_info = {
     "name": "Material Library",
-    "author": "Mackraken (mackraken2023@hotmail.com)",
-    "version": (0, 5, 9),
+    "author": "Mackraken",
+    "version": (0, 6, 0),
     "blender": (2, 80, 0),
     "location": "Properties > Material",
     "description": "Material Library VX",
     "warning": "",
-    "wiki_url": "https://sites.google.com/site/aleonserra/home/scripts/matlib-vx",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "materials/material_library.html",
     "tracker_url": "",
     "category": "Material"}
 

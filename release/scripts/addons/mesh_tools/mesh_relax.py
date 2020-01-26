@@ -75,7 +75,7 @@ def relax_mesh(context):
 
     # run smooth operator to relax the mesh
     bpy.ops.object.mode_set(mode='EDIT')
-    bpy.ops.mesh.vertices_smooth()
+    bpy.ops.mesh.vertices_smooth(factor=0.5)
     bpy.ops.object.mode_set(mode='OBJECT')
 
     # apply the modifier

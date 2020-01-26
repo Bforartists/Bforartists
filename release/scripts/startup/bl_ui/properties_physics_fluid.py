@@ -95,6 +95,16 @@ class PhysicButtonsPanel:
         md = context.fluid
         return md and (md.fluid_type == 'FLOW')
 
+    @staticmethod
+    def poll_fluid_flow_outflow(context):
+        if not PhysicButtonsPanel.poll_fluid_flow(context):
+            return False
+
+        md = context.fluid
+        flow = md.flow_settings
+        if (flow.flow_behavior == 'OUTFLOW'):
+            return True
+
 
 class PHYSICS_PT_fluid(PhysicButtonsPanel, Panel):
     bl_label = "Fluid"
@@ -507,6 +517,9 @@ class PHYSICS_PT_flow_initial_velocity(PhysicButtonsPanel, Panel):
         if not PhysicButtonsPanel.poll_fluid_flow(context):
             return False
 
+        if PhysicButtonsPanel.poll_fluid_flow_outflow(context):
+            return False
+
         return (context.engine in cls.COMPAT_ENGINES)
 
     def draw_header(self, context):
@@ -544,6 +557,9 @@ class PHYSICS_PT_flow_texture(PhysicButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         if not PhysicButtonsPanel.poll_fluid_flow(context):
+            return False
+
+        if PhysicButtonsPanel.poll_fluid_flow_outflow(context):
             return False
 
         return (context.engine in cls.COMPAT_ENGINES)
@@ -1088,13 +1104,7 @@ class PHYSICS_PT_cache(PhysicButtonsPanel, Panel):
             col.separator()
             split = layout.split()
 
-            bake_incomplete = (domain.cache_frame_pause_data < domain.cache_frame_end)
-            if domain.has_cache_baked_data and not domain.is_cache_baking_data and bake_incomplete:
-                col = split.column()
-                col.operator("fluid.bake_all", text="Resume")
-                col = split.column()
-                col.operator("fluid.free_all", text="Free")
-            elif domain.is_cache_baking_data and not domain.has_cache_baked_data:
+            if domain.is_cache_baking_data and not domain.has_cache_baked_data:
                 split.enabled = False
                 split.operator("fluid.pause_bake", text="Baking All - ESC to pause")
             elif not domain.has_cache_baked_data and not domain.is_cache_baking_data:

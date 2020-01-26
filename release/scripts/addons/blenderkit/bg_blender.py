@@ -155,7 +155,7 @@ process_sources = (
 
 
 class KillBgProcess(bpy.types.Operator):
-    '''Remove  processes in background.'''
+    '''Remove processes in background'''
     bl_idname = "object.kill_bg_process"
     bl_label = "Kill Background Process"
     bl_options = {'REGISTER'}
