@@ -13,7 +13,8 @@ from bpy.props import (
         EnumProperty,
         FloatProperty,
         FloatVectorProperty,
-        IntProperty
+        IntProperty,
+        StringProperty,
         )
 
 
@@ -339,15 +340,23 @@ class AddRoundCube(Operator, object_utils.AddObjectHelper):
     sanity_check_verts = 200000
     vert_count = 0
 
+    Roundcube : BoolProperty(name = "Roundcube",
+                default = True,
+                description = "Roundcube")
+    change : BoolProperty(name = "Change",
+                default = False,
+                description = "change Roundcube")
+
     radius: FloatProperty(
             name="Radius",
             description="Radius of vertices for sphere, capsule or cuboid bevel",
-            default=1.0, min=0.0, soft_min=0.01, step=10
+            default=0.2, min=0.0, soft_min=0.01, step=10
             )
     size: FloatVectorProperty(
             name="Size",
             description="Size",
             subtype='XYZ',
+            default=(2.0, 2.0, 2.0),
             )
     arc_div: IntProperty(
             name="Arc Divisions",
@@ -389,13 +398,48 @@ class AddRoundCube(Operator, object_utils.AddObjectHelper):
                 self.report({'ERROR'}, 'More than ' + str(self.sanity_check_verts) +
                             ' vertices!  Check "No Limit" to proceed')
                 return {'CANCELLED'}
-
-        verts, faces = round_cube(self.radius, self.arc_div, self.lin_div,
+        
+        if bpy.context.mode == "OBJECT":
+            if context.selected_objects != [] and context.active_object and \
+            ('Roundcube' in context.active_object.data.keys()) and (self.change == True):
+                obj = context.active_object
+                oldmesh = obj.data
+                oldmeshname = obj.data.name
+                verts, faces = round_cube(self.radius, self.arc_div, self.lin_div,
                                   self.size, self.div_type, self.odd_axis_align)
+                mesh = bpy.data.meshes.new('Roundcube')
+                mesh.from_pydata(verts, [], faces)
+                obj.data = mesh
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
+                bpy.data.meshes.remove(oldmesh)
+                obj.data.name = oldmeshname
+            else:
+                verts, faces = round_cube(self.radius, self.arc_div, self.lin_div,
+                                  self.size, self.div_type, self.odd_axis_align)
+                mesh = bpy.data.meshes.new('Roundcube')
+                mesh.from_pydata(verts, [], faces)
+                obj = object_utils.object_data_add(context, mesh, operator=self)
 
-        mesh = bpy.data.meshes.new('Roundcube')
-        mesh.from_pydata(verts, [], faces)
-        object_utils.object_data_add(context, mesh, operator=self)
+            obj.data["Roundcube"] = True
+            obj.data["change"] = False
+            for prm in RoundCubeParameters():
+                obj.data[prm] = getattr(self, prm)
+        
+        if bpy.context.mode == "EDIT_MESH":
+            active_object = context.active_object
+            name_active_object = active_object.name
+            bpy.ops.object.mode_set(mode='OBJECT')
+            verts, faces = round_cube(self.radius, self.arc_div, self.lin_div,
+                                  self.size, self.div_type, self.odd_axis_align)
+            mesh = bpy.data.meshes.new('Roundcube')
+            mesh.from_pydata(verts, [], faces)
+            obj = object_utils.object_data_add(context, mesh, operator=self)
+            obj.select_set(True)
+            active_object.select_set(True)
+            bpy.ops.object.join()
+            context.active_object.name = name_active_object
+            bpy.ops.object.mode_set(mode='EDIT')
 
         return {'FINISHED'}
 
@@ -412,6 +456,7 @@ class AddRoundCube(Operator, object_utils.AddObjectHelper):
         return self.execute(context)
 
     def draw(self, context):
+        self.check(context)
         layout = self.layout
 
         layout.prop(self, 'radius')
@@ -442,7 +487,22 @@ class AddRoundCube(Operator, object_utils.AddObjectHelper):
         row.alert = self.vert_count > self.sanity_check_verts
         row.prop(self, 'no_limit', text='No limit ({})'.format(self.vert_count))
 
-        col = layout.column(align=True)
-        col.prop(self, 'location', expand=True)
-        col = layout.column(align=True)
-        col.prop(self, 'rotation', expand=True)
+        if self.change == False:
+            col = layout.column(align=True)
+            col.prop(self, 'align', expand=True)
+            col = layout.column(align=True)
+            col.prop(self, 'location', expand=True)
+            col = layout.column(align=True)
+            col.prop(self, 'rotation', expand=True)
+
+def RoundCubeParameters():
+    RoundCubeParameters = [
+        "radius",
+        "size",
+        "arc_div",
+        "lin_div",
+        "div_type",
+        "odd_axis_align",
+        "no_limit",
+        ]
+    return RoundCubeParameters

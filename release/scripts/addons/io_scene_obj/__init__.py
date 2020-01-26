@@ -26,7 +26,8 @@ bl_info = {
     "location": "File > Import-Export",
     "description": "Import-Export OBJ, Import OBJ mesh, UV's, materials and textures",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/latest/addons/io_scene_obj.html",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "import_export/io_scene_obj.html",
     "support": 'OFFICIAL',
     "category": "Import-Export"}
 
@@ -320,6 +321,7 @@ class OBJ_PT_export_geometry(bpy.types.Panel):
         layout.prop(operator, 'use_materials')
         layout.prop(operator, 'use_triangles')
         layout.prop(operator, 'use_nurbs', text="Curves as NURBS")
+        layout.prop(operator, 'use_vertex_groups')
         layout.prop(operator, 'keep_vertex_order')
 
 

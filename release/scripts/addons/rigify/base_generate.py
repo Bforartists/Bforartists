@@ -219,6 +219,9 @@ class BaseGenerator:
         # different rigs don't collide id's
         self.rig_id = random_id(16)
 
+        # Table of renamed ORG bones
+        self.org_rename_table = dict()
+
 
     def disable_auto_parent(self, bone_name):
         """Prevent automatically parenting the bone to root if parentless."""
@@ -229,6 +232,20 @@ class BaseGenerator:
         for i, val in enumerate(layers):
             if val:
                 self.layer_group_priorities[bone_name][i] = priority
+
+
+    def rename_org_bone(self, old_name, new_name):
+        assert self.stage == 'instantiate'
+        assert old_name == self.org_rename_table.get(old_name, None)
+        assert old_name not in self.bone_owners
+
+        bone = self.obj.data.bones[old_name]
+
+        bone.name = new_name
+        new_name = bone.name
+
+        self.org_rename_table[old_name] = new_name
+        return new_name
 
 
     def __run_object_stage(self, method_name):
@@ -431,9 +448,16 @@ class BaseGenerator:
         assert(self.context.active_object == self.obj)
         assert(self.obj.mode == 'OBJECT')
 
+        self.stage = 'instantiate'
+
+        # Compute the list of bones
+        bone_list = list_bone_names_depth_first_sorted(self.obj)
+
+        self.org_rename_table = {n: n for n in bone_list}
+
         # Construct the rig instances
-        for name in list_bone_names_depth_first_sorted(self.obj):
-            self.__create_rigs(name, halt_on_missing)
+        for name in bone_list:
+            self.__create_rigs(self.org_rename_table[name], halt_on_missing)
 
         # Connect rigs and bones into a tree
         handled = {}

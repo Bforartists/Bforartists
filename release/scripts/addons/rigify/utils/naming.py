@@ -35,15 +35,15 @@ _PREFIX_TABLE = { 'org': "ORG", 'mch': "MCH", 'def': "DEF", 'ctrl': '' }
 # Name structure
 #=======================================================================
 
-NameParts = collections.namedtuple('NameParts', ['prefix', 'base', 'side', 'number'])
+NameParts = collections.namedtuple('NameParts', ['prefix', 'base', 'side_z', 'side', 'number'])
 
 
 def split_name(name):
-    name_parts = re.match(r'^(?:(ORG|MCH|DEF)-)?(.*?)([._-][lLrR])?(?:\.(\d+))?$', name)
+    name_parts = re.match(r'^(?:(ORG|MCH|DEF)-)?(.*?)([._-][tTbB])?([._-][lLrR])?(?:\.(\d+))?$', name)
     return NameParts(*name_parts.groups())
 
 
-def combine_name(parts, *, prefix=None, base=None, side=None, number=None):
+def combine_name(parts, *, prefix=None, base=None, side_z=None, side=None, number=None):
     eff_prefix = prefix if prefix is not None else parts.prefix
     eff_number = number if number is not None else parts.number
     if isinstance(eff_number, int):
@@ -52,6 +52,7 @@ def combine_name(parts, *, prefix=None, base=None, side=None, number=None):
     return ''.join([
         eff_prefix+'-' if eff_prefix else '',
         base if base is not None else parts.base,
+        side_z if side_z is not None else parts.side_z or '',
         side if side is not None else parts.side or '',
         '.'+eff_number if eff_number else '',
     ])
@@ -100,9 +101,10 @@ class Side(enum.IntEnum):
     def to_string(parts, side):
         if side != Side.MIDDLE:
             side_char = 'L' if side == Side.LEFT else 'R'
+            side_str = parts.side or parts.side_z
 
-            if parts.side:
-                sep, schar = parts.side[0:2]
+            if side_str:
+                sep, schar = side_str[0:2]
                 if schar.lower() == schar:
                     side_char = side_char.lower()
             else:
@@ -118,17 +120,63 @@ class Side(enum.IntEnum):
         return combine_name(parts, side=new_side)
 
 
+class SideZ(enum.IntEnum):
+    TOP = 2
+    MIDDLE = 0
+    BOTTOM = -2
+
+    @staticmethod
+    def from_parts(parts):
+        if parts.side_z:
+            if parts.side_z[1].lower() == 't':
+                return SideZ.TOP
+            else:
+                return Side.BOTTOM
+        else:
+            return Side.MIDDLE
+
+    @staticmethod
+    def to_string(parts, side):
+        if side != SideZ.MIDDLE:
+            side_char = 'T' if side == SideZ.TOP else 'B'
+            side_str = parts.side_z or parts.side
+
+            if side_str:
+                sep, schar = side_str[0:2]
+                if schar.lower() == schar:
+                    side_char = side_char.lower()
+            else:
+                sep = '.'
+
+            return sep + side_char
+        else:
+            return ''
+
+    @staticmethod
+    def to_name(parts, side):
+        new_side = SideZ.to_string(parts, side)
+        return combine_name(parts, side_z=new_side)
+
+
 def get_name_side(name):
     return Side.from_parts(split_name(name))
 
 
-def get_name_side_and_base(name):
+def get_name_side_z(name):
+    return SideZ.from_parts(split_name(name))
+
+
+def get_name_base_and_sides(name):
     parts = split_name(name)
-    return Side.from_parts(parts), Side.to_name(parts, side=Side.MIDDLE)
+    base = combine_name(parts, side='', side_z='')
+    return base, Side.from_parts(parts),  SideZ.from_parts(parts)
 
 
-def change_name_side(name, side):
-    return Side.to_name(split_name(name), side)
+def change_name_side(name, side=None, *, side_z=None):
+    parts = split_name(name)
+    new_side = None if side is None else Side.to_string(parts, side)
+    new_side_z = None if side_z is None else SideZ.to_string(parts, side_z)
+    return combine_name(parts, side=new_side, side_z=new_side_z)
 
 
 def mirror_name(name):
@@ -139,6 +187,17 @@ def mirror_name(name):
         return Side.to_name(parts, -side)
     else:
         return name
+
+
+def mirror_name_z(name):
+    parts = split_name(name)
+    side = SideZ.from_parts(parts)
+
+    if side != SideZ.MIDDLE:
+        return SideZ.to_name(parts, -side)
+    else:
+        return name
+
 
 #=======================================================================
 # Name manipulation

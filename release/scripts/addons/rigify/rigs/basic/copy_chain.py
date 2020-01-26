@@ -22,7 +22,6 @@ import bpy
 
 from ..chain_rigs import SimpleChainRig
 
-from ...utils.layers import DEF_LAYER
 from ...utils.errors import MetarigError
 from ...utils.rig import connected_children_names
 from ...utils.naming import make_derived_name
@@ -42,12 +41,7 @@ class Rig(SimpleChainRig):
         """ Gather and validate data about the rig.
         """
         self.make_controls = self.params.make_controls
-
-        deform = self.params.make_deforms
-        rename = self.params.rename_to_deform
-
-        self.make_deforms = deform and not rename
-        self.rename_deforms = deform and rename
+        self.make_deforms = self.params.make_deforms
 
     ##############################
     # Control chain
@@ -99,18 +93,6 @@ class Rig(SimpleChainRig):
             super().rig_deform_chain()
 
     ##############################
-    # Rename To Deform
-
-    def finalize(self):
-        if self.rename_deform:
-            new_names = [ self.rename_bone(name, make_derived_name(name, 'def')) for name in self.bones.org ]
-
-            for name in new_names:
-                bone = self.get_bone(name).bone
-                bone.use_deform = True
-                bone.layers = DEF_LAYER
-
-    ##############################
     # Parameter UI
 
     @classmethod
@@ -121,12 +103,6 @@ class Rig(SimpleChainRig):
         params.make_controls = bpy.props.BoolProperty(name="Controls", default=True, description="Create control bones for the copy")
         params.make_deforms = bpy.props.BoolProperty(name="Deform", default=True, description="Create deform bones for the copy")
 
-        params.rename_to_deform = bpy.props.BoolProperty(
-            name        = "Rename To Deform",
-            default     = False,
-            description = "Rename the original bone itself to use as deform bone (advanced feature)"
-        )
-
     @classmethod
     def parameters_ui(self, layout, params):
         """ Create the ui for the rig parameters.
@@ -135,10 +111,6 @@ class Rig(SimpleChainRig):
         r.prop(params, "make_controls")
         r = layout.row()
         r.prop(params, "make_deforms")
-
-        if params.make_deforms:
-            r = layout.row()
-            r.prop(params, "rename_to_deform")
 
 
 def create_sample(obj):

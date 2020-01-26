@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-04 15:50:16\n"
+"POT-Creation-Date: 2020-01-20 09:05:33\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -511,6 +511,10 @@ msgid "Armature"
 msgstr "Armatur"
 
 
+msgid "Mix Mode"
+msgstr "Modus Sunting"
+
+
 msgid "Target object"
 msgstr "Sunting Objek"
 
@@ -561,10 +565,6 @@ msgstr "Salin"
 
 msgid "Copy Z"
 msgstr "Salin"
-
-
-msgid "Mix Mode"
-msgstr "Modus Sunting"
 
 
 msgid "Copy Transforms Constraint"
@@ -815,36 +815,84 @@ msgid "Fonts"
 msgstr "Huruf:"
 
 
-msgid "Cache Offset"
-msgstr "Kamera"
+msgid "Additional"
+msgstr "Orientasi Transformasi"
 
 
-msgid "Generate Particles"
-msgstr "Partikel"
+msgid "Color Grid"
+msgstr "Warna"
 
 
-msgid "Simulation Speed"
-msgstr "Data Animasi"
-
-
-msgid "Slip Type"
-msgstr "Tipe"
-
-
-msgid "Free Slip"
+msgid "res"
 msgstr "Bebas"
 
 
-msgid "Simulation Threads"
-msgstr "Rangkaian Simulasi"
+msgid "Smoke Grid Resolution"
+msgstr "Gerakan"
 
 
-msgid "Tracer Particles"
+msgid "Ignition"
+msgstr "Data Animasi"
+
+
+msgid "Smoke Color"
+msgstr "Warna"
+
+
+msgid "Time"
+msgstr "Waktu"
+
+
+msgid "Delete"
+msgstr "Hapus"
+
+
+msgid "Adaptive Domain"
+msgstr "Tambah Baru"
+
+
+msgid "Bottom"
+msgstr "Bawah"
+
+
+msgid "Top"
+msgstr "Atas"
+
+
+msgid "Display Type"
+msgstr "Tipe"
+
+
+msgid "Flow Type"
+msgstr "Tipe"
+
+
+msgid "Add smoke"
+msgstr "Tambah Baru"
+
+
+msgid "Add fire and smoke"
+msgstr "Gambar Latar"
+
+
+msgid "Add fire"
+msgstr "Modus Pahat"
+
+
+msgid "Flame Rate"
+msgstr "Dalam Jarak"
+
+
+msgid "Texture mapping type"
+msgstr "Tekstur"
+
+
+msgid "Generated coordinates centered to flow object"
 msgstr "Partikel"
 
 
-msgid "Particle Influence"
-msgstr "Partikel"
+msgid "Use Texture"
+msgstr "Tekstur"
 
 
 msgid "Selection by Visibility"
@@ -963,10 +1011,6 @@ msgid "Bones"
 msgstr "Tulang"
 
 
-msgid "Display Type"
-msgstr "Tipe"
-
-
 msgid "B-Bone"
 msgstr "Tulang"
 
@@ -1017,10 +1061,6 @@ msgstr "Modus Pahat"
 
 msgid "Show cursor in viewport"
 msgstr "Tampilkan kursor di viewport"
-
-
-msgid "Use Texture"
-msgstr "Tekstur"
 
 
 msgid "Show texture in viewport"
@@ -1085,14 +1125,6 @@ msgstr "Tekstur"
 
 msgid "Center text"
 msgstr "Internet:"
-
-
-msgid "Top"
-msgstr "Atas"
-
-
-msgid "Bottom"
-msgstr "Bawah"
 
 
 msgid "Edit Format"
@@ -1169,10 +1201,6 @@ msgstr "Partikel"
 
 msgid "Generated Type"
 msgstr "Tipe"
-
-
-msgid "Color Grid"
-msgstr "Warna"
 
 
 msgid "Viewer"
@@ -1804,8 +1832,8 @@ msgid "Clip"
 msgstr "Buka"
 
 
-msgid "Delete"
-msgstr "Hapus"
+msgid "Fluid Presets"
+msgstr "Kamera"
 
 
 msgctxt "Operator"
@@ -1947,10 +1975,6 @@ msgstr "Modus Pahat"
 
 msgid "Integrate"
 msgstr "Internet:"
-
-
-msgid "Time"
-msgstr "Waktu"
 
 
 msgid "Mirror Object"
@@ -2561,6 +2585,10 @@ msgstr "Adegan"
 
 msgid "Fixed/Scene"
 msgstr "Adegan"
+
+
+msgid "Compare"
+msgstr "Tipe"
 
 
 msgid "Movie Distortion"
@@ -3595,10 +3623,6 @@ msgid "Select Random"
 msgstr "Seleksi"
 
 
-msgid "Compare"
-msgstr "Tipe"
-
-
 msgctxt "Operator"
 msgid "Smooth Curve Radius"
 msgstr "Partikel"
@@ -3697,11 +3721,6 @@ msgstr "Gambar Latar"
 
 msgid "ID name"
 msgstr "Nama"
-
-
-msgctxt "Operator"
-msgid "Fluid Simulation Bake"
-msgstr "Data Animasi"
 
 
 msgctxt "Operator"
@@ -5046,11 +5065,6 @@ msgstr "Hapus"
 
 msgctxt "Operator"
 msgid "Quick Explode"
-msgstr "Sunting Cepat"
-
-
-msgctxt "Operator"
-msgid "Quick Fluid"
 msgstr "Sunting Cepat"
 
 
@@ -6522,17 +6536,9 @@ msgid "Geometry Data"
 msgstr "Kamera"
 
 
-msgid "Fluid Presets"
-msgstr "Kamera"
-
-
 msgctxt "Operator"
 msgid "Scale"
 msgstr "Adegan"
-
-
-msgid "Adaptive Domain"
-msgstr "Tambah Baru"
 
 
 msgid "Development"
@@ -6619,10 +6625,6 @@ msgstr "Gerakan"
 
 msgid "Ambient Color"
 msgstr "Warna Standar"
-
-
-msgid "MultiSample"
-msgstr "Gerakan"
 
 
 msgid "Panorama Type"
@@ -6875,58 +6877,6 @@ msgstr "Modus Pahat"
 
 msgid "Bright"
 msgstr "Kanan"
-
-
-msgid "Collision type"
-msgstr "Gerakan"
-
-
-msgid "Additional"
-msgstr "Orientasi Transformasi"
-
-
-msgid "res"
-msgstr "Bebas"
-
-
-msgid "Smoke Grid Resolution"
-msgstr "Gerakan"
-
-
-msgid "Ignition"
-msgstr "Data Animasi"
-
-
-msgid "Smoke Color"
-msgstr "Warna"
-
-
-msgid "Flame Rate"
-msgstr "Dalam Jarak"
-
-
-msgid "Flow Type"
-msgstr "Tipe"
-
-
-msgid "Add smoke"
-msgstr "Tambah Baru"
-
-
-msgid "Add fire and smoke"
-msgstr "Gambar Latar"
-
-
-msgid "Add fire"
-msgstr "Modus Pahat"
-
-
-msgid "Texture mapping type"
-msgstr "Tekstur"
-
-
-msgid "Generated coordinates centered to flow object"
-msgstr "Partikel"
 
 
 msgid "Space Clip Editor"
@@ -7449,14 +7399,6 @@ msgstr "Belakang"
 msgctxt "Operator"
 msgid "More"
 msgstr "Modus"
-
-
-msgid "Unified Size"
-msgstr "Ukurang"
-
-
-msgid "Unified Strength"
-msgstr "Partikel"
 
 
 msgctxt "Operator"
@@ -8406,14 +8348,6 @@ msgstr "Tidak dapat membuka dokumen"
 
 msgid "No frames to bake"
 msgstr "Modus Sunting"
-
-
-msgid "No fluid input objects in the scene"
-msgstr "Adegan"
-
-
-msgid "Invalid object matrix"
-msgstr "Data Objek"
 
 
 msgid "Scene has no camera"

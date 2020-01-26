@@ -741,17 +741,16 @@ def get_download_url(asset_data, scene_id, api_key, tcom=None):
     data = {
         'scene_uuid': scene_id
     }
-    r = None
     try:
         r = rerequests.get(asset_data['download_url'], params=data, headers=headers)
     except Exception as e:
         print(e)
         if tcom is not None:
             tcom.error = True
-
     if r == None:
-        tcom.report = 'Connection Error'
-        tcom.error = True
+        if tcom is not None:
+            tcom.report = 'Connection Error'
+            tcom.error = True
         return 'Connection Error'
 
     if r.status_code < 400:
@@ -763,14 +762,17 @@ def get_download_url(asset_data, scene_id, api_key, tcom=None):
 
     if r.status_code == 403:
         r = 'You need Full plan to get this item.'
-        tcom.report = r
-        r1 = 'All materials and brushes are available for free. Only users registered to Standard plan can use all models.'
-        tasks_queue.add_task((ui.add_report, (r1, 5, colors.RED)))
-        tcom.error = True
+        # r1 = 'All materials and brushes are available for free. Only users registered to Standard plan can use all models.'
+        # tasks_queue.add_task((ui.add_report, (r1, 5, colors.RED)))
+        if tcom is not None:
+            tcom.report = r
+            tcom.error = True
 
     elif r.status_code >= 500:
-        tcom.report = 'Server error'
-        tcom.error = True
+        utils.p(r.text)
+        if tcom is not None:
+            tcom.report = 'Server error'
+            tcom.error = True
     return False
 
 
@@ -821,7 +823,7 @@ asset_types = (
 
 
 class BlenderkitKillDownloadOperator(bpy.types.Operator):
-    """Kill a download."""
+    """Kill a download"""
     bl_idname = "scene.blenderkit_download_kill"
     bl_label = "BlenderKit Kill Asset Download"
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -883,7 +885,7 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
 
         atype = asset_data['asset_type']
         if bpy.context.mode != 'OBJECT' and (
-                atype == 'model' or atype == 'material') and bpy.context.active_object is not None:
+                atype == 'model' or atype == 'material') and bpy.context.view_layer.objects.active is not None:
             bpy.ops.object.mode_set(mode='OBJECT')
 
         if self.replace:  # cleanup first, assign later.

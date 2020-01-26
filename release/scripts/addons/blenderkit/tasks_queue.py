@@ -28,8 +28,6 @@ from bpy.app.handlers import persistent
 
 import queue
 
-
-
 @persistent
 def scene_load(context):
     if not (bpy.app.timers.is_registered(queue_worker)):
@@ -44,24 +42,41 @@ def get_queue():
         t.task_queue = queue.Queue()
     return t.task_queue
 
+class task_object:
+    def __init__(self, command = '', arguments = (), wait = 0):
+        self.command = command
+        self.arguments = arguments
+        self.wait = wait
 
-def add_task(task):
+
+def add_task(task, wait = 0):
     q = get_queue()
-    q.put(task)
+    taskob = task_object(task[0],task[1], wait = wait)
+    q.put(taskob)
 
 
 def queue_worker():
+    time_step = 2.0
     q = get_queue()
+
+    back_to_queue = [] #delayed events
     while not q.empty():
-        utils.p('as a task:   ')
         # print('window manager', bpy.context.window_manager)
         task = q.get()
-        utils.p(task)
-        try:
-            task[0](*task[1])
-        except Exception as e:
-            utils.p('task failed:')
-            print(e)
+
+        if task.wait>0:
+            task.wait-=time_step
+            back_to_queue.append(task)
+        else:
+            utils.p('as a task:   ')
+            utils.p(task.command, task.arguments)
+            try:
+                task.command(*task.arguments)
+            except Exception as e:
+                utils.p('task failed:')
+                print(e)
+    for task in back_to_queue:
+        q.put(task)
     return 2.0
 
 

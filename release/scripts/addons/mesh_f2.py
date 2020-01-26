@@ -493,7 +493,7 @@ class F2AddonPreferences(bpy.types.AddonPreferences):
         default=True)
     extendvert : bpy.props.BoolProperty(
         name="Enable Extend Vert",
-        description="Anables a way to build tris and quads by adding verts",
+        description="Enables a way to build tris and quads by adding verts",
         default=False)
     quad_from_e_mat : bpy.props.BoolProperty(
         name="Quad From Edge",

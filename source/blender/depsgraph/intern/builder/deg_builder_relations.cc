@@ -47,6 +47,7 @@ extern "C" {
 #include "DNA_gpencil_types.h"
 #include "DNA_key_types.h"
 #include "DNA_light_types.h"
+#include "DNA_linestyle_types.h"
 #include "DNA_material_types.h"
 #include "DNA_mask_types.h"
 #include "DNA_mesh_types.h"
@@ -113,6 +114,7 @@ extern "C" {
 #include "intern/node/deg_node_operation.h"
 #include "intern/node/deg_node_time.h"
 
+#include "intern/depsgraph_relation.h"
 #include "intern/depsgraph_type.h"
 
 namespace DEG {
@@ -121,28 +123,6 @@ namespace DEG {
 /* Relations Builder */
 
 namespace {
-
-/* TODO(sergey): This is somewhat weak, but we don't want neither false-positive
- * time dependencies nor special exceptions in the depsgraph evaluation. */
-
-bool python_driver_exression_depends_on_time(const char *expression)
-{
-  if (expression[0] == '\0') {
-    /* Empty expression depends on nothing. */
-    return false;
-  }
-  if (strchr(expression, '(') != NULL) {
-    /* Function calls are considered dependent on a time. */
-    return true;
-  }
-  if (strstr(expression, "frame") != NULL) {
-    /* Variable `frame` depends on time. */
-    /* TODO(sergey): This is a bit weak, but not sure about better way of handling this. */
-    return true;
-  }
-  /* Possible indirect time relation s should be handled via variable targets. */
-  return false;
-}
 
 bool driver_target_depends_on_time(const DriverTarget *target)
 {
@@ -175,10 +155,8 @@ bool driver_variables_depends_on_time(const ListBase *variables)
 
 bool driver_depends_on_time(ChannelDriver *driver)
 {
-  if (driver->type == DRIVER_TYPE_PYTHON) {
-    if (python_driver_exression_depends_on_time(driver->expression)) {
-      return true;
-    }
+  if (BKE_driver_expression_depends_on_time(driver)) {
+    return true;
   }
   if (driver_variables_depends_on_time(&driver->variables)) {
     return true;
@@ -535,6 +513,9 @@ void DepsgraphRelationBuilder::build_id(ID *id)
       break;
     case ID_MSK:
       build_mask((Mask *)id);
+      break;
+    case ID_LS:
+      build_freestyle_linestyle((FreestyleLineStyle *)id);
       break;
     case ID_MC:
       build_movieclip((MovieClip *)id);
@@ -2427,6 +2408,18 @@ void DepsgraphRelationBuilder::build_mask(Mask *mask)
       }
     }
   }
+}
+
+void DepsgraphRelationBuilder::build_freestyle_linestyle(FreestyleLineStyle *linestyle)
+{
+  if (built_map_.checkIsBuiltAndTag(linestyle)) {
+    return;
+  }
+
+  ID *linestyle_id = &linestyle->id;
+  build_parameters(linestyle_id);
+  build_animdata(linestyle_id);
+  build_nodetree(linestyle->nodetree);
 }
 
 void DepsgraphRelationBuilder::build_movieclip(MovieClip *clip)

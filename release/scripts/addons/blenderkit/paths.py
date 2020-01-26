@@ -33,7 +33,6 @@ BLENDERKIT_BRUSH_UPLOAD_INSTRUCTIONS_URL = "https://www.blenderkit.com/docs/uplo
 BLENDERKIT_LOGIN_URL = "https://www.blenderkit.com/accounts/login"
 BLENDERKIT_OAUTH_LANDING_URL = "/oauth-landing/"
 BLENDERKIT_SIGNUP_URL = "https://www.blenderkit.com/accounts/register"
-BLENDERKIT_ADDON_URL = "https://www.blenderkit.com/api/v1/assets/6923b215-7df0-46f3-95ae-a2b5ff44ddd5/"
 BLENDERKIT_ADDON_FILE_URL = "https://www.blenderkit.com/get-blenderkit/"
 BLENDERKIT_SETTINGS_FILENAME = os.path.join(_presets, "bkit.json")
 

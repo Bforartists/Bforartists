@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-04 15:50:16\n"
+"POT-Creation-Date: 2020-01-20 09:05:33\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -504,12 +504,28 @@ msgid "Show Hidden"
 msgstr "Toon Niet Zichtbaar"
 
 
-msgid "Preview Resolution"
-msgstr "Preview Resolutie"
+msgid "End"
+msgstr "Einde"
 
 
-msgid "Preview resolution in X,Y and Z direction"
-msgstr "Preview resolutie in X, Y and Z as"
+msgid "Start"
+msgstr "Start"
+
+
+msgid "Time"
+msgstr "Tijd"
+
+
+msgid "Delete"
+msgstr "Verwijder"
+
+
+msgid "Bottom"
+msgstr "Onderkant"
+
+
+msgid "Top"
+msgstr "Bovenkant"
 
 
 msgid "Inclusive"
@@ -526,14 +542,6 @@ msgstr "Vouw"
 
 msgid "Line Style"
 msgstr "Stijl voor Lijnen"
-
-
-msgid "End"
-msgstr "Einde"
-
-
-msgid "Start"
-msgstr "Start"
 
 
 msgid "Visibility"
@@ -728,14 +736,6 @@ msgstr "Volg"
 
 msgid "Center text"
 msgstr "Centreer tekst"
-
-
-msgid "Top"
-msgstr "Bovenkant"
-
-
-msgid "Bottom"
-msgstr "Onderkant"
 
 
 msgid "Body Text"
@@ -1127,10 +1127,6 @@ msgid "Console"
 msgstr "Console"
 
 
-msgid "Delete"
-msgstr "Verwijder"
-
-
 msgid "Key"
 msgstr "Sleutel"
 
@@ -1278,10 +1274,6 @@ msgstr "Eigen Normaal"
 
 msgid "Cut Edges"
 msgstr "Knip Randen"
-
-
-msgid "Time"
-msgstr "Tijd"
 
 
 msgid "Mirror Object"
@@ -2450,11 +2442,6 @@ msgid "Copy Strokes"
 msgstr "Kopieer Strepen"
 
 
-msgctxt "Operator"
-msgid "Grease Pencil Add New"
-msgstr "Voeg Nieuwe Vetkrijt Toe"
-
-
 msgid "Delete selected strokes"
 msgstr "Verwijder geselecteerde strepen"
 
@@ -3182,11 +3169,6 @@ msgstr "Bereken Object paden"
 msgctxt "Operator"
 msgid "Quick Explode"
 msgstr "Snel Explosie"
-
-
-msgctxt "Operator"
-msgid "Quick Fluid"
-msgstr "Snel Vloeistof"
 
 
 msgctxt "Operator"
@@ -4308,10 +4290,6 @@ msgid "Springs"
 msgstr "Veren"
 
 
-msgid "Behavior"
-msgstr "Gedrag"
-
-
 msgid "Audio"
 msgstr "Geluid"
 
@@ -5000,10 +4978,6 @@ msgstr "Tekenen:"
 msgctxt "Operator"
 msgid "Convert..."
 msgstr "Converteer..."
-
-
-msgid "Select:"
-msgstr "Selecteer:"
 
 
 msgctxt "Operator"
