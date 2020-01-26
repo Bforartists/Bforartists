@@ -26,6 +26,8 @@ bl_info = {
     "location": "File > Import",
     "description": "Import Palettes",
     "warning": "",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "import_export/io_palettes.html",
     "category": "Import-Export"}
 
 import sys

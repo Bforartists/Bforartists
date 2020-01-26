@@ -28,7 +28,7 @@ bl_info = {
     "description": "Palettes for color and weight paint modes",
     "warning": "",
     "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "paint_palettes.html",
+                "paint/paint_palettes.html",
     "category": "Paint",
 }
 

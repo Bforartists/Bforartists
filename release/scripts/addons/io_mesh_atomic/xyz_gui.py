@@ -97,7 +97,7 @@ class IMPORT_OT_xyz(Operator, ImportHelper):
         name="", default=1, min=1,
         description="Choose the number of images between 2 keys.")
 
-    # This thing here just guarantees that the menu entry is not active when the 
+    # This thing here just guarantees that the menu entry is not active when the
     # check box in the addon preferences is not activated! See __init__.py
     @classmethod
     def poll(cls, context):
@@ -110,35 +110,42 @@ class IMPORT_OT_xyz(Operator, ImportHelper):
         row.prop(self, "use_camera")
         row.prop(self, "use_lamp")
         row = layout.row()
+        row.prop(self, "use_center")
+        row = layout.row()
+        row.prop(self, "use_center_all")
+        # Balls
+        box = layout.box()
+        row = box.row()
+        row.label(text="Balls / atoms")
+        row = box.row()
         col = row.column()
         col.prop(self, "ball")
-        row = layout.row()
+        row = box.row()
         row.active = (self.ball == "1")
         col = row.column(align=True)
         col.prop(self, "mesh_azimuth")
         col.prop(self, "mesh_zenith")
-        row = layout.row()
+        row = box.row()
         col = row.column()
         col.label(text="Scaling factors")
         col = row.column(align=True)
         col.prop(self, "scale_ballradius")
         col.prop(self, "scale_distances")
-        row = layout.row()
-        row.prop(self, "use_center")
-        row = layout.row()
-        row.prop(self, "use_center_all")
-        row = layout.row()
+        row = box.row()
         row.prop(self, "atomradius")
-
-        row = layout.row()
+        # Frames
+        box = layout.box()
+        row = box.row()
+        row.label(text="Frames")
+        row = box.row()
         row.prop(self, "use_frames")
-        row = layout.row()
+        row = box.row()
         row.active = self.use_frames
         col = row.column()
         col.label(text="Skip frames")
         col = row.column()
         col.prop(self, "skip_frames")
-        row = layout.row()
+        row = box.row()
         row.active = self.use_frames
         col = row.column()
         col.label(text="Frames/key")
@@ -192,7 +199,7 @@ class EXPORT_OT_xyz(Operator, ExportHelper):
                                  " a proper element name")),
                default='1',)
 
-    # This thing here just guarantees that the menu entry is not active when the 
+    # This thing here just guarantees that the menu entry is not active when the
     # check box in the addon preferences is not activated! See __init__.py
     @classmethod
     def poll(cls, context):

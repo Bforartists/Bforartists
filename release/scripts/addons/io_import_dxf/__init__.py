@@ -38,7 +38,8 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "File > Import > AutoCAD DXF",
     "description": "Import files in the Autocad DXF format (.dxf)",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Import-Export/DXF_Importer",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "import_export/scene_dxf.html",
     "category": "Import-Export",
 }
 

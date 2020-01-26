@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-04 15:50:16\n"
+"POT-Creation-Date: 2020-01-20 09:05:33\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -1257,6 +1257,10 @@ msgid "The constraining action"
 msgstr "ﻞﻣﺎﻌﺗ:"
 
 
+msgid "Mix Mode"
+msgstr "ﯽﺒﯿﮐﺮﺗ ﺖﻟﺎﺣ"
+
+
 msgid "Target"
 msgstr "ﻑﺪﻫ"
 
@@ -1471,10 +1475,6 @@ msgstr "ﺖﻓﺎﺑ ﯽﺷﺎﻘﻧ"
 
 msgid "Invert the Z rotation"
 msgstr "ﺖﻓﺎﺑ ﯽﺷﺎﻘﻧ"
-
-
-msgid "Mix Mode"
-msgstr "ﯽﺒﯿﮐﺮﺗ ﺖﻟﺎﺣ"
 
 
 msgid "Copy Scale Constraint"
@@ -2318,108 +2318,12 @@ msgid "Shading"
 msgstr "ﯽﻧﺯ ﻪﯾﺎﺳ"
 
 
-msgid "Particle"
-msgstr "ﻩﺭﺫ"
+msgid "Additional"
+msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
 
-msgid "Attraction Strength"
-msgstr "ﺕﺭﺪﻗ ﻥﺩﺮﮐ‌ﯽﮑﯾ"
-
-
-msgid "End Time"
-msgstr "ﻥﺎﻣﺯ ﻥﺎﯾﺎﭘ"
-
-
-msgid "Start Time"
-msgstr "ﻥﺎﻣﺯ ﻉﻭﺮﺷ"
-
-
-msgid "Reverse Frames"
-msgstr "ﻢﯾﺮﻓ ﻥﺎﯾﺎﭘ"
-
-
-msgid "Velocity Radius"
-msgstr "ﮓﻧﺭ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
-
-
-msgid "Velocity Strength"
-msgstr "ﺕﺭﺪﻗ ﻥﺩﺮﮐ‌ﯽﮑﯾ"
-
-
-msgid "Compressibility"
-msgstr "ﺪﯾﺩ"
-
-
-msgid "Cache Offset"
-msgstr "ﻦﯿﺑﺭﻭﺩ ﺖﺴﻓﺍ"
-
-
-msgid "Generate Particles"
-msgstr "ﺕﺍﺭﺫ"
-
-
-msgid "Grid Levels"
-msgstr "ﺡﻮﻄﺳ"
-
-
-msgid "Memory Estimate"
-msgstr "ﻪﻈﻓﺎﺣ ﻥﺍﺰﯿﻣ"
-
-
-msgid "Preview Resolution"
-msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
-
-
-msgid "Render Display Mode"
-msgstr "ﯼﺭﺍﺬﮔﺭﺎﺑ ﺮﯿﺧﺎﺗ"
-
-
-msgid "Preview"
-msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
-
-
-msgid "Simulation Speed"
-msgstr "ﻦﺸﯿﻤﯿﻧﺍ ﻩٔﺩﺍﺩ"
-
-
-msgid "Size of the simulation domain in meters"
-msgstr "ﺭﺍﺩﺮﮐ ﯼﺪﯿﻠﮐ ﯼﺎﻫ‌ﻢﯾﺮﻓ ﻪﻤﻫ"
-
-
-msgid "Slip Type"
-msgstr "ﻪﻠﺻﺎﻓ ﻉﻮﻧ"
-
-
-msgid "Free Slip"
-msgstr "ﺩﺍﺯﺁ"
-
-
-msgid "Surface Smoothing"
-msgstr "ﻪﻧﻮﻤﻧ ﺖﻣﺮﻓ"
-
-
-msgid "Tracer Particles"
-msgstr "ﺕﺍﺭﺫ"
-
-
-msgid "Both"
-msgstr "ﻭﺩ ﺮﻫ"
-
-
-msgid "Alpha Influence"
-msgstr "ﺭﺍﺩﺮﮐ ﺮﯿﺛﺎﺗ"
-
-
-msgid "Particle Influence"
-msgstr "ﺭﺍﺩﺮﮐ ﺮﯿﺛﺎﺗ"
-
-
-msgid "Tracer"
-msgstr "NLA ﮎﺮﺗ"
-
-
-msgid "Show drop particles"
-msgstr "NLA ﮎﺮﺗ"
+msgid "Single"
+msgstr "ﯽﮑﺗ"
 
 
 msgid "End"
@@ -2428,6 +2332,130 @@ msgstr "ﻥﺎﯾﺎﭘ"
 
 msgid "Start"
 msgstr "ﻉﻭﺮﺷ"
+
+
+msgid "Red"
+msgstr "ﺰﻣﺮﻗ"
+
+
+msgid "Green"
+msgstr "ﺰﺒﺳ"
+
+
+msgid "Blue"
+msgstr "ﯽﺑﺁ"
+
+
+msgid "Color Grid"
+msgstr "ﮓﻧﺭ"
+
+
+msgid "res"
+msgstr "re"
+
+
+msgid "Smoke Grid Resolution"
+msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
+
+
+msgid "Ignition"
+msgstr "ﻦﺸﯿﻤﯿﻧﺍ"
+
+
+msgid "Maximum temperature of flames"
+msgstr "ﻦﯿﻣﺯ ﺭﺩ ﺖﻋﺮﺳ ﻪﻨﯿﺸﯿﺑ"
+
+
+msgid "Smoke Color"
+msgstr "ﻦﯾﺰﮕﯾﺎﺟ"
+
+
+msgid "Preview"
+msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
+
+
+msgid "Time"
+msgstr "ﻥﺎﻣﺯ"
+
+
+msgid "Delete"
+msgstr "ﻑﺬﺣ"
+
+
+msgid "p0"
+msgstr "0"
+
+
+msgid "Start point"
+msgstr "ﻢﯾﺮﻓ ﻉﻭﺮﺷ"
+
+
+msgid "Adaptive Domain"
+msgstr "ﻪﻠﺻﺎﻓ"
+
+
+msgid "Bottom"
+msgstr "ﻦﯿﯾﺎﭘ"
+
+
+msgid "Top"
+msgstr "ﻻ﻿ﺎﺑ"
+
+
+msgid "Tracer"
+msgstr "NLA ﮎﺮﺗ"
+
+
+msgid "Display Type"
+msgstr "ﯽﯾﺎﺠﺑﺎﺟ ﻉﻮﻧ"
+
+
+msgid "Flow Type"
+msgstr "ﻥﺩﺮﮐ ﺮﭘ ﻉﻮﻧ"
+
+
+msgid "Add smoke"
+msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
+
+
+msgid "Add fire and smoke"
+msgstr "ﻪﻨﯿﻣﺯ ﺲﭘ ﺮﯾﻮﺼﺗ"
+
+
+msgid "Add fire"
+msgstr "ﻩﺮﯾﺍﺩ"
+
+
+msgid "Flame Rate"
+msgstr "ﻪﻧﻮﻤﻧ ﺖﻋﺮﺳ"
+
+
+msgid "Color of smoke"
+msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﺮﮕﻧﺎﺸﻧ"
+
+
+msgid "Subframes"
+msgstr "ﯼﺪﯿﻠﮐ ﯼﺎﻫ‌ﻢﯾﺮﻓ:"
+
+
+msgid "Texture mapping type"
+msgstr "ﺖﻓﺎﺑ ﯽﺷﺎﻘﻧ"
+
+
+msgid "Generated coordinates centered to flow object"
+msgstr "ﺖﻓﺎﺑ ﯽﺷﺎﻘﻧ"
+
+
+msgid "Use UV layer for texture coordinates"
+msgstr "ﻝﺎﻌﻓ ﺖﯿﻌﻗﻮﻣ ﻑﺬﺣ"
+
+
+msgid "Use Texture"
+msgstr "UV ﺖﻓﺎﺑ"
+
+
+msgid "Amount of random velocity"
+msgstr "ﻞﻣﺎﻌﺗ:"
 
 
 msgid "Visibility"
@@ -2566,6 +2594,10 @@ msgid "Build Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
+msgid "Both"
+msgstr "ﻭﺩ ﺮﻫ"
+
+
 msgid "Hook Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
@@ -2594,18 +2626,6 @@ msgid "Custom Curve"
 msgstr "ﯽﺷﺭﺎﻔﺳ ﮏﻧﺭ"
 
 
-msgid "Red"
-msgstr "ﺰﻣﺮﻗ"
-
-
-msgid "Green"
-msgstr "ﺰﺒﺳ"
-
-
-msgid "Blue"
-msgstr "ﯽﺑﺁ"
-
-
 msgid "Show Line"
 msgstr "ﻩﺩﺮﺘﺴﮔ ﺶﯾﺎﻤﻧ"
 
@@ -2632,10 +2652,6 @@ msgstr "‪%s‬ :ﻝﺎﻌﻓ ﺮﯿﻏ"
 
 msgid "Bones"
 msgstr "ﺎﻫ‌ﻥﺍﻮﺨﺘﺳﺍ"
-
-
-msgid "Display Type"
-msgstr "ﯽﯾﺎﺠﺑﺎﺟ ﻉﻮﻧ"
 
 
 msgid "B-Bone"
@@ -2768,10 +2784,6 @@ msgstr "ﻪﺒﻟ ﻪﺑ ﻪﺒﻟ"
 
 msgid "Use Front-Face"
 msgstr "ﻂﻘﻓ ﻮﻠﺟ ﺢﻄﺳ"
-
-
-msgid "Use Texture"
-msgstr "UV ﺖﻓﺎﺑ"
 
 
 msgid "Use Weight"
@@ -2990,14 +3002,6 @@ msgid "Center text"
 msgstr "ﺖﻧﺮﺘﻨﯾﺍ:"
 
 
-msgid "Top"
-msgstr "ﻻ﻿ﺎﺑ"
-
-
-msgid "Bottom"
-msgstr "ﻦﯿﯾﺎﭘ"
-
-
 msgid "Content of this text object"
 msgstr "ﺭﺍﺩﺮﮐ ﺮﯿﺛﺎﺗ"
 
@@ -3084,10 +3088,6 @@ msgstr "ﻪﻘﻄﻨﻣ ﻉﺎﻔﺗﺭﺍ"
 
 msgid "Generated Type"
 msgstr "ﻪﻠﺻﺎﻓ ﻉﻮﻧ"
-
-
-msgid "Color Grid"
-msgstr "ﮓﻧﺭ"
 
 
 msgid "Movie file"
@@ -3622,6 +3622,10 @@ msgid "Object Aligned"
 msgstr "ءﺎﯿﺷﺍ ﯼﺎﻫ‌ﺖﯾﺩﻭﺪﺤﻣ"
 
 
+msgid "Particle"
+msgstr "ﻩﺭﺫ"
+
+
 msgid "Path End"
 msgstr "X ﻥﺎﯾﺎﭘ"
 
@@ -3708,10 +3712,6 @@ msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
 
 msgid "Random Size"
 msgstr "ﯽﻓﺩﺎﺼﺗ"
-
-
-msgid "Subframes"
-msgstr "ﯼﺪﯿﻠﮐ ﯼﺎﻫ‌ﻢﯾﺮﻓ:"
 
 
 msgid "Particle Type"
@@ -4460,12 +4460,12 @@ msgid "Tracking"
 msgstr "ﯽﺑﺎﯾﺩﺭ"
 
 
-msgid "Delete"
-msgstr "ﻑﺬﺣ"
-
-
 msgid "Key"
 msgstr "ﺪﯿﻠﮐ"
+
+
+msgid "Fluid Presets"
+msgstr "ﺎﻫ‌ﮓﻧﺭ:"
 
 
 msgid "UV"
@@ -4765,14 +4765,6 @@ msgid "Explode Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
-msgid "Fluid Simulation Modifier"
-msgstr "ﺭﺍﺩﺮﮐ ﯼﺪﯿﻠﮐ ﯼﺎﻫ‌ﻢﯾﺮﻓ ﻪﻤﻫ"
-
-
-msgid "Settings for how this object is used in the fluid simulation"
-msgstr "ﺖﮐﺮﺣ ﻢﺴﺠﺗ ﯼﺍﺮﺑ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
 msgid "Bound"
 msgstr "ﺍﺪﺻ"
 
@@ -4807,10 +4799,6 @@ msgstr "ﯽﺑﺎﯾﺯﺭﺍ NLA ﻩﺪﺷ ﻝﺎﻌﻓ"
 
 msgid "None "
 msgstr "ﻡﺍﺪﮐ ﭻﯿﻫ"
-
-
-msgid "Time"
-msgstr "ﻥﺎﻣﺯ"
 
 
 msgid "Merge Limit"
@@ -5007,14 +4995,6 @@ msgstr "ﺍﺪﺟ"
 
 msgid "Branch Smoothing"
 msgstr "ﻪﻧﻮﻤﻧ ﺖﻣﺮﻓ"
-
-
-msgid "Smoke Modifier"
-msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
-
-
-msgid "Smoke simulation modifier"
-msgstr "ﺭﺍﺩﺮﮐ ﯼﺪﯿﻠﮐ ﯼﺎﻫ‌ﻢﯾﺮﻓ ﻪﻤﻫ"
 
 
 msgid "Soft Body Modifier"
@@ -5593,10 +5573,6 @@ msgid "Limit Channel"
 msgstr "ﺎﻫ‌ﻝﺎﻧﺎﮐ"
 
 
-msgid "Single"
-msgstr "ﯽﮑﺗ"
-
-
 msgid "Alpha falloff"
 msgstr "ﺖﺑﺎﺛ ﻝﻭﺰﻧ"
 
@@ -6011,6 +5987,10 @@ msgstr "ﯽﺿﺎﯾﺭ"
 
 msgid "Less Than"
 msgstr "ﺯﺍ ﺮﺘﻤﮐ"
+
+
+msgid "Compare"
+msgstr "ﻩﺩﺮﺸﻓ ﺮﮕﻧﺎﺸﻧ"
 
 
 msgid "Movie Distortion"
@@ -7534,10 +7514,6 @@ msgid "Select Control Point Row"
 msgstr "ﺶﺧﺮﭼ ﻪﻄﻘﻧ"
 
 
-msgid "Compare"
-msgstr "ﻩﺩﺮﺸﻓ ﺮﮕﻧﺎﺸﻧ"
-
-
 msgid "Less"
 msgstr "ﺮﺘﻤﮐ"
 
@@ -7810,11 +7786,6 @@ msgstr "ﻡﺎﻧ ﺶﯾﺎﻤﻧ"
 
 
 msgctxt "Operator"
-msgid "Fluid Simulation Bake"
-msgstr "ﺭﺍﺩﺮﮐ ﯼﺪﯿﻠﮐ ﯼﺎﻫ‌ﻢﯾﺮﻓ ﻪﻤﻫ"
-
-
-msgctxt "Operator"
 msgid "Add Fluid Preset"
 msgstr "ﺎﻫ‌ﮓﻧﺭ:"
 
@@ -7963,11 +7934,6 @@ msgstr "ﻢﯾﺮﻓ ﻥﺎﯾﺎﭘ"
 
 msgid "Normalize Weight"
 msgstr "ﻪﻘﻄﻨﻣ ﻉﺎﻔﺗﺭﺍ"
-
-
-msgctxt "Operator"
-msgid "Grease Pencil Add New"
-msgstr "ﯽﻨﻏﻭﺭ ﺩﺍﺪﻣ"
 
 
 msgctxt "Operator"
@@ -9878,11 +9844,6 @@ msgstr "ﯽﺴﮐﻭﺮﭘ ﻦﺘﺧﺎﺳ..."
 
 msgctxt "Operator"
 msgid "Quick Explode"
-msgstr "ﻊﯾﺮﺳ ﺶﯾﺍﺮﯾﻭ"
-
-
-msgctxt "Operator"
-msgid "Quick Fluid"
 msgstr "ﻊﯾﺮﺳ ﺶﯾﺍﺮﯾﻭ"
 
 
@@ -12180,10 +12141,6 @@ msgid "System"
 msgstr "ﻢﺘﺴﯿﺳ"
 
 
-msgid "Fluid Presets"
-msgstr "ﺎﻫ‌ﮓﻧﺭ:"
-
-
 msgctxt "Operator"
 msgid "Scale"
 msgstr "ﺲﻧﺎﺠﺗ"
@@ -12212,14 +12169,6 @@ msgstr "ﮏﯾﺰﯿﻓ"
 
 msgid "Dynamics"
 msgstr "ﺎﯾﻮﭘ"
-
-
-msgid "Adaptive Domain"
-msgstr "ﻪﻠﺻﺎﻓ"
-
-
-msgid "Behavior"
-msgstr "ﺭﺎﺘﻓﺭ"
 
 
 msgid "Color Management"
@@ -12399,10 +12348,6 @@ msgstr "ﻪﻧﻮﻤﻧ ﺶﯾﺍﺮﮔ:"
 
 msgid "Ambient Color"
 msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
-
-
-msgid "MultiSample"
-msgstr "ﺏﺮﺿ"
 
 
 msgid "New Window"
@@ -12717,6 +12662,10 @@ msgid "Convert Float"
 msgstr "ﻝﺪﺒﻣ"
 
 
+msgid "Reverse Frames"
+msgstr "ﻢﯾﺮﻓ ﻥﺎﯾﺎﭘ"
+
+
 msgid "Use Translation"
 msgstr "ﻪﻤﺟﺮﺗ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
 
@@ -12891,90 +12840,6 @@ msgstr ":UV ﯼﺭﺍﺩﺮﺑ ﻪﺸﻘﻧ"
 
 msgid "Gray Scale"
 msgstr "ﯼﺮﺘﺴﮐﺎﺧ ﺱﺎﯿﻘﻣ"
-
-
-msgid "Collision type"
-msgstr "ﺩﺭﻮﺧﺮﺑ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgid "Static"
-msgstr "ﻦﮐﺎﺳ"
-
-
-msgid "Additional"
-msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
-
-
-msgid "res"
-msgstr "re"
-
-
-msgid "Smoke Grid Resolution"
-msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
-
-
-msgid "Ignition"
-msgstr "ﻦﺸﯿﻤﯿﻧﺍ"
-
-
-msgid "Maximum temperature of flames"
-msgstr "ﻦﯿﻣﺯ ﺭﺩ ﺖﻋﺮﺳ ﻪﻨﯿﺸﯿﺑ"
-
-
-msgid "Smoke Color"
-msgstr "ﻦﯾﺰﮕﯾﺎﺟ"
-
-
-msgid "p0"
-msgstr "0"
-
-
-msgid "Start point"
-msgstr "ﻢﯾﺮﻓ ﻉﻭﺮﺷ"
-
-
-msgid "Flame Rate"
-msgstr "ﻪﻧﻮﻤﻧ ﺖﻋﺮﺳ"
-
-
-msgid "Color of smoke"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﺮﮕﻧﺎﺸﻧ"
-
-
-msgid "Emit smoke from particles"
-msgstr "NLA ﮎﺮﺗ"
-
-
-msgid "Flow Type"
-msgstr "ﻥﺩﺮﮐ ﺮﭘ ﻉﻮﻧ"
-
-
-msgid "Add smoke"
-msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
-
-
-msgid "Add fire and smoke"
-msgstr "ﻪﻨﯿﻣﺯ ﺲﭘ ﺮﯾﻮﺼﺗ"
-
-
-msgid "Add fire"
-msgstr "ﻩﺮﯾﺍﺩ"
-
-
-msgid "Texture mapping type"
-msgstr "ﺖﻓﺎﺑ ﯽﺷﺎﻘﻧ"
-
-
-msgid "Generated coordinates centered to flow object"
-msgstr "ﺖﻓﺎﺑ ﯽﺷﺎﻘﻧ"
-
-
-msgid "Use UV layer for texture coordinates"
-msgstr "ﻝﺎﻌﻓ ﺖﯿﻌﻗﻮﻣ ﻑﺬﺣ"
-
-
-msgid "Amount of random velocity"
-msgstr "ﻞﻣﺎﻌﺗ:"
 
 
 msgid "Space Clip Editor"
@@ -13706,11 +13571,6 @@ msgstr "ﺩﺍﺯﺁ:"
 
 
 msgctxt "Operator"
-msgid "Flip Direction"
-msgstr "ﺖﻬﺟ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
-
-
-msgctxt "Operator"
 msgid "Selection to Grid"
 msgstr "ﻪﮑﺒﺷ ﻪﺑ ﺏﺎﺨﺘﻧﺍ"
 
@@ -13728,6 +13588,11 @@ msgstr "ﻪﮑﺒﺷ ﻪﺑ ﺎﻤﻧ ﻥﺎﮑﻣ"
 msgctxt "Operator"
 msgid "Poly"
 msgstr "ﯼﺍ ﻪﺷﻮﮔ"
+
+
+msgctxt "Operator"
+msgid "Flip Direction"
+msgstr "ﺖﻬﺟ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
 
 
 msgctxt "Operator"
@@ -13780,6 +13645,14 @@ msgstr "ﯽﻤﯾﺪﻗ"
 
 msgid "Date"
 msgstr "ﺦﯾﺭﺎﺗ"
+
+
+msgid "Front Faces Only"
+msgstr "ﻂﻘﻓ ﻮﻠﺟ ﺢﻄﺳ"
+
+
+msgid "Edge To Edge"
+msgstr "ﻪﺒﻟ ﻪﺑ ﻪﺒﻟ"
 
 
 msgid "Roughness 1"
@@ -14009,14 +13882,6 @@ msgid "More"
 msgstr "ﺮﺘﺸﯿﺑ"
 
 
-msgid "Unified Size"
-msgstr "ﻩﺯﺍﺪﻧﺍ ﻥﺩﺮﮐ‌ﯽﮑﯾ"
-
-
-msgid "Unified Strength"
-msgstr "ﺪﺤﺘﻣ ﺖﻣﻭﺎﻘﻣ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
-
-
 msgctxt "Operator"
 msgid "New"
 msgstr "ﺪﯾﺪﺟ"
@@ -14089,10 +13954,6 @@ msgstr "ﻪﻠﺻﺎﻓ"
 
 msgid "Image*"
 msgstr "ﺮﯾﻮﺼﺗ*"
-
-
-msgid "Edge To Edge"
-msgstr "ﻪﺒﻟ ﻪﺑ ﻪﺒﻟ"
 
 
 msgctxt "Operator"
@@ -14816,6 +14677,14 @@ msgid "Spot Blend"
 msgstr "ﻪﻄﻘﻧ ﺐﯿﮐﺮﺗ"
 
 
+msgid "Auto Normalize"
+msgstr "ﺭﺎﮐﺩﻮﺧ ﯼﺯﺎﺳ ﯼﺩﺎﻋ"
+
+
+msgid "Multi-Paint"
+msgstr "ﮓﻧﺭ ﺪﻨﭼ"
+
+
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "ﻊﯾﺮﺳ ﺶﯾﺍﺮﯾﻭ"
@@ -14837,18 +14706,6 @@ msgstr "ﺩﻮﺷ ﻪﺘﺨﭘ ﺪﯾﺎﺑ ﻥﺎﻬﻧ ﻪﻈﻓﺎﺣ ﻪﻄ�
 
 msgid "in memory to enable editing!"
 msgstr "ﺶﯾﺍﺮﯾﻭ ﻥﺩﺮﮐ‌ﻝﺎﻌﻓ ﯼﺍﺮﺑ ﻪﻈﻓﺎﺣ ﺭﺩ!"
-
-
-msgid "Front Faces Only"
-msgstr "ﻂﻘﻓ ﻮﻠﺟ ﺢﻄﺳ"
-
-
-msgid "Auto Normalize"
-msgstr "ﺭﺎﮐﺩﻮﺧ ﯼﺯﺎﺳ ﯼﺩﺎﻋ"
-
-
-msgid "Multi-Paint"
-msgstr "ﮓﻧﺭ ﺪﻨﭼ"
 
 
 msgid "No AnimData to set action on"
@@ -15722,14 +15579,6 @@ msgstr "ﯼﺪﯿﻠﮐ ﯼﺎﻫ ﻢﯾﺮﻓ ﺎﺑ ﺎﻫ ﮎﺮﺗِ"
 
 msgid "Bake failed: no Dynamic Paint modifier found"
 msgstr "ﺎﯾﻮﭘ"
-
-
-msgid "No fluid input objects in the scene"
-msgstr "ﻪﻨﺤﺻ ﻪﺑ ﻦﯿﺑﺭﻭﺩ ﮏﯾ ﻥﺩﻭﺰﻓﺍ"
-
-
-msgid "Invalid object matrix"
-msgstr "ءﯽﺷ ﯼﺎﻫ‌ﻩﺩﺍﺩ"
 
 
 msgid "Air"

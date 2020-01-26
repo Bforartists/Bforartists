@@ -290,14 +290,14 @@ def _template_items_proportional_editing(*, connected=False):
 
 # Tool System Templates
 
-def _template_items_tool_select(params, operator, cursor_operator, extend_type):
+def _template_items_tool_select(params, operator, cursor_operator, *, extend):
     if params.select_mouse == 'LEFTMOUSE':
         # Immediate select without quick delay.
         return [
             (operator, {"type": 'LEFTMOUSE', "value": 'PRESS'},
              {"properties": [("deselect_all", True)]}),
             (operator, {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-             {"properties": [(extend_type, True)]}),
+             {"properties": [(extend, True)]}),
         ]
     else:
         # For right mouse, set the cursor.
@@ -2335,12 +2335,20 @@ def km_sequencercommon(_params):
 
     items.extend([
         *_template_space_region_type_toggle(
+            toolbar_key={"type": 'T', "value": 'PRESS'},
             sidebar_key={"type": 'N', "value": 'PRESS'},
         ),
         ("wm.context_toggle", {"type": 'O', "value": 'PRESS', "shift": True},
          {"properties": [("data_path", 'scene.sequence_editor.show_overlay')]}),
         ("sequencer.view_toggle", {"type": 'TAB', "value": 'PRESS', "ctrl": True}, None),
     ])
+
+    if _params.select_mouse == 'LEFTMOUSE' and not _params.legacy:
+        # Quick switch to select tool, since left select can't easily
+        # select with any tool active.
+        items.extend([
+            op_tool_cycle("builtin.select_box", {"type": 'W', "value": 'PRESS'}),
+        ])
 
     return keymap
 
@@ -5057,7 +5065,7 @@ def km_image_editor_tool_uv_select(params):
     return (
         "Image Editor Tool: Uv, Tweak",
         {"space_type": 'IMAGE_EDITOR', "region_type": 'WINDOW'},
-        {"items": _template_items_tool_select(params, "uv.select", "uv.cursor_set", "extend")},
+        {"items": _template_items_tool_select(params, "uv.select", "uv.cursor_set", extend="extend")},
     )
 
 
@@ -5208,7 +5216,7 @@ def km_3d_view_tool_select(params):
     return (
         "3D View Tool: Tweak",
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
-        {"items": _template_items_tool_select(params, "view3d.select", "view3d.cursor3d", "toggle")},
+        {"items": _template_items_tool_select(params, "view3d.select", "view3d.cursor3d", extend="toggle")},
     )
 
 
@@ -5915,7 +5923,7 @@ def km_3d_view_tool_edit_gpencil_select(params):
     return (
         "3D View Tool: Edit Gpencil, Tweak",
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
-        {"items": _template_items_tool_select(params, "gpencil.select", "view3d.cursor3d", "toggle")},
+        {"items": _template_items_tool_select(params, "gpencil.select", "view3d.cursor3d", extend="toggle")},
     )
 
 
@@ -6020,7 +6028,7 @@ def km_3d_view_tool_sculpt_gpencil_select(params):
     return (
         "3D View Tool: Sculpt Gpencil, Tweak",
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
-        {"items": _template_items_tool_select(params, "gpencil.select", "view3d.cursor3d", "toggle")},
+        {"items": _template_items_tool_select(params, "gpencil.select", "view3d.cursor3d", extend="toggle")},
     )
 
 
@@ -6048,6 +6056,39 @@ def km_3d_view_tool_sculpt_gpencil_select_lasso(params):
         "3D View Tool: Sculpt Gpencil, Select Lasso",
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
         {"items": _template_items_tool_select_actions("gpencil.select_lasso", type=params.tool_tweak, value='ANY')},
+    )
+
+
+def km_sequencer_editor_tool_select(params):
+    return (
+        "Sequencer Tool: Select",
+        {"space_type": 'SEQUENCE_EDITOR', "region_type": 'WINDOW'},
+        {"items": [
+            ("sequencer.select", {"type": params.select_mouse, "value": 'PRESS'},
+             {"properties": [("extend", False), ("deselect_all", not params.legacy)]}),
+        ]},
+    )
+
+
+def km_sequencer_editor_tool_select_box(params):
+    return (
+        "Sequencer Tool: Select Box",
+        {"space_type": 'SEQUENCE_EDITOR', "region_type": 'WINDOW'},
+        {"items": _template_items_tool_select_actions_simple(
+            "sequencer.select_box", type=params.tool_tweak, value='ANY',
+            properties=[("tweak", True)],
+        )},
+    )
+
+
+def km_sequencer_editor_tool_cut(params):
+    return (
+        "Sequencer Tool: Cut",
+        {"space_type": 'SEQUENCE_EDITOR', "region_type": 'WINDOW'},
+        {"items":[
+            ("sequencer.cut", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+             {"properties": [("type", 'SOFT'), ("side", 'NO_CHANGE'), ("use_cursor_position", True), ("ignore_selection", True)]}),
+        ]},
     )
 
 
@@ -6264,6 +6305,9 @@ def generate_keymaps(params=None):
         km_3d_view_tool_sculpt_gpencil_select_box(params),
         km_3d_view_tool_sculpt_gpencil_select_circle(params),
         km_3d_view_tool_sculpt_gpencil_select_lasso(params),
+        km_sequencer_editor_tool_select(params),
+        km_sequencer_editor_tool_select_box(params),
+        km_sequencer_editor_tool_cut(params),
     ]
 
 # ------------------------------------------------------------------------------

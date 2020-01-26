@@ -99,7 +99,7 @@ def write_tokens(auth_token, refresh_token, oauth_response):
 
 
 class RegisterLoginOnline(bpy.types.Operator):
-    """Bring linked object hierarchy to scene and make it editable."""
+    """Login online on BlenderKit webpage"""
 
     bl_idname = "wm.blenderkit_login"
     bl_label = "BlenderKit login or signup"
@@ -124,7 +124,7 @@ class RegisterLoginOnline(bpy.types.Operator):
 
 
 class Logout(bpy.types.Operator):
-    """Bring linked object hierarchy to scene and make it editable."""
+    """Logout from BlenderKit immediately"""
 
     bl_idname = "wm.blenderkit_logout"
     bl_label = "BlenderKit logout"

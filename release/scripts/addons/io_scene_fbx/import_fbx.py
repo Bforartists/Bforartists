@@ -2307,17 +2307,6 @@ class FbxImportHelperNode:
             return None
 
 
-def is_ascii(filepath, size):
-    with open(filepath, 'r', encoding="utf-8") as f:
-        try:
-            f.read(size)
-            return True
-        except UnicodeDecodeError:
-            pass
-
-    return False
-
-
 def load(operator, context, filepath="",
          use_manual_orientation=False,
          axis_forward='-Z',
@@ -2358,10 +2347,24 @@ def load(operator, context, filepath="",
     perfmon.step("FBX Import: start importing %s" % filepath)
     perfmon.level_up()
 
-    # detect ascii files
-    if is_ascii(filepath, 24):
+    # Detect ASCII files.
+
+    # Typically it's bad practice to fail silently on any error,
+    # however the file may fail to read for many reasons,
+    # and this situation is handled later in the code,
+    # right now we only want to know if the file successfully reads as ascii.
+    try:
+        with open(filepath, 'r', encoding="utf-8") as fh:
+            fh.read(24)
+        is_ascii = True
+    except Exception:
+        is_ascii = False
+
+    if is_ascii:
         operator.report({'ERROR'}, "ASCII FBX files are not supported %r" % filepath)
         return {'CANCELLED'}
+    del is_ascii
+    # End ascii detection.
 
     try:
         elem_root, version = parse_fbx.parse(filepath)

@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-04 15:50:16\n"
+"POT-Creation-Date: 2020-01-20 09:05:33\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -771,20 +771,64 @@ msgid "Shading"
 msgstr "Көлөкөлөө"
 
 
-msgid "Fluid"
-msgstr "Суюктук"
-
-
-msgid "Particle"
-msgstr "Бөлүкчө"
-
-
 msgid "End"
 msgstr "Соңу"
 
 
 msgid "Start"
 msgstr "Башы"
+
+
+msgid "Clipping"
+msgstr "Кесүү"
+
+
+msgid "Red"
+msgstr "Кызыл"
+
+
+msgid "Green"
+msgstr "Жашыл"
+
+
+msgid "Blue"
+msgstr "Көк"
+
+
+msgid "Smoke"
+msgstr "Түтүн"
+
+
+msgid "Time"
+msgstr "Убакыты"
+
+
+msgid "Compression"
+msgstr "Кысылышы"
+
+
+msgid "Delete"
+msgstr "Өчүрүү"
+
+
+msgid "Bottom"
+msgstr "Асты"
+
+
+msgid "Top"
+msgstr "Үстү"
+
+
+msgid "Collision"
+msgstr "Кагылышуу"
+
+
+msgid "Fire"
+msgstr "От"
+
+
+msgid "Normal"
+msgstr "Нормаль"
 
 
 msgid "Visibility"
@@ -858,18 +902,6 @@ msgstr "Сфера"
 
 msgid "Matrix"
 msgstr "Матрица"
-
-
-msgid "Red"
-msgstr "Кызыл"
-
-
-msgid "Green"
-msgstr "Жашыл"
-
-
-msgid "Blue"
-msgstr "Көк"
 
 
 msgid "Users"
@@ -950,14 +982,6 @@ msgstr "Жартысы"
 
 msgid "Text Curve"
 msgstr "Текст ийриси"
-
-
-msgid "Top"
-msgstr "Үстү"
-
-
-msgid "Bottom"
-msgstr "Асты"
 
 
 msgid "Font"
@@ -1052,10 +1076,6 @@ msgid "Intensity"
 msgstr "Күчөгөндүгү"
 
 
-msgid "Clipping"
-msgstr "Кесүү"
-
-
 msgid "Opaque"
 msgstr "Күңүрттүк"
 
@@ -1066,6 +1086,10 @@ msgstr "Чач"
 
 msgid "Cloth"
 msgstr "Кездеме"
+
+
+msgid "Fluid"
+msgstr "Суюктук"
 
 
 msgid "Update"
@@ -1152,12 +1176,8 @@ msgid "Mass"
 msgstr "Масса"
 
 
-msgid "Normal"
-msgstr "Нормаль"
-
-
-msgid "Collision"
-msgstr "Кагылышуу"
+msgid "Particle"
+msgstr "Бөлүкчө"
 
 
 msgid "Halo"
@@ -1341,10 +1361,6 @@ msgid "G"
 msgstr "G"
 
 
-msgid "Compression"
-msgstr "Кысылышы"
-
-
 msgid "Codec"
 msgstr "Кодек"
 
@@ -1408,10 +1424,6 @@ msgstr "Тилдер..."
 
 msgid "Channel"
 msgstr "Канал"
-
-
-msgid "Delete"
-msgstr "Өчүрүү"
 
 
 msgid "Key"
@@ -1515,10 +1527,6 @@ msgid "Ocean"
 msgstr "Океан"
 
 
-msgid "Smoke"
-msgstr "Түтүн"
-
-
 msgid "New"
 msgstr "Жаңы"
 
@@ -1537,10 +1545,6 @@ msgstr "Ырастоолор"
 
 msgid "None "
 msgstr "Жок "
-
-
-msgid "Time"
-msgstr "Убакыты"
 
 
 msgid "Levels"
@@ -2323,25 +2327,12 @@ msgstr "Прокси объекти"
 
 
 msgctxt "Operator"
-msgid "Quick Fluid"
-msgstr "Тез суюктук"
-
-
-msgid "Fluid Style"
-msgstr "Суюктук стили"
-
-
-msgctxt "Operator"
 msgid "Quick Smoke"
 msgstr "Тез түтүн"
 
 
 msgid "Smoke Style"
 msgstr "Түтүн стили"
-
-
-msgid "Fire"
-msgstr "От"
 
 
 msgid "Object Color"
@@ -2855,10 +2846,6 @@ msgstr "Вектороскоп"
 
 msgid "Physics"
 msgstr "Физика"
-
-
-msgid "Behavior"
-msgstr "Кылык"
 
 
 msgid "Shadows"

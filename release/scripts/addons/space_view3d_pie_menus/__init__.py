@@ -58,6 +58,8 @@ sub_modules_names = (
     "pie_animation_menu",
     "pie_save_open_menu",
     "pie_editor_switch_menu",
+    "pie_defaults_menu",
+    "pie_proportional_menu",
     )
 
 

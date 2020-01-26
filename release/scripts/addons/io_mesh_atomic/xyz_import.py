@@ -359,12 +359,12 @@ def rotate_object(rot_mat, obj):
 
     orig_loc_mat   = Matrix.Translation(orig_loc)
     orig_rot_mat   = orig_rot.to_matrix().to_4x4()
-    orig_scale_mat = (Matrix.Scale(orig_scale[0],4,(1,0,0)) @ 
-                      Matrix.Scale(orig_scale[1],4,(0,1,0)) @ 
+    orig_scale_mat = (Matrix.Scale(orig_scale[0],4,(1,0,0)) @
+                      Matrix.Scale(orig_scale[1],4,(0,1,0)) @
                       Matrix.Scale(orig_scale[2],4,(0,0,1)))
 
     # Assemble the new matrix.
-    obj.matrix_world = orig_loc_mat @ rot_mat @ orig_rot_mat @ orig_scale_mat 
+    obj.matrix_world = orig_loc_mat @ rot_mat @ orig_rot_mat @ orig_scale_mat
 
 
 # Function, which puts a camera and light source into the 3D scene
@@ -411,8 +411,8 @@ def camera_light_source(use_camera,
         # camera position and view onto the object.
         bpy.ops.object.select_all(action='DESELECT')
         camera.select_set(True)
-        
-        # Rotate the camera around its axis 'object_camera_vec' by 90° such 
+
+        # Rotate the camera around its axis 'object_camera_vec' by 90° such
         # that we have a nice camera view onto the object.
         matrix_rotation = Matrix.Rotation(90/360*2*pi, 4, object_camera_vec)
         rotate_object(matrix_rotation, camera)
@@ -503,10 +503,11 @@ def import_xyz(Ball_type,
                     # However, before we check if it is a vacancy
                     # The vacancy is represented by a transparent cube.
                     if atom.name == "Vacancy":
+                        # Some properties for eevee.
                         material.metallic = 0.8
                         material.specular_intensity = 0.5
                         material.roughness = 0.3
-                        material.blend_method = 'ADD'
+                        material.blend_method = 'OPAQUE'
                         material.show_transparent_back = False
                         # Some properties for cycles
                         material.use_nodes = True
@@ -514,7 +515,7 @@ def import_xyz(Ball_type,
                         mat_P_BSDF.inputs['Metallic'].default_value = 0.1
                         mat_P_BSDF.inputs['Roughness'].default_value = 0.2
                         mat_P_BSDF.inputs['Transmission'].default_value = 0.97
-                        mat_P_BSDF.inputs['IOR'].default_value = 0.8   
+                        mat_P_BSDF.inputs['IOR'].default_value = 0.8
                     # The atom gets its properties.
                     atom.material = material
 
@@ -608,11 +609,11 @@ def import_xyz(Ball_type,
 
     object_size = 0.0
     object_size = max(object_size_vec).length
-    
+
     # ------------------------------------------------------------------------
     # COLLECTION
 
-    # Before we start to draw the atoms, we first create a collection for the 
+    # Before we start to draw the atoms, we first create a collection for the
     # atomic structure. All atoms (balls) are put into this collection.
     coll_structure_name = os.path.basename(filepath_xyz)
     scene = bpy.context.scene
@@ -636,21 +637,21 @@ def import_xyz(Ball_type,
             # the whole object is translated back to 'object_center_vec'.
             atom_vertices.append( atom.location - object_center_vec )
 
-        # First, we create a collection of the element, which  
-        # contains the atoms (balls + mesh)!  
+        # First, we create a collection of the element, which
+        # contains the atoms (balls + mesh)!
         coll_element_name = atom.name # the element name
         # Create the new collection and ...
         coll_element = bpy.data.collections.new(coll_element_name)
-        # ... link it to the collection, which contains all parts of the 
+        # ... link it to the collection, which contains all parts of the
         # structure.
         coll_structure.children.link(coll_element)
 
-        # Now, create a collection for the atoms, which includes the 
+        # Now, create a collection for the atoms, which includes the
         # representative ball and the mesh.
         coll_atom_name = atom.name + "_atom"
         # Create the new collection and ...
         coll_atom = bpy.data.collections.new(coll_atom_name)
-        # ... link it to the collection, which contains all parts of the 
+        # ... link it to the collection, which contains all parts of the
         # element (ball and mesh).
         coll_element.children.link(coll_atom)
 
@@ -714,7 +715,7 @@ def import_xyz(Ball_type,
             coll_past = coll_all[0]
         else:
             coll_past = bpy.context.scene.collection
-        
+
         # Put the atom into the new collection 'atom' and ...
         coll_atom.objects.link(ball)
         # ... unlink the atom from the other collection.

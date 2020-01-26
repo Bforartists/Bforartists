@@ -63,7 +63,8 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "File -> Import -> PDB (.pdb) and File -> Import -> XYZ (.xyz)",
     "warning": "",
-    "wiki_url": "https://wiki.blender.org/",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "import_export/mesh_atomic.html",
     "category": "Import-Export",
 }
 

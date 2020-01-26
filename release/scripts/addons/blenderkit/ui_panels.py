@@ -108,7 +108,6 @@ def draw_upload_common(layout, props, asset_type, context):
     # if props.upload_state.find('Error') > -1:
     #     layout.label(text = props.upload_state)
 
-
     if props.asset_base_id == '':
         optext = 'Upload %s' % asset_type.lower()
         op = layout.operator("object.blenderkit_upload", text=optext, icon='EXPORT')
@@ -151,7 +150,9 @@ def prop_needed(layout, props, name, value, is_not_filled=''):
     if value == is_not_filled:
         # row.label(text='', icon = 'ERROR')
         icon = 'ERROR'
-        row.prop(props, name, icon=icon)
+        row.alert = True
+        row.prop(props, name)#, icon=icon)
+        row.alert = False
     else:
         # row.label(text='', icon = 'FILE_TICK')
         icon = None
@@ -263,12 +264,32 @@ def draw_panel_scene_upload(self, context):
     row.prop(props, 'work_hours')
     layout.prop(props, 'adult')
 
+def draw_assetbar_show_hide(layout, props):
+    s = bpy.context.scene
+    ui_props = s.blenderkitUI
+
+    if ui_props.assetbar_on:
+        icon = 'HIDE_OFF'
+        ttip = 'Click to Hide Asset Bar'
+    else:
+        icon = 'HIDE_ON'
+        ttip = 'Click to Show Asset Bar'
+    op = layout.operator('view3d.blenderkit_asset_bar', text='', icon=icon)
+    op.keep_running = False
+    op.do_search = False
+
+    op.tooltip = ttip
+
 
 def draw_panel_model_search(self, context):
     s = context.scene
+
     props = s.blenderkit_models
     layout = self.layout
-    layout.prop(props, "search_keywords", text="", icon='VIEWZOOM')
+
+    row = layout.row()
+    row.prop(props, "search_keywords", text="", icon='VIEWZOOM')
+    draw_assetbar_show_hide(row, props)
 
     icon = 'NONE'
     if props.report == 'You need Full plan to get this item.':
@@ -330,8 +351,8 @@ def draw_panel_model_search(self, context):
 
     layout.separator()
     layout.label(text='Import method:')
-    col = layout.column()
-    col.prop(props, 'append_method', expand=True, icon_only=False)
+    row = layout.row()
+    row.prop(props, 'append_method', expand=True, icon_only=False)
     layout.prop(props, 'randomize_rotation')
     if props.randomize_rotation:
         layout.prop(props, 'randomize_rotation_amount')
@@ -342,7 +363,9 @@ def draw_panel_scene_search(self, context):
     props = s.blenderkit_scene
     layout = self.layout
     # layout.label(text = "common search properties:")
-    layout.prop(props, "search_keywords", text="", icon='VIEWZOOM')
+    row = layout.row()
+    row.prop(props, "search_keywords", text="", icon='VIEWZOOM')
+    draw_assetbar_show_hide(row, props)
 
     label_multiline(layout, text=props.report)
 
@@ -364,7 +387,7 @@ class VIEW3D_PT_blenderkit_model_properties(Panel):
 
     @classmethod
     def poll(cls, context):
-        p = bpy.context.active_object is not None
+        p = bpy.context.view_layer.objects.active is not None
         return p
 
     def draw(self, context):
@@ -381,12 +404,12 @@ class VIEW3D_PT_blenderkit_model_properties(Panel):
             # if 'rig' in ad['tags']:
             #     # layout.label(text = 'can make proxy')
             #     layout.operator('object.blenderkit_make_proxy', text = 'Make Armature proxy')
-        #fast upload, blocked by now
+        # fast upload, blocked by now
         # else:
         #     op = layout.operator("object.blenderkit_upload", text='Store as private', icon='EXPORT')
         #     op.asset_type = 'MODEL'
         #     op.fast = True
-        #fun override project, not finished
+        # fun override project, not finished
         # layout.operator('object.blenderkit_color_corrector')
 
 
@@ -500,7 +523,9 @@ def draw_panel_material_search(self, context):
     props = wm.blenderkit_mat
 
     layout = self.layout
-    layout.prop(props, "search_keywords", text="", icon='VIEWZOOM')
+    row = layout.row()
+    row.prop(props, "search_keywords", text="", icon='VIEWZOOM')
+    draw_assetbar_show_hide(row, props)
 
     label_multiline(layout, text=props.report)
 
@@ -540,7 +565,11 @@ def draw_panel_brush_search(self, context):
     props = wm.blenderkit_brush
 
     layout = self.layout
-    layout.prop(props, "search_keywords", text="", icon='VIEWZOOM')
+    row = layout.row()
+    row.prop(props, "search_keywords", text="", icon='VIEWZOOM')
+    draw_assetbar_show_hide(row, props)
+
+
     label_multiline(layout, text=props.report)
     draw_panel_categories(self, context)
 
@@ -591,15 +620,21 @@ class VIEW3D_PT_blenderkit_unified(Panel):
         layout = self.layout
 
         # layout.prop_tabs_enum(ui_props, "asset_type", icon_only = True)
-        row = layout.row()
-        row.scale_x = 1.6
-        row.scale_y = 1.6
-        #
-        row.prop(ui_props, 'down_up', expand=True, icon_only=True)
-        # row.label(text='')
-        row = row.split().row()
 
-        row.prop(ui_props, 'asset_type', expand=True, icon_only=True)
+        row = layout.row()
+        #row.scale_x = 1.6
+        #row.scale_y = 1.6
+        #
+        row.prop(ui_props, 'down_up', expand=True, icon_only=False)
+        # row.label(text='')
+        #row = row.split().row()
+        #layout.alert = True
+        #layout.alignment = 'CENTER'
+        #row = layout.row(align = True)
+        #split = row.split(factor=.5)
+        #row.prop(ui_props, 'asset_type', expand=True, icon_only=True)
+        #row = layout.column(align = False)
+        layout.prop(ui_props, 'asset_type', expand=False, text = '')
 
         w = context.region.width
         if user_preferences.login_attempt:
@@ -617,33 +652,12 @@ class VIEW3D_PT_blenderkit_unified(Panel):
                 layout.prop(user_preferences, 'api_key', text='')
             layout.separator()
         if bpy.data.filepath == '':
-            label_multiline(layout, text="It's better to save the file first.", width=w)
+            layout.alert = True
+            label_multiline(layout, text="It's better to save your file first.", width=w)
+            layout.alert = False
             layout.separator()
-        if wm.get('bkit_update'):
-            label_multiline(layout, text="New version available!", icon='INFO', width=w)
-            layout.operator("wm.url_open", text="Get new version",
-                            icon='URL').url = paths.BLENDERKIT_ADDON_FILE_URL
-            layout.separator()
-            layout.separator()
-            layout.separator()
+
         if ui_props.down_up == 'SEARCH':
-            # global assetbar_on
-            if not ui_props.assetbar_on:
-                icon = 'EXPORT'
-                text = 'Show AssetBar - ;'
-                row = layout.row()
-                sr = bpy.context.scene.get('search results')
-                if sr != None:
-                    icon = 'RESTRICT_VIEW_OFF'
-                    row.scale_y = 1
-                    text = 'Show Assetbar to see %i results - ;' % len(sr)
-                op = row.operator('view3d.blenderkit_asset_bar', text=text, icon=icon)
-
-            else:
-
-                op = layout.operator('view3d.blenderkit_asset_bar', text='Hide AssetBar - ;', icon='EXPORT')
-            op.keep_running = False
-            op.do_search = False
 
             if ui_props.asset_type == 'MODEL':
                 # noinspection PyCallByClass
@@ -671,6 +685,8 @@ class VIEW3D_PT_blenderkit_unified(Panel):
             op = layout.operator('view3d.blenderkit_asset_bar', text=text, icon='EXPORT')
             op.keep_running = False
             op.do_search = False
+            op.tooltip = 'Show/Hide asset preview'
+
             e = s.render.engine
             if e not in ('CYCLES', 'BLENDER_EEVEE'):
                 rtext = 'Only Cycles and EEVEE render engines are currently supported. ' \
@@ -680,7 +696,7 @@ class VIEW3D_PT_blenderkit_unified(Panel):
 
             if ui_props.asset_type == 'MODEL':
                 # label_multiline(layout, "Uploaded models won't be available in b2.79", icon='ERROR')
-                if bpy.context.active_object is not None:
+                if bpy.context.view_layer.objects.active is not None:
                     draw_panel_model_upload(self, context)
                 else:
                     layout.label(text='selet object to upload')
@@ -690,7 +706,7 @@ class VIEW3D_PT_blenderkit_unified(Panel):
             elif ui_props.asset_type == 'MATERIAL':
                 # label_multiline(layout, "Uploaded materials won't be available in b2.79", icon='ERROR')
 
-                if bpy.context.active_object is not None and bpy.context.active_object.active_material is not None:
+                if bpy.context.view_layer.objects.active is not None and bpy.context.active_object.active_material is not None:
                     draw_panel_material_upload(self, context)
                 else:
                     label_multiline(layout, text='select object with material to upload materials', width=w)
@@ -705,12 +721,13 @@ class VIEW3D_PT_blenderkit_unified(Panel):
 
             if ui_props.asset_type == 'MODEL':
                 # TODO improve poll here to parenting structures
-                if bpy.context.active_object is not None and bpy.context.active_object.get('asset_data') != None:
+                if bpy.context.view_layer.objects.active is not None and bpy.context.active_object.get(
+                        'asset_data') != None:
                     ad = bpy.context.active_object.get('asset_data')
                     layout.label(text=ad['name'])
                     draw_panel_model_rating(self, context)
             if ui_props.asset_type == 'MATERIAL':
-                if bpy.context.active_object is not None and \
+                if bpy.context.view_layer.objects.active is not None and \
                         bpy.context.active_object.active_material is not None and \
                         bpy.context.active_object.active_material.blenderkit.asset_base_id != '':
                     layout.label(text=bpy.context.active_object.active_material.blenderkit.name + ' :')
@@ -725,6 +742,7 @@ class VIEW3D_PT_blenderkit_unified(Panel):
                         draw_panel_brush_ratings(self, context)
             if ui_props.asset_type == 'TEXTURE':
                 layout.label(text='not yet implemented')
+
 
 
 class OBJECT_MT_blenderkit_asset_menu(bpy.types.Menu):
@@ -755,27 +773,36 @@ class OBJECT_MT_blenderkit_asset_menu(bpy.types.Menu):
 
         op = layout.operator('view3d.blenderkit_search', text='Search Similar')
         op.keywords = asset_data['name'] + ' ' + asset_data['description'] + ' ' + ' '.join(asset_data['tags'])
-
-        if bpy.context.active_object is not None and ui_props.asset_type == 'MODEL':
-            aob = bpy.context.active_object
-            op = layout.operator('scene.blenderkit_download', text='Replace Active Models')
-            op.asset_type = ui_props.asset_type
-            op.asset_index = ui_props.active_index
-            op.model_location = aob.location
-            op.model_rotation = aob.rotation_euler
-            op.target_object = aob.name
-            op.material_target_slot = aob.active_material_index
-            op.replace = True
+        if asset_data.get('canDownload') != 0:
+            if bpy.context.view_layer.objects.active is not None and ui_props.asset_type == 'MODEL':
+                aob = bpy.context.active_object
+                op = layout.operator('scene.blenderkit_download', text='Replace Active Models')
+                op.asset_type = ui_props.asset_type
+                op.asset_index = ui_props.active_index
+                op.model_location = aob.location
+                op.model_rotation = aob.rotation_euler
+                op.target_object = aob.name
+                op.material_target_slot = aob.active_material_index
+                op.replace = True
 
         wm = bpy.context.window_manager
         profile = wm.get('bkit profile')
         if profile is not None:
             # validation by admin
-            if profile['user']['id'] == 2:
+            if profile['user']['exmenu']:
+                layout.label(text='Validation tools:')
                 if asset_data['verificationStatus'] != 'validated':
                     op = layout.operator('object.blenderkit_change_status', text='Validate')
                     op.asset_id = asset_data['id']
                     op.state = 'validated'
+                if asset_data['verificationStatus'] != 'on_hold':
+                    op = layout.operator('object.blenderkit_change_status', text='Put on Hold')
+                    op.asset_id = asset_data['id']
+                    op.state = 'on_hold'
+                if asset_data['verificationStatus'] != 'rejected':
+                    op = layout.operator('object.blenderkit_change_status', text='Reject')
+                    op.asset_id = asset_data['id']
+                    op.state = 'rejected'
 
             if author_id == str(profile['user']['id']):
                 layout.label(text='Management tools:')
@@ -818,6 +845,50 @@ class SetCategoryOperator(bpy.types.Operator):
         # we have to write back to wm. Thought this should happen with original list.
         bpy.context.window_manager['active_category'][self.asset_type] = acat
         return {'FINISHED'}
+
+
+class UrlPopupDialog(bpy.types.Operator):
+    """Generate Cycles thumbnail for model assets"""
+    bl_idname = "wm.blenderkit_url_dialog"
+    bl_label = "BlenderKit message:"
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    url: bpy.props.StringProperty(
+        name="Url",
+        description="url",
+        default="")
+
+    link_text: bpy.props.StringProperty(
+        name="Url",
+        description="url",
+        default="Go to website")
+
+    message: bpy.props.StringProperty(
+        name="Text",
+        description="text",
+        default="")
+
+    # @classmethod
+    # def poll(cls, context):
+    #     return bpy.context.view_layer.objects.active is not None
+
+    def draw(self, context):
+        layout = self.layout
+        label_multiline(layout, text=self.message)
+
+        layout.active_default = True
+        op = layout.operator("wm.url_open", text=self.link_text, icon='QUESTION')
+        op.url = self.url
+
+    def execute(self, context):
+        #start_thumbnailer(self, context)
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        self.bl_label = 'ahoj'
+        wm = context.window_manager
+
+        return wm.invoke_props_dialog(self)
 
 
 def draw_panel_categories(self, context):
@@ -903,6 +974,27 @@ class VIEW3D_PT_blenderkit_downloads(Panel):
                 layout.separator()
 
 
+def header_search_draw(self, context):
+    '''Top bar menu in 3d view'''
+    layout = self.layout
+    s = bpy.context.scene
+    ui_props = s.blenderkitUI
+    if ui_props.asset_type == 'MODEL':
+        props = s.blenderkit_models
+    if ui_props.asset_type == 'MATERIAL':
+        props = s.blenderkit_mat
+    if ui_props.asset_type == 'BRUSH':
+        props = s.blenderkit_brush
+
+    layout.separator_spacer()
+    layout.prop(ui_props, "asset_type", text='', icon='URL')
+    layout.prop(props, "search_keywords", text="", icon='VIEWZOOM')
+    draw_assetbar_show_hide(layout, props)
+
+
+# We can store multiple preview collections here,
+# however in this example we only store "main"
+preview_collections = {}
 classess = (
     SetCategoryOperator,
 
@@ -910,13 +1002,15 @@ classess = (
     VIEW3D_PT_blenderkit_model_properties,
     VIEW3D_PT_blenderkit_downloads,
     VIEW3D_PT_blenderkit_profile,
-    OBJECT_MT_blenderkit_asset_menu
+    OBJECT_MT_blenderkit_asset_menu,
+    UrlPopupDialog
 )
 
 
 def register_ui_panels():
     for c in classess:
         bpy.utils.register_class(c)
+    bpy.types.VIEW3D_MT_editor_menus.append(header_search_draw)
 
 
 def unregister_ui_panels():
