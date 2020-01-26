@@ -287,7 +287,9 @@ class Generator(base_generate.BaseGenerator):
                             and prop in obj.pose.bones[bone].keys():
                                 tar.data_path = tar.data_path[7:]
                             else:
-                                tar.data_path = 'pose.bones["%s"]["%s"]' % (make_original_name(bone), prop)
+                                org_name = make_original_name(bone)
+                                org_name = self.org_rename_table.get(org_name, org_name)
+                                tar.data_path = 'pose.bones["%s"]["%s"]' % (org_name, prop)
 
 
     def __assign_widgets(self):

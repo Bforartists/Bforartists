@@ -30,6 +30,7 @@ import requests
 import json
 import os
 import bpy
+import time
 
 import shutil
 import threading
@@ -106,22 +107,34 @@ def load_categories():
     except:
         print('categories failed to read')
 
-def fetch_categories(API_key):
+#
+catfetch_counter = 0
+
+
+def fetch_categories(API_key, force = False):
     url = paths.get_api_url() + 'categories/'
 
     headers = utils.get_headers(API_key)
 
     tempdir = paths.get_temp_dir()
     categories_filepath = os.path.join(tempdir, 'categories.json')
+    catfile_age = time.time() - os.path.getmtime(categories_filepath)
 
+    # global catfetch_counter
+    # catfetch_counter += 1
+    # utils.p('fetching categories: ', catfetch_counter)
+    # utils.p('age of cat file', catfile_age)
     try:
-        r = rerequests.get(url, headers=headers)
-        rdata = r.json()
-        categories = rdata['results']
-        fix_category_counts(categories)
-        # filter_categories(categories) #TODO this should filter categories for search, but not for upload. by now off.
-        with open(categories_filepath, 'w') as s:
-            json.dump(categories, s, indent=4)
+        # read categories only once per day maximum, or when forced to do so.
+        if catfile_age > 86400 or force:
+            utils.p('requesting categories')
+            r = rerequests.get(url, headers=headers)
+            rdata = r.json()
+            categories = rdata['results']
+            fix_category_counts(categories)
+            # filter_categories(categories) #TODO this should filter categories for search, but not for upload. by now off.
+            with open(categories_filepath, 'w') as s:
+                json.dump(categories, s, indent=4)
         tasks_queue.add_task((load_categories, ()))
     except Exception as e:
         utils.p('category fetching failed')
@@ -131,6 +144,6 @@ def fetch_categories(API_key):
             shutil.copy(source_path, categories_filepath)
 
 
-def fetch_categories_thread(API_key):
-    cat_thread = threading.Thread(target=fetch_categories, args=([API_key]), daemon=True)
+def fetch_categories_thread(API_key, force = False):
+    cat_thread = threading.Thread(target=fetch_categories, args=([API_key, force]), daemon=True)
     cat_thread.start()

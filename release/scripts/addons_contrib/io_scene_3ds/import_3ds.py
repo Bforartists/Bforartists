@@ -413,7 +413,7 @@ def process_next_chunk(context, file, previous_chunk, importedObjects, IMAGE_SEA
             if temp_chunk.ID == MAT_MAP_FILEPATH:
                 texture_name, read_str_len = read_string(file)
 
-                img = TEXTURE_DICT[contextMaterial.name] = load_image(texture_name, dirname)
+                img = TEXTURE_DICT[contextMaterial.name] = load_image(texture_name, dirname, recursive=IMAGE_SEARCH)
                 temp_chunk.bytes_read += read_str_len  # plus one for the null character that gets removed
 
             elif temp_chunk.ID == MAT_MAP_USCALE:

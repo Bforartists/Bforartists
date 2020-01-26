@@ -208,6 +208,7 @@ struct SeqEffectHandle {
  *
  * sequencer render functions
  * ********************************************************************** */
+double BKE_sequencer_rendersize_to_scale_factor(int size);
 
 struct ImBuf *BKE_sequencer_give_ibuf(const SeqRenderData *context, float cfra, int chanshown);
 struct ImBuf *BKE_sequencer_give_ibuf_threaded(const SeqRenderData *context,
@@ -503,6 +504,7 @@ enum {
   SEQ_SIDE_LEFT,
   SEQ_SIDE_RIGHT,
   SEQ_SIDE_BOTH,
+  SEQ_SIDE_NO_CHANGE,
 };
 int BKE_sequencer_find_next_prev_edit(struct Scene *scene,
                                       int cfra,

@@ -1163,7 +1163,7 @@ class ScriptGenerator(base_generate.GeneratorPlugin):
 
         # Generate the UI script
         if metarig.data.rigify_rig_basename:
-            rig_ui_name = metarig.data.rigify_rig_basename + '_rig_ui.py'
+            rig_ui_name = metarig.data.rigify_rig_basename + '_ui.py'
         else:
             rig_ui_name = 'rig_ui.py'
 

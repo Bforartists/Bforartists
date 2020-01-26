@@ -675,7 +675,7 @@ def addBeamMesh(sRef, context):
 #
 #  UI functions and object creation.
 
-class addBeam(Operator):
+class addBeam(Operator, object_utils.AddObjectHelper):
     bl_idname = "mesh.add_beam"
     bl_label = "Beam Builder"
     bl_description = "Create beam meshes of various profiles"
@@ -684,11 +684,6 @@ class addBeam(Operator):
     Beam : BoolProperty(name = "Beam",
                 default = True,
                 description = "Beam")
-
-    #### change properties
-    name : StringProperty(name = "Name",
-                    description = "Name")
-
     change : BoolProperty(name = "Change",
                 default = False,
                 description = "change Beam")
@@ -757,6 +752,13 @@ class addBeam(Operator):
         if self.Type != '0':
             box.prop(self, "edgeA")
 
+        if self.change == False:
+            # generic transform props
+            box = layout.box()
+            box.prop(self, 'align', expand=True)
+            box.prop(self, 'location', expand=True)
+            box.prop(self, 'rotation', expand=True)
+
     def execute(self, context):
         if bpy.context.mode == "OBJECT":
 
@@ -773,7 +775,7 @@ class addBeam(Operator):
                 obj.data.name = oldmeshname
             else:
                 mesh = addBeamMesh(self, context)
-                obj = object_utils.object_data_add(context, mesh, operator=None)
+                obj = object_utils.object_data_add(context, mesh, operator=self)
 
             if self.Type == '2':  # Rotate C shape
                 bpy.ops.transform.rotate(value=1.570796, constraint_axis=[False, True, False])
@@ -799,7 +801,7 @@ class addBeam(Operator):
             name_active_object = active_object.name
             bpy.ops.object.mode_set(mode='OBJECT')
             mesh = addBeamMesh(self, context)
-            obj = object_utils.object_data_add(context, mesh, operator=None)
+            obj = object_utils.object_data_add(context, mesh, operator=self)
             obj.select_set(True)
             active_object.select_set(True)
             bpy.ops.object.join()
@@ -810,6 +812,7 @@ class addBeam(Operator):
 
 def BeamParameters():
     BeamParameters = [
+            "Type",
             "beamZ",
             "beamX",
             "beamY",

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-04 15:50:16\n"
+"POT-Creation-Date: 2020-01-20 09:05:33\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
 "Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -167,8 +167,8 @@ msgid "Environment"
 msgstr "הביבס"
 
 
-msgid "Both"
-msgstr "םהינש"
+msgid "Density"
+msgstr "תופיפצ"
 
 
 msgid "End"
@@ -177,6 +177,38 @@ msgstr "ףוס"
 
 msgid "Start"
 msgstr "הלחתה"
+
+
+msgid "Red"
+msgstr "םודא"
+
+
+msgid "Green"
+msgstr "קורי"
+
+
+msgid "Blue"
+msgstr "לוחכ"
+
+
+msgid "Ignition"
+msgstr "םוקמ"
+
+
+msgid "Smoke Color"
+msgstr "חתפמ עבצ"
+
+
+msgid "Add fire"
+msgstr "הנשמ ףסוה"
+
+
+msgid "Generated"
+msgstr "רצוימ"
+
+
+msgid "Generated coordinates centered to flow object"
+msgstr "רצוימ"
 
 
 msgid "Quadratic"
@@ -215,16 +247,8 @@ msgid "Mirror"
 msgstr "הארמ"
 
 
-msgid "Red"
-msgstr "םודא"
-
-
-msgid "Green"
-msgstr "קורי"
-
-
-msgid "Blue"
-msgstr "לוחכ"
+msgid "Both"
+msgstr "םהינש"
 
 
 msgid "Mask"
@@ -249,10 +273,6 @@ msgstr "ןימי"
 
 msgid "Movie"
 msgstr "טרס"
-
-
-msgid "Generated"
-msgstr "רצוימ"
 
 
 msgid "Roughness"
@@ -469,10 +489,6 @@ msgid "Weight Gradient"
 msgstr "לקשמ תעיבצ"
 
 
-msgid "Density"
-msgstr "תופיפצ"
-
-
 msgctxt "Operator"
 msgid "Move"
 msgstr "טרס"
@@ -538,22 +554,6 @@ msgstr ":ץבוק ביתנ"
 
 msgid "Double-Density"
 msgstr "תופיפצ"
-
-
-msgid "Ignition"
-msgstr "םוקמ"
-
-
-msgid "Smoke Color"
-msgstr "חתפמ עבצ"
-
-
-msgid "Add fire"
-msgstr "הנשמ ףסוה"
-
-
-msgid "Generated coordinates centered to flow object"
-msgstr "רצוימ"
 
 
 msgid "Blender File"

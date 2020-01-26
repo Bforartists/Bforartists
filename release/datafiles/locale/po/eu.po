@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-04 15:50:16\n"
+"POT-Creation-Date: 2020-01-20 09:05:33\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -385,6 +385,18 @@ msgid "Environment"
 msgstr "Ingurunea"
 
 
+msgid "Time"
+msgstr "Denbora"
+
+
+msgid "Delete"
+msgstr "Ezabatu"
+
+
+msgid "Normal"
+msgstr "Normala"
+
+
 msgid "Onion Skinning"
 msgstr "Tipula-azapa"
 
@@ -461,10 +473,6 @@ msgstr "Zirkulua"
 
 msgid "Angular Velocity"
 msgstr "Abiadura-angeluarra"
-
-
-msgid "Normal"
-msgstr "Normala"
 
 
 msgid "World"
@@ -552,10 +560,6 @@ msgid "Show/Hide"
 msgstr "Erakutsi/Ezkutatu"
 
 
-msgid "Delete"
-msgstr "Ezabatu"
-
-
 msgid "UV"
 msgstr "UV"
 
@@ -602,10 +606,6 @@ msgstr "Berria"
 
 msgid "Local"
 msgstr "Lokala"
-
-
-msgid "Time"
-msgstr "Denbora"
 
 
 msgctxt "Curve"

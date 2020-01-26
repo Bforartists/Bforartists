@@ -24,8 +24,9 @@ from io_scene_gltf2.blender.exp import gltf2_blender_search_node_tree
 from io_scene_gltf2.io.exp import gltf2_io_binary_data
 from io_scene_gltf2.io.exp import gltf2_io_image_data
 from io_scene_gltf2.io.com import gltf2_io_debug
-from io_scene_gltf2.blender.exp import gltf2_blender_image
+from io_scene_gltf2.blender.exp.gltf2_blender_image import Channel, ExportImage
 from io_scene_gltf2.blender.exp.gltf2_blender_gather_cache import cached
+from io_scene_gltf2.io.exp.gltf2_io_user_extensions import export_user_extensions
 
 
 @cached
@@ -37,17 +38,17 @@ def gather_image(
         return None
 
     image_data = __get_image_data(blender_shader_sockets_or_texture_slots, export_settings)
-    if image_data is None:
-        # The blender image has no data
+    if image_data.empty():
+        # The export image has no data
         return None
 
-    mime_type = __gather_mime_type(blender_shader_sockets_or_texture_slots, export_settings)
+    mime_type = __gather_mime_type(blender_shader_sockets_or_texture_slots, image_data, export_settings)
     name = __gather_name(blender_shader_sockets_or_texture_slots, export_settings)
 
     uri = __gather_uri(image_data, mime_type, name, export_settings)
     buffer_view = __gather_buffer_view(image_data, mime_type, name, export_settings)
 
-    return __make_image(
+    image = __make_image(
         buffer_view,
         __gather_extensions(blender_shader_sockets_or_texture_slots, export_settings),
         __gather_extras(blender_shader_sockets_or_texture_slots, export_settings),
@@ -56,6 +57,10 @@ def gather_image(
         uri,
         export_settings
     )
+
+    export_user_extensions('gather_image_hook', export_settings, image, blender_shader_sockets_or_texture_slots)
+
+    return image
 
 @cached
 def __make_image(buffer_view, extensions, extras, mime_type, name, uri, export_settings):
@@ -90,27 +95,20 @@ def __gather_extras(sockets_or_slots, export_settings):
     return None
 
 
-def __gather_mime_type(sockets_or_slots, export_settings):
+def __gather_mime_type(sockets_or_slots, export_image, export_settings):
     # force png if Alpha contained so we can export alpha
     for socket in sockets_or_slots:
         if socket.name == "Alpha":
             return "image/png"
 
-    if export_settings["gltf_image_format"] == "NAME":
-        extension = __get_extension_from_slot(sockets_or_slots, export_settings)
-        extension = extension.lower()
-        if extension in [".jpeg", ".jpg", ".png"]:
-            return {
-                ".jpeg": "image/jpeg",
-                ".jpg": "image/jpeg",
-                ".png": "image/png",
-            }[extension]
+    if export_settings["gltf_image_format"] == "AUTO":
+        image = export_image.blender_image()
+        if image is not None and image.file_format == 'JPEG':
+            return "image/jpeg"
         return "image/png"
 
     elif export_settings["gltf_image_format"] == "JPEG":
         return "image/jpeg"
-    else:
-        return "image/png"
 
 
 def __gather_name(sockets_or_slots, export_settings):
@@ -139,13 +137,13 @@ def __is_slot(sockets_or_slots):
     return isinstance(sockets_or_slots[0], bpy.types.MaterialTextureSlot)
 
 
-def __get_image_data(sockets_or_slots, export_settings) -> gltf2_blender_image.ExportImage:
+def __get_image_data(sockets_or_slots, export_settings) -> ExportImage:
     # For shared resources, such as images, we just store the portion of data that is needed in the glTF property
     # in a helper class. During generation of the glTF in the exporter these will then be combined to actual binary
     # resources.
     if __is_socket(sockets_or_slots):
         results = [__get_tex_from_socket(socket, export_settings) for socket in sockets_or_slots]
-        composed_image = None
+        composed_image = ExportImage()
         for result, socket in zip(results, sockets_or_slots):
             if result.shader_node.image.channels == 0:
                 gltf2_io_debug.print_console("WARNING",
@@ -154,44 +152,45 @@ def __get_image_data(sockets_or_slots, export_settings) -> gltf2_blender_image.E
                 continue
 
             # rudimentarily try follow the node tree to find the correct image data.
-            source_channel = 0
+            src_chan = Channel.R
             for elem in result.path:
                 if isinstance(elem.from_node, bpy.types.ShaderNodeSeparateRGB):
-                    source_channel = {
-                        'R': 0,
-                        'G': 1,
-                        'B': 2
+                   src_chan = {
+                        'R': Channel.R,
+                        'G': Channel.G,
+                        'B': Channel.B,
                     }[elem.from_socket.name]
 
-            image = gltf2_blender_image.ExportImage.from_blender_image(result.shader_node.image)
-
-            target_channel = None
+            dst_chan = None
 
             # some sockets need channel rewriting (gltf pbr defines fixed channels for some attributes)
             if socket.name == 'Metallic':
-                target_channel = 2
+                dst_chan = Channel.B
             elif socket.name == 'Roughness':
-                target_channel = 1
+                dst_chan = Channel.G
             elif socket.name == 'Occlusion' and len(sockets_or_slots) > 1 and sockets_or_slots[1] is not None:
-                target_channel = 0
+                dst_chan = Channel.R
             elif socket.name == 'Alpha' and len(sockets_or_slots) > 1 and sockets_or_slots[1] is not None:
-                composed_image.set_alpha(True)
-                target_channel = 3
+                dst_chan = Channel.A
 
-            if target_channel is not None:
-                if composed_image is None:
-                    composed_image = gltf2_blender_image.ExportImage.white_image(image.width, image.height)
+            if dst_chan is not None:
+                composed_image.fill_image(result.shader_node.image, dst_chan, src_chan)
 
-                composed_image[target_channel] = image[source_channel]
+                # Since metal/roughness are always used together, make sure
+                # the other channel is filled.
+                if socket.name == 'Metallic' and not composed_image.is_filled(Channel.G):
+                    composed_image.fill_white(Channel.G)
+                elif socket.name == 'Roughness' and not composed_image.is_filled(Channel.B):
+                    composed_image.fill_white(Channel.B)
             else:
                 # copy full image...eventually following sockets might overwrite things
-                composed_image = image
+                composed_image = ExportImage.from_blender_image(result.shader_node.image)
 
         return composed_image
 
     elif __is_slot(sockets_or_slots):
         texture = __get_tex_from_slot(sockets_or_slots[0])
-        image = gltf2_blender_image.ExportImage.from_blender_image(texture.image)
+        image = ExportImage.from_blender_image(texture.image)
         return image
     else:
         raise NotImplementedError()
@@ -239,24 +238,4 @@ def __get_texname_from_slot(sockets_or_slots, export_settings):
 
     elif isinstance(sockets_or_slots[0], bpy.types.MaterialTextureSlot):
         return sockets_or_slots[0].texture.image.name
-
-
-@cached
-def __get_extension_from_slot(sockets_or_slots, export_settings):
-    if __is_socket(sockets_or_slots):
-        for socket in sockets_or_slots:
-            node = __get_tex_from_socket(socket, export_settings)
-            if node is not None:
-                image_name = node.shader_node.image.name
-                filepath = bpy.data.images[image_name].filepath
-                name, extension = os.path.splitext(filepath)
-                if extension:
-                    return extension
-        return '.png'
-
-    elif isinstance(sockets_or_slots[0], bpy.types.MaterialTextureSlot):
-        image_name = sockets_or_slots[0].texture.image.name
-        filepath = bpy.data.images[image_name].filepath
-        name, extension = os.path.splitext(filepath)
-        return extension
 

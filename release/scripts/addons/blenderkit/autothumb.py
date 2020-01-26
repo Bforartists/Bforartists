@@ -32,13 +32,6 @@ import bpy
 
 BLENDERKIT_EXPORT_DATA_FILE = "data.json"
 
-ABOVE_NORMAL_PRIORITY_CLASS = 0x00008000
-BELOW_NORMAL_PRIORITY_CLASS = 0x00004000
-HIGH_PRIORITY_CLASS = 0x00000080
-IDLE_PRIORITY_CLASS = 0x00000040
-NORMAL_PRIORITY_CLASS = 0x00000020
-REALTIME_PRIORITY_CLASS = 0x00000100
-
 
 def check_thumbnail(props, imgpath):
     img = utils.get_hidden_image(imgpath, 'upload_preview', force_reload=True)
@@ -81,7 +74,7 @@ def update_upload_scene_preview(self, context):
 
 def update_upload_material_preview(self, context):
     if hasattr(bpy.context, 'active_object') \
-            and bpy.context.active_object is not None \
+            and bpy.context.view_layer.objects.active is not None \
             and bpy.context.active_object.active_material is not None:
         mat = bpy.context.active_object.active_material
         props = mat.blenderkit
@@ -147,10 +140,7 @@ def start_thumbnailer(self, context):
                 "thumbnail_denoising": bkit.thumbnail_denoising,
             }, s)
 
-        flags = BELOW_NORMAL_PRIORITY_CLASS
-        if sys.platform != 'win32':  # TODO test this on windows and find out how to change process priority on linux
-            # without psutil - we don't want any more libs in the addon
-            flags = 0
+
 
         proc = subprocess.Popen([
             binary_path,
@@ -159,7 +149,7 @@ def start_thumbnailer(self, context):
             tfpath,
             "--python", os.path.join(script_path, "autothumb_model_bg.py"),
             "--", datafile, filepath, thumb_path, tempdir
-        ], bufsize=1, stdout=subprocess.PIPE, stdin=subprocess.PIPE, creationflags=flags)
+        ], bufsize=1, stdout=subprocess.PIPE, stdin=subprocess.PIPE, creationflags=utils.get_process_flags())
 
         eval_path_computing = "bpy.data.objects['%s'].blenderkit.is_generating_thumbnail" % mainmodel.name
         eval_path_state = "bpy.data.objects['%s'].blenderkit.thumbnail_generating_state" % mainmodel.name
@@ -225,9 +215,6 @@ def start_material_thumbnailer(self, context):
                 "texture_size_meters": bkit.texture_size_meters,
             }, s)
 
-        flags = BELOW_NORMAL_PRIORITY_CLASS
-        if sys.platform != 'win32':  # TODO test this on windows
-            flags = 0
 
         proc = subprocess.Popen([
             binary_path,
@@ -236,7 +223,7 @@ def start_material_thumbnailer(self, context):
             tfpath,
             "--python", os.path.join(script_path, "autothumb_material_bg.py"),
             "--", datafile, filepath, thumb_path, tempdir
-        ], bufsize=1, stdout=subprocess.PIPE, stdin=subprocess.PIPE, creationflags=flags)
+        ], bufsize=1, stdout=subprocess.PIPE, stdin=subprocess.PIPE, creationflags=utils.get_process_flags())
 
         eval_path_computing = "bpy.data.materials['%s'].blenderkit.is_generating_thumbnail" % mat.name
         eval_path_state = "bpy.data.materials['%s'].blenderkit.thumbnail_generating_state" % mat.name
@@ -260,7 +247,7 @@ class GenerateThumbnailOperator(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return bpy.context.active_object is not None
+        return bpy.context.view_layer.objects.active is not None
 
     def draw(self, context):
         ob = bpy.context.active_object
@@ -303,7 +290,7 @@ class GenerateMaterialThumbnailOperator(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return bpy.context.active_object is not None
+        return bpy.context.view_layer.objects.active is not None
 
     def check(self, context):
         return True

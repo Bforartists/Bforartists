@@ -1352,10 +1352,11 @@ def import_pdb(Ball_type,
                 # gets some additional preparation. The vacancy is represented
                 # by a transparent cube.
                 if atom.name == "Vacancy":
+                    # Some properties for eevee.
                     material.metallic = 0.8
                     material.specular_intensity = 0.5
                     material.roughness = 0.3
-                    material.blend_method = 'ADD'
+                    material.blend_method = 'OPAQUE'
                     material.show_transparent_back = False
                     # Some properties for cycles
                     material.use_nodes = True

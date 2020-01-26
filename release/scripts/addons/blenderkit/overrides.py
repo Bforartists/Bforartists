@@ -184,7 +184,7 @@ class BringToScene(Operator):
 
     @classmethod
     def poll(cls, context):
-        return bpy.context.active_object is not None
+        return bpy.context.view_layer.objects.active is not None
 
     def execute(self, context):
         import bpy
@@ -249,7 +249,7 @@ class ModelProxy(Operator):
 
     @classmethod
     def poll(cls, context):
-        return bpy.context.active_object is not None
+        return bpy.context.view_layer.objects.active is not None
 
     def execute(self, context):
         result = modelProxy()
@@ -265,7 +265,7 @@ class ColorCorrector(Operator):
 
     @classmethod
     def poll(cls, context):
-        return bpy.context.active_object is not None
+        return bpy.context.view_layer.objects.active is not None
 
     def execute(self, context):
         ao = bpy.context.active_object
