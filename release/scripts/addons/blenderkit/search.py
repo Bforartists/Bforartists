@@ -95,8 +95,6 @@ def refresh_token_timer():
 def scene_load(context):
     wm = bpy.context.window_manager
     fetch_server_data()
-    # following doesn't necessarily happen if version isn't checked yet or similar, first run.
-    # wm['bkit_update'] = version_checker.compare_versions(blenderkit)
     categories.load_categories()
     if not bpy.app.timers.is_registered(refresh_token_timer):
         bpy.app.timers.register(refresh_token_timer, persistent=True, first_interval=36000)
@@ -106,20 +104,29 @@ def fetch_server_data():
     ''' download categories and addon version'''
     if not bpy.app.background:
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-        url = paths.BLENDERKIT_ADDON_URL
         api_key = user_preferences.api_key
         # Only refresh new type of tokens(by length), and only one hour before the token timeouts.
         if user_preferences.enable_oauth and \
-                len(user_preferences.api_key)<38 and \
-                user_preferences.api_key_timeout<time.time()+ 3600:
+                len(user_preferences.api_key) < 38 and \
+                user_preferences.api_key_timeout < time.time() + 3600:
             bkit_oauth.refresh_token_thread()
-        if api_key != '':
+        if api_key != '' and bpy.context.window_manager.get('bkit profile') == None:
             get_profile()
-        categories.fetch_categories_thread(api_key)
+        if bpy.context.window_manager.get('bkit_categories') is None:
+            categories.fetch_categories_thread(api_key)
 
+
+first_time = True
 
 @bpy.app.handlers.persistent
 def timer_update():  # TODO might get moved to handle all blenderkit stuff.
+    #this makes a first search after opening blender. showing latest assets.
+    global first_time
+    preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    if first_time:
+        first_time = False
+        if preferences.show_on_start:
+            search()
 
     global search_threads
     # don't do anything while dragging - this could switch asset type during drag, and make results list length different,
@@ -164,7 +171,7 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff.
             result_field = []
             ok, error = check_errors(rdata)
             if ok:
-
+                bpy.ops.object.run_assetbar_fix_context()
                 for r in rdata['results']:
                     # TODO remove this fix when filesSize is fixed.
                     # this is a temporary fix for too big numbers from the server.
@@ -254,7 +261,7 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff.
                     ui_props.scrolloffset = 0
                 props.is_searching = False
                 props.search_error = False
-                props.report = 'Open assetbar to see %i results. ' % len(s['search results'])
+                props.report = 'Found %i results. ' % (s['search results orig']['count'])
                 if len(s['search results']) == 0:
                     tasks_queue.add_task((ui.add_report, ('No matching results found.',)))
 
@@ -321,15 +328,23 @@ def split_subs(text, threshold=40):
     # temporarily disable this, to be able to do this in drawing code
 
     text = text.rstrip()
+    text = text.replace('\r\n', '\n')
+
     lines = []
 
     while len(text) > threshold:
-        i = text.rfind(' ', 0, threshold)
-        i1 = text.rfind(',', 0, threshold)
-        i2 = text.rfind('.', 0, threshold)
-        i = max(i, i1, i2)
-        if i <= 0:
-            i = threshold
+        #first handle if there's an \n line ending
+        i_rn = text.find('\n')
+        if 1 < i_rn < threshold:
+            i = i_rn
+            text = text.replace('\n','',1)
+        else:
+            i = text.rfind(' ', 0, threshold)
+            i1 = text.rfind(',', 0, threshold)
+            i2 = text.rfind('.', 0, threshold)
+            i = max(i, i1, i2)
+            if i <= 0:
+                i = threshold
         lines.append(text[:i])
         text = text[i:]
     lines.append(text)
@@ -608,6 +623,7 @@ def fetch_author(a_id, api_key):
         utils.p(e)
     utils.p('finish fetch')
 
+# profile_counter =0
 
 def get_author(r):
     a_id = str(r['author']['id'])
@@ -616,11 +632,13 @@ def get_author(r):
     if authors == {}:
         bpy.context.window_manager['bkit authors'] = authors
     a = authors.get(a_id)
-    if a is None or a is '' or \
-            (a.get('gravatarHash') is not None and a.get('gravatarImg') is None):
-        authors[a_id] = None
+    if a is None:# or a is '' or (a.get('gravatarHash') is not None and a.get('gravatarImg') is None):
+        authors[a_id] = ''
         thread = threading.Thread(target=fetch_author, args=(a_id, preferences.api_key), daemon=True)
         thread.start()
+        # global profile_counter
+        # profile_counter+=1
+        # print(profile_counter,'author:', a_id)
     return a
 
 
@@ -634,6 +652,11 @@ def write_profile(adata):
         user['sumPrivateAssetFilesSize'] /= (1024 * 1024)
     if user.get('remainingPrivateQuota') is not None:
         user['remainingPrivateQuota'] /= (1024 * 1024)
+
+    if adata.get('canEditAllAssets') is True:
+        user['exmenu'] = True
+    else:
+        user['exmenu'] = False
 
     bpy.context.window_manager['bkit profile'] = adata
 
@@ -660,6 +683,7 @@ def fetch_profile(api_key):
         utils.p(e)
 
 
+
 def get_profile():
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     a = bpy.context.window_manager.get('bkit profile')
@@ -667,6 +691,11 @@ def get_profile():
     thread.start()
     return a
 
+def profile_is_validator():
+    a = bpy.context.window_manager.get('bkit profile')
+    if a is not None and a['user'].get('exmenu'):
+        return True
+    return False
 
 class Searcher(threading.Thread):
     query = None
@@ -723,17 +752,22 @@ class Searcher(threading.Thread):
                     requeststring += '+'
 
             # result ordering: _score - relevance, score - BlenderKit score
-            if query.get('category_subtree') is not None:
-                requeststring += '+order:-score,_score'
+            #first condition assumes no keywords and no category, thus an empty search that is triggered on start.
+            if query['keywords'] == '' and query.get('category_subtree') == None:
+                requeststring += '+order:-created'
+            elif query.get('author_id') is not None and profile_is_validator():
+                requeststring += '+order:-created'
             else:
-                requeststring += '+order:_score'
+                if query.get('category_subtree') is not None:
+                    requeststring += '+order:-score,_score'
+                else:
+                    requeststring += '+order:_score'
 
             requeststring += '&addon_version=%s' % params['addon_version']
             if params.get('scene_uuid') is not None:
                 requeststring += '&scene_uuid=%s' % params['scene_uuid']
 
             urlquery = url + requeststring
-
         try:
             utils.p(urlquery)
             r = rerequests.get(urlquery, headers=headers)
@@ -1093,8 +1127,12 @@ def search(category='', get_next=False, author_id=''):
 
 def search_update(self, context):
     utils.p('search updater')
-    if self.search_keywords != '':
-        search()
+    #if self.search_keywords != '':
+    ui_props = bpy.context.scene.blenderkitUI
+    if ui_props.down_up != 'SEARCH':
+        ui_props.down_up = 'SEARCH'
+
+    search()
 
 
 class SearchOperator(Operator):
@@ -1111,27 +1149,27 @@ class SearchOperator(Operator):
         name="category",
         description="search only subtree of this category",
         default="",
-        options = {'SKIP_SAVE'}
+        options={'SKIP_SAVE'}
     )
 
     author_id: StringProperty(
         name="Author ID",
         description="Author ID - search only assets by this author",
         default="",
-        options = {'SKIP_SAVE'}
+        options={'SKIP_SAVE'}
     )
 
     get_next: BoolProperty(name="next page",
                            description="get next page from previous search",
                            default=False,
-        options = {'SKIP_SAVE'}
-    )
+                           options={'SKIP_SAVE'}
+                           )
 
     keywords: StringProperty(
         name="Keywords",
         description="Keywords",
         default="",
-        options = {'SKIP_SAVE'}
+        options={'SKIP_SAVE'}
     )
 
     @classmethod
@@ -1163,7 +1201,7 @@ def register_search():
     for c in classes:
         bpy.utils.register_class(c)
 
-    bpy.app.timers.register(timer_update, persistent = True)
+    bpy.app.timers.register(timer_update, persistent=True)
 
     categories.load_categories()
 
@@ -1175,4 +1213,3 @@ def unregister_search():
         bpy.utils.unregister_class(c)
     if bpy.app.timers.is_registered(timer_update):
         bpy.app.timers.unregister(timer_update)
-

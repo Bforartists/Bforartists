@@ -44,9 +44,5 @@ class BlenderCamera():
             cam.clip_end = pycamera.zfar
 
         obj = bpy.data.objects.new(pycamera.name, cam)
-        if gltf.blender_active_collection is not None:
-            bpy.data.collections[gltf.blender_active_collection].objects.link(obj)
-        else:
-            bpy.data.scenes[gltf.blender_scene].collection.objects.link(obj)
         return obj
 

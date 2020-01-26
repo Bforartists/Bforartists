@@ -318,11 +318,16 @@ def modify_objects(action_type,
     if (action_type == "STICKS_RADIUS_ALL" and 'STICK' in atom.name.upper() and
                                     ('CUP'      in atom.name.upper() or
                                      'CYLINDER' in atom.name.upper())):
-        
-        # Make the cylinder or cup visible first, otherwise one cannot
-        # go into EDIT mode. Note that 'atom' here is in fact a 'stick' 
-        # (cylinder or cup).
-        atom.hide_set(False)
+
+        # For dupliverts structures only: Make the cylinder or cup visible
+        # first, otherwise one cannot go into EDIT mode. Note that 'atom' here
+        # is in fact a 'stick' (cylinder or cup).
+        # First, identify if it is a normal cylinder object or a dupliverts
+        # structure. The identifier for a dupliverts structure is the parent's
+        # name, which includes "_sticks_mesh"
+        if "_sticks_mesh" in atom.parent.name:
+            atom.hide_set(False)
+
         bpy.context.view_layer.objects.active = atom
         bpy.ops.object.mode_set(mode='EDIT', toggle=False)
         bm = bmesh.from_edit_mesh(atom.data)
@@ -343,8 +348,11 @@ def modify_objects(action_type,
             v.co[1] = ((v.co[1] - center[1]) / radius) * radius_new + center[1]
 
         bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
-        # Hide again the representative stick (cylinder or cup).
-        atom.hide_set(True)
+        # Hide again the representative stick (cylinder or cup) if it is a
+        # dupliverts structure.
+        if "_sticks_mesh" in atom.parent.name:
+            atom.hide_set(True)
+
         bpy.context.view_layer.objects.active = None
 
     # Replace atom objects
@@ -416,9 +424,9 @@ def separate_atoms(scn):
     bm.free()
     del(bm)
 
-    # Delete already the selected vertices    
+    # Delete already the selected vertices
     bpy.ops.mesh.delete(type='VERT')
-    
+
     # Find the representative ball within the collection.
     for obj in coll.objects:
         if obj.parent != None:
@@ -436,7 +444,7 @@ def separate_atoms(scn):
         obj_dupli.name = obj.name + "_sep"
         # Do not hide the object!
         obj_dupli.hide_set(False)
-            
+
 
     bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
     bpy.context.view_layer.objects.active = mesh
@@ -454,7 +462,7 @@ def draw_obj_material(material_type, material):
         material_new.metallic = 0.8
         material_new.specular_intensity = 0.5
         material_new.roughness = 0.3
-        material_new.blend_method = 'ADD'
+        material_new.blend_method = 'OPAQUE'
         material_new.show_transparent_back = False
         # Some properties for cycles
         material_new.use_nodes = True
@@ -481,7 +489,7 @@ def draw_obj_material(material_type, material):
         material_new.metallic = 0.3
         material_new.specular_intensity = 0.5
         material_new.roughness = 0.3
-        material_new.blend_method = 'ADD'
+        material_new.blend_method = 'OPAQUE'
         material_new.show_transparent_back = False
         # Some properties for cycles
         material_new.use_nodes = True
@@ -490,7 +498,7 @@ def draw_obj_material(material_type, material):
         mat_P_BSDF.inputs['Roughness'].default_value = 0.2
         mat_P_BSDF.inputs['Transmission'].default_value = 0.5
         mat_P_BSDF.inputs['IOR'].default_value = 0.8
-        
+
     # Always, when the material is changed, a new name is created. Note that
     # this makes sense: Imagine, an other object uses the same material as the
     # selected one. After changing the material of the selected object the old
@@ -512,7 +520,7 @@ def draw_obj_material(material_type, material):
 
 # Get the collection of an object.
 def get_collection_object(obj):
-    
+
     coll_all = obj.users_collection
     if len(coll_all) > 0:
         coll = coll_all[0]
@@ -632,7 +640,7 @@ def draw_obj(atom_shape, atom, new_material):
 
     new_atom.active_material = new_material
 
-    # If it is the representative object of a duplivert structure then 
+    # If it is the representative object of a duplivert structure then
     # transfer the parent and hide the new object.
     if atom.parent != None:
         new_atom.parent = atom.parent
@@ -640,10 +648,10 @@ def draw_obj(atom_shape, atom, new_material):
 
     # Note the collection where the old object was placed into.
     coll_old_atom = get_collection_object(atom)
-    
+
     # Note the collection where the new object was placed into.
     coll_new_atom_past = get_collection_object(new_atom)
-    
+
     # If it is not the same collection then ...
     if coll_new_atom_past != coll_old_atom:
         # Put the new object into the collection of the old object and ...
@@ -660,7 +668,7 @@ def draw_obj(atom_shape, atom, new_material):
         coll_child = get_collection_object(child)
         coll_child.objects.unlink(child)
         bpy.ops.object.delete()
-        del(child)               
+        del(child)
 
     # Deselect everything
     bpy.ops.object.select_all(action='DESELECT')
@@ -674,7 +682,7 @@ def draw_obj(atom_shape, atom, new_material):
     coll_old_atom.objects.unlink(atom)
     # Delete the old atom
     bpy.ops.object.delete()
-    del(atom)   
+    del(atom)
 
     #if "_F2+_center" or "_F+_center" or "_F0_center" in coll_old_atom:
     #    print("Delete the collection")
@@ -713,7 +721,7 @@ def draw_obj_special(atom_shape, atom):
         material_cube.metallic = 0.8
         material_cube.specular_intensity = 0.5
         material_cube.roughness = 0.3
-        material_cube.blend_method = 'ADD'
+        material_cube.blend_method = 'OPAQUE'
         material_cube.show_transparent_back = True
         # Some properties for cycles
         material_cube.use_nodes = True
@@ -724,7 +732,7 @@ def draw_obj_special(atom_shape, atom):
         mat_P_BSDF.inputs['IOR'].default_value = 0.8
         cube.active_material = material_cube
         # Put a nice point lamp inside the defect
-        lamp_data = bpy.data.lights.new(name=atom.name + "_F2+_lamp", 
+        lamp_data = bpy.data.lights.new(name=atom.name + "_F2+_lamp",
                                         type="POINT")
         lamp_data.distance = atom.scale[0] * 2.0
         lamp_data.energy = 1.0
@@ -739,11 +747,11 @@ def draw_obj_special(atom_shape, atom):
         lmp_P_BSDF.inputs['Strength'].default_value = 2000
         # The new 'atom' is the F2+ defect
         new_atom = cube
-        
+
         # Note the collection where all the new objects were placed into.
         # We use only one object, the cube
         coll_ori = get_collection_object(cube)
-       
+
         # If it is not the same collection then ...
         if coll_ori != coll_new:
             # Put all new objects into the new collection and ...
@@ -752,14 +760,14 @@ def draw_obj_special(atom_shape, atom):
             # ... unlink them from their original collection.
             coll_ori.objects.unlink(cube)
             coll_ori.objects.unlink(lamp)
-            
+
         coll_new.name = atom.name + "_F2+_center"
-        
+
         if atom.parent != None:
             cube.parent = atom.parent
             cube.hide_set(True)
             lamp.hide_set(True)
-            
+
     # F+ center
     if atom_shape == '2':
         # Create first a cube
@@ -777,7 +785,7 @@ def draw_obj_special(atom_shape, atom):
         material_cube.metallic = 0.8
         material_cube.specular_intensity = 0.5
         material_cube.roughness = 0.3
-        material_cube.blend_method = 'ADD'
+        material_cube.blend_method = 'OPAQUE'
         material_cube.show_transparent_back = True
         # Some properties for cycles
         material_cube.use_nodes = True
@@ -808,7 +816,7 @@ def draw_obj_special(atom_shape, atom):
         material_electron.show_transparent_back = False
         electron.active_material = material_electron
         # Put a nice point lamp inside the electron
-        lamp_data = bpy.data.lights.new(name=atom.name + "_F+_lamp", 
+        lamp_data = bpy.data.lights.new(name=atom.name + "_F+_lamp",
                                         type="POINT")
         lamp_data.distance = atom.scale[0] * 2.0
         lamp_data.energy = 1.0
@@ -827,7 +835,7 @@ def draw_obj_special(atom_shape, atom):
         # Note the collection where all the new objects were placed into.
         # We use only one object, the cube
         coll_ori = get_collection_object(cube)
-       
+
         # If it is not the same collection then ...
         if coll_ori != coll_new:
             # Put all new objects into the new collection and ...
@@ -840,7 +848,7 @@ def draw_obj_special(atom_shape, atom):
             coll_ori.objects.unlink(lamp)
 
         coll_new.name = atom.name + "_F+_center"
-        
+
         if atom.parent != None:
             cube.parent = atom.parent
             cube.hide_set(True)
@@ -864,7 +872,7 @@ def draw_obj_special(atom_shape, atom):
         material_cube.metallic = 0.8
         material_cube.specular_intensity = 0.5
         material_cube.roughness = 0.83
-        material_cube.blend_method = 'ADD'
+        material_cube.blend_method = 'OPAQUE'
         material_cube.show_transparent_back = True
         # Some properties for cycles
         material_cube.use_nodes = True
@@ -905,7 +913,7 @@ def draw_obj_special(atom_shape, atom):
         electron1.active_material = material_electron
         electron2.active_material = material_electron
         # Put two nice point lamps inside the electrons
-        lamp1_data = bpy.data.lights.new(name=atom.name + "_F0_lamp1", 
+        lamp1_data = bpy.data.lights.new(name=atom.name + "_F0_lamp1",
                                          type="POINT")
         lamp1_data.distance = atom.scale[0] * 2.0
         lamp1_data.energy = 1.0
@@ -914,8 +922,8 @@ def draw_obj_special(atom_shape, atom):
         lamp1.location = Vector((scale[0]*1.5, 0.0, 0.0))
         bpy.context.collection.objects.link(lamp1)
         lamp1.parent = cube
-        lamp2_data = bpy.data.lights.new(name=atom.name + "_F0_lamp2", 
-                                         type="POINT") 
+        lamp2_data = bpy.data.lights.new(name=atom.name + "_F0_lamp2",
+                                         type="POINT")
         lamp2_data.distance = atom.scale[0] * 2.0
         lamp2_data.energy = 1.0
         lamp2_data.color = (0.8, 0.8, 0.8)
@@ -936,7 +944,7 @@ def draw_obj_special(atom_shape, atom):
         # Note the collection where all the new objects were placed into.
         # We use only one object, the cube
         coll_ori = get_collection_object(cube)
-       
+
         # If it is not the same collection then ...
         if coll_ori != coll_new:
             # Put all new objects into the collection of 'atom' and ...
@@ -961,7 +969,7 @@ def draw_obj_special(atom_shape, atom):
             electron2.hide_set(True)
             lamp1.hide_set(True)
             lamp2.hide_set(True)
-        
+
     # Deselect everything
     bpy.ops.object.select_all(action='DESELECT')
     # Make the old atom visible.
@@ -974,8 +982,8 @@ def draw_obj_special(atom_shape, atom):
     coll_atom.objects.unlink(atom)
     # Delete the old atom
     bpy.ops.object.delete()
-    del(atom)        
-    
+    del(atom)
+
     return new_atom
 
 

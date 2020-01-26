@@ -85,6 +85,9 @@
 /** Time step default value for nice appearance. */
 #define DT_DEFAULT 0.1f
 
+/** Max value for phi initialization */
+#define PHI_MAX 9999.0f
+
 static void BKE_fluid_modifier_reset_ex(struct FluidModifierData *mmd, bool need_lock);
 
 #ifdef WITH_FLUID
@@ -927,10 +930,10 @@ static void update_obstacles(Depsgraph *depsgraph,
 
     /* Use big value that's not inf to initialize levelset grids. */
     if (phi_obs_in) {
-      phi_obs_in[z] = FLT_MAX;
+      phi_obs_in[z] = PHI_MAX;
     }
     if (phi_guide_in) {
-      phi_guide_in[z] = FLT_MAX;
+      phi_guide_in[z] = PHI_MAX;
     }
     if (num_obstacles) {
       num_obstacles[z] = 0;
@@ -1551,7 +1554,7 @@ static void update_mesh_distances(int index,
                                   float surface_thickness,
                                   int use_plane_init)
 {
-  float min_dist = FLT_MAX;
+  float min_dist = PHI_MAX;
 
   /* Ensure that planes get initialized correctly. */
   if (use_plane_init) {
@@ -1585,12 +1588,12 @@ static void update_mesh_distances(int index,
   /* Count for ray misses (no face hit) and cases where ray direction matches face normal
    * direction. */
   int miss_cnt = 0, dir_cnt = 0;
-  min_dist = FLT_MAX;
+  min_dist = PHI_MAX;
 
   for (int i = 0; i < ray_cnt; i++) {
     BVHTreeRayHit hit_tree = {0};
     hit_tree.index = -1;
-    hit_tree.dist = FLT_MAX;
+    hit_tree.dist = PHI_MAX;
 
     normalize_v3(ray_dirs[i]);
     BLI_bvhtree_ray_cast(tree_data->tree,
@@ -1640,7 +1643,7 @@ static void update_mesh_distances(int index,
 
     BVHTreeRayHit hit_tree = {0};
     hit_tree.index = -1;
-    hit_tree.dist = FLT_MAX;
+    hit_tree.dist = PHI_MAX;
 
     normalize_v3(ray);
     BLI_bvhtree_ray_cast(
@@ -1695,7 +1698,7 @@ static void sample_mesh(FluidFlowSettings *mfs,
   float sample_str = 0.0f;
 
   hit.index = -1;
-  hit.dist = FLT_MAX;
+  hit.dist = PHI_MAX;
   nearest.index = -1;
   nearest.dist_sq = mfs->surface_distance *
                     mfs->surface_distance; /* find_nearest uses squared distance */
@@ -1717,7 +1720,7 @@ static void sample_mesh(FluidFlowSettings *mfs,
          * point is at least surrounded by two faces */
         negate_v3(ray_dir);
         hit.index = -1;
-        hit.dist = FLT_MAX;
+        hit.dist = PHI_MAX;
 
         BLI_bvhtree_ray_cast(tree_data->tree,
                              ray_start,
@@ -2779,10 +2782,10 @@ static void update_flowsfluids(struct Depsgraph *depsgraph,
   /* Grid reset before writing again */
   for (z = 0; z < mds->res[0] * mds->res[1] * mds->res[2]; z++) {
     if (phi_in) {
-      phi_in[z] = FLT_MAX;
+      phi_in[z] = PHI_MAX;
     }
     if (phiout_in) {
-      phiout_in[z] = FLT_MAX;
+      phiout_in[z] = PHI_MAX;
     }
     if (density_in) {
       density_in[z] = 0.0f;
@@ -2862,7 +2865,7 @@ static void update_flowsfluids(struct Depsgraph *depsgraph,
             else if (mfs->behavior == FLUID_FLOW_BEHAVIOR_GEOMETRY && !is_first_frame) {
               apply_inflow_fields(mfs,
                                   0.0f,
-                                  FLT_MAX,
+                                  PHI_MAX,
                                   d_index,
                                   density_in,
                                   density,
@@ -3110,7 +3113,7 @@ static Mesh *create_liquid_geometry(FluidDomainSettings *mds, Mesh *orgmesh, Obj
 
     // if reading raw data directly from manta, normalize now, otherwise omit this, ie when reading
     // from files
-    {
+    if (!manta_liquid_mesh_from_file(mds->fluid)) {
       // normalize to unit cube around 0
       mverts->co[0] -= ((float)mds->res[0] * mds->mesh_scale) * 0.5f;
       mverts->co[1] -= ((float)mds->res[1] * mds->mesh_scale) * 0.5f;
@@ -3664,12 +3667,14 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
 
     /* Read mesh cache. */
     if (with_liquid && with_mesh) {
-      has_mesh = manta_read_mesh(mds->fluid, mmd, mesh_frame);
+      /* Update mesh data from file is faster than via Python (manta_read_mesh()). */
+      has_mesh = manta_update_mesh_structures(mds->fluid, mmd, mesh_frame);
     }
 
     /* Read particles cache. */
     if (with_liquid && with_particles) {
-      has_particles = manta_read_particles(mds->fluid, mmd, particles_frame);
+      /* Update particle data from file is faster than via Python (manta_read_particles()). */
+      has_particles = manta_update_particle_structures(mds->fluid, mmd, particles_frame);
     }
 
     /* Read guide cache. */
@@ -3707,12 +3712,23 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
     }
     /* Read data cache only */
     else {
-      /* Read config and realloc fluid object if needed. */
-      if (manta_read_config(mds->fluid, mmd, data_frame) && manta_needs_realloc(mds->fluid, mmd)) {
-        BKE_fluid_reallocate_fluid(mds, mds->res, 1);
+      if (with_smoke) {
+        /* Read config and realloc fluid object if needed. */
+        if (manta_read_config(mds->fluid, mmd, data_frame) &&
+            manta_needs_realloc(mds->fluid, mmd)) {
+          BKE_fluid_reallocate_fluid(mds, mds->res, 1);
+        }
+        /* Read data cache */
+        has_data = manta_read_data(mds->fluid, mmd, data_frame);
       }
-      /* Read data cache */
-      has_data = manta_read_data(mds->fluid, mmd, data_frame);
+      if (with_liquid) {
+        if (!baking_data && !baking_particles && !baking_mesh && !mode_replay) {
+          has_data = manta_update_liquid_structures(mds->fluid, mmd, data_frame);
+        }
+        else {
+          has_data = manta_read_data(mds->fluid, mmd, data_frame);
+        }
+      }
     }
   }
 
@@ -3806,15 +3822,47 @@ struct Mesh *BKE_fluid_modifier_do(
     BLI_rw_mutex_unlock(mmd->domain->fluid_mutex);
   }
 
+  /* Optimization: Do not update viewport during bakes (except in replay mode)
+   * Reason: UI is locked and updated liquid / smoke geometry is not visible anyways. */
+  bool needs_viewport_update = false;
+  if (mmd->domain) {
+    FluidDomainSettings *mds = mmd->domain;
+
+    /* Always update viewport in cache replay mode. */
+    if (mds->cache_type == FLUID_DOMAIN_CACHE_REPLAY ||
+        mds->flags & FLUID_DOMAIN_USE_ADAPTIVE_DOMAIN) {
+      needs_viewport_update = true;
+    }
+    /* In other cache modes, only update the viewport when no bake is going on. */
+    else {
+      bool with_mesh;
+      with_mesh = mds->flags & FLUID_DOMAIN_USE_MESH;
+      bool baking_data, baking_noise, baking_mesh, baking_particles, baking_guide;
+      baking_data = mds->cache_flag & FLUID_DOMAIN_BAKING_DATA;
+      baking_noise = mds->cache_flag & FLUID_DOMAIN_BAKING_NOISE;
+      baking_mesh = mds->cache_flag & FLUID_DOMAIN_BAKING_MESH;
+      baking_particles = mds->cache_flag & FLUID_DOMAIN_BAKING_PARTICLES;
+      baking_guide = mds->cache_flag & FLUID_DOMAIN_BAKING_GUIDE;
+
+      if (with_mesh && !baking_data && !baking_noise && !baking_mesh && !baking_particles &&
+          !baking_guide) {
+        needs_viewport_update = true;
+      }
+    }
+  }
+
   Mesh *result = NULL;
   if (mmd->type & MOD_FLUID_TYPE_DOMAIN && mmd->domain) {
-    /* Return generated geometry depending on domain type. */
-    if (mmd->domain->type == FLUID_DOMAIN_TYPE_LIQUID) {
-      result = create_liquid_geometry(mmd->domain, me, ob);
+    if (needs_viewport_update) {
+      /* Return generated geometry depending on domain type. */
+      if (mmd->domain->type == FLUID_DOMAIN_TYPE_LIQUID) {
+        result = create_liquid_geometry(mmd->domain, me, ob);
+      }
+      if (mmd->domain->type == FLUID_DOMAIN_TYPE_GAS) {
+        result = create_smoke_geometry(mmd->domain, me, ob);
+      }
     }
-    if (mmd->domain->type == FLUID_DOMAIN_TYPE_GAS) {
-      result = create_smoke_geometry(mmd->domain, me, ob);
-    }
+
     /* Clear flag outside of locked block (above). */
     mmd->domain->cache_flag &= ~FLUID_DOMAIN_OUTDATED_DATA;
     mmd->domain->cache_flag &= ~FLUID_DOMAIN_OUTDATED_NOISE;
@@ -4161,7 +4209,7 @@ void BKE_fluid_particle_system_destroy(struct Object *ob, const int particle_typ
 
   for (psys = ob->particlesystem.first; psys; psys = next_psys) {
     next_psys = psys->next;
-    if (psys->part->type & particle_type) {
+    if (psys->part->type == particle_type) {
       /* clear modifier */
       pmmd = psys_get_modifier(ob, psys);
       BLI_remlink(&ob->modifiers, pmmd);

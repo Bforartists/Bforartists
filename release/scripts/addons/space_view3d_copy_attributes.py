@@ -21,7 +21,7 @@
 bl_info = {
     "name": "Copy Attributes Menu",
     "author": "Bassam Kurdali, Fabian Fricke, Adam Wiseman",
-    "version": (0, 4, 8),
+    "version": (0, 4, 9),
     "blender": (2, 80, 0),
     "location": "View3D > Ctrl-C",
     "description": "Copy Attributes Menu from Blender 2.4",
@@ -655,7 +655,7 @@ class MESH_MT_CopyFaceSettings(Menu):
 
     def draw(self, context):
         mesh = context.object.data
-        uv = len(mesh.uv_textures) > 1
+        uv = len(mesh.uv_layers) > 1
         vc = len(mesh.vertex_colors) > 1
 
         layout = self.layout
@@ -665,11 +665,7 @@ class MESH_MT_CopyFaceSettings(Menu):
         op['layer'] = ''
         op['mode'] = 'MAT'
 
-        if mesh.uv_textures.active:
-            op = layout.operator(MESH_OT_CopyFaceSettings.bl_idname,
-                                 text="Copy Active UV Image")
-            op['layer'] = ''
-            op['mode'] = 'IMAGE'
+        if mesh.uv_layers.active:
             op = layout.operator(MESH_OT_CopyFaceSettings.bl_idname,
                                  text="Copy Active UV Coords")
             op['layer'] = ''
@@ -693,19 +689,6 @@ class MESH_MT_CopyFaceSettings(Menu):
 # Data (UV map, Image and Vertex color) menus calling MESH_OT_CopyFaceSettings
 # Explicitly defined as using the generator code was broken in case of Menus
 # causing issues with access and registration
-
-class MESH_MT_CopyImagesFromLayer(Menu):
-    bl_label = "Copy Other UV Image Layers"
-
-    @classmethod
-    def poll(cls, context):
-        obj = context.active_object
-        return obj and obj.mode == "EDIT_MESH" and len(
-            obj.data.uv_layers) > 1
-
-    def draw(self, context):
-        mesh = context.active_object.data
-        _buildmenu(self, mesh, 'IMAGE', "IMAGE_COL")
 
 
 class MESH_MT_CopyUVCoordsFromLayer(Menu):
@@ -741,7 +724,7 @@ def _buildmenu(self, mesh, mode, icon):
     if mode == 'VCOL':
         layers = mesh.vertex_colors
     else:
-        layers = mesh.uv_textures
+        layers = mesh.uv_layers
     for layer in layers:
         if not layer.active:
             op = layout.operator(MESH_OT_CopyFaceSettings.bl_idname,
@@ -771,7 +754,7 @@ class MESH_OT_CopyFaceSettings(Operator):
 
     def execute(self, context):
         mode = getattr(self, 'mode', '')
-        if mode not in {'MAT', 'VCOL', 'IMAGE', 'UV'}:
+        if mode not in {'MAT', 'VCOL', 'UV'}:
             self.report({'ERROR'}, "No mode specified or invalid mode")
             return self._end(context, {'CANCELLED'})
         layername = getattr(self, 'layer', '')
@@ -788,9 +771,6 @@ class MESH_OT_CopyFaceSettings(Operator):
             if mode == 'VCOL':
                 layers = mesh.vertex_colors
                 act_layer = mesh.vertex_colors.active
-            elif mode == 'IMAGE':
-                layers = mesh.uv_textures
-                act_layer = mesh.uv_textures.active
             elif mode == 'UV':
                 layers = mesh.uv_layers
                 act_layer = mesh.uv_layers.active
@@ -812,9 +792,6 @@ class MESH_OT_CopyFaceSettings(Operator):
                     continue
                 if mode == 'MAT':
                     f.material_index = polys[from_index].material_index
-                    continue
-                elif mode == 'IMAGE':
-                    to_data[f.index].image = from_data[from_index].image
                     continue
                 if len(f.loop_indices) != len(polys[from_index].loop_indices):
                     self.report({'WARNING'}, "Different number of vertices.")
@@ -842,7 +819,6 @@ classes = (
     CopySelectedObjectModifiers,
     VIEW3D_MT_copypopup,
     MESH_MT_CopyFaceSettings,
-    MESH_MT_CopyImagesFromLayer,
     MESH_MT_CopyUVCoordsFromLayer,
     MESH_MT_CopyVertexColorsFromLayer,
     MESH_OT_CopyFaceSettings,

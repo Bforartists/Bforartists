@@ -7,7 +7,9 @@ from bpy.props import (
         FloatProperty,
         IntProperty,
         BoolProperty,
+        StringProperty,
         )
+from bpy_extras import object_utils
 
 
 # Create a new mesh (object) from verts/edges/faces
@@ -133,11 +135,18 @@ def add_twisted_torus(major_rad, minor_rad, major_seg, minor_seg, twists):
     return verts, faces
 
 
-class AddTwistedTorus(bpy.types.Operator):
+class AddTwistedTorus(bpy.types.Operator, object_utils.AddObjectHelper):
     bl_idname = "mesh.primitive_twisted_torus_add"
     bl_label = "Add Twisted Torus"
     bl_description = "Construct a twisted torus mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
+
+    TwistedTorus : BoolProperty(name = "TwistedTorus",
+                default = True,
+                description = "TwistedTorus")
+    change : BoolProperty(name = "Change",
+                default = False,
+                description = "change TwistedTorus")
 
     major_radius: FloatProperty(
         name="Major Radius",
@@ -195,22 +204,101 @@ class AddTwistedTorus(bpy.types.Operator):
         default=0.5
         )
 
+    def draw(self, context):
+        layout = self.layout
+
+        layout.prop(self, 'major_radius', expand=True)
+        layout.prop(self, 'minor_radius', expand=True)
+        layout.prop(self, 'major_segments', expand=True)
+        layout.prop(self, 'minor_segments', expand=True)
+        layout.prop(self, 'twists', expand=True)
+        layout.prop(self, 'use_abso', expand=True)
+        layout.prop(self, 'abso_major_rad', expand=True)
+        layout.prop(self, 'abso_minor_rad', expand=True)
+
+        if self.change == False:
+            col = layout.column(align=True)
+            col.prop(self, 'align', expand=True)
+            col = layout.column(align=True)
+            col.prop(self, 'location', expand=True)
+            col = layout.column(align=True)
+            col.prop(self, 'rotation', expand=True)
+
     def execute(self, context):
 
         if self.use_abso is True:
             extra_helper = (self.abso_major_rad - self.abso_minor_rad) * 0.5
             self.major_radius = self.abso_minor_rad + extra_helper
             self.minor_radius = extra_helper
+        
+        if bpy.context.mode == "OBJECT":
+            if context.selected_objects != [] and context.active_object and \
+            ('TwistedTorus' in context.active_object.data.keys()) and (self.change == True):
+                obj = context.active_object
+                oldmesh = obj.data
+                oldmeshname = obj.data.name
+                verts, faces = add_twisted_torus(
+                            self.major_radius,
+                            self.minor_radius,
+                            self.major_segments,
+                            self.minor_segments,
+                            self.twists
+                            )
+                mesh = bpy.data.meshes.new('TwistedTorus')
+                mesh.from_pydata(verts, [], faces)
+                obj.data = mesh
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
+                bpy.data.meshes.remove(oldmesh)
+                obj.data.name = oldmeshname
+            else:
+                verts, faces = add_twisted_torus(
+                            self.major_radius,
+                            self.minor_radius,
+                            self.major_segments,
+                            self.minor_segments,
+                            self.twists
+                            )
+                mesh = bpy.data.meshes.new('TwistedTorus')
+                mesh.from_pydata(verts, [], faces)
+                obj = object_utils.object_data_add(context, mesh, operator=self)
 
-        verts, faces = add_twisted_torus(
-            self.major_radius,
-            self.minor_radius,
-            self.major_segments,
-            self.minor_segments,
-            self.twists
-            )
-
-        # Create the mesh object from this geometry data.
-        obj = create_mesh_object(context, verts, [], faces, "TwistedTorus")
+            obj.data["TwistedTorus"] = True
+            obj.data["change"] = False
+            for prm in TwistedTorusParameters():
+                obj.data[prm] = getattr(self, prm)
+        
+        if bpy.context.mode == "EDIT_MESH":
+            active_object = context.active_object
+            name_active_object = active_object.name
+            bpy.ops.object.mode_set(mode='OBJECT')
+            verts, faces = add_twisted_torus(
+                            self.major_radius,
+                            self.minor_radius,
+                            self.major_segments,
+                            self.minor_segments,
+                            self.twists
+                            )
+            mesh = bpy.data.meshes.new('TwistedTorus')
+            mesh.from_pydata(verts, [], faces)
+            obj = object_utils.object_data_add(context, mesh, operator=self)
+            obj.select_set(True)
+            active_object.select_set(True)
+            bpy.ops.object.join()
+            context.active_object.name = name_active_object
+            bpy.ops.object.mode_set(mode='EDIT')
 
         return {'FINISHED'}
+
+def TwistedTorusParameters():
+    TwistedTorusParameters = [
+        "major_radius",
+        "minor_radius",
+        "major_segments",
+        "minor_segments",
+        "twists",
+        "use_abso",
+        "abso_major_rad",
+        "abso_minor_rad",
+        ]
+    return TwistedTorusParameters

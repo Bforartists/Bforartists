@@ -305,7 +305,7 @@ static bool image_sample_poll(bContext *C)
 typedef struct ViewPanData {
   float x, y;
   float xof, yof;
-  int event_type;
+  int launch_event;
   bool own_cursor;
 } ViewPanData;
 
@@ -327,7 +327,7 @@ static void image_view_pan_init(bContext *C, wmOperator *op, const wmEvent *even
   vpd->y = event->y;
   vpd->xof = sima->xof;
   vpd->yof = sima->yof;
-  vpd->event_type = event->type;
+  vpd->launch_event = WM_userdef_event_type_from_keymap_type(event->type);
 
   WM_event_add_modal_handler(C, op);
 }
@@ -398,7 +398,7 @@ static int image_view_pan_modal(bContext *C, wmOperator *op, const wmEvent *even
       image_view_pan_exec(C, op);
       break;
     default:
-      if (event->type == vpd->event_type && event->val == KM_RELEASE) {
+      if (event->type == vpd->launch_event && event->val == KM_RELEASE) {
         image_view_pan_exit(C, op, false);
         return OPERATOR_FINISHED;
       }
@@ -452,7 +452,7 @@ void IMAGE_OT_view_pan(wmOperatorType *ot)
 typedef struct ViewZoomData {
   float origx, origy;
   float zoom;
-  int event_type;
+  int launch_event;
   float location[2];
 
   /* needed for continuous zoom */
@@ -483,7 +483,7 @@ static void image_view_zoom_init(bContext *C, wmOperator *op, const wmEvent *eve
   vpd->origx = event->x;
   vpd->origy = event->y;
   vpd->zoom = sima->zoom;
-  vpd->event_type = event->type;
+  vpd->launch_event = WM_userdef_event_type_from_keymap_type(event->type);
 
   UI_view2d_region_to_view(
       &ar->v2d, event->mval[0], event->mval[1], &vpd->location[0], &vpd->location[1]);
@@ -633,7 +633,7 @@ static int image_view_zoom_modal(bContext *C, wmOperator *op, const wmEvent *eve
   else if (event->type == MOUSEMOVE) {
     event_code = VIEW_APPLY;
   }
-  else if (event->type == vpd->event_type && event->val == KM_RELEASE) {
+  else if (event->type == vpd->launch_event && event->val == KM_RELEASE) {
     event_code = VIEW_CONFIRM;
   }
 
@@ -3361,6 +3361,9 @@ static void image_sample_draw(const bContext *C, ARegion *ar, void *arg_info)
 /* Returns color in linear space, matching ED_space_node_color_sample(). */
 bool ED_space_image_color_sample(SpaceImage *sima, ARegion *ar, int mval[2], float r_col[3])
 {
+  if (sima->image == NULL) {
+    return false;
+  }
   float uv[2];
   UI_view2d_region_to_view(&ar->v2d, mval[0], mval[1], &uv[0], &uv[1]);
   int tile = BKE_image_get_tile_from_pos(sima->image, uv, uv, NULL);

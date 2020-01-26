@@ -1,23 +1,40 @@
-import bpy
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 from bpy.types import AddonPreferences
 from bpy.props import StringProperty
 
 
-class Add_Camera_Rigs_Preferences(AddonPreferences):
+class AddCameraRigsPreferences(AddonPreferences):
     bl_idname = 'add_camera_rigs'
 
-    # widget prefix
+    # Widget prefix
     widget_prefix: StringProperty(
         name="Camera Widget prefix",
-        description="Choose a prefix for the widget objects",
-        default="WDGT_",
+        description="Prefix for the widget objects",
+        default="WGT-",
     )
 
-    # collection name
+    # Collection name
     camera_widget_collection_name: StringProperty(
         name="Bone Widget collection name",
-        description="Choose a name for the collection the widgets will appear",
-        default="WDGTS_camera",
+        description="Name for the collection the widgets will appear",
+        default="Widgets",
     )
 
     def draw(self, context):
@@ -30,7 +47,7 @@ class Add_Camera_Rigs_Preferences(AddonPreferences):
 
 
 classes = (
-    Add_Camera_Rigs_Preferences,
+    AddCameraRigsPreferences,
 )
 
 

@@ -371,37 +371,13 @@ class BirailedSplineSurface:
 class BirailedSurface:
     @staticmethod
     def FromSelection():
-        nrSelectedObjects = bpy.context.scene.curvetools.NrSelectedObjects
-        if nrSelectedObjects != 3: raise Exception("nrSelectedObjects != 3") # shouldn't be possible
+        selectedObjects = bpy.context.selected_objects
 
+        rail1Curve = curves.Curve(selectedObjects[0])
+        rail2Curve = curves.Curve(selectedObjects[1])
+        profileCurve = curves.Curve(selectedObjects[2])
 
-        selectedObjects = bpy.context.scene.curvetools.SelectedObjects
-        selectedObjectValues = selectedObjects.values()
-
-        curveName = selectedObjectValues[0].name
-        rail1BlenderCurve = None
-        try: rail1BlenderCurve = bpy.data.objects[curveName]
-        except: rail1BlenderCurve = None
-        if rail1BlenderCurve is None: raise Exception("rail1BlenderCurve is None")
-
-        curveName = selectedObjectValues[1].name
-        rail2BlenderCurve = None
-        try: rail2BlenderCurve = bpy.data.objects[curveName]
-        except: rail2BlenderCurve = None
-        if rail2BlenderCurve is None: raise Exception("rail2BlenderCurve is None")
-
-        curveName = selectedObjectValues[2].name
-        profileBlenderCurve = None
-        try: profileBlenderCurve = bpy.data.objects[curveName]
-        except: profileBlenderCurve = None
-        if profileBlenderCurve is None: raise Exception("profileBlenderCurve is None")
-
-
-        rail1Curve = curves.Curve(rail1BlenderCurve)
-        rail2Curve = curves.Curve(rail2BlenderCurve)
-        profileCurve = curves.Curve(profileBlenderCurve)
-
-        name = "TODO: autoname"
+        name = "BirailedSurface"
 
         return BirailedSurface(rail1Curve, rail2Curve, profileCurve, name)
 
