@@ -154,15 +154,15 @@ class VIEW3D_HT_header(Header):
 
         view = context.space_data
         shading = view.shading
-        # mode_string = context.mode
-        obj = context.active_object
         overlay = view.overlay
         tool_settings = context.tool_settings
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         show_region_tool_header = view.show_region_tool_header
-
+  
+        obj = context.active_object
+        # mode_string = context.mode
         object_mode = 'OBJECT' if obj is None else obj.mode
         has_pose_mode = (
             (object_mode == 'POSE') or
@@ -306,10 +306,21 @@ class VIEW3D_HT_header(Header):
         row = layout.row()
         row.active = (object_mode == 'EDIT') or (shading.type in {'WIREFRAME', 'SOLID'})
 
-        if shading.type == 'WIREFRAME':
-            row.prop(shading, "show_xray_wireframe", text="", icon='XRAY')
-        else:
-            row.prop(shading, "show_xray", text="", icon='XRAY')
+        # While exposing 'shading.show_xray(_wireframe)' is correct.
+        # this hides the key shortcut from users: T70433.
+        row.operator(
+            "view3d.toggle_xray",
+            text="",
+            icon='XRAY',
+            depress=(
+                overlay.show_xray_bone if has_pose_mode else
+                getattr(
+                    shading,
+                    "show_xray_wireframe" if shading.type == 'WIREFRAME' else
+                    "show_xray"
+                )
+            ),
+        )
 
         row = layout.row(align=True)
         row.prop(shading, "type", text="", expand=True)
