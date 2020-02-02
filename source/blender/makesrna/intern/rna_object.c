@@ -383,36 +383,44 @@ static void rna_Object_matrix_basis_set(PointerRNA *ptr, const float values[16])
   BKE_object_apply_mat4(ob, (float(*)[4])values, false, false);
 }
 
-void rna_Object_internal_update_data(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)
+void rna_Object_internal_update_data_impl(PointerRNA *ptr)
 {
   DEG_id_tag_update(ptr->owner_id, ID_RECALC_GEOMETRY);
   WM_main_add_notifier(NC_OBJECT | ND_DRAW, ptr->owner_id);
 }
 
-void rna_Object_internal_update_data_dependency(Main *bmain, Scene *scene, PointerRNA *ptr)
+void rna_Object_internal_update_data(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)
 {
-  DEG_relations_tag_update(bmain);
-  rna_Object_internal_update_data(bmain, scene, ptr);
+  rna_Object_internal_update_data_impl(ptr);
 }
 
-static void rna_Object_active_shape_update(bContext *C, PointerRNA *ptr)
+void rna_Object_internal_update_data_dependency(Main *bmain, Scene *UNUSED(scene), PointerRNA *ptr)
+{
+  DEG_relations_tag_update(bmain);
+  rna_Object_internal_update_data_impl(ptr);
+}
+
+static void rna_Object_active_shape_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *ptr)
 {
   Object *ob = (Object *)ptr->owner_id;
-  Main *bmain = CTX_data_main(C);
-  Scene *scene = CTX_data_scene(C);
 
-  if (CTX_data_edit_object(C) == ob) {
+  if (BKE_object_is_in_editmode(ob)) {
     /* exit/enter editmode to get new shape */
     switch (ob->type) {
-      case OB_MESH:
+      case OB_MESH: {
+        Mesh *me = ob->data;
+        BMEditMesh *em = me->edit_mesh;
+        int select_mode = em->selectmode;
         EDBM_mesh_load(bmain, ob);
-        EDBM_mesh_make(ob, scene->toolsettings->selectmode, true);
+        EDBM_mesh_make(ob, select_mode, true);
+        em = me->edit_mesh;
 
-        DEG_id_tag_update(ob->data, 0);
+        DEG_id_tag_update(&me->id, 0);
 
-        EDBM_mesh_normals_update(((Mesh *)ob->data)->edit_mesh);
-        BKE_editmesh_looptri_calc(((Mesh *)ob->data)->edit_mesh);
+        EDBM_mesh_normals_update(em);
+        BKE_editmesh_looptri_calc(em);
         break;
+      }
       case OB_CURVE:
       case OB_SURF:
         ED_curve_editnurb_load(bmain, ob);
@@ -425,7 +433,7 @@ static void rna_Object_active_shape_update(bContext *C, PointerRNA *ptr)
     }
   }
 
-  rna_Object_internal_update_data(bmain, scene, ptr);
+  rna_Object_internal_update_data_impl(ptr);
 }
 
 static void rna_Object_dependency_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *ptr)
@@ -1522,7 +1530,7 @@ static void rna_Object_modifier_clear(Object *object, bContext *C)
   WM_main_add_notifier(NC_OBJECT | ND_MODIFIER | NA_REMOVED, object);
 }
 
-bool rna_Object_modifiers_override_apply(Main *UNUSED(bmain),
+bool rna_Object_modifiers_override_apply(Main *bmain,
                                          PointerRNA *ptr_dst,
                                          PointerRNA *ptr_src,
                                          PointerRNA *UNUSED(ptr_storage),
@@ -1545,7 +1553,7 @@ bool rna_Object_modifiers_override_apply(Main *UNUSED(bmain),
 
   /* Remember that insertion operations are defined and stored in correct order, which means that
    * even if we insert several items in a row, we always insert first one, then second one, etc.
-   * So we should always find 'anchor' constraint in both _src *and* _dst. */
+   * So we should always find 'anchor' modifier in both _src *and* _dst. */
   ModifierData *mod_anchor = NULL;
   if (opop->subitem_local_name && opop->subitem_local_name[0]) {
     mod_anchor = BLI_findstring(
@@ -1568,18 +1576,32 @@ bool rna_Object_modifiers_override_apply(Main *UNUSED(bmain),
 
   BLI_assert(mod_src != NULL);
 
-  ModifierData *mod_dst = modifier_new(mod_src->type);
-  modifier_copyData(mod_src, mod_dst);
+  /* While it would be nicer to use lower-level modifier_new() here, this one is lacking
+   * special-cases handling (particles and other physics modifiers mostly), so using the ED version
+   * instead, to avoid duplicating code. */
+  ModifierData *mod_dst = ED_object_modifier_add(
+      NULL, bmain, NULL, ob_dst, mod_src->name, mod_src->type);
 
+  /* XXX Current handling of 'copy' from particle-system modifier is *very* bad (it keeps same psys
+   * pointer as source, then calling code copies psys of object separately and do some magic
+   * remapping of pointers...), unfortunately several pieces of code in Object editing area rely on
+   * this behavior. So for now, hacking around it to get it doing what we want it to do, as getting
+   * a proper behavior would be everything but trivial, and this whole particle thingy is
+   * end-of-life. */
+  ParticleSystem *psys_dst = (mod_dst->type == eModifierType_ParticleSystem) ?
+                                 ((ParticleSystemModifierData *)mod_dst)->psys :
+                                 NULL;
+  modifier_copyData(mod_src, mod_dst);
+  if (mod_dst->type == eModifierType_ParticleSystem) {
+    psys_dst->flag &= ~PSYS_DELETE;
+    ((ParticleSystemModifierData *)mod_dst)->psys = psys_dst;
+  }
+
+  BLI_remlink(&ob_dst->modifiers, mod_dst);
   /* This handles NULL anchor as expected by adding at head of list. */
   BLI_insertlinkafter(&ob_dst->modifiers, mod_anchor, mod_dst);
 
-  /* This should actually *not* be needed in typical cases.
-   * However, if overridden source was edited,
-   * we *may* have some new conflicting names. */
-  modifier_unique_name(&ob_dst->modifiers, mod_dst);
-
-  //  printf("%s: We inserted a modifier...\n", __func__);
+  //  printf("%s: We inserted a modifier '%s'...\n", __func__, mod_dst->name);
   return true;
 }
 
@@ -2671,14 +2693,14 @@ static void rna_def_object(BlenderRNA *brna)
   prop = RNA_def_property(srna, "lock_location", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "protectflag", OB_LOCK_LOCX);
   RNA_def_property_array(prop, 3);
-  RNA_def_property_ui_text(prop, "Lock Location", "Lock editing of location in the interface");
+  RNA_def_property_ui_text(prop, "Lock Location", "Lock editing of location when transforming");
   RNA_def_property_ui_icon(prop, ICON_UNLOCKED, 1);
   RNA_def_property_update(prop, NC_OBJECT | ND_TRANSFORM, "rna_Object_internal_update");
 
   prop = RNA_def_property(srna, "lock_rotation", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "protectflag", OB_LOCK_ROTX);
   RNA_def_property_array(prop, 3);
-  RNA_def_property_ui_text(prop, "Lock Rotation", "Lock editing of rotation in the interface");
+  RNA_def_property_ui_text(prop, "Lock Rotation", "Lock editing of rotation when transforming");
   RNA_def_property_ui_icon(prop, ICON_UNLOCKED, 1);
   RNA_def_property_update(prop, NC_OBJECT | ND_TRANSFORM, "rna_Object_internal_update");
 
@@ -2690,7 +2712,7 @@ static void rna_def_object(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Lock Rotation (4D Angle)",
-      "Lock editing of 'angle' component of four-component rotations in the interface");
+      "Lock editing of 'angle' component of four-component rotations when transforming");
   /* XXX this needs a better name */
   prop = RNA_def_property(srna, "lock_rotations_4d", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "protectflag", OB_LOCK_ROT4D);
@@ -2702,7 +2724,7 @@ static void rna_def_object(BlenderRNA *brna)
   prop = RNA_def_property(srna, "lock_scale", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "protectflag", OB_LOCK_SCALEX);
   RNA_def_property_array(prop, 3);
-  RNA_def_property_ui_text(prop, "Lock Scale", "Lock editing of scale in the interface");
+  RNA_def_property_ui_text(prop, "Lock Scale", "Lock editing of scale when transforming");
   RNA_def_property_ui_icon(prop, ICON_UNLOCKED, 1);
   RNA_def_property_update(prop, NC_OBJECT | ND_TRANSFORM, "rna_Object_internal_update");
 
@@ -3091,7 +3113,6 @@ static void rna_def_object(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "active_shape_key_index", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, NULL, "shapenr");
-  RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE); /* XXX this is really unpredictable... */
   RNA_def_property_int_funcs(prop,
                              "rna_Object_active_shape_key_index_get",

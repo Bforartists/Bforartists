@@ -28,8 +28,23 @@ import bpy
 from mathutils import Vector
 import json
 import os
-import requests
+import sys
 
+
+
+
+ABOVE_NORMAL_PRIORITY_CLASS = 0x00008000
+BELOW_NORMAL_PRIORITY_CLASS = 0x00004000
+HIGH_PRIORITY_CLASS = 0x00000080
+IDLE_PRIORITY_CLASS = 0x00000040
+NORMAL_PRIORITY_CLASS = 0x00000020
+REALTIME_PRIORITY_CLASS = 0x00000100
+
+def get_process_flags():
+    flags = BELOW_NORMAL_PRIORITY_CLASS
+    if sys.platform != 'win32':  # TODO test this on windows
+        flags = 0
+    return flags
 
 def activate(ob):
     bpy.ops.object.select_all(action='DESELECT')
@@ -51,8 +66,8 @@ def selection_set(sel):
 
 
 def get_active_model():
-    if hasattr(bpy.context, 'active_object'):
-        ob = bpy.context.active_object
+    if bpy.context.view_layer.objects.active is not None:
+        ob = bpy.context.view_layer.objects.active
         while ob.parent is not None:
             ob = ob.parent
         return ob
@@ -115,14 +130,14 @@ def get_active_asset():
     scene = bpy.context.scene
     ui_props = scene.blenderkitUI
     if ui_props.asset_type == 'MODEL':
-        if bpy.context.active_object is not None:
+        if bpy.context.view_layer.objects.active is not None:
             ob = get_active_model()
             return ob
     if ui_props.asset_type == 'SCENE':
         return bpy.context.scene
 
     elif ui_props.asset_type == 'MATERIAL':
-        if bpy.context.active_object is not None and bpy.context.active_object.active_material is not None:
+        if bpy.context.view_layer.objects.active is not None and bpy.context.active_object.active_material is not None:
             return bpy.context.active_object.active_material
     elif ui_props.asset_type == 'TEXTURE':
         return None
@@ -137,14 +152,14 @@ def get_upload_props():
     scene = bpy.context.scene
     ui_props = scene.blenderkitUI
     if ui_props.asset_type == 'MODEL':
-        if bpy.context.active_object is not None:
+        if bpy.context.view_layer.objects.active is not None:
             ob = get_active_model()
             return ob.blenderkit
     if ui_props.asset_type == 'SCENE':
         s = bpy.context.scene
         return s.blenderkit
     elif ui_props.asset_type == 'MATERIAL':
-        if bpy.context.active_object is not None and bpy.context.active_object.active_material is not None:
+        if bpy.context.view_layer.objects.active is not None and bpy.context.active_object.active_material is not None:
             return bpy.context.active_object.active_material.blenderkit
     elif ui_props.asset_type == 'TEXTURE':
         return None
@@ -237,11 +252,12 @@ def get_hidden_image(tpath, bdata_name, force_reload=False):
 
                 img.filepath = tpath
                 img.reload()
+        img.colorspace_settings.name = 'Linear'
     elif force_reload:
         if img.packed_file is not None:
             img.unpack(method='USE_ORIGINAL')
         img.reload()
-    img.colorspace_settings.name = 'Linear'
+        img.colorspace_settings.name = 'Linear'
     return img
 
 

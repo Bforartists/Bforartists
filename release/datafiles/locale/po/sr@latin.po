@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-04 15:50:16\n"
+"POT-Creation-Date: 2020-01-20 09:05:33\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -2160,6 +2160,10 @@ msgid "Minimum value for target channel range"
 msgstr "Postavlja minimalnu Y vrednost renderovanog okvira"
 
 
+msgid "Mix Mode"
+msgstr "Režim mešanja"
+
+
 msgid "Sub-Target"
 msgstr "Drugi cilj"
 
@@ -2338,10 +2342,6 @@ msgstr "Kopiraj Z"
 
 msgid "Copy Rotation Constraint"
 msgstr "Umnoži ograničenja rotacije"
-
-
-msgid "Mix Mode"
-msgstr "Režim mešanja"
 
 
 msgid "Power"
@@ -4409,204 +4409,316 @@ msgid "Show image files"
 msgstr "Prikaži datoteke slika"
 
 
-msgid "Fluid Simulation Settings"
-msgstr "Podešavanja simulacije tečnosti"
+msgid "Additional"
+msgstr "Dodatno"
 
 
-msgid "Fluid simulation settings for an object taking part in the simulation"
-msgstr "Podešavanja simulacije tečnosti za objekat koji je deo simulacije"
+msgid "Density"
+msgstr "Gustina"
 
 
-msgid "Type of participation in the fluid simulation"
-msgstr "Vrsta učešća u simulaciji tečnosti"
+msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
+msgstr "Koliko gustina utiče na kretanje dima (veća vrednost utiče da se dim brže diže)"
 
 
-msgid "Domain"
-msgstr "Oblast"
+msgid "Heat"
+msgstr "Toplota"
 
 
-msgid "Fluid"
-msgstr "Tečnost"
+msgid "End"
+msgstr "Kraj"
 
 
-msgid "Object adds fluid to the simulation"
-msgstr "Objekat dodaje tečnost u simulaciju"
+msgid "Frame on which the simulation stops"
+msgstr "Kadar početka simulacije"
 
 
-msgid "Object removes fluid from the simulation"
-msgstr "Objekat uklanja tečnost iz simulacije"
+msgid "Start"
+msgstr "Početak"
 
 
-msgid "Particle"
-msgstr "Čestica"
-
-
-msgid "Control"
-msgstr "Kontrolor"
-
-
-msgid "Control Fluid Simulation Settings"
-msgstr "Kontroliše podešavanja simulacije tečnosti"
-
-
-msgid "Fluid simulation settings for objects controlling the motion of fluid in the simulation"
-msgstr "Podešavanja sudara objekata u simulaciji fizike"
-
-
-msgid "End Time"
-msgstr "Krajnje vreme"
-
-
-msgid "Quality which is used for object sampling (higher = better but slower)"
-msgstr "Kvalitet korišćen za uzorke objekta (što više to je bolji kvalitet, ali sporije)"
-
-
-msgid "Start Time"
-msgstr "Odstrani"
-
-
-msgid "Reverse Frames"
-msgstr "Obrnuti kadrovi"
-
-
-msgid "Reverse control object movement"
-msgstr "Obrnuta kontrola kretanja objekta"
-
-
-msgid "Velocity Radius"
-msgstr "Radius ubrzanja"
-
-
-msgid "Velocity Strength"
-msgstr "Jačina ubrzanja"
-
-
-msgid "Fluid simulation settings for the domain of a fluid simulation"
-msgstr "Podešavanja sudara objekata u simulaciji fizike"
-
-
-msgid "Compressibility"
-msgstr "Kompresuj"
-
-
-msgid "Fluid Mesh Vertices"
-msgstr "Temena meša tečnosti"
-
-
-msgid "Generate Particles"
-msgstr "Generiši čestice"
-
-
-msgid "Preview Resolution"
-msgstr "Rezolucija pregleda"
-
-
-msgid "Preview"
-msgstr "Pregled"
+msgid "Frame on which the simulation starts"
+msgstr "Kadar od koga počinje simulacija"
 
 
 msgid "Final"
 msgstr "Konačno"
 
 
-msgid "Display final quality results"
-msgstr "Prikaži rezultat u najboljem kvalitetu"
+msgid "Cell Size"
+msgstr "Veličina ćelije"
 
 
-msgid "Simulation Speed"
-msgstr "Brzina animacije"
+msgid "Clipping"
+msgstr "Isecanje"
 
 
-msgid "Real World Size"
-msgstr "Realna veličina sveta"
+msgid "Red"
+msgstr "Crvena"
 
 
-msgid "Size of the simulation domain in meters"
-msgstr "Fizička veličina područja simulacije (m)"
+msgid "Green"
+msgstr "Zelena"
 
 
-msgid "No Slip"
-msgstr "Nema spavanja"
+msgid "Blue"
+msgstr "Plava"
 
 
-msgid "Partial Slip"
-msgstr "Brzina čestica"
+msgid "Color Grid"
+msgstr "Mreža boja"
 
 
-msgid "Free Slip"
-msgstr "Slobodno"
+msgid "Smoke density grid"
+msgstr "Mreža gustine dima"
 
 
-msgid "Surface Smoothing"
-msgstr "Umekšanje površi"
+msgid "Cubic"
+msgstr "Kubično"
 
 
-msgid "Surface Subdivisions"
-msgstr "Izdeljenost površi"
+msgid "Thickness"
+msgstr "Debljina"
 
 
-msgid "Reverse fluid frames"
-msgstr "Obrni kadrove tečnosti"
+msgid "Dissolve Speed"
+msgstr "Brzina rastapanja"
 
 
-msgid "Generate Speed Vectors"
-msgstr "Generiši informacije o sistemu"
+msgid "res"
+msgstr "rez"
 
 
-msgid "How to display the mesh in the viewport"
-msgstr "Boja u zenitu"
+msgid "Smoke Grid Resolution"
+msgstr "Rezolucija mreže dima"
+
+
+msgid "Ignition"
+msgstr "Paljenje"
+
+
+msgid "Minimum temperature of flames"
+msgstr "Najmanja temperatura plamena"
+
+
+msgid "Maximum temperature of flames"
+msgstr "Najveća temperatura plamena"
+
+
+msgid "Smoke"
+msgstr "Dim"
+
+
+msgid "Smoke Color"
+msgstr "Boja dima"
+
+
+msgid "Color of smoke emitted from burning fuel"
+msgstr "Boja dima koji emituje zapaljeno gorivo"
+
+
+msgid "Vorticity"
+msgstr "Brzina"
+
+
+msgid "Domain"
+msgstr "Oblast"
+
+
+msgid "Emitter"
+msgstr "Emiter"
+
+
+msgid "Method for sampling the high resolution flow"
+msgstr "Metoda uzorkovanja toka visoke rezolucije"
+
+
+msgid "Full Sample"
+msgstr "Ceo ekran"
+
+
+msgid "Nearest"
+msgstr "Najbliže"
+
+
+msgid "Preview"
+msgstr "Pregled"
+
+
+msgid "Radius"
+msgstr "Radius"
+
+
+msgid "Fluid Mesh Vertices"
+msgstr "Temena meša tečnosti"
+
+
+msgid "Strength of noise"
+msgstr "Jačina šuma"
+
+
+msgid "Time"
+msgstr "Vreme"
+
+
+msgid "Wavelet"
+msgstr "Talas"
+
+
+msgid "Compression"
+msgstr "Kompresija"
+
+
+msgid "Compression method to be used"
+msgstr "Izbor metoda spajanja."
+
+
+msgid "Effective but slow compression"
+msgstr "Efikasna, ali spora kompresija"
+
+
+msgid "Number"
+msgstr "Broj"
+
+
+msgid "Cache Compression"
+msgstr "Kompresija"
+
+
+msgid "Heavy"
+msgstr "Teško"
+
+
+msgid "p0"
+msgstr "p0"
+
+
+msgid "Start point"
+msgstr "Početna tačka"
+
+
+msgid "Adjust simulation speed"
+msgstr "Podesi brzinu simulacije"
+
+
+msgid "Adaptive Domain"
+msgstr "Prilagodljivi domen"
+
+
+msgid "Bottom"
+msgstr "Odozdo"
+
+
+msgid "Top"
+msgstr "Odozgo"
+
+
+msgid "Dissolve Smoke"
+msgstr "Rastapanje dima"
+
+
+msgid "Using 1/x "
+msgstr "Koristi 1/x "
+
+
+msgid "Tracer"
+msgstr "Staza"
 
 
 msgid "Viscosity Exponent"
 msgstr "Izložilac"
 
 
+msgid "Amount of turbulence/rotation in fluid"
+msgstr "Vrednost turbulencije/rotacije u tečnosti"
+
+
+msgid "Smoke collision settings"
+msgstr "Podešavanja sudara dima"
+
+
+msgid "Collision"
+msgstr "Sudaranje"
+
+
+msgid "Vertex Group"
+msgstr "Grupa temena"
+
+
+msgid "Add smoke"
+msgstr "Dodaj dim"
+
+
+msgid "Fire + Smoke"
+msgstr "Vatra i dim"
+
+
+msgid "Add fire and smoke"
+msgstr "Dodaj vatru i dim"
+
+
+msgid "Fire"
+msgstr "Vatra"
+
+
+msgid "Add fire"
+msgstr "Dodaj vatru"
+
+
+msgid "Flame Rate"
+msgstr "Učestalost plamena"
+
+
+msgid "Particle systems emitted from the object"
+msgstr "Sistem čestica koji emituje objekat"
+
+
+msgid "Color of smoke"
+msgstr "Boja dima"
+
+
+msgid "Subframes"
+msgstr "Podkadrovi"
+
+
+msgid "Mapping"
+msgstr "Mapiranje"
+
+
+msgid "Texture mapping type"
+msgstr "Vrsta mapiranja teksture"
+
+
+msgid "Generated"
+msgstr "Generisano"
+
+
+msgid "Use UV layer for texture coordinates"
+msgstr "Koristi UV sloj za koordinate teksture"
+
+
+msgid "Z-offset of texture mapping"
+msgstr "Z odstojanje mape teksture"
+
+
+msgid "Absolute Density"
+msgstr "Apsolutna gustina"
+
+
 msgid "Initial Velocity"
 msgstr "Početna brzina"
 
 
-msgid "Initial velocity of fluid"
-msgstr "Početna brzina tečnosti"
+msgid "Use Texture"
+msgstr "Koristi teksturu"
 
 
-msgid "Export Animated Mesh"
-msgstr "Izvezi animirani meš"
+msgid "Initial"
+msgstr "Početno"
 
 
-msgid "Shell"
-msgstr "Školjka"
-
-
-msgid "Use only the outer shell of the mesh"
-msgstr "Koristi samo spoljnu školjku meša"
-
-
-msgid "Both"
-msgstr "Obe"
-
-
-msgid "Local Coordinates"
-msgstr "Lokalne koordinate"
-
-
-msgid "Impact Factor"
-msgstr "Faktor uticaja"
-
-
-msgid "Fluid simulation settings for objects removing fluids from the simulation"
-msgstr "Podešavanja sudara objekata u simulaciji fizike"
-
-
-msgid "Fluid simulation settings for objects storing fluid particles generated by the simulation"
-msgstr "Podešavanja sudara objekata u simulaciji fizike"
-
-
-msgid "Alpha Influence"
-msgstr "Uticaj:"
-
-
-msgid "Tracer"
-msgstr "Staza"
+msgid "Normal"
+msgstr "Normalno"
 
 
 msgid "Freestyle Line Set"
@@ -4659,14 +4771,6 @@ msgstr "Ime zbirke linija"
 
 msgid "Line set name"
 msgstr "Ime zbirke linija"
-
-
-msgid "End"
-msgstr "Kraj"
-
-
-msgid "Start"
-msgstr "Početak"
 
 
 msgid "Selection by Visibility"
@@ -4777,10 +4881,6 @@ msgid "Quadratic"
 msgstr "Kvadratna"
 
 
-msgid "Cubic"
-msgstr "Kubično"
-
-
 msgid "Circular"
 msgstr "Kružno"
 
@@ -4885,10 +4985,6 @@ msgid "Show Points"
 msgstr "Prikaži tačke"
 
 
-msgid "Thickness"
-msgstr "Debljina"
-
-
 msgid "Direction"
 msgstr "Smer"
 
@@ -4899,10 +4995,6 @@ msgstr "Dodaj efekat četkice"
 
 msgid "Subtract effect of brush"
 msgstr "Oduzmi efekat četkice"
-
-
-msgid "Radius"
-msgstr "Radius"
 
 
 msgid "Radius of the brush in pixels"
@@ -5089,10 +5181,6 @@ msgid "Use Vertex Groups"
 msgstr "Koristi grupe temena"
 
 
-msgid "Vertex Group"
-msgstr "Grupa temena"
-
-
 msgid "Count"
 msgstr "Broj"
 
@@ -5119,6 +5207,10 @@ msgstr "Rast"
 
 msgid "Fade"
 msgstr "Nestajanje"
+
+
+msgid "Both"
+msgstr "Obe"
 
 
 msgid "Hook Modifier"
@@ -5236,18 +5328,6 @@ msgstr "Aktivni sloj"
 
 msgid "Channels to display when drawing the histogram"
 msgstr "Kanali za prikaz u histogrmu"
-
-
-msgid "Red"
-msgstr "Crvena"
-
-
-msgid "Green"
-msgstr "Zelena"
-
-
-msgid "Blue"
-msgstr "Plava"
 
 
 msgid "Show Line"
@@ -5626,10 +5706,6 @@ msgid "Use Sculpt"
 msgstr "Koristi vajanje"
 
 
-msgid "Use Texture"
-msgstr "Koristi teksturu"
-
-
 msgid "Use Vertex"
 msgstr "Koristi temena"
 
@@ -5992,14 +6068,6 @@ msgstr "Poravnaj tekst i levo i desno"
 
 msgid "Align to the left and the right, with equal character spacing"
 msgstr "Poravnaj tekst levo i desno, sa istim razmakom znakova"
-
-
-msgid "Top"
-msgstr "Odozgo"
-
-
-msgid "Bottom"
-msgstr "Odozdo"
 
 
 msgid "Body Text"
@@ -6386,10 +6454,6 @@ msgid "Generated grid to test UV mappings"
 msgstr "Napravi mrežu za testiranje UV mapiranja"
 
 
-msgid "Color Grid"
-msgstr "Mreža boja"
-
-
 msgid "Generated improved UV grid to test UV mappings"
 msgstr "Širina slike"
 
@@ -6466,10 +6530,6 @@ msgid "Movie file"
 msgstr "Datoteka filma"
 
 
-msgid "Generated"
-msgstr "Generisano"
-
-
 msgid "Generated image"
 msgstr "Generisana slika"
 
@@ -6480,6 +6540,10 @@ msgstr "Pogledač"
 
 msgid "Compositing node viewer"
 msgstr "Pogledač čvora slaganja"
+
+
+msgid "Tiled"
+msgstr "Popločano"
 
 
 msgid "Settings for stereo 3d"
@@ -6650,10 +6714,6 @@ msgid "Intensity"
 msgstr "Intenzitet"
 
 
-msgid "Clipping"
-msgstr "Isecanje"
-
-
 msgid "Active Shape Index"
 msgstr "Indeks aktivnog senčenja"
 
@@ -6720,6 +6780,10 @@ msgstr "Niti kose"
 
 msgid "Cloth"
 msgstr "Tkanina"
+
+
+msgid "Fluid"
+msgstr "Tečnost"
 
 
 msgid "Roughness"
@@ -7318,10 +7382,6 @@ msgid "Parent Vertices"
 msgstr "Roditeljska temena"
 
 
-msgid "Particle systems emitted from the object"
-msgstr "Sistem čestica koji emituje objekat"
-
-
 msgid "Current pose for armatures"
 msgstr "Tekuća poza kostura"
 
@@ -7490,10 +7550,6 @@ msgid "Color Maximum"
 msgstr "Maksimalna boja"
 
 
-msgid "Number"
-msgstr "Broj"
-
-
 msgid "Adaptive Subframe Threshold"
 msgstr "Prag spajanja"
 
@@ -7654,8 +7710,8 @@ msgid "Dummy"
 msgstr "Lutka"
 
 
-msgid "Normal"
-msgstr "Normalno"
+msgid "Particle"
+msgstr "Čestica"
 
 
 msgid "Path End"
@@ -7696,10 +7752,6 @@ msgstr "Reaguj na"
 
 msgid "Death"
 msgstr "Smrt"
-
-
-msgid "Collision"
-msgstr "Sudaranje"
 
 
 msgid "Reactor"
@@ -7786,24 +7838,12 @@ msgid "Random Size"
 msgstr "Nasumična veličina"
 
 
-msgid "Subframes"
-msgstr "Podkadrovi"
-
-
 msgid "Rotate the surface tangent"
 msgstr "Rotiranje tangente površi"
 
 
-msgid "Tip"
-msgstr "Savet"
-
-
 msgid "Particle Type"
 msgstr "Vrsta čestica"
-
-
-msgid "Emitter"
-msgstr "Emiter"
 
 
 msgid "Automatic Subframes"
@@ -8768,10 +8808,6 @@ msgid "Precision"
 msgstr "Preciznost"
 
 
-msgid "Initial"
-msgstr "Početno"
-
-
 msgid "Max Step"
 msgstr "Maks. korak"
 
@@ -8834,10 +8870,6 @@ msgstr "Slike se upisuju u boji"
 
 msgid "Images are saved with RGB and Alpha data (if supported)"
 msgstr "Slike se upisuju u boji sa providnošću (ako je moguće)"
-
-
-msgid "Compression"
-msgstr "Kompresija"
 
 
 msgid "Codec"
@@ -9240,10 +9272,6 @@ msgid "Curve used for the curve mapping"
 msgstr "Kriva korišćena za mapiranje krive"
 
 
-msgid "Mapping"
-msgstr "Mapiranje"
-
-
 msgid "Select the mapping type"
 msgstr "Izaberi vrstu mapiranja"
 
@@ -9572,6 +9600,10 @@ msgstr "Ključ"
 
 msgid "Snap"
 msgstr "Lepljenje"
+
+
+msgid "Fluid Presets"
+msgstr "Svojstva tečnosti:"
 
 
 msgid "Material Specials"
@@ -10107,10 +10139,6 @@ msgid "Explode"
 msgstr "Ekspozicija"
 
 
-msgid "Fluid Simulation"
-msgstr "Simulacija tečnosti"
-
-
 msgid "Ocean"
 msgstr "Okean"
 
@@ -10119,8 +10147,8 @@ msgid "Particle Instance"
 msgstr "Čestice"
 
 
-msgid "Smoke"
-msgstr "Dim"
+msgid "Fluid Simulation"
+msgstr "Simulacija tečnosti"
 
 
 msgid "Soft Body"
@@ -10487,10 +10515,6 @@ msgid "Cut Edges"
 msgstr "Iseci ivice"
 
 
-msgid "Fluid Simulation Modifier"
-msgstr "Modifikator simulacije čestica"
-
-
 msgid "Fluid simulation modifier"
 msgstr "Modifikator simulacije čestica"
 
@@ -10585,10 +10609,6 @@ msgstr "Mod vremena"
 
 msgid "Use the time from the scene"
 msgstr "Koristi vreme iz scene"
-
-
-msgid "Time"
-msgstr "Vreme"
 
 
 msgid "Mirror Object"
@@ -11442,10 +11462,6 @@ msgid "Active Track Index"
 msgstr "Aktivni indeks praćenja"
 
 
-msgid "Nearest"
-msgstr "Najbliže"
-
-
 msgid "Bilinear"
 msgstr "Bilinearno"
 
@@ -12108,6 +12124,10 @@ msgstr "Manje od"
 
 msgid "Greater Than"
 msgstr "Veće od"
+
+
+msgid "Compare"
+msgstr "Uporedi"
 
 
 msgid "Modulo"
@@ -14624,10 +14644,6 @@ msgid "Select Control Point Row"
 msgstr "Izaberi niz kontrolnih tačaka"
 
 
-msgid "Compare"
-msgstr "Uporedi"
-
-
 msgid "Equal"
 msgstr "Jednako"
 
@@ -15558,11 +15574,6 @@ msgstr "Kopiraj poteze"
 
 msgid "Copy selected Grease Pencil points and strokes"
 msgstr "Kopira izabrane poteze skice"
-
-
-msgctxt "Operator"
-msgid "Grease Pencil Add New"
-msgstr "Nova skica"
 
 
 msgid "Delete selected Grease Pencil strokes, vertices, or frames"
@@ -18377,33 +18388,12 @@ msgstr "Vrsta razbijanja"
 
 
 msgctxt "Operator"
-msgid "Quick Fluid"
-msgstr "Brza tečnost"
-
-
-msgid "Keep the fluid objects visible during rendering"
-msgstr "Određuje nivo izdeljenosti objekta tokom renderinga"
-
-
-msgid "Fluid Style"
-msgstr "Vrsta tečnost"
-
-
-msgid "Basic"
-msgstr "Osnovno"
-
-
-msgctxt "Operator"
 msgid "Quick Fur"
 msgstr "Brzo krzno"
 
 
 msgid "Fur Density"
 msgstr "Gustina krzna"
-
-
-msgid "Heavy"
-msgstr "Teško"
 
 
 msgid "View %"
@@ -18425,10 +18415,6 @@ msgstr "Određuje nivo izdeljenosti objekta tokom renderinga"
 
 msgid "Smoke Style"
 msgstr "Način uvećavanja"
-
-
-msgid "Fire"
-msgstr "Vatra"
 
 
 msgctxt "Operator"
@@ -19674,10 +19660,6 @@ msgstr "Dodaje ograničenja krutog tela aktivnom objektu"
 msgctxt "Operator"
 msgid "Calculate Mass"
 msgstr "Izračunaj putanje"
-
-
-msgid "Density"
-msgstr "Gustina"
 
 
 msgid "Material Preset"
@@ -22348,10 +22330,6 @@ msgid "System"
 msgstr "Sistem"
 
 
-msgid "Fluid Presets"
-msgstr "Svojstva tečnosti:"
-
-
 msgctxt "Operator"
 msgid "Scale"
 msgstr "Povećaj/smanji"
@@ -22402,20 +22380,16 @@ msgid "Movement"
 msgstr "Kretanje"
 
 
+msgid "Border Collisions"
+msgstr "Ivica sudara"
+
+
 msgid "Force Fields"
 msgstr "Fh sila "
 
 
 msgid "Dynamics"
 msgstr "Dinamičko"
-
-
-msgid "Adaptive Domain"
-msgstr "Prilagodljivi domen"
-
-
-msgid "Behavior"
-msgstr "Ponašanje"
 
 
 msgid "Self Collision"
@@ -22670,6 +22644,10 @@ msgid "Point select mode"
 msgstr "Izbor tačaka"
 
 
+msgid "Tip"
+msgstr "Savet"
+
+
 msgid "Tip select mode"
 msgstr "Izbor vrhova"
 
@@ -22798,32 +22776,12 @@ msgid "Target Particle System"
 msgstr "Sistem čestica mete"
 
 
-msgid "Cache Compression"
-msgstr "Kompresija"
-
-
-msgid "Compression method to be used"
-msgstr "Izbor metoda spajanja."
-
-
 msgid "No compression"
 msgstr "Kompresija"
 
 
-msgid "Effective but slow compression"
-msgstr "Efikasna, ali spora kompresija"
-
-
 msgid "Cache file path"
 msgstr "Putanja do skladišta"
-
-
-msgid "Frame on which the simulation stops"
-msgstr "Kadar početka simulacije"
-
-
-msgid "Frame on which the simulation starts"
-msgstr "Kadar od koga počinje simulacija"
 
 
 msgid "Cache Step"
@@ -22998,12 +22956,12 @@ msgid "File Paths"
 msgstr "Putanje datoteke"
 
 
-msgid "Edit Methods"
-msgstr "Metode uređivanja"
-
-
 msgid "Experimental"
 msgstr "Proširi vodoravno"
+
+
+msgid "Edit Methods"
+msgstr "Metode uređivanja"
 
 
 msgid "Default paths for external files"
@@ -24150,10 +24108,6 @@ msgid "Draw stylized strokes using Freestyle"
 msgstr "Crtaj slobodoručne stilizovane poteze"
 
 
-msgid "Full Sample"
-msgstr "Ceo ekran"
-
-
 msgid "Save for every anti-aliasing sample the entire RenderLayer results (this solves anti-aliasing issues with compositing)"
 msgstr "Čuva za svaki uzorak umekšavanja celokupan rezultat renderovanih slojeva (kako bi izbegao probleme umekšavanja prilikom slaganja)"
 
@@ -24530,6 +24484,10 @@ msgid "Convert input to float data"
 msgstr "Pretvori ulaz u decimalni podatak"
 
 
+msgid "Reverse Frames"
+msgstr "Obrnuti kadrovi"
+
+
 msgid "Use Translation"
 msgstr "Koristi premeštanje"
 
@@ -24802,214 +24760,6 @@ msgid "Point in a shape key"
 msgstr "Tačka u ključu oblika"
 
 
-msgid "Smoke collision settings"
-msgstr "Podešavanja sudara dima"
-
-
-msgid "Collision Type"
-msgstr "Vrsta sudara"
-
-
-msgid "Collision type"
-msgstr "Vrsta sudara"
-
-
-msgid "Static"
-msgstr "Statično"
-
-
-msgid "Non moving obstacle"
-msgstr "Nepomična prepreka"
-
-
-msgid "Rigid"
-msgstr "Kruto"
-
-
-msgid "Rigid obstacle"
-msgstr "Kruta pepreka"
-
-
-msgid "Animated"
-msgstr "Animirano"
-
-
-msgid "Animated obstacle"
-msgstr "Animirana prepreka"
-
-
-msgid "Additional"
-msgstr "Dodatno"
-
-
-msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Koliko gustina utiče na kretanje dima (veća vrednost utiče da se dim brže diže)"
-
-
-msgid "Amplification"
-msgstr "Dupliranje"
-
-
-msgid "Heat"
-msgstr "Toplota"
-
-
-msgid "Cell Size"
-msgstr "Veličina ćelije"
-
-
-msgid "Border Collisions"
-msgstr "Ivica sudara"
-
-
-msgid "Vertically Open"
-msgstr "Otvori vertikalno"
-
-
-msgid "Collide All"
-msgstr "Sudaraj sve"
-
-
-msgid "Smoke collides with every side"
-msgstr "Dim se sudara sa svim stranama"
-
-
-msgid "Smoke density grid"
-msgstr "Mreža gustine dima"
-
-
-msgid "Dissolve Speed"
-msgstr "Brzina rastapanja"
-
-
-msgid "res"
-msgstr "rez"
-
-
-msgid "Smoke Grid Resolution"
-msgstr "Rezolucija mreže dima"
-
-
-msgid "Ignition"
-msgstr "Paljenje"
-
-
-msgid "Minimum temperature of flames"
-msgstr "Najmanja temperatura plamena"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Najveća temperatura plamena"
-
-
-msgid "Smoke Color"
-msgstr "Boja dima"
-
-
-msgid "Color of smoke emitted from burning fuel"
-msgstr "Boja dima koji emituje zapaljeno gorivo"
-
-
-msgid "Vorticity"
-msgstr "Brzina"
-
-
-msgid "Method for sampling the high resolution flow"
-msgstr "Metoda uzorkovanja toka visoke rezolucije"
-
-
-msgid "Wavelet"
-msgstr "Talas"
-
-
-msgid "FFT"
-msgstr "FFT"
-
-
-msgid "p0"
-msgstr "p0"
-
-
-msgid "Start point"
-msgstr "Početna tačka"
-
-
-msgid "Strength of noise"
-msgstr "Jačina šuma"
-
-
-msgid "Adjust simulation speed"
-msgstr "Podesi brzinu simulacije"
-
-
-msgid "Dissolve Smoke"
-msgstr "Rastapanje dima"
-
-
-msgid "Using 1/x "
-msgstr "Koristi 1/x "
-
-
-msgid "Amount of turbulence/rotation in fluid"
-msgstr "Vrednost turbulencije/rotacije u tečnosti"
-
-
-msgid "Smoke flow settings"
-msgstr "Podešavanje toka dima"
-
-
-msgid "Flame Rate"
-msgstr "Učestalost plamena"
-
-
-msgid "Color of smoke"
-msgstr "Boja dima"
-
-
-msgid "Delete smoke from simulation"
-msgstr "Izbriši dim iz simulacije"
-
-
-msgid "Add smoke"
-msgstr "Dodaj dim"
-
-
-msgid "Fire + Smoke"
-msgstr "Vatra i dim"
-
-
-msgid "Add fire and smoke"
-msgstr "Dodaj vatru i dim"
-
-
-msgid "Add fire"
-msgstr "Dodaj vatru"
-
-
-msgid "Maximum distance from mesh surface to emit smoke"
-msgstr "Postavlja maksimalnu X vrednost renderovanog okvira"
-
-
-msgid "Texture mapping type"
-msgstr "Vrsta mapiranja teksture"
-
-
-msgid "Use UV layer for texture coordinates"
-msgstr "Koristi UV sloj za koordinate teksture"
-
-
-msgid "Z-offset of texture mapping"
-msgstr "Z odstojanje mape teksture"
-
-
-msgid "Absolute Density"
-msgstr "Apsolutna gustina"
-
-
-msgid "Only allow given density value in emitter area"
-msgstr "Dozvoli samo izabranu gustinu u području emitovanja"
-
-
 msgid "Aero"
 msgstr "Aero"
 
@@ -25024,6 +24774,10 @@ msgstr "Veličina lopte"
 
 msgid "Bending"
 msgstr "Savijanje"
+
+
+msgid "Collision Type"
+msgstr "Vrsta sudara"
 
 
 msgid "Choose Collision Type"
@@ -25741,10 +25495,6 @@ msgid "Brush Texture Slot"
 msgstr "Slot teksture četkice"
 
 
-msgid "Tiled"
-msgstr "Popločano"
-
-
 msgid "Stencil"
 msgstr "Matrica"
 
@@ -26375,6 +26125,10 @@ msgstr "Zaobljenost"
 
 msgid "Shade Down"
 msgstr "Donja senka"
+
+
+msgid "Animated"
+msgstr "Animirano"
 
 
 msgid "Changed"
@@ -27811,15 +27565,6 @@ msgid "Draw:"
 msgstr "Crtaj:"
 
 
-msgid "Edit:"
-msgstr "Uredi:"
-
-
-msgctxt "Operator"
-msgid "Flip Direction"
-msgstr "Promeni smer"
-
-
 msgid "Active Layer:      "
 msgstr "Aktivni sloj:"
 
@@ -27853,12 +27598,9 @@ msgid "Data Source:"
 msgstr "Izvor podataka:"
 
 
-msgid "Select:"
-msgstr "Izaberi:"
-
-
-msgid "Cleanup:"
-msgstr "Očisti:"
+msgctxt "Operator"
+msgid "Flip Direction"
+msgstr "Promeni smer"
 
 
 msgctxt "Operator"
@@ -27918,6 +27660,14 @@ msgstr "Datum"
 
 msgid "Buffer"
 msgstr "Bafer"
+
+
+msgid "Front Faces Only"
+msgstr "Samo prednje stranice"
+
+
+msgid "Edge To Edge"
+msgstr "Ivica do ivice"
 
 
 msgid "Roughness 1"
@@ -28001,6 +27751,10 @@ msgstr "Ukloni četkicu"
 
 msgid "Color Layer"
 msgstr "Boja sloja"
+
+
+msgid "Real World Size"
+msgstr "Realna veličina sveta"
 
 
 msgid "Bounciness"
@@ -28204,14 +27958,6 @@ msgid "More"
 msgstr "Više"
 
 
-msgid "Unified Size"
-msgstr "Jedinstvena veličina"
-
-
-msgid "Unified Strength"
-msgstr "Jedinstvena jačina"
-
-
 msgctxt "Operator"
 msgid "New"
 msgstr "Novo"
@@ -28294,10 +28040,6 @@ msgstr "Ostrvo"
 
 msgid "Image*"
 msgstr "Slika*"
-
-
-msgid "Edge To Edge"
-msgstr "Ivica do ivice"
 
 
 msgctxt "Operator"
@@ -29233,6 +28975,14 @@ msgid "Spot Size"
 msgstr "Veličina projekcije"
 
 
+msgid "Auto Normalize"
+msgstr "Auto-normalizacija"
+
+
+msgid "Multi-Paint"
+msgstr "Višestruko bojenje"
+
+
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Brza izmena"
@@ -29258,18 +29008,6 @@ msgstr "Morate generisati ostavu tačaka"
 
 msgid "in memory to enable editing!"
 msgstr "u memoriji kako bi omogućili uređivanje!"
-
-
-msgid "Front Faces Only"
-msgstr "Samo prednje stranice"
-
-
-msgid "Auto Normalize"
-msgstr "Auto-normalizacija"
-
-
-msgid "Multi-Paint"
-msgstr "Višestruko bojenje"
 
 
 msgid "Const"
@@ -29408,6 +29146,10 @@ msgstr "Ne mogu da napravim spojenu stranicu"
 msgctxt "Action"
 msgid "Group"
 msgstr "Grupa"
+
+
+msgid "Basic"
+msgstr "Osnovno"
 
 
 msgid "Scene not found"

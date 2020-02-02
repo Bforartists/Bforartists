@@ -180,7 +180,7 @@ def edgeIntersect(context, operator):
 		return
 
 	point = line[0].lerp(line[1], 0.5)
-	context.scene.cursor.location = obj.matrix_world * point
+	context.scene.cursor.location = obj.matrix_world @ point
 
 
 # Cursor Edge Intersection Operator #
@@ -196,8 +196,8 @@ class VIEW3D_OT_CursorToEdgeIntersection(Operator):
 
 	def execute(self, context):
 		# Prevent unsupported Execution in Local View modes
-		space_data = bpy.context.space_data
-		if True in space_data.layers_local_view:
+		space = bpy.context.space_data
+		if space.local_view:
 			self.report({'INFO'}, 'Global Perspective modes only unable to continue.')
 			return {'FINISHED'}
 		edgeIntersect(context, self)

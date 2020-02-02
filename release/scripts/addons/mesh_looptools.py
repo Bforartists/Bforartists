@@ -15,11 +15,15 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+# Contributed to Germano Cavalcante (mano-wii), Florian Meyer (testscreenings),
+# Brendon Murphy (meta-androcto),
+# Maintainer:	Vladimir Spivak (cwolf3d)
+# Originally an addon by Bart Crouch
 
 bl_info = {
     "name": "LoopTools",
-    "author": "Bart Crouch",
-    "version": (4, 6, 9),
+    "author": "Bart Crouch, Vladimir Spivak (cwolf3d)",
+    "version": (4, 7, 1),
     "blender": (2, 80, 0),
     "location": "View3D > Sidebar > Edit Tab / Edit Mode Context Menu",
     "warning": "",
@@ -2320,8 +2324,16 @@ def curve_cut_boundaries(bm_mod, loops):
     cut_loops = []
     for loop, circular in loops:
         if circular:
-            # don't cut
-            cut_loops.append([loop, circular])
+            selected = [bm_mod.verts[v].select for v in loop]
+            first = selected.index(True)
+            selected.reverse()
+            last = -selected.index(True)
+            if last == 0:
+                if len(loop[first:]) < len(loop)/2:
+                    cut_loops.append([loop[first:], False])
+            else:
+                if len(loop[first:last]) < len(loop)/2:
+                    cut_loops.append([loop[first:last], False])
             continue
         selected = [bm_mod.verts[v].select for v in loop]
         first = selected.index(True)
@@ -4361,6 +4373,8 @@ class Space(Operator):
         if derived:
             bm_mod.free()
         terminate()
+        
+        cache_delete("Space")
 
         return{'FINISHED'}
 

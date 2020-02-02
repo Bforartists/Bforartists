@@ -18,16 +18,20 @@
 
 # <pep8 compliant>
 
+"""update new variables to values from older API.
+
+It does not have a UI and used to be found with F3 search field.
+This file needs an update."""
 
 import bpy
 from bpy.props import (
-        StringProperty,
-        BoolProperty,
-        IntProperty,
-        FloatProperty,
-        FloatVectorProperty,
-        EnumProperty,
-        )
+    StringProperty,
+    BoolProperty,
+    IntProperty,
+    FloatProperty,
+    FloatVectorProperty,
+    EnumProperty,
+)
 
 
 def update2_0_0_9():
@@ -38,45 +42,106 @@ def update2_0_0_9():
     # XXX We could also store the new name, but as it is just the same without leading pov_ ...
     # Get default values of pov scene props.
     old_sce_props = {}
-    for k in ["pov_tempfiles_enable", "pov_deletefiles_enable", "pov_scene_name", "pov_scene_path",
-              "pov_renderimage_path", "pov_list_lf_enable", "pov_radio_enable",
-              "pov_radio_display_advanced", "pov_media_enable", "pov_media_samples", "pov_media_color",
-              "pov_baking_enable", "pov_indentation_character", "pov_indentation_spaces",
-              "pov_comments_enable", "pov_command_line_switches", "pov_antialias_enable",
-              "pov_antialias_method", "pov_antialias_depth", "pov_antialias_threshold",
-              "pov_jitter_enable", "pov_jitter_amount", "pov_antialias_gamma", "pov_max_trace_level",
-              "pov_photon_spacing", "pov_photon_max_trace_level", "pov_photon_adc_bailout",
-              "pov_photon_gather_min", "pov_photon_gather_max", "pov_radio_adc_bailout",
-              "pov_radio_always_sample", "pov_radio_brightness", "pov_radio_count",
-              "pov_radio_error_bound", "pov_radio_gray_threshold", "pov_radio_low_error_factor",
-              "pov_radio_media", "pov_radio_minimum_reuse", "pov_radio_nearest_count",
-              "pov_radio_normal", "pov_radio_recursion_limit", "pov_radio_pretrace_start",
-              "pov_radio_pretrace_end"]:
+    for k in [
+        "pov_tempfiles_enable",
+        "pov_deletefiles_enable",
+        "pov_scene_name",
+        "pov_scene_path",
+        "pov_renderimage_path",
+        "pov_list_lf_enable",
+        "pov_radio_enable",
+        "pov_radio_display_advanced",
+        "pov_media_enable",
+        "pov_media_samples",
+        "pov_media_color",
+        "pov_baking_enable",
+        "pov_indentation_character",
+        "pov_indentation_spaces",
+        "pov_comments_enable",
+        "pov_command_line_switches",
+        "pov_antialias_enable",
+        "pov_antialias_method",
+        "pov_antialias_depth",
+        "pov_antialias_threshold",
+        "pov_jitter_enable",
+        "pov_jitter_amount",
+        "pov_antialias_gamma",
+        "pov_max_trace_level",
+        "pov_photon_spacing",
+        "pov_photon_max_trace_level",
+        "pov_photon_adc_bailout",
+        "pov_photon_gather_min",
+        "pov_photon_gather_max",
+        "pov_radio_adc_bailout",
+        "pov_radio_always_sample",
+        "pov_radio_brightness",
+        "pov_radio_count",
+        "pov_radio_error_bound",
+        "pov_radio_gray_threshold",
+        "pov_radio_low_error_factor",
+        "pov_radio_media",
+        "pov_radio_minimum_reuse",
+        "pov_radio_nearest_count",
+        "pov_radio_normal",
+        "pov_radio_recursion_limit",
+        "pov_radio_pretrace_start",
+        "pov_radio_pretrace_end",
+    ]:
         old_sce_props[k] = getattr(bpy.types.Scene, k)[1].get('default', None)
 
     # Get default values of pov material props.
     old_mat_props = {}
-    for k in ["pov_irid_enable", "pov_mirror_use_IOR", "pov_mirror_metallic", "pov_conserve_energy",
-              "pov_irid_amount", "pov_irid_thickness", "pov_irid_turbulence", "pov_interior_fade_color",
-              "pov_caustics_enable", "pov_fake_caustics", "pov_fake_caustics_power",
-              "pov_photons_refraction", "pov_photons_dispersion", "pov_photons_reflection",
-              "pov_refraction_type", "pov_replacement_text"]:
-        old_mat_props[k] = getattr(bpy.types.Material, k)[1].get('default', None)
+    for k in [
+        "pov_irid_enable",
+        "pov_mirror_use_IOR",
+        "pov_mirror_metallic",
+        "pov_conserve_energy",
+        "pov_irid_amount",
+        "pov_irid_thickness",
+        "pov_irid_turbulence",
+        "pov_interior_fade_color",
+        "pov_caustics_enable",
+        "pov_fake_caustics",
+        "pov_fake_caustics_power",
+        "pov_photons_refraction",
+        "pov_photons_dispersion",
+        "pov_photons_reflection",
+        "pov_refraction_type",
+        "pov_replacement_text",
+    ]:
+        old_mat_props[k] = getattr(bpy.types.Material, k)[1].get(
+            'default', None
+        )
 
     # Get default values of pov texture props.
     old_tex_props = {}
-    for k in ["pov_tex_gamma_enable", "pov_tex_gamma_value", "pov_replacement_text"]:
+    for k in [
+        "pov_tex_gamma_enable",
+        "pov_tex_gamma_value",
+        "pov_replacement_text",
+    ]:
         old_tex_props[k] = getattr(bpy.types.Texture, k)[1].get('default', None)
 
     # Get default values of pov object props.
     old_obj_props = {}
-    for k in ["pov_importance_value", "pov_collect_photons", "pov_replacement_text"]:
+    for k in [
+        "pov_importance_value",
+        "pov_collect_photons",
+        "pov_replacement_text",
+    ]:
         old_obj_props[k] = getattr(bpy.types.Object, k)[1].get('default', None)
 
     # Get default values of pov camera props.
     old_cam_props = {}
-    for k in ["pov_dof_enable", "pov_dof_aperture", "pov_dof_samples_min", "pov_dof_samples_max",
-              "pov_dof_variance", "pov_dof_confidence", "pov_replacement_text"]:
+    for k in [
+        "pov_dof_enable",
+        "pov_dof_aperture",
+        "pov_dof_samples_min",
+        "pov_dof_samples_max",
+        "pov_dof_variance",
+        "pov_dof_confidence",
+        "pov_replacement_text",
+    ]:
         old_cam_props[k] = getattr(bpy.types.Camera, k)[1].get('default', None)
 
     # Get default values of pov text props.
@@ -125,6 +190,7 @@ def update2_0_0_9():
 
 class RenderCopySettings(bpy.types.Operator):
     """Update old POV properties to new ones"""
+
     bl_idname = "scene.pov_update_properties"
     bl_label = "PovRay render: Update to script v0.0.9"
     bl_option = {'REGISTER'}
@@ -149,372 +215,598 @@ def register():
 
     # File Options
     Scene.pov_tempfiles_enable = BoolProperty(
-            name="Enable Tempfiles",
-            description="Enable the OS-Tempfiles. Otherwise set the path where to save the files",
-            default=True)
+        name="Enable Tempfiles",
+        description="Enable the OS-Tempfiles. Otherwise set the path where to save the files",
+        default=True,
+    )
     Scene.pov_deletefiles_enable = BoolProperty(
-            name="Delete files",
-            description="Delete files after rendering. Doesn't work with the image",
-            default=True)
+        name="Delete files",
+        description="Delete files after rendering. Doesn't work with the image",
+        default=True,
+    )
     Scene.pov_scene_name = StringProperty(
-            name="Scene Name",
-            description="Name of POV-Ray scene to create. Empty name will use the name of the blend file",
-            default="", maxlen=1024)
+        name="Scene Name",
+        description="Name of POV-Ray scene to create. Empty name will use the name of the blend file",
+        default="",
+        maxlen=1024,
+    )
     Scene.pov_scene_path = StringProperty(
-            name="Export scene path",
-            # description="Path to directory where the exported scene (POV and INI) is created",  # Bug in POV-Ray RC3
-            description="Path to directory where the files are created",
-            default="", maxlen=1024, subtype="DIR_PATH")
+        name="Export scene path",
+        # description="Path to directory where the exported scene (POV and INI) is created",  # Bug in POV-Ray RC3
+        description="Path to directory where the files are created",
+        default="",
+        maxlen=1024,
+        subtype="DIR_PATH",
+    )
     Scene.pov_renderimage_path = StringProperty(
-            name="Rendered image path",
-            description="Full path to directory where the rendered image is saved",
-            default="", maxlen=1024, subtype="DIR_PATH")
+        name="Rendered image path",
+        description="Full path to directory where the rendered image is saved",
+        default="",
+        maxlen=1024,
+        subtype="DIR_PATH",
+    )
     Scene.pov_list_lf_enable = BoolProperty(
-            name="LF in lists",
-            description="Enable line breaks in lists (vectors and indices). Disabled: lists are exported in one line",
-            default=True)
+        name="LF in lists",
+        description="Enable line breaks in lists (vectors and indices). Disabled: lists are exported in one line",
+        default=True,
+    )
 
     # Not a real pov option, just to know if we should write
     Scene.pov_radio_enable = BoolProperty(
-            name="Enable Radiosity",
-            description="Enable POV-Rays radiosity calculation",
-            default=False)
+        name="Enable Radiosity",
+        description="Enable POV-Rays radiosity calculation",
+        default=False,
+    )
     Scene.pov_radio_display_advanced = BoolProperty(
-            name="Advanced Options",
-            description="Show advanced options",
-            default=False)
+        name="Advanced Options",
+        description="Show advanced options",
+        default=False,
+    )
     Scene.pov_media_enable = BoolProperty(
-            name="Enable Media",
-            description="Enable POV-Rays atmospheric media",
-            default=False)
+        name="Enable Media",
+        description="Enable POV-Rays atmospheric media",
+        default=False,
+    )
     Scene.pov_media_samples = IntProperty(
-            name="Samples", description="Number of samples taken from camera to first object encountered along ray path for media calculation",
-            min=1, max=100, default=35)
+        name="Samples",
+        description="Number of samples taken from camera to first object encountered along ray path for media calculation",
+        min=1,
+        max=100,
+        default=35,
+    )
 
     Scene.pov_media_color = FloatVectorProperty(
-            name="Media Color",
-            description="The atmospheric media color",
-            subtype='COLOR',
-            precision=4,
-            step=0.01,
-            min=0,
-            soft_max=1,
-            default=(0.001, 0.001, 0.001),
-            options={'ANIMATABLE'})
+        name="Media Color",
+        description="The atmospheric media color",
+        subtype='COLOR',
+        precision=4,
+        step=0.01,
+        min=0,
+        soft_max=1,
+        default=(0.001, 0.001, 0.001),
+        options={'ANIMATABLE'},
+    )
 
     Scene.pov_baking_enable = BoolProperty(
-            name="Enable Baking",
-            description="Enable POV-Rays texture baking",
-            default=False)
+        name="Enable Baking",
+        description="Enable POV-Rays texture baking",
+        default=False,
+    )
     Scene.pov_indentation_character = EnumProperty(
-            name="Indentation",
-            description="Select the indentation type",
-            items=(("0", "None", "No indentation"),
-               ("1", "Tabs", "Indentation with tabs"),
-               ("2", "Spaces", "Indentation with spaces")),
-            default="2")
+        name="Indentation",
+        description="Select the indentation type",
+        items=(
+            ("0", "None", "No indentation"),
+            ("1", "Tabs", "Indentation with tabs"),
+            ("2", "Spaces", "Indentation with spaces"),
+        ),
+        default="2",
+    )
     Scene.pov_indentation_spaces = IntProperty(
-            name="Quantity of spaces",
-            description="The number of spaces for indentation",
-            min=1, max=10, default=4)
+        name="Quantity of spaces",
+        description="The number of spaces for indentation",
+        min=1,
+        max=10,
+        default=4,
+    )
 
     Scene.pov_comments_enable = BoolProperty(
-            name="Enable Comments",
-            description="Add comments to pov file",
-            default=True)
+        name="Enable Comments",
+        description="Add comments to pov file",
+        default=True,
+    )
 
     # Real pov options
-    Scene.pov_command_line_switches = StringProperty(name="Command Line Switches",
-            description="Command line switches consist of a + (plus) or - (minus) sign, followed by one or more alphabetic characters and possibly a numeric value",
-            default="", maxlen=500)
+    Scene.pov_command_line_switches = StringProperty(
+        name="Command Line Switches",
+        description="Command line switches consist of a + (plus) or - (minus) sign, followed by one or more alphabetic characters and possibly a numeric value",
+        default="",
+        maxlen=500,
+    )
 
     Scene.pov_antialias_enable = BoolProperty(
-            name="Anti-Alias", description="Enable Anti-Aliasing",
-            default=True)
+        name="Anti-Alias", description="Enable Anti-Aliasing", default=True
+    )
 
     Scene.pov_antialias_method = EnumProperty(
-            name="Method",
-            description="AA-sampling method. Type 1 is an adaptive, non-recursive, super-sampling method. Type 2 is an adaptive and recursive super-sampling method",
-            items=(("0", "non-recursive AA", "Type 1 Sampling in POV-Ray"),
-               ("1", "recursive AA", "Type 2 Sampling in POV-Ray")),
-            default="1")
+        name="Method",
+        description="AA-sampling method. Type 1 is an adaptive, non-recursive, super-sampling method. Type 2 is an adaptive and recursive super-sampling method",
+        items=(
+            ("0", "non-recursive AA", "Type 1 Sampling in POV-Ray"),
+            ("1", "recursive AA", "Type 2 Sampling in POV-Ray"),
+        ),
+        default="1",
+    )
 
     Scene.pov_antialias_depth = IntProperty(
-            name="Antialias Depth", description="Depth of pixel for sampling",
-            min=1, max=9, default=3)
+        name="Antialias Depth",
+        description="Depth of pixel for sampling",
+        min=1,
+        max=9,
+        default=3,
+    )
 
     Scene.pov_antialias_threshold = FloatProperty(
-            name="Antialias Threshold", description="Tolerance for sub-pixels",
-            min=0.0, max=1.0, soft_min=0.05, soft_max=0.5, default=0.1)
+        name="Antialias Threshold",
+        description="Tolerance for sub-pixels",
+        min=0.0,
+        max=1.0,
+        soft_min=0.05,
+        soft_max=0.5,
+        default=0.1,
+    )
 
     Scene.pov_jitter_enable = BoolProperty(
-            name="Jitter", description="Enable Jittering. Adds noise into the sampling process (it should be avoided to use jitter in animation)",
-            default=True)
+        name="Jitter",
+        description="Enable Jittering. Adds noise into the sampling process (it should be avoided to use jitter in animation)",
+        default=True,
+    )
 
     Scene.pov_jitter_amount = FloatProperty(
-            name="Jitter Amount", description="Amount of jittering",
-            min=0.0, max=1.0, soft_min=0.01, soft_max=1.0, default=1.0)
+        name="Jitter Amount",
+        description="Amount of jittering",
+        min=0.0,
+        max=1.0,
+        soft_min=0.01,
+        soft_max=1.0,
+        default=1.0,
+    )
 
     Scene.pov_antialias_gamma = FloatProperty(
-            name="Antialias Gamma", description="POV-Ray compares gamma-adjusted values for super sampling. Antialias Gamma sets the Gamma before comparison",
-            min=0.0, max=5.0, soft_min=0.01, soft_max=2.5, default=2.5)
+        name="Antialias Gamma",
+        description="POV-Ray compares gamma-adjusted values for super sampling. Antialias Gamma sets the Gamma before comparison",
+        min=0.0,
+        max=5.0,
+        soft_min=0.01,
+        soft_max=2.5,
+        default=2.5,
+    )
 
     Scene.pov_max_trace_level = IntProperty(
-            name="Max Trace Level", description="Number of reflections/refractions allowed on ray path",
-            min=1, max=256, default=5)
+        name="Max Trace Level",
+        description="Number of reflections/refractions allowed on ray path",
+        min=1,
+        max=256,
+        default=5,
+    )
 
     Scene.pov_photon_spacing = FloatProperty(
-            name="Spacing", description="Average distance between photons on surfaces. half this get four times as many surface photons",
-            min=0.001, max=1.000, soft_min=0.001, soft_max=1.000, default=0.005, precision=3)
+        name="Spacing",
+        description="Average distance between photons on surfaces. half this get four times as many surface photons",
+        min=0.001,
+        max=1.000,
+        soft_min=0.001,
+        soft_max=1.000,
+        default=0.005,
+        precision=3,
+    )
 
     Scene.pov_photon_max_trace_level = IntProperty(
-            name="Max Trace Level", description="Number of reflections/refractions allowed on ray path",
-            min=1, max=256, default=5)
+        name="Max Trace Level",
+        description="Number of reflections/refractions allowed on ray path",
+        min=1,
+        max=256,
+        default=5,
+    )
 
     Scene.pov_photon_adc_bailout = FloatProperty(
-            name="ADC Bailout", description="The adc_bailout for photons. Use adc_bailout = 0.01 / brightest_ambient_object for good results",
-            min=0.0, max=1000.0, soft_min=0.0, soft_max=1.0, default=0.1, precision=3)
+        name="ADC Bailout",
+        description="The adc_bailout for photons. Use adc_bailout = 0.01 / brightest_ambient_object for good results",
+        min=0.0,
+        max=1000.0,
+        soft_min=0.0,
+        soft_max=1.0,
+        default=0.1,
+        precision=3,
+    )
 
     Scene.pov_photon_gather_min = IntProperty(
-            name="Gather Min", description="Minimum number of photons gathered for each point",
-            min=1, max=256, default=20)
+        name="Gather Min",
+        description="Minimum number of photons gathered for each point",
+        min=1,
+        max=256,
+        default=20,
+    )
 
     Scene.pov_photon_gather_max = IntProperty(
-            name="Gather Max", description="Maximum number of photons gathered for each point",
-            min=1, max=256, default=100)
+        name="Gather Max",
+        description="Maximum number of photons gathered for each point",
+        min=1,
+        max=256,
+        default=100,
+    )
 
     Scene.pov_radio_adc_bailout = FloatProperty(
-            name="ADC Bailout", description="The adc_bailout for radiosity rays. Use adc_bailout = 0.01 / brightest_ambient_object for good results",
-            min=0.0, max=1000.0, soft_min=0.0, soft_max=1.0, default=0.01, precision=3)
+        name="ADC Bailout",
+        description="The adc_bailout for radiosity rays. Use adc_bailout = 0.01 / brightest_ambient_object for good results",
+        min=0.0,
+        max=1000.0,
+        soft_min=0.0,
+        soft_max=1.0,
+        default=0.01,
+        precision=3,
+    )
 
     Scene.pov_radio_always_sample = BoolProperty(
-            name="Always Sample", description="Only use the data from the pretrace step and not gather any new samples during the final radiosity pass",
-            default=True)
+        name="Always Sample",
+        description="Only use the data from the pretrace step and not gather any new samples during the final radiosity pass",
+        default=True,
+    )
 
     Scene.pov_radio_brightness = FloatProperty(
-            name="Brightness", description="Amount objects are brightened before being returned upwards to the rest of the system",
-            min=0.0, max=1000.0, soft_min=0.0, soft_max=10.0, default=1.0)
+        name="Brightness",
+        description="Amount objects are brightened before being returned upwards to the rest of the system",
+        min=0.0,
+        max=1000.0,
+        soft_min=0.0,
+        soft_max=10.0,
+        default=1.0,
+    )
 
     Scene.pov_radio_count = IntProperty(
-            name="Ray Count", description="Number of rays for each new radiosity value to be calculated (halton sequence over 1600)",
-            min=1, max=10000, soft_max=1600, default=35)
+        name="Ray Count",
+        description="Number of rays for each new radiosity value to be calculated (halton sequence over 1600)",
+        min=1,
+        max=10000,
+        soft_max=1600,
+        default=35,
+    )
 
     Scene.pov_radio_error_bound = FloatProperty(
-            name="Error Bound", description="One of the two main speed/quality tuning values, lower values are more accurate",
-            min=0.0, max=1000.0, soft_min=0.1, soft_max=10.0, default=1.8)
+        name="Error Bound",
+        description="One of the two main speed/quality tuning values, lower values are more accurate",
+        min=0.0,
+        max=1000.0,
+        soft_min=0.1,
+        soft_max=10.0,
+        default=1.8,
+    )
 
     Scene.pov_radio_gray_threshold = FloatProperty(
-            name="Gray Threshold", description="One of the two main speed/quality tuning values, lower values are more accurate",
-            min=0.0, max=1.0, soft_min=0, soft_max=1, default=0.0)
+        name="Gray Threshold",
+        description="One of the two main speed/quality tuning values, lower values are more accurate",
+        min=0.0,
+        max=1.0,
+        soft_min=0,
+        soft_max=1,
+        default=0.0,
+    )
 
     Scene.pov_radio_low_error_factor = FloatProperty(
-            name="Low Error Factor", description="Just enough samples is slightly blotchy. Low error changes error tolerance for less critical last refining pass",
-            min=0.0, max=1.0, soft_min=0.0, soft_max=1.0, default=0.5)
+        name="Low Error Factor",
+        description="Just enough samples is slightly blotchy. Low error changes error tolerance for less critical last refining pass",
+        min=0.0,
+        max=1.0,
+        soft_min=0.0,
+        soft_max=1.0,
+        default=0.5,
+    )
 
     # max_sample - not available yet
     Scene.pov_radio_media = BoolProperty(
-            name="Media", description="Radiosity estimation can be affected by media",
-            default=False)
+        name="Media",
+        description="Radiosity estimation can be affected by media",
+        default=False,
+    )
 
     Scene.pov_radio_minimum_reuse = FloatProperty(
-            name="Minimum Reuse", description="Fraction of the screen width which sets the minimum radius of reuse for each sample point (At values higher than 2% expect errors)",
-            min=0.0, max=1.0, soft_min=0.1, soft_max=0.1, default=0.015, precision=3)
+        name="Minimum Reuse",
+        description="Fraction of the screen width which sets the minimum radius of reuse for each sample point (At values higher than 2% expect errors)",
+        min=0.0,
+        max=1.0,
+        soft_min=0.1,
+        soft_max=0.1,
+        default=0.015,
+        precision=3,
+    )
 
     Scene.pov_radio_nearest_count = IntProperty(
-            name="Nearest Count", description="Number of old ambient values blended together to create a new interpolated value",
-            min=1, max=20, default=5)
+        name="Nearest Count",
+        description="Number of old ambient values blended together to create a new interpolated value",
+        min=1,
+        max=20,
+        default=5,
+    )
 
     Scene.pov_radio_normal = BoolProperty(
-            name="Normals", description="Radiosity estimation can be affected by normals",
-            default=False)
+        name="Normals",
+        description="Radiosity estimation can be affected by normals",
+        default=False,
+    )
 
     Scene.pov_radio_recursion_limit = IntProperty(
-            name="Recursion Limit", description="how many recursion levels are used to calculate the diffuse inter-reflection",
-            min=1, max=20, default=3)
+        name="Recursion Limit",
+        description="how many recursion levels are used to calculate the diffuse inter-reflection",
+        min=1,
+        max=20,
+        default=3,
+    )
 
     Scene.pov_radio_pretrace_start = FloatProperty(
-            name="Pretrace Start", description="Fraction of the screen width which sets the size of the blocks in the mosaic preview first pass",
-            min=0.01, max=1.00, soft_min=0.02, soft_max=1.0, default=0.08)
+        name="Pretrace Start",
+        description="Fraction of the screen width which sets the size of the blocks in the mosaic preview first pass",
+        min=0.01,
+        max=1.00,
+        soft_min=0.02,
+        soft_max=1.0,
+        default=0.08,
+    )
 
     Scene.pov_radio_pretrace_end = FloatProperty(
-            name="Pretrace End", description="Fraction of the screen width which sets the size of the blocks in the mosaic preview last pass",
-            min=0.001, max=1.00, soft_min=0.01, soft_max=1.00, default=0.04, precision=3)
+        name="Pretrace End",
+        description="Fraction of the screen width which sets the size of the blocks in the mosaic preview last pass",
+        min=0.001,
+        max=1.00,
+        soft_min=0.01,
+        soft_max=1.00,
+        default=0.04,
+        precision=3,
+    )
 
     #############################MATERIAL######################################
 
     Mat.pov_irid_enable = BoolProperty(
-            name="Enable Iridescence",
-            description="Newton's thin film interference (like an oil slick on a puddle of water or the rainbow hues of a soap bubble.)",
-            default=False)
+        name="Enable Iridescence",
+        description="Newton's thin film interference (like an oil slick on a puddle of water or the rainbow hues of a soap bubble.)",
+        default=False,
+    )
 
     Mat.pov_mirror_use_IOR = BoolProperty(
-            name="Correct Reflection",
-            description="Use same IOR as raytrace transparency to calculate mirror reflections. More physically correct",
-            default=False)
+        name="Correct Reflection",
+        description="Use same IOR as raytrace transparency to calculate mirror reflections. More physically correct",
+        default=False,
+    )
 
     Mat.pov_mirror_metallic = BoolProperty(
-            name="Metallic Reflection",
-            description="mirror reflections get colored as diffuse (for metallic materials)",
-            default=False)
+        name="Metallic Reflection",
+        description="mirror reflections get colored as diffuse (for metallic materials)",
+        default=False,
+    )
 
     Mat.pov_conserve_energy = BoolProperty(
-            name="Conserve Energy",
-            description="Light transmitted is more correctly reduced by mirror reflections, also the sum of diffuse and translucency gets reduced below one ",
-            default=True)
+        name="Conserve Energy",
+        description="Light transmitted is more correctly reduced by mirror reflections, also the sum of diffuse and translucency gets reduced below one ",
+        default=True,
+    )
 
     Mat.pov_irid_amount = FloatProperty(
-            name="amount",
-            description="Contribution of the iridescence effect to the overall surface color. As a rule of thumb keep to around 0.25 (25% contribution) or less, but experiment. If the surface is coming out too white, try lowering the diffuse and possibly the ambient values of the surface",
-            min=0.0, max=1.0, soft_min=0.01, soft_max=1.0, default=0.25)
+        name="amount",
+        description="Contribution of the iridescence effect to the overall surface color. As a rule of thumb keep to around 0.25 (25% contribution) or less, but experiment. If the surface is coming out too white, try lowering the diffuse and possibly the ambient values of the surface",
+        min=0.0,
+        max=1.0,
+        soft_min=0.01,
+        soft_max=1.0,
+        default=0.25,
+    )
 
     Mat.pov_irid_thickness = FloatProperty(
-            name="thickness",
-            description="A very thin film will have a high frequency of color changes while a thick film will have large areas of color",
-            min=0.0, max=1000.0, soft_min=0.1, soft_max=10.0, default=1)
+        name="thickness",
+        description="A very thin film will have a high frequency of color changes while a thick film will have large areas of color",
+        min=0.0,
+        max=1000.0,
+        soft_min=0.1,
+        soft_max=10.0,
+        default=1,
+    )
 
     Mat.pov_irid_turbulence = FloatProperty(
-            name="turbulence",
-            description="This parameter varies the thickness",
-            min=0.0, max=10.0, soft_min=0.000, soft_max=1.0, default=0)
+        name="turbulence",
+        description="This parameter varies the thickness",
+        min=0.0,
+        max=10.0,
+        soft_min=0.000,
+        soft_max=1.0,
+        default=0,
+    )
 
     Mat.pov_interior_fade_color = FloatVectorProperty(
-            name="Fade Color",
-            description="Color of filtered attenuation for transparent materials",
-            subtype='COLOR',
-            precision=4,
-            step=0.01,
-            min=0.0,
-            soft_max=1.0,
-            default=(0, 0, 0),
-            options={'ANIMATABLE'})
+        name="Fade Color",
+        description="Color of filtered attenuation for transparent materials",
+        subtype='COLOR',
+        precision=4,
+        step=0.01,
+        min=0.0,
+        soft_max=1.0,
+        default=(0, 0, 0),
+        options={'ANIMATABLE'},
+    )
 
     Mat.pov_caustics_enable = BoolProperty(
-            name="Caustics",
-            description="use only fake refractive caustics (default) or photon based reflective/refractive caustics",
-            default=True)
+        name="Caustics",
+        description="use only fake refractive caustics (default) or photon based reflective/refractive caustics",
+        default=True,
+    )
 
     Mat.pov_fake_caustics = BoolProperty(
-            name="Fake Caustics",
-            description="use only (Fast) fake refractive caustics",
-            default=True)
+        name="Fake Caustics",
+        description="use only (Fast) fake refractive caustics",
+        default=True,
+    )
 
     Mat.pov_fake_caustics_power = FloatProperty(
-            name="Fake caustics power",
-            description="Values typically range from 0.0 to 1.0 or higher. Zero is no caustics. Low, non-zero values give broad hot-spots while higher values give tighter, smaller simulated focal points",
-            min=0.00, max=10.0, soft_min=0.00, soft_max=1.10, default=0.1)
+        name="Fake caustics power",
+        description="Values typically range from 0.0 to 1.0 or higher. Zero is no caustics. Low, non-zero values give broad hot-spots while higher values give tighter, smaller simulated focal points",
+        min=0.00,
+        max=10.0,
+        soft_min=0.00,
+        soft_max=1.10,
+        default=0.1,
+    )
 
     Mat.pov_photons_refraction = BoolProperty(
-            name="Refractive Photon Caustics",
-            description="more physically correct",
-            default=False)
+        name="Refractive Photon Caustics",
+        description="more physically correct",
+        default=False,
+    )
 
     Mat.pov_photons_dispersion = FloatProperty(
-            name="chromatic dispersion",
-            description="Light passing through will be separated according to wavelength. This ratio of refractive indices for violet to red controls how much the colors are spread out 1 = no dispersion, good values are 1.01 to 1.1",
-            min=1.0000, max=10.000, soft_min=1.0000, soft_max=1.1000, precision=4, default=1.0000)
+        name="chromatic dispersion",
+        description="Light passing through will be separated according to wavelength. This ratio of refractive indices for violet to red controls how much the colors are spread out 1 = no dispersion, good values are 1.01 to 1.1",
+        min=1.0000,
+        max=10.000,
+        soft_min=1.0000,
+        soft_max=1.1000,
+        precision=4,
+        default=1.0000,
+    )
 
     Mat.pov_photons_reflection = BoolProperty(
-            name="Reflective Photon Caustics",
-            description="Use this to make your Sauron's ring ;-P",
-            default=False)
+        name="Reflective Photon Caustics",
+        description="Use this to make your Sauron's ring ;-P",
+        default=False,
+    )
 
     Mat.pov_refraction_type = EnumProperty(
-            items=[("0", "None", "use only reflective caustics"),
-                   ("1", "Fake Caustics", "use fake caustics"),
-                   ("2", "Photons Caustics", "use photons for refractive caustics"),
-                   ],
-            name="Refractive",
-            description="use fake caustics (fast) or true photons for refractive Caustics",
-            default="1")
+        items=[
+            ("0", "None", "use only reflective caustics"),
+            ("1", "Fake Caustics", "use fake caustics"),
+            ("2", "Photons Caustics", "use photons for refractive caustics"),
+        ],
+        name="Refractive",
+        description="use fake caustics (fast) or true photons for refractive Caustics",
+        default="1",
+    )
     ##################################CustomPOV Code############################
     Mat.pov_replacement_text = StringProperty(
-            name="Declared name:",
-            description="Type the declared name in custom POV code or an external .inc it points at. texture {} expected",
-            default="")
+        name="Declared name:",
+        description="Type the declared name in custom POV code or an external .inc it points at. texture {} expected",
+        default="",
+    )
 
-    #Only DUMMIES below for now:
+    # Only DUMMIES below for now:
     Tex.pov_replacement_text = StringProperty(
-            name="Declared name:",
-            description="Type the declared name in custom POV code or an external .inc it points at. pigment {} expected",
-            default="")
+        name="Declared name:",
+        description="Type the declared name in custom POV code or an external .inc it points at. pigment {} expected",
+        default="",
+    )
 
     Obj.pov_replacement_text = StringProperty(
-            name="Declared name:",
-            description="Type the declared name in custom POV code or an external .inc it points at. Any POV shape expected e.g: isosurface {}",
-            default="")
+        name="Declared name:",
+        description="Type the declared name in custom POV code or an external .inc it points at. Any POV shape expected e.g: isosurface {}",
+        default="",
+    )
 
     Cam.pov_replacement_text = StringProperty(
-            name="Texts in blend file",
-            description="Type the declared name in custom POV code or an external .inc it points at. camera {} expected",
-            default="")
+        name="Texts in blend file",
+        description="Type the declared name in custom POV code or an external .inc it points at. camera {} expected",
+        default="",
+    )
     ##############################TEXTURE######################################
 
-    #Custom texture gamma
+    # Custom texture gamma
     Tex.pov_tex_gamma_enable = BoolProperty(
-            name="Enable custom texture gamma",
-            description="Notify some custom gamma for which texture has been precorrected without the file format carrying it and only if it differs from your OS expected standard (see pov doc)",
-            default=False)
+        name="Enable custom texture gamma",
+        description="Notify some custom gamma for which texture has been precorrected without the file format carrying it and only if it differs from your OS expected standard (see pov doc)",
+        default=False,
+    )
 
     Tex.pov_tex_gamma_value = FloatProperty(
-            name="Custom texture gamma",
-            description="value for which the file was issued e.g. a Raw photo is gamma 1.0",
-            min=0.45, max=5.00, soft_min=1.00, soft_max=2.50, default=1.00)
+        name="Custom texture gamma",
+        description="value for which the file was issued e.g. a Raw photo is gamma 1.0",
+        min=0.45,
+        max=5.00,
+        soft_min=1.00,
+        soft_max=2.50,
+        default=1.00,
+    )
 
     #################################OBJECT####################################
 
-    #Importance sampling
+    # Importance sampling
     Obj.pov_importance_value = FloatProperty(
-            name="Radiosity Importance",
-            description="Priority value relative to other objects for sampling radiosity rays. Increase to get more radiosity rays at comparatively small yet bright objects",
-            min=0.01, max=1.00, default=1.00)
+        name="Radiosity Importance",
+        description="Priority value relative to other objects for sampling radiosity rays. Increase to get more radiosity rays at comparatively small yet bright objects",
+        min=0.01,
+        max=1.00,
+        default=1.00,
+    )
 
-    #Collect photons
+    # Collect photons
     Obj.pov_collect_photons = BoolProperty(
-            name="Receive Photon Caustics",
-            description="Enable object to collect photons from other objects caustics. Turn off for objects that don't really need to receive caustics (e.g. objects that generate caustics often don't need to show any on themselves) ",
-            default=True)
+        name="Receive Photon Caustics",
+        description="Enable object to collect photons from other objects caustics. Turn off for objects that don't really need to receive caustics (e.g. objects that generate caustics often don't need to show any on themselves) ",
+        default=True,
+    )
 
     ##################################CAMERA###################################
 
-    #DOF Toggle
+    # DOF Toggle
     Cam.pov_dof_enable = BoolProperty(
-            name="Depth Of Field",
-            description="Enable POV-Ray Depth Of Field ",
-            default=True)
+        name="Depth Of Field",
+        description="Enable POV-Ray Depth Of Field ",
+        default=True,
+    )
 
-    #Aperture (Intensity of the Blur)
+    # Aperture (Intensity of the Blur)
     Cam.pov_dof_aperture = FloatProperty(
-            name="Aperture",
-            description="Similar to a real camera's aperture effect over focal blur (though not in physical units and independent of focal length).Increase to get more blur",
-            min=0.01, max=1.00, default=0.25)
+        name="Aperture",
+        description="Similar to a real camera's aperture effect over focal blur (though not in physical units and independent of focal length).Increase to get more blur",
+        min=0.01,
+        max=1.00,
+        default=0.25,
+    )
 
-    #Aperture adaptive sampling
+    # Aperture adaptive sampling
     Cam.pov_dof_samples_min = IntProperty(
-            name="Samples Min",
-            description="Minimum number of rays to use for each pixel",
-            min=1, max=128, default=96)
+        name="Samples Min",
+        description="Minimum number of rays to use for each pixel",
+        min=1,
+        max=128,
+        default=96,
+    )
 
     Cam.pov_dof_samples_max = IntProperty(
-            name="Samples Max",
-            description="Maximum number of rays to use for each pixel",
-            min=1, max=128, default=128)
+        name="Samples Max",
+        description="Maximum number of rays to use for each pixel",
+        min=1,
+        max=128,
+        default=128,
+    )
 
     Cam.pov_dof_variance = IntProperty(
-            name="Variance",
-            description="Minimum threshold (fractional value) for adaptive DOF sampling (up increases quality and render time). The value for the variance should be in the range of the smallest displayable color difference",
-            min=1, max=100000, soft_max=10000, default=256)
+        name="Variance",
+        description="Minimum threshold (fractional value) for adaptive DOF sampling (up increases quality and render time). The value for the variance should be in the range of the smallest displayable color difference",
+        min=1,
+        max=100000,
+        soft_max=10000,
+        default=256,
+    )
 
     Cam.pov_dof_confidence = FloatProperty(
-            name="Confidence",
-            description="Probability to reach the real color value. Larger confidence values will lead to more samples, slower traces and better images",
-            min=0.01, max=0.99, default=0.90)
+        name="Confidence",
+        description="Probability to reach the real color value. Larger confidence values will lead to more samples, slower traces and better images",
+        min=0.01,
+        max=0.99,
+        default=0.90,
+    )
 
     ###################################TEXT####################################
 
     Text.pov_custom_code = BoolProperty(
-            name="Custom Code",
-            description="Add this text at the top of the exported POV-Ray file",
-            default=False)
+        name="Custom Code",
+        description="Add this text at the top of the exported POV-Ray file",
+        default=False,
+    )
 
 
 def unregister():

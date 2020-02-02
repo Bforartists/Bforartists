@@ -35,6 +35,8 @@ struct CacheFile;
 struct Camera;
 struct Collection;
 struct FCurve;
+struct FreestyleLineSet;
+struct FreestyleLineStyle;
 struct GHash;
 struct ID;
 struct Image;
@@ -104,27 +106,27 @@ class DepsgraphNodeBuilder : public DepsgraphBuilder {
 
   OperationNode *add_operation_node(ComponentNode *comp_node,
                                     OperationCode opcode,
-                                    const DepsEvalOperationCb &op = NULL,
+                                    const DepsEvalOperationCb &op = nullptr,
                                     const char *name = "",
                                     int name_tag = -1);
   OperationNode *add_operation_node(ID *id,
                                     NodeType comp_type,
                                     const char *comp_name,
                                     OperationCode opcode,
-                                    const DepsEvalOperationCb &op = NULL,
+                                    const DepsEvalOperationCb &op = nullptr,
                                     const char *name = "",
                                     int name_tag = -1);
   OperationNode *add_operation_node(ID *id,
                                     NodeType comp_type,
                                     OperationCode opcode,
-                                    const DepsEvalOperationCb &op = NULL,
+                                    const DepsEvalOperationCb &op = nullptr,
                                     const char *name = "",
                                     int name_tag = -1);
 
   OperationNode *ensure_operation_node(ID *id,
                                        NodeType comp_type,
                                        OperationCode opcode,
-                                       const DepsEvalOperationCb &op = NULL,
+                                       const DepsEvalOperationCb &op = nullptr,
                                        const char *name = "",
                                        int name_tag = -1);
 
@@ -201,6 +203,8 @@ class DepsgraphNodeBuilder : public DepsgraphBuilder {
   virtual void build_nodetree(bNodeTree *ntree);
   virtual void build_material(Material *ma);
   virtual void build_materials(Material **materials, int num_materials);
+  virtual void build_freestyle_lineset(FreestyleLineSet *fls);
+  virtual void build_freestyle_linestyle(FreestyleLineStyle *linestyle);
   virtual void build_texture(Tex *tex);
   virtual void build_image(Image *image);
   virtual void build_world(World *world);

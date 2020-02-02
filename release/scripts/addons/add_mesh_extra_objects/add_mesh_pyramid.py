@@ -2,20 +2,18 @@
 
 import bpy
 import bmesh
-from bpy.types import Operator
 from bpy.props import (
         FloatProperty,
         IntProperty,
+        StringProperty,
+        BoolProperty,
         )
 from math import pi
 from mathutils import (
         Quaternion,
         Vector,
         )
-from bpy_extras.object_utils import (
-        AddObjectHelper,
-        object_data_add,
-        )
+from bpy_extras import object_utils
 
 
 def create_step(width, base_level, step_height, num_sides):
@@ -59,7 +57,7 @@ def get_connector_pairs(lst, n_sides):
     return lst
 
 
-def add_pyramid_object(self, context):
+def pyramid_mesh(self, context):
     all_verts = []
 
     height_offset = 0
@@ -98,14 +96,22 @@ def add_pyramid_object(self, context):
 
     bm.to_mesh(mesh)
     mesh.update()
-    res = object_data_add(context, mesh, operator=self)
+    
+    return mesh
 
 
-class AddPyramid(Operator, AddObjectHelper):
+class AddPyramid(bpy.types.Operator,  object_utils.AddObjectHelper):
     bl_idname = "mesh.primitive_steppyramid_add"
     bl_label = "Pyramid"
     bl_description = "Construct a step pyramid mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
+
+    Pyramid : BoolProperty(name = "Pyramid",
+                default = True,
+                description = "Pyramid")
+    change : BoolProperty(name = "Change",
+                default = False,
+                description = "change Pyramid")
 
     num_sides: IntProperty(
             name="Number Sides",
@@ -138,7 +144,65 @@ class AddPyramid(Operator, AddObjectHelper):
             default=.20
             )
 
+    def draw(self, context):
+        layout = self.layout
+
+        layout.prop(self, 'num_sides', expand=True)
+        layout.prop(self, 'num_steps', expand=True)
+        layout.prop(self, 'width', expand=True)
+        layout.prop(self, 'height', expand=True)
+        layout.prop(self, 'reduce_by', expand=True)
+
+        if self.change == False:
+            col = layout.column(align=True)
+            col.prop(self, 'align', expand=True)
+            col = layout.column(align=True)
+            col.prop(self, 'location', expand=True)
+            col = layout.column(align=True)
+            col.prop(self, 'rotation', expand=True)
+
     def execute(self, context):
-        add_pyramid_object(self, context)
+        
+        if bpy.context.mode == "OBJECT":
+            if context.selected_objects != [] and context.active_object and \
+            ('Pyramid' in context.active_object.data.keys()) and (self.change == True):
+                obj = context.active_object
+                oldmesh = obj.data
+                oldmeshname = obj.data.name
+                obj.data = pyramid_mesh(self, context)
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
+                bpy.data.meshes.remove(oldmesh)
+                obj.data.name = oldmeshname
+            else:
+                mesh = pyramid_mesh(self, context)
+                obj = object_utils.object_data_add(context, mesh, operator=self)
+
+            obj.data["Pyramid"] = True
+            obj.data["change"] = False
+            for prm in PyramidParameters():
+                obj.data[prm] = getattr(self, prm)
+        
+        if bpy.context.mode == "EDIT_MESH":
+            active_object = context.active_object
+            name_active_object = active_object.name
+            bpy.ops.object.mode_set(mode='OBJECT')
+            mesh = pyramid_mesh(self, context)
+            obj = object_utils.object_data_add(context, mesh, operator=self)
+            obj.select_set(True)
+            active_object.select_set(True)
+            bpy.ops.object.join()
+            context.active_object.name = name_active_object
+            bpy.ops.object.mode_set(mode='EDIT')
 
         return {'FINISHED'}
+
+def PyramidParameters():
+    PyramidParameters = [
+        "num_sides",
+        "num_steps",
+        "width",
+        "height",
+        "reduce_by",
+        ]
+    return PyramidParameters

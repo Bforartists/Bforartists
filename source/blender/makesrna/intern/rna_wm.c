@@ -90,6 +90,7 @@ static const EnumPropertyItem event_mouse_type_items[] = {
     {MOUSEPAN, "TRACKPADPAN", 0, "Mouse/Trackpad Pan", ""},
     {MOUSEZOOM, "TRACKPADZOOM", 0, "Mouse/Trackpad Zoom", ""},
     {MOUSEROTATE, "MOUSEROTATE", 0, "Mouse/Trackpad Rotate", ""},
+    {MOUSESMARTZOOM, "MOUSESMARTZOOM", 0, "Mouse/Trackpad Smart Zoom", ""},
     {0, "", 0, NULL, NULL},
     {WHEELUPMOUSE, "WHEELUPMOUSE", 0, "Wheel Up", ""},
     {WHEELDOWNMOUSE, "WHEELDOWNMOUSE", 0, "Wheel Down", ""},
@@ -186,6 +187,7 @@ const EnumPropertyItem rna_enum_event_type_items[] = {
     {MOUSEPAN, "TRACKPADPAN", 0, "Mouse/Trackpad Pan", "MsPan"},
     {MOUSEZOOM, "TRACKPADZOOM", 0, "Mouse/Trackpad Zoom", "MsZoom"},
     {MOUSEROTATE, "MOUSEROTATE", 0, "Mouse/Trackpad Rotate", "MsRot"},
+    {MOUSESMARTZOOM, "MOUSESMARTZOOM", 0, "Mouse/Trackpad Smart Zoom", "MsSmartZoom"},
     {0, "", 0, NULL, NULL},
     {WHEELUPMOUSE, "WHEELUPMOUSE", 0, "Wheel Up", "WhUp"},
     {WHEELDOWNMOUSE, "WHEELDOWNMOUSE", 0, "Wheel Down", "WhDown"},
@@ -2185,7 +2187,7 @@ static void rna_def_event(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Is Tablet", "The event has tablet data");
 
   prop = RNA_def_property(srna, "is_mouse_absolute", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, NULL, "is_motion_absolute", 1);
+  RNA_def_property_boolean_sdna(prop, NULL, "tablet.is_motion_absolute", 1);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_ui_text(prop, "Absolute Motion", "The last motion event was an absolute input");
 

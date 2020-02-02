@@ -1345,6 +1345,7 @@ char BKE_imtype_valid_channels(const char imtype, bool write_file)
 
   /* bw */
   switch (imtype) {
+    case R_IMF_IMTYPE_BMP:
     case R_IMF_IMTYPE_PNG:
     case R_IMF_IMTYPE_JPEG90:
     case R_IMF_IMTYPE_TARGA:
@@ -3891,7 +3892,12 @@ static void image_initialize_after_load(Image *ima, ImageUser *iuser, ImBuf *UNU
   BKE_image_tag_time(ima);
 
   ImageTile *tile = BKE_image_get_tile_from_iuser(ima, iuser);
-  tile->ok = IMA_OK_LOADED;
+  /* Images should never get loaded if the corresponding tile does not exist,
+   * but we should at least not crash if it happens due to a bug elsewhere. */
+  BLI_assert(tile != NULL);
+  if (tile != NULL) {
+    tile->ok = IMA_OK_LOADED;
+  }
 }
 
 static int imbuf_alpha_flags_for_image(Image *ima)
@@ -4764,14 +4770,14 @@ BLI_INLINE bool image_quick_test(Image *ima, ImageUser *iuser)
     return false;
   }
 
-  ImageTile *tile = BKE_image_get_tile_from_iuser(ima, iuser);
-
   if (iuser) {
     if (iuser->ok == 0) {
       return false;
     }
   }
-  else if (tile == NULL) {
+
+  ImageTile *tile = BKE_image_get_tile_from_iuser(ima, iuser);
+  if (tile == NULL) {
     return false;
   }
   else if (tile->ok == 0) {

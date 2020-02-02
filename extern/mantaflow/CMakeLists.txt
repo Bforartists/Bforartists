@@ -51,6 +51,7 @@ endif()
 
 if(WITH_OPENVDB)
   add_definitions(-DOPENVDB=1)
+  add_definitions(-DOPENVDB_STATICLIB)
 endif()
 
 set(INC
@@ -72,6 +73,9 @@ if(WITH_TBB)
   list(APPEND INC_SYS
     ${TBB_INCLUDE_DIRS}
   )
+  list(APPEND LIB
+    ${TBB_LIBRARIES}
+  )
 endif()
 
 if(WITH_OPENVDB)
@@ -80,6 +84,18 @@ if(WITH_OPENVDB)
     ${OPENEXR_INCLUDE_DIRS}
     ${OPENVDB_INCLUDE_DIRS}
   )
+  list(APPEND LIB
+    ${OPENVDB_LIBRARIES}
+    ${OPENEXR_LIBRARIES}
+    ${ZLIB_LIBRARIES}
+    ${BOOST_LIBRARIES}
+  )
+  if(WITH_OPENVDB_BLOSC)
+    list(APPEND LIB
+      ${BLOSC_LIBRARIES}
+      ${ZLIB_LIBRARIES}
+    )
+  endif()
 endif()
 
 set(SRC
@@ -206,6 +222,8 @@ set(SRC
 )
 
 set(LIB
+  ${PYTHON_LINKFLAGS}
+  ${PYTHON_LIBRARIES}
 )
 
 blender_add_lib(extern_mantaflow "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

@@ -306,6 +306,7 @@ class PresetMenu():
     def set_pos(self, context):
 
         x_min, x_max, y_min, y_max = self.screen.size(context)
+        y_max -= 20
         p0, p1, p2, p3 = Vector((x_min, y_min)), Vector((x_min, y_max)), Vector((x_max, y_max)), Vector((x_max, y_min))
         self.bg.set_pos([p0, p2])
         self.border.set_pos([p0, p1, p2, p3])

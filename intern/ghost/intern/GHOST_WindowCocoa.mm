@@ -94,6 +94,12 @@
 - (void)windowWillEnterFullScreen:(NSNotification *)notification
 {
   associatedWindow->setImmediateDraw(true);
+  /* macOS does not send a window resize event when switching between zoomed
+   * and fullscreen, when automatic show/hide of dock and menu bar are enabled.
+   * Send our own to prevent artifacts. */
+  if ([(NSWindow *)associatedWindow->getOSWindow() isZoomed]) {
+    systemCocoa->handleWindowEvent(GHOST_kEventWindowSize, associatedWindow);
+  }
 }
 
 - (void)windowDidEnterFullScreen:(NSNotification *)notification
@@ -109,6 +115,10 @@
 - (void)windowDidExitFullScreen:(NSNotification *)notification
 {
   associatedWindow->setImmediateDraw(false);
+  /* See comment for windowWillEnterFullScreen. */
+  if ([(NSWindow *)associatedWindow->getOSWindow() isZoomed]) {
+    systemCocoa->handleWindowEvent(GHOST_kEventWindowSize, associatedWindow);
+  }
 }
 
 - (void)windowDidResize:(NSNotification *)notification
@@ -387,7 +397,7 @@ GHOST_WindowCocoa::GHOST_WindowCocoa(GHOST_SystemCocoa *systemCocoa,
 
   setTitle(title);
 
-  m_tablet.Active = GHOST_kTabletModeNone;
+  m_tablet = GHOST_TABLET_DATA_DEFAULT;
 
   CocoaWindowDelegate *windowDelegate = [[CocoaWindowDelegate alloc] init];
   [windowDelegate setSystemAndWindowCocoa:systemCocoa windowCocoa:this];
@@ -799,6 +809,7 @@ GHOST_TSuccess GHOST_WindowCocoa::setOrder(GHOST_TWindowOrder order)
 
   GHOST_ASSERT(getValid(), "GHOST_WindowCocoa::setOrder(): window invalid");
   if (order == GHOST_kWindowOrderTop) {
+    [NSApp activateIgnoringOtherApps:YES];
     [m_window makeKeyAndOrderFront:nil];
   }
   else {

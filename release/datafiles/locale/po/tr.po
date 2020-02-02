@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-04 15:50:16\n"
+"POT-Creation-Date: 2020-01-20 09:05:33\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -1319,6 +1319,10 @@ msgid "The constraining action"
 msgstr "Hareket Editörü "
 
 
+msgid "Mix Mode"
+msgstr "Düzenleme Modu"
+
+
 msgid "Sub-Target"
 msgstr "Hedef değişkeni sil"
 
@@ -1561,10 +1565,6 @@ msgstr "Döndürme & Ölçek"
 
 msgid "Invert the Z rotation"
 msgstr "Döndürme & Ölçek"
-
-
-msgid "Mix Mode"
-msgstr "Düzenleme Modu"
 
 
 msgid "Copy the target's X rotation"
@@ -3244,260 +3244,20 @@ msgid "Show text files"
 msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
 
 
-msgid "Fluid Simulation Settings"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
+msgid "Domain Settings"
+msgstr "Kemik Ayarları"
 
 
-msgid "Type of participation in the fluid simulation"
-msgstr "Nesne, simülasyonda akışkan olarak temsil edilir"
+msgid "Additional"
+msgstr "Değiştirici Ekle"
 
 
-msgid "Domain"
-msgstr "Alan"
+msgid "Maximum number of additional cells"
+msgstr "En fazla dahili konsol satır sayısı"
 
 
-msgid "Bounding box of this object represents the computational domain of the fluid simulation"
-msgstr "Akış Simülasyonunun Alan Hesabını, Nesnenin Kutusal Sınırı temsil eder"
-
-
-msgid "Fluid"
-msgstr "Akışkan"
-
-
-msgid "Object represents a volume of fluid in the simulation"
-msgstr "Nesne, simülasyonda akışkan olarak temsil edilir"
-
-
-msgid "Object is a fixed obstacle"
-msgstr "Nesneyi, Sabitlenmiş bir Engel yap"
-
-
-msgid "Object adds fluid to the simulation"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgid "Outflow"
-msgstr "Sızıntı"
-
-
-msgid "Object removes fluid from the simulation"
-msgstr "Nesne, Akışı Simülasyondan Çıkarır"
-
-
-msgid "Particle"
-msgstr "Parçacık"
-
-
-msgid "Control"
-msgstr "Kontrol"
-
-
-msgid "Control Fluid Simulation Settings"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgid "Attraction Radius"
-msgstr "Yarıçap Ortalaması:"
-
-
-msgid "End Time"
-msgstr "Bitiş Zamanı"
-
-
-msgid "Start Time"
-msgstr "Başlangıç Zamanı"
-
-
-msgid "Object contributes to the fluid simulation"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgid "Reverse Frames"
-msgstr "Kare/Saniye"
-
-
-msgid "Velocity Radius"
-msgstr "Yarıçap Ortalaması:"
-
-
-msgid "Domain Fluid Simulation Settings"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgid "Compressibility"
-msgstr "Sıkıştırılabilirlik:"
-
-
-msgid "Fluid Mesh Vertices"
-msgstr "Noktaları Göster/Gizle"
-
-
-msgid "Generate Particles"
-msgstr "Gösterim Listesi Oluştur"
-
-
-msgid "Gravity in X, Y and Z direction"
-msgstr "X, Y ve Z yönünde Etki Alanı Çözünürlüğü"
-
-
-msgid "Grid Levels"
-msgstr "Izgara Ekle"
-
-
-msgid "Memory Estimate"
-msgstr "Bellek yetersiz."
-
-
-msgid "Partial Slip Amount"
-msgstr "Yansıma miktarı"
-
-
-msgid "Preview Resolution"
-msgstr "Birleşik Önizleme..."
-
-
-msgid "Preview resolution in X,Y and Z direction"
-msgstr "X, Y ve Z yönünde Etki Alanı Çözünürlüğü"
-
-
-msgid "Render Display Mode"
-msgstr "İşlenen görüntüyü Tam ekranda(Full Screen), Resim düzenleme penceresinde(İmage Editor) yada ayrı pencerede(Render Window) görüntüleyebilirsiniz."
-
-
-msgid "How to display the mesh for rendering"
-msgstr "Render için Mesh akışı nasıl görüntülensin"
-
-
-msgid "Display geometry"
-msgstr "Ekran Rengi:"
-
-
-msgid "Preview"
-msgstr "Önizleme"
-
-
-msgid "Final"
-msgstr "Sonuç "
-
-
-msgid "Domain resolution in X,Y and Z direction"
-msgstr "X, Y ve Z yönünde Etki Alanı Çözünürlüğü"
-
-
-msgid "Simulation Speed"
-msgstr "Hız Kontrol"
-
-
-msgid "Real World Size"
-msgstr "Yazıtipi Boyutu Seçin:"
-
-
-msgid "Size of the simulation domain in meters"
-msgstr "Fark Değiştirici Ekle"
-
-
-msgid "Slip Type"
-msgstr "Kesme Biçimi "
-
-
-msgid "No Slip"
-msgstr "Grup yok"
-
-
-msgid "Free Slip"
-msgstr "Serbest kullanılmamış"
-
-
-msgid "Surface Smoothing"
-msgstr "NURBS Yüzey"
-
-
-msgid "Surface Subdivisions"
-msgstr "NURBS Yüzey"
-
-
-msgid "Reverse fluid frames"
-msgstr "10 Kare Geri"
-
-
-msgid "Generate Speed Vectors"
-msgstr "Gösterim Listesi Oluştur"
-
-
-msgid "Override Time"
-msgstr "Bitiş Zamanı"
-
-
-msgid "Viewport Display Mode"
-msgstr "Kamera Uçuş Modu"
-
-
-msgid "How to display the mesh in the viewport"
-msgstr "Blender GUI içinde Mesh akışı nasıl görüntülensin"
-
-
-msgid "Fluid Fluid Simulation Settings"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgid "Fluid simulation settings for the fluid in the simulation"
-msgstr "Nesne, simülasyonda akışkan olarak temsil edilir"
-
-
-msgid "Initial velocity of fluid"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgid "Export Animated Mesh"
-msgstr "Mesh Gölgesini Çiz"
-
-
-msgid "Both"
-msgstr "İkisi de"
-
-
-msgid "Inflow Fluid Simulation Settings"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgid "Local Coordinates"
-msgstr "Yerel Bakış"
-
-
-msgid "Obstacle Fluid Simulation Settings"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgid "Impact Factor"
-msgstr "Harekete bağlı bulanıklık derecesi"
-
-
-msgid "Outflow Fluid Simulation Settings"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgid "Particle Fluid Simulation Settings"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgid "Particle Influence"
-msgstr "Parçacık Modu"
-
-
-msgid "Show tracer particles"
-msgstr "Tüm Katmanları Göster"
-
-
-msgid "Show drop particles"
-msgstr "Tüm Katmanları Göster"
-
-
-msgid "Border"
-msgstr "Çerçeve Seçim"
-
-
-msgid "Crease"
-msgstr "Kırışıklık"
+msgid "Single"
+msgstr "Tekli Resim Dosyası"
 
 
 msgid "End"
@@ -3506,6 +3266,242 @@ msgstr "Son"
 
 msgid "Start"
 msgstr "Başlat"
+
+
+msgid "Final"
+msgstr "Sonuç "
+
+
+msgid "Cell Size"
+msgstr "Ekstrüzyon Boyutu"
+
+
+msgid "Clipping"
+msgstr "Kırpma Seçenekleri"
+
+
+msgid "Red"
+msgstr "Kırmızı"
+
+
+msgid "Green"
+msgstr "Yeşil"
+
+
+msgid "Blue"
+msgstr "Mavi"
+
+
+msgid "Color Grid"
+msgstr "Izgara Ekle"
+
+
+msgid "Dissolve Speed"
+msgstr "Hız Kontrol"
+
+
+msgid "res"
+msgstr "İşareti (Tekrar) Adlandır"
+
+
+msgid "Smoke Grid Resolution"
+msgstr "X, Y ve Z yönünde Etki Alanı Çözünürlüğü"
+
+
+msgid "Ignition"
+msgstr "Animasyon"
+
+
+msgid "Maximum temperature of flames"
+msgstr "Yansımaları da işle"
+
+
+msgid "Smoke Color"
+msgstr "Ekran Rengi:"
+
+
+msgid "Color of smoke emitted from burning fuel"
+msgstr "Arabellek rengini yapıştır"
+
+
+msgid "Additional vorticity for the flames"
+msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
+
+
+msgid "Gravity in X, Y and Z direction"
+msgstr "X, Y ve Z yönünde Etki Alanı Çözünürlüğü"
+
+
+msgid "Domain"
+msgstr "Alan"
+
+
+msgid "Full Sample"
+msgstr "Tam Ekran"
+
+
+msgid "Nearest"
+msgstr "En yakın Kare"
+
+
+msgid "Preview"
+msgstr "Önizleme"
+
+
+msgid "Radius"
+msgstr "Yarıçap"
+
+
+msgid "Fluid Mesh Vertices"
+msgstr "Noktaları Göster/Gizle"
+
+
+msgid "Time"
+msgstr "Zaman"
+
+
+msgid "Noise Method"
+msgstr "Kontur Metodu:"
+
+
+msgid "Compression"
+msgstr "Dosya sıkıştırmayı etkinleştir"
+
+
+msgid "Cache Compression"
+msgstr "Dosya sıkıştırmayı etkinleştir"
+
+
+msgid "Max Res"
+msgstr "Önizleme-Çöz.:"
+
+
+msgid "Delete"
+msgstr "Sil"
+
+
+msgid "Start point"
+msgstr "Başlangıç Zamanı"
+
+
+msgid "Time Scale"
+msgstr "Döndürme & Ölçek"
+
+
+msgid "Adjust simulation speed"
+msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
+
+
+msgid "Adaptive Domain"
+msgstr "Blender Sunum"
+
+
+msgid "Bottom"
+msgstr "Alt "
+
+
+msgid "Top"
+msgstr "Üst"
+
+
+msgid "Display Type"
+msgstr "Kesme Biçimi "
+
+
+msgid "Smoke collision settings"
+msgstr "Fabrika Ayarlarını Yükle"
+
+
+msgid "Flow Settings"
+msgstr "Kemik Ayarları"
+
+
+msgid "Vertex Group"
+msgstr "Yeni bir nokta grubu oluşturur"
+
+
+msgid "Outflow"
+msgstr "Sızıntı"
+
+
+msgid "Flow Type"
+msgstr "Kesme Biçimi "
+
+
+msgid "Add smoke"
+msgstr "Değiştirici Ekle"
+
+
+msgid "Fire + Smoke"
+msgstr "Hızlı Düzenle"
+
+
+msgid "Add fire and smoke"
+msgstr "Vertex Slide"
+
+
+msgid "Add fire"
+msgstr "Çember Ekle"
+
+
+msgid "Flame Rate"
+msgstr "Kare Sil"
+
+
+msgid "Color of smoke"
+msgstr "İşaret Ekle"
+
+
+msgid "Temp. Diff."
+msgstr "Geçici dosyaları otomatik kaydet"
+
+
+msgid "Mapping"
+msgstr "UV "
+
+
+msgid "Texture mapping type"
+msgstr "UV "
+
+
+msgid "Generated"
+msgstr "Üretilmiş"
+
+
+msgid "Generated coordinates centered to flow object"
+msgstr "Doku Boyama"
+
+
+msgid "Use UV layer for texture coordinates"
+msgstr "Düzeltilmiş koordinatları görüntüler"
+
+
+msgid "Z-offset of texture mapping"
+msgstr "Nesne Tipini Değiştir..."
+
+
+msgid "Size of texture mapping"
+msgstr "UV "
+
+
+msgid "Use Texture"
+msgstr "Doku Boyama"
+
+
+msgid "Use a texture to control emission strength"
+msgstr "Seçili kontrol noktalarını seçili gruba ekler.(Ebeveyn ilişkisi ile ilişkilendirdiğiniz kemik nesnelerinin sadece gruplandırdığınız noktaları etkilemesi için kullanılır.)"
+
+
+msgid "Amount of random velocity"
+msgstr "Yansıma miktarı"
+
+
+msgid "Border"
+msgstr "Çerçeve Seçim"
+
+
+msgid "Crease"
+msgstr "Kırışıklık"
 
 
 msgid "Visibility"
@@ -3602,10 +3598,6 @@ msgstr "Kütüphaneye Ekle"
 
 msgid "Subtract effect of brush"
 msgstr "Fırça Kütüphanesi"
-
-
-msgid "Radius"
-msgstr "Yarıçap"
 
 
 msgid "Radius of the brush in pixels"
@@ -3756,10 +3748,6 @@ msgid "Use Vertex Groups"
 msgstr "Tüm Grupları Sil"
 
 
-msgid "Vertex Group"
-msgstr "Yeni bir nokta grubu oluşturur"
-
-
 msgid "Layer"
 msgstr "Katman"
 
@@ -3774,6 +3762,10 @@ msgstr "Shift SolOk"
 
 msgid "Build Modifier"
 msgstr "Değiştirici Ekle"
+
+
+msgid "Both"
+msgstr "İkisi de"
 
 
 msgid "Hook Modifier"
@@ -3844,18 +3836,6 @@ msgid "Active Layer"
 msgstr "Aktif katmana ayarla"
 
 
-msgid "Red"
-msgstr "Kırmızı"
-
-
-msgid "Green"
-msgstr "Yeşil"
-
-
-msgid "Blue"
-msgstr "Mavi"
-
-
 msgid "Show Line"
 msgstr "Koni Ekle"
 
@@ -3894,10 +3874,6 @@ msgstr "İşaretleri Ters Çevir"
 
 msgid "Bones"
 msgstr "Kemik:"
-
-
-msgid "Display Type"
-msgstr "Kesme Biçimi "
 
 
 msgid "B-Bone"
@@ -4138,10 +4114,6 @@ msgstr "Orijinali Koru"
 
 msgid "Use Sculpt"
 msgstr "Heykeltraşlık Modu"
-
-
-msgid "Use Texture"
-msgstr "Doku Boyama"
 
 
 msgid "Use Vertex"
@@ -4484,14 +4456,6 @@ msgid "Align text to the right"
 msgstr "Görüntüyü Seçili Olana Hizala"
 
 
-msgid "Top"
-msgstr "Üst"
-
-
-msgid "Bottom"
-msgstr "Alt "
-
-
 msgid "Body Text"
 msgstr "Metni Düzenle:"
 
@@ -4704,10 +4668,6 @@ msgid "UV Grid"
 msgstr "UV Izgarası"
 
 
-msgid "Color Grid"
-msgstr "Izgara Ekle"
-
-
 msgid "Generated Width"
 msgstr "Genişlik Boyutu"
 
@@ -4742,10 +4702,6 @@ msgstr "Film"
 
 msgid "Movie file"
 msgstr "Video dosyası"
-
-
-msgid "Generated"
-msgstr "Üretilmiş"
 
 
 msgid "Generated image"
@@ -4896,10 +4852,6 @@ msgid "Intensity"
 msgstr "Yoğunluk"
 
 
-msgid "Clipping"
-msgstr "Kırpma Seçenekleri"
-
-
 msgid "Active Shape Index"
 msgstr "Şekil Anahtarı Ekle"
 
@@ -4942,6 +4894,10 @@ msgstr "Küp"
 
 msgid "Hair strands"
 msgstr "Önizleme Biçimi: Saç-Tel-İplik"
+
+
+msgid "Fluid"
+msgstr "Akışkan"
 
 
 msgid "Specular Color"
@@ -5638,6 +5594,10 @@ msgstr "Malzeme butonları"
 
 msgid "Object Aligned"
 msgstr "Nesne Kısıtlamaları"
+
+
+msgid "Particle"
+msgstr "Parçacık"
 
 
 msgid "The size of the particles"
@@ -6469,10 +6429,6 @@ msgid "Images are saved with RGB and Alpha data (if supported)"
 msgstr "İşlenen görüntüyü (varsa eğer) şeffaflık özelliği ile kaydet"
 
 
-msgid "Compression"
-msgstr "Dosya sıkıştırmayı etkinleştir"
-
-
 msgid "Codec"
 msgstr "Kodek"
 
@@ -6745,10 +6701,6 @@ msgid "Selected Objects"
 msgstr "Seçili Nesneler"
 
 
-msgid "Mapping"
-msgstr "UV "
-
-
 msgid "Max Angle"
 msgstr "Çevirme Açısı: "
 
@@ -6966,16 +6918,16 @@ msgid "Channel"
 msgstr "Kanal Sıralaması"
 
 
-msgid "Delete"
-msgstr "Sil"
-
-
 msgid "Key"
 msgstr "Anahtar"
 
 
 msgid "Snap"
 msgstr "Yakala"
+
+
+msgid "Fluid Presets"
+msgstr "Akışkan Simülasyonu"
 
 
 msgid "Material Specials"
@@ -7407,12 +7359,12 @@ msgid "Dynamic Paint"
 msgstr "Çoklu-Boyama"
 
 
-msgid "Fluid Simulation"
-msgstr "Akışkan Simülasyonu"
-
-
 msgid "Particle Instance"
 msgstr "Parçacık Modu"
+
+
+msgid "Fluid Simulation"
+msgstr "Akışkan Simülasyonu"
 
 
 msgid "Armature deformation modifier"
@@ -7699,10 +7651,6 @@ msgid "Cut Edges"
 msgstr "Tüm Kenarlar"
 
 
-msgid "Fluid Simulation Modifier"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
 msgid "Fluid simulation modifier"
 msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
 
@@ -7753,10 +7701,6 @@ msgstr "İlk Kare"
 
 msgid "None "
 msgstr "Kullanılamaz"
-
-
-msgid "Time"
-msgstr "Zaman"
 
 
 msgid "MeshDeform Modifier"
@@ -8037,22 +7981,6 @@ msgstr "Gösterim Listesi Oluştur"
 
 msgid "Branch Smoothing"
 msgstr "NURBS Yüzey"
-
-
-msgid "Smoke Modifier"
-msgstr "Değiştirici Ekle"
-
-
-msgid "Smoke simulation modifier"
-msgstr "Fark Değiştirici Ekle"
-
-
-msgid "Domain Settings"
-msgstr "Kemik Ayarları"
-
-
-msgid "Flow Settings"
-msgstr "Kemik Ayarları"
 
 
 msgid "Soft Body Modifier"
@@ -8623,10 +8551,6 @@ msgid "Active Track Index"
 msgstr "Aktif pozisyonu sil"
 
 
-msgid "Nearest"
-msgstr "En yakın Kare"
-
-
 msgid "Location Influence"
 msgstr "Konum Kısıtlamaları"
 
@@ -8909,10 +8833,6 @@ msgstr "Space Handler Scripts"
 
 msgid "Limit Channel"
 msgstr "Kanal Sıralaması"
-
-
-msgid "Single"
-msgstr "Tekli Resim Dosyası"
 
 
 msgid "Chroma Key"
@@ -9497,6 +9417,10 @@ msgstr "Küçüktür"
 
 msgid "Greater Than"
 msgstr "Büyüktür"
+
+
+msgid "Compare"
+msgstr "Dosyayı Sıkıştır"
 
 
 msgid "Movie Distortion"
@@ -11598,10 +11522,6 @@ msgid "Trackball"
 msgstr "Trackball"
 
 
-msgid "Time Scale"
-msgstr "Döndürme & Ölçek"
-
-
 msgid "Align"
 msgstr "Düzen"
 
@@ -11730,10 +11650,6 @@ msgstr "Rasgele Bozulma"
 
 msgid "Randomly select some control points"
 msgstr "Anahtarları Seç"
-
-
-msgid "Compare"
-msgstr "Dosyayı Sıkıştır"
 
 
 msgid "Greater"
@@ -12281,15 +12197,6 @@ msgstr "Yeni dosya oluştur"
 
 
 msgctxt "Operator"
-msgid "Fluid Simulation Bake"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgid "Bake fluid simulation"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgctxt "Operator"
 msgid "Add Fluid Preset"
 msgstr "Kütüphaneye Ekle"
 
@@ -12583,11 +12490,6 @@ msgstr "Ağırlık Ortalaması:"
 
 msgid "Has Valid Timing"
 msgstr "Kırpma Kullan"
-
-
-msgctxt "Operator"
-msgid "Grease Pencil Add New"
-msgstr "Yeni Ekle (Şimdiki Kareye)"
 
 
 msgctxt "Operator"
@@ -15234,27 +15136,6 @@ msgstr "Hızlı Düzenle"
 
 msgid "Amount of pieces"
 msgstr "Yansıma miktarı"
-
-
-msgctxt "Operator"
-msgid "Quick Fluid"
-msgstr "Akışkan Simülasyonu"
-
-
-msgid "Initial velocity of the fluid"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgid "Render Fluid Objects"
-msgstr "Aynı Tip Nesneler"
-
-
-msgid "Start Fluid Bake"
-msgstr "Bake Render Meshes"
-
-
-msgid "Fluid Style"
-msgstr "Akışkan Simülasyonu"
 
 
 msgctxt "Operator"
@@ -18951,10 +18832,6 @@ msgid "System"
 msgstr "Sistem"
 
 
-msgid "Fluid Presets"
-msgstr "Akışkan Simülasyonu"
-
-
 msgid "Sample Line"
 msgstr "Tam Doğrultu"
 
@@ -18997,16 +18874,12 @@ msgid "Movement"
 msgstr "Fare Hareketlerini Kaydet"
 
 
-msgid "Viscosity"
-msgstr "Viskozite"
+msgid "Border Collisions"
+msgstr "Çerçeve Seçim"
 
 
 msgid "Dynamics"
 msgstr "Dinamikler"
-
-
-msgid "Adaptive Domain"
-msgstr "Blender Sunum"
 
 
 msgid "Color Management"
@@ -19472,10 +19345,6 @@ msgid "Target Particle System"
 msgstr "Hedef değişkeni sil"
 
 
-msgid "Cache Compression"
-msgstr "Dosya sıkıştırmayı etkinleştir"
-
-
 msgid "No compression"
 msgstr "Grup yok"
 
@@ -19568,12 +19437,12 @@ msgid "File Paths"
 msgstr "Dosya Yolları"
 
 
-msgid "Edit Methods"
-msgstr "Düzenleme Metotları"
-
-
 msgid "Experimental"
 msgstr "Deneysel"
+
+
+msgid "Edit Methods"
+msgstr "Düzenleme Metotları"
 
 
 msgid "Settings for input devices"
@@ -20042,10 +19911,6 @@ msgstr "İst. BAKE Belleği:"
 
 msgid "Memory cache limit (in megabytes)"
 msgstr "İst. BAKE Belleği:"
-
-
-msgid "MultiSample"
-msgstr "Üret"
 
 
 msgid "Prefetch Frames"
@@ -20680,10 +20545,6 @@ msgid "File Extensions"
 msgstr "Dosya Uzantılarını Filtrele"
 
 
-msgid "Full Sample"
-msgstr "Tam Ekran"
-
-
 msgid "Persistent Data"
 msgstr "Kesit Sınırı Oluştur"
 
@@ -20816,6 +20677,10 @@ msgid "Fluid interaction radius"
 msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
 
 
+msgid "Viscosity"
+msgstr "Viskozite"
+
+
 msgid "Linear viscosity"
 msgstr "Doğrusal Bozulma"
 
@@ -20930,6 +20795,10 @@ msgstr "Eksenlerde Çevir"
 
 msgid "Convert Float"
 msgstr "Nesne Çevir"
+
+
+msgid "Reverse Frames"
+msgstr "Kare/Saniye"
 
 
 msgid "Use Translation"
@@ -21312,186 +21181,6 @@ msgid "Shape Key Point"
 msgstr "Şekil Anahtarı Ekle"
 
 
-msgid "Smoke collision settings"
-msgstr "Fabrika Ayarlarını Yükle"
-
-
-msgid "Collision Type"
-msgstr "Kesme Biçimi "
-
-
-msgid "Collision type"
-msgstr "Kesme Biçimi "
-
-
-msgid "Static"
-msgstr "Statik"
-
-
-msgid "Rigid obstacle"
-msgstr "Engel"
-
-
-msgid "Animated obstacle"
-msgstr "Yeni dosya oluştur"
-
-
-msgid "Smoke domain settings"
-msgstr "Fabrika Ayarlarını Yükle"
-
-
-msgid "Additional"
-msgstr "Değiştirici Ekle"
-
-
-msgid "Maximum number of additional cells"
-msgstr "En fazla dahili konsol satır sayısı"
-
-
-msgid "Cell Size"
-msgstr "Ekstrüzyon Boyutu"
-
-
-msgid "Border Collisions"
-msgstr "Çerçeve Seçim"
-
-
-msgid "Vertically Open"
-msgstr "Son Açılan..."
-
-
-msgid "Collide All"
-msgstr "Tümünü Normalleştir"
-
-
-msgid "Dissolve Speed"
-msgstr "Hız Kontrol"
-
-
-msgid "res"
-msgstr "İşareti (Tekrar) Adlandır"
-
-
-msgid "Smoke Grid Resolution"
-msgstr "X, Y ve Z yönünde Etki Alanı Çözünürlüğü"
-
-
-msgid "Ignition"
-msgstr "Animasyon"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Yansımaları da işle"
-
-
-msgid "Smoke Color"
-msgstr "Ekran Rengi:"
-
-
-msgid "Color of smoke emitted from burning fuel"
-msgstr "Arabellek rengini yapıştır"
-
-
-msgid "Additional vorticity for the flames"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgid "Noise Method"
-msgstr "Kontur Metodu:"
-
-
-msgid "Max Res"
-msgstr "Önizleme-Çöz.:"
-
-
-msgid "Show High Resolution"
-msgstr "Tüm Katmanları Göster"
-
-
-msgid "Start point"
-msgstr "Başlangıç Zamanı"
-
-
-msgid "Adjust simulation speed"
-msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
-
-
-msgid "Smoke flow settings"
-msgstr "Fabrika Ayarlarını Yükle"
-
-
-msgid "Flame Rate"
-msgstr "Kare Sil"
-
-
-msgid "Color of smoke"
-msgstr "İşaret Ekle"
-
-
-msgid "Emit smoke from particles"
-msgstr "'Döndür' komutunun toplamda kaç adımda gerçekleşeceği belirtilir"
-
-
-msgid "Flow Type"
-msgstr "Kesme Biçimi "
-
-
-msgid "Change how flow affects the simulation"
-msgstr "Simülasyonun başlangıç zamanı, blenderın ilk karesidir."
-
-
-msgid "Delete smoke from simulation"
-msgstr "Nesne, Akışı Simülasyondan Çıkarır"
-
-
-msgid "Add smoke"
-msgstr "Değiştirici Ekle"
-
-
-msgid "Fire + Smoke"
-msgstr "Hızlı Düzenle"
-
-
-msgid "Add fire and smoke"
-msgstr "Vertex Slide"
-
-
-msgid "Add fire"
-msgstr "Çember Ekle"
-
-
-msgid "Temp. Diff."
-msgstr "Geçici dosyaları otomatik kaydet"
-
-
-msgid "Texture mapping type"
-msgstr "UV "
-
-
-msgid "Generated coordinates centered to flow object"
-msgstr "Doku Boyama"
-
-
-msgid "Use UV layer for texture coordinates"
-msgstr "Düzeltilmiş koordinatları görüntüler"
-
-
-msgid "Z-offset of texture mapping"
-msgstr "Nesne Tipini Değiştir..."
-
-
-msgid "Size of texture mapping"
-msgstr "UV "
-
-
-msgid "Use a texture to control emission strength"
-msgstr "Seçili kontrol noktalarını seçili gruba ekler.(Ebeveyn ilişkisi ile ilişkilendirdiğiniz kemik nesnelerinin sadece gruplandırdığınız noktaları etkilemesi için kullanılır.)"
-
-
-msgid "Amount of random velocity"
-msgstr "Yansıma miktarı"
-
-
 msgid "Make edges 'sail'"
 msgstr "Ayrık Nokta/Kenar"
 
@@ -21502,6 +21191,10 @@ msgstr "Kesme Biçimi "
 
 msgid "Ball Size"
 msgstr "Ekstrüzyon Boyutu"
+
+
+msgid "Collision Type"
+msgstr "Kesme Biçimi "
 
 
 msgid "Choose Collision Type"
@@ -23950,11 +23643,6 @@ msgstr "Çiz:"
 
 
 msgctxt "Operator"
-msgid "Flip Direction"
-msgstr "Yönü Çevir"
-
-
-msgctxt "Operator"
 msgid "Selection to Grid"
 msgstr "Izgarayı yakala:"
 
@@ -23972,6 +23660,11 @@ msgstr "İmleci Izgaraya"
 msgctxt "Operator"
 msgid "Poly"
 msgstr "Oynat"
+
+
+msgctxt "Operator"
+msgid "Flip Direction"
+msgstr "Yönü Çevir"
 
 
 msgctxt "Operator"
@@ -24033,6 +23726,14 @@ msgstr "Tarih"
 
 msgid "Buffer"
 msgstr "Arabellek rengini yapıştır"
+
+
+msgid "Front Faces Only"
+msgstr "Yalnızca Ön Yüz"
+
+
+msgid "Edge To Edge"
+msgstr "Kenardan Kenara"
 
 
 msgid "Roughness End"
@@ -24114,6 +23815,10 @@ msgstr "Pozu Sil..."
 
 msgid "Displace Type"
 msgstr "Kesme Biçimi "
+
+
+msgid "Real World Size"
+msgstr "Yazıtipi Boyutu Seçin:"
 
 
 msgid "Bounciness"
@@ -24345,10 +24050,6 @@ msgid "More"
 msgstr "Taşı"
 
 
-msgid "Unified Size"
-msgstr "Tümleşik Boyut"
-
-
 msgctxt "Operator"
 msgid "New"
 msgstr "Yeni"
@@ -24441,10 +24142,6 @@ msgstr "Yüzey Alanı"
 
 msgid "Image*"
 msgstr "Görüntü*"
-
-
-msgid "Edge To Edge"
-msgstr "Kenardan Kenara"
 
 
 msgctxt "Operator"
@@ -25310,6 +25007,14 @@ msgid "Threaded Sculpt"
 msgstr "Heykeltraşlık Modu"
 
 
+msgid "Auto Normalize"
+msgstr "Otomatik Normalleştir"
+
+
+msgid "Multi-Paint"
+msgstr "Çoklu-Boyama"
+
+
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Hızlı Düzenle"
@@ -25327,18 +25032,6 @@ msgstr "Görüntü İşlenmedi (F12 ile işleyin)"
 
 msgid "Path Steps"
 msgstr "Yol Adımları"
-
-
-msgid "Front Faces Only"
-msgstr "Yalnızca Ön Yüz"
-
-
-msgid "Auto Normalize"
-msgstr "Otomatik Normalleştir"
-
-
-msgid "Multi-Paint"
-msgstr "Çoklu-Boyama"
 
 
 msgid "Not supported in sculpt mode"
@@ -26307,22 +26000,6 @@ msgstr "Anahtar Kareler:"
 
 msgid "Bake failed: no Dynamic Paint modifier found"
 msgstr "Fark Değiştirici Ekle"
-
-
-msgid "There should be only one domain object"
-msgstr "Nesneyi, Sabitlenmiş bir Engel yap"
-
-
-msgid "No domain object found"
-msgstr "Nesne Kısıtlamaları"
-
-
-msgid "No fluid input objects in the scene"
-msgstr "Nesneyi bir Gruba ekle"
-
-
-msgid "Invalid object matrix"
-msgstr "Bağlı Malzemeler:"
 
 
 msgid "Scene has no camera"

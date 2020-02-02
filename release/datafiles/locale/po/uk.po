@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 3) (b'7868db9343d5')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-04 15:50:16\n"
+"POT-Creation-Date: 2020-01-20 09:05:33\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -3946,6 +3946,22 @@ msgid "Internal Friction"
 msgstr "Внутрішнє тертя"
 
 
+msgid "Tension Stiffness"
+msgstr "Тугість Натягу"
+
+
+msgid "How much the material resists stretching"
+msgstr "Наскільки цей матеріал опирається розтягуванню"
+
+
+msgid "Tension Stiffness Maximum"
+msgstr "Максимум Тугості Натягу"
+
+
+msgid "Maximum tension stiffness value"
+msgstr "Максимальне значення тугості натягування"
+
+
 msgid "Pin Stiffness"
 msgstr "Тугість шпильки"
 
@@ -4024,22 +4040,6 @@ msgstr "Згасання Натягу Пружини"
 
 msgid "Amount of damping in stretching behavior"
 msgstr "Величина згасання у поведінці розтягування"
-
-
-msgid "Tension Stiffness"
-msgstr "Тугість Натягу"
-
-
-msgid "How much the material resists stretching"
-msgstr "Наскільки цей матеріал опирається розтягуванню"
-
-
-msgid "Tension Stiffness Maximum"
-msgstr "Максимум Тугості Натягу"
-
-
-msgid "Maximum tension stiffness value"
-msgstr "Максимальне значення тугості натягування"
 
 
 msgid "Cloth speed is multiplied by this value"
@@ -5087,6 +5087,10 @@ msgid "Minimum value for target channel range"
 msgstr "Найменше значення діапазону цільового каналу"
 
 
+msgid "Mix Mode"
+msgstr "Режим Мішання"
+
+
 msgid "Sub-Target"
 msgstr "Підціль"
 
@@ -5461,10 +5465,6 @@ msgstr "Інвертувати оберт Y"
 
 msgid "Invert the Z rotation"
 msgstr "Інвертувати оберт Z"
-
-
-msgid "Mix Mode"
-msgstr "Режим Мішання"
 
 
 msgid "Copy the target's X rotation"
@@ -10804,156 +10804,336 @@ msgid "Whether we may browse blender files' content or not"
 msgstr "Можливо чи ні оглядати вміст файлів Blender"
 
 
-msgid "Fluid Simulation Settings"
-msgstr "Параметри імітації рідини"
+msgid "Domain Settings"
+msgstr "Устави Домену"
 
 
-msgid "Fluid simulation settings for an object taking part in the simulation"
-msgstr "Параметри моделювання рідини для об'єкта, що бере участь в моделюванні"
+msgid "Margin added around fluid to minimize boundary interference"
+msgstr "Відступ навколо рідини для зменшення взаємодії з межами"
 
 
-msgid "Type of participation in the fluid simulation"
-msgstr "Тип участі в моделюванні рідини"
+msgid "Maximum amount of fluid cell can contain before it is considered empty"
+msgstr "Найбільша кількість рідини у комірці, за якої вона вважається порожньою"
+
+
+msgid "Additional"
+msgstr "Додатково"
+
+
+msgid "Maximum number of additional cells"
+msgstr "Найбільша кількість додаткових комірок"
+
+
+msgid "Density"
+msgstr "Щільність"
+
+
+msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
+msgstr "Наскільки щільність впливає на рух диму (більше значення призводить до швидшого піднімання диму)"
+
+
+msgid "Slice the whole domain object"
+msgstr "Розкраяти увесь об'єкт домену"
+
+
+msgid "Single"
+msgstr "Один"
+
+
+msgid "Perform a single slice of the domain object"
+msgstr "Здійснити одиничноий розкрій об'єкта домену"
+
+
+msgid "Heat"
+msgstr "Тепло"
+
+
+msgid "How much heat affects smoke motion (higher value results in faster rising smoke)"
+msgstr "Як тепло впливає на рух диму (більше значення призводить до швидшого піднімання диму)"
+
+
+msgid "Speed of the burning reaction (use larger values for smaller flame)"
+msgstr "Швидкість реакції горіння (більші значення - менше полум'я)"
+
+
+msgid "End"
+msgstr "Кінець"
+
+
+msgid "Frame on which the simulation stops"
+msgstr "Кадр, на якому зупиняється моделювання"
+
+
+msgid "Start"
+msgstr "Старт"
+
+
+msgid "Frame on which the simulation starts"
+msgstr "Кадр, на якому починається моделювання"
+
+
+msgid "Final"
+msgstr "Фінальне"
+
+
+msgid "Cell Size"
+msgstr "Розмір комірки"
+
+
+msgid "Clipping"
+msgstr "Відсікання"
+
+
+msgid "Value under which voxels are considered empty space to optimize caching and rendering"
+msgstr "Значення, нижче якого вокселі вважаються порожнім простором, для оптимізування кешування та рендерингу"
+
+
+msgid "Field"
+msgstr "Поле"
+
+
+msgid "Simulation field to color map"
+msgstr "Імітація поля для карти кольорів"
+
+
+msgid "Red"
+msgstr "Червоне"
+
+
+msgid "Red component of the color field"
+msgstr "Червоний компонент поля кольору"
+
+
+msgid "Green"
+msgstr "Зелений"
+
+
+msgid "Green component of the color field"
+msgstr "Зелений компонент поля кольору"
+
+
+msgid "Blue"
+msgstr "Синій"
+
+
+msgid "Blue component of the color field"
+msgstr "Синій компонент поля кольору"
+
+
+msgid "Quantity of soot in the fluid"
+msgstr "Кількість сажі в рідині"
+
+
+msgid "Flame"
+msgstr "Полум'я"
+
+
+msgid "Flame field"
+msgstr "Поле полум'я"
+
+
+msgid "Fuel"
+msgstr "Паливо"
+
+
+msgid "Fuel field"
+msgstr "Поле палива"
+
+
+msgid "Temperature of the fluid"
+msgstr "Температура рідини"
+
+
+msgid "X Velocity"
+msgstr "Скорість X"
+
+
+msgid "X component of the velocity field"
+msgstr "Складова X поля скорості"
+
+
+msgid "Y Velocity"
+msgstr "Скорість Y"
+
+
+msgid "Y component of the velocity field"
+msgstr "Складова Y поля скорості"
+
+
+msgid "Z Velocity"
+msgstr "Скорість Z"
+
+
+msgid "Z component of the velocity field"
+msgstr "Складова Z поля скорості"
+
+
+msgid "Color Grid"
+msgstr "Кольорова сітка"
+
+
+msgid "Smoke color grid"
+msgstr "Решітка кольору диму"
+
+
+msgid "Data Depth"
+msgstr "Глибина даних"
+
+
+msgid "Bit depth for writing all scalar (including vector) lower values reduce file size"
+msgstr "Бітова глибина для запису всіх скалярних значень (включно з векторами); нижчі значення скорочують розмір файлу"
+
+
+msgid "Float (Half)"
+msgstr "Дійсне (половина)"
+
+
+msgid "Half float (16 bit data)"
+msgstr "Половина дійсночислової глибини даних (16-бітні дані)"
+
+
+msgid "Float (Full)"
+msgstr "Дійсне (повне)"
+
+
+msgid "Full float (32 bit data)"
+msgstr "Повна дійсночислова глибина даних (32-бітні дані)"
+
+
+msgid "Density Grid"
+msgstr "Решітка щільності"
+
+
+msgid "Smoke density grid"
+msgstr "Решітка щільності диму"
+
+
+msgid "Interpolation method to use for smoke/fire volumes in solid mode"
+msgstr "Метод інтерполяції для вживання для об'ємів диму/вогню у суцільному режимі"
+
+
+msgid "Good smoothness and speed"
+msgstr "Хороша гладкість і швидкість"
+
+
+msgid "Cubic"
+msgstr "Кубічний"
+
+
+msgid "Smoothed high quality interpolation, but slower"
+msgstr "Згладжена інтерполяція високої якості, але повільніше"
+
+
+msgid "Thickness"
+msgstr "Товщина"
+
+
+msgid "Thickness of smoke drawing in the viewport"
+msgstr "Товщина прорису диму в області перегляду"
+
+
+msgid "Dissolve Speed"
+msgstr "Швидкість розчинення"
+
+
+msgid "res"
+msgstr "розд"
+
+
+msgid "Smoke Grid Resolution"
+msgstr "Роздільність сітки диму"
+
+
+msgid "Flame Grid"
+msgstr "Решітка полум'я"
+
+
+msgid "Smoke flame grid"
+msgstr "Решітка полум'я"
+
+
+msgid "Ignition"
+msgstr "Спалах"
+
+
+msgid "Minimum temperature of flames"
+msgstr "Найменша температура полум'я"
+
+
+msgid "Maximum temperature of flames"
+msgstr "Найбільша температура полум'я"
+
+
+msgid "Smoke"
+msgstr "Дим"
+
+
+msgid "Amount of smoke created by burning fuel"
+msgstr "Кількість диму, створеного паливом, що горить"
+
+
+msgid "Smoke Color"
+msgstr "Колір диму"
+
+
+msgid "Color of smoke emitted from burning fuel"
+msgstr "Колір диму, що випускається при горінні палива"
+
+
+msgid "Vorticity"
+msgstr "Завихреність"
+
+
+msgid "Additional vorticity for the flames"
+msgstr "Додаткове завихрення полум'я"
+
+
+msgid "Fluid Collection"
+msgstr "Колекція Рідини"
+
+
+msgid "Limit fluid objects to this collection"
+msgstr "Лімітувати об'єкти рідини цією колекцією"
+
+
+msgid "Gravity in X, Y and Z direction"
+msgstr "Тяжіння у напрямах X, Y і Z"
 
 
 msgid "Domain"
 msgstr "Область"
 
 
-msgid "Bounding box of this object represents the computational domain of the fluid simulation"
-msgstr "Габаритний паралелепіпед цього об'єкта є областю для моделювання рідини"
+msgid "Heat Grid"
+msgstr "Сітка теплоти"
 
 
-msgid "Fluid"
-msgstr "Рідина"
+msgid "Smoke heat grid"
+msgstr "Сітка теплоти диму"
 
 
-msgid "Object represents a volume of fluid in the simulation"
-msgstr "Об'єкт являє собою об'єм рідини для симуляції"
+msgid "Emitter"
+msgstr "Випромінювач"
 
 
-msgid "Object is a fixed obstacle"
-msgstr "Об'єкт є нерухомою перешкодою"
+msgid "Method for sampling the high resolution flow"
+msgstr "Метод відбору високороздільного потоку"
 
 
-msgid "Object adds fluid to the simulation"
-msgstr "Об'єкт додає рідину для моделювання"
+msgid "Full Sample"
+msgstr "Повна вибірка"
 
 
-msgid "Outflow"
-msgstr "Відтік"
+msgid "Nearest"
+msgstr "Найближче"
 
 
-msgid "Object removes fluid from the simulation"
-msgstr "Об'єкт вилучає рідину з імітації"
+msgid "Preview"
+msgstr "Передогляд"
 
 
-msgid "Particle"
-msgstr "Частинка"
-
-
-msgid "Object is made a particle system to display particles generated by a fluidsim domain object"
-msgstr "Об'єкт, утворений системою частинок для показу частинок, породжених об'єктом-областю моделювання рідини"
-
-
-msgid "Control"
-msgstr "Керування"
-
-
-msgid "Object is made a fluid control mesh, which influences the fluid"
-msgstr "Керувальний об'єкт-сіть, який впливає на рідину"
-
-
-msgid "Control Fluid Simulation Settings"
-msgstr "Параметри керування моделюванням рідини"
-
-
-msgid "Fluid simulation settings for objects controlling the motion of fluid in the simulation"
-msgstr "Параметри моделювання рідини для об'єктів, що керують рухом рідини"
-
-
-msgid "Attraction Radius"
-msgstr "Радіус тяжіння"
-
-
-msgid "Force field radius around the control object"
-msgstr "Радіус силового поля навколо керувального об'єкта"
-
-
-msgid "Attraction Strength"
-msgstr "Сила тяжіння"
-
-
-msgid "Force strength for directional attraction towards the control object"
-msgstr "Сила тяжіння, спрямована до керувального об'єкта"
-
-
-msgid "End Time"
-msgstr "Час закінчення"
-
-
-msgid "Time when the control particles are deactivated"
-msgstr "Час, коли керувальні частинки вимикаються"
-
-
-msgid "Quality which is used for object sampling (higher = better but slower)"
-msgstr "Якість, що використовується для відбору об'єктів (більше - краще, але повільніше)"
-
-
-msgid "Start Time"
-msgstr "Час початку"
-
-
-msgid "Time when the control particles are activated"
-msgstr "Час, коли керувальні частинки активуються"
-
-
-msgid "Object contributes to the fluid simulation"
-msgstr "Об'єкт робить внесок у моделювання рідини"
-
-
-msgid "Reverse Frames"
-msgstr "Розвернути кадри"
-
-
-msgid "Reverse control object movement"
-msgstr "Зворотний рух керувального об'єкта"
-
-
-msgid "Velocity Radius"
-msgstr "Радіус швидкості"
-
-
-msgid "Velocity Strength"
-msgstr "Сила швидкості"
-
-
-msgid "Force strength of how much of the control object's velocity is influencing the fluid velocity"
-msgstr "Величина сили, наскільки швидкість керувального об'єкта впливає на швидкість рідини"
-
-
-msgid "Domain Fluid Simulation Settings"
-msgstr "Устави Симуляції Домену Рідини"
-
-
-msgid "Fluid simulation settings for the domain of a fluid simulation"
-msgstr "Устави симуляції рідини для домену рідинної симуляції"
-
-
-msgid "Compressibility"
-msgstr "Стискуваність"
-
-
-msgid "Allowed compressibility due to gravitational force for standing fluid (directly affects simulation step size)"
-msgstr "Допустима стискуваність нерухомої рідини під дією тяжіння (безпосередньо впливає на розмір кроку імітації)"
-
-
-msgid "Simulation time of the last blender frame (in seconds)"
-msgstr "Час моделювання останнього кадру (в секундах)"
-
-
-msgid "Directory (and/or filename prefix) to store baked fluid simulation files in"
-msgstr "Тека (та/або префікс назви файлу) для запису файлів запікання рідини"
+msgid "Radius"
+msgstr "Радіус"
 
 
 msgid "Fluid Mesh Vertices"
@@ -10964,200 +11144,236 @@ msgid "Vertices of the fluid mesh generated by simulation"
 msgstr "Вершини сіті рідини, породжені при імітації"
 
 
-msgid "Cache Offset"
-msgstr "Зсув кешу"
+msgid "Strength of noise"
+msgstr "Рівень шуму"
 
 
-msgid "Offset when reading baked cache"
-msgstr "Зміщення при читанні кешу запікання"
+msgid "Time"
+msgstr "Час"
 
 
-msgid "Generate Particles"
-msgstr "Генерувати Частинки"
+msgid "Noise Method"
+msgstr "Метод шуму"
 
 
-msgid "Amount of particles to generate (0=off, 1=normal, >1=more)"
-msgstr "Кількість частинок для генерування (0 - вимкнено, 1 - нормальна, >1 - більше)"
+msgid "Noise method which is used for creating the high resolution"
+msgstr "Метод шуму, що використовується для створення високої роздільності"
 
 
-msgid "Gravity in X, Y and Z direction"
-msgstr "Тяжіння у напрямах X, Y і Z"
+msgid "Wavelet"
+msgstr "Брижі"
 
 
-msgid "Grid Levels"
-msgstr "Рівні сітки"
+msgid "Compression"
+msgstr "Стиснення"
 
 
-msgid "Number of coarsened grids to use (-1 for automatic)"
-msgstr "Кількість використовуваних грубих сіток  (-1 - автоматично)"
+msgid "Compression method to be used"
+msgstr "Використовуваний метод стискання"
 
 
-msgid "Memory Estimate"
-msgstr "Оцінка пам'яті"
+msgid "Zip"
+msgstr "Zip"
 
 
-msgid "Estimated amount of memory needed for baking the domain"
-msgstr "Розрахунковий обсяг пам'яті, необхідний для запікання області"
+msgid "Effective but slow compression"
+msgstr "Ефективне, але повільне стискання"
 
 
-msgid "Partial Slip Amount"
-msgstr "Величина часткового ковзання"
+msgid "Blosc"
+msgstr "Blosc"
 
 
-msgid "Amount of mixing between no- and free-slip, 0 is no slip and 1 is free slip"
-msgstr "Величина мішання між ’без’ та вільним ковзанням; 0 означає відсутність ковзання, а 1 - вільне ковзання"
+msgid "Multithreaded compression, similar in size and quality as 'Zip'"
+msgstr "Багатопотокове стискання, подібне за розміром та якість до 'Zip'"
 
 
-msgid "Preview Resolution"
-msgstr "Роздільність для перегляду"
+msgid "Do not use any compression"
+msgstr "Без стискання"
 
 
-msgid "Preview resolution in X,Y and Z direction"
-msgstr "Роздільність для перегляду в напрямах X, Y і Z"
+msgid "Number"
+msgstr "Номер"
 
 
-msgid "Render Display Mode"
-msgstr "Режим Показу Рендера"
+msgid "Randomness"
+msgstr "Випадковість"
 
 
-msgid "How to display the mesh for rendering"
-msgstr "Як показувати сіть для рендерингу"
+msgid "Cache Compression"
+msgstr "Стиснення кешу"
 
 
-msgid "Display geometry"
-msgstr "Показати геометрію"
+msgid "Lite"
+msgstr "Полегшено "
 
 
-msgid "Preview"
-msgstr "Передогляд"
+msgid "Fast but not so effective compression"
+msgstr "Швидке, але не таке ефективне стискання"
 
 
-msgid "Display preview quality results"
-msgstr "Показати результат з якістю попереднього перегляду"
+msgid "Heavy"
+msgstr "Сильно"
 
 
-msgid "Final"
-msgstr "Фінальне"
+msgid "Max Res"
+msgstr "Найбільша роздільність"
 
 
-msgid "Display final quality results"
-msgstr "Показати результат з фінальною якістю"
+msgid "Display Velocity"
+msgstr "Показ Скорості"
 
 
-msgid "Domain resolution in X,Y and Z direction"
-msgstr "Роздільність області в напрямах X, Y і Z"
+msgid "Toggle visualization of the velocity field as needles"
+msgstr "Перемкнути візуалльне представлення поля швидкості при потребі"
 
 
-msgid "Simulation Speed"
-msgstr "Швидкість Симуляції"
+msgid "Adjust slice direction according to the view direction"
+msgstr "Наладнати напрям розкраювання відповідно до напряму огляду "
 
 
-msgid "Fluid motion rate (0 = stationary, 1 = normal speed)"
-msgstr "Швидкість руху рідини (0 = стаціонарна, 1 = нормальна швидкість)"
+msgid "Slice along the X axis"
+msgstr "Розкраяти вздовж осі X"
 
 
-msgid "Real World Size"
-msgstr "Розмір реального світу"
+msgid "Slice along the Y axis"
+msgstr "Розкраяти вздовж осі Y"
 
 
-msgid "Size of the simulation domain in meters"
-msgstr "Розмір області моделювання у метрах"
+msgid "Slice along the Z axis"
+msgstr "Розкраяти вздовж осі Z"
 
 
-msgid "Slip Type"
-msgstr "Тип ковзання"
+msgid "Position of the slice"
+msgstr "Позиція розкраювання"
 
 
-msgid "No Slip"
-msgstr "Без ковзання"
+msgid "View Method"
+msgstr "Метод вигляду"
 
 
-msgid "Obstacle causes zero normal and tangential velocity (=sticky), default for all (only option for moving objects)"
-msgstr "Перешкода надає нульову нормальну і дотичну швидкості (= липка); типове для всіх (єдиний варіант для рухомих об'єктів)"
+msgid "How to slice the volume for viewport rendering"
+msgstr "Як розкраяти об'єм для рендерингу вікна огляду"
 
 
-msgid "Partial Slip"
-msgstr "Часткове ковзання"
+msgid "Slice volume parallel to the view plane"
+msgstr "Розкраяти об'єм паралельно до площини вигляду"
 
 
-msgid "Mix between no-slip and free-slip (non moving objects only!)"
-msgstr "Мішання між відсутнім ковзанням і вільним ковзанням (лише для нерухомих об'єктів!)"
+msgid "Slice volume parallel to the major axis"
+msgstr "Розкраяти об'єм паралельно до головної осі"
 
 
-msgid "Free Slip"
-msgstr "Вільне ковзання"
+msgid "Slice Per Voxel"
+msgstr "Розкраювання по вокселях"
 
 
-msgid "Obstacle only causes zero normal velocity (=not sticky, non moving objects only!)"
-msgstr "Перешкода робить нульовою лише нормальну швидкість (= не липка; лише для нерухомих об'єктів!)"
+msgid "How many slices per voxel should be generated"
+msgstr "Скільки скибок по вокселях має бути згенеровано"
 
 
-msgid "Simulation time of the first blender frame (in seconds)"
-msgstr "Час моделювання першого кадру Blender (в секундах)"
+msgid "Delete"
+msgstr "Видалення"
 
 
-msgid "Surface Smoothing"
-msgstr "Згладжування поверхні"
+msgid "Buoyancy"
+msgstr "Плавучість"
 
 
-msgid "Amount of surface smoothing (a value of 0 is off, 1 is normal smoothing and more than 1 is extra smoothing)"
-msgstr "Рівень згладжування поверхні (значення 0 - вимкнено, 1 - нормальне згладжування і більше 1 - додаткове згладжування)"
+msgid "p0"
+msgstr "т0"
 
 
-msgid "Surface Subdivisions"
-msgstr "Поділи поверхні"
+msgid "Start point"
+msgstr "Початкова точка"
 
 
-msgid "Number of isosurface subdivisions (this is necessary for the inclusion of particles into the surface generation - WARNING: can lead to longer computation times !)"
-msgstr "Кількість поділів ізоповерхні (це необхідно для включення частинок у створення поверхні - УВАГА: може призвести до збільшення часу обчислень!)"
+msgid "Tension"
+msgstr "Натяг"
 
 
-msgid "Simulation Threads"
-msgstr "Потоки Симуляції"
+msgid "Temperature Grid"
+msgstr "Сітка Температури"
 
 
-msgid "Override number of threads for the simulation, 0 is automatic"
-msgstr "Перекрити кількість потоків для симуляції, 0 - автоматично"
+msgid "Smoke temperature grid, range 0..1 represents 0..1000K"
+msgstr "Сітка температури диму, діапазон 0..1 представляє 0..1000К"
 
 
-msgid "Tracer Particles"
-msgstr "Трасувальні частинки"
+msgid "Time Scale"
+msgstr "Часова шкала"
 
 
-msgid "Number of tracer particles to generate"
-msgstr "Кількість згенерованих трасувальних частинок"
+msgid "Adjust simulation speed"
+msgstr "Наладнати швидкість симуляції"
 
 
-msgid "Reverse fluid frames"
-msgstr "Обернути кадри рідини"
+msgid "Adaptive Domain"
+msgstr "Адаптивна область"
 
 
-msgid "Generate Speed Vectors"
-msgstr "Генерувати Вектори Швидкості"
+msgid "Adapt simulation resolution and size to fluid"
+msgstr "Адаптувати роздільність моделювання та розмір до рідини"
 
 
-msgid "Generate speed vectors for vector blur"
-msgstr "Генерувати вектори швидкості для векторного розмиву"
+msgid "Bottom"
+msgstr "Знизу"
 
 
-msgid "Removes the air gap between fluid surface and obstacles - WARNING: Can result in a dissolving surface in other areas"
-msgstr "Вилучає бульбашки повітря між поверхнею рідини та перешкодою. ПОПЕРЕДЖЕННЯ: може спричинити розчинення поверхні на інших ділянках."
+msgid "Top"
+msgstr "Зверху"
 
 
-msgid "Override Time"
-msgstr "Заміщення Часу"
+msgid "Render a simulation field while mapping its voxels values to the colors of a ramp"
+msgstr "Рендерити симуляцію поля при розкладанні значень його вокселів на кольори градієнту"
 
 
-msgid "Use a custom start and end time (in seconds) instead of the scene's timeline"
-msgstr "Використати власні час початку і закінчення (в секундах) замість шкали часу сцени"
+msgid "Dissolve Smoke"
+msgstr "Розчинення диму"
 
 
-msgid "Viewport Display Mode"
-msgstr "Режим показу вікна огляду"
+msgid "Enable smoke to disappear over time"
+msgstr "Увімкнути зникнення диму з часом"
 
 
-msgid "How to display the mesh in the viewport"
-msgstr "Як показати сіть у вікні огляду"
+msgid "Using 1/x "
+msgstr "Використати 1/x "
+
+
+msgid "Tracer"
+msgstr "Слідкуючі"
+
+
+msgid "Display Type"
+msgstr "Показати тип"
+
+
+msgid "Needle"
+msgstr "Голка"
+
+
+msgid "Display vectors as needles"
+msgstr "Показувати вектори як голки"
+
+
+msgid "Streamlines"
+msgstr "Напрямні"
+
+
+msgid "Display vectors as streamlines"
+msgstr "Показувати вектори як напрямні"
+
+
+msgid "Multiplier for scaling the vectors"
+msgstr "Множник для масштабування векторів"
+
+
+msgid "Velocity Grid"
+msgstr "Сітка швидкості"
+
+
+msgid "Smoke velocity grid"
+msgstr "Сітка швидкості диму"
 
 
 msgid "Viscosity Base"
@@ -11176,152 +11392,8 @@ msgid "Negative exponent for the viscosity value (to simplify entering small val
 msgstr "Від'ємний показник значення в'язкості (для спрощення введення малих значень, наприклад, 5 * 10 ^ -6)"
 
 
-msgid "Fluid Fluid Simulation Settings"
-msgstr "Параметри рідини, що моделюється"
-
-
-msgid "Fluid simulation settings for the fluid in the simulation"
-msgstr "Параметри рідини для моделювання"
-
-
-msgid "Initial Velocity"
-msgstr "Початкова швидкість"
-
-
-msgid "Initial velocity of fluid"
-msgstr "Початкова швидкість рідини"
-
-
-msgid "Export Animated Mesh"
-msgstr "Експорт анімованої сіті"
-
-
-msgid "Export this mesh as an animated one (slower and enforces No Slip, only use if really necessary [e.g. armatures or parented objects], animated pos/rot/scale F-Curves do not require it)"
-msgstr "Експортувати цю сіть з анімацією (повільніше і примусово вимикає ковзання; використовувати, лише коли дійсно необхідно [наприклад, арматури або приріднені об'єкти]; анімаційні Ф-Криві поз./оберт. /масшт. цього не вимагають)"
-
-
-msgid "Volume Initialization"
-msgstr "Ініціалізація об'єму"
-
-
-msgid "Volume initialization type (WARNING: complex volumes might require too much memory and break simulation)"
-msgstr "Тип ініціалізації об'єму (УВАГА: складні об'єми можуть вимагати занадто багато пам'яті і перервати імітацію)"
-
-
-msgid "Use only the inner volume of the mesh"
-msgstr "Вжити лише внутрішній об'єм сіті"
-
-
-msgid "Shell"
-msgstr "Оболонка"
-
-
-msgid "Use only the outer shell of the mesh"
-msgstr "Вжити тільки зовнішню оболонку сіті"
-
-
-msgid "Both"
-msgstr "Обидва"
-
-
-msgid "Use both the inner volume and the outer shell of the mesh"
-msgstr "Вжити як внутрішній об'єм, так і зовнішню оболонку сіті"
-
-
-msgid "Inflow Fluid Simulation Settings"
-msgstr "Параметри моделювання припливу рідини"
-
-
-msgid "Fluid simulation settings for objects adding fluids in the simulation"
-msgstr "Параметри моделювання рідини для об'єктів, що додають рідину до моделі"
-
-
-msgid "Inflow Velocity"
-msgstr "Швидкість втікання"
-
-
-msgid "Local Coordinates"
-msgstr "Локальні координати"
-
-
-msgid "Use local coordinates for inflow (e.g. for rotating objects)"
-msgstr "Використати локальні координати для притоку (наприклад, для об'єктів, що крутяться)"
-
-
-msgid "Obstacle Fluid Simulation Settings"
-msgstr "Параметри моделювання рідини для перешкод"
-
-
-msgid "Fluid simulation settings for obstacles in the simulation"
-msgstr "Параметри перешкод при моделюванні рідини"
-
-
-msgid "Impact Factor"
-msgstr "Динамічний коефіцієнт"
-
-
-msgid "This is an unphysical value for moving objects - it controls the impact an obstacle has on the fluid, =0 behaves a bit like outflow (deleting fluid), =1 is default, while >1 results in high forces (can be used to tweak total mass)"
-msgstr "Це - не фізичне значення для рухомих об'єктів; воно керує впливом перешкоди на рідину: 0 - поводиться подібно до відтоку (видалення рідини); 1 - стандартне; > 1 призводить до збільшення сили (може бути використане для підправлення загальної маси)"
-
-
-msgid "Outflow Fluid Simulation Settings"
-msgstr "Параметри моделювання відтоку рідини"
-
-
-msgid "Fluid simulation settings for objects removing fluids from the simulation"
-msgstr "Параметри моделювання рідини для об'єктів, що видаляють рідину з моделі"
-
-
-msgid "Particle Fluid Simulation Settings"
-msgstr "Параметри моделювання частинок рідини"
-
-
-msgid "Fluid simulation settings for objects storing fluid particles generated by the simulation"
-msgstr "Параметри моделювання рідини для об'єктів, що містять частинки рідини, створені при моделюванні"
-
-
-msgid "Alpha Influence"
-msgstr "Альфа-вплив"
-
-
-msgid "Amount of particle alpha change, inverse of size influence: 0=off (all same alpha), 1=full (larger particles get lower alphas, smaller ones higher values)"
-msgstr "Величина зміни прозорості частинок обернено пропорційно до розміру: 0=вимкнено (однакова прозорість у всіх), 1=повністю (що більша частинка, то менша її прозорість, і навпаки)"
-
-
-msgid "Directory (and/or filename prefix) to store and load particles from"
-msgstr "Тека (та/або префікс назви файлу) для запису та завантаження частинок"
-
-
-msgid "Particle Influence"
-msgstr "Вплив частинок"
-
-
-msgid "Amount of particle size scaling: 0=off (all same size), 1=full (range 0.2-2.0), >1=stronger"
-msgstr "Величина масштабування частинок: 0 = вимкнено (всі однакового розміру), 1 = повне (діапазон 0,2-2,0), >1 = сильніше"
-
-
-msgid "Tracer"
-msgstr "Слідкуючі"
-
-
-msgid "Show tracer particles"
-msgstr "Показати трасувальні частинки"
-
-
-msgid "Drops"
-msgstr "Краплі"
-
-
-msgid "Show drop particles"
-msgstr "Показати частинки-краплі"
-
-
-msgid "Floats"
-msgstr "Плаваючі"
-
-
-msgid "Show floating foam particles"
-msgstr "Показати плаваючі частинки піни"
+msgid "Amount of turbulence/rotation in fluid"
+msgstr "Кількість турбулентності/обертання у рідині"
 
 
 msgid "Fluid Mesh Velocity"
@@ -11330,6 +11402,174 @@ msgstr "Скорість рідинної сіті"
 
 msgid "Velocity of a simulated fluid mesh"
 msgstr "Скорість імітованої рідинної сіті"
+
+
+msgid "Smoke collision settings"
+msgstr "Параметри зіткнення диму"
+
+
+msgid "Collision"
+msgstr "Зіткнення"
+
+
+msgid "Guide"
+msgstr "Напрямна"
+
+
+msgid "Maximize"
+msgstr "Максимізувати"
+
+
+msgid "Override"
+msgstr "Заміщення"
+
+
+msgid "Flow Settings"
+msgstr "Устави Потоку"
+
+
+msgid "Vertex Group"
+msgstr "Група вершин"
+
+
+msgid "Name of vertex group which determines surface emission rate"
+msgstr "Назва групи вершин, що визначає рівень випускання поверхнею"
+
+
+msgid "Outflow"
+msgstr "Відтік"
+
+
+msgid "Flow Type"
+msgstr "Тип потоку"
+
+
+msgid "Add smoke"
+msgstr "Додати дим"
+
+
+msgid "Fire + Smoke"
+msgstr "Вогонь + дим"
+
+
+msgid "Add fire and smoke"
+msgstr "Додати вогонь та дим"
+
+
+msgid "Fire"
+msgstr "Вогонь"
+
+
+msgid "Add fire"
+msgstr "Додати вогонь"
+
+
+msgid "Flame Rate"
+msgstr "Частота Кадрів"
+
+
+msgid "Texture that controls emission strength"
+msgstr "Текстура, що керує силою випускання"
+
+
+msgid "Particle size in simulation cells"
+msgstr "Розмір частинки у комірках моделювання"
+
+
+msgid "Particle systems emitted from the object"
+msgstr "Системи частинок, що випускається об'єктом"
+
+
+msgid "Color of smoke"
+msgstr "Колір диму"
+
+
+msgid "Subframes"
+msgstr "Підкадри"
+
+
+msgid "Number of additional samples to take between frames to improve quality of fast moving flows"
+msgstr "Кількість додаткових вибірок між кадрами для покращення якості швидких потоків"
+
+
+msgid "Temp. Diff."
+msgstr "Різниця температур"
+
+
+msgid "Temperature difference to ambient temperature"
+msgstr "Відмінність температури від температури навколишнього середовища"
+
+
+msgid "Mapping"
+msgstr "Розкладання"
+
+
+msgid "Texture mapping type"
+msgstr "Тип розкладання текстури"
+
+
+msgid "Generated"
+msgstr "Генероване"
+
+
+msgid "Generated coordinates centered to flow object"
+msgstr "Створені координати центровані за об'єктом, що випускає"
+
+
+msgid "Use UV layer for texture coordinates"
+msgstr "Використати UV-шар для текстурних координат"
+
+
+msgid "Z-offset of texture mapping"
+msgstr "Z-зсув розкладання текстури"
+
+
+msgid "Size of texture mapping"
+msgstr "Розмір розкладання текстури"
+
+
+msgid "Absolute Density"
+msgstr "Абсолютна щільність"
+
+
+msgid "Initial Velocity"
+msgstr "Початкова швидкість"
+
+
+msgid "Set Size"
+msgstr "Задати розмір"
+
+
+msgid "Set particle size in simulation cells or use nearest cell"
+msgstr "Задати розмір частинки у комірці моделювання або взяти з найближчої комірки"
+
+
+msgid "Use Texture"
+msgstr "Вжити текстуру"
+
+
+msgid "Use a texture to control emission strength"
+msgstr "Використати текстуру для керування силою випускання"
+
+
+msgid "Initial"
+msgstr "Початковий"
+
+
+msgid "Normal"
+msgstr "Нормаль"
+
+
+msgid "Amount of normal directional velocity"
+msgstr "Швидкість у напрямі нормалі"
+
+
+msgid "Amount of random velocity"
+msgstr "Величина випадкової швидкості"
+
+
+msgid "Factor for smoke emitted from inside the mesh volume"
+msgstr "Фактор для диму, емітованого зсередини об'єму сіті"
 
 
 msgid "Freestyle Line Set"
@@ -11540,16 +11780,8 @@ msgid "Line set name"
 msgstr "Назва набору ліній"
 
 
-msgid "End"
-msgstr "Кінець"
-
-
 msgid "Last QI value of the QI range"
 msgstr "Кінцеве значення діапазону часткової невидимості"
-
-
-msgid "Start"
-msgstr "Старт"
 
 
 msgid "First QI value of the QI range"
@@ -11968,10 +12200,6 @@ msgid "Quadratic easing"
 msgstr "Квадратичне ослаблення"
 
 
-msgid "Cubic"
-msgstr "Кубічний"
-
-
 msgid "Cubic easing"
 msgstr "Кубічне ослаблення"
 
@@ -12232,10 +12460,6 @@ msgid "Draw the points which make up the strokes (for debugging purposes)"
 msgstr "Малювати точки, які складають штрихи (для зневаджування)"
 
 
-msgid "Thickness"
-msgstr "Товщина"
-
-
 msgid "Thickness of annotation strokes"
 msgstr "Товщина штрихів анотацій"
 
@@ -12318,10 +12542,6 @@ msgstr "Додати ефект пензля"
 
 msgid "Subtract effect of brush"
 msgstr "Відняти ефект пензля"
-
-
-msgid "Radius"
-msgstr "Радіус"
 
 
 msgid "Radius of the brush in pixels"
@@ -12466,10 +12686,6 @@ msgstr "Властивості інструмента ліплення нари�
 
 msgid "Brush"
 msgstr "Пензель"
-
-
-msgid "Guide"
-msgstr "Напрямна"
 
 
 msgid "Threshold for stroke intersections"
@@ -13266,10 +13482,6 @@ msgid "Bind vertex groups to armature modifier"
 msgstr "Прив'язати групи вершин до модифікатора арматури"
 
 
-msgid "Vertex Group"
-msgstr "Група вершин"
-
-
 msgid "Name of Vertex Group which determines influence of modifier per point"
 msgstr "Назва групи вершин, що визначає вплив модифікатора на точки"
 
@@ -13512,6 +13724,10 @@ msgstr "Відтінок Кольору"
 
 msgid "Set what colors of the stroke are affected"
 msgstr "Задає, які кольори штриха задіюються"
+
+
+msgid "Both"
+msgstr "Обидва"
 
 
 msgid "Modify fill and stroke colors"
@@ -14044,18 +14260,6 @@ msgid "Red Green Blue"
 msgstr "Червоне Зелене Синє"
 
 
-msgid "Red"
-msgstr "Червоне"
-
-
-msgid "Green"
-msgstr "Зелений"
-
-
-msgid "Blue"
-msgstr "Синій"
-
-
 msgid "Show Line"
 msgstr "Показати лінію"
 
@@ -14199,10 +14403,6 @@ msgstr "Дані анімації для цього блоку даних"
 
 msgid "Bones"
 msgstr "Кістки"
-
-
-msgid "Display Type"
-msgstr "Показати тип"
 
 
 msgid "Octahedral"
@@ -14993,10 +15193,6 @@ msgid "Use this brush in grease pencil drawing mode"
 msgstr "Використовує цей пензель у режимі рисування нарисного олівця"
 
 
-msgid "Use Texture"
-msgstr "Вжити текстуру"
-
-
 msgid "Use this brush in texture paint mode"
 msgstr "Використати цей пензель у режимі малювання текстури"
 
@@ -15087,22 +15283,6 @@ msgstr "Вжити перекриття текстур"
 
 msgid "Show texture in viewport"
 msgstr "Показати текстуру у вікні перегляду"
-
-
-msgid "2D Falloff"
-msgstr "2D Спад"
-
-
-msgid "Apply brush influence in 2D circle instead of a sphere"
-msgstr "Застосувати вплив пензля у 2D кільці замість сфери"
-
-
-msgid "Absolute Jitter"
-msgstr "Абсолютне тремтіння"
-
-
-msgid "Jittering happens in screen space, not relative to brush size"
-msgstr "Тремтіння розраховується у просторі екрану, а не відносно розміру пензля"
 
 
 msgid "Restore Mesh"
@@ -15941,20 +16121,12 @@ msgid "Align to top but use the base-line of the text"
 msgstr "Вирівняти зверху, але використовуючи базову лінію символів тексту"
 
 
-msgid "Top"
-msgstr "Зверху"
-
-
 msgid "Align text to the top"
 msgstr "Вирівняти текст по верху"
 
 
 msgid "Align text to the middle"
 msgstr "Вирівняти текст по середині"
-
-
-msgid "Bottom"
-msgstr "Знизу"
 
 
 msgid "Align text to the bottom"
@@ -17205,10 +17377,6 @@ msgid "Generated grid to test UV mappings"
 msgstr "Згенерована сітка для перевірки UV-розкладання"
 
 
-msgid "Color Grid"
-msgstr "Кольорова сітка"
-
-
 msgid "Generated improved UV grid to test UV mappings"
 msgstr "Згенерована поліпшена UV-сітка для перевірки UV-розкладання"
 
@@ -17325,10 +17493,6 @@ msgid "Movie file"
 msgstr "Файл фільму"
 
 
-msgid "Generated"
-msgstr "Генероване"
-
-
 msgid "Generated image"
 msgstr "Згенероване зображення"
 
@@ -17339,6 +17503,10 @@ msgstr "Оглядач"
 
 msgid "Compositing node viewer"
 msgstr "Оглядач вузлів компонування"
+
+
+msgid "Tiled"
+msgstr "Черепиця"
 
 
 msgid "Stereo 3D Format"
@@ -17979,10 +18147,6 @@ msgid "Type of parallax volume"
 msgstr "Тип об'єму паралакса"
 
 
-msgid "Clipping"
-msgstr "Відсікання"
-
-
 msgid "Show the clipping distances in the 3D view"
 msgstr "Показ відстаней відсікання в 3D-огляді"
 
@@ -18249,6 +18413,10 @@ msgstr "Куля Шейдера"
 
 msgid "Cloth"
 msgstr "Тканина"
+
+
+msgid "Fluid"
+msgstr "Рідина"
 
 
 msgid "Refraction Depth"
@@ -19415,10 +19583,6 @@ msgid "Indices of vertices in case of a vertex parenting relation"
 msgstr "Індекси вершин у разі предків-вершин"
 
 
-msgid "Particle systems emitted from the object"
-msgstr "Системи частинок, що випускається об'єктом"
-
-
 msgid "Index number for the \"Object Index\" render pass"
 msgstr "Номер індексу для проходу рендера \"Індекс Об'єкта\""
 
@@ -19933,10 +20097,6 @@ msgid "Maximum length of the particle color vector"
 msgstr "Найбільша довжина вектора кольору частинок"
 
 
-msgid "Number"
-msgstr "Номер"
-
-
 msgid "Total number of particles"
 msgstr "Загальна кількість частинок"
 
@@ -20277,10 +20437,6 @@ msgid "Dummy"
 msgstr "Фіктивне"
 
 
-msgid "Normal"
-msgstr "Нормаль"
-
-
 msgid "Let the surface normal give the particle a starting velocity"
 msgstr "Хай нормаль поверхні надає частинкам стартової скорості"
 
@@ -20299,6 +20455,10 @@ msgstr "Скорість Об'єкта"
 
 msgid "Let the object give the particle a starting velocity"
 msgstr "Хай об'єкт надає частинкам стартової скорості"
+
+
+msgid "Particle"
+msgstr "Частинка"
 
 
 msgid "Let the target particle give the particle a starting velocity"
@@ -20369,10 +20529,6 @@ msgid "Death"
 msgstr "Смерть"
 
 
-msgid "Collision"
-msgstr "Зіткнення"
-
-
 msgid "Reactor"
 msgstr "Реактор"
 
@@ -20403,10 +20559,6 @@ msgstr "Рендерені Нащадки"
 
 msgid "Number of children/parent for rendering"
 msgstr "Кількість нащадків/предків для рендерингу"
-
-
-msgid "Strand width at the root"
-msgstr "Ширина пасма в корені"
 
 
 msgid "Random Orientation"
@@ -20549,10 +20701,6 @@ msgid "Give the particle size a random variation"
 msgstr "Надати розміру частинок випадкової зміни"
 
 
-msgid "Subframes"
-msgstr "Підкадри"
-
-
 msgid "Subframes to simulate for improved stability and finer granularity simulations (dt = timestep / (subframes + 1))"
 msgstr "Кількість підкадрів для підвищення стабільності і точнішого моделювання деталізації (dt = крок часу/(кількість підкадрів + 1))"
 
@@ -20581,14 +20729,6 @@ msgid "The simulation timestep per frame (seconds per frame)"
 msgstr "Крок часу моделювання на кадр (секунд на кадр)"
 
 
-msgid "Tip"
-msgstr "Кінець"
-
-
-msgid "Strand width at the tip"
-msgstr "Ширина пасма у верхівці"
-
-
 msgid "Trail Count"
 msgstr "Розмір шлейфу"
 
@@ -20611,10 +20751,6 @@ msgstr "Крива, що визначає кручення"
 
 msgid "Particle Type"
 msgstr "Тип частинок"
-
-
-msgid "Emitter"
-msgstr "Випромінювач"
 
 
 msgid "Absolute Path Time"
@@ -21279,10 +21415,6 @@ msgstr "Анімація відтворюється"
 
 msgid "Animation playback is active"
 msgstr "Відтворення анімації активне"
-
-
-msgid "Maximize"
-msgstr "Максимізувати"
 
 
 msgid "An area is maximized, filling this screen"
@@ -22883,10 +23015,6 @@ msgid "The solver does not reiterate, not even on first frame (starts from rest 
 msgstr "Обчислювач не виконує повторень, навіть не на першому кадрі (починає з пози спокою)"
 
 
-msgid "Initial"
-msgstr "Початковий"
-
-
 msgid "The solver reiterates (converges) on the first frame but not on subsequent frame"
 msgstr "Обчислювач виконує повторення (уточнення) на першому кадрі, але не на наступних"
 
@@ -23005,10 +23133,6 @@ msgstr "Зображення зберігаються з RGB-даними кол
 
 msgid "Images are saved with RGB and Alpha data (if supported)"
 msgstr "Зображення зберігаються з даними RGB і прозорості (якщо підтримується форматом)"
-
-
-msgid "Compression"
-msgstr "Стиснення"
 
 
 msgid "Amount of time to determine best compression: 0 = no compression with fast file output, 100 = maximum lossless compression with slow file output"
@@ -25167,10 +25291,6 @@ msgid "Invert the fade-out direction of the linear mapping"
 msgstr "Інвертувати напрям згасання при прямолінійному розкладанні"
 
 
-msgid "Mapping"
-msgstr "Розкладання"
-
-
 msgid "Select the mapping type"
 msgstr "Виберіть тип розкладання"
 
@@ -26466,10 +26586,6 @@ msgid "Marker Settings"
 msgstr "Устави Міток"
 
 
-msgid "Set Handle Type"
-msgstr "Задати тип держака"
-
-
 msgid "Pivot Point"
 msgstr "Опорна точка"
 
@@ -26538,10 +26654,6 @@ msgid "Dope Sheet Context Menu"
 msgstr "Контекстне Меню Аркуша Експозицій"
 
 
-msgid "Delete"
-msgstr "Видалення"
-
-
 msgid "Key"
 msgstr "Ключ"
 
@@ -26552,6 +26664,10 @@ msgstr "Підхоп"
 
 msgid "Bookmarks Specials"
 msgstr "Закладки Спеціальне"
+
+
+msgid "Fluid Presets"
+msgstr "Передустави Рідини"
 
 
 msgid "Clean Up"
@@ -27756,6 +27872,10 @@ msgid "Vertex Weight Mix"
 msgstr "Мішання Вагомостей Вершин"
 
 
+msgid "Mix the weights of two vertex groups"
+msgstr "Мішати вагомості двох груп вершин"
+
+
 msgid "Vertex Weight Proximity"
 msgstr "Близкість вагомостей вершин"
 
@@ -27808,10 +27928,6 @@ msgid "Wireframe"
 msgstr "Каркас"
 
 
-msgid "Generate a wireframe on the edges of a mesh"
-msgstr "Створює каркас на основі ребер сіті"
-
-
 msgid "Cast"
 msgstr "Підгонка"
 
@@ -27856,10 +27972,6 @@ msgid "Explode"
 msgstr "Вибух"
 
 
-msgid "Fluid Simulation"
-msgstr "Симуляція Рідини"
-
-
 msgid "Ocean"
 msgstr "Океан"
 
@@ -27868,8 +27980,8 @@ msgid "Particle Instance"
 msgstr "Примірник частинки"
 
 
-msgid "Smoke"
-msgstr "Дим"
+msgid "Fluid Simulation"
+msgstr "Симуляція Рідини"
 
 
 msgid "Soft Body"
@@ -29272,16 +29384,12 @@ msgid "Use particle size for the shrapnel"
 msgstr "Використати розмір частинок для уламків"
 
 
-msgid "Fluid Simulation Modifier"
-msgstr "Модифікатор моделювання рідини"
-
-
 msgid "Fluid simulation modifier"
 msgstr "Модифікатор моделювання рідини"
 
 
-msgid "Settings for how this object is used in the fluid simulation"
-msgstr "Налаштування того, як цей об'єкт використовується у моделюванні рідини"
+msgid "Inflow/Outflow"
+msgstr "Влив/вилив"
 
 
 msgid "Hook modifier to modify the location of vertices"
@@ -29470,10 +29578,6 @@ msgstr "Метод керування часом відтворення"
 
 msgid "Control playback using a frame-number (ignoring time FPS and start frame from the file)"
 msgstr "Керувати часом відтворення за допомогою номерів кадрів (знехтувати частоту кадрів та початковий кадр з файлу)"
-
-
-msgid "Time"
-msgstr "Час"
 
 
 msgid "Control playback using time in seconds"
@@ -30425,26 +30529,6 @@ msgid "Avoid making unsymmetrical quads across the Z axis"
 msgstr "Уникати створення чотирикутників, не симетричних відносно осі Z"
 
 
-msgid "Smoke Modifier"
-msgstr "Модифікатор Дим"
-
-
-msgid "Smoke simulation modifier"
-msgstr "Модифікатор моделювання диму"
-
-
-msgid "Domain Settings"
-msgstr "Устави Домену"
-
-
-msgid "Flow Settings"
-msgstr "Устави Потоку"
-
-
-msgid "Inflow/Outflow"
-msgstr "Влив/вилив"
-
-
 msgid "Soft Body Modifier"
 msgstr "Модифікатор М'яке тіло"
 
@@ -30914,10 +30998,6 @@ msgstr "Вилучити з групи вершини, вагомість яки
 
 msgid "WeightVG Mix Modifier"
 msgstr "Модифікатор Мішання Вагомостей Груп Вершин"
-
-
-msgid "Mix the weights of two vertex groups"
-msgstr "Мішати вагомості двох груп вершин"
 
 
 msgid "Default Weight A"
@@ -32372,10 +32452,6 @@ msgid "Interpolation to use for sub-pixel shifts and rotations due to stabilizat
 msgstr "Інтерполяція для використання зсувів та обертать під-пікселів для стабілізації"
 
 
-msgid "Nearest"
-msgstr "Найближче"
-
-
 msgid "No interpolation, use nearest neighbor pixel"
 msgstr "Без інтерполяції, використати найближчий сусідній піксель"
 
@@ -33190,10 +33266,6 @@ msgstr "Алгоритм"
 
 msgid "Algorithm to use to limit channel"
 msgstr "Алгоритм обмеження каналу"
-
-
-msgid "Single"
-msgstr "Один"
 
 
 msgid "Limit by single channel"
@@ -34339,6 +34411,10 @@ msgstr "Менше ніж"
 
 msgid "Greater Than"
 msgstr "Більше ніж"
+
+
+msgid "Compare"
+msgstr "Порівняти"
 
 
 msgid "Ceil"
@@ -39884,10 +39960,6 @@ msgid "Bonesize"
 msgstr "РозмірКістки"
 
 
-msgid "Time Scale"
-msgstr "Часова шкала"
-
-
 msgid "Bweight"
 msgstr "B-вагомість"
 
@@ -40139,10 +40211,6 @@ msgstr "Вибрати рядок керувальних точок, включ�
 
 msgid "Select similar curve points by property type"
 msgstr "Вибрати подібні точки кривої за типом властивості"
-
-
-msgid "Compare"
-msgstr "Порівняти"
 
 
 msgid "Equal"
@@ -41938,15 +42006,6 @@ msgstr "Розпакувати всі використані бібліотек�
 
 
 msgctxt "Operator"
-msgid "Fluid Simulation Bake"
-msgstr "Запікання Симуляції Рідини"
-
-
-msgid "Bake fluid simulation"
-msgstr "Запекти симуляцію рідини"
-
-
-msgctxt "Operator"
 msgid "Add Fluid Preset"
 msgstr "Додати Передуставу Рідини"
 
@@ -42537,15 +42596,6 @@ msgstr "Копіювати штрихи"
 
 msgid "Copy selected Grease Pencil points and strokes"
 msgstr "Копіювати вибрані точки та штрихи нарисного олівця"
-
-
-msgctxt "Operator"
-msgid "Grease Pencil Add New"
-msgstr "Додати новий нарисний олівець"
-
-
-msgid "Add new Grease Pencil data-block"
-msgstr "Додати новий блок даних нарисного олівця"
 
 
 msgctxt "Operator"
@@ -50716,43 +50766,6 @@ msgstr "Скорість Розлітання"
 
 
 msgctxt "Operator"
-msgid "Quick Fluid"
-msgstr "Швидка Рідина"
-
-
-msgid "Use selected objects in a fluid simulation"
-msgstr "Вживати вибрані об'єкти у симуляції рідини"
-
-
-msgid "Initial velocity of the fluid"
-msgstr "Початкова швидкість рідини"
-
-
-msgid "Render Fluid Objects"
-msgstr "Рендер Об'єктів Рідини"
-
-
-msgid "Keep the fluid objects visible during rendering"
-msgstr "Утримувати об'єкти рідини видимими у ході рендерингу"
-
-
-msgid "Start Fluid Bake"
-msgstr "Почати запікання рідини"
-
-
-msgid "Start baking the fluid immediately after creating the domain object"
-msgstr "Розпочати запікання рідини відразу після створення об'єкта-області"
-
-
-msgid "Fluid Style"
-msgstr "Стиль рідини"
-
-
-msgid "Basic"
-msgstr "Основний"
-
-
-msgctxt "Operator"
 msgid "Quick Fur"
 msgstr "Швидке хутро"
 
@@ -50763,10 +50776,6 @@ msgstr "Додати уклад хутра до вибраних об'єктів
 
 msgid "Fur Density"
 msgstr "Щільність хутра"
-
-
-msgid "Heavy"
-msgstr "Сильно"
 
 
 msgid "View %"
@@ -50792,10 +50801,6 @@ msgstr "Утримувати об'єкти диму видимими у ході
 
 msgid "Smoke Style"
 msgstr "Стиль диму"
-
-
-msgid "Fire"
-msgstr "Вогонь"
 
 
 msgid "Smoke + Fire"
@@ -54726,10 +54731,6 @@ msgstr "Розрахувати масу"
 
 msgid "Automatically calculate mass values for Rigid Body Objects based on volume"
 msgstr "Автоматично розраховувати значення маси твердих тіл на основі об'єму"
-
-
-msgid "Density"
-msgstr "Щільність"
 
 
 msgid "Custom density value (kg/m^3) to use instead of material preset"
@@ -62237,10 +62238,6 @@ msgid "Shutter Curve"
 msgstr "Крива затвора"
 
 
-msgid "Override"
-msgstr "Заміщення"
-
-
 msgid "Passes"
 msgstr "Проходи"
 
@@ -62383,10 +62380,6 @@ msgstr "Недавнє"
 
 msgid "System"
 msgstr "Система"
-
-
-msgid "Fluid Presets"
-msgstr "Передустави Рідини"
 
 
 msgid "Active Tool"
@@ -62689,6 +62682,10 @@ msgid "Timing"
 msgstr "Часування"
 
 
+msgid "Border Collisions"
+msgstr "Зіткнення з межами"
+
+
 msgid "Collisions"
 msgstr "Зіткнення"
 
@@ -62711,10 +62708,6 @@ msgstr "Самозіткнення"
 
 msgid "Softbody And Cloth"
 msgstr "М'яке тіло і Тканина"
-
-
-msgid "Viscosity"
-msgstr "В'язкість"
 
 
 msgid "Falloff Ramp"
@@ -62741,6 +62734,14 @@ msgid "Force Fields"
 msgstr "Силові поля"
 
 
+msgid "Flow Source"
+msgstr "Джерело Потоку"
+
+
+msgid "Guides"
+msgstr "Напрямні"
+
+
 msgid "Surface Response"
 msgstr "Реагування Поверхні"
 
@@ -62755,30 +62756,6 @@ msgstr "Динаміка"
 
 msgid "Deactivation"
 msgstr "Деактивація"
-
-
-msgid "Adaptive Domain"
-msgstr "Адаптивна область"
-
-
-msgid "Behavior"
-msgstr "Поведінка"
-
-
-msgid "Flames"
-msgstr "Полум'я"
-
-
-msgid "High Resolution"
-msgstr "Висока Роздільність"
-
-
-msgid "Particle Size"
-msgstr "Розмір Частинки"
-
-
-msgid "Debug Velocity"
-msgstr "Зневадження Скорості"
 
 
 msgid "Self Collision"
@@ -62799,6 +62776,10 @@ msgstr "Діагностика"
 
 msgid "Helpers"
 msgstr "Помічники"
+
+
+msgid "Debug Velocity"
+msgstr "Зневадження Скорості"
 
 
 msgid "Color Management"
@@ -63055,10 +63036,6 @@ msgid "MatCaps"
 msgstr "ПередМатеріали"
 
 
-msgid "LookDev HDRIs"
-msgstr "HDRI Розробки Вигляду"
-
-
 msgid "Cycles Render Devices"
 msgstr "Пристрої Рендера з Cycles"
 
@@ -63195,10 +63172,6 @@ msgid "Draw Context Menu"
 msgstr "Контекстне Меню Рисування"
 
 
-msgid "Guides"
-msgstr "Напрямні"
-
-
 msgid "Drawing Plane"
 msgstr "Площина Рисування"
 
@@ -63249,10 +63222,6 @@ msgstr "Контекстне Меню Вагомостей"
 
 msgid "Quad View"
 msgstr "Чотирибічний Огляд"
-
-
-msgid "Unified Brush"
-msgstr "Уніфікований Пензель"
 
 
 msgid "Shadow Settings"
@@ -63555,16 +63524,8 @@ msgid "Post-Processing"
 msgstr "Після-Оброблення"
 
 
-msgid "Stabilize"
-msgstr "Стабілізація"
-
-
 msgid "Sculpt Strokes"
 msgstr "Ліпка штрихів"
-
-
-msgid "Particle tools"
-msgstr "Засоби частинок"
 
 
 msgid "Default tools for particle mode"
@@ -63765,6 +63726,10 @@ msgstr "Режим редагування шляху"
 
 msgid "Point select mode"
 msgstr "Режим вибору точок"
+
+
+msgid "Tip"
+msgstr "Кінець"
 
 
 msgid "Tip select mode"
@@ -64339,40 +64304,12 @@ msgid "Active point cache for physics simulations"
 msgstr "Активний кеш точок для симуляцій фізики"
 
 
-msgid "Cache Compression"
-msgstr "Стиснення кешу"
-
-
-msgid "Compression method to be used"
-msgstr "Використовуваний метод стискання"
-
-
 msgid "No compression"
 msgstr "Без стиснення"
 
 
-msgid "Lite"
-msgstr "Полегшено "
-
-
-msgid "Fast but not so effective compression"
-msgstr "Швидке, але не таке ефективне стискання"
-
-
-msgid "Effective but slow compression"
-msgstr "Ефективне, але повільне стискання"
-
-
 msgid "Cache file path"
 msgstr "Кешувати шлях до файлу"
-
-
-msgid "Frame on which the simulation stops"
-msgstr "Кадр, на якому зупиняється моделювання"
-
-
-msgid "Frame on which the simulation starts"
-msgstr "Кадр, на якому починається моделювання"
 
 
 msgid "Cache Step"
@@ -64505,10 +64442,6 @@ msgstr "Додавати тимчасові примуси ІК при захо�
 
 msgid "Relative Mirror"
 msgstr "Відносне Дзеркалення"
-
-
-msgid "Apply relative transformations in X-mirror mode"
-msgstr "Застосувати відносні трансформації у режимі дзеркалення по X"
 
 
 msgid "Pose Bone"
@@ -64791,6 +64724,10 @@ msgid "File Paths"
 msgstr "Шляхи файлів"
 
 
+msgid "Experimental"
+msgstr "Експериментальні"
+
+
 msgid "Application Template"
 msgstr "Шаблони застосунка"
 
@@ -64805,10 +64742,6 @@ msgstr "Методи редагування"
 
 msgid "Settings for interacting with Blender data"
 msgstr "Параметри для взаємодії з даними Blender"
-
-
-msgid "Experimental"
-msgstr "Експериментальні"
 
 
 msgid "Default paths for external files"
@@ -66067,14 +66000,6 @@ msgid "Memory cache limit (in megabytes)"
 msgstr "Межа кешу пам'яті (мегабайт)"
 
 
-msgid "MultiSample"
-msgstr "Мультивибірка"
-
-
-msgid "Enable OpenGL multi-sampling, only for systems that support it"
-msgstr "Увімкнути багато-відбір OpenGL, лише для систем, що його підтримують"
-
-
 msgid "OpenSubdiv Compute Type"
 msgstr "Тип обчислення OpenSubdiv"
 
@@ -66381,14 +66306,6 @@ msgstr "Автоматично (Автоматично)"
 
 msgid "Automatically choose system's defined language if available, or fall-back to English"
 msgstr "Автоматично вибирати визначену мову системи, якщо доступно, або повертатися на Англійську"
-
-
-msgid "Look Dev Spheres Size"
-msgstr "Розмір Сфер Розробки Вигляду"
-
-
-msgid "Maximum diameter of the look development sphere size"
-msgstr "Максимальний діаметр розміру сфер Розробки Вигляду"
 
 
 msgid "Mini Axes Brightness"
@@ -67049,14 +66966,6 @@ msgstr "Об'ємна інтерполяція"
 
 msgid "Interpolation method to use for smoke/fire volumes"
 msgstr "Метод інтерполяції для об'ємів диму/вогню"
-
-
-msgid "Good smoothness and speed"
-msgstr "Хороша гладкість і швидкість"
-
-
-msgid "Smoothed high quality interpolation, but slower"
-msgstr "Згладжена інтерполяція високої якості, але повільніше"
 
 
 msgid "Volume Sampling"
@@ -69051,10 +68960,6 @@ msgid "Layers Blending"
 msgstr "Шари Змішування"
 
 
-msgid "Do not display blend layers"
-msgstr "Не показувати шари змішання"
-
-
 msgid "Simplify Playback"
 msgstr "Спростити Програвання"
 
@@ -69067,32 +68972,12 @@ msgid "Disable Lines"
 msgstr "Вимкнути Лінії"
 
 
-msgid "Disable external lines of fill strokes"
-msgstr "Вимкнути зовнішні лінії заповнених штрихів"
-
-
 msgid "Simplify Shaders"
 msgstr "Спростити Шейдери"
 
 
-msgid "Do not apply shader fx"
-msgstr "Не застосовувати спецефекти шейдерів"
-
-
-msgid "Disable Fill"
-msgstr "Вимкнути Заповнення"
-
-
-msgid "Disable fill strokes in the viewport"
-msgstr "Вимкнути заповнені штрихи у вікні огляду"
-
-
 msgid "Disable Modifiers"
 msgstr "Вимкнути Модифікатори"
-
-
-msgid "Do not apply modifiers in the viewport"
-msgstr "Не застосовувати модифікатори у вікні огляду"
 
 
 msgid "Simplify Subdivision"
@@ -69225,10 +69110,6 @@ msgstr "Додати відповідне формату розширення д
 
 msgid "Draw stylized strokes using Freestyle"
 msgstr "Малювати стилізовані штрихи за допомогою Freestyle"
-
-
-msgid "Full Sample"
-msgstr "Повна вибірка"
 
 
 msgid "Save for every anti-aliasing sample the entire RenderLayer results (this solves anti-aliasing issues with compositing)"
@@ -70107,10 +69988,6 @@ msgid "Settings for particle fluids physics"
 msgstr "Параметри фізики частинок рідини"
 
 
-msgid "Buoyancy"
-msgstr "Плавучість"
-
-
 msgid "Artificial buoyancy force in negative gravity direction based on pressure differences inside the fluid"
 msgstr "Штучна виштовхувальна сила, протилежна до тяжіння, на основі різниці тисків всередині рідини"
 
@@ -70121,6 +69998,10 @@ msgstr "Радіус взаємодії"
 
 msgid "Fluid interaction radius"
 msgstr "Радіус взаємодії рідини"
+
+
+msgid "Viscosity"
+msgstr "В'язкість"
 
 
 msgid "Linear viscosity"
@@ -71147,6 +71028,10 @@ msgstr "Перетворити ввідні дані на значення з р
 
 msgid "Use a preview proxy and/or timecode index for this strip"
 msgstr "Використати для цієї смужки замісник перегляду та/або індекс час-коду"
+
+
+msgid "Reverse Frames"
+msgstr "Розвернути кадри"
 
 
 msgid "Use Translation"
@@ -72502,654 +72387,6 @@ msgid "Point in a shape key"
 msgstr "Точка у ключі форми"
 
 
-msgid "Smoke collision settings"
-msgstr "Параметри зіткнення диму"
-
-
-msgid "Collision Type"
-msgstr "Тип зіткнення"
-
-
-msgid "Collision type"
-msgstr "Тип зіткнення"
-
-
-msgid "Static"
-msgstr "Статично"
-
-
-msgid "Non moving obstacle"
-msgstr "Нерухома перешкода"
-
-
-msgid "Rigid"
-msgstr "Тверде тіло"
-
-
-msgid "Rigid obstacle"
-msgstr "Нерухома перешкода"
-
-
-msgid "Animated"
-msgstr "Анімоване"
-
-
-msgid "Animated obstacle"
-msgstr "Анімована перешкода"
-
-
-msgid "Smoke domain settings"
-msgstr "Устави домену диму"
-
-
-msgid "Margin added around fluid to minimize boundary interference"
-msgstr "Відступ навколо рідини для зменшення взаємодії з межами"
-
-
-msgid "Maximum amount of fluid cell can contain before it is considered empty"
-msgstr "Найбільша кількість рідини у комірці, за якої вона вважається порожньою"
-
-
-msgid "Additional"
-msgstr "Додатково"
-
-
-msgid "Maximum number of additional cells"
-msgstr "Найбільша кількість додаткових комірок"
-
-
-msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Наскільки щільність впливає на рух диму (більше значення призводить до швидшого піднімання диму)"
-
-
-msgid "Amplification"
-msgstr "Посилення"
-
-
-msgid "Enhance the resolution of smoke by this factor using noise"
-msgstr "Покращити роздільність диму на цей коефіцієнт завдяки шуму"
-
-
-msgid "Slice the whole domain object"
-msgstr "Розкраяти увесь об'єкт домену"
-
-
-msgid "Perform a single slice of the domain object"
-msgstr "Здійснити одиничноий розкрій об'єкта домену"
-
-
-msgid "Heat"
-msgstr "Тепло"
-
-
-msgid "How much heat affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Як тепло впливає на рух диму (більше значення призводить до швидшого піднімання диму)"
-
-
-msgid "Speed of the burning reaction (use larger values for smaller flame)"
-msgstr "Швидкість реакції горіння (більші значення - менше полум'я)"
-
-
-msgid "Select the file format to be used for caching"
-msgstr "Вибрати формат файлу для кешування"
-
-
-msgid "Blender specific point cache file format"
-msgstr "Специфічний для Blender формат файлу для кешу точок "
-
-
-msgid "OpenVDB"
-msgstr "OpenVDB"
-
-
-msgid "OpenVDB file format"
-msgstr "Формат OpenVDB"
-
-
-msgid "Cell Size"
-msgstr "Розмір комірки"
-
-
-msgid "Value under which voxels are considered empty space to optimize caching and rendering"
-msgstr "Значення, нижче якого вокселі вважаються порожнім простором, для оптимізування кешування та рендерингу"
-
-
-msgid "Field"
-msgstr "Поле"
-
-
-msgid "Simulation field to color map"
-msgstr "Імітація поля для карти кольорів"
-
-
-msgid "Red component of the color field"
-msgstr "Червоний компонент поля кольору"
-
-
-msgid "Green component of the color field"
-msgstr "Зелений компонент поля кольору"
-
-
-msgid "Blue component of the color field"
-msgstr "Синій компонент поля кольору"
-
-
-msgid "Quantity of soot in the fluid"
-msgstr "Кількість сажі в рідині"
-
-
-msgid "Flame"
-msgstr "Полум'я"
-
-
-msgid "Flame field"
-msgstr "Поле полум'я"
-
-
-msgid "Fuel"
-msgstr "Паливо"
-
-
-msgid "Fuel field"
-msgstr "Поле палива"
-
-
-msgid "Temperature of the fluid"
-msgstr "Температура рідини"
-
-
-msgid "X Velocity"
-msgstr "Скорість X"
-
-
-msgid "X component of the velocity field"
-msgstr "Складова X поля скорості"
-
-
-msgid "Y Velocity"
-msgstr "Скорість Y"
-
-
-msgid "Y component of the velocity field"
-msgstr "Складова Y поля скорості"
-
-
-msgid "Z Velocity"
-msgstr "Скорість Z"
-
-
-msgid "Z component of the velocity field"
-msgstr "Складова Z поля скорості"
-
-
-msgid "Limit collisions to this collection"
-msgstr "Лімітувати зіткнення цією колекцією"
-
-
-msgid "Border Collisions"
-msgstr "Зіткнення з межами"
-
-
-msgid "Select which domain border will be treated as collision object"
-msgstr "Виберіть межу області, що буде розглядатися в якості об'єкта зіткнення"
-
-
-msgid "Smoke doesn't collide with any border"
-msgstr "Дим не стикається з жодною межею і зникає при перетинанні меж домену"
-
-
-msgid "Vertically Open"
-msgstr "Відкрити вертикально"
-
-
-msgid "Smoke doesn't collide with top and bottom sides"
-msgstr "Дим не торкається верхньої та нижньої сторін і зникає при зіштовхуванні з верхньою та нижньою межами домену"
-
-
-msgid "Collide All"
-msgstr "Повне зіткнення"
-
-
-msgid "Smoke collides with every side"
-msgstr "Дим стикається з кожною межею домену і відштовхується від них"
-
-
-msgid "Smoke color grid"
-msgstr "Решітка кольору диму"
-
-
-msgid "Data Depth"
-msgstr "Глибина даних"
-
-
-msgid "Bit depth for writing all scalar (including vector) lower values reduce file size"
-msgstr "Бітова глибина для запису всіх скалярних значень (включно з векторами); нижчі значення скорочують розмір файлу"
-
-
-msgid "Float (Half)"
-msgstr "Дійсне (половина)"
-
-
-msgid "Half float (16 bit data)"
-msgstr "Половина дійсночислової глибини даних (16-бітні дані)"
-
-
-msgid "Float (Full)"
-msgstr "Дійсне (повне)"
-
-
-msgid "Full float (32 bit data)"
-msgstr "Повна дійсночислова глибина даних (32-бітні дані)"
-
-
-msgid "Density Grid"
-msgstr "Решітка щільності"
-
-
-msgid "Smoke density grid"
-msgstr "Решітка щільності диму"
-
-
-msgid "Interpolation method to use for smoke/fire volumes in solid mode"
-msgstr "Метод інтерполяції для вживання для об'ємів диму/вогню у суцільному режимі"
-
-
-msgid "Thickness of smoke drawing in the viewport"
-msgstr "Товщина прорису диму в області перегляду"
-
-
-msgid "Dissolve Speed"
-msgstr "Швидкість розчинення"
-
-
-msgid "res"
-msgstr "розд"
-
-
-msgid "Smoke Grid Resolution"
-msgstr "Роздільність сітки диму"
-
-
-msgid "Flame Grid"
-msgstr "Решітка полум'я"
-
-
-msgid "Smoke flame grid"
-msgstr "Решітка полум'я"
-
-
-msgid "Ignition"
-msgstr "Спалах"
-
-
-msgid "Minimum temperature of flames"
-msgstr "Найменша температура полум'я"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Найбільша температура полум'я"
-
-
-msgid "Amount of smoke created by burning fuel"
-msgstr "Кількість диму, створеного паливом, що горить"
-
-
-msgid "Smoke Color"
-msgstr "Колір диму"
-
-
-msgid "Color of smoke emitted from burning fuel"
-msgstr "Колір диму, що випускається при горінні палива"
-
-
-msgid "Vorticity"
-msgstr "Завихреність"
-
-
-msgid "Additional vorticity for the flames"
-msgstr "Додаткове завихрення полум'я"
-
-
-msgid "Fluid Collection"
-msgstr "Колекція Рідини"
-
-
-msgid "Limit fluid objects to this collection"
-msgstr "Лімітувати об'єкти рідини цією колекцією"
-
-
-msgid "Heat Grid"
-msgstr "Сітка теплоти"
-
-
-msgid "Smoke heat grid"
-msgstr "Сітка теплоти диму"
-
-
-msgid "Method for sampling the high resolution flow"
-msgstr "Метод відбору високороздільного потоку"
-
-
-msgid "Noise Method"
-msgstr "Метод шуму"
-
-
-msgid "Noise method which is used for creating the high resolution"
-msgstr "Метод шуму, що використовується для створення високої роздільності"
-
-
-msgid "Wavelet"
-msgstr "Брижі"
-
-
-msgid "FFT"
-msgstr "ШПФ (FFT)"
-
-
-msgid "Zip"
-msgstr "Zip"
-
-
-msgid "Blosc"
-msgstr "Blosc"
-
-
-msgid "Multithreaded compression, similar in size and quality as 'Zip'"
-msgstr "Багатопотокове стискання, подібне за розміром та якість до 'Zip'"
-
-
-msgid "Do not use any compression"
-msgstr "Без стискання"
-
-
-msgid "Max Res"
-msgstr "Найбільша роздільність"
-
-
-msgid "Maximal resolution used in the fluid domain"
-msgstr "Найбільша роздільність для області рідини"
-
-
-msgid "Show High Resolution"
-msgstr "Показ з високою роздільністю"
-
-
-msgid "Show high resolution (using amplification)"
-msgstr "Показати у високій роздільності (з підсиленням)"
-
-
-msgid "Display Velocity"
-msgstr "Показ Скорості"
-
-
-msgid "Toggle visualization of the velocity field as needles"
-msgstr "Перемкнути візуалльне представлення поля швидкості при потребі"
-
-
-msgid "Adjust slice direction according to the view direction"
-msgstr "Наладнати напрям розкраювання відповідно до напряму огляду "
-
-
-msgid "Slice along the X axis"
-msgstr "Розкраяти вздовж осі X"
-
-
-msgid "Slice along the Y axis"
-msgstr "Розкраяти вздовж осі Y"
-
-
-msgid "Slice along the Z axis"
-msgstr "Розкраяти вздовж осі Z"
-
-
-msgid "Position of the slice"
-msgstr "Позиція розкраювання"
-
-
-msgid "View Method"
-msgstr "Метод вигляду"
-
-
-msgid "How to slice the volume for viewport rendering"
-msgstr "Як розкраяти об'єм для рендерингу вікна огляду"
-
-
-msgid "Slice volume parallel to the view plane"
-msgstr "Розкраяти об'єм паралельно до площини вигляду"
-
-
-msgid "Slice volume parallel to the major axis"
-msgstr "Розкраяти об'єм паралельно до головної осі"
-
-
-msgid "Slice Per Voxel"
-msgstr "Розкраювання по вокселях"
-
-
-msgid "How many slices per voxel should be generated"
-msgstr "Скільки скибок по вокселях має бути згенеровано"
-
-
-msgid "p0"
-msgstr "т0"
-
-
-msgid "Start point"
-msgstr "Початкова точка"
-
-
-msgid "Strength of noise"
-msgstr "Рівень шуму"
-
-
-msgid "Temperature Grid"
-msgstr "Сітка Температури"
-
-
-msgid "Smoke temperature grid, range 0..1 represents 0..1000K"
-msgstr "Сітка температури диму, діапазон 0..1 представляє 0..1000К"
-
-
-msgid "Adjust simulation speed"
-msgstr "Наладнати швидкість симуляції"
-
-
-msgid "Adapt simulation resolution and size to fluid"
-msgstr "Адаптувати роздільність моделювання та розмір до рідини"
-
-
-msgid "Render a simulation field while mapping its voxels values to the colors of a ramp"
-msgstr "Рендерити симуляцію поля при розкладанні значень його вокселів на кольори градієнту"
-
-
-msgid "Dissolve Smoke"
-msgstr "Розчинення диму"
-
-
-msgid "Enable smoke to disappear over time"
-msgstr "Увімкнути зникнення диму з часом"
-
-
-msgid "Using 1/x "
-msgstr "Використати 1/x "
-
-
-msgid "Enable high resolution (using amplification)"
-msgstr "Увімкнути високу роздільність (з підсиленням)"
-
-
-msgid "Needle"
-msgstr "Голка"
-
-
-msgid "Display vectors as needles"
-msgstr "Показувати вектори як голки"
-
-
-msgid "Streamlines"
-msgstr "Напрямні"
-
-
-msgid "Display vectors as streamlines"
-msgstr "Показувати вектори як напрямні"
-
-
-msgid "Multiplier for scaling the vectors"
-msgstr "Множник для масштабування векторів"
-
-
-msgid "Velocity Grid"
-msgstr "Сітка швидкості"
-
-
-msgid "Smoke velocity grid"
-msgstr "Сітка швидкості диму"
-
-
-msgid "Amount of turbulence/rotation in fluid"
-msgstr "Кількість турбулентності/обертання у рідині"
-
-
-msgid "Smoke flow settings"
-msgstr "Параметри потоку диму"
-
-
-msgid "Name of vertex group which determines surface emission rate"
-msgstr "Назва групи вершин, що визначає рівень випускання поверхнею"
-
-
-msgid "Flame Rate"
-msgstr "Частота Кадрів"
-
-
-msgid "Texture that controls emission strength"
-msgstr "Текстура, що керує силою випускання"
-
-
-msgid "Particle size in simulation cells"
-msgstr "Розмір частинки у комірках моделювання"
-
-
-msgid "Color of smoke"
-msgstr "Колір диму"
-
-
-msgid "Change how smoke is emitted"
-msgstr "Змінити характер випускання диму"
-
-
-msgid "Emit smoke from particles"
-msgstr "Випускати дим з частинок"
-
-
-msgid "Emit smoke from mesh surface or volume"
-msgstr "Емітувати дим з поверхні сіті або об'єму"
-
-
-msgid "Flow Type"
-msgstr "Тип потоку"
-
-
-msgid "Change how flow affects the simulation"
-msgstr "Змінити вплив потоку на моделювання"
-
-
-msgid "Delete smoke from simulation"
-msgstr "Видалити дим з імітації"
-
-
-msgid "Add smoke"
-msgstr "Додати дим"
-
-
-msgid "Fire + Smoke"
-msgstr "Вогонь + дим"
-
-
-msgid "Add fire and smoke"
-msgstr "Додати вогонь та дим"
-
-
-msgid "Add fire"
-msgstr "Додати вогонь"
-
-
-msgid "Number of additional samples to take between frames to improve quality of fast moving flows"
-msgstr "Кількість додаткових вибірок між кадрами для покращення якості швидких потоків"
-
-
-msgid "Maximum distance from mesh surface to emit smoke"
-msgstr "Максимальна відстань від поверхні сіті для емітування диму"
-
-
-msgid "Temp. Diff."
-msgstr "Різниця температур"
-
-
-msgid "Temperature difference to ambient temperature"
-msgstr "Відмінність температури від температури навколишнього середовища"
-
-
-msgid "Texture mapping type"
-msgstr "Тип розкладання текстури"
-
-
-msgid "Generated coordinates centered to flow object"
-msgstr "Створені координати центровані за об'єктом, що випускає"
-
-
-msgid "Use UV layer for texture coordinates"
-msgstr "Використати UV-шар для текстурних координат"
-
-
-msgid "Z-offset of texture mapping"
-msgstr "Z-зсув розкладання текстури"
-
-
-msgid "Size of texture mapping"
-msgstr "Розмір розкладання текстури"
-
-
-msgid "Absolute Density"
-msgstr "Абсолютна щільність"
-
-
-msgid "Only allow given density value in emitter area"
-msgstr "Дозволити лише дане значення щільності в області випромінювача"
-
-
-msgid "Smoke has some initial velocity when it is emitted"
-msgstr "Дим при випусканні має певну початкову швидкість"
-
-
-msgid "Set Size"
-msgstr "Задати розмір"
-
-
-msgid "Set particle size in simulation cells or use nearest cell"
-msgstr "Задати розмір частинки у комірці моделювання або взяти з найближчої комірки"
-
-
-msgid "Use a texture to control emission strength"
-msgstr "Використати текстуру для керування силою випускання"
-
-
-msgid "Multiplier of source velocity passed to smoke"
-msgstr "Множник швидкості джерела, наданої диму"
-
-
-msgid "Amount of normal directional velocity"
-msgstr "Швидкість у напрямі нормалі"
-
-
-msgid "Amount of random velocity"
-msgstr "Величина випадкової швидкості"
-
-
-msgid "Factor for smoke emitted from inside the mesh volume"
-msgstr "Фактор для диму, емітованого зсередини об'єму сіті"
-
-
 msgid "Soft body simulation settings for an object"
 msgstr "Параметри моделювання м'якого тіла для об'єкта"
 
@@ -73208,6 +72445,10 @@ msgstr "Заповнення"
 
 msgid "'Viscosity' inside collision target"
 msgstr "'В'язкість' всередині цілі зіткнення"
+
+
+msgid "Collision Type"
+msgstr "Тип зіткнення"
 
 
 msgid "Choose Collision Type"
@@ -75960,10 +75201,6 @@ msgid "Has Texture Angle Source"
 msgstr "Має джерело кута текстури"
 
 
-msgid "Tiled"
-msgstr "Черепиця"
-
-
 msgid "Stencil"
 msgstr "Візерунок"
 
@@ -77704,6 +76941,10 @@ msgid "Theme settings for widget state colors"
 msgstr "Параметри теми для кольорів стану віджета"
 
 
+msgid "Animated"
+msgstr "Анімоване"
+
+
 msgid "Animated Selected"
 msgstr "Анімоване вибране"
 
@@ -78909,10 +78150,6 @@ msgid "Display Freestyle face marks, used with the Freestyle renderer"
 msgstr "Показати позначки граней Freestyle, що використовуються рендерером Freestyle"
 
 
-msgid "Look Dev Preview"
-msgstr "Передогляд Розробки Вигляду"
-
-
 msgid "Show the Motion Paths Overlay"
 msgstr "Показ Накладки Шляхів Руху"
 
@@ -79085,14 +78322,6 @@ msgid "Opacity for edit vertices"
 msgstr "Безпрозорість для редагування вершин"
 
 
-msgid "Vertex Paint Opacity"
-msgstr "Безпрозорість Малювання Вершин"
-
-
-msgid "Opacity of the vertex paint mode overlay"
-msgstr "Безпрозорість накладання режиму малювання вершин"
-
-
 msgid "Weight Paint Opacity"
 msgstr "Безпрозорість Малювання Вагомостей"
 
@@ -79103,10 +78332,6 @@ msgstr "Безпрозорість накладання режиму малюв�
 
 msgid "Wireframe Threshold"
 msgstr "Поріг каркаса"
-
-
-msgid "Adjust the number of wires displayed (1 for all wires)"
-msgstr "Наладнати кількість показуваних дротів каркаса (1 для показу всіх його дротів)"
 
 
 msgid "Opacity to use for bone selection"
@@ -80826,10 +80051,6 @@ msgid "Export"
 msgstr "Експортувати"
 
 
-msgid "Randomness"
-msgstr "Випадковість"
-
-
 msgid "Demo Mode:"
 msgstr "Демо Режим:"
 
@@ -82287,35 +81508,6 @@ msgid "Delete Frame(s)"
 msgstr "Видалити кадр(и)"
 
 
-msgid "Edit:"
-msgstr "Змінити:"
-
-
-msgctxt "Operator"
-msgid "Arrange Strokes..."
-msgstr "Впорядкувати штрихи..."
-
-
-msgctxt "Operator"
-msgid "Assign Material"
-msgstr "Присвоїти матеріал"
-
-
-msgctxt "Operator"
-msgid "Adaptive"
-msgstr "Адаптивно"
-
-
-msgctxt "Operator"
-msgid "Trim"
-msgstr "Підріз"
-
-
-msgctxt "Operator"
-msgid "Flip Direction"
-msgstr "Обернути напрям"
-
-
 msgid "Active Layer:      "
 msgstr "Активний шар:"
 
@@ -82366,39 +81558,6 @@ msgid "Data Source:"
 msgstr "Джерело даних:"
 
 
-msgid "Select:"
-msgstr "Виділення:"
-
-
-msgctxt "Operator"
-msgid "Toggle Caps..."
-msgstr "Перемкнути Торці..."
-
-
-msgctxt "Operator"
-msgid "& Copy"
-msgstr "& Копіювати"
-
-
-msgctxt "Operator"
-msgid "Separate..."
-msgstr "Відокремлення..."
-
-
-msgid "Cleanup:"
-msgstr "Вичистити:"
-
-
-msgctxt "Operator"
-msgid "Reproject Strokes..."
-msgstr "Перепроєктувати штрихи..."
-
-
-msgctxt "Operator"
-msgid "Clean Boundary Strokes..."
-msgstr "Очистити Штрихи Рубежів..."
-
-
 msgctxt "Operator"
 msgid "Straight Lines"
 msgstr "Прямі Лінії"
@@ -82420,6 +81579,11 @@ msgstr "Перемістити у колір"
 
 msgid "Join Strokes"
 msgstr "Сполучити штрихи"
+
+
+msgctxt "Operator"
+msgid "Flip Direction"
+msgstr "Обернути напрям"
 
 
 msgid "Show Drawing Direction"
@@ -82531,12 +81695,14 @@ msgid "Stroke Color"
 msgstr "Колір Штриха"
 
 
-msgid "CCW"
-msgstr "ПротиГС"
+msgctxt "Operator"
+msgid "Re-key Shape Points"
+msgstr "Переключувати точки форми"
 
 
-msgid "CW"
-msgstr "ЗаГС"
+msgctxt "Operator"
+msgid "Reset Feather Animation"
+msgstr "Скинути анімацію розтушовки"
 
 
 msgid "Parent:"
@@ -82577,11 +81743,6 @@ msgstr "Вставити Ключ"
 msgctxt "Operator"
 msgid "Clear Key"
 msgstr "Зчистити Ключ"
-
-
-msgctxt "Operator"
-msgid "Reset Feather Animation"
-msgstr "Скинути анімацію розтушовки"
 
 
 msgctxt "Operator"
@@ -82700,8 +81861,20 @@ msgid "Pressure Masking"
 msgstr "Маскування Натиску"
 
 
+msgid "Front Faces Only"
+msgstr "Лише передні грані"
+
+
 msgid "Sample Bias"
 msgstr "Ухил Вибірки"
+
+
+msgid "Edge To Edge"
+msgstr "Ребро до ребра"
+
+
+msgid "Thickness Profile"
+msgstr "Профіль Товщини"
 
 
 msgid "Source Clone Slot"
@@ -82716,20 +81889,16 @@ msgid "Source Clone UV Map"
 msgstr "UV-карта джерела клонування"
 
 
-msgid "Thickness Profile"
-msgstr "Профіль Товщини"
-
-
 msgid "Mask Value"
 msgstr "Значення маски"
 
 
-msgid "Fill Options"
-msgstr "Опції Заповнення"
+msgid "CCW"
+msgstr "ПротиГС"
 
 
-msgid "Ignore Transparent Strokes"
-msgstr "Ігнорувати Прозорі Штрихи"
+msgid "CW"
+msgstr "ЗаГС"
 
 
 msgctxt "Operator"
@@ -82820,10 +81989,6 @@ msgstr "Шорсткість - кінець"
 
 msgid "Strand Shape"
 msgstr "Форма пасма"
-
-
-msgid "Radius Root"
-msgstr "Радіус Кореня"
 
 
 msgid "Lifetime Randomness"
@@ -82941,6 +82106,14 @@ msgid "Air Viscosity"
 msgstr "В'язкість Повітря"
 
 
+msgid "Max Tension"
+msgstr "Макс Натяг"
+
+
+msgid "Max Compression"
+msgstr "Макс Стиснення"
+
+
 msgid "Pin Group"
 msgstr "Група Пришпилення"
 
@@ -82965,14 +82138,6 @@ msgid "Structural Group"
 msgstr "Група Структурності"
 
 
-msgid "Max Tension"
-msgstr "Макс Натяг"
-
-
-msgid "Max Compression"
-msgstr "Макс Стиснення"
-
-
 msgid "Shear Group"
 msgstr "Група Косування"
 
@@ -82995,10 +82160,6 @@ msgstr "Група Стискання"
 
 msgid "Max Shrinking"
 msgstr "Макс Стискання"
-
-
-msgid "Tension"
-msgstr "Натяг"
 
 
 msgid "Structural"
@@ -83151,45 +82312,32 @@ msgid "Clumping amount"
 msgstr "Величина скупчення"
 
 
-msgctxt "Operator"
-msgid "Bake (Req. Memory: %s)"
-msgstr "Запекти (потреб.пам'яті: %s)"
+msgid "Temperature Diff."
+msgstr "Різниця Температур"
 
 
-msgid "Scene Size Meters"
-msgstr "Розмір Сцени Метри"
+msgid "Reaction Speed"
+msgstr "Швидкість Реакції"
 
 
-msgid "World Size Meters"
-msgstr "Розмір Світу Метри"
+msgid "Temperature Ignition"
+msgstr "Температура Запалювання"
 
 
-msgid "Optimization"
-msgstr "Оптимізація"
+msgid "Add Resolution"
+msgstr "Додати Роздільність"
 
 
-msgid "Built without fluids"
-msgstr "Побудовано без рідин"
+msgid "Real World Size"
+msgstr "Розмір реального світу"
 
 
-msgid "Final Resolution"
-msgstr "Фінальна Роздільність"
+msgid "Slicing"
+msgstr "Розкраювання"
 
 
-msgid "Render Display"
-msgstr "Показ Рендера"
-
-
-msgid "Time Start"
-msgstr "Час Старт"
-
-
-msgid "Bake (Req. Memory: %s)"
-msgstr "Запекти (потреб.пам'яті: %s)"
-
-
-msgid "Influence Size"
-msgstr "Розмір Впливу"
+msgid "Resolution Divisions"
+msgstr "Поділи Роздільності"
 
 
 msgid "Object does not have a Rigid Body"
@@ -83234,54 +82382,6 @@ msgstr "Z Нижнє"
 
 msgid "Y Lower"
 msgstr "Y Нижнє"
-
-
-msgid "Temperature Diff."
-msgstr "Різниця Температур"
-
-
-msgid "Reaction Speed"
-msgstr "Швидкість Реакції"
-
-
-msgid "Temperature Ignition"
-msgstr "Температура Запалювання"
-
-
-msgid "Add Resolution"
-msgstr "Додати Роздільність"
-
-
-msgid "Resolution Divisions"
-msgstr "Поділи Роздільності"
-
-
-msgid "Flow Sampling"
-msgstr "Відбір Потоку"
-
-
-msgid "Slicing"
-msgstr "Розкраювання"
-
-
-msgid "Built without Smoke modifier"
-msgstr "Побудовано без модифікатора Дим"
-
-
-msgid "Empty Space"
-msgstr "Порожній Простір"
-
-
-msgid "Flow Source"
-msgstr "Джерело Потоку"
-
-
-msgid "Sampling Subframes"
-msgstr "Підкадри Відбору"
-
-
-msgid "Built without OpenVDB support"
-msgstr "Побудовано без підтримки OpenVDB"
 
 
 msgid "Collision Edge"
@@ -83720,11 +82820,6 @@ msgid "Unlock Tracks"
 msgstr "Розблокувати стежки"
 
 
-msgctxt "Operator"
-msgid "Re-key Shape Points"
-msgstr "Переключувати точки форми"
-
-
 msgid "Solve error: %.4f"
 msgstr "Помилка обчислювача: %.4f"
 
@@ -83945,18 +83040,6 @@ msgid "More"
 msgstr "Більше"
 
 
-msgid "Unified Size"
-msgstr "Уніфікований Розмір"
-
-
-msgid "Unified Strength"
-msgstr "Уніфікована Сила"
-
-
-msgid "Unified Color"
-msgstr "Уніфікований Колір"
-
-
 msgctxt "Operator"
 msgid "New"
 msgstr "Нове"
@@ -83979,18 +83062,6 @@ msgstr "Інвертувати кольори зображення"
 
 msgid "Affect"
 msgstr "Задіяння"
-
-
-msgid "Curve Alpha"
-msgstr "Альфа Кривих"
-
-
-msgid "Texture Alpha"
-msgstr "Альфа Текстур"
-
-
-msgid "Mask Texture Alpha"
-msgstr "Альфа Текстур Маски"
 
 
 msgid "Show Same Material"
@@ -84113,10 +83184,6 @@ msgstr "Зображення*"
 
 msgid "Repeat Image"
 msgstr "Повтор Зображення"
-
-
-msgid "Edge To Edge"
-msgstr "Ребро до ребра"
 
 
 msgctxt "Operator"
@@ -85224,30 +84291,6 @@ msgid "Sample Format"
 msgstr "Формат зразка"
 
 
-msgid "View Name"
-msgstr "Показати назву"
-
-
-msgid "Playback FPS"
-msgstr "Частота кадрів при перегляді"
-
-
-msgid "3D Viewport Axis"
-msgstr "Вісь вікна 3D-огляду"
-
-
-msgid "Multisampling"
-msgstr "Багатовідбір"
-
-
-msgid "Grease Pencil Multisampling"
-msgstr "Багатовідбір Нарисного Олівця"
-
-
-msgid "Limit Size"
-msgstr "Граничний розмір"
-
-
 msgid "Undo Memory Limit"
 msgstr "Ліміт Пам'яті Скасувань"
 
@@ -85266,6 +84309,26 @@ msgstr "Частота Збирання Сміття"
 
 msgid "Vbo Time Out"
 msgstr "Перечікування Vbo"
+
+
+msgid "View Name"
+msgstr "Показати назву"
+
+
+msgid "Playback FPS"
+msgstr "Частота кадрів при перегляді"
+
+
+msgid "3D Viewport Axis"
+msgstr "Вісь вікна 3D-огляду"
+
+
+msgid "Grease Pencil Multisampling"
+msgstr "Багатовідбір Нарисного Олівця"
+
+
+msgid "Limit Size"
+msgstr "Граничний розмір"
 
 
 msgctxt "Operator"
@@ -85317,16 +84380,12 @@ msgid "Timer (mins)"
 msgstr "Таймер (хвилин)"
 
 
-msgid "Pan Options"
-msgstr "Опції панорамування"
-
-
-msgid "Zoom Options"
-msgstr "Опції зумування"
-
-
 msgid "Double Click Speed"
 msgstr "Швидкість Подвійного Клацка"
+
+
+msgid "Pan Sensitivity"
+msgstr "Чутливість панорамування"
 
 
 msgid "Zoom Method"
@@ -85337,8 +84396,12 @@ msgid "Invert Wheel Zoom Direction"
 msgstr "Інвертувати зумування коліщатком"
 
 
-msgid "Pan Sensitivity"
-msgstr "Чутливість панорамування"
+msgid "Pan Options"
+msgstr "Опції панорамування"
+
+
+msgid "Zoom Options"
+msgstr "Опції зумування"
 
 
 msgid "Use Light"
@@ -85358,6 +84421,14 @@ msgid "Player"
 msgstr "Програвач"
 
 
+msgid "Natural Trackpad Direction"
+msgstr "Природний напрям трекпаду"
+
+
+msgid "Invert Mouse Zoom Direction"
+msgstr "Інвертувати зумування мишею"
+
+
 msgid "Orbit Style"
 msgstr "Стиль обльоту"
 
@@ -85372,14 +84443,6 @@ msgstr "Опції обльоту"
 
 msgid "Fly/Walk Options"
 msgstr "Опції ходьби/польоту"
-
-
-msgid "Natural Trackpad Direction"
-msgstr "Природний напрям трекпаду"
-
-
-msgid "Invert Mouse Zoom Direction"
-msgstr "Інвертувати зумування мишею"
 
 
 msgid "Multiple add-ons with the same name found!"
@@ -86173,6 +85236,16 @@ msgstr "Фіксовано"
 
 
 msgctxt "Operator"
+msgid "Adaptive"
+msgstr "Адаптивно"
+
+
+msgctxt "Operator"
+msgid "Trim"
+msgstr "Підріз"
+
+
+msgctxt "Operator"
 msgid "Arrange Strokes"
 msgstr "Розставити Штрихи"
 
@@ -86490,11 +85563,6 @@ msgstr "Контекстне Меню Вершин"
 
 
 msgctxt "Operator"
-msgid "Randomize Vertices"
-msgstr "Рандомізувати Вершини"
-
-
-msgctxt "Operator"
 msgid "Smooth Laplacian"
 msgstr "Згладження Лапласіан"
 
@@ -86794,6 +85862,11 @@ msgstr "Приєднати до групи"
 
 
 msgctxt "Operator"
+msgid "Randomize Vertices"
+msgstr "Рандомізувати Вершини"
+
+
+msgctxt "Operator"
 msgid "Delete Vertices"
 msgstr "Видалити Вершини"
 
@@ -86982,6 +86055,14 @@ msgid "Tile Offset"
 msgstr "Зсув плиток"
 
 
+msgid "Auto Normalize"
+msgstr "Автонормалізація"
+
+
+msgid "Multi-Paint"
+msgstr "Мультималювання"
+
+
 msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Швидке редагування"
@@ -87050,25 +86131,17 @@ msgid "Auto-Velocity"
 msgstr "Авто-Скорість"
 
 
-msgid "Front Faces Only"
-msgstr "Лише передні грані"
-
-
 msgid "No Textures"
 msgstr "Без Текстур"
-
-
-msgid "Auto Normalize"
-msgstr "Автонормалізація"
-
-
-msgid "Multi-Paint"
-msgstr "Мультималювання"
 
 
 msgctxt "Operator"
 msgid "Add UVs"
 msgstr "Додати UV-ти"
+
+
+msgid "Ignore Transparent Strokes"
+msgstr "Ігнорувати Прозорі Штрихи"
 
 
 msgid "Modifier requires original data, bad stack position"
@@ -87419,10 +86492,6 @@ msgstr "Жодного нового файлу не упаковано"
 
 msgid "Unable to pack file, source path '%s' not found"
 msgstr "Неможливо упакувати файл, шлях джерела '%s' не знайдено"
-
-
-msgid "Image '%s' skipped, movies and image sequences not supported"
-msgstr "Зображення '%s' пропущено, фільми та послідовності зображень не підтримуються"
 
 
 msgid "Error creating file '%s'"
@@ -87903,6 +86972,10 @@ msgstr "Компонування | Ініціалізація виконання
 
 msgid "Compositing | De-initializing execution"
 msgstr "Компонування | Де-ініціалізація виконання"
+
+
+msgid "Basic"
+msgstr "Основний"
 
 
 msgid "Baking light cache"
@@ -88737,16 +87810,8 @@ msgid "Nothing to erase"
 msgstr "Нема нічого для стирання"
 
 
-msgid "Annotation cannot be used in grease pencil draw mode"
-msgstr "Анотація не може використовуватися у режимі рисування нарисного олівця"
-
-
 msgid "Annotation operator is already active"
 msgstr "Оператор анотації вже активний"
-
-
-msgid "Failed to find Grease Pencil data to draw into"
-msgstr "Не вдалось знайти дані нарисного олівця для рисування нарисів"
 
 
 msgid "Active region not set"
@@ -88895,6 +87960,10 @@ msgstr "Немає активної ділянки"
 
 msgid "There is no layer number %d"
 msgstr "Немає шару з номером %d"
+
+
+msgid "Failed to find Grease Pencil data to draw into"
+msgstr "Не вдалось знайти дані нарисного олівця для рисування нарисів"
 
 
 msgid "Fill: ESC/RMB cancel, LMB Fill, Shift Draw on Back"
@@ -90808,46 +89877,6 @@ msgid "Copy particle systems to selected: %d done, %d failed"
 msgstr "Копіювання систем частинок у вибране: %d успішно, %d невдало"
 
 
-msgid "There should be only one domain object"
-msgstr "Має бути лише один об'єкт-область"
-
-
-msgid "No domain object found"
-msgstr "Об'єкт-область не знайдено"
-
-
-msgid "Cannot bake with more than 256 objects"
-msgstr "Неможливе запікання більше ніж з 256 об'єктами"
-
-
-msgid "No fluid input objects in the scene"
-msgstr "Сцена не містить ввідних об'єктів рідини"
-
-
-msgid "No frames to export (check your animation range settings)"
-msgstr "Немає кадрів для експортування (перевірте діапазон анімації)"
-
-
-msgid "Invalid object matrix"
-msgstr "Неправильна матриця об'єкта"
-
-
-msgid "Fluidsim: empty cache path, reset to default '%s'"
-msgstr "Імітація рідин: порожній шлях до кешу; скидається на стандартний '%s'"
-
-
-msgid "Fluidsim: could not create cache directory '%s', reset to default '%s'"
-msgstr "Імітація рідин: неможливо створити теку кешу '%s'; скидається на стандартну '%s'"
-
-
-msgid "Fluidsim: cache directory '%s' is not writable, reset to default '%s'"
-msgstr "Імітація рідин: тека кешу '%s' недоступна для запису; скидається на стандартну '%s'"
-
-
-msgid "Fluidsim: could not use default cache directory '%s', please define a valid cache path manually"
-msgstr "Імітація рідин: неможливо використати стандартну теку кешу '%s'; визначте правильний шлях до кешу вручну"
-
-
 msgid "No Rigid Body World to add Rigid Body Constraint to"
 msgstr "Немає світу твердого тіла для додавання примусу твердого тіла"
 
@@ -91317,12 +90346,12 @@ msgid "Packed MultiLayer files cannot be painted: %s"
 msgstr "Неможливо малювати по упакованих багатошарових файлах: %s"
 
 
-msgid "Image requires 4 color channels to paint"
-msgstr "Зображення потребує для малювання 4 колірних канали"
-
-
 msgid "Packed MultiLayer files cannot be painted"
 msgstr "Неможливо малювати по упакованих багатошарових файлах"
+
+
+msgid "Image requires 4 color channels to paint"
+msgstr "Зображення потребує для малювання 4 колірних канали"
 
 
 msgid "Untitled"

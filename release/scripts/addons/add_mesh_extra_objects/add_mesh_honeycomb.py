@@ -1,10 +1,7 @@
 # GPL # "author": "Kayo Phoenix"
 
 import bpy
-from bpy_extras.object_utils import (
-        AddObjectHelper,
-        object_data_add,
-        )
+from bpy_extras import object_utils
 from math import (
         pi, sin,
         cos,
@@ -15,6 +12,7 @@ from bpy.props import (
         BoolVectorProperty,
         FloatProperty,
         FloatVectorProperty,
+        StringProperty,
         )
 
 
@@ -210,7 +208,7 @@ def edge_max(diam):
     return diam * sin(pi / 3)
 
 
-class add_mesh_honeycomb(bpy.types.Operator, AddObjectHelper):
+class add_mesh_honeycomb(bpy.types.Operator, object_utils.AddObjectHelper):
     bl_idname = "mesh.honeycomb_add"
     bl_label = "Add HoneyComb"
     bl_description = "Simple honeycomb mesh generator"
@@ -220,6 +218,13 @@ class add_mesh_honeycomb(bpy.types.Operator, AddObjectHelper):
         m = edge_max(self.diam)
         if self.edge > m:
             self.edge = m
+
+    HoneyComb : BoolProperty(name = "HoneyComb",
+                default = True,
+                description = "HoneyComb")
+    change : BoolProperty(name = "Change",
+                default = False,
+                description = "change HoneyComb")
 
     rows: IntProperty(
             name="Num of rows",
@@ -232,12 +237,6 @@ class add_mesh_honeycomb(bpy.types.Operator, AddObjectHelper):
             default=2,
             min=1, max=100,
             description='Number of the columns'
-            )
-    layers: BoolVectorProperty(
-            name="Layers",
-            size=20,
-            subtype='LAYER',
-            options={'HIDDEN', 'SKIP_SAVE'},
             )
     diam: FloatProperty(
             name='Cell Diameter',
@@ -252,19 +251,76 @@ class add_mesh_honeycomb(bpy.types.Operator, AddObjectHelper):
             description='Width of the edge'
             )
 
+    def draw(self, context):
+        layout = self.layout
+
+        layout.prop(self, 'rows', expand=True)
+        layout.prop(self, 'cols', expand=True)
+        layout.prop(self, 'diam', expand=True)
+        layout.prop(self, 'edge', expand=True)
+
+        if self.change == False:
+            col = layout.column(align=True)
+            col.prop(self, 'align', expand=True)
+            col = layout.column(align=True)
+            col.prop(self, 'location', expand=True)
+            col = layout.column(align=True)
+            col.prop(self, 'rotation', expand=True)
+
     @classmethod
     def poll(cls, context):
         return context.scene is not None
 
     def execute(self, context):
-        mesh = bpy.data.meshes.new(name='honeycomb')
+        if bpy.context.mode == "OBJECT":
+            if context.selected_objects != [] and context.active_object and \
+            ('HoneyComb' in context.active_object.data.keys()) and (self.change == True):
+                obj = context.active_object
+                oldmesh = obj.data
+                oldmeshname = obj.data.name
+                comb = honeycomb_geometry(self.rows, self.cols, self.diam, self.edge)
+                verts, faces = comb.generate()
+                mesh = bpy.data.meshes.new('HoneyComb')
+                mesh.from_pydata(verts, [], faces)
+                obj.data = mesh
+                for material in oldmesh.materials:
+                    obj.data.materials.append(material)
+                bpy.data.meshes.remove(oldmesh)
+                obj.data.name = oldmeshname
+            else:
+                comb = honeycomb_geometry(self.rows, self.cols, self.diam, self.edge)
+                verts, faces = comb.generate()
+                mesh = bpy.data.meshes.new('HoneyComb')
+                mesh.from_pydata(verts, [], faces)
+                obj = object_utils.object_data_add(context, mesh, operator=self)
 
-        comb = honeycomb_geometry(self.rows, self.cols, self.diam, self.edge)
-        verts, faces = comb.generate()
-
-        mesh.from_pydata(vertices=verts, edges=[], faces=faces)
-        mesh.update()
-
-        object_data_add(context, mesh, operator=self)
+            obj.data["HoneyComb"] = True
+            obj.data["change"] = False
+            for prm in HoneyCombParameters():
+                obj.data[prm] = getattr(self, prm)
+        
+        if bpy.context.mode == "EDIT_MESH":
+            active_object = context.active_object
+            name_active_object = active_object.name
+            bpy.ops.object.mode_set(mode='OBJECT')
+            comb = honeycomb_geometry(self.rows, self.cols, self.diam, self.edge)
+            verts, faces = comb.generate()
+            mesh = bpy.data.meshes.new('HoneyComb')
+            mesh.from_pydata(verts, [], faces)
+            obj = object_utils.object_data_add(context, mesh, operator=self)
+            obj.select_set(True)
+            active_object.select_set(True)
+            bpy.ops.object.join()
+            context.active_object.name = name_active_object
+            bpy.ops.object.mode_set(mode='EDIT')
 
         return {'FINISHED'}
+
+def HoneyCombParameters():
+    HoneyCombParameters = [
+        "rows",
+        "cols",
+        "diam",
+        "edge",
+        ]
+    return HoneyCombParameters

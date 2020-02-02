@@ -443,6 +443,13 @@ bool GHOST_SystemWin32::processEvents(bool waitForEvent)
       ::DispatchMessageW(&msg);
       hasEventHandled = true;
     }
+
+    /* PeekMessage above is allowed to dispatch messages to the wndproc without us
+     * noticing, so we need to check the event manager here to see if there are
+     * events waiting in the queue.
+     */
+    hasEventHandled |= this->m_eventManager->getNumEvents() > 0;
+
   } while (waitForEvent && !hasEventHandled);
 
   return hasEventHandled;
@@ -894,6 +901,7 @@ GHOST_Event *GHOST_SystemWin32::processPointerEvent(GHOST_TEventType type,
 
   switch (type) {
     case GHOST_kEventButtonDown:
+      /* Update window tablet data to be included in event. */
       window->setTabletData(&pointerInfo.tabletData);
       eventHandled = true;
       return new GHOST_EventButton(
@@ -903,6 +911,7 @@ GHOST_Event *GHOST_SystemWin32::processPointerEvent(GHOST_TEventType type,
       return new GHOST_EventButton(
           system->getMilliSeconds(), GHOST_kEventButtonUp, window, pointerInfo.buttonMask);
     case GHOST_kEventCursorMove:
+      /* Update window tablet data to be included in event. */
       window->setTabletData(&pointerInfo.tabletData);
       eventHandled = true;
       return new GHOST_EventCursor(system->getMilliSeconds(),
@@ -1451,7 +1460,10 @@ LRESULT WINAPI GHOST_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
         ////////////////////////////////////////////////////////////////////////
         case WM_CLOSE:
           /* The WM_CLOSE message is sent as a signal that a window
-           * or an application should terminate. */
+           * or an application should terminate. Restore if minimized. */
+          if (IsIconic(hwnd)) {
+            ShowWindow(hwnd, SW_RESTORE);
+          }
           event = processWindowEvent(GHOST_kEventWindowClose, window);
           break;
         case WM_ACTIVATE:
