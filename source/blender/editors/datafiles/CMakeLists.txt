@@ -822,7 +822,7 @@ overlap
 node_bump
 
 node_channel
-#def_icon_blank(840
+folder_redirect
 view_pan
 view_perspective
 view_zoom
@@ -886,7 +886,7 @@ holdout_on
 community
 cone
 cube
-#def_icon_blank(902
+brushes_all
 driver_distance
 driver_rotational_difference
 driver_transform
@@ -1565,11 +1565,11 @@ node_wavelength
 node_waves
 node_wireframe
 
-#def_icon_blank(1582
-#def_icon_blank(1583
-#def_icon_blank(1584
-#def_icon_blank(1585
-#def_icon_blank(1586
+anchor_bottom
+anchor_center
+anchor_left
+anchor_right
+anchor_top
 #def_icon_blank(1587
 #def_icon_blank(1588
 #def_icon_blank(1589
