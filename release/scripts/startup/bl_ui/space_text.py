@@ -44,16 +44,24 @@ class TEXT_HT_header(Header):
         row = layout.row(align=True)
         row.template_ID(st, "text", new="text.new",
                         unlink="text.unlink", open="text.open")
-
+                
         if text:
-            is_osl = text.name.endswith((".osl", ".osl"))
+            text_name = text.name
+            is_osl = text_name.endswith((".osl", ".oso"))
+
+            row = layout.row()
             if is_osl:
-                row.operator("node.shader_script_update",
-                             text="", icon='FILE_REFRESH')
+                row = layout.row()
+                row.operator("node.shader_script_update")
             else:
+
                 row = layout.row()
                 row.active = is_syntax_highlight_supported
                 row.operator("text.run_script", text="", icon='PLAY')
+                
+                row = layout.row()
+                row.active = text_name.endswith(".py")
+                row.prop(text, "use_module")
 
         layout.separator_spacer()
 
