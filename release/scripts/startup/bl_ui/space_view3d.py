@@ -6375,7 +6375,7 @@ class VIEW3D_PT_collections(Panel):
         view = context.space_data
         view_layer = context.view_layer
 
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.prop(view, "use_local_collections")
         layout.separator()
 
