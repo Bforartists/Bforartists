@@ -75,6 +75,7 @@ flip
 string
 set_roll
 clear_roll
+clear_roll
 roll_x_neg
 roll_x_pos
 roll_x_tang_neg
@@ -907,7 +908,7 @@ transfer_data
 transfer_data_layout
 new_group
 add_to_active
-#def_icon_blank(923
+mod_smoke
 parent_set
 parent_clear
 link_data
