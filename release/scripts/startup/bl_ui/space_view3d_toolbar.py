@@ -875,6 +875,7 @@ class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
         row.prop(mesh, "remesh_voxel_size")
         props = row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
         props.mode = 'VOXEL'
+        col.use_property_split = False
         col.prop(mesh, "remesh_voxel_adaptivity")
         col.prop(mesh, "use_remesh_fix_poles")
         col.prop(mesh, "use_remesh_smooth_normals")
