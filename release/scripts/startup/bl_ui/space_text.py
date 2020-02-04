@@ -268,17 +268,6 @@ class TEXT_MT_text(Menu):
                 layout.separator()
                 layout.operator("text.make_internal", icon = "MAKE_INTERNAL")
 
-            layout.separator()
-            row = layout.row()
-            row.active = text.name.endswith(".py")
-            row.prop(text, "use_module")
-            row = layout.row()
-
-            layout.prop(st, "use_live_edit")
-
-            layout.separator()
-            layout.operator("text.run_script", icon = "PLAY")
-
         layout.separator()
 
         layout.menu("TEXT_MT_templates")
