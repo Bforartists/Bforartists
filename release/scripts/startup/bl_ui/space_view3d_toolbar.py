@@ -317,12 +317,12 @@ class VIEW3D_PT_tools_posemode_options(View3DPanel, Panel):
 
         layout.prop(pose, "use_auto_ik")
         layout.prop(pose, "use_mirror_x")
-        col = layout.column()
-        col.active = pose.use_mirror_x and not pose.use_auto_ik
-        col.prop(pose, "use_mirror_relative")
+        if pose.use_mirror_x and not pose.use_auto_ik:
+            row = layout.row()
+            row.separator()
+            row.prop(pose, "use_mirror_relative")
 
-        layout.label(text="Affect Only")
-        layout.prop(tool_settings, "use_transform_pivot_point_align", text="Locations")
+        layout.prop(tool_settings, "use_transform_pivot_point_align", text="Affect Only Locations")
 
 
 # ********** default tools for paint modes ****************
