@@ -277,6 +277,7 @@ class DATA_PT_active_spline(CurveButtonsPanelActive, Panel):
         else:
 
             sub = col.column(align=True)
+            sub.use_property_split = False
             sub.prop(act_spline, "use_cyclic_u")
             if is_surf:
                 sub.prop(act_spline, "use_cyclic_v", text="V")
