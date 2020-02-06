@@ -120,6 +120,7 @@ class BONE_PT_transform(BoneButtonsPanel, Panel):
 
             col = layout.column()
             col.prop(bone, "roll")
+            col.use_property_split = False
             col.prop(bone, "lock")
 
 
@@ -165,6 +166,7 @@ class BONE_PT_curved(BoneButtonsPanel, Panel):
         col = topcol.column(align=True)
         col.prop(bbone, "bbone_rollin", text="Roll In")
         col.prop(bbone, "bbone_rollout", text="Out")
+        col.use_property_split = False
         col.prop(bone, "use_endroll_as_inroll")
 
         col = topcol.column(align=True)

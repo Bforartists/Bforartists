@@ -256,7 +256,7 @@ class DATA_PT_gpencil_onion_skinning_display(DataButtonsPanel, Panel):
         gpd = context.gpencil
 
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.enabled = gpd.users <= 1
 
         layout.prop(gpd, "use_ghosts_always", text="View In Render")
@@ -364,6 +364,8 @@ class DATA_PT_gpencil_strokes(DataButtonsPanel, Panel):
         sub = col.column()
         sub.active = gpd.stroke_thickness_space == 'WORLDSPACE'
         sub.prop(gpd, "pixel_factor", text="Thickness Scale")
+        
+        layout.use_property_split = False
 
         layout.prop(gpd, "use_force_fill_recalc", text="Force Fill Update")
         layout.prop(gpd, "use_adaptive_uv", text="Adaptive UVs")
@@ -383,6 +385,7 @@ class DATA_PT_gpencil_display(DataButtonsPanel, Panel):
 
         layout.prop(gpd, "edit_line_color", text="Edit Line Color")
         if gpl:
+            layout.use_property_split = False
             layout.prop(gpd, "show_stroke_direction", text="Show Stroke Directions")
 
 

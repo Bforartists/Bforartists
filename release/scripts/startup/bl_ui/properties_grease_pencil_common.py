@@ -912,6 +912,7 @@ class GreasePencilLayerAdjustmentsPanel:
         col.prop_search(gpl, "viewlayer_render", scene, "view_layers", text="View Layer")
 
         col = layout.row(align=True)
+        col.use_property_split = False
         col.prop(gpl, "lock_material")
 
 
@@ -951,6 +952,7 @@ class GreasePencilLayerDisplayPanel:
         col.prop(gpl, "channel_color")
 
         col = layout.row(align=True)
+        col.use_property_split = False
         col.prop(gpl, "use_solo_mode", text="Show Only On Keyframed")
 
 
