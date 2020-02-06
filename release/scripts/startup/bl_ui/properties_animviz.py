@@ -94,7 +94,7 @@ class MotionPathButtonsPanel_display:
 
         mps = avs.motion_path
 
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=False, even_rows=False, align=True)
