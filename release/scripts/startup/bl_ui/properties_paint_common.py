@@ -610,6 +610,7 @@ def brush_settings(layout, context, brush, popover=False):
 
             if do_persistent:
                 layout.separator()
+                layout.use_property_split = False
                 layout.prop(brush, "use_persistent")
                 layout.operator("sculpt.set_persistent_base")
                 layout.separator()
@@ -629,6 +630,7 @@ def brush_settings(layout, context, brush, popover=False):
         
         if brush.sculpt_tool == 'SCRAPE':
             row = layout.row()
+            row.use_property_split = False
             row.prop(brush, "invert_to_scrape_fill", text="Invert to Fill")
 
         if brush.sculpt_tool == 'FILL':
@@ -921,13 +923,16 @@ def brush_texture_settings(layout, brush, sculpt):
         col = layout.column()
         col.prop(tex_slot, "angle", text="Angle")
         if tex_slot.has_texture_angle_source:
+            col.use_property_split = False
             col.prop(tex_slot, "use_rake", text="Rake")
 
             if brush.brush_capabilities.has_random_texture_angle and tex_slot.has_random_texture_angle:
                 if sculpt:
                     if brush.sculpt_capabilities.has_random_texture_angle:
+                        col.use_property_split = False
                         col.prop(tex_slot, "use_random", text="Random")
                         if tex_slot.use_random:
+                            col.use_property_split = True
                             col.prop(tex_slot, "random_angle", text="Random Angle")
                 else:
                     col.prop(tex_slot, "use_random", text="Random")
