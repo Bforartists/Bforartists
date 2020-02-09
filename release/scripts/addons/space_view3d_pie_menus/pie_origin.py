@@ -267,7 +267,7 @@ class PIE_MT_OriginPivot(Menu):
                         icon='NONE').type = 'ORIGIN_GEOMETRY'
 
 
-        elif obj and obj.type == 'MESH' and obj.mode in {'EDIT'}:						
+        elif obj and obj.type == 'MESH' and obj.mode in {'EDIT'}:
             # 4 - LEFT
             pie.operator("object.origintomass_edit", text="Origin to Center of Mass",
                          icon='NONE')
@@ -279,7 +279,7 @@ class PIE_MT_OriginPivot(Menu):
                         icon='TRIA_DOWN')
 			# 8 - TOP
             pie.operator("object.setorigintoselected_edit", text="Origin To Selected",
-                        icon='SNAP_INCREMENT')		
+                        icon='SNAP_INCREMENT')
             # 7 - TOP - LEFT
             pie.operator("object.geometrytoorigin_edit", text="Geometry To Origin",
                         icon='NONE')

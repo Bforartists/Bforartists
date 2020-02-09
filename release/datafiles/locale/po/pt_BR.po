@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Dalai Felinto, Bruno Gonçalves Pirajá, Samuel Arataca, Daniel Tavares, Moraes Junior <ivan.paulos.tome@yandex.com>\n"
@@ -9434,14 +9434,6 @@ msgid "Maximum number of additional cells"
 msgstr "Número máximo de células adicionais."
 
 
-msgid "Density"
-msgstr "Densidade"
-
-
-msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Define quanto a densidade afeta o movimento da fumaça (valores mais altos resultam em fumaça subindo mais rápido)."
-
-
 msgid "Slice the whole domain object"
 msgstr "Fatia o objeto de domínio como um todo."
 
@@ -9452,18 +9444,6 @@ msgstr "Único"
 
 msgid "Perform a single slice of the domain object"
 msgstr "Perfaz um fatiamento único (constante) do objeto de domínio."
-
-
-msgid "Heat"
-msgstr "Calor"
-
-
-msgid "How much heat affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Define quanto o calor afeta o movimento da fumaça (valores mais altos resultam em fumaça subindo mais rápido)."
-
-
-msgid "Speed of the burning reaction (use larger values for smaller flame)"
-msgstr "Velocidade da reação de queima (use valores maiores para chamas menores)."
 
 
 msgid "End"
@@ -9526,6 +9506,10 @@ msgid "Blue component of the color field"
 msgstr "O componente azul do espaço de cores."
 
 
+msgid "Density"
+msgstr "Densidade"
+
+
 msgid "Quantity of soot in the fluid"
 msgstr "Quantidade de fuligem presente no fluido."
 
@@ -9544,6 +9528,10 @@ msgstr "Combustível"
 
 msgid "Fuel field"
 msgstr "Espaço de combustível"
+
+
+msgid "Heat"
+msgstr "Calor"
 
 
 msgid "Temperature of the fluid"
@@ -9654,18 +9642,6 @@ msgid "Smoke flame grid"
 msgstr "A grade de chamas de fumaça."
 
 
-msgid "Ignition"
-msgstr "Ignição"
-
-
-msgid "Minimum temperature of flames"
-msgstr "Temperatura mínima das chamas."
-
-
-msgid "Maximum temperature of flames"
-msgstr "Temperatura máxima das chamas."
-
-
 msgid "Smoke"
 msgstr "Fumaça"
 
@@ -9750,10 +9726,6 @@ msgid "Noise Method"
 msgstr "Método de ruído"
 
 
-msgid "Noise method which is used for creating the high resolution"
-msgstr "Método de ruído que é usado para a criação de alta resolução."
-
-
 msgid "Wavelet"
 msgstr "Pequena ondulação"
 
@@ -9804,10 +9776,6 @@ msgstr "Compressão rápida mas não tão eficaz."
 
 msgid "Heavy"
 msgstr "Pesada"
-
-
-msgid "Max Res"
-msgstr "Resolução máxima"
 
 
 msgid "Toggle visualization of the velocity field as needles"
@@ -9862,10 +9830,6 @@ msgid "Delete"
 msgstr "Apagar"
 
 
-msgid "Buoyancy"
-msgstr "Flutuabilidade"
-
-
 msgid "p0"
 msgstr "Ponto inicial"
 
@@ -9904,14 +9868,6 @@ msgstr "Renderiza em um espaço de simulação durante o mapeamento dos seus val
 
 msgid "Dissolve Smoke"
 msgstr "Dissolver fumaça"
-
-
-msgid "Enable smoke to disappear over time"
-msgstr "Habilita o desaparecimento da fumaça com o tempo."
-
-
-msgid "Using 1/x "
-msgstr "Usa a dissolução logarítmica, tornando-a progressivamente mais lenta (1/x)"
 
 
 msgid "Tracer"
@@ -9956,10 +9912,6 @@ msgstr "Exponente de viscosidade"
 
 msgid "Negative exponent for the viscosity value (to simplify entering small values e.g. 5*10^-6)"
 msgstr "Exponente negativo para o valor de viscosidade (para simplificar, entre com pequenos valores, ex 5*10^-6)."
-
-
-msgid "Amount of turbulence/rotation in fluid"
-msgstr "Montante de turbulência ou rotação dentro do fluido (e outras simulações)."
 
 
 msgid "Fluid Mesh Velocity"
@@ -10124,10 +10076,6 @@ msgstr "Quantidade de velocidade direcional fornecida pelas normais."
 
 msgid "Amount of random velocity"
 msgstr "Quantidade de velocidade aleatória."
-
-
-msgid "Factor for smoke emitted from inside the mesh volume"
-msgstr "Fator para fumaça emitida a partir de dentro do volume de malha."
 
 
 msgid "Freestyle Line Set"
@@ -12273,10 +12221,6 @@ msgid "Rotate"
 msgstr "Rotacionar"
 
 
-msgid "Topology"
-msgstr "Topologia"
-
-
 msgid "Secondary Color"
 msgstr "Cor secundária"
 
@@ -13233,24 +13177,12 @@ msgid "Option for curve-deform: make deformed child to stretch along entire path
 msgstr "Opções para deformação por curvas: Faz com que as crianças deformadas se estiquem ao longo do caminho todo."
 
 
-msgid "Use UV for mapping"
-msgstr "Usar para mapeamento UV"
-
-
-msgid "Uses the UV values as Generated textured coordinates"
-msgstr "Usa os valores UV como coordenadas geradas por textura."
-
-
 msgid "Surface Curve"
 msgstr "Superfície de curva"
 
 
 msgid "Curve data-block used for storing surfaces"
 msgstr "Blocos de dados de curvas usado para armazenar as superfícies."
-
-
-msgid "Use UV for Mapping"
-msgstr "Usar para mapeamento UV"
 
 
 msgid "Text Curve"
@@ -15737,24 +15669,12 @@ msgid "Lock Location"
 msgstr "Travar as localizações"
 
 
-msgid "Lock editing of location in the interface"
-msgstr "Trava a edição da localização na interface."
-
-
 msgid "Lock Rotation"
 msgstr "Travar as rotações"
 
 
-msgid "Lock editing of rotation in the interface"
-msgstr "Trava a edição da rotação na interface."
-
-
 msgid "Lock Rotation (4D Angle)"
 msgstr "Travar as rotações (ângulos 4D)"
-
-
-msgid "Lock editing of 'angle' component of four-component rotations in the interface"
-msgstr "Trava a edição dos componentes dos \"ângulos\" das rotações formadas por quatro componentes na interface."
 
 
 msgid "Lock Rotations (4D)"
@@ -15767,10 +15687,6 @@ msgstr "Permite o travamento da edição dos quatro componentes das rotações i
 
 msgid "Lock Scale"
 msgstr "Travar os escalonamentos"
-
-
-msgid "Lock editing of scale in the interface"
-msgstr "Trava a edição de escala na interface."
 
 
 msgid "Material Slots"
@@ -23825,6 +23741,10 @@ msgstr "Mapeamento de arestas"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Método utilizado para mapear as arestas da fonte para aquelas presentes na destinação."
+
+
+msgid "Topology"
+msgstr "Topologia"
 
 
 msgid "Copy from identical topology meshes"
@@ -58651,6 +58571,10 @@ msgid "Settings for particle fluids physics"
 msgstr "Configurações para a física de partículas de fluido."
 
 
+msgid "Buoyancy"
+msgstr "Flutuabilidade"
+
+
 msgid "Artificial buoyancy force in negative gravity direction based on pressure differences inside the fluid"
 msgstr "Força de flutuação artificial na direção da gravidade negativa com base em diferenças de pressão no interior do fluido."
 
@@ -73590,40 +73514,12 @@ msgid "Cursor Y"
 msgstr "Cursor Y"
 
 
-msgid "Display Color:"
-msgstr "Cores para exibição:"
-
-
-msgid "Auto Handle Smoothing:"
-msgstr "Suavização automática de manípulos:"
-
-
 msgid "Interpolation:"
 msgstr "Interpolação:"
 
 
 msgid "None for Enum/Boolean"
 msgstr "Referencial nulo para enumeradores ou booleanos"
-
-
-msgid "Key:"
-msgstr "Chaves:"
-
-
-msgid "Frame:"
-msgstr "Quadro:"
-
-
-msgid "Value:"
-msgstr "Valor:"
-
-
-msgid "Left Handle:"
-msgstr "Manípulo esquerdo:"
-
-
-msgid "Right Handle:"
-msgstr "Manípulo direito:"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -73648,6 +73544,10 @@ msgstr "Propriedades:"
 
 msgid "Driver Value:"
 msgstr "Valor de controlador:"
+
+
+msgid "Value:"
+msgstr "Valor:"
 
 
 msgid "Update Dependencies"
@@ -73935,28 +73835,12 @@ msgid "Verts:%s | Tris:%s%s"
 msgstr "Vértices: %s | Triângulos: %s%s"
 
 
-msgid "Strip Extents:"
-msgstr "Extensão da faixa:"
-
-
-msgid "Playback Settings:"
-msgstr "Configurações de reprodução:"
-
-
-msgid "Action Extents:"
-msgstr "Extensão da ação:"
-
-
 msgid "Sync Length"
 msgstr "Sincronizar comprimento"
 
 
 msgid "Now"
 msgstr "Agora"
-
-
-msgid "Evaluation"
-msgstr "Avaliação"
 
 
 msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
@@ -74313,10 +74197,6 @@ msgstr "Clipe de filme não encontrado."
 
 msgid "Mask not found"
 msgstr "Máscara não encontrada."
-
-
-msgid "Start and end frame are not set"
-msgstr "Quadro inicial e final não configurados."
 
 
 msgid "File '%s' could not be loaded"

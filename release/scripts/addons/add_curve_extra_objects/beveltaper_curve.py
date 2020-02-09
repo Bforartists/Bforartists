@@ -313,7 +313,7 @@ class add_tapercurve(Operator):
         col_sub.active = self.link2
         row.prop(self, "link2", toggle=True, text="", icon="LINKED")
         col_sub.prop(self, "diff")
-        
+
         col = layout.column()
         col.row().prop(self, "edit_mode", expand=True)
 
@@ -325,7 +325,7 @@ class add_tapercurve(Operator):
             self.scale_ends2 = self.scale_ends1 = self.scale_mid - self.diff
 
         add_taper(self, context)
-        
+
         if self.edit_mode:
             bpy.ops.object.mode_set(mode = 'EDIT')
         else:
@@ -410,7 +410,7 @@ class add_bevelcurve(Operator, AddObjectHelper):
             add_type4(self, context)
         if self.types == 5:
             add_type5(self, context)
-            
+
         if self.edit_mode:
             bpy.ops.object.mode_set(mode = 'EDIT')
         else:

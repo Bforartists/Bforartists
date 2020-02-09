@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -10824,14 +10824,6 @@ msgid "Maximum number of additional cells"
 msgstr "Найбільша кількість додаткових комірок"
 
 
-msgid "Density"
-msgstr "Щільність"
-
-
-msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Наскільки щільність впливає на рух диму (більше значення призводить до швидшого піднімання диму)"
-
-
 msgid "Slice the whole domain object"
 msgstr "Розкраяти увесь об'єкт домену"
 
@@ -10842,18 +10834,6 @@ msgstr "Один"
 
 msgid "Perform a single slice of the domain object"
 msgstr "Здійснити одиничноий розкрій об'єкта домену"
-
-
-msgid "Heat"
-msgstr "Тепло"
-
-
-msgid "How much heat affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Як тепло впливає на рух диму (більше значення призводить до швидшого піднімання диму)"
-
-
-msgid "Speed of the burning reaction (use larger values for smaller flame)"
-msgstr "Швидкість реакції горіння (більші значення - менше полум'я)"
 
 
 msgid "End"
@@ -10920,6 +10900,10 @@ msgid "Blue component of the color field"
 msgstr "Синій компонент поля кольору"
 
 
+msgid "Density"
+msgstr "Щільність"
+
+
 msgid "Quantity of soot in the fluid"
 msgstr "Кількість сажі в рідині"
 
@@ -10938,6 +10922,10 @@ msgstr "Паливо"
 
 msgid "Fuel field"
 msgstr "Поле палива"
+
+
+msgid "Heat"
+msgstr "Тепло"
 
 
 msgid "Temperature of the fluid"
@@ -11052,18 +11040,6 @@ msgid "Smoke flame grid"
 msgstr "Решітка полум'я"
 
 
-msgid "Ignition"
-msgstr "Спалах"
-
-
-msgid "Minimum temperature of flames"
-msgstr "Найменша температура полум'я"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Найбільша температура полум'я"
-
-
 msgid "Smoke"
 msgstr "Дим"
 
@@ -11156,10 +11132,6 @@ msgid "Noise Method"
 msgstr "Метод шуму"
 
 
-msgid "Noise method which is used for creating the high resolution"
-msgstr "Метод шуму, що використовується для створення високої роздільності"
-
-
 msgid "Wavelet"
 msgstr "Брижі"
 
@@ -11214,10 +11186,6 @@ msgstr "Швидке, але не таке ефективне стискання
 
 msgid "Heavy"
 msgstr "Сильно"
-
-
-msgid "Max Res"
-msgstr "Найбільша роздільність"
 
 
 msgid "Display Velocity"
@@ -11276,10 +11244,6 @@ msgid "Delete"
 msgstr "Видалення"
 
 
-msgid "Buoyancy"
-msgstr "Плавучість"
-
-
 msgid "p0"
 msgstr "т0"
 
@@ -11332,14 +11296,6 @@ msgid "Dissolve Smoke"
 msgstr "Розчинення диму"
 
 
-msgid "Enable smoke to disappear over time"
-msgstr "Увімкнути зникнення диму з часом"
-
-
-msgid "Using 1/x "
-msgstr "Використати 1/x "
-
-
 msgid "Tracer"
 msgstr "Слідкуючі"
 
@@ -11390,10 +11346,6 @@ msgstr "Показник в'язкості"
 
 msgid "Negative exponent for the viscosity value (to simplify entering small values e.g. 5*10^-6)"
 msgstr "Від'ємний показник значення в'язкості (для спрощення введення малих значень, наприклад, 5 * 10 ^ -6)"
-
-
-msgid "Amount of turbulence/rotation in fluid"
-msgstr "Кількість турбулентності/обертання у рідині"
 
 
 msgid "Fluid Mesh Velocity"
@@ -11566,10 +11518,6 @@ msgstr "Швидкість у напрямі нормалі"
 
 msgid "Amount of random velocity"
 msgstr "Величина випадкової швидкості"
-
-
-msgid "Factor for smoke emitted from inside the mesh volume"
-msgstr "Фактор для диму, емітованого зсередини об'єму сіті"
 
 
 msgid "Freestyle Line Set"
@@ -14937,10 +14885,6 @@ msgid "Rotate"
 msgstr "Оберт"
 
 
-msgid "Topology"
-msgstr "Топологія"
-
-
 msgid "Secondary Color"
 msgstr "Вторинний колір"
 
@@ -16037,24 +15981,12 @@ msgid "Option for curve-deform: make deformed child to stretch along entire path
 msgstr "Опція для деформації за кривою: деформований нащадок буде розтягнутий уздовж всього шляху"
 
 
-msgid "Use UV for mapping"
-msgstr "Використати UV для розкладання"
-
-
-msgid "Uses the UV values as Generated textured coordinates"
-msgstr "Використовує UV-значення як згенеровані текстурні координати"
-
-
 msgid "Surface Curve"
 msgstr "Крива поверхні"
 
 
 msgid "Curve data-block used for storing surfaces"
 msgstr "Блок даних кривої, що використовується для зберігання поверхонь"
-
-
-msgid "Use UV for Mapping"
-msgstr "Вжити UV для розкладання"
 
 
 msgid "Text Curve"
@@ -19423,24 +19355,12 @@ msgid "Lock Location"
 msgstr "Заблокувати розташування"
 
 
-msgid "Lock editing of location in the interface"
-msgstr "Заблокувати в інтерфейсі редагування розташування"
-
-
 msgid "Lock Rotation"
 msgstr "Блокувати обертання"
 
 
-msgid "Lock editing of rotation in the interface"
-msgstr "Заблокувати в інтерфейсі редагування обертання"
-
-
 msgid "Lock Rotation (4D Angle)"
 msgstr "Блокувати обертання (4D-кут)"
-
-
-msgid "Lock editing of 'angle' component of four-component rotations in the interface"
-msgstr "Заблокувати в інтерфейсі редагування компоненту 'кут' для 4-компонентного обертання"
 
 
 msgid "Lock Rotations (4D)"
@@ -19453,10 +19373,6 @@ msgstr "Заблокувати в інтерфейсі редагування 4-
 
 msgid "Lock Scale"
 msgstr "Заблокувати масштабування"
-
-
-msgid "Lock editing of scale in the interface"
-msgstr "Заблокувати в інтерфейсі редагування масштабування"
 
 
 msgid "Material Slots"
@@ -28730,6 +28646,10 @@ msgstr "Розкладка ребер"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Метод, використовуваний для розкладки ребер джерела на об'єкті призначення"
+
+
+msgid "Topology"
+msgstr "Топологія"
 
 
 msgid "Copy from identical topology meshes"
@@ -69988,6 +69908,10 @@ msgid "Settings for particle fluids physics"
 msgstr "Параметри фізики частинок рідини"
 
 
+msgid "Buoyancy"
+msgstr "Плавучість"
+
+
 msgid "Artificial buoyancy force in negative gravity direction based on pressure differences inside the fluid"
 msgstr "Штучна виштовхувальна сила, протилежна до тяжіння, на основі різниці тисків всередині рідини"
 
@@ -82312,16 +82236,8 @@ msgid "Clumping amount"
 msgstr "Величина скупчення"
 
 
-msgid "Temperature Diff."
-msgstr "Різниця Температур"
-
-
 msgid "Reaction Speed"
 msgstr "Швидкість Реакції"
-
-
-msgid "Temperature Ignition"
-msgstr "Температура Запалювання"
 
 
 msgid "Add Resolution"
@@ -90778,40 +90694,12 @@ msgid "Cursor Y"
 msgstr "Курсор Y"
 
 
-msgid "Display Color:"
-msgstr "Показати колір:"
-
-
-msgid "Auto Handle Smoothing:"
-msgstr "Згладження авто держаків:"
-
-
 msgid "Interpolation:"
 msgstr "Інтерполяція:"
 
 
 msgid "None for Enum/Boolean"
 msgstr "Нема для Нумерованих/Булевих"
-
-
-msgid "Key:"
-msgstr "Ключ:"
-
-
-msgid "Frame:"
-msgstr "Кадр:"
-
-
-msgid "Value:"
-msgstr "Значення:"
-
-
-msgid "Left Handle:"
-msgstr "Лівий важіль:"
-
-
-msgid "Right Handle:"
-msgstr "Правий важіль:"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -90844,6 +90732,10 @@ msgstr "Вираз"
 
 msgid "Add Input Variable"
 msgstr "Додати Змінну Уводу"
+
+
+msgid "Value:"
+msgstr "Значення:"
 
 
 msgid "Update Dependencies"
@@ -91219,28 +91111,12 @@ msgid "Verts:%s | Faces:%s | Tris:%s | Objects:%s/%s%s%s"
 msgstr "Вершини:%s | Грані:%s | Трикутники:%s | Об'єкти:%s/%s%s%s"
 
 
-msgid "Strip Extents:"
-msgstr "За межами смужки:"
-
-
-msgid "Playback Settings:"
-msgstr "Параметри відтворення:"
-
-
-msgid "Action Extents:"
-msgstr "Дія за межами:"
-
-
 msgid "Sync Length"
 msgstr "Узгодити тривалість"
 
 
 msgid "Now"
 msgstr "Зараз"
-
-
-msgid "Evaluation"
-msgstr "Розрахунок"
 
 
 msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
@@ -91774,10 +91650,6 @@ msgstr "Відеокліп не знайдено"
 
 msgid "Mask not found"
 msgstr "Маску не знайдено"
-
-
-msgid "Start and end frame are not set"
-msgstr "Початковий та кінцевий кадри не вказані"
 
 
 msgid "File '%s' could not be loaded"
@@ -94577,10 +94449,6 @@ msgstr "Спроба перезавантажити або перерозміс�
 
 msgid "Win"
 msgstr "Win"
-
-
-msgid "OSkey"
-msgstr "OSkey"
 
 
 msgid "Bksp"

@@ -229,14 +229,14 @@ def nodemargin(self, context):
 	for i in ntree.nodes:
 		if i.type == 'GROUP':
 			n_groups.append(i)
-			
+
 	while n_groups:
 		j = n_groups.pop(0)
 		nodes_iterate(j.node_tree)
 		for i in j.node_tree.nodes:
 			if i.type == 'GROUP':
 				n_groups.append(i)
-		
+
 	nodes_iterate(ntree)
 
 	# arrange nodes + this center nodes together

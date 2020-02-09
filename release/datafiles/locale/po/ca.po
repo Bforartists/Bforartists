@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -3488,10 +3488,6 @@ msgid "Single"
 msgstr "Esborrar Origen"
 
 
-msgid "Heat"
-msgstr "Calor"
-
-
 msgid "Start"
 msgstr "Començar Joc"
 
@@ -3512,6 +3508,10 @@ msgid "Red"
 msgstr "Render"
 
 
+msgid "Heat"
+msgstr "Calor"
+
+
 msgid "Color Grid"
 msgstr "Desparentar"
 
@@ -3522,14 +3522,6 @@ msgstr "Anterior"
 
 msgid "Smoke Grid Resolution"
 msgstr "Seleccionar connectats"
-
-
-msgid "Ignition"
-msgstr "Finestra de Render"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Esborrar"
 
 
 msgid "Smoke Color"
@@ -3582,10 +3574,6 @@ msgstr "Esborrar Rotació"
 
 msgid "Heavy"
 msgstr "Pesat"
-
-
-msgid "Max Res"
-msgstr "Joc"
 
 
 msgid "Delete"
@@ -4692,20 +4680,8 @@ msgid "Follow"
 msgstr "Desparentar"
 
 
-msgid "Use UV for mapping"
-msgstr "Image Displist"
-
-
-msgid "Uses the UV values as Generated textured coordinates"
-msgstr "Texte"
-
-
 msgid "Surface Curve"
 msgstr "Superfície"
-
-
-msgid "Use UV for Mapping"
-msgstr "Image Displist"
 
 
 msgid "Text Curve"
@@ -27846,24 +27822,8 @@ msgid "Cursor Y"
 msgstr "Image Displist"
 
 
-msgid "Display Color:"
-msgstr "Mostrar propietats de les arestes"
-
-
 msgid "Interpolation:"
 msgstr "Esborrar Rotació"
-
-
-msgid "Value:"
-msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Left Handle:"
-msgstr "Tangents lineals"
-
-
-msgid "Right Handle:"
-msgstr "Autotangents"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -27876,6 +27836,10 @@ msgstr "Image Displist"
 
 msgid "Driver Value:"
 msgstr "Afegir Tira"
+
+
+msgid "Value:"
+msgstr "Mostrar propietats de les arestes"
 
 
 msgid "Update Dependencies"
@@ -28060,10 +28024,6 @@ msgstr "Image Displist"
 
 msgid "Mask not found"
 msgstr "Guardar imatge"
-
-
-msgid "Start and end frame are not set"
-msgstr "Començar a renderitzar una seqüència"
 
 
 msgid "Cannot apply effects to audio sequence strips"

@@ -50,6 +50,11 @@ import os
 
 handler_2d = None
 handler_3d = None
+active_area = None
+active_area = None
+active_window = None
+active_region = None
+
 reports = []
 
 mappingdict = {
@@ -67,7 +72,7 @@ verification_icons = {
     'uploading': 'vs_uploading.png',
     'on_hold': 'vs_on_hold.png',
     'validated': None,
-    'rejected': None
+    'rejected': 'vs_rejected.png'
 
 }
 
@@ -133,7 +138,8 @@ class Report():
                     pass;
 
     def draw(self, x, y):
-        ui_bgl.draw_text(self.text, x, y + 8, 16, self.draw_color)
+        if bpy.context.area == active_area:
+            ui_bgl.draw_text(self.text, x, y + 8, 16, self.draw_color)
 
 
 def get_asset_under_mouse(mousex, mousey):
@@ -698,6 +704,7 @@ def draw_callback_2d_upload_preview(self, context):
 
     props = utils.get_upload_props()
     if props != None and ui_props.draw_tooltip:
+
         if ui_props.asset_type != 'BRUSH':
             ui_props.thumbnail_image = props.thumbnail
         else:
@@ -889,8 +896,12 @@ def draw_callback_2d_search(self, context):
                            ui_props.mouse_y - linelength, 2, white)
 
 
+
 def draw_callback_3d(self, context):
     ''' Draw snapped bbox while dragging and in the future other blenderkit related stuff. '''
+    if not utils.guard_from_crash():
+        return;
+
     ui = context.scene.blenderkitUI
 
     if ui.dragging and ui.asset_type == 'MODEL':
@@ -1173,6 +1184,10 @@ def get_largest_3dview():
                     for r in a.regions:
                         if r.type == 'WINDOW':
                             region = r
+    global active_area, active_window, active_region
+    active_window = maxw
+    active_area = maxa
+    active_region = region
     return maxw, maxa, region
 
 
@@ -1417,6 +1432,8 @@ class AssetBarOperator(bpy.types.Operator):
                     ui_props.draw_tooltip = True
 
                     ui_props.tooltip = asset_data['tooltip']
+                    # bpy.ops.wm.call_menu(name='OBJECT_MT_blenderkit_asset_menu')
+
                 else:
                     ui_props.draw_tooltip = False
 
@@ -1476,7 +1493,7 @@ class AssetBarOperator(bpy.types.Operator):
                     if not asset_data['can_download']:
                         message = 'Asset locked. Find out how to unlock Everything and ...'
                         link_text = 'support all BlenderKit artists.'
-                        url = paths.get_bkit_url() + '/get-blenderkit/' + asset_data['id']
+                        url = paths.get_bkit_url() + '/get-blenderkit/' + asset_data['id'] + '/?from_addon'
                         bpy.ops.wm.blenderkit_url_dialog('INVOKE_REGION_WIN', url=url, message=message,
                                                          link_text=link_text)
                         return {'RUNNING_MODAL'}
@@ -1558,7 +1575,8 @@ class AssetBarOperator(bpy.types.Operator):
 
                         else:
                             # first, test if object can have material applied.
-                            if object is not None and not object.is_library_indirect:
+                            #TODO add other types here if droppable.
+                            if object is None or object.is_library_indirect and object.type =='MESH' :
                                 target_object = object.name
                                 # create final mesh to extract correct material slot
                                 depsgraph = bpy.context.evaluated_depsgraph_get()
@@ -1696,30 +1714,38 @@ class AssetBarOperator(bpy.types.Operator):
         if sr is None:
             bpy.context.scene['search results'] = []
 
-        if context.area.type == 'VIEW_3D':
-            # the arguments we pass the the callback
-            args = (self, context)
-            self.window = context.window
-            self.area = context.area
-            self.scene = bpy.context.scene
-            self.has_quad_views = len(bpy.context.area.spaces[0].region_quadviews) > 0
-
-            for r in self.area.regions:
-                if r.type == 'WINDOW':
-                    self.region = r
-
-            update_ui_size(self.area, self.region)
-
-            self._handle_2d = bpy.types.SpaceView3D.draw_handler_add(draw_callback_2d, args, 'WINDOW', 'POST_PIXEL')
-            self._handle_3d = bpy.types.SpaceView3D.draw_handler_add(draw_callback_3d, args, 'WINDOW', 'POST_VIEW')
-
-            context.window_manager.modal_handler_add(self)
-            ui_props.assetbar_on = True
-            return {'RUNNING_MODAL'}
-        else:
-
+        if context.area.type != 'VIEW_3D':
             self.report({'WARNING'}, "View3D not found, cannot run operator")
             return {'CANCELLED'}
+
+        # the arguments we pass the the callback
+        args = (self, context)
+
+        self.window = context.window
+        self.area = context.area
+        self.scene = bpy.context.scene
+
+
+
+        self.has_quad_views = len(bpy.context.area.spaces[0].region_quadviews) > 0
+
+        for r in self.area.regions:
+            if r.type == 'WINDOW':
+                self.region = r
+
+        global active_window, active_area, active_region
+        active_window = self.window
+        active_area = self.area
+        active_region = self.region
+
+        update_ui_size(self.area, self.region)
+
+        self._handle_2d = bpy.types.SpaceView3D.draw_handler_add(draw_callback_2d, args, 'WINDOW', 'POST_PIXEL')
+        self._handle_3d = bpy.types.SpaceView3D.draw_handler_add(draw_callback_3d, args, 'WINDOW', 'POST_VIEW')
+
+        context.window_manager.modal_handler_add(self)
+        ui_props.assetbar_on = True
+        return {'RUNNING_MODAL'}
 
     def execute(self, context):
         return {'RUNNING_MODAL'}
@@ -1743,6 +1769,29 @@ class TransferBlenderkitData(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class UndoWithContext(bpy.types.Operator):
+    """Regenerate cobweb"""
+    bl_idname = "wm.undo_push_context"
+    bl_label = "BlnenderKit undo push"
+    bl_description = "BlenderKit undo push with fixed context"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    # def modal(self, context, event):
+    #     return {'RUNNING_MODAL'}
+
+    message = StringProperty('Undo Message', default = 'BlenderKit operation')
+
+    def execute(self, context):
+        C_dict = bpy.context.copy()
+        C_dict.update(region='WINDOW')
+        if context.area is None or context.area.type != 'VIEW_3D':
+            w, a, r = get_largest_3dview()
+            override = {'window': w, 'screen': w.screen, 'area': a, 'region': r}
+            C_dict.update(override)
+        bpy.ops.ed.undo_push(C_dict, 'INVOKE_REGION_WIN', message = self.message)
+        return {'FINISHED'}
+
+
 class RunAssetBarWithContext(bpy.types.Operator):
     """Regenerate cobweb"""
     bl_idname = "object.run_assetbar_fix_context"
@@ -1761,17 +1810,27 @@ class RunAssetBarWithContext(bpy.types.Operator):
             override = {'window': w, 'screen': w.screen, 'area': a, 'region': r}
             C_dict.update(override)
         bpy.ops.view3d.blenderkit_asset_bar(C_dict, 'INVOKE_REGION_WIN', keep_running=True, do_search=False)
-        return {'RUNNING_MODAL'}
+        return {'FINISHED'}
 
 
 classess = (
     AssetBarOperator,
     RunAssetBarWithContext,
-    TransferBlenderkitData
+    TransferBlenderkitData,
+    UndoWithContext
 )
 
 # store keymap items here to access after registration
 addon_keymapitems = []
+
+#@persistent
+def pre_load(context):
+    ui_props = bpy.context.scene.blenderkitUI
+    ui_props.assetbar_on = False
+    ui_props.turn_off = True
+    preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    preferences.login_attempt = False
+
 
 
 def register_ui():
@@ -1803,6 +1862,7 @@ def register_ui():
 
 def unregister_ui():
     global handler_2d, handler_3d
+    pre_load(bpy.context)
 
     bpy.types.SpaceView3D.draw_handler_remove(handler_2d, 'WINDOW')
     bpy.types.SpaceView3D.draw_handler_remove(handler_3d, 'WINDOW')

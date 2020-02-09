@@ -87,8 +87,8 @@ def upload_file(upload_data, f):
     upload_create_url = paths.get_api_url() + 'uploads/'
     upload = rerequests.post(upload_create_url, json=upload_info, headers=headers, verify=True)
     upload = upload.json()
-
-    chunk_size = 1024 * 256
+    #
+    chunk_size = 1024 * 1024 * 2
     utils.pprint(upload)
     # file gets uploaded here:
     uploaded = False
@@ -103,8 +103,10 @@ def upload_file(upload_data, f):
                 if upload_response.status_code == 200:
                     uploaded = True
                 else:
+                    print(upload_response.text)
                     bg_blender.progress(f'Upload failed, retry. {a}')
             except Exception as e:
+                print(e)
                 bg_blender.progress('Upload %s failed, retrying' % f['type'])
                 time.sleep(1)
 

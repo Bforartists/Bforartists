@@ -185,7 +185,7 @@ class Unfolder:
         bm = bmesh.from_edit_mesh(ob.data)
         self.mesh = Mesh(bm, ob.matrix_world)
         self.mesh.check_correct()
-    
+
     def __del__(self):
         if not self.do_create_uvmap:
             self.mesh.delete_uvmap()
@@ -264,7 +264,7 @@ class Unfolder:
                 bk.use_pass_direct, bk.use_pass_indirect, bk.use_pass_color = False, False, True
                 sce.cycles.samples = 1
             else:
-                sce.cycles.samples = properties.bake_samples                
+                sce.cycles.samples = properties.bake_samples
             if sce.cycles.bake_type == 'COMBINED':
                 bk.use_pass_direct, bk.use_pass_indirect = True, True
                 bk.use_pass_diffuse, bk.use_pass_glossy, bk.use_pass_transmission, bk.use_pass_subsurface, bk.use_pass_ambient_occlusion, bk.use_pass_emit = True, False, False, True, True, True
@@ -302,10 +302,10 @@ class Mesh:
             if edge.main_faces:
                 edge.calculate_angle()
         self.copy_freestyle_marks()
-    
+
     def delete_uvmap(self):
         self.data.loops.layers.uv.remove(self.looptex) if self.looptex else None
-    
+
     def copy_freestyle_marks(self):
         # NOTE: this is a workaround for NotImplementedError on bmesh.edges.layers.freestyle
         mesh = bpy.data.meshes.new("unfolder_temp")
@@ -313,7 +313,7 @@ class Mesh:
         for bmedge, edge in self.edges.items():
             edge.freestyle = mesh.edges[bmedge.index].use_freestyle_mark
         bpy.data.meshes.remove(mesh)
-    
+
     def mark_cuts(self):
         for bmedge, edge in self.edges.items():
             if edge.is_main_cut and not bmedge.is_boundary:
@@ -329,7 +329,7 @@ class Mesh:
             diameter = max((center - vertex.co).length for vertex in face.verts)
             threshold = 0.01 * diameter
             return any(abs(v.co.dot(face.normal) - plane_d) > threshold for v in face.verts)
-        
+
         null_edges = {e for e in self.edges.keys() if e.calc_length() < epsilon and e.link_faces}
         null_faces = {f for f in self.data.faces if f.calc_area() < epsilon}
         twisted_faces = {f for f in self.data.faces if is_twisted(f)}
@@ -452,7 +452,7 @@ class Mesh:
         def add_sticker(uvedge, index, target_uvedge):
             uvedge.sticker = Sticker(uvedge, default_width, index, target_uvedge)
             uvedge.uvface.island.add_marker(uvedge.sticker)
-        
+
         def is_index_obvious(uvedge, target):
             if uvedge in (target.neighbor_left, target.neighbor_right):
                 return True
@@ -632,7 +632,7 @@ class Mesh:
                 island.image_path = image_path
             image.user_clear()
             bpy.data.images.remove(image)
-    
+
     def bake(self, faces, image):
         if not self.looptex:
             raise UnfoldError("The mesh has no UV Map slots left. Either delete a UV Map or export the net without textures.")
@@ -766,14 +766,14 @@ class Island:
         self.is_inside_out = False  # swaps concave <-> convex edges
         self.has_safe_geometry = True
         self.sticker_numbering = 0
-        
+
         uvface = UVFace(face, self, matrix, normal_matrix)
         self.vertices.update(uvface.vertices)
         self.edges.update(uvface.edges)
         self.faces[face] = uvface
         # UVEdges on the boundary
         self.boundary = list(self.edges.values())
-    
+
     def add_marker(self, marker):
         self.fake_vertices.extend(marker.bounds)
         self.markers.append(marker)
@@ -2050,7 +2050,7 @@ class ExportPaperModel(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         return context.active_object and context.active_object.type == 'MESH'
-    
+
     def prepare(self, context):
         sce = context.scene
         self.recall_mode = context.object.mode
@@ -2062,7 +2062,7 @@ class ExportPaperModel(bpy.types.Operator):
         self.unfolder.prepare(cage_size, scale=sce.unit_settings.scale_length/self.scale, limit_by_page=sce.paper_model.limit_by_page)
         if self.scale == 1:
             self.scale = ceil(self.get_scale_ratio(sce))
-    
+
     def recall(self):
         if self.unfolder:
             del self.unfolder
@@ -2225,7 +2225,7 @@ class SelectIsland(bpy.types.Operator):
     bl_idname = "mesh.select_paper_island"
     bl_label = "Select Island"
     bl_description = "Select an island of the paper model net"
-    
+
     operation: bpy.props.EnumProperty(
         name="Operation", description="Operation with the current selection",
         default='ADD', items=[

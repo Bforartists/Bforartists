@@ -317,7 +317,7 @@ class MESH_OT_SURFSK_add_surface(Operator):
                 )
     strokes_type: StringProperty()
     initial_global_undo_state: BoolProperty()
-   
+
 
     def draw(self, context):
         layout = self.layout
@@ -3089,14 +3089,14 @@ class MESH_OT_SURFSK_add_surface(Operator):
         except:
             pass
 
-        try:   
+        try:
             global global_in_front
             self.main_object.show_in_front = global_in_front
             bpy.context.scene.bsurfaces.SURFSK_in_front = global_in_front
         except:
             pass
 
-        try:   
+        try:
             global global_show_wire
             self.main_object.show_wire = global_show_wire
             bpy.context.scene.bsurfaces.SURFSK_show_wire = global_show_wire
@@ -3188,7 +3188,7 @@ class MESH_OT_SURFSK_add_surface(Operator):
             if global_shade_smooth:
                 bpy.ops.object.shade_smooth()
             else:
-                bpy.ops.object.shade_flat() 
+                bpy.ops.object.shade_flat()
 
             # Delete main splines
             bpy.ops.object.mode_set('INVOKE_REGION_WIN', mode='OBJECT')
@@ -4318,7 +4318,7 @@ def conver_gpencil_to_curve(self, context, pencil, type):
     if not error:
         for i, _stroke in enumerate(strokes):
             stroke_points = strokes[i].points
-            data_list = [ (point.co.x, point.co.y, point.co.z) 
+            data_list = [ (point.co.x, point.co.y, point.co.z)
                             for point in stroke_points ]
             points_to_add = len(data_list)-1
 

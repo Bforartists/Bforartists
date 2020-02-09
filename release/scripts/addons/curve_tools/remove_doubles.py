@@ -12,70 +12,70 @@ bl_info = {
 }
 
 def main(context, distance = 0.01):
-    
+
     selected_Curves = util.GetSelectedCurves()
     if bpy.ops.object.mode_set.poll():
         bpy.ops.object.mode_set(mode='EDIT')
-        
+
     for curve in selected_Curves:
         bezier_dellist = []
         dellist = []
-    
-        for spline in curve.data.splines: 
+
+        for spline in curve.data.splines:
             if spline.type == 'BEZIER':
                 if len(spline.bezier_points) > 1:
-                    for i in range(0, len(spline.bezier_points)): 
-                        
+                    for i in range(0, len(spline.bezier_points)):
+
                         if i == 0:
                             ii = len(spline.bezier_points) - 1
-                        else:        
+                        else:
                             ii = i - 1
-                            
+
                         dot = spline.bezier_points[i];
-                        dot1 = spline.bezier_points[ii];   
-                            
+                        dot1 = spline.bezier_points[ii];
+
                         while dot1 in bezier_dellist and i != ii:
                             ii -= 1
-                            if ii < 0: 
+                            if ii < 0:
                                 ii = len(spline.bezier_points)-1
                             dot1 = spline.bezier_points[ii]
-                            
-                        if dot.select_control_point and dot1.select_control_point and (i!=0 or spline.use_cyclic_u):   
-                    
+
+                        if dot.select_control_point and dot1.select_control_point and (i!=0 or spline.use_cyclic_u):
+
                             if (dot.co-dot1.co).length < distance:
                                 # remove points and recreate hangles
                                 dot1.handle_right_type = "FREE"
                                 dot1.handle_right = dot.handle_right
                                 dot1.co = (dot.co + dot1.co) / 2
                                 bezier_dellist.append(dot)
-                                
+
                             else:
                                 # Handles that are on main point position converts to vector,
                                 # if next handle are also vector
                                 if dot.handle_left_type == 'VECTOR' and (dot1.handle_right - dot1.co).length < distance:
                                     dot1.handle_right_type = "VECTOR"
                                 if dot1.handle_right_type == 'VECTOR' and (dot.handle_left - dot.co).length < distance:
-                                    dot.handle_left_type = "VECTOR"  
+                                    dot.handle_left_type = "VECTOR"
             else:
                 if len(spline.points) > 1:
-                    for i in range(0, len(spline.points)): 
-                        
+                    for i in range(0, len(spline.points)):
+
                         if i == 0:
                             ii = len(spline.points) - 1
-                        else:        
+                        else:
                             ii = i - 1
-                            
+
                         dot = spline.points[i];
-                        dot1 = spline.points[ii];   
-                            
+                        dot1 = spline.points[ii];
+
                         while dot1 in dellist and i != ii:
                             ii -= 1
-                            if ii < 0: 
+                            if ii < 0:
                                 ii = len(spline.points)-1
                             dot1 = spline.points[ii]
-                            
-                        if dot.select and dot1.select and (i!=0 or spline.use_cyclic_u):   
-                    
+
+                        if dot.select and dot1.select and (i!=0 or spline.use_cyclic_u):
+
                             if (dot.co-dot1.co).length < distance:
                                 dot1.co = (dot.co + dot1.co) / 2
                                 dellist.append(dot)
@@ -84,19 +84,19 @@ def main(context, distance = 0.01):
 
     for dot in bezier_dellist:
         dot.select_control_point = True
-    
+
     for dot in dellist:
         dot.select = True
-    
+
     bezier_count = len(bezier_dellist)
     count = len(dellist)
-    
+
     bpy.ops.curve.delete(type = 'VERT')
-    
+
     bpy.ops.curve.select_all(action = 'DESELECT')
-    
+
     return bezier_count + count
-    
+
 
 
 class CurveRemvDbs(bpy.types.Operator):

@@ -4270,7 +4270,10 @@ class archipack_roof(ArchipackLines, ArchipackObject, Manipulable, PropertyGroup
             default=0.0001,
             update=update_cutter
             )
-
+    z_parent: FloatProperty(
+        description="Delta z of t child for grand childs",
+        default=0
+    )
     hole_offset_left : FloatProperty(
             name="Left",
             description="Left distance from border",
@@ -4512,8 +4515,8 @@ class archipack_roof(ArchipackLines, ArchipackObject, Manipulable, PropertyGroup
 
                 # print("slope: %s" % (slope))
 
-                z = d.z - self.t_dist_y * slope
-
+                z = d.z_parent + d.z - self.t_dist_y * slope
+                self.z_parent = z - self.z
                 # a_right from axis cross z
 
                 b_right = self.intersection_angle(

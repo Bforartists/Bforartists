@@ -96,7 +96,7 @@ def pyramid_mesh(self, context):
 
     bm.to_mesh(mesh)
     mesh.update()
-    
+
     return mesh
 
 
@@ -162,7 +162,7 @@ class AddPyramid(bpy.types.Operator,  object_utils.AddObjectHelper):
             col.prop(self, 'rotation', expand=True)
 
     def execute(self, context):
-        
+
         if bpy.context.mode == "OBJECT":
             if context.selected_objects != [] and context.active_object and \
             ('Pyramid' in context.active_object.data.keys()) and (self.change == True):
@@ -182,7 +182,7 @@ class AddPyramid(bpy.types.Operator,  object_utils.AddObjectHelper):
             obj.data["change"] = False
             for prm in PyramidParameters():
                 obj.data[prm] = getattr(self, prm)
-        
+
         if bpy.context.mode == "EDIT_MESH":
             active_object = context.active_object
             name_active_object = active_object.name

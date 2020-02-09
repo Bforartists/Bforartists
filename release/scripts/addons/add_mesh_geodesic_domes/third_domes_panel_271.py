@@ -41,7 +41,7 @@ class GenerateGeodesicDome(Operator, object_utils.AddObjectHelper):
 
     GeodesicDome : BoolProperty(name = "GeodesicDome",
                 default = True,
-                description = "GeodesicDome")                
+                description = "GeodesicDome")
     change : BoolProperty(name = "Change",
                 default = False,
                 description = "change Geodesic Dome")
@@ -1097,7 +1097,7 @@ class GenerateGeodesicDome(Operator, object_utils.AddObjectHelper):
             multi_label(help_text, box, text_width)
 
     def execute(self, context):
- 
+
         global last_generated_object, last_imported_mesh, basegeodesic, imported_hubmesh_to_use, error_message
         # default superformparam = [3, 10, 10, 10, 1, 1, 4, 10, 10, 10, 1, 1, 0, 0, 0.0, 0.0, 0, 0]]
         superformparam = [self.um, self.un1, self.un2, self.un3, self.ua,
@@ -1309,7 +1309,7 @@ class GenerateGeodesicDome(Operator, object_utils.AddObjectHelper):
                 obj.data["change"] = False
                 for prm in GeodesicDomeParameters():
                     obj.data[prm] = getattr(self, prm)
-            
+
             if bpy.context.mode == "EDIT_MESH":
                 active_object = context.active_object
                 name_active_object = active_object.name

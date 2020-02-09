@@ -441,6 +441,7 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
     scene['assets rated'][id] = scene['assets rated'].get(id, False)
 
     parent['asset_data'] = asset_data  # TODO remove this??? should write to blenderkit Props?
+    bpy.ops.wm.undo_push_context(message = 'add %s to scene'% asset_data['name'])
     # moving reporting to on save.
     # report_use_success(asset_data['id'])
 
@@ -522,6 +523,34 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff, not 
                 utils.p('finished download thread')
     return .5
 
+
+def download_file(asset_data):
+    #this is a simple non-threaded way to download files for background resolution genenration tool
+    file_name = paths.get_download_filenames(asset_data)[0]  # prefer global dir if possible.
+
+    if check_existing(asset_data):
+        # this sends the thread for processing, where another check should occur, since the file might be corrupted.
+        utils.p('not downloading, already in db')
+        return file_name
+    preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    api_key = preferences.api_key
+
+    with open(file_name, "wb") as f:
+        print("Downloading %s" % file_name)
+        headers = utils.get_headers(api_key)
+
+        response = requests.get(asset_data['url'], stream=True)
+        total_length = response.headers.get('Content-Length')
+
+        if total_length is None:  # no content length header
+            f.write(response.content)
+        else:
+            dl = 0
+            for data in response.iter_content(chunk_size=4096):
+                dl += len(data)
+                print(dl)
+                f.write(data)
+    return file_name
 
 class Downloader(threading.Thread):
     def __init__(self, asset_data, tcom, scene_id, api_key):

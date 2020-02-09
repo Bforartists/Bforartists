@@ -8,31 +8,31 @@ from bpy.app.handlers import persistent
 
 @persistent
 def ApplyOverrides(dummy):
-    global obDict 
+    global obDict
 
     for override in bpy.context.scene.ovlist:
         for ob in bpy.data.collections[override.grooverride].all_objects:
             if ob.type == "MESH":
                 if not ob.hide_viewport and not ob.hide_render:
-                    obDict.append([ob,[mat for mat in ob.data.materials]]) 
+                    obDict.append([ob,[mat for mat in ob.data.materials]])
 
     for override in bpy.context.scene.ovlist:
         for ob in bpy.data.collections[override.grooverride].all_objects:
             if ob.type == "MESH":
                 if not ob.hide_viewport and not ob.hide_render:
                     for i,mat  in enumerate(ob.data.materials):
-                        ob.data.materials[i] = bpy.data.materials[override.matoverride] 
+                        ob.data.materials[i] = bpy.data.materials[override.matoverride]
 
 
 @persistent
 def RestoreOverrides(dummy):
     global obDict
-    
+
     for set in obDict:
         for i,mat in enumerate(set[1]):
             set[0].data.materials[i] = mat
- 
-    obDict = []    
+
+    obDict = []
 
 
 # ---------------------------------------------------
@@ -42,9 +42,9 @@ def RestoreOverrides(dummy):
 class OscOverridesProp(bpy.types.PropertyGroup):
     matoverride: bpy.props.StringProperty()
     grooverride: bpy.props.StringProperty()
-    
-bpy.utils.register_class(OscOverridesProp)  
-bpy.types.Scene.ovlist = bpy.props.CollectionProperty(type=OscOverridesProp)    
+
+bpy.utils.register_class(OscOverridesProp)
+bpy.types.Scene.ovlist = bpy.props.CollectionProperty(type=OscOverridesProp)
 
 
 class OVERRIDES_PT_OscOverridesGUI(bpy.types.Panel):
@@ -174,5 +174,5 @@ class OscOverridesKill(bpy.types.Operator):
     def execute(self, context):
         ovlist = context.scene.ovlist
         ovlist.remove(self.index)
-        return {'FINISHED'}    
+        return {'FINISHED'}
 

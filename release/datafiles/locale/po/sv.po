@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -4043,10 +4043,6 @@ msgid "Maximum number of additional cells"
 msgstr "Iterationer"
 
 
-msgid "Density"
-msgstr "Densitet"
-
-
 msgid "Single"
 msgstr "Vinkel"
 
@@ -4075,6 +4071,10 @@ msgid "Red"
 msgstr "Rendera"
 
 
+msgid "Density"
+msgstr "Densitet"
+
+
 msgid "Color Grid"
 msgstr "Färguppsättning:"
 
@@ -4093,14 +4093,6 @@ msgstr "Trådmodell"
 
 msgid "Smoke Grid Resolution"
 msgstr "Visa i hög upplösning"
-
-
-msgid "Ignition"
-msgstr "Animering"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Radera"
 
 
 msgid "Smoke"
@@ -4171,16 +4163,8 @@ msgid "Cache Compression"
 msgstr "Kompression"
 
 
-msgid "Max Res"
-msgstr "Spel"
-
-
 msgid "Delete"
 msgstr "Radera"
-
-
-msgid "Buoyancy"
-msgstr "Flytkraft"
 
 
 msgid "Start point"
@@ -5447,20 +5431,8 @@ msgid "Follow"
 msgstr "Rensa Förälder"
 
 
-msgid "Use UV for mapping"
-msgstr "Mappning"
-
-
-msgid "Uses the UV values as Generated textured coordinates"
-msgstr "Klibbig texturkoordinat för meshvertex"
-
-
 msgid "Surface Curve"
 msgstr "&gt;Nurbs Cirkel"
-
-
-msgid "Use UV for Mapping"
-msgstr "Mappning"
 
 
 msgid "Text Curve"
@@ -26092,6 +26064,10 @@ msgid "Settings for particle fluids physics"
 msgstr "Fysikinställningar för partikelvätskor"
 
 
+msgid "Buoyancy"
+msgstr "Flytkraft"
+
+
 msgid "Interaction Radius"
 msgstr "Interaktion:"
 
@@ -32090,24 +32066,8 @@ msgid "Cursor Y"
 msgstr "Bild Displist"
 
 
-msgid "Display Color:"
-msgstr "Visa inställningar för kant"
-
-
 msgid "Interpolation:"
 msgstr "Integrering:"
-
-
-msgid "Value:"
-msgstr "Värde"
-
-
-msgid "Left Handle:"
-msgstr "Vänster handtag"
-
-
-msgid "Right Handle:"
-msgstr "Höger handtag"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -32124,6 +32084,10 @@ msgstr "Bild Displist"
 
 msgid "Driver Value:"
 msgstr "Driver"
+
+
+msgid "Value:"
+msgstr "Värde"
 
 
 msgid "Update Dependencies"
@@ -32328,10 +32292,6 @@ msgstr "Bild Displist"
 
 msgid "Mask not found"
 msgstr "Spara Bild"
-
-
-msgid "Start and end frame are not set"
-msgstr "Starta rendering av sekvens"
 
 
 msgid "Cannot apply effects to audio sequence strips"

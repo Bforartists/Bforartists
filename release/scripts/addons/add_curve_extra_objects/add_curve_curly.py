@@ -388,7 +388,7 @@ def make_curve(self, context, verts, lh, rh):
     # create object
     if bpy.context.mode == 'EDIT_CURVE':
         Curve = context.active_object
-        
+
         for spline in Curve.data.splines:
             if spline.type == 'BEZIER':
                 for point in spline.bezier_points:
@@ -417,7 +417,7 @@ def make_curve(self, context, verts, lh, rh):
             # something weird with this one
             if types == 1 or types == 2 or types == 3:
                 newSpline.bezier_points[3].handle_left.xyz = lh[p][3]
-                
+
     else:
         # create curve
         dataCurve = bpy.data.curves.new(name='CurlyCurve', type='CURVE')  # curvedatablock
@@ -438,8 +438,8 @@ def make_curve(self, context, verts, lh, rh):
                 c += 1
             # something weird with this one
             if types == 1 or types == 2 or types == 3:
-                newSpline.bezier_points[3].handle_left.xyz = lh[p][3]        
-        
+                newSpline.bezier_points[3].handle_left.xyz = lh[p][3]
+
         # create object with newCurve
         Curve = object_data_add(context, dataCurve, operator=self)  # place in active scene
         Curve.select_set(True)
@@ -451,7 +451,7 @@ def make_curve(self, context, verts, lh, rh):
         Curve.data.fill_mode = 'FULL'
     else:
         Curve.data.fill_mode = 'BOTH'
-        
+
     # move and rotate spline in edit mode
     if bpy.context.mode == 'EDIT_CURVE':
         if self.align == "WORLD":
@@ -460,7 +460,7 @@ def make_curve(self, context, verts, lh, rh):
             bpy.ops.transform.rotate(value = self.rotation[0], orient_axis = 'X', orient_type='GLOBAL')
             bpy.ops.transform.rotate(value = self.rotation[1], orient_axis = 'Y', orient_type='GLOBAL')
             bpy.ops.transform.rotate(value = self.rotation[2], orient_axis = 'Z', orient_type='GLOBAL')
-            
+
         elif self.align == "VIEW":
             bpy.ops.transform.translate(value = self.location)
             bpy.ops.transform.rotate(value = self.rotation[0], orient_axis = 'X')
@@ -508,7 +508,7 @@ class add_curlycurve(Operator, AddObjectHelper):
             ('3D', "3D", "3D")
             ]
             )
-            
+
     edit_mode : BoolProperty(
             name="Show in edit mode",
             default=True,
@@ -526,13 +526,13 @@ class add_curlycurve(Operator, AddObjectHelper):
         col.label(text = "Resize:")
         col.prop(self, "scale_x")
         col.prop(self, "scale_y")
-        
+
         row = layout.row()
         row.prop(self, "shape", expand=True)
-        
+
         col = layout.column(align=True)
         col.row().prop(self, "edit_mode", expand=True)
-        
+
         col = layout.column(align=True)
         # AddObjectHelper props
         col.prop(self, "align")
@@ -543,7 +543,7 @@ class add_curlycurve(Operator, AddObjectHelper):
         # turn off 'Enter Edit Mode'
         use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
         bpy.context.preferences.edit.use_enter_edit_mode = False
-        
+
         if self.types == 1:
             add_type1(self, context)
         if self.types == 2:
@@ -564,10 +564,10 @@ class add_curlycurve(Operator, AddObjectHelper):
             add_type9(self, context)
         if self.types == 10:
             add_type10(self, context)
-            
+
         if use_enter_edit_mode:
             bpy.ops.object.mode_set(mode = 'EDIT')
-        
+
         # restore pre operator state
         bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 

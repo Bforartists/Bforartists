@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -1753,24 +1753,12 @@ msgid "Lock Location"
 msgstr "ล็อกตำแหน่ง"
 
 
-msgid "Lock editing of location in the interface"
-msgstr "ล็อกการแก้ไขตำแหน่งบนอินเตอร์เฟส"
-
-
 msgid "Lock Rotation"
 msgstr "ล็อกการหมุน"
 
 
-msgid "Lock editing of rotation in the interface"
-msgstr "ล็อกการหมุนบนอินเตอร์เฟส"
-
-
 msgid "Lock Scale"
 msgstr "ล็อกการปรับขนาด"
-
-
-msgid "Lock editing of scale in the interface"
-msgstr "ล็อกการปรับขนาดบนอินเตอร์เฟส"
 
 
 msgid "Object Mode"
@@ -6280,10 +6268,6 @@ msgstr "บันทึก \"%s\" แล้ว"
 
 msgid "Win"
 msgstr "Win"
-
-
-msgid "OSkey"
-msgstr "ปุ่ม OS"
 
 
 msgid "Bksp"

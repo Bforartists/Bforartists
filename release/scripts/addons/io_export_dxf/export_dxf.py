@@ -41,7 +41,7 @@ def exportDXF(context, filePath, settings):
         print("Generating Object list for export... (Root parents only)")
 
     scene = context.scene
-    
+
     if settings['onlySelected'] is True:
         objects = (ob for ob in scene.objects if not ob.hide_viewport and ob.select_get() and ob.type in SUPPORTED_TYPES)
     else:

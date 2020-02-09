@@ -452,7 +452,7 @@ float ED_view3d_radius_to_dist(const struct View3D *v3d,
                                const bool use_aspect,
                                const float radius);
 
-void imm_drawcircball(const float cent[3], float rad, const float tmat[4][4], unsigned pos);
+void imm_drawcircball(const float cent[3], float rad, const float tmat[4][4], unsigned int pos);
 
 /* backbuffer select and draw support */
 void ED_view3d_backbuf_depth_validate(struct ViewContext *vc);
@@ -624,6 +624,8 @@ void ED_view3d_update_viewmat(struct Depsgraph *depsgraph,
                               bool offscreen);
 bool ED_view3d_quat_from_axis_view(const char view, float quat[4]);
 char ED_view3d_quat_to_axis_view(const float quat[4], const float epsilon);
+bool ED_view3d_quat_is_axis_aligned(const float viewquat[4]);
+
 char ED_view3d_lock_view_from_index(int index);
 char ED_view3d_axis_view_opposite(char view);
 bool ED_view3d_lock(struct RegionView3D *rv3d);

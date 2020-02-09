@@ -725,8 +725,7 @@ typedef enum PrimitiveType {
 /* Attributes */
 
 typedef enum AttributePrimitive {
-  ATTR_PRIM_TRIANGLE = 0,
-  ATTR_PRIM_CURVE,
+  ATTR_PRIM_GEOMETRY = 0,
   ATTR_PRIM_SUBD,
 
   ATTR_PRIM_TYPES
@@ -1057,6 +1056,7 @@ typedef struct PathState {
 
 #ifdef __DENOISING_FEATURES__
   float denoising_feature_weight;
+  float3 denoising_feature_throughput;
 #endif /* __DENOISING_FEATURES__ */
 
   /* multiple importance sampling */
