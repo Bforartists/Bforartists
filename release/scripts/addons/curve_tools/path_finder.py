@@ -27,7 +27,7 @@ bl_info = {
     'wiki_url': '',
     'tracker_url': '',
     'category': 'Curve'}
-    
+
 import time
 import threading
 
@@ -69,7 +69,7 @@ def get_bezier_points(spline, matrix_world):
             point_list.extend([matrix_world @ spline.bezier_points[0].co])
 
     return point_list
-        
+
 def get_points(spline, matrix_world):
     point_list = []
     len_points = len(spline.points)
@@ -92,25 +92,25 @@ def get_points(spline, matrix_world):
     return point_list
 
 def draw_bezier_points(self, context, spline, matrix_world, path_color, path_thickness):
-    
+
     points = get_bezier_points(spline, matrix_world)
-    
+
     shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
     batch = batch_for_shader(shader, 'POINTS', {"pos": points})
-    
+
     shader.bind()
     shader.uniform_float("color", path_color)
     bgl.glEnable(bgl.GL_BLEND)
     bgl.glLineWidth(path_thickness)
     batch.draw(shader)
-    
+
 def draw_points(self, context, spline, matrix_world, path_color, path_thickness):
-    
+
     points = get_points(spline, matrix_world)
-    
+
     shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
     batch = batch_for_shader(shader, 'POINTS', {"pos": points})
-    
+
     shader.bind()
     shader.uniform_float("color", path_color)
     bgl.glEnable(bgl.GL_BLEND)
@@ -131,7 +131,7 @@ def near(location3D, point, radius):
         factor += 1
     if point.z < (location3D.z + radius):
         factor += 1
-        
+
     return factor
 
 def click(self, context, event):
@@ -141,9 +141,9 @@ def click(self, context, event):
         matrix_world = object.matrix_world
         if object.type == 'CURVE':
             curvedata = object.data
-            
+
             radius = bpy.context.scene.curvetools.PathFinderRadius
-            
+
             for spline in curvedata.splines:
                 len_bezier_points = len(spline.bezier_points)
                 factor_max = 0
@@ -153,7 +153,7 @@ def click(self, context, event):
                     factor = near(self.location3D, co, radius)
                     if factor > factor_max:
                                 factor_max = factor
-                        
+
                     if i < len_bezier_points - 1:
                         for t in range(0, 100, 2):
                             h = mathematics.subdivide_cubic_bezier(spline.bezier_points[i].co,
@@ -186,7 +186,7 @@ def click(self, context, event):
                         bezier_point.select_control_point = True
                         bezier_point.select_left_handle = True
                         bezier_point.select_right_handle = True
-            
+
             for spline in curvedata.splines:
                 len_points = len(spline.points)
                 factor_max = 0
@@ -219,7 +219,7 @@ def click(self, context, event):
                 if factor_max == 6:
                     args = (self, context, spline, matrix_world, self.path_color, self.path_thickness)
                     self.handlers.append(bpy.types.SpaceView3D.draw_handler_add(draw_points, args, 'WINDOW', 'POST_VIEW'))
-                        
+
                     for point in spline.points:
                         point.select = True
 
@@ -230,51 +230,51 @@ def remove_handler(handlers):
         except:
             pass
     for handler in handlers:
-        handlers.remove(handler)                        
+        handlers.remove(handler)
 
 class PathFinder(bpy.types.Operator):
     bl_idname = "curvetools.pathfinder"
     bl_label = "Path Finder"
     bl_description = "Path Finder"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
     x: IntProperty(name="x", description="x")
     y: IntProperty(name="y", description="y")
     location3D: FloatVectorProperty(name = "",
                 description = "Start location",
                 default = (0.0, 0.0, 0.0),
                 subtype = 'XYZ')
-                
+
     handlers = []
-        
+
     def execute(self, context):
         self.report({'INFO'}, "ESC or TAB - cancel")
         bpy.ops.object.mode_set(mode = 'EDIT')
-        
+
         # color change in the panel
         self.path_color = bpy.context.scene.curvetools.path_color
         self.path_thickness = bpy.context.scene.curvetools.path_thickness
 
     def modal(self, context, event):
         context.area.tag_redraw()
-        
+
         if event.type in {'ESC', 'TAB'}:  # Cancel
             remove_handler(self.handlers)
             return {'CANCELLED'}
-            
+
         if event.type in {'X', 'DEL'}:  # Cancel
             remove_handler(self.handlers)
-            bpy.ops.curve.delete(type='VERT') 
-            return {'RUNNING_MODAL'}         
-        
+            bpy.ops.curve.delete(type='VERT')
+            return {'RUNNING_MODAL'}
+
         elif event.alt and event.shift and event.type == 'LEFTMOUSE':
             click(self, context, event)
-        
+
         elif event.alt and not event.shift and event.type == 'LEFTMOUSE':
             remove_handler(self.handlers)
             bpy.ops.curve.select_all(action='DESELECT')
             click(self, context, event)
-            
+
         elif event.alt and event.type == 'RIGHTMOUSE':
            remove_handler(self.handlers)
            bpy.ops.curve.select_all(action='DESELECT')
@@ -282,12 +282,12 @@ class PathFinder(bpy.types.Operator):
 
         elif event.alt and not event.shift and event.shift and event.type == 'RIGHTMOUSE':
             click(self, context, event)
-            
+
         elif event.type == 'A':
             remove_handler(self.handlers)
             bpy.ops.curve.select_all(action='DESELECT')
-            
-        elif event.type == 'MOUSEMOVE':  # 
+
+        elif event.type == 'MOUSEMOVE':  #
             self.x = event.mouse_x
             self.y = event.mouse_y
             region = bpy.context.region
@@ -297,7 +297,7 @@ class PathFinder(bpy.types.Operator):
                 rv3d,
                 (event.mouse_region_x, event.mouse_region_y),
                 (0.0, 0.0, 0.0)
-                )       
+                )
 
         return {'PASS_THROUGH'}
 
@@ -305,7 +305,7 @@ class PathFinder(bpy.types.Operator):
         self.execute(context)
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
-        
+
     @classmethod
     def poll(cls, context):
         return util.Selected1OrMoreCurves()

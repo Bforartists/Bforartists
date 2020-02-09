@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -6328,28 +6328,8 @@ msgid "Maximum number of additional cells"
 msgstr "Maximale Anzahl der transparenten Begrenzung"
 
 
-msgid "Density"
-msgstr "Dichte"
-
-
-msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Wie viel Raumdichte sich auf die Rauchbewegung auswirkt (höherer Wert lässt Rauch schneller aufsteigen)"
-
-
 msgid "Single"
 msgstr "Einzelner"
-
-
-msgid "Heat"
-msgstr "Hitze"
-
-
-msgid "How much heat affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Wie viel Hitze sich auf die Rauchbewegung auswirkt (höherer Wert lässt Rauch schneller aufsteigen)"
-
-
-msgid "Speed of the burning reaction (use larger values for smaller flame)"
-msgstr "Geschwindigkeit der Brennreaktion (größere Werte für kleinere Flamme verwenden)"
 
 
 msgid "End"
@@ -6392,6 +6372,10 @@ msgid "Blue"
 msgstr "Blau"
 
 
+msgid "Density"
+msgstr "Dichte"
+
+
 msgid "Flame"
 msgstr "Flamme"
 
@@ -6406,6 +6390,10 @@ msgstr "Treibstoff"
 
 msgid "Fuel field"
 msgstr "Treibstofffeld"
+
+
+msgid "Heat"
+msgstr "Hitze"
 
 
 msgid "Temperature of the fluid"
@@ -6446,18 +6434,6 @@ msgstr "Auflösung"
 
 msgid "Smoke Grid Resolution"
 msgstr "Rauch-Rasterauflösung"
-
-
-msgid "Ignition"
-msgstr "Entzündung"
-
-
-msgid "Minimum temperature of flames"
-msgstr "Minimale Temperatur der Flamme"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Maximale Temperatur der Flamme"
 
 
 msgid "Smoke"
@@ -6544,10 +6520,6 @@ msgid "Heavy"
 msgstr "Schwer"
 
 
-msgid "Max Res"
-msgstr "Maximale Auflösung"
-
-
 msgid "Delete"
 msgstr "Löschen"
 
@@ -6580,14 +6552,6 @@ msgid "Dissolve Smoke"
 msgstr "Rauch auflösen"
 
 
-msgid "Enable smoke to disappear over time"
-msgstr "Aktiviert nach Zeitablauf das Verschwinden des Rauches"
-
-
-msgid "Using 1/x "
-msgstr "Verwende 1/x "
-
-
 msgid "Tracer"
 msgstr "Leuchtspur"
 
@@ -6610,10 +6574,6 @@ msgstr "Viskositätsexponent"
 
 msgid "Negative exponent for the viscosity value (to simplify entering small values e.g. 5*10^-6)"
 msgstr "Negativer Exponent für den Viskositätswert (um die Eingabe kleiner Werte zu vereinfachen, z. B. 5*10^-6)"
-
-
-msgid "Amount of turbulence/rotation in fluid"
-msgstr "Anzahl der Turbulenz/Rotation im Fluss"
 
 
 msgid "Fluid Mesh Velocity"
@@ -6758,10 +6718,6 @@ msgstr "Betrag des Lichtes, das ausstrahlt"
 
 msgid "Amount of random velocity"
 msgstr "Verlauf rückgängig machen"
-
-
-msgid "Factor for smoke emitted from inside the mesh volume"
-msgstr "Faktor für Rauchabgabe von der Innenseite des Mesh-Volumens"
 
 
 msgid "Collection"
@@ -8462,16 +8418,8 @@ msgid "Follow"
 msgstr "Folgen"
 
 
-msgid "Use UV for mapping"
-msgstr "UV für Mapping verwenden"
-
-
 msgid "Surface Curve"
 msgstr "Oberflächenkurve"
-
-
-msgid "Use UV for Mapping"
-msgstr "UV-Mapping:"
 
 
 msgid "Text Curve"
@@ -9878,16 +9826,8 @@ msgid "Lock Location"
 msgstr "Position sperren"
 
 
-msgid "Lock editing of location in the interface"
-msgstr "Bearbeiten der Position in der Benutzeroberfläche sperren"
-
-
 msgid "Lock Rotation"
 msgstr "Rotation sperren"
-
-
-msgid "Lock editing of rotation in the interface"
-msgstr "Bearbeiten der Rotation in der Benutzeroberfläche sperren"
 
 
 msgid "Lock Rotation (4D Angle)"
@@ -9896,10 +9836,6 @@ msgstr "Rotations sperren (4D Winkel)"
 
 msgid "Lock Scale"
 msgstr "Skalierung sperren"
-
-
-msgid "Lock editing of scale in the interface"
-msgstr "Bearbeiten der Skalierung in der Benutzeroberfläche sperren"
 
 
 msgid "Material Slots"
@@ -35919,10 +35855,6 @@ msgid "Color Layer"
 msgstr "Farbebene"
 
 
-msgid "Temperature Diff."
-msgstr "Temperaturunterschied"
-
-
 msgid "Real World Size"
 msgstr "Reale Weltgröße"
 
@@ -39003,26 +38935,6 @@ msgid "Cursor Y"
 msgstr "Cursor Y"
 
 
-msgid "Display Color:"
-msgstr "Anzeigefarbe:"
-
-
-msgid "Frame:"
-msgstr "Einzelbild:"
-
-
-msgid "Value:"
-msgstr "Wert:"
-
-
-msgid "Left Handle:"
-msgstr "Linker Anfasser:"
-
-
-msgid "Right Handle:"
-msgstr "Rechter Anfasser:"
-
-
 msgid "F-Curve only has F-Modifiers"
 msgstr "F-Kurve die nur F-Modifikatoren haben"
 
@@ -39049,6 +38961,10 @@ msgstr "Treiberwert:"
 
 msgid "Expression:"
 msgstr "Ausdruck:"
+
+
+msgid "Value:"
+msgstr "Wert:"
 
 
 msgid "Update Dependencies"
@@ -39189,18 +39105,6 @@ msgstr "Relative Pfade können nicht bei einer ungespeicherten blend-Datei geset
 
 msgid "Cannot set absolute paths with an unsaved blend file"
 msgstr "Absolute Pfade können nicht bei einer ungespeicherten blend-Datei gesetzt werden"
-
-
-msgid "Strip Extents:"
-msgstr "Streifen erweitern:"
-
-
-msgid "Playback Settings:"
-msgstr "Abspieleinstellungenen:"
-
-
-msgid "Action Extents:"
-msgstr "Aktionen erweitern:"
 
 
 msgid "Sync Length"
@@ -39385,10 +39289,6 @@ msgstr "Filmclip nicht gefunden"
 
 msgid "Mask not found"
 msgstr "Maske nicht gefunden"
-
-
-msgid "Start and end frame are not set"
-msgstr "Start- und Endbild sind nicht festgelegt"
 
 
 msgid "File '%s' could not be loaded"
@@ -40500,10 +40400,6 @@ msgstr "'%s': keine Bibliothek"
 
 msgid "Win"
 msgstr "Win"
-
-
-msgid "OSkey"
-msgstr "OS-Taste"
 
 
 msgid "Bksp"

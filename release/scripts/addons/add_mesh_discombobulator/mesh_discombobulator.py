@@ -567,7 +567,7 @@ class chooseDoodad(Operator):
         msg = "Object with this name already saved"
 
         DISC_doodads = context.scene.discombobulator.DISC_doodads
-        
+
         if obj_name not in DISC_doodads:
             DISC_doodads.append(obj_name)
             msg = "Saved Doodad object: {}".format(obj_name)
@@ -641,7 +641,7 @@ class discombobulator_dodads_list(Menu):
 
     def draw(self, context):
         layout = self.layout
-        
+
         DISC_doodads = context.scene.discombobulator.DISC_doodads
 
         doodle = len(DISC_doodads)
@@ -788,7 +788,7 @@ class VIEW3D_OT_tools_discombobulate(Operator):
 
     def draw(self, context):
         layout = self.layout
-        
+
         self.DISC_doodads = bpy.context.scene.discombobulator.DISC_doodads
 
         row = layout.row()

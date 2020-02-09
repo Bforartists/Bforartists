@@ -81,28 +81,6 @@ def add_version(data):
     data["addonVersion"] = addon_version
 
 
-def params_to_dict(inputs, parameters=None):
-    if parameters == None:
-        parameters = []
-    for k in inputs.keys():
-        if type(inputs[k]) == list:
-            strlist = ""
-            for idx, s in enumerate(inputs[k]):
-                strlist += s
-                if idx < len(inputs[k]) - 1:
-                    strlist += ','
-
-            value = "%s" % strlist
-        elif type(inputs[k]) != bool:
-            value = inputs[k]
-        else:
-            value = str(inputs[k])
-        parameters.append(
-            {
-                "parameterType": k,
-                "value": value
-            })
-    return parameters
 
 
 def write_to_report(props, text):
@@ -254,6 +232,10 @@ def get_upload_data(self, context, asset_type):
             "manifold": props.manifold,
             "objectCount": props.object_count,
 
+            "procedural": props.is_procedural,
+            "nodeCount": props.node_count,
+            "textureCount": props.texture_count,
+            "megapixels": round(props.total_megapixels/ 1000000),
             # "scene": props.is_scene,
         }
         if props.use_design_year:
@@ -381,6 +363,7 @@ def get_upload_data(self, context, asset_type):
             "procedural": props.is_procedural,
             "nodeCount": props.node_count,
             "textureCount": props.texture_count,
+            "megapixels": round(props.total_megapixels/ 1000000),
 
         }
 
@@ -570,7 +553,7 @@ def start_upload(self, context, asset_type, reupload, upload_set):
     export_data, upload_data, eval_path_computing, eval_path_state, eval_path, props = get_upload_data(self, context,
                                                                                                        asset_type)
     # utils.pprint(upload_data)
-    upload_data['parameters'] = params_to_dict(
+    upload_data['parameters'] = utils.dict_to_params(
         upload_data['parameters'])  # weird array conversion only for upload, not for tooltips.
 
     binary_path = bpy.app.binary_path
@@ -783,7 +766,10 @@ class UploadOperator(Operator):
 
         if props.is_private == 'PUBLIC':
             ui_panels.label_multiline(layout, text='public assets are validated several hours'
-                                                   ' or days after upload. ', width=300)
+                                                   ' or days after upload. Remember always to '
+                                                    'test download your asset to a clean file'
+                                                   ' to see if it uploaded correctly.'
+                                      , width=300)
 
     def invoke(self, context, event):
         props = utils.get_upload_props()

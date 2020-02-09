@@ -26,11 +26,12 @@ from bpy.types import Operator
 from mathutils import Vector
 from pathlib import Path
 from .pdt_functions import debug, oops
-from .pdt_msg_strings import PDT_ERR_NO_LIBRARY
+from .pdt_msg_strings import PDT_ERR_NO_LIBRARY, PDT_ERR_OBJECTMODE
 
 
 class PDT_OT_LibShow(Operator):
     """Show Library File Details."""
+
     bl_idname = "pdt.lib_show"
     bl_label = "Show Library Details"
     bl_options = {"REGISTER", "UNDO"}
@@ -51,7 +52,9 @@ class PDT_OT_LibShow(Operator):
         pg.error = str(Path(file_path))
         debug("PDT Parts Library:")
         debug(f"{pg.error}")
-        bpy.context.window_manager.popup_menu(oops, title="Information - Parts Library File", icon="INFO")
+        bpy.context.window_manager.popup_menu(
+            oops, title="Information - Parts Library File", icon="INFO"
+        )
         return {"FINISHED"}
 
 
@@ -65,13 +68,12 @@ class PDT_OT_Append(Operator):
     def execute(self, context):
         """Appends Objects from PDT Library file.
 
-        Appended Objects are placed at Cursor Location.
+        Note:
+            Appended Objects are placed at Cursor Location.
+            Uses pg.lib_objects, pg.lib_collections & pg.lib_materials
 
         Args:
             context: Blender bpy.context instance.
-
-        Notes:
-            Uses pg.lib_objects, pg.lib_collections & pg.lib_materials
 
         Returns:
             Status Set.
@@ -79,44 +81,63 @@ class PDT_OT_Append(Operator):
 
         scene = context.scene
         pg = scene.pdt_pg
+        obj = context.view_layer.objects.active
+        if obj is not None:
+            if obj.mode != "OBJECT":
+                error_message = PDT_ERR_OBJECTMODE
+                self.report({"ERROR"}, error_message)
+                return {"FINISHED"}
+
         obj_names = [o.name for o in context.view_layer.objects].copy()
         file_path = context.preferences.addons[__package__].preferences.pdt_library_path
         path = Path(file_path)
 
         if path.is_file() and ".blend" in str(path):
             if pg.lib_mode == "OBJECTS":
-                # Force object Mode
-                bpy.ops.object.mode_set(mode='OBJECT')
                 bpy.ops.wm.append(
-                    filepath=str(path), directory=str(path) + "/Object", filename=pg.lib_objects
+                    filepath=str(path),
+                    directory=str(path) + "/Object",
+                    filename=pg.lib_objects,
                 )
                 for obj in context.view_layer.objects:
                     if obj.name not in obj_names:
                         obj.select_set(False)
                         obj.location = Vector(
-                            (scene.cursor.location.x, scene.cursor.location.y, scene.cursor.location.z)
+                            (
+                                scene.cursor.location.x,
+                                scene.cursor.location.y,
+                                scene.cursor.location.z,
+                            )
                         )
                 return {"FINISHED"}
-            elif pg.lib_mode == "COLLECTIONS":
+            if pg.lib_mode == "COLLECTIONS":
                 bpy.ops.wm.append(
-                    filepath=str(path), directory=str(path) + "/Collection", filename=pg.lib_collections
+                    filepath=str(path),
+                    directory=str(path) + "/Collection",
+                    filename=pg.lib_collections,
                 )
                 for obj in context.view_layer.objects:
                     if obj.name not in obj_names:
                         obj.select_set(False)
                         obj.location = Vector(
-                            (scene.cursor.location.x, scene.cursor.location.y, scene.cursor.location.z)
+                            (
+                                scene.cursor.location.x,
+                                scene.cursor.location.y,
+                                scene.cursor.location.z,
+                            )
                         )
                 return {"FINISHED"}
-            elif pg.lib_mode == "MATERIALS":
+            if pg.lib_mode == "MATERIALS":
                 bpy.ops.wm.append(
-                    filepath=str(path), directory=str(path) + "/Material", filename=pg.lib_materials
+                    filepath=str(path),
+                    directory=str(path) + "/Material",
+                    filename=pg.lib_materials,
                 )
                 return {"FINISHED"}
-        else:
-            errmsg = PDT_ERR_NO_LIBRARY
-            self.report({"ERROR"}, errmsg)
-            return {"FINISHED"}
+
+        error_message = PDT_ERR_NO_LIBRARY
+        self.report({"ERROR"}, error_message)
+        return {"FINISHED"}
 
 
 class PDT_OT_Link(Operator):
@@ -129,13 +150,12 @@ class PDT_OT_Link(Operator):
     def execute(self, context):
         """Links Objects from PDT Library file.
 
-        Linked Objects are placed at Cursor Location
+        Note:
+            Linked Objects are placed at Cursor Location
+            Uses pg.lib_objects, pg.lib_collections & pg.lib_materials
 
         Args:
-            context
-
-        Notes:
-            Uses pg.lib_objects, pg.lib_collections & pg.lib_materials
+            context: Blender bpy.context instance.
 
         Returns:
             Status Set.
@@ -143,31 +163,42 @@ class PDT_OT_Link(Operator):
 
         scene = context.scene
         pg = scene.pdt_pg
+        obj = context.view_layer.objects.active
+        if obj is not None:
+            if obj.mode != "OBJECT":
+                error_message = PDT_ERR_OBJECTMODE
+                self.report({"ERROR"}, error_message)
+                return {"FINISHED"}
+
         file_path = context.preferences.addons[__package__].preferences.pdt_library_path
         path = Path(file_path)
         if path.is_file() and ".blend" in str(path):
             if pg.lib_mode == "OBJECTS":
-                # Force object Mode
-                bpy.ops.object.mode_set(mode='OBJECT')
                 bpy.ops.wm.link(
-                    filepath=str(path), directory=str(path) + "/Object", filename=pg.lib_objects
+                    filepath=str(path),
+                    directory=str(path) + "/Object",
+                    filename=pg.lib_objects,
                 )
                 for obj in context.view_layer.objects:
                     obj.select_set(False)
                 return {"FINISHED"}
-            elif pg.lib_mode == "COLLECTIONS":
+            if pg.lib_mode == "COLLECTIONS":
                 bpy.ops.wm.link(
-                    filepath=str(path), directory=str(path) + "/Collection", filename=pg.lib_collections
+                    filepath=str(path),
+                    directory=str(path) + "/Collection",
+                    filename=pg.lib_collections,
                 )
                 for obj in context.view_layer.objects:
                     obj.select_set(False)
                 return {"FINISHED"}
-            elif pg.lib_mode == "MATERIALS":
+            if pg.lib_mode == "MATERIALS":
                 bpy.ops.wm.link(
-                    filepath=str(path), directory=str(path) + "/Material", filename=pg.lib_materials
+                    filepath=str(path),
+                    directory=str(path) + "/Material",
+                    filename=pg.lib_materials,
                 )
                 return {"FINISHED"}
-        else:
-            errmsg = PDT_ERR_NO_LIBRARY
-            self.report({"ERROR"}, errmsg)
-            return {"FINISHED"}
+
+        error_message = PDT_ERR_NO_LIBRARY
+        self.report({"ERROR"}, error_message)
+        return {"FINISHED"}

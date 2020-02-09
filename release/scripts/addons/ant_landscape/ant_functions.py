@@ -425,9 +425,9 @@ def draw_ant_main(self, context, generate=True):
             row = box.row(align=True)
             split = row.split(align=True)
 
-#            split.prop(self, "at_cursor", toggle=True, icon_only=True, icon='PIVOT_CURSOR')
+            split.prop(self, "at_cursor", toggle=True, icon_only=True, icon='PIVOT_CURSOR')
 
-#            split.prop(self, "smooth_mesh", toggle=True, icon_only=True, icon='SHADING_SOLID')
+            split.prop(self, "smooth_mesh", toggle=True, icon_only=True, icon='SHADING_SOLID')
             split.prop(self, "tri_face", toggle=True, text="Triangulate", icon='MESH_DATA')
 
             if not self.sphere_mesh:

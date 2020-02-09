@@ -29,7 +29,7 @@
 bl_info = {
     "name": "Precision Drawing Tools (PDT)",
     "author": "Alan Odom (Clockmender), Rune Morling (ermo)",
-    "version": (1, 1, 8),
+    "version": (1, 2, 1),
     "blender": (2, 80, 0),
     "location": "View3D > UI > PDT",
     "description": "Precision Drawing Tools for Acccurate Modelling",
@@ -107,7 +107,7 @@ from .pdt_msg_strings import (
     PDT_DES_ROTMOVAX,
     PDT_DES_TRIM,
     PDT_DES_VALIDLET,
-    PDT_DES_WORPLANE
+    PDT_DES_WORPLANE,
 )
 from .pdt_command import command_run
 from .pdt_functions import scale_set
@@ -142,9 +142,9 @@ def enumlist_objects(self, context):
     if path.is_file() and ".blend" in str(path):
         with bpy.data.libraries.load(str(path)) as (data_from, _):
             if len(pg.object_search_string) == 0:
-                object_names = [ob for ob in data_from.objects]
+                object_names = [obj for obj in data_from.objects]
             else:
-                object_names = [ob for ob in data_from.objects if pg.object_search_string in ob]
+                object_names = [obj for obj in data_from.objects if pg.object_search_string in obj]
         for object_name in object_names:
             _pdt_obj_items.append((object_name, object_name, ""))
     else:
@@ -174,9 +174,11 @@ def enumlist_collections(self, context):
     if path.is_file() and ".blend" in str(path):
         with bpy.data.libraries.load(str(path)) as (data_from, _):
             if len(pg.collection_search_string) == 0:
-                object_names = [ob for ob in data_from.collections]
+                object_names = [obj for obj in data_from.collections]
             else:
-                object_names = [ob for ob in data_from.collections if pg.collection_search_string in ob]
+                object_names = [
+                    obj for obj in data_from.collections if pg.collection_search_string in obj
+                ]
         for object_name in object_names:
             _pdt_col_items.append((object_name, object_name, ""))
     else:
@@ -206,9 +208,11 @@ def enumlist_materials(self, context):
     if path.is_file() and ".blend" in str(path):
         with bpy.data.libraries.load(str(path)) as (data_from, _):
             if len(pg.material_search_string) == 0:
-                object_names = [ob for ob in data_from.materials]
+                object_names = [obj for obj in data_from.materials]
             else:
-                object_names = [ob for ob in data_from.materials if pg.material_search_string in ob]
+                object_names = [
+                    obj for obj in data_from.materials if pg.material_search_string in obj
+                ]
         for object_name in object_names:
             _pdt_mat_items.append((object_name, object_name, ""))
     else:
@@ -219,32 +223,21 @@ def enumlist_materials(self, context):
 class PDTSceneProperties(PropertyGroup):
     """Contains all PDT related properties."""
 
-    object_search_string : StringProperty(
-        name="Search", default="", description=PDT_DES_LIBSER
-    )
-    collection_search_string : StringProperty(
-        name="Search", default="", description=PDT_DES_LIBSER
-    )
-    material_search_string : StringProperty(
-        name="Search", default="", description=PDT_DES_LIBSER
-    )
+    object_search_string: StringProperty(name="Search", default="", description=PDT_DES_LIBSER)
+    collection_search_string: StringProperty(name="Search", default="", description=PDT_DES_LIBSER)
+    material_search_string: StringProperty(name="Search", default="", description=PDT_DES_LIBSER)
 
-    cartesian_coords : FloatVectorProperty(
-        name="Coords",
-        default=(0.0, 0.0, 0.0),
-        subtype="XYZ",
-        description=PDT_DES_COORDS
+    cartesian_coords: FloatVectorProperty(
+        name="Coords", default=(0.0, 0.0, 0.0), subtype="XYZ", description=PDT_DES_COORDS
     )
-    distance : FloatProperty(
+    distance: FloatProperty(
         name="Distance", default=0.0, precision=5, description=PDT_DES_OFFDIS, unit="LENGTH"
     )
-    angle : FloatProperty(
+    angle: FloatProperty(
         name="Angle", min=-180, max=180, default=0.0, precision=5, description=PDT_DES_OFFANG
     )
-    percent : FloatProperty(
-        name="Percent", default=0.0, precision=5, description=PDT_DES_OFFPER
-    )
-    plane : EnumProperty(
+    percent: FloatProperty(name="Percent", default=0.0, precision=5, description=PDT_DES_OFFPER)
+    plane: EnumProperty(
         items=(
             ("XZ", "Front(X-Z)", "Use X-Z Plane"),
             ("XY", "Top(X-Y)", "Use X-Y Plane"),
@@ -255,7 +248,7 @@ class PDTSceneProperties(PropertyGroup):
         default="XZ",
         description=PDT_DES_WORPLANE,
     )
-    select : EnumProperty(
+    select: EnumProperty(
         items=(
             ("REL", "Current Pos.", "Move Relative to Current Position"),
             (
@@ -268,13 +261,17 @@ class PDTSceneProperties(PropertyGroup):
         default="SEL",
         description=PDT_DES_MOVESEL,
     )
-    operation : EnumProperty(
+    operation: EnumProperty(
         items=(
             ("CU", "Move Cursor", "This function will Move the Cursor"),
             ("PP", "Move Pivot Point", "This function will Move the Pivot Point"),
-            ("MV", "Move (per Move Mode)", "This function will Move selected Vertices or Objects"),
+            ("MV", "Move Entities", "This function will Move selected Vertices or Objects"),
             ("NV", "Add New Vertex", "This function will Add a New Vertex"),
-            ("EV", "Extrude Vertex/Vertices", "This function will Extrude Vertex/Vertices Only in EDIT Mode"),
+            (
+                "EV",
+                "Extrude Vertex/Vertices",
+                "This function will Extrude Vertex/Vertices Only in EDIT Mode",
+            ),
             ("SE", "Split Edges", "This function will Split Edges Only in EDIT Mode"),
             (
                 "DG",
@@ -291,7 +288,7 @@ class PDTSceneProperties(PropertyGroup):
         default="CU",
         description=PDT_DES_OPMODE,
     )
-    taper : EnumProperty(
+    taper: EnumProperty(
         items=(
             ("RX-MY", "RotX-MovY", "Rotate X - Move Y"),
             ("RX-MZ", "RotX-MovZ", "Rotate X - Move Z"),
@@ -305,27 +302,19 @@ class PDTSceneProperties(PropertyGroup):
         description=PDT_DES_ROTMOVAX,
     )
 
-    flip_angle : BoolProperty(
-        name="Flip Angle", default=False, description=PDT_DES_FLIPANG
-    )
-    flip_percent : BoolProperty(
-        name="Flip %", default=False, description=PDT_DES_FLIPPER
-    )
+    flip_angle: BoolProperty(name="Flip Angle", default=False, description=PDT_DES_FLIPANG)
+    flip_percent: BoolProperty(name="Flip %", default=False, description=PDT_DES_FLIPPER)
 
-    extend : BoolProperty(
-        name="Trim/Extend All", default=False, description=PDT_DES_TRIM
-    )
+    extend: BoolProperty(name="Trim/Extend All", default=False, description=PDT_DES_TRIM)
 
-    lib_objects : EnumProperty(
-        items=enumlist_objects, name="Objects", description=PDT_DES_LIBOBS
-    )
-    lib_collections : EnumProperty(
+    lib_objects: EnumProperty(items=enumlist_objects, name="Objects", description=PDT_DES_LIBOBS)
+    lib_collections: EnumProperty(
         items=enumlist_collections, name="Collections", description=PDT_DES_LIBCOLS
     )
-    lib_materials : EnumProperty(
+    lib_materials: EnumProperty(
         items=enumlist_materials, name="Materials", description=PDT_DES_LIBMATS
     )
-    lib_mode : EnumProperty(
+    lib_mode: EnumProperty(
         items=(
             ("OBJECTS", "Objects", "Use Objects"),
             ("COLLECTIONS", "Collections", "Use Collections"),
@@ -336,14 +325,11 @@ class PDTSceneProperties(PropertyGroup):
         description=PDT_DES_LIBMODE,
     )
 
-    rotation_coords : FloatVectorProperty(
-        name="Rotation",
-        default=(0.0, 0.0, 0.0),
-        subtype="XYZ",
-        description="Rotation Coordinates"
+    rotation_coords: FloatVectorProperty(
+        name="Rotation", default=(0.0, 0.0, 0.0), subtype="XYZ", description="Rotation Coordinates"
     )
 
-    object_order : EnumProperty(
+    object_order: EnumProperty(
         items=(
             ("1,2,3,4", "1,2,3,4", "Objects 1 & 2 are First Line"),
             ("1,3,2,4", "1,3,2,4", "Objects 1 & 3 are First Line"),
@@ -353,99 +339,86 @@ class PDTSceneProperties(PropertyGroup):
         default="1,2,3,4",
         description=PDT_DES_OBORDER,
     )
-    vrotangle : FloatProperty(name="View Rotate Angle", default=10, max=180, min=-180)
-    command : StringProperty(
-        name="Command",
-        default="CA0,0,0",
-        update=command_run,
-        description=PDT_DES_VALIDLET,
+    vrotangle: FloatProperty(name="View Rotate Angle", default=10, max=180, min=-180)
+    command: StringProperty(
+        name="Command", default="CA0,0,0", update=command_run, description=PDT_DES_VALIDLET,
     )
-    maths_output : FloatProperty(
-        name="Maths output",
-        default=0,
-        description=PDT_DES_OUTPUT,
+    maths_output: FloatProperty(
+        name="Maths output", default=0, description=PDT_DES_OUTPUT,
     )
-    error : StringProperty(name="Error", default="")
+    error: StringProperty(name="Error", default="")
 
     # Was pivot* -- is now pivot_*
-    pivot_loc : FloatVectorProperty(
-        name="Pivot Location",
-        default=(0.0, 0.0, 0.0),
-        subtype="XYZ",
-        description=PDT_DES_PPLOC,
+    pivot_loc: FloatVectorProperty(
+        name="Pivot Location", default=(0.0, 0.0, 0.0), subtype="XYZ", description=PDT_DES_PPLOC,
     )
-    pivot_scale : FloatVectorProperty(
+    pivot_scale: FloatVectorProperty(
         name="Pivot Scale", default=(1.0, 1.0, 1.0), subtype="XYZ", description=PDT_DES_PPSCALEFAC
     )
-    pivot_size : FloatProperty(
+    pivot_size: FloatProperty(
         name="Pivot Factor", min=0.4, max=10, default=2, precision=1, description=PDT_DES_PPSIZE
     )
-    pivot_width : IntProperty(
-        name="Width", min=1, max=5, default=2, description=PDT_DES_PPWIDTH
+    pivot_width: IntProperty(name="Width", min=1, max=5, default=2, description=PDT_DES_PPWIDTH)
+
+    pivot_ang: FloatProperty(name="Pivot Angle", min=-180, max=180, default=0.0)
+
+    pivot_dis: FloatProperty(
+        name="Pivot Dist", default=0.0, min=0, update=scale_set, description=PDT_DES_PIVOTDIS,
     )
-    # FIXME: might as well become pivot_angle
-    pivot_ang : FloatProperty(name="Pivot Angle", min=-180, max=180, default=0.0)
-    # FIXME: pivot_dist for consistency?
-    pivot_dis : FloatProperty(name="Pivot Dist",
-        default=0.0,
-        min = 0,
-        update=scale_set,
-        description=PDT_DES_PIVOTDIS,
+    pivot_alpha: FloatProperty(
+        name="Alpha", min=0.2, max=1, default=0.6, precision=1, description=PDT_DES_PPTRANS,
     )
-    pivot_alpha : FloatProperty(
-        name="Alpha",
-        min=0.2,
-        max=1,
-        default=0.6,
-        precision=1,
-        description=PDT_DES_PPTRANS,
-    )
-    pivot_show : BoolProperty()
+    pivot_show: BoolProperty()
 
     # Was filletrad
-    fillet_radius : FloatProperty(
+    fillet_radius: FloatProperty(
         name="Fillet Radius", min=0.0, default=1.0, description=PDT_DES_FILLETRAD
     )
     # Was filletnum
-    fillet_segments : IntProperty(
+    fillet_segments: IntProperty(
         name="Fillet Segments", min=1, default=4, description=PDT_DES_FILLETSEG
     )
     # Was filletpro
-    fillet_profile : FloatProperty(
+    fillet_profile: FloatProperty(
         name="Fillet Profile", min=0.0, max=1.0, default=0.5, description=PDT_DES_FILLETPROF
     )
     # Was filletbool
-    fillet_vertices_only : BoolProperty(
-        name="Fillet Vertices Only",
-        default=True,
-        description=PDT_DES_FILLETVERTS,
+    fillet_vertices_only: BoolProperty(
+        name="Fillet Vertices Only", default=True, description=PDT_DES_FILLETVERTS,
     )
-    fillet_int : BoolProperty(
-        name="Intersect",
-        default=False,
-        description=PDT_DES_FILLINT,
+    fillet_intersect: BoolProperty(
+        name="Intersect", default=False, description=PDT_DES_FILLINT,
     )
 
 
 class PDTPreferences(AddonPreferences):
-    # This must match the addon name, use '__package__' when defining this in a submodule of a python package.
+    # This must match the addon name, use '__package__'
+    # when defining this in a submodule of a python package.
 
     bl_idname = __name__
 
-    pdt_library_path : StringProperty(
-        name="Parts Library", default="", description="Parts Library File",
-        maxlen=1024, subtype='FILE_PATH'
+    pdt_library_path: StringProperty(
+        name="Parts Library",
+        default="",
+        description="Parts Library File",
+        maxlen=1024,
+        subtype="FILE_PATH",
     )
 
-    debug : BoolProperty(
-        name="Enable console debug output from PDT scripts", default=False,
-        description="NOTE: Does not enable debugging globally in Blender (only in PDT scripts)"
+    debug: BoolProperty(
+        name="Enable console debug output from PDT scripts",
+        default=False,
+        description="NOTE: Does not enable debugging globally in Blender (only in PDT scripts)",
     )
 
-    pdt_ui_width : IntProperty(
-        name='UI Width Cut-off',
+    pdt_ui_width: IntProperty(
+        name="UI Width Cut-off",
         default=350,
-        description="Cutoff width for shrinking items per line in menus"
+        description="Cutoff width for shrinking items per line in menus",
+    )
+
+    pdt_input_round: IntProperty(
+        name="Input Rounding", default=5, description="Rounding Factor for Inputs"
     )
 
     def draw(self, context):
@@ -454,9 +427,11 @@ class PDTPreferences(AddonPreferences):
         box = layout.box()
         row1 = box.row()
         row2 = box.row()
+        row3 = box.row()
         row1.prop(self, "debug")
-        row1.prop(self, "pdt_ui_width")
-        row2.prop(self, "pdt_library_path")
+        row2.prop(self, "pdt_ui_width")
+        row2.prop(self, "pdt_input_round")
+        row3.prop(self, "pdt_library_path")
 
 
 # List of All Classes in the Add-on to register
@@ -487,6 +462,7 @@ classes = (
     pdt_library.PDT_OT_Link,
     pdt_library.PDT_OT_LibShow,
     pdt_menus.PDT_PT_PanelDesign,
+    pdt_menus.PDT_PT_PanelTools,
     pdt_menus.PDT_PT_PanelCommandLine,
     pdt_menus.PDT_PT_PanelViewControl,
     pdt_menus.PDT_PT_PanelPivotPoint,
@@ -501,12 +477,12 @@ classes = (
     pdt_pivot_point.PDT_OT_PivotWrite,
     pdt_pivot_point.PDT_OT_PivotRead,
     pdt_view.PDT_OT_ViewRot,
-    pdt_view.PDT_OT_vRotL,
-    pdt_view.PDT_OT_vRotR,
-    pdt_view.PDT_OT_vRotU,
-    pdt_view.PDT_OT_vRotD,
-    pdt_view.PDT_OT_vRoll,
-    pdt_view.PDT_OT_viso,
+    pdt_view.PDT_OT_ViewRotL,
+    pdt_view.PDT_OT_ViewRotR,
+    pdt_view.PDT_OT_ViewRotU,
+    pdt_view.PDT_OT_ViewRotD,
+    pdt_view.PDT_OT_ViewRoll,
+    pdt_view.PDT_OT_ViewIso,
     pdt_view.PDT_OT_Reset3DView,
     pdt_xall.PDT_OT_IntersectAllEdges,
 )
@@ -525,10 +501,10 @@ def register():
 
     # OpenGL flag
     #
-    wm = WindowManager
+    window_manager = WindowManager
     # Register Internal OpenGL Property
     #
-    wm.pdt_run_opengl = BoolProperty(default=False)
+    window_manager.pdt_run_opengl = BoolProperty(default=False)
 
     Scene.pdt_pg = PointerProperty(type=PDTSceneProperties)
 
@@ -545,10 +521,10 @@ def unregister():
     pdt_pivot_point.PDT_OT_ModalDrawOperator.handle_remove(
         pdt_pivot_point.PDT_OT_ModalDrawOperator, bpy.context
     )
-    wm = bpy.context.window_manager
-    p = "pdt_run_opengl"
-    if p in wm:
-        del wm[p]
+    window_manager = bpy.context.window_manager
+    pdt_wm = "pdt_run_opengl"
+    if pdt_wm in window_manager:
+        del window_manager[pdt_wm]
 
     for cls in reversed(classes):
         unregister_class(cls)

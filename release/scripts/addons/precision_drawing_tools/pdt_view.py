@@ -32,6 +32,8 @@ from .pdt_functions import debug, euler_to_quaternion
 
 
 class PDT_OT_ViewRot(Operator):
+    """Rotate View by Absolute Coordinates."""
+
     bl_idname = "pdt.viewrot"
     bl_label = "Rotate View"
     bl_options = {"REGISTER", "UNDO"}
@@ -40,14 +42,13 @@ class PDT_OT_ViewRot(Operator):
     def execute(self, context):
         """View Rotation by Absolute Values.
 
-        Rotations are converted to 3x3 Quaternion Rotation Matrix.
-        This is an Absolute Rotation, not an Incremental Orbit.
+        Note:
+            Rotations are converted to 3x3 Quaternion Rotation Matrix.
+            This is an Absolute Rotation, not an Incremental Orbit.
+            Uses pg.rotation_coords scene variable
 
         Args:
             context: Blender bpy.context instance.
-
-        Notes:
-            Uses pg.rotation_coords scene variables
 
         Returns:
             Status Set.
@@ -55,18 +56,18 @@ class PDT_OT_ViewRot(Operator):
 
         scene = context.scene
         pg = scene.pdt_pg
-        areas = [a for a in context.screen.areas if a.type == "VIEW_3D"]
-        if len(areas) > 0:
-            roll_value = euler_to_quaternion(
-                pg.rotation_coords.x * pi / 180,
-                pg.rotation_coords.y * pi / 180,
-                pg.rotation_coords.z * pi / 180
-            )
-            areas[0].spaces.active.region_3d.view_rotation = roll_value
+        roll_value = euler_to_quaternion(
+            pg.rotation_coords.x * pi / 180,
+            pg.rotation_coords.y * pi / 180,
+            pg.rotation_coords.z * pi / 180,
+        )
+        context.region_data.view_rotation = roll_value
         return {"FINISHED"}
 
 
-class PDT_OT_vRotL(Operator):
+class PDT_OT_ViewRotL(Operator):
+    """Rotate View Left."""
+
     bl_idname = "pdt.viewleft"
     bl_label = "Rotate Left"
     bl_options = {"REGISTER", "UNDO"}
@@ -75,26 +76,26 @@ class PDT_OT_vRotL(Operator):
     def execute(self, context):
         """View Orbit Left by Delta Value.
 
-        Orbits view to the left about its vertical axis
+        Note:
+            Uses pg.vrotangle scene variable
+            Orbits view to the left about its vertical axis
 
         Args:
             context: Blender bpy.context instance.
 
-        Notes:
-            Uses pg.vrotangle scene variable
-
-        Returns: Status Set.
+        Returns:
+            Status Set.
         """
 
         scene = context.scene
         pg = scene.pdt_pg
-        areas = [a for a in context.screen.areas if a.type == "VIEW_3D"]
-        if len(areas) > 0:
-            bpy.ops.view3d.view_orbit(angle=(pg.vrotangle * pi / 180), type="ORBITLEFT")
+        bpy.ops.view3d.view_orbit(angle=(pg.vrotangle * pi / 180), type="ORBITLEFT")
         return {"FINISHED"}
 
 
-class PDT_OT_vRotR(Operator):
+class PDT_OT_ViewRotR(Operator):
+    """Rotate View Right."""
+
     bl_idname = "pdt.viewright"
     bl_label = "Rotate Right"
     bl_options = {"REGISTER", "UNDO"}
@@ -103,13 +104,12 @@ class PDT_OT_vRotR(Operator):
     def execute(self, context):
         """View Orbit Right by Delta Value.
 
-        Orbits view to the right about its vertical axis
+        Note:
+            Uses pg.vrotangle scene variable
+            Orbits view to the right about its vertical axis
 
         Args:
             context: Blender bpy.context instance.
-
-        Notes:
-            Uses pg.vrotangle scene variable
 
         Returns:
             Status Set.
@@ -117,13 +117,13 @@ class PDT_OT_vRotR(Operator):
 
         scene = context.scene
         pg = scene.pdt_pg
-        areas = [a for a in context.screen.areas if a.type == "VIEW_3D"]
-        if len(areas) > 0:
-            bpy.ops.view3d.view_orbit(angle=(pg.vrotangle * pi / 180), type="ORBITRIGHT")
+        bpy.ops.view3d.view_orbit(angle=(pg.vrotangle * pi / 180), type="ORBITRIGHT")
         return {"FINISHED"}
 
 
-class PDT_OT_vRotU(Operator):
+class PDT_OT_ViewRotU(Operator):
+    """Rotate View Up."""
+
     bl_idname = "pdt.viewup"
     bl_label = "Rotate Up"
     bl_options = {"REGISTER", "UNDO"}
@@ -132,13 +132,12 @@ class PDT_OT_vRotU(Operator):
     def execute(self, context):
         """View Orbit Up by Delta Value.
 
-        Orbits view up about its horizontal axis
+        Note:
+            Uses pg.vrotangle scene variable
+            Orbits view up about its horizontal axis
 
         Args:
             context: Blender bpy.context instance.
-
-        Notes:
-            Uses pg.vrotangle scene variable
 
         Returns:
             Status Set.
@@ -146,13 +145,13 @@ class PDT_OT_vRotU(Operator):
 
         scene = context.scene
         pg = scene.pdt_pg
-        areas = [a for a in context.screen.areas if a.type == "VIEW_3D"]
-        if len(areas) > 0:
-            bpy.ops.view3d.view_orbit(angle=(pg.vrotangle * pi / 180), type="ORBITUP")
+        bpy.ops.view3d.view_orbit(angle=(pg.vrotangle * pi / 180), type="ORBITUP")
         return {"FINISHED"}
 
 
-class PDT_OT_vRotD(Operator):
+class PDT_OT_ViewRotD(Operator):
+    """Rotate View Down."""
+
     bl_idname = "pdt.viewdown"
     bl_label = "Rotate Down"
     bl_options = {"REGISTER", "UNDO"}
@@ -161,13 +160,12 @@ class PDT_OT_vRotD(Operator):
     def execute(self, context):
         """View Orbit Down by Delta Value.
 
-        Orbits view down about its horizontal axis
+        Note:
+            Uses pg.vrotangle scene variable
+            Orbits view down about its horizontal axis
 
         Args:
             context: Blender bpy.context instance.
-
-        Notes:
-            Uses pg.vrotangle scene variable
 
         Returns:
             Status Set.
@@ -175,13 +173,13 @@ class PDT_OT_vRotD(Operator):
 
         scene = context.scene
         pg = scene.pdt_pg
-        areas = [a for a in context.screen.areas if a.type == "VIEW_3D"]
-        if len(areas) > 0:
-            bpy.ops.view3d.view_orbit(angle=(pg.vrotangle * pi / 180), type="ORBITDOWN")
+        bpy.ops.view3d.view_orbit(angle=(pg.vrotangle * pi / 180), type="ORBITDOWN")
         return {"FINISHED"}
 
 
-class PDT_OT_vRoll(Operator):
+class PDT_OT_ViewRoll(Operator):
+    """Roll View."""
+
     bl_idname = "pdt.viewroll"
     bl_label = "Roll View"
     bl_options = {"REGISTER", "UNDO"}
@@ -190,13 +188,12 @@ class PDT_OT_vRoll(Operator):
     def execute(self, context):
         """View Roll by Delta Value.
 
-        Rolls view about its normal axis
+        Note:
+            Uses pg.vrotangle scene variable
+            Rolls view about its normal axis
 
         Args:
             context: Blender bpy.context instance.
-
-        Notes:
-            Uses pg.vrotangle scene variable
 
         Returns:
             Status Set.
@@ -204,13 +201,13 @@ class PDT_OT_vRoll(Operator):
 
         scene = context.scene
         pg = scene.pdt_pg
-        areas = [a for a in context.screen.areas if a.type == "VIEW_3D"]
-        if len(areas) > 0:
-            bpy.ops.view3d.view_roll(angle=(pg.vrotangle * pi / 180), type="ANGLE")
+        bpy.ops.view3d.view_roll(angle=(pg.vrotangle * pi / 180), type="ANGLE")
         return {"FINISHED"}
 
 
-class PDT_OT_viso(Operator):
+class PDT_OT_ViewIso(Operator):
+    """Set View Isometric."""
+
     bl_idname = "pdt.viewiso"
     bl_label = "Isometric View"
     bl_options = {"REGISTER", "UNDO"}
@@ -219,7 +216,8 @@ class PDT_OT_viso(Operator):
     def execute(self, context):
         """Set Isometric View.
 
-        Set view orientation to Isometric
+        Note:
+            Set view orientation to Orthographic Isometric
 
         Args:
             context: Blender bpy.context instance.
@@ -228,20 +226,18 @@ class PDT_OT_viso(Operator):
             Status Set.
         """
 
-        areas = [a for a in context.screen.areas if a.type == "VIEW_3D"]
-        if len(areas) > 0:
-            # Try working this out in your head!
-            areas[0].spaces.active.region_3d.view_rotation = Quaternion(
-                (0.8205, 0.4247, -0.1759, -0.3399)
-            )
-            areas[0].spaces.active.region_3d.view_perspective = 'ORTHO'
+        # Rotate view 45 degrees about Z then 32.2644 about X
+        context.region_data.view_rotation = Quaternion((0.8205, 0.4247, -0.1759, -0.3399))
+        context.region_data.view_perspective = "ORTHO"
         return {"FINISHED"}
 
 
 class PDT_OT_Reset3DView(Operator):
+    """Reset Views to Factory Default."""
+
     bl_idname = "pdt.reset_3d_view"
     bl_label = "Reset 3D View"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
     bl_description = "Reset 3D View to Blender Defaults."
 
     def execute(self, context):
@@ -256,34 +252,35 @@ class PDT_OT_Reset3DView(Operator):
 
         # The default view_distance to the origin when starting up Blender
         default_view_distance = 17.986562728881836
+        default_view_distance = (
+            bpy.data.screens["Layout"].areas[-1].spaces[0].region_3d.view_distance
+        )
         # The default view_matrix when starting up Blender
         default_view_matrix = (
             (0.41, -0.4017, 0.8188, 0.0),
             (0.912, 0.1936, -0.3617, 0.0),
             (-0.0133, 0.8950, 0.4458, 0.0),
-            (0.0, 0.0, -17.9866, 1.0)
+            (0.0, 0.0, -17.9866, 1.0),
         )
 
-        for area in (a for a in context.screen.areas if a.type == 'VIEW_3D'):
-            view = area.spaces[0].region_3d
-            if view is not None:
-                debug(f"is_orthographic_side_view: {view.is_orthographic_side_view}")
-                if view.is_orthographic_side_view:
-                    # When the view is orthographic, reset the distance and location.
-                    # The rotation already fits.
-                    debug(f"view_distance before reset: {view.view_distance}")
-                    debug(f"view_location before reset: {view.view_location}")
-                    view.view_distance = default_view_distance
-                    view.view_location = (-0.0, -0.0, -0.0)
-                    view.update()
-                    debug(f"view_distance AFTER reset: {view.view_distance}")
-                    debug(f"view_location AFTER reset: {view.view_location}")
-                else:
-                    # Otherwise, the view matrix needs to be reset (includes distance).
-                    debug(f"view_matrix before reset:\n{view.view_matrix}")
-                    view.view_matrix = default_view_matrix
-                    view.view_distance = default_view_distance
-                    view.update()
-                    debug(f"view_matrix AFTER reset:\n{view.view_matrix}")
+        view = context.region_data
+        debug(f"is_orthographic_side_view: {view.is_orthographic_side_view}")
+        if view.is_orthographic_side_view:
+            # When the view is orthographic, reset the distance and location.
+            # The rotation already fits.
+            debug(f"view_distance before reset: {view.view_distance}")
+            debug(f"view_location before reset: {view.view_location}")
+            view.view_distance = default_view_distance
+            view.view_location = (-0.0, -0.0, -0.0)
+            view.update()
+            debug(f"view_distance AFTER reset: {view.view_distance}")
+            debug(f"view_location AFTER reset: {view.view_location}")
+        else:
+            # Otherwise, the view matrix needs to be reset.
+            debug(f"view_matrix before reset:\n{view.view_matrix}")
+            view.view_matrix = default_view_matrix
+            view.view_distance = default_view_distance
+            view.update()
+            debug(f"view_matrix AFTER reset:\n{view.view_matrix}")
 
-        return {'FINISHED'}
+        return {"FINISHED"}

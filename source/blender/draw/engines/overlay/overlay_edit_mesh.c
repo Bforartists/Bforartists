@@ -96,7 +96,6 @@ void OVERLAY_edit_mesh_cache_init(OVERLAY_Data *vedata)
 
   if ((flag & V3D_OVERLAY_EDIT_FACES) == 0) {
     pd->edit_mesh.do_faces = false;
-    pd->edit_mesh.do_zbufclip = false;
   }
   if ((flag & V3D_OVERLAY_EDIT_EDGES) == 0) {
     if ((tsettings->selectmode & SCE_SELECT_EDGE) == 0) {
@@ -407,7 +406,11 @@ void OVERLAY_edit_mesh_draw(OVERLAY_Data *vedata)
       GPU_framebuffer_clear_depth(fbl->overlay_default_fb, 1.0f);
     }
 
-    DRW_draw_pass(psl->edit_mesh_depth_ps[IN_FRONT]);
+    if (!DRW_pass_is_empty(psl->edit_mesh_depth_ps[IN_FRONT])) {
+      DRW_view_set_active(NULL);
+      DRW_draw_pass(psl->edit_mesh_depth_ps[IN_FRONT]);
+    }
+
     overlay_edit_mesh_draw_components(psl, pd, true);
   }
 }

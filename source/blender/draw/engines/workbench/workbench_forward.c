@@ -665,7 +665,7 @@ void workbench_forward_cache_populate(WORKBENCH_Data *vedata, Object *ob)
     return;
   }
 
-  WORKBENCH_MaterialData *material;
+  WORKBENCH_MaterialData *material = NULL;
   if (ELEM(ob->type, OB_MESH, OB_CURVE, OB_SURF, OB_FONT, OB_MBALL)) {
     const bool use_sculpt_pbvh = BKE_sculptsession_use_pbvh_draw(ob, draw_ctx->v3d) &&
                                  !DRW_state_is_image_render();
@@ -741,7 +741,7 @@ void workbench_forward_cache_populate(WORKBENCH_Data *vedata, Object *ob)
         struct DRWShadingGroup **shgrps = BLI_array_alloca(shgrps, materials_len);
 
         for (int i = 0; i < materials_len; i++) {
-          struct Material *mat = give_current_material(ob, i + 1);
+          struct Material *mat = BKE_object_material_get(ob, i + 1);
           material = workbench_forward_get_or_create_material_data(
               vedata, ob, mat, NULL, NULL, V3D_SHADING_MATERIAL_COLOR, 0);
           shgrps[i] = material->shgrp;
@@ -764,7 +764,7 @@ void workbench_forward_cache_populate(WORKBENCH_Data *vedata, Object *ob)
               continue;
             }
 
-            Material *mat = give_current_material(ob, i + 1);
+            Material *mat = BKE_object_material_get(ob, i + 1);
             material = workbench_forward_get_or_create_material_data(
                 vedata, ob, mat, NULL, NULL, V3D_SHADING_MATERIAL_COLOR, 0);
             /* TODO(fclem) make this call optional */

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
 "Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -167,10 +167,6 @@ msgid "Environment"
 msgstr "הביבס"
 
 
-msgid "Density"
-msgstr "תופיפצ"
-
-
 msgid "End"
 msgstr "ףוס"
 
@@ -191,8 +187,8 @@ msgid "Blue"
 msgstr "לוחכ"
 
 
-msgid "Ignition"
-msgstr "םוקמ"
+msgid "Density"
+msgstr "תופיפצ"
 
 
 msgid "Smoke Color"
@@ -888,20 +884,8 @@ msgid "File name"
 msgstr "ץבוק םש"
 
 
-msgid "Display Color:"
-msgstr ":הגוצת עבצ"
-
-
-msgid "Key:"
-msgstr ":חתפמ"
-
-
 msgid "Value:"
 msgstr ":ךרע"
-
-
-msgid "Right Handle:"
-msgstr ":תינמי תידי"
 
 
 msgid "Add Modifier"

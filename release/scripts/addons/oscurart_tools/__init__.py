@@ -29,7 +29,7 @@ bl_info = {
     "wiki_url": "https://www.oscurart.com.ar",
     "category": "Object",
     }
-    
+
 
 import bpy
 from bpy.app.handlers import persistent
@@ -67,16 +67,16 @@ from bpy.props import (
 
 # mesh
 class VIEW3D_MT_edit_mesh_oscurarttools(Menu):
-    bl_label = "OscurartTools"   
-    
+    bl_label = "OscurartTools"
+
     def draw(self, context):
         layout = self.layout
-        
+
         layout.operator("mesh.uv_island_copy")
         layout.operator("mesh.uv_island_paste")
         layout.operator("mesh.select_doubles")
-        layout.separator()          
-        layout.operator("image.reload_images_osc")      
+        layout.separator()
+        layout.operator("image.reload_images_osc")
         layout.operator("file.save_incremental_backup")
         layout.operator("file.collect_all_images")
         layout.operator("file.create_batch_maker_osc")
@@ -87,17 +87,17 @@ def menu_funcMesh(self, context):
 
 # image
 class IMAGE_MT_uvs_oscurarttools(Menu):
-    bl_label = "OscurartTools"   
-    
+    bl_label = "OscurartTools"
+
     def draw(self, context):
         layout = self.layout
-        
+
         layout.operator("mesh.uv_island_copy")
         layout.operator("mesh.uv_island_paste")
         layout.operator("mesh.overlap_uv_faces")
-        layout.operator("mesh.select_flipped_uvs")        
-        layout.separator()          
-        layout.operator("image.reload_images_osc")      
+        layout.operator("mesh.select_flipped_uvs")
+        layout.separator()
+        layout.operator("image.reload_images_osc")
         layout.operator("file.save_incremental_backup")
         layout.operator("file.collect_all_images")
         layout.operator("file.create_batch_maker_osc")
@@ -110,19 +110,19 @@ def menu_funcImage(self, context):
 
 # object
 class VIEW3D_MT_object_oscurarttools(Menu):
-    bl_label = "OscurartTools"   
-    
+    bl_label = "OscurartTools"
+
     def draw(self, context):
         layout = self.layout
-        
-        layout.operator("mesh.vertex_color_mask")        
+
+        layout.operator("mesh.vertex_color_mask")
         layout.operator("object.distribute_osc")
         layout.operator("mesh.remove_modifiers")
         layout.operator("object.search_and_select_osc")
         layout.operator("object.shape_key_to_objects_osc")
-        layout.operator("mesh.apply_linked_meshes")        
-        layout.separator()          
-        layout.operator("image.reload_images_osc")      
+        layout.operator("mesh.apply_linked_meshes")
+        layout.separator()
+        layout.operator("image.reload_images_osc")
         layout.operator("file.save_incremental_backup")
         layout.operator("file.collect_all_images")
         layout.operator("file.create_batch_maker_osc")
@@ -138,8 +138,8 @@ classes = (
     VIEW3D_MT_edit_mesh_oscurarttools,
     IMAGE_MT_uvs_oscurarttools,
     VIEW3D_MT_object_oscurarttools,
-    reload_images.reloadImages,  
-    overlap_uvs.CopyUvIsland, 
+    reload_images.reloadImages,
+    overlap_uvs.CopyUvIsland,
     overlap_uvs.PasteUvIsland,
     distribute.DistributeOsc,
     selection.OSSELECTION_HT_OscSelection,
@@ -163,23 +163,23 @@ classes = (
     flipped_uvs.selectFlippedUvs
     )
 
-def register():   
+def register():
     from bpy.types import Scene
     Scene.multimeshedit = StringProperty()
     bpy.types.VIEW3D_MT_edit_mesh_context_menu.prepend(menu_funcMesh)
     bpy.types.IMAGE_MT_uvs_context_menu.prepend(menu_funcImage)
     bpy.types.VIEW3D_MT_object_context_menu.prepend(menu_funcObject)
     bpy.app.handlers.render_init.append(render_tokens.replaceTokens)
-    bpy.app.handlers.render_cancel.append(render_tokens.restoreTokens) 
-    bpy.app.handlers.render_complete.append(render_tokens.restoreTokens) 
-    bpy.app.handlers.render_pre.append(material_overrides.ApplyOverrides)   
-    bpy.app.handlers.render_cancel.append(material_overrides.RestoreOverrides) 
-    bpy.app.handlers.render_post.append(material_overrides.RestoreOverrides) 
-    
+    bpy.app.handlers.render_cancel.append(render_tokens.restoreTokens)
+    bpy.app.handlers.render_complete.append(render_tokens.restoreTokens)
+    bpy.app.handlers.render_pre.append(material_overrides.ApplyOverrides)
+    bpy.app.handlers.render_cancel.append(material_overrides.RestoreOverrides)
+    bpy.app.handlers.render_post.append(material_overrides.RestoreOverrides)
+
     from bpy.utils import register_class
     for cls in classes:
-        register_class(cls)                                            
-                                                                              
+        register_class(cls)
+
 
 def unregister():
     bpy.types.VIEW3D_MT_edit_mesh_context_menu.remove(menu_funcMesh)

@@ -220,7 +220,7 @@ def vertsToPoints(Verts, splineType):
 def draw_curve(props, context, align_matrix):
     # output splineType 'POLY' 'NURBS' 'BEZIER'
     splineType = props.curve_type
-    
+
     if props.spiral_type == 'ARCH':
         verts = make_spiral(props, context)
     if props.spiral_type == 'LOG':
@@ -238,13 +238,13 @@ def draw_curve(props, context, align_matrix):
         # create curve
         dataCurve = bpy.data.curves.new(name='Spiral', type='CURVE')  # curvedatablock
         newSpline = dataCurve.splines.new(type=splineType)          # spline
-        
+
         # create object with newCurve
         Curve = object_data_add(context, dataCurve)  # place in active scene
         Curve.matrix_world = align_matrix  # apply matrix
         Curve.rotation_euler = props.rotation_euler
         Curve.select_set(True)
-        
+
     # set curveOptions
     Curve.data.dimensions = props.shape
     Curve.data.use_path = True
@@ -252,15 +252,15 @@ def draw_curve(props, context, align_matrix):
         Curve.data.fill_mode = 'FULL'
     else:
         Curve.data.fill_mode = 'BOTH'
-        
+
     # set curveOptions
     newSpline.use_cyclic_u = props.use_cyclic_u
     newSpline.use_endpoint_u = props.endp_u
     newSpline.order_u = props.order_u
-    
+
     # turn verts into array
     vertArray = vertsToPoints(verts, splineType)
-        
+
     for spline in Curve.data.splines:
         if spline.type == 'BEZIER':
             for point in spline.bezier_points:
@@ -270,7 +270,7 @@ def draw_curve(props, context, align_matrix):
         else:
             for point in spline.points:
                 point.select = False
-    
+
     # create newSpline from vertarray
     if splineType == 'BEZIER':
         newSpline.bezier_points.add(int(len(vertArray) * 0.33))
@@ -303,7 +303,7 @@ class CURVE_OT_spirals(Operator):
 
     # align_matrix for the invoke
     align_matrix : Matrix()
-    
+
     spiral_type : EnumProperty(
             items=[('ARCH', "Archemedian", "Archemedian"),
                    ("LOG", "Logarithmic", "Logarithmic"),
@@ -513,12 +513,12 @@ class CURVE_OT_spirals(Operator):
 
         row = layout.row()
         row.prop(self, "shape", expand=True)
-        
+
         # output options
         col = layout.column()
         col.label(text="Output Curve Type:")
         col.row().prop(self, "curve_type", expand=True)
-        
+
         if self.curve_type == 'NURBS':
             col.prop(self, "order_u")
         elif self.curve_type == 'BEZIER':
@@ -529,7 +529,7 @@ class CURVE_OT_spirals(Operator):
 
         col = layout.column()
         col.row().prop(self, "edit_mode", expand=True)
-        
+
         box = layout.box()
         box.label(text="Location:")
         box.prop(self, "startlocation")
@@ -545,17 +545,17 @@ class CURVE_OT_spirals(Operator):
         # turn off 'Enter Edit Mode'
         use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
         bpy.context.preferences.edit.use_enter_edit_mode = False
-        
+
         time_start = time.time()
         self.align_matrix = align_matrix(context, self.startlocation)
         draw_curve(self, context, self.align_matrix)
-        
+
         if use_enter_edit_mode:
             bpy.ops.object.mode_set(mode = 'EDIT')
-        
+
         # restore pre operator state
         bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
-        
+
         if self.edit_mode:
             bpy.ops.object.mode_set(mode = 'EDIT')
         else:
