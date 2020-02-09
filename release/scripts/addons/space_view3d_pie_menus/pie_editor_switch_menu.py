@@ -78,7 +78,7 @@ class PIE_MT_AreaTypePieOther(Menu):
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="File Browser", icon="FILEBROWSER").types = "FILE_BROWSER"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Preferences",
                              icon="PREFERENCES").types = "PREFERENCES"
-        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Text Editor", icon="TEXT").types = "TEXT_EDITOR" 
+        self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Text Editor", icon="TEXT").types = "TEXT_EDITOR"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Python Console", icon="CONSOLE").types = "CONSOLE"
         self.layout.operator(PIE_OT_SetAreaType.bl_idname, text="Info", icon="INFO").types = "INFO"
 

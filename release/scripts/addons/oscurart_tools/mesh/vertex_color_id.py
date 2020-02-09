@@ -49,8 +49,8 @@ def vertexColorMask(self,context):
             for loop in face.loops:
                 loop[color_layer] = color
     bpy.ops.object.mode_set(mode="VERTEX_PAINT")
-    
-    
+
+
 class createVCMask(bpy.types.Operator):
     bl_idname = "mesh.vertex_color_mask"
     bl_label = "Vertex Color Mask"

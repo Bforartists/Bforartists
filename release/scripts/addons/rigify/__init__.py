@@ -26,7 +26,7 @@ bl_info = {
     "description": "Automatic rigging from building-block components",
     "location": "Armature properties, Bone properties, View3d tools panel, Armature Add menu",
     "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "rigging/rigify.html",
+                "rigging/rigify/index.html",
     "category": "Rigging"}
 
 import importlib

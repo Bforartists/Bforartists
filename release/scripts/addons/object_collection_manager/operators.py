@@ -36,6 +36,7 @@ from .internals import (
     expanded,
     layer_collections,
     update_property_group,
+    get_modifiers,
     send_report,
 )
 
@@ -164,49 +165,61 @@ class CMSetCollectionOperator(Operator):
 
 
 class CMExcludeOperator(Operator):
-    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children'''
+    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children\n  * Shift-Ctrl-Click to toggle nested isolation'''
     bl_label = "Exclude Collection from View Layer"
     bl_idname = "view3d.exclude_collection"
     bl_options = {'REGISTER', 'UNDO'}
 
     name: StringProperty()
 
+    # static class var
+    isolated = False
+
     def invoke(self, context, event):
         global rto_history
+        cls = CMExcludeOperator
 
+        modifiers = get_modifiers(event)
         view_layer = context.view_layer.name
         laycol_ptr = layer_collections[self.name]["ptr"]
 
         if not view_layer in rto_history["exclude"]:
             rto_history["exclude"][view_layer] = {"target": "", "history": []}
 
-        rto_history["exclude"][view_layer]["target"] = self.name
+        target = rto_history["exclude"][view_layer]["target"]
         exclude_history = rto_history["exclude"][view_layer]["history"]
 
-        if event.shift:
+        if modifiers == {"shift"}:
             # isolate/de-isolate exclusion of collections
 
-            # get active layer collections
-            active_layer_collections = [x for x in layer_collections.values() \
-                                          if x["ptr"].exclude == False]
+            active_layer_collections = [x["ptr"] for x in layer_collections.values() if not x["ptr"].exclude]
 
-            # check if collection isolated
-            if len(active_layer_collections) == 1 and active_layer_collections[0]["name"] == self.name:
-                if len(exclude_history) > 0:
-                    # restore previous state
-                    for x, item in enumerate(layer_collections.values()):
-                        item["ptr"].exclude = exclude_history[x]
-
-                else:
-                    # enable all collections
-                    for item in layer_collections.values():
-                        item["ptr"].exclude = False
+            # check if previous state should be restored
+            if cls.isolated and self.name == target:
+                # restore previous state
+                for x, item in enumerate(layer_collections.values()):
+                    item["ptr"].exclude = exclude_history[x]
 
                 # reset exclude history
                 del rto_history["exclude"][view_layer]
 
+                cls.isolated = False
+
+            # check if all collections should be enabled
+            elif len(active_layer_collections) == 1 and active_layer_collections[0].name == self.name:
+                # enable all collections
+                for item in layer_collections.values():
+                    item["ptr"].exclude = False
+
+                # reset exclude history
+                del rto_history["exclude"][view_layer]
+
+                cls.isolated = False
+
             else:
                 # isolate collection
+
+                rto_history["exclude"][view_layer]["target"] = self.name
 
                 # reset exclude history
                 exclude_history.clear()
@@ -234,8 +247,10 @@ class CMExcludeOperator(Operator):
 
                     laycol_iter_list = new_laycol_iter_list
 
+                cls.isolated = True
 
-        elif event.ctrl:
+
+        elif modifiers == {"ctrl"}:
             # toggle children
 
             # reset exclude history
@@ -243,6 +258,67 @@ class CMExcludeOperator(Operator):
 
             # toggle exclusion of collection (this propagates to children)
             laycol_ptr.exclude = not laycol_ptr.exclude
+
+            cls.isolated = False
+
+        elif modifiers == {"ctrl", "shift"}:
+            # toggle nested isolation
+
+            rto_history["exclude"][view_layer]["target"] = self.name
+
+            if cls.isolated and self.name == target:
+                # restore previous state
+                for x, item in enumerate(layer_collections.values()):
+                    item["ptr"].exclude = exclude_history[x]
+
+                # reset exclude history
+                del rto_history["exclude"][view_layer]
+
+                cls.isolated = False
+
+            else:
+                # isolate nested collections
+
+                # reset exclude history
+                exclude_history.clear()
+
+                # save state
+                for item in layer_collections.values():
+                    exclude_history.append(item["ptr"].exclude)
+
+                # get child states
+                child_states = {}
+                laycol_iter_list = [laycol_ptr.children]
+                while len(laycol_iter_list) > 0:
+                    new_laycol_iter_list = []
+                    for laycol_iter in laycol_iter_list:
+                        for layer_collection in laycol_iter:
+                            child_states[layer_collection.name] = layer_collection.exclude
+                            if len(layer_collection.children) > 0:
+                                new_laycol_iter_list.append(layer_collection.children)
+
+                    laycol_iter_list = new_laycol_iter_list
+
+                # isolate collection
+                for item in layer_collections.values():
+                    if item["name"] != laycol_ptr.name:
+                        item["ptr"].exclude = True
+
+                laycol_ptr.exclude = False
+
+                # restore child states
+                laycol_iter_list = [laycol_ptr.children]
+                while len(laycol_iter_list) > 0:
+                    new_laycol_iter_list = []
+                    for laycol_iter in laycol_iter_list:
+                        for layer_collection in laycol_iter:
+                            layer_collection.exclude = child_states[layer_collection.name]
+                            if len(layer_collection.children) > 0:
+                                new_laycol_iter_list.append(layer_collection.children)
+
+                    laycol_iter_list = new_laycol_iter_list
+
+                cls.isolated = True
 
         else:
             # toggle exclusion
@@ -274,6 +350,7 @@ class CMExcludeOperator(Operator):
             for laycol in child_exclusion:
                 laycol[0].exclude = laycol[1]
 
+            cls.isolated = False
 
         # reset exclude all history
         if view_layer in rto_history["exclude_all"]:
@@ -334,56 +411,66 @@ class CMUnExcludeAllOperator(Operator):
 
 
 class CMRestrictSelectOperator(Operator):
-    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children'''
+    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children\n  * Shift-Ctrl-Click to toggle nested isolation'''
     bl_label = "Disable Selection of Collection"
     bl_idname = "view3d.restrict_select_collection"
     bl_options = {'REGISTER', 'UNDO'}
 
     name: StringProperty()
 
+    # static class var
+    isolated = False
+
     def invoke(self, context, event):
         global rto_history
+        cls = CMRestrictSelectOperator
 
+        modifiers = get_modifiers(event)
         view_layer = context.view_layer.name
         laycol_ptr = layer_collections[self.name]["ptr"]
 
         if not view_layer in rto_history["select"]:
             rto_history["select"][view_layer] = {"target": "", "history": []}
 
-        rto_history["select"][view_layer]["target"] = self.name
+        target = rto_history["select"][view_layer]["target"]
         select_history = rto_history["select"][view_layer]["history"]
 
-        if event.shift:
+        if modifiers == {"shift"}:
             # isolate/de-isolate selectability of collections
 
-            # get active collections
-            active_layer_collections = [x for x in layer_collections.values() \
-                                          if x["ptr"].collection.hide_select == False]
-
-            layerchain = []
             laycol = layer_collections[self.name]
 
-            # get chain of parents up to top level collection
-            while laycol["id"] != 0:
-                    layerchain.append(laycol)
-                    laycol = laycol["parent"]
+            # get active collections
+            active_layer_collections = [x["ptr"] for x in layer_collections.values() \
+                                          if x["ptr"].collection.hide_select == False]
 
-            # check if reversed layerchain matches active collections
-            if layerchain[::-1] == active_layer_collections:
-                if len(select_history) > 0:
-                    # restore previous state
-                    for x, item in enumerate(layer_collections.values()):
-                        item["ptr"].collection.hide_select = select_history[x]
-
-                else:
-                    # make all collections selectable
-                    for item in layer_collections.values():
-                        item["ptr"].collection.hide_select = False
+            # check if previous state should be restored
+            if cls.isolated and self.name == target:
+                # restore previous state
+                for x, item in enumerate(layer_collections.values()):
+                    item["ptr"].collection.hide_select = select_history[x]
 
                 # reset select history
                 del rto_history["select"][view_layer]
 
+                cls.isolated = False
+
+            # check if all collections should be enabled
+            elif len(active_layer_collections) == 1 and active_layer_collections[0].name == self.name:
+                # make all collections selectable
+                for item in layer_collections.values():
+                    item["ptr"].collection.hide_select = False
+
+                # reset select history
+                del rto_history["select"][view_layer]
+
+                cls.isolated = False
+
             else:
+                # isolate selectability
+
+                rto_history["select"][view_layer]["target"] = self.name
+
                 # reset select history
                 select_history.clear()
 
@@ -403,8 +490,9 @@ class CMRestrictSelectOperator(Operator):
                     laycol["ptr"].collection.hide_select = False
                     laycol = laycol["parent"]
 
+                cls.isolated = True
 
-        elif event.ctrl:
+        elif modifiers == {"ctrl"}:
             # toggle children
 
             # reset select history
@@ -426,13 +514,85 @@ class CMRestrictSelectOperator(Operator):
 
                 laycol_iter_list = new_laycol_iter_list
 
+            cls.isolated = False
+
+        elif modifiers == {"ctrl", "shift"}:
+            # isolate nested collections
+
+            laycol = layer_collections[self.name]
+
+            # check if previous state should be restored
+            if cls.isolated and self.name == target:
+                # restore previous state
+                for x, item in enumerate(layer_collections.values()):
+                    item["ptr"].collection.hide_select = select_history[x]
+
+                # reset select history
+                del rto_history["select"][view_layer]
+
+                cls.isolated = False
+
+            else:
+                # isolate nested selectability
+
+                rto_history["select"][view_layer]["target"] = self.name
+
+                # reset select history
+                select_history.clear()
+
+                # save state
+                for item in layer_collections.values():
+                    select_history.append(item["ptr"].collection.hide_select)
+
+                # get child states
+                child_states = {}
+                laycol_iter_list = [laycol_ptr.children]
+                while len(laycol_iter_list) > 0:
+                    new_laycol_iter_list = []
+                    for laycol_iter in laycol_iter_list:
+                        for layer_collection in laycol_iter:
+                            child_states[layer_collection.name] = layer_collection.collection.hide_select
+                            if len(layer_collection.children) > 0:
+                                new_laycol_iter_list.append(layer_collection.children)
+
+                    laycol_iter_list = new_laycol_iter_list
+
+                # make all collections unselectable
+                for item in layer_collections.values():
+                    item["ptr"].collection.hide_select = True
+
+                # allow selection of active collection plus parents
+                laycol_ptr.collection.hide_select = False
+
+                laycol = layer_collections[self.name]
+                while laycol["id"] != 0:
+                    laycol["ptr"].collection.hide_select = False
+                    laycol = laycol["parent"]
+
+                # restore child states
+                laycol_iter_list = [laycol_ptr.children]
+                while len(laycol_iter_list) > 0:
+                    new_laycol_iter_list = []
+                    for laycol_iter in laycol_iter_list:
+                        for layer_collection in laycol_iter:
+                            layer_collection.collection.hide_select = child_states[layer_collection.name]
+                            if len(layer_collection.children) > 0:
+                                new_laycol_iter_list.append(layer_collection.children)
+
+                    laycol_iter_list = new_laycol_iter_list
+
+                cls.isolated = True
+
         else:
+            # toggle selectable
+
             # reset select history
             del rto_history["select"][view_layer]
 
             # toggle selectability of collection
             laycol_ptr.collection.hide_select = not laycol_ptr.collection.hide_select
 
+            cls.isolated = False
 
         # reset select all history
         if view_layer in rto_history["select_all"]:
@@ -487,56 +647,66 @@ class CMUnRestrictSelectAllOperator(Operator):
 
 
 class CMHideOperator(Operator):
-    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children'''
+    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children\n  * Shift-Ctrl-Click to toggle nested isolation'''
     bl_label = "Hide Collection"
     bl_idname = "view3d.hide_collection"
     bl_options = {'REGISTER', 'UNDO'}
 
     name: StringProperty()
 
+    # static class var
+    isolated = False
+
     def invoke(self, context, event):
         global rto_history
+        cls = CMHideOperator
 
+        modifiers = get_modifiers(event)
         view_layer = context.view_layer.name
         laycol_ptr = layer_collections[self.name]["ptr"]
 
         if not view_layer in rto_history["hide"]:
             rto_history["hide"][view_layer] = {"target": "", "history": []}
 
-        rto_history["hide"][view_layer]["target"] = self.name
+        target = rto_history["hide"][view_layer]["target"]
         hide_history = rto_history["hide"][view_layer]["history"]
 
-        if event.shift:
+        if modifiers == {"shift"}:
             # isolate/de-isolate view of collections
 
-            # get active collections
-            active_layer_collections = [x for x in layer_collections.values() \
-                                          if x["ptr"].hide_viewport == False]
-
-            layerchain = []
             laycol = layer_collections[self.name]
 
-            # get chain of parents up to top level collection
-            while laycol["id"] != 0:
-                    layerchain.append(laycol)
-                    laycol = laycol["parent"]
+            # get active collections
+            active_layer_collections = [x["ptr"] for x in layer_collections.values() \
+                                          if x["ptr"].hide_viewport == False]
 
-            # check if reversed layerchain matches active collections
-            if layerchain[::-1] == active_layer_collections:
-                if len(hide_history) > 0:
-                    # restore previous state
-                    for x, item in enumerate(layer_collections.values()):
-                        item["ptr"].hide_viewport = hide_history[x]
-
-                else:
-                    # show all collections
-                    for laycol in layer_collections.values():
-                        laycol["ptr"].hide_viewport = False
+            # check if previous state should be restored
+            if cls.isolated and self.name == target:
+                # restore previous state
+                for x, item in enumerate(layer_collections.values()):
+                    item["ptr"].hide_viewport = hide_history[x]
 
                 # reset hide history
                 del rto_history["hide"][view_layer]
 
+                cls.isolated = False
+
+            # check if all collections should be enabled
+            elif len(active_layer_collections) == 1 and active_layer_collections[0].name == self.name:
+                # show all collections
+                for laycol in layer_collections.values():
+                    laycol["ptr"].hide_viewport = False
+
+            # reset hide history
+                del rto_history["hide"][view_layer]
+
+                cls.isolated = False
+
             else:
+                # isolate visibility
+
+                rto_history["hide"][view_layer]["target"] = self.name
+
                 # reset hide history
                 hide_history.clear()
 
@@ -556,7 +726,9 @@ class CMHideOperator(Operator):
                     laycol["ptr"].hide_viewport = False
                     laycol = laycol["parent"]
 
-        elif event.ctrl:
+                cls.isolated = True
+
+        elif modifiers == {"ctrl"}:
             # toggle children
 
             # reset hide history
@@ -578,13 +750,85 @@ class CMHideOperator(Operator):
 
                 laycol_iter_list = new_laycol_iter_list
 
+            cls.isolated = False
+
+        elif modifiers == {"ctrl", "shift"}:
+            # isolate nested collections
+
+            laycol = layer_collections[self.name]
+
+            # check if previous state should be restored
+            if cls.isolated and self.name == target:
+                # restore previous state
+                for x, item in enumerate(layer_collections.values()):
+                    item["ptr"].hide_viewport = hide_history[x]
+
+                # reset hide history
+                del rto_history["hide"][view_layer]
+
+                cls.isolated = False
+
+            else:
+                # isolate nested visibility
+
+                rto_history["hide"][view_layer]["target"] = self.name
+
+                # reset hide history
+                hide_history.clear()
+
+                # save state
+                for item in layer_collections.values():
+                    hide_history.append(item["ptr"].hide_viewport)
+
+                # get child states
+                child_states = {}
+                laycol_iter_list = [laycol_ptr.children]
+                while len(laycol_iter_list) > 0:
+                    new_laycol_iter_list = []
+                    for laycol_iter in laycol_iter_list:
+                        for layer_collection in laycol_iter:
+                            child_states[layer_collection.name] = layer_collection.hide_viewport
+                            if len(layer_collection.children) > 0:
+                                new_laycol_iter_list.append(layer_collection.children)
+
+                    laycol_iter_list = new_laycol_iter_list
+
+                # hide all collections
+                for laycol in layer_collections.values():
+                    laycol["ptr"].hide_viewport = True
+
+                # show active collection plus parents
+                laycol_ptr.hide_viewport = False
+
+                laycol = layer_collections[self.name]
+                while laycol["id"] != 0:
+                    laycol["ptr"].hide_viewport = False
+                    laycol = laycol["parent"]
+
+                # restore child states
+                laycol_iter_list = [laycol_ptr.children]
+                while len(laycol_iter_list) > 0:
+                    new_laycol_iter_list = []
+                    for laycol_iter in laycol_iter_list:
+                        for layer_collection in laycol_iter:
+                            layer_collection.hide_viewport = child_states[layer_collection.name]
+                            if len(layer_collection.children) > 0:
+                                new_laycol_iter_list.append(layer_collection.children)
+
+                    laycol_iter_list = new_laycol_iter_list
+
+                cls.isolated = True
+
         else:
+            # toggle visible
+
             # reset hide history
             del rto_history["hide"][view_layer]
 
             # toggle view of collection
             laycol_ptr.hide_viewport = not laycol_ptr.hide_viewport
 
+            cls.isolated = False
 
         # reset hide all history
         if view_layer in rto_history["hide_all"]:
@@ -639,56 +883,66 @@ class CMUnHideAllOperator(Operator):
 
 
 class CMDisableViewportOperator(Operator):
-    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children'''
+    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children\n  * Shift-Ctrl-Click to toggle nested isolation'''
     bl_label = "Disable Collection in Viewport"
     bl_idname = "view3d.disable_viewport_collection"
     bl_options = {'REGISTER', 'UNDO'}
 
     name: StringProperty()
 
+    # static class var
+    isolated = False
+
     def invoke(self, context, event):
         global rto_history
+        cls = CMDisableViewportOperator
 
+        modifiers = get_modifiers(event)
         view_layer = context.view_layer.name
         laycol_ptr = layer_collections[self.name]["ptr"]
 
         if not view_layer in rto_history["disable"]:
             rto_history["disable"][view_layer] = {"target": "", "history": []}
 
-        rto_history["disable"][view_layer]["target"] = self.name
+        target = rto_history["disable"][view_layer]["target"]
         disable_history = rto_history["disable"][view_layer]["history"]
 
-        if event.shift:
+        if modifiers == {"shift"}:
             # isolate/de-isolate disablement of collections in viewport
 
-            # get active collections
-            active_layer_collections = [x for x in layer_collections.values() \
-                                          if x["ptr"].collection.hide_viewport == False]
-
-            layerchain = []
             laycol = layer_collections[self.name]
 
-            # get chain of parents up to top level collection
-            while laycol["id"] != 0:
-                    layerchain.append(laycol)
-                    laycol = laycol["parent"]
+            # get active collections
+            active_layer_collections = [x["ptr"] for x in layer_collections.values() \
+                                          if x["ptr"].collection.hide_viewport == False]
 
-            # check if reversed layerchain matches active collections
-            if layerchain[::-1] == active_layer_collections:
-                if len(disable_history) > 0:
-                    # restore previous state
-                    for x, item in enumerate(layer_collections.values()):
-                        item["ptr"].collection.hide_viewport = disable_history[x]
-
-                else:
-                    # enable all collections in viewport
-                    for laycol in layer_collections.values():
-                        laycol["ptr"].collection.hide_viewport = False
+            # check if previous state should be restored
+            if cls.isolated and self.name == target:
+                # restore previous state
+                for x, item in enumerate(layer_collections.values()):
+                    item["ptr"].collection.hide_viewport = disable_history[x]
 
                 # reset disable history
                 del rto_history["disable"][view_layer]
 
+                cls.isolated = False
+
+            # check if all collections should be enabled
+            elif len(active_layer_collections) == 1 and active_layer_collections[0].name == self.name:
+                # enable all collections in viewport
+                for laycol in layer_collections.values():
+                    laycol["ptr"].collection.hide_viewport = False
+
+                # reset disable history
+                del rto_history["disable"][view_layer]
+
+                cls.isolated = False
+
             else:
+                 # isolate disable
+
+                rto_history["disable"][view_layer]["target"] = self.name
+
                 # reset disable history
                 disable_history.clear()
 
@@ -708,7 +962,9 @@ class CMDisableViewportOperator(Operator):
                     laycol["ptr"].collection.hide_viewport = False
                     laycol = laycol["parent"]
 
-        elif event.ctrl:
+                cls.isolated = True
+
+        elif modifiers == {"ctrl"}:
             # toggle children
 
             # reset disable history
@@ -730,13 +986,85 @@ class CMDisableViewportOperator(Operator):
 
                 laycol_iter_list = new_laycol_iter_list
 
+            cls.isolated = False
+
+        elif modifiers == {"ctrl", "shift"}:
+            # isolate nested collections
+
+            laycol = layer_collections[self.name]
+
+            # check if previous state should be restored
+            if cls.isolated and self.name == target:
+                # restore previous state
+                for x, item in enumerate(layer_collections.values()):
+                    item["ptr"].collection.hide_viewport = disable_history[x]
+
+                # reset disable history
+                del rto_history["disable"][view_layer]
+
+                cls.isolated = False
+
+            else:
+                 # isolate nested disable
+
+                rto_history["disable"][view_layer]["target"] = self.name
+
+                # reset disable history
+                disable_history.clear()
+
+                # save state
+                for item in layer_collections.values():
+                    disable_history.append(item["ptr"].collection.hide_viewport)
+
+                # get child states
+                child_states = {}
+                laycol_iter_list = [laycol_ptr.children]
+                while len(laycol_iter_list) > 0:
+                    new_laycol_iter_list = []
+                    for laycol_iter in laycol_iter_list:
+                        for layer_collection in laycol_iter:
+                            child_states[layer_collection.name] = layer_collection.collection.hide_viewport
+                            if len(layer_collection.children) > 0:
+                                new_laycol_iter_list.append(layer_collection.children)
+
+                    laycol_iter_list = new_laycol_iter_list
+
+                # disable all collections in viewport
+                for laycol in layer_collections.values():
+                    laycol["ptr"].collection.hide_viewport = True
+
+                # enable active collection plus parents in viewport
+                laycol_ptr.collection.hide_viewport = False
+
+                laycol = layer_collections[self.name]
+                while laycol["id"] != 0:
+                    laycol["ptr"].collection.hide_viewport = False
+                    laycol = laycol["parent"]
+
+                # restore child states
+                laycol_iter_list = [laycol_ptr.children]
+                while len(laycol_iter_list) > 0:
+                    new_laycol_iter_list = []
+                    for laycol_iter in laycol_iter_list:
+                        for layer_collection in laycol_iter:
+                            layer_collection.collection.hide_viewport = child_states[layer_collection.name]
+                            if len(layer_collection.children) > 0:
+                                new_laycol_iter_list.append(layer_collection.children)
+
+                    laycol_iter_list = new_laycol_iter_list
+
+                cls.isolated = True
+
         else:
+            # toggle disable
+
             # reset disable history
             del rto_history["disable"][view_layer]
 
             # toggle disable of collection in viewport
             laycol_ptr.collection.hide_viewport = not laycol_ptr.collection.hide_viewport
 
+            cls.isolated = False
 
         # reset disable all history
         if view_layer in rto_history["disable_all"]:
@@ -792,56 +1120,66 @@ class CMUnDisableViewportAllOperator(Operator):
 
 
 class CMDisableRenderOperator(Operator):
-    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children'''
+    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children\n  * Shift-Ctrl-Click to toggle nested isolation'''
     bl_label = "Disable Collection in Render"
     bl_idname = "view3d.disable_render_collection"
     bl_options = {'REGISTER', 'UNDO'}
 
     name: StringProperty()
 
+    # static class var
+    isolated = False
+
     def invoke(self, context, event):
         global rto_history
+        cls = CMDisableRenderOperator
 
+        modifiers = get_modifiers(event)
         view_layer = context.view_layer.name
         laycol_ptr = layer_collections[self.name]["ptr"]
 
         if not view_layer in rto_history["render"]:
             rto_history["render"][view_layer] = {"target": "", "history": []}
 
-        rto_history["render"][view_layer]["target"] = self.name
+        target = rto_history["render"][view_layer]["target"]
         render_history = rto_history["render"][view_layer]["history"]
 
-        if event.shift:
+        if modifiers == {"shift"}:
             # isolate/de-isolate render of collections
 
-            # get active collections
-            active_layer_collections = [x for x in layer_collections.values() \
-                                          if x["ptr"].collection.hide_render == False]
-
-            layerchain = []
             laycol = layer_collections[self.name]
 
-            # get chain of parents up to top level collection
-            while laycol["id"] != 0:
-                    layerchain.append(laycol)
-                    laycol = laycol["parent"]
+            # get active collections
+            active_layer_collections = [x["ptr"] for x in layer_collections.values() \
+                                          if x["ptr"].collection.hide_render == False]
 
-            # check if reversed layerchain matches active collections
-            if layerchain[::-1] == active_layer_collections:
-                if len(render_history) > 0:
-                    # restore previous state
-                    for x, item in enumerate(layer_collections.values()):
-                        item["ptr"].collection.hide_render = render_history[x]
-
-                else:
-                    # allow render of all collections
-                    for laycol in layer_collections.values():
-                        laycol["ptr"].collection.hide_render = False
+            # check if previous state should be restored
+            if cls.isolated and self.name == target:
+                # restore previous state
+                for x, item in enumerate(layer_collections.values()):
+                    item["ptr"].collection.hide_render = render_history[x]
 
                 # reset render history
                 del rto_history["render"][view_layer]
 
+                cls.isolated = False
+
+            # check if all collections should be enabled
+            elif len(active_layer_collections) == 1 and active_layer_collections[0].name == self.name:
+                # allow render of all collections
+                for laycol in layer_collections.values():
+                    laycol["ptr"].collection.hide_render = False
+
+                # reset render history
+                del rto_history["render"][view_layer]
+
+                cls.isolated = False
+
             else:
+                # isolate renderability
+
+                rto_history["render"][view_layer]["target"] = self.name
+
                 # reset render history
                 render_history.clear()
 
@@ -861,7 +1199,9 @@ class CMDisableRenderOperator(Operator):
                     laycol["ptr"].collection.hide_render = False
                     laycol = laycol["parent"]
 
-        elif event.ctrl:
+                cls.isolated = True
+
+        elif modifiers == {"ctrl"}:
             # toggle children
 
             # reset render history
@@ -883,13 +1223,85 @@ class CMDisableRenderOperator(Operator):
 
                 laycol_iter_list = new_laycol_iter_list
 
+            cls.isolated = False
+
+        elif modifiers == {"ctrl", "shift"}:
+            # isolate nested collections
+
+            laycol = layer_collections[self.name]
+
+            # check if previous state should be restored
+            if cls.isolated and self.name == target:
+                # restore previous state
+                for x, item in enumerate(layer_collections.values()):
+                    item["ptr"].collection.hide_render = render_history[x]
+
+                # reset render history
+                del rto_history["render"][view_layer]
+
+                cls.isolated = False
+
+            else:
+                # isolate nested renderability
+
+                rto_history["render"][view_layer]["target"] = self.name
+
+                # reset render history
+                render_history.clear()
+
+                # save state
+                for item in layer_collections.values():
+                    render_history.append(item["ptr"].collection.hide_render)
+
+                # get child states
+                child_states = {}
+                laycol_iter_list = [laycol_ptr.children]
+                while len(laycol_iter_list) > 0:
+                    new_laycol_iter_list = []
+                    for laycol_iter in laycol_iter_list:
+                        for layer_collection in laycol_iter:
+                            child_states[layer_collection.name] = layer_collection.collection.hide_render
+                            if len(layer_collection.children) > 0:
+                                new_laycol_iter_list.append(layer_collection.children)
+
+                    laycol_iter_list = new_laycol_iter_list
+
+                # disallow render of all collections
+                for laycol in layer_collections.values():
+                    laycol["ptr"].collection.hide_render = True
+
+                # allow render of active collection plus parents
+                laycol_ptr.collection.hide_render = False
+
+                laycol = layer_collections[self.name]
+                while laycol["id"] != 0:
+                    laycol["ptr"].collection.hide_render = False
+                    laycol = laycol["parent"]
+
+                # restore child states
+                laycol_iter_list = [laycol_ptr.children]
+                while len(laycol_iter_list) > 0:
+                    new_laycol_iter_list = []
+                    for laycol_iter in laycol_iter_list:
+                        for layer_collection in laycol_iter:
+                            layer_collection.collection.hide_render = child_states[layer_collection.name]
+                            if len(layer_collection.children) > 0:
+                                new_laycol_iter_list.append(layer_collection.children)
+
+                    laycol_iter_list = new_laycol_iter_list
+
+                cls.isolated = True
+
         else:
+            # toggle renderable
+
             # reset render history
             del rto_history["render"][view_layer]
 
             # toggle renderability of collection
             laycol_ptr.collection.hide_render = not laycol_ptr.collection.hide_render
 
+            cls.isolated = False
 
         # reset render all history
         if view_layer in rto_history["render_all"]:
@@ -1141,10 +1553,10 @@ class CMPhantomModeOperator(Operator):
             for rto, history, in rto_history.items():
                 if view_layer in history:
                     del history[view_layer]
-                
+
                 if phantom_history[rto+"_history"]:
                     history[view_layer] = deepcopy(phantom_history[rto+"_history"])
-                
+
                 phantom_history[rto+"_history"].clear()
 
             scn.CM_Phantom_Mode = False

@@ -1188,7 +1188,7 @@ def blen_read_geom_layer_normal(fbx_obj, mesh, xform=None):
                 for pidx, p in enumerate(mesh.polygons):
                     for lidx in range(p.loop_start, p.loop_start + p.loop_total):
                         mesh.loops[lidx].normal[:] = bdata[pidx]
-            elif blen_data_type is "Vertices":
+            elif blen_data_type == "Vertices":
                 # We have to copy vnors to lnors! Far from elegant, but simple.
                 for l in mesh.loops:
                     l.normal[:] = bdata[l.vertex_index]

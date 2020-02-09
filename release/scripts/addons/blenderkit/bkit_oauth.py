@@ -78,7 +78,7 @@ def refresh_token(api_key_refresh, url):
     auth_token, refresh_token, oauth_response = authenticator.get_refreshed_token(api_key_refresh)
     if auth_token is not None and refresh_token is not None:
         tasks_queue.add_task((write_tokens, (auth_token, refresh_token, oauth_response)))
-    return auth_token, refresh_token
+    return auth_token, refresh_token, oauth_response
 
 
 def write_tokens(auth_token, refresh_token, oauth_response):

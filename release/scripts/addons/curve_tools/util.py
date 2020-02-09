@@ -12,8 +12,8 @@ def GetSelectedCurves():
             pass
 
     return rvList
-    
-    
+
+
 def GetSelectedMeshes():
     rvList = []
 
@@ -84,7 +84,7 @@ def Selected1OrMoreCurves():
         pass
 
     return False
-    
+
 def Selected2OrMoreCurves():
     try:
         if len(GetSelectedCurves()) > 1:

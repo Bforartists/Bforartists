@@ -85,7 +85,7 @@ def update_collection_tree(context):
 def get_all_collections(context, collections, parent, tree, level=0, visible=False):
     global row_index
     global max_lvl
-    
+
     if level > max_lvl:
         max_lvl = level
 
@@ -135,6 +135,24 @@ def create_property_group(context, tree):
             create_property_group(context, laycol["children"])
 
 
+def get_modifiers(event):
+    modifiers = []
+
+    if event.alt:
+        modifiers.append("alt")
+
+    if event.ctrl:
+        modifiers.append("ctrl")
+
+    if event.oskey:
+        modifiers.append("oskey")
+
+    if event.shift:
+        modifiers.append("shift")
+
+    return set(modifiers)
+
+
 class CMSendReport(Operator):
     bl_label = "Send Report"
     bl_idname = "view3d.cm_send_report"
@@ -164,10 +182,10 @@ class CMSendReport(Operator):
             layout.row().label(text=string, icon='ERROR')
         else:
             layout.row().label(text=string, icon='BLANK1')
-    
+
     def invoke(self, context, event):
         wm = context.window_manager
-    
+
         max_len = 0
         length = 0
 
@@ -196,3 +214,4 @@ def send_report(message):
         bpy.ops.view3d.cm_send_report(ctx, 'INVOKE_DEFAULT', message=message)
 
     bpy.app.timers.register(report)
+

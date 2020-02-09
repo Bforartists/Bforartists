@@ -262,7 +262,7 @@ classes = (
 
 
 def register():
-    bpy.app.handlers.load_post.append(linked_file_check) 
+    bpy.app.handlers.load_post.append(linked_file_check)
 
     for c in classes:
         bpy.utils.register_class(c)
@@ -278,15 +278,15 @@ def register():
             default=False)
 
     # add the function to the file menu
-    bpy.types.TOPBAR_MT_file_external_data.append(TOPBAR_MT_edit_linked_submenu.draw) 
+    bpy.types.TOPBAR_MT_file_external_data.append(TOPBAR_MT_edit_linked_submenu.draw)
 
 
 
 
 def unregister():
 
-    bpy.app.handlers.load_post.remove(linked_file_check) 
-    bpy.types.TOPBAR_MT_file_external_data.remove(TOPBAR_MT_edit_linked_submenu) 
+    bpy.app.handlers.load_post.remove(linked_file_check)
+    bpy.types.TOPBAR_MT_file_external_data.remove(TOPBAR_MT_edit_linked_submenu)
 
     del bpy.types.Scene.use_autosave
     del bpy.types.Scene.use_instance

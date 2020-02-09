@@ -408,7 +408,7 @@ def vertsToPoints(Verts, splineType):
 def main(context, self, use_enter_edit_mode):
     # output splineType 'POLY' 'NURBS' 'BEZIER'
     splineType = self.outputType
-    
+
     sides = abs(int((self.Simple_endangle - self.Simple_startangle) / 90))
 
     # get verts
@@ -499,25 +499,25 @@ def main(context, self, use_enter_edit_mode):
         verts = SimpleTrapezoid(
                     self.Simple_a, self.Simple_b, self.Simple_h, self.Simple_center
                     )
-    
+
     # turn verts into array
     vertArray = vertsToPoints(verts, splineType)
-    
+
     # create object
     if bpy.context.mode == 'EDIT_CURVE':
-        
+
         Curve = context.active_object
         newSpline = Curve.data.splines.new(type=splineType)          # spline
     else:
         name = self.Simple_Type  # Type as name
-    
+
         dataCurve = bpy.data.curves.new(name, type='CURVE')  # curve data block
         newSpline = dataCurve.splines.new(type=splineType)          # spline
 
         # create object with new Curve
         Curve = object_utils.object_data_add(context, dataCurve, operator=self)  # place in active scene
         Curve.select_set(True)
-    
+
     for spline in Curve.data.splines:
         if spline.type == 'BEZIER':
             for point in spline.bezier_points:
@@ -527,7 +527,7 @@ def main(context, self, use_enter_edit_mode):
         else:
             for point in spline.points:
                 point.select = False
-    
+
     # create spline from vertarray
     all_points = []
     if splineType == 'BEZIER':
@@ -547,7 +547,7 @@ def main(context, self, use_enter_edit_mode):
         for point in newSpline.points:
             all_points.append(point)
             point.select = True
-    
+
     n = len(all_points)
 
     d = 2 * 0.27606262
@@ -613,7 +613,7 @@ def main(context, self, use_enter_edit_mode):
                     p1.handle_right = v1
                     p2.handle_left = v2
                 i += 1
-    
+
         if self.Simple_Type == 'Ellipse':
             all_points[0].handle_right = Vector((self.Simple_a, self.Simple_b * d, 0))
             all_points[0].handle_left = Vector((self.Simple_a, -self.Simple_b * d, 0))
@@ -623,7 +623,7 @@ def main(context, self, use_enter_edit_mode):
             all_points[2].handle_left = Vector((-self.Simple_a, self.Simple_b * d, 0))
             all_points[3].handle_right = Vector((self.Simple_a * d, -self.Simple_b, 0))
             all_points[3].handle_left = Vector((-self.Simple_a * d, -self.Simple_b, 0))
-    
+
         if self.Simple_Type == 'Arc':
             i = 0
             for p1 in all_points:
@@ -660,7 +660,7 @@ def main(context, self, use_enter_edit_mode):
                 i += 1
             all_points[0].handle_left_type = 'VECTOR'
             all_points[-1].handle_right_type = 'VECTOR'
-    
+
         if self.Simple_Type == 'Sector':
             i = 0
             for p1 in all_points:
@@ -702,7 +702,7 @@ def main(context, self, use_enter_edit_mode):
             all_points[0].handle_right_type = 'VECTOR'
             all_points[1].handle_left_type = 'VECTOR'
             all_points[-1].handle_right_type = 'VECTOR'
-    
+
         if self.Simple_Type == 'Segment':
             i = 0
             if self.Simple_a > self.Simple_b:
@@ -772,7 +772,7 @@ def main(context, self, use_enter_edit_mode):
                         v2 = Vector((p2.co.x, p2.co.y, 0)) - vh2
                         p1.handle_right = v1
                         p2.handle_left = v2
-    
+
                 i += 1
             all_points[0].handle_left_type = 'VECTOR'
             all_points[n - 1].handle_right_type = 'VECTOR'
@@ -783,7 +783,7 @@ def main(context, self, use_enter_edit_mode):
     newSpline.use_cyclic_u = self.use_cyclic_u
     newSpline.use_endpoint_u = self.endp_u
     newSpline.order_u = self.order_u
-    
+
     # set curve Options
     Curve.data.dimensions = self.shape
     Curve.data.use_path = True
@@ -791,7 +791,7 @@ def main(context, self, use_enter_edit_mode):
         Curve.data.fill_mode = 'FULL'
     else:
         Curve.data.fill_mode = 'BOTH'
-    
+
     # move and rotate spline in edit mode
     if bpy.context.mode == 'EDIT_CURVE':
         if self.align == "WORLD":
@@ -800,7 +800,7 @@ def main(context, self, use_enter_edit_mode):
             bpy.ops.transform.rotate(value = self.rotation[0], orient_axis = 'X', orient_type='GLOBAL')
             bpy.ops.transform.rotate(value = self.rotation[1], orient_axis = 'Y', orient_type='GLOBAL')
             bpy.ops.transform.rotate(value = self.rotation[2], orient_axis = 'Z', orient_type='GLOBAL')
-            
+
         elif self.align == "VIEW":
             bpy.ops.transform.translate(value = self.location)
             bpy.ops.transform.rotate(value = self.rotation[0], orient_axis = 'X')
@@ -875,7 +875,7 @@ def menu(self, context):
     oper14 = self.layout.operator(Simple.bl_idname, text="Trapezoid", icon="MOD_EDGESPLIT")
     oper14.Simple_Type = "Trapezoid"
     oper14.use_cyclic_u = True
-    
+
 # ------------------------------------------------------------
 # Simple operator
 
@@ -1236,12 +1236,12 @@ class Simple(Operator, object_utils.AddObjectHelper):
 
         row = layout.row()
         row.prop(self, "shape", expand=True)
-        
+
         # output options
         col = layout.column()
         col.label(text="Output Curve Type:")
         col.row().prop(self, "outputType", expand=True)
-        
+
         if self.outputType == 'NURBS':
             col.prop(self, "order_u")
         elif self.outputType == 'BEZIER':
@@ -1249,10 +1249,10 @@ class Simple(Operator, object_utils.AddObjectHelper):
 
         col = layout.column()
         col.row().prop(self, "use_cyclic_u", expand=True)
-        
+
         col = layout.column()
         col.row().prop(self, "edit_mode", expand=True)
-        
+
         col = layout.column()
         # AddObjectHelper props
         col.prop(self, "align")
@@ -1274,29 +1274,29 @@ class Simple(Operator, object_utils.AddObjectHelper):
         return context.scene is not None
 
     def execute(self, context):
-        
+
         # turn off 'Enter Edit Mode'
         use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
         bpy.context.preferences.edit.use_enter_edit_mode = False
-        
+
         # main function
         main(context, self, use_enter_edit_mode)
-        
+
         if use_enter_edit_mode:
             bpy.ops.object.mode_set(mode = 'EDIT')
-        
+
         # restore pre operator state
         bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
-        
+
         if self.edit_mode:
             bpy.ops.object.mode_set(mode = 'EDIT')
         else:
             bpy.ops.object.mode_set(mode = 'OBJECT')
 
         return {'FINISHED'}
-        
+
     def invoke(self, context, event):
-    
+
         self.execute(context)
 
         return {'FINISHED'}

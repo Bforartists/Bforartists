@@ -40,7 +40,7 @@ from bpy.types import (
         Menu,
         PropertyGroup
         )
-from bpy.props import ( 
+from bpy.props import (
         EnumProperty,
         StringProperty,
         IntProperty
@@ -55,7 +55,7 @@ def stdlib_excludes():
         for nm in files:
             if nm != '__init__.py' and nm[-3:] == '.py':
                 excludes.append(os.path.join(top, nm)[len(std_lib)+1:-3].replace('\\','.'))
-    
+
     return excludes
 
 def make_loc(prefix, c):
@@ -63,19 +63,19 @@ def make_loc(prefix, c):
     space = ""
     #if hasattr(c, "bl_space_type"):
     #    space = c.bl_space_type
-        
+
     region = ""
     #if hasattr(c, "bl_region_type"):
     #   region = c.bl_region_type
-        
+
     label = ""
     if hasattr(c, "bl_label"):
         label = c.bl_label
-    
+
     return prefix+": " + space + " " + region + " " + label
 
 def walk_module(opname, mod, calls=[], exclude=[]):
-    
+
     for name, m in inspect.getmembers(mod):
         if inspect.ismodule(m):
             if m.__name__ not in exclude:
@@ -94,7 +94,7 @@ def walk_module(opname, mod, calls=[], exclude=[]):
                         if opname in s:
                             file = mod.__file__
                             line = n + i
-                        
+
                             if issubclass(m, Panel) and name != "Panel":
                                 loc = make_loc("Panel", m)
                                 calls.append([opname, loc, file, line])
@@ -121,10 +121,10 @@ def getclazz(opname):
 def getmodule(opname):
     addon = True
     clazz = getclazz(opname)
-    
+
     if clazz is None:
         return  "", -1, False
-    
+
     modn = clazz.__module__
 
     try:
@@ -168,24 +168,24 @@ def get_ops():
     return [(y, y, "", x) for x, y in enumerate(l)]
 
 class OperatorEntry(PropertyGroup):
-    
+
     label : StringProperty(
             name="Label",
             description="",
             default=""
             )
-             
+
     path : StringProperty(
             name="Path",
             description="",
             default=""
             )
-            
+
     line : IntProperty(
             name="Line",
             description="",
             default=-1
-            ) 
+            )
 
 class TEXT_OT_EditOperator(Operator):
     bl_idname = "text.edit_operator"
@@ -200,22 +200,22 @@ class TEXT_OT_EditOperator(Operator):
             description="",
             items=items
             )
-            
+
     path : StringProperty(
             name="Path",
             description="",
             default=""
             )
-            
+
     line : IntProperty(
             name="Line",
             description="",
             default=-1
             )
-            
+
     def show_text(self, context, path, line):
         found = False
-        
+
         for t in bpy.data.texts:
             if t.filepath == path:
                 #switch to the wanted text first
@@ -231,25 +231,25 @@ class TEXT_OT_EditOperator(Operator):
                         "Opened file: " + path)
             bpy.ops.text.open(filepath=path)
             bpy.ops.text.jump(line=line)
-            
+
     def show_calls(self, context):
         import bl_ui
         import addon_utils
-        
+
         exclude = stdlib_excludes()
         exclude.append("bpy")
         exclude.append("sys")
-        
+
         calls = []
         walk_module(self.op, bl_ui, calls, exclude)
-        
+
         for m in addon_utils.modules():
             try:
                 mod = sys.modules[m.__name__]
                 walk_module(self.op, mod, calls, exclude)
             except KeyError:
                 continue
-            
+
         for c in calls:
             cl = context.scene.calls.add()
             cl.name = c[0]
@@ -265,33 +265,33 @@ class TEXT_OT_EditOperator(Operator):
         if self.path != "" and self.line != -1:
             #invocation of one of the "found" locations
             self.show_text(context, self.path, self.line)
-            return {'FINISHED'} 
+            return {'FINISHED'}
         else:
             context.scene.calls.clear()
             path, line, addon = getmodule(self.op)
-            
+
             if addon:
                 self.show_text(context, path, line)
-                
+
                 #add convenient "source" button, to toggle back from calls to source
                 c = context.scene.calls.add()
                 c.name = self.op
                 c.label = "Source"
                 c.path = path
                 c.line = line
-                
+
                 self.show_calls(context)
                 context.area.tag_redraw()
-                
+
                 return {'FINISHED'}
             else:
-                
+
                 self.report({'WARNING'},
                             "Found no source file for " + self.op)
-                            
+
                 self.show_calls(context)
                 context.area.tag_redraw()
-               
+
                 return {'FINISHED'}
 
 
@@ -307,7 +307,7 @@ class TEXT_PT_EditOperatorPanel(Panel):
         op = layout.operator("text.edit_operator")
         op.path = ""
         op.line = -1
-        
+
         if len(context.scene.calls) > 0:
             box = layout.box()
             box.label(text="Calls of: " + context.scene.calls[0].name)
@@ -321,7 +321,7 @@ class TEXT_PT_EditOperatorPanel(Panel):
 
 def register():
     bpy.utils.register_class(OperatorEntry)
-    bpy.types.Scene.calls = bpy.props.CollectionProperty(name="Calls", 
+    bpy.types.Scene.calls = bpy.props.CollectionProperty(name="Calls",
                                                          type=OperatorEntry)
     bpy.utils.register_class(TEXT_OT_EditOperator)
     bpy.utils.register_class(TEXT_PT_EditOperatorPanel)

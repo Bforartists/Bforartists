@@ -216,7 +216,7 @@ class add_supertoroid(bpy.types.Operator, object_utils.AddObjectHelper):
             # at least as big as the radius of the tube
             if rad2 > rad1:
                 rad1 = rad2
-        
+
         if bpy.context.mode == "OBJECT":
             if context.selected_objects != [] and context.active_object and \
             ('SuperToroid' in context.active_object.data.keys()) and (self.change == True):
@@ -253,7 +253,7 @@ class add_supertoroid(bpy.types.Operator, object_utils.AddObjectHelper):
             obj.data["change"] = False
             for prm in SuperToroidParameters():
                 obj.data[prm] = getattr(self, prm)
-        
+
         if bpy.context.mode == "EDIT_MESH":
             active_object = context.active_object
             name_active_object = active_object.name

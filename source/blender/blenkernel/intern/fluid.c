@@ -872,6 +872,11 @@ static void update_obstacleflags(FluidDomainSettings *mds,
     FluidModifierData *mmd2 = (FluidModifierData *)modifiers_findByType(coll_ob,
                                                                         eModifierType_Fluid);
 
+    /* Sanity check. */
+    if (!mmd2) {
+      continue;
+    }
+
     if ((mmd2->type & MOD_FLUID_TYPE_EFFEC) && mmd2->effector) {
       FluidEffectorSettings *mes = mmd2->effector;
       if (!mes) {
@@ -958,6 +963,11 @@ static void update_obstacles(Depsgraph *depsgraph,
     Object *coll_ob = coll_ob_array[coll_index];
     FluidModifierData *mmd2 = (FluidModifierData *)modifiers_findByType(coll_ob,
                                                                         eModifierType_Fluid);
+
+    /* Sanity check. */
+    if (!mmd2) {
+      continue;
+    }
 
     /* TODO (sebbas): check if modifier is active? */
     if ((mmd2->type & MOD_FLUID_TYPE_EFFEC) && mmd2->effector) {
@@ -2298,7 +2308,7 @@ static void update_flowsflags(FluidDomainSettings *mds, Object **flowobjs, int n
     FluidModifierData *mmd2 = (FluidModifierData *)modifiers_findByType(coll_ob,
                                                                         eModifierType_Fluid);
 
-    // Sanity check
+    /* Sanity check. */
     if (!mmd2) {
       continue;
     }
@@ -2411,12 +2421,22 @@ static void update_flowsfluids(struct Depsgraph *depsgraph,
     FluidModifierData *mmd2 = (FluidModifierData *)modifiers_findByType(flowobj,
                                                                         eModifierType_Fluid);
 
+    /* Sanity check. */
+    if (!mmd2) {
+      continue;
+    }
+
     /* Check for initialized smoke object. */
     if ((mmd2->type & MOD_FLUID_TYPE_FLOW) && mmd2->flow) {
       FluidFlowSettings *mfs = mmd2->flow;
       int subframes = mfs->subframes;
       EmissionMap *em = &emaps[flow_index];
 
+      /* Optimization: Skip flow objects with disabled inflow flag. */
+      if (mfs->behavior == FLUID_FLOW_BEHAVIOR_INFLOW &&
+          (mfs->flags & FLUID_FLOW_USE_INFLOW) == 0) {
+        continue;
+      }
       /* Optimization: No need to compute emission value if it won't be applied. */
       if (mfs->behavior == FLUID_FLOW_BEHAVIOR_GEOMETRY && !is_first_frame) {
         continue;
@@ -2606,6 +2626,11 @@ static void update_flowsfluids(struct Depsgraph *depsgraph,
     Object *flowobj = flowobjs[flow_index];
     FluidModifierData *mmd2 = (FluidModifierData *)modifiers_findByType(flowobj,
                                                                         eModifierType_Fluid);
+
+    /* Sanity check. */
+    if (!mmd2) {
+      continue;
+    }
 
     /* Check for initialized flow object. */
     if ((mmd2->type & MOD_FLUID_TYPE_FLOW) && mmd2->flow) {
@@ -3313,7 +3338,7 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
   guide_parent = mds->guide_parent;
   if (guide_parent) {
     mmd_parent = (FluidModifierData *)modifiers_findByType(guide_parent, eModifierType_Fluid);
-    if (mmd_parent->domain) {
+    if (mmd_parent && mmd_parent->domain) {
       copy_v3_v3_int(mds->guide_res, mmd_parent->domain->res);
     }
   }
@@ -3480,10 +3505,14 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
           manta_needs_realloc(mds->fluid, mmd)) {
         BKE_fluid_reallocate_fluid(mds, mds->res, 1);
       }
-      has_noise = manta_read_noise(mds->fluid, mmd, noise_frame);
+      if (!baking_data && !baking_noise && !mode_replay) {
+        has_data = manta_update_noise_structures(mds->fluid, mmd, noise_frame);
+      }
+      else {
+        has_noise = manta_read_noise(mds->fluid, mmd, noise_frame);
+      }
 
-      /* In case of using the adaptive domain, copy all data that was read to a new fluid object.
-       */
+      /* When using the adaptive domain, copy all data that was read to a new fluid object. */
       if (with_adaptive && baking_noise) {
         /* Adaptive domain needs to know about current state, so save it, then copy. */
         copy_v3_v3_int(o_res, mds->res);
@@ -3496,7 +3525,13 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
               mds, o_res, mds->res, o_min, mds->res_min, o_max, o_shift, mds->shift);
         }
       }
-      has_data = manta_read_data(mds->fluid, mmd, data_frame);
+      if (!baking_data && !baking_noise && !mode_replay) {
+        /* TODO (sebbas): Confirm if this read call is really needed or not. */
+        has_data = manta_update_smoke_structures(mds->fluid, mmd, data_frame);
+      }
+      else {
+        has_data = manta_read_data(mds->fluid, mmd, data_frame);
+      }
     }
     /* Read data cache only */
     else {
@@ -3507,7 +3542,12 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
           BKE_fluid_reallocate_fluid(mds, mds->res, 1);
         }
         /* Read data cache */
-        has_data = manta_read_data(mds->fluid, mmd, data_frame);
+        if (!baking_data && !baking_particles && !baking_mesh && !mode_replay) {
+          has_data = manta_update_smoke_structures(mds->fluid, mmd, data_frame);
+        }
+        else {
+          has_data = manta_read_data(mds->fluid, mmd, data_frame);
+        }
       }
       if (with_liquid) {
         if (!baking_data && !baking_particles && !baking_mesh && !mode_replay) {
@@ -4408,9 +4448,15 @@ void BKE_fluid_modifier_create_type_data(struct FluidModifierData *mmd)
     mmd->domain->cache_flag = 0;
     mmd->domain->cache_type = FLUID_DOMAIN_CACHE_MODULAR;
     mmd->domain->cache_mesh_format = FLUID_DOMAIN_FILE_BIN_OBJECT;
+#ifdef WITH_OPENVDB
     mmd->domain->cache_data_format = FLUID_DOMAIN_FILE_OPENVDB;
     mmd->domain->cache_particle_format = FLUID_DOMAIN_FILE_OPENVDB;
     mmd->domain->cache_noise_format = FLUID_DOMAIN_FILE_OPENVDB;
+#else
+    mmd->domain->cache_data_format = FLUID_DOMAIN_FILE_UNI;
+    mmd->domain->cache_particle_format = FLUID_DOMAIN_FILE_UNI;
+    mmd->domain->cache_noise_format = FLUID_DOMAIN_FILE_UNI;
+#endif
     modifier_path_init(mmd->domain->cache_directory,
                        sizeof(mmd->domain->cache_directory),
                        FLUID_DOMAIN_DIR_DEFAULT);

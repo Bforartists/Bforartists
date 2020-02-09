@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -7925,10 +7925,6 @@ msgid "Maximum number of additional cells"
 msgstr "ﺔﻓﺎﻔﺸﻟﺍ ﺕﺍﺩﺍﺪﺗﺭﻺ﻿ﻟ ﺩﺪﻋ ﺮﺜﻛﺍ"
 
 
-msgid "Density"
-msgstr "ﺔﻓﺎﺜﻜﻟﺍ"
-
-
 msgid "Single"
 msgstr "ﻱﺩﺮﻓ"
 
@@ -7969,6 +7965,10 @@ msgid "Blue"
 msgstr "ﻕﺭﺯﺃ"
 
 
+msgid "Density"
+msgstr "ﺔﻓﺎﺜﻜﻟﺍ"
+
+
 msgid "Color Grid"
 msgstr "ﻥﻮﻠﻟﺍ ﺔﻜﺒﺷ"
 
@@ -8003,14 +8003,6 @@ msgstr "ﺔﻗﺪﻟﺍ"
 
 msgid "Smoke Grid Resolution"
 msgstr "ﻥﺎﺧﺪﻟﺍ ﺔﻜﺒﺷ ﺔﻗﺩ"
-
-
-msgid "Ignition"
-msgstr "ﺔﻛﺮﺣ"
-
-
-msgid "Maximum temperature of flames"
-msgstr "ﻁﻮﺒﻫ ﺔﻋﺮﺳ ﻰﻠﻋﺃ"
 
 
 msgid "Smoke"
@@ -8097,10 +8089,6 @@ msgid "Delete"
 msgstr "ﻑﺬﺣﺍ"
 
 
-msgid "Buoyancy"
-msgstr "ﻮﻔﻃ"
-
-
 msgid "p0"
 msgstr "p0"
 
@@ -8123,10 +8111,6 @@ msgstr "ﻞﻔﺳﺃ"
 
 msgid "Top"
 msgstr "ﻕﻮﻓ"
-
-
-msgid "Enable smoke to disappear over time"
-msgstr "ﻦﻣﺰﻟﺍ ﻲّﻀﻣ ﻰﻠﻋ ءﺎﻔﺘﺧﻻ﻿ﺎﺑ ﻥﺎﺧﺪﻠﻟ ﺢﻤﺳﺍ"
 
 
 msgid "Tracer"
@@ -10795,20 +10779,8 @@ msgid "Option for curve-deform: make deformed child to stretch along entire path
 msgstr "ﻼ﻿ﻣﺎﻛ ﺭﺎﺴﻤﻟﺍ ﻝﻮﻃ ﻰﻠﻋ ﺩﺪﻤﺘﻳ ﻉﻮّﻄﻤﻟﺍ ﻉﺮﻔﻟﺍ ﻞﻌﺟﺍ :ﻰﻨﺤﻨﻤﻟﺎﺑ ﻊﻳﻮﻄﺘﻠﻟ ﺭﺎﻴﺧ"
 
 
-msgid "Use UV for mapping"
-msgstr "ءﺎﺴﻛﻺ﻿ﻟ UV ﻡﺪﺨﺘﺳﺍ"
-
-
-msgid "Uses the UV values as Generated textured coordinates"
-msgstr "ﺓﺪﻟﻮﻣ ﺔﺠّﺴﻨﻣ ﺕﺎﻴﺛﺍﺪﺣﺈﻛ UV ﻢﻴﻗ ﻞﻤﻌﺘﺴﻳ"
-
-
 msgid "Surface Curve"
 msgstr "ﺢﻄﺳ ﻰﻨﺤﻨﻣ"
-
-
-msgid "Use UV for Mapping"
-msgstr "ﻂﺋﺍﺮﺨﻟﺍ ﻢﺳﺮﻟ UV ﺭﻭﺎﺤﻣ ﻡﺪﺨﺘﺳﺍ"
 
 
 msgid "Text Curve"
@@ -13087,24 +13059,12 @@ msgid "Lock Location"
 msgstr "ﻊﻗﻮﻤﻟﺍ ﻞﻔﻗ"
 
 
-msgid "Lock editing of location in the interface"
-msgstr "ﺔﻬﺟﺍﻮﻟﺍ ﻲﻓ ﻊﻗﻮﻤﻟﺍ ﻞﻳﺪﻌﺗ ﻞﻔﻗ"
-
-
 msgid "Lock Rotation"
 msgstr "ﻥﺍﺭﻭﺩ ﻞﻔﻗ"
 
 
-msgid "Lock editing of rotation in the interface"
-msgstr "ﺔﻬﺟﺍﻮﻟﺍ ﻲﻓ ﺮﻳﻭﺪﺘﻟﺍ ﻞﻳﺪﻌﺗ ﻞﻔﻗ"
-
-
 msgid "Lock Rotation (4D Angle)"
 msgstr "(ﺩﺎﻌﺑﺃ 4 ﺔﻳﻭﺍﺯ) ﻥﺍﺭﻭﺪﻟﺍ ﻞﻔﻗ"
-
-
-msgid "Lock editing of 'angle' component of four-component rotations in the interface"
-msgstr " ﺔﻬﺟﺍﻮﻟﺍ ﻲﻓ ﺮﺻﺎﻨﻋ-ﻊﺑﺭﺃ ﺕﺍﺮﻳﻭﺪﺗ ﻦﻣ 'ﺔﻳﻭﺍﺰﻟﺍ' ﺮﺼﻨﻋ ﻞﻳﺪﻌﺗ ﻞﻔﻗ"
 
 
 msgid "Lock Rotations (4D)"
@@ -13117,10 +13077,6 @@ msgstr "(ﺯﺮﻟﻮﻳ ﺽﻮﻋ) ﺮﺻﺎﻨﻌﻟﺎﺑ ﺮﺻﺎﻨﻋ ﻊ
 
 msgid "Lock Scale"
 msgstr "ﻢﻴﺠﺤﺘﻟﺍ ﻞﻔﻗ"
-
-
-msgid "Lock editing of scale in the interface"
-msgstr "ﺔﻬﺟﺍﻮﻟﺍ ﻲﻓ ﻢﺠﺤﻟﺍ ﻞﻳﺪﻌﺗ ﻞﻔﻗ"
 
 
 msgid "Material Slots"
@@ -36355,6 +36311,10 @@ msgid "Settings for particle fluids physics"
 msgstr "ءﻱﺰﺠﻟﺍ ﻞﺋﺍﻮﺳ ﺕﺎﻴﺋﺎﻳﺰﻴﻓ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
+msgid "Buoyancy"
+msgstr "ﻮﻔﻃ"
+
+
 msgid "Artificial buoyancy force in negative gravity direction based on pressure differences inside the fluid"
 msgstr " ﻞﺋﺎﺴﻟﺍ ﻞﺧﺍﺩ ﺕﺎﻓﻼ﻿ﺘﺧﻹ﻿ﺍ ﻰﻠﻋ ﺍﺩﺎﻤﺘﻋﺍ ﺲﻛﺎﻌﻤﻟﺍ ﺔﻴﺑﺫﺎﺠﻟﺍ ﻩﺎﺠﺗﺎﺑ ﻲﻋﺎﻨﺻ ﻮﻔﻃ ﺓﺪﺷ"
 
@@ -44065,32 +44025,8 @@ msgid "Cursor Y"
 msgstr " Y ﺮﺷﺆﻤﻟﺍ"
 
 
-msgid "Display Color:"
-msgstr ":ﻥﻮﻠﻟﺍ ﺮﻬﻇﺃ"
-
-
 msgid "Interpolation:"
 msgstr ":ﻰﻨﺤﻨﻤﻟﺍ ﻉﻮﻧ"
-
-
-msgid "Key:"
-msgstr ":ﺡﺎﺘﻔﻤﻟﺍ"
-
-
-msgid "Frame:"
-msgstr ":ﺭﺎﻃﺇ"
-
-
-msgid "Value:"
-msgstr ":ﺔﻤﻴﻗ"
-
-
-msgid "Left Handle:"
-msgstr ":ﻝﺎﻤﺸﻟﺍ ﺾﺒﻘﻤﻟﺍ"
-
-
-msgid "Right Handle:"
-msgstr ":ﻦﻴﻤﻴﻟﺍ ﺾﺒﻘﻤﻟﺍ"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -44115,6 +44051,10 @@ msgstr ":ﺔﻴﺻﺎﺧ"
 
 msgid "Driver Value:"
 msgstr ":ﻞﻐﺸﻤﻟﺍ ﺔﻤﻴﻗ"
+
+
+msgid "Value:"
+msgstr ":ﺔﻤﻴﻗ"
 
 
 msgid "Update Dependencies"
@@ -44239,10 +44179,6 @@ msgstr "ﻦﻣﺍﺰﺘﻟﺍ ﻝﻮﻃ"
 
 msgid "Now"
 msgstr "ﻥﻻ﻿ﺃ"
-
-
-msgid "Evaluation"
-msgstr "ﻢﻴﻴﻘﺘﻟﺍ"
 
 
 msgid "No valid action to add"
@@ -44403,10 +44339,6 @@ msgstr "ﻢﻠﻔﻟﺍ ﺔﺻﺎﺼﻗ ﺭﺮﺤﻣ"
 
 msgid "Mask not found"
 msgstr "ﺔﻴﻔﻠﺨﻟﺍ ﻲﻔﺧﺍ"
-
-
-msgid "Start and end frame are not set"
-msgstr "ﺮﻴﺛﺄﺘﻠﻟ ﺔﻳﺍﺪﺒﻟﺍ ﺭﺎﻃﺍ"
 
 
 msgid "Please select all related strips"

@@ -77,7 +77,7 @@ class AntAddLandscape(bpy.types.Operator):
             )
     smooth_mesh: BoolProperty(
             name="Smooth",
-            default=False,
+            default=True,
             description="Shade smooth"
             )
     tri_face: BoolProperty(
@@ -716,7 +716,7 @@ class AntAddLandscape(bpy.types.Operator):
             bpy.ops.object.shade_smooth()
 
         if not self.at_cursor:
-            new_ob.object.location = (0.0, 0.0, 0.0)
+            new_ob.location = (0.0, 0.0, 0.0)
 
         # Landscape Material
         if self.land_material != "" and self.land_material in bpy.data.materials:
@@ -762,7 +762,7 @@ class AntAddLandscape(bpy.types.Operator):
                 bpy.ops.object.shade_smooth()
 
             if not self.at_cursor:
-                wobj.object.location = (0.0, 0.0, 0.0)
+                wobj.location = (0.0, 0.0, 0.0)
 
             # Water Material
             if self.water_material != "" and self.water_material in bpy.data.materials:

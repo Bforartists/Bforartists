@@ -54,10 +54,12 @@ def rerequest(method, url, **kwargs):
         if rdata.get('detail') == 'Invalid token.':
             user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
             if user_preferences.api_key != '':
-                if user_preferences.enable_oauth:
-                    tasks_queue.add_task((ui.add_report, ('refreshing token.',)))
+                if user_preferences.enable_oauth and user_preferences.api_key_refresh != '':
+                    tasks_queue.add_task((ui.add_report, (
+                    'refreshing token. If this fails, please login in BlenderKit Login panel.', 10)))
                     refresh_url = paths.get_bkit_url()
-                    auth_token, refresh_token, oauth_response = bkit_oauth.refresh_token(user_preferences.api_key_refresh, refresh_url)
+                    auth_token, refresh_token, oauth_response = bkit_oauth.refresh_token(
+                        user_preferences.api_key_refresh, refresh_url)
 
                     # utils.p(auth_token, refresh_token)
                     if auth_token is not None:

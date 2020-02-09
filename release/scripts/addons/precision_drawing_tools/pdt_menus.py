@@ -87,7 +87,7 @@ def ui_width():
 #
 class PDT_PT_PanelDesign(Panel):
     bl_idname = "PDT_PT_PanelDesign"
-    bl_label = "PDT Design"
+    bl_label = "PDT Design Operations"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "PDT"
@@ -180,39 +180,51 @@ class PDT_PT_PanelDesign(Panel):
             row = box.row()
         row.prop(pdt_pg, "flip_percent", text=PDT_LAB_FLIPPERCENT)
 
+class PDT_PT_PanelTools(Panel):
+    bl_idname = "PDT_PT_PanelTools"
+    bl_label = "PDT Design Tools"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "PDT"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        ui_cutoff = bpy.context.preferences.addons[__package__].preferences.pdt_ui_width
+        layout = self.layout
+        pdt_pg = context.scene.pdt_pg
         # -----
         # Tools
-        toolbox = layout.box()
-        toolbox.label(text=PDT_LAB_TOOLS)
-        row = toolbox.row()
+        row = layout.row()
+        row.label(text=PDT_LAB_TOOLS)
+        row = layout.row()
         row.operator("pdt.origin", text=PDT_LAB_ORIGINCURSOR)
-        row = toolbox.row()
+        row = layout.row()
         row.operator("pdt.angle2", text=PDT_LAB_AD2D)
         row.operator("pdt.angle3", text=PDT_LAB_AD3D)
-        row = toolbox.row()
+        row = layout.row()
         row.operator("pdt.join", text=PDT_LAB_JOIN2VERTS)
         row.operator("pdt.linetobisect", text=PDT_LAB_BISECT)
-        row = toolbox.row()
+        row = layout.row()
         row.operator("pdt.edge_to_face", text=PDT_LAB_EDGETOEFACE)
         row.operator("pdt.intersectall", text=PDT_LAB_INTERSETALL)
         #
         # Taper tool
-        box = toolbox.box()
+        box = layout.box()
         row = box.row()
         row.operator("pdt.taper", text=PDT_LAB_TAPER)
         row.prop(pdt_pg, "taper", text=PDT_LAB_TAPERAXES)
         #
         # Fillet tool
-        box = toolbox.box()
+        box = layout.box()
+        row = box.row()
+        row.operator("pdt.fillet", text=f"{PDT_LAB_FILLET}")
+        row.prop(pdt_pg, "fillet_intersect", text="Intersect")
         row = box.row()
         row.prop(pdt_pg, "fillet_radius", text=PDT_LAB_RADIUS)
         row.prop(pdt_pg, "fillet_profile", text=PDT_LAB_PROFILE)
         row = box.row()
         row.prop(pdt_pg, "fillet_segments", text=PDT_LAB_SEGMENTS)
         row.prop(pdt_pg, "fillet_vertices_only", text=PDT_LAB_USEVERTS)
-        row = box.row()
-        row.operator("pdt.fillet", text=f"{PDT_LAB_FILLET}")
-        row.prop(pdt_pg, "fillet_int", text="Intersect")
 
 
 class PDT_PT_PanelPivotPoint(Panel):

@@ -43,15 +43,15 @@ def get_queue():
     return t.task_queue
 
 class task_object:
-    def __init__(self, command = '', arguments = (), wait = 0):
+    def __init__(self, command = '', arguments = (), wait = 0, only_last = False):
         self.command = command
         self.arguments = arguments
         self.wait = wait
+        self.only_last = only_last
 
-
-def add_task(task, wait = 0):
+def add_task(task, wait = 0, only_last = False):
     q = get_queue()
-    taskob = task_object(task[0],task[1], wait = wait)
+    taskob = task_object(task[0],task[1], wait = wait, only_last = only_last)
     q.put(taskob)
 
 
@@ -60,6 +60,23 @@ def queue_worker():
     q = get_queue()
 
     back_to_queue = [] #delayed events
+    stashed = {}
+    # first round we get all tasks that are supposed to be stashed and run only once (only_last option)
+    # stashing finds tasks with the property only_last and same command and executes only the last one.
+    while not q.empty():
+        task = q.get()
+        if task.only_last:
+            stashed[task.command] = task
+        else:
+            back_to_queue.append(task)
+    #return tasks to que except for stashed
+    for task in back_to_queue:
+        q.put(task)
+    #return stashed tasks to queue
+    for k in stashed.keys():
+        q.put(stashed[k])
+    #second round, execute or put back waiting tasks.
+    back_to_queue = []
     while not q.empty():
         # print('window manager', bpy.context.window_manager)
         task = q.get()

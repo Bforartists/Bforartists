@@ -24,8 +24,8 @@ bl_info = {
     "location": "Scene > 3D-Coat Applink",
     "description": "Transfer data between 3D-Coat/Blender",
     "warning": "",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Import-Export/3dcoat_applink",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "import_export/coat3D.html",
     "category": "Import-Export",
 }
 
@@ -850,10 +850,10 @@ class SCENE_OT_import(bpy.types.Operator):
                     if(scene_objects.coat3D.applink_address == new_applink_address):
                         new_object = False
 
-        
+
         elif(os.path.isfile(exportfile3)):
             obj_pathh = open(exportfile3)
-            
+
             for line in obj_pathh:
                 new_applink_address = line
                 break
@@ -865,7 +865,7 @@ class SCENE_OT_import(bpy.types.Operator):
                         scene_objects.coat3D.type == ''
                         new_ref_object = True
                         nimi = scene_objects.name
-                       
+
 
 
         exportfile = coat3D.exchangedir
@@ -873,7 +873,7 @@ class SCENE_OT_import(bpy.types.Operator):
         exportfile += ('%sexport.txt' % (os.sep))
         if (os.path.isfile(exportfile)):
             os.remove(exportfile)
-        
+
         if(new_ref_object):
 
             create_collection = True
@@ -899,7 +899,7 @@ class SCENE_OT_import(bpy.types.Operator):
             old_objects = bpy.data.objects.keys()
             object_list = []
 
-           
+
             bpy.ops.import_scene.fbx(filepath=new_applink_address, global_scale = 0.01,axis_forward='X', axis_up='Y',use_custom_normals=False)
             new_objects = bpy.data.objects.keys()
             diff_objects = [i for i in new_objects if i not in old_objects]
@@ -909,12 +909,12 @@ class SCENE_OT_import(bpy.types.Operator):
 
                 refmesh = bpy.data.objects[nimi]
                 copymesh = bpy.data.objects[nimi].copy()
-            
+
                 copymesh.data = bpy.data.objects[diff_object].data
                 copymesh.coat3D.applink_name = bpy.data.objects[diff_object].data.name
                 copymesh.coat3D.applink_address = refmesh.coat3D.applink_address
                 ne_name = bpy.data.objects[diff_object].data.name
-               
+
                 copymesh.coat3D.type = 'ppp'
                 copymesh.coat3D.retopo = True
 
@@ -931,7 +931,7 @@ class SCENE_OT_import(bpy.types.Operator):
                 copymesh.material_slots[0].material.node_tree.nodes['Principled BSDF'].inputs['Metallic'].default_value = 0
                 copymesh.material_slots[0].material.node_tree.nodes['Principled BSDF'].inputs['Specular'].default_value = 0.5
 
-            
+
             refmesh.coat3D.applink_name = ''
             refmesh.coat3D.applink_address = ''
             refmesh.coat3D.type = ''
@@ -998,7 +998,7 @@ class SCENE_OT_import(bpy.types.Operator):
                         path3b_n = coat3D.exchangedir
                         path3b_n += ('%slast_saved_3b_file.txt' % (os.sep))
                         if(objekti.coat3D.import_mesh and coat3D.importmesh == True):
-                           
+
                             objekti.coat3D.import_mesh = False
                             objekti.select_set(True)
 
@@ -1007,7 +1007,7 @@ class SCENE_OT_import(bpy.types.Operator):
 
                             '''Changes objects mesh into proxy mesh'''
                             if(objekti.coat3D.type != 'ref'):
-                              
+
                                 for proxy_objects in diff_objects:
                                     if(objekti.coat3D.retopo == False):
                                         if (proxy_objects == objekti.coat3D.applink_name):
@@ -1151,7 +1151,7 @@ class SCENE_OT_import(bpy.types.Operator):
                             objekti.coat3D.applink_name = objekti.name
                             objekti.coat3D.applink_mesh = True
                             objekti.coat3D.import_mesh = False
-                           
+
                             bpy.ops.object.transforms_to_deltas(mode='SCALE')
                             objekti.coat3D.applink_firsttime = False
                             bpy.context.collection.all_objects[del_obj].select_set(False)

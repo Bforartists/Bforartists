@@ -687,7 +687,7 @@ class addBeam(Operator, object_utils.AddObjectHelper):
     change : BoolProperty(name = "Change",
                 default = False,
                 description = "change Beam")
-    
+
     Type: EnumProperty(
             items=(
             ('0', "Box Profile", "Square Beam"),
@@ -795,7 +795,7 @@ class addBeam(Operator, object_utils.AddObjectHelper):
                 obj.data[prm] = getattr(self, prm)
 
             return {'FINISHED'}
-            
+
         if bpy.context.mode == "EDIT_MESH":
             active_object = context.active_object
             name_active_object = active_object.name

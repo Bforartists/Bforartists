@@ -240,7 +240,7 @@ class OBJECT_OT_objectconnect(Operator):
                 bpy.ops.curve.btgrow()
 
             bpy.data.collections["Btrace"].objects.link(curve) # add to Btrace collection
-            
+
             # Check if we add grow curve
             if Btrace.animate:
                 bpy.ops.curve.btgrow()  # Add grow curve
@@ -312,7 +312,7 @@ class OBJECT_OT_particletrace(Operator):
 
             if Btrace.curve_join:
                 tracer = curvetracer('Tracer', 'Splines')
-            
+
             for x in ps.particles:
                 if not Btrace.curve_join:
                     tracer = curvetracer('Tracer.000', 'Spline.000')
@@ -322,7 +322,7 @@ class OBJECT_OT_particletrace(Operator):
                 spline.bezier_points.add((x.lifetime - 1) // particle_step)
                 for t in list(range(int(x.lifetime))):
                     bpy.context.scene.frame_set(t + x.birth_time)
-                    
+
                     if not t % particle_step:
                         p = spline.bezier_points[t // particle_step]
                         p.co = x.location
@@ -813,7 +813,7 @@ class OBJECT_OT_meshfollow(Operator):
                 if curveobject.type == 'CURVE':
                     curveobject.select_set(True)
                     bpy.context.view_layer.objects.active = curveobject
-                    
+
                     bpy.data.collections["Btrace"].objects.link(curveobject) #2.8 link obj to collection
                     bpy.context.scene.collection.objects.unlink(curveobject) # unlink from scene collection
                     # bpy.ops.object.group_link(group="Btrace")
@@ -852,7 +852,7 @@ def addtracemat(matobj):
         matslots = bpy.context.object.data.materials.items()
 
         if len(matslots) < 1:  # Make sure there is only one material slot
-            
+
             Btrace = bpy.context.window_manager.curve_tracer
 
             # Check if color blender is to be run
@@ -909,14 +909,14 @@ def addtracemat(matobj):
                     mat_color = Btrace.trace_mat_color
 
                 TraceMat = bpy.data.materials.new('TraceMat')
-                
-                TraceMat.use_nodes = True 
+
+                TraceMat.use_nodes = True
                 BSDF = TraceMat.node_tree.nodes[1]
                 r, g, b = mat_color[0], mat_color[1], mat_color[2]
                 BSDF.inputs[0].default_value = [r, g, b, 1] # change node color
                 TraceMat.diffuse_color = [r, g, b, 1] # change viewport color
-                
-               
+
+
                 # Add material to object
                 matobj.materials.append(bpy.data.materials.get(TraceMat.name))
 

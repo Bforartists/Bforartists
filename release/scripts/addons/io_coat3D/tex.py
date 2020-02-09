@@ -565,12 +565,12 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
 
             tile_int_x = int(tile[3])
             tile_int_y = int(tile[2])
-            
+
             min_node = texture_tree.nodes.new('ShaderNodeVectorMath')
             min_node.operation = "MINIMUM"
             min_node.inputs[1].default_value[0] = tile_int_x - 1
             min_node.inputs[1].default_value[1] = tile_int_y
- 
+
             max_node = texture_tree.nodes.new('ShaderNodeVectorMath')
             max_node.operation = "MAXIMUM"
             max_node.inputs[1].default_value[0] = tile_int_x

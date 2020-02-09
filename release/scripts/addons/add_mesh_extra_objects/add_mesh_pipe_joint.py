@@ -111,7 +111,7 @@ class AddElbowJoint(Operator, object_utils.AddObjectHelper):
     change : BoolProperty(name = "Change",
                 default = False,
                 description = "change ElbowJoint")
-    
+
     radius: FloatProperty(
         name="Radius",
         description="The radius of the pipe",
@@ -223,7 +223,7 @@ class AddElbowJoint(Operator, object_utils.AddObjectHelper):
         # Create faces
         faces.extend(createFaces(loop1, loop2, closed=True))
         faces.extend(createFaces(loop2, loop3, closed=True))
-        
+
         if bpy.context.mode == "OBJECT":
             if (context.selected_objects != []) and context.active_object and \
             ('ElbowJoint' in context.active_object.data.keys()) and (self.change == True):
@@ -289,7 +289,7 @@ class AddTeeJoint(Operator, object_utils.AddObjectHelper):
     change : BoolProperty(name = "Change",
                 default = False,
                 description = "change TeeJoint")
-    
+
     radius: FloatProperty(
         name="Radius",
         description="The radius of the pipe",
@@ -478,7 +478,7 @@ class AddTeeJoint(Operator, object_utils.AddObjectHelper):
         faces.extend(createFaces(loopMainStart, loopJoint1, closed=True))
         faces.extend(createFaces(loopJoint2, loopArm, closed=True))
         faces.extend(createFaces(loopJoint3, loopMainEnd, closed=True))
-        
+
         if bpy.context.mode == "OBJECT":
             if (context.selected_objects != []) and context.active_object and \
             ('TeeJoint' in context.active_object.data.keys()) and (self.change == True):
@@ -542,7 +542,7 @@ class AddWyeJoint(Operator, object_utils.AddObjectHelper):
     change : BoolProperty(name = "Change",
                 default = False,
                 description = "change WyeJoint")
-    
+
     radius: FloatProperty(
         name="Radius",
         description="The radius of the pipe",
@@ -750,7 +750,7 @@ class AddWyeJoint(Operator, object_utils.AddObjectHelper):
         faces.extend(createFaces(loopMainStart, loopJoint1, closed=True))
         faces.extend(createFaces(loopJoint2, loopArm1, closed=True))
         faces.extend(createFaces(loopJoint3, loopArm2, closed=True))
-        
+
         if bpy.context.mode == "OBJECT":
             if (context.selected_objects != []) and context.active_object and \
             ('WyeJoint' in context.active_object.data.keys()) and (self.change == True):
@@ -818,7 +818,7 @@ class AddCrossJoint(Operator, object_utils.AddObjectHelper):
     change : BoolProperty(name = "Change",
                 default = False,
                 description = "change CrossJoint")
-    
+
     radius: FloatProperty(
         name="Radius",
         description="The radius of the pipe",
@@ -1086,7 +1086,7 @@ class AddCrossJoint(Operator, object_utils.AddObjectHelper):
         faces.extend(createFaces(loopJoint2, loopArm1, closed=True))
         faces.extend(createFaces(loopJoint3, loopArm2, closed=True))
         faces.extend(createFaces(loopJoint4, loopArm3, closed=True))
-        
+
         if bpy.context.mode == "OBJECT":
             if (context.selected_objects != []) and context.active_object and \
             ('CrossJoint' in context.active_object.data.keys()) and (self.change == True):
@@ -1149,7 +1149,7 @@ class AddNJoint(Operator, object_utils.AddObjectHelper):
     change : BoolProperty(name = "Change",
                 default = False,
                 description = "change NJoint")
-    
+
     radius: FloatProperty(
         name="Radius",
         description="The radius of the pipe",
@@ -1319,7 +1319,7 @@ class AddNJoint(Operator, object_utils.AddObjectHelper):
             faces.extend(
                 createFaces(loopsJoints[loopIdx],
                 loopsEndCircles[loopIdx], closed=True))
-        
+
         if bpy.context.mode == "OBJECT":
             if (context.selected_objects != []) and context.active_object and \
             ('NJoint' in context.active_object.data.keys()) and (self.change == True):

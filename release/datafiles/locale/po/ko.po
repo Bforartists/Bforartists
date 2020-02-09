@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -11441,14 +11441,6 @@ msgid "Maximum number of additional cells"
 msgstr "추가적인 셀의 최대치 수"
 
 
-msgid "Density"
-msgstr "밀도"
-
-
-msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
-msgstr "스모크의 움직임에 영향을 주는 밀도 (값이 높을수록 빠르게 상승하는 스모크 결과를 얻습니다)"
-
-
 msgid "Slice the whole domain object"
 msgstr "모든 도메인 오브젝트를 슬라이스"
 
@@ -11459,18 +11451,6 @@ msgstr "싱글"
 
 msgid "Perform a single slice of the domain object"
 msgstr "도메인 오브젝트의 단일 슬라이스를 수행"
-
-
-msgid "Heat"
-msgstr "온도"
-
-
-msgid "How much heat affects smoke motion (higher value results in faster rising smoke)"
-msgstr "스모크 움직임에 영향을 주는 온도 (값이 높을수록 빠르게 상승하는 스모크 결과를 얻습니다)"
-
-
-msgid "Speed of the burning reaction (use larger values for smaller flame)"
-msgstr "연소 반응의 속력 (작은 불꽃에 더 큰 값을 사용)"
 
 
 msgid "Select the file format to be used for caching volumetric data"
@@ -11537,10 +11517,6 @@ msgid "CFL"
 msgstr "CFL"
 
 
-msgid "Maximal velocity per cell (higher value results in larger timesteps)"
-msgstr "셀당 최대 속도 (값이 클수록 타임 스텝이 더 큼)"
-
-
 msgid "Clipping"
 msgstr "클리핑"
 
@@ -11581,6 +11557,10 @@ msgid "Blue component of the color field"
 msgstr "컬러 필드의 블루 구성 요소"
 
 
+msgid "Density"
+msgstr "밀도"
+
+
 msgid "Quantity of soot in the fluid"
 msgstr "유체의 그을음의 양"
 
@@ -11599,6 +11579,10 @@ msgstr "연료"
 
 msgid "Fuel field"
 msgstr "연료 필드"
+
+
+msgid "Heat"
+msgstr "온도"
 
 
 msgid "Temperature of the fluid"
@@ -11753,18 +11737,6 @@ msgid "Smoke flame grid"
 msgstr "스모크 플래임 격자"
 
 
-msgid "Ignition"
-msgstr "점화"
-
-
-msgid "Minimum temperature of flames"
-msgstr "플래임의 최소 온도"
-
-
-msgid "Maximum temperature of flames"
-msgstr "플래임의 최대 온도"
-
-
 msgid "Smoke"
 msgstr "스모크"
 
@@ -11849,20 +11821,12 @@ msgid "Domain"
 msgstr "도메인"
 
 
-msgid "Use a fluid domain for guiding (domain needs to be baked already so that velocities can be extracted but can be of any type)"
-msgstr "가이딩을 위해 우체 도메인을 사용 (속도를 추출 할 수 있지만 모든 유형이 될 수 있도록 도메인을 이미 베이킹해야 함)"
-
-
 msgid "Effector"
 msgstr "이펙터"
 
 
 msgid "Use guiding (effector) objects to create fluid guiding (guiding objects should be animated and baked once set up completely)"
 msgstr "유체 가이딩을 생성하기 위해 가이딩 (이펙터) 오브젝트를 사용하십시오 (가이딩 오브젝트는 애니메이션이 설정되고 완전히 설정되면 구워 져야합니다)"
-
-
-msgid "Guiding velocity factor (higher value results in bigger guiding velocities)"
-msgstr "가이딩 속도 팩터 (값이 클수록 가이딩 속도가 커짐)"
 
 
 msgid "Heat Grid"
@@ -11929,16 +11893,8 @@ msgid "Radius"
 msgstr "반경"
 
 
-msgid "Particle radius factor (higher value results in larger (meshed) particles)"
-msgstr "파티클 반경 팩터 (값이 높을수록 (메쉬된) 파티클들이 커짐)"
-
-
 msgid "Mesh scale"
 msgstr "메쉬 축적"
-
-
-msgid "Scale underlying mesh grids by this factor. Mesh grids have size factor times base resolution"
-msgstr "이 요소를 기준으로 기본 메쉬 그리드를 스케일링합니다. 메쉬 그리드의 크기는 기본 해상도의 배입니다"
 
 
 msgid "Smoothen Neg"
@@ -11973,10 +11929,6 @@ msgid "Noise Scale"
 msgstr "노이즈 축적"
 
 
-msgid "Scale underlying noise grids by this factor. Noise grids have size factor times base resolution"
-msgstr "이 요소에 따라 기본 노이즈 그리드를 스케일링합니다. 노이즈 그리드의 크기는 기본 해상도의 기본 배입니다"
-
-
 msgid "Strength of noise"
 msgstr "노이즈의 강도"
 
@@ -11991,10 +11943,6 @@ msgstr "노이즈의 애니메이션 시간"
 
 msgid "Noise Method"
 msgstr "노이즈 메서드"
-
-
-msgid "Noise method which is used for creating the high resolution"
-msgstr "고해상도를 만드는 데 사용되는 노이즈 방법"
 
 
 msgid "Wavelet"
@@ -12049,20 +11997,12 @@ msgid "Particle number factor (higher value results in more particles)"
 msgstr "파티클 수 팩터 (값이 클수록 파티클들이 많아짐)"
 
 
-msgid "Particle radius factor. Use this parameter when the simulation appears to leak volume"
-msgstr "파티클 반경 팩터. 시뮬레이션이 볼륨을 누설하는 것으로 보일 때이 매개 변수를 사용"
-
-
 msgid "Randomness"
 msgstr "랜덤성"
 
 
 msgid "Randomness factor for particle sampling"
 msgstr "파티클 샘플링을 위한 렌덤성 팩터"
-
-
-msgid "Scale underlying particle grids by this factor. Particle grids have size factor times base resolution"
-msgstr "이 요소를 기준으로 기본 파티클 그리드를 스케일합니다. 파티클 그리드의 크기는 기본 해상도의 배입니다"
 
 
 msgid "Cache Compression"
@@ -12079,14 +12019,6 @@ msgstr "빠르지만 효과적이지 않은 압축"
 
 msgid "Heavy"
 msgstr "헤비"
-
-
-msgid "Max Res"
-msgstr "최대 해상도"
-
-
-msgid "Resolution used for the fluid domain"
-msgstr "유체 도메인에 사용되는 리솔루션"
 
 
 msgid "Display Velocity"
@@ -12221,16 +12153,12 @@ msgid "Create one particle system that contains all three secondary particle typ
 msgstr "세 가지 이차 파티클 유형을 모두 포함하는 하나의 파티클 시스템을 만듭니다."
 
 
-msgid "Buoyancy"
-msgstr "부력"
+msgid "Bubble Buoyancy"
+msgstr "버블 부력"
 
 
-msgid "Amount of buoyancy force that rises bubbles (high values result in bubble movement mainly upwards)"
-msgstr "버블을 상승시키는 부력의 양 (높은 값은 버블을 주로 위쪽으로 이동시킵니다)"
-
-
-msgid "Amount of drag force that moves bubbles along with the fluid (high values result in bubble movement mainly along with the fluid)"
-msgstr "유체와 함께 버블을 이동시키는 항력의 양 (높은 값은 주로 유체와 함께 버블 이동을 초래 함)"
+msgid "Bubble Drag"
+msgstr "버블 드래그"
 
 
 msgid "Trapped Air Sampling"
@@ -12249,16 +12177,8 @@ msgid "Maximum number of particles generated per wave crest cell per frame"
 msgstr "프레임 당 웨이브 크레스트 셀당 생성된 최대 파티클들의 수"
 
 
-msgid "Lifetime(max)"
-msgstr "수명(최대)"
-
-
 msgid "Highest possible particle lifetime"
 msgstr "가능한 최고의 파티클 수명"
-
-
-msgid "Lifetime(min)"
-msgstr "수명(최소)"
 
 
 msgid "Lowest possible particle lifetime"
@@ -12277,48 +12197,12 @@ msgid "tauMax_k"
 msgstr "tauMax_k"
 
 
-msgid "Upper clamping threshold that indicates the fluid speed where cells no longer emit more particles (higher values result in generally less particles)"
-msgstr "셀이 더 이상 더 많은 파티클들을 방출하지 않는 유체 속도를 나타내는 상위 클램핑 임계 값 (높은 값은 일반적으로 더 적은 파티클들을 생성 함)"
-
-
-msgid "tauMax_ta"
-msgstr "tauMax_ta"
-
-
-msgid "Upper clamping threshold for marking fluid cells where air is trapped (higher values result in less marked cells)"
-msgstr "공기가 갇히는 유체 셀을 표시하기 위한 클램핑 임계 값 상한 (값이 클수록 셀이 덜 표시됨)"
-
-
-msgid "tauMax_wc"
-msgstr "tauMax_wc"
-
-
-msgid "Upper clamping threshold for marking fluid cells as wave crests (higher values result in less marked cells)"
-msgstr "유체 셀을 웨이브 크레스트로 표시하기위한 클램핑 임계 값 상한 (값이 클수록 셀이 덜 표시됨)"
-
-
 msgid "tauMin_k"
 msgstr "tauMin_k"
 
 
 msgid "Lower clamping threshold that indicates the fluid speed where cells start to emit particles (lower values result in generally more particles)"
 msgstr "셀이 파티클들을 방출하기 시작하는 유체 속력을 나타내는 낮은 클램핑 임계 값 (값이 낮을수록 일반적으로 더 많은 파티클들이 생성됨)"
-
-
-msgid "tauMin_ta"
-msgstr "tauMin_ta"
-
-
-msgid "Lower clamping threshold for marking fluid cells where air is trapped (lower values result in more marked cells)"
-msgstr "공기가 갇히는 유체 셀을 표시하기 위한 낮은 클램핑 임계 값 (값이 낮을수록 셀이 더 많이 표시됨)"
-
-
-msgid "tauMin_wc"
-msgstr "tauMin_wc"
-
-
-msgid "Lower clamping threshold for marking fluid cells as wave crests (lower values result in more marked cells)"
-msgstr "유체 셀을 웨이브 크레스트로 표시하기위한 낮은 클램핑 임계 값 (값이 낮을수록 더 많은 셀이 표시됨)"
 
 
 msgid "Update Radius"
@@ -12429,24 +12313,8 @@ msgid "Dissolve Smoke"
 msgstr "디졸브 스모크"
 
 
-msgid "Enable smoke to disappear over time"
-msgstr "시간이 지남에 따라 사라지는 스모크를 사용"
-
-
-msgid "Logarithmic dissolve"
-msgstr "로그 디졸브"
-
-
-msgid "Using 1/x "
-msgstr "사용하기 1/x "
-
-
 msgid "FLIP"
 msgstr "FLIP"
-
-
-msgid "Create FLIP particle system"
-msgstr "FLIP 파티클 시스템을 생성"
 
 
 msgid "Foam"
@@ -12491,10 +12359,6 @@ msgstr "유체 노이즈를 활성화 (증폭 사용)"
 
 msgid "Speed Vectors"
 msgstr "속력 벡터"
-
-
-msgid "Generate speed vectors (will be loaded automatically during render for motion blur)"
-msgstr "속도 벡터를 생성 (모션 블러를 위해 렌더링하는 동안 자동으로 로드 됨)"
 
 
 msgid "Spray"
@@ -12559,10 +12423,6 @@ msgstr "점도 지수"
 
 msgid "Negative exponent for the viscosity value (to simplify entering small values e.g. 5*10^-6)"
 msgstr "점도 값에 대한 음성 지수 (e.g. 5*10^-6 입력되는 작은 값을 단순화)"
-
-
-msgid "Amount of turbulence/rotation in fluid"
-msgstr "유동체의 난기류/회전의 양"
 
 
 msgid "Fluid Mesh Velocity"
@@ -12765,10 +12625,6 @@ msgid "Number of additional samples to take between frames to improve quality of
 msgstr "빠르게 움직이는 흐름의 품질을 향상 시키기 위해 프레임 사이에 가져오는 추가적인 샘플의 수"
 
 
-msgid "Maximum distance from mesh surface to emit fluid"
-msgstr "메쉬 표면에서 유체를 방출하는 최대 거리"
-
-
 msgid "Temp. Diff."
 msgstr "온도. 차이."
 
@@ -12863,10 +12719,6 @@ msgstr "노멀 지향성의 속도의 양"
 
 msgid "Amount of random velocity"
 msgstr "랜덤 속도의 양"
-
-
-msgid "Factor for smoke emitted from inside the mesh volume"
-msgstr "메쉬 볼륨 내부에서 방출되는 스모크에 대한 팩터"
 
 
 msgid "Freestyle Line Set"
@@ -16626,10 +16478,6 @@ msgid "Rotate"
 msgstr "회전"
 
 
-msgid "Topology"
-msgstr "토폴로지"
-
-
 msgid "Secondary Color"
 msgstr "보조 컬러"
 
@@ -17790,24 +17638,12 @@ msgid "Option for curve-deform: make deformed child to stretch along entire path
 msgstr "커브 변형에 대한 옵션 : 변형된 자식이 전체 경로를 따라 늘어나도록합니다"
 
 
-msgid "Use UV for mapping"
-msgstr "맵핑에 대해 UV를 사용"
-
-
-msgid "Uses the UV values as Generated textured coordinates"
-msgstr "생성된 텍스처 좌표로 UV 값을 사용"
-
-
 msgid "Surface Curve"
 msgstr "표면 커브"
 
 
 msgid "Curve data-block used for storing surfaces"
 msgstr "표면을 저장하기 위해 사용되는 커브 데이터 블록"
-
-
-msgid "Use UV for Mapping"
-msgstr "맵핑에 대해 UV를 사용"
 
 
 msgid "Text Curve"
@@ -21344,24 +21180,12 @@ msgid "Lock Location"
 msgstr "위치를 잠금"
 
 
-msgid "Lock editing of location in the interface"
-msgstr "인터페이스에서 위치의 편집을 잠금"
-
-
 msgid "Lock Rotation"
 msgstr "회전을 잠금"
 
 
-msgid "Lock editing of rotation in the interface"
-msgstr "인터페이스에서 회전의 편집을 잠금"
-
-
 msgid "Lock Rotation (4D Angle)"
 msgstr "회전을 잠금 (4D 각도)"
-
-
-msgid "Lock editing of 'angle' component of four-component rotations in the interface"
-msgstr "인터페이스에서 네 가지 구성 요소 회전에 '각도' 구성 요소의 편집을 잠금"
 
 
 msgid "Lock Rotations (4D)"
@@ -21374,10 +21198,6 @@ msgstr "구성 요소에 의한 4개의 구성 요소 회전의 편집을 잠금
 
 msgid "Lock Scale"
 msgstr "축적을 잠금"
-
-
-msgid "Lock editing of scale in the interface"
-msgstr "인터페이스에서 축적의 편집을 잠금"
 
 
 msgid "Material Slots"
@@ -31043,6 +30863,10 @@ msgstr "에지 맵핑"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "목적지들에 소스 에지를 맵하는 데 사용된 메서드"
+
+
+msgid "Topology"
+msgstr "토폴로지"
 
 
 msgid "Copy from identical topology meshes"
@@ -68027,11 +67851,6 @@ msgstr "넛지"
 
 
 msgctxt "Operator"
-msgid "Topology"
-msgstr "토폴로지"
-
-
-msgctxt "Operator"
 msgid "Simplify"
 msgstr "단순화"
 
@@ -75134,6 +74953,10 @@ msgstr "오브젝트가 충돌할 때 누적할 수 있는 여분의 속도를 �
 
 msgid "Settings for particle fluids physics"
 msgstr "파티클 유체 피직스에 대한 설정"
+
+
+msgid "Buoyancy"
+msgstr "부력"
 
 
 msgid "Artificial buoyancy force in negative gravity direction based on pressure differences inside the fluid"
@@ -88058,28 +87881,12 @@ msgid "Clumping amount"
 msgstr "응집 양"
 
 
-msgid "Temperature Diff."
-msgstr "온도 차이."
-
-
 msgid "Reaction Speed"
 msgstr "반응 속력"
 
 
 msgid "Flame Smoke"
 msgstr "플래임 스모크"
-
-
-msgid "Flame Vorticity"
-msgstr "플래임 소용돌이"
-
-
-msgid "Temperature Ignition"
-msgstr "온도 점화"
-
-
-msgid "Maximum Temperature"
-msgstr "최대 온도"
 
 
 msgid "Flame Color"
@@ -88158,14 +87965,6 @@ msgid "Particle Life Maximum"
 msgstr "파티클 수명 최대"
 
 
-msgid "Bubble Buoyancy"
-msgstr "버블 부력"
-
-
-msgid "Bubble Drag"
-msgstr "버블 드래그"
-
-
 msgid "Particles in Boundary:"
 msgstr "경계의 파티클:"
 
@@ -88214,10 +88013,6 @@ msgid "Timesteps Maximum"
 msgstr "타임 스텝 최대"
 
 
-msgid "Surface Thickness"
-msgstr "표면 두께"
-
-
 msgid "Smoothing Positive"
 msgstr "스무딩 포지티브"
 
@@ -88240,10 +88035,6 @@ msgstr "장면 중력을 사용"
 
 msgid "Sampling Substeps"
 msgstr "샘플링 하위 단계"
-
-
-msgid "Volume Density"
-msgstr "볼륨 밀도"
 
 
 msgctxt "Operator"
@@ -88271,6 +88062,10 @@ msgstr "모두 베이킹 - ESC 일시 중지"
 
 msgid "Use Inflow"
 msgstr "유입을 사용"
+
+
+msgid "Surface Thickness"
+msgstr "표면 두께"
 
 
 msgctxt "Operator"
@@ -97571,40 +97366,12 @@ msgid "Cursor Y"
 msgstr "커서 Y"
 
 
-msgid "Display Color:"
-msgstr "표시 컬러:"
-
-
-msgid "Auto Handle Smoothing:"
-msgstr "자동 핸들 스무싱:"
-
-
 msgid "Interpolation:"
 msgstr "보간법:"
 
 
 msgid "None for Enum/Boolean"
 msgstr "열거/불리언에 대해 없음"
-
-
-msgid "Key:"
-msgstr "키:"
-
-
-msgid "Frame:"
-msgstr "프레임:"
-
-
-msgid "Value:"
-msgstr "값:"
-
-
-msgid "Left Handle:"
-msgstr "왼쪽 핸들:"
-
-
-msgid "Right Handle:"
-msgstr "오른쪽 핸들:"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -97637,6 +97404,10 @@ msgstr "표현식:"
 
 msgid "Add Input Variable"
 msgstr "입력 변수를 추가"
+
+
+msgid "Value:"
+msgstr "값:"
 
 
 msgid "Update Dependencies"
@@ -98016,28 +97787,12 @@ msgid "Verts:%s | Faces:%s | Tris:%s | Objects:%s/%s%s%s"
 msgstr "버택스:%s | 페이스:%s | 트라이:%s | 오브젝트:%s/%s%s%s"
 
 
-msgid "Strip Extents:"
-msgstr "스트립 범위:"
-
-
-msgid "Playback Settings:"
-msgstr "재생 설정:"
-
-
-msgid "Action Extents:"
-msgstr "액션 범위:"
-
-
 msgid "Sync Length"
 msgstr "길이를 동기화"
 
 
 msgid "Now"
 msgstr "지금"
-
-
-msgid "Evaluation"
-msgstr "평가"
 
 
 msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
@@ -98614,10 +98369,6 @@ msgstr "무비 클립을 찾을 수 없습니다"
 
 msgid "Mask not found"
 msgstr "마스크를 찾을 수 없습니다"
-
-
-msgid "Start and end frame are not set"
-msgstr "프레임 시작과 종료가 설정되어 있지 않음"
 
 
 msgid "File '%s' could not be loaded"
@@ -101529,10 +101280,6 @@ msgstr "라이브러리 '%s'를 잘못된 경로 '%s'에 다시 불러오거나 
 
 msgid "Win"
 msgstr "Win"
-
-
-msgid "OSkey"
-msgstr "OSkey"
 
 
 msgid "Bksp"

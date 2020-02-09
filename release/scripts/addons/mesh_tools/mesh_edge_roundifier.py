@@ -1371,12 +1371,12 @@ class EdgeRoundifier(Operator):
     @classmethod
     def poll(cls, context):
         return (context.view_layer.objects.active.type == 'MESH') and (context.view_layer.objects.active.mode == 'EDIT')
-    
+
 def draw_item(self, context):
     self.layout.operator_context = 'INVOKE_DEFAULT'
     self.layout.operator('mesh.edge_roundifier')
 
-    
+
 classes = (
            EdgeRoundifier,
            )
