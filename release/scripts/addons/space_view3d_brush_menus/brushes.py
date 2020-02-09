@@ -110,7 +110,7 @@ class BrushesMenu(Menu):
                         )
         else:
             column_flow = layout.column_flow(columns=colum_n)
-            
+
             # iterate over all the brushes
             for item in bpy.data.brushes:
                 if mode == 'SCULPT':

@@ -339,7 +339,9 @@ class StrokePanel(BrushPanel):
 
         if mode in {'PAINT_TEXTURE', 'PAINT_2D', 'SCULPT'}:
             if brush.image_paint_capabilities.has_space_attenuation or brush.sculpt_capabilities.has_space_attenuation:
+                col.use_property_split = False
                 col.prop(brush, "use_space_attenuation")
+                col.use_property_split = True
 
         if brush.use_curve:
             col.separator()
@@ -580,12 +582,16 @@ def brush_settings(layout, context, brush, popover=False):
                 pressure_name="use_offset_pressure",
                 slider=True,
             )
-
-            layout.prop(brush, "use_plane_trim", text="Plane Trim")
-            row = layout.row()
-            row.active = brush.use_plane_trim
-            row.prop(brush, "plane_trim", slider=True, text="Distance")
+            
             layout.separator()
+            
+            row = layout.row()
+            row.use_property_split = False
+            row.prop(brush, "use_plane_trim", text="Plane Trim")
+            
+            if brush.use_plane_trim:
+                row.prop(brush, "plane_trim", slider=True, text="")
+                
 
         # height
         if capabilities.has_height:
@@ -604,6 +610,7 @@ def brush_settings(layout, context, brush, popover=False):
 
             if do_persistent:
                 layout.separator()
+                layout.use_property_split = False
                 layout.prop(brush, "use_persistent")
                 layout.operator("sculpt.set_persistent_base")
                 layout.separator()
@@ -623,6 +630,7 @@ def brush_settings(layout, context, brush, popover=False):
         
         if brush.sculpt_tool == 'SCRAPE':
             row = layout.row()
+            row.use_property_split = False
             row.prop(brush, "invert_to_scrape_fill", text="Invert to Fill")
 
         if brush.sculpt_tool == 'FILL':
@@ -782,11 +790,14 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         use_frontface = True
 
         # topology automasking
+        layout.use_property_split = False
         layout.prop(brush, "use_automasking_topology")
 
         # sculpt plane settings
         if capabilities.has_sculpt_plane:
+            layout.use_property_split = True
             layout.prop(brush, "sculpt_plane")
+            layout.use_property_split = False
             layout.prop(brush, "use_original_normal")
             layout.prop(brush, "use_original_plane")
             layout.separator()
@@ -795,6 +806,8 @@ def brush_settings_advanced(layout, context, brush, popover=False):
     elif mode in {'PAINT_TEXTURE', 'PAINT_2D'}:
         capabilities = brush.image_paint_capabilities
         use_accumulate = capabilities.has_accumulate
+        
+        layout.use_property_split = False
 
         if mode == 'PAINT_2D':
             layout.prop(brush, "use_paint_antialiasing")
@@ -820,6 +833,7 @@ def brush_settings_advanced(layout, context, brush, popover=False):
 
     # Vertex Paint #
     elif mode == 'PAINT_VERTEX':
+        layout.use_property_split = False
         layout.prop(brush, "use_alpha")
         if brush.vertex_tool != 'SMEAR':
             use_accumulate = True
@@ -833,9 +847,11 @@ def brush_settings_advanced(layout, context, brush, popover=False):
 
     # Draw shared settings.
     if use_accumulate:
+        layout.use_property_split = False
         layout.prop(brush, "use_accumulate")
 
     if use_frontface:
+        layout.use_property_split = False
         layout.prop(brush, "use_frontface", text="Front Faces Only")
 
 
@@ -907,13 +923,16 @@ def brush_texture_settings(layout, brush, sculpt):
         col = layout.column()
         col.prop(tex_slot, "angle", text="Angle")
         if tex_slot.has_texture_angle_source:
+            col.use_property_split = False
             col.prop(tex_slot, "use_rake", text="Rake")
 
             if brush.brush_capabilities.has_random_texture_angle and tex_slot.has_random_texture_angle:
                 if sculpt:
                     if brush.sculpt_capabilities.has_random_texture_angle:
+                        col.use_property_split = False
                         col.prop(tex_slot, "use_random", text="Random")
                         if tex_slot.use_random:
+                            col.use_property_split = True
                             col.prop(tex_slot, "random_angle", text="Random Angle")
                 else:
                     col.prop(tex_slot, "use_random", text="Random")
@@ -995,6 +1014,8 @@ def brush_basic_texpaint_settings(layout, context, brush, *, compact=False):
 def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False):
     gp_settings = brush.gpencil_settings
     tool = context.workspace.tools.from_space_view3d_mode(context.mode, create=False)
+    if gp_settings is None:
+        return
 
     # Brush details
     if brush.gpencil_tool == 'ERASE':

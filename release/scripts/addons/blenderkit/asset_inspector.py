@@ -85,8 +85,11 @@ def check_render_engine(props, obs):
     mattype = None
     materials = []
     shaders = []
+    textures = []
     props.uv = False
-
+    props.texture_count = 0
+    props.total_megapixels = 0
+    props.node_count = 0
     for ob in obs:  # TODO , this is duplicated here for other engines, otherwise this should be more clever.
         for ms in ob.material_slots:
             if ms.material is not None:
@@ -108,25 +111,31 @@ def check_render_engine(props, obs):
                 checknodes = m.node_tree.nodes[:]
                 while len(checknodes) > 0:
                     n = checknodes.pop()
+                    props.node_count +=1
                     if n.type == 'GROUP':  # dive deeper here.
                         checknodes.extend(n.node_tree.nodes)
                     if len(n.outputs) == 1 and n.outputs[0].type == 'SHADER' and n.type != 'GROUP':
                         if n.type not in shaders:
                             shaders.append(n.type)
                     if n.type == 'TEX_IMAGE':
-                        mattype = 'image based'
-                        if n.image is not None:
+
+
+                        if n.image is not None and n.image not in textures:
+                            props.is_procedural = False
+                            mattype = 'image based'
+
+                            textures.append(n.image)
+                            props.texture_count += 1
+                            props.total_megapixels += (n.image.size[0] * n.image.size[1])
 
                             maxres = max(n.image.size[0], n.image.size[1])
-
                             props.texture_resolution_max = max(props.texture_resolution_max, maxres)
-
                             minres = min(n.image.size[0], n.image.size[1])
-
                             if props.texture_resolution_min == 0:
                                 props.texture_resolution_min = minres
                             else:
                                 props.texture_resolution_min = min(props.texture_resolution_min, minres)
+
 
         # if mattype == None:
         #    mattype = 'procedural'

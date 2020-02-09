@@ -132,7 +132,7 @@ class PIE_OT_SetObjectModePie(Operator):
         return {'FINISHED'}
 
 
-# Edit Selection Modes 
+# Edit Selection Modes
 class PIE_OT_ClassVertex(Operator):
     bl_idname = "class.vertex"
     bl_label = "Class Vertex"
@@ -223,7 +223,7 @@ class PIE_MT_ObjectEditMode(Menu):
         ob = context.object
         # No Object Selected #
         if not ob or not ob.select_get():
-            message = "No Active Object Selected" 
+            message = "No Active Object Selected"
             pie = layout.menu_pie()
             pie.separator()
             pie.separator()
@@ -383,7 +383,7 @@ class PIE_MT_ObjectEditMode(Menu):
 
 
         elif ob and ob.type in {"LIGHT", "CAMERA", "EMPTY", "SPEAKER"}:
-            message = "Active Object has only Object Mode available" 
+            message = "Active Object has only Object Mode available"
             pie = layout.menu_pie()
             pie.separator()
             pie.separator()
@@ -408,7 +408,7 @@ classes = (
     )
 
 addon_keymaps = []
-	
+
 
 def register():
     for cls in classes:

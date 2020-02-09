@@ -439,7 +439,7 @@ class AntLandscapePropertiesGroup(bpy.types.PropertyGroup):
             )
     smooth_mesh: BoolProperty(
             name="Smooth",
-            default=False,
+            default=True,
             description="Shade smooth"
             )
     tri_face: BoolProperty(

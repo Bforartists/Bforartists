@@ -478,6 +478,7 @@ class DATA_PT_remesh(MeshButtonsPanel, Panel):
         if mesh.remesh_mode == 'VOXEL':
             col.prop(mesh, "remesh_voxel_size")
             col.prop(mesh, "remesh_voxel_adaptivity")
+            col.use_property_split = False
             col.prop(mesh, "use_remesh_fix_poles")
             col.prop(mesh, "use_remesh_smooth_normals")
             col.prop(mesh, "use_remesh_preserve_volume")
@@ -512,6 +513,7 @@ class DATA_PT_customdata(MeshButtonsPanel, Panel):
         col = layout.column()
 
         col.enabled = obj is not None and obj.mode != 'EDIT'
+        col.use_property_split = False
         col.prop(me, "use_customdata_vertex_bevel")
         col.prop(me, "use_customdata_edge_bevel")
         col.prop(me, "use_customdata_edge_crease")

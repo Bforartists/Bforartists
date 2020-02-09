@@ -345,11 +345,11 @@ class VIEW3D_PT_CurvePanel(Panel):
             row.operator("curvetools.scale_reset", text='Scale Reset')
             row = col.row(align=True)
             row.operator("curvetools.operatorbirail", text="Birail")
-            row = col.row(align=True)        
+            row = col.row(align=True)
             row.operator("curvetools.convert_selected_face_to_bezier", text="Convert selected faces to Bezier")
             row = col.row(align=True)
             row.operator("curvetools.convert_bezier_to_surface", text="Convert Bezier to Surface")
-        
+
         # Extended options
         box1 = self.layout.box()
         col = box1.column(align=True)
@@ -363,9 +363,9 @@ class VIEW3D_PT_CurvePanel(Panel):
             row = col.row(align=True)
             row.operator("curvetools.bezier_cad_subdivide", text="Multi Subdivide")
             row = col.row(align=True)
-            row.operator("curvetools.split", text='Split by selected points')            
+            row.operator("curvetools.split", text='Split by selected points')
             row = col.row(align=True)
-            row.operator("curvetools.remove_doubles", text='Remove Doubles')            
+            row.operator("curvetools.remove_doubles", text='Remove Doubles')
             row = col.row(align=True)
             row.operator("curvetools.add_toolpath_discretize_curve", text="Discretize Curve")
             row = col.row(align=True)
@@ -387,7 +387,7 @@ class VIEW3D_PT_CurvePanel(Panel):
             row.prop(context.scene.curvetools, "curve_vertcolor", text="")
             row = col.row(align=True)
             row.operator("curvetools.show_resolution", text="Run [ESC]")
-            
+
             # D.1 set spline sequence
             row = col.row(align=True)
             row.label(text="Show and rearrange spline sequence:")
@@ -444,7 +444,7 @@ class VIEW3D_PT_CurvePanel(Panel):
             row.label(text="Alt + Shift + mouse click - add spline to select")
             row = col.row(align=True)
             row.label(text="A - deselect all")
-            
+
 # Add-ons Preferences Update Panel
 
 # Define Panel classes for updating
@@ -492,17 +492,17 @@ class CurveAddonPreferences(AddonPreferences):
 # Context MENU
 def curve_tools_context_menu(self, context):
     bl_label = 'Curve tools'
-   
+
     self.layout.operator("curvetools.bezier_points_fillet", text="Fillet")
     self.layout.operator("curvetools.bezier_cad_handle_projection", text='Handle Projection')
     self.layout.operator("curvetools.bezier_spline_divide", text="Divide")
     self.layout.operator("curvetools.add_toolpath_offset_curve", text="Offset Curve")
     self.layout.operator("curvetools.remove_doubles", text='Remove Doubles')
     self.layout.separator()
-    
+
 def curve_tools_object_context_menu(self, context):
     bl_label = 'Curve tools'
-   
+
     if context.active_object.type == "CURVE":
         self.layout.operator("curvetools.scale_reset", text="Scale Reset")
         self.layout.operator("curvetools.add_toolpath_offset_curve", text="Offset Curve")
@@ -566,21 +566,21 @@ def register():
             default=True,
             description="Curves Utils"
             )
-    
+
     for cls in classes:
         bpy.utils.register_class(cls)
 
     for panel in panels:
         bpy.utils.register_class(panel)
-    
+
     auto_loft.register()
-    
+
     bpy.types.TOPBAR_MT_file_export.append(menu_file_export)
-    
+
     bpy.types.Scene.curvetools = bpy.props.PointerProperty(type=curvetoolsSettings)
-    
+
     update_panel(None, bpy.context)
-    
+
     bpy.types.VIEW3D_MT_edit_curve_context_menu.prepend(curve_tools_context_menu)
     bpy.types.VIEW3D_MT_object_context_menu.prepend(curve_tools_object_context_menu)
 
@@ -592,17 +592,17 @@ def unregister():
     del bpy.types.Scene.UTAdvancedDrop
     del bpy.types.Scene.UTExtendedDrop
     del bpy.types.Scene.UTUtilsDrop
-    
+
     auto_loft.unregister()
-    
+
     bpy.types.TOPBAR_MT_file_export.remove(menu_file_export)
-    
+
     bpy.types.VIEW3D_MT_edit_curve_context_menu.remove(curve_tools_context_menu)
     bpy.types.VIEW3D_MT_object_context_menu.remove(curve_tools_object_context_menu)
-    
+
     for panel in panels:
         bpy.utils.unregister_class(panel)
-    
+
     for cls in classes:
         bpy.utils.unregister_class(cls)
 

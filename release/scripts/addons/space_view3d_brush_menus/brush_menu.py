@@ -25,7 +25,7 @@ class BrushOptionsMenu(Menu):
     def draw(self, context):
         mode = utils_core.get_mode()
         layout = self.layout
-        
+
         # add generic menu items
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
@@ -34,8 +34,8 @@ class BrushOptionsMenu(Menu):
         layout.operator_menu_enum("object.mode_set", "mode",
                                   text="Interactive Mode", icon='VIEW3D')
         layout.separator()
-        
-        
+
+
         # add mode specific menu items
         if mode == 'SCULPT':
             self.sculpt(mode, layout, context)
@@ -53,7 +53,7 @@ class BrushOptionsMenu(Menu):
         has_brush = utils_core.get_brush_link(context, types="brush")
         icons = brushes.brush_icon[mode][has_brush.sculpt_tool] if \
                 has_brush else "BRUSH_DATA"
-        
+
         layout.row().menu("VIEW3D_MT_sv3_brushes_menu",
                             icon=icons)
 
@@ -75,8 +75,8 @@ class BrushOptionsMenu(Menu):
         has_brush = utils_core.get_brush_link(context, types="brush")
         icons = brushes.brush_icon[mode][has_brush.vertex_tool] if \
                 has_brush else "BRUSH_DATA"
-        
-        if mode == 'VERTEX_PAINT':		
+
+        if mode == 'VERTEX_PAINT':
             layout.row().operator(ColorPickerPopup.bl_idname, icon="COLOR")
             layout.row().separator()
 
@@ -107,7 +107,7 @@ class BrushOptionsMenu(Menu):
 
     def texpaint(self, mode, layout, context):
         toolsettings = context.tool_settings.image_paint
-        
+
         has_brush = utils_core.get_brush_link(context, types="brush")
         icons = brushes.brush_icon[mode][has_brush.image_tool] if \
                     has_brush else "BRUSH_DATA"
@@ -116,36 +116,36 @@ class BrushOptionsMenu(Menu):
             if toolsettings.missing_uvs:
                 layout.row().label(text="Missing UVs", icon='ERROR')
                 layout.row().operator("paint.add_simple_uvs")
-                
+
                 return
-            
+
             elif toolsettings.missing_materials or toolsettings.missing_texture:
                 layout.row().label(text="Missing Data", icon='ERROR')
                 layout.row().operator_menu_enum("paint.add_texture_paint_slot", \
                                                   "type", \
                                                   icon='ADD', \
                                                   text="Add Texture Paint Slot")
-                
+
                 return
-        
+
             elif toolsettings.missing_stencil:
                 layout.row().label(text="Missing Data", icon='ERROR')
                 layout.row().label(text="See Mask Properties", icon='FORWARD')
                 layout.row().separator()
                 layout.row().menu("VIEW3D_MT_sv3_brushes_menu",
                                     icon=icons)
-                
+
                 return
-            
+
             else:
                 layout.row().label(text="Missing Data", icon="INFO")
-        
+
         else:
             if has_brush and has_brush.image_tool in {'DRAW', 'FILL'} and \
                has_brush.blend not in {'ERASE_ALPHA', 'ADD_ALPHA'}:
                 layout.row().operator(ColorPickerPopup.bl_idname, icon="COLOR")
                 layout.row().separator()
-            
+
             layout.row().menu("VIEW3D_MT_sv3_brushes_menu",
                                 icon=icons)
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -11168,14 +11168,6 @@ msgid "Maximum number of additional cells"
 msgstr "Nombre maximum de cellules supplémentaires"
 
 
-msgid "Density"
-msgstr "Densité"
-
-
-msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
-msgstr "À quel point la densité affecte le mouvement de la fumée (de plus hautes valeurs donnent une fumées montant plus vite)"
-
-
 msgid "Slice the whole domain object"
 msgstr "Couper l’ensemble de l’objet domaine"
 
@@ -11186,18 +11178,6 @@ msgstr "Unique"
 
 msgid "Perform a single slice of the domain object"
 msgstr "Effectuer une seule coupe de l’objet domaine"
-
-
-msgid "Heat"
-msgstr "Chaleur"
-
-
-msgid "How much heat affects smoke motion (higher value results in faster rising smoke)"
-msgstr "À quel point la chaleur affecte le mouvement de la fumée (de plus hautes valeurs donnent une fumée montant plus vite)"
-
-
-msgid "Speed of the burning reaction (use larger values for smaller flame)"
-msgstr "Vitesse de la réaction de combustion (utiliser de plus fortes valeurs pour des flammes plus petites)"
 
 
 msgid "End"
@@ -11260,6 +11240,10 @@ msgid "Blue component of the color field"
 msgstr "Composante bleue du champ de couleurs"
 
 
+msgid "Density"
+msgstr "Densité"
+
+
 msgid "Quantity of soot in the fluid"
 msgstr "Quantité de suie dans le fluide"
 
@@ -11278,6 +11262,10 @@ msgstr "Combustible"
 
 msgid "Fuel field"
 msgstr "Champ de combustible"
+
+
+msgid "Heat"
+msgstr "Chaleur"
 
 
 msgid "Temperature of the fluid"
@@ -11388,18 +11376,6 @@ msgid "Smoke flame grid"
 msgstr "Grille de flamme pour la fumée"
 
 
-msgid "Ignition"
-msgstr "Allumage"
-
-
-msgid "Minimum temperature of flames"
-msgstr "Température minimum des flammes"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Température maximale des flammes"
-
-
 msgid "Smoke"
 msgstr "Fumée"
 
@@ -11484,10 +11460,6 @@ msgid "Noise Method"
 msgstr "Méthode de bruit"
 
 
-msgid "Noise method which is used for creating the high resolution"
-msgstr "Méthode de bruit utilisée pour créer la haute résolution"
-
-
 msgid "Wavelet"
 msgstr "Vaguelette"
 
@@ -11544,10 +11516,6 @@ msgid "Heavy"
 msgstr "Compact"
 
 
-msgid "Max Res"
-msgstr "Résolution max"
-
-
 msgid "Toggle visualization of the velocity field as needles"
 msgstr "(Dés)activer la visualisation du champs de vélocité par des aiguilles"
 
@@ -11600,10 +11568,6 @@ msgid "Delete"
 msgstr "Supprimer"
 
 
-msgid "Buoyancy"
-msgstr "Flottabilité"
-
-
 msgid "p0"
 msgstr "p0"
 
@@ -11648,14 +11612,6 @@ msgid "Dissolve Smoke"
 msgstr "Dissoudre fumée"
 
 
-msgid "Enable smoke to disappear over time"
-msgstr "Permettre à la fumée de disparaître avec le temps"
-
-
-msgid "Using 1/x "
-msgstr "Utiliser 1/x "
-
-
 msgid "Tracer"
 msgstr "Traceuses"
 
@@ -11698,10 +11654,6 @@ msgstr "Exposant de viscosité"
 
 msgid "Negative exponent for the viscosity value (to simplify entering small values e.g. 5*10^-6)"
 msgstr "Exposant négatif pour la valeur de viscosité (pour simplifier l’entrée de petites valeurs, par ex. 5*10^-6)"
-
-
-msgid "Amount of turbulence/rotation in fluid"
-msgstr "Quantité de turbulence/rotation dans le fluide"
 
 
 msgid "Fluid Mesh Velocity"
@@ -11874,10 +11826,6 @@ msgstr "Quantité de vitesse directionnelle normale"
 
 msgid "Amount of random velocity"
 msgstr "Quantité de vitesse aléatoire"
-
-
-msgid "Factor for smoke emitted from inside the mesh volume"
-msgstr "Facteur pour la fumée émise depuis l’intérieur du volume du mesh"
 
 
 msgid "Freestyle Line Set"
@@ -15353,10 +15301,6 @@ msgid "Rotate"
 msgstr "Tourner"
 
 
-msgid "Topology"
-msgstr "Topologie"
-
-
 msgid "Secondary Color"
 msgstr "Couleur secondaire"
 
@@ -16489,24 +16433,12 @@ msgid "Option for curve-deform: make deformed child to stretch along entire path
 msgstr "Option pour la déformation sur courbe : faire que l’enfant déformé s’étire sur l’intégralité du chemin"
 
 
-msgid "Use UV for mapping"
-msgstr "Utiliser l’UV pour le placage"
-
-
-msgid "Uses the UV values as Generated textured coordinates"
-msgstr "Utiliser les valeurs UV comme coordonnées de texture générées"
-
-
 msgid "Surface Curve"
 msgstr "Courbe surface"
 
 
 msgid "Curve data-block used for storing surfaces"
 msgstr "Bloc de données courbe utilisé pour stocker des surfaces"
-
-
-msgid "Use UV for Mapping"
-msgstr "Utiliser UV pour le placage"
 
 
 msgid "Text Curve"
@@ -19975,24 +19907,12 @@ msgid "Lock Location"
 msgstr "Verrouiller position"
 
 
-msgid "Lock editing of location in the interface"
-msgstr "Verrouiller l’édition de la position dans l’interface"
-
-
 msgid "Lock Rotation"
 msgstr "Verrouiller rotation"
 
 
-msgid "Lock editing of rotation in the interface"
-msgstr "Verrouiller l’édition de la rotation dans l’interface"
-
-
 msgid "Lock Rotation (4D Angle)"
 msgstr "Verrouiller rotation (angle 4D)"
-
-
-msgid "Lock editing of 'angle' component of four-component rotations in the interface"
-msgstr "Verrouiller l’édition de la composante “angle” des rotations à quatre composantes, dans l’interface"
 
 
 msgid "Lock Rotations (4D)"
@@ -20005,10 +19925,6 @@ msgstr "Verrouiller l’édition des rotations à quatre composantes par composa
 
 msgid "Lock Scale"
 msgstr "Verrouiller taille"
-
-
-msgid "Lock editing of scale in the interface"
-msgstr "Verrouiller l’édition de la taille (de l’échelle) dans l’interface"
 
 
 msgid "Material Slots"
@@ -28674,6 +28590,10 @@ msgstr "Correspondance d’arête"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Méthode utilisée pour faire correspondre les arêtes source avec celles de destination"
+
+
+msgid "Topology"
+msgstr "Topologie"
 
 
 msgid "Copy from identical topology meshes"
@@ -66344,6 +66264,10 @@ msgid "Settings for particle fluids physics"
 msgstr "Réglages des physiques de fluides des particules"
 
 
+msgid "Buoyancy"
+msgstr "Flottabilité"
+
+
 msgid "Artificial buoyancy force in negative gravity direction based on pressure differences inside the fluid"
 msgstr "Force de flottabilité artificielle dans la direction opposée à la gravité, basée sur les différences de pression au sein du fluide"
 
@@ -75493,10 +75417,6 @@ msgid "Wave Clamp"
 msgstr "Limite de vague"
 
 
-msgid "Temperature Diff."
-msgstr "Température diff."
-
-
 msgid "Real World Size"
 msgstr "Taille réelle du monde"
 
@@ -81711,40 +81631,12 @@ msgid "Cursor Y"
 msgstr "Curseur Y"
 
 
-msgid "Display Color:"
-msgstr "Couleur d’affichage :"
-
-
-msgid "Auto Handle Smoothing:"
-msgstr "Adoucissement poignées auto :"
-
-
 msgid "Interpolation:"
 msgstr "Interpolation :"
 
 
 msgid "None for Enum/Boolean"
 msgstr "None for Enum/Boolean"
-
-
-msgid "Key:"
-msgstr "Clé :"
-
-
-msgid "Frame:"
-msgstr "Frame :"
-
-
-msgid "Value:"
-msgstr "Valeur :"
-
-
-msgid "Left Handle:"
-msgstr "Poignée gauche :"
-
-
-msgid "Right Handle:"
-msgstr "Poignée droite :"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -81773,6 +81665,10 @@ msgstr "Valeur du contrôleur :"
 
 msgid "Expression:"
 msgstr "Expression :"
+
+
+msgid "Value:"
+msgstr "Valeur :"
 
 
 msgid "Update Dependencies"
@@ -82068,28 +81964,12 @@ msgid "Verts:%s | Tris:%s%s"
 msgstr "Verts : %s | Tris : %s%s"
 
 
-msgid "Strip Extents:"
-msgstr "Limites de piste :"
-
-
-msgid "Playback Settings:"
-msgstr "Réglages de lecture :"
-
-
-msgid "Action Extents:"
-msgstr "Limites d’action :"
-
-
 msgid "Sync Length"
 msgstr "Synchroniser longueur"
 
 
 msgid "Now"
 msgstr "Maintenant"
-
-
-msgid "Evaluation"
-msgstr "Évaluation"
 
 
 msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
@@ -82590,10 +82470,6 @@ msgstr "Clip vidéo non trouvé"
 
 msgid "Mask not found"
 msgstr "Masque non trouvé"
-
-
-msgid "Start and end frame are not set"
-msgstr "Les frames de début et de fin ne sont pas définies"
 
 
 msgid "File '%s' could not be loaded"
@@ -85305,10 +85181,6 @@ msgstr "Essai de rechargement ou de relocalisation de la bibliothèque “%s” 
 
 msgid "Win"
 msgstr "Win"
-
-
-msgid "OSkey"
-msgstr "ToucheOS"
 
 
 msgid "Bksp"

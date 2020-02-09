@@ -47,7 +47,7 @@ class PIE_MT_PieApplyTransforms(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         # 4 - LEFT
-        pie.operator("object.visual_transform_apply", text="Apply Visual")	
+        pie.operator("object.visual_transform_apply", text="Apply Visual")
         # 6 - RIGHT
         pie.operator("apply.transformall", text="Apply All")
         # 2 - BOTTOM

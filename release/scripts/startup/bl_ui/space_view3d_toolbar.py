@@ -317,12 +317,12 @@ class VIEW3D_PT_tools_posemode_options(View3DPanel, Panel):
 
         layout.prop(pose, "use_auto_ik")
         layout.prop(pose, "use_mirror_x")
-        col = layout.column()
-        col.active = pose.use_mirror_x and not pose.use_auto_ik
-        col.prop(pose, "use_mirror_relative")
+        if pose.use_mirror_x and not pose.use_auto_ik:
+            row = layout.row()
+            row.separator()
+            row.prop(pose, "use_mirror_relative")
 
-        layout.label(text="Affect Only")
-        layout.prop(tool_settings, "use_transform_pivot_point_align", text="Locations")
+        layout.prop(tool_settings, "use_transform_pivot_point_align", text="Affect Only Locations")
 
 
 # ********** default tools for paint modes ****************
@@ -819,39 +819,10 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         sub.prop(sculpt, "detail_refine_method", text="Refine Method")
         sub.prop(sculpt, "detail_type_method", text="Detailing")
 
-        col.use_property_split = False
-        col.prop(sculpt, "use_smooth_shading")
-
-
-class VIEW3D_PT_sculpt_dyntopo_remesh(Panel, View3DPaintPanel):
-    bl_context = ".sculpt_mode"  # dot on purpose (access from topbar)
-    bl_label = "Remesh"
-    bl_parent_id = "VIEW3D_PT_sculpt_dyntopo"
-    bl_options = {'DEFAULT_CLOSED'}
-    bl_ui_units_x = 12
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        tool_settings = context.tool_settings
-        sculpt = tool_settings.sculpt
-
-        col = layout.column()
-        col.active = context.sculpt_object.use_dynamic_topology_sculpting
-
-        col.prop(sculpt, "symmetrize_direction")
-
-        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
-
-        col = flow.column()
-        col.operator("sculpt.symmetrize", icon = "SYMMETRIZE")
-        col = flow.column()
-        col.operator("sculpt.optimize", icon = "OPTIMIZE")
         if sculpt.detail_type_method in {'CONSTANT', 'MANUAL'}:
-            col = flow.column()
-            col.operator("sculpt.detail_flood_fill", icon = "FLOODFILL")
+            col.operator("sculpt.detail_flood_fill")
+
+        col.prop(sculpt, "use_smooth_shading")
 
 
 class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
@@ -875,6 +846,7 @@ class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
         row.prop(mesh, "remesh_voxel_size")
         props = row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
         props.mode = 'VOXEL'
+        col.use_property_split = False
         col.prop(mesh, "remesh_voxel_adaptivity")
         col.prop(mesh, "use_remesh_fix_poles")
         col.prop(mesh, "use_remesh_smooth_normals")
@@ -1001,6 +973,13 @@ class VIEW3D_PT_sculpt_symmetry(Panel, View3DPaintPanel):
         
         layout.use_property_split = False
         layout.prop(sculpt, "use_symmetry_feather", text="Feather")
+
+        layout.separator()
+
+        col = layout.column()
+
+        col.prop(sculpt, "symmetrize_direction")
+        col.operator("sculpt.symmetrize")
 
 
 class VIEW3D_PT_sculpt_symmetry_for_topbar(Panel):
@@ -1216,7 +1195,6 @@ class VIEW3D_PT_tools_imagepaint_options(View3DPaintPanel, Panel):
 class VIEW3D_PT_tools_imagepaint_options_cavity(View3DPaintPanel, Panel):
     bl_context = ".imagepaint"  # dot on purpose (access from topbar)
     bl_label = "Cavity Mask"
-    bl_parent_id = "VIEW3D_PT_tools_imagepaint_options"
     bl_parent_id = "VIEW3D_PT_mask"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -1928,7 +1906,6 @@ classes = (
     VIEW3D_PT_tools_brush_display,
 
     VIEW3D_PT_sculpt_dyntopo,
-    VIEW3D_PT_sculpt_dyntopo_remesh,
     VIEW3D_PT_sculpt_voxel_remesh,
     VIEW3D_PT_sculpt_symmetry,
     VIEW3D_PT_sculpt_symmetry_for_topbar,

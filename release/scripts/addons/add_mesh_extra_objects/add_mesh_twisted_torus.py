@@ -230,7 +230,7 @@ class AddTwistedTorus(bpy.types.Operator, object_utils.AddObjectHelper):
             extra_helper = (self.abso_major_rad - self.abso_minor_rad) * 0.5
             self.major_radius = self.abso_minor_rad + extra_helper
             self.minor_radius = extra_helper
-        
+
         if bpy.context.mode == "OBJECT":
             if context.selected_objects != [] and context.active_object and \
             ('TwistedTorus' in context.active_object.data.keys()) and (self.change == True):
@@ -267,7 +267,7 @@ class AddTwistedTorus(bpy.types.Operator, object_utils.AddObjectHelper):
             obj.data["change"] = False
             for prm in TwistedTorusParameters():
                 obj.data[prm] = getattr(self, prm)
-        
+
         if bpy.context.mode == "EDIT_MESH":
             active_object = context.active_object
             name_active_object = active_object.name

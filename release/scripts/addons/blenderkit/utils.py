@@ -515,3 +515,47 @@ def name_update():
     fname = fname.replace('\"', '')
     asset = get_active_asset()
     asset.name = fname
+
+def params_to_dict(params):
+    params_dict = {}
+    for p in params:
+        params_dict[p['parameterType']] = p['value']
+    return params_dict
+
+def dict_to_params(inputs, parameters=None):
+    if parameters == None:
+        parameters = []
+    for k in inputs.keys():
+        if type(inputs[k]) == list:
+            strlist = ""
+            for idx, s in enumerate(inputs[k]):
+                strlist += s
+                if idx < len(inputs[k]) - 1:
+                    strlist += ','
+
+            value = "%s" % strlist
+        elif type(inputs[k]) != bool:
+            value = inputs[k]
+        else:
+            value = str(inputs[k])
+        parameters.append(
+            {
+                "parameterType": k,
+                "value": value
+            })
+    return parameters
+
+
+def profile_is_validator():
+    a = bpy.context.window_manager.get('bkit profile')
+    if a is not None and a['user'].get('exmenu'):
+        return True
+    return False
+
+def guard_from_crash():
+    '''Blender tends to crash when trying to run some functions with the addon going through unregistration process.'''
+    if bpy.context.preferences.addons['blenderkit'] is None:
+        return False;
+    if bpy.context.preferences.addons['blenderkit'].preferences is None:
+        return False;
+    return True

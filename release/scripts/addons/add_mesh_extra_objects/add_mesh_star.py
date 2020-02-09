@@ -236,7 +236,7 @@ class AddStar(bpy.types.Operator, object_utils.AddObjectHelper):
             obj.data["change"] = False
             for prm in StarParameters():
                 obj.data[prm] = getattr(self, prm)
-        
+
         if bpy.context.mode == "EDIT_MESH":
             active_object = context.active_object
             name_active_object = active_object.name

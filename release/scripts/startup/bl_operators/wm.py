@@ -1685,7 +1685,7 @@ class WM_OT_tool_set_by_id(Operator):
                 tool_settings.workspace_tool_type = 'FALLBACK'
             return {'FINISHED'}
         else:
-            self.report({'WARNING'}, f"Tool {self.name!r:s} not found for space {space_type!r:s}.")
+            self.report({'WARNING'}, f"Tool {self.name!r:s} not found for space {space_type!r:s}. Wrong Mode!")
             return {'CANCELLED'}
 
 

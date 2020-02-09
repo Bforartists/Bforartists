@@ -57,6 +57,6 @@ class SearchAndSelectOt(bpy.types.Operator):
         self.count = True
         self.end = True
         return context.window_manager.invoke_props_dialog(self)
-    
+
 
 

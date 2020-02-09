@@ -30,6 +30,7 @@ class TEXT_HT_header(Header):
 
         st = context.space_data
         text = st.text
+        is_syntax_highlight_supported = st.is_syntax_highlight_supported()
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         TEXT_MT_editor_menus.draw_collapsible(context, layout)
@@ -43,16 +44,24 @@ class TEXT_HT_header(Header):
         row = layout.row(align=True)
         row.template_ID(st, "text", new="text.new",
                         unlink="text.unlink", open="text.open")
-
+                
         if text:
-            is_osl = text.name.endswith((".osl", ".osl"))
+            text_name = text.name
+            is_osl = text_name.endswith((".osl", ".oso"))
+
+            row = layout.row()
             if is_osl:
-                row.operator("node.shader_script_update",
-                             text="", icon='FILE_REFRESH')
+                row = layout.row()
+                row.operator("node.shader_script_update")
             else:
+
                 row = layout.row()
                 row.active = is_syntax_highlight_supported
                 row.operator("text.run_script", text="", icon='PLAY')
+                
+                row = layout.row()
+                row.active = text_name.endswith(".py")
+                row.prop(text, "use_module")
 
         layout.separator_spacer()
 
@@ -258,17 +267,6 @@ class TEXT_MT_text(Menu):
             if text.filepath:
                 layout.separator()
                 layout.operator("text.make_internal", icon = "MAKE_INTERNAL")
-
-            layout.separator()
-            row = layout.row()
-            row.active = text.name.endswith(".py")
-            row.prop(text, "use_module")
-            row = layout.row()
-
-            layout.prop(st, "use_live_edit")
-
-            layout.separator()
-            layout.operator("text.run_script", icon = "PLAY")
 
         layout.separator()
 

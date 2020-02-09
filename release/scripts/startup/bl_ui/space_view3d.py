@@ -3766,6 +3766,10 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.menu("VIEW3D_MT_sculpt_set_pivot", text="Set Pivot")
 
+        layout.separator()
+
+        layout.operator("sculpt.optimize")
+
 
 class VIEW3D_MT_mask(Menu):
     bl_label = "Mask"
@@ -6375,7 +6379,7 @@ class VIEW3D_PT_collections(Panel):
         view = context.space_data
         view_layer = context.view_layer
 
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.prop(view, "use_local_collections")
         layout.separator()
 
