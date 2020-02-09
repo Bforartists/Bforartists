@@ -262,6 +262,8 @@ class GenerateThumbnailOperator(bpy.types.Operator):
         layout.prop(props, 'thumbnail_samples')
         layout.prop(props, 'thumbnail_resolution')
         layout.prop(props, 'thumbnail_denoising')
+        preferences = bpy.context.preferences.addons['blenderkit'].preferences
+        layout.prop(preferences, "thumbnail_use_gpu")
 
     def execute(self, context):
         start_thumbnailer(self, context)
@@ -278,7 +280,7 @@ class GenerateThumbnailOperator(bpy.types.Operator):
 
             bpy.context.window_manager.popup_menu(draw_message, title=title, icon='INFO')
             return {'FINISHED'}
-        
+
         return wm.invoke_props_dialog(self)
 
 
@@ -307,6 +309,8 @@ class GenerateMaterialThumbnailOperator(bpy.types.Operator):
         layout.prop(props, 'thumbnail_samples')
         layout.prop(props, 'thumbnail_denoising')
         layout.prop(props, 'adaptive_subdivision')
+        preferences = bpy.context.preferences.addons['blenderkit'].preferences
+        layout.prop(preferences, "thumbnail_use_gpu")
 
     def execute(self, context):
         start_material_thumbnailer(self, context)

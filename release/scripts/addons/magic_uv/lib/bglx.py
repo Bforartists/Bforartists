@@ -116,11 +116,11 @@ def _get_transparency_shader():
     vertex_shader = '''
     uniform mat4 modelViewMatrix;
     uniform mat4 projectionMatrix;
-    
+
     in vec2 pos;
     in vec2 texCoord;
     out vec2 uvInterp;
-    
+
     void main()
     {
         uvInterp = texCoord;
@@ -132,10 +132,10 @@ def _get_transparency_shader():
     fragment_shader = '''
     uniform sampler2D image;
     uniform vec4 color;
-    
+
     in vec2 uvInterp;
     out vec4 fragColor;
-    
+
     void main()
     {
         fragColor = texture(image, uvInterp);

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -2358,14 +2358,6 @@ msgid "Smoke Grid Resolution"
 msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
 
 
-msgid "Ignition"
-msgstr "ﻦﺸﯿﻤﯿﻧﺍ"
-
-
-msgid "Maximum temperature of flames"
-msgstr "ﻦﯿﻣﺯ ﺭﺩ ﺖﻋﺮﺳ ﻪﻨﯿﺸﯿﺑ"
-
-
 msgid "Smoke Color"
 msgstr "ﻦﯾﺰﮕﯾﺎﺟ"
 
@@ -2982,16 +2974,8 @@ msgid "Map Taper"
 msgstr "ﻪﻠﺻﺎﻓ ﻉﻮﻧ"
 
 
-msgid "Use UV for mapping"
-msgstr ":UV ﯼﺭﺍﺩﺮﺑ ﻪﺸﻘﻧ"
-
-
 msgid "Surface Curve"
 msgstr "ﻝﻭﮊﺎﻣ ﻡﺎﻧ"
-
-
-msgid "Use UV for Mapping"
-msgstr ":UV ﯼﺭﺍﺩﺮﺑ ﻪﺸﻘﻧ"
 
 
 msgid "Text Curve"
@@ -3374,24 +3358,12 @@ msgid "Lock Location"
 msgstr "ﯽﯾﺎﺤﺑﺎﺟ ﻞﻔﻗ"
 
 
-msgid "Lock editing of location in the interface"
-msgstr "ﯼﺮﺑﺭﺎﮐ ﻂﺑﺍﺭ ﺭﺩ ﯽﯾﺎﺠﺑﺎﺟ ﺶﯾﺍﺮﯾﻭ ﻞﻔﻗ"
-
-
 msgid "Lock Rotation"
 msgstr "ﻥﺍﺭﻭﺩ ﻞﻔﻗ"
 
 
-msgid "Lock editing of rotation in the interface"
-msgstr "ﯼﺮﺑﺭﺎﮐ ﻂﺑﺍﺭ ﺭﺩ ﻥﺍﺭﻭﺩ ﺶﯾﺍﺮﯾﻭ ﻞﻔﻗ"
-
-
 msgid "Lock Scale"
 msgstr "ﺲﻧﺎﺠﺗ ﻞﻔﻗ"
-
-
-msgid "Lock editing of scale in the interface"
-msgstr "ﯼﺮﺑﺭﺎﮐ ﻂﺑﺍﺭ ﺭﺩ ﺲﻧﺎﺠﺗ ﺶﯾﺍﺮﯾﻭ ﻞﻔﻗ"
 
 
 msgid "Material Slots"
@@ -15705,26 +15677,6 @@ msgid "Cursor Y"
 msgstr "ﺎﻤﻧ ﻥﺎﮑﻣ"
 
 
-msgid "Display Color:"
-msgstr "ﺮﮕﺸﯾﺎﻤﻧ:"
-
-
-msgid "Key:"
-msgstr "ﺪﯿﻠﮐ:"
-
-
-msgid "Value:"
-msgstr "ﺭﺍﺪﻘﻣ"
-
-
-msgid "Left Handle:"
-msgstr "ﺭﻮﺘﮐﻭ ﻪٔﺘﺳﺩ"
-
-
-msgid "Right Handle:"
-msgstr "ﺭﺎﮐﺩﻮﺧ ﻪﺘﺳﺩ"
-
-
 msgid "F-Curve only has F-Modifiers"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
@@ -15735,6 +15687,10 @@ msgstr "ﯽﮔﮋﯾﻭ"
 
 msgid "Driver Value:"
 msgstr "ﺭﻮﯾﺍﺭﺩ ﺮﯿﻐﺘﻣ"
+
+
+msgid "Value:"
+msgstr "ﺭﺍﺪﻘﻣ"
 
 
 msgid "Update Dependencies"
@@ -15931,10 +15887,6 @@ msgstr "ﻢﻠﯿﻓ ﭗﯿﻠﮐ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
 msgid "Mask not found"
 msgstr "ﻪﻨﯿﻣﺯ ﺲﭘ ﺮﯾﻮﺼﺗ"
-
-
-msgid "Start and end frame are not set"
-msgstr "ﺝﻭﺮﺧ ﯼﺍﺮﺑ ﻢﯾﺮﻓ ﻉﻭﺮﺷ"
 
 
 msgid "Please select all related strips"

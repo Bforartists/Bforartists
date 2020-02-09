@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -4413,18 +4413,6 @@ msgid "Additional"
 msgstr "Додатно"
 
 
-msgid "Density"
-msgstr "Густина"
-
-
-msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Колико густина утиче на кретање дима (већа вредност утиче да се дим брже диже)"
-
-
-msgid "Heat"
-msgstr "Топлота"
-
-
 msgid "End"
 msgstr "Крај"
 
@@ -4465,6 +4453,14 @@ msgid "Blue"
 msgstr "Плава"
 
 
+msgid "Density"
+msgstr "Густина"
+
+
+msgid "Heat"
+msgstr "Топлота"
+
+
 msgid "Color Grid"
 msgstr "Мрежа боја"
 
@@ -4491,18 +4487,6 @@ msgstr "рез"
 
 msgid "Smoke Grid Resolution"
 msgstr "Резолуција мреже дима"
-
-
-msgid "Ignition"
-msgstr "Паљење"
-
-
-msgid "Minimum temperature of flames"
-msgstr "Најмања температура пламена"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Највећа температура пламена"
 
 
 msgid "Smoke"
@@ -4617,20 +4601,12 @@ msgid "Dissolve Smoke"
 msgstr "Растапање дима"
 
 
-msgid "Using 1/x "
-msgstr "Користи 1/x "
-
-
 msgid "Tracer"
 msgstr "Стаза"
 
 
 msgid "Viscosity Exponent"
 msgstr "Изложилац"
-
-
-msgid "Amount of turbulence/rotation in fluid"
-msgstr "Вредност турбуленције/ротације у течности"
 
 
 msgid "Smoke collision settings"
@@ -6034,14 +6010,6 @@ msgid "Follow"
 msgstr "Прати"
 
 
-msgid "Use UV for mapping"
-msgstr "UV Мапирање"
-
-
-msgid "Use UV for Mapping"
-msgstr "Користи UV за мапирање"
-
-
 msgid "Text Curve"
 msgstr "Криве текста"
 
@@ -7270,24 +7238,12 @@ msgid "Lock Location"
 msgstr "Закључај локацију"
 
 
-msgid "Lock editing of location in the interface"
-msgstr "Онемогући измену локације"
-
-
 msgid "Lock Rotation"
 msgstr "Закључај ротацију"
 
 
-msgid "Lock editing of rotation in the interface"
-msgstr "Онемогући измену ротације"
-
-
 msgid "Lock Rotation (4D Angle)"
 msgstr "Закључај ротацију (4D угао)"
-
-
-msgid "Lock editing of 'angle' component of four-component rotations in the interface"
-msgstr "Онемогући измену компоненте угла при четворокомпонентној ротацији"
 
 
 msgid "Lock Rotations (4D)"
@@ -7300,10 +7256,6 @@ msgstr "Онемогући измену четворокомпонентне р�
 
 msgid "Lock Scale"
 msgstr "Закључај величину"
-
-
-msgid "Lock editing of scale in the interface"
-msgstr "Онемогући измену величине"
 
 
 msgid "Material Slots"
@@ -30229,30 +30181,6 @@ msgid "Cursor Y"
 msgstr "Курсор Y"
 
 
-msgid "Display Color:"
-msgstr "Прикажи криве"
-
-
-msgid "Key:"
-msgstr "Кључ:"
-
-
-msgid "Frame:"
-msgstr "Кадар:"
-
-
-msgid "Value:"
-msgstr "Вредност"
-
-
-msgid "Left Handle:"
-msgstr "Лева ручка:"
-
-
-msgid "Right Handle:"
-msgstr "Десна ручка:"
-
-
 msgid "No active keyframe on F-Curve"
 msgstr "Модификатор вредности F-криве"
 
@@ -30263,6 +30191,10 @@ msgstr "Својство"
 
 msgid "Driver Value:"
 msgstr "Вредност возача:"
+
+
+msgid "Value:"
+msgstr "Вредност"
 
 
 msgid "Update Dependencies"
@@ -30347,10 +30279,6 @@ msgstr "Темена:%s | Троуглова:%s%s"
 
 msgid "Now"
 msgstr "Сад"
-
-
-msgid "Evaluation"
-msgstr "Процена"
 
 
 msgid "No valid action to add"
@@ -30479,10 +30407,6 @@ msgstr "Уређивач видео исечака"
 
 msgid "Mask not found"
 msgstr "Маскирај позадину"
-
-
-msgid "Start and end frame are not set"
-msgstr "Почетни кадар за извоз"
 
 
 msgid "Cannot apply effect to more than 3 sequence strips"

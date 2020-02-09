@@ -71,6 +71,13 @@ class ImportPLY(bpy.types.Operator, ImportHelper):
         ),
         type=bpy.types.OperatorFileListElement)
 
+    # Hide opertator properties, rest of this is managed in C. See WM_operator_properties_filesel().
+    hide_props_region: BoolProperty(
+        name="Hide Operator Properties",
+        description="Collapse the region displaying the operator settings",
+        default=True,
+    )
+
     directory: StringProperty()
 
     filename_ext = ".ply"

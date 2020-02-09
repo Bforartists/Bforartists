@@ -31,18 +31,18 @@ from .drawing_utilities import SnapDrawn
 
 
 class SnapWidgetCommon(SnapUtilities, bpy.types.Gizmo):
-#    __slots__ = ('inited', 'mode', 'last_mval', 'depsgraph')
+#    __slots__ = ('inited', 'mode', 'last_mval')
 
     snap_to_update = False
 
-    def handler(self, scene):
+    def handler(self, scene, depsgraph):
         cls = SnapWidgetCommon
         if cls.snap_to_update is False:
             last_operator = self.wm_operators[-1] if self.wm_operators else None
             if (not last_operator or
                 last_operator.name not in {'Select', 'Loop Select', '(De)select All'}):
-                    cls.snap_to_update = self.depsgraph.id_type_updated('MESH') or\
-                                         self.depsgraph.id_type_updated('OBJECT')
+                    cls.snap_to_update = depsgraph.id_type_updated('MESH') or \
+                                         depsgraph.id_type_updated('OBJECT')
 
     def draw_point_and_elem(self):
         if self.bm:
@@ -57,7 +57,7 @@ class SnapWidgetCommon(SnapUtilities, bpy.types.Gizmo):
     def init_delayed(self):
         self.inited = False
 
-    def init_snapwidget(self, context, snap_edge_and_vert = True):
+    def init_snapwidget(self, context, snap_edge_and_vert=True):
         self.inited = True
 
         self.snap_context_init(context, snap_edge_and_vert)
@@ -66,7 +66,6 @@ class SnapWidgetCommon(SnapUtilities, bpy.types.Gizmo):
         self.last_mval = None
 
         self.wm_operators = context.window_manager.operators
-        self.depsgraph = context.evaluated_depsgraph_get()
         bpy.app.handlers.depsgraph_update_post.append(self.handler)
         SnapWidgetCommon.snap_to_update = False
 
@@ -109,8 +108,7 @@ class SnapWidgetCommon(SnapUtilities, bpy.types.Gizmo):
 
         if snap_face != self.snap_face:
             self.snap_face = snap_face
-            self.sctx.set_snap_mode(
-                     self.snap_vert, self.snap_edge, self.snap_face)
+            self.sctx.set_snap_mode(self.snap_vert, self.snap_edge, self.snap_face)
 
         snap_utilities.cache.clear()
         self.snap_obj, prev_loc, self.location, self.type, self.bm, self.geom, len = snap_utilities(

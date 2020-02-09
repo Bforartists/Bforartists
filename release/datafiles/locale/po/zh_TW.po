@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
-"PO-Revision-Date: 2018-09-23 13:23+0800\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"PO-Revision-Date: 2020-01-27 15:08+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
 "Language: zh_TW\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.1.1\n"
+"X-Generator: Poedit 2.2.4\n"
 "X-Poedit-Bookmarks: 19357,18446,13680,5545,19262,-1,-1,-1,-1,-1"
 
 
@@ -170,6 +170,18 @@ msgstr "動作群組已選取"
 
 msgid "Expanded"
 msgstr "已擴展"
+
+
+msgid "Action group is expanded except in graph editor"
+msgstr "動作群組除了在圖表編輯器外都擴展"
+
+
+msgid "Expanded in Graph Editor"
+msgstr "在圖表編輯器中擴展"
+
+
+msgid "Action group is expanded in graph editor"
+msgstr "動作群組在圖表編輯器中擴展"
 
 
 msgid "Action Groups"
@@ -372,6 +384,18 @@ msgid "Replace"
 msgstr "替換"
 
 
+msgid "The strip values replace the accumulated results by amount specified by influence"
+msgstr "根據影響所指定的量來替換累積結果的片段值"
+
+
+msgid "Combine"
+msgstr "結合"
+
+
+msgid "The strip values are combined with accumulated results by appropriately using addition, multiplication, or quaternion math, based on channel type"
+msgstr "根據頻道類型，妥善以加法、乘法或四元數等數學方法來結合累積結果的片段值"
+
+
 msgid "Add"
 msgstr "添加"
 
@@ -560,6 +584,10 @@ msgid "Number of frames between paths shown (not for 'On Keyframes' Onion-skinni
 msgstr "在路徑中顯示的幀數 (不適用「鍵幀上」洋蔥皮化方法)"
 
 
+msgid "Has Motion Paths"
+msgstr "有運動路徑"
+
+
 msgid "Show Frame Numbers"
 msgstr "顯示幀編號"
 
@@ -670,6 +698,14 @@ msgstr "此區域的目前編輯器類型"
 
 msgid "Empty"
 msgstr "空體"
+
+
+msgid "3D Viewport"
+msgstr "3D 視接口"
+
+
+msgid "Manipulate objects in a 3D environment"
+msgstr "在 3D 環境中操控物體"
 
 
 msgid "UV/Image Editor"
@@ -2233,7 +2269,7 @@ msgstr "噴槍"
 
 
 msgid "Fill"
-msgstr "充填"
+msgstr "填入"
 
 
 msgid "Aspect Ratio"
@@ -3040,6 +3076,10 @@ msgid "Standard RGB Display Space"
 msgstr "標準 RGB 顯示空間"
 
 
+msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
+msgstr "不要在載入時執行任何色彩變換，將色彩視為已是場景中的線性空間"
+
+
 msgid "Color Space"
 msgstr "色彩空間"
 
@@ -3065,7 +3105,7 @@ msgstr "曝光"
 
 
 msgid "Exposure (stops) applied before display transform"
-msgstr "在顯示轉換之前要套用的曝光量 (階數) "
+msgstr "在顯示轉換之前要套用的曝光量 (階數)"
 
 
 msgid "Gamma"
@@ -3547,6 +3587,10 @@ msgstr "使用來自目標的變換屬性控制擁有者的其他 (或同個) �
 
 msgid "Transform Cache"
 msgstr "變換快取"
+
+
+msgid "Look up the transformation matrix from an external file"
+msgstr "查詢外部檔案中的變換矩陣"
 
 
 msgid "Clamp To"
@@ -8241,28 +8285,8 @@ msgid "Maximum number of additional cells"
 msgstr "額外巢格的最大數"
 
 
-msgid "Density"
-msgstr "密度"
-
-
-msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
-msgstr "多少密度會影響煙霧運動 (較高的值導致煙霧較快昇起)"
-
-
 msgid "Single"
 msgstr "單一"
-
-
-msgid "Heat"
-msgstr "熱"
-
-
-msgid "How much heat affects smoke motion (higher value results in faster rising smoke)"
-msgstr "多少熱會影響煙霧運動 (較高的值導致煙霧較快昇起)"
-
-
-msgid "Speed of the burning reaction (use larger values for smaller flame)"
-msgstr "燃燒反應的速度 (使用較大的值可得到較小的火焰)"
 
 
 msgid "End"
@@ -8305,8 +8329,16 @@ msgid "Blue"
 msgstr "藍"
 
 
+msgid "Density"
+msgstr "密度"
+
+
 msgid "Flame"
 msgstr "火焰"
+
+
+msgid "Heat"
+msgstr "熱"
 
 
 msgid "Color Grid"
@@ -8359,18 +8391,6 @@ msgstr "火焰網格"
 
 msgid "Smoke flame grid"
 msgstr "煙霧火焰網格"
-
-
-msgid "Ignition"
-msgstr "點火"
-
-
-msgid "Minimum temperature of flames"
-msgstr "火焰的最低溫度"
-
-
-msgid "Maximum temperature of flames"
-msgstr "火焰的最高溫度"
 
 
 msgid "Smoke"
@@ -8449,10 +8469,6 @@ msgid "Noise Method"
 msgstr "噪訊方法"
 
 
-msgid "Noise method which is used for creating the high resolution"
-msgstr "建立高解析度使用的噪訊方法"
-
-
 msgid "Wavelet"
 msgstr "波"
 
@@ -8489,16 +8505,8 @@ msgid "Heavy"
 msgstr "濃密"
 
 
-msgid "Max Res"
-msgstr "最大解析度"
-
-
 msgid "Delete"
 msgstr "刪除"
-
-
-msgid "Buoyancy"
-msgstr "浮力"
 
 
 msgid "p0"
@@ -8537,14 +8545,6 @@ msgid "Dissolve Smoke"
 msgstr "消融煙霧"
 
 
-msgid "Enable smoke to disappear over time"
-msgstr "啟用煙霧隨時間消失"
-
-
-msgid "Using 1/x "
-msgstr "使用 1/x "
-
-
 msgid "Tracer"
 msgstr "曳流"
 
@@ -8567,10 +8567,6 @@ msgstr "黏滯度指數"
 
 msgid "Negative exponent for the viscosity value (to simplify entering small values e.g. 5*10^-6)"
 msgstr "黏滯度值的負指數 (用來簡化小值的輸入，例如 5*10^-6)"
-
-
-msgid "Amount of turbulence/rotation in fluid"
-msgstr "流體中擾動/旋轉的量"
 
 
 msgid "Smoke collision settings"
@@ -8723,10 +8719,6 @@ msgstr "法線方向速度的量"
 
 msgid "Amount of random velocity"
 msgstr "隨機速度的量"
-
-
-msgid "Factor for smoke emitted from inside the mesh volume"
-msgstr "從網格體積內部發散煙霧的因子"
 
 
 msgid "Freestyle Line Set"
@@ -10434,10 +10426,6 @@ msgid "Rotate"
 msgstr "旋轉"
 
 
-msgid "Topology"
-msgstr "拓樸"
-
-
 msgid "Secondary Color"
 msgstr "次色"
 
@@ -11283,7 +11271,7 @@ msgstr "為倒角曲線填補蓋帽"
 
 
 msgid "Fill Deformed"
-msgstr "充填變形後"
+msgstr "填入變形後"
 
 
 msgid "Fill curve after applying shape keys and all modifiers"
@@ -11314,20 +11302,8 @@ msgid "Option for curve-deform: make deformed child to stretch along entire path
 msgstr "曲線變形的選項：讓變形的子代沿整條路徑伸展"
 
 
-msgid "Use UV for mapping"
-msgstr "使用 UV 作映射處理"
-
-
-msgid "Uses the UV values as Generated textured coordinates"
-msgstr "使用 UV 值作為生成的紋理化座標"
-
-
 msgid "Surface Curve"
 msgstr "表面曲線"
-
-
-msgid "Use UV for Mapping"
-msgstr "使用 UV 作映射處理"
 
 
 msgid "Text Curve"
@@ -12068,6 +12044,10 @@ msgstr "啟用或停用紋理筆觸"
 
 msgid "Freehand annotation sketchbook"
 msgstr "隨手畫註解草圖簿"
+
+
+msgid "All Types"
+msgstr "全部類型"
 
 
 msgid "Keyframe"
@@ -13582,24 +13562,12 @@ msgid "Lock Location"
 msgstr "鎖定位置"
 
 
-msgid "Lock editing of location in the interface"
-msgstr "在介面中鎖定位置的編輯"
-
-
 msgid "Lock Rotation"
 msgstr "鎖定旋轉"
 
 
-msgid "Lock editing of rotation in the interface"
-msgstr "在介面中鎖定旋轉的編輯"
-
-
 msgid "Lock Rotation (4D Angle)"
 msgstr "鎖定旋轉 (4D 角度)"
-
-
-msgid "Lock editing of 'angle' component of four-component rotations in the interface"
-msgstr "在介面中鎖定「角度」部件其四部件旋轉的編輯"
 
 
 msgid "Lock Rotations (4D)"
@@ -13612,10 +13580,6 @@ msgstr "以部件鎖定四部件旋轉的編輯 (而不是像尤拉一般)"
 
 msgid "Lock Scale"
 msgstr "鎖定縮放"
-
-
-msgid "Lock editing of scale in the interface"
-msgstr "在介面中鎖定縮放的編輯"
 
 
 msgid "Material Slots"
@@ -17954,7 +17918,7 @@ msgstr "計算洞"
 
 
 msgid "Calculate holes when filling overlapping curves"
-msgstr "當充填重疊曲線時計算洞"
+msgstr "當填入重疊曲線時計算洞"
 
 
 msgid "Calculate Overlap"
@@ -17962,7 +17926,7 @@ msgstr "計算重疊"
 
 
 msgid "Calculate self intersections and overlap before filling"
-msgstr "計算自我交錯與在充填之前重疊"
+msgstr "計算自我交錯與在填入之前重疊"
 
 
 msgid "Mask Layers"
@@ -18098,11 +18062,19 @@ msgstr "對齊"
 
 
 msgid "Fill Color"
-msgstr "充填色彩"
+msgstr "填入色彩"
 
 
 msgid "Color for filling region bounded by each stroke"
-msgstr "對各筆觸包圍的區塊行充填之色彩"
+msgstr "對各筆觸包圍的區塊填入的色彩"
+
+
+msgid "Fill Style"
+msgstr "填入樣式"
+
+
+msgid "Checker Board"
+msgstr "棋盤格"
 
 
 msgid "Flip"
@@ -18820,6 +18792,10 @@ msgid "Undeformed Location"
 msgstr "未變形的位置"
 
 
+msgid "Meta Elements"
+msgstr "變幻元素"
+
+
 msgid "Active Element"
 msgstr "作用中元素"
 
@@ -18892,8 +18868,16 @@ msgid "Mesh Cache"
 msgstr "網格快取"
 
 
+msgid "Mesh Sequence Cache"
+msgstr "網格序段快取"
+
+
 msgid "Normal Edit"
 msgstr "法線編輯"
+
+
+msgid "Weighted Normal"
+msgstr "權重法線"
 
 
 msgid "UV Project"
@@ -18964,6 +18948,10 @@ msgid "Triangulate"
 msgstr "分成三角形"
 
 
+msgid "Convert all polygons to triangles"
+msgstr "將所有的多角形轉換為三角形"
+
+
 msgid "Wireframe"
 msgstr "線框"
 
@@ -18986,6 +18974,10 @@ msgstr "網格變形"
 
 msgid "Simple Deform"
 msgstr "簡單變形"
+
+
+msgid "Surface Deform"
+msgstr "表面變形"
 
 
 msgid "Warp"
@@ -19098,6 +19090,14 @@ msgstr "合併距離"
 
 msgid "Limit below which to merge vertices"
 msgstr "限制多少之下會合併頂點"
+
+
+msgid "U Offset"
+msgstr "U 偏移"
+
+
+msgid "V Offset"
+msgstr "V 偏移"
 
 
 msgid "Relative Offset Displacement"
@@ -19496,6 +19496,10 @@ msgid "Edge Mapping"
 msgstr "邊線映射"
 
 
+msgid "Topology"
+msgstr "拓樸"
+
+
 msgid "Copy from identical topology meshes"
 msgstr "從相同的拓樸網格複製"
 
@@ -19716,6 +19720,10 @@ msgid "All Boundaries"
 msgstr "所有邊界"
 
 
+msgid "Symmetry"
+msgstr "對稱"
+
+
 msgid "Vertex group name (collapse only)"
 msgstr "頂點群組名稱 (僅塌陷)"
 
@@ -19738,6 +19746,10 @@ msgstr "使用紋理的強度值在 Y 方向錯置"
 
 msgid "Use the texture's intensity value to displace in the Z direction"
 msgstr "使用紋理的強度值在 Z 方向錯置"
+
+
+msgid "Custom Normal"
+msgstr "自訂法線"
 
 
 msgid "RGB to XYZ"
@@ -19904,6 +19916,10 @@ msgid "Hook modifier to modify the location of vertices"
 msgstr "修改頂點位置的鉤修改器"
 
 
+msgid "Custom falloff curve"
+msgstr "自訂衰減曲線"
+
+
 msgid "Laplacian Deform Modifier"
 msgstr "拉普拉斯變形修改器"
 
@@ -20041,7 +20057,7 @@ msgstr "將這加入起始幀"
 
 
 msgid "None "
-msgstr "無"
+msgstr "無 "
 
 
 msgid "Time Mode"
@@ -20110,6 +20126,14 @@ msgstr "鏡像物體"
 
 msgid "Object to use as mirror"
 msgstr "要作為鏡像的物體"
+
+
+msgid "Flip U Offset"
+msgstr "翻轉 U 偏移"
+
+
+msgid "Flip V Offset"
+msgstr "翻轉 V 偏移"
 
 
 msgid "Prevent vertices from going through the mirror during transform"
@@ -20214,6 +20238,14 @@ msgstr "複製"
 
 msgid "How to affect (generate) normals"
 msgstr "影響 (生成) 法線的方式"
+
+
+msgid "Directional"
+msgstr "方向性"
+
+
+msgid "Lock Polygon Normals"
+msgstr "鎖定多角形法向"
 
 
 msgid "Parallel Normals"
@@ -20422,6 +20454,10 @@ msgstr "旋轉的極軸"
 
 msgid "Object that has the particle system"
 msgstr "有粒子系統的物體"
+
+
+msgid "Particle Offset"
+msgstr "粒子偏移"
 
 
 msgid "Particle System Number"
@@ -22476,7 +22512,7 @@ msgstr "自動縮放"
 
 
 msgid "Automatically scale footage to cover unfilled areas when stabilizing"
-msgstr "自動縮放連續鏡頭以在穩定處理時覆蓋未充填的區域"
+msgstr "自動縮放連續鏡頭以在穩定處理時覆蓋未填入的區域"
 
 
 msgid "Stabilize Rotation"
@@ -30850,7 +30886,7 @@ msgstr "建立一個帶 Alpha 通道的影像"
 
 
 msgid "Default fill color"
-msgstr "預設充填色彩"
+msgstr "預設填入色彩"
 
 
 msgid "32 bit Float"
@@ -30862,7 +30898,7 @@ msgstr "建立具有 32 位元浮點位元深度的影像"
 
 
 msgid "Fill the image with a grid for UV map testing"
-msgstr "以 UV 映射測試用格線充填影像"
+msgstr "以 UV 映射測試用格線填入影像"
 
 
 msgid "Image height"
@@ -32377,11 +32413,11 @@ msgstr "以平滑樣式顯示面 (使用頂點法線)"
 
 msgctxt "Operator"
 msgid "Fill"
-msgstr "充填"
+msgstr "填入"
 
 
 msgid "Fill a selected edge loop with faces"
-msgstr "以面充填所選的線圈"
+msgstr "以面填入所選的線圈"
 
 
 msgid "Use best triangulation division"
@@ -32390,7 +32426,7 @@ msgstr "使用最佳三角劃分"
 
 msgctxt "Operator"
 msgid "Grid Fill"
-msgstr "格線充填"
+msgstr "格線填入"
 
 
 msgid "Fill grid from two loops"
@@ -32407,11 +32443,11 @@ msgstr "簡單混合"
 
 msgctxt "Operator"
 msgid "Fill Holes"
-msgstr "充填孔洞"
+msgstr "填入孔洞"
 
 
 msgid "Fill in holes (boundary edge loops)"
-msgstr "充填孔洞 (邊界線圈)"
+msgstr "填入孔洞 (邊界線圈)"
 
 
 msgctxt "Operator"
@@ -32657,7 +32693,7 @@ msgstr "讓面與頂點法線點都在網格的外面或是內面"
 
 
 msgid "Fill Holes"
-msgstr "充填孔洞"
+msgstr "填入孔洞"
 
 
 msgctxt "Operator"
@@ -32718,11 +32754,11 @@ msgstr "建立一個圓形網格"
 
 
 msgid "Fill Type"
-msgstr "充填類型"
+msgstr "填入類型"
 
 
 msgid "Don't fill at all"
-msgstr "都不要充填"
+msgstr "都不要填入"
 
 
 msgid "Ngon"
@@ -32751,7 +32787,7 @@ msgstr "建立一個圓錐體網格"
 
 
 msgid "Base Fill Type"
-msgstr "基礎充填類型"
+msgstr "基礎填入類型"
 
 
 msgid "Radius 1"
@@ -32781,7 +32817,7 @@ msgstr "建立一個圓柱體網格"
 
 
 msgid "Cap Fill Type"
-msgstr "蓋帽充填類型"
+msgstr "蓋帽填入類型"
 
 
 msgctxt "Operator"
@@ -32829,7 +32865,7 @@ msgstr "添加平面"
 
 
 msgid "Construct a filled planar mesh with 4 vertices"
-msgstr "建立一個充填 4 個頂點的平面網格"
+msgstr "建立一個填入 4 個頂點的平面網格"
 
 
 msgctxt "Operator"
@@ -33024,7 +33060,7 @@ msgstr "讓頂點或邊線從連接好的幾何形狀中斷開連接"
 
 
 msgid "Fill the ripped region"
-msgstr "充填剝離的區塊"
+msgstr "填入剝離的區塊"
 
 
 msgid "Rip polygons and move the result"
@@ -36819,11 +36855,11 @@ msgstr "劃下筆觸時將筆刷切換至光滑模式"
 
 msgctxt "Operator"
 msgid "Mask Flood Fill"
-msgstr "遮罩漫流充填"
+msgstr "遮罩漫流填入"
 
 
 msgid "Fill the whole mask with a given value, or invert its values"
-msgstr "以給定的值充填整個遮罩，或是反轉其值"
+msgstr "以給定的值填入整個遮罩，或是反轉其值"
 
 
 msgid "Set mask to the level specified by the 'value' property"
@@ -36924,7 +36960,7 @@ msgstr "設定頂點色彩"
 
 
 msgid "Fill the active vertex color layer with the current paint color"
-msgstr "以目前繪製色彩充填作用中頂點色彩分層"
+msgstr "以目前繪製色彩填入作用中頂點色彩分層"
 
 
 msgctxt "Operator"
@@ -37030,7 +37066,7 @@ msgstr "設定權重"
 
 
 msgid "Fill the active vertex group with the current paint weight"
-msgstr "以目前的繪製權重充填作用中頂點群組"
+msgstr "以目前的繪製權重填入作用中頂點群組"
 
 
 msgctxt "Operator"
@@ -37091,8 +37127,24 @@ msgid "Copy Particle Systems"
 msgstr "複製粒子系統"
 
 
+msgid "Remove Target Particles"
+msgstr "移除目標粒子"
+
+
+msgid "Remove particle systems on the target objects"
+msgstr "移除目標物體的粒子系統"
+
+
+msgid "Copy inside each object's local space"
+msgstr "在各個物體的局部空間內複製"
+
+
+msgid "Copy in world space"
+msgstr "在世界空間中複製"
+
+
 msgid "Use Active"
-msgstr "採用作用項"
+msgstr "使用作用項"
 
 
 msgid "Use the active particle system from the context"
@@ -37393,6 +37445,15 @@ msgstr "新添加姿勢的名稱"
 
 
 msgctxt "Operator"
+msgid "PoseLib Move Pose"
+msgstr "姿勢庫移動姿勢"
+
+
+msgid "The pose to move"
+msgstr "要移動的姿勢"
+
+
+msgctxt "Operator"
 msgid "PoseLib Remove Pose"
 msgstr "姿勢庫移除姿勢"
 
@@ -37451,6 +37512,54 @@ msgstr "姿勢分解器"
 
 msgid "Create a suitable breakdown pose on the current frame"
 msgstr "於目前的框幀上建立合適的分解姿勢"
+
+
+msgid "Axis Lock"
+msgstr "軸向鎖"
+
+
+msgid "Transform axis to restrict effects to"
+msgstr "限制會受影響的變換軸"
+
+
+msgid "All axes are affected"
+msgstr "全部的軸都受到影響"
+
+
+msgid "Only X-axis transforms are affected"
+msgstr "僅影響 X 軸變換"
+
+
+msgid "Only Y-axis transforms are affected"
+msgstr "僅影響 Y 軸變換"
+
+
+msgid "Only Z-axis transforms are affected"
+msgstr "僅影響 Z 軸變換"
+
+
+msgid "Set of properties that are affected"
+msgstr "設定會受影響的屬性"
+
+
+msgid "All Properties"
+msgstr "全部屬性"
+
+
+msgid "Location only"
+msgstr "僅位置"
+
+
+msgid "Rotation only"
+msgstr "僅旋轉"
+
+
+msgid "Scale only"
+msgstr "僅縮放"
+
+
+msgid "Custom properties"
+msgstr "自訂屬性"
 
 
 msgid "Next Keyframe"
@@ -37762,6 +37871,10 @@ msgid "Reveal Selected"
 msgstr "揭開所選項"
 
 
+msgid "Reveal all bones hidden in Pose Mode"
+msgstr "揭開所有姿勢模式中隱藏的骨骼"
+
+
 msgctxt "Operator"
 msgid "Clear Pose Rotation"
 msgstr "清除姿勢旋轉"
@@ -37850,6 +37963,53 @@ msgid "Apply final constrained position of pose bones to their transform"
 msgstr "將姿勢骨骼的最終約束位置套用到其自身變換"
 
 
+msgctxt "Operator"
+msgid "Disable Add-on"
+msgstr "停用附加元件"
+
+
+msgid "Disable an add-on"
+msgstr "停用一項附加元件"
+
+
+msgid "Module name of the add-on to disable"
+msgstr "要停用的附加元件模組名稱"
+
+
+msgctxt "Operator"
+msgid "Enable Add-on"
+msgstr "啟用附加元件"
+
+
+msgid "Enable an add-on"
+msgstr "啟用一項附加元件"
+
+
+msgid "Module name of the add-on to enable"
+msgstr "要啟用的附加元件模組名稱"
+
+
+msgid "Display information and preferences for this add-on"
+msgstr "顯示此附加元件的資訊和偏好設定"
+
+
+msgid "Module name of the add-on to expand"
+msgstr "要展開的附加元件模組名稱"
+
+
+msgctxt "Operator"
+msgid "Install Add-on"
+msgstr "安裝附加元件"
+
+
+msgid "Install an add-on"
+msgstr "安裝一項附加元件"
+
+
+msgid "Remove existing add-ons with the same ID"
+msgstr "移除具有相同 ID 的既有附加元件"
+
+
 msgid "Target Path"
 msgstr "目標路徑"
 
@@ -37861,6 +38021,40 @@ msgstr "使用者偏好設定"
 msgctxt "Operator"
 msgid "Refresh"
 msgstr "重新整理"
+
+
+msgid "Scan add-on directories for new modules"
+msgstr "掃描附加元件目錄中是否有新模組"
+
+
+msgctxt "Operator"
+msgid "Remove Add-on"
+msgstr "移除附加元件"
+
+
+msgid "Delete the add-on from the file system"
+msgstr "從檔案系統刪除附加元件"
+
+
+msgid "Module name of the add-on to remove"
+msgstr "要刪除的附加元件模組名稱"
+
+
+msgid "Show add-on preferences"
+msgstr "顯示附加元件偏好設定"
+
+
+msgctxt "Operator"
+msgid "Install Template from File..."
+msgstr "從檔案安裝範本..."
+
+
+msgid "Install an application-template"
+msgstr "安裝應用程式範本"
+
+
+msgid "Remove existing template with the same ID"
+msgstr "移除具有相同 ID 的既有範本"
 
 
 msgctxt "Operator"
@@ -37983,6 +38177,50 @@ msgstr "重設回預設主題色彩"
 
 
 msgctxt "Operator"
+msgid "Copy Studio Light settings"
+msgstr "複製攝影棚光照設定值"
+
+
+msgid "Copy Studio Light settings to the Studio light editor"
+msgstr "複製攝影棚光照設定值到攝影棚光照編輯器中"
+
+
+msgctxt "Operator"
+msgid "Install Custom Studio Light"
+msgstr "安裝自訂攝影棚光照"
+
+
+msgid "Install a user defined studio light"
+msgstr "安裝使用者自訂的攝影棚光照"
+
+
+msgid "Studio"
+msgstr "攝影棚"
+
+
+msgctxt "Operator"
+msgid "Save Custom Studio Light"
+msgstr "儲存自訂攝影棚光照"
+
+
+msgid "Save custom studio light from the studio light editor settings"
+msgstr "儲存攝影棚光照編輯器設定值為自訂攝影棚光照"
+
+
+msgid "Show light preferences"
+msgstr "顯示光照偏好設定"
+
+
+msgctxt "Operator"
+msgid "Uninstall Studio Light"
+msgstr "取消安裝攝影棚光照"
+
+
+msgid "Delete Studio Light"
+msgstr "刪除攝影棚光照"
+
+
+msgctxt "Operator"
 msgid "Install Theme..."
 msgstr "安裝主題..."
 
@@ -38036,6 +38274,24 @@ msgstr "從快取烘焙"
 
 
 msgctxt "Operator"
+msgid "Delete Physics Bake"
+msgstr "刪除物理烘培"
+
+
+msgid "Delete physics bake"
+msgstr "刪除物理運算烘培"
+
+
+msgctxt "Operator"
+msgid "Delete All Physics Bakes"
+msgstr "刪除全部物理烘培"
+
+
+msgid "Delete all baked caches of all objects in the current scene"
+msgstr "刪除目前場景中所有物體的所有烘焙快取"
+
+
+msgctxt "Operator"
 msgid "Delete Current Cache"
 msgstr "刪除目前快取"
 
@@ -38062,8 +38318,21 @@ msgid "Add a Sampling Preset"
 msgstr "添加取樣預置"
 
 
+msgctxt "Operator"
+msgid "Viewport Render"
+msgstr "視接口算繪"
+
+
+msgid "Take a snapshot of the active viewport"
+msgstr "擷取使用中視接口的快照"
+
+
 msgid "Render files from the animation range of this scene"
 msgstr "算繪來自此場景動畫範圍的檔案"
+
+
+msgid "Render Keyframes Only"
+msgstr "僅算繪鍵幀"
 
 
 msgid "Sequencer"
@@ -38455,7 +38724,7 @@ msgstr "將線條色彩修改器添加至與作用中線條集關連的線條樣
 
 msgctxt "Operator"
 msgid "Fill Range by Selection"
-msgstr "依選取項充填範圍"
+msgstr "依選取項填入範圍"
 
 
 msgid "Name of the modifier to work on"
@@ -39021,7 +39290,7 @@ msgstr "在背景中點擊並不會啟動筆觸"
 
 msgctxt "Operator"
 msgid "Detail Flood Fill"
-msgstr "詳細漫流充填"
+msgstr "詳細漫流填入"
 
 
 msgctxt "Operator"
@@ -41175,7 +41444,7 @@ msgstr "從修改的網格匯出 UV"
 
 
 msgid "Fill Opacity"
-msgstr "充填不透明"
+msgstr "填入不透明"
 
 
 msgid "Dimensions of the exported file"
@@ -41294,7 +41563,7 @@ msgstr "在伸展最小化與原始之間的混合因子"
 
 
 msgid "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry"
-msgstr "拆解之前虛擬充填網格的孔洞，較能避免重疊並保留對稱性"
+msgstr "拆解之前虛擬填入網格的孔洞，較能避免重疊並保留對稱性"
 
 
 msgid "Number of iterations to run, 0 is unlimited when run interactively"
@@ -42793,11 +43062,11 @@ msgstr "半徑控制要設定的屬性其次要路徑"
 
 
 msgid "Fill Color Path"
-msgstr "充填色彩路徑"
+msgstr "填入色彩路徑"
 
 
 msgid "Path of property used to set the fill color of the control"
-msgstr "用於設定充填色彩的屬性路徑"
+msgstr "用於設定填入色彩的屬性路徑控制項"
 
 
 msgid "Image ID"
@@ -46935,6 +47204,10 @@ msgid "Brush Size"
 msgstr "筆刷大小"
 
 
+msgid "Fill Contours"
+msgstr "填入輪廓"
+
+
 msgid "Format type to export to"
 msgstr "要匯出的格式類型"
 
@@ -48051,6 +48324,10 @@ msgid "Settings for particle fluids physics"
 msgstr "粒子流體物理的設定"
 
 
+msgid "Buoyancy"
+msgstr "浮力"
+
+
 msgid "Artificial buoyancy force in negative gravity direction based on pressure differences inside the fluid"
 msgstr "在流體中基於壓力差以重力的負向人造浮力"
 
@@ -48624,7 +48901,7 @@ msgstr "色彩序段"
 
 
 msgid "Sequence strip creating an image filled with a single color"
-msgstr "建立充填單一色彩的影像之序段片段"
+msgstr "建立填入單一色彩的影像之序段片段"
 
 
 msgid "Cross Sequence"
@@ -53084,6 +53361,10 @@ msgid "Project individual elements on the surface of other objects"
 msgstr "將各自元素投影至其他物體的表面上"
 
 
+msgid "Manipulate object data"
+msgstr "操控物體資料"
+
+
 msgid "UV Sync Selection"
 msgstr "UV 同步選取"
 
@@ -55447,6 +55728,10 @@ msgid "Buffer"
 msgstr "緩衝"
 
 
+msgid "Falloff Opacity"
+msgstr "衰減不透明"
+
+
 msgid "Front Faces Only"
 msgstr "僅前方面"
 
@@ -56948,7 +57233,7 @@ msgstr "反轉遮罩"
 
 msgctxt "Operator"
 msgid "Fill Mask"
-msgstr "充填遮罩"
+msgstr "填入遮罩"
 
 
 msgctxt "Operator"
@@ -59245,7 +59530,7 @@ msgstr "無選取的邊線"
 
 
 msgid "No faces filled"
-msgstr "無充填的面"
+msgstr "無填入的面"
 
 
 msgid "No active vertex group"
@@ -60162,32 +60447,8 @@ msgid "Cursor Y"
 msgstr "游標 Y"
 
 
-msgid "Display Color:"
-msgstr "顯示色彩："
-
-
 msgid "Interpolation:"
 msgstr "插補："
-
-
-msgid "Key:"
-msgstr "鍵："
-
-
-msgid "Frame:"
-msgstr "幀："
-
-
-msgid "Value:"
-msgstr "值："
-
-
-msgid "Left Handle:"
-msgstr "左控制桿："
-
-
-msgid "Right Handle:"
-msgstr "右控制桿："
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -60212,6 +60473,10 @@ msgstr "屬性："
 
 msgid "Driver Value:"
 msgstr "驅動器值："
+
+
+msgid "Value:"
+msgstr "值："
 
 
 msgid "Update Dependencies"
@@ -60487,28 +60752,12 @@ msgid "Verts:%s | Tris:%s%s"
 msgstr "點：%s | 三角：%s%s"
 
 
-msgid "Strip Extents:"
-msgstr "片段範圍："
-
-
-msgid "Playback Settings:"
-msgstr "回放設定："
-
-
-msgid "Action Extents:"
-msgstr "動作範圍："
-
-
 msgid "Sync Length"
 msgstr "同步長度"
 
 
 msgid "Now"
 msgstr "現在"
-
-
-msgid "Evaluation"
-msgstr "評估"
 
 
 msgid "Internal Error - AnimData block is not valid"
@@ -60749,10 +60998,6 @@ msgstr "找不到影片剪輯"
 
 msgid "Mask not found"
 msgstr "找不到遮罩"
-
-
-msgid "Start and end frame are not set"
-msgstr "未設定起始幀與結束幀"
 
 
 msgid "File '%s' could not be loaded"
@@ -62418,12 +62663,40 @@ msgid "Detail Scale"
 msgstr "細節縮放"
 
 
+msgid "Color Attribute"
+msgstr "色彩特性"
+
+
+msgid "Density Attribute"
+msgstr "密度特性"
+
+
+msgid "Absorption Color"
+msgstr "吸收色彩"
+
+
+msgid "Emission Strength"
+msgstr "發射強度"
+
+
 msgid "Emission Color"
 msgstr "發射色彩"
 
 
+msgid "Blackbody Intensity"
+msgstr "黑體強度"
+
+
+msgid "Temperature Attribute"
+msgstr "溫度特性"
+
+
 msgid "Patterns"
 msgstr "樣式"
+
+
+msgid "Texture Node Editor"
+msgstr "紋理節點編輯器"
 
 
 msgid "Bricks 1"
@@ -62474,6 +62747,14 @@ msgid "Unknown py-exception, could not convert"
 msgstr "未知的 py-exception，無法轉換"
 
 
+msgid "Could not resolve path (%s)"
+msgstr "無法解析路徑 (%s)"
+
+
+msgid "Failed allocate render result, out of memory"
+msgstr "無法分配算繪結果，記憶體不足"
+
+
 msgid "Fra:%d Mem:%.2fM (%.2fM, Peak %.2fM) "
 msgstr "幀：%d 記憶：%.2fM (%.2fM，峰值 %.2fM) "
 
@@ -62511,7 +62792,7 @@ msgstr "場景中無算繪輸出節點"
 
 
 msgid "Full sample AA not supported without 3D rendering"
-msgstr "無 3D 算繪時不支援完整取樣 AA "
+msgstr "無 3D 算繪時不支援完整取樣 AA"
 
 
 msgid "All render layers are disabled"
@@ -62532,6 +62813,10 @@ msgstr "「%s」攝影機不是多視圖攝影機"
 
 msgid "No active view found in scene \"%s\""
 msgstr "「%s」場景中找不到作用中視圖"
+
+
+msgid "%s: no Combined pass found in the render layer '%s'"
+msgstr "%s：「%s」算繪層中找不到結合通遞"
 
 
 msgid "%s: failed to allocate clip buffer '%s'"
@@ -62566,8 +62851,44 @@ msgid "Trusted Source [Untrusted Path]"
 msgstr "信任的來源 [未受信任的路徑]"
 
 
+msgid "Allow Execution"
+msgstr "允許執行"
+
+
+msgid "Don't Save"
+msgstr "不要儲存"
+
+
 msgid "unable to open the file"
 msgstr "無法開啟檔案"
+
+
+msgid "For security reasons, automatic execution of Python scripts in this file was disabled:"
+msgstr "基於安全性考量，此檔案的 Python 指令稿自動執行功能已停用："
+
+
+msgid "This may lead to unexpected behavior"
+msgstr "這可能導致預期外的行為"
+
+
+msgid "Permanently allow execution of scripts"
+msgstr "永遠允許執行指令稿"
+
+
+msgid "Reload file with execution of Python scripts enabled"
+msgstr "重新載入檔案並啟用 Python 指令稿執行"
+
+
+msgid "Enable scripts"
+msgstr "啟用指令稿"
+
+
+msgid "Continue using file without Python scripts"
+msgstr "繼續使用檔案而不用 Python 指令稿"
+
+
+msgid "Save changes to \"%s\" before closing?"
+msgstr "在關閉前是否要將變更儲存至「%s」？"
 
 
 msgid "Path is empty, cannot save"
@@ -62606,6 +62927,10 @@ msgid "Unknown error loading '%s'"
 msgstr "未知的載入錯誤「%s」"
 
 
+msgid "Application Template '%s' not found"
+msgstr "找不到「%s」應用程式範本"
+
+
 msgid "Could not read '%s'"
 msgstr "無法讀取「%s」"
 
@@ -62622,12 +62947,24 @@ msgid "Can't read alternative start-up file: '%s'"
 msgstr "無法讀取替代性初始啟動檔：「%s」"
 
 
+msgid "Saved \"%s\""
+msgstr "已儲存「%s」"
+
+
 msgid "Not a library"
 msgstr "非函式庫"
 
 
 msgid "Nothing indicated"
 msgstr "未有指示"
+
+
+msgid "Can't append data-block '%s' of type '%s'"
+msgstr "無法附加「%s」資料塊，其類型為「%s」"
+
+
+msgid "Can't link data-block '%s' of type '%s'"
+msgstr "無法連結「%s」資料塊，其類型為「%s」"
 
 
 msgid "'%s': not a library"
@@ -62660,6 +62997,18 @@ msgstr "嘗試重新自無效路徑「%s」中載入「%s」函式庫"
 
 msgid "Trying to reload or relocate library '%s' to invalid path '%s'"
 msgstr "嘗試重新載入或重新定位「%s」函式庫到無效路徑「%s」"
+
+
+msgid "Win"
+msgstr "Win"
+
+
+msgid "Bksp"
+msgstr "Bksp"
+
+
+msgid "Esc"
+msgstr "Esc"
 
 
 msgid "dbl-"
@@ -62747,6 +63096,41 @@ msgid "%d x %s: %.4f ms, average: %.8f ms"
 msgstr "%d x %s：%.4f ms，平均：%.8f ms"
 
 
+msgctxt "WindowManager"
+msgid "Limited Platform Support"
+msgstr "有限的平臺支援"
+
+
+msgctxt "WindowManager"
+msgid "Your graphics card or driver has limited support. It may work, but with issues."
+msgstr "您的圖形顯示卡或驅動程式支援有限。可能有辦法運作，但會遇到一些問題。"
+
+
+msgctxt "WindowManager"
+msgid "Newer graphics drivers may be available to improve Blender support."
+msgstr "或許更新版的圖形顯示卡驅動程式能改善 Blender 的支援。"
+
+
+msgctxt "WindowManager"
+msgid "Graphics card:"
+msgstr "圖形顯示卡："
+
+
+msgctxt "WindowManager"
+msgid "Platform Unsupported"
+msgstr "未支援的平臺"
+
+
+msgctxt "WindowManager"
+msgid "Your graphics card or driver is not supported."
+msgstr "尚未支援您的圖形顯示卡或驅動程式。"
+
+
+msgctxt "WindowManager"
+msgid "The program will now close."
+msgstr "程式即將關閉。"
+
+
 msgid "Stereo 3D Mode requires the window to be fullscreen"
 msgstr "立體 3D 模式需要視窗變成全螢幕"
 
@@ -62777,6 +63161,10 @@ msgstr "MakeHuman"
 
 msgid "Rigging"
 msgstr "索具"
+
+
+msgid "Video Tools"
+msgstr "視訊工具"
 
 
 msgid "Workflow"
@@ -62953,6 +63341,18 @@ msgstr "巴斯克文 (Euskara)"
 
 msgid "Hausa (Hausa)"
 msgstr "豪薩文 (Hausa)"
+
+
+msgid "Kazakh (қазақша)"
+msgstr "哈薩克文 (қазақша)"
+
+
+msgid "Thai (ภาษาไทย)"
+msgstr "泰文 (ภาษาไทย)"
+
+
+msgid "Slovak (Slovenčina)"
+msgstr "斯洛伐克文 (Slovenčina)"
 
 
 msgid "Complete"

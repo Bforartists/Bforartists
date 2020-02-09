@@ -536,13 +536,13 @@ class AddXYZFunctionSurface(Operator):
                 return {'CANCELLED'}
 
             obj = create_mesh_object(context, verts, [], faces, "XYZ Function")
-            
+
             if self.show_wire:
                 obj.show_wire = True
-                
+
         if self.edit_mode:
             bpy.ops.object.mode_set(mode = 'EDIT')
         else:
-            bpy.ops.object.mode_set(mode = 'OBJECT')    
+            bpy.ops.object.mode_set(mode = 'OBJECT')
 
         return {'FINISHED'}

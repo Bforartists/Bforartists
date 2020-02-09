@@ -69,7 +69,7 @@ class MeshDXFExporter(BasePrimitiveDXFExporter):
         allpoints = self.toGlobalOrigin(allpoints)
         faces=[]
         edges=[]
-        
+
         me.calc_loop_triangles() #me.update(calc_tessface=True)
         me_faces = me.loop_triangles #tessfaces
         #print('deb: allpoints=\n', allpoints) #---------

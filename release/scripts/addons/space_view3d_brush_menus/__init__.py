@@ -69,12 +69,12 @@ addon_files = (
     symmetry_menu,
     texture_menu,
     )
-    
+
 
 
 class VIEW3D_MT_Brushes_Pref(AddonPreferences):
     bl_idname = __name__
-    
+
     column_set: IntProperty(
         name="Number of Columns",
         description="Number of columns used for the brushes menu",
@@ -99,10 +99,10 @@ def register():
     # register all files
     for addon_file in addon_files:
         addon_file.register()
-    
+
     # set the add-on name variable to access the preferences
     utils_core.get_addon_name = __name__
-    
+
     # register preferences
     bpy.utils.register_class(VIEW3D_MT_Brushes_Pref)
 
@@ -121,10 +121,10 @@ def unregister():
     # unregister all files
     for addon_file in addon_files:
         addon_file.unregister()
-    
+
     # unregister preferences
     bpy.utils.unregister_class(VIEW3D_MT_Brushes_Pref)
-    
+
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()

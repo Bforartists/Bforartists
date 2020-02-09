@@ -32,8 +32,8 @@ def batchMaker(BIN):
         else:
             for scene in bpy.data.scenes:
                 FILE.writelines("blender -b '%s' --scene %s --python-text Text -a \n" % (bpy.data.filepath,scene.name))
-                
-            
+
+
 
 class oscBatchMaker (bpy.types.Operator):
     """It creates .bat(win) or .sh(unix) file, to execute and render from Console/Terminal"""

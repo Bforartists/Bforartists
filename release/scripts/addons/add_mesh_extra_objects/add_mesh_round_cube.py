@@ -398,7 +398,7 @@ class AddRoundCube(Operator, object_utils.AddObjectHelper):
                 self.report({'ERROR'}, 'More than ' + str(self.sanity_check_verts) +
                             ' vertices!  Check "No Limit" to proceed')
                 return {'CANCELLED'}
-        
+
         if bpy.context.mode == "OBJECT":
             if context.selected_objects != [] and context.active_object and \
             ('Roundcube' in context.active_object.data.keys()) and (self.change == True):
@@ -425,7 +425,7 @@ class AddRoundCube(Operator, object_utils.AddObjectHelper):
             obj.data["change"] = False
             for prm in RoundCubeParameters():
                 obj.data[prm] = getattr(self, prm)
-        
+
         if bpy.context.mode == "EDIT_MESH":
             active_object = context.active_object
             name_active_object = active_object.name

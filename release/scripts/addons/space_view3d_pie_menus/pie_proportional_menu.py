@@ -298,7 +298,7 @@ class PIE_OT_ProportionalRandomEdt(Operator):
         ts.use_proportional_edit = True
         ts.proportional_edit_falloff = 'RANDOM'
         return {'FINISHED'}
-		
+
 class PIE_OT_ProportionalInverseSquareEdt(Operator):
     bl_idname = "proportional_edt.inversesquare"
     bl_label = "Proportional Inverese Square EditMode"

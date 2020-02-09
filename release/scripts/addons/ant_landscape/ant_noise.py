@@ -39,7 +39,7 @@ from math import (
         sin, cos, pi,
         )
 
-noise_basis_default = "PERLIN_ORIGINAL"
+noise_basis_default = "BLENDER"
 noise_basis = [
     ("BLENDER", "Blender", "Blender default noise", 0),
     ("PERLIN_ORIGINAL", "Perlin", "Perlin noise", 1),
@@ -109,34 +109,34 @@ def no_bias(a):
 
 def shapes(x, y, z, shape=0):
     p = pi
-    if shape is 1:
+    if shape == 1:
         # ring
         x = x * p
         y = y * p
         s = cos(x**2 + y**2) / (x**2 + y**2 + 0.5)
-    elif shape is 2:
+    elif shape == 2:
         # swirl
         x = x * p
         y = y * p
         s = ((x * sin(x * x + y * y) + y * cos(x * x + y * y)) / (x**2 + y**2 + 0.5))
-    elif shape is 3:
+    elif shape == 3:
         # bumps
         x = x * p
         y = y * p
         z = z * p
         s = 1 - ((cos(x * p) + cos(y * p) + cos(z * p)) - 0.5)
-    elif shape is 4:
+    elif shape == 4:
         # wave
         x = x * p * 2
         y = y * p * 2
         s = sin(x + sin(y))
-    elif shape is 5:
+    elif shape == 5:
         # z grad.
         s = (z * p)
-    elif shape is 6:
+    elif shape == 6:
         # y grad.
         s = (y * p)
-    elif shape is 7:
+    elif shape == 7:
         # x grad.
         s = (x * p)
     else:
@@ -154,24 +154,24 @@ def marble_noise(x, y, z, origin, size, shape, bias, sharpnes, turb, depth, hard
     z += origin[2]
     value = s + turb * turbulence_vector((x, y, z), depth, hard, noise_basis=basis)[1]
 
-    if bias is 1:
+    if bias == 1:
         value = cos_bias(value)
-    elif bias is 2:
+    elif bias == 2:
         value = tri_bias(value)
-    elif bias is 3:
+    elif bias == 3:
         value = saw_bias(value)
     else:
         value = sin_bias(value)
 
-    if sharpnes is 1:
+    if sharpnes == 1:
         value = 1.0 - sharp(value)
-    elif sharpnes is 2:
+    elif sharpnes == 2:
         value = 1.0 - sharper(value)
-    elif sharpnes is 3:
+    elif sharpnes == 3:
         value = soft(value)
-    elif sharpnes is 4:
+    elif sharpnes == 4:
         value = sharp(value)
-    elif sharpnes is 5:
+    elif sharpnes == 5:
         value = sharper(value)
     else:
         value = 1.0 - soft(value)
@@ -557,7 +557,7 @@ def noise_gen(coords, props):
     x, y, z = coords
 
     # Origin
-    if rseed is 0:
+    if rseed == 0:
         origin = x_offset, y_offset, z_offset
         origin_x = x_offset
         origin_y = y_offset

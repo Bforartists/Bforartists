@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -4689,10 +4689,6 @@ msgid "Single"
 msgstr "Úhel"
 
 
-msgid "Heat"
-msgstr "Záhlaví"
-
-
 msgid "End"
 msgstr "Konec"
 
@@ -4721,6 +4717,10 @@ msgid "Green"
 msgstr "Zelená"
 
 
+msgid "Heat"
+msgstr "Záhlaví"
+
+
 msgid "Color Grid"
 msgstr "Sada barev"
 
@@ -4739,14 +4739,6 @@ msgstr "Volný"
 
 msgid "Smoke Grid Resolution"
 msgstr "Jemnost dělení"
-
-
-msgid "Ignition"
-msgstr "Animace"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Označit vrstvu"
 
 
 msgid "Smoke"
@@ -4819,10 +4811,6 @@ msgstr "Komprimovat soubor"
 
 msgid "Heavy"
 msgstr "Záhlaví"
-
-
-msgid "Max Res"
-msgstr "Frekvence "
 
 
 msgid "Delete"
@@ -6277,20 +6265,8 @@ msgid "Follow"
 msgstr "Následovat Cestu"
 
 
-msgid "Use UV for mapping"
-msgstr "Použít Ořez"
-
-
-msgid "Uses the UV values as Generated textured coordinates"
-msgstr "Použít souřadnice označených vertexů i pro souřadnice uv mapování"
-
-
 msgid "Surface Curve"
 msgstr "Přidat plošku"
-
-
-msgid "Use UV for Mapping"
-msgstr "Použít Ořez"
 
 
 msgid "Text Curve"
@@ -34585,24 +34561,8 @@ msgid "Cursor Y"
 msgstr "Kurzor"
 
 
-msgid "Display Color:"
-msgstr "Zobrazit křivku"
-
-
 msgid "Interpolation:"
 msgstr "Mód Interpolace"
-
-
-msgid "Value:"
-msgstr "Hodnota"
-
-
-msgid "Left Handle:"
-msgstr "Vazby a spojení"
-
-
-msgid "Right Handle:"
-msgstr "Mód Úchopu"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -34619,6 +34579,10 @@ msgstr "Vlastnost"
 
 msgid "Driver Value:"
 msgstr "Aktivovat materiálové uzly"
+
+
+msgid "Value:"
+msgstr "Hodnota"
 
 
 msgid "Update Dependencies"
@@ -34819,10 +34783,6 @@ msgstr "Editor uzlů"
 
 msgid "Mask not found"
 msgstr "Vybrat obrázek pozadí"
-
-
-msgid "Start and end frame are not set"
-msgstr "První frame animace"
 
 
 msgid "Cannot apply effects to audio sequence strips"

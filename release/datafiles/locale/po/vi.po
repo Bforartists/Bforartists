@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -11440,14 +11440,6 @@ msgid "Maximum number of additional cells"
 msgstr "Số lượng tế bào thêm tối đa"
 
 
-msgid "Density"
-msgstr "Tỉ Trọng"
-
-
-msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Mức tỉ trọng được ảnh hưởng chuyển động của khói (giá trị càng cao tốc độ bay lên càng lẹ)"
-
-
 msgid "Slice the whole domain object"
 msgstr "Cắt ngang toàn vật thể phạm vi"
 
@@ -11458,18 +11450,6 @@ msgstr "Một"
 
 msgid "Perform a single slice of the domain object"
 msgstr "Thực hành cắt ngang vật thể phạm vi một lần"
-
-
-msgid "Heat"
-msgstr "Nhiệt"
-
-
-msgid "How much heat affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Mức nhiệt được ảnh hưởng chuyển động của khói (giá trị càng cao tốc độ bay lên càng lẹ) "
-
-
-msgid "Speed of the burning reaction (use larger values for smaller flame)"
-msgstr "Tốc độ của phản ứng cháy (giá trị càng lớn lửa càng nhỏ)"
 
 
 msgid "Select the file format to be used for caching volumetric data"
@@ -11520,6 +11500,10 @@ msgid "Replay"
 msgstr "Hát Lại"
 
 
+msgid "Use the timeline to bake the scene. Pausing and resuming possible"
+msgstr "Dùng thời lịch để nướng cảnh. Có thể dừng lại và khởi động lại"
+
+
 msgid "Modular"
 msgstr "Mô Khối"
 
@@ -11534,10 +11518,6 @@ msgstr "Kích Cỡ Tế Bào"
 
 msgid "CFL"
 msgstr "CFL"
-
-
-msgid "Maximal velocity per cell (higher value results in larger timesteps)"
-msgstr "Vận tốc cực đại từng tế bào (giá trị càng cao, bước thời gian càng dài)"
 
 
 msgid "Clipping"
@@ -11580,6 +11560,10 @@ msgid "Blue component of the color field"
 msgstr "Thành phần xanh của trường màu"
 
 
+msgid "Density"
+msgstr "Tỉ Trọng"
+
+
 msgid "Quantity of soot in the fluid"
 msgstr "Số lượng bồ hóng trong chất lỏng"
 
@@ -11598,6 +11582,10 @@ msgstr "Nhiên liệu"
 
 msgid "Fuel field"
 msgstr "Trường nhiên liệu"
+
+
+msgid "Heat"
+msgstr "Nhiệt"
 
 
 msgid "Temperature of the fluid"
@@ -11752,18 +11740,6 @@ msgid "Smoke flame grid"
 msgstr "Đồ thị lửa khói"
 
 
-msgid "Ignition"
-msgstr "Bật Lửa"
-
-
-msgid "Minimum temperature of flames"
-msgstr "Nhiệt độ cực tiểu của lửa"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Nhiệt độ cực đại của lửa"
-
-
 msgid "Smoke"
 msgstr "Khói"
 
@@ -11848,20 +11824,12 @@ msgid "Domain"
 msgstr "Phạm Vi"
 
 
-msgid "Use a fluid domain for guiding (domain needs to be baked already so that velocities can be extracted but can be of any type)"
-msgstr "Dùng một phạm vi chất lỏng cho dẫn (cần nướng phạm vi trước để được rút ra vận tốc, nhưng phạm vi có thể là bắt cứ loại nào)"
-
-
 msgid "Effector"
 msgstr "Đồ Hiệu Ứng"
 
 
 msgid "Use guiding (effector) objects to create fluid guiding (guiding objects should be animated and baked once set up completely)"
 msgstr "Dùng vật thể (đồ hiệu ứng) để chế tạo dẫn chất lỏng (vật thể dẫn nên được hoạt hình và nướng khi cài đặt sẵn hoàn toàn)"
-
-
-msgid "Guiding velocity factor (higher value results in bigger guiding velocities)"
-msgstr "Tỉ số dẫn vận tốc (giá trị càng cao, vận tốc dẫn càng cao)"
 
 
 msgid "Heat Grid"
@@ -11928,16 +11896,8 @@ msgid "Radius"
 msgstr "Bán Kính"
 
 
-msgid "Particle radius factor (higher value results in larger (meshed) particles)"
-msgstr "Hậ số bán kính (giá trị cao hơn có hạt (mạng lưới) to hơn)"
-
-
 msgid "Mesh scale"
 msgstr "Phóng to mạng lưới"
-
-
-msgid "Scale underlying mesh grids by this factor. Mesh grids have size factor times base resolution"
-msgstr "Phóng to của đồ thị mạng lưới. Đồ Thị mạng lưới có hệ số kích cỡ nhân cơ sở độ phân giải"
 
 
 msgid "Smoothen Neg"
@@ -11972,10 +11932,6 @@ msgid "Noise Scale"
 msgstr "Phóng To Huyên Náo"
 
 
-msgid "Scale underlying noise grids by this factor. Noise grids have size factor times base resolution"
-msgstr "Phóng to của đồ thị huyên náo. Đồ thị huyên náo có hệ số kích cỡ nhân cơ sở độ phân giải"
-
-
 msgid "Strength of noise"
 msgstr "Sức của huyên náo"
 
@@ -11990,10 +11946,6 @@ msgstr "Thời gian hoạt hình của huyên náo"
 
 msgid "Noise Method"
 msgstr "Phương Pháp Huyên Náo"
-
-
-msgid "Noise method which is used for creating the high resolution"
-msgstr "Phương pháp huyên náo cho chế tạo độ phân giải cao"
 
 
 msgid "Wavelet"
@@ -12048,20 +12000,12 @@ msgid "Particle number factor (higher value results in more particles)"
 msgstr "Hệ số số lượng hạt (giá trị cao hơn có hạt nhiều hơn)"
 
 
-msgid "Particle radius factor. Use this parameter when the simulation appears to leak volume"
-msgstr "Hệ số bán kính hạt. Dùng tham số này khi mô phỏng nhiễu ra thể tích"
-
-
 msgid "Randomness"
 msgstr "Độ Ngẫu Nhiên"
 
 
 msgid "Randomness factor for particle sampling"
 msgstr "Hệ số ngẫu nhiên cho mẫu hạt"
-
-
-msgid "Scale underlying particle grids by this factor. Particle grids have size factor times base resolution"
-msgstr "Hệ số phóng của to đồ thị hạt. Đồ thị hạt có hệ số kích cỡ nhân cơ sỡ độ phân giải"
 
 
 msgid "Cache Compression"
@@ -12078,14 +12022,6 @@ msgstr "Nhanh mà mà hiệu qủa nén không cao"
 
 msgid "Heavy"
 msgstr "Nặng"
-
-
-msgid "Max Res"
-msgstr "Độ Phân Giải Tối Đa"
-
-
-msgid "Resolution used for the fluid domain"
-msgstr "Độ phân giải tối đa dùng cho phạm vi chất lỏng"
 
 
 msgid "Display Velocity"
@@ -12220,16 +12156,12 @@ msgid "Create one particle system that contains all three secondary particle typ
 msgstr "Chế tạo một hệ thống hạt chứa tất cả ba loại hạt thứ hai"
 
 
-msgid "Buoyancy"
-msgstr "Lực Nổi"
+msgid "Bubble Buoyancy"
+msgstr "Lực Nổi Bong Bóng"
 
 
-msgid "Amount of buoyancy force that rises bubbles (high values result in bubble movement mainly upwards)"
-msgstr "Mức lực nỗi để đẩy lên bong bóng (giá trị cao làm bong bóng đi lên nhiều hơn đi ngang)"
-
-
-msgid "Amount of drag force that moves bubbles along with the fluid (high values result in bubble movement mainly along with the fluid)"
-msgstr "Mức lực kéo lê được di chuyển bong bóng theo chất lỏng (giá trị cao hơn làm bong bóng đi theo chuyển động của chất lỏng hơn)"
+msgid "Bubble Drag"
+msgstr "Kéo Lê Bong Bóng"
 
 
 msgid "Trapped Air Sampling"
@@ -12248,16 +12180,8 @@ msgid "Maximum number of particles generated per wave crest cell per frame"
 msgstr "Số lượng hạt cực đại được chế tạo từng tế bào đầu ngọn sóng mỗi bức"
 
 
-msgid "Lifetime(max)"
-msgstr "Tuổi Thọ (tối đa)"
-
-
 msgid "Highest possible particle lifetime"
 msgstr "Tuổi thọ lâu nhất"
-
-
-msgid "Lifetime(min)"
-msgstr "Tuổi Thọ (tối thiệu)"
 
 
 msgid "Lowest possible particle lifetime"
@@ -12276,48 +12200,12 @@ msgid "tauMax_k"
 msgstr "tauCựcĐại_k"
 
 
-msgid "Upper clamping threshold that indicates the fluid speed where cells no longer emit more particles (higher values result in generally less particles)"
-msgstr "Ngưỡng kép lại cực đại cho biểu lộ tốc độ chất lỏng làm tế bào không còn phát hạt thêm (giá trị cao hơn giảm bất số lượng hạt)"
-
-
-msgid "tauMax_ta"
-msgstr "TauCựcĐại_ta"
-
-
-msgid "Upper clamping threshold for marking fluid cells where air is trapped (higher values result in less marked cells)"
-msgstr "Ngưỡng kẹp lại cực đại để ký dấu cho tế bào đang nhốt không khí (giá trị cao hơn giảm số lượng tế bào được ký dấu)"
-
-
-msgid "tauMax_wc"
-msgstr "tauCựcĐại_wc"
-
-
-msgid "Upper clamping threshold for marking fluid cells as wave crests (higher values result in less marked cells)"
-msgstr "Ngưỡng kẹp lại cực đại để ký dấu cho tế bào là đầu ngọn sóng (giá trị cao hơn giảm số lượng tế bào được ký dấu)"
-
-
 msgid "tauMin_k"
 msgstr "TauCựcTiểu_k"
 
 
 msgid "Lower clamping threshold that indicates the fluid speed where cells start to emit particles (lower values result in generally more particles)"
 msgstr "Ngưỡng kẹp lại thấp cho biểu lộ tốc độ chất lỏng khi tế bào bắt đầu phát hạt (giá trị thấp hơn tăng số lượng hạt)"
-
-
-msgid "tauMin_ta"
-msgstr "TauCựcTiểu_ta"
-
-
-msgid "Lower clamping threshold for marking fluid cells where air is trapped (lower values result in more marked cells)"
-msgstr "Ngưỡng kẹp lại cực tiểu để ký dấu cho tế bào chất lỏng khi nhốt không khi (giá trị thấp tăng số lượng tế bào được ký dấu)"
-
-
-msgid "tauMin_wc"
-msgstr "tauCựcTiểu_wc"
-
-
-msgid "Lower clamping threshold for marking fluid cells as wave crests (lower values result in more marked cells)"
-msgstr "Ngưỡng kẹp lại cực tiểu cho ký dấu tế bào chất lỏng là đầu ngọn sóng (giá trị thấp tăng số lượng tế bào được ký dấu)"
 
 
 msgid "Update Radius"
@@ -12428,24 +12316,8 @@ msgid "Dissolve Smoke"
 msgstr "Tan Khói"
 
 
-msgid "Enable smoke to disappear over time"
-msgstr "Bật để sau một giai đoạn cho khói biến mất"
-
-
-msgid "Logarithmic dissolve"
-msgstr "Hòa tan kiểu log"
-
-
-msgid "Using 1/x "
-msgstr "Dùng 1/x"
-
-
 msgid "FLIP"
 msgstr "FLIP"
-
-
-msgid "Create FLIP particle system"
-msgstr "Chế tạo hệ thống hạt FLIP"
 
 
 msgid "Foam"
@@ -12490,10 +12362,6 @@ msgstr "Bật huyên náo chất lỏng (dùng tăng cường)"
 
 msgid "Speed Vectors"
 msgstr "Vectơ Tốc Độ"
-
-
-msgid "Generate speed vectors (will be loaded automatically during render for motion blur)"
-msgstr "Chế tạo vectơ tốc độ (Sẽ được nhập tự động khi kết xuất cho mờ hóa chuyển động)"
 
 
 msgid "Spray"
@@ -12558,10 +12426,6 @@ msgstr "Lũy Thừa Độ Nhớt"
 
 msgid "Negative exponent for the viscosity value (to simplify entering small values e.g. 5*10^-6)"
 msgstr "Lũy thừa âm cho giá trị độ nhớt (cho đơn giản hóa nhập trị nhỏ, ví dụ 5*10^-6)"
-
-
-msgid "Amount of turbulence/rotation in fluid"
-msgstr "Mức nhiễu loạn/xoáy trong chất lỏng"
 
 
 msgid "Fluid Mesh Velocity"
@@ -12764,10 +12628,6 @@ msgid "Number of additional samples to take between frames to improve quality of
 msgstr "Số lượng của mẫu vật thêm được tính giữa bức để tăng chất lượng của lưu tốc độ cao"
 
 
-msgid "Maximum distance from mesh surface to emit fluid"
-msgstr "Khoảng cách cực đại từ bề mặt mạng lưới để phát chất lỏng"
-
-
 msgid "Temp. Diff."
 msgstr "Chênh Lệch Nhiệt Độ"
 
@@ -12862,10 +12722,6 @@ msgstr "Mức vận tốc theo hướng pháp tuyến"
 
 msgid "Amount of random velocity"
 msgstr "Mức vận tốc ngẫu nhiên"
-
-
-msgid "Factor for smoke emitted from inside the mesh volume"
-msgstr "Hệ số khói phát từ ở trong thể tích mạng lưới"
 
 
 msgid "Freestyle Line Set"
@@ -16509,6 +16365,14 @@ msgid "If a vertex is further away from offset plane than this, then it is not a
 msgstr "Các một đỉnh xa hơn dịch mặt phẳng này, nó không được ảnh hưởng"
 
 
+msgid "Pose IK Segments"
+msgstr "Khúc IK Dạng Đứng"
+
+
+msgid "Number of segments of the inverse kinematics chain that will deform the mesh"
+msgstr "Số lượng khúc của chuỗi động lý đảo nghịch sẽ méo hóa mạng lưới"
+
+
 msgid "Pose Origin Offset"
 msgstr "Dịch Gốc Tọa Độ Dạng Đứng"
 
@@ -16623,10 +16487,6 @@ msgstr "Dời Chút"
 
 msgid "Rotate"
 msgstr "Xoay"
-
-
-msgid "Topology"
-msgstr "Hình Dạng Học"
 
 
 msgid "Secondary Color"
@@ -17789,24 +17649,12 @@ msgid "Option for curve-deform: make deformed child to stretch along entire path
 msgstr "Lựa chọn cho méo hóa cong: kéo dài con cái bị méo hóa theo toàn đường cong"
 
 
-msgid "Use UV for mapping"
-msgstr "Dùng UV cho ánh xạ"
-
-
-msgid "Uses the UV values as Generated textured coordinates"
-msgstr "Dùng giá trị UV như tọa độ họa tiết được Phát Ra"
-
-
 msgid "Surface Curve"
 msgstr "Đường Cong Bề Mặt"
 
 
 msgid "Curve data-block used for storing surfaces"
 msgstr "Cục dữ liệu cho chứa bề mặt"
-
-
-msgid "Use UV for Mapping"
-msgstr "Dùng UV cho Ánh Xạ"
 
 
 msgid "Text Curve"
@@ -21343,24 +21191,12 @@ msgid "Lock Location"
 msgstr "Khóa Vị Trí"
 
 
-msgid "Lock editing of location in the interface"
-msgstr "Khóa biên tập vị trí trong giao diện"
-
-
 msgid "Lock Rotation"
 msgstr "Khóa Xoay"
 
 
-msgid "Lock editing of rotation in the interface"
-msgstr "Khóa biên tập xoay trong giao diện"
-
-
 msgid "Lock Rotation (4D Angle)"
 msgstr "Khóa Xoay (Góc 4 Chiều)"
-
-
-msgid "Lock editing of 'angle' component of four-component rotations in the interface"
-msgstr "Khóa biên tập thành phần 'góc' của xoay 4 thành phần trong giao diện"
 
 
 msgid "Lock Rotations (4D)"
@@ -21373,10 +21209,6 @@ msgstr "Khóa biên tập xoay 4 thành phần bằng thành phần (thay thế 
 
 msgid "Lock Scale"
 msgstr "Khóa Phóng To"
-
-
-msgid "Lock editing of scale in the interface"
-msgstr "Khóa biên tập của phóng to trong giao diện"
 
 
 msgid "Material Slots"
@@ -22497,6 +22329,14 @@ msgid "Number of children/parent for rendering"
 msgstr "Số lượng con cái/phụ huynh để kết xuất"
 
 
+msgid "Root Diameter"
+msgstr "Đường Kính Rể"
+
+
+msgid "Strand diameter width at the root"
+msgstr "Đường kính của sợi tại rể"
+
+
 msgid "Random Orientation"
 msgstr "Định Hướng Ngẫu Nhiên"
 
@@ -22663,6 +22503,14 @@ msgstr "Bước Thời Gian"
 
 msgid "The simulation timestep per frame (seconds per frame)"
 msgstr "Bước thời gian mỗi bức của mô phỏng (giây/bức)"
+
+
+msgid "Tip Diameter"
+msgstr "Đường Kính Đỉnh"
+
+
+msgid "Strand diameter width at the tip"
+msgstr "Đường kính của sợi tại đỉnh"
 
 
 msgid "Trail Count"
@@ -31040,6 +30888,10 @@ msgstr "Ánh Xạ Cạnh"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Phương pháp cho ánh xạ cạnh nguồn đến cạnh đích"
+
+
+msgid "Topology"
+msgstr "Hình Dạng Học"
 
 
 msgid "Copy from identical topology meshes"
@@ -45574,6 +45426,19 @@ msgid "Wait for first click instead of painting immediately"
 msgstr "Chờ bấm lần đầu thay thế sơn ngay lập tức"
 
 
+msgid "Delete the active frame for the active Annotation Layer"
+msgstr "Xóa bức hoạt động của Lớp Ghi Chú hoạt động"
+
+
+msgctxt "Operator"
+msgid "Annotation Add New"
+msgstr "Ghi Chú - Thêm Mới"
+
+
+msgid "Add new Annotation data-block"
+msgstr "Thêm cục dữ liệu Ghi Chú mới"
+
+
 msgctxt "Operator"
 msgid "Insert Blank Frame"
 msgstr "Chèn Bức Rỗng"
@@ -46139,6 +46004,33 @@ msgstr "Thêm Lớp Mới"
 
 msgid "Add new layer or note for the active data-block"
 msgstr "Thêm một lớp hay tin nhắn mới cho cục dữ liệu hoạt động"
+
+
+msgctxt "Operator"
+msgid "Add New Annotation Layer"
+msgstr "Thêm Lớp Ghi Chú Mới"
+
+
+msgid "Add new Annotation layer or note for the active data-block"
+msgstr "Thêm một lớp Ghi Chú hay tin nhắn mới cho cục dữ liệu hoạt động"
+
+
+msgctxt "Operator"
+msgid "Move Annotation Layer"
+msgstr "Di Chuyển Lớp Ghi Chú"
+
+
+msgid "Move the active Annotation layer up/down in the list"
+msgstr "Di chuyển lớp Ghi Chú hoạt động lên/xuống trong danh sách"
+
+
+msgctxt "Operator"
+msgid "Remove Annotation Layer"
+msgstr "Xóa Lớp Ghi Chú"
+
+
+msgid "Remove active Annotation layer"
+msgstr "Xóa lớp Ghi Chú hoạt động"
 
 
 msgctxt "Operator"
@@ -68024,11 +67916,6 @@ msgstr "Dời Chút"
 
 
 msgctxt "Operator"
-msgid "Topology"
-msgstr "Hình Dạng Học"
-
-
-msgctxt "Operator"
 msgid "Simplify"
 msgstr "Đơn Giản Hóa"
 
@@ -71977,6 +71864,34 @@ msgid "Number of neighboring frames to use for denoising animations (more frames
 msgstr "Số lượng bức kề để dùng cho giảm huyên náo hoạt hình (bức càng nhiều kết qủa càng mịn nhưng giảm hiệu suất)"
 
 
+msgid "Input Passes"
+msgstr "Vòng Ngõ Vào"
+
+
+msgid "Controls which passes the OptiX AI denoiser should use as input, which can have different effects on the denoised image"
+msgstr "Điều khiển vòng nào để cho bộ giảm huyên náo OptiX AI nên dùng làm ngõ vào, có thể có hiệu ứng khác với ảnh được giảm huyên náo"
+
+
+msgid "Use only color as input"
+msgstr "Chỉ dùng màu làm ngõ vào"
+
+
+msgid "Color + Albedo"
+msgstr "Màu + Suất Phản Chiếu"
+
+
+msgid "Use color and albedo data as input"
+msgstr "Dùng màu và suất phản chiếu cho ngõ vào"
+
+
+msgid "Color + Albedo + Normal"
+msgstr "Màu + Suất Phản Chiếu + Pháp Tuyến"
+
+
+msgid "Use color, albedo and normal data as input"
+msgstr "Dùng màu, suất phản chiếu và pháp tuyến cho ngõ vào"
+
+
 msgid "Denoising Radius"
 msgstr "Bán Kính Bắt Huyên Náo"
 
@@ -72103,6 +72018,14 @@ msgstr "Dùng Bất Huyên Náo"
 
 msgid "Denoise the rendered image"
 msgstr "Bất huyên náo trong ảnh kết xuất"
+
+
+msgid "Use OptiX AI Denoising"
+msgstr "Dùng Giảm Huyên Náo TTNT OptiX"
+
+
+msgid "Denoise the rendered image with the OptiX AI denoiser"
+msgstr "Giảm huyên náo của ảnh kết xuất bằng TTNT OptiX"
 
 
 msgid "Cryptomatte Asset"
@@ -75135,6 +75058,10 @@ msgstr "Giảm vận tốc dư có thể xuất hiện khi vật thể va chạm
 
 msgid "Settings for particle fluids physics"
 msgstr "Cài đặt cho vật lý hạt chất lỏng"
+
+
+msgid "Buoyancy"
+msgstr "Lực Nổi"
 
 
 msgid "Artificial buoyancy force in negative gravity direction based on pressure differences inside the fluid"
@@ -85437,6 +85364,10 @@ msgid "Cull back-faces"
 msgstr "Hủy Diệt Mặt Phía Sau"
 
 
+msgid "OptiX AI Denoising"
+msgstr "Giảm Huyên Náo TTNT OptiX"
+
+
 msgid "Incompatible output node"
 msgstr "Giao điểm ngõ ra không thích hợp"
 
@@ -87726,6 +87657,10 @@ msgid "Strand Shape"
 msgstr "Hình Dạng Sợi Tóc"
 
 
+msgid "Diameter Root"
+msgstr "Đường Kính Rể"
+
+
 msgid "Lifetime Randomness"
 msgstr "Sự Ngẫu Nhiên Tuổi Thọ"
 
@@ -88063,28 +87998,12 @@ msgid "Clumping amount"
 msgstr "Mức Dính Bó"
 
 
-msgid "Temperature Diff."
-msgstr "Chênh Lệch Nhiệt Độ"
-
-
 msgid "Reaction Speed"
 msgstr "Tốc Độ Phản Ứng"
 
 
 msgid "Flame Smoke"
 msgstr "Khói Ngón Lửa"
-
-
-msgid "Flame Vorticity"
-msgstr "Xoáy Ngón Lửa"
-
-
-msgid "Temperature Ignition"
-msgstr "Nhiệt Độ Đốt"
-
-
-msgid "Maximum Temperature"
-msgstr "Nhiệt Độ Cực Đại"
 
 
 msgid "Flame Color"
@@ -88163,14 +88082,6 @@ msgid "Particle Life Maximum"
 msgstr "Tuổi Thọ Hạt Cực Đại"
 
 
-msgid "Bubble Buoyancy"
-msgstr "Lực Nổi Bong Bóng"
-
-
-msgid "Bubble Drag"
-msgstr "Kéo Lê Bong Bóng"
-
-
 msgid "Particles in Boundary:"
 msgstr "Các Hạt trong Ranh Giới:"
 
@@ -88219,10 +88130,6 @@ msgid "Timesteps Maximum"
 msgstr "Bước Thời Gian Cực Đại"
 
 
-msgid "Surface Thickness"
-msgstr "Bề Dày Bề Mặt"
-
-
 msgid "Smoothing Positive"
 msgstr "Mịn Hóa Dương"
 
@@ -88245,10 +88152,6 @@ msgstr "Đang Dùng Hấp Dẫn Cảnh"
 
 msgid "Sampling Substeps"
 msgstr "Mẫu Cho Hạ Bức"
-
-
-msgid "Volume Density"
-msgstr "Tỉ Trọng Thể Tích"
 
 
 msgctxt "Operator"
@@ -88276,6 +88179,10 @@ msgstr "Đang Nướng Hết - Bấm ESC để dừng lại"
 
 msgid "Use Inflow"
 msgstr "Dùng Lưu Nhập"
+
+
+msgid "Surface Thickness"
+msgstr "Bề Dày Bề Mặt"
 
 
 msgctxt "Operator"
@@ -93042,6 +92949,10 @@ msgid "GPencil"
 msgstr "Bút Sáp"
 
 
+msgid "LightProbe"
+msgstr "ÁnhSángKế"
+
+
 msgid "No new files have been packed"
 msgstr "Không có tệp nào mới được gói lại"
 
@@ -94019,11 +93930,11 @@ msgstr "Xương trong chuỗi không thể chọn được"
 
 
 msgid "Bone Heat Weighting: failed to find solution for one or more bones"
-msgstr "Quyền Lượng Nhiệt Xương: Tìm nghiệm cho một hay trở lên xương bị thất bại"
+msgstr "Quyền Lượng Nhiệt Xương: Tìm nghiệm cho một hay trở lên xương đã thất bại"
 
 
 msgid "Failed to find bind solution (increase precision?)"
-msgstr "Tìm nghiệm bị thất bại (tăng độ chính xác không?)"
+msgstr "Tìm nghiệm đã thất bại (tăng độ chính xác không?)"
 
 
 msgid "Cannot pose libdata"
@@ -94394,6 +94305,10 @@ msgid "Annotation operator is already active"
 msgstr "Thao tác lới ghi chú đang hoạt động rồi"
 
 
+msgid "Failed to find Annotation data to draw into"
+msgstr "Tìm dữ liệu Ghi Chú để vẽ vào đã thất bại"
+
+
 msgid "Active region not set"
 msgstr "Chưa được đặt vùng hoạt động"
 
@@ -94543,7 +94458,7 @@ msgstr "Không có lớp số %d"
 
 
 msgid "Failed to find Grease Pencil data to draw into"
-msgstr "Tìm dữ liệu bút sáp để vẽ vào bị thất bại"
+msgstr "Tìm dữ liệu bút sáp để vẽ vào đã thất bại"
 
 
 msgid "Fill: ESC/RMB cancel, LMB Fill, Shift Draw on Back"
@@ -95542,6 +95457,10 @@ msgstr "Sai lầm khi xuất (xem Diện Điều Khiển)"
 
 msgid "Parsing errors in Document (see Blender Console)"
 msgstr "Sai lầm phân tích ngữ pháp trong Tài Liệu (xem Diện Điều Khiển Blender)"
+
+
+msgid "Experimental:"
+msgstr "Đồ Thử Nghiệm:"
 
 
 msgctxt "Mesh"
@@ -97592,40 +97511,12 @@ msgid "Cursor Y"
 msgstr "Y Con Trỏ"
 
 
-msgid "Display Color:"
-msgstr "Màu Hiển Thị:"
-
-
-msgid "Auto Handle Smoothing:"
-msgstr "Tự Động Mịn Hóa Tay Cằm:"
-
-
 msgid "Interpolation:"
 msgstr "Suy Nội:"
 
 
 msgid "None for Enum/Boolean"
 msgstr "Không Có Cho Liệt Kê/Bool"
-
-
-msgid "Key:"
-msgstr "Bức Mẫu:"
-
-
-msgid "Frame:"
-msgstr "Bức:"
-
-
-msgid "Value:"
-msgstr "Giá Trị:"
-
-
-msgid "Left Handle:"
-msgstr "Tay Cầm Trái:"
-
-
-msgid "Right Handle:"
-msgstr "Tay Cầm Phải:"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -97658,6 +97549,10 @@ msgstr "Biểu Thức:"
 
 msgid "Add Input Variable"
 msgstr "Thêm Biến Số Ngõ Vào"
+
+
+msgid "Value:"
+msgstr "Giá Trị:"
 
 
 msgid "Update Dependencies"
@@ -98037,28 +97932,12 @@ msgid "Verts:%s | Faces:%s | Tris:%s | Objects:%s/%s%s%s"
 msgstr "Đỉnh:%s | Mặt:%s | TamGiác:%s | VậtThể:%s/%s%s%s"
 
 
-msgid "Strip Extents:"
-msgstr "Sự Kiện Đoạn Phim:"
-
-
-msgid "Playback Settings:"
-msgstr "Cài Đặt Hát Lại:"
-
-
-msgid "Action Extents:"
-msgstr "Kéo Dài Hành Động:"
-
-
 msgid "Sync Length"
 msgstr "Bề Dài Đồng Bộ"
 
 
 msgid "Now"
 msgstr "Bây Giờ"
-
-
-msgid "Evaluation"
-msgstr "Tính Toán"
 
 
 msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
@@ -98611,10 +98490,6 @@ msgstr "Không tìm được đoạn phim"
 
 msgid "Mask not found"
 msgstr "Mặt nạ không tìm được"
-
-
-msgid "Start and end frame are not set"
-msgstr "Chưa đặt bức đầu và cuối"
 
 
 msgid "File '%s' could not be loaded"
@@ -100319,6 +100194,10 @@ msgid "ParticleSystem"
 msgstr "HệThốngHạt"
 
 
+msgid "uv_on_emitter() requires a modifier from an evaluated object"
+msgstr "uv_on_emitter() yêu cầu có một cụ sửa đổi từ một vật thể được tính toán"
+
+
 msgid "Mesh has no UV data"
 msgstr "Mạng lưới không có dữ liệu UV"
 
@@ -101534,10 +101413,6 @@ msgstr "TĐang thử nhập lại hay di chuyển thư viện '%s' đến đư�
 
 msgid "Win"
 msgstr "CửaSổ"
-
-
-msgid "OSkey"
-msgstr "PhímHệĐiềuHành"
 
 
 msgid "Bksp"

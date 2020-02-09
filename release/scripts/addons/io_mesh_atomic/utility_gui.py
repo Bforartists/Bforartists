@@ -22,7 +22,7 @@ from bpy.props import (StringProperty,
                        EnumProperty,
                        FloatProperty,
                        BoolProperty)
-        
+
 from io_mesh_atomic.utility_panel import choose_objects
 from io_mesh_atomic.utility_panel import custom_datafile
 from io_mesh_atomic.utility_panel import custom_datafile_change_atom_props
@@ -43,7 +43,7 @@ class PANEL_PT_prepare(Panel):
     bl_idname = "ATOMIC_PT_utilities"
 
 
-    # This thing here just guarantees that the panel is NOT opened when the 
+    # This thing here just guarantees that the panel is NOT opened when the
     # check box in the addon preferences is not activated! See __init__.py
     @classmethod
     def poll(cls, context):
@@ -66,7 +66,7 @@ class PANEL_PT_prepare(Panel):
         col.operator("atom_blend.button_distance")
         col.prop(scn, "distance")
 
-        # This is from Blender 2.79 and does not work in 2.80. However, it  
+        # This is from Blender 2.79 and does not work in 2.80. However, it
         # might be useful later on if changed.
         #
         #box = layout.box()

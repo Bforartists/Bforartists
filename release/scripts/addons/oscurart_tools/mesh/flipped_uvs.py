@@ -25,18 +25,18 @@ import bmesh
 def defSelectFlippedUvs(self, context):
     bm = bmesh.from_edit_mesh(bpy.context.active_object.data)
     bpy.context.scene.tool_settings.use_uv_select_sync = True
-    
+
     uvLayer = bm.loops.layers.uv.verify()
-    
+
 
     for face in bm.faces:
         sum_edges = 0
-        
+
         for i in range(3):
             uv_A = face.loops[i][uvLayer].uv
             uv_B = face.loops[(i+1)%3][uvLayer].uv
             sum_edges += uv_B.cross(uv_A)
-            
+
         if sum_edges > 0:
             face.select_set(True)
 
