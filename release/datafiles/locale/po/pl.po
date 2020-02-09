@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -10097,30 +10097,6 @@ msgid "Cursor Y"
 msgstr "Kursor Y"
 
 
-msgid "Display Color:"
-msgstr "Kolor wyświetlany"
-
-
-msgid "Key:"
-msgstr "Klucz:"
-
-
-msgid "Frame:"
-msgstr "Klatka:"
-
-
-msgid "Value:"
-msgstr "Wartość:"
-
-
-msgid "Left Handle:"
-msgstr "Lewy uchwyt"
-
-
-msgid "Right Handle:"
-msgstr "Prawy uchwyt"
-
-
 msgid "F-Curve only has F-Modifiers"
 msgstr "Krzywa F ma tylko modyfikatory F"
 
@@ -10143,6 +10119,10 @@ msgstr "Prop:"
 
 msgid "Driver Value:"
 msgstr "Wartość Sterownika:"
+
+
+msgid "Value:"
+msgstr "Wartość:"
 
 
 msgid "Update Dependencies"
@@ -10389,28 +10369,12 @@ msgid "Verts:%s/%s"
 msgstr "Wierzch:%s/%s"
 
 
-msgid "Strip Extents:"
-msgstr "Zakresy Paska:"
-
-
-msgid "Playback Settings:"
-msgstr "Ustawienia Odtwarzania:"
-
-
-msgid "Action Extents:"
-msgstr "Zakresy Akcji:"
-
-
 msgid "Sync Length"
 msgstr "Sync Długość"
 
 
 msgid "Now"
 msgstr "Teraz"
-
-
-msgid "Evaluation"
-msgstr "Ewaluacja"
 
 
 msgid "Internal Error - AnimData block is not valid"
@@ -10703,10 +10667,6 @@ msgstr "Nie odnaleziono klipu filmowego"
 
 msgid "Mask not found"
 msgstr "Nie odnaleziono maski"
-
-
-msgid "Start and end frame are not set"
-msgstr "Klatka początkowa i końcowa nie są ustanowione"
 
 
 msgid "File '%s' could not be loaded"

@@ -33,13 +33,13 @@
 #  Acknowledgements
 #  ================
 #
-#  A big thank you to all those people who I met in particular in the IRC and  
+#  A big thank you to all those people who I met in particular in the IRC and
 #  who helped me a lot.
 #
 #  Blender developers
 #  ------------------
-#  Campbell Barton      (ideasman) 
-#  Brendon Murphy       (meta_androcto) 
+#  Campbell Barton      (ideasman)
+#  Brendon Murphy       (meta_androcto)
 #  Truman Melton (?)    (truman)
 #  Kilon Alios          (kilon)
 #  ??                   (CoDEmanX)
@@ -104,7 +104,7 @@ class AddonPreferences(AddonPreferences):
                default=True,
                description="Import/export XYZ",
                )
-    # This boolean is checked in the poll function in PANEL_PT_prepare 
+    # This boolean is checked in the poll function in PANEL_PT_prepare
     # (see utility.py).
     bool_utility : BoolProperty(
                    name="Utility panel",
@@ -119,7 +119,7 @@ class AddonPreferences(AddonPreferences):
         layout.prop(self, "bool_pdb")
         layout.prop(self, "bool_xyz")
         layout.prop(self, "bool_utility")
-        
+
 
 # -----------------------------------------------------------------------------
 #                                                                          Menu
@@ -149,7 +149,7 @@ def menu_func_export_xyz(self, context):
 
 def register():
     from bpy.utils import register_class
-    
+
     register_class(AddonPreferences)
 
     register_class(pdb_gui.IMPORT_OT_pdb)
@@ -162,21 +162,21 @@ def register():
     bpy.types.TOPBAR_MT_file_import.append(menu_func_import_xyz)
     bpy.types.TOPBAR_MT_file_export.append(menu_func_export_xyz)
 
-    classes = (utility_gui.PANEL_PT_prepare, 
+    classes = (utility_gui.PANEL_PT_prepare,
                 utility_gui.PanelProperties,
-                utility_gui.DatafileApply, 
-                utility_gui.DefaultAtom, 
-                utility_gui.ReplaceAtom, 
-                utility_gui.SeparateAtom, 
-                utility_gui.DistanceButton, 
-                utility_gui.RadiusAllBiggerButton, 
-                utility_gui.RadiusAllSmallerButton, 
-                utility_gui.SticksAllBiggerButton, 
+                utility_gui.DatafileApply,
+                utility_gui.DefaultAtom,
+                utility_gui.ReplaceAtom,
+                utility_gui.SeparateAtom,
+                utility_gui.DistanceButton,
+                utility_gui.RadiusAllBiggerButton,
+                utility_gui.RadiusAllSmallerButton,
+                utility_gui.SticksAllBiggerButton,
                 utility_gui.SticksAllSmallerButton)
     from bpy.utils import register_class
     utility_panel.read_elements()
     for cls in classes:
-        register_class(cls)    
+        register_class(cls)
 
     scene = bpy.types.Scene
     scene.atom_blend = bpy.props.PointerProperty(type=utility_gui.PanelProperties)
@@ -197,19 +197,19 @@ def unregister():
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import_xyz)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export_xyz)
 
-    classes = (utility_gui.PANEL_PT_prepare, 
+    classes = (utility_gui.PANEL_PT_prepare,
                 utility_gui.PanelProperties,
-                utility_gui.DatafileApply, 
-                utility_gui.DefaultAtom, 
-                utility_gui.ReplaceAtom, 
-                utility_gui.SeparateAtom, 
-                utility_gui.DistanceButton, 
-                utility_gui.RadiusAllBiggerButton, 
-                utility_gui.RadiusAllSmallerButton, 
-                utility_gui.SticksAllBiggerButton, 
+                utility_gui.DatafileApply,
+                utility_gui.DefaultAtom,
+                utility_gui.ReplaceAtom,
+                utility_gui.SeparateAtom,
+                utility_gui.DistanceButton,
+                utility_gui.RadiusAllBiggerButton,
+                utility_gui.RadiusAllSmallerButton,
+                utility_gui.SticksAllBiggerButton,
                 utility_gui.SticksAllSmallerButton)
     for cls in classes:
-        unregister_class(cls)        
+        unregister_class(cls)
 
 
 # -----------------------------------------------------------------------------

@@ -52,7 +52,7 @@ class SimpleOAuthAuthenticator(object):
         if response.status_code != 200:
             print("error retrieving refresh tokens %s" % response.status_code)
             print(response.content)
-            return None, None
+            return None, None, None
 
         response_json = json.loads(response.content)
         refresh_token = response_json ['refresh_token']

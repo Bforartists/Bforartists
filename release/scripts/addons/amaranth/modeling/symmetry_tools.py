@@ -181,7 +181,7 @@ def register():
     bpy.utils.register_class(AMTH_MESH_OT_find_asymmetric)
     bpy.utils.register_class(AMTH_MESH_OT_make_symmetric)
     bpy.types.VIEW3D_MT_edit_mesh.append(ui_symmetry_tools)
-    
+
 
 def unregister():
     bpy.utils.unregister_class(AMTH_MESH_OT_find_asymmetric)

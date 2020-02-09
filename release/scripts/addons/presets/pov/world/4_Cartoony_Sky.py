@@ -2,7 +2,7 @@ import bpy
 scene = bpy.context.scene
 
 scene.world.pov.use_sky_blend = True
-#below multiplied by two for a better proportion Clear vs Overcast sky 
+#below multiplied by two for a better proportion Clear vs Overcast sky
 #since Clear sky is 20000 lux vs 2000 for overcast
 scene.world.pov.horizon_color = (0.350*2, 0.611*2, 1.0*2)
 scene.world.pov.zenith_color = (0.05000000074505806*2, 0.125*2, 0.5*2)

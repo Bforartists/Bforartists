@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: 2020-01-04 09:08+0100\n"
 "Language-Team: pegas\n"
 "MIME-Version: 1.0\n"
@@ -11213,14 +11213,6 @@ msgid "Maximum number of additional cells"
 msgstr "Maximálny počet prídavných buniek"
 
 
-msgid "Density"
-msgstr "Hustota"
-
-
-msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Ako hustota ovplyvňuje pohyb dymu (vyššie hodnoty spôsobia rýchlejšie narastajúci dym)"
-
-
 msgid "Slice the whole domain object"
 msgstr "Rozkrájať celý objekt oblasti vplyvu"
 
@@ -11231,18 +11223,6 @@ msgstr "Jednoduhá"
 
 msgid "Perform a single slice of the domain object"
 msgstr "Vytvorí jednoduché rezy oblasti vplyvu objektu"
-
-
-msgid "Heat"
-msgstr "Teplo"
-
-
-msgid "How much heat affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Ako teplo ovplyvňuje pohyb dymu (vyššie hodnoty spôsobia rýchlejšie narastajúci dym)"
-
-
-msgid "Speed of the burning reaction (use larger values for smaller flame)"
-msgstr "Rýchlosť reakcie horenia (použitie vyšších hodnôt pre menší plameň)"
 
 
 msgid "End"
@@ -11309,6 +11289,10 @@ msgid "Blue component of the color field"
 msgstr "Modrá zložka farebného poľa"
 
 
+msgid "Density"
+msgstr "Hustota"
+
+
 msgid "Quantity of soot in the fluid"
 msgstr "Množstvo sadzí v kvapaline"
 
@@ -11327,6 +11311,10 @@ msgstr "Palivo"
 
 msgid "Fuel field"
 msgstr "Pole paliva"
+
+
+msgid "Heat"
+msgstr "Teplo"
 
 
 msgid "Temperature of the fluid"
@@ -11445,18 +11433,6 @@ msgid "Smoke flame grid"
 msgstr "Dym mriežky plameňa"
 
 
-msgid "Ignition"
-msgstr "Zapaľovanie"
-
-
-msgid "Minimum temperature of flames"
-msgstr "Minimálna teplota plameňa"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Maximálna teplota plameňa"
-
-
 msgid "Smoke"
 msgstr "Dym"
 
@@ -11549,10 +11525,6 @@ msgid "Noise Method"
 msgstr "Metóda šumu"
 
 
-msgid "Noise method which is used for creating the high resolution"
-msgstr "Metóda šumu použitá na vytvorenie vysokého rozlíšenia"
-
-
 msgid "Wavelet"
 msgstr "Wavelet"
 
@@ -11607,10 +11579,6 @@ msgstr "Rýchla, ale kompresia nie je efektívna"
 
 msgid "Heavy"
 msgstr "Ťažký"
-
-
-msgid "Max Res"
-msgstr "Maximálne rozlíšenie"
 
 
 msgid "Display Velocity"
@@ -11669,10 +11637,6 @@ msgid "Delete"
 msgstr "Odstrániť"
 
 
-msgid "Buoyancy"
-msgstr "Vztlak"
-
-
 msgid "p0"
 msgstr "p0"
 
@@ -11725,14 +11689,6 @@ msgid "Dissolve Smoke"
 msgstr "Rozplynúť dym"
 
 
-msgid "Enable smoke to disappear over time"
-msgstr "Povolí rozplynutie dymu v priebehu času"
-
-
-msgid "Using 1/x "
-msgstr "Použiť 1/x "
-
-
 msgid "Tracer"
 msgstr "Značkovanie"
 
@@ -11783,10 +11739,6 @@ msgstr "Exponent viskozity"
 
 msgid "Negative exponent for the viscosity value (to simplify entering small values e.g. 5*10^-6)"
 msgstr "Záporný exponent pre hodnotu viskozity (zjednoduší zadávanie malých hodnôt napr. 5*10^-6)"
-
-
-msgid "Amount of turbulence/rotation in fluid"
-msgstr "Množstvo turbulencie/rotácie v kvapaline"
 
 
 msgid "Fluid Mesh Velocity"
@@ -11959,10 +11911,6 @@ msgstr "Veľkosť smerovej rýchlosti kolmíc"
 
 msgid "Amount of random velocity"
 msgstr "Veľkosť náhodnej rýchlosti"
-
-
-msgid "Factor for smoke emitted from inside the mesh volume"
-msgstr "Faktor dymu emitovaného zvnútra objemu povrchovej siete"
 
 
 msgid "Freestyle Line Set"
@@ -15570,10 +15518,6 @@ msgid "Rotate"
 msgstr "Zakrútenie"
 
 
-msgid "Topology"
-msgstr "Topológia"
-
-
 msgid "Secondary Color"
 msgstr "Sekundárna farba"
 
@@ -16714,24 +16658,12 @@ msgid "Option for curve-deform: make deformed child to stretch along entire path
 msgstr "Voľba pre krivku deformácie: Vytvorí deformovaného potomka pozdĺž celej cesty"
 
 
-msgid "Use UV for mapping"
-msgstr "Použiť UV pre mapovanie"
-
-
-msgid "Uses the UV values as Generated textured coordinates"
-msgstr "Použije UV hodnoty ako vygenerované textúrované súradnice"
-
-
 msgid "Surface Curve"
 msgstr "Krivka povrchu"
 
 
 msgid "Curve data-block used for storing surfaces"
 msgstr "Blok údajov krivky použitý na uloženie povrchov"
-
-
-msgid "Use UV for Mapping"
-msgstr "Použiť UV pre mapovanie"
 
 
 msgid "Text Curve"
@@ -20256,24 +20188,12 @@ msgid "Lock Location"
 msgstr "Zamknúť polohu"
 
 
-msgid "Lock editing of location in the interface"
-msgstr "Zamkne úpravu polohy v rozhraní"
-
-
 msgid "Lock Rotation"
 msgstr "Zamknúť rotáciu"
 
 
-msgid "Lock editing of rotation in the interface"
-msgstr "Zamkne úpravu rotácie v rozhraní"
-
-
 msgid "Lock Rotation (4D Angle)"
 msgstr "Zamknúť rotáciu (uhol 4D)"
-
-
-msgid "Lock editing of 'angle' component of four-component rotations in the interface"
-msgstr "Zamkne úpravu 'uhla' štvoritého prvku rotácie v rozhraní"
 
 
 msgid "Lock Rotations (4D)"
@@ -20286,10 +20206,6 @@ msgstr "Zamkne úpravu štvoritého prvku rotácie podľa komponentov (namiesto 
 
 msgid "Lock Scale"
 msgstr "Zamknúť zmenu veľkosti"
-
-
-msgid "Lock editing of scale in the interface"
-msgstr "Zamkne úpravu mierky v rozhraní"
 
 
 msgid "Material Slots"
@@ -29665,6 +29581,10 @@ msgstr "Priradenie hrán"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Metóda používaná na priradenie zdrojových hrán k prvým cieľovým"
+
+
+msgid "Topology"
+msgstr "Topológia"
 
 
 msgid "Copy from identical topology meshes"
@@ -72890,6 +72810,10 @@ msgid "Settings for particle fluids physics"
 msgstr "Nastavenia pre fyziku častíc kvapaliny"
 
 
+msgid "Buoyancy"
+msgstr "Vztlak"
+
+
 msgid "Artificial buoyancy force in negative gravity direction based on pressure differences inside the fluid"
 msgstr "Umelá sila vztlaku v smere negatívnej gravitácie založená na rozdieloch tlaku vo vnútri kvapaliny"
 
@@ -85601,16 +85525,8 @@ msgid "Clumping amount"
 msgstr "Množstvo zhluku"
 
 
-msgid "Temperature Diff."
-msgstr "Teplotný rozdiel"
-
-
 msgid "Reaction Speed"
 msgstr "Rýchlosť reakcie"
-
-
-msgid "Temperature Ignition"
-msgstr "Teplota zapálenia"
 
 
 msgid "Add Resolution"
@@ -94738,40 +94654,12 @@ msgid "Cursor Y"
 msgstr "Kurzor Y"
 
 
-msgid "Display Color:"
-msgstr "Farba zobrazenia:"
-
-
-msgid "Auto Handle Smoothing:"
-msgstr "Auto vyhladenie manipulátora:"
-
-
 msgid "Interpolation:"
 msgstr "Interpolácia:"
 
 
 msgid "None for Enum/Boolean"
 msgstr "Nič pre sčítanie/Boolean"
-
-
-msgid "Key:"
-msgstr "Kľúč:"
-
-
-msgid "Frame:"
-msgstr "Snímka:"
-
-
-msgid "Value:"
-msgstr "Hodnota:"
-
-
-msgid "Left Handle:"
-msgstr "Ľavý manipulátor:"
-
-
-msgid "Right Handle:"
-msgstr "Pravý manipulátor:"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -94804,6 +94692,10 @@ msgstr "Výraz:"
 
 msgid "Add Input Variable"
 msgstr "Pridať premennú vstupu"
+
+
+msgid "Value:"
+msgstr "Hodnota:"
 
 
 msgid "Update Dependencies"
@@ -95179,28 +95071,12 @@ msgid "Verts:%s | Faces:%s | Tris:%s | Objects:%s/%s%s%s"
 msgstr "Vrcholy:%s | Plôšky:%s | Trojuholníky:%s | Objekty:%s/%s%s%s"
 
 
-msgid "Strip Extents:"
-msgstr "Pás rozšírení:"
-
-
-msgid "Playback Settings:"
-msgstr "Nastavenia prehrávania:"
-
-
-msgid "Action Extents:"
-msgstr "Akcie rozšírení:"
-
-
 msgid "Sync Length"
 msgstr "Dĺžka synchronizácie"
 
 
 msgid "Now"
 msgstr "Ihneď"
-
-
-msgid "Evaluation"
-msgstr "Vyhodnotenie"
 
 
 msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
@@ -95777,10 +95653,6 @@ msgstr "Filmový klip sa nenašiel"
 
 msgid "Mask not found"
 msgstr "Maska sa nenašla"
-
-
-msgid "Start and end frame are not set"
-msgstr "Počiatočná a koncová snímka nie je nastavená"
 
 
 msgid "File '%s' could not be loaded"
@@ -98632,10 +98504,6 @@ msgstr "Pokúšate sa znova načítať alebo premiestniť knižnicu '%s' na nepl
 
 msgid "Win"
 msgstr "Win klávesa"
-
-
-msgid "OSkey"
-msgstr "Klávesa OS"
 
 
 msgid "Bksp"

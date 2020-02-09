@@ -19,14 +19,14 @@
 bl_info = {
     "name": "BlenderKit Asset Library",
     "author": "Vilem Duha, Petr Dlouhy",
-    "version": (1, 0, 29),
+    "version": (1, 0, 30),
     "blender": (2, 82, 0),
     "location": "View3D > Properties > BlenderKit",
     "description": "Online BlenderKit library (materials, models, brushes and more)",
     "warning": "",
     "wiki_url": "https://youtu.be/1hVgcQhIAo8"
                 "Scripts/Add_Mesh/BlenderKit",
-    "category": "Add Mesh",
+    "category": "3D View",
 }
 
 if "bpy" in locals():
@@ -39,6 +39,7 @@ if "bpy" in locals():
     ratings = reload(ratings)
     autothumb = reload(autothumb)
     ui = reload(ui)
+    icons = reload(icons)
     bg_blender = reload(bg_blender)
     paths = reload(paths)
     utils = reload(utils)
@@ -48,7 +49,8 @@ if "bpy" in locals():
     bkit_oauth = reload(bkit_oauth)
     tasks_queue = reload(tasks_queue)
 else:
-    from blenderkit import asset_inspector, search, download, upload, ratings, autothumb, ui, bg_blender, paths, utils, \
+    from blenderkit import asset_inspector, search, download, upload, ratings, autothumb, ui, icons, bg_blender, paths, \
+        utils, \
         overrides, ui_panels, categories, bkit_oauth, tasks_queue
 
 import os
@@ -91,6 +93,7 @@ def scene_load(context):
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     preferences.login_attempt = False
 
+
 def check_timers_timer():
     ''' checks if all timers are registered regularly. Prevents possible bugs from stopping the addon.'''
     if not bpy.app.timers.is_registered(search.timer_update):
@@ -102,6 +105,7 @@ def check_timers_timer():
     if not bpy.app.timers.is_registered(bg_blender.bg_update):
         bpy.app.timers.register(bg_blender.bg_update)
     return 5.0
+
 
 licenses = (
     ('royalty_free', 'Royalty Free', 'royalty free commercial license'),
@@ -191,6 +195,7 @@ thumbnail_resolutions = (
     ('2048', '2048', ''),
 )
 
+
 def get_upload_asset_type(self):
     typemapper = {
         BlenderKitModelUploadProps: 'model',
@@ -244,16 +249,17 @@ def switch_search_results(self, context):
         s['search results orig'] = s.get('bkit brush search orig')
     search.load_previews()
 
+
 def asset_type_callback(self, context):
-    #s = bpy.context.scene
-    #ui_props = s.blenderkitUI
+    # s = bpy.context.scene
+    # ui_props = s.blenderkitUI
     if self.down_up == 'SEARCH':
         items = (
-            ('MODEL', 'Search Models', 'Browse models', 'OBJECT_DATAMODE', 0),
+            ('MODEL', 'Find Models', 'Find models in the BlenderKit online database', 'OBJECT_DATAMODE', 0),
             # ('SCENE', 'SCENE', 'Browse scenes', 'SCENE_DATA', 1),
-            ('MATERIAL', 'Search Materials', 'Browse materials', 'MATERIAL', 2),
+            ('MATERIAL', 'Find Materials', 'Find models in the BlenderKit online database', 'MATERIAL', 2),
             # ('TEXTURE', 'Texture', 'Browse textures', 'TEXTURE', 3),
-            ('BRUSH', 'Search Brushes', 'Browse brushes', 'BRUSH_DATA', 3)
+            ('BRUSH', 'Find Brushes', 'Find models in the BlenderKit online database', 'BRUSH_DATA', 3)
         )
     else:
         items = (
@@ -264,6 +270,7 @@ def asset_type_callback(self, context):
             ('BRUSH', 'Upload Brush', 'Upload a brush to BlenderKit', 'BRUSH_DATA', 3)
         )
     return items
+
 
 class BlenderKitUIProps(PropertyGroup):
     down_up: EnumProperty(
@@ -379,6 +386,12 @@ class BlenderKitUIProps(PropertyGroup):
     last_rating_time: FloatProperty(name="Last Rating Time", default=0.0)
 
 
+def search_procedural_update(self, context):
+    if self.search_procedural in ('PROCEDURAL', 'BOTH'):
+        self.search_texture_resolution = False
+    search.search_update(self, context)
+
+
 class BlenderKitCommonSearchProps(object):
     # STATES
     is_searching: BoolProperty(name="Searching", description="search is currently running (internal)", default=False)
@@ -386,18 +399,95 @@ class BlenderKitCommonSearchProps(object):
                                  default=False)
     search_done: BoolProperty(name="Search Completed", description="at least one search did run (internal)",
                               default=False)
+    own_only: BoolProperty(name="My Assets", description="Search only for your assets",
+                           default=False)
+    search_advanced: BoolProperty(name="Advanced Search Options", description="use advanced search properties",
+                                  default=False, update=search.search_update)
+
     search_error: BoolProperty(name="Search Error", description="last search had an error", default=False)
     report: StringProperty(
         name="Report",
         description="errors and messages",
         default="")
 
+    # TEXTURE RESOLUTION
+    search_texture_resolution: BoolProperty(name="Texture Resolution",
+                                            description="Span of the texture resolutions",
+                                            default=False,
+                                            update=search.search_update,
+                                            )
+    search_texture_resolution_min: IntProperty(name="Min Texture Resolution",
+                                               description="Minimum texture resolution",
+                                               default=256,
+                                               min=0,
+                                               max=32768,
+                                               update=search.search_update,
+                                               )
+
+    search_texture_resolution_max: IntProperty(name="Max Texture Resolution",
+                                               description="Maximum texture resolution",
+                                               default=4096,
+                                               min=0,
+                                               max=32768,
+                                               update=search.search_update,
+                                               )
+
+    # file_size
+    search_file_size: BoolProperty(name="File Size",
+                                   description="Span of the file sizes",
+                                   default=False,
+                                   update=search.search_update,
+                                   )
+    search_file_size_min: IntProperty(name="Min File Size",
+                                      description="Minimum file size",
+                                      default=0,
+                                      min=0,
+                                      max=2000,
+                                      update=search.search_update,
+                                      )
+
+    search_file_size_max: IntProperty(name="Max File Size",
+                                      description="Maximum file size",
+                                      default=500,
+                                      min=0,
+                                      max=2000,
+                                      update=search.search_update,
+                                      )
+
+    search_procedural: EnumProperty(
+        items=(
+            ('BOTH', 'Both', ''),
+            ('PROCEDURAL', 'Procedural', ''),
+            ('TEXTURE_BASED', 'Texture based', ''),
+
+        ),
+        default='BOTH',
+        description='Search only procedural/texture based assets',
+        update=search_procedural_update
+    )
+
+    search_verification_status: EnumProperty(
+        name="Verification status",
+        description="Search by verification status",
+        items=
+        (
+            ('ALL', 'All', 'All'),
+            ('UPLOADING', 'Uploading', 'Uploading'),
+            ('UPLOADED', 'Uploaded', 'Uploaded'),
+            ('READY', 'Ready for V.', 'Ready for validation (deprecated since 2.8)'),
+            ('VALIDATED', 'Validated', 'Calidated'),
+            ('ON_HOLD', 'On Hold', 'On Hold'),
+            ('REJECTED', 'Rejected', 'Rejected'),
+            ('DELETED', 'Deleted', 'Deleted'),
+        ),
+        default='ALL',
+    )
+
 
 def name_update(self, context):
     ''' checks for name change, because it decides if whole asset has to be re-uploaded. Name is stored in the blend file
     and that's the reason.'''
     utils.name_update()
-
 
 
 def update_tags(self, context):
@@ -424,6 +514,7 @@ def update_tags(self, context):
     if props.tags != ns:
         props.tags = ns
 
+
 def update_free(self, context):
     if self.is_free == False:
         self.is_free = True
@@ -437,6 +528,7 @@ def update_free(self, context):
             ui_panels.label_multiline(self.layout, text=message, icon='NONE', width=-1)
 
         bpy.context.window_manager.popup_menu(draw_message, title=title, icon='INFO')
+
 
 class BlenderKitCommonUploadProps(object):
     id: StringProperty(
@@ -504,12 +596,12 @@ class BlenderKitCommonUploadProps(object):
     )
 
     is_procedural: BoolProperty(name="Procedural",
-                          description="Asset is procedural - has no texture.",
-                          default=True
-                          )
+                                description="Asset is procedural - has no texture.",
+                                default=True
+                                )
     node_count: IntProperty(name="Node count", description="Total nodes in the asset", default=0)
-    texture_count: IntProperty(name="Node count", description="Total nodes in the asset", default=0)
-    total_megapixels: IntProperty(name="Node count", description="Total nodes in the asset", default=0)
+    texture_count: IntProperty(name="Texture count", description="Total texture count in asset", default=0)
+    total_megapixels: IntProperty(name="Megapixels", description="Total megapixels of texture", default=0)
 
     # is_private: BoolProperty(name="Asset is Private",
     #                       description="If not marked private, your asset will go into the validation process automatically\n"
@@ -555,9 +647,16 @@ class BlenderKitCommonUploadProps(object):
 
 
 class BlenderKitRatingProps(PropertyGroup):
-    rating_quality: IntProperty(name="Quality", description="quality of the material", default=0, min=-1, max=10)
-    rating_work_hours: FloatProperty(name="Work Hours", description="How many hours did this work take?", default=0.01,
-                                     min=0.0, max=1000
+    rating_quality: IntProperty(name="Quality",
+                                description="quality of the material",
+                                default=0,
+                                min=-1, max=10,
+                                update=ratings.update_ratings_quality)
+
+    rating_work_hours: FloatProperty(name="Work Hours",
+                                     description="How many hours did this work take?",
+                                     default=0.01,
+                                     min=0.0, max=1000, update=ratings.update_ratings_work_hours
                                      )
     rating_complexity: IntProperty(name="Complexity",
                                    description="Complexity is a number estimating how much work was spent on the asset.aaa",
@@ -591,22 +690,26 @@ class BlenderKitMaterialSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
         items=search_material_styles,
         description="Style of material",
         default="ANY",
+        update=search.search_update,
     )
     search_style_other: StringProperty(
         name="Style Other",
         description="Style not in the list",
         default="",
+        update=search.search_update,
     )
     search_engine: EnumProperty(
         name='Engine',
         items=engines,
         default='NONE',
         description='Output engine',
+        update=search.search_update,
     )
     search_engine_other: StringProperty(
         name="Engine",
         description="engine not specified by addon",
         default="",
+        update=search.search_update,
     )
     automap: BoolProperty(name="Auto-Map",
                           description="reset object texture space and also add automatically a cube mapped UV "
@@ -1145,10 +1248,7 @@ class BlenderKitModelSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
     )
 
     free_only: BoolProperty(name="Free only", description="Show only free models",
-                            default=False)
-
-    search_advanced: BoolProperty(name="Advanced Search Options", description="use advanced search properties",
-                                  default=False)
+                            default=False, update=search.search_update)
 
     # CONDITION
     search_condition: EnumProperty(
@@ -1167,52 +1267,45 @@ class BlenderKitModelSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
 
     # DESIGN YEAR
     search_design_year: BoolProperty(name="Sesigned in Year",
-                                     description="when the object was approximately designed",
-                                     default=False)
+                                     description="When the object was approximately designed",
+                                     default=False,
+                                     update=search.search_update,
+                                     )
 
-    search_design_year_min: IntProperty(name="Min Age",
-                                        description="when the object was approximately designed",
-                                        default=1950, min=-100000000, max=1000000000)
+    search_design_year_min: IntProperty(name="Minimum Design Year",
+                                        description="Minimum design year",
+                                        default=1950, min=-100000000, max=1000000000,
+                                        update=search.search_update,
+                                        )
 
-    search_design_year_max: IntProperty(name="Max Age",
-                                        description="when the object was approximately designed",
+    search_design_year_max: IntProperty(name="Maximum Design Year",
+                                        description="Maximum design year",
                                         default=2017,
                                         min=0,
-                                        max=10000000)
-
-    # TEXTURE RESOLUTION
-    search_texture_resolution: BoolProperty(name="Texture Resolution",
-                                            description="Span of the texture resolutions",
-                                            default=False)
-
-    search_texture_resolution_min: IntProperty(name="Min Texture Resolution",
-                                               description="when the object was approximately designed",
-                                               default=256,
-                                               min=0,
-                                               max=32768)
-
-    search_texture_resolution_max: IntProperty(name="Max Texture Resolution",
-                                               description="when the object was approximately designed",
-                                               default=4096,
-                                               min=0,
-                                               max=32768)
+                                        max=10000000,
+                                        update=search.search_update,
+                                        )
 
     # POLYCOUNT
     search_polycount: BoolProperty(name="Use Polycount",
-                                   description="use polycount of object search tag",
-                                   default=False)
+                                   description="Use polycount of object search tag",
+                                   default=False,
+                                   update=search.search_update, )
 
     search_polycount_min: IntProperty(name="Min Polycount",
-                                      description="polycount of the asset minimum",
+                                      description="Minimum poly count of the asset",
                                       default=0,
                                       min=0,
-                                      max=100000000)
+                                      max=100000000,
+                                      update=search.search_update, )
 
     search_polycount_max: IntProperty(name="Max Polycount",
-                                      description="polycount of the asset maximum",
+                                      description="Maximum poly count of the asset",
                                       default=100000000,
                                       min=0,
-                                      max=100000000)
+                                      max=100000000,
+                                      update=search.search_update,
+                                      )
 
     append_method: EnumProperty(
         name="Import Method",
@@ -1324,9 +1417,9 @@ class BlenderKitAddonPreferences(AddonPreferences):
     )
 
     api_key_timeout: IntProperty(
-        name = 'api key timeout',
-        description = 'time where the api key will need to be refreshed',
-        default = 0,
+        name='api key timeout',
+        description='time where the api key will need to be refreshed',
+        default=0,
     )
 
     api_key_life: IntProperty(
@@ -1351,6 +1444,18 @@ class BlenderKitAddonPreferences(AddonPreferences):
         name="Show assetbar when starting blender",
         description="Show assetbar when starting blender",
         default=False
+    )
+
+    tips_on_start: BoolProperty(
+        name="Show tips when starting blender",
+        description="Show tips when starting blender",
+        default=False
+    )
+
+    search_in_header: BoolProperty(
+        name="Show BlenderKit search in 3d view header",
+        description="Show BlenderKit search in 3d view header",
+        default=True
     )
 
     global_dir: StringProperty(
@@ -1389,7 +1494,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
     thumbnail_use_gpu: BoolProperty(
         name="Use GPU for Thumbnails Rendering",
         description="By default this is off so you can continue your work without any lag",
-        default=True
+        default=False
     )
 
     panel_behaviour: EnumProperty(
@@ -1413,9 +1518,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
                                    min=0,
                                    max=20)
 
-
     thumb_size: IntProperty(name="Assetbar thumbnail Size", default=96, min=-1, max=256)
-
 
     asset_counter: IntProperty(name="Usage Counter",
                                description="Counts usages so it asks for registration only after reaching a limit",
@@ -1447,7 +1550,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
                 layout.operator("wm.blenderkit_logout", text="Logout",
                                 icon='URL')
 
-        #if not self.enable_oauth:
+        # if not self.enable_oauth:
         layout.prop(self, "api_key", text='Your API Key')
         # layout.label(text='After you paste API Key, categories are downloaded, so blender will freeze for a few seconds.')
         layout.prop(self, "global_dir")
@@ -1459,6 +1562,8 @@ class BlenderKitAddonPreferences(AddonPreferences):
         # layout.prop(self, "panel_behaviour")
         layout.prop(self, "thumb_size")
         layout.prop(self, "max_assetbar_rows")
+        layout.prop(self, "tips_on_start")
+        layout.prop(self, "search_in_header")
 
 
 # registration
@@ -1531,6 +1636,7 @@ def register():
     ratings.register_ratings()
     autothumb.register_thumbnailer()
     ui.register_ui()
+    icons.register_icons()
     ui_panels.register_ui_panels()
     bg_blender.register()
     utils.load_prefs()
@@ -1538,16 +1644,16 @@ def register():
     bkit_oauth.register()
     tasks_queue.register()
 
-    bpy.app.timers.register(check_timers_timer)
+    bpy.app.timers.register(check_timers_timer, persistent=True)
 
     bpy.app.handlers.load_post.append(scene_load)
 
 
 def unregister():
-
     bpy.app.timers.unregister(check_timers_timer)
 
     ui.unregister_ui()
+    icons.unregister_icons()
     search.unregister_search()
     asset_inspector.unregister_asset_inspector()
     download.unregister_download()

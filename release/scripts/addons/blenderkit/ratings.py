@@ -22,8 +22,9 @@ if "bpy" in locals():
     paths = reload(paths)
     utils = reload(utils)
     rerequests = reload(rerequests)
+    tasks_queue = reload(tasks_queue)
 else:
-    from blenderkit import paths, utils, rerequests
+    from blenderkit import paths, utils, rerequests, tasks_queue
 
 import bpy
 import requests, threading
@@ -44,12 +45,7 @@ from bpy.types import (
 
 def pretty_print_POST(req):
     """
-    At this point it is completely built and ready
-    to be fired; it is "prepared".
-
-    However pay attention at the formatting used in
-    this function because it is programmed to be pretty
-    printed and may differ from the actual request.
+    pretty print a request
     """
     print('{}\n{}\n{}\n\n{}'.format(
         '-----------START-----------',
@@ -60,6 +56,8 @@ def pretty_print_POST(req):
 
 
 def uplaod_rating_thread(url, ratings, headers):
+    ''' Upload rating thread function / disconnected from blender data.'''
+    utils.p('upload rating', url, ratings)
     for rating_name, score in ratings:
         if (score != -1 and score != 0):
             rating_url = url + rating_name + '/'
@@ -74,6 +72,19 @@ def uplaod_rating_thread(url, ratings, headers):
                 print('ratings upload failed: %s' % str(e))
 
 
+def send_rating_to_thread_quality(url, ratings, headers):
+    '''Sens rating into thread rating, main purpose is for tasks_queue.
+    One function per property to avoid lost data due to stashing.'''
+    thread = threading.Thread(target=uplaod_rating_thread, args=(url, ratings, headers))
+    thread.start()
+
+def send_rating_to_thread_work_hours(url, ratings, headers):
+    '''Sens rating into thread rating, main purpose is for tasks_queue.
+    One function per property to avoid lost data due to stashing.'''
+    thread = threading.Thread(target=uplaod_rating_thread, args=(url, ratings, headers))
+    thread.start()
+
+
 def uplaod_review_thread(url, reviews, headers):
     r = rerequests.put(url, data=reviews, verify=True, headers=headers)
 
@@ -81,18 +92,57 @@ def uplaod_review_thread(url, reviews, headers):
     #     print('reviews upload failed: %s' % str(e))
 
 
+def get_rating(asset_id):
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    api_key = user_preferences.api_key
+    headers = utils.get_headers(api_key)
+    rl = paths.get_api_url() + 'assets/' + asset['asset_data']['id'] + '/rating/'
+    rtypes = ['quality', 'working_hours']
+    for rt in rtypes:
+        params = {
+            'rating_type': rt
+        }
+        r = rerequests.get(r1, params=data, verify=True, headers=headers)
+        print(r.text)
+
+
+def update_ratings_quality(self, context):
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    api_key = user_preferences.api_key
+    headers = utils.get_headers(api_key)
+    asset = self.id_data
+    bkit_ratings = asset.bkit_ratings
+    url = paths.get_api_url() + 'assets/' + asset['asset_data']['id'] + '/rating/'
+
+    if bkit_ratings.rating_quality > 0.1:
+        ratings = [('quality', bkit_ratings.rating_quality)]
+        tasks_queue.add_task((send_rating_to_thread_quality, (url, ratings, headers)), wait=1, only_last=True)
+
+
+def update_ratings_work_hours(self, context):
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    api_key = user_preferences.api_key
+    headers = utils.get_headers(api_key)
+    asset = self.id_data
+    bkit_ratings = asset.bkit_ratings
+    url = paths.get_api_url() + 'assets/' + asset['asset_data']['id'] + '/rating/'
+
+    if bkit_ratings.rating_quality > 0.1:
+        ratings = [('working_hours', round(bkit_ratings.rating_work_hours, 1))]
+        tasks_queue.add_task((send_rating_to_thread_work_hours, (url, ratings, headers)), wait=1, only_last=True)
+
+
 def upload_rating(asset):
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     api_key = user_preferences.api_key
     headers = utils.get_headers(api_key)
-
-    asset_data = asset['asset_data']
 
     bkit_ratings = asset.bkit_ratings
     # print('rating asset', asset_data['name'], asset_data['asset_base_id'])
     url = paths.get_api_url() + 'assets/' + asset['asset_data']['id'] + '/rating/'
 
     ratings = [
+
     ]
 
     if bkit_ratings.rating_quality > 0.1:
@@ -123,8 +173,8 @@ def upload_rating(asset):
 class StarRatingOperator(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "object.blenderkit_rating"
-    bl_label = "Rate the Asset"
-    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+    bl_label = "Rate the Asset Quality"
+    bl_options = {'REGISTER', 'INTERNAL'}
 
     property_name: StringProperty(
         name="Rating Property",
@@ -137,7 +187,7 @@ class StarRatingOperator(bpy.types.Operator):
     def execute(self, context):
         asset = utils.get_active_asset()
         props = asset.bkit_ratings
-        props[self.property_name] = self.rating
+        props.rating_quality = self.rating
         return {'FINISHED'}
 
 
@@ -151,19 +201,20 @@ asset_types = (
 )
 
 
+# TODO drop this operator, not needed anymore.
 class UploadRatingOperator(bpy.types.Operator):
     """Upload rating to the web db"""
     bl_idname = "object.blenderkit_rating_upload"
-    bl_label = "Upload the Rating"
+    bl_label = "Send Rating"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     # type of upload - model, material, textures, e.t.c.
-    asset_type: EnumProperty(
-        name="Type",
-        items=asset_types,
-        description="Type of asset",
-        default="MODEL",
-    )
+    # asset_type: EnumProperty(
+    #     name="Type",
+    #     items=asset_types,
+    #     description="Type of asset",
+    #     default="MODEL",
+    # )
 
     # @classmethod
     # def poll(cls, context):

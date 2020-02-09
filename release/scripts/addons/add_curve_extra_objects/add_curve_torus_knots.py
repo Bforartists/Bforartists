@@ -669,7 +669,7 @@ class torus_knot_plus(Operator, AddObjectHelper):
             box.prop(self, "colorSet")
             box.prop(self, "random_colors")
             box.prop(self, "saturation")
-            
+
         col = layout.column()
         col.row().prop(self, "edit_mode", expand=True)
 
@@ -689,7 +689,7 @@ class torus_knot_plus(Operator, AddObjectHelper):
         # turn off 'Enter Edit Mode'
         use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
         bpy.context.preferences.edit.use_enter_edit_mode = False
-        
+
         if self.mode == 'EXT_INT':
             # adjust the equivalent radii pair : (R,r) <=> (eR,iR)
             self.torus_R = (self.torus_eR + self.torus_iR) * 0.5
@@ -721,10 +721,10 @@ class torus_knot_plus(Operator, AddObjectHelper):
 
         # create the curve
         create_torus_knot(self, context)
-        
+
         if use_enter_edit_mode:
             bpy.ops.object.mode_set(mode = 'EDIT')
-        
+
         # restore pre operator state
         bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 

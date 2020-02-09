@@ -385,6 +385,7 @@ class TOPBAR_MT_templates_more(Menu):
 class TOPBAR_MT_file_import(Menu):
     bl_idname = "TOPBAR_MT_file_import"
     bl_label = "Import"
+    bl_owner_use_filter = False
 
     def draw(self, _context):
         if bpy.app.build_options.collada:
@@ -396,6 +397,7 @@ class TOPBAR_MT_file_import(Menu):
 class TOPBAR_MT_file_export(Menu):
     bl_idname = "TOPBAR_MT_file_export"
     bl_label = "Export"
+    bl_owner_use_filter = False
 
     def draw(self, _context):
         if bpy.app.build_options.collada:

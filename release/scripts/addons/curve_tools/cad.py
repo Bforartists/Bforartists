@@ -70,9 +70,9 @@ class Boolean(bpy.types.Operator):
 
     def execute(self, context):
         current_mode = bpy.context.object.mode
-        
+
         bpy.ops.object.mode_set(mode = 'EDIT')
-        
+
         if bpy.context.object.data.dimensions != '2D':
             self.report({'WARNING'}, 'Can only be applied in 2D')
             return {'CANCELLED'}
@@ -86,9 +86,9 @@ class Boolean(bpy.types.Operator):
         if not internal.bezierBooleanGeometry(splineA, splineB, self.operation):
             self.report({'WARNING'}, 'Invalid selection. Only work to selected two spline.')
             return {'CANCELLED'}
-        
+
         bpy.ops.object.mode_set (mode = current_mode)
-        
+
         return {'FINISHED'}
 
 class Intersection(bpy.types.Operator):
@@ -108,7 +108,7 @@ class Intersection(bpy.types.Operator):
 
         internal.bezierMultiIntersection(segments)
         return {'FINISHED'}
-        
+
 class HandleProjection(bpy.types.Operator):
     bl_idname = 'curvetools.bezier_cad_handle_projection'
     bl_description = bl_label = 'Handle Projection'
@@ -191,7 +191,7 @@ class Subdivide(bpy.types.Operator):
 
     def execute(self, context):
         current_mode = bpy.context.object.mode
-        
+
         bpy.ops.object.mode_set(mode = 'EDIT')
 
         segments = internal.bezierSegments(bpy.context.object.data.splines, True)
@@ -206,7 +206,7 @@ class Subdivide(bpy.types.Operator):
         for segment in segments:
             segment['cuts'].extend(cuts)
         internal.subdivideBezierSegments(segments)
-        
+
         bpy.ops.object.mode_set (mode = current_mode)
         return {'FINISHED'}
 

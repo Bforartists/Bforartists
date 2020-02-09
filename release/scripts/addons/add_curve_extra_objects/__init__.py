@@ -276,7 +276,7 @@ def register():
     from bpy.utils import register_class
     for cls in classes:
         register_class(cls)
-    
+
     add_curve_simple.register()
     add_curve_spirals.register()
     add_curve_aceous_galore.register()
@@ -287,7 +287,7 @@ def register():
     add_curve_spirofit_bouncespline.register()
     add_surface_plane_cone.register()
     beveltaper_curve.register()
-    
+
     # Add "Extras" menu to the "Add Curve" menu
     bpy.types.VIEW3D_MT_curve_add.append(menu_func)
     # Add "Extras" menu to the "Add Surface" menu
@@ -299,7 +299,7 @@ def unregister():
     bpy.types.VIEW3D_MT_curve_add.remove(menu_func)
     # Remove "Extras" menu from the "Add Surface" menu.
     bpy.types.VIEW3D_MT_surface_add.remove(menu_surface)
-    
+
     add_surface_plane_cone.unregister()
     add_curve_spirofit_bouncespline.unregister()
     add_curve_curly.unregister()
@@ -310,7 +310,7 @@ def unregister():
     add_curve_spirals.unregister()
     add_curve_simple.unregister()
     beveltaper_curve.unregister()
-    
+
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)

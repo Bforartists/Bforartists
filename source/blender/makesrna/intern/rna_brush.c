@@ -151,9 +151,13 @@ const EnumPropertyItem rna_enum_brush_gpencil_types_items[] = {
 
 #ifndef RNA_RUNTIME
 static EnumPropertyItem rna_enum_gpencil_brush_eraser_modes_items[] = {
-    {GP_BRUSH_ERASER_SOFT, "SOFT", 0, "Soft", "Use soft eraser"},
-    {GP_BRUSH_ERASER_HARD, "HARD", 0, "Hard", "Use hard eraser"},
-    {GP_BRUSH_ERASER_STROKE, "STROKE", 0, "Stroke", "Use stroke eraser"},
+    {GP_BRUSH_ERASER_SOFT,
+     "SOFT",
+     0,
+     "Dissolve,",
+     "Erase strokes, fading their points strength and thickness"},
+    {GP_BRUSH_ERASER_HARD, "HARD", 0, "Point", "Erase stroke points"},
+    {GP_BRUSH_ERASER_STROKE, "STROKE", 0, "Stroke", "Erase entire strokes"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -778,7 +782,7 @@ static void rna_BrushGpencilSettings_use_material_pin_update(bContext *C, Pointe
   Brush *brush = (Brush *)ptr->owner_id;
 
   if (brush->gpencil_settings->flag & GP_BRUSH_MATERIAL_PINNED) {
-    Material *material = give_current_material(ob, ob->actcol);
+    Material *material = BKE_object_material_get(ob, ob->actcol);
     BKE_gpencil_brush_material_set(brush, material);
   }
   else {

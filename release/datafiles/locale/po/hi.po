@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -1493,14 +1493,6 @@ msgid "Filter Text"
 msgstr "निस्पादक पाठ"
 
 
-msgid "Density"
-msgstr "घनत्व"
-
-
-msgid "Heat"
-msgstr "गर्मी"
-
-
 msgid "End"
 msgstr "समाप्त"
 
@@ -1525,8 +1517,16 @@ msgid "Blue"
 msgstr "नीला"
 
 
+msgid "Density"
+msgstr "घनत्व"
+
+
 msgid "Flame"
 msgstr "लौ"
+
+
+msgid "Heat"
+msgstr "गर्मी"
 
 
 msgid "Color Grid"
@@ -2020,10 +2020,6 @@ msgstr "बिंदू विस्तार v"
 
 msgid "Z-Up"
 msgstr "Z-ऊर्ध्व"
-
-
-msgid "Use UV for mapping"
-msgstr "प्रतिचित्रण के लिए यूवी उपयोग करें"
 
 
 msgid "Flush"
@@ -7544,14 +7540,6 @@ msgid "File name"
 msgstr "संचिका का नाम"
 
 
-msgid "Display Color:"
-msgstr "रंग प्रदर्शित करें:"
-
-
-msgid "Key:"
-msgstr "कुंजी:"
-
-
 msgid "Value:"
 msgstr "मान:"
 
@@ -7570,10 +7558,6 @@ msgstr "असमर्थित श्रव्य स्वरूप"
 
 msgid "(Key) "
 msgstr "(कुंजी) "
-
-
-msgid "Playback Settings:"
-msgstr "प्लेबैक सेटिंग्स:"
 
 
 msgid "Speed:"

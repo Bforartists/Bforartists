@@ -61,7 +61,7 @@ class AlignVertices(Operator):
 
     def execute(self, context):
         automirror = context.scene.automirror
-        
+
         bpy.ops.object.mode_set(mode = 'OBJECT')
 
         x1,y1,z1 = bpy.context.scene.cursor.location
@@ -142,7 +142,7 @@ class AutoMirror(bpy.types.Operator):
         automirror = context.scene.automirror
 
         X,Y,Z = 0,0,0
-        
+
         if automirror.axis == 'x':
             X = 1
         elif automirror.axis == 'y':
@@ -154,14 +154,14 @@ class AutoMirror(bpy.types.Operator):
 
         if bpy.context.object.mode != "EDIT":
             bpy.ops.object.mode_set(mode = "EDIT") # Go to edit mode
-        
+
         bpy.ops.mesh.select_all(action = 'SELECT') # Select all the vertices
-        
+
         if automirror.orientation == 'positive':
             orientation = 1
         else:
             orientation = -1
-        
+
         cut_normal = self.get_local_axis_vector(context, X, Y, Z, orientation)
 
         # Cut the mesh
@@ -213,7 +213,7 @@ class VIEW3D_PT_BisectMirror(Panel):
 
     def draw(self, context):
         automirror = context.scene.automirror
-        
+
         layout = self.layout
         col = layout.column(align=True)
 
@@ -266,7 +266,7 @@ class AutoMirrorProps(PropertyGroup):
     clipping : BoolProperty(
         default=True,
         )
-        
+
     Use_Matcap : BoolProperty(
         default=True,
         description="Use clipping for the mirror modifier",
@@ -340,7 +340,7 @@ classes = (
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-        
+
     bpy.types.Scene.automirror = PointerProperty(type = AutoMirrorProps)
     update_panel(None, bpy.context)
 
@@ -348,7 +348,7 @@ def register():
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
-        
+
     del bpy.types.Scene.automirror
 
 if __name__ == "__main__":

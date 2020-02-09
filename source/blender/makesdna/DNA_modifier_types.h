@@ -24,6 +24,10 @@
 #include "DNA_defs.h"
 #include "DNA_listBase.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* WARNING ALERT! TYPEDEF VALUES ARE WRITTEN IN FILES! SO DO NOT CHANGE!
  * (ONLY ADD NEW ITEMS AT THE END)
  */
@@ -182,8 +186,14 @@ typedef struct LatticeModifierData {
   /** Optional vertexgroup name, MAX_VGROUP_NAME. */
   char name[64];
   float strength;
-  char _pad[4];
+  short flag;
+  char _pad[2];
 } LatticeModifierData;
+
+/*Lattice modifier flags */
+enum {
+  MOD_LATTICE_INVERT_VGROUP = (1 << 0),
+};
 
 typedef struct CurveModifierData {
   ModifierData modifier;
@@ -193,8 +203,14 @@ typedef struct CurveModifierData {
   char name[64];
   /** Axis along which curve deforms. */
   short defaxis;
-  char _pad[6];
+  short flag;
+  char _pad[4];
 } CurveModifierData;
+
+/* Curve modifier flags */
+enum {
+  MOD_CURVE_INVERT_VGROUP = (1 << 0),
+};
 
 /* CurveModifierData->defaxis */
 enum {
@@ -492,7 +508,14 @@ typedef struct DisplaceModifierData {
   char defgrp_name[64];
   float midlevel;
   int space;
+  short flag;
+  char _pad[6];
 } DisplaceModifierData;
+
+/* DisplaceModifierData->flag */
+enum {
+  MOD_DISP_INVERT_VGROUP = (1 << 0),
+};
 
 /* DisplaceModifierData->direction */
 enum {
@@ -591,6 +614,7 @@ typedef struct SmoothModifierData {
 
 /* Smooth modifier flags */
 enum {
+  MOD_SMOOTH_INVERT_VGROUP = (1 << 0),
   MOD_SMOOTH_X = (1 << 1),
   MOD_SMOOTH_Y = (1 << 2),
   MOD_SMOOTH_Z = (1 << 3),
@@ -1293,13 +1317,17 @@ typedef struct WarpModifierData {
   char defgrp_name[64];
   float strength;
   float falloff_radius;
-  /** Not used yet. */
   char flag;
   char falloff_type;
   char _pad[6];
 } WarpModifierData;
 
 #define MOD_WARP_VOLUME_PRESERVE 1
+
+/* WarpModifierData->flag */
+enum {
+  MOD_WARP_INVERT_VGROUP = (1 << 0),
+};
 
 typedef enum {
   eWarp_Falloff_None = 0,
@@ -2017,5 +2045,9 @@ enum {
 
 #define MOD_MESHSEQ_READ_ALL \
   (MOD_MESHSEQ_READ_VERT | MOD_MESHSEQ_READ_POLY | MOD_MESHSEQ_READ_UV | MOD_MESHSEQ_READ_COLOR)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __DNA_MODIFIER_TYPES_H__ */

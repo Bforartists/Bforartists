@@ -336,7 +336,7 @@ class add_mesh_bolt(Operator, AddObjectHelper):
         return context.scene is not None
 
     def execute(self, context):
-    
+
         if bpy.context.mode == "OBJECT":
             if context.selected_objects != [] and context.active_object and \
             ('Bolt' in context.active_object.data.keys()) and (self.change == True):
@@ -349,16 +349,16 @@ class add_mesh_bolt(Operator, AddObjectHelper):
                     bpy.ops.object.vertex_group_remove(all=True)
                 except:
                     pass
-                
+
                 for material in oldmesh.materials:
                     obj.data.materials.append(material)
-                    
+
                 bpy.data.meshes.remove(oldmesh)
                 obj.data.name = oldmeshname
             else:
                 mesh = createMesh.Create_New_Mesh(self, context)
                 obj = object_utils.object_data_add(context, mesh, operator=self)
-                
+
             obj.data["Bolt"] = True
             obj.data["change"] = False
             for prm in BoltParameters():
@@ -370,7 +370,7 @@ class add_mesh_bolt(Operator, AddObjectHelper):
             bpy.ops.object.mode_set(mode='OBJECT')
             mesh = createMesh.Create_New_Mesh(self, context)
             obj = object_utils.object_data_add(context, mesh, operator=self)
-            
+
             obj.select_set(True)
             active_object.select_set(True)
             bpy.ops.object.join()
@@ -387,10 +387,10 @@ class add_mesh_bolt(Operator, AddObjectHelper):
 # Register:
 def Bolt_contex_menu(self, context):
     bl_label = 'Change'
-    
+
     obj = context.object
     layout = self.layout
-    
+
     if 'Bolt' in obj.data.keys():
         props = layout.operator("mesh.bolt_add", text="Change Bolt")
         props.change = True
@@ -408,8 +408,8 @@ classes = (
     add_mesh_bolt,
 )
 
-		
-		
+
+
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)

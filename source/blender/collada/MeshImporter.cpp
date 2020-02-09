@@ -279,7 +279,7 @@ bool MeshImporter::is_nice_mesh(COLLADAFW::Mesh *mesh)
 
   const std::string &name = bc_get_dae_name(mesh);
 
-  for (unsigned i = 0; i < prim_arr.getCount(); i++) {
+  for (unsigned int i = 0; i < prim_arr.getCount(); i++) {
 
     COLLADAFW::MeshPrimitive *mp = prim_arr[i];
     COLLADAFW::MeshPrimitive::PrimitiveType type = mp->getPrimitiveType();
@@ -683,7 +683,7 @@ void MeshImporter::read_polys(COLLADAFW::Mesh *collada_mesh, Mesh *me)
     // XXX The proper function of TRIANGLE_FANS is not tested!!!
     // XXX In particular the handling of the normal_indices looks very wrong to me
     if (collada_meshtype == COLLADAFW::MeshPrimitive::TRIANGLE_FANS) {
-      unsigned grouped_vertex_count = mp->getGroupedVertexElementsCount();
+      unsigned int grouped_vertex_count = mp->getGroupedVertexElementsCount();
       for (unsigned int group_index = 0; group_index < grouped_vertex_count; group_index++) {
         unsigned int first_vertex = position_indices[0];  // Store first trifan vertex
         unsigned int first_normal = normal_indices[0];    // Store first trifan vertex normal
@@ -1076,7 +1076,7 @@ void MeshImporter::assign_material_to_geom(
   // Attention! This temporarily assigns material to object on purpose!
   // See note above.
   ob->actcol = 0;
-  assign_material(m_bmain, ob, ma, mat_index + 1, BKE_MAT_ASSIGN_OBJECT);
+  BKE_object_material_assign(m_bmain, ob, ma, mat_index + 1, BKE_MAT_ASSIGN_OBJECT);
 
   MaterialIdPrimitiveArrayMap &mat_prim_map = geom_uid_mat_mapping_map[*geom_uid];
   COLLADAFW::MaterialId mat_id = cmaterial.getMaterialId();

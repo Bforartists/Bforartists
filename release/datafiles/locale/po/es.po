@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzan <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -11440,14 +11440,6 @@ msgid "Maximum number of additional cells"
 msgstr "Cantidad máxima de celdas adicionales"
 
 
-msgid "Density"
-msgstr "Densidad"
-
-
-msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Qué tanto afecta la densidad al movimiento del humo (valores mayores logran un humo de ascenso más rápido)"
-
-
 msgid "Slice the whole domain object"
 msgstr "Rebanar el objeto de dominio por completo"
 
@@ -11458,18 +11450,6 @@ msgstr "Individual"
 
 msgid "Perform a single slice of the domain object"
 msgstr "Rebanar el objeto de dominio una única vez"
-
-
-msgid "Heat"
-msgstr "Calor"
-
-
-msgid "How much heat affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Qué tanto afecta el calor al movimiento del humo (valores mayores logran un humo de ascenso más rápido)"
-
-
-msgid "Speed of the burning reaction (use larger values for smaller flame)"
-msgstr "Velocidad de la reacción combustible (usar valores mayores para una llama más pequeña)"
 
 
 msgid "Select the file format to be used for caching volumetric data"
@@ -11536,10 +11516,6 @@ msgid "CFL"
 msgstr "CFL"
 
 
-msgid "Maximal velocity per cell (higher value results in larger timesteps)"
-msgstr "Velocidad máxima por celda (valores mayores resultarán en intervalos de tiempo mayores)"
-
-
 msgid "Clipping"
 msgstr "Recortar"
 
@@ -11580,6 +11556,10 @@ msgid "Blue component of the color field"
 msgstr "Componente azul del campo de color"
 
 
+msgid "Density"
+msgstr "Densidad"
+
+
 msgid "Quantity of soot in the fluid"
 msgstr "Cantidad de hollín en el fluido"
 
@@ -11598,6 +11578,10 @@ msgstr "Combustible"
 
 msgid "Fuel field"
 msgstr "Campo de combustible"
+
+
+msgid "Heat"
+msgstr "Calor"
 
 
 msgid "Temperature of the fluid"
@@ -11752,18 +11736,6 @@ msgid "Smoke flame grid"
 msgstr "Cuadrícula de llamas"
 
 
-msgid "Ignition"
-msgstr "Ignición"
-
-
-msgid "Minimum temperature of flames"
-msgstr "Temperatura mínima de las llamas"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Temperatura máxima de las llamas"
-
-
 msgid "Smoke"
 msgstr "Humo"
 
@@ -11848,20 +11820,12 @@ msgid "Domain"
 msgstr "Dominio"
 
 
-msgid "Use a fluid domain for guiding (domain needs to be baked already so that velocities can be extracted but can be of any type)"
-msgstr "Permite usar el dominio de un fluido como guía (el dominio deberá haber sido previamente capturado, de manera que sus velocidades puedan ser extraídas; sin embargo podrá ser de cualquier tipo)"
-
-
 msgid "Effector"
 msgstr "Efector"
 
 
 msgid "Use guiding (effector) objects to create fluid guiding (guiding objects should be animated and baked once set up completely)"
 msgstr "Permite usar objetos (efectores) para crear guías de fluido (los objetos-guía deberían estar animados y capturados una vez completamente definidos)"
-
-
-msgid "Guiding velocity factor (higher value results in bigger guiding velocities)"
-msgstr "Factor de guía de velocidad (valores más altos producirán velocidades de guía mayores)"
 
 
 msgid "Heat Grid"
@@ -11928,16 +11892,8 @@ msgid "Radius"
 msgstr "Radio"
 
 
-msgid "Particle radius factor (higher value results in larger (meshed) particles)"
-msgstr "Factor del radio de las partículas (valores más altos producirán partículas (malladas) más grandes)"
-
-
 msgid "Mesh scale"
 msgstr "Escala de la malla"
-
-
-msgid "Scale underlying mesh grids by this factor. Mesh grids have size factor times base resolution"
-msgstr "Escala las cuadrículas de las mallas subyacentes según este factor. Las cuadrículas de la malla tendrán un tamaño igual a la resolución base multiplicada por este factor"
 
 
 msgid "Smoothen Neg"
@@ -11972,10 +11928,6 @@ msgid "Noise Scale"
 msgstr "Escala del ruido"
 
 
-msgid "Scale underlying noise grids by this factor. Noise grids have size factor times base resolution"
-msgstr "Permite escalar las cuadrículas de ruido subyacentes según este factor. Las cuadrículas de ruido tendrán un tamaño igual a la resolución base multiplicada por este factor"
-
-
 msgid "Strength of noise"
 msgstr "Intensidad del ruido"
 
@@ -11990,10 +11942,6 @@ msgstr "Tiempo de animación del ruido"
 
 msgid "Noise Method"
 msgstr "Método del ruido"
-
-
-msgid "Noise method which is used for creating the high resolution"
-msgstr "Método del ruido que será usado para crear la alta resolución"
 
 
 msgid "Wavelet"
@@ -12048,20 +11996,12 @@ msgid "Particle number factor (higher value results in more particles)"
 msgstr "Factor de cantidad de partículas (un valor más alto producirá más partículas)"
 
 
-msgid "Particle radius factor. Use this parameter when the simulation appears to leak volume"
-msgstr "Factor de radio de las partículas. Usar este parámetro cuando la simulación parezca perder volumen"
-
-
 msgid "Randomness"
 msgstr "Aleatoriedad"
 
 
 msgid "Randomness factor for particle sampling"
 msgstr "Factor de aleatoriedad del muestreo de las partículas"
-
-
-msgid "Scale underlying particle grids by this factor. Particle grids have size factor times base resolution"
-msgstr "Escala las cuadrículas subyacentes de partículas según este factor. Las cuadrículas de partículas tendrán un tamaño igual a la resolución base multiplicada por este factor"
 
 
 msgid "Cache Compression"
@@ -12078,14 +12018,6 @@ msgstr "Compresión rápida pero no tan efectiva"
 
 msgid "Heavy"
 msgstr "Intensa"
-
-
-msgid "Max Res"
-msgstr "Res. máx"
-
-
-msgid "Resolution used for the fluid domain"
-msgstr "Resolución usada para el dominio del fluido"
 
 
 msgid "Display Velocity"
@@ -12220,16 +12152,12 @@ msgid "Create one particle system that contains all three secondary particle typ
 msgstr "Crea un sistema de partículas que contendrá los tres tipos de partículas secundarias"
 
 
-msgid "Buoyancy"
-msgstr "Flotabilidad"
+msgid "Bubble Buoyancy"
+msgstr "Flotabilidad de burbujas"
 
 
-msgid "Amount of buoyancy force that rises bubbles (high values result in bubble movement mainly upwards)"
-msgstr "La cantidad de fuerza de flotabilidad que hace elevar a las burbujas (valores más altos producirán un movimiento mayormente ascendente de las mismas)"
-
-
-msgid "Amount of drag force that moves bubbles along with the fluid (high values result in bubble movement mainly along with the fluid)"
-msgstr "La cantidad de fuerza de arrastre que hace mover a las burbujas junto con el fluido (valores más altos producirán un movimiento mayormente en la dirección del fluido)"
+msgid "Bubble Drag"
+msgstr "Arrastre de burbujas"
 
 
 msgid "Trapped Air Sampling"
@@ -12248,16 +12176,8 @@ msgid "Maximum number of particles generated per wave crest cell per frame"
 msgstr "Cantidad máxima de partículas generadas por celda de cresta de olas por fotograma"
 
 
-msgid "Lifetime(max)"
-msgstr "Vida(máx)"
-
-
 msgid "Highest possible particle lifetime"
 msgstr "Mayor vida posible de las partículas"
-
-
-msgid "Lifetime(min)"
-msgstr "Vida(mín)"
 
 
 msgid "Lowest possible particle lifetime"
@@ -12276,48 +12196,12 @@ msgid "tauMax_k"
 msgstr "tauMáx_k"
 
 
-msgid "Upper clamping threshold that indicates the fluid speed where cells no longer emit more particles (higher values result in generally less particles)"
-msgstr "Umbral máximo de limitación que indica la velocidad del fluido a la que las celdas dejarán de emitir partículas (valores más altos generalmente producirán menos partículas)"
-
-
-msgid "tauMax_ta"
-msgstr "tauMáx_ta"
-
-
-msgid "Upper clamping threshold for marking fluid cells where air is trapped (higher values result in less marked cells)"
-msgstr "Umbral máximo de limitación para marcar una celda del fluido como capaz de encapsular aire (valores más altos producirán menos celdas marcadas)"
-
-
-msgid "tauMax_wc"
-msgstr "tauMáx_wc"
-
-
-msgid "Upper clamping threshold for marking fluid cells as wave crests (higher values result in less marked cells)"
-msgstr "Umbral máximo de limitación para marcar celdas del fluido como crestas de ola (valores más altos producirán menos celdas marcadas)"
-
-
 msgid "tauMin_k"
 msgstr "tauMín_k"
 
 
 msgid "Lower clamping threshold that indicates the fluid speed where cells start to emit particles (lower values result in generally more particles)"
 msgstr "Umbral mínimo de limitación que indica la velocidad del fluido a la que las celdas comenzarán a emitir partículas (valores más bajos generalmente producirán más partículas)"
-
-
-msgid "tauMin_ta"
-msgstr "tauMín_ta"
-
-
-msgid "Lower clamping threshold for marking fluid cells where air is trapped (lower values result in more marked cells)"
-msgstr "Umbral mínimo de limitación para marcar una celda del fluido como capaz de encapsular aire (valores más bajos producirán más celdas marcadas)"
-
-
-msgid "tauMin_wc"
-msgstr "tauMín_wc"
-
-
-msgid "Lower clamping threshold for marking fluid cells as wave crests (lower values result in more marked cells)"
-msgstr "Umbral mínimo de limitación para marcar celdas del fluido como crestas de ola (valores más bajos producirán más celdas marcadas)"
 
 
 msgid "Update Radius"
@@ -12428,24 +12312,8 @@ msgid "Dissolve Smoke"
 msgstr "Disolución del humo"
 
 
-msgid "Enable smoke to disappear over time"
-msgstr "Habilita la desaparición del humo con el tiempo"
-
-
-msgid "Logarithmic dissolve"
-msgstr "Disolución logarítmica"
-
-
-msgid "Using 1/x "
-msgstr "Se usará 1/x "
-
-
 msgid "FLIP"
 msgstr "FLIP"
-
-
-msgid "Create FLIP particle system"
-msgstr "Crea un sistema de partículas FLIP"
 
 
 msgid "Foam"
@@ -12490,10 +12358,6 @@ msgstr "Habilita el uso de ruido en el fluido (usando amplificación)"
 
 msgid "Speed Vectors"
 msgstr "Vectores de velocidad"
-
-
-msgid "Generate speed vectors (will be loaded automatically during render for motion blur)"
-msgstr "Genera vectores de velocidad (se cargarán automáticamente durante el procesamiento, para el desenfoque de movimiento)"
 
 
 msgid "Spray"
@@ -12558,10 +12422,6 @@ msgstr "Exponente de Viscosidad"
 
 msgid "Negative exponent for the viscosity value (to simplify entering small values e.g. 5*10^-6)"
 msgstr "Exponente negativo del valor de viscosidad (para simplificar el ingreso de valores pequeños p.ej: 5*10^-6)"
-
-
-msgid "Amount of turbulence/rotation in fluid"
-msgstr "Cantidad de turbulencia o rotación en el fluido"
 
 
 msgid "Fluid Mesh Velocity"
@@ -12764,10 +12624,6 @@ msgid "Number of additional samples to take between frames to improve quality of
 msgstr "Cantidad de muestras adicionales a tomar entre fotogramas para mejorar la calidad en flujos de movmiento rápido"
 
 
-msgid "Maximum distance from mesh surface to emit fluid"
-msgstr "Distancia máxima desde la superficie de la malla para emitir el fluido"
-
-
 msgid "Temp. Diff."
 msgstr "Dif. temperatura"
 
@@ -12862,10 +12718,6 @@ msgstr "Cantidad de velocidad direccional normal"
 
 msgid "Amount of random velocity"
 msgstr "Cantidad de velocidad aleatoria"
-
-
-msgid "Factor for smoke emitted from inside the mesh volume"
-msgstr "Factor de humo emitido desde el interior del volumen de la malla"
 
 
 msgid "Freestyle Line Set"
@@ -16625,10 +16477,6 @@ msgid "Rotate"
 msgstr "Rotar"
 
 
-msgid "Topology"
-msgstr "Topología"
-
-
 msgid "Secondary Color"
 msgstr "Color secundario"
 
@@ -17789,24 +17637,12 @@ msgid "Option for curve-deform: make deformed child to stretch along entire path
 msgstr "Opción para deformación por curvas: Hacer que el subordinado deformado se estire a lo largo de toda la trayectoria"
 
 
-msgid "Use UV for mapping"
-msgstr "Usar UV para mapeado"
-
-
-msgid "Uses the UV values as Generated textured coordinates"
-msgstr "Usa los valores UV como coordenadas de texturizado generadas"
-
-
 msgid "Surface Curve"
 msgstr "Curva de superficie"
 
 
 msgid "Curve data-block used for storing surfaces"
 msgstr "Bloque de datos de curva usado para almacenar superficies"
-
-
-msgid "Use UV for Mapping"
-msgstr "Usar UV para el mapeado"
 
 
 msgid "Text Curve"
@@ -21343,24 +21179,12 @@ msgid "Lock Location"
 msgstr "Bloquear posición"
 
 
-msgid "Lock editing of location in the interface"
-msgstr "Bloquea la edición interactiva de la posición"
-
-
 msgid "Lock Rotation"
 msgstr "Bloquear rotación"
 
 
-msgid "Lock editing of rotation in the interface"
-msgstr "Bloquea la edición interactiva de la rotación"
-
-
 msgid "Lock Rotation (4D Angle)"
 msgstr "Bloquear rotación (ángulo 4D)"
-
-
-msgid "Lock editing of 'angle' component of four-component rotations in the interface"
-msgstr "Bloquea la edición interactiva del componente 'ángulo' en rotaciones de cuatro componentes"
 
 
 msgid "Lock Rotations (4D)"
@@ -21373,10 +21197,6 @@ msgstr "Bloquea la edición interactiva de rotaciones de cuatro componentes por 
 
 msgid "Lock Scale"
 msgstr "Bloquear escala"
-
-
-msgid "Lock editing of scale in the interface"
-msgstr "Bloquea la edición interactiva de la escala"
 
 
 msgid "Material Slots"
@@ -31040,6 +30860,10 @@ msgstr "Mapeo de bordes"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Método usado para mapear los bordes de origen a los de destino"
+
+
+msgid "Topology"
+msgstr "Topología"
 
 
 msgid "Copy from identical topology meshes"
@@ -68024,11 +67848,6 @@ msgstr "Empujar"
 
 
 msgctxt "Operator"
-msgid "Topology"
-msgstr "Topología"
-
-
-msgctxt "Operator"
 msgid "Simplify"
 msgstr "Simplificar"
 
@@ -75135,6 +74954,10 @@ msgstr "Reduce la velocidad extra que puede generarse cuando los objetos colisio
 
 msgid "Settings for particle fluids physics"
 msgstr "Opciones de dinámicas de fluidos de partículas"
+
+
+msgid "Buoyancy"
+msgstr "Flotabilidad"
 
 
 msgid "Artificial buoyancy force in negative gravity direction based on pressure differences inside the fluid"
@@ -88063,28 +87886,12 @@ msgid "Clumping amount"
 msgstr "Cantidad de mechones"
 
 
-msgid "Temperature Diff."
-msgstr "Diferencia de temperatura"
-
-
 msgid "Reaction Speed"
 msgstr "Velocidad de reacción"
 
 
 msgid "Flame Smoke"
 msgstr "Humo de la llama"
-
-
-msgid "Flame Vorticity"
-msgstr "Vorticidad de la llama"
-
-
-msgid "Temperature Ignition"
-msgstr "Temperatura de ignición"
-
-
-msgid "Maximum Temperature"
-msgstr "Temperatura máxima"
 
 
 msgid "Flame Color"
@@ -88163,14 +87970,6 @@ msgid "Particle Life Maximum"
 msgstr "Vida máxima de las partículas"
 
 
-msgid "Bubble Buoyancy"
-msgstr "Flotabilidad de burbujas"
-
-
-msgid "Bubble Drag"
-msgstr "Arrastre de burbujas"
-
-
 msgid "Particles in Boundary:"
 msgstr "Partículas en límites:"
 
@@ -88219,10 +88018,6 @@ msgid "Timesteps Maximum"
 msgstr "Subintervalos  Máximo"
 
 
-msgid "Surface Thickness"
-msgstr "Grosor de la superficie"
-
-
 msgid "Smoothing Positive"
 msgstr "Suavizar   Positiva"
 
@@ -88245,10 +88040,6 @@ msgstr "Usar gravedad de la escena"
 
 msgid "Sampling Substeps"
 msgstr "Subintervalos de muestreo"
-
-
-msgid "Volume Density"
-msgstr "Densidad del volumen"
 
 
 msgctxt "Operator"
@@ -88276,6 +88067,10 @@ msgstr "Capturando todo - Esc para pausar"
 
 msgid "Use Inflow"
 msgstr "Adicionar flujo"
+
+
+msgid "Surface Thickness"
+msgstr "Grosor de la superficie"
 
 
 msgctxt "Operator"
@@ -97592,40 +97387,12 @@ msgid "Cursor Y"
 msgstr "Cursor Y"
 
 
-msgid "Display Color:"
-msgstr "Color visualización:"
-
-
-msgid "Auto Handle Smoothing:"
-msgstr "Auto suavizado de asas:"
-
-
 msgid "Interpolation:"
 msgstr "Interpolación:"
 
 
 msgid "None for Enum/Boolean"
 msgstr "Ninguno para Enum/Booleanas"
-
-
-msgid "Key:"
-msgstr "Clave:"
-
-
-msgid "Frame:"
-msgstr "Fotograma:"
-
-
-msgid "Value:"
-msgstr "Valor:"
-
-
-msgid "Left Handle:"
-msgstr "Asa izquierda:"
-
-
-msgid "Right Handle:"
-msgstr "Asa derecha:"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -97658,6 +97425,10 @@ msgstr "Expresión:"
 
 msgid "Add Input Variable"
 msgstr "Agregar variable de entrada"
+
+
+msgid "Value:"
+msgstr "Valor:"
 
 
 msgid "Update Dependencies"
@@ -98037,28 +97808,12 @@ msgid "Verts:%s | Faces:%s | Tris:%s | Objects:%s/%s%s%s"
 msgstr "Vért:%s | Caras:%s | Triáng:%s | Objetos:%s/%s%s%s"
 
 
-msgid "Strip Extents:"
-msgstr "Extensión del clip:"
-
-
-msgid "Playback Settings:"
-msgstr "Opciones de reproducción:"
-
-
-msgid "Action Extents:"
-msgstr "Extensión de la acción:"
-
-
 msgid "Sync Length"
 msgstr "Sincronizar longitud"
 
 
 msgid "Now"
 msgstr "Ahora"
-
-
-msgid "Evaluation"
-msgstr "Evaluación"
 
 
 msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
@@ -98635,10 +98390,6 @@ msgstr "Clip de película no encontrado"
 
 msgid "Mask not found"
 msgstr "Máscara no encontrada"
-
-
-msgid "Start and end frame are not set"
-msgstr "Fotogramas inicial y final no definidos"
 
 
 msgid "File '%s' could not be loaded"
@@ -101558,10 +101309,6 @@ msgstr "Intentando recargar o reubicar la biblioteca '%s' a la ruta inválida '%
 
 msgid "Win"
 msgstr "Win"
-
-
-msgid "OSkey"
-msgstr "Tecla del SO"
 
 
 msgid "Bksp"

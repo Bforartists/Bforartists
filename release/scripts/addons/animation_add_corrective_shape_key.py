@@ -41,14 +41,14 @@ object as a new shape key.
 - Unpose-function reused from a script by Tal Trachtman in 2007
   http://www.apexbow.com/randd.html
 - Converted to Blender 2.5 by Ivo Grigull
-- Converted to Blender 2.8 by Tokikake 
-("fast" option was removed, add new "delta" option 
+- Converted to Blender 2.8 by Tokikake
+("fast" option was removed, add new "delta" option
 which count currently used shape key values of armature mesh when transfer)
 
 Limitations and new delta option for 2.8
 - Target mesh may not have any transformation at object level,
   it will be set to zero.
-  
+
 - new "delta" option usage, when you hope to make new shape-key with keep currently visible other shape keys value.
  it can generate new shape key, with value as 1.00. then deform target shape as source shape with keep other shape key values relative.
 
@@ -69,11 +69,11 @@ threshold = 1e-16
 def update_mesh(ob):
     depth = bpy.context.evaluated_depsgraph_get()
     depth.update()
-    ob.update_tag() 
-    bpy.context.view_layer.update()    
+    ob.update_tag()
+    bpy.context.view_layer.update()
     ob.data.update()
-    
-    
+
+
 def reset_transform(ob):
     ob.matrix_local.identity()
 
@@ -124,25 +124,25 @@ def func_add_corrective_pose_shape(source, target, flag):
     print(ob_1)
     print(ob_1.active_shape_key)
     active_key_name = ob_1.active_shape_key.name
-    
+
     if (flag == True):
-    # Make mix shape key from currently used shape keys  
+    # Make mix shape key from currently used shape keys
         if not key_index == 0:
             ob_1.active_shape_key.value = 0
         mix_shape = ob_1.shape_key_add(from_mix = True)
         mix_shape.name = "Mix_shape"
         update_mesh(ob_1)
-        keys = ob_1.data.shape_keys.key_blocks.keys()       
+        keys = ob_1.data.shape_keys.key_blocks.keys()
         ob_1.active_shape_key_index = keys.index(active_key_name)
-    
-    print("active_key_name: ", active_key_name)  
-    
+
+    print("active_key_name: ", active_key_name)
+
     if key_index == 0:
         new_shapekey = ob_1.shape_key_add()
         new_shapekey.name = "Shape_" + ob_2.name
         update_mesh(ob_1)
-        keys = ob_1.data.shape_keys.key_blocks.keys()        
-        ob_1.active_shape_key_index = keys.index(new_shapekey.name) 
+        keys = ob_1.data.shape_keys.key_blocks.keys()
+        ob_1.active_shape_key_index = keys.index(new_shapekey.name)
 
     # else, the active shape will be used (updated)
 
@@ -196,29 +196,29 @@ def func_add_corrective_pose_shape(source, target, flag):
         apply_vert_coords(ob_1, mesh_1_key_verts, x)
 
     ob_1.show_only_shape_key = True
-    
+
     if (flag == True):
     # remove delta of mix-shape key values from new shape key
         key_index = ob_1.active_shape_key_index
-        active_key_name = ob_1.active_shape_key.name        
+        active_key_name = ob_1.active_shape_key.name
         shape_data = ob_1.active_shape_key.data
-        mix_data = mix_shape.data   
+        mix_data = mix_shape.data
         for i in range(0, len(mesh_1.vertices)):
-            shape_data[i].co = mesh_1.vertices[i].co + shape_data[i].co - mix_data[i].co        
+            shape_data[i].co = mesh_1.vertices[i].co + shape_data[i].co - mix_data[i].co
         update_mesh(ob_1)
-        
+
         ob_1.active_shape_key_index = ob_1.data.shape_keys.key_blocks.keys().index("Mix_shape")
         bpy.ops.object.shape_key_remove()
         ob_1.active_shape_key_index = ob_1.data.shape_keys.key_blocks.keys().index(active_key_name)
         ob_1.data.update()
         ob_1.show_only_shape_key = False
-        
+
     ob_1.active_shape_key.vertex_group = vgroup
 
     # set the new shape key value to 1.0, so we see the result instantly
     ob_1.active_shape_key.value = 1.0
-    update_mesh(ob_1)   
-    
+    update_mesh(ob_1)
+
 
 
 class add_corrective_pose_shape(bpy.types.Operator):
@@ -244,13 +244,13 @@ class add_corrective_pose_shape(bpy.types.Operator):
             source = selection[1]
         else:
             source = selection[0]
-            
+
         delta_flag = False
 
         func_add_corrective_pose_shape(source, target, delta_flag)
 
         return {'FINISHED'}
-        
+
 class add_corrective_pose_shape_delta (bpy.types.Operator):
     """Adds first object as shape to second object for the current pose """ \
     """while maintaining modifiers and currently used other shape keys""" \
@@ -274,7 +274,7 @@ class add_corrective_pose_shape_delta (bpy.types.Operator):
             source = selection[1]
         else:
             source = selection[0]
-            
+
         delta_flag = True
 
         func_add_corrective_pose_shape(source, target, delta_flag)
@@ -431,7 +431,7 @@ def func_add_corrective_pose_shape_fast(source, target):
     verts = source.data.vertices
     for n in range(len(verts)):
         shape_key_verts[n].co = verts[n].co
-    target.update_tag() 
+    target.update_tag()
     bpy.context.view_layer.update()
     # go to all armature modifies and unpose the shape
     for n in target.modifiers:
@@ -446,18 +446,18 @@ def func_add_corrective_pose_shape_fast(source, target):
 
     # set the new shape key value to 1.0, so we see the result instantly
     target.active_shape_key.value = 1.0
-    
+
     try:
         target.active_shape_key.vertex_group = vgroup
     except:
         pass
 
     target.show_only_shape_key = False
-    target.update_tag() 
+    target.update_tag()
     bpy.context.view_layer.update()
-    
+
     target.data.update()
-    
+
 
 
 
@@ -524,6 +524,6 @@ def unregister():
         unregister_class(cls)
     bpy.types.MESH_MT_shape_key_context_menu.remove(vgroups_draw)
     bpy.types.DATA_PT_modifiers.remove(modifiers_draw)
-    
+
 if __name__ == "__main__":
     register()

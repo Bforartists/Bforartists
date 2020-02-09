@@ -246,10 +246,10 @@ def menu_func(self, context):
 
 def Extras_contex_menu(self, context):
     bl_label = 'Change'
-    
+
     obj = context.object
     layout = self.layout
-    
+
     if 'Gear' in obj.data.keys():
         props = layout.operator("mesh.primitive_gear", text="Change Gear")
         props.change = True
@@ -263,7 +263,7 @@ def Extras_contex_menu(self, context):
         for prm in add_mesh_gears.WormGearParameters():
             setattr(props, prm, obj.data[prm])
         layout.separator()
-        
+
     if 'Beam' in obj.data.keys():
         props = layout.operator("mesh.add_beam", text="Change Beam")
         props.change = True
@@ -319,28 +319,28 @@ def Extras_contex_menu(self, context):
         for prm in add_mesh_gemstones.DiamondParameters():
             setattr(props, prm, obj.data[prm])
         layout.separator()
-        
+
     if 'Gem' in obj.data.keys():
         props = layout.operator("mesh.primitive_gem_add", text="Change Gem")
         props.change = True
         for prm in add_mesh_gemstones.GemParameters():
             setattr(props, prm, obj.data[prm])
         layout.separator()
-        
+
     if 'Brilliant' in obj.data.keys():
         props = layout.operator("mesh.primitive_brilliant_add", text="Change Brilliant")
         props.change = True
         for prm in add_mesh_round_brilliant.BrilliantParameters():
             setattr(props, prm, obj.data[prm])
         layout.separator()
-        
+
     if 'Roundcube' in obj.data.keys():
         props = layout.operator("mesh.primitive_round_cube_add", text="Change Roundcube")
         props.change = True
         for prm in add_mesh_round_cube.RoundCubeParameters():
             setattr(props, prm, obj.data[prm])
         layout.separator()
-        
+
     if 'TorusKnot' in obj.data.keys():
         props = layout.operator("mesh.primitive_torusknot_add", text="Change TorusKnot")
         props.change = True
@@ -361,14 +361,14 @@ def Extras_contex_menu(self, context):
         for prm in add_mesh_twisted_torus.TwistedTorusParameters():
             setattr(props, prm, obj.data[prm])
         layout.separator()
-    
+
     if 'Star' in obj.data.keys():
         props = layout.operator("mesh.primitive_star_add", text="Change Star")
         props.change = True
         for prm in add_mesh_star.StarParameters():
             setattr(props, prm, obj.data[prm])
         layout.separator()
-        
+
     if 'Pyramid' in obj.data.keys():
         props = layout.operator("mesh.primitive_steppyramid_add", text="Change Pyramid")
         props.change = True
@@ -441,7 +441,7 @@ def unregister():
     # Remove "Extras" menu from the "Add Mesh" menu and context menu.
     bpy.types.VIEW3D_MT_object_context_menu.remove(Extras_contex_menu)
     bpy.types.VIEW3D_MT_mesh_add.remove(menu_func)
-    
+
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)

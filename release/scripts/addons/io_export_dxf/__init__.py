@@ -56,6 +56,6 @@ def unregister():
     for cls in reversed(classes):
         unregister_class(cls)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func)
-    
+
 if __name__ == "__main__":
     register()

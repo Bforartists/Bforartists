@@ -64,7 +64,7 @@ def randnum(low=0.0, high=1.0, seed=0):
             (type=float)
         high - higher range
             (type=float)
-        seed - the random seed number, if seed is 0, the current time will be used instead
+        seed - the random seed number, if seed == 0, the current time will be used instead
             (type=int)
     Returns:
         a random number
@@ -99,14 +99,14 @@ def vTurbNoise(x, y, z, iScale=0.25, Size=1.0, Depth=6, Hard=False, Basis=0, See
             (type=int)
         basis - type of noise used for turbulence
             (type=int)
-        Seed - the random seed number, if seed is 0, the current time will be used instead
+        Seed - the random seed number, if seed == 0, the current time will be used instead
             (type=int)
     Returns:
         the generated turbulence vector.
             (type=3-float list)
     """
     rand = randnum(-100, 100, Seed)
-    if Basis is 9:
+    if Basis == 9:
         Basis = 14
     vec = Vector((x / Size + rand, y / Size + rand, z / Size + rand))
     vTurb = Noise.turbulence_vector(vec, Depth, Hard)
@@ -142,7 +142,7 @@ def ProfileCurve(type=0, a=0.25, b=0.25):
     """
 
     newpoints = []
-    if type is 1:
+    if type == 1:
         # H:
         a *= 0.5
         b *= 0.5
@@ -153,7 +153,7 @@ def ProfileCurve(type=0, a=0.25, b=0.25):
                 [1.0 - a, -b, 0.0], [-1.0 + a, -b, 0.0], [-1.0 + a, -1.0, 0.0],
                 [-1.0, -1.0, 0.0]
                 ]
-    elif type is 2:
+    elif type == 2:
         # T:
         a *= 0.5
         newpoints = [
@@ -161,7 +161,7 @@ def ProfileCurve(type=0, a=0.25, b=0.25):
                 [1.0, 1.0 - b, 0.0], [a, 1.0 - b, 0.0], [a, -1.0, 0.0],
                 [-a, -1.0, 0.0], [-a, 1.0 - b, 0.0], [-1.0, 1.0 - b, 0.0]
                 ]
-    elif type is 3:
+    elif type == 3:
         # U:
         a *= 0.5
         newpoints = [
@@ -169,7 +169,7 @@ def ProfileCurve(type=0, a=0.25, b=0.25):
                 [-1.0 + a, -1.0 + b, 0.0], [1.0 - a, -1.0 + b, 0.0], [1.0 - a, 1.0, 0.0],
                 [1.0, 1.0, 0.0], [1.0, -1.0, 0.0], [-1.0, -1.0, 0.0]
                 ]
-    elif type is 4:
+    elif type == 4:
         # Z:
         a *= 0.5
         newpoints = [
@@ -209,7 +209,7 @@ def ArrowCurve(type=1, a=1.0, b=0.5):
     """
 
     newpoints = []
-    if type is 0:
+    if type == 0:
         # Arrow1:
         a *= 0.5
         b *= 0.5
@@ -219,7 +219,7 @@ def ArrowCurve(type=1, a=1.0, b=0.5):
                 [-1.0 + a, -1.0, 0.0], [-1.0 + a, -b, 0.0],
                 [-1.0, -b, 0.0]
                 ]
-    elif type is 1:
+    elif type == 1:
         # Arrow2:
         newpoints = [[-a, b, 0.0], [a, 0.0, 0.0], [-a, -b, 0.0], [0.0, 0.0, 0.0]]
     else:
@@ -251,7 +251,7 @@ def RectCurve(type=1, a=1.0, b=0.5, c=1.0):
     """
 
     newpoints = []
-    if type is 1:
+    if type == 1:
         # Rounded Rectangle:
         newpoints = [
                 [-a, b - b * 0.2, 0.0], [-a + a * 0.05, b - b * 0.05, 0.0], [-a + a * 0.2, b, 0.0],
@@ -259,7 +259,7 @@ def RectCurve(type=1, a=1.0, b=0.5, c=1.0):
                 [a, -b + b * 0.2, 0.0], [a - a * 0.05, -b + b * 0.05, 0.0], [a - a * 0.2, -b, 0.0],
                 [-a + a * 0.2, -b, 0.0], [-a + a * 0.05, -b + b * 0.05, 0.0], [-a, -b + b * 0.2, 0.0]
                 ]
-    elif type is 2:
+    elif type == 2:
         # Rounded Rectangle II:
         newpoints = []
         x = a
@@ -410,10 +410,10 @@ def ArcCurve(sides=6, startangle=0.0, endangle=90.0, innerradius=0.5, outerradiu
         # Arc: turn cyclic curve flag off!
 
     # Segment:
-    if type is 2:
+    if type == 2:
         newpoints.append([0, 0, 0])
     # Ring:
-    elif type is 3:
+    elif type == 3:
         j = sides - 1
         while j > -1:
             t = (j * step) + angle * startangle
@@ -574,7 +574,7 @@ def CycloidCurve(number=100, type=0, R=4.0, r=1.0, d=1.0):
     newpoints = []
     step = 2.0 / (number - 1)
     i = 0
-    if type is 1:
+    if type == 1:
         # Hypotrochoid / Hypocycloid
         while i < number:
             t = i * step
@@ -583,7 +583,7 @@ def CycloidCurve(number=100, type=0, R=4.0, r=1.0, d=1.0):
             z = 0
             newpoints.append([x, y, z])
             i += 1
-    elif type is 2:
+    elif type == 2:
         # Epitrochoid / Epycycloid
         while i < number:
             t = i * step
@@ -683,7 +683,7 @@ def NoiseCurve(type=0, number=100, length=2.0, size=0.5,
     newpoints = []
     step = (length / number)
     i = 0
-    if type is 1:
+    if type == 1:
         # noise circle
         while i < number:
             t = i * step
@@ -693,7 +693,7 @@ def NoiseCurve(type=0, number=100, length=2.0, size=0.5,
             z = v[2] * scale[2]
             newpoints.append([x, y, z])
             i += 1
-    elif type is 2:
+    elif type == 2:
         # noise knot / ball
         while i < number:
             t = i * step
@@ -744,10 +744,10 @@ def vertsToPoints(Verts, splineType):
 def createCurve(context, vertArray, self):
     # output splineType 'POLY' 'NURBS' 'BEZIER'
     splineType = self.outputType
-    
+
     # GalloreType as name
     name = self.ProfileType
-    
+
     # create object
     if bpy.context.mode == 'EDIT_CURVE':
         Curve = context.active_object
@@ -756,15 +756,15 @@ def createCurve(context, vertArray, self):
         # create curve
         dataCurve = bpy.data.curves.new(name, type='CURVE')  # curve data block
         newSpline = dataCurve.splines.new(type=splineType)          # spline
-        
+
         # create object with newCurve
         Curve = object_utils.object_data_add(context, dataCurve, operator=self)  # place in active scene
-        
+
     # set newSpline Options
     newSpline.use_cyclic_u = self.use_cyclic_u
     newSpline.use_endpoint_u = self.endp_u
     newSpline.order_u = self.order_u
-    
+
     # set curve Options
     Curve.data.dimensions = self.shape
     Curve.data.use_path = True
@@ -782,7 +782,7 @@ def createCurve(context, vertArray, self):
         else:
             for point in spline.points:
                 point.select = False
-    
+
     # create spline from vertarray
     if splineType == 'BEZIER':
         newSpline.bezier_points.add(int(len(vertArray) * 0.33))
@@ -799,7 +799,7 @@ def createCurve(context, vertArray, self):
         newSpline.use_endpoint_u = True
         for point in newSpline.points:
             point.select = True
-            
+
     # move and rotate spline in edit mode
     if bpy.context.mode == 'EDIT_CURVE':
         if self.align == "WORLD":
@@ -808,7 +808,7 @@ def createCurve(context, vertArray, self):
             bpy.ops.transform.rotate(value = self.rotation[0], orient_axis = 'X', orient_type='GLOBAL')
             bpy.ops.transform.rotate(value = self.rotation[1], orient_axis = 'Y', orient_type='GLOBAL')
             bpy.ops.transform.rotate(value = self.rotation[2], orient_axis = 'Z', orient_type='GLOBAL')
-            
+
         elif self.align == "VIEW":
             bpy.ops.transform.translate(value = self.location)
             bpy.ops.transform.rotate(value = self.rotation[0], orient_axis = 'X')
@@ -1331,7 +1331,7 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
             col.prop(self, "MiscCurveType")
             col.prop(self, "MiscCurvevar1", text="Width")
             col.prop(self, "MiscCurvevar2", text="Height")
-            if self.MiscCurveType is 2:
+            if self.MiscCurveType == 2:
                 col.prop(self, "MiscCurvevar3", text="Corners")
 
         elif self.ProfileType == 'Flower':
@@ -1391,7 +1391,7 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
             col = box.column(align=True)
             col.prop(self, "cyclo_a")
             col.prop(self, "cyclo_b")
-            if self.cycloType is not 0:
+            if self.cycloType != 0:
                 col.prop(self, "cyclo_d")
 
         elif self.ProfileType == 'Helix':
@@ -1425,12 +1425,12 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
 
         row = layout.row()
         row.prop(self, "shape", expand=True)
-        
+
         # output options
         col = layout.column()
         col.label(text="Output Curve Type:")
         col.row().prop(self, "outputType", expand=True)
-        
+
         if self.outputType == 'NURBS':
             col.prop(self, 'order_u')
         elif self.outputType == 'BEZIER':
@@ -1441,7 +1441,7 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
 
         col = layout.column()
         col.row().prop(self, "edit_mode", expand=True)
-        
+
         col = layout.column()
         # AddObjectHelper props
         col.prop(self, "align")
@@ -1456,13 +1456,13 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
         # turn off 'Enter Edit Mode'
         use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
         bpy.context.preferences.edit.use_enter_edit_mode = False
-        
+
         # main function
         main(context, self)
-        
+
         if use_enter_edit_mode:
             bpy.ops.object.mode_set(mode = 'EDIT')
-        
+
         # restore pre operator state
         bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 
@@ -1470,9 +1470,9 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
             bpy.ops.object.mode_set(mode = 'EDIT')
         else:
             bpy.ops.object.mode_set(mode = 'OBJECT')
-        
+
         return {'FINISHED'}
-        
+
     def invoke(self, context, event):
         # deal with 2D - 3D curve differences
         if self.ProfileType in ['Helix', 'Cycloid', 'Noise']:
@@ -1483,16 +1483,16 @@ class Curveaceous_galore(Operator, object_utils.AddObjectHelper):
         if self.ProfileType in ['Helix', 'Noise', 'Cycloid']:
             self.use_cyclic_u = False
             if self.ProfileType in ['Cycloid']:
-                if self.cycloType is 0:
+                if self.cycloType == 0:
                     self.use_cyclic_u = False
                 else:
                     self.use_cyclic_u = True
         else:
-            if self.ProfileType == 'Arc' and self.arcType is 1:
+            if self.ProfileType == 'Arc' and self.arcType == 1:
                 self.use_cyclic_u = False
             else:
                 self.use_cyclic_u = True
-                
+
         self.execute(context)
 
         return {'FINISHED'}

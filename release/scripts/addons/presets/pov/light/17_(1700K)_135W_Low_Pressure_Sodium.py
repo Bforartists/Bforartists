@@ -1,5 +1,5 @@
 #(1700K) 135W Low Pressure Sodium Vapor Starting from 1932
-#Mostly used for Outdoor city lighting, security lighting, long tunnel lighting 
+#Mostly used for Outdoor city lighting, security lighting, long tunnel lighting
 
 import bpy
 bpy.context.object.data.type = 'POINT'
