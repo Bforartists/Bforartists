@@ -707,7 +707,7 @@ class MESH_OT_face_inset_fillet(Operator):
         edit_mode_in()
 
         return {'FINISHED'}
-    
+
 # ********** Edit Multiselect **********
 class VIEW3D_MT_Edit_MultiMET(Menu):
     bl_label = "Multi Select"
@@ -897,7 +897,7 @@ class VIEW3D_MT_edit_mesh_tools(Menu):
                         text="Multi Extrude")
         layout.operator('mesh.split_solidify', text="Split Solidify")
 
-            
+
 
 # panel containing all tools
 class VIEW3D_PT_edit_mesh_tools(Panel):
@@ -1017,7 +1017,7 @@ class VIEW3D_PT_edit_mesh_tools(Panel):
             row.operator("mesh.tris_convert_to_quads")
             row = col_top.row(align=True)
             row.operator("mesh.relax")
-            
+
 # property group containing all properties for the gui in the panel
 class EditToolsProps(PropertyGroup):
     """

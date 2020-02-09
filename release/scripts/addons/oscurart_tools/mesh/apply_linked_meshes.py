@@ -35,7 +35,7 @@ def applyLRTEx(self, context):
         actObj.rotation_euler = (0,0,0)
         actObj.scale = (1,1,1)
 
-    for ob in linkedObjects:     
+    for ob in linkedObjects:
         ob.matrix_world = ob.matrix_world @ actObj.matrix_world.inverted()
 
 
@@ -53,8 +53,8 @@ class ApplyLRT(bpy.types.Operator):
     def execute(self, context):
         applyLRTEx(self, context)
         return {'FINISHED'}
-    
-  
+
+
 
 
 

@@ -90,11 +90,11 @@ def register():
 def unregister():
     # Remove "Extras" menu from the "Add Mesh" menu.
     bpy.types.VIEW3D_MT_mesh_add.remove(menu_func)
-    
+
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)
-        
+
     del bpy.types.Scene.discombobulator
 
 if __name__ == "__main__":

@@ -316,10 +316,7 @@ void OBJECT_OT_vertex_parent_set(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Make Vertex Parent";
-  ot->description =
-      "Parent selected objects to the selected vertices\nCan be used at Mesh, "
-      "Lattice and Curve Objects\nSelect vertice(s), select object to parent with strg+lmb, then "
-      "perform Make Vertex Parent";
+  ot->description = "Parent selected objects to the selected vertices";
   ot->idname = "OBJECT_OT_vertex_parent_set";
 
   /* api callbacks */
@@ -618,8 +615,6 @@ void OBJECT_OT_parent_clear(wmOperatorType *ot)
   /* api callbacks */
   ot->invoke = WM_menu_invoke;
   ot->exec = parent_clear_exec;
-
-  ot->poll = ED_operator_object_active_editable;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1060,7 +1055,9 @@ static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
   if (parent->type == OB_ARMATURE) {
     uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_BONE, "type", PAR_ARMATURE);
     uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_BONE, "type", PAR_ARMATURE_NAME);
-    uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_BONE, "type", PAR_ARMATURE_ENVELOPE);
+    if (!has_children_of_type.gpencil) {
+      uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_BONE, "type", PAR_ARMATURE_ENVELOPE);
+    }
     if (has_children_of_type.mesh || has_children_of_type.gpencil) {
       uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_BONE, "type", PAR_ARMATURE_AUTO);
     }
@@ -1538,16 +1535,16 @@ static int make_links_data_exec(bContext *C, wmOperator *op)
             ob_dst->data = obdata_id;
 
             /* if amount of material indices changed: */
-            test_object_materials(bmain, ob_dst, ob_dst->data);
+            BKE_object_materials_test(bmain, ob_dst, ob_dst->data);
 
             DEG_id_tag_update(&ob_dst->id, ID_RECALC_GEOMETRY);
             break;
           case MAKE_LINKS_MATERIALS:
             /* new approach, using functions from kernel */
             for (a = 0; a < ob_src->totcol; a++) {
-              Material *ma = give_current_material(ob_src, a + 1);
+              Material *ma = BKE_object_material_get(ob_src, a + 1);
               /* also works with `ma == NULL` */
-              assign_material(bmain, ob_dst, ma, a + 1, BKE_MAT_ASSIGN_USERPREF);
+              BKE_object_material_assign(bmain, ob_dst, ma, a + 1, BKE_MAT_ASSIGN_USERPREF);
             }
             DEG_id_tag_update(&ob_dst->id, ID_RECALC_GEOMETRY);
             break;
@@ -1954,7 +1951,7 @@ static void single_mat_users(
   FOREACH_OBJECT_FLAG_BEGIN (scene, view_layer, v3d, flag, ob) {
     if (!ID_IS_LINKED(ob)) {
       for (a = 1; a <= ob->totcol; a++) {
-        ma = give_current_material(ob, a);
+        ma = BKE_object_material_get(ob, a);
         if (ma) {
           /* do not test for LIB_TAG_NEW or use newid:
            * this functions guaranteed delivers single_users! */
@@ -1964,7 +1961,7 @@ static void single_mat_users(
             BKE_animdata_copy_id_action(bmain, &man->id, false);
 
             man->id.us = 0;
-            assign_material(bmain, ob, man, a, BKE_MAT_ASSIGN_USERPREF);
+            BKE_object_material_assign(bmain, ob, man, a, BKE_MAT_ASSIGN_USERPREF);
           }
         }
       }
@@ -2266,7 +2263,7 @@ static int make_local_exec(bContext *C, wmOperator *op)
           }
         }
 
-        matarar = (Material ***)give_matarar(ob);
+        matarar = (Material ***)BKE_object_material_array(ob);
         if (matarar) {
           for (a = 0; a < ob->totcol; a++) {
             ma = (*matarar)[a];
@@ -2297,11 +2294,7 @@ void OBJECT_OT_make_local(wmOperatorType *ot)
 {
   static const EnumPropertyItem type_items[] = {
       {MAKE_LOCAL_SELECT_OB, "SELECT_OBJECT", ICON_MAKE_LOCAL, "Selected Objects", ""},
-      {MAKE_LOCAL_SELECT_OBDATA,
-       "SELECT_OBDATA",
-       ICON_MAKE_LOCAL,
-       "Selected Objects and Data",
-       ""},
+      {MAKE_LOCAL_SELECT_OBDATA, "SELECT_OBDATA", ICON_MAKE_LOCAL, "Selected Objects and Data", ""},
       {MAKE_LOCAL_SELECT_OBDATA_MATERIAL,
        "SELECT_OBDATA_MATERIAL",
        ICON_MAKE_LOCAL,
@@ -2684,7 +2677,7 @@ static int drop_named_material_invoke(bContext *C, wmOperator *op, const wmEvent
     return OPERATOR_CANCELLED;
   }
 
-  assign_material(CTX_data_main(C), base->object, ma, 1, BKE_MAT_ASSIGN_USERPREF);
+  BKE_object_material_assign(CTX_data_main(C), base->object, ma, 1, BKE_MAT_ASSIGN_USERPREF);
 
   DEG_id_tag_update(&base->object->id, ID_RECALC_TRANSFORM);
 

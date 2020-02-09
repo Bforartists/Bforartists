@@ -573,7 +573,7 @@ class OffsetEdges(bpy.types.Operator):
         row.prop(self, d_mode)
         row.prop(self, flip, icon='ARROW_LEFTRIGHT', icon_only=True)
         if self.depth_mode == 'angle':
-            layout.prop(self, 'angle_presets', text="Presets", expand=True) 
+            layout.prop(self, 'angle_presets', text="Presets", expand=True)
 
         layout.separator()
 
@@ -769,7 +769,7 @@ class OffsetEdgesMenu(bpy.types.Menu):
 classes = (
 OffsetEdges,
 OffsetEdgesMenu,
-)		
+)
 
 def draw_item(self, context):
     self.layout.menu("VIEW3D_MT_edit_mesh_offset_edges")

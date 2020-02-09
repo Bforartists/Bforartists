@@ -30,9 +30,9 @@ def replaceTokens (dummy):
     "$File":os.path.basename(bpy.data.filepath).split(".")[0],
     "$ViewLayer":bpy.context.view_layer.name,
     "$Camera":bpy.context.scene.camera.name}
-    
+
     renpath = bpy.context.scene.render.filepath
-    
+
     bpy.context.scene.render.filepath = renpath.replace("$Scene",tokens["$Scene"]).replace("$File",tokens["$File"]).replace("$ViewLayer",tokens["$ViewLayer"]).replace("$Camera",tokens["$Camera"])
     print(bpy.context.scene.render.filepath)
 

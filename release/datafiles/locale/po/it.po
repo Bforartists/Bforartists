@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'02f6722350d9')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 09:05:33\n"
+"POT-Creation-Date: 2020-02-03 10:17:07\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
 "Last-Translator: MT\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -8909,28 +8909,8 @@ msgid "Maximum number of additional cells"
 msgstr "Numero massimo di celle addizionali"
 
 
-msgid "Density"
-msgstr "Densità"
-
-
-msgid "How much density affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Quanto la densità agisce sul movimento del fumo (valori più alti danno un movimento più rapido)"
-
-
 msgid "Single"
 msgstr "Singolo"
-
-
-msgid "Heat"
-msgstr "Calore"
-
-
-msgid "How much heat affects smoke motion (higher value results in faster rising smoke)"
-msgstr "Quanto il calore agisce sul movimento del fumo (valori più alti danno un movimento più rapido)"
-
-
-msgid "Speed of the burning reaction (use larger values for smaller flame)"
-msgstr "Velocità della reazione di combustione (usa valori più alti per una fiamma minore)"
 
 
 msgid "End"
@@ -8977,6 +8957,10 @@ msgid "Blue"
 msgstr "Blu"
 
 
+msgid "Density"
+msgstr "Densità"
+
+
 msgid "Flame"
 msgstr "Fiamma"
 
@@ -8991,6 +8975,10 @@ msgstr "Combustibile"
 
 msgid "Fuel field"
 msgstr "Campo combustibile"
+
+
+msgid "Heat"
+msgstr "Calore"
 
 
 msgid "Temperature of the fluid"
@@ -9067,18 +9055,6 @@ msgstr "Risoluzione Griglia Fumo"
 
 msgid "Flame Grid"
 msgstr "Griglia Fiamme"
-
-
-msgid "Ignition"
-msgstr "Ignizione"
-
-
-msgid "Minimum temperature of flames"
-msgstr "Minima temperatura delle fiamme"
-
-
-msgid "Maximum temperature of flames"
-msgstr "Massima temperatura delle fiamme"
 
 
 msgid "Smoke"
@@ -9165,10 +9141,6 @@ msgid "Noise Method"
 msgstr "Metodo Rumore"
 
 
-msgid "Noise method which is used for creating the high resolution"
-msgstr "Metodo del rumore usato per creare l'alta risoluzione"
-
-
 msgid "Wavelet"
 msgstr "Increspatura"
 
@@ -9213,10 +9185,6 @@ msgid "Heavy"
 msgstr "Pesante"
 
 
-msgid "Max Res"
-msgstr "Massima Risoluzione"
-
-
 msgid "Slice along the X axis"
 msgstr "Taglia lungo l'asse X"
 
@@ -9247,10 +9215,6 @@ msgstr "taglia Per Voxel"
 
 msgid "Delete"
 msgstr "Cancella"
-
-
-msgid "Buoyancy"
-msgstr "Galleggiamento"
 
 
 msgid "p0"
@@ -9289,14 +9253,6 @@ msgid "Dissolve Smoke"
 msgstr "Dissolvi Fumo"
 
 
-msgid "Enable smoke to disappear over time"
-msgstr "Fa scomparire il fumo col trascorrere del tempo"
-
-
-msgid "Using 1/x "
-msgstr "Usando 1/x "
-
-
 msgid "Tracer"
 msgstr "Traccianti"
 
@@ -9327,10 +9283,6 @@ msgstr "Esponente Viscosità"
 
 msgid "Negative exponent for the viscosity value (to simplify entering small values e.g. 5*10^-6)"
 msgstr "Esponente negativo per il valore della viscosità (per semplificare immettere valori piccoli es. 5*10^-6)"
-
-
-msgid "Amount of turbulence/rotation in fluid"
-msgstr "Quantità di turbolenza/rotazione nel fluido"
 
 
 msgid "Fluid Mesh Velocity"
@@ -11104,10 +11056,6 @@ msgid "Rotate"
 msgstr "Ruota"
 
 
-msgid "Topology"
-msgstr "Topologia"
-
-
 msgid "Secondary Color"
 msgstr "Colore Secondario"
 
@@ -11816,20 +11764,12 @@ msgid "Follow"
 msgstr "Segui"
 
 
-msgid "Use UV for mapping"
-msgstr "Usa UV per la mappatura"
-
-
 msgid "Surface Curve"
 msgstr "Curva Superficie"
 
 
 msgid "Curve data-block used for storing surfaces"
 msgstr "Blocco-dati Curva usato per conservare le superfici"
-
-
-msgid "Use UV for Mapping"
-msgstr "Usa UV per la Mappatura"
 
 
 msgid "Text Curve"
@@ -13946,24 +13886,12 @@ msgid "Lock Location"
 msgstr "Blocca Posizione"
 
 
-msgid "Lock editing of location in the interface"
-msgstr "Blocca la modifica delle posizioni nell'interfaccia"
-
-
 msgid "Lock Rotation"
 msgstr "Blocca Rotazione"
 
 
-msgid "Lock editing of rotation in the interface"
-msgstr "Blocca la modifica delle rotazioni nell'interfaccia"
-
-
 msgid "Lock Rotation (4D Angle)"
 msgstr "Blocca Rotazione (Angoli 4D)"
-
-
-msgid "Lock editing of 'angle' component of four-component rotations in the interface"
-msgstr "Blocca la modifica del componente 'angolo' delle rotazioni a quattro componenti nell'interfaccia"
 
 
 msgid "Lock Rotations (4D)"
@@ -13976,10 +13904,6 @@ msgstr "Blocca la modifica di quattro rotazioni composte per componenti (e non c
 
 msgid "Lock Scale"
 msgstr "Blocca Scala"
-
-
-msgid "Lock editing of scale in the interface"
-msgstr "Blocca la modifica della scala nell'interfaccia"
 
 
 msgid "Material Slots"
@@ -20692,6 +20616,10 @@ msgstr "Mappatura Spigolo"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Metodo usato per mappare gli spigoli di origine a quelli di destinazione"
+
+
+msgid "Topology"
+msgstr "Topologia"
 
 
 msgid "Copy from identical topology meshes"
@@ -46282,11 +46210,6 @@ msgstr "Posa"
 
 
 msgctxt "Operator"
-msgid "Topology"
-msgstr "Topologia"
-
-
-msgctxt "Operator"
 msgid "Simplify"
 msgstr "Semplifica"
 
@@ -50888,6 +50811,10 @@ msgstr "Cambia la velocità della simulazione"
 
 msgid "Settings for particle fluids physics"
 msgstr "Impostazioni per la fisica delle particelle dei fluidi"
+
+
+msgid "Buoyancy"
+msgstr "Galleggiamento"
 
 
 msgid "Artificial buoyancy force in negative gravity direction based on pressure differences inside the fluid"
@@ -64389,36 +64316,8 @@ msgid "Cursor Y"
 msgstr "Y Cursore"
 
 
-msgid "Display Color:"
-msgstr "Mostra Colore:"
-
-
-msgid "Auto Handle Smoothing:"
-msgstr "Smussatura Maniglia Automatica:"
-
-
 msgid "Interpolation:"
 msgstr "Interpolazione:"
-
-
-msgid "Key:"
-msgstr "Chiave:"
-
-
-msgid "Frame:"
-msgstr "Fotogramma:"
-
-
-msgid "Value:"
-msgstr "Valore:"
-
-
-msgid "Left Handle:"
-msgstr "Maniglia Sinistra:"
-
-
-msgid "Right Handle:"
-msgstr "Maniglia Destra:"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -64447,6 +64346,10 @@ msgstr "Valore Guida:"
 
 msgid "Expression:"
 msgstr "Espressione:"
+
+
+msgid "Value:"
+msgstr "Valore:"
 
 
 msgid "Update Dependencies"
@@ -64638,28 +64541,12 @@ msgid "Verts:%s | Faces:%s | Tris:%s | Objects:%s/%s%s%s"
 msgstr "Vert:%s | Facce:%s | Triang:%s | Oggetti:%s/%s%s%s"
 
 
-msgid "Strip Extents:"
-msgstr "Estensione Spezzone:"
-
-
-msgid "Playback Settings:"
-msgstr "Impostazioni Riproduzione:"
-
-
-msgid "Action Extents:"
-msgstr "Estensione Azione:"
-
-
 msgid "Sync Length"
 msgstr "Sincronizza Lunghezza"
 
 
 msgid "Now"
 msgstr "Adesso"
-
-
-msgid "Evaluation"
-msgstr "Valutazione"
 
 
 msgid "Cannot push down actions while tweaking a strip's action, exit tweak mode first"
@@ -64928,10 +64815,6 @@ msgstr "Filmato non trovato"
 
 msgid "Mask not found"
 msgstr "Maschera non trovata"
-
-
-msgid "Start and end frame are not set"
-msgstr "Primo ed ultimo fotogramma non impostati"
 
 
 msgid "File '%s' could not be loaded"

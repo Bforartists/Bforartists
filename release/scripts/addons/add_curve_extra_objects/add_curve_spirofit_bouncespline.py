@@ -890,7 +890,6 @@ def add_curve_object(
             spline.points[i].co = verts[i][0], verts[i][1], verts[i][2], 1
 
     scene.collection.objects.link(cur)
-    cur.data.use_uv_as_generated = True
     cur.data.resolution_u = resolution_u
     cur.data.fill_mode = 'FULL'
     cur.data.bevel_depth = bevel
