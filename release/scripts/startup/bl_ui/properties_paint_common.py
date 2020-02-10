@@ -539,6 +539,8 @@ def brush_settings(layout, context, brush, popover=False):
 
         # normal_radius_factor
         layout.prop(brush, "normal_radius_factor", slider=True)
+        
+        layout.separator()
 
         # auto_smooth_factor and use_inverse_smooth_pressure
         if capabilities.has_auto_smooth:
@@ -765,10 +767,10 @@ def brush_shared_settings(layout, context, brush, popover=False):
             pressure_name=pressure_name,
             slider=True,
         )
-        layout.separator()
 
     if direction:
         layout.row().prop(brush, "direction", expand=True)
+        layout.separator()
 
 
 def brush_settings_advanced(layout, context, brush, popover=False):
