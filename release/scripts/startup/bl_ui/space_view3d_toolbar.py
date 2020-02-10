@@ -820,8 +820,11 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         sub.prop(sculpt, "detail_type_method", text="Detailing")
 
         if sculpt.detail_type_method in {'CONSTANT', 'MANUAL'}:
-            col.operator("sculpt.detail_flood_fill")
+            col.separator()
+            col.operator("sculpt.detail_flood_fill")           
 
+        col.separator()
+        col.use_property_split = False
         col.prop(sculpt, "use_smooth_shading")
 
 
