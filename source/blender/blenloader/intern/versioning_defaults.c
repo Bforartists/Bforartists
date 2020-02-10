@@ -137,8 +137,9 @@ static void blo_update_defaults_screen(bScreen *screen,
       BLI_freelistN(&ar->panels_category_active);
 
       /* Reset size so it uses consistent defaults from the region types. */
-      ar->sizex = 0;
-      ar->sizey = 0;
+      /*bfa - NEVER !*/
+      //ar->sizex = 0;
+      //ar->sizey = 0;
     }
 
     if (sa->spacetype == SPACE_IMAGE) {
