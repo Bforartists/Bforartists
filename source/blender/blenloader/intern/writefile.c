@@ -157,7 +157,7 @@
 #include "BKE_gpencil_modifier.h"
 #include "BKE_idcode.h"
 #include "BKE_layer.h"
-#include "BKE_library_override.h"
+#include "BKE_lib_override.h"
 #include "BKE_main.h"
 #include "BKE_modifier.h"
 #include "BKE_node.h"
@@ -3600,6 +3600,7 @@ static void write_workspace(WriteData *wd, WorkSpace *workspace)
   ListBase *layouts = BKE_workspace_layouts_get(workspace);
 
   writestruct(wd, ID_WS, WorkSpace, 1, workspace);
+  write_iddata(wd, &workspace->id);
   writelist(wd, DATA, WorkSpaceLayout, layouts);
   writelist(wd, DATA, WorkSpaceDataRelation, &workspace->hook_layout_relations);
   writelist(wd, DATA, wmOwnerID, &workspace->owner_ids);
@@ -3785,7 +3786,7 @@ static bool write_file_handle(Main *mainvar,
   mywrite_flush(wd);
 
   OverrideLibraryStorage *override_storage =
-      wd->use_memfile ? NULL : BKE_override_library_operations_store_initialize();
+      wd->use_memfile ? NULL : BKE_lib_override_library_operations_store_initialize();
 
   /* This outer loop allows to save first data-blocks from real mainvar,
    * then the temp ones from override process,
@@ -3810,7 +3811,7 @@ static bool write_file_handle(Main *mainvar,
         const bool do_override = !ELEM(override_storage, NULL, bmain) && id->override_library;
 
         if (do_override) {
-          BKE_override_library_operations_store_start(bmain, override_storage, id);
+          BKE_lib_override_library_operations_store_start(bmain, override_storage, id);
         }
 
         switch ((ID_Type)GS(id->name)) {
@@ -3930,7 +3931,7 @@ static bool write_file_handle(Main *mainvar,
         }
 
         if (do_override) {
-          BKE_override_library_operations_store_end(override_storage, id);
+          BKE_lib_override_library_operations_store_end(override_storage, id);
         }
       }
 
@@ -3939,7 +3940,7 @@ static bool write_file_handle(Main *mainvar,
   } while ((bmain != override_storage) && (bmain = override_storage));
 
   if (override_storage) {
-    BKE_override_library_operations_store_finalize(override_storage);
+    BKE_lib_override_library_operations_store_finalize(override_storage);
     override_storage = NULL;
   }
 

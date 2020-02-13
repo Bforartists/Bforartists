@@ -23,6 +23,8 @@
 #include "DNA_mesh_types.h"
 #include "DNA_view3d_types.h"
 
+#include "BKE_curve.h"
+#include "BKE_displist.h"
 #include "BKE_editmesh.h"
 #include "BKE_global.h"
 #include "BKE_object.h"
@@ -65,7 +67,7 @@ void OVERLAY_wireframe_cache_init(OVERLAY_Data *vedata)
   GPUShader *wires_sh = use_select ? OVERLAY_shader_wireframe_select() :
                                      OVERLAY_shader_wireframe();
 
-  for (int xray = 0; xray < 2; xray++) {
+  for (int xray = 0; xray < (is_material_shmode ? 1 : 2); xray++) {
     /* Only do stencil test if stencil buffer is written by the render engine. */
     DRWState stencil_state = is_material_shmode ? 0 : DRW_STATE_STENCIL_EQUAL;
     DRWState state = DRW_STATE_FIRST_VERTEX_CONVENTION | DRW_STATE_WRITE_COLOR |
@@ -104,6 +106,16 @@ void OVERLAY_wireframe_cache_init(OVERLAY_Data *vedata)
     DRW_shgroup_uniform_bool_copy(grp, "useColoring", false);
     DRW_shgroup_stencil_mask(grp, stencil_mask);
   }
+
+  if (is_material_shmode) {
+    /* Make all drawcalls go into the non-xray shading groups. */
+    for (int use_coloring = 0; use_coloring < 2; use_coloring++) {
+      pd->wires_grp[1][use_coloring] = pd->wires_grp[0][use_coloring];
+      pd->wires_all_grp[1][use_coloring] = pd->wires_all_grp[0][use_coloring];
+    }
+    pd->wires_sculpt_grp[1] = pd->wires_sculpt_grp[0];
+    psl->wireframe_xray_ps = NULL;
+  }
 }
 
 void OVERLAY_wireframe_cache_populate(OVERLAY_Data *vedata,
@@ -128,6 +140,9 @@ void OVERLAY_wireframe_cache_populate(OVERLAY_Data *vedata,
     struct GPUBatch *geom = NULL;
     switch (ob->type) {
       case OB_CURVE:
+        if (ob->runtime.curve_cache && BKE_displist_has_faces(&ob->runtime.curve_cache->disp)) {
+          break;
+        }
         geom = DRW_cache_curve_edge_wire_get(ob);
         break;
       case OB_SURF:
@@ -237,8 +252,10 @@ void OVERLAY_wireframe_in_front_draw(OVERLAY_Data *data)
   OVERLAY_PassList *psl = data->psl;
   OVERLAY_PrivateData *pd = data->stl->pd;
 
-  DRW_view_set_active(pd->view_wires);
-  DRW_draw_pass(psl->wireframe_xray_ps);
+  if (psl->wireframe_xray_ps) {
+    DRW_view_set_active(pd->view_wires);
+    DRW_draw_pass(psl->wireframe_xray_ps);
 
-  DRW_view_set_active(NULL);
+    DRW_view_set_active(NULL);
+  }
 }

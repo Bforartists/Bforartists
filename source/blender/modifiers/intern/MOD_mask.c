@@ -36,7 +36,7 @@
 
 #include "BKE_action.h" /* BKE_pose_channel_find_name */
 #include "BKE_customdata.h"
-#include "BKE_library_query.h"
+#include "BKE_lib_query.h"
 #include "BKE_mesh.h"
 #include "BKE_modifier.h"
 #include "BKE_deform.h"
@@ -131,7 +131,7 @@ static Mesh *applyModifier(ModifierData *md, const ModifierEvalContext *ctx, Mes
     bDeformGroup *def;
     bool *bone_select_array;
     int bone_select_tot = 0;
-    const int defbase_tot = BLI_listbase_count(&ob->defbase);
+    const uint defbase_tot = (uint)BLI_listbase_count(&ob->defbase);
 
     /* check that there is armature object with bones to use, otherwise return original mesh */
     if (ELEM(NULL, oba, oba->pose, ob->defbase.first)) {

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: 2020-01-27 15:08+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -2228,12 +2228,8 @@ msgid "Mode"
 msgstr "模式"
 
 
-msgid "Soft"
-msgstr "柔軟"
-
-
-msgid "Hard"
-msgstr "剛硬"
+msgid "Point"
+msgstr "點"
 
 
 msgid "Stroke"
@@ -6986,10 +6982,6 @@ msgstr "F 曲線取樣"
 
 msgid "Sample point for F-Curve"
 msgstr "F 曲線的取樣點"
-
-
-msgid "Point"
-msgstr "點"
 
 
 msgid "Point coordinates"
@@ -15668,8 +15660,16 @@ msgid "Noise Type"
 msgstr "噪訊類型"
 
 
+msgid "Soft"
+msgstr "柔軟"
+
+
 msgid "Generate soft noise (smooth transitions)"
 msgstr "生成軟噪訊 (平滑過度)"
+
+
+msgid "Hard"
+msgstr "剛硬"
 
 
 msgid "Generate hard noise (sharp transitions)"
@@ -54330,10 +54330,6 @@ msgid "Transform Modal Map"
 msgstr "變換典範映射"
 
 
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "DEM 資料 (.hgt) 作為網格與/或影像"
-
-
 msgid "OSL shader compilation succeeded"
 msgstr "OSL 著色器編纂成功"
 
@@ -58677,10 +58673,6 @@ msgid "Not yet implemented"
 msgstr "尚未實作"
 
 
-msgid "No conversion possible"
-msgstr "無轉換可能"
-
-
 msgid "Too few selections to merge"
 msgstr "要合併的選取項過少"
 
@@ -60451,6 +60443,10 @@ msgid "Interpolation:"
 msgstr "插補："
 
 
+msgid "Value:"
+msgstr "值："
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "F 曲線僅有 F 修改器"
 
@@ -60473,10 +60469,6 @@ msgstr "屬性："
 
 msgid "Driver Value:"
 msgstr "驅動器值："
-
-
-msgid "Value:"
-msgstr "值："
 
 
 msgid "Update Dependencies"
@@ -63155,20 +63147,12 @@ msgid "Import-Export"
 msgstr "匯入-匯出"
 
 
-msgid "MakeHuman"
-msgstr "MakeHuman"
-
-
 msgid "Rigging"
 msgstr "索具"
 
 
 msgid "Video Tools"
 msgstr "視訊工具"
-
-
-msgid "Workflow"
-msgstr "工作流程"
 
 
 msgid "English (English)"

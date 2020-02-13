@@ -73,7 +73,7 @@
 #include "BKE_global.h"
 #include "BKE_idprop.h"
 #include "BKE_key.h"
-#include "BKE_library.h"
+#include "BKE_lib_id.h"
 #include "BKE_layer.h"
 #include "BKE_main.h"
 #include "BKE_mesh.h"
@@ -1558,7 +1558,7 @@ void do_versions_after_linking_280(Main *bmain, ReportList *UNUSED(reports))
       }
     }
 
-    /* This versionning could probably be done only on earlier versions, not sure however
+    /* This versioning could probably be done only on earlier versions, not sure however
      * which exact version fully deprecated tessfaces, so think we can keep that one here, no
      * harm to be expected anyway for being over-conservative. */
     for (Mesh *me = bmain->meshes.first; me != NULL; me = me->id.next) {
@@ -4254,6 +4254,12 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
         }
       }
     }
+
+    for (Brush *br = bmain->brushes.first; br; br = br->id.next) {
+      if (br->ob_mode & OB_MODE_SCULPT && br->area_radius_factor == 0.0f) {
+        br->area_radius_factor = 0.5f;
+      }
+    }
   }
 
   if (!MAIN_VERSION_ATLEAST(bmain, 282, 2)) {
@@ -4428,7 +4434,6 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
       }
     }
 
-    /* Brush cursor alpha */
     for (Brush *br = bmain->brushes.first; br; br = br->id.next) {
       br->add_col[3] = 0.9f;
       br->sub_col[3] = 0.9f;
@@ -4438,6 +4443,22 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
     for (Brush *br = bmain->brushes.first; br; br = br->id.next) {
       if (br->pose_ik_segments == 0) {
         br->pose_ik_segments = 1;
+      }
+    }
+
+    /* Pose brush keep anchor point. */
+    for (Brush *br = bmain->brushes.first; br; br = br->id.next) {
+      if (br->sculpt_tool == SCULPT_TOOL_POSE) {
+        br->flag2 |= BRUSH_POSE_IK_ANCHORED;
+      }
+    }
+
+    /* Tip Roundness. */
+    if (!DNA_struct_elem_find(fd->filesdna, "Brush", "float", "tip_roundness")) {
+      for (Brush *br = bmain->brushes.first; br; br = br->id.next) {
+        if (br->ob_mode & OB_MODE_SCULPT && br->sculpt_tool == SCULPT_TOOL_CLAY_STRIPS) {
+          br->tip_roundness = 0.18f;
+        }
       }
     }
   }
