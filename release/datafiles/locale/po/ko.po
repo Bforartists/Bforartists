@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -3035,28 +3035,12 @@ msgid "Eraser Mode"
 msgstr "지우게 모드"
 
 
-msgid "Soft"
-msgstr "소프트"
-
-
-msgid "Use soft eraser"
-msgstr "소프트 지우개를 사용"
-
-
-msgid "Hard"
-msgstr "하드"
-
-
-msgid "Use hard eraser"
-msgstr "하드 지우개를 사용"
+msgid "Point"
+msgstr "포인트"
 
 
 msgid "Stroke"
 msgstr "스트로크"
-
-
-msgid "Use stroke eraser"
-msgstr "스트로크 지우게를 사용"
 
 
 msgid "Affect Stroke Strength"
@@ -4173,10 +4157,6 @@ msgstr "옷감 속력은 이 값을 곱한 값"
 
 msgid "Pressure"
 msgstr "압력"
-
-
-msgid "The uniform pressure that is constanty applied to the mesh. Can be negative"
-msgstr "메쉬에 지속적으로 적용되는 균일한 압력. 음수 일 수 있습니다"
 
 
 msgid "Dynamic Base Mesh"
@@ -9545,10 +9525,6 @@ msgstr "F-커브 샘플"
 
 msgid "Sample point for F-Curve"
 msgstr "F-커브의 샘플 포인트"
-
-
-msgid "Point"
-msgstr "포인트"
 
 
 msgid "Point coordinates"
@@ -23768,8 +23744,16 @@ msgid "Noise Type"
 msgstr "노이즈 유형"
 
 
+msgid "Soft"
+msgstr "소프트"
+
+
 msgid "Generate soft noise (smooth transitions)"
 msgstr "매끄러운 노이즈를 생성 (스무스 전환)"
+
+
+msgid "Hard"
+msgstr "하드"
 
 
 msgid "Generate hard noise (sharp transitions)"
@@ -85067,10 +85051,6 @@ msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "아이드라퍼 컬러램프 포인트샘플링 맵"
 
 
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "다른 이미지 및/또는 메쉬로 DEM 데이터 (.hgt)"
-
-
 msgid "Denoising completed."
 msgstr "노이즈 제거가 완료됨."
 
@@ -87679,10 +87659,6 @@ msgid "Max Compression"
 msgstr "최대 압축률"
 
 
-msgid "Custom volume"
-msgstr "커스텀 볼륨"
-
-
 msgid "Pin Group"
 msgstr "핀 그룹"
 
@@ -88094,11 +88070,6 @@ msgstr "초기 온도"
 
 msgid "Guide Mode"
 msgstr "가이드 모드"
-
-
-msgctxt "Operator"
-msgid "Pause Guides"
-msgstr "일시 중지 가이드"
 
 
 msgid "Object does not have a Rigid Body"
@@ -94004,10 +93975,6 @@ msgid "Not yet implemented"
 msgstr "아직 구현되지 안음"
 
 
-msgid "No conversion possible"
-msgstr "가능한 변환 없음"
-
-
 msgid "No points were selected"
 msgstr "포인트가 선택되지 않았습니다"
 
@@ -97374,6 +97341,10 @@ msgid "None for Enum/Boolean"
 msgstr "열거/불리언에 대해 없음"
 
 
+msgid "Value:"
+msgstr "값:"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "F-커브는 F-모디파이어 만 있음"
 
@@ -97404,10 +97375,6 @@ msgstr "표현식:"
 
 msgid "Add Input Variable"
 msgstr "입력 변수를 추가"
-
-
-msgid "Value:"
-msgstr "값:"
 
 
 msgid "Update Dependencies"
@@ -101466,20 +101433,12 @@ msgid "Import-Export"
 msgstr "가져오기-내보내기"
 
 
-msgid "MakeHuman"
-msgstr "MakeHuman"
-
-
 msgid "Rigging"
 msgstr "리깅"
 
 
 msgid "Video Tools"
 msgstr "비디오 도구"
-
-
-msgid "Workflow"
-msgstr "워크플로"
 
 
 msgid "English (English)"

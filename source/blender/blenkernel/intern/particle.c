@@ -65,7 +65,7 @@
 #include "BKE_particle.h"
 #include "BKE_material.h"
 #include "BKE_key.h"
-#include "BKE_library.h"
+#include "BKE_lib_id.h"
 #include "BKE_modifier.h"
 #include "BKE_mesh.h"
 #include "BKE_cdderivedmesh.h" /* for weight_to_rgb() */
@@ -3112,8 +3112,6 @@ typedef struct CacheEditrPathsIterData {
   ParticleData *pa;
   int segments;
   bool use_weight;
-  float sel_col[3];
-  float nosel_col[3];
 } CacheEditrPathsIterData;
 
 static void psys_cache_edit_paths_iter(void *__restrict iter_data_v,
@@ -3329,18 +3327,6 @@ void psys_cache_edit_paths(Depsgraph *depsgraph,
   iter_data.pa = pa;
   iter_data.segments = segments;
   iter_data.use_weight = use_weight;
-
-  if (use_weight) {
-    /* use weight painting colors now... */
-  }
-  else {
-    iter_data.sel_col[0] = (float)edit->sel_col[0] / 255.0f;
-    iter_data.sel_col[1] = (float)edit->sel_col[1] / 255.0f;
-    iter_data.sel_col[2] = (float)edit->sel_col[2] / 255.0f;
-    iter_data.nosel_col[0] = (float)edit->nosel_col[0] / 255.0f;
-    iter_data.nosel_col[1] = (float)edit->nosel_col[1] / 255.0f;
-    iter_data.nosel_col[2] = (float)edit->nosel_col[2] / 255.0f;
-  }
 
   TaskParallelSettings settings;
   BLI_parallel_range_settings_defaults(&settings);
@@ -3812,7 +3798,7 @@ void BKE_particlesettings_twist_curve_init(ParticleSettings *part)
  *
  * WARNING! This function will not handle ID user count!
  *
- * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_lib_id.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_particlesettings_copy_data(Main *UNUSED(bmain),
                                     ParticleSettings *part_dst,

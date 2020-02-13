@@ -29,7 +29,7 @@
 
 #include "BKE_cdderivedmesh.h"
 #include "BKE_deform.h"
-#include "BKE_library.h"
+#include "BKE_lib_id.h"
 #include "BKE_mesh.h"
 
 #include "MOD_modifiertypes.h"
@@ -360,7 +360,7 @@ static void apply_weights_vertex_normal(WeightedNormalModifierData *wnmd,
   }
   else {
     /* TODO: Ideally, we could add an option to BKE_mesh_normals_loop_custom_[from_vertices_]set()
-     * to keep current clnors instead of resetting them to default autocomputed ones,
+     * to keep current clnors instead of resetting them to default auto-computed ones,
      * when given new custom normal is zero-vec.
      * But this is not exactly trivial change, better to keep this optimization for later...
      */
