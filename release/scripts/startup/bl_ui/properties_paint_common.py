@@ -475,7 +475,9 @@ class DisplayPanel(BrushPanel):
             row.label(text="Display Cursor")
 
         col = layout.column()
-        col.active = brush.brush_capabilities.has_overlay and settings.show_brush
+        #col.active = brush.brush_capabilities.has_overlay and settings.show_brush
+        # workaround for bug Image Editor - inactive settings in Brush Tip panel #1367
+        col.active = settings.show_brush
 
         col.prop(brush, "cursor_color_add", text="Cursor Color")
         if mode == 'SCULPT' and brush.sculpt_capabilities.has_secondary_color:
