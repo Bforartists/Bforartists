@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzan <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -3034,28 +3034,12 @@ msgid "Eraser Mode"
 msgstr "Modo del borrador"
 
 
-msgid "Soft"
-msgstr "Suave"
-
-
-msgid "Use soft eraser"
-msgstr "Usar borrador suave"
-
-
-msgid "Hard"
-msgstr "Duro"
-
-
-msgid "Use hard eraser"
-msgstr "Usar borrador duro"
+msgid "Point"
+msgstr "Punto"
 
 
 msgid "Stroke"
 msgstr "Trazo"
-
-
-msgid "Use stroke eraser"
-msgstr "Usar borrador de trazos"
 
 
 msgid "Affect Stroke Strength"
@@ -4172,10 +4156,6 @@ msgstr "La velocidad de la ropa es multiplicada por este valor"
 
 msgid "Pressure"
 msgstr "Presión"
-
-
-msgid "The uniform pressure that is constanty applied to the mesh. Can be negative"
-msgstr "La presión uniforme que será aplicada de forma constante a la malla. Podrá tener valores negativos"
 
 
 msgid "Dynamic Base Mesh"
@@ -9544,10 +9524,6 @@ msgstr "Muestra de la curva-f"
 
 msgid "Sample point for F-Curve"
 msgstr "Punto de muestreo de la curva-f"
-
-
-msgid "Point"
-msgstr "Punto"
 
 
 msgid "Point coordinates"
@@ -23767,8 +23743,16 @@ msgid "Noise Type"
 msgstr "Tipo de ruido"
 
 
+msgid "Soft"
+msgstr "Suave"
+
+
 msgid "Generate soft noise (smooth transitions)"
 msgstr "Generar ruido suave (transiciones suaves)"
+
+
+msgid "Hard"
+msgstr "Duro"
 
 
 msgid "Generate hard noise (sharp transitions)"
@@ -85072,10 +85056,6 @@ msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "Cuentagotas - Mapa punto banda de color"
 
 
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "Datos DEM (.hgt) como malla y/o imagen"
-
-
 msgid "Denoising completed."
 msgstr "Reducción de ruidos completa."
 
@@ -87684,10 +87664,6 @@ msgid "Max Compression"
 msgstr "Compresión máx"
 
 
-msgid "Custom volume"
-msgstr "Volumen personalizado"
-
-
 msgid "Pin Group"
 msgstr "Grupos de fijación"
 
@@ -88099,11 +88075,6 @@ msgstr "Temperatura inicial"
 
 msgid "Guide Mode"
 msgstr "Modo de guía"
-
-
-msgctxt "Operator"
-msgid "Pause Guides"
-msgstr "Pausar guías"
 
 
 msgid "Object does not have a Rigid Body"
@@ -94017,10 +93988,6 @@ msgid "Not yet implemented"
 msgstr "Aún no implementado"
 
 
-msgid "No conversion possible"
-msgstr "No hay conversión posible"
-
-
 msgid "No points were selected"
 msgstr "No se han seleccionado puntos"
 
@@ -97395,6 +97362,10 @@ msgid "None for Enum/Boolean"
 msgstr "Ninguno para Enum/Booleanas"
 
 
+msgid "Value:"
+msgstr "Valor:"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "La curva-f sólo tiene modificadores-f"
 
@@ -97425,10 +97396,6 @@ msgstr "Expresión:"
 
 msgid "Add Input Variable"
 msgstr "Agregar variable de entrada"
-
-
-msgid "Value:"
-msgstr "Valor:"
 
 
 msgid "Update Dependencies"
@@ -101495,20 +101462,12 @@ msgid "Import-Export"
 msgstr "Importación-Exportación"
 
 
-msgid "MakeHuman"
-msgstr "MakeHuman"
-
-
 msgid "Rigging"
 msgstr "Preparación"
 
 
 msgid "Video Tools"
 msgstr "Herramientas de video"
-
-
-msgid "Workflow"
-msgstr "Flujo de trabajo"
 
 
 msgid "English (English)"

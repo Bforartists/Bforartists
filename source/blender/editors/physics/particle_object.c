@@ -39,7 +39,7 @@
 #include "BKE_bvhutils.h"
 #include "BKE_context.h"
 #include "BKE_global.h"
-#include "BKE_library.h"
+#include "BKE_lib_id.h"
 #include "BKE_main.h"
 #include "BKE_mesh.h"
 #include "BKE_mesh_runtime.h"
@@ -1036,9 +1036,6 @@ static void copy_particle_edit(Depsgraph *depsgraph,
     pa++;
   }
   update_world_cos(ob, edit);
-
-  UI_GetThemeColor3ubv(TH_EDGE_SELECT, edit->sel_col);
-  UI_GetThemeColor3ubv(TH_WIRE, edit->nosel_col);
 
   recalc_lengths(edit);
   recalc_emitter_field(depsgraph, ob, psys);

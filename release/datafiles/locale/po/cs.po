@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -1143,8 +1143,8 @@ msgid "Mode"
 msgstr "Mód"
 
 
-msgid "Soft"
-msgstr "Zjemnit"
+msgid "Point"
+msgstr "Bod"
 
 
 msgid "Stroke"
@@ -3978,10 +3978,6 @@ msgstr "Editor Ipo křivek"
 
 msgid "Sample point for F-Curve"
 msgstr "Povolit vypocet stinu"
-
-
-msgid "Point"
-msgstr "Bod"
 
 
 msgid "Point coordinates"
@@ -8661,6 +8657,10 @@ msgstr "Faktor zvětšení textury"
 
 msgid "Noise Type"
 msgstr "Soubor "
+
+
+msgid "Soft"
+msgstr "Zjemnit"
 
 
 msgid "Distortion Amount"
@@ -33696,10 +33696,6 @@ msgid "Copy buffer is empty"
 msgstr "Odstranit vybrané vertexy z aktuální skupiny vertexů"
 
 
-msgid "No conversion possible"
-msgstr "Rotace"
-
-
 msgid "Too few selections to merge"
 msgstr "Vzbrat vše podle typu"
 
@@ -34565,6 +34561,10 @@ msgid "Interpolation:"
 msgstr "Mód Interpolace"
 
 
+msgid "Value:"
+msgstr "Hodnota"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "Kopírovat modifikátory "
 
@@ -34579,10 +34579,6 @@ msgstr "Vlastnost"
 
 msgid "Driver Value:"
 msgstr "Aktivovat materiálové uzly"
-
-
-msgid "Value:"
-msgstr "Hodnota"
 
 
 msgid "Update Dependencies"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -258,6 +258,10 @@ msgid "Mode"
 msgstr "Mode"
 
 
+msgid "Point"
+msgstr "Punt"
+
+
 msgid "Resolution"
 msgstr "Resolutie"
 
@@ -457,10 +461,6 @@ msgstr "Oplossen"
 
 msgid "Group"
 msgstr "Groep"
-
-
-msgid "Point"
-msgstr "Punt"
 
 
 msgctxt "Sound"

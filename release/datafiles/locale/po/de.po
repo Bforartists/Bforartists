@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -2398,12 +2398,8 @@ msgid "Mode"
 msgstr "Modus"
 
 
-msgid "Soft"
-msgstr "Weich"
-
-
-msgid "Hard"
-msgstr "Hart"
+msgid "Point"
+msgstr "Punkt"
 
 
 msgid "Stroke"
@@ -5441,10 +5437,6 @@ msgstr "Modifikatoren"
 
 msgid "Muted"
 msgstr "Stumm"
-
-
-msgid "Point"
-msgstr "Punkt"
 
 
 msgid "Point coordinates"
@@ -11146,6 +11138,14 @@ msgstr "Rauschgröße"
 
 msgid "Noise Type"
 msgstr "Rausch-Typ"
+
+
+msgid "Soft"
+msgstr "Weich"
+
+
+msgid "Hard"
+msgstr "Hart"
 
 
 msgid "Procedural distorted noise texture"
@@ -38935,6 +38935,10 @@ msgid "Cursor Y"
 msgstr "Cursor Y"
 
 
+msgid "Value:"
+msgstr "Wert:"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "F-Kurve die nur F-Modifikatoren haben"
 
@@ -38961,10 +38965,6 @@ msgstr "Treiberwert:"
 
 msgid "Expression:"
 msgstr "Ausdruck:"
-
-
-msgid "Value:"
-msgstr "Wert:"
 
 
 msgid "Update Dependencies"
@@ -40463,16 +40463,8 @@ msgid "Import-Export"
 msgstr "Importieren/Expotieren"
 
 
-msgid "MakeHuman"
-msgstr "MakeHuman"
-
-
 msgid "Video Tools"
 msgstr "Videowerkzeuge"
-
-
-msgid "Workflow"
-msgstr "Arbeitsablauf"
 
 
 msgid "English (English)"

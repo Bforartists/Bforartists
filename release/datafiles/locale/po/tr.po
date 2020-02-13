@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -788,6 +788,10 @@ msgstr "Açı"
 
 msgid "Mode"
 msgstr "Mod"
+
+
+msgid "Point"
+msgstr "Nokta"
 
 
 msgid "Stroke"
@@ -2769,10 +2773,6 @@ msgstr "Bağlama verileri eksik."
 
 msgid "F-Curve Sample"
 msgstr "Eğri Önayarı"
-
-
-msgid "Point"
-msgstr "Nokta"
 
 
 msgid "Point coordinates"
@@ -25290,10 +25290,6 @@ msgid "Copy buffer is empty"
 msgstr "Nesne, Akışı Simülasyondan Çıkarır"
 
 
-msgid "No conversion possible"
-msgstr "Consolda Olayları Günlükle"
-
-
 msgid "Too few selections to merge"
 msgstr "Noktaları Göster/Gizle"
 
@@ -26110,12 +26106,12 @@ msgid "Interpolation:"
 msgstr "Aradeğerleme Modu"
 
 
-msgid "Driver Value:"
-msgstr "Sürücüyü Kaldır"
-
-
 msgid "Value:"
 msgstr "Değer:"
+
+
+msgid "Driver Value:"
+msgstr "Sürücüyü Kaldır"
 
 
 msgid "Update Dependencies"

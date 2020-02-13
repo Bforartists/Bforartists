@@ -38,7 +38,7 @@
 
 #include "BKE_effect.h"
 #include "BKE_fluid.h"
-#include "BKE_library.h"
+#include "BKE_lib_id.h"
 #include "BKE_modifier.h"
 #include "BKE_pointcache.h"
 
@@ -632,7 +632,7 @@ static void obstacles_from_mesh_task_cb(void *__restrict userdata,
 
   /* Distance between two opposing vertices in a unit cube.
    * I.e. the unit cube diagonal or sqrt(3).
-   * This value is our nearest neighbour search distance. */
+   * This value is our nearest neighbor search distance. */
   const float surface_distance = 1.732;
 
   for (int x = mds->res_min[0]; x < mds->res_max[0]; x++) {
@@ -1563,7 +1563,7 @@ static void sample_mesh(FluidFlowSettings *mfs,
 
   /* Distance between two opposing vertices in a unit cube.
    * I.e. the unit cube diagonal or sqrt(3).
-   * This value is our nearest neighbour search distance. */
+   * This value is our nearest neighbor search distance. */
   const float surface_distance = 1.732;
   nearest.dist_sq = surface_distance * surface_distance; /* find_nearest uses squared distance. */
 
@@ -2219,7 +2219,7 @@ BLI_INLINE void apply_inflow_fields(FluidFlowSettings *mfs,
   }
 
   /* Set emission value for smoke inflow.
-   * Ensure that emission value is "maximised". */
+   * Ensure that emission value is "maximized". */
   if (emission_in) {
     emission_in[index] = MAX2(emission_value, emission_in[index]);
   }
@@ -3239,7 +3239,6 @@ static void manta_guiding(
   FluidDomainSettings *mds = mmd->domain;
   float fps = scene->r.frs_sec / scene->r.frs_sec_base;
   float dt = DT_DEFAULT * (25.0f / fps) * mds->time_scale;
-  ;
 
   BLI_mutex_lock(&object_update_lock);
 
@@ -3325,15 +3324,6 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
     BKE_fluid_modifier_reset_ex(mmd, false);
   }
 
-  BKE_fluid_modifier_init(mmd, depsgraph, ob, scene, me);
-
-  /* ensure that time parameters are initialized correctly before every step */
-  float fps = scene->r.frs_sec / scene->r.frs_sec_base;
-  mds->frame_length = DT_DEFAULT * (25.0f / fps) * mds->time_scale;
-  mds->dt = mds->frame_length;
-  mds->time_per_frame = 0;
-  mds->time_total = (scene_framenr - 1) * mds->frame_length;
-
   /* Guiding parent res pointer needs initialization */
   guide_parent = mds->guide_parent;
   if (guide_parent) {
@@ -3342,6 +3332,15 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
       copy_v3_v3_int(mds->guide_res, mmd_parent->domain->res);
     }
   }
+
+  BKE_fluid_modifier_init(mmd, depsgraph, ob, scene, me);
+
+  /* ensure that time parameters are initialized correctly before every step */
+  float fps = scene->r.frs_sec / scene->r.frs_sec_base;
+  mds->frame_length = DT_DEFAULT * (25.0f / fps) * mds->time_scale;
+  mds->dt = mds->frame_length;
+  mds->time_per_frame = 0;
+  mds->time_total = (scene_framenr - 1) * mds->frame_length;
 
   objs = BKE_collision_objects_create(
       depsgraph, ob, mds->fluid_group, &numobj, eModifierType_Fluid);
@@ -3403,7 +3402,8 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
   resume_guide = (!is_startframe) && (mds->cache_frame_pause_guide == scene_framenr);
 
   bool read_cache, bake_cache;
-  read_cache = false, bake_cache = baking_data || baking_noise || baking_mesh || baking_particles;
+  read_cache = false;
+  bake_cache = baking_data || baking_noise || baking_mesh || baking_particles || baking_guide;
 
   bool with_gdomain;
   with_gdomain = (mds->guide_source == FLUID_DOMAIN_GUIDE_SRC_DOMAIN);
@@ -3419,14 +3419,14 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
   switch (mode) {
     case FLUID_DOMAIN_CACHE_FINAL:
       /* Just load the data that has already been baked */
-      if (!baking_data && !baking_noise && !baking_mesh && !baking_particles) {
+      if (!baking_data && !baking_noise && !baking_mesh && !baking_particles && !baking_guide) {
         read_cache = true;
         bake_cache = false;
       }
       break;
     case FLUID_DOMAIN_CACHE_MODULAR:
       /* Just load the data that has already been baked */
-      if (!baking_data && !baking_noise && !baking_mesh && !baking_particles) {
+      if (!baking_data && !baking_noise && !baking_mesh && !baking_particles && !baking_guide) {
         read_cache = true;
         bake_cache = false;
         break;
@@ -4561,7 +4561,7 @@ void BKE_fluid_modifier_create_type_data(struct FluidModifierData *mmd)
     mmd->effector->flags = 0;
 
     /* guide options */
-    mmd->effector->guide_mode = FLUID_EFFECTOR_GUIDE_MAX;
+    mmd->effector->guide_mode = FLUID_EFFECTOR_GUIDE_OVERRIDE;
     mmd->effector->vel_multi = 1.0f;
   }
 }

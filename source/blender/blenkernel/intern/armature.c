@@ -58,7 +58,7 @@
 #include "BKE_deform.h"
 #include "BKE_displist.h"
 #include "BKE_idprop.h"
-#include "BKE_library.h"
+#include "BKE_lib_id.h"
 #include "BKE_lattice.h"
 #include "BKE_main.h"
 #include "BKE_object.h"
@@ -194,7 +194,7 @@ static void copy_bonechildren_custom_handles(Bone *bone_dst, bArmature *arm_dst)
  *
  * WARNING! This function will not handle ID user count!
  *
- * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_lib_id.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_armature_copy_data(Main *UNUSED(bmain),
                             bArmature *arm_dst,
@@ -1562,8 +1562,8 @@ static void armature_vert_task(void *__restrict userdata,
     int deformed = 0;
     unsigned int j;
     for (j = dvert->totweight; j != 0; j--, dw++) {
-      const int index = dw->def_nr;
-      if (index >= 0 && index < data->defbase_tot && (pchan = data->defnrToPC[index])) {
+      const uint index = dw->def_nr;
+      if (index < data->defbase_tot && (pchan = data->defnrToPC[index])) {
         float weight = dw->weight;
         Bone *bone = pchan->bone;
 

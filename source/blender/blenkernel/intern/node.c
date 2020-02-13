@@ -53,7 +53,7 @@
 #include "BKE_animsys.h"
 #include "BKE_global.h"
 #include "BKE_idprop.h"
-#include "BKE_library.h"
+#include "BKE_lib_id.h"
 #include "BKE_main.h"
 #include "BKE_node.h"
 
@@ -1499,7 +1499,7 @@ bNodeTree *ntreeAddTree(Main *bmain, const char *name, const char *idname)
  *
  * WARNING! This function will not handle ID user count!
  *
- * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_lib_id.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_node_tree_copy_data(Main *UNUSED(bmain),
                              bNodeTree *ntree_dst,
@@ -3572,6 +3572,12 @@ void nodeLabel(bNodeTree *ntree, bNode *node, char *label, int maxlen)
     }
     BLI_strncpy(label, tmp, maxlen);
   }
+}
+
+/* Get node socket label if it is set */
+const char *nodeSocketLabel(const bNodeSocket *sock)
+{
+  return (sock->label[0] != '\0') ? sock->label : sock->name;
 }
 
 static void node_type_base_defaults(bNodeType *ntype)

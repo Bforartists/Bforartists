@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -935,14 +935,6 @@ msgstr "Vinkel"
 
 msgid "Mode"
 msgstr "Redigerings Läge"
-
-
-msgid "Soft"
-msgstr "Suddighet"
-
-
-msgid "Hard"
-msgstr "Hårdhet"
 
 
 msgid "Stroke"
@@ -7759,6 +7751,14 @@ msgstr "Skalningsfaktor för bakgrundsbilden"
 
 msgid "Noise Type"
 msgstr "Arkiv"
+
+
+msgid "Soft"
+msgstr "Suddighet"
+
+
+msgid "Hard"
+msgstr "Hårdhet"
 
 
 msgid "Distortion Amount"
@@ -31381,10 +31381,6 @@ msgid "Copy buffer is empty"
 msgstr "Markera Länkad"
 
 
-msgid "No conversion possible"
-msgstr "Rensa Rotation"
-
-
 msgid "Too few selections to merge"
 msgstr "Växla markering av alla nycklar"
 
@@ -32070,6 +32066,10 @@ msgid "Interpolation:"
 msgstr "Integrering:"
 
 
+msgid "Value:"
+msgstr "Värde"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "Radera Allt"
 
@@ -32084,10 +32084,6 @@ msgstr "Bild Displist"
 
 msgid "Driver Value:"
 msgstr "Driver"
-
-
-msgid "Value:"
-msgstr "Värde"
 
 
 msgid "Update Dependencies"

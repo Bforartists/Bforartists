@@ -112,6 +112,10 @@ def show_device_active(context):
         return True
     return context.preferences.addons[__package__].preferences.has_active_device()
 
+def show_optix_denoising(context):
+    # OptiX AI denoiser can be used when at least one device supports OptiX
+    return bool(context.preferences.addons[__package__].preferences.get_devices_for_type('OPTIX'))
+
 
 def draw_samples_info(layout, context):
     cscene = context.scene.cycles
@@ -179,13 +183,12 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
         
         col = layout.column()
 
-        if cscene.progressive == 'PATH' or use_branched_path(context) is False:
+        if not use_branched_path(context):
             col.prop(cscene, "samples", text="Render")
             col.prop(cscene, "preview_samples", text="Viewport")
             col = layout.column()
             col.use_property_split = False
             col.prop(cscene, "use_square_samples")
-            draw_samples_info(layout, context)
             
         else:
             col.prop(cscene, "aa_samples", text="Render")
@@ -194,6 +197,14 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
             col.use_property_split = False
             col.prop(cscene, "use_square_samples")
 
+        # Viewport denoising is currently only supported with OptiX
+        if show_optix_denoising(context):
+            col = layout.column()
+            col.prop(cscene, "preview_denoising")
+
+        if not use_branched_path(context):
+            draw_samples_info(layout, context)
+
 
 class CYCLES_RENDER_PT_sampling_sub_samples(CyclesButtonsPanel, Panel):
     bl_label = "Sub Samples"
@@ -201,9 +212,7 @@ class CYCLES_RENDER_PT_sampling_sub_samples(CyclesButtonsPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        scene = context.scene
-        cscene = scene.cycles
-        return cscene.progressive != 'PATH' and use_branched_path(context)
+        return use_branched_path(context)
 
     def draw(self, context):
         layout = self.layout
@@ -645,10 +654,6 @@ class CYCLES_RENDER_PT_performance_tiles(CyclesButtonsPanel, Panel):
 
         sub = col.column()
         sub.active = not rd.use_save_buffers
-        for view_layer in scene.view_layers:
-            if view_layer.cycles.use_denoising:
-                sub.active = False
-        sub.use_property_split = False
         sub.prop(cscene, "use_progressive_refine")
 
 
@@ -997,14 +1002,14 @@ class CYCLES_RENDER_PT_denoising(CyclesButtonsPanel, Panel):
 
         col = split.column(align=True)
 
-        if use_optix(context):
-            col.prop(cycles_view_layer, "use_optix_denoising", text="OptiX AI Denoising")
+        if show_optix_denoising(context):
+            col.prop(cycles_view_layer, "use_optix_denoising")
+            col.separator(factor=2.0)
+
 
             if cycles_view_layer.use_optix_denoising:
                 col.prop(cycles_view_layer, "denoising_optix_input_passes")
                 return
-
-            col.separator(factor=2.0)
 
         col.prop(cycles_view_layer, "denoising_radius", text="Radius")
         col.prop(cycles_view_layer, "denoising_strength", slider=True, text="Strength")
@@ -2221,8 +2226,6 @@ def draw_device(self, context):
 
         col = layout.column()
         col.prop(cscene, "feature_set")
-
-        scene = context.scene
 
         col = layout.column()
         col.active = show_device_active(context)
