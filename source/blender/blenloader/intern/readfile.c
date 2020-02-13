@@ -120,10 +120,10 @@
 #include "BKE_idcode.h"
 #include "BKE_idprop.h"
 #include "BKE_layer.h"
-#include "BKE_library.h"
+#include "BKE_lib_id.h"
 #include "BKE_main_idmap.h"
-#include "BKE_library_override.h"
-#include "BKE_library_query.h"
+#include "BKE_lib_override.h"
+#include "BKE_lib_query.h"
 #include "BKE_main.h"  // for Main
 #include "BKE_material.h"
 #include "BKE_mesh.h"  // for ME_ defines (patching)
@@ -7744,11 +7744,10 @@ static void lib_link_clipboard_restore(struct IDNameLib_Map *id_map)
   BKE_sequencer_base_recursive_apply(&seqbase_clipboard, lib_link_seq_clipboard_cb, id_map);
 }
 
-static int lib_link_main_data_restore_cb(void *user_data,
-                                         ID *UNUSED(id_self),
-                                         ID **id_pointer,
-                                         int cb_flag)
+static int lib_link_main_data_restore_cb(LibraryIDLinkCallbackData *cb_data)
 {
+  const int cb_flag = cb_data->cb_flag;
+  ID **id_pointer = cb_data->id_pointer;
   if (cb_flag & IDWALK_CB_PRIVATE || *id_pointer == NULL) {
     return IDWALK_RET_NOP;
   }
@@ -7759,11 +7758,14 @@ static int lib_link_main_data_restore_cb(void *user_data,
   if (GS((*id_pointer)->name) == ID_GR) {
     Collection *collection = (Collection *)*id_pointer;
     if (collection->flag & COLLECTION_IS_MASTER) {
+      /* We should never reach that point anymore, since master collection private ID should be
+       * properly tagged with IDWALK_CB_PRIVATE. */
+      BLI_assert(0);
       return IDWALK_RET_NOP;
     }
   }
 
-  struct IDNameLib_Map *id_map = user_data;
+  struct IDNameLib_Map *id_map = cb_data->user_data;
 
   /* Note: Handling of usercount here is really bad, defining its own system...
    * Will have to be refactored at some point, but that is not top priority task for now.
@@ -9783,7 +9785,7 @@ BlendFileData *blo_read_file_internal(FileData *fd, const char *filepath)
      * we can re-generate overrides from their references. */
     if (fd->memfile == NULL) {
       /* Do not apply in undo case! */
-      BKE_main_override_library_update(bfd->main);
+      BKE_lib_override_library_main_update(bfd->main);
     }
 
     BKE_collections_after_lib_link(bfd->main);

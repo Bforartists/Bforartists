@@ -320,7 +320,9 @@ class StrokePanel(BrushPanel):
         col.separator()
 
         if brush.use_anchor:
+            col.use_property_split = False
             col.prop(brush, "use_edge_to_edge", text="Edge To Edge")
+            col.use_property_split = True
 
         if brush.use_airbrush:
             col.prop(brush, "rate", text="Rate", slider=True)
@@ -473,7 +475,9 @@ class DisplayPanel(BrushPanel):
             row.label(text="Display Cursor")
 
         col = layout.column()
-        col.active = brush.brush_capabilities.has_overlay and settings.show_brush
+        #col.active = brush.brush_capabilities.has_overlay and settings.show_brush
+        # workaround for bug Image Editor - inactive settings in Brush Tip panel #1367
+        col.active = settings.show_brush
 
         col.prop(brush, "cursor_color_add", text="Cursor Color")
         if mode == 'SCULPT' and brush.sculpt_capabilities.has_secondary_color:
@@ -537,6 +541,8 @@ def brush_settings(layout, context, brush, popover=False):
 
         # normal_radius_factor
         layout.prop(brush, "normal_radius_factor", slider=True)
+        
+        layout.separator()
 
         # auto_smooth_factor and use_inverse_smooth_pressure
         if capabilities.has_auto_smooth:
@@ -615,6 +621,10 @@ def brush_settings(layout, context, brush, popover=False):
                 layout.operator("sculpt.set_persistent_base")
                 layout.separator()
 
+        if brush.sculpt_tool == 'CLAY_STRIPS':
+            row = layout.row()
+            row.prop(brush, "tip_roundness")
+
         if brush.sculpt_tool == 'ELASTIC_DEFORM':
             layout.separator()
             layout.prop(brush, "elastic_deform_type")
@@ -626,14 +636,18 @@ def brush_settings(layout, context, brush, popover=False):
             layout.prop(brush, "pose_offset")
             layout.prop(brush, "pose_smooth_iterations")
             layout.prop(brush, "pose_ik_segments")
+            layout.prop(brush, "use_pose_ik_anchored")
             layout.separator()
         
         if brush.sculpt_tool == 'SCRAPE':
             row = layout.row()
-            row.use_property_split = False
+            row.prop(brush, "area_radius_factor", slider=True)
+            row = layout.row()
             row.prop(brush, "invert_to_scrape_fill", text="Invert to Fill")
 
         if brush.sculpt_tool == 'FILL':
+            row = layout.row()
+            row.prop(brush, "area_radius_factor", slider=True)
             row = layout.row()
             row.prop(brush, "invert_to_scrape_fill", text="Invert to Scrape")
 
@@ -763,10 +777,10 @@ def brush_shared_settings(layout, context, brush, popover=False):
             pressure_name=pressure_name,
             slider=True,
         )
-        layout.separator()
 
     if direction:
         layout.row().prop(brush, "direction", expand=True)
+        layout.separator()
 
 
 def brush_settings_advanced(layout, context, brush, popover=False):
@@ -873,7 +887,7 @@ def draw_color_settings(context, layout, brush, color_type=False):
         UnifiedPaintPanel.prop_unified_color(row, context, brush, "secondary_color", text="")
         row.separator()
         row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="", emboss=False)
-        row.prop(ups, "use_unified_color", text="", icon='WORLD')
+        row.prop(ups, "use_unified_color", text="", icon="BRUSHES_ALL")
     # Gradient
     elif brush.color_type == 'GRADIENT':
         layout.template_color_ramp(brush, "gradient", expand=True)

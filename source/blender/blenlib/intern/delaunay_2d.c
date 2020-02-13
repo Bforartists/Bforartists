@@ -389,7 +389,6 @@ static CDTEdge *connect_separate_parts(CDT_state *cdt, SymEdge *se1, SymEdge *se
 {
   CDTEdge *e;
   SymEdge *se1_rot, *se1_rotsym, *se2_rot, *se2_rotsym, *new_se, *new_se_sym;
-  ;
 
   BLI_assert(se1->face == cdt->outer_face && se2->face == cdt->outer_face);
   se1_rot = se1->rot;
@@ -1376,7 +1375,7 @@ static void add_edge_constraint(
         isect = isect_seg_seg_v2_lambda_mu_db(va->co, vb->co, curco, v2->co, &lambda, NULL);
         if (isect == ISECT_LINE_LINE_NONE || isect == ISECT_LINE_LINE_EXACT) {
           /* The orient tests say that there is an intersection between
-           * va and vb, but the inexect isect routine has either put the
+           * va and vb, but the inexact intersection routine has either put the
            * intersection exactly on one of the endpoints or just outside
            * one of them.
            * Or this is an exact intersection at one of the curco / v2 ends.
@@ -1735,7 +1734,7 @@ static bool can_collapse(const SymEdge *se)
  * edges may end up with zero or negative area (see can_collapse, above).
  * So don't choose a collapse direction that is not allowed or one that has an original vertex
  * as origin and a non-original vertex as destination.
- * If both collapse directions are allowed by that rule, picke the one with the lower original
+ * If both collapse directions are allowed by that rule, pick the one with the lower original
  * index.
  *
  * After merging, the faces abc and adb disappear (if they are not the outer face).
@@ -2444,7 +2443,7 @@ static CDT_result *cdt_get_output(CDT_state *cdt,
  * The current initial Deluanay triangulation algorithm is the Guibas-Stolfi Divide and Conquer
  * algorithm (see "Primitives for the Manipulation of General Subdivisions and the Computation of
  * Voronoi Diagrams"). and uses Shewchuk's exact predicates to issues where numeric errors cause
- * inconsistent geometric judgements. This is followed by inserting edge constraints (including the
+ * inconsistent geometric judgments. This is followed by inserting edge constraints (including the
  * edges implied by faces) using the algorithms discussed in "Fully Dynamic Constrained Delaunay
  * Triangulations" by Kallmann, Bieri, and Thalmann.
  *
@@ -3086,7 +3085,7 @@ static void write_cdt_input_to_file(const CDT_input *inp)
 #  ifndef NDEBUG /* Only used in assert. */
 /*
  * Is a visible from b: i.e., ab crosses no edge of cdt?
- * If constrained is true, consider only constrained edges as possible crossers.
+ * If constrained is true, consider only constrained edges as possible crosser's.
  * In any case, don't count an edge ab itself.
  * Note: this is an expensive test if there are a lot of edges.
  */

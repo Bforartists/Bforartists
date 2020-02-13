@@ -45,7 +45,7 @@
 #include "BKE_brush.h"
 #include "BKE_colortools.h"
 #include "BKE_layer.h"
-#include "BKE_library.h"
+#include "BKE_lib_id.h"
 #include "BKE_main.h"
 #include "BKE_mesh.h"
 #include "BKE_node.h"
@@ -137,8 +137,9 @@ static void blo_update_defaults_screen(bScreen *screen,
       BLI_freelistN(&ar->panels_category_active);
 
       /* Reset size so it uses consistent defaults from the region types. */
-      ar->sizex = 0;
-      ar->sizey = 0;
+      /*bfa - NEVER !*/
+      //ar->sizex = 0;
+      //ar->sizey = 0;
     }
 
     if (sa->spacetype == SPACE_IMAGE) {

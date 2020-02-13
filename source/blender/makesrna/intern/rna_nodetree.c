@@ -7891,6 +7891,11 @@ static void rna_def_node_socket(BlenderRNA *brna)
   RNA_def_struct_name_property(srna, prop);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_NodeSocket_update");
 
+  prop = RNA_def_property(srna, "label", PROP_STRING, PROP_NONE);
+  RNA_def_property_string_sdna(prop, NULL, "label");
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_ui_text(prop, "Label", "Custom dynamic defined socket label");
+
   prop = RNA_def_property(srna, "identifier", PROP_STRING, PROP_NONE);
   RNA_def_property_string_sdna(prop, NULL, "identifier");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
@@ -8613,7 +8618,8 @@ static void rna_def_internal_node(BlenderRNA *brna)
 
   /* update */
   func = RNA_def_function(srna, "update", "rna_NodeInternal_update");
-  RNA_def_function_ui_description(func, "Update on editor changes");
+  RNA_def_function_ui_description(
+      func, "Update on node graph topology changes (adding or removing nodes and links)");
   RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_ALLOW_WRITE);
 
   /* draw buttons */
@@ -8917,7 +8923,8 @@ static void rna_def_node(BlenderRNA *brna)
 
   /* update */
   func = RNA_def_function(srna, "update", NULL);
-  RNA_def_function_ui_description(func, "Update on editor changes");
+  RNA_def_function_ui_description(
+      func, "Update on node graph topology changes (adding or removing nodes and links)");
   RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_REGISTER_OPTIONAL | FUNC_ALLOW_WRITE);
 
   /* insert_link */

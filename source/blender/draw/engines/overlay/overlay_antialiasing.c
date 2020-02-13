@@ -83,7 +83,7 @@ void OVERLAY_antialiasing_init(OVERLAY_Data *vedata)
   GPUTexture *line_tex = NULL;
 
   if (pd->antialiasing.enabled) {
-    DRW_texture_ensure_fullscreen_2d(&txl->overlay_color_tx, GPU_RGBA8, DRW_TEX_FILTER);
+    DRW_texture_ensure_fullscreen_2d(&txl->overlay_color_tx, GPU_SRGB8_A8, DRW_TEX_FILTER);
     DRW_texture_ensure_fullscreen_2d(&txl->overlay_line_tx, GPU_RGBA8, 0);
 
     color_tex = txl->overlay_color_tx;
@@ -91,7 +91,7 @@ void OVERLAY_antialiasing_init(OVERLAY_Data *vedata)
   }
   else {
     /* Just a copy of the defaults framebuffers. */
-    color_tex = dtxl->color;
+    color_tex = dtxl->color_overlay;
   }
 
   GPU_framebuffer_ensure_config(&fbl->overlay_color_only_fb,
@@ -194,9 +194,7 @@ void OVERLAY_antialiasing_end(OVERLAY_Data *vedata)
   DefaultFramebufferList *dfbl = DRW_viewport_framebuffer_list_get();
 
   if (pd->antialiasing.enabled) {
-    GPU_framebuffer_bind(dfbl->color_only_fb);
+    GPU_framebuffer_bind(dfbl->overlay_only_fb);
     DRW_draw_pass(psl->antialiasing_ps);
-
-    GPU_framebuffer_bind(dfbl->default_fb);
   }
 }

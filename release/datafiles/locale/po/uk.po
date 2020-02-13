@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -2974,28 +2974,12 @@ msgid "Eraser Mode"
 msgstr "Режим Стирача"
 
 
-msgid "Soft"
-msgstr "М'який"
-
-
-msgid "Use soft eraser"
-msgstr "Вжити м'який стирач"
-
-
-msgid "Hard"
-msgstr "Жорсткий"
-
-
-msgid "Use hard eraser"
-msgstr "Вжити жорсткий стирач"
+msgid "Point"
+msgstr "Точка"
 
 
 msgid "Stroke"
 msgstr "Штрих"
-
-
-msgid "Use stroke eraser"
-msgstr "Вжити стирач штриха"
 
 
 msgid "Affect Stroke Strength"
@@ -9024,10 +9008,6 @@ msgstr "Вибірка Ф-Кривої"
 
 msgid "Sample point for F-Curve"
 msgstr "Зразкова точка для Ф-Кривої"
-
-
-msgid "Point"
-msgstr "Точка"
 
 
 msgid "Point coordinates"
@@ -21895,8 +21875,16 @@ msgid "Noise Type"
 msgstr "Тип шуму"
 
 
+msgid "Soft"
+msgstr "М'який"
+
+
 msgid "Generate soft noise (smooth transitions)"
 msgstr "Створити м'який шум (плавні переходи)"
+
+
+msgid "Hard"
+msgstr "Жорсткий"
 
 
 msgid "Generate hard noise (sharp transitions)"
@@ -79589,10 +79577,6 @@ msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "Розкладка Відбору Точок Градієнта Кольорів Піпетки"
 
 
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "Дані DEM (.hgt) як сіть і/або зображення"
-
-
 msgid "Denoising completed."
 msgstr "Знешумлення завершено."
 
@@ -87558,10 +87542,6 @@ msgid "Not yet implemented"
 msgstr "Ще не реалізовано"
 
 
-msgid "No conversion possible"
-msgstr "Перетворення неможливе"
-
-
 msgid "No points were selected"
 msgstr "Жодні точки не вибрані"
 
@@ -90702,6 +90682,10 @@ msgid "None for Enum/Boolean"
 msgstr "Нема для Нумерованих/Булевих"
 
 
+msgid "Value:"
+msgstr "Значення:"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "Ф-крива має лише Ф-модифікатори"
 
@@ -90732,10 +90716,6 @@ msgstr "Вираз"
 
 msgid "Add Input Variable"
 msgstr "Додати Змінну Уводу"
-
-
-msgid "Value:"
-msgstr "Значення:"
 
 
 msgid "Update Dependencies"
@@ -94600,16 +94580,8 @@ msgid "Import-Export"
 msgstr "Імпорт-експорт"
 
 
-msgid "MakeHuman"
-msgstr "MakeHuman"
-
-
 msgid "Rigging"
 msgstr "Оснащення (rigging)"
-
-
-msgid "Workflow"
-msgstr "Порядок роботи"
 
 
 msgid "English (English)"

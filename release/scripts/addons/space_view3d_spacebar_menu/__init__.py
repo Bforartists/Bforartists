@@ -379,7 +379,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                 layout.operator("mball.duplicate_metaelems", icon='OUTLINER_DATA_META')
                 layout.menu("VIEW3D_MT_edit_meta_showhide", icon='HIDE_OFF')
                 UseSeparator(self, context)
-                layout.operator("mball.delete_metaelems", text="Delete", icon='X')               
+                layout.operator("mball.delete_metaelems", text="Delete", icon='X')
                 UseSeparator(self, context)
                 layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
 

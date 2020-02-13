@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -1987,12 +1987,8 @@ msgid "Mode"
 msgstr "ﻊﺿﻮﻟﺍ"
 
 
-msgid "Soft"
-msgstr "ﻢﻋﺎﻧ"
-
-
-msgid "Hard"
-msgstr "ﻲﺳﺎﻗ"
+msgid "Point"
+msgstr "ﺔﻄﻘﻧ"
 
 
 msgid "Stroke"
@@ -6498,10 +6494,6 @@ msgstr "ﻲﻧﺎﻴﺑ ﻂﺧ ﺔﻨﻴﻋ"
 
 msgid "Sample point for F-Curve"
 msgstr "ﻲﻧﺎﻴﺒﻟﺍ ﻂﺨﻠﻟ ﺔﻨﻴﻋ ﺔﻄﻘﻧ"
-
-
-msgid "Point"
-msgstr "ﺔﻄﻘﻧ"
 
 
 msgid "Point coordinates"
@@ -15225,8 +15217,16 @@ msgid "Noise Type"
 msgstr "ﺏﺎﺒﻀﻟﺍ ﻉﻮﻧ"
 
 
+msgid "Soft"
+msgstr "ﻢﻋﺎﻧ"
+
+
 msgid "Generate soft noise (smooth transitions)"
 msgstr "(ﺔﻤﻋﺎﻧ ﺕﻻ﻿ﺎﻘﺘﻧﺍ) ﺔﻤﻋﺎﻧ ﺔﻴﺋﺍﻮﺸﻋ ﺪﻟّﻭ"
+
+
+msgid "Hard"
+msgstr "ﻲﺳﺎﻗ"
 
 
 msgid "Generate hard noise (sharp transitions)"
@@ -42872,10 +42872,6 @@ msgid "Copy buffer is empty"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﺍﺬﻫ ﻦﻣ ﺦﺴﻧﺍ"
 
 
-msgid "No conversion possible"
-msgstr "ﻞﻳﻮﺤﺘﻟﺍ ﻞﺠﺳ ﺎﻣﺎﻏ"
-
-
 msgid "Too few selections to merge"
 msgstr "ﺔﻓﺎﺤﻟﺍ ﺭﺎﻴﺘﺣﺍ ﻂﻤﻧ"
 
@@ -44029,6 +44025,10 @@ msgid "Interpolation:"
 msgstr ":ﻰﻨﺤﻨﻤﻟﺍ ﻉﻮﻧ"
 
 
+msgid "Value:"
+msgstr ":ﺔﻤﻴﻗ"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "ﺔﻴﻧﺎﻴﺑ ﺕﺍﺮﻴﻐﻣ ﻂﻘﻓ ﻪﻳﺪﻟ ﻲﻧﺎﻴﺒﻟﺍ ﻰﻨﺤﻨﻤﻟﺍ"
 
@@ -44051,10 +44051,6 @@ msgstr ":ﺔﻴﺻﺎﺧ"
 
 msgid "Driver Value:"
 msgstr ":ﻞﻐﺸﻤﻟﺍ ﺔﻤﻴﻗ"
-
-
-msgid "Value:"
-msgstr ":ﺔﻤﻴﻗ"
 
 
 msgid "Update Dependencies"

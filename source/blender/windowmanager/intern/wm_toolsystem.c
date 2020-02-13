@@ -40,7 +40,7 @@
 #include "BKE_brush.h"
 #include "BKE_context.h"
 #include "BKE_idprop.h"
-#include "BKE_library.h"
+#include "BKE_lib_id.h"
 #include "BKE_main.h"
 #include "BKE_paint.h"
 #include "BKE_workspace.h"
@@ -741,7 +741,7 @@ static const char *toolsystem_default_tool(const bToolKey *tkey)
       }
       break;
     case SPACE_NODE: {
-      return "builtin.select_box";
+      return "builtin.select"; /*bfa - changed from builtin.select_box to builtin.select*/
     }
     case SPACE_SEQ: {
       switch (tkey->mode) {
@@ -752,11 +752,11 @@ static const char *toolsystem_default_tool(const bToolKey *tkey)
         case SEQ_VIEW_SEQUENCE_PREVIEW:
           return "builtin.select";
       }
-      return "builtin.select_box";
+      return "builtin.select"; /*bfa - changed from builtin.select_box to builtin.select*/
     }
   }
 
-  return "builtin.select_box";
+  return "builtin.select"; /*bfa - changed from builtin.select_box to builtin.select*/
 }
 
 /**
