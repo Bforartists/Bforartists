@@ -1037,7 +1037,7 @@ static bool raycastObjects(SnapObjectContext *sctx,
  * \{ */
 
 /* Test BoundBox */
-static bool snap_bound_box_check_dist(float min[3],
+static bool snap_bound_box_check_dist(const float min[3],
                                       const float max[3],
                                       const float lpmat[4][4],
                                       const float win_size[2],
@@ -2055,7 +2055,7 @@ static short snapCamera(const SnapObjectContext *sctx,
 
   tracking = &clip->tracking;
 
-  BKE_tracking_get_camera_object_matrix(scene, object, orig_camera_mat);
+  BKE_tracking_get_camera_object_matrix(object, orig_camera_mat);
 
   invert_m4_m4(orig_camera_imat, orig_camera_mat);
   invert_m4_m4(imat, obmat);

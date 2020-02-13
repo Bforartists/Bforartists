@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -3010,28 +3010,12 @@ msgid "Eraser Mode"
 msgstr "Mode gomme"
 
 
-msgid "Soft"
-msgstr "Doux"
-
-
-msgid "Use soft eraser"
-msgstr "Utiliser gomme douce"
-
-
-msgid "Hard"
-msgstr "Dur"
-
-
-msgid "Use hard eraser"
-msgstr "Utiliser gomme dure"
+msgid "Point"
+msgstr "Point"
 
 
 msgid "Stroke"
 msgstr "Trait"
-
-
-msgid "Use stroke eraser"
-msgstr "Utiliser gomme de trait"
 
 
 msgid "Affect Stroke Strength"
@@ -9336,10 +9320,6 @@ msgstr "Échantillon de F-courbe"
 
 msgid "Sample point for F-Curve"
 msgstr "Point d’échantillonnage pour F-courbe"
-
-
-msgid "Point"
-msgstr "Point"
 
 
 msgid "Point coordinates"
@@ -22439,8 +22419,16 @@ msgid "Noise Type"
 msgstr "Type de bruit"
 
 
+msgid "Soft"
+msgstr "Doux"
+
+
 msgid "Generate soft noise (smooth transitions)"
 msgstr "Générer du bruit doux (transitions douces)"
+
+
+msgid "Hard"
+msgstr "Dur"
 
 
 msgid "Generate hard noise (sharp transitions)"
@@ -73499,10 +73487,6 @@ msgid "Eyedropper Modal Map"
 msgstr "Carte modale de la pipette"
 
 
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "Données DEM (.hgt) vers mesh et/ou image"
-
-
 msgid "OSL shader compilation succeeded"
 msgstr "La compilation du shader OSL a réussi"
 
@@ -79019,10 +79003,6 @@ msgid "Not yet implemented"
 msgstr "Pas encore implémenté"
 
 
-msgid "No conversion possible"
-msgstr "Pas de conversion possible"
-
-
 msgid "Too few selections to merge"
 msgstr "Trop peu d’éléments sélectionnés pour fusionner"
 
@@ -81639,6 +81619,10 @@ msgid "None for Enum/Boolean"
 msgstr "None for Enum/Boolean"
 
 
+msgid "Value:"
+msgstr "Valeur :"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "La F-courbe n’a que des F-modificateurs"
 
@@ -81665,10 +81649,6 @@ msgstr "Valeur du contrôleur :"
 
 msgid "Expression:"
 msgstr "Expression :"
-
-
-msgid "Value:"
-msgstr "Valeur :"
 
 
 msgid "Update Dependencies"
@@ -85332,16 +85312,8 @@ msgid "Import-Export"
 msgstr "Import-export"
 
 
-msgid "MakeHuman"
-msgstr "MakeHuman"
-
-
 msgid "Rigging"
 msgstr "Armature"
-
-
-msgid "Workflow"
-msgstr "Processus"
 
 
 msgid "English (English)"

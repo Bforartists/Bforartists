@@ -1,18 +1,19 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
-"PO-Revision-Date: 2020-01-04 09:08+0100\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
+"PO-Revision-Date: 2020-02-08 13:01+0100\n"
 "Language-Team: pegas\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.4\n"
-"Last-Translator: Jozef Matta <matta.jozef@mail.telekom.sk>\n"
+"X-Generator: Poedit 2.3\n"
+"Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
-"Language: sk_SK"
+"Language: sk_SK\n"
+"X-Poedit-Bookmarks: -1,24972,-1,-1,-1,-1,-1,-1,-1,-1"
 
 
 msgid "Action F-Curves"
@@ -2548,7 +2549,7 @@ msgstr "Segmenty ohybu kostí"
 
 
 msgid "Number of subdivisions of bone (for B-Bones only)"
-msgstr "Počet delení kostí (iba pre ohyb kosti)"
+msgstr "Počet členení kostí (iba pre ohyb kosti)"
 
 
 msgid "B-Bone Display X Width"
@@ -2649,6 +2650,10 @@ msgstr "Opraviť strih"
 
 msgid "Inherit scaling, but remove shearing of the child in the rest orientation"
 msgstr "Zdedenie mierky, ale strihanie dieťaťa odstráňte v kľudovej orientácii"
+
+
+msgid "Rotate non-uniform parent scaling to align with the child, applying parent X scale to child X axis, and so forth"
+msgstr "Otočte nerovnomerné rodičovské mierky tak, aby boli zarovnané s potomkom, použitím rodičovskej mierky X na os potomka X atď."
 
 
 msgid "Inherit uniform scaling representing the overall change in the volume of the parent"
@@ -3031,28 +3036,12 @@ msgid "Eraser Mode"
 msgstr "Režim gumovania"
 
 
-msgid "Soft"
-msgstr "Mäkká"
-
-
-msgid "Use soft eraser"
-msgstr "Použije mäkkú gumu"
-
-
-msgid "Hard"
-msgstr "Tvrdá"
-
-
-msgid "Use hard eraser"
-msgstr "Použije tvrdú gumu"
+msgid "Point"
+msgstr "Všesmerové"
 
 
 msgid "Stroke"
 msgstr "Ťah štetca"
-
-
-msgid "Use stroke eraser"
-msgstr "Použije ťah gumy"
 
 
 msgid "Affect Stroke Strength"
@@ -4019,6 +4008,30 @@ msgid "Internal Friction"
 msgstr "Vlastné trenie"
 
 
+msgid "Internal Spring Max Diversion"
+msgstr "Vnútorná maximálna odchýlka pružiny"
+
+
+msgid "How much the rays used to connect the internal points can diverge from the vertex normal"
+msgstr "Koľko lúčov použitých na spojenie vnútorných bodov sa môže líšiť od kolmice vrcholu"
+
+
+msgid "Internal Spring Max Length"
+msgstr "Vnútorná maximálna dĺžka pružiny"
+
+
+msgid "The maximum length an internal spring can have during creation. If the distance between internal points is greater than this, no internal spring will be created between these points. A length of zero means that there is no length limit"
+msgstr "Maximálna dĺžka, ktorú môže mať vnútorná pružina počas vytvárania. Ak je vzdialenosť medzi vnútornými bodmi väčšia ako táto, medzi týmito bodmi sa nevytvorí žiadna vnútorná pružina. Nulová dĺžka znamená, že neexistuje žiadny limit dĺžky"
+
+
+msgid "Check Internal Spring Normals"
+msgstr "Skontrolujte kolmice vnútornej pružiny"
+
+
+msgid "Require the points the internal springs connect to have opposite normal directions"
+msgstr "Vyžaduje body, ktoré spájajú vnútorné pružiny, aby mali opačný smer kolmíc"
+
+
 msgid "Tension Stiffness"
 msgstr "Tuhosť napnutia"
 
@@ -4035,12 +4048,28 @@ msgid "Maximum tension stiffness value"
 msgstr "Maximálna hodnota tuhosti napnutia"
 
 
+msgid "Vertex Mass"
+msgstr "Hmotnosť vrcholu"
+
+
+msgid "The mass of each vertex on the cloth material"
+msgstr "Hmotnosť každého vrcholu na materiále látky"
+
+
 msgid "Pin Stiffness"
 msgstr "Tuhosť prichytenia"
 
 
 msgid "Pin (vertex target position) spring stiffness"
 msgstr "Tuhosť pružnosti prichytenia (cieľová pozícia vrcholu)"
+
+
+msgid "Pressure Scale"
+msgstr "Stupnica tlaku"
+
+
+msgid "Air pressure scaling factor"
+msgstr "Faktor mierky tlaku vzduchu"
 
 
 msgid "Quality"
@@ -4107,6 +4136,14 @@ msgid "Factor by which to shrink cloth"
 msgstr "Faktor zmrštenia plášťa"
 
 
+msgid "Target Volume"
+msgstr "Cieľový rozsah"
+
+
+msgid "The mesh volume where the inner/outer pressure will be the same. If set to zero the volume will not contribute to the total pressure"
+msgstr "Rozsah povrchovej siete, kde bude vnútorný / vonkajší tlak rovnaký. Ak je nastavený na nulu, objem nebude prispievať k celkovému tlaku"
+
+
 msgid "Tension Spring Damping"
 msgstr "Útlm napnutia pružiny"
 
@@ -4131,6 +4168,26 @@ msgid "Make simulation respect deformations in the base mesh"
 msgstr "Vytvorí simuláciu deformácie so zreteľom na základnú povrchovú sieť"
 
 
+msgid "Create Internal Springs"
+msgstr "Vytvoriť vnútorné pružiny"
+
+
+msgid "Simulate an internal volume structure by creating springs connecting the opposite sides of the mesh"
+msgstr "Simuluje štruktúru vnútorného rozsahu vytvorením pružín spájajúcich opačné strany povrchovej siete"
+
+
+msgid "Simulate pressure inside a closed cloth mesh"
+msgstr "Simuluje tlak vo vnútri uzavretej povrchovej siete"
+
+
+msgid "Use Custom Volume"
+msgstr "Použiť vlastný rozsah"
+
+
+msgid "Use the Volume parameter as the initial volume"
+msgstr "Ako počiatočný rozsah použije parameter Rozsah"
+
+
 msgid "Sew Cloth"
 msgstr "Zošiť plášť"
 
@@ -4147,12 +4204,28 @@ msgid "Vertex group for fine control over bending stiffness"
 msgstr "Skupina vrcholov pre jemné ovládanie tuhosti prehnutia"
 
 
+msgid "Internal Springs Vertex Group"
+msgstr "Vnútorná skupina pružín vrcholov"
+
+
+msgid "Vertex group for fine control over the internal spring stiffness"
+msgstr "Skupina vrcholov pre jemné ovládanie vnútornej tuhosti pružiny"
+
+
 msgid "Mass Vertex Group"
 msgstr "Hmota skupín vrcholov"
 
 
 msgid "Vertex Group for pinning of vertices"
 msgstr "Skupina vrcholov pre pripnutie vrcholov"
+
+
+msgid "Pressure Vertex Group"
+msgstr "Tlak skupiny vrcholov"
+
+
+msgid "Vertex Group for where to apply pressure. Zero weight means no pressure while a weight of one means full pressure. Faces with a vertex that has zero weight will be excluded from the volume calculation"
+msgstr "Skupina vrcholov, na ktorú sa má vyvíjať tlak. Nulová hmotnosť znamená žiadny tlak, zatiaľ čo hmotnosť jedna znamená plný tlak. Plôšky s vrcholom s nulovou hmotnosťou budú z výpočtu rozsahu vylúčené"
 
 
 msgid "Shear Stiffness Vertex Group"
@@ -5164,12 +5237,32 @@ msgid "Mix Mode"
 msgstr "Režim zmiešavania"
 
 
+msgid "Specify how existing transformations and the action channels are combined"
+msgstr "Určuje, ako sú skombinované existujúce transformácie a akčné kanály"
+
+
 msgid "Before Original"
 msgstr "Pred originál"
 
 
+msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent with Aligned Inherit Scale"
+msgstr "Použije akčné kanály pred pôvodnou transformáciou, ako keby sa použili na imaginárneho rodiča pomocou zarovnania dedičnej mierky"
+
+
 msgid "After Original"
-msgstr "Za originál"
+msgstr "Po originále"
+
+
+msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Aligned Inherit Scale"
+msgstr "Použije akčné kanály po pôvodnej transformácii, ako keby sa použili na imaginárneho potomka so zarovnanou zdedenou mierkou"
+
+
+msgid "After Original (Full Scale)"
+msgstr "Po originále (plná mierka)"
+
+
+msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Full Inherit Scale. This mode can create shear and is provided only for backward compatibility"
+msgstr "Použije akčné kanály po pôvodnej transformácii, ako keby sa použili na imaginárneho potomka s úplne zdedenou mierkou. Tento režim môže vytvárať štrih a slúži iba na spätnú kompatibilitu"
 
 
 msgid "Sub-Target"
@@ -6708,8 +6801,32 @@ msgid "Keep Axis"
 msgstr "Zachovať osi"
 
 
+msgid "The rotation type and axis order to use"
+msgstr "Typ rotácie a poradie osí, ktoré sa majú použiť"
+
+
 msgid "XZ"
 msgstr "XZ"
+
+
+msgid "Rotate around local X, then Z"
+msgstr "Rotácia okolo miestnej X, potom Z"
+
+
+msgid "ZX"
+msgstr "ZX"
+
+
+msgid "Rotate around local Z, then X"
+msgstr "Rotácia okolo miestnej Z, potom X"
+
+
+msgid "Swing"
+msgstr "Kolísanie"
+
+
+msgid "Use the smallest single axis rotation, similar to Damped Track"
+msgstr "Použije najmenšiu rotáciu jednej osi, podobne ako v prípade tlmenej stopy"
 
 
 msgid "Original Length"
@@ -7328,28 +7445,116 @@ msgid "Use the start of the stroke for the depth"
 msgstr "Použije počiatočný ťah pre hĺbku"
 
 
+msgid "Profile Path editor used to build a profile path"
+msgstr "Editor profilových ciest použitý na zostavenie profilovej cesty"
+
+
+msgid "Profile control points"
+msgstr "Kontrolné body profilu"
+
+
+msgid "Preset"
+msgstr "Predvoľba"
+
+
+msgid "Support Loops"
+msgstr "Podporné slučky"
+
+
+msgid "Loops on each side of the profile"
+msgstr "Slučky na každej strane profilu"
+
+
+msgid "Cornice Moulding"
+msgstr "Formovanie previsu"
+
+
+msgid "Crown Moulding"
+msgstr "Formovanie koruny"
+
+
 msgid "Steps"
 msgstr "Kroky"
+
+
+msgid "A number of steps defined by the segments"
+msgstr "Počet krokov definovaných segmentami"
 
 
 msgid "Segments"
 msgstr "Segmenty"
 
 
+msgid "Segments sampled from control points"
+msgstr "Segmenty zosnímané z kontrolných bodov"
+
+
+msgid "Force the path view to fit a defined boundary"
+msgstr "Vynúti zobrazenie cesty pre prispôsobenie definovanej hranici"
+
+
+msgid "Sample Even Lengths"
+msgstr "Snímať párne dĺžky"
+
+
+msgid "Sample edges with even lengths"
+msgstr "Snímať hrany s párnymi dĺžkami"
+
+
+msgid "Sample Straight Edges"
+msgstr "Snímať rovné hrany"
+
+
+msgid "Sample edges with vector handles"
+msgstr "Snímať hrany podľa vektorových manipulátorov"
+
+
+msgid "Point of a path used to define a profile"
+msgstr "Bod cesty použitý na definovanie profilu"
+
+
+msgid "First Handle Type"
+msgstr "Typ prvého manipulátora"
+
+
+msgid "Path interpolation at this point: Bezier or vector"
+msgstr "Interpolácia cesty v tomto bode: Bezier alebo vektor"
+
+
+msgid "Second Handle Type"
+msgstr "Typ druhého manipulátora"
+
+
+msgid "X/Y coordinates of the path point"
+msgstr "Súradnice X/Y bodu cesty"
+
+
+msgid "Selection state of the path point"
+msgstr "Stav výberu bodu cesty"
+
+
+msgid "Profile Point"
+msgstr "Profilový bod"
+
+
+msgid "Collection of Profile Points"
+msgstr "Kolekcia profilových bodov"
+
+
 msgid "Curve Splines"
-msgstr "Krivka kriviek ohybu"
+msgstr "Krivka vodiacich kriviek"
 
 
 msgid "Collection of curve splines"
-msgstr "Kolekcia kriviek ohybu"
+msgstr "Kolekcia vodiacich kriviek"
 
 
 msgid "Active Spline"
-msgstr "Aktívna krivka ohybu"
+msgstr "Aktívna vodiaca krivka"
 
 
 msgid "Active curve spline"
-msgstr "Aktívna krivka krivky ohybu"
+msgstr "Aktívna krivka vodiacej krivky"
 
 
 msgid "Dependency Graph"
@@ -9323,10 +9528,6 @@ msgid "Sample point for F-Curve"
 msgstr "Bod ukážky F-krivky"
 
 
-msgid "Point"
-msgstr "Všesmerové"
-
-
 msgid "Point coordinates"
 msgstr "Súradnice bodu"
 
@@ -11197,6 +11398,10 @@ msgid "Domain Settings"
 msgstr "Nastavenia oblasti"
 
 
+msgid "Fluid domain settings"
+msgstr "Nastavenia oblasti vplyvu dymu"
+
+
 msgid "Margin added around fluid to minimize boundary interference"
 msgstr "Okraje pridané okolo tekutiny na minimalizáciu narušovania hraníc"
 
@@ -11225,6 +11430,18 @@ msgid "Perform a single slice of the domain object"
 msgstr "Vytvorí jednoduché rezy oblasti vplyvu objektu"
 
 
+msgid "Select the file format to be used for caching volumetric data"
+msgstr "Vyberte formát súboru na použitie uskladňovania údajov objemu"
+
+
+msgid "Cache directory"
+msgstr "Priečinok vyrovnávacej pamäte"
+
+
+msgid "Directory that contains fluid cache files"
+msgstr "Priečinok, ktorý obsahuje súbory vyrovnávacej pamäte"
+
+
 msgid "End"
 msgstr "Koniec"
 
@@ -11241,16 +11458,48 @@ msgid "Frame on which the simulation starts"
 msgstr "Snímka, na ktorej sa simulácia začne"
 
 
+msgid "Select the file format to be used for caching surface data"
+msgstr "Vyberte formát súboru na použitie uskladňovania údajov povrchov"
+
+
+msgid "Select the file format to be used for caching noise data"
+msgstr "Vyberte formát súboru na použitie uskladňovania údajov šumu"
+
+
+msgid "Select the file format to be used for caching particle data"
+msgstr "Vyberte formát súboru na použitie uskladňovania údajov častíc"
+
+
+msgid "Change the cache type of the simulation"
+msgstr "Zmeňte typ simulácie vo vyrovnávacej pamäti"
+
+
+msgid "Replay"
+msgstr "Prehrávka"
+
+
+msgid "Use the timeline to bake the scene. Pausing and resuming possible"
+msgstr "Použije časovú os na zapečenie scény. Možné pozastavenie a pokračovanie"
+
+
+msgid "Modular"
+msgstr "Modulárna"
+
+
 msgid "Final"
-msgstr "Finálne"
+msgstr "Finálna"
 
 
 msgid "Cell Size"
 msgstr "Veľkosť bunky"
 
 
+msgid "CFL"
+msgstr "CFL"
+
+
 msgid "Clipping"
-msgstr "Orezanie"
+msgstr "Vystrihnutie"
 
 
 msgid "Value under which voxels are considered empty space to optimize caching and rendering"
@@ -11425,12 +11674,48 @@ msgid "Meters"
 msgstr "Metre"
 
 
+msgid "Domain size in meters (longest domain side)"
+msgstr "Veľkosť oblasti v metroch (najdlhšia strana oblasti)"
+
+
+msgid "Domain Type"
+msgstr "Typ oblasti"
+
+
+msgid "Change domain type of the simulation"
+msgstr "Zmení typ oblasti simulácie"
+
+
+msgid "Gas"
+msgstr "Plyn"
+
+
+msgid "Create domain for gases"
+msgstr "Vytvorí oblasť pre plyny"
+
+
+msgid "Liquid"
+msgstr "Kvapalina"
+
+
+msgid "Create domain for liquids"
+msgstr "Vytvorí oblasť pre kvapaliny"
+
+
+msgid "Export Fluidflow Script"
+msgstr "Export skriptu prúdenia kvapalín"
+
+
+msgid "Generate and export Fluidflow script from current domain settings during bake. This is only needed if you plan to analyse the cache (e.g. view grids, velocity vectors, particles) in Fluidflow directly (outside of Blender) after baking the simulation"
+msgstr "Vygenerujte a exportuje skript prúdenia kvapalín (Fluidflow) z aktuálneho nastavenia oblasti počas zapekania. Toto je potrebné iba v prípade, že plánujete analyzovať vyrovnávaciu pamäť (napr. mriežky, vektory rýchlosti, častice) prúdenia kvapalín priamo (mimo Blender) po zapečení simulácie"
+
+
 msgid "Flame Grid"
 msgstr "Mriežka plameňa"
 
 
 msgid "Smoke flame grid"
-msgstr "Dym mriežky plameňa"
+msgstr "Mriežka dymu plameňa"
 
 
 msgid "Smoke"
@@ -11457,6 +11742,14 @@ msgid "Additional vorticity for the flames"
 msgstr "Prídavné zvírenie pre plamene"
 
 
+msgid "FLIP Ratio"
+msgstr "Pomer FLIP"
+
+
+msgid "PIC/FLIP Ratio. A value of 1.0 will result in a completely FLIP based simulation. Use a lower value for simulations which should produce smaller splashes"
+msgstr "Pomer PIC/FLIP. Hodnota 1,0 bude mať za následok simuláciu založenú výlučne na FLIP. Nižšiu hodnotu použite pre simulácie, ktoré by mali spôsobovať menšie rozstrekovanie"
+
+
 msgid "Fluid Collection"
 msgstr "Kolekcia kvapalín"
 
@@ -11465,12 +11758,56 @@ msgid "Limit fluid objects to this collection"
 msgstr "Limit objektov kvapalín tejto kolekcie"
 
 
+msgid "Force Collection"
+msgstr "Kolekcia síl"
+
+
+msgid "Limit forces to this collection"
+msgstr "Limit síl do tejto kolekcie"
+
+
+msgid "Obstacle-Fluid Threshold "
+msgstr "Prah prehradenia kvapaliny "
+
+
+msgid "Determines how much fluid is allowed in an obstacle cell (higher values will tag a boundary cell as an obstacle easier and reduce the boundary smoothening effect)"
+msgstr "Určuje, koľko kvapaliny je povolené v bunke prehradenia (vyššie hodnoty označia okrajovú bunku ako ľahšie prehradenie a znížia efekt vyhladenia hranice)"
+
+
 msgid "Gravity in X, Y and Z direction"
 msgstr "Gravitácia v smere X, Y a Z"
 
 
+msgid "Guiding weight (higher value results in greater lag)"
+msgstr "Vodiaca váha (vyššia hodnota vedie k väčšiemu oneskoreniu)"
+
+
+msgid "Guiding size (higher value results in larger vortices)"
+msgstr "Vodiaca veľkosť (vyššia hodnota vedie k väčšiemu zvíreniu)"
+
+
+msgid "Use velocities from this object for the guiding effect (object needs to have fluid modifier and be of type domain))"
+msgstr "Na smerovanie použije rýchlosti tohto objektu (objekt musí mať modifikátor kvapaliny a musí byť typu oblasti)"
+
+
+msgid "Guiding source"
+msgstr "Vodiaci zdroj"
+
+
+msgid "Choose where to get guiding velocities from"
+msgstr "Vyberá si odkiaľ získava smerové rýchlosti"
+
+
 msgid "Domain"
 msgstr "Oblasť vplyvu"
+
+
+msgid "Effector"
+msgstr "Efektor"
+
+
+msgid "Use guiding (effector) objects to create fluid guiding (guiding objects should be animated and baked once set up completely)"
+msgstr "Na smerovanie kvapalín použije vodiace (efektorové) objekty (smerové objekty by sa mali byť po kompletnom nastavení animácie a zapečené)"
 
 
 msgid "Heat Grid"
@@ -11497,12 +11834,64 @@ msgid "Nearest"
 msgstr "Najbližší"
 
 
+msgid "Lower Concavity"
+msgstr "Dolná konkávnosť"
+
+
+msgid "Lower mesh concavity bound (high values tend to smoothen and fill out concave regions)"
+msgstr "Spodná hranica konkávnosti (vyhĺbenia) povrchovej siete (vysoké hodnoty majú tendenciu vyhladzovať a vypĺňať vyhĺbené (konkávne) oblasti)"
+
+
+msgid "Upper Concavity"
+msgstr "Horná konkávnosť"
+
+
+msgid "Upper mesh concavity bound (high values tend to smoothen and fill out concave regions)"
+msgstr "Horná hranica konkávnosti (vyhĺbenia) povrchovej siete (vysoké hodnoty majú tendenciu vyhladzovať a vyplňovať konkávne (vyhĺbené) oblasti)"
+
+
+msgid "Mesh generator"
+msgstr "Generátor povrchovej siete"
+
+
+msgid "Which particle levelset generator to use"
+msgstr "Určuje typ použitej úrovne generátora častíc"
+
+
+msgid "Use improved particle levelset (slower but more precise and with mesh smoothening options)"
+msgstr "Použije vylepšenú úroveň častíc (pomalšie, ale presnejšie a s možnosťou vyhladenia povrchovej siete)"
+
+
 msgid "Preview"
 msgstr "Náhľad"
 
 
+msgid "Use union particle levelset (faster but lower quality)"
+msgstr "Použije jednotnú úroveň častíc (rýchlejšie, ale nižšia kvalita)"
+
+
 msgid "Radius"
 msgstr "Dosah"
+
+
+msgid "Mesh scale"
+msgstr "Mierka povrchovej siete"
+
+
+msgid "Smoothen Neg"
+msgstr "Vyhladenie Neg"
+
+
+msgid "Negative mesh smoothening"
+msgstr "Negatívne vyhladenie povrchovej siete"
+
+
+msgid "Smoothen Pos"
+msgstr "Vyhladenie Poz"
+
+
+msgid "Positive mesh smoothening"
+msgstr "Pozitívne vyhladenie povrchovej siete"
 
 
 msgid "Fluid Mesh Vertices"
@@ -11513,12 +11902,24 @@ msgid "Vertices of the fluid mesh generated by simulation"
 msgstr "Vrcholy povrchovej siete kvapaliny vygenerované simuláciou"
 
 
+msgid "Scale of noise (higher value results in larger vortices)"
+msgstr "Miera šumu (vyššia hodnota vedie k väčším zvíreniam)"
+
+
+msgid "Noise Scale"
+msgstr "Miera šumu"
+
+
 msgid "Strength of noise"
-msgstr "Plnosť šumu"
+msgstr "Intenzita šumu"
 
 
 msgid "Time"
 msgstr "Čas"
+
+
+msgid "Animation time of noise"
+msgstr "Čas animácie šumu"
 
 
 msgid "Noise Method"
@@ -11550,23 +11951,43 @@ msgstr "Blosc"
 
 
 msgid "Multithreaded compression, similar in size and quality as 'Zip'"
-msgstr "Viacvláknová kompresia, podobnej veľkosti a kvality ako 'zip'"
+msgstr "Viacvláknová kompresia, podobnej veľkosti a kvality ako 'Zip'"
 
 
 msgid "Do not use any compression"
 msgstr "Nepoužívať žiadne kompresie"
 
 
+msgid "Particle (narrow) band width (higher value results in thicker band and more particles)"
+msgstr "Šírka pásu častíc (úzka) (vyššia hodnota vedie k hrubšiemu pásu a väčšiemu počtu častíc)"
+
+
+msgid "Maximum number of particles per cell (ensures that each cell has at most this amount of particles)"
+msgstr "Maximálny počet častíc na bunku (zabezpečuje, aby každá bunka obsahovala najviac toto množstvo častíc)"
+
+
+msgid "Minimum number of particles per cell (ensures that each cell has at least this amount of particles)"
+msgstr "Minimálny počet častíc na bunku (zabezpečuje, aby každá bunka obsahovala aspoň toto množstvo častíc)"
+
+
 msgid "Number"
 msgstr "Počet"
+
+
+msgid "Particle number factor (higher value results in more particles)"
+msgstr "Faktor počtu častíc (vyššia hodnota vedie k početnejším časticiam)"
 
 
 msgid "Randomness"
 msgstr "Náhodnosť"
 
 
+msgid "Randomness factor for particle sampling"
+msgstr "Faktor náhodnosti pri snímaní častíc"
+
+
 msgid "Cache Compression"
-msgstr "Kompresia zásobníka"
+msgstr "Kompresia vyrovnávacej pamäte"
 
 
 msgid "Lite"
@@ -11578,7 +11999,7 @@ msgstr "Rýchla, ale kompresia nie je efektívna"
 
 
 msgid "Heavy"
-msgstr "Ťažký"
+msgstr "Hustá"
 
 
 msgid "Display Velocity"
@@ -11586,7 +12007,19 @@ msgstr "Rýchlosť zobrazenia"
 
 
 msgid "Toggle visualization of the velocity field as needles"
-msgstr "Prepínanie vizualizácií rýchlosti poľa ako ihlíc"
+msgstr "Prepínanie vizualizácií rýchlosti poľa ako ihličie"
+
+
+msgid "Simulation Method"
+msgstr "Metóda simulácie"
+
+
+msgid "Change the underlying simulation method"
+msgstr "Zmena základnej simulačnej metódy"
+
+
+msgid "Use FLIP as the simulation method"
+msgstr "Použite FLIP ako metódu simulácie"
 
 
 msgid "Adjust slice direction according to the view direction"
@@ -11633,8 +12066,124 @@ msgid "How many slices per voxel should be generated"
 msgstr "Koľko rezov na voxel by sa malo vygenerovať"
 
 
+msgid "Particles in Boundary"
+msgstr "Častice na hraniciach"
+
+
+msgid "How particles that left the domain are treated"
+msgstr "Ako sú ošetrené častice, ktoré opustili oblasť"
+
+
 msgid "Delete"
 msgstr "Odstrániť"
+
+
+msgid "Delete secondary particles that are inside obstacles or left the domain"
+msgstr "Odstráni sekundárne častice, ktoré sú vo vnútri prekážok alebo opúšťajú oblasť"
+
+
+msgid "Push Out"
+msgstr "Zastrčiť"
+
+
+msgid "Push secondary particles that left the domain back into the domain"
+msgstr "Zatlačí sekundárne častice, ktoré opustili oblasť, späť do oblasti"
+
+
+msgid "Combined Export"
+msgstr "Kombinovaný export"
+
+
+msgid "Determines which particle systems are created from secondary particles"
+msgstr "Určuje, aké časticové systémy sa vytvárajú zo sekundárnych častíc"
+
+
+msgid "Create a seperate particle system for every secondary particle type"
+msgstr "Vytvára samostatný systém častíc pre každý druh sekundárnych častíc"
+
+
+msgid "Spray + Foam"
+msgstr "Sprej + pena"
+
+
+msgid "Spray and foam particles are saved in the same particle system"
+msgstr "Častice spreja a peny sú uložené v rovnakom systéme častíc"
+
+
+msgid "Spray + Bubbles"
+msgstr "Sprej + bubliny"
+
+
+msgid "Spray and bubble particles are saved in the same particle system"
+msgstr "Častice spreja a bublín sú uložené v rovnakom systéme častíc"
+
+
+msgid "Foam + Bubbles"
+msgstr "Pena + bubliny"
+
+
+msgid "Foam and bubbles particles are saved in the same particle system"
+msgstr "Častice peny a bublín sú uložené v rovnakom systéme častíc"
+
+
+msgid "Spray + Foam + Bubbles"
+msgstr "Sprej + pena + bubliny"
+
+
+msgid "Create one particle system that contains all three secondary particle types"
+msgstr "Vytvára jeden systém častíc, ktorý obsahuje všetky tri druhy sekundárnych častíc"
+
+
+msgid "Bubble Buoyancy"
+msgstr "Vztlak bubliny"
+
+
+msgid "Bubble Drag"
+msgstr "Ťah bubliny"
+
+
+msgid "Trapped Air Sampling"
+msgstr "Snímanie zachyteného vzduchu"
+
+
+msgid "Maximum number of particles generated per trapped air cell per frame"
+msgstr "Maximálny počet častíc generovaných na zachytenej bunke vzduchu na snímku"
+
+
+msgid "Wave Crest Sampling"
+msgstr "Snímanie hrebeňa vlny"
+
+
+msgid "Maximum number of particles generated per wave crest cell per frame"
+msgstr "Maximálny počet častíc vygenerovaných na bunku hrebeňa vlny na snímku"
+
+
+msgid "Highest possible particle lifetime"
+msgstr "Najvyššia možná životnosť častíc"
+
+
+msgid "Lowest possible particle lifetime"
+msgstr "Najnižšia možná životnosť častíc"
+
+
+msgid "Potential Radius"
+msgstr "Potenciálny dosah"
+
+
+msgid "Radius to compute potential for each cell (higher values are slower but create smoother potential grids)"
+msgstr "Dosah pre výpočet potenciálu každej bunky (vyššie hodnoty sú pomalšie, ale vytvárajú hladšie potenciálne siete)"
+
+
+msgid "Lower clamping threshold that indicates the fluid speed where cells start to emit particles (lower values result in generally more particles)"
+msgstr "Dolný prah upnutia indikujúci rýchlosť tekutiny, pri ktorej bunky začínajú emitovať častice (nižšie hodnoty majú za následok zvyčajne viac častíc)"
+
+
+msgid "Update Radius"
+msgstr "Obnoviť dosah"
+
+
+msgid "Radius to compute position update for each particle (higher values are slower but particles move less chaotic)"
+msgstr "Dosah pre výpočet aktualizácie polohy každej častice (vyššie hodnoty sú pomalšie, ale častice sa pohybujú menej chaoticky)"
 
 
 msgid "p0"
@@ -11649,6 +12198,10 @@ msgid "Tension"
 msgstr "Napätie"
 
 
+msgid "Surface tension of liquid (higher value results in greater hydrophobic behaviour)"
+msgstr "Povrchové napätie kvapaliny (vyššia hodnota vedie k väčšiemu hydrofóbnemu správaniu)"
+
+
 msgid "Temperature Grid"
 msgstr "Mriežka teploty"
 
@@ -11658,39 +12211,143 @@ msgstr "Mriežka teploty dymu, rozsah 0 - 1 predstavuje 0 - 1000K"
 
 
 msgid "Time Scale"
-msgstr "Čas mierky"
+msgstr "Časová mierka"
 
 
 msgid "Adjust simulation speed"
 msgstr "Nastavenie rýchlosti simulácie"
 
 
+msgid "Maximum number of simulation steps to perform for one frame"
+msgstr "Maximálny počet simulačných krokov, ktoré sa majú vykonať pre jednu snímku"
+
+
+msgid "Minimum number of simulation steps to perform for one frame"
+msgstr "Minimálny počet simulačných krokov, ktoré sa majú vykonať pre jednu snímku"
+
+
 msgid "Adaptive Domain"
-msgstr "Adaptívna doména"
+msgstr "Adaptívna oblasť"
 
 
 msgid "Adapt simulation resolution and size to fluid"
-msgstr "Upraví rozlíšenie a veľkosť simulácie na kvapaliny"
+msgstr "Prispôsobí rozlíšenie a veľkosť simulácie na kvapalinu"
+
+
+msgid "Use Adaptive Time Steps"
+msgstr "Použije časové kroky prispôsobenia"
+
+
+msgid "Bubble"
+msgstr "Bublina"
+
+
+msgid "Create bubble particle system"
+msgstr "Vytvára systém častíc bublín"
+
+
+msgid "Enable collisons with back domain border"
+msgstr "Povolí kolízie so zadným okrajom oblasti"
 
 
 msgid "Bottom"
 msgstr "Zdola"
 
 
+msgid "Enable collisons with bottom domain border"
+msgstr "Povoliť kolízie s dolným okrajom oblasti"
+
+
+msgid "Enable collisons with front domain border"
+msgstr "Povolí kolízie s predným okrajom oblasti"
+
+
+msgid "Enable collisons with left domain border"
+msgstr "Povolí kolízie so ľavým okrajom oblasti"
+
+
+msgid "Enable collisons with right domain border"
+msgstr "Povolí kolízie s pravým okrajom oblasti"
+
+
 msgid "Top"
 msgstr "Zhora"
 
 
+msgid "Enable collisons with top domain border"
+msgstr "Povolí kolízie s horným okrajom oblasti"
+
+
 msgid "Render a simulation field while mapping its voxels values to the colors of a ramp"
-msgstr "Vykreslí poľa simulácie pri priraďovaní hodnôt voxelov podľa poklesu farieb"
+msgstr "Vykreslí pole simulácie pri priraďovaní hodnôt voxelov podľa poklesu farieb"
 
 
 msgid "Dissolve Smoke"
 msgstr "Rozplynúť dym"
 
 
+msgid "FLIP"
+msgstr "FLIP"
+
+
+msgid "Foam"
+msgstr "Pena"
+
+
+msgid "Create foam particle system"
+msgstr "Vytvorte systém penových častíc"
+
+
+msgid "Fractional Obstacles"
+msgstr "Úlomkové prekážky"
+
+
+msgid "Fractional obstacles improve and smoothen the fluid-obstacle boundary"
+msgstr "Úlomkové prekážky zlepšujú a vyhladzujú hranicu prekážky v tekutine"
+
+
+msgid "Use Guiding"
+msgstr "Použite vedenie"
+
+
+msgid "Enable fluid guiding"
+msgstr "Povolí smerovanie kvapalín"
+
+
+msgid "Use Mesh"
+msgstr "Použiť povrchovú sieť"
+
+
+msgid "Enable fluid mesh (using amplification)"
+msgstr "Povolí povrchovú sieť kvapaliny (použitím zosilnenia)"
+
+
+msgid "Use Noise"
+msgstr "Použiť šum"
+
+
+msgid "Enable fluid noise (using amplification)"
+msgstr "Povolí šum kvapaliny (použitím zosilnenia)"
+
+
+msgid "Speed Vectors"
+msgstr "Vektory rýchlosti"
+
+
+msgid "Spray"
+msgstr "Sprej"
+
+
+msgid "Create spray particle system"
+msgstr "Vytvorte systém sprejových častíc"
+
+
 msgid "Tracer"
-msgstr "Značkovanie"
+msgstr "Sledovacie"
+
+
+msgid "Create tracer particle system"
+msgstr "Vytvorte systém stopovacích častíc"
 
 
 msgid "Display Type"
@@ -11698,11 +12355,11 @@ msgstr "Typ zobrazenia"
 
 
 msgid "Needle"
-msgstr "Ihlice"
+msgstr "Ihličie"
 
 
 msgid "Display vectors as needles"
-msgstr "Zobrazí vektory ako ihlice"
+msgstr "Zobrazí vektory ako ihličie"
 
 
 msgid "Streamlines"
@@ -11710,7 +12367,7 @@ msgstr "Prúdnicové"
 
 
 msgid "Display vectors as streamlines"
-msgstr "Zobrazí vektory ako prúdnicové"
+msgstr "Zobrazí vektory ako prúdnice"
 
 
 msgid "Multiplier for scaling the vectors"
@@ -11749,28 +12406,100 @@ msgid "Velocity of a simulated fluid mesh"
 msgstr "Rýchlosť simulovanej povrchovej siete kvapaliny"
 
 
+msgid "Effector Settings"
+msgstr "Nastavenia efektora"
+
+
 msgid "Smoke collision settings"
 msgstr "Nastavenie kolízie dymu"
+
+
+msgid "Effector Type"
+msgstr "Typ efektora"
+
+
+msgid "Change type of effector in the simulation"
+msgstr "Zmena typu efektora pri simulácii"
 
 
 msgid "Collision"
 msgstr "Kolízia"
 
 
+msgid "Create collision object"
+msgstr "Vytvorí kolízny objekt"
+
+
 msgid "Guide"
 msgstr "Vodiace"
+
+
+msgid "Create guide object"
+msgstr "Vytvorí vodiaci objekt"
+
+
+msgid "Guiding mode"
+msgstr "Vodiaci režim"
+
+
+msgid "How to create guiding velocities"
+msgstr "Ako vytvoriť smerové rýchlosti"
 
 
 msgid "Maximize"
 msgstr "Maximalizovať"
 
 
+msgid "Compare velocities from previous frame with new velocities from current frame and keep the maximum"
+msgstr "Porovná rýchlosti z predchádzajúcej snímky s novými rýchlosťami z aktuálnej snímky a udržiava maximum"
+
+
+msgid "Minimize"
+msgstr "Minimalizovať"
+
+
+msgid "Compare velocities from previous frame with new velocities from current frame and keep the minimum"
+msgstr "Porovná rýchlosti z predchádzajúcej snímky s novými rýchlosťami z aktuálnej snímky a udržiavajte minimum"
+
+
 msgid "Override"
 msgstr "Prepísať"
 
 
+msgid "Always write new guide velocities for every frame (each frame only contains current velocities from guiding objects)"
+msgstr "Vždy zapíše nové smerové rýchlosti pre každú snímku (každá snímka obsahuje iba aktuálne rýchlosti zo smerových objektov)"
+
+
+msgid "Averaged"
+msgstr "Priemerné"
+
+
+msgid "Take average of velocities from previous frame and new velocities from current frame"
+msgstr "Zoberie priemer rýchlostí z predchádzajúcej snímky a novej rýchlosti z aktuálnej snímky"
+
+
+msgid "Distance around mesh surface to consider as effector"
+msgstr "Vzdialenosť okolo povrchu povrchovej siete, ktorá sa má považovať za efektor"
+
+
+msgid "Is Planar"
+msgstr "Je rovinná"
+
+
+msgid "Treat this object as a planar, unclosed mesh"
+msgstr "S týmto objektom zaobchádza ako s rovinnou neuzatvorenou povrchovou sieťou"
+
+
+msgid "Multiplier of obstacle velocity"
+msgstr "Násobiteľ rýchlosti prekážky"
+
+
 msgid "Flow Settings"
 msgstr "Nastavenia prúdenia"
+
+
+msgid "Fluid flow settings"
+msgstr "Nastavenia prúdenia kvapaliny"
 
 
 msgid "Vertex Group"
@@ -11781,12 +12510,40 @@ msgid "Name of vertex group which determines surface emission rate"
 msgstr "Názov skupiny vrcholov, ktorá určuje mieru emisie povrchu"
 
 
+msgid "Flow Behavior"
+msgstr "Správanie prúdenia"
+
+
+msgid "Change flow behavior in the simulation"
+msgstr "Zmena správania prúdenia v simulácii"
+
+
+msgid "Add fluid to simulation"
+msgstr "Pridá kvapalinu do simulácie"
+
+
 msgid "Outflow"
 msgstr "Odtok"
 
 
+msgid "Delete fluid from simulation"
+msgstr "Odstráni kvapalinu zo simulácie"
+
+
+msgid "Only use given geometry for fluid"
+msgstr "Danú geometriu používajte iba pre kvapalinu"
+
+
+msgid "Change how fluid is emitted"
+msgstr "Zmení spôsob vpúšťania kvapaliny"
+
+
 msgid "Flow Type"
 msgstr "Typ prúdenia"
+
+
+msgid "Change type of fluid in the simulation"
+msgstr "Zmení typ kvapaliny v simulácii"
 
 
 msgid "Add smoke"
@@ -11809,8 +12566,12 @@ msgid "Add fire"
 msgstr "Pridá oheň"
 
 
+msgid "Add liquid"
+msgstr "Pridá tekutinu"
+
+
 msgid "Flame Rate"
-msgstr "Miera plameňa"
+msgstr "Intenzita plameňa"
 
 
 msgid "Texture that controls emission strength"
@@ -11838,7 +12599,7 @@ msgstr "Počet pridaných vzoriek medzi snímkami na zlepšenie kvality rýchlo 
 
 
 msgid "Temp. Diff."
-msgstr "Teplotný rozdiel"
+msgstr "Tepl. rozd."
 
 
 msgid "Temperature difference to ambient temperature"
@@ -11877,8 +12638,20 @@ msgid "Absolute Density"
 msgstr "Absolútna hustota"
 
 
+msgid "Only allow given density value in emitter area and will not add up"
+msgstr "Povolí iba danú hodnotu hustoty v oblasti emitora a nezapočítava ju"
+
+
+msgid "Control when to apply inflow"
+msgstr "Kontrola použitia prítoku"
+
+
 msgid "Initial Velocity"
 msgstr "Počiatočná rýchlosť"
+
+
+msgid "Fluid has some initial velocity when it is emitted"
+msgstr "Kvapalina má určitú počiatočnú rýchlosť, keď je vpúšťaná"
 
 
 msgid "Set Size"
@@ -11899,6 +12672,14 @@ msgstr "Použije textúru na ovládanie intenzity emisie"
 
 msgid "Initial"
 msgstr "Počiatočná"
+
+
+msgid "Initial velocity in X, Y and Z direction"
+msgstr "Počiatočná rýchlosť v smere X, Y a Z"
+
+
+msgid "Multiplier of source velocity passed to fluid (source velocity is non-zero only if object is moving)"
+msgstr "Násobiteľ rýchlosti zdroja prešiel do kvapaliny (rýchlosť zdroja je nenulová, iba ak sa objekt pohybuje)"
 
 
 msgid "Normal"
@@ -13739,6 +14520,14 @@ msgid "Subdivide stroke adding more control points"
 msgstr "Rozdelí ťah pridaním ďalších riadiacich bodov"
 
 
+msgid "Multiple Strokes"
+msgstr "Viacnásobný ťah"
+
+
+msgid "Produce multiple strokes along one stroke"
+msgstr "Vytvára viac ťahov pozdĺž jedného ťahu"
+
+
 msgid "Deform stroke points using armature object"
 msgstr "Deformuje body ťahu použitím objektu kostry"
 
@@ -14265,6 +15054,62 @@ msgid "Mirror this axis"
 msgstr "Zrkadliť túto os"
 
 
+msgid "Multiply Modifier"
+msgstr "Viacnásobný modifikátor"
+
+
+msgid "Generate multiple strokes from one stroke"
+msgstr "Vytvára viac ťahov z jedného ťahu"
+
+
+msgid "Distance of duplications"
+msgstr "Vzdialenosť duplikátov"
+
+
+msgid "Duplications"
+msgstr "Vytvárať kópie"
+
+
+msgid "How many copies of strokes be displayed"
+msgstr "Koľko kópií ťahov sa zobrazí"
+
+
+msgid "Angle Splitting"
+msgstr "Delenie uhla"
+
+
+msgid "Enable angle splitting"
+msgstr "Povoliť rozdelenie uhla"
+
+
+msgid "Enable Fading"
+msgstr "Povoliť vytrácanie"
+
+
+msgid "Enable fading"
+msgstr "Povoliť vytrácanie"
+
+
+msgid "Fade center"
+msgstr "Stred vytrácania"
+
+
+msgid "Fade influence of stroke's opacity"
+msgstr "Vytrácanie vplyvu nepriehľadnosti ťahu"
+
+
+msgid "Fade influence of stroke's thickness"
+msgstr "Vytrácanie vplyvu hrúbky ťahu"
+
+
+msgid "Offset of duplications. -1 to 1: inner to outer"
+msgstr "Posuv duplikátov. -1 až 1: vnútorné až vonkajšie"
+
+
+msgid "Split angle for segments"
+msgstr "Rozdelí uhol na segmenty"
+
+
 msgid "Noise Modifier"
 msgstr "Modifikátor šumu"
 
@@ -14450,15 +15295,15 @@ msgstr "Koľkokrát je použité vyhladenie (vysoké čísla môžu znížiť FP
 
 
 msgid "Subdivision Modifier"
-msgstr "Modifikátor rozdelenia"
+msgstr "Modifikátor členenia"
 
 
 msgid "Subdivide Stroke modifier"
-msgstr "Modifikátor delenia ťahu"
+msgstr "Modifikátor členenia ťahu"
 
 
 msgid "Number of subdivisions"
-msgstr "Počet delení"
+msgstr "Počet členení"
 
 
 msgid "Simple"
@@ -14618,11 +15463,11 @@ msgstr "Farba čiar mriežky"
 
 
 msgid "Grid Subdivisions"
-msgstr "Rozdelenie mriežky"
+msgstr "Rozčlenenie mriežky"
 
 
 msgid "Number of subdivisions in each side of symmetry line"
-msgstr "Počet delení v každej strane symetrie čiary"
+msgstr "Počet členení v každej strane symetrie čiary"
 
 
 msgid "Offset of the canvas"
@@ -15015,15 +15860,19 @@ msgstr "Pri maľovaní použije režim zmiešania Zacloniť"
 
 
 msgid "Color Dodge"
-msgstr "Uhnúť farbe"
+msgstr "Vyhýbanie farbe"
 
 
 msgid "Use Color Dodge blending mode while painting"
-msgstr "Pri maľovaní použije režim zmiešania Uhnúť farbe"
+msgstr "Pri maľovaní použije režim zmiešania Vyhýbanie farbe"
 
 
 msgid "Use Add blending mode while painting"
 msgstr "Pri maľovaní použije režim zmiešania Pridávať"
+
+
+msgid "Use Overlay blending mode while painting"
+msgstr "Pri maľovaní použije režim zmiešania Prekrývať"
 
 
 msgid "Use Soft Light blending mode while painting"
@@ -15079,11 +15928,11 @@ msgstr "Pri maľovaní použije režim zmiešania Odtieň"
 
 
 msgid "Use Saturation blending mode while painting"
-msgstr "Pri maľovaní použije režim zmiešania Nasýtenie"
+msgstr "Pri maľovaní použije režim zmiešania Nasýtiť"
 
 
 msgid "Use Color blending mode while painting"
-msgstr "Pri maľovaní použije režim zmiešania Farbenie"
+msgstr "Pri maľovaní použije režim zmiešania Sfarbiť"
 
 
 msgid "Use Value blending mode while painting"
@@ -15191,7 +16040,7 @@ msgstr "Farba kurzora pri odčítaní"
 
 
 msgid "Mask Texture Overlay Alpha"
-msgstr "Alfa maska prekrytia textúry"
+msgstr "Alfa prekrytia masky textúry"
 
 
 msgid "Editable falloff curve"
@@ -15202,8 +16051,12 @@ msgid "Curve Preset"
 msgstr "Predvoľba krivky"
 
 
+msgid "Smoother"
+msgstr "Hladšie"
+
+
 msgid "Root"
-msgstr "Koreňová"
+msgstr "Koreňové"
 
 
 msgid "Sharp"
@@ -15211,11 +16064,27 @@ msgstr "Hranaté"
 
 
 msgid "Sharper"
-msgstr "Veľmi ostrá"
+msgstr "Veľmi ostré"
 
 
 msgid "Inverse square"
 msgstr "Inverzný štvorec"
+
+
+msgid "Dash Ratio"
+msgstr "Pomer čiarky"
+
+
+msgid "Ratio of samples in a cycle that the brush is enabled"
+msgstr "Pomer vzoriek v cykle povolený štetcom"
+
+
+msgid "Dash Length"
+msgstr "Dĺžka pomlčky"
+
+
+msgid "Length of a dash cycle measured in stroke samples"
+msgstr "Dĺžka čiarkovaného cyklu rozmeraná na vzorkách ťahu"
 
 
 msgid "Deformation"
@@ -15246,6 +16115,26 @@ msgid "Paint most on faces pointing towards the view according to this angle"
 msgstr "Vyfarbí väčšinu plôšok smerujúcich na zobrazenie podľa tohto uhla"
 
 
+msgid "Falloff Shape"
+msgstr "Tvar dopadu"
+
+
+msgid "Use projected or spherical falloff"
+msgstr "Použije premietnutý alebo sférický dopad"
+
+
+msgid "Apply brush influence in a Sphere, outwards from the center"
+msgstr "Aplikuje vplyv štetca na sféru smerom von od stredu"
+
+
+msgid "Projected"
+msgstr "Premietaný"
+
+
+msgid "Apply brush influence in a 2D circle, projected from the view"
+msgstr "Aplikuje vplyv štetca v 2D kruhu premietanom z pohľadu"
+
+
 msgid "Fill Threshold"
 msgstr "Prah výplne"
 
@@ -15256,6 +16145,10 @@ msgstr "Prahová hodnota, nad ktorou sa vyplnenie nerozširuje"
 
 msgid "Gpencil Settings"
 msgstr "Nastavenia pastelky"
+
+
+msgid "Grease Pencil Draw Tool"
+msgstr "Nástroj kreslenia pastelky"
 
 
 msgid "Draw"
@@ -15334,12 +16227,36 @@ msgid "Mask"
 msgstr "Maskovanie"
 
 
+msgid "Invert to Scrape or Fill"
+msgstr "Prevrátiť zoškrabanie alebo vyplnenie"
+
+
+msgid "Use Scrape or Fill tool when inverting this brush instead of inverting its displacement direction"
+msgstr "Pri prevrátení tohto štetca použite namiesto obrátenia jeho smer posunu, použite nástroj Zoškrabať alebo vyplniť"
+
+
 msgid "Jitter the position of the brush while painting"
 msgstr "Chvenie polohy štetca pri maľovaní"
 
 
 msgid "Jitter the position of the brush in pixels while painting"
 msgstr "Chvenie polohy štetca pri vyfarbovaní v pixeloch"
+
+
+msgid "Jitter Unit"
+msgstr "Jednotka chvenia"
+
+
+msgid "Jitter in screen space or relative to brush size"
+msgstr "Chvenie v priestore obrazovky alebo relatívne k veľkosti štetca"
+
+
+msgid "Jitterring happens in screen space, in pixels"
+msgstr "Chvenie sa deje v priestore obrazovky, v pixeloch"
+
+
+msgid "Jitterring happens relative to the brush size"
+msgstr "Chvenie sa deje relatívne k veľkosti štetca"
 
 
 msgid "Mask Stencil Dimensions"
@@ -15359,7 +16276,7 @@ msgstr "Poloha vzorkovnice masky v zábere"
 
 
 msgid "Mask Texture"
-msgstr "Textúra masky"
+msgstr "Maska textúry"
 
 
 msgid "Mask Texture Slot"
@@ -15368,6 +16285,14 @@ msgstr "Zásuvka textúry masky"
 
 msgid "Mask Tool"
 msgstr "Nástroj masky"
+
+
+msgid "Plane Angle"
+msgstr "Uhol roviny"
+
+
+msgid "Angle between the planes of the crease"
+msgstr "Uhol medzi rovinami záhybu"
 
 
 msgid "Normal Radius"
@@ -15410,6 +16335,14 @@ msgid "If a vertex is further away from offset plane than this, then it is not a
 msgstr "Ak je vrchol je ďalej od posunu roviny, ako je táto, potom to nie je ovplyvnená"
 
 
+msgid "Pose IK Segments"
+msgstr "Póza IK segmentov"
+
+
+msgid "Number of segments of the inverse kinematics chain that will deform the mesh"
+msgstr "Počet segmentov inverzného kinematického reťazca deformujúcich povrchovú sieť"
+
+
 msgid "Pose Origin Offset"
 msgstr "Posun pôvodnej pózy"
 
@@ -15420,6 +16353,10 @@ msgstr "Posun pôvodnej pózy k relatívnemu dosahu štetca"
 
 msgid "Smooth Iterations"
 msgstr "Opakovane vyhladiť"
+
+
+msgid "Smooth iterations applied after calculating the pose factor of each vertex"
+msgstr "Opakované vyhladenie použité po výpočte faktora pózy každého vrcholu"
 
 
 msgid "Rake"
@@ -15494,6 +16431,10 @@ msgid "Scrape"
 msgstr "Zoškrabanie"
 
 
+msgid "Multiplane Scrape"
+msgstr "Viacplošné zoškrabanie"
+
+
 msgid "Elastic Deform"
 msgstr "Elastická deformácia"
 
@@ -15518,6 +16459,10 @@ msgid "Rotate"
 msgstr "Zakrútenie"
 
 
+msgid "Slide Relax"
+msgstr "Posuvník uvoľnenia"
+
+
 msgid "Secondary Color"
 msgstr "Sekundárna farba"
 
@@ -15528,6 +16473,14 @@ msgstr "Prah ostrosti"
 
 msgid "Threshold below which, no sharpening is done"
 msgstr "Prah, pod ktorým sa neurobí žiadny ostrý tvar"
+
+
+msgid "Show Cursor Preview"
+msgstr "Zobraziť náhľad kurzora"
+
+
+msgid "Preview the scrape planes in the cursor during the stroke"
+msgstr "Počas ťahu zobrazuje náhľad zoškrabávaných rovín v kurzore"
 
 
 msgid "Smooth Stroke Factor"
@@ -15619,7 +16572,7 @@ msgstr "Definuje krivku ťahu podľa Bézierovej krivky (ťahy sú oddelené pod
 
 
 msgid "Texture Overlay Alpha"
-msgstr "Textúra alfa prekrytia"
+msgstr "Alfa prekrytia textúry"
 
 
 msgid "Texture Sample Bias"
@@ -15766,6 +16719,14 @@ msgid "Measure brush size relative to the scene"
 msgstr "Pomer veľkosti štetca vzhľadom na scénu"
 
 
+msgid "Dynamic Mode"
+msgstr "Dynamický režim"
+
+
+msgid "The angle between the planes changes during the stroke to fit the surface under the cursor"
+msgstr "Uhol medzi rovinami sa počas ťahu mení tak, aby sa prispôsobil povrchu pod kurzorom"
+
+
 msgid "Plane Offset Pressure"
 msgstr "Posun roviny tlakom"
 
@@ -15790,12 +16751,16 @@ msgid "When locked keep using the plane origin of surface where stroke was initi
 msgstr "Pri zamknutom povrchu používa pôvodnú rovinu povrchu, na ktorom bol zahájený ťah"
 
 
+msgid "Smooths the edges of the strokes"
+msgstr "Vyhladzovať hrany ťahov"
+
+
 msgid "Use Sculpt"
 msgstr "Použiť sochárstvo"
 
 
 msgid "Use this brush in grease pencil drawing mode"
-msgstr "Použije túto štetec v režime maľovania pastelkou"
+msgstr "Použije tento štetec v režime maľovania pastelkou"
 
 
 msgid "Use this brush in texture paint mode"
@@ -16379,7 +17344,7 @@ msgstr "Faktor skosenia konca"
 
 
 msgid "Factor that defines to where beveling of spline happens (0=to the very beginning, 1=to the very end)"
-msgstr "Faktor definujúci skosenie hrán nastávajúcej krivke ohybu (0=na samom začiatku, 1=až do samého konca)"
+msgstr "Faktor definujúci skosenie hrán nastávajúcej vodiacej krivke (0=na samom začiatku, 1=až do samého konca)"
 
 
 msgid "End Mapping Type"
@@ -16387,15 +17352,15 @@ msgstr "Typ priradenia konca"
 
 
 msgid "Determines how the end bevel factor is mapped to a spline"
-msgstr "Určuje faktor konca skosenia priradeného ku krivke ohybu"
+msgstr "Určuje faktor konca skosenia priradeného k vodiacej krivke"
 
 
 msgid "Map the bevel factor to the number of subdivisions of a spline (U resolution)"
-msgstr "Priradí faktor skosenia k počtu delení krivky ohybu (U rozlíšenie)"
+msgstr "Priradí faktor skosenia k počtu členení krivky ohybu (U rozlíšenie)"
 
 
 msgid "Map the bevel factor to the length of a segment and to the number of subdivisions of a segment"
-msgstr "Priradí skosenie k dĺžke segmentu a k počtu delení segmentov"
+msgstr "Priradí skosenie k dĺžke segmentu a k počtu členení segmentov"
 
 
 msgid "Spline"
@@ -18167,7 +19132,11 @@ msgstr "Prehliadač uzla kompozície"
 
 
 msgid "Tiled"
-msgstr "Vydláždené"
+msgstr "Dlaždicovo"
+
+
+msgid "Tiled image texture"
+msgstr "Textúra dlaždicovými obrázkami"
 
 
 msgid "Stereo 3D Format"
@@ -18176,6 +19145,14 @@ msgstr "Stereo 3D formát"
 
 msgid "Settings for stereo 3d"
 msgstr "Nastavenia pre stereo 3D"
+
+
+msgid "Image Tiles"
+msgstr "Obrázok dlaždice"
+
+
+msgid "Tiles of the image"
+msgstr "Dlaždice obrázku"
 
 
 msgid "How to generate the image"
@@ -18295,7 +19272,7 @@ msgstr "Catmull-Rom"
 
 
 msgid "BSpline"
-msgstr "B krivka ohybu"
+msgstr "B vodiaca krivka"
 
 
 msgid "Interpolation Type V"
@@ -20188,12 +21165,24 @@ msgid "Lock Location"
 msgstr "Zamknúť polohu"
 
 
+msgid "Lock editing of location when transforming"
+msgstr "Uzamkne úpravu polohy počas transformácie"
+
+
 msgid "Lock Rotation"
 msgstr "Zamknúť rotáciu"
 
 
+msgid "Lock editing of rotation when transforming"
+msgstr "Uzamkne úpravu rotácie počas transformácie"
+
+
 msgid "Lock Rotation (4D Angle)"
 msgstr "Zamknúť rotáciu (uhol 4D)"
+
+
+msgid "Lock editing of 'angle' component of four-component rotations when transforming"
+msgstr "Uzamkne úpravu 'uhla' štvoritého prvku rotácie počas transformácie"
 
 
 msgid "Lock Rotations (4D)"
@@ -20206,6 +21195,10 @@ msgstr "Zamkne úpravu štvoritého prvku rotácie podľa komponentov (namiesto 
 
 msgid "Lock Scale"
 msgstr "Zamknúť zmenu veľkosti"
+
+
+msgid "Lock editing of scale when transforming"
+msgstr "Uzamkne úpravu mierky počas transformácie"
 
 
 msgid "Material Slots"
@@ -21326,6 +22319,14 @@ msgid "Number of children/parent for rendering"
 msgstr "Počet potomkov/rodičov na vykresľovanie"
 
 
+msgid "Root Diameter"
+msgstr "Priemer koreňa"
+
+
+msgid "Strand diameter width at the root"
+msgstr "Šírka priemeru prameňa pri koreni"
+
+
 msgid "Random Orientation"
 msgstr "Náhodná orientácia"
 
@@ -21492,6 +22493,14 @@ msgstr "Časový krok"
 
 msgid "The simulation timestep per frame (seconds per frame)"
 msgstr "Simulácia časového úseku na snímke (snímok za sekundu)"
+
+
+msgid "Tip Diameter"
+msgstr "Priemer hrotu"
+
+
+msgid "Strand diameter width at the tip"
+msgstr "Šírka priemeru prameňa na hrote"
 
 
 msgid "Trail Count"
@@ -22776,8 +23785,16 @@ msgid "Noise Type"
 msgstr "Typ šumu"
 
 
+msgid "Soft"
+msgstr "Mäkká"
+
+
 msgid "Generate soft noise (smooth transitions)"
 msgstr "Generuje mäkký šum (hladké prechody)"
+
+
+msgid "Hard"
+msgstr "Tvrdá"
 
 
 msgid "Generate hard noise (sharp transitions)"
@@ -24152,6 +25169,14 @@ msgid "View in multilayer image"
 msgstr "Zobrazenie vo viacvrstvovej snímke"
 
 
+msgid "Tile"
+msgstr "Dlaždica"
+
+
+msgid "Tile in tiled image"
+msgstr "Dlaždica v dlaždicovom obrázku"
+
+
 msgid "Auto Refresh"
 msgstr "Automatická obnova"
 
@@ -24603,6 +25628,15 @@ msgstr "Win klávesa"
 
 msgid "Cmd"
 msgstr "Win"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Application"
+msgstr "Menu"
+
+
+msgid "App"
+msgstr "Menu"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -26581,11 +27615,11 @@ msgstr "Vykreslí modrotlač použitím elipsovitých ťahov obrysu"
 
 
 msgid "Squares"
-msgstr "Hranaté"
+msgstr "Štvorcové"
 
 
 msgid "Draw a blueprint using square contour strokes"
-msgstr "Vykreslí modrotlač použitím hranatých ťahov obrysu"
+msgstr "Vykreslí modrotlač použitím štvorcových ťahov obrysu"
 
 
 msgid "Modify the stroke geometry so that it corresponds to its main direction line"
@@ -27534,6 +28568,10 @@ msgid "GP Vertex Groups"
 msgstr "Skupiny vrcholov pastelky"
 
 
+msgid "Layer Specials"
+msgstr "Špeciálne vrstvy"
+
+
 msgid "Move to Layer"
 msgstr "Presunúť do vrstvy"
 
@@ -27829,6 +28867,10 @@ msgstr "Povoliť možnosti kostí"
 
 msgid "Toggle Bone Options"
 msgstr "Prepínač možnosti kostí"
+
+
+msgid "Brush Specials"
+msgstr "Špeciálne štetce"
 
 
 msgid "Enabled Modes"
@@ -28687,32 +29729,64 @@ msgid "Data Transfer"
 msgstr "Prenos údajov"
 
 
+msgid "Transfer several types of data (vertex groups, UV maps, vertex colors, custom normals) from one mesh to another"
+msgstr "Prenáša niekoľko typov údajov (skupiny vrcholov, UV mapy, farby vrcholov, vlastné kolmice) z jednej povrchovej siete na druhú"
+
+
 msgid "Mesh Cache"
 msgstr "Zásobník povrchovej siete"
+
+
+msgid "Deform the mesh using an external frame-by-frame vertex transform cache"
+msgstr "Deformuje sieť pomocou externého zásobníka na transformáciu vrcholu"
 
 
 msgid "Mesh Sequence Cache"
 msgstr "Zásobník sekvencie povrchovej siete"
 
 
+msgid "Deform the mesh or curve using an external mesh cache in Alembic format"
+msgstr "Deformuje sieť alebo krivku pomocou externej vyrovnávacej pamäte povrchovej siete v Alembic formáte"
+
+
 msgid "Normal Edit"
 msgstr "Úprava kolmíc"
+
+
+msgid "Modify the direction of the surface normals"
+msgstr "Upravuje smer kolmíc povrchu"
 
 
 msgid "Weighted Normal"
 msgstr "Váženie kolmíc"
 
 
+msgid "Modify the direction of the surface normals using a weighting method"
+msgstr "Upravuje smer kolmíc povrchu použitím metódy váženia"
+
+
 msgid "UV Project"
 msgstr "UV projekcia"
+
+
+msgid "Project the UV map coordinates from the negative Z axis of another object"
+msgstr "Premieta súradnice UV mapy zo zápornej osi Z iného objektu"
 
 
 msgid "UV Warp"
 msgstr "Skrútenie UV"
 
 
+msgid "Transform the UV map using the the difference between two objects"
+msgstr "Transformuje UV mapu pomocou rozdielu medzi dvoma objektami"
+
+
 msgid "Vertex Weight Edit"
 msgstr "Úpravy váhy vrcholov"
+
+
+msgid "Modify of the weights of a vertex group"
+msgstr "Upravuje váhy dvoch skupín vrcholov"
 
 
 msgid "Vertex Weight Mix"
@@ -28727,88 +29801,228 @@ msgid "Vertex Weight Proximity"
 msgstr "Príbuznosť váhy vrcholov"
 
 
+msgid "Set the vertex group weights based on the distance to another target object"
+msgstr "Váhy skupín vrcholu nastavuje na základe vzdialenosti od iného cieľového objektu"
+
+
+msgid "Create copies of the shape with offsets"
+msgstr "Vytvára kópie tvaru s posunom"
+
+
 msgid "Bevel"
 msgstr "Skosenie"
+
+
+msgid "Generate sloped corners by adding geometry to the mesh's edges or vertices"
+msgstr "Vytvára skosené rohy pridaním geometrie k okrajom alebo vrcholom povrchovej siete"
 
 
 msgid "Boolean"
 msgstr "Boolean"
 
 
+msgid "Use another shape to cut, combine or perform a difference operation"
+msgstr "Na strih, kombináciu alebo vykonávanie rozdielovej operácie použije iný tvar"
+
+
+msgid "Cause the faces of the mesh object to appear or disappear one after the other over time"
+msgstr "Dôvodom je, že sa plôšky povrchovej siete objektu postupne objavujú alebo miznú"
+
+
 msgid "Decimate"
 msgstr "Zdecimovanie"
+
+
+msgid "Reduce the geometry density"
+msgstr "Zníži hustotu geometrie"
 
 
 msgid "Edge Split"
 msgstr "Odčleniť hranu"
 
 
+msgid "Split away joined faces at the edges"
+msgstr "Rozdelí spojené plôšky na hranách"
+
+
+msgid "Dynamically hide vertices based on a vertex group or armature"
+msgstr "Dynamicky skrýva vrcholy na základe skupiny vrcholov alebo armatúry"
+
+
+msgid "Mirror along the local X, Y and/or Z axes, over the object origin"
+msgstr "Zrkadlo pozdĺž miestnej osi X, Y a/alebo Z nad pôvodným objektom"
+
+
 msgid "Multiresolution"
 msgstr "Viacnásobné rozlíšenie"
+
+
+msgid "Subdivide the mesh in a way that allows editing the higher subdivision levels"
+msgstr "Rozdeľuje povrchovú sieť spôsobom, ktorý umožňuje úpravu vyšších úrovní rozdelenia"
 
 
 msgid "Remesh"
 msgstr "Pretvorenie povrchovej siete"
 
 
+msgid "Generate new mesh topology based on the current shape"
+msgstr "Vytvára novú topológiu povrchovej siete na základe aktuálneho tvaru"
+
+
 msgid "Screw"
 msgstr "Skrutka"
+
+
+msgid "Lathe around an axis, treating the inout mesh as a profile"
+msgstr "Obkrúca okolo osi vstupnú povrchovú sieť upravte ako profil"
 
 
 msgid "Skin"
 msgstr "Opláštenie"
 
 
+msgid "Create a solid shape from vertices and edges, using the vertex radius to define the thickness"
+msgstr "Vytvára pevný tvar z vrcholov a hrán použitím dosahu vrcholu na definovanie hrúbky"
+
+
 msgid "Solidify"
 msgstr "Spevnenie"
 
 
+msgid " Make the surface thick"
+msgstr " Vytvára hrubý povrch"
+
+
 msgid "Subdivision Surface"
-msgstr "Rozdelenie povrchu"
+msgstr "Prerozdelenie povrchu"
+
+
+msgid "Split the faces into smaller parts, giving it a smoother appearance"
+msgstr "Rozdeľuje plôšky na menšie časti, čím sa dosiahne jemnejší vzhľad"
 
 
 msgid "Triangulate"
 msgstr "Triangulácia"
 
 
+msgid "Convert all polygons to triangles"
+msgstr "Konvertuje všetky polygóny na trojuholníky"
+
+
 msgid "Wireframe"
 msgstr "Drôtený model"
+
+
+msgid "Convert faces into thickened edges"
+msgstr "Konvertuje plôšky na zosilnené hrany"
+
+
+msgid "Weld"
+msgstr "Zvariť"
+
+
+msgid "Find groups of vertices closer then dist and merges them together"
+msgstr "Hľadá skupiny vrcholov, ktoré sú bližšie ako vzdialenosť a spája ich"
+
+
+msgid "Deform the shape using an armature object"
+msgstr "Deformujte tvar použitím armatúry objektu"
 
 
 msgid "Cast"
 msgstr "Vrhanie"
 
 
+msgid "Shift the shape towards a predefined primitive"
+msgstr "Posúva tvar smerom k preddefinovanej prvotine"
+
+
+msgid "Bend the mesh using a curve object"
+msgstr "Ohýba povrchovú sieť použitím objektu krivky"
+
+
 msgid "Displace"
 msgstr "Premiestnenie"
+
+
+msgid "Offset vertices based on a texture"
+msgstr "Posúva vrcholy založené na textúre"
+
+
+msgid "Deform specific points using another object"
+msgstr "Deformuje určené body použitím iného objektu"
 
 
 msgid "Laplacian Deform"
 msgstr "Laplacianova deformácia"
 
 
+msgid "Deform based a series of anchor points"
+msgstr "Deformuje na základe série kotviacich bodov"
+
+
+msgid "Deform using the shape of a lattice object"
+msgstr "Deformuje použitím tvaru mriežkového objektu"
+
+
 msgid "Mesh Deform"
 msgstr "Deformácia povrchovej siete"
+
+
+msgid "Deform using a different mesh, which acts as a deformation cage"
+msgstr "Deformuje použitím inej povrchovej siete, ktorá pôsobí ako deformačná klietka"
+
+
+msgid "Project the shape onto another object"
+msgstr "Premietne tvar na iný objekt"
 
 
 msgid "Simple Deform"
 msgstr "Jednoduchá deformácia"
 
 
+msgid "Deform the shape by twisting, bending, tapering or stretching"
+msgstr "Deformuje tvar krútením, ohýbaním, zužovaním alebo napínaním"
+
+
+msgid "Smooth the mesh by flattening the angles between adjacent faces"
+msgstr "Vyhladzuje povrchovú sieť vyrovnaním uhlov medzi susediacimi plôškami"
+
+
 msgid "Smooth Corrective"
 msgstr "Opravné vyhladenie"
+
+
+msgid "Smooth the mesh while still preserving the volume"
+msgstr "Vyhladzuje povrchovú sieť pri zachovaní objemu"
 
 
 msgid "Smooth Laplacian"
 msgstr "Vyhladiť (Laplacian)"
 
 
+msgid "Reduce the noise on a mesh surface with minimal changes to its shape"
+msgstr "Redukuje šum povrchovej siete s minimálnymi zmenami jej tvaru"
+
+
 msgid "Surface Deform"
 msgstr "Deformácia povrchu"
 
 
+msgid "Transfer motion from another mesh"
+msgstr "Prenáša pohyb z inej povrchovej siete"
+
+
 msgid "Warp"
 msgstr "Obtočenie"
+
+
+msgid "Warp parts of a mesh to a new location in a very flexible way thanks to 2 specified objects"
+msgstr "Obtáča časti povrchovej siete na nové miesto veľmi flexibilným spôsobom vďaka 2 zadaným objektom"
+
+
+msgid "Adds a ripple-like motion to an object’s geometry"
+msgstr "Pridá vlnenie podobné pohybu do geometrie objektu"
 
 
 msgid "Dynamic Paint"
@@ -28819,12 +30033,24 @@ msgid "Explode"
 msgstr "Explózia"
 
 
+msgid "Break apart the mesh faces and let them follow particles"
+msgstr "Roztrhne časti povrchovej siete a nechá ich nasledovať časticami"
+
+
 msgid "Ocean"
 msgstr "Oceán"
 
 
+msgid "Generate a moving ocean surface"
+msgstr "Vytvorí pohyblivú hladinu oceánu"
+
+
 msgid "Particle Instance"
 msgstr "Inštancia častice"
+
+
+msgid "Spawn particles from the shape"
+msgstr "Stvorené častice z tvaru"
 
 
 msgid "Fluid Simulation"
@@ -28993,6 +30219,14 @@ msgstr "Modifikátor skosenie na vytvorenie zaoblenejších vrcholov"
 
 msgid "Angle above which to bevel edges"
 msgstr "Uhol nad ktorým sa skosia hrany"
+
+
+msgid "Custom Profile Path"
+msgstr "Cesta vlastného profilu"
+
+
+msgid "The path for the custom profile"
+msgstr "Cesta pre vlastný profil"
 
 
 msgid "Set Face Strength"
@@ -29179,6 +30413,14 @@ msgid "Clamp the width to avoid overlap"
 msgstr "Zarážka šírky na zabránenie prekrývania"
 
 
+msgid "Custom Profile"
+msgstr "Vlastný profil"
+
+
+msgid "Whether to use a user inputed curve for the bevel's profile"
+msgstr "Stanovuje, či sa má pre profil zošikmenia použiť krivka zadaná používateľom"
+
+
 msgid "Only Vertices"
 msgstr "Len vrcholy"
 
@@ -29189,6 +30431,26 @@ msgstr "Skosenie vrcholov/rohov, nie hrán"
 
 msgid "Vertex group name"
 msgstr "Názov skupiny vrcholov"
+
+
+msgid "Vertex Mesh Method"
+msgstr "Metóda vrcholov povrchovej siete"
+
+
+msgid "The method to use to create the mesh at intersections"
+msgstr "Metóda použitá na vytváranie povrchovej siete pri pretínaní"
+
+
+msgid "Grid Fill"
+msgstr "Výplň mriežky"
+
+
+msgid "Default patterned fill"
+msgstr "Predvolená vzorovaná výplň"
+
+
+msgid "A cut-off at the end of each profile before the intersection"
+msgstr "Orezanie na konci každého profilu pred pretínaním"
 
 
 msgid "Bevel amount"
@@ -30160,7 +31422,7 @@ msgstr "Plátno"
 
 
 msgid "EdgeSplit Modifier"
-msgstr "Modifikátor členeinia hrán"
+msgstr "Modifikátor členenia hrán"
 
 
 msgid "Edge splitting modifier to create sharp edges"
@@ -30245,6 +31507,10 @@ msgstr "Prereže hrany plôšky pre krajšie črepiny"
 
 msgid "Use particle size for the shrapnel"
 msgstr "Použije veľkosť častíc pre črepiny"
+
+
+msgid "Fluid Modifier"
+msgstr "Modifikátor kvapaliny"
 
 
 msgid "Fluid simulation modifier"
@@ -30596,7 +31862,7 @@ msgstr "Úrovne"
 
 
 msgid "Number of subdivisions to use in the viewport"
-msgstr "Počet delení, ktoré sa majú použiť v zábere"
+msgstr "Počet členení, ktoré sa majú použiť v zábere"
 
 
 msgid "Accuracy of vertex positions, lower value is faster but less precise"
@@ -30616,7 +31882,7 @@ msgstr "Úrovne sochárstva"
 
 
 msgid "Number of subdivisions to use in sculpt mode"
-msgstr "Počet delení na použitie v režime sochárstva"
+msgstr "Počet členení na použitie v režime sochárstva"
 
 
 msgid "Optimal Display"
@@ -30644,7 +31910,7 @@ msgstr "Celkové úrovne"
 
 
 msgid "Number of subdivisions for which displacements are stored"
-msgstr "Počet delení, pre ktoré sú uložené premiestnenia"
+msgstr "Počet členení, pre ktoré sú uložené premiestnenia"
 
 
 msgid "Use Creases"
@@ -31249,7 +32515,7 @@ msgstr "Úrovne podpovrchov"
 
 
 msgid "Number of subdivisions that must be performed before extracting vertices' positions and normals"
-msgstr "Počet delení, ktoré sa musia vykonať pred extrahovaním pozícií vrcholov a kolmíc"
+msgstr "Počet členení, ktoré sa musia vykonať pred extrahovaním pozícií vrcholov a kolmíc"
 
 
 msgid "Mesh target to shrink to"
@@ -31408,6 +32674,10 @@ msgid "Solidify Modifier"
 msgstr "Modifikátor spevnenia"
 
 
+msgid "Create a solid skin, compensating for sharp angles"
+msgstr "Vytvára pevný plášť, kompenzovaním ostrých uhlov"
+
+
 msgid "Inner Crease"
 msgstr "Vnútorný záhyb"
 
@@ -31456,8 +32726,64 @@ msgid "Offset material index of generated rim faces"
 msgstr "Index posunu materiálu generovaného lemu plôšok"
 
 
+msgid "Boundary Shape"
+msgstr "Ohraničujúci tvar"
+
+
+msgid "Selects the boundary adjustment algorithm"
+msgstr "Vyberie algoritmus úpravy okrajov"
+
+
+msgid "No shape correction"
+msgstr "Žiadna korekcia tvaru"
+
+
+msgid "Round open perimeter shape"
+msgstr "Oblý tvar otvoreného obvodu"
+
+
+msgid "Flat open perimeter shape"
+msgstr "Plochý tvar otvoreného obvodu"
+
+
+msgid "Thickness Mode"
+msgstr "Režim hrúbky"
+
+
+msgid "Selects the used thickness algorithm"
+msgstr "Vyberie použitý algoritmus hrúbky"
+
+
+msgid "Most basic thickness calculation"
+msgstr "Najzákladnejší výpočet hrúbky"
+
+
+msgid "Even thickness calculation which takes the angle between faces into account"
+msgstr "Rovnomerný výpočet hrúbky, ktorý zohľadňuje uhol medzi plôškami"
+
+
+msgid "Thickness calculation using constraints, most advanced"
+msgstr "Výpočet hrúbky pomocou obmedzení, najpokročilejší"
+
+
 msgid "Offset the thickness from the center"
 msgstr "Posun hrúbky od stredu"
+
+
+msgid "Selects the used algorithm"
+msgstr "Vyberie použitý algoritmus"
+
+
+msgid "Output a solidified version of a mesh by simple extrusion"
+msgstr "Výstup pevnej verzie povrchovej siete jednoduchým vytláčaním"
+
+
+msgid "Complex"
+msgstr "Komplexný"
+
+
+msgid "Output a manifold mesh even if the base mesh is non-manifold, where edges have 3 or more connecting faces.This method is slower"
+msgstr "Výstup viacnásobnej povrchovej siete, aj keď je základná sieť nerozvetvená, kde hrany majú 3 alebo viac spojovacích plôch. Táto metóda je pomalšia"
 
 
 msgid "Thickness of the shell"
@@ -31516,6 +32842,14 @@ msgid "Only add the rim to the original data"
 msgstr "Pridá len lem k pôvodným údajom"
 
 
+msgid "Angle Clamp"
+msgstr "Uhol svorky"
+
+
+msgid "Clamp thickness based on angles"
+msgstr "Hrúbka svorky na základe uhlov"
+
+
 msgid "Subsurf Modifier"
 msgstr "Modifikátor povrchu"
 
@@ -31525,11 +32859,11 @@ msgstr "Modifikátor delenia povrchu"
 
 
 msgid "Number of subdivisions to perform"
-msgstr "Počet delení na vykonanie"
+msgstr "Počet členení na vykonanie"
 
 
 msgid "Number of subdivisions to perform when rendering"
-msgstr "Počet delení, ktoré sa majú vykonať pri vykresľovaní"
+msgstr "Počet členení, ktoré sa majú vykonať pri vykresľovaní"
 
 
 msgid "SurfaceDeform Modifier"
@@ -32255,6 +33589,22 @@ msgstr "Názov skupiny vrcholov na úpravu vybratých oblastí"
 
 msgid "Corrective factor applied to faces' weights, 50 is neutral, lower values increase weight of weak faces, higher values increase weight of strong faces"
 msgstr "Faktor korekcie aplikovaný na váhy plôšok, 50 je neutrálny, nižšie hodnoty zvyšujú váhu ľahkých plôšok, vyššie hodnoty zvyšujú váhu ťažkých plôšok"
+
+
+msgid "Weld Modifier"
+msgstr "Modifikátor zvarenia"
+
+
+msgid "Weld modifier"
+msgstr "Modifikátor zvarenia"
+
+
+msgid "Duplicate Limit"
+msgstr "Limit duplikátu"
+
+
+msgid "For a better performance, limits the number of elements found per vertex. (0 makes it infinite)"
+msgstr "Pre lepšiu výkonnosť obmedzuje počet prvkov nájdených na vrchole. (0 robí ho nekonečným)"
 
 
 msgid "Wireframe Modifier"
@@ -35318,6 +36668,14 @@ msgid "A / B"
 msgstr "A / B"
 
 
+msgid "Multiply Add"
+msgstr "Viacnásobné pridanie"
+
+
+msgid "A * B + C"
+msgstr "A * B + C"
+
+
 msgid "A power B"
 msgstr "A výkon B"
 
@@ -35334,8 +36692,20 @@ msgid "Square root of A"
 msgstr "Druhá odmocnina A"
 
 
+msgid "Inverse Square Root"
+msgstr "Odmocnina inverzného štvorca"
+
+
+msgid "1 / Square root of A"
+msgstr "1 / Druhá odmocnina A"
+
+
 msgid "Magnitude of A"
 msgstr "Magnitúda A"
+
+
+msgid "exp(A)"
+msgstr "exp(A)"
 
 
 msgid "The minimum from A and B"
@@ -35362,8 +36732,36 @@ msgid "1 if A > B else 0"
 msgstr "1 ak A>B inak 0"
 
 
+msgid "Sign"
+msgstr "Znak"
+
+
+msgid "Returns the sign of A"
+msgstr "Vráti znak A"
+
+
 msgid "Compare"
 msgstr "Porovnať"
+
+
+msgid "1 if (A == B) within tolerance C else 0"
+msgstr "1, ak (A == B) v rámci tolerancie C inak 0"
+
+
+msgid "Smooth Minimum"
+msgstr "Minimum vyhladenia"
+
+
+msgid "The minimum from A and B with smoothing C"
+msgstr "Minimum pre A a B s vyhladením C"
+
+
+msgid "Smooth Maximum"
+msgstr "Maximum vyhladenia"
+
+
+msgid "The maximum from A and B with smoothing C"
+msgstr "Maximum pre A a B s vyhladením C"
 
 
 msgid "Round A to the nearest integer. Round upward if the fraction part is 0.5"
@@ -35382,6 +36780,10 @@ msgid "The smallest integer greater than or equal A"
 msgstr "Najmenšie celé číslo väčšie alebo rovnaké A"
 
 
+msgid "trunc(A)"
+msgstr "trunc(A)"
+
+
 msgid "Fraction"
 msgstr "Zlomok"
 
@@ -35395,7 +36797,23 @@ msgstr "Zvyšok"
 
 
 msgid "A mod B"
-msgstr "A zvyšok b"
+msgstr "A zvyšok B"
+
+
+msgid "Snap to increment, snap(A,B)"
+msgstr "Uchytiť na zvýšené, uchytiť(A, B)"
+
+
+msgid "Wrap value to range, wrap(A,B)"
+msgstr "Pokryje hodnotu do rozsahu, pokryť(A, B)"
+
+
+msgid "Pingpong"
+msgstr "Pingpong"
+
+
+msgid "Wraps a value and reverses every other cycle (A,B)"
+msgstr "Ovinie hodnotu a prevráti každý ďalší cyklus (A, B)"
 
 
 msgid "sin(A)"
@@ -35440,6 +36858,46 @@ msgstr "Arktangens2"
 
 msgid "The signed angle arctan(A / B)"
 msgstr "Uhlový arktangens so znamienkom(A/B)"
+
+
+msgid "Hyperbolic Sine"
+msgstr "Hyperbolická sínus"
+
+
+msgid "sinh(A)"
+msgstr "sinh(A)"
+
+
+msgid "Hyperbolic Cosine"
+msgstr "Hyperbolický kosínus"
+
+
+msgid "cosh(A)"
+msgstr "cosh(A)"
+
+
+msgid "Hyperbolic Tangent"
+msgstr "Hyperbolický tangens"
+
+
+msgid "tanh(A)"
+msgstr "tanh(A)"
+
+
+msgid "To Radians"
+msgstr "Na radiány"
+
+
+msgid "Convert from degrees to radians"
+msgstr "Prevedie stupne na radiány"
+
+
+msgid "To Degrees"
+msgstr "Na stupne"
+
+
+msgid "Convert from radians to degrees"
+msgstr "Prevedie radiány na stupne"
 
 
 msgid "Include alpha of second input in this operation"
@@ -36035,6 +37493,22 @@ msgid "Camera Data"
 msgstr "Údaje kamery"
 
 
+msgid "Clamp Type"
+msgstr "Typ prichytenia"
+
+
+msgid "Min Max"
+msgstr "Min Max"
+
+
+msgid "Clamp values using Min and Max values"
+msgstr "Hodnoty upnutia použitím Min a Max hodnôt"
+
+
+msgid "Clamp values between Min and Max range"
+msgstr "Hodnota upnutia v rozsahu Min a Max"
+
+
 msgid "Combine HSV"
 msgstr "Kombinovať HSV"
 
@@ -36096,11 +37570,43 @@ msgstr "Cesta svetla"
 
 
 msgid "Clamp the result to the target range [To Min, To Max]"
-msgstr "Pripne výsledok do cieľového rozsahu [do min, do Max]"
+msgstr "Upne výsledok do cieľového rozsahu [do min, do Max]"
+
+
+msgid "Interpolation Type"
+msgstr "Typ interpolácie"
+
+
+msgid "Linear interpolation between From Min and From Max values"
+msgstr "Lineárna interpolácia v rozsahu hodnôt Min a Max"
+
+
+msgid "Stepped Linear"
+msgstr "Lineárne stupňovanie"
+
+
+msgid "Stepped linear interpolation between From Min and From Max values"
+msgstr "Stupňovaná lineárna interpolácia medzi hodnotami Min a Max"
+
+
+msgid "Smoothstep"
+msgstr "Hladký krok"
+
+
+msgid "Smooth hermite edge interpolation between From Min and From Max values"
+msgstr "Vyhladená interpolácia Hermitových hrán v rozsahu hodnôt Min a Max"
+
+
+msgid "Smootherstep"
+msgstr "Vyhladenejší krok"
+
+
+msgid "Smoother hermite edge interpolation between From Min and From Max values"
+msgstr "Vyhladenejšia interpolácia Hermitových hrán v rozsahu hodnôt Min a Max"
 
 
 msgid "Type of vector that the mapping transforms"
-msgstr "Typ vektora, ktorý mapovanie transformuje"
+msgstr "Typ vektora, ktorý transformuje priradenie"
 
 
 msgid "Transform a point"
@@ -36169,6 +37675,14 @@ msgstr "UV mapa pre mapy priestoru dotyčníc"
 
 msgid "Object Info"
 msgstr "Info o objekte"
+
+
+msgid "AOV Output"
+msgstr "Výstup AOV"
+
+
+msgid "Name of the AOV that this output writes to"
+msgstr "Názov AOV, do ktorého sa tento výstup zapisuje"
 
 
 msgid "Light Output"
@@ -36693,6 +38207,10 @@ msgstr "Vypočíta vzdialenosť k druhému najbližšiemu bodu, ako aj jeho polo
 
 msgid "Smooth F1"
 msgstr "Vyhladiť F1"
+
+
+msgid "Smoothed version of F1. Weighted sum of neighbor voronoi cells"
+msgstr "Verzia vyhladenia F1. Vážený súčet susedných Voronoi buniek"
 
 
 msgid "Distance To Edge"
@@ -39445,6 +40963,10 @@ msgid "Filter text files"
 msgstr "Filter textových súborov"
 
 
+msgid "Filter USD files"
+msgstr "Filtrovať USD súbory"
+
+
 msgid "Hide Operator Properties"
 msgstr "Skryť vlastnosti operátora"
 
@@ -40621,6 +42143,11 @@ msgid "Name of the new collection"
 msgstr "Názov novej kolekcie"
 
 
+msgctxt "Operator"
+msgid "Add Selected to Active Collection"
+msgstr "Pridať vybrané do aktívnej kolekcie"
+
+
 msgid "Add the object to an object collection that contains the active object"
 msgstr "Pridá objekt do kolekcie objektov, ktorá obsahuje aktívny objekt"
 
@@ -40640,6 +42167,11 @@ msgstr "Odstráni vybrané objekty z kolekcie"
 
 msgid "The collection to remove this object from"
 msgstr "Kolekcia na odstránenie z tohto objektu"
+
+
+msgctxt "Operator"
+msgid "Remove Selected from Active Collection"
+msgstr "Odstrániť vybrané z aktívnej kolekcie"
 
 
 msgid "Remove the object from an object collection that contains the active object"
@@ -40812,6 +42344,15 @@ msgstr "Odsadiť"
 
 msgid "Add 4 spaces at line beginning"
 msgstr "Pridá 4 medzery na začiatku riadku"
+
+
+msgctxt "Operator"
+msgid "Indent or Autocomplete"
+msgstr "Odsadenie alebo automatické dokončovanie"
+
+
+msgid "Indent selected text or autocomplete"
+msgstr "Odsadí vybraný text alebo automaticky dokončí"
 
 
 msgctxt "Operator"
@@ -41669,6 +43210,15 @@ msgstr "Poloha na pridanie nového vrcholu"
 
 
 msgctxt "Operator"
+msgid "Add AOV"
+msgstr "Pridať AOV"
+
+
+msgid "Add an AOV pass"
+msgstr "Pridá prechod AOV"
+
+
+msgctxt "Operator"
 msgid "Denoise Animation"
 msgstr "Znížiť šum animácie"
 
@@ -41708,6 +43258,15 @@ msgstr "Cesta k súboru na zlúčenie obrázka"
 
 msgid "File path for merged image"
 msgstr "Cesta k súboru pre zlúčený obrázok"
+
+
+msgctxt "Operator"
+msgid "Remove AOV"
+msgstr "Odstrániť AOV"
+
+
+msgid "Remove an AOV pass"
+msgstr "Odstráni prechod AOV"
 
 
 msgctxt "Operator"
@@ -41953,6 +43512,10 @@ msgid "Export PLY"
 msgstr "Export PLY"
 
 
+msgid "Export as a Stanford PLY with normals, vertex colors and texture coordinates"
+msgstr "Exportuje jeden objekt ako Stanford PLY s kolmicami, farbami vrcholov a súradnicami textúr"
+
+
 msgid "X Forward"
 msgstr "X vpredu"
 
@@ -42032,6 +43595,10 @@ msgstr "Exportuje aktívnu UV vrstvu"
 msgctxt "Operator"
 msgid "Export STL"
 msgstr "Export STL"
+
+
+msgid "Save STL triangle mesh data"
+msgstr "Uloží údaje trojuholníkovej povrchovej siete STL"
 
 
 msgid "Ascii"
@@ -42488,12 +44055,28 @@ msgid "Export the scene in the current animation frame"
 msgstr "Exportuje scénu do aktuálnej snímky animácie"
 
 
+msgid "Export Deformation bones only"
+msgstr "Exportuje iba deformácie kostí"
+
+
+msgid "Export Deformation bones only (and needed bones for hierarchy)"
+msgstr "Exportuje iba deformácie kostí (a potrebné kosti pre hierarchiu)"
+
+
 msgid "Displacement Textures (EXPERIMENTAL)"
 msgstr "Premiestnenie textúr (EXPERIMENTÁLNE)"
 
 
 msgid "EXPERIMENTAL: Export displacement textures. Uses incomplete \"KHR_materials_displacement\" glTF extension"
 msgstr "EXPERIMENTÁLNE: Export posunu textúry. Používa neúplné \"posuv materiálu KHR\" glTF (GL Transmission Format) rozšírenie"
+
+
+msgid "Generic quantization bits"
+msgstr "Generické kvantizačné bity"
+
+
+msgid "Quantization bits for generic coordinate values like weights or joints (0 = no quantization)"
+msgstr "Kvantizácia bitov pre všeobecné hodnoty súradníc, ako sú hmotnosti alebo kĺby (0 = bez kvantizácie)"
 
 
 msgid "Draco mesh compression"
@@ -42666,6 +44249,10 @@ msgstr "Exportuje dotyčnice vrcholov s povrchovými sieťami"
 
 msgid "Export UVs (texture coordinates) with meshes"
 msgstr "Exportuje UV súradnice textúry) s povrchovými sieťami"
+
+
+msgid "Folder to place texture files in. Relative to the .gltf file"
+msgstr "Priečinok na umiestnenie súborov textúr. Relatívne ku súboru .gltf"
 
 
 msgid "+Y Up"
@@ -42988,7 +44575,7 @@ msgstr "Názov nového priečinka"
 
 
 msgid "Open"
-msgstr "Otvoriť"
+msgstr "Otvorené"
 
 
 msgid "Open new directory"
@@ -43329,6 +44916,123 @@ msgstr "Rozbalí všetky použité súbory knižnice Blender z tohto .blend súb
 
 
 msgctxt "Operator"
+msgid "Bake All"
+msgstr "Zapiecť všetko"
+
+
+msgid "Bake Entire Fluid Simulation"
+msgstr "Zapečie celú simuláciu kvapalín"
+
+
+msgctxt "Operator"
+msgid "Bake Data"
+msgstr "Zapiecť údaje"
+
+
+msgid "Bake Fluid Data"
+msgstr "Zapiecť údaje kvapaliny"
+
+
+msgctxt "Operator"
+msgid "Bake Guides"
+msgstr "Zapiecť smerovanie"
+
+
+msgid "Bake Fluid Guiding"
+msgstr "Zapečie smerovanie kvapalín"
+
+
+msgctxt "Operator"
+msgid "Bake Mesh"
+msgstr "Zapiecť povrchovú sieť"
+
+
+msgid "Bake Fluid Mesh"
+msgstr "Zapečie povrchovú sieť kvapalín"
+
+
+msgctxt "Operator"
+msgid "Bake Noise"
+msgstr "Zapiecť šum"
+
+
+msgid "Bake Fluid Noise"
+msgstr "Zapečie šum kvapalín"
+
+
+msgctxt "Operator"
+msgid "Bake Particles"
+msgstr "Zapiecť častice"
+
+
+msgid "Bake Fluid Particles"
+msgstr "Zapečie častice kvapalín"
+
+
+msgctxt "Operator"
+msgid "Free All"
+msgstr "Všetko voľné"
+
+
+msgid "Free Entire Fluid Simulation"
+msgstr "Voľná celá simulácia kvapalín"
+
+
+msgctxt "Operator"
+msgid "Free Data"
+msgstr "Voľné údaje"
+
+
+msgid "Free Fluid Data"
+msgstr "Voľné údaje kvapalín"
+
+
+msgctxt "Operator"
+msgid "Free Guides"
+msgstr "Voľné smerovanie"
+
+
+msgid "Free Fluid Guiding"
+msgstr "Voľné smerovanie tekutín"
+
+
+msgctxt "Operator"
+msgid "Free Mesh"
+msgstr "Voľné povrchové siete"
+
+
+msgid "Free Fluid Mesh"
+msgstr "Voľné povrchové údaje kvapalín"
+
+
+msgctxt "Operator"
+msgid "Free Noise"
+msgstr "Voľný šum"
+
+
+msgid "Free Fluid Noise"
+msgstr "Voľný šum kvapalín"
+
+
+msgctxt "Operator"
+msgid "Free Particles"
+msgstr "Voľné častice"
+
+
+msgid "Free Fluid Particles"
+msgstr "Voľné častice kvapalín"
+
+
+msgctxt "Operator"
+msgid "Pause Bake"
+msgstr "Pauza zapečenia"
+
+
+msgid "Pause Bake"
+msgstr "Pauza zapečenia"
+
+
+msgctxt "Operator"
 msgid "Add Fluid Preset"
 msgstr "Pridať predvoľbu skvapalnenia"
 
@@ -43347,7 +45051,7 @@ msgstr "Nastaví veľké písmená"
 
 
 msgid "Case"
-msgstr "Veľké"
+msgstr "Veľkosť"
 
 
 msgid "Lower or upper case"
@@ -43677,6 +45381,19 @@ msgstr "Zmaže vysvetlivku ťahu"
 
 msgid "Wait for first click instead of painting immediately"
 msgstr "Počká na prvé kliknutie namiesto okamžitého maľovania"
+
+
+msgid "Delete the active frame for the active Annotation Layer"
+msgstr "Odstráni aktívnu snímku aktívnej vrstvy poznámky"
+
+
+msgctxt "Operator"
+msgid "Annotation Add New"
+msgstr "Pridať novú poznámku"
+
+
+msgid "Add new Annotation data-block"
+msgstr "Pridať nový blok údajov poznámok"
 
 
 msgctxt "Operator"
@@ -44247,6 +45964,33 @@ msgstr "Pridá novú vrstvu alebo poznámku pre aktívny blok údajov"
 
 
 msgctxt "Operator"
+msgid "Add New Annotation Layer"
+msgstr "Pridať novú vrstvu poznámky"
+
+
+msgid "Add new Annotation layer or note for the active data-block"
+msgstr "Pridá novú vrstvu poznámok alebo poznámku pre aktívny blok údajov"
+
+
+msgctxt "Operator"
+msgid "Move Annotation Layer"
+msgstr "Presunúť vrstvu poznámok"
+
+
+msgid "Move the active Annotation layer up/down in the list"
+msgstr "Presúva aktívnu vrstvu poznámok v zozname nahor/nadol"
+
+
+msgctxt "Operator"
+msgid "Remove Annotation Layer"
+msgstr "Odstrániť vrstvu poznámok"
+
+
+msgid "Remove active Annotation layer"
+msgstr "Odstráni aktívnu vrstvu poznámok"
+
+
+msgctxt "Operator"
 msgid "Change Layer"
 msgstr "Zmeniť vrstvu"
 
@@ -44381,6 +46125,10 @@ msgstr "Počet hrán polygónu"
 
 msgid "Type of shape"
 msgstr "Typ tvaru"
+
+
+msgid "Polyline"
+msgstr "Polygonálna čiara"
 
 
 msgctxt "Operator"
@@ -45073,6 +46821,43 @@ msgstr "Interaktívne nastavenie aktuálnej snímky a hodnoty kurzora"
 
 
 msgctxt "Operator"
+msgid "Decimate Keyframes"
+msgstr "Zdecimovať kľúčové snímky"
+
+
+msgid "Decimate F-Curves by removing keyframes that influence the curve shape the least"
+msgstr "Zdecimuje F-krivky odstránením kľúčových snímok, ktoré najmenej ovplyvňujú tvar krivky"
+
+
+msgid "Which mode to use for decimation"
+msgstr "Ktorý režim sa použiť na zdecimovanie"
+
+
+msgid "Use a percentage to specify how many keyframes you want to remove"
+msgstr "Použitím percenta určíte, koľko kľúčových snímok chcete odstrániť"
+
+
+msgid "Error Margin"
+msgstr "Chybové rozpätie"
+
+
+msgid "Use an error margin to specify how much the curve is allowed to deviate from the original path"
+msgstr "Použitím chybového rozpätia môžete určiť, nakoľko sa krivka môže odchýliť od pôvodnej cesty"
+
+
+msgid "Max Error Margin"
+msgstr "Maximálne chybové rozpätie"
+
+
+msgid "How much the new decimated curve is allowed to deviate from the original"
+msgstr "Určuje, o koľko sa nová zdecimovaná krivka môže odchyľovať od originálu"
+
+
+msgid "The percentage of keyframes to remove"
+msgstr "Percento kľúčových snímok na odstránenie"
+
+
+msgctxt "Operator"
 msgid "Delete Invalid Drivers"
 msgstr "Odstrániť neplatné ovládače"
 
@@ -45507,6 +47292,10 @@ msgid "Image data-block name"
 msgstr "Názov bloku údajov obrázka"
 
 
+msgid "Create a tiled image"
+msgstr "Vytvorí dlaždicový obrázok"
+
+
 msgid "Create an image with left and right views"
 msgstr "Vytvorí obrázok s ľavými a pravými pohľadmi"
 
@@ -45530,6 +47319,14 @@ msgstr "Rozpoznať sekvencie"
 
 msgid "Automatically detect animated sequences in selected images (based on file names)"
 msgstr "Automaticky zistí animované sekvencie vo vybraných obrázkoch (na základe názvov súborov)"
+
+
+msgid "Detect UDIMs"
+msgstr "Zistiť UDIM"
+
+
+msgid "Detect selected UDIM files and load all matching tiles"
+msgstr "Detekuje vybrané súbory UDIM a načíta všetky zodpovedajúce dlaždice"
 
 
 msgctxt "Operator"
@@ -45697,6 +47494,49 @@ msgstr "Uložiť sekvenciu"
 
 msgid "Save a sequence of images"
 msgstr "Uloží sekvencie obrázkov"
+
+
+msgctxt "Operator"
+msgid "Add tile"
+msgstr "Pridať dlaždicu"
+
+
+msgid "Adds a tile to the image"
+msgstr "Pridá do obrázka dlaždicu"
+
+
+msgid "How many tiles to add"
+msgstr "Určuje, koľko bude pridaných dlaždíc"
+
+
+msgid "Fill new tile with a generated image"
+msgstr "Vyplní novou dlaždicu vygenerovaný obrázok"
+
+
+msgid "Optional tile label"
+msgstr "Voliteľný štítok na dlaždice"
+
+
+msgid "UDIM number of the tile"
+msgstr "UDIM číslo dlaždice"
+
+
+msgctxt "Operator"
+msgid "Fill Tile"
+msgstr "Vyplniť dlaždicu"
+
+
+msgid "Fill the current tile with a generated image"
+msgstr "Vyplní aktuálnou dlaždicou vygenerovaný obrázok"
+
+
+msgctxt "Operator"
+msgid "Remove tile"
+msgstr "Odstráňte dlaždicu"
+
+
+msgid "Removes a tile from the image"
+msgstr "Odstráni dlaždicu z obrázka"
 
 
 msgctxt "Operator"
@@ -47057,6 +48897,10 @@ msgid "Bevel"
 msgstr "Skosiť"
 
 
+msgid "Cut into selected items at an angle to create bevel or chamfer"
+msgstr "Oreže vybrané položky pod uhlom pre vytvorenie skosenia alebo zaoblenia"
+
+
 msgid "Do not allow beveled edges/vertices to overlap each other"
 msgstr "Nedovolí, aby sa skosené hrany/vrcholy navzájom prekrývali"
 
@@ -47071,6 +48915,10 @@ msgstr "Či nastaví spevnnenie plôšky a na ktoré plôšky nastaví spevnenie
 
 msgid "Set face strength on new and modified faces only"
 msgstr "Nastaví spevnenie plôšky len na nové a modifikované plôšky"
+
+
+msgid "Prefer sliding along edges to even widths"
+msgstr "Preferuje posúvanie pozdĺž okraja na rovnobežné šírky"
 
 
 msgid "Material for bevel faces (-1 means use adjacent faces)"
@@ -47093,6 +48941,10 @@ msgid "Amount to spread arcs for arc inner miters"
 msgstr "Množstvo pre rozšírovanie oblúkov pre oblúky vnútorného sklonu"
 
 
+msgid "Use a custom profile for the bevel"
+msgstr "Pre skosenie použite vlastný profil"
+
+
 msgid "Vertex Only"
 msgstr "Len vrcholy"
 
@@ -47101,13 +48953,21 @@ msgid "Bevel only vertices"
 msgstr "Skosí iba vrcholy"
 
 
+msgid "The method to use to create meshes at intersections"
+msgstr "Metóda použitá na vytvorenie povrchovej siete na priesečníkoch"
+
+
+msgid "A cut-off at each profile's end before the intersection"
+msgstr "Orezanie na konci každého profilu pred priesečníkom"
+
+
 msgctxt "Operator"
 msgid "Bisect"
 msgstr "Pretnúť"
 
 
 msgid "Cut geometry along a plane (click-drag to define plane)"
-msgstr "Rez geometriou pozdĺž roviny (klikni a ťahaj na definovanie roviny)"
+msgstr "Orezanie geometrie pozdĺž roviny (klikni a ťahaj na definovanie roviny)"
 
 
 msgid "Clear Inner"
@@ -48373,8 +50233,29 @@ msgid "Smooth iterations applied to the extracted mesh"
 msgstr "Opakované vyhladenie použité na extrahovanú sieť"
 
 
+msgctxt "Operator"
+msgid "Mask Slice"
+msgstr "Naplátkovať masku"
+
+
+msgid "Slices the paint mask from the mesh"
+msgstr "Naplátkuje masku maľby povrchovej siete"
+
+
 msgid "Fill Holes"
 msgstr "Vyplniť otvory"
+
+
+msgid "Fill holes after slicing the mask"
+msgstr "Po naplátkovaní masky vyplní otvory"
+
+
+msgid "Slice to New Object"
+msgstr "Plátky na nový objekt"
+
+
+msgid "Create a new object from the sliced mask"
+msgstr "Vytvorí nový objekt z plátkov masky"
 
 
 msgctxt "Operator"
@@ -48662,11 +50543,11 @@ msgstr "Vytvorí povrchovú sieť tvaru mriežky"
 
 
 msgid "X Subdivisions"
-msgstr "Delenie X"
+msgstr "Členenie X"
 
 
 msgid "Y Subdivisions"
-msgstr "Delenie Y"
+msgstr "Členenie Y"
 
 
 msgctxt "Operator"
@@ -48679,7 +50560,7 @@ msgstr "Vytvorí mnohostennú guľu z trojuholníkov"
 
 
 msgid "Subdivisions"
-msgstr "Delenie"
+msgstr "Členenie"
 
 
 msgctxt "Operator"
@@ -49516,6 +51397,10 @@ msgstr "Vysunie vybrané vrcholy v kruhu okolo kurzora v indikovanom zábere"
 
 msgid "Rotation for each step"
 msgstr "Otočiť po každom kroku"
+
+
+msgid "Use Duplicates"
+msgstr "Použiť duplikáty"
 
 
 msgid "Auto Merge"
@@ -52533,6 +54418,19 @@ msgstr "Hustota kožušiny"
 
 msgid "View %"
 msgstr "Zobraziť %"
+
+
+msgctxt "Operator"
+msgid "Quick Liquid"
+msgstr "Rýchla kvapalina"
+
+
+msgid "Render Liquid Objects"
+msgstr "Zachytáva kvapalné objekty"
+
+
+msgid "Keep the liquid objects visible during rendering"
+msgstr "Počas vykresľovania zachová kvapalné objekty viditeľné"
 
 
 msgctxt "Operator"
@@ -56313,6 +58211,14 @@ msgid "Render files from the animation range of this scene"
 msgstr "Vykreslí súbory z rozsahu animácie tejto scény"
 
 
+msgid "Render Keyframes Only"
+msgstr "Nasnímať len kľúčové snímky"
+
+
+msgid "Render only those frames where selected objects have a key in their animation data. Only used when rendering animation"
+msgstr "Nasníma iba tie snímky, v ktorých vybrané objekty sú v animačných údajoch kľúčové. Používa sa iba pri vykresľovaní animácie"
+
+
 msgid "Sequencer"
 msgstr "Radič"
 
@@ -57729,6 +59635,10 @@ msgid "Randomize vertex positions"
 msgstr "Náhodná poloha vrcholov"
 
 
+msgid "Relax mesh"
+msgstr "Kľudová povrchová sieť"
+
+
 msgctxt "Operator"
 msgid "Optimize"
 msgstr "Optimalizovať"
@@ -57751,8 +59661,24 @@ msgid "Screen Coordinates of sampling"
 msgstr "Súradnice obrazovky snímania"
 
 
+msgid "Detail Mode"
+msgstr "Režim detailu"
+
+
+msgid "Target sculpting workflow that is going to use the sampled size"
+msgstr "Cieľový pracovný postup sochárstva, ktorý bude používať veľkosť vzorky"
+
+
 msgid "Dyntopo"
 msgstr "Dynamická topológia"
+
+
+msgid "Sample dyntopo detail"
+msgstr "Detail vzorky dynamickej topológie"
+
+
+msgid "Sample mesh voxel size"
+msgstr "Veľkosť vzorky voxelu povrchovej siete"
 
 
 msgctxt "Operator"
@@ -58548,6 +60474,32 @@ msgstr "Vyberie viac pásov susediacich s aktuálnym výberom"
 
 
 msgctxt "Operator"
+msgid "Select Side"
+msgstr "Vybrať stranu"
+
+
+msgid "Select strips on the nominated side of the selected strips"
+msgstr "Vyberie pásy na navrhovanej strane z vybratých pásov"
+
+
+msgid "The side to which the selection is applied"
+msgstr "Strana, na ktorú sa vzťahuje výber"
+
+
+msgctxt "Operator"
+msgid "Set Range to Strips"
+msgstr "Nastaviť rozsah na pásy"
+
+
+msgid "Set the frame range to the selected strips start and end"
+msgstr "Nastaví rozsah snímok na začiatok a koniec vybratých pásov"
+
+
+msgid "Set the preview range instead"
+msgstr "Namiesto toho nastavte rozsah náhľadu"
+
+
+msgctxt "Operator"
 msgid "Trim Strips"
 msgstr "Orezať pásy"
 
@@ -59052,6 +61004,10 @@ msgstr "Pridá alebo odstráni komentáre"
 
 msgid "Toggle Comments"
 msgstr "Prepne komentáre"
+
+
+msgid "Comment"
+msgstr "Komentár"
 
 
 msgid "Un-Comment"
@@ -59822,15 +61778,15 @@ msgstr "Upraviť preklad"
 
 
 msgid "Translate the label and tooltip of the given property"
-msgstr "Premiestni menovku a popis danej vlastnosti"
+msgstr "Preloží nápis a popis danej vlastnosti"
 
 
 msgid "Label of the control"
-msgstr "Menovka ovládacieho prvku"
+msgstr "Nápis ovládacieho prvku"
 
 
 msgid "Flags about the label of the button"
-msgstr "Príznaky menovky tlačidla"
+msgstr "Príznaky nápisu tlačidla"
 
 
 msgid "Message is marked as fuzzy in po file"
@@ -59842,11 +61798,11 @@ msgstr "Pri tejto správe sa vyskytla chyba"
 
 
 msgid "Tip of the control"
-msgstr "Tip ovládacieho prvku"
+msgstr "Popis ovládacieho prvku"
 
 
 msgid "Flags about the tip of the button"
-msgstr "Príznak ohľadne tipu tlačidla"
+msgstr "Príznak popisu tlačidla"
 
 
 msgid "Remove all local translation files, to be able to use the system ones again"
@@ -59854,19 +61810,19 @@ msgstr "Odstráni všetky lokálne prekladové súbory, aby ste mohli znova pou�
 
 
 msgid "Label of the enum item of the control, if any"
-msgstr "Menovka číslovania položky ovládacieho prvku, ak existuje"
+msgstr "Nápis číslovania položky ovládacieho prvku, ak existuje"
 
 
 msgid "Flags about the RNA enum item label of the button"
-msgstr "Príznak o RNA číslovania položky menovky tlačidla"
+msgstr "Príznak RNA číslovania položky nápisu tlačidla"
 
 
 msgid "Tip of the enum item of the control, if any"
-msgstr "Tip položky ovládacieho prvku, ak je"
+msgstr "Popis položky ovládacieho prvku, ak je"
 
 
 msgid "Flags about the RNA enum item tip of the button"
-msgstr "Príznaky o RNA číslovania položky tipu tlačidla"
+msgstr "Príznaky o RNA číslovania položky popisu tlačidla"
 
 
 msgid "Current (translated) language"
@@ -59874,27 +61830,27 @@ msgstr "Aktuálny (preložený) jazyk"
 
 
 msgid "Original label of the control"
-msgstr "Pôvodná menovka ovládacieho prvku"
+msgstr "Pôvodný nápis ovládacieho prvku"
 
 
 msgid "Original tip of the control"
-msgstr "Originálny tip ovládacieho prvku"
+msgstr "Pôvodný popis tip ovládacieho prvku"
 
 
 msgid "Original label of the enum item of the control, if any"
-msgstr "Pôvodná menovka položky ovládacieho prvku, ak je"
+msgstr "Pôvodný nápis položky ovládacieho prvku, ak je"
 
 
 msgid "Original tip of the enum item of the control, if any"
-msgstr "Pôvodný tip položky ovládacieho prvku, ak je"
+msgstr "Pôvodný popis položky ovládacieho prvku, ak je"
 
 
 msgid "Original RNA-defined label of the control, if any"
-msgstr "Pôvodná RNA definovaná menovka ovládacieho prvku, ak je"
+msgstr "Definovaná RNA pôvodného nápisu ovládacieho prvku, ak je"
 
 
 msgid "Original RNA-defined tip of the control, if any"
-msgstr "Pôvodná RNA definovaná tip ovládacieho prvku, ak je"
+msgstr "Definovaná RNA pôvodného popisu ovládacieho prvku, ak je"
 
 
 msgid "Path to the matching po file"
@@ -59902,7 +61858,7 @@ msgstr "Cesta ku zhodnému .po súboru"
 
 
 msgid "RNA context for label"
-msgstr "Kontext RNA pre menovku"
+msgstr "Kontext RNA pre nápis"
 
 
 msgid "Identifier of the RNA enum item, if any"
@@ -59910,11 +61866,11 @@ msgstr "Identifikátor číslovania položky RNA, ak existuje"
 
 
 msgid "RNA-defined label of the control, if any"
-msgstr "RNA definovaná menovka ovládacieho prvku, ak je"
+msgstr "Definovaná RNA nápisu ovládacieho prvku, ak je"
 
 
 msgid "Flags about the RNA-defined label of the button"
-msgstr "Príznaky o menovke tlačidla definovanej RNA"
+msgstr "Príznaky definovanej RNA nápisu tlačidla"
 
 
 msgid "Identifier of the RNA property, if any"
@@ -59926,11 +61882,11 @@ msgstr "Identifikátor RNA štruktúry, ak existuje"
 
 
 msgid "RNA-defined tip of the control, if any"
-msgstr "RNA definovaný tip ovládacieho prvku, ak je"
+msgstr "Definovaná RNA popisu ovládacieho prvku, ak je"
 
 
 msgid "Flags about the RNA-defined tip of the button"
-msgstr "Príznaky o tipe tlačidla definovaným RNA"
+msgstr "Príznaky definovanej RNA popisu tlačidla"
 
 
 msgid "Stats from opened po"
@@ -59946,7 +61902,7 @@ msgstr "Aktualizuje .po súbor, pokúsi sa obnoviť .mo súbor a obnoviť užív
 
 
 msgid "Edit i18n in current language for the active button"
-msgstr "Upraviť i18n v aktuálnom jazyku pre aktívne tlačidlo"
+msgstr "Upraví i18n v aktuálnom jazyku pre aktívne tlačidlo"
 
 
 msgctxt "Operator"
@@ -60043,6 +61999,15 @@ msgstr "Vytvorí ovládač len pre túto vlastnosť a ešte bez priradenia cieľ
 
 
 msgctxt "Operator"
+msgid "Grease Pencil Eyedropper"
+msgstr "Nasať farbu pastelky"
+
+
+msgid "Sample a color from the Blender Window and create Grease Pencil material"
+msgstr "Zosnímajte farbu z okna Blendera a vytvorte materiál pastelky"
+
+
+msgctxt "Operator"
 msgid "Eyedropper Data-Block"
 msgstr "Blok údajov kvapkadla"
 
@@ -60095,7 +62060,7 @@ msgstr "Aktualizovať doplnok i18n"
 
 
 msgid "Wrapper operator which will invoke given op after setting its module_name"
-msgstr "Operátor obaľovača, ktorý sa bude odvolávať na daný OP po nastavení jeho názvu modulu"
+msgstr "Operátor obalu, ktorý sa bude odvolávať na daný OP po nastavení jeho názvu modulu"
 
 
 msgid "Operator Name"
@@ -62007,6 +63972,14 @@ msgid "Export vertex colors"
 msgstr "Exportuje farby vrcholov"
 
 
+msgid "Visible Objects Only"
+msgstr "Iba viditeľné objekty"
+
+
+msgid "Export only objects that are visible"
+msgstr "Exportuje iba viditeľné objekty"
+
+
 msgid "Transform Samples"
 msgstr "Transformácia vzoriek"
 
@@ -63648,6 +65621,14 @@ msgid "Set the tool by name (for keymaps)"
 msgstr "Nastaví nástroj podľa názvu (pre priradenie kláves)"
 
 
+msgid "Set Fallback"
+msgstr "Nastaviť náhradný"
+
+
+msgid "Set the fallback tool instead of the primary tool"
+msgstr "Namiesto primárneho nástroja nastaví náhradný nástroj"
+
+
 msgid "Cycle"
 msgstr "Cyklicky"
 
@@ -63669,6 +65650,10 @@ msgid "Set the tool by index (for keymaps)"
 msgstr "Nastaví nástroj podľa indexu (pre priradenie klávesy)"
 
 
+msgid "Set the fallback tool instead of the primary"
+msgstr "Namiesto náhradného nastaví primárny nástroj"
+
+
 msgid "Include tool sub-groups"
 msgstr "Zahrnie podskupiny nástrojov"
 
@@ -63680,6 +65665,20 @@ msgstr "Index v lište nástrojov"
 msgctxt "Operator"
 msgid "Toolbar"
 msgstr "Lišta nástrojov"
+
+
+msgctxt "Operator"
+msgid "Fallback Tool Pie Menu"
+msgstr "Kloáčová ponuka náhradného nástroja"
+
+
+msgctxt "Operator"
+msgid "Toolbar Prompt"
+msgstr "Výzva lišty nástrojov"
+
+
+msgid "Leader key like functionality for accessing tools"
+msgstr "Riadiaci kľúč ako funkčnosť pre prístup k nástrojom"
 
 
 msgid "Open a website in the web-browser"
@@ -64565,6 +66564,10 @@ msgid "Passes"
 msgstr "Prechody"
 
 
+msgid "Shader AOV"
+msgstr "Shader AOV"
+
+
 msgid "Performance"
 msgstr "Výkon"
 
@@ -64590,7 +66593,7 @@ msgstr "Medzisnímka"
 
 
 msgid "Subdivision"
-msgstr "Delenie"
+msgstr "Členenie"
 
 
 msgid "Volumes"
@@ -64721,6 +66724,10 @@ msgid "Directory Path"
 msgstr "Cesta priečinka"
 
 
+msgid "Extensions"
+msgstr "Rozšírenie"
+
+
 msgid "Active Tool"
 msgstr "Aktívny nástroj"
 
@@ -64730,7 +66737,11 @@ msgstr "Klonovať z obrázka/UV mapy"
 
 
 msgid "Color Picker"
-msgstr "Kvapkadlo farby"
+msgstr "Nasať farbu"
+
+
+msgid "Stabilize Stroke"
+msgstr "Stabilizácia ťahu"
 
 
 msgid "Color Palette"
@@ -64856,12 +66867,24 @@ msgid "Mask"
 msgstr "Maskovanie"
 
 
+msgid "Brush Tip"
+msgstr "Hrot štetca"
+
+
 msgid "Tiling"
 msgstr "Obkladanie"
 
 
 msgid "Texture Mask"
 msgstr "Maska textúry"
+
+
+msgid "UDIM Grid"
+msgstr "Mriežka UDIM"
+
+
+msgid "UDIM Tiles"
+msgstr "Dlaždice UDIM"
 
 
 msgid "2D Cursor"
@@ -65041,6 +67064,10 @@ msgid "Collisions"
 msgstr "Kolízie"
 
 
+msgid "Internal Springs"
+msgstr "Vnútorné pružiny"
+
+
 msgid "Object Collisions"
 msgstr "Kolízie objektov"
 
@@ -65059,6 +67086,10 @@ msgstr "Vlastné kolízie"
 
 msgid "Softbody And Cloth"
 msgstr "Mäkké teleso a tkanina"
+
+
+msgid "Diffusion"
+msgstr "Rozptyl"
 
 
 msgid "Falloff Ramp"
@@ -65285,6 +67316,20 @@ msgid "Rename Active Item"
 msgstr "Premenovať aktívnu položku"
 
 
+msgid ""
+"\n"
+"    Popover panel for adding extra options that don't fit in the tool settings header\n"
+"    "
+msgstr ""
+"\n"
+"   Vyskakovací panel pre pridanie ďalších možností, ktoré sa nehodia do hlavičky nastavenia nástroja\n"
+"   "
+
+
+msgid "Extra Options"
+msgstr "Zvláštne voľby"
+
+
 msgid "I18n Update Translation"
 msgstr "Aktualizácia prekladu i18n"
 
@@ -65404,6 +67449,10 @@ msgstr "Štúdio svetiel"
 
 msgid "MatCaps"
 msgstr "Zachytený materiál (MatCaps - Material Capture)"
+
+
+msgid "HDRIs"
+msgstr "HDRIs"
 
 
 msgid "Cycles Render Devices"
@@ -65774,6 +67823,11 @@ msgstr "Zoškrabanie"
 
 
 msgctxt "Operator"
+msgid "Multiplane Scrape"
+msgstr "Viacplošné zoškrabanie"
+
+
+msgctxt "Operator"
 msgid "Elastic Deform"
 msgstr "Elastická deformácia"
 
@@ -65796,6 +67850,11 @@ msgstr "Póza"
 msgctxt "Operator"
 msgid "Nudge"
 msgstr "Drgnutie"
+
+
+msgctxt "Operator"
+msgid "Slide Relax"
+msgstr "Kľudový posuvník"
 
 
 msgctxt "Operator"
@@ -65864,6 +67923,11 @@ msgstr "Čiara"
 
 
 msgctxt "Operator"
+msgid "Polyline"
+msgstr "Polygonálna čiara"
+
+
+msgctxt "Operator"
 msgid "Arc"
 msgstr "Oblúk"
 
@@ -65924,6 +67988,10 @@ msgstr "Dodatočné spracovanie"
 
 msgid "Sculpt Strokes"
 msgstr "Ťahy sochárstva"
+
+
+msgid "Particle Tool"
+msgstr "Nástroje častice"
 
 
 msgid "Default tools for particle mode"
@@ -66850,6 +68918,10 @@ msgid "Relative Mirror"
 msgstr "Relatívne zrkadlo"
 
 
+msgid "Apply relative transformations in X-mirror mode (not supported with Auto IK)"
+msgstr "Použije relatívne transformácie v režime zrkadla X (nie je podporované v Auto IK)"
+
+
 msgid "Pose Bone"
 msgstr "Póza kosti"
 
@@ -67148,6 +69220,10 @@ msgstr "Metódy úprav"
 
 msgid "Settings for interacting with Blender data"
 msgstr "Nastavenia vzájomného pôsobenia údajmi Blendera"
+
+
+msgid "Settings for features that are still early in their development stage"
+msgstr "Nastavenia funkcií, ktoré sú ešte stále vo fáze vývoja"
 
 
 msgid "Default paths for external files"
@@ -67504,6 +69580,10 @@ msgstr "Aktuálne číslo snímky možno manuálne nastaviť na zápornú hodnot
 
 msgid "Use Visual keying automatically for constrained objects"
 msgstr "Automatická viditeľnosť kľúčovania pre obmedzené objekty"
+
+
+msgid "Experimental features"
+msgstr "Experimentálne vlastnosti"
 
 
 msgid "Animation Player"
@@ -67955,7 +70035,7 @@ msgstr "Maximálny prah"
 
 
 msgid "Raw input pressure value that is interpreted as 100% by Blender"
-msgstr "Hodnota hrubého vstupného tlaku, ktorá sa podľa Blendera vykladá ako 100% "
+msgstr "Hodnota hrubého vstupného tlaku, ktorá sa podľa Blendera vykladá ako 100%"
 
 
 msgid "Tablet API"
@@ -68534,6 +70614,14 @@ msgid "Enable Edit-Mode edge smoothing, reducing aliasing, requires restart"
 msgstr "Povolí režimu editácie vyhladenie hrán, zníženie aliasingu, vyžaduje reštart"
 
 
+msgid "Overlay Smooth Wires"
+msgstr "Vyhladzovanie drôtov prekrývaním"
+
+
+msgid "Enable overlay smooth wires, reducing aliasing"
+msgstr "Povolí vyhladenie drôtov prekrývaním, čím sa zníži vyhladzovanie hrán (aliasing)"
+
+
 msgid "Region Overlap"
 msgstr "Prekrývanie oblasti"
 
@@ -68776,6 +70864,14 @@ msgstr "Automatický (automatický)"
 
 msgid "Automatically choose system's defined language if available, or fall-back to English"
 msgstr "Automaticky zvolí systémom definovaný jazyk, ak je k dispozícii, alebo sa vráti späť do angličtiny"
+
+
+msgid "HDRI Preview Size"
+msgstr "Veľkosť náhľadu HDRI"
+
+
+msgid "Diameter of the HDRI preview spheres"
+msgstr "Priemer sférického náhľadu HDRI"
 
 
 msgid "Mini Axes Brightness"
@@ -69294,6 +71390,30 @@ msgid "Use regular expressions to match text in the 'Find' field"
 msgstr "Použije obvyklé výrazy na porovnanie textu v poli „Hľadať“"
 
 
+msgid "Conflict"
+msgstr "Konflikt"
+
+
+msgid "If there is a conflict with another render passes, message explaining why"
+msgstr "Správa vysvetľujúca, prečo došlo ku konfliktu s inými prechodmi vykreslenia"
+
+
+msgid "Name of the pass, to use in the AOV Output shader node"
+msgstr "Názov prechodu, ktorý sa má použiť v uzle shadera výstupu AOV"
+
+
+msgid "Pass data type"
+msgstr "Typ údajov prechodu"
+
+
+msgid "Write a Value pass"
+msgstr "Napíše hodnotu prechodu"
+
+
+msgid "Write a Color pass"
+msgstr "Napíše farbu prechodu"
+
+
 msgid "Field of view for the fisheye lens"
 msgstr "Zorné pole pre objektív Rybie oko"
 
@@ -69423,7 +71543,7 @@ msgstr "Použiť hrúbky vlákien pri vykresľovaní"
 
 
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
-msgstr "Počet delení použitých v pretnutí zásadnej krivky (výkon 2)"
+msgstr "Počet členení použitých v pretnutí zásadnej krivky (výkon 2)"
 
 
 msgid "Use Cycles Hair Rendering"
@@ -69634,6 +71754,10 @@ msgid "Use motion blur for this object"
 msgstr "Použije pre tento objekt rozmazanie pohybu"
 
 
+msgid "Custom render passes that can be output by shader nodes"
+msgstr "Vlastné prechody vykresľovania, ktoré môžu byť výstupom uzlov shadera"
+
+
 msgid "Diffuse Direct"
 msgstr "Priamy rozptyl"
 
@@ -69680,6 +71804,34 @@ msgstr "Susedné snímky"
 
 msgid "Number of neighboring frames to use for denoising animations (more frames produce smoother results at the cost of performance)"
 msgstr "Počet susedných snímok použitých pre zníženie šumu animácie (viac snímok prináša plynulejšie výsledky pri nárokoch na výkon)"
+
+
+msgid "Input Passes"
+msgstr "Vstupné prechody"
+
+
+msgid "Controls which passes the OptiX AI denoiser should use as input, which can have different effects on the denoised image"
+msgstr "Ovládače, ktoré prechádzajú odšumovačom OptiX AI, by sa mali používať ako vstup, čo môže mať rôzne účinky na odšumený obrázok"
+
+
+msgid "Use only color as input"
+msgstr "Ako vstup používajte iba farbu"
+
+
+msgid "Color + Albedo"
+msgstr "Farba + činiteľ odrazu"
+
+
+msgid "Use color and albedo data as input"
+msgstr "Ako vstup použite farbu a údaje činiteľa odrazu"
+
+
+msgid "Color + Albedo + Normal"
+msgstr "Farba + činiteľ odrazu + kolmica"
+
+
+msgid "Use color, albedo and normal data as input"
+msgstr "Ako vstup použije farbu, činiteľ odrazu a údaje kolmice"
 
 
 msgid "Denoising Radius"
@@ -69808,6 +71960,14 @@ msgstr "Použiť zníženie šumu"
 
 msgid "Denoise the rendered image"
 msgstr "Zníži šum vykresleného obrázku"
+
+
+msgid "Use OptiX AI Denoising"
+msgstr "Použite odšumenie OptiX AI"
+
+
+msgid "Denoise the rendered image with the OptiX AI denoiser"
+msgstr "Odšumte vykresľovaný obrázok odšumovačom OptiX AI"
 
 
 msgid "Cryptomatte Asset"
@@ -70203,11 +72363,11 @@ msgstr "Celkový maximálny počet odrazov"
 
 
 msgid "Max Subdivisions"
-msgstr "Maximálne delenia"
+msgstr "Maximálne členenie"
 
 
 msgid "Stop subdividing when this level is reached even if the dice rate would produce finer tessellation"
-msgstr "Zastaví delenie pri dosiahnutí tejto úrovne, aj keby kúskovanie viedlo k jemnejšiemu mozaikovaniu"
+msgstr "Zastaví členenie pri dosiahnutí tejto úrovne, aj keby kúskovanie viedlo k jemnejšiemu mozaikovaniu"
 
 
 msgid "Mesh Light Samples"
@@ -70984,6 +73144,14 @@ msgstr "Veľkosť vygenerovaných objektov"
 
 msgid "Change it to get a different scatter pattern"
 msgstr "Jeho zmenou získate iný vzor rozptylu"
+
+
+msgid "Use Normal Rotation"
+msgstr "Použiť rotáciu kolmíc"
+
+
+msgid "Rotate the instances according to the surface normals"
+msgstr "Inštancie otáča podľa kolmíc povrchu"
 
 
 msgid "Operator File List Element"
@@ -71774,6 +73942,10 @@ msgid "Layers Blending"
 msgstr "Vrstvy zmiešania"
 
 
+msgid "Display blend layers"
+msgstr "Zobrazí vrstvy zmiešavania"
+
+
 msgid "Simplify Playback"
 msgstr "Zjednodušiť prehrávanie"
 
@@ -71786,16 +73958,36 @@ msgid "Disable Lines"
 msgstr "Zakázať čiary"
 
 
+msgid "Display external lines of fill strokes"
+msgstr "Zobrazí vnútorné čiary výplne ťahov"
+
+
 msgid "Simplify Shaders"
 msgstr "Zjednodušiť shadery"
+
+
+msgid "Display Shader FX"
+msgstr "Zobraziť shader FX"
 
 
 msgid "Layers Tinting"
 msgstr "Vrstvy tónovania"
 
 
+msgid "Display layer tint"
+msgstr "Zobraziť odtieň vrstvy"
+
+
+msgid "Display fill strokes in the viewport"
+msgstr "Zobrazí výplne v zábere"
+
+
 msgid "Disable Modifiers"
 msgstr "Zakázať modifikátory"
+
+
+msgid "Display modifiers in the viewport"
+msgstr "Zobrazí modifikátor v zábere"
 
 
 msgid "Simplify Subdivision"
@@ -74084,6 +76276,14 @@ msgid "Sequence strip creating text"
 msgstr "Sekvenčný pás vytvárajúci text"
 
 
+msgid "Align the text along the X axis, relative to the text bounds"
+msgstr "Zarovná text pozdĺž osi X vzhľadom na okraje textu"
+
+
+msgid "Align the text along the Y axis, relative to the text bounds"
+msgstr "Zarovná text pozdĺž osi Y, vzhľadom na okraje textu"
+
+
 msgid "Text color"
 msgstr "Farba textu"
 
@@ -74314,11 +76514,11 @@ msgstr "Pre MPEG filmy, predom vyhľadá mnoho snímok"
 
 
 msgid "Stream Index"
-msgstr "Index toku"
+msgstr "Index prúdenia"
 
 
 msgid "For files with several movie streams, use the stream with the given index"
-msgstr "Pri súboroch s viacerými filmovými tokmi použije daný index toku"
+msgstr "Pri súboroch s viacerými filmovými tokmi použije daný index prúdenia"
 
 
 msgid "Mode to load movie views"
@@ -75493,6 +77693,10 @@ msgid "Use Edges as springs"
 msgstr "Použije okraje ako pruženie"
 
 
+msgid "Estimate Matrix"
+msgstr "Matica odhadu"
+
+
 msgid "Estimate matrix... split to COM, ROT, SCALE"
 msgstr "Matica odhadu... rozdelená na VÝPOČET, ROTÁCIU, MIERKU"
 
@@ -76108,6 +78312,14 @@ msgstr "Zobraziť manipulátor a interpoláciu"
 
 msgid "Display keyframe handle types and non-bezier interpolation modes"
 msgstr "Zobrazí typy ovládania kľúčových snímok a nebézierových interpolačných režimov"
+
+
+msgid "Show Markers"
+msgstr "Zobraziť značky"
+
+
+msgid "If any exists, show markers in a separate row at the bottom of the editor"
+msgstr "Ak existujú, zobrazí značky v samostatnom riadku v dolnej časti editora"
 
 
 msgid "Show Pose Markers"
@@ -77799,6 +80011,14 @@ msgid "Select UVs that share mesh vertex, irrespective if they are in the same l
 msgstr "Vyberie UV zdieľaných vrcholov povrchovej siete, bez ohľadu na to, či sú na rovnakom polohe"
 
 
+msgid "Tile Grid Shape"
+msgstr "Tvar mriežky dlaždíc"
+
+
+msgid "How many tiles will be shown in the background"
+msgstr "Koľko dlaždíc sa zobrazí na pozadí"
+
+
 msgid "Live Unwrap"
 msgstr "Aktuálne rozvinúť"
 
@@ -77876,11 +80096,11 @@ msgstr "Typ interpolácie okruhu pre Bézierove krivky"
 
 
 msgid "Curve or Surface subdivisions per segment"
-msgstr "Delenie krivky alebo povrchu na segmenty"
+msgstr "Členenie krivky alebo povrchu na segmenty"
 
 
 msgid "Surface subdivisions per segment"
-msgstr "Delenie povrchu na segmenty"
+msgstr "Členenie povrchu na segmenty"
 
 
 msgid "Tilt Interpolation"
@@ -79023,8 +81243,16 @@ msgid "Active Vert/Edge/Face"
 msgstr "Aktívny vrchol/hrana/plôška"
 
 
+msgid "Face Orientation Back"
+msgstr "Zadná orientácia plôšky"
+
+
 msgid "Face Dot Selected"
 msgstr "Vybraná bodka plôšky"
+
+
+msgid "Face Orientation Front"
+msgstr "Predná orientácia plôšky"
 
 
 msgid "Face Selected"
@@ -79755,6 +81983,14 @@ msgid "Color of the 1px shadow line underlying widgets"
 msgstr "Farba 1px čiary tieňa základných ovládacích prvkov"
 
 
+msgid "Text Cursor"
+msgstr "Kurzor textu"
+
+
+msgid "Color of the interface widgets text insertion cursor (caret)"
+msgstr "Farba kurzora na vloženie textu pre ovládacie prvky rozhrania (zástupný znak)"
+
+
 msgid "Theme 3D View"
 msgstr "Motív 3D zobrazenia"
 
@@ -80057,6 +82293,14 @@ msgstr "Režim automatického vkladania kľúčovej snímky pre objekty a kosti"
 
 msgid "Add & Replace"
 msgstr "Pridať a nahradiť"
+
+
+msgid "Curve Profile Widget"
+msgstr "Ovládací prvok profilu krivky"
+
+
+msgid "Used for defining a profile's path"
+msgstr "Používa sa na definovanie cesty profilu"
 
 
 msgid "Merge Threshold"
@@ -80480,6 +82724,10 @@ msgid "Align rotation with the snapping target"
 msgstr "Zarovná rotáciu použitím prichytenia cieľa"
 
 
+msgid "Exclude back facing geometry from snapping"
+msgstr "Vylúči z prichytenia geometriu smerujúcu dozadu"
+
+
 msgid "Absolute Grid Snap"
 msgstr "Prichytiť absolútnu mriežku"
 
@@ -80664,6 +82912,10 @@ msgid "Weight to assign in vertex groups"
 msgstr "Váha na priradenie do skupín vrcholov"
 
 
+msgid "Action when dragging in the viewport"
+msgstr "Akcia pri pretiahnutí v zábere"
+
+
 msgid "Name of the custom transform orientation"
 msgstr "Názov vlastnej orientácie transformácie"
 
@@ -80678,6 +82930,38 @@ msgstr "Aktuálna orientácia transformácie"
 
 msgid "Use scene orientation instead of a custom setting"
 msgstr "Použije orientáciu scény namiesto vlastného nastavenia"
+
+
+msgid "UDIM Tile"
+msgstr "Dlaždica UDIM"
+
+
+msgid "Properties of the UDIM tile"
+msgstr "Vlastnosti dlaždice UDIM"
+
+
+msgid "Tile label"
+msgstr "Menovka dlaždice"
+
+
+msgid "Number of the position that this tile covers"
+msgstr "Číslo pozície, ktorú táto dlaždica pokrýva"
+
+
+msgid "Collection of UDIM tiles"
+msgstr "Zbierka dlaždíc UDIM"
+
+
+msgid "Active Image Tile"
+msgstr "Aktívny dlaždica obrázku"
+
+
+msgid "Active Tile Index"
+msgstr "Index aktívnych dlaždíc"
+
+
+msgid "Active index in tiles array"
+msgstr "Aktívny index v poli dlaždíc"
 
 
 msgid "UI list containing the elements of a collection"
@@ -81029,7 +83313,7 @@ msgstr "Zmení veľkosť bunky mriežky nastavením systémových jednotiek scé
 
 
 msgid "Number of subdivisions between grid lines"
-msgstr "Počet ďalších delení medzi čiarami mriežky"
+msgstr "Počet členení medzi čiarami mriežky"
 
 
 msgid "Normal Size"
@@ -81226,6 +83510,14 @@ msgstr "Kresliť označenia plôšok voľného štýlu"
 
 msgid "Display Freestyle face marks, used with the Freestyle renderer"
 msgstr "Zobrazí označenie plôšok voľného štýlu, používané vykresľovaním voľného štýlu"
+
+
+msgid "HDRI Preview"
+msgstr "Náhľad HDRI"
+
+
+msgid "Show HDRI preview spheres"
+msgstr "Zobrazí sférickú oblasť s náhľadom HDRI"
 
 
 msgid "Show the Motion Paths Overlay"
@@ -81436,6 +83728,10 @@ msgid "Wireframe Threshold"
 msgstr "Prah drôteného modelu"
 
 
+msgid "Adjust the angle threshold for displaying edges (1.0 for all)"
+msgstr "Upraví uhol prahu zobrazovania hrán (1,0 pre všetkých)"
+
+
 msgid "Opacity to use for bone selection"
 msgstr "Nepriehľadnosť na použitie pre výber kostí"
 
@@ -81574,6 +83870,10 @@ msgstr "Farba obrysu"
 
 msgid "Color for object outline"
 msgstr "Farba pre obrys objektu"
+
+
+msgid "Render Pass to show in the viewport"
+msgstr "Vykreslí prechod zobrazenia v zábere"
 
 
 msgid "Selected StudioLight"
@@ -81814,6 +84114,10 @@ msgstr "Nástroj pracovného priestoru"
 
 msgid "Has Datablock"
 msgstr "Má blok údajov"
+
+
+msgid "Identifier Fallback"
+msgstr "Identifikátor náhrady"
 
 
 msgid "Tool Mode"
@@ -82780,10 +85084,6 @@ msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "Mapa kvapkadla snímania bodu farebného spádu"
 
 
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "Údaje DEM (.hgt) ako povrchová sieť a/alebo obrázok"
-
-
 msgid "Denoising completed."
 msgstr "Zníženie šumu dokončené."
 
@@ -82968,6 +85268,10 @@ msgid "Cull back-faces"
 msgstr "Vyradiť zadnú plôšku"
 
 
+msgid "OptiX AI Denoising"
+msgstr "Odšumenie OptiX AI"
+
+
 msgid "Incompatible output node"
 msgstr "Nekompatibilný výstupný uzol"
 
@@ -82993,7 +85297,7 @@ msgstr "Vymazať obrázok"
 
 
 msgid "Curve subdivisions"
-msgstr "Delenia krivky"
+msgstr "Členenia krivky"
 
 
 msgctxt "Operator"
@@ -83247,7 +85551,7 @@ msgstr "    Kontext RNA: "
 
 
 msgid "Labels:"
-msgstr "Menovky:"
+msgstr "Nápisy:"
 
 
 msgid "Tool Tips:"
@@ -83255,27 +85559,27 @@ msgstr "Popisy:"
 
 
 msgid "Button Label:"
-msgstr "Menovka tlačidla:"
+msgstr "Nápis tlačidla:"
 
 
 msgid "RNA Label:"
-msgstr "Menovka RNA:"
+msgstr "RNA nápisu:"
 
 
 msgid "Enum Item Label:"
-msgstr "Menovka položky výpočtu:"
+msgstr "Nápis položky výpočtu:"
 
 
 msgid "Button Tip:"
-msgstr "Tip tlačidla:"
+msgstr "Popis tlačidla:"
 
 
 msgid "RNA Tip:"
-msgstr "Tip RNA:"
+msgstr "RNA popisu:"
 
 
 msgid "Enum Item Tip:"
-msgstr "Tip položky výpočtu:"
+msgstr "Popis položky číslovania:"
 
 
 msgid "Could not write to po file ({})"
@@ -84052,12 +86356,24 @@ msgid "UVs:"
 msgstr "UV:"
 
 
+msgid "Miter Type:"
+msgstr "Typ sklonu:"
+
+
 msgid "Outer"
 msgstr "Vonkajší"
 
 
 msgid "Limit Method:"
 msgstr "Metóda limitu:"
+
+
+msgid "Face Strength Mode:"
+msgstr "Režim spevnenia plôšky:"
+
+
+msgid "Intersection Type:"
+msgstr "Typ priešečníka:"
 
 
 msgid "Operation:"
@@ -84477,7 +86793,7 @@ msgstr "Záber:"
 
 
 msgid "Subdivisions:"
-msgstr "Delenie:"
+msgstr "Členenia:"
 
 
 msgid "Final Dicing Rate:"
@@ -84812,8 +87128,16 @@ msgid "Boundary Strokes all Frames"
 msgstr "Okraje ťahu všetkých snímok"
 
 
+msgid "Display Cursor"
+msgstr "Zobraziť kurzor"
+
+
 msgid "Show Fill Color While Drawing"
 msgstr "Zobrazí farbu výplne počas maľovania"
+
+
+msgid "Cursor Color"
+msgstr "Farba kurzora"
 
 
 msgctxt "Operator"
@@ -84877,6 +87201,10 @@ msgstr "Spojiť a kopírovať"
 
 msgid "Lock Frame"
 msgstr "Zamknúť snímku"
+
+
+msgid "Inverse Cursor Color"
+msgstr "Farba inverzného kurzora"
 
 
 msgctxt "Operator"
@@ -84949,6 +87277,11 @@ msgstr "Vymazať klávesu"
 msgctxt "Operator"
 msgid "Re-Key Shape Points"
 msgstr "Prekľúčovať body tvaru"
+
+
+msgctxt "Operator"
+msgid "Square"
+msgstr "Štvorec"
 
 
 msgid "Holes"
@@ -85070,6 +87403,14 @@ msgid "Pressure Masking"
 msgstr "Tlakové maskovanie"
 
 
+msgid "Falloff Opacity"
+msgstr "Nepriehľadnosť dopadu"
+
+
+msgid "Advanced:"
+msgstr "Pokročilé:"
+
+
 msgid "Front Faces Only"
 msgstr "Len predné plôšky"
 
@@ -85082,8 +87423,24 @@ msgid "Edge To Edge"
 msgstr "Hrana k hrane"
 
 
+msgid "Mask Texture Opacity"
+msgstr "Nepriehľadnosť masky textúry"
+
+
+msgid "Invert to Fill"
+msgstr "Invertovať na výplň"
+
+
+msgid "Invert to Scrape"
+msgstr "Invertovať na škrabanie"
+
+
 msgid "Thickness Profile"
 msgstr "Profil hrúbky"
+
+
+msgid "Use Thickness Profile"
+msgstr "Použite profil hrúbky"
 
 
 msgid "Source Clone Slot"
@@ -85204,6 +87561,10 @@ msgid "Strand Shape"
 msgstr "Tvar vlákna"
 
 
+msgid "Diameter Root"
+msgstr "Priemer koreňa"
+
+
 msgid "Lifetime Randomness"
 msgstr "Životnosť náhodných"
 
@@ -85317,6 +87678,18 @@ msgstr "Násobič rýchlosti"
 
 msgid "Air Viscosity"
 msgstr "Viskozita vzduchu"
+
+
+msgid "Max Spring Creation Length"
+msgstr "Maximálna dĺžka vytvorenia pružiny"
+
+
+msgid "Max Creation Diversion"
+msgstr "Maximálne vytvorenie odchýlky"
+
+
+msgid "Check Surface Normals"
+msgstr "Kontrola kolmíc povrchu"
 
 
 msgid "Max Tension"
@@ -85529,20 +87902,215 @@ msgid "Reaction Speed"
 msgstr "Rýchlosť reakcie"
 
 
+msgid "Flame Smoke"
+msgstr "Dym plameňa"
+
+
+msgid "Flame Color"
+msgstr "Farba plameňa"
+
+
+msgid "Particle Radius"
+msgstr "Dosah častíc"
+
+
+msgid "Particles Maximum"
+msgstr "Maximálna veľkosť častíc"
+
+
+msgid "Particle Sampling"
+msgstr "Vykresľovanie častíc"
+
+
+msgid "Narrow Band Width"
+msgstr "Úzka šírka pásma"
+
+
+msgid "Particle Randomness"
+msgstr "Náhodnosť častíc"
+
+
+msgid "Obstacle-Fluid Threshold"
+msgstr "Prah prehradenia kvapaliny"
+
+
 msgid "Add Resolution"
 msgstr "Pridať rozlíšenie"
+
+
+msgid "Upres Factor"
+msgstr "Upres faktor"
+
+
+msgid "Use Speed Vectors"
+msgstr "Použije vektory rýchlosti"
+
+
+msgid "Mesh Generator"
+msgstr "Generátor povrchovej siete"
+
+
+msgid "Bubbles"
+msgstr "Bubliny"
+
+
+msgid "Wave Crest Potential Maximum"
+msgstr "Maximálny potenciál hrebeňa vlny"
+
+
+msgid "Trapped Air Potential Maximum"
+msgstr "Maximum zachyteného potenciálu vzduchu"
+
+
+msgid "Kinetic Energy Potential Maximum"
+msgstr "Maximálny potenciál kinetickej energie"
+
+
+msgid "Particle Update Radius"
+msgstr "Dosah obnovy častíc"
+
+
+msgid "Wave Crest Particle Sampling"
+msgstr "Vykresľovanie častíc hrebeňa vlny"
+
+
+msgid "Trapped Air Particle Sampling"
+msgstr "Vykresľovanie zachytených častíc vzduchu"
+
+
+msgid "Particle Life Maximum"
+msgstr "Maximálna životnosť častíc"
+
+
+msgid "Particles in Boundary:"
+msgstr "Častice na okrajoch:"
+
+
+msgid "Viscosity Presets:"
+msgstr "Predvoľby viskozity:"
 
 
 msgid "Real World Size"
 msgstr "Veľkosť reálneho sveta"
 
 
+msgid "Surface Tension"
+msgstr "Povrchové napätie"
+
+
+msgid "Velocity Source"
+msgstr "Zdroj rýchlosti"
+
+
+msgid "Data File Format"
+msgstr "Formát súboru údajov"
+
+
+msgid "Export Mantaflow Script"
+msgstr "Exportovať skript Mantaflow"
+
+
 msgid "Slicing"
 msgstr "Krájanie"
 
 
+msgid "Built without Fluid modifier"
+msgstr "Zostavené bez modifikátora kvapalín"
+
+
 msgid "Resolution Divisions"
-msgstr "Sekcie rozlíšení"
+msgstr "Rozdelenie rozlíšenia"
+
+
+msgid "CFL Number"
+msgstr "Číslo CFL"
+
+
+msgid "Timesteps Maximum"
+msgstr "Maximálne časové krokovanie"
+
+
+msgid "Smoothing Positive"
+msgstr "Pozitívne vyhladzovanie"
+
+
+msgid "Concavity Upper"
+msgstr "Horné vydutie"
+
+
+msgid "Guide Parent"
+msgstr "Vedenie rodičom"
+
+
+msgid "Particle File Format"
+msgstr "Formát súboru častíc"
+
+
+msgid "Using Scene Gravity"
+msgstr "Používanie gravitácie scény"
+
+
+msgid "Sampling Substeps"
+msgstr "Medzikroky snímania"
+
+
+msgctxt "Operator"
+msgid "Resume"
+msgstr "Zhrnutie"
+
+
+msgctxt "Operator"
+msgid "Free"
+msgstr "Voľná"
+
+
+msgid "Noise File Format"
+msgstr "Formát súboru šumu"
+
+
+msgid "Mesh File Format"
+msgstr "Formát súboru povrchovej siete"
+
+
+msgctxt "Operator"
+msgid "Baking All - ESC to pause"
+msgstr "Zapečenie všetkých - ESC na pozastavenie"
+
+
+msgid "Use Inflow"
+msgstr "Použite prítok"
+
+
+msgid "Surface Thickness"
+msgstr "Hrúbka povrchu"
+
+
+msgctxt "Operator"
+msgid "Baking Noise - ESC to pause"
+msgstr "Zapečenie šumu - ESC na pozastavenie"
+
+
+msgctxt "Operator"
+msgid "Baking Mesh - ESC to pause"
+msgstr "Zapečenie povrchovej siete - ESC na pozastavenie"
+
+
+msgctxt "Operator"
+msgid "Baking Particles - ESC to pause"
+msgstr "Zapečenie častíc - ESC na pozastavenie"
+
+
+msgctxt "Operator"
+msgid "Baking Data - ESC to pause"
+msgstr "Zapečenie údajov - ESC na pozastavenie"
+
+
+msgid "Initial Temperature"
+msgstr "Počiatočná teplota"
+
+
+msgid "Guide Mode"
+msgstr "Režim vedenia"
 
 
 msgid "Object does not have a Rigid Body"
@@ -86357,6 +88925,16 @@ msgstr "Skryť nevybrané krivky"
 
 
 msgctxt "Operator"
+msgid "Decimate (Ratio)"
+msgstr "Zdecimovanie (pomer)"
+
+
+msgctxt "Operator"
+msgid "Decimate (Allowed Change)"
+msgstr "Zdecimovanie (povolená zmena)"
+
+
+msgctxt "Operator"
 msgid "Cursor Value"
 msgstr "Hodnota kurzora"
 
@@ -86403,6 +88981,10 @@ msgstr "Invertovať farby obrázka"
 
 msgid "Affect"
 msgstr "Vplyv"
+
+
+msgid "Grid Shape"
+msgstr "Tvar mriežky"
 
 
 msgid "Show Same Material"
@@ -86651,6 +89233,11 @@ msgid "Remove from Frame"
 msgstr "Odstrániť zo snímky"
 
 
+msgctxt "Operator"
+msgid "Rename..."
+msgstr "Premenovať..."
+
+
 msgid "Projection X"
 msgstr "Projekcia X"
 
@@ -86838,6 +89425,11 @@ msgstr "Zisk:"
 
 
 msgctxt "Operator"
+msgid "Set Frame Range to Strips"
+msgstr "Nastaviť rozsah snímok na pásy"
+
+
+msgctxt "Operator"
 msgid "Sequence Render Animation"
 msgstr "Animácia sekvencie vykresľovania"
 
@@ -86968,6 +89560,11 @@ msgid "Set Overlay Region"
 msgstr "Nastaviť oblasť prekrytia"
 
 
+msgctxt "Operator"
+msgid "Set Preview Range to Strips"
+msgstr "Nastaví rozsah náhľadu na pásy"
+
+
 msgid "Preview as Backdrop"
 msgstr "Ukázať ako pozadie"
 
@@ -86995,6 +89592,11 @@ msgstr "Obrázok vykreslenia sekvencie"
 msgctxt "Operator"
 msgid "Both"
 msgstr "Oboje"
+
+
+msgctxt "Operator"
+msgid "Both Sides"
+msgstr "Obe strany"
 
 
 msgctxt "Operator"
@@ -87397,6 +89999,10 @@ msgid "Layered Recording"
 msgstr "Vrstvové nahrávanie"
 
 
+msgid "Drag:"
+msgstr "Ťahať:"
+
+
 msgid "Unable to find toolbar group"
 msgstr "Nepodarilo sa nájsť skupinu panelov s nástrojmi"
 
@@ -87467,7 +90073,7 @@ msgstr "Vykresliť zvuk..."
 
 msgctxt "Operator"
 msgid "View Render"
-msgstr "Zobraziť zachytávanie"
+msgstr "Zobraziť vykreslenie"
 
 
 msgctxt "Operator"
@@ -87578,6 +90184,11 @@ msgstr "Collada (predvolené) (.dae)"
 msgctxt "Operator"
 msgid "Alembic (.abc)"
 msgstr "Alembic (.abc)"
+
+
+msgctxt "Operator"
+msgid "Universal Scene Description (.usd, .usdc, .usda)"
+msgstr "Univerzálny popis scény (.usd, .usdc, .usda)"
 
 
 msgctxt "Operator"
@@ -87875,6 +90486,10 @@ msgid "Pan Options"
 msgstr "Možnosti posunu"
 
 
+msgid "Invert Axis"
+msgstr "Invertovať osi"
+
+
 msgid "Zoom Options"
 msgstr "Možnosti priblíženia"
 
@@ -88021,6 +90636,11 @@ msgstr "Perspektívna/kolmá projekcia"
 msgctxt "Operator"
 msgid "Viewport Render Image"
 msgstr "Obrázok vykreslenia záberu"
+
+
+msgctxt "Operator"
+msgid "Viewport Render Keyframes"
+msgstr "Kľúčové snímky vykreslenia záberu"
 
 
 msgctxt "Operator"
@@ -88528,6 +91148,16 @@ msgstr "Rozbaliť masku podľa topológie"
 msgctxt "Operator"
 msgid "Expand Mask By Curvature"
 msgstr "Rozbaliť masku podľa zakrivenia"
+
+
+msgctxt "Operator"
+msgid "Mask Slice and Fill Holes"
+msgstr "Narezanie masky a vyplnenie dier"
+
+
+msgctxt "Operator"
+msgid "Mask Slice to New Object"
+msgstr "Narezanie masky na nový objekt"
 
 
 msgctxt "Operator"
@@ -89686,6 +92316,16 @@ msgstr "Konvertovať na cestu"
 
 
 msgctxt "Operator"
+msgid "Convert to Bezier Curve"
+msgstr "Konvertovať na Bézierovu krivku"
+
+
+msgctxt "Operator"
+msgid "Convert to Polygon Curve"
+msgstr "Konvertovať na polygónovú krivku"
+
+
+msgctxt "Operator"
 msgid "Empty Draw Size"
 msgstr "Prázdna veľkosť kresby"
 
@@ -90140,6 +92780,10 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "Nezapísané, obrázok nemá \"%s\" a \"%s\" zobrazenia"
 
 
+msgid "When saving a tiled image, the path '%s' must contain the UDIM tag 1001"
+msgstr "Pri ukladaní dlaždicového obrázka musí cesta '%s' obsahovať UDIM príznak 1001"
+
+
 msgid "Key %d"
 msgstr "Kľúč %d"
 
@@ -90202,6 +92846,10 @@ msgstr "Neboli zbalené žiadne nové súbory"
 
 msgid "Unable to pack file, source path '%s' not found"
 msgstr "Súbor nemožno zbaliť. Zdrojová cesta %s sa nenašla"
+
+
+msgid "Image '%s' skipped, movies, image sequences and packed files not supported"
+msgstr "Obrázok '%s' preskočený, filmy, obrazové sekvencie a zbalené súbory nie sú podporované"
 
 
 msgid "Packed %d file(s)"
@@ -90469,6 +93117,10 @@ msgstr "Nemožno otvoriť"
 
 msgid "Non-Empty object '%s' cannot duplicate collection '%s' anymore in Blender 2.80, removed instancing"
 msgstr "Neprázdny objekt '%s' už nemôže vytvárať kópiu kolekcie '%s' v Blender 2.80, odstránené vytvorenie inštancie"
+
+
+msgid "Possible data loss when saving this file! %s modifier is deprecated (Object: %s)."
+msgstr "Pri ukladaní tohto súboru môže dôjsť k strate údajov! Modifikátor %s je zastaraný (Object: %s)."
 
 
 msgid "LIB: object lost from scene: '%s'"
@@ -91368,10 +94020,6 @@ msgid "Not yet implemented"
 msgstr "Ešte neimplementované"
 
 
-msgid "No conversion possible"
-msgstr "Nie je možná konverzia"
-
-
 msgid "No points were selected"
 msgstr "Neboli vybraté žiadne body"
 
@@ -91538,6 +94186,10 @@ msgstr "Nič na vymazanie"
 
 msgid "Annotation operator is already active"
 msgstr "Operátor poznámky je práve aktívny"
+
+
+msgid "Failed to find Annotation data to draw into"
+msgstr "Nepodarilo sa nájsť údaje poznámok na ich natiahnutie"
 
 
 msgid "Active region not set"
@@ -91780,6 +94432,10 @@ msgid "Line: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to ad
 msgstr "Riadok: ESC na zrušenie, ĽTM nastaví pôvodné, Enter/STM na potvrdenie, kolieskom/+- úpravu počtu delenia, Shift na zarovnanie, Alt na stred, E: vytiahnuť"
 
 
+msgid "Line: ESC to cancel, LMB to set, Enter/MMB to confirm, Shift to align"
+msgstr "Riadok: ESC na zrušenie, ĽTM na nastavenie, Enter/STM na potvrdenie, Shift na zarovnanie"
+
+
 msgid "Rectangle: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, Shift to square, Alt to center"
 msgstr "Obdĺžnik: ESC na zrušenie, ĽTM nastaví pôvodné, Enter/STM na potvrdenie, kolieskom/+- na úpravu počtu delení, Shift na štvorec, Alt na stred"
 
@@ -91965,6 +94621,10 @@ msgid "Failed to set value"
 msgstr "Nepodarilo sa nastaviť hodnotu"
 
 
+msgid "LMB: Stroke - Shift: Fill - Shift+Ctrl: Stroke + Fill"
+msgstr "ĽTM: Ťah - Shift: Vyplniť - Shift+Ctrl: Ťah + Vyplniť"
+
+
 msgid "Animate property"
 msgstr "Animovať vlastnosť"
 
@@ -92069,6 +94729,10 @@ msgid "Panel \"%s\" not found"
 msgstr "Panel \"%s\" sa nenašiel"
 
 
+msgid "Unsupported context"
+msgstr "Nepodporovaný kontext"
+
+
 msgid "Internal error!"
 msgstr "Interná chyba!"
 
@@ -92079,6 +94743,10 @@ msgstr "Skratka: %s"
 
 msgid "Python: %s"
 msgstr "Python: %s"
+
+
+msgid "Shortcut Cycle: %s"
+msgstr "Cyklus skratiek: %s"
 
 
 msgid "(Shift-Click/Drag to select multiple)"
@@ -92297,6 +94965,22 @@ msgstr "Odstrániť body"
 
 msgid "Reset Black/White point and curves"
 msgstr "Obnoví čierny/biely bod a krivky"
+
+
+msgid "Reverse Path"
+msgstr "Spätná cesta"
+
+
+msgid "Toggle Profile Clipping"
+msgstr "Prepnúť orezanie profilu"
+
+
+msgid "Set the point's handle type to sharp"
+msgstr "Nastaví typ bodu manipulátora na ostrý"
+
+
+msgid "Set the point's handle type to smooth"
+msgstr "Nastaví typ bodu manipulátora na vyhladený"
 
 
 msgid "Double click to rename"
@@ -92658,6 +95342,10 @@ msgid "Parsing errors in Document (see Blender Console)"
 msgstr "Analýza chyby v dokumente (pozri Blender konzolu)"
 
 
+msgid "Experimental:"
+msgstr "Experimentálne:"
+
+
 msgctxt "Mesh"
 msgid "Plane"
 msgstr "Plocha"
@@ -92701,6 +95389,10 @@ msgstr "Sféra"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "Ico guľa"
+
+
+msgid "%s: Confirm, %s: Cancel, %s: Mode (%s), %s: Width (%s), %s: Segments (%d), %s: Profile (%.3f), %s: Clamp Overlap (%s), %s: Vertex Only (%s), %s: Outer Miter (%s), %s: Inner Miter (%s), %s: Harden Normals (%s), %s: Mark Seam (%s), %s: Mark Sharp (%s), %s: Custom Profile (%s), %s: Intersection (%s)"
+msgstr "%s: Potvrdiť, %s: Zrušiť, %s: Režim (%s), %s: Šírka (%s), %s: Segmenty (%d), %s: Profil (%.3f), %s: Presah svorky (%s), %s: Iba vrchol (%s), %s: Vonkajší sklon (%s), %s: Vnútorný sklon (%s), %s: Tvrdé kolmice (%s), %s: Označiť šev (%s), %s: Označiť ostré (%s), %s: Vlastný profil (%s), %s: Priesečník (%s)"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -93438,7 +96130,7 @@ msgstr "Konštruktívny modifikátor nie je možné aplikovať na údaje s viacn
 
 
 msgid "Reshape can work only with higher levels of subdivisions"
-msgstr "Pretváranie môže pracovať len s vyššou úrovňou delení"
+msgstr "Pretváranie môže pracovať len s vyššou úrovňou členení"
 
 
 msgid "Second selected mesh object required to copy shape from"
@@ -93547,6 +96239,10 @@ msgstr "Aktívny objekt '%s' nie je možné prepísať"
 
 msgid "Voxel remesher cannot run with a voxel size of 0.0."
 msgstr "Pretvárač voxelov nemôže bežať s veľkosťou voxelu 0,0."
+
+
+msgid "Voxel remesher failed to create mesh."
+msgstr "Pretváračovi voxelov sa nepodarilo vytvoriť sieť."
 
 
 msgid "The remesher cannot run from edit mode."
@@ -93711,6 +96407,38 @@ msgstr "Nespojené žiadne vlasy (nie je možné spojiť vlasy, ak je modifikát
 
 msgid "Copy particle systems to selected: %d done, %d failed"
 msgstr "Kopírovanie systémov častíc do vybraných: %d vykonaných, %d zlyhalo"
+
+
+msgid "Bake failed: no Fluid modifier found"
+msgstr "Zapečenie zlyhalo: nenašiel sa žiadny modifikátor kvapaliny"
+
+
+msgid "Bake failed: invalid domain"
+msgstr "Zapečenie zlyhalo: neplatná oblasť"
+
+
+msgid "Bake free failed: no Fluid modifier found"
+msgstr "Voľné zapečenie zlyhalo: nenašiel sa žiadny modifikátor kvapaliny"
+
+
+msgid "Bake free failed: invalid domain"
+msgstr "Voľné zapečenie zlyhalo: neplatná oblasť"
+
+
+msgid "Bake free failed: pending bake jobs found"
+msgstr "Zapečenie zlyhalo: nájdené čakajúce úlohy na zapečenie"
+
+
+msgid "Fluid: Empty cache path, reset to default '%s'"
+msgstr "Kvapalina: prázdna cesta k vyrovnávacej pamäti, obnovená predvolená hodnota '%s'"
+
+
+msgid "Fluid: Could not create cache directory '%s', reset to default '%s'"
+msgstr "Kvapalina: Nepodarilo sa vytvoriť priečinok vyrovnávacej pamäte '%s', obnovené predvolené nastavenie '%s'"
+
+
+msgid "Fluid: Could not use default cache directory '%s', please define a valid cache path manually"
+msgstr "Kvapalina: Nepodarilo sa použiť predvolený priečinok vyrovnávacej pamäte '%s', definujte, prosím, platnú cestu na vyrovnávaciu pamäť manuálne"
 
 
 msgid "No Rigid Body World to add Rigid Body Constraint to"
@@ -94662,6 +97390,10 @@ msgid "None for Enum/Boolean"
 msgstr "Nič pre sčítanie/Boolean"
 
 
+msgid "Value:"
+msgstr "Hodnota:"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "Krivka funkcie má iba modifikátory funkcie"
 
@@ -94671,7 +97403,7 @@ msgstr "Pozri panel modifikátorov nižšie"
 
 
 msgid "F-Curve doesn't have any keyframes as it only contains sampled points"
-msgstr "Krivka funkcie nemá žiadne kľúčové snímky, pretože obsahuje iba body vzorky"
+msgstr "F-krivka nemá žiadne kľúčové snímky, pretože obsahuje iba nasnímané body"
 
 
 msgid "No active keyframe on F-Curve"
@@ -94692,10 +97424,6 @@ msgstr "Výraz:"
 
 msgid "Add Input Variable"
 msgstr "Pridať premennú vstupu"
-
-
-msgid "Value:"
-msgstr "Hodnota:"
 
 
 msgid "Update Dependencies"
@@ -94789,6 +97517,10 @@ msgstr "Ovládané vlastnosti"
 msgctxt "Operator"
 msgid "Invalid Variable Name"
 msgstr "Neplatný názov premennej"
+
+
+msgid "Decimate Keyframes"
+msgstr "Zdecimovať kľúčové snímky"
 
 
 msgid "<No ID>"
@@ -95071,12 +97803,28 @@ msgid "Verts:%s | Faces:%s | Tris:%s | Objects:%s/%s%s%s"
 msgstr "Vrcholy:%s | Plôšky:%s | Trojuholníky:%s | Objekty:%s/%s%s%s"
 
 
+msgid "Strip Extents:"
+msgstr "Pás rozšírení:"
+
+
+msgid "Playback Settings:"
+msgstr "Nastavenia prehrávania:"
+
+
+msgid "Action Extents:"
+msgstr "Akcie rozšírení:"
+
+
 msgid "Sync Length"
 msgstr "Dĺžka synchronizácie"
 
 
 msgid "Now"
 msgstr "Ihneď"
+
+
+msgid "Evaluation"
+msgstr "Vyhodnotenie"
 
 
 msgid "No active AnimData block to use (select a data-block expander first or set the appropriate flags on an AnimData block)"
@@ -95717,6 +98465,18 @@ msgstr "Nemožno vytvoriť súbor titulkov"
 
 msgid "No subtitles (text strips) to export"
 msgstr "Žiadne titulky (textové pásy) na export"
+
+
+msgid "Select one or more strips"
+msgstr "Vyberte jeden alebo viac pásov"
+
+
+msgid "Can't set a negative range"
+msgstr "Nemožno nastaviť záporný rozsah"
+
+
+msgid "Could not build proxy for strip %s"
+msgstr "Nepodarilo sa vytvoriť server proxy pre pás %s"
 
 
 msgid "No active sequence!"
@@ -96744,6 +99504,10 @@ msgid "%s: expected %s type, not %s."
 msgstr "%s: je očakávaný typ %s, nie %s."
 
 
+msgid "%s: expected ID type, not %s."
+msgstr "%s: očakávaný typ ID, nie %s."
+
+
 msgid "Array length mismatch (expected %d, got %d)"
 msgstr "Zmätočná dĺžka poľa (očakávaná %d, daná %d)"
 
@@ -96860,6 +99624,10 @@ msgid "Unable to remove curve point"
 msgstr "Bod krivky nemožno odstrániť"
 
 
+msgid "CurveMapping does not own CurveMap"
+msgstr "Mapovanie krivky nemá vlastnú mapu krivky"
+
+
 msgid "CurveMap table not initialized, call initialize() on CurveMapping owner of the CurveMap"
 msgstr "Tabuľka mapy krivky nie je inicializovaná, zavolať inicializáciu() na Mapovanie kriviek vlastník Mapa krivky"
 
@@ -96894,6 +99662,14 @@ msgstr "Možno pridať len Bézierovu vyhladenú krivku"
 
 msgid "Curve '%s' does not contain spline given"
 msgstr "Krivka '%s' neobsahuje danú vyhladenú krivku"
+
+
+msgid "Unable to remove path point"
+msgstr "Bod cesty sa nedá odstrániť"
+
+
+msgid "CurveProfile table not initialized, call initialize()"
+msgstr "Tabuľka Profil krivky nie je inicializovaná, volaná inicializácia()"
 
 
 msgid "Dependency graph update requested during evaluation"
@@ -96970,6 +99746,10 @@ msgstr "Scéna nie je v kontexte, nemožno získať parametre uloženia"
 
 msgid "Image not packed"
 msgstr "Obrázok nezbalený"
+
+
+msgid "Unpacking movies, image sequences or tiled images not supported"
+msgstr "Rozbalenie filmov, sekvencií obrázkov alebo dlaždicových obrázkov nie je podporované"
 
 
 msgid "Could not save packed file to disk as '%s'"
@@ -97153,6 +99933,22 @@ msgid "NLA strip '%s' not found in track '%s'"
 msgstr "Pás NLA '%s' sa v stope '%s' nenašiel"
 
 
+msgid "Functions"
+msgstr "Funkcie"
+
+
+msgid "Comparison"
+msgstr "Porovnanie"
+
+
+msgid "Trigonometric"
+msgstr "Trigonometrický"
+
+
+msgid "Conversion"
+msgstr "Konverzia"
+
+
 msgid "Same input/output direction of sockets"
 msgstr "Rovnaký smer vstupu/výstupu zásuviek"
 
@@ -97311,6 +100107,10 @@ msgstr "Paleta '%s' neobsahuje danú farbu"
 
 msgid "ParticleSystem"
 msgstr "Systém častíc"
+
+
+msgid "uv_on_emitter() requires a modifier from an evaluated object"
+msgstr "uv_on_emitter () vyžaduje modifikátor z vyhodnoteného objektu"
 
 
 msgid "Mesh has no UV data"
@@ -97722,6 +100522,18 @@ msgid "Faces needed for useful output"
 msgstr "Potrebné plôšky pre použiteľný výstup"
 
 
+msgid "Internal Error: edges array wrong size: %u instead of %u"
+msgstr "Interná chyba: nesprávna veľkosť poľa okrajov: %u namiesto %u"
+
+
+msgid "Internal Error: polys array wrong size: %u instead of %u"
+msgstr "Interná chyba: nesprávna veľkosť poľa polygónov: %u namiesto %u"
+
+
+msgid "Internal Error: loops array wrong size: %u instead of %u"
+msgstr "Interná chyba: pole slučiek nemá správnu veľkosť: %u namiesto %u"
+
+
 msgid "Out of memory"
 msgstr "Nedostatok pamäte"
 
@@ -98028,6 +100840,10 @@ msgstr "Vytváranie zadných plôšok"
 
 msgid "Pointiness"
 msgstr "Bodkované"
+
+
+msgid "Random Per Island"
+msgstr "Náhodne na ostrov"
 
 
 msgid "Is Strand"
@@ -98506,6 +101322,10 @@ msgid "Win"
 msgstr "Win klávesa"
 
 
+msgid "OSkey"
+msgstr "Klávesa OS"
+
+
 msgid "Bksp"
 msgstr "Backspace"
 
@@ -98515,7 +101335,7 @@ msgstr "Esc"
 
 
 msgid "dbl-"
-msgstr "dvojklik "
+msgstr "dvojklik-"
 
 
 msgid "ON"
@@ -98690,20 +101510,12 @@ msgid "Import-Export"
 msgstr "Import-Export"
 
 
-msgid "MakeHuman"
-msgstr "Vytvoriť človeka"
-
-
 msgid "Rigging"
 msgstr "Vybavenie"
 
 
 msgid "Video Tools"
 msgstr "Video nástroje"
-
-
-msgid "Workflow"
-msgstr "Pracovný postup"
 
 
 msgid "English (English)"
@@ -98891,7 +101703,7 @@ msgstr "Thajský (ภาษาไทย)"
 
 
 msgid "Slovak (Slovenčina)"
-msgstr "Slovak (slovenčina)"
+msgstr "Slovenský (slovenčina)"
 
 
 msgid "Complete"

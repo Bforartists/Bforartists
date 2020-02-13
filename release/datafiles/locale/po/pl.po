@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -1840,6 +1840,10 @@ msgstr "Odstępy"
 
 msgid "Mode"
 msgstr "Tryb"
+
+
+msgid "Point"
+msgstr "Punkt"
 
 
 msgid "Default"
@@ -5659,10 +5663,6 @@ msgid "Sample point for F-Curve"
 msgstr "Punkt próbkowania krzywej-F"
 
 
-msgid "Point"
-msgstr "Punkt"
-
-
 msgid "Point coordinates"
 msgstr "Współrzędne punktu"
 
@@ -7858,10 +7858,6 @@ msgstr "Nie można rozdzielić obecnego zaznaczenia"
 
 msgid "Not yet implemented"
 msgstr "Jeszcze nie zaimplementowano"
-
-
-msgid "No conversion possible"
-msgstr "Żadna konwersja nie jest możliwa"
 
 
 msgid "Too few selections to merge"
@@ -10097,6 +10093,10 @@ msgid "Cursor Y"
 msgstr "Kursor Y"
 
 
+msgid "Value:"
+msgstr "Wartość:"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "Krzywa F ma tylko modyfikatory F"
 
@@ -10119,10 +10119,6 @@ msgstr "Prop:"
 
 msgid "Driver Value:"
 msgstr "Wartość Sterownika:"
-
-
-msgid "Value:"
-msgstr "Wartość:"
 
 
 msgid "Update Dependencies"

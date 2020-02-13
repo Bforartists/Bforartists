@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -1227,12 +1227,8 @@ msgid "Mode"
 msgstr "Режим рада"
 
 
-msgid "Soft"
-msgstr "Meko"
-
-
-msgid "Hard"
-msgstr "Тврдо"
+msgid "Point"
+msgstr "Тачка"
 
 
 msgid "Stroke"
@@ -3834,10 +3830,6 @@ msgstr "Модификатори"
 
 msgid "Muted"
 msgstr "Утишано"
-
-
-msgid "Point"
-msgstr "Тачка"
 
 
 msgid "Point coordinates"
@@ -8360,8 +8352,16 @@ msgid "Noise Type"
 msgstr "Врста шума"
 
 
+msgid "Soft"
+msgstr "Meko"
+
+
 msgid "Generate soft noise (smooth transitions)"
 msgstr "Генериши мекан шум (мекан прелаз)"
+
+
+msgid "Hard"
+msgstr "Тврдо"
 
 
 msgid "Generate hard noise (sharp transitions)"
@@ -30181,6 +30181,10 @@ msgid "Cursor Y"
 msgstr "Курсор Y"
 
 
+msgid "Value:"
+msgstr "Вредност"
+
+
 msgid "No active keyframe on F-Curve"
 msgstr "Модификатор вредности F-криве"
 
@@ -30191,10 +30195,6 @@ msgstr "Својство"
 
 msgid "Driver Value:"
 msgstr "Вредност возача:"
-
-
-msgid "Value:"
-msgstr "Вредност"
 
 
 msgid "Update Dependencies"

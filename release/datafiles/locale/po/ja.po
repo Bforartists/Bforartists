@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
 "Last-Translator: \n"
 "Language-Team: Japanese Translation Team (https://sites.google.com/site/blugjp/blender-translators)\n"
@@ -1104,7 +1104,7 @@ msgstr "ベイクマップを外部ファイルに保存します"
 
 
 msgid "Automatic Name"
-msgstr "オートネーム"
+msgstr "自動ネーム"
 
 
 msgid "Automatically name the output file with the pass type (external only)"
@@ -3043,28 +3043,12 @@ msgid "Eraser Mode"
 msgstr "消しゴムモード"
 
 
-msgid "Soft"
-msgstr "ソフト"
-
-
-msgid "Use soft eraser"
-msgstr "柔らかな消しゴムを使用します"
-
-
-msgid "Hard"
-msgstr "ハード"
-
-
-msgid "Use hard eraser"
-msgstr "硬い消しゴムを使用します"
+msgid "Point"
+msgstr "ポイント"
 
 
 msgid "Stroke"
 msgstr "ストローク"
-
-
-msgid "Use stroke eraser"
-msgstr "ストローク消しゴムを使用します"
 
 
 msgid "Affect Stroke Strength"
@@ -4037,6 +4021,14 @@ msgid "Internal Friction"
 msgstr "内部摩擦"
 
 
+msgid "Internal Spring Max Diversion"
+msgstr "内部スプリング最大角度"
+
+
+msgid "How much the rays used to connect the internal points can diverge from the vertex normal"
+msgstr "頂点の法線から分岐して内部ポイントをつなぐのに使用可能な最大角度"
+
+
 msgid "Internal Spring Max Length"
 msgstr "内部スプリング最大長"
 
@@ -4049,7 +4041,11 @@ msgstr ""
 
 
 msgid "Check Internal Spring Normals"
-msgstr "内部スプリング法線をチェック"
+msgstr "内部スプリング法線チェック"
+
+
+msgid "Require the points the internal springs connect to have opposite normal directions"
+msgstr "内部スプリングとつながるポイントは、法線と反対方向である必要があります"
 
 
 msgid "Tension Stiffness"
@@ -4178,10 +4174,6 @@ msgstr "クロスの速度はこの値と乗算されます"
 
 msgid "Pressure"
 msgstr "圧力"
-
-
-msgid "The uniform pressure that is constanty applied to the mesh. Can be negative"
-msgstr "メッシュに持続的に適用される均一な圧力。負の値も指定可能です"
 
 
 msgid "Dynamic Base Mesh"
@@ -9596,10 +9588,6 @@ msgid "Sample point for F-Curve"
 msgstr "Fカーブのサンプリング点"
 
 
-msgid "Point"
-msgstr "ポイント"
-
-
 msgid "Point coordinates"
 msgstr "点座標"
 
@@ -11492,6 +11480,14 @@ msgid "Maximum number of additional cells"
 msgstr "追加するセルの最大数"
 
 
+msgid "Buoyancy Density"
+msgstr "密度の浮力"
+
+
+msgid "Buoyant force based on smoke density (higher value results in faster rising smoke)"
+msgstr "煙の密度を元にした浮力（大きな値で速く煙が上昇）"
+
+
 msgid "Slice the whole domain object"
 msgstr "ドメインオブジェクト全体をスライスします"
 
@@ -11502,6 +11498,18 @@ msgstr "シングル"
 
 msgid "Perform a single slice of the domain object"
 msgstr "ドメインオブジェクトのスライスを一回だけ実行します"
+
+
+msgid "Buoyancy Heat"
+msgstr "熱の浮力"
+
+
+msgid "Buoyant force based on smoke heat (higher value results in faster rising smoke)"
+msgstr "煙のヒート値を元にした浮力（大きな値で速く煙が上昇）"
+
+
+msgid "Speed of the burning reaction (higher value results in smaller flames)"
+msgstr "燃焼反応の速度（大きな値で小さな炎になります）"
 
 
 msgid "Select the file format to be used for caching volumetric data"
@@ -11562,8 +11570,21 @@ msgid "Modular"
 msgstr "モジュール"
 
 
+msgid "Bake every stage of the simulation separately. Pausing and resuming possible"
+msgstr ""
+"シミュレーションの各段階別に分けてベイクします。\n"
+"ポーズとリジュームが可能です"
+
+
 msgid "Final"
 msgstr "最終結果"
+
+
+msgid "Bake the entire simulation at once. Only generates the most essential cache files. Pausing and resuming not possible"
+msgstr ""
+"シミュレーション全体を一度にベイクします。\n"
+"必要不可欠なキャッシュファイルのみ生成します。\n"
+"ポーズもリジュームもできません。"
 
 
 msgid "Cell Size"
@@ -11572,6 +11593,10 @@ msgstr "セルサイズ"
 
 msgid "CFL"
 msgstr "CFL"
+
+
+msgid "Maximal velocity per cell (higher value results in greater timesteps)"
+msgstr "セル毎の最大速度（大きな値でタイムステップが大きくなります）"
 
 
 msgid "Clipping"
@@ -11740,6 +11765,10 @@ msgid "Dissolve Speed"
 msgstr "消滅速度"
 
 
+msgid "Determine how quickly the smoke dissolves (higher value makes smoke disappear faster)"
+msgstr "煙が消滅する速度を決めます（大きな値で早く煙が消滅）"
+
+
 msgid "res"
 msgstr "解像度"
 
@@ -11797,6 +11826,14 @@ msgstr "炎グリッド"
 
 msgid "Smoke flame grid"
 msgstr "煙の炎グリッド"
+
+
+msgid "Minimum temperature of the flames (higher value results in faster rising flames)"
+msgstr "炎の最低温度（大きい値で炎が速く上昇）"
+
+
+msgid "Maximum temperature of the flames (higher value results in faster rising flames)"
+msgstr "炎の最高温度（大きい値で炎が速く上昇）"
 
 
 msgid "Smoke"
@@ -11888,8 +11925,25 @@ msgid "Domain"
 msgstr "ドメイン"
 
 
+msgid "Use a fluid domain for guiding (domain needs to be baked already so that velocities can be extracted). Guiding domain can be of any type (i.e. gas or liquid)"
+msgstr ""
+"流体ドメインをガイドに使用します\n"
+"（速度を抽出可能にするため、ドメインはベイク済である必要があります）\n"
+"ガイド用のドメインのタイプ（気体・液体）は問いません"
+
+
 msgid "Effector"
 msgstr "エフェクター"
+
+
+msgid "Use guiding (effector) objects to create fluid guiding (guiding objects should be animated and baked once set up completely)"
+msgstr ""
+"ガイド（エフェクター）オブジェクトを流体ガイドの生成に使用します。\n"
+"（ガイドオブジェクトは一度アニメーション付けと設定のベイクを完全にしてください）"
+
+
+msgid "Guiding velocity factor (higher value results in greater guiding velocities)"
+msgstr "速度係数をガイド（大きな値でガイド速度が大きくなります）"
 
 
 msgid "Heat Grid"
@@ -11956,8 +12010,20 @@ msgid "Radius"
 msgstr "半径"
 
 
+msgid "Particle radius factor (higher value results in larger (meshed) particles). Needs to be adjusted after changing the mesh scale"
+msgstr ""
+"パーティクル半径係数（大きな値で大きな（メッシュ化された）パーティクルになります）。\n"
+"メッシュスケール変更後は調整が必要です"
+
+
 msgid "Mesh scale"
 msgstr "メッシュスケール"
+
+
+msgid "The mesh simulation is scaled up by this factor (compared to the base resolution of the domain). For best meshing, it is recommended to adjust the mesh particle radius alongside this value"
+msgstr ""
+"この係数でメッシュのシミュレーションを（ドメインのベース解像度に対し）スケールアップします。\n"
+"最適なメッシュにするには、メッシュパーティクル半径をこの値と並行して調整することをお勧めします"
 
 
 msgid "Smoothen Neg"
@@ -11992,6 +12058,10 @@ msgid "Noise Scale"
 msgstr "ノイズスケール"
 
 
+msgid "The noise simulation is scaled up by this factor (compared to the base resolution of the domain)"
+msgstr "ノイズシミュレーションをこの係数で（ドメインのベース解像度に対し）スケールアップします"
+
+
 msgid "Strength of noise"
 msgstr "ノイズ強度"
 
@@ -12006,6 +12076,10 @@ msgstr "ノイズのアニメーション時間"
 
 msgid "Noise Method"
 msgstr "ノイズの方法"
+
+
+msgid "Noise method which is used during the high-res simulation"
+msgstr "高解像のシミュレーション中に使用されるノイズメソッド"
 
 
 msgid "Wavelet"
@@ -12040,6 +12114,12 @@ msgid "Do not use any compression"
 msgstr "圧縮なし"
 
 
+msgid "Particle (narrow) band width (higher value results in thicker band and more particles)"
+msgstr ""
+"パーティクル（さざ波）の幅\n"
+"（大きい値でさざ波とパーティクル数が増加）"
+
+
 msgid "Maximum number of particles per cell (ensures that each cell has at most this amount of particles)"
 msgstr ""
 "セル毎のパーティクルの最大数\n"
@@ -12060,12 +12140,28 @@ msgid "Particle number factor (higher value results in more particles)"
 msgstr "パーティクル係数（大きな値でパーティクルが増加）"
 
 
+msgid "Particle radius factor. Increase this value if the simulation appears to leak volume, decrease it if the simulation seems to gain volume"
+msgstr ""
+"パーティクル半径係数。シミュレーションがボリュームから漏れて見える時はこの値を増やし、\n"
+"シミュレーションがボリュームを増やしていると思われる時は減らしてください"
+
+
 msgid "Randomness"
 msgstr "ランダムさ"
 
 
 msgid "Randomness factor for particle sampling"
 msgstr "パーティクルサンプリング用のランダム係数"
+
+
+msgid "Particle scale"
+msgstr "パーティクルスケール"
+
+
+msgid "The particle simulation is scaled up by this factor (compared to the base resolution of the domain)"
+msgstr ""
+"パーティクルシミュレーションがこの係数で\n"
+"（ドメインのベース解像度に対し）スケールアップします"
 
 
 msgid "Cache Compression"
@@ -12082,6 +12178,16 @@ msgstr "高速ですが圧縮が効率的ではありません"
 
 msgid "Heavy"
 msgstr "ヘビー"
+
+
+msgid "Maximum Resolution"
+msgstr "最大解像度"
+
+
+msgid "Resolution used for the fluid domain. Value corresponds to the longest domain side (resolution for other domain sides is calculated automatically)"
+msgstr ""
+"流体ドメインが使用する解像度。値はドメインの一番長い辺に対応します\n"
+"（ドメインの他の辺の解像度は自動的に計算されます）"
 
 
 msgid "Display Velocity"
@@ -12164,6 +12270,10 @@ msgid "Delete secondary particles that are inside obstacles or left the domain"
 msgstr "障害物内部またはドメインから離れるセカンダリパーティクルを削除します"
 
 
+msgid "Push Out"
+msgstr "押し戻す"
+
+
 msgid "Push secondary particles that left the domain back into the domain"
 msgstr "ドメインから離れたセカンダリパーティクルをドメイン内に押し戻します"
 
@@ -12216,8 +12326,20 @@ msgid "Bubble Buoyancy"
 msgstr "気泡の浮力"
 
 
+msgid "Amount of buoyancy force that rises bubbles (high value results in bubble movement mainly upwards)"
+msgstr ""
+"気泡を押し上げる浮力\n"
+"（大きい値で気泡の移動が主に上に）"
+
+
 msgid "Bubble Drag"
-msgstr "気泡の抵抗"
+msgstr "気泡を流す力"
+
+
+msgid "Amount of drag force that moves bubbles along with the fluid (high value results in bubble movement mainly along with the fluid)"
+msgstr ""
+"気泡を流体の方向に移動する力\n"
+"（大きい値で気泡の移動が主に流体の方向に）"
 
 
 msgid "Trapped Air Sampling"
@@ -12236,12 +12358,24 @@ msgid "Maximum number of particles generated per wave crest cell per frame"
 msgstr "フレーム毎に波頭セル毎に生成されるパーティクルの最大数"
 
 
+msgid "Maximum Lifetime"
+msgstr "最大寿命"
+
+
 msgid "Highest possible particle lifetime"
-msgstr "パーティクルが取り得る寿命の最大値"
+msgstr "パーティクルの寿命の最大値"
+
+
+msgid "Minimum Lifetime"
+msgstr "最小寿命"
 
 
 msgid "Lowest possible particle lifetime"
-msgstr "パーティクルが取り得る寿命の最小値"
+msgstr "パーティクルの寿命の最小値"
+
+
+msgid "Potential Radius"
+msgstr "ポテンシャル半径"
 
 
 msgid "Radius to compute potential for each cell (higher values are slower but create smoother potential grids)"
@@ -12254,14 +12388,64 @@ msgid "tauMax_k"
 msgstr "tauMax_k"
 
 
+msgid "Upper clamping threshold that indicates the fluid speed where cells no longer emit more particles (higher value results in generally less particles)"
+msgstr ""
+"セルがもうパーティクルを発生しなくなることを示す、\n"
+"流体の速度上限（大きな値で全体的にパーティクルが減ります）"
+
+
+msgid "Maximum Trapped Air Potential"
+msgstr "最大混入空気ポテンシャル"
+
+
+msgid "Upper clamping threshold for marking fluid cells where air is trapped (highe value results in less marked cells)"
+msgstr ""
+"流体セルに空気が混入しているとマークするしきい値の上限\n"
+"（大きな値でマークされるセルが減ります）"
+
+
+msgid "Maximum Wave Crest Potential"
+msgstr "最大波頭ポテンシャル"
+
+
+msgid "Upper clamping threshold for marking fluid cells as wave crests (higher value results in less marked cells)"
+msgstr ""
+"流体セルに波頭とマークするしきい値の上限\n"
+"（大きな値でマークされるセルが減ります）"
+
+
 msgid "tauMin_k"
 msgstr "tauMin_k"
 
 
 msgid "Lower clamping threshold that indicates the fluid speed where cells start to emit particles (lower values result in generally more particles)"
 msgstr ""
-"パーティクルの発生を開始するセルでの流体の速度の下限\n"
-"（小さな値で全体的にパーティクルが増えます）"
+"セルがパーティクルの発生を開始することを示す、\n"
+"流体の速度下限（小さな値で全体的にパーティクルが増えます）"
+
+
+msgid "Minimum Trapped Air Potential"
+msgstr "最小混入空気ポテンシャル"
+
+
+msgid "Lower clamping threshold for marking fluid cells where air is trapped (lower value results in more marked cells)"
+msgstr ""
+"流体セルを空気が混入しているとマークするしきい値の下限\n"
+"（小さな値でマークされるセルが増えます）"
+
+
+msgid "Minimum Wave Crest Potential"
+msgstr "最小波頭ポテンシャル"
+
+
+msgid "Lower clamping threshold for marking fluid cells as wave crests (lower value results in more marked cells)"
+msgstr ""
+"流体セルを波頭とマークするしきい値の下限\n"
+"（小さな値でマークされるセルが増えます）"
+
+
+msgid "Update Radius"
+msgstr "更新半径"
 
 
 msgid "Radius to compute position update for each particle (higher values are slower but particles move less chaotic)"
@@ -12370,8 +12554,24 @@ msgid "Dissolve Smoke"
 msgstr "煙の消失"
 
 
+msgid "Let smoke disappear over time"
+msgstr "時間とともに煙が消えるようにします"
+
+
+msgid "Logarithmic Dissolve"
+msgstr "対数的に消失"
+
+
+msgid "Dissolve smoke in a logarithmic fashion. Dissolves quickly at first, but lingers longer"
+msgstr "煙が対数関数的な方法で消失します。最初は速く、後は長く残ります"
+
+
 msgid "FLIP"
 msgstr "FLIP"
+
+
+msgid "Create liquid particle system"
+msgstr "液体のパーティクルシステムを作成します"
 
 
 msgid "Foam"
@@ -12382,8 +12582,12 @@ msgid "Create foam particle system"
 msgstr "泡沫のパーティクルシステムを生成します"
 
 
+msgid "Fractional Obstacles"
+msgstr "分割障害物"
+
+
 msgid "Fractional obstacles improve and smoothen the fluid-obstacle boundary"
-msgstr "分割障害物は流体と障害物の境界を改善・スムージングします"
+msgstr "分割障害物は流体と障害物の境界を改善し、スムーズにします"
 
 
 msgid "Use Guiding"
@@ -12398,12 +12602,26 @@ msgid "Use Mesh"
 msgstr "メッシュを使用"
 
 
+msgid "Enable fluid mesh (using amplification)"
+msgstr "流体メッシュを有効に（増幅を使用）します"
+
+
 msgid "Use Noise"
 msgstr "ノイズを使用"
 
 
+msgid "Enable fluid noise (using amplification)"
+msgstr "流体ノイズを有効に（増幅を使用）します"
+
+
 msgid "Speed Vectors"
 msgstr "速度ベクトル"
+
+
+msgid "Caches velocities of mesh vertices. These will be used (automatically) when rendering with motion blur enabled"
+msgstr ""
+"メッシュ頂点の速度をキャッシュします。\n"
+"モーションブラーと共にレンダリングする時、（自動的に）使用されます"
 
 
 msgid "Spray"
@@ -12468,6 +12686,10 @@ msgstr "粘度指数"
 
 msgid "Negative exponent for the viscosity value (to simplify entering small values e.g. 5*10^-6)"
 msgstr "粘度値の負の指数( 5*10^-6 などの小さい値を入れて簡素化)"
+
+
+msgid "Amount of turbulence and rotation in smoke"
+msgstr "煙の渦と回転の量"
 
 
 msgid "Fluid Mesh Velocity"
@@ -12672,6 +12894,16 @@ msgid "Number of additional samples to take between frames to improve quality of
 msgstr "高速に動くフローの品質を改善するためにフレーム間で取得する、追加のサンプル数"
 
 
+msgid "Surface Emission"
+msgstr "表面からの発生距離"
+
+
+msgid "Controls fluid emission from the mesh surface (higher value results in emission further away from the mesh surface"
+msgstr ""
+"メッシュ表面からの流体発生をコントロールします。\n"
+"（大きな値でメッシュ表面から離れて発生します）"
+
+
 msgid "Temp. Diff."
 msgstr "温度差"
 
@@ -12736,6 +12968,12 @@ msgid "Set particle size in simulation cells or use nearest cell"
 msgstr "シミュレーションセル内のパーティクルサイズを設定、または最も近いセルを使用します"
 
 
+msgid "Treat this object as a planar and unclosed mesh. Fluid will only be emitted from the mesh surface and based on the surface emission value"
+msgstr ""
+"このオブジェクトを平面かつ閉じていないメッシュとして処理します。\n"
+"流体は表面から発生（Surface Emittion）値を元に、メッシュ表面からのみ発生します"
+
+
 msgid "Use Texture"
 msgstr "テクスチャで使用"
 
@@ -12768,6 +13006,16 @@ msgstr "法線方向の速度の量"
 
 msgid "Amount of random velocity"
 msgstr "ランダム速度の量"
+
+
+msgid "Volume Emission"
+msgstr "ボリュームから発生"
+
+
+msgid "Controls fluid emission from within the mesh (higher value results in greater emissions from inside the mesh)"
+msgstr ""
+"メッシュ内部からの流体の発生をコントロールします。\n"
+"（大きな値でメッシュ内部からの発生が多くなります）"
 
 
 msgid "Freestyle Line Set"
@@ -17675,7 +17923,7 @@ msgstr "接線を繰り返しスムージングします"
 
 
 msgid "Auto Texture Space"
-msgstr "オートテクスチャ空間"
+msgstr "自動テクスチャ空間"
 
 
 msgid "Adjust active object's texture space automatically when transforming object"
@@ -23921,8 +24169,16 @@ msgid "Noise Type"
 msgstr "ノイズタイプ"
 
 
+msgid "Soft"
+msgstr "ソフト"
+
+
 msgid "Generate soft noise (smooth transitions)"
 msgstr "ソフトなノイズを生成 (スムーズな変化)"
+
+
+msgid "Hard"
+msgstr "ハード"
 
 
 msgid "Generate hard noise (sharp transitions)"
@@ -30020,6 +30276,10 @@ msgstr "他の形状を使用し、カットや結合、差違の演算を行い
 
 msgid "Cause the faces of the mesh object to appear or disappear one after the other over time"
 msgstr "メッシュオブジェクトの面を、時間の経過で出現・消失させます"
+
+
+msgid "Decimate"
+msgstr "デシメート"
 
 
 msgid "Reduce the geometry density"
@@ -36955,8 +37215,16 @@ msgid "1 if (A == B) within tolerance C else 0"
 msgstr "許容範囲 C 内で A ＝ B なら 1、違えば 0"
 
 
+msgid "Smooth Minimum"
+msgstr "Smooth Minimum"
+
+
 msgid "The minimum from A and B with smoothing C"
 msgstr "A と B の最小値を C でスムージングします"
+
+
+msgid "Smooth Maximum"
+msgstr "Smooth Maximum"
 
 
 msgid "The maximum from A and B with smoothing C"
@@ -37784,12 +38052,24 @@ msgid "Linear interpolation between From Min and From Max values"
 msgstr "最小値から最大値の間を線形補間します"
 
 
+msgid "Stepped Linear"
+msgstr "Stepped Linear"
+
+
 msgid "Stepped linear interpolation between From Min and From Max values"
 msgstr "最小値から最大値の間を階段状に線形補間します"
 
 
+msgid "Smoothstep"
+msgstr "Smoothstep"
+
+
 msgid "Smooth hermite edge interpolation between From Min and From Max values"
 msgstr "最小値から最大値の間をスムーズエッジエルミート補間します"
+
+
+msgid "Smootherstep"
+msgstr "Smootherstep"
 
 
 msgid "Smoother hermite edge interpolation between From Min and From Max values"
@@ -39183,7 +39463,7 @@ msgstr "キーフレームをコピー・ペーストバッファーにコピー
 
 msgctxt "Operator"
 msgid "Delete Keyframes"
-msgstr "キーフレーム削除"
+msgstr "キーフレームを削除"
 
 
 msgid "Remove all selected keyframes"
@@ -59935,6 +60215,10 @@ msgid "Detail Mode"
 msgstr "ディテールモード"
 
 
+msgid "Target sculpting workflow that is going to use the sampled size"
+msgstr "取得したサイズを使用するスカルプトワークフロー"
+
+
 msgid "Dyntopo"
 msgstr "Dyntopo"
 
@@ -69217,7 +69501,7 @@ msgstr "IKチェーンのIKソルバーの選択、0でレガシー、1でiTaSC"
 
 
 msgid "Auto IK"
-msgstr "オートIK"
+msgstr "自動IK"
 
 
 msgid "Add temporary IK constraints while grabbing bones in Pose Mode"
@@ -69229,7 +69513,7 @@ msgstr "相対ミラー"
 
 
 msgid "Apply relative transformations in X-mirror mode (not supported with Auto IK)"
-msgstr "X ミラーモード時、相対的なトランスフォームを適用します（オートIK では未対応）"
+msgstr "X ミラーモード時、相対的なトランスフォームを適用します（自動IK では未対応）"
 
 
 msgid "Pose Bone"
@@ -70434,7 +70718,7 @@ msgstr "(トランスフォーム、UIコントロールドラッグなどの)�
 
 
 msgid "Auto Depth"
-msgstr "オート深度"
+msgstr "自動深度"
 
 
 msgid "Use the depth under the mouse to improve view pan/rotate/zoom functionality"
@@ -85101,6 +85385,11 @@ msgstr "メッシュ"
 
 
 msgctxt "WindowManager"
+msgid "3D View Tool: Shear"
+msgstr "3Dビューツール：せん断"
+
+
+msgctxt "WindowManager"
 msgid "Curve"
 msgstr "カーブ"
 
@@ -85508,10 +85797,6 @@ msgstr "スポイトモーダルマップ"
 msgctxt "WindowManager"
 msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "カラーランプのカラーストップ用スポイトマップ"
-
-
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "DEMデータ(.hgt)をメッシュや画像として"
 
 
 msgid "Denoising completed."
@@ -87873,6 +88158,10 @@ msgid "Invert to Scrape"
 msgstr "反転を削り取りに"
 
 
+msgid "Thickness Profile"
+msgstr "幅のプロファイル"
+
+
 msgid "Use Thickness Profile"
 msgstr "幅の特性を使用"
 
@@ -88118,6 +88407,10 @@ msgid "Max Spring Creation Length"
 msgstr "最大生成スプリング長"
 
 
+msgid "Max Creation Diversion"
+msgstr "最大生成角度"
+
+
 msgid "Check Surface Normals"
 msgstr "サーフェス法線をチェック"
 
@@ -88128,10 +88421,6 @@ msgstr "最大引張"
 
 msgid "Max Compression"
 msgstr "最大圧縮"
-
-
-msgid "Custom volume"
-msgstr "カスタム体積"
 
 
 msgid "Pin Group"
@@ -88340,6 +88629,10 @@ msgid "Flame Smoke"
 msgstr "炎の煙"
 
 
+msgid "Temperature Maximum"
+msgstr "温度最大"
+
+
 msgid "Flame Color"
 msgstr "炎のカラー"
 
@@ -88354,6 +88647,10 @@ msgstr "パーティクル数最大"
 
 msgid "Particle Sampling"
 msgstr "パーティクルサンプリング"
+
+
+msgid "Narrow Band Width"
+msgstr "さざ波の幅"
 
 
 msgid "Particle Randomness"
@@ -88394,6 +88691,10 @@ msgstr "混入空気ポテンシャル最大"
 
 msgid "Kinetic Energy Potential Maximum"
 msgstr "運動エネルギーポテンシャル最大"
+
+
+msgid "Particle Update Radius"
+msgstr "パーティクル更新半径"
 
 
 msgid "Wave Crest Particle Sampling"
@@ -88539,11 +88840,6 @@ msgid "Guide Mode"
 msgstr "ガイドモード"
 
 
-msgctxt "Operator"
-msgid "Pause Guides"
-msgstr "ガイドをポーズ"
-
-
 msgid "Object does not have a Rigid Body"
 msgstr "オブジェクトにリジッドボディがありません"
 
@@ -88605,7 +88901,7 @@ msgstr "最小ステップサイズ"
 
 
 msgid "Auto-Step"
-msgstr "オートステップ"
+msgstr "自動ステップ"
 
 
 msgid "Light Clamping"
@@ -89185,7 +89481,7 @@ msgstr "反転して貼り付け"
 
 msgctxt "Operator"
 msgid "Clean Channels"
-msgstr "チャンネルの削除"
+msgstr "チャンネルを掃除"
 
 
 msgctxt "Operator"
@@ -89353,6 +89649,16 @@ msgstr "選択中のカーブを隠す"
 msgctxt "Operator"
 msgid "Hide Unselected Curves"
 msgstr "非選択のカーブを隠す"
+
+
+msgctxt "Operator"
+msgid "Decimate (Ratio)"
+msgstr "減量（率）"
+
+
+msgctxt "Operator"
+msgid "Decimate (Allowed Change)"
+msgstr "減量（変更可）"
 
 
 msgctxt "Operator"
@@ -89817,6 +90123,16 @@ msgstr "その他"
 msgctxt "Operator"
 msgid "Purge"
 msgstr "パージ"
+
+
+msgctxt "Operator"
+msgid "s Set"
+msgstr "s セット"
+
+
+msgctxt "Operator"
+msgid "s Clear"
+msgstr "s クリア"
 
 
 msgid "No Keying Set Active"
@@ -91346,12 +91662,12 @@ msgstr "ローカル化..."
 
 msgctxt "Operator"
 msgid "Insert Keyframe..."
-msgstr "キーフレーム挿入..."
+msgstr "キーフレームを挿入..."
 
 
 msgctxt "Operator"
 msgid "Delete Keyframes..."
-msgstr "キーフレーム削除..."
+msgstr "キーフレームを削除..."
 
 
 msgctxt "Operator"
@@ -92159,17 +92475,17 @@ msgstr "ポーズを反転して貼り付け"
 
 msgctxt "Operator"
 msgid "AutoName Left/Right"
-msgstr "オートネーム（左右）"
+msgstr "自動ネーム（左右）"
 
 
 msgctxt "Operator"
 msgid "AutoName Front/Back"
-msgstr "オートネーム（前後）"
+msgstr "自動ネーム（前後）"
 
 
 msgctxt "Operator"
 msgid "AutoName Top/Bottom"
-msgstr "オートネーム（上下）"
+msgstr "自動ネーム（上下）"
 
 
 msgctxt "Operator"
@@ -93255,10 +93571,6 @@ msgid "GPencil"
 msgstr "グリースペンシル"
 
 
-msgid "LightProbe"
-msgstr "ライトプローブ"
-
-
 msgid "No new files have been packed"
 msgstr "パックされた新規ファイルはありません"
 
@@ -94050,7 +94362,7 @@ msgstr "アクティブキーイングセットがありません"
 
 
 msgid "Keying set failed to remove any keyframes"
-msgstr "キーイングセットがすべてのキーフレーム削除に失敗"
+msgstr "キーイングセットがどのキーフレームの削除も失敗しました"
 
 
 msgid "This property cannot be animated as it will not get updated correctly"
@@ -94439,10 +94751,6 @@ msgstr "現在の選択物を分離できません"
 
 msgid "Not yet implemented"
 msgstr "未実装です"
-
-
-msgid "No conversion possible"
-msgstr "変換できません"
 
 
 msgid "No points were selected"
@@ -97829,16 +98137,8 @@ msgid "None for Enum/Boolean"
 msgstr "なし（Enum/Boolean時）"
 
 
-msgid "Key Value"
-msgstr "キー値"
-
-
-msgid "Left Handle X"
-msgstr "左ハンドルX"
-
-
-msgid "Right Handle X"
-msgstr "右ハンドルX"
+msgid "Value:"
+msgstr "値:"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -97871,10 +98171,6 @@ msgstr "式:"
 
 msgid "Add Input Variable"
 msgstr "入力値を追加"
-
-
-msgid "Value:"
-msgstr "値:"
 
 
 msgid "Update Dependencies"
@@ -97970,6 +98266,10 @@ msgstr "プロパティ表示"
 msgctxt "Operator"
 msgid "Invalid Variable Name"
 msgstr "無効な変数名"
+
+
+msgid "Decimate Keyframes"
+msgstr "キーフレームを減量"
 
 
 msgid "<No ID>"
@@ -101951,20 +102251,12 @@ msgid "Import-Export"
 msgstr "インポート/エクスポート"
 
 
-msgid "MakeHuman"
-msgstr "MakeHuman"
-
-
 msgid "Rigging"
 msgstr "リギング"
 
 
 msgid "Video Tools"
 msgstr "動画ツール"
-
-
-msgid "Workflow"
-msgstr "ワークフロー"
 
 
 msgid "English (English)"
