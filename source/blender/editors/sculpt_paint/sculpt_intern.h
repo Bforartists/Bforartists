@@ -35,9 +35,9 @@
 
 struct KeyBlock;
 struct Object;
+struct SculptPoseIKChainSegment;
 struct SculptUndoNode;
 struct bContext;
-struct SculptPoseIKChainSegment;
 
 bool sculpt_mode_poll(struct bContext *C);
 bool sculpt_mode_poll_view3d(struct bContext *C);
@@ -207,6 +207,13 @@ typedef struct SculptThreadedTaskData {
 
   bool use_area_cos;
   bool use_area_nos;
+
+  /* 0=towards view, 1=flipped */
+  float (*area_cos)[3];
+  float (*area_nos)[3];
+  int *count_no;
+  int *count_co;
+
   bool any_vertex_sampled;
 
   float *prev_mask;
@@ -220,6 +227,9 @@ typedef struct SculptThreadedTaskData {
 
   float max_distance_squared;
   float nearest_vertex_search_co[3];
+
+  /* Stabilized strength for the Clay Thumb brush. */
+  float clay_strength;
 
   int mask_expand_update_it;
   bool mask_expand_invert_mask;
@@ -277,7 +287,10 @@ void sculpt_brush_test_init(struct SculptSession *ss, SculptBrushTest *test);
 bool sculpt_brush_test_sphere(SculptBrushTest *test, const float co[3]);
 bool sculpt_brush_test_sphere_sq(SculptBrushTest *test, const float co[3]);
 bool sculpt_brush_test_sphere_fast(const SculptBrushTest *test, const float co[3]);
-bool sculpt_brush_test_cube(SculptBrushTest *test, const float co[3], float local[4][4]);
+bool sculpt_brush_test_cube(SculptBrushTest *test,
+                            const float co[3],
+                            const float local[4][4],
+                            const float roundness);
 bool sculpt_brush_test_circle_sq(SculptBrushTest *test, const float co[3]);
 bool sculpt_search_sphere_cb(PBVHNode *node, void *data_v);
 bool sculpt_search_circle_cb(PBVHNode *node, void *data_v);
@@ -311,6 +324,8 @@ bool sculpt_pbvh_calc_area_normal(const struct Brush *brush,
  *
  * For descriptions of these settings, check the operator properties.
  */
+
+#define CLAY_STABILIZER_LEN 10
 
 typedef struct StrokeCache {
   /* Invariants */
@@ -389,6 +404,13 @@ typedef struct StrokeCache {
 
   /* Pose brush */
   struct SculptPoseIKChain *pose_ik_chain;
+
+  /* Clay Thumb brush */
+  /* Angle of the front tilting plane of the brush to simulate clay accumulation. */
+  float clay_thumb_front_angle;
+  /* Stores pressure samples to get an stabilized strength and radius variation. */
+  float clay_pressure_stabilizer[CLAY_STABILIZER_LEN];
+  int clay_pressure_stabilizer_index;
 
   float vertex_rotation; /* amount to rotate the vertices when using rotate brush */
   struct Dial *dial;

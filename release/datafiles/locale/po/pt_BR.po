@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Dalai Felinto, Bruno Gonçalves Pirajá, Samuel Arataca, Daniel Tavares, Moraes Junior <ivan.paulos.tome@yandex.com>\n"
@@ -2725,12 +2725,8 @@ msgid "Mode"
 msgstr "Modo"
 
 
-msgid "Soft"
-msgstr "Suavizar"
-
-
-msgid "Hard"
-msgstr "Rígido"
+msgid "Point"
+msgstr "Pontos"
 
 
 msgid "Stroke"
@@ -7847,10 +7843,6 @@ msgstr "Amostra de curva-f"
 
 msgid "Sample point for F-Curve"
 msgstr "Ponto de amostra para curva-f."
-
-
-msgid "Point"
-msgstr "Pontos"
 
 
 msgid "Point coordinates"
@@ -17943,8 +17935,16 @@ msgid "Noise Type"
 msgstr "Tipo de ruído"
 
 
+msgid "Soft"
+msgstr "Suavizar"
+
+
 msgid "Generate soft noise (smooth transitions)"
 msgstr "Gera um ruído suave (transições mais suaves)."
+
+
+msgid "Hard"
+msgstr "Rígido"
 
 
 msgid "Generate hard noise (sharp transitions)"
@@ -65717,10 +65717,6 @@ msgid "Eyedropper Modal Map"
 msgstr "Mapa modal para conta-gotas"
 
 
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "Dados DEM (.hgt) como malha e / ou imagem."
-
-
 msgid "OSL shader compilation succeeded"
 msgstr "Compilação de sombreador OSL realizada com sucesso."
 
@@ -70934,10 +70930,6 @@ msgid "Not yet implemented"
 msgstr "Ainda não implementado."
 
 
-msgid "No conversion possible"
-msgstr "Nenhuma conversão possível."
-
-
 msgid "Too few selections to merge"
 msgstr "Muito poucas seleções para fusão."
 
@@ -73522,6 +73514,10 @@ msgid "None for Enum/Boolean"
 msgstr "Referencial nulo para enumeradores ou booleanos"
 
 
+msgid "Value:"
+msgstr "Valor:"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "Curva-f somente possui modificadores-f"
 
@@ -73544,10 +73540,6 @@ msgstr "Propriedades:"
 
 msgid "Driver Value:"
 msgstr "Valor de controlador:"
-
-
-msgid "Value:"
-msgstr "Valor:"
 
 
 msgid "Update Dependencies"
@@ -76615,16 +76607,8 @@ msgid "Import-Export"
 msgstr "Importar e exportar"
 
 
-msgid "MakeHuman"
-msgstr "MakeHuman"
-
-
 msgid "Rigging"
 msgstr "Arranjo de animação"
-
-
-msgid "Workflow"
-msgstr "Fluxo de produção"
 
 
 msgid "English (English)"

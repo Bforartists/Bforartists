@@ -12,27 +12,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * Copyright 2020, Blender Foundation.
  */
-
-#ifndef __BLI_TEMPORARY_ALLOCATOR_CXX_H__
-#define __BLI_TEMPORARY_ALLOCATOR_CXX_H__
 
 /** \file
- * \ingroup bli
+ * \ingroup draw
  */
 
-#include "BLI_temporary_allocator.h"
+#ifndef __DRAW_COLOR_MANAGEMENT_H__
+#define __DRAW_COLOR_MANAGEMENT_H__
 
-namespace BLI {
+void DRW_transform_none(struct GPUTexture *tex);
 
-template<typename T> class MutableArrayRef;
-
-template<typename T> MutableArrayRef<T> temporary_allocate_array(uint size)
-{
-  void *ptr = BLI_temporary_allocate(sizeof(T) * size);
-  return MutableArrayRef<T>((T *)ptr, size);
-}
-
-};  // namespace BLI
-
-#endif /* __BLI_TEMPORARY_ALLOCATOR_CXX_H__ */
+#endif /* __DRAW_COLOR_MANAGEMENT_H__ */

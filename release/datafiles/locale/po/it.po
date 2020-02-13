@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
 "Last-Translator: MT\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -2682,12 +2682,8 @@ msgid "Mode"
 msgstr "Modalità"
 
 
-msgid "Soft"
-msgstr "Morbido"
-
-
-msgid "Hard"
-msgstr "Duro"
+msgid "Point"
+msgstr "Punto"
 
 
 msgid "Stroke"
@@ -7438,10 +7434,6 @@ msgstr "Campione Curva-F"
 
 msgid "Sample point for F-Curve"
 msgstr "Punti campione per la Curva Funzione"
-
-
-msgid "Point"
-msgstr "Punto"
 
 
 msgid "Point coordinates"
@@ -15931,8 +15923,16 @@ msgid "Noise Type"
 msgstr "Tipo Rumore"
 
 
+msgid "Soft"
+msgstr "Morbido"
+
+
 msgid "Generate soft noise (smooth transitions)"
 msgstr "Genera rumore leggero (transizione morbida)"
+
+
+msgid "Hard"
+msgstr "Duro"
 
 
 msgid "Generate hard noise (sharp transitions)"
@@ -62355,10 +62355,6 @@ msgid "Not yet implemented"
 msgstr "Non ancora implementato"
 
 
-msgid "No conversion possible"
-msgstr "Conversione non possibile"
-
-
 msgid "Too few selections to merge"
 msgstr "Troppe poche selezioni da unire"
 
@@ -64320,6 +64316,10 @@ msgid "Interpolation:"
 msgstr "Interpolazione:"
 
 
+msgid "Value:"
+msgstr "Valore:"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "La Curva-F ha solo Modificatori-F"
 
@@ -64346,10 +64346,6 @@ msgstr "Valore Guida:"
 
 msgid "Expression:"
 msgstr "Espressione:"
-
-
-msgid "Value:"
-msgstr "Valore:"
 
 
 msgid "Update Dependencies"
@@ -66685,16 +66681,8 @@ msgid "Import-Export"
 msgstr "Importa-Esporta"
 
 
-msgid "MakeHuman"
-msgstr "MakeHuman"
-
-
 msgid "Rigging"
 msgstr "Rigging"
-
-
-msgid "Workflow"
-msgstr "Flusso di Lavoro"
 
 
 msgid "English (English)"

@@ -5,8 +5,9 @@ import os
 import sys
 import subprocess
 
-CLANG_FORMAT_CMD = "clang-format"
 VERSION_MIN = (6, 0, 0)
+VERSION_MAX_RECOMMENDED = (7, 0, 0)
+CLANG_FORMAT_CMD = "clang-format"
 
 BASE_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 os.chdir(BASE_DIR)
@@ -95,17 +96,29 @@ def convert_tabs_to_spaces(files):
             fh.write(data)
 
 
-def clang_format_version():
-    version_output = subprocess.check_output((CLANG_FORMAT_CMD, "-version")).decode('utf-8')
+def clang_format_ensure_version():
+    global CLANG_FORMAT_CMD
+    clang_format_cmd = None
+    version_output = None
+    for i in range(2, -1, -1):
+        clang_format_cmd = "clang-format-" + (".".join(["%d"] * i) % VERSION_MIN[:i]) if i > 0 else "clang-format"
+        try:
+            version_output = subprocess.check_output((clang_format_cmd, "-version")).decode('utf-8')
+        except FileNotFoundError as e:
+            continue
+        CLANG_FORMAT_CMD = clang_format_cmd
+        break
     version = next(iter(v for v in version_output.split() if v[0].isdigit()), None)
     if version is not None:
         version = version.split("-")[0]
         version = tuple(int(n) for n in version.split("."))
+    if version is not None:
+        print("Using %s (%d.%d.%d)..." % (CLANG_FORMAT_CMD, version[0], version[1], version[2])) 
     return version
 
 
 def clang_format_file(files):
-    cmd = ["clang-format", "-i", "-verbose"] + files
+    cmd = [CLANG_FORMAT_CMD, "-i", "-verbose"] + files
     return subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
 
@@ -152,13 +165,16 @@ def argparse_create():
 
 
 def main():
-    version = clang_format_version()
+    version = clang_format_ensure_version()
     if version is None:
         print("Unable to detect 'clang-format -version'")
         sys.exit(1)
     if version < VERSION_MIN:
         print("Version of clang-format is too old:", version, "<", VERSION_MIN)
         sys.exit(1)
+    if version >= VERSION_MAX_RECOMMENDED:
+        print("WARNING: Version of clang-format is too recent:", version, ">=", VERSION_MIN)
+        print("You may want to install clang-format-%d.%d, or use the precompiled libs repository." % (version[0], version[1]))
 
     args = argparse_create().parse_args()
 

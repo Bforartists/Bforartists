@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -591,12 +591,8 @@ msgid "Mode"
 msgstr "रूप"
 
 
-msgid "Soft"
-msgstr "मॄदु"
-
-
-msgid "Hard"
-msgstr "कठोर"
+msgid "Point"
+msgstr "बिंदु"
 
 
 msgid "Default"
@@ -1302,10 +1298,6 @@ msgstr "अनुप्रतीक"
 
 msgid "Group"
 msgstr "समूह"
-
-
-msgid "Point"
-msgstr "बिंदु"
 
 
 msgid "Selection status"
@@ -2637,6 +2629,14 @@ msgstr "लकड़ी"
 
 msgid "Blender Original"
 msgstr "ब्लेंडर मूल"
+
+
+msgid "Soft"
+msgstr "मॄदु"
+
+
+msgid "Hard"
+msgstr "कठोर"
 
 
 msgid "Clip Cube"
