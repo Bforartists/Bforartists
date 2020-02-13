@@ -62,8 +62,8 @@
 #include "BKE_collision.h"
 #include "BKE_colortools.h"
 #include "BKE_effect.h"
-#include "BKE_library.h"
-#include "BKE_library_query.h"
+#include "BKE_lib_id.h"
+#include "BKE_lib_query.h"
 #include "BKE_particle.h"
 
 #include "BKE_collection.h"
@@ -4378,7 +4378,6 @@ static void particles_fluid_step(ParticleSimulationData *sim,
               1. / fabsf(ob->scale[0]), 1. / fabsf(ob->scale[1]), 1. / fabsf(ob->scale[2])};
           mul_v3_fl(scaleAbs, max_size);
           mul_v3_v3(pa->state.co, scaleAbs);
-          ;
 
           /* Match domain scale. */
           mul_m4_v3(ob->obmat, pa->state.co);

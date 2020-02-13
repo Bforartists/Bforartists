@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -27166,10 +27166,6 @@ msgid "Not yet implemented"
 msgstr "Encara no s'ha implementat"
 
 
-msgid "No conversion possible"
-msgstr "Esborrar Rotació"
-
-
 msgid "Too few selections to merge"
 msgstr "Seleccionar connectats"
 
@@ -27826,6 +27822,10 @@ msgid "Interpolation:"
 msgstr "Esborrar Rotació"
 
 
+msgid "Value:"
+msgstr "Mostrar propietats de les arestes"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "Comprimir Dades"
 
@@ -27836,10 +27836,6 @@ msgstr "Image Displist"
 
 msgid "Driver Value:"
 msgstr "Afegir Tira"
-
-
-msgid "Value:"
-msgstr "Mostrar propietats de les arestes"
 
 
 msgid "Update Dependencies"

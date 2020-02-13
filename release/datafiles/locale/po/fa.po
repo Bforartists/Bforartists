@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'831bb6bc772e')\n"
+"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-03 10:17:07\n"
+"POT-Creation-Date: 2020-02-10 10:28:09\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -15677,6 +15677,10 @@ msgid "Cursor Y"
 msgstr "ﺎﻤﻧ ﻥﺎﮑﻣ"
 
 
+msgid "Value:"
+msgstr "ﺭﺍﺪﻘﻣ"
+
+
 msgid "F-Curve only has F-Modifiers"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
@@ -15687,10 +15691,6 @@ msgstr "ﯽﮔﮋﯾﻭ"
 
 msgid "Driver Value:"
 msgstr "ﺭﻮﯾﺍﺭﺩ ﺮﯿﻐﺘﻣ"
-
-
-msgid "Value:"
-msgstr "ﺭﺍﺪﻘﻣ"
 
 
 msgid "Update Dependencies"

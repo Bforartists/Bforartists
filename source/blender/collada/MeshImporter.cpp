@@ -19,10 +19,7 @@
  */
 
 #include <algorithm>
-
-#if !defined(WIN32)
-#  include <iostream>
-#endif
+#include <iostream>
 
 /* COLLADABU_ASSERT, may be able to remove later */
 #include "COLLADABUPlatform.h"
@@ -37,7 +34,7 @@ extern "C" {
 #include "BKE_customdata.h"
 #include "BKE_displist.h"
 #include "BKE_global.h"
-#include "BKE_library.h"
+#include "BKE_lib_id.h"
 #include "BKE_material.h"
 #include "BKE_mesh.h"
 #include "BKE_object.h"
