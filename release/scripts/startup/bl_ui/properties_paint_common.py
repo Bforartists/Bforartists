@@ -1050,7 +1050,9 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
             row.prop(gp_settings, "eraser_thickness_factor")
 
         row = layout.row(align=True)
+        row.use_property_split = False
         row.prop(gp_settings, "use_cursor", text="Display Cursor")
+        row.use_property_split = True
 
     # FIXME: tools must use their own UI drawing!
     elif brush.gpencil_tool == 'FILL':
@@ -1111,8 +1113,10 @@ def brush_basic_gpencil_sculpt_settings(layout, context, brush, *, compact=False
     row = layout.row(align=True)
     row.prop(brush, "strength", slider=True)
     row.prop(brush, "use_pressure_strength", text="")
-
+    
+    layout.use_property_split = False
     layout.prop(brush, "use_falloff")
+    layout.use_property_split = True
 
     if compact:
         if tool in {'THICKNESS', 'STRENGTH', 'PINCH', 'TWIST'}:
@@ -1141,6 +1145,7 @@ def brush_basic_gpencil_weight_settings(layout, _context, brush, *, compact=Fals
     row.prop(brush, "strength", slider=True)
     row.prop(brush, "use_pressure_strength", text="")
     layout.prop(brush, "weight", slider=True)
+    layout.use_property_split = False
     layout.prop(brush, "use_falloff")
 
 
