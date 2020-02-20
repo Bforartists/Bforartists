@@ -1493,7 +1493,11 @@ class VIEW3D_PT_tools_grease_pencil_brush_advanced(View3DPanel, Panel):
                 col.separator()
                 col.prop(gp_settings, "fill_factor", text="Resolution")
                 if gp_settings.fill_draw_mode != 'STROKE':
+                    col.separator()
+                    col.use_property_split = False
                     col.prop(gp_settings, "show_fill", text="Ignore Transparent Strokes")
+                    col.use_property_split = True
+                    col.separator()
                     col.prop(gp_settings, "fill_threshold", text="Threshold")
 
 class VIEW3D_PT_tools_grease_pencil_brush_stroke(Panel, View3DPanel):
@@ -1604,7 +1608,10 @@ class VIEW3D_PT_tools_grease_pencil_brush_post_processing(View3DPanel, Panel):
         col1.prop(gp_settings, "simplify_factor")
 
         col1 = col.column(align=True)
+        col1.separator()
+        col1.use_property_split = False
         col1.prop(gp_settings, "trim")
+        col1.use_property_split = True
 
 
 class VIEW3D_PT_tools_grease_pencil_brush_random(View3DPanel, Panel):
