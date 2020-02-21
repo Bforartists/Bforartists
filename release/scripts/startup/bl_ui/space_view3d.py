@@ -2116,12 +2116,6 @@ class VIEW3D_MT_select_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("gpencil.select_box", icon='BORDER_RECT')
-        layout.operator("gpencil.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-
         layout.operator("gpencil.select_linked", text="Linked", icon = "LINKED")
         layout.operator("gpencil.select_alternate", icon = "ALTERNATED")
         layout.menu("VIEW3D_MT_select_gpencil_grouped", text="Grouped")
