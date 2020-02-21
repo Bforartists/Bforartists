@@ -56,7 +56,7 @@ class INFO_MT_info(Menu):
         layout = self.layout
 
         layout.operator("info.select_all", text="All", icon = "SELECT_ALL").action = 'SELECT'
-        layout.operator("info.select_all", text="Nonel", icon = "SELECT_NONE").action = 'DESELECT'
+        layout.operator("info.select_all", text="None", icon = "SELECT_NONE").action = 'DESELECT'
         layout.operator("info.select_all", text="Inverse", icon = "INVERSE").action = 'INVERT'
         layout.operator("info.select_all", text="Toggle Selection", icon = "RESTRICT_SELECT_OFF").action = 'TOGGLE'
 
