@@ -3758,7 +3758,7 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.separator()
 
-        layout.operator("sculpt.optimize")
+        layout.operator("sculpt.optimize", icon = "FILE_REFRESH")
 
 
 class VIEW3D_MT_mask(Menu):
