@@ -2243,7 +2243,8 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             layout.prop(st, "waveform_display_type")
 
             layout.separator()
-
+            
+            layout.use_property_split = False
             layout.prop(st, "show_markers")
 
         if is_preview:
