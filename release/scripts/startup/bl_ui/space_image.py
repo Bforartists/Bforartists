@@ -1092,9 +1092,11 @@ class IMAGE_PT_view_display_uv_edit_overlays(Panel):
         col = layout.column()
 
         col.prop(uvedit, "edge_display_type", text="Display As")
+        col.use_property_split = False
         col.prop(uvedit, "show_faces", text="Faces")
 
         col = layout.column()
+        col.use_property_split = False
         col.prop(uvedit, "show_smooth_edges", text="Smooth")
         col.prop(uvedit, "show_modified_edges", text="Modified")
 
