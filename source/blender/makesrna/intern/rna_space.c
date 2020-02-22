@@ -2734,9 +2734,11 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
       {0, NULL, 0, NULL, NULL},
   };
 
+  /*bfa - changed order to have stretching method area first*/
   static const EnumPropertyItem dt_uvstretch_items[] = {
-      {SI_UVDT_STRETCH_ANGLE, "ANGLE", 0, "Angle", "Angular distortion between UV and 3D angles"},
       {SI_UVDT_STRETCH_AREA, "AREA", 0, "Area", "Area distortion between UV and 3D faces"},
+      {SI_UVDT_STRETCH_ANGLE, "ANGLE", 0, "Angle", "Angular distortion between UV and 3D angles"},
+
       {0, NULL, 0, NULL, NULL},
   };
 
