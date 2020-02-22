@@ -189,9 +189,12 @@ class RENDER_PT_post_processing(RenderOutputButtonsPanel, Panel):
 
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
         col = flow.column()
+        col.use_property_split = False
         col.prop(rd, "use_compositing")
         col = flow.column()
+        col.use_property_split = False
         col.prop(rd, "use_sequencer")
+        col.use_property_split = True
 
         layout.prop(rd, "dither_intensity", text="Dither", slider=True)
 

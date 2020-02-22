@@ -146,6 +146,7 @@ def point_cache_ui(self, cache, enabled, cachetype):
         if cachetype == 'FLUID':
             col.prop(cache, "use_library_path", text="Use Library Path")
 
+        col.use_property_split = False
         col.prop(cache, "use_external")
 
     if cache.use_external:

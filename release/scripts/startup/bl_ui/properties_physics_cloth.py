@@ -190,7 +190,9 @@ class PHYSICS_PT_cloth_internal_springs(PhysicButtonsPanel, Panel):
         col = flow.column()
         col.prop(cloth, "internal_spring_max_diversion", text="Max Creation Diversion")
         col = flow.column()
+        col.use_property_split = False
         col.prop(cloth, "internal_spring_normal_check", text="Check Surface Normals")
+        col.use_property_split = True
         col = flow.column()
         col.prop(cloth, "internal_tension_stiffness", text="Tension")
         col = flow.column()
@@ -231,7 +233,9 @@ class PHYSICS_PT_cloth_pressure(PhysicButtonsPanel, Panel):
         col.prop(cloth, "uniform_pressure_force")
 
         col = flow.column()
+        col.use_property_split = False
         col.prop(cloth, "use_pressure_volume", text="Custom Volume")
+        col.use_property_split = True
 
         col = flow.column()
         col.active = cloth.use_pressure_volume
