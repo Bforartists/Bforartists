@@ -654,6 +654,7 @@ class CYCLES_RENDER_PT_performance_tiles(CyclesButtonsPanel, Panel):
 
         sub = col.column()
         sub.active = not rd.use_save_buffers
+        sub.use_property_split = False
         sub.prop(cscene, "use_progressive_refine")
 
 
@@ -732,7 +733,7 @@ class CYCLES_RENDER_PT_filter(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         with_freestyle = bpy.app.build_options.freestyle
@@ -788,7 +789,7 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         scene = context.scene
@@ -824,7 +825,8 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         col.prop(cycles_view_layer, "pass_debug_render_time", text="Render Time")
 
         layout.separator()
-
+        
+        layout.use_property_split = True
         layout.prop(view_layer, "pass_alpha_threshold")
 
 
@@ -882,6 +884,7 @@ class CYCLES_RENDER_PT_passes_light(CyclesButtonsPanel, Panel):
         row.prop(cycles_view_layer, "use_pass_volume_indirect", text="Indirect", toggle=True)
 
         col = layout.column(align=True)
+        col.use_property_split = False
         col.prop(view_layer, "use_pass_emit", text="Emission")
         col.prop(view_layer, "use_pass_environment")
         col.prop(view_layer, "use_pass_shadow")
@@ -913,6 +916,7 @@ class CYCLES_RENDER_PT_passes_crypto(CyclesButtonsPanel, Panel):
 
         row = layout.row(align=True)
         row.active = use_cpu(context)
+        row.use_property_split = False
         row.prop(cycles_view_layer, "pass_crypto_accurate", text="Accurate Mode")
 
 
@@ -1014,6 +1018,8 @@ class CYCLES_RENDER_PT_denoising(CyclesButtonsPanel, Panel):
         col.prop(cycles_view_layer, "denoising_radius", text="Radius")
         col.prop(cycles_view_layer, "denoising_strength", slider=True, text="Strength")
         col.prop(cycles_view_layer, "denoising_feature_strength", slider=True, text="Feature Strength")
+        col.separator()
+        col.use_property_split = False
         col.prop(cycles_view_layer, "denoising_relative_pca")
 
         layout.separator()
@@ -1080,6 +1086,7 @@ class CYCLES_PT_post_processing(CyclesButtonsPanel, Panel):
         rd = context.scene.render
 
         col = layout.column(align=True)
+        col.use_property_split = False
         col.prop(rd, "use_compositing")
         col.prop(rd, "use_sequencer")
 
