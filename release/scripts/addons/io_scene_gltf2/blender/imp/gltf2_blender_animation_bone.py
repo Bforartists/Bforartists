@@ -197,4 +197,3 @@ class BlenderBoneAnim():
 
             elif channel.target.path == "scale":
                 BlenderBoneAnim.parse_scale_channel(gltf, vnode, obj, bone, channel, animation)
-

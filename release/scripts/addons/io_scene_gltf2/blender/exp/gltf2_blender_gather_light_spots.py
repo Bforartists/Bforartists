@@ -42,4 +42,3 @@ def __gather_inner_cone_angle(blender_lamp, _) -> Optional[float]:
 
 def __gather_outer_cone_angle(blender_lamp, _) -> Optional[float]:
     return blender_lamp.spot_size * 0.5
-

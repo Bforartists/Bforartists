@@ -101,12 +101,6 @@ typedef enum DerivedMeshType {
   DM_TYPE_CCGDM,
 } DerivedMeshType;
 
-typedef enum DMForeachFlag {
-  DM_FOREACH_NOP = 0,
-  /* foreachMappedVert, foreachMappedLoop, foreachMappedFaceCenter */
-  DM_FOREACH_USE_NORMAL = (1 << 0),
-} DMForeachFlag;
-
 typedef enum DMDirtyFlag {
   /* dm has valid tessellated faces, but tessellated CDDATA need to be updated. */
   DM_DIRTY_TESS_CDLAYERS = 1 << 0,
@@ -361,11 +355,6 @@ void DM_interp_vert_data(struct DerivedMesh *source,
                          int dest_index);
 
 void mesh_get_mapped_verts_coords(struct Mesh *me_eval, float (*r_cos)[3], const int totcos);
-
-DerivedMesh *mesh_create_derived_render(struct Depsgraph *depsgraph,
-                                        struct Scene *scene,
-                                        struct Object *ob,
-                                        const struct CustomData_MeshMasks *dataMask);
 
 /* same as above but wont use render settings */
 struct Mesh *editbmesh_get_eval_cage(struct Depsgraph *depsgraph,

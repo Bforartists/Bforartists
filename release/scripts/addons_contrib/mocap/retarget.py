@@ -79,7 +79,7 @@ def createIntermediate(performer_obj, enduser_obj, root, s_frame, e_frame, scene
         perf_world_rotation = perf_bone.matrix
         inter_world_base_rotation = inter_bone.bone.matrix_local
         inter_world_base_inv = inter_world_base_rotation.inverted()
-        bake_matrix = (inter_world_base_inv.to_3x3() * perf_world_rotation.to_3x3())
+        bake_matrix = inter_world_base_inv.to_3x3() @ perf_world_rotation.to_3x3()
         return bake_matrix.to_4x4()
 
     #uses 1to1 and interpolation/averaging to match many to 1 retarget
@@ -108,7 +108,7 @@ def createIntermediate(performer_obj, enduser_obj, root, s_frame, e_frame, scene
                 inter_bone.matrix_basis = singleBoneRetarget(inter_bone, perf_bone)
         #Some bones have incorrect roll on the source armature, and need to be marked for fixing
         if inter_bone.bone.twistFix:
-            inter_bone.matrix_basis *= Matrix.Rotation(radians(180), 4, "Y")
+            inter_bone.matrix_basis @= Matrix.Rotation(radians(180), 4, "Y")
         rot_mode = inter_bone.rotation_mode
         if rot_mode == "QUATERNION":
             inter_bone.keyframe_insert("rotation_quaternion")
@@ -191,11 +191,11 @@ def retargetEnduser(inter_obj, enduser_obj, root, s_frame, e_frame, scene, step)
             parent_rest = trg_bone.parent.bone.matrix_local
             parent_rest_inv = parent_rest.inverted()
             parent_mat_inv = parent_mat.inverted()
-            bake_matrix = parent_mat_inv * bake_matrix
-            rest_matrix = parent_rest_inv * rest_matrix
+            bake_matrix = parent_mat_inv @ bake_matrix
+            rest_matrix = parent_rest_inv @ rest_matrix
 
         rest_matrix_inv = rest_matrix.inverted()
-        bake_matrix = rest_matrix_inv * bake_matrix
+        bake_matrix = rest_matrix_inv @ bake_matrix
         end_bone.matrix_basis = bake_matrix
         rot_mode = end_bone.rotation_mode
         if rot_mode == "QUATERNION":
@@ -299,7 +299,7 @@ def copyTranslation(performer_obj, enduser_obj, perfFeet, root, s_frame, e_frame
         scene.frame_set(t)
         #calculate the new position, by dividing by the found ratio between performer and enduser
         newTranslation = (tailLoc(perf_bones[perfRoot]) / avg)
-        stride_bone.location = enduser_obj_mat * (newTranslation - initialPos)
+        stride_bone.location = enduser_obj_mat @ (newTranslation - initialPos)
         stride_bone.keyframe_insert("location")
     stride_bone.animation_data.action.name = ("Stride Bone " + action_name)
 
@@ -373,7 +373,7 @@ def restoreObjMat(performer_obj, enduser_obj, perf_obj_mat, enduser_obj_mat, str
     performer_obj.matrix_world = perf_obj_mat
     enduser_obj.parent = stride_bone
     scene.frame_set(s_frame)
-    enduser_obj_mat = enduser_obj_mat.to_3x3().to_4x4() * Matrix.Translation(stride_bone.matrix_world.to_translation())
+    enduser_obj_mat = enduser_obj_mat.to_3x3().to_4x4() @ Matrix.Translation(stride_bone.matrix_world.to_translation())
     enduser_obj.matrix_world = enduser_obj_mat
 
 

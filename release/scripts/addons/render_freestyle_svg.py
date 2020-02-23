@@ -240,11 +240,11 @@ class SVGExport(bpy.types.PropertyGroup):
             default='FRAME',
             )
     line_join_type: EnumProperty(
-            name="Linejoin",
+            name="Line Join",
             items=(
                 ('MITER', "Miter", "Corners are sharp", 0),
                 ('ROUND', "Round", "Corners are smoothed", 1),
-                ('BEVEL', "Bevel", "Corners are bevelled", 2),
+                ('BEVEL', "Bevel", "Corners are beveled", 2),
                 ),
             default='ROUND',
             )

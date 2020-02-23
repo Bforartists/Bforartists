@@ -410,4 +410,3 @@ def __gather_output(channels: typing.Tuple[bpy.types.FCurve],
         sparse=None,
         type=data_type
     )
-

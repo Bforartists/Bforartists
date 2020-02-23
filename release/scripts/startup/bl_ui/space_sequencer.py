@@ -421,6 +421,8 @@ class SEQUENCER_MT_select(Menu):
         layout.separator()
 
         layout.operator("sequencer.select_box", text="Box Select", icon='BORDER_RECT')
+        props = layout.operator("sequencer.select_box", text="Box Select (Include Handles)", icon='BORDER_RECT')
+        props.include_handles = True
 
         layout.separator()
 
@@ -736,8 +738,8 @@ class SEQUENCER_MT_strip(Menu):
         layout.operator("sequencer.offset_clear", icon = "SEQ_CLEAR_OFFSET")
 
         layout.separator()
-        layout.operator("sequencer.cut", text="Cut", icon='CUT').type = 'SOFT'
-        layout.operator("sequencer.cut", text="Hold Cut", icon='CUT').type = 'HARD'
+        layout.operator("sequencer.split", text="Split", icon='CUT').type = 'SOFT'
+        layout.operator("sequencer.split", text="Hold Split", icon='CUT').type = 'HARD'
 
         layout.separator()
         layout.operator("sequencer.copy", text="Copy", icon='COPYDOWN')
@@ -802,7 +804,7 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("sequencer.cut", text="Cut", icon='CUT').type = 'SOFT'
+        layout.operator("sequencer.split", text="Split", icon='CUT').type = 'SOFT'
 
         layout.separator()
 
@@ -863,7 +865,7 @@ class SEQUENCER_MT_context_menu(Menu):
             }:
                 layout.separator()
                 layout.menu("SEQUENCER_MT_strip_effect")
-            elif strip_type in 'MOVIE':
+            elif strip_type == 'MOVIE':
                 layout.separator()
                 layout.menu("SEQUENCER_MT_strip_movie")
             elif strip_type == 'IMAGE':
@@ -1137,11 +1139,11 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
                     if i == strip.multicam_source:
                         sub = row.row(align=True)
                         sub.enabled = False
-                        sub.operator("sequencer.cut_multicam", text=f"{i:d}").camera = i
+                        sub.operator("sequencer.split_multicam", text="%d" % i).camera = i
                     else:
                         sub_1 = row.row(align=True)
                         sub_1.enabled = True
-                        sub_1.operator("sequencer.cut_multicam", text=f"{i:d}").camera = i
+                        sub_1.operator("sequencer.split_multicam", text="%d" % i).camera = i
 
                 if strip.channel > BT_ROW and (strip_channel - 1) % BT_ROW:
                     for i in range(strip.channel, strip_channel + ((BT_ROW + 1 - strip_channel) % BT_ROW)):
@@ -2243,7 +2245,8 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             layout.prop(st, "waveform_display_type")
 
             layout.separator()
-
+            
+            layout.use_property_split = False
             layout.prop(st, "show_markers")
 
         if is_preview:

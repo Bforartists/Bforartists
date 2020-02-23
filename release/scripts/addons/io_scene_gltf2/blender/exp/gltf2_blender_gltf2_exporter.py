@@ -328,4 +328,3 @@ def _path_to_uri(path):
     path = os.path.normpath(path)
     path = path.replace(os.sep, '/')
     return urllib.parse.quote(path)
-

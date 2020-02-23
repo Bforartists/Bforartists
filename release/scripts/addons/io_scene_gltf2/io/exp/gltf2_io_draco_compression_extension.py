@@ -343,4 +343,3 @@ def __compress_primitive(primitive, dll, export_settings):
     dll.destroy_compressor(compressor)
 
     return
-

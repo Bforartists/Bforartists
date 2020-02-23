@@ -170,4 +170,3 @@ def transform_value(value: Vector, _: Matrix = Matrix.Identity(4)) -> Vector:
 def round_if_near(value: float, target: float) -> float:
     """If value is very close to target, round to target."""
     return value if abs(value - target) > 2.0e-6 else target
-

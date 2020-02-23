@@ -55,14 +55,14 @@ class INFO_MT_info(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("info.select_all", text="Select All").action = 'SELECT'
-        layout.operator("info.select_all", text="Deselect All").action = 'DESELECT'
-        layout.operator("info.select_all", text="Invert Selection").action = 'INVERT'
-        layout.operator("info.select_all", text="Toggle Selection").action = 'TOGGLE'
+        layout.operator("info.select_all", text="All", icon = "SELECT_ALL").action = 'SELECT'
+        layout.operator("info.select_all", text="None", icon = "SELECT_NONE").action = 'DESELECT'
+        layout.operator("info.select_all", text="Inverse", icon = "INVERSE").action = 'INVERT'
+        layout.operator("info.select_all", text="Toggle Selection", icon = "RESTRICT_SELECT_OFF").action = 'TOGGLE'
 
         layout.separator()
 
-        layout.operator("info.select_box")
+        layout.operator("info.select_box", icon = 'BORDER_RECT')
 
         layout.separator()
 
@@ -73,8 +73,8 @@ class INFO_MT_info(Menu):
         # layout.operator("info.report_replay")
         # layout.separator()
 
-        layout.operator("info.report_delete", text="Delete")
-        layout.operator("info.report_copy", text="Copy")
+        layout.operator("info.report_delete", text="Delete", icon = "DELETE")
+        layout.operator("info.report_copy", text="Copy", icon='COPYDOWN')
 
 
 # bfa - show hide the editormenu

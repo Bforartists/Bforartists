@@ -15,12 +15,12 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (1, 2, 18),
-    'blender': (2, 81, 6),
+    "version": (1, 2, 26),
+    'blender': (2, 82, 7),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
     'warning': '',
-    'wiki_url': "https://docs.blender.org/manual/en/dev/addons/import_export/io_scene_gltf2.html",
+    'wiki_url': "https://docs.blender.org/manual/en/dev/addons/import_export/scene_gltf2.html",
     'tracker_url': "https://github.com/KhronosGroup/glTF-Blender-IO/issues/",
     'support': 'OFFICIAL',
     'category': 'Import-Export',
@@ -480,13 +480,8 @@ class ExportGLTF2_Base:
 
         return gltf2_blender_export.save(context, export_settings)
 
-
-
-
-
-
     def draw(self, context):
-        pass
+        pass # Is needed to get panels available
 
 
 class GLTF_PT_export_main(bpy.types.Panel):

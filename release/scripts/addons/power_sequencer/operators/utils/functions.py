@@ -14,10 +14,11 @@
 # You should have received a copy of the GNU General Public License along with Power Sequencer. If
 # not, see <https://www.gnu.org/licenses/>.
 #
-import bpy
-import subprocess
-from math import sqrt, floor
+from math import floor, sqrt
 from operator import attrgetter
+
+import bpy
+
 from .global_settings import SequenceTypes
 
 
@@ -258,36 +259,48 @@ def slice_selection(context, sequences):
     return broken_selection
 
 
-def trim_strips(
-    context, start_frame, end_frame, select_mode, strips_to_trim=[], strips_to_delete=[]
-):
+def trim_strips(context, start_frame, end_frame, to_trim=[], to_delete=[]):
     """
     Remove the footage and audio between start_frame and end_frame.
     """
     trim_start = min(start_frame, end_frame)
     trim_end = max(start_frame, end_frame)
 
-    strips_to_trim = [s for s in strips_to_trim if s.type in SequenceTypes.CUTABLE]
+    to_trim = [s for s in to_trim if s.type in SequenceTypes.CUTABLE]
 
-    for s in strips_to_trim:
-        if s.frame_final_start < trim_start and s.frame_final_end > trim_end:
+    for s in to_trim:
+        # Cut strip longer than the trim range in three
+        is_strip_longer_than_trim_range = (
+            s.frame_final_start < trim_start and s.frame_final_end > trim_end
+        )
+        if is_strip_longer_than_trim_range:
             bpy.ops.sequencer.select_all(action="DESELECT")
             s.select = True
             bpy.ops.sequencer.cut(frame=trim_start, type="SOFT", side="RIGHT")
             bpy.ops.sequencer.cut(frame=trim_end, type="SOFT", side="LEFT")
-            strips_to_delete.append(context.selected_sequences[0])
+            to_delete.append(context.selected_sequences[0])
             continue
+
+        # Resize strips that overlap the trim range
         elif s.frame_final_start < trim_end and s.frame_final_end > trim_end:
             s.frame_final_start = trim_end
         elif s.frame_final_end > trim_start and s.frame_final_start < trim_start:
             s.frame_final_end = trim_start
 
-    if strips_to_delete != []:
-        bpy.ops.sequencer.select_all(action="DESELECT")
-        for s in strips_to_delete:
-            s.select = True
-        bpy.ops.sequencer.delete()
+    delete_strips(to_delete)
     return {"FINISHED"}
+
+
+def delete_strips(to_delete=[]):
+    """
+    Remove the footage and audio between start_frame and end_frame.
+    """
+    if to_delete == []:
+        return
+    bpy.ops.sequencer.select_all(action="DESELECT")
+    for s in to_delete:
+        s.select = True
+    bpy.ops.sequencer.delete()
 
 
 def find_closest_surrounding_cuts(context, frame):
@@ -333,11 +346,48 @@ def get_sequences_under_cursor(context):
     return under_cursor
 
 
-def sequencer_workaround_2_80_audio_bug(context):
-    for s in context.sequences:
-        if s.lock:
-            continue
+def ripple_move(context, sequences, duration_frames, delete=False):
+    """Moves sequences in the list and ripples the change to all sequences after them, in the corresponding channels
+    The `duration_frames` can be positive or negative.
+    If `delete` is True, deletes every sequence in `sequences`.
+    """
+    channels = {s.channel for s in sequences}
+    first_strip = min(sequences, key=lambda s: s.frame_final_start)
+    to_ripple = [
+        s
+        for s in context.sequences
+        if s.channel in channels and s.frame_final_start >= first_strip.frame_final_start
+    ]
+
+    if delete:
+        bpy.ops.sequencer.select_all(action="DESELECT")
+        for s in sequences:
+            s.select = True
+        bpy.ops.sequencer.delete()
+    else:
+        to_ripple = set(to_ripple + sequences)
+
+    # Use the built-in seq_slide operator to move strips, for best performances
+    initial_selection = context.selected_sequences
+    bpy.ops.sequencer.select_all(action="DESELECT")
+    for s in to_ripple:
         s.select = True
-        bpy.ops.transform.seq_slide(value=(0, 0))
-        s.select = False
-        break
+    bpy.ops.transform.seq_slide(value=(duration_frames, 0))
+    bpy.ops.sequencer.select_all(action="DESELECT")
+    for s in initial_selection:
+        s.select = True
+
+
+def apply_time_offset(context, sequences=[], offset=0):
+    """Offsets a list of sequences in time using bpy.ops.transform.seq_slide. Mutates and restores the
+    user's selection. Use this function to ensure maximum performances and avoid having to figure
+    out the logic to move strips in the right order.
+    """
+    selection = context.selected_sequences
+    bpy.ops.sequencer.select_all(action="DESELECT")
+    for s in sequences:
+        s.select = True
+    bpy.ops.transform.seq_slide(value=(offset, 0))
+    bpy.ops.sequencer.select_all(action="DESELECT")
+    for s in selection:
+        s.select = True

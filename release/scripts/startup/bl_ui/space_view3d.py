@@ -1590,6 +1590,11 @@ class VIEW3D_MT_select_particle(Menu):
 
         layout.separator()
 
+        layout.operator("particle.select_linked", text="Select Linked", icon = "LINKED")
+
+        layout.separator()
+
+
         layout.operator("particle.select_random", text = "Random", icon = "RANDOMIZE")
 
         layout.separator()
@@ -2113,12 +2118,6 @@ class VIEW3D_MT_select_gpencil(Menu):
         layout.operator("gpencil.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("gpencil.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("gpencil.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
-
-        layout.separator()
-
-        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
-        layout.operator("gpencil.select_box", icon='BORDER_RECT')
-        layout.operator("gpencil.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
@@ -3764,7 +3763,7 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.separator()
 
-        layout.operator("sculpt.optimize")
+        layout.operator("sculpt.optimize", icon = "FILE_REFRESH")
 
 
 class VIEW3D_MT_mask(Menu):
@@ -4008,6 +4007,8 @@ class VIEW3D_MT_particle_context_menu(Menu):
 
             layout.operator("particle.select_more", icon = "SELECTMORE")
             layout.operator("particle.select_less", icon = "SELECTLESS")
+
+            layout.operator("particle.select_linked", text="Select Linked", icon = "LINKED")
 
 
 # Workaround to separate the tooltips for Show Hide for Particles in Particle mode
@@ -8052,7 +8053,10 @@ class VIEW3D_PT_sculpt_context_menu(Panel):
             layout.prop(brush, "normal_weight", slider=True)
 
         if capabilities.has_pinch_factor:
-            layout.prop(brush, "crease_pinch_factor", slider=True, text="Pinch")
+            text = "Pinch"
+            if brush.sculpt_tool in {'BLOB', 'SNAKE_HOOK'}:
+                text = "Magnify"
+            layout.prop(brush, "crease_pinch_factor", slider=True, text=text)
 
         if capabilities.has_rake_factor:
             layout.prop(brush, "rake_factor", slider=True)

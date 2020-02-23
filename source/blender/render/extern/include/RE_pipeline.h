@@ -228,6 +228,13 @@ struct RenderPass *RE_create_gp_pass(struct RenderResult *rr,
                                      const char *layername,
                                      const char *viewname);
 
+void RE_create_render_pass(struct RenderResult *rr,
+                           const char *name,
+                           int channels,
+                           const char *chan_id,
+                           const char *layername,
+                           const char *viewname);
+
 /* obligatory initialize call, disprect is optional */
 void RE_InitState(struct Render *re,
                   struct Render *source,
@@ -246,9 +253,6 @@ void RE_SetOverrideCamera(struct Render *re, struct Object *camera);
 void RE_SetCamera(struct Render *re, struct Object *camera);
 void RE_SetWindow(struct Render *re, const rctf *viewplane, float clip_start, float clip_end);
 void RE_SetOrtho(struct Render *re, const rctf *viewplane, float clip_start, float clip_end);
-
-/* option to set viewmatrix before making dbase */
-void RE_SetView(struct Render *re, float mat[4][4]);
 
 /* get current view and window transform */
 void RE_GetViewPlane(struct Render *re, rctf *r_viewplane, rcti *r_disprect);

@@ -75,10 +75,6 @@ def get_socket_or_texture_slot(blender_material: bpy.types.Material, name: str):
         inputs = sum([[input for input in node.inputs if input.name == name] for node in nodes], [])
         if inputs:
             return inputs[0]
-    else:
-
-
-        pass
 
     return None
 
@@ -222,4 +218,3 @@ def get_node(data_path):
         return None
 
     return node_name[:(index)]
-

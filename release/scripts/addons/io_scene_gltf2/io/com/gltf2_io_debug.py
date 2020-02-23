@@ -124,4 +124,3 @@ class Log:
         self.hdlr.setFormatter(formatter)
         self.logger.addHandler(self.hdlr)
         self.logger.setLevel(int(loglevel))
-

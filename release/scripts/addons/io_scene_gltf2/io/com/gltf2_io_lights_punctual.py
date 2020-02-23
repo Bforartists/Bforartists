@@ -74,4 +74,3 @@ class Light:
                                           self.extensions)
         result["extras"] = self.extras
         return result
-

@@ -55,7 +55,7 @@ class ScatterObjects(bpy.types.Operator):
         self.objects_to_scatter = get_selected_non_active_objects(context)
 
         if self.target_object is None or len(self.objects_to_scatter) == 0:
-            self.report({'ERROR'}, "Select objects to scatter and a target object.")
+            self.report({'ERROR'}, "Select objects to scatter and a target object")
             return {'CANCELLED'}
 
         self.base_scale = get_max_object_side_length(self.objects_to_scatter)

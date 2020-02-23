@@ -15,11 +15,9 @@
 # not, see <https://www.gnu.org/licenses/>.
 #
 import bpy
-from math import floor
 
-from .utils.functions import convert_duration_to_frames
-from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 from .utils.functions import slice_selection
+from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 
 
 class POWER_SEQUENCER_OT_expand_to_surrounding_cuts(bpy.types.Operator):
@@ -63,16 +61,15 @@ class POWER_SEQUENCER_OT_expand_to_surrounding_cuts(bpy.types.Operator):
     def invoke(self, context, event):
         sequence_blocks = slice_selection(context, context.selected_sequences)
         for sequences in sequence_blocks:
-            sequences_frame_start = min(sequences, key=lambda s: s.frame_final_start).frame_final_start
+            sequences_frame_start = min(
+                sequences, key=lambda s: s.frame_final_start
+            ).frame_final_start
             sequences_frame_end = max(sequences, key=lambda s: s.frame_final_end).frame_final_end
 
             frame_left, frame_right = find_closest_cuts(
                 context, sequences_frame_start, sequences_frame_end
             )
-            if (
-                sequences_frame_start == frame_left
-                and sequences_frame_end == frame_right
-            ):
+            if sequences_frame_start == frame_left and sequences_frame_end == frame_right:
                 continue
 
             to_extend_left = [s for s in sequences if s.frame_final_start == sequences_frame_start]
@@ -80,15 +77,11 @@ class POWER_SEQUENCER_OT_expand_to_surrounding_cuts(bpy.types.Operator):
 
             for s in to_extend_left:
                 s.frame_final_start = (
-                    frame_left
-                    if frame_left < sequences_frame_start
-                    else sequences_frame_start
+                    frame_left if frame_left < sequences_frame_start else sequences_frame_start
                 )
             for s in to_extend_right:
                 s.frame_final_end = (
-                    frame_right
-                    if frame_right > sequences_frame_end
-                    else sequences_frame_end
+                    frame_right if frame_right > sequences_frame_end else sequences_frame_end
                 )
         return {"FINISHED"}
 

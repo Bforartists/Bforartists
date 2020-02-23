@@ -35,4 +35,3 @@ def is_json_convertible(data):
         return True
     except:
         return False
-
