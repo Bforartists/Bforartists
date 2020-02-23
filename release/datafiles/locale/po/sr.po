@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
+"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 10:28:09\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -4499,6 +4499,10 @@ msgstr "Брзина"
 
 msgid "Domain"
 msgstr "Област"
+
+
+msgid "Velocity Factor"
+msgstr "Фактор брзине"
 
 
 msgid "Emitter"
@@ -11490,6 +11494,10 @@ msgid "Blending"
 msgstr "Мешање"
 
 
+msgid "Mute"
+msgstr "Искључи звук"
+
+
 msgid "Meta"
 msgstr "Мета"
 
@@ -11540,10 +11548,6 @@ msgstr "Статичка врста"
 
 msgid "Node type (deprecated, use with care)"
 msgstr "Врста чвора (застарело, користите пажљиво)"
-
-
-msgid "Mute"
-msgstr "Искључи звук"
 
 
 msgid "Node selection state"
@@ -18653,10 +18657,6 @@ msgid "Limit Number of Weights per Vertex"
 msgstr "Ограничен број тежина по темену"
 
 
-msgid "Change the lock state of all vertex groups of active object"
-msgstr "Мења избор свих временских маркера"
-
-
 msgid "Lock action to execute on vertex groups"
 msgstr "Поставља активну групу темена"
 
@@ -19904,11 +19904,6 @@ msgstr "Игнориши клик на позадину"
 
 
 msgctxt "Operator"
-msgid "Optimize"
-msgstr "Оптимизуј"
-
-
-msgctxt "Operator"
 msgid "Sample Detail Size"
 msgstr "Једноставна детаљност"
 
@@ -20039,19 +20034,6 @@ msgstr "Претапање звука"
 
 msgid "Do cross-fading volume animation of two selected sound strips"
 msgstr "Претопи јачину звука између две изабране звучне траке"
-
-
-msgctxt "Operator"
-msgid "Cut Strips"
-msgstr "Исеци траке"
-
-
-msgid "Cut the selected strips"
-msgstr "Исеци изабране траке"
-
-
-msgid "The type of cut operation to perform on strips"
-msgstr "Врста исецања трака"
 
 
 msgctxt "Operator"
@@ -20652,6 +20634,10 @@ msgid "Unindent selected text"
 msgstr "Извлачи изабрани блок текста"
 
 
+msgid "Constraint Axis"
+msgstr "Ограничења оса"
+
+
 msgctxt "Operator"
 msgid "Bend"
 msgstr "Савијање"
@@ -20743,10 +20729,6 @@ msgstr "Исправи UV-е"
 
 msgid "Correct UV coordinates when transforming"
 msgstr "Исправи UV координате приликом трансформације"
-
-
-msgid "Constraint Axis"
-msgstr "Ограничења оса"
 
 
 msgctxt "Operator"
@@ -22250,6 +22232,10 @@ msgid "Geometry Data"
 msgstr "Геометријски подаци"
 
 
+msgid "Transparency"
+msgstr "Провидност"
+
+
 msgid "Paragraph"
 msgstr "Параграф"
 
@@ -23438,10 +23424,6 @@ msgstr "Величина меморијске оставе"
 
 msgid "Memory cache limit (in megabytes)"
 msgstr "Величина меморијске оставе (у мегабајтима)"
-
-
-msgid "Number of frames to render ahead during playback (sequencer only)"
-msgstr "Број кадрова који је потребно рендеровати у напред током репродукције (само секвенцер)"
 
 
 msgid "Maximum number of lines to store for the console buffer"
@@ -25523,10 +25505,6 @@ msgid "Emission Time"
 msgstr "Време исијавања"
 
 
-msgid "Velocity Factor"
-msgstr "Фактор брзине"
-
-
 msgid "Clip Editor"
 msgstr "Уређивач клипова"
 
@@ -25761,22 +25739,6 @@ msgstr "Тема информација"
 
 msgid "Theme settings for Info"
 msgstr "Подешавање теме за информације"
-
-
-msgid "Error Background"
-msgstr "Позадина грешке"
-
-
-msgid "Error Text"
-msgstr "Текст грешке"
-
-
-msgid "Warning Background"
-msgstr "Позадина упозорења"
-
-
-msgid "Warning Text"
-msgstr "Текст упозорења"
 
 
 msgid "Sound Strips Selected"
@@ -26733,10 +26695,6 @@ msgid "Mesh Light"
 msgstr "Меш светло"
 
 
-msgid "Transparency"
-msgstr "Провидност"
-
-
 msgid "Tiles X"
 msgstr "Делова X"
 
@@ -27362,6 +27320,10 @@ msgid "UV Axis:"
 msgstr "UV осе:"
 
 
+msgid "Offset:"
+msgstr "Одстојање:"
+
+
 msgid "UV Map:"
 msgstr "UV мапа:"
 
@@ -27388,10 +27350,6 @@ msgstr "Подешавања:"
 
 msgid "Color:"
 msgstr "Боја:"
-
-
-msgid "Offset:"
-msgstr "Одстојање:"
 
 
 msgid "Bone:"
@@ -30165,24 +30123,8 @@ msgid "File name"
 msgstr "Назив датотеке"
 
 
-msgid "Cursor from Selection"
-msgstr "Курсор на избор"
-
-
 msgid "Cursor X"
 msgstr "Курсор X"
-
-
-msgid "To Keys"
-msgstr "Кључеви"
-
-
-msgid "Cursor Y"
-msgstr "Курсор Y"
-
-
-msgid "Value:"
-msgstr "Вредност"
 
 
 msgid "No active keyframe on F-Curve"
@@ -30197,16 +30139,16 @@ msgid "Driver Value:"
 msgstr "Вредност возача:"
 
 
+msgid "Value:"
+msgstr "Вредност"
+
+
 msgid "Update Dependencies"
 msgstr "Освежи зависности"
 
 
 msgid "Add Modifier"
 msgstr "Додај модификатор"
-
-
-msgid "View Properties"
-msgstr "Особине погледа"
 
 
 msgid "Unsupported audio format"
@@ -30513,10 +30455,6 @@ msgid "Object as Camera"
 msgstr "Објекат као камера"
 
 
-msgid "%s (Local)"
-msgstr "%s (локални)"
-
-
 msgid "Cannot fly a camera from an external library"
 msgstr "Читај складиште са спољне локације"
 
@@ -30559,14 +30497,6 @@ msgstr "дуж %s Z"
 
 msgid "along local Z"
 msgstr "дуж локалне Z"
-
-
-msgid "Shrink/Fatten:"
-msgstr "Скупи/удебљај:"
-
-
-msgid "Vert Slide: "
-msgstr "Величина темена"
 
 
 msgid "global"
@@ -30619,6 +30549,14 @@ msgstr "(Сфера)"
 
 msgid "(Random)"
 msgstr "(Насумично)"
+
+
+msgid "Shrink/Fatten:"
+msgstr "Скупи/удебљај:"
+
+
+msgid "Vert Slide: "
+msgstr "Величина темена"
 
 
 msgctxt "Scene"

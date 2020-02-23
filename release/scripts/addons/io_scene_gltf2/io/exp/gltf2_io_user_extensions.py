@@ -20,4 +20,3 @@ def export_user_extensions(hook_name, export_settings, gltf2_object, *args):
         hook = getattr(extension, hook_name, None)
         if hook is not None:
             hook(gltf2_object, *args, export_settings)
-

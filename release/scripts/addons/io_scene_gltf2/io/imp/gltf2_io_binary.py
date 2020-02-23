@@ -174,4 +174,3 @@ class BinaryData():
             return data, image_name
 
         return None, None
-

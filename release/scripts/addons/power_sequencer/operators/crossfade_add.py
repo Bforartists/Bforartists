@@ -26,7 +26,6 @@ class POWER_SEQUENCER_OT_crossfade_add(bpy.types.Operator):
     """
     *brief* Adds cross fade between selected sequence and the closest sequence to its right
 
-
     Based on the active strip, finds the closest next sequence of a similar type, moves it
     so it overlaps the active strip, and adds a gamma cross effect between them. Works with
     MOVIE, IMAGE and META strips
@@ -66,7 +65,7 @@ class POWER_SEQUENCER_OT_crossfade_add(bpy.types.Operator):
         sorted_selection = sorted(context.selected_sequences, key=lambda s: s.frame_final_start)
         for s in sorted_selection:
             s_next = self.get_next_sequence_after(context, s)
-            s_to_offset = s_next if s_next.type not in SequenceTypes.EFFECT else s_next.input_1
+            s_to_offset = s_next.input_1 if hasattr(s_next, "input_1") else s_next
 
             if self.auto_move_strip:
                 offset = s_to_offset.frame_final_start - s.frame_final_end

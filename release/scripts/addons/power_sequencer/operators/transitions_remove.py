@@ -44,7 +44,6 @@ class POWER_SEQUENCER_OT_transitions_remove(bpy.types.Operator):
     def poll(cls, context):
         return context.selected_sequences
 
-
     def execute(self, context):
         to_process = (
             self.sequences_override if self.sequences_override else context.selected_sequences

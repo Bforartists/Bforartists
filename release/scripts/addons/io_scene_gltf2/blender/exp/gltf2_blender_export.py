@@ -147,4 +147,3 @@ def __notify_end(context, elapsed):
     print_console('INFO', 'Finished glTF 2.0 export in {} s'.format(elapsed))
     context.window_manager.progress_end()
     print_newline()
-

@@ -59,7 +59,7 @@ class POWER_SEQUENCER_OT_merge_from_scene_strip(bpy.types.Operator):
     def execute(self, context):
         strip = context.scene.sequence_editor.active_strip
         if strip.type != "SCENE":
-            return {'FINISHED'}
+            return {"FINISHED"}
         strip_scene = strip.scene
         start_scene = context.window.scene
 

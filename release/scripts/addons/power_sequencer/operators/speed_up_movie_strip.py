@@ -19,7 +19,6 @@ from math import ceil
 
 from .utils.global_settings import SequenceTypes
 from .utils.functions import slice_selection
-from .utils.functions import find_linked
 from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 
 
@@ -36,21 +35,9 @@ class POWER_SEQUENCER_OT_speed_up_movie_strip(bpy.types.Operator):
         "demo": "https://i.imgur.com/ZyEd0jD.gif",
         "description": doc_description(__doc__),
         "shortcuts": [
-            (
-                {"type": "NUMPAD_2", "value": "PRESS", "alt": True},
-                {"speed_factor": 2.0},
-                "Speed x2",
-            ),
-            (
-                {"type": "NUMPAD_3", "value": "PRESS", "alt": True},
-                {"speed_factor": 3.0},
-                "Speed x3",
-            ),
-            (
-                {"type": "NUMPAD_4", "value": "PRESS", "alt": True},
-                {"speed_factor": 4.0},
-                "Speed x4",
-            ),
+            ({"type": "TWO", "value": "PRESS", "alt": True}, {"speed_factor": 2.0}, "Speed x2",),
+            ({"type": "THREE", "value": "PRESS", "alt": True}, {"speed_factor": 3.0}, "Speed x3",),
+            ({"type": "FOUR", "value": "PRESS", "alt": True}, {"speed_factor": 4.0}, "Speed x4",),
         ],
         "keymap": "Sequencer",
     }
@@ -101,16 +88,15 @@ class POWER_SEQUENCER_OT_speed_up_movie_strip(bpy.types.Operator):
             return
 
         sequence_editor = context.scene.sequence_editor
-        bpy.ops.sequencer.select_all(action="DESELECT")
+        sequencer = bpy.ops.sequencer
+
+        sequencer.select_all(action="DESELECT")
         for s in sequences:
             s.select = True
-        bpy.ops.sequencer.meta_make()
+        sequencer.meta_make()
         meta_strip = sequence_editor.active_strip
-        if len(meta_strip.sequences) == 1:
-            meta_strip.sequences[0].frame_offset_start = 0
-            meta_strip.sequences[0].frame_offset_end = 0
 
-        bpy.ops.sequencer.effect_strip_add(type="SPEED")
+        sequencer.effect_strip_add(type="SPEED")
         speed_effect = sequence_editor.active_strip
         speed_effect.use_default_fade = False
         speed_effect.speed_factor = self.speed_factor
@@ -121,7 +107,7 @@ class POWER_SEQUENCER_OT_speed_up_movie_strip(bpy.types.Operator):
         sequence_editor.active_strip = meta_strip
         speed_effect.select = True
         meta_strip.select = True
-        bpy.ops.sequencer.meta_make()
+        sequencer.meta_make()
         sequence_editor.active_strip.name = (
             meta_strip.sequences[0].name + " " + str(self.speed_factor) + "x"
         )

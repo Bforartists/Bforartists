@@ -815,7 +815,7 @@ static void template_ID(bContext *C,
   }
 
   if (text) {
-    /* Add label resepecting the seperated layout property split state. */
+    /* Add label resepecting the separated layout property split state. */
     layout = uiItemL_respect_property_split(layout, text, ICON_NONE);
   }
 
@@ -4609,7 +4609,7 @@ static uiBlock *CurveProfile_presets_func(bContext *C, ARegion *ar, CurveProfile
                    UI_BTYPE_BUT_MENU,
                    1,
                    ICON_BLANK1,
-                   IFACE_("Cornice Moulding"),
+                   IFACE_("Cornice Molding"),
                    0,
                    yco -= UI_UNIT_Y,
                    menuwidth,
@@ -4624,7 +4624,7 @@ static uiBlock *CurveProfile_presets_func(bContext *C, ARegion *ar, CurveProfile
                    UI_BTYPE_BUT_MENU,
                    1,
                    ICON_BLANK1,
-                   IFACE_("Crown Moulding"),
+                   IFACE_("Crown Molding"),
                    0,
                    yco -= UI_UNIT_Y,
                    menuwidth,
@@ -6873,6 +6873,7 @@ static char *progress_tooltip_func(bContext *UNUSED(C), void *argN, const char *
 
 void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
 {
+  Main *bmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
   ScrArea *sa = CTX_wm_area(C);
   uiBlock *block;
@@ -6886,7 +6887,7 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
 
   Scene *scene;
   /* another scene can be rendering too, for example via compositor */
-  for (scene = CTX_data_main(C)->scenes.first; scene; scene = scene->id.next) {
+  for (scene = bmain->scenes.first; scene; scene = scene->id.next) {
     if (WM_jobs_test(wm, scene, WM_JOB_TYPE_ANY)) {
       handle_event = B_STOPOTHER;
       icon = ICON_NONE;

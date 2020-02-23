@@ -60,4 +60,3 @@ def get_target(property):
         "scale": "scale",
         "value": "weights"
     }.get(property)
-

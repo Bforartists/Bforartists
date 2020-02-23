@@ -15,7 +15,7 @@
 # not, see <https://www.gnu.org/licenses/>.
 #
 import bpy
-from .utils.functions import get_sequences_under_cursor
+from .utils.functions import get_sequences_under_cursor, apply_time_offset
 from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 
 
@@ -48,11 +48,10 @@ class POWER_SEQUENCER_OT_snap_selection(bpy.types.Operator):
     def execute(self, context):
         sequences = (
             context.selected_sequences
-            if len(context.selected_sequences) > 0
+            if context.selected_sequences
             else get_sequences_under_cursor(context)
         )
-        time_move = context.scene.frame_current - sequences[0].frame_final_start
-        # bpy.ops.power_sequencer.select_related_strips()
-        for s in sequences:
-            s.frame_start += time_move
+        frame_first = min(sequences, key=lambda s: s.frame_final_start).frame_final_start
+        time_offset = context.scene.frame_current - frame_first
+        apply_time_offset(context, sequences, time_offset)
         return {"FINISHED"}

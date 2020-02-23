@@ -139,7 +139,7 @@ def setup_folders_hdd(cfg, clargs, **kwargs):
     -------
     out: (iter((str, iter(tuple))), dict)
     1st element: see commands.py:get_commands_all
-    2nd element: the keyword arguments used by calls.py:call
+    2nd elment: the keyword arguments used by calls.py:call
     """
     # create folder structure if it doesn't exist already only if
     # appropriate command line arguments are given
@@ -170,7 +170,7 @@ def setup(cfg, clargs):
     -------
     out: (iter((str, iter(tuple))), dict)
     1st element: see commands.py:get_commands_all
-    2nd element: the keyword arguments used by calls.py:call
+    2nd elment: the keyword arguments used by calls.py:call
     """
     setups_f = (setup_bspy, setup_probe, setup_paths, setup_folders_hdd)
     lg.basicConfig(level=LOGLEV[min(clargs.verbose, len(LOGLEV) - 1)])

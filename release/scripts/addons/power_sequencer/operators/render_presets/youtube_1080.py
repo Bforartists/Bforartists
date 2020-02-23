@@ -31,12 +31,11 @@ if __name__ == "__main__":
     render.ffmpeg.constant_rate_factor = "PERC_LOSSLESS"
     render.ffmpeg.ffmpeg_preset = "BEST"
 
-    is_ntsc = render.fps != 25
-    if is_ntsc:
-        render.ffmpeg.gopsize = 18
-    else:
-        render.ffmpeg.gopsize = 15
-    render.ffmpeg.use_max_b_frames = False
+    scene = bpy.context.scene
+    fps = scene.render.fps / scene.render.fps_base
+    render.ffmpeg.gopsize = round(fps / 2.0)
+    render.ffmpeg.use_max_b_frames = True
+    render.ffmpeg.max_b_frames = 2
 
     render.ffmpeg.video_bitrate = 9000
     render.ffmpeg.maxrate = 9000
@@ -44,3 +43,6 @@ if __name__ == "__main__":
     render.ffmpeg.buffersize = 224 * 8
     render.ffmpeg.packetsize = 2048
     render.ffmpeg.muxrate = 10080000
+
+    render.ffmpeg.audio_codec = "AAC"
+    render.ffmpeg.audio_bitrate = 384

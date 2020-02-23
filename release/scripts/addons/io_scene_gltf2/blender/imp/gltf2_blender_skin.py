@@ -53,4 +53,3 @@ class BlenderSkin():
             obj = vnode.blender_object
             mod = obj.modifiers.new(name="Armature", type="ARMATURE")
             mod.object = arma.blender_object
-

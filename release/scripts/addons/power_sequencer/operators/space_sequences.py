@@ -16,7 +16,7 @@
 #
 import bpy
 
-from .utils.functions import get_mouse_frame_and_channel, convert_duration_to_frames
+from .utils.functions import convert_duration_to_frames
 from .utils.global_settings import SequenceTypes
 from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 

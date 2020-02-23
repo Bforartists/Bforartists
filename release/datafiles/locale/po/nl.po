@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
+"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 10:28:09\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -1335,6 +1335,10 @@ msgid "Custom Color"
 msgstr "Eigen Kleur"
 
 
+msgid "Mute"
+msgstr "Zet Uit"
+
+
 msgid "Meta"
 msgstr "Meta"
 
@@ -1345,10 +1349,6 @@ msgstr "Geluidsclip"
 
 msgid "Custom Node"
 msgstr "Eigen Node"
-
-
-msgid "Mute"
-msgstr "Zet Uit"
 
 
 msgid "Show Texture"
@@ -1653,11 +1653,6 @@ msgstr "Ontkoppel Actie"
 msgctxt "Operator"
 msgid "View All"
 msgstr "Bekijk Alles"
-
-
-msgctxt "Operator"
-msgid "View Frame"
-msgstr "Bekijk Frame"
 
 
 msgctxt "Operator"
@@ -3757,11 +3752,6 @@ msgid "Copy"
 msgstr "Kopieer"
 
 
-msgctxt "Operator"
-msgid "Cut Strips"
-msgstr "Knip Strips"
-
-
 msgid "Duplicate Strips"
 msgstr "Dupliceer Strips"
 
@@ -3792,6 +3782,11 @@ msgstr "Volgende Strip"
 msgctxt "Operator"
 msgid "Swap Strip"
 msgstr "Ruil Strip Om"
+
+
+msgctxt "Operator"
+msgid "View Frame"
+msgstr "Bekijk Frame"
 
 
 msgctxt "Operator"
@@ -4838,6 +4833,11 @@ msgstr "Verwijder Alle Groepen"
 
 
 msgctxt "Operator"
+msgid "Lock Invert All"
+msgstr "Vergrende Al het Tegenovergestelde"
+
+
+msgctxt "Operator"
 msgid "Sort by Name"
 msgstr "Sorteren bij Naam"
 
@@ -4845,11 +4845,6 @@ msgstr "Sorteren bij Naam"
 msgctxt "Operator"
 msgid "Delete All Groups"
 msgstr "Verwijder Alle Groepen"
-
-
-msgctxt "Operator"
-msgid "Lock Invert All"
-msgstr "Vergrende Al het Tegenovergestelde"
 
 
 msgid "Sharp Edges"

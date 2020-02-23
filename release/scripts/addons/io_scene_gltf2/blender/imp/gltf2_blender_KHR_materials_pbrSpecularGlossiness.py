@@ -162,4 +162,3 @@ def copy_socket(mh, copy_from, copy_to):
     copy_to.default_value = copy_from.default_value
     for link in copy_from.links:
         mh.node_tree.links.new(copy_to, link.from_socket)
-

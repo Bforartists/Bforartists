@@ -602,6 +602,9 @@ def draw_tooltip_old(x, y, text='', author='', img=None):
 
 
 def draw_callback_2d(self, context):
+    if not utils.guard_from_crash():
+        return;
+
     a = context.area
     w = context.window
     try:
@@ -769,6 +772,7 @@ def draw_callback_2d_search(self, context):
                                       ui_props.thumb_size,
                                       img,
                                       1)
+
                 if search_results_orig['count'] - ui_props.scrolloffset > (ui_props.wcount * ui_props.hcount) + 1:
                     if ui_props.active_index == -1:
                         ui_bgl.draw_rect(ui_props.bar_x + ui_props.bar_width - 25,
@@ -782,6 +786,7 @@ def draw_callback_2d_search(self, context):
 
             for b in range(0, h_draw):
                 w_draw = min(ui_props.wcount, len(search_results) - b * ui_props.wcount - ui_props.scrolloffset)
+
                 y = ui_props.bar_y - (b + 1) * (row_height)
                 for a in range(0, w_draw):
                     x = ui_props.bar_x + a * (
@@ -894,7 +899,6 @@ def draw_callback_2d_search(self, context):
                           ui_props.thumb_size, ui_props.thumb_size, img, 1)
         ui_bgl.draw_line2d(ui_props.mouse_x, ui_props.mouse_y, ui_props.mouse_x + linelength,
                            ui_props.mouse_y - linelength, 2, white)
-
 
 
 def draw_callback_3d(self, context):
@@ -1110,7 +1114,16 @@ def mouse_in_area(mx, my, x, y, w, h):
 
 
 def mouse_in_asset_bar(mx, my):
+    s = bpy.context.scene
+
     ui_props = bpy.context.scene.blenderkitUI
+    # search_results = s.get('search results')
+    # if search_results == None:
+    #     return False
+    #
+    # w_draw1 = min(ui_props.wcount + 1, len(search_results) - b * ui_props.wcount - ui_props.scrolloffset)
+    # end = ui_props.bar_x + (w_draw1) * (
+    #         ui_props.margin + ui_props.thumb_size) + ui_props.margin + ui_props.drawoffset + 25
 
     if ui_props.bar_y - ui_props.bar_height < my < ui_props.bar_y \
             and mx > ui_props.bar_x and mx < ui_props.bar_x + ui_props.bar_width:
@@ -1575,8 +1588,8 @@ class AssetBarOperator(bpy.types.Operator):
 
                         else:
                             # first, test if object can have material applied.
-                            #TODO add other types here if droppable.
-                            if object is None or object.is_library_indirect and object.type =='MESH' :
+                            # TODO add other types here if droppable.
+                            if object is not None and not object.is_library_indirect and object.type == 'MESH':
                                 target_object = object.name
                                 # create final mesh to extract correct material slot
                                 depsgraph = bpy.context.evaluated_depsgraph_get()
@@ -1725,8 +1738,6 @@ class AssetBarOperator(bpy.types.Operator):
         self.area = context.area
         self.scene = bpy.context.scene
 
-
-
         self.has_quad_views = len(bpy.context.area.spaces[0].region_quadviews) > 0
 
         for r in self.area.regions:
@@ -1779,7 +1790,7 @@ class UndoWithContext(bpy.types.Operator):
     # def modal(self, context, event):
     #     return {'RUNNING_MODAL'}
 
-    message = StringProperty('Undo Message', default = 'BlenderKit operation')
+    message: StringProperty('Undo Message', default='BlenderKit operation')
 
     def execute(self, context):
         C_dict = bpy.context.copy()
@@ -1788,7 +1799,7 @@ class UndoWithContext(bpy.types.Operator):
             w, a, r = get_largest_3dview()
             override = {'window': w, 'screen': w.screen, 'area': a, 'region': r}
             C_dict.update(override)
-        bpy.ops.ed.undo_push(C_dict, 'INVOKE_REGION_WIN', message = self.message)
+        bpy.ops.ed.undo_push(C_dict, 'INVOKE_REGION_WIN', message=self.message)
         return {'FINISHED'}
 
 
@@ -1823,14 +1834,14 @@ classess = (
 # store keymap items here to access after registration
 addon_keymapitems = []
 
-#@persistent
+
+# @persistent
 def pre_load(context):
     ui_props = bpy.context.scene.blenderkitUI
     ui_props.assetbar_on = False
     ui_props.turn_off = True
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     preferences.login_attempt = False
-
 
 
 def register_ui():

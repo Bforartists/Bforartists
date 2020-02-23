@@ -70,7 +70,7 @@ def get_commands_image_1(cfg, clargs, **kwargs):
     out: iter(tuple(str))
     Iterator containing commands.
     """
-    cmd = "ffmpeg -y -v quiet -stats -i '{path_i_1}' {common_all}"
+    cmd = "ffmpeg -hwaccel auto -y -v quiet -stats -i '{path_i_1}' {common_all}"
     common = "-f apng -filter:v scale=iw*{size}:ih*{size} '{path_o_1}'"
     common_all = map(lambda s: kwargs["path_o_1"].format(size=s), clargs.sizes)
     common_all = map(
@@ -101,7 +101,7 @@ def get_commands_video_1(cfg, clargs, **kwargs):
     out: iter(tuple(str))
     Iterator containing commands.
     """
-    cmd = "ffmpeg -y -v quiet -stats -i '{path_i_1}' {common_all}"
+    cmd = "ffmpeg -hwaccel auto -y -v quiet -stats -i '{path_i_1}' {common_all}"
     common = (
         "-pix_fmt yuv420p"
         " -g 1"
@@ -186,5 +186,5 @@ def get_commands_vi(cfg, clargs, **kwargs):
     An iterator with the 1st element as a tag (the `what` parameter) and the 2nd
     element as the iterator of the actual commands.
     """
-    ws = filter(lambda x: x != "all", cfg["extensions"])
+    ws = filter(lambda x: x is not "all", cfg["extensions"])
     return chain.from_iterable(map(lambda w: get_commands(cfg, clargs, what=w, **kwargs), ws))

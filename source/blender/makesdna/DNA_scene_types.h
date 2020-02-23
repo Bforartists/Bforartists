@@ -317,6 +317,11 @@ typedef enum eScenePassType {
 #define RE_PASSNAME_SUBSURFACE_INDIRECT "SubsurfaceInd"
 #define RE_PASSNAME_SUBSURFACE_COLOR "SubsurfaceCol"
 
+#define RE_PASSNAME_FREESTYLE "Freestyle"
+#define RE_PASSNAME_BLOOM "BloomCol"
+#define RE_PASSNAME_VOLUME_TRANSMITTANCE "VolumeTransmCol"
+#define RE_PASSNAME_VOLUME_SCATTER "VolumeScatterCol"
+
 /* View - MultiView */
 typedef struct SceneRenderView {
   struct SceneRenderView *next, *prev;
@@ -592,12 +597,6 @@ typedef enum eBakePassFilter {
 
 #define R_BAKE_PASS_FILTER_ALL (~0)
 
-/* RenderEngineSettingsClay.options */
-typedef enum ClayFlagSettings {
-  CLAY_USE_AO = (1 << 0),
-  CLAY_USE_HSV = (1 << 1),
-} ClayFlagSettings;
-
 /* *************************************************************** */
 /* Render Data */
 
@@ -653,12 +652,8 @@ typedef struct RenderData {
   short subimtype DNA_DEPRECATED;
   short quality DNA_DEPRECATED;
 
-  /**
-   * Render to image editor, fullscreen or to new window.
-   */
-  short displaymode;
   char use_lock_interface;
-  char _pad7;
+  char _pad7[3];
 
   /**
    * Flags for render settings. Use bit-masking to access the settings.
@@ -752,7 +747,10 @@ typedef struct RenderData {
 
   /* render engine */
   char engine[32];
-  char _pad2[4];
+  char _pad2[2];
+
+  /* Performance Options */
+  short perf_flag;
 
   /* Cycles baking */
   struct BakeData bake;
@@ -777,6 +775,11 @@ typedef struct RenderData {
   /* Motion blur shutter */
   struct CurveMapping mblur_shutter_curve;
 } RenderData;
+
+/* RenderData.quality_flag */
+typedef enum eQualityOption {
+  SCE_PERF_HQ_NORMALS = (1 << 0),
+} eQualityOption;
 
 /* RenderData.hair_type */
 typedef enum eHairType {
@@ -1851,13 +1854,6 @@ enum {
   R_SEQ_OVERRIDE_SCENE_SETTINGS = (1 << 5),
 };
 
-/** #RenderData.displaymode */
-#define R_OUTPUT_SCREEN 0
-#define R_OUTPUT_AREA 1
-#define R_OUTPUT_WINDOW 2
-#define R_OUTPUT_NONE 3
-/*#define R_OUTPUT_FORKED   4*/
-
 /** #RenderData.filtertype (used for nodes) */
 #define R_FILTER_BOX 0
 #define R_FILTER_TENT 1
@@ -2325,7 +2321,7 @@ typedef enum eGPencil_Placement_Flags {
   GP_PROJECT_VIEWSPACE = (1 << 0),
 
   /* Viewport space, but relative to render canvas (Sequencer Preview Only) */
-  GP_PROJECT_CANVAS = (1 << 1),
+  /* GP_PROJECT_CANVAS = (1 << 1), */ /* UNUSED */
 
   /* Project into the screen's Z values */
   GP_PROJECT_DEPTH_VIEW = (1 << 2),
@@ -2431,8 +2427,8 @@ enum {
 /* SceneEEVEE->shadow_method */
 enum {
   SHADOW_ESM = 1,
-  SHADOW_VSM = 2,
-  SHADOW_METHOD_MAX = 3,
+  /* SHADOW_VSM = 2, */        /* UNUSED */
+  /* SHADOW_METHOD_MAX = 3, */ /* UNUSED */
 };
 
 /* SceneDisplay->render_aa, SceneDisplay->viewport_aa */

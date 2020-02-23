@@ -90,4 +90,3 @@ class BlenderLight():
             spot.spot_blend = 1.0
 
         return obj
-

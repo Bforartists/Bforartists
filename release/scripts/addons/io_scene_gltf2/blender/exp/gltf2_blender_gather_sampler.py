@@ -100,4 +100,3 @@ def gather_sampler_from_texture_slot(blender_texture: bpy.types.TextureSlot, exp
         wrap_s=wrap,
         wrap_t=wrap
     )
-

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
+"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 10:28:09\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -2360,6 +2360,10 @@ msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
 
 msgid "Smoke Color"
 msgstr "ﻦﯾﺰﮕﯾﺎﺟ"
+
+
+msgid "Velocity Factor"
+msgstr "ﺖﻋﺮﺳ ﺭﻮﺘﮐﺎﻓ"
 
 
 msgid "Preview"
@@ -12958,10 +12962,6 @@ msgid "Strand / Particle"
 msgstr "ﻩﺭﺫ/ﻪﺘﺷﺭ"
 
 
-msgid "Velocity Factor"
-msgstr "ﺖﻋﺮﺳ ﺭﻮﺘﮐﺎﻓ"
-
-
 msgid "Clip Editor"
 msgstr "ﻑﺍﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
@@ -15661,24 +15661,8 @@ msgid "File name"
 msgstr "ﻞﯾﺎﻓ ﻡﺎﻧ"
 
 
-msgid "Cursor from Selection"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﺎﻤﻧ ﻥﺎﮑﻣ"
-
-
 msgid "Cursor X"
 msgstr "ﺎﻤﻧ ﻥﺎﮑﻣ"
-
-
-msgid "To Keys"
-msgstr "ﺎﻫ‌ﺪﯿﻠﮐ ﻪﻤﻫ"
-
-
-msgid "Cursor Y"
-msgstr "ﺎﻤﻧ ﻥﺎﮑﻣ"
-
-
-msgid "Value:"
-msgstr "ﺭﺍﺪﻘﻣ"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -15693,6 +15677,10 @@ msgid "Driver Value:"
 msgstr "ﺭﻮﯾﺍﺭﺩ ﺮﯿﻐﺘﻣ"
 
 
+msgid "Value:"
+msgstr "ﺭﺍﺪﻘﻣ"
+
+
 msgid "Update Dependencies"
 msgstr "ﺎﻫ‌ﯽﮕﺘﺴﺑﺍﻭ ﯽﻧﺎﺳﺭ ﺯﻭﺭ‌ﻪﺑ"
 
@@ -15703,10 +15691,6 @@ msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 msgid "ERROR: Invalid target channel(s)"
 msgstr "ﺖﺳﺍ ﺮﺒﺘﻌﻣﺎﻧ ﻑﺪﻫ ﻝﺎﻧﺎﮐ :ﺎﻄﺧ"
-
-
-msgid "View Properties"
-msgstr "ﺕﺎﻤﯿﻈﻨﺗ"
 
 
 msgid "Active F-Curve is not editable"
@@ -15771,10 +15755,6 @@ msgstr "ﺮﯾﻮﺼﺗ ﺲﻧﺎﮑﺳ"
 
 msgid "No images have been changed"
 msgstr "ﺩﺮﮑﻧ ﺮﯿﯿﻐﺗ ﯽﺴﮑﻋ ﭻﯿﻫ"
-
-
-msgid "Packing movies or image sequences not supported"
-msgstr "ﺩﻮﺷ‌ﯽﻤﻧ ﯽﻧﺎﺒﯿﺘﺸﭘ ﺲﻧﺎﮑﺳ ﺮﯾﻭﺎﺼﺗ ﺎﯾ ﻭ ﺎﻫ‌ﻢﻠﯿﻓ ﯼﺪﻨﺑ ﻪﺘﺴﺑ"
 
 
 msgid "image file not found"
@@ -16006,10 +15986,6 @@ msgid "Cannot fly an object with constraints"
 msgstr "ءﺎﯿﺷﺍ ﯼﺎﻫ‌ﺖﯾﺩﻭﺪﺤﻣ"
 
 
-msgid "Vert Slide: "
-msgstr "ﺱﺃﺭ ﯽﺷﺎﻘﻧ"
-
-
 msgid "global"
 msgstr "ﯽﻧﺎﻬﺟ"
 
@@ -16040,6 +16016,10 @@ msgstr "ﺖﺑﺎﺛ"
 
 msgid "(Random)"
 msgstr "ﯽﻓﺩﺎﺼﺗ"
+
+
+msgid "Vert Slide: "
+msgstr "ﺱﺃﺭ ﯽﺷﺎﻘﻧ"
 
 
 msgid "UV Vertex"

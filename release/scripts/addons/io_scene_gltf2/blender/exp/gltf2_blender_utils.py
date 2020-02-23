@@ -65,4 +65,3 @@ def min_components(l: list, data_type: gltf2_io_constants.DataType) -> list:
         for i, c in enumerate(components):
             result[i] = min(result[i], c)
     return result
-
