@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
+"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 10:28:09\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -4751,6 +4751,10 @@ msgstr "Viskozita"
 
 msgid "Domain"
 msgstr "Spojit"
+
+
+msgid "Velocity Factor"
+msgstr "Maximální rychlost"
 
 
 msgid "Emitter"
@@ -12153,6 +12157,10 @@ msgid "Amount the strip contributes to the current result"
 msgstr "Vložit zrcadlenou pózu z bufferu"
 
 
+msgid "Mute"
+msgstr "Tlumit"
+
+
 msgid "Number of times to repeat the action range"
 msgstr "Počet opakování pro překreslení"
 
@@ -12235,10 +12243,6 @@ msgstr "Aktuální barva"
 
 msgid "Height of the node"
 msgstr "Šířka a výška nového obrázku"
-
-
-msgid "Mute"
-msgstr "Tlumit"
 
 
 msgid "Show Options"
@@ -21134,10 +21138,6 @@ msgid "Change the Lock On Vertex Groups"
 msgstr "Aktuální skupina vertexů"
 
 
-msgid "Change the lock state of all vertex groups of active object"
-msgstr "Vzbrat vše podle typu"
-
-
 msgid "Lock action to execute on vertex groups"
 msgstr "Vybrat řádek"
 
@@ -22855,11 +22855,6 @@ msgstr "Odstranit odkaz na obrázek pozadí"
 
 
 msgctxt "Operator"
-msgid "Optimize"
-msgstr "Rotace:"
-
-
-msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Řezbářský mód"
 
@@ -22953,15 +22948,6 @@ msgstr "Kopírovat"
 msgctxt "Operator"
 msgid "Crossfade sounds"
 msgstr "Kopirovat zvuk"
-
-
-msgctxt "Operator"
-msgid "Cut Strips"
-msgstr "NLA Proužky"
-
-
-msgid "Cut the selected strips"
-msgstr "Oříznout vybrané pruhy"
 
 
 msgctxt "Operator"
@@ -23757,6 +23743,14 @@ msgid "Unindent selected text"
 msgstr "Skrýt označené plošky"
 
 
+msgid "Constraint Axis"
+msgstr "Vazba os"
+
+
+msgid "Transformation orientation"
+msgstr "Orientace transformací"
+
+
 msgid "Use Snapping Options"
 msgstr "Možnosti editace"
 
@@ -23828,14 +23822,6 @@ msgstr "Odznačit spojené"
 
 msgid "Correct UV coordinates when transforming"
 msgstr "Použít souřadnice označených vertexů i pro souřadnice uv mapování"
-
-
-msgid "Constraint Axis"
-msgstr "Vazba os"
-
-
-msgid "Transformation orientation"
-msgstr "Orientace transformací"
 
 
 msgctxt "Operator"
@@ -25665,6 +25651,10 @@ msgid "Geometry Data"
 msgstr "Zobrazit:"
 
 
+msgid "Transparency"
+msgstr "Průhlednost"
+
+
 msgid "Path Animation"
 msgstr "Přehrát animaci"
 
@@ -27036,14 +27026,6 @@ msgstr "Limit cache paměti"
 
 msgid "Memory cache limit (in megabytes)"
 msgstr "Limit cache paměti"
-
-
-msgid "Prefetch Frames"
-msgstr "Aktuální snímek"
-
-
-msgid "Number of frames to render ahead during playback (sequencer only)"
-msgstr "Počet snímků renderovaných předem během přehrávání"
 
 
 msgid "Solid Lights"
@@ -29902,10 +29884,6 @@ msgid "UV map to use for mapping with UV texture coordinates"
 msgstr "Použít souřadnice označených vertexů i pro souřadnice uv mapování"
 
 
-msgid "Velocity Factor"
-msgstr "Maximální rychlost"
-
-
 msgid "Clip Editor"
 msgstr "Konec střihu"
 
@@ -31226,10 +31204,6 @@ msgid "Mesh Light"
 msgstr "Světlo"
 
 
-msgid "Transparency"
-msgstr "Průhlednost"
-
-
 msgid "Tiles X"
 msgstr "Dlaždice:"
 
@@ -31788,6 +31762,10 @@ msgid "UV Axis:"
 msgstr "Osa X"
 
 
+msgid "Offset:"
+msgstr "Kompenzace:"
+
+
 msgid "UV Map:"
 msgstr "Použít Ořez"
 
@@ -31806,10 +31784,6 @@ msgstr "Nastavení renderování"
 
 msgid "Color:"
 msgstr "Barva:"
-
-
-msgid "Offset:"
-msgstr "Kompenzace:"
 
 
 msgid "Shift:"
@@ -34541,28 +34515,12 @@ msgid "File name"
 msgstr "Název souboru"
 
 
-msgid "Cursor from Selection"
-msgstr "Kurzor k výběru"
-
-
 msgid "Cursor X"
-msgstr "Kurzor"
-
-
-msgid "To Keys"
-msgstr "Klíč"
-
-
-msgid "Cursor Y"
 msgstr "Kurzor"
 
 
 msgid "Interpolation:"
 msgstr "Mód Interpolace"
-
-
-msgid "Value:"
-msgstr "Hodnota"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -34581,6 +34539,10 @@ msgid "Driver Value:"
 msgstr "Aktivovat materiálové uzly"
 
 
+msgid "Value:"
+msgstr "Hodnota"
+
+
 msgid "Update Dependencies"
 msgstr "Přehrát animaci"
 
@@ -34591,10 +34553,6 @@ msgstr "Přidat modifikátor"
 
 msgid "Delete target variable"
 msgstr "Renderovat plošky z obou stran"
-
-
-msgid "View Properties"
-msgstr "Vlastnosti..."
 
 
 msgid "Active F-Curve is not editable"
@@ -34634,14 +34592,6 @@ msgstr "Pridat objekt do nové skupiny"
 
 
 msgid "Cannot save multilayer sequences"
-msgstr "Pridat objekt do nové skupiny"
-
-
-msgid "Packing movies or image sequences not supported"
-msgstr "Pridat objekt do nové skupiny"
-
-
-msgid "Unpacking movies or image sequences not supported"
 msgstr "Pridat objekt do nové skupiny"
 
 
@@ -34939,14 +34889,6 @@ msgid "Auto Keying On"
 msgstr "Další klíč"
 
 
-msgid "Shrink/Fatten:"
-msgstr "Smrštit/roztáhnout"
-
-
-msgid "Vert Slide: "
-msgstr "Velikost vertexu"
-
-
 msgid "global"
 msgstr "Globální"
 
@@ -34993,6 +34935,14 @@ msgstr "Kulové"
 
 msgid "(Random)"
 msgstr "Náhodné"
+
+
+msgid "Shrink/Fatten:"
+msgstr "Smrštit/roztáhnout"
+
+
+msgid "Vert Slide: "
+msgstr "Velikost vertexu"
 
 
 msgid "UV Vertex"

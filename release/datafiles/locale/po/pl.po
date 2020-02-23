@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
+"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 10:28:09\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -8715,10 +8715,6 @@ msgid "Selected faces required"
 msgstr "Wymagane zaznaczone ściany"
 
 
-msgid "No other selected objects found to use for projection"
-msgstr "Nie odnaleziono innych zaznaczonych obiektów do użycia przy projekcji"
-
-
 msgid "Select a ring to be cut, use mouse-wheel or page-up/down for number of cuts, hold Alt for smooth"
 msgstr "Zaznacz pierścień do przecięcia, użyj kółka myszy lub page-up/down do określenia ilości cięć, przytrzymaj Alt dla wygładzenia"
 
@@ -10077,24 +10073,8 @@ msgid "File name"
 msgstr "Nazwa pliku"
 
 
-msgid "Cursor from Selection"
-msgstr "Kursor z zaznaczenia"
-
-
 msgid "Cursor X"
 msgstr "Kursor X"
-
-
-msgid "To Keys"
-msgstr "Do Kluczy"
-
-
-msgid "Cursor Y"
-msgstr "Kursor Y"
-
-
-msgid "Value:"
-msgstr "Wartość:"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -10119,6 +10099,10 @@ msgstr "Prop:"
 
 msgid "Driver Value:"
 msgstr "Wartość Sterownika:"
+
+
+msgid "Value:"
+msgstr "Wartość:"
 
 
 msgid "Update Dependencies"
@@ -10163,10 +10147,6 @@ msgstr "Modyfikatory-F mogą również tworzyć krzywe dla tych"
 
 msgid "Delete target variable"
 msgstr "Usuń docelową zmienną"
-
-
-msgid "View Properties"
-msgstr "Właściwości Widoku"
 
 
 msgid "<No ID>"
@@ -10283,14 +10263,6 @@ msgstr "Nie można zapisać sekwencji multilayer"
 
 msgid "No images have been changed"
 msgstr "Żaden obraz nie został zmieniony"
-
-
-msgid "Packing movies or image sequences not supported"
-msgstr "Pakowanie filmów lub sekwencji obrazów nie obsługiwane"
-
-
-msgid "Unpacking movies or image sequences not supported"
-msgstr "Rozpoakowywanie filmów lub sekwencji obrazów nie obsługiwane"
 
 
 msgid "Can not set border from a cropped render"
@@ -10931,10 +10903,6 @@ msgid "Object as Camera"
 msgstr "Obiekt jako kamera"
 
 
-msgid "%s (Local)"
-msgstr "%s (Lokalna)"
-
-
 msgid "fps: %.2f"
 msgstr "klatkaż: %.2f"
 
@@ -11029,238 +10997,6 @@ msgstr "blokada Z - %s"
 
 msgid "along local Z"
 msgstr "wzdłuż lokalnej Z"
-
-
-msgid "Bend Angle: %.3f Radius: %.4f, Alt, Clamp %s"
-msgstr "Kąt wygięcia: %.3f Promień: %.4f, Alt, Ogranicz %s"
-
-
-msgid "Shear: %s %s"
-msgstr "Ścinanie: %s %s"
-
-
-msgid "Shear: %.3f %s (Press X or Y to set shear axis)"
-msgstr "Ścinanie: %.3f %s (Wciśnij X lub Y dla ustalenia osi ścinania)"
-
-
-msgid "Scale: %s%s %s"
-msgstr "Skala: %s%s %s"
-
-
-msgid "Scale: %s : %s%s %s"
-msgstr "Skala: %s : %s%s %s"
-
-
-msgid "Scale: %s : %s : %s%s %s"
-msgstr "Skala: %s : %s : %s%s %s"
-
-
-msgid "Scale X: %s   Y: %s%s %s"
-msgstr "Skala X: %s   Y: %s%s %s"
-
-
-msgid "Scale X: %s   Y: %s  Z: %s%s %s"
-msgstr "Skala X: %s   Y: %s  Z: %s%s %s"
-
-
-msgid " Proportional size: %.2f"
-msgstr " rozmiar proporcjonalny: %.2f"
-
-
-msgid "To Sphere: %s %s"
-msgstr "Do Sfery: %s %s"
-
-
-msgid "To Sphere: %.4f %s"
-msgstr "Do Sfery: %.4f %s"
-
-
-msgid "Rot: %s %s %s"
-msgstr "Rot: %s %s %s"
-
-
-msgid "Rot: %.2f%s %s"
-msgstr "Rot: %.2f%s %s"
-
-
-msgid "Trackball: %s %s %s"
-msgstr "Trackball: %s %s %s"
-
-
-msgid "Trackball: %.2f %.2f %s"
-msgstr "Trackball: %.2f %.2f %s"
-
-
-msgid "AutoIK-Len: %d"
-msgstr "AutoIK-Len: %d"
-
-
-msgid "Shrink/Fatten:"
-msgstr "Kurcz/Rozszerz"
-
-
-msgid " or Alt) Even Thickness %s"
-msgstr " lub Alt) Równa grubość %s"
-
-
-msgid "Tilt: %s° %s"
-msgstr "Przechyl: %s° %s"
-
-
-msgid "Tilt: %.2f° %s"
-msgstr "Przechyl: %.2f° %s"
-
-
-msgid "Shrink/Fatten: %s"
-msgstr "Kurcz/Rozszerz: %s"
-
-
-msgid "Shrink/Fatten: %3f"
-msgstr "Kurcz/Rozszerz: %3f"
-
-
-msgid "Feather Shrink/Fatten: %s"
-msgstr "Kurcz/Rozszerz zmiękczenie: %s"
-
-
-msgid "Feather Shrink/Fatten: %3f"
-msgstr "Kurcz/Rozszerz zmiękczenie: %3f"
-
-
-msgid "Push/Pull: %s%s %s"
-msgstr "Pchaj/Ciągnij: %s%s %s"
-
-
-msgid "Push/Pull: %.4f%s %s"
-msgstr "Pchaj/Ciągnij: %.4f%s %s"
-
-
-msgid "Bevel Weight: +%s %s"
-msgstr "Waga skosu: +%s %s"
-
-
-msgid "Bevel Weight: %s %s"
-msgstr "Waga skosu: %s %s"
-
-
-msgid "Bevel Weight: +%.3f %s"
-msgstr "Waga skosu: +%.3f %s"
-
-
-msgid "Bevel Weight: %.3f %s"
-msgstr "Waga skosu: %.3f %s"
-
-
-msgid "Crease: +%s %s"
-msgstr "Fałda: +%s %s"
-
-
-msgid "Crease: %s %s"
-msgstr "Fałda: %s %s"
-
-
-msgid "Crease: +%.3f %s"
-msgstr "Fałda: +%.3f %s"
-
-
-msgid "Crease: %.3f %s"
-msgstr "Fałda: %.3f %s"
-
-
-msgid "ScaleB: %s%s %s"
-msgstr "SkalaB: %s%s %s"
-
-
-msgid "ScaleB: %s : %s : %s%s %s"
-msgstr "SkalaB: %s : %s : %s%s %s"
-
-
-msgid "ScaleB X: %s  Y: %s  Z: %s%s %s"
-msgstr "SkalaB X: %s  Y: %s  Z: %s%s %s"
-
-
-msgid "Envelope: %s"
-msgstr "Otoczka: %s"
-
-
-msgid "Envelope: %3f"
-msgstr "Otoczka: %3f"
-
-
-msgid "(E)ven: %s, "
-msgstr "Równ(E): %s "
-
-
-msgid "(F)lipped: %s, "
-msgstr "(F) - odwrócone: %s "
-
-
-msgid "Alt or (C)lamp: %s"
-msgstr "Alt lub (C)lamp - ściśnij: %s"
-
-
-msgid "Vert Slide: "
-msgstr "Ślizganie Wierzchołka: "
-
-
-msgid "Roll: %s"
-msgstr "Toczyć: %s"
-
-
-msgid "Roll: %.2f"
-msgstr "Toczyć: %.2f"
-
-
-msgid "Time: +%s %s"
-msgstr "Czas: +%s %s"
-
-
-msgid "Time: %s %s"
-msgstr "Czas: %s %s"
-
-
-msgid "Time: +%.3f %s"
-msgstr "Czas: +%.3f %s"
-
-
-msgid "Time: %.3f %s"
-msgstr "Czas: %.3f %s"
-
-
-msgid "Mirror%s"
-msgstr "Lustro%s"
-
-
-msgid "Select a mirror axis (X, Y)"
-msgstr "Wybierz oś lustra (mirror) (X, Y)"
-
-
-msgid "Select a mirror axis (X, Y, Z)"
-msgstr "Wybierz oś lustra (mirror) (X, Y, Z)"
-
-
-msgid "Sequence Slide: %s%s, ("
-msgstr "Przesuń Sekwencję: %s%s, ("
-
-
-msgid " or Alt) Expand to fit %s"
-msgstr " lub Alt) Rozszerz by dopasować %s"
-
-
-msgid "DeltaX: %s"
-msgstr "DeltaX: %s"
-
-
-msgid "TimeSlide: %s"
-msgstr "TimeSlide: %s"
-
-
-msgid "ScaleX: %s"
-msgstr "SkalaX: %s"
-
-
-msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for translating keyframes in Dope Sheet Editor"
-msgstr "Użyj trybu transformacji 'Time_Translate' zamiast trybu 'Translation' dla translacji (przesunięcia) klatek kluczowych w Edytorze Kluczy"
 
 
 msgid "global"
@@ -11361,6 +11097,238 @@ msgstr "(Losowo)"
 
 msgid "(InvSquare)"
 msgstr "(Odwrócony Kwadrat)"
+
+
+msgid "Rot: %s %s %s"
+msgstr "Rot: %s %s %s"
+
+
+msgid "Rot: %.2f%s %s"
+msgstr "Rot: %.2f%s %s"
+
+
+msgid " Proportional size: %.2f"
+msgstr " rozmiar proporcjonalny: %.2f"
+
+
+msgid "Scale: %s%s %s"
+msgstr "Skala: %s%s %s"
+
+
+msgid "Scale: %s : %s%s %s"
+msgstr "Skala: %s : %s%s %s"
+
+
+msgid "Scale: %s : %s : %s%s %s"
+msgstr "Skala: %s : %s : %s%s %s"
+
+
+msgid "Scale X: %s   Y: %s%s %s"
+msgstr "Skala X: %s   Y: %s%s %s"
+
+
+msgid "Scale X: %s   Y: %s  Z: %s%s %s"
+msgstr "Skala X: %s   Y: %s  Z: %s%s %s"
+
+
+msgid "Time: +%s %s"
+msgstr "Czas: +%s %s"
+
+
+msgid "Time: %s %s"
+msgstr "Czas: %s %s"
+
+
+msgid "Time: +%.3f %s"
+msgstr "Czas: +%.3f %s"
+
+
+msgid "Time: %.3f %s"
+msgstr "Czas: %.3f %s"
+
+
+msgid "ScaleB: %s%s %s"
+msgstr "SkalaB: %s%s %s"
+
+
+msgid "ScaleB: %s : %s : %s%s %s"
+msgstr "SkalaB: %s : %s : %s%s %s"
+
+
+msgid "ScaleB X: %s  Y: %s  Z: %s%s %s"
+msgstr "SkalaB X: %s  Y: %s  Z: %s%s %s"
+
+
+msgid "Bend Angle: %.3f Radius: %.4f, Alt, Clamp %s"
+msgstr "Kąt wygięcia: %.3f Promień: %.4f, Alt, Ogranicz %s"
+
+
+msgid "Envelope: %s"
+msgstr "Otoczka: %s"
+
+
+msgid "Envelope: %3f"
+msgstr "Otoczka: %3f"
+
+
+msgid "Roll: %s"
+msgstr "Toczyć: %s"
+
+
+msgid "Roll: %.2f"
+msgstr "Toczyć: %.2f"
+
+
+msgid "Shrink/Fatten: %s"
+msgstr "Kurcz/Rozszerz: %s"
+
+
+msgid "Shrink/Fatten: %3f"
+msgstr "Kurcz/Rozszerz: %3f"
+
+
+msgid "Bevel Weight: +%s %s"
+msgstr "Waga skosu: +%s %s"
+
+
+msgid "Bevel Weight: %s %s"
+msgstr "Waga skosu: %s %s"
+
+
+msgid "Bevel Weight: +%.3f %s"
+msgstr "Waga skosu: +%.3f %s"
+
+
+msgid "Bevel Weight: %.3f %s"
+msgstr "Waga skosu: %.3f %s"
+
+
+msgid "Crease: +%s %s"
+msgstr "Fałda: +%s %s"
+
+
+msgid "Crease: %s %s"
+msgstr "Fałda: %s %s"
+
+
+msgid "Crease: +%.3f %s"
+msgstr "Fałda: +%.3f %s"
+
+
+msgid "Crease: %.3f %s"
+msgstr "Fałda: %.3f %s"
+
+
+msgid "Sequence Slide: %s%s, ("
+msgstr "Przesuń Sekwencję: %s%s, ("
+
+
+msgid " or Alt) Expand to fit %s"
+msgstr " lub Alt) Rozszerz by dopasować %s"
+
+
+msgid "(E)ven: %s, "
+msgstr "Równ(E): %s "
+
+
+msgid "(F)lipped: %s, "
+msgstr "(F) - odwrócone: %s "
+
+
+msgid "Alt or (C)lamp: %s"
+msgstr "Alt lub (C)lamp - ściśnij: %s"
+
+
+msgid "Feather Shrink/Fatten: %s"
+msgstr "Kurcz/Rozszerz zmiękczenie: %s"
+
+
+msgid "Feather Shrink/Fatten: %3f"
+msgstr "Kurcz/Rozszerz zmiękczenie: %3f"
+
+
+msgid "Mirror%s"
+msgstr "Lustro%s"
+
+
+msgid "Select a mirror axis (X, Y)"
+msgstr "Wybierz oś lustra (mirror) (X, Y)"
+
+
+msgid "Select a mirror axis (X, Y, Z)"
+msgstr "Wybierz oś lustra (mirror) (X, Y, Z)"
+
+
+msgid "Push/Pull: %s%s %s"
+msgstr "Pchaj/Ciągnij: %s%s %s"
+
+
+msgid "Push/Pull: %.4f%s %s"
+msgstr "Pchaj/Ciągnij: %.4f%s %s"
+
+
+msgid "Shear: %s %s"
+msgstr "Ścinanie: %s %s"
+
+
+msgid "Shear: %.3f %s (Press X or Y to set shear axis)"
+msgstr "Ścinanie: %.3f %s (Wciśnij X lub Y dla ustalenia osi ścinania)"
+
+
+msgid "Shrink/Fatten:"
+msgstr "Kurcz/Rozszerz"
+
+
+msgid " or Alt) Even Thickness %s"
+msgstr " lub Alt) Równa grubość %s"
+
+
+msgid "Tilt: %s° %s"
+msgstr "Przechyl: %s° %s"
+
+
+msgid "Tilt: %.2f° %s"
+msgstr "Przechyl: %.2f° %s"
+
+
+msgid "ScaleX: %s"
+msgstr "SkalaX: %s"
+
+
+msgid "TimeSlide: %s"
+msgstr "TimeSlide: %s"
+
+
+msgid "DeltaX: %s"
+msgstr "DeltaX: %s"
+
+
+msgid "To Sphere: %s %s"
+msgstr "Do Sfery: %s %s"
+
+
+msgid "To Sphere: %.4f %s"
+msgstr "Do Sfery: %.4f %s"
+
+
+msgid "Trackball: %s %s %s"
+msgstr "Trackball: %s %s %s"
+
+
+msgid "Trackball: %.2f %.2f %s"
+msgstr "Trackball: %.2f %.2f %s"
+
+
+msgid "AutoIK-Len: %d"
+msgstr "AutoIK-Len: %d"
+
+
+msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for translating keyframes in Dope Sheet Editor"
+msgstr "Użyj trybu transformacji 'Time_Translate' zamiast trybu 'Translation' dla translacji (przesunięcia) klatek kluczowych w Edytorze Kluczy"
+
+
+msgid "Vert Slide: "
+msgstr "Ślizganie Wierzchołka: "
 
 
 msgid "Create Orientation's 'use' parameter only valid in a 3DView context"
@@ -12116,10 +12084,6 @@ msgstr "Błąd hull"
 
 msgid "Faces needed for useful output"
 msgstr "Ściany potrzebne dla użytecznego output"
-
-
-msgid "From/To objects must be set"
-msgstr "Od/Do obiektu musi być ustawione"
 
 
 msgid "Convertor"

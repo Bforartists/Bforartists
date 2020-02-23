@@ -58,4 +58,3 @@ class Buffer:
 
     def clear(self):
         self.__data = b""
-

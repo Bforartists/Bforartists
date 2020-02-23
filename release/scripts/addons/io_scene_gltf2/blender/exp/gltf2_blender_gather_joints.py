@@ -81,4 +81,3 @@ def gather_joint(blender_bone, export_settings):
         translation=translation,
         weights=None
     )
-

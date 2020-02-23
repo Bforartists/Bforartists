@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
+"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 10:28:09\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -3305,12 +3305,12 @@ msgid "Save As"
 msgstr "บันทึกเป็น"
 
 
-msgid "Closest"
-msgstr "ใกล้ชิดที่สุด"
-
-
 msgid "Transformation orientation"
 msgstr "ทิศทางการแปลง"
+
+
+msgid "Closest"
+msgstr "ใกล้ชิดที่สุด"
 
 
 msgctxt "Operator"
@@ -5057,10 +5057,6 @@ msgid ":"
 msgstr ":"
 
 
-msgid "upgrade to 2.8x required"
-msgstr "จำเป็นต้องอัพเกรดไปยัง 2.8x"
-
-
 msgid "Description:"
 msgstr "คำอธิบาย:"
 
@@ -6056,10 +6052,6 @@ msgid "User Perspective"
 msgstr "ทัศนมิติ"
 
 
-msgid "%s (Local)"
-msgstr "%s (ท้องถิ่น)"
-
-
 msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
 msgstr "เลือกจุดยอด"
 
@@ -6070,30 +6062,6 @@ msgstr "เลือกเส้นขอบ"
 
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
 msgstr "เลือกด้าน"
-
-
-msgid " Proportional size: %.2f"
-msgstr " ขนาดสัดส่วน: %.2f"
-
-
-msgid "Rot: %s %s %s"
-msgstr "หมุน: %s %s %s"
-
-
-msgid "Rot: %.2f%s %s"
-msgstr "หมุน: %.2f%s %s"
-
-
-msgid "right"
-msgstr "ขวา"
-
-
-msgid "Roll: %s"
-msgstr "หมุน: %s"
-
-
-msgid "Roll: %.2f"
-msgstr "หมุน: %.2f"
 
 
 msgid "view"
@@ -6158,6 +6126,30 @@ msgstr "(ทรงกลม)"
 
 msgid "(Random)"
 msgstr "(สุ่ม)"
+
+
+msgid "Rot: %s %s %s"
+msgstr "หมุน: %s %s %s"
+
+
+msgid "Rot: %.2f%s %s"
+msgstr "หมุน: %.2f%s %s"
+
+
+msgid " Proportional size: %.2f"
+msgstr " ขนาดสัดส่วน: %.2f"
+
+
+msgid "Roll: %s"
+msgstr "หมุน: %s"
+
+
+msgid "Roll: %.2f"
+msgstr "หมุน: %.2f"
+
+
+msgid "right"
+msgstr "ขวา"
 
 
 msgid "custom"

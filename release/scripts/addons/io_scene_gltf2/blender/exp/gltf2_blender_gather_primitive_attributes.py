@@ -223,4 +223,3 @@ def __gather_skins(blender_primitive, export_settings):
             joint_id = 'JOINTS_' + str(bone_set_index)
             weight_id = 'WEIGHTS_' + str(bone_set_index)
     return attributes
-

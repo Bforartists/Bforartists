@@ -15,13 +15,14 @@
 # not, see <https://www.gnu.org/licenses/>.
 #
 import bpy
-from operator import attrgetter
 
 from .utils.doc import doc_brief, doc_description, doc_idname, doc_name
-from .utils.functions import get_frame_range
-from .utils.functions import get_mouse_frame_and_channel
-from .utils.global_settings import SequenceTypes
-from .utils.functions import slice_selection
+from .utils.functions import (
+    get_frame_range,
+    get_mouse_frame_and_channel,
+    slice_selection,
+    ripple_move,
+)
 
 
 class POWER_SEQUENCER_OT_ripple_delete(bpy.types.Operator):
@@ -58,6 +59,7 @@ class POWER_SEQUENCER_OT_ripple_delete(bpy.types.Operator):
         scene = context.scene
         sequencer = bpy.ops.sequencer
         selection = context.selected_sequences
+        selection_length = len(selection)
 
         audio_scrub_active = context.scene.use_audio_scrub
         context.scene.use_audio_scrub = False
@@ -67,44 +69,28 @@ class POWER_SEQUENCER_OT_ripple_delete(bpy.types.Operator):
 
         is_single_channel = len(channels) == 1
         if is_single_channel:
-            first_strip = selection_blocks[0][0]
             for block in selection_blocks:
-                sequencer.select_all(action="DESELECT")
-                block_strip_start = block[0]
-                delete_start = block_strip_start.frame_final_start
+                delete_start = block[0].frame_final_start
                 delete_end = block[-1].frame_final_end
-                ripple_length = delete_end - delete_start
-                assert ripple_length > 0
-
-                for s in block:
-                    s.select = True
-                sequencer.delete()
-
-                strips_in_channel = [
-                    s
-                    for s in bpy.context.sequences
-                    if s.channel == channels[0]
-                    and s.frame_final_start >= first_strip.frame_final_start
-                ]
-                strips_in_channel = sorted(strips_in_channel, key=attrgetter("frame_final_start"))
-                to_ripple = [s for s in strips_in_channel if s.frame_final_start > delete_start]
-                for s in to_ripple:
-                    s.frame_start -= ripple_length
+                ripple_duration = abs(delete_end - delete_start)
+                ripple_move(context, block, -ripple_duration, delete=True)
 
         else:
+            cursor_frame = scene.frame_current
             for block in selection_blocks:
                 sequencer.select_all(action="DESELECT")
                 for s in block:
                     s.select = True
-                selection_start, _ = get_frame_range(context, block)
+                selection_start = get_frame_range(context, block)[0]
                 sequencer.delete()
 
                 scene.frame_current = selection_start
                 bpy.ops.power_sequencer.gap_remove()
+            scene.frame_current = cursor_frame
 
         self.report(
             {"INFO"},
-            "Deleted " + str(len(selection)) + " sequence" + "s" if len(selection) > 1 else "",
+            "Deleted " + str(selection_length) + " sequence" + "s" if selection_length > 1 else "",
         )
 
         context.scene.use_audio_scrub = audio_scrub_active

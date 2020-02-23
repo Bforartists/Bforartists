@@ -919,7 +919,7 @@ make_proxy
 erase
 extrudesize
 width_size
-#def_icon_blank(934
+file_cache
 ruler
 vertex_parent
 select_nonmanifold
@@ -1885,6 +1885,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.sculpt.border_mask
   ops.sculpt.lasso_mask
   ops.sculpt.mesh_filter
+  ops.sequencer.blade
   ops.transform.bone_envelope
   ops.transform.bone_size
   ops.transform.edge_slide

@@ -205,4 +205,3 @@ class BlenderNode():
             BlenderMesh.set_mesh(gltf, gltf.data.meshes[pynode.mesh], obj)
 
         return obj
-

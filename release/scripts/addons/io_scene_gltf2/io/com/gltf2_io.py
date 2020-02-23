@@ -1220,4 +1220,3 @@ def gltf_from_dict(s):
 
 def gltf_to_dict(x):
     return to_class(Gltf, x)
-

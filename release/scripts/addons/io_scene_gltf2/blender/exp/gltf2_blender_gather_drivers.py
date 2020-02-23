@@ -71,4 +71,3 @@ def get_sk_driver_values(blender_object, frame, fcurves):
         sk_values.append(blender_object.data.shape_keys.path_resolve(get_target_object_path(f.data_path)).value)
 
     return tuple(sk_values)
-

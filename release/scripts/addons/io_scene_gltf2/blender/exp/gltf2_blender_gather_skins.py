@@ -189,4 +189,3 @@ def get_bone_tree(blender_dummy, blender_object):
     list_ = list(set(bones))
     root_ = list(set(root_bones))
     return [blender_object.data.bones[b] for b in list_], children, [blender_object.pose.bones[b] for b in root_]
-

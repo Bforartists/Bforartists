@@ -240,4 +240,3 @@ def __get_texname_from_slot(sockets_or_slots, export_settings):
 
     elif isinstance(sockets_or_slots[0], bpy.types.MaterialTextureSlot):
         return sockets_or_slots[0].texture.image.name
-

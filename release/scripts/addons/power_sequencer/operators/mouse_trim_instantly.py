@@ -21,7 +21,6 @@ from .utils.functions import find_strips_mouse
 from .utils.functions import trim_strips
 from .utils.functions import get_frame_range
 from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
-from .utils.functions import sequencer_workaround_2_80_audio_bug
 
 
 class POWER_SEQUENCER_OT_mouse_trim_instantly(bpy.types.Operator):
@@ -79,35 +78,33 @@ class POWER_SEQUENCER_OT_mouse_trim_instantly(bpy.types.Operator):
         default=True,
     )
 
-    to_select = []
-
     @classmethod
     def poll(cls, context):
         return context.sequences
 
     def invoke(self, context, event):
-        to_select = []
+        to_trim = []
         frame, channel = -1, -1
-        x, y = context.region.view2d.region_to_view(
-            x=event.mouse_region_x, y=event.mouse_region_y
-        )
+        x, y = context.region.view2d.region_to_view(x=event.mouse_region_x, y=event.mouse_region_y)
         frame, channel = round(x), floor(y)
 
         mouse_clicked_strip = find_strips_mouse(context, frame, channel, self.select_linked)
-        to_select.extend(mouse_clicked_strip)
-        if self.select_mode == "CURSOR":
-            to_select.extend([s for s in context.sequences if s.frame_final_start <= frame <= s.frame_final_end and not s.lock])
+        to_trim += mouse_clicked_strip
+        if self.select_mode == "CURSOR" or (self.select_mode == "CONTEXT" and to_trim == []):
+            to_trim += [
+                s
+                for s in context.sequences
+                if s.frame_final_start <= frame <= s.frame_final_end and not s.lock
+            ]
 
-        frame_cut_closest = min(get_frame_range(context, to_select), key=lambda f: abs(frame - f))
+        frame_cut_closest = min(get_frame_range(context, to_trim), key=lambda f: abs(frame - f))
         frame_start = min(frame, frame_cut_closest)
         frame_end = max(frame, frame_cut_closest)
 
-        trim_strips(context, frame_start, frame_end, self.select_mode, to_select)
+        trim_strips(context, frame_start, frame_end, to_trim=to_trim)
 
         context.scene.frame_current = frame_start
         if self.gap_remove and self.select_mode == "CURSOR":
             bpy.ops.power_sequencer.gap_remove()
 
-        # FIXME: Workaround Blender 2.80's audio bug, remove when fixed in Blender
-        sequencer_workaround_2_80_audio_bug(context)
         return {"FINISHED"}

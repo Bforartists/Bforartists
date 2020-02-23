@@ -144,6 +144,14 @@ else()
   set(CMAKE_C_FLAGS     "${CMAKE_C_FLAGS} /nologo /J /Gd /MP /bigobj")
 endif()
 
+# C++ standards conformace (/permissive-) is available on msvc 15.5 (1912) and up
+if(MSVC_VERSION GREATER 1911 AND NOT MSVC_CLANG)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /permissive-")
+  # Two-phase name lookup does not place nicely with OpenMP yet, so disable for now
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:twoPhase-")
+endif()
+
+
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd /ZI")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MDd /ZI")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
@@ -599,7 +607,7 @@ endif()
 
 if(WITH_CYCLES_OSL)
   set(CYCLES_OSL ${LIBDIR}/osl CACHE PATH "Path to OpenShadingLanguage installation")
-
+  set(OSL_SHADER_DIR ${CYCLES_OSL}/shaders)
   find_library(OSL_LIB_EXEC NAMES oslexec PATHS ${CYCLES_OSL}/lib)
   find_library(OSL_LIB_COMP NAMES oslcomp PATHS ${CYCLES_OSL}/lib)
   find_library(OSL_LIB_QUERY NAMES oslquery PATHS ${CYCLES_OSL}/lib)
