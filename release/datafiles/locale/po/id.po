@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
+"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 10:28:09\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -8418,19 +8418,7 @@ msgid "File name"
 msgstr "Nama file"
 
 
-msgid "Cursor from Selection"
-msgstr "lokasi"
-
-
 msgid "Cursor X"
-msgstr "lokasi"
-
-
-msgid "To Keys"
-msgstr "Semua Tampilan"
-
-
-msgid "Cursor Y"
 msgstr "lokasi"
 
 
@@ -8638,12 +8626,12 @@ msgid "Cannot fly an object with constraints"
 msgstr "Data Objek"
 
 
-msgid "Vert Slide: "
-msgstr "Warna Standar"
-
-
 msgid "(Random)"
 msgstr "Acak"
+
+
+msgid "Vert Slide: "
+msgstr "Warna Standar"
 
 
 msgid "UV Vertex"

@@ -57,4 +57,3 @@ USE_NO_COLOR = 'gltf_use_no_color'
 
 METALLIC_ROUGHNESS_IMAGE = "metallic_roughness_image"
 GROUP_INDEX = 'group_index'
-

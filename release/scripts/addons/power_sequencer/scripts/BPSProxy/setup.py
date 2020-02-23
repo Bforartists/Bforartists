@@ -16,7 +16,7 @@
 #
 
 def readme():
-    with open("README.rst") as f:
+    with open("README.md") as f:
         return f.read()
 
 
@@ -25,11 +25,12 @@ if __name__ == "__main__":
 
     setup(
         name="bpsproxy",
-        version="0.1.3.post1",
+        version="0.2.0",
         description="Blender Power Sequencer proxy generator tool",
         long_description=readme(),
+        long_description_content_type="text/markdown",
         classifiers=[
-            "Development Status :: 4 - Beta",
+            "Development Status :: 5 - Production/Stable",
             "Environment :: Console",
             "Intended Audience :: End Users/Desktop",
             "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
@@ -43,7 +44,7 @@ if __name__ == "__main__":
             "Topic :: Multimedia :: Video",
             "Topic :: Utilities",
         ],
-        url="https://gitlab.com/razcore/bpsproxy",
+        url="https://github.com/GDquest/BPSProxy",
         keywords="blender proxy vse sequence editor productivity",
         author="Răzvan C. Rădulescu",
         author_email="razcore.art@gmail.com",

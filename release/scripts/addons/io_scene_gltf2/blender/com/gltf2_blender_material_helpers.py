@@ -15,4 +15,3 @@
 
 def get_gltf_node_name():
     return "glTF Settings"
-

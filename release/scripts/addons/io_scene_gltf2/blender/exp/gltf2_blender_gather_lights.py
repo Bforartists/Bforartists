@@ -133,4 +133,3 @@ def __get_cycles_emission_node(blender_lamp) -> Optional[bpy.types.ShaderNodeEmi
                     continue
                 return result[0].shader_node
     return None
-

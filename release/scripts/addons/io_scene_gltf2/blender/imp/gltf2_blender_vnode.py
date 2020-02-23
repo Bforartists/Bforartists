@@ -358,4 +358,3 @@ def calc_bone_matrices(gltf):
 
 
 # TODO: add pass to rotate/resize bones so they look pretty
-

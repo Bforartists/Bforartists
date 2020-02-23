@@ -170,7 +170,7 @@ class MessageOperator(bpy.types.Operator):
 
     def invoke(self, context, event):
         wm = context.window_manager
-        return wm.invoke_popup(self, width=500, height=20)
+        return wm.invoke_popup(self, width=500)
 
     def draw(self, context):
 

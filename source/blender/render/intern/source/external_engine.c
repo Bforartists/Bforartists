@@ -258,7 +258,7 @@ void RE_engine_add_pass(RenderEngine *engine,
     return;
   }
 
-  render_result_add_pass(re->result, name, channels, chan_id, layername, NULL);
+  RE_create_render_pass(re->result, name, channels, chan_id, layername, NULL);
 }
 
 void RE_engine_end_result(
@@ -863,7 +863,7 @@ void RE_engine_register_pass(struct RenderEngine *engine,
                              const char *name,
                              int channels,
                              const char *chanid,
-                             int type)
+                             eNodeSocketDatatype type)
 {
   if (!(scene && view_layer && engine && engine->update_render_passes_cb)) {
     return;

@@ -112,4 +112,3 @@ class BlenderNodeAnim():
                     group_name=group_name,
                     interpolation=animation.samplers[channel.sampler].interpolation,
                 )
-

@@ -18,7 +18,6 @@
 This code is an adaptation of 'audio-offset-finder' by BBC
 """
 import os
-import warnings
 import numpy as np
 
 from .mfcc import mfcc

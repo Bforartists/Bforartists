@@ -17,7 +17,6 @@
 import json
 import os
 import re
-from operator import attrgetter
 
 import bpy
 
@@ -91,7 +90,9 @@ class POWER_SEQUENCER_OT_import_local_footage(bpy.types.Operator):
         self.directory = os.path.split(bpy.data.filepath)[0]
 
         filepaths = self.find_local_footage_files()
-        files_to_import = [os.path.join(self.directory, f) for f in self.find_new_files_to_import(filepaths)]
+        files_to_import = [
+            os.path.join(self.directory, f) for f in self.find_new_files_to_import(filepaths)
+        ]
         print(files_to_import)
         if not files_to_import:
             self.report({"INFO"}, "No new files to import found")
@@ -162,7 +163,7 @@ class POWER_SEQUENCER_OT_import_local_footage(bpy.types.Operator):
         Creates a new text data block that contains an empty json list, renames it to `name` and
         returns it
         """
-        re_text = re.compile(r"^Text.[0-9]{3}$")
+        re.compile(r"^Text.[0-9]{3}$")
 
         bpy.ops.text.new()
 

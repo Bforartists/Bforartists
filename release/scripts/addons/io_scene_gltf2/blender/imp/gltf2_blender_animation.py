@@ -59,4 +59,3 @@ class BlenderAnimation():
 
         for child in gltf.vnodes[vnode_id].children:
             BlenderAnimation.restore_animation(gltf, child, animation_name)
-

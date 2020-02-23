@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
+"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 10:28:09\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -3326,6 +3326,10 @@ msgstr "X, Y ve Z yönünde Etki Alanı Çözünürlüğü"
 
 msgid "Domain"
 msgstr "Alan"
+
+
+msgid "Velocity Factor"
+msgstr "Harekete bağlı bulanıklık derecesi"
 
 
 msgid "Full Sample"
@@ -16732,11 +16736,6 @@ msgstr "Vida Aracını çalıştırır"
 
 
 msgctxt "Operator"
-msgid "Optimize"
-msgstr "Anahtar Kareyi Göster"
-
-
-msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Heykeltraşlık Modu"
 
@@ -16801,20 +16800,6 @@ msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli d
 msgctxt "Operator"
 msgid "Copy"
 msgstr "Kopya"
-
-
-msgctxt "Operator"
-msgid "Cut Strips"
-msgstr "Kesme Biçimi "
-
-
-msgid "Cut the selected strips"
-msgstr "Seçili İşaretler arasında"
-
-
-msgctxt "Operator"
-msgid "Cut multicam"
-msgstr "Kesme Biçimi "
 
 
 msgctxt "Operator"
@@ -17379,6 +17364,14 @@ msgid "Unindent selected text"
 msgstr "METİN DOSYASI YÜKLE"
 
 
+msgid "Constraint Axis"
+msgstr "Yatay Eksen"
+
+
+msgid "Transformation orientation"
+msgstr "Kullanacağınız eksen takımını burdan değiştirebilirsiniz. (Alt Space)"
+
+
 msgid "Use Snapping Options"
 msgstr "Arkaplan Resmi Kullan"
 
@@ -17422,14 +17415,6 @@ msgstr "Kenar Kaydır"
 
 msgid "Correct UVs"
 msgstr "Doğru:"
-
-
-msgid "Constraint Axis"
-msgstr "Yatay Eksen"
-
-
-msgid "Transformation orientation"
-msgstr "Kullanacağınız eksen takımını burdan değiştirebilirsiniz. (Alt Space)"
 
 
 msgctxt "Operator"
@@ -18792,6 +18777,10 @@ msgid "Geometry Data"
 msgstr "Falloff Mesafesi"
 
 
+msgid "Transparency"
+msgstr "Saydamlık"
+
+
 msgid "Path Animation"
 msgstr "Animasyon Pencereleri"
 
@@ -19891,10 +19880,6 @@ msgstr "İst. BAKE Belleği:"
 
 msgid "Memory cache limit (in megabytes)"
 msgstr "İst. BAKE Belleği:"
-
-
-msgid "Prefetch Frames"
-msgstr "Kare/Saniye"
 
 
 msgid "Solid Lights"
@@ -21997,10 +21982,6 @@ msgid "Emission Time"
 msgstr "Bitiş Zamanı"
 
 
-msgid "Velocity Factor"
-msgstr "Harekete bağlı bulanıklık derecesi"
-
-
 msgid "Clip Editor"
 msgstr "Mantık Editörü"
 
@@ -23043,10 +23024,6 @@ msgstr "Kırpma Kullan"
 
 msgid "Mesh Light"
 msgstr "Doğrusal Bozulma"
-
-
-msgid "Transparency"
-msgstr "Saydamlık"
 
 
 msgid "Persistent Images"
@@ -26086,32 +26063,20 @@ msgid "File name"
 msgstr "Dosya adı"
 
 
-msgid "Cursor from Selection"
-msgstr "Seçimi İmlece"
-
-
 msgid "Cursor X"
 msgstr "İmleç X"
-
-
-msgid "To Keys"
-msgstr "Anahtarları Ters Çevir"
-
-
-msgid "Cursor Y"
-msgstr "İmleç Y"
 
 
 msgid "Interpolation:"
 msgstr "Aradeğerleme Modu"
 
 
-msgid "Value:"
-msgstr "Değer:"
-
-
 msgid "Driver Value:"
 msgstr "Sürücüyü Kaldır"
+
+
+msgid "Value:"
+msgstr "Değer:"
 
 
 msgid "Update Dependencies"
@@ -26124,10 +26089,6 @@ msgstr "Değiştirici Ekle"
 
 msgid "Delete target variable"
 msgstr "Hedef değişkeni sil"
-
-
-msgid "View Properties"
-msgstr "Görünüm Özellikleri"
 
 
 msgid "Active F-Curve is not editable"
@@ -26412,10 +26373,6 @@ msgid "Tilt of curve control points"
 msgstr "Seçili yüzeylerin açılarını düzleştirir"
 
 
-msgid "%s (Local)"
-msgstr "%s (Kilitli)"
-
-
 msgid "Depth too large"
 msgstr "Kemik Katmanlarınını Değiştir..."
 
@@ -26426,14 +26383,6 @@ msgstr "Tüm Nesne Merkezleri"
 
 msgid "Auto Keying On"
 msgstr "Otomatik Normalleştir"
-
-
-msgid "Shrink/Fatten:"
-msgstr "Eğri Önayarı"
-
-
-msgid "Vert Slide: "
-msgstr "Vertex Slide"
 
 
 msgid "global"
@@ -26482,6 +26431,14 @@ msgstr "Küresel"
 
 msgid "(Random)"
 msgstr "Rasgele"
+
+
+msgid "Shrink/Fatten:"
+msgstr "Eğri Önayarı"
+
+
+msgid "Vert Slide: "
+msgstr "Vertex Slide"
 
 
 msgid "UV Vertex"

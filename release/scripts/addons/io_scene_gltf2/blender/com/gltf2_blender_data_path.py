@@ -36,4 +36,3 @@ def get_rotation_modes(target_property: str) -> str:
         return True, ["AXIS_ANGLE"]
     else:
         return False, []
-

@@ -50,4 +50,3 @@ class BlenderCamera():
 
         obj = bpy.data.objects.new(pycamera.name, cam)
         return obj
-

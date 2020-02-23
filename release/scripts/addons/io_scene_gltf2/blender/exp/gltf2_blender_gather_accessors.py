@@ -45,4 +45,3 @@ def gather_accessor(buffer_view: gltf2_io_binary_data.BinaryData,
         sparse=None,
         type=type
     )
-
