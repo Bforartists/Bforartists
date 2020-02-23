@@ -629,13 +629,13 @@ void ED_region_tag_redraw(ARegion *ar)
    * but python scripts can cause this to happen indirectly */
   if (ar && !(ar->do_draw & RGN_DRAWING)) {
     /* zero region means full region redraw */
-    ar->do_draw &= ~(RGN_DRAW_PARTIAL | RGN_DRAW_NO_REBUILD);
+    ar->do_draw &= ~(RGN_DRAW_PARTIAL | RGN_DRAW_NO_REBUILD | RGN_DRAW_EDITOR_OVERLAYS);
     ar->do_draw |= RGN_DRAW;
     memset(&ar->drawrct, 0, sizeof(ar->drawrct));
   }
 }
 
-void ED_region_tag_redraw_overlay(ARegion *ar)
+void ED_region_tag_redraw_cursor(ARegion *ar)
 {
   if (ar) {
     ar->do_draw_overlay = RGN_DRAW;
@@ -645,7 +645,7 @@ void ED_region_tag_redraw_overlay(ARegion *ar)
 void ED_region_tag_redraw_no_rebuild(ARegion *ar)
 {
   if (ar && !(ar->do_draw & (RGN_DRAWING | RGN_DRAW))) {
-    ar->do_draw &= ~RGN_DRAW_PARTIAL;
+    ar->do_draw &= ~(RGN_DRAW_PARTIAL | RGN_DRAW_EDITOR_OVERLAYS);
     ar->do_draw |= RGN_DRAW_NO_REBUILD;
     memset(&ar->drawrct, 0, sizeof(ar->drawrct));
   }
@@ -655,6 +655,22 @@ void ED_region_tag_refresh_ui(ARegion *ar)
 {
   if (ar) {
     ar->do_draw |= RGN_REFRESH_UI;
+  }
+}
+
+/**
+ * Tag editor overlays to be redrawn. If in doubt about which parts need to be redrawn (partial
+ * clipping rectangle set), redraw everything.
+ */
+void ED_region_tag_redraw_editor_overlays(struct ARegion *ar)
+{
+  if (ar && !(ar->do_draw & (RGN_DRAWING | RGN_DRAW))) {
+    if (ar->do_draw & RGN_DRAW_PARTIAL) {
+      ED_region_tag_redraw(ar);
+    }
+    else {
+      ar->do_draw |= RGN_DRAW_EDITOR_OVERLAYS;
+    }
   }
 }
 
@@ -1853,15 +1869,21 @@ void ED_region_floating_initialize(ARegion *ar)
 
 void ED_region_cursor_set(wmWindow *win, ScrArea *sa, ARegion *ar)
 {
-  if (ar && sa && ar->type && ar->type->cursor) {
-    ar->type->cursor(win, sa, ar);
-  }
-  else {
-    if (WM_cursor_set_from_tool(win, sa, ar)) {
+  if (ar != NULL) {
+    if ((ar->gizmo_map != NULL) && WM_gizmomap_cursor_set(ar->gizmo_map, win)) {
       return;
     }
-    WM_cursor_set(win, WM_CURSOR_DEFAULT);
+    if (sa && ar->type && ar->type->cursor) {
+      ar->type->cursor(win, sa, ar);
+      return;
+    }
   }
+
+  if (WM_cursor_set_from_tool(win, sa, ar)) {
+    return;
+  }
+
+  WM_cursor_set(win, WM_CURSOR_DEFAULT);
 }
 
 /* for use after changing visibility of regions */
@@ -2927,7 +2949,8 @@ void ED_region_info_draw(ARegion *ar,
                          float fill_color[4],
                          const bool full_redraw)
 {
-  ED_region_info_draw_multiline(ar, (const char * [2]){text, NULL}, fill_color, full_redraw);
+  const char *text_array[2] = {text, NULL};
+  ED_region_info_draw_multiline(ar, text_array, fill_color, full_redraw);
 }
 
 #define MAX_METADATA_STR 1024

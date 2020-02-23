@@ -135,4 +135,3 @@ def __get_tex_from_socket(socket):
     if result[0].shader_node.image is None:
         return None
     return result[0]
-

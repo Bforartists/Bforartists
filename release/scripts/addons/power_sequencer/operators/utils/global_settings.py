@@ -58,7 +58,7 @@ class SequenceTypes:
     SOUND = ("SOUND",)
     IMAGE = ("IMAGE",)
     TRANSITIONABLE = (
-        VIDEO + IMAGE + ("MULTICAM", "GAUSSIAN_BLUR", "TRANSFORM", "ADJUSTMENT", "SPEED")
+        VIDEO + IMAGE + ("MULTICAM", "GAUSSIAN_BLUR", "TRANSFORM", "ADJUSTMENT", "SPEED", "COLOR")
     )
     # Strips that can be cut. If most effect strips are linked to their inputs
     # and shouldn't be cut, some can be edited directly

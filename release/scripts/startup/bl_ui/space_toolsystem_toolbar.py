@@ -127,7 +127,7 @@ class _defs_view3d_generic:
                 "\u2022 Drag ruler segment to measure an angle.\n"
                 "\u2022 {} to remove the active ruler.\n"
                 "\u2022 Ctrl while dragging to snap.\n"
-                "\u2022 Shift while dragging to measure surface thickness."
+                "\u2022 Shift while dragging to measure surface thickness"
             ).format(
                 kmi_to_string_or_none(kmi_add),
                 kmi_to_string_or_none(kmi_remove),
@@ -462,6 +462,7 @@ class _defs_edit_armature:
         return dict(
             idname="builtin.extrude_to_cursor",
             label="Extrude to Cursor",
+            cursor='CROSSHAIR',
             icon="ops.armature.extrude_cursor",
             widget=None,
             keymap=(),
@@ -723,6 +724,7 @@ class _defs_edit_mesh:
         return dict(
             idname="builtin.extrude_to_cursor",
             label="Extrude to Cursor",
+            cursor='CROSSHAIR',
             icon="ops.mesh.dupli_extrude_cursor",
             widget=None,
             keymap=(),
@@ -910,7 +912,8 @@ class _defs_edit_curve:
     def extrude_cursor():
         return dict(
             idname="builtin.extrude_cursor",
-            label="Extrude Cursor",
+            label="Extrude to Cursor",
+            cursor='CROSSHAIR',
             icon="ops.curve.extrude_cursor",
             widget=None,
             keymap=(),
@@ -1728,18 +1731,19 @@ class _defs_node_edit:
 class _defs_sequencer_generic:
 
     @ToolDef.from_fn
-    def cut():
+    def blade():
         def draw_settings(_context, layout, tool):
-            props = tool.operator_properties("sequencer.cut")
+            props = tool.operator_properties("sequencer.split")
             row = layout.row()
             row.use_property_split = False
             row.prop(props, "type", expand=True)
         return dict(
-            idname="builtin.cut",
-            label="Cut",
-            icon="ops.mesh.knife_tool",
+            idname="builtin.blade",
+            label="Blade",
+            icon="ops.sequencer.blade",
+            cursor='CROSSHAIR',
             widget=None,
-            keymap="Sequencer Tool: Cut",
+            keymap="Sequencer Tool: Blade",
             draw_settings=draw_settings,
         )
 
@@ -2303,12 +2307,12 @@ class SEQUENCER_PT_tools_active(ToolSelectPanelHelper, Panel):
         ],
         'SEQUENCER': [
             *_tools_select,
-            _defs_sequencer_generic.cut,
+            _defs_sequencer_generic.blade,
         ],
         'SEQUENCER_PREVIEW': [
             *_tools_select,
             *_tools_annotate,
-            _defs_sequencer_generic.cut,
+            _defs_sequencer_generic.blade,
         ],
     }
 

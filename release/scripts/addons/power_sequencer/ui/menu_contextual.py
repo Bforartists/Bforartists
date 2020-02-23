@@ -69,9 +69,7 @@ class POWER_SEQUENCER_MT_contextual(bpy.types.Menu):
             layout.operator(
                 "power_sequencer.ripple_delete", icon="AUTOMERGE_ON", text="Ripple delete"
             )
-            layout.operator(
-                "power_sequencer.snap_selection", icon="SNAP_ON", text="Snap selection"
-            )
+            layout.operator("power_sequencer.snap_selection", icon="SNAP_ON", text="Snap selection")
 
         layout.separator()
 

@@ -56,11 +56,11 @@ class POWER_SEQUENCER_OT_grab(bpy.types.Operator):
 
     def execute(self, context):
         if len(context.selected_sequences) == 0:
-            return {'FINISHED'}
+            return {"FINISHED"}
 
         strip = context.selected_sequences[0]
         if len(context.selected_sequences) == 1 and strip.type in SequenceTypes.TRANSITION:
             context.scene.sequence_editor.active_strip = strip
             return bpy.ops.power_sequencer.crossfade_edit()
         else:
-            return bpy.ops.transform.seq_slide('INVOKE_DEFAULT')
+            return bpy.ops.transform.seq_slide("INVOKE_DEFAULT")

@@ -98,6 +98,8 @@
 
 #include "view3d_intern.h" /* own include */
 
+#define M_GOLDEN_RATION_CONJUGATE 0.618033988749895f
+
 /* -------------------------------------------------------------------- */
 /** \name General Functions
  * \{ */
@@ -450,7 +452,7 @@ static void drawviewborder_triangle(
 
   if (w > h) {
     if (golden) {
-      ofs = w * (1.0f - (1.0f / 1.61803399f));
+      ofs = w * (1.0f - (1.0f / M_GOLDEN_RATION_CONJUGATE));
     }
     else {
       ofs = h * (h / w);
@@ -470,7 +472,7 @@ static void drawviewborder_triangle(
   }
   else {
     if (golden) {
-      ofs = h * (1.0f - (1.0f / 1.61803399f));
+      ofs = h * (1.0f - (1.0f / M_GOLDEN_RATION_CONJUGATE));
     }
     else {
       ofs = w * (w / h);
@@ -568,7 +570,7 @@ static void drawviewborder(Scene *scene, Depsgraph *depsgraph, ARegion *ar, View
       GPU_blend(false);
     }
 
-    immUniformThemeColor(TH_BACK);
+    immUniformThemeColor3(TH_BACK);
     imm_draw_box_wire_2d(shdr_pos, x1i, y1i, x2i, y2i);
 
 #ifdef VIEW3D_CAMERA_BORDER_HACK
@@ -605,7 +607,7 @@ static void drawviewborder(Scene *scene, Depsgraph *depsgraph, ARegion *ar, View
       imm_draw_box_wire_2d(shdr_pos, x1i - 1, y1i - 1, x2i + 1, y2i + 1);
     }
 
-    immUniformThemeColor(TH_VIEW_OVERLAY);
+    immUniformThemeColor3(TH_VIEW_OVERLAY);
     imm_draw_box_wire_2d(shdr_pos, x1i, y1i, x2i, y2i);
   }
 
@@ -660,7 +662,7 @@ static void drawviewborder(Scene *scene, Depsgraph *depsgraph, ARegion *ar, View
     }
 
     if (ca->dtx & CAM_DTX_GOLDEN) {
-      drawviewborder_grid3(shdr_pos, x1, x2, y1, y2, 1.0f - (1.0f / 1.61803399f));
+      drawviewborder_grid3(shdr_pos, x1, x2, y1, y2, 1.0f - (1.0f / M_GOLDEN_RATION_CONJUGATE));
     }
 
     if (ca->dtx & CAM_DTX_GOLDEN_TRI_A) {

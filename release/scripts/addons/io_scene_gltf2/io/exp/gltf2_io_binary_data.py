@@ -39,4 +39,3 @@ class BinaryData:
     @property
     def byte_length(self):
         return len(self.data)
-

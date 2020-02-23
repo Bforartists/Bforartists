@@ -249,7 +249,7 @@ def get_commands_join(cfg, clargs, **kwargs):
         "-c:a",
         "aac",
         "-b:a",
-        "192k",
+        "320k",
         "-y",
         kwargs["render_audiovideo_path"],
     )

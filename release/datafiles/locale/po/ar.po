@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
+"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 10:28:09\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -8019,6 +8019,10 @@ msgstr "ﺔﻳﺩﻮﻣﺎﻌﻟﺍ ﻭ ﺔﻳﺩﻮﻤﻌﻟﺍ ﻭ ﺔﻴﻘ�
 
 msgid "Domain"
 msgstr "ﻕﺎﻄﻧ"
+
+
+msgid "Velocity Factor"
+msgstr "ﺔﻋﺮﺴﻟﺍ ﻞﻣﺎﻌﻣ"
 
 
 msgid "Emitter"
@@ -22835,11 +22839,6 @@ msgstr "ﻼ﻿ﻣﺎﻛ ﺢﻴﺗﺎﻔﻤﻟﺍ ﻕﺎﻄﻧ ﺭﺎﻬﻇﻹ﻿
 
 
 msgctxt "Operator"
-msgid "View Frame"
-msgstr "ﺭﺎﻃﻹ﻿ﺍ ﺮﻬﻇﺍ"
-
-
-msgctxt "Operator"
 msgid "View Selected"
 msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﺮﻬﻇﺍ"
 
@@ -28654,10 +28653,6 @@ msgid "Change the Lock On Vertex Groups"
 msgstr "ﻂﻘﻨﻟﺍ ﺕﺎﻋﻮﻤﺠﻤﻟ ﻞﻔﻘﻟﺍ ﺮﻴﻏ"
 
 
-msgid "Change the lock state of all vertex groups of active object"
-msgstr "ﻝﺎﻌﻔﻟﺍ ﻦﺋﺎﻜﻠﻟ ﻂﻘﻨﻟﺍ ﺕﺎﻋﻮﻤﺠﻣ ﻞﻜﻟ ﻞﻔﻘﻟﺍ ﺔﻟﺎﺣ ﺮﻴﻏ"
-
-
 msgid "Lock action to execute on vertex groups"
 msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﻂﻘﻨﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺦﺴﻧﺍ"
 
@@ -30139,11 +30134,6 @@ msgstr "ﻥﺎﻀﻴﻔﺑ ﻞﻴﺻﺎﻔﺘﻟﺍ ﺊﺒّﻋ"
 
 
 msgctxt "Operator"
-msgid "Optimize"
-msgstr ":ﻦﻴﺴﺤﺘﻟﺍ"
-
-
-msgctxt "Operator"
 msgid "Sample Detail Size"
 msgstr "ﺔﻠﻴﺼﻔﺘﻟﺍ ﻢﺠﺣ ﻦﻳﺎﻋ"
 
@@ -30231,20 +30221,6 @@ msgstr "ﺕﺍﻮﺻﻻ﻿ﺍ ﻞﺧﺍﺩ"
 
 msgid "Do cross-fading volume animation of two selected sound strips"
 msgstr "ﻦﻳﺭﺎﺘﺨﻣ ﺕﻮﺻ ﻲﻄﻳﺮﺸﻟ ﻞﺋﺎﻀﺘﻣ ﻞﺧﺍﺪﺘﻣ ﻲﻤﺠﺣ ﻙﺮﺤﺗ ﺊﺸﻧﺍ"
-
-
-msgctxt "Operator"
-msgid "Cut Strips"
-msgstr "ﺔﻃﺮﺷﻻ﻿ﺍ ﺺﻗ"
-
-
-msgid "Cut the selected strips"
-msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺔﻃﺮﺷﻷ﻿ﺍ ﻊﻄﻗﺇ"
-
-
-msgctxt "Operator"
-msgid "Cut multicam"
-msgstr "ﺕﺍﺮﻴﻣﺎﻜﻟﺍ ﻂﻳﺮﺷ ﺺﻗ"
 
 
 msgctxt "Operator"
@@ -30507,6 +30483,11 @@ msgstr "ﺓﺭﺎﺘﺨﻣ ﺮﻴﻐﻟﺍ ﺔﻃﺮﺷﻷ﻿ﺍ ﻞﻌّﻓ"
 
 msgid "Unmute unselected rather than selected strips"
 msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﻝﺪﺑ ﺓﺭﺎﺘﺨﻣ ﺮﻴﻐﻟﺍ ﺔﻃﺮﺷﻷ﻿ﺍ ﻞﻌّﻓ"
+
+
+msgctxt "Operator"
+msgid "View Frame"
+msgstr "ﺭﺎﻃﻹ﻿ﺍ ﺮﻬﻇﺍ"
 
 
 msgctxt "Operator"
@@ -32490,6 +32471,10 @@ msgstr "ﺞﻴﺴﻨﻟﺍ ﻝﺎﺠﻣ"
 
 msgid "Geometry Data"
 msgstr "ﻢﺴﺠﻤﻟﺍ ﺪﻌﺑ"
+
+
+msgid "Transparency"
+msgstr "ﺔﻴﻓﺎﻔﺷ"
 
 
 msgid "Paragraph"
@@ -34685,14 +34670,6 @@ msgstr "ﻲﺑ ﻡﺍ ﻦﺑﻭﺍ"
 
 msgid "GLSL Compute"
 msgstr "GLSL ﺏﺎﺴﺣ"
-
-
-msgid "Prefetch Frames"
-msgstr "ﺮﻃﻸ﻿ﻟ ﺔﻘﺒﺴﻣ-ﺮﻴﻴﺼﺗ"
-
-
-msgid "Number of frames to render ahead during playback (sequencer only)"
-msgstr "(ﻂﻘﻓ ﻂﺋﺍﺮﺸﻟﺍ ﺭﺮﺤﻣ) ﺽﺮﻌﻟﺍ ﻝﻼ﻿ﺧ ﺎﻘﺒﺴﻣ ﺓﺮﻴّﺼﻤﻟﺍ ﺮﻃﻷ﻿ﺍ ﺩﺪﻋ"
 
 
 msgid "Maximum number of lines to store for the console buffer"
@@ -37848,10 +37825,6 @@ msgid "UV map to use for mapping with UV texture coordinates"
 msgstr "UV ـﻟﺍ ﺞﻴﺴﻧ ﺕﺎﻴﺛﺍﺪﺣﺈﺑ ءﺎﺴﻛﻺ﻿ﻟ ﺔﻣﺪﺨﺘﺴﻤﻟﺍ UV ـﻟﺍ ﺔﻄﻳﺮﺧ"
 
 
-msgid "Velocity Factor"
-msgstr "ﺔﻋﺮﺴﻟﺍ ﻞﻣﺎﻌﻣ"
-
-
 msgid "Amount texture affects particle initial velocity"
 msgstr "ءﻱﺰﺠﻠﻟ ﺔﻴﺋﺪﺒﻤﻟﺍ ﺔﻋﺮﺴﻟﺍ ﻰﻠﻋ ﺞﻴﺴﻨﻟﺍ ﺮﻴﺛﺄﺗ ﺔﻴﻤﻛ"
 
@@ -38114,22 +38087,6 @@ msgstr "ﺓﺯﺮﻐﻟﺍ ﺔﻨﻳﺎﻌﻣ ﺔﻓﺎﺣ ﻥﻮﻟ"
 
 msgid "Wire Edit"
 msgstr "ﻲﻜﻠﺳ ﺮﻳﺮﺤﺗ"
-
-
-msgid "Debug Background"
-msgstr "ﻊﺒﺘﺘﻟﺍ ﺔﻴﻔﻠﺧ"
-
-
-msgid "Error Background"
-msgstr "ﺄﻄﺨﻠﻟ ﺔﻴﻔﻠﺧ"
-
-
-msgid "Info Background"
-msgstr "ﺕﺎﻣﻮﻠﻌﻤﻠﻟ ﺔﻴﻔﻠﺧ"
-
-
-msgid "Selected Line Text"
-msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﺺﻨﻟﺍ ﺮﻄﺳ"
 
 
 msgid "Active Action"
@@ -39569,10 +39526,6 @@ msgid "Mesh Light"
 msgstr "ﻢﺴﺠﻤﻟﺍ ءﻮﺿ"
 
 
-msgid "Transparency"
-msgstr "ﺔﻴﻓﺎﻔﺷ"
-
-
 msgid "Tiles X"
 msgstr "X ﺕﺎﻨﺒﻟ"
 
@@ -39941,10 +39894,6 @@ msgid "Control Rotation"
 msgstr "ﻥﺍﺭﻭﺩ ﻢﻜﺤﺘﻟﺍ"
 
 
-msgid "Bone Size"
-msgstr "ﺔﻤﻈﻌﻟﺍ ﻢﺠﺣ"
-
-
 msgctxt "Operator"
 msgid "Add Image"
 msgstr "ﺓﺭﻮﺻ ﻒﺿﺃ"
@@ -40015,6 +39964,11 @@ msgstr "ﻊﻴﻣﺪﺘﻟﺍ ﻑﺍﺮﺤﻧﺇ"
 
 
 msgctxt "Operator"
+msgid "Lock Invert All"
+msgstr "ﻞﻜﻟﺍ ﻞﻔﻗ ﺲﻜﻋ"
+
+
+msgctxt "Operator"
 msgid "Sort by Name"
 msgstr "ﻢﺳﻹ﻿ﺍ ﺐﺴﺣ ﺐﺗّﺭ"
 
@@ -40037,11 +39991,6 @@ msgstr "ﺔﻟﺎﻌّﻔﻟﺍ ﺔﻋﻮﻤﺠﻤﻟﺍ ﻒﻈّﻧ"
 msgctxt "Operator"
 msgid "Delete All Groups"
 msgstr "ﺕﺎﻋﻮﻤﺠﻤﻟﺍ ﻞﻛ ﻑﺬﺣﺍ"
-
-
-msgctxt "Operator"
-msgid "Lock Invert All"
-msgstr "ﻞﻜﻟﺍ ﻞﻔﻗ ﺲﻜﻋ"
 
 
 msgctxt "Operator"
@@ -40333,6 +40282,10 @@ msgid "UV Axis:"
 msgstr "Y ﺭﻮﺤﻤﻟﺍ"
 
 
+msgid "Offset:"
+msgstr ":ﺔﺣﺍﺯﺇ"
+
+
 msgid "UV Map:"
 msgstr ":UV ﺔﻄﻳﺮﺧ"
 
@@ -40363,10 +40316,6 @@ msgstr ":ﺕﺍﺩﺍﺪﻋﺇ"
 
 msgid "Color:"
 msgstr ":ﻥﻮﻟ"
-
-
-msgid "Offset:"
-msgstr ":ﺔﺣﺍﺯﺇ"
 
 
 msgid "Shift:"
@@ -44005,28 +43954,12 @@ msgid "File name"
 msgstr "ﻒﻠﻤﻟﺍ ﻢﺳﺇ"
 
 
-msgid "Cursor from Selection"
-msgstr "ﻲﻟﺎﺤﻟﺍ ﺭﺎﻴﺘﺧﻺ﻿ﻟ ﺮﺷﺆﻤﻟﺍ"
-
-
 msgid "Cursor X"
 msgstr " X ﺮﺷﺆﻤﻟﺍ"
 
 
-msgid "To Keys"
-msgstr "ﺢﻴﺗﺎﻔﻤﻠﻟ"
-
-
-msgid "Cursor Y"
-msgstr " Y ﺮﺷﺆﻤﻟﺍ"
-
-
 msgid "Interpolation:"
 msgstr ":ﻰﻨﺤﻨﻤﻟﺍ ﻉﻮﻧ"
-
-
-msgid "Value:"
-msgstr ":ﺔﻤﻴﻗ"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -44053,6 +43986,10 @@ msgid "Driver Value:"
 msgstr ":ﻞﻐﺸﻤﻟﺍ ﺔﻤﻴﻗ"
 
 
+msgid "Value:"
+msgstr ":ﺔﻤﻴﻗ"
+
+
 msgid "Update Dependencies"
 msgstr "ﺕﺎﻳﺩﺎﻤﺘﻋﻻ﻿ﺍ ﺙﺪﺣ"
 
@@ -44071,10 +44008,6 @@ msgstr "ﺔﺤﻴﺤﺻ ﺮﻴﻏ ﻑﺪﻬﻟﺍ ﺓﺎﻨﻗ :ﺄﻄﺧ"
 
 msgid "Delete target variable"
 msgstr "ﻑﺪﻬﻟﺍ ﺮﻴﻐﺘﻣ ﻑﺬﺣﺍ"
-
-
-msgid "View Properties"
-msgstr "ﺹﺍﻮﺨﻟﺍ ﺮﻬﻇﺍ"
 
 
 msgid "No selected F-Curves to add keyframes to"
@@ -44497,10 +44430,6 @@ msgid "Vertex Weights"
 msgstr "ﺔﻄﻘﻨﻟﺍ ﻥﺍﺯﻭﺃ"
 
 
-msgid "%s (Local)"
-msgstr "‪%s‬ (ﻞﻔﻘﻣ)"
-
-
 msgid "Depth too large"
 msgstr "ﻖﻤﻌﻟﺍ ﺮﻴﻴﻐﺗ"
 
@@ -44527,18 +44456,6 @@ msgstr "ﺩﻮﻴﻘﺑ ﻦﺋﺎﻜﻟﺍ ﺢﻔّﺼﺗ ﻦﻜﻤﻳ ﻻ﻿"
 
 msgid "Auto Keying On"
 msgstr "ﺔﻴﺗﺍﺫ ﺔﻓﺎﺿﺇ"
-
-
-msgid "Shrink/Fatten:"
-msgstr "ﻦﻤّﺳ/ﺺﻠّﻗ"
-
-
-msgid "Edge Slide: "
-msgstr ":ﺔﻓﺎﺤﻟﺍ ﻕﻻ﻿ﺰﻧﺍ"
-
-
-msgid "Vert Slide: "
-msgstr "ﻂﻘﻨﻟﺍ ﺡﺯﺍ"
 
 
 msgid "global"
@@ -44591,6 +44508,18 @@ msgstr "ﺓﺮﻛ"
 
 msgid "(Random)"
 msgstr "ﻲﺋﺍﻮﺸﻋ"
+
+
+msgid "Edge Slide: "
+msgstr ":ﺔﻓﺎﺤﻟﺍ ﻕﻻ﻿ﺰﻧﺍ"
+
+
+msgid "Shrink/Fatten:"
+msgstr "ﻦﻤّﺳ/ﺺﻠّﻗ"
+
+
+msgid "Vert Slide: "
+msgstr "ﻂﻘﻨﻟﺍ ﺡﺯﺍ"
 
 
 msgctxt "Scene"

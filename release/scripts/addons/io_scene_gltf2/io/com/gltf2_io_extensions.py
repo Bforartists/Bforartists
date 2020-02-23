@@ -35,4 +35,3 @@ class ChildOfRootExtension(Extension):
         """
         self.path = path
         super().__init__(name, extension, required)
-

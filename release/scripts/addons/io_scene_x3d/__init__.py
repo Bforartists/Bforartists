@@ -85,7 +85,7 @@ class ImportX3D(bpy.types.Operator, ImportHelper):
 class X3D_PT_export_include(bpy.types.Panel):
     bl_space_type = 'FILE_BROWSER'
     bl_region_type = 'TOOL_PROPS'
-    bl_label = "include"
+    bl_label = "Include"
     bl_parent_id = "FILE_PT_operator"
 
     @classmethod

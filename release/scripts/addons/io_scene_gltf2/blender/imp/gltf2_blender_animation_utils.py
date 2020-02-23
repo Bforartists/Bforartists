@@ -80,4 +80,3 @@ def make_fcurve(action, co, data_path, index=0, group_name=None, interpolation=N
     fcurve.update() # force updating tangents (this may change when tangent will be managed)
 
     return fcurve
-

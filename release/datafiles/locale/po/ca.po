@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
+"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 10:28:09\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -3530,6 +3530,10 @@ msgstr "Comprimir Dades"
 
 msgid "Domain"
 msgstr "Mostrar propietats de les arestes"
+
+
+msgid "Velocity Factor"
+msgstr "Desparentar"
 
 
 msgid "Emitter"
@@ -17031,10 +17035,6 @@ msgid "Change the Lock On Vertex Groups"
 msgstr "Pintura Vectorial"
 
 
-msgid "Change the lock state of all vertex groups of active object"
-msgstr "Seleccionar connectats"
-
-
 msgid "Lock action to execute on vertex groups"
 msgstr "Duplicar"
 
@@ -18470,11 +18470,6 @@ msgstr "Amagar Seleccionats"
 
 
 msgctxt "Operator"
-msgid "Optimize"
-msgstr "Esborrar Rotació"
-
-
-msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Mode d'Edició"
 
@@ -18539,15 +18534,6 @@ msgstr "Render"
 msgctxt "Operator"
 msgid "Copy"
 msgstr "Guardar"
-
-
-msgctxt "Operator"
-msgid "Cut Strips"
-msgstr "Afegir Tira"
-
-
-msgid "Cut the selected strips"
-msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
@@ -19177,6 +19163,14 @@ msgid "Unindent selected text"
 msgstr "Amagar Seleccionats"
 
 
+msgid "Constraint Axis"
+msgstr "Afegir Tira"
+
+
+msgid "Transformation orientation"
+msgstr "Esborrar Rotació"
+
+
 msgid "Use Snapping Options"
 msgstr "Esborrar Rotació"
 
@@ -19224,14 +19218,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Correct UV coordinates when transforming"
 msgstr "Texte"
-
-
-msgid "Constraint Axis"
-msgstr "Afegir Tira"
-
-
-msgid "Transformation orientation"
-msgstr "Esborrar Rotació"
 
 
 msgid "Push/Pull selected items"
@@ -20659,6 +20645,10 @@ msgid "Geometry Data"
 msgstr "Mostrar propietats de les arestes"
 
 
+msgid "Transparency"
+msgstr "Seleccionar connectats"
+
+
 msgid "Path Animation"
 msgstr "Finestra de Render"
 
@@ -21677,14 +21667,6 @@ msgstr "Esborrar Rotació"
 
 msgid "Ambient Color"
 msgstr "Seleccionar fila"
-
-
-msgid "Prefetch Frames"
-msgstr "Començar Joc"
-
-
-msgid "Number of frames to render ahead during playback (sequencer only)"
-msgstr "Seleccionar connectats"
 
 
 msgid "Texture Time Out"
@@ -23955,10 +23937,6 @@ msgid "UV map to use for mapping with UV texture coordinates"
 msgstr "Texte"
 
 
-msgid "Velocity Factor"
-msgstr "Desparentar"
-
-
 msgid "Clip Editor"
 msgstr "Image Displist"
 
@@ -25159,10 +25137,6 @@ msgid "Mesh Light"
 msgstr "Dreta"
 
 
-msgid "Transparency"
-msgstr "Seleccionar connectats"
-
-
 msgid "Tiles X"
 msgstr "Arxiu"
 
@@ -25610,6 +25584,10 @@ msgid "UV Axis:"
 msgstr "Ampliar"
 
 
+msgid "Offset:"
+msgstr "Joc"
+
+
 msgid "UV Map:"
 msgstr "Image Displist"
 
@@ -25628,10 +25606,6 @@ msgstr "Eines"
 
 msgid "Color:"
 msgstr "Desparentar"
-
-
-msgid "Offset:"
-msgstr "Joc"
 
 
 msgid "Shift:"
@@ -27802,28 +27776,12 @@ msgid "File name"
 msgstr "Arxiu"
 
 
-msgid "Cursor from Selection"
-msgstr "Amagar Seleccionats"
-
-
 msgid "Cursor X"
 msgstr "Seleccionar connectats"
 
 
-msgid "To Keys"
-msgstr "Seleccionar fila"
-
-
-msgid "Cursor Y"
-msgstr "Image Displist"
-
-
 msgid "Interpolation:"
 msgstr "Esborrar Rotació"
-
-
-msgid "Value:"
-msgstr "Mostrar propietats de les arestes"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -27838,6 +27796,10 @@ msgid "Driver Value:"
 msgstr "Afegir Tira"
 
 
+msgid "Value:"
+msgstr "Mostrar propietats de les arestes"
+
+
 msgid "Update Dependencies"
 msgstr "Finestra de Render"
 
@@ -27848,10 +27810,6 @@ msgstr "Esborrar tot"
 
 msgid "Delete target variable"
 msgstr "Finestra de Render"
-
-
-msgid "View Properties"
-msgstr "Image Displist"
 
 
 msgid "Active F-Curve is not editable"
@@ -28143,14 +28101,6 @@ msgid "Auto Keying On"
 msgstr "Moure a Capa"
 
 
-msgid "Shrink/Fatten:"
-msgstr "Contreure/Engreixar"
-
-
-msgid "Vert Slide: "
-msgstr "Pintura Vectorial"
-
-
 msgid "global"
 msgstr "Global"
 
@@ -28185,6 +28135,14 @@ msgstr "Esfera UV"
 
 msgid "(Random)"
 msgstr "Seleccionar fila"
+
+
+msgid "Shrink/Fatten:"
+msgstr "Contreure/Engreixar"
+
+
+msgid "Vert Slide: "
+msgstr "Pintura Vectorial"
 
 
 msgid "UV Vertex"

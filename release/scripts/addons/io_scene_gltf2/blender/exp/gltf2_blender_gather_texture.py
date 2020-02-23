@@ -106,4 +106,3 @@ def __get_tex_from_socket(socket):
     if not result:
         return None
     return result[0]
-

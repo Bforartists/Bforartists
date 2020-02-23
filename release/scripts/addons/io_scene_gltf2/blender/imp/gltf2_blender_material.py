@@ -91,4 +91,3 @@ class BlenderMaterial():
             color = pbr.base_color_factor or [1, 1, 1, 1]
 
         mat.diffuse_color = color
-

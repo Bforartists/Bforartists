@@ -191,4 +191,3 @@ class BlenderGlTF():
 
             suffix = '.%03d' % cntr
             cntr += 1
-

@@ -20,7 +20,7 @@
 bl_info = {
     "name": "Bsurfaces GPL Edition",
     "author": "Eclectiel, Vladimir Spivak (cwolf3d)",
-    "version": (1, 7, 6),
+    "version": (1, 7, 7),
     "blender": (2, 80, 0),
     "location": "View3D EditMode > Sidebar > Edit Tab",
     "description": "Modeling and retopology tool",
@@ -167,7 +167,7 @@ def get_strokes_type(context):
     # Check if they are annotation
     if context.scene.bsurfaces.SURFSK_guide == 'Annotation':
         try:
-            strokes = bpy.data.grease_pencils[0].layers.active.active_frame.strokes
+            strokes = bpy.context.annotation_data.layers.active.active_frame.strokes
 
             strokes_num = len(strokes)
 
@@ -3122,9 +3122,11 @@ class MESH_OT_SURFSK_add_surface(Operator):
 
         try:
             global global_mesh_object
-            bsurfaces_props = bpy.context.scene.bsurfaces
+            global_mesh_object = bpy.context.scene.bsurfaces.SURFSK_mesh.name
+            bpy.data.objects[global_mesh_object].select_set(True)
             self.main_object = bpy.data.objects[global_mesh_object]
-            self.main_object.select_set(True)
+            bpy.context.view_layer.objects.active = self.main_object
+            bsurfaces_props = bpy.context.scene.bsurfaces
         except:
             self.report({'WARNING'}, "Specify the name of the object with retopology")
             return{"CANCELLED"}
@@ -3217,10 +3219,11 @@ class MESH_OT_SURFSK_add_surface(Operator):
             # Delete annotations
             if self.strokes_type == "GP_ANNOTATION" and not self.stopping_errors:
                 try:
-                    bpy.data.grease_pencils[0].layers.active.clear()
+                    bpy.context.annotation_data.layers.active.clear()
                 except:
                     pass
 
+            bsurfaces_props = bpy.context.scene.bsurfaces
             bsurfaces_props.SURFSK_edges_U = self.edges_U
             bsurfaces_props.SURFSK_edges_V = self.edges_V
             bsurfaces_props.SURFSK_cyclic_cross = self.cyclic_cross
@@ -3253,8 +3256,9 @@ class MESH_OT_SURFSK_add_surface(Operator):
 
         try:
             global global_mesh_object
+            global_mesh_object = bpy.context.scene.bsurfaces.SURFSK_mesh.name
+            bpy.data.objects[global_mesh_object].select_set(True)
             self.main_object = bpy.data.objects[global_mesh_object]
-            self.main_object.select_set(True)
             bpy.context.view_layer.objects.active = self.main_object
         except:
             self.report({'WARNING'}, "Specify the name of the object with retopology")
@@ -3289,7 +3293,7 @@ class MESH_OT_SURFSK_add_surface(Operator):
 
             elif self.strokes_type == "GP_ANNOTATION":
                 # Convert grease pencil strokes to curve
-                gp = bpy.data.grease_pencils["Annotations"]
+                gp = bpy.context.annotation_data
                 self.original_curve = conver_gpencil_to_curve(self, context, gp, 'Annotation')
                 self.using_external_curves = False
 
@@ -3456,7 +3460,7 @@ class MESH_OT_SURFSK_add_surface(Operator):
                 # Delete annotation strokes
                 elif self.strokes_type == "GP_ANNOTATION":
                     try:
-                        bpy.data.grease_pencils[0].layers.active.clear()
+                        bpy.context.annotation_data.layers.active.clear()
                     except:
                         pass
 
@@ -3704,7 +3708,10 @@ class MESH_OT_SURFSK_edit_surface(Operator):
 
     def invoke(self, context, event):
         try:
-            bpy.context.scene.bsurfaces.SURFSK_mesh.select_set(True)
+            global_mesh_object = bpy.context.scene.bsurfaces.SURFSK_mesh.name
+            bpy.data.objects[global_mesh_object].select_set(True)
+            self.main_object = bpy.data.objects[global_mesh_object]
+            bpy.context.view_layer.objects.active = self.main_object
         except:
             self.report({'WARNING'}, "Specify the name of the object with retopology")
             return{"CANCELLED"}
@@ -3798,7 +3805,7 @@ class GPENCIL_OT_SURFSK_annotation_to_curves(Operator):
         if curve != None:
             # Delete annotation strokes
             try:
-                bpy.data.grease_pencils[0].layers.active.clear()
+                bpy.context.annotation_data.layers.active.clear()
             except:
                 pass
 
@@ -3812,7 +3819,7 @@ class GPENCIL_OT_SURFSK_annotation_to_curves(Operator):
 
     def invoke(self, context, event):
         try:
-            strokes = bpy.data.grease_pencils[0].layers.active.active_frame.strokes
+            strokes = bpy.context.annotation_data.layers.active.active_frame.strokes
 
             _strokes_num = len(strokes)
         except:
@@ -4306,9 +4313,8 @@ def conver_gpencil_to_curve(self, context, pencil, type):
         CurveObject.rotation_euler = pencil.rotation_euler
         CurveObject.scale = pencil.scale
     elif type == 'Annotation':
-        grease_pencil = bpy.data.grease_pencils[0]
         try:
-            strokes = grease_pencil.layers.active.active_frame.strokes
+            strokes = bpy.context.annotation_data.layers.active.active_frame.strokes
         except:
             error = True
         CurveObject.location = (0.0, 0.0, 0.0)
