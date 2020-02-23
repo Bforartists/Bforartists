@@ -53,4 +53,3 @@ class ImageData:
     @property
     def byte_length(self):
         return len(self._data)
-

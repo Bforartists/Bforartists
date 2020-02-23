@@ -400,7 +400,7 @@ class BlenderKitCommonSearchProps(object):
     search_done: BoolProperty(name="Search Completed", description="at least one search did run (internal)",
                               default=False)
     own_only: BoolProperty(name="My Assets", description="Search only for your assets",
-                           default=False)
+                           default=False, update=search.search_update)
     search_advanced: BoolProperty(name="Advanced Search Options", description="use advanced search properties",
                                   default=False, update=search.search_update)
 
@@ -1313,7 +1313,8 @@ class BlenderKitModelSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
             ('LINK_COLLECTION', 'Link', 'Link Collection'),
             ('APPEND_OBJECTS', 'Append', 'Append as Objects'),
         ),
-        description="choose if the assets will be linked or appended",
+        description="Appended objects are editable in your scene. Linked assets are saved in original files, "
+                    "aren't editable but also don't increase your file size",
         default="LINK_COLLECTION"
     )
     append_link: EnumProperty(
@@ -1453,8 +1454,8 @@ class BlenderKitAddonPreferences(AddonPreferences):
     )
 
     search_in_header: BoolProperty(
-        name="Show BlenderKit search in 3d view header",
-        description="Show BlenderKit search in 3d view header",
+        name="Show BlenderKit search in 3D view header",
+        description="Show BlenderKit search in 3D view header",
         default=True
     )
 
@@ -1651,8 +1652,9 @@ def register():
 
 def unregister():
     bpy.app.timers.unregister(check_timers_timer)
-
+    ui_panels.unregister_ui_panels()
     ui.unregister_ui()
+
     icons.unregister_icons()
     search.unregister_search()
     asset_inspector.unregister_asset_inspector()
@@ -1660,7 +1662,6 @@ def unregister():
     upload.unregister_upload()
     ratings.unregister_ratings()
     autothumb.unregister_thumbnailer()
-    ui_panels.unregister_ui_panels()
     bg_blender.unregister()
     overrides.unregister_overrides()
     bkit_oauth.unregister()

@@ -91,4 +91,3 @@ def set_extras(blender_element, extras, exclude=[]):
             blender_element[custom_property] = value
         except TypeError as e:
             print('Error setting property %s to value of type %s' % (custom_property, type(value)))
-

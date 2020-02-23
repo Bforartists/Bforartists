@@ -217,4 +217,3 @@ def __has_image_node_from_socket(socket):
     if not result:
         return False
     return True
-

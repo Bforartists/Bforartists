@@ -371,7 +371,6 @@ typedef struct wmNotifier {
 /* NC_LAMP Light */
 #define ND_LIGHTING (40 << 16)
 #define ND_LIGHTING_DRAW (41 << 16)
-#define ND_SKY (42 << 16)
 
 /* NC_WORLD World */
 #define ND_WORLD_DRAW (45 << 16)
@@ -573,13 +572,6 @@ typedef struct wmEvent {
   void *customdata;
 
 } wmEvent;
-
-/**
- * Values below are considered a click, above are considered a drag.
- */
-int WM_event_cursor_click_drag_threshold_from_event_(const wmEvent *event);
-
-bool WM_event_cursor_click_drag_threshold_met(const wmEvent *event);
 
 /**
  * Values below are ignored when detecting if the user intentionally moved the cursor.

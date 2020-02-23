@@ -137,4 +137,3 @@ def __gather_extras(blender_object, export_settings):
     if export_settings[gltf2_blender_export_keys.EXTRAS]:
         return generate_extras(blender_object)
     return None
-

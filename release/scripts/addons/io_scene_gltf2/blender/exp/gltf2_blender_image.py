@@ -340,4 +340,3 @@ def _render_temp_scene(
 
         with open(tmpfilename, "rb") as f:
             return f.read()
-

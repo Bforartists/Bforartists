@@ -70,7 +70,6 @@ def mfcc(input, nwin=256, nfft=512, fs=16000, nceps=13):
 
     nlinfil = 13
     nlogfil = 27
-    nfil = nlinfil + nlogfil
 
     w = hamming(nwin, sym=0)
 

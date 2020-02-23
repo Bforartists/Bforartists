@@ -18,7 +18,6 @@
 Utilities to convert operator names and docstrings to human-readable text.
 Used to generate names for Blender's operator search, and to generate Power Sequencer's documentation.
 """
-import re
 
 
 upper_match = lambda m: m.string

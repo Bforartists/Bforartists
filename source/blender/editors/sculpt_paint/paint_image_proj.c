@@ -6065,7 +6065,8 @@ void paint_proj_stroke_done(void *ps_handle_p)
 /* use project paint to re-apply an image */
 static int texture_paint_camera_project_exec(bContext *C, wmOperator *op)
 {
-  Image *image = BLI_findlink(&CTX_data_main(C)->images, RNA_enum_get(op->ptr, "image"));
+  Main *bmain = CTX_data_main(C);
+  Image *image = BLI_findlink(&bmain->images, RNA_enum_get(op->ptr, "image"));
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   ProjPaintState ps = {NULL};
@@ -6732,7 +6733,7 @@ static int texture_paint_add_texture_paint_slot_invoke(bContext *C,
   get_default_texture_layer_name_for_object(ob, type, (char *)&imagename, sizeof(imagename));
   RNA_string_set(op->ptr, "name", imagename);
 
-  return WM_operator_props_dialog_popup(C, op, 300, 100);
+  return WM_operator_props_dialog_popup(C, op, 300);
 }
 
 #define IMA_DEF_NAME N_("Untitled")

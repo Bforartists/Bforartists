@@ -232,4 +232,3 @@ def __gather_targets(blender_primitive, blender_mesh, modifiers, export_settings
                     morph_index += 1
         return targets
     return None
-

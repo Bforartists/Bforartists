@@ -117,4 +117,3 @@ def save_gltf(gltf, export_settings, encoder, glb_buffer):
         file.close()
 
     return True
-
