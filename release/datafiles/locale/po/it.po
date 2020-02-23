@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
+"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 10:28:09\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
 "Last-Translator: MT\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -9079,6 +9079,10 @@ msgstr "Gravità nelle direzioni X, Y e Z"
 
 msgid "Domain"
 msgstr "Dominio"
+
+
+msgid "Velocity Factor"
+msgstr "Fattore Velocità"
 
 
 msgid "Heat Grid"
@@ -23625,6 +23629,10 @@ msgid "Modifiers affecting all the F-Curves in the referenced Action"
 msgstr "I modificatori hanno effetto sui dati geometrici dell'oggetto"
 
 
+msgid "Mute"
+msgstr "Disattiva"
+
+
 msgid "Number of times to repeat the action range"
 msgstr "Numero di ripetizioni dell'intervallo dell'azione"
 
@@ -23783,10 +23791,6 @@ msgstr "Altezza del nodo"
 
 msgid "Optional custom node label"
 msgstr "Etichetta nodo opzionale personalizzata"
-
-
-msgid "Mute"
-msgstr "Disattiva"
 
 
 msgid "Unique node identifier"
@@ -26601,15 +26605,6 @@ msgstr "Mostra Tutto"
 
 msgid "Reset viewable area to show full keyframe range"
 msgstr "Ripristina l'area visibile per mostrare l'intero intervallo di keyframe"
-
-
-msgctxt "Operator"
-msgid "View Frame"
-msgstr "Mostra Fotogramma"
-
-
-msgid "Reset viewable area to show range around current frame"
-msgstr "Ripristina l'area visibile per mostrare l'intervallo attorno al fotogramma corrente"
 
 
 msgctxt "Operator"
@@ -37535,10 +37530,6 @@ msgid "Change the Lock On Vertex Groups"
 msgstr "Cambia il Blocco Sui Gruppi Vertici"
 
 
-msgid "Change the lock state of all vertex groups of active object"
-msgstr "Cambia lo stato di blocco di tutti i gruppi vertici dell'oggetto attivo"
-
-
 msgid "Lock action to execute on vertex groups"
 msgstr "Blocca l'azione da eseguire sui gruppi vertici"
 
@@ -40739,11 +40730,6 @@ msgid "Dynamic topology alters the mesh topology while sculpting"
 msgstr "La topologia dinamica altera la topologia della mesh mentre si scolpisce"
 
 
-msgctxt "Operator"
-msgid "Optimize"
-msgstr "Ottimizza"
-
-
 msgid "Dyntopo"
 msgstr "Topologia Dinamica"
 
@@ -40923,36 +40909,6 @@ msgstr "Dissolvenza incrociata dei suoni"
 
 msgid "Do cross-fading volume animation of two selected sound strips"
 msgstr "Esegue la dissolvenza incrociata del volume dell'animazione fra le due spezzoni sonori selezionati"
-
-
-msgctxt "Operator"
-msgid "Cut Strips"
-msgstr "Taglia Spezzoni"
-
-
-msgid "Cut the selected strips"
-msgstr "Taglia gli spezzoni selezionati"
-
-
-msgid "Frame where selected strips will be cut"
-msgstr "Fotogramma in cui gli spezzoni selezionati vengono tagliati"
-
-
-msgid "The side that remains selected after cutting"
-msgstr "La parte che rimane selezionata dopo il taglio"
-
-
-msgid "The type of cut operation to perform on strips"
-msgstr "Il tipo di operazione di taglio da eseguire sugli spezzoni"
-
-
-msgctxt "Operator"
-msgid "Cut multicam"
-msgstr "Taglio multicam"
-
-
-msgid "Cut multi-cam strip and select camera"
-msgstr "Taglia gli spezzoni multicam e seleziona la camera"
 
 
 msgctxt "Operator"
@@ -41497,6 +41453,15 @@ msgstr "Visualizza tutti gli spezzoni del sequencer"
 
 msgid "Zoom preview to fit in the area"
 msgstr "Ingrandisce anteprima per adattarsi all'area"
+
+
+msgctxt "Operator"
+msgid "View Frame"
+msgstr "Mostra Fotogramma"
+
+
+msgid "Reset viewable area to show range around current frame"
+msgstr "Ripristina l'area visibile per mostrare l'intervallo attorno al fotogramma corrente"
 
 
 msgctxt "Operator"
@@ -42087,6 +42052,14 @@ msgid "Unlink active text data-block"
 msgstr "Scollega il blocco-dati testo attivo"
 
 
+msgid "Constraint Axis"
+msgstr "Vincolo Asse"
+
+
+msgid "Transformation orientation"
+msgstr "Sistema di Assi"
+
+
 msgctxt "Operator"
 msgid "Bend"
 msgstr "Fletti"
@@ -42199,14 +42172,6 @@ msgstr "Lato Singolo"
 
 msgid "Mirror selected items around one or more axes"
 msgstr "Ribalta gli elementi selezionati attorno a uno o più assi"
-
-
-msgid "Constraint Axis"
-msgstr "Vincolo Asse"
-
-
-msgid "Transformation orientation"
-msgstr "Sistema di Assi"
 
 
 msgctxt "Operator"
@@ -45552,6 +45517,10 @@ msgid "Geometry Data"
 msgstr "Dati Geometria"
 
 
+msgid "Transparency"
+msgstr "Trasparenza"
+
+
 msgid "Paragraph"
 msgstr "Paragrafo"
 
@@ -46167,11 +46136,6 @@ msgstr "Strappa Regione"
 msgctxt "Operator"
 msgid "Rip Edge"
 msgstr "Strappa Spigolo"
-
-
-msgctxt "Operator"
-msgid "Extrude Cursor"
-msgstr "Estrudi Cursore"
 
 
 msgctxt "Operator"
@@ -47139,10 +47103,6 @@ msgstr "Posizione Posa Estremità"
 
 msgid "Location of tail of the channel's bone"
 msgstr "Posizione dell'estremità del canale dell'osso"
-
-
-msgid "Use Bone Size"
-msgstr "Usa Dimensioni Ossa"
 
 
 msgid "Scale the custom object by the bone length"
@@ -48209,14 +48169,6 @@ msgid "OpenMP"
 msgstr "OpenMP"
 
 
-msgid "Prefetch Frames"
-msgstr "Precaricamento Fotogrammi"
-
-
-msgid "Number of frames to render ahead during playback (sequencer only)"
-msgstr "Numero di fotogrammi da renderizzare in anticipo durante la riproduzione"
-
-
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "Numero massimo di linee da memorizzare per il buffer della console"
 
@@ -49271,6 +49223,10 @@ msgstr "L'otturatore chiude al fotogramma corrente"
 
 msgid "Number of antialiasing samples to render in the viewport, unlimited if 0"
 msgstr "Numero di campioni antialiasing da renderizzare nella finestra vista, se 0 sono illimitati"
+
+
+msgid "Viewport Denoising"
+msgstr "Riduzione al Rumore nella vista"
 
 
 msgid "Preview Dicing Rate"
@@ -51009,10 +50965,6 @@ msgid "Enable screen space Refractions"
 msgstr "Abilita le rifrazioni spazio schermo"
 
 
-msgid "Viewport Denoising"
-msgstr "Riduzione al Rumore nella vista"
-
-
 msgid "2px"
 msgstr "2px"
 
@@ -52060,10 +52012,6 @@ msgstr "Quads Rigidi"
 
 msgid "Goal Vertex Group"
 msgstr "Obiettivi Gruppo di Vertici"
-
-
-msgid "Lock Time to Other Windows"
-msgstr "Aggancia il Tempo alle Altre Finestre"
 
 
 msgctxt "MovieClip"
@@ -53875,10 +53823,6 @@ msgid "UV map to use for mapping with UV texture coordinates"
 msgstr "Mappa UV da usare per la mappatura con le coordinate UV della texture"
 
 
-msgid "Velocity Factor"
-msgstr "Fattore Velocità"
-
-
 msgid "Amount texture affects particle initial velocity"
 msgstr "Quanto la texture influenza la velocità iniziale della particella"
 
@@ -54347,44 +54291,8 @@ msgid "Theme settings for Info"
 msgstr "Impostazioni del tema per le Informazioni"
 
 
-msgid "Debug Background"
-msgstr "Sfondo Debug"
-
-
-msgid "Debug Text"
-msgstr "Testo Debug"
-
-
-msgid "Error Background"
-msgstr "Sfondo Errore"
-
-
-msgid "Error Text"
-msgstr "Testo Errore"
-
-
-msgid "Info Background"
-msgstr "Sfondo Info"
-
-
-msgid "Info Text"
-msgstr "Testo Info"
-
-
 msgid "Selected Line Background"
 msgstr "Sfondo Linea Selezionata"
-
-
-msgid "Selected Line Text"
-msgstr "Testo Linea Selezionata"
-
-
-msgid "Warning Background"
-msgstr "Sfondo Avvertimento"
-
-
-msgid "Warning Text"
-msgstr "Testo Avvertimento"
 
 
 msgid "Theme settings for the NLA Editor"
@@ -56592,10 +56500,6 @@ msgid "Mesh Light"
 msgstr "Luce Mesh"
 
 
-msgid "Transparency"
-msgstr "Trasparenza"
-
-
 msgid "Direct Light"
 msgstr "Illuminazione Diretta"
 
@@ -57253,10 +57157,6 @@ msgid "Control Rotation"
 msgstr "Controllo Rotazione"
 
 
-msgid "Bone Size"
-msgstr "Dimensione Osso"
-
-
 msgctxt "Operator"
 msgid "Add Image"
 msgstr "Aggiungi Immagine"
@@ -57332,6 +57232,11 @@ msgstr "Influenza Scolorimento"
 
 
 msgctxt "Operator"
+msgid "Lock Invert All"
+msgstr "Inverti Tutti i Blocchi"
+
+
+msgctxt "Operator"
 msgid "Sort by Name"
 msgstr "Ordina per Nome"
 
@@ -57364,11 +57269,6 @@ msgstr "Cancella Tutti i Gruppi Sbloccati"
 msgctxt "Operator"
 msgid "Delete All Groups"
 msgstr "Cancella Tutti i Gruppi"
-
-
-msgctxt "Operator"
-msgid "Lock Invert All"
-msgstr "Inverti Tutti i Blocchi"
 
 
 msgctxt "Operator"
@@ -57705,6 +57605,10 @@ msgid "UV Axis:"
 msgstr "Asse UV:"
 
 
+msgid "Offset:"
+msgstr "Scostamento:"
+
+
 msgid "UV Map:"
 msgstr "Mappa UV:"
 
@@ -57748,10 +57652,6 @@ msgstr "Colore:"
 
 msgid "Opacity:"
 msgstr "Opacità:"
-
-
-msgid "Offset:"
-msgstr "Scostamento:"
 
 
 msgid "Shift:"
@@ -60012,10 +59912,6 @@ msgstr "File di script mancanti"
 
 msgid ":"
 msgstr ":"
-
-
-msgid "upgrade to 2.8x required"
-msgstr "aggiornamento a 2.8x richiesto"
 
 
 msgid "Description:"
@@ -64296,28 +64192,12 @@ msgid "File name"
 msgstr "Nome file"
 
 
-msgid "Cursor from Selection"
-msgstr "Cursore da Selezione"
-
-
 msgid "Cursor X"
 msgstr "X Cursore"
 
 
-msgid "To Keys"
-msgstr "A Chiavi"
-
-
-msgid "Cursor Y"
-msgstr "Y Cursore"
-
-
 msgid "Interpolation:"
 msgstr "Interpolazione:"
-
-
-msgid "Value:"
-msgstr "Valore:"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -64346,6 +64226,10 @@ msgstr "Valore Guida:"
 
 msgid "Expression:"
 msgstr "Espressione:"
+
+
+msgid "Value:"
+msgstr "Valore:"
 
 
 msgid "Update Dependencies"
@@ -64378,10 +64262,6 @@ msgstr "Nome variabile non valido, clicca qui per i dettagli"
 
 msgid "Delete target variable"
 msgstr "Cancella variabile obiettivo"
-
-
-msgid "View Properties"
-msgstr "Proprietà Vista"
 
 
 msgctxt "Operator"
@@ -65169,10 +65049,6 @@ msgid "User Perspective"
 msgstr "Prospettiva Utente"
 
 
-msgid "%s (Local)"
-msgstr "%s (Locale)"
-
-
 msgid "fps: %.2f"
 msgstr "fps: %.2f"
 
@@ -65263,254 +65139,6 @@ msgstr "bloccando Z %s"
 
 msgid "along local Z"
 msgstr "lungo Z locale"
-
-
-msgid "Bend Angle: %s Radius: %s Alt, Clamp %s"
-msgstr "Angolo Curvatura: %s Raggio: %s Alt, Blocca %s"
-
-
-msgid "Bend Angle: %.3f Radius: %.4f, Alt, Clamp %s"
-msgstr "Angolo Curvatura: %.3f Raggio: %.4f Alt, Blocca %s"
-
-
-msgid "Shear: %s %s"
-msgstr "Inclina: %s %s"
-
-
-msgid "Shear: %.3f %s (Press X or Y to set shear axis)"
-msgstr "Inclina: %.3f %s (Premi X o Y per impostare l'asse di inclinazione)"
-
-
-msgid "Scale: %s%s %s"
-msgstr "Scala: %s%s %s"
-
-
-msgid "Scale: %s : %s%s %s"
-msgstr "Scala: %s : %s%s %s"
-
-
-msgid "Scale: %s : %s : %s%s %s"
-msgstr "Scala: %s : %s : %s%s %s"
-
-
-msgid "Scale X: %s   Y: %s%s %s"
-msgstr "Scala X: %s   Y: %s%s %s"
-
-
-msgid "Scale X: %s   Y: %s  Z: %s%s %s"
-msgstr "Scala X: %s   Y: %s  Z: %s%s %s"
-
-
-msgid " Proportional size: %.2f"
-msgstr " Dimens. proporzionale: %.2f"
-
-
-msgid "To Sphere: %s %s"
-msgstr "A Sfera: %s %s"
-
-
-msgid "To Sphere: %.4f %s"
-msgstr "A Sfera: %.4f %s"
-
-
-msgid "Rot: %s %s %s"
-msgstr "Rot: %s %s %s"
-
-
-msgid "Rot: %.2f%s %s"
-msgstr "Rot: %.2f%s %s"
-
-
-msgid "Trackball: %s %s %s"
-msgstr "Trackball: %s %s %s"
-
-
-msgid "Trackball: %.2f %.2f %s"
-msgstr "Trackball: %.2f %.2f %s"
-
-
-msgid "AutoIK-Len: %d"
-msgstr "AutoIK-Lung: %d"
-
-
-msgid "right"
-msgstr "destra"
-
-
-msgid "left"
-msgstr "sinistra"
-
-
-msgid "Auto-offset set to %s - press %s to toggle direction  |  %s"
-msgstr "Auto-spaziatura impostata a %s - premi %s per cambiare direzione | %s"
-
-
-msgid "Shrink/Fatten:"
-msgstr "Stringi/Allarga:"
-
-
-msgid " or Alt) Even Thickness %s"
-msgstr " o Alt) Spessore Uniforme %s"
-
-
-msgid "Tilt: %s° %s"
-msgstr "Inclinazione: %s° %s"
-
-
-msgid "Tilt: %.2f° %s"
-msgstr "Inclinazione: %.2f° %s"
-
-
-msgid "Shrink/Fatten: %s"
-msgstr "Stringi/Allarga: %s"
-
-
-msgid "Shrink/Fatten: %3f"
-msgstr "Stringi/Allarga: %3f"
-
-
-msgid "Feather Shrink/Fatten: %s"
-msgstr "Stringi/Allarga Sfumatura: %s"
-
-
-msgid "Feather Shrink/Fatten: %3f"
-msgstr "Stringi/Allarga Sfumatura: %3f"
-
-
-msgid "Push/Pull: %s%s %s"
-msgstr "Spingi/Tira: %s%s %s"
-
-
-msgid "Push/Pull: %.4f%s %s"
-msgstr "Spingi/Tira: %.4f%s %s"
-
-
-msgid "Bevel Weight: +%s %s"
-msgstr "Peso Smusso: +%s %s"
-
-
-msgid "Bevel Weight: %s %s"
-msgstr "Peso Smusso: %s %s"
-
-
-msgid "Bevel Weight: +%.3f %s"
-msgstr "Peso Smusso: +%.3f %s"
-
-
-msgid "Bevel Weight: %.3f %s"
-msgstr "Peso Smusso: %.3f %s"
-
-
-msgid "Crease: +%s %s"
-msgstr "Piega: +%s %s"
-
-
-msgid "Crease: %s %s"
-msgstr "Piega: %s %s"
-
-
-msgid "Crease: +%.3f %s"
-msgstr "Piega: +%.3f %s"
-
-
-msgid "Crease: %.3f %s"
-msgstr "Piega: %.3f %s"
-
-
-msgid "ScaleB: %s%s %s"
-msgstr "ScalaB: %s%s %s"
-
-
-msgid "ScaleB: %s : %s : %s%s %s"
-msgstr "ScalaB: %s : %s : %s%s %s"
-
-
-msgid "ScaleB X: %s  Y: %s  Z: %s%s %s"
-msgstr "ScalaB X: %s  Y: %s  Z: %s%s %s"
-
-
-msgid "Envelope: %s"
-msgstr "Inviluppo: %s"
-
-
-msgid "Envelope: %3f"
-msgstr "Inviluppo: %3f"
-
-
-msgid "Edge Slide: "
-msgstr "Scivola Spigolo: "
-
-
-msgid "(E)ven: %s, "
-msgstr "Allin(E)ato: %s, "
-
-
-msgid "(F)lipped: %s, "
-msgstr "Inverso (F): %s, "
-
-
-msgid "Alt or (C)lamp: %s"
-msgstr "Alt o blo(C)ca: %s"
-
-
-msgid "Vert Slide: "
-msgstr "Scivola Vertice: "
-
-
-msgid "Roll: %s"
-msgstr "Rollio: %s"
-
-
-msgid "Roll: %.2f"
-msgstr "Rollio: %.2f"
-
-
-msgid "Time: +%s %s"
-msgstr "Tempo: +%s %s"
-
-
-msgid "Time: %s %s"
-msgstr "Tempo: %s %s"
-
-
-msgid "Time: +%.3f %s"
-msgstr "Tempo: +%.3f %s"
-
-
-msgid "Time: %.3f %s"
-msgstr "Tempo: %.3f %s"
-
-
-msgid "Mirror%s"
-msgstr "Specchia%s"
-
-
-msgid "Select a mirror axis (X, Y)"
-msgstr "Seleziona un asse di ribaltamento (X, Y)"
-
-
-msgid "Select a mirror axis (X, Y, Z)"
-msgstr "Seleziona un asse di ribaltamento (X, Y, Z)"
-
-
-msgid "Sequence Slide: %s%s, ("
-msgstr "Slittamento Sequenza: %s%s, ("
-
-
-msgid " or Alt) Expand to fit %s"
-msgstr " o Alt) Espande per adattare %s"
-
-
-msgid "DeltaX: %s"
-msgstr "DeltaX: %s"
-
-
-msgid "TimeSlide: %s"
-msgstr "Slittamento Temporale: %s"
-
-
-msgid "ScaleX: %s"
-msgstr "ScalaX: %s"
 
 
 msgid "global"
@@ -65607,6 +65235,254 @@ msgstr "(Casuale)"
 
 msgid "(InvSquare)"
 msgstr "(QuadraticoInv)"
+
+
+msgid "Rot: %s %s %s"
+msgstr "Rot: %s %s %s"
+
+
+msgid "Rot: %.2f%s %s"
+msgstr "Rot: %.2f%s %s"
+
+
+msgid " Proportional size: %.2f"
+msgstr " Dimens. proporzionale: %.2f"
+
+
+msgid "Scale: %s%s %s"
+msgstr "Scala: %s%s %s"
+
+
+msgid "Scale: %s : %s%s %s"
+msgstr "Scala: %s : %s%s %s"
+
+
+msgid "Scale: %s : %s : %s%s %s"
+msgstr "Scala: %s : %s : %s%s %s"
+
+
+msgid "Scale X: %s   Y: %s%s %s"
+msgstr "Scala X: %s   Y: %s%s %s"
+
+
+msgid "Scale X: %s   Y: %s  Z: %s%s %s"
+msgstr "Scala X: %s   Y: %s  Z: %s%s %s"
+
+
+msgid "Time: +%s %s"
+msgstr "Tempo: +%s %s"
+
+
+msgid "Time: %s %s"
+msgstr "Tempo: %s %s"
+
+
+msgid "Time: +%.3f %s"
+msgstr "Tempo: +%.3f %s"
+
+
+msgid "Time: %.3f %s"
+msgstr "Tempo: %.3f %s"
+
+
+msgid "ScaleB: %s%s %s"
+msgstr "ScalaB: %s%s %s"
+
+
+msgid "ScaleB: %s : %s : %s%s %s"
+msgstr "ScalaB: %s : %s : %s%s %s"
+
+
+msgid "ScaleB X: %s  Y: %s  Z: %s%s %s"
+msgstr "ScalaB X: %s  Y: %s  Z: %s%s %s"
+
+
+msgid "Bend Angle: %s Radius: %s Alt, Clamp %s"
+msgstr "Angolo Curvatura: %s Raggio: %s Alt, Blocca %s"
+
+
+msgid "Bend Angle: %.3f Radius: %.4f, Alt, Clamp %s"
+msgstr "Angolo Curvatura: %.3f Raggio: %.4f Alt, Blocca %s"
+
+
+msgid "Envelope: %s"
+msgstr "Inviluppo: %s"
+
+
+msgid "Envelope: %3f"
+msgstr "Inviluppo: %3f"
+
+
+msgid "Roll: %s"
+msgstr "Rollio: %s"
+
+
+msgid "Roll: %.2f"
+msgstr "Rollio: %.2f"
+
+
+msgid "Shrink/Fatten: %s"
+msgstr "Stringi/Allarga: %s"
+
+
+msgid "Shrink/Fatten: %3f"
+msgstr "Stringi/Allarga: %3f"
+
+
+msgid "Bevel Weight: +%s %s"
+msgstr "Peso Smusso: +%s %s"
+
+
+msgid "Bevel Weight: %s %s"
+msgstr "Peso Smusso: %s %s"
+
+
+msgid "Bevel Weight: +%.3f %s"
+msgstr "Peso Smusso: +%.3f %s"
+
+
+msgid "Bevel Weight: %.3f %s"
+msgstr "Peso Smusso: %.3f %s"
+
+
+msgid "Crease: +%s %s"
+msgstr "Piega: +%s %s"
+
+
+msgid "Crease: %s %s"
+msgstr "Piega: %s %s"
+
+
+msgid "Crease: +%.3f %s"
+msgstr "Piega: +%.3f %s"
+
+
+msgid "Crease: %.3f %s"
+msgstr "Piega: %.3f %s"
+
+
+msgid "Sequence Slide: %s%s, ("
+msgstr "Slittamento Sequenza: %s%s, ("
+
+
+msgid " or Alt) Expand to fit %s"
+msgstr " o Alt) Espande per adattare %s"
+
+
+msgid "Edge Slide: "
+msgstr "Scivola Spigolo: "
+
+
+msgid "(E)ven: %s, "
+msgstr "Allin(E)ato: %s, "
+
+
+msgid "(F)lipped: %s, "
+msgstr "Inverso (F): %s, "
+
+
+msgid "Alt or (C)lamp: %s"
+msgstr "Alt o blo(C)ca: %s"
+
+
+msgid "Feather Shrink/Fatten: %s"
+msgstr "Stringi/Allarga Sfumatura: %s"
+
+
+msgid "Feather Shrink/Fatten: %3f"
+msgstr "Stringi/Allarga Sfumatura: %3f"
+
+
+msgid "Mirror%s"
+msgstr "Specchia%s"
+
+
+msgid "Select a mirror axis (X, Y)"
+msgstr "Seleziona un asse di ribaltamento (X, Y)"
+
+
+msgid "Select a mirror axis (X, Y, Z)"
+msgstr "Seleziona un asse di ribaltamento (X, Y, Z)"
+
+
+msgid "Push/Pull: %s%s %s"
+msgstr "Spingi/Tira: %s%s %s"
+
+
+msgid "Push/Pull: %.4f%s %s"
+msgstr "Spingi/Tira: %.4f%s %s"
+
+
+msgid "Shear: %s %s"
+msgstr "Inclina: %s %s"
+
+
+msgid "Shear: %.3f %s (Press X or Y to set shear axis)"
+msgstr "Inclina: %.3f %s (Premi X o Y per impostare l'asse di inclinazione)"
+
+
+msgid "Shrink/Fatten:"
+msgstr "Stringi/Allarga:"
+
+
+msgid " or Alt) Even Thickness %s"
+msgstr " o Alt) Spessore Uniforme %s"
+
+
+msgid "Tilt: %s° %s"
+msgstr "Inclinazione: %s° %s"
+
+
+msgid "Tilt: %.2f° %s"
+msgstr "Inclinazione: %.2f° %s"
+
+
+msgid "ScaleX: %s"
+msgstr "ScalaX: %s"
+
+
+msgid "TimeSlide: %s"
+msgstr "Slittamento Temporale: %s"
+
+
+msgid "DeltaX: %s"
+msgstr "DeltaX: %s"
+
+
+msgid "To Sphere: %s %s"
+msgstr "A Sfera: %s %s"
+
+
+msgid "To Sphere: %.4f %s"
+msgstr "A Sfera: %.4f %s"
+
+
+msgid "Trackball: %s %s %s"
+msgstr "Trackball: %s %s %s"
+
+
+msgid "Trackball: %.2f %.2f %s"
+msgstr "Trackball: %.2f %.2f %s"
+
+
+msgid "AutoIK-Len: %d"
+msgstr "AutoIK-Lung: %d"
+
+
+msgid "right"
+msgstr "destra"
+
+
+msgid "left"
+msgstr "sinistra"
+
+
+msgid "Auto-offset set to %s - press %s to toggle direction  |  %s"
+msgstr "Auto-spaziatura impostata a %s - premi %s per cambiare direzione | %s"
+
+
+msgid "Vert Slide: "
+msgstr "Scivola Vertice: "
 
 
 msgid "custom"
@@ -66018,10 +65894,6 @@ msgstr "Vertici cambiati da %u a %u"
 
 msgid "Target polygons changed from %u to %u"
 msgstr "Poligoni obiettivo cambiati da %u a %u"
-
-
-msgid "From/To objects must be set"
-msgstr "Gli oggetti da/a devono essere impostati"
 
 
 msgid "Convertor"

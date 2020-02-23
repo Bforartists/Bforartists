@@ -17,8 +17,8 @@
 import bpy
 from operator import attrgetter
 
-from .utils.functions import slice_selection, sequencer_workaround_2_80_audio_bug
 from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
+from .utils.functions import slice_selection
 
 
 class POWER_SEQUENCER_OT_gap_remove(bpy.types.Operator):
@@ -84,7 +84,6 @@ class POWER_SEQUENCER_OT_gap_remove(bpy.types.Operator):
         )
 
         self.gaps_remove(context, blocks_after_gap, gap_frame)
-        sequencer_workaround_2_80_audio_bug(context)
         return {"FINISHED"}
 
     def find_gap_frame(self, context, frame, sorted_sequences):

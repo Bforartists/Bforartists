@@ -410,4 +410,3 @@ def __get_correction_node(blender_object, export_settings):
         translation=None,
         weights=None
     )
-

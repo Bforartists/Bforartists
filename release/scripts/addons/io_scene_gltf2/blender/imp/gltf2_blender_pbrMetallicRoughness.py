@@ -487,4 +487,3 @@ def get_settings_group():
         gltf_node_group_input = gltf_node_group.nodes.new('NodeGroupInput')
         gltf_node_group_input.location = -200, 0
     return gltf_node_group
-

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
+"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 10:28:09\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -6454,6 +6454,10 @@ msgstr "Zusätzliche Verwirbelung der Flammen"
 
 msgid "Domain"
 msgstr "Wirkungsraum"
+
+
+msgid "Velocity Factor"
+msgstr "Geschwindigkeits-Faktor"
 
 
 msgid "Emitter"
@@ -15090,6 +15094,10 @@ msgid "Blending"
 msgstr "Überblenden"
 
 
+msgid "Mute"
+msgstr "Stumm"
+
+
 msgid "NLA Strip is selected"
 msgstr "NLA-Streifen ist ausgewählt"
 
@@ -15132,10 +15140,6 @@ msgstr "Höhe der Box"
 
 msgid "Optional custom node label"
 msgstr "Optionale Knotenbeschriftung"
-
-
-msgid "Mute"
-msgstr "Stumm"
 
 
 msgid "Unique node identifier"
@@ -25012,11 +25016,6 @@ msgstr "Topologie Messerwerkzeug"
 
 
 msgctxt "Operator"
-msgid "Optimize"
-msgstr "Optimierung:"
-
-
-msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Skulpturmodus"
 
@@ -25083,15 +25082,6 @@ msgstr "Ebene Ausrichten"
 msgctxt "Operator"
 msgid "Copy"
 msgstr "Kopieren"
-
-
-msgctxt "Operator"
-msgid "Cut Strips"
-msgstr "Streifen ausschneiden"
-
-
-msgid "Frame where selected strips will be cut"
-msgstr "Einzelbild, an dem ausgewählte Streifen abgeschnitten werden"
 
 
 msgctxt "Operator"
@@ -25792,6 +25782,14 @@ msgid "Unindent selected text"
 msgstr "Ausgewählten Text ausrücken"
 
 
+msgid "Constraint Axis"
+msgstr "Beschränkungsachse"
+
+
+msgid "Transformation orientation"
+msgstr "Transformationsausrichtung"
+
+
 msgctxt "Operator"
 msgid "Bend"
 msgstr "Biegen"
@@ -25856,14 +25854,6 @@ msgstr "Korrigiere UV's"
 
 msgid "Correct UV coordinates when transforming"
 msgstr "Korrigiere UV Koordinaten beim Transformieren"
-
-
-msgid "Constraint Axis"
-msgstr "Beschränkungsachse"
-
-
-msgid "Transformation orientation"
-msgstr "Transformationsausrichtung"
 
 
 msgctxt "Operator"
@@ -27539,6 +27529,10 @@ msgid "Geometry Data"
 msgstr "Geometrieabstand"
 
 
+msgid "Transparency"
+msgstr "Transparenz"
+
+
 msgid "Adjustments"
 msgstr "Anpassungen"
 
@@ -27593,10 +27587,6 @@ msgstr "Lesezeichen"
 
 msgid "Favorites"
 msgstr "Favoriten"
-
-
-msgid "Recents"
-msgstr "Letzte"
 
 
 msgid "System"
@@ -29602,10 +29592,6 @@ msgstr "OpenMP"
 
 msgid "GLSL Compute"
 msgstr "GLSL berechnen"
-
-
-msgid "Prefetch Frames"
-msgstr "Vorgeladene Einzelbilder"
 
 
 msgid "Maximum number of lines to store for the console buffer"
@@ -33161,10 +33147,6 @@ msgid "Affect the emission time of the particles"
 msgstr "Emissionszeit der Partikel beeinflussen"
 
 
-msgid "Velocity Factor"
-msgstr "Geschwindigkeits-Faktor"
-
-
 msgid "Clip Editor"
 msgstr "Clipeditor"
 
@@ -33535,26 +33517,6 @@ msgstr "Info-Thema"
 
 msgid "Theme settings for Info"
 msgstr "Themeneinstellungen für Information"
-
-
-msgid "Debug Background"
-msgstr "Debug-Hintergrund"
-
-
-msgid "Error Background"
-msgstr "Fehler-Hintergrund"
-
-
-msgid "Info Background"
-msgstr "Info-Hintergrund"
-
-
-msgid "Selected Line Text"
-msgstr "Ausgewählter Zeilentext"
-
-
-msgid "Warning Background"
-msgstr "Warnung-Hintergrund"
 
 
 msgid "Theme settings for the NLA Editor"
@@ -34845,10 +34807,6 @@ msgid "Mesh Light"
 msgstr "Mesh-Licht"
 
 
-msgid "Transparency"
-msgstr "Transparenz"
-
-
 msgid "Direct Light"
 msgstr "Direkte Beleuchtung"
 
@@ -35445,6 +35403,10 @@ msgid "UV Axis:"
 msgstr "UV-Achse:"
 
 
+msgid "Offset:"
+msgstr "Versatz:"
+
+
 msgid "UV Map:"
 msgstr "UV-Map:"
 
@@ -35483,10 +35445,6 @@ msgstr "Farbe:"
 
 msgid "Opacity:"
 msgstr "Deckkraft:"
-
-
-msgid "Offset:"
-msgstr "Versatz:"
 
 
 msgid "Shift:"
@@ -38923,20 +38881,8 @@ msgid "File name"
 msgstr "Dateiname"
 
 
-msgid "Cursor from Selection"
-msgstr "Cursor von der Auswahl"
-
-
 msgid "Cursor X"
 msgstr "Cursor X"
-
-
-msgid "Cursor Y"
-msgstr "Cursor Y"
-
-
-msgid "Value:"
-msgstr "Wert:"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -38967,6 +38913,10 @@ msgid "Expression:"
 msgstr "Ausdruck:"
 
 
+msgid "Value:"
+msgstr "Wert:"
+
+
 msgid "Update Dependencies"
 msgstr "Abhängigkeiten aktualisieren"
 
@@ -38985,10 +38935,6 @@ msgstr "FEHLER: ein oder mehrere ungültige Zielkanäle"
 
 msgid "Delete target variable"
 msgstr "Zielvariable löschen"
-
-
-msgid "View Properties"
-msgstr "Ansicht-Eigenschaften"
 
 
 msgid "Active F-Curve is not editable"
@@ -39061,14 +39007,6 @@ msgstr "Mehrfachebenen-Sequenz kann nicht gespeichert werden"
 
 msgid "No images have been changed"
 msgstr "Keine Bilder wurden verändert"
-
-
-msgid "Packing movies or image sequences not supported"
-msgstr "Gepackte Film- oder Bildsequenzen werden nicht unterstützt"
-
-
-msgid "Unpacking movies or image sequences not supported"
-msgstr "Entpackte Film- oder Bildsequenzen werden nicht unterstützt"
 
 
 msgid "Cannot save image, path '%s' is not writable"
@@ -39487,10 +39425,6 @@ msgid "Object as Camera"
 msgstr "Objekt als Kamera"
 
 
-msgid "%s (Local)"
-msgstr "%s (Lokal)"
-
-
 msgid "fps: %.2f"
 msgstr "fps: %.2f"
 
@@ -39553,62 +39487,6 @@ msgstr "sperre %s Z"
 
 msgid "along local Z"
 msgstr "entlang lokaler Z"
-
-
-msgid "Scale: %s%s %s"
-msgstr "Skalieren: %s%s %s"
-
-
-msgid "Scale: %s : %s%s %s"
-msgstr "Skalieren: %s : %s%s %s"
-
-
-msgid "Scale: %s : %s : %s%s %s"
-msgstr "Skalieren: %s : %s : %s%s %s"
-
-
-msgid "Scale X: %s   Y: %s%s %s"
-msgstr "Skalieren X: %s   Y: %s%s %s"
-
-
-msgid "Scale X: %s   Y: %s  Z: %s%s %s"
-msgstr "Skalieren X: %s   Y: %s  Z: %s%s %s"
-
-
-msgid " Proportional size: %.2f"
-msgstr " Proportionale Größe: %.2f"
-
-
-msgid "Shrink/Fatten:"
-msgstr "Schrumpfen/Vergrößern:"
-
-
-msgid "Edge Slide: "
-msgstr "Kante schieben:"
-
-
-msgid "Time: +%s %s"
-msgstr "Zeil: +%s %s"
-
-
-msgid "Time: %s %s"
-msgstr "Zeit: %s %s"
-
-
-msgid "Time: +%.3f %s"
-msgstr "Zeit: +%.3f %s"
-
-
-msgid "Time: %.3f %s"
-msgstr "Zeit: %.3f %s"
-
-
-msgid "Select a mirror axis (X, Y)"
-msgstr "Spiegelachse wählen (X, Y)"
-
-
-msgid "Select a mirror axis (X, Y, Z)"
-msgstr "Spiegelachse wählen (X, Y, Z)"
 
 
 msgid "global"
@@ -39693,6 +39571,62 @@ msgstr "(Kugel)"
 
 msgid "(Random)"
 msgstr "(Zufällig)"
+
+
+msgid " Proportional size: %.2f"
+msgstr " Proportionale Größe: %.2f"
+
+
+msgid "Scale: %s%s %s"
+msgstr "Skalieren: %s%s %s"
+
+
+msgid "Scale: %s : %s%s %s"
+msgstr "Skalieren: %s : %s%s %s"
+
+
+msgid "Scale: %s : %s : %s%s %s"
+msgstr "Skalieren: %s : %s : %s%s %s"
+
+
+msgid "Scale X: %s   Y: %s%s %s"
+msgstr "Skalieren X: %s   Y: %s%s %s"
+
+
+msgid "Scale X: %s   Y: %s  Z: %s%s %s"
+msgstr "Skalieren X: %s   Y: %s  Z: %s%s %s"
+
+
+msgid "Time: +%s %s"
+msgstr "Zeil: +%s %s"
+
+
+msgid "Time: %s %s"
+msgstr "Zeit: %s %s"
+
+
+msgid "Time: +%.3f %s"
+msgstr "Zeit: +%.3f %s"
+
+
+msgid "Time: %.3f %s"
+msgstr "Zeit: %.3f %s"
+
+
+msgid "Edge Slide: "
+msgstr "Kante schieben:"
+
+
+msgid "Select a mirror axis (X, Y)"
+msgstr "Spiegelachse wählen (X, Y)"
+
+
+msgid "Select a mirror axis (X, Y, Z)"
+msgstr "Spiegelachse wählen (X, Y, Z)"
+
+
+msgid "Shrink/Fatten:"
+msgstr "Schrumpfen/Vergrößern:"
 
 
 msgctxt "Scene"

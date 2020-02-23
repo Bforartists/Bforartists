@@ -132,7 +132,7 @@ last_clipboard = ''
 
 
 @bpy.app.handlers.persistent
-def timer_update():  # TODO might get moved to handle all blenderkit stuff.
+def timer_update():
     # this makes a first search after opening blender. showing latest assets.
     global first_time
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
@@ -148,24 +148,25 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff.
     # clipboard monitoring to search assets from web
     global last_clipboard
     if bpy.context.window_manager.clipboard != last_clipboard:
-        last_clipboard = bpy.context.window_manager.clipboard
+        last_clipboard =  bpy.context.window_manager.clipboard
         instr = 'asset_base_id:'
+        # first check if contains asset id, then asset type
         if last_clipboard[:len(instr)] == instr:
             atstr = 'asset_type:'
             ati = last_clipboard.find(atstr)
+            #this only checks if the asset_type keyword is there but let's the keywords update function do the parsing.
             if ati > -1:
-                at = last_clipboard[ati:]
-
-            search_props = utils.get_search_props()
-            search_props.search_keywords = last_clipboard
-            search()
+                search_props = utils.get_search_props()
+                search_props.search_keywords = last_clipboard
+                # don't run search after this - assigning to keywords runs the search_update function.
 
     global search_threads
-    # don't do anything while dragging - this could switch asset type during drag, and make results list length different,
-    # causing a lot of throuble literally.
+    # don't do anything while dragging - this could switch asset during drag, and make results list length different,
+    # causing a lot of throuble.
     if len(search_threads) == 0 or bpy.context.scene.blenderkitUI.dragging:
         return 1
-    for thread in search_threads:  # TODO this doesn't check all processes when one gets removed,
+    for thread in search_threads:
+        # TODO this doesn't check all processes when one gets removed,
         # but most of the time only one is running anyway
         if not thread[0].is_alive():
             search_threads.remove(thread)  #
@@ -1189,6 +1190,32 @@ def search_update(self, context):
     if ui_props.down_up != 'SEARCH':
         ui_props.down_up = 'SEARCH'
 
+    # here we tweak the input if it comes form the clipboard. we need to get rid of asset type and set it to
+    sprops = utils.get_search_props()
+    instr = 'asset_base_id:'
+    atstr = 'asset_type:'
+    kwds = sprops.search_keywords
+    idi = kwds.find(instr)
+    ati = kwds.find(atstr)
+    # if the asset type already isn't there it means this update function
+    # was triggered by it's last iteration and needs to cancel
+    if idi>-1 and ati == -1:
+        return;
+    if ati > -1:
+        at = kwds[ati:].lower()
+        # uncertain length of the remaining string -  find as better method to check the presence of asset type
+        if at.find('model') > -1:
+            ui_props.asset_type = 'MODEL'
+        elif at.find('material') > -1:
+            ui_props.asset_type = 'MATERIAL'
+        elif at.find('brush') > -1:
+            ui_props.asset_type = 'BRUSH'
+        # now we trim the input copypaste by anything extra that is there,
+        # this is also a way for this function to recognize that it already has parsed the clipboard
+        # the search props can have changed and this needs to transfer the data to the other field
+        # this complex behaviour is here for the case where the user needs to paste manually into blender?
+        sprops = utils.get_search_props()
+        sprops.search_keywords = kwds[:ati].rstrip()
     search()
 
 

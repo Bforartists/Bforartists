@@ -1074,6 +1074,11 @@ def km_view3d(params):
              {"properties": [("type", 'RIGHT')]}),
             ("view3d.view_axis", {"type": 'EVT_TWEAK_M', "value": 'WEST', "alt": True},
              {"properties": [("type", 'LEFT')]}),
+            # Match the pie menu.
+            ("view3d.view_axis", {"type": 'EVT_TWEAK_M', "value": 'NORTH_WEST', "alt": True},
+             {"properties": [("type", 'FRONT')]}),
+            ("view3d.view_axis", {"type": 'EVT_TWEAK_M', "value": 'NORTH_EAST', "alt": True},
+             {"properties": [("type", 'BACK')]}),
         )),
         ("view3d.view_center_pick", {"type": 'MIDDLEMOUSE', "value": 'CLICK', "alt": True}, None),
         ("view3d.ndof_orbit_zoom", {"type": 'NDOF_MOTION', "value": 'ANY'}, None),
@@ -1455,8 +1460,7 @@ def km_graph_editor(params):
         ("graph.select_leftright", {"type": 'RIGHT_BRACKET', "value": 'PRESS'},
          {"properties": [("mode", 'RIGHT'), ("extend", False)]}),
         *_template_items_select_actions(params, "graph.select_all"),
-        ("graph.select_box", {"type": 'B', "value": 'PRESS'},
-         {"properties": [("axis_range", False)]}),
+        ("graph.select_box", {"type": 'B', "value": 'PRESS'}, None),
         ("graph.select_box", {"type": 'B', "value": 'PRESS', "alt": True},
          {"properties": [("axis_range", True)]}),
         ("graph.select_box", {"type": params.select_tweak, "value": 'ANY'},
@@ -2392,9 +2396,9 @@ def km_sequencer(params):
 
     items.extend([
         *_template_items_select_actions(params, "sequencer.select_all"),
-        ("sequencer.cut", {"type": 'K', "value": 'PRESS'},
+        ("sequencer.split", {"type": 'K', "value": 'PRESS'},
          {"properties": [("type", 'SOFT')]}),
-        ("sequencer.cut", {"type": 'K', "value": 'PRESS', "shift": True},
+        ("sequencer.split", {"type": 'K', "value": 'PRESS', "shift": True},
          {"properties": [("type", 'HARD')]}),
         ("sequencer.mute", {"type": 'H', "value": 'PRESS'},
          {"properties": [("unselected", False)]}),
@@ -2445,7 +2449,7 @@ def km_sequencer(params):
         ("sequencer.snap", {"type": 'S', "value": 'PRESS', "shift": True}, None),
         ("sequencer.swap_inputs", {"type": 'S', "value": 'PRESS', "alt": True}, None),
         *(
-            (("sequencer.cut_multicam",
+            (("sequencer.split_multicam",
               {"type": NUMBERS_1[i], "value": 'PRESS'},
               {"properties": [("camera", i + 1)]})
              for i in range(10)
@@ -2481,6 +2485,8 @@ def km_sequencer(params):
         ("sequencer.select_box", {"type": params.select_tweak, "value": 'ANY', "ctrl": True},
          {"properties": [("tweak", True), ("mode", 'SUB')]}),
         ("sequencer.select_box", {"type": 'B', "value": 'PRESS'}, None),
+        ("sequencer.select_box", {"type": 'B', "value": 'PRESS', "ctrl": True},
+         {"properties": [("include_handles", True)]}),
         ("sequencer.select_grouped", {"type": 'G', "value": 'PRESS', "shift": True}, None),
         op_menu("SEQUENCER_MT_add", {"type": 'A', "value": 'PRESS', "shift": True}),
         op_menu("SEQUENCER_MT_change", {"type": 'C', "value": 'PRESS'}),
@@ -3468,8 +3474,7 @@ def km_pose(params):
         ("armature.layers_show_all", {"type": 'ACCENT_GRAVE', "value": 'PRESS', "ctrl": True}, None),
         ("armature.armature_layers", {"type": 'M', "value": 'PRESS', "shift": True}, None),
         ("pose.bone_layers", {"type": 'M', "value": 'PRESS'}, None),
-        ("transform.transform", {"type": 'S', "value": 'PRESS', "ctrl": True, "alt": True},
-         {"properties": [("mode", 'BONE_SIZE')]}),
+        ("transform.bbone_resize", {"type": 'S', "value": 'PRESS', "ctrl": True, "alt": True}, None),
         ("anim.keyframe_insert_menu", {"type": 'I', "value": 'PRESS'}, None),
         ("anim.keyframe_delete_v3d", {"type": 'I', "value": 'PRESS', "alt": True}, None),
         ("anim.keying_set_active_set", {"type": 'I', "value": 'PRESS', "shift": True, "ctrl": True, "alt": True}, None),
@@ -4187,8 +4192,7 @@ def km_armature(params):
         ("armature.armature_layers", {"type": 'M', "value": 'PRESS', "shift": True}, None),
         ("armature.bone_layers", {"type": 'M', "value": 'PRESS'}, None),
         # Special transforms.
-        ("transform.transform", {"type": 'S', "value": 'PRESS', "ctrl": True, "alt": True},
-         {"properties": [("mode", 'BONE_SIZE')]}),
+        ("transform.bbone_resize", {"type": 'S', "value": 'PRESS', "ctrl": True, "alt": True}, None),
         ("transform.transform", {"type": 'S', "value": 'PRESS', "alt": True},
          {"properties": [("mode", 'BONE_ENVELOPE')]}),
         ("transform.transform", {"type": 'R', "value": 'PRESS', "ctrl": True},
@@ -4264,10 +4268,11 @@ def km_particle(params):
         *_template_items_select_actions(params, "particle.select_all"),
         ("particle.select_more", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "ctrl": True}, None),
         ("particle.select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True}, None),
-        ("particle.select_linked", {"type": 'L', "value": 'PRESS'},
+        ("particle.select_linked_pick", {"type": 'L', "value": 'PRESS'},
          {"properties": [("deselect", False)]}),
-        ("particle.select_linked", {"type": 'L', "value": 'PRESS', "shift": True},
+        ("particle.select_linked_pick", {"type": 'L', "value": 'PRESS', "shift": True},
          {"properties": [("deselect", True)]}),
+        ("particle.select_linked", {"type": 'L', "value": 'PRESS', "ctrl": True}, None),
         ("particle.delete", {"type": 'X', "value": 'PRESS'}, None),
         ("particle.delete", {"type": 'DEL', "value": 'PRESS'}, None),
         ("particle.reveal", {"type": 'H', "value": 'PRESS', "alt": True}, None),
@@ -5403,8 +5408,8 @@ def km_3d_view_tool_edit_armature_bone_size(params):
         "3D View Tool: Edit Armature, Bone Size",
         {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
         {"items": [
-            ("transform.transform", {"type": params.tool_tweak, "value": 'ANY'},
-             {"properties": [("release_confirm", True), ("mode", 'BONE_SIZE')]}),
+            ("transform.bbone_resize", {"type": params.tool_tweak, "value": 'ANY'},
+             {"properties": [("release_confirm", True)]}),
         ]},
     )
 
@@ -6116,12 +6121,12 @@ def km_sequencer_editor_tool_select_box(params):
     )
 
 
-def km_sequencer_editor_tool_cut(_params):
+def km_sequencer_editor_tool_blade(_params):
     return (
-        "Sequencer Tool: Cut",
+        "Sequencer Tool: Blade",
         {"space_type": 'SEQUENCE_EDITOR', "region_type": 'WINDOW'},
-        {"items":[
-            ("sequencer.cut", {"type": 'LEFTMOUSE', "value": 'PRESS'},
+        {"items": [
+            ("sequencer.split", {"type": 'LEFTMOUSE', "value": 'PRESS'},
              {"properties": [("type", 'SOFT'), ("side", 'NO_CHANGE'), ("use_cursor_position", True), ("ignore_selection", True)]}),
         ]},
     )
@@ -6342,7 +6347,7 @@ def generate_keymaps(params=None):
         km_3d_view_tool_sculpt_gpencil_select_lasso(params),
         km_sequencer_editor_tool_select(params),
         km_sequencer_editor_tool_select_box(params),
-        km_sequencer_editor_tool_cut(params),
+        km_sequencer_editor_tool_blade(params),
     ]
 
 # ------------------------------------------------------------------------------

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.82 (sub 6) (b'5e30bd43f873')\n"
+"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-10 10:28:09\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -4101,6 +4101,10 @@ msgstr "Hastighet"
 
 msgid "Additional vorticity for the flames"
 msgstr "Vätskans initialhastighet"
+
+
+msgid "Velocity Factor"
+msgstr "Hastighetsstyrka:"
 
 
 msgid "Emitter"
@@ -19704,10 +19708,6 @@ msgid "Change the Lock On Vertex Groups"
 msgstr "Vektor Måla"
 
 
-msgid "Change the lock state of all vertex groups of active object"
-msgstr "Markera Länkad"
-
-
 msgid "Lock action to execute on vertex groups"
 msgstr "Markera Länkad"
 
@@ -21414,11 +21414,6 @@ msgstr "Spara Bild"
 
 
 msgctxt "Operator"
-msgid "Optimize"
-msgstr "Optimering:"
-
-
-msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Redigerings Läge"
 
@@ -21548,19 +21543,6 @@ msgstr "Spara"
 msgctxt "Operator"
 msgid "Crossfade sounds"
 msgstr "Tona över ljud"
-
-
-msgctxt "Operator"
-msgid "Cut Strips"
-msgstr "Lägg till Stripp"
-
-
-msgid "Cut the selected strips"
-msgstr "Markera Länkad"
-
-
-msgid "Frame where selected strips will be cut"
-msgstr "Markera Länkad"
 
 
 msgctxt "Operator"
@@ -22346,6 +22328,14 @@ msgid "Unindent selected text"
 msgstr "Göm Markerad"
 
 
+msgid "Constraint Axis"
+msgstr "Lägg till Stripp"
+
+
+msgid "Transformation orientation"
+msgstr "Rensa Rotation"
+
+
 msgid "Use Snapping Options"
 msgstr "Rensa Rotation"
 
@@ -22405,14 +22395,6 @@ msgstr "Markera Länkad"
 
 msgid "Correct UV coordinates when transforming"
 msgstr "Klibbig texturkoordinat för meshvertex"
-
-
-msgid "Constraint Axis"
-msgstr "Lägg till Stripp"
-
-
-msgid "Transformation orientation"
-msgstr "Rensa Rotation"
 
 
 msgid "Push/Pull selected items"
@@ -24135,6 +24117,10 @@ msgid "Geometry Data"
 msgstr "Visa inställningar för kant"
 
 
+msgid "Transparency"
+msgstr "Genomskinlighet"
+
+
 msgid "Path Animation"
 msgstr "Renderings Fönster"
 
@@ -25230,14 +25216,6 @@ msgstr "Rörelsesamplingar"
 
 msgid "Ambient Color"
 msgstr "Markera Rad"
-
-
-msgid "Prefetch Frames"
-msgstr "Starta Spel"
-
-
-msgid "Number of frames to render ahead during playback (sequencer only)"
-msgstr "Bild Displist"
 
 
 msgid "Texture Time Out"
@@ -27708,10 +27686,6 @@ msgid "UV map to use for mapping with UV texture coordinates"
 msgstr "Klibbig texturkoordinat för meshvertex"
 
 
-msgid "Velocity Factor"
-msgstr "Hastighetsstyrka:"
-
-
 msgid "Clip Editor"
 msgstr "Bild Displist"
 
@@ -28924,10 +28898,6 @@ msgid "Mesh Light"
 msgstr "Ljus"
 
 
-msgid "Transparency"
-msgstr "Genomskinlighet"
-
-
 msgid "Tiles X"
 msgstr "Arkiv"
 
@@ -29506,6 +29476,10 @@ msgid "UV Axis:"
 msgstr "Axel"
 
 
+msgid "Offset:"
+msgstr "Förskjutning:"
+
+
 msgid "UV Map:"
 msgstr "Mappning"
 
@@ -29524,10 +29498,6 @@ msgstr "Inställningar:"
 
 msgid "Color:"
 msgstr "Färg:"
-
-
-msgid "Offset:"
-msgstr "Förskjutning:"
 
 
 msgid "Shift:"
@@ -32046,28 +32016,12 @@ msgid "File name"
 msgstr "Arkiv"
 
 
-msgid "Cursor from Selection"
-msgstr "Markör till markerade"
-
-
 msgid "Cursor X"
 msgstr "Markera Länkad"
 
 
-msgid "To Keys"
-msgstr "Nycklar:"
-
-
-msgid "Cursor Y"
-msgstr "Bild Displist"
-
-
 msgid "Interpolation:"
 msgstr "Integrering:"
-
-
-msgid "Value:"
-msgstr "Värde"
 
 
 msgid "F-Curve only has F-Modifiers"
@@ -32086,6 +32040,10 @@ msgid "Driver Value:"
 msgstr "Driver"
 
 
+msgid "Value:"
+msgstr "Värde"
+
+
 msgid "Update Dependencies"
 msgstr "Renderings Fönster"
 
@@ -32096,10 +32054,6 @@ msgstr "Radera Allt"
 
 msgid "Delete target variable"
 msgstr "Flytta Till Lager"
-
-
-msgid "View Properties"
-msgstr "Lägg till spelegenskap"
 
 
 msgid "Active F-Curve is not editable"
@@ -32139,14 +32093,6 @@ msgstr "Starta rendering av sekvens"
 
 
 msgid "Cannot save multilayer sequences"
-msgstr "Starta rendering av sekvens"
-
-
-msgid "Packing movies or image sequences not supported"
-msgstr "Starta rendering av sekvens"
-
-
-msgid "Unpacking movies or image sequences not supported"
 msgstr "Starta rendering av sekvens"
 
 
@@ -32436,14 +32382,6 @@ msgid "Auto Keying On"
 msgstr "Flytta Till Lager"
 
 
-msgid "Shrink/Fatten:"
-msgstr "Krymp/sväll"
-
-
-msgid "Vert Slide: "
-msgstr "Vektor Måla"
-
-
 msgid "global"
 msgstr "Global"
 
@@ -32486,6 +32424,14 @@ msgstr "UVsfär"
 
 msgid "(Random)"
 msgstr "Slumpmässig"
+
+
+msgid "Shrink/Fatten:"
+msgstr "Krymp/sväll"
+
+
+msgid "Vert Slide: "
+msgstr "Vektor Måla"
 
 
 msgid "UV Vertex"

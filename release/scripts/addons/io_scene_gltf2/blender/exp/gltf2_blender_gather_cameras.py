@@ -119,4 +119,3 @@ def __gather_type(blender_camera, export_settings):
     elif blender_camera.type == 'ORTHO':
         return "orthographic"
     return None
-

@@ -202,4 +202,3 @@ class glTFImporter():
         except Exception:
             self.log.error("Couldn't read file: " + path)
             return None, None
-

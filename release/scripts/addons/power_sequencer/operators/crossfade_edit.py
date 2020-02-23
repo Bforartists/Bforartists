@@ -48,7 +48,6 @@ class POWER_SEQUENCER_OT_crossfade_edit(bpy.types.Operator):
     def poll(cls, context):
         return context.scene.sequence_editor.active_strip and context.selected_sequences
 
-
     def execute(self, context):
         active = context.scene.sequence_editor.active_strip
         if active.type not in self.crossfade_types:

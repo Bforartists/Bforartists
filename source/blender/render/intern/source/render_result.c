@@ -442,6 +442,15 @@ RenderResult *render_result_new(Render *re,
       if (view_layer->passflag & SCE_PASS_SUBSURFACE_COLOR) {
         RENDER_LAYER_ADD_PASS_SAFE(rr, rl, 3, RE_PASSNAME_SUBSURFACE_COLOR, view, "RGB");
       }
+      if (view_layer->eevee.render_passes & EEVEE_RENDER_PASS_BLOOM) {
+        RENDER_LAYER_ADD_PASS_SAFE(rr, rl, 3, RE_PASSNAME_BLOOM, view, "RGB");
+      }
+      if (view_layer->eevee.render_passes & EEVEE_RENDER_PASS_VOLUME_SCATTER) {
+        RENDER_LAYER_ADD_PASS_SAFE(rr, rl, 3, RE_PASSNAME_VOLUME_SCATTER, view, "RGB");
+      }
+      if (view_layer->eevee.render_passes & EEVEE_RENDER_PASS_VOLUME_TRANSMITTANCE) {
+        RENDER_LAYER_ADD_PASS_SAFE(rr, rl, 3, RE_PASSNAME_VOLUME_TRANSMITTANCE, view, "RGB");
+      }
 #undef RENDER_LAYER_ADD_PASS_SAFE
     }
   }
@@ -520,12 +529,12 @@ void render_result_clone_passes(Render *re, RenderResult *rr, const char *viewna
   }
 }
 
-void render_result_add_pass(RenderResult *rr,
-                            const char *name,
-                            int channels,
-                            const char *chan_id,
-                            const char *layername,
-                            const char *viewname)
+void RE_create_render_pass(RenderResult *rr,
+                           const char *name,
+                           int channels,
+                           const char *chan_id,
+                           const char *layername,
+                           const char *viewname)
 {
   RenderLayer *rl;
   RenderPass *rp;
@@ -1234,7 +1243,7 @@ void render_result_exr_file_begin(Render *re, RenderEngine *engine)
        * mutex locked to avoid deadlock with Python GIL. */
       BLI_rw_mutex_lock(&re->resultmutex, THREAD_LOCK_WRITE);
       for (RenderPass *pass = templates.first; pass; pass = pass->next) {
-        render_result_add_pass(
+        RE_create_render_pass(
             re->result, pass->name, pass->channels, pass->chan_id, rl->name, NULL);
       }
       BLI_rw_mutex_unlock(&re->resultmutex);
@@ -1277,8 +1286,7 @@ void render_result_exr_file_end(Render *re, RenderEngine *engine)
      * mutex locked to avoid deadlock with Python GIL. */
     BLI_rw_mutex_lock(&re->resultmutex, THREAD_LOCK_WRITE);
     for (RenderPass *pass = templates.first; pass; pass = pass->next) {
-      render_result_add_pass(
-          re->result, pass->name, pass->channels, pass->chan_id, rl->name, NULL);
+      RE_create_render_pass(re->result, pass->name, pass->channels, pass->chan_id, rl->name, NULL);
     }
 
     BLI_freelistN(&templates);

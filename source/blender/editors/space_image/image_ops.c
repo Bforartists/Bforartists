@@ -2826,7 +2826,7 @@ static int image_new_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(e
 
   /* Better for user feedback. */
   RNA_string_set(op->ptr, "name", DATA_(IMA_DEF_NAME));
-  return WM_operator_props_dialog_popup(C, op, 300, 100);
+  return WM_operator_props_dialog_popup(C, op, 300);
 }
 
 static void image_new_draw(bContext *UNUSED(C), wmOperator *op)
@@ -3072,7 +3072,7 @@ static int image_scale_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED
     RNA_property_int_set_array(op->ptr, prop, size);
     BKE_image_release_ibuf(ima, ibuf, NULL);
   }
-  return WM_operator_props_dialog_popup(C, op, 200, 200);
+  return WM_operator_props_dialog_popup(C, op, 200);
 }
 
 static int image_scale_exec(bContext *C, wmOperator *op)
@@ -3204,6 +3204,7 @@ void IMAGE_OT_pack(wmOperatorType *ot)
 
 static int image_unpack_exec(bContext *C, wmOperator *op)
 {
+  Main *bmain = CTX_data_main(C);
   Image *ima = image_from_context(C);
   int method = RNA_enum_get(op->ptr, "method");
 
@@ -3211,7 +3212,7 @@ static int image_unpack_exec(bContext *C, wmOperator *op)
   if (RNA_struct_property_is_set(op->ptr, "id")) {
     char imaname[MAX_ID_NAME - 2];
     RNA_string_get(op->ptr, "id", imaname);
-    ima = BLI_findstring(&CTX_data_main(C)->images, imaname, offsetof(ID, name) + 2);
+    ima = BLI_findstring(&bmain->images, imaname, offsetof(ID, name) + 2);
     if (!ima) {
       ima = image_from_context(C);
     }
@@ -4434,7 +4435,7 @@ static int tile_add_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(ev
   RNA_int_set(op->ptr, "count", 1);
   RNA_string_set(op->ptr, "label", "");
 
-  return WM_operator_props_dialog_popup(C, op, 10 * UI_UNIT_X, 5 * UI_UNIT_Y);
+  return WM_operator_props_dialog_popup(C, op, 10 * UI_UNIT_X);
 }
 
 static void tile_add_draw(bContext *UNUSED(C), wmOperator *op)
@@ -4568,7 +4569,7 @@ static int tile_fill_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(e
 {
   initialize_fill_tile(op->ptr, CTX_data_edit_image(C), NULL);
 
-  return WM_operator_props_dialog_popup(C, op, 15 * UI_UNIT_X, 5 * UI_UNIT_Y);
+  return WM_operator_props_dialog_popup(C, op, 15 * UI_UNIT_X);
 }
 
 static void tile_fill_draw(bContext *UNUSED(C), wmOperator *op)

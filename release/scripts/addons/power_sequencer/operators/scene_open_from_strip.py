@@ -46,7 +46,7 @@ class POWER_SEQUENCER_OT_open_scene_strip(bpy.types.Operator):
     def execute(self, context):
         active_strip = context.scene.sequence_editor.active_strip
         if active_strip.type != "SCENE":
-            return {'FINISHED'}
+            return {"FINISHED"}
 
         strip_scene = active_strip.scene
         context.screen.scene = bpy.data.scenes[strip_scene.name]

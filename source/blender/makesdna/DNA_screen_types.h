@@ -464,8 +464,8 @@ enum {
   /** Update size of regions within the area. */
   AREA_FLAG_REGION_SIZE_UPDATE = (1 << 3),
   AREA_FLAG_ACTIVE_TOOL_UPDATE = (1 << 4),
+  AREA_FLAG_CURSOR_UPDATE = (1 << 5),
 
-  //  AREA_FLAG_UNUSED_5           = (1 << 5),
   AREA_FLAG_UNUSED_6 = (1 << 6), /* cleared */
 
   /**
@@ -592,7 +592,7 @@ enum {
 enum {
   /* Plain values (only one is valid at a time, once masked with UILST_FLT_SORT_MASK. */
   /** Just for sake of consistency. */
-  UILST_FLT_SORT_INDEX = 0,
+  /* UILST_FLT_SORT_INDEX = 0, */ /* UNUSED */
   UILST_FLT_SORT_ALPHA = 1,
 
   /* Bitflags affecting behavior of any kind of sorting. */
@@ -687,6 +687,9 @@ enum {
   RGN_DRAWING = 8,
   /* For popups, to refresh UI layout along with drawing. */
   RGN_REFRESH_UI = 16,
+
+  /* Only editor overlays (currently gizmos only!) should be redrawn. */
+  RGN_DRAW_EDITOR_OVERLAYS = 32,
 };
 
 #endif /* __DNA_SCREEN_TYPES_H__ */

@@ -15,7 +15,6 @@
 # not, see <https://www.gnu.org/licenses/>.
 #
 import bpy
-import time
 
 
 class InfoProgressBar:

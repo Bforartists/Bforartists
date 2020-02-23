@@ -1115,6 +1115,13 @@ void Session::denoise()
     return;
   }
 
+  /* Cannot denoise with resolution divider and separate denoising devices.
+   * It breaks the copy in 'MultiDevice::map_neighbor_tiles' (which operates on the full buffer
+   * dimensions and not the scaled ones). */
+  if (!params.device.denoising_devices.empty() && tile_manager.state.resolution_divider > 1) {
+    return;
+  }
+
   /* Add separate denoising task. */
   DeviceTask task(DeviceTask::DENOISE);
 
@@ -1127,6 +1134,10 @@ void Session::denoise()
   }
   else {
     assert(buffers);
+
+    if (tile_manager.state.buffer.width == 0 || tile_manager.state.buffer.height == 0) {
+      return; /* Avoid empty launches. */
+    }
 
     /* Wait for rendering to finish. */
     device->task_wait();

@@ -35,14 +35,11 @@ def set_keymap_property(properties, property_name, value):
         print("Warning: %r" % e)
 
 
-def register_shortcuts():
+def register_shortcuts(operator_classes):
     def keymapgetter(operator):
         return operator[1]["keymap"]
 
-    data = dir(operators)
-    data = filter(lambda operator: operator[0].isupper(), data)
-    data = map(lambda operator: op.attrgetter(operator), data)
-    data = map(lambda operator: operator(operators), data)
+    data = operator_classes
     data = map(lambda operator: op.attrgetter("bl_idname", "doc")(operator), data)
     data = {k: v for k, v in data if v != {}}
     data.update(operators.doc)

@@ -74,4 +74,3 @@ class BlenderImage():
 def _uri_to_path(uri):
     uri = urllib.parse.unquote(uri)
     return normpath(uri)
-

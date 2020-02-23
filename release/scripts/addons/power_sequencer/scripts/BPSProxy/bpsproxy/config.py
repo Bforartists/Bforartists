@@ -29,7 +29,7 @@ CONFIG = {
     },
     "presets": {
         "webm": "-c:v libvpx -crf 25 -speed 16 -threads {}".format(str(mp.cpu_count())),
-        "mp4": "-c:v libx264 -crf 25 -preset faster",
+        "mp4": "-c:v libx264 -crf 25 -preset faster -tune fastdecode",
         "nvenc": "-c:v h264_nvenc -qp 25 -preset fast",
     },
     "pre": {"work": "»", "done": "•", "skip": "~"},
