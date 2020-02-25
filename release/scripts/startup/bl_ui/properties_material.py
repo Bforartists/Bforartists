@@ -30,9 +30,9 @@ class MATERIAL_MT_context_menu(Menu):
         layout = self.layout
 
         layout.operator("material.copy", icon='COPYDOWN')
-        layout.operator("object.material_slot_copy")
+        layout.operator("object.material_slot_copy", icon='COPYDOWN')
         layout.operator("material.paste", icon='PASTEDOWN')
-        layout.operator("object.material_slot_remove_unused")
+        layout.operator("object.material_slot_remove_unused", icon='DELETE')
 
 
 class MATERIAL_UL_matslots(UIList):
