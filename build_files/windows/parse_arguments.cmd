@@ -1,4 +1,4 @@
-set BUILD_DIR=%BLENDER_DIR%..\build_windows
+set BUILD_DIR=%BLENDER_DIR%..\bfa_build_windows
 set BUILD_TYPE=Release
 :argv_loop
 if NOT "%1" == "" (
