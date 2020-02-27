@@ -2112,6 +2112,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_transform.shear,
         ],
         'EDIT_TEXT': [
+            _defs_view3d_select.select,
             _defs_view3d_generic.cursor,
             None,
             *_tools_annotate,
