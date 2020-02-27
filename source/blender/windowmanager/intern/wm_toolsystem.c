@@ -741,7 +741,7 @@ static const char *toolsystem_default_tool(const bToolKey *tkey)
         case CTX_MODE_PARTICLE:
           return "builtin_brush.Comb";
         case CTX_MODE_EDIT_TEXT:
-          return "builtin.cursor";
+          return "builtin.select"; /*bfa - changed from builtin.cursor to builtin.select*/
       }
       break;
     case SPACE_IMAGE:
