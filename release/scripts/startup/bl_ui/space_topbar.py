@@ -595,8 +595,8 @@ class TOPBAR_MT_help(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("wm.url_open", text="Manual", icon='HELP').url = "https://www.bforartists.de/wiki/Manual"
-        layout.operator("wm.url_open", text="Release notes", icon='URL').url = "https://www.bforartists.de/wiki/release-notes"
+        layout.operator("wm.url_open", text="Manual", icon='HELP').url = "https://www.bforartists.de/bforartists-2-reference-manual/"
+        layout.operator("wm.url_open", text="Release notes", icon='URL').url = "https://www.bforartists.de/release-notes/"
 
         layout.separator()
 
