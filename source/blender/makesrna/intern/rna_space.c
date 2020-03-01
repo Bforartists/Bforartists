@@ -1285,7 +1285,24 @@ static const EnumPropertyItem *rna_3DViewShading_render_pass_itemf(bContext *C,
       RNA_enum_item_add(&result, &totitem, item);
     }
   }
+
+  RNA_enum_item_end(&result, &totitem);
   *r_free = true;
+  return result;
+}
+static int rna_3DViewShading_render_pass_get(PointerRNA *ptr)
+{
+  View3DShading *shading = (View3DShading *)ptr->data;
+  eViewLayerEEVEEPassType result = shading->render_pass;
+  Scene *scene = rna_3DViewShading_scene(ptr);
+
+  if (result == EEVEE_RENDER_PASS_AO && ((scene->eevee.flag & SCE_EEVEE_GTAO_ENABLED) == 0)) {
+    result = EEVEE_RENDER_PASS_COMBINED;
+  }
+  if (result == EEVEE_RENDER_PASS_BLOOM && ((scene->eevee.flag & SCE_EEVEE_BLOOM_ENABLED) == 0)) {
+    result = EEVEE_RENDER_PASS_COMBINED;
+  }
+
   return result;
 }
 
@@ -3258,9 +3275,18 @@ static void rna_def_space_view3d_shading(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "studiolight_background_alpha", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_float_sdna(prop, NULL, "studiolight_background");
-  RNA_def_property_ui_text(prop, "Background", "Show the studiolight in the background");
+  RNA_def_property_ui_text(prop, "World Opacity", "Show the studiolight in the background");
   RNA_def_property_range(prop, 0.0f, 1.0f);
-  RNA_def_property_ui_range(prop, 0.00f, 1.0f, 1, 3);
+  RNA_def_property_ui_range(prop, 0.0f, 1.0f, 1, 3);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
+
+  prop = RNA_def_property(srna, "studiolight_background_blur", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_float_sdna(prop, NULL, "studiolight_blur");
+  RNA_def_property_ui_text(prop, "Blur", "Blur the studiolight in the background");
+  RNA_def_property_float_default(prop, 0.5f);
+  RNA_def_property_range(prop, 0.0f, 1.0f);
+  RNA_def_property_ui_range(prop, 0.0f, 1.0f, 1, 2);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
@@ -3389,7 +3415,8 @@ static void rna_def_space_view3d_shading(BlenderRNA *brna)
   RNA_def_property_enum_sdna(prop, NULL, "render_pass");
   RNA_def_property_enum_items(prop, rna_enum_view3dshading_render_pass_type_items);
   RNA_def_property_ui_text(prop, "Render Pass", "Render Pass to show in the viewport");
-  RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_3DViewShading_render_pass_itemf");
+  RNA_def_property_enum_funcs(
+      prop, "rna_3DViewShading_render_pass_get", NULL, "rna_3DViewShading_render_pass_itemf");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 }
 

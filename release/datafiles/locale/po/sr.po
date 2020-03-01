@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -12538,6 +12538,10 @@ msgid "UV coordinates to be used for mapping"
 msgstr "UV координате за мапирање"
 
 
+msgid "Z Axis"
+msgstr "Z оса"
+
+
 msgid "Vector Transform"
 msgstr "Векторска трансформација"
 
@@ -14947,10 +14951,6 @@ msgstr "Ако је могуће, увек користи релативне п�
 
 msgid "Filename only"
 msgstr "Само име датотеке"
-
-
-msgid "Z Axis"
-msgstr "Z оса"
 
 
 msgid "Only Deform Bones"
@@ -25675,10 +25675,6 @@ msgstr "Светлина сенке"
 
 msgid "Theme Background Color"
 msgstr "Боја позадине теме"
-
-
-msgid "Use Gradient"
-msgstr "Користи прелаз"
 
 
 msgid "Channels Region"

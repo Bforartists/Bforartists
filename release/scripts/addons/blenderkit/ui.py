@@ -1288,10 +1288,7 @@ class AssetBarOperator(bpy.types.Operator):
 
         update_ui_size(self.area, self.region)
 
-        if context.region != self.region:
-            print(time.time(), 'pass through because of region')
-            print(context.region.type, self.region.type)
-            return {'PASS_THROUGH'}
+
 
         # this was here to check if sculpt stroke is running, but obviously that didn't help,
         #  since the RELEASE event is cought by operator and thus there is no way to detect a stroke has ended...
@@ -1312,6 +1309,11 @@ class AssetBarOperator(bpy.types.Operator):
             self.exit_modal()
             ui_props.draw_tooltip = False
             return {'CANCELLED'}
+
+        if context.region != self.region:
+            # print(time.time(), 'pass through because of region')
+            # print(context.region.type, self.region.type)
+            return {'PASS_THROUGH'}
 
         if ui_props.down_up == 'UPLOAD':
 
@@ -1504,8 +1506,8 @@ class AssetBarOperator(bpy.types.Operator):
                     asset_search_index = ui_props.active_index
                     asset_data = sr[asset_search_index]
                     if not asset_data['can_download']:
-                        message = 'Asset locked. Find out how to unlock Everything and ...'
-                        link_text = 'support all BlenderKit artists.'
+                        message = "Let's support asset creators and Blender development."
+                        link_text = 'Unlock the asset.'
                         url = paths.get_bkit_url() + '/get-blenderkit/' + asset_data['id'] + '/?from_addon'
                         bpy.ops.wm.blenderkit_url_dialog('INVOKE_REGION_WIN', url=url, message=message,
                                                          link_text=link_text)

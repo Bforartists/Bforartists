@@ -470,13 +470,20 @@ class VIEW3D_PT_blenderkit_profile(Panel):
 
                 # plan information
 
-                # pcoll = icons.icon_collections["main"]
-                # my_icon = pcoll['free']
-                # row = layout.row()
-                # row.label(text='My plan:')
-                # row.label(text='Free plan', icon_value=my_icon.icon_id)
-                # layout.operator("wm.url_open", text="Change plan",
-                #                 icon='URL').url = paths.get_bkit_url() + paths.BLENDERKIT_PLANS
+                if me.get('currentPlanName') is not None:
+                    pn = me['currentPlanName']
+                    pcoll = icons.icon_collections["main"]
+                    if pn == 'Free':
+                        my_icon = pcoll['free']
+                    else:
+                        my_icon = pcoll['full']
+
+                    row = layout.row()
+                    row.label(text='My plan:')
+                    row.label(text='%s plan' % pn, icon_value=my_icon.icon_id)
+                    if pn =='Free':
+                        layout.operator("wm.url_open", text="Change plan",
+                            icon='URL').url = paths.get_bkit_url() + paths.BLENDERKIT_PLANS
 
                 # storage statistics
                 # if me.get('sumAssetFilesSize') is not None:  # TODO remove this when production server has these too.

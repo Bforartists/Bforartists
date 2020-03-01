@@ -29,6 +29,7 @@
 #include "BLI_math.h"
 #include "BLI_utildefines.h"
 
+#include "BKE_DerivedMesh.h"
 #include "BKE_pbvh.h"
 #include "BKE_cdderivedmesh.h"
 #include "BKE_mesh.h"
@@ -150,22 +151,6 @@ static void cdDM_copyPolyArray(DerivedMesh *dm, MPoly *r_poly)
   memcpy(r_poly, cddm->mpoly, sizeof(*r_poly) * dm->numPolyData);
 }
 
-static void cdDM_getMinMax(DerivedMesh *dm, float r_min[3], float r_max[3])
-{
-  CDDerivedMesh *cddm = (CDDerivedMesh *)dm;
-  int i;
-
-  if (dm->numVertData) {
-    for (i = 0; i < dm->numVertData; i++) {
-      minmax_v3v3_v3(r_min, r_max, cddm->mvert[i].co);
-    }
-  }
-  else {
-    zero_v3(r_min);
-    zero_v3(r_max);
-  }
-}
-
 static void cdDM_getVertCo(DerivedMesh *dm, int index, float r_co[3])
 {
   CDDerivedMesh *cddm = (CDDerivedMesh *)dm;
@@ -193,7 +178,7 @@ static const MeshElemMap *cdDM_getPolyMap(Object *ob, DerivedMesh *dm)
   return cddm->pmap;
 }
 
-void CDDM_recalc_looptri(DerivedMesh *dm)
+static void cdDM_recalc_looptri(DerivedMesh *dm)
 {
   CDDerivedMesh *cddm = (CDDerivedMesh *)dm;
   const unsigned int totpoly = dm->numPolyData;
@@ -240,8 +225,6 @@ static CDDerivedMesh *cdDM_create(const char *desc)
   cddm = MEM_callocN(sizeof(*cddm), desc);
   dm = &cddm->dm;
 
-  dm->getMinMax = cdDM_getMinMax;
-
   dm->getNumVerts = cdDM_getNumVerts;
   dm->getNumEdges = cdDM_getNumEdges;
   dm->getNumTessFaces = cdDM_getNumTessFaces;
@@ -265,7 +248,7 @@ static CDDerivedMesh *cdDM_create(const char *desc)
   dm->getEdgeDataArray = DM_get_edge_data_layer;
   dm->getTessFaceDataArray = DM_get_tessface_data_layer;
 
-  dm->recalcLoopTri = CDDM_recalc_looptri;
+  dm->recalcLoopTri = cdDM_recalc_looptri;
 
   dm->getVertCo = cdDM_getVertCo;
   dm->getVertNo = cdDM_getVertNo;
@@ -277,41 +260,9 @@ static CDDerivedMesh *cdDM_create(const char *desc)
   return cddm;
 }
 
-DerivedMesh *CDDM_new(int numVerts, int numEdges, int numTessFaces, int numLoops, int numPolys)
-{
-  CDDerivedMesh *cddm = cdDM_create("CDDM_new dm");
-  DerivedMesh *dm = &cddm->dm;
-
-  DM_init(dm, DM_TYPE_CDDM, numVerts, numEdges, numTessFaces, numLoops, numPolys);
-
-  CustomData_add_layer(&dm->vertData, CD_ORIGINDEX, CD_CALLOC, NULL, numVerts);
-  CustomData_add_layer(&dm->edgeData, CD_ORIGINDEX, CD_CALLOC, NULL, numEdges);
-  CustomData_add_layer(&dm->faceData, CD_ORIGINDEX, CD_CALLOC, NULL, numTessFaces);
-  CustomData_add_layer(&dm->polyData, CD_ORIGINDEX, CD_CALLOC, NULL, numPolys);
-
-  CustomData_add_layer(&dm->vertData, CD_MVERT, CD_CALLOC, NULL, numVerts);
-  CustomData_add_layer(&dm->edgeData, CD_MEDGE, CD_CALLOC, NULL, numEdges);
-  CustomData_add_layer(&dm->faceData, CD_MFACE, CD_CALLOC, NULL, numTessFaces);
-  CustomData_add_layer(&dm->loopData, CD_MLOOP, CD_CALLOC, NULL, numLoops);
-  CustomData_add_layer(&dm->polyData, CD_MPOLY, CD_CALLOC, NULL, numPolys);
-
-  cddm->mvert = CustomData_get_layer(&dm->vertData, CD_MVERT);
-  cddm->medge = CustomData_get_layer(&dm->edgeData, CD_MEDGE);
-  cddm->mface = CustomData_get_layer(&dm->faceData, CD_MFACE);
-  cddm->mloop = CustomData_get_layer(&dm->loopData, CD_MLOOP);
-  cddm->mpoly = CustomData_get_layer(&dm->polyData, CD_MPOLY);
-
-  return dm;
-}
-
-DerivedMesh *CDDM_from_mesh(Mesh *mesh)
-{
-  return CDDM_from_mesh_ex(mesh, CD_REFERENCE, &CD_MASK_MESH);
-}
-
-DerivedMesh *CDDM_from_mesh_ex(Mesh *mesh,
-                               eCDAllocType alloctype,
-                               const CustomData_MeshMasks *mask)
+static DerivedMesh *cdDM_from_mesh_ex(Mesh *mesh,
+                                      eCDAllocType alloctype,
+                                      const CustomData_MeshMasks *mask)
 {
   CDDerivedMesh *cddm = cdDM_create(__func__);
   DerivedMesh *dm = &cddm->dm;
@@ -370,148 +321,9 @@ DerivedMesh *CDDM_from_mesh_ex(Mesh *mesh,
   return dm;
 }
 
-/* TODO(campbell): remove, use BKE_mesh_from_bmesh_for_eval_nomain instead. */
-
-/* used for both editbmesh and bmesh */
-static DerivedMesh *cddm_from_bmesh_ex(struct BMesh *bm, const bool use_mdisps)
+DerivedMesh *CDDM_from_mesh(Mesh *mesh)
 {
-  DerivedMesh *dm = CDDM_new(bm->totvert, bm->totedge, 0, bm->totloop, bm->totface);
-
-  CDDerivedMesh *cddm = (CDDerivedMesh *)dm;
-  BMIter iter;
-  BMVert *eve;
-  BMEdge *eed;
-  BMFace *efa;
-  MVert *mvert = cddm->mvert;
-  MEdge *medge = cddm->medge;
-  MLoop *mloop = cddm->mloop;
-  MPoly *mpoly = cddm->mpoly;
-  int *index, add_orig;
-  CustomData_MeshMasks mask = {0};
-  unsigned int i, j;
-
-  const int cd_vert_bweight_offset = CustomData_get_offset(&bm->vdata, CD_BWEIGHT);
-  const int cd_edge_bweight_offset = CustomData_get_offset(&bm->edata, CD_BWEIGHT);
-  const int cd_edge_crease_offset = CustomData_get_offset(&bm->edata, CD_CREASE);
-
-  dm->deformedOnly = 1;
-
-  /* don't add origindex layer if one already exists */
-  add_orig = !CustomData_has_layer(&bm->pdata, CD_ORIGINDEX);
-
-  mask = CD_MASK_DERIVEDMESH;
-  if (use_mdisps) {
-    mask.lmask |= CD_MASK_MDISPS;
-  }
-
-  /* don't process shapekeys, we only feed them through the modifier stack as needed,
-   * e.g. for applying modifiers or the like*/
-  mask.vmask &= ~CD_MASK_SHAPEKEY;
-  CustomData_merge(&bm->vdata, &dm->vertData, mask.vmask, CD_CALLOC, dm->numVertData);
-  CustomData_merge(&bm->edata, &dm->edgeData, mask.emask, CD_CALLOC, dm->numEdgeData);
-  CustomData_merge(&bm->ldata, &dm->loopData, mask.lmask, CD_CALLOC, dm->numLoopData);
-  CustomData_merge(&bm->pdata, &dm->polyData, mask.pmask, CD_CALLOC, dm->numPolyData);
-
-  index = dm->getVertDataArray(dm, CD_ORIGINDEX);
-
-  BM_ITER_MESH_INDEX (eve, &iter, bm, BM_VERTS_OF_MESH, i) {
-    MVert *mv = &mvert[i];
-
-    copy_v3_v3(mv->co, eve->co);
-
-    BM_elem_index_set(eve, i); /* set_inline */
-
-    normal_float_to_short_v3(mv->no, eve->no);
-
-    mv->flag = BM_vert_flag_to_mflag(eve);
-
-    if (cd_vert_bweight_offset != -1) {
-      mv->bweight = BM_ELEM_CD_GET_FLOAT_AS_UCHAR(eve, cd_vert_bweight_offset);
-    }
-
-    if (add_orig) {
-      *index++ = i;
-    }
-
-    CustomData_from_bmesh_block(&bm->vdata, &dm->vertData, eve->head.data, i);
-  }
-  bm->elem_index_dirty &= ~BM_VERT;
-
-  index = dm->getEdgeDataArray(dm, CD_ORIGINDEX);
-  BM_ITER_MESH_INDEX (eed, &iter, bm, BM_EDGES_OF_MESH, i) {
-    MEdge *med = &medge[i];
-
-    BM_elem_index_set(eed, i); /* set_inline */
-
-    med->v1 = BM_elem_index_get(eed->v1);
-    med->v2 = BM_elem_index_get(eed->v2);
-
-    med->flag = BM_edge_flag_to_mflag(eed);
-
-    /* handle this differently to editmode switching,
-     * only enable draw for single user edges rather then calculating angle */
-    if ((med->flag & ME_EDGEDRAW) == 0) {
-      if (eed->l && eed->l == eed->l->radial_next) {
-        med->flag |= ME_EDGEDRAW;
-      }
-    }
-
-    if (cd_edge_crease_offset != -1) {
-      med->crease = BM_ELEM_CD_GET_FLOAT_AS_UCHAR(eed, cd_edge_crease_offset);
-    }
-    if (cd_edge_bweight_offset != -1) {
-      med->bweight = BM_ELEM_CD_GET_FLOAT_AS_UCHAR(eed, cd_edge_bweight_offset);
-    }
-
-    CustomData_from_bmesh_block(&bm->edata, &dm->edgeData, eed->head.data, i);
-    if (add_orig) {
-      *index++ = i;
-    }
-  }
-  bm->elem_index_dirty &= ~BM_EDGE;
-
-  index = CustomData_get_layer(&dm->polyData, CD_ORIGINDEX);
-  j = 0;
-  BM_ITER_MESH_INDEX (efa, &iter, bm, BM_FACES_OF_MESH, i) {
-    BMLoop *l_iter;
-    BMLoop *l_first;
-    MPoly *mp = &mpoly[i];
-
-    BM_elem_index_set(efa, i); /* set_inline */
-
-    mp->totloop = efa->len;
-    mp->flag = BM_face_flag_to_mflag(efa);
-    mp->loopstart = j;
-    mp->mat_nr = efa->mat_nr;
-
-    l_iter = l_first = BM_FACE_FIRST_LOOP(efa);
-    do {
-      mloop->v = BM_elem_index_get(l_iter->v);
-      mloop->e = BM_elem_index_get(l_iter->e);
-      CustomData_from_bmesh_block(&bm->ldata, &dm->loopData, l_iter->head.data, j);
-
-      BM_elem_index_set(l_iter, j); /* set_inline */
-
-      j++;
-      mloop++;
-    } while ((l_iter = l_iter->next) != l_first);
-
-    CustomData_from_bmesh_block(&bm->pdata, &dm->polyData, efa->head.data, i);
-
-    if (add_orig) {
-      *index++ = i;
-    }
-  }
-  bm->elem_index_dirty &= ~(BM_FACE | BM_LOOP);
-
-  dm->cd_flag = BM_mesh_cd_flag_from_bmesh(bm);
-
-  return dm;
-}
-
-DerivedMesh *CDDM_from_editbmesh(BMEditMesh *em, const bool use_mdisps)
-{
-  return cddm_from_bmesh_ex(em->bm, use_mdisps);
+  return cdDM_from_mesh_ex(mesh, CD_REFERENCE, &CD_MASK_MESH);
 }
 
 DerivedMesh *CDDM_copy(DerivedMesh *source)
@@ -558,63 +370,4 @@ DerivedMesh *CDDM_copy(DerivedMesh *source)
   cddm->mpoly = CustomData_get_layer(&dm->polyData, CD_MPOLY);
 
   return dm;
-}
-
-/* #define DEBUG_CLNORS */
-#ifdef DEBUG_CLNORS
-#  include "BLI_linklist.h"
-#endif
-
-/* mesh element access functions */
-
-MVert *CDDM_get_vert(DerivedMesh *dm, int index)
-{
-  return &((CDDerivedMesh *)dm)->mvert[index];
-}
-
-MEdge *CDDM_get_edge(DerivedMesh *dm, int index)
-{
-  return &((CDDerivedMesh *)dm)->medge[index];
-}
-
-MFace *CDDM_get_tessface(DerivedMesh *dm, int index)
-{
-  return &((CDDerivedMesh *)dm)->mface[index];
-}
-
-MLoop *CDDM_get_loop(DerivedMesh *dm, int index)
-{
-  return &((CDDerivedMesh *)dm)->mloop[index];
-}
-
-MPoly *CDDM_get_poly(DerivedMesh *dm, int index)
-{
-  return &((CDDerivedMesh *)dm)->mpoly[index];
-}
-
-/* array access functions */
-
-MVert *CDDM_get_verts(DerivedMesh *dm)
-{
-  return ((CDDerivedMesh *)dm)->mvert;
-}
-
-MEdge *CDDM_get_edges(DerivedMesh *dm)
-{
-  return ((CDDerivedMesh *)dm)->medge;
-}
-
-MFace *CDDM_get_tessfaces(DerivedMesh *dm)
-{
-  return ((CDDerivedMesh *)dm)->mface;
-}
-
-MLoop *CDDM_get_loops(DerivedMesh *dm)
-{
-  return ((CDDerivedMesh *)dm)->mloop;
-}
-
-MPoly *CDDM_get_polys(DerivedMesh *dm)
-{
-  return ((CDDerivedMesh *)dm)->mpoly;
 }

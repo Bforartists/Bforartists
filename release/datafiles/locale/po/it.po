@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -25707,6 +25707,10 @@ msgid "Dot Product"
 msgstr "Prodotto Scalare"
 
 
+msgid "Z Axis"
+msgstr "Asse Z"
+
+
 msgid "Vector Transform"
 msgstr "Trasformazione Vettore"
 
@@ -30023,10 +30027,6 @@ msgstr "Copia il file nel percorso di destinazione (o sottocartella)"
 
 msgid "Primary Bone Axis"
 msgstr "Asse Primario Osso"
-
-
-msgid "Z Axis"
-msgstr "Asse Z"
 
 
 msgid "-X Axis"
@@ -54191,10 +54191,6 @@ msgid "Gradient High/Off"
 msgstr "Gradiente Alto/Off"
 
 
-msgid "Use Gradient"
-msgstr "Usa Gradiente"
-
-
 msgid "Theme Graph Editor"
 msgstr "Tema Editor Grafi"
 
@@ -61483,16 +61479,16 @@ msgid "Path '%s' not found"
 msgstr "Percorso '%s' non trovato"
 
 
-msgid "Path '%s' cannot be made relative"
-msgstr "Il percorso '%s' non può essere reso relativo"
+msgid "Path '%s' cannot be made absolute"
+msgstr "Il percorso '%s' non può essere reso assoluto"
 
 
 msgid "Total files %d | Changed %d | Failed %d"
 msgstr "Files totali %d | Modificati %d | Falliti %d"
 
 
-msgid "Path '%s' cannot be made absolute"
-msgstr "Il percorso '%s' non può essere reso assoluto"
+msgid "Path '%s' cannot be made relative"
+msgstr "Il percorso '%s' non può essere reso relativo"
 
 
 msgid "Could not open directory '%s'"
@@ -61890,28 +61886,12 @@ msgid "Cannot open file %s for writing: %s"
 msgstr "Impossibile aprire il file %s per scrivere: %s"
 
 
-msgid "Self intersection error"
-msgstr "Errore auto intersezione"
-
-
-msgid "Could not dissolve vert"
-msgstr "Impossibile dissolvere i vertici"
-
-
 msgid "Could not connect vertices"
 msgstr "Impossibile connettere i vertici"
 
 
 msgid "Could not dissolve faces"
 msgstr "Impossibile dissolvere le facce"
-
-
-msgid "Tessellation error"
-msgstr "Errore tassellazione"
-
-
-msgid "Cannot deal with non-manifold geometry"
-msgstr "Impossibile gestire una geometria non-manifold (aperta)"
 
 
 msgid "Invalid selection"
