@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -12065,6 +12065,14 @@ msgid "Push secondary particles that left the domain back into the domain"
 msgstr "도메인을 떠난 보조 파티클들을 다시 도메인으로 밀어 넣습니다"
 
 
+msgid "Bubble Buoyancy"
+msgstr "버블 부력"
+
+
+msgid "Bubble Drag"
+msgstr "버블 드래그"
+
+
 msgid "Combined Export"
 msgstr "결합된 내보내기"
 
@@ -12105,12 +12113,24 @@ msgid "Create one particle system that contains all three secondary particle typ
 msgstr "세 가지 이차 파티클 유형을 모두 포함하는 하나의 파티클 시스템을 만듭니다."
 
 
-msgid "Bubble Buoyancy"
-msgstr "버블 부력"
+msgid "Highest possible particle lifetime"
+msgstr "가능한 최고의 파티클 수명"
 
 
-msgid "Bubble Drag"
-msgstr "버블 드래그"
+msgid "Lowest possible particle lifetime"
+msgstr "가능한 최저의 파티클 수명"
+
+
+msgid "Lower clamping threshold that indicates the fluid speed where cells start to emit particles (lower values result in generally more particles)"
+msgstr "셀이 파티클들을 방출하기 시작하는 유체 속력을 나타내는 낮은 클램핑 임계 값 (값이 낮을수록 일반적으로 더 많은 파티클들이 생성됨)"
+
+
+msgid "Potential Radius"
+msgstr "잠재력 반경"
+
+
+msgid "Radius to compute potential for each cell (higher values are slower but create smoother potential grids)"
+msgstr "각 셀의 잠재력을 계산하기 위한 반경 (높은 값은 느리지 만 매끄러운 가능성 그리드를 만듭니다)"
 
 
 msgid "Trapped Air Sampling"
@@ -12127,34 +12147,6 @@ msgstr "웨이브 크레스트 샘플링"
 
 msgid "Maximum number of particles generated per wave crest cell per frame"
 msgstr "프레임 당 웨이브 크레스트 셀당 생성된 최대 파티클들의 수"
-
-
-msgid "Highest possible particle lifetime"
-msgstr "가능한 최고의 파티클 수명"
-
-
-msgid "Lowest possible particle lifetime"
-msgstr "가능한 최저의 파티클 수명"
-
-
-msgid "Potential Radius"
-msgstr "잠재력 반경"
-
-
-msgid "Radius to compute potential for each cell (higher values are slower but create smoother potential grids)"
-msgstr "각 셀의 잠재력을 계산하기 위한 반경 (높은 값은 느리지 만 매끄러운 가능성 그리드를 만듭니다)"
-
-
-msgid "tauMax_k"
-msgstr "tauMax_k"
-
-
-msgid "tauMin_k"
-msgstr "tauMin_k"
-
-
-msgid "Lower clamping threshold that indicates the fluid speed where cells start to emit particles (lower values result in generally more particles)"
-msgstr "셀이 파티클들을 방출하기 시작하는 유체 속력을 나타내는 낮은 클램핑 임계 값 (값이 낮을수록 일반적으로 더 많은 파티클들이 생성됨)"
 
 
 msgid "Update Radius"
@@ -29829,20 +29821,20 @@ msgid "Convert all polygons to triangles"
 msgstr "모든 폴리곤들을 삼각형으로 변환합니다"
 
 
-msgid "Wireframe"
-msgstr "와이어프레임"
-
-
-msgid "Convert faces into thickened edges"
-msgstr "페이스을 두꺼운 에지들로 변환합니다"
-
-
 msgid "Weld"
 msgstr "용접"
 
 
 msgid "Find groups of vertices closer then dist and merges them together"
 msgstr "먼 곳에있는 버텍스 그룹을 찾아서 dist와 병합"
+
+
+msgid "Wireframe"
+msgstr "와이어프레임"
+
+
+msgid "Convert faces into thickened edges"
+msgstr "페이스을 두꺼운 에지들로 변환합니다"
 
 
 msgid "Deform the shape using an armature object"
@@ -38227,6 +38219,10 @@ msgid "Round A to the largest integer multiple of B less than or equal A"
 msgstr "A를 A보다 작거나 같은 B의 가장 큰 정수 배수로 반올림"
 
 
+msgid "Z Axis"
+msgstr "Z 축"
+
+
 msgid "Vector Transform"
 msgstr "벡터 변환"
 
@@ -43749,10 +43745,6 @@ msgstr "파일을 대상 경로에 복사 (또는 하위 디렉토리)"
 
 msgid "Primary Bone Axis"
 msgstr "기본 본 축"
-
-
-msgid "Z Axis"
-msgstr "Z 축"
 
 
 msgid "-X Axis"
@@ -50188,10 +50180,6 @@ msgstr "커서에서 폴리 빌드 변환"
 msgctxt "Operator"
 msgid "Poly Build Face at Cursor"
 msgstr "폴리 빌드 페이스에서 커서"
-
-
-msgid "Create quads"
-msgstr "쿼드를 생성"
 
 
 msgid "Automatically split edges in triangles to maintain quad topology"
@@ -65190,10 +65178,6 @@ msgstr "실제 작업 상태를 저장은 하지만 저장된 파일을 활성 �
 
 msgid "Remap Relative"
 msgstr "상대적인 경로를 재배치"
-
-
-msgid "Make paths relative when saving to a different directory"
-msgstr "다른 디렉토리에 저장할 때 상대 경로를 만들기"
 
 
 msgctxt "Operator"
@@ -80827,14 +80811,6 @@ msgid "Gradient High/Off"
 msgstr "그라디언트 높음/꺼짐"
 
 
-msgid "Use Gradient"
-msgstr "그라디언트를 사용"
-
-
-msgid "Do a gradient for the background of the viewport working area"
-msgstr "뷰포트 작업 영역의 배경에 그라데이션을 적용"
-
-
 msgid "Theme Graph Editor"
 msgstr "테마 그래프 에디터"
 
@@ -92128,16 +92104,16 @@ msgid "Path '%s' not found"
 msgstr "경로 '%s' 찾을 수 없습니다"
 
 
-msgid "Path '%s' cannot be made relative"
-msgstr "경로 '%s'는 상대적으로 만들 수 없습니다"
+msgid "Path '%s' cannot be made absolute"
+msgstr "경로 '%s' 는 절대 경로로 만들 수 없습니다"
 
 
 msgid "Total files %d | Changed %d | Failed %d"
 msgstr "전체 파일 %d | 바뀜 %d | 실패됨 %d"
 
 
-msgid "Path '%s' cannot be made absolute"
-msgstr "경로 '%s' 는 절대 경로로 만들 수 없습니다"
+msgid "Path '%s' cannot be made relative"
+msgstr "경로 '%s'는 상대적으로 만들 수 없습니다"
 
 
 msgid "Could not open directory '%s'"
@@ -92789,32 +92765,12 @@ msgid "Cannot open file %s for writing: %s"
 msgstr "쓰기 위해 %s 파일을 열 수 없음: %s"
 
 
-msgid "Self intersection error"
-msgstr "자체 교차 오류"
-
-
-msgid "Could not dissolve vert"
-msgstr "버텍스를 디졸브 할 수 없음"
-
-
 msgid "Could not connect vertices"
 msgstr "버텍스를 연결할 수 없음"
 
 
-msgid "Could not traverse mesh"
-msgstr "메쉬를 횡단할 수 없음"
-
-
 msgid "Could not dissolve faces"
 msgstr "페이스를 디졸브 할 수 없음"
-
-
-msgid "Tessellation error"
-msgstr "테셀레이션 오류"
-
-
-msgid "Cannot deal with non-manifold geometry"
-msgstr "논 매니폴드 지오메트리 처리 할 수 없습니다"
 
 
 msgid "Invalid selection"

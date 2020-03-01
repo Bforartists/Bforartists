@@ -279,6 +279,7 @@ def fake_main():
     # ID Subclasses
     bpy.types.Armature = type("Armature", (), {})
     bpy.types.Brush = type("Brush", (), {})
+    bpy.types.Brush.bl_rna = NewAttr("bpy.types.Brush.bl_rna", "bl_rna")
     bpy.types.Camera = type("Camera", (), {})
     bpy.types.Curve = type("Curve", (), {})
     bpy.types.GreasePencil = type("GreasePencil", (), {})
@@ -323,7 +324,11 @@ def fake_main():
     bpy.props.CollectionProperty = dict
 
     bpy.app = module_add("bpy.app")
+    bpy.app.use_userpref_skip_save_on_exit = False
+    bpy.app.use_override_library = True
+
     bpy.app.build_options = module_add("bpy.app.build_options")
+    bpy.app.build_options.fluid = True
     bpy.app.build_options.freestyle = True
     bpy.app.build_options.mod_fluid = True
     bpy.app.build_options.collada = True
@@ -331,6 +336,7 @@ def fake_main():
     bpy.app.build_options.mod_smoke = True
     bpy.app.build_options.alembic = True
     bpy.app.build_options.bullet = True
+    bpy.app.build_options.usd = True
 
     bpy.app.translations = module_add("bpy.app.translations")
     bpy.app.translations.pgettext_iface = lambda s, context="": s
@@ -339,6 +345,8 @@ def fake_main():
     # id's are chosen at random here...
     bpy.app.translations.contexts = module_add("bpy.app.translations.contexts")
     bpy.app.translations.contexts.default = "CONTEXT_DEFAULT"
+    bpy.app.translations.contexts.operator_default = "CONTEXT_DEFAULT"
+    bpy.app.translations.contexts.id_particlesettings = "CONTEXT_DEFAULT"
     bpy.app.translations.contexts.id_movieclip = "CONTEXT_ID_MOVIECLIP"
     bpy.app.translations.contexts.id_windowmanager = "CONTEXT_ID_WM"
     bpy.app.translations.contexts.plural = "CONTEXT_PLURAL"

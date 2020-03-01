@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
@@ -6971,10 +6971,6 @@ msgid "Gradient High/Off"
 msgstr "Tipe"
 
 
-msgid "Use Gradient"
-msgstr "Kamera"
-
-
 msgid "Active Action"
 msgstr "lokasi"
 
@@ -7881,14 +7877,6 @@ msgstr "Tidak dapat membuka dokumen"
 
 msgid "Cannot open file %s for writing: %s"
 msgstr "Tidak dapat membuka: \"%s\",%s."
-
-
-msgid "Self intersection error"
-msgstr "Seleksi"
-
-
-msgid "Tessellation error"
-msgstr "Warna"
 
 
 msgid "Invalid selection"

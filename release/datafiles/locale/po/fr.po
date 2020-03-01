@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -35254,6 +35254,10 @@ msgid "Dot Product"
 msgstr "Produit scalaire"
 
 
+msgid "Z Axis"
+msgstr "Axe Z"
+
+
 msgid "Vector Transform"
 msgstr "Transformation vectorielle"
 
@@ -40433,10 +40437,6 @@ msgstr "Copier le fichier vers le chemin de destination (ou sous-dossier)"
 
 msgid "Primary Bone Axis"
 msgstr "Axe d’os primaire"
-
-
-msgid "Z Axis"
-msgstr "Axe Z"
 
 
 msgid "-X Axis"
@@ -58417,10 +58417,6 @@ msgid "Remap Relative"
 msgstr "Actualiser les relations relatives"
 
 
-msgid "Make paths relative when saving to a different directory"
-msgstr "Rendre les chemins relatifs lors d'un enregistrement dans un autre répertoire"
-
-
 msgctxt "Operator"
 msgid "Save Startup File"
 msgstr "Enregistrer fichier de démarrage"
@@ -70749,14 +70745,6 @@ msgid "Gradient High/Off"
 msgstr "Dégradé Haut/Off"
 
 
-msgid "Use Gradient"
-msgstr "Utiliser dégradé"
-
-
-msgid "Do a gradient for the background of the viewport working area"
-msgstr "Appliquer un dégradé à l’arrière-plan de la vue 3D"
-
-
 msgid "Theme Graph Editor"
 msgstr "Thème de l’éditeur de graphes"
 
@@ -77664,16 +77652,16 @@ msgid "Path '%s' not found"
 msgstr "Le chemin “%s” est introuvable"
 
 
-msgid "Path '%s' cannot be made relative"
-msgstr "Impossible de rendre relatif le chemin “%s”"
+msgid "Path '%s' cannot be made absolute"
+msgstr "Impossible de rendre absolu le chemin “%s”"
 
 
 msgid "Total files %d | Changed %d | Failed %d"
 msgstr "Fichiers totaux %d | Modifiés %d | Échoués %d"
 
 
-msgid "Path '%s' cannot be made absolute"
-msgstr "Impossible de rendre absolu le chemin “%s”"
+msgid "Path '%s' cannot be made relative"
+msgstr "Impossible de rendre relatif le chemin “%s”"
 
 
 msgid "Could not open directory '%s'"
@@ -78225,32 +78213,12 @@ msgid "Cannot open file %s for writing: %s"
 msgstr "Impossible d’ouvrir le fichier “%s” en écriture : %s"
 
 
-msgid "Self intersection error"
-msgstr "Erreur d’auto-intersection"
-
-
-msgid "Could not dissolve vert"
-msgstr "Impossible de dissoudre le vertex"
-
-
 msgid "Could not connect vertices"
 msgstr "Impossible de connecter les vertices"
 
 
-msgid "Could not traverse mesh"
-msgstr "Impossible de traverser (parcourir ?) le mesh"
-
-
 msgid "Could not dissolve faces"
 msgstr "Impossible de dissoudre les faces"
-
-
-msgid "Tessellation error"
-msgstr "Erreur de tessellation"
-
-
-msgid "Cannot deal with non-manifold geometry"
-msgstr "Impossible de gérer une géométrie non-“manifold”"
 
 
 msgid "Invalid selection"
