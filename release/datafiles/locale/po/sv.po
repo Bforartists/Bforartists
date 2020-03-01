@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12335,6 +12335,10 @@ msgid "Vector Math"
 msgstr "Vektor Handtag"
 
 
+msgid "Z Axis"
+msgstr "Zooma In"
+
+
 msgid "Texture Node"
 msgstr "Texturläge"
 
@@ -15186,10 +15190,6 @@ msgstr "Lägg till Stripp"
 
 msgid "Filename only"
 msgstr "Filnamn"
-
-
-msgid "Z Axis"
-msgstr "Zooma In"
 
 
 msgid "Only Deform Bones"
@@ -27958,10 +27958,6 @@ msgid "Gradient High/Off"
 msgstr "Arkiv"
 
 
-msgid "Use Gradient"
-msgstr "Vektor Måla"
-
-
 msgid "Theme Graph Editor"
 msgstr "Bild Displist"
 
@@ -31155,28 +31151,12 @@ msgid "Unable to open"
 msgstr "Webbaddress som skall öppnas"
 
 
-msgid "Self intersection error"
-msgstr "Markera Länkad"
-
-
-msgid "Could not dissolve vert"
-msgstr "Göm Markerad"
-
-
 msgid "Could not connect vertices"
 msgstr "Markera Länkad"
 
 
-msgid "Could not traverse mesh"
-msgstr "Göm Markerad"
-
-
 msgid "Could not dissolve faces"
 msgstr "Göm Markerad"
-
-
-msgid "Tessellation error"
-msgstr "Tesselation"
 
 
 msgid "Invalid selection"

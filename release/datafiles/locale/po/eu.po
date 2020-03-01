@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -649,6 +649,10 @@ msgid "Z axis"
 msgstr "Z ardatza"
 
 
+msgid "Z Axis"
+msgstr "Z Ardatza"
+
+
 msgctxt "Operator"
 msgid "Duplicate"
 msgstr "Bikoiztu"
@@ -887,10 +891,6 @@ msgstr "Beti helbide erlatiboak idatzi (posible denean)"
 
 msgid "Filename only"
 msgstr "Fitxategi-izena soilik"
-
-
-msgid "Z Axis"
-msgstr "Z Ardatza"
 
 
 msgid "-X Axis"

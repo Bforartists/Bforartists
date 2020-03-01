@@ -6,7 +6,7 @@ import sys
 import subprocess
 
 VERSION_MIN = (6, 0, 0)
-VERSION_MAX_RECOMMENDED = (7, 0, 0)
+VERSION_MAX_RECOMMENDED = (9, 0, 1)
 CLANG_FORMAT_CMD = "clang-format"
 
 BASE_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
@@ -113,7 +113,7 @@ def clang_format_ensure_version():
         version = version.split("-")[0]
         version = tuple(int(n) for n in version.split("."))
     if version is not None:
-        print("Using %s (%d.%d.%d)..." % (CLANG_FORMAT_CMD, version[0], version[1], version[2])) 
+        print("Using %s (%d.%d.%d)..." % (CLANG_FORMAT_CMD, version[0], version[1], version[2]))
     return version
 
 
@@ -172,7 +172,7 @@ def main():
     if version < VERSION_MIN:
         print("Version of clang-format is too old:", version, "<", VERSION_MIN)
         sys.exit(1)
-    if version >= VERSION_MAX_RECOMMENDED:
+    if version > VERSION_MAX_RECOMMENDED:
         print("WARNING: Version of clang-format is too recent:", version, ">=", VERSION_MIN)
         print("You may want to install clang-format-%d.%d, or use the precompiled libs repository." % (version[0], version[1]))
 

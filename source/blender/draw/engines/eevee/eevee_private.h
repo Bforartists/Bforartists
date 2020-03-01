@@ -136,9 +136,20 @@ extern struct DrawEngineType draw_engine_eevee_type;
              ((v3d->shading.type == OB_RENDER) && \
               ((v3d->shading.flag & V3D_SHADING_SCENE_WORLD_RENDER) == 0))))
 
-#define OCTAHEDRAL_SIZE_FROM_CUBESIZE(cube_size) \
-  ((int)ceilf(sqrtf((cube_size * cube_size) * 6.0f)))
 #define MIN_CUBE_LOD_LEVEL 3
+
+BLI_INLINE int octahedral_size_from_cubesize(int cube_size)
+{
+  int cube_pixel_count = SQUARE(cube_size) * 6.0f;
+  int octa_size = (int)ceilf(sqrtf(cube_pixel_count));
+  int lod_count = log2_floor_u(octa_size) - MIN_CUBE_LOD_LEVEL;
+  /* Find lowest lod size and grow back to avoid having non matching mipsizes that would
+   * break trilinear interpolation. */
+  octa_size /= 1 << lod_count;
+  octa_size *= 1 << lod_count;
+  return octa_size;
+}
+
 #define MAX_PLANAR_LOD_LEVEL 9
 
 /* All the renderpasses that use the GPUMaterial for accumulation */
@@ -886,10 +897,10 @@ void EEVEE_materials_cache_populate(EEVEE_Data *vedata,
                                     EEVEE_ViewLayerData *sldata,
                                     Object *ob,
                                     bool *cast_shadow);
-void EEVEE_hair_cache_populate(EEVEE_Data *vedata,
-                               EEVEE_ViewLayerData *sldata,
-                               Object *ob,
-                               bool *cast_shadow);
+void EEVEE_particle_hair_cache_populate(EEVEE_Data *vedata,
+                                        EEVEE_ViewLayerData *sldata,
+                                        Object *ob,
+                                        bool *cast_shadow);
 void EEVEE_materials_cache_finish(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata);
 struct GPUMaterial *EEVEE_material_world_lightprobe_get(struct Scene *scene, struct World *wo);
 struct GPUMaterial *EEVEE_material_world_background_get(struct Scene *scene, struct World *wo);
@@ -976,6 +987,7 @@ struct GPUShader *EEVEE_shaders_probe_filter_visibility_sh_get(void);
 struct GPUShader *EEVEE_shaders_probe_grid_fill_sh_get(void);
 struct GPUShader *EEVEE_shaders_probe_planar_downsample_sh_get(void);
 struct GPUShader *EEVEE_shaders_default_studiolight_sh_get(void);
+struct GPUShader *EEVEE_shaders_background_studiolight_sh_get(void);
 struct GPUShader *EEVEE_shaders_probe_cube_display_sh_get(void);
 struct GPUShader *EEVEE_shaders_probe_grid_display_sh_get(void);
 struct GPUShader *EEVEE_shaders_probe_planar_display_sh_get(void);
@@ -1185,9 +1197,9 @@ void EEVEE_render_update_passes(struct RenderEngine *engine,
 
 /** eevee_lookdev.c */
 void EEVEE_lookdev_cache_init(EEVEE_Data *vedata,
+                              EEVEE_ViewLayerData *sldata,
                               DRWShadingGroup **grp,
                               DRWPass *pass,
-                              float background_alpha,
                               struct World *world,
                               EEVEE_LightProbesInfo *pinfo);
 void EEVEE_lookdev_draw(EEVEE_Data *vedata);
