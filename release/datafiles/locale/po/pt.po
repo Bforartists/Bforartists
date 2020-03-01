@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -30108,6 +30108,10 @@ msgid "Dot Product"
 msgstr "Produto escalar"
 
 
+msgid "Z Axis"
+msgstr "Eixo Z"
+
+
 msgid "Vector Transform"
 msgstr "Vetores de transformação"
 
@@ -35077,10 +35081,6 @@ msgstr "Copia o ficheiro para o caminho de destinação (ou subdiretório)."
 
 msgid "Primary Bone Axis"
 msgstr "Eixo primário do osso"
-
-
-msgid "Z Axis"
-msgstr "Eixo Z"
 
 
 msgid "-X Axis"
@@ -62529,14 +62529,6 @@ msgid "Gradient High/Off"
 msgstr "Gradiente - Alta ou desligada"
 
 
-msgid "Use Gradient"
-msgstr "Usar gradiente"
-
-
-msgid "Do a gradient for the background of the viewport working area"
-msgstr "Cria uma gradiente para o plano de fundo da área de trabalho da porta de visão."
-
-
 msgid "Theme Graph Editor"
 msgstr "Tema - Editor gráfico"
 
@@ -69020,16 +69012,16 @@ msgid "Path '%s' not found"
 msgstr "Caminho '%s' não encontrado"
 
 
-msgid "Path '%s' cannot be made relative"
-msgstr "Caminho '%s' não pode se tornar relativo"
+msgid "Path '%s' cannot be made absolute"
+msgstr "Caminho '%s' não pode se tornar absoluto"
 
 
 msgid "Total files %d | Changed %d | Failed %d"
 msgstr "Ficheiros totais %d | Alterados %d | Falhos %d"
 
 
-msgid "Path '%s' cannot be made absolute"
-msgstr "Caminho '%s' não pode se tornar absoluto"
+msgid "Path '%s' cannot be made relative"
+msgstr "Caminho '%s' não pode se tornar relativo"
 
 
 msgid "Could not open directory '%s'"
@@ -69581,32 +69573,12 @@ msgid "Cannot open file %s for writing: %s"
 msgstr "Não foi possível abrir o ficheiro %s para escrita: %s"
 
 
-msgid "Self intersection error"
-msgstr "Erro de intersecção em si mesmo."
-
-
-msgid "Could not dissolve vert"
-msgstr "Não é possível dissolver vértice."
-
-
 msgid "Could not connect vertices"
 msgstr "Não é possível conectar vértices."
 
 
-msgid "Could not traverse mesh"
-msgstr "Não é possível converter malha."
-
-
 msgid "Could not dissolve faces"
 msgstr "Não é possível dissolver faces."
-
-
-msgid "Tessellation error"
-msgstr "Erro de tesselação."
-
-
-msgid "Cannot deal with non-manifold geometry"
-msgstr "Não é possível lidar com geometria de desdobramento não contíguo."
 
 
 msgid "Invalid selection"

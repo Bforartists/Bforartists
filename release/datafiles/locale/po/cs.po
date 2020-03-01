@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -13633,6 +13633,10 @@ msgid "Vector Math"
 msgstr "Vektor"
 
 
+msgid "Z Axis"
+msgstr "Osa Z"
+
+
 msgid "Texture Node"
 msgstr "Textury"
 
@@ -16524,10 +16528,6 @@ msgstr "NLA Proužky"
 
 msgid "Filename only"
 msgstr "Zobrazit jméno"
-
-
-msgid "Z Axis"
-msgstr "Osa Z"
 
 
 msgid "Only Deform Bones"
@@ -30168,10 +30168,6 @@ msgid "Gradient High/Off"
 msgstr "Gradient"
 
 
-msgid "Use Gradient"
-msgstr "Gradient"
-
-
 msgid "Theme Graph Editor"
 msgstr "UV/obrázkový editor"
 
@@ -33462,28 +33458,12 @@ msgid "Cannot open file %s for writing: %s"
 msgstr "Nelze přečíst soubor: \"%s\", %s."
 
 
-msgid "Self intersection error"
-msgstr "Tření"
-
-
-msgid "Could not dissolve vert"
-msgstr "Přiblíží/oddálí pohled"
-
-
 msgid "Could not connect vertices"
 msgstr "Vybrat náhodně: vertexy"
 
 
-msgid "Could not traverse mesh"
-msgstr "Přiblíží/oddálí pohled"
-
-
 msgid "Could not dissolve faces"
 msgstr "Přiblíží/oddálí pohled"
-
-
-msgid "Tessellation error"
-msgstr "Překládat"
 
 
 msgid "Invalid selection"

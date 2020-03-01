@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12064,6 +12064,14 @@ msgid "Push secondary particles that left the domain back into the domain"
 msgstr "Empujar partículas secundarias que hayan dejado el domino nuevamente dentro del mismo"
 
 
+msgid "Bubble Buoyancy"
+msgstr "Flotabilidad de burbujas"
+
+
+msgid "Bubble Drag"
+msgstr "Arrastre de burbujas"
+
+
 msgid "Combined Export"
 msgstr "Exportación combinada"
 
@@ -12104,12 +12112,24 @@ msgid "Create one particle system that contains all three secondary particle typ
 msgstr "Crea un sistema de partículas que contendrá los tres tipos de partículas secundarias"
 
 
-msgid "Bubble Buoyancy"
-msgstr "Flotabilidad de burbujas"
+msgid "Highest possible particle lifetime"
+msgstr "Mayor vida posible de las partículas"
 
 
-msgid "Bubble Drag"
-msgstr "Arrastre de burbujas"
+msgid "Lowest possible particle lifetime"
+msgstr "Menor vida posible de las partículas"
+
+
+msgid "Lower clamping threshold that indicates the fluid speed where cells start to emit particles (lower values result in generally more particles)"
+msgstr "Umbral mínimo de limitación que indica la velocidad del fluido a la que las celdas comenzarán a emitir partículas (valores más bajos generalmente producirán más partículas)"
+
+
+msgid "Potential Radius"
+msgstr "Radio potencial"
+
+
+msgid "Radius to compute potential for each cell (higher values are slower but create smoother potential grids)"
+msgstr "Radio para calcular el potencial de cada celda (valores más altos serán más lentos pero crearán cuadrículas de potencial más suaves)"
 
 
 msgid "Trapped Air Sampling"
@@ -12126,34 +12146,6 @@ msgstr "Muestreo de cresta de olas"
 
 msgid "Maximum number of particles generated per wave crest cell per frame"
 msgstr "Cantidad máxima de partículas generadas por celda de cresta de olas por fotograma"
-
-
-msgid "Highest possible particle lifetime"
-msgstr "Mayor vida posible de las partículas"
-
-
-msgid "Lowest possible particle lifetime"
-msgstr "Menor vida posible de las partículas"
-
-
-msgid "Potential Radius"
-msgstr "Radio potencial"
-
-
-msgid "Radius to compute potential for each cell (higher values are slower but create smoother potential grids)"
-msgstr "Radio para calcular el potencial de cada celda (valores más altos serán más lentos pero crearán cuadrículas de potencial más suaves)"
-
-
-msgid "tauMax_k"
-msgstr "tauMáx_k"
-
-
-msgid "tauMin_k"
-msgstr "tauMín_k"
-
-
-msgid "Lower clamping threshold that indicates the fluid speed where cells start to emit particles (lower values result in generally more particles)"
-msgstr "Umbral mínimo de limitación que indica la velocidad del fluido a la que las celdas comenzarán a emitir partículas (valores más bajos generalmente producirán más partículas)"
 
 
 msgid "Update Radius"
@@ -29826,20 +29818,20 @@ msgid "Convert all polygons to triangles"
 msgstr "Permite convertir todas las caras en triángulos"
 
 
-msgid "Wireframe"
-msgstr "Estructura"
-
-
-msgid "Convert faces into thickened edges"
-msgstr "Permite convertir los bordes del objeto en una estructura poligonal con un cierto grosor"
-
-
 msgid "Weld"
 msgstr "Fusionar"
 
 
 msgid "Find groups of vertices closer then dist and merges them together"
 msgstr "Encuentra grupos de vértices más cercanos que la distancia indicada y los suelda"
+
+
+msgid "Wireframe"
+msgstr "Estructura"
+
+
+msgid "Convert faces into thickened edges"
+msgstr "Permite convertir los bordes del objeto en una estructura poligonal con un cierto grosor"
 
 
 msgid "Deform the shape using an armature object"
@@ -38224,6 +38216,10 @@ msgid "Round A to the largest integer multiple of B less than or equal A"
 msgstr "Redondea A al mayor entero múltiplo de B menor o igual que A"
 
 
+msgid "Z Axis"
+msgstr "Eje Z"
+
+
 msgid "Vector Transform"
 msgstr "Transformación vectorial"
 
@@ -43746,10 +43742,6 @@ msgstr "Copiar el archivo a la ruta (o subdirectorio) destino"
 
 msgid "Primary Bone Axis"
 msgstr "Eje primario del hueso"
-
-
-msgid "Z Axis"
-msgstr "Eje Z"
 
 
 msgid "-X Axis"
@@ -50185,10 +50177,6 @@ msgstr "Crear polígono Transformar en el puntero"
 msgctxt "Operator"
 msgid "Poly Build Face at Cursor"
 msgstr "Crear polígono Cara en el puntero"
-
-
-msgid "Create quads"
-msgstr "Crear cuadriláteros"
 
 
 msgid "Automatically split edges in triangles to maintain quad topology"
@@ -65187,10 +65175,6 @@ msgstr "Guarda una copia del estado actual del trabajo, pero no hace que el arch
 
 msgid "Remap Relative"
 msgstr "Remapear a relativas"
-
-
-msgid "Make paths relative when saving to a different directory"
-msgstr "Hace que las rutas sean relativas al guardar en un directorio diferente"
 
 
 msgctxt "Operator"
@@ -80828,14 +80812,6 @@ msgid "Gradient High/Off"
 msgstr "Gradiente arriba"
 
 
-msgid "Use Gradient"
-msgstr "Usar gradiente"
-
-
-msgid "Do a gradient for the background of the viewport working area"
-msgstr "Mostrar un gradiente como fondo del área de trabajo de la vista"
-
-
 msgid "Theme Graph Editor"
 msgstr "Editor de curvas"
 
@@ -92133,16 +92109,16 @@ msgid "Path '%s' not found"
 msgstr "Ruta '%s' no encontrada"
 
 
-msgid "Path '%s' cannot be made relative"
-msgstr "La ruta '%s' no puede ser convertida en relativa"
+msgid "Path '%s' cannot be made absolute"
+msgstr "La ruta '%s' no puede ser convertida en absoluta"
 
 
 msgid "Total files %d | Changed %d | Failed %d"
 msgstr "Total arch. %d | Cambiados %d | Fallidos %d"
 
 
-msgid "Path '%s' cannot be made absolute"
-msgstr "La ruta '%s' no puede ser convertida en absoluta"
+msgid "Path '%s' cannot be made relative"
+msgstr "La ruta '%s' no puede ser convertida en relativa"
 
 
 msgid "Could not open directory '%s'"
@@ -92794,32 +92770,12 @@ msgid "Cannot open file %s for writing: %s"
 msgstr "No es posible abrir el archivo %s para escritura: %s"
 
 
-msgid "Self intersection error"
-msgstr "Error de intersección propia"
-
-
-msgid "Could not dissolve vert"
-msgstr "No fue posible disolver el vértice"
-
-
 msgid "Could not connect vertices"
 msgstr "No fue posible conectar los vértices"
 
 
-msgid "Could not traverse mesh"
-msgstr "No fue posible atravesar la malla"
-
-
 msgid "Could not dissolve faces"
 msgstr "No fue posible disolver las caras"
-
-
-msgid "Tessellation error"
-msgstr "Error de teselación"
-
-
-msgid "Cannot deal with non-manifold geometry"
-msgstr "No es posible manejar geometría no desplegable"
 
 
 msgid "Invalid selection"

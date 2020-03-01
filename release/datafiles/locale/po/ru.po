@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -36839,6 +36839,10 @@ msgid "Round A to the largest integer multiple of B less than or equal A"
 msgstr "Округлить A до наибольшего значения множителя B, меньшего или равного A"
 
 
+msgid "Z Axis"
+msgstr "Ось Z"
+
+
 msgid "Vector Transform"
 msgstr "Преобразовать вектор"
 
@@ -42322,10 +42326,6 @@ msgstr "Копировать файл в конечный путь (или по�
 
 msgid "Primary Bone Axis"
 msgstr "Основная ось костей"
-
-
-msgid "Z Axis"
-msgstr "Ось Z"
 
 
 msgid "-X Axis"
@@ -48487,10 +48487,6 @@ msgstr "PolyBuild: переместить курсором мыши"
 msgctxt "Operator"
 msgid "Poly Build Face at Cursor"
 msgstr "Poly Build Создать грань курсором мыши"
-
-
-msgid "Create quads"
-msgstr "Создавать четырёхугольники"
 
 
 msgid "Automatically split edges in triangles to maintain quad topology"
@@ -63405,10 +63401,6 @@ msgstr "Сохранить копию текущего рабочего окру
 
 msgid "Remap Relative"
 msgstr "Переписать относительные пути"
-
-
-msgid "Make paths relative when saving to a different directory"
-msgstr "Сделать пути относительными при сохранении в другую папку"
 
 
 msgctxt "Operator"
@@ -78857,14 +78849,6 @@ msgid "Gradient High/Off"
 msgstr "Градиент наверху/выкл."
 
 
-msgid "Use Gradient"
-msgstr "Использовать градиент"
-
-
-msgid "Do a gradient for the background of the viewport working area"
-msgstr "Рисовать градиент на фоне рабочей области вьюпорта"
-
-
 msgid "Theme Graph Editor"
 msgstr "Тема редактора графов"
 
@@ -89760,16 +89744,16 @@ msgid "Path '%s' not found"
 msgstr "Путь «%s» не найден"
 
 
-msgid "Path '%s' cannot be made relative"
-msgstr "Невозможно преобразовать путь «%s» в относительный"
+msgid "Path '%s' cannot be made absolute"
+msgstr "Невозможно преобразовать путь «%s» в абсолютный"
 
 
 msgid "Total files %d | Changed %d | Failed %d"
 msgstr "Всего файлов: %d | Изменено: %d | Ошибок: %d"
 
 
-msgid "Path '%s' cannot be made absolute"
-msgstr "Невозможно преобразовать путь «%s» в абсолютный"
+msgid "Path '%s' cannot be made relative"
+msgstr "Невозможно преобразовать путь «%s» в относительный"
 
 
 msgid "Could not open directory '%s'"
@@ -90413,32 +90397,12 @@ msgid "Cannot open file %s for writing: %s"
 msgstr "Ошибка открытия файла %s для записи: %s"
 
 
-msgid "Self intersection error"
-msgstr "Ошибка самопересечения"
-
-
-msgid "Could not dissolve vert"
-msgstr "Невозможно растворить вершину"
-
-
 msgid "Could not connect vertices"
 msgstr "Невозможно соединить вершины"
 
 
-msgid "Could not traverse mesh"
-msgstr "Ошибка обхода меша"
-
-
 msgid "Could not dissolve faces"
 msgstr "Невозможно растворить грани"
-
-
-msgid "Tessellation error"
-msgstr "Ошибка тесселяции"
-
-
-msgid "Cannot deal with non-manifold geometry"
-msgstr "Не получилось решить проблемы в геометрии"
 
 
 msgid "Invalid selection"

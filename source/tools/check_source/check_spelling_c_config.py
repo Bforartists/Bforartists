@@ -48,6 +48,7 @@ dict_custom = {
     # Correct spelling, update the dictionary, here:
     # https://github.com/en-wl/wordlist
     "adjoint", "adjugate",
+    "alignable",
     "allocator",
     "atomicity",
     "boolean",
@@ -154,6 +155,7 @@ dict_custom = {
     "keymap",
     "lerp",
     "metadata",
+    "mutex",
     "opengl",
     "preprocessor",
     "quantized",
