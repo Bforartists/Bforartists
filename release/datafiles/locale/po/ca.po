@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -10764,6 +10764,10 @@ msgid "Vector Math"
 msgstr "Tangents lineals"
 
 
+msgid "Z Axis"
+msgstr "Ampliar"
+
+
 msgid "Texture Node"
 msgstr "Texte"
 
@@ -13145,10 +13149,6 @@ msgstr "Afegir Tira"
 
 msgid "Filename only"
 msgstr "Arxiu"
-
-
-msgid "Z Axis"
-msgstr "Ampliar"
 
 
 msgid "Only Deform Bones"
@@ -24201,10 +24201,6 @@ msgid "Gradient High/Off"
 msgstr "Seleccionar fila"
 
 
-msgid "Use Gradient"
-msgstr "Pintura Vectorial"
-
-
 msgid "Theme Graph Editor"
 msgstr "Image Displist"
 
@@ -26952,28 +26948,12 @@ msgid "Unable to open"
 msgstr "Seleccionar amb límit"
 
 
-msgid "Self intersection error"
-msgstr "Seleccionar connectats"
-
-
-msgid "Could not dissolve vert"
-msgstr "Amagar Seleccionats"
-
-
 msgid "Could not connect vertices"
 msgstr "Image Displist"
 
 
-msgid "Could not traverse mesh"
-msgstr "Amagar Seleccionats"
-
-
 msgid "Could not dissolve faces"
 msgstr "Amagar Seleccionats"
-
-
-msgid "Tessellation error"
-msgstr "Seleccionar connectats"
 
 
 msgid "Invalid selection"

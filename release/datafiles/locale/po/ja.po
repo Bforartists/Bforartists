@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -12275,6 +12275,26 @@ msgid "Push secondary particles that left the domain back into the domain"
 msgstr "ドメインから離れたセカンダリパーティクルをドメイン内に押し戻します"
 
 
+msgid "Bubble Buoyancy"
+msgstr "気泡の浮力"
+
+
+msgid "Amount of buoyancy force that rises bubbles (high value results in bubble movement mainly upwards)"
+msgstr ""
+"気泡を押し上げる浮力\n"
+"（大きい値で気泡の移動が主に上に）"
+
+
+msgid "Bubble Drag"
+msgstr "気泡を流す力"
+
+
+msgid "Amount of drag force that moves bubbles along with the fluid (high value results in bubble movement mainly along with the fluid)"
+msgstr ""
+"気泡を流体の方向に移動する力\n"
+"（大きい値で気泡の移動が主に流体の方向に）"
+
+
 msgid "Combined Export"
 msgstr "統合エクスポート"
 
@@ -12315,42 +12335,6 @@ msgid "Create one particle system that contains all three secondary particle typ
 msgstr "三つのセカンダリパーティクルタイプをすべて含んだ、一つのパーティクルシステムを作成します"
 
 
-msgid "Bubble Buoyancy"
-msgstr "気泡の浮力"
-
-
-msgid "Amount of buoyancy force that rises bubbles (high value results in bubble movement mainly upwards)"
-msgstr ""
-"気泡を押し上げる浮力\n"
-"（大きい値で気泡の移動が主に上に）"
-
-
-msgid "Bubble Drag"
-msgstr "気泡を流す力"
-
-
-msgid "Amount of drag force that moves bubbles along with the fluid (high value results in bubble movement mainly along with the fluid)"
-msgstr ""
-"気泡を流体の方向に移動する力\n"
-"（大きい値で気泡の移動が主に流体の方向に）"
-
-
-msgid "Trapped Air Sampling"
-msgstr "混入空気サンプリング"
-
-
-msgid "Maximum number of particles generated per trapped air cell per frame"
-msgstr "フレーム毎に混入空気セル毎に生成されるパーティクルの最大数"
-
-
-msgid "Wave Crest Sampling"
-msgstr "波頭サンプリング"
-
-
-msgid "Maximum number of particles generated per wave crest cell per frame"
-msgstr "フレーム毎に波頭セル毎に生成されるパーティクルの最大数"
-
-
 msgid "Maximum Lifetime"
 msgstr "最大寿命"
 
@@ -12367,20 +12351,6 @@ msgid "Lowest possible particle lifetime"
 msgstr "パーティクルの寿命の最小値"
 
 
-msgid "Potential Radius"
-msgstr "ポテンシャル半径"
-
-
-msgid "Radius to compute potential for each cell (higher values are slower but create smoother potential grids)"
-msgstr ""
-"各セルのポテンシャルを計算する範囲\n"
-"（大きな値で遅くなりますが、滑らかなポテンシャルグリッドが生成されます）"
-
-
-msgid "tauMax_k"
-msgstr "tauMax_k"
-
-
 msgid "Upper clamping threshold that indicates the fluid speed where cells no longer emit more particles (higher value results in generally less particles)"
 msgstr ""
 "セルがもうパーティクルを発生しなくなることを示す、\n"
@@ -12391,12 +12361,6 @@ msgid "Maximum Trapped Air Potential"
 msgstr "最大混入空気ポテンシャル"
 
 
-msgid "Upper clamping threshold for marking fluid cells where air is trapped (highe value results in less marked cells)"
-msgstr ""
-"流体セルに空気が混入しているとマークするしきい値の上限\n"
-"（大きな値でマークされるセルが減ります）"
-
-
 msgid "Maximum Wave Crest Potential"
 msgstr "最大波頭ポテンシャル"
 
@@ -12405,10 +12369,6 @@ msgid "Upper clamping threshold for marking fluid cells as wave crests (higher v
 msgstr ""
 "流体セルに波頭とマークするしきい値の上限\n"
 "（大きな値でマークされるセルが減ります）"
-
-
-msgid "tauMin_k"
-msgstr "tauMin_k"
 
 
 msgid "Lower clamping threshold that indicates the fluid speed where cells start to emit particles (lower values result in generally more particles)"
@@ -12435,6 +12395,32 @@ msgid "Lower clamping threshold for marking fluid cells as wave crests (lower va
 msgstr ""
 "流体セルを波頭とマークするしきい値の下限\n"
 "（小さな値でマークされるセルが増えます）"
+
+
+msgid "Potential Radius"
+msgstr "ポテンシャル半径"
+
+
+msgid "Radius to compute potential for each cell (higher values are slower but create smoother potential grids)"
+msgstr ""
+"各セルのポテンシャルを計算する範囲\n"
+"（大きな値で遅くなりますが、滑らかなポテンシャルグリッドが生成されます）"
+
+
+msgid "Trapped Air Sampling"
+msgstr "混入空気サンプリング"
+
+
+msgid "Maximum number of particles generated per trapped air cell per frame"
+msgstr "フレーム毎に混入空気セル毎に生成されるパーティクルの最大数"
+
+
+msgid "Wave Crest Sampling"
+msgstr "波頭サンプリング"
+
+
+msgid "Maximum number of particles generated per wave crest cell per frame"
+msgstr "フレーム毎に波頭セル毎に生成されるパーティクルの最大数"
 
 
 msgid "Update Radius"
@@ -30289,20 +30275,20 @@ msgid "Convert all polygons to triangles"
 msgstr "すべてのポリゴンを三角形の面に変換します"
 
 
-msgid "Wireframe"
-msgstr "ワイヤーフレーム"
-
-
-msgid "Convert faces into thickened edges"
-msgstr "面を太さのある辺に変換します"
-
-
 msgid "Weld"
 msgstr "溶接"
 
 
 msgid "Find groups of vertices closer then dist and merges them together"
 msgstr "近くの頂点群を見つけ、一緒にマージします"
+
+
+msgid "Wireframe"
+msgstr "ワイヤーフレーム"
+
+
+msgid "Convert faces into thickened edges"
+msgstr "面を太さのある辺に変換します"
 
 
 msgid "Deform the shape using an armature object"
@@ -38711,6 +38697,10 @@ msgid "Round A to the largest integer multiple of B less than or equal A"
 msgstr "A を A 以下で最大の B の整数倍に丸めます"
 
 
+msgid "Z Axis"
+msgstr "Z軸"
+
+
 msgid "Vector Transform"
 msgstr "ベクトル変換"
 
@@ -44260,10 +44250,6 @@ msgstr "対象のパス(もしくはサブディレクトリ)にファイルを�
 
 msgid "Primary Bone Axis"
 msgstr "プライマリボーン軸"
-
-
-msgid "Z Axis"
-msgstr "Z軸"
 
 
 msgid "-X Axis"
@@ -50763,10 +50749,6 @@ msgstr "カーソル位置でポリビルドトランスフォーム"
 msgctxt "Operator"
 msgid "Poly Build Face at Cursor"
 msgstr "カーソル位置でポリビルド面作成"
-
-
-msgid "Create quads"
-msgstr "四角面を作成"
 
 
 msgid "Automatically split edges in triangles to maintain quad topology"
@@ -65811,10 +65793,6 @@ msgstr "作業状態のコピーを保存しますが、現在のファイル名
 
 msgid "Remap Relative"
 msgstr "相対パスに変更"
-
-
-msgid "Make paths relative when saving to a different directory"
-msgstr "別のディレクトリに保存する時、相対パスにします"
 
 
 msgctxt "Operator"
@@ -81563,14 +81541,6 @@ msgid "Gradient High/Off"
 msgstr "グラデーション上/オフ"
 
 
-msgid "Use Gradient"
-msgstr "グラデーション使用"
-
-
-msgid "Do a gradient for the background of the viewport working area"
-msgstr "作業領域のビュー背景にグラデーションを掛けます"
-
-
 msgid "Theme Graph Editor"
 msgstr "グラフエディターのテーマ"
 
@@ -92900,16 +92870,16 @@ msgid "Path '%s' not found"
 msgstr "パス「%s」が見つかりません"
 
 
-msgid "Path '%s' cannot be made relative"
-msgstr "パス「%s」が相対パスにできません"
+msgid "Path '%s' cannot be made absolute"
+msgstr "パス「%s」が絶対パスにできません"
 
 
 msgid "Total files %d | Changed %d | Failed %d"
 msgstr "総ファイル数 %d | 変更 %d | 失敗 %d"
 
 
-msgid "Path '%s' cannot be made absolute"
-msgstr "パス「%s」が絶対パスにできません"
+msgid "Path '%s' cannot be made relative"
+msgstr "パス「%s」が相対パスにできません"
 
 
 msgid "Could not open directory '%s'"
@@ -93563,32 +93533,12 @@ msgid "Cannot open file %s for writing: %s"
 msgstr "ファイル %s を %s の保存用に開けませんでした"
 
 
-msgid "Self intersection error"
-msgstr "自分自身との交差エラー"
-
-
-msgid "Could not dissolve vert"
-msgstr "頂点を溶解できませんでした"
-
-
 msgid "Could not connect vertices"
 msgstr "頂点を接続できませんでした"
 
 
-msgid "Could not traverse mesh"
-msgstr "メッシュをトラバースできませんでした"
-
-
 msgid "Could not dissolve faces"
 msgstr "面を溶解できませんでした"
-
-
-msgid "Tessellation error"
-msgstr "テッセレーションエラー"
-
-
-msgid "Cannot deal with non-manifold geometry"
-msgstr "非多様体の形状を処理できません"
 
 
 msgid "Invalid selection"

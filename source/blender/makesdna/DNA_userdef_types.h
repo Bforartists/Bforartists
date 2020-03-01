@@ -289,6 +289,7 @@ typedef struct ThemeSpace {
   unsigned char time_keyframe[4], time_gp_keyframe[4];
   unsigned char freestyle_edge_mark[4], freestyle_face_mark[4];
   unsigned char time_scrub_background[4];
+  unsigned char time_marker_line[4], time_marker_line_selected[4];
 
   unsigned char nurb_uline[4], nurb_vline[4];
   unsigned char act_spline[4], nurb_sel_uline[4], nurb_sel_vline[4], lastsel_point[4];
@@ -314,6 +315,7 @@ typedef struct ThemeSpace {
 
   unsigned char vertex_size, outline_width, obcenter_dia, facedot_size;
   unsigned char noodle_curving;
+  unsigned char grid_levels;
 
   /* syntax for textwindow and nodes */
   unsigned char syntaxl[4], syntaxs[4];  // in nodespace used for backdrop matte
@@ -322,7 +324,7 @@ typedef struct ThemeSpace {
   unsigned char syntaxd[4], syntaxr[4];  // in nodespace used for distort
 
   unsigned char line_numbers[4];
-  char _pad6[4];
+  char _pad6[3];
 
   unsigned char nodeclass_output[4], nodeclass_filter[4];
   unsigned char nodeclass_vector[4], nodeclass_texture[4];
@@ -747,7 +749,7 @@ typedef struct UserDef {
   /** Milliseconds to spend spinning the view. */
   short smooth_viewtx;
   short glreslimit;
-  short curssize;
+  short curssize DNA_DEPRECATED;
   /** #eColorPicker_Types. */
   short color_picker_type;
   /** Curve smoothing type for newly added F-Curves. */

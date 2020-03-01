@@ -5235,34 +5235,21 @@ class VIEW3D_MT_edit_curve_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_DEFAULT'
 
+        # Add
         layout.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES')
-        layout.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION')
-
-        layout.separator()
-
-        layout.operator("curve.duplicate_move", icon = "DUPLICATE")
-        layout.operator("curve.split", icon = "SPLIT")
-        layout.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
-        layout.operator_menu_enum("curve.spline_type_set", "type")
-
-        layout.separator()
-
+        layout.operator("curve.extrude_move", icon = 'EXTRUDE_REGION')
         layout.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT")
+        layout.operator("curve.duplicate_move", icon = "DUPLICATE")
 
         layout.separator()
 
+        # Transform
+        layout.operator("transform.transform", text="Radius").mode = 'CURVE_SHRINKFATTEN'
         layout.operator("transform.tilt", icon = 'TILT')
         layout.operator("curve.tilt_clear", icon = "CLEAR_TILT")
-
-        layout.separator()
-
-        layout.operator_menu_enum("curve.handle_type_set", "type")
-        layout.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS')
-
-        layout.separator()
-
-        layout.operator("curve.spline_weight_set", icon = "MOD_VERTEX_WEIGHT")
-        layout.operator("curve.radius_set", icon = "RADIUS")
+        layout.operator("curve.smooth", icon = 'SHADING_SMOOTH')
+        layout.operator("curve.smooth_tilt", icon = "SMOOTH_TILT")
+        layout.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS")
 
         layout.separator()
 
@@ -5271,10 +5258,28 @@ class VIEW3D_MT_edit_curve_context_menu(Menu):
 
         layout.separator()
 
+        # Modify
+        layout.operator_menu_enum("curve.spline_type_set", "type")
+        layout.operator_menu_enum("curve.handle_type_set", "type")
+        layout.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
+        layout.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION')
+
+        layout.separator()
+
+        layout.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS')
+        layout.operator("curve.spline_weight_set", icon = "MOD_VERTEX_WEIGHT")
+        layout.operator("curve.radius_set", icon = "RADIUS")
+
+        layout.separator()
+
+        # Remove
+        layout.operator("curve.split", icon = "SPLIT")
         layout.operator("curve.decimate", icon = "DECIMATE")
-        layout.operator("curve.delete", text="Delete Point", icon = "DELETE").type = 'VERT'
+        layout.operator("curve.separate", icon = "SEPARATE")
+        layout.operator("curve.dissolve_verts", icon='DISSOLVE_VERTS')       
         layout.operator("curve.delete", text="Delete Segment", icon = "DELETE").type = 'SEGMENT'
-        layout.operator("curve.dissolve_verts", icon='DISSOLVE_VERTS')
+        layout.operator("curve.delete", text="Delete Point", icon = "DELETE").type = 'VERT'
+        
 
 
 class VIEW3D_MT_edit_curve_delete(Menu):
@@ -5347,7 +5352,24 @@ class VIEW3D_MT_edit_font(Menu):
         layout.separator()
 
         layout.operator("font.delete", icon = "DELETE").type = 'NEXT_OR_SELECTION'
-        
+
+        layout.menu("VIEW3D_MT_edit_font_kerning")
+
+
+class VIEW3D_MT_edit_font_kerning(Menu):
+    bl_label = "Kerning"
+
+    def draw(self, context):
+        layout = self.layout
+
+        ob = context.active_object
+        text = ob.data
+        kerning = text.edit_format.kerning
+
+        layout.operator("font.change_spacing", text="Decrease Kerning").delta = -1
+        layout.operator("font.change_spacing", text="Increase Kerning").delta = 1
+        layout.operator("font.change_spacing", text="Reset Kerning").delta = -kerning
+
 
 class VIEW3D_MT_edit_font_move(Menu):
     bl_label = "Move Cursor"
@@ -5622,6 +5644,7 @@ class VIEW3D_MT_armature_context_menu(Menu):
 
         # Remove
         layout.operator("armature.split", icon = "SPLIT")
+        layout.operator("armature.separate", icon = "SEPARATE")
         layout.operator("armature.merge", icon = "MERGE")
         layout.operator("armature.dissolve", icon = "DELETE")
         layout.operator("armature.delete", icon = "DELETE")
@@ -6567,6 +6590,7 @@ class VIEW3D_PT_shading_lighting(Panel):
                 col.prop(shading, "studiolight_rotate_z", text="Rotation")
                 col.prop(shading, "studiolight_intensity")
                 col.prop(shading, "studiolight_background_alpha")
+                col.prop(shading, "studiolight_background_blur")
                 col = split.column()  # to align properly with above
 
         elif shading.type == 'RENDERED':
@@ -6590,6 +6614,7 @@ class VIEW3D_PT_shading_lighting(Panel):
                 col.prop(shading, "studiolight_rotate_z", text="Rotation")
                 col.prop(shading, "studiolight_intensity")
                 col.prop(shading, "studiolight_background_alpha")
+                col.prop(shading, "studiolight_background_blur")
                 col = split.column()  # to align properly with above
 
 
@@ -8261,6 +8286,7 @@ classes = (
     VIEW3D_MT_edit_curve_show_hide,
     VIEW3D_MT_edit_surface,
     VIEW3D_MT_edit_font,
+    VIEW3D_MT_edit_font_kerning,
     VIEW3D_MT_edit_font_move,
     VIEW3D_MT_edit_font_move_select,
     VIEW3D_MT_edit_text_chars,

@@ -120,7 +120,7 @@ void EEVEE_cache_populate(void *vedata, Object *ob)
   bool cast_shadow = false;
 
   if (ob_visibility & OB_VISIBLE_PARTICLES) {
-    EEVEE_hair_cache_populate(vedata, sldata, ob, &cast_shadow);
+    EEVEE_particle_hair_cache_populate(vedata, sldata, ob, &cast_shadow);
   }
 
   if (DRW_object_is_renderable(ob) && (ob_visibility & OB_VISIBLE_SELF)) {
@@ -177,9 +177,6 @@ static void eevee_cache_finish(void *vedata)
   if (g_data->queued_shaders_count != g_data->queued_shaders_count_prev) {
     g_data->queued_shaders_count_prev = g_data->queued_shaders_count;
     EEVEE_temporal_sampling_reset(vedata);
-    /* At this moment the TAA sampling will be redrawn in the next iteration.
-     * we set the taa_current_sample to 0 so the next iteration will use sample 1 */
-    stl->effects->taa_current_sample = 0;
   }
 }
 

@@ -1527,6 +1527,11 @@ class BlenderKitAddonPreferences(AddonPreferences):
                                min=0,
                                max=20000)
 
+    first_run: BoolProperty(
+        name="First run",
+        description="Detects if addon was already registered/run.",
+        default=True
+    )
     # allow_proximity : BoolProperty(
     #     name="allow proximity data reports",
     #     description="This sends anonymized proximity data \n \
