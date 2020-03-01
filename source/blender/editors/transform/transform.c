@@ -61,6 +61,7 @@
 #include "BLT_translation.h"
 
 #include "transform.h"
+#include "transform_constraints.h"
 #include "transform_convert.h"
 #include "transform_draw_cursors.h"
 #include "transform_mode.h"
@@ -1635,9 +1636,9 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
     }
   }
 
-  if ((prop = RNA_struct_find_property(op->ptr, "mouse_coordinate_override"))) {
+  if ((prop = RNA_struct_find_property(op->ptr, "center_override"))) {
     /* Important for redo operations. */
-    RNA_property_int_set_array(op->ptr, prop, t->mouse.imval);
+    RNA_property_float_set_array(op->ptr, prop, t->center_global);
   }
 
   if (t->flag & T_PROP_EDIT_ALL) {

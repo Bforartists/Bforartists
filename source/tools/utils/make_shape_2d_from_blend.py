@@ -34,14 +34,11 @@ def curve_to_loops(ob):
     import bmesh
     cu = ob.data
 
-    # Support 2.7x & 2.8x
-    if bpy.app.version >= (2, 8):
-        me = ob.to_mesh(bpy.context.scene, bpy.context.view_layer, True, 'PREVIEW')
-    else:
-        me = ob.to_mesh(bpy.context.scene, True, 'PREVIEW', calc_tessface=False)
-
+    me = ob.to_mesh()
     bm = bmesh.new()
     bm.from_mesh(me)
+    me = ob.to_mesh_clear()
+
     bmesh.ops.beautify_fill(bm, faces=bm.faces, edges=bm.edges)
 
     edges = bm.edges[:]
@@ -75,7 +72,6 @@ def curve_to_loops(ob):
             )
         data_all.append((points, f.material_index))
     bm.free()
-    bpy.data.meshes.remove(me)
     return data_all
 
 

@@ -153,10 +153,15 @@ def main():
         "OBJ Nurbs Import/Export",
         "<b>AutoCRC</b> - Improvements to fluid particles, vertex color baking",
         "<b>Adidas</b> - Principled BSDF shader in Cycles",
+        "<b>AMD</b> - Cycles OpenCL rendering",
+        "<b>Intel</b> - Cycles ray-tracing optimization",
+        "<b>NVidia</b> - Cycles Optix rendering",
     )
 
     credits = Credits()
     # commit_range = "HEAD~10..HEAD"
+    # commit_range = "blender-v2.81-release..blender-v2.82-release"
+    # commit_range = "blender-v2.82-release"
     commit_range = args.range_sha1
     citer = GitCommitIter(args.source_dir, commit_range)
     credits.process((c for c in citer if is_credit_commit_valid(c)))
