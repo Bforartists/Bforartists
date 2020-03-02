@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -22372,6 +22372,10 @@ msgid "Vector Math"
 msgstr "ﻲﺑﺎﺴﺣ ﻪﺠﺘﻣ"
 
 
+msgid "Z Axis"
+msgstr "Z ﺭﻮﺤﻣ"
+
+
 msgid "Vector Transform"
 msgstr "ﻲﻬﺠﺘﻣ ﻝﻮّﺤﺗ"
 
@@ -24814,10 +24818,6 @@ msgstr "ﺮﻴﻏ"
 
 msgid "Method used to reference paths"
 msgstr "ﺕﺍﺭﺎﺴﻤﻟﺍ ﺔﻴﻌﺟﺮﻤﻟ ﺔﻣﺪﺨﺘﺴﻤﻟﺍ ﺔﻘﻳﺮﻄﻟﺍ"
-
-
-msgid "Z Axis"
-msgstr "Z ﺭﻮﺤﻣ"
 
 
 msgid "-X Axis"
@@ -38057,10 +38057,6 @@ msgid "Gradient High/Off"
 msgstr "ﺝﺭﺪﺗ"
 
 
-msgid "Use Gradient"
-msgstr "ﺝﺭﺪﺗ"
-
-
 msgid "Vertex Select"
 msgstr "ﺔﻄﻘﻨﻟﺍ ﺭﺎﻴﺘﺧﺍ"
 
@@ -42580,16 +42576,8 @@ msgid "Cannot open file %s for writing: %s"
 msgstr ".%s‬\", ‪%s‬‪\" :ﻒﻠﻤﻟﺍ ﺓءﺍﺮﻗ ﻦﻜﻤﻳ ﻻ﻿"
 
 
-msgid "Self intersection error"
-msgstr "ﻲﺗﺍﺬﻟﺍ ﻞﺧﺍﺪﺘﻟﺍ ﺺﺤﻓ"
-
-
 msgid "Could not connect vertices"
 msgstr "ﺔﻠﺼﺘﻤﻟﺍ UV ـﻟﺍ ﻂﻘﻧ ﻦﻣ ﻞﺴﻠﺴﺗ ﺮﺘﺧﺇ"
-
-
-msgid "Tessellation error"
-msgstr "ﺔﺋﺰﺠﺗ"
 
 
 msgid "Invalid selection"

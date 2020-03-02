@@ -709,6 +709,9 @@ def get_area_and_paint(myvertices, myobj, obverts, region, rv3d, rgba, ms_scale)
     else:
         return 0.0
 
+    # Apply world scale
+    totarea *= bpy.context.scene.unit_settings.scale_length
+
     return totarea
 
 

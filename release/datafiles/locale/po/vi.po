@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
@@ -12176,6 +12176,22 @@ msgid "Push secondary particles that left the domain back into the domain"
 msgstr "Đẩy các hạt thứ hai vẫn còn ở trong phạm vi trở lại vào phạm vi"
 
 
+msgid "Bubble Buoyancy"
+msgstr "Lực Nổi Bong Bóng"
+
+
+msgid "Amount of buoyancy force that rises bubbles (high value results in bubble movement mainly upwards)"
+msgstr "Mức lực nỗi để đẩy lên bong bóng (giá trị cao làm bong bóng chủ yếu đi lên)"
+
+
+msgid "Bubble Drag"
+msgstr "Kéo Lê Bong Bóng"
+
+
+msgid "Amount of drag force that moves bubbles along with the fluid (high value results in bubble movement mainly along with the fluid)"
+msgstr "Mức lực kéo lê được kéo bong bóng theo chất lỏng (giá trị cao hơn làm bong bóng chủ yếu đi theo chuyển động của chất lỏng)"
+
+
 msgid "Combined Export"
 msgstr "Xuất Gồm"
 
@@ -12216,38 +12232,6 @@ msgid "Create one particle system that contains all three secondary particle typ
 msgstr "Chế tạo một hệ thống hạt chứa tất cả ba loại hạt thứ hai"
 
 
-msgid "Bubble Buoyancy"
-msgstr "Lực Nổi Bong Bóng"
-
-
-msgid "Amount of buoyancy force that rises bubbles (high value results in bubble movement mainly upwards)"
-msgstr "Mức lực nỗi để đẩy lên bong bóng (giá trị cao làm bong bóng chủ yếu đi lên)"
-
-
-msgid "Bubble Drag"
-msgstr "Kéo Lê Bong Bóng"
-
-
-msgid "Amount of drag force that moves bubbles along with the fluid (high value results in bubble movement mainly along with the fluid)"
-msgstr "Mức lực kéo lê được kéo bong bóng theo chất lỏng (giá trị cao hơn làm bong bóng chủ yếu đi theo chuyển động của chất lỏng)"
-
-
-msgid "Trapped Air Sampling"
-msgstr "Mẫu Không Khí Bị Nhốt"
-
-
-msgid "Maximum number of particles generated per trapped air cell per frame"
-msgstr "Số lượng hạt tối đa được chế tạo từng tế bào nhốt không khi mỗi bức"
-
-
-msgid "Wave Crest Sampling"
-msgstr "Mẫu Đầu Ngọn Sóng"
-
-
-msgid "Maximum number of particles generated per wave crest cell per frame"
-msgstr "Số lượng hạt cực đại được chế tạo từng tế bào đầu ngọn sóng mỗi bức"
-
-
 msgid "Maximum Lifetime"
 msgstr "Tuổi Thọ Tối Đa"
 
@@ -12264,18 +12248,6 @@ msgid "Lowest possible particle lifetime"
 msgstr "Tuổi thọ nhắn nhất"
 
 
-msgid "Potential Radius"
-msgstr "Bán Kính Nặng Thế"
-
-
-msgid "Radius to compute potential for each cell (higher values are slower but create smoother potential grids)"
-msgstr "Bán kính để tính nặng thế cho mỗi tế bào (giá trị cao hơn là chậm hơn nhưng chế tạo đồ thị năng thế mịn hơn)"
-
-
-msgid "tauMax_k"
-msgstr "tauCựcĐại_k"
-
-
 msgid "Upper clamping threshold that indicates the fluid speed where cells no longer emit more particles (higher value results in generally less particles)"
 msgstr "Ngưỡng kép lại cực đại cho biểu lộ tốc độ chất của lỏng làm tế bào không còn phát hạt thêm (giá trị cao hơn giảm bất số lượng hạt)"
 
@@ -12284,20 +12256,12 @@ msgid "Maximum Trapped Air Potential"
 msgstr "Năng Thế Cực Đại Của Không Khí Bị Nhốt"
 
 
-msgid "Upper clamping threshold for marking fluid cells where air is trapped (highe value results in less marked cells)"
-msgstr "Ngưỡng kẹp lại cực đại để ký dấu cho tế bào đang nhốt không khí (giá trị cao hơn giảm số lượng tế bào được ký dấu)"
-
-
 msgid "Maximum Wave Crest Potential"
 msgstr "ăng Thế Cực Đại Của Đầu Ngọn Sóng"
 
 
 msgid "Upper clamping threshold for marking fluid cells as wave crests (higher value results in less marked cells)"
 msgstr "Ngưỡng kẹp lại cực đại để ký dấu cho tế bào là đầu ngọn sóng (giá trị cao hơn giảm số lượng tế bào được ký dấu)"
-
-
-msgid "tauMin_k"
-msgstr "TauCựcTiểu_k"
 
 
 msgid "Lower clamping threshold that indicates the fluid speed where cells start to emit particles (lower values result in generally more particles)"
@@ -12318,6 +12282,30 @@ msgstr "Năng Thế Cực Tiểu Của Đầu Ngọn Sóng"
 
 msgid "Lower clamping threshold for marking fluid cells as wave crests (lower value results in more marked cells)"
 msgstr "Ngưỡng kẹp lại cực tiểu cho ký dấu tế bào chất lỏng là đầu ngọn sóng (giá trị thấp tăng số lượng tế bào được ký dấu)"
+
+
+msgid "Potential Radius"
+msgstr "Bán Kính Nặng Thế"
+
+
+msgid "Radius to compute potential for each cell (higher values are slower but create smoother potential grids)"
+msgstr "Bán kính để tính nặng thế cho mỗi tế bào (giá trị cao hơn là chậm hơn nhưng chế tạo đồ thị năng thế mịn hơn)"
+
+
+msgid "Trapped Air Sampling"
+msgstr "Mẫu Không Khí Bị Nhốt"
+
+
+msgid "Maximum number of particles generated per trapped air cell per frame"
+msgstr "Số lượng hạt tối đa được chế tạo từng tế bào nhốt không khi mỗi bức"
+
+
+msgid "Wave Crest Sampling"
+msgstr "Mẫu Đầu Ngọn Sóng"
+
+
+msgid "Maximum number of particles generated per wave crest cell per frame"
+msgstr "Số lượng hạt cực đại được chế tạo từng tế bào đầu ngọn sóng mỗi bức"
 
 
 msgid "Update Radius"
@@ -30078,20 +30066,20 @@ msgid "Convert all polygons to triangles"
 msgstr "Biến đổi tất cả đa giác sang tam giác"
 
 
-msgid "Wireframe"
-msgstr "Khung Sợi Dây"
-
-
-msgid "Convert faces into thickened edges"
-msgstr "Biến đổi các mặt sang cạnh dày"
-
-
 msgid "Weld"
 msgstr "Hàn"
 
 
 msgid "Find groups of vertices closer then dist and merges them together"
 msgstr "Tìm các nhóm đỉnh gần hơn khoảng cách và gồm với nhau"
+
+
+msgid "Wireframe"
+msgstr "Khung Sợi Dây"
+
+
+msgid "Convert faces into thickened edges"
+msgstr "Biến đổi các mặt sang cạnh dày"
 
 
 msgid "Deform the shape using an armature object"
@@ -38476,6 +38464,10 @@ msgid "Round A to the largest integer multiple of B less than or equal A"
 msgstr "Tròn số A đến số nguyên được chia B, ngưng lớn hơn hoặc bằng A"
 
 
+msgid "Z Axis"
+msgstr "Trục Z"
+
+
 msgid "Vector Transform"
 msgstr "Biến Hóa Vectơ"
 
@@ -43998,10 +43990,6 @@ msgstr "Chép tệp vào đường dẫn đích (thư mục phụ)"
 
 msgid "Primary Bone Axis"
 msgstr "Trục Xương Chánh"
-
-
-msgid "Z Axis"
-msgstr "Trục Z"
 
 
 msgid "-X Axis"
@@ -50477,10 +50465,6 @@ msgstr "Xây Đựng Biến Hóa Đa Giác tại Con Trỏ"
 msgctxt "Operator"
 msgid "Poly Build Face at Cursor"
 msgstr "Mặt Xây Dựng Đa Giác tại Con Trỏ"
-
-
-msgid "Create quads"
-msgstr "Chế tạo tư giác %s"
 
 
 msgid "Automatically split edges in triangles to maintain quad topology"
@@ -65479,10 +65463,6 @@ msgstr "Lưu một bản sao của trạng thái công việc mà không cho t�
 
 msgid "Remap Relative"
 msgstr "Ánh Xạ Lại Tướng Đối"
-
-
-msgid "Make paths relative when saving to a different directory"
-msgstr "Làm đường dẫn tương đối khi lưu trong một thư mục mới"
 
 
 msgctxt "Operator"
@@ -81149,14 +81129,6 @@ msgid "Gradient High/Off"
 msgstr "Chuyển Sắc Cao/Tắt"
 
 
-msgid "Use Gradient"
-msgstr "Dùng Chuyển Sắc"
-
-
-msgid "Do a gradient for the background of the viewport working area"
-msgstr "Dùng một chuyển sắc cho nền công việc của màn chiếu "
-
-
 msgid "Theme Graph Editor"
 msgstr "Phong Cách - Bộ Biên Tập Biểu Đồ"
 
@@ -92476,16 +92448,16 @@ msgid "Path '%s' not found"
 msgstr "Không được tìm đường dẫn '%s'"
 
 
-msgid "Path '%s' cannot be made relative"
-msgstr "Không được làm đường dẫn '%s' tương đối"
+msgid "Path '%s' cannot be made absolute"
+msgstr "Đường dẫn '%s' không được làm tuyệt đối"
 
 
 msgid "Total files %d | Changed %d | Failed %d"
 msgstr "Tổng số tệp %d | Được đổi %d | Thất bại %d"
 
 
-msgid "Path '%s' cannot be made absolute"
-msgstr "Đường dẫn '%s' không được làm tuyệt đối"
+msgid "Path '%s' cannot be made relative"
+msgstr "Không được làm đường dẫn '%s' tương đối"
 
 
 msgid "Could not open directory '%s'"
@@ -93137,32 +93109,12 @@ msgid "Cannot open file %s for writing: %s"
 msgstr "Không mở được tệp %s cho ghi: %s"
 
 
-msgid "Self intersection error"
-msgstr "Sai lầm tự cắt"
-
-
-msgid "Could not dissolve vert"
-msgstr "Không hòa tan được đỉnh"
-
-
 msgid "Could not connect vertices"
 msgstr "Không được kết nối đỉnh"
 
 
-msgid "Could not traverse mesh"
-msgstr "Không xà ngang được mạng lưới"
-
-
 msgid "Could not dissolve faces"
 msgstr "Không hòa tan được các mặt"
-
-
-msgid "Tessellation error"
-msgstr "Sai lầm phân hóa"
-
-
-msgid "Cannot deal with non-manifold geometry"
-msgstr "Không thể làm việc với hình dạng vô đa tập"
 
 
 msgid "Invalid selection"

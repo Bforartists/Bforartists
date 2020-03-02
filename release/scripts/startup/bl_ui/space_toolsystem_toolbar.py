@@ -18,6 +18,9 @@
 
 # <pep8 compliant>
 
+# For documentation on tool definitions: see "bl_ui.space_toolsystem_common.ToolDef"
+# where there are comments for each field and their use.
+
 # For now group all tools together
 # we may want to move these into per space-type files.
 #
@@ -617,15 +620,6 @@ class _defs_edit_mesh:
             region_type = context.region.type
 
             if not extra:
-                if props.offset_type == 'PERCENT':
-                    layout.prop(props, "offset_pct")
-                else:
-                    offset_text = "Width"
-                    if props.offset_type == 'DEPTH':
-                        offset_text = "Depth"
-                    elif props.offset_type == 'OFFSET':
-                        offset_text = "Offset"
-                    layout.prop(props, "offset", text=offset_text)
                 if region_type == 'TOOL_HEADER':
                     layout.prop(props, "offset_type", text="")
                 else:
@@ -1154,8 +1148,25 @@ class _defs_weight_paint:
         def draw_settings(context, layout, tool):
             brush = context.tool_settings.weight_paint.brush
             if brush is not None:
-                layout.prop(brush, "weight", slider=True)
-                layout.prop(brush, "strength", slider=True)
+                from bl_ui.properties_paint_common import UnifiedPaintPanel
+                UnifiedPaintPanel.prop_unified(
+                    layout,
+                    context,
+                    brush,
+                    "weight",
+                    unified_name="use_unified_weight",
+                    slider=True,
+                    header=True
+                )
+                UnifiedPaintPanel.prop_unified(
+                    layout,
+                    context,
+                    brush,
+                    "strength",
+                    unified_name="use_unified_strength",
+                    header=True
+                )
+
             props = tool.operator_properties("paint.weight_gradient")
             layout.prop(props, "type", expand=True)
 

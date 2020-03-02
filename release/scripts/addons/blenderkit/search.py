@@ -130,35 +130,38 @@ def fetch_server_data():
 first_time = True
 last_clipboard = ''
 
+def check_clipboard():
+    # clipboard monitoring to search assets from web
+    global last_clipboard
+    if bpy.context.window_manager.clipboard != last_clipboard:
+        last_clipboard = bpy.context.window_manager.clipboard
+        instr = 'asset_base_id:'
+        # first check if contains asset id, then asset type
+        if last_clipboard[:len(instr)] == instr:
+            atstr = 'asset_type:'
+            ati = last_clipboard.find(atstr)
+            # this only checks if the asset_type keyword is there but let's the keywords update function do the parsing.
+            if ati > -1:
+                search_props = utils.get_search_props()
+                search_props.search_keywords = last_clipboard
+                # don't run search after this - assigning to keywords runs the search_update function.
 
 @bpy.app.handlers.persistent
 def timer_update():
     # this makes a first search after opening blender. showing latest assets.
     global first_time
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    if first_time:
+    if first_time:# first time
         first_time = False
-        if preferences.show_on_start:
+        if preferences.show_on_start or preferences.first_run:
             search()
+            preferences.first_run = False
         if preferences.tips_on_start:
             ui.get_largest_3dview()
             ui.update_ui_size(ui.active_area, ui.active_region)
             ui.add_report(text='BlenderKit Tip: ' + random.choice(rtips), timeout=12, color=colors.GREEN)
 
-    # clipboard monitoring to search assets from web
-    global last_clipboard
-    if bpy.context.window_manager.clipboard != last_clipboard:
-        last_clipboard =  bpy.context.window_manager.clipboard
-        instr = 'asset_base_id:'
-        # first check if contains asset id, then asset type
-        if last_clipboard[:len(instr)] == instr:
-            atstr = 'asset_type:'
-            ati = last_clipboard.find(atstr)
-            #this only checks if the asset_type keyword is there but let's the keywords update function do the parsing.
-            if ati > -1:
-                search_props = utils.get_search_props()
-                search_props.search_keywords = last_clipboard
-                # don't run search after this - assigning to keywords runs the search_update function.
+    check_clipboard()
 
     global search_threads
     # don't do anything while dragging - this could switch asset during drag, and make results list length different,

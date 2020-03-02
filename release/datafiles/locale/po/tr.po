@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 3) (b'2d1b05a15fa2')\n"
+"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -9783,6 +9783,10 @@ msgid "Dot Product"
 msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
 
 
+msgid "Z Axis"
+msgstr "Z Eks"
+
+
 msgid "Texture Node"
 msgstr "Düğüm Editörü"
 
@@ -11935,10 +11939,6 @@ msgstr "Dosya yolu"
 
 msgid "Filename only"
 msgstr "Yalnız Kenarlar"
-
-
-msgid "Z Axis"
-msgstr "Z Eks"
 
 
 msgid "Only Deform Bones"
@@ -22218,10 +22218,6 @@ msgid "Gradient High/Off"
 msgstr "Kesme Biçimi "
 
 
-msgid "Use Gradient"
-msgstr "Ağırlık Boyama"
-
-
 msgid "Theme Graph Editor"
 msgstr "Ipo Eğri Editörü "
 
@@ -25087,28 +25083,12 @@ msgid "Unable to open blend <memory>"
 msgstr "Dosya kaydı olanaksız"
 
 
-msgid "Self intersection error"
-msgstr "Seçimi İmlece"
-
-
-msgid "Could not dissolve vert"
-msgstr "Ön Görünümde Olmalısınız (NumPad1)"
-
-
 msgid "Could not connect vertices"
 msgstr "Bağlantılı başka nokta(lar) seçmelisiniz "
 
 
-msgid "Could not traverse mesh"
-msgstr "Ön Görünümde Olmalısınız (NumPad1)"
-
-
 msgid "Could not dissolve faces"
 msgstr "Ön Görünümde Olmalısınız (NumPad1)"
-
-
-msgid "Tessellation error"
-msgstr "İmleci Merkez al"
 
 
 msgid "Invalid selection"

@@ -333,10 +333,8 @@ def create_diffuse_material(matname, replace, r, g, b, rv=0.8, gv=0.8, bv=0.8, m
     nodes = mat.node_tree.nodes
 
     # support for multilanguage
-    node = nodes[get_node_index(nodes, 'BSDF_DIFFUSE')]
+    node = nodes.new('ShaderNodeBsdfDiffuse')
     node.name = 'Diffuse BSDF'
-    node.label = 'Diffuse BSDF'
-
     node.inputs[0].default_value = [r, g, b, 1]
     node.location = 200, 320
 
@@ -417,10 +415,8 @@ def create_translucent_material(matname, replace, r, g, b, rv=0.8, gv=0.8, bv=0.
     nodes = mat.node_tree.nodes
 
     # support for multilanguage
-    node = nodes[get_node_index(nodes, 'BSDF_DIFFUSE')]
+    node = nodes.new('ShaderNodeBsdfDiffuse')
     node.name = 'Diffuse BSDF'
-    node.label = 'Diffuse BSDF'
-
     node.inputs[0].default_value = [r, g, b, 1]
     node.location = 200, 320
 
@@ -500,7 +496,8 @@ def create_glass_material(matname, replace, rv=0.333, gv=0.342, bv=0.9):
     node.inputs[0].default_value = 0.1
     node.location = 690, 290
 
-    node = nodes[get_node_index(nodes, 'OUTPUT_MATERIAL')]
+    node = nodes.new('ShaderNodeOutputMaterial')
+    node.name = 'OUTPUT_MATERIAL'
     node.location = 920, 290
 
     # Connect nodes
@@ -786,10 +783,8 @@ def create_fabric_material(matname, replace, r, g, b, rv=0.8, gv=0.636, bv=0.315
     nodes = mat.node_tree.nodes
 
     # support for multilanguage
-    node = nodes[get_node_index(nodes, 'BSDF_DIFFUSE')]
+    node = nodes.new('ShaderNodeBsdfDiffuse')
     node.name = 'Diffuse BSDF'
-    node.label = 'Diffuse BSDF'
-
     node.inputs[0].default_value = [r, g, b, 1]
     node.location = 810, 270
 
