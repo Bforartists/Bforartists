@@ -5366,9 +5366,9 @@ class VIEW3D_MT_edit_font_kerning(Menu):
         text = ob.data
         kerning = text.edit_format.kerning
 
-        layout.operator("font.change_spacing", text="Decrease Kerning").delta = -1
-        layout.operator("font.change_spacing", text="Increase Kerning").delta = 1
-        layout.operator("font.change_spacing", text="Reset Kerning").delta = -kerning
+        layout.operator("font.change_spacing", text="Decrease Kerning", icon = "DECREASE_KERNING").delta = -1
+        layout.operator("font.change_spacing", text="Increase Kerning", icon = "INCREASE_KERNING").delta = 1
+        layout.operator("font.change_spacing", text="Reset Kerning", icon = "RESET").delta = -kerning
 
 
 class VIEW3D_MT_edit_font_move(Menu):
