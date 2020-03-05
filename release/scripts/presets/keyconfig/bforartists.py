@@ -5743,6 +5743,7 @@ keyconfig_data = \
     ("file.delete", {"type": 'DEL', "value": 'PRESS'}, None),
     ("file.smoothscroll", {"type": 'TIMER1', "value": 'ANY', "any": True}, None),
     ("file.bookmark_toggle", {"type": 'T', "value": 'PRESS'}, None),
+    ("file.start_filter", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
     ("wm.call_menu",
      {"type": 'RIGHTMOUSE', "value": 'PRESS'},
      {"properties":
