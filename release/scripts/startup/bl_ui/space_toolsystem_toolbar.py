@@ -170,7 +170,6 @@ class _defs_annotate:
                     panel="TOPBAR_PT_annotation_layers",
                     text=text,
                 )
-                layout.prop(gpl, "thickness")
 
         tool_settings = context.tool_settings
         space_type = tool.space_type
@@ -342,15 +341,12 @@ class _defs_view3d_select:
 
     @ToolDef.from_fn
     def select():
-        def draw_settings(_context, _layout, _tool):
-            pass
         return dict(
             idname="builtin.select",
             label="Tweak",
             icon="ops.generic.select",
             widget=None,
             keymap="3D View Tool: Tweak",
-            draw_settings=draw_settings,
         )
 
     @ToolDef.from_fn
