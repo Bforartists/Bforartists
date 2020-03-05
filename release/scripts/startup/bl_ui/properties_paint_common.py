@@ -656,20 +656,24 @@ def brush_settings(layout, context, brush, popover=False):
             row = layout.row()
             row.prop(brush, "area_radius_factor", slider=True)
             row = layout.row()
+            row.use_property_split = False     
             row.prop(brush, "invert_to_scrape_fill", text="Invert to Fill")
 
         if brush.sculpt_tool == 'FILL':
             row = layout.row()
             row.prop(brush, "area_radius_factor", slider=True)
             row = layout.row()
+            row.use_property_split = False     
             row.prop(brush, "invert_to_scrape_fill", text="Invert to Scrape")
 
         if brush.sculpt_tool == 'GRAB':
+            layout.use_property_split = False  
             layout.prop(brush, "use_grab_active_vertex")
 
         if brush.sculpt_tool == 'MULTIPLANE_SCRAPE':
             col = layout.column()
             col.prop(brush, "multiplane_scrape_angle")
+            col.use_property_split = False  
             col.prop(brush, "use_multiplane_scrape_dynamic")
             col.prop(brush, "show_multiplane_scrape_planes_preview")
 
