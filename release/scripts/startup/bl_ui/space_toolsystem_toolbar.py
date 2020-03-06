@@ -684,6 +684,7 @@ class _defs_edit_mesh:
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("mesh.extrude_region_shrink_fatten")
             props_macro = props.TRANSFORM_OT_shrink_fatten
+            layout.use_property_split = False            
             layout.prop(props_macro, "use_even_offset")
         return dict(
             idname="builtin.extrude_along_normals",
