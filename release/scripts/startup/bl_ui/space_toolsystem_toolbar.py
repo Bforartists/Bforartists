@@ -515,7 +515,9 @@ class _defs_edit_mesh:
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("mesh.polybuild_face_at_cursor_move")
             props_macro = props.MESH_OT_polybuild_face_at_cursor
+            layout.use_property_split = False
             layout.prop(props_macro, "create_quads")
+            
         return dict(
             idname="builtin.poly_build",
             label="Poly Build",
