@@ -545,6 +545,7 @@ class _defs_edit_mesh:
     def vert_slide():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("transform.vert_slide")
+            layout.use_property_split = False
             layout.prop(props, "correct_uv")
 
         return dict(
@@ -710,6 +711,7 @@ class _defs_edit_mesh:
     def extrude_cursor():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("mesh.dupli_extrude_cursor")
+            layout.use_property_split = False
             layout.prop(props, "rotate_source")
 
         return dict(
@@ -840,9 +842,11 @@ class _defs_edit_mesh:
     def bisect():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("mesh.bisect")
+            layout.use_property_split = False     
             layout.prop(props, "use_fill")
             layout.prop(props, "clear_inner")
             layout.prop(props, "clear_outer")
+            layout.use_property_split = True     
             layout.prop(props, "threshold")
         return dict(
             idname="builtin.bisect",
