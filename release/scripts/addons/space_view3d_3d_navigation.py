@@ -30,8 +30,7 @@ bl_info = {
     "location": "View3D > Sidebar > View Tab",
     "description": "Navigate the Camera & 3D View from the Toolshelf",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "3d_view/3d_navigation.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/3d_view/3d_navigation.html",
     "category": "3D View",
 }
 

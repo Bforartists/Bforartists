@@ -23,8 +23,7 @@ bl_info = {
     "blender":  (2, 80, 0),
     "location": "View3D > Add > Mesh",
     "description": "Add a bolt or nut",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "add_mesh/boltfactory.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_mesh/boltfactory.html",
     "category": "Add Mesh",
 }
 
@@ -45,7 +44,7 @@ import bpy
 
 
 def register():
-	Boltfactory.register()
+    Boltfactory.register()
 
 
 

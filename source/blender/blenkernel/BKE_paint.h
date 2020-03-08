@@ -24,6 +24,10 @@
  * \ingroup bke
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct BMFace;
 struct BMesh;
 struct Brush;
@@ -59,6 +63,7 @@ struct bToolRef;
 
 enum eOverlayFlags;
 
+#include "BLI_utildefines.h"
 #include "DNA_object_enums.h"
 
 extern const char PAINT_CURSOR_SCULPT[3];
@@ -132,7 +137,7 @@ void BKE_palette_copy_data(struct Main *bmain,
                            const struct Palette *palette_src,
                            const int flag);
 struct Palette *BKE_palette_copy(struct Main *bmain, const struct Palette *palette);
-void BKE_palette_make_local(struct Main *bmain, struct Palette *palette, const bool lib_local);
+void BKE_palette_make_local(struct Main *bmain, struct Palette *palette, const int flags);
 struct PaletteColor *BKE_palette_color_add(struct Palette *palette);
 bool BKE_palette_is_empty(const struct Palette *palette);
 void BKE_palette_color_remove(struct Palette *palette, struct PaletteColor *color);
@@ -146,7 +151,7 @@ void BKE_paint_curve_copy_data(struct Main *bmain,
                                const struct PaintCurve *pc_src,
                                const int flag);
 struct PaintCurve *BKE_paint_curve_copy(struct Main *bmain, const struct PaintCurve *pc);
-void BKE_paint_curve_make_local(struct Main *bmain, struct PaintCurve *pc, const bool lib_local);
+void BKE_paint_curve_make_local(struct Main *bmain, struct PaintCurve *pc, const int flags);
 
 bool BKE_paint_ensure(struct ToolSettings *ts, struct Paint **r_paint);
 void BKE_paint_init(struct Main *bmain, struct Scene *sce, ePaintMode mode, const char col[3]);
@@ -213,6 +218,8 @@ void BKE_paint_toolslots_brush_update_ex(struct Paint *paint, struct Brush *brus
 void BKE_paint_toolslots_brush_update(struct Paint *paint);
 void BKE_paint_toolslots_brush_validate(struct Main *bmain, struct Paint *paint);
 struct Brush *BKE_paint_toolslots_brush_get(struct Paint *paint, int slot_index);
+
+#define SCULPT_FACE_SET_NONE 0
 
 /* Used for both vertex color and weight paint */
 struct SculptVertexPaintGeomMap {
@@ -286,6 +293,9 @@ typedef struct SculptSession {
   struct MeshElemMap *pmap;
   int *pmap_mem;
 
+  /* Mesh Face Sets */
+  int *face_sets;
+
   /* BMesh for dynamic topology sculpting */
   struct BMesh *bm;
   int cd_vert_node_offset;
@@ -300,6 +310,7 @@ typedef struct SculptSession {
   /* PBVH acceleration structure */
   struct PBVH *pbvh;
   bool show_mask;
+  bool show_face_sets;
 
   /* Painting on deformed mesh */
   bool deform_modifiers_active; /* object is deformed with some modifiers */
@@ -408,4 +419,9 @@ enum {
   SCULPT_MASK_LAYER_CALC_VERT = (1 << 0),
   SCULPT_MASK_LAYER_CALC_LOOP = (1 << 1),
 };
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

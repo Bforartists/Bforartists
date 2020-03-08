@@ -25,7 +25,7 @@ bl_info = {
     'location': 'View3D > Toolshelf > Tools tab',
     'warning': '',
     'description': 'Set of utilities for CAD-like precision modeling',
-    'wiki_url': 'https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Object/NP_Station',
+    'doc_url': 'https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Object/NP_Station',
     'category': '3D View'}
 
 if 'bpy' in locals():

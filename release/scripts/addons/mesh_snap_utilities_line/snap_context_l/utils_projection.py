@@ -214,4 +214,3 @@ def intersect_ray_segment_fac(v0, v1, ray_direction, ray_origin):
         c = n - t
         cray = c.cross(ray_direction)
         return cray.dot(n) / nlen
-

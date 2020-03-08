@@ -8,9 +8,10 @@ bl_info = {
     "blender": (2, 68, 0),
     "location": "View3D > Add > Mesh",
     "warning": "First Version",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Triangles",
-    "category": "Add Mesh"}
+    "doc_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
+               "Scripts/Triangles",
+    "category": "Add Mesh",
+}
 
 """
 This script provides a triangle mesh primitive

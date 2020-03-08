@@ -8,9 +8,9 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "Toolbar > Tools > Mesh Tools: set Length(Shit+Alt+E)",
     "warning": "",
-    "wiki_url": "",
+    "doc_url": "",
     "category": "Mesh",
-    }
+}
 
 import bpy
 import bmesh

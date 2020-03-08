@@ -1200,10 +1200,6 @@ static void fill_crossdata_for_through_vert(CDTVert *v,
   SymEdge *se;
 #ifdef DEBUG_CDT
   int dbg_level = 0;
-
-  if (global_dbg) {
-    dbg_level = 1;
-  }
 #endif
 
   cd_next->lambda = 0.0;
@@ -2230,7 +2226,7 @@ static const CDT_input *modify_input_for_near_edge_ends(const CDT_input *input, 
     }
 
     /* Allocate new CDT_input, now we know sizes needed (perhaps overestimated a bit).
-     * Caller will be reponsible for freeing it and its arrays.
+     * Caller will be responsible for freeing it and its arrays.
      */
     new_input = MEM_callocN(sizeof(CDT_input), __func__);
     new_input->epsilon = input->epsilon;
@@ -2969,6 +2965,13 @@ static CDT_result *cdt_get_output(CDT_state *cdt,
   SymEdge *se, *se_start;
   CDTEdge *e;
   CDTFace *f;
+#ifdef DEBUG_CDT
+  int dbg_level = 0;
+
+  if (dbg_level > 0) {
+    fprintf(stderr, "\nCDT_GET_OUTPUT\n\n");
+  }
+#endif
 
   prepare_cdt_for_output(cdt, output_type);
 
@@ -2976,6 +2979,12 @@ static CDT_result *cdt_get_output(CDT_state *cdt,
   if (cdt->vert_array_len == 0) {
     return result;
   }
+
+#ifdef DEBUG_CDT
+  if (dbg_level > 1) {
+    dump_cdt(cdt, "cdt to output");
+  }
+#endif
 
   /* All verts without a merge_to_index will be output.
    * vert_to_output_map[i] will hold the output vertex index
@@ -3030,7 +3039,9 @@ static CDT_result *cdt_get_output(CDT_state *cdt,
       result->vert_coords[i][0] = (float)v->co[0];
       result->vert_coords[i][1] = (float)v->co[1];
       result->verts_orig_start_table[i] = orig_map_index;
-      result->verts_orig[orig_map_index++] = j;
+      if (j < input->verts_len) {
+        result->verts_orig[orig_map_index++] = j;
+      }
       for (ln = v->input_ids; ln; ln = ln->next) {
         result->verts_orig[orig_map_index++] = POINTER_AS_INT(ln->link);
       }
@@ -3114,7 +3125,7 @@ static CDT_result *cdt_get_output(CDT_state *cdt,
         result->faces_start_table[i] = j;
         se = se_start = f->symedge;
         do {
-          result->faces[j++] = se->vert->index;
+          result->faces[j++] = vert_to_output_map[se->vert->index];
           se = se->next;
         } while (se != se_start);
         result->faces_len_table[i] = j - result->faces_start_table[i];
@@ -3218,7 +3229,7 @@ CDT_result *BLI_delaunay_2d_cdt_calc(const CDT_input *input, const CDT_output_ty
     ne = input->edges_len;
     nf = input->faces_len;
 #ifdef DEBUG_CDT
-    if (dbg_level > 4) {
+    if (dbg_level > 0) {
       fprintf(stderr, "input modified for near ends; now ne=%d\n", ne);
     }
 #endif

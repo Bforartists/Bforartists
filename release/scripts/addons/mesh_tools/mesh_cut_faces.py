@@ -4,7 +4,8 @@ bl_info = {
     "version" : (1, 0, 0),
     "blender" : (2, 80, 0),
     "description" : "Cut Faces and Deselect Boundary operators",
-    "category" : "Mesh",}
+    "category" : "Mesh",
+}
 
 import bpy
 import bmesh

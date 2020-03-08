@@ -24,7 +24,7 @@ bl_info = {
     'location': 'View3D > Add > Curve',
     'description': 'Adds Dimension',
     'warning': '', # used for warning icon and text in addons panel
-    'wiki_url': 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Curve/Dimension',
+    'doc_url': 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Curve/Dimension',
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     'category': 'Add Curve'}
 
@@ -1524,7 +1524,7 @@ def createCurve(vertArray, self, align_matrix):
 
     # set curveOptions
     newCurve.dimensions = '2D'
-    newCurve.fill_mode = 'BOTH'    
+    newCurve.fill_mode = 'BOTH'
     newSpline.use_cyclic_u = True
     newSpline.use_endpoint_u = True
 
@@ -1915,7 +1915,7 @@ def main(self, align_matrix):
                 if self.Angle_Type == 'C':
                    b = ablength(0, self.Dimension_startlocation.y, self.Dimension_startlocation.z, 0, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
                    a = ablength(0, self.Dimension_startlocation.y, self.Dimension_startlocation.z, 0, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z)
-                   c = ablength(0, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z, 0, self.Dimension_endlocation.y, self.Dimension_endlocation.z) 
+                   c = ablength(0, self.Dimension_endanglelocation.y, self.Dimension_endanglelocation.z, 0, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
             if self.Dimension_liberty == '3D':
                 if self.Angle_Type == 'A':
                    c = ablength(self.Dimension_startlocation.x, self.Dimension_startlocation.y, self.Dimension_startlocation.z, self.Dimension_endlocation.x, self.Dimension_endlocation.y, self.Dimension_endlocation.z)
@@ -2063,7 +2063,7 @@ class Dimension(bpy.types.Operator):
     bl_label = "Dimension"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
     bl_description = "add dimension"
-    
+
     #settings : bpy.props.PointerProperty(type=DimensionVariables)
 
     # align_matrix for the invoke
@@ -2586,10 +2586,10 @@ def StartLocationUpdate(self, context):
 # ### MENU append ###
 def Dimension_object_menu(self, context):
     bl_label = 'Dimension'
-    
+
     obj = context.object
     layout = self.layout
-    
+
     if 'Dimension' in obj.keys():
         props = layout.operator("curve.dimension", text="Change Dimension")
         props.Dimension_Change = True
@@ -2822,10 +2822,10 @@ def Dimension_object_menu(self, context):
 
 def Dimension_edit_menu(self, context):
     bl_label = 'Dimension'
-    
+
     obj = context.object
     layout = self.layout
-    
+
     vertex = []
     for i in obj.data.vertices :
         if i.select :
@@ -3034,7 +3034,7 @@ def unregister():
     bpy.types.VIEW3D_MT_edit_mesh_context_menu.remove(Dimension_edit_menu)
     bpy.types.VIEW3D_MT_object_context_menu.remove(Dimension_object_menu)
     bpy.types.VIEW3D_MT_curve_add.remove(Dimension_button)
-    
+
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)

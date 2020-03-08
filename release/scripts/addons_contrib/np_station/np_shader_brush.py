@@ -25,7 +25,7 @@ bl_info = {
     'location': 'View3D',
     'warning': '',
     'description': 'Transfers materials between objects in 3D view',
-    'wiki_url': '',
+    'doc_url': '',
     'category': '3D View'}
 
 

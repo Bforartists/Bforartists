@@ -27,8 +27,7 @@ bl_info = {
     "location": "View3D > Sidebar > Create Tab",
     "description": "Another Noise Tool: Landscape and Displace",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "add_mesh/ant_landscape.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_mesh/ant_landscape.html",
     "category": "Add Mesh",
 }
 

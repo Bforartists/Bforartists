@@ -551,7 +551,7 @@ static void merged_element_search_call_cb(struct bContext *C, void *UNUSED(arg1)
  * Merged element search menu
  * Created on activation of a merged or aggregated icon-row icon.
  */
-static uiBlock *merged_element_search_menu(bContext *C, ARegion *ar, void *data)
+static uiBlock *merged_element_search_menu(bContext *C, ARegion *region, void *data)
 {
   static char search[64] = "";
   uiBlock *block;
@@ -560,7 +560,7 @@ static uiBlock *merged_element_search_menu(bContext *C, ARegion *ar, void *data)
   /* Clear search on each menu creation */
   *search = '\0';
 
-  block = UI_block_begin(C, ar, __func__, UI_EMBOSS);
+  block = UI_block_begin(C, region, __func__, UI_EMBOSS);
   UI_block_flag_enable(block, UI_BLOCK_LOOP | UI_BLOCK_MOVEMOUSE_QUIT | UI_BLOCK_SEARCH_MENU);
   UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
 
@@ -698,8 +698,8 @@ static void id_local_cb(bContext *C,
     Main *bmain = CTX_data_main(C);
     /* if the ID type has no special local function,
      * just clear the lib */
-    if (id_make_local(bmain, tselem->id, false, false) == false) {
-      id_clear_lib_data(bmain, tselem->id);
+    if (BKE_lib_id_make_local(bmain, tselem->id, false, 0) == false) {
+      BKE_lib_id_clear_library_data(bmain, tselem->id);
     }
     else {
       BKE_main_id_clear_newpoins(bmain);
@@ -832,7 +832,7 @@ void outliner_do_object_operation_ex(bContext *C,
     if (tselem->flag & TSE_SELECTED) {
       if (tselem->type == 0 && te->idcode == ID_OB) {
         // when objects selected in other scenes... dunno if that should be allowed
-        Scene *scene_owner = (Scene *)outliner_search_back(soops, te, ID_SCE);
+        Scene *scene_owner = (Scene *)outliner_search_back(te, ID_SCE);
         if (scene_owner && scene_act != scene_owner) {
           WM_window_set_active_scene(CTX_data_main(C), C, CTX_wm_window(C), scene_owner);
         }
@@ -1048,9 +1048,8 @@ static void constraint_cb(int event, TreeElement *te, TreeStoreElem *UNUSED(tsel
 {
   bContext *C = C_v;
   Main *bmain = CTX_data_main(C);
-  SpaceOutliner *soops = CTX_wm_space_outliner(C);
   bConstraint *constraint = (bConstraint *)te->directdata;
-  Object *ob = (Object *)outliner_search_back(soops, te, ID_OB);
+  Object *ob = (Object *)outliner_search_back(te, ID_OB);
 
   if (event == OL_CONSTRAINTOP_ENABLE) {
     constraint->flag &= ~CONSTRAINT_OFF;
@@ -1089,9 +1088,8 @@ static void modifier_cb(int event, TreeElement *te, TreeStoreElem *UNUSED(tselem
 {
   bContext *C = (bContext *)Carg;
   Main *bmain = CTX_data_main(C);
-  SpaceOutliner *soops = CTX_wm_space_outliner(C);
   ModifierData *md = (ModifierData *)te->directdata;
-  Object *ob = (Object *)outliner_search_back(soops, te, ID_OB);
+  Object *ob = (Object *)outliner_search_back(te, ID_OB);
 
   if (event == OL_MODIFIER_OP_TOGVIS) {
     md->mode ^= eModifierMode_Realtime;
@@ -2324,7 +2322,7 @@ static int outliner_operator_menu(bContext *C, const char *opname)
 }
 
 static int do_outliner_operation_event(
-    bContext *C, ARegion *ar, SpaceOutliner *soops, TreeElement *te, const float mval[2])
+    bContext *C, ARegion *region, SpaceOutliner *soops, TreeElement *te, const float mval[2])
 {
   ReportList *reports = CTX_wm_reports(C);  // XXX...
 
@@ -2343,7 +2341,7 @@ static int do_outliner_operation_event(
 
       /* Only redraw, don't rebuild here because TreeElement pointers will
        * become invalid and operations will crash. */
-      ED_region_tag_redraw_no_rebuild(ar);
+      ED_region_tag_redraw_no_rebuild(region);
     }
 
     set_operation_types(soops, &soops->tree, &scenelevel, &objectlevel, &idlevel, &datalevel);
@@ -2421,7 +2419,7 @@ static int do_outliner_operation_event(
   }
 
   for (te = te->subtree.first; te; te = te->next) {
-    int retval = do_outliner_operation_event(C, ar, soops, te, mval);
+    int retval = do_outliner_operation_event(C, region, soops, te, mval);
     if (retval) {
       return retval;
     }
@@ -2432,7 +2430,7 @@ static int do_outliner_operation_event(
 
 static int outliner_operation(bContext *C, wmOperator *UNUSED(op), const wmEvent *event)
 {
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   SpaceOutliner *soops = CTX_wm_space_outliner(C);
   uiBut *but = UI_context_active_but_get(C);
   TreeElement *te;
@@ -2442,10 +2440,10 @@ static int outliner_operation(bContext *C, wmOperator *UNUSED(op), const wmEvent
     UI_but_tooltip_timer_remove(C, but);
   }
 
-  UI_view2d_region_to_view(&ar->v2d, event->mval[0], event->mval[1], &fmval[0], &fmval[1]);
+  UI_view2d_region_to_view(&region->v2d, event->mval[0], event->mval[1], &fmval[0], &fmval[1]);
 
   for (te = soops->tree.first; te; te = te->next) {
-    int retval = do_outliner_operation_event(C, ar, soops, te, fmval);
+    int retval = do_outliner_operation_event(C, region, soops, te, fmval);
     if (retval) {
       return retval;
     }

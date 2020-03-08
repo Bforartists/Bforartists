@@ -26,8 +26,8 @@ bl_info = {
     "location": "Render > Engine > Network Render",
     "description": "Distributed rendering for Blender",
     "warning": "Stable but still work in progress",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Render/Net_render",
+    "doc_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
+               "Scripts/Render/Net_render",
     "category": "Render",
 }
 

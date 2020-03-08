@@ -16,8 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 # Contributed to by:
-# testscreenings, Alejandro Omar Chocano Vasquez, Jimmy Hazevoet, meta-androcto #
-# Cmomoney, Jared Forsyth, Adam Newgas, Spivak Vladimir, Jared Forsyth, Atom    #
+# testscreenings, Alejandro Omar Chocano Vasquez, Jimmy Hazevoet, meta-androcto
+# Cmomoney, Jared Forsyth, Adam Newgas, Spivak Vladimir, Jared Forsyth, Atom
 # Antonio Osprite, Marius Giurgi (DolphinDream)
 
 bl_info = {
@@ -28,10 +28,9 @@ bl_info = {
     "location": "View3D > Add > Curve > Extra Objects",
     "description": "Add extra curve object types",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "add_curve/extra_objects.html",
-    "category": "Add Curve"
-    }
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
+    "category": "Add Curve",
+}
 
 if "bpy" in locals():
     import importlib

@@ -24,6 +24,12 @@
  * \ingroup bli
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "BLI_utildefines.h"
+
 typedef unsigned int BLI_bitmap;
 
 /* warning: the bitmap does not keep track of its own size or check
@@ -108,5 +114,9 @@ void BLI_bitmap_flip_all(BLI_bitmap *bitmap, size_t bits);
 void BLI_bitmap_copy_all(BLI_bitmap *dst, const BLI_bitmap *src, size_t bits);
 void BLI_bitmap_and_all(BLI_bitmap *dst, const BLI_bitmap *src, size_t bits);
 void BLI_bitmap_or_all(BLI_bitmap *dst, const BLI_bitmap *src, size_t bits);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

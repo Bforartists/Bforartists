@@ -214,4 +214,3 @@ def send_report(message):
         bpy.ops.view3d.cm_send_report(ctx, 'INVOKE_DEFAULT', message=message)
 
     bpy.app.timers.register(report)
-

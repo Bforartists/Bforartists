@@ -9,9 +9,8 @@ bl_info = {
     "description": "Add 3 Point Lighting to Selected / Active Object",
     "warning": "",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/lighting/trilighting.html",
     "category": "Lighting",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "lighting/trilighting.html",
 }
 
 import bpy

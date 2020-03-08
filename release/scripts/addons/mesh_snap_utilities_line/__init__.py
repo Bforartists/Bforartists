@@ -25,8 +25,9 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "View3D > TOOLS > Line Tool",
     "description": "Extends Blender Snap controls",
-    "wiki_url" : "https://blenderartists.org/t/cad-snap-utilities",
-    "category": "Mesh"}
+    "doc_url" : "https://blenderartists.org/t/cad-snap-utilities",
+    "category": "Mesh",
+}
 
 if "bpy" in locals():
     import importlib

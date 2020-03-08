@@ -24,6 +24,10 @@
 #ifndef __ED_NODE_H__
 #define __ED_NODE_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct ID;
 struct Main;
 struct Scene;
@@ -107,7 +111,14 @@ void ED_node_composite_job(const struct bContext *C,
 void ED_operatormacros_node(void);
 
 /* node_view.c */
-bool ED_space_node_color_sample(
-    struct Main *bmain, struct SpaceNode *snode, struct ARegion *ar, int mval[2], float r_col[3]);
+bool ED_space_node_color_sample(struct Main *bmain,
+                                struct SpaceNode *snode,
+                                struct ARegion *region,
+                                int mval[2],
+                                float r_col[3]);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __ED_NODE_H__ */

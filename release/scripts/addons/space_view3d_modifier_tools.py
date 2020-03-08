@@ -25,8 +25,7 @@ bl_info = {
     "location": "Properties > Modifiers",
     "description": "Modifiers Specials Show/Hide/Apply Selected",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "interface/modifier_tools.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/modifier_tools.html",
     "category": "Interface"
     }
 

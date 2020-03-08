@@ -131,6 +131,13 @@ class GHOST_SystemWin32 : public GHOST_System {
   GHOST_IContext *createOffscreenContext();
 
   /**
+   * Create a new offscreen context.
+   * Never explicitly delete the window, use disposeContext() instead.
+   * \return  The new context (or 0 if creation failed).
+   */
+  GHOST_IContext *createOffscreenContext(GHOST_TDrawingContextType type);
+
+  /**
    * Dispose of a context.
    * \param   context Pointer to the context to be disposed.
    * \return  Indication of success.
@@ -247,6 +254,13 @@ class GHOST_SystemWin32 : public GHOST_System {
    * \return A success value.
    */
   GHOST_TSuccess exit();
+
+  /**
+   * Create a new offscreen DirectX context.
+   * Never explicitly delete the window, use disposeContext() instead.
+   * \return  The new context (or 0 if creation failed).
+   */
+  GHOST_IContext *createOffscreenContextD3D();
 
   /**
    * Converts raw WIN32 key codes from the wndproc to GHOST keys.
@@ -400,6 +414,8 @@ class GHOST_SystemWin32 : public GHOST_System {
 
   /** The current state of the modifier keys. */
   GHOST_ModifierKeys m_modifierKeys;
+  /** The virtual-key code (VKey) of the last press event. Used to detect repeat events. */
+  unsigned short m_keycode_last_repeat_key;
   /** State variable set at initialization. */
   bool m_hasPerformanceCounter;
   /** High frequency timer variable. */

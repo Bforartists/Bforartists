@@ -206,8 +206,8 @@ static void set_prop_dist(TransInfo *t, const bool with_dist)
   const bool use_island = transdata_check_local_islands(t, t->around);
 
   if (t->flag & T_PROP_PROJECTED) {
-    if (t->spacetype == SPACE_VIEW3D && t->ar && t->ar->regiontype == RGN_TYPE_WINDOW) {
-      RegionView3D *rv3d = t->ar->regiondata;
+    if (t->spacetype == SPACE_VIEW3D && t->region && t->region->regiontype == RGN_TYPE_WINDOW) {
+      RegionView3D *rv3d = t->region->regiondata;
       normalize_v3_v3(_proj_vec, rv3d->viewinv[2]);
       proj_vec = _proj_vec;
     }
@@ -900,6 +900,8 @@ static void posttrans_gpd_clean(bGPdata *gpd)
   }
   /* set cache flag to dirty */
   DEG_id_tag_update(&gpd->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
+
+  WM_main_add_notifier(NC_GPENCIL | NA_EDITED, gpd);
 }
 
 static void posttrans_mask_clean(Mask *mask)
@@ -929,6 +931,8 @@ static void posttrans_mask_clean(Mask *mask)
     }
 #endif
   }
+
+  WM_main_add_notifier(NC_MASK | NA_EDITED, mask);
 }
 
 /* Time + Average value */
@@ -1420,10 +1424,10 @@ void autokeyframe_object(bContext *C, Scene *scene, ViewLayer *view_layer, Objec
     KeyingSet *active_ks = ANIM_scene_get_active_keyingset(scene);
     ListBase dsources = {NULL, NULL};
     float cfra = (float)CFRA;  // xxx this will do for now
-    short flag = 0;
+    eInsertKeyFlags flag = 0;
 
-    /* get flags used for inserting keyframes */
-    flag = ANIM_get_keyframing_flags(scene, 1);
+    /* Get flags used for inserting keyframes. */
+    flag = ANIM_get_keyframing_flags(scene, true);
 
     /* add datasource override for the object */
     ANIM_relative_keyingset_add_source(&dsources, id, NULL, NULL);
@@ -1562,14 +1566,14 @@ void autokeyframe_pose(bContext *C, Scene *scene, Object *ob, int tmode, short t
     KeyingSet *active_ks = ANIM_scene_get_active_keyingset(scene);
     ListBase nla_cache = {NULL, NULL};
     float cfra = (float)CFRA;
-    short flag = 0;
+    eInsertKeyFlags flag = 0;
 
     /* flag is initialized from UserPref keyframing settings
      * - special exception for targetless IK - INSERTKEY_MATRIX keyframes should get
      *   visual keyframes even if flag not set, as it's not that useful otherwise
      *   (for quick animation recording)
      */
-    flag = ANIM_get_keyframing_flags(scene, 1);
+    flag = ANIM_get_keyframing_flags(scene, true);
 
     if (targetless_ik) {
       flag |= INSERTKEY_MATRIX;
@@ -2035,15 +2039,24 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
        *                            but we made duplicates, so get rid of these
        */
       if ((saction->flag & SACTION_NOTRANSKEYCULL) == 0 && ((canceled == 0) || (duplicate))) {
-        bGPdata *gpd;
+        ListBase anim_data = {NULL, NULL};
+        const int filter = ANIMFILTER_DATA_VISIBLE;
+        ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
-        // XXX: BAD! this get gpencil datablocks directly from main db...
-        // but that's how this currently works :/
-        for (gpd = bmain->gpencils.first; gpd; gpd = gpd->id.next) {
-          if (ID_REAL_USERS(gpd)) {
-            posttrans_gpd_clean(gpd);
+        for (bAnimListElem *ale = anim_data.first; ale; ale = ale->next) {
+          if (ale->datatype == ALE_GPFRAME) {
+            ale->id->tag |= LIB_TAG_DOIT;
           }
         }
+        for (bAnimListElem *ale = anim_data.first; ale; ale = ale->next) {
+          if (ale->datatype == ALE_GPFRAME) {
+            if (ale->id->tag & LIB_TAG_DOIT) {
+              ale->id->tag &= ~LIB_TAG_DOIT;
+              posttrans_gpd_clean((bGPdata *)ale->id);
+            }
+          }
+        }
+        ANIM_animdata_freelist(&anim_data);
       }
     }
     else if (ac.datatype == ANIMCONT_MASK) {
@@ -2057,15 +2070,24 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
        *    User canceled the transform, but we made duplicates, so get rid of these.
        */
       if ((saction->flag & SACTION_NOTRANSKEYCULL) == 0 && ((canceled == 0) || (duplicate))) {
-        Mask *mask;
+        ListBase anim_data = {NULL, NULL};
+        const int filter = ANIMFILTER_DATA_VISIBLE;
+        ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
-        // XXX: BAD! this get gpencil datablocks directly from main db...
-        // but that's how this currently works :/
-        for (mask = bmain->masks.first; mask; mask = mask->id.next) {
-          if (ID_REAL_USERS(mask)) {
-            posttrans_mask_clean(mask);
+        for (bAnimListElem *ale = anim_data.first; ale; ale = ale->next) {
+          if (ale->datatype == ALE_MASKLAY) {
+            ale->id->tag |= LIB_TAG_DOIT;
           }
         }
+        for (bAnimListElem *ale = anim_data.first; ale; ale = ale->next) {
+          if (ale->datatype == ALE_MASKLAY) {
+            if (ale->id->tag & LIB_TAG_DOIT) {
+              ale->id->tag &= ~LIB_TAG_DOIT;
+              posttrans_mask_clean((Mask *)ale->id);
+            }
+          }
+        }
+        ANIM_animdata_freelist(&anim_data);
       }
     }
 
@@ -2094,7 +2116,7 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
     }
 
     /* make sure all F-Curves are set correctly */
-    if (!ELEM(ac.datatype, ANIMCONT_GPENCIL, ANIMCONT_MASK)) {
+    if (!ELEM(ac.datatype, ANIMCONT_GPENCIL)) {
       ANIM_editkeyframes_refresh(&ac);
     }
 
@@ -2746,9 +2768,9 @@ void createTransData(bContext *C, TransInfo *t)
     }
 
     /* Check if we're transforming the camera from the camera */
-    if ((t->spacetype == SPACE_VIEW3D) && (t->ar->regiontype == RGN_TYPE_WINDOW)) {
+    if ((t->spacetype == SPACE_VIEW3D) && (t->region->regiontype == RGN_TYPE_WINDOW)) {
       View3D *v3d = t->view;
-      RegionView3D *rv3d = t->ar->regiondata;
+      RegionView3D *rv3d = t->region->regiondata;
       if ((rv3d->persp == RV3D_CAMOB) && v3d->camera) {
         /* we could have a flag to easily check an object is being transformed */
         if (v3d->camera->id.tag & LIB_TAG_DOIT) {

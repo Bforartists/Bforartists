@@ -24,9 +24,9 @@ bl_info = {
     "location": "Movie clip Editor > Tools Panel > Autotrack",
     "description": "Motion Tracking with automatic feature detection.",
     "warning": "",
-    "wiki_url": "https://github.com/miikapuustinen/blender_autotracker",
+    "doc_url": "https://github.com/miikapuustinen/blender_autotracker",
     "category": "Video Tools",
-    }
+}
 
 import bpy
 import bgl

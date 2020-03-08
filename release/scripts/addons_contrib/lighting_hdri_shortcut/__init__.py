@@ -6,12 +6,13 @@ bl_info = {
     "author": "Nicolas Priniotakis (Nikos)",
     "version": (1, 3, 2, 0),
     "blender": (2, 80, 0),
-    "category": "Lighting",
     "location": "Properties > World",
     "description": "Easy setup for HDRI global lightings",
     "warning": "",
-    "wiki_url": "",
-    "tracker_url": "", }
+    "doc_url": "",
+    "tracker_url": "",
+    "category": "Lighting",
+}
 
 import bpy
 from bpy.types import Operator, AddonPreferences

@@ -2481,9 +2481,9 @@ static int sequencer_delete_exec(bContext *C, wmOperator *UNUSED(op))
 
 static int sequencer_delete_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
 
-  if (ar->regiontype == RGN_TYPE_WINDOW) {
+  if (region->regiontype == RGN_TYPE_WINDOW) {
     /* bounding box of 30 pixels is used for markers shortcuts,
      * prevent conflict with markers shortcuts here
      */
@@ -2902,13 +2902,13 @@ void SEQUENCER_OT_meta_separate(wmOperatorType *ot)
 /* view_all operator */
 static int sequencer_view_all_exec(bContext *C, wmOperator *op)
 {
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   rctf box;
 
   const int smooth_viewtx = WM_operator_smooth_viewtx_get(op);
 
   boundbox_seq(CTX_data_scene(C), &box);
-  UI_view2d_smooth_view(C, ar, &box, smooth_viewtx);
+  UI_view2d_smooth_view(C, region, &box, smooth_viewtx);
   return OPERATOR_FINISHED;
 }
 
@@ -2956,7 +2956,7 @@ static int sequencer_view_all_preview_exec(bContext *C, wmOperator *UNUSED(op))
   bScreen *sc = CTX_wm_screen(C);
   ScrArea *area = CTX_wm_area(C);
 #if 0
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   SpaceSeq *sseq = area->spacedata.first;
   Scene *scene = CTX_data_scene(C);
 #endif
@@ -2971,8 +2971,8 @@ static int sequencer_view_all_preview_exec(bContext *C, wmOperator *UNUSED(op))
   float zoomX, zoomY;
   int width, height, imgwidth, imgheight;
 
-  width = ar->winx;
-  height = ar->winy;
+  width = region->winx;
+  height = region->winy;
 
   seq_reset_imageofs(sseq);
 
@@ -3105,7 +3105,7 @@ static int sequencer_view_selected_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   View2D *v2d = UI_view2d_fromcontext(C);
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   Editing *ed = BKE_sequencer_editing_get(scene, false);
   Sequence *last_seq = BKE_sequencer_active_get(scene);
   Sequence *seq;
@@ -3158,7 +3158,7 @@ static int sequencer_view_selected_exec(bContext *C, wmOperator *op)
       cur_new.ymax = ymid + (orig_height / 2);
     }
 
-    UI_view2d_smooth_view(C, ar, &cur_new, smooth_viewtx);
+    UI_view2d_smooth_view(C, region, &cur_new, smooth_viewtx);
 
     return OPERATOR_FINISHED;
   }
@@ -3170,7 +3170,7 @@ static int sequencer_view_selected_exec(bContext *C, wmOperator *op)
 void SEQUENCER_OT_view_selected(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "View Selected";
+  ot->name = "Frame Selected";
   ot->idname = "SEQUENCER_OT_view_selected";
   ot->description = "Zoom the sequencer on the selected strips";
 

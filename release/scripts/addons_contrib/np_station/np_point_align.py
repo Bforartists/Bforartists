@@ -26,7 +26,7 @@ bl_info = {
     'location': 'View3D',
     'warning': '',
     'description': 'Aligns selected objects using 1, 2 or 3 pairs of snap points',
-    'wiki_url': '',
+    'doc_url': '',
     'category': '3D View'}
 
 import bpy

@@ -677,12 +677,12 @@ static void gp_duplicate_points(const bGPDstroke *gps,
         gpsd->tot_triangles = 0;
 
         /* now, make a new points array, and copy of the relevant parts */
-        gpsd->points = MEM_callocN(sizeof(bGPDspoint) * len, "gps stroke points copy");
+        gpsd->points = MEM_mallocN(sizeof(bGPDspoint) * len, "gps stroke points copy");
         memcpy(gpsd->points, gps->points + start_idx, sizeof(bGPDspoint) * len);
         gpsd->totpoints = len;
 
         if (gps->dvert != NULL) {
-          gpsd->dvert = MEM_callocN(sizeof(MDeformVert) * len, "gps stroke weights copy");
+          gpsd->dvert = MEM_mallocN(sizeof(MDeformVert) * len, "gps stroke weights copy");
           memcpy(gpsd->dvert, gps->dvert + start_idx, sizeof(MDeformVert) * len);
 
           /* Copy weights */
@@ -3418,8 +3418,8 @@ static int gp_strokes_reproject_exec(bContext *C, wmOperator *op)
   ToolSettings *ts = CTX_data_tool_settings(C);
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Object *ob = CTX_data_active_object(C);
-  ARegion *ar = CTX_wm_region(C);
-  RegionView3D *rv3d = ar->regiondata;
+  ARegion *region = CTX_wm_region(C);
+  RegionView3D *rv3d = region->regiondata;
   SnapObjectContext *sctx = NULL;
   int oldframe = (int)DEG_get_ctime(depsgraph);
 
@@ -3434,7 +3434,7 @@ static int gp_strokes_reproject_exec(bContext *C, wmOperator *op)
   int cfra_prv = INT_MIN;
   /* init snap context for geometry projection */
   sctx = ED_transform_snap_object_context_create_view3d(
-      bmain, scene, depsgraph, 0, ar, CTX_wm_view3d(C));
+      bmain, scene, depsgraph, 0, region, CTX_wm_view3d(C));
 
   /* Go through each editable + selected stroke, adjusting each of its points one by one... */
   GP_EDITABLE_STROKES_BEGIN (gpstroke_iter, C, gpl, gps) {
@@ -3523,7 +3523,7 @@ static int gp_strokes_reproject_exec(bContext *C, wmOperator *op)
           float location[3] = {0.0f, 0.0f, 0.0f};
           float normal[3] = {0.0f, 0.0f, 0.0f};
 
-          ED_view3d_win_to_ray(ar, xy, &ray_start[0], &ray_normal[0]);
+          ED_view3d_win_to_ray(region, xy, &ray_start[0], &ray_normal[0]);
           if (ED_transform_snap_object_project_ray(sctx,
                                                    &(const struct SnapObjectParams){
                                                        .snap_select = SNAP_ALL,
@@ -4105,8 +4105,11 @@ static int gp_stroke_separate_exec(bContext *C, wmOperator *op)
 
   const bool is_multiedit = (bool)GPENCIL_MULTIEDIT_SESSIONS_ON(gpd_src);
 
-  /* create a new object */
-  base_new = ED_object_add_duplicate(bmain, scene, view_layer, base_old, 0);
+  /* Create a new object. */
+  /* Take into account user preferences for duplicating actions. */
+  short dupflag = (U.dupflag & USER_DUP_ACT);
+
+  base_new = ED_object_add_duplicate(bmain, scene, view_layer, base_old, dupflag);
   ob_dst = base_new->object;
   ob_dst->mode = OB_MODE_OBJECT;
   /* create new grease pencil datablock */

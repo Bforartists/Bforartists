@@ -24,6 +24,10 @@
 #ifndef __ED_SPACE_API_H__
 #define __ED_SPACE_API_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct ARegionType;
 struct bContext;
 
@@ -73,6 +77,12 @@ void ED_region_draw_cb_draw(const struct bContext *, struct ARegion *, int);
 void ED_region_draw_cb_exit(struct ARegionType *, void *);
 /* generic callbacks */
 /* ed_util.c */
-void ED_region_draw_mouse_line_cb(const struct bContext *C, struct ARegion *ar, void *arg_info);
+void ED_region_draw_mouse_line_cb(const struct bContext *C,
+                                  struct ARegion *region,
+                                  void *arg_info);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __ED_SPACE_API_H__ */

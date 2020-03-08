@@ -26,7 +26,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "3D View Object & Edit modes",
     "warning": "",
-    "wiki_url": "",
+    "doc_url": "",
     "category": "Proportional Edit Pie"
     }
 

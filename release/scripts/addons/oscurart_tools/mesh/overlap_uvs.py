@@ -128,4 +128,3 @@ class PasteUvIsland(Operator):
     def execute(self, context):
         defPasteUvsIsland(self, self.uvOffset, self.rotateUv, context)
         return {'FINISHED'}
-

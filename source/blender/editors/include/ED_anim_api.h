@@ -24,6 +24,10 @@
 #ifndef __ED_ANIM_API_H__
 #define __ED_ANIM_API_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct AnimData;
 struct Depsgraph;
 struct ID;
@@ -80,7 +84,7 @@ typedef struct bAnimContext {
   /** editor data */
   struct SpaceLink *sl;
   /** region within editor */
-  struct ARegion *ar;
+  struct ARegion *region;
 
   /** dopesheet data for editor (or which is being used) */
   struct bDopeSheet *ads;
@@ -403,7 +407,7 @@ typedef enum eAnimFilter_Flags {
 
 /* channel heights */
 #define ACHANNEL_FIRST_TOP(ac) \
-  (UI_view2d_scale_get_y(&(ac)->ar->v2d) * -UI_TIME_SCRUB_MARGIN_Y - ACHANNEL_SKIP)
+  (UI_view2d_scale_get_y(&(ac)->region->v2d) * -UI_TIME_SCRUB_MARGIN_Y - ACHANNEL_SKIP)
 #define ACHANNEL_HEIGHT(ac) (0.8f * (ac)->yscale_fac * U.widget_unit)
 #define ACHANNEL_SKIP (0.1f * U.widget_unit)
 #define ACHANNEL_STEP(ac) (ACHANNEL_HEIGHT(ac) + ACHANNEL_SKIP)
@@ -421,7 +425,7 @@ typedef enum eAnimFilter_Flags {
 
 /* NLA channel heights */
 #define NLACHANNEL_FIRST_TOP(ac) \
-  (UI_view2d_scale_get_y(&(ac)->ar->v2d) * -UI_TIME_SCRUB_MARGIN_Y - NLACHANNEL_SKIP)
+  (UI_view2d_scale_get_y(&(ac)->region->v2d) * -UI_TIME_SCRUB_MARGIN_Y - NLACHANNEL_SKIP)
 #define NLACHANNEL_HEIGHT(snla) \
   ((snla && (snla->flag & SNLA_NOSTRIPCURVES)) ? (0.8f * U.widget_unit) : (1.2f * U.widget_unit))
 #define NLACHANNEL_SKIP (0.1f * U.widget_unit)
@@ -858,5 +862,9 @@ void animviz_calc_motionpaths(struct Depsgraph *depsgraph,
                               bool restore);
 
 void animviz_get_object_motionpaths(struct Object *ob, ListBase *targets);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __ED_ANIM_API_H__ */

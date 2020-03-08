@@ -584,16 +584,16 @@ static void area_region_from_regiondata(bScreen *sc,
                                         ARegion **r_ar)
 {
   ScrArea *sa;
-  ARegion *ar;
+  ARegion *region;
 
   *r_sa = NULL;
   *r_ar = NULL;
 
   for (sa = sc->areabase.first; sa; sa = sa->next) {
-    for (ar = sa->regionbase.first; ar; ar = ar->next) {
-      if (ar->regiondata == regiondata) {
+    for (region = sa->regionbase.first; region; region = region->next) {
+      if (region->regiondata == regiondata) {
         *r_sa = sa;
-        *r_ar = ar;
+        *r_ar = region;
         return;
       }
     }
@@ -617,9 +617,9 @@ static bool rna_Space_bool_from_region_flag_get_by_type(PointerRNA *ptr,
                                                         const int region_flag)
 {
   ScrArea *sa = rna_area_from_space(ptr);
-  ARegion *ar = BKE_area_find_region_type(sa, region_type);
-  if (ar) {
-    return (ar->flag & region_flag);
+  ARegion *region = BKE_area_find_region_type(sa, region_type);
+  if (region) {
+    return (region->flag & region_flag);
   }
   return false;
 }
@@ -630,11 +630,11 @@ static void rna_Space_bool_from_region_flag_set_by_type(PointerRNA *ptr,
                                                         bool value)
 {
   ScrArea *sa = rna_area_from_space(ptr);
-  ARegion *ar = BKE_area_find_region_type(sa, region_type);
-  if (ar && (ar->alignment != RGN_ALIGN_NONE)) {
-    SET_FLAG_FROM_TEST(ar->flag, value, region_flag);
+  ARegion *region = BKE_area_find_region_type(sa, region_type);
+  if (region && (region->alignment != RGN_ALIGN_NONE)) {
+    SET_FLAG_FROM_TEST(region->flag, value, region_flag);
   }
-  ED_region_tag_redraw(ar);
+  ED_region_tag_redraw(region);
 }
 
 static void rna_Space_bool_from_region_flag_update_by_type(bContext *C,
@@ -643,22 +643,22 @@ static void rna_Space_bool_from_region_flag_update_by_type(bContext *C,
                                                            const int region_flag)
 {
   ScrArea *sa = rna_area_from_space(ptr);
-  ARegion *ar = BKE_area_find_region_type(sa, region_type);
-  if (ar) {
+  ARegion *region = BKE_area_find_region_type(sa, region_type);
+  if (region) {
     if (region_flag == RGN_FLAG_HIDDEN) {
       /* Only support animation when the area is in the current context. */
-      if (ar->overlap && (sa == CTX_wm_area(C))) {
-        ED_region_visibility_change_update_animated(C, sa, ar);
+      if (region->overlap && (sa == CTX_wm_area(C))) {
+        ED_region_visibility_change_update_animated(C, sa, region);
       }
       else {
-        ED_region_visibility_change_update(C, sa, ar);
+        ED_region_visibility_change_update(C, sa, region);
       }
     }
     else if (region_flag == RGN_FLAG_HIDDEN_BY_USER) {
-      if (!(ar->flag & RGN_FLAG_HIDDEN_BY_USER) != !(ar->flag & RGN_FLAG_HIDDEN)) {
-        ED_region_toggle_hidden(C, ar);
+      if (!(region->flag & RGN_FLAG_HIDDEN_BY_USER) != !(region->flag & RGN_FLAG_HIDDEN)) {
+        ED_region_toggle_hidden(C, region);
 
-        if ((ar->flag & RGN_FLAG_HIDDEN_BY_USER) == 0) {
+        if ((region->flag & RGN_FLAG_HIDDEN_BY_USER) == 0) {
           ED_area_type_hud_ensure(C, sa);
         }
       }
@@ -779,12 +779,12 @@ static void rna_Space_show_region_hud_update(bContext *C, PointerRNA *ptr)
 static bool rna_Space_view2d_sync_get(PointerRNA *ptr)
 {
   ScrArea *sa;
-  ARegion *ar;
+  ARegion *region;
 
   sa = rna_area_from_space(ptr); /* can be NULL */
-  ar = BKE_area_find_region_type(sa, RGN_TYPE_WINDOW);
-  if (ar) {
-    View2D *v2d = &ar->v2d;
+  region = BKE_area_find_region_type(sa, RGN_TYPE_WINDOW);
+  if (region) {
+    View2D *v2d = &region->v2d;
     return (v2d->flag & V2D_VIEWSYNC_SCREEN_TIME) != 0;
   }
 
@@ -794,12 +794,12 @@ static bool rna_Space_view2d_sync_get(PointerRNA *ptr)
 static void rna_Space_view2d_sync_set(PointerRNA *ptr, bool value)
 {
   ScrArea *sa;
-  ARegion *ar;
+  ARegion *region;
 
   sa = rna_area_from_space(ptr); /* can be NULL */
-  ar = BKE_area_find_region_type(sa, RGN_TYPE_WINDOW);
-  if (ar) {
-    View2D *v2d = &ar->v2d;
+  region = BKE_area_find_region_type(sa, RGN_TYPE_WINDOW);
+  if (region) {
+    View2D *v2d = &region->v2d;
     if (value) {
       v2d->flag |= V2D_VIEWSYNC_SCREEN_TIME;
     }
@@ -814,14 +814,14 @@ static void rna_Space_view2d_sync_update(Main *UNUSED(bmain),
                                          PointerRNA *ptr)
 {
   ScrArea *sa;
-  ARegion *ar;
+  ARegion *region;
 
   sa = rna_area_from_space(ptr); /* can be NULL */
-  ar = BKE_area_find_region_type(sa, RGN_TYPE_WINDOW);
+  region = BKE_area_find_region_type(sa, RGN_TYPE_WINDOW);
 
-  if (ar) {
+  if (region) {
     bScreen *sc = (bScreen *)ptr->owner_id;
-    View2D *v2d = &ar->v2d;
+    View2D *v2d = &region->v2d;
 
     UI_view2d_sync(sc, sa, v2d, V2D_LOCK_SET);
   }
@@ -884,8 +884,8 @@ static PointerRNA rna_SpaceView3D_region_3d_get(PointerRNA *ptr)
   void *regiondata = NULL;
   if (sa) {
     ListBase *regionbase = (sa->spacedata.first == v3d) ? &sa->regionbase : &v3d->regionbase;
-    ARegion *ar = regionbase->last; /* always last in list, weak .. */
-    regiondata = ar->regiondata;
+    ARegion *region = regionbase->last; /* always last in list, weak .. */
+    regiondata = region->regiondata;
   }
 
   return rna_pointer_inherit_refine(ptr, &RNA_RegionView3D, regiondata);
@@ -898,16 +898,17 @@ static void rna_SpaceView3D_region_quadviews_begin(CollectionPropertyIterator *i
   ScrArea *sa = rna_area_from_space(ptr);
   int i = 3;
 
-  ARegion *ar = ((sa && sa->spacedata.first == v3d) ? &sa->regionbase : &v3d->regionbase)->last;
+  ARegion *region =
+      ((sa && sa->spacedata.first == v3d) ? &sa->regionbase : &v3d->regionbase)->last;
   ListBase lb = {NULL, NULL};
 
-  if (ar && ar->alignment == RGN_ALIGN_QSPLIT) {
-    while (i-- && ar) {
-      ar = ar->prev;
+  if (region && region->alignment == RGN_ALIGN_QSPLIT) {
+    while (i-- && region) {
+      region = region->prev;
     }
 
     if (i < 0) {
-      lb.first = ar;
+      lb.first = region;
     }
   }
 
@@ -926,11 +927,11 @@ static void rna_RegionView3D_quadview_update(Main *UNUSED(main),
                                              PointerRNA *ptr)
 {
   ScrArea *sa;
-  ARegion *ar;
+  ARegion *region;
 
-  rna_area_region_from_regiondata(ptr, &sa, &ar);
-  if (sa && ar && ar->alignment == RGN_ALIGN_QSPLIT) {
-    ED_view3d_quadview_update(sa, ar, false);
+  rna_area_region_from_regiondata(ptr, &sa, &region);
+  if (sa && region && region->alignment == RGN_ALIGN_QSPLIT) {
+    ED_view3d_quadview_update(sa, region, false);
   }
 }
 
@@ -940,11 +941,11 @@ static void rna_RegionView3D_quadview_clip_update(Main *UNUSED(main),
                                                   PointerRNA *ptr)
 {
   ScrArea *sa;
-  ARegion *ar;
+  ARegion *region;
 
-  rna_area_region_from_regiondata(ptr, &sa, &ar);
-  if (sa && ar && ar->alignment == RGN_ALIGN_QSPLIT) {
-    ED_view3d_quadview_update(sa, ar, true);
+  rna_area_region_from_regiondata(ptr, &sa, &region);
+  if (sa && region && region->alignment == RGN_ALIGN_QSPLIT) {
+    ED_view3d_quadview_update(sa, region, true);
   }
 }
 
@@ -1513,15 +1514,15 @@ static void rna_SpaceImageEditor_zoom_get(PointerRNA *ptr, float *values)
 {
   SpaceImage *sima = (SpaceImage *)ptr->data;
   ScrArea *sa;
-  ARegion *ar;
+  ARegion *region;
 
   values[0] = values[1] = 1;
 
   /* find aregion */
   sa = rna_area_from_space(ptr); /* can be NULL */
-  ar = BKE_area_find_region_type(sa, RGN_TYPE_WINDOW);
-  if (ar) {
-    ED_space_image_get_zoom(sima, ar, &values[0], &values[1]);
+  region = BKE_area_find_region_type(sa, RGN_TYPE_WINDOW);
+  if (region) {
+    ED_space_image_get_zoom(sima, region, &values[0], &values[1]);
   }
 }
 
@@ -2214,9 +2215,9 @@ static void rna_SpaceNodeEditor_cursor_location_from_region(SpaceNode *snode,
                                                             int x,
                                                             int y)
 {
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
 
-  UI_view2d_region_to_view(&ar->v2d, x, y, &snode->cursor[0], &snode->cursor[1]);
+  UI_view2d_region_to_view(&region->v2d, x, y, &snode->cursor[0], &snode->cursor[1]);
   snode->cursor[0] /= UI_DPI_FAC;
   snode->cursor[1] /= UI_DPI_FAC;
 }
@@ -2332,6 +2333,11 @@ static void rna_FileSelectPrams_filter_glob_set(PointerRNA *ptr, const char *val
 
   /* Remove stupi things like last group being a wildcard-only one... */
   BLI_path_extension_glob_validate(params->filter_glob);
+}
+
+static PointerRNA rna_FileSelectParams_filter_id_get(PointerRNA *ptr)
+{
+  return rna_pointer_inherit_refine(ptr, &RNA_FileSelectIDFilter, ptr->data);
 }
 
 static void rna_FileBrowser_FSMenuEntry_path_get(PointerRNA *ptr, char *value)
@@ -2521,6 +2527,9 @@ static int rna_FileBrowser_FSMenu_active_get(PointerRNA *ptr, const FSMenuCatego
     case FS_CATEGORY_RECENT:
       actnr = sf->recentnr;
       break;
+    case FS_CATEGORY_OTHER:
+      /* pass. */
+      break;
   }
 
   return actnr;
@@ -2547,6 +2556,9 @@ static void rna_FileBrowser_FSMenu_active_set(PointerRNA *ptr,
         break;
       case FS_CATEGORY_RECENT:
         sf->recentnr = value;
+        break;
+      case FS_CATEGORY_OTHER:
+        /* pass. */
         break;
     }
 
@@ -2802,21 +2814,9 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
   };
 
   static const EnumPropertyItem pixel_snap_mode_items[] = {
-      {SI_PIXEL_SNAP_DISABLED,
-       "DISABLED",
-       ICON_SNAPTOPIXEL_OFF,
-       "Disabled",
-       "Don't snap to pixels"},
-      {SI_PIXEL_SNAP_CORNER,
-       "CORNER",
-       ICON_SNAPTOPIXEL_CORNER,
-       "Corner",
-       "Snap to pixel corners"},
-      {SI_PIXEL_SNAP_CENTER,
-       "CENTER",
-       ICON_SNAPTOPIXEL_CENTER,
-       "Center",
-       "Snap to pixel centers"},
+      {SI_PIXEL_SNAP_DISABLED, "DISABLED", ICON_SNAPTOPIXEL_OFF, "Disabled", "Don't snap to pixels"},
+      {SI_PIXEL_SNAP_CORNER, "CORNER", ICON_SNAPTOPIXEL_CORNER, "Corner", "Snap to pixel corners"},
+      {SI_PIXEL_SNAP_CENTER, "CENTER", ICON_SNAPTOPIXEL_CENTER, "Center", "Snap to pixel centers"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -3774,6 +3774,12 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   prop = RNA_def_property(srna, "sculpt_mode_mask_opacity", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_float_sdna(prop, NULL, "overlay.sculpt_mode_mask_opacity");
   RNA_def_property_ui_text(prop, "Sculpt Mask Opacity", "");
+  RNA_def_property_range(prop, 0.0f, 1.0f);
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
+
+  prop = RNA_def_property(srna, "sculpt_mode_face_sets_opacity", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_float_sdna(prop, NULL, "overlay.sculpt_mode_face_sets_opacity");
+  RNA_def_property_ui_text(prop, "Sculpt Face Sets Opacity", "");
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
@@ -5358,6 +5364,144 @@ static void rna_def_space_console(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Output", "Command output");
 }
 
+/* Filter for datablock types in link/append. */
+static void rna_def_fileselect_idfilter(BlenderRNA *brna)
+{
+  struct IDFilterBoolean {
+    /* 64 bit, so we can't use bitflag enum. */
+    const uint64_t flag;
+    const char *identifier;
+    const int icon;
+    const char *name;
+    const char *description;
+  };
+
+  static const struct IDFilterBoolean booleans[] = {
+      /* Datablocks */
+      {FILTER_ID_AC, "filter_action", ICON_ANIM_DATA, "Actions", "Show Action data-blocks"},
+      {FILTER_ID_AR,
+       "filter_armature",
+       ICON_ARMATURE_DATA,
+       "Armatures",
+       "Show Armature data-blocks"},
+      {FILTER_ID_BR, "filter_brush", ICON_BRUSH_DATA, "Brushes", "Show Brushes data-blocks"},
+      {FILTER_ID_CA, "filter_camera", ICON_CAMERA_DATA, "Cameras", "Show Camera data-blocks"},
+      {FILTER_ID_CF, "filter_cachefile", ICON_FILE, "Cache Files", "Show Cache File data-blocks"},
+      {FILTER_ID_CU, "filter_curve", ICON_CURVE_DATA, "Curves", "Show Curve data-blocks"},
+      {FILTER_ID_GD,
+       "filter_grease_pencil",
+       ICON_GREASEPENCIL,
+       "Grease Pencil",
+       "Show Grease pencil data-blocks"},
+      {FILTER_ID_GR, "filter_group", ICON_GROUP, "Collections", "Show Collection data-blocks"},
+      {FILTER_ID_IM, "filter_image", ICON_IMAGE_DATA, "Images", "Show Image data-blocks"},
+      {FILTER_ID_LA, "filter_light", ICON_LIGHT_DATA, "Lights", "Show Light data-blocks"},
+      {FILTER_ID_LS,
+       "filter_linestyle",
+       ICON_LINE_DATA,
+       "Freestyle Linestyles",
+       "Show Freestyle's Line Style data-blocks"},
+      {FILTER_ID_LT, "filter_lattice", ICON_LATTICE_DATA, "Lattices", "Show Lattice data-blocks"},
+      {FILTER_ID_MA,
+       "filter_material",
+       ICON_MATERIAL_DATA,
+       "Materials",
+       "Show Material data-blocks"},
+      {FILTER_ID_MB, "filter_metaball", ICON_META_DATA, "Metaballs", "Show Metaball data-blocks"},
+      {FILTER_ID_MC,
+       "filter_movie_clip",
+       ICON_TRACKER_DATA,
+       "Movie Clips",
+       "Show Movie Clip data-blocks"},
+      {FILTER_ID_ME, "filter_mesh", ICON_MESH_DATA, "Meshes", "Show Mesh data-blocks"},
+      {FILTER_ID_MSK, "filter_mask", ICON_MOD_MASK, "Masks", "Show Mask data-blocks"},
+      {FILTER_ID_NT,
+       "filter_node_tree",
+       ICON_NODETREE,
+       "Node Trees",
+       "Show Node Tree data-blocks"},
+      {FILTER_ID_OB, "filter_object", ICON_OBJECT_DATA, "Objects", "Show Object data-blocks"},
+      {FILTER_ID_PA,
+       "filter_particle_settings",
+       ICON_PARTICLE_DATA,
+       "Particles Settings",
+       "Show Particle Settings data-blocks"},
+      {FILTER_ID_PAL, "filter_palette", ICON_COLOR, "Palettes", "Show Palette data-blocks"},
+      {FILTER_ID_PC,
+       "filter_paint_curve",
+       ICON_CURVE_BEZCURVE,
+       "Paint Curves",
+       "Show Paint Curve data-blocks"},
+      {FILTER_ID_LP,
+       "filter_light_probe",
+       ICON_OUTLINER_DATA_LIGHTPROBE,
+       "Light Probes",
+       "Show Light Probe data-blocks"},
+      {FILTER_ID_SCE, "filter_scene", ICON_SCENE_DATA, "Scenes", "Show Scene data-blocks"},
+      {FILTER_ID_SPK, "filter_speaker", ICON_SPEAKER, "Speakers", "Show Speaker data-blocks"},
+      {FILTER_ID_SO, "filter_sound", ICON_SOUND, "Sounds", "Show Sound data-blocks"},
+      {FILTER_ID_TE, "filter_texture", ICON_TEXTURE, "Textures", "Show Texture data-blocks"},
+      {FILTER_ID_TXT, "filter_text", ICON_TEXT, "Texts", "Show Text data-blocks"},
+      {FILTER_ID_VF, "filter_font", ICON_FONT_DATA, "Fonts", "Show Font data-blocks"},
+      {FILTER_ID_WO, "filter_world", ICON_WORLD, "Worlds", "Show World data-blocks"},
+      {FILTER_ID_WS,
+       "filter_work_space",
+       ICON_WORKSPACE,
+       "Workspaces",
+       "Show workspace data-blocks"},
+
+      /* Categories */
+      {FILTER_ID_SCE, "category_scene", ICON_SCENE_DATA, "Scenes", "Show scenes"},
+      {FILTER_ID_AC, "category_animation", ICON_ANIM_DATA, "Animations", "Show animation data"},
+      {FILTER_ID_OB | FILTER_ID_GR,
+       "category_object",
+       ICON_GROUP,
+       "Objects & Collections",
+       "Show objects and groups"},
+      {FILTER_ID_AR | FILTER_ID_CU | FILTER_ID_LT | FILTER_ID_MB | FILTER_ID_ME,
+       "category_geometry",
+       ICON_MESH_DATA,
+       "Geometry",
+       "Show meshes, curves, lattice, armatures and metaballs data"},
+      {FILTER_ID_LS | FILTER_ID_MA | FILTER_ID_NT | FILTER_ID_TE,
+       "category_shading",
+       ICON_MATERIAL_DATA,
+       "Shading",
+       "Show materials, nodetrees, textures and Freestyle's linestyles"},
+      {FILTER_ID_IM | FILTER_ID_MC | FILTER_ID_MSK | FILTER_ID_SO,
+       "category_image",
+       ICON_IMAGE_DATA,
+       "Images & Sounds",
+       "Show images, movie clips, sounds and masks"},
+      {FILTER_ID_CA | FILTER_ID_LA | FILTER_ID_LP | FILTER_ID_SPK | FILTER_ID_WO | FILTER_ID_WS,
+       "category_environment",
+       ICON_WORLD,
+       "Environment",
+       "Show worlds, lights, cameras and speakers"},
+      {FILTER_ID_BR | FILTER_ID_GD | FILTER_ID_PA | FILTER_ID_PAL | FILTER_ID_PC | FILTER_ID_TXT |
+           FILTER_ID_VF | FILTER_ID_CF,
+       "category_misc",
+       ICON_GREASEPENCIL,
+       "Miscellaneous",
+       "Show other data types"},
+
+      {0, NULL, 0, NULL, NULL}};
+
+  StructRNA *srna = RNA_def_struct(brna, "FileSelectIDFilter", NULL);
+  RNA_def_struct_sdna(srna, "FileSelectParams");
+  RNA_def_struct_nested(brna, srna, "FileSelectParams");
+  RNA_def_struct_ui_text(
+      srna, "File Select ID Filter", "Which ID types to show/hide, when browsing a library");
+
+  for (int i = 0; booleans[i].identifier; i++) {
+    PropertyRNA *prop = RNA_def_property(srna, booleans[i].identifier, PROP_BOOLEAN, PROP_NONE);
+    RNA_def_property_boolean_sdna(prop, NULL, "filter_id", booleans[i].flag);
+    RNA_def_property_ui_text(prop, booleans[i].name, booleans[i].description);
+    RNA_def_property_ui_icon(prop, booleans[i].icon, 0);
+    RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, NULL);
+  }
+}
+
 static void rna_def_fileselect_params(BlenderRNA *brna)
 {
   StructRNA *srna;
@@ -5383,114 +5527,6 @@ static void rna_def_fileselect_params(BlenderRNA *brna)
       {96, "SMALL", 0, "Small", ""},
       {128, "NORMAL", 0, "Regular", ""},
       {192, "LARGE", 0, "Large", ""},
-      {0, NULL, 0, NULL, NULL},
-  };
-
-  static const EnumPropertyItem file_filter_idtypes_items[] = {
-      {FILTER_ID_AC, "ACTION", ICON_ANIM_DATA, "Actions", "Show/hide Action data-blocks"},
-      {FILTER_ID_AR,
-       "ARMATURE",
-       ICON_ARMATURE_DATA,
-       "Armatures",
-       "Show/hide Armature data-blocks"},
-      {FILTER_ID_BR, "BRUSH", ICON_BRUSH_DATA, "Brushes", "Show/hide Brushes data-blocks"},
-      {FILTER_ID_CA, "CAMERA", ICON_CAMERA_DATA, "Cameras", "Show/hide Camera data-blocks"},
-      {FILTER_ID_CF, "CACHEFILE", ICON_FILE, "Cache Files", "Show/hide Cache File data-blocks"},
-      {FILTER_ID_CU, "CURVE", ICON_CURVE_DATA, "Curves", "Show/hide Curve data-blocks"},
-      {FILTER_ID_GD,
-       "GREASE_PENCIL",
-       ICON_GREASEPENCIL,
-       "Grease Pencil",
-       "Show/hide Grease pencil data-blocks"},
-      {FILTER_ID_GR, "GROUP", ICON_GROUP, "Collections", "Show/hide Collection data-blocks"},
-      {FILTER_ID_IM, "IMAGE", ICON_IMAGE_DATA, "Images", "Show/hide Image data-blocks"},
-      {FILTER_ID_LA, "LIGHT", ICON_LIGHT_DATA, "Lights", "Show/hide Light data-blocks"},
-      {FILTER_ID_LS,
-       "LINESTYLE",
-       ICON_LINE_DATA,
-       "Freestyle Linestyles",
-       "Show/hide Freestyle's Line Style data-blocks"},
-      {FILTER_ID_LT, "LATTICE", ICON_LATTICE_DATA, "Lattices", "Show/hide Lattice data-blocks"},
-      {FILTER_ID_MA,
-       "MATERIAL",
-       ICON_MATERIAL_DATA,
-       "Materials",
-       "Show/hide Material data-blocks"},
-      {FILTER_ID_MB, "METABALL", ICON_META_DATA, "Metaballs", "Show/hide Metaball data-blocks"},
-      {FILTER_ID_MC,
-       "MOVIE_CLIP",
-       ICON_TRACKER_DATA,
-       "Movie Clips",
-       "Show/hide Movie Clip data-blocks"},
-      {FILTER_ID_ME, "MESH", ICON_MESH_DATA, "Meshes", "Show/hide Mesh data-blocks"},
-      {FILTER_ID_MSK, "MASK", ICON_MOD_MASK, "Masks", "Show/hide Mask data-blocks"},
-      {FILTER_ID_NT, "NODE_TREE", ICON_NODETREE, "Node Trees", "Show/hide Node Tree data-blocks"},
-      {FILTER_ID_OB, "OBJECT", ICON_OBJECT_DATA, "Objects", "Show/hide Object data-blocks"},
-      {FILTER_ID_PA,
-       "PARTICLE_SETTINGS",
-       ICON_PARTICLE_DATA,
-       "Particles Settings",
-       "Show/hide Particle Settings data-blocks"},
-      {FILTER_ID_PAL, "PALETTE", ICON_COLOR, "Palettes", "Show/hide Palette data-blocks"},
-      {FILTER_ID_PC,
-       "PAINT_CURVE",
-       ICON_CURVE_BEZCURVE,
-       "Paint Curves",
-       "Show/hide Paint Curve data-blocks"},
-      {FILTER_ID_LP,
-       "LIGHT_PROBE",
-       ICON_OUTLINER_DATA_LIGHTPROBE,
-       "Light Probes",
-       "Show/hide Light Probe data-blocks"},
-      {FILTER_ID_SCE, "SCENE", ICON_SCENE_DATA, "Scenes", "Show/hide Scene data-blocks"},
-      {FILTER_ID_SPK, "SPEAKER", ICON_SPEAKER, "Speakers", "Show/hide Speaker data-blocks"},
-      {FILTER_ID_SO, "SOUND", ICON_SOUND, "Sounds", "Show/hide Sound data-blocks"},
-      {FILTER_ID_TE, "TEXTURE", ICON_TEXTURE, "Textures", "Show/hide Texture data-blocks"},
-      {FILTER_ID_TXT, "TEXT", ICON_TEXT, "Texts", "Show/hide Text data-blocks"},
-      {FILTER_ID_VF, "FONT", ICON_FONT_DATA, "Fonts", "Show/hide Font data-blocks"},
-      {FILTER_ID_WO, "WORLD", ICON_WORLD, "Worlds", "Show/hide World data-blocks"},
-      {FILTER_ID_WS,
-       "WORK_SPACE",
-       ICON_WORKSPACE,
-       "Workspaces",
-       "Show/hide workspace data-blocks"},
-      {0, NULL, 0, NULL, NULL},
-  };
-
-  static const EnumPropertyItem file_filter_idcategories_items[] = {
-      {FILTER_ID_SCE, "SCENE", ICON_SCENE_DATA, "Scenes", "Show/hide scenes"},
-      {FILTER_ID_AC, "ANIMATION", ICON_ANIM_DATA, "Animations", "Show/hide animation data"},
-      {FILTER_ID_OB | FILTER_ID_GR,
-       "OBJECT",
-       ICON_GROUP,
-       "Objects & Collections",
-       "Show/hide objects and groups"},
-      {FILTER_ID_AR | FILTER_ID_CU | FILTER_ID_LT | FILTER_ID_MB | FILTER_ID_ME,
-       "GEOMETRY",
-       ICON_MESH_DATA,
-       "Geometry",
-       "Show/hide meshes, curves, lattice, armatures and metaballs data"},
-      {FILTER_ID_LS | FILTER_ID_MA | FILTER_ID_NT | FILTER_ID_TE,
-       "SHADING",
-       ICON_MATERIAL_DATA,
-       "Shading",
-       "Show/hide materials, nodetrees, textures and Freestyle's linestyles"},
-      {FILTER_ID_IM | FILTER_ID_MC | FILTER_ID_MSK | FILTER_ID_SO,
-       "IMAGE",
-       ICON_IMAGE_DATA,
-       "Images & Sounds",
-       "Show/hide images, movie clips, sounds and masks"},
-      {FILTER_ID_CA | FILTER_ID_LA | FILTER_ID_SPK | FILTER_ID_WO | FILTER_ID_WS,
-       "ENVIRONMENT",
-       ICON_WORLD,
-       "Environment",
-       "Show/hide worlds, lights, cameras and speakers"},
-      {FILTER_ID_BR | FILTER_ID_GD | FILTER_ID_PA | FILTER_ID_PAL | FILTER_ID_PC | FILTER_ID_TXT |
-           FILTER_ID_VF | FILTER_ID_CF,
-       "MISC",
-       ICON_GREASEPENCIL,
-       "Miscellaneous",
-       "Show/hide other data types"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -5632,21 +5668,12 @@ static void rna_def_fileselect_params(BlenderRNA *brna)
   RNA_def_property_ui_icon(prop, ICON_BLENDER, 0);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, NULL);
 
-  prop = RNA_def_property(srna, "filter_id", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_sdna(prop, NULL, "filter_id");
-  RNA_def_property_enum_items(prop, file_filter_idtypes_items);
-  RNA_def_property_flag(prop, PROP_ENUM_FLAG);
+  prop = RNA_def_property(srna, "filter_id", PROP_POINTER, PROP_NONE);
+  RNA_def_property_flag(prop, PROP_NEVER_NULL);
+  RNA_def_property_struct_type(prop, "FileSelectIDFilter");
+  RNA_def_property_pointer_funcs(prop, "rna_FileSelectParams_filter_id_get", NULL, NULL, NULL);
   RNA_def_property_ui_text(
       prop, "Filter ID Types", "Which ID types to show/hide, when browsing a library");
-  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, NULL);
-
-  prop = RNA_def_property(srna, "filter_id_category", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_sdna(prop, NULL, "filter_id");
-  RNA_def_property_enum_items(prop, file_filter_idcategories_items);
-  RNA_def_property_flag(prop, PROP_ENUM_FLAG);
-  RNA_def_property_ui_text(
-      prop, "Filter ID Categories", "Which ID categories to show/hide, when browsing a library");
-  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, NULL);
 
   prop = RNA_def_property(srna, "filter_glob", PROP_STRING, PROP_NONE);
   RNA_def_property_string_sdna(prop, NULL, "filter_glob");
@@ -6475,6 +6502,7 @@ void RNA_def_space(BlenderRNA *brna)
   rna_def_space_sequencer(brna);
   rna_def_space_text(brna);
   rna_def_fileselect_params(brna);
+  rna_def_fileselect_idfilter(brna);
   rna_def_filemenu_entry(brna);
   rna_def_space_filebrowser(brna);
   rna_def_space_outliner(brna);

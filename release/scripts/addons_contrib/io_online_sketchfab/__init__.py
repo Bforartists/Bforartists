@@ -24,7 +24,7 @@ bl_info = {
     "location": "Tools > File I/O tab",
     "description": "Upload your model to Sketchfab",
     "warning": "",
-    "wiki_url": "",
+    "doc_url": "",
     "category": "Import-Export"
 }
 
