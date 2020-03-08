@@ -24,9 +24,10 @@ bl_info = {
     "location": "View3D > Sidebar > Create Tab",
     "description": "Fractured Object, or Cracked Surface",
     "warning": "Developmental",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Object/CellFracture",
-    "category": "Object"}
+    "doc_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+               "Scripts/Object/CellFracture",
+    "category": "Object",
+}
 
 
 if "bpy" in locals():
@@ -51,7 +52,7 @@ from bpy.props import (
 from bpy.types import (
         Panel,
         PropertyGroup,
-        )        
+        )
 
 
 class OBJECT_PT_FRACTURE_Panel(Panel):
@@ -70,10 +71,10 @@ class OBJECT_PT_FRACTURE_Panel(Panel):
         layout.label(text="Use Fracture It First")
         layout.operator("object.add_fracture_cell",
                     text="Fracture It")
-        layout.label(text="Use Crack It To Displace")					
+        layout.label(text="Use Crack It To Displace")
         layout.operator(operator.FRACTURE_OT_Crack.bl_idname,
                     text="Crack It")
-        
+
         material_props = context.window_manager.fracture_material_props
         layout.separator()
         box = layout.box()
@@ -91,10 +92,10 @@ class OBJECT_PT_FRACTURE_Panel(Panel):
 
         row = box.row()
         row.operator(operator.FRACTURE_OT_Material.bl_idname, icon="MATERIAL_DATA",
-                    text="Append Material")       
+                    text="Append Material")
 
 
-class FractureCellProperties(PropertyGroup):              
+class FractureCellProperties(PropertyGroup):
     # -------------------------------------------------------------------------
     # Source Options
     source_vert_own: IntProperty(
@@ -133,16 +134,16 @@ class FractureCellProperties(PropertyGroup):
             min=0, max=2000,
             default=0,
             )
-    '''        
+    '''
     source_limit: IntProperty(
             name="Source Limit",
             description="Limit the number of input points, 0 for unlimited",
             min=0, max=5000,
             default=100,
             )
-    '''    
+    '''
     # -------------------------------------------------------------------------
-    # Transform 
+    # Transform
     source_noise: FloatProperty(
             name="Noise",
             description="Randomize point distribution",
@@ -190,7 +191,7 @@ class FractureCellProperties(PropertyGroup):
     recursion_source_limit: IntProperty(
             name="Fracture Each",
             description="Limit the number of input points, 0 for unlimited (applies to recursion only)",
-            min=2, max=2000, # Oviously, dividing in more than two objects is needed, to avoid no fracture object. 
+            min=2, max=2000, # Oviously, dividing in more than two objects is needed, to avoid no fracture object.
             default=8,
             )
     recursion_clamp: IntProperty(
@@ -248,17 +249,17 @@ class FractureCellProperties(PropertyGroup):
             default=False,
             )
     # -------------------------------------------------------------------------
-    # Scene Options    
+    # Scene Options
     use_collection: BoolProperty(
             name="Use Collection",
             description="Use collection to organize fracture objects",
             default=True,
-            )    
+            )
     new_collection: BoolProperty(
             name="New Collection",
             description="Make new collection for fracture objects",
             default=True,
-            )  
+            )
     collection_name: StringProperty(
             name="Name",
             description="Collection name.",
@@ -275,12 +276,12 @@ class FractureCellProperties(PropertyGroup):
             default=False,
             )
     # -------------------------------------------------------------------------
-    # Custom Property Options    
+    # Custom Property Options
     use_mass: BoolProperty(
         name="Mass",
         description="Append mass data on custom properties of cell objects.",
         default=False,
-        )   
+        )
     mass_name: StringProperty(
         name="Property Name",
         description="Name for custome properties.",
@@ -319,7 +320,7 @@ class FractureCellProperties(PropertyGroup):
             default=False,
             )
 
-            
+
 class FractureCrackProperties(PropertyGroup):
     modifier_decimate : FloatProperty(
         name="Reduce Faces",
@@ -360,10 +361,10 @@ class FractureCrackProperties(PropertyGroup):
             name="Wireframe Modifier",
             description="Wireframe Modifier",
             default=False
-            )  
+            )
 
 
-class FractureMaterialProperties(PropertyGroup):  
+class FractureMaterialProperties(PropertyGroup):
     # Note: you can choose the original name in the library blend
     # or the prop name
     material_preset : EnumProperty(
@@ -387,7 +388,7 @@ class FractureMaterialProperties(PropertyGroup):
                         "instead of the one defined in the Preset",
             default=True
             )
-    
+
 classes = (
     FractureCellProperties,
     FractureCrackProperties,
@@ -411,13 +412,13 @@ def register():
     )
     bpy.types.WindowManager.fracture_material_props = PointerProperty(
         type=FractureMaterialProperties
-    )    
-    
+    )
+
 def unregister():
     del bpy.types.WindowManager.fracture_material_props
     del bpy.types.WindowManager.fracture_crack_props
     del bpy.types.WindowManager.fracture_cell_props
-    
+
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)

@@ -602,7 +602,7 @@ static int stencil_control_invoke(bContext *C, wmOperator *op, const wmEvent *ev
   Paint *paint = BKE_paint_get_active_from_context(C);
   Brush *br = BKE_paint_brush(paint);
   float mvalf[2] = {event->mval[0], event->mval[1]};
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   StencilControlData *scd;
   int mask = RNA_enum_get(op->ptr, "texmode");
 
@@ -627,8 +627,8 @@ static int stencil_control_invoke(bContext *C, wmOperator *op, const wmEvent *ev
 
   scd->mode = RNA_enum_get(op->ptr, "mode");
   scd->launch_event = WM_userdef_event_type_from_keymap_type(event->type);
-  scd->area_size[0] = ar->winx;
-  scd->area_size[1] = ar->winy;
+  scd->area_size[0] = region->winx;
+  scd->area_size[1] = region->winy;
 
   op->customdata = scd;
   WM_event_add_modal_handler(C, op);
@@ -682,8 +682,7 @@ static void stencil_control_calculate(StencilControlData *scd, const int mval[2]
       if (scd->constrain_mode != STENCIL_CONSTRAINT_X) {
         mdiff[1] = factor * scd->init_sdim[1];
       }
-      CLAMP(mdiff[0], 5.0f, 10000.0f);
-      CLAMP(mdiff[1], 5.0f, 10000.0f);
+      clamp_v2(mdiff, 5.0f, 10000.0f);
       copy_v2_v2(scd->dim_target, mdiff);
       break;
     }
@@ -1053,7 +1052,7 @@ void ED_keymap_paint(wmKeyConfig *keyconf)
 
   /* Sculpt mode */
   keymap = WM_keymap_ensure(keyconf, "Sculpt", 0, 0);
-  keymap->poll = sculpt_mode_poll;
+  keymap->poll = SCULPT_mode_poll;
 
   /* Vertex Paint mode */
   keymap = WM_keymap_ensure(keyconf, "Vertex Paint", 0, 0);

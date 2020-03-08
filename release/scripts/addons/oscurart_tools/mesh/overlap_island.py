@@ -95,6 +95,3 @@ class OscOverlapUv(Operator):
     def execute(self, context):
         DefOscOverlapUv(self,self.offset,self.rotate)
         return {'FINISHED'}
-
-
-

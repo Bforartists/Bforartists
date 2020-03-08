@@ -24,8 +24,7 @@ bl_info = {
     "location": "View3D > Properties > BlenderKit",
     "description": "Online BlenderKit library (materials, models, brushes and more)",
     "warning": "",
-    "wiki_url": "https://youtu.be/1hVgcQhIAo8"
-                "Scripts/Add_Mesh/BlenderKit",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_mesh/blenderkit.html",
     "category": "3D View",
 }
 

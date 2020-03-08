@@ -42,6 +42,3 @@ class RemoveModifiers(bpy.types.Operator):
     def execute(self, context):
         funcRemoveModifiers(self,context)
         return {'FINISHED'}
-
-
-

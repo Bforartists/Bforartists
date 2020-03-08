@@ -24,7 +24,7 @@ bl_info = {
     "location": "Rendertab -> Output Panel -> Subpanel",
     "description": "Automatically save the image after rendering",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Render/Auto_Save",
+    "doc_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Render/Auto_Save",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Render"}
 

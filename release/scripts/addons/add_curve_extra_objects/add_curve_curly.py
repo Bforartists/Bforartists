@@ -10,9 +10,10 @@ bl_info = {
     "location": "View3D > Add > Curve > Curly Curve",
     "description": "Adds a new Curly Curve",
     "warning": "",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
-                "Py/Scripts/Curve/Curly_Curves",
-    "category": "Add Curve"}
+    "doc_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
+               "Py/Scripts/Curve/Curly_Curves",
+    "category": "Add Curve",
+}
 
 import bpy
 from bpy.types import Operator

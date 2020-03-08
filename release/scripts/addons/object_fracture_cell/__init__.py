@@ -24,8 +24,7 @@ bl_info = {
     "location": "Viewport Object Menu -> Quick Effects",
     "description": "Fractured Object Creation",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "object/cell_fracture.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/object/cell_fracture.html",
     "category": "Object",
 }
 

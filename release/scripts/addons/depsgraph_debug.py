@@ -30,9 +30,10 @@ bl_info = {
     "blender": (2, 80, 0),
     "description": "Various dependency graph debugging tools",
     "warning": "",
-    "wiki_url": "",
+    "doc_url": "",
     "tracker_url": "",
-    "category": "Development"}
+    "category": "Development",
+}
 
 
 def _get_depsgraph(context):

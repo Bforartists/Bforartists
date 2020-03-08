@@ -49,14 +49,6 @@ typedef enum TreeElementInsertType {
   TE_INSERT_INTO,
 } TreeElementInsertType;
 
-/* Use generic walk select after D4771 is committed */
-typedef enum WalkSelectDirection {
-  OUTLINER_SELECT_WALK_UP,
-  OUTLINER_SELECT_WALK_DOWN,
-  OUTLINER_SELECT_WALK_LEFT,
-  OUTLINER_SELECT_WALK_RIGHT,
-} WalkSelectDirection;
-
 typedef enum TreeTraversalAction {
   /* Continue traversal regularly, don't skip children. */
   TRAVERSE_CONTINUE = 0,
@@ -229,7 +221,7 @@ void outliner_build_tree(struct Main *mainvar,
                          struct Scene *scene,
                          struct ViewLayer *view_layer,
                          struct SpaceOutliner *soops,
-                         struct ARegion *ar);
+                         struct ARegion *region);
 
 typedef struct IDsSelectedData {
   struct ListBase selected_array;
@@ -369,7 +361,7 @@ void item_object_mode_exit_cb(struct bContext *C,
                               struct TreeStoreElem *tselem,
                               void *user_data);
 
-void outliner_set_coordinates(struct ARegion *ar, struct SpaceOutliner *soops);
+void outliner_set_coordinates(struct ARegion *region, struct SpaceOutliner *soops);
 
 void outliner_item_openclose(TreeElement *te, bool open, bool toggle_all);
 
@@ -492,7 +484,7 @@ TreeElement *outliner_find_parent_element(ListBase *lb,
 TreeElement *outliner_find_id(struct SpaceOutliner *soops, ListBase *lb, const struct ID *id);
 TreeElement *outliner_find_posechannel(ListBase *lb, const struct bPoseChannel *pchan);
 TreeElement *outliner_find_editbone(ListBase *lb, const struct EditBone *ebone);
-struct ID *outliner_search_back(SpaceOutliner *soops, TreeElement *te, short idcode);
+struct ID *outliner_search_back(TreeElement *te, short idcode);
 bool outliner_tree_traverse(const SpaceOutliner *soops,
                             ListBase *tree,
                             int filter_te_flag,
@@ -502,7 +494,7 @@ bool outliner_tree_traverse(const SpaceOutliner *soops,
 float outliner_restrict_columns_width(const struct SpaceOutliner *soops);
 TreeElement *outliner_find_element_with_flag(const ListBase *lb, short flag);
 bool outliner_is_element_visible(const TreeElement *te);
-void outliner_scroll_view(struct ARegion *ar, int delta_y);
+void outliner_scroll_view(struct ARegion *region, int delta_y);
 
 /* outliner_sync.c ---------------------------------------------- */
 

@@ -69,7 +69,7 @@ bl_info = {
     'location': 'View3D',
     'warning': '',
     'description': 'Moves selected objects using "take" and "place" snap points',
-    'wiki_url': '',
+    'doc_url': '',
     'category': '3D View'}
 
 import bpy

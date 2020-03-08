@@ -24,10 +24,10 @@ bl_info = {
     "author": "zeffii (aka Dealga McArdle)",
     "version": (1, 3, 2),
     "blender": (2, 80, 0),
-    "category": "Mesh",
     "location": "View3D > EditMode Context Menu",
-    "wiki_url": "http://zeffii.github.io/mesh_tiny_cad/",
-    "tracker_url": "https://github.com/zeffii/mesh_tiny_cad/issues"
+    "doc_url": "http://zeffii.github.io/mesh_tiny_cad/",
+    "tracker_url": "https://github.com/zeffii/mesh_tiny_cad/issues",
+    "category": "Mesh",
 }
 
 

@@ -257,7 +257,6 @@ class SunPosAddonPreferences(AddonPreferences):
         col.label(text="Show options or labels:")
         flow = col.grid_flow(columns=0, even_columns=True, even_rows=False, align=False)
         flow.prop(self, "show_time_place")
-        flow.prop(self, "show_object_collection")
         flow.prop(self, "show_dms")
         flow.prop(self, "show_north")
         flow.prop(self, "show_refraction")

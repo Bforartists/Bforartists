@@ -565,5 +565,3 @@ class TracerProperties(PropertyGroup):
             description="",
             default='tool_help'
             )
-
-

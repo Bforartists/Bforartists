@@ -279,7 +279,7 @@ def process_next_chunk(context, file, previous_chunk, importedObjects, IMAGE_SEA
 
     TEXTURE_DICT = {}
     MATDICT = {}
-# 	TEXMODE = Mesh.FaceModes['TEX']
+#   TEXMODE = Mesh.FaceModes['TEX']
 
     # Localspace variable names, faster.
     STRUCT_SIZE_FLOAT = struct.calcsize('f')
@@ -497,7 +497,7 @@ def process_next_chunk(context, file, previous_chunk, importedObjects, IMAGE_SEA
         #is it a material chunk?
         elif new_chunk.ID == MATERIAL:
 
-# 			print("read material")
+#           print("read material")
 
             #print 'elif new_chunk.ID == MATERIAL:'
             contextMaterial = bpy.data.materials.new('Material')
@@ -507,7 +507,7 @@ def process_next_chunk(context, file, previous_chunk, importedObjects, IMAGE_SEA
             #print 'elif new_chunk.ID == MAT_NAME:'
             material_name, read_str_len = read_string(file)
 
-# 			print("material name", material_name)
+#           print("material name", material_name)
 
             #plus one for the null character that ended the string
             new_chunk.bytes_read += read_str_len
@@ -521,14 +521,14 @@ def process_next_chunk(context, file, previous_chunk, importedObjects, IMAGE_SEA
             # TODO: consider ambient term somehow. maybe add to color
 #               if temp_chunk.ID == MAT_FLOAT_COLOR:
 #               contextMaterial.mirror_color = read_float_color(temp_chunk)
-# 				temp_data = file.read(struct.calcsize('3f'))
-# 				temp_chunk.bytes_read += 12
-# 				contextMaterial.mirCol = [float(col) for col in struct.unpack('<3f', temp_data)]
+#               temp_data = file.read(struct.calcsize('3f'))
+#               temp_chunk.bytes_read += 12
+#               contextMaterial.mirCol = [float(col) for col in struct.unpack('<3f', temp_data)]
 #            elif temp_chunk.ID == MAT_24BIT_COLOR:
 #                contextMaterial.mirror_color = read_byte_color(temp_chunk)
-# 				temp_data = file.read(struct.calcsize('3B'))
-# 				temp_chunk.bytes_read += 3
-# 				contextMaterial.mirCol = [float(col)/255 for col in struct.unpack('<3B', temp_data)] # data [0,1,2] == rgb
+#               temp_data = file.read(struct.calcsize('3B'))
+#               temp_chunk.bytes_read += 3
+#               contextMaterial.mirCol = [float(col)/255 for col in struct.unpack('<3B', temp_data)] # data [0,1,2] == rgb
 #            else:
             skip_to_end(file, temp_chunk)
             new_chunk.bytes_read += temp_chunk.bytes_read
@@ -538,35 +538,35 @@ def process_next_chunk(context, file, previous_chunk, importedObjects, IMAGE_SEA
             read_chunk(file, temp_chunk)
             if temp_chunk.ID == MAT_FLOAT_COLOR:
                 contextMaterialWrapper.base_color = read_float_color(temp_chunk)
-# 				temp_data = file.read(struct.calcsize('3f'))
-# 				temp_chunk.bytes_read += 12
-# 				contextMaterial.rgbCol = [float(col) for col in struct.unpack('<3f', temp_data)]
+#               temp_data = file.read(struct.calcsize('3f'))
+#               temp_chunk.bytes_read += 12
+#               contextMaterial.rgbCol = [float(col) for col in struct.unpack('<3f', temp_data)]
             elif temp_chunk.ID == MAT_24BIT_COLOR:
                 contextMaterialWrapper.base_color = read_byte_color(temp_chunk)
-# 				temp_data = file.read(struct.calcsize('3B'))
-# 				temp_chunk.bytes_read += 3
-# 				contextMaterial.rgbCol = [float(col)/255 for col in struct.unpack('<3B', temp_data)] # data [0,1,2] == rgb
+#               temp_data = file.read(struct.calcsize('3B'))
+#               temp_chunk.bytes_read += 3
+#               contextMaterial.rgbCol = [float(col)/255 for col in struct.unpack('<3B', temp_data)] # data [0,1,2] == rgb
             else:
                 skip_to_end(file, temp_chunk)
 
-# 			print("read material diffuse color", contextMaterial.diffuse_color)
+#           print("read material diffuse color", contextMaterial.diffuse_color)
 
             new_chunk.bytes_read += temp_chunk.bytes_read
 
         elif new_chunk.ID == MAT_SPECULAR:
             #print 'elif new_chunk.ID == MAT_SPECULAR:'
             read_chunk(file, temp_chunk)
-			# TODO: consider using specular term somehow
+            # TODO: consider using specular term somehow
 #            if temp_chunk.ID == MAT_FLOAT_COLOR:
 #                contextMaterial.specular_color = read_float_color(temp_chunk)
-# 				temp_data = file.read(struct.calcsize('3f'))
-# 				temp_chunk.bytes_read += 12
-# 				contextMaterial.mirCol = [float(col) for col in struct.unpack('<3f', temp_data)]
+#               temp_data = file.read(struct.calcsize('3f'))
+#               temp_chunk.bytes_read += 12
+#               contextMaterial.mirCol = [float(col) for col in struct.unpack('<3f', temp_data)]
 #            elif temp_chunk.ID == MAT_24BIT_COLOR:
 #                contextMaterial.specular_color = read_byte_color(temp_chunk)
-# 				temp_data = file.read(struct.calcsize('3B'))
-# 				temp_chunk.bytes_read += 3
-# 				contextMaterial.mirCol = [float(col)/255 for col in struct.unpack('<3B', temp_data)] # data [0,1,2] == rgb
+#               temp_data = file.read(struct.calcsize('3B'))
+#               temp_chunk.bytes_read += 3
+#               contextMaterial.mirCol = [float(col)/255 for col in struct.unpack('<3B', temp_data)] # data [0,1,2] == rgb
 #            else:
             skip_to_end(file, temp_chunk)
             new_chunk.bytes_read += temp_chunk.bytes_read
@@ -856,8 +856,8 @@ def load_3ds(filepath,
 #    global SCN
 
     # XXX
-# 	if BPyMessages.Error_NoFile(filepath):
-# 		return
+#   if BPyMessages.Error_NoFile(filepath):
+#       return
 
     print("importing 3DS: %r..." % (filepath), end="")
 
@@ -865,7 +865,7 @@ def load_3ds(filepath,
         bpy.ops.object.select_all(action='DESELECT')
 
     time1 = time.clock()
-# 	time1 = Blender.sys.time()
+#   time1 = Blender.sys.time()
 
     current_chunk = Chunk()
 
@@ -891,10 +891,10 @@ def load_3ds(filepath,
     object_matrix.clear()
 
     scn = context.scene
-# 	scn = bpy.data.scenes.active
+#   scn = bpy.data.scenes.active
 #    SCN = scn
-# 	SCN_OBJECTS = scn.objects
-# 	SCN_OBJECTS.selected = [] # de select all
+#   SCN_OBJECTS = scn.objects
+#   SCN_OBJECTS.selected = [] # de select all
 
     importedObjects = []  # Fill this list with objects
     process_next_chunk(context, file, current_chunk, importedObjects, IMAGE_SEARCH)

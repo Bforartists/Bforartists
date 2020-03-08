@@ -69,11 +69,13 @@
 #include <errno.h>
 
 /* ---------- FILE SELECTION ------------ */
-static FileSelection find_file_mouse_rect(SpaceFile *sfile, ARegion *ar, const rcti *rect_region)
+static FileSelection find_file_mouse_rect(SpaceFile *sfile,
+                                          ARegion *region,
+                                          const rcti *rect_region)
 {
   FileSelection sel;
 
-  View2D *v2d = &ar->v2d;
+  View2D *v2d = &region->v2d;
   rcti rect_view;
   rctf rect_view_fl;
   rctf rect_region_fl;
@@ -141,12 +143,12 @@ static void clamp_to_filelist(int numfiles, FileSelection *sel)
 
 static FileSelection file_selection_get(bContext *C, const rcti *rect, bool fill)
 {
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   SpaceFile *sfile = CTX_wm_space_file(C);
   int numfiles = filelist_files_ensure(sfile->files);
   FileSelection sel;
 
-  sel = find_file_mouse_rect(sfile, ar, rect);
+  sel = find_file_mouse_rect(sfile, region, rect);
   if (!((sel.first == -1) && (sel.last == -1))) {
     clamp_to_filelist(numfiles, &sel);
   }
@@ -253,34 +255,34 @@ static bool file_is_any_selected(struct FileList *files)
 /**
  * If \a file is outside viewbounds, this adjusts view to make sure it's inside
  */
-static void file_ensure_inside_viewbounds(ARegion *ar, SpaceFile *sfile, const int file)
+static void file_ensure_inside_viewbounds(ARegion *region, SpaceFile *sfile, const int file)
 {
-  FileLayout *layout = ED_fileselect_get_layout(sfile, ar);
-  rctf *cur = &ar->v2d.cur;
+  FileLayout *layout = ED_fileselect_get_layout(sfile, region);
+  rctf *cur = &region->v2d.cur;
   rcti rect;
   bool changed = true;
 
-  file_tile_boundbox(ar, layout, file, &rect);
+  file_tile_boundbox(region, layout, file, &rect);
 
   /* down - also use if tile is higher than viewbounds so view is aligned to file name */
-  if (cur->ymin > rect.ymin || layout->tile_h > ar->winy) {
+  if (cur->ymin > rect.ymin || layout->tile_h > region->winy) {
     cur->ymin = rect.ymin - (2 * layout->tile_border_y);
-    cur->ymax = cur->ymin + ar->winy;
+    cur->ymax = cur->ymin + region->winy;
   }
   /* up */
   else if ((cur->ymax - layout->offset_top) < rect.ymax) {
     cur->ymax = rect.ymax + layout->tile_border_y + layout->offset_top;
-    cur->ymin = cur->ymax - ar->winy;
+    cur->ymin = cur->ymax - region->winy;
   }
   /* left - also use if tile is wider than viewbounds so view is aligned to file name */
-  else if (cur->xmin > rect.xmin || layout->tile_w > ar->winx) {
+  else if (cur->xmin > rect.xmin || layout->tile_w > region->winx) {
     cur->xmin = rect.xmin - layout->tile_border_x;
-    cur->xmax = cur->xmin + ar->winx;
+    cur->xmax = cur->xmin + region->winx;
   }
   /* right */
   else if (cur->xmax < rect.xmax) {
     cur->xmax = rect.xmax + (2 * layout->tile_border_x);
-    cur->xmin = cur->xmax - ar->winx;
+    cur->xmin = cur->xmax - region->winx;
   }
   else {
     BLI_assert(cur->xmin <= rect.xmin && cur->xmax >= rect.xmax && cur->ymin <= rect.ymin &&
@@ -289,7 +291,7 @@ static void file_ensure_inside_viewbounds(ARegion *ar, SpaceFile *sfile, const i
   }
 
   if (changed) {
-    UI_view2d_curRect_validate(&ar->v2d);
+    UI_view2d_curRect_validate(&region->v2d);
   }
 }
 
@@ -323,16 +325,16 @@ static FileSelect file_select(
     sfile->params->active_file = -1;
   }
   else if (sel.last >= 0) {
-    ARegion *ar = CTX_wm_region(C);
-    const FileLayout *layout = ED_fileselect_get_layout(sfile, ar);
+    ARegion *region = CTX_wm_region(C);
+    const FileLayout *layout = ED_fileselect_get_layout(sfile, region);
 
     /* Adjust view to display selection. Doing iterations for first and last
      * selected item makes view showing as much of the selection possible.
      * Not really useful if tiles are (almost) bigger than viewbounds though. */
-    if (((layout->flag & FILE_LAYOUT_HOR) && ar->winx > (1.2f * layout->tile_w)) ||
-        ((layout->flag & FILE_LAYOUT_VER) && ar->winy > (2.0f * layout->tile_h))) {
-      file_ensure_inside_viewbounds(ar, sfile, sel.last);
-      file_ensure_inside_viewbounds(ar, sfile, sel.first);
+    if (((layout->flag & FILE_LAYOUT_HOR) && region->winx > (1.2f * layout->tile_w)) ||
+        ((layout->flag & FILE_LAYOUT_VER) && region->winy > (2.0f * layout->tile_h))) {
+      file_ensure_inside_viewbounds(region, sfile, sel.last);
+      file_ensure_inside_viewbounds(region, sfile, sel.first);
     }
   }
 
@@ -343,19 +345,19 @@ static FileSelect file_select(
 }
 
 static int file_box_select_find_last_selected(SpaceFile *sfile,
-                                              ARegion *ar,
+                                              ARegion *region,
                                               const FileSelection *sel,
                                               const int mouse_xy[2])
 {
-  FileLayout *layout = ED_fileselect_get_layout(sfile, ar);
+  FileLayout *layout = ED_fileselect_get_layout(sfile, region);
   rcti bounds_first, bounds_last;
   int dist_first, dist_last;
   float mouseco_view[2];
 
-  UI_view2d_region_to_view(&ar->v2d, UNPACK2(mouse_xy), &mouseco_view[0], &mouseco_view[1]);
+  UI_view2d_region_to_view(&region->v2d, UNPACK2(mouse_xy), &mouseco_view[0], &mouseco_view[1]);
 
-  file_tile_boundbox(ar, layout, sel->first, &bounds_first);
-  file_tile_boundbox(ar, layout, sel->last, &bounds_last);
+  file_tile_boundbox(region, layout, sel->first, &bounds_first);
+  file_tile_boundbox(region, layout, sel->last, &bounds_last);
 
   /* are first and last in the same column (horizontal layout)/row (vertical layout)? */
   if ((layout->flag & FILE_LAYOUT_HOR && bounds_first.xmin == bounds_last.xmin) ||
@@ -377,7 +379,7 @@ static int file_box_select_find_last_selected(SpaceFile *sfile,
 
 static int file_box_select_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   SpaceFile *sfile = CTX_wm_space_file(C);
   FileSelectParams *params = ED_fileselect_get_params(sfile);
   FileSelection sel;
@@ -390,7 +392,7 @@ static int file_box_select_modal(bContext *C, wmOperator *op, const wmEvent *eve
   if (result == OPERATOR_RUNNING_MODAL) {
     WM_operator_properties_border_to_rcti(op, &rect);
 
-    ED_fileselect_layout_isect_rect(sfile->layout, &ar->v2d, &rect, &rect);
+    ED_fileselect_layout_isect_rect(sfile->layout, &region->v2d, &rect, &rect);
 
     sel = file_selection_get(C, &rect, 0);
     if ((sel.first != params->sel_first) || (sel.last != params->sel_last)) {
@@ -418,7 +420,7 @@ static int file_box_select_modal(bContext *C, wmOperator *op, const wmEvent *eve
     }
     params->sel_first = sel.first;
     params->sel_last = sel.last;
-    params->active_file = file_box_select_find_last_selected(sfile, ar, &sel, event->mval);
+    params->active_file = file_box_select_find_last_selected(sfile, region, &sel, event->mval);
   }
   else {
     params->highlight_file = -1;
@@ -433,7 +435,7 @@ static int file_box_select_modal(bContext *C, wmOperator *op, const wmEvent *eve
 
 static int file_box_select_exec(bContext *C, wmOperator *op)
 {
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   SpaceFile *sfile = CTX_wm_space_file(C);
   rcti rect;
   FileSelect ret;
@@ -446,7 +448,7 @@ static int file_box_select_exec(bContext *C, wmOperator *op)
     file_deselect_all(sfile, FILE_SEL_SELECTED);
   }
 
-  ED_fileselect_layout_isect_rect(sfile->layout, &ar->v2d, &rect, &rect);
+  ED_fileselect_layout_isect_rect(sfile->layout, &region->v2d, &rect, &rect);
 
   ret = file_select(C, &rect, select ? FILE_SEL_ADD : FILE_SEL_REMOVE, false, false);
 
@@ -484,7 +486,7 @@ void FILE_OT_select_box(wmOperatorType *ot)
 
 static int file_select_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   SpaceFile *sfile = CTX_wm_space_file(C);
   FileSelect ret;
   rcti rect;
@@ -493,14 +495,14 @@ static int file_select_invoke(bContext *C, wmOperator *op, const wmEvent *event)
   const bool do_diropen = RNA_boolean_get(op->ptr, "open");
   const bool deselect_all = RNA_boolean_get(op->ptr, "deselect_all");
 
-  if (ar->regiontype != RGN_TYPE_WINDOW) {
+  if (region->regiontype != RGN_TYPE_WINDOW) {
     return OPERATOR_CANCELLED;
   }
 
   rect.xmin = rect.xmax = event->mval[0];
   rect.ymin = rect.ymax = event->mval[1];
 
-  if (!ED_fileselect_layout_is_inside_pt(sfile->layout, &ar->v2d, rect.xmin, rect.ymin)) {
+  if (!ED_fileselect_layout_is_inside_pt(sfile->layout, &region->v2d, rect.xmin, rect.ymin)) {
     return OPERATOR_CANCELLED;
   }
 
@@ -536,7 +538,7 @@ static int file_select_invoke(bContext *C, wmOperator *op, const wmEvent *event)
     WM_event_add_notifier(C, NC_SPACE | ND_SPACE_FILE_PARAMS, NULL);
   }
 
-  WM_event_add_mousemove(C); /* for directory changes */
+  WM_event_add_mousemove(CTX_wm_window(C)); /* for directory changes */
   WM_event_add_notifier(C, NC_SPACE | ND_SPACE_FILE_PARAMS, NULL);
 
   return OPERATOR_FINISHED;
@@ -578,7 +580,8 @@ void FILE_OT_select(wmOperatorType *ot)
 /**
  * \returns true if selection has changed
  */
-static bool file_walk_select_selection_set(bContext *C,
+static bool file_walk_select_selection_set(wmWindow *win,
+                                           ARegion *region,
                                            SpaceFile *sfile,
                                            const int direction,
                                            const int numfiles,
@@ -626,11 +629,11 @@ static bool file_walk_select_selection_set(bContext *C,
   }
   else {
     /* select last file */
-    if (ELEM(direction, FILE_SELECT_WALK_UP, FILE_SELECT_WALK_LEFT)) {
+    if (ELEM(direction, UI_SELECT_WALK_UP, UI_SELECT_WALK_LEFT)) {
       params->active_file = active = numfiles - 1;
     }
     /* select first file */
-    else if (ELEM(direction, FILE_SELECT_WALK_DOWN, FILE_SELECT_WALK_RIGHT)) {
+    else if (ELEM(direction, UI_SELECT_WALK_DOWN, UI_SELECT_WALK_RIGHT)) {
       params->active_file = active = 0;
     }
     else {
@@ -656,7 +659,7 @@ static bool file_walk_select_selection_set(bContext *C,
 
     /* highlight file under mouse pos */
     params->highlight_file = -1;
-    WM_event_add_mousemove(C);
+    WM_event_add_mousemove(win);
   }
 
   /* do the actual selection */
@@ -686,7 +689,7 @@ static bool file_walk_select_selection_set(bContext *C,
   fileselect_file_set(sfile, params->active_file);
 
   /* ensure newly selected file is inside viewbounds */
-  file_ensure_inside_viewbounds(CTX_wm_region(C), sfile, params->active_file);
+  file_ensure_inside_viewbounds(region, sfile, params->active_file);
 
   /* selection changed */
   return true;
@@ -702,6 +705,8 @@ static bool file_walk_select_do(bContext *C,
                                 const bool extend,
                                 const bool fill)
 {
+  wmWindow *win = CTX_wm_window(C);
+  ARegion *region = CTX_wm_region(C);
   struct FileList *files = sfile->files;
   const int numfiles = filelist_files_ensure(files);
   const bool has_selection = file_is_any_selected(files);
@@ -717,27 +722,26 @@ static bool file_walk_select_do(bContext *C,
   }
 
   if (has_selection) {
-    ARegion *ar = CTX_wm_region(C);
-    FileLayout *layout = ED_fileselect_get_layout(sfile, ar);
+    FileLayout *layout = ED_fileselect_get_layout(sfile, region);
     const int idx_shift = (layout->flag & FILE_LAYOUT_HOR) ? layout->rows : layout->flow_columns;
 
-    if ((layout->flag & FILE_LAYOUT_HOR && direction == FILE_SELECT_WALK_UP) ||
-        (layout->flag & FILE_LAYOUT_VER && direction == FILE_SELECT_WALK_LEFT)) {
+    if ((layout->flag & FILE_LAYOUT_HOR && direction == UI_SELECT_WALK_UP) ||
+        (layout->flag & FILE_LAYOUT_VER && direction == UI_SELECT_WALK_LEFT)) {
       active_new = active_old - 1;
       other_site = active_old + 1;
     }
-    else if ((layout->flag & FILE_LAYOUT_HOR && direction == FILE_SELECT_WALK_DOWN) ||
-             (layout->flag & FILE_LAYOUT_VER && direction == FILE_SELECT_WALK_RIGHT)) {
+    else if ((layout->flag & FILE_LAYOUT_HOR && direction == UI_SELECT_WALK_DOWN) ||
+             (layout->flag & FILE_LAYOUT_VER && direction == UI_SELECT_WALK_RIGHT)) {
       active_new = active_old + 1;
       other_site = active_old - 1;
     }
-    else if ((layout->flag & FILE_LAYOUT_HOR && direction == FILE_SELECT_WALK_LEFT) ||
-             (layout->flag & FILE_LAYOUT_VER && direction == FILE_SELECT_WALK_UP)) {
+    else if ((layout->flag & FILE_LAYOUT_HOR && direction == UI_SELECT_WALK_LEFT) ||
+             (layout->flag & FILE_LAYOUT_VER && direction == UI_SELECT_WALK_UP)) {
       active_new = active_old - idx_shift;
       other_site = active_old + idx_shift;
     }
-    else if ((layout->flag & FILE_LAYOUT_HOR && direction == FILE_SELECT_WALK_RIGHT) ||
-             (layout->flag & FILE_LAYOUT_VER && direction == FILE_SELECT_WALK_DOWN)) {
+    else if ((layout->flag & FILE_LAYOUT_HOR && direction == UI_SELECT_WALK_RIGHT) ||
+             (layout->flag & FILE_LAYOUT_VER && direction == UI_SELECT_WALK_DOWN)) {
 
       active_new = active_old + idx_shift;
       other_site = active_old - idx_shift;
@@ -763,7 +767,8 @@ static bool file_walk_select_do(bContext *C,
     }
   }
 
-  return file_walk_select_selection_set(C,
+  return file_walk_select_selection_set(win,
+                                        region,
                                         sfile,
                                         direction,
                                         numfiles,
@@ -793,13 +798,6 @@ static int file_walk_select_invoke(bContext *C, wmOperator *op, const wmEvent *U
 
 void FILE_OT_select_walk(wmOperatorType *ot)
 {
-  static const EnumPropertyItem direction_items[] = {
-      {FILE_SELECT_WALK_UP, "UP", 0, "Prev", ""},
-      {FILE_SELECT_WALK_DOWN, "DOWN", 0, "Next", ""},
-      {FILE_SELECT_WALK_LEFT, "LEFT", 0, "Left", ""},
-      {FILE_SELECT_WALK_RIGHT, "RIGHT", 0, "Right", ""},
-      {0, NULL, 0, NULL, NULL},
-  };
   PropertyRNA *prop;
 
   /* identifiers */
@@ -812,13 +810,7 @@ void FILE_OT_select_walk(wmOperatorType *ot)
   ot->poll = ED_operator_file_active;
 
   /* properties */
-  prop = RNA_def_enum(ot->srna,
-                      "direction",
-                      direction_items,
-                      0,
-                      "Walk Direction",
-                      "Select/Deselect file in this direction");
-  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+  WM_operator_properties_select_walk_direction(ot);
   prop = RNA_def_boolean(ot->srna,
                          "extend",
                          false,
@@ -880,7 +872,7 @@ static int file_select_all_exec(bContext *C, wmOperator *op)
   }
 
   file_draw_check(C);
-  WM_event_add_mousemove(C);
+  WM_event_add_mousemove(CTX_wm_window(C));
   ED_area_tag_redraw(sa);
 
   return OPERATOR_FINISHED;
@@ -956,8 +948,10 @@ static int bookmark_add_exec(bContext *C, wmOperator *UNUSED(op))
 
     fsmenu_insert_entry(
         fsmenu, FS_CATEGORY_BOOKMARKS, params->dir, NULL, ICON_FILE_FOLDER, FS_INSERT_SAVE);
-    BLI_make_file_string(
-        "/", name, BKE_appdir_folder_id_create(BLENDER_USER_CONFIG, NULL), BLENDER_BOOKMARK_FILE);
+    BLI_join_dirfile(name,
+                     sizeof(name),
+                     BKE_appdir_folder_id_create(BLENDER_USER_CONFIG, NULL),
+                     BLENDER_BOOKMARK_FILE);
     fsmenu_write_file(fsmenu, name);
   }
 
@@ -999,10 +993,10 @@ static int bookmark_delete_exec(bContext *C, wmOperator *op)
       char name[FILE_MAX];
 
       fsmenu_remove_entry(fsmenu, FS_CATEGORY_BOOKMARKS, index);
-      BLI_make_file_string("/",
-                           name,
-                           BKE_appdir_folder_id_create(BLENDER_USER_CONFIG, NULL),
-                           BLENDER_BOOKMARK_FILE);
+      BLI_join_dirfile(name,
+                       sizeof(name),
+                       BKE_appdir_folder_id_create(BLENDER_USER_CONFIG, NULL),
+                       BLENDER_BOOKMARK_FILE);
       fsmenu_write_file(fsmenu, name);
       ED_area_tag_refresh(sa);
       ED_area_tag_redraw(sa);
@@ -1053,8 +1047,10 @@ static int bookmark_cleanup_exec(bContext *C, wmOperator *UNUSED(op))
   if (changed) {
     char name[FILE_MAX];
 
-    BLI_make_file_string(
-        "/", name, BKE_appdir_folder_id_create(BLENDER_USER_CONFIG, NULL), BLENDER_BOOKMARK_FILE);
+    BLI_join_dirfile(name,
+                     sizeof(name),
+                     BKE_appdir_folder_id_create(BLENDER_USER_CONFIG, NULL),
+                     BLENDER_BOOKMARK_FILE);
     fsmenu_write_file(fsmenu, name);
     fsmenu_refresh_bookmarks_status(CTX_wm_manager(C), fsmenu);
     ED_area_tag_refresh(sa);
@@ -1130,8 +1126,10 @@ static int bookmark_move_exec(bContext *C, wmOperator *op)
   /* Need to update active bookmark number. */
   sfile->bookmarknr = new_index;
 
-  BLI_make_file_string(
-      "/", fname, BKE_appdir_folder_id_create(BLENDER_USER_CONFIG, NULL), BLENDER_BOOKMARK_FILE);
+  BLI_join_dirfile(fname,
+                   sizeof(fname),
+                   BKE_appdir_folder_id_create(BLENDER_USER_CONFIG, NULL),
+                   BLENDER_BOOKMARK_FILE);
   fsmenu_write_file(fsmenu, fname);
 
   ED_area_tag_redraw(sa);
@@ -1176,8 +1174,10 @@ static int reset_recent_exec(bContext *C, wmOperator *UNUSED(op))
   while (ED_fsmenu_get_entry(fsmenu, FS_CATEGORY_RECENT, 0) != NULL) {
     fsmenu_remove_entry(fsmenu, FS_CATEGORY_RECENT, 0);
   }
-  BLI_make_file_string(
-      "/", name, BKE_appdir_folder_id_create(BLENDER_USER_CONFIG, NULL), BLENDER_BOOKMARK_FILE);
+  BLI_join_dirfile(name,
+                   sizeof(name),
+                   BKE_appdir_folder_id_create(BLENDER_USER_CONFIG, NULL),
+                   BLENDER_BOOKMARK_FILE);
   fsmenu_write_file(fsmenu, name);
   ED_area_tag_redraw(sa);
 
@@ -1196,9 +1196,9 @@ void FILE_OT_reset_recent(wmOperatorType *ot)
   ot->poll = ED_operator_file_active;
 }
 
-int file_highlight_set(SpaceFile *sfile, ARegion *ar, int mx, int my)
+int file_highlight_set(SpaceFile *sfile, ARegion *region, int mx, int my)
 {
-  View2D *v2d = &ar->v2d;
+  View2D *v2d = &region->v2d;
   FileSelectParams *params;
   int numfiles, origfile;
 
@@ -1211,8 +1211,8 @@ int file_highlight_set(SpaceFile *sfile, ARegion *ar, int mx, int my)
 
   origfile = params->highlight_file;
 
-  mx -= ar->winrct.xmin;
-  my -= ar->winrct.ymin;
+  mx -= region->winrct.xmin;
+  my -= region->winrct.ymin;
 
   if (ED_fileselect_layout_is_inside_pt(sfile->layout, v2d, mx, my)) {
     float fx, fy;
@@ -1239,10 +1239,10 @@ int file_highlight_set(SpaceFile *sfile, ARegion *ar, int mx, int my)
 
 static int file_highlight_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent *event)
 {
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   SpaceFile *sfile = CTX_wm_space_file(C);
 
-  if (!file_highlight_set(sfile, ar, event->x, event->y)) {
+  if (!file_highlight_set(sfile, region, event->x, event->y)) {
     return OPERATOR_PASS_THROUGH;
   }
 
@@ -1267,13 +1267,13 @@ static int file_column_sort_ui_context_invoke(bContext *C,
                                               wmOperator *UNUSED(op),
                                               const wmEvent *event)
 {
-  const ARegion *ar = CTX_wm_region(C);
+  const ARegion *region = CTX_wm_region(C);
   SpaceFile *sfile = CTX_wm_space_file(C);
 
   if (file_attribute_column_header_is_inside(
-          &ar->v2d, sfile->layout, event->mval[0], event->mval[1])) {
+          &region->v2d, sfile->layout, event->mval[0], event->mval[1])) {
     const FileAttributeColumnType column_type = file_attribute_column_type_find_isect(
-        &ar->v2d, sfile->params, sfile->layout, event->mval[0]);
+        &region->v2d, sfile->params, sfile->layout, event->mval[0]);
 
     if (column_type != COLUMN_NONE) {
       const FileAttributeColumn *column = &sfile->layout->attribute_columns[column_type];
@@ -1579,10 +1579,10 @@ int file_exec(bContext *C, wmOperator *exec_op)
                           FS_INSERT_SAVE | FS_INSERT_FIRST);
     }
 
-    BLI_make_file_string(BKE_main_blendfile_path(bmain),
-                         filepath,
-                         BKE_appdir_folder_id_create(BLENDER_USER_CONFIG, NULL),
-                         BLENDER_BOOKMARK_FILE);
+    BLI_join_dirfile(filepath,
+                     sizeof(filepath),
+                     BKE_appdir_folder_id_create(BLENDER_USER_CONFIG, NULL),
+                     BLENDER_BOOKMARK_FILE);
     fsmenu_write_file(ED_fsmenu_get(), filepath);
     WM_event_fileselect_event(wm, op, EVT_FILESELECT_EXEC);
   }
@@ -1735,7 +1735,7 @@ static int file_smoothscroll_invoke(bContext *C, wmOperator *UNUSED(op), const w
 {
   ScrArea *sa = CTX_wm_area(C);
   SpaceFile *sfile = CTX_wm_space_file(C);
-  ARegion *ar, *oldar = CTX_wm_region(C);
+  ARegion *region, *ar_ctx = CTX_wm_region(C);
   const bool is_horizontal = (sfile->layout->flag & FILE_LAYOUT_HOR) != 0;
   int i;
 
@@ -1777,8 +1777,8 @@ static int file_smoothscroll_invoke(bContext *C, wmOperator *UNUSED(op), const w
   }
 
   /* we need the correct area for scrolling */
-  ar = BKE_area_find_region_type(sa, RGN_TYPE_WINDOW);
-  if (!ar || ar->regiontype != RGN_TYPE_WINDOW) {
+  region = BKE_area_find_region_type(sa, RGN_TYPE_WINDOW);
+  if (!region || region->regiontype != RGN_TYPE_WINDOW) {
     WM_event_remove_timer(CTX_wm_manager(C), CTX_wm_window(C), sfile->smoothscroll_timer);
     sfile->smoothscroll_timer = NULL;
     return OPERATOR_PASS_THROUGH;
@@ -1794,9 +1794,9 @@ static int file_smoothscroll_invoke(bContext *C, wmOperator *UNUSED(op), const w
     sfile->scroll_offset = (edit_idx / items_block_size) * items_block_size;
   }
 
-  const int numfiles_layout = ED_fileselect_layout_numfiles(sfile->layout, ar);
+  const int numfiles_layout = ED_fileselect_layout_numfiles(sfile->layout, region);
   const int first_visible_item = ED_fileselect_layout_offset(
-      sfile->layout, (int)ar->v2d.cur.xmin, (int)-ar->v2d.cur.ymax);
+      sfile->layout, (int)region->v2d.cur.xmin, (int)-region->v2d.cur.ymax);
   const int last_visible_item = first_visible_item + numfiles_layout + 1;
 
   /* Note: the special case for vertical layout is because filename is at the bottom of items then,
@@ -1813,10 +1813,10 @@ static int file_smoothscroll_invoke(bContext *C, wmOperator *UNUSED(op), const w
    * beginning/end of the view. */
   /* Note that there is a weird glitch, that sometimes tot rctf is smaller than cur rctf...
    * that is why we still need to keep the min/max_middle_offset checks too. :( */
-  const float min_tot_scroll = is_horizontal ? ar->v2d.tot.xmin : -ar->v2d.tot.ymax;
-  const float max_tot_scroll = is_horizontal ? ar->v2d.tot.xmax : -ar->v2d.tot.ymin;
-  const float min_curr_scroll = is_horizontal ? ar->v2d.cur.xmin : -ar->v2d.cur.ymax;
-  const float max_curr_scroll = is_horizontal ? ar->v2d.cur.xmax : -ar->v2d.cur.ymin;
+  const float min_tot_scroll = is_horizontal ? region->v2d.tot.xmin : -region->v2d.tot.ymax;
+  const float max_tot_scroll = is_horizontal ? region->v2d.tot.xmax : -region->v2d.tot.ymin;
+  const float min_curr_scroll = is_horizontal ? region->v2d.cur.xmin : -region->v2d.cur.ymax;
+  const float max_curr_scroll = is_horizontal ? region->v2d.cur.xmax : -region->v2d.cur.ymin;
 
   /* Check if we have reached our final scroll position. */
   /* Filelist has to be ready, otherwise it makes no sense to stop scrolling yet. */
@@ -1850,7 +1850,7 @@ static int file_smoothscroll_invoke(bContext *C, wmOperator *UNUSED(op), const w
 
   /* Temporarily set context to the main window region,
    * so that the pan operator works. */
-  CTX_wm_region_set(C, ar);
+  CTX_wm_region_set(C, region);
 
   /* scroll one step in the desired direction */
   PointerRNA op_ptr;
@@ -1896,10 +1896,10 @@ static int file_smoothscroll_invoke(bContext *C, wmOperator *UNUSED(op), const w
   WM_operator_name_call(C, "VIEW2D_OT_pan", WM_OP_EXEC_DEFAULT, &op_ptr);
   WM_operator_properties_free(&op_ptr);
 
-  ED_region_tag_redraw(ar);
+  ED_region_tag_redraw(region);
 
   /* and restore context */
-  CTX_wm_region_set(C, oldar);
+  CTX_wm_region_set(C, ar_ctx);
 
   return OPERATOR_FINISHED;
 }
@@ -2489,22 +2489,19 @@ static bool file_delete_poll(bContext *C)
 
 int file_delete_exec(bContext *C, wmOperator *op)
 {
-  char str[FILE_MAX];
-  Main *bmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
   SpaceFile *sfile = CTX_wm_space_file(C);
   ScrArea *sa = CTX_wm_area(C);
-  FileDirEntry *file;
   int numfiles = filelist_files_ensure(sfile->files);
-  int i;
 
   const char *error_message = NULL;
   bool report_error = false;
   errno = 0;
-  for (i = 0; i < numfiles; i++) {
+  for (int i = 0; i < numfiles; i++) {
     if (filelist_entry_select_index_get(sfile->files, i, CHECK_ALL)) {
-      file = filelist_file(sfile->files, i);
-      BLI_make_file_string(BKE_main_blendfile_path(bmain), str, sfile->params->dir, file->relpath);
+      FileDirEntry *file = filelist_file(sfile->files, i);
+      char str[FILE_MAX];
+      BLI_join_dirfile(str, sizeof(str), sfile->params->dir, file->relpath);
       if (BLI_delete_soft(str, &error_message) != 0 || BLI_exists(str)) {
         report_error = true;
       }
@@ -2545,10 +2542,10 @@ void FILE_OT_delete(struct wmOperatorType *ot)
 static int file_start_filter_exec(bContext *C, wmOperator *UNUSED(op))
 {
   ScrArea *sa = CTX_wm_area(C);
-  ARegion *ar = BKE_area_find_region_type(sa, RGN_TYPE_UI);
+  ARegion *region = BKE_area_find_region_type(sa, RGN_TYPE_UI);
   SpaceFile *sf = CTX_wm_space_file(C);
 
-  UI_textbutton_activate_rna(C, ar, sf->params, "filter_search");
+  UI_textbutton_activate_rna(C, region, sf->params, "filter_search");
   return OPERATOR_FINISHED;
 }
 

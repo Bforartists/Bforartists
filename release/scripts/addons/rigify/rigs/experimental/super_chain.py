@@ -558,7 +558,7 @@ class Rig:
         )
 
         invert_last = True
-        if self.params.wgt_align_axis is not 'y' or '-y':
+        if self.params.wgt_align_axis not in {'y', '-y'}:
             invert_last = False
 
         create_chain_widget(

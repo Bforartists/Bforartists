@@ -39,8 +39,7 @@ bl_info = {
     "description": "Pie Menu Activation",
     "location": "Addons Preferences",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "interface/viewport_pies.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/viewport_pies.html",
     "category": "Interface"
     }
 
@@ -178,14 +177,14 @@ class PIEToolsPreferences(AddonPreferences):
                     split.label(text='Warning:')
                     split.label(text='  ' + info['warning'], icon='ERROR')
 
-                tot_row = int(bool(info.get('wiki_url')))
+                tot_row = int(bool(info.get('doc_url')))
                 if tot_row:
                     split = col.row().split(factor=0.15)
                     split.label(text='Internet:')
-                    if info.get('wiki_url'):
+                    if info.get('doc_url'):
                         op = split.operator('wm.url_open',
                                             text='Documentation', icon='HELP')
-                        op.url = info.get('wiki_url')
+                        op.url = info.get('doc_url')
                     for i in range(4 - tot_row):
                         split.separator()
 

@@ -308,6 +308,7 @@ static eOLDrawState tree_element_set_active_object(bContext *C,
                                                    bool recursive)
 {
   TreeStoreElem *tselem = TREESTORE(te);
+  TreeStoreElem *parent_tselem;
   Scene *sce;
   Base *base;
   Object *ob = NULL;
@@ -317,8 +318,10 @@ static eOLDrawState tree_element_set_active_object(bContext *C,
     ob = (Object *)tselem->id;
   }
   else {
-    ob = (Object *)outliner_search_back(soops, te, ID_OB);
-    if (ob == OBACT(view_layer)) {
+    ob = (Object *)outliner_search_back(te, ID_OB);
+
+    /* Don't return when activating children of the previous active object. */
+    if (ob == OBACT(view_layer) && set == OL_SETSEL_NONE) {
       return OL_DRAWSEL_NONE;
     }
   }
@@ -326,7 +329,7 @@ static eOLDrawState tree_element_set_active_object(bContext *C,
     return OL_DRAWSEL_NONE;
   }
 
-  sce = (Scene *)outliner_search_back(soops, te, ID_SCE);
+  sce = (Scene *)outliner_search_back(te, ID_SCE);
   if (sce && scene != sce) {
     WM_window_set_active_scene(CTX_data_main(C), C, CTX_wm_window(C), sce);
     scene = sce;
@@ -352,14 +355,17 @@ static eOLDrawState tree_element_set_active_object(bContext *C,
     }
   }
 
+  parent_tselem = TREESTORE(outliner_find_id(soops, &soops->tree, (ID *)ob));
   if (base) {
     if (set == OL_SETSEL_EXTEND) {
       /* swap select */
       if (base->flag & BASE_SELECTED) {
         ED_object_base_select(base, BA_DESELECT);
+        parent_tselem->flag &= ~TSE_SELECTED;
       }
       else {
         ED_object_base_select(base, BA_SELECT);
+        parent_tselem->flag |= TSE_SELECTED;
       }
     }
     else {
@@ -375,6 +381,7 @@ static eOLDrawState tree_element_set_active_object(bContext *C,
         BKE_view_layer_base_deselect_all(view_layer);
       }
       ED_object_base_select(base, BA_SELECT);
+      parent_tselem->flag |= TSE_SELECTED;
     }
 
     if (recursive) {
@@ -398,7 +405,6 @@ static eOLDrawState tree_element_set_active_object(bContext *C,
 static eOLDrawState tree_element_active_material(bContext *C,
                                                  Scene *UNUSED(scene),
                                                  ViewLayer *view_layer,
-                                                 SpaceOutliner *soops,
                                                  TreeElement *te,
                                                  const eOLSetState set)
 {
@@ -406,7 +412,7 @@ static eOLDrawState tree_element_active_material(bContext *C,
   Object *ob;
 
   /* we search for the object parent */
-  ob = (Object *)outliner_search_back(soops, te, ID_OB);
+  ob = (Object *)outliner_search_back(te, ID_OB);
   // note: ob->matbits can be NULL when a local object points to a library mesh.
   if (ob == NULL || ob != OBACT(view_layer) || ob->matbits == NULL) {
     return OL_DRAWSEL_NONE; /* just paranoia */
@@ -454,11 +460,10 @@ static eOLDrawState tree_element_active_material(bContext *C,
 static eOLDrawState tree_element_active_camera(bContext *C,
                                                Scene *scene,
                                                ViewLayer *UNUSED(view_layer),
-                                               SpaceOutliner *soops,
                                                TreeElement *te,
                                                const eOLSetState set)
 {
-  Object *ob = (Object *)outliner_search_back(soops, te, ID_OB);
+  Object *ob = (Object *)outliner_search_back(te, ID_OB);
 
   if (set != OL_SETSEL_NONE) {
     scene->camera = ob;
@@ -1026,13 +1031,13 @@ eOLDrawState tree_element_active(bContext *C,
       }
       break;
     case ID_MA:
-      return tree_element_active_material(C, tvc->scene, tvc->view_layer, soops, te, set);
+      return tree_element_active_material(C, tvc->scene, tvc->view_layer, te, set);
     case ID_WO:
       return tree_element_active_world(C, tvc->scene, tvc->view_layer, soops, te, set);
     case ID_TXT:
       return tree_element_active_text(C, tvc->scene, tvc->view_layer, soops, te, set);
     case ID_CA:
-      return tree_element_active_camera(C, tvc->scene, tvc->view_layer, soops, te, set);
+      return tree_element_active_camera(C, tvc->scene, tvc->view_layer, te, set);
   }
   return OL_DRAWSEL_NONE;
 }
@@ -1201,7 +1206,7 @@ static void do_outliner_item_activate_tree_element(bContext *C,
       WM_event_add_notifier(C, NC_SCENE | ND_OB_SELECT, tvc->scene);
     }
     else if (OB_DATA_SUPPORT_EDITMODE(te->idcode)) {
-      Object *ob = (Object *)outliner_search_back(soops, te, ID_OB);
+      Object *ob = (Object *)outliner_search_back(te, ID_OB);
       if ((ob != NULL) && (ob->data == tselem->id)) {
         Base *base = BKE_view_layer_base_find(tvc->view_layer, ob);
         if ((base != NULL) && (base->flag & BASE_VISIBLE_DEPSGRAPH)) {
@@ -1311,10 +1316,10 @@ static void do_outliner_range_select(bContext *C,
 }
 
 static bool outliner_is_co_within_restrict_columns(const SpaceOutliner *soops,
-                                                   const ARegion *ar,
+                                                   const ARegion *region,
                                                    float view_co_x)
 {
-  return (view_co_x > ar->v2d.cur.xmax - outliner_restrict_columns_width(soops));
+  return (view_co_x > region->v2d.cur.xmax - outliner_restrict_columns_width(soops));
 }
 
 /**
@@ -1345,15 +1350,15 @@ static int outliner_item_do_activate_from_cursor(bContext *C,
                                                  const bool use_range,
                                                  const bool deselect_all)
 {
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   SpaceOutliner *soops = CTX_wm_space_outliner(C);
   TreeElement *te;
   float view_mval[2];
   bool changed = false, rebuild_tree = false;
 
-  UI_view2d_region_to_view(&ar->v2d, mval[0], mval[1], &view_mval[0], &view_mval[1]);
+  UI_view2d_region_to_view(&region->v2d, mval[0], mval[1], &view_mval[0], &view_mval[1]);
 
-  if (outliner_is_co_within_restrict_columns(soops, ar, view_mval[0])) {
+  if (outliner_is_co_within_restrict_columns(soops, region, view_mval[0])) {
     return OPERATOR_CANCELLED;
   }
 
@@ -1401,10 +1406,10 @@ static int outliner_item_do_activate_from_cursor(bContext *C,
 
   if (changed) {
     if (rebuild_tree) {
-      ED_region_tag_redraw(ar);
+      ED_region_tag_redraw(region);
     }
     else {
-      ED_region_tag_redraw_no_rebuild(ar);
+      ED_region_tag_redraw_no_rebuild(region);
     }
 
     if (soops->flag & SO_SYNC_SELECT) {
@@ -1479,7 +1484,7 @@ static int outliner_box_select_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   SpaceOutliner *soops = CTX_wm_space_outliner(C);
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   rctf rectf;
 
   const eSelectOp sel_op = RNA_enum_get(op->ptr, "mode");
@@ -1489,7 +1494,7 @@ static int outliner_box_select_exec(bContext *C, wmOperator *op)
   }
 
   WM_operator_properties_border_to_rctf(op, &rectf);
-  UI_view2d_region_to_view_rctf(&ar->v2d, &rectf, &rectf);
+  UI_view2d_region_to_view_rctf(&region->v2d, &rectf, &rectf);
 
   for (TreeElement *te = soops->tree.first; te; te = te->next) {
     outliner_item_box_select(soops, scene, &rectf, te, select);
@@ -1497,7 +1502,7 @@ static int outliner_box_select_exec(bContext *C, wmOperator *op)
 
   DEG_id_tag_update(&scene->id, ID_RECALC_SELECT);
   WM_event_add_notifier(C, NC_SCENE | ND_OB_SELECT, scene);
-  ED_region_tag_redraw(ar);
+  ED_region_tag_redraw(region);
 
   if (soops->flag & SO_SYNC_SELECT) {
     ED_outliner_select_sync_from_outliner(C, soops);
@@ -1509,11 +1514,12 @@ static int outliner_box_select_exec(bContext *C, wmOperator *op)
 static int outliner_box_select_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   SpaceOutliner *soops = CTX_wm_space_outliner(C);
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   float view_mval[2];
   const bool tweak = RNA_boolean_get(op->ptr, "tweak");
 
-  UI_view2d_region_to_view(&ar->v2d, event->mval[0], event->mval[1], &view_mval[0], &view_mval[1]);
+  UI_view2d_region_to_view(
+      &region->v2d, event->mval[0], event->mval[1], &view_mval[0], &view_mval[1]);
 
   /* Find element clicked on */
   TreeElement *te = outliner_find_item_at_y(soops, &soops->tree, view_mval[1]);
@@ -1636,16 +1642,16 @@ static TreeElement *do_outliner_select_walk(SpaceOutliner *soops,
   tselem->flag &= ~TSE_ACTIVE_WALK;
 
   switch (direction) {
-    case OUTLINER_SELECT_WALK_UP:
+    case UI_SELECT_WALK_UP:
       walk_element = outliner_find_previous_element(soops, walk_element);
       break;
-    case OUTLINER_SELECT_WALK_DOWN:
+    case UI_SELECT_WALK_DOWN:
       walk_element = outliner_find_next_element(soops, walk_element);
       break;
-    case OUTLINER_SELECT_WALK_LEFT:
+    case UI_SELECT_WALK_LEFT:
       outliner_item_openclose(walk_element, false, toggle_all);
       break;
-    case OUTLINER_SELECT_WALK_RIGHT:
+    case UI_SELECT_WALK_RIGHT:
       outliner_item_openclose(walk_element, true, toggle_all);
       break;
   }
@@ -1700,25 +1706,25 @@ static TreeElement *find_walk_select_start_element(SpaceOutliner *soops, bool *c
 }
 
 /* Scroll the outliner when the walk element reaches the top or bottom boundary */
-static void outliner_walk_scroll(ARegion *ar, TreeElement *te)
+static void outliner_walk_scroll(ARegion *region, TreeElement *te)
 {
   /* Account for the header height */
-  int y_max = ar->v2d.cur.ymax - UI_UNIT_Y;
-  int y_min = ar->v2d.cur.ymin;
+  int y_max = region->v2d.cur.ymax - UI_UNIT_Y;
+  int y_min = region->v2d.cur.ymin;
 
   /* Scroll if walked position is beyond the border */
   if (te->ys > y_max) {
-    outliner_scroll_view(ar, te->ys - y_max);
+    outliner_scroll_view(region, te->ys - y_max);
   }
   else if (te->ys < y_min) {
-    outliner_scroll_view(ar, -(y_min - te->ys));
+    outliner_scroll_view(region, -(y_min - te->ys));
   }
 }
 
 static int outliner_walk_select_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
 {
   SpaceOutliner *soops = CTX_wm_space_outliner(C);
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
 
   const short direction = RNA_enum_get(op->ptr, "direction");
   const bool extend = RNA_boolean_get(op->ptr, "extend");
@@ -1736,26 +1742,18 @@ static int outliner_walk_select_invoke(bContext *C, wmOperator *op, const wmEven
   }
 
   /* Scroll outliner to focus on walk element */
-  outliner_walk_scroll(ar, walk_element);
+  outliner_walk_scroll(region, walk_element);
 
   if (soops->flag & SO_SYNC_SELECT) {
     ED_outliner_select_sync_from_outliner(C, soops);
   }
-  ED_region_tag_redraw(ar);
+  ED_region_tag_redraw(region);
 
   return OPERATOR_FINISHED;
 }
 
 void OUTLINER_OT_select_walk(wmOperatorType *ot)
 {
-  static const EnumPropertyItem direction_items[] = {
-      {OUTLINER_SELECT_WALK_UP, "UP", 0, "Up", ""},
-      {OUTLINER_SELECT_WALK_DOWN, "DOWN", 0, "Down", ""},
-      {OUTLINER_SELECT_WALK_LEFT, "LEFT", 0, "Left", ""},
-      {OUTLINER_SELECT_WALK_RIGHT, "RIGHT", 0, "Right", ""},
-      {0, NULL, 0, NULL, NULL},
-  };
-
   /* identifiers */
   ot->name = "Walk Select";
   ot->idname = "OUTLINER_OT_select_walk";
@@ -1769,13 +1767,7 @@ void OUTLINER_OT_select_walk(wmOperatorType *ot)
 
   /* properties */
   PropertyRNA *prop;
-  prop = RNA_def_enum(ot->srna,
-                      "direction",
-                      direction_items,
-                      0,
-                      "Walk Direction",
-                      "Select element in this direction");
-  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+  WM_operator_properties_select_walk_direction(ot);
   prop = RNA_def_boolean(ot->srna, "extend", false, "Extend", "Extend selection on walk");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
   prop = RNA_def_boolean(

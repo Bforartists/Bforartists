@@ -26,9 +26,9 @@ bl_info = {
     "location": "View3D > Context Menu > Object/Edit Modes",
     "description": "Tools for objects, render, shapes, and files.",
     "warning": "",
-    "wiki_url": "https://www.oscurart.com.ar",
+    "doc_url": "https://www.oscurart.com.ar",
     "category": "Object",
-    }
+}
 
 
 import bpy

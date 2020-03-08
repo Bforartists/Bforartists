@@ -25,8 +25,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "Properties: Scene > Math Vis Console and Python Console: Menu",
     "description": "Display console defined mathutils variables in the 3D view",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "3d_view/math_vis_console.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/3d_view/math_vis_console.html",
     "support": "OFFICIAL",
     "category": "3D View",
 }

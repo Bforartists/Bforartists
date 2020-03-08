@@ -46,14 +46,14 @@ def points_to_verts(original_xyz_minmax,
         xmin, xmax = original_xyz_minmax["x"]
         ymin, ymax = original_xyz_minmax["y"]
         zmin, zmax = original_xyz_minmax["z"]
-        
+
         xmin -= margin_bounds
         xmax += margin_bounds
         ymin -= margin_bounds
         ymax += margin_bounds
         zmin -= margin_bounds
         zmax += margin_bounds
-        
+
         # (x,y,z,scaler) for plane. xyz is normaliized direction. scaler is scale for plane.
         # Plane will be made at the perpendicular direction of the normal vector.
         convexPlanes = [
@@ -64,33 +64,33 @@ def points_to_verts(original_xyz_minmax,
             Vector((0.0, 0.0, +1.0, -zmax)),
             Vector((0.0, 0.0, -1.0, +zmin)),
             ]
-      
+
     if len(points) > 1:
         points_dist_sorted = [(Vector(p[0]), p[1]) for p in points]
-        
+
         for i, point_current in enumerate(points):
             planes = [None] * len(convexPlanes)
             for j in range(len(convexPlanes)):
-                planes[j] = convexPlanes[j].copy()               
+                planes[j] = convexPlanes[j].copy()
                 # e.g. Dot product point's (xyz) with convex's (+1.0,0.0,0.0) detects x value of the point.
                 # e.g. Then, x scaler += point's x value.
                 planes[j][3] += planes[j].xyz.dot(point_current[0])
-                       
+
             distance_max = 10000000000.0  # a big value!
-            
+
             points_dist_sorted_current = points_dist_sorted.copy()
             # Closer points to the current point are earlier order. Of course, current point is the first.
             points_dist_sorted_current.sort(key=lambda p: (p[0] - point_current[0]).length_squared)
-            
+
             # The point itself is removed.
-            points_dist_sorted_current.pop(0)        
-            
+            points_dist_sorted_current.pop(0)
+
             # Compare the current point with other points.
             for j in range(len(points_dist_sorted_current)):
 
                 point_target = points_dist_sorted_current[j]
-                normal = 0           
-                normal = point_target[0] - point_current[0]           
+                normal = 0
+                normal = point_target[0] - point_current[0]
                 nlength = normal.length # is sqrt(X^2+y^2+z^2).
 
                 if points_scale is not None:
@@ -115,7 +115,7 @@ def points_to_verts(original_xyz_minmax,
                 plane.resize_4d()
                 plane[3] = (-nlength / 2.0) + margin_cell
                 planes.append(plane)
-                
+
                 # Make vertex points of cell, by crossing point of planes.
                 vertices[:], plane_indices[:] = mathutils.geometry.points_in_planes(planes)
                 #if len(vertices) == 0:
@@ -125,7 +125,7 @@ def points_to_verts(original_xyz_minmax,
                     planes[:] = [planes[k] for k in plane_indices]
 
                 # for comparisons use length_squared and delay
-                # converting to a real length until the end. 
+                # converting to a real length until the end.
                 distance_max = 10000000000.0  # a big value!
                 for v in vertices:
                     distance = v.length_squared
@@ -136,14 +136,14 @@ def points_to_verts(original_xyz_minmax,
 
             if len(vertices) == 0:
                 continue
-                
+
             cells.append((point_current[0], vertices[:]))
-            del vertices[:]        
-          
+            del vertices[:]
+
     else:
         vertices[:], plane_indices[:] = mathutils.geometry.points_in_planes(convexPlanes)
         #convex_center = Vector(((xmin-xmax)/2, (ymin-ymax)/2, (zmin-zmax)/2))
         convex_center = Vector((0,0,0))
         cells.append((convex_center, vertices[:]))
-    
+
     return cells

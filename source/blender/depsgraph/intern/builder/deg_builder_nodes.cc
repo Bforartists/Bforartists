@@ -717,9 +717,9 @@ void DepsgraphNodeBuilder::build_object_data(Object *object, bool is_object_visi
     }
   }
   /* Materials. */
-  Material ***materials_ptr = BKE_object_material_array(object);
+  Material ***materials_ptr = BKE_object_material_array_p(object);
   if (materials_ptr != nullptr) {
-    short *num_materials_ptr = BKE_object_material_num(object);
+    short *num_materials_ptr = BKE_object_material_len_p(object);
     build_materials(*materials_ptr, *num_materials_ptr);
   }
 }
@@ -991,6 +991,12 @@ void DepsgraphNodeBuilder::build_parameters(ID *id)
   op_node->set_as_exit();
 }
 
+void DepsgraphNodeBuilder::build_dimensions(Object *object)
+{
+  /* Object dimensions (bounding box) node. Will depend on both geometry and transform. */
+  add_operation_node(&object->id, NodeType::PARAMETERS, OperationCode::DIMENSIONS);
+}
+
 /* Recursively build graph for world */
 void DepsgraphNodeBuilder::build_world(World *world)
 {
@@ -1224,6 +1230,7 @@ void DepsgraphNodeBuilder::build_object_data_geometry(Object *object, bool is_ob
   build_object_pointcache(object);
   /* Geometry. */
   build_object_data_geometry_datablock((ID *)object->data, is_object_visible);
+  build_dimensions(object);
   /* Batch cache. */
   add_operation_node(&object->id,
                      NodeType::BATCH_CACHE,

@@ -26,10 +26,10 @@ bl_info = {
     "location": "File > Import-Export",
     "description": "Import-Export OBJ, Import OBJ mesh, UV's, materials and textures",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "import_export/io_scene_obj.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/scene_obj.html",
     "support": 'OFFICIAL',
-    "category": "Import-Export"}
+    "category": "Import-Export",
+}
 
 if "bpy" in locals():
     import importlib

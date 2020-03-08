@@ -25,9 +25,8 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "Text Editor > Sidebar > Dev Tab",
     "description": "Find free shortcuts, inform about used and print a key list",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "development/is_key_free.html",
-    "category": "Development"
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/development/is_key_free.html",
+    "category": "Development",
 }
 
 import bpy

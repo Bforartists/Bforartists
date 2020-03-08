@@ -605,7 +605,8 @@ typedef struct UserDef_FileSpaceData {
   int sort_type;      /* FileSelectParams.sort */
   int details_flags;  /* FileSelectParams.details_flags */
   int flag;           /* FileSelectParams.flag */
-  int filter_id;      /* FileSelectParams.filter_id */
+  int _pad0;
+  uint64_t filter_id; /* FileSelectParams.filter_id */
 
   /** Info used when creating the file browser in a temporary window. */
   int temp_win_sizex;
@@ -749,7 +750,6 @@ typedef struct UserDef {
   /** Milliseconds to spend spinning the view. */
   short smooth_viewtx;
   short glreslimit;
-  short curssize DNA_DEPRECATED;
   /** #eColorPicker_Types. */
   short color_picker_type;
   /** Curve smoothing type for newly added F-Curves. */
@@ -758,7 +758,7 @@ typedef struct UserDef {
   char ipo_new;
   /** Handle types for newly added keyframes. */
   char keyhandles_new;
-  char _pad11[2];
+  char _pad11[4];
   /** #eZoomFrame_Mode. */
   char view_frame_type;
 

@@ -18,14 +18,13 @@
 
 bl_info = {
     "name": "Edge Roundifier",
-    "category": "Mesh",
     "author": "Piotr Komisarczyk (komi3D), PKHG",
     "version": (1, 0, 2),
     "blender": (2, 80, 0),
     "location": "SPACE > Edge Roundifier or CTRL-E > "
                 "Edge Roundifier or Tools > Addons > Edge Roundifier",
     "description": "Mesh editing script allowing edge rounding",
-    "wiki_url": "",
+    "doc_url": "",
     "category": "Mesh"
 }
 

@@ -794,7 +794,15 @@ bool UI_context_copy_to_selected_list(bContext *C,
     ui_context_selected_bones_via_pose(C, r_lb);
   }
   else if (RNA_struct_is_a(ptr->type, &RNA_Sequence)) {
-    *r_lb = CTX_data_collection_get(C, "selected_editable_sequences");
+    /* Special case when we do this for 'Sequence.lock'.
+     * (if the sequence is locked, it wont be in "selected_editable_sequences"). */
+    const char *prop_id = RNA_property_identifier(prop);
+    if (STREQ(prop_id, "lock")) {
+      *r_lb = CTX_data_collection_get(C, "selected_sequences");
+    }
+    else {
+      *r_lb = CTX_data_collection_get(C, "selected_editable_sequences");
+    }
   }
   else if (RNA_struct_is_a(ptr->type, &RNA_FCurve)) {
     *r_lb = CTX_data_collection_get(C, "selected_editable_fcurves");
@@ -901,7 +909,15 @@ bool UI_context_copy_to_selected_list(bContext *C,
       /* Try to recursively find an RNA_Sequence ancestor,
        * to handle situations like T41062... */
       if ((*r_path = RNA_path_resolve_from_type_to_property(ptr, prop, &RNA_Sequence)) != NULL) {
-        *r_lb = CTX_data_collection_get(C, "selected_editable_sequences");
+        /* Special case when we do this for 'Sequence.lock'.
+         * (if the sequence is locked, it wont be in "selected_editable_sequences"). */
+        const char *prop_id = RNA_property_identifier(prop);
+        if (STREQ(prop_id, "lock")) {
+          *r_lb = CTX_data_collection_get(C, "selected_sequences");
+        }
+        else {
+          *r_lb = CTX_data_collection_get(C, "selected_editable_sequences");
+        }
       }
     }
     return (*r_path != NULL);
@@ -1313,7 +1329,7 @@ static int editsource_exec(bContext *C, wmOperator *op)
     GHashIterator ghi;
     struct uiEditSourceButStore *but_store = NULL;
 
-    ARegion *ar = CTX_wm_region(C);
+    ARegion *region = CTX_wm_region(C);
     int ret;
 
     /* needed else the active button does not get tested */
@@ -1325,9 +1341,9 @@ static int editsource_exec(bContext *C, wmOperator *op)
     ui_editsource_active_but_set(but);
 
     /* redraw and get active button python info */
-    ED_region_do_layout(C, ar);
-    ED_region_do_draw(C, ar);
-    ar->do_draw = false;
+    ED_region_do_layout(C, region);
+    ED_region_do_draw(C, region);
+    region->do_draw = false;
 
     for (BLI_ghashIterator_init(&ghi, ui_editsource_info->hash);
          BLI_ghashIterator_done(&ghi) == false;
@@ -1604,17 +1620,17 @@ static int ui_button_press_invoke(bContext *C, wmOperator *op, const wmEvent *ev
   bScreen *sc = CTX_wm_screen(C);
   const bool skip_depressed = RNA_boolean_get(op->ptr, "skip_depressed");
   ARegion *ar_prev = CTX_wm_region(C);
-  ARegion *ar = sc ? BKE_screen_find_region_xy(sc, RGN_TYPE_ANY, event->x, event->y) : NULL;
+  ARegion *region = sc ? BKE_screen_find_region_xy(sc, RGN_TYPE_ANY, event->x, event->y) : NULL;
 
-  if (ar == NULL) {
-    ar = ar_prev;
+  if (region == NULL) {
+    region = ar_prev;
   }
 
-  if (ar == NULL) {
+  if (region == NULL) {
     return OPERATOR_PASS_THROUGH;
   }
 
-  CTX_wm_region_set(C, ar);
+  CTX_wm_region_set(C, region);
   uiBut *but = UI_context_active_but_get(C);
   CTX_wm_region_set(C, ar_prev);
 
@@ -1629,11 +1645,11 @@ static int ui_button_press_invoke(bContext *C, wmOperator *op, const wmEvent *ev
    * having this avoids a minor drawing glitch. */
   void *but_optype = but->optype;
 
-  UI_but_execute(C, ar, but);
+  UI_but_execute(C, region, but);
 
   but->optype = but_optype;
 
-  WM_event_add_mousemove(C);
+  WM_event_add_mousemove(CTX_wm_window(C));
 
   return OPERATOR_FINISHED;
 }
@@ -1693,14 +1709,14 @@ bool UI_drop_color_poll(struct bContext *C,
    * return true always */
   if (drag->type == WM_DRAG_COLOR) {
     SpaceImage *sima = CTX_wm_space_image(C);
-    ARegion *ar = CTX_wm_region(C);
+    ARegion *region = CTX_wm_region(C);
 
     if (UI_but_active_drop_color(C)) {
       return 1;
     }
 
     if (sima && (sima->mode == SI_MODE_PAINT) && sima->image &&
-        (ar && ar->regiontype == RGN_TYPE_WINDOW)) {
+        (region && region->regiontype == RGN_TYPE_WINDOW)) {
       return 1;
     }
   }
@@ -1718,7 +1734,7 @@ void UI_drop_color_copy(wmDrag *drag, wmDropBox *drop)
 
 static int drop_color_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
-  ARegion *ar = CTX_wm_region(C);
+  ARegion *region = CTX_wm_region(C);
   uiBut *but = NULL;
   float color[4];
   bool gamma;
@@ -1728,7 +1744,7 @@ static int drop_color_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 
   /* find button under mouse, check if it has RNA color property and
    * if it does copy the data */
-  but = ui_region_find_active_but(ar);
+  but = ui_region_find_active_but(region);
 
   if (but && but->type == UI_BTYPE_COLOR && but->rnaprop) {
     const int color_len = RNA_property_array_length(&but->rnapoin, but->rnaprop);
@@ -1762,7 +1778,7 @@ static int drop_color_invoke(bContext *C, wmOperator *op, const wmEvent *event)
     ED_imapaint_bucket_fill(C, color, op, event->mval);
   }
 
-  ED_region_tag_redraw(ar);
+  ED_region_tag_redraw(region);
 
   return OPERATOR_FINISHED;
 }

@@ -25,10 +25,11 @@ bl_info = {
     "blender": (2, 66, 0),
     "description": "Automatic rigging from building-block components",
     "location": "Armature properties, Bone properties, View3d tools panel, Armature Add menu",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.5/Py/"
-                "Scripts/Rigging/Rigify",
+    "doc_url": "http://wiki.blender.org/index.php/Extensions:2.5/Py/"
+               "Scripts/Rigging/Rigify",
     "tracker_url": "http://github.com/cessen/rigify/issues",
-    "category": "Rigging"}
+    "category": "Rigging",
+}
 
 
 if "bpy" in locals():

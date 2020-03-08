@@ -88,7 +88,7 @@ void EEVEE_lookdev_cache_init(EEVEE_Data *vedata,
       rect = &fallback_rect;
     }
     else {
-      rect = ED_region_visible_rect(draw_ctx->ar);
+      rect = ED_region_visible_rect(draw_ctx->region);
     }
 
     /* Make the viewport width scale the lookdev spheres a bit.
@@ -176,6 +176,8 @@ void EEVEE_lookdev_cache_init(EEVEE_Data *vedata,
         DRW_shgroup_uniform_block(grp, "grid_block", sldata->grid_ubo);
         DRW_shgroup_uniform_block(grp, "planar_block", sldata->planar_ubo);
         DRW_shgroup_uniform_block(grp, "common_block", sldata->common_ubo);
+        DRW_shgroup_uniform_block(
+            grp, "renderpass_block", EEVEE_material_default_render_pass_ubo_get(sldata));
       }
 
       DRW_shgroup_call(grp, DRW_cache_fullscreen_quad_get(), NULL);

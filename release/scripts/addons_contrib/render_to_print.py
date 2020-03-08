@@ -25,10 +25,11 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "Output > Render to Print",
     "description": "Set the size of the render for a print",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/ \
-                Py/Scripts/Render/Render to Print",
+    "doc_url": "http://wiki.blender.org/index.php/Extensions:2.6/"
+               "Py/Scripts/Render/Render to Print",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
-    "category": "Render"}
+    "category": "Render",
+}
 
 
 import math
@@ -330,9 +331,9 @@ class RENDER_OT_apply_size(Operator):
         return {'FINISHED'}
 
 
-classes = ( 
-            RENDER_OT_apply_size, 
-            RENDER_PT_print, 
+classes = (
+            RENDER_OT_apply_size,
+            RENDER_PT_print,
             RenderPrintSertings
             )
 
@@ -350,7 +351,7 @@ def unregister():
 
     for cls in classes:
         unregister_class(cls)
-        
+
     del Scene.print_settings
 
 

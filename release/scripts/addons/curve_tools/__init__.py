@@ -29,10 +29,10 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "View3D > Tool Shelf > Edit Tab",
     "warning": "WIP",
-    "wiki_url": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "add_curve/curve_tools.html",
-    "category": "Add Curve"}
+    "doc_url": "",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/curve_tools.html",
+    "category": "Add Curve",
+}
 
 
 import os, bpy, importlib, math

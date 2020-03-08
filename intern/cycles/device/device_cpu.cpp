@@ -29,16 +29,19 @@
 #include "device/device_intern.h"
 #include "device/device_split_kernel.h"
 
+// clang-format off
 #include "kernel/kernel.h"
 #include "kernel/kernel_compat_cpu.h"
 #include "kernel/kernel_types.h"
 #include "kernel/split/kernel_split_data.h"
 #include "kernel/kernel_globals.h"
+#include "kernel/kernel_adaptive_sampling.h"
 
 #include "kernel/filter/filter.h"
 
 #include "kernel/osl/osl_shader.h"
 #include "kernel/osl/osl_globals.h"
+// clang-format on
 
 #include "render/buffers.h"
 #include "render/coverage.h"
@@ -317,6 +320,10 @@ class CPUDevice : public Device {
     REGISTER_SPLIT_KERNEL(next_iteration_setup);
     REGISTER_SPLIT_KERNEL(indirect_subsurface);
     REGISTER_SPLIT_KERNEL(buffer_update);
+    REGISTER_SPLIT_KERNEL(adaptive_stopping);
+    REGISTER_SPLIT_KERNEL(adaptive_filter_x);
+    REGISTER_SPLIT_KERNEL(adaptive_filter_y);
+    REGISTER_SPLIT_KERNEL(adaptive_adjust_samples);
 #undef REGISTER_SPLIT_KERNEL
 #undef KERNEL_FUNCTIONS
   }
@@ -823,6 +830,49 @@ class CPUDevice : public Device {
     return true;
   }
 
+  bool adaptive_sampling_filter(KernelGlobals *kg, RenderTile &tile)
+  {
+    WorkTile wtile;
+    wtile.x = tile.x;
+    wtile.y = tile.y;
+    wtile.w = tile.w;
+    wtile.h = tile.h;
+    wtile.offset = tile.offset;
+    wtile.stride = tile.stride;
+    wtile.buffer = (float *)tile.buffer;
+
+    bool any = false;
+    for (int y = tile.y; y < tile.y + tile.h; ++y) {
+      any |= kernel_do_adaptive_filter_x(kg, y, &wtile);
+    }
+    for (int x = tile.x; x < tile.x + tile.w; ++x) {
+      any |= kernel_do_adaptive_filter_y(kg, x, &wtile);
+    }
+    return (!any);
+  }
+
+  void adaptive_sampling_post(const RenderTile &tile, KernelGlobals *kg)
+  {
+    float *render_buffer = (float *)tile.buffer;
+    for (int y = tile.y; y < tile.y + tile.h; y++) {
+      for (int x = tile.x; x < tile.x + tile.w; x++) {
+        int index = tile.offset + x + y * tile.stride;
+        ccl_global float *buffer = render_buffer + index * kernel_data.film.pass_stride;
+        if (buffer[kernel_data.film.pass_sample_count] < 0.0f) {
+          buffer[kernel_data.film.pass_sample_count] = -buffer[kernel_data.film.pass_sample_count];
+          float sample_multiplier = tile.sample / max((float)tile.start_sample + 1.0f,
+                                                      buffer[kernel_data.film.pass_sample_count]);
+          if (sample_multiplier != 1.0f) {
+            kernel_adaptive_post_adjust(kg, buffer, sample_multiplier);
+          }
+        }
+        else {
+          kernel_adaptive_post_adjust(kg, buffer, tile.sample / (tile.sample - 1.0f));
+        }
+      }
+    }
+  }
+
   void path_trace(DeviceTask &task, RenderTile &tile, KernelGlobals *kg)
   {
     const bool use_coverage = kernel_data.film.cryptomatte_passes & CRYPT_ACCURATE;
@@ -855,13 +905,26 @@ class CPUDevice : public Device {
           path_trace_kernel()(kg, render_buffer, sample, x, y, tile.offset, tile.stride);
         }
       }
-
       tile.sample = sample + 1;
+
+      if (task.adaptive_sampling.use && task.adaptive_sampling.need_filter(sample)) {
+        const bool stop = adaptive_sampling_filter(kg, tile);
+        if (stop) {
+          const int num_progress_samples = end_sample - sample;
+          tile.sample = end_sample;
+          task.update_progress(&tile, tile.w * tile.h * num_progress_samples);
+          break;
+        }
+      }
 
       task.update_progress(&tile, tile.w * tile.h);
     }
     if (use_coverage) {
       coverage.finalize();
+    }
+
+    if (task.adaptive_sampling.use) {
+      adaptive_sampling_post(tile, kg);
     }
   }
 
