@@ -24,7 +24,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "All Editors",
     "warning": "",
-    "wiki_url": "",
+    "doc_url": "",
     "category": "Save Open Pie"
     }
 

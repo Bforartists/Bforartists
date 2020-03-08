@@ -24,8 +24,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "View3D EditMode > Sidebar > Edit Tab",
     "description": "Modeling and retopology tool",
-    "wiki_url": "https://docs.blender.org/manual/nb/dev/addons/"
-                "mesh/bsurfaces.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/mesh/bsurfaces.html",
     "category": "Mesh",
 }
 

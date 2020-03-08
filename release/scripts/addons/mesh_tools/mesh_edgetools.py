@@ -28,9 +28,10 @@ bl_info = {
     "location": "View3D > Toolbar and View3D > Specials (W-key)",
     "warning": "",
     "description": "CAD style edge manipulation tools",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Modeling/EdgeTools",
-    "category": "Mesh"}
+    "doc_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
+               "Scripts/Modeling/EdgeTools",
+    "category": "Mesh",
+}
 
 
 import bpy

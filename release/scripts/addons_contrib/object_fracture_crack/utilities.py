@@ -1,6 +1,6 @@
 
 def _cell_props_to_dict(fracture_cell_props):
-    cell_keywords = {        
+    cell_keywords = {
         'source_vert_own': fracture_cell_props.source_vert_own,
         'source_vert_child': fracture_cell_props.source_vert_child,
         'source_particle_own': fracture_cell_props.source_particle_own,
@@ -24,7 +24,7 @@ def _cell_props_to_dict(fracture_cell_props):
         'use_data_match': fracture_cell_props.use_data_match,
         'material_index': fracture_cell_props.material_index,
         'use_interior_vgroup': fracture_cell_props.use_interior_vgroup,
-        
+
         'use_collection': fracture_cell_props.use_collection,
         'new_collection': fracture_cell_props.new_collection,
         'collection_name': fracture_cell_props.collection_name,
@@ -34,9 +34,9 @@ def _cell_props_to_dict(fracture_cell_props):
         'mass_name': fracture_cell_props.mass_name,
         'mass_mode': fracture_cell_props.mass_mode,
         'mass': fracture_cell_props.mass,
-        
+
         'use_debug_points': fracture_cell_props.use_debug_points,
         'use_debug_redraw': fracture_cell_props.use_debug_redraw,
-        'use_debug_bool': fracture_cell_props.use_debug_bool   
+        'use_debug_bool': fracture_cell_props.use_debug_bool
     }
     return cell_keywords

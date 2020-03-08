@@ -21,6 +21,10 @@
 #ifndef __ED_TRANSFORM_SNAP_OBJECT_CONTEXT_H__
 #define __ED_TRANSFORM_SNAP_OBJECT_CONTEXT_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct BMEdge;
 struct BMFace;
 struct BMVert;
@@ -82,7 +86,7 @@ SnapObjectContext *ED_transform_snap_object_context_create_view3d(struct Main *b
                                                                   struct Depsgraph *depsgraph,
                                                                   int flag,
                                                                   /* extra args for view3d */
-                                                                  const struct ARegion *ar,
+                                                                  const struct ARegion *region,
                                                                   const struct View3D *v3d);
 void ED_transform_snap_object_context_destroy(SnapObjectContext *sctx);
 
@@ -148,5 +152,9 @@ bool ED_transform_snap_object_project_all_view3d_ex(SnapObjectContext *sctx,
                                                     float ray_depth,
                                                     bool sort,
                                                     ListBase *r_hit_list);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __ED_TRANSFORM_SNAP_OBJECT_CONTEXT_H__ */

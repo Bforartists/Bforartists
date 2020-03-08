@@ -13,20 +13,20 @@ from mathutils import Euler
 
 # Join fractures into an object
 def make_join(cells):
-    
+
     # Execute join
     bpy.context.view_layer.objects.active = cells[0]
     cells[0].select_set(state=True)
     bpy.ops.object.join()
 
     bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN')
-    
+
     joined = bpy.context.active_object
-           
+
     suffix_index = joined.name.rfind("_cell")
     if suffix_index != -1:
         joined.name = joined.name[:suffix_index] + "_crack"
-            
+
     return bpy.context.active_object
 
 
@@ -45,7 +45,7 @@ def add_modifiers(decimate_val=0.4, smooth_val=0.5):
     smooth = bpy.context.object.modifiers[-1]
     smooth.name = 'SMOOTH_crackit'
     smooth.factor = smooth_val
-   
+
 
 # -------------- multi extrude --------------------
 # var1=random offset, var2=random rotation, var3=random scale

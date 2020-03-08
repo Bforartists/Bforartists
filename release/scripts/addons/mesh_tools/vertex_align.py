@@ -28,8 +28,9 @@ bl_info = {
     "location": "View3D > Tool Shelf",
     "description": "",
     "warning": "",
-    "wiki_url": "",
-    "category": "Mesh"}
+    "doc_url": "",
+    "category": "Mesh",
+}
 
 
 import bpy

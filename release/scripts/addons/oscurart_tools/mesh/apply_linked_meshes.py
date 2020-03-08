@@ -53,8 +53,3 @@ class ApplyLRT(bpy.types.Operator):
     def execute(self, context):
         applyLRTEx(self, context)
         return {'FINISHED'}
-
-
-
-
-

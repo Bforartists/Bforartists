@@ -54,7 +54,7 @@ bl_info = {
     "location": "Render Panel",
     "description": "",
     "warning": "Needs Updating",
-    "wiki_url": "https://github.com/dfelinto/render_cube_map",
+    "doc_url": "https://github.com/dfelinto/render_cube_map",
     "tracker_url": "",
     "category": "Render"}
 

@@ -96,7 +96,7 @@ bl_info = {
     'location': 'View3D',
     'warning': '',
     'description': 'Draws lines and closed polygons using vertex snapping',
-    'wiki_url': '',
+    'doc_url': '',
     'category': '3D View'}
 
 import bpy

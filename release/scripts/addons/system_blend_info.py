@@ -28,8 +28,7 @@ bl_info = {
     "location": "Properties > Scene > Blend Info Panel",
     "description": "Show information about the .blend",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "system/blend_info.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/system/blend_info.html",
     "category": "System",
 }
 

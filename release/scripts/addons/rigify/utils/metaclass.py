@@ -168,4 +168,3 @@ class SingletonPluginMetaclass(StagedMetaclass):
             owner.plugin_list.append(new_obj)
             owner.plugin_list.sort(key=lambda obj: obj.priority, reverse=True)
             return new_obj
-

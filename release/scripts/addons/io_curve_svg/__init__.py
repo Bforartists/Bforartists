@@ -25,8 +25,7 @@ bl_info = {
     "location": "File > Import > Scalable Vector Graphics (.svg)",
     "description": "Import SVG as curves",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "import_export/io_curve_svg.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/curve_svg.html",
     "support": 'OFFICIAL',
     "category": "Import-Export",
 }

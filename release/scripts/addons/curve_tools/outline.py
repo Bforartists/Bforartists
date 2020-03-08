@@ -23,10 +23,10 @@ END GPL LICENCE BLOCK
 bl_info = {
     "name": "Curve Outline",
     "description": "creates an Outline",
-    "category": "Object",
     "author": "Yann Bertrand (jimflim), Vladimir Spivak (cwolf3d)",
     "version": (0, 5),
     "blender": (2, 69, 0),
+    "category": "Object",
 }
 
 import bpy

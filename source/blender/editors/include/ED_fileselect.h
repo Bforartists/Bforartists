@@ -24,6 +24,10 @@
 #ifndef __ED_FILESELECT_H__
 #define __ED_FILESELECT_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct ARegion;
 struct FileSelectParams;
 struct ScrArea;
@@ -106,11 +110,11 @@ void ED_fileselect_params_to_userdef(struct SpaceFile *sfile,
 
 void ED_fileselect_reset_params(struct SpaceFile *sfile);
 
-void ED_fileselect_init_layout(struct SpaceFile *sfile, struct ARegion *ar);
+void ED_fileselect_init_layout(struct SpaceFile *sfile, struct ARegion *region);
 
-FileLayout *ED_fileselect_get_layout(struct SpaceFile *sfile, struct ARegion *ar);
+FileLayout *ED_fileselect_get_layout(struct SpaceFile *sfile, struct ARegion *region);
 
-int ED_fileselect_layout_numfiles(FileLayout *layout, struct ARegion *ar);
+int ED_fileselect_layout_numfiles(FileLayout *layout, struct ARegion *region);
 int ED_fileselect_layout_offset(FileLayout *layout, int x, int y);
 FileSelection ED_fileselect_layout_offset_rect(FileLayout *layout, const struct rcti *rect);
 
@@ -167,6 +171,8 @@ typedef enum FSMenuCategory {
   FS_CATEGORY_SYSTEM_BOOKMARKS,
   FS_CATEGORY_BOOKMARKS,
   FS_CATEGORY_RECENT,
+  /* For internal use, a list of known paths that are used to match paths to icons and names. */
+  FS_CATEGORY_OTHER,
 } FSMenuCategory;
 
 typedef enum FSMenuInsert {
@@ -199,5 +205,9 @@ void ED_fsmenu_entry_set_name(struct FSMenuEntry *fsentry, const char *name);
 
 int ED_fsmenu_entry_get_icon(struct FSMenuEntry *fsentry);
 void ED_fsmenu_entry_set_icon(struct FSMenuEntry *fsentry, const int icon);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __ED_FILESELECT_H__ */

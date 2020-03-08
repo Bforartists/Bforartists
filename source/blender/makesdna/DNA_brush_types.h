@@ -227,6 +227,7 @@ typedef enum eBrushClothForceFalloffType {
 
 typedef enum eAutomasking_flag {
   BRUSH_AUTOMASKING_TOPOLOGY = (1 << 0),
+  BRUSH_AUTOMASKING_FACE_SETS = (1 << 1),
 } eAutomasking_flag;
 
 typedef struct Brush {
@@ -326,7 +327,7 @@ typedef struct Brush {
   char mask_tool;
   /** Active grease pencil tool. */
   char gpencil_tool;
-  char _pad1[1];
+  char _pad1[5];
 
   float autosmooth_factor;
 
@@ -344,6 +345,8 @@ typedef struct Brush {
   float texture_sample_bias;
 
   int curve_preset;
+  float hardness;
+
   int automasking_flags;
 
   /* Factor that controls the shape of the brush tip by rounding the corners of a square. */
@@ -538,6 +541,7 @@ typedef enum eBrushSculptTool {
   SCULPT_TOOL_SLIDE_RELAX = 24,
   SCULPT_TOOL_CLAY_THUMB = 25,
   SCULPT_TOOL_CLOTH = 26,
+  SCULPT_TOOL_DRAW_FACE_SETS = 27,
 } eBrushSculptTool;
 
 /* Brush.uv_sculpt_tool */
@@ -580,6 +584,7 @@ typedef enum eBrushUVSculptTool {
         SCULPT_TOOL_SLIDE_RELAX, \
         SCULPT_TOOL_ELASTIC_DEFORM, \
         SCULPT_TOOL_POSE, \
+        SCULPT_TOOL_DRAW_FACE_SETS, \
 \
         /* These brushes could handle dynamic topology, \ \
          * but user feedback indicates it's better not to */ \

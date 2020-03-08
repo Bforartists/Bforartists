@@ -25,8 +25,9 @@ bl_info = {
     "blender": (2, 63, 0),
     "location": "Spacebar Menu",
     "description": "Chamfer vertex",
-    "wiki_url": "",
-    "category": "Mesh"}
+    "doc_url": "",
+    "category": "Mesh",
+}
 
 
 import bpy

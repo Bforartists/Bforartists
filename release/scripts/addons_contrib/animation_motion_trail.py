@@ -27,10 +27,11 @@ bl_info = {
     "location": "View3D > Toolbar > Motion Trail tab",
     "warning": "Needs bgl draw update",
     "description": "Display and edit motion trails in the 3D View",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Animation/Motion_Trail",
+    "doc_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
+               "Scripts/Animation/Motion_Trail",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
-    "category": "Animation"}
+    "category": "Animation",
+}
 
 
 import bgl

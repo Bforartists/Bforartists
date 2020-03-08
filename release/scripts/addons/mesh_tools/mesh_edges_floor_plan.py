@@ -26,8 +26,9 @@ bl_info = {
     "blender": (2, 78, 0),
     "location": "View3D > EditMode > Mesh",
     "description": "Make a Floor Plan from Edges",
-    "wiki_url": "",
-    "category": "Mesh"}
+    "doc_url": "",
+    "category": "Mesh",
+}
 
 import bpy
 import bmesh

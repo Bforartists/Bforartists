@@ -27,7 +27,7 @@ bl_info = {
     "location": "Info -> File Menu -> Project Folder",
     "description": "Open the project folder in a file browser",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/System/Project_Folder",
+    "doc_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/System/Project_Folder",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "System"}
 

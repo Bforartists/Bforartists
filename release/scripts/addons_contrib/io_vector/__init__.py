@@ -26,7 +26,7 @@ bl_info = {
   "location": "File > Import-Export > Vector files (.ai, .pdf, .svg)",
   "description": "Import Adobe Illustrator, PDF, and SVG",
   "warning": "",
-  "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+  "doc_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
       "Scripts/Import-Export/AI_PDF_SVG",
   "category": "Import-Export"}
 

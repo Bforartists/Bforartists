@@ -30,11 +30,11 @@ bl_info = {
     "location": "Help Menu > Save Shortcuts as SVG files",
     "description": "Save the hotkeys as .svg files (search: Keyboard)",
     "warning": "Needs Updating. Basic functions work",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/System/keymaps_to_svg",
+    "doc_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
+               "Scripts/System/keymaps_to_svg",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
-    "category": "System"
-    }
+    "category": "System",
+}
 
 import bpy
 import os
