@@ -26,7 +26,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "Alt Q key",
     "warning": "",
-    "wiki_url": "",
+    "doc_url": "",
     "category": "View Numpad Pie"
     }
 

@@ -24,9 +24,10 @@ bl_info = {
     'location': 'Curve Tools addon. (N) Panel',
     'description': 'Various types of fillet (chamfering)',
     'warning': '', # used for warning icon and text in addons panel
-    'wiki_url': '',
+    'doc_url': '',
     'tracker_url': '',
-    'category': 'Curve'}
+    'category': 'Curve',
+}
 
 
 import bpy

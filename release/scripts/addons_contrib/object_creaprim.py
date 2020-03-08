@@ -53,7 +53,7 @@ bl_info = {
     "location": "View3D > Object Tools",
     "description": "Create primitive addon",
     "warning": "under construction",
-    "wiki_url": "",
+    "doc_url": "",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Object"}
 
@@ -261,7 +261,7 @@ def do_creaprim(self, mesh, objname, addondir):
     strlist.append("    \"location\": \"Add > Mesh\",\n")
     strlist.append("    \"description\": \"Create " + objname + " primitive\",\n")
     strlist.append("    \"warning\": \"\",\n")
-    strlist.append("    \"wiki_url\": \"\",\n")
+    strlist.append("    \"doc_url\": \"\",\n")
     strlist.append("    \"tracker_url\": \"\",\n")
     strlist.append("    \"category\": \"Add Mesh\"}\n")
     strlist.append("\n")
@@ -403,7 +403,7 @@ def makeinit(txtlist, namelist, groupname, addondir):
     strlist.append("    \"location\": \"Add > Mesh\",\n")
     strlist.append("    \"description\": \"Create " + groupname + " primitive group\",\n")
     strlist.append("    \"warning\": \"\",\n")
-    strlist.append("    \"wiki_url\": \"\",\n")
+    strlist.append("    \"doc_url\": \"\",\n")
     strlist.append("    \"tracker_url\": \"\",\n")
     strlist.append("    \"category\": \"Add Mesh\"}\n")
     strlist.append("\n")

@@ -103,5 +103,3 @@ def register():
 
 def unregister():
     bpy.app.handlers.load_post.remove(scene_load)
-
-

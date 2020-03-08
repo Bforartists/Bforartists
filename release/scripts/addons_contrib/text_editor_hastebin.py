@@ -23,7 +23,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "Text editor > Properties panel",
     "description": "Send your selection or text to hastebin.com",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+    "doc_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
         "Scripts/Text_Editor/hastebin",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Development"}

@@ -471,7 +471,7 @@ static Scene *preview_prepare_scene(
           if (OB_TYPE_SUPPORT_MATERIAL(base->object->type)) {
             /* don't use BKE_object_material_assign, it changed mat->id.us, which shows in the UI
              */
-            Material ***matar = BKE_object_material_array(base->object);
+            Material ***matar = BKE_object_material_array_p(base->object);
             int actcol = max_ii(base->object->actcol - 1, 0);
 
             if (matar && actcol < base->object->totcol) {
@@ -958,23 +958,7 @@ static void preview_id_copy_free(ID *id)
     IDP_FreePropertyContent_ex(properties, false);
     MEM_freeN(properties);
   }
-  switch (GS(id->name)) {
-    case ID_MA:
-      BKE_material_free((Material *)id);
-      break;
-    case ID_TE:
-      BKE_texture_free((Tex *)id);
-      break;
-    case ID_LA:
-      BKE_light_free((Light *)id);
-      break;
-    case ID_WO:
-      BKE_world_free((World *)id);
-      break;
-    default:
-      BLI_assert(!"ID type preview not supported.");
-      break;
-  }
+  BKE_libblock_free_datablock(id, 0);
   MEM_freeN(id);
 }
 

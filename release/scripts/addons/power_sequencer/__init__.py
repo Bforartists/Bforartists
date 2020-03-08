@@ -42,7 +42,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "Sequencer",
     "tracker_url": "https://github.com/GDquest/Blender-power-sequencer/issues",
-    "wiki_url": "https://www.gdquest.com/docs/documentation/power-sequencer/",
+    "doc_url": "https://www.gdquest.com/docs/documentation/power-sequencer/",
     "support": "COMMUNITY",
     "category": "Sequencer",
 }

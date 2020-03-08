@@ -37,13 +37,13 @@ bl_info = {
     "author": "Daniel Grauer (kromar), CansecoGPC",
     "version": (1, 2, 2),
     "blender": (2, 80, 0),
-    "category": "Import-Export",
     "location": "File > Import > BrushSet",
     "description": "Imports all image files from a folder.",
     "warning": '',    # used for warning icon and text in addons panel
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.5/Py/Scripts/Import-Export/BrushSet",
+    "doc_url": "http://wiki.blender.org/index.php/Extensions:2.5/Py/Scripts/Import-Export/BrushSet",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
-    }
+    "category": "Import-Export",
+}
 
 #---------------------------------------------#
 

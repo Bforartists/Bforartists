@@ -56,7 +56,7 @@ def appendMaterial(mat_lib_name, mat_name, mat_ui_names="Nameless Material"):
         bpy.context.object.data.materials.append(mat)
 
         return True
-   
+
     return False
 
 

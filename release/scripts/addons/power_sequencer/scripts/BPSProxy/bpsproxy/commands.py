@@ -186,5 +186,5 @@ def get_commands_vi(cfg, clargs, **kwargs):
     An iterator with the 1st element as a tag (the `what` parameter) and the 2nd
     element as the iterator of the actual commands.
     """
-    ws = filter(lambda x: x is not "all", cfg["extensions"])
+    ws = filter(lambda x: x != "all", cfg["extensions"])
     return chain.from_iterable(map(lambda w: get_commands(cfg, clargs, what=w, **kwargs), ws))

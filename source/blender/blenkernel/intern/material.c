@@ -49,11 +49,14 @@
 #include "BLI_utildefines.h"
 #include "BLI_array_utils.h"
 
+#include "BLT_translation.h"
+
 #include "BKE_animsys.h"
 #include "BKE_brush.h"
 #include "BKE_displist.h"
 #include "BKE_gpencil.h"
 #include "BKE_icons.h"
+#include "BKE_idtype.h"
 #include "BKE_image.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
@@ -74,28 +77,87 @@
 
 static CLG_LogRef LOG = {"bke.material"};
 
-/** Free (or release) any data used by this material (does not free the material itself). */
-void BKE_material_free(Material *ma)
+static void material_init_data(ID *id)
 {
-  BKE_animdata_free((ID *)ma, false);
+  Material *material = (Material *)id;
 
-  /* Free gpu material before the ntree */
-  GPU_material_free(&ma->gpumaterial);
+  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(material, id));
 
-  /* is no lib link block, but material extension */
-  if (ma->nodetree) {
-    ntreeFreeNestedTree(ma->nodetree);
-    MEM_freeN(ma->nodetree);
-    ma->nodetree = NULL;
+  MEMCPY_STRUCT_AFTER(material, DNA_struct_default_get(Material), id);
+}
+
+static void material_copy_data(Main *bmain, ID *id_dst, const ID *id_src, const int flag)
+{
+  Material *material_dst = (Material *)id_dst;
+  const Material *material_src = (const Material *)id_src;
+
+  /* We always need allocation of our private ID data. */
+  const int flag_private_id_data = flag & ~LIB_ID_CREATE_NO_ALLOCATE;
+
+  if (material_src->nodetree) {
+    BKE_id_copy_ex(
+        bmain, (ID *)material_src->nodetree, (ID **)&material_dst->nodetree, flag_private_id_data);
   }
 
-  MEM_SAFE_FREE(ma->texpaintslot);
+  if ((flag & LIB_ID_COPY_NO_PREVIEW) == 0) {
+    BKE_previewimg_id_copy(&material_dst->id, &material_src->id);
+  }
+  else {
+    material_dst->preview = NULL;
+  }
 
-  MEM_SAFE_FREE(ma->gp_style);
+  if (material_src->texpaintslot != NULL) {
+    material_dst->texpaintslot = MEM_dupallocN(material_src->texpaintslot);
+  }
 
-  BKE_icon_id_delete((ID *)ma);
-  BKE_previewimg_free(&ma->preview);
+  if (material_src->gp_style != NULL) {
+    material_dst->gp_style = MEM_dupallocN(material_src->gp_style);
+  }
+
+  BLI_listbase_clear(&material_dst->gpumaterial);
+
+  /* TODO Duplicate Engine Settings and set runtime to NULL */
 }
+
+static void material_free_data(ID *id)
+{
+  Material *material = (Material *)id;
+
+  BKE_animdata_free((ID *)material, false);
+
+  /* Free gpu material before the ntree */
+  GPU_material_free(&material->gpumaterial);
+
+  /* is no lib link block, but material extension */
+  if (material->nodetree) {
+    ntreeFreeNestedTree(material->nodetree);
+    MEM_freeN(material->nodetree);
+    material->nodetree = NULL;
+  }
+
+  MEM_SAFE_FREE(material->texpaintslot);
+
+  MEM_SAFE_FREE(material->gp_style);
+
+  BKE_icon_id_delete((ID *)material);
+  BKE_previewimg_free(&material->preview);
+}
+
+IDTypeInfo IDType_ID_MA = {
+    .id_code = ID_MA,
+    .id_filter = FILTER_ID_MA,
+    .main_listbase_index = INDEX_ID_MA,
+    .struct_size = sizeof(Material),
+    .name = "Material",
+    .name_plural = "materials",
+    .translation_context = BLT_I18NCONTEXT_ID_MATERIAL,
+    .flags = 0,
+
+    .init_data = material_init_data,
+    .copy_data = material_copy_data,
+    .free_data = material_free_data,
+    .make_local = NULL,
+};
 
 void BKE_gpencil_material_attr_init(Material *ma)
 {
@@ -118,20 +180,13 @@ void BKE_gpencil_material_attr_init(Material *ma)
   }
 }
 
-void BKE_material_init(Material *ma)
-{
-  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(ma, id));
-
-  MEMCPY_STRUCT_AFTER(ma, DNA_struct_default_get(Material), id);
-}
-
 Material *BKE_material_add(Main *bmain, const char *name)
 {
   Material *ma;
 
   ma = BKE_libblock_alloc(bmain, ID_MA, name, 0);
 
-  BKE_material_init(ma);
+  material_init_data(&ma->id);
 
   return ma;
 }
@@ -147,45 +202,6 @@ Material *BKE_gpencil_material_add(Main *bmain, const char *name)
     BKE_gpencil_material_attr_init(ma);
   }
   return ma;
-}
-
-/**
- * Only copy internal data of Material ID from source
- * to already allocated/initialized destination.
- * You probably never want to use that directly,
- * use #BKE_id_copy or #BKE_id_copy_ex for typical needs.
- *
- * WARNING! This function will not handle ID user count!
- *
- * \param flag: Copying options (see BKE_lib_id.h's LIB_ID_COPY_... flags for more).
- */
-void BKE_material_copy_data(Main *bmain, Material *ma_dst, const Material *ma_src, const int flag)
-{
-  /* We always need allocation of our private ID data. */
-  const int flag_private_id_data = flag & ~LIB_ID_CREATE_NO_ALLOCATE;
-
-  if (ma_src->nodetree) {
-    BKE_id_copy_ex(bmain, (ID *)ma_src->nodetree, (ID **)&ma_dst->nodetree, flag_private_id_data);
-  }
-
-  if ((flag & LIB_ID_COPY_NO_PREVIEW) == 0) {
-    BKE_previewimg_id_copy(&ma_dst->id, &ma_src->id);
-  }
-  else {
-    ma_dst->preview = NULL;
-  }
-
-  if (ma_src->texpaintslot != NULL) {
-    ma_dst->texpaintslot = MEM_dupallocN(ma_src->texpaintslot);
-  }
-
-  if (ma_src->gp_style != NULL) {
-    ma_dst->gp_style = MEM_dupallocN(ma_src->gp_style);
-  }
-
-  BLI_listbase_clear(&ma_dst->gpumaterial);
-
-  /* TODO Duplicate Engine Settings and set runtime to NULL */
 }
 
 Material *BKE_material_copy(Main *bmain, const Material *ma)
@@ -230,12 +246,7 @@ Material *BKE_material_localize(Material *ma)
   return man;
 }
 
-void BKE_material_make_local(Main *bmain, Material *ma, const bool lib_local)
-{
-  BKE_id_make_local_generic(bmain, &ma->id, true, lib_local);
-}
-
-Material ***BKE_object_material_array(Object *ob)
+Material ***BKE_object_material_array_p(Object *ob)
 {
   Mesh *me;
   Curve *cu;
@@ -261,7 +272,7 @@ Material ***BKE_object_material_array(Object *ob)
   return NULL;
 }
 
-short *BKE_object_material_num(Object *ob)
+short *BKE_object_material_len_p(Object *ob)
 {
   Mesh *me;
   Curve *cu;
@@ -288,7 +299,7 @@ short *BKE_object_material_num(Object *ob)
 }
 
 /* same as above but for ID's */
-Material ***BKE_id_material_array(ID *id)
+Material ***BKE_id_material_array_p(ID *id)
 {
   /* ensure we don't try get materials from non-obdata */
   BLI_assert(OB_DATA_SUPPORT_ID(GS(id->name)));
@@ -308,7 +319,7 @@ Material ***BKE_id_material_array(ID *id)
   return NULL;
 }
 
-short *BKE_id_material_num(ID *id)
+short *BKE_id_material_len_p(ID *id)
 {
   /* ensure we don't try get materials from non-obdata */
   BLI_assert(OB_DATA_SUPPORT_ID(GS(id->name)));
@@ -388,10 +399,10 @@ static void material_data_index_clear_id(ID *id)
   }
 }
 
-void BKE_material_resize_id(Main *bmain, ID *id, short totcol, bool do_id_user)
+void BKE_id_material_resize(Main *bmain, ID *id, short totcol, bool do_id_user)
 {
-  Material ***matar = BKE_id_material_array(id);
-  short *totcolp = BKE_id_material_num(id);
+  Material ***matar = BKE_id_material_array_p(id);
+  short *totcolp = BKE_id_material_len_p(id);
 
   if (matar == NULL) {
     return;
@@ -419,11 +430,11 @@ void BKE_material_resize_id(Main *bmain, ID *id, short totcol, bool do_id_user)
   DEG_relations_tag_update(bmain);
 }
 
-void BKE_material_append_id(Main *bmain, ID *id, Material *ma)
+void BKE_id_material_append(Main *bmain, ID *id, Material *ma)
 {
   Material ***matar;
-  if ((matar = BKE_id_material_array(id))) {
-    short *totcol = BKE_id_material_num(id);
+  if ((matar = BKE_id_material_array_p(id))) {
+    short *totcol = BKE_id_material_len_p(id);
     Material **mat = MEM_callocN(sizeof(void *) * ((*totcol) + 1), "newmatar");
     if (*totcol) {
       memcpy(mat, *matar, sizeof(void *) * (*totcol));
@@ -443,13 +454,13 @@ void BKE_material_append_id(Main *bmain, ID *id, Material *ma)
   }
 }
 
-Material *BKE_material_pop_id(Main *bmain, ID *id, int index_i)
+Material *BKE_id_material_pop(Main *bmain, ID *id, int index_i)
 {
   short index = (short)index_i;
   Material *ret = NULL;
   Material ***matar;
-  if ((matar = BKE_id_material_array(id))) {
-    short *totcol = BKE_id_material_num(id);
+  if ((matar = BKE_id_material_array_p(id))) {
+    short *totcol = BKE_id_material_len_p(id);
     if (index >= 0 && index < (*totcol)) {
       ret = (*matar)[index];
       id_us_min((ID *)ret);
@@ -481,11 +492,11 @@ Material *BKE_material_pop_id(Main *bmain, ID *id, int index_i)
   return ret;
 }
 
-void BKE_material_clear_id(Main *bmain, ID *id)
+void BKE_id_material_clear(Main *bmain, ID *id)
 {
   Material ***matar;
-  if ((matar = BKE_id_material_array(id))) {
-    short *totcol = BKE_id_material_num(id);
+  if ((matar = BKE_id_material_array_p(id))) {
+    short *totcol = BKE_id_material_len_p(id);
 
     while ((*totcol)--) {
       id_us_min((ID *)((*matar)[*totcol]));
@@ -514,7 +525,7 @@ Material **BKE_object_material_get_p(Object *ob, short act)
   }
 
   /* if object cannot have material, (totcolp == NULL) */
-  totcolp = BKE_object_material_num(ob);
+  totcolp = BKE_object_material_len_p(ob);
   if (totcolp == NULL || ob->totcol == 0) {
     return NULL;
   }
@@ -543,7 +554,7 @@ Material **BKE_object_material_get_p(Object *ob, short act)
       act = ob->totcol;
     }
 
-    matarar = BKE_object_material_array(ob);
+    matarar = BKE_object_material_array_p(ob);
 
     if (matarar && *matarar) {
       ma_p = &(*matarar)[act - 1];
@@ -588,14 +599,13 @@ MaterialGPencilStyle *BKE_gpencil_material_settings(Object *ob, short act)
   }
 }
 
-void BKE_material_resize_object(Main *bmain, Object *ob, const short totcol, bool do_id_user)
+void BKE_object_material_resize(Main *bmain, Object *ob, const short totcol, bool do_id_user)
 {
   Material **newmatar;
   char *newmatbits;
 
   if (do_id_user && totcol < ob->totcol) {
-    short i;
-    for (i = totcol; i < ob->totcol; i++) {
+    for (int i = totcol; i < ob->totcol; i++) {
       id_us_min((ID *)ob->mat[i]);
     }
   }
@@ -639,11 +649,11 @@ void BKE_object_materials_test(Main *bmain, Object *ob, ID *id)
   /* make the ob mat-array same size as 'ob->data' mat-array */
   const short *totcol;
 
-  if (id == NULL || (totcol = BKE_id_material_num(id)) == NULL) {
+  if (id == NULL || (totcol = BKE_id_material_len_p(id)) == NULL) {
     return;
   }
 
-  BKE_material_resize_object(bmain, ob, *totcol, false);
+  BKE_object_material_resize(bmain, ob, *totcol, false);
 }
 
 void BKE_objects_materials_test_all(Main *bmain, ID *id)
@@ -652,14 +662,14 @@ void BKE_objects_materials_test_all(Main *bmain, ID *id)
   Object *ob;
   const short *totcol;
 
-  if (id == NULL || (totcol = BKE_id_material_num(id)) == NULL) {
+  if (id == NULL || (totcol = BKE_id_material_len_p(id)) == NULL) {
     return;
   }
 
   BKE_main_lock(bmain);
   for (ob = bmain->objects.first; ob; ob = ob->id.next) {
     if (ob->data == id) {
-      BKE_material_resize_object(bmain, ob, *totcol, false);
+      BKE_object_material_resize(bmain, ob, *totcol, false);
     }
   }
   BKE_main_unlock(bmain);
@@ -679,8 +689,8 @@ void BKE_id_material_assign(Main *bmain, ID *id, Material *ma, short act)
 
   /* test arraylens */
 
-  totcolp = BKE_id_material_num(id);
-  matarar = BKE_id_material_array(id);
+  totcolp = BKE_id_material_len_p(id);
+  matarar = BKE_id_material_array_p(id);
 
   if (totcolp == NULL || matarar == NULL) {
     return;
@@ -733,8 +743,8 @@ void BKE_object_material_assign(Main *bmain, Object *ob, Material *ma, short act
 
   /* test arraylens */
 
-  totcolp = BKE_object_material_num(ob);
-  matarar = BKE_object_material_array(ob);
+  totcolp = BKE_object_material_len_p(ob);
+  matarar = BKE_object_material_array_p(ob);
 
   if (totcolp == NULL || matarar == NULL) {
     return;
@@ -809,10 +819,10 @@ void BKE_object_material_assign(Main *bmain, Object *ob, Material *ma, short act
   }
 }
 
-void BKE_material_remap_object(Object *ob, const unsigned int *remap)
+void BKE_object_material_remap(Object *ob, const unsigned int *remap)
 {
-  Material ***matar = BKE_object_material_array(ob);
-  const short *totcol_p = BKE_object_material_num(ob);
+  Material ***matar = BKE_object_material_array_p(ob);
+  const short *totcol_p = BKE_object_material_len_p(ob);
 
   BLI_array_permute(ob->mat, ob->totcol, remap);
 
@@ -845,7 +855,7 @@ void BKE_material_remap_object(Object *ob, const unsigned int *remap)
  * \param remap_src_to_dst: An array the size of `ob_src->totcol`
  * where index values are filled in which map to \a ob_dst materials.
  */
-void BKE_material_remap_object_calc(Object *ob_dst, Object *ob_src, short *remap_src_to_dst)
+void BKE_object_material_remap_calc(Object *ob_dst, Object *ob_src, short *remap_src_to_dst)
 {
   if (ob_src->totcol == 0) {
     return;
@@ -927,8 +937,8 @@ short BKE_object_material_slot_find_index(Object *ob, Material *ma)
     return 0;
   }
 
-  totcolp = BKE_object_material_num(ob);
-  matarar = BKE_object_material_array(ob);
+  totcolp = BKE_object_material_len_p(ob);
+  matarar = BKE_object_material_array_p(ob);
 
   if (totcolp == NULL || matarar == NULL) {
     return 0;
@@ -965,7 +975,6 @@ bool BKE_object_material_slot_remove(Main *bmain, Object *ob)
 {
   Material *mao, ***matarar;
   short *totcolp;
-  short a, actcol;
 
   if (ob == NULL || ob->totcol == 0) {
     return false;
@@ -984,8 +993,8 @@ bool BKE_object_material_slot_remove(Main *bmain, Object *ob)
    * after that check indices in mesh/curve/mball!!!
    */
 
-  totcolp = BKE_object_material_num(ob);
-  matarar = BKE_object_material_array(ob);
+  totcolp = BKE_object_material_len_p(ob);
+  matarar = BKE_object_material_array_p(ob);
 
   if (ELEM(NULL, matarar, *matarar)) {
     return false;
@@ -1002,7 +1011,7 @@ bool BKE_object_material_slot_remove(Main *bmain, Object *ob)
     id_us_min(&mao->id);
   }
 
-  for (a = ob->actcol; a < ob->totcol; a++) {
+  for (int a = ob->actcol; a < ob->totcol; a++) {
     (*matarar)[a - 1] = (*matarar)[a];
   }
   (*totcolp)--;
@@ -1012,7 +1021,7 @@ bool BKE_object_material_slot_remove(Main *bmain, Object *ob)
     *matarar = NULL;
   }
 
-  actcol = ob->actcol;
+  const int actcol = ob->actcol;
 
   for (Object *obt = bmain->objects.first; obt; obt = obt->id.next) {
     if (obt->data == ob->data) {
@@ -1026,7 +1035,7 @@ bool BKE_object_material_slot_remove(Main *bmain, Object *ob)
         id_us_min(&mao->id);
       }
 
-      for (a = actcol; a < obt->totcol; a++) {
+      for (int a = actcol; a < obt->totcol; a++) {
         obt->mat[a - 1] = obt->mat[a];
         obt->matbits[a - 1] = obt->matbits[a];
       }
@@ -1688,7 +1697,7 @@ void BKE_material_defaults_free_gpu(void)
 void BKE_materials_init(void)
 {
   for (int i = 0; default_materials[i]; i++) {
-    BKE_material_init(default_materials[i]);
+    material_init_data(&default_materials[i]->id);
   }
 
   material_default_surface_init(&default_material_surface);
@@ -1699,6 +1708,6 @@ void BKE_materials_init(void)
 void BKE_materials_exit(void)
 {
   for (int i = 0; default_materials[i]; i++) {
-    BKE_material_free(default_materials[i]);
+    material_free_data(&default_materials[i]->id);
   }
 }

@@ -29,8 +29,7 @@ bl_info = {
     "location": "Editmode > F",
     "warning": "",
     "description": "Extends the 'Make Edge/Face' functionality",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "mesh/f2.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/mesh/f2.html",
     "category": "Mesh",
 }
 

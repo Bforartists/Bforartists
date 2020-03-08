@@ -25,7 +25,7 @@ bl_info = {
             "location": "View3D > EZ Lattice",
             "description": "Create a lattice for shape editing",
             "warning": "",
-            "wiki_url": "",
+            "doc_url": "",
             "tracker_url": "",
             "category": "Mesh"}
 

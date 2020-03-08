@@ -26,9 +26,9 @@ bl_info = {
     "description": "SpiroFit, BounceSpline and Catenary adds "
                    "splines to selected mesh or objects",
     "warning": "",
-    "wiki_url": "",
+    "doc_url": "",
     "category": "Object",
-    }
+}
 
 import bpy
 from bpy.types import (

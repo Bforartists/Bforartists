@@ -38,9 +38,10 @@ bl_info = {
     "location": "Sidebar > Edit Tab",
     "description": "Tools for Computational Design",
     "warning": "",
-    "wiki_url": "https://github.com/alessandro-zomparelli/tissue/wiki",
+    "doc_url": "https://github.com/alessandro-zomparelli/tissue/wiki",
     "tracker_url": "https://github.com/alessandro-zomparelli/tissue/issues",
-    "category": "Mesh"}
+    "category": "Mesh",
+}
 
 
 if "bpy" in locals():

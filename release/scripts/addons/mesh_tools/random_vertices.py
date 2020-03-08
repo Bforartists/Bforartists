@@ -8,8 +8,9 @@ bl_info = {
     "location": "Object > Transform > Random Vertices",
     "description": "Randomize selected components of active object",
     "warning": "",
-    "wiki_url": "",
-    "category": "Mesh"}
+    "doc_url": "",
+    "category": "Mesh",
+}
 
 
 import bpy

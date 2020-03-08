@@ -27,8 +27,7 @@ bl_info = {
     "description": "Adds generated ivy to a mesh object starting "
                    "at the 3D cursor",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "add_curve/ivy_gen.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/ivy_gen.html",
     "category": "Add Curve",
 }
 

@@ -175,4 +175,3 @@ class OscOverridesKill(bpy.types.Operator):
         ovlist = context.scene.ovlist
         ovlist.remove(self.index)
         return {'FINISHED'}
-

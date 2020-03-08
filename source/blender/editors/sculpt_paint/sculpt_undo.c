@@ -79,8 +79,7 @@ static void update_cb(PBVHNode *node, void *rebuild)
   BKE_pbvh_node_mark_update(node);
   BKE_pbvh_node_mark_update_mask(node);
   if (*((bool *)rebuild)) {
-    BKE_pbvh_node_mark_rebuild_draw(node);
-    BKE_pbvh_node_mark_visibility_update(node);
+    BKE_pbvh_node_mark_update_visibility(node);
   }
   BKE_pbvh_node_fully_hidden_set(node, 0);
 }
@@ -199,7 +198,7 @@ static bool sculpt_undo_restore_coords(bContext *C, Depsgraph *depsgraph, Sculpt
       }
 
       /* Propagate new coords to keyblock. */
-      sculpt_vertcos_to_key(ob, ss->shapekey_active, vertCos);
+      SCULPT_vertcos_to_key(ob, ss->shapekey_active, vertCos);
 
       /* PBVH uses it's own mvert array, so coords should be */
       /* propagated to PBVH here. */
@@ -330,6 +329,15 @@ static bool sculpt_undo_restore_mask(bContext *C, SculptUndoNode *unode)
   }
 
   return true;
+}
+
+static bool sculpt_undo_restore_face_sets(bContext *C, SculptUndoNode *unode)
+{
+  ViewLayer *view_layer = CTX_data_view_layer(C);
+  Object *ob = OBACT(view_layer);
+  SculptSession *ss = ob->sculpt;
+  memcpy(ss->face_sets, unode->face_sets, ss->totpoly * sizeof(int));
+  return false;
 }
 
 static void sculpt_undo_bmesh_restore_generic_task_cb(
@@ -533,6 +541,30 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
       BKE_sculpt_update_object_for_edit(depsgraph, ob, false, need_mask);
       return;
     }
+    else if (unode->type == SCULPT_UNDO_FACE_SETS) {
+
+      sculpt_undo_restore_face_sets(C, unode);
+
+      rebuild = true;
+      BKE_pbvh_search_callback(ss->pbvh, NULL, NULL, update_cb, &rebuild);
+
+      BKE_sculpt_update_object_for_edit(depsgraph, ob, true, need_mask);
+
+      SCULPT_visibility_sync_all_face_sets_to_vertices(ss);
+      BKE_pbvh_update_vertex_data(ss->pbvh, PBVH_UpdateVisibility);
+
+      if (BKE_pbvh_type(ss->pbvh) == PBVH_FACES) {
+        BKE_mesh_flush_hidden_from_verts(ob->data);
+      }
+
+      if (!BKE_sculptsession_use_pbvh_draw(ob, v3d)) {
+        DEG_id_tag_update(&ob->id, ID_RECALC_SHADING);
+        DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
+      }
+
+      unode->applied = true;
+      return;
+    }
   }
 
   BKE_sculpt_update_object_for_edit(depsgraph, ob, false, need_mask);
@@ -584,6 +616,8 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
           update_mask = true;
         }
         break;
+      case SCULPT_UNDO_FACE_SETS:
+        break;
 
       case SCULPT_UNDO_DYNTOPO_BEGIN:
       case SCULPT_UNDO_DYNTOPO_END:
@@ -619,8 +653,14 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
     };
     BKE_pbvh_search_callback(ss->pbvh, NULL, NULL, update_cb_partial, &data);
     BKE_pbvh_update_bounds(ss->pbvh, PBVH_UpdateBB | PBVH_UpdateOriginalBB | PBVH_UpdateRedraw);
+
     if (update_mask) {
       BKE_pbvh_update_vertex_data(ss->pbvh, PBVH_UpdateMask);
+    }
+
+    if (update_visibility) {
+      SCULPT_visibility_sync_all_vertex_to_face_sets(ss);
+      BKE_pbvh_update_visibility(ss->pbvh);
     }
 
     if (BKE_sculpt_multires_active(scene, ob)) {
@@ -632,18 +672,14 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
       }
     }
 
-    tag_update |= ID_REAL_USERS(ob->data) > 1 || !BKE_sculptsession_use_pbvh_draw(ob, v3d);
+    tag_update |= ID_REAL_USERS(ob->data) > 1 || !BKE_sculptsession_use_pbvh_draw(ob, v3d) ||
+                  ss->shapekey_active || ss->deform_modifiers_active;
 
-    if (ss->shapekey_active || ss->deform_modifiers_active) {
+    if (tag_update) {
       Mesh *mesh = ob->data;
       BKE_mesh_calc_normals(mesh);
 
       BKE_sculptsession_free_deformMats(ss);
-      tag_update |= true;
-    }
-
-    if (update_visibility) {
-      BKE_pbvh_update_visibility(ss->pbvh);
     }
 
     if (BKE_pbvh_type(ss->pbvh) == PBVH_FACES && update_visibility) {
@@ -655,7 +691,7 @@ static void sculpt_undo_restore_list(bContext *C, Depsgraph *depsgraph, ListBase
       DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
     }
     else {
-      sculpt_update_object_bounding_box(ob);
+      SCULPT_update_object_bounding_box(ob);
     }
   }
 
@@ -714,6 +750,10 @@ static void sculpt_undo_free_list(ListBase *lb)
       CustomData_free(&unode->geom_pdata, unode->geom_totpoly);
     }
 
+    if (unode->face_sets) {
+      MEM_freeN(unode->face_sets);
+    }
+
     MEM_freeN(unode);
 
     unode = unode_next;
@@ -743,7 +783,7 @@ static bool sculpt_undo_cleanup(bContext *C, ListBase *lb)
 }
 #endif
 
-SculptUndoNode *sculpt_undo_get_node(PBVHNode *node)
+SculptUndoNode *SCULPT_undo_get_node(PBVHNode *node)
 {
   UndoSculpt *usculpt = sculpt_undo_get_nodes();
 
@@ -828,6 +868,7 @@ static SculptUndoNode *sculpt_undo_alloc_node(Object *ob, PBVHNode *node, Sculpt
     case SCULPT_UNDO_DYNTOPO_SYMMETRIZE:
       BLI_assert(!"Dynamic topology should've already been handled");
     case SCULPT_UNDO_GEOMETRY:
+    case SCULPT_UNDO_FACE_SETS:
       break;
   }
 
@@ -939,6 +980,27 @@ static SculptUndoNode *sculpt_undo_geometry_push(Object *ob, SculptUndoType type
   return unode;
 }
 
+static SculptUndoNode *sculpt_undo_face_sets_push(Object *ob, SculptUndoType type)
+{
+  UndoSculpt *usculpt = sculpt_undo_get_nodes();
+  SculptSession *ss = ob->sculpt;
+
+  SculptUndoNode *unode = usculpt->nodes.first;
+
+  unode = MEM_callocN(sizeof(*unode), __func__);
+
+  BLI_strncpy(unode->idname, ob->id.name, sizeof(unode->idname));
+  unode->type = type;
+  unode->applied = true;
+
+  unode->face_sets = MEM_callocN(ss->totpoly * sizeof(int), "sculpt face sets");
+  memcpy(unode->face_sets, ss->face_sets, ss->totpoly * sizeof(int));
+
+  BLI_addtail(&usculpt->nodes, unode);
+
+  return unode;
+}
+
 static SculptUndoNode *sculpt_undo_bmesh_push(Object *ob, PBVHNode *node, SculptUndoType type)
 {
   UndoSculpt *usculpt = sculpt_undo_get_nodes();
@@ -1022,6 +1084,7 @@ static SculptUndoNode *sculpt_undo_bmesh_push(Object *ob, PBVHNode *node, Sculpt
       case SCULPT_UNDO_DYNTOPO_END:
       case SCULPT_UNDO_DYNTOPO_SYMMETRIZE:
       case SCULPT_UNDO_GEOMETRY:
+      case SCULPT_UNDO_FACE_SETS:
         break;
     }
   }
@@ -1029,7 +1092,7 @@ static SculptUndoNode *sculpt_undo_bmesh_push(Object *ob, PBVHNode *node, Sculpt
   return unode;
 }
 
-SculptUndoNode *sculpt_undo_push_node(Object *ob, PBVHNode *node, SculptUndoType type)
+SculptUndoNode *SCULPT_undo_push_node(Object *ob, PBVHNode *node, SculptUndoType type)
 {
   SculptSession *ss = ob->sculpt;
   SculptUndoNode *unode;
@@ -1051,7 +1114,12 @@ SculptUndoNode *sculpt_undo_push_node(Object *ob, PBVHNode *node, SculptUndoType
     BLI_thread_unlock(LOCK_CUSTOM1);
     return unode;
   }
-  else if ((unode = sculpt_undo_get_node(node))) {
+  else if (type == SCULPT_UNDO_FACE_SETS) {
+    unode = sculpt_undo_face_sets_push(ob, type);
+    BLI_thread_unlock(LOCK_CUSTOM1);
+    return unode;
+  }
+  else if ((unode = SCULPT_undo_get_node(node))) {
     BLI_thread_unlock(LOCK_CUSTOM1);
     return unode;
   }
@@ -1091,6 +1159,7 @@ SculptUndoNode *sculpt_undo_push_node(Object *ob, PBVHNode *node, SculptUndoType
     case SCULPT_UNDO_DYNTOPO_SYMMETRIZE:
       BLI_assert(!"Dynamic topology should've already been handled");
     case SCULPT_UNDO_GEOMETRY:
+    case SCULPT_UNDO_FACE_SETS:
       break;
   }
 
@@ -1111,7 +1180,7 @@ SculptUndoNode *sculpt_undo_push_node(Object *ob, PBVHNode *node, SculptUndoType
   return unode;
 }
 
-void sculpt_undo_push_begin(const char *name)
+void SCULPT_undo_push_begin(const char *name)
 {
   UndoStack *ustack = ED_undo_stack_get();
 
@@ -1121,7 +1190,7 @@ void sculpt_undo_push_begin(const char *name)
   BKE_undosys_step_push_init_with_type(ustack, C, name, BKE_UNDOSYS_TYPE_SCULPT);
 }
 
-void sculpt_undo_push_end(void)
+void SCULPT_undo_push_end(void)
 {
   UndoSculpt *usculpt = sculpt_undo_get_nodes();
   SculptUndoNode *unode;
@@ -1294,14 +1363,14 @@ static void sculpt_undosys_step_free(UndoStep *us_p)
 
 void ED_sculpt_undo_geometry_begin(struct Object *ob, const char *name)
 {
-  sculpt_undo_push_begin(name);
-  sculpt_undo_push_node(ob, NULL, SCULPT_UNDO_GEOMETRY);
+  SCULPT_undo_push_begin(name);
+  SCULPT_undo_push_node(ob, NULL, SCULPT_UNDO_GEOMETRY);
 }
 
 void ED_sculpt_undo_geometry_end(struct Object *ob)
 {
-  sculpt_undo_push_node(ob, NULL, SCULPT_UNDO_GEOMETRY);
-  sculpt_undo_push_end();
+  SCULPT_undo_push_node(ob, NULL, SCULPT_UNDO_GEOMETRY);
+  SCULPT_undo_push_end();
 }
 
 /* Export for ED_undo_sys. */

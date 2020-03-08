@@ -30,8 +30,9 @@ bl_info = {
     "location": "View3D > Tool Shelf",
     "description": "Repeat extrusions from faces to create organic shapes",
     "warning": "",
-    "wiki_url": "",
-    "category": "Mesh"}
+    "doc_url": "",
+    "category": "Mesh",
+}
 
 
 import bpy

@@ -24,7 +24,7 @@ bl_info = {
     "location": "Render Menu, UV Editor Render Tab",
     "description": "Render Settings BI & Cycles",
     "warning": "",
-    "wiki_url": "https://github.com/meta-androcto/blenderpython/wiki/AF_Render_Settings",
+    "doc_url": "https://github.com/meta-androcto/blenderpython/wiki/AF_Render_Settings",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Render"
 }

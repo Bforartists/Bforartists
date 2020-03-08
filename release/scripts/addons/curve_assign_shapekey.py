@@ -24,12 +24,11 @@ bl_info = {
     "name": "Assign Shape Keys",
     "author": "Shrinivas Kulkarni",
     "version": (1, 0, 1),
+    "blender": (2, 80, 0),
     "location": "View 3D > Sidebar > Edit Tab",
     "description": "Assigns one or more Bezier curves as shape keys to another Bezier curve",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/assign_shape_keys.html",
     "category": "Add Curve",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "add_curve/assign_shape_keys.html",
-    "blender": (2, 80, 0),
 }
 
 alignList = [('minX', 'Min X', 'Align vertices with Min X'),

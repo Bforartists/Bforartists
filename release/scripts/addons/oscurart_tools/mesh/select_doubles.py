@@ -72,6 +72,3 @@ class SelectDoubles(Operator):
     def execute(self, context):
         SelDoubles(self, context,self.distance)
         return {'FINISHED'}
-
-
-

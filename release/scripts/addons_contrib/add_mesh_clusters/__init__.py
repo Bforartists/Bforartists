@@ -45,7 +45,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "Panel: View 3D - Tools (right side)",
     "warning": "",
-    "wiki_url": "... will be updated asap ...",
+    "doc_url": "... will be updated asap ...",
     "category": "Add Mesh"}
 
 import os
@@ -302,12 +302,12 @@ def DEF_atom_draw_atoms(prop_element,
         color = (1.0,  0.81,  0.13, 1.0)
         radii = [1.34]
 
-    # First, we create a collection for the atoms, which includes the 
+    # First, we create a collection for the atoms, which includes the
     # representative ball and the mesh.
     coll_atom_name = "Cluster (" + coll_name + ")_" + name.lower()
     # Create the new collection and ...
     coll_atom = bpy.data.collections.new(coll_atom_name)
-    # ... link it to the collection, which contains all parts of the 
+    # ... link it to the collection, which contains all parts of the
     # element (ball and mesh).
     bpy.data.collections.new(coll_atom_name)
     bpy.context.scene.collection.children.link(coll_atom)
@@ -354,7 +354,7 @@ def DEF_atom_draw_atoms(prop_element,
         coll_past = coll_all[0]
     else:
         coll_past = bpy.context.scene.collection
-    
+
     # Put the atom into the new collection 'atom' and ...
     coll_atom.objects.link(ball)
     # ... unlink the atom from the other collection.
@@ -374,26 +374,26 @@ def DEF_menu_func(self, context):
     self.layout.operator(CLASS_ImportCluster.bl_idname, icon='PLUGIN')
 
 
-classes = (CLASS_ImportCluster, 
-           CLASS_PT_atom_cluster_panel, 
-           CLASS_atom_cluster_Properties, 
+classes = (CLASS_ImportCluster,
+           CLASS_PT_atom_cluster_panel,
+           CLASS_atom_cluster_Properties,
            CLASS_atom_cluster_load_button)
 
 
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-        
+
     bpy.types.Scene.atom_cluster = bpy.props.PointerProperty(type=
                                                   CLASS_atom_cluster_Properties)
     bpy.types.VIEW3D_MT_mesh_add.append(DEF_menu_func)
-    
+
 
 def unregister():
     bpy.types.VIEW3D_MT_mesh_add.remove(DEF_menu_func)
-    
+
     del bpy.types.Scene.atom_cluster
-    
+
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
 
