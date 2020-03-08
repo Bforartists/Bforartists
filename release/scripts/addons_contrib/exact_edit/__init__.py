@@ -25,7 +25,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "View3D",
     "description": "Tool for precisely setting distance, scale, and rotation",
-    "wiki_url": "https://github.com/n-Burn/Exact_Edit/wiki",
+    "doc_url": "https://github.com/n-Burn/Exact_Edit/wiki",
     "category": "Object"
 }
 

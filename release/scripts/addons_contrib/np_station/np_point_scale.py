@@ -88,7 +88,7 @@ bl_info = {
     'location': 'View3D',
     'warning': '',
     'description': 'Scales selected objects using bounding box with handles',
-    'wiki_url': '',
+    'doc_url': '',
     'category': '3D View'}
 
 import bpy

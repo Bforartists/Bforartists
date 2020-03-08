@@ -26,7 +26,7 @@ bl_info = {
     "location": "View3D",
     "description": "Use face-maps in the 3D view when rigged meshes are selected.",
     "warning": "This is currently a proof of concept.",
-    "wiki_url": "",
+    "doc_url": "",
     "category": "Rigging",
 }
 

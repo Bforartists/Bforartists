@@ -36,7 +36,7 @@ class Parser:
 
     def add(self, name, pattern, virtual=False):
         """ Adds a new named pattern (regular expression) that can reference previously added patterns by %(pattern_name)s.
-		Virtual patterns can be used to make expressions more compact but don't show up in the parse tree. """
+        Virtual patterns can be used to make expressions more compact but don't show up in the parse tree. """
         self.raw_patterns[name] = "(?:" + pattern + ")"
         self.virtual[name] = virtual
 
@@ -169,7 +169,7 @@ def get_coordinate(b):
 
 def parse_position(s):
     """ Takes a (utf8-encoded) string describing a position and returns a tuple of floats for latitude and longitude in degrees.
-	Tries to be as tolerant as possible with input. Returns None if parsing doesn't succeed. """
+    Tries to be as tolerant as possible with input. Returns None if parsing doesn't succeed. """
 
     parse_tree = position_parser.parse("position", s)
     if parse_tree == None: return None

@@ -27,9 +27,10 @@ bl_info = {
     "description": "Import 3DS, meshes, uvs, materials, textures, "
                    "cameras & lamps",
     "warning": "Images must be in file folder",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Import-Export/Autodesk_3DS",
-    "category": "Import-Export"}
+    "doc_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+               "Scripts/Import-Export/Autodesk_3DS",
+    "category": "Import-Export",
+}
 
 if "bpy" in locals():
     import importlib

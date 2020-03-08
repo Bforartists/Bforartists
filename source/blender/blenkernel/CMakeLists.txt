@@ -125,6 +125,7 @@ set(SRC
   intern/idcode.c
   intern/idprop.c
   intern/idprop_utils.c
+  intern/idtype.c
   intern/image.c
   intern/image_gen.c
   intern/image_save.c
@@ -292,6 +293,7 @@ set(SRC
   BKE_icons.h
   BKE_idcode.h
   BKE_idprop.h
+  BKE_idtype.h
   BKE_image.h
   BKE_image_save.h
   BKE_ipo.h
@@ -485,7 +487,7 @@ endif()
 
 if(WITH_CODEC_AVI)
   list(APPEND INC
-    ../avi
+    ../io/avi
   )
   add_definitions(-DWITH_AVI)
 endif()
@@ -606,7 +608,7 @@ endif()
 
 if(WITH_ALEMBIC)
   list(APPEND INC
-    ../alembic
+    ../io/alembic
   )
   add_definitions(-DWITH_ALEMBIC)
 endif()

@@ -539,6 +539,7 @@ def brush_settings(layout, context, brush, popover=False):
 
         # normal_radius_factor
         layout.prop(brush, "normal_radius_factor", slider=True)
+        layout.prop(brush, "hardness", slider=True)
         
         layout.separator()
 
@@ -651,7 +652,7 @@ def brush_settings(layout, context, brush, popover=False):
             layout.prop(brush, "cloth_mass")
             layout.prop(brush, "cloth_damping")
             layout.separator()  
-        
+
         if brush.sculpt_tool == 'SCRAPE':
             row = layout.row()
             row.prop(brush, "area_radius_factor", slider=True)
@@ -823,6 +824,9 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         # topology automasking
         layout.use_property_split = False
         layout.prop(brush, "use_automasking_topology")
+
+        # face masks automasking
+        layout.prop(brush, "use_automasking_face_sets")
 
         # sculpt plane settings
         if capabilities.has_sculpt_plane:

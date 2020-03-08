@@ -24,8 +24,7 @@ bl_info = {
     "location": "Scene > 3D-Coat Applink",
     "description": "Transfer data between 3D-Coat/Blender",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "import_export/coat3D.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/coat3D.html",
     "category": "Import-Export",
 }
 

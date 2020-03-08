@@ -1,10 +1,10 @@
 # Copyright 2015 Théo Friberg under GNU GPL 3
 
 if "bpy" in locals():
-	import importlib
-	importlib.reload(JSONOps)
+    import importlib
+    importlib.reload(JSONOps)
 else:
-	from . import JSONOps
+    from . import JSONOps
 
 import bpy
 import os

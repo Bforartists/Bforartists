@@ -8,7 +8,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "View3D > Add > Surface",
     "warning": "",
-    "wiki_url": "",
+    "doc_url": "",
     "category": "Add Mesh"
 }
 

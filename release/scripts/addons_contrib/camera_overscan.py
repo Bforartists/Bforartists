@@ -24,7 +24,7 @@ bl_info = {
     "location": "Render Settings > Camera Overscan",
     "description": "Render Overscan",
     "warning": "",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Render/Camera_Overscan",
+    "doc_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Render/Camera_Overscan",
     "tracker_url": "",
     "category": "Render"}
 

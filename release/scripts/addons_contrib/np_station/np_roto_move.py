@@ -26,7 +26,7 @@ bl_info = {
     'location': 'View3D',
     'warning': '',
     'description': 'Rotates selected objects using snap points',
-    'wiki_url': '',
+    'doc_url': '',
     'category': '3D View'}
 
 import bpy
@@ -794,7 +794,8 @@ def DRAW_Overlay(self, context):
 
     walpha = translate_graphic(walpha, centerloc)
     wbeta_L = translate_graphic(wbeta_L, centerloc)
-    if flag is not 'RUNROTEND': wbeta_D = translate_graphic(wbeta_D, centerloc)
+    if flag != 'RUNROTEND':
+        wbeta_D = translate_graphic(wbeta_D, centerloc)
 
 
     np_print('rv3d', rv3d)
@@ -874,7 +875,7 @@ def DRAW_Overlay(self, context):
         bgl.glEnd()
 
 
-    if flag is not 'RUNROTEND':
+    if flag != 'RUNROTEND':
         # drawing of wbeta_D contours:
         bgl.glColor4f(1.0, 1.0, 1.0, 0.6)
         bgl.glLineWidth(1)

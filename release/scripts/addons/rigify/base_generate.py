@@ -465,4 +465,3 @@ class BaseGenerator:
         for bone in self.obj.data.bones:
             if bone.parent is None:
                 self.__build_rig_tree_rec(bone, None, handled)
-

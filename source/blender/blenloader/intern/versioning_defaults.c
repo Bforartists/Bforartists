@@ -101,11 +101,11 @@ static void blo_update_defaults_screen(bScreen *screen,
 {
   /* For all app templates. */
   for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
-    for (ARegion *ar = sa->regionbase.first; ar; ar = ar->next) {
+    for (ARegion *region = sa->regionbase.first; region; region = region->next) {
       /* Some toolbars have been saved as initialized,
        * we don't want them to have odd zoom-level or scrolling set, see: T47047 */
-      if (ELEM(ar->regiontype, RGN_TYPE_UI, RGN_TYPE_TOOLS, RGN_TYPE_TOOL_PROPS)) {
-        ar->v2d.flag &= ~V2D_IS_INITIALISED;
+      if (ELEM(region->regiontype, RGN_TYPE_UI, RGN_TYPE_TOOLS, RGN_TYPE_TOOL_PROPS)) {
+        region->v2d.flag &= ~V2D_IS_INITIALISED;
       }
     }
 
@@ -130,16 +130,16 @@ static void blo_update_defaults_screen(bScreen *screen,
   }
 
   for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
-    for (ARegion *ar = sa->regionbase.first; ar; ar = ar->next) {
+    for (ARegion *region = sa->regionbase.first; region; region = region->next) {
       /* Remove all stored panels, we want to use defaults
        * (order, open/closed) as defined by UI code here! */
-      BKE_area_region_panels_free(&ar->panels);
-      BLI_freelistN(&ar->panels_category_active);
+      BKE_area_region_panels_free(&region->panels);
+      BLI_freelistN(&region->panels_category_active);
 
       /* Reset size so it uses consistent defaults from the region types. */
-      /*bfa - NEVER !*/
-      //ar->sizex = 0;
-      //ar->sizey = 0;
+      /*bfa - NEVER ! - this is the cause for single row tool shelf factory default*/
+      //region->sizex = 0;
+      //region->sizey = 0;
     }
 
     if (sa->spacetype == SPACE_IMAGE) {
@@ -157,9 +157,9 @@ static void blo_update_defaults_screen(bScreen *screen,
       if (saction->mode == SACTCONT_TIMELINE) {
         saction->ads.flag |= ADS_FLAG_SUMMARY_COLLAPSED;
 
-        for (ARegion *ar = sa->regionbase.first; ar; ar = ar->next) {
-          if (ar->regiontype == RGN_TYPE_CHANNELS) {
-            ar->flag |= RGN_FLAG_HIDDEN;
+        for (ARegion *region = sa->regionbase.first; region; region = region->next) {
+          if (region->regiontype == RGN_TYPE_CHANNELS) {
+            region->flag |= RGN_FLAG_HIDDEN;
           }
         }
       }
@@ -214,13 +214,13 @@ static void blo_update_defaults_screen(bScreen *screen,
     for (SpaceLink *sl = sa->spacedata.first; sl; sl = sl->next) {
       ListBase *regionbase = (sl == sa->spacedata.first) ? &sa->regionbase : &sl->regionbase;
 
-      for (ARegion *ar = regionbase->first; ar; ar = ar->next) {
-        if (ar->regiontype == RGN_TYPE_TOOL_HEADER) {
+      for (ARegion *region = regionbase->first; region; region = region->next) {
+        if (region->regiontype == RGN_TYPE_TOOL_HEADER) {
           if ((sl->spacetype == SPACE_IMAGE) && hide_image_tool_header) {
-            ar->flag |= RGN_FLAG_HIDDEN;
+            region->flag |= RGN_FLAG_HIDDEN;
           }
           else {
-            ar->flag &= ~(RGN_FLAG_HIDDEN | RGN_FLAG_HIDDEN_BY_USER);
+            region->flag &= ~(RGN_FLAG_HIDDEN | RGN_FLAG_HIDDEN_BY_USER);
           }
         }
       }
@@ -230,7 +230,7 @@ static void blo_update_defaults_screen(bScreen *screen,
   /* 2D animation template. */
   if (app_template && STREQ(app_template, "2D_Animation")) {
     for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
-      for (ARegion *ar = sa->regionbase.first; ar; ar = ar->next) {
+      for (ARegion *region = sa->regionbase.first; region; region = region->next) {
         if (sa->spacetype == SPACE_ACTION) {
           SpaceAction *saction = sa->spacedata.first;
           /* Enable Sliders. */
@@ -267,7 +267,7 @@ void BLO_update_defaults_workspace(WorkSpace *workspace, const char *app_templat
         bScreen *screen = layout->screen;
         if (screen) {
           for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
-            for (ARegion *ar = sa->regionbase.first; ar; ar = ar->next) {
+            for (ARegion *region = sa->regionbase.first; region; region = region->next) {
               if (sa->spacetype == SPACE_VIEW3D) {
                 View3D *v3d = sa->spacedata.first;
                 v3d->shading.flag &= ~V3D_SHADING_CAVITY;
@@ -541,6 +541,30 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       brush = BKE_brush_add(bmain, brush_name, OB_MODE_SCULPT);
       id_us_min(&brush->id);
       brush->sculpt_tool = SCULPT_TOOL_MULTIPLANE_SCRAPE;
+    }
+
+    brush_name = "Clay Thumb";
+    brush = BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2);
+    if (!brush) {
+      brush = BKE_brush_add(bmain, brush_name, OB_MODE_SCULPT);
+      id_us_min(&brush->id);
+      brush->sculpt_tool = SCULPT_TOOL_CLAY_THUMB;
+    }
+
+    brush_name = "Cloth";
+    brush = BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2);
+    if (!brush) {
+      brush = BKE_brush_add(bmain, brush_name, OB_MODE_SCULPT);
+      id_us_min(&brush->id);
+      brush->sculpt_tool = SCULPT_TOOL_CLOTH;
+    }
+
+    brush_name = "Slide Relax";
+    brush = BLI_findstring(&bmain->brushes, brush_name, offsetof(ID, name) + 2);
+    if (!brush) {
+      brush = BKE_brush_add(bmain, brush_name, OB_MODE_SCULPT);
+      id_us_min(&brush->id);
+      brush->sculpt_tool = SCULPT_TOOL_SLIDE_RELAX;
     }
 
     brush_name = "Simplify";

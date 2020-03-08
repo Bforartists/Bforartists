@@ -707,8 +707,8 @@ bool ED_object_parent_set(ReportList *reports,
       /* if follow, add F-Curve for ctime (i.e. "eval_time") so that path-follow works */
       if (partype == PAR_FOLLOW) {
         /* get or create F-Curve */
-        bAction *act = verify_adt_action(bmain, &cu->id, 1);
-        FCurve *fcu = verify_fcurve(bmain, act, NULL, NULL, "eval_time", 0, 1);
+        bAction *act = ED_id_action_ensure(bmain, &cu->id);
+        FCurve *fcu = ED_action_fcurve_ensure(bmain, act, NULL, NULL, "eval_time", 0);
 
         /* setup dummy 'generator' modifier here to get 1-1 correspondence still working */
         if (!fcu->bezt && !fcu->fpt && !fcu->modifiers.first) {
@@ -2261,7 +2261,7 @@ static int make_local_exec(bContext *C, wmOperator *op)
           }
         }
 
-        matarar = (Material ***)BKE_object_material_array(ob);
+        matarar = BKE_object_material_array_p(ob);
         if (matarar) {
           for (a = 0; a < ob->totcol; a++) {
             ma = (*matarar)[a];
@@ -2610,6 +2610,9 @@ static int make_single_user_exec(bContext *C, wmOperator *op)
 
   if (RNA_boolean_get(op->ptr, "obdata")) {
     single_obdata_users(bmain, scene, view_layer, v3d, flag);
+
+    /* Needed since some IDs were remapped? (incl. me->texcomesh, see T73797). */
+    update_deps = true;
   }
 
   if (RNA_boolean_get(op->ptr, "material")) {

@@ -27,8 +27,8 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "File > Export > Adobe After Effects (.jsx)",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Import-Export/Adobe_After_Effects",
+    "doc_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+               "Scripts/Import-Export/Adobe_After_Effects",
     "category": "Import-Export",
 }
 
@@ -260,7 +260,7 @@ def write_jsx_file(file, data, selection, include_animation, include_active_cam,
     active_cam_name = ''
     if include_active_cam and data['active_cam_frames'] != []:
         # check if more that one active cam exist (true if active cams set by markers)
-        if len(data['active_cam_frames']) is 1:
+        if len(data['active_cam_frames']) == 1:
             name_ae = convert_name(data['active_cam_frames'][0].name)  # take name of the only active camera in scene
         else:
             name_ae = 'Active_Camera'

@@ -17,9 +17,8 @@ bl_info = {
     "location": "File > Export > Paper Model",
     "warning": "",
     "description": "Export printable net of the active mesh",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/paper_model.html",
     "category": "Import-Export",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "import_export/paper_model.html",
 }
 
 # Task: split into four files (SVG and PDF separately)

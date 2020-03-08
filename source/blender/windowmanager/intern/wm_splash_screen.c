@@ -67,7 +67,7 @@ static void wm_block_splash_close(bContext *C, void *arg_block, void *UNUSED(arg
   UI_popup_block_close(C, win, arg_block);
 }
 
-static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *arg_unused);
+static uiBlock *wm_block_create_splash(bContext *C, ARegion *region, void *arg_unused);
 
 static void wm_block_splash_refreshmenu(bContext *C, void *UNUSED(arg_block), void *UNUSED(arg))
 {
@@ -255,15 +255,13 @@ static ImBuf *wm_block_splash_image(int r_unit_size[2])
 #endif
 }
 
-
-
-static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *UNUSED(arg))
+static uiBlock *wm_block_create_splash(bContext *C, ARegion *region, void *UNUSED(arg))
 {
   uiBlock *block;
   uiBut *but;
   uiStyle *style = UI_style_get_dpi();
 
-  block = UI_block_begin(C, ar, "splash", UI_EMBOSS);
+  block = UI_block_begin(C, region, "splash", UI_EMBOSS);
 
   /* note on UI_BLOCK_NO_WIN_CLIP, the window size is not always synchronized
    * with the OS when the splash shows, window clipping in this case gives
@@ -280,8 +278,8 @@ static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *UNUSED(ar
                  "",
                  0,
                  0.5f * U.widget_unit,
-                 U.dpi_fac * 501,
-                 U.dpi_fac * 282, /* bfa - changed from 250 to 282 - our splash screen is higher*/
+                 U.dpi_fac * ibuf_unit_size[0],
+                 U.dpi_fac * ibuf_unit_size[1],
                  /* Button owns the imbuf now. */
                  ibuf,
                  0.0,
@@ -296,7 +294,6 @@ static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *UNUSED(ar
   int y = U.dpi_fac * (ibuf_unit_size[1] - 13);
 
 /*bfa -  We don't need Blender hashes or Blender version numbers in Bforartists*/
-
   /*wm_block_splash_add_labels(block, x, y);*/
 
   const int layout_margin_x = U.dpi_fac * 26;

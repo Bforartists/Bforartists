@@ -26,7 +26,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "Mesh Edit Mode",
     "warning": "",
-    "wiki_url": "",
+    "doc_url": "",
     "category": "Edit Align Pie"
     }
 

@@ -33,5 +33,3 @@ class reloadImages (Operator):
         for imgs in bpy.data.images:
             imgs.reload()
         return {'FINISHED'}
-
-

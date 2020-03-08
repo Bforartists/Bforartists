@@ -27,8 +27,7 @@ bl_info = {
     "description": ("Edit arbitrary selected properties for "
                     "objects/sequence strips of the same type"),
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "system/property_chart.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/system/property_chart.html",
     "category": "System",
 }
 

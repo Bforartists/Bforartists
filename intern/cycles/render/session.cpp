@@ -976,7 +976,7 @@ bool Session::update_scene()
   Integrator *integrator = scene->integrator;
   BakeManager *bake_manager = scene->bake_manager;
 
-  if (integrator->sampling_pattern == SAMPLING_PATTERN_CMJ || bake_manager->get_baking()) {
+  if (integrator->sampling_pattern != SAMPLING_PATTERN_SOBOL || bake_manager->get_baking()) {
     int aa_samples = tile_manager.num_samples;
 
     if (aa_samples != integrator->aa_samples) {
@@ -1102,6 +1102,10 @@ void Session::render(bool with_denoising)
   task.update_progress_sample = function_bind(&Progress::add_samples, &this->progress, _1, _2);
   task.need_finish_queue = params.progressive_refine;
   task.integrator_branched = scene->integrator->method == Integrator::BRANCHED_PATH;
+
+  task.adaptive_sampling.use = (scene->integrator->sampling_pattern == SAMPLING_PATTERN_PMJ) &&
+                               scene->dscene.data.film.pass_adaptive_aux_buffer;
+  task.adaptive_sampling.min_samples = scene->dscene.data.integrator.adaptive_min_samples;
 
   /* Acquire render tiles by default. */
   task.tile_types = RenderTile::PATH_TRACE;

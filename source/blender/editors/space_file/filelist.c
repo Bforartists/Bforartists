@@ -269,8 +269,8 @@ typedef struct FileListEntryPreview {
 } FileListEntryPreview;
 
 typedef struct FileListFilter {
-  unsigned int filter;
-  unsigned int filter_id;
+  uint64_t filter;
+  uint64_t filter_id;
   char filter_glob[FILE_MAXFILE];
   char filter_search[66]; /* + 2 for heading/trailing implicit '*' wildcards. */
   short flags;
@@ -361,7 +361,7 @@ static void filelist_readjob_dir(
 
 /* helper, could probably go in BKE actually? */
 static int groupname_to_code(const char *group);
-static unsigned int groupname_to_filter_id(const char *group);
+static uint64_t groupname_to_filter_id(const char *group);
 
 static void filelist_filter_clear(FileList *filelist);
 static void filelist_cache_clear(FileListEntryCache *cache, size_t new_size);
@@ -746,7 +746,7 @@ static bool is_filtered_lib(FileListInternEntry *file, const char *root, FileLis
             is_filtered = false;
           }
           else {
-            unsigned int filter_id = groupname_to_filter_id(group);
+            uint64_t filter_id = groupname_to_filter_id(group);
             if (!(filter_id & filter->filter_id)) {
               is_filtered = false;
             }
@@ -835,8 +835,8 @@ void filelist_setfilter_options(FileList *filelist,
                                 const bool do_filter,
                                 const bool hide_dot,
                                 const bool hide_parent,
-                                const unsigned int filter,
-                                const unsigned int filter_id,
+                                const uint64_t filter,
+                                const uint64_t filter_id,
                                 const char *filter_glob,
                                 const char *filter_search)
 {
@@ -996,16 +996,24 @@ static int filelist_geticon_ex(FileDirEntry *file,
       return (file->attributes & FILE_ATTR_ANY_LINK) ? ICON_FOLDER_REDIRECT : ICON_FILE_FOLDER;
     }
     else {
-      /* If this path is in System list then use that icon. */
+
+      /* If this path is in System list or path cache then use that icon. */
       struct FSMenu *fsmenu = ED_fsmenu_get();
-      FSMenuEntry *tfsm = ED_fsmenu_get_category(fsmenu, FS_CATEGORY_SYSTEM_BOOKMARKS);
-      char fullpath[FILE_MAX_LIBEXTRA];
-      BLI_join_dirfile(fullpath, sizeof(fullpath), root, file->relpath);
-      BLI_add_slash(fullpath);
-      for (; tfsm; tfsm = tfsm->next) {
-        if (STREQ(tfsm->path, fullpath)) {
-          /* Never want a little folder inside a large one. */
-          return (tfsm->icon == ICON_FILE_FOLDER) ? ICON_NONE : tfsm->icon;
+      FSMenuCategory categories[] = {
+          FS_CATEGORY_SYSTEM_BOOKMARKS,
+          FS_CATEGORY_OTHER,
+      };
+
+      for (int i = 0; i < ARRAY_SIZE(categories); i++) {
+        FSMenuEntry *tfsm = ED_fsmenu_get_category(fsmenu, categories[i]);
+        char fullpath[FILE_MAX_LIBEXTRA];
+        BLI_join_dirfile(fullpath, sizeof(fullpath), root, file->relpath);
+        BLI_add_slash(fullpath);
+        for (; tfsm; tfsm = tfsm->next) {
+          if (STREQ(tfsm->path, fullpath)) {
+            /* Never want a little folder inside a large one. */
+            return (tfsm->icon == ICON_FILE_FOLDER) ? ICON_NONE : tfsm->icon;
+          }
         }
       }
     }
@@ -2422,7 +2430,7 @@ static int groupname_to_code(const char *group)
   return buf[0] ? BKE_idcode_from_name(buf) : 0;
 }
 
-static unsigned int groupname_to_filter_id(const char *group)
+static uint64_t groupname_to_filter_id(const char *group)
 {
   int id_code = groupname_to_code(group);
 

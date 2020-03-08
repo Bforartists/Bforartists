@@ -514,7 +514,7 @@ static void drw_call_obinfos_init(DRWObjectInfos *ob_infos, Object *ob)
   ob_infos->ob_flag += (ob->base_flag & BASE_FROM_DUPLI) ? (1 << 2) : 0;
   ob_infos->ob_flag += (ob->base_flag & BASE_FROM_SET) ? (1 << 3) : 0;
   ob_infos->ob_flag += (ob == DST.draw_ctx.obact) ? (1 << 4) : 0;
-  /* Negative scalling. */
+  /* Negative scaling. */
   ob_infos->ob_flag *= (ob->transflag & OB_NEG_SCALE) ? -1.0f : 1.0f;
   /* Object Color. */
   copy_v4_v4(ob_infos->ob_color, ob->color);
@@ -823,6 +823,7 @@ typedef struct DRWSculptCallbackData {
   bool use_wire;
   bool use_mats;
   bool use_mask;
+  bool use_fsets;
   bool fast_mode; /* Set by draw manager. Do not init. */
 
   int debug_node_nr;
@@ -843,11 +844,6 @@ static float sculpt_debug_colors[9][4] = {
 
 static void sculpt_draw_cb(DRWSculptCallbackData *scd, GPU_PBVH_Buffers *buffers)
 {
-  /* Meh... use_mask is a bit misleading here. */
-  if (scd->use_mask && !GPU_pbvh_buffers_has_mask(buffers)) {
-    return;
-  }
-
   GPUBatch *geom = GPU_pbvh_buffers_batch_get(buffers, scd->fast_mode, scd->use_wire);
   short index = 0;
 

@@ -45,14 +45,14 @@ def points_from_object(original, original_xyz_minmax,
                        source_particle_child=0,
                        source_pencil=0,
                        source_random=0):
-    
+
     points = []
-    
+
     # This is not used by anywhere
     def edge_center(mesh, edge):
         v1, v2 = edge.vertices
         return (mesh.vertices[v1].co + mesh.vertices[v2].co) / 2.0
-    
+
     # This is not used by anywhere
     def poly_center(mesh, poly):
         from mathutils import Vector
@@ -62,13 +62,13 @@ def points_from_object(original, original_xyz_minmax,
             co += mesh.vertices[mesh.loops[i].vertex_index].co
             tot += 1
         return co / tot
-    
+
     def points_from_verts(original):
         """Takes points from _any_ object with geometry"""
         if original.type == 'MESH':
             mesh = original.data
-            matrix = original.matrix_world.copy()    
-            p = [(matrix @ v.co, 'VERTS') for v in mesh.vertices]            
+            matrix = original.matrix_world.copy()
+            p = [(matrix @ v.co, 'VERTS') for v in mesh.vertices]
             return p
         else:
             depsgraph = bpy.context.evaluated_depsgraph_get()
@@ -78,21 +78,21 @@ def points_from_object(original, original_xyz_minmax,
             except:
                 mesh = None
 
-            if mesh is not None:               
+            if mesh is not None:
                 matrix = original.matrix_world.copy()
-                p =  [(matrix @ v.co, 'VERTS') for v in mesh.vertices]              
+                p =  [(matrix @ v.co, 'VERTS') for v in mesh.vertices]
                 ob_eval.to_mesh_clear()
                 return p
 
     def points_from_particles(original):
         depsgraph = bpy.context.evaluated_depsgraph_get()
         obj_eval = original.evaluated_get(depsgraph)
-                     
+
         p = [(particle.location.copy(), 'PARTICLE')
                for psys in obj_eval.particle_systems
                for particle in psys.particles]
         return p
-    
+
     def points_from_random(original, original_xyz_minmax):
         xmin, xmax = original_xyz_minmax["x"]
         ymin, ymax = original_xyz_minmax["y"]
@@ -100,19 +100,19 @@ def points_from_object(original, original_xyz_minmax,
 
         from random import uniform
         from mathutils import Vector
-        
+
         p = []
         for i in range(source_random):
             new_pos = Vector( (uniform(xmin, xmax), uniform(ymin, ymax), uniform(zmin, zmax)) )
-            p.append((new_pos, 'RANDOM')) 
-        return p  
-    
+            p.append((new_pos, 'RANDOM'))
+        return p
+
      # geom own
     if source_vert_own > 0:
         new_points = points_from_verts(original)
         new_points = _limit_source(new_points, source_vert_own)
         points.extend(new_points)
-    
+
     # random
     if source_random > 0:
         new_points = points_from_random(original, original_xyz_minmax)
@@ -125,7 +125,7 @@ def points_from_object(original, original_xyz_minmax,
             new_points  = points_from_verts(original_child)
             new_points = _limit_source(new_points, source_vert_child)
             points.extend(new_points)
-    
+
     # geom particles
     if source_particle_own > 0:
         new_points = points_from_particles(original)
@@ -151,13 +151,13 @@ def points_from_object(original, original_xyz_minmax,
                 gpl.frames.new(current)
                 gpl.active_frame = current
                 fr = gpl.active_frame
-            
-            return [get_points(stroke) for stroke in fr.strokes]     
+
+            return [get_points(stroke) for stroke in fr.strokes]
         else:
             return []
 
-    if source_pencil > 0:   
-        gp = bpy.context.scene.grease_pencil        
+    if source_pencil > 0:
+        gp = bpy.context.scene.grease_pencil
         if gp:
             line_points = []
             line_points = [(p, 'PENCIL') for spline in get_splines(gp)
@@ -168,17 +168,17 @@ def points_from_object(original, original_xyz_minmax,
                 # Make New point between the line point and the closest point.
                 if not points:
                     points.extend(line_points)
-                    
+
                 else:
                     for lp in line_points:
                         # Make vector between the line point and its closest point.
                         points.sort(key=lambda p: (p[0] - lp[0]).length_squared)
-                        closest_point = points[0]           
+                        closest_point = points[0]
                         normal = lp[0].xyz - closest_point[0].xyz
-                                   
+
                         new_point = (lp[0], lp[1])
                         new_point[0].xyz +=  normal / 2
-                       
+
                         points.append(new_point)
     #print("Found %d points" % len(points))
     return points
@@ -186,7 +186,7 @@ def points_from_object(original, original_xyz_minmax,
 
 def points_to_cells(context, original, original_xyz_minmax, points,
                     source_limit=0,
-                    source_noise=0.0,                        
+                    source_noise=0.0,
                     use_smooth_faces=False,
                     use_data_match=False,
                     use_debug_points=False,
@@ -199,16 +199,16 @@ def points_to_cells(context, original, original_xyz_minmax, points,
     from . import cell_calc
     collection = context.collection
     view_layer = context.view_layer
-        
+
     # apply optional clamp
     if source_limit != 0 and source_limit < len(points):
         points = _limit_source(points, source_limit)
-    
+
     # saddly we cant be sure there are no doubles
     from mathutils import Vector
     to_tuple = Vector.to_tuple
-    
-    # To remove doubles, round the values.    
+
+    # To remove doubles, round the values.
     points = [(Vector(to_tuple(p[0], 4)),p[1]) for p in points]
     del to_tuple
     del Vector
@@ -234,11 +234,11 @@ def points_to_cells(context, original, original_xyz_minmax, points,
         obj_tmp = bpy.data.objects.new(name=mesh_tmp.name, object_data=mesh_tmp)
         collection.objects.link(obj_tmp)
         del obj_tmp, mesh_tmp
-    
+
     cells_verts = cell_calc.points_to_verts(original_xyz_minmax,
                                             points,
                                             cell_scale,
-                                            margin_cell=margin)    
+                                            margin_cell=margin)
     # some hacks here :S
     cell_name = original.name + "_cell"
     cells = []
@@ -247,13 +247,13 @@ def points_to_cells(context, original, original_xyz_minmax, points,
         # BMESH
         # create the convex hulls
         bm = bmesh.new()
-        
+
         # WORKAROUND FOR CONVEX HULL BUG/LIMIT
         # XXX small noise
         import random
         def R():
             return (random.random() - 0.5) * 0.001
-        
+
         for i, co in enumerate(cell_verts):
             co.x += R()
             co.y += R()
@@ -328,7 +328,7 @@ def points_to_cells(context, original, original_xyz_minmax, points,
     view_layer.update()
     # move this elsewhere...
     # Blender 2.8: BGE integration was disabled, --
-    # -- because BGE was deleted in Blender 2.8. 
+    # -- because BGE was deleted in Blender 2.8.
     '''
     for cell in cells:
         game = cell.game
@@ -353,17 +353,17 @@ def cell_boolean(context, original, cells,
     collection = context.collection
     scene = context.scene
     view_layer = context.view_layer
-        
+
     if use_interior_hide and level == 0:
         # only set for level 0
-        original.data.polygons.foreach_set("hide", [False] * len(original.data.polygons))  
-    
+        original.data.polygons.foreach_set("hide", [False] * len(original.data.polygons))
+
     # The first object can't be applied by bool, so it is used as a no-effect first straw-man.
     bpy.ops.mesh.primitive_cube_add(enter_editmode=False, location=(original.location.x+10000000000.0, 0, 0))
     temp_cell = bpy.context.active_object
     cells.insert(0, temp_cell)
-    
-    bpy.ops.object.select_all(action='DESELECT')  
+
+    bpy.ops.object.select_all(action='DESELECT')
     for i, cell in enumerate(cells):
         mod = cell.modifiers.new(name="Boolean", type='BOOLEAN')
         mod.object = original
@@ -372,35 +372,35 @@ def cell_boolean(context, original, cells,
         if not use_debug_bool:
             if use_interior_hide:
                 cell.data.polygons.foreach_set("hide", [True] * len(cell.data.polygons))
-            
+
             # mesh_old should be made before appling boolean modifier.
             mesh_old = cell.data
-                       
+
             original.select_set(True)
             cell.select_set(True)
             bpy.context.view_layer.objects.active = cell
             bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Boolean")
-            
+
             if i == 0:
                 bpy.data.objects.remove(cell, do_unlink=True)
                 continue
-                        
+
             cell = bpy.context.active_object
             cell.select_set(False)
-            
+
             # depsgraph sould be gotten after applied boolean modifier, for new_mesh.
             depsgraph = context.evaluated_depsgraph_get()
             cell_eval = cell.evaluated_get(depsgraph)
-            
-            mesh_new = bpy.data.meshes.new_from_object(cell_eval)            
+
+            mesh_new = bpy.data.meshes.new_from_object(cell_eval)
             cell.data = mesh_new
-            
+
             '''
             check_hide = [11] * len(cell.data.polygons)
             cell.data.polygons.foreach_get("hide", check_hide)
-            print(check_hide) 
+            print(check_hide)
             '''
-            
+
             # remove if not valid
             if not mesh_old.users:
                 bpy.data.meshes.remove(mesh_old)
@@ -446,22 +446,22 @@ def cell_boolean(context, original, cells,
 
             if use_debug_redraw:
                 _redraw_yasiamevil()
-    
+
     bpy.context.view_layer.objects.active = original
-    
+
     if (not use_debug_bool) and use_island_split:
         # this is ugly and Im not proud of this - campbell
         for ob in view_layer.objects:
             ob.select_set(False)
         for cell in cells_boolean:
-            cell.select_set(True)        
+            cell.select_set(True)
         # If new separated meshes are made, selected objects is increased.
         if cells_boolean:
             bpy.ops.mesh.separate(type='LOOSE')
 
         cells_boolean[:] = [cell for cell in scene.objects if cell.select_get()]
-     
-    context.view_layer.update()    
+
+    context.view_layer.update()
     return cells_boolean
 
 
@@ -498,7 +498,7 @@ def interior_handle(cells,
 
         if use_sharp_edges:
             bpy.context.space_data.overlay.show_edge_sharp = True
-            
+
             for bm_edge in bm.edges:
                 if len({bm_face.hide for bm_face in bm_edge.link_faces}) == 2:
                     bm_edge.smooth = False
@@ -517,7 +517,7 @@ def interior_handle(cells,
                     bm.normal_update()
                     bmesh.ops.split_edges(bm, edges=edges)
                 '''
-                
+
         for bm_face in bm.faces:
             bm_face.hide = False
 
@@ -533,30 +533,30 @@ def post_process(cells,
                 mass=1.0,
                 mass_mode='VOLUME', mass_name='mass',
                 ):
-    
+
     """Run after Interiro handle"""
     #--------------
-    # Collection Options   
+    # Collection Options
     if use_collection:
-        colle = None            
+        colle = None
         if not new_collection:
             colle = bpy.data.collections.get(collection_name)
 
         if colle is None:
             colle = bpy.data.collections.new(collection_name)
-        
+
         # THe collection should be children of master collection to show in outliner.
         child_names = [m.name for m in bpy.context.scene.collection.children]
         if colle.name not in child_names:
             bpy.context.scene.collection.children.link(colle)
-            
+
         # Cell objects are only link to the collection.
-        bpy.ops.collection.objects_remove_all() # For all selected object.        
-        for colle_obj in cells:           
+        bpy.ops.collection.objects_remove_all() # For all selected object.
+        for colle_obj in cells:
             colle.objects.link(colle_obj)
 
     #--------------
-    # Mass Options     
+    # Mass Options
     if use_mass:
         # Blender 2.8:  Mass for BGE was no more available.--
         # -- Instead, Mass values is used for custom properies on cell objects.
