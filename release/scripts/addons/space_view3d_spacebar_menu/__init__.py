@@ -25,8 +25,7 @@ bl_info = {
     "location": "View3D > Spacebar",
     "description": "Object Mode Context Sensitive Spacebar Menu",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "interface/context_menu.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/context_menu.html",
     "category": "Interface",
 }
 
@@ -827,20 +826,20 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
 
 # Text Edit Mode
 def menu_func(self, context):
-	layout = self.layout
+    layout = self.layout
 
-	layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
-	layout.menu("VIEW3D_MT_select_edit_text", icon='VIEW3D')
-	layout.separator()
-	layout.operator_context = 'INVOKE_REGION_WIN'
-	layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
-	layout.menu("VIEW3D_MT_Animation_Player",
-				text="Animation", icon='PLAY')
-	layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
-	layout.operator("object.editmode_toggle", text="Enter Object Mode",
-					icon='OBJECT_DATA')
-	layout.separator()
-	layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
+    layout.menu("VIEW3D_MT_View_Menu", icon='ZOOM_ALL')
+    layout.menu("VIEW3D_MT_select_edit_text", icon='VIEW3D')
+    layout.separator()
+    layout.operator_context = 'INVOKE_REGION_WIN'
+    layout.operator("wm.search_menu", text="Search", icon='VIEWZOOM')
+    layout.menu("VIEW3D_MT_Animation_Player",
+                text="Animation", icon='PLAY')
+    layout.menu("SCREEN_MT_user_menu", text="Quick Favorites", icon='HEART')
+    layout.operator("object.editmode_toggle", text="Enter Object Mode",
+                    icon='OBJECT_DATA')
+    layout.separator()
+    layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
 
 
 # Preferences utility functions

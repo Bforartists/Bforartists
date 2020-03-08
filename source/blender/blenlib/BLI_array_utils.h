@@ -23,6 +23,11 @@
  */
 
 #include "BLI_compiler_typecheck.h"
+#include "BLI_sys_types.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void _bli_array_reverse(void *arr, unsigned int arr_len, size_t arr_stride);
 #define BLI_array_reverse(arr, arr_len) _bli_array_reverse(arr, arr_len, sizeof(*(arr)))
@@ -84,5 +89,9 @@ bool _bli_array_iter_span(const void *arr,
 
 bool _bli_array_is_zeroed(const void *arr, unsigned int arr_len, size_t arr_stride);
 #define BLI_array_is_zeroed(arr, arr_len) _bli_array_is_zeroed(arr, arr_len, sizeof(*(arr)))
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __BLI_ARRAY_UTILS_H__ */

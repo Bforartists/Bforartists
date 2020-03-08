@@ -237,6 +237,32 @@ class CYCLES_RENDER_PT_sampling_sub_samples(CyclesButtonsPanel, Panel):
         draw_samples_info(layout, context)
 
 
+class CYCLES_RENDER_PT_sampling_adaptive(CyclesButtonsPanel, Panel):
+    bl_label = "Adaptive Sampling"
+    bl_parent_id = "CYCLES_RENDER_PT_sampling"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, context):
+        layout = self.layout
+        scene = context.scene
+        cscene = scene.cycles
+
+        layout.prop(cscene, "use_adaptive_sampling", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        scene = context.scene
+        cscene = scene.cycles
+
+        layout.active = cscene.use_adaptive_sampling
+
+        col = layout.column(align=True)
+        col.prop(cscene, "adaptive_min_samples", text="Min Samples")
+        col.prop(cscene, "adaptive_threshold", text="Noise Threshold")
+
 class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
     bl_label = "Advanced"
     bl_parent_id = "CYCLES_RENDER_PT_sampling"
@@ -254,7 +280,9 @@ class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
         row.prop(cscene, "seed")
         row.prop(cscene, "use_animated_seed", text="", icon='TIME')
 
-        layout.prop(cscene, "sampling_pattern", text="Pattern")
+        col = layout.column(align=True)
+        col.active = not(cscene.use_adaptive_sampling)
+        col.prop(cscene, "sampling_pattern", text="Pattern")
 
         col = layout.column(align=True)
         col.prop(cscene, "min_light_bounces")
@@ -828,6 +856,8 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         col.prop(cycles_view_layer, "denoising_store_passes", text="Denoising Data")
         col = flow.column()
         col.prop(cycles_view_layer, "pass_debug_render_time", text="Render Time")
+        col = flow.column()
+        col.prop(cycles_view_layer, "pass_debug_sample_count", text="Sample Count")
 
         layout.separator()
         
@@ -2278,6 +2308,7 @@ classes = (
     CYCLES_PT_integrator_presets,
     CYCLES_RENDER_PT_sampling,
     CYCLES_RENDER_PT_sampling_sub_samples,
+    CYCLES_RENDER_PT_sampling_adaptive,
     CYCLES_RENDER_PT_sampling_advanced,
     CYCLES_RENDER_PT_light_paths,
     CYCLES_RENDER_PT_light_paths_max_bounces,

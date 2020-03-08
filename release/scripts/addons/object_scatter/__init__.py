@@ -24,7 +24,7 @@ bl_info = {
     "location": "3D View",
     "description": "Distribute object instances on another object.",
     "warning": "",
-    "wiki_url": "",
+    "doc_url": "",
     "support": 'OFFICIAL',
     "category": "Object",
 }

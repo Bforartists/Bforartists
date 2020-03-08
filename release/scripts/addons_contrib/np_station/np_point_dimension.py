@@ -27,7 +27,7 @@ bl_info = {
     'location': 'View3D',
     'warning': '',
     'description': 'Creates OpenGL dimensions with use of snap',
-    'wiki_url': '',
+    'doc_url': '',
     'category': '3D View'}
 
 import bpy

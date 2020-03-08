@@ -9,8 +9,9 @@ bl_info = {
     "location": "View3D > Add > Mesh > New Braid",
     "description": "Adds a new Braid",
     "warning": "",
-    "wiki_url": "",
-    "category": "Add Mesh"}
+    "doc_url": "",
+    "category": "Add Mesh",
+}
 """
 
 import bpy

@@ -66,5 +66,3 @@ class saveIncrementalBackup (bpy.types.Operator):
     def execute(self, context):
         saveBkp(self, context)
         return {'FINISHED'}
-
-

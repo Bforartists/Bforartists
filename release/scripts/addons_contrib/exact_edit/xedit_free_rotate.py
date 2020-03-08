@@ -306,7 +306,7 @@ class ViewButton():
         #offs_2d = Vector((-self.wid / 2, 25))
         offs_2d = Vector((-self.wid / 2, 0))
         new2d = co2d + offs_2d
-        
+
         # co_bl == coordinate bottom left, co_tr == coordinate top right
         co_bl = new2d[0], new2d[1]
         co_tl = new2d[0], new2d[1] + self.hgt
@@ -1078,7 +1078,7 @@ def draw_callback_px(self, context):
             axis_pts = get_axis_line_co(pts2d[2], t2d, rwid, rhgt)
             if axis_pts is not None:
                 draw_line_2d(axis_pts[0], axis_pts[1], Colr.white)
-                
+
             #btn_co = pts2d[2] + Vector((0, 20))
             draw_line_2d(pts2d[0], pts2d[2], Colr.white)
             draw_line_2d(pts2d[1], pts2d[2], Colr.white)

@@ -32,8 +32,7 @@ bl_info = {
     "version": (1, 2, 2),
     "blender": (2, 80, 0),
     "description": "Generate rooms, doors, windows, and other architecture objects",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "add_mesh/archimesh.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_mesh/archimesh.html",
     "category": "Add Mesh"
     }
 

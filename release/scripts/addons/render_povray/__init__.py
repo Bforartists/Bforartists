@@ -102,7 +102,7 @@ bl_info = {
     "blender": (2, 81, 0),
     "location": "Render Properties > Render Engine > Persistence of Vision",
     "description": "Persistence of Vision integration for blender",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/render/povray.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/render/povray.html",
     "category": "Render",
 }
 

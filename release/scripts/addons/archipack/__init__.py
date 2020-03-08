@@ -35,7 +35,7 @@ bl_info = {
     'blender': (2, 80, 0),
     'location': 'View3D > Sidebar > Create > Archipack',
     'warning': '',
-    'wiki_url': 'https://github.com/s-leger/archipack/wiki',
+    'doc_url': 'https://github.com/s-leger/archipack/wiki',
     'tracker_url': 'https://github.com/s-leger/archipack/issues',
     'link': 'https://github.com/s-leger/archipack',
     'support': 'COMMUNITY',

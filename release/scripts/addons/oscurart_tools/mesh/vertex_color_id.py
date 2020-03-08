@@ -65,6 +65,3 @@ class createVCMask(bpy.types.Operator):
     def execute(self, context):
         vertexColorMask(self, context)
         return {'FINISHED'}
-
-
-

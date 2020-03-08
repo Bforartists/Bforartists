@@ -31,7 +31,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "Properties Editor > Render > Render",
     "warning": "",
-    "wiki_url": "https://github.com/kostex/blenderscripts/",
+    "doc_url": "https://github.com/kostex/blenderscripts/",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Render"}
 

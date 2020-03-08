@@ -401,7 +401,7 @@ class ViewButton():
         #offs_2d = Vector((-self.wid / 2, 25))
         offs_2d = Vector((-self.wid / 2, 0))
         new2d = co2d + offs_2d
-        
+
         # co_bl == coordinate bottom left, co_tr == coordinate top right
         co_bl = new2d[0], new2d[1]
         co_tl = new2d[0], new2d[1] + self.hgt
@@ -1272,7 +1272,7 @@ def do_rotate(self):
         o_mat = create_z_orient(norml)
 
         bpy.ops.transform.rotate(
-            value=RotDat.ang_diff_r, 
+            value=RotDat.ang_diff_r,
             orient_axis='Z',
             orient_type='LOCAL',
             #orient_type='GLOBAL',
@@ -1303,7 +1303,7 @@ def do_rotate(self):
 
     editmode_refresh()
 
-        
+
 # Uses axis_lock or piv_norm from RotDat to obtain rotation axis.
 # Then rotates selected objects or selected vertices around the
 # 3D cursor using RotDat's ang_diff_r radian value.
@@ -1930,7 +1930,7 @@ class XEDIT_OT_set_meas(bpy.types.Operator):
             if not popup_active:
                 process_popup_input(self)
                 set_help_text(self, "CLICK")
-  
+
         elif self.addon_mode == GET_0_OR_180:
             choose_0_or_180(RotDat.lock_pts[2], RotDat.rot_pt_pos,
                     RotDat.rot_pt_neg, RotDat.ang_diff_r, self.mouse_co)

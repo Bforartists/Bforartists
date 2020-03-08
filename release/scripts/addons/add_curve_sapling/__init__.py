@@ -26,9 +26,9 @@ bl_info = {
     "description": ("Adds a parametric tree. The method is presented by "
     "Jason Weber & Joseph Penn in their paper 'Creation and Rendering of "
     "Realistic Trees'"),
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "add_curve/sapling.html",
-    "category": "Add Curve"}
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/sapling.html",
+    "category": "Add Curve",
+}
 
 if "bpy" in locals():
     import importlib

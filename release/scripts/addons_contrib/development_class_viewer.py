@@ -24,7 +24,7 @@ bl_info = {
     "location": "Text Editor > Toolbar, Text Editor > Right Click",
     "warning": "",
     "description": "List classes and definitions of a text block",
-    "wiki_url": "https://sites.google.com/site/aleonserra/home/scripts/class-viewer",
+    "doc_url": "https://sites.google.com/site/aleonserra/home/scripts/class-viewer",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Development"}
 

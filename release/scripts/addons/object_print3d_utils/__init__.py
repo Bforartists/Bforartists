@@ -24,7 +24,7 @@ bl_info = {
     "blender": (2, 82, 0),
     "location": "3D View > Sidebar",
     "description": "Utilities for 3D printing",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/mesh/3d_print_toolbox.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/mesh/3d_print_toolbox.html",
     "support": 'OFFICIAL',
     "category": "Mesh",
 }

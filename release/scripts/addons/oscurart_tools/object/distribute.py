@@ -67,4 +67,3 @@ class DistributeOsc(Operator):
         self.Booly = True
         self.Boolz = True
         return context.window_manager.invoke_props_dialog(self)
-

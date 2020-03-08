@@ -27,8 +27,7 @@ bl_info = {
     "location": "View3D > Add > Mesh",
     "description": "Add Discombobulator",
     "warning": "",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
-                "add_mesh/discombobulator.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_mesh/discombobulator.html",
     "category": "Add Mesh",
 }
 

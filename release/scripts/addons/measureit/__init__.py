@@ -32,8 +32,8 @@ bl_info = {
     "version": (1, 8, 1),
     "blender": (2, 80, 0),
     "description": "Tools for measuring objects.",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons"
-                "/3d_view/measureit.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons"
+               "/3d_view/measureit.html",
     "category": "3D View"
 }
 

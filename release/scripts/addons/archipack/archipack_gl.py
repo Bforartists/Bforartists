@@ -85,7 +85,7 @@ in vec2 pos;
 
 void main()
 {
-	gl_Position = ModelViewProjectionMatrix * vec4(pos, 0.0, 1.0);
+    gl_Position = ModelViewProjectionMatrix * vec4(pos, 0.0, 1.0);
 }
 
 '''
@@ -97,7 +97,7 @@ out vec4 fragColor;
 
 void main()
 {
-	fragColor = color;
+    fragColor = color;
 }
 '''
 

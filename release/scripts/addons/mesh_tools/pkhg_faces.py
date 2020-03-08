@@ -8,7 +8,7 @@ bl_info = {
     "location": "View3D > Tools > PKHG (tab)",
     "description": "Faces selected will become added faces of different style",
     "warning": "",
-    "wiki_url": "",
+    "doc_url": "",
     "category": "Mesh",
 }
 

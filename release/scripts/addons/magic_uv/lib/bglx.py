@@ -272,4 +272,3 @@ def glTexParameteri(target, pname, param):
 
 def glTexEnvi(target, pname, param):
     pass
-

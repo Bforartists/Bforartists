@@ -48,4 +48,3 @@ class oscBatchMaker (bpy.types.Operator):
     def execute(self, context):
         batchMaker(self.bin)
         return {'FINISHED'}
-

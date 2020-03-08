@@ -418,4 +418,3 @@ class SticksAllSmallerButton(Operator):
                        None,
                        1.0/scn.sticks_all)
         return {'FINISHED'}
-

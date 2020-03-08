@@ -20,32 +20,32 @@
 
 remove_strict_flags()
 FIND_FILE(OPENCOLLADA_ANIMATION_CLIP
-      NAMES
-        COLLADAFWAnimationClip.h
-      PATHS
-        ${OPENCOLLADA_INCLUDE_DIRS}
-      NO_DEFAULT_PATH
-    )
+  NAMES
+    COLLADAFWAnimationClip.h
+  PATHS
+    ${OPENCOLLADA_INCLUDE_DIRS}
+  NO_DEFAULT_PATH
+)
 
-IF(OPENCOLLADA_ANIMATION_CLIP)
-   add_definitions(-DWITH_OPENCOLLADA_ANIMATION_CLIP)
-ENDIF()
+if(OPENCOLLADA_ANIMATION_CLIP)
+  add_definitions(-DWITH_OPENCOLLADA_ANIMATION_CLIP)
+endif()
 
 set(INC
   .
-  ../blenkernel
-  ../blenlib
-  ../blentranslation
-  ../depsgraph
-  ../editors/include
-  ../imbuf
-  ../makesdna
-  ../makesrna
-  ../windowmanager
-  ../../../intern/guardedalloc
-  ../ikplugin
-  ../../../intern/iksolver/extern
-  ../bmesh
+  ../../blenkernel
+  ../../blenlib
+  ../../blentranslation
+  ../../depsgraph
+  ../../editors/include
+  ../../imbuf
+  ../../makesdna
+  ../../makesrna
+  ../../windowmanager
+  ../../../../intern/guardedalloc
+  ../../ikplugin
+  ../../../../intern/iksolver/extern
+  ../../bmesh
 )
 
 set(INC_SYS
