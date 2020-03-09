@@ -3854,23 +3854,23 @@ class VIEW3D_MT_face_sets(Menu):
         layout = self.layout
 
 
-        op = layout.operator("sculpt.face_sets_create", text='Face Set From Masked')
+        op = layout.operator("sculpt.face_sets_create", text='Face Set From Masked', icon = "MOD_MASK")
         op.mode = 'MASKED'
 
-        op = layout.operator("sculpt.face_sets_create", text='Face Set From Visible')
+        op = layout.operator("sculpt.face_sets_create", text='Face Set From Visible', icon = "FILL_MASK")
         op.mode = 'VISIBLE'
 
         layout.separator()
 
-        op = layout.operator("sculpt.face_set_change_visibility", text='Invert Visible Face Sets')
+        op = layout.operator("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon = "INVERT_MASK")
         op.mode = 'INVERT'
 
-        op = layout.operator("sculpt.face_set_change_visibility", text='Show All Face Sets')
+        op = layout.operator("sculpt.face_set_change_visibility", text='Show All Face Sets', icon = "HIDE_OFF")
         op.mode = 'SHOW_ALL'
 
         layout.separator()
 
-        op = layout.operator("sculpt.face_sets_randomize_colors", text='Randomize Colors')
+        op = layout.operator("sculpt.face_sets_randomize_colors", text='Randomize Colors', icon = "COLOR")
 
 
 class VIEW3D_MT_sculpt_set_pivot(Menu):
