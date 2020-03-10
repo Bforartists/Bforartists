@@ -3005,15 +3005,6 @@ class NODES_PT_Modify_script(bpy.types.Panel):
 
 
 # ------------- Relations tab -------------------------------
-
-
-# Workaround to separate the tooltips
-class NODE_PT_exit_edit_group(bpy.types.Operator):
-    """Exit edit node group"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "node.group_edit_exit"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Group Edit Exit"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-    
             
 #Relations tab, Relations Panel
 class NODES_PT_Relations_group(bpy.types.Panel):
@@ -3042,8 +3033,7 @@ class NODES_PT_Relations_group(bpy.types.Panel):
             col.operator("node.group_insert", text = " Group Insert      ", icon = "NODE_GROUPINSERT")
 
             col = layout.column(align=True)  
-            col.operator("node.group_edit", text=" Edit Group         ", icon = "NODE_EDITGROUP").exit = False
-            col.operator("node.group_edit_exit", text = "Exit Edit Group ", icon = "NODE_EXITEDITGROUP") #bfa - separated tooltip
+            col.operator("node.group_edit", text=" Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
 
             col = layout.column(align=True)  
             col.operator("node.group_ungroup", text = " Ungroup           ", icon = "NODE_UNGROUP")
@@ -3161,7 +3151,6 @@ classes = (
     NODES_PT_Modify_distort_tex,
     NODES_PT_Modify_distort_comp,
     NODES_PT_Modify_script,
-    NODE_PT_exit_edit_group, # BFA - separated tooltip
     NODES_PT_Relations_group,
     NODES_PT_Relations_layout, 
 )
