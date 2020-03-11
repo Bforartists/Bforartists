@@ -365,12 +365,12 @@ class NODE_MT_node(Menu):
 
         layout.operator("node.join", text="Join in New Frame", icon = "JOIN")
         layout.operator("node.detach", text="Remove from Frame", icon = "DELETE")
+        layout.operator("node.parent_set", text = "Frame Make Parent", icon = "PARENT_SET")
 
         layout.separator()
 
         layout.menu("NODE_MT_node_links")
-        layout.operator("node.parent_set", icon = "PARENT_SET")
-
+        
         layout.separator()
 
         layout.menu("NODE_MT_node_group_separate")
