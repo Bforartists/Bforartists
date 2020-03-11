@@ -151,7 +151,7 @@ class GRAPH_PT_filters(DopesheetFilterPopoverBase, Panel):
 
 
 class GRAPH_PT_properties_Marker_options(Panel):
-    bl_label = "View Options"
+    bl_label = "Marker Options"
     bl_category = "View"
     bl_space_type = 'GRAPH_EDITOR'
     bl_region_type = 'UI'
