@@ -319,6 +319,18 @@ void DepsgraphNodeBuilder::begin_build()
    * them for new ID nodes. */
   id_info_hash_ = BLI_ghash_ptr_new("Depsgraph id hash");
   for (IDNode *id_node : graph_->id_nodes) {
+    /* It is possible that the ID does not need to have CoW version in which case id_cow is the
+     * same as id_orig. Additionally, such ID might have been removed, which makes the check
+     * for whether id_cow is expanded to access freed memory. In orderr to deal with this we
+     * check whether CoW is needed based on a scalar value which does not lead to access of
+     * possibly deleted memory.
+     * Additionally, this saves some space in the map by skipping mapping for datablocks which
+     * do not need CoW, */
+    if (!deg_copy_on_write_is_needed(id_node->id_type)) {
+      id_node->id_cow = nullptr;
+      continue;
+    }
+
     IDInfo *id_info = (IDInfo *)MEM_mallocN(sizeof(IDInfo), "depsgraph id info");
     if (deg_copy_on_write_is_expanded(id_node->id_cow) && id_node->id_orig != id_node->id_cow) {
       id_info->id_cow = id_node->id_cow;
@@ -624,7 +636,9 @@ void DepsgraphNodeBuilder::build_object(int base_index,
     is_parent_collection_visible_ = is_visible;
     build_collection(nullptr, object->instance_collection);
     is_parent_collection_visible_ = is_current_parent_collection_visible;
-    add_operation_node(&object->id, NodeType::DUPLI, OperationCode::DUPLI);
+    OperationNode *op_node = add_operation_node(
+        &object->id, NodeType::DUPLI, OperationCode::DUPLI);
+    op_node->flag |= OperationFlag::DEPSOP_FLAG_PINNED;
   }
   /* Synchronization back to original object. */
   add_operation_node(&object->id,
@@ -1308,7 +1322,7 @@ void DepsgraphNodeBuilder::build_object_data_geometry_datablock(ID *obdata, bool
           obdata,
           NodeType::GEOMETRY,
           OperationCode::GEOMETRY_EVAL,
-          function_bind(BKE_gpencil_eval_geometry, _1, (bGPdata *)obdata_cow));
+          function_bind(BKE_gpencil_frame_active_set, _1, (bGPdata *)obdata_cow));
       op_node->set_as_entry();
       break;
     }

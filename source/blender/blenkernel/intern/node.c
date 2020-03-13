@@ -195,8 +195,6 @@ static void ntree_free_data(ID *id)
   bNode *node, *next;
   bNodeSocket *sock, *nextsock;
 
-  BKE_animdata_free((ID *)ntree, false);
-
   /* XXX hack! node trees should not store execution graphs at all.
    * This should be removed when old tree types no longer require it.
    * Currently the execution data for texture nodes remains in the tree
@@ -1656,7 +1654,7 @@ bNodeTree *ntreeAddTree(Main *bmain, const char *name, const char *idname)
   }
   else {
     ntree = MEM_callocN(sizeof(bNodeTree), "new node tree");
-    ntree->id.flag |= LIB_PRIVATE_DATA;
+    ntree->id.flag |= LIB_EMBEDDED_DATA;
     *((short *)ntree->id.name) = ID_NT;
     BLI_strncpy(ntree->id.name + 2, name, sizeof(ntree->id.name));
   }
@@ -1682,21 +1680,6 @@ bNodeTree *ntreeCopyTree_ex(const bNodeTree *ntree, Main *bmain, const bool do_i
 bNodeTree *ntreeCopyTree(Main *bmain, const bNodeTree *ntree)
 {
   return ntreeCopyTree_ex(ntree, bmain, true);
-}
-
-void ntreeUserIncrefID(bNodeTree *ntree)
-{
-  bNode *node;
-  for (node = ntree->nodes.first; node; node = node->next) {
-    id_us_plus(node->id);
-  }
-}
-void ntreeUserDecrefID(bNodeTree *ntree)
-{
-  bNode *node;
-  for (node = ntree->nodes.first; node; node = node->next) {
-    id_us_min(node->id);
-  }
 }
 
 /* *************** Node Preview *********** */
@@ -2156,6 +2139,7 @@ static void free_localized_node_groups(bNodeTree *ntree)
 void ntreeFreeTree(bNodeTree *ntree)
 {
   ntree_free_data(&ntree->id);
+  BKE_animdata_free(&ntree->id, false);
 }
 
 void ntreeFreeNestedTree(bNodeTree *ntree)
