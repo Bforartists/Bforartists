@@ -21,6 +21,7 @@
 #include <inttypes.h>
 #include <float.h>
 #include <limits.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -588,7 +589,7 @@ static void rna_float_print(FILE *f, float num)
   else if (num == FLT_MAX) {
     fprintf(f, "FLT_MAX");
   }
-  else if ((ABS(num) < INT64_MAX) && ((int64_t)num == num)) {
+  else if ((fabsf(num) < INT64_MAX) && ((int64_t)num == num)) {
     fprintf(f, "%.1ff", num);
   }
   else {
@@ -4652,8 +4653,8 @@ static const char *cpp_classes =
     "    operator void*() { return ptr.data; }\n"
     "    operator bool() { return ptr.data != NULL; }\n"
     "\n"
-    "    bool operator==(const Pointer &other) { return ptr.data == other.ptr.data; }\n"
-    "    bool operator!=(const Pointer &other) { return ptr.data != other.ptr.data; }\n"
+    "    bool operator==(const Pointer &other) const { return ptr.data == other.ptr.data; }\n"
+    "    bool operator!=(const Pointer &other) const { return ptr.data != other.ptr.data; }\n"
     "\n"
     "    PointerRNA ptr;\n"
     "};\n"

@@ -1102,7 +1102,7 @@ static void recalcData_objects(TransInfo *t)
 
     if (motionpath_update) {
       /* Update motion paths once for all transformed objects. */
-      ED_objects_recalculate_paths(t->context, t->scene, OBJECT_PATH_CALC_RANGE_CHANGED);
+      ED_objects_recalculate_paths(t->context, t->scene, OBJECT_PATH_CALC_RANGE_CURRENT_FRAME);
     }
 
     if (t->options & CTX_OBMODE_XFORM_SKIP_CHILDREN) {
@@ -1149,12 +1149,15 @@ static void recalcData_sequencer(TransInfo *t)
 static void recalcData_gpencil_strokes(TransInfo *t)
 {
   TransDataContainer *tc = TRANS_DATA_CONTAINER_FIRST_SINGLE(t);
+  bGPDstroke *gps_prev = NULL;
 
   TransData *td = tc->data;
   for (int i = 0; i < tc->data_len; i++, td++) {
     bGPDstroke *gps = td->extra;
-    if (gps != NULL) {
-      gps->flag |= GP_STROKE_RECALC_GEOMETRY;
+    if ((gps != NULL) && (gps != gps_prev)) {
+      /* Calc geometry data. */
+      BKE_gpencil_stroke_geometry_update(gps);
+      gps_prev = gps;
     }
   }
 }
