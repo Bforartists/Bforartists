@@ -157,6 +157,8 @@
 
 #include "RE_engine.h"
 
+#include "engines/eevee/eevee_lightcache.h"
+
 #include "readfile.h"
 
 #include <errno.h>
@@ -1852,8 +1854,8 @@ void blo_make_scene_pointer_map(FileData *fd, Main *oldmain)
   fd->scenemap = oldnewmap_new();
 
   for (; sce; sce = sce->id.next) {
-    if (sce->eevee.light_cache) {
-      struct LightCache *light_cache = sce->eevee.light_cache;
+    if (sce->eevee.light_cache_data) {
+      struct LightCache *light_cache = sce->eevee.light_cache_data;
       oldnewmap_insert(fd->scenemap, light_cache, light_cache, 0);
     }
   }
@@ -1873,7 +1875,7 @@ void blo_end_scene_pointer_map(FileData *fd, Main *oldmain)
   }
 
   for (; sce; sce = sce->id.next) {
-    sce->eevee.light_cache = newsceadr(fd, sce->eevee.light_cache);
+    sce->eevee.light_cache_data = newsceadr(fd, sce->eevee.light_cache_data);
   }
 }
 
@@ -3609,23 +3611,23 @@ static void direct_link_nodetree(FileData *fd, bNodeTree *ntree)
   }
 
 #if 0
-  if (ntree->previews) {
-    bNodeInstanceHash *new_previews = BKE_node_instance_hash_new("node previews");
-    bNodeInstanceHashIterator iter;
+	if (ntree->previews) {
+		bNodeInstanceHash* new_previews = BKE_node_instance_hash_new("node previews");
+		bNodeInstanceHashIterator iter;
 
-    NODE_INSTANCE_HASH_ITER(iter, ntree->previews) {
-      bNodePreview *preview = BKE_node_instance_hash_iterator_get_value(&iter);
-      if (preview) {
-        bNodePreview *new_preview = newimaadr(fd, preview);
-        if (new_preview) {
-          bNodeInstanceKey key = BKE_node_instance_hash_iterator_get_key(&iter);
-          BKE_node_instance_hash_insert(new_previews, key, new_preview);
-        }
-      }
-    }
-    BKE_node_instance_hash_free(ntree->previews, NULL);
-    ntree->previews = new_previews;
-  }
+		NODE_INSTANCE_HASH_ITER(iter, ntree->previews) {
+			bNodePreview* preview = BKE_node_instance_hash_iterator_get_value(&iter);
+			if (preview) {
+				bNodePreview* new_preview = newimaadr(fd, preview);
+				if (new_preview) {
+					bNodeInstanceKey key = BKE_node_instance_hash_iterator_get_key(&iter);
+					BKE_node_instance_hash_insert(new_previews, key, new_preview);
+				}
+			}
+		}
+		BKE_node_instance_hash_free(ntree->previews, NULL);
+		ntree->previews = new_previews;
+	}
 #else
   /* XXX TODO */
   ntree->previews = NULL;
@@ -4084,10 +4086,10 @@ static void direct_link_text(FileData *fd, Text *text)
   text->compiled = NULL;
 
 #if 0
-  if (text->flags & TXT_ISEXT) {
-    BKE_text_reload(text);
-  }
-  /* else { */
+	if (text->flags & TXT_ISEXT) {
+		BKE_text_reload(text);
+	}
+	/* else { */
 #endif
 
   link_list(fd, &text->lines);
@@ -5071,7 +5073,7 @@ static void lib_link_object(FileData *fd, Main *bmain, Object *ob)
        * some leaked memory rather then crashing immediately
        * while bad this _is_ an exceptional case - campbell */
 #if 0
-          BKE_pose_free(ob->pose);
+			BKE_pose_free(ob->pose);
 #else
       MEM_freeN(ob->pose);
 #endif
@@ -5439,7 +5441,8 @@ static void direct_link_modifiers(FileData *fd, ListBase *lb, Object *ob)
 
         mmd->domain->fluid = NULL;
         mmd->domain->fluid_mutex = BLI_rw_mutex_alloc();
-        mmd->domain->tex = NULL;
+        mmd->domain->tex_density = NULL;
+        mmd->domain->tex_color = NULL;
         mmd->domain->tex_shadow = NULL;
         mmd->domain->tex_flame = NULL;
         mmd->domain->tex_flame_coba = NULL;
@@ -5540,15 +5543,15 @@ static void direct_link_modifiers(FileData *fd, ListBase *lb, Object *ob)
     else if (md->type == eModifierType_Collision) {
       CollisionModifierData *collmd = (CollisionModifierData *)md;
 #if 0
-      // TODO: CollisionModifier should use pointcache
-      // + have proper reset events before enabling this
-      collmd->x = newdataadr(fd, collmd->x);
-      collmd->xnew = newdataadr(fd, collmd->xnew);
-      collmd->mfaces = newdataadr(fd, collmd->mfaces);
+			// TODO: CollisionModifier should use pointcache
+			// + have proper reset events before enabling this
+			collmd->x = newdataadr(fd, collmd->x);
+			collmd->xnew = newdataadr(fd, collmd->xnew);
+			collmd->mfaces = newdataadr(fd, collmd->mfaces);
 
-      collmd->current_x = MEM_calloc_arrayN(collmd->numverts, sizeof(MVert), "current_x");
-      collmd->current_xnew = MEM_calloc_arrayN(collmd->numverts, sizeof(MVert), "current_xnew");
-      collmd->current_v = MEM_calloc_arrayN(collmd->numverts, sizeof(MVert), "current_v");
+			collmd->current_x = MEM_calloc_arrayN(collmd->numverts, sizeof(MVert), "current_x");
+			collmd->current_xnew = MEM_calloc_arrayN(collmd->numverts, sizeof(MVert), "current_xnew");
+			collmd->current_v = MEM_calloc_arrayN(collmd->numverts, sizeof(MVert), "current_v");
 #endif
 
       collmd->x = NULL;
@@ -5752,14 +5755,56 @@ static void direct_link_gpencil_modifiers(FileData *fd, ListBase *lb)
         direct_link_curvemapping(fd, hmd->curfalloff);
       }
     }
+    else if (md->type == eGpencilModifierType_Noise) {
+      NoiseGpencilModifierData *gpmd = (NoiseGpencilModifierData *)md;
+
+      gpmd->curve_intensity = newdataadr(fd, gpmd->curve_intensity);
+      if (gpmd->curve_intensity) {
+        direct_link_curvemapping(fd, gpmd->curve_intensity);
+        /* initialize the curve. Maybe this could be moved to modififer logic */
+        BKE_curvemapping_initialize(gpmd->curve_intensity);
+      }
+    }
     else if (md->type == eGpencilModifierType_Thick) {
       ThickGpencilModifierData *gpmd = (ThickGpencilModifierData *)md;
 
       gpmd->curve_thickness = newdataadr(fd, gpmd->curve_thickness);
       if (gpmd->curve_thickness) {
         direct_link_curvemapping(fd, gpmd->curve_thickness);
-        /* initialize the curve. Maybe this could be moved to modififer logic */
         BKE_curvemapping_initialize(gpmd->curve_thickness);
+      }
+    }
+    else if (md->type == eGpencilModifierType_Tint) {
+      TintGpencilModifierData *gpmd = (TintGpencilModifierData *)md;
+      gpmd->colorband = newdataadr(fd, gpmd->colorband);
+      gpmd->curve_intensity = newdataadr(fd, gpmd->curve_intensity);
+      if (gpmd->curve_intensity) {
+        direct_link_curvemapping(fd, gpmd->curve_intensity);
+        BKE_curvemapping_initialize(gpmd->curve_intensity);
+      }
+    }
+    else if (md->type == eGpencilModifierType_Smooth) {
+      SmoothGpencilModifierData *gpmd = (SmoothGpencilModifierData *)md;
+      gpmd->curve_intensity = newdataadr(fd, gpmd->curve_intensity);
+      if (gpmd->curve_intensity) {
+        direct_link_curvemapping(fd, gpmd->curve_intensity);
+        BKE_curvemapping_initialize(gpmd->curve_intensity);
+      }
+    }
+    else if (md->type == eGpencilModifierType_Color) {
+      ColorGpencilModifierData *gpmd = (ColorGpencilModifierData *)md;
+      gpmd->curve_intensity = newdataadr(fd, gpmd->curve_intensity);
+      if (gpmd->curve_intensity) {
+        direct_link_curvemapping(fd, gpmd->curve_intensity);
+        BKE_curvemapping_initialize(gpmd->curve_intensity);
+      }
+    }
+    else if (md->type == eGpencilModifierType_Opacity) {
+      OpacityGpencilModifierData *gpmd = (OpacityGpencilModifierData *)md;
+      gpmd->curve_intensity = newdataadr(fd, gpmd->curve_intensity);
+      if (gpmd->curve_intensity) {
+        direct_link_curvemapping(fd, gpmd->curve_intensity);
+        BKE_curvemapping_initialize(gpmd->curve_intensity);
       }
     }
   }
@@ -6333,6 +6378,15 @@ static void lib_link_scene(FileData *fd, Main *UNUSED(bmain), Scene *sce)
   if (sce->toolsettings->gp_paint) {
     link_paint(fd, sce, &sce->toolsettings->gp_paint->paint);
   }
+  if (sce->toolsettings->gp_vertexpaint) {
+    link_paint(fd, sce, &sce->toolsettings->gp_vertexpaint->paint);
+  }
+  if (sce->toolsettings->gp_sculptpaint) {
+    link_paint(fd, sce, &sce->toolsettings->gp_sculptpaint->paint);
+  }
+  if (sce->toolsettings->gp_weightpaint) {
+    link_paint(fd, sce, &sce->toolsettings->gp_weightpaint->paint);
+  }
 
   if (sce->toolsettings->sculpt) {
     sce->toolsettings->sculpt->gravity_object = newlibadr(
@@ -6615,6 +6669,9 @@ static void direct_link_scene(FileData *fd, Scene *sce)
     direct_link_paint_helper(fd, sce, (Paint **)&sce->toolsettings->wpaint);
     direct_link_paint_helper(fd, sce, (Paint **)&sce->toolsettings->uvsculpt);
     direct_link_paint_helper(fd, sce, (Paint **)&sce->toolsettings->gp_paint);
+    direct_link_paint_helper(fd, sce, (Paint **)&sce->toolsettings->gp_vertexpaint);
+    direct_link_paint_helper(fd, sce, (Paint **)&sce->toolsettings->gp_sculptpaint);
+    direct_link_paint_helper(fd, sce, (Paint **)&sce->toolsettings->gp_weightpaint);
 
     direct_link_paint(fd, sce, &sce->toolsettings->imapaint.paint);
 
@@ -6864,19 +6921,20 @@ static void direct_link_scene(FileData *fd, Scene *sce)
   if (fd->memfile) {
     /* If it's undo try to recover the cache. */
     if (fd->scenemap) {
-      sce->eevee.light_cache = newsceadr(fd, sce->eevee.light_cache);
+      sce->eevee.light_cache_data = newsceadr(fd, sce->eevee.light_cache_data);
     }
     else {
-      sce->eevee.light_cache = NULL;
+      sce->eevee.light_cache_data = NULL;
     }
   }
   else {
     /* else try to read the cache from file. */
-    sce->eevee.light_cache = newdataadr(fd, sce->eevee.light_cache);
-    if (sce->eevee.light_cache) {
-      direct_link_lightcache(fd, sce->eevee.light_cache);
+    sce->eevee.light_cache_data = newdataadr(fd, sce->eevee.light_cache_data);
+    if (sce->eevee.light_cache_data) {
+      direct_link_lightcache(fd, sce->eevee.light_cache_data);
     }
   }
+  EEVEE_lightcache_info_update(&sce->eevee);
 
   direct_link_view3dshading(fd, &sce->display.shading);
 
@@ -6895,7 +6953,7 @@ static void lib_link_gpencil(FileData *fd, Main *UNUSED(bmain), bGPdata *gpd)
 {
   /* Relink all data-lock linked by GP data-lock */
   /* Layers */
-  for (bGPDlayer *gpl = gpd->layers.first; gpl; gpl = gpl->next) {
+  LISTBASE_FOREACH (bGPDlayer *, gpl, &gpd->layers) {
     /* Layer -> Parent References */
     gpl->parent = newlibadr(fd, gpd->id.lib, gpl->parent);
   }
@@ -6909,9 +6967,6 @@ static void lib_link_gpencil(FileData *fd, Main *UNUSED(bmain), bGPdata *gpd)
 /* relinks grease-pencil data - used for direct_link and old file linkage */
 static void direct_link_gpencil(FileData *fd, bGPdata *gpd)
 {
-  bGPDlayer *gpl;
-  bGPDframe *gpf;
-  bGPDstroke *gps;
   bGPDpalette *palette;
 
   /* we must firstly have some grease-pencil data to link! */
@@ -6929,6 +6984,7 @@ static void direct_link_gpencil(FileData *fd, bGPdata *gpd)
     gpd->flag &= ~GP_DATA_STROKE_EDITMODE;
     gpd->flag &= ~GP_DATA_STROKE_SCULPTMODE;
     gpd->flag &= ~GP_DATA_STROKE_WEIGHTMODE;
+    gpd->flag &= ~GP_DATA_STROKE_VERTEXMODE;
   }
 
   /* init stroke buffer */
@@ -6952,7 +7008,7 @@ static void direct_link_gpencil(FileData *fd, bGPdata *gpd)
   /* relink layers */
   link_list(fd, &gpd->layers);
 
-  for (gpl = gpd->layers.first; gpl; gpl = gpl->next) {
+  LISTBASE_FOREACH (bGPDlayer *, gpl, &gpd->layers) {
     /* relink frames */
     link_list(fd, &gpl->frames);
 
@@ -6960,24 +7016,24 @@ static void direct_link_gpencil(FileData *fd, bGPdata *gpd)
 
     gpl->runtime.icon_id = 0;
 
-    for (gpf = gpl->frames.first; gpf; gpf = gpf->next) {
+    /* Relink masks. */
+    link_list(fd, &gpl->mask_layers);
+
+    LISTBASE_FOREACH (bGPDframe *, gpf, &gpl->frames) {
       /* relink strokes (and their points) */
       link_list(fd, &gpf->strokes);
 
-      for (gps = gpf->strokes.first; gps; gps = gps->next) {
+      LISTBASE_FOREACH (bGPDstroke *, gps, &gpf->strokes) {
         /* relink stroke points array */
         gps->points = newdataadr(fd, gps->points);
+        /* Relink geometry*/
+        gps->triangles = newdataadr(fd, gps->triangles);
 
         /* relink weight data */
         if (gps->dvert) {
           gps->dvert = newdataadr(fd, gps->dvert);
           direct_link_dverts(fd, gps->totpoints, gps->dvert);
         }
-
-        /* the triangulation is not saved, so need to be recalculated */
-        gps->triangles = NULL;
-        gps->tot_triangles = 0;
-        gps->flag |= GP_STROKE_RECALC_GEOMETRY;
       }
     }
   }
@@ -7198,10 +7254,10 @@ static void direct_link_area(FileData *fd, ScrArea *area)
        * so sacrifice a few old files for now to avoid crashes with new files!
        * committed: r28002 */
 #if 0
-      sima->gpd = newdataadr(fd, sima->gpd);
-      if (sima->gpd) {
-        direct_link_gpencil(fd, sima->gpd);
-      }
+			sima->gpd = newdataadr(fd, sima->gpd);
+			if (sima->gpd) {
+				direct_link_gpencil(fd, sima->gpd);
+			}
 #endif
     }
     else if (sl->spacetype == SPACE_NODE) {
@@ -7232,10 +7288,10 @@ static void direct_link_area(FileData *fd, ScrArea *area)
        * simple return NULL here (sergey)
        */
 #if 0
-      if (sseq->gpd) {
-        sseq->gpd = newdataadr(fd, sseq->gpd);
-        direct_link_gpencil(fd, sseq->gpd);
-      }
+			if (sseq->gpd) {
+				sseq->gpd = newdataadr(fd, sseq->gpd);
+				direct_link_gpencil(fd, sseq->gpd);
+			}
 #endif
       sseq->scopes.reference_ibuf = NULL;
       sseq->scopes.zebra_ibuf = NULL;
@@ -7730,7 +7786,7 @@ static int lib_link_main_data_restore_cb(LibraryIDLinkCallbackData *cb_data)
 {
   const int cb_flag = cb_data->cb_flag;
   ID **id_pointer = cb_data->id_pointer;
-  if (cb_flag & IDWALK_CB_PRIVATE || *id_pointer == NULL) {
+  if (cb_flag & IDWALK_CB_EMBEDDED || *id_pointer == NULL) {
     return IDWALK_RET_NOP;
   }
 
@@ -7741,7 +7797,7 @@ static int lib_link_main_data_restore_cb(LibraryIDLinkCallbackData *cb_data)
     Collection *collection = (Collection *)*id_pointer;
     if (collection->flag & COLLECTION_IS_MASTER) {
       /* We should never reach that point anymore, since master collection private ID should be
-       * properly tagged with IDWALK_CB_PRIVATE. */
+       * properly tagged with IDWALK_CB_EMBEDDED. */
       BLI_assert(0);
       return IDWALK_RET_NOP;
     }
@@ -7906,11 +7962,11 @@ static void lib_link_workspace_layout_restore(struct IDNameLib_Map *id_map,
           sima->iuser.scene = NULL;
 
 #if 0
-          /* Those are allocated and freed by space code, no need to handle them here. */
-          MEM_SAFE_FREE(sima->scopes.waveform_1);
-          MEM_SAFE_FREE(sima->scopes.waveform_2);
-          MEM_SAFE_FREE(sima->scopes.waveform_3);
-          MEM_SAFE_FREE(sima->scopes.vecscope);
+					/* Those are allocated and freed by space code, no need to handle them here. */
+					MEM_SAFE_FREE(sima->scopes.waveform_1);
+					MEM_SAFE_FREE(sima->scopes.waveform_2);
+					MEM_SAFE_FREE(sima->scopes.waveform_3);
+					MEM_SAFE_FREE(sima->scopes.vecscope);
 #endif
           sima->scopes.ok = 0;
 
@@ -8281,8 +8337,8 @@ static void direct_link_speaker(FileData *fd, Speaker *spk)
   direct_link_animdata(fd, spk->adt);
 
 #if 0
-  spk->sound = newdataadr(fd, spk->sound);
-  direct_link_sound(fd, spk->sound);
+	spk->sound = newdataadr(fd, spk->sound);
+	direct_link_sound(fd, spk->sound);
 #endif
 }
 
@@ -8905,12 +8961,12 @@ static BHead *read_data_into_oldnewmap(FileData *fd, BHead *bhead, const char *a
   while (bhead && bhead->code == DATA) {
     void *data;
 #if 0
-    /* XXX DUMB DEBUGGING OPTION TO GIVE NAMES for guarded malloc errors */
-    short *sp = fd->filesdna->structs[bhead->SDNAnr];
-    char *tmp = malloc(100);
-    allocname = fd->filesdna->types[sp[0]];
-    strcpy(tmp, allocname);
-    data = read_struct(fd, bhead, tmp);
+		/* XXX DUMB DEBUGGING OPTION TO GIVE NAMES for guarded malloc errors */
+		short* sp = fd->filesdna->structs[bhead->SDNAnr];
+		char* tmp = malloc(100);
+		allocname = fd->filesdna->types[sp[0]];
+		strcpy(tmp, allocname);
+		data = read_struct(fd, bhead, tmp);
 #else
     data = read_struct(fd, bhead, allocname);
 #endif
@@ -9307,11 +9363,6 @@ static void do_versions_userdef(FileData *fd, BlendFileData *bfd)
     user->walk_navigation.view_height = 1.6f;   /* m */
     user->walk_navigation.jump_height = 0.4f;   /* m */
     user->walk_navigation.teleport_time = 0.2f; /* s */
-  }
-
-  /* grease pencil multisamples */
-  if (!DNA_struct_elem_find(fd->filesdna, "UserDef", "short", "gpencil_multisamples")) {
-    user->gpencil_multisamples = 4;
   }
 
   /* tablet pressure threshold */
@@ -9722,7 +9773,7 @@ BlendFileData *blo_read_file_internal(FileData *fd, const char *filepath)
           bhead = read_libblock(fd, libmain, bhead, 0, true, NULL);
         }
         break;
-      /* in 2.50+ files, the file identifier for screens is patched, forward compatibility */
+        /* in 2.50+ files, the file identifier for screens is patched, forward compatibility */
       case ID_SCRN:
         bhead->code = ID_SCR;
         /* pass on to default */
@@ -9877,7 +9928,7 @@ static BHead *find_previous_lib(FileData *fd, BHead *bhead)
 static BHead *find_bhead(FileData *fd, void *old)
 {
 #if 0
-  BHead *bhead;
+	BHead* bhead;
 #endif
   struct BHeadSort *bhs, bhs_s;
 
@@ -9897,11 +9948,11 @@ static BHead *find_bhead(FileData *fd, void *old)
   }
 
 #if 0
-  for (bhead = blo_bhead_first(fd); bhead; bhead = blo_bhead_next(fd, bhead)) {
-    if (bhead->old == old) {
-      return bhead;
-    }
-  }
+	for (bhead = blo_bhead_first(fd); bhead; bhead = blo_bhead_next(fd, bhead)) {
+		if (bhead->old == old) {
+			return bhead;
+		}
+	}
 #endif
 
   return NULL;
@@ -10032,9 +10083,9 @@ static void expand_doit_library(void *fdhandle, Main *mainvar, void *old)
 
       /* Commented because this can print way too much. */
 #if 0
-      if (G.debug & G_DEBUG) {
-        printf("expand_doit: already linked: %s lib: %s\n", id->name, lib->name);
-      }
+			if (G.debug & G_DEBUG) {
+				printf("expand_doit: already linked: %s lib: %s\n", id->name, lib->name);
+			}
 #endif
     }
 
@@ -10870,7 +10921,7 @@ static void expand_linestyle(FileData *fd, Main *mainvar, FreestyleLineStyle *li
 
 static void expand_gpencil(FileData *fd, Main *mainvar, bGPdata *gpd)
 {
-  for (bGPDlayer *gpl = gpd->layers.first; gpl; gpl = gpl->next) {
+  LISTBASE_FOREACH (bGPDlayer *, gpl, &gpd->layers) {
     expand_doit(fd, mainvar, gpl->parent);
   }
 
@@ -11813,9 +11864,9 @@ static void read_libraries(FileData *basefd, ListBase *mainlist)
       /* Does this library have any more linked data-blocks we need to read? */
       if (has_linked_ids_to_read(mainptr)) {
 #if 0
-        printf("Reading linked data-blocks from %s (%s)\n",
-               mainptr->curlib->id.name,
-               mainptr->curlib->name);
+				printf("Reading linked data-blocks from %s (%s)\n",
+					mainptr->curlib->id.name,
+					mainptr->curlib->name);
 #endif
 
         /* Open file if it has not been done yet. */

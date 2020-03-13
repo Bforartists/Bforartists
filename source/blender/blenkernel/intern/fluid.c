@@ -26,6 +26,7 @@
 #include "BLI_listbase.h"
 
 #include "BLI_fileops.h"
+#include "BLI_hash.h"
 #include "BLI_math.h"
 #include "BLI_path_util.h"
 #include "BLI_string.h"
@@ -2740,7 +2741,7 @@ static void update_flowsfluids(struct Depsgraph *depsgraph,
       }
       /* Optimization: Static liquid flow objects don't need emission computation after first
        * frame.
-       * TODO (sebbas): Also do not use static mode if inital velocities are enabled. */
+       * TODO (sebbas): Also do not use static mode if initial velocities are enabled. */
       if (mfs->type == FLUID_FLOW_TYPE_LIQUID && is_static && !is_first_frame && !use_velocity) {
         continue;
       }
@@ -2960,7 +2961,7 @@ static void update_flowsfluids(struct Depsgraph *depsgraph,
       if (is_liquid && !is_first_frame) {
 
         /* Skip static liquid objects that are not on the first frame.
-         * TODO (sebbas): Also do not use static mode if inital velocities are enabled. */
+         * TODO (sebbas): Also do not use static mode if initial velocities are enabled. */
         if (is_static && !use_velocity) {
           continue;
         }
@@ -3221,7 +3222,7 @@ static Mesh *create_liquid_geometry(FluidDomainSettings *mds, Mesh *orgmesh, Obj
   float cell_size_scaled[3];
 
   /* Assign material + flags to new mesh.
-   * If there are no faces in original mesj, keep materials and flags unchanged. */
+   * If there are no faces in original mesh, keep materials and flags unchanged. */
   MPoly *mpoly;
   MPoly mp_example = {0};
   mpoly = orgmesh->mpoly;
@@ -4810,9 +4811,10 @@ void BKE_fluid_modifier_create_type_data(struct FluidModifierData *mmd)
     mmd->domain->cache_particle_format = FLUID_DOMAIN_FILE_UNI;
     mmd->domain->cache_noise_format = FLUID_DOMAIN_FILE_UNI;
 #endif
-    modifier_path_init(mmd->domain->cache_directory,
-                       sizeof(mmd->domain->cache_directory),
-                       FLUID_DOMAIN_DIR_DEFAULT);
+    char cache_name[64];
+    BKE_fluid_cache_new_name_for_current_session(sizeof(cache_name), cache_name);
+    modifier_path_init(
+        mmd->domain->cache_directory, sizeof(mmd->domain->cache_directory), cache_name);
 
     /* time options */
     mmd->domain->time_scale = 1.0;
@@ -5146,6 +5148,13 @@ void BKE_fluid_modifier_copy(const struct FluidModifierData *mmd,
     tmes->guide_mode = mes->guide_mode;
     tmes->vel_multi = mes->vel_multi;
   }
+}
+
+void BKE_fluid_cache_new_name_for_current_session(int maxlen, char *r_name)
+{
+  static int counter = 1;
+  BLI_snprintf(r_name, maxlen, FLUID_DOMAIN_DIR_DEFAULT "_%x", BLI_hash_int(counter));
+  counter++;
 }
 
 /** \} */

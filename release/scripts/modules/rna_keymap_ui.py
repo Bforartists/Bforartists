@@ -407,7 +407,8 @@ def draw_keymaps(context, layout):
         ok = True
 
     # go back and fill in rowsub
-    rowsub.prop(spref, "filter_type", expand=True)# bfa - radio buttons instead of dropdown
+    rowsubsub = rowsub.row(align=True)
+    rowsubsub.prop(spref, "filter_type", expand=True)# bfa - radio buttons instead of dropdown
     rowsubsub = rowsub.row(align=True)
     if not ok:
         rowsubsub.alert = True

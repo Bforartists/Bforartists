@@ -36,6 +36,7 @@
 
 #include "GPU_batch.h"
 #include "GPU_shader.h"
+#include "GPU_vertex_buffer.h"
 
 #include "draw_hair_private.h"
 
@@ -62,6 +63,8 @@ static int g_tf_target_width;
 static int g_tf_target_height;
 #endif
 
+static GPUVertBuf *g_dummy_vbo = NULL;
+static GPUTexture *g_dummy_texture = NULL;
 static GPUShader *g_refine_shaders[PART_REFINE_MAX_SHADER] = {NULL};
 static DRWPass *g_tf_pass; /* XXX can be a problem with multiple DRWManager in the future */
 
@@ -102,12 +105,29 @@ void DRW_hair_init(void)
 #else
   g_tf_pass = DRW_pass_create("Update Hair Pass", DRW_STATE_WRITE_COLOR);
 #endif
+
+  if (g_dummy_vbo == NULL) {
+    /* initialize vertex format */
+    GPUVertFormat format = {0};
+    uint dummy_id = GPU_vertformat_attr_add(&format, "dummy", GPU_COMP_F32, 4, GPU_FETCH_FLOAT);
+
+    g_dummy_vbo = GPU_vertbuf_create_with_format(&format);
+
+    float vert[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    GPU_vertbuf_data_alloc(g_dummy_vbo, 1);
+    GPU_vertbuf_attr_fill(g_dummy_vbo, dummy_id, vert);
+    /* Create vbo immediately to bind to texture buffer. */
+    GPU_vertbuf_use(g_dummy_vbo);
+
+    g_dummy_texture = GPU_texture_create_from_vertbuf(g_dummy_vbo);
+  }
 }
 
 static DRWShadingGroup *drw_shgroup_create_hair_procedural_ex(Object *object,
                                                               ParticleSystem *psys,
                                                               ModifierData *md,
                                                               DRWPass *hair_pass,
+                                                              DRWShadingGroup *shgrp_parent,
                                                               struct GPUMaterial *gpu_mat,
                                                               GPUShader *gpu_shader)
 {
@@ -127,7 +147,10 @@ static DRWShadingGroup *drw_shgroup_create_hair_procedural_ex(Object *object,
       object, psys, md, &hair_cache, subdiv, thickness_res);
 
   DRWShadingGroup *shgrp;
-  if (gpu_mat) {
+  if (shgrp_parent) {
+    shgrp = DRW_shgroup_create_sub(shgrp_parent);
+  }
+  else if (gpu_mat) {
     shgrp = DRW_shgroup_material_create(gpu_mat, hair_pass);
   }
   else if (gpu_shader) {
@@ -149,6 +172,17 @@ static DRWShadingGroup *drw_shgroup_create_hair_procedural_ex(Object *object,
       DRW_shgroup_uniform_texture(
           shgrp, hair_cache->col_layer_names[i][n], hair_cache->col_tex[i]);
     }
+  }
+
+  /* Fix issue with certain driver not drawing anything if there is no texture bound to
+   * "ac", "au", "u" or "c". */
+  if (hair_cache->num_uv_layers == 0) {
+    DRW_shgroup_uniform_texture(shgrp, "u", g_dummy_texture);
+    DRW_shgroup_uniform_texture(shgrp, "au", g_dummy_texture);
+  }
+  if (hair_cache->num_col_layers == 0) {
+    DRW_shgroup_uniform_texture(shgrp, "c", g_dummy_texture);
+    DRW_shgroup_uniform_texture(shgrp, "ac", g_dummy_texture);
   }
 
   if ((dupli_parent != NULL) && (dupli_object != NULL)) {
@@ -220,7 +254,15 @@ static DRWShadingGroup *drw_shgroup_create_hair_procedural_ex(Object *object,
 DRWShadingGroup *DRW_shgroup_hair_create(
     Object *object, ParticleSystem *psys, ModifierData *md, DRWPass *hair_pass, GPUShader *shader)
 {
-  return drw_shgroup_create_hair_procedural_ex(object, psys, md, hair_pass, NULL, shader);
+  return drw_shgroup_create_hair_procedural_ex(object, psys, md, hair_pass, NULL, NULL, shader);
+}
+
+DRWShadingGroup *DRW_shgroup_hair_create_sub(Object *object,
+                                             ParticleSystem *psys,
+                                             ModifierData *md,
+                                             DRWShadingGroup *shgrp)
+{
+  return drw_shgroup_create_hair_procedural_ex(object, psys, md, NULL, shgrp, NULL, NULL);
 }
 
 DRWShadingGroup *DRW_shgroup_material_hair_create(Object *object,
@@ -229,7 +271,7 @@ DRWShadingGroup *DRW_shgroup_material_hair_create(Object *object,
                                                   DRWPass *hair_pass,
                                                   struct GPUMaterial *material)
 {
-  return drw_shgroup_create_hair_procedural_ex(object, psys, md, hair_pass, material, NULL);
+  return drw_shgroup_create_hair_procedural_ex(object, psys, md, hair_pass, NULL, material, NULL);
 }
 
 void DRW_hair_update(void)
@@ -313,4 +355,7 @@ void DRW_hair_free(void)
   for (int i = 0; i < PART_REFINE_MAX_SHADER; i++) {
     DRW_SHADER_FREE_SAFE(g_refine_shaders[i]);
   }
+
+  GPU_VERTBUF_DISCARD_SAFE(g_dummy_vbo);
+  DRW_TEXTURE_FREE_SAFE(g_dummy_texture);
 }

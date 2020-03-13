@@ -162,7 +162,8 @@ static void lib_id_clear_library_data_ex(Main *bmain, ID *id)
 {
   bNodeTree *ntree = NULL;
   Key *key = NULL;
-  const bool id_in_mainlist = (id->tag & LIB_TAG_NO_MAIN) == 0;
+  const bool id_in_mainlist = (id->tag & LIB_TAG_NO_MAIN) == 0 &&
+                              (id->flag & LIB_EMBEDDED_DATA) == 0;
 
   lib_id_library_local_paths(bmain, id->lib, id);
 
@@ -340,7 +341,7 @@ static int lib_id_expand_local_cb(LibraryIDLinkCallbackData *cb_data)
   ID *id_self = cb_data->id_self;
   ID **id_pointer = cb_data->id_pointer;
   int const cb_flag = cb_data->cb_flag;
-  if (cb_flag & IDWALK_CB_PRIVATE) {
+  if (cb_flag & IDWALK_CB_EMBEDDED) {
     return IDWALK_RET_NOP;
   }
 
@@ -465,130 +466,7 @@ bool BKE_lib_id_make_local(Main *bmain, ID *id, const bool test, const int flags
     return false;
   }
 
-  switch ((ID_Type)GS(id->name)) {
-    case ID_SCE:
-      BLI_assert(0);
-      return true;
-    case ID_OB:
-      BLI_assert(0);
-      return true;
-    case ID_ME:
-      BLI_assert(0);
-      return true;
-    case ID_CU:
-      BLI_assert(0);
-      return true;
-    case ID_MB:
-      BLI_assert(0);
-      return true;
-    case ID_MA:
-      BLI_assert(0);
-      return true;
-    case ID_TE:
-      BLI_assert(0);
-      return true;
-    case ID_IM:
-      BLI_assert(0);
-      return true;
-    case ID_LT:
-      BLI_assert(0);
-      return true;
-    case ID_LA:
-      BLI_assert(0);
-      return true;
-    case ID_CA:
-      BLI_assert(0);
-      return true;
-    case ID_SPK:
-      if (!test) {
-        BKE_speaker_make_local(bmain, (Speaker *)id, flags);
-      }
-      return true;
-    case ID_LP:
-      BLI_assert(0);
-      return true;
-    case ID_WO:
-      BLI_assert(0);
-      return true;
-    case ID_VF:
-      BLI_assert(0);
-      return true;
-    case ID_TXT:
-      BLI_assert(0);
-      return true;
-    case ID_SO:
-      if (!test) {
-        BKE_sound_make_local(bmain, (bSound *)id, flags);
-      }
-      return true;
-    case ID_GR:
-      BLI_assert(0);
-      return true;
-    case ID_AR:
-      BLI_assert(0);
-      return true;
-    case ID_AC:
-      BLI_assert(0);
-      return true;
-    case ID_NT:
-      BLI_assert(0);
-      return true;
-    case ID_BR:
-      BLI_assert(0);
-      return true;
-    case ID_PA:
-      if (!test) {
-        BKE_particlesettings_make_local(bmain, (ParticleSettings *)id, flags);
-      }
-      return true;
-    case ID_GD:
-      if (!test) {
-        BKE_gpencil_make_local(bmain, (bGPdata *)id, flags);
-      }
-      return true;
-    case ID_MC:
-      if (!test) {
-        BKE_movieclip_make_local(bmain, (MovieClip *)id, flags);
-      }
-      return true;
-    case ID_MSK:
-      if (!test) {
-        BKE_mask_make_local(bmain, (Mask *)id, flags);
-      }
-      return true;
-    case ID_LS:
-      if (!test) {
-        BKE_linestyle_make_local(bmain, (FreestyleLineStyle *)id, flags);
-      }
-      return true;
-    case ID_PAL:
-      if (!test) {
-        BKE_palette_make_local(bmain, (Palette *)id, flags);
-      }
-      return true;
-    case ID_PC:
-      if (!test) {
-        BKE_paint_curve_make_local(bmain, (PaintCurve *)id, flags);
-      }
-      return true;
-    case ID_CF:
-      if (!test) {
-        BKE_cachefile_make_local(bmain, (CacheFile *)id, flags);
-      }
-      return true;
-    case ID_WS:
-    case ID_SCR:
-      /* A bit special: can be appended but not linked. Return false
-       * since supporting make-local doesn't make much sense. */
-      return false;
-    case ID_LI:
-    case ID_KE:
-    case ID_WM:
-      return false; /* can't be linked */
-    case ID_IP:
-      return false; /* deprecated */
-  }
-
+  BLI_assert(!"IDType Missing IDTypeInfo");
   return false;
 }
 
@@ -682,116 +560,7 @@ bool BKE_id_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int flag)
     }
   }
   else {
-    if (!BKE_id_copy_is_allowed(id)) {
-      return false;
-    }
-
-    BKE_libblock_copy_ex(bmain, id, r_newid, flag);
-
-    switch ((ID_Type)GS(id->name)) {
-      case ID_SCE:
-        BLI_assert(0);
-        break;
-      case ID_OB:
-        BLI_assert(0);
-        break;
-      case ID_ME:
-        BLI_assert(0);
-        break;
-      case ID_CU:
-        BLI_assert(0);
-        break;
-      case ID_MB:
-        BLI_assert(0);
-        break;
-      case ID_MA:
-        BLI_assert(0);
-        break;
-      case ID_TE:
-        BLI_assert(0);
-        break;
-      case ID_IM:
-        BLI_assert(0);
-        break;
-      case ID_LT:
-        BLI_assert(0);
-        break;
-      case ID_LA:
-        BLI_assert(0);
-        break;
-      case ID_SPK:
-        BKE_speaker_copy_data(bmain, (Speaker *)*r_newid, (Speaker *)id, flag);
-        break;
-      case ID_LP:
-        BLI_assert(0);
-        break;
-      case ID_CA:
-        BLI_assert(0);
-        break;
-      case ID_KE:
-        BLI_assert(0);
-        break;
-      case ID_WO:
-        BLI_assert(0);
-        break;
-      case ID_TXT:
-        BLI_assert(0);
-        break;
-      case ID_GR:
-        BLI_assert(0);
-        break;
-      case ID_AR:
-        BLI_assert(0);
-        break;
-      case ID_AC:
-        BLI_assert(0);
-        break;
-      case ID_NT:
-        BLI_assert(0);
-        break;
-      case ID_BR:
-        BLI_assert(0);
-        break;
-      case ID_PA:
-        BKE_particlesettings_copy_data(
-            bmain, (ParticleSettings *)*r_newid, (ParticleSettings *)id, flag);
-        break;
-      case ID_GD:
-        BKE_gpencil_copy_data((bGPdata *)*r_newid, (bGPdata *)id, flag);
-        break;
-      case ID_MC:
-        BKE_movieclip_copy_data(bmain, (MovieClip *)*r_newid, (MovieClip *)id, flag);
-        break;
-      case ID_MSK:
-        BKE_mask_copy_data(bmain, (Mask *)*r_newid, (Mask *)id, flag);
-        break;
-      case ID_LS:
-        BKE_linestyle_copy_data(
-            bmain, (FreestyleLineStyle *)*r_newid, (FreestyleLineStyle *)id, flag);
-        break;
-      case ID_PAL:
-        BKE_palette_copy_data(bmain, (Palette *)*r_newid, (Palette *)id, flag);
-        break;
-      case ID_PC:
-        BKE_paint_curve_copy_data(bmain, (PaintCurve *)*r_newid, (PaintCurve *)id, flag);
-        break;
-      case ID_CF:
-        BKE_cachefile_copy_data(bmain, (CacheFile *)*r_newid, (CacheFile *)id, flag);
-        break;
-      case ID_SO:
-        BKE_sound_copy_data(bmain, (bSound *)*r_newid, (bSound *)id, flag);
-        break;
-      case ID_VF:
-        BLI_assert(0);
-        break;
-      case ID_LI:
-      case ID_SCR:
-      case ID_WM:
-      case ID_WS:
-      case ID_IP:
-        BLI_assert(0); /* Should have been rejected at start of function! */
-        break;
-    }
+    BLI_assert(!"IDType Missing IDTypeInfo");
   }
 
   /* Update ID refcount, remap pointers to self in new ID. */
@@ -1305,117 +1074,7 @@ void BKE_libblock_init_empty(ID *id)
     return;
   }
 
-  /* Note that only ID types that are not valid when filled of zero should have a callback here. */
-  switch ((ID_Type)GS(id->name)) {
-    case ID_SCE:
-      BLI_assert(0);
-      break;
-    case ID_LI:
-      /* Nothing to do. */
-      break;
-    case ID_OB:
-      BLI_assert(0);
-      break;
-    case ID_ME:
-      BLI_assert(0);
-      break;
-    case ID_CU:
-      BLI_assert(0);
-      break;
-    case ID_MB:
-      BLI_assert(0);
-      break;
-    case ID_MA:
-      BLI_assert(0);
-      break;
-    case ID_TE:
-      BLI_assert(0);
-      break;
-    case ID_IM:
-      BLI_assert(0);
-      break;
-    case ID_LT:
-      BLI_assert(0);
-      break;
-    case ID_LA:
-      BLI_assert(0);
-      break;
-    case ID_SPK:
-      BKE_speaker_init((Speaker *)id);
-      break;
-    case ID_LP:
-      BLI_assert(0);
-      break;
-    case ID_CA:
-      BLI_assert(0);
-      break;
-    case ID_WO:
-      BLI_assert(0);
-      break;
-    case ID_SCR:
-      /* Nothing to do. */
-      break;
-    case ID_VF:
-      BLI_assert(0);
-      break;
-    case ID_TXT:
-      BLI_assert(0);
-      break;
-    case ID_SO:
-      /* Another fuzzy case, think NULLified content is OK here... */
-      break;
-    case ID_GR:
-      /* Nothing to do. */
-      break;
-    case ID_AR:
-      /* Nothing to do. */
-      break;
-    case ID_AC:
-      /* Nothing to do. */
-      break;
-    case ID_NT:
-      BLI_assert(0);
-      break;
-    case ID_BR:
-      BLI_assert(0);
-      break;
-    case ID_PA:
-      /* Nothing to do. */
-      break;
-    case ID_PC:
-      /* Nothing to do. */
-      break;
-    case ID_GD:
-      /* Nothing to do. */
-      break;
-    case ID_MSK:
-      /* Nothing to do. */
-      break;
-    case ID_LS:
-      BKE_linestyle_init((FreestyleLineStyle *)id);
-      break;
-    case ID_CF:
-      BKE_cachefile_init((CacheFile *)id);
-      break;
-    case ID_KE:
-      /* Shapekeys are a complex topic too - they depend on their 'user' data type...
-       * They are not linkable, though, so it should never reach here anyway. */
-      BLI_assert(0);
-      break;
-    case ID_WM:
-      /* We should never reach this. */
-      BLI_assert(0);
-      break;
-    case ID_IP:
-      /* Should not be needed - animation from lib pre-2.5 is broken anyway. */
-      BLI_assert(0);
-      break;
-    case ID_PAL:
-      BKE_palette_init((Palette *)id);
-      break;
-    default:
-      BLI_assert(0); /* Should never reach this point... */
-  }
+  BLI_assert(!"IDType Missing IDTypeInfo");
 }
 
 /* ********** ID session-wise UUID management. ********** */
@@ -1490,7 +1149,7 @@ void BKE_libblock_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int ori
   ID *new_id = *r_newid;
   int flag = orig_flag;
 
-  const bool is_private_id_data = (id->flag & LIB_PRIVATE_DATA) != 0;
+  const bool is_private_id_data = (id->flag & LIB_EMBEDDED_DATA) != 0;
 
   BLI_assert((flag & LIB_ID_CREATE_NO_MAIN) != 0 || bmain != NULL);
   BLI_assert((flag & LIB_ID_CREATE_NO_MAIN) != 0 || (flag & LIB_ID_CREATE_NO_ALLOCATE) == 0);
@@ -1509,7 +1168,7 @@ void BKE_libblock_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int ori
   }
 
   /* The id->flag bits to copy over. */
-  const int copy_idflag_mask = LIB_PRIVATE_DATA;
+  const int copy_idflag_mask = LIB_EMBEDDED_DATA;
 
   if ((flag & LIB_ID_CREATE_NO_ALLOCATE) != 0) {
     /* r_newid already contains pointer to allocated memory. */
@@ -2086,7 +1745,7 @@ static void library_make_local_copying_check(ID *id,
       }
 
       /* Shapekeys are considered 'private' to their owner ID here, and never tagged
-       * (since they cannot be linked), * so we have to switch effective parent to their owner.
+       * (since they cannot be linked), so we have to switch effective parent to their owner.
        */
       if (GS(par_id->name) == ID_KE) {
         par_id = ((Key *)par_id)->from;
