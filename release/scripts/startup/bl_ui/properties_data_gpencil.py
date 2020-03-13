@@ -22,6 +22,7 @@ from bpy.types import Menu, Panel, UIList
 from rna_prop_ui import PropertyPanel
 
 from bl_ui.properties_grease_pencil_common import (
+    GreasePencilLayerMasksPanel,
     GreasePencilLayerAdjustmentsPanel,
     GreasePencilLayerRelationsPanel,
     GreasePencilLayerDisplayPanel,
@@ -159,15 +160,13 @@ class DATA_PT_gpencil_layers(DataButtonsPanel, Panel):
 
                 sub = col.column(align=True)
                 sub.operator("gpencil.layer_isolate", icon='HIDE_ON', text="").affect_visibility = True
-                sub.operator("gpencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False
-                
+                sub.operator("gpencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False       
 
         # Layer main properties
         row = layout.row()
         col = layout.column(align=True)
 
         if gpl:
-
             layout = self.layout
             layout.use_property_split = True
             layout.use_property_decorate = True
@@ -178,6 +177,15 @@ class DATA_PT_gpencil_layers(DataButtonsPanel, Panel):
 
             col = layout.row(align=True)
             col.prop(gpl, "opacity", text="Opacity", slider=True)
+
+            col = layout.row(align=True)
+            col.prop(gpl, "use_lights")
+
+
+class DATA_PT_gpencil_layer_masks(LayerDataButtonsPanel, GreasePencilLayerMasksPanel, Panel):
+    bl_label = "Masks"
+    bl_parent_id = 'DATA_PT_gpencil_layers'
+    bl_options = {'DEFAULT_CLOSED'}
 
 
 class DATA_PT_gpencil_layer_adjustments(LayerDataButtonsPanel, GreasePencilLayerAdjustmentsPanel, Panel):
@@ -265,7 +273,7 @@ class DATA_PT_gpencil_onion_skinning_display(DataButtonsPanel, Panel):
         col.prop(gpd, "use_onion_fade", text="Fade")
         sub = layout.column()
         sub.active = gpd.onion_mode in {'RELATIVE', 'SELECTED'}
-        sub.prop(gpd, "use_onion_loop", text="Loop")
+        sub.prop(gpd, "use_onion_loop", text="Show Start Frame")
 
 
 class GPENCIL_MT_gpencil_vertex_group(Menu):
@@ -364,11 +372,6 @@ class DATA_PT_gpencil_strokes(DataButtonsPanel, Panel):
         sub = col.column()
         sub.active = gpd.stroke_thickness_space == 'WORLDSPACE'
         sub.prop(gpd, "pixel_factor", text="Thickness Scale")
-        
-        layout.use_property_split = False
-
-        layout.prop(gpd, "use_force_fill_recalc", text="Force Fill Update")
-        layout.prop(gpd, "use_adaptive_uv", text="Adaptive UVs")
 
 
 class DATA_PT_gpencil_display(DataButtonsPanel, Panel):
@@ -384,9 +387,6 @@ class DATA_PT_gpencil_display(DataButtonsPanel, Panel):
         gpl = gpd.layers.active
 
         layout.prop(gpd, "edit_line_color", text="Edit Line Color")
-        if gpl:
-            layout.use_property_split = False
-            layout.prop(gpd, "show_stroke_direction", text="Show Stroke Directions")
 
 
 class DATA_PT_gpencil_canvas(DataButtonsPanel, Panel):
@@ -415,6 +415,7 @@ class DATA_PT_custom_props_gpencil(DataButtonsPanel, PropertyPanel, Panel):
     _context_path = "object.data"
     _property_type = bpy.types.GreasePencil
 
+
 ###############################
 
 
@@ -424,6 +425,7 @@ classes = (
     DATA_PT_gpencil_onion_skinning,
     DATA_PT_gpencil_onion_skinning_custom_colors,
     DATA_PT_gpencil_onion_skinning_display,
+    DATA_PT_gpencil_layer_masks,
     DATA_PT_gpencil_layer_adjustments,
     DATA_PT_gpencil_layer_relations,
     DATA_PT_gpencil_layer_display,
@@ -441,5 +443,6 @@ classes = (
 
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class
+
     for cls in classes:
         register_class(cls)
