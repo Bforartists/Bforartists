@@ -138,7 +138,6 @@ static void armature_copy_data(Main *UNUSED(bmain), ID *id_dst, const ID *id_src
 static void armature_free_data(struct ID *id)
 {
   bArmature *armature = (bArmature *)id;
-  BKE_animdata_free(&armature->id, false);
 
   BKE_armature_bone_hash_free(armature);
   BKE_armature_bonelist_free(&armature->bonebase);
@@ -1009,12 +1008,12 @@ void BKE_pchan_bbone_handles_compute(const BBoneSplineParameters *param,
    * - These properties allow users to hand-animate the
    *   bone curve/shape, without having to resort to using
    *   extra bones
-   * - The "bone" level offsets are for defining the restpose
+   * - The "bone" level offsets are for defining the rest-pose
    *   shape of the bone (e.g. for curved eyebrows for example).
    *   -> In the viewport, it's needed to define what the rest pose
    *      looks like
    *   -> For "rest == 0", we also still need to have it present
-   *      so that we can "cancel out" this restpose when it comes
+   *      so that we can "cancel out" this rest-pose when it comes
    *      time to deform some geometry, it won't cause double transforms.
    * - The "pchan" level offsets are the ones that animators actually
    *   end up animating

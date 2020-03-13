@@ -1255,6 +1255,19 @@ typedef struct OceanModifierData {
   float foam_coverage;
   float time;
 
+  char _pad1[4];
+
+  /* Spectrum being used. */
+  int spectrum;
+
+  /* Common JONSWAP parameters. */
+  /**
+   * This is the distance from a lee shore, called the fetch, or the distance
+   * over which the wind blows with constant velocity.
+   */
+  float fetch_jonswap;
+  float sharpen_peak_jonswap;
+
   int bakestart;
   int bakeend;
 
@@ -1284,6 +1297,13 @@ enum {
   MOD_OCEAN_GEOM_GENERATE = 0,
   MOD_OCEAN_GEOM_DISPLACE = 1,
   MOD_OCEAN_GEOM_SIM_ONLY = 2,
+};
+
+enum {
+  MOD_OCEAN_SPECTRUM_PHILLIPS = 0,
+  MOD_OCEAN_SPECTRUM_PIERSON_MOSKOWITZ = 1,
+  MOD_OCEAN_SPECTRUM_JONSWAP = 2,
+  MOD_OCEAN_SPECTRUM_TEXEL_MARSEN_ARSLOE = 3,
 };
 
 enum {
@@ -1684,10 +1704,10 @@ typedef struct CorrectiveSmoothDeltaCache {
 
   /* Value of settings when creating the cache.
    * These are used to check if the cache should be recomputed. */
-  float lambda;
+  float lambda, scale;
   short repeat, flag;
   char smooth_type, rest_source;
-  char _pad[2];
+  char _pad[6];
 } CorrectiveSmoothDeltaCache;
 
 typedef struct CorrectiveSmoothModifierData {
@@ -1700,10 +1720,10 @@ typedef struct CorrectiveSmoothModifierData {
   /* note: -1 is used to bind */
   unsigned int bind_coords_num;
 
-  float lambda;
+  float lambda, scale;
   short repeat, flag;
   char smooth_type, rest_source;
-  char _pad[2];
+  char _pad[6];
 
   /** MAX_VGROUP_NAME. */
   char defgrp_name[64];
