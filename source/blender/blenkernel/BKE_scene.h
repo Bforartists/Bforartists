@@ -78,7 +78,7 @@ void BKE_scene_remove_rigidbody_object(struct Main *bmain,
                                        const bool free_us);
 
 bool BKE_scene_object_find(struct Scene *scene, struct Object *ob);
-struct Object *BKE_scene_object_find_by_name(struct Scene *scene, const char *name);
+struct Object *BKE_scene_object_find_by_name(const struct Scene *scene, const char *name);
 
 /* Scene base iteration function.
  * Define struct here, so no need to bother with alloc/free it.
@@ -118,8 +118,8 @@ struct Object *BKE_scene_camera_switch_find(struct Scene *scene);  // DURIAN_CAM
 #endif
 bool BKE_scene_camera_switch_update(struct Scene *scene);
 
-char *BKE_scene_find_marker_name(struct Scene *scene, int frame);
-char *BKE_scene_find_last_marker_name(struct Scene *scene, int frame);
+const char *BKE_scene_find_marker_name(const struct Scene *scene, int frame);
+const char *BKE_scene_find_last_marker_name(const struct Scene *scene, int frame);
 
 int BKE_scene_frame_snap_by_seconds(struct Scene *scene, double interval_in_seconds, int cfra);
 
@@ -215,6 +215,7 @@ int BKE_scene_multiview_num_videos_get(const struct RenderData *rd);
 void BKE_scene_allocate_depsgraph_hash(struct Scene *scene);
 void BKE_scene_ensure_depsgraph_hash(struct Scene *scene);
 void BKE_scene_free_depsgraph_hash(struct Scene *scene);
+void BKE_scene_free_view_layer_depsgraph(struct Scene *scene, struct ViewLayer *view_layer);
 
 struct Depsgraph *BKE_scene_get_depsgraph(struct Main *bmain,
                                           struct Scene *scene,

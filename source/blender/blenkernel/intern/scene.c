@@ -201,72 +201,6 @@ static void scene_init_data(ID *id)
   BKE_color_managed_view_settings_init_render(
       &scene->r.bake.im_format.view_settings, &scene->r.bake.im_format.display_settings, "Filmic");
 
-  /* GP Sculpt brushes */
-  {
-    GP_Sculpt_Settings *gset = &scene->toolsettings->gp_sculpt;
-    GP_Sculpt_Data *gp_brush;
-    float curcolor_add[3], curcolor_sub[3];
-    ARRAY_SET_ITEMS(curcolor_add, 1.0f, 0.6f, 0.6f);
-    ARRAY_SET_ITEMS(curcolor_sub, 0.6f, 0.6f, 1.0f);
-
-    gp_brush = &gset->brush[GP_SCULPT_TYPE_SMOOTH];
-    gp_brush->size = 25;
-    gp_brush->strength = 0.3f;
-    gp_brush->flag = GP_SCULPT_FLAG_USE_FALLOFF | GP_SCULPT_FLAG_SMOOTH_PRESSURE |
-                     GP_SCULPT_FLAG_ENABLE_CURSOR;
-    copy_v3_v3(gp_brush->curcolor_add, curcolor_add);
-    copy_v3_v3(gp_brush->curcolor_sub, curcolor_sub);
-
-    gp_brush = &gset->brush[GP_SCULPT_TYPE_THICKNESS];
-    gp_brush->size = 25;
-    gp_brush->strength = 0.5f;
-    gp_brush->flag = GP_SCULPT_FLAG_USE_FALLOFF | GP_SCULPT_FLAG_ENABLE_CURSOR;
-    copy_v3_v3(gp_brush->curcolor_add, curcolor_add);
-    copy_v3_v3(gp_brush->curcolor_sub, curcolor_sub);
-
-    gp_brush = &gset->brush[GP_SCULPT_TYPE_STRENGTH];
-    gp_brush->size = 25;
-    gp_brush->strength = 0.5f;
-    gp_brush->flag = GP_SCULPT_FLAG_USE_FALLOFF | GP_SCULPT_FLAG_ENABLE_CURSOR;
-    copy_v3_v3(gp_brush->curcolor_add, curcolor_add);
-    copy_v3_v3(gp_brush->curcolor_sub, curcolor_sub);
-
-    gp_brush = &gset->brush[GP_SCULPT_TYPE_GRAB];
-    gp_brush->size = 50;
-    gp_brush->strength = 0.3f;
-    gp_brush->flag = GP_SCULPT_FLAG_USE_FALLOFF | GP_SCULPT_FLAG_ENABLE_CURSOR;
-    copy_v3_v3(gp_brush->curcolor_add, curcolor_add);
-    copy_v3_v3(gp_brush->curcolor_sub, curcolor_sub);
-
-    gp_brush = &gset->brush[GP_SCULPT_TYPE_PUSH];
-    gp_brush->size = 25;
-    gp_brush->strength = 0.3f;
-    gp_brush->flag = GP_SCULPT_FLAG_USE_FALLOFF | GP_SCULPT_FLAG_ENABLE_CURSOR;
-    copy_v3_v3(gp_brush->curcolor_add, curcolor_add);
-    copy_v3_v3(gp_brush->curcolor_sub, curcolor_sub);
-
-    gp_brush = &gset->brush[GP_SCULPT_TYPE_TWIST];
-    gp_brush->size = 50;
-    gp_brush->strength = 0.3f;
-    gp_brush->flag = GP_SCULPT_FLAG_USE_FALLOFF | GP_SCULPT_FLAG_ENABLE_CURSOR;
-    copy_v3_v3(gp_brush->curcolor_add, curcolor_add);
-    copy_v3_v3(gp_brush->curcolor_sub, curcolor_sub);
-
-    gp_brush = &gset->brush[GP_SCULPT_TYPE_PINCH];
-    gp_brush->size = 50;
-    gp_brush->strength = 0.5f;
-    gp_brush->flag = GP_SCULPT_FLAG_USE_FALLOFF | GP_SCULPT_FLAG_ENABLE_CURSOR;
-    copy_v3_v3(gp_brush->curcolor_add, curcolor_add);
-    copy_v3_v3(gp_brush->curcolor_sub, curcolor_sub);
-
-    gp_brush = &gset->brush[GP_SCULPT_TYPE_RANDOMIZE];
-    gp_brush->size = 25;
-    gp_brush->strength = 0.5f;
-    gp_brush->flag = GP_SCULPT_FLAG_USE_FALLOFF | GP_SCULPT_FLAG_ENABLE_CURSOR;
-    copy_v3_v3(gp_brush->curcolor_add, curcolor_add);
-    copy_v3_v3(gp_brush->curcolor_sub, curcolor_sub);
-  }
-
   /* Curve Profile */
   scene->toolsettings->custom_bevel_profile_preset = BKE_curveprofile_add(PROF_PRESET_LINE);
 
@@ -399,8 +333,6 @@ static void scene_free_data(ID *id)
   Scene *scene = (Scene *)id;
   const bool do_id_user = false;
 
-  BKE_animdata_free((ID *)scene, false);
-
   BKE_sequencer_editing_free(scene, do_id_user);
 
   BKE_keyingsets_free(&scene->keyingsets);
@@ -463,9 +395,9 @@ static void scene_free_data(ID *id)
     scene->master_collection = NULL;
   }
 
-  if (scene->eevee.light_cache) {
-    EEVEE_lightcache_free(scene->eevee.light_cache);
-    scene->eevee.light_cache = NULL;
+  if (scene->eevee.light_cache_data) {
+    EEVEE_lightcache_free(scene->eevee.light_cache_data);
+    scene->eevee.light_cache_data = NULL;
   }
 
   if (scene->display.shading.prop) {
@@ -560,6 +492,18 @@ ToolSettings *BKE_toolsettings_copy(ToolSettings *toolsettings, const int flag)
     ts->gp_paint = MEM_dupallocN(ts->gp_paint);
     BKE_paint_copy(&ts->gp_paint->paint, &ts->gp_paint->paint, flag);
   }
+  if (ts->gp_vertexpaint) {
+    ts->gp_vertexpaint = MEM_dupallocN(ts->gp_vertexpaint);
+    BKE_paint_copy(&ts->gp_vertexpaint->paint, &ts->gp_vertexpaint->paint, flag);
+  }
+  if (ts->gp_sculptpaint) {
+    ts->gp_sculptpaint = MEM_dupallocN(ts->gp_sculptpaint);
+    BKE_paint_copy(&ts->gp_sculptpaint->paint, &ts->gp_sculptpaint->paint, flag);
+  }
+  if (ts->gp_weightpaint) {
+    ts->gp_weightpaint = MEM_dupallocN(ts->gp_weightpaint);
+    BKE_paint_copy(&ts->gp_weightpaint->paint, &ts->gp_weightpaint->paint, flag);
+  }
 
   BKE_paint_copy(&ts->imapaint.paint, &ts->imapaint.paint, flag);
   ts->imapaint.paintcursor = NULL;
@@ -602,6 +546,18 @@ void BKE_toolsettings_free(ToolSettings *toolsettings)
     BKE_paint_free(&toolsettings->gp_paint->paint);
     MEM_freeN(toolsettings->gp_paint);
   }
+  if (toolsettings->gp_vertexpaint) {
+    BKE_paint_free(&toolsettings->gp_vertexpaint->paint);
+    MEM_freeN(toolsettings->gp_vertexpaint);
+  }
+  if (toolsettings->gp_sculptpaint) {
+    BKE_paint_free(&toolsettings->gp_sculptpaint->paint);
+    MEM_freeN(toolsettings->gp_sculptpaint);
+  }
+  if (toolsettings->gp_weightpaint) {
+    BKE_paint_free(&toolsettings->gp_weightpaint->paint);
+    MEM_freeN(toolsettings->gp_weightpaint);
+  }
   BKE_paint_free(&toolsettings->imapaint.paint);
 
   /* free Grease Pencil interpolation curve */
@@ -627,7 +583,7 @@ void BKE_scene_copy_data_eevee(Scene *sce_dst, const Scene *sce_src)
 {
   /* Copy eevee data between scenes. */
   sce_dst->eevee = sce_src->eevee;
-  sce_dst->eevee.light_cache = NULL;
+  sce_dst->eevee.light_cache_data = NULL;
   sce_dst->eevee.light_cache_info[0] = '\0';
   /* TODO Copy the cache. */
 }
@@ -784,7 +740,7 @@ bool BKE_scene_object_find(Scene *scene, Object *ob)
   return false;
 }
 
-Object *BKE_scene_object_find_by_name(Scene *scene, const char *name)
+Object *BKE_scene_object_find_by_name(const Scene *scene, const char *name)
 {
   for (ViewLayer *view_layer = scene->view_layers.first; view_layer;
        view_layer = view_layer->next) {
@@ -1043,10 +999,10 @@ bool BKE_scene_camera_switch_update(Scene *scene)
   return false;
 }
 
-char *BKE_scene_find_marker_name(Scene *scene, int frame)
+const char *BKE_scene_find_marker_name(const Scene *scene, int frame)
 {
-  ListBase *markers = &scene->markers;
-  TimeMarker *m1, *m2;
+  const ListBase *markers = &scene->markers;
+  const TimeMarker *m1, *m2;
 
   /* search through markers for match */
   for (m1 = markers->first, m2 = markers->last; m1 && m2; m1 = m1->next, m2 = m2->prev) {
@@ -1068,9 +1024,9 @@ char *BKE_scene_find_marker_name(Scene *scene, int frame)
 
 /* return the current marker for this frame,
  * we can have more than 1 marker per frame, this just returns the first :/ */
-char *BKE_scene_find_last_marker_name(Scene *scene, int frame)
+const char *BKE_scene_find_last_marker_name(const Scene *scene, int frame)
 {
-  TimeMarker *marker, *best_marker = NULL;
+  const TimeMarker *marker, *best_marker = NULL;
   int best_frame = -MAXFRAME * 2;
   for (marker = scene->markers.first; marker; marker = marker->next) {
     if (marker->frame == frame) {
@@ -2099,6 +2055,14 @@ void BKE_scene_free_depsgraph_hash(Scene *scene)
   }
   BLI_ghash_free(scene->depsgraph_hash, depsgraph_key_free, depsgraph_key_value_free);
   scene->depsgraph_hash = NULL;
+}
+
+void BKE_scene_free_view_layer_depsgraph(Scene *scene, ViewLayer *view_layer)
+{
+  if (scene->depsgraph_hash != NULL) {
+    DepsgraphKey key = {view_layer};
+    BLI_ghash_remove(scene->depsgraph_hash, &key, depsgraph_key_free, depsgraph_key_value_free);
+  }
 }
 
 /* Query depsgraph for a specific contexts. */

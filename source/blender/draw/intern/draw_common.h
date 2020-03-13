@@ -68,6 +68,8 @@ typedef struct GlobalsUboStorage {
   float colorFace[4];
   float colorFaceSelect[4];
   float colorFaceFreestyle[4];
+  float colorGpencilVertex[4];
+  float colorGpencilVertexSelect[4];
   float colorNormal[4];
   float colorVNormal[4];
   float colorLNormal[4];
@@ -174,6 +176,11 @@ struct DRWShadingGroup *DRW_shgroup_hair_create(struct Object *object,
                                                 struct ModifierData *md,
                                                 struct DRWPass *hair_pass,
                                                 struct GPUShader *shader);
+
+struct DRWShadingGroup *DRW_shgroup_hair_create_sub(struct Object *object,
+                                                    struct ParticleSystem *psys,
+                                                    struct ModifierData *md,
+                                                    struct DRWShadingGroup *shgrp);
 
 struct DRWShadingGroup *DRW_shgroup_material_hair_create(struct Object *object,
                                                          struct ParticleSystem *psys,
