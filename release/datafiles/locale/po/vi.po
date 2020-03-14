@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
+"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
@@ -1074,10 +1074,6 @@ msgid "Transmission"
 msgstr "Truyền"
 
 
-msgid "Subsurface"
-msgstr "Hạ Mặt"
-
-
 msgid "Save Mode"
 msgstr "Chế Độ Lưu"
 
@@ -1152,10 +1148,6 @@ msgstr "Góp thêm bóng loáng"
 
 msgid "Add indirect lighting contribution"
 msgstr "Góp thêm ánh sáng gián tiếp"
-
-
-msgid "Add subsurface contribution"
-msgstr "Góp thêm hạ mặt"
 
 
 msgid "Add transmission contribution"
@@ -3026,6 +3018,18 @@ msgid "Curve used for the strength"
 msgstr "Đường cong được sử dụng cho sức"
 
 
+msgid "Direction"
+msgstr "Hướng"
+
+
+msgid "Add effect of brush"
+msgstr "Thêm hiệu ứng của bút"
+
+
+msgid "Subtract effect of brush"
+msgstr "Trừ hiệu ứng của bút"
+
+
 msgid "Mode"
 msgstr "Chế Độ"
 
@@ -3034,8 +3038,8 @@ msgid "Eraser Mode"
 msgstr "Chế Độ Cục Gôm"
 
 
-msgid "Dissolve,"
-msgstr "Hòa Tan,"
+msgid "Dissolve"
+msgstr "Hòa Tan"
 
 
 msgid "Erase strokes, fading their points strength and thickness"
@@ -3186,16 +3190,52 @@ msgid "Eraser Stroke"
 msgstr "Nét Cục Gôm"
 
 
-msgid "Border Opacity Factor"
-msgstr "Hệ Số Độ Đục Ranh Giới"
+msgid "Smooth"
+msgstr "Mịn Hóa"
+
+
+msgid "Thickness"
+msgstr "Bề Dày"
+
+
+msgid "Randomize"
+msgstr "Ngẫu Nhiên Hóa"
+
+
+msgid "Grab"
+msgstr "Cầm"
+
+
+msgid "Push"
+msgstr "Đẩy"
+
+
+msgid "Twist"
+msgstr "Xoắn"
+
+
+msgid "Pinch"
+msgstr "Ngắc"
+
+
+msgid "Clone"
+msgstr "Chép Lại"
+
+
+msgid "Draw"
+msgstr "Vẽ"
+
+
+msgid "Blur"
+msgstr "Mờ"
+
+
+msgid "Smear"
+msgstr "Nhẹp"
 
 
 msgid "Amount of gradient for Dot and Box strokes (set to 1 for full solid)"
 msgstr "Mức chuyển sắc cho nét Dấu Chấm và Hộp (đặt = 1 cho tô rắn)"
-
-
-msgid "Aspect Ratio"
-msgstr "Tỉ Số Cạnh"
 
 
 msgid "Input Samples"
@@ -3222,18 +3262,6 @@ msgid "Jitter factor for new strokes"
 msgstr "Hệ số hốt hoảng cho nét mới"
 
 
-msgid "Sensitivity"
-msgstr "Độ Nhạy Cảm"
-
-
-msgid "Pressure sensitivity factor for new strokes"
-msgstr "Hệ số nhạy cảm với áp suất cho nét mới"
-
-
-msgid "Smooth"
-msgstr "Mịn Hóa"
-
-
 msgid "Amount of smoothing to apply after finish newly created strokes, to reduce jitter/noise"
 msgstr "Mức mịn hóa để áp dụng với nét mới vẽ, cho giảm hốt hoảng/huyên náo"
 
@@ -3258,22 +3286,6 @@ msgid "Number of times to subdivide newly created strokes, for less jagged strok
 msgstr "Số lần cho phân hóa nét mới chế tạo, cho giảm nét hốt hoảng"
 
 
-msgid "Smooth Thickness"
-msgstr "Độ Dầy Mịn Hóa"
-
-
-msgid "Amount of thickness smoothing to apply after finish newly created strokes, to reduce jitter/noise"
-msgstr "Mức mịn hóa để áp dụng với nét mới chế tạo, cho giảm hốt hoảng/huyên náo"
-
-
-msgid "Iterations Thickness"
-msgstr "Độ Dày Lặp Lại"
-
-
-msgid "Number of times to smooth thickness for newly created strokes"
-msgstr "Số lần làm mịn hóa cho nét mới vẽ"
-
-
 msgid "Pressure Randomness"
 msgstr "Mức Ngẫu Nhiên Áp Suất"
 
@@ -3288,14 +3300,6 @@ msgstr "Sức Ngẫu Nhiên"
 
 msgid "Randomness factor strength in new strokes"
 msgstr "Hệ số ngẫu nhiên của sức khi vẽ nét mới"
-
-
-msgid "Random Subdivision"
-msgstr "Phân Hóa Ngẫu Nhiên"
-
-
-msgid "Randomness factor for new strokes after subdivision"
-msgstr "Hệ số ngẫu nhiên khi vẽ nét mới sau phân hóa"
 
 
 msgid "Show Fill"
@@ -3334,20 +3338,52 @@ msgid "Trim intersecting stroke ends"
 msgstr "Cắt kết thúc nét đang cắt nhau"
 
 
-msgid "Enable Cursor"
-msgstr "Bật Con Trỏ"
-
-
-msgid "Enable cursor on screen"
-msgstr "Bật con trỏ trên màn"
-
-
 msgid "Default Eraser"
 msgstr "Cục Gôm Mặc Định"
 
 
 msgid "Use this brush when enable eraser with fast switch key"
 msgstr "Sử dụng bút này khi bật cục gôm với phím trao đổi nhanh"
+
+
+msgid "Affect Position"
+msgstr "Ảnh Hưởng Vị Trí"
+
+
+msgid "The brush affects the position of the point"
+msgstr "Bút sẽ ảnh hướng vị trí của điểm"
+
+
+msgid "Affect Pressure"
+msgstr "Ảnh Hưởng Áp Suất"
+
+
+msgid "Affect pressure values as well when smoothing strokes"
+msgstr "Cùng ảnh hưởng giá trị áp suất khi đang mịn hóa nét"
+
+
+msgid "Affect Strength"
+msgstr "Sức Ảnh Hưởng"
+
+
+msgid "The brush affects the color strength of the point"
+msgstr "Bút được ảnh hưởng sức màu của điểm"
+
+
+msgid "Affect Thickness"
+msgstr "Ảnh Hưởng Bề Rộng"
+
+
+msgid "The brush affects the thickness of the point"
+msgstr "Bút sẽ ảnh hượng bề rộng của điểm"
+
+
+msgid "Affect UV"
+msgstr "Ảnh Hưởng UV"
+
+
+msgid "The brush affects the UV rotation of the point"
+msgstr "Bút được ảnh hướng xoay UV của điểm"
 
 
 msgid "Use Pressure Jitter"
@@ -3420,6 +3456,14 @@ msgstr "UV Ngẫu Nhiên"
 
 msgid "Random factor for autogenerated UV rotation"
 msgstr "Hệ số cho xoay UV tự động chế tạo"
+
+
+msgid "Mode Type"
+msgstr "Loại Chế Độ"
+
+
+msgid "Both"
+msgstr "Cả Hai"
 
 
 msgid "Background Image"
@@ -8978,10 +9022,6 @@ msgid "Use 5x multisampling to smooth paint edges"
 msgstr "Dùng đa mẫu vật 5x cho mịn hóa cạnh sơn"
 
 
-msgid "Dissolve"
-msgstr "Hòa Tan"
-
-
 msgid "Enable to make surface changes disappear over time"
 msgstr "Bật để làm biến đổi của bề mặt biến mất qua thời gian"
 
@@ -10896,6 +10936,54 @@ msgid "Whether this path is saved in bookmarks, or generated from OS"
 msgstr "Đường dẫn này được lưu trong dấu sách, hay được chế tạo từ hệ điều hành"
 
 
+msgid "Which ID types to show/hide, when browsing a library"
+msgstr "Hiện/ẩn loại ID nào khi trình duyệt một thư viện"
+
+
+msgid "Animations"
+msgstr "Hoạt Hình"
+
+
+msgid "Environment"
+msgstr "Môi Trường"
+
+
+msgid "Images & Sounds"
+msgstr "Ảnh & Âm Thanh"
+
+
+msgid "Miscellaneous"
+msgstr "Lạt Vạt"
+
+
+msgid "Objects & Collections"
+msgstr "Các Vật Thể & Sưu Tập"
+
+
+msgid "Shading"
+msgstr "Tô Sắc"
+
+
+msgid "Fonts"
+msgstr "Phông"
+
+
+msgid "Light Probes"
+msgstr "Quang Kế"
+
+
+msgid "Freestyle Linestyles"
+msgstr "Phong Cách Nét Vẽ Tự Do"
+
+
+msgid "Node Trees"
+msgstr "Cây Giao Điểm"
+
+
+msgid "Particles Settings"
+msgstr "Cài Đặt Hạt"
+
+
 msgid "Directory"
 msgstr "Thư Mục"
 
@@ -10978,218 +11066,6 @@ msgstr "Tìm kiếm gương mẫu kiểu giống trình bao UINX, được hỗ 
 
 msgid "Filter ID Types"
 msgstr "Lọc Loại ID"
-
-
-msgid "Which ID types to show/hide, when browsing a library"
-msgstr "Hiện/ẩn loại ID nào khi trình duyệt một thư viện"
-
-
-msgid "Show/hide Action data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Hành Động"
-
-
-msgid "Show/hide Armature data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Cốt"
-
-
-msgid "Show/hide Brushes data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Bút Lông"
-
-
-msgid "Show/hide Camera data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Máy Quay Phim"
-
-
-msgid "Show/hide Cache File data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Tệp Bộ Đệm"
-
-
-msgid "Show/hide Curve data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Cong"
-
-
-msgid "Show/hide Grease pencil data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Bút Sáp"
-
-
-msgid "Show/hide Collection data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Sưu Tập"
-
-
-msgid "Show/hide Image data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Ảnh"
-
-
-msgid "Show/hide Light data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Đèn"
-
-
-msgid "Freestyle Linestyles"
-msgstr "Phong Cách Nét Vẽ Tự Do"
-
-
-msgid "Show/hide Freestyle's Line Style data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Phong Cách Nét Tự Do"
-
-
-msgid "Show/hide Lattice data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Lưới Rào"
-
-
-msgid "Show/hide Material data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu vật Liệu"
-
-
-msgid "Show/hide Metaball data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Siêu Cầu"
-
-
-msgid "Show/hide Movie Clip data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Đoạn Phim"
-
-
-msgid "Show/hide Mesh data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Mạng Lưới"
-
-
-msgid "Show/hide Mask data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Mặt Nạ"
-
-
-msgid "Node Trees"
-msgstr "Cây Giao Điểm"
-
-
-msgid "Show/hide Node Tree data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Cây Giao Điểm"
-
-
-msgid "Show/hide Object data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Vật Thể"
-
-
-msgid "Particles Settings"
-msgstr "Cài Đặt Hạt"
-
-
-msgid "Show/hide Particle Settings data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Cài Đặt Hạt"
-
-
-msgid "Show/hide Palette data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Bảng Màu"
-
-
-msgid "Show/hide Paint Curve data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Cong Sơn"
-
-
-msgid "Light Probes"
-msgstr "Quang Kế"
-
-
-msgid "Show/hide Light Probe data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Quang Kế"
-
-
-msgid "Show/hide Scene data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Cảnh"
-
-
-msgid "Show/hide Speaker data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Loa"
-
-
-msgid "Show/hide Sound data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Âm Thanh"
-
-
-msgid "Show/hide Texture data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Họa Tiết"
-
-
-msgid "Show/hide Text data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Văn Bản"
-
-
-msgid "Fonts"
-msgstr "Phông"
-
-
-msgid "Show/hide Font data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Phông"
-
-
-msgid "Show/hide World data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu Thế Giới"
-
-
-msgid "Show/hide workspace data-blocks"
-msgstr "Hiện/ẩn cục dữ liệu công trường"
-
-
-msgid "Filter ID Categories"
-msgstr "Lọc Loại ID"
-
-
-msgid "Which ID categories to show/hide, when browsing a library"
-msgstr "Hiện/ẩn loại ID nào khi trình duyệt một thư viện"
-
-
-msgid "Show/hide scenes"
-msgstr "Hiện/ẩn cảnh"
-
-
-msgid "Animations"
-msgstr "Hoạt Hình"
-
-
-msgid "Show/hide animation data"
-msgstr "Hiện/ẩn dữ liệu hoạt hình"
-
-
-msgid "Objects & Collections"
-msgstr "Các Vật Thể & Sưu Tập"
-
-
-msgid "Show/hide objects and groups"
-msgstr "Hiện/ẩn vật thể và nhóm"
-
-
-msgid "Show/hide meshes, curves, lattice, armatures and metaballs data"
-msgstr "Hiện/ẩn dữ liệu mạng lưới, cong, lưới rào, cốt, và siêu cầu"
-
-
-msgid "Shading"
-msgstr "Tô Sắc"
-
-
-msgid "Show/hide materials, nodetrees, textures and Freestyle's linestyles"
-msgstr "Hiện/ẩn vật liệu, cây giao điểm, họa tiết, và phong cách nét của Vé Nét Tự Do"
-
-
-msgid "Images & Sounds"
-msgstr "Ảnh & Âm Thanh"
-
-
-msgid "Show/hide images, movie clips, sounds and masks"
-msgstr "Hiện/ẩn ảnh, đoạn phim, âm thanh và mặt nạ "
-
-
-msgid "Environment"
-msgstr "Môi Trường"
-
-
-msgid "Show/hide worlds, lights, cameras and speakers"
-msgstr "Hiện/ẩn thế giơi, đèn, máy quay phim và loa"
-
-
-msgid "Miscellaneous"
-msgstr "Lạt Vạt"
-
-
-msgid "Show/hide other data types"
-msgstr "Hiện/ẩn các loại dữ liệu khác"
 
 
 msgid "Filter by name, supports '*' wildcard"
@@ -11414,10 +11290,6 @@ msgstr "Cài đặt phạm vi chất lỏng"
 
 msgid "Margin added around fluid to minimize boundary interference"
 msgstr "Thêm lề quanh chất lỏng để giảm sự ảnh hưởng của ranh giới"
-
-
-msgid "Maximum amount of fluid cell can contain before it is considered empty"
-msgstr "Mức cực đại chât lỏng tế bào được chứa trước nó được chấp nhận là trống rỗng"
 
 
 msgid "Additional"
@@ -11690,10 +11562,6 @@ msgstr "Lập Phương"
 
 msgid "Smoothed high quality interpolation, but slower"
 msgstr "Suy nội mịn chất lượng cao, mà chậm hơn"
-
-
-msgid "Thickness"
-msgstr "Bề Dày"
 
 
 msgid "Thickness of smoke drawing in the viewport"
@@ -12608,6 +12476,10 @@ msgid "Take average of velocities from previous frame and new velocities from cu
 msgstr "Tính vận tốc trung bình từ bức trước và vận tốc từ bức hiện tại"
 
 
+msgid "Subframes"
+msgstr "Hạ Bức"
+
+
 msgid "Distance around mesh surface to consider as effector"
 msgstr "Khoảng cách quanh bề mặt mạng lưới để chấp nhận là đồ hiệu ứng"
 
@@ -12718,10 +12590,6 @@ msgstr "Hệ thống hạt được phát từ vật thể này"
 
 msgid "Color of smoke"
 msgstr "Màu Khói"
-
-
-msgid "Subframes"
-msgstr "Hạ Bức"
 
 
 msgid "Number of additional samples to take between frames to improve quality of fast moving flows"
@@ -13664,14 +13532,6 @@ msgid "Avoids editing locked materials in the layer"
 msgstr "Tránh biên tập các vật liệu được khóa trong lớp này"
 
 
-msgid "Mask Layer"
-msgstr "Lớp Mặt Nạ"
-
-
-msgid "Remove any pixel outside underlying layers drawing"
-msgstr "Xóa bắt cứ điểm ảnh nào ở ngoài lớp phía dưới khi vẽ"
-
-
 msgid "Parent inverse transformation matrix"
 msgstr "Đặt ma trận biến hóa đảo nghịch làm phụ huynh"
 
@@ -13768,6 +13628,10 @@ msgid "Display annotation onion skins before and after the current frame"
 msgstr "Hiển thị lời ghi chú trên bóng ma trước và sau bức hiện tại"
 
 
+msgid "Mask Layer"
+msgstr "Lớp Mặt Nạ"
+
+
 msgid "Display onion skins before and after the current frame"
 msgstr "Hiển thị bóng ma trươc và sau bức hiện tại"
 
@@ -13788,84 +13652,12 @@ msgid "Only include Layer in this View Layer render output (leave blank to inclu
 msgstr "Chỉ gồm Lớp trong ngõ ra kết xuất của Lớp Màn Chiếu này (bỏ trống rỗng để luôn luôn gồm nó)"
 
 
-msgid "GPencil Sculpt Brush"
-msgstr "Sáp Bút - Bút Khắc"
+msgid "Invert"
+msgstr "Đảo Nghịch"
 
 
-msgid "Stroke editing brush"
-msgstr "Bút để biên tập nét"
-
-
-msgid "Cursor Add"
-msgstr "Con Trỏ Cộng"
-
-
-msgid "Color for the cursor for addition"
-msgstr "Màu cho con trỏ cộng"
-
-
-msgid "Cursor Sub"
-msgstr "Con Trỏ Trừ"
-
-
-msgid "Color for the cursor for subtraction"
-msgstr "Màu của con trỏ khi trừ"
-
-
-msgid "Direction"
-msgstr "Hướng"
-
-
-msgid "Add effect of brush"
-msgstr "Thêm hiệu ứng của bút"
-
-
-msgid "Subtract effect of brush"
-msgstr "Trừ hiệu ứng của bút"
-
-
-msgid "Radius of the brush in pixels"
-msgstr "Bán kính của bút (đơn vị điểm ảnh)"
-
-
-msgid "Brush strength"
-msgstr "Sức bút"
-
-
-msgid "Affect Pressure"
-msgstr "Ảnh Hưởng Áp Suất"
-
-
-msgid "Affect pressure values as well when smoothing strokes"
-msgstr "Cùng ảnh hưởng giá trị áp suất khi đang mịn hóa nét"
-
-
-msgid "Use Falloff"
-msgstr "Dùng Sự Giảm"
-
-
-msgid "Strength of brush decays with distance from cursor"
-msgstr "Sức của bút được giảm tùy cách từ con trỏ"
-
-
-msgid "Radius Pressure"
-msgstr "Bán Kính Áp Suất"
-
-
-msgid "Enable tablet pressure sensitivity for radius"
-msgstr "Bật sử dụng độ nhảy cảm áp suất của bàn vẽ cho bán kính"
-
-
-msgid "Strength Pressure"
-msgstr "Áp Suất Sức"
-
-
-msgid "Enable tablet pressure sensitivity for strength"
-msgstr "Bật dùng độ nhảy cảm áp suất của bàn vẽ cho sức"
-
-
-msgid "Target weight (define a maximum range limit for the weight. Any value above will be clamped)"
-msgstr "Quyền lượng mục đích (xác định một giới hạn cực đại cho quyền lượng. Giá trị nào hơn này sẽ bị kẹp lại)"
+msgid "Layer"
+msgstr "Lớp"
 
 
 msgid "GPencil Sculpt Guide"
@@ -13968,14 +13760,6 @@ msgid "GPencil Sculpt Settings"
 msgstr "Bút Sáp - Cài Đặt Khắc"
 
 
-msgid "Properties for Grease Pencil stroke sculpting tool"
-msgstr "Đặc tính cho dụng cụ khắc nét của Bút Sáp"
-
-
-msgid "Brush"
-msgstr "Bút"
-
-
 msgid "Threshold for stroke intersections"
 msgstr "Ngưỡng cho nét cắt nhau"
 
@@ -14020,104 +13804,12 @@ msgid "Custom curve to control falloff of brush effect by Grease Pencil frames"
 msgstr "Đường cong tùy chọn để kiểm soát sự giảm của hiệu ứng bút bằng bức Bút Sáp"
 
 
-msgid "Tool"
-msgstr "Dụng Cụ"
-
-
-msgid "Smooth stroke points"
-msgstr "Mịn hóa điểm nét"
-
-
-msgid "Adjust thickness of strokes"
-msgstr "Chỉnh bề dày của nét"
-
-
-msgid "Adjust color strength of strokes"
-msgstr "Chỉnh sức màu của nét"
-
-
-msgid "Randomize"
-msgstr "Ngẫu Nhiên Hóa"
-
-
-msgid "Introduce jitter/randomness into strokes"
-msgstr "Làm nét bị hốt hoảng/ngẫu nhiên"
-
-
-msgid "Grab"
-msgstr "Cầm"
-
-
-msgid "Translate the set of points initially within the brush circle"
-msgstr "Địch sưu tập điểm ban đầu được khởi động trong vòng tròn bút"
-
-
-msgid "Push"
-msgstr "Đẩy"
-
-
-msgid "Move points out of the way, as if combing them"
-msgstr "Di chuyển điểm cho tránh đường đi như đang chai lược"
-
-
-msgid "Twist"
-msgstr "Xoắn"
-
-
-msgid "Rotate points around the midpoint of the brush"
-msgstr "Xoay điểm quanh trung điểm của bút"
-
-
-msgid "Pinch"
-msgstr "Ngắc"
-
-
-msgid "Pull points towards the midpoint of the brush"
-msgstr "Kéo điểm đến trung điểm của bút"
-
-
-msgid "Clone"
-msgstr "Chép Lại"
-
-
-msgid "Paste copies of the strokes stored on the clipboard"
-msgstr "Chép lại bản sao nét đang giữ trong bàng dán"
-
-
 msgid "Custom curve to control primitive thickness"
 msgstr "Đường cong tùy chọn để kiểm soát bề dày của đồ cơ bản"
 
 
-msgid "Affect Position"
-msgstr "Ảnh Hưởng Vị Trí"
-
-
-msgid "The brush affects the position of the point"
-msgstr "Bút sẽ ảnh hướng vị trí của điểm"
-
-
-msgid "Affect Strength"
-msgstr "Sức Ảnh Hưởng"
-
-
-msgid "The brush affects the color strength of the point"
-msgstr "Bút được ảnh hưởng sức màu của điểm"
-
-
-msgid "Affect Thickness"
-msgstr "Ảnh Hưởng Bề Rộng"
-
-
-msgid "The brush affects the thickness of the point"
-msgstr "Bút sẽ ảnh hượng bề rộng của điểm"
-
-
-msgid "Affect UV"
-msgstr "Ảnh Hưởng UV"
-
-
-msgid "The brush affects the UV rotation of the point"
-msgstr "Bút được ảnh hướng xoay UV của điểm"
+msgid "Use Falloff"
+msgstr "Dùng Sự Giảm"
 
 
 msgid "Use falloff effect when edit in multiframe mode to compute brush effect by frame"
@@ -14130,14 +13822,6 @@ msgstr "Sử Dụng Đường Cong"
 
 msgid "Use curve to define primitive stroke thickness"
 msgstr "Sử dụng đường cong cho chỉ định bề rộng nét cơ bản"
-
-
-msgid "Tool for weight painting"
-msgstr "Dụng cụ cho sơn quyền lượng"
-
-
-msgid "Weight Paint for Vertex Groups"
-msgstr "Sơn Quyền Lượng cho Nhóm Đỉnh"
 
 
 msgid "Grease Pencil Stroke"
@@ -14204,16 +13888,16 @@ msgid "Flat"
 msgstr "Bằng Phẳng"
 
 
-msgid "Amount of gradient along section of stroke"
-msgstr "Mức chuyển sắc trong khúc nét"
-
-
 msgid "Groups"
 msgstr "Nhóm"
 
 
 msgid "Weights for the vertex groups this vertex is member of"
 msgstr "Quyền lượng của các nhóm đỉnh thì đỉnh này được làm nhân viên"
+
+
+msgid "Amount of gradient along section of stroke"
+msgstr "Mức chuyển sắc trong khúc nét"
 
 
 msgid "No Fill"
@@ -14264,6 +13948,10 @@ msgid "Triangulation data for HQ fill"
 msgstr "Dữ liệu tam giác hóa cho tô đầy chất lượng cao"
 
 
+msgid "UV Rotation"
+msgstr "Xoay UV"
+
+
 msgid "Grease Pencil Stroke Point"
 msgstr "Điểm Nét Bút Sáp"
 
@@ -14296,10 +13984,6 @@ msgid "Internal UV factor"
 msgstr "Hệ số UV nội bộ"
 
 
-msgid "UV Rotation"
-msgstr "Xoay UV"
-
-
 msgid "Internal UV factor for dot mode"
 msgstr "Hệ số UV nội bộ cho chế độ chấm"
 
@@ -14322,18 +14006,6 @@ msgstr "Tam Giác"
 
 msgid "Triangulation data for Grease Pencil fills"
 msgstr "Dữ liệu tam giác hóa cho tô đầy Bút Sáp"
-
-
-msgid "First triangle vertex texture coordinates"
-msgstr "Tọa độ họa tiết của đỉnh tam giác thứ nhất"
-
-
-msgid "Second triangle vertex texture coordinates"
-msgstr "Tọa độ họa tiết của đỉnh tam giác thứ hai"
-
-
-msgid "Third triangle vertex texture coordinates"
-msgstr "Tọa độ họa tiết của đỉnh tam giác thứ ba"
 
 
 msgid "First triangle vertex index"
@@ -14750,10 +14422,6 @@ msgid "Change stroke using armature to deform modifier"
 msgstr "Đổi nét bằng sử dụng cốt để méo hóa cụ sửa đổi"
 
 
-msgid "Invert"
-msgstr "Đảo Nghịch"
-
-
 msgid "Invert vertex group influence"
 msgstr "Đảo ngược sự ảnh hưởng của nhóm đỉnh"
 
@@ -14790,6 +14458,14 @@ msgid "Create grid of duplicate instances"
 msgstr "Chế tạo đồ thị của thực thể bản sao"
 
 
+msgid "Constant Offset"
+msgstr "Dịch Hằng Số"
+
+
+msgid "Value for the distance between items"
+msgstr "Giá trị cho khoảng cách giữa mặt hàng"
+
+
 msgid "Count"
 msgstr "Số Lượng"
 
@@ -14814,18 +14490,6 @@ msgid "Inverse Materials"
 msgstr "Vật Liệu Đảo Nghịch"
 
 
-msgid "Keep on Top"
-msgstr "Giữ ở Trên"
-
-
-msgid "Keep the original stroke in front of new instances (only affect by layer)"
-msgstr "Giữ nét ban đầu ở phía trước các thực thể mới (chỉ được ảnh hưởng bằng lớp)"
-
-
-msgid "Layer"
-msgstr "Lớp"
-
-
 msgid "Pass"
 msgstr "Vòng"
 
@@ -14836,10 +14500,6 @@ msgstr "Chỉ số vòng lớp"
 
 msgid "Material name"
 msgstr "Tên vật liệu"
-
-
-msgid "Value for the distance between items"
-msgstr "Giá trị cho khoảng cách giữa mặt hàng"
 
 
 msgid "Object Offset"
@@ -14858,30 +14518,6 @@ msgid "Random Rotation"
 msgstr "Xoay Ngẫu Nhiên"
 
 
-msgid "Use random factors for rotation"
-msgstr "Sử dụng hệ số ngẫu nhiên cho xoay"
-
-
-msgid "Random Scale"
-msgstr "Phóng To Ngẫu Nhiên"
-
-
-msgid "Use random factors for scale"
-msgstr "Sử dụng hệ số ngẫu nhiên cho phóng to"
-
-
-msgid "Index of the material used for generated strokes (0 keep original material)"
-msgstr "Chỉ số của vật liệu sử dụng cho nét được chế tạo (số 0 cho giữ vật liệu ban đầu)"
-
-
-msgid "Rotation Factor"
-msgstr "Hệ Số Xoay"
-
-
-msgid "Random factor for rotation"
-msgstr "Hệ số ngẫu nhiên cho xoay"
-
-
 msgid "Value for changes in rotation"
 msgstr "Giá trị cho sự biến đổi xoay"
 
@@ -14890,20 +14526,24 @@ msgid "Value for changes in scale"
 msgstr "Giá trị cho biến đổi phóng to"
 
 
-msgid "Scale Factor"
-msgstr "Hệ Số Phóng To"
+msgid "Relative Offset"
+msgstr "Dịch Tương Đối"
 
 
-msgid "Random factor for scale"
-msgstr "Hệ số ngẫu nhiên cho phóng to"
+msgid "The size of the geometry will determine the distance between arrayed items"
+msgstr "Kích cỡ của hình dạng sẽ xác định khoảng cách giữa mặt hàng trong mảng"
+
+
+msgid "Index of the material used for generated strokes (0 keep original material)"
+msgstr "Chỉ số của vật liệu sử dụng cho nét được chế tạo (số 0 cho giữ vật liệu ban đầu)"
+
+
+msgid "Random seed"
+msgstr "Số hạt ngẫu nhiên"
 
 
 msgid "Shift"
 msgstr "Độ Dịch"
-
-
-msgid "Shiftiness value"
-msgstr "Giá trị độ dịch"
 
 
 msgid "Build Modifier"
@@ -15018,24 +14658,12 @@ msgid "Change Hue/Saturation modifier"
 msgstr "Cụ sửa đổi cho đổi Màu Sắc/Độ Tươi"
 
 
-msgid "Create Materials"
-msgstr "Chế Tạo Vật Liệu"
-
-
-msgid "When apply modifier, create new material"
-msgstr "Khi áp dụng cụ sửa đổi, chế tạo vật liệu mới"
-
-
 msgid "Color Hue"
 msgstr "Màu Sắc Màu"
 
 
 msgid "Set what colors of the stroke are affected"
 msgstr "Xác định màu nào của nét được ảnh hưởng"
-
-
-msgid "Both"
-msgstr "Cả Hai"
 
 
 msgid "Modify fill and stroke colors"
@@ -15052,6 +14680,10 @@ msgstr "Chỉ sửa đổi màu tô đầy"
 
 msgid "Color Saturation"
 msgstr "Độ Tươi Màu"
+
+
+msgid "Custom Curve"
+msgstr "Đường Cong Tùy Chọn"
 
 
 msgid "Color Value"
@@ -15216,10 +14848,6 @@ msgid "Distance of duplications"
 msgstr "Quãng của bản sao"
 
 
-msgid "Duplications"
-msgstr "Bản Sao"
-
-
 msgid "How many copies of strokes be displayed"
 msgstr "Số lượng hiển thị để hiện"
 
@@ -15230,14 +14858,6 @@ msgstr "Chẻ Góc"
 
 msgid "Enable angle splitting"
 msgstr "Bất chẻ góc"
-
-
-msgid "Enable Fading"
-msgstr "Bật Phai"
-
-
-msgid "Enable fading"
-msgstr "Bật phai"
 
 
 msgid "Fade center"
@@ -15268,28 +14888,8 @@ msgid "Amount of noise to apply"
 msgstr "Lượng huyên náo để áp dụng"
 
 
-msgid "Full Stroke"
-msgstr "Toàn Bộ Nét"
-
-
-msgid "The noise moves the stroke as a whole, not point by point"
-msgstr "Huyên náo được di chuyển toàn bộ nét, không phải chỉ điểm từ điểm"
-
-
-msgid "Move Extremes"
-msgstr "Di Chuyển Cực Đoan"
-
-
-msgid "The noise moves the stroke extreme points"
-msgstr "Huyên náo được di chuyển điểm cực đoan"
-
-
-msgid "Use random values"
-msgstr "Sử dụng giá trị ngẫu nhiên"
-
-
-msgid "Random seed"
-msgstr "Số hạt ngẫu nhiên"
+msgid "Thickness Factor"
+msgstr "Hệ Số Độ Dày"
 
 
 msgid "Step"
@@ -15302,18 +14902,6 @@ msgstr "Số lượng bức trước được tính lại giá trị ngẫu nhi�
 
 msgid "The modifier affects the position of the point"
 msgstr "Cụ sửa đổi được ảnh hướng vị trí của điểm"
-
-
-msgid "The modifier affects the color strength of the point"
-msgstr "Cụ sửa đổi được ảnh hưởng sức màu của điểm"
-
-
-msgid "The modifier affects the thickness of the point"
-msgstr "Cụ sửa đổi được ảnh hượng bề dày của điểm"
-
-
-msgid "The modifier affects the UV rotation factor of the point"
-msgstr "Cụ sửa đổi được ảnh hượng hệ số xoay UV của điểm"
 
 
 msgid "Offset Modifier"
@@ -15346,22 +14934,6 @@ msgstr "Độ đục của cụ sửa đổi Nét"
 
 msgid "Factor of Opacity"
 msgstr "Hệ số Độ Đục"
-
-
-msgid "Opacity Mode"
-msgstr "Chế Độ Độ Đục"
-
-
-msgid "Set what mode used to define opacity"
-msgstr "Đặt chế độ để xác định độ đục"
-
-
-msgid "Modify opacity using alpha channel of material"
-msgstr "Sửa đổi độ đục bằng kênh độ đục của vật liệu"
-
-
-msgid "Modify opacity using point strength"
-msgstr "Sửa đổi độ đục bằng sức của điểm"
 
 
 msgid "Simplify Modifier"
@@ -15400,10 +14972,6 @@ msgid "Adaptive"
 msgstr "Ứng Phó"
 
 
-msgid "Use a RDP algorithm to simplify the stroke"
-msgstr "Dùng một giải thuật RDP để đơn giản hoá nét"
-
-
 msgid "Sample"
 msgstr "Mẫu Vật"
 
@@ -15436,6 +15004,18 @@ msgid "Number of times to apply smooth (high numbers can reduce fps)"
 msgstr "Số lần để áp dụng mịn hóa (số lớn có thể giảm bức/giây)"
 
 
+msgid "The modifier affects the color strength of the point"
+msgstr "Cụ sửa đổi được ảnh hưởng sức màu của điểm"
+
+
+msgid "The modifier affects the thickness of the point"
+msgstr "Cụ sửa đổi được ảnh hượng bề dày của điểm"
+
+
+msgid "The modifier affects the UV rotation factor of the point"
+msgstr "Cụ sửa đổi được ảnh hượng hệ số xoay UV của điểm"
+
+
 msgid "Subdivision Modifier"
 msgstr "Cụ Sửa Đổi Phân Hóa"
 
@@ -15448,12 +15028,20 @@ msgid "Number of subdivisions"
 msgstr "Số lượng phân hóa"
 
 
+msgid "Subdivision Type"
+msgstr "Loại Phân Hóa"
+
+
+msgid "Select type of subdivision algorithm"
+msgstr "Chọn giải thuật phân hóa"
+
+
+msgid "Catmull-Clark"
+msgstr "Catmull-Clark"
+
+
 msgid "Simple"
 msgstr "Đơn Giản"
-
-
-msgid "The modifier only add control points"
-msgstr "Cụ sửa đổi chỉ được thêm điểm điều khiển"
 
 
 msgid "Thick Modifier"
@@ -15462,30 +15050,6 @@ msgstr "Cụ Sửa Đổi Bề Dày"
 
 msgid "Subdivide and Smooth Stroke modifier"
 msgstr "Cụ sửa đổi Phân và Mịn Hóa"
-
-
-msgid "Custom Thickness Curve"
-msgstr "Đường Cong Bề Dày Tùy Chọn"
-
-
-msgid "Normalize"
-msgstr "Đơn Vị Hóa"
-
-
-msgid "Normalize the full stroke to modifier thickness"
-msgstr "Đơn vị hóa toàn bộ nét đến bề dày của cụ sửa đổi"
-
-
-msgid "Factor of thickness change"
-msgstr "Hệ số sự thay đổi bề dày"
-
-
-msgid "Custom Curve"
-msgstr "Đường Cong Tùy Chọn"
-
-
-msgid "Use a custom curve to define thickness changes"
-msgstr "Sử dụng một đường cong tùy chọn để chỉ định sử thay đổi bề dày"
 
 
 msgid "Time Offset Modifier"
@@ -16141,6 +15705,22 @@ msgid "Clone Offset"
 msgstr "Dịch Bản Sao"
 
 
+msgid "Deformation"
+msgstr "Sự Méo Hóa"
+
+
+msgid "Deformation type that is used in the brush"
+msgstr "Loại méo hóa được dùng trong bút"
+
+
+msgid "Inflate"
+msgstr "Phình Lên"
+
+
+msgid "Expand"
+msgstr "Mở Rộng"
+
+
 msgid "Color Type"
 msgstr "Loại Màu"
 
@@ -16229,14 +15809,6 @@ msgid "Length of a dash cycle measured in stroke samples"
 msgstr "Bề dài của chu trình a"
 
 
-msgid "Deformation"
-msgstr "Sự Méo Hóa"
-
-
-msgid "Deformation type that is used in the brush"
-msgstr "Loại méo hóa được dùng trong bút"
-
-
 msgid "Bi-scale Grab"
 msgstr "Bắt Nhị Phóng To"
 
@@ -16285,16 +15857,48 @@ msgid "Threshold above which filling is not propagated"
 msgstr "Ngưỡng cho tô đầy, hơn giá trị này không truyền tô"
 
 
+msgid "Smooth stroke points"
+msgstr "Mịn hóa điểm nét"
+
+
+msgid "Adjust thickness of strokes"
+msgstr "Chỉnh bề dày của nét"
+
+
+msgid "Adjust color strength of strokes"
+msgstr "Chỉnh sức màu của nét"
+
+
+msgid "Introduce jitter/randomness into strokes"
+msgstr "Làm nét bị hốt hoảng/ngẫu nhiên"
+
+
+msgid "Translate the set of points initially within the brush circle"
+msgstr "Địch sưu tập điểm ban đầu được khởi động trong vòng tròn bút"
+
+
+msgid "Move points out of the way, as if combing them"
+msgstr "Di chuyển điểm cho tránh đường đi như đang chai lược"
+
+
+msgid "Rotate points around the midpoint of the brush"
+msgstr "Xoay điểm quanh trung điểm của bút"
+
+
+msgid "Pull points towards the midpoint of the brush"
+msgstr "Kéo điểm đến trung điểm của bút"
+
+
+msgid "Paste copies of the strokes stored on the clipboard"
+msgstr "Chép lại bản sao nét đang giữ trong bàng dán"
+
+
 msgid "Gpencil Settings"
 msgstr "Cài Đặt Bút Sáp"
 
 
 msgid "Grease Pencil Draw Tool"
 msgstr "Dụng Cụ Vẽ Bút Sáp"
-
-
-msgid "Draw"
-msgstr "Vẽ"
 
 
 msgid "The brush is of type used for drawing strokes"
@@ -16311,6 +15915,10 @@ msgstr "Bôi"
 
 msgid "The brush is used for erasing strokes"
 msgstr "Bút là loại sử dụng cho bôi nét"
+
+
+msgid "Weight Paint for Vertex Groups"
+msgstr "Sơn Quyền Lượng cho Nhóm Đỉnh"
 
 
 msgid "Gradient Spacing"
@@ -16361,10 +15969,6 @@ msgid "Soften"
 msgstr "Mềm Hóa"
 
 
-msgid "Smear"
-msgstr "Nhẹp"
-
-
 msgid "Mask"
 msgstr "Mặt Nạ"
 
@@ -16391,6 +15995,10 @@ msgstr "Đơn Vị Hốt Hoảng"
 
 msgid "Jitter in screen space or relative to brush size"
 msgstr "Hốt hoảng trong không gian màn hoặc tương đối với khổ bút"
+
+
+msgid "Brush"
+msgstr "Bút"
 
 
 msgid "Mask Stencil Dimensions"
@@ -16549,10 +16157,6 @@ msgid "Clay Strips"
 msgstr "Dãy Đất Xét"
 
 
-msgid "Inflate"
-msgstr "Phình Lên"
-
-
 msgid "Blob"
 msgstr "Cầu Thể"
 
@@ -16593,6 +16197,10 @@ msgid "Slide Relax"
 msgstr "Giãn Trơn Trượt"
 
 
+msgid "Cloth"
+msgstr "Vải"
+
+
 msgid "Secondary Color"
 msgstr "Màu Phụ"
 
@@ -16611,6 +16219,10 @@ msgstr "Hiện Dự Khán Con Trỏ"
 
 msgid "Preview the scrape planes in the cursor during the stroke"
 msgstr "Dự khán của mặt phẳng cào trong con trỏ khi đang làm nét"
+
+
+msgid "Radius of the brush in pixels"
+msgstr "Bán kính của bút (đơn vị điểm ảnh)"
 
 
 msgid "Smooth Stroke Factor"
@@ -16881,16 +16493,16 @@ msgid "Smooths the edges of the strokes"
 msgstr "Mịn hóa ranh của các nét"
 
 
-msgid "Use Sculpt"
-msgstr "Sử Dụng Khắc"
-
-
 msgid "Use this brush in grease pencil drawing mode"
 msgstr "Sử dụng bút này trong chế độ vẽ bút sáp"
 
 
 msgid "Use this brush in texture paint mode"
 msgstr "Sử dụng bút này trong chế độ sơn họa tiết"
+
+
+msgid "Use Sculpt"
+msgstr "Sử Dụng Khắc"
 
 
 msgid "Use this brush in sculpt mode"
@@ -16973,6 +16585,14 @@ msgid "Enable tablet pressure sensitivity for spacing"
 msgstr "Bật nhảy cảm áp suất của bàn vẽ cho khoảng cách"
 
 
+msgid "Strength Pressure"
+msgstr "Áp Suất Sức"
+
+
+msgid "Enable tablet pressure sensitivity for strength"
+msgstr "Bật dùng độ nhảy cảm áp suất của bàn vẽ cho sức"
+
+
 msgid "Use Texture Overlay"
 msgstr "Dùng Lớp Che Họa Tiết"
 
@@ -17039,10 +16659,6 @@ msgstr "Ngắc UV"
 
 msgid "Vertex Paint Tool"
 msgstr "Dụng Cụ Sơn Đỉnh"
-
-
-msgid "Blur"
-msgstr "Mờ"
 
 
 msgid "Vertex weight when brush is applied"
@@ -18765,20 +18381,8 @@ msgid "Scale conversion factor for pixel size (use larger values for thicker lin
 msgstr "Hệ số biến đổi cho kích cỡ của điểm ảnh (sử dụng giá trị lớn hơn cho nét dày hơn)"
 
 
-msgid "Show Direction"
-msgstr "Hiện Hướng"
-
-
-msgid "Show stroke drawing direction with a bigger green dot (start) and smaller red dot (end) points"
-msgstr "Hiện hướng vẽ nét bằng chấm điểm màu lục lớn hơn (bắt đầu) và chấm điểm màu đỏ nhỏ hơn (kết thúc)"
-
-
 msgid "Stroke Depth Order"
 msgstr "Thứ Tự Độ Sâu Nét"
-
-
-msgid "Defines how the strokes are ordered in 3D space"
-msgstr "Chỉ định làm sao nét được sắp thự tự trong không gian 3D"
 
 
 msgid "2D Layers"
@@ -18817,28 +18421,12 @@ msgid "Set stroke thickness relative to the screen space"
 msgstr "Đặt bề dày nét tương đối với không gian màn"
 
 
-msgid "Adaptive UV"
-msgstr "UV Ứng Phó"
-
-
-msgid "Automatic UVs are calculated depending of the stroke size"
-msgstr "UV Tự Động được tính tùy bề dày của nét"
-
-
 msgid "Autolock Layers"
 msgstr "Tự Khóa Lớp"
 
 
 msgid "Lock automatically all layers except active one to avoid accidental changes"
 msgstr "Khóa tự động hết lớp trừ lớp hoạt động để tránh sờ ý đổi lớp khác"
-
-
-msgid "Force Fill Update"
-msgstr "Bắt Buộc Nâng Cấp Tô Đầy"
-
-
-msgid "Force recalc of fill data after use deformation modifiers (reduce FPS)"
-msgstr "Bắt buộc tịnh lại dữ liệu tô đầy sau sử dụng cụ sửa đổi méo hóa (giảm tốc độ bức/giây)"
 
 
 msgid "Use Custom Ghost Colors"
@@ -18867,14 +18455,6 @@ msgstr "Biên tập nét tử nhiều bức mẫu bút sáp cùng một lượt 
 
 msgid "Display onion keyframes with a fade in color transparency"
 msgstr "Hiển thị bức mẫu bóng ma bằng một phai độ dục màu"
-
-
-msgid "Loop"
-msgstr "Lặp Lại"
-
-
-msgid "Display first onion keyframes using next frame color to show indication of loop start frame"
-msgstr "Hiển thị các bức bóng ma đầu tiên bằng màu của bức kế tiệp để hiện bức lặp lại đầu"
 
 
 msgid "Onion Skins"
@@ -20173,10 +19753,6 @@ msgstr "Sợi Tóc"
 
 msgid "Shader Ball"
 msgstr "Cầu Tô Sắc"
-
-
-msgid "Cloth"
-msgstr "Vải"
 
 
 msgid "Fluid"
@@ -28353,14 +27929,6 @@ msgid "Fill area with gradient color"
 msgstr "Tô đầy khu vực bằng màu chuyển sắc"
 
 
-msgid "Checker Board"
-msgstr "Bảng Ca Rô"
-
-
-msgid "Fill area with checkerboard pattern"
-msgstr "Tô đầy khu vực bằng họa tiết bảng ca rô"
-
-
 msgid "Fill area with image texture"
 msgstr "Tô đầy bằng họa tiết ảnh"
 
@@ -28425,16 +27993,8 @@ msgid "Color for mixing with primary filling color"
 msgstr "Màu cho pha trộn với màu tô đầy chánh"
 
 
-msgid "Mix Adjustment Factor"
-msgstr "Hệ Số Pha Tộn "
-
-
-msgid "Mix Stroke Color"
-msgstr "Pha Trộn Màu Nét"
-
-
-msgid "Mode Type"
-msgstr "Loại Chế Độ"
+msgid "Mix Factor"
+msgstr "Hệ Số TPha rộn"
 
 
 msgid "Select draw mode for stroke"
@@ -28449,36 +28009,8 @@ msgid "Draw strokes using separated dots"
 msgstr "Vẽ nét bằng dấu chấm không kết nối"
 
 
-msgid "Boxes"
-msgstr "Hộp"
-
-
-msgid "Draw strokes using separated rectangle boxes"
-msgstr "Vẽ nét bằng hộp chữ nhật không kết nối"
-
-
 msgid "Index number for the \"Color Index\" pass"
 msgstr "Chỉ số cho vòng \"Chỉ Số Chất Màu\""
-
-
-msgid "Pattern Orientation Angle"
-msgstr "Góc Định Hướng Kiểu Mẫu"
-
-
-msgid "Box Size"
-msgstr "Kích Cỡ Hộp"
-
-
-msgid "Pattern Radius"
-msgstr "Bán Kính Họa Tiết"
-
-
-msgid "Scale Factor for UV coordinates"
-msgstr "Hệ Số Phóng To cho tọa độ UV"
-
-
-msgid "Shift filling pattern in 2d space"
-msgstr "Dịch của kiểu mẫu tô đầy trong không gian 2D"
 
 
 msgid "Texture Pixel Size factor along the stroke"
@@ -28533,32 +28065,12 @@ msgid "Scale Factor for Texture"
 msgstr "Hệ Số Phóng To cho Họa Tiết"
 
 
-msgid "Use Fill Texture as a pattern to apply color"
-msgstr "Sử dụng Họa Tiết Tô Đầy làm một kiểu mẫu để áp dụng màu"
-
-
-msgid "Mix Texture"
-msgstr "Pha Trộn Họa Tiết"
-
-
-msgid "Mix texture image with filling color"
-msgstr "Pha trộn ảnh họa tiết với màu tô đầy"
-
-
 msgid "Self Overlap"
 msgstr "Tứ Lấn Lên"
 
 
 msgid "Disable stencil and overlap self intersections with alpha materials"
 msgstr "Tắt khuôn tô và tự lấn lên với vật liệu có độ đục"
-
-
-msgid "Use Stroke Texture as a pattern to apply color"
-msgstr "Sử dụng Họa Tiết Nét làm một kiểu mẫu để áp dụng màu"
-
-
-msgid "Mix texture image with stroke color"
-msgstr "Pha trộn ảnh họa tiết với màu nét"
 
 
 msgid "Material slot in an object"
@@ -28683,10 +28195,6 @@ msgid "Files Context Menu"
 msgstr "Danh Bạ Bối Cảnh Tệp"
 
 
-msgid "Fluid Presets"
-msgstr "Đặt Sẵn Chất Lỏng"
-
-
 msgid "Clean Up"
 msgstr "Làm Sạch"
 
@@ -28705,34 +28213,6 @@ msgstr "Đồ Đặc Biệt Lớp"
 
 msgid "Move to Layer"
 msgstr "Di Chuyển Đến Lớp"
-
-
-msgid "A pie menu for accessing Grease Pencil stroke sculpt settings"
-msgstr "Một danh bạ quạt để cài đặt khắc nét Bút Sáp"
-
-
-msgid "Grease Pencil Sculpt"
-msgstr "Bút Sáp Khắc"
-
-
-msgid "A pie menu for quick access to Grease Pencil settings"
-msgstr "Một danh bạ quạt cho đến cài đặt Bút Sáp nhanh"
-
-
-msgid "A pie menu for quick access to Grease Pencil tools"
-msgstr "Một danh bạ quạt cho đến dụng cụ Bút Sáp nhanh"
-
-
-msgid "Grease Pencil Tools"
-msgstr "Dụng Cụ Bút Sáp"
-
-
-msgid "A pie menu for accessing more Grease Pencil tools"
-msgstr "Một danh bạ quạt cho đến dụng cụ Bút Sáp nhanh"
-
-
-msgid "More Grease Pencil Tools"
-msgstr "Thêm Dụng Cụ Bút Sáp"
 
 
 msgid "F-Curve Channel Context Menu"
@@ -29050,6 +28530,10 @@ msgid "Curve Context Menu"
 msgstr "Danh Bạ Bối Cảnh Đường Cong"
 
 
+msgid "Kerning"
+msgstr "Cách Giữa Ký Tự"
+
+
 msgid "Interpolate"
 msgstr "Suy Nội"
 
@@ -29124,6 +28608,10 @@ msgstr "Ký Tự Đặc Biệt"
 
 msgid "Text Context Menu"
 msgstr "Danh Bạ Bối Cảnh Văn Bản"
+
+
+msgid "Face Sets"
+msgstr "Tập Mặt"
 
 
 msgid "Generate Weights"
@@ -29720,10 +29208,6 @@ msgstr "Đóng Đinh UV"
 
 msgid "UV Select"
 msgstr "Chọn UV"
-
-
-msgid "UV Edge Select"
-msgstr "Chọn Cạnh UV"
 
 
 msgid "Set the map as active for display and editing"
@@ -30326,16 +29810,8 @@ msgid "Relative Offset Displacement"
 msgstr "Dịch Tương Đối"
 
 
-msgid "The size of the geometry will determine the distance between arrayed items"
-msgstr "Kích cỡ của hình dạng sẽ xác định khoảng cách giữa mặt hàng trong mảng"
-
-
 msgid "Mesh object to use as a start cap"
 msgstr "Vật thể mạng lưới để làm một nắp đầu"
-
-
-msgid "Constant Offset"
-msgstr "Dịch Hằng Số"
 
 
 msgid "Add a constant offset"
@@ -30356,10 +29832,6 @@ msgstr "Gồm đỉnh là sao chép đầu và cuối"
 
 msgid "Add another object's transformation to the total offset"
 msgstr "Cộng biến hóa của một vật thể khác với dịch tổng cộng"
-
-
-msgid "Relative Offset"
-msgstr "Dịch Tương Đối"
 
 
 msgid "Add an offset relative to the object's bounding box"
@@ -31166,10 +30638,6 @@ msgid "Maximum allowed distance between source and destination element, for non-
 msgstr "Khoảng cách cực đại giữa phần tử nguồn và đích, cho ánh xạ kiểu không hình dạng học"
 
 
-msgid "Mix Factor"
-msgstr "Hệ Số TPha rộn"
-
-
 msgid "Factor to use when applying data to destination (exact behavior depends on mix mode, multiplied with weights from vertex group when defined)"
 msgstr "Hệ số dùng khi áp dụng dữ liệu đến đích (hành vi tùy chế độ pha trộn, nhân với quyền lượng từ nhóm đỉnh khi được chỉ định)"
 
@@ -31710,10 +31178,6 @@ msgid "Whether geometry has been bound to anchors"
 msgstr "Hình dạng bị trói với neo hay không"
 
 
-msgid "Vertex Group for Anchors"
-msgstr "Nhóm Đỉnh Cho Neo"
-
-
 msgid "Name of Vertex Group which determines Anchors"
 msgstr "Tên của Nhóm Đỉnh được xác định Các Neo"
 
@@ -32044,18 +31508,6 @@ msgstr "Màn Chiếu Tối Ưu"
 
 msgid "Skip drawing/rendering of interior subdivided edges"
 msgstr "Bỏ qua vẽ/kết xuật cạnh phân hóa nội bộ"
-
-
-msgid "Subdivision Type"
-msgstr "Loại Phân Hóa"
-
-
-msgid "Select type of subdivision algorithm"
-msgstr "Chọn giải thuật phân hóa"
-
-
-msgid "Catmull-Clark"
-msgstr "Catmull-Clark"
 
 
 msgid "Total Levels"
@@ -34760,6 +34212,10 @@ msgstr "Dùng Mặt Nạ"
 
 msgid "Use a grease pencil data-block as a mask to use only specified areas of pattern when tracking"
 msgstr "Dùng một cục dữ liệu bút sáp làm mặt nạ cho dùng chỉ khu vực gương mẫu được xác định khi theo dõi"
+
+
+msgid "Normalize"
+msgstr "Đơn Vị Hóa"
 
 
 msgid "Normalize light intensities while tracking (slower)"
@@ -39650,8 +39106,8 @@ msgstr "Đặt lại khu vực hiển thị để hiện toàn phạm vi bức m
 
 
 msgctxt "Operator"
-msgid "View Selected"
-msgstr "Chiếu Được Chọn"
+msgid "Frame Selected"
+msgstr "Bức Được Chọn"
 
 
 msgid "Reset viewable area to show selected keyframes range"
@@ -40895,6 +40351,10 @@ msgstr "Điều Khiển Bút Khuôn Tô"
 
 msgid "Control the stencil brush"
 msgstr "Điều khiền bút khuôn tô"
+
+
+msgid "Tool"
+msgstr "Dụng Cụ"
 
 
 msgid "Translation"
@@ -44856,10 +44316,6 @@ msgid "Walk Direction"
 msgstr "Hướng Đi Bộ"
 
 
-msgid "Select/Deselect file in this direction"
-msgstr "Chọn/Thả tệp theo hướng này"
-
-
 msgid "Prev"
 msgstr "Trước"
 
@@ -45464,15 +44920,6 @@ msgstr "Chế tạo bức rỗng trong tất cả lớp, không phải chỉ l�
 
 
 msgctxt "Operator"
-msgid "Create Preset Brushes"
-msgstr "Chế Tạo Bút Đặt Sẵn"
-
-
-msgid "Create a set of predefined Grease Pencil drawing brushes"
-msgstr "Chế tạo một tập Bút Sáp đặt sẵn"
-
-
-msgctxt "Operator"
 msgid "Hide Color(s)"
 msgstr "Ẩn (Các) Màu"
 
@@ -45757,10 +45204,6 @@ msgstr "Hòa tan tất cả điểm chưa được chọn"
 msgctxt "Operator"
 msgid "Grease Pencil Draw"
 msgstr "Vẽ Bút Sáp"
-
-
-msgid "Draw a new stroke in the active Grease Pencil Object"
-msgstr "Vẽ một nét mới trong vật thể Bút Sáp hoạt động"
 
 
 msgid "No Fill Areas"
@@ -46082,6 +45525,11 @@ msgstr "Cô Lập Lớp"
 
 msgid "Toggle whether the active layer is the only one that can be edited and/or visible"
 msgstr "Bật/tắt chỉ có thể biên tập và/hay hiển thị lớp hoạt động"
+
+
+msgctxt "Operator"
+msgid "Remove Mask Layer"
+msgstr "Xóa Lớp Mặt Nạ"
 
 
 msgctxt "Operator"
@@ -46733,6 +46181,10 @@ msgid "Trim selected stroke to first loop or intersection"
 msgstr "Cắt bớt nét được chọn đến lặp vòng đầu hay chổ cắt nhau"
 
 
+msgid "Confirm on Release"
+msgstr "Xác Nhận Khi Thả"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Mở Khóa Hết Lớp"
@@ -46740,6 +46192,50 @@ msgstr "Mở Khóa Hết Lớp"
 
 msgid "Unlock all Grease Pencil layers so that they can be edited"
 msgstr "Mở khóa hết lớp Bút Sáp cho có thể chỉnh sửa chúng nó"
+
+
+msgctxt "Operator"
+msgid "Vertex Paint Bright/Contrast"
+msgstr "Độ Sáng/Chênh Lệch Sơn Đỉnh"
+
+
+msgid "Adjust vertex color brightness/contrast"
+msgstr "Chỉnh độ sáng/chênh lệch màu đỉnh"
+
+
+msgctxt "Operator"
+msgid "Vertex Paint Hue Saturation Value"
+msgstr "Giá Trị Độ Tươi Màu Sắc Sơn Đỉnh"
+
+
+msgid "Adjust vertex color HSV values"
+msgstr "Chỉnh giá trị đỉnh màu HSV"
+
+
+msgctxt "Operator"
+msgid "Vertex Paint Invert"
+msgstr "Đảo Nghịch Sơn Đỉnh"
+
+
+msgid "Invert RGB values"
+msgstr "Đảo nghịch giá trị RGB"
+
+
+msgctxt "Operator"
+msgid "Vertex Paint Levels"
+msgstr "Mức Sơn Đỉnh"
+
+
+msgid "Adjust levels of vertex colors"
+msgstr "Chỉnh mức của màu đỉnh"
+
+
+msgid "Value to multiply colors by"
+msgstr "Giá trị cho nhân với màu"
+
+
+msgid "Value to add to colors"
+msgstr "Giá trị cho cộng với màu"
 
 
 msgctxt "Operator"
@@ -47714,6 +47210,10 @@ msgid "Set the scene framerate to that of the BVH file (note that this nullifies
 msgstr "Đặt tốc độ bức của cảnh bằng tốc độ của tệp BVH (lưu ý cái này sẽ xóa tùy chọn 'Phóng To Tốc Độ Bức' vì phóng to sẽ trở thành 1:1)"
 
 
+msgid "Loop"
+msgstr "Lặp Lại"
+
+
 msgid "Loop the animation playback"
 msgstr "Lặp lại khi hát hoạt hình"
 
@@ -48624,11 +48124,6 @@ msgid "Name of new mask layer"
 msgstr "Tên của lớp mặt nạ mới"
 
 
-msgctxt "Operator"
-msgid "Remove Mask Layer"
-msgstr "Xóa Lớp Mặt Nạ"
-
-
 msgid "Remove mask layer"
 msgstr "Xóa lớp mặt nạ"
 
@@ -48981,10 +48476,6 @@ msgstr "Vật liệu cho xiên mặt (-1 nghĩa là dùng mặt kề)"
 
 msgid "Controls profile shape (0.5 = round)"
 msgstr "Điều khiển dạng trình bày (0.5 = tròn)"
-
-
-msgid "Confirm on Release"
-msgstr "Xác Nhận Khi Thả"
 
 
 msgid "Segments for curved edge"
@@ -51121,10 +50612,6 @@ msgstr "Chế độ sự lựa chọn cạnh"
 
 msgid "Face selection mode"
 msgstr "Chế độ sự lựa chọn mặt"
-
-
-msgid "Expand"
-msgstr "Mở Rộng"
 
 
 msgid "Select more vertices, edges or faces connected to initial selection"
@@ -53446,8 +52933,8 @@ msgstr "Xây dựng một vật thể bút sáp con khỉ"
 
 
 msgctxt "Operator"
-msgid "Add Grease Pencil Modifier"
-msgstr "Thêm Cụ Sửa Đổi Bút Sáp"
+msgid "Add Modifier"
+msgstr "Thêm Cụ sửa Đổi"
 
 
 msgid "Add a procedural operation/effect to the active grease pencil object"
@@ -53990,11 +53477,6 @@ msgid "Mesh Mode"
 msgstr "Chế Độ Mạng Lưới"
 
 
-msgctxt "Operator"
-msgid "Add Modifier"
-msgstr "Thêm Cụ sửa Đổi"
-
-
 msgid "Add a procedural operation/effect to the active object"
 msgstr "Kèm tương tác/hiệu ứng thủ tục cho vật thể hoạt động"
 
@@ -54396,14 +53878,6 @@ msgid "Relative number of faces compared to the current mesh"
 msgstr "Số lượng mặt tương đối với mạng lưới hiện tại"
 
 
-msgid "Use Mesh Curvature"
-msgstr "Dùng Độ Cong Mạng Lưới"
-
-
-msgid "Take the mesh curvature into account when remeshing"
-msgstr "Dùng độ cong của cong khi làm lại mạng lưới"
-
-
 msgid "Use Paint Symmetry"
 msgstr "Dùng Đối Xứng Sơn"
 
@@ -54782,10 +54256,6 @@ msgstr "Hào Quang"
 
 msgid "Create a glow effect"
 msgstr "Chế tạo một hiệu ứng hào quang"
-
-
-msgid "Simulate illumination"
-msgstr "Mô phỏng ánh sáng"
 
 
 msgctxt "ID"
@@ -56220,10 +55690,6 @@ msgid "Use walk navigation to select tree elements"
 msgstr "Dùng sự lựa chọn chuyển hướng đi bộ để chọn phần tử cây"
 
 
-msgid "Select element in this direction"
-msgstr "Chọn/Thả phần tử theo hướng này"
-
-
 msgid "Extend selection on walk"
 msgstr "Mở rộng sự lựa chọn khi đi bộ"
 
@@ -56631,15 +56097,6 @@ msgstr "Đổi sự lựa chọn cho tất cả đỉnh"
 
 
 msgctxt "Operator"
-msgid "Vertex Paint Bright/Contrast"
-msgstr "Độ Sáng/Chênh Lệch Sơn Đỉnh"
-
-
-msgid "Adjust vertex color brightness/contrast"
-msgstr "Chỉnh độ sáng/chênh lệch màu đỉnh"
-
-
-msgctxt "Operator"
 msgid "Dirty Vertex Colors"
 msgstr "Màu Đỉnh Dơ"
 
@@ -56687,41 +56144,6 @@ msgstr "Màu Đỉnh từ Quyền Lượng"
 
 msgid "Convert active weight into gray scale vertex colors"
 msgstr "Đổi quyền lượng hoạt động sang màu độ xám cho các đỉnh"
-
-
-msgctxt "Operator"
-msgid "Vertex Paint Hue Saturation Value"
-msgstr "Giá Trị Độ Tươi Màu Sắc Sơn Đỉnh"
-
-
-msgid "Adjust vertex color HSV values"
-msgstr "Chỉnh giá trị đỉnh màu HSV"
-
-
-msgctxt "Operator"
-msgid "Vertex Paint Invert"
-msgstr "Đảo Nghịch Sơn Đỉnh"
-
-
-msgid "Invert RGB values"
-msgstr "Đảo nghịch giá trị RGB"
-
-
-msgctxt "Operator"
-msgid "Vertex Paint Levels"
-msgstr "Mức Sơn Đỉnh"
-
-
-msgid "Adjust levels of vertex colors"
-msgstr "Chỉnh mức của màu đỉnh"
-
-
-msgid "Value to multiply colors by"
-msgstr "Giá trị cho nhân với màu"
-
-
-msgid "Value to add to colors"
-msgstr "Giá trị cho cộng với màu"
 
 
 msgctxt "Operator"
@@ -56857,6 +56279,10 @@ msgid "Remove active color from palette"
 msgstr "Xóa màu hoạt động từ bảng màu"
 
 
+msgid "Palette"
+msgstr "Bảng Màu"
+
+
 msgctxt "Operator"
 msgid "Add New Palette"
 msgstr "Thêm Bảng Màu Mới"
@@ -56864,6 +56290,10 @@ msgstr "Thêm Bảng Màu Mới"
 
 msgid "Add new palette"
 msgstr "Thêm bảng màu mới"
+
+
+msgid "Luminance"
+msgstr "Độ Sáng"
 
 
 msgctxt "Operator"
@@ -60684,15 +60114,6 @@ msgstr "Phóng to dự khán cho vừa khu vực"
 
 
 msgctxt "Operator"
-msgid "View Frame"
-msgstr "Hiển Thị Bức"
-
-
-msgid "Reset viewable area to show range around current frame"
-msgstr "Đặt lại khu vực hiển thị để hiện phạm vi quanh bức hiện tại"
-
-
-msgctxt "Operator"
 msgid "Border Offset View"
 msgstr "Màn Dịch Lề"
 
@@ -63892,10 +63313,6 @@ msgid "Exports non-hair particle systems"
 msgstr "Xuất hệ thống hạt trừ tóc"
 
 
-msgid "Face Sets"
-msgstr "Tập Mặt"
-
-
 msgid "Export per face shading group assignments"
 msgstr "Xuất tô sắc mỗi mặt tùy chỉ định nhóm"
 
@@ -65718,6 +65135,14 @@ msgid "Site"
 msgstr "Trang Mạng"
 
 
+msgid "UV Maps"
+msgstr "Bản Đồ UV"
+
+
+msgid "Instancing"
+msgstr "Thực Thể Hóa"
+
+
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "Thêm Đường Dẫn Autoexec"
@@ -65861,10 +65286,6 @@ msgstr "Cong lỗ có thể biên tập"
 
 msgid "Average multiple input samples together to smooth the brush stroke"
 msgstr "Trung bình của nhiều mẫu vật ngõ vào cho mịn hóa nét vé"
-
-
-msgid "Palette"
-msgstr "Bảng Màu"
 
 
 msgid "Active Palette"
@@ -66702,10 +66123,6 @@ msgid "Text Boxes"
 msgstr "Hợp Văn Bản"
 
 
-msgid "UV Maps"
-msgstr "Bản Đồ UV"
-
-
 msgid "Filters"
 msgstr "Bộ Lọc"
 
@@ -66740,6 +66157,10 @@ msgstr "Các Đặc Điểm"
 
 msgid "Directory Path"
 msgstr "Đường Dẫn Thư Mục"
+
+
+msgid "Fluid Presets"
+msgstr "Đặt Sẵn Chất Lỏng"
 
 
 msgid "Extensions"
@@ -66974,10 +66395,6 @@ msgid "Delta Transform"
 msgstr "Biến Hóa Lệch Lạc"
 
 
-msgid "Instancing"
-msgstr "Thực Thể Hóa"
-
-
 msgid "Scale by Face Size"
 msgstr "Phóng To bằng Kích Cỡ Mặt"
 
@@ -67025,6 +66442,10 @@ msgstr "Loại 2"
 
 msgid "Hair Dynamics"
 msgstr "Động Lý Tóc"
+
+
+msgid "Collisions"
+msgstr "Va Chạm"
 
 
 msgid "Hair Dynamics Presets"
@@ -67081,10 +66502,6 @@ msgstr "Thời Tự"
 
 msgid "Border Collisions"
 msgstr "Va Chạm Ranh Giới"
-
-
-msgid "Collisions"
-msgstr "Va Chạm"
 
 
 msgid "Internal Springs"
@@ -67145,6 +66562,10 @@ msgstr "Nguồn Lưu"
 
 msgid "Guides"
 msgstr "Đường Hướng Dẫn"
+
+
+msgid "Sensitivity"
+msgstr "Độ Nhạy Cảm"
 
 
 msgid "Surface Response"
@@ -67635,6 +67056,10 @@ msgid "Sculpt Context Menu"
 msgstr "Danh Bạ Bối Cảnh Khắc"
 
 
+msgid "Vertex Paint Context Menu"
+msgstr "Danh Bạ Bối Cảnh Sơn Đỉnh"
+
+
 msgid "View Object Types"
 msgstr "Loại Vật Thể Màn"
 
@@ -67657,10 +67082,6 @@ msgstr "Theo Dõi Chuyển Động"
 
 msgid "Texture Paint Context Menu"
 msgstr "Danh Bạ Bối Cảnh Sơn Họa Tiết"
-
-
-msgid "Vertex Paint Context Menu"
-msgstr "Danh Bạ Bối Cảnh Sơn Đỉnh"
 
 
 msgid "Weights Context Menu"
@@ -68122,6 +67543,10 @@ msgstr "Giảm sưng tóc"
 
 msgid "Brush steps"
 msgstr "Bước bút"
+
+
+msgid "Brush strength"
+msgstr "Sức bút"
 
 
 msgid "Puff Volume"
@@ -70444,54 +69869,6 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "Hạn chế kích cỡ họa tiết cho tiết kiệm trí nhớ"
 
 
-msgid "Gpencil MultiSample"
-msgstr "Bút Sáp Đa Mẵu Vật"
-
-
-msgid "Enable Grease Pencil OpenGL multi-sampling, only for systems that support it"
-msgstr "Bật đa mẫu vật OpenGL, chỉ cho hệ thống được hỗ trợ nó"
-
-
-msgid "No MultiSample"
-msgstr "Không Dùng Đa Mẫu Vật"
-
-
-msgid "Do not use OpenGL MultiSample"
-msgstr "Không dùng Đa Mẫu Vật OpenGL"
-
-
-msgid "MultiSample: 2"
-msgstr "Đa Mẫu Vật: 2"
-
-
-msgid "Use 2x OpenGL MultiSample"
-msgstr "Dùng Đa Mẫu Vật OpenGL 2x"
-
-
-msgid "MultiSample: 4"
-msgstr "Đa Mẫu Vật: 4"
-
-
-msgid "Use 4x OpenGL MultiSample"
-msgstr "Dùng Đa Mẫu Vật OpenGL 4x"
-
-
-msgid "MultiSample: 8"
-msgstr "Đa Mẫu Vật: 8"
-
-
-msgid "Use 8x OpenGL MultiSample"
-msgstr "Dùng Đa Mẫu Vật OpenGL 8x"
-
-
-msgid "MultiSample: 16"
-msgstr "Đa Mẫu Vật: 16"
-
-
-msgid "Use 16x OpenGL MultiSample"
-msgstr "Dùng Đa Mẫu Vật OpenGL 16x"
-
-
 msgid "Image Display Method"
 msgstr "Phương Pháp Hiển Thị Ảnh"
 
@@ -71018,14 +70395,6 @@ msgstr "Hiện tùy chọn cho người lập trình (biên tập mã nguồn tr
 
 msgid "Use transform gizmos by default"
 msgstr "Mặc định là dùng đồ đạc biến hóa"
-
-
-msgid "Large Cursors"
-msgstr "Con Trỏ To"
-
-
-msgid "Use large mouse cursors when available"
-msgstr "Dùng con trỏ chuột to khi có thể dùng"
 
 
 msgid "Editor Corner Splitting"
@@ -71858,22 +71227,6 @@ msgstr "Sức Bất Huyên Náo"
 
 msgid "Controls neighbor pixel weighting for the denoising filter (lower values preserve more detail, but aren't as smooth)"
 msgstr "Điều khiển quyền lượng bộ lọc bất huyên náo (giá trị thấp giữ chi tiết nhiều hơn, nhưng không mịn bằng)"
-
-
-msgid "Subsurface Direct"
-msgstr "Hạ Bề Mặt Trực Tiếp"
-
-
-msgid "Denoise the direct subsurface lighting"
-msgstr "Bắt huynê náo ánh sáng hạ bề mặt"
-
-
-msgid "Subsurface Indirect"
-msgstr "Hạ Bề Mặt Gián Tiếp"
-
-
-msgid "Denoise the indirect subsurface lighting"
-msgstr "Bắt huyên náo trong ánh sáng hạ bề mặt trực tiếp"
 
 
 msgid "Transmission Direct"
@@ -72868,22 +72221,6 @@ msgid "Show the Transmission Color render pass"
 msgstr "Hiện vòng kết xuất Truyền Xạ Màu"
 
 
-msgid "Show the Subsurface Direct render pass"
-msgstr "Hiện vòng kết xuất Tán Xạ Hạ Bề Mặt Trực Tiếp"
-
-
-msgid "Show the Subsurface Indirect render pass"
-msgstr "Hiện vòng kết xuất Tán Xạ hạ Bề Mặt Trực Tiếp"
-
-
-msgid "Subsurface Color"
-msgstr "Màu Hạ Bề Mặt"
-
-
-msgid "Show the Subsurface Color render pass"
-msgstr "Hiện vòng kết xuất Tán Xạ Hạ Bề Mặt Màu"
-
-
 msgid "Show the Volume Direct render pass"
 msgstr "Hiện vòng kết xuất Thể Tích Trực Tiếp"
 
@@ -73544,12 +72881,24 @@ msgid "Deliver shadow pass"
 msgstr "Cấp vòng bóng tối"
 
 
+msgid "Subsurface Color"
+msgstr "Màu Hạ Bề Mặt"
+
+
 msgid "Deliver subsurface color pass"
 msgstr "Cấp vòng màu hạ bề mặt"
 
 
+msgid "Subsurface Direct"
+msgstr "Hạ Bề Mặt Trực Tiếp"
+
+
 msgid "Deliver subsurface direct pass"
 msgstr "Cấp vòng hạ bề mặt trực tiếp"
+
+
+msgid "Subsurface Indirect"
+msgstr "Hạ Bề Mặt Gián Tiếp"
 
 
 msgid "Deliver subsurface indirect pass"
@@ -73920,32 +73269,12 @@ msgid "Simplify Grease Pencil drawing"
 msgstr "Đơn Giản Hóa vẽ bằng Bút Sáp"
 
 
-msgid "Layers Blending"
-msgstr "Pha Trộn Lớp"
-
-
-msgid "Display blend layers"
-msgstr "Không hiển thị các lớp pha trộn"
-
-
-msgid "Simplify Playback"
-msgstr "Đơn Giản Hóa Hát Lại"
+msgid "Playback Only"
+msgstr "Chỉ Hát Lại"
 
 
 msgid "Simplify Grease Pencil only during animation playback"
 msgstr "Đơn giản hóa Bút Sáp chỉ khi hát lại hoạt hình"
-
-
-msgid "Disable Lines"
-msgstr "Tắt Nét"
-
-
-msgid "Display external lines of fill strokes"
-msgstr "Hiển thị đường ngoài của nét tô đầy"
-
-
-msgid "Simplify Shaders"
-msgstr "Đơn Giản Hóa Bộ Tô Sắc"
 
 
 msgid "Display Shader FX"
@@ -73962,14 +73291,6 @@ msgstr "Hiển thị màu nhiễm của lớp"
 
 msgid "Display fill strokes in the viewport"
 msgstr "Hiển thị nét tô đầy trong màn chiếu"
-
-
-msgid "Disable Modifiers"
-msgstr "Tắt Cụ Sửa Đổi"
-
-
-msgid "Display modifiers in the viewport"
-msgstr "Hiển thị cụ sửa đổi trong màn chiếu"
 
 
 msgid "Simplify Subdivision"
@@ -75276,34 +74597,6 @@ msgid "Size of every cubemaps"
 msgstr "Kích cỡ của mỗi bản đồ lập phương"
 
 
-msgid "64px"
-msgstr "64 điểm ảnh"
-
-
-msgid "128px"
-msgstr "128 điểm ảnh"
-
-
-msgid "256px"
-msgstr "256 điểm ảnh"
-
-
-msgid "512px"
-msgstr "512 điểm ảnh"
-
-
-msgid "1024px"
-msgstr "1024 điểm ảnh"
-
-
-msgid "2048px"
-msgstr "2048 điểm ảnh"
-
-
-msgid "4096px"
-msgstr "4096 điểm ảnh"
-
-
 msgid "Number of time the light is reinjected inside light grids, 0 disable indirect diffuse light"
 msgstr "Số lần tiêm ánh sáng vào đồ thị ánh sáng, đặt = 0 để tắt"
 
@@ -75362,18 +74655,6 @@ msgstr "Kích Cỡ Hiển Thị Sự Rọi"
 
 msgid "Size of the shadow map applied to each irradiance sample"
 msgstr "Kích cỡ của bàn đồ bóng tối được áp dụng cho mỗi mẫu vật sự rọi"
-
-
-msgid "8px"
-msgstr "8 điểm ảnh"
-
-
-msgid "16px"
-msgstr "16 điểm ảnh"
-
-
-msgid "32px"
-msgstr "32 điểm ảnh"
 
 
 msgid "Distance of object that contribute to the ambient occlusion effect"
@@ -75598,14 +74879,6 @@ msgstr "Khoảng cách bắt đầu hiệu ứng thể tích"
 
 msgid "Control the quality of the volumetric effects (lower size increase vram usage and quality)"
 msgstr "Điều khiển chất lượng của hiệu ứng thể tích (kích cỡ càng nhỏ càng tăng dùng trí nhớ độ họa và chất lượng)"
-
-
-msgid "2px"
-msgstr "2 điểm ảnh"
-
-
-msgid "4px"
-msgstr "4 điểm ảnh"
 
 
 msgid "Scene Objects"
@@ -77047,24 +76320,12 @@ msgid "Gaussian Blur effect"
 msgstr "Hiệu ứng Mờ Hoá Gauss"
 
 
-msgid "Define circle of confusion for depth of field"
-msgstr "Chỉ định vòng tròn lộn xộn cho độ sâu trường "
-
-
-msgid "Factor of Blur"
-msgstr "Hệ Số Mờ Hóa"
-
-
 msgid "Number of Blur Samples (zero, disable blur)"
 msgstr "Số lượng Mẫu Vật Mờ Hóa (đặt = 0 để tắt)"
 
 
-msgid "Lock Focal Plane"
-msgstr "Khóa Mặt Phẳng Tiêu Điểm"
-
-
-msgid "Blur using focal plane distance as factor to simulate depth of field effect (only in camera view)"
-msgstr "Mờ hóa bằng khoảng cách mặt phẳng tiêu điểm để làm mô phỏng độ sâu trường (chỉ trong màn máy quay phim)"
+msgid "Factor of Blur"
+msgstr "Hệ Số Mờ Hóa"
 
 
 msgid "Colorize Effect"
@@ -77147,14 +76408,6 @@ msgid "Glow mode"
 msgstr "Chế độ hào quang"
 
 
-msgid "Luminance"
-msgstr "Độ Sáng"
-
-
-msgid "Number of pixels for blurring glow (set to 0 to disable)"
-msgstr "Số lượng điểm ảnh cho mờ hóa hào quang (đặt = 0 để tắt)"
-
-
 msgid "Number of Blur Samples"
 msgstr "Số lượng Mẫu Vật Mờ Hóa"
 
@@ -77171,38 +76424,6 @@ msgid "Limit to select color for glow effect"
 msgstr "Giới hạn để chọn màu cho hiệu ứng hào quang"
 
 
-msgid "Glow only areas with alpha"
-msgstr "Chỉ làm hào quang trong khu vực có độ đục"
-
-
-msgid "Light Effect"
-msgstr "Hiệu Ứng Ánh Sáng"
-
-
-msgid "Light effect"
-msgstr "Hiệu ứng ánh sáng"
-
-
-msgid "Ambient"
-msgstr "Bao Quanh"
-
-
-msgid "Strength of ambient light source"
-msgstr "Sức của nguồn ánh sáng bao quanh"
-
-
-msgid "Energy"
-msgstr "Năng Lượng"
-
-
-msgid "Strength of light source"
-msgstr "Sức của nguồn ánh sáng"
-
-
-msgid "Object to determine light source location"
-msgstr "Vật thể để xác định vị trí của nguồn ánh sáng"
-
-
 msgid "Pixelate Effect"
 msgstr "Hiệu Ứng Điểm Ảnh Hóa"
 
@@ -77217,10 +76438,6 @@ msgstr "Màu được dùng cho nét"
 
 msgid "Pixel size"
 msgstr "Kích cỡ điểm ảnh"
-
-
-msgid "Display lines between pixels"
-msgstr "Hiển thị nét giữa điểm ảnh"
 
 
 msgid "Rim Effect"
@@ -80297,10 +79514,6 @@ msgid "Text character formatting settings"
 msgstr "Cài đặt cho định dạng ký tự văn bản"
 
 
-msgid "Kerning"
-msgstr "Cách Giữa Ký Tự"
-
-
 msgid "Spacing between characters"
 msgstr "Cách giữa ký tự"
 
@@ -82229,6 +81442,10 @@ msgid "Settings for Grease Pencil Interpolation tools"
 msgstr "Cài đặt cho dụng cụ Suy Nội Bút Sáp"
 
 
+msgid "Grease Pencil Sculpt"
+msgstr "Bút Sáp Khắc"
+
+
 msgid "Settings for stroke sculpting tools and brushes"
 msgstr "Cài đặt cho dụng cụ nét khắc và nét bút"
 
@@ -83186,12 +82403,12 @@ msgid "Fade layer opacity for Grease Pencil layers except the active one"
 msgstr "Phai độ đục của các lớp Bút Sáp trừ lớp dang hoạt động"
 
 
-msgid "Canvas grid opacity"
-msgstr "Độ đục đồ thị mặt sơn"
-
-
 msgid "Fade factor"
 msgstr "Hệ số phai"
+
+
+msgid "Canvas grid opacity"
+msgstr "Độ đục đồ thị mặt sơn"
 
 
 msgid "Grid Lines"
@@ -83562,8 +82779,12 @@ msgid "Show Edit Lines"
 msgstr "Hiện Đường Biên Tập"
 
 
-msgid "Show edit lines when editing strokes"
-msgstr "Hiện đường biên tập khi biên tập nét"
+msgid "Fade Grease Pencil Objects"
+msgstr "Phai Vật Thể Bút Sáp"
+
+
+msgid "Fade Grease Pencil Objects, except the active one"
+msgstr "Phai Vật Thể Bút Sáp, trừ vật thể hoạt dộng"
 
 
 msgid "Fade Layers"
@@ -83574,12 +82795,12 @@ msgid "Toggle fading of Grease Pencil layers except the active one"
 msgstr "Bật/tắt phai lớp Bút Sáp trừ các lớp đang hoạt dộng"
 
 
-msgid "Fade Grease Pencil Objects"
-msgstr "Phai Vật Thể Bút Sáp"
+msgid "Fade Objects"
+msgstr "Phai Vật Thể"
 
 
-msgid "Fade Grease Pencil Objects, except the active one"
-msgstr "Phai Vật Thể Bút Sáp, trừ vật thể hoạt dộng"
+msgid "Fade all viewport objects with a full color layer to improve visibility"
+msgstr "Phai hết vật thể màn chiếu có một lớp màu đầu đủ để tăng sự hiển thị"
 
 
 msgid "Use Grid"
@@ -83594,16 +82815,12 @@ msgid "Lines Only"
 msgstr "Chỉ Dường"
 
 
-msgid "Only show edit lines for additional frames"
-msgstr "Chỉ hiện đường biên tập cho bức them"
+msgid "Show Edit Lines only in multiframe"
+msgstr "Cho Xem Biên Tập Đường chỉ trong đa màn"
 
 
-msgid "Fade Objects"
-msgstr "Phai Vật Thể"
-
-
-msgid "Fade all viewport objects with a full color layer to improve visibility"
-msgstr "Phai hết vật thể màn chiếu có một lớp màu đầu đủ để tăng sự hiển thị"
+msgid "Show stroke drawing direction with a bigger green dot (start) and smaller red dot (end) points"
+msgstr "Hiện hướng vẽ nét bằng chấm điểm màu lục lớn hơn (bắt đầu) và chấm điểm màu đỏ nhỏ hơn (kết thúc)"
 
 
 msgid "Vertex Opacity"
@@ -84648,16 +83865,6 @@ msgstr "Sơn Quyền Lượng"
 
 
 msgctxt "WindowManager"
-msgid "Weight Paint Vertex Selection"
-msgstr "Sự Lựa Chọn Sơn Quyền Đỉnh"
-
-
-msgctxt "WindowManager"
-msgid "Face Mask"
-msgstr "Mặt Nạ Mặt"
-
-
-msgctxt "WindowManager"
 msgid "Image Paint"
 msgstr "Sơn Ảnh"
 
@@ -85075,6 +84282,10 @@ msgstr "Che Khuất Bao Quanh"
 
 msgid "Mesh Light"
 msgstr "Đèn Mạng Lưới"
+
+
+msgid "Subsurface"
+msgstr "Hạ Mặt"
 
 
 msgid "Dicing Rate Render"
@@ -86088,10 +85299,6 @@ msgid "Thickness Scale"
 msgstr "Phóng To Bề Dày"
 
 
-msgid "Adaptive UVs"
-msgstr "UV Ứng Phó"
-
-
 msgctxt "Operator"
 msgid "Hide Others"
 msgstr "Ẩn Khác"
@@ -86124,10 +85331,6 @@ msgstr "Chọn Điểm"
 msgctxt "Operator"
 msgid "Deselect Points"
 msgstr "Thả Điểm"
-
-
-msgid "Show Stroke Directions"
-msgstr "Cho Xem Hướng Nét"
 
 
 msgid "Keyframes Before"
@@ -86355,10 +85558,6 @@ msgstr "Tọa Độ Họa Tiết:"
 
 msgid "Sharp Edges"
 msgstr "Cạnh Bén"
-
-
-msgid "Anchors Vertex Group:"
-msgstr "Nhóm Đỉnh Neo:"
 
 
 msgctxt "Operator"
@@ -86626,40 +85825,24 @@ msgid "Weighting Mode:"
 msgstr "Chế Độ Quyền Lượng:"
 
 
-msgid "Affect:"
-msgstr "Ảnh Hưởng:"
+msgid "Layer:"
+msgstr "Lớp:"
 
 
 msgid "Material:"
 msgstr "Vật Liệu:"
 
 
-msgid "Layer:"
-msgstr "Lớp:"
+msgid "Affect:"
+msgstr "Ảnh Hưởng:"
 
 
 msgid "Settings:"
 msgstr "Cài Đặt:"
 
 
-msgid "Thickness Factor"
-msgstr "Hệ Số Độ Dày"
-
-
 msgid "Color:"
 msgstr "Màu:"
-
-
-msgid "Opacity:"
-msgstr "Độ Đục:"
-
-
-msgid "Shift:"
-msgstr "Dời:"
-
-
-msgid "Keep original stroke on top"
-msgstr "Giữ nét ban đầu ở trên"
 
 
 msgid "Bone:"
@@ -86762,10 +85945,6 @@ msgstr "Dùng Vật Thể Làm Điểm Tựa"
 
 msgid "Use Wave Effect"
 msgstr "Dùng Hiệu Ứng Sóng"
-
-
-msgid "Use Alpha Mode"
-msgstr "Dùng Chế Độ Độ Đục"
 
 
 msgid "Distance Reference"
@@ -86914,15 +86093,6 @@ msgid "Delete Frame(s)"
 msgstr "Xóa Bức"
 
 
-msgid "Active Layer:      "
-msgstr "Lớp Hoạt Động:"
-
-
-msgctxt "Operator"
-msgid "Convert..."
-msgstr "Biến Đổi..."
-
-
 msgctxt "Operator"
 msgid "Selection to Grid"
 msgstr "Sự Lựa Chọn Đến Đồ Thị"
@@ -86953,14 +86123,6 @@ msgid "Delete Loose Points"
 msgstr "Xoá Điểm Rời Ra"
 
 
-msgid "Playback Only"
-msgstr "Chỉ Hát Lại"
-
-
-msgid "ShaderFX"
-msgstr "Hiệu Ứng Bộ Tô Sắc"
-
-
 msgid "Show Only On Keyframed"
 msgstr "Chỉ Hiện Trên Có Bức Mẫu"
 
@@ -86972,48 +86134,6 @@ msgstr "Đa Giác"
 
 msgid "Data Source:"
 msgstr "Nguồn Dữ Liệu:"
-
-
-msgctxt "Operator"
-msgid "Straight Lines"
-msgstr "Đường Thẳng"
-
-
-msgctxt "Operator"
-msgid "Eraser"
-msgstr "Cục Gôm"
-
-
-msgid "Arrange Strokes"
-msgstr "Sắp Xếp Nét"
-
-
-msgctxt "Operator"
-msgid "Move to Color"
-msgstr "Di Chuyển Đến Màu"
-
-
-msgid "Join Strokes"
-msgstr "Kết Nối Nét"
-
-
-msgctxt "Operator"
-msgid "Flip Direction"
-msgstr "Lật Hướng"
-
-
-msgid "Show Drawing Direction"
-msgstr "Hiện Hướng Vẽ"
-
-
-msgctxt "Operator"
-msgid "Paste by Layer"
-msgstr "Dán tùy Lớp"
-
-
-msgctxt "Operator"
-msgid "Back to Main Palette..."
-msgstr "Trở Lại đến Bảng Chánh..."
 
 
 msgctxt "Operator"
@@ -87053,76 +86173,12 @@ msgid "Cursor Color"
 msgstr "Màu Con Trỏ"
 
 
-msgctxt "Operator"
-msgid "Settings..."
-msgstr "Cài đặt..."
-
-
-msgctxt "Operator"
-msgid "Exit Edit Mode"
-msgstr "Thoát Chế Độ Biên Tập"
-
-
-msgid "Proportional Edit:"
-msgstr "Biên Tập Đồng Biến:"
-
-
-msgctxt "Operator"
-msgid "Select Inverse"
-msgstr "Chọn Đảo Nghịch"
-
-
-msgctxt "Operator"
-msgid "Alternate Select"
-msgstr "Chọn Xen Kẽ"
-
-
-msgctxt "Operator"
-msgid "Delete..."
-msgstr "Xóa..."
-
-
-msgctxt "Operator"
-msgid "Enable Stroke Editing"
-msgstr "Bật Biên Tập Nét"
-
-
-msgctxt "Operator"
-msgid "Send to Back"
-msgstr "Gởi Phía Sau"
-
-
-msgctxt "Operator"
-msgid "Send Backward"
-msgstr "Gởi Phía Sau"
-
-
-msgctxt "Operator"
-msgid "Bring to Front"
-msgstr "Gởi Phía Trước"
-
-
-msgctxt "Operator"
-msgid "Bring Forward"
-msgstr "Nâng Phía Trước"
-
-
-msgctxt "Operator"
-msgid "Join & Copy"
-msgstr "Kết Nối & Chép"
-
-
 msgid "Lock Frame"
 msgstr "Khóa Bức"
 
 
 msgid "Inverse Cursor Color"
 msgstr "Đảo Nhgịch Màu Con Trỏ"
-
-
-msgctxt "Operator"
-msgid "More..."
-msgstr "Thêm..."
 
 
 msgid "Unlocked"
@@ -87236,24 +86292,12 @@ msgid "Lock Unused"
 msgstr "Khóa Không Được Dùng"
 
 
-msgid "Clip Image"
-msgstr "Cắt Ảnh"
-
-
-msgid "Use As Stencil Mask"
-msgstr "Dùng Như Mặt Nạ Khuôn Tô"
-
-
 msgid "Flip Colors"
 msgstr "Lật Màu"
 
 
-msgid "Use as Stencil Mask"
-msgstr "Dùng như Mặt Nạ Khuôn Tô"
-
-
-msgid "Mix with Color"
-msgstr "Pha Trộn với Màu"
+msgid "Clip Image"
+msgstr "Cắt Ảnh"
 
 
 msgid "Tracking Axis"
@@ -87416,10 +86460,6 @@ msgstr "Sức Tỉ Trọng"
 
 msgid "Tangent Phase"
 msgstr "Pha Tiếp Tuyến"
-
-
-msgid "Randomize Phase "
-msgstr "Ngẫu Nhiên Hóa Pha"
 
 
 msgid "Render As"
@@ -87905,10 +86945,6 @@ msgstr "Tuổi Thọ Hạt Cực Đại"
 
 msgid "Particles in Boundary:"
 msgstr "Các Hạt trong Ranh Giới:"
-
-
-msgid "Viscosity Presets:"
-msgstr "Đặt Sẵn Độ Nhớt:"
 
 
 msgid "Real World Size"
@@ -88914,11 +87950,6 @@ msgstr "Hiện Cùng Vật Liệu"
 
 
 msgctxt "Operator"
-msgid "Frame Selected"
-msgstr "Bức Được Chọn"
-
-
-msgctxt "Operator"
 msgid "Frame All Fit"
 msgstr "Vừa Khung"
 
@@ -89025,6 +88056,10 @@ msgstr "Xóa Đỉnh UV Đôi"
 
 msgid "Image*"
 msgstr "Ảnh*"
+
+
+msgid "Aspect Ratio"
+msgstr "Tỉ Số Cạnh"
 
 
 msgid "Repeat Image"
@@ -89441,6 +88476,11 @@ msgstr "Đổi Đường Dẫn/Tệp"
 msgctxt "Operator"
 msgid "Swap Data"
 msgstr "Trao Đổi Dữ Liệu"
+
+
+msgctxt "Operator"
+msgid "Delete..."
+msgstr "Xóa..."
 
 
 msgid "Position X"
@@ -90293,10 +89333,6 @@ msgstr "Hát Lại Bức Ành/Giây"
 
 msgid "3D Viewport Axis"
 msgstr "Trục Màn Chiếu 3D"
-
-
-msgid "Grease Pencil Multisampling"
-msgstr "Đa Mẫu Vật Bút Sáp"
 
 
 msgid "Limit Size"
@@ -91361,6 +90397,11 @@ msgid "Sequence"
 msgstr "Trình Tự"
 
 
+msgctxt "Operator"
+msgid "View Selected"
+msgstr "Chiếu Được Chọn"
+
+
 msgid "Show Gizmos"
 msgstr "Hiện Đồ Đạc"
 
@@ -91446,31 +90487,8 @@ msgid "Snap to"
 msgstr "Hút dính đến"
 
 
-msgid "PAINT_GPENCILEDIT_GPENCILSCULPT_GPENCILWEIGHT_GPENCILOBJECTDraw Grease PencilEdit Grease PencilSculpt Grease PencilWeight Grease PencilGrease Pencil"
-msgstr "BútKhắc Bút Sáp QuyềnLượngBút Sáp SápBút Bút"
-
-
 msgid "Display:"
 msgstr "Hiễn Thị:"
-
-
-msgid "Frames:"
-msgstr "Các Bức:"
-
-
-msgctxt "Operator"
-msgid "Insert Blank in Active Layer"
-msgstr "Chèn Rỗng trong Lớp Hoạt Động"
-
-
-msgctxt "Operator"
-msgid "Duplicate Active Layer"
-msgstr "Sao Chép Lớp Hoạt Động"
-
-
-msgctxt "Operator"
-msgid "Delete All Layers"
-msgstr "Xóa Hết Lớp"
 
 
 msgctxt "Operator"
@@ -91912,6 +90930,11 @@ msgstr "Không có lớp để chép"
 
 
 msgctxt "Operator"
+msgid "Paste by Layer"
+msgstr "Dán tùy Lớp"
+
+
+msgctxt "Operator"
 msgid "Smooth Points"
 msgstr "Điểm Mịn"
 
@@ -91972,10 +90995,6 @@ msgid "Reference Point"
 msgstr "Điểm Tham Chiếu"
 
 
-msgid "Show Edit Lines only in multiframe"
-msgstr "Cho Xem Biên Tập Đường chỉ trong đa màn"
-
-
 msgid "Point Context Menu"
 msgstr "Danh Bạ Bối Cảnh Điểm"
 
@@ -91998,21 +91017,6 @@ msgstr "Gương Lại Nét"
 
 msgid "Snap Stroke"
 msgstr "Hút Dính Nét"
-
-
-msgctxt "Operator"
-msgid "Insert Blank in All Layers"
-msgstr "Chèn Rỗng trong Tấc Cả Lớp"
-
-
-msgctxt "Operator"
-msgid "Duplicate All Layers"
-msgstr "Sao Chép Tất Cả Lớp"
-
-
-msgctxt "Operator"
-msgid "Delete Active Layer"
-msgstr "Xóa Lớp Hoạt Động"
 
 
 msgid "Multiframe"
@@ -92390,10 +91394,6 @@ msgstr "Không được hỗ trợ trong hình dạng động lý"
 
 msgid "Not supported in sculpt mode"
 msgstr "Không được hỗ trợ trong chế độ khắc"
-
-
-msgid "Hide, Mask and optimized display disabled"
-msgstr "Ẩn, Mặt Nạ và hiển thị ưu tắt rồi"
 
 
 msgid ", cannot have single-frame paths"
@@ -93179,11 +92179,6 @@ msgstr "Đôi vành-cạnh chứa được kết nối"
 
 msgid "Edge-rings are not connected"
 msgstr "Vành-cạnh chưa được kết nối"
-
-
-msgctxt "Action"
-msgid "Group"
-msgstr "Nhóm"
 
 
 msgid "Compositing | Tile %u-%u"
@@ -94086,18 +93081,6 @@ msgid "No Armature object in the view layer"
 msgstr "Không có vật thể Cốt trong lớp màn chiếu"
 
 
-msgid "GPencil Sculpt: %s Stroke  | LMB to paint | RMB/Escape to Exit | Ctrl to Invert Action | Wheel Up/Down for Size  | Shift-Wheel Up/Down for Strength"
-msgstr "Khắc Bút Sáp: %s Nét  | NCT cho vẽ | NCP/ESC cho thoát | Ctrl cho Đảo Nghịch Hành Động | Nút Cuộn Lên/Xuống cho Kích Cỡ | Shift-Nút Cuộn Lên/Xuống cho Sức"
-
-
-msgid "Copy some strokes to the clipboard before using the Clone brush to paste copies of them"
-msgstr "Chép lại vài nét đến bảng dán trước dùng bút chép lại để dán bản sao của nó"
-
-
-msgid "Cannot sculpt while play animation"
-msgstr "Không thể khắc khi đang hát lại hoạt hình"
-
-
 msgid "No Grease Pencil data to work on"
 msgstr "Không có dữ liệu Bút Sáp để dùng"
 
@@ -94170,14 +93153,6 @@ msgid "Can not paste strokes when active layer is hidden or locked"
 msgstr "Không thể dán nét khi lớp hoạt động bị ẩn hay khóa"
 
 
-msgid "Cannot paste 2D strokes in 3D View"
-msgstr "Không thể dán nét 2D trong màn 3D"
-
-
-msgid "Cannot paste 3D strokes in 2D editors"
-msgstr "Không thể dán nét 3D trong bộ biên tập 2D"
-
-
 msgid "No grease pencil data"
 msgstr "Không có dữ liệu bút sáp"
 
@@ -94200,10 +93175,6 @@ msgstr "Không có khu vực hoạt động"
 
 msgid "There is no layer number %d"
 msgstr "Không có lớp số %d"
-
-
-msgid "Failed to find Grease Pencil data to draw into"
-msgstr "Tìm dữ liệu bút sáp để vẽ vào đã thất bại"
 
 
 msgid "Fill: ESC/RMB cancel, LMB Fill, Shift Draw on Back"
@@ -94262,10 +93233,6 @@ msgid "Grease Pencil Freehand Session: Hold and drag LMB to draw"
 msgstr "Phiên Chạy Vẽ Tự Do Bút Sáp: Bấm giữ và kéo NCT để vẽ"
 
 
-msgid "Grease Pencil Poly Session: LMB click to place next stroke vertex | Release Shift/ESC/Enter to end (or click outside this area)"
-msgstr "Phiên Chạy Đa Đỉnh Bút Sáp: bấm NCT để chấm đỉnh nét tiếp | Thả Shift/ESC/Enter để kết thúc (hay bấm ra ngoài khu vực này)"
-
-
 msgid "Grease Pencil Session: ESC/Enter to end (or click outside this area)"
 msgstr "Phiên Chạy Bút Sáp: Bấm ESC/Enter để kết thúc (hay bấm ra ngoài khu vực này)"
 
@@ -94316,6 +93283,18 @@ msgstr "Chỉ được thêm hình cơ bản trong chế độ Vẽ hay Biên T�
 
 msgid "Primitives cannot be added as active layer is locked or hidden"
 msgstr "Không thể thêm hình cơ bản khi lớp hoạt động bị khóa hay ẩn"
+
+
+msgid "GPencil Sculpt: %s Stroke  | LMB to paint | RMB/Escape to Exit | Ctrl to Invert Action | Wheel Up/Down for Size  | Shift-Wheel Up/Down for Strength"
+msgstr "Khắc Bút Sáp: %s Nét  | NCT cho vẽ | NCP/ESC cho thoát | Ctrl cho Đảo Nghịch Hành Động | Nút Cuộn Lên/Xuống cho Kích Cỡ | Shift-Nút Cuộn Lên/Xuống cho Sức"
+
+
+msgid "Copy some strokes to the clipboard before using the Clone brush to paste copies of them"
+msgstr "Chép lại vài nét đến bảng dán trước dùng bút chép lại để dán bản sao của nó"
+
+
+msgid "Cannot sculpt while play animation"
+msgstr "Không thể khắc khi đang hát lại hoạt hình"
 
 
 msgid "Non-Keyboard Shortcut"
@@ -98055,6 +97034,11 @@ msgstr "Cục dữ liệu không có người dùng và sẽ bị xóa"
 
 msgid "Data-block has a 'fake' user which will keep it in the file even if nothing else uses it"
 msgstr "Cục dữ liệu có một 'người dùng giả' để giữ lại nó trong tệp cũng nếu chẳng có cái gì khác được dùng nó"
+
+
+msgctxt "Action"
+msgid "Group"
+msgstr "Nhóm"
 
 
 msgid "Library path '%s' does not exist, correct this before saving"

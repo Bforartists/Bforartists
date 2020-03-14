@@ -357,12 +357,12 @@ class BezierSpline:
         return [newSpline1, newSpline2]
 
 
-    def Join(self, spline2, mode = 'At midpoint'):
-        if mode == 'At midpoint':
+    def Join(self, spline2, mode = 'At_midpoint'):
+        if mode == 'At_midpoint':
             self.JoinAtMidpoint(spline2)
             return
 
-        if mode == 'Insert segment':
+        if mode == 'Insert_segment':
             self.JoinInsertSegment(spline2)
             return
 

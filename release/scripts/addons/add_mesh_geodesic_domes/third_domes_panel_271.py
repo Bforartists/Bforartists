@@ -127,7 +127,7 @@ class GenerateGeodesicDome(Operator, object_utils.AddObjectHelper):
                    ("Parabola", "Parabola", "Generate Parabola"),
                    ("Torus", "Torus", "Generate Torus"),
                    ("Sphere", "Sphere", "Generate Sphere"),
-                   ("Import your mesh", "Import your mesh", "Import Your Mesh"),
+                   ("Import_your_mesh", "Import your mesh", "Import Your Mesh"),
                   ],
             default='Geodesic'
             )
@@ -157,10 +157,10 @@ class GenerateGeodesicDome(Operator, object_utils.AddObjectHelper):
     geodesic_class: EnumProperty(
             name="Class",
             description="Subdivide Basic/Triacon",
-            items=[("Class 1", "Class 1", "class one"),
-                   ("Class 2", "Class 2", "class two"),
+            items=[("Class_1", "Class 1", "class one"),
+                   ("Class_2", "Class 2", "class two"),
                    ],
-            default='Class 1'
+            default='Class_1'
             )
     tri_hex_star: EnumProperty(
             name="Shape",
@@ -930,7 +930,7 @@ class GenerateGeodesicDome(Operator, object_utils.AddObjectHelper):
                 row.prop(self, "grxsz")
                 row = layout.row()
                 row.prop(self, "grysz")
-            elif tmp == 'Import your mesh':
+            elif tmp == 'Import_your_mesh':
                 col.prop(self, "use_imported_mesh")
                 col.prop(self, "import_mesh_name")
             # superform parameters only where possible
@@ -939,7 +939,7 @@ class GenerateGeodesicDome(Operator, object_utils.AddObjectHelper):
             row = layout.row()
             row.prop(self, "vact")
             row = layout.row()
-            if not(tmp == 'Import your mesh'):
+            if tmp != 'Import_your_mesh':
                 if (self.uact is False) and (self.vact is False):
                     row.label(text="No checkbox active", icon="INFO")
                 else:
@@ -1117,7 +1117,7 @@ class GenerateGeodesicDome(Operator, object_utils.AddObjectHelper):
                     faceshape = 2
                 tmp_cl = self.geodesic_class
                 klass = 0
-                if tmp_cl == "Class 2":
+                if tmp_cl == "Class_2":
                     klass = 1
                 shape = 0
                 parameters = [self.frequency, self.eccentricity, self.squish,
@@ -1167,7 +1167,7 @@ class GenerateGeodesicDome(Operator, object_utils.AddObjectHelper):
                                     self.bvellipse, superformparam
                                     )
                 mesh = vefm_271.vefm_add_object(basegeodesic)
-            elif self.geodesic_types == "Import your mesh":
+            elif self.geodesic_types == "Import_your_mesh":
                 obj_name = self.import_mesh_name
                 if obj_name == "None":
                     message = "Fill in a name \nof an existing mesh\nto be imported"

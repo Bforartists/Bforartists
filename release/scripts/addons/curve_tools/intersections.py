@@ -29,7 +29,7 @@ class BezierSegmentsIntersector:
         if algorithm == '3D':
             return self.CalcFirstRealIntersection3D(nrSamples1, nrSamples2)
 
-        if algorithm == 'From View':
+        if algorithm == 'From_View':
             global algoDIR
             if algoDIR is not None:
                 return self.CalcFirstRealIntersectionFromViewDIR(nrSamples1, nrSamples2)
@@ -309,7 +309,7 @@ class BezierSegmentsIntersector:
         if algorithm == '3D':
             return self.CalcIntersections3D(nrSamples1, nrSamples2)
 
-        if algorithm == 'From View':
+        if algorithm == 'From_View':
             global algoDIR
             if algoDIR is not None:
                 return self.CalcIntersectionsFromViewDIR(nrSamples1, nrSamples2)
@@ -527,7 +527,7 @@ class CurvesIntersector:
         global algoDIR
 
         algo = bpy.context.scene.curvetools.IntersectCurvesAlgorithm
-        if algo == 'From View':
+        if algo == 'From_View':
             regionView3D = util.GetFirstRegionView3D()
             if regionView3D is None:
                 print("### ERROR: regionView3D is None. Stopping.")

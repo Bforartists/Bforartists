@@ -65,10 +65,11 @@ def update_collection_tree(context):
     max_lvl = 0
     row_index = 0
 
-    init_laycol_list = context.view_layer.layer_collection.children
+    layer_collection = context.view_layer.layer_collection
+    init_laycol_list = layer_collection.children
 
     master_laycol = {"id": 0,
-                     "name": context.view_layer.layer_collection.name,
+                     "name": layer_collection.name,
                      "lvl": -1,
                      "row_index": -1,
                      "visible": True,
@@ -76,10 +77,13 @@ def update_collection_tree(context):
                      "expanded": True,
                      "parent": None,
                      "children": [],
-                     "ptr": context.view_layer.layer_collection
+                     "ptr": layer_collection
                      }
 
-    get_all_collections(context, init_laycol_list, master_laycol, collection_tree, visible=True)
+    get_all_collections(context, init_laycol_list, master_laycol, master_laycol["children"], visible=True)
+
+    for laycol in master_laycol["children"]:
+        collection_tree.append(laycol)
 
 
 def get_all_collections(context, collections, parent, tree, level=0, visible=False):
@@ -120,15 +124,17 @@ def get_all_collections(context, collections, parent, tree, level=0, visible=Fal
 
 def update_property_group(context):
     update_collection_tree(context)
-    context.scene.CMListCollection.clear()
+    context.scene.collection_manager.cm_list_collection.clear()
     create_property_group(context, collection_tree)
 
 
 def create_property_group(context, tree):
     global in_filter
 
+    cm = context.scene.collection_manager
+
     for laycol in tree:
-        new_cm_listitem = context.scene.CMListCollection.add()
+        new_cm_listitem = cm.cm_list_collection.add()
         new_cm_listitem.name = laycol["name"]
 
         if laycol["has_children"]:

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
+"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -258,6 +258,10 @@ msgid "Mode"
 msgstr "Mode"
 
 
+msgid "Dissolve"
+msgstr "Oplossen"
+
+
 msgid "Point"
 msgstr "Punt"
 
@@ -266,16 +270,16 @@ msgid "Resolution"
 msgstr "Resolutie"
 
 
-msgid "Material"
-msgstr "Materiaal"
-
-
-msgid "Sensitivity"
-msgstr "Gevoeligheid"
-
-
 msgid "Smooth"
 msgstr "Glad"
+
+
+msgid "Draw"
+msgstr "Potlood"
+
+
+msgid "Material"
+msgstr "Materiaal"
 
 
 msgid "Back"
@@ -455,10 +459,6 @@ msgid "Vertex"
 msgstr "Punt"
 
 
-msgid "Dissolve"
-msgstr "Oplossen"
-
-
 msgid "Group"
 msgstr "Groep"
 
@@ -572,6 +572,10 @@ msgid "Parent Object"
 msgstr "Ouder Object"
 
 
+msgid "Layer"
+msgstr "Laag"
+
+
 msgid "Grid"
 msgstr "Rooster"
 
@@ -588,8 +592,8 @@ msgid "Mirror"
 msgstr "Spiegel"
 
 
-msgid "Layer"
-msgstr "Laag"
+msgid "Custom Curve"
+msgstr "Eigen Kromme"
 
 
 msgctxt "Curve"
@@ -650,10 +654,6 @@ msgid "Step"
 msgstr "Stap"
 
 
-msgid "Custom Curve"
-msgstr "Eigen Kromme"
-
-
 msgid "Active Layer"
 msgstr "Actieve Laag"
 
@@ -672,10 +672,6 @@ msgstr "Wortel"
 
 msgid "Sharp"
 msgstr "Scherp"
-
-
-msgid "Draw"
-msgstr "Potlood"
 
 
 msgid "Mask"
@@ -1657,11 +1653,6 @@ msgstr "Ontkoppel Actie"
 msgctxt "Operator"
 msgid "View All"
 msgstr "Bekijk Alles"
-
-
-msgctxt "Operator"
-msgid "View Selected"
-msgstr "Bekijk Geselecteerd"
 
 
 msgctxt "Operator"
@@ -3055,6 +3046,11 @@ msgstr "Aap"
 
 
 msgctxt "Operator"
+msgid "Add Modifier"
+msgstr "Voeg Aanpasser Toe"
+
+
+msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Pas Aanpasser Toe"
 
@@ -3144,11 +3140,6 @@ msgstr "Voeg Metabol toe"
 msgctxt "Operator"
 msgid "Set Object Mode"
 msgstr "Zet Object Modus"
-
-
-msgctxt "Operator"
-msgid "Add Modifier"
-msgstr "Voeg Aanpasser Toe"
 
 
 msgctxt "Operator"
@@ -3785,11 +3776,6 @@ msgstr "Ruil Strip Om"
 
 
 msgctxt "Operator"
-msgid "View Frame"
-msgstr "Bekijk Frame"
-
-
-msgctxt "Operator"
 msgid "Open Sound"
 msgstr "Open Geluid"
 
@@ -4283,6 +4269,10 @@ msgstr "Tekenen"
 
 msgid "Springs"
 msgstr "Veren"
+
+
+msgid "Sensitivity"
+msgstr "Gevoeligheid"
 
 
 msgid "Audio"
@@ -4971,43 +4961,8 @@ msgstr "Tekenen:"
 
 
 msgctxt "Operator"
-msgid "Convert..."
-msgstr "Converteer..."
-
-
-msgctxt "Operator"
-msgid "Straight Lines"
-msgstr "Rechte Lijnen"
-
-
-msgctxt "Operator"
-msgid "Eraser"
-msgstr "Gum"
-
-
-msgctxt "Operator"
 msgid "Selection to Cursor"
 msgstr "Selectie naar Cursor"
-
-
-msgctxt "Operator"
-msgid "Settings..."
-msgstr "Instellingen..."
-
-
-msgctxt "Operator"
-msgid "Select Inverse"
-msgstr "Selecteer Omgedraaide"
-
-
-msgctxt "Operator"
-msgid "Delete..."
-msgstr "Verwijder..."
-
-
-msgctxt "Operator"
-msgid "More..."
-msgstr "Meer..."
 
 
 msgctxt "Operator"
@@ -5209,6 +5164,11 @@ msgstr "Film"
 msgctxt "Operator"
 msgid "Sound"
 msgstr "Geluid"
+
+
+msgctxt "Operator"
+msgid "Delete..."
+msgstr "Verwijder..."
 
 
 msgctxt "Operator"
@@ -5523,6 +5483,11 @@ msgid "Make"
 msgstr "Maak"
 
 
+msgctxt "Operator"
+msgid "View Selected"
+msgstr "Bekijk Geselecteerd"
+
+
 msgctxt "Plural"
 msgid "Sharp"
 msgstr "Scherp"
@@ -5590,11 +5555,6 @@ msgstr "Krommes"
 msgctxt "Sequence"
 msgid "Hue Correct"
 msgstr "Hue Corrigeren"
-
-
-msgctxt "Action"
-msgid "Group"
-msgstr "Groep"
 
 
 msgid "Add Point"
@@ -5904,6 +5864,11 @@ msgstr "Voeg Aanpasser Toe"
 
 msgid "Select Layer"
 msgstr "Selecteer Laag"
+
+
+msgctxt "Action"
+msgid "Group"
+msgstr "Groep"
 
 
 msgid "(empty)"

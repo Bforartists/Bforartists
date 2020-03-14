@@ -73,8 +73,9 @@ class ExpandAllOperator(Operator):
         return {'FINISHED'}
 
 
+expand_history = {"target": "", "history": []}
 class ExpandSublevelOperator(Operator):
-    '''  * Shift-Click to expand/collapse all sublevels'''
+    '''  * Ctrl-Click to expand/collapse all sublevels\n  * Shift-Click to isolate/restore tree'''
     bl_label = "Expand Sublevel Items"
     bl_idname = "view3d.expand_sublevel"
     bl_options = {'REGISTER', 'UNDO'}
@@ -83,8 +84,16 @@ class ExpandSublevelOperator(Operator):
     name: StringProperty()
     index: IntProperty()
 
+    # static class var
+    isolated = False
+
     def invoke(self, context, event):
-        if event.shift:
+        global expand_history
+        cls = ExpandSublevelOperator
+
+        modifiers = get_modifiers(event)
+
+        if modifiers == {"ctrl"}:
             # expand/collapse all subcollections
             expand = None
 
@@ -111,6 +120,35 @@ class ExpandSublevelOperator(Operator):
 
             loop(layer_collections[self.name]["ptr"])
 
+            expand_history["target"] = ""
+            expand_history["history"].clear()
+            cls.isolated = False
+
+        elif modifiers == {"shift"}:
+            def isolate_tree(current_laycol):
+                parent = current_laycol["parent"]
+
+                for laycol in parent["children"]:
+                    if laycol["name"] != current_laycol["name"] and laycol["name"] in expanded:
+                        expanded.remove(laycol["name"])
+                        expand_history["history"].append(laycol["name"])
+
+                if parent["parent"]:
+                    isolate_tree(parent)
+
+            if cls.isolated:
+                for item in expand_history["history"]:
+                    expanded.append(item)
+
+                expand_history["target"] = ""
+                expand_history["history"].clear()
+                cls.isolated = False
+
+            else:
+                isolate_tree(layer_collections[self.name])
+                expand_history["target"] = self.name
+                cls.isolated = True
+
         else:
             # expand/collapse collection
             if self.expand:
@@ -118,9 +156,13 @@ class ExpandSublevelOperator(Operator):
             else:
                 expanded.remove(self.name)
 
+            expand_history["target"] = ""
+            expand_history["history"].clear()
+            cls.isolated = False
+
 
         # set selected row to the collection you're expanding/collapsing and update tree view
-        context.scene.CMListIndex = self.index
+        context.scene.collection_manager.cm_list_index = self.index
         update_property_group(context)
 
         return {'FINISHED'}
@@ -192,7 +234,8 @@ class CMExcludeOperator(Operator):
         if modifiers == {"shift"}:
             # isolate/de-isolate exclusion of collections
 
-            active_layer_collections = [x["ptr"] for x in layer_collections.values() if not x["ptr"].exclude]
+            active_layer_collections = [x["ptr"] for x in layer_collections.values()
+                                        if not x["ptr"].exclude]
 
             # check if previous state should be restored
             if cls.isolated and self.name == target:
@@ -206,7 +249,8 @@ class CMExcludeOperator(Operator):
                 cls.isolated = False
 
             # check if all collections should be enabled
-            elif len(active_layer_collections) == 1 and active_layer_collections[0].name == self.name:
+            elif (len(active_layer_collections) == 1 and
+                  active_layer_collections[0].name == self.name):
                 # enable all collections
                 for item in layer_collections.values():
                     item["ptr"].exclude = False
@@ -441,8 +485,8 @@ class CMRestrictSelectOperator(Operator):
             laycol = layer_collections[self.name]
 
             # get active collections
-            active_layer_collections = [x["ptr"] for x in layer_collections.values() \
-                                          if x["ptr"].collection.hide_select == False]
+            active_layer_collections = [x["ptr"] for x in layer_collections.values()
+                                        if x["ptr"].collection.hide_select == False]
 
             # check if previous state should be restored
             if cls.isolated and self.name == target:
@@ -456,7 +500,8 @@ class CMRestrictSelectOperator(Operator):
                 cls.isolated = False
 
             # check if all collections should be enabled
-            elif len(active_layer_collections) == 1 and active_layer_collections[0].name == self.name:
+            elif (len(active_layer_collections) == 1 and
+                  active_layer_collections[0].name == self.name):
                 # make all collections selectable
                 for item in layer_collections.values():
                     item["ptr"].collection.hide_select = False
@@ -622,17 +667,19 @@ class CMUnRestrictSelectAllOperator(Operator):
             keep_history = False
 
             for item in layer_collections.values():
+                collection = item["ptr"].collection
+
                 if event.shift:
                     keep_history = True
-                    select_all_history.append(item["ptr"].collection.hide_select)
-                    item["ptr"].collection.hide_select = not item["ptr"].collection.hide_select
+                    select_all_history.append(collection.hide_select)
+                    collection.hide_select = not collection.hide_select
 
                 else:
-                    if item["ptr"].collection.hide_select:
+                    if collection.hide_select:
                         keep_history = True
 
-                    select_all_history.append(item["ptr"].collection.hide_select)
-                    item["ptr"].collection.hide_select = False
+                    select_all_history.append(collection.hide_select)
+                    collection.hide_select = False
 
             if not keep_history:
                 del rto_history["select_all"][view_layer]
@@ -677,8 +724,8 @@ class CMHideOperator(Operator):
             laycol = layer_collections[self.name]
 
             # get active collections
-            active_layer_collections = [x["ptr"] for x in layer_collections.values() \
-                                          if x["ptr"].hide_viewport == False]
+            active_layer_collections = [x["ptr"] for x in layer_collections.values()
+                                        if x["ptr"].hide_viewport == False]
 
             # check if previous state should be restored
             if cls.isolated and self.name == target:
@@ -692,7 +739,8 @@ class CMHideOperator(Operator):
                 cls.isolated = False
 
             # check if all collections should be enabled
-            elif len(active_layer_collections) == 1 and active_layer_collections[0].name == self.name:
+            elif (len(active_layer_collections) == 1 and
+                  active_layer_collections[0].name == self.name):
                 # show all collections
                 for laycol in layer_collections.values():
                     laycol["ptr"].hide_viewport = False
@@ -913,8 +961,8 @@ class CMDisableViewportOperator(Operator):
             laycol = layer_collections[self.name]
 
             # get active collections
-            active_layer_collections = [x["ptr"] for x in layer_collections.values() \
-                                          if x["ptr"].collection.hide_viewport == False]
+            active_layer_collections = [x["ptr"] for x in layer_collections.values()
+                                        if x["ptr"].collection.hide_viewport == False]
 
             # check if previous state should be restored
             if cls.isolated and self.name == target:
@@ -928,7 +976,8 @@ class CMDisableViewportOperator(Operator):
                 cls.isolated = False
 
             # check if all collections should be enabled
-            elif len(active_layer_collections) == 1 and active_layer_collections[0].name == self.name:
+            elif (len(active_layer_collections) == 1 and
+                  active_layer_collections[0].name == self.name):
                 # enable all collections in viewport
                 for laycol in layer_collections.values():
                     laycol["ptr"].collection.hide_viewport = False
@@ -1094,18 +1143,19 @@ class CMUnDisableViewportAllOperator(Operator):
             keep_history = False
 
             for item in layer_collections.values():
+                collection = item["ptr"].collection
+
                 if event.shift:
                     keep_history = True
-                    disable_all_history.append(item["ptr"].collection.hide_viewport)
-                    item["ptr"].collection.hide_viewport = not \
-                        item["ptr"].collection.hide_viewport
+                    disable_all_history.append(collection.hide_viewport)
+                    collection.hide_viewport = not collection.hide_viewport
 
                 else:
-                    if item["ptr"].collection.hide_viewport:
+                    if collection.hide_viewport:
                         keep_history = True
 
-                    disable_all_history.append(item["ptr"].collection.hide_viewport)
-                    item["ptr"].collection.hide_viewport = False
+                    disable_all_history.append(collection.hide_viewport)
+                    collection.hide_viewport = False
 
             if not keep_history:
                 del rto_history["disable_all"][view_layer]
@@ -1150,8 +1200,8 @@ class CMDisableRenderOperator(Operator):
             laycol = layer_collections[self.name]
 
             # get active collections
-            active_layer_collections = [x["ptr"] for x in layer_collections.values() \
-                                          if x["ptr"].collection.hide_render == False]
+            active_layer_collections = [x["ptr"] for x in layer_collections.values()
+                                        if x["ptr"].collection.hide_render == False]
 
             # check if previous state should be restored
             if cls.isolated and self.name == target:
@@ -1165,7 +1215,8 @@ class CMDisableRenderOperator(Operator):
                 cls.isolated = False
 
             # check if all collections should be enabled
-            elif len(active_layer_collections) == 1 and active_layer_collections[0].name == self.name:
+            elif (len(active_layer_collections) == 1 and
+                  active_layer_collections[0].name == self.name):
                 # allow render of all collections
                 for laycol in layer_collections.values():
                     laycol["ptr"].collection.hide_render = False
@@ -1331,18 +1382,19 @@ class CMUnDisableRenderAllOperator(Operator):
             keep_history = False
 
             for item in layer_collections.values():
+                collection = item["ptr"].collection
+
                 if event.shift:
                     keep_history = True
-                    render_all_history.append(item["ptr"].collection.hide_render)
-                    item["ptr"].collection.hide_render = not \
-                        item["ptr"].collection.hide_render
+                    render_all_history.append(collection.hide_render)
+                    collection.hide_render = not collection.hide_render
 
                 else:
-                    if item["ptr"].collection.hide_render:
+                    if collection.hide_render:
                         keep_history = True
 
-                    render_all_history.append(item["ptr"].collection.hide_render)
-                    item["ptr"].collection.hide_render = False
+                    render_all_history.append(collection.hide_render)
+                    collection.hide_render = False
 
             if not keep_history:
                 del rto_history["render_all"][view_layer]
@@ -1367,6 +1419,8 @@ class CMRemoveCollectionOperator(Operator):
     def execute(self, context):
         global rto_history
 
+        cm = context.scene.collection_manager
+
         laycol = layer_collections[self.collection_name]
         collection = laycol["ptr"].collection
         parent_collection = laycol["parent"]["ptr"].collection
@@ -1389,8 +1443,8 @@ class CMRemoveCollectionOperator(Operator):
         update_property_group(context)
 
 
-        if len(context.scene.CMListCollection) == context.scene.CMListIndex:
-            context.scene.CMListIndex = len(context.scene.CMListCollection) - 1
+        if len(cm.cm_list_collection) == cm.cm_list_index:
+            cm.cm_list_index = len(cm.cm_list_collection) - 1
             update_property_group(context)
 
 
@@ -1413,12 +1467,13 @@ class CMNewCollectionOperator(Operator):
         global rto_history
 
         new_collection = bpy.data.collections.new('Collection')
-        scn = context.scene
+        cm = context.scene.collection_manager
+
 
         # if there are collections
-        if len(scn.CMListCollection) > 0:
+        if len(cm.cm_list_collection) > 0:
             # get selected collection
-            laycol = layer_collections[scn.CMListCollection[scn.CMListIndex].name]
+            laycol = layer_collections[cm.cm_list_collection[cm.cm_list_index].name]
 
             # add new collection
             if self.child:
@@ -1428,7 +1483,7 @@ class CMNewCollectionOperator(Operator):
                 # update tree view property
                 update_property_group(context)
 
-                scn.CMListIndex = layer_collections[new_collection.name]["row_index"]
+                cm.cm_list_index = layer_collections[new_collection.name]["row_index"]
 
             else:
                 laycol["parent"]["ptr"].collection.children.link(new_collection)
@@ -1436,16 +1491,16 @@ class CMNewCollectionOperator(Operator):
                 # update tree view property
                 update_property_group(context)
 
-                scn.CMListIndex = layer_collections[new_collection.name]["row_index"]
+                cm.cm_list_index = layer_collections[new_collection.name]["row_index"]
 
         # if no collections add top level collection and select it
         else:
-            scn.collection.children.link(new_collection)
+            context.scene.collection.children.link(new_collection)
 
             # update tree view property
             update_property_group(context)
 
-            scn.CMListIndex = 0
+            cm.cm_list_index = 0
 
         global rename
         rename[0] = True
@@ -1482,18 +1537,18 @@ class CMPhantomModeOperator(Operator):
         global phantom_history
         global rto_history
 
-        scn = context.scene
-        view_layer = context.view_layer.name
+        cm = context.scene.collection_manager
+        view_layer = context.view_layer
 
         # enter Phantom Mode
-        if not scn.CM_Phantom_Mode:
+        if not cm.in_phantom_mode:
 
-            scn.CM_Phantom_Mode = True
+            cm.in_phantom_mode = True
 
             # save current visibility state
-            phantom_history["view_layer"] = view_layer
+            phantom_history["view_layer"] = view_layer.name
 
-            laycol_iter_list = [context.view_layer.layer_collection.children]
+            laycol_iter_list = [view_layer.layer_collection.children]
             while len(laycol_iter_list) > 0:
                 new_laycol_iter_list = []
                 for laycol_iter in laycol_iter_list:
@@ -1514,13 +1569,13 @@ class CMPhantomModeOperator(Operator):
 
             # save current rto history
             for rto, history, in rto_history.items():
-                if history.get(view_layer, None):
-                    phantom_history[rto+"_history"] = deepcopy(history[view_layer])
+                if history.get(view_layer.name, None):
+                    phantom_history[rto+"_history"] = deepcopy(history[view_layer.name])
 
 
         # return to normal mode
         else:
-            laycol_iter_list = [context.view_layer.layer_collection.children]
+            laycol_iter_list = [view_layer.layer_collection.children]
             while len(laycol_iter_list) > 0:
                 new_laycol_iter_list = []
                 for laycol_iter in laycol_iter_list:
@@ -1551,15 +1606,15 @@ class CMPhantomModeOperator(Operator):
 
             # restore previous rto history
             for rto, history, in rto_history.items():
-                if view_layer in history:
-                    del history[view_layer]
+                if view_layer.name in history:
+                    del history[view_layer.name]
 
                 if phantom_history[rto+"_history"]:
-                    history[view_layer] = deepcopy(phantom_history[rto+"_history"])
+                    history[view_layer.name] = deepcopy(phantom_history[rto+"_history"])
 
                 phantom_history[rto+"_history"].clear()
 
-            scn.CM_Phantom_Mode = False
+            cm.in_phantom_mode = False
 
 
         return {'FINISHED'}

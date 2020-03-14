@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
+"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
@@ -931,6 +931,10 @@ msgid "Parent Type"
 msgstr "Induk"
 
 
+msgid "Layer"
+msgstr "Lapisan"
+
+
 msgid "Draw Mode"
 msgstr "Modus"
 
@@ -963,12 +967,16 @@ msgid "Time Offset"
 msgstr "Kamera"
 
 
-msgid "Layer"
-msgstr "Lapisan"
+msgid "Constant Offset"
+msgstr "Kamera"
 
 
 msgid "Object Offset"
 msgstr "Data Objek"
+
+
+msgid "Relative Offset"
+msgstr "Kamera"
 
 
 msgctxt "Curve"
@@ -1828,10 +1836,6 @@ msgid "Clip"
 msgstr "Buka"
 
 
-msgid "Fluid Presets"
-msgstr "Kamera"
-
-
 msgctxt "Operator"
 msgid "Add"
 msgstr "Baru"
@@ -1909,24 +1913,12 @@ msgid "UV Select"
 msgstr "Seleksi"
 
 
-msgid "UV Edge Select"
-msgstr "Modus Sunting"
-
-
 msgid "Multi Modifier"
 msgstr "Modus Pahat"
 
 
 msgid "Fit Type"
 msgstr "Tipe"
-
-
-msgid "Constant Offset"
-msgstr "Kamera"
-
-
-msgid "Relative Offset"
-msgstr "Kamera"
 
 
 msgid "New"
@@ -2927,11 +2919,6 @@ msgstr "Semua Tampilan"
 
 
 msgctxt "Operator"
-msgid "View Selected"
-msgstr "Seleksi"
-
-
-msgctxt "Operator"
 msgid "Change Frame"
 msgstr "Saluran"
 
@@ -3843,6 +3830,11 @@ msgstr "Lapisan"
 
 
 msgctxt "Operator"
+msgid "Remove Mask Layer"
+msgstr "Warna Standar"
+
+
+msgctxt "Operator"
 msgid "Deselect Vertex Group"
 msgstr "Warna Standar"
 
@@ -4174,11 +4166,6 @@ msgstr "Hapus"
 msgctxt "Operator"
 msgid "Add Mask Layer"
 msgstr "Tambah Gambar"
-
-
-msgctxt "Operator"
-msgid "Remove Mask Layer"
-msgstr "Warna Standar"
 
 
 msgid "Remove mask layer"
@@ -4911,6 +4898,11 @@ msgstr "Adegan"
 
 
 msgctxt "Operator"
+msgid "Add Modifier"
+msgstr "Modus Pahat"
+
+
+msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Modus Pahat"
 
@@ -5004,11 +4996,6 @@ msgstr "Bahan"
 msgctxt "Operator"
 msgid "Set Object Mode"
 msgstr "Modus Objek"
-
-
-msgctxt "Operator"
-msgid "Add Modifier"
-msgstr "Modus Pahat"
 
 
 msgctxt "Operator"
@@ -6532,6 +6519,10 @@ msgid "Geometry Data"
 msgstr "Kamera"
 
 
+msgid "Fluid Presets"
+msgstr "Kamera"
+
+
 msgctxt "Operator"
 msgid "Scale"
 msgstr "Adegan"
@@ -6601,22 +6592,6 @@ msgstr "Gerakan"
 
 msgid "Continue"
 msgstr "Lanjutkan"
-
-
-msgid "MultiSample: 2"
-msgstr "Gerakan"
-
-
-msgid "MultiSample: 4"
-msgstr "Gerakan"
-
-
-msgid "MultiSample: 8"
-msgstr "Gerakan"
-
-
-msgid "MultiSample: 16"
-msgstr "Gerakan"
 
 
 msgid "Ambient Color"
@@ -7258,16 +7233,6 @@ msgstr "Putar"
 
 
 msgctxt "Operator"
-msgid "Select Inverse"
-msgstr "Seleksi"
-
-
-msgctxt "Operator"
-msgid "Delete..."
-msgstr "Hapus"
-
-
-msgctxt "Operator"
 msgid "Parent"
 msgstr "Induk"
 
@@ -7471,6 +7436,11 @@ msgstr "Grup"
 msgctxt "Operator"
 msgid "Sound"
 msgstr "Suara"
+
+
+msgctxt "Operator"
+msgid "Delete..."
+msgstr "Hapus"
 
 
 msgctxt "Operator"
@@ -7740,6 +7710,11 @@ msgstr "Semua Tampilan"
 msgctxt "Operator"
 msgid "Make"
 msgstr "Buat"
+
+
+msgctxt "Operator"
+msgid "View Selected"
+msgstr "Seleksi"
 
 
 msgctxt "Operator"
