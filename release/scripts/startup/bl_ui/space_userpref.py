@@ -57,6 +57,7 @@ class USERPREF_HT_header(Header):
         USERPREF_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.separator_spacer()
+
         self.draw_buttons(layout, context)
 
 
@@ -147,7 +148,6 @@ class USERPREF_PT_save_preferences(Panel):
         layout.menu("USERPREF_MT_save_load", text="", icon='COLLAPSEMENU')
 
         USERPREF_HT_header.draw_buttons(layout, context)
-
 
 
 # -----------------------------------------------------------------------------
@@ -2128,62 +2128,6 @@ class USERPREF_PT_studiolight_light_editor(StudioLightPanel, Panel):
 
         layout.prop(system, "light_ambient")
 
-
-# -----------------------------------------------------------------------------
-# Experimental Panels
-
-class ExperimentalPanel:
-    bl_space_type = 'PREFERENCES'
-    bl_region_type = 'WINDOW'
-    bl_context = "experimental"
-
-    url_prefix = "https://developer.blender.org/"
-
-
-class USERPREF_PT_experimental_ui(ExperimentalPanel, Panel):
-    bl_label = "User Interface"
-
-    def draw(self, context):
-        prefs = context.preferences
-        experimental = prefs.experimental
-
-        layout = self.layout
-        layout.use_property_split = False
-        layout.use_property_decorate = False
-
-        task = "T66304"
-        split = layout.split(factor=0.66)
-        col = split.column()
-        col.prop(experimental, "use_tool_fallback", text="Use Tool Fallback")
-        col = split.column()
-        col.operator("wm.url_open", text=task, icon='URL').url = self.url_prefix + task
-
-
-"""
-# Example panel, leave it here so we always have a template to follow even
-# after the features are gone from the experimental panel.
-
-class USERPREF_PT_experimental_virtual_reality(ExperimentalPanel, Panel):
-    bl_label = "Virtual Reality"
-
-    def draw_centered(self, context, layout):
-        prefs = context.preferences
-        experimental = prefs.experimental
-
-        task = "T71347"
-        split = layout.split(factor=0.66)
-        col = split.split()
-        col.prop(experimental, "use_virtual_reality_scene_inspection", text="Scene Inspection")
-        col = split.split()
-        col.operator("wm.url_open", text=task, icon='URL').url = self.url_prefix + task
-
-        task = "T71348"
-        split = layout.split(factor=0.66)
-        col = split.column()
-        col.prop(experimental, "use_virtual_reality_immersive_drawing", text="Continuous Immersive Drawing")
-        col = split.column()
-        col.operator("wm.url_open", text=task, icon='URL').url = self.url_prefix + task
-"""
 
 # -----------------------------------------------------------------------------
 # Experimental Panels
