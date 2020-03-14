@@ -1145,7 +1145,153 @@ class CurveBoolean(bpy.types.Operator):
 
                 j += 1
 
-        bpy.ops.object.mode_set (mode = current_mode)
+        bpy.ops.object.mode_set(mode = 'EDIT')
+        bpy.ops.curve.select_all(action='SELECT')
+
+        return {'FINISHED'}
+
+# ----------------------------
+# Set first points operator
+class SetFirstPoints(bpy.types.Operator):
+    bl_idname = "curvetools.set_first_points"
+    bl_label = "Set first points"
+    bl_description = "Set the selected points as the first point of each spline"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return util.Selected1OrMoreCurves()
+
+    def execute(self, context):
+        splines_to_invert = []
+
+        curve = bpy.context.object
+
+        bpy.ops.object.mode_set('INVOKE_REGION_WIN', mode='EDIT')
+
+        # Check non-cyclic splines to invert
+        for i in range(len(curve.data.splines)):
+            b_points = curve.data.splines[i].bezier_points
+
+            if i not in self.cyclic_splines:  # Only for non-cyclic splines
+                if b_points[len(b_points) - 1].select_control_point:
+                    splines_to_invert.append(i)
+
+        # Reorder points of cyclic splines, and set all handles to "Automatic"
+
+        # Check first selected point
+        cyclic_splines_new_first_pt = {}
+        for i in self.cyclic_splines:
+            sp = curve.data.splines[i]
+
+            for t in range(len(sp.bezier_points)):
+                bp = sp.bezier_points[t]
+                if bp.select_control_point or bp.select_right_handle or bp.select_left_handle:
+                    cyclic_splines_new_first_pt[i] = t
+                    break  # To take only one if there are more
+
+        # Reorder
+        for spline_idx in cyclic_splines_new_first_pt:
+            sp = curve.data.splines[spline_idx]
+
+            spline_old_coords = []
+            for bp_old in sp.bezier_points:
+                coords = (bp_old.co[0], bp_old.co[1], bp_old.co[2])
+
+                left_handle_type = str(bp_old.handle_left_type)
+                left_handle_length = float(bp_old.handle_left.length)
+                left_handle_xyz = (
+                        float(bp_old.handle_left.x),
+                        float(bp_old.handle_left.y),
+                        float(bp_old.handle_left.z)
+                        )
+                right_handle_type = str(bp_old.handle_right_type)
+                right_handle_length = float(bp_old.handle_right.length)
+                right_handle_xyz = (
+                        float(bp_old.handle_right.x),
+                        float(bp_old.handle_right.y),
+                        float(bp_old.handle_right.z)
+                        )
+                spline_old_coords.append(
+                        [coords, left_handle_type,
+                        right_handle_type, left_handle_length,
+                        right_handle_length, left_handle_xyz,
+                        right_handle_xyz]
+                        )
+
+            for t in range(len(sp.bezier_points)):
+                bp = sp.bezier_points
+
+                if t + cyclic_splines_new_first_pt[spline_idx] + 1 <= len(bp) - 1:
+                    new_index = t + cyclic_splines_new_first_pt[spline_idx] + 1
+                else:
+                    new_index = t + cyclic_splines_new_first_pt[spline_idx] + 1 - len(bp)
+
+                bp[t].co = Vector(spline_old_coords[new_index][0])
+
+                bp[t].handle_left.length = spline_old_coords[new_index][3]
+                bp[t].handle_right.length = spline_old_coords[new_index][4]
+
+                bp[t].handle_left_type = "FREE"
+                bp[t].handle_right_type = "FREE"
+
+                bp[t].handle_left.x = spline_old_coords[new_index][5][0]
+                bp[t].handle_left.y = spline_old_coords[new_index][5][1]
+                bp[t].handle_left.z = spline_old_coords[new_index][5][2]
+
+                bp[t].handle_right.x = spline_old_coords[new_index][6][0]
+                bp[t].handle_right.y = spline_old_coords[new_index][6][1]
+                bp[t].handle_right.z = spline_old_coords[new_index][6][2]
+
+                bp[t].handle_left_type = spline_old_coords[new_index][1]
+                bp[t].handle_right_type = spline_old_coords[new_index][2]
+
+        # Invert the non-cyclic splines designated above
+        for i in range(len(splines_to_invert)):
+            bpy.ops.curve.select_all('INVOKE_REGION_WIN', action='DESELECT')
+
+            bpy.ops.object.editmode_toggle('INVOKE_REGION_WIN')
+            curve.data.splines[splines_to_invert[i]].bezier_points[0].select_control_point = True
+            bpy.ops.object.editmode_toggle('INVOKE_REGION_WIN')
+
+            bpy.ops.curve.switch_direction()
+
+        bpy.ops.curve.select_all('INVOKE_REGION_WIN', action='DESELECT')
+
+        # Keep selected the first vert of each spline
+        bpy.ops.object.editmode_toggle('INVOKE_REGION_WIN')
+        for i in range(len(curve.data.splines)):
+            if not curve.data.splines[i].use_cyclic_u:
+                bp = curve.data.splines[i].bezier_points[0]
+            else:
+                bp = curve.data.splines[i].bezier_points[
+                                                        len(curve.data.splines[i].bezier_points) - 1
+                                                        ]
+
+            bp.select_control_point = True
+            bp.select_right_handle = True
+            bp.select_left_handle = True
+
+        bpy.ops.object.editmode_toggle('INVOKE_REGION_WIN')
+
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        curve = bpy.context.object
+
+        # Check if all curves are Bezier, and detect which ones are cyclic
+        self.cyclic_splines = []
+        for i in range(len(curve.data.splines)):
+            if curve.data.splines[i].type != "BEZIER":
+                self.report({'WARNING'}, "All splines must be Bezier type")
+
+                return {'CANCELLED'}
+            else:
+                if curve.data.splines[i].use_cyclic_u:
+                    self.cyclic_splines.append(i)
+
+        self.execute(context)
+        self.report({'INFO'}, "First points have been set")
 
         return {'FINISHED'}
 
@@ -1182,4 +1328,5 @@ operators = [
     Split,
     SeparateOutline,
     CurveBoolean,
+    SetFirstPoints,
     ]

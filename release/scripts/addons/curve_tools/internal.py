@@ -103,11 +103,11 @@ def nearestPointOfLines(originA, dirA, originB, dirB, tollerance=0.0):
 def lineSegmentLineSegmentIntersection(beginA, endA, beginB, endB, tollerance=0.001):
     dirA = endA-beginA
     dirB = endB-beginB
-    intersection = nearestPointOfLines(beginA, dirA, beginB, dirB)
-    if math.isnan(intersection[0]) or (intersection[2]-intersection[3]).length > tollerance or \
-       intersection[0] < 0 or intersection[0] > 1 or intersection[1] < 0 or intersection[1] > 1:
+    paramA, paramB, pointA, pointB = nearestPointOfLines(beginA, dirA, beginB, dirB)
+    if math.isnan(paramA) or (pointA-pointB).length > tollerance or \
+       paramA < 0 or paramA > 1 or paramB < 0 or paramB > 1:
         return None
-    return intersection
+    return (paramA, paramB, pointA, pointB)
 
 def aabbOfPoints(points):
     min = Vector(points[0])
@@ -289,6 +289,16 @@ def isSegmentLinear(points, tollerance=0.0001):
 
 def bezierSegmentPoints(begin, end):
     return [begin.co, begin.handle_right, end.handle_left, end.co]
+
+def grab_cursor(context, event):
+    if event.mouse_region_x < 0:
+        context.window.cursor_warp(context.region.x+context.region.width, event.mouse_y)
+    elif event.mouse_region_x > context.region.width:
+        context.window.cursor_warp(context.region.x, event.mouse_y)
+    elif event.mouse_region_y < 0:
+        context.window.cursor_warp(event.mouse_x, context.region.y+context.region.height)
+    elif event.mouse_region_y > context.region.height:
+        context.window.cursor_warp(event.mouse_x, context.region.y)
 
 def deleteFromArray(item, array):
     for index, current in enumerate(array):
@@ -586,7 +596,6 @@ def getSelectedSplines(include_bezier, include_polygon, allow_partial_selection=
     return result
 
 def addObject(type, name):
-    bpy.ops.object.select_all(action='DESELECT')
     if type == 'CURVE':
         data = bpy.data.curves.new(name=name, type='CURVE')
         data.dimensions = '3D'
@@ -779,6 +788,27 @@ def filletSpline(spline, radius, chamfer_mode, limit_half_way, tollerance=0.0001
         else:
             i = i+1
     return addBezierSpline(bpy.context.object, spline.use_cyclic_u, vertices)
+
+def dogBone(spline, radius):
+    vertices = []
+    def handlePoint(prev_segment_points, next_segment_points, selected, prev_tangent, current_tangent, next_tangent, normal, angle, is_first, is_last):
+        if not selected or is_first or is_last or angle == 0 or normal[2] > 0.0 or \
+           (spline.type == 'BEZIER' and not (isSegmentLinear(prev_segment_points) and isSegmentLinear(next_segment_points))):
+            prev_handle = next_segment_points[0] if is_first else prev_segment_points[2] if spline.type == 'BEZIER' else prev_segment_points[0]
+            next_handle = next_segment_points[0] if is_last else next_segment_points[1] if spline.type == 'BEZIER' else next_segment_points[3]
+            vertices.append([prev_handle, next_segment_points[0], next_handle])
+            return
+        tan_factor = math.tan(angle*0.5)
+        corner = next_segment_points[0]+normal.cross(prev_tangent)*radius-prev_tangent*radius*tan_factor
+        direction = next_segment_points[0]-corner
+        distance = direction.length
+        corner = next_segment_points[0]+direction/distance*(distance-radius)
+        vertices.append([prev_segment_points[0], next_segment_points[0], corner])
+        vertices.append([next_segment_points[0], corner, next_segment_points[0]])
+        vertices.append([corner, next_segment_points[0], next_segment_points[3]])
+    iterateSpline(spline, handlePoint)
+    print(vertices)
+    return vertices
 
 def discretizeCurve(spline, step_angle, samples):
     vertices = []

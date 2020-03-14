@@ -2125,7 +2125,7 @@ static int scroller_activate_invoke(bContext *C, wmOperator *op, const wmEvent *
   }
   else {
     /* not in scroller, so nothing happened...
-		 * (pass through let's something else catch event) */
+     * (pass through let's something else catch event) */
     return OPERATOR_PASS_THROUGH;
   }
 }

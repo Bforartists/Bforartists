@@ -19,7 +19,7 @@
 import bpy
 from bpy.types import Panel
 
-from .operators import get_arm_and_cam
+from .operators import get_rig_and_cam
 
 class ADD_CAMERA_RIGS_PT_composition_guides(Panel):
     bl_label = "Composition Guides"
@@ -29,7 +29,7 @@ class ADD_CAMERA_RIGS_PT_composition_guides(Panel):
     def draw(self, context):
         layout = self.layout
 
-        arm, cam = get_arm_and_cam(context.active_object)
+        rig, cam = get_rig_and_cam(context.active_object)
         cam = cam.data
 
         layout.prop(cam, "show_safe_areas")

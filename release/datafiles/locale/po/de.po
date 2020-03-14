@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
+"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -804,10 +804,6 @@ msgstr "Glanz"
 
 msgid "Transmission"
 msgstr "Übergang"
-
-
-msgid "Subsurface"
-msgstr "Oberfläche"
 
 
 msgid "Save Mode"
@@ -2394,8 +2390,24 @@ msgid "Curve Sensitivity"
 msgstr "Kurvenempfindlichkeit"
 
 
+msgid "Direction"
+msgstr "Richtung"
+
+
+msgid "Add effect of brush"
+msgstr "Hinzufügen-Effekt des Pinsels"
+
+
+msgid "Subtract effect of brush"
+msgstr "Abziehen-Effekt des Pinsels"
+
+
 msgid "Mode"
 msgstr "Modus"
+
+
+msgid "Dissolve"
+msgstr "Auflösen"
 
 
 msgid "Point"
@@ -2438,8 +2450,48 @@ msgid "Fill"
 msgstr "Füllen"
 
 
-msgid "Aspect Ratio"
-msgstr "Seitenverhältnis"
+msgid "Smooth"
+msgstr "Weich"
+
+
+msgid "Thickness"
+msgstr "Dicke"
+
+
+msgid "Randomize"
+msgstr "Zufällig"
+
+
+msgid "Grab"
+msgstr "Greifen"
+
+
+msgid "Push"
+msgstr "Drücken"
+
+
+msgid "Twist"
+msgstr "Verdrehen"
+
+
+msgid "Pinch"
+msgstr "Ausdünnen"
+
+
+msgid "Clone"
+msgstr "Klonen"
+
+
+msgid "Draw"
+msgstr "Zeichnen"
+
+
+msgid "Blur"
+msgstr "Weichzeichnen"
+
+
+msgid "Smear"
+msgstr "Verschmieren"
 
 
 msgid "Input Samples"
@@ -2454,12 +2506,16 @@ msgid "Jitter"
 msgstr "Flimmern"
 
 
-msgid "Smooth"
-msgstr "Weich"
-
-
 msgid "Iterations"
 msgstr "Wiederholungen"
+
+
+msgid "Mode Type"
+msgstr "Modustyp"
+
+
+msgid "Both"
+msgstr "Beides"
 
 
 msgid "Background Image"
@@ -5187,10 +5243,6 @@ msgid "Anti-Aliasing"
 msgstr "Kantenglättung"
 
 
-msgid "Dissolve"
-msgstr "Auflösen"
-
-
 msgid "Slow"
 msgstr "Langsam"
 
@@ -6152,6 +6204,18 @@ msgid "Save"
 msgstr "Speichern"
 
 
+msgid "Environment"
+msgstr "Umgebung"
+
+
+msgid "Shading"
+msgstr "Shading"
+
+
+msgid "Fonts"
+msgstr "Schriftarten"
+
+
 msgid "Directory"
 msgstr "Verzeichnis"
 
@@ -6186,18 +6250,6 @@ msgstr "Aktive Datei im Dateibrowser"
 
 msgid "Extension Filter"
 msgstr "Erweiterungsfilter"
-
-
-msgid "Fonts"
-msgstr "Schriftarten"
-
-
-msgid "Shading"
-msgstr "Shading"
-
-
-msgid "Environment"
-msgstr "Umgebung"
 
 
 msgid "Show Hidden"
@@ -6412,10 +6464,6 @@ msgid "Cubic"
 msgstr "Kubisch"
 
 
-msgid "Thickness"
-msgstr "Dicke"
-
-
 msgid "Dissolve Speed"
 msgstr "Auflösegeschwindigkeit"
 
@@ -6592,6 +6640,10 @@ msgid "Override"
 msgstr "Überschreiben"
 
 
+msgid "Subframes"
+msgstr "Unterrahmen"
+
+
 msgid "Flow Settings"
 msgstr "Flusseinstellungen"
 
@@ -6638,10 +6690,6 @@ msgstr "Vom Objekt emittierte Partikelsysteme"
 
 msgid "Color of smoke"
 msgstr "Rauchfarbe"
-
-
-msgid "Subframes"
-msgstr "Unterrahmen"
 
 
 msgid "Temp. Diff."
@@ -7096,10 +7144,6 @@ msgid "Frame Locked"
 msgstr "Rahmen sperren"
 
 
-msgid "Mask Layer"
-msgstr "Maskenebene"
-
-
 msgid "Opacity"
 msgstr "Deckkraft"
 
@@ -7140,100 +7184,20 @@ msgid "Onion Skinning"
 msgstr "Zwiebelschalen-Animation"
 
 
-msgid "Direction"
-msgstr "Richtung"
+msgid "Mask Layer"
+msgstr "Maskenebene"
 
 
-msgid "Add effect of brush"
-msgstr "Hinzufügen-Effekt des Pinsels"
+msgid "Invert"
+msgstr "Invertieren"
 
 
-msgid "Subtract effect of brush"
-msgstr "Abziehen-Effekt des Pinsels"
-
-
-msgid "Radius of the brush in pixels"
-msgstr "Pinselradius in Pixeln"
-
-
-msgid "Brush strength"
-msgstr "Pinselstärke"
-
-
-msgid "Strength Pressure"
-msgstr "Stärke"
+msgid "Layer"
+msgstr "Ebene"
 
 
 msgid "Grid"
 msgstr "Raster"
-
-
-msgid "Brush"
-msgstr "Pinsel"
-
-
-msgid "Tool"
-msgstr "Werkzeug"
-
-
-msgid "Smooth stroke points"
-msgstr "Weiche Strichpunkte"
-
-
-msgid "Adjust thickness of strokes"
-msgstr "Passtdie Stärke der Striche an"
-
-
-msgid "Adjust color strength of strokes"
-msgstr "Passt die Farbstärke der Striche an"
-
-
-msgid "Randomize"
-msgstr "Zufällig"
-
-
-msgid "Introduce jitter/randomness into strokes"
-msgstr "Füge Zittern / Zufälligkeit in Striche ein"
-
-
-msgid "Grab"
-msgstr "Greifen"
-
-
-msgid "Translate the set of points initially within the brush circle"
-msgstr "Verschiebt den Punktesatz zunächst innerhalb des Pinselkreises"
-
-
-msgid "Push"
-msgstr "Drücken"
-
-
-msgid "Move points out of the way, as if combing them"
-msgstr "Bewegt die Punkte zur Seite, als würden sie gekämmt werden"
-
-
-msgid "Twist"
-msgstr "Verdrehen"
-
-
-msgid "Rotate points around the midpoint of the brush"
-msgstr "Dreht die Punkte um den Mittelpunkt des Pinsels"
-
-
-msgid "Pinch"
-msgstr "Ausdünnen"
-
-
-msgid "Pull points towards the midpoint of the brush"
-msgstr "Zieht die Punkte zum Mittelpunkt des Pinsels"
-
-
-msgid "Clone"
-msgstr "Klonen"
-
-
-msgid "Paste copies of the strokes stored on the clipboard"
-msgstr "Fügt Kopien der in der Zwischenablage gespeicherten Striche ein"
 
 
 msgid "Grease Pencil Stroke"
@@ -7368,10 +7332,6 @@ msgid "Armature Modifier"
 msgstr "Skelett-Modifikator"
 
 
-msgid "Invert"
-msgstr "Invertieren"
-
-
 msgid "Invert vertex group influence"
 msgstr "Vertexgruppen-Einfluss umkehren"
 
@@ -7384,12 +7344,12 @@ msgid "Bind vertex groups to armature modifier"
 msgstr "Vertexgruppen an den Skelett-Modifikator binden"
 
 
+msgid "Constant Offset"
+msgstr "Konstanter Versatz"
+
+
 msgid "Count"
 msgstr "Anzahl"
-
-
-msgid "Layer"
-msgstr "Ebene"
 
 
 msgid "Pass"
@@ -7398,6 +7358,14 @@ msgstr "Durchgang"
 
 msgid "Object Offset"
 msgstr "Objektversatz"
+
+
+msgid "Relative Offset"
+msgstr "Relative Versatz"
+
+
+msgid "The size of the geometry will determine the distance between arrayed items"
+msgstr "Die Größe der Geometrie bestimmt den Abstand zwischen den Array-Objekten"
 
 
 msgid "Shift"
@@ -7416,8 +7384,8 @@ msgid "Fade"
 msgstr "Verblassen"
 
 
-msgid "Both"
-msgstr "Beides"
+msgid "Custom Curve"
+msgstr "Benutzerdefinierte Kurve"
 
 
 msgid "Hook Modifier"
@@ -7514,16 +7482,16 @@ msgid "Smooth Modifier"
 msgstr "Weicher Modifikator"
 
 
+msgid "Subdivision Type"
+msgstr "Unterteilungstyp"
+
+
+msgid "Catmull-Clark"
+msgstr "Catmull-Clark"
+
+
 msgid "Simple"
 msgstr "Einfach"
-
-
-msgid "Normalize"
-msgstr "Normalisieren"
-
-
-msgid "Custom Curve"
-msgstr "Benutzerdefinierte Kurve"
 
 
 msgid "Frame Scale"
@@ -7718,6 +7686,14 @@ msgid "Clone Offset"
 msgstr "Versatz klonen"
 
 
+msgid "Inflate"
+msgstr "Aufblasen"
+
+
+msgid "Expand"
+msgstr "Erweitern"
+
+
 msgid "Color Type"
 msgstr "Farbtyp"
 
@@ -7754,8 +7730,40 @@ msgid "Sharper"
 msgstr "Schärfer"
 
 
-msgid "Draw"
-msgstr "Zeichnen"
+msgid "Smooth stroke points"
+msgstr "Weiche Strichpunkte"
+
+
+msgid "Adjust thickness of strokes"
+msgstr "Passtdie Stärke der Striche an"
+
+
+msgid "Adjust color strength of strokes"
+msgstr "Passt die Farbstärke der Striche an"
+
+
+msgid "Introduce jitter/randomness into strokes"
+msgstr "Füge Zittern / Zufälligkeit in Striche ein"
+
+
+msgid "Translate the set of points initially within the brush circle"
+msgstr "Verschiebt den Punktesatz zunächst innerhalb des Pinselkreises"
+
+
+msgid "Move points out of the way, as if combing them"
+msgstr "Bewegt die Punkte zur Seite, als würden sie gekämmt werden"
+
+
+msgid "Rotate points around the midpoint of the brush"
+msgstr "Dreht die Punkte um den Mittelpunkt des Pinsels"
+
+
+msgid "Pull points towards the midpoint of the brush"
+msgstr "Zieht die Punkte zum Mittelpunkt des Pinsels"
+
+
+msgid "Paste copies of the strokes stored on the clipboard"
+msgstr "Fügt Kopien der in der Zwischenablage gespeicherten Striche ein"
 
 
 msgid "Repeat"
@@ -7786,10 +7794,6 @@ msgid "Soften"
 msgstr "Weichzeichnen"
 
 
-msgid "Smear"
-msgstr "Verschmieren"
-
-
 msgid "Mask"
 msgstr "Maske"
 
@@ -7800,6 +7804,10 @@ msgstr "Flimmern der Pinselposition während des Malens"
 
 msgid "Jitter the position of the brush in pixels while painting"
 msgstr "Flimmern der Pinselposition während des Malens"
+
+
+msgid "Brush"
+msgstr "Pinsel"
 
 
 msgid "Mask Texture"
@@ -7894,10 +7902,6 @@ msgid "Clay Strips"
 msgstr "Claystück"
 
 
-msgid "Inflate"
-msgstr "Aufblasen"
-
-
 msgid "Blob"
 msgstr "Klecksen"
 
@@ -7928,6 +7932,14 @@ msgstr "Anstoßen"
 
 msgid "Rotate"
 msgstr "Rotieren"
+
+
+msgid "Cloth"
+msgstr "Stoff"
+
+
+msgid "Radius of the brush in pixels"
+msgstr "Pinselradius in Pixeln"
 
 
 msgid "Smooth Stroke Factor"
@@ -8046,12 +8058,12 @@ msgid "Radius Unit"
 msgstr "Radius-Einheit"
 
 
-msgid "Use Sculpt"
-msgstr "Skulptur verwenden"
-
-
 msgid "Use this brush in texture paint mode"
 msgstr "Diesen Pinsel im Texturmalen-Modus verwenden"
+
+
+msgid "Use Sculpt"
+msgstr "Skulptur verwenden"
 
 
 msgid "Use this brush in sculpt mode"
@@ -8086,6 +8098,10 @@ msgid "Cutoff"
 msgstr "Abschneiden"
 
 
+msgid "Strength Pressure"
+msgstr "Stärke"
+
+
 msgid "Use Texture Overlay"
 msgstr "Texturüberlagerung verwenden"
 
@@ -8112,10 +8128,6 @@ msgstr "UV's entspannen"
 
 msgid "Vertex Paint Tool"
 msgstr "Vertex-Malwerkzeug"
-
-
-msgid "Blur"
-msgstr "Weichzeichnen"
 
 
 msgid "Weight Paint Tool"
@@ -9336,10 +9348,6 @@ msgstr "Haar"
 
 msgid "Hair strands"
 msgstr "Haarstränen"
-
-
-msgid "Cloth"
-msgstr "Stoff"
 
 
 msgid "Fluid"
@@ -12353,14 +12361,6 @@ msgid "Fill area with gradient color"
 msgstr "Bereich mit Verlauffarbe füllen"
 
 
-msgid "Checker Board"
-msgstr "Prüfmuster"
-
-
-msgid "Fill area with checkerboard pattern"
-msgstr "Bereich mit Prüfmuster füllen"
-
-
 msgid "Fill area with image texture"
 msgstr "Bereich mit Bildtextur füllen"
 
@@ -12381,16 +12381,8 @@ msgid "Color for mixing with primary filling color"
 msgstr "Farbe zum Mischen mit Primärfüllfarbe"
 
 
-msgid "Mode Type"
-msgstr "Modustyp"
-
-
-msgid "Boxes"
-msgstr "Boxen"
-
-
-msgid "Box Size"
-msgstr "Boxgröße"
+msgid "Mix Factor"
+msgstr "Misch-Faktor"
 
 
 msgid "Show Stroke"
@@ -12403,14 +12395,6 @@ msgstr "Strichlinie auf diesem Material anzeigen"
 
 msgid "Stroke Style"
 msgstr "Strichstil"
-
-
-msgid "Mix Texture"
-msgstr "Textur mischen"
-
-
-msgid "Mix texture image with filling color"
-msgstr "Texturbild mit Füllfarbe mischen"
 
 
 msgid "Self Overlap"
@@ -12486,20 +12470,12 @@ msgid "Snap"
 msgstr "Einrasten"
 
 
-msgid "Fluid Presets"
-msgstr "Flüssigkeits-Voreinstellungen"
-
-
 msgid "Clean Up"
 msgstr "Aufräumen"
 
 
 msgid "Move to Layer"
 msgstr "Auf Ebene verschieben"
-
-
-msgid "Grease Pencil Tools"
-msgstr "Wachsstiftwerkzeug"
 
 
 msgid "F-Curve Channel Context Menu"
@@ -13011,10 +12987,6 @@ msgid "UV Select"
 msgstr "UV Auswahl"
 
 
-msgid "UV Edge Select"
-msgstr "UV-Kantenauswahl"
-
-
 msgid "Mesh Vertex"
 msgstr "Mesh-Vertex"
 
@@ -13235,14 +13207,6 @@ msgid "Relative Offset Displacement"
 msgstr "Relativer Versatzabstand"
 
 
-msgid "The size of the geometry will determine the distance between arrayed items"
-msgstr "Die Größe der Geometrie bestimmt den Abstand zwischen den Array-Objekten"
-
-
-msgid "Constant Offset"
-msgstr "Konstanter Versatz"
-
-
 msgid "Add a constant offset"
 msgstr "Konstanten Versatz hinzufügen"
 
@@ -13261,10 +13225,6 @@ msgstr "Vertices im ersten und letzten Duplikat zusammenführen"
 
 msgid "Add another object's transformation to the total offset"
 msgstr "Andere Objekttransformation zum gesamten Versatz hinzufügen"
-
-
-msgid "Relative Offset"
-msgstr "Relative Versatz"
 
 
 msgid "Bevel Modifier"
@@ -13397,10 +13357,6 @@ msgstr "VFarbe"
 
 msgid "All Layers"
 msgstr "Alle Ebenen"
-
-
-msgid "Mix Factor"
-msgstr "Misch-Faktor"
 
 
 msgid "Nearest vertex"
@@ -13665,14 +13621,6 @@ msgstr "Skulpturmodus"
 
 msgid "Optimal Display"
 msgstr "Optimale Anzeige"
-
-
-msgid "Subdivision Type"
-msgstr "Unterteilungstyp"
-
-
-msgid "Catmull-Clark"
-msgstr "Catmull-Clark"
 
 
 msgid "Total Levels"
@@ -14952,6 +14900,10 @@ msgstr "Grünkanal vom Filmmaterial zum Verfolgen verwenden"
 
 msgid "Use Mask"
 msgstr "Maske benutzen"
+
+
+msgid "Normalize"
+msgstr "Normalisieren"
 
 
 msgid "Use Red Channel"
@@ -17250,11 +17202,6 @@ msgstr "Alles zeigen"
 
 
 msgctxt "Operator"
-msgid "View Selected"
-msgstr "Ausgewählte zeigen"
-
-
-msgctxt "Operator"
 msgid "Change Frame"
 msgstr "Einzelbild ändern"
 
@@ -17851,6 +17798,10 @@ msgstr "Pinsel zurücksetzen"
 
 msgid "Return brush to defaults based on current tool"
 msgstr "Pinsel auf Voreinstellung, basierend auf aktivem Werkzeug, zurücksetzen"
+
+
+msgid "Tool"
+msgstr "Werkzeug"
 
 
 msgid "Translation"
@@ -19965,6 +19916,11 @@ msgid "Add New Layer"
 msgstr "Neue Ebene hinzufügen"
 
 
+msgctxt "Operator"
+msgid "Remove Mask Layer"
+msgstr "Maskenebene löschen"
+
+
 msgid "Side"
 msgstr "Seite"
 
@@ -19985,6 +19941,10 @@ msgstr "Auswahl an Cursor einrasten"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Auswahl an Raster einrasten"
+
+
+msgid "Confirm on Release"
+msgstr "Ausgabe bestätigen"
 
 
 msgctxt "Operator"
@@ -20641,11 +20601,6 @@ msgid "Name of new mask layer"
 msgstr "Name der neuen Maskenebene"
 
 
-msgctxt "Operator"
-msgid "Remove Mask Layer"
-msgstr "Maskenebene löschen"
-
-
 msgid "Remove mask layer"
 msgstr "Maskenebene entfernen"
 
@@ -20781,10 +20736,6 @@ msgstr "Winkelbegrenzung"
 msgctxt "Operator"
 msgid "Bevel"
 msgstr "Fase"
-
-
-msgid "Confirm on Release"
-msgstr "Ausgabe bestätigen"
 
 
 msgid "Segments for curved edge"
@@ -21577,10 +21528,6 @@ msgstr "Auswahlmodus ändern"
 
 msgid "Vertex selection mode"
 msgstr "Vertex-Auswahlmodus"
-
-
-msgid "Expand"
-msgstr "Erweitern"
 
 
 msgid "Select more vertices, edges or faces connected to initial selection"
@@ -22731,6 +22678,11 @@ msgstr "Affe"
 
 
 msgctxt "Operator"
+msgid "Add Modifier"
+msgstr "Modifikator hinzufügen"
+
+
+msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Modifikator anwenden"
 
@@ -22958,11 +22910,6 @@ msgstr "Objektmodus festlegen"
 
 msgid "Sets the object interaction mode"
 msgstr "Objekt-Interaktions-Modus setzen"
-
-
-msgctxt "Operator"
-msgid "Add Modifier"
-msgstr "Modifikator hinzufügen"
 
 
 msgctxt "Operator"
@@ -27183,6 +27130,10 @@ msgid "URL to open"
 msgstr "Zu öffnende URL"
 
 
+msgid "UV Maps"
+msgstr "UV-Maps"
+
+
 msgid "Toggle the current window fullscreen"
 msgstr "Vollbildmodus für aktuelles Fenster aktivieren/deaktivieren"
 
@@ -27561,10 +27512,6 @@ msgid "Text Boxes"
 msgstr "Textboxen"
 
 
-msgid "UV Maps"
-msgstr "UV-Maps"
-
-
 msgid "Filters"
 msgstr "Filter"
 
@@ -27599,6 +27546,10 @@ msgstr "Eigenschaften"
 
 msgid "Directory Path"
 msgstr "Verzeichnispfad"
+
+
+msgid "Fluid Presets"
+msgstr "Flüssigkeits-Voreinstellungen"
 
 
 msgid "Active Tool"
@@ -27820,6 +27771,10 @@ msgid "Hair Dynamics"
 msgstr "Haardynamiken"
 
 
+msgid "Collisions"
+msgstr "Kollisionen"
+
+
 msgid "Physics"
 msgstr "Physik"
 
@@ -27842,10 +27797,6 @@ msgstr "Kräfte"
 
 msgid "Border Collisions"
 msgstr "Randkollisionen"
-
-
-msgid "Collisions"
-msgstr "Kollisionen"
 
 
 msgid "Softbody And Cloth"
@@ -28125,6 +28076,10 @@ msgid "Drawing Plane"
 msgstr "Malfläche"
 
 
+msgid "Vertex Paint Context Menu"
+msgstr "Vertex-Malen Kontextmenü"
+
+
 msgid "Curve Edit Mode"
 msgstr "Kurven-Bearbeitungsmodus"
 
@@ -28143,10 +28098,6 @@ msgstr "Bewegungsverfolgung"
 
 msgid "Texture Paint Context Menu"
 msgstr "Textur-Malen Kontextmenü"
-
-
-msgid "Vertex Paint Context Menu"
-msgstr "Vertex-Malen Kontextmenü"
 
 
 msgid "Weights Context Menu"
@@ -28408,6 +28359,10 @@ msgstr "Längenmodus"
 
 msgid "Brush steps"
 msgstr "Pinselschritte"
+
+
+msgid "Brush strength"
+msgstr "Pinselstärke"
 
 
 msgid "Editing hair"
@@ -29534,30 +29489,6 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "Texturgröße begrenzen, um Grafikspeicher zu sparen"
 
 
-msgid "No MultiSample"
-msgstr "Keine Mehrfach-Abtastungen"
-
-
-msgid "Do not use OpenGL MultiSample"
-msgstr "Keine OpenGL Mehrfach-Abtastung verwenden"
-
-
-msgid "MultiSample: 2"
-msgstr "Mehrfach-Abtastungen: 2"
-
-
-msgid "MultiSample: 4"
-msgstr "Mehrfach-Abtastungen: 4"
-
-
-msgid "MultiSample: 8"
-msgstr "Mehrfach-Abtastungen: 8"
-
-
-msgid "MultiSample: 16"
-msgstr "Mehrfach-Abtastungen: 16"
-
-
 msgid "Method used for displaying images on the screen"
 msgstr "Methode, die für die Anzeige auf dem Bildschirm verwendet wird"
 
@@ -29684,14 +29615,6 @@ msgstr "Werkzeugleiste-Spaltenlayout"
 
 msgid "Use a column layout for toolbox"
 msgstr "Spaltenlayout für Werkzeugleiste verwenden"
-
-
-msgid "Large Cursors"
-msgstr "Große Cursor"
-
-
-msgid "Use large mouse cursors when available"
-msgstr "Große Maus-Cursor verwenden, falls verfügbar"
 
 
 msgid "Display Object Info"
@@ -30254,10 +30177,6 @@ msgid "Transmission Color"
 msgstr "Farbübertragung"
 
 
-msgid "Subsurface Color"
-msgstr "Oberflächenfarbe"
-
-
 msgid "Object visibility for camera rays"
 msgstr "Objektsichtbarkeit für Kamerastrahlen"
 
@@ -30424,6 +30343,10 @@ msgstr "Objekt-Index-Durchgang übergeben"
 
 msgid "Deliver shadow pass"
 msgstr "Schatten-Durchgang übergeben"
+
+
+msgid "Subsurface Color"
+msgstr "Oberflächenfarbe"
 
 
 msgid "Deliver transmission color pass"
@@ -31848,14 +31771,6 @@ msgstr "Graustufen"
 
 msgid "Sepia"
 msgstr "Sepia"
-
-
-msgid "Ambient"
-msgstr "Umgebung"
-
-
-msgid "Energy"
-msgstr "Energie"
 
 
 msgid "Shape Key"
@@ -34621,11 +34536,6 @@ msgstr "Gewichtungsmalerei"
 
 
 msgctxt "WindowManager"
-msgid "Face Mask"
-msgstr "Flächenmaske"
-
-
-msgctxt "WindowManager"
 msgid "Image Paint"
 msgstr "Bild malen"
 
@@ -34801,6 +34711,10 @@ msgstr "AO"
 
 msgid "Mesh Light"
 msgstr "Mesh-Licht"
+
+
+msgid "Subsurface"
+msgstr "Oberfläche"
 
 
 msgid "Direct Light"
@@ -35423,12 +35337,12 @@ msgid "Weighting Mode:"
 msgstr "Gewichtungsmodus:"
 
 
-msgid "Material:"
-msgstr "Material:"
-
-
 msgid "Layer:"
 msgstr "Ebene:"
+
+
+msgid "Material:"
+msgstr "Material:"
 
 
 msgid "Settings:"
@@ -35437,14 +35351,6 @@ msgstr "Einstellungen:"
 
 msgid "Color:"
 msgstr "Farbe:"
-
-
-msgid "Opacity:"
-msgstr "Deckkraft:"
-
-
-msgid "Shift:"
-msgstr "Umschalt:"
 
 
 msgid "Bone:"
@@ -35590,15 +35496,6 @@ msgid "Draw:"
 msgstr "Zeichnen:"
 
 
-msgid "Active Layer:      "
-msgstr "Aktive Ebene:      "
-
-
-msgctxt "Operator"
-msgid "Convert..."
-msgstr "Konvertieren..."
-
-
 msgctxt "Operator"
 msgid "Selection to Grid"
 msgstr "Auswahl an Raster"
@@ -35624,32 +35521,8 @@ msgstr "Datenquelle:"
 
 
 msgctxt "Operator"
-msgid "Flip Direction"
-msgstr "Richtung umdrehen"
-
-
-msgctxt "Operator"
 msgid "Selection to Cursor"
 msgstr "Auswahl an Cursor"
-
-
-msgctxt "Operator"
-msgid "Settings..."
-msgstr "Einstellungen..."
-
-
-msgid "Proportional Edit:"
-msgstr "Proportionales Bearbeiten:"
-
-
-msgctxt "Operator"
-msgid "Select Inverse"
-msgstr "Auswahl umkehren"
-
-
-msgctxt "Operator"
-msgid "Delete..."
-msgstr "Löschen..."
 
 
 msgid "Parent:"
@@ -36205,6 +36078,10 @@ msgid "Image*"
 msgstr "Bild*"
 
 
+msgid "Aspect Ratio"
+msgstr "Seitenverhältnis"
+
+
 msgctxt "Operator"
 msgid "Replace..."
 msgstr "Ersetzen..."
@@ -36303,6 +36180,11 @@ msgstr "Film"
 msgctxt "Operator"
 msgid "Sound"
 msgstr "Klang"
+
+
+msgctxt "Operator"
+msgid "Delete..."
+msgstr "Löschen..."
 
 
 msgctxt "Operator"
@@ -37074,6 +36956,11 @@ msgid "Make"
 msgstr "Erstellen"
 
 
+msgctxt "Operator"
+msgid "View Selected"
+msgstr "Ausgewählte zeigen"
+
+
 msgid "Local Camera"
 msgstr "Lokale Kamera"
 
@@ -37671,11 +37558,6 @@ msgstr "Interner Meshfehler"
 
 msgid "Could not create merged face"
 msgstr "Konnte Fläche nicht zusammenführen"
-
-
-msgctxt "Action"
-msgid "Group"
-msgstr "Gruppieren"
 
 
 msgid "Scene not found"
@@ -39167,6 +39049,11 @@ msgstr "Entferne Knoten, die mit dem Eingang verbunden sind"
 
 msgid "Disconnect nodes connected to the input"
 msgstr "Knoten trennen, die mit dem Eingang verbunden sind"
+
+
+msgctxt "Action"
+msgid "Group"
+msgstr "Gruppieren"
 
 
 msgid "Library path '%s' does not exist, correct this before saving"

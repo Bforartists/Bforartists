@@ -25,7 +25,7 @@ bl_info = {
     "name": "Curve Tools",
     "description": "Adds some functionality for bezier/nurbs curve/surface modeling",
     "author": "Mackraken",
-    "version": (0, 4, 3),
+    "version": (0, 4, 4),
     "blender": (2, 80, 0),
     "location": "View3D > Tool Shelf > Edit Tab",
     "warning": "WIP",
@@ -128,13 +128,13 @@ class curvetoolsSettings(PropertyGroup):
             description="Only join splines at the starting point of one and the ending point of the other"
             )
     splineJoinModeItems = (
-            ('At midpoint', 'At midpoint', 'Join splines at midpoint of neighbouring points'),
-            ('Insert segment', 'Insert segment', 'Insert segment between neighbouring points')
+            ('At_midpoint', 'At midpoint', 'Join splines at midpoint of neighbouring points'),
+            ('Insert_segment', 'Insert segment', 'Insert segment between neighbouring points')
             )
     SplineJoinMode: EnumProperty(
             items=splineJoinModeItems,
             name="SplineJoinMode",
-            default='At midpoint',
+            default='At_midpoint',
             description="Determines how the splines will be joined"
             )
     # curve intersection
@@ -147,7 +147,7 @@ class curvetoolsSettings(PropertyGroup):
 
     intAlgorithmItems = (
             ('3D', '3D', 'Detect where curves intersect in 3D'),
-            ('From View', 'From View', 'Detect where curves intersect in the RegionView3D')
+            ('From_View', 'From View', 'Detect where curves intersect in the RegionView3D')
             )
     IntersectCurvesAlgorithm: EnumProperty(
             items=intAlgorithmItems,
@@ -229,227 +229,223 @@ class curvetoolsSettings(PropertyGroup):
             )
 
 
-class VIEW3D_PT_CurvePanel(Panel):
-    bl_label = "Curve Tools"
+# Curve Info
+class VIEW3D_PT_curve_tools_info(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
+    bl_category = "Curve Edit"
+    bl_label = "Curve Info"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_category = "Edit"
-
-    @classmethod
-    def poll(cls, context):
-        return context.scene is not None
 
     def draw(self, context):
         scene = context.scene
-        SINGLEDROP = scene.UTSingleDrop
-        MOREDROP = scene.UTMOREDROP
-        LOFTDROP = scene.UTLoftDrop
-        ADVANCEDDROP = scene.UTAdvancedDrop
-        EXTENDEDDROP = scene.UTExtendedDrop
-        UTILSDROP = scene.UTUtilsDrop
         layout = self.layout
 
-        # Single Curve options
-        box1 = self.layout.box()
-        col = box1.column(align=True)
+        col = layout.column(align=True)
+        col.operator("curvetools.operatorcurveinfo", text="Curve")
         row = col.row(align=True)
-        row.prop(scene, "UTSingleDrop", icon="TRIA_DOWN")
-        if SINGLEDROP:
-            # A. 1 curve
-            row = col.row(align=True)
-
-            # A.1 curve info/length
-            row.operator("curvetools.operatorcurveinfo", text="Curve info")
-            row = col.row(align=True)
-            row.operator("curvetools.operatorcurvelength", text="Calc Length")
-            row.prop(context.scene.curvetools, "CurveLength", text="")
-
-            # A.2 splines info
-            row = col.row(align=True)
-            row.operator("curvetools.operatorsplinesinfo", text="Curve splines info")
-
-            # A.3 segments info
-            row = col.row(align=True)
-            row.operator("curvetools.operatorsegmentsinfo", text="Curve segments info")
-
-            # A.4 origin to spline0start
-            row = col.row(align=True)
-            row.operator("curvetools.operatororigintospline0start", text="Set origin to spline start")
-
-        # Double Curve options
-        box2 = self.layout.box()
-        col = box2.column(align=True)
+        row.operator("curvetools.operatorsplinesinfo", text="Spline")
+        row.operator("curvetools.operatorsegmentsinfo", text="Segment")
         row = col.row(align=True)
-        row.prop(scene, "UTMOREDROP", icon="TRIA_DOWN")
+        row.operator("curvetools.operatorcurvelength", icon = "DRIVER_DISTANCE", text="Length")
+        row.prop(context.scene.curvetools, "CurveLength", text="")
 
-        if MOREDROP:
-            # B. 2 curves
-            row = col.row(align=True)
+# Curve Edit
+class VIEW3D_PT_curve_tools_edit(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Curve Edit"
+    bl_label = "Curve Edit"
 
-            # B.1 curve intersections
-            row = col.row(align=True)
-            row.operator("curvetools.operatorintersectcurves", text="Intersect curves")
 
-            row = col.row(align=True)
-            row.prop(context.scene.curvetools, "LimitDistance", text="LimitDistance")
+    def draw(self, context):
+        scene = context.scene
+        layout = self.layout
 
-            row = col.row(align=True)
-            row.prop(context.scene.curvetools, "IntersectCurvesAlgorithm", text="Algorithm")
-
-            row = col.row(align=True)
-            row.prop(context.scene.curvetools, "IntersectCurvesMode", text="Mode")
-
-            row = col.row(align=True)
-            row.prop(context.scene.curvetools, "IntersectCurvesAffect", text="Affect")
-
-        # Loft options
-        box1 = self.layout.box()
-        col = box1.column(align=True)
+        col = layout.column(align=True)
+        col.operator("curvetools.bezier_points_fillet", text='Fillet/Chamfer')
         row = col.row(align=True)
-        row.prop(scene, "UTLoftDrop", icon="TRIA_DOWN")
-
-        if LOFTDROP:
-            # B.2 surface generation
-            wm = context.window_manager
-            scene = context.scene
-            layout = self.layout
-            layout.operator("curvetools.create_auto_loft")
-            lofters = [o for o in scene.objects if "autoloft" in o.keys()]
-            for o in lofters:
-                layout.label(text=o.name)
-            # layout.prop(o, '["autoloft"]', toggle=True)
-            layout.prop(wm, "auto_loft", toggle=True)
-            layout.operator("curvetools.update_auto_loft_curves")
-
-        # Advanced options
-        box1 = self.layout.box()
-        col = box1.column(align=True)
+        row.operator("curvetools.outline", text="Outline")
+        row.operator("curvetools.add_toolpath_offset_curve", text="Recursive Offset")
+        col.operator("curvetools.sep_outline", text="Separate Offset/Selected")
+        col.operator("curvetools.bezier_cad_handle_projection", text='Extend Handles')
+        col.operator("curvetools.bezier_cad_boolean", text="Boolean Splines")
         row = col.row(align=True)
-        row.prop(scene, "UTAdvancedDrop", icon="TRIA_DOWN")
-        if ADVANCEDDROP:
-            # C. 3 curves
-            row = col.row(align=True)
-            row.operator("curvetools.outline", text="Curve Outline")
-            row = col.row(align=True)
-            row.operator("curvetools.sep_outline", text="Separate Outline or selected")
-            row = col.row(align=True)
-            row.operator("curvetools.bezier_curve_boolean", text="2D Curve Boolean")
-            row = col.row(align=True)
-            row.operator("curvetools.bezier_points_fillet", text='Fillet')
-            row = col.row(align=True)
-            row.operator("curvetools.bezier_cad_handle_projection", text='Handle Projection')
-            row = col.row(align=True)
-            row.operator("curvetools.bezier_spline_divide", text='Divide')
-            row = col.row(align=True)
-            row.operator("curvetools.scale_reset", text='Scale Reset')
-            row = col.row(align=True)
-            row.operator("curvetools.operatorbirail", text="Birail")
-            row = col.row(align=True)
-            row.operator("curvetools.convert_selected_face_to_bezier", text="Convert selected faces to Bezier")
-            row = col.row(align=True)
-            row.operator("curvetools.convert_bezier_to_surface", text="Convert Bezier to Surface")
+        row.operator("curvetools.bezier_spline_divide", text='Subdivide')
+        row.operator("curvetools.bezier_cad_subdivide", text="Multi Subdivide")
 
-        # Extended options
-        box1 = self.layout.box()
-        col = box1.column(align=True)
+        col.operator("curvetools.split", text='Split at Vertex')
+        col.operator("curvetools.add_toolpath_discretize_curve", text="Discretize Curve")
+        col.operator("curvetools.bezier_cad_array", text="Array Splines")
+
+# Curve Intersect
+class VIEW3D_PT_curve_tools_intersect(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Curve Edit"
+    bl_label = "Intersect"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        scene = context.scene
+        layout = self.layout
+
+        col = layout.column(align=True)
+        col.operator("curvetools.bezier_curve_boolean", text="2D Curve Boolean")
+        col.operator("curvetools.operatorintersectcurves", text="Intersect Curves")
+        col.prop(context.scene.curvetools, "LimitDistance", text="Limit Distance")
+        col.prop(context.scene.curvetools, "IntersectCurvesAlgorithm", text="Algorithm")
+        col.prop(context.scene.curvetools, "IntersectCurvesMode", text="Mode")
+        col.prop(context.scene.curvetools, "IntersectCurvesAffect", text="Affect")
+
+# Curve Surfaces
+class VIEW3D_PT_curve_tools_surfaces(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Curve Edit"
+    bl_label = "Surfaces"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        wm = context.window_manager
+        scene = context.scene
+        layout = self.layout
+
+        col = layout.column(align=True)
+        col.operator("curvetools.operatorbirail", text="Birail")
+        col.operator("curvetools.convert_bezier_to_surface", text="Convert Bezier to Surface")
+        col.operator("curvetools.convert_selected_face_to_bezier", text="Convert Faces to Bezier")
+
+# Curve Path Finder
+class VIEW3D_PT_curve_tools_loft(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Curve Edit"
+    bl_parent_id = "VIEW3D_PT_curve_tools_surfaces"
+    bl_label = "Loft"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        wm = context.window_manager
+        scene = context.scene
+        layout = self.layout
+
+        col = layout.column(align=True)
+        col.operator("curvetools.create_auto_loft")
+        lofters = [o for o in scene.objects if "autoloft" in o.keys()]
+        for o in lofters:
+            col.label(text=o.name)
+        # layout.prop(o, '["autoloft"]', toggle=True)
+        col.prop(wm, "auto_loft", toggle=True)
+        col.operator("curvetools.update_auto_loft_curves")
+        col = layout.column(align=True)
+
+
+# Curve Sanitize
+class VIEW3D_PT_curve_tools_sanitize(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Curve Edit"
+    bl_label = "Sanitize"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        scene = context.scene
+        layout = self.layout
+
+        col = layout.column(align=True)
+        col.operator("curvetools.operatororigintospline0start", icon = "OBJECT_ORIGIN", text="Set Origin to Spline Start")
+        col.operator("curvetools.scale_reset", text='Reset Scale')
+
+        col.label(text="Cleanup:")
+        col.operator("curvetools.remove_doubles", icon = "TRASH", text='Remove Doubles')
+        col.operator("curvetools.operatorsplinesremovezerosegment", icon = "TRASH", text="0-Segment Splines")
         row = col.row(align=True)
-        row.prop(scene, "UTExtendedDrop", icon="TRIA_DOWN")
-        if EXTENDEDDROP:
-            row = col.row(align=True)
-            row.operator("curvetools.add_toolpath_offset_curve", text="Offset Curve")
-            row = col.row(align=True)
-            row.operator("curvetools.bezier_cad_boolean", text="Boolean 2 selected spline")
-            row = col.row(align=True)
-            row.operator("curvetools.bezier_cad_subdivide", text="Multi Subdivide")
-            row = col.row(align=True)
-            row.operator("curvetools.split", text='Split by selected points')
-            row = col.row(align=True)
-            row.operator("curvetools.remove_doubles", text='Remove Doubles')
-            row = col.row(align=True)
-            row.operator("curvetools.add_toolpath_discretize_curve", text="Discretize Curve")
-            row = col.row(align=True)
-            row.operator("curvetools.bezier_cad_array", text="Array selected spline")
+        row.operator("curvetools.operatorsplinesremoveshort", text="Short Splines")
+        row.prop(context.scene.curvetools, "SplineRemoveLength", text="Threshold remove")
 
-        # Utils Curve options
-        box1 = self.layout.box()
-        col = box1.column(align=True)
+        col.label(text="Join Splines:")
+        col.operator("curvetools.operatorsplinesjoinneighbouring", text="Join Neighbouring Splines")
         row = col.row(align=True)
-        row.prop(scene, "UTUtilsDrop", icon="TRIA_DOWN")
-        if UTILSDROP:
-            # D.1 set spline resolution
-            row = col.row(align=True)
-            row.label(text="Show point Resolution:")
-            row = col.row(align=True)
-            row.operator("curvetools.operatorsplinessetresolution", text="Set resolution")
-            row.prop(context.scene.curvetools, "SplineResolution", text="")
-            row = col.row(align=True)
-            row.prop(context.scene.curvetools, "curve_vertcolor", text="")
-            row = col.row(align=True)
-            row.operator("curvetools.show_resolution", text="Run [ESC]")
+        col.prop(context.scene.curvetools, "SplineJoinDistance", text="Threshold")
+        col.prop(context.scene.curvetools, "SplineJoinStartEnd", text="Only at Ends")
+        col.prop(context.scene.curvetools, "SplineJoinMode", text="Join Position")
 
-            # D.1 set spline sequence
-            row = col.row(align=True)
-            row.label(text="Show and rearrange spline sequence:")
-            row = col.row(align=True)
-            row.prop(context.scene.curvetools, "sequence_color", text="")
-            row.prop(context.scene.curvetools, "font_thickness", text="")
-            row.prop(context.scene.curvetools, "font_size", text="")
-            row = col.row(align=True)
-            oper = row.operator("curvetools.rearrange_spline", text="<")
-            oper.command = 'PREV'
-            oper = row.operator("curvetools.rearrange_spline", text=">")
-            oper.command = 'NEXT'
-            row = col.row(align=True)
-            row.operator("curvetools.show_splines_sequence", text="Run [ESC]")
+# Curve Utilities
+class VIEW3D_PT_curve_tools_utilities(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Curve Edit"
+    bl_label = "Utilities"
+    bl_options = {'DEFAULT_CLOSED'}
 
-            # D.2 remove splines
-            row = col.row(align=True)
-            row.label(text="Remove splines:")
-            row = col.row(align=True)
-            row.operator("curvetools.operatorsplinesremovezerosegment", text="Remove 0-segments splines")
-            row = col.row(align=True)
-            row.operator("curvetools.operatorsplinesremoveshort", text="Remove short splines")
-            row = col.row(align=True)
-            row.prop(context.scene.curvetools, "SplineRemoveLength", text="Threshold remove")
+    def draw(self, context):
+        scene = context.scene
+        layout = self.layout
 
-            # D.3 join splines
-            row = col.row(align=True)
-            row.label(text="Join splines:")
-            row = col.row(align=True)
-            row.operator("curvetools.operatorsplinesjoinneighbouring", text="Join neighbouring splines")
-            row = col.row(align=True)
-            row.prop(context.scene.curvetools, "SplineJoinDistance", text="Threshold join")
-            row = col.row(align=True)
-            row.prop(context.scene.curvetools, "SplineJoinStartEnd", text="Only at start & end")
-            row = col.row(align=True)
-            row.prop(context.scene.curvetools, "SplineJoinMode", text="Join mode")
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.label(text="Curve Resolution:")
+        row = col.row(align=True)
+        row.operator("curvetools.show_resolution", icon="HIDE_OFF", text="Show [ESC]")
+        row.prop(context.scene.curvetools, "curve_vertcolor", text="")
+        row = col.row(align=True)
+        row.operator("curvetools.operatorsplinessetresolution", text="Set Resolution")
+        row.prop(context.scene.curvetools, "SplineResolution", text="")
 
-            row = col.row(align=True)
-            row.label(text="PathFinder:")
-            row = col.row(align=True)
-            row.prop(context.scene.curvetools, "PathFinderRadius", text="PathFinder Radius")
-            row = col.row(align=True)
-            row.prop(context.scene.curvetools, "path_color", text="")
-            row.prop(context.scene.curvetools, "path_thickness", text="")
-            row = col.row(align=True)
-            row.operator("curvetools.pathfinder", text="Run Path Finder [ESC]")
-            row = col.row(align=True)
-            row.label(text="ESC or TAB - exit from PathFinder")
-            row = col.row(align=True)
-            row.label(text="X or DEL - delete")
-            row = col.row(align=True)
-            row.label(text="Alt + mouse click - select spline")
-            row = col.row(align=True)
-            row.label(text="Alt + Shift + mouse click - add spline to select")
-            row = col.row(align=True)
-            row.label(text="A - deselect all")
+
+        row = col.row(align=True)
+        row.label(text="Spline Order:")
+        row = col.row(align=True)
+        row.operator("curvetools.show_splines_sequence", icon="HIDE_OFF", text="Show [ESC]")
+        row.prop(context.scene.curvetools, "sequence_color", text="")
+        row = col.row(align=True)
+        row.prop(context.scene.curvetools, "font_size", text="Font Size")
+        row.prop(context.scene.curvetools, "font_thickness", text="Font Thickness")
+        row = col.row(align=True)
+        oper = row.operator("curvetools.rearrange_spline", text = "<")
+        oper.command = 'PREV'
+        oper = row.operator("curvetools.rearrange_spline", text = ">")
+        oper.command = 'NEXT'
+        row = col.row(align=True)
+        row.operator("curve.switch_direction", text="Switch Direction")
+        row = col.row(align=True)
+        row.operator("curvetools.set_first_points", text="Set First Points")
+
+# Curve Path Finder
+class VIEW3D_PT_curve_tools_pathfinder(Panel):
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Curve Edit"
+    bl_parent_id = "VIEW3D_PT_curve_tools_utilities"
+    bl_label = "Path Finder"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        scene = context.scene
+        layout = self.layout
+
+        col = layout.column(align=True)
+        col.operator("curvetools.pathfinder", text="Path Finder [ESC]")
+        col.prop(context.scene.curvetools, "PathFinderRadius", text="PathFinder Radius")
+        col.prop(context.scene.curvetools, "path_color", text="")
+        col.prop(context.scene.curvetools, "path_thickness", text="Thickness")
+
+        col = layout.column(align=True)
+        col.label(text="ESC or TAB - Exit PathFinder")
+        col.label(text="X or DEL - Delete")
+        col.label(text="Alt + Mouse Click - Select Spline")
+        col.label(text="Alt + Shift + Mouse click - Add Spline to Selection")
+        col.label(text="A - Deselect All")
 
 # Add-ons Preferences Update Panel
 
 # Define Panel classes for updating
 panels = (
-        VIEW3D_PT_CurvePanel,
+        VIEW3D_PT_curve_tools_info, VIEW3D_PT_curve_tools_edit,
+        VIEW3D_PT_curve_tools_intersect, VIEW3D_PT_curve_tools_surfaces,
+        VIEW3D_PT_curve_tools_loft, VIEW3D_PT_curve_tools_sanitize,
+        VIEW3D_PT_curve_tools_utilities, VIEW3D_PT_curve_tools_pathfinder
         )
 
 
