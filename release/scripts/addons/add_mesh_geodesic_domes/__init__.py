@@ -22,7 +22,7 @@
 bl_info = {
     "name": "Geodesic Domes",
     "author": "Andy Houston",
-    "version": (0, 3, 5),
+    "version": (0, 3, 6),
     "blender": (2, 80, 0),
     "location": "View3D > Add > Mesh",
     "description": "Create geodesic dome type objects.",

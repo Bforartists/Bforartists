@@ -284,6 +284,10 @@ class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
         col.active = not(cscene.use_adaptive_sampling)
         col.prop(cscene, "sampling_pattern", text="Pattern")
 
+        layout.prop(cscene, "use_square_samples")
+
+        layout.separator()
+
         col = layout.column(align=True)
         col.prop(cscene, "min_light_bounces")
         col.prop(cscene, "min_transparent_bounces")

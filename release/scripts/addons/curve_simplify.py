@@ -596,10 +596,10 @@ def main_rd(context, distance = 0.01):
     if bpy.ops.object.mode_set.poll():
         bpy.ops.object.mode_set(mode='EDIT')
 
-    for curve in selected_Curves:
-        bezier_dellist = []
-        dellist = []
+    bezier_dellist = []
+    dellist = []
 
+    for curve in selected_Curves:
         for spline in curve.data.splines:
             if spline.type == 'BEZIER':
                 if len(spline.bezier_points) > 1:
