@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
+"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -281,6 +281,10 @@ msgid "Parent"
 msgstr "Gurasoa"
 
 
+msgid "Direction"
+msgstr "Norabidea"
+
+
 msgid "Point"
 msgstr "Puntu"
 
@@ -373,16 +377,16 @@ msgid "Save"
 msgstr "Gorde"
 
 
-msgid "Display Mode"
-msgstr "Bistaraketa Modua"
+msgid "Environment"
+msgstr "Ingurunea"
 
 
 msgid "Shading"
 msgstr "Itzalak"
 
 
-msgid "Environment"
-msgstr "Ingurunea"
+msgid "Display Mode"
+msgstr "Bistaraketa Modua"
 
 
 msgid "Time"
@@ -401,8 +405,12 @@ msgid "Onion Skinning"
 msgstr "Tipula-azapa"
 
 
-msgid "Direction"
-msgstr "Norabidea"
+msgid "Invert"
+msgstr "Alderantzikatu"
+
+
+msgid "Layer"
+msgstr "Geruza"
 
 
 msgid "Grid"
@@ -419,14 +427,6 @@ msgstr "Leihoa"
 
 msgid "Tools"
 msgstr "Tresnak"
-
-
-msgid "Invert"
-msgstr "Alderantzikatu"
-
-
-msgid "Layer"
-msgstr "Geruza"
 
 
 msgctxt "Curve"
@@ -1081,10 +1081,6 @@ msgstr "Hautatu edo ez-hautatu fitxategi guztiak"
 msgctxt "Operator"
 msgid "Select Directory"
 msgstr "Direktorioa hautatu"
-
-
-msgid "Select/Deselect file in this direction"
-msgstr "Hautatu/Deshautatu fitxategiak helbide honetan"
 
 
 msgid "Prev"
@@ -1982,11 +1978,6 @@ msgstr "Lehentasuna"
 
 
 msgctxt "Operator"
-msgid "Delete..."
-msgstr "Ezabatu..."
-
-
-msgctxt "Operator"
 msgid "Clear"
 msgstr "Garbitu"
 
@@ -2018,6 +2009,11 @@ msgstr "Ireki..."
 msgctxt "Operator"
 msgid "Save As..."
 msgstr "Gorde honela..."
+
+
+msgctxt "Operator"
+msgid "Delete..."
+msgstr "Ezabatu..."
 
 
 msgctxt "Operator"

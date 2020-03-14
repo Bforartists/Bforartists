@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
+"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1074,10 +1074,6 @@ msgid "Transmission"
 msgstr "Transmisión"
 
 
-msgid "Subsurface"
-msgstr "Transluminiscencia"
-
-
 msgid "Save Mode"
 msgstr "Modo de guardado"
 
@@ -1152,10 +1148,6 @@ msgstr "Agrega la contribución de los reflejos"
 
 msgid "Add indirect lighting contribution"
 msgstr "Agrega la contribución de la iluminación indirecta"
-
-
-msgid "Add subsurface contribution"
-msgstr "Agrega la contribución de la transluminiscencia"
 
 
 msgid "Add transmission contribution"
@@ -3026,12 +3018,28 @@ msgid "Curve used for the strength"
 msgstr "Curva usada para la intensidad"
 
 
+msgid "Direction"
+msgstr "Dirección"
+
+
+msgid "Add effect of brush"
+msgstr "Adiciona el efecto del pincel"
+
+
+msgid "Subtract effect of brush"
+msgstr "Sustrae el efecto del pincel"
+
+
 msgid "Mode"
 msgstr "Modo"
 
 
 msgid "Eraser Mode"
 msgstr "Modo del borrador"
+
+
+msgid "Dissolve"
+msgstr "Disolver"
 
 
 msgid "Point"
@@ -3170,16 +3178,52 @@ msgid "Eraser Stroke"
 msgstr "Borrador trazo"
 
 
-msgid "Border Opacity Factor"
-msgstr "Opacidad de bordes"
+msgid "Smooth"
+msgstr "Suavizado"
+
+
+msgid "Thickness"
+msgstr "Grosor"
+
+
+msgid "Randomize"
+msgstr "Aleatorizar"
+
+
+msgid "Grab"
+msgstr "Arrastrar"
+
+
+msgid "Push"
+msgstr "Empujar"
+
+
+msgid "Twist"
+msgstr "Torsionar"
+
+
+msgid "Pinch"
+msgstr "Pellizcar"
+
+
+msgid "Clone"
+msgstr "Clonar"
+
+
+msgid "Draw"
+msgstr "Dibujar"
+
+
+msgid "Blur"
+msgstr "Desenfocar"
+
+
+msgid "Smear"
+msgstr "Manchar"
 
 
 msgid "Amount of gradient for Dot and Box strokes (set to 1 for full solid)"
 msgstr "Cantidad de esfumado en trazos de tipo Punto y Caja (fijar en 1 para que sea completamente sólido)"
-
-
-msgid "Aspect Ratio"
-msgstr "Proporción"
 
 
 msgid "Input Samples"
@@ -3206,18 +3250,6 @@ msgid "Jitter factor for new strokes"
 msgstr "Factor de alteración para los nuevos trazos"
 
 
-msgid "Sensitivity"
-msgstr "Sensibilidad"
-
-
-msgid "Pressure sensitivity factor for new strokes"
-msgstr "Factor de sensibilidad a la presión para los nuevos trazos"
-
-
-msgid "Smooth"
-msgstr "Suavizado"
-
-
 msgid "Amount of smoothing to apply after finish newly created strokes, to reduce jitter/noise"
 msgstr "Cantidad de suavizado a aplicar a los nuevos trazos, una vez creados, para reducir su vibración/ruido"
 
@@ -3242,22 +3274,6 @@ msgid "Number of times to subdivide newly created strokes, for less jagged strok
 msgstr "Cantidad de veces a subdividir los nuevos trazos creados, para reducir sus vibraciones"
 
 
-msgid "Smooth Thickness"
-msgstr "Suavizar grosor"
-
-
-msgid "Amount of thickness smoothing to apply after finish newly created strokes, to reduce jitter/noise"
-msgstr "Cantidad de suavizado del grosor a aplicar a los nuevos trazos, una vez creados, para reducir su vibración/ruido"
-
-
-msgid "Iterations Thickness"
-msgstr "Iteraciones del grosor"
-
-
-msgid "Number of times to smooth thickness for newly created strokes"
-msgstr "Cantidad de veces que se suavizará el grosor de los nuevos trazos creados"
-
-
 msgid "Pressure Randomness"
 msgstr "Aleatoriedad de presión"
 
@@ -3272,14 +3288,6 @@ msgstr "Aleatoriedad de intensidad"
 
 msgid "Randomness factor strength in new strokes"
 msgstr "Factor de aleatoriedad para la intensidad en los nuevos trazos"
-
-
-msgid "Random Subdivision"
-msgstr "Aleatoriedad subdivisión"
-
-
-msgid "Randomness factor for new strokes after subdivision"
-msgstr "Factor de aleatoriedad para los nuevos trazos luego de la subdivisión"
 
 
 msgid "Show Fill"
@@ -3318,20 +3326,52 @@ msgid "Trim intersecting stroke ends"
 msgstr "Recorta los extremos del trazo que se intersecten con otros"
 
 
-msgid "Enable Cursor"
-msgstr "Habilitar cursor"
-
-
-msgid "Enable cursor on screen"
-msgstr "Habilita el cursor en pantalla"
-
-
 msgid "Default Eraser"
 msgstr "Borrador predefinido"
 
 
 msgid "Use this brush when enable eraser with fast switch key"
 msgstr "Usar este pincel al habilitar el borrador con la tecla de cambio rápido"
+
+
+msgid "Affect Position"
+msgstr "Afectar posición"
+
+
+msgid "The brush affects the position of the point"
+msgstr "El pincel afecta a la posición del punto"
+
+
+msgid "Affect Pressure"
+msgstr "Afectar presión"
+
+
+msgid "Affect pressure values as well when smoothing strokes"
+msgstr "También se afectan los valores de presión al suavizar los trazos"
+
+
+msgid "Affect Strength"
+msgstr "Afectar intensidad"
+
+
+msgid "The brush affects the color strength of the point"
+msgstr "El pincel afecta a la intensidad del color del punto"
+
+
+msgid "Affect Thickness"
+msgstr "Afectar grosor"
+
+
+msgid "The brush affects the thickness of the point"
+msgstr "El pincel afecta al grosor del punto"
+
+
+msgid "Affect UV"
+msgstr "Afectar UV"
+
+
+msgid "The brush affects the UV rotation of the point"
+msgstr "El pincel afecta a la rotación de las UV del punto"
 
 
 msgid "Use Pressure Jitter"
@@ -3404,6 +3444,14 @@ msgstr "Aleatoriedad de UV"
 
 msgid "Random factor for autogenerated UV rotation"
 msgstr "Factor de aleatoriedad para la rotación de las UV autogeneradas"
+
+
+msgid "Mode Type"
+msgstr "Modo"
+
+
+msgid "Both"
+msgstr "Ambos"
 
 
 msgid "Background Image"
@@ -8958,10 +9006,6 @@ msgid "Use 5x multisampling to smooth paint edges"
 msgstr "Usa un muestreo múltiple 5 veces mayor para pintar los bordes suavemente"
 
 
-msgid "Dissolve"
-msgstr "Disolver"
-
-
 msgid "Enable to make surface changes disappear over time"
 msgstr "Habilitar para hacer que los cambios en la superficie desaparezcan con el tiempo"
 
@@ -10876,6 +10920,54 @@ msgid "Whether this path is saved in bookmarks, or generated from OS"
 msgstr "Indica si esta ruta se encuentra guardada en los marcadores o proviene del sistema operativo"
 
 
+msgid "Which ID types to show/hide, when browsing a library"
+msgstr "Qué tipos de elementos mostrar u ocultar, al explorar una biblioteca"
+
+
+msgid "Animations"
+msgstr "Animaciones"
+
+
+msgid "Environment"
+msgstr "Entorno"
+
+
+msgid "Images & Sounds"
+msgstr "Imágenes y sonidos"
+
+
+msgid "Miscellaneous"
+msgstr "Varios"
+
+
+msgid "Objects & Collections"
+msgstr "Objetos y colecciones"
+
+
+msgid "Shading"
+msgstr "Sombreado"
+
+
+msgid "Fonts"
+msgstr "Tipografías"
+
+
+msgid "Light Probes"
+msgstr "Sondas de luz"
+
+
+msgid "Freestyle Linestyles"
+msgstr "Estilos de línea de Freestyle"
+
+
+msgid "Node Trees"
+msgstr "Árboles de nodos"
+
+
+msgid "Particles Settings"
+msgstr "Opciones de partículas"
+
+
 msgid "Directory"
 msgstr "Directorio"
 
@@ -10958,218 +11050,6 @@ msgstr "Coincidencia de nombre de archivos de tipo línea de comandos de UNIX, s
 
 msgid "Filter ID Types"
 msgstr "Filtrar por tipo"
-
-
-msgid "Which ID types to show/hide, when browsing a library"
-msgstr "Qué tipos de elementos mostrar u ocultar, al explorar una biblioteca"
-
-
-msgid "Show/hide Action data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de acción"
-
-
-msgid "Show/hide Armature data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de esqueleto"
-
-
-msgid "Show/hide Brushes data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de pincel"
-
-
-msgid "Show/hide Camera data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de cámara"
-
-
-msgid "Show/hide Cache File data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de archivo de caché"
-
-
-msgid "Show/hide Curve data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de curva"
-
-
-msgid "Show/hide Grease pencil data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de lápiz de cera"
-
-
-msgid "Show/hide Collection data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de colección"
-
-
-msgid "Show/hide Image data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de imagen"
-
-
-msgid "Show/hide Light data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de luz"
-
-
-msgid "Freestyle Linestyles"
-msgstr "Estilos de línea de Freestyle"
-
-
-msgid "Show/hide Freestyle's Line Style data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de estilo de línea de Freestyle"
-
-
-msgid "Show/hide Lattice data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de jaula"
-
-
-msgid "Show/hide Material data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de material"
-
-
-msgid "Show/hide Metaball data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de metabola"
-
-
-msgid "Show/hide Movie Clip data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de clip de película"
-
-
-msgid "Show/hide Mesh data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de malla"
-
-
-msgid "Show/hide Mask data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de máscara"
-
-
-msgid "Node Trees"
-msgstr "Árboles de nodos"
-
-
-msgid "Show/hide Node Tree data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de árbol de nodos"
-
-
-msgid "Show/hide Object data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de objeto"
-
-
-msgid "Particles Settings"
-msgstr "Opciones de partículas"
-
-
-msgid "Show/hide Particle Settings data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de opciones de partículas"
-
-
-msgid "Show/hide Palette data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de paleta"
-
-
-msgid "Show/hide Paint Curve data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de curva de pintura"
-
-
-msgid "Light Probes"
-msgstr "Sondas de luz"
-
-
-msgid "Show/hide Light Probe data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de sonda de luz"
-
-
-msgid "Show/hide Scene data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de escena"
-
-
-msgid "Show/hide Speaker data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de altavoz"
-
-
-msgid "Show/hide Sound data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de sonido"
-
-
-msgid "Show/hide Texture data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de textura"
-
-
-msgid "Show/hide Text data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de texto"
-
-
-msgid "Fonts"
-msgstr "Tipografías"
-
-
-msgid "Show/hide Font data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de tipografía"
-
-
-msgid "Show/hide World data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de entorno"
-
-
-msgid "Show/hide workspace data-blocks"
-msgstr "Mostrar u ocultar bloques de datos de espacio de trabajo"
-
-
-msgid "Filter ID Categories"
-msgstr "Filtrar por categorías"
-
-
-msgid "Which ID categories to show/hide, when browsing a library"
-msgstr "Qué categorías mostrar u ocultar, al explorar una biblioteca"
-
-
-msgid "Show/hide scenes"
-msgstr "Mostrar u ocultar escenas"
-
-
-msgid "Animations"
-msgstr "Animaciones"
-
-
-msgid "Show/hide animation data"
-msgstr "Mostrar u ocultar datos de animación"
-
-
-msgid "Objects & Collections"
-msgstr "Objetos y colecciones"
-
-
-msgid "Show/hide objects and groups"
-msgstr "Mostrar u ocultar objetos y colecciones"
-
-
-msgid "Show/hide meshes, curves, lattice, armatures and metaballs data"
-msgstr "Mostrar u ocultar datos de mallas, curvas, jaulas, esqueletos y metabolas"
-
-
-msgid "Shading"
-msgstr "Sombreado"
-
-
-msgid "Show/hide materials, nodetrees, textures and Freestyle's linestyles"
-msgstr "Mostrar u ocultar materiales, árboles de nodos, texturas y estilos de línea de Freestyle"
-
-
-msgid "Images & Sounds"
-msgstr "Imágenes y sonidos"
-
-
-msgid "Show/hide images, movie clips, sounds and masks"
-msgstr "Mostrar u ocultar imágenes, clips de película, sonidos y máscaras"
-
-
-msgid "Environment"
-msgstr "Entorno"
-
-
-msgid "Show/hide worlds, lights, cameras and speakers"
-msgstr "Mostrar u ocultar entornos, luces, cámaras y altavoces"
-
-
-msgid "Miscellaneous"
-msgstr "Varios"
-
-
-msgid "Show/hide other data types"
-msgstr "Mostrar u ocultar otros tipos de datos"
 
 
 msgid "Filter by name, supports '*' wildcard"
@@ -11394,10 +11274,6 @@ msgstr "Opciones del dominio del fluido"
 
 msgid "Margin added around fluid to minimize boundary interference"
 msgstr "Margen agregado alrededor del fluido para minimizar la interferencia de los límites"
-
-
-msgid "Maximum amount of fluid cell can contain before it is considered empty"
-msgstr "Cantidad máxima de fluido que puede contener la celda antes de ser considerada vacía"
 
 
 msgid "Additional"
@@ -11634,10 +11510,6 @@ msgstr "Cúbica"
 
 msgid "Smoothed high quality interpolation, but slower"
 msgstr "Interpolación suave de alta calidad, pero más lento"
-
-
-msgid "Thickness"
-msgstr "Grosor"
 
 
 msgid "Thickness of smoke drawing in the viewport"
@@ -12424,6 +12296,10 @@ msgid "Take average of velocities from previous frame and new velocities from cu
 msgstr "Toma el promedio de las velocidades del fotograma anterior y las nuevas del fotograma actual"
 
 
+msgid "Subframes"
+msgstr "Subfotogramas"
+
+
 msgid "Distance around mesh surface to consider as effector"
 msgstr "Distancia alrededor de la superficie de la malla para considerar como un efector"
 
@@ -12534,10 +12410,6 @@ msgstr "Sistemas de partículas emitidos desde el objeto"
 
 msgid "Color of smoke"
 msgstr "Color del humo"
-
-
-msgid "Subframes"
-msgstr "Subfotogramas"
 
 
 msgid "Number of additional samples to take between frames to improve quality of fast moving flows"
@@ -13460,14 +13332,6 @@ msgid "Avoids editing locked materials in the layer"
 msgstr "Evita la edición de materiales bloqueados en la capa"
 
 
-msgid "Mask Layer"
-msgstr "Capa de máscara"
-
-
-msgid "Remove any pixel outside underlying layers drawing"
-msgstr "Elimina cualquier píxel por fuera de los dibujos de las capas inferiores"
-
-
 msgid "Parent inverse transformation matrix"
 msgstr "Matriz de transformaciones relativa al superior"
 
@@ -13564,6 +13428,10 @@ msgid "Display annotation onion skins before and after the current frame"
 msgstr "Mostrar piel de cebolla de anotaciones antes y después del fotograma actual"
 
 
+msgid "Mask Layer"
+msgstr "Capa de máscara"
+
+
 msgid "Display onion skins before and after the current frame"
 msgstr "Mostrar piel de cebolla antes y después del fotograma actual"
 
@@ -13584,84 +13452,12 @@ msgid "Only include Layer in this View Layer render output (leave blank to inclu
 msgstr "Sólo incluir en esta capa de visualización (dejar en blanco para incluirla siempre)"
 
 
-msgid "GPencil Sculpt Brush"
-msgstr "Pincel escultura de lápiz de cera"
+msgid "Invert"
+msgstr "Invertir"
 
 
-msgid "Stroke editing brush"
-msgstr "Pincel de edición de trazado"
-
-
-msgid "Cursor Add"
-msgstr "Cursor adición"
-
-
-msgid "Color for the cursor for addition"
-msgstr "Color del cursor al adicionar"
-
-
-msgid "Cursor Sub"
-msgstr "Cursor sustracción"
-
-
-msgid "Color for the cursor for subtraction"
-msgstr "Color del cursor al sustraer"
-
-
-msgid "Direction"
-msgstr "Dirección"
-
-
-msgid "Add effect of brush"
-msgstr "Adiciona el efecto del pincel"
-
-
-msgid "Subtract effect of brush"
-msgstr "Sustrae el efecto del pincel"
-
-
-msgid "Radius of the brush in pixels"
-msgstr "Radio del pincel en píxeles"
-
-
-msgid "Brush strength"
-msgstr "Intensidad del pincel"
-
-
-msgid "Affect Pressure"
-msgstr "Afectar presión"
-
-
-msgid "Affect pressure values as well when smoothing strokes"
-msgstr "También se afectan los valores de presión al suavizar los trazos"
-
-
-msgid "Use Falloff"
-msgstr "Usar decaimiento"
-
-
-msgid "Strength of brush decays with distance from cursor"
-msgstr "La intensidad del pincel decaerá según la distancia al cursor"
-
-
-msgid "Radius Pressure"
-msgstr "Presión radio"
-
-
-msgid "Enable tablet pressure sensitivity for radius"
-msgstr "Habilita la sensibilidad a la presión de la tableta para controlar el radio"
-
-
-msgid "Strength Pressure"
-msgstr "Presión a intensidad"
-
-
-msgid "Enable tablet pressure sensitivity for strength"
-msgstr "Habilita la sensibilidad a la presión de la tableta para la fuerza"
-
-
-msgid "Target weight (define a maximum range limit for the weight. Any value above will be clamped)"
-msgstr "Influencia objetivo (define un límite máximo para el rango para la influencia. Cualquier valor por encima será limitado)"
+msgid "Layer"
+msgstr "Capa"
 
 
 msgid "GPencil Sculpt Guide"
@@ -13764,14 +13560,6 @@ msgid "GPencil Sculpt Settings"
 msgstr "Opciones de escultura de lápiz de cera"
 
 
-msgid "Properties for Grease Pencil stroke sculpting tool"
-msgstr "Propiedades de la herramienta de escultura del lápiz de cera"
-
-
-msgid "Brush"
-msgstr "Pincel"
-
-
 msgid "Threshold for stroke intersections"
 msgstr "Umbral para la intersección de trazos"
 
@@ -13816,104 +13604,12 @@ msgid "Custom curve to control falloff of brush effect by Grease Pencil frames"
 msgstr "Curva personalizada para controlar el decaimiento del efecto del pincel con los fotogramas de lápiz de cera"
 
 
-msgid "Tool"
-msgstr "Herramienta"
-
-
-msgid "Smooth stroke points"
-msgstr "Suavizar los puntos del trazo"
-
-
-msgid "Adjust thickness of strokes"
-msgstr "Ajustar el grosor de los trazos"
-
-
-msgid "Adjust color strength of strokes"
-msgstr "Ajustar la intensidad del color de los trazos"
-
-
-msgid "Randomize"
-msgstr "Aleatorizar"
-
-
-msgid "Introduce jitter/randomness into strokes"
-msgstr "Permite introducir una alteración aleatoria en los trazos"
-
-
-msgid "Grab"
-msgstr "Arrastrar"
-
-
-msgid "Translate the set of points initially within the brush circle"
-msgstr "Permite trasladar el conjunto de puntos que inicialmente se encuentra dentro del círculo del pincel"
-
-
-msgid "Push"
-msgstr "Empujar"
-
-
-msgid "Move points out of the way, as if combing them"
-msgstr "Permite mover puntos tal como si se los estuviera peinando"
-
-
-msgid "Twist"
-msgstr "Torsionar"
-
-
-msgid "Rotate points around the midpoint of the brush"
-msgstr "Permite rotar puntos alrededor del punto medio del pincel"
-
-
-msgid "Pinch"
-msgstr "Pellizcar"
-
-
-msgid "Pull points towards the midpoint of the brush"
-msgstr "Permite tirar de los puntos hacia el punto medio del pincel"
-
-
-msgid "Clone"
-msgstr "Clonar"
-
-
-msgid "Paste copies of the strokes stored on the clipboard"
-msgstr "Permite pegar copias de los trazos almacenados en el portapapeles"
-
-
 msgid "Custom curve to control primitive thickness"
 msgstr "Curva personalizada para controlar el grosor de la figura"
 
 
-msgid "Affect Position"
-msgstr "Afectar posición"
-
-
-msgid "The brush affects the position of the point"
-msgstr "El pincel afecta a la posición del punto"
-
-
-msgid "Affect Strength"
-msgstr "Afectar intensidad"
-
-
-msgid "The brush affects the color strength of the point"
-msgstr "El pincel afecta a la intensidad del color del punto"
-
-
-msgid "Affect Thickness"
-msgstr "Afectar grosor"
-
-
-msgid "The brush affects the thickness of the point"
-msgstr "El pincel afecta al grosor del punto"
-
-
-msgid "Affect UV"
-msgstr "Afectar UV"
-
-
-msgid "The brush affects the UV rotation of the point"
-msgstr "El pincel afecta a la rotación de las UV del punto"
+msgid "Use Falloff"
+msgstr "Usar decaimiento"
 
 
 msgid "Use falloff effect when edit in multiframe mode to compute brush effect by frame"
@@ -13926,14 +13622,6 @@ msgstr "Usar curva"
 
 msgid "Use curve to define primitive stroke thickness"
 msgstr "Usar una curva para definir el grosor del trazo de la figura"
-
-
-msgid "Tool for weight painting"
-msgstr "Herramienta para pintar inluencias"
-
-
-msgid "Weight Paint for Vertex Groups"
-msgstr "Pintar influencias para grupos vértices"
 
 
 msgid "Grease Pencil Stroke"
@@ -14000,16 +13688,16 @@ msgid "Flat"
 msgstr "Plano"
 
 
-msgid "Amount of gradient along section of stroke"
-msgstr "Cantidad de esfumado a lo largo de la sección del trazo"
-
-
 msgid "Groups"
 msgstr "Grupos"
 
 
 msgid "Weights for the vertex groups this vertex is member of"
 msgstr "Influencias para los grupos de vértices de los cuales este vértice es miembro"
+
+
+msgid "Amount of gradient along section of stroke"
+msgstr "Cantidad de esfumado a lo largo de la sección del trazo"
 
 
 msgid "No Fill"
@@ -14060,6 +13748,10 @@ msgid "Triangulation data for HQ fill"
 msgstr "Datos de triangulación del relleno de alta calidad"
 
 
+msgid "UV Rotation"
+msgstr "Rotación UV"
+
+
 msgid "Grease Pencil Stroke Point"
 msgstr "Punto de trazo de lápiz de cera"
 
@@ -14092,10 +13784,6 @@ msgid "Internal UV factor"
 msgstr "Factor interno de UV"
 
 
-msgid "UV Rotation"
-msgstr "Rotación UV"
-
-
 msgid "Internal UV factor for dot mode"
 msgstr "Factor interno de UV para el modo de puntos"
 
@@ -14118,18 +13806,6 @@ msgstr "Triangulación"
 
 msgid "Triangulation data for Grease Pencil fills"
 msgstr "Datos de triangulación para los rellenos de lápiz de cera"
-
-
-msgid "First triangle vertex texture coordinates"
-msgstr "Coordenadas de texturizado del primer vértice del triángulo"
-
-
-msgid "Second triangle vertex texture coordinates"
-msgstr "Coordenadas de texturizado del segundo vértice del triángulo"
-
-
-msgid "Third triangle vertex texture coordinates"
-msgstr "Coordenadas de texturizado del tercer vértice del triángulo"
 
 
 msgid "First triangle vertex index"
@@ -14546,10 +14222,6 @@ msgid "Change stroke using armature to deform modifier"
 msgstr "Deforma el trazo usando un esqueleto"
 
 
-msgid "Invert"
-msgstr "Invertir"
-
-
 msgid "Invert vertex group influence"
 msgstr "Invertir influencia del grupo de vértices"
 
@@ -14586,6 +14258,14 @@ msgid "Create grid of duplicate instances"
 msgstr "Crea una cuadrícula de instancias"
 
 
+msgid "Constant Offset"
+msgstr "Desplazamiento constante"
+
+
+msgid "Value for the distance between items"
+msgstr "Valor de distancia entre los elementos"
+
+
 msgid "Count"
 msgstr "Cantidad"
 
@@ -14610,18 +14290,6 @@ msgid "Inverse Materials"
 msgstr "Invertir materiales"
 
 
-msgid "Keep on Top"
-msgstr "Mantener delante"
-
-
-msgid "Keep the original stroke in front of new instances (only affect by layer)"
-msgstr "Mantiene el trazo original delante de las nuevas instancias (sólo afectado por el orden de capas)"
-
-
-msgid "Layer"
-msgstr "Capa"
-
-
 msgid "Pass"
 msgstr "Pasada"
 
@@ -14632,10 +14300,6 @@ msgstr "Índice de la pasada de la capa"
 
 msgid "Material name"
 msgstr "Nombre del material"
-
-
-msgid "Value for the distance between items"
-msgstr "Valor de distancia entre los elementos"
 
 
 msgid "Object Offset"
@@ -14654,30 +14318,6 @@ msgid "Random Rotation"
 msgstr "Aleatorizar rotación"
 
 
-msgid "Use random factors for rotation"
-msgstr "Usar factores aleatorios para la rotación"
-
-
-msgid "Random Scale"
-msgstr "Aleatorizar escala"
-
-
-msgid "Use random factors for scale"
-msgstr "Usar factores aleatorios para la escala"
-
-
-msgid "Index of the material used for generated strokes (0 keep original material)"
-msgstr "Índice del material usado para los trazos generados (0 para mantener el material original)"
-
-
-msgid "Rotation Factor"
-msgstr "Factor de rotación"
-
-
-msgid "Random factor for rotation"
-msgstr "Factor aleatorio para la rotación"
-
-
 msgid "Value for changes in rotation"
 msgstr "Valor para los cambios en la rotación"
 
@@ -14686,20 +14326,24 @@ msgid "Value for changes in scale"
 msgstr "Valor para los cambios en la escala"
 
 
-msgid "Scale Factor"
-msgstr "Factor de escala"
+msgid "Relative Offset"
+msgstr "Desplazamiento relativo"
 
 
-msgid "Random factor for scale"
-msgstr "Factor aleatorio para la escala"
+msgid "The size of the geometry will determine the distance between arrayed items"
+msgstr "El tamaño de la geometría determinará la distancia entre los elementos de la serie"
+
+
+msgid "Index of the material used for generated strokes (0 keep original material)"
+msgstr "Índice del material usado para los trazos generados (0 para mantener el material original)"
+
+
+msgid "Random seed"
+msgstr "Semilla aleatoria"
 
 
 msgid "Shift"
 msgstr "Mayúsculas"
-
-
-msgid "Shiftiness value"
-msgstr "Valor de desplazamiento"
 
 
 msgid "Build Modifier"
@@ -14814,24 +14458,12 @@ msgid "Change Hue/Saturation modifier"
 msgstr "Modificador para cambiar Tono/Saturación"
 
 
-msgid "Create Materials"
-msgstr "Crear materiales"
-
-
-msgid "When apply modifier, create new material"
-msgstr "Al aplicar el modificador, crear nuevos materiales"
-
-
 msgid "Color Hue"
 msgstr "Tono del color"
 
 
 msgid "Set what colors of the stroke are affected"
 msgstr "Define qué colores del trazo serán afectados"
-
-
-msgid "Both"
-msgstr "Ambos"
 
 
 msgid "Modify fill and stroke colors"
@@ -14848,6 +14480,10 @@ msgstr "Modificar sólo el color de relleno"
 
 msgid "Color Saturation"
 msgstr "Saturación del color"
+
+
+msgid "Custom Curve"
+msgstr "Curva personalizada"
 
 
 msgid "Color Value"
@@ -15012,10 +14648,6 @@ msgid "Distance of duplications"
 msgstr "Distancia de los duplicados"
 
 
-msgid "Duplications"
-msgstr "Duplicados"
-
-
 msgid "How many copies of strokes be displayed"
 msgstr "Cuántas copias del trazo mostrar"
 
@@ -15026,14 +14658,6 @@ msgstr "División por ángulo"
 
 msgid "Enable angle splitting"
 msgstr "Habilita la división por ángulo"
-
-
-msgid "Enable Fading"
-msgstr "Habilitar fundido"
-
-
-msgid "Enable fading"
-msgstr "Habilita el fundido"
 
 
 msgid "Fade center"
@@ -15064,28 +14688,8 @@ msgid "Amount of noise to apply"
 msgstr "Cantidad de ruido a plicar"
 
 
-msgid "Full Stroke"
-msgstr "Trazo completo"
-
-
-msgid "The noise moves the stroke as a whole, not point by point"
-msgstr "El ruido mueve el trazo como un todo, no punto a punto"
-
-
-msgid "Move Extremes"
-msgstr "Mover extremos"
-
-
-msgid "The noise moves the stroke extreme points"
-msgstr "El ruido mueve los extremos del trazo"
-
-
-msgid "Use random values"
-msgstr "Usar valores aleatorios"
-
-
-msgid "Random seed"
-msgstr "Semilla aleatoria"
+msgid "Thickness Factor"
+msgstr "Factor de grosor"
 
 
 msgid "Step"
@@ -15098,18 +14702,6 @@ msgstr "Cantidad de fotogramas antes de recalcular los valores aleatorios nuevam
 
 msgid "The modifier affects the position of the point"
 msgstr "El modificador afectará a la posición del punto"
-
-
-msgid "The modifier affects the color strength of the point"
-msgstr "El modificador afectará a la intensidad del color del punto"
-
-
-msgid "The modifier affects the thickness of the point"
-msgstr "El modificador afectará al grosor del punto"
-
-
-msgid "The modifier affects the UV rotation factor of the point"
-msgstr "El modificador afectará al factor de rotación de UV del punto"
 
 
 msgid "Offset Modifier"
@@ -15142,22 +14734,6 @@ msgstr "Modificador para cambiar la opacidad de trazos"
 
 msgid "Factor of Opacity"
 msgstr "Factor de opacidad"
-
-
-msgid "Opacity Mode"
-msgstr "Modo de opacidad"
-
-
-msgid "Set what mode used to define opacity"
-msgstr "Permite definir qué modo se usará para definir la opacidad"
-
-
-msgid "Modify opacity using alpha channel of material"
-msgstr "Modifica la opacidad usando el canal alfa del material"
-
-
-msgid "Modify opacity using point strength"
-msgstr "Modifica la opacidad usando la intensidad de los puntos"
 
 
 msgid "Simplify Modifier"
@@ -15196,10 +14772,6 @@ msgid "Adaptive"
 msgstr "Adaptativo"
 
 
-msgid "Use a RDP algorithm to simplify the stroke"
-msgstr "Usa un algoritmo RDP para simplificar el trazo"
-
-
 msgid "Sample"
 msgstr "Muestreo"
 
@@ -15232,6 +14804,18 @@ msgid "Number of times to apply smooth (high numbers can reduce fps)"
 msgstr "Número de veces que aplicar el suavizado (valores mayores pueden reducir los FPS)"
 
 
+msgid "The modifier affects the color strength of the point"
+msgstr "El modificador afectará a la intensidad del color del punto"
+
+
+msgid "The modifier affects the thickness of the point"
+msgstr "El modificador afectará al grosor del punto"
+
+
+msgid "The modifier affects the UV rotation factor of the point"
+msgstr "El modificador afectará al factor de rotación de UV del punto"
+
+
 msgid "Subdivision Modifier"
 msgstr "Modificador Subdividir"
 
@@ -15244,12 +14828,20 @@ msgid "Number of subdivisions"
 msgstr "Cantidad de subdivisiones"
 
 
+msgid "Subdivision Type"
+msgstr "Tipo de subdivisión"
+
+
+msgid "Select type of subdivision algorithm"
+msgstr "Seleccione el tipo de algoritmo para la subdivisión"
+
+
+msgid "Catmull-Clark"
+msgstr "Catmull-Clark"
+
+
 msgid "Simple"
 msgstr "Simple"
-
-
-msgid "The modifier only add control points"
-msgstr "El modificador sólo agrega puntos de control"
 
 
 msgid "Thick Modifier"
@@ -15258,30 +14850,6 @@ msgstr "Modificador Grosor"
 
 msgid "Subdivide and Smooth Stroke modifier"
 msgstr "Modificador para subdividir y suavizar trazos"
-
-
-msgid "Custom Thickness Curve"
-msgstr "Curva de grosor personalizada"
-
-
-msgid "Normalize"
-msgstr "Normalizar"
-
-
-msgid "Normalize the full stroke to modifier thickness"
-msgstr "Normalizar el trazo completo al grosor del modificador"
-
-
-msgid "Factor of thickness change"
-msgstr "Factor de cambio del grosor"
-
-
-msgid "Custom Curve"
-msgstr "Curva personalizada"
-
-
-msgid "Use a custom curve to define thickness changes"
-msgstr "Usar una curva personalizada para definir los cambios de grosor"
 
 
 msgid "Time Offset Modifier"
@@ -15937,6 +15505,22 @@ msgid "Clone Offset"
 msgstr "Clonar desplazamiento"
 
 
+msgid "Deformation"
+msgstr "Deformación"
+
+
+msgid "Deformation type that is used in the brush"
+msgstr "Tipo de deformación a ser usada en el pincel"
+
+
+msgid "Inflate"
+msgstr "Inflar"
+
+
+msgid "Expand"
+msgstr "Expandir"
+
+
 msgid "Color Type"
 msgstr "Tipo de color"
 
@@ -16025,14 +15609,6 @@ msgid "Length of a dash cycle measured in stroke samples"
 msgstr "Longitud de un ciclo de líneas discontinuas, medido en cantidad de muestras del trazo"
 
 
-msgid "Deformation"
-msgstr "Deformación"
-
-
-msgid "Deformation type that is used in the brush"
-msgstr "Tipo de deformación a ser usada en el pincel"
-
-
 msgid "Bi-scale Grab"
 msgstr "Arrastre doble"
 
@@ -16081,16 +15657,48 @@ msgid "Threshold above which filling is not propagated"
 msgstr "Umbral por encima del cual no se propagará el relleno"
 
 
+msgid "Smooth stroke points"
+msgstr "Suavizar los puntos del trazo"
+
+
+msgid "Adjust thickness of strokes"
+msgstr "Ajustar el grosor de los trazos"
+
+
+msgid "Adjust color strength of strokes"
+msgstr "Ajustar la intensidad del color de los trazos"
+
+
+msgid "Introduce jitter/randomness into strokes"
+msgstr "Permite introducir una alteración aleatoria en los trazos"
+
+
+msgid "Translate the set of points initially within the brush circle"
+msgstr "Permite trasladar el conjunto de puntos que inicialmente se encuentra dentro del círculo del pincel"
+
+
+msgid "Move points out of the way, as if combing them"
+msgstr "Permite mover puntos tal como si se los estuviera peinando"
+
+
+msgid "Rotate points around the midpoint of the brush"
+msgstr "Permite rotar puntos alrededor del punto medio del pincel"
+
+
+msgid "Pull points towards the midpoint of the brush"
+msgstr "Permite tirar de los puntos hacia el punto medio del pincel"
+
+
+msgid "Paste copies of the strokes stored on the clipboard"
+msgstr "Permite pegar copias de los trazos almacenados en el portapapeles"
+
+
 msgid "Gpencil Settings"
 msgstr "Opciones de lápiz de cera"
 
 
 msgid "Grease Pencil Draw Tool"
 msgstr "Herramienta dibujar de lápiz de cera"
-
-
-msgid "Draw"
-msgstr "Dibujar"
 
 
 msgid "The brush is of type used for drawing strokes"
@@ -16107,6 +15715,10 @@ msgstr "Borrar"
 
 msgid "The brush is used for erasing strokes"
 msgstr "El pincel es usado para borrar trazos"
+
+
+msgid "Weight Paint for Vertex Groups"
+msgstr "Pintar influencias para grupos vértices"
 
 
 msgid "Gradient Spacing"
@@ -16157,10 +15769,6 @@ msgid "Soften"
 msgstr "Suavizar"
 
 
-msgid "Smear"
-msgstr "Manchar"
-
-
 msgid "Mask"
 msgstr "Máscara"
 
@@ -16187,6 +15795,10 @@ msgstr "Unidad alteración"
 
 msgid "Jitter in screen space or relative to brush size"
 msgstr "Permite decidir si la alteración sucederá en espacio de la pantalla o relativa al tamaño del pincel"
+
+
+msgid "Brush"
+msgstr "Pincel"
 
 
 msgid "Mask Stencil Dimensions"
@@ -16337,10 +15949,6 @@ msgid "Clay Strips"
 msgstr "Tiras de arcilla"
 
 
-msgid "Inflate"
-msgstr "Inflar"
-
-
 msgid "Blob"
 msgstr "Glóbulo"
 
@@ -16377,6 +15985,10 @@ msgid "Rotate"
 msgstr "Rotar"
 
 
+msgid "Cloth"
+msgstr "Ropa"
+
+
 msgid "Secondary Color"
 msgstr "Color secundario"
 
@@ -16395,6 +16007,10 @@ msgstr "Mostrar previsualización en puntero"
 
 msgid "Preview the scrape planes in the cursor during the stroke"
 msgstr "Previsualiza los planos de raspado en el puntero mientras se dibuja el trazo"
+
+
+msgid "Radius of the brush in pixels"
+msgstr "Radio del pincel en píxeles"
 
 
 msgid "Smooth Stroke Factor"
@@ -16665,16 +16281,16 @@ msgid "Smooths the edges of the strokes"
 msgstr "Suaviza los bordes de los trazos"
 
 
-msgid "Use Sculpt"
-msgstr "Usar en escultura"
-
-
 msgid "Use this brush in grease pencil drawing mode"
 msgstr "Usar este pincel en modo de dibujo con lápiz de cera"
 
 
 msgid "Use this brush in texture paint mode"
 msgstr "Usa este pincel en modo Pintar Texturas"
+
+
+msgid "Use Sculpt"
+msgstr "Usar en escultura"
 
 
 msgid "Use this brush in sculpt mode"
@@ -16757,6 +16373,14 @@ msgid "Enable tablet pressure sensitivity for spacing"
 msgstr "Habilita la sensibilidad a la presión de la tableta para el espaciado"
 
 
+msgid "Strength Pressure"
+msgstr "Presión a intensidad"
+
+
+msgid "Enable tablet pressure sensitivity for strength"
+msgstr "Habilita la sensibilidad a la presión de la tableta para la fuerza"
+
+
 msgid "Use Texture Overlay"
 msgstr "Superponer textura"
 
@@ -16823,10 +16447,6 @@ msgstr "Pellizcar UV"
 
 msgid "Vertex Paint Tool"
 msgstr "Herramienta Pintar Vértices"
-
-
-msgid "Blur"
-msgstr "Desenfocar"
 
 
 msgid "Vertex weight when brush is applied"
@@ -18549,20 +18169,8 @@ msgid "Scale conversion factor for pixel size (use larger values for thicker lin
 msgstr "Factor de escala del tamaño de píxel (usar valores mayores para líneas más gruesas)"
 
 
-msgid "Show Direction"
-msgstr "Mostrar dirección"
-
-
-msgid "Show stroke drawing direction with a bigger green dot (start) and smaller red dot (end) points"
-msgstr "Mostrar la dirección de dibujo del trazo usando un punto verde de mayor tamaño (al inicio) y uno rojo (al final)"
-
-
 msgid "Stroke Depth Order"
 msgstr "Orden de profundidad de trazos"
-
-
-msgid "Defines how the strokes are ordered in 3D space"
-msgstr "Define cómo se ordenarán los trazos en el espacio 3D"
 
 
 msgid "2D Layers"
@@ -18601,28 +18209,12 @@ msgid "Set stroke thickness relative to the screen space"
 msgstr "Define el grosor del trazo en relación al espacio de la pantalla"
 
 
-msgid "Adaptive UV"
-msgstr "UV adaptativas"
-
-
-msgid "Automatic UVs are calculated depending of the stroke size"
-msgstr "Se calcularán UV automáticas dependientes del tamaño del trazo"
-
-
 msgid "Autolock Layers"
 msgstr "Autobloquear capas"
 
 
 msgid "Lock automatically all layers except active one to avoid accidental changes"
 msgstr "Bloquea automáticamente todas las capas excepto la activa, para evitar cambios accidentales"
-
-
-msgid "Force Fill Update"
-msgstr "Forzar actualización relleno"
-
-
-msgid "Force recalc of fill data after use deformation modifiers (reduce FPS)"
-msgstr "Fuerza el recálculo de los rellenos, luego del uso de modificadores de deformación (reduce los FPS)"
 
 
 msgid "Use Custom Ghost Colors"
@@ -18651,14 +18243,6 @@ msgstr "Permite editar trazos de múltiples fotogramas clave de lápiz de cera a
 
 msgid "Display onion keyframes with a fade in color transparency"
 msgstr "Mostrar los fotogramas de piel de cebolla con un desvanecimiento en su transparencia"
-
-
-msgid "Loop"
-msgstr "Bucle"
-
-
-msgid "Display first onion keyframes using next frame color to show indication of loop start frame"
-msgstr "Mostrar los primeros fotogramas clave de piel de cebolla usando el color de los posteriores para indicar un fotograma de comienzo de bucle"
 
 
 msgid "Onion Skins"
@@ -19957,10 +19541,6 @@ msgstr "Hebras de pelo"
 
 msgid "Shader Ball"
 msgstr "Esfera de sombreado"
-
-
-msgid "Cloth"
-msgstr "Ropa"
 
 
 msgid "Fluid"
@@ -28105,14 +27685,6 @@ msgid "Fill area with gradient color"
 msgstr "Rellenar el área con un gradiente de colores"
 
 
-msgid "Checker Board"
-msgstr "Damero"
-
-
-msgid "Fill area with checkerboard pattern"
-msgstr "Rellenar el área con un patrón de damero"
-
-
 msgid "Fill area with image texture"
 msgstr "Rellenar el área con una textura de imagen"
 
@@ -28177,16 +27749,8 @@ msgid "Color for mixing with primary filling color"
 msgstr "Color para mezclar con el color principal de relleno"
 
 
-msgid "Mix Adjustment Factor"
-msgstr "Factor de ajuste de mezcla"
-
-
-msgid "Mix Stroke Color"
-msgstr "Mezclar con el color del trazo"
-
-
-msgid "Mode Type"
-msgstr "Modo"
+msgid "Mix Factor"
+msgstr "Factor de mezcla"
 
 
 msgid "Select draw mode for stroke"
@@ -28201,36 +27765,8 @@ msgid "Draw strokes using separated dots"
 msgstr "Dibujar los trazos usando puntos separados"
 
 
-msgid "Boxes"
-msgstr "Cuadrados"
-
-
-msgid "Draw strokes using separated rectangle boxes"
-msgstr "Dibujar los trazos usando cuadrados separados"
-
-
 msgid "Index number for the \"Color Index\" pass"
 msgstr "Nº de índice en la pasada \"Índice de colores\""
-
-
-msgid "Pattern Orientation Angle"
-msgstr "Ángulo de orientación del patrón"
-
-
-msgid "Box Size"
-msgstr "Tamaño de la caja"
-
-
-msgid "Pattern Radius"
-msgstr "Radio del patrón"
-
-
-msgid "Scale Factor for UV coordinates"
-msgstr "Factor de escala de las coordenadas UV"
-
-
-msgid "Shift filling pattern in 2d space"
-msgstr "Desplazamiento del patrón de relleno en espacio 2D"
 
 
 msgid "Texture Pixel Size factor along the stroke"
@@ -28285,32 +27821,12 @@ msgid "Scale Factor for Texture"
 msgstr "Factor de escala de la textura"
 
 
-msgid "Use Fill Texture as a pattern to apply color"
-msgstr "Usar la textura de relleno como patrón para aplicar color"
-
-
-msgid "Mix Texture"
-msgstr "Mezclar textura"
-
-
-msgid "Mix texture image with filling color"
-msgstr "Mezcla la imagen de la textura con el color de relleno"
-
-
 msgid "Self Overlap"
 msgstr "Superposición propia"
 
 
 msgid "Disable stencil and overlap self intersections with alpha materials"
 msgstr "Deshabilita el esténcil y superpone las intersecciones propias usando el alfa"
-
-
-msgid "Use Stroke Texture as a pattern to apply color"
-msgstr "Usar la textura de trazo como patrón para aplicar color"
-
-
-msgid "Mix texture image with stroke color"
-msgstr "Mezcla la imagen de la textura con el color del trazo"
 
 
 msgid "Material slot in an object"
@@ -28435,10 +27951,6 @@ msgid "Files Context Menu"
 msgstr "Archivos - menú contextual"
 
 
-msgid "Fluid Presets"
-msgstr "Ajustes de fluido"
-
-
 msgid "Clean Up"
 msgstr "Limpiar"
 
@@ -28457,34 +27969,6 @@ msgstr "Especiales de capas"
 
 msgid "Move to Layer"
 msgstr "Mover a capa"
-
-
-msgid "A pie menu for accessing Grease Pencil stroke sculpt settings"
-msgstr "Un menú circular para acceder a las opciones de esculpido de trazos de lápiz de cera"
-
-
-msgid "Grease Pencil Sculpt"
-msgstr "Escultura de lápiz de cera"
-
-
-msgid "A pie menu for quick access to Grease Pencil settings"
-msgstr "Un menú circular que permite un rápido acceso a las opciones del lápiz de cera"
-
-
-msgid "A pie menu for quick access to Grease Pencil tools"
-msgstr "Un menú circular que permite un rápido acceso a las herramientas del lápiz de cera"
-
-
-msgid "Grease Pencil Tools"
-msgstr "Herramientas del lápiz de cera"
-
-
-msgid "A pie menu for accessing more Grease Pencil tools"
-msgstr "Un menú circular que permite un rápido acceso a herramientas adicionales del lápiz de cera"
-
-
-msgid "More Grease Pencil Tools"
-msgstr "Herramientas adicionales del lápiz de cera"
 
 
 msgid "F-Curve Channel Context Menu"
@@ -28802,6 +28286,10 @@ msgid "Curve Context Menu"
 msgstr "Curva - menú contextual"
 
 
+msgid "Kerning"
+msgstr "Espaciado"
+
+
 msgid "Interpolate"
 msgstr "Interpolar"
 
@@ -28876,6 +28364,10 @@ msgstr "Caracteres especiales"
 
 msgid "Text Context Menu"
 msgstr "Texto - menú contextual"
+
+
+msgid "Face Sets"
+msgstr "Conjuntos de caras"
 
 
 msgid "Generate Weights"
@@ -29472,10 +28964,6 @@ msgstr "UV fijo"
 
 msgid "UV Select"
 msgstr "Seleccionar UV"
-
-
-msgid "UV Edge Select"
-msgstr "Selección de bordes UV"
 
 
 msgid "Set the map as active for display and editing"
@@ -30078,16 +29566,8 @@ msgid "Relative Offset Displacement"
 msgstr "Desplazamiento relativo"
 
 
-msgid "The size of the geometry will determine the distance between arrayed items"
-msgstr "El tamaño de la geometría determinará la distancia entre los elementos de la serie"
-
-
 msgid "Mesh object to use as a start cap"
 msgstr "Objeto poligonal a usar como tapa al inicio"
-
-
-msgid "Constant Offset"
-msgstr "Desplazamiento constante"
 
 
 msgid "Add a constant offset"
@@ -30108,10 +29588,6 @@ msgstr "Fusiona los vértices de los duplicados inicial y final"
 
 msgid "Add another object's transformation to the total offset"
 msgstr "Agrega la transformación de otro objeto al desplazamiento total"
-
-
-msgid "Relative Offset"
-msgstr "Desplazamiento relativo"
 
 
 msgid "Add an offset relative to the object's bounding box"
@@ -30918,10 +30394,6 @@ msgid "Maximum allowed distance between source and destination element, for non-
 msgstr "Distancia máxima permitida entre los elementos de origen y destino, para los mapeos que no usan la topología"
 
 
-msgid "Mix Factor"
-msgstr "Factor de mezcla"
-
-
 msgid "Factor to use when applying data to destination (exact behavior depends on mix mode, multiplied with weights from vertex group when defined)"
 msgstr "Factor a ser usado al aplicar los datos al destino (el comportamiento exacto dependerá del modo de mezcla escogido, multiplicado por las influencias del grupo de vértices especificado)"
 
@@ -31462,10 +30934,6 @@ msgid "Whether geometry has been bound to anchors"
 msgstr "Establece si la geometría ha sido enlazada a anclas"
 
 
-msgid "Vertex Group for Anchors"
-msgstr "Grupo de vértices de anclaje"
-
-
 msgid "Name of Vertex Group which determines Anchors"
 msgstr "Nombre del grupo de vértices que define las áreas de anclaje"
 
@@ -31796,18 +31264,6 @@ msgstr "Visualización óptima"
 
 msgid "Skip drawing/rendering of interior subdivided edges"
 msgstr "Omite la visualización y procesamiento de bordes internos subdivididos"
-
-
-msgid "Subdivision Type"
-msgstr "Tipo de subdivisión"
-
-
-msgid "Select type of subdivision algorithm"
-msgstr "Seleccione el tipo de algoritmo para la subdivisión"
-
-
-msgid "Catmull-Clark"
-msgstr "Catmull-Clark"
 
 
 msgid "Total Levels"
@@ -34512,6 +33968,10 @@ msgstr "Usar máscara"
 
 msgid "Use a grease pencil data-block as a mask to use only specified areas of pattern when tracking"
 msgstr "Usar un bloque de datos de lápiz de cera como máscara, para usar sólo las áreas patrón especificadas al rastrear"
+
+
+msgid "Normalize"
+msgstr "Normalizar"
 
 
 msgid "Normalize light intensities while tracking (slower)"
@@ -39402,8 +38862,8 @@ msgstr "Restablece el área visible para mostrar el rango completo de fotogramas
 
 
 msgctxt "Operator"
-msgid "View Selected"
-msgstr "Ver lo seleccionado"
+msgid "Frame Selected"
+msgstr "Enmarcar lo seleccionado"
 
 
 msgid "Reset viewable area to show selected keyframes range"
@@ -40647,6 +40107,10 @@ msgstr "Control del pincel de esténcil"
 
 msgid "Control the stencil brush"
 msgstr "Controla el pincel de esténcil"
+
+
+msgid "Tool"
+msgstr "Herramienta"
 
 
 msgid "Translation"
@@ -44608,10 +44072,6 @@ msgid "Walk Direction"
 msgstr "Dirección de tránsito"
 
 
-msgid "Select/Deselect file in this direction"
-msgstr "Seleccionar/deseleccionar archivos en esta dirección"
-
-
 msgid "Prev"
 msgstr "Prev"
 
@@ -45203,15 +44663,6 @@ msgstr "Crear fotograma en blanco en todas las capas, no sólo en la activa"
 
 
 msgctxt "Operator"
-msgid "Create Preset Brushes"
-msgstr "Crear ajustes de pinceles"
-
-
-msgid "Create a set of predefined Grease Pencil drawing brushes"
-msgstr "Permite crear un conjunto predefinido de pinceles de lápiz de cera"
-
-
-msgctxt "Operator"
 msgid "Hide Color(s)"
 msgstr "Ocultar color(es)"
 
@@ -45496,10 +44947,6 @@ msgstr "Disuelve todos los puntos deseleccionados"
 msgctxt "Operator"
 msgid "Grease Pencil Draw"
 msgstr "Lápiz de cera Dibujar"
-
-
-msgid "Draw a new stroke in the active Grease Pencil Object"
-msgstr "Dibuja un nuevo trazo en el objeto activo de lápiz de cera"
 
 
 msgid "No Fill Areas"
@@ -45794,6 +45241,11 @@ msgstr "Aislar capa"
 
 msgid "Toggle whether the active layer is the only one that can be edited and/or visible"
 msgstr "Permite que la capa activa sea la única capaz de ser editada y/o visualizada"
+
+
+msgctxt "Operator"
+msgid "Remove Mask Layer"
+msgstr "Eliminar capa de máscara"
 
 
 msgctxt "Operator"
@@ -46445,6 +45897,10 @@ msgid "Trim selected stroke to first loop or intersection"
 msgstr "Recorta el trazo seleccionado hasta el primer bucle o intersección"
 
 
+msgid "Confirm on Release"
+msgstr "Confirmar al soltar"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Desbloquear todas las capas"
@@ -46452,6 +45908,50 @@ msgstr "Desbloquear todas las capas"
 
 msgid "Unlock all Grease Pencil layers so that they can be edited"
 msgstr "Permite desbloquear todas las capas de lápiz de cera para que puedan ser editadas"
+
+
+msgctxt "Operator"
+msgid "Vertex Paint Bright/Contrast"
+msgstr "Pintar brillo/contraste en vértices"
+
+
+msgid "Adjust vertex color brightness/contrast"
+msgstr "Permite ajustar el brillo/contraste del color de los vértices"
+
+
+msgctxt "Operator"
+msgid "Vertex Paint Hue Saturation Value"
+msgstr "Pintar tono/saturación/valor en vértices"
+
+
+msgid "Adjust vertex color HSV values"
+msgstr "Permite ajustar los valores TSV de los vértices"
+
+
+msgctxt "Operator"
+msgid "Vertex Paint Invert"
+msgstr "Invertir pintura de vértices"
+
+
+msgid "Invert RGB values"
+msgstr "Invierte los valores RVA"
+
+
+msgctxt "Operator"
+msgid "Vertex Paint Levels"
+msgstr "Niveles de pintura de vértices"
+
+
+msgid "Adjust levels of vertex colors"
+msgstr "Permite ajustar los niveles de los colores de los vértices"
+
+
+msgid "Value to multiply colors by"
+msgstr "Valor por el cual multiplicar los colores"
+
+
+msgid "Value to add to colors"
+msgstr "Valor a agregar a los colores"
 
 
 msgctxt "Operator"
@@ -47426,6 +46926,10 @@ msgid "Set the scene framerate to that of the BVH file (note that this nullifies
 msgstr "Permite redefinir la velocidad de fotogramas de la escena a la del archivo BVH (nótese que esto anula la opción 'Escalar FPS', ya que la escala será 1:1)"
 
 
+msgid "Loop"
+msgstr "Bucle"
+
+
 msgid "Loop the animation playback"
 msgstr "Reproducción cíclica de la animación"
 
@@ -48336,11 +47840,6 @@ msgid "Name of new mask layer"
 msgstr "Nombre de la nueva capa de máscara"
 
 
-msgctxt "Operator"
-msgid "Remove Mask Layer"
-msgstr "Eliminar capa de máscara"
-
-
 msgid "Remove mask layer"
 msgstr "Remueve la capa de la máscara"
 
@@ -48693,10 +48192,6 @@ msgstr "Material de caras biseladas (-1 significa usar el de las caras adyacente
 
 msgid "Controls profile shape (0.5 = round)"
 msgstr "Controla la forma del perfil (0.5 = circular)"
-
-
-msgid "Confirm on Release"
-msgstr "Confirmar al soltar"
 
 
 msgid "Segments for curved edge"
@@ -50833,10 +50328,6 @@ msgstr "Modo de selección de bordes"
 
 msgid "Face selection mode"
 msgstr "Modo de selección de caras"
-
-
-msgid "Expand"
-msgstr "Expandir"
 
 
 msgid "Select more vertices, edges or faces connected to initial selection"
@@ -53158,8 +52649,8 @@ msgstr "Crea un objeto de lápiz de cera de Suzanne"
 
 
 msgctxt "Operator"
-msgid "Add Grease Pencil Modifier"
-msgstr "Agregar modificador de lápiz de cera"
+msgid "Add Modifier"
+msgstr "Agregar modificador"
 
 
 msgid "Add a procedural operation/effect to the active grease pencil object"
@@ -53702,11 +53193,6 @@ msgid "Mesh Mode"
 msgstr "Modo de malla"
 
 
-msgctxt "Operator"
-msgid "Add Modifier"
-msgstr "Agregar modificador"
-
-
 msgid "Add a procedural operation/effect to the active object"
 msgstr "Permite agregar una operación o efecto procedural al objeto activo"
 
@@ -54108,14 +53594,6 @@ msgid "Relative number of faces compared to the current mesh"
 msgstr "Cantidad relativa de caras comparada con la malla actual"
 
 
-msgid "Use Mesh Curvature"
-msgstr "Usar curvatura de la malla"
-
-
-msgid "Take the mesh curvature into account when remeshing"
-msgstr "Tomar en cuenta la curvatura de la malla al rehacer la malla"
-
-
 msgid "Use Paint Symmetry"
 msgstr "Usar simetría de pintura"
 
@@ -54494,10 +53972,6 @@ msgstr "Resplandor"
 
 msgid "Create a glow effect"
 msgstr "Crea un efecto de resplandor"
-
-
-msgid "Simulate illumination"
-msgstr "Simula iluminación"
 
 
 msgctxt "ID"
@@ -55932,10 +55406,6 @@ msgid "Use walk navigation to select tree elements"
 msgstr "Usar navegación estilo transitar para seleccionar elementos del árbol"
 
 
-msgid "Select element in this direction"
-msgstr "Seleccionar un elemento en esta dirección"
-
-
 msgid "Extend selection on walk"
 msgstr "Extender la selección al transitar"
 
@@ -56343,15 +55813,6 @@ msgstr "Cambiar la selección de todos los vértices"
 
 
 msgctxt "Operator"
-msgid "Vertex Paint Bright/Contrast"
-msgstr "Pintar brillo/contraste en vértices"
-
-
-msgid "Adjust vertex color brightness/contrast"
-msgstr "Permite ajustar el brillo/contraste del color de los vértices"
-
-
-msgctxt "Operator"
 msgid "Dirty Vertex Colors"
 msgstr "Colores vértices sucios"
 
@@ -56399,41 +55860,6 @@ msgstr "Colores de vértices desde influencias"
 
 msgid "Convert active weight into gray scale vertex colors"
 msgstr "Convierte la influencia activa a colores de vértices (en escala de grises)"
-
-
-msgctxt "Operator"
-msgid "Vertex Paint Hue Saturation Value"
-msgstr "Pintar tono/saturación/valor en vértices"
-
-
-msgid "Adjust vertex color HSV values"
-msgstr "Permite ajustar los valores TSV de los vértices"
-
-
-msgctxt "Operator"
-msgid "Vertex Paint Invert"
-msgstr "Invertir pintura de vértices"
-
-
-msgid "Invert RGB values"
-msgstr "Invierte los valores RVA"
-
-
-msgctxt "Operator"
-msgid "Vertex Paint Levels"
-msgstr "Niveles de pintura de vértices"
-
-
-msgid "Adjust levels of vertex colors"
-msgstr "Permite ajustar los niveles de los colores de los vértices"
-
-
-msgid "Value to multiply colors by"
-msgstr "Valor por el cual multiplicar los colores"
-
-
-msgid "Value to add to colors"
-msgstr "Valor a agregar a los colores"
 
 
 msgctxt "Operator"
@@ -56569,6 +55995,10 @@ msgid "Remove active color from palette"
 msgstr "Remueve el color activo de la paleta"
 
 
+msgid "Palette"
+msgstr "Paleta"
+
+
 msgctxt "Operator"
 msgid "Add New Palette"
 msgstr "Agregar nueva paleta"
@@ -56576,6 +56006,10 @@ msgstr "Agregar nueva paleta"
 
 msgid "Add new palette"
 msgstr "Agrega una nueva paleta"
+
+
+msgid "Luminance"
+msgstr "Luminancia"
 
 
 msgctxt "Operator"
@@ -60396,15 +59830,6 @@ msgstr "Cambia el zoom de la previsualización para que se ajuste al área"
 
 
 msgctxt "Operator"
-msgid "View Frame"
-msgstr "Ver fotograma"
-
-
-msgid "Reset viewable area to show range around current frame"
-msgstr "Restablece el área visible para mostrar un rango alrededor del fotograma actual"
-
-
-msgctxt "Operator"
 msgid "Border Offset View"
 msgstr "Desplazar vista hasta marco"
 
@@ -63604,10 +63029,6 @@ msgid "Exports non-hair particle systems"
 msgstr "Permite exportar sistemas de partículas normales"
 
 
-msgid "Face Sets"
-msgstr "Conjuntos de caras"
-
-
 msgid "Export per face shading group assignments"
 msgstr "Exporta las asignaciones de grupo de sombreado por cara"
 
@@ -65430,6 +64851,14 @@ msgid "Site"
 msgstr "Sitio"
 
 
+msgid "UV Maps"
+msgstr "Mapas UV"
+
+
+msgid "Instancing"
+msgstr "Instanciado"
+
+
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "Agregar ruta de auto ejecución"
@@ -65573,10 +65002,6 @@ msgstr "Curva de cavidad editable"
 
 msgid "Average multiple input samples together to smooth the brush stroke"
 msgstr "Promedia varias posiciones del trazo del pincel para suavizar su trayectoria"
-
-
-msgid "Palette"
-msgstr "Paleta"
 
 
 msgid "Active Palette"
@@ -66414,10 +65839,6 @@ msgid "Text Boxes"
 msgstr "Marcos de texto"
 
 
-msgid "UV Maps"
-msgstr "Mapas UV"
-
-
 msgid "Filters"
 msgstr "Filtros"
 
@@ -66452,6 +65873,10 @@ msgstr "Atributos"
 
 msgid "Directory Path"
 msgstr "Ruta de directorio"
+
+
+msgid "Fluid Presets"
+msgstr "Ajustes de fluido"
 
 
 msgid "Extensions"
@@ -66686,10 +66111,6 @@ msgid "Delta Transform"
 msgstr "Transformación relativa"
 
 
-msgid "Instancing"
-msgstr "Instanciado"
-
-
 msgid "Scale by Face Size"
 msgstr "Escalar según tamaño de caras"
 
@@ -66737,6 +66158,10 @@ msgstr "Tipo 2"
 
 msgid "Hair Dynamics"
 msgstr "Dinámicas de pelo"
+
+
+msgid "Collisions"
+msgstr "Colisiones"
 
 
 msgid "Hair Dynamics Presets"
@@ -66793,10 +66218,6 @@ msgstr "Temporización"
 
 msgid "Border Collisions"
 msgstr "Colisión con bordes"
-
-
-msgid "Collisions"
-msgstr "Colisiones"
 
 
 msgid "Internal Springs"
@@ -66857,6 +66278,10 @@ msgstr "Origen del flujo"
 
 msgid "Guides"
 msgstr "Guías"
+
+
+msgid "Sensitivity"
+msgstr "Sensibilidad"
 
 
 msgid "Surface Response"
@@ -67347,6 +66772,10 @@ msgid "Sculpt Context Menu"
 msgstr "Escultura - menú contextual"
 
 
+msgid "Vertex Paint Context Menu"
+msgstr "Pintar vértices - menú contextual"
+
+
 msgid "View Object Types"
 msgstr "Ver tipos de objeto"
 
@@ -67369,10 +66798,6 @@ msgstr "Rastreo de movimiento"
 
 msgid "Texture Paint Context Menu"
 msgstr "Textura - menú contextual"
-
-
-msgid "Vertex Paint Context Menu"
-msgstr "Pintar vértices - menú contextual"
 
 
 msgid "Weights Context Menu"
@@ -67829,6 +67254,10 @@ msgstr "Hacer al pelo menos voluminoso"
 
 msgid "Brush steps"
 msgstr "Intervalos de pincel"
+
+
+msgid "Brush strength"
+msgstr "Intensidad del pincel"
 
 
 msgid "Puff Volume"
@@ -70147,54 +69576,6 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "Limita el tamaño de las texturas para ahorrar memoria gráfica"
 
 
-msgid "Gpencil MultiSample"
-msgstr "Muestreo múltiple lápiz de cera"
-
-
-msgid "Enable Grease Pencil OpenGL multi-sampling, only for systems that support it"
-msgstr "Habilita el muestreo múltiple OpenGL, sólo para sistemas que lo soporten, requiere el reinicio"
-
-
-msgid "No MultiSample"
-msgstr "Sin muestreo múltiple"
-
-
-msgid "Do not use OpenGL MultiSample"
-msgstr "No usar muestreo múltiple OpenGL"
-
-
-msgid "MultiSample: 2"
-msgstr "Muestreo múltiple: 2"
-
-
-msgid "Use 2x OpenGL MultiSample"
-msgstr "Usar muestreo múltiple OpenGL x2"
-
-
-msgid "MultiSample: 4"
-msgstr "Muestreo múltiple: 4"
-
-
-msgid "Use 4x OpenGL MultiSample"
-msgstr "Usar muestreo múltiple OpenGL x4"
-
-
-msgid "MultiSample: 8"
-msgstr "Muestreo múltiple: 8"
-
-
-msgid "Use 8x OpenGL MultiSample"
-msgstr "Usar muestreo múltiple OpenGL x8"
-
-
-msgid "MultiSample: 16"
-msgstr "Muestreo múltiple: 16"
-
-
-msgid "Use 16x OpenGL MultiSample"
-msgstr "Usar muestreo múltiple OpenGL x16"
-
-
 msgid "Image Display Method"
 msgstr "Método visualización imágenes"
 
@@ -70721,14 +70102,6 @@ msgstr "Muestra opciones para desarrolladores (menú contextual para edición de
 
 msgid "Use transform gizmos by default"
 msgstr "Usar manipuladores de transformación de forma predefinida"
-
-
-msgid "Large Cursors"
-msgstr "Cursores grandes"
-
-
-msgid "Use large mouse cursors when available"
-msgstr "Usa cursores de ratón grandes cuando estén disponibles"
 
 
 msgid "Editor Corner Splitting"
@@ -71537,22 +70910,6 @@ msgstr "Intensidad de la reducción"
 
 msgid "Controls neighbor pixel weighting for the denoising filter (lower values preserve more detail, but aren't as smooth)"
 msgstr "Controla la influencia de los píxeles cercanos en el filtro de reducción de ruidos (valores menores preservarán más detalles, pero no serán tan suaves)"
-
-
-msgid "Subsurface Direct"
-msgstr "Transluminiscencia directa"
-
-
-msgid "Denoise the direct subsurface lighting"
-msgstr "Reducir ruidos en la iluminación transluminiscente directa"
-
-
-msgid "Subsurface Indirect"
-msgstr "Transluminiscencia indirecta"
-
-
-msgid "Denoise the indirect subsurface lighting"
-msgstr "Reducir ruidos en la iluminación transluminiscente indirecta"
 
 
 msgid "Transmission Direct"
@@ -72547,22 +71904,6 @@ msgid "Show the Transmission Color render pass"
 msgstr "Mostrar la pasada de procesamiento de Color de Transmisión"
 
 
-msgid "Show the Subsurface Direct render pass"
-msgstr "Mostrar la pasada de procesamiento de Transluminiscencia Directa"
-
-
-msgid "Show the Subsurface Indirect render pass"
-msgstr "Mostrar la pasada de procesamiento de Transluminiscencia Indirecta"
-
-
-msgid "Subsurface Color"
-msgstr "Color de transluminiscencia"
-
-
-msgid "Show the Subsurface Color render pass"
-msgstr "Mostrar la pasada de procesamiento de Color de Transluminiscencia"
-
-
 msgid "Show the Volume Direct render pass"
 msgstr "Mostrar la pasada de procesamiento de Volumen Directo"
 
@@ -73223,12 +72564,24 @@ msgid "Deliver shadow pass"
 msgstr "Produce una pasada de sombras"
 
 
+msgid "Subsurface Color"
+msgstr "Color de transluminiscencia"
+
+
 msgid "Deliver subsurface color pass"
 msgstr "Produce una pasada de color de transluminiscencia"
 
 
+msgid "Subsurface Direct"
+msgstr "Transluminiscencia directa"
+
+
 msgid "Deliver subsurface direct pass"
 msgstr "Produce una pasada de transluminiscencia directa"
+
+
+msgid "Subsurface Indirect"
+msgstr "Transluminiscencia indirecta"
 
 
 msgid "Deliver subsurface indirect pass"
@@ -73599,32 +72952,12 @@ msgid "Simplify Grease Pencil drawing"
 msgstr "Simplificar el dibujo del lápiz de cera"
 
 
-msgid "Layers Blending"
-msgstr "Capas de fusión"
-
-
-msgid "Display blend layers"
-msgstr "Mostrar capas de fusión"
-
-
-msgid "Simplify Playback"
-msgstr "Simplificar reproducción"
+msgid "Playback Only"
+msgstr "Sólo reproducción"
 
 
 msgid "Simplify Grease Pencil only during animation playback"
 msgstr "Simplifica el lápiz de cera sólo durante la reproducción"
-
-
-msgid "Disable Lines"
-msgstr "Deshabilitar líneas"
-
-
-msgid "Display external lines of fill strokes"
-msgstr "Mostrar las líneas externas de los trazos de relleno"
-
-
-msgid "Simplify Shaders"
-msgstr "Simplificar efectos visuales"
 
 
 msgid "Display Shader FX"
@@ -73641,14 +72974,6 @@ msgstr "Mostrar el teñido de las capas"
 
 msgid "Display fill strokes in the viewport"
 msgstr "Mostrar los trazos de relleno en las vistas"
-
-
-msgid "Disable Modifiers"
-msgstr "Deshabilitar modificadores"
-
-
-msgid "Display modifiers in the viewport"
-msgstr "Mostrar modificadores en las vistas"
 
 
 msgid "Simplify Subdivision"
@@ -74955,34 +74280,6 @@ msgid "Size of every cubemaps"
 msgstr "Tamaño de cada mapa cúbico"
 
 
-msgid "64px"
-msgstr "64px"
-
-
-msgid "128px"
-msgstr "128px"
-
-
-msgid "256px"
-msgstr "256px"
-
-
-msgid "512px"
-msgstr "512px"
-
-
-msgid "1024px"
-msgstr "1024px"
-
-
-msgid "2048px"
-msgstr "2048px"
-
-
-msgid "4096px"
-msgstr "4096px"
-
-
 msgid "Number of time the light is reinjected inside light grids, 0 disable indirect diffuse light"
 msgstr "Cantidad de veces que la luz es reinyectada en las cuadrículas de iluminación, 0 deshabilita la iluminación difusa indirecta"
 
@@ -75041,18 +74338,6 @@ msgstr "Tamaño visibilidad irradiación"
 
 msgid "Size of the shadow map applied to each irradiance sample"
 msgstr "Tamaño del mapa de sombras aplicado a cada muestra de irradiación"
-
-
-msgid "8px"
-msgstr "8px"
-
-
-msgid "16px"
-msgstr "16px"
-
-
-msgid "32px"
-msgstr "32px"
 
 
 msgid "Distance of object that contribute to the ambient occlusion effect"
@@ -75277,14 +74562,6 @@ msgstr "Distancia de inicio del efecto volumétrico"
 
 msgid "Control the quality of the volumetric effects (lower size increase vram usage and quality)"
 msgstr "Controla la calidad de los efectos volumétricos (tamaños menores aumentan la calidad y el uso de VRAM)"
-
-
-msgid "2px"
-msgstr "2px"
-
-
-msgid "4px"
-msgstr "4px"
 
 
 msgid "Scene Objects"
@@ -76726,24 +76003,12 @@ msgid "Gaussian Blur effect"
 msgstr "Efecto de desenfoque Gaussiano"
 
 
-msgid "Define circle of confusion for depth of field"
-msgstr "Define el círculo de confusión para la profundidad de campo"
-
-
-msgid "Factor of Blur"
-msgstr "Factor de desenfoque"
-
-
 msgid "Number of Blur Samples (zero, disable blur)"
 msgstr "Cantidad de muestras del desenfoque (cero deshabilita el efecto)"
 
 
-msgid "Lock Focal Plane"
-msgstr "Fijar al plano de enfoque"
-
-
-msgid "Blur using focal plane distance as factor to simulate depth of field effect (only in camera view)"
-msgstr "Desenfocar usando la distancia al plano de enfoque como factor para simular el efecto de profundidad de campo (sólo en la vista de cámara)"
+msgid "Factor of Blur"
+msgstr "Factor de desenfoque"
 
 
 msgid "Colorize Effect"
@@ -76826,14 +76091,6 @@ msgid "Glow mode"
 msgstr "Modo del resplandor"
 
 
-msgid "Luminance"
-msgstr "Luminancia"
-
-
-msgid "Number of pixels for blurring glow (set to 0 to disable)"
-msgstr "Cantidad de píxeles para desenfocar el resplandor (0 para deshabilitar)"
-
-
 msgid "Number of Blur Samples"
 msgstr "Cantidad de muestras del desenfoque"
 
@@ -76850,38 +76107,6 @@ msgid "Limit to select color for glow effect"
 msgstr "Umbral para seleccionar a qué partes aplicar el resplandor"
 
 
-msgid "Glow only areas with alpha"
-msgstr "Resplandecer sólo las áreas con alfa"
-
-
-msgid "Light Effect"
-msgstr "Luz"
-
-
-msgid "Light effect"
-msgstr "Efecto de luz"
-
-
-msgid "Ambient"
-msgstr "Ambiente"
-
-
-msgid "Strength of ambient light source"
-msgstr "Intensidad de la fuente de luz ambiental"
-
-
-msgid "Energy"
-msgstr "Energía"
-
-
-msgid "Strength of light source"
-msgstr "Intensidad de la fuente de luz"
-
-
-msgid "Object to determine light source location"
-msgstr "Objeto para determinar la posición de la fuente de luz"
-
-
 msgid "Pixelate Effect"
 msgstr "Pixelar"
 
@@ -76896,10 +76121,6 @@ msgstr "Color usado para las l;ineas"
 
 msgid "Pixel size"
 msgstr "Tamaño de los píxeles"
-
-
-msgid "Display lines between pixels"
-msgstr "Mostrar líneas entre los píxeles"
 
 
 msgid "Rim Effect"
@@ -79976,10 +79197,6 @@ msgid "Text character formatting settings"
 msgstr "Opciones de formateo de caracteres de texto"
 
 
-msgid "Kerning"
-msgstr "Espaciado"
-
-
 msgid "Spacing between characters"
 msgstr "Espaciado entre caracteres"
 
@@ -81908,6 +81125,10 @@ msgid "Settings for Grease Pencil Interpolation tools"
 msgstr "Opciones de las herramientas de interpolación del lápiz de cera"
 
 
+msgid "Grease Pencil Sculpt"
+msgstr "Escultura de lápiz de cera"
+
+
 msgid "Settings for stroke sculpting tools and brushes"
 msgstr "Opciones de las herramientas y pinceles de esculpido"
 
@@ -82865,12 +82086,12 @@ msgid "Fade layer opacity for Grease Pencil layers except the active one"
 msgstr "Desvanece la opacidad de las capas de lápiz de cera, exceptuando a la activa"
 
 
-msgid "Canvas grid opacity"
-msgstr "Opacidad de la cuadrícula del lienzo"
-
-
 msgid "Fade factor"
 msgstr "Factor de fundido"
+
+
+msgid "Canvas grid opacity"
+msgstr "Opacidad de la cuadrícula del lienzo"
 
 
 msgid "Grid Lines"
@@ -83241,8 +82462,12 @@ msgid "Show Edit Lines"
 msgstr "Mostrar líneas edición"
 
 
-msgid "Show edit lines when editing strokes"
-msgstr "Muestra las líneas de edición al editar trazos"
+msgid "Fade Grease Pencil Objects"
+msgstr "Fundir objetos de lápiz de cera"
+
+
+msgid "Fade Grease Pencil Objects, except the active one"
+msgstr "Funde los objetos de lápiz de cera, excepto el actual"
 
 
 msgid "Fade Layers"
@@ -83253,12 +82478,12 @@ msgid "Toggle fading of Grease Pencil layers except the active one"
 msgstr "Funde las capas de lápiz de cera, excepto la actual"
 
 
-msgid "Fade Grease Pencil Objects"
-msgstr "Fundir objetos de lápiz de cera"
+msgid "Fade Objects"
+msgstr "Fundir objetos"
 
 
-msgid "Fade Grease Pencil Objects, except the active one"
-msgstr "Funde los objetos de lápiz de cera, excepto el actual"
+msgid "Fade all viewport objects with a full color layer to improve visibility"
+msgstr "Funde todos los objetos de la vista, usando un color pleno para mejorar la visibilidad"
 
 
 msgid "Use Grid"
@@ -83273,16 +82498,12 @@ msgid "Lines Only"
 msgstr "Sólo líneas"
 
 
-msgid "Only show edit lines for additional frames"
-msgstr "Muestra solamente las líneas de edición para los fotogramas adicionales"
+msgid "Show Edit Lines only in multiframe"
+msgstr "Mostrar Líneas de edición sólo en Multifotogramas"
 
 
-msgid "Fade Objects"
-msgstr "Fundir objetos"
-
-
-msgid "Fade all viewport objects with a full color layer to improve visibility"
-msgstr "Funde todos los objetos de la vista, usando un color pleno para mejorar la visibilidad"
+msgid "Show stroke drawing direction with a bigger green dot (start) and smaller red dot (end) points"
+msgstr "Mostrar la dirección de dibujo del trazo usando un punto verde de mayor tamaño (al inicio) y uno rojo (al final)"
 
 
 msgid "Vertex Opacity"
@@ -84318,16 +83539,6 @@ msgstr "Pintar Influencias"
 
 
 msgctxt "WindowManager"
-msgid "Weight Paint Vertex Selection"
-msgstr "Pintar Influencias - Selección de vértices"
-
-
-msgctxt "WindowManager"
-msgid "Face Mask"
-msgstr "Máscaras de caras"
-
-
-msgctxt "WindowManager"
 msgid "Image Paint"
 msgstr "Pintar Imagen"
 
@@ -84745,6 +83956,10 @@ msgstr "Oclusión ambiental"
 
 msgid "Mesh Light"
 msgstr "Luz de mallas"
+
+
+msgid "Subsurface"
+msgstr "Transluminiscencia"
 
 
 msgid "Dicing Rate Render"
@@ -85758,10 +84973,6 @@ msgid "Thickness Scale"
 msgstr "Escala del grosor"
 
 
-msgid "Adaptive UVs"
-msgstr "UV adaptativas"
-
-
 msgctxt "Operator"
 msgid "Hide Others"
 msgstr "Ocultar otras"
@@ -85794,10 +85005,6 @@ msgstr "Seleccionar puntos"
 msgctxt "Operator"
 msgid "Deselect Points"
 msgstr "Deseleccionar puntos"
-
-
-msgid "Show Stroke Directions"
-msgstr "Mostrar dirección de trazos"
 
 
 msgid "Keyframes Before"
@@ -86025,10 +85232,6 @@ msgstr "Coordenadas de texturizado:"
 
 msgid "Sharp Edges"
 msgstr "Bordes definidos"
-
-
-msgid "Anchors Vertex Group:"
-msgstr "Grupo de vértices de anclaje:"
 
 
 msgctxt "Operator"
@@ -86296,40 +85499,24 @@ msgid "Weighting Mode:"
 msgstr "Modo de influencias:"
 
 
-msgid "Affect:"
-msgstr "Afecta:"
+msgid "Layer:"
+msgstr "Capa:"
 
 
 msgid "Material:"
 msgstr "Material:"
 
 
-msgid "Layer:"
-msgstr "Capa:"
+msgid "Affect:"
+msgstr "Afecta:"
 
 
 msgid "Settings:"
 msgstr "Opciones:"
 
 
-msgid "Thickness Factor"
-msgstr "Factor de grosor"
-
-
 msgid "Color:"
 msgstr "Color:"
-
-
-msgid "Opacity:"
-msgstr "Opacidad:"
-
-
-msgid "Shift:"
-msgstr "Desplazamiento:"
-
-
-msgid "Keep original stroke on top"
-msgstr "Mantener trazo original por encima"
 
 
 msgid "Bone:"
@@ -86432,10 +85619,6 @@ msgstr "Usar objeto como pivote"
 
 msgid "Use Wave Effect"
 msgstr "Ondas"
-
-
-msgid "Use Alpha Mode"
-msgstr "Usar alfa"
 
 
 msgid "Distance Reference"
@@ -86584,15 +85767,6 @@ msgid "Delete Frame(s)"
 msgstr "Borrar fotograma(s)"
 
 
-msgid "Active Layer:      "
-msgstr "Capa activa:      "
-
-
-msgctxt "Operator"
-msgid "Convert..."
-msgstr "Convertir..."
-
-
 msgctxt "Operator"
 msgid "Selection to Grid"
 msgstr "Selección a la cuadrícula"
@@ -86623,14 +85797,6 @@ msgid "Delete Loose Points"
 msgstr "Borrar puntos sueltos"
 
 
-msgid "Playback Only"
-msgstr "Sólo reproducción"
-
-
-msgid "ShaderFX"
-msgstr "Efectos visuales"
-
-
 msgid "Show Only On Keyframed"
 msgstr "Mostrar sólo lo animado"
 
@@ -86642,48 +85808,6 @@ msgstr "Polígono"
 
 msgid "Data Source:"
 msgstr "Origen de datos:"
-
-
-msgctxt "Operator"
-msgid "Straight Lines"
-msgstr "Líneas rectas"
-
-
-msgctxt "Operator"
-msgid "Eraser"
-msgstr "Borrador"
-
-
-msgid "Arrange Strokes"
-msgstr "Ordenar trazos"
-
-
-msgctxt "Operator"
-msgid "Move to Color"
-msgstr "Mover a color"
-
-
-msgid "Join Strokes"
-msgstr "Unir trazos"
-
-
-msgctxt "Operator"
-msgid "Flip Direction"
-msgstr "Invertir dirección"
-
-
-msgid "Show Drawing Direction"
-msgstr "Mostrar la dirección de dibujo"
-
-
-msgctxt "Operator"
-msgid "Paste by Layer"
-msgstr "Pegar por capa"
-
-
-msgctxt "Operator"
-msgid "Back to Main Palette..."
-msgstr "Regresar a paleta principal..."
 
 
 msgctxt "Operator"
@@ -86723,76 +85847,12 @@ msgid "Cursor Color"
 msgstr "Color del cursor"
 
 
-msgctxt "Operator"
-msgid "Settings..."
-msgstr "Opciones..."
-
-
-msgctxt "Operator"
-msgid "Exit Edit Mode"
-msgstr "Salir del modo Edición"
-
-
-msgid "Proportional Edit:"
-msgstr "Edición proporcional:"
-
-
-msgctxt "Operator"
-msgid "Select Inverse"
-msgstr "Invertir selección"
-
-
-msgctxt "Operator"
-msgid "Alternate Select"
-msgstr "Alternar selección"
-
-
-msgctxt "Operator"
-msgid "Delete..."
-msgstr "Borrar..."
-
-
-msgctxt "Operator"
-msgid "Enable Stroke Editing"
-msgstr "Habilitar edición de trazos"
-
-
-msgctxt "Operator"
-msgid "Send to Back"
-msgstr "Enviar al fondo"
-
-
-msgctxt "Operator"
-msgid "Send Backward"
-msgstr "Enviar hacia atrás"
-
-
-msgctxt "Operator"
-msgid "Bring to Front"
-msgstr "Enviar al frente"
-
-
-msgctxt "Operator"
-msgid "Bring Forward"
-msgstr "Enviar hacia adelante"
-
-
-msgctxt "Operator"
-msgid "Join & Copy"
-msgstr "Unir y copiar"
-
-
 msgid "Lock Frame"
 msgstr "Bloquear fotograma"
 
 
 msgid "Inverse Cursor Color"
 msgstr "Invertir cursor de color"
-
-
-msgctxt "Operator"
-msgid "More..."
-msgstr "Más..."
 
 
 msgid "Unlocked"
@@ -86906,24 +85966,12 @@ msgid "Lock Unused"
 msgstr "Bloquear no usados"
 
 
-msgid "Clip Image"
-msgstr "Recortar imagen"
-
-
-msgid "Use As Stencil Mask"
-msgstr "Usar como máscara de esténcil"
-
-
 msgid "Flip Colors"
 msgstr "Invertir colores"
 
 
-msgid "Use as Stencil Mask"
-msgstr "Usar como máscara de esténcil"
-
-
-msgid "Mix with Color"
-msgstr "Mezclar con color"
+msgid "Clip Image"
+msgstr "Recortar imagen"
 
 
 msgid "Tracking Axis"
@@ -87086,10 +86134,6 @@ msgstr "Intensidad de densidad"
 
 msgid "Tangent Phase"
 msgstr "Fase de la tangente"
-
-
-msgid "Randomize Phase "
-msgstr "Aleatorizar fase "
 
 
 msgid "Render As"
@@ -87563,10 +86607,6 @@ msgstr "Vida máxima de las partículas"
 
 msgid "Particles in Boundary:"
 msgstr "Partículas en límites:"
-
-
-msgid "Viscosity Presets:"
-msgstr "Ajustes de viscosidad:"
 
 
 msgid "Real World Size"
@@ -88567,11 +87607,6 @@ msgstr "Mostrar el mismo material"
 
 
 msgctxt "Operator"
-msgid "Frame Selected"
-msgstr "Enmarcar lo seleccionado"
-
-
-msgctxt "Operator"
 msgid "Frame All Fit"
 msgstr "Enmarcar todo"
 
@@ -88678,6 +87713,10 @@ msgstr "Eliminar UV dobles"
 
 msgid "Image*"
 msgstr "Imagen*"
+
+
+msgid "Aspect Ratio"
+msgstr "Proporción"
 
 
 msgid "Repeat Image"
@@ -89094,6 +88133,11 @@ msgstr "Cambiar rutas/archivos"
 msgctxt "Operator"
 msgid "Swap Data"
 msgstr "Intercambiar datos"
+
+
+msgctxt "Operator"
+msgid "Delete..."
+msgstr "Borrar..."
 
 
 msgid "Position X"
@@ -89946,10 +88990,6 @@ msgstr "FPS de reproducción"
 
 msgid "3D Viewport Axis"
 msgstr "Ejes de vista 3D"
-
-
-msgid "Grease Pencil Multisampling"
-msgstr "Muestreo múltiple lápiz de cera"
 
 
 msgid "Limit Size"
@@ -91014,6 +90054,11 @@ msgid "Sequence"
 msgstr "Secuenciar"
 
 
+msgctxt "Operator"
+msgid "View Selected"
+msgstr "Ver lo seleccionado"
+
+
 msgid "Show Gizmos"
 msgstr "Mostrar manipuladores"
 
@@ -91099,31 +90144,8 @@ msgid "Snap to"
 msgstr "Adherir a"
 
 
-msgid "PAINT_GPENCILEDIT_GPENCILSCULPT_GPENCILWEIGHT_GPENCILOBJECTDraw Grease PencilEdit Grease PencilSculpt Grease PencilWeight Grease PencilGrease Pencil"
-msgstr "PINTAR_LCERAEDITAR_LCERAESCULPIR_LCERAINFLUENCIAS_LCERAOBJETODibujar Lápiz de ceraEditar Lápiz de ceraEsculpir Lápiz de ceraInfluencias Lápiz de ceraLápiz de cera"
-
-
 msgid "Display:"
 msgstr "Visualización:"
-
-
-msgid "Frames:"
-msgstr "Fotogramas:"
-
-
-msgctxt "Operator"
-msgid "Insert Blank in Active Layer"
-msgstr "Insertar blanco en capa activa"
-
-
-msgctxt "Operator"
-msgid "Duplicate Active Layer"
-msgstr "Duplicar capa activa"
-
-
-msgctxt "Operator"
-msgid "Delete All Layers"
-msgstr "Borrar todas las capas"
 
 
 msgctxt "Operator"
@@ -91565,6 +90587,11 @@ msgstr "Ninguna capa que copiar"
 
 
 msgctxt "Operator"
+msgid "Paste by Layer"
+msgstr "Pegar por capa"
+
+
+msgctxt "Operator"
 msgid "Smooth Points"
 msgstr "Suavizar puntos"
 
@@ -91625,10 +90652,6 @@ msgid "Reference Point"
 msgstr "Punto de referencia"
 
 
-msgid "Show Edit Lines only in multiframe"
-msgstr "Mostrar Líneas de edición sólo en Multifotogramas"
-
-
 msgid "Point Context Menu"
 msgstr "Punto - menú contextual"
 
@@ -91651,21 +90674,6 @@ msgstr "Simetrizar trazo"
 
 msgid "Snap Stroke"
 msgstr "Adherir trazo"
-
-
-msgctxt "Operator"
-msgid "Insert Blank in All Layers"
-msgstr "Insertar blanco en todas las capas"
-
-
-msgctxt "Operator"
-msgid "Duplicate All Layers"
-msgstr "Duplicar todas las capas"
-
-
-msgctxt "Operator"
-msgid "Delete Active Layer"
-msgstr "Borrar capa activa"
 
 
 msgid "Multiframe"
@@ -92043,10 +91051,6 @@ msgstr "No soportado con topología dinámica"
 
 msgid "Not supported in sculpt mode"
 msgstr "No soportado en modo escultura"
-
-
-msgid "Hide, Mask and optimized display disabled"
-msgstr "Ocultar, Máscara y la visualización optimizada, deshabilitados"
 
 
 msgid ", cannot have single-frame paths"
@@ -92832,11 +91836,6 @@ msgstr "El par de anillos de bordes no está conectado"
 
 msgid "Edge-rings are not connected"
 msgstr "Los anillos de bordes no están conectados"
-
-
-msgctxt "Action"
-msgid "Group"
-msgstr "Agrupar"
 
 
 msgid "Compositing | Tile %u-%u"
@@ -93735,18 +92734,6 @@ msgid "No Armature object in the view layer"
 msgstr "No hay un esqueleto en la capa de visualización"
 
 
-msgid "GPencil Sculpt: %s Stroke  | LMB to paint | RMB/Escape to Exit | Ctrl to Invert Action | Wheel Up/Down for Size  | Shift-Wheel Up/Down for Strength"
-msgstr "GPencil Escultura: trazo %s  | clic Izq. para pintar | clic Der/Esc para salir | Ctrl para invertir acción | Rueda para tamaño  | May. + rueda para intensidad"
-
-
-msgid "Copy some strokes to the clipboard before using the Clone brush to paste copies of them"
-msgstr "Copiar algunos trazos al portapapeles antes de usar el pincel de clonado para pegar sus copias"
-
-
-msgid "Cannot sculpt while play animation"
-msgstr "No es posible esculpir mientras se está reproduciendo la animación"
-
-
 msgid "No Grease Pencil data to work on"
 msgstr "No hay datos de lápiz de cera en los que trabajar"
 
@@ -93819,14 +92806,6 @@ msgid "Can not paste strokes when active layer is hidden or locked"
 msgstr "No es posible pegar trazos mientras la capa activa está oculta o bloqueada"
 
 
-msgid "Cannot paste 2D strokes in 3D View"
-msgstr "No es posible pegar trazos 2D en la vista 3D"
-
-
-msgid "Cannot paste 3D strokes in 2D editors"
-msgstr "No es posible pegar trazos 3D en los editores 2D"
-
-
 msgid "No grease pencil data"
 msgstr "No hay datos de lápiz de cera"
 
@@ -93849,10 +92828,6 @@ msgstr "No hay área activa"
 
 msgid "There is no layer number %d"
 msgstr "No existe la capa número %d"
-
-
-msgid "Failed to find Grease Pencil data to draw into"
-msgstr "No fue posible encontrar datos de lápiz de cera dónde dibujar"
 
 
 msgid "Fill: ESC/RMB cancel, LMB Fill, Shift Draw on Back"
@@ -93911,10 +92886,6 @@ msgid "Grease Pencil Freehand Session: Hold and drag LMB to draw"
 msgstr "Lápiz de cera - A mano alzada: Arrastrar con botón Izq. para dibujar"
 
 
-msgid "Grease Pencil Poly Session: LMB click to place next stroke vertex | Release Shift/ESC/Enter to end (or click outside this area)"
-msgstr "Lápiz de cera - Línea poligonal: Clic con botón Izq para ubicar el siguiente punto del trazo | Soltar Mayúsculas/Esc/Intro para finalizar (o clic fuera de esta área)"
-
-
 msgid "Grease Pencil Session: ESC/Enter to end (or click outside this area)"
 msgstr "Lápiz de cera: Esc/Intro para finalizar (o clic fuera de esta área)"
 
@@ -93965,6 +92936,18 @@ msgstr "Las primitivas sólo pueden ser agregadas en los modo Dibujo y Edición"
 
 msgid "Primitives cannot be added as active layer is locked or hidden"
 msgstr "Las primitivas no pueden ser agregadas porque la capa activa se encuentra bloqueada u oculta"
+
+
+msgid "GPencil Sculpt: %s Stroke  | LMB to paint | RMB/Escape to Exit | Ctrl to Invert Action | Wheel Up/Down for Size  | Shift-Wheel Up/Down for Strength"
+msgstr "GPencil Escultura: trazo %s  | clic Izq. para pintar | clic Der/Esc para salir | Ctrl para invertir acción | Rueda para tamaño  | May. + rueda para intensidad"
+
+
+msgid "Copy some strokes to the clipboard before using the Clone brush to paste copies of them"
+msgstr "Copiar algunos trazos al portapapeles antes de usar el pincel de clonado para pegar sus copias"
+
+
+msgid "Cannot sculpt while play animation"
+msgstr "No es posible esculpir mientras se está reproduciendo la animación"
 
 
 msgid "Non-Keyboard Shortcut"
@@ -97712,6 +96695,11 @@ msgstr "El bloque de datos no tiene usuarios y será eliminado"
 
 msgid "Data-block has a 'fake' user which will keep it in the file even if nothing else uses it"
 msgstr "El bloque de datos tiene un usuario 'ficticio' que lo mantendrá en el archivo, aunque ningún elemento esté haciendo uso de él"
+
+
+msgctxt "Action"
+msgid "Group"
+msgstr "Agrupar"
 
 
 msgid "Library path '%s' does not exist, correct this before saving"

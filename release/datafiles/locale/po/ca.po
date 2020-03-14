@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
+"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -802,6 +802,10 @@ msgid "Has Secondary Color"
 msgstr "Començar Joc"
 
 
+msgid "Add effect of brush"
+msgstr "Afegir Tira"
+
+
 msgid "Mode"
 msgstr "Mode d'Edició"
 
@@ -822,16 +826,28 @@ msgid "Fill"
 msgstr "Omplir"
 
 
-msgid "Aspect Ratio"
-msgstr "Moure a Capa"
+msgid "Randomize"
+msgstr "Seleccionar fila"
+
+
+msgid "Grab"
+msgstr "Desplaçador"
+
+
+msgid "Push"
+msgstr "Empenta"
+
+
+msgid "Twist"
+msgstr "Editar"
+
+
+msgid "Clone"
+msgstr "Desplaçador"
 
 
 msgid "Input Samples"
 msgstr "Esborrar"
-
-
-msgid "Sensitivity"
-msgstr "Seleccionar connectats"
 
 
 msgid "Background Image"
@@ -3396,6 +3412,14 @@ msgid "Save"
 msgstr "Guardar"
 
 
+msgid "Shading"
+msgstr "Esborrar Rotació"
+
+
+msgid "Fonts"
+msgstr "Duplicar"
+
+
 msgid "Regular"
 msgstr "Crear aresta/cara"
 
@@ -3406,14 +3430,6 @@ msgstr "Mostrar propietats de les arestes"
 
 msgid "File Name"
 msgstr "Arxiu"
-
-
-msgid "Fonts"
-msgstr "Duplicar"
-
-
-msgid "Shading"
-msgstr "Esborrar Rotació"
 
 
 msgid "Extension"
@@ -3616,6 +3632,10 @@ msgid "Collision"
 msgstr "Eines"
 
 
+msgid "Subframes"
+msgstr "Esborrar"
+
+
 msgid "Flow Settings"
 msgstr "Eines"
 
@@ -3658,10 +3678,6 @@ msgstr "Image Displist"
 
 msgid "Color of smoke"
 msgstr "Menú Esborrar"
-
-
-msgid "Subframes"
-msgstr "Esborrar"
 
 
 msgid "Texture mapping type"
@@ -3776,10 +3792,6 @@ msgid "Frame Locked"
 msgstr "Joc"
 
 
-msgid "Mask Layer"
-msgstr "Moure a Capa"
-
-
 msgid "Parent Object"
 msgstr "Comprimir Dades"
 
@@ -3804,16 +3816,8 @@ msgid "Show Points"
 msgstr "Esborrar Str"
 
 
-msgid "Add effect of brush"
-msgstr "Afegir Tira"
-
-
-msgid "Brush strength"
-msgstr "Image Displist"
-
-
-msgid "Strength Pressure"
-msgstr "Duplicar"
+msgid "Mask Layer"
+msgstr "Moure a Capa"
 
 
 msgid "Spacing"
@@ -3822,30 +3826,6 @@ msgstr "Seleccionar fila"
 
 msgid "Grid"
 msgstr "Reixa"
-
-
-msgid "Tool"
-msgstr "Eines"
-
-
-msgid "Randomize"
-msgstr "Seleccionar fila"
-
-
-msgid "Grab"
-msgstr "Desplaçador"
-
-
-msgid "Push"
-msgstr "Empenta"
-
-
-msgid "Twist"
-msgstr "Editar"
-
-
-msgid "Clone"
-msgstr "Desplaçador"
 
 
 msgid "Grease Pencil Stroke"
@@ -3980,12 +3960,20 @@ msgid "Bind vertex groups to armature modifier"
 msgstr "Pintura Vectorial"
 
 
+msgid "Constant Offset"
+msgstr "Joc"
+
+
 msgid "Count"
 msgstr "Seleccionar fila"
 
 
 msgid "Object Offset"
 msgstr "Comprimir Dades"
+
+
+msgid "Relative Offset"
+msgstr "Esborrar Rotació"
 
 
 msgid "Shift"
@@ -4002,6 +3990,10 @@ msgstr "Seleccionar connectats"
 
 msgid "Grow"
 msgstr "Créixer"
+
+
+msgid "Custom Curve"
+msgstr "Desparentar"
 
 
 msgid "Hook Modifier"
@@ -4048,16 +4040,12 @@ msgid "Smooth Modifier"
 msgstr "Seleccionar fila"
 
 
+msgid "Subdivision Type"
+msgstr "Eines"
+
+
 msgid "Simple"
 msgstr "Esborrar"
-
-
-msgid "Normalize"
-msgstr "Calcular Normals"
-
-
-msgid "Custom Curve"
-msgstr "Desparentar"
 
 
 msgid "Frame Scale"
@@ -4198,6 +4186,10 @@ msgstr "Moure a Capa"
 
 msgid "Clone Offset"
 msgstr "Joc"
+
+
+msgid "Expand"
+msgstr "Moure a Capa"
 
 
 msgid "Add Color"
@@ -4402,6 +4394,10 @@ msgstr "Render"
 
 msgid "Spacing Pressure"
 msgstr "Render"
+
+
+msgid "Strength Pressure"
+msgstr "Duplicar"
 
 
 msgid "Use Texture Overlay"
@@ -4829,10 +4825,6 @@ msgstr "Extrusionar"
 
 
 msgid "Selected"
-msgstr "Seleccionar fila"
-
-
-msgid "Loop"
 msgstr "Seleccionar fila"
 
 
@@ -7446,6 +7438,10 @@ msgid "Gradient Type"
 msgstr "Seleccionar fila"
 
 
+msgid "Mix Factor"
+msgstr "Reduir"
+
+
 msgid "Material slot in an object"
 msgstr "Guardar com"
 
@@ -7489,10 +7485,6 @@ msgstr "Pintura Vectorial"
 
 msgid "Snap"
 msgstr "Menu Snap"
-
-
-msgid "Fluid Presets"
-msgstr "Render"
 
 
 msgid "Material Specials"
@@ -7764,10 +7756,6 @@ msgid "UV Select"
 msgstr "Seleccionar fila"
 
 
-msgid "UV Edge Select"
-msgstr "Seleccionar fila"
-
-
 msgid "Set the map as active for display and editing"
 msgstr "Finestra de Render"
 
@@ -7944,10 +7932,6 @@ msgid "Relative Offset Displacement"
 msgstr "Emparentar"
 
 
-msgid "Constant Offset"
-msgstr "Joc"
-
-
 msgid "Add a constant offset"
 msgstr "Afegir Tira"
 
@@ -7958,10 +7942,6 @@ msgstr "Amagar Seleccionats"
 
 msgid "Add another object's transformation to the total offset"
 msgstr "Aplicar Deformació"
-
-
-msgid "Relative Offset"
-msgstr "Esborrar Rotació"
 
 
 msgid "Bevel Modifier"
@@ -8082,10 +8062,6 @@ msgstr "Afegir Tira"
 
 msgid "All Layers"
 msgstr "Moure a Capa"
-
-
-msgid "Mix Factor"
-msgstr "Reduir"
 
 
 msgid "Nearest vertex"
@@ -8362,10 +8338,6 @@ msgstr "Esborrar"
 
 msgid "Optimal Display"
 msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Subdivision Type"
-msgstr "Eines"
 
 
 msgid "Number of subdivisions for which displacements are stored"
@@ -9414,6 +9386,10 @@ msgstr "Finestra de Render"
 
 msgid "Use Mask"
 msgstr "Esborrar Pista"
+
+
+msgid "Normalize"
+msgstr "Calcular Normals"
 
 
 msgid "Use Red Channel"
@@ -11210,11 +11186,6 @@ msgid "View All"
 msgstr "Mostrar Tot"
 
 
-msgctxt "Operator"
-msgid "View Selected"
-msgstr "Amagar Seleccionats"
-
-
 msgid "Reset viewable area to show selected keyframes range"
 msgstr "Seleccionar connectats"
 
@@ -11782,6 +11753,10 @@ msgstr "Seleccionar fila"
 
 msgid "Scalar"
 msgstr "Escalar"
+
+
+msgid "Tool"
+msgstr "Eines"
 
 
 msgid "Translation"
@@ -13706,6 +13681,11 @@ msgid "Add New Layer"
 msgstr "Render"
 
 
+msgctxt "Operator"
+msgid "Remove Mask Layer"
+msgstr "Moure a Capa"
+
+
 msgid "Side"
 msgstr "Costat"
 
@@ -14053,6 +14033,10 @@ msgid "Convert rotations to quaternions"
 msgstr "Esborrar Rotació"
 
 
+msgid "Loop"
+msgstr "Seleccionar fila"
+
+
 msgid "Loop the animation playback"
 msgstr "Finestra de Render"
 
@@ -14351,11 +14335,6 @@ msgstr "Afegir Tira"
 
 msgid "Name of new mask layer"
 msgstr "Render"
-
-
-msgctxt "Operator"
-msgid "Remove Mask Layer"
-msgstr "Moure a Capa"
 
 
 msgid "Remove mask layer"
@@ -15240,10 +15219,6 @@ msgstr "Seleccionar amb límit"
 
 msgid "Face selection mode"
 msgstr "Seleccionar connectats"
-
-
-msgid "Expand"
-msgstr "Moure a Capa"
 
 
 msgctxt "Operator"
@@ -16285,6 +16260,11 @@ msgstr "&gt;Mona"
 
 
 msgctxt "Operator"
+msgid "Add Modifier"
+msgstr "Esborrar tot"
+
+
+msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Esborrar tot"
 
@@ -16501,11 +16481,6 @@ msgstr "Primitiu"
 msgctxt "Operator"
 msgid "Set Object Mode"
 msgstr "Comprimir Dades"
-
-
-msgctxt "Operator"
-msgid "Add Modifier"
-msgstr "Esborrar tot"
 
 
 msgctxt "Operator"
@@ -20420,6 +20395,10 @@ msgid "URL to open"
 msgstr "URL per obrir"
 
 
+msgid "UV Maps"
+msgstr "Image Displist"
+
+
 msgctxt "Operator"
 msgid "New World"
 msgstr "Sigüent"
@@ -20657,10 +20636,6 @@ msgid "Text Boxes"
 msgstr "Texte"
 
 
-msgid "UV Maps"
-msgstr "Image Displist"
-
-
 msgid "Filters"
 msgstr "Duplicar"
 
@@ -20671,6 +20646,10 @@ msgstr "Menú Esborrar"
 
 msgid "System"
 msgstr "Sistema"
+
+
+msgid "Fluid Presets"
+msgstr "Render"
 
 
 msgid "Scopes"
@@ -20724,6 +20703,10 @@ msgstr "Seleccionar amb límit"
 
 msgid "Force Fields"
 msgstr "Guardar com"
+
+
+msgid "Sensitivity"
+msgstr "Seleccionar connectats"
 
 
 msgid "Dynamics"
@@ -20882,6 +20865,10 @@ msgstr "Duplicar"
 
 
 msgid "Brush steps"
+msgstr "Image Displist"
+
+
+msgid "Brush strength"
 msgstr "Image Displist"
 
 
@@ -21643,26 +21630,6 @@ msgstr "192 khz"
 
 msgid "GL Texture Limit"
 msgstr "Texte"
-
-
-msgid "No MultiSample"
-msgstr "Esborrar Rotació"
-
-
-msgid "MultiSample: 2"
-msgstr "Esborrar Rotació"
-
-
-msgid "MultiSample: 4"
-msgstr "Esborrar Rotació"
-
-
-msgid "MultiSample: 8"
-msgstr "Esborrar Rotació"
-
-
-msgid "MultiSample: 16"
-msgstr "Esborrar Rotació"
 
 
 msgid "Ambient Color"
@@ -25588,12 +25555,12 @@ msgid "UV Map:"
 msgstr "Image Displist"
 
 
-msgid "Material:"
-msgstr "Duplicar"
-
-
 msgid "Layer:"
 msgstr "Moure a Capa"
+
+
+msgid "Material:"
+msgstr "Duplicar"
 
 
 msgid "Settings:"
@@ -25602,10 +25569,6 @@ msgstr "Eines"
 
 msgid "Color:"
 msgstr "Desparentar"
-
-
-msgid "Shift:"
-msgstr "Dreta"
 
 
 msgid "Bone:"
@@ -25682,23 +25645,8 @@ msgstr "Finestra de Render"
 
 
 msgctxt "Operator"
-msgid "Flip Direction"
-msgstr "Seleccionar connectats"
-
-
-msgctxt "Operator"
 msgid "Selection to Cursor"
 msgstr "Seleccionar connectats"
-
-
-msgctxt "Operator"
-msgid "Select Inverse"
-msgstr "Seleccionar fila"
-
-
-msgctxt "Operator"
-msgid "Delete..."
-msgstr "Esborrar"
 
 
 msgid "Parent:"
@@ -26117,6 +26065,10 @@ msgid "Image*"
 msgstr "Zoom d'Imatge"
 
 
+msgid "Aspect Ratio"
+msgstr "Moure a Capa"
+
+
 msgctxt "Operator"
 msgid "Pack"
 msgstr "Empaquetar"
@@ -26184,6 +26136,11 @@ msgstr "Pel·lícula"
 msgctxt "Operator"
 msgid "Sound"
 msgstr "So:"
+
+
+msgctxt "Operator"
+msgid "Delete..."
+msgstr "Esborrar"
 
 
 msgid "Storage"
@@ -26689,6 +26646,11 @@ msgstr "Seleccionar fila"
 msgctxt "Operator"
 msgid "Make"
 msgstr "Moure a Capa"
+
+
+msgctxt "Operator"
+msgid "View Selected"
+msgstr "Amagar Seleccionats"
 
 
 msgctxt "Operator"

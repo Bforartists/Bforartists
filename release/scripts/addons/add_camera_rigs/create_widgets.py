@@ -1,4 +1,24 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
+from mathutils import Vector
+from math import cos, sin, pi
 
 
 def create_widget(name):
@@ -26,6 +46,44 @@ def create_widget(name):
         # Link the collection
         coll.objects.link(obj)
 
+    return obj
+
+
+def create_corner_widget(name, reverse=False):
+    """Create a wedge-shaped widget"""
+    obj = create_widget(name)
+    if not obj.data.vertices:
+        reverse = -1 if reverse else 1
+        verts = (Vector((reverse *  0.0, 0.0, 0.0)),
+                 Vector((reverse *  0.0, 1.0, 0.0)),
+                 Vector((reverse * -0.1, 1.0, 0.0)),
+                 Vector((reverse * -0.1, 0.1, 0.0)),
+                 Vector((reverse * -1.0, 0.1, 0.0)),
+                 Vector((reverse * -1.0, 0.0, 0.0)),
+                 )
+        edges = [(n, (n+1) % len(verts)) for n in range(len(verts))]
+
+        mesh = obj.data
+        mesh.from_pydata(verts, edges, ())
+        mesh.update()
+    return obj
+
+
+def create_circle_widget(name, radius=1.0):
+    """Create a circle-shaped widget"""
+    obj = create_widget(name)
+    if not obj.data.vertices:
+        vert_n = 16
+        verts = []
+        for n in range(vert_n):
+            angle = n / vert_n * 2*pi
+            verts.append(Vector((cos(angle) * radius,
+                                 sin(angle) * radius, 0.0)))
+        edges = [(n, (n+1) % len(verts)) for n in range(len(verts))]
+
+        mesh = obj.data
+        mesh.from_pydata(verts, edges, ())
+        mesh.update()
     return obj
 
 

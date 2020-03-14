@@ -19,7 +19,7 @@
 import bpy
 from bpy.types import Panel
 
-from .operators import get_arm_and_cam, CameraRigMixin
+from .operators import get_rig_and_cam, CameraRigMixin
 
 
 class ADD_CAMERA_RIGS_PT_camera_rig_ui(Panel, CameraRigMixin):
@@ -30,66 +30,87 @@ class ADD_CAMERA_RIGS_PT_camera_rig_ui(Panel, CameraRigMixin):
 
     def draw(self, context):
         active_object = context.active_object
-        arm, cam = get_arm_and_cam(context.active_object)
-        pose_bones = arm.pose.bones
+        rig, cam = get_rig_and_cam(context.active_object)
+        pose_bones = rig.pose.bones
         cam_data = cam.data
+        layout = self.layout
 
-        layout = self.layout.box().column()
-        layout.label(text="Clipping:")
-        layout.prop(cam_data, "clip_start", text="Start")
-        layout.prop(cam_data, "clip_end", text="End")
+        # Camera lens
+        if rig["rig_id"].lower() in ("dolly_rig", "crane_rig"):
+            layout.prop(pose_bones["Camera"], '["lens"]',
+                        text="Focal Length (mm)")
+
+        col = layout.column(align=True)
+        col.label(text="Clipping:")
+        col.prop(cam_data, "clip_start", text="Start")
+        col.prop(cam_data, "clip_end", text="End")
+
         layout.prop(cam_data, "type")
-        layout.prop(cam_data.dof, "use_dof")
-        if cam_data.dof.use_dof:
-            if cam_data.dof.focus_object is None:
-                layout.operator("add_camera_rigs.add_dof_object",
-                                text="Add DOF Empty", icon="OUTLINER_OB_EMPTY")
-            layout.prop(pose_bones["Camera"],
-                        '["focus_distance"]', text="Focus Distance")
-            layout.prop(pose_bones["Camera"],
-                        '["aperture_fstop"]', text="F-Stop")
 
+        # DoF
+        col = layout.column(align=True)
+        col.prop(cam_data.dof, "use_dof")
+        if cam_data.dof.use_dof:
+            if rig["rig_id"].lower() in ("crane_rig", "dolly_rig"):
+                if cam_data.dof.focus_object is None:
+                    col.operator("add_camera_rigs.add_dof_object",
+                                 text="Add DOF Empty", icon="OUTLINER_OB_EMPTY")
+            else:
+                col.prop(cam_data.dof, "focus_object")
+            row = col.row(align=True)
+            row.active = cam_data.dof.focus_object is None
+            row.prop(pose_bones["Camera"],
+                     '["focus_distance"]', text="Focus Distance")
+            col.prop(pose_bones["Camera"],
+                     '["aperture_fstop"]', text="F-Stop")
+
+        # Viewport display
         layout.prop(active_object, 'show_in_front',
                     toggle=False, text='Show in Front')
         layout.prop(cam_data, "show_limits")
-        layout.prop(cam_data, "show_passepartout")
+        col = layout.column(align=True)
+        col.prop(cam_data, "show_passepartout")
         if cam_data.show_passepartout:
-            layout.prop(cam_data, "passepartout_alpha")
+            col.prop(cam_data, "passepartout_alpha")
 
-        layout.row().separator()
-        # Added the comp guides here
+        # Composition guides
         layout.popover(
             panel="ADD_CAMERA_RIGS_PT_composition_guides",
             text="Composition Guides",)
-        layout.row().separator()
 
-        layout.prop(cam,
+        # Props and operators
+        col = layout.column(align=True)
+        col.prop(cam,
                     "hide_select", text="Make Camera Unselectable")
+        col.operator("add_camera_rigs.add_marker_bind",
+                     text="Add Marker and Bind", icon="MARKER_HLT")
+        col.operator("add_camera_rigs.set_scene_camera",
+                     text="Make Camera Active", icon='CAMERA_DATA')
 
-        layout.operator("add_camera_rigs.add_marker_bind",
-                        text="Add Marker and Bind", icon="MARKER_HLT")
-        if context.scene.camera is not cam:
-            layout.operator("add_camera_rigs.set_scene_camera",
-                            text="Make Camera Active", icon='CAMERA_DATA')
-
-        # Camera lens
-        layout.separator()
-        layout.prop(pose_bones["Camera"], '["lens"]', text="Focal Length (mm)")
-
-        # Track to Constraint
-        layout.label(text="Tracking:")
-        layout.prop(pose_bones["Camera"].constraints["Track To"],
-                    'influence', text="Aim Lock", slider=True)
-
-        if arm["rig_id"].lower() == "crane_rig":
-            col = layout.box().column()
+        if rig["rig_id"].lower() in ("dolly_rig", "crane_rig"):
+            # Track to Constraint
+            col = layout.column(align=True)
+            col.label(text="Tracking:")
+            col.prop(pose_bones["Camera"].constraints["Track To"],
+                     'influence', text="Aim Lock", slider=True)
 
             # Crane arm stuff
-            col.label(text="Crane Arm:")
-            col.prop(pose_bones["Crane_height"],
-                     'scale', index=1, text="Arm Height")
-            col.prop(pose_bones["Crane_arm"],
-                     'scale', index=1, text="Arm Length")
+            if rig["rig_id"].lower() == "crane_rig":
+                col = layout.column(align=True)
+                col.label(text="Crane Arm:")
+                col.prop(pose_bones["Crane_height"],
+                         'scale', index=1, text="Arm Height")
+                col.prop(pose_bones["Crane_arm"],
+                         'scale', index=1, text="Arm Length")
+
+        # 2D rig stuff
+        elif rig["rig_id"].lower() == "2d_rig":
+            col = layout.column(align=True)
+            col.label(text="2D Rig:")
+            col.prop(pose_bones["Camera"], '["rotation_shift"]',
+                     text="Rotation/Shift")
+            if cam.data.sensor_width != 36:
+                col.label(text="Please set Camera Sensor Width to 36", icon="ERROR")
 
 
 def register():
