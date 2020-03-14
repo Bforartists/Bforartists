@@ -222,10 +222,7 @@ static void draw_frame_curves(SpaceClip *sc, unsigned int pos)
   MovieTrackingReconstruction *reconstruction = BKE_tracking_get_active_reconstruction(tracking);
   int i, lines = 0, prevfra = 0;
 
-  immUniformColor3f(
-      0.0f,
-      1.0f,
-      1.0f); /*bfa - motion tracking. changed the show frames color from dark blue to turquise*/
+  immUniformColor3f(0.0f, 1.0f, 1.0f); /*bfa - motion tracking. changed the show frames color from dark blue to turquise*/
 
   for (i = 0; i < reconstruction->camnr; i++) {
     MovieReconstructedCamera *camera = &reconstruction->cameras[i];

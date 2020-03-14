@@ -549,7 +549,6 @@ class CLIP_OT_setup_tracking_scene(Operator):
     def poll(cls, context):
         sc = context.space_data
 
-
         if sc.type != 'CLIP_EDITOR':
             return False
 

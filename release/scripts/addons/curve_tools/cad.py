@@ -156,10 +156,14 @@ class MergeEnds(bpy.types.Operator):
             self.report({'WARNING'}, 'Invalid selection')
             return {'CANCELLED'}
 
+        if is_last_point[0]:
+            points[1], points[0] = points[0], points[1]
+            selected_splines[1], selected_splines[0] = selected_splines[0], selected_splines[1]
+            is_last_point[1], is_last_point[0] = is_last_point[0], is_last_point[1]
+
         points[0].handle_left_type = 'FREE'
         points[0].handle_right_type = 'FREE'
         new_co = (points[0].co+points[1].co)*0.5
-
         handle = (points[1].handle_left if is_last_point[1] else points[1].handle_right)+new_co-points[1].co
         if is_last_point[0]:
             points[0].handle_left += new_co-points[0].co
@@ -169,13 +173,13 @@ class MergeEnds(bpy.types.Operator):
             points[0].handle_left = handle
         points[0].co = new_co
 
-        bpy.ops.curve.select_all(action='DESELECT')
-        points[1].select_control_point = True
-        bpy.ops.curve.delete()
-        selected_splines[0].bezier_points[-1 if is_last_point[0] else 0].select_control_point = True
-        selected_splines[1].bezier_points[-1 if is_last_point[1] else 0].select_control_point = True
+        point_index = 0 if selected_splines[0] == selected_splines[1] else len(selected_splines[1].bezier_points)
         bpy.ops.curve.make_segment()
-        bpy.ops.curve.select_all(action='DESELECT')
+        point = selected_splines[0].bezier_points[point_index]
+        point.select_control_point = False
+        point.select_left_handle = False
+        point.select_right_handle = False
+        bpy.ops.curve.delete()
         return {'FINISHED'}
 
 class Subdivide(bpy.types.Operator):

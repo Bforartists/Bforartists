@@ -37,6 +37,7 @@ from .internals import (
 
 from .operators import (
     rto_history,
+    expand_history,
     phantom_history,
     )
 
@@ -49,12 +50,12 @@ class CollectionManager(Operator):
 
     def draw(self, context):
         layout = self.layout
-        scn = context.scene
-        view_layer = context.view_layer.name
+        cm = context.scene.collection_manager
+        view_layer = context.view_layer
 
-        if view_layer != self.last_view_layer:
+        if view_layer.name != self.last_view_layer:
             update_collection_tree(context)
-            self.last_view_layer = view_layer
+            self.last_view_layer = view_layer.name
 
         title_row = layout.split(factor=0.5)
         main = title_row.row()
@@ -63,7 +64,7 @@ class CollectionManager(Operator):
 
         main.label(text="Collection Manager")
 
-        view.prop(context.view_layer, "use", text="")
+        view.prop(view_layer, "use", text="")
         view.separator()
 
         window = context.window
@@ -104,48 +105,54 @@ class CollectionManager(Operator):
         sec2 = toggle_row.row()
         sec2.alignment = 'RIGHT'
 
-        if scn.show_exclude:
-            exclude_all_history = rto_history["exclude_all"].get(view_layer, [])
+        if cm.show_exclude:
+            exclude_all_history = rto_history["exclude_all"].get(view_layer.name, [])
             depress = True if len(exclude_all_history) else False
 
             sec2.operator("view3d.un_exclude_all_collections", text="", icon='CHECKBOX_HLT', depress=depress)
 
-        if scn.show_selectable:
-            select_all_history = rto_history["select_all"].get(view_layer, [])
+        if cm.show_selectable:
+            select_all_history = rto_history["select_all"].get(view_layer.name, [])
             depress = True if len(select_all_history) else False
 
             sec2.operator("view3d.un_restrict_select_all_collections", text="", icon='RESTRICT_SELECT_OFF', depress=depress)
 
-        if scn.show_hideviewport:
-            hide_all_history = rto_history["hide_all"].get(view_layer, [])
+        if cm.show_hide_viewport:
+            hide_all_history = rto_history["hide_all"].get(view_layer.name, [])
             depress = True if len(hide_all_history) else False
 
             sec2.operator("view3d.un_hide_all_collections", text="", icon='HIDE_OFF', depress=depress)
 
-        if scn.show_disableviewport:
-            disable_all_history = rto_history["disable_all"].get(view_layer, [])
+        if cm.show_disable_viewport:
+            disable_all_history = rto_history["disable_all"].get(view_layer.name, [])
             depress = True if len(disable_all_history) else False
 
             sec2.operator("view3d.un_disable_viewport_all_collections", text="", icon='RESTRICT_VIEW_OFF', depress=depress)
 
-        if scn.show_render:
-            render_all_history = rto_history["render_all"].get(view_layer, [])
+        if cm.show_render:
+            render_all_history = rto_history["render_all"].get(view_layer.name, [])
             depress = True if len(render_all_history) else False
 
             sec2.operator("view3d.un_disable_render_all_collections", text="", icon='RESTRICT_RENDER_OFF', depress=depress)
 
-        layout.row().template_list("CM_UL_items", "", context.scene, "CMListCollection", context.scene, "CMListIndex", rows=15, sort_lock=True)
+        layout.row().template_list("CM_UL_items", "",
+                                   cm, "cm_list_collection",
+                                   cm, "cm_list_index",
+                                   rows=15,
+                                   sort_lock=True)
 
         addcollec_row = layout.row()
-        addcollec_row.operator("view3d.add_collection", text="Add Collection", icon='COLLECTION_NEW').child = False
+        addcollec_row.operator("view3d.add_collection", text="Add Collection",
+                               icon='COLLECTION_NEW').child = False
 
-        addcollec_row.operator("view3d.add_collection", text="Add SubCollection", icon='COLLECTION_NEW').child = True
+        addcollec_row.operator("view3d.add_collection", text="Add SubCollection",
+                               icon='COLLECTION_NEW').child = True
 
         phantom_row = layout.row()
-        toggle_text = "Disable " if scn.CM_Phantom_Mode else "Enable "
+        toggle_text = "Disable " if cm.in_phantom_mode else "Enable "
         phantom_row.operator("view3d.toggle_phantom_mode", text=toggle_text+"Phantom Mode")
 
-        if scn.CM_Phantom_Mode:
+        if cm.in_phantom_mode:
             view.enabled = False
             addcollec_row.enabled = False
 
@@ -154,23 +161,27 @@ class CollectionManager(Operator):
         wm = context.window_manager
 
         update_property_group(context)
-        self.view_layer = context.view_layer.name
+
+        cm = context.scene.collection_manager
+        view_layer = context.view_layer
+
+        self.view_layer = view_layer.name
 
         # sync selection in ui list with active layer collection
         try:
-            active_laycol_name = context.view_layer.active_layer_collection.name
+            active_laycol_name = view_layer.active_layer_collection.name
             active_laycol_row_index = layer_collections[active_laycol_name]["row_index"]
-            context.scene.CMListIndex = active_laycol_row_index
+            cm.cm_list_index = active_laycol_row_index
         except:
-            context.scene.CMListIndex = -1
+            cm.cm_list_index = -1
 
         # check if in phantom mode and if it's still viable
-        if context.scene.CM_Phantom_Mode:
+        if cm.in_phantom_mode:
             if set(layer_collections.keys()) != set(phantom_history["initial_state"].keys()):
-                context.scene.CM_Phantom_Mode = False
+                cm.in_phantom_mode = False
 
-            if context.view_layer.name != phantom_history["view_layer"]:
-                context.scene.CM_Phantom_Mode = False
+            if view_layer.name != phantom_history["view_layer"]:
+                cm.in_phantom_mode = False
 
         # handle window sizing
         max_width = 960
@@ -191,12 +202,12 @@ class CollectionManager(Operator):
 
 
 def update_selection(self, context):
-    scn = context.scene
+    cm = context.scene.collection_manager
 
-    if scn.CMListIndex == -1:
+    if cm.cm_list_index == -1:
         return
 
-    selected_item = scn.CMListCollection[scn.CMListIndex]
+    selected_item = cm.cm_list_collection[cm.cm_list_index]
     layer_collection = layer_collections[selected_item.name]["ptr"]
 
     context.view_layer.active_layer_collection = layer_collection
@@ -250,8 +261,8 @@ class CM_UL_items(UIList):
     def draw_item(self, context, layout, data, item, icon, active_data,active_propname, index):
         self.use_filter_show = True
 
-        scn = context.scene
-        view_layer = context.view_layer.name
+        cm = context.scene.collection_manager
+        view_layer = context.view_layer
         laycol = layer_collections[item.name]
         collection = laycol["ptr"].collection
 
@@ -267,13 +278,17 @@ class CM_UL_items(UIList):
         # add expander if collection has children to make UIList act like tree view
         if laycol["has_children"]:
             if laycol["expanded"]:
-                prop = row.operator("view3d.expand_sublevel", text="", icon='DISCLOSURE_TRI_DOWN', emboss=False)
+                highlight = True if expand_history["target"] == item.name else False
+
+                prop = row.operator("view3d.expand_sublevel", text="", icon='DISCLOSURE_TRI_DOWN',
+                                    emboss=highlight, depress=highlight)
                 prop.expand = False
                 prop.name = item.name
                 prop.index = index
 
             else:
-                prop = row.operator("view3d.expand_sublevel", text="", icon='DISCLOSURE_TRI_RIGHT', emboss=False)
+                prop = row.operator("view3d.expand_sublevel", text="",
+                                    icon='DISCLOSURE_TRI_RIGHT', emboss=False)
                 prop.expand = True
                 prop.name = item.name
                 prop.index = index
@@ -286,7 +301,7 @@ class CM_UL_items(UIList):
 
         name_row = row.row()
 
-        #if rename[0] and index == scn.CMListIndex:
+        #if rename[0] and index == cm.cm_list_index:
             #name_row.activate_init = True
             #rename[0] = False
 
@@ -308,72 +323,77 @@ class CM_UL_items(UIList):
             row_setcol.enabled = False
 
 
-        prop = row_setcol.operator("view3d.set_collection", text="", icon=icon, emboss=False)
+        prop = row_setcol.operator("view3d.set_collection", text="",
+                                   icon=icon, emboss=False)
         prop.collection_index = laycol["id"]
         prop.collection_name = item.name
 
 
-        if scn.show_exclude:
-            exclude_history_base = rto_history["exclude"].get(view_layer, {})
+        if cm.show_exclude:
+            exclude_history_base = rto_history["exclude"].get(view_layer.name, {})
             exclude_target = exclude_history_base.get("target", "")
             exclude_history = exclude_history_base.get("history", [])
 
-            depress = True if len(exclude_history) and exclude_target == item.name else False
-            emboss = True if len(exclude_history) and exclude_target == item.name else False
+            highlight = bool(exclude_history and exclude_target == item.name)
             icon = 'CHECKBOX_DEHLT' if laycol["ptr"].exclude else 'CHECKBOX_HLT'
 
-            row.operator("view3d.exclude_collection", text="", icon=icon, emboss=emboss, depress=depress).name = item.name
+            row.operator("view3d.exclude_collection", text="", icon=icon,
+                         emboss=highlight, depress=highlight).name = item.name
 
-        if scn.show_selectable:
-            select_history_base = rto_history["select"].get(view_layer, {})
+        if cm.show_selectable:
+            select_history_base = rto_history["select"].get(view_layer.name, {})
             select_target = select_history_base.get("target", "")
             select_history = select_history_base.get("history", [])
 
-            depress = True if len(select_history) and select_target == item.name else False
-            emboss = True if len(select_history) and select_target == item.name else False
-            icon = 'RESTRICT_SELECT_ON' if laycol["ptr"].collection.hide_select else 'RESTRICT_SELECT_OFF'
+            highlight = bool(select_history and select_target == item.name)
+            icon = ('RESTRICT_SELECT_ON' if laycol["ptr"].collection.hide_select else
+                    'RESTRICT_SELECT_OFF')
 
-            row.operator("view3d.restrict_select_collection", text="", icon=icon, emboss=emboss, depress=depress).name = item.name
+            row.operator("view3d.restrict_select_collection", text="", icon=icon,
+                         emboss=highlight, depress=highlight).name = item.name
 
-        if scn.show_hideviewport:
-            hide_history_base = rto_history["hide"].get(view_layer, {})
+        if cm.show_hide_viewport:
+            hide_history_base = rto_history["hide"].get(view_layer.name, {})
             hide_target = hide_history_base.get("target", "")
             hide_history = hide_history_base.get("history", [])
 
-            depress = True if len(hide_history) and hide_target == item.name else False
-            emboss = True if len(hide_history) and hide_target == item.name else False
+            highlight = bool(hide_history and hide_target == item.name)
             icon = 'HIDE_ON' if laycol["ptr"].hide_viewport else 'HIDE_OFF'
 
-            row.operator("view3d.hide_collection", text="", icon=icon, emboss=emboss, depress=depress).name = item.name
+            row.operator("view3d.hide_collection", text="", icon=icon,
+                         emboss=highlight, depress=highlight).name = item.name
 
-        if scn.show_disableviewport:
-            disable_history_base = rto_history["disable"].get(view_layer, {})
+        if cm.show_disable_viewport:
+            disable_history_base = rto_history["disable"].get(view_layer.name, {})
             disable_target = disable_history_base.get("target", "")
             disable_history = disable_history_base.get("history", [])
 
-            depress = True if len(disable_history) and disable_target == item.name else False
-            emboss = True if len(disable_history) and disable_target == item.name else False
-            icon = 'RESTRICT_VIEW_ON' if laycol["ptr"].collection.hide_viewport else 'RESTRICT_VIEW_OFF'
+            highlight = bool(disable_history and disable_target == item.name)
+            icon = ('RESTRICT_VIEW_ON' if laycol["ptr"].collection.hide_viewport else
+                    'RESTRICT_VIEW_OFF')
 
-            row.operator("view3d.disable_viewport_collection", text="", icon=icon, emboss=emboss, depress=depress).name = item.name
+            row.operator("view3d.disable_viewport_collection", text="", icon=icon,
+                         emboss=highlight, depress=highlight).name = item.name
 
-        if scn.show_render:
-            render_history_base = rto_history["render"].get(view_layer, {})
+        if cm.show_render:
+            render_history_base = rto_history["render"].get(view_layer.name, {})
             render_target = render_history_base.get("target", "")
             render_history = render_history_base.get("history", [])
 
-            depress = True if len(render_history) and render_target == item.name else False
-            emboss = True if len(render_history) and render_target == item.name else False
-            icon = 'RESTRICT_RENDER_ON' if laycol["ptr"].collection.hide_render else 'RESTRICT_RENDER_OFF'
+            highlight = bool(render_history and render_target == item.name)
+            icon = ('RESTRICT_RENDER_ON' if laycol["ptr"].collection.hide_render else
+                    'RESTRICT_RENDER_OFF')
 
-            row.operator("view3d.disable_render_collection", text="", icon=icon, emboss=emboss, depress=depress).name = item.name
+            row.operator("view3d.disable_render_collection", text="", icon=icon,
+                         emboss=highlight, depress=highlight).name = item.name
 
 
         rm_op = split.row()
         rm_op.alignment = 'RIGHT'
-        rm_op.operator("view3d.remove_collection", text="", icon='X', emboss=False).collection_name = item.name
+        rm_op.operator("view3d.remove_collection", text="", icon='X',
+                       emboss=False).collection_name = item.name
 
-        if scn.CM_Phantom_Mode:
+        if cm.in_phantom_mode:
             name_row.enabled = False
             row_setcol.enabled = False
             rm_op.enabled = False
@@ -432,13 +452,13 @@ class CMRestrictionTogglesPanel(Panel):
     bl_region_type = 'HEADER'
 
     def draw(self, context):
+        cm = context.scene.collection_manager
 
         layout = self.layout
-
         row = layout.row()
 
-        row.prop(context.scene, "show_exclude", icon='CHECKBOX_HLT', icon_only=True)
-        row.prop(context.scene, "show_selectable", icon='RESTRICT_SELECT_OFF', icon_only=True)
-        row.prop(context.scene, "show_hideviewport", icon='HIDE_OFF', icon_only=True)
-        row.prop(context.scene, "show_disableviewport", icon='RESTRICT_VIEW_OFF', icon_only=True)
-        row.prop(context.scene, "show_render", icon='RESTRICT_RENDER_OFF', icon_only=True)
+        row.prop(cm, "show_exclude", icon='CHECKBOX_HLT', icon_only=True)
+        row.prop(cm, "show_selectable", icon='RESTRICT_SELECT_OFF', icon_only=True)
+        row.prop(cm, "show_hide_viewport", icon='HIDE_OFF', icon_only=True)
+        row.prop(cm, "show_disable_viewport", icon='RESTRICT_VIEW_OFF', icon_only=True)
+        row.prop(cm, "show_render", icon='RESTRICT_RENDER_OFF', icon_only=True)

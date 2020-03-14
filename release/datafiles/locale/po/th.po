@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
+"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -510,12 +510,16 @@ msgid "Marker"
 msgstr "เครื่องหมาย"
 
 
-msgid "Material"
-msgstr "วัสดุ"
-
-
 msgid "Smooth"
 msgstr "ราบเรียบ"
+
+
+msgid "Randomize"
+msgstr "สุ่ม"
+
+
+msgid "Material"
+msgstr "วัสดุ"
 
 
 msgid "Depth"
@@ -1116,20 +1120,20 @@ msgid "Save"
 msgstr "บันทึก"
 
 
-msgid "Large"
-msgstr "ใหญ่"
-
-
-msgid "Fonts"
-msgstr "ฟอนต์"
+msgid "Miscellaneous"
+msgstr "เบ็ดเตล็ด"
 
 
 msgid "Shading"
 msgstr "แรเงา"
 
 
-msgid "Miscellaneous"
-msgstr "เบ็ดเตล็ด"
+msgid "Fonts"
+msgstr "ฟอนต์"
+
+
+msgid "Large"
+msgstr "ใหญ่"
 
 
 msgid "Show .blend files"
@@ -1220,20 +1224,20 @@ msgid "Frames"
 msgstr "เฟรม"
 
 
-msgid "Mask Layer"
-msgstr "ชั้นหน้ากาก"
-
-
 msgid "Opacity"
 msgstr "ความทึบแสง"
 
 
+msgid "Mask Layer"
+msgstr "ชั้นหน้ากาก"
+
+
+msgid "Invert"
+msgstr "กลับค่า"
+
+
 msgid "Grid"
 msgstr "ตาราง"
-
-
-msgid "Randomize"
-msgstr "สุ่ม"
 
 
 msgid "Flat"
@@ -1264,16 +1268,8 @@ msgid "Subdivide"
 msgstr "แบ่งย่อย"
 
 
-msgid "Invert"
-msgstr "กลับค่า"
-
-
 msgid "Shift"
 msgstr "เลื่อน"
-
-
-msgid "Shiftiness value"
-msgstr "ค่าระดับการเลื่อน"
 
 
 msgctxt "Curve"
@@ -1325,6 +1321,10 @@ msgstr "คงที่"
 
 msgid "Merge"
 msgstr "ผสาน"
+
+
+msgid "Subdivision Type"
+msgstr "ชนิดของการแบ่งย่อย"
 
 
 msgid "Simple"
@@ -2373,10 +2373,6 @@ msgid "Mirror V"
 msgstr "สะท้อน V"
 
 
-msgid "Subdivision Type"
-msgstr "ชนิดของการแบ่งย่อย"
-
-
 msgid "Copy"
 msgstr "คัดลอก"
 
@@ -3205,6 +3201,10 @@ msgid "Show"
 msgstr "แสดง"
 
 
+msgid "Palette"
+msgstr "จานสี"
+
+
 msgctxt "Operator"
 msgid "Mirror"
 msgstr "กระจกสะท้อน"
@@ -3476,10 +3476,6 @@ msgstr "แถบเครื่องมือ"
 
 msgid "URL"
 msgstr "URL"
-
-
-msgid "Palette"
-msgstr "จานสี"
 
 
 msgid "Show Brush"
@@ -3761,10 +3757,6 @@ msgid "Developer Extras"
 msgstr "เครื่องมือพิเศษสำหรับผู้พัฒนา"
 
 
-msgid "Large Cursors"
-msgstr "เคอร์เซอร์ใหญ่"
-
-
 msgid "Display Object Info"
 msgstr "แสดงข้อมูลวัตถุ"
 
@@ -3859,22 +3851,6 @@ msgstr "เรนเดอร์มุมมอง"
 
 msgid "Z Angle"
 msgstr "องศา Z"
-
-
-msgid "128px"
-msgstr "128px"
-
-
-msgid "1024px"
-msgstr "1024px"
-
-
-msgid "2048px"
-msgstr "2048px"
-
-
-msgid "16px"
-msgstr "16px"
 
 
 msgid "Render Samples"
@@ -4376,10 +4352,6 @@ msgstr "แทนที่อันดั้งเดิม"
 
 msgid "Material:"
 msgstr "วัสดุ:"
-
-
-msgid "Shift:"
-msgstr "เลื่อน:"
 
 
 msgid "Render:"
@@ -5475,10 +5447,6 @@ msgid "Display:"
 msgstr "แสดง:"
 
 
-msgid "Frames:"
-msgstr "เฟรม:"
-
-
 msgctxt "Operator"
 msgid "Armature"
 msgstr "โครงร่าง"
@@ -5622,11 +5590,6 @@ msgstr "คีย์ %d"
 
 msgid "Undefined"
 msgstr "ไม่ได้กำหนดไว้"
-
-
-msgctxt "Action"
-msgid "Group"
-msgstr "กลุ่ม"
 
 
 msgid "Add Point"
@@ -6018,6 +5981,11 @@ msgstr "ตำแหน่ง:"
 
 msgid "Mask '%s' not found"
 msgstr "ไม่พบหน้ากาก '%s'"
+
+
+msgctxt "Action"
+msgid "Group"
+msgstr "กลุ่ม"
 
 
 msgid "). Click here to proceed..."
