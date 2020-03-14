@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
+"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
@@ -293,12 +293,16 @@ msgid "Marker"
 msgstr "Маркер"
 
 
-msgid "Material"
-msgstr "Материал"
-
-
 msgid "Smooth"
 msgstr "Тегиз"
+
+
+msgid "Draw"
+msgstr "Тартуу"
+
+
+msgid "Material"
+msgstr "Материал"
 
 
 msgid "Background Image"
@@ -763,12 +767,12 @@ msgid "Save"
 msgstr "Сактоо"
 
 
-msgid "Fonts"
-msgstr "Ариптер"
-
-
 msgid "Shading"
 msgstr "Көлөкөлөө"
+
+
+msgid "Fonts"
+msgstr "Ариптер"
 
 
 msgid "End"
@@ -843,12 +847,8 @@ msgid "Opacity"
 msgstr "Күңүрттүк"
 
 
-msgid "Brush"
-msgstr "Чачы"
-
-
-msgid "Tool"
-msgstr "Аспап"
+msgid "Layer"
+msgstr "Кат"
 
 
 msgid "Flat"
@@ -887,10 +887,6 @@ msgid "Hook"
 msgstr "Илмек"
 
 
-msgid "Layer"
-msgstr "Кат"
-
-
 msgid "Shift"
 msgstr "Shift"
 
@@ -904,16 +900,20 @@ msgid "Matrix"
 msgstr "Матрица"
 
 
+msgid "Catmull-Clark"
+msgstr "Катмулл-Кларк"
+
+
 msgid "Users"
 msgstr "Колдонуучулар"
 
 
-msgid "Draw"
-msgstr "Тартуу"
-
-
 msgid "Mask"
 msgstr "Маска"
+
+
+msgid "Brush"
+msgstr "Чачы"
 
 
 msgid "Mask Tool"
@@ -926,6 +926,10 @@ msgstr "Жыштыгы"
 
 msgid "Rotate"
 msgstr "Айлантуу"
+
+
+msgid "Cloth"
+msgstr "Кездеме"
 
 
 msgid "Ramp"
@@ -1082,10 +1086,6 @@ msgstr "Күңүрттүк"
 
 msgid "Hair"
 msgstr "Чач"
-
-
-msgid "Cloth"
-msgstr "Кездеме"
 
 
 msgid "Fluid"
@@ -1551,10 +1551,6 @@ msgid "Levels"
 msgstr "Деңгээлдер"
 
 
-msgid "Catmull-Clark"
-msgstr "Катмулл-Кларк"
-
-
 msgid "Copy"
 msgstr "Көчүрүү"
 
@@ -1731,6 +1727,10 @@ msgstr "Тандалганын жашыруу"
 msgctxt "Curve"
 msgid "Mode"
 msgstr "Режим"
+
+
+msgid "Tool"
+msgstr "Аспап"
 
 
 msgctxt "Operator"
@@ -2272,6 +2272,11 @@ msgid "Monkey"
 msgstr "Маймыл"
 
 
+msgctxt "Operator"
+msgid "Add Modifier"
+msgstr "Модификаторду кошуу"
+
+
 msgid "Object Data"
 msgstr "Объект маалыматтары"
 
@@ -2297,11 +2302,6 @@ msgstr "Материал слотун өчүрүү"
 
 msgid "Remove the selected material slot"
 msgstr "Тандалган материал слотун өчүрүү"
-
-
-msgctxt "Operator"
-msgid "Add Modifier"
-msgstr "Модификаторду кошуу"
 
 
 msgctxt "Operator"
@@ -3106,14 +3106,6 @@ msgid "Sepia"
 msgstr "Сепия"
 
 
-msgid "Ambient"
-msgstr "Чөйрөсү"
-
-
-msgid "Energy"
-msgstr "Энергия"
-
-
 msgid "Aero"
 msgstr "Аэро"
 
@@ -3446,11 +3438,6 @@ msgid "Draw:"
 msgstr "Тартуу:"
 
 
-msgctxt "Operator"
-msgid "Delete..."
-msgstr "Өчүрүү..."
-
-
 msgid "Transform:"
 msgstr "Өзгөртүү:"
 
@@ -3564,6 +3551,11 @@ msgstr "Тасма"
 msgctxt "Operator"
 msgid "Sound"
 msgstr "Үн"
+
+
+msgctxt "Operator"
+msgid "Delete..."
+msgstr "Өчүрүү..."
 
 
 msgctxt "Operator"
@@ -3812,11 +3804,6 @@ msgstr "Тез оңдоо"
 msgctxt "Operator"
 msgid "Apply"
 msgstr "Колдонуу"
-
-
-msgctxt "Action"
-msgid "Group"
-msgstr "Топ"
 
 
 msgctxt "Curve"
@@ -4113,6 +4100,11 @@ msgstr "Жолу:"
 
 msgid "Format:"
 msgstr "Форматы:"
+
+
+msgctxt "Action"
+msgid "Group"
+msgstr "Топ"
 
 
 msgid "Not found: %s"

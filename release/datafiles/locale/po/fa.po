@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
+"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -688,6 +688,10 @@ msgid "Has Secondary Color"
 msgstr "ﻪﯾﻮﻧﺎﺛ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
 
 
+msgid "Direction"
+msgstr "ﺎﺘﺳﺍﺭ"
+
+
 msgid "Mode"
 msgstr "ﺖﻟﺎﺣ"
 
@@ -700,8 +704,16 @@ msgid "Marker"
 msgstr "ﺮﮕﻧﺎﺸﻧ"
 
 
-msgid "Aspect Ratio"
-msgstr "ﺮﯾﻮﺼﺗ ﺖﺒﺴﻧ"
+msgid "Smooth"
+msgstr "ﻑﺎﺻ"
+
+
+msgid "Draw"
+msgstr "ﺩﺍﺯﺁ ﯽﺷﺎﻘﻧ"
+
+
+msgid "Blur"
+msgstr "ﯽﮔﺮﯿﺗ"
 
 
 msgid "Input Samples"
@@ -712,12 +724,8 @@ msgid "Material"
 msgstr "ﻩﺩﺎﻣ"
 
 
-msgid "Sensitivity"
-msgstr "ﺖﯿﺳﺎﺴﺣ"
-
-
-msgid "Smooth"
-msgstr "ﻑﺎﺻ"
+msgid "Both"
+msgstr "ﻭﺩ ﺮﻫ"
 
 
 msgid "Background Image"
@@ -2310,12 +2318,12 @@ msgid "Save"
 msgstr "ﻩﺮﯿﺧﺫ"
 
 
-msgid "Fonts"
-msgstr "ﺎﻫ ﺖﻧﻮﻓ:"
-
-
 msgid "Shading"
 msgstr "ﯽﻧﺯ ﻪﯾﺎﺳ"
+
+
+msgid "Fonts"
+msgstr "ﺎﻫ ﺖﻧﻮﻓ:"
 
 
 msgid "Additional"
@@ -2406,6 +2414,10 @@ msgid "Display Type"
 msgstr "ﯽﯾﺎﺠﺑﺎﺟ ﻉﻮﻧ"
 
 
+msgid "Subframes"
+msgstr "ﯼﺪﯿﻠﮐ ﯼﺎﻫ‌ﻢﯾﺮﻓ:"
+
+
 msgid "Flow Type"
 msgstr "ﻥﺩﺮﮐ ﺮﭘ ﻉﻮﻧ"
 
@@ -2428,10 +2440,6 @@ msgstr "ﻪﻧﻮﻤﻧ ﺖﻋﺮﺳ"
 
 msgid "Color of smoke"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﺮﮕﻧﺎﺸﻧ"
-
-
-msgid "Subframes"
-msgstr "ﯼﺪﯿﻠﮐ ﯼﺎﻫ‌ﻢﯾﺮﻓ:"
 
 
 msgid "Texture mapping type"
@@ -2490,16 +2498,16 @@ msgid "Onion Skinning"
 msgstr "ﺯﺎﯿﭘ ﺖﺳﻮﭘ"
 
 
-msgid "Direction"
-msgstr "ﺎﺘﺳﺍﺭ"
+msgid "Invert"
+msgstr "ﻥﻭﺭﺍﻭ"
+
+
+msgid "Layer"
+msgstr "ﻪﯾﻻ﻿"
 
 
 msgid "Spacing"
 msgstr "ﻪﻠﺻﺎﻓ"
-
-
-msgid "Brush"
-msgstr "ﻮﻣ ﻢﻠﻗ"
 
 
 msgid "Draw Mode"
@@ -2562,10 +2570,6 @@ msgid "Armature Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
-msgid "Invert"
-msgstr "ﻥﻭﺭﺍﻭ"
-
-
 msgid "Use Bone Envelopes"
 msgstr "ﻥﺍﻮﺨﺘﺳﺍ ﯼﺎﻫ‌ﺖﮐﺎﭘ ﺯﺍ ﺹﺎﺼﺘﺧﺍ"
 
@@ -2578,20 +2582,24 @@ msgid "Bind vertex groups to armature modifier"
 msgstr "ﺱﺃﺭ ﯼﺎﻫ‌ﻩﻭﺮﮔ"
 
 
-msgid "Layer"
-msgstr "ﻪﯾﻻ﻿"
+msgid "Constant Offset"
+msgstr "ﺖﯾﺩﻭﺪﺤﻣ"
 
 
 msgid "Object Offset"
 msgstr "ءﯽﺷ ﯼﺎﻀﻓ"
 
 
+msgid "Relative Offset"
+msgstr "X ﺖﺴﻓﺍ"
+
+
 msgid "Build Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
-msgid "Both"
-msgstr "ﻭﺩ ﺮﻫ"
+msgid "Custom Curve"
+msgstr "ﯽﺷﺭﺎﻔﺳ ﮏﻧﺭ"
 
 
 msgid "Hook Modifier"
@@ -2612,14 +2620,6 @@ msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 msgid "Smooth Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
-
-
-msgid "Normalize"
-msgstr "ﯼﺯﺎﺳ ﯼﺩﺎﻋ"
-
-
-msgid "Custom Curve"
-msgstr "ﯽﺷﺭﺎﻔﺳ ﮏﻧﺭ"
 
 
 msgid "Show Line"
@@ -2686,6 +2686,10 @@ msgid "Clone Offset"
 msgstr "X ﺖﺴﻓﺍ"
 
 
+msgid "Expand"
+msgstr "ﻪﺘﻓﺎﯾ‌ﻂﺴﺑ"
+
+
 msgid "Add Color"
 msgstr "ﮓﻧﺭ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
@@ -2698,16 +2702,16 @@ msgid "Sharper"
 msgstr "ﯼﺰﯿﺗ"
 
 
-msgid "Draw"
-msgstr "ﺩﺍﺯﺁ ﯽﺷﺎﻘﻧ"
-
-
 msgid "Brush Height"
 msgstr "ﯼﺯﺎﺑ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
 msgid "Image Paint Tool"
 msgstr "ﺮﯾﻮﺼﺗ ﺮﮕﺸﯾﺍﺮﯾﻭ"
+
+
+msgid "Brush"
+msgstr "ﻮﻣ ﻢﻠﻗ"
 
 
 msgid "Mask Tool"
@@ -2812,10 +2816,6 @@ msgstr "ﻥﺩﺮﮐ‌ﻞﺷ"
 
 msgid "Vertex Paint Tool"
 msgstr "ﻥﺯﻭ ﯽﺷﺎﻘﻧ"
-
-
-msgid "Blur"
-msgstr "ﯽﮔﺮﯿﺗ"
 
 
 msgid "Weight Paint Tool"
@@ -4440,10 +4440,6 @@ msgid "Key"
 msgstr "ﺪﯿﻠﮐ"
 
 
-msgid "Fluid Presets"
-msgstr "ﺎﻫ‌ﮓﻧﺭ:"
-
-
 msgid "UV"
 msgstr "UV"
 
@@ -4573,10 +4569,6 @@ msgid "UV Select"
 msgstr "ﺏﺎﺨﺘﻧﺍ"
 
 
-msgid "UV Edge Select"
-msgstr "ﻪﺒﻟ ﺏﺎﺨﺘﻧﺍ ﺖﻟﺎﺣ:"
-
-
 msgid "Ball"
 msgstr "ﭖﻮﺗ"
 
@@ -4611,14 +4603,6 @@ msgstr "ﺍﺯﺍﺭﺩ"
 
 msgid "Merge Distance"
 msgstr "DOF ﻪﻠﺻﺎﻓ"
-
-
-msgid "Constant Offset"
-msgstr "ﺖﯾﺩﻭﺪﺤﻣ"
-
-
-msgid "Relative Offset"
-msgstr "X ﺖﺴﻓﺍ"
 
 
 msgid "Bevel Modifier"
@@ -5363,6 +5347,10 @@ msgstr "ﯽﯾﺎﺗﻭﺩ"
 
 msgid "Use Mask"
 msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
+
+
+msgid "Normalize"
+msgstr "ﯼﺯﺎﺳ ﯼﺩﺎﻋ"
 
 
 msgid "Use Red Channel"
@@ -6488,11 +6476,6 @@ msgstr "ﻞﻣﺎﻋ ﻢﺘﺴﯿﺳ ﺪﯿﻠﮐ"
 msgctxt "Operator"
 msgid "View All"
 msgstr "ﻪﻤﻫ ﻩﺪﻫﺎﺸﻣ"
-
-
-msgctxt "Operator"
-msgid "View Selected"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻩﺪﻫﺎﺸﻣ"
 
 
 msgctxt "Operator"
@@ -7934,6 +7917,11 @@ msgid "Add New Layer"
 msgstr "ﻪﯾﻻ﻿"
 
 
+msgctxt "Operator"
+msgid "Remove Mask Layer"
+msgstr "ﻪﻧﻭﺰﻓﺍ ﻑﺬﺣ"
+
+
 msgid "Mouse location"
 msgstr "ﺱﻭﺎﻣ ﻥﺎﮑﻣ"
 
@@ -8388,11 +8376,6 @@ msgstr "ﺮﮕﻧﺎﺸﻧ"
 
 msgid "Add new mask layer for masking"
 msgstr "ﯽﺑﺎﯾﺩﺭ ﯼﺍﺮﺑ ﺪﯾﺪﺟ ءﯽﺷ ﻥﺩﻭﺰﻓﺍ"
-
-
-msgctxt "Operator"
-msgid "Remove Mask Layer"
-msgstr "ﻪﻧﻭﺰﻓﺍ ﻑﺬﺣ"
 
 
 msgid "Remove mask layer"
@@ -8913,10 +8896,6 @@ msgstr "ﺏﺎﺨﺘﻧﺍ ﻮﻨﻣ"
 
 msgid "Change selection mode"
 msgstr "ﻪﻤﻫ ﺏﺎﺨﺘﻧﺍ ﻡﺪﻋ/ﺏﺎﺨﺘﻧﺍ"
-
-
-msgid "Expand"
-msgstr "ﻪﺘﻓﺎﯾ‌ﻂﺴﺑ"
 
 
 msgctxt "Operator"
@@ -9532,6 +9511,11 @@ msgstr "ﻥﺍﺪﯿﻣ ﯼﻭﺮﯿﻧ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
 msgctxt "Operator"
+msgid "Add Modifier"
+msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
+
+
+msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
@@ -9675,11 +9659,6 @@ msgstr "MetaBall"
 msgctxt "Operator"
 msgid "Set Object Mode"
 msgstr "ءﯽﺷ ﺖﻟﺎﺣ"
-
-
-msgctxt "Operator"
-msgid "Add Modifier"
-msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
 msgctxt "Operator"
@@ -11984,6 +11963,10 @@ msgid "URL to open"
 msgstr "ﻥﺩﺮﮐ‌ﺯﺎﺑ ﯼﺍﺮﺑ ﯽﺘﻧﺮﺘﻨﯾﺍ ﺱﺭﺩﺁ"
 
 
+msgid "UV Maps"
+msgstr ":UV ﯼﺭﺍﺩﺮﺑ ﻪﺸﻘﻧ"
+
+
 msgctxt "Operator"
 msgid "New World"
 msgstr "ﻥﺎﻬﺟ"
@@ -12105,16 +12088,16 @@ msgid "Text Boxes"
 msgstr "ﯽﻨﺘﻣ ﯼﺎﻫ‌ﻪﺒﻌﺟ"
 
 
-msgid "UV Maps"
-msgstr ":UV ﯼﺭﺍﺩﺮﺑ ﻪﺸﻘﻧ"
-
-
 msgid "Bookmarks"
 msgstr "ﺎﻫ‌ﻪﻧﺎﺸﻧ"
 
 
 msgid "System"
 msgstr "ﻢﺘﺴﯿﺳ"
+
+
+msgid "Fluid Presets"
+msgstr "ﺎﻫ‌ﮓﻧﺭ:"
 
 
 msgctxt "Operator"
@@ -12141,6 +12124,10 @@ msgstr "ﻥﺍﺪﯿﻣ ﯼﻭﺮﯿﻧ ﺕﺎﻤﯿﻈﻨﺗ"
 
 msgid "Physics"
 msgstr "ﮏﯾﺰﯿﻓ"
+
+
+msgid "Sensitivity"
+msgstr "ﺖﯿﺳﺎﺴﺣ"
 
 
 msgid "Dynamics"
@@ -12300,26 +12287,6 @@ msgstr "ﯽﺗﻮﺻ ﻩﺎﮕﺘﺳﺩ"
 
 msgid "Audio output device"
 msgstr "ﯽﺗﻮﺻ ﯽﺟﻭﺮﺧ ﻩﺎﮕﺘﺳﺩ"
-
-
-msgid "No MultiSample"
-msgstr "ﺏﺮﺿ"
-
-
-msgid "MultiSample: 2"
-msgstr "ﻪﻧﻮﻤﻧ ﺶﯾﺍﺮﮔ:"
-
-
-msgid "MultiSample: 4"
-msgstr "ﻪﻧﻮﻤﻧ ﺶﯾﺍﺮﮔ:"
-
-
-msgid "MultiSample: 8"
-msgstr "ﻪﻧﻮﻤﻧ ﺶﯾﺍﺮﮔ:"
-
-
-msgid "MultiSample: 16"
-msgstr "ﻪﻧﻮﻤﻧ ﺶﯾﺍﺮﮔ:"
 
 
 msgid "Ambient Color"
@@ -13495,12 +13462,12 @@ msgid "UV Map:"
 msgstr "UV ﺖﺷﺎﮕﻧ:"
 
 
-msgid "Material:"
-msgstr "ﻩﺩﺎﻣ:"
-
-
 msgid "Layer:"
 msgstr "ﻪﯾﻻ﻿"
+
+
+msgid "Material:"
+msgstr "ﻩﺩﺎﻣ:"
 
 
 msgid "Color:"
@@ -13559,23 +13526,8 @@ msgstr "ﯼﺍ ﻪﺷﻮﮔ"
 
 
 msgctxt "Operator"
-msgid "Flip Direction"
-msgstr "ﺖﻬﺟ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
-
-
-msgctxt "Operator"
 msgid "Selection to Cursor"
 msgstr "ﺎﻤﻧ ﻥﺎﮑﻣ ﺏﺎﺨﺘﻧﺍ"
-
-
-msgctxt "Operator"
-msgid "Select Inverse"
-msgstr "ﺎﺑ ﺏﺎﺨﺘﻧﺍ:"
-
-
-msgctxt "Operator"
-msgid "Delete..."
-msgstr "ﻑﺬﺣ..."
 
 
 msgid "Transform:"
@@ -13924,6 +13876,10 @@ msgid "Image*"
 msgstr "ﺮﯾﻮﺼﺗ*"
 
 
+msgid "Aspect Ratio"
+msgstr "ﺮﯾﻮﺼﺗ ﺖﺒﺴﻧ"
+
+
 msgctxt "Operator"
 msgid "Pack"
 msgstr "ﻪﺘﺴﺑ"
@@ -13962,6 +13918,11 @@ msgstr "ﻩﻭﺮﮔ"
 msgctxt "Operator"
 msgid "Sound"
 msgstr "ﺍﺪﺻ"
+
+
+msgctxt "Operator"
+msgid "Delete..."
+msgstr "ﻑﺬﺣ..."
 
 
 msgctxt "Operator"
@@ -14496,6 +14457,11 @@ msgstr "ﻢﯾﺮﻓ ﻉﻭﺮﺷ"
 msgctxt "Operator"
 msgid "Make"
 msgstr "ﺖﺧﺎﺳ"
+
+
+msgctxt "Operator"
+msgid "View Selected"
+msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻩﺪﻫﺎﺸﻣ"
 
 
 msgid "Creases"

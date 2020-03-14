@@ -17,6 +17,7 @@
 #  ***** GPL LICENSE BLOCK *****
 
 import bpy, math, bmesh
+from bpy_extras import view3d_utils
 from mathutils import Vector, Matrix
 from . import internal
 
@@ -68,28 +69,19 @@ class SliceMesh(bpy.types.Operator):
     bl_description = bl_label = 'Slice Mesh'
     bl_options = {'REGISTER', 'UNDO'}
 
-    pitch_axis: bpy.props.FloatVectorProperty(name='Pitch & Axis', unit='LENGTH', description='Vector between to slices', subtype='DIRECTION', default=(0.0, 0.0, 0.1), size=3)
-    offset: bpy.props.FloatProperty(name='Offset', unit='LENGTH', description='Position of first slice along axis', default=-0.4)
-    slice_count: bpy.props.IntProperty(name='Count', description='Number of slices', min=1, default=9)
+    pitch: bpy.props.FloatProperty(name='Pitch', unit='LENGTH', description='Distance between two slices', default=0.1)
+    offset: bpy.props.FloatProperty(name='Offset', unit='LENGTH', description='Position of first slice along the axis', default=0.0)
+    slice_count: bpy.props.IntProperty(name='Count', description='Number of slices', min=1, default=3)
 
     @classmethod
     def poll(cls, context):
         return bpy.context.object != None and bpy.context.object.mode == 'OBJECT'
 
-    def execute(self, context):
-        if bpy.context.object.type != 'MESH':
-            self.report({'WARNING'}, 'Active object must be a mesh')
-            return {'CANCELLED'}
-        depsgraph = context.evaluated_depsgraph_get()
-        mesh = bmesh.new()
-        mesh.from_object(bpy.context.object, depsgraph, deform=True, cage=False, face_normals=True)
-        mesh.transform(bpy.context.object.matrix_world)
-        toolpath = internal.addObject('CURVE', 'Slices Toolpath')
-        pitch_axis = Vector(self.pitch_axis)
-        axis = pitch_axis.normalized()
+    def perform(self, context):
+        axis = Vector((0.0, 0.0, 1.0))
         for i in range(0, self.slice_count):
-            aux_mesh = mesh.copy()
-            cut_geometry = bmesh.ops.bisect_plane(aux_mesh, geom=aux_mesh.edges[:]+aux_mesh.faces[:], dist=0, plane_co=pitch_axis*i+axis*self.offset, plane_no=axis, clear_outer=False, clear_inner=False)['geom_cut']
+            aux_mesh = self.mesh.copy()
+            cut_geometry = bmesh.ops.bisect_plane(aux_mesh, geom=aux_mesh.edges[:]+aux_mesh.faces[:], dist=0, plane_co=axis*(i*self.pitch+self.offset), plane_no=axis, clear_outer=False, clear_inner=False)['geom_cut']
             edge_pool = set([e for e in cut_geometry if isinstance(e, bmesh.types.BMEdge)])
             while len(edge_pool) > 0:
                 current_edge = edge_pool.pop()
@@ -110,9 +102,104 @@ class SliceMesh(bpy.types.Operator):
                             break
                 current_vertex = current_edge.other_vert(current_vertex)
                 vertices.append(current_vertex.co)
-                internal.addPolygonSpline(toolpath, False, vertices)
+                internal.addPolygonSpline(self.result, False, vertices)
             aux_mesh.free()
-        mesh.free()
+
+    def invoke(self, context, event):
+        if bpy.context.object.type != 'MESH':
+            self.report({'WARNING'}, 'Active object must be a mesh')
+            return {'CANCELLED'}
+        self.pitch = 0.1
+        self.offset = 0.0
+        self.slice_count = 3
+        self.mode = 'PITCH'
+        self.execute(context)
+        context.window_manager.modal_handler_add(self)
+        return {'RUNNING_MODAL'}
+
+    def modal(self, context, event):
+        if event.type == 'MOUSEMOVE':
+            mouse = (event.mouse_region_x, event.mouse_region_y)
+            input_value = internal.nearestPointOfLines(
+                bpy.context.scene.cursor.location,
+                bpy.context.scene.cursor.matrix.col[2].xyz,
+                view3d_utils.region_2d_to_origin_3d(context.region, context.region_data, mouse),
+                view3d_utils.region_2d_to_vector_3d(context.region, context.region_data, mouse)
+            )[0]
+            if self.mode == 'PITCH':
+                self.pitch = input_value/(self.slice_count-1) if self.slice_count > 2 else input_value
+            elif self.mode == 'OFFSET':
+                self.offset = input_value-self.pitch*0.5*((self.slice_count-1) if self.slice_count > 2 else 1.0)
+        elif event.type == 'WHEELUPMOUSE':
+            if self.slice_count > 2:
+                self.pitch *= (self.slice_count-1)
+            self.slice_count += 1
+            if self.slice_count > 2:
+                self.pitch /= (self.slice_count-1)
+        elif event.type == 'WHEELDOWNMOUSE':
+            if self.slice_count > 2:
+                self.pitch *= (self.slice_count-1)
+            if self.slice_count > 1:
+                self.slice_count -= 1
+            if self.slice_count > 2:
+                self.pitch /= (self.slice_count-1)
+        elif event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
+            if self.mode == 'PITCH':
+                self.mode = 'OFFSET'
+                return {'RUNNING_MODAL'}
+            elif self.mode == 'OFFSET':
+                return {'FINISHED'}
+        elif event.type in {'RIGHTMOUSE', 'ESC'}:
+            bpy.context.scene.collection.objects.unlink(self.result)
+            return {'CANCELLED'}
+        else:
+            return {'PASS_THROUGH'}
+        self.result.data.splines.clear()
+        self.perform(context)
+        return {'RUNNING_MODAL'}
+
+    def execute(self, context):
+        depsgraph = context.evaluated_depsgraph_get()
+        self.mesh = bmesh.new()
+        self.mesh.from_object(bpy.context.object, depsgraph, deform=True, cage=False, face_normals=True)
+        self.mesh.transform(bpy.context.scene.cursor.matrix.inverted()@bpy.context.object.matrix_world)
+        self.result = internal.addObject('CURVE', 'Slices')
+        self.result.matrix_world = bpy.context.scene.cursor.matrix
+        self.perform(context)
+        return {'FINISHED'}
+
+class DogBone(bpy.types.Operator):
+    bl_idname = 'curvetools.add_toolpath_dogbone'
+    bl_description = bl_label = 'Dog Bone'
+    bl_options = {'REGISTER', 'UNDO'}
+
+    radius: bpy.props.FloatProperty(name='Radius', description='Tool radius to compensate for', unit='LENGTH', min=0.0, default=0.1)
+
+    @classmethod
+    def poll(cls, context):
+        return bpy.context.object != None and bpy.context.object.type == 'CURVE'
+
+    def execute(self, context):
+        if bpy.context.object.mode == 'EDIT':
+            splines = internal.getSelectedSplines(True, False)
+        else:
+            splines = bpy.context.object.data.splines
+
+        if len(splines) == 0:
+            self.report({'WARNING'}, 'Nothing selected')
+            return {'CANCELLED'}
+
+        if bpy.context.object.mode != 'EDIT':
+            internal.addObject('CURVE', 'Dog Bone')
+            origin = bpy.context.scene.cursor.location
+        else:
+            origin = Vector((0.0, 0.0, 0.0))
+
+        for spline in splines:
+            if spline.type != 'BEZIER':
+                continue
+            result = internal.dogBone(spline, self.radius)
+            internal.addBezierSpline(bpy.context.object, spline.use_cyclic_u, result) # [vertex-origin for vertex in result])
         return {'FINISHED'}
 
 class DiscretizeCurve(bpy.types.Operator):
@@ -295,4 +382,4 @@ def unregister():
 if __name__ == "__main__":
     register()
 
-operators = [OffsetCurve, SliceMesh, DiscretizeCurve, Truncate, RectMacro, DrillMacro]
+operators = [OffsetCurve, SliceMesh, DogBone, DiscretizeCurve, Truncate, RectMacro, DrillMacro]

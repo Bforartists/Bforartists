@@ -28,6 +28,8 @@
 
 #include "BKE_blender_version.h"
 
+#include "BLO_readfile.h" /* own include */
+
 /* bfa - for the flag names have a look into source\blender\makesrna\intern\rna_userdef.c*/
 /*bfa -  added USER_TOOLTIPS_PYTHON, USER_DEVELOPER_UI and USER_FILENOUI to the .flag*/
 
@@ -102,7 +104,6 @@ const UserDef U_default = {
     .user_keyconfig_prefs = {NULL},
 
     /** Initialized by #BKE_blendfile_userdef_from_defaults. */
-    /*source\blender\blenkernel\intern\blendfile.c*/
     .addons = {NULL},
 
     .autoexec_paths = {NULL},

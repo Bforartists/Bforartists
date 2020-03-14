@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 4) (b'14856e149ff5')\n"
+"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -1838,6 +1838,10 @@ msgid "Has Spacing"
 msgstr "Odstępy"
 
 
+msgid "Direction"
+msgstr "Kierunek"
+
+
 msgid "Mode"
 msgstr "Tryb"
 
@@ -1854,16 +1858,16 @@ msgid "Threshold"
 msgstr "Próg"
 
 
-msgid "Material"
-msgstr "Materiał"
-
-
-msgid "Sensitivity"
-msgstr "Czułość"
-
-
 msgid "Smooth"
 msgstr "Wygładzanie"
+
+
+msgid "Blur"
+msgstr "Rozmycie"
+
+
+msgid "Material"
+msgstr "Materiał"
 
 
 msgid "Iterations"
@@ -6304,12 +6308,12 @@ msgid "Onion Skinning"
 msgstr "Pokrywanie wielowarstwowe"
 
 
-msgid "Direction"
-msgstr "Kierunek"
+msgid "Invert"
+msgstr "Odwrócenie"
 
 
-msgid "Brush"
-msgstr "Pędzel"
+msgid "Layer"
+msgstr "Warstwa"
 
 
 msgid "Flat"
@@ -6328,14 +6332,6 @@ msgid "Lattice"
 msgstr "Kratownica"
 
 
-msgid "Invert"
-msgstr "Odwrócenie"
-
-
-msgid "Layer"
-msgstr "Warstwa"
-
-
 msgid "Fixed"
 msgstr "Stałe"
 
@@ -6352,16 +6348,16 @@ msgid "Mask"
 msgstr "Maska"
 
 
+msgid "Brush"
+msgstr "Pędzel"
+
+
 msgid "Paint Curve"
 msgstr "Krzywa graficzna"
 
 
 msgid "Rotate"
 msgstr "Obróć"
-
-
-msgid "Blur"
-msgstr "Rozmycie"
 
 
 msgid "Clip End"
@@ -6707,6 +6703,10 @@ msgid "Child"
 msgstr "Potomek"
 
 
+msgid "Palette"
+msgstr "Paleta"
+
+
 msgid "Hinge"
 msgstr "Zawias"
 
@@ -6760,10 +6760,6 @@ msgid "Save Copy"
 msgstr "Zapisz Kopię"
 
 
-msgid "Palette"
-msgstr "Paleta"
-
-
 msgid "Pin"
 msgstr "Przypnij"
 
@@ -6779,6 +6775,10 @@ msgstr "Skaluj"
 
 msgid "Slot"
 msgstr "Otwór"
+
+
+msgid "Sensitivity"
+msgstr "Czułość"
 
 
 msgid "Dynamics"
@@ -7395,11 +7395,6 @@ msgid "Edge-rings are not connected"
 msgstr "Pierścienie Krawędzi nie są połączone"
 
 
-msgctxt "Action"
-msgid "Group"
-msgstr "Grupa"
-
-
 msgid "F-Curve is visible in Graph Editor for editing"
 msgstr "Krzywa-F jest widoczna w Edytorze Krzywych-F dla edycji"
 
@@ -7984,14 +7979,6 @@ msgid "Can not paste strokes when active layer is hidden or locked"
 msgstr "Nie mogę wkleić kresek gdy aktywna warstwa jest ukryta lub zablokowana"
 
 
-msgid "Cannot paste 2D strokes in 3D View"
-msgstr "Nie można wkleić kresek 3D w widoku 3D"
-
-
-msgid "Cannot paste 3D strokes in 2D editors"
-msgstr "Nie można wkleić kresek 3D w edytorach 2D"
-
-
 msgid "No grease pencil data"
 msgstr "Brak danych szkicownika"
 
@@ -8002,10 +7989,6 @@ msgstr "Brak aktywnej klatki do usunięcia"
 
 msgid "No active area"
 msgstr "Brak aktywnego obszaru"
-
-
-msgid "Failed to find Grease Pencil data to draw into"
-msgstr "Nie udało się odnaleźć danych szkicownika w których można zapisać"
 
 
 msgid "Grease Pencil operator is already active"
@@ -10559,6 +10542,11 @@ msgstr "Usuń nody przyłączone do tego wejścia"
 
 msgid "Disconnect nodes connected to the input"
 msgstr "Odłącz nody przyłączone do tego wejścia"
+
+
+msgctxt "Action"
+msgid "Group"
+msgstr "Grupa"
 
 
 msgid "Library path '%s' does not exist, correct this before saving"
