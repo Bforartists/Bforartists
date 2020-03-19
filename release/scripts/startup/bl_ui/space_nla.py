@@ -24,7 +24,6 @@ from bpy.types import Header, Menu, Panel
 from bpy.app.translations import contexts as i18n_contexts
 from bl_ui.space_dopesheet import (
     DopesheetFilterPopoverBase,
-    dopesheet_filter,
 )
 
 ################################ Switch between the editors ##########################################

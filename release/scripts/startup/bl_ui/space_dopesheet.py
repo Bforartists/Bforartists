@@ -33,25 +33,6 @@ from bl_ui.properties_grease_pencil_common import (
 )
 
 #######################################
-# DopeSheet Filtering - Header Buttons
-
-# used for DopeSheet, NLA, and Graph Editors
-
-
-def dopesheet_filter(layout, context):
-    dopesheet = context.space_data.dopesheet
-    is_nla = context.area.type == 'NLA_EDITOR'
-
-    row = layout.row(align=True)
-    row.prop(dopesheet, "show_only_selected", text="")
-    row.prop(dopesheet, "show_hidden", text="")
-
-    if is_nla:
-        row.prop(dopesheet, "show_missing_nla", text="")
-    else:  # graph and dopesheet editors - F-Curves and drivers only
-        row.prop(dopesheet, "show_only_errors", text="")
-
-#######################################
 # Dopesheet Filtering Popovers
 
 # Generic Layout - Used as base for filtering popovers used in all animation editors
@@ -359,15 +340,6 @@ class DOPESHEET_HT_editor_buttons(Header):
 
         layout.separator_spacer()
 
-        if st.mode == 'DOPESHEET':
-            dopesheet_filter(layout, context)
-        elif st.mode == 'ACTION':
-            dopesheet_filter(layout, context)
-        elif st.mode == 'GPENCIL':
-            row = layout.row(align=True)
-            row.prop(st.dopesheet, "show_only_selected", text="")
-            row.prop(st.dopesheet, "show_hidden", text="")
-
         layout.popover(
             panel="DOPESHEET_PT_filters",
             text="",
@@ -380,9 +352,13 @@ class DOPESHEET_HT_editor_buttons(Header):
 
         row = layout.row(align=True)
         row.prop(tool_settings, "use_proportional_action", text="", icon_only=True)
-        sub = row.row(align=True)
-        sub.active = tool_settings.use_proportional_action
-        sub.prop(tool_settings, "proportional_edit_falloff", text="", icon_only=True)
+        if tool_settings.use_proportional_action:
+            sub = row.row(align=True)
+            sub.prop(tool_settings, "proportional_edit_falloff", text="", icon_only=True)
+            
+        layout.operator_menu_enum("action.handle_type", "type", text="", icon = "HANDLE_AUTO")
+        layout.operator_menu_enum("action.interpolation_type", "type", text="", icon = "INTERPOLATE")
+        layout.prop(tool_settings, "keyframe_type", text="", icon_only=True)
 
 
 class DOPESHEET_MT_editor_menus(Menu):
