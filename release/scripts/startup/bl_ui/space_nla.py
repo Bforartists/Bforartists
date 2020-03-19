@@ -37,6 +37,9 @@ class ANIM_OT_switch_editors_in_nla(bpy.types.Operator):
     bl_label = "Nonlinear Animation Editor"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
+    def execute(self, context):        # Blank button, we don't execute anything here.
+        return {'FINISHED'}
+
 ##########################################
 		
 
