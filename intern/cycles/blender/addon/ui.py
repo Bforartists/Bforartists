@@ -1824,7 +1824,7 @@ class CYCLES_MATERIAL_PT_settings_surface(CyclesButtonsPanel, Panel):
     @staticmethod
     def draw_shared(self, mat):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         cmat = mat.cycles
@@ -1832,6 +1832,7 @@ class CYCLES_MATERIAL_PT_settings_surface(CyclesButtonsPanel, Panel):
         col = layout.column()
         col.prop(cmat, "sample_as_light", text="Multiple Importance")
         col.prop(cmat, "use_transparent_shadow")
+        col.use_property_split = True
         col.prop(cmat, "displacement_method", text="Displacement")
 
     def draw(self, context):
@@ -1856,6 +1857,7 @@ class CYCLES_MATERIAL_PT_settings_volume(CyclesButtonsPanel, Panel):
         sub.active = use_cpu(context)
         sub.prop(cmat, "volume_sampling", text="Sampling")
         col.prop(cmat, "volume_interpolation", text="Interpolation")
+        col.use_property_split = False
         col.prop(cmat, "homogeneous_volume", text="Homogeneous")
 
     def draw(self, context):
