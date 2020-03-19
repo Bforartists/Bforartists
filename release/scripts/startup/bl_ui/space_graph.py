@@ -34,6 +34,9 @@ class ANIM_OT_switch_editor_in_graph(bpy.types.Operator):
     bl_idname = "wm.switch_editor_in_graph"        # unique identifier for buttons and menu items to reference.
     bl_label = "Graph Editor"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+    
+    def execute(self, context):        # Blank button, we don't execute anything here.
+        return {'FINISHED'}
 
 
 class ANIM_OT_switch_editor_in_driver(bpy.types.Operator):
@@ -42,6 +45,8 @@ class ANIM_OT_switch_editor_in_driver(bpy.types.Operator):
     bl_label = "Driver Editor"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
+    def execute(self, context):        # Blank button, we don't execute anything here.
+        return {'FINISHED'}
 
 ##########################################
 
