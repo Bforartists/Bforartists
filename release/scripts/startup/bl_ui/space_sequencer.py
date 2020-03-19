@@ -105,8 +105,6 @@ class SEQUENCER_HT_tool_header(Header):
     def draw(self, context):
         layout = self.layout
 
-        layout.template_header()
-
         self.draw_tool_settings(context)
 
         # TODO: options popover.
@@ -129,13 +127,8 @@ class SEQUENCER_HT_header(Header):
 
         st = context.space_data
 
-        show_region_tool_header = st.show_region_tool_header
-
-        if not show_region_tool_header:
-            layout.template_header()
-
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         layout.prop(st, "view_type", text="")
-
         SEQUENCER_MT_editor_menus.draw_collapsible(context, layout)
 
         if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
