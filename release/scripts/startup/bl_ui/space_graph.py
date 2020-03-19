@@ -22,7 +22,6 @@ import bpy
 from bpy.types import Header, Menu, Panel
 from bl_ui.space_dopesheet import (
     DopesheetFilterPopoverBase,
-    dopesheet_filter,
 )
 
 ################################ Switch between the editors ##########################################
