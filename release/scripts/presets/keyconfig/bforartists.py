@@ -1,5 +1,25 @@
 keyconfig_data = \
-[("Grease Pencil Stroke Edit Mode",
+[("3D View Tool: Edit Gpencil, Tweak",
+  {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
+  {"items":
+   [("gpencil.select",
+     {"type": 'LEFTMOUSE', "value": 'CLICK'},
+     {"properties":
+      [("deselect_all", True),
+       ],
+      },
+     ),
+    ("gpencil.select",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("toggle", True),
+       ],
+      },
+     ),
+    ],
+   },
+  ),
+ ("Grease Pencil Stroke Edit Mode",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
    [("gpencil.interpolate", {"type": 'E', "value": 'PRESS', "ctrl": True, "alt": True}, None),
