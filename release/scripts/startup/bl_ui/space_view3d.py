@@ -866,6 +866,8 @@ class VIEW3D_MT_editor_menus(Menu):
                     layout.menu("VIEW3D_MT_select_gpencil")
                 elif mode_string == 'VERTEX_GPENCIL':
                     layout.menu("VIEW3D_MT_select_gpencil")
+                    layout.menu("VIEW3D_MT_gpencil_animation")
+                    layout.menu("GPENCIL_MT_layer_active", text = "Active Layer")
 
         elif mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
             mesh = obj.data
