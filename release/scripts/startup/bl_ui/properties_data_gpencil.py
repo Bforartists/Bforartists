@@ -179,6 +179,7 @@ class DATA_PT_gpencil_layers(DataButtonsPanel, Panel):
             col.prop(gpl, "opacity", text="Opacity", slider=True)
 
             col = layout.row(align=True)
+            col.use_property_split = False
             col.prop(gpl, "use_lights")
 
 
