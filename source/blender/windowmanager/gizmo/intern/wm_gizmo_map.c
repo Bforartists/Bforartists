@@ -24,11 +24,11 @@
 #include <string.h>
 
 #include "BLI_buffer.h"
+#include "BLI_ghash.h"
 #include "BLI_listbase.h"
 #include "BLI_math.h"
 #include "BLI_math_bits.h"
 #include "BLI_rect.h"
-#include "BLI_ghash.h"
 
 #include "BKE_context.h"
 #include "BKE_global.h"
@@ -55,8 +55,8 @@
 #include "DEG_depsgraph.h"
 
 /* own includes */
-#include "wm_gizmo_wmapi.h"
 #include "wm_gizmo_intern.h"
+#include "wm_gizmo_wmapi.h"
 
 /**
  * Store all gizmo-maps here. Anyone who wants to register a gizmo for a certain
@@ -576,6 +576,7 @@ static int gizmo_find_intersected_3d_intern(wmGizmo **visible_gizmos,
                                             const int co[2],
                                             const int hotspot)
 {
+  const wmWindowManager *wm = CTX_wm_manager(C);
   ScrArea *sa = CTX_wm_area(C);
   ARegion *region = CTX_wm_region(C);
   View3D *v3d = sa->spacedata.first;
@@ -588,7 +589,7 @@ static int gizmo_find_intersected_3d_intern(wmGizmo **visible_gizmos,
   BLI_rcti_init_pt_radius(&rect, co, hotspot);
 
   ED_view3d_draw_setup_view(
-      CTX_wm_window(C), depsgraph, CTX_data_scene(C), region, v3d, NULL, NULL, &rect);
+      wm, CTX_wm_window(C), depsgraph, CTX_data_scene(C), region, v3d, NULL, NULL, &rect);
 
   bool use_select_bias = false;
 
@@ -608,7 +609,7 @@ static int gizmo_find_intersected_3d_intern(wmGizmo **visible_gizmos,
   }
 
   ED_view3d_draw_setup_view(
-      CTX_wm_window(C), depsgraph, CTX_data_scene(C), region, v3d, NULL, NULL, NULL);
+      wm, CTX_wm_window(C), depsgraph, CTX_data_scene(C), region, v3d, NULL, NULL, NULL);
 
   if (use_select_bias && (hits > 1)) {
     float co_direction[3];

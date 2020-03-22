@@ -22,22 +22,22 @@
 
 #include "DRW_render.h"
 
-#include "BLI_utildefines.h"
 #include "BLI_rand.h"
+#include "BLI_utildefines.h"
 
-#include "DNA_world_types.h"
-#include "DNA_texture_types.h"
 #include "DNA_image_types.h"
 #include "DNA_lightprobe_types.h"
+#include "DNA_texture_types.h"
 #include "DNA_view3d_types.h"
+#include "DNA_world_types.h"
 
 #include "BKE_collection.h"
 #include "BKE_object.h"
 #include "MEM_guardedalloc.h"
 
+#include "GPU_extensions.h"
 #include "GPU_material.h"
 #include "GPU_texture.h"
-#include "GPU_extensions.h"
 
 #include "DEG_depsgraph_query.h"
 
@@ -786,8 +786,8 @@ void EEVEE_lightprobes_cache_finish(EEVEE_ViewLayerData *sldata, EEVEE_Data *ved
         if (pinfo->do_grid_update) {
           scene_orig->eevee.light_cache_data->flag |= LIGHTCACHE_UPDATE_GRID;
         }
-        /* If we update grid we need to update the cubemaps too.
-         * So always refresh cubemaps. */
+        /* If we update grid we need to update the cube-maps too.
+         * So always refresh cube-maps. */
         scene_orig->eevee.light_cache_data->flag |= LIGHTCACHE_UPDATE_CUBE;
         /* Tag the lightcache to auto update. */
         scene_orig->eevee.light_cache_data->flag |= LIGHTCACHE_UPDATE_AUTO;

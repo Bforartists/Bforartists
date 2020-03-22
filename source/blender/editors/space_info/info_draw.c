@@ -21,23 +21,23 @@
  * \ingroup spinfo
  */
 
-#include <string.h>
 #include <limits.h>
+#include <string.h>
 
 #include "BLI_utildefines.h"
 
-#include "DNA_space_types.h"
 #include "DNA_screen_types.h"
+#include "DNA_space_types.h"
 
 #include "BKE_report.h"
 
-#include "UI_resources.h"
 #include "UI_interface.h"
+#include "UI_resources.h"
 #include "UI_view2d.h"
 
+#include "GPU_framebuffer.h"
 #include "info_intern.h"
 #include "textview.h"
-#include "GPU_framebuffer.h"
 
 static enum eTextViewContext_LineFlag report_line_data(TextViewContext *tvc,
                                                        uchar fg[4],
@@ -53,7 +53,7 @@ static enum eTextViewContext_LineFlag report_line_data(TextViewContext *tvc,
 
   /* Zebra striping for background. */
   int bg_id = (report->flag & SELECT) ? TH_INFO_SELECTED : TH_BACK;
-  int shade = tvc->iter_tmp % 2 ? 4 : -4;
+  int shade = (tvc->iter_tmp % 2) ? 4 : -4;
   UI_GetThemeColorShade4ubv(bg_id, shade, bg);
 
   /* Icon color and backgound depend of report type. */

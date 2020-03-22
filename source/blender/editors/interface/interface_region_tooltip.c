@@ -32,19 +32,19 @@
  * For now it's not a priority, so leave as-is.
  */
 
+#include <assert.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #include "MEM_guardedalloc.h"
 
-#include "DNA_userdef_types.h"
 #include "DNA_brush_types.h"
+#include "DNA_userdef_types.h"
 
 #include "BLI_math.h"
-#include "BLI_string.h"
 #include "BLI_rect.h"
+#include "BLI_string.h"
 #include "BLI_utildefines.h"
 
 #include "BKE_context.h"
@@ -1168,7 +1168,7 @@ static ARegion *ui_tooltip_create_with_data(bContext *C,
   wmWindow *win = CTX_wm_window(C);
   const int winx = WM_window_pixels_x(win);
   const int winy = WM_window_pixels_y(win);
-  uiStyle *style = UI_style_get();
+  const uiStyle *style = UI_style_get();
   static ARegionType type;
   ARegion *region;
   int fonth, fontw;

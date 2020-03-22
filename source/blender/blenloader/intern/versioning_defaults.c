@@ -20,16 +20,18 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_utildefines.h"
 #include "BLI_listbase.h"
 #include "BLI_math.h"
 #include "BLI_string.h"
 #include "BLI_system.h"
+#include "BLI_utildefines.h"
 
 #include "DNA_camera_types.h"
 #include "DNA_curveprofile_types.h"
 #include "DNA_gpencil_types.h"
+#include "DNA_light_types.h"
 #include "DNA_mesh_types.h"
+#include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
@@ -37,24 +39,21 @@
 #include "DNA_userdef_types.h"
 #include "DNA_windowmanager_types.h"
 #include "DNA_workspace_types.h"
-#include "DNA_mesh_types.h"
-#include "DNA_meshdata_types.h"
-#include "DNA_light_types.h"
 
 #include "BKE_appdir.h"
 #include "BKE_brush.h"
 #include "BKE_colortools.h"
+#include "BKE_curveprofile.h"
 #include "BKE_gpencil.h"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
-#include "BKE_mesh.h"
 #include "BKE_material.h"
+#include "BKE_mesh.h"
 #include "BKE_node.h"
 #include "BKE_paint.h"
 #include "BKE_screen.h"
 #include "BKE_workspace.h"
-#include "BKE_curveprofile.h"
 
 #include "BLO_readfile.h"
 
@@ -628,7 +627,7 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       BKE_id_delete(bmain, brush);
     }
 
-    /* Rename and fix materials. */
+    /* Rename and fix materials and enable default object lights on. */
     if (app_template && STREQ(app_template, "2D_Animation")) {
       Material *ma = NULL;
       rename_id_for_versioning(bmain, ID_MA, "Black", "Solid Stroke");
@@ -654,6 +653,11 @@ void BLO_update_defaults_startup_blend(Main *bmain, const char *app_template)
       ma = BLI_findstring(&bmain->materials, "Solid Fill", offsetof(ID, name) + 2);
       if (ma != NULL) {
         ma->gp_style->flag &= ~GP_MATERIAL_STROKE_SHOW;
+      }
+
+      Object *ob = BLI_findstring(&bmain->objects, "Stroke", offsetof(ID, name) + 2);
+      if (ob && ob->type == OB_GPENCIL) {
+        ob->dtx |= OB_USE_GPENCIL_LIGHTS;
       }
     }
 

@@ -23,16 +23,16 @@
  */
 
 #include "DNA_light_types.h"
-#include "DNA_node_types.h"
+#include "DNA_linestyle_types.h"
 #include "DNA_material_types.h"
+#include "DNA_node_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
 #include "DNA_texture_types.h"
 #include "DNA_world_types.h"
-#include "DNA_linestyle_types.h"
 
-#include "BLI_math.h"
 #include "BLI_blenlib.h"
+#include "BLI_math.h"
 
 #include "BLT_translation.h"
 
@@ -47,17 +47,17 @@
 
 #include "BIF_glutil.h"
 
+#include "GPU_framebuffer.h"
 #include "GPU_immediate.h"
 #include "GPU_immediate_util.h"
 #include "GPU_matrix.h"
 #include "GPU_state.h"
-#include "GPU_framebuffer.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
 
-#include "ED_node.h"
 #include "ED_gpencil.h"
+#include "ED_node.h"
 #include "ED_space_api.h"
 
 #include "UI_resources.h"
@@ -1179,6 +1179,25 @@ static void node_draw_basis(const bContext *C,
                        0,
                        "");
     UI_but_func_set(but, node_toggle_button_cb, node, (void *)"NODE_OT_group_edit");
+    UI_block_emboss_set(node->block, UI_EMBOSS);
+  }
+  if (node->type == NODE_CUSTOM && node->typeinfo->ui_icon != ICON_NONE) {
+    iconofs -= iconbutw;
+    UI_block_emboss_set(node->block, UI_EMBOSS_NONE);
+    uiDefIconBut(node->block,
+                 UI_BTYPE_BUT,
+                 0,
+                 node->typeinfo->ui_icon,
+                 iconofs,
+                 rct->ymax - NODE_DY,
+                 iconbutw,
+                 UI_UNIT_Y,
+                 NULL,
+                 0,
+                 0,
+                 0,
+                 0,
+                 "");
     UI_block_emboss_set(node->block, UI_EMBOSS);
   }
 

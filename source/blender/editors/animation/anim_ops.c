@@ -21,22 +21,22 @@
  * \ingroup edanimation
  */
 
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
 
 #include "BLI_sys_types.h"
 
-#include "BLI_utildefines.h"
 #include "BLI_math_base.h"
+#include "BLI_utildefines.h"
 
 #include "DNA_anim_types.h"
 #include "DNA_scene_types.h"
 
 #include "BKE_context.h"
-#include "BKE_sequencer.h"
 #include "BKE_global.h"
 #include "BKE_main.h"
 #include "BKE_scene.h"
+#include "BKE_sequencer.h"
 
 #include "UI_view2d.h"
 
@@ -215,7 +215,7 @@ static int change_frame_modal(bContext *C, wmOperator *op, const wmEvent *event)
   int ret = OPERATOR_RUNNING_MODAL;
   /* execute the events */
   switch (event->type) {
-    case ESCKEY:
+    case EVT_ESCKEY:
       ret = OPERATOR_FINISHED;
       break;
 
@@ -233,8 +233,8 @@ static int change_frame_modal(bContext *C, wmOperator *op, const wmEvent *event)
       }
       break;
 
-    case LEFTCTRLKEY:
-    case RIGHTCTRLKEY:
+    case EVT_LEFTCTRLKEY:
+    case EVT_RIGHTCTRLKEY:
       if (event->val == KM_RELEASE) {
         RNA_boolean_set(op->ptr, "snap", false);
       }

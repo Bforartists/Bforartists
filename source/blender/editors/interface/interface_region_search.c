@@ -23,10 +23,10 @@
  * Search Box Region & Interaction
  */
 
+#include <assert.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #include "MEM_guardedalloc.h"
 
@@ -34,8 +34,8 @@
 
 #include "BLI_math.h"
 
-#include "BLI_string.h"
 #include "BLI_rect.h"
+#include "BLI_string.h"
 #include "BLI_utildefines.h"
 
 #include "BKE_context.h"
@@ -54,9 +54,9 @@
 
 #include "ED_screen.h"
 
+#include "GPU_state.h"
 #include "interface_intern.h"
 #include "interface_regions_intern.h"
-#include "GPU_state.h"
 
 #define MENU_BORDER (int)(0.3f * U.widget_unit)
 
@@ -283,11 +283,11 @@ void ui_searchbox_event(bContext *C, ARegion *region, uiBut *but, const wmEvent 
 
   switch (type) {
     case WHEELUPMOUSE:
-    case UPARROWKEY:
+    case EVT_UPARROWKEY:
       ui_searchbox_select(C, region, but, -1);
       break;
     case WHEELDOWNMOUSE:
-    case DOWNARROWKEY:
+    case EVT_DOWNARROWKEY:
       ui_searchbox_select(C, region, but, 1);
       break;
     case MOUSEMOVE:
@@ -498,7 +498,7 @@ static void ui_searchbox_region_free_cb(ARegion *region)
 ARegion *ui_searchbox_create_generic(bContext *C, ARegion *butregion, uiBut *but)
 {
   wmWindow *win = CTX_wm_window(C);
-  uiStyle *style = UI_style_get();
+  const uiStyle *style = UI_style_get();
   static ARegionType type;
   ARegion *region;
   uiSearchboxData *data;
