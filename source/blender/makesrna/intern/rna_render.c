@@ -21,16 +21,16 @@
 #include <stdlib.h>
 
 #include "DNA_node_types.h"
-#include "DNA_scene_types.h"
 #include "DNA_object_types.h"
+#include "DNA_scene_types.h"
 
-#include "BLI_utildefines.h"
 #include "BLI_path_util.h"
+#include "BLI_utildefines.h"
 
 #include "DEG_depsgraph.h"
 
-#include "BKE_scene.h"
 #include "BKE_image.h"
+#include "BKE_scene.h"
 
 #include "RNA_define.h"
 #include "RNA_enum_types.h"
@@ -98,9 +98,9 @@ const EnumPropertyItem rna_enum_bake_pass_type_items[] = {
 #  include "BKE_context.h"
 #  include "BKE_report.h"
 
-#  include "IMB_colormanagement.h"
 #  include "GPU_extensions.h"
 #  include "GPU_shader.h"
+#  include "IMB_colormanagement.h"
 
 #  include "DEG_depsgraph_query.h"
 
@@ -833,6 +833,7 @@ static void rna_def_render_engine(BlenderRNA *brna)
   parm = RNA_def_string(func, "chanid", NULL, 8, "Channel IDs", "");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
   parm = RNA_def_enum(func, "type", render_pass_type_items, SOCK_FLOAT, "Type", "");
+  RNA_def_property_enum_native_type(parm, "eNodeSocketDatatype");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 
   /* registration */
@@ -883,6 +884,11 @@ static void rna_def_render_engine(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "type->flag", RE_USE_SPHERICAL_STEREO);
   RNA_def_property_flag(prop, PROP_REGISTER_OPTIONAL);
   RNA_def_property_ui_text(prop, "Use Spherical Stereo", "Support spherical stereo camera models");
+
+  prop = RNA_def_property(srna, "bl_use_stereo_viewport", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "type->flag", RE_USE_STEREO_VIEWPORT);
+  RNA_def_property_flag(prop, PROP_REGISTER_OPTIONAL);
+  RNA_def_property_ui_text(prop, "Use Stereo Viewport", "Support rendering stereo 3D viewport");
 
   RNA_define_verify_sdna(1);
 }

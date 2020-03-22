@@ -28,9 +28,9 @@
 
 #include "DNA_armature_types.h"
 #include "DNA_constraint_types.h"
-#include "DNA_object_types.h"
-#include "DNA_gpencil_types.h"
 #include "DNA_gpencil_modifier_types.h"
+#include "DNA_gpencil_types.h"
+#include "DNA_object_types.h"
 
 #include "BLI_blenlib.h"
 #include "BLI_ghash.h"
@@ -39,16 +39,16 @@
 
 #include "BLT_translation.h"
 
-#include "BKE_animsys.h"
 #include "BKE_action.h"
+#include "BKE_animsys.h"
 #include "BKE_armature.h"
 #include "BKE_constraint.h"
 #include "BKE_context.h"
 #include "BKE_deform.h"
+#include "BKE_gpencil_modifier.h"
 #include "BKE_layer.h"
 #include "BKE_main.h"
 #include "BKE_modifier.h"
-#include "BKE_gpencil_modifier.h"
 
 #include "DEG_depsgraph.h"
 
@@ -359,9 +359,9 @@ void ED_armature_bone_rename(Main *bmain,
           for (sl = sa->spacedata.first; sl; sl = sl->next) {
             if (sl->spacetype == SPACE_VIEW3D) {
               View3D *v3d = (View3D *)sl;
-              if (v3d->ob_centre && v3d->ob_centre->data == arm) {
-                if (STREQ(v3d->ob_centre_bone, oldname)) {
-                  BLI_strncpy(v3d->ob_centre_bone, newname, MAXBONENAME);
+              if (v3d->ob_center && v3d->ob_center->data == arm) {
+                if (STREQ(v3d->ob_center_bone, oldname)) {
+                  BLI_strncpy(v3d->ob_center_bone, newname, MAXBONENAME);
                 }
               }
             }

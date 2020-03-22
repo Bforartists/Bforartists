@@ -35,12 +35,12 @@
 
 #include "BKE_context.h"
 
-#include "WM_types.h"
 #include "WM_api.h"
+#include "WM_types.h"
 
 #include "wm.h"
-#include "wm_event_types.h"
 #include "wm_event_system.h"
+#include "wm_event_types.h"
 
 #include "ED_screen.h"
 #include "ED_select_utils.h"
@@ -687,7 +687,7 @@ int WM_gesture_lasso_modal(bContext *C, wmOperator *op, const wmEvent *event)
         return OPERATOR_FINISHED;
       }
       break;
-    case ESCKEY:
+    case EVT_ESCKEY:
       gesture_modal_end(C, op);
       return OPERATOR_CANCELLED;
   }

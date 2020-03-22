@@ -21,8 +21,8 @@
  * \ingroup spseq
  */
 
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "MEM_guardedalloc.h"
@@ -40,11 +40,11 @@
 
 #include "BKE_context.h"
 #include "BKE_global.h"
+#include "BKE_lib_id.h"
 #include "BKE_main.h"
 #include "BKE_report.h"
 #include "BKE_sequencer.h"
 #include "BKE_sound.h"
-#include "BKE_lib_id.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -57,12 +57,12 @@
 #include "ED_anim_api.h"
 #include "ED_numinput.h"
 #include "ED_screen.h"
-#include "ED_transform.h"
 #include "ED_sequencer.h"
 #include "ED_space_api.h"
+#include "ED_transform.h"
 
-#include "UI_view2d.h"
 #include "UI_interface.h"
+#include "UI_view2d.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
@@ -410,7 +410,7 @@ Sequence *find_nearest_seq(Scene *scene, View2D *v2d, int *hand, const int mval[
 
           /* clamp handles to defined size in pixel space */
 
-          handsize = seq->handsize;
+          handsize = 2.0f * sequence_handle_size_get_clamped(seq, pixelx);
           displen = (float)abs(seq->startdisp - seq->enddisp);
 
           /* don't even try to grab the handles of small strips */
@@ -1710,8 +1710,8 @@ static int sequencer_slip_modal(bContext *C, wmOperator *op, const wmEvent *even
     }
 
     case LEFTMOUSE:
-    case RETKEY:
-    case SPACEKEY: {
+    case EVT_RETKEY:
+    case EVT_SPACEKEY: {
       MEM_freeN(data->seq_array);
       MEM_freeN(data->trim);
       MEM_freeN(data->ts);
@@ -1725,7 +1725,7 @@ static int sequencer_slip_modal(bContext *C, wmOperator *op, const wmEvent *even
       return OPERATOR_FINISHED;
     }
 
-    case ESCKEY:
+    case EVT_ESCKEY:
     case RIGHTMOUSE: {
       int i;
       Editing *ed = BKE_sequencer_editing_get(scene, false);
@@ -1757,8 +1757,8 @@ static int sequencer_slip_modal(bContext *C, wmOperator *op, const wmEvent *even
       return OPERATOR_CANCELLED;
     }
 
-    case RIGHTSHIFTKEY:
-    case LEFTSHIFTKEY:
+    case EVT_RIGHTSHIFTKEY:
+    case EVT_LEFTSHIFTKEY:
       if (!has_numInput) {
         if (event->val == KM_PRESS) {
           data->slow = true;

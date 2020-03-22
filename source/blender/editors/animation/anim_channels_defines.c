@@ -35,33 +35,36 @@
 #include "DNA_armature_types.h"
 #include "DNA_cachefile_types.h"
 #include "DNA_camera_types.h"
-#include "DNA_object_types.h"
-#include "DNA_particle_types.h"
-#include "DNA_screen_types.h"
-#include "DNA_scene_types.h"
-#include "DNA_space_types.h"
+#include "DNA_gpencil_types.h"
+#include "DNA_hair_types.h"
 #include "DNA_key_types.h"
-#include "DNA_light_types.h"
 #include "DNA_lattice_types.h"
+#include "DNA_light_types.h"
 #include "DNA_linestyle_types.h"
-#include "DNA_mesh_types.h"
+#include "DNA_mask_types.h"
 #include "DNA_material_types.h"
+#include "DNA_mesh_types.h"
 #include "DNA_meta_types.h"
 #include "DNA_node_types.h"
-#include "DNA_world_types.h"
-#include "DNA_gpencil_types.h"
+#include "DNA_object_types.h"
+#include "DNA_particle_types.h"
+#include "DNA_pointcloud_types.h"
+#include "DNA_scene_types.h"
+#include "DNA_screen_types.h"
+#include "DNA_space_types.h"
 #include "DNA_speaker_types.h"
-#include "DNA_mask_types.h"
+#include "DNA_volume_types.h"
+#include "DNA_world_types.h"
 
 #include "RNA_access.h"
 
 #include "BKE_animsys.h"
+#include "BKE_context.h"
 #include "BKE_curve.h"
 #include "BKE_gpencil.h"
 #include "BKE_key.h"
 #include "BKE_main.h"
 #include "BKE_nla.h"
-#include "BKE_context.h"
 
 #include "GPU_immediate.h"
 #include "GPU_state.h"
@@ -71,6 +74,7 @@
 #include "UI_interface.h"
 #include "UI_interface_icons.h"
 #include "UI_resources.h"
+#include "UI_view2d.h"
 
 #include "ED_anim_api.h"
 #include "ED_keyframing.h"
@@ -698,6 +702,12 @@ static int acf_object_icon(bAnimListElem *ale)
       return ICON_OUTLINER_OB_FONT;
     case OB_SURF:
       return ICON_OUTLINER_OB_SURFACE;
+    case OB_HAIR:
+      return ICON_OUTLINER_OB_HAIR;
+    case OB_POINTCLOUD:
+      return ICON_OUTLINER_OB_POINTCLOUD;
+    case OB_VOLUME:
+      return ICON_OUTLINER_OB_VOLUME;
     case OB_EMPTY:
       return ICON_OUTLINER_OB_EMPTY;
     case OB_GPENCIL:
@@ -916,7 +926,8 @@ static bool acf_group_setting_valid(bAnimContext *ac,
   /* for now, all settings are supported, though some are only conditionally */
   switch (setting) {
     /* unsupported */
-    case ACHANNEL_SETTING_SOLO: /* Only available in NLA Editor for tracks */
+    case ACHANNEL_SETTING_SOLO:   /* Only available in NLA Editor for tracks */
+    case ACHANNEL_SETTING_PINNED: /* Only for NLA actions */
       return false;
 
     /* conditionally supported */
@@ -1963,6 +1974,25 @@ static int acf_dsskey_icon(bAnimListElem *UNUSED(ale))
   return ICON_SHAPEKEY_DATA;
 }
 
+/* check if some setting exists for this channel */
+static bool acf_dsskey_setting_valid(bAnimContext *ac,
+                                     bAnimListElem *UNUSED(ale),
+                                     eAnimChannel_Settings setting)
+{
+  switch (setting) {
+    case ACHANNEL_SETTING_SELECT:
+    case ACHANNEL_SETTING_EXPAND:
+      return true;
+
+    /* mute is only supported for NLA */
+    case ACHANNEL_SETTING_MUTE:
+      return ((ac) && (ac->spacetype == SPACE_NLA));
+
+    default:
+      return false;
+  }
+}
+
 /* get the appropriate flag(s) for the setting when it is valid  */
 static int acf_dsskey_setting_flag(bAnimContext *UNUSED(ac),
                                    eAnimChannel_Settings setting,
@@ -2029,9 +2059,9 @@ static bAnimChannelType ACF_DSSKEY = {
     acf_generic_idblock_name_prop, /* name prop */
     acf_dsskey_icon,               /* icon */
 
-    acf_generic_dataexpand_setting_valid, /* has setting */
-    acf_dsskey_setting_flag,              /* flag for setting */
-    acf_dsskey_setting_ptr,               /* pointer for setting */
+    acf_dsskey_setting_valid, /* has setting */
+    acf_dsskey_setting_flag,  /* flag for setting */
+    acf_dsskey_setting_ptr,   /* pointer for setting */
 };
 
 /* World Expander  ------------------------------------------- */
@@ -2764,6 +2794,244 @@ static bAnimChannelType ACF_DSSPK = {
     acf_dsspk_setting_ptr,                /* pointer for setting */
 };
 
+/* Hair Expander  ------------------------------------------- */
+
+// TODO: just get this from RNA?
+static int acf_dshair_icon(bAnimListElem *UNUSED(ale))
+{
+  return ICON_HAIR_DATA;
+}
+
+/* get the appropriate flag(s) for the setting when it is valid  */
+static int acf_dshair_setting_flag(bAnimContext *UNUSED(ac),
+                                   eAnimChannel_Settings setting,
+                                   bool *neg)
+{
+  /* clear extra return data first */
+  *neg = false;
+
+  switch (setting) {
+    case ACHANNEL_SETTING_EXPAND: /* expanded */
+      return VO_DS_EXPAND;
+
+    case ACHANNEL_SETTING_MUTE: /* mute (only in NLA) */
+      return ADT_NLA_EVAL_OFF;
+
+    case ACHANNEL_SETTING_VISIBLE: /* visible (only in Graph Editor) */
+      *neg = true;
+      return ADT_CURVES_NOT_VISIBLE;
+
+    case ACHANNEL_SETTING_SELECT: /* selected */
+      return ADT_UI_SELECTED;
+
+    default: /* unsupported */
+      return 0;
+  }
+}
+
+/* get pointer to the setting */
+static void *acf_dshair_setting_ptr(bAnimListElem *ale, eAnimChannel_Settings setting, short *type)
+{
+  Hair *hair = (Hair *)ale->data;
+
+  /* clear extra return data first */
+  *type = 0;
+
+  switch (setting) {
+    case ACHANNEL_SETTING_EXPAND: /* expanded */
+      return GET_ACF_FLAG_PTR(hair->flag, type);
+
+    case ACHANNEL_SETTING_SELECT:  /* selected */
+    case ACHANNEL_SETTING_MUTE:    /* muted (for NLA only) */
+    case ACHANNEL_SETTING_VISIBLE: /* visible (for Graph Editor only) */
+      if (hair->adt)
+        return GET_ACF_FLAG_PTR(hair->adt->flag, type);
+      return NULL;
+
+    default: /* unsupported */
+      return NULL;
+  }
+}
+
+/* hair expander type define */
+static bAnimChannelType ACF_DSHAIR = {
+    "Hair Expander",        /* type name */
+    ACHANNEL_ROLE_EXPANDER, /* role */
+
+    acf_generic_dataexpand_color,    /* backdrop color */
+    acf_generic_dataexpand_backdrop, /* backdrop */
+    acf_generic_indention_1,         /* indent level */
+    acf_generic_basic_offset,        /* offset */
+
+    acf_generic_idblock_name,      /* name */
+    acf_generic_idblock_name_prop, /* name prop */
+    acf_dshair_icon,               /* icon */
+
+    acf_generic_dataexpand_setting_valid, /* has setting */
+    acf_dshair_setting_flag,              /* flag for setting */
+    acf_dshair_setting_ptr                /* pointer for setting */
+};
+
+/* PointCloud Expander  ------------------------------------------- */
+
+// TODO: just get this from RNA?
+static int acf_dspointcloud_icon(bAnimListElem *UNUSED(ale))
+{
+  return ICON_POINTCLOUD_DATA;
+}
+
+/* get the appropriate flag(s) for the setting when it is valid  */
+static int acf_dspointcloud_setting_flag(bAnimContext *UNUSED(ac),
+                                         eAnimChannel_Settings setting,
+                                         bool *neg)
+{
+  /* clear extra return data first */
+  *neg = false;
+
+  switch (setting) {
+    case ACHANNEL_SETTING_EXPAND: /* expanded */
+      return VO_DS_EXPAND;
+
+    case ACHANNEL_SETTING_MUTE: /* mute (only in NLA) */
+      return ADT_NLA_EVAL_OFF;
+
+    case ACHANNEL_SETTING_VISIBLE: /* visible (only in Graph Editor) */
+      *neg = true;
+      return ADT_CURVES_NOT_VISIBLE;
+
+    case ACHANNEL_SETTING_SELECT: /* selected */
+      return ADT_UI_SELECTED;
+
+    default: /* unsupported */
+      return 0;
+  }
+}
+
+/* get pointer to the setting */
+static void *acf_dspointcloud_setting_ptr(bAnimListElem *ale,
+                                          eAnimChannel_Settings setting,
+                                          short *type)
+{
+  PointCloud *pointcloud = (PointCloud *)ale->data;
+
+  /* clear extra return data first */
+  *type = 0;
+
+  switch (setting) {
+    case ACHANNEL_SETTING_EXPAND: /* expanded */
+      return GET_ACF_FLAG_PTR(pointcloud->flag, type);
+
+    case ACHANNEL_SETTING_SELECT:  /* selected */
+    case ACHANNEL_SETTING_MUTE:    /* muted (for NLA only) */
+    case ACHANNEL_SETTING_VISIBLE: /* visible (for Graph Editor only) */
+      if (pointcloud->adt)
+        return GET_ACF_FLAG_PTR(pointcloud->adt->flag, type);
+      return NULL;
+
+    default: /* unsupported */
+      return NULL;
+  }
+}
+
+/* pointcloud expander type define */
+static bAnimChannelType ACF_DSPOINTCLOUD = {
+    "PointCloud Expander",  /* type name */
+    ACHANNEL_ROLE_EXPANDER, /* role */
+
+    acf_generic_dataexpand_color,    /* backdrop color */
+    acf_generic_dataexpand_backdrop, /* backdrop */
+    acf_generic_indention_1,         /* indent level */
+    acf_generic_basic_offset,        /* offset */
+
+    acf_generic_idblock_name,      /* name */
+    acf_generic_idblock_name_prop, /* name prop */
+    acf_dspointcloud_icon,         /* icon */
+
+    acf_generic_dataexpand_setting_valid, /* has setting */
+    acf_dspointcloud_setting_flag,        /* flag for setting */
+    acf_dspointcloud_setting_ptr          /* pointer for setting */
+};
+
+/* Volume Expander  ------------------------------------------- */
+
+// TODO: just get this from RNA?
+static int acf_dsvolume_icon(bAnimListElem *UNUSED(ale))
+{
+  return ICON_VOLUME_DATA;
+}
+
+/* get the appropriate flag(s) for the setting when it is valid  */
+static int acf_dsvolume_setting_flag(bAnimContext *UNUSED(ac),
+                                     eAnimChannel_Settings setting,
+                                     bool *neg)
+{
+  /* clear extra return data first */
+  *neg = false;
+
+  switch (setting) {
+    case ACHANNEL_SETTING_EXPAND: /* expanded */
+      return VO_DS_EXPAND;
+
+    case ACHANNEL_SETTING_MUTE: /* mute (only in NLA) */
+      return ADT_NLA_EVAL_OFF;
+
+    case ACHANNEL_SETTING_VISIBLE: /* visible (only in Graph Editor) */
+      *neg = true;
+      return ADT_CURVES_NOT_VISIBLE;
+
+    case ACHANNEL_SETTING_SELECT: /* selected */
+      return ADT_UI_SELECTED;
+
+    default: /* unsupported */
+      return 0;
+  }
+}
+
+/* get pointer to the setting */
+static void *acf_dsvolume_setting_ptr(bAnimListElem *ale,
+                                      eAnimChannel_Settings setting,
+                                      short *type)
+{
+  Volume *volume = (Volume *)ale->data;
+
+  /* clear extra return data first */
+  *type = 0;
+
+  switch (setting) {
+    case ACHANNEL_SETTING_EXPAND: /* expanded */
+      return GET_ACF_FLAG_PTR(volume->flag, type);
+
+    case ACHANNEL_SETTING_SELECT:  /* selected */
+    case ACHANNEL_SETTING_MUTE:    /* muted (for NLA only) */
+    case ACHANNEL_SETTING_VISIBLE: /* visible (for Graph Editor only) */
+      if (volume->adt)
+        return GET_ACF_FLAG_PTR(volume->adt->flag, type);
+      return NULL;
+
+    default: /* unsupported */
+      return NULL;
+  }
+}
+
+/* volume expander type define */
+static bAnimChannelType ACF_DSVOLUME = {
+    "Volume Expander",      /* type name */
+    ACHANNEL_ROLE_EXPANDER, /* role */
+
+    acf_generic_dataexpand_color,    /* backdrop color */
+    acf_generic_dataexpand_backdrop, /* backdrop */
+    acf_generic_indention_1,         /* indent level */
+    acf_generic_basic_offset,        /* offset */
+
+    acf_generic_idblock_name,      /* name */
+    acf_generic_idblock_name_prop, /* name prop */
+    acf_dsvolume_icon,             /* icon */
+
+    acf_generic_dataexpand_setting_valid, /* has setting */
+    acf_dsvolume_setting_flag,            /* flag for setting */
+    acf_dsvolume_setting_ptr              /* pointer for setting */
+};
+
 /* GPencil Expander  ------------------------------------------- */
 
 // TODO: just get this from RNA?
@@ -3155,6 +3423,8 @@ static bool acf_gpl_setting_valid(bAnimContext *UNUSED(ac),
     /* unsupported */
     case ACHANNEL_SETTING_EXPAND: /* gpencil layers are more like F-Curves than groups */
     case ACHANNEL_SETTING_SOLO:   /* nla editor only */
+    case ACHANNEL_SETTING_MOD_OFF:
+    case ACHANNEL_SETTING_PINNED: /* nla actions only */
       return false;
 
     /* always available */
@@ -3335,6 +3605,9 @@ static bool acf_masklay_setting_valid(bAnimContext *UNUSED(ac),
     case ACHANNEL_SETTING_EXPAND:  /* mask layers are more like F-Curves than groups */
     case ACHANNEL_SETTING_VISIBLE: /* graph editor only */
     case ACHANNEL_SETTING_SOLO:    /* nla editor only */
+    case ACHANNEL_SETTING_MOD_OFF:
+    case ACHANNEL_SETTING_PINNED: /* nla actions only */
+    case ACHANNEL_SETTING_MUTE:
       return false;
 
     /* always available */
@@ -3754,24 +4027,27 @@ static void ANIM_init_channel_typeinfo_data(void)
     animchannelTypeInfo[type++] = &ACF_FILLACTD;    /* Object Action Expander */
     animchannelTypeInfo[type++] = &ACF_FILLDRIVERS; /* Drivers Expander */
 
-    animchannelTypeInfo[type++] = &ACF_DSMAT;       /* Material Channel */
-    animchannelTypeInfo[type++] = &ACF_DSLIGHT;     /* Light Channel */
-    animchannelTypeInfo[type++] = &ACF_DSCAM;       /* Camera Channel */
-    animchannelTypeInfo[type++] = &ACF_DSCACHEFILE; /* CacheFile Channel */
-    animchannelTypeInfo[type++] = &ACF_DSCUR;       /* Curve Channel */
-    animchannelTypeInfo[type++] = &ACF_DSSKEY;      /* ShapeKey Channel */
-    animchannelTypeInfo[type++] = &ACF_DSWOR;       /* World Channel */
-    animchannelTypeInfo[type++] = &ACF_DSNTREE;     /* NodeTree Channel */
-    animchannelTypeInfo[type++] = &ACF_DSPART;      /* Particle Channel */
-    animchannelTypeInfo[type++] = &ACF_DSMBALL;     /* MetaBall Channel */
-    animchannelTypeInfo[type++] = &ACF_DSARM;       /* Armature Channel */
-    animchannelTypeInfo[type++] = &ACF_DSMESH;      /* Mesh Channel */
-    animchannelTypeInfo[type++] = &ACF_DSTEX;       /* Texture Channel */
-    animchannelTypeInfo[type++] = &ACF_DSLAT;       /* Lattice Channel */
-    animchannelTypeInfo[type++] = &ACF_DSLINESTYLE; /* LineStyle Channel */
-    animchannelTypeInfo[type++] = &ACF_DSSPK;       /* Speaker Channel */
-    animchannelTypeInfo[type++] = &ACF_DSGPENCIL;   /* GreasePencil Channel */
-    animchannelTypeInfo[type++] = &ACF_DSMCLIP;     /* MovieClip Channel */
+    animchannelTypeInfo[type++] = &ACF_DSMAT;        /* Material Channel */
+    animchannelTypeInfo[type++] = &ACF_DSLIGHT;      /* Light Channel */
+    animchannelTypeInfo[type++] = &ACF_DSCAM;        /* Camera Channel */
+    animchannelTypeInfo[type++] = &ACF_DSCACHEFILE;  /* CacheFile Channel */
+    animchannelTypeInfo[type++] = &ACF_DSCUR;        /* Curve Channel */
+    animchannelTypeInfo[type++] = &ACF_DSSKEY;       /* ShapeKey Channel */
+    animchannelTypeInfo[type++] = &ACF_DSWOR;        /* World Channel */
+    animchannelTypeInfo[type++] = &ACF_DSNTREE;      /* NodeTree Channel */
+    animchannelTypeInfo[type++] = &ACF_DSPART;       /* Particle Channel */
+    animchannelTypeInfo[type++] = &ACF_DSMBALL;      /* MetaBall Channel */
+    animchannelTypeInfo[type++] = &ACF_DSARM;        /* Armature Channel */
+    animchannelTypeInfo[type++] = &ACF_DSMESH;       /* Mesh Channel */
+    animchannelTypeInfo[type++] = &ACF_DSTEX;        /* Texture Channel */
+    animchannelTypeInfo[type++] = &ACF_DSLAT;        /* Lattice Channel */
+    animchannelTypeInfo[type++] = &ACF_DSLINESTYLE;  /* LineStyle Channel */
+    animchannelTypeInfo[type++] = &ACF_DSSPK;        /* Speaker Channel */
+    animchannelTypeInfo[type++] = &ACF_DSGPENCIL;    /* GreasePencil Channel */
+    animchannelTypeInfo[type++] = &ACF_DSMCLIP;      /* MovieClip Channel */
+    animchannelTypeInfo[type++] = &ACF_DSHAIR;       /* Hair Channel */
+    animchannelTypeInfo[type++] = &ACF_DSPOINTCLOUD; /* PointCloud Channel */
+    animchannelTypeInfo[type++] = &ACF_DSVOLUME;     /* Volume Channel */
 
     animchannelTypeInfo[type++] = &ACF_SHAPEKEY; /* ShapeKey */
 
@@ -4112,10 +4388,6 @@ void ANIM_channel_draw(
       /* just skip - drawn as widget now */
       offset += ICON_WIDTH;
     }
-    else if (ale->type == ANIMTYPE_GPLAYER) {
-      /* just skip - drawn as a widget */
-      offset += ICON_WIDTH;
-    }
   }
 
   /* step 5) draw name ............................................... */
@@ -4163,8 +4435,16 @@ void ANIM_channel_draw(
   }
 
   /* step 6) draw backdrops behind mute+protection toggles + (sliders) ....................... */
-  /* reset offset - now goes from RHS of panel */
-  offset = 0;
+  /*  - Reset offset - now goes from RHS of panel.
+   *  - Exception for graph editor, which needs extra space for the scroll bar.
+   */
+  if (ac->spacetype == SPACE_GRAPH &&
+      ELEM(ale->type, ANIMTYPE_FCURVE, ANIMTYPE_NLACURVE, ANIMTYPE_GROUP)) {
+    offset = V2D_SCROLL_WIDTH;
+  }
+  else {
+    offset = 0;
+  }
 
   /* TODO: when drawing sliders, make those draw instead of these toggles if not enough space */
 
@@ -4207,7 +4487,14 @@ void ANIM_channel_draw(
       if (acf->has_setting(ac, ale, ACHANNEL_SETTING_MUTE)) {
         offset += ICON_WIDTH;
       }
+
+      /* grease pencil visibility... */
       if (ale->type == ANIMTYPE_GPLAYER) {
+        offset += ICON_WIDTH;
+      }
+
+      /* modifiers toggle... */
+      if (acf->has_setting(ac, ale, ACHANNEL_SETTING_MOD_OFF)) {
         offset += ICON_WIDTH;
       }
 
@@ -4804,60 +5091,6 @@ void ANIM_channel_draw_widgets(const bContext *C,
       draw_setting_widget(ac, ale, acf, block, offset, ymid, ACHANNEL_SETTING_SOLO);
       offset += ICON_WIDTH;
     }
-    else if (ale->type == ANIMTYPE_GPLAYER) {
-#if 0
-      /* XXX: Maybe need a better design */
-      /* color swatch for layer color */
-      bGPDlayer *gpl = (bGPDlayer *)ale->data;
-      PointerRNA ptr;
-      float w = ICON_WIDTH / 2.0f;
-
-      RNA_pointer_create(ale->id, &RNA_GPencilLayer, ale->data, &ptr);
-
-      UI_block_align_begin(block);
-      UI_block_emboss_set(block,
-                          RNA_boolean_get(&ptr, "is_stroke_visible") ? UI_EMBOSS : UI_EMBOSS_NONE);
-      uiDefButR(block,
-                UI_BTYPE_COLOR,
-                1,
-                "",
-                offset,
-                yminc,
-                w,
-                ICON_WIDTH,
-                &ptr,
-                "color",
-                -1,
-                0,
-                0,
-                0,
-                0,
-                gpl->info);
-
-      UI_block_emboss_set(block,
-                          RNA_boolean_get(&ptr, "is_fill_visible") ? UI_EMBOSS : UI_EMBOSS_NONE);
-      uiDefButR(block,
-                UI_BTYPE_COLOR,
-                1,
-                "",
-                offset + w,
-                yminc,
-                w,
-                ICON_WIDTH,
-                &ptr,
-                "fill_color",
-                -1,
-                0,
-                0,
-                0,
-                0,
-                gpl->info);
-      UI_block_emboss_set(block, UI_EMBOSS_NONE);
-      UI_block_align_end(block);
-
-      offset += ICON_WIDTH;
-#endif
-    }
   }
 
   /* step 4) draw text - check if renaming widget is in use... */
@@ -4957,8 +5190,7 @@ void ANIM_channel_draw_widgets(const bContext *C,
 
       /* modifiers disable */
       if (acf->has_setting(ac, ale, ACHANNEL_SETTING_MOD_OFF)) {
-        /* hack: extra spacing, to avoid touching the mute toggle */
-        offset -= ICON_WIDTH * 1.2f;
+        offset -= ICON_WIDTH;
         draw_setting_widget(ac, ale, acf, block, offset, ymid, ACHANNEL_SETTING_MOD_OFF);
       }
 
@@ -5073,37 +5305,40 @@ void ANIM_channel_draw_widgets(const bContext *C,
         else if (ale->type == ANIMTYPE_GPLAYER) {
           bGPdata *gpd = (bGPdata *)ale->id;
           if ((gpd != NULL) && ((gpd->flag & GP_DATA_ANNOTATIONS) == 0)) {
-            /* Add some offset to make it more pleasing to the eye. */
-            offset += SLIDER_WIDTH / 2.1f;
+            /* Reset slider offset, in order to add special gp icons. */
+            offset += SLIDER_WIDTH;
 
             char *gp_rna_path = NULL;
             bGPDlayer *gpl = (bGPDlayer *)ale->data;
-            const short width = SLIDER_WIDTH / 5;
 
             /* Create the RNA pointers. */
             RNA_pointer_create(ale->id, &RNA_GPencilLayer, ale->data, &ptr);
             RNA_id_pointer_create(ale->id, &id_ptr);
             int icon;
 
-            /* Layer opacity. */
-            UI_block_emboss_set(block, UI_EMBOSS);
-            prop = RNA_struct_find_property(&ptr, "opacity");
+            /* Layer onion skinning switch. */
+            offset -= ICON_WIDTH;
+            UI_block_emboss_set(block, UI_EMBOSS_NONE);
+            prop = RNA_struct_find_property(&ptr, "use_onion_skinning");
             gp_rna_path = RNA_path_from_ID_to_property(&ptr, prop);
             if (RNA_path_resolve_property(&id_ptr, gp_rna_path, &ptr, &prop)) {
+              icon = (gpl->onion_flag & GP_LAYER_ONIONSKIN) ? ICON_ONIONSKIN_ON :
+                                                              ICON_ONIONSKIN_OFF;
               uiDefAutoButR(block,
                             &ptr,
                             prop,
                             array_index,
                             "",
-                            ICON_NONE,
+                            icon,
                             offset,
                             ymid,
-                            width * 3,
+                            ICON_WIDTH,
                             channel_height);
             }
             MEM_freeN(gp_rna_path);
 
             /* Mask Layer. */
+            offset -= ICON_WIDTH;
             UI_block_emboss_set(block, UI_EMBOSS_NONE);
             prop = RNA_struct_find_property(&ptr, "use_mask_layer");
             gp_rna_path = RNA_path_from_ID_to_property(&ptr, prop);
@@ -5121,26 +5356,27 @@ void ANIM_channel_draw_widgets(const bContext *C,
                             array_index,
                             "",
                             icon,
-                            offset + (width * 3),
+                            offset,
                             ymid,
-                            width,
+                            ICON_WIDTH,
                             channel_height);
             }
             MEM_freeN(gp_rna_path);
 
-            /* Layer onion skinning switch. */
-            prop = RNA_struct_find_property(&ptr, "use_onion_skinning");
+            /* Layer opacity. */
+            const short width = SLIDER_WIDTH * 0.6;
+            offset -= width;
+            UI_block_emboss_set(block, UI_EMBOSS);
+            prop = RNA_struct_find_property(&ptr, "opacity");
             gp_rna_path = RNA_path_from_ID_to_property(&ptr, prop);
             if (RNA_path_resolve_property(&id_ptr, gp_rna_path, &ptr, &prop)) {
-              icon = (gpl->onion_flag & GP_LAYER_ONIONSKIN) ? ICON_ONIONSKIN_ON :
-                                                              ICON_ONIONSKIN_OFF;
               uiDefAutoButR(block,
                             &ptr,
                             prop,
                             array_index,
                             "",
-                            icon,
-                            offset + (width * 4),
+                            ICON_NONE,
+                            offset,
                             ymid,
                             width,
                             channel_height);

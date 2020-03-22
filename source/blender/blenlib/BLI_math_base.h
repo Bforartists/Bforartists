@@ -27,13 +27,13 @@
  * \ingroup bli
  */
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(_USE_MATH_DEFINES)
 #  define _USE_MATH_DEFINES
 #endif
 
-#include <math.h>
 #include "BLI_assert.h"
 #include "BLI_math_inline.h"
+#include <math.h>
 
 #ifndef M_PI
 #  define M_PI 3.14159265358979323846 /* pi */

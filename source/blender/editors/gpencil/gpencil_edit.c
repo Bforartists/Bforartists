@@ -22,11 +22,11 @@
  * \ingroup edgpencil
  */
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stddef.h>
 #include <math.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "MEM_guardedalloc.h"
 
@@ -39,34 +39,35 @@
 
 #include "BLT_translation.h"
 
+#include "DNA_gpencil_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
 #include "DNA_view3d_types.h"
-#include "DNA_gpencil_types.h"
 
 #include "BKE_brush.h"
 #include "BKE_context.h"
 #include "BKE_global.h"
 #include "BKE_gpencil.h"
+#include "BKE_gpencil_geom.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
 #include "BKE_material.h"
 #include "BKE_object.h"
 #include "BKE_paint.h"
 #include "BKE_report.h"
-#include "BKE_workspace.h"
 #include "BKE_scene.h"
+#include "BKE_workspace.h"
 
 #include "UI_interface.h"
 #include "UI_resources.h"
 
 #include "WM_api.h"
-#include "WM_types.h"
 #include "WM_message.h"
 #include "WM_toolsystem.h"
+#include "WM_types.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -77,10 +78,10 @@
 #include "ED_gpencil.h"
 #include "ED_object.h"
 #include "ED_screen.h"
-#include "ED_transform_snap_object_context.h"
-#include "ED_view3d.h"
 #include "ED_select_utils.h"
 #include "ED_space_api.h"
+#include "ED_transform_snap_object_context.h"
+#include "ED_view3d.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
@@ -2601,10 +2602,11 @@ void GPENCIL_OT_dissolve(wmOperatorType *ot)
  */
 static bool gp_snap_poll(bContext *C)
 {
-  bGPdata *gpd = CTX_data_gpencil_data(C);
   ScrArea *sa = CTX_wm_area(C);
+  Object *ob = CTX_data_active_object(C);
 
-  return (gpd != NULL) && ((sa != NULL) && (sa->spacetype == SPACE_VIEW3D));
+  return (ob != NULL) && (ob->type == OB_GPENCIL) &&
+         ((sa != NULL) && (sa->spacetype == SPACE_VIEW3D));
 }
 
 /* --------------------------------- */
@@ -2779,12 +2781,13 @@ void GPENCIL_OT_snap_to_cursor(wmOperatorType *ot)
 
 static int gp_snap_cursor_to_sel(bContext *C, wmOperator *UNUSED(op))
 {
-  bGPdata *gpd = ED_gpencil_data_get_active(C);
+  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
+  Object *obact = CTX_data_active_object(C);
+  Object *ob_eval = DEG_get_evaluated_object(depsgraph, obact);
+  bGPdata *gpd = (bGPdata *)ob_eval->data;
 
   Scene *scene = CTX_data_scene(C);
   View3D *v3d = CTX_wm_view3d(C);
-  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
-  Object *obact = CTX_data_active_object(C);
 
   float *cursor = scene->cursor.location;
   float centroid[3] = {0.0f};

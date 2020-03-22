@@ -25,31 +25,31 @@
 
 #include "BLT_translation.h"
 
-#include "BLI_utildefines.h"
 #include "BLI_ghash.h"
 #include "BLI_listbase.h"
 #include "BLI_string_utils.h"
+#include "BLI_utildefines.h"
 
 #include "DNA_armature_types.h"
 #include "DNA_cloth_types.h"
 #include "DNA_curve_types.h"
 #include "DNA_lattice_types.h"
-#include "DNA_meshdata_types.h"
 #include "DNA_mesh_types.h"
+#include "DNA_meshdata_types.h"
 #include "DNA_modifier_types.h"
-#include "DNA_object_types.h"
 #include "DNA_object_force_types.h"
+#include "DNA_object_types.h"
 #include "DNA_particle_types.h"
 #include "DNA_scene_types.h"
 
 #include "BKE_action.h"
 #include "BKE_deform.h"
 #include "BKE_editmesh.h"
-#include "BKE_object_deform.h" /* own include */
-#include "BKE_object.h"
+#include "BKE_gpencil.h"
 #include "BKE_mesh.h"
 #include "BKE_modifier.h"
-#include "BKE_gpencil.h"
+#include "BKE_object.h"
+#include "BKE_object_deform.h" /* own include */
 
 /** \name Misc helpers
  * \{ */
@@ -691,6 +691,72 @@ bool *BKE_object_defgroup_selected_get(Object *ob, int defbase_tot, int *r_dg_fl
   }
 
   return dg_selection;
+}
+
+/**
+ * Checks if the lock relative mode is applicable.
+ *
+ * \return true if an unlocked deform group is active.
+ */
+bool BKE_object_defgroup_check_lock_relative(const bool *lock_flags,
+                                             const bool *validmap,
+                                             int index)
+{
+  return validmap && validmap[index] && !(lock_flags && lock_flags[index]);
+}
+
+/**
+ * Additional check for whether the lock relative mode is applicable in multi-paint mode.
+ *
+ * \return true if none of the selected groups are locked.
+ */
+bool BKE_object_defgroup_check_lock_relative_multi(int defbase_tot,
+                                                   const bool *lock_flags,
+                                                   const bool *selected,
+                                                   int sel_tot)
+{
+  if (lock_flags == NULL) {
+    return true;
+  }
+
+  if (selected == NULL || sel_tot <= 1) {
+    return true;
+  }
+
+  for (int i = 0; i < defbase_tot; i++) {
+    if (selected[i] && lock_flags[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Takes a pair of boolean masks of all locked and all deform groups, and computes
+ * a pair of masks for locked deform and unlocked deform groups. Output buffers may
+ * reuse the input ones.
+ */
+void BKE_object_defgroup_split_locked_validmap(
+    int defbase_tot, const bool *locked, const bool *deform, bool *r_locked, bool *r_unlocked)
+{
+  if (!locked) {
+    if (r_unlocked != deform) {
+      memcpy(r_unlocked, deform, sizeof(bool) * defbase_tot);
+    }
+    if (r_locked) {
+      memset(r_locked, 0, sizeof(bool) * defbase_tot);
+    }
+    return;
+  }
+
+  for (int i = 0; i < defbase_tot; i++) {
+    bool is_locked = locked[i];
+    bool is_deform = deform[i];
+
+    r_locked[i] = is_deform && is_locked;
+    r_unlocked[i] = is_deform && !is_locked;
+  }
 }
 
 /**

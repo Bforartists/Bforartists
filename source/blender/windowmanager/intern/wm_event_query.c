@@ -27,14 +27,14 @@
 #include <string.h>
 
 #include "DNA_listBase.h"
-#include "DNA_screen_types.h"
 #include "DNA_scene_types.h"
-#include "DNA_windowmanager_types.h"
+#include "DNA_screen_types.h"
 #include "DNA_userdef_types.h"
+#include "DNA_windowmanager_types.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_utildefines.h"
 #include "BLI_math.h"
+#include "BLI_utildefines.h"
 
 #include "BKE_context.h"
 
@@ -420,7 +420,7 @@ bool WM_event_is_tablet(const struct wmEvent *event)
 /* most os using ctrl/oskey + space to switch ime, avoid added space */
 bool WM_event_is_ime_switch(const struct wmEvent *event)
 {
-  return event->val == KM_PRESS && event->type == SPACEKEY &&
+  return event->val == KM_PRESS && event->type == EVT_SPACEKEY &&
          (event->ctrl || event->oskey || event->shift || event->alt);
 }
 #endif

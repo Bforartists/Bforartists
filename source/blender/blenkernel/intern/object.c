@@ -21,9 +21,9 @@
  * \ingroup bke
  */
 
-#include <string.h>
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "CLG_log.h"
 
@@ -34,17 +34,21 @@
 #include "DNA_camera_types.h"
 #include "DNA_collection_types.h"
 #include "DNA_constraint_types.h"
-#include "DNA_gpencil_types.h"
-#include "DNA_gpencil_modifier_types.h"
-#include "DNA_key_types.h"
-#include "DNA_light_types.h"
-#include "DNA_lattice_types.h"
+#include "DNA_defaults.h"
 #include "DNA_fluid_types.h"
+#include "DNA_gpencil_modifier_types.h"
+#include "DNA_gpencil_types.h"
+#include "DNA_key_types.h"
+#include "DNA_lattice_types.h"
+#include "DNA_light_types.h"
+#include "DNA_lightprobe_types.h"
 #include "DNA_material_types.h"
-#include "DNA_meta_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
+#include "DNA_meta_types.h"
 #include "DNA_movieclip_types.h"
+#include "DNA_object_types.h"
+#include "DNA_rigidbody_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_sequence_types.h"
@@ -52,51 +56,53 @@
 #include "DNA_space_types.h"
 #include "DNA_view3d_types.h"
 #include "DNA_world_types.h"
-#include "DNA_object_types.h"
-#include "DNA_lightprobe_types.h"
-#include "DNA_rigidbody_types.h"
-#include "DNA_defaults.h"
 
 #include "BLI_blenlib.h"
+#include "BLI_kdtree.h"
+#include "BLI_linklist.h"
 #include "BLI_math.h"
 #include "BLI_threads.h"
 #include "BLI_utildefines.h"
-#include "BLI_linklist.h"
-#include "BLI_kdtree.h"
 
 #include "BLT_translation.h"
 
-#include "BKE_pbvh.h"
-#include "BKE_main.h"
-#include "BKE_global.h"
-#include "BKE_idprop.h"
-#include "BKE_armature.h"
-#include "BKE_action.h"
-#include "BKE_deform.h"
 #include "BKE_DerivedMesh.h"
-#include "BKE_animsys.h"
+#include "BKE_action.h"
 #include "BKE_anim.h"
+#include "BKE_animsys.h"
+#include "BKE_armature.h"
+#include "BKE_camera.h"
 #include "BKE_collection.h"
 #include "BKE_constraint.h"
 #include "BKE_curve.h"
+#include "BKE_deform.h"
 #include "BKE_displist.h"
+#include "BKE_editmesh.h"
 #include "BKE_effect.h"
-#include "BKE_font.h"
 #include "BKE_fcurve.h"
+#include "BKE_font.h"
+#include "BKE_global.h"
+#include "BKE_gpencil.h"
+#include "BKE_gpencil_geom.h"
 #include "BKE_gpencil_modifier.h"
+#include "BKE_hair.h"
 #include "BKE_icons.h"
+#include "BKE_idprop.h"
 #include "BKE_idtype.h"
+#include "BKE_image.h"
 #include "BKE_key.h"
-#include "BKE_light.h"
-#include "BKE_layer.h"
 #include "BKE_lattice.h"
+#include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
 #include "BKE_lib_remap.h"
+#include "BKE_light.h"
+#include "BKE_lightprobe.h"
 #include "BKE_linestyle.h"
-#include "BKE_mesh.h"
-#include "BKE_editmesh.h"
+#include "BKE_main.h"
+#include "BKE_material.h"
 #include "BKE_mball.h"
+#include "BKE_mesh.h"
 #include "BKE_modifier.h"
 #include "BKE_multires.h"
 #include "BKE_node.h"
@@ -104,20 +110,18 @@
 #include "BKE_object_facemap.h"
 #include "BKE_paint.h"
 #include "BKE_particle.h"
+#include "BKE_pbvh.h"
 #include "BKE_pointcache.h"
-#include "BKE_lightprobe.h"
+#include "BKE_pointcloud.h"
 #include "BKE_rigidbody.h"
 #include "BKE_scene.h"
 #include "BKE_sequencer.h"
 #include "BKE_shader_fx.h"
-#include "BKE_speaker.h"
 #include "BKE_softbody.h"
-#include "BKE_subsurf.h"
+#include "BKE_speaker.h"
 #include "BKE_subdiv_ccg.h"
-#include "BKE_material.h"
-#include "BKE_camera.h"
-#include "BKE_image.h"
-#include "BKE_gpencil.h"
+#include "BKE_subsurf.h"
+#include "BKE_volume.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
@@ -524,7 +528,7 @@ bool BKE_object_support_modifier_type_check(const Object *ob, int modifier_type)
   return true;
 }
 
-void BKE_object_link_modifiers(Scene *scene, struct Object *ob_dst, const struct Object *ob_src)
+void BKE_object_link_modifiers(struct Object *ob_dst, const struct Object *ob_src)
 {
   ModifierData *md;
   BKE_object_free_modifiers(ob_dst, 0);
@@ -562,7 +566,7 @@ void BKE_object_link_modifiers(Scene *scene, struct Object *ob_dst, const struct
     if (md->type == eModifierType_Multires) {
       /* Has to be done after mod creation, but *before* we actually copy its settings! */
       multiresModifier_sync_levels_ex(
-          scene, ob_dst, (MultiresModifierData *)md, (MultiresModifierData *)nmd);
+          ob_dst, (MultiresModifierData *)md, (MultiresModifierData *)nmd);
     }
 
     modifier_copyData(md, nmd);
@@ -1013,6 +1017,12 @@ static const char *get_obdata_defname(int type)
       return DATA_("Armature");
     case OB_SPEAKER:
       return DATA_("Speaker");
+    case OB_HAIR:
+      return DATA_("Hair");
+    case OB_POINTCLOUD:
+      return DATA_("PointCloud");
+    case OB_VOLUME:
+      return DATA_("Volume");
     case OB_EMPTY:
       return DATA_("Empty");
     case OB_GPENCIL:
@@ -1076,6 +1086,12 @@ void *BKE_object_obdata_add_from_type(Main *bmain, int type, const char *name)
       return BKE_lightprobe_add(bmain, name);
     case OB_GPENCIL:
       return BKE_gpencil_data_addnew(bmain, name);
+    case OB_HAIR:
+      return BKE_hair_add(bmain, name);
+    case OB_POINTCLOUD:
+      return BKE_pointcloud_add(bmain, name);
+    case OB_VOLUME:
+      return BKE_volume_add(bmain, name);
     case OB_EMPTY:
       return NULL;
     default:
@@ -1763,6 +1779,39 @@ Object *BKE_object_duplicate(Main *bmain, const Object *ob, const int dupflag)
         else
         {
           obn->data = ID_NEW_SET(obn->data, BKE_gpencil_copy(bmain, obn->data));
+          didit = 1;
+        }
+        id_us_min(id);
+      }
+      break;
+    case OB_HAIR:
+      if (dupflag & USER_DUP_HAIR) {
+        ID_NEW_REMAP_US2(obn->data)
+        else
+        {
+          obn->data = ID_NEW_SET(obn->data, BKE_hair_copy(bmain, obn->data));
+          didit = 1;
+        }
+        id_us_min(id);
+      }
+      break;
+    case OB_POINTCLOUD:
+      if (dupflag & USER_DUP_POINTCLOUD) {
+        ID_NEW_REMAP_US2(obn->data)
+        else
+        {
+          obn->data = ID_NEW_SET(obn->data, BKE_pointcloud_copy(bmain, obn->data));
+          didit = 1;
+        }
+        id_us_min(id);
+      }
+      break;
+    case OB_VOLUME:
+      if (dupflag & USER_DUP_VOLUME) {
+        ID_NEW_REMAP_US2(obn->data)
+        else
+        {
+          obn->data = ID_NEW_SET(obn->data, BKE_volume_copy(bmain, obn->data));
           didit = 1;
         }
         id_us_min(id);
@@ -2680,7 +2729,8 @@ void BKE_object_workob_calc_parent(Depsgraph *depsgraph, Scene *scene, Object *o
 }
 
 /**
- * Applies the global transformation \a mat to the \a ob using a relative parent space if supplied.
+ * Applies the global transformation \a mat to the \a ob using a relative parent space if
+ * supplied.
  *
  * \param mat: the global transformation mat that the object should be set object to.
  * \param parent: the parent space in which this object will be set relative to
@@ -2808,6 +2858,15 @@ BoundBox *BKE_object_boundbox_get(Object *ob)
       break;
     case OB_GPENCIL:
       bb = BKE_gpencil_boundbox_get(ob);
+      break;
+    case OB_HAIR:
+      bb = BKE_hair_boundbox_get(ob);
+      break;
+    case OB_POINTCLOUD:
+      bb = BKE_pointcloud_boundbox_get(ob);
+      break;
+    case OB_VOLUME:
+      bb = BKE_volume_boundbox_get(ob);
       break;
     default:
       break;
@@ -2979,6 +3038,25 @@ void BKE_object_minmax(Object *ob, float min_r[3], float max_r[3], const bool us
       }
       break;
     }
+    case OB_HAIR: {
+      bb = *BKE_hair_boundbox_get(ob);
+      BKE_boundbox_minmax(&bb, ob->obmat, min_r, max_r);
+      changed = true;
+      break;
+    }
+
+    case OB_POINTCLOUD: {
+      bb = *BKE_pointcloud_boundbox_get(ob);
+      BKE_boundbox_minmax(&bb, ob->obmat, min_r, max_r);
+      changed = true;
+      break;
+    }
+    case OB_VOLUME: {
+      bb = *BKE_volume_boundbox_get(ob);
+      BKE_boundbox_minmax(&bb, ob->obmat, min_r, max_r);
+      changed = true;
+      break;
+    }
   }
 
   if (changed == false) {
@@ -3124,6 +3202,7 @@ void BKE_object_foreach_display_point(Object *ob,
                                       void (*func_cb)(const float[3], void *),
                                       void *user_data)
 {
+  /* TODO: pointcloud and hair objects support */
   Mesh *mesh_eval = BKE_object_get_evaluated_mesh(ob);
   float co[3];
 
@@ -3183,7 +3262,8 @@ typedef struct ObTfmBack {
   float obmat[4][4];
   /** inverse result of parent, so that object doesn't 'stick' to parent. */
   float parentinv[4][4];
-  /** inverse result of constraints. doesn't include effect of parent or object local transform. */
+  /** inverse result of constraints. doesn't include effect of parent or object local transform.
+   */
   float constinv[4][4];
   /** inverse matrix of 'obmat' for during render, temporally: ipokeys of transform. */
   float imat[4][4];

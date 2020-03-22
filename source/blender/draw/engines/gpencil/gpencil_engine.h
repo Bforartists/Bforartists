@@ -33,16 +33,16 @@ extern DrawEngineType draw_engine_gpencil_type;
 
 struct GPENCIL_Data;
 struct GPENCIL_StorageList;
+struct GPUBatch;
+struct GPUVertBuf;
+struct GPUVertFormat;
+struct GpencilBatchCache;
 struct MaterialGPencilStyle;
 struct Object;
 struct RenderEngine;
 struct RenderLayer;
-struct bGPDstroke;
 struct View3D;
-struct GpencilBatchCache;
-struct GPUBatch;
-struct GPUVertBuf;
-struct GPUVertFormat;
+struct bGPDstroke;
 
 /* used to convert pixel scale. */
 #define GPENCIL_PIXEL_FACTOR 2000.0f
@@ -309,6 +309,8 @@ typedef struct GPENCIL_PrivateData {
   Object *camera;
   /* Copy of draw_ctx->scene for convenience. */
   struct Scene *scene;
+  /* Copy of draw_ctx->vie3d for convenience. */
+  struct View3D *v3d;
 
   /* Active object. */
   Object *obact;

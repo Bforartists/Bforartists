@@ -21,9 +21,9 @@
  * \ingroup edobj
  */
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 #include "MEM_guardedalloc.h"
 
@@ -31,24 +31,24 @@
 #include "DNA_camera_types.h"
 #include "DNA_collection_types.h"
 #include "DNA_curve_types.h"
-#include "DNA_light_types.h"
+#include "DNA_gpencil_types.h"
 #include "DNA_key_types.h"
+#include "DNA_light_types.h"
+#include "DNA_lightprobe_types.h"
 #include "DNA_material_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meta_types.h"
 #include "DNA_object_fluidsim_types.h"
 #include "DNA_object_force_types.h"
 #include "DNA_object_types.h"
-#include "DNA_lightprobe_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_vfont_types.h"
-#include "DNA_gpencil_types.h"
 
-#include "BLI_utildefines.h"
 #include "BLI_ghash.h"
 #include "BLI_listbase.h"
 #include "BLI_math.h"
 #include "BLI_string.h"
+#include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
 
@@ -58,20 +58,21 @@
 #include "BKE_armature.h"
 #include "BKE_camera.h"
 #include "BKE_collection.h"
-#include "BKE_context.h"
 #include "BKE_constraint.h"
+#include "BKE_context.h"
 #include "BKE_curve.h"
 #include "BKE_displist.h"
 #include "BKE_effect.h"
 #include "BKE_font.h"
-#include "BKE_gpencil.h"
+#include "BKE_gpencil_geom.h"
+#include "BKE_hair.h"
 #include "BKE_key.h"
-#include "BKE_light.h"
 #include "BKE_lattice.h"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
 #include "BKE_lib_remap.h"
+#include "BKE_light.h"
 #include "BKE_lightprobe.h"
 #include "BKE_main.h"
 #include "BKE_material.h"
@@ -81,9 +82,11 @@
 #include "BKE_nla.h"
 #include "BKE_object.h"
 #include "BKE_particle.h"
+#include "BKE_pointcloud.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_speaker.h"
+#include "BKE_volume.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
@@ -1459,9 +1462,82 @@ void OBJECT_OT_speaker_add(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Delete Object Operator
+/** \name Add Hair Operator
  * \{ */
 
+static int object_hair_add_exec(bContext *C, wmOperator *op)
+{
+  ushort local_view_bits;
+  float loc[3], rot[3];
+
+  if (!ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, NULL, &local_view_bits, NULL)) {
+    return OPERATOR_CANCELLED;
+  }
+  Object *object = ED_object_add_type(C, OB_HAIR, NULL, loc, rot, false, local_view_bits);
+  object->dtx |= OB_DRAWBOUNDOX; /* TODO: remove once there is actual drawing. */
+
+  return OPERATOR_FINISHED;
+}
+
+void OBJECT_OT_hair_add(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Add Hair";
+  ot->description = "Add a hair object to the scene";
+  ot->idname = "OBJECT_OT_hair_add";
+
+  /* api callbacks */
+  ot->exec = object_hair_add_exec;
+  ot->poll = ED_operator_objectmode;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  ED_object_add_generic_props(ot, false);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Add Point Cloud Operator
+ * \{ */
+
+static int object_pointcloud_add_exec(bContext *C, wmOperator *op)
+{
+  ushort local_view_bits;
+  float loc[3], rot[3];
+
+  if (!ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, NULL, &local_view_bits, NULL)) {
+    return OPERATOR_CANCELLED;
+  }
+  Object *object = ED_object_add_type(C, OB_POINTCLOUD, NULL, loc, rot, false, local_view_bits);
+  object->dtx |= OB_DRAWBOUNDOX; /* TODO: remove once there is actual drawing. */
+
+  return OPERATOR_FINISHED;
+}
+
+void OBJECT_OT_pointcloud_add(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Add Point Cloud";
+  ot->description = "Add a point cloud object to the scene";
+  ot->idname = "OBJECT_OT_pointcloud_add";
+
+  /* api callbacks */
+  ot->exec = object_pointcloud_add_exec;
+  ot->poll = ED_operator_objectmode;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  ED_object_add_generic_props(ot, false);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Delete Object Operator
+ * \{ */
 /* remove base from a specific scene */
 /* note: now unlinks constraints as well */
 void ED_object_base_free_and_unlink(Main *bmain, Scene *scene, Object *ob)

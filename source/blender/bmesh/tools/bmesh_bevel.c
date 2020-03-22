@@ -26,8 +26,8 @@
 #include "DNA_modifier_types.h"
 #include "DNA_scene_types.h"
 
-#include "BLI_array.h"
 #include "BLI_alloca.h"
+#include "BLI_array.h"
 #include "BLI_math.h"
 #include "BLI_memarena.h"
 #include "BLI_utildefines.h"
@@ -3164,7 +3164,7 @@ static void regularize_profile_orientation(BevelParams *bp, BMEdge *bme)
       }
       else {
         /* The opposite side as the first direction because we're moving the other way. */
-        edgehalf->leftv->is_profile_start = !toward_bv ^ right_highest;
+        edgehalf->leftv->is_profile_start = (!toward_bv) ^ right_highest;
       }
 
       /* The next jump will in the opposite direction relative to the BevVert. */
@@ -6919,13 +6919,14 @@ static void set_profile_spacing(BevelParams *bp, ProfileSpacing *pro_spacing, bo
 
 /**
  * Assume we have a situation like:
- *
+ * <pre>
  * a                 d
  *  \               /
  * A \             / C
  *    \ th1    th2/
  *     b---------c
  *          B
+ * </pre>
  *
  * where edges are A, B, and C, following a face around vertices a, b, c, d.
  * th1 is angle abc and th2 is angle bcd;

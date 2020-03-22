@@ -18,7 +18,7 @@
  */
 
 /** \file
- *  \ingroup edphys
+ * \ingroup edphys
  */
 
 #include <math.h>
@@ -33,37 +33,37 @@
 #include "DNA_object_types.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_path_util.h"
 #include "BLI_math.h"
+#include "BLI_path_util.h"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
 
 #include "BKE_context.h"
 #include "BKE_customdata.h"
+#include "BKE_fluid.h"
+#include "BKE_global.h"
 #include "BKE_main.h"
 #include "BKE_modifier.h"
 #include "BKE_object.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
-#include "BKE_fluid.h"
-#include "BKE_global.h"
 
 #include "DEG_depsgraph.h"
 
 #include "ED_screen.h"
 #include "PIL_time.h"
 
-#include "WM_types.h"
 #include "WM_api.h"
+#include "WM_types.h"
 
-#include "physics_intern.h"  // own include
 #include "manta_fluid_API.h"
+#include "physics_intern.h"  // own include
 
-#include "DNA_scene_types.h"
 #include "DNA_fluid_types.h"
 #include "DNA_mesh_types.h"
+#include "DNA_scene_types.h"
 
 #define FLUID_JOB_BAKE_ALL "FLUID_OT_bake_all"
 #define FLUID_JOB_BAKE_DATA "FLUID_OT_bake_data"
@@ -305,6 +305,12 @@ static void fluid_bake_sequence(FluidJob *job)
 
     /* Update animation system */
     ED_update_for_newframe(job->bmain, job->depsgraph);
+
+    /* If user requested stop, quit baking */
+    if (G.is_break) {
+      job->success = 0;
+      return;
+    }
   }
 
   /* Restore frame position that we were on before bake */
@@ -600,7 +606,7 @@ static int fluid_bake_modal(bContext *C, wmOperator *UNUSED(op), const wmEvent *
   }
 
   switch (event->type) {
-    case ESCKEY:
+    case EVT_ESCKEY:
       return OPERATOR_RUNNING_MODAL;
   }
   return OPERATOR_PASS_THROUGH;

@@ -38,8 +38,8 @@
 #include "BKE_idprop.h"
 #include "BKE_screen.h"
 
-#include "ED_screen.h"
 #include "ED_keyframing.h"
+#include "ED_screen.h"
 
 #include "UI_interface.h"
 
@@ -169,7 +169,7 @@ static uiBlock *menu_change_shortcut(bContext *C, ARegion *region, void *arg)
   wmKeyMapItem *kmi;
   PointerRNA ptr;
   uiLayout *layout;
-  uiStyle *style = UI_style_get_dpi();
+  const uiStyle *style = UI_style_get_dpi();
   IDProperty *prop;
   const char *idname = shortcut_get_operator_property(C, but, &prop);
 
@@ -225,7 +225,7 @@ static uiBlock *menu_add_shortcut(bContext *C, ARegion *region, void *arg)
   wmKeyMapItem *kmi;
   PointerRNA ptr;
   uiLayout *layout;
-  uiStyle *style = UI_style_get_dpi();
+  const uiStyle *style = UI_style_get_dpi();
   int kmi_id;
   IDProperty *prop;
   const char *idname = shortcut_get_operator_property(C, but, &prop);
@@ -233,7 +233,7 @@ static uiBlock *menu_add_shortcut(bContext *C, ARegion *region, void *arg)
   /* XXX this guess_opname can potentially return a different keymap
    * than being found on adding later... */
   km = WM_keymap_guess_opname(C, idname);
-  kmi = WM_keymap_add_item(km, idname, AKEY, KM_PRESS, 0, 0);
+  kmi = WM_keymap_add_item(km, idname, EVT_AKEY, KM_PRESS, 0, 0);
   kmi_id = kmi->id;
 
   /* This takes ownership of prop, or prop can be NULL for reset. */

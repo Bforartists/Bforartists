@@ -1360,9 +1360,9 @@ slide_vertex
 smooth_vertex
 #def_icon_blank(1374
 snap_surface
-#def_icon_blank(1376
+outliner_ob_hair
 
-#def_icon_blank(1378
+hair_data
 retopo
 uv_vertexsel
 uv_edgesel
@@ -1424,10 +1424,10 @@ tilt
 axis_side
 axis_front
 axis_top
-#def_icon_blank(1443
-#def_icon_blank(1444
-#def_icon_blank(1445
-#def_icon_blank(1446
+outliner_ob_pointcloud
+pointcloud_data
+outliner_ob_volume
+volume_data
 
 layer_used
 layer_active
@@ -1755,6 +1755,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   brush.gpencil_draw.draw
   brush.gpencil_draw.erase
   brush.gpencil_draw.fill
+  brush.gpencil_draw.tint
   brush.paint_texture.airbrush
   brush.paint_texture.clone
   brush.paint_texture.draw
@@ -1768,6 +1769,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   brush.paint_vertex.average
   brush.paint_vertex.blur
   brush.paint_vertex.draw
+  brush.paint_vertex.replace
   brush.paint_vertex.smear
   brush.paint_weight.average
   brush.paint_weight.blur
@@ -1784,8 +1786,11 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   brush.sculpt.blob
   brush.sculpt.clay
   brush.sculpt.clay_strips
+  brush.sculpt.clay_thumb
+  brush.sculpt.cloth
   brush.sculpt.crease
   brush.sculpt.draw
+  brush.sculpt.draw_face_sets
   brush.sculpt.draw_sharp
   brush.sculpt.elastic_deform
   brush.sculpt.fill
@@ -1849,6 +1854,7 @@ set_property(GLOBAL PROPERTY ICON_GEOM_NAMES
   ops.gpencil.sculpt_twist
   ops.gpencil.sculpt_weight
   ops.gpencil.stroke_cutter
+  ops.gpencil.transform_fill
   ops.mesh.bevel
   ops.mesh.bisect
   ops.mesh.dupli_extrude_cursor
@@ -1922,6 +1928,7 @@ if(WITH_BLENDER)
     # images
     data_to_c_simple(../../../../release/datafiles/splash.png SRC)
     data_to_c_simple(../../../../release/datafiles/splash_2x.png SRC)
+    data_to_c_simple(../../../../release/datafiles/alert_icons.png SRC)
     # XXX These are handy, but give nasty "false changes" in svn :/
     # svg_to_png(../../../../release/datafiles/blender_icons.svg
     #            ../../../../release/datafiles/blender_icons16.png

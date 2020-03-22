@@ -29,9 +29,9 @@
 #include "DNA_windowmanager_types.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_utildefines.h"
 #include "BLI_math_base.h"
 #include "BLI_math_vector.h"
+#include "BLI_utildefines.h"
 
 #include "BKE_context.h"
 
@@ -43,8 +43,8 @@
 
 #include "ED_screen.h"
 
-#include "UI_view2d.h"
 #include "UI_interface.h"
+#include "UI_view2d.h"
 
 #include "PIL_time.h" /* USER_ZOOM_CONT */
 
@@ -306,7 +306,7 @@ static int view_pan_modal(bContext *C, wmOperator *op, const wmEvent *event)
       }
 #endif
     default:
-      if (event->type == vpd->invoke_event || event->type == ESCKEY) {
+      if (event->type == vpd->invoke_event || event->type == EVT_ESCKEY) {
         if (event->val == KM_RELEASE) {
           /* calculate overall delta mouse-movement for redo */
           RNA_int_set(op->ptr, "deltax", (vpd->startx - vpd->lastx));
@@ -1244,7 +1244,7 @@ static int view_zoomdrag_modal(bContext *C, wmOperator *op, const wmEvent *event
     /* apply zooming */
     view_zoomdrag_apply(C, op);
   }
-  else if (event->type == vzd->invoke_event || event->type == ESCKEY) {
+  else if (event->type == vzd->invoke_event || event->type == EVT_ESCKEY) {
     if (event->val == KM_RELEASE) {
 
       /* for redo, store the overall deltas - need to respect zoom-locks here... */
@@ -2157,7 +2157,7 @@ static void VIEW2D_OT_scroller_activate(wmOperatorType *ot)
 
 static int reset_exec(bContext *C, wmOperator *UNUSED(op))
 {
-  uiStyle *style = UI_style_get();
+  const uiStyle *style = UI_style_get();
   ARegion *region = CTX_wm_region(C);
   View2D *v2d = &region->v2d;
   int winx, winy;

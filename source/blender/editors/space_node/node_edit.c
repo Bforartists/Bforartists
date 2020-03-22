@@ -29,8 +29,8 @@
 #include "DNA_text_types.h"
 #include "DNA_world_types.h"
 
-#include "BLI_math.h"
 #include "BLI_blenlib.h"
+#include "BLI_math.h"
 
 #include "BKE_context.h"
 #include "BKE_global.h"
@@ -50,9 +50,9 @@
 #include "RE_pipeline.h"
 
 #include "ED_node.h" /* own include */
-#include "ED_select_utils.h"
-#include "ED_screen.h"
 #include "ED_render.h"
+#include "ED_screen.h"
+#include "ED_select_utils.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -67,10 +67,10 @@
 
 #include "IMB_imbuf_types.h"
 
-#include "node_intern.h" /* own include */
 #include "NOD_composite.h"
 #include "NOD_shader.h"
 #include "NOD_texture.h"
+#include "node_intern.h" /* own include */
 
 #define USE_ESC_COMPO
 
@@ -446,8 +446,17 @@ void ED_node_shader_default(const bContext *C, ID *id)
 
   if (GS(id->name) == ID_MA) {
     /* Materials */
+    Object *ob = CTX_data_active_object(C);
     Material *ma = (Material *)id;
-    Material *ma_default = BKE_material_default_surface();
+    Material *ma_default;
+
+    if (ob && ob->type == OB_VOLUME) {
+      ma_default = BKE_material_default_volume();
+    }
+    else {
+      ma_default = BKE_material_default_surface();
+    }
+
     ma->nodetree = ntreeCopyTree(bmain, ma_default->nodetree);
     ntreeUpdateTree(bmain, ma->nodetree);
   }

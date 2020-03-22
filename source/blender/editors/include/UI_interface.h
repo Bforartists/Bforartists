@@ -1124,7 +1124,9 @@ uiBut *uiDefIconButO_ptr(uiBlock *block,
                          short width,
                          short height,
                          const char *tip);
-
+uiBut *uiDefButImage(
+    uiBlock *block, void *imbuf, int x, int y, short width, short height, const uchar color[4]);
+uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short height);
 uiBut *uiDefIconTextBut(uiBlock *block,
                         int type,
                         int retval,
@@ -1805,7 +1807,7 @@ uiLayout *UI_block_layout(uiBlock *block,
                           int size,
                           int em,
                           int padding,
-                          struct uiStyle *style);
+                          const struct uiStyle *style);
 void UI_block_layout_set_current(uiBlock *block, uiLayout *layout);
 void UI_block_layout_resolve(uiBlock *block, int *r_x, int *r_y);
 
@@ -2431,8 +2433,8 @@ int UI_fontstyle_height_max(const struct uiFontStyle *fs);
 
 void UI_draw_icon_tri(float x, float y, char dir, const float[4]);
 
-struct uiStyle *UI_style_get(void);     /* use for fonts etc */
-struct uiStyle *UI_style_get_dpi(void); /* DPI scaled settings for drawing */
+const struct uiStyle *UI_style_get(void);     /* use for fonts etc */
+const struct uiStyle *UI_style_get_dpi(void); /* DPI scaled settings for drawing */
 
 /* linker workaround ack! */
 void UI_template_fix_linking(void);

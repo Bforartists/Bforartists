@@ -15,9 +15,9 @@
  */
 
 #include "render/image.h"
-#include "render/image_oiio.h"
 #include "device/device.h"
 #include "render/colorspace.h"
+#include "render/image_oiio.h"
 #include "render/scene.h"
 #include "render/stats.h"
 
@@ -119,6 +119,9 @@ void ImageHandle::clear()
   foreach (const int slot, tile_slots) {
     manager->remove_image_user(slot);
   }
+
+  tile_slots.clear();
+  manager = NULL;
 }
 
 bool ImageHandle::empty()
@@ -183,6 +186,7 @@ ImageMetaData::ImageMetaData()
       type(IMAGE_DATA_NUM_TYPES),
       colorspace(u_colorspace_raw),
       colorspace_file_format(""),
+      use_transform_3d(false),
       compress_as_srgb(false)
 {
 }
@@ -190,8 +194,9 @@ ImageMetaData::ImageMetaData()
 bool ImageMetaData::operator==(const ImageMetaData &other) const
 {
   return channels == other.channels && width == other.width && height == other.height &&
-         depth == other.depth && type == other.type && colorspace == other.colorspace &&
-         compress_as_srgb == other.compress_as_srgb;
+         depth == other.depth && use_transform_3d == other.use_transform_3d &&
+         (!use_transform_3d || transform_3d == other.transform_3d) && type == other.type &&
+         colorspace == other.colorspace && compress_as_srgb == other.compress_as_srgb;
 }
 
 bool ImageMetaData::is_float() const
@@ -304,7 +309,12 @@ void ImageManager::load_image_metadata(Image *img)
   metadata = ImageMetaData();
   metadata.colorspace = img->params.colorspace;
 
-  img->loader->load_metadata(metadata);
+  if (img->loader->load_metadata(metadata)) {
+    assert(metadata.type != IMAGE_DATA_NUM_TYPES);
+  }
+  else {
+    metadata.type = IMAGE_DATA_TYPE_BYTE4;
+  }
 
   metadata.detect_colorspace();
 
@@ -529,7 +539,7 @@ bool ImageManager::file_load_image(Image *img, int texture_limit)
         img->metadata.colorspace != u_colorspace_srgb) {
       /* Convert to scene linear. */
       ColorSpaceManager::to_scene_linear(
-          img->metadata.colorspace, pixels, width, height, depth, img->metadata.compress_as_srgb);
+          img->metadata.colorspace, pixels, num_pixels, img->metadata.compress_as_srgb);
     }
   }
 
@@ -621,6 +631,8 @@ void ImageManager::device_load_image(Device *device, Scene *scene, int slot, Pro
 
   img->mem = new device_texture(
       device, img->mem_name.c_str(), slot, type, img->params.interpolation, img->params.extension);
+  img->mem->info.use_transform_3d = img->metadata.use_transform_3d;
+  img->mem->info.transform_3d = img->metadata.transform_3d;
 
   /* Create new texture. */
   if (type == IMAGE_DATA_TYPE_FLOAT4) {
