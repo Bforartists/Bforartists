@@ -13,40 +13,33 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
+ * The Original Code is Copyright (C) 2019 Blender Foundation.
  * All rights reserved.
  */
 
-#ifndef __BKE_IDCODE_H__
-#define __BKE_IDCODE_H__
-
 /** \file
- * \ingroup bke
+ * \ingroup depsgraph
  */
 
-#include "BLI_sys_types.h"
+#pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+struct Volume;
+struct VolumeGridVector;
 
-const char *BKE_idcode_to_name(short idcode);
-const char *BKE_idcode_to_name_plural(short idcode);
-const char *BKE_idcode_to_translation_context(short idcode);
-short BKE_idcode_from_name(const char *name);
-bool BKE_idcode_is_linkable(short idcode);
-bool BKE_idcode_is_valid(short idcode);
+namespace DEG {
 
-uint64_t BKE_idcode_to_idfilter(const short idcode);
-short BKE_idcode_from_idfilter(const uint64_t idfilter);
+struct Depsgraph;
 
-int BKE_idcode_to_index(const short idcode);
-short BKE_idcode_from_index(const int index);
+/* Backup of volume datablocks runtime data. */
+class VolumeBackup {
+ public:
+  VolumeBackup(const Depsgraph *depsgraph);
 
-short BKE_idcode_iter_step(int *index);
+  void init_from_volume(Volume *volume);
+  void restore_to_volume(Volume *volume);
 
-#ifdef __cplusplus
-}
-#endif
+  VolumeGridVector *grids;
+  char filepath[1024]; /* FILE_MAX */
+};
 
-#endif
+}  // namespace DEG

@@ -21,14 +21,14 @@
  * \ingroup edgpencil
  */
 
-#include <stdlib.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "BLI_sys_types.h"
 
-#include "BKE_context.h"
 #include "BKE_brush.h"
+#include "BKE_context.h"
 #include "BKE_gpencil.h"
 #include "BKE_paint.h"
 
@@ -39,14 +39,14 @@
 #include "DNA_space_types.h"
 
 #include "WM_api.h"
-#include "WM_types.h"
 #include "WM_toolsystem.h"
+#include "WM_types.h"
 
 #include "RNA_access.h"
 
 #include "ED_gpencil.h"
-#include "ED_select_utils.h"
 #include "ED_object.h"
+#include "ED_select_utils.h"
 #include "ED_transform.h"
 
 #include "gpencil_intern.h"
@@ -544,7 +544,7 @@ void ED_operatortypes_gpencil(void)
   WM_operatortype_append(GPENCIL_OT_select_first);
   WM_operatortype_append(GPENCIL_OT_select_last);
   WM_operatortype_append(GPENCIL_OT_select_alternate);
-  WM_operatortype_append(GPENCIL_OT_select_color);
+  WM_operatortype_append(GPENCIL_OT_select_vertex_color);
 
   WM_operatortype_append(GPENCIL_OT_duplicate);
   WM_operatortype_append(GPENCIL_OT_delete);
@@ -608,7 +608,7 @@ void ED_operatortypes_gpencil(void)
 
   WM_operatortype_append(GPENCIL_OT_stroke_arrange);
   WM_operatortype_append(GPENCIL_OT_stroke_change_color);
-  WM_operatortype_append(GPENCIL_OT_stroke_lock_color);
+  WM_operatortype_append(GPENCIL_OT_material_lock_unused);
   WM_operatortype_append(GPENCIL_OT_stroke_apply_thickness);
   WM_operatortype_append(GPENCIL_OT_stroke_cyclical_set);
   WM_operatortype_append(GPENCIL_OT_stroke_caps_set);
@@ -648,12 +648,12 @@ void ED_operatortypes_gpencil(void)
 
   /* color handle */
   WM_operatortype_append(GPENCIL_OT_lock_layer);
-  WM_operatortype_append(GPENCIL_OT_color_isolate);
-  WM_operatortype_append(GPENCIL_OT_color_hide);
-  WM_operatortype_append(GPENCIL_OT_color_reveal);
-  WM_operatortype_append(GPENCIL_OT_color_lock_all);
-  WM_operatortype_append(GPENCIL_OT_color_unlock_all);
-  WM_operatortype_append(GPENCIL_OT_color_select);
+  WM_operatortype_append(GPENCIL_OT_material_isolate);
+  WM_operatortype_append(GPENCIL_OT_material_hide);
+  WM_operatortype_append(GPENCIL_OT_material_reveal);
+  WM_operatortype_append(GPENCIL_OT_material_lock_all);
+  WM_operatortype_append(GPENCIL_OT_material_unlock_all);
+  WM_operatortype_append(GPENCIL_OT_select_material);
 
   /* Editing (Time) --------------- */
 

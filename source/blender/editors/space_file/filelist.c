@@ -23,8 +23,8 @@
 
 /* global includes */
 
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <time.h>
@@ -32,8 +32,8 @@
 #ifndef WIN32
 #  include <unistd.h>
 #else
-#  include <io.h>
 #  include <direct.h>
+#  include <io.h>
 #endif
 #include "MEM_guardedalloc.h"
 
@@ -56,7 +56,7 @@
 #include "BKE_context.h"
 #include "BKE_global.h"
 #include "BKE_icons.h"
-#include "BKE_idcode.h"
+#include "BKE_idtype.h"
 #include "BKE_main.h"
 #include "BLO_readfile.h"
 
@@ -75,8 +75,8 @@
 #include "WM_api.h"
 #include "WM_types.h"
 
-#include "UI_resources.h"
 #include "UI_interface_icons.h"
+#include "UI_resources.h"
 
 #include "atomic_ops.h"
 
@@ -267,6 +267,12 @@ typedef struct FileListEntryPreview {
   int index;
   ImBuf *img;
 } FileListEntryPreview;
+
+/* Dummy wrapper around FileListEntryPreview to ensure we do not access freed memory when freeing
+ * tasks' data (see T74609). */
+typedef struct FileListEntryPreviewTaskData {
+  FileListEntryPreview *preview;
+} FileListEntryPreviewTaskData;
 
 typedef struct FileListFilter {
   uint64_t filter;
@@ -1074,6 +1080,9 @@ static int filelist_geticon_ex(FileDirEntry *file,
   else if (typeflag & FILE_TYPE_USD) {
     return ICON_FILE_3D;
   }
+  else if (typeflag & FILE_TYPE_VOLUME) {
+    return ICON_VOLUME_DATA;
+  }
   else if (typeflag & FILE_TYPE_OBJECT_IO) {
     return ICON_FILE_3D;
   }
@@ -1254,7 +1263,8 @@ static void filelist_cache_preview_runf(TaskPool *__restrict pool,
                                         int UNUSED(threadid))
 {
   FileListEntryCache *cache = BLI_task_pool_userdata(pool);
-  FileListEntryPreview *preview = taskdata;
+  FileListEntryPreviewTaskData *preview_taskdata = taskdata;
+  FileListEntryPreview *preview = preview_taskdata->preview;
 
   ThumbSource source = 0;
 
@@ -1283,10 +1293,8 @@ static void filelist_cache_preview_runf(TaskPool *__restrict pool,
   preview->img = IMB_thumb_manage(preview->path, THB_LARGE, source);
   IMB_thumb_path_unlock(preview->path);
 
-  /* Used to tell free func to not free anything.
-   * Note that we do not care about cas result here,
-   * we only want value attribution itself to be atomic (and memory barier).*/
-  atomic_cas_uint32(&preview->flags, preview->flags, 0);
+  /* That way task freeing function won't free th preview, since it does not own it anymore. */
+  atomic_cas_ptr((void **)&preview_taskdata->preview, preview, NULL);
   BLI_thread_queue_push(cache->previews_done, preview);
 
   //  printf("%s: End (%d)...\n", __func__, threadid);
@@ -1296,16 +1304,18 @@ static void filelist_cache_preview_freef(TaskPool *__restrict UNUSED(pool),
                                          void *taskdata,
                                          int UNUSED(threadid))
 {
-  FileListEntryPreview *preview = taskdata;
+  FileListEntryPreviewTaskData *preview_taskdata = taskdata;
+  FileListEntryPreview *preview = preview_taskdata->preview;
 
-  /* If preview->flag is empty, it means that preview has already been generated and
-   * added to done queue, we do not own it anymore. */
-  if (preview->flags) {
+  /* preview_taskdata->preview is atomically set to NULL once preview has been processed and sent
+   * to previews_done queue. */
+  if (preview != NULL) {
     if (preview->img) {
       IMB_freeImBuf(preview->img);
     }
     MEM_freeN(preview);
   }
+  MEM_freeN(preview_taskdata);
 }
 
 static void filelist_cache_preview_ensure_running(FileListEntryCache *cache)
@@ -1322,11 +1332,10 @@ static void filelist_cache_preview_ensure_running(FileListEntryCache *cache)
 
 static void filelist_cache_previews_clear(FileListEntryCache *cache)
 {
-  FileListEntryPreview *preview;
-
   if (cache->previews_pool) {
     BLI_task_pool_cancel(cache->previews_pool);
 
+    FileListEntryPreview *preview;
     while ((preview = BLI_thread_queue_pop_timeout(cache->previews_done, 0))) {
       // printf("%s: DONE %d - %s - %p\n", __func__, preview->index, preview->path,
       // preview->img);
@@ -1374,9 +1383,13 @@ static void filelist_cache_previews_push(FileList *filelist, FileDirEntry *entry
     //      printf("%s: %d - %s - %p\n", __func__, preview->index, preview->path, preview->img);
 
     filelist_cache_preview_ensure_running(cache);
+
+    FileListEntryPreviewTaskData *preview_taskdata = MEM_mallocN(sizeof(*preview_taskdata),
+                                                                 __func__);
+    preview_taskdata->preview = preview;
     BLI_task_pool_push_ex(cache->previews_pool,
                           filelist_cache_preview_runf,
-                          preview,
+                          preview_taskdata,
                           true,
                           filelist_cache_preview_freef,
                           TASK_PRIORITY_LOW);
@@ -2226,6 +2239,9 @@ int ED_path_extension_type(const char *path)
   else if (BLI_path_extension_check_n(path, ".usd", ".usda", ".usdc", NULL)) {
     return FILE_TYPE_USD;
   }
+  else if (BLI_path_extension_check(path, ".vdb")) {
+    return FILE_TYPE_VOLUME;
+  }
   else if (BLI_path_extension_check(path, ".zip")) {
     return FILE_TYPE_ARCHIVE;
   }
@@ -2288,6 +2304,8 @@ int ED_file_extension_icon(const char *path)
       return ICON_FILE_TEXT;
     case FILE_TYPE_ARCHIVE:
       return ICON_FILE_ARCHIVE;
+    case FILE_TYPE_VOLUME:
+      return ICON_VOLUME_DATA;
     default:
       return ICON_FILE_BLANK;
   }
@@ -2436,14 +2454,14 @@ static int groupname_to_code(const char *group)
     lslash[0] = '\0';
   }
 
-  return buf[0] ? BKE_idcode_from_name(buf) : 0;
+  return buf[0] ? BKE_idtype_idcode_from_name(buf) : 0;
 }
 
 static uint64_t groupname_to_filter_id(const char *group)
 {
   int id_code = groupname_to_code(group);
 
-  return BKE_idcode_to_idfilter(id_code);
+  return BKE_idtype_idcode_to_idfilter(id_code);
 }
 
 /**
@@ -2615,9 +2633,9 @@ static void filelist_readjob_main_rec(Main *bmain, FileList *filelist)
   if (filelist->dir[0] == 0) {
     /* make directories */
 #  ifdef WITH_FREESTYLE
-    filelist->filelist.nbr_entries = 24;
+		filelist->filelist.nbr_entries = 27;
 #  else
-    filelist->filelist.nbr_entries = 23;
+		filelist->filelist.nbr_entries = 26;
 #  endif
     filelist_resize(filelist, filelist->filelist.nbr_entries);
 
@@ -2648,8 +2666,11 @@ static void filelist_readjob_main_rec(Main *bmain, FileList *filelist)
     filelist->filelist.entries[20].entry->relpath = BLI_strdup("Action");
     filelist->filelist.entries[21].entry->relpath = BLI_strdup("NodeTree");
     filelist->filelist.entries[22].entry->relpath = BLI_strdup("Speaker");
+		filelist->filelist.entries[23].entry->relpath = BLI_strdup("Hair");
+		filelist->filelist.entries[24].entry->relpath = BLI_strdup("Point Cloud");
+		filelist->filelist.entries[25].entry->relpath = BLI_strdup("Volume");
 #  ifdef WITH_FREESTYLE
-    filelist->filelist.entries[23].entry->relpath = BLI_strdup("FreestyleLineStyle");
+		filelist->filelist.entries[26].entry->relpath = BLI_strdup("FreestyleLineStyle");
 #  endif
   }
   else {
@@ -3057,12 +3078,12 @@ void filelist_readjob_start(FileList *filelist, const bContext *C)
   WM_jobs_start(CTX_wm_manager(C), wm_job);
 }
 
-void filelist_readjob_stop(wmWindowManager *wm, ScrArea *sa)
+void filelist_readjob_stop(wmWindowManager *wm, Scene *owner_scene)
 {
-  WM_jobs_kill_type(wm, sa, WM_JOB_TYPE_FILESEL_READDIR);
+  WM_jobs_kill_type(wm, owner_scene, WM_JOB_TYPE_FILESEL_READDIR);
 }
 
-int filelist_readjob_running(wmWindowManager *wm, ScrArea *sa)
+int filelist_readjob_running(wmWindowManager *wm, Scene *owner_scene)
 {
-  return WM_jobs_test(wm, sa, WM_JOB_TYPE_FILESEL_READDIR);
+  return WM_jobs_test(wm, owner_scene, WM_JOB_TYPE_FILESEL_READDIR);
 }

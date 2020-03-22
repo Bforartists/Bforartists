@@ -28,35 +28,38 @@
 
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
-#include "DNA_constraint_types.h"
-#include "DNA_camera_types.h"
 #include "DNA_cachefile_types.h"
+#include "DNA_camera_types.h"
 #include "DNA_collection_types.h"
+#include "DNA_constraint_types.h"
 #include "DNA_gpencil_types.h"
+#include "DNA_hair_types.h"
 #include "DNA_key_types.h"
 #include "DNA_light_types.h"
+#include "DNA_lightprobe_types.h"
+#include "DNA_linestyle_types.h"
 #include "DNA_material_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meta_types.h"
-#include "DNA_lightprobe_types.h"
+#include "DNA_object_types.h"
 #include "DNA_particle_types.h"
+#include "DNA_pointcloud_types.h"
 #include "DNA_scene_types.h"
-#include "DNA_world_types.h"
 #include "DNA_sequence_types.h"
 #include "DNA_speaker_types.h"
-#include "DNA_object_types.h"
-#include "DNA_linestyle_types.h"
+#include "DNA_volume_types.h"
+#include "DNA_world_types.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_listbase.h"
-#include "BLI_utildefines.h"
-#include "BLI_mempool.h"
 #include "BLI_fnmatch.h"
+#include "BLI_listbase.h"
+#include "BLI_mempool.h"
+#include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
 
 #include "BKE_fcurve.h"
-#include "BKE_idcode.h"
+#include "BKE_idtype.h"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_main.h"
@@ -750,6 +753,25 @@ static void outliner_add_id_contents(SpaceOutliner *soops,
         Collection *collection = (Collection *)id;
         outliner_add_collection_recursive(soops, collection, te);
       }
+      break;
+    }
+    case ID_HA: {
+      Hair *hair = (Hair *)id;
+      if (outliner_animdata_test(hair->adt))
+        outliner_add_element(soops, &te->subtree, hair, te, TSE_ANIM_DATA, 0);
+      break;
+    }
+    case ID_PT: {
+      PointCloud *pointcloud = (PointCloud *)id;
+      if (outliner_animdata_test(pointcloud->adt))
+        outliner_add_element(soops, &te->subtree, pointcloud, te, TSE_ANIM_DATA, 0);
+      break;
+    }
+    case ID_VO: {
+      Volume *volume = (Volume *)id;
+      if (outliner_animdata_test(volume->adt))
+        outliner_add_element(soops, &te->subtree, volume, te, TSE_ANIM_DATA, 0);
+      break;
     }
     default:
       break;
@@ -1215,7 +1237,7 @@ static void outliner_add_seq_dup(SpaceOutliner *soops, Sequence *seq, TreeElemen
 
 static const char *outliner_idcode_to_plural(short idcode)
 {
-  const char *propname = BKE_idcode_to_name_plural(idcode);
+  const char *propname = BKE_idtype_idcode_to_name_plural(idcode);
   PropertyRNA *prop = RNA_struct_type_find_property(&RNA_BlendData, propname);
   return (prop) ? RNA_property_ui_name(prop) : "UNKNOWN";
 }

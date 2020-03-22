@@ -28,29 +28,30 @@
 #include "BLI_blenlib.h"
 #include "BLI_math_vector.h"
 
-#include "DNA_meshdata_types.h"
-#include "DNA_scene_types.h"
-#include "DNA_object_types.h"
-#include "DNA_gpencil_types.h"
 #include "DNA_gpencil_modifier_types.h"
+#include "DNA_gpencil_types.h"
+#include "DNA_meshdata_types.h"
+#include "DNA_object_types.h"
+#include "DNA_scene_types.h"
 
 #include "BKE_colortools.h"
 #include "BKE_deform.h"
-#include "BKE_material.h"
 #include "BKE_gpencil.h"
 #include "BKE_gpencil_modifier.h"
 #include "BKE_main.h"
+#include "BKE_material.h"
 
 #include "DEG_depsgraph.h"
 
-#include "MOD_gpencil_util.h"
 #include "MOD_gpencil_modifiertypes.h"
+#include "MOD_gpencil_util.h"
 
 static void initData(GpencilModifierData *md)
 {
   OpacityGpencilModifierData *gpmd = (OpacityGpencilModifierData *)md;
   gpmd->pass_index = 0;
   gpmd->factor = 1.0f;
+  gpmd->hardeness = 1.0f;
   gpmd->layername[0] = '\0';
   gpmd->materialname[0] = '\0';
   gpmd->vgname[0] = '\0';
@@ -101,6 +102,14 @@ static void deformStroke(GpencilModifierData *md,
                                       mmd->flag & GP_OPACITY_INVERT_PASS,
                                       mmd->flag & GP_OPACITY_INVERT_LAYERPASS,
                                       mmd->flag & GP_OPACITY_INVERT_MATERIAL)) {
+    return;
+  }
+
+  /* Hardeness (at stroke level). */
+  if (mmd->modify_color == GP_MODIFY_COLOR_HARDENESS) {
+    gps->hardeness *= mmd->hardeness;
+    CLAMP(gps->hardeness, 0.0f, 1.0f);
+
     return;
   }
 

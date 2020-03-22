@@ -37,8 +37,8 @@
 
 #include "rna_internal.h"
 
-#include "WM_types.h"
 #include "WM_api.h"
+#include "WM_types.h"
 
 const EnumPropertyItem rna_enum_image_generated_type_items[] = {
     {IMA_GENTYPE_BLANK, "BLANK", 0, "Blank", "Generate a blank image"},
@@ -398,7 +398,7 @@ static void rna_Image_resolution_set(PointerRNA *ptr, const float *values)
 static int rna_Image_bindcode_get(PointerRNA *ptr)
 {
   Image *ima = (Image *)ptr->data;
-  GPUTexture *tex = ima->gputexture[TEXTARGET_TEXTURE_2D];
+  GPUTexture *tex = ima->gputexture[TEXTARGET_TEXTURE_2D][0];
   return (tex) ? GPU_texture_opengl_bindcode(tex) : 0;
 }
 

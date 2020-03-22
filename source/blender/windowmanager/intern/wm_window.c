@@ -25,8 +25,8 @@
  */
 
 #include <math.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "DNA_listBase.h"
@@ -38,8 +38,8 @@
 
 #include "GHOST_C-api.h"
 
-#include "BLI_math.h"
 #include "BLI_blenlib.h"
+#include "BLI_math.h"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
@@ -60,32 +60,32 @@
 #include "WM_types.h"
 #include "wm.h"
 #include "wm_draw.h"
+#include "wm_event_system.h"
 #include "wm_files.h"
 #include "wm_platform_support.h"
 #include "wm_window.h"
 #include "wm_window_private.h"
-#include "wm_event_system.h"
 
 #include "ED_anim_api.h"
+#include "ED_fileselect.h"
 #include "ED_render.h"
 #include "ED_scene.h"
 #include "ED_screen.h"
-#include "ED_fileselect.h"
 
 #include "UI_interface.h"
 #include "UI_interface_icons.h"
 
 #include "PIL_time.h"
 
+#include "BLF_api.h"
 #include "GPU_batch.h"
 #include "GPU_batch_presets.h"
-#include "GPU_draw.h"
-#include "GPU_platform.h"
-#include "GPU_framebuffer.h"
-#include "GPU_init_exit.h"
-#include "GPU_immediate.h"
 #include "GPU_context.h"
-#include "BLF_api.h"
+#include "GPU_draw.h"
+#include "GPU_framebuffer.h"
+#include "GPU_immediate.h"
+#include "GPU_init_exit.h"
+#include "GPU_platform.h"
 
 #include "UI_resources.h"
 
@@ -1631,6 +1631,11 @@ void wm_window_process_events(const bContext *C)
     GHOST_DispatchEvents(g_system);
   }
   hasevent |= wm_window_timer(C);
+#ifdef WITH_XR_OPENXR
+  /* XR events don't use the regular window queues. So here we don't only trigger
+   * processing/dispatching but also handling. */
+  hasevent |= wm_xr_events_handle(CTX_wm_manager(C));
+#endif
 
   /* no event, we sleep 5 milliseconds */
   if (hasevent == 0) {
@@ -1957,6 +1962,9 @@ void wm_window_raise(wmWindow *win)
 /** \name Window Buffers
  * \{ */
 
+/**
+ * \brief Push rendered buffer to the screen.
+ */
 void wm_window_swap_buffers(wmWindow *win)
 {
   GHOST_SwapWindowBuffers(win->ghostwin);
@@ -2446,3 +2454,24 @@ void WM_ghost_show_message_box(const char *title,
   GHOST_ShowMessageBox(g_system, title, message, help_label, continue_label, link, dialog_options);
 }
 /** \} */
+
+#ifdef WIN32
+/* -------------------------------------------------------------------- */
+/** \name Direct DirectX Context Management
+ * \{ */
+
+void *WM_directx_context_create(void)
+{
+  BLI_assert(GPU_framebuffer_active_get() == NULL);
+  return GHOST_CreateDirectXContext(g_system);
+}
+
+void WM_directx_context_dispose(void *context)
+{
+  BLI_assert(GPU_framebuffer_active_get() == NULL);
+  GHOST_DisposeDirectXContext(g_system, context);
+}
+
+/** \} */
+
+#endif

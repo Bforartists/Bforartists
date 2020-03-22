@@ -21,12 +21,12 @@
  * \ingroup edinterface
  */
 
+#include <ctype.h>
 #include <float.h>
 #include <limits.h>
 #include <math.h>
-#include <string.h>
-#include <ctype.h>
 #include <stddef.h> /* offsetof() */
+#include <string.h>
 
 #include "MEM_guardedalloc.h"
 
@@ -36,11 +36,11 @@
 #include "DNA_userdef_types.h"
 #include "DNA_workspace_types.h"
 
-#include "BLI_math.h"
 #include "BLI_listbase.h"
+#include "BLI_math.h"
+#include "BLI_rect.h"
 #include "BLI_string.h"
 #include "BLI_string_utf8.h"
-#include "BLI_rect.h"
 
 #include "BLI_utildefines.h"
 
@@ -65,15 +65,15 @@
 #include "IMB_imbuf.h"
 
 #include "WM_api.h"
-#include "WM_types.h"
 #include "WM_message.h"
+#include "WM_types.h"
 
 #include "RNA_access.h"
 
 #include "BPY_extern.h"
 
-#include "ED_screen.h"
 #include "ED_numinput.h"
+#include "ED_screen.h"
 
 #include "IMB_colormanagement.h"
 
@@ -366,7 +366,7 @@ void UI_block_translate(uiBlock *block, int x, int y)
 
 static void ui_block_bounds_calc_text(uiBlock *block, float offset)
 {
-  uiStyle *style = UI_style_get();
+  const uiStyle *style = UI_style_get();
   uiBut *bt, *init_col_bt, *col_bt;
   int i = 0, j, x1addval = offset;
 
@@ -4437,6 +4437,48 @@ uiBut *uiDefBut(uiBlock *block,
   ui_but_update(but);
 
   return but;
+}
+
+uiBut *uiDefButImage(
+    uiBlock *block, void *imbuf, int x, int y, short width, short height, const uchar color[4])
+{
+  uiBut *but = ui_def_but(
+      block, UI_BTYPE_IMAGE, 0, "", x, y, width, height, imbuf, 0, 0, 0, 0, "");
+  if (color) {
+    copy_v4_v4_uchar(but->col, color);
+  }
+  else {
+    but->col[0] = 255;
+    but->col[1] = 255;
+    but->col[2] = 255;
+    but->col[3] = 255;
+  }
+  ui_but_update(but);
+  return but;
+}
+
+uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short height)
+{
+  struct ImBuf *ibuf = UI_alert_image(icon);
+
+  if (icon == ALERT_ICON_BLENDER) {
+    return uiDefButImage(block, ibuf, x, y, width, height, NULL);
+  }
+  else {
+    uchar icon_color[4];
+    ThemeColorID color_id = TH_INFO_WARNING;
+    if (icon == ALERT_ICON_ERROR) {
+      color_id = TH_INFO_ERROR;
+    }
+    else if (icon == ALERT_ICON_INFO) {
+      color_id = TH_INFO_INFO;
+    }
+    else if (icon == ALERT_ICON_QUESTION) {
+      color_id = TH_INFO_PROPERTY;
+    }
+    UI_GetThemeColorType4ubv(color_id, SPACE_INFO, icon_color);
+    return uiDefButImage(block, ibuf, x, y, width, height, icon_color);
+  }
 }
 
 /**

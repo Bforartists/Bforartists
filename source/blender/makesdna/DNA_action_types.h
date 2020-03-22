@@ -32,11 +32,11 @@
 extern "C" {
 #endif
 
-#include "DNA_listBase.h"
 #include "DNA_ID.h"
-#include "DNA_view2d_types.h"
-#include "DNA_vec_types.h"
+#include "DNA_listBase.h"
 #include "DNA_userdef_types.h" /* ThemeWireColor */
+#include "DNA_vec_types.h"
+#include "DNA_view2d_types.h"
 
 struct Collection;
 struct GHash;
@@ -776,6 +776,9 @@ typedef enum eDopeSheet_FilterFlag {
 typedef enum eDopeSheet_FilterFlag2 {
   ADS_FILTER_NOCACHEFILES = (1 << 1),
   ADS_FILTER_NOMOVIECLIPS = (1 << 2),
+  ADS_FILTER_NOHAIR = (1 << 3),
+  ADS_FILTER_NOPOINTCLOUD = (1 << 4),
+  ADS_FILTER_NOVOLUME = (1 << 5),
 } eDopeSheet_FilterFlag2;
 
 /* DopeSheet general flags */

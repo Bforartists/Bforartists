@@ -30,22 +30,22 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_bitmap.h"
-#include "BLI_math_color.h"
-#include "BLI_math.h"
-#include "BLI_utildefines.h"
 #include "BLI_ghash.h"
 #include "BLI_hash.h"
+#include "BLI_math.h"
+#include "BLI_math_color.h"
+#include "BLI_utildefines.h"
 
 #include "DNA_meshdata_types.h"
 
-#include "BKE_ccg.h"
 #include "BKE_DerivedMesh.h"
-#include "BKE_paint.h"
+#include "BKE_ccg.h"
 #include "BKE_mesh.h"
+#include "BKE_paint.h"
 #include "BKE_pbvh.h"
 
-#include "GPU_buffers.h"
 #include "GPU_batch.h"
+#include "GPU_buffers.h"
 
 #include "gpu_private.h"
 
@@ -266,8 +266,8 @@ void GPU_pbvh_mesh_buffers_update(GPU_PBVH_Buffers *buffers,
         }
 
         /* Face Sets. */
-        uchar face_set_color[4] = {UCHAR_MAX, UCHAR_MAX, UCHAR_MAX, UCHAR_MAX};
         for (uint i = 0; i < buffers->face_indices_len; i++) {
+          uchar face_set_color[4] = {UCHAR_MAX, UCHAR_MAX, UCHAR_MAX, UCHAR_MAX};
           if (show_face_sets) {
             const MLoopTri *lt = &buffers->looptri[buffers->face_indices[i]];
             const int fset = abs(sculpt_face_sets[lt->poly]);

@@ -26,8 +26,8 @@
 
 #include "DNA_object_types.h"
 
-#include "ED_screen.h"
 #include "ED_gizmo_library.h"
+#include "ED_screen.h"
 
 #include "UI_interface.h"
 #include "UI_resources.h"
@@ -252,14 +252,14 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
       (navgroup->state.rect_visible.ymax == rect_visible->ymax) &&
       (navgroup->state.rv3d.is_persp == rv3d->is_persp) &&
       (navgroup->state.rv3d.is_camera == (rv3d->persp == RV3D_CAMOB)) &&
-      (navgroup->state.rv3d.viewlock == rv3d->viewlock)) {
+      (navgroup->state.rv3d.viewlock == RV3D_LOCK_FLAGS(rv3d))) {
     return;
   }
 
   navgroup->state.rect_visible = *rect_visible;
   navgroup->state.rv3d.is_persp = rv3d->is_persp;
   navgroup->state.rv3d.is_camera = (rv3d->persp == RV3D_CAMOB);
-  navgroup->state.rv3d.viewlock = rv3d->viewlock;
+  navgroup->state.rv3d.viewlock = RV3D_LOCK_FLAGS(rv3d);
 
   const bool show_navigate = (U.uiflag & USER_SHOW_GIZMO_NAVIGATE) != 0;
   const bool show_rotate_gizmo = (U.mini_axis_type == USER_MINI_AXIS_TYPE_GIZMO);
@@ -296,7 +296,6 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
     WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, true);
   }
 
-  /* RV3D_LOCKED or Camera: only show supported buttons. */
   if (show_rotate_gizmo) {
     gz = navgroup->gz_array[GZ_INDEX_ROTATE];
     gz->matrix_basis[3][0] = co_rotate[0];
@@ -316,16 +315,16 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
     gz->matrix_basis[3][1] = co[1];/* bfa- changed back navigation buttons to horizontal*/
     WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
 
-    if ((rv3d->viewlock & RV3D_LOCKED) == 0) {
+    if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ROTATION) == 0) {
       gz = navgroup->gz_array[GZ_INDEX_CAMERA];
-      gz->matrix_basis[3][0] = roundf(co[0]) - (icon_offset_mini * icon_mini_slot++);/* bfa- changed back navigation buttons to horizontal*/
-      gz->matrix_basis[3][1] = roundf(co[1]);/* bfa- changed back navigation buttons to horizontal*/
+      gz->matrix_basis[3][0] = (co[0]) - (icon_offset_mini * icon_mini_slot++);/* bfa- changed back navigation buttons to horizontal*/
+      gz->matrix_basis[3][1] = (co[1]);/* bfa- changed back navigation buttons to horizontal*/
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
 
       if (navgroup->state.rv3d.is_camera == false) {
         gz = navgroup->gz_array[rv3d->is_persp ? GZ_INDEX_PERSP : GZ_INDEX_ORTHO];
-        gz->matrix_basis[3][0] = roundf(co[0]) - (icon_offset_mini * icon_mini_slot++);/* bfa- changed back navigation buttons to horizontal*/
-        gz->matrix_basis[3][1] = roundf(co[1]);/* bfa- changed back navigation buttons to horizontal*/
+        gz->matrix_basis[3][0] = (co[0]) - (icon_offset_mini * icon_mini_slot++);/* bfa- changed back navigation buttons to horizontal*/
+        gz->matrix_basis[3][1] = (co[1]);/* bfa- changed back navigation buttons to horizontal*/
         WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
       }
     }
