@@ -18,22 +18,22 @@
  * \ingroup RNA
  */
 
-#include <inttypes.h>
+#include <errno.h>
 #include <float.h>
+#include <inttypes.h>
 #include <limits.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 
 #include "MEM_guardedalloc.h"
 
 #include "BLI_utildefines.h"
 
 #include "RNA_define.h"
-#include "RNA_types.h"
 #include "RNA_enum_types.h"
+#include "RNA_types.h"
 
 #include "rna_internal.h"
 
@@ -482,8 +482,14 @@ static const char *rna_type_type_name(PropertyRNA *prop)
     case PROP_BOOLEAN:
       return "bool";
     case PROP_INT:
-    case PROP_ENUM:
       return "int";
+    case PROP_ENUM: {
+      EnumPropertyRNA *eprop = (EnumPropertyRNA *)prop;
+      if (eprop->native_enum_type) {
+        return eprop->native_enum_type;
+      }
+      return "int";
+    }
     case PROP_FLOAT:
       return "float";
     case PROP_STRING:
@@ -4259,6 +4265,9 @@ static RNAProcessItem PROCESS_ITEMS[] = {
     {"rna_dynamicpaint.c", NULL, RNA_def_dynamic_paint},
     {"rna_fcurve.c", "rna_fcurve_api.c", RNA_def_fcurve},
     {"rna_gpencil.c", NULL, RNA_def_gpencil},
+#ifdef WITH_NEW_OBJECT_TYPES
+    {"rna_hair.c", NULL, RNA_def_hair},
+#endif
     {"rna_image.c", "rna_image_api.c", RNA_def_image},
     {"rna_key.c", NULL, RNA_def_key},
     {"rna_light.c", NULL, RNA_def_light},
@@ -4281,6 +4290,9 @@ static RNAProcessItem PROCESS_ITEMS[] = {
     {"rna_packedfile.c", NULL, RNA_def_packedfile},
     {"rna_palette.c", NULL, RNA_def_palette},
     {"rna_particle.c", NULL, RNA_def_particle},
+#ifdef WITH_NEW_OBJECT_TYPES
+    {"rna_pointcloud.c", NULL, RNA_def_pointcloud},
+#endif
     {"rna_pose.c", "rna_pose_api.c", RNA_def_pose},
     {"rna_curveprofile.c", NULL, RNA_def_profile},
     {"rna_lightprobe.c", NULL, RNA_def_lightprobe},
@@ -4299,6 +4311,7 @@ static RNAProcessItem PROCESS_ITEMS[] = {
     {"rna_ui.c", "rna_ui_api.c", RNA_def_ui},
     {"rna_userdef.c", NULL, RNA_def_userdef},
     {"rna_vfont.c", "rna_vfont_api.c", RNA_def_vfont},
+    {"rna_volume.c", NULL, RNA_def_volume},
     {"rna_wm.c", "rna_wm_api.c", RNA_def_wm},
     {"rna_wm_gizmo.c", "rna_wm_gizmo_api.c", RNA_def_wm_gizmo},
     {"rna_workspace.c", "rna_workspace_api.c", RNA_def_workspace},
@@ -4306,6 +4319,7 @@ static RNAProcessItem PROCESS_ITEMS[] = {
     {"rna_movieclip.c", NULL, RNA_def_movieclip},
     {"rna_tracking.c", NULL, RNA_def_tracking},
     {"rna_mask.c", NULL, RNA_def_mask},
+    {"rna_xr.c", NULL, RNA_def_xr},
     {NULL, NULL},
 };
 
@@ -4331,6 +4345,7 @@ static void rna_generate(BlenderRNA *brna, FILE *f, const char *filename, const 
 
   fprintf(f, "#include \"DNA_ID.h\"\n");
   fprintf(f, "#include \"DNA_scene_types.h\"\n");
+  fprintf(f, "#include \"DNA_node_types.h\"\n");
 
   fprintf(f, "#include \"BLI_blenlib.h\"\n\n");
   fprintf(f, "#include \"BLI_utildefines.h\"\n\n");
@@ -4347,7 +4362,9 @@ static void rna_generate(BlenderRNA *brna, FILE *f, const char *filename, const 
   /* include the generated prototypes header */
   fprintf(f, "#include \"rna_prototypes_gen.h\"\n\n");
 
-  fprintf(f, "#include \"%s\"\n", filename);
+  if (filename) {
+    fprintf(f, "#include \"%s\"\n", filename);
+  }
   if (api_filename) {
     fprintf(f, "#include \"%s\"\n", api_filename);
   }
@@ -4421,6 +4438,7 @@ static void rna_generate_header(BlenderRNA *UNUSED(brna), FILE *f)
           " * Do not edit manually, changes will be overwritten.              */\n\n");
 
   fprintf(f, "#include \"RNA_types.h\"\n\n");
+  fprintf(f, "#include \"DNA_node_types.h\"\n\n");
 
   fprintf(f, "#ifdef __cplusplus\nextern \"C\" {\n#endif\n\n");
 
@@ -4855,6 +4873,7 @@ static void rna_generate_header_cpp(BlenderRNA *UNUSED(brna), FILE *f)
   fprintf(f, "#include \"RNA_blender.h\"\n");
   fprintf(f, "#include \"RNA_types.h\"\n");
   fprintf(f, "#include \"RNA_access.h\"\n");
+  fprintf(f, "#include \"DNA_node_types.h\"\n");
 
   fprintf(f, "%s", cpp_classes);
 

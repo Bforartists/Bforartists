@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#include "render/image.h"
-#include "render/hair.h"
-#include "render/mesh.h"
 #include "render/attribute.h"
+#include "render/hair.h"
+#include "render/image.h"
+#include "render/mesh.h"
 
 #include "util/util_foreach.h"
 #include "util/util_transform.h"
@@ -48,7 +48,7 @@ Attribute::Attribute(
 Attribute::~Attribute()
 {
   /* For voxel data, we need to free the image handle. */
-  if (element == ATTR_ELEMENT_VOXEL) {
+  if (element == ATTR_ELEMENT_VOXEL && buffer.size()) {
     ImageHandle &handle = data_voxel();
     handle.~ImageHandle();
   }

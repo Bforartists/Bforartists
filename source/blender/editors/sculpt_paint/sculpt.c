@@ -24,12 +24,12 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_math.h"
 #include "BLI_blenlib.h"
 #include "BLI_dial_2d.h"
-#include "BLI_gsqueue.h"
 #include "BLI_ghash.h"
+#include "BLI_gsqueue.h"
 #include "BLI_hash.h"
+#include "BLI_math.h"
 #include "BLI_task.h"
 #include "BLI_utildefines.h"
 
@@ -37,13 +37,13 @@
 
 #include "PIL_time.h"
 
+#include "DNA_brush_types.h"
 #include "DNA_customdata_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_node_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
-#include "DNA_brush_types.h"
 
 #include "BKE_brush.h"
 #include "BKE_ccg.h"
@@ -74,13 +74,13 @@
 #include "DEG_depsgraph.h"
 
 #include "WM_api.h"
-#include "WM_types.h"
 #include "WM_message.h"
 #include "WM_toolsystem.h"
+#include "WM_types.h"
 
-#include "ED_sculpt.h"
 #include "ED_object.h"
 #include "ED_screen.h"
+#include "ED_sculpt.h"
 #include "ED_view3d.h"
 #include "paint_intern.h"
 #include "sculpt_intern.h"
@@ -8371,9 +8371,8 @@ static void SCULPT_OT_optimize(wmOperatorType *ot)
 static bool sculpt_no_multires_poll(bContext *C)
 {
   Object *ob = CTX_data_active_object(C);
-  SculptSession *ss = ob->sculpt;
-  if (ss && ss->pbvh && SCULPT_mode_poll(C)) {
-    return BKE_pbvh_type(ss->pbvh) != PBVH_GRIDS;
+  if (SCULPT_mode_poll(C) && ob->sculpt && ob->sculpt->pbvh) {
+    return BKE_pbvh_type(ob->sculpt->pbvh) != PBVH_GRIDS;
   }
   return false;
 }
@@ -10068,7 +10067,7 @@ static int sculpt_mask_expand_modal(bContext *C, wmOperator *op, const wmEvent *
     mask_expand_update_it = ss->filter_cache->mask_update_it[(int)SCULPT_active_vertex_get(ss)];
   }
 
-  if ((event->type == ESCKEY && event->val == KM_PRESS) ||
+  if ((event->type == EVT_ESCKEY && event->val == KM_PRESS) ||
       (event->type == RIGHTMOUSE && event->val == KM_PRESS)) {
     /* Returning OPERATOR_CANCELLED will leak memory due to not finishing
      * undo. Better solution could be to make paint_mesh_restore_co work
@@ -10078,8 +10077,8 @@ static int sculpt_mask_expand_modal(bContext *C, wmOperator *op, const wmEvent *
   }
 
   if ((event->type == LEFTMOUSE && event->val == KM_RELEASE) ||
-      (event->type == RETKEY && event->val == KM_PRESS) ||
-      (event->type == PADENTER && event->val == KM_PRESS)) {
+      (event->type == EVT_RETKEY && event->val == KM_PRESS) ||
+      (event->type == EVT_PADENTER && event->val == KM_PRESS)) {
 
     /* Smooth iterations. */
     SculptThreadedTaskData data = {
@@ -10149,7 +10148,7 @@ static int sculpt_mask_expand_modal(bContext *C, wmOperator *op, const wmEvent *
     mask_expand_update_it = ss->filter_cache->mask_update_last_it - 1;
   }
 
-  if (!ELEM(event->type, MOUSEMOVE, LEFTCTRLKEY, RIGHTCTRLKEY)) {
+  if (!ELEM(event->type, MOUSEMOVE, EVT_LEFTCTRLKEY, EVT_RIGHTCTRLKEY)) {
     return OPERATOR_RUNNING_MODAL;
   }
 
@@ -11040,6 +11039,18 @@ static int sculpt_face_sets_change_visibility_invoke(bContext *C,
 
   if (mode == SCULPT_FACE_SET_VISIBILITY_INVERT) {
     SCULPT_face_sets_visibility_invert(ss);
+  }
+
+  /* For modes that use the cursor active vertex, update the rotation origin for viewport
+   * navigation. */
+  if (ELEM(mode, SCULPT_FACE_SET_VISIBILITY_TOGGLE, SCULPT_FACE_SET_VISIBILITY_SHOW_ACTIVE)) {
+    UnifiedPaintSettings *ups = &CTX_data_tool_settings(C)->unified_paint_settings;
+    float location[3];
+    copy_v3_v3(location, SCULPT_active_vertex_co_get(ss));
+    mul_m4_v3(ob->obmat, location);
+    copy_v3_v3(ups->average_stroke_accum, location);
+    ups->average_stroke_counter = 1;
+    ups->last_stroke_valid = true;
   }
 
   /* Sync face sets visibility and vertex visibility. */

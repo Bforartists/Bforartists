@@ -16,6 +16,7 @@
 
 #include "render/background.h"
 #include "render/camera.h"
+#include "render/curves.h"
 #include "render/film.h"
 #include "render/graph.h"
 #include "render/integrator.h"
@@ -25,19 +26,18 @@
 #include "render/object.h"
 #include "render/scene.h"
 #include "render/shader.h"
-#include "render/curves.h"
 
 #include "device/device.h"
 
 #include "blender/blender_device.h"
-#include "blender/blender_sync.h"
 #include "blender/blender_session.h"
+#include "blender/blender_sync.h"
 #include "blender/blender_util.h"
 
 #include "util/util_debug.h"
 #include "util/util_foreach.h"
-#include "util/util_opengl.h"
 #include "util/util_hash.h"
+#include "util/util_opengl.h"
 
 CCL_NAMESPACE_BEGIN
 
@@ -178,6 +178,11 @@ void BlenderSync::sync_recalc(BL::Depsgraph &b_depsgraph, BL::SpaceView3D &b_v3d
         world_recalc = true;
       }
     }
+    /* Volume */
+    else if (b_id.is_a(&RNA_Volume)) {
+      BL::Volume b_volume(b_id);
+      geometry_map.set_recalc(b_volume);
+    }
   }
 
   BlenderViewportParameters new_viewport_parameters(b_v3d);
@@ -257,7 +262,8 @@ void BlenderSync::sync_integrator()
   integrator->transparent_max_bounce = get_int(cscene, "transparent_max_bounces");
 
   integrator->volume_max_steps = get_int(cscene, "volume_max_steps");
-  integrator->volume_step_size = get_float(cscene, "volume_step_size");
+  integrator->volume_step_rate = (preview) ? get_float(cscene, "volume_preview_step_rate") :
+                                             get_float(cscene, "volume_step_rate");
 
   integrator->caustics_reflective = get_boolean(cscene, "caustics_reflective");
   integrator->caustics_refractive = get_boolean(cscene, "caustics_refractive");
@@ -627,12 +633,12 @@ vector<Pass> BlenderSync::sync_render_passes(BL::RenderLayer &b_rlay,
 
   /* Cryptomatte stores two ID/weight pairs per RGBA layer.
    * User facing parameter is the number of pairs. */
-  int crypto_depth = min(16, get_int(crp, "pass_crypto_depth")) / 2;
+  int crypto_depth = min(16, get_int(crp, "pass_crypto_depth"));
   scene->film->cryptomatte_depth = crypto_depth;
   scene->film->cryptomatte_passes = CRYPT_NONE;
   if (get_boolean(crp, "use_pass_crypto_object")) {
-    for (int i = 0; i < crypto_depth; ++i) {
-      string passname = cryptomatte_prefix + string_printf("Object%02d", i);
+    for (int i = 0; i < crypto_depth; i += 2) {
+      string passname = cryptomatte_prefix + string_printf("Object%02d", i / 2);
       b_engine.add_pass(passname.c_str(), 4, "RGBA", b_view_layer.name().c_str());
       Pass::add(PASS_CRYPTOMATTE, passes, passname.c_str());
     }
@@ -640,8 +646,8 @@ vector<Pass> BlenderSync::sync_render_passes(BL::RenderLayer &b_rlay,
                                                         CRYPT_OBJECT);
   }
   if (get_boolean(crp, "use_pass_crypto_material")) {
-    for (int i = 0; i < crypto_depth; ++i) {
-      string passname = cryptomatte_prefix + string_printf("Material%02d", i);
+    for (int i = 0; i < crypto_depth; i += 2) {
+      string passname = cryptomatte_prefix + string_printf("Material%02d", i / 2);
       b_engine.add_pass(passname.c_str(), 4, "RGBA", b_view_layer.name().c_str());
       Pass::add(PASS_CRYPTOMATTE, passes, passname.c_str());
     }
@@ -649,8 +655,8 @@ vector<Pass> BlenderSync::sync_render_passes(BL::RenderLayer &b_rlay,
                                                         CRYPT_MATERIAL);
   }
   if (get_boolean(crp, "use_pass_crypto_asset")) {
-    for (int i = 0; i < crypto_depth; ++i) {
-      string passname = cryptomatte_prefix + string_printf("Asset%02d", i);
+    for (int i = 0; i < crypto_depth; i += 2) {
+      string passname = cryptomatte_prefix + string_printf("Asset%02d", i / 2);
       b_engine.add_pass(passname.c_str(), 4, "RGBA", b_view_layer.name().c_str());
       Pass::add(PASS_CRYPTOMATTE, passes, passname.c_str());
     }

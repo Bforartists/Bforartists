@@ -29,8 +29,8 @@
 #include "BLI_utildefines.h"
 
 #include "DNA_brush_types.h"
-#include "DNA_customdata_types.h"
 #include "DNA_color_types.h"
+#include "DNA_customdata_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
@@ -39,13 +39,13 @@
 #include "DNA_view3d_types.h"
 
 #include "BKE_brush.h"
+#include "BKE_colortools.h"
 #include "BKE_context.h"
 #include "BKE_curve.h"
 #include "BKE_image.h"
 #include "BKE_node.h"
-#include "BKE_paint.h"
-#include "BKE_colortools.h"
 #include "BKE_object.h"
+#include "BKE_paint.h"
 
 #include "WM_api.h"
 #include "wm_cursors.h"
@@ -1239,6 +1239,7 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
     return;
   }
 
+  const wmWindowManager *wm = CTX_wm_manager(C);
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   Scene *scene = CTX_data_scene(C);
   UnifiedPaintSettings *ups = &scene->toolsettings->unified_paint_settings;
@@ -1443,7 +1444,8 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
 
           /* Draw 3D brush cursor. */
           GPU_matrix_push_projection();
-          ED_view3d_draw_setup_view(CTX_wm_window(C),
+          ED_view3d_draw_setup_view(wm,
+                                    CTX_wm_window(C),
                                     CTX_data_depsgraph_pointer(C),
                                     CTX_data_scene(C),
                                     region,
@@ -1537,7 +1539,8 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
               !is_multires) {
             if (BKE_pbvh_type(ss->pbvh) == PBVH_FACES && ss->deform_modifiers_active) {
               GPU_matrix_push_projection();
-              ED_view3d_draw_setup_view(CTX_wm_window(C),
+              ED_view3d_draw_setup_view(wm,
+                                        CTX_wm_window(C),
                                         CTX_data_depsgraph_pointer(C),
                                         CTX_data_scene(C),
                                         region,
@@ -1556,7 +1559,8 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
           if (brush->sculpt_tool == SCULPT_TOOL_MULTIPLANE_SCRAPE &&
               brush->flag2 & BRUSH_MULTIPLANE_SCRAPE_PLANES_PREVIEW && !ss->cache->first_time) {
             GPU_matrix_push_projection();
-            ED_view3d_draw_setup_view(CTX_wm_window(C),
+            ED_view3d_draw_setup_view(wm,
+                                      CTX_wm_window(C),
                                       CTX_data_depsgraph_pointer(C),
                                       CTX_data_scene(C),
                                       region,
@@ -1573,7 +1577,8 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
 
           if (brush->sculpt_tool == SCULPT_TOOL_CLOTH && !ss->cache->first_time) {
             GPU_matrix_push_projection();
-            ED_view3d_draw_setup_view(CTX_wm_window(C),
+            ED_view3d_draw_setup_view(CTX_wm_manager(C),
+                                      CTX_wm_window(C),
                                       CTX_data_depsgraph_pointer(C),
                                       CTX_data_scene(C),
                                       region,

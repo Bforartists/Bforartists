@@ -76,9 +76,7 @@ bool BKE_object_shaderfx_use_time(struct Object *ob, struct ShaderFxData *md);
 
 bool BKE_object_support_modifier_type_check(const struct Object *ob, int modifier_type);
 
-void BKE_object_link_modifiers(struct Scene *scene,
-                               struct Object *ob_dst,
-                               const struct Object *ob_src);
+void BKE_object_link_modifiers(struct Object *ob_dst, const struct Object *ob_src);
 void BKE_object_free_modifiers(struct Object *ob, const int flag);
 void BKE_object_free_shaderfx(struct Object *ob, const int flag);
 
@@ -396,7 +394,7 @@ bool BKE_object_empty_image_data_is_visible_in_view3d(const struct Object *ob,
  * The result is owned by the object.
  *
  * The mesh will be freed when object is re-evaluated or is destroyed. It is possible to force to
- * clear memory sued by this mesh by calling BKE_object_to_mesh_clear().
+ * clear memory used by this mesh by calling BKE_object_to_mesh_clear().
  *
  * If preserve_all_data_layers is truth then the modifier stack is re-evaluated to ensure it
  * preserves all possible custom data layers.

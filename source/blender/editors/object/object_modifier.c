@@ -37,22 +37,23 @@
 #include "DNA_scene_types.h"
 
 #include "BLI_bitmap.h"
-#include "BLI_math.h"
 #include "BLI_listbase.h"
+#include "BLI_math.h"
+#include "BLI_path_util.h"
 #include "BLI_string.h"
 #include "BLI_string_utf8.h"
-#include "BLI_path_util.h"
 #include "BLI_utildefines.h"
 
-#include "BKE_animsys.h"
-#include "BKE_curve.h"
-#include "BKE_context.h"
 #include "BKE_DerivedMesh.h"
+#include "BKE_animsys.h"
+#include "BKE_context.h"
+#include "BKE_curve.h"
 #include "BKE_displist.h"
 #include "BKE_editmesh.h"
 #include "BKE_effect.h"
 #include "BKE_global.h"
 #include "BKE_gpencil_modifier.h"
+#include "BKE_hair.h"
 #include "BKE_key.h"
 #include "BKE_lattice.h"
 #include "BKE_lib_id.h"
@@ -67,9 +68,11 @@
 #include "BKE_ocean.h"
 #include "BKE_paint.h"
 #include "BKE_particle.h"
+#include "BKE_pointcloud.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_softbody.h"
+#include "BKE_volume.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
@@ -80,9 +83,9 @@
 #include "RNA_enum_types.h"
 
 #include "ED_armature.h"
+#include "ED_mesh.h"
 #include "ED_object.h"
 #include "ED_screen.h"
-#include "ED_mesh.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -113,6 +116,15 @@ static void object_force_modifier_update_for_bind(Depsgraph *depsgraph, Object *
   }
   else if (ob->type == OB_GPENCIL) {
     BKE_gpencil_modifiers_calc(depsgraph, scene_eval, ob_eval);
+  }
+  else if (ob->type == OB_HAIR) {
+    BKE_hair_data_update(depsgraph, scene_eval, ob);
+  }
+  else if (ob->type == OB_POINTCLOUD) {
+    BKE_pointcloud_data_update(depsgraph, scene_eval, ob);
+  }
+  else if (ob->type == OB_VOLUME) {
+    BKE_volume_data_update(depsgraph, scene_eval, ob);
   }
 }
 
@@ -654,6 +666,7 @@ static int modifier_apply_shape(Main *bmain,
     BKE_id_free(NULL, mesh_applied);
   }
   else {
+    /* TODO: implement for hair, pointclouds and volumes. */
     BKE_report(reports, RPT_ERROR, "Cannot apply modifier for this object type");
     return 0;
   }
@@ -686,7 +699,7 @@ static int modifier_apply_obdata(
     }
 
     if (mmd && mmd->totlvl && mti->type == eModifierTypeType_OnlyDeform) {
-      if (!multiresModifier_reshapeFromDeformModifier(depsgraph, mmd, ob, md_eval)) {
+      if (!multiresModifier_reshapeFromDeformModifier(depsgraph, ob, mmd, md_eval)) {
         BKE_report(reports, RPT_ERROR, "Multires modifier returned error, skipping apply");
         return 0;
       }
@@ -732,6 +745,7 @@ static int modifier_apply_obdata(
     DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
   }
   else {
+    /* TODO: implement for hair, pointclouds and volumes. */
     BKE_report(reports, RPT_ERROR, "Cannot apply modifier for this object type");
     return 0;
   }
@@ -1375,26 +1389,25 @@ void OBJECT_OT_multires_higher_levels_delete(wmOperatorType *ot)
 
 static int multires_subdivide_exec(bContext *C, wmOperator *op)
 {
-  Scene *scene = CTX_data_scene(C);
-  Object *ob = ED_object_active_context(C);
+  Object *object = ED_object_active_context(C);
   MultiresModifierData *mmd = (MultiresModifierData *)edit_modifier_property_get(
-      op, ob, eModifierType_Multires);
+      op, object, eModifierType_Multires);
 
   if (!mmd) {
     return OPERATOR_CANCELLED;
   }
 
-  multiresModifier_subdivide(mmd, scene, ob, 0, mmd->simple);
+  multiresModifier_subdivide(object, mmd);
 
   ED_object_iter_other(
-      CTX_data_main(C), ob, true, ED_object_multires_update_totlevels_cb, &mmd->totlvl);
+      CTX_data_main(C), object, true, ED_object_multires_update_totlevels_cb, &mmd->totlvl);
 
-  DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
-  WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER, ob);
+  DEG_id_tag_update(&object->id, ID_RECALC_GEOMETRY);
+  WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER, object);
 
-  if (ob->mode & OB_MODE_SCULPT) {
+  if (object->mode & OB_MODE_SCULPT) {
     /* ensure that grid paint mask layer is created */
-    BKE_sculpt_mask_layers_ensure(ob, mmd);
+    BKE_sculpt_mask_layers_ensure(object, mmd);
   }
 
   return OPERATOR_FINISHED;
@@ -1614,19 +1627,19 @@ void OBJECT_OT_multires_external_pack(wmOperatorType *ot)
 /********************* multires apply base ***********************/
 static int multires_base_apply_exec(bContext *C, wmOperator *op)
 {
-  Scene *scene = CTX_data_scene(C);
-  Object *ob = ED_object_active_context(C);
+  Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
+  Object *object = ED_object_active_context(C);
   MultiresModifierData *mmd = (MultiresModifierData *)edit_modifier_property_get(
-      op, ob, eModifierType_Multires);
+      op, object, eModifierType_Multires);
 
   if (!mmd) {
     return OPERATOR_CANCELLED;
   }
 
-  multiresModifier_base_apply(mmd, scene, ob);
+  multiresModifier_base_apply(depsgraph, object, mmd);
 
-  DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
-  WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER, ob);
+  DEG_id_tag_update(&object->id, ID_RECALC_GEOMETRY);
+  WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER, object);
 
   return OPERATOR_FINISHED;
 }

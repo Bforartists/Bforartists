@@ -20,9 +20,9 @@
  * \ingroup draw
  */
 
+#include "DNA_material_types.h"
 #include "DNA_object_types.h"
 #include "DNA_world_types.h"
-#include "DNA_material_types.h"
 
 #include "BLI_dynstr.h"
 #include "BLI_listbase.h"
@@ -34,8 +34,8 @@
 
 #include "DEG_depsgraph_query.h"
 
-#include "GPU_shader.h"
 #include "GPU_material.h"
+#include "GPU_shader.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -558,13 +558,12 @@ void DRW_shader_library_add_file(DRWShaderLibrary *lib, char *lib_code, const ch
   if (index > -1) {
     lib->libs[index] = lib_code;
     BLI_strncpy(lib->libs_name[index], lib_name, MAX_LIB_NAME);
+    lib->libs_deps[index] = drw_shader_dependencies_get(lib, lib_code);
   }
   else {
     printf("Error: Too many libraries. Cannot add %s.\n", lib_name);
     BLI_assert(0);
   }
-
-  lib->libs_deps[index] = drw_shader_dependencies_get(lib, lib_code);
 }
 
 /* Return an allocN'ed string containing the shader code with its dependencies prepended.

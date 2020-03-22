@@ -22,8 +22,8 @@
  */
 
 #include <errno.h>
-#include <sys/types.h>
 #include <fcntl.h>
+#include <sys/types.h>
 
 #ifndef WIN32
 #  include <unistd.h>
@@ -33,16 +33,16 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "DNA_userdef_types.h"
 #include "DNA_scene_types.h" /* min/max frames */
+#include "DNA_userdef_types.h"
 
-#include "BLI_utildefines.h"
 #include "BLI_fileops.h"
-#include "BLI_path_util.h"
 #include "BLI_math.h"
+#include "BLI_path_util.h"
 #include "BLI_rect.h"
-#include "BLI_task.h"
 #include "BLI_string.h"
+#include "BLI_task.h"
+#include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
 
@@ -57,11 +57,11 @@
 #include "WM_api.h"
 #include "WM_types.h"
 
-#include "IMB_imbuf_types.h"
 #include "IMB_imbuf.h"
+#include "IMB_imbuf_types.h"
 
-#include "ED_screen.h"
 #include "ED_clip.h"
+#include "ED_screen.h"
 
 #include "UI_interface.h"
 
@@ -484,11 +484,11 @@ static int view_pan_modal(bContext *C, wmOperator *op, const wmEvent *event)
       RNA_float_set_array(op->ptr, "offset", offset);
       view_pan_exec(C, op);
       break;
-    case ESCKEY:
+    case EVT_ESCKEY:
       view_pan_exit(C, op, 1);
 
       return OPERATOR_CANCELLED;
-    case SPACEKEY:
+    case EVT_SPACEKEY:
       view_pan_exit(C, op, 0);
 
       return OPERATOR_FINISHED;
@@ -1137,7 +1137,7 @@ static int change_frame_invoke(bContext *C, wmOperator *op, const wmEvent *event
 static int change_frame_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
   switch (event->type) {
-    case ESCKEY:
+    case EVT_ESCKEY:
       return OPERATOR_FINISHED;
 
     case MOUSEMOVE:
@@ -1703,7 +1703,7 @@ static int clip_prefetch_modal(bContext *C, wmOperator *UNUSED(op), const wmEven
 
   /* running render */
   switch (event->type) {
-    case ESCKEY:
+    case EVT_ESCKEY:
       return OPERATOR_RUNNING_MODAL;
   }
 

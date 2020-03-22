@@ -37,10 +37,10 @@
 #include "WM_api.h"
 #include "WM_types.h"
 
-#include "ED_space_api.h"
-#include "ED_screen.h"
-#include "ED_view3d.h"
 #include "ED_curve.h"
+#include "ED_screen.h"
+#include "ED_space_api.h"
+#include "ED_view3d.h"
 
 #include "GPU_batch.h"
 #include "GPU_batch_presets.h"
@@ -1154,7 +1154,7 @@ static int curve_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
       return OPERATOR_FINISHED;
     }
   }
-  else if (ELEM(event->type, ESCKEY, RIGHTMOUSE)) {
+  else if (ELEM(event->type, EVT_ESCKEY, RIGHTMOUSE)) {
     ED_region_tag_redraw(cdd->vc.region);
     curve_draw_cancel(C, op);
     return OPERATOR_CANCELLED;

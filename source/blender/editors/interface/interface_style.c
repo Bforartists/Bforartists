@@ -355,7 +355,7 @@ void UI_fontstyle_draw_simple_backdrop(const uiFontStyle *fs,
 
 /* ************** helpers ************************ */
 /* XXX: read a style configure */
-uiStyle *UI_style_get(void)
+const uiStyle *UI_style_get(void)
 {
 #if 0
   uiStyle *style = NULL;
@@ -368,9 +368,9 @@ uiStyle *UI_style_get(void)
 }
 
 /* for drawing, scaled with DPI setting */
-uiStyle *UI_style_get_dpi(void)
+const uiStyle *UI_style_get_dpi(void)
 {
-  uiStyle *style = UI_style_get();
+  const uiStyle *style = UI_style_get();
   static uiStyle _style;
 
   _style = *style;

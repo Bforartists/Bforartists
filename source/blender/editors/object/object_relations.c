@@ -33,8 +33,8 @@
 #include "DNA_collection_types.h"
 #include "DNA_constraint_types.h"
 #include "DNA_gpencil_types.h"
-#include "DNA_light_types.h"
 #include "DNA_lattice_types.h"
+#include "DNA_light_types.h"
 #include "DNA_material_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meta_types.h"
@@ -44,36 +44,37 @@
 #include "DNA_vfont_types.h"
 #include "DNA_world_types.h"
 
-#include "BLI_math.h"
-#include "BLI_listbase.h"
-#include "BLI_linklist.h"
-#include "BLI_string.h"
 #include "BLI_kdtree.h"
+#include "BLI_linklist.h"
+#include "BLI_listbase.h"
+#include "BLI_math.h"
+#include "BLI_string.h"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
 
+#include "BKE_DerivedMesh.h"
 #include "BKE_action.h"
 #include "BKE_animsys.h"
 #include "BKE_armature.h"
 #include "BKE_camera.h"
 #include "BKE_collection.h"
-#include "BKE_context.h"
 #include "BKE_constraint.h"
+#include "BKE_context.h"
 #include "BKE_curve.h"
-#include "BKE_DerivedMesh.h"
 #include "BKE_displist.h"
 #include "BKE_editmesh.h"
-#include "BKE_gpencil.h"
 #include "BKE_fcurve.h"
+#include "BKE_gpencil.h"
+#include "BKE_hair.h"
 #include "BKE_idprop.h"
-#include "BKE_light.h"
 #include "BKE_lattice.h"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_override.h"
 #include "BKE_lib_query.h"
 #include "BKE_lib_remap.h"
+#include "BKE_light.h"
 #include "BKE_lightprobe.h"
 #include "BKE_main.h"
 #include "BKE_material.h"
@@ -82,10 +83,12 @@
 #include "BKE_modifier.h"
 #include "BKE_node.h"
 #include "BKE_object.h"
+#include "BKE_pointcloud.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_speaker.h"
 #include "BKE_texture.h"
+#include "BKE_volume.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
@@ -105,8 +108,8 @@
 #include "ED_curve.h"
 #include "ED_gpencil.h"
 #include "ED_keyframing.h"
-#include "ED_object.h"
 #include "ED_mesh.h"
+#include "ED_object.h"
 #include "ED_screen.h"
 #include "ED_view3d.h"
 
@@ -483,12 +486,6 @@ void OBJECT_OT_proxy_make(wmOperatorType *ot)
 }
 
 /********************** Clear Parent Operator ******************* */
-
-typedef enum eObClearParentTypes {
-  CLEAR_PARENT_ALL = 0,
-  CLEAR_PARENT_KEEP_TRANSFORM,
-  CLEAR_PARENT_INVERSE,
-} eObClearParentTypes;
 
 EnumPropertyItem prop_clear_parent_types[] = {
     {CLEAR_PARENT_ALL,
@@ -1587,7 +1584,7 @@ static int make_links_data_exec(bContext *C, wmOperator *op)
             DEG_id_tag_update(&ob_dst->id, ID_RECALC_COPY_ON_WRITE);
             break;
           case MAKE_LINKS_MODIFIERS:
-            BKE_object_link_modifiers(scene, ob_dst, ob_src);
+            BKE_object_link_modifiers(ob_dst, ob_src);
             DEG_id_tag_update(&ob_dst->id,
                               ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY | ID_RECALC_ANIMATION);
             break;
@@ -1900,6 +1897,15 @@ static void single_obdata_users(
             break;
           case OB_GPENCIL:
             ob->data = ID_NEW_SET(ob->data, BKE_gpencil_copy(bmain, ob->data));
+            break;
+          case OB_HAIR:
+            ob->data = ID_NEW_SET(ob->data, BKE_hair_copy(bmain, ob->data));
+            break;
+          case OB_POINTCLOUD:
+            ob->data = ID_NEW_SET(ob->data, BKE_pointcloud_copy(bmain, ob->data));
+            break;
+          case OB_VOLUME:
+            ob->data = ID_NEW_SET(ob->data, BKE_volume_copy(bmain, ob->data));
             break;
           default:
             printf("ERROR %s: can't copy %s\n", __func__, id->name);
@@ -2471,7 +2477,7 @@ static int make_override_library_exec(bContext *C, wmOperator *op)
         /* Disabled for now, according to some artist this is probably not really useful anyway.
          * And it breaks things like objects parented to bones
          * (most likely due to missing proper setting of inverse parent matrix?)... */
-        /* Note: we might even actually want to get rid of that instanciating empty... */
+        /* Note: we might even actually want to get rid of that instantiating empty... */
         if (0 && new_ob->parent == NULL) {
           new_ob->parent = obcollection;
         }

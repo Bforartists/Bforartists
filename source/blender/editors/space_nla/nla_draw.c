@@ -21,11 +21,11 @@
  * \ingroup spnla
  */
 
-#include <string.h>
+#include <float.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <float.h>
+#include <string.h>
 
 #include "DNA_anim_types.h"
 #include "DNA_node_types.h"
@@ -37,9 +37,9 @@
 #include "BLI_dlrbTree.h"
 #include "BLI_utildefines.h"
 
+#include "BKE_context.h"
 #include "BKE_fcurve.h"
 #include "BKE_nla.h"
-#include "BKE_context.h"
 #include "BKE_screen.h"
 
 #include "ED_anim_api.h"
@@ -55,8 +55,8 @@
 #include "UI_resources.h"
 #include "UI_view2d.h"
 
-#include "nla_private.h"
 #include "nla_intern.h" /* own include */
+#include "nla_private.h"
 
 /* *********************************************** */
 /* Strips */
@@ -604,7 +604,7 @@ static void nla_draw_strip_text(AnimData *adt,
                          (nlt->flag & NLATRACK_SOLO) == 0);
   char str[256];
   size_t str_len;
-  char col[4];
+  uchar col[4];
 
   /* just print the name and the range */
   if (strip->flag & NLASTRIP_FLAG_TEMP_META) {
@@ -652,7 +652,7 @@ static void nla_draw_strip_frames_text(
     NlaTrack *UNUSED(nlt), NlaStrip *strip, View2D *v2d, float UNUSED(yminc), float ymaxc)
 {
   const float ytol = 1.0f; /* small offset to vertical positioning of text, for legibility */
-  const char col[4] = {220, 220, 220, 255}; /* light gray */
+  const uchar col[4] = {220, 220, 220, 255}; /* light gray */
   char numstr[32];
   size_t numstr_len;
 

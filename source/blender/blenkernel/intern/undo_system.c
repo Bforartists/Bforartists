@@ -24,10 +24,10 @@
 
 #include "CLG_log.h"
 
-#include "BLI_utildefines.h"
-#include "BLI_sys_types.h"
 #include "BLI_listbase.h"
 #include "BLI_string.h"
+#include "BLI_sys_types.h"
+#include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
 
@@ -163,6 +163,7 @@ static bool undosys_step_encode(bContext *C, Main *bmain, UndoStack *ustack, Und
        * not all members are filled in. */
       us->type->step_foreach_ID_ref(us, undosys_id_ref_store, bmain);
     }
+
 #ifdef WITH_GLOBAL_UNDO_CORRECT_ORDER
     if (us->type == BKE_UNDOSYS_TYPE_MEMFILE) {
       ustack->step_active_memfile = us;
@@ -193,7 +194,7 @@ static void undosys_step_decode(
              * undo step will be correctly resolved, see: T56163. */
             undosys_step_decode(C, bmain, ustack, us_iter, dir, false);
             /* May have been freed on memfile read. */
-            bmain = G.main;
+            bmain = G_MAIN;
           }
           break;
         }
