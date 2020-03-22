@@ -24,14 +24,14 @@
 #include "render/shader.h"
 
 #include "blender/blender_image.h"
-#include "blender/blender_texture.h"
 #include "blender/blender_sync.h"
+#include "blender/blender_texture.h"
 #include "blender/blender_util.h"
 
 #include "util/util_debug.h"
 #include "util/util_foreach.h"
-#include "util/util_string.h"
 #include "util/util_set.h"
+#include "util/util_string.h"
 #include "util/util_task.h"
 
 CCL_NAMESPACE_BEGIN
@@ -1260,6 +1260,7 @@ void BlenderSync::sync_materials(BL::Depsgraph &b_depsgraph, bool update_all)
       shader->heterogeneous_volume = !get_boolean(cmat, "homogeneous_volume");
       shader->volume_sampling_method = get_volume_sampling(cmat);
       shader->volume_interpolation_method = get_volume_interpolation(cmat);
+      shader->volume_step_rate = get_float(cmat, "volume_step_rate");
       shader->displacement_method = get_displacement_method(cmat);
 
       shader->set_graph(graph);
@@ -1324,6 +1325,7 @@ void BlenderSync::sync_world(BL::Depsgraph &b_depsgraph, BL::SpaceView3D &b_v3d,
       shader->heterogeneous_volume = !get_boolean(cworld, "homogeneous_volume");
       shader->volume_sampling_method = get_volume_sampling(cworld);
       shader->volume_interpolation_method = get_volume_interpolation(cworld);
+      shader->volume_step_rate = get_float(cworld, "volume_step_size");
     }
     else if (new_viewport_parameters.use_scene_world && b_world) {
       BackgroundNode *background = new BackgroundNode();

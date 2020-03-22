@@ -21,8 +21,8 @@
  * \ingroup edtransform
  */
 
-#include <string.h>
 #include <math.h>
+#include <string.h>
 
 #include "MEM_guardedalloc.h"
 
@@ -34,20 +34,21 @@
 #include "DNA_constraint_types.h"
 #include "DNA_gpencil_types.h"
 #include "DNA_lattice_types.h"
+#include "DNA_mask_types.h"
+#include "DNA_mesh_types.h"
+#include "DNA_meta_types.h"
+#include "DNA_modifier_types.h"
+#include "DNA_movieclip_types.h"
+#include "DNA_object_types.h"
+#include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_sequence_types.h"
 #include "DNA_space_types.h"
-#include "DNA_scene_types.h"
-#include "DNA_object_types.h"
-#include "DNA_mesh_types.h"
 #include "DNA_view3d_types.h"
-#include "DNA_modifier_types.h"
-#include "DNA_movieclip_types.h"
-#include "DNA_mask_types.h"
-#include "DNA_meta_types.h"
 
-#include "BLI_math.h"
 #include "BLI_blenlib.h"
+#include "BLI_ghash.h"
+#include "BLI_math.h"
 #include "BLI_rand.h"
 #include "BLI_utildefines.h"
 
@@ -69,7 +70,7 @@
 #include "BKE_curve.h"
 #include "BKE_editmesh.h"
 #include "BKE_fcurve.h"
-#include "BKE_gpencil.h"
+#include "BKE_gpencil_geom.h"
 #include "BKE_lattice.h"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
@@ -86,24 +87,24 @@
 
 #include "ED_anim_api.h"
 #include "ED_armature.h"
+#include "ED_clip.h"
+#include "ED_curve.h" /* for curve_editnurbs */
+#include "ED_gpencil.h"
 #include "ED_image.h"
 #include "ED_keyframing.h"
 #include "ED_markers.h"
 #include "ED_mesh.h"
 #include "ED_object.h"
 #include "ED_particle.h"
+#include "ED_screen.h"
 #include "ED_screen_types.h"
+#include "ED_sculpt.h"
 #include "ED_space_api.h"
 #include "ED_uvedit.h"
 #include "ED_view3d.h"
-#include "ED_curve.h" /* for curve_editnurbs */
-#include "ED_clip.h"
-#include "ED_screen.h"
-#include "ED_gpencil.h"
-#include "ED_sculpt.h"
 
-#include "WM_types.h"
 #include "WM_api.h"
+#include "WM_types.h"
 
 #include "RE_engine.h"
 
@@ -1149,17 +1150,19 @@ static void recalcData_sequencer(TransInfo *t)
 static void recalcData_gpencil_strokes(TransInfo *t)
 {
   TransDataContainer *tc = TRANS_DATA_CONTAINER_FIRST_SINGLE(t);
-  bGPDstroke *gps_prev = NULL;
+  GHash *strokes = BLI_ghash_ptr_new(__func__);
 
   TransData *td = tc->data;
   for (int i = 0; i < tc->data_len; i++, td++) {
     bGPDstroke *gps = td->extra;
-    if ((gps != NULL) && (gps != gps_prev)) {
+
+    if ((gps != NULL) && (!BLI_ghash_haskey(strokes, gps))) {
+      BLI_ghash_insert(strokes, gps, gps);
       /* Calc geometry data. */
       BKE_gpencil_stroke_geometry_update(gps);
-      gps_prev = gps;
     }
   }
+  BLI_ghash_free(strokes, NULL, NULL);
 }
 
 static void recalcData_sculpt(TransInfo *t)

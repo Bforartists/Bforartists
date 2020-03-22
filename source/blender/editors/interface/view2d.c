@@ -32,17 +32,17 @@
 #include "DNA_userdef_types.h"
 
 #include "BLI_array.h"
-#include "BLI_utildefines.h"
 #include "BLI_link_utils.h"
-#include "BLI_rect.h"
 #include "BLI_math.h"
 #include "BLI_memarena.h"
-#include "BLI_timecode.h"
+#include "BLI_rect.h"
 #include "BLI_string.h"
+#include "BLI_timecode.h"
+#include "BLI_utildefines.h"
 
 #include "BKE_context.h"
-#include "BKE_screen.h"
 #include "BKE_global.h"
+#include "BKE_screen.h"
 
 #include "GPU_immediate.h"
 #include "GPU_matrix.h"
@@ -243,7 +243,7 @@ static void view2d_masks(View2D *v2d, bool check_scrollers, const rcti *mask_scr
 void UI_view2d_region_reinit(View2D *v2d, short type, int winx, int winy)
 {
   bool tot_changed = false, do_init;
-  uiStyle *style = UI_style_get();
+  const uiStyle *style = UI_style_get();
 
   do_init = (v2d->flag & V2D_IS_INITIALISED) == 0;
 
@@ -2146,7 +2146,7 @@ static MemArena *g_v2d_strings_arena = NULL;
 static View2DString *g_v2d_strings = NULL;
 
 void UI_view2d_text_cache_add(
-    View2D *v2d, float x, float y, const char *str, size_t str_len, const char col[4])
+    View2D *v2d, float x, float y, const char *str, size_t str_len, const uchar col[4])
 {
   int mval[2];
 
@@ -2177,7 +2177,7 @@ void UI_view2d_text_cache_add(
 
 /* no clip (yet) */
 void UI_view2d_text_cache_add_rectf(
-    View2D *v2d, const rctf *rect_view, const char *str, size_t str_len, const char col[4])
+    View2D *v2d, const rctf *rect_view, const char *str, size_t str_len, const uchar col[4])
 {
   rcti rect;
 

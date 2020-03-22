@@ -16,11 +16,11 @@
 
 #include <stdlib.h>
 
+#include "device/device.h"
 #include "render/background.h"
 #include "render/bake.h"
 #include "render/camera.h"
 #include "render/curves.h"
-#include "device/device.h"
 #include "render/film.h"
 #include "render/integrator.h"
 #include "render/light.h"
@@ -63,6 +63,7 @@ DeviceScene::DeviceScene(Device *device)
       object_motion_pass(device, "__object_motion_pass", MEM_GLOBAL),
       object_motion(device, "__object_motion", MEM_GLOBAL),
       object_flag(device, "__object_flag", MEM_GLOBAL),
+      object_volume_step(device, "__object_volume_step", MEM_GLOBAL),
       camera_motion(device, "__camera_motion", MEM_GLOBAL),
       attributes_map(device, "__attributes_map", MEM_GLOBAL),
       attributes_float(device, "__attributes_float", MEM_GLOBAL),
@@ -84,7 +85,15 @@ DeviceScene::DeviceScene(Device *device)
 }
 
 Scene::Scene(const SceneParams &params_, Device *device)
-    : name("Scene"), device(device), dscene(device), params(params_)
+    : name("Scene"),
+      default_surface(NULL),
+      default_volume(NULL),
+      default_light(NULL),
+      default_background(NULL),
+      default_empty(NULL),
+      device(device),
+      dscene(device),
+      params(params_)
 {
   memset((void *)&dscene.data, 0, sizeof(dscene.data));
 

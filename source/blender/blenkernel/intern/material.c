@@ -21,39 +21,45 @@
  * \ingroup bke
  */
 
-#include <string.h>
 #include <math.h>
 #include <stddef.h>
+#include <string.h>
 
 #include "CLG_log.h"
 
 #include "MEM_guardedalloc.h"
 
+#include "DNA_ID.h"
 #include "DNA_anim_types.h"
 #include "DNA_collection_types.h"
 #include "DNA_curve_types.h"
+#include "DNA_customdata_types.h"
+#include "DNA_defaults.h"
+#include "DNA_gpencil_types.h"
+#include "DNA_hair_types.h"
 #include "DNA_material_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
-#include "DNA_customdata_types.h"
-#include "DNA_gpencil_types.h"
-#include "DNA_ID.h"
 #include "DNA_meta_types.h"
 #include "DNA_node_types.h"
 #include "DNA_object_types.h"
+#include "DNA_pointcloud_types.h"
 #include "DNA_scene_types.h"
-#include "DNA_defaults.h"
+#include "DNA_volume_types.h"
 
-#include "BLI_math.h"
-#include "BLI_listbase.h"
-#include "BLI_utildefines.h"
 #include "BLI_array_utils.h"
+#include "BLI_listbase.h"
+#include "BLI_math.h"
+#include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
 
 #include "BKE_animsys.h"
 #include "BKE_brush.h"
+#include "BKE_curve.h"
 #include "BKE_displist.h"
+#include "BKE_editmesh.h"
+#include "BKE_font.h"
 #include "BKE_gpencil.h"
 #include "BKE_icons.h"
 #include "BKE_idtype.h"
@@ -62,11 +68,8 @@
 #include "BKE_main.h"
 #include "BKE_material.h"
 #include "BKE_mesh.h"
-#include "BKE_scene.h"
 #include "BKE_node.h"
-#include "BKE_curve.h"
-#include "BKE_editmesh.h"
-#include "BKE_font.h"
+#include "BKE_scene.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
@@ -243,52 +246,66 @@ Material *BKE_material_localize(Material *ma)
 
 Material ***BKE_object_material_array_p(Object *ob)
 {
-  Mesh *me;
-  Curve *cu;
-  MetaBall *mb;
-  bGPdata *gpd;
-
   if (ob->type == OB_MESH) {
-    me = ob->data;
+    Mesh *me = ob->data;
     return &(me->mat);
   }
   else if (ELEM(ob->type, OB_CURVE, OB_FONT, OB_SURF)) {
-    cu = ob->data;
+    Curve *cu = ob->data;
     return &(cu->mat);
   }
   else if (ob->type == OB_MBALL) {
-    mb = ob->data;
+    MetaBall *mb = ob->data;
     return &(mb->mat);
   }
   else if (ob->type == OB_GPENCIL) {
-    gpd = ob->data;
+    bGPdata *gpd = ob->data;
     return &(gpd->mat);
+  }
+  else if (ob->type == OB_HAIR) {
+    Hair *hair = ob->data;
+    return &(hair->mat);
+  }
+  else if (ob->type == OB_POINTCLOUD) {
+    PointCloud *pointcloud = ob->data;
+    return &(pointcloud->mat);
+  }
+  else if (ob->type == OB_VOLUME) {
+    Volume *volume = ob->data;
+    return &(volume->mat);
   }
   return NULL;
 }
 
 short *BKE_object_material_len_p(Object *ob)
 {
-  Mesh *me;
-  Curve *cu;
-  MetaBall *mb;
-  bGPdata *gpd;
-
   if (ob->type == OB_MESH) {
-    me = ob->data;
+    Mesh *me = ob->data;
     return &(me->totcol);
   }
   else if (ELEM(ob->type, OB_CURVE, OB_FONT, OB_SURF)) {
-    cu = ob->data;
+    Curve *cu = ob->data;
     return &(cu->totcol);
   }
   else if (ob->type == OB_MBALL) {
-    mb = ob->data;
+    MetaBall *mb = ob->data;
     return &(mb->totcol);
   }
   else if (ob->type == OB_GPENCIL) {
-    gpd = ob->data;
+    bGPdata *gpd = ob->data;
     return &(gpd->totcol);
+  }
+  else if (ob->type == OB_HAIR) {
+    Hair *hair = ob->data;
+    return &(hair->totcol);
+  }
+  else if (ob->type == OB_POINTCLOUD) {
+    PointCloud *pointcloud = ob->data;
+    return &(pointcloud->totcol);
+  }
+  else if (ob->type == OB_VOLUME) {
+    Volume *volume = ob->data;
+    return &(volume->totcol);
   }
   return NULL;
 }
@@ -308,6 +325,12 @@ Material ***BKE_id_material_array_p(ID *id)
       return &(((MetaBall *)id)->mat);
     case ID_GD:
       return &(((bGPdata *)id)->mat);
+    case ID_HA:
+      return &(((Hair *)id)->mat);
+    case ID_PT:
+      return &(((PointCloud *)id)->mat);
+    case ID_VO:
+      return &(((Volume *)id)->mat);
     default:
       break;
   }
@@ -328,6 +351,12 @@ short *BKE_id_material_len_p(ID *id)
       return &(((MetaBall *)id)->totcol);
     case ID_GD:
       return &(((bGPdata *)id)->totcol);
+    case ID_HA:
+      return &(((Hair *)id)->totcol);
+    case ID_PT:
+      return &(((PointCloud *)id)->totcol);
+    case ID_VO:
+      return &(((Volume *)id)->totcol);
     default:
       break;
   }
@@ -347,7 +376,10 @@ static void material_data_index_remove_id(ID *id, short index)
       BKE_curve_material_index_remove((Curve *)id, index);
       break;
     case ID_MB:
-      /* meta-elems don't have materials atm */
+    case ID_HA:
+    case ID_PT:
+    case ID_VO:
+      /* No material indices for these object data types. */
       break;
     default:
       break;
@@ -387,7 +419,10 @@ static void material_data_index_clear_id(ID *id)
       BKE_curve_material_index_clear((Curve *)id);
       break;
     case ID_MB:
-      /* meta-elems don't have materials atm */
+    case ID_HA:
+    case ID_PT:
+    case ID_VO:
+      /* No material indices for these object data types. */
       break;
     default:
       break;

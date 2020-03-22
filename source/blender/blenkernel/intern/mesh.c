@@ -23,38 +23,37 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "DNA_object_types.h"
+#include "DNA_defaults.h"
 #include "DNA_key_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
-#include "DNA_defaults.h"
+#include "DNA_object_types.h"
 
-#include "BLI_utildefines.h"
 #include "BLI_bitmap.h"
+#include "BLI_edgehash.h"
 #include "BLI_ghash.h"
 #include "BLI_hash.h"
-#include "BLI_math.h"
 #include "BLI_linklist.h"
+#include "BLI_math.h"
 #include "BLI_memarena.h"
-#include "BLI_edgehash.h"
 #include "BLI_string.h"
+#include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
 
 #include "BKE_animsys.h"
-#include "BKE_idcode.h"
-#include "BKE_main.h"
+#include "BKE_editmesh.h"
 #include "BKE_global.h"
 #include "BKE_idtype.h"
 #include "BKE_key.h"
+#include "BKE_lib_id.h"
+#include "BKE_main.h"
+#include "BKE_material.h"
 #include "BKE_mesh.h"
 #include "BKE_mesh_runtime.h"
-#include "BKE_lib_id.h"
-#include "BKE_material.h"
 #include "BKE_modifier.h"
 #include "BKE_multires.h"
 #include "BKE_object.h"
-#include "BKE_editmesh.h"
 
 #include "PIL_time.h"
 
@@ -148,7 +147,7 @@ IDTypeInfo IDType_ID_ME = {
     .id_filter = FILTER_ID_ME,
     .main_listbase_index = INDEX_ID_ME,
     .struct_size = sizeof(Mesh),
-    .name = "mesh",
+    .name = "Mesh",
     .name_plural = "meshes",
     .translation_context = BLT_I18NCONTEXT_ID_MESH,
     .flags = 0,
@@ -672,7 +671,8 @@ static void mesh_ensure_cdlayers_primary(Mesh *mesh, bool do_tessface)
 Mesh *BKE_mesh_new_nomain(
     int verts_len, int edges_len, int tessface_len, int loops_len, int polys_len)
 {
-  Mesh *mesh = BKE_libblock_alloc(NULL, ID_ME, BKE_idcode_to_name(ID_ME), LIB_ID_COPY_LOCALIZE);
+  Mesh *mesh = BKE_libblock_alloc(
+      NULL, ID_ME, BKE_idtype_idcode_to_name(ID_ME), LIB_ID_COPY_LOCALIZE);
   BKE_libblock_init_empty(&mesh->id);
 
   /* don't use CustomData_reset(...); because we dont want to touch customdata */
@@ -857,11 +857,11 @@ Mesh *BKE_mesh_from_bmesh_for_eval_nomain(BMesh *bm,
  * TODO(campbell): support mesh with only an edit-mesh which is lazy initialized.
  */
 Mesh *BKE_mesh_from_editmesh_with_coords_thin_wrap(BMEditMesh *em,
-                                                   const CustomData_MeshMasks *data_mask,
+                                                   const CustomData_MeshMasks *cd_mask_extra,
                                                    float (*vertexCos)[3],
                                                    const Mesh *me_settings)
 {
-  Mesh *me = BKE_mesh_from_bmesh_for_eval_nomain(em->bm, data_mask, me_settings);
+  Mesh *me = BKE_mesh_from_bmesh_for_eval_nomain(em->bm, cd_mask_extra, me_settings);
   /* Use editmesh directly where possible. */
   me->runtime.is_original = true;
   if (vertexCos) {

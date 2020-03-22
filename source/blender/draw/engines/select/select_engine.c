@@ -32,8 +32,8 @@
 #include "draw_cache_impl.h"
 #include "draw_manager.h"
 
-#include "select_private.h"
 #include "select_engine.h"
+#include "select_private.h"
 
 #define SELECT_ENGINE "SELECT_ENGINE"
 
@@ -381,7 +381,7 @@ RenderEngineType DRW_engine_viewport_select_type = {
     NULL,
     SELECT_ENGINE,
     N_("Select ID"),
-    RE_INTERNAL,
+    RE_INTERNAL | RE_USE_STEREO_VIEWPORT,
     NULL,
     NULL,
     NULL,

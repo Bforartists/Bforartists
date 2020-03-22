@@ -24,11 +24,10 @@
 #ifndef __DNA_GPENCIL_TYPES_H__
 #define __DNA_GPENCIL_TYPES_H__
 
-#include "DNA_listBase.h"
 #include "DNA_ID.h"
 #include "DNA_brush_types.h"
+#include "DNA_listBase.h"
 
-struct ARegion;
 struct AnimData;
 struct MDeformVert;
 
@@ -481,8 +480,6 @@ typedef enum eGPLayerBlendModes {
 
 /* Runtime temp data for bGPdata */
 typedef struct bGPdata_Runtime {
-  /** Last region where drawing was originated. */
-  struct ARegion *ar;
   /** Stroke buffer. */
   void *sbuffer;
   /** Temp batches cleared after drawing. */

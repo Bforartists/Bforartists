@@ -24,10 +24,10 @@
 /* a full doc with API notes can be found in
  * bf-blender/trunk/blender/doc/guides/interface_API.txt */
 
+#include <ctype.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 #include "MEM_guardedalloc.h"
 
@@ -51,10 +51,10 @@
 
 #include "ED_screen.h"
 
-#include "UI_view2d.h"
 #include "UI_interface.h"
 #include "UI_interface_icons.h"
 #include "UI_resources.h"
+#include "UI_view2d.h"
 
 #include "GPU_immediate.h"
 #include "GPU_state.h"
@@ -434,7 +434,7 @@ void UI_panel_end(
 
 static void ui_offset_panel_block(uiBlock *block)
 {
-  uiStyle *style = UI_style_get_dpi();
+  const uiStyle *style = UI_style_get_dpi();
 
   /* compute bounds and offset */
   ui_block_bounds_calc(block);
@@ -1584,13 +1584,13 @@ static void ui_handle_panel_header(
   /* XXX weak code, currently it assumes layout style for location of widgets */
 
   /* check open/collapsed button */
-  if (event == RETKEY) {
+  if (event == EVT_RETKEY) {
     button = 1;
   }
-  else if (event == AKEY) {
+  else if (event == EVT_AKEY) {
     button = 1;
   }
-  else if (ELEM(event, 0, RETKEY, LEFTMOUSE) && shift) {
+  else if (ELEM(event, 0, EVT_RETKEY, LEFTMOUSE) && shift) {
     if (block->panel->type->parent == NULL) {
       block->panel->flag ^= PNL_PIN;
       button = 2;
@@ -1938,7 +1938,7 @@ void UI_panel_category_draw_all(ARegion *region, const char *category_id_active)
   // #define USE_FLAT_INACTIVE
   const bool is_left = RGN_ALIGN_ENUM_FROM_MASK(region->alignment != RGN_ALIGN_RIGHT);
   View2D *v2d = &region->v2d;
-  uiStyle *style = UI_style_get();
+  const uiStyle *style = UI_style_get();
   const uiFontStyle *fstyle = &style->widget;
   const int fontid = fstyle->uifont_id;
   short fstyle_points = fstyle->points;
@@ -2305,7 +2305,7 @@ int ui_handler_panel_region(bContext *C,
           retval = WM_UI_HANDLER_BREAK;
         }
       }
-      else if ((event->type == TABKEY && event->ctrl) ||
+      else if ((event->type == EVT_TABKEY && event->ctrl) ||
                ELEM(event->type, WHEELUPMOUSE, WHEELDOWNMOUSE)) {
         /* cycle tabs */
         retval = ui_handle_panel_category_cycling(event, region, active_but);
@@ -2340,7 +2340,8 @@ int ui_handler_panel_region(bContext *C,
     /* XXX hardcoded key warning */
     if (ELEM(mouse_state, PANEL_MOUSE_INSIDE_CONTENT, PANEL_MOUSE_INSIDE_HEADER) &&
         event->val == KM_PRESS) {
-      if (event->type == AKEY && ((event->ctrl + event->oskey + event->shift + event->alt) == 0)) {
+      if (event->type == EVT_AKEY &&
+          ((event->ctrl + event->oskey + event->shift + event->alt) == 0)) {
 
         if (pa->flag & PNL_CLOSEDY) {
           if ((block->rect.ymax <= my) && (block->rect.ymax + PNL_HEADER >= my)) {
@@ -2366,9 +2367,9 @@ int ui_handler_panel_region(bContext *C,
       if (event->val == KM_PRESS) {
 
         /* open close on header */
-        if (ELEM(event->type, RETKEY, PADENTER)) {
+        if (ELEM(event->type, EVT_RETKEY, EVT_PADENTER)) {
           if (mouse_state == PANEL_MOUSE_INSIDE_HEADER) {
-            ui_handle_panel_header(C, block, mx, my, RETKEY, event->ctrl, event->shift);
+            ui_handle_panel_header(C, block, mx, my, EVT_RETKEY, event->ctrl, event->shift);
             retval = WM_UI_HANDLER_BREAK;
             break;
           }
@@ -2395,7 +2396,7 @@ int ui_handler_panel_region(bContext *C,
             break;
           }
         }
-        else if (event->type == ESCKEY) {
+        else if (event->type == EVT_ESCKEY) {
           /*XXX 2.50*/
 #if 0
           if (block->handler) {
@@ -2405,7 +2406,7 @@ int ui_handler_panel_region(bContext *C,
           }
 #endif
         }
-        else if (event->type == PADPLUSKEY || event->type == PADMINUS) {
+        else if (event->type == EVT_PADPLUSKEY || event->type == EVT_PADMINUS) {
 #if 0 /* XXX make float panel exception? */
           int zoom = 0;
 

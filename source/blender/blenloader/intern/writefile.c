@@ -72,18 +72,18 @@
  * - write #USER (#UserDef struct) if filename is ``~/.config/blender/X.XX/config/startup.blend``.
  */
 
-#include <math.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <math.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifdef WIN32
-#  include <zlib.h> /* odd include order-issue */
+#  include "BLI_winstuff.h"
 #  include "winsock2.h"
 #  include <io.h>
-#  include "BLI_winstuff.h"
+#  include <zlib.h> /* odd include order-issue */
 #else
 #  include <unistd.h> /* FreeBSD, for write() and close(). */
 #endif
@@ -101,50 +101,53 @@
 #include "DNA_cloth_types.h"
 #include "DNA_collection_types.h"
 #include "DNA_constraint_types.h"
+#include "DNA_curveprofile_types.h"
 #include "DNA_dynamicpaint_types.h"
-#include "DNA_genfile.h"
-#include "DNA_gpencil_types.h"
-#include "DNA_gpencil_modifier_types.h"
-#include "DNA_shader_fx_types.h"
 #include "DNA_fileglobal_types.h"
+#include "DNA_fluid_types.h"
+#include "DNA_genfile.h"
+#include "DNA_gpencil_modifier_types.h"
+#include "DNA_gpencil_types.h"
+#include "DNA_hair_types.h"
 #include "DNA_key_types.h"
 #include "DNA_lattice_types.h"
-#include "DNA_light_types.h"
 #include "DNA_layer_types.h"
+#include "DNA_light_types.h"
+#include "DNA_lightprobe_types.h"
 #include "DNA_linestyle_types.h"
-#include "DNA_meta_types.h"
+#include "DNA_mask_types.h"
+#include "DNA_material_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
-#include "DNA_material_types.h"
+#include "DNA_meta_types.h"
+#include "DNA_movieclip_types.h"
 #include "DNA_node_types.h"
-#include "DNA_object_types.h"
 #include "DNA_object_force_types.h"
+#include "DNA_object_types.h"
 #include "DNA_packedFile_types.h"
 #include "DNA_particle_types.h"
-#include "DNA_lightprobe_types.h"
+#include "DNA_pointcloud_types.h"
 #include "DNA_rigidbody_types.h"
 #include "DNA_scene_types.h"
+#include "DNA_screen_types.h"
 #include "DNA_sdna_types.h"
 #include "DNA_sequence_types.h"
-#include "DNA_fluid_types.h"
-#include "DNA_space_types.h"
-#include "DNA_screen_types.h"
-#include "DNA_speaker_types.h"
+#include "DNA_shader_fx_types.h"
 #include "DNA_sound_types.h"
+#include "DNA_space_types.h"
+#include "DNA_speaker_types.h"
 #include "DNA_text_types.h"
-#include "DNA_view3d_types.h"
 #include "DNA_vfont_types.h"
-#include "DNA_world_types.h"
+#include "DNA_view3d_types.h"
+#include "DNA_volume_types.h"
 #include "DNA_windowmanager_types.h"
 #include "DNA_workspace_types.h"
-#include "DNA_movieclip_types.h"
-#include "DNA_mask_types.h"
-#include "DNA_curveprofile_types.h"
+#include "DNA_world_types.h"
 
-#include "MEM_guardedalloc.h"  // MEM_freeN
 #include "BLI_bitmap.h"
 #include "BLI_blenlib.h"
 #include "BLI_mempool.h"
+#include "MEM_guardedalloc.h"  // MEM_freeN
 
 #include "BKE_action.h"
 #include "BKE_blender_version.h"
@@ -155,7 +158,7 @@
 #include "BKE_fcurve.h"
 #include "BKE_global.h"  // for G
 #include "BKE_gpencil_modifier.h"
-#include "BKE_idcode.h"
+#include "BKE_idtype.h"
 #include "BKE_layer.h"
 #include "BKE_lib_override.h"
 #include "BKE_main.h"
@@ -703,7 +706,7 @@ void IDP_WriteProperty(const IDProperty *prop, void *wd)
   IDP_WriteProperty_OnlyData(prop, wd);
 }
 
-static void write_iddata(void *wd, const ID *id)
+static void write_iddata(WriteData *wd, ID *id)
 {
   /* ID_WM's id->properties are considered runtime only, and never written in .blend file. */
   if (id->properties && !ELEM(GS(id->name), ID_WM)) {
@@ -730,6 +733,11 @@ static void write_iddata(void *wd, const ID *id)
         }
       }
     }
+  }
+
+  /* Clear the accumulated recalc flags in case of undo step saving. */
+  if (wd->use_memfile) {
+    id->recalc_undo_accumulated = 0;
   }
 }
 
@@ -1130,6 +1138,11 @@ static void write_nodetree_nolib(WriteData *wd, bNodeTree *ntree)
   }
   for (sock = ntree->outputs.first; sock; sock = sock->next) {
     write_node_socket_interface(wd, sock);
+  }
+
+  /* Clear the accumulated recalc flags in case of undo step saving. */
+  if (wd->use_memfile) {
+    ntree->id.recalc_undo_accumulated = 0;
   }
 }
 
@@ -2425,6 +2438,11 @@ static void write_collection_nolib(WriteData *wd, Collection *collection)
   for (CollectionChild *child = collection->children.first; child; child = child->next) {
     writestruct(wd, DATA, CollectionChild, 1, child);
   }
+
+  /* Clear the accumulated recalc flags in case of undo step saving. */
+  if (wd->use_memfile) {
+    collection->id.recalc_undo_accumulated = 0;
+  }
 }
 
 static void write_collection(WriteData *wd, Collection *collection)
@@ -2805,6 +2823,11 @@ static void write_gpencil(WriteData *wd, bGPdata *gpd)
   }
 }
 
+static void write_wm_xr_data(WriteData *wd, wmXrData *xr_data)
+{
+  write_view3dshading(wd, &xr_data->session_settings.shading);
+}
+
 static void write_region(WriteData *wd, ARegion *region, int spacetype)
 {
   writestruct(wd, DATA, ARegion, 1, region);
@@ -3054,6 +3077,7 @@ static void write_windowmanager(WriteData *wd, wmWindowManager *wm)
 {
   writestruct(wd, ID_WM, wmWindowManager, 1, wm);
   write_iddata(wd, &wm->id);
+  write_wm_xr_data(wd, &wm->xr);
 
   for (wmWindow *win = wm->windows.first; win; win = win->next) {
 #ifndef WITH_GLOBAL_AREA_WRITING
@@ -3694,6 +3718,98 @@ static void write_workspace(WriteData *wd, WorkSpace *workspace)
   }
 }
 
+static void write_hair(WriteData *wd, Hair *hair)
+{
+  if (hair->id.us > 0 || wd->use_memfile) {
+    /* Write a copy of the hair with possibly reduced number of data layers.
+     * Don't edit the original since other threads might be reading it. */
+    Hair *old_hair = hair;
+    Hair copy_hair = *hair;
+    hair = &copy_hair;
+
+    CustomDataLayer *players = NULL, players_buff[CD_TEMP_CHUNK_SIZE];
+    CustomDataLayer *clayers = NULL, clayers_buff[CD_TEMP_CHUNK_SIZE];
+    CustomData_file_write_prepare(&hair->pdata, &players, players_buff, ARRAY_SIZE(players_buff));
+    CustomData_file_write_prepare(&hair->cdata, &clayers, clayers_buff, ARRAY_SIZE(clayers_buff));
+
+    /* Write LibData */
+    writestruct_at_address(wd, ID_HA, Hair, 1, old_hair, hair);
+    write_iddata(wd, &hair->id);
+
+    /* Direct data */
+    write_customdata(wd, &hair->id, hair->totpoint, &hair->pdata, players, CD_MASK_ALL);
+    write_customdata(wd, &hair->id, hair->totcurve, &hair->cdata, clayers, CD_MASK_ALL);
+    writedata(wd, DATA, sizeof(void *) * hair->totcol, hair->mat);
+    if (hair->adt) {
+      write_animdata(wd, hair->adt);
+    }
+
+    /* Remove temporary data. */
+    if (players && players != players_buff) {
+      MEM_freeN(players);
+    }
+    if (clayers && clayers != clayers_buff) {
+      MEM_freeN(clayers);
+    }
+
+    /* restore pointer */
+    hair = old_hair;
+  }
+}
+
+static void write_pointcloud(WriteData *wd, PointCloud *pointcloud)
+{
+  if (pointcloud->id.us > 0 || wd->use_memfile) {
+    /* Write a copy of the pointcloud with possibly reduced number of data layers.
+     * Don't edit the original since other threads might be reading it. */
+    PointCloud *old_pointcloud = pointcloud;
+    PointCloud copy_pointcloud = *pointcloud;
+    pointcloud = &copy_pointcloud;
+
+    CustomDataLayer *players = NULL, players_buff[CD_TEMP_CHUNK_SIZE];
+    CustomData_file_write_prepare(
+        &pointcloud->pdata, &players, players_buff, ARRAY_SIZE(players_buff));
+
+    /* Write LibData */
+    writestruct_at_address(wd, ID_PT, PointCloud, 1, old_pointcloud, pointcloud);
+    write_iddata(wd, &pointcloud->id);
+
+    /* Direct data */
+    write_customdata(
+        wd, &pointcloud->id, pointcloud->totpoint, &pointcloud->pdata, players, CD_MASK_ALL);
+    writedata(wd, DATA, sizeof(void *) * pointcloud->totcol, pointcloud->mat);
+    if (pointcloud->adt) {
+      write_animdata(wd, pointcloud->adt);
+    }
+
+    /* Remove temporary data. */
+    if (players && players != players_buff) {
+      MEM_freeN(players);
+    }
+  }
+}
+
+static void write_volume(WriteData *wd, Volume *volume)
+{
+  if (volume->id.us > 0 || wd->use_memfile) {
+    /* write LibData */
+    writestruct(wd, ID_VO, Volume, 1, volume);
+    write_iddata(wd, &volume->id);
+
+    /* direct data */
+    writedata(wd, DATA, sizeof(void *) * volume->totcol, volume->mat);
+    if (volume->adt) {
+      write_animdata(wd, volume->adt);
+    }
+
+    if (volume->packedfile) {
+      PackedFile *pf = volume->packedfile;
+      writestruct(wd, DATA, PackedFile, 1, pf);
+      writedata(wd, DATA, pf->size, pf->data);
+    }
+  }
+}
+
 /* Keep it last of write_foodata functions. */
 static void write_libraries(WriteData *wd, Main *main)
 {
@@ -3748,7 +3864,7 @@ static void write_libraries(WriteData *wd, Main *main)
           if (id->us > 0 &&
               ((id->tag & LIB_TAG_EXTERN) ||
                ((id->tag & LIB_TAG_INDIRECT) && (id->flag & LIB_INDIRECT_WEAK_LINK)))) {
-            if (!BKE_idcode_is_linkable(GS(id->name))) {
+            if (!BKE_idtype_idcode_is_linkable(GS(id->name))) {
               printf(
                   "ERROR: write file: data-block '%s' from lib '%s' is not linkable "
                   "but is flagged as directly linked",
@@ -3999,6 +4115,15 @@ static bool write_file_handle(Main *mainvar,
           case ID_CF:
             write_cachefile(wd, (CacheFile *)id);
             break;
+          case ID_HA:
+            write_hair(wd, (Hair *)id);
+            break;
+          case ID_PT:
+            write_pointcloud(wd, (PointCloud *)id);
+            break;
+          case ID_VO:
+            write_volume(wd, (Volume *)id);
+            break;
           case ID_LI:
             /* Do nothing, handled below - and should never be reached. */
             BLI_assert(0);
@@ -4014,6 +4139,12 @@ static bool write_file_handle(Main *mainvar,
 
         if (do_override) {
           BKE_lib_override_library_operations_store_end(override_storage, id);
+        }
+
+        if (wd->use_memfile) {
+          /* Very important to do it after every ID write now, otherwise we cannot know whether a
+           * specific ID changed or not. */
+          mywrite_flush(wd);
         }
       }
 

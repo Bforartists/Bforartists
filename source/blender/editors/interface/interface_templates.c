@@ -19,34 +19,34 @@
  */
 
 #include <ctype.h>
-#include <stdlib.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "MEM_guardedalloc.h"
 
+#include "DNA_brush_types.h"
 #include "DNA_cachefile_types.h"
 #include "DNA_constraint_types.h"
-#include "DNA_node_types.h"
-#include "DNA_scene_types.h"
-#include "DNA_object_types.h"
-#include "DNA_object_force_types.h"
-#include "DNA_brush_types.h"
-#include "DNA_texture_types.h"
-#include "DNA_gpencil_modifier_types.h"
-#include "DNA_shader_fx_types.h"
 #include "DNA_curveprofile_types.h"
+#include "DNA_gpencil_modifier_types.h"
+#include "DNA_node_types.h"
+#include "DNA_object_force_types.h"
+#include "DNA_object_types.h"
+#include "DNA_scene_types.h"
+#include "DNA_shader_fx_types.h"
+#include "DNA_texture_types.h"
 
-#include "BLI_utildefines.h"
 #include "BLI_alloca.h"
-#include "BLI_string.h"
-#include "BLI_ghash.h"
-#include "BLI_rect.h"
-#include "BLI_math.h"
-#include "BLI_listbase.h"
 #include "BLI_fnmatch.h"
+#include "BLI_ghash.h"
+#include "BLI_listbase.h"
+#include "BLI_math.h"
 #include "BLI_path_util.h"
+#include "BLI_rect.h"
+#include "BLI_string.h"
 #include "BLI_timecode.h"
+#include "BLI_utildefines.h"
 
 #include "BLF_api.h"
 #include "BLT_translation.h"
@@ -56,10 +56,11 @@
 #include "BKE_colortools.h"
 #include "BKE_constraint.h"
 #include "BKE_context.h"
+#include "BKE_curveprofile.h"
 #include "BKE_global.h"
 #include "BKE_gpencil_modifier.h"
-#include "BKE_idcode.h"
 #include "BKE_idprop.h"
+#include "BKE_idtype.h"
 #include "BKE_layer.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_override.h"
@@ -70,7 +71,6 @@
 #include "BKE_packedFile.h"
 #include "BKE_paint.h"
 #include "BKE_particle.h"
-#include "BKE_curveprofile.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
@@ -80,9 +80,9 @@
 #include "DEG_depsgraph_build.h"
 
 #include "ED_fileselect.h"
-#include "ED_screen.h"
 #include "ED_object.h"
 #include "ED_render.h"
+#include "ED_screen.h"
 #include "ED_undo.h"
 
 #include "RNA_access.h"
@@ -591,11 +591,9 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
           DEG_relations_tag_update(bmain);
         }
         else {
-          if (id) {
-            Main *bmain = CTX_data_main(C);
-            id_single_user(C, id, &template_ui->ptr, template_ui->prop);
-            DEG_relations_tag_update(bmain);
-          }
+          Main *bmain = CTX_data_main(C);
+          id_single_user(C, id, &template_ui->ptr, template_ui->prop);
+          DEG_relations_tag_update(bmain);
         }
       }
       break;
@@ -670,6 +668,12 @@ static const char *template_id_browse_tip(const StructRNA *type)
         return N_("Data Browser\nBrowse Workspace to be linked");
       case ID_LP:
         return N_("Data Browser\nBrowse LightProbe to be linked");
+      case ID_HA:
+        return N_("Data Browser\nBrowse Hair Data to be linked");
+      case ID_PT:
+        return N_("Data Browser\nBrowse Point Cloud Data to be linked");
+      case ID_VO:
+        return N_("Data Browser\nBrowse Volume Data to be linked");
     }
   }
   return N_("Browse ID data to be linked");
@@ -683,7 +687,7 @@ static const char *template_id_browse_tip(const StructRNA *type)
 static const char *template_id_context(StructRNA *type)
 {
   if (type) {
-    return BKE_idcode_to_translation_context(RNA_type_to_ID_code(type));
+    return BKE_idtype_idcode_to_translation_context(RNA_type_to_ID_code(type));
   }
   return BLT_I18NCONTEXT_DEFAULT;
 }
@@ -732,7 +736,13 @@ static uiBut *template_id_def_new_but(uiBlock *block,
                             BLT_I18NCONTEXT_ID_GPENCIL,
                             BLT_I18NCONTEXT_ID_FREESTYLELINESTYLE,
                             BLT_I18NCONTEXT_ID_WORKSPACE,
-                            BLT_I18NCONTEXT_ID_LIGHTPROBE, );
+                            BLT_I18NCONTEXT_ID_LIGHTPROBE,
+                            BLT_I18NCONTEXT_ID_HAIR,
+                            BLT_I18NCONTEXT_ID_POINTCLOUD,
+                            BLT_I18NCONTEXT_ID_VOLUME, );
+  /* Note: BLT_I18N_MSGID_MULTI_CTXT takes a maximum number of parameters,
+   * check the definition to see if a new call must be added when the limit
+   * is exceeded. */
 
   if (newop) {
     /*bfa - changed ICON_DUPLICATE : ICON_ADD to ICON_ADD : ICON_ADD */
@@ -1140,7 +1150,7 @@ static void template_ID_tabs(bContext *C,
   const int but_height = UI_UNIT_Y * 1.1;
 
   uiBlock *block = uiLayoutGetBlock(layout);
-  uiStyle *style = UI_style_get_dpi();
+  const uiStyle *style = UI_style_get_dpi();
 
   ListBase ordered;
   BKE_id_ordered_list(&ordered, template->idlb);
@@ -2772,7 +2782,8 @@ void uiTemplatePreview(uiLayout *layout,
 
   if (!preview_id || (preview_id[0] == '\0')) {
     /* If no identifier given, generate one from ID type. */
-    BLI_snprintf(_preview_id, UI_MAX_NAME_STR, "uiPreview_%s", BKE_idcode_to_name(GS(id->name)));
+    BLI_snprintf(
+        _preview_id, UI_MAX_NAME_STR, "uiPreview_%s", BKE_idtype_idcode_to_name(GS(id->name)));
     preview_id = _preview_id;
   }
 
@@ -3052,7 +3063,7 @@ static void colorband_tools_dofunc(bContext *C, void *coba_v, int event)
 
 static uiBlock *colorband_tools_func(bContext *C, ARegion *region, void *coba_v)
 {
-  uiStyle *style = UI_style_get_dpi();
+  const uiStyle *style = UI_style_get_dpi();
   ColorBand *coba = coba_v;
   uiBlock *block;
   short yco = 0, menuwidth = 10 * UI_UNIT_X;
@@ -7138,7 +7149,7 @@ void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
   uiLayout *ui_abs;
   uiBlock *block;
   uiBut *but;
-  uiStyle *style = UI_style_get();
+  const uiStyle *style = UI_style_get();
   int width;
   int icon;
 

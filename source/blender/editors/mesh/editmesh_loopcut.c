@@ -25,27 +25,27 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_string.h"
 #include "BLI_math.h"
+#include "BLI_string.h"
 
 #include "BLT_translation.h"
 
 #include "DNA_mesh_types.h"
 
 #include "BKE_context.h"
+#include "BKE_editmesh.h"
+#include "BKE_layer.h"
 #include "BKE_modifier.h"
 #include "BKE_report.h"
-#include "BKE_editmesh.h"
 #include "BKE_unit.h"
-#include "BKE_layer.h"
 
 #include "UI_interface.h"
 
+#include "ED_mesh.h"
+#include "ED_numinput.h"
 #include "ED_screen.h"
 #include "ED_space_api.h"
 #include "ED_view3d.h"
-#include "ED_mesh.h"
-#include "ED_numinput.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -536,8 +536,8 @@ static int loopcut_modal(bContext *C, wmOperator *op, const wmEvent *event)
   else {
     bool handled = false;
     switch (event->type) {
-      case RETKEY:
-      case PADENTER:
+      case EVT_RETKEY:
+      case EVT_PADENTER:
       case LEFTMOUSE: /* confirm */  // XXX hardcoded
         if (event->val == KM_PRESS) {
           return loopcut_finish(lcd, C, op);
@@ -552,7 +552,7 @@ static int loopcut_modal(bContext *C, wmOperator *op, const wmEvent *event)
         ED_workspace_status_text(C, NULL);
 
         return OPERATOR_CANCELLED;
-      case ESCKEY:
+      case EVT_ESCKEY:
         if (event->val == KM_RELEASE) {
           /* cancel */
           ED_region_tag_redraw(lcd->region);
@@ -577,8 +577,8 @@ static int loopcut_modal(bContext *C, wmOperator *op, const wmEvent *event)
         }
         handled = true;
         break;
-      case PADPLUSKEY:
-      case PAGEUPKEY:
+      case EVT_PADPLUSKEY:
+      case EVT_PAGEUPKEY:
       case WHEELUPMOUSE: /* change number of cuts */
         if (event->val == KM_RELEASE) {
           break;
@@ -591,8 +591,8 @@ static int loopcut_modal(bContext *C, wmOperator *op, const wmEvent *event)
         }
         handled = true;
         break;
-      case PADMINUS:
-      case PAGEDOWNKEY:
+      case EVT_PADMINUS:
+      case EVT_PAGEDOWNKEY:
       case WHEELDOWNMOUSE: /* change number of cuts */
         if (event->val == KM_RELEASE) {
           break;

@@ -34,18 +34,18 @@
 #include "BLT_translation.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_math.h"
 #include "BLI_ghash.h"
+#include "BLI_math.h"
 
 #include "BKE_action.h"
 #include "BKE_armature.h"
 #include "BKE_constraint.h"
 #include "BKE_context.h"
-#include "BKE_layer.h"
 #include "BKE_global.h"
+#include "BKE_layer.h"
 #include "BKE_main.h"
-#include "BKE_report.h"
 #include "BKE_object.h"
+#include "BKE_report.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -343,7 +343,7 @@ static int armature_calc_roll_exec(bContext *C, wmOperator *op)
             sub_v3_v3v3(dir_a, ebone->tail, ebone->head);
             normalize_v3(dir_a);
 
-            /* find the first bone in the chane with a different direction */
+            /* find the first bone in the chain with a different direction */
             do {
               sub_v3_v3v3(dir_b, ebone_other->head, ebone_other->tail);
               normalize_v3(dir_b);

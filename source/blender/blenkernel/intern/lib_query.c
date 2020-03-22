@@ -30,35 +30,38 @@
 #include "DNA_collection_types.h"
 #include "DNA_constraint_types.h"
 #include "DNA_gpencil_types.h"
+#include "DNA_hair_types.h"
 #include "DNA_key_types.h"
-#include "DNA_light_types.h"
 #include "DNA_lattice_types.h"
+#include "DNA_light_types.h"
+#include "DNA_lightprobe_types.h"
 #include "DNA_linestyle_types.h"
+#include "DNA_mask_types.h"
 #include "DNA_material_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meta_types.h"
 #include "DNA_movieclip_types.h"
-#include "DNA_mask_types.h"
 #include "DNA_node_types.h"
 #include "DNA_object_force_types.h"
 #include "DNA_outliner_types.h"
-#include "DNA_lightprobe_types.h"
+#include "DNA_pointcloud_types.h"
 #include "DNA_rigidbody_types.h"
 #include "DNA_scene_types.h"
-#include "DNA_sequence_types.h"
 #include "DNA_screen_types.h"
+#include "DNA_sequence_types.h"
+#include "DNA_sound_types.h"
 #include "DNA_space_types.h"
 #include "DNA_speaker_types.h"
-#include "DNA_sound_types.h"
 #include "DNA_text_types.h"
 #include "DNA_vfont_types.h"
+#include "DNA_volume_types.h"
 #include "DNA_windowmanager_types.h"
 #include "DNA_workspace_types.h"
 #include "DNA_world_types.h"
 
-#include "BLI_utildefines.h"
 #include "BLI_ghash.h"
 #include "BLI_linklist_stack.h"
+#include "BLI_utildefines.h"
 
 #include "BKE_animsys.h"
 #include "BKE_collection.h"
@@ -401,7 +404,7 @@ static void library_foreach_screen_area(LibraryForeachIDData *data, ScrArea *are
         View3D *v3d = (View3D *)sl;
 
         FOREACH_CALLBACK_INVOKE(data, v3d->camera, IDWALK_CB_NOP);
-        FOREACH_CALLBACK_INVOKE(data, v3d->ob_centre, IDWALK_CB_NOP);
+        FOREACH_CALLBACK_INVOKE(data, v3d->ob_center, IDWALK_CB_NOP);
 
         if (v3d->localvd) {
           FOREACH_CALLBACK_INVOKE(data, v3d->localvd->camera, IDWALK_CB_NOP);
@@ -1250,6 +1253,27 @@ static void library_foreach_ID_link(Main *bmain,
 
         break;
       }
+      case ID_HA: {
+        Hair *hair = (Hair *)id;
+        for (i = 0; i < hair->totcol; i++) {
+          CALLBACK_INVOKE(hair->mat[i], IDWALK_CB_USER);
+        }
+        break;
+      }
+      case ID_PT: {
+        PointCloud *pointcloud = (PointCloud *)id;
+        for (i = 0; i < pointcloud->totcol; i++) {
+          CALLBACK_INVOKE(pointcloud->mat[i], IDWALK_CB_USER);
+        }
+        break;
+      }
+      case ID_VO: {
+        Volume *volume = (Volume *)id;
+        for (i = 0; i < volume->totcol; i++) {
+          CALLBACK_INVOKE(volume->mat[i], IDWALK_CB_USER);
+        }
+        break;
+      }
 
       case ID_SCR: {
         if (data.flag & IDWALK_INCLUDE_UI) {
@@ -1416,6 +1440,12 @@ bool BKE_library_id_can_use_idtype(ID *id_owner, const short id_type_used)
       return ELEM(id_type_used, ID_MA);
     case ID_WS:
       return ELEM(id_type_used, ID_SCR, ID_SCE);
+    case ID_HA:
+      return ELEM(id_type_used, ID_MA);
+    case ID_PT:
+      return ELEM(id_type_used, ID_MA);
+    case ID_VO:
+      return ELEM(id_type_used, ID_MA);
     case ID_IM:
     case ID_VF:
     case ID_TXT:
