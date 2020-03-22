@@ -24,8 +24,8 @@
 #ifndef __ED_VIEW3D_OFFSCREEN_H__
 #define __ED_VIEW3D_OFFSCREEN_H__
 
-#include "DNA_view3d_types.h"
 #include "DNA_object_enums.h"
+#include "DNA_view3d_types.h"
 
 #include "IMB_imbuf_types.h"
 
@@ -34,12 +34,12 @@ extern "C" {
 #endif
 
 /* ********* exports for space_view3d/ module for offscreen rendering ********** */
-struct Depsgraph;
-struct Scene;
-struct View3D;
 struct ARegion;
+struct Depsgraph;
 struct GPUOffScreen;
 struct GPUViewport;
+struct Scene;
+struct View3D;
 struct View3DShading;
 
 void ED_view3d_draw_offscreen(struct Depsgraph *depsgraph,
@@ -51,12 +51,31 @@ void ED_view3d_draw_offscreen(struct Depsgraph *depsgraph,
                               int winy,
                               float viewmat[4][4],
                               float winmat[4][4],
+                              bool is_image_render,
                               bool do_sky,
                               bool is_persp,
                               const char *viewname,
                               const bool do_color_management,
                               struct GPUOffScreen *ofs,
                               struct GPUViewport *viewport);
+void ED_view3d_draw_offscreen_simple(struct Depsgraph *depsgraph,
+                                     struct Scene *scene,
+                                     struct View3DShading *shading_override,
+                                     int drawtype,
+                                     int winx,
+                                     int winy,
+                                     unsigned int draw_flags,
+                                     float viewmat[4][4],
+                                     float winmat[4][4],
+                                     float clip_start,
+                                     float clip_end,
+                                     bool is_image_render,
+                                     bool do_sky,
+                                     bool is_persp,
+                                     const char *viewname,
+                                     const bool do_color_management,
+                                     struct GPUOffScreen *ofs,
+                                     struct GPUViewport *viewport);
 
 struct ImBuf *ED_view3d_draw_offscreen_imbuf(struct Depsgraph *depsgraph,
                                              struct Scene *scene,

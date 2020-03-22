@@ -21,16 +21,16 @@
  * \ingroup spfile
  */
 
+#include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-#include <math.h>
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_utildefines.h"
 #include "BLI_blenlib.h"
 #include "BLI_ghash.h"
+#include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
 
@@ -43,22 +43,22 @@
 #  include <windows.h>
 /* For SHGetSpecialFolderPath, has to be done before BLI_winstuff
  * because 'near' is disabled through BLI_windstuff. */
-#  include <shlobj.h>
 #  include "BLI_winstuff.h"
+#  include <shlobj.h>
 #endif
 
-#include "WM_api.h"
-#include "WM_types.h"
 #include "UI_interface_icons.h"
 #include "UI_resources.h"
+#include "WM_api.h"
+#include "WM_types.h"
 
 #ifdef __APPLE__
 #  include <Carbon/Carbon.h>
 #endif /* __APPLE__ */
 
 #ifdef __linux__
-#  include <mntent.h>
 #  include "BLI_fileops_types.h"
+#  include <mntent.h>
 #endif
 
 #include "fsmenu.h" /* include ourselves */
@@ -182,12 +182,12 @@ static void fsmenu_xdg_user_dirs_free(GHash *xdg_map)
 }
 
 /**
- *  Add fsmenu entry for system folders on linux.
- *  - Check if a path is stored in the GHash generated from user-dirs.dirs
- *  - If not, check for a default path in $HOME
+ * Add fsmenu entry for system folders on linux.
+ * - Check if a path is stored in the GHash generated from user-dirs.dirs
+ * - If not, check for a default path in $HOME
  *
- *  \param key: Use `user-dirs.dirs` format "XDG_EXAMPLE_DIR"
- *  \param default_path: Directory name to check in $HOME, also used for the menu entry name.
+ * \param key: Use `user-dirs.dirs` format "XDG_EXAMPLE_DIR"
+ * \param default_path: Directory name to check in $HOME, also used for the menu entry name.
  */
 static void fsmenu_xdg_insert_entry(GHash *xdg_map,
                                     struct FSMenu *fsmenu,

@@ -21,14 +21,14 @@
  * \ingroup spfile
  */
 
+#include <errno.h>
 #include <math.h>
 #include <string.h>
-#include <errno.h>
 
 #include "BLI_blenlib.h"
 #include "BLI_fileops_types.h"
-#include "BLI_utildefines.h"
 #include "BLI_math.h"
+#include "BLI_utildefines.h"
 
 #ifdef WIN32
 #  include "BLI_winstuff.h"
@@ -170,7 +170,6 @@ static void file_draw_string(int sx,
                              eFontStyle_Align align,
                              const uchar col[4])
 {
-  uiStyle *style;
   uiFontStyle fs;
   rcti rect;
   char fname[FILE_MAXFILE];
@@ -179,7 +178,7 @@ static void file_draw_string(int sx,
     return;
   }
 
-  style = UI_style_get();
+  const uiStyle *style = UI_style_get();
   fs = style->widgetlabel;
 
   BLI_strncpy(fname, string, FILE_MAXFILE);
@@ -385,7 +384,6 @@ static void renamebutton_cb(bContext *C, void *UNUSED(arg1), char *oldname)
   char filename[FILE_MAX + 12];
   wmWindowManager *wm = CTX_wm_manager(C);
   SpaceFile *sfile = (SpaceFile *)CTX_wm_space_data(C);
-  ScrArea *sa = CTX_wm_area(C);
   ARegion *region = CTX_wm_region(C);
 
   BLI_join_dirfile(orgname, sizeof(orgname), sfile->params->dir, oldname);
@@ -413,7 +411,7 @@ static void renamebutton_cb(bContext *C, void *UNUSED(arg1), char *oldname)
       }
 
       /* to make sure we show what is on disk */
-      ED_fileselect_clear(wm, sa, sfile);
+      ED_fileselect_clear(wm, CTX_data_scene(C), sfile);
     }
 
     ED_region_tag_redraw(region);

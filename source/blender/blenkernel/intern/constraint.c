@@ -21,35 +21,35 @@
  * \ingroup bke
  */
 
-#include <stdio.h>
-#include <stddef.h>
-#include <string.h>
-#include <math.h>
 #include <float.h>
+#include <math.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_math.h"
 #include "BLI_kdopbvh.h"
-#include "BLI_utildefines.h"
+#include "BLI_math.h"
 #include "BLI_string_utils.h"
+#include "BLI_utildefines.h"
 #include "BLT_translation.h"
 
+#include "DNA_action_types.h"
 #include "DNA_armature_types.h"
 #include "DNA_cachefile_types.h"
 #include "DNA_constraint_types.h"
-#include "DNA_modifier_types.h"
-#include "DNA_object_types.h"
-#include "DNA_action_types.h"
 #include "DNA_curve_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
+#include "DNA_modifier_types.h"
+#include "DNA_object_types.h"
 
 #include "DNA_lattice_types.h"
+#include "DNA_movieclip_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_tracking_types.h"
-#include "DNA_movieclip_types.h"
 
 #include "BKE_action.h"
 #include "BKE_anim.h" /* for the curve calculation part */
@@ -741,8 +741,8 @@ static void default_get_tarmat_full_bbone(struct Depsgraph *UNUSED(depsgraph),
 
 /* This following macro should be used for all standard single-target *_get_tars functions
  * to save typing and reduce maintenance woes.
- * (Hopefully all compilers will be happy with the lines with just a space on them. Those are
- *  really just to help this code easier to read)
+ * (Hopefully all compilers will be happy with the lines with just a space on them.
+ * Those are really just to help this code easier to read).
  */
 // TODO: cope with getting rotation order...
 #define SINGLETARGET_GET_TARS(con, datatar, datasubtarget, ct, list) \
@@ -4822,7 +4822,7 @@ static bConstraintTypeInfo CTI_FOLLOWTRACK = {
     followtrack_evaluate,           /* evaluate */
 };
 
-/* ----------- Camre Solver ------------- */
+/* ----------- Camera Solver ------------- */
 
 static void camerasolver_new_data(void *cdata)
 {

@@ -16,15 +16,15 @@
 
 #ifdef WITH_OPENCL
 
-#  include "device/opencl/device_opencl.h"
 #  include "device/device_intern.h"
+#  include "device/opencl/device_opencl.h"
 
 #  include "util/util_debug.h"
 #  include "util/util_logging.h"
 #  include "util/util_md5.h"
 #  include "util/util_path.h"
-#  include "util/util_time.h"
 #  include "util/util_system.h"
+#  include "util/util_time.h"
 
 using std::cerr;
 using std::endl;
@@ -747,6 +747,10 @@ bool OpenCLInfo::device_supported(const string &platform_name, const cl_device_i
   }
   VLOG(3) << "OpenCL driver version " << driver_major << "." << driver_minor;
 
+  if (getenv("CYCLES_OPENCL_TEST")) {
+    return true;
+  }
+
   /* It is possible to have Iris GPU on AMD/Apple OpenCL framework
    * (aka, it will not be on Intel framework). This isn't supported
    * and needs an explicit blacklist.
@@ -858,7 +862,7 @@ string OpenCLInfo::get_hardware_id(const string &platform_name, cl_device_id dev
   return "";
 }
 
-void OpenCLInfo::get_usable_devices(vector<OpenCLPlatformDevice> *usable_devices, bool force_all)
+void OpenCLInfo::get_usable_devices(vector<OpenCLPlatformDevice> *usable_devices)
 {
   const cl_device_type device_type = OpenCLInfo::device_type();
   static bool first_time = true;
@@ -924,7 +928,7 @@ void OpenCLInfo::get_usable_devices(vector<OpenCLPlatformDevice> *usable_devices
         FIRST_VLOG(2) << "Ignoring device " << device_name << " due to old compiler version.";
         continue;
       }
-      if (force_all || device_supported(platform_name, device_id)) {
+      if (device_supported(platform_name, device_id)) {
         cl_device_type device_type;
         if (!get_device_type(device_id, &device_type, &error)) {
           FIRST_VLOG(2) << "Ignoring device " << device_name

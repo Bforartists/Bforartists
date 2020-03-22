@@ -186,8 +186,7 @@ if(APPLE)
   option(WITH_XR_OPENXR   "Enable VR features through the OpenXR specification" OFF)
   mark_as_advanced(WITH_XR_OPENXR)
 else()
-  # Disabled until there's more than just the build system stuff. Should be enabled soon.
-  option(WITH_XR_OPENXR   "Enable VR features through the OpenXR specification" OFF)
+  option(WITH_XR_OPENXR   "Enable VR features through the OpenXR specification" ON)
 endif()
 
 # Compositor
@@ -319,6 +318,10 @@ mark_as_advanced(WITH_SYSTEM_GLOG)
 
 # Freestyle
 option(WITH_FREESTYLE     "Enable Freestyle (advanced edges rendering)" ON)
+
+# New object types
+option(WITH_NEW_OBJECT_TYPES "Enable new hair and pointcloud objects (use for development only, don't save in files)" OFF)
+mark_as_advanced(WITH_NEW_OBJECT_TYPES)
 
 # Misc
 if(WIN32)
@@ -681,6 +684,7 @@ if(WITH_GHOST_SDL OR WITH_HEADLESS)
   set(WITH_X11_ALPHA     OFF)
   set(WITH_GHOST_XDND    OFF)
   set(WITH_INPUT_IME     OFF)
+  set(WITH_XR_OPENXR     OFF)
 endif()
 
 if(WITH_CPU_SSE)

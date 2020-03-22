@@ -29,12 +29,12 @@
 #include "DNA_image_types.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_hash_mm2a.h"
-#include "BLI_link_utils.h"
-#include "BLI_utildefines.h"
 #include "BLI_dynstr.h"
 #include "BLI_ghash.h"
+#include "BLI_hash_mm2a.h"
+#include "BLI_link_utils.h"
 #include "BLI_threads.h"
+#include "BLI_utildefines.h"
 
 #include "PIL_time.h"
 
@@ -53,8 +53,8 @@
 #include "gpu_material_library.h"
 #include "gpu_node_graph.h"
 
-#include <string.h>
 #include <stdarg.h>
+#include <string.h>
 
 extern char datatoc_gpu_shader_common_obinfos_lib_glsl[];
 extern char datatoc_common_view_lib_glsl[];
@@ -335,6 +335,7 @@ static int codegen_process_uniforms_functions(GPUMaterial *material,
   /* Volume Grids */
   for (GPUMaterialVolumeGrid *grid = graph->volume_grids.first; grid; grid = grid->next) {
     BLI_dynstr_appendf(ds, "uniform sampler3D %s;\n", grid->sampler_name);
+    BLI_dynstr_appendf(ds, "uniform mat4 %s = mat4(0.0);\n", grid->transform_name);
   }
 
   /* Print other uniforms */
@@ -431,6 +432,9 @@ static void codegen_call_functions(DynStr *ds, GPUNodeGraph *graph, GPUOutput *f
       }
       else if (input->source == GPU_SOURCE_VOLUME_GRID) {
         BLI_dynstr_append(ds, input->volume_grid->sampler_name);
+      }
+      else if (input->source == GPU_SOURCE_VOLUME_GRID_TRANSFORM) {
+        BLI_dynstr_append(ds, input->volume_grid->transform_name);
       }
       else if (input->source == GPU_SOURCE_OUTPUT) {
         codegen_convert_datatype(

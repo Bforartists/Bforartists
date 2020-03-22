@@ -33,17 +33,17 @@
 extern "C" {
 #endif
 
+#include "DNA_ID.h"
+#include "DNA_collection_types.h"
 #include "DNA_color_types.h" /* color management */
 #include "DNA_curveprofile_types.h"
 #include "DNA_customdata_types.h" /* Scene's runtime cddata masks. */
-#include "DNA_vec_types.h"
-#include "DNA_listBase.h"
-#include "DNA_ID.h"
 #include "DNA_freestyle_types.h"
-#include "DNA_collection_types.h"
 #include "DNA_layer_types.h"
+#include "DNA_listBase.h"
 #include "DNA_material_types.h"
 #include "DNA_userdef_types.h"
+#include "DNA_vec_types.h"
 #include "DNA_view3d_types.h"
 
 struct AnimData;
@@ -1470,6 +1470,9 @@ typedef struct ToolSettings {
 
   /** Auto normalizing mode in wpaint. */
   char auto_normalize;
+  /** Present weights as if all locked vertex groups were
+   *  deleted, and the remaining deform groups normalized. */
+  char wpaint_lock_relative;
   /** Paint multiple bones in wpaint. */
   char multipaint;
   char weightuser;
@@ -1480,7 +1483,7 @@ typedef struct ToolSettings {
   char gpencil_selectmode_vertex;
 
   /* UV painting */
-  char _pad2[2];
+  char _pad2[1];
   char uv_sculpt_settings;
   char uv_relax_method;
   /* XXX: these sculpt_paint_* fields are deprecated, use the

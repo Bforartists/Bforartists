@@ -20,14 +20,14 @@
 
 /* defines VIEW3D_OT_navigate - walk modal operator */
 
-#include "DNA_scene_types.h"
 #include "DNA_object_types.h"
+#include "DNA_scene_types.h"
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_math.h"
 #include "BLI_blenlib.h"
 #include "BLI_kdopbvh.h"
+#include "BLI_math.h"
 #include "BLI_utildefines.h"
 
 #include "BKE_context.h"
@@ -1347,7 +1347,7 @@ static int walk_invoke(bContext *C, wmOperator *op, const wmEvent *event)
   RegionView3D *rv3d = CTX_wm_region_view3d(C);
   WalkInfo *walk;
 
-  if (rv3d->viewlock & RV3D_LOCKED) {
+  if (RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ANY_TRANSFORM) {
     return OPERATOR_CANCELLED;
   }
 

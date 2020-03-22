@@ -23,51 +23,51 @@
 
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
-#include "DNA_space_types.h"
 #include "DNA_constraint_types.h"
 #include "DNA_gpencil_types.h"
 #include "DNA_mask_types.h"
+#include "DNA_space_types.h"
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_math.h"
-#include "BLI_listbase.h"
-#include "BLI_string.h"
 #include "BLI_kdtree.h"
+#include "BLI_listbase.h"
+#include "BLI_math.h"
+#include "BLI_string.h"
 
 #include "BKE_animsys.h"
 #include "BKE_armature.h"
 #include "BKE_context.h"
+#include "BKE_editmesh.h"
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
 #include "BKE_gpencil.h"
-#include "BKE_layer.h"
 #include "BKE_key.h"
+#include "BKE_layer.h"
 #include "BKE_main.h"
+#include "BKE_mask.h"
 #include "BKE_modifier.h"
 #include "BKE_nla.h"
 #include "BKE_node.h"
 #include "BKE_pointcache.h"
 #include "BKE_rigidbody.h"
 #include "BKE_scene.h"
-#include "BKE_editmesh.h"
 #include "BKE_tracking.h"
-#include "BKE_mask.h"
 
 #include "BIK_api.h"
 
 #include "ED_anim_api.h"
 #include "ED_armature.h"
-#include "ED_particle.h"
+#include "ED_clip.h"
 #include "ED_image.h"
-#include "ED_keyframing.h"
 #include "ED_keyframes_edit.h"
-#include "ED_object.h"
+#include "ED_keyframing.h"
 #include "ED_markers.h"
+#include "ED_mask.h"
 #include "ED_mesh.h"
 #include "ED_node.h"
-#include "ED_clip.h"
-#include "ED_mask.h"
+#include "ED_object.h"
+#include "ED_particle.h"
 
 #include "UI_view2d.h"
 
@@ -830,25 +830,6 @@ bool FrameOnMouseSide(char side, float frame, float cframe)
 
 /* ********************* ACTION EDITOR ****************** */
 
-static int gpf_cmp_frame(void *thunk, const void *a, const void *b)
-{
-  const bGPDframe *frame_a = a;
-  const bGPDframe *frame_b = b;
-
-  if (frame_a->framenum < frame_b->framenum) {
-    return -1;
-  }
-  if (frame_a->framenum > frame_b->framenum) {
-    return 1;
-  }
-  *((bool *)thunk) = true;
-  /* selected last */
-  if ((frame_a->flag & GP_FRAME_SELECT) && ((frame_b->flag & GP_FRAME_SELECT) == 0)) {
-    return 1;
-  }
-  return 0;
-}
-
 static int masklay_shape_cmp_frame(void *thunk, const void *a, const void *b)
 {
   const MaskLayerShape *frame_a = a;
@@ -881,7 +862,7 @@ static void posttrans_gpd_clean(bGPdata *gpd)
     bGPDframe *gpf, *gpfn;
     bool is_double = false;
 
-    BLI_listbase_sort_r(&gpl->frames, gpf_cmp_frame, &is_double);
+    BKE_gpencil_layer_frames_sort(gpl, &is_double);
 
     if (is_double) {
       for (gpf = gpl->frames.first; gpf; gpf = gpfn) {
@@ -2779,7 +2760,7 @@ void createTransData(bContext *C, TransInfo *t)
           t->flag |= T_CAMERA;
         }
       }
-      else if (v3d->ob_centre && v3d->ob_centre->id.tag & LIB_TAG_DOIT) {
+      else if (v3d->ob_center && v3d->ob_center->id.tag & LIB_TAG_DOIT) {
         t->flag |= T_CAMERA;
       }
     }

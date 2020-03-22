@@ -25,14 +25,14 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "BLI_alloca.h"
 #include "BLI_bitmap.h"
 #include "BLI_buffer.h"
-#include "BLI_utildefines.h"
-#include "BLI_math_vector.h"
-#include "BLI_math_bits.h"
-#include "BLI_string.h"
-#include "BLI_alloca.h"
 #include "BLI_edgehash.h"
+#include "BLI_math_bits.h"
+#include "BLI_math_vector.h"
+#include "BLI_string.h"
+#include "BLI_utildefines.h"
 
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
@@ -45,8 +45,8 @@
 #include "BKE_editmesh_cache.h"
 #include "BKE_editmesh_tangent.h"
 #include "BKE_mesh.h"
-#include "BKE_mesh_tangent.h"
 #include "BKE_mesh_runtime.h"
+#include "BKE_mesh_tangent.h"
 #include "BKE_modifier.h"
 #include "BKE_object_deform.h"
 
@@ -62,8 +62,8 @@
 #include "ED_mesh.h"
 #include "ED_uvedit.h"
 
-#include "draw_cache_inline.h"
 #include "draw_cache_extract.h"
+#include "draw_cache_inline.h"
 
 #include "draw_cache_impl.h" /* own include */
 
@@ -239,6 +239,8 @@ static DRW_MeshCDMask mesh_cd_calc_used_gpu_layers(const Mesh *me,
 static void drw_mesh_weight_state_clear(struct DRW_MeshWeightState *wstate)
 {
   MEM_SAFE_FREE(wstate->defgroup_sel);
+  MEM_SAFE_FREE(wstate->defgroup_locked);
+  MEM_SAFE_FREE(wstate->defgroup_unlocked);
 
   memset(wstate, 0, sizeof(*wstate));
 
@@ -250,12 +252,26 @@ static void drw_mesh_weight_state_copy(struct DRW_MeshWeightState *wstate_dst,
                                        const struct DRW_MeshWeightState *wstate_src)
 {
   MEM_SAFE_FREE(wstate_dst->defgroup_sel);
+  MEM_SAFE_FREE(wstate_dst->defgroup_locked);
+  MEM_SAFE_FREE(wstate_dst->defgroup_unlocked);
 
   memcpy(wstate_dst, wstate_src, sizeof(*wstate_dst));
 
   if (wstate_src->defgroup_sel) {
     wstate_dst->defgroup_sel = MEM_dupallocN(wstate_src->defgroup_sel);
   }
+  if (wstate_src->defgroup_locked) {
+    wstate_dst->defgroup_locked = MEM_dupallocN(wstate_src->defgroup_locked);
+  }
+  if (wstate_src->defgroup_unlocked) {
+    wstate_dst->defgroup_unlocked = MEM_dupallocN(wstate_src->defgroup_unlocked);
+  }
+}
+
+static bool drw_mesh_flags_equal(const bool *array1, const bool *array2, int size)
+{
+  return ((!array1 && !array2) ||
+          (array1 && array2 && memcmp(array1, array2, size * sizeof(bool)) == 0));
 }
 
 /** Compare two selection structures. */
@@ -265,9 +281,9 @@ static bool drw_mesh_weight_state_compare(const struct DRW_MeshWeightState *a,
   return a->defgroup_active == b->defgroup_active && a->defgroup_len == b->defgroup_len &&
          a->flags == b->flags && a->alert_mode == b->alert_mode &&
          a->defgroup_sel_count == b->defgroup_sel_count &&
-         ((!a->defgroup_sel && !b->defgroup_sel) ||
-          (a->defgroup_sel && b->defgroup_sel &&
-           memcmp(a->defgroup_sel, b->defgroup_sel, a->defgroup_len * sizeof(bool)) == 0));
+         drw_mesh_flags_equal(a->defgroup_sel, b->defgroup_sel, a->defgroup_len) &&
+         drw_mesh_flags_equal(a->defgroup_locked, b->defgroup_locked, a->defgroup_len) &&
+         drw_mesh_flags_equal(a->defgroup_unlocked, b->defgroup_unlocked, a->defgroup_len);
 }
 
 static void drw_mesh_weight_state_extract(Object *ob,
@@ -306,6 +322,33 @@ static void drw_mesh_weight_state_extract(Object *ob,
     else {
       wstate->defgroup_sel_count = 0;
       MEM_SAFE_FREE(wstate->defgroup_sel);
+    }
+  }
+
+  if (paint_mode && ts->wpaint_lock_relative) {
+    /* Set of locked vertex groups for the lock relative mode. */
+    wstate->defgroup_locked = BKE_object_defgroup_lock_flags_get(ob, wstate->defgroup_len);
+    wstate->defgroup_unlocked = BKE_object_defgroup_validmap_get(ob, wstate->defgroup_len);
+
+    /* Check that a deform group is active, and none of selected groups are locked. */
+    if (BKE_object_defgroup_check_lock_relative(
+            wstate->defgroup_locked, wstate->defgroup_unlocked, wstate->defgroup_active) &&
+        BKE_object_defgroup_check_lock_relative_multi(wstate->defgroup_len,
+                                                      wstate->defgroup_locked,
+                                                      wstate->defgroup_sel,
+                                                      wstate->defgroup_sel_count)) {
+      wstate->flags |= DRW_MESH_WEIGHT_STATE_LOCK_RELATIVE;
+
+      /* Compute the set of locked and unlocked deform vertex groups. */
+      BKE_object_defgroup_split_locked_validmap(wstate->defgroup_len,
+                                                wstate->defgroup_locked,
+                                                wstate->defgroup_unlocked,
+                                                wstate->defgroup_locked, /* out */
+                                                wstate->defgroup_unlocked);
+    }
+    else {
+      MEM_SAFE_FREE(wstate->defgroup_unlocked);
+      MEM_SAFE_FREE(wstate->defgroup_locked);
     }
   }
 }

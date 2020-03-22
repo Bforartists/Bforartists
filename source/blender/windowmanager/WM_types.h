@@ -120,15 +120,15 @@ struct wmEvent;
 struct wmOperator;
 struct wmWindowManager;
 
-#include "RNA_types.h"
+#include "BLI_compiler_attrs.h"
 #include "DNA_listBase.h"
 #include "DNA_vec_types.h"
-#include "BLI_compiler_attrs.h"
+#include "RNA_types.h"
 
 /* exported types for WM */
+#include "gizmo/WM_gizmo_types.h"
 #include "wm_cursors.h"
 #include "wm_event_types.h"
-#include "gizmo/WM_gizmo_types.h"
 
 /* Include external gizmo API's */
 #include "gizmo/WM_gizmo_api.h"
@@ -310,6 +310,7 @@ typedef struct wmNotifier {
 #define ND_HISTORY (4 << 16)
 #define ND_JOB (5 << 16)
 #define ND_UNDO (6 << 16)
+#define ND_XR_DATA_CHANGED (7 << 17)
 
 /* NC_SCREEN */
 #define ND_LAYOUTBROWSE (1 << 16)
@@ -438,6 +439,7 @@ typedef struct wmNotifier {
 
 /* subtype 3d view editing */
 #define NS_VIEW3D_GPU (16 << 8)
+#define NS_VIEW3D_SHADING (16 << 9)
 
 /* action classification */
 #define NOTE_ACTION (0x000000FF)

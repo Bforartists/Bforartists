@@ -484,19 +484,15 @@ static bool brush_replace_apply(tGP_BrushVertexpaintData *gso, bGPDstroke *gps, 
 
   /* Apply color to Stroke point. */
   if (GPENCIL_TINT_VERTEX_COLOR_STROKE(brush)) {
-    copy_v3_v3(pt->vert_color, gso->linear_color);
-    /* If not mix color, full replace. */
-    if (pt->vert_color[3] == 0.0f) {
-      pt->vert_color[3] = 1.0f;
+    if (pt->vert_color[3] > 0.0f) {
+      copy_v3_v3(pt->vert_color, gso->linear_color);
     }
   }
 
   /* Apply color to Fill area (all with same color and factor). */
   if (GPENCIL_TINT_VERTEX_COLOR_FILL(brush)) {
-    copy_v3_v3(gps->vert_color_fill, gso->linear_color);
-    /* If not mix color, full replace. */
-    if (gps->vert_color_fill[3] == 0.0f) {
-      gps->vert_color_fill[3] = 1.0f;
+    if (gps->vert_color_fill[3] > 0.0f) {
+      copy_v3_v3(gps->vert_color_fill, gso->linear_color);
     }
   }
 
@@ -1312,7 +1308,7 @@ static int gp_vertexpaint_brush_modal(bContext *C, wmOperator *op, const wmEvent
       /* Abort painting if any of the usual things are tried */
       case MIDDLEMOUSE:
       case RIGHTMOUSE:
-      case ESCKEY:
+      case EVT_ESCKEY:
         gp_vertexpaint_brush_exit(C, op);
         return OPERATOR_FINISHED;
     }
@@ -1333,7 +1329,7 @@ static int gp_vertexpaint_brush_modal(bContext *C, wmOperator *op, const wmEvent
 
       /* Exit modal operator, based on the "standard" ops */
       case RIGHTMOUSE:
-      case ESCKEY:
+      case EVT_ESCKEY:
         gp_vertexpaint_brush_exit(C, op);
         return OPERATOR_FINISHED;
 
@@ -1348,24 +1344,24 @@ static int gp_vertexpaint_brush_modal(bContext *C, wmOperator *op, const wmEvent
         break;
 
       /* Change Frame - Allowed */
-      case LEFTARROWKEY:
-      case RIGHTARROWKEY:
-      case UPARROWKEY:
-      case DOWNARROWKEY:
+      case EVT_LEFTARROWKEY:
+      case EVT_RIGHTARROWKEY:
+      case EVT_UPARROWKEY:
+      case EVT_DOWNARROWKEY:
         return OPERATOR_PASS_THROUGH;
 
       /* Camera/View Gizmo's - Allowed */
       /* (See rationale in gpencil_paint.c -> gpencil_draw_modal()) */
-      case PAD0:
-      case PAD1:
-      case PAD2:
-      case PAD3:
-      case PAD4:
-      case PAD5:
-      case PAD6:
-      case PAD7:
-      case PAD8:
-      case PAD9:
+      case EVT_PAD0:
+      case EVT_PAD1:
+      case EVT_PAD2:
+      case EVT_PAD3:
+      case EVT_PAD4:
+      case EVT_PAD5:
+      case EVT_PAD6:
+      case EVT_PAD7:
+      case EVT_PAD8:
+      case EVT_PAD9:
         return OPERATOR_PASS_THROUGH;
 
       /* Unhandled event */

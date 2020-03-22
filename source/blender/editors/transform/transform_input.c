@@ -18,8 +18,8 @@
  * \ingroup edtransform
  */
 
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
 
 #include "DNA_screen_types.h"
 
@@ -28,8 +28,8 @@
 #include "BLI_math.h"
 #include "BLI_utildefines.h"
 
-#include "WM_types.h"
 #include "WM_api.h"
+#include "WM_types.h"
 
 #include "transform.h"
 
@@ -476,8 +476,8 @@ eRedrawFlag handleMouseInput(TransInfo *t, MouseInput *mi, const wmEvent *event)
   eRedrawFlag redraw = TREDRAW_NOTHING;
 
   switch (event->type) {
-    case LEFTSHIFTKEY:
-    case RIGHTSHIFTKEY:
+    case EVT_LEFTSHIFTKEY:
+    case EVT_RIGHTSHIFTKEY:
       if (event->val == KM_PRESS) {
         t->modifiers |= MOD_PRECISION;
         /* shift is modifier for higher precision transforn */

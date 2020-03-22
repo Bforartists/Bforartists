@@ -29,8 +29,8 @@
 #include "DNA_customdata_types.h"
 #include "DNA_listBase.h"
 
-#include "GPU_material.h"
 #include "GPU_glew.h"
+#include "GPU_material.h"
 #include "GPU_shader.h"
 
 struct GPUNode;
@@ -62,6 +62,7 @@ typedef enum {
   GPU_NODE_LINK_IMAGE_TILED,
   GPU_NODE_LINK_IMAGE_TILED_MAPPING,
   GPU_NODE_LINK_VOLUME_GRID,
+  GPU_NODE_LINK_VOLUME_GRID_TRANSFORM,
   GPU_NODE_LINK_OUTPUT,
   GPU_NODE_LINK_UNIFORM,
 } GPUNodeLinkType;
@@ -131,7 +132,7 @@ typedef struct GPUInput {
     struct GPUMaterialTexture *texture;
     /* GPU_SOURCE_ATTR */
     struct GPUMaterialAttribute *attr;
-    /* GPU_SOURCE_VOLUME_GRID */
+    /* GPU_SOURCE_VOLUME_GRID | GPU_SOURCE_VOLUME_GRID_TRANSFORM */
     struct GPUMaterialVolumeGrid *volume_grid;
   };
 } GPUInput;

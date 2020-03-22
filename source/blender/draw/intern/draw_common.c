@@ -27,9 +27,9 @@
 
 #include "UI_resources.h"
 
-#include "BKE_object.h"
-#include "BKE_global.h"
 #include "BKE_colorband.h"
+#include "BKE_global.h"
+#include "BKE_object.h"
 
 #include "BIF_glutil.h"
 
@@ -437,7 +437,15 @@ bool DRW_object_is_flat(Object *ob, int *r_axis)
 {
   float dim[3];
 
-  if (!ELEM(ob->type, OB_MESH, OB_CURVE, OB_SURF, OB_FONT, OB_MBALL)) {
+  if (!ELEM(ob->type,
+            OB_MESH,
+            OB_CURVE,
+            OB_SURF,
+            OB_FONT,
+            OB_MBALL,
+            OB_HAIR,
+            OB_POINTCLOUD,
+            OB_VOLUME)) {
     /* Non-meshes object cannot be considered as flat. */
     return false;
   }

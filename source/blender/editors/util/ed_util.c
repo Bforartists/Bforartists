@@ -21,23 +21,23 @@
  * \ingroup edutil
  */
 
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #include "MEM_guardedalloc.h"
 
 #include "DNA_armature_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_object_types.h"
+#include "DNA_packedFile_types.h"
+#include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
-#include "DNA_scene_types.h"
-#include "DNA_packedFile_types.h"
 
-#include "BLI_utildefines.h"
-#include "BLI_string.h"
 #include "BLI_path_util.h"
+#include "BLI_string.h"
+#include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
 
@@ -45,6 +45,7 @@
 #include "BKE_global.h"
 #include "BKE_layer.h"
 #include "BKE_main.h"
+#include "BKE_material.h"
 #include "BKE_multires.h"
 #include "BKE_object.h"
 #include "BKE_packedFile.h"
@@ -52,7 +53,6 @@
 #include "BKE_screen.h"
 #include "BKE_undo_system.h"
 #include "BKE_workspace.h"
-#include "BKE_material.h"
 
 #include "DEG_depsgraph.h"
 
@@ -73,9 +73,9 @@
 #include "UI_interface.h"
 #include "UI_resources.h"
 
-#include "WM_types.h"
-#include "WM_api.h"
 #include "RNA_access.h"
+#include "WM_api.h"
+#include "WM_types.h"
 
 /* ********* general editor util funcs, not BKE stuff please! ********* */
 
@@ -127,7 +127,7 @@ void ED_editors_init(bContext *C)
     }
     else if (ob->type == OB_GPENCIL) {
       /* For multi-edit mode we may already have mode data (grease pencil does not need it).
-       * However we may have a non-active object stuck in a greasepencil edit mode. */
+       * However we may have a non-active object stuck in a grease-pencil edit mode. */
       if (ob != obact) {
         ob->mode = OB_MODE_OBJECT;
         DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
@@ -238,7 +238,7 @@ bool ED_editors_flush_edits_for_object_ex(Main *bmain,
     /* Don't allow flushing while in the middle of a stroke (frees data in use).
      * Auto-save prevents this from happening but scripts
      * may cause a flush on saving: T53986. */
-    if (!ELEM(NULL, ob->sculpt, ob->sculpt->cache)) {
+    if (ob->sculpt != NULL && ob->sculpt->cache == NULL) {
       char *needs_flush_ptr = &ob->sculpt->needs_flush_to_id;
       if (check_needs_flush && (*needs_flush_ptr == 0)) {
         return false;
