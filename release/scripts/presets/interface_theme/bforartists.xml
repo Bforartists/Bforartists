@@ -1040,11 +1040,11 @@
       <ThemeInfo
         info_selected="#6080ff"
         info_selected_text="#ffffff"
-        info_error="#dc0000ff"
+        info_error="#dc000000"
         info_error_text="#000000"
         info_warning="#f5bc41ff"
         info_warning_text="#000000"
-        info_info="#00aa00ff"
+        info_info="#00aa0000"
         info_info_text="#000000"
         info_debug="#c4c4c4ff"
         info_debug_text="#000000"
