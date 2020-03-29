@@ -73,6 +73,11 @@ const EnumPropertyItem rna_enum_object_greasepencil_modifier_type_items[] = {
      ICON_MOD_MIRROR,
      "Mirror",
      "Duplicate strokes like a mirror"},
+    {eGpencilModifierType_Multiply,
+     "GP_MULTIPLY",
+     ICON_GP_MULTIFRAME_EDITING,
+     "Multiple Strokes",
+     "Produce multiple strokes along one stroke"},
     {eGpencilModifierType_Simplify,
      "GP_SIMPLIFY",
      ICON_MOD_SIMPLIFY,
@@ -83,11 +88,6 @@ const EnumPropertyItem rna_enum_object_greasepencil_modifier_type_items[] = {
      ICON_MOD_SUBSURF,
      "Subdivide",
      "Subdivide stroke adding more control points"},
-    {eGpencilModifierType_Multiply,
-     "GP_MULTIPLY",
-     ICON_GP_MULTIFRAME_EDITING,
-     "Multiple Strokes",
-     "Produce multiple strokes along one stroke"},
     {0, "", 0, N_("Deform"), ""},
     {eGpencilModifierType_Armature,
      "GP_ARMATURE",
@@ -1022,7 +1022,7 @@ static void rna_def_modifier_gpenciltint(BlenderRNA *brna)
   static EnumPropertyItem tint_mode_types_items[] = {
       {GPPAINT_MODE_STROKE, "STROKE", 0, "Stroke", "Vertex Color affects to Stroke only"},
       {GPPAINT_MODE_FILL, "FILL", 0, "Fill", "Vertex Color affects to Fill only"},
-      {GPPAINT_MODE_BOTH, "BOTH", 0, "Both", "Vertex Color affects to Stroke and Fill"},
+      {GPPAINT_MODE_BOTH, "BOTH", 0, "Stroke and Fill", "Vertex Color affects to Stroke and Fill"},
       {0, NULL, 0, NULL, NULL},
   };
 

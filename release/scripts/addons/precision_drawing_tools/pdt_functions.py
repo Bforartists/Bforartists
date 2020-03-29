@@ -111,6 +111,7 @@ def set_mode(mode_pl):
 
     Note:
         Sets indices of axes for locational vectors:
+        a3 is normal to screen, or depth
         "XY": a1 = x, a2 = y, a3 = z
         "XZ": a1 = x, a2 = z, a3 = y
         "YZ": a1 = y, a2 = z, a3 = x
@@ -126,6 +127,7 @@ def set_mode(mode_pl):
         "XY": (0, 1, 2),
         "XZ": (0, 2, 1),
         "YZ": (1, 2, 0),
+        "LO": (0, 1, 2),
     }
     return order[mode_pl]
 

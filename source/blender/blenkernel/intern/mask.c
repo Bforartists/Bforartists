@@ -38,10 +38,6 @@
 #include "BLT_translation.h"
 
 #include "DNA_mask_types.h"
-#include "DNA_node_types.h"
-#include "DNA_screen_types.h"
-#include "DNA_sequence_types.h"
-#include "DNA_space_types.h"
 
 #include "BKE_animsys.h"
 #include "BKE_curve.h"
@@ -52,8 +48,6 @@
 #include "BKE_main.h"
 #include "BKE_mask.h"
 #include "BKE_movieclip.h"
-#include "BKE_node.h"
-#include "BKE_sequencer.h"
 #include "BKE_tracking.h"
 
 #include "DEG_depsgraph_build.h"
@@ -508,9 +502,9 @@ float BKE_mask_spline_project_co(MaskSpline *spline,
 
 /* point */
 
-eMaskhandleMode BKE_mask_point_handles_mode_get(MaskSplinePoint *point)
+eMaskhandleMode BKE_mask_point_handles_mode_get(const MaskSplinePoint *point)
 {
-  BezTriple *bezt = &point->bezt;
+  const BezTriple *bezt = &point->bezt;
 
   if (bezt->h1 == bezt->h2 && bezt->h1 == HD_ALIGN) {
     return MASK_HANDLE_MODE_STICK;
@@ -519,23 +513,25 @@ eMaskhandleMode BKE_mask_point_handles_mode_get(MaskSplinePoint *point)
   return MASK_HANDLE_MODE_INDIVIDUAL_HANDLES;
 }
 
-void BKE_mask_point_handle(MaskSplinePoint *point, eMaskWhichHandle which_handle, float handle[2])
+void BKE_mask_point_handle(const MaskSplinePoint *point,
+                           eMaskWhichHandle which_handle,
+                           float r_handle[2])
 {
-  BezTriple *bezt = &point->bezt;
+  const BezTriple *bezt = &point->bezt;
 
   if (which_handle == MASK_WHICH_HANDLE_STICK) {
     float vec[2];
 
     sub_v2_v2v2(vec, bezt->vec[0], bezt->vec[1]);
 
-    handle[0] = (bezt->vec[1][0] + vec[1]);
-    handle[1] = (bezt->vec[1][1] - vec[0]);
+    r_handle[0] = (bezt->vec[1][0] + vec[1]);
+    r_handle[1] = (bezt->vec[1][1] - vec[0]);
   }
   else if (which_handle == MASK_WHICH_HANDLE_LEFT) {
-    copy_v2_v2(handle, bezt->vec[0]);
+    copy_v2_v2(r_handle, bezt->vec[0]);
   }
   else if (which_handle == MASK_WHICH_HANDLE_RIGHT) {
-    copy_v2_v2(handle, bezt->vec[2]);
+    copy_v2_v2(r_handle, bezt->vec[2]);
   }
   else {
     BLI_assert(!"Unknown handle passed to BKE_mask_point_handle");

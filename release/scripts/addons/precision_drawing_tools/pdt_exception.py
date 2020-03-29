@@ -85,3 +85,7 @@ class ShaderError(Exception):
 class FeatureError(Exception):
     """Wrong Feature Type Error Exception."""
     pass
+
+class DistanceError(Exception):
+    """Invalid Distance (Separation) Error."""
+    pass

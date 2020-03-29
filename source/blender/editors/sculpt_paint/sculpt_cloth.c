@@ -145,12 +145,11 @@ static void do_cloth_brush_build_constraints_task_cb_ex(
       int tot_indices = 0;
       build_indices[tot_indices] = vd.index;
       tot_indices++;
-      sculpt_vertex_neighbors_iter_begin(ss, vd.index, ni)
-      {
+      SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, vd.index, ni) {
         build_indices[tot_indices] = ni.index;
         tot_indices++;
       }
-      sculpt_vertex_neighbors_iter_end(ni);
+      SCULPT_VERTEX_NEIGHBORS_ITER_END(ni);
 
       /* As we don't know the order of the neighbor vertices, we create all possible combinations
        * between the neighbor and the original vertex as length constraints. */
@@ -446,7 +445,14 @@ static void cloth_brush_satisfy_constraints(SculptSession *ss,
       const float constraint_distance = constraint->length +
                                         (cloth_sim->length_constraint_tweak[v1] * 0.5f) +
                                         (cloth_sim->length_constraint_tweak[v2] * 0.5f);
-      mul_v3_v3fl(correction_vector, v1_to_v2, 1.0f - (constraint_distance / current_distance));
+
+      if (current_distance > 0.0f) {
+        mul_v3_v3fl(correction_vector, v1_to_v2, 1.0f - (constraint_distance / current_distance));
+      }
+      else {
+        copy_v3_v3(correction_vector, v1_to_v2);
+      }
+
       mul_v3_v3fl(correction_vector_half, correction_vector, 0.5f);
 
       const float mask_v1 = (1.0f - SCULPT_vertex_mask_get(ss, v1)) *

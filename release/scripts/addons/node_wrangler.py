@@ -2697,7 +2697,7 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
 
         nodes, links = get_nodes_links(context)
         active_node = nodes.active
-        if not active_node.bl_idname == 'ShaderNodeBsdfPrincipled':
+        if not (active_node and active_node.bl_idname == 'ShaderNodeBsdfPrincipled'):
             self.report({'INFO'}, 'Select Principled BSDF')
             return {'CANCELLED'}
 

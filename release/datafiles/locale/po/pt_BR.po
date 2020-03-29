@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -6352,14 +6352,6 @@ msgstr "Mostrar lápis de cera"
 
 msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "Inclui a visualização dos dados e quadros de animação relacionados ao lápis de cera."
-
-
-msgid "Active Scene Only"
-msgstr "Somente a cena ativa"
-
-
-msgid "Only show Grease Pencil data-blocks used as part of the active scene"
-msgstr "Mostra somente os blocos de dados de lápis de cera usados como parte da cena ativa."
 
 
 msgid "Display Hidden"
@@ -18379,6 +18371,10 @@ msgid "Vector font for Text objects"
 msgstr "Fonte vetorial para objetos de texto."
 
 
+msgid "Offset the number of the frame to use in the animation"
+msgstr "Desloca o número do quadro para usar dentro da animação."
+
+
 msgid "Window Manager"
 msgstr "Gerenciador de janelas"
 
@@ -18889,10 +18885,6 @@ msgstr "Número do quadro atual dentro do filme ou sequência de imagem."
 
 msgid "Number of images of a movie to use"
 msgstr "Número de imagens de um filme para usar."
-
-
-msgid "Offset the number of the frame to use in the animation"
-msgstr "Desloca o número do quadro para usar dentro da animação."
 
 
 msgid "Global starting frame of the movie/sequence, assuming first picture has a #1"
@@ -30650,6 +30642,15 @@ msgstr "Transforma os itens selecionados por tipo de modo."
 
 
 msgctxt "Operator"
+msgid "Set Keyframe Easing Type"
+msgstr "Configurar o tipo de facilitação dos quadros-chave"
+
+
+msgid "Set easing type for the F-Curve segments starting from the selected keyframes"
+msgstr "Configura o tipo de facilitação para os segmentos de curva-f, iniciando a partir dos quadros-chave selecionados"
+
+
+msgctxt "Operator"
 msgid "Set Keyframe Extrapolation"
 msgstr "Configurar extrapolação de quadro-chave"
 
@@ -36019,63 +36020,6 @@ msgstr "Cria um quadro em branco em todas as camadas, e não somente na ativa."
 
 
 msgctxt "Operator"
-msgid "Hide Color(s)"
-msgstr "Ocultar as cores"
-
-
-msgid "Hide selected/unselected Grease Pencil colors"
-msgstr "Oculta as cores de lápis de cera selecionadas ou não selecionadas."
-
-
-msgid "Hide unselected rather than selected colors"
-msgstr "Oculta as não selecionadas ao invés das cores selecionadas."
-
-
-msgid "Toggle whether the active color is the only one that is editable and/or visible"
-msgstr "Permite alternar entre manter a cor ativa como a única que poderá ser editada e / ou estar visível."
-
-
-msgid "Affect Visibility"
-msgstr "Afetar a visibilidade"
-
-
-msgid "In addition to toggling the editability, also affect the visibility"
-msgstr "Em adição a alternância da editabilidade, também afeta a visibilidade."
-
-
-msgctxt "Operator"
-msgid "Lock All Colors"
-msgstr "Bloquear todas as cores"
-
-
-msgid "Lock all Grease Pencil colors to prevent them from being accidentally modified"
-msgstr "Bloqueia todas as cores de lápis de cera para evitar que elas sejam modificadas acidentalmente."
-
-
-msgctxt "Operator"
-msgid "Show All Colors"
-msgstr "Mostrar todas as cores"
-
-
-msgctxt "Operator"
-msgid "Select Color"
-msgstr "Seleção por cores"
-
-
-msgid "Select all Grease Pencil strokes using current color"
-msgstr "Permite selecionar os traços de lápis de cera usando a cor ativa atualmente selecionada."
-
-
-msgctxt "Operator"
-msgid "Unlock All Colors"
-msgstr "Desbloquear todas as cores"
-
-
-msgid "Unlock all Grease Pencil colors so that they can be edited"
-msgstr "Desbloqueia todas as cores de lápis de cera de maneira que estas possam ser editadas."
-
-
-msgctxt "Operator"
 msgid "Convert Grease Pencil"
 msgstr "Converter lápis de cera"
 
@@ -36361,6 +36305,14 @@ msgid "Toggle whether the active layer is the only one that can be edited and/or
 msgstr "Permite alternar entre manter a camada ativa como a única que poderá ser editada e / ou estar visível."
 
 
+msgid "Affect Visibility"
+msgstr "Afetar a visibilidade"
+
+
+msgid "In addition to toggling the editability, also affect the visibility"
+msgstr "Em adição a alternância da editabilidade, também afeta a visibilidade."
+
+
 msgctxt "Operator"
 msgid "Remove Mask Layer"
 msgstr "Remover camada de máscara"
@@ -36409,6 +36361,10 @@ msgstr "Desabilitar as cores não utilizadas na camada"
 
 msgid "Lock and hide any color not used in any layer"
 msgstr "Bloqueia e oculta quaisquer cores não utilizadas em quaisquer camadas."
+
+
+msgid "Hide unselected rather than selected colors"
+msgstr "Oculta as não selecionadas ao invés das cores selecionadas."
 
 
 msgctxt "Operator"
@@ -36693,15 +36649,6 @@ msgstr "Juntar e copiar"
 
 
 msgctxt "Operator"
-msgid "Lock Unused Colors"
-msgstr "Bloquear as cores não usadas"
-
-
-msgid "Lock any color not used in any selected stroke"
-msgstr "Bloqueia quaisquer cores não usadas em quaisquer traços selecionados."
-
-
-msgctxt "Operator"
 msgid "Subdivide Stroke"
 msgstr "Subdividir traços"
 
@@ -36897,15 +36844,6 @@ msgstr "Substituir existentes"
 
 msgid "Replace existing driver variables, instead of just appending to the end of the existing list"
 msgstr "Substitui as variáveis de controlador existentes, ao invés de simplesmente anexá-las ao final da lista existente."
-
-
-msgctxt "Operator"
-msgid "Set Keyframe Easing Type"
-msgstr "Configurar o tipo de facilitação dos quadros-chave"
-
-
-msgid "Set easing type for the F-Curve segments starting from the selected keyframes"
-msgstr "Configura o tipo de facilitação para os segmentos de curva-f, iniciando a partir dos quadros-chave selecionados"
 
 
 msgctxt "Operator"
@@ -49982,20 +49920,12 @@ msgid "Rotate the view"
 msgstr "Rotaciona a visualização."
 
 
-msgid "Use the object center when selecting, in editmode used to extend object selection"
-msgstr "Usa o centro do objeto durante a seleção. Durante o modo de edição, isso é usado para estender a seleção dos objetos."
-
-
 msgid "Enumerate"
 msgstr "Enumerar"
 
 
 msgid "List objects under the mouse (object mode only)"
 msgstr "Lista os objetos abaixo do mouse (somente no modo de objeto)."
-
-
-msgid "Use object selection (editmode only)"
-msgstr "Usa a seleção de objetos (somente no modo de edição)"
 
 
 msgid "Select items using circle selection"
@@ -52687,20 +52617,12 @@ msgid "Pie Menu"
 msgstr "Menus setorizados"
 
 
-msgid "Video Sequence Editor"
-msgstr "Editor de sequências de vídeo"
-
-
 msgid "Text Style"
 msgstr "Estilo de texto"
 
 
 msgid "User Interface"
 msgstr "Interface de usuário"
-
-
-msgid "3D View"
-msgstr "Janela de visualização 3D"
 
 
 msgid "Gradient Colors"
@@ -56585,10 +56507,6 @@ msgid "Number of volume scattering samples to render for each AA sample"
 msgstr "Número de amostras de espalhamento de volume para renderizar para cada amostra de antisserrilhamento."
 
 
-msgid "Distance between volume shader samples when rendering the volume (lower values give more accurate and detailed results, but also increased render time)"
-msgstr "Distância entre as amostras de sombreamento dos volumes durante sua renderização (valores mais baixos fornecem precisão e resultados detalhados, mas também aumentam o tempo de renderização)."
-
-
 msgid "Glossy Color"
 msgstr "Cor de polimento"
 
@@ -56639,6 +56557,10 @@ msgstr "Manual"
 
 msgid "Interpolation method to use for volumes"
 msgstr "Método de interpolação a ser utilizado para volumes."
+
+
+msgid "Distance between volume shader samples when rendering the volume (lower values give more accurate and detailed results, but also increased render time)"
+msgstr "Distância entre as amostras de sombreamento dos volumes durante sua renderização (valores mais baixos fornecem precisão e resultados detalhados, mas também aumentam o tempo de renderização)."
 
 
 msgid "Settings/info about a language"
@@ -62317,6 +62239,10 @@ msgid "Active Theme Area"
 msgstr "Área de tema ativo"
 
 
+msgid "3D View"
+msgstr "Janela de visualização 3D"
+
+
 msgid "Theme Bone Color Set"
 msgstr "Tema de cor de conjunto de ossos"
 
@@ -62369,38 +62295,6 @@ msgid "Color of disabled marker"
 msgstr "A cor do marcadores desabilitados."
 
 
-msgid "Align handle color"
-msgstr "Cor - Manípulo de alinhamento"
-
-
-msgid "Auto handle color"
-msgstr "Cor - Manípulo automático"
-
-
-msgid "Auto-Clamped handle color"
-msgstr "Cor - Manípulo auto-limitado"
-
-
-msgid "Free handle color"
-msgstr "Cor - Manípulo livre"
-
-
-msgid "Align handle selected color"
-msgstr "Cor - Manípulo de alinhamento selecionado"
-
-
-msgid "Auto handle selected color"
-msgstr "Cor - Manípulo automático selecionado"
-
-
-msgid "Auto-Clamped handle selected color"
-msgstr "Cor - Manípulo auto-limitado selecionado"
-
-
-msgid "Free handle selected color"
-msgstr "Cor - Manípulo livre selecionado"
-
-
 msgid "Handle Vertex"
 msgstr "Manípulos - Vértices"
 
@@ -62421,16 +62315,8 @@ msgid "Color of locked marker"
 msgstr "A cor dos marcadores travados."
 
 
-msgid "Marker Color"
-msgstr "Marcador - Cor"
-
-
 msgid "Color of marker"
 msgstr "A cor dos marcadores."
-
-
-msgid "Marker Outline Color"
-msgstr "Marcador - Cor dos contornos"
 
 
 msgid "Color of marker's outline"
@@ -62749,18 +62635,6 @@ msgid "Channels Region"
 msgstr "Região de canais"
 
 
-msgid "Vector handle selected color"
-msgstr "Cor - Manípulo de vetor selecionado"
-
-
-msgid "Vector handle color"
-msgstr "Cor - Manípulo de vetor"
-
-
-msgid "Last selected point"
-msgstr "Último ponto selecionado"
-
-
 msgid "Vertex Bevel"
 msgstr "Chanfros de vértices"
 
@@ -62815,34 +62689,6 @@ msgstr "Hastes de curva de pintura"
 
 msgid "Paint Curve Pivot"
 msgstr "Pivô de curva de pintura"
-
-
-msgid "Stitch preview active island"
-msgstr "Previsão de junção de ilha ativa"
-
-
-msgid "Stitch preview edge color"
-msgstr "Cor de previsão das junções das costuras"
-
-
-msgid "Stitch preview face color"
-msgstr "Cor de previsão das junções das faces"
-
-
-msgid "Stitch preview stitchable color"
-msgstr "Cor de previsão das junções de cores soldáveis"
-
-
-msgid "Stitch preview unstitchable color"
-msgstr "Cor de previsão das junções de cores não soldáveis"
-
-
-msgid "Stitch preview vertex color"
-msgstr "Cor de previsão das junções dos vértices"
-
-
-msgid "Scope region background color"
-msgstr "Cor de região de plano de fundo do escopo"
 
 
 msgid "Other Object UVs"
@@ -63121,10 +62967,6 @@ msgid "Text Strip"
 msgstr "Faixa de texto"
 
 
-msgid "Transition Strip"
-msgstr "Faixa de transições"
-
-
 msgid "Theme Space Settings"
 msgstr "Tema - Configurações do espaço"
 
@@ -63377,10 +63219,6 @@ msgid "Theme settings for the 3D View"
 msgstr "Configurações de tema para a janela de visualização 3D."
 
 
-msgid "Active spline"
-msgstr "Spline ativa"
-
-
 msgid "Bone Pose"
 msgstr "Ossos em modo de pose"
 
@@ -63455,22 +63293,6 @@ msgstr "Tamanho dos vértices de lápis de cera"
 
 msgid "Face Normal"
 msgstr "Normais das faces"
-
-
-msgid "NURBS active U-lines"
-msgstr "Linhas U ativas para NURBS"
-
-
-msgid "NURBS active V-lines"
-msgstr "Linhas V ativas para NURBS"
-
-
-msgid "NURBS U-lines"
-msgstr "Linhas U NURBS"
-
-
-msgid "NURBS V-lines"
-msgstr "Linhas V NURBS"
 
 
 msgid "Object Origin Size"
@@ -64253,10 +64075,6 @@ msgid "Number of grid lines to display in perspective view"
 msgstr "O número de linhas de grade para mostrar em visualização de perspectiva."
 
 
-msgid "Distance between 3D View grid lines"
-msgstr "Distância entre as linhas de grade da janela de visualização 3D."
-
-
 msgid "Grid Scale Unit"
 msgstr "Unidades de escala da grade"
 
@@ -64471,6 +64289,10 @@ msgstr "Z, índices, normais, UV e passos de vetor somente são afetados pelas s
 
 msgid "Render stylized strokes in this Layer"
 msgstr "Renderiza os traços estilizados nesta camada."
+
+
+msgid "Unknown"
+msgstr "Desconhecido"
 
 
 msgid "Walk navigation settings"
@@ -66568,6 +66390,10 @@ msgid "Use Channel:"
 msgstr "Usar canal:"
 
 
+msgid "Detail"
+msgstr "Detalhes"
+
+
 msgid "Edge Detection Options:"
 msgstr "Opções de detecção de aresta:"
 
@@ -67024,10 +66850,6 @@ msgstr "Amortecimento"
 
 msgid "Auto-Step"
 msgstr "Passos automáticos"
-
-
-msgid "Shadow Samples"
-msgstr "Amostras de sombras"
 
 
 msgid "Refraction"
@@ -70893,10 +70715,6 @@ msgstr "Deformação de parente %s"
 
 msgid "Make Real"
 msgstr "Tornar real"
-
-
-msgid "Unknown"
-msgstr "Desconhecido"
 
 
 msgid "Pos"
@@ -75195,10 +75013,6 @@ msgid "Original vertex count mismatch: %u to %u"
 msgstr "A contagem de vértices originais não combina: %u para %u."
 
 
-msgid "Enable 'Auto Smooth' option in mesh settings"
-msgstr "Por favor, habilite a opção \"Suavizar automaticamente\" no contexto de dados do objeto."
-
-
 msgid "You are using a rather high poly as source or destination, computation might be slow"
 msgstr "Talvez você esteja utilizando um objeto com uma quantidade alta de polígonos como fonte ou destinação, a computação desses dados pode ser lenta."
 
@@ -75617,10 +75431,6 @@ msgstr "Altura da coluna"
 
 msgid "Reflection"
 msgstr "Reflexão"
-
-
-msgid "Detail"
-msgstr "Detalhes"
 
 
 msgid "Detail Scale"
