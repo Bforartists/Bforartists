@@ -1675,7 +1675,7 @@ static int wm_operator_defaults_exec(bContext *C, wmOperator *op)
 /* used by operator preset menu. pre-2.65 this was a 'Reset' button */
 static void WM_OT_operator_defaults(wmOperatorType *ot)
 {
-  ot->name = "Restore Defaults";
+  ot->name = "Restore Operator Defaults";
   ot->idname = "WM_OT_operator_defaults";
   ot->description = "Set the active operator to its default values";
 
@@ -1687,10 +1687,15 @@ static void WM_OT_operator_defaults(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Operator Search Menu
+/** \name Operator/Menu Search Operator
  * \{ */
 
 struct SearchPopupInit_Data {
+  enum {
+    SEARCH_TYPE_OPERATOR = 0,
+    SEARCH_TYPE_MENU = 1,
+  } search_type;
+
   int size[2];
 };
 
@@ -1717,7 +1722,17 @@ static uiBlock *wm_block_search_menu(bContext *C, ARegion *region, void *userdat
                        0,
                        0,
                        "");
-  UI_but_func_operator_search(but);
+
+  if (init_data->search_type == SEARCH_TYPE_OPERATOR) {
+    UI_but_func_operator_search(but);
+  }
+  else if (init_data->search_type == SEARCH_TYPE_MENU) {
+    UI_but_func_menu_search(but);
+  }
+  else {
+    BLI_assert(0);
+  }
+
   UI_but_flag_enable(but, UI_BUT_ACTIVATE_ON_INIT);
 
   /* fake button, it holds space for search items */
@@ -1747,7 +1762,7 @@ static int wm_search_menu_exec(bContext *UNUSED(C), wmOperator *UNUSED(op))
   return OPERATOR_FINISHED;
 }
 
-static int wm_search_menu_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent *event)
+static int wm_search_menu_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   /* Exception for launching via spacebar */
   if (event->type == EVT_SPACEKEY) {
@@ -1775,9 +1790,20 @@ static int wm_search_menu_invoke(bContext *C, wmOperator *UNUSED(op), const wmEv
     }
   }
 
+  PropertyRNA *prop = op->type->prop;
+  int search_type;
+  if (RNA_property_is_set(op->ptr, prop)) {
+    search_type = RNA_property_enum_get(op->ptr, prop);
+  }
+  else {
+    search_type = U.experimental.use_menu_search ? SEARCH_TYPE_MENU : SEARCH_TYPE_OPERATOR;
+  }
+
   static struct SearchPopupInit_Data data;
-  data.size[0] = UI_searchbox_size_x() * 2;
-  data.size[1] = UI_searchbox_size_y();
+  data = (struct SearchPopupInit_Data){
+      .search_type = search_type,
+      .size = {UI_searchbox_size_x() * 2, UI_searchbox_size_y()},
+  };
 
   UI_popup_block_invoke(C, wm_block_search_menu, &data, NULL);
 
@@ -1793,6 +1819,15 @@ static void WM_OT_search_menu(wmOperatorType *ot)
   ot->invoke = wm_search_menu_invoke;
   ot->exec = wm_search_menu_exec;
   ot->poll = WM_operator_winactive;
+
+  static const EnumPropertyItem search_type_items[] = {
+      {SEARCH_TYPE_OPERATOR, "OPERATOR", 0, "Operator", "Search all operators"},
+      {SEARCH_TYPE_MENU, "MENU", 0, "Menu", "Search active menu items"},
+      {0, NULL, 0, NULL, NULL},
+  };
+
+  /* properties */
+  ot->prop = RNA_def_enum(ot->srna, "type", search_type_items, SEARCH_TYPE_OPERATOR, "Type", "");
 }
 
 static int wm_call_menu_exec(bContext *C, wmOperator *op)
@@ -3798,14 +3833,14 @@ static void gesture_circle_modal_keymap(wmKeyConfig *keyconf)
   };
 
   /* WARNING - name is incorrect, use for non-3d views */
-  wmKeyMap *keymap = WM_modalkeymap_get(keyconf, "View3D Gesture Circle");
+  wmKeyMap *keymap = WM_modalkeymap_find(keyconf, "View3D Gesture Circle");
 
   /* this function is called for each spacetype, only needs to add map once */
   if (keymap && keymap->modal_items) {
     return;
   }
 
-  keymap = WM_modalkeymap_add(keyconf, "View3D Gesture Circle", modal_items);
+  keymap = WM_modalkeymap_ensure(keyconf, "View3D Gesture Circle", modal_items);
 
   /* assign map to operators */
   WM_modalkeymap_assign(keymap, "VIEW3D_OT_select_circle");
@@ -3828,14 +3863,14 @@ static void gesture_straightline_modal_keymap(wmKeyConfig *keyconf)
       {0, NULL, 0, NULL, NULL},
   };
 
-  wmKeyMap *keymap = WM_modalkeymap_get(keyconf, "Gesture Straight Line");
+  wmKeyMap *keymap = WM_modalkeymap_find(keyconf, "Gesture Straight Line");
 
   /* this function is called for each spacetype, only needs to add map once */
   if (keymap && keymap->modal_items) {
     return;
   }
 
-  keymap = WM_modalkeymap_add(keyconf, "Gesture Straight Line", modal_items);
+  keymap = WM_modalkeymap_ensure(keyconf, "Gesture Straight Line", modal_items);
 
   /* assign map to operators */
   WM_modalkeymap_assign(keymap, "IMAGE_OT_sample_line");
@@ -3854,14 +3889,14 @@ static void gesture_box_modal_keymap(wmKeyConfig *keyconf)
       {0, NULL, 0, NULL, NULL},
   };
 
-  wmKeyMap *keymap = WM_modalkeymap_get(keyconf, "Gesture Box");
+  wmKeyMap *keymap = WM_modalkeymap_find(keyconf, "Gesture Box");
 
   /* this function is called for each spacetype, only needs to add map once */
   if (keymap && keymap->modal_items) {
     return;
   }
 
-  keymap = WM_modalkeymap_add(keyconf, "Gesture Box", modal_items);
+  keymap = WM_modalkeymap_ensure(keyconf, "Gesture Box", modal_items);
 
   /* assign map to operators */
   WM_modalkeymap_assign(keymap, "ACTION_OT_select_box");
@@ -3905,14 +3940,14 @@ static void gesture_zoom_border_modal_keymap(wmKeyConfig *keyconf)
       {0, NULL, 0, NULL, NULL},
   };
 
-  wmKeyMap *keymap = WM_modalkeymap_get(keyconf, "Gesture Zoom Border");
+  wmKeyMap *keymap = WM_modalkeymap_find(keyconf, "Gesture Zoom Border");
 
   /* this function is called for each spacetype, only needs to add map once */
   if (keymap && keymap->modal_items) {
     return;
   }
 
-  keymap = WM_modalkeymap_add(keyconf, "Gesture Zoom Border", modal_items);
+  keymap = WM_modalkeymap_ensure(keyconf, "Gesture Zoom Border", modal_items);
 
   /* assign map to operators */
   WM_modalkeymap_assign(keymap, "VIEW2D_OT_zoom_border");

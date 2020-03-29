@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -18894,20 +18894,12 @@ msgid "Shaded"
 msgstr "Gölgeli "
 
 
-msgid "Video Sequence Editor"
-msgstr "Video Sıra Editörü"
-
-
 msgid "Text Style"
 msgstr "Özellik Seti"
 
 
 msgid "User Interface"
 msgstr "Arabirim yazıtipi:"
-
-
-msgid "3D View"
-msgstr "3D Görünüm "
 
 
 msgid "Gradient Colors"
@@ -21949,6 +21941,10 @@ msgid "Active Theme Area"
 msgstr "Aktif pozisyonu sil"
 
 
+msgid "3D View"
+msgstr "3D Görünüm "
+
+
 msgid "Colored Constraints"
 msgstr "Kemik Kısıtlamaları"
 
@@ -21973,22 +21969,6 @@ msgid "Color of disabled marker"
 msgstr "İşareti (Tekrar) Adlandır"
 
 
-msgid "Align handle color"
-msgstr "Arabellek rengini yapıştır"
-
-
-msgid "Auto handle color"
-msgstr "Arabellek rengini yapıştır"
-
-
-msgid "Free handle color"
-msgstr "Arabellek rengini yapıştır"
-
-
-msgid "Align handle selected color"
-msgstr "Görüntüyü Seçili Olana Hizala"
-
-
 msgid "Handle Vertex"
 msgstr "Nokta Boyama"
 
@@ -22009,16 +21989,8 @@ msgid "Color of locked marker"
 msgstr "İşareti (Tekrar) Adlandır"
 
 
-msgid "Marker Color"
-msgstr "Ekran Rengi:"
-
-
 msgid "Color of marker"
 msgstr "İşaret Ekle"
-
-
-msgid "Marker Outline Color"
-msgstr "Arabellek rengini yapıştır"
 
 
 msgid "Color of marker's outline"
@@ -22181,14 +22153,6 @@ msgid "Channels Region"
 msgstr "Döngü Alana"
 
 
-msgid "Vector handle color"
-msgstr "Arabellek rengini yapıştır"
-
-
-msgid "Last selected point"
-msgstr "Seçili İşaretler arasında"
-
-
 msgid "Vertex Select"
 msgstr "Ters Seçim"
 
@@ -22219,10 +22183,6 @@ msgstr "Seçilenler"
 
 msgid "Face Dot Size"
 msgstr "Yazıtipi Boyutu Seçin:"
-
-
-msgid "Stitch preview vertex color"
-msgstr "Yeni bir nokta rengi katmanı oluştur"
 
 
 msgid "Theme Info"
@@ -22370,10 +22330,6 @@ msgstr "Arkaplan Kaynağı"
 
 
 msgid "Scene Strip"
-msgstr "Strip Özellikleri..."
-
-
-msgid "Transition Strip"
 msgstr "Strip Özellikleri..."
 
 
@@ -22537,10 +22493,6 @@ msgid "Theme 3D View"
 msgstr "Anim 3D Grnmde oynat"
 
 
-msgid "Active spline"
-msgstr "Aktif Kamera"
-
-
 msgid "Bone Pose"
 msgstr "Poz Ekle..."
 
@@ -22591,22 +22543,6 @@ msgstr "METİN DOSYASI YÜKLE"
 
 msgid "Face Normal"
 msgstr "Yüzey Alanı"
-
-
-msgid "NURBS active U-lines"
-msgstr "Aktif pozisyonu sil"
-
-
-msgid "NURBS active V-lines"
-msgstr "Aktif pozisyonu sil"
-
-
-msgid "NURBS U-lines"
-msgstr "Bağlantı çizgileri"
-
-
-msgid "NURBS V-lines"
-msgstr "Bağlantı çizgileri"
 
 
 msgid "Object Origin Size"
@@ -23542,6 +23478,10 @@ msgid "Use Channel:"
 msgstr "Kanal Sıralaması"
 
 
+msgid "Detail"
+msgstr "Mesh Araçları"
+
+
 msgid "Draw:"
 msgstr "Çiz:"
 
@@ -23716,10 +23656,6 @@ msgstr "Nesnenin genel rengi."
 
 msgid "Auto-Step"
 msgstr "Otomatik Normalleştir"
-
-
-msgid "Shadow Samples"
-msgstr "Mesh Gölgesini Çiz"
 
 
 msgid "Refraction"
@@ -26633,10 +26569,6 @@ msgstr "Yükseklik"
 
 msgid "Reflection"
 msgstr "Yansıma"
-
-
-msgid "Detail"
-msgstr "Mesh Araçları"
 
 
 msgid "Detail Scale"

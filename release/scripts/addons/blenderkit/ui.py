@@ -990,6 +990,10 @@ def floor_raycast(context, mx, my):
 def is_rating_possible():
     ao = bpy.context.active_object
     ui = bpy.context.scene.blenderkitUI
+    preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    #first test if user is logged in.
+    if preferences.api_key == '':
+        return False, False, None, None
     if bpy.context.scene.get('assets rated') is not None and ui.down_up == 'SEARCH':
         if bpy.context.mode in ('SCULPT', 'PAINT_TEXTURE'):
             b = utils.get_active_brush()
@@ -1096,9 +1100,7 @@ def interact_rating(r, mx, my, event):
                         bkit_ratings.rating_work_hours = wh
 
                 if event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
-                    if bkit_ratings.rating_quality > 0.1 or bkit_ratings.rating_work_hours > 0.1:
-                        ratings.upload_rating(asset)
-                    ui.last_rating_time = time.time()
+                    ui.last_rating_time = time.time() # this prop seems obsolete now?
                 return True
             else:
                 ui.rating_button_on = True
@@ -1664,7 +1666,7 @@ class AssetBarOperator(bpy.types.Operator):
             else:
                 return {'RUNNING_MODAL'}
 
-        if event.type == 'W' and ui_props.active_index != -3:
+        if event.type == 'W' and ui_props.active_index > -1:
             sr = bpy.context.scene['search results']
             asset_data = sr[ui_props.active_index]
             a = bpy.context.window_manager['bkit authors'].get(asset_data['author_id'])
@@ -1673,7 +1675,7 @@ class AssetBarOperator(bpy.types.Operator):
                 if a.get('aboutMeUrl') is not None:
                     bpy.ops.wm.url_open(url=a['aboutMeUrl'])
             return {'RUNNING_MODAL'}
-        if event.type == 'A' and ui_props.active_index != -3:
+        if event.type == 'A' and ui_props.active_index > -1:
             sr = bpy.context.scene['search results']
             asset_data = sr[ui_props.active_index]
             a = asset_data['author_id']
@@ -1683,7 +1685,7 @@ class AssetBarOperator(bpy.types.Operator):
                 utils.p('author:', a)
                 search.search(author_id=a)
             return {'RUNNING_MODAL'}
-        if event.type == 'X' and ui_props.active_index != -3:
+        if event.type == 'X' and ui_props.active_index > -1:
             sr = bpy.context.scene['search results']
             asset_data = sr[ui_props.active_index]
             print(asset_data['name'])

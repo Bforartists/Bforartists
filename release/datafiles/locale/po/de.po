@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1252,6 +1252,10 @@ msgstr "Version"
 
 msgid "Version of Blender the .blend was saved with"
 msgstr "Version von Blender, mit der die .blend Datei gespeichert wurde"
+
+
+msgid "Volumes"
+msgstr "Volumen"
 
 
 msgid "Window Managers"
@@ -26454,10 +26458,6 @@ msgid "Rotate View"
 msgstr "Ansicht drehen"
 
 
-msgid "Use object selection (editmode only)"
-msgstr "Objektauswahl verwenden (nur Editiermodus)"
-
-
 msgid "Select items using circle selection"
 msgstr "Objekte mittels Kreisauswahl auswählen"
 
@@ -27440,10 +27440,6 @@ msgid "Subdivision"
 msgstr "Unterteilung"
 
 
-msgid "Volumes"
-msgstr "Volumen"
-
-
 msgid "Render Pass"
 msgstr "Renderdurchgänge"
 
@@ -28040,20 +28036,12 @@ msgid "Tab"
 msgstr "Tab"
 
 
-msgid "Video Sequence Editor"
-msgstr "Video Sequenzeditor"
-
-
 msgid "Text Style"
 msgstr "Stil setzen"
 
 
 msgid "User Interface"
 msgstr "Benutzeroberfläche"
-
-
-msgid "3D View"
-msgstr "3D Ansicht"
 
 
 msgid "Gradient Colors"
@@ -33074,6 +33062,10 @@ msgid "Active Theme Area"
 msgstr "Aktives Themengebiet"
 
 
+msgid "3D View"
+msgstr "3D Ansicht"
+
+
 msgid "Colored Constraints"
 msgstr "Färbe Beschränkungen ein"
 
@@ -33102,22 +33094,6 @@ msgid "Color of disabled marker"
 msgstr "Farbe der nicht aktiven Marker"
 
 
-msgid "Auto handle color"
-msgstr "Auto Anfasser-Farbe"
-
-
-msgid "Free handle color"
-msgstr "Freier Anfasser-Farbe"
-
-
-msgid "Auto handle selected color"
-msgstr "Ausgewählter Auto Anfasser-Farbe"
-
-
-msgid "Free handle selected color"
-msgstr "Ausgewählter freier Anfasser-Farbe"
-
-
 msgid "Handle Vertex"
 msgstr "Anfasser-Vertex"
 
@@ -33138,16 +33114,8 @@ msgid "Color of locked marker"
 msgstr "Farbe der gesperrten Marker"
 
 
-msgid "Marker Color"
-msgstr "Markerfarbe"
-
-
 msgid "Color of marker"
 msgstr "Markerfarbe"
-
-
-msgid "Marker Outline Color"
-msgstr "Marker-Randfarbe"
 
 
 msgid "Color of marker's outline"
@@ -33364,18 +33332,6 @@ msgstr "Graph-Editor-Thema"
 
 msgid "Theme settings for the graph editor"
 msgstr "Themeneinstellungen für den Grapheneditor"
-
-
-msgid "Vector handle selected color"
-msgstr "Ausgewählter Vektoranfasser-Farbe"
-
-
-msgid "Vector handle color"
-msgstr "Vektoranfasser-Farbe"
-
-
-msgid "Last selected point"
-msgstr "Letzer ausgewählter Punkt"
 
 
 msgid "Vertex Select"
@@ -33662,10 +33618,6 @@ msgid "Scene Strip"
 msgstr "Szenenstreifen"
 
 
-msgid "Transition Strip"
-msgstr "Übergangsstreifen"
-
-
 msgid "Theme Space Settings"
 msgstr "Raumeinstellung-Thema"
 
@@ -33856,22 +33808,6 @@ msgstr "Flächen-Textbereich"
 
 msgid "Face Normal"
 msgstr "Flächen-Normale"
-
-
-msgid "NURBS active U-lines"
-msgstr "NURBS aktive U-Linien"
-
-
-msgid "NURBS active V-lines"
-msgstr "NURBS aktive V-Linien"
-
-
-msgid "NURBS U-lines"
-msgstr "NURBS-U-Linie"
-
-
-msgid "NURBS V-lines"
-msgstr "NURBS-V-Linie"
 
 
 msgid "Object Origin Size"
@@ -34184,10 +34120,6 @@ msgstr "Rasterlinien"
 
 msgid "Number of grid lines to display in perspective view"
 msgstr "Anzahl von Rasterlinien, die in der perspektivischen Ansicht angezeigt werden"
-
-
-msgid "Distance between 3D View grid lines"
-msgstr "Abstand zwischen Rasterlinien in der 3D-Ansicht"
 
 
 msgid "Grid Scale Unit"
@@ -35402,6 +35334,10 @@ msgstr "Lose löschen"
 
 msgid "Use Channel:"
 msgstr "Kanal verwenden:"
+
+
+msgid "Detail"
+msgstr "Detail"
 
 
 msgid "Priority"
@@ -39983,10 +39919,6 @@ msgid "Reflection"
 msgstr "Reflexion"
 
 
-msgid "Detail"
-msgstr "Detail"
-
-
 msgid "Detail Scale"
 msgstr "Detail-Skalierung"
 
@@ -40133,10 +40065,6 @@ msgstr "Skripte aktivieren"
 
 msgid "Continue using file without Python scripts"
 msgstr "Datei ohne Python-Skripte weiter verwenden"
-
-
-msgid "Save changes to \"%s\" before closing?"
-msgstr "Vor dem Schließen Änderungen an \"%s\" speichern?"
 
 
 msgid "Path is empty, cannot save"
