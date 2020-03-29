@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -586,6 +586,10 @@ msgid "UV Axis:"
 msgstr "Y ריצ"
 
 
+msgid "Detail"
+msgstr "טוריפ"
+
+
 msgctxt "Operator"
 msgid "Cursor to Selected"
 msgstr "רחבנל קתעה"
@@ -1046,10 +1050,6 @@ msgstr "הרוש הבוג"
 
 msgid "Reflection"
 msgstr "תופקתשה"
-
-
-msgid "Detail"
-msgstr "טוריפ"
 
 
 msgid "Bricks 1"

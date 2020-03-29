@@ -15,7 +15,7 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (1, 2, 42),
+    "version": (1, 2, 57),
     'blender': (2, 82, 7),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -76,7 +76,7 @@ class ExportGLTF2_Base:
         from io_scene_gltf2.io.exp import gltf2_io_draco_compression_extension
         self.is_draco_available = gltf2_io_draco_compression_extension.dll_exists()
 
-    bl_options = {'UNDO', 'PRESET'}
+    bl_options = {'PRESET'}
 
     export_format: EnumProperty(
         name='Format',
@@ -222,7 +222,7 @@ class ExportGLTF2_Base:
         default=False
     )
 
-    use_selected: BoolProperty(
+    use_selection: BoolProperty(
         name='Selected Objects',
         description='Export selected objects only',
         default=False
@@ -352,11 +352,11 @@ class ExportGLTF2_Base:
         if settings:
             try:
                 for (k, v) in settings.items():
-                    if k == "export_selected": # Back compatibility for export_selected --> use_selected
-                        setattr(self, "use_selected", v)
+                    if k == "export_selected": # Back compatibility for export_selected --> use_selection
+                        setattr(self, "use_selection", v)
                         del settings[k]
-                        settings["use_selected"] = v
-                        print("export_selected is now renamed use_selected, and will be deleted in a few release")
+                        settings["use_selection"] = v
+                        print("export_selected is now renamed use_selection, and will be deleted in a few release")
                     else:
                         setattr(self, k, v)
                 self.will_save_settings = True
@@ -431,14 +431,14 @@ class ExportGLTF2_Base:
         export_settings['gltf_colors'] = self.export_colors
         export_settings['gltf_cameras'] = self.export_cameras
 
-        # compatibility after renaming export_selected to use_selected
+        # compatibility after renaming export_selected to use_selection
         if self.export_selected is True:
-            self.report({"WARNING"}, "export_selected is now renamed use_selected, and will be deleted in a few release")
+            self.report({"WARNING"}, "export_selected is now renamed use_selection, and will be deleted in a few release")
             export_settings['gltf_selected'] = self.export_selected
         else:
-            export_settings['gltf_selected'] = self.use_selected
+            export_settings['gltf_selected'] = self.use_selection
 
-        # export_settings['gltf_selected'] = self.use_selected This can be uncomment when removing compatibility of export_selected
+        # export_settings['gltf_selected'] = self.use_selection This can be uncomment when removing compatibility of export_selected
         export_settings['gltf_layers'] = True  # self.export_layers
         export_settings['gltf_extras'] = self.export_extras
         export_settings['gltf_yup'] = self.export_yup
@@ -556,7 +556,7 @@ class GLTF_PT_export_include(bpy.types.Panel):
         sfile = context.space_data
         operator = sfile.active_operator
 
-        layout.prop(operator, 'use_selected')
+        layout.prop(operator, 'use_selection')
         layout.prop(operator, 'export_extras')
         layout.prop(operator, 'export_cameras')
         layout.prop(operator, 'export_lights')
@@ -859,15 +859,30 @@ class ImportGLTF2(Operator, ImportHelper):
     bone_heuristic: EnumProperty(
         name="Bone Dir",
         items=(
-            ("BLENDER", "Blender (+Y)",
-                "Round-trips bone directions in glTFs exported from Blender.\n"
+            ("BLENDER", "Blender (best for re-importing)",
+                "Good for re-importing glTFs exported from Blender.\n"
                 "Bone tips are placed on their local +Y axis (in glTF space)"),
-            ("TEMPERANCE", "Temperance",
-                "Okay for many different models.\n"
-                "Bone tips are placed at a child's root")
+            ("TEMPERANCE", "Temperance (average)",
+                "Decent all-around strategy.\n"
+                "A bone with one child has its tip placed on the local axis\n"
+                "closest to its child"),
+            ("FORTUNE", "Fortune (may look better, less accurate)",
+                "Might look better than Temperance, but also might have errors.\n"
+                "A bone with one child has its tip placed at its child's root.\n"
+                "Non-uniform scalings may get messed up though, so beware"),
         ),
         description="Heuristic for placing bones. Tries to make bones pretty",
         default="TEMPERANCE",
+    )
+
+    guess_original_bind_pose: BoolProperty(
+        name='Guess original bind pose',
+        description=(
+            'Try to guess the original bind pose for skinned meshes from '
+            'the inverse bind matrices.\n'
+            'When off, use default/rest pose as bind pose'
+        ),
+        default=True,
     )
 
     def draw(self, context):
@@ -875,6 +890,7 @@ class ImportGLTF2(Operator, ImportHelper):
 
         layout.prop(self, 'import_pack_images')
         layout.prop(self, 'import_shading')
+        layout.prop(self, 'guess_original_bind_pose')
         layout.prop(self, 'bone_heuristic')
 
     def execute(self, context):
@@ -913,11 +929,11 @@ class ImportGLTF2(Operator, ImportHelper):
         if not success:
             self.report({'ERROR'}, txt)
             return {'CANCELLED'}
-        self.gltf_importer.log.critical("Data are loaded, start creating Blender stuff")
+        print("Data are loaded, start creating Blender stuff")
         start_time = time.time()
         BlenderGlTF.create(self.gltf_importer)
         elapsed_s = "{:.2f}s".format(time.time() - start_time)
-        self.gltf_importer.log.critical("glTF import finished in " + elapsed_s)
+        print("glTF import finished in " + elapsed_s)
         self.gltf_importer.log.removeHandler(self.gltf_importer.log_handler)
 
         return {'FINISHED'}

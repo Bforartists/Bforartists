@@ -810,6 +810,17 @@ class AssetVerificationStatusChange(Operator):
     def execute(self, context):
         preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
+        # update status in search results for validator's clarity
+        sr = bpy.context.scene['search results']
+        sro = bpy.context.scene['search results orig']['results']
+
+        for r in sr:
+            if r['id'] == self.asset_id:
+                r['verification_status'] = self.state
+        for r in sro:
+            if r['id'] == self.asset_id:
+                r['verificationStatus'] = self.state
+
         thread = threading.Thread(target=verification_status_change_thread,
                                   args=(self.asset_id, self.state, preferences.api_key))
         thread.start()

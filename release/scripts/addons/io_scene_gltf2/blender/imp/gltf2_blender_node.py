@@ -60,10 +60,12 @@ class BlenderNode():
             obj = BlenderNode.create_mesh_object(gltf, pynode, name=vnode.name)
         elif vnode.camera_node_idx is not None:
             pynode = gltf.data.nodes[vnode.camera_node_idx]
-            obj = BlenderCamera.create(gltf, pynode.camera)
+            cam = BlenderCamera.create(gltf, pynode.camera)
+            obj = bpy.data.objects.new(vnode.name, cam)
         elif vnode.light_node_idx is not None:
             pynode = gltf.data.nodes[vnode.light_node_idx]
-            obj = BlenderLight.create(gltf, pynode.extensions['KHR_lights_punctual']['light'])
+            light = BlenderLight.create(gltf, pynode.extensions['KHR_lights_punctual']['light'])
+            obj = bpy.data.objects.new(vnode.name, light)
         elif vnode.is_arma:
             armature = bpy.data.armatures.new(vnode.arma_name)
             obj = bpy.data.objects.new(vnode.name, armature)
@@ -205,6 +207,9 @@ class BlenderNode():
         if pymesh.shapekey_names:
             BlenderNode.set_morph_weights(gltf, pynode, obj)
 
+        if pynode.skin is not None:
+            BlenderNode.setup_skinning(gltf, pynode, obj)
+
         return obj
 
     @staticmethod
@@ -214,3 +219,20 @@ class BlenderNode():
         for i, weight in enumerate(weights):
             if pymesh.shapekey_names[i] is not None:
                 obj.data.shape_keys.key_blocks[pymesh.shapekey_names[i]].value = weight
+
+    @staticmethod
+    def setup_skinning(gltf, pynode, obj):
+        pyskin = gltf.data.skins[pynode.skin]
+
+        # Armature/bones should have already been created.
+
+        # Create vertex groups for each joint
+        for node_idx in pyskin.joints:
+            bone = gltf.vnodes[node_idx]
+            obj.vertex_groups.new(name=bone.blender_bone_name)
+
+        # Create an Armature modifier
+        first_bone = gltf.vnodes[pyskin.joints[0]]
+        arma = gltf.vnodes[first_bone.bone_arma]
+        mod = obj.modifiers.new(name="Armature", type="ARMATURE")
+        mod.object = arma.blender_object

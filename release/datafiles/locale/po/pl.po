@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -6793,14 +6793,6 @@ msgid "Development"
 msgstr "Rozwój"
 
 
-msgid "Video Sequence Editor"
-msgstr "Edytor Sekwencji Wideo"
-
-
-msgid "3D View"
-msgstr "Widok 3D"
-
-
 msgid "Continue"
 msgstr "Kontynuacja"
 
@@ -6829,12 +6821,20 @@ msgid "3D"
 msgstr "3D"
 
 
+msgid "3D View"
+msgstr "Widok 3D"
+
+
 msgid "Animated"
 msgstr "Animowana"
 
 
 msgid "Laplacian"
 msgstr "Laplacian"
+
+
+msgid "Unknown"
+msgstr "Nieznany"
 
 
 msgctxt "Operator"
@@ -6844,6 +6844,10 @@ msgstr "Usuń"
 
 msgid "Layer:"
 msgstr "Warstwa:"
+
+
+msgid "Detail"
+msgstr "Szczegóły"
 
 
 msgid "Priority"
@@ -8220,10 +8224,6 @@ msgstr "%s zniekształcenie rodzicem"
 
 msgid "Make Real"
 msgstr "Utwórz prawdziwy"
-
-
-msgid "Unknown"
-msgstr "Nieznany"
 
 
 msgid "Pos"
@@ -11990,10 +11990,6 @@ msgid "Cannot execute boolean operation"
 msgstr "Operacja boolean nie powiodła się"
 
 
-msgid "Enable 'Auto Smooth' option in mesh settings"
-msgstr "Aktywuj opcję 'Auto Smooth' w ustawieniach siatki"
-
-
 msgid "You are using a rather high poly as source or destination, computation might be slow"
 msgstr "Używasz źródła lub celu o dość dużej gęstości, spodziewany długi czas kalkulacji"
 
@@ -12300,10 +12296,6 @@ msgstr "Szerokość cegły"
 
 msgid "Row Height"
 msgstr "Wysokość rzędu"
-
-
-msgid "Detail"
-msgstr "Szczegóły"
 
 
 msgid "Detail Scale"

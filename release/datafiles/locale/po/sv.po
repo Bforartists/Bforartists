@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -8093,6 +8093,10 @@ msgid "Vector font for Text objects"
 msgstr "Packa Data"
 
 
+msgid "Offset the number of the frame to use in the animation"
+msgstr "Markera Länkad"
+
+
 msgid "Window Manager"
 msgstr "Duplicera"
 
@@ -8262,10 +8266,6 @@ msgstr "Bild Displist"
 
 
 msgid "Number of images of a movie to use"
-msgstr "Markera Länkad"
-
-
-msgid "Offset the number of the frame to use in the animation"
 msgstr "Markera Länkad"
 
 
@@ -23174,10 +23174,6 @@ msgid "List objects under the mouse (object mode only)"
 msgstr "Göm Markerad"
 
 
-msgid "Use object selection (editmode only)"
-msgstr "Göm Markerad"
-
-
 msgid "Select items using circle selection"
 msgstr "Markera Länkad"
 
@@ -24272,10 +24268,6 @@ msgstr "Markera Länkad"
 
 msgid "User Interface"
 msgstr "Yta"
-
-
-msgid "3D View"
-msgstr "Visa"
 
 
 msgid "Gradient Colors"
@@ -27661,6 +27653,10 @@ msgid "Active Theme Area"
 msgstr "Aktiv temadel"
 
 
+msgid "3D View"
+msgstr "Visa"
+
+
 msgid "Theme Bone Color Set"
 msgstr "Rensa Förälder"
 
@@ -27705,22 +27701,6 @@ msgid "Color of disabled marker"
 msgstr "Rensa Förälder"
 
 
-msgid "Auto handle color"
-msgstr "Vektor Handtag"
-
-
-msgid "Align handle selected color"
-msgstr "Göm Markerad"
-
-
-msgid "Auto handle selected color"
-msgstr "Markera Länkad"
-
-
-msgid "Free handle selected color"
-msgstr "Markera Länkad"
-
-
 msgid "Handle Vertex"
 msgstr "Flytta Till Lager"
 
@@ -27741,16 +27721,8 @@ msgid "Color of locked marker"
 msgstr "Raderings Meny"
 
 
-msgid "Marker Color"
-msgstr "Markera Rad"
-
-
 msgid "Color of marker"
 msgstr "Raderings Meny"
-
-
-msgid "Marker Outline Color"
-msgstr "Kontur"
 
 
 msgid "Color of marker's outline"
@@ -27937,18 +27909,6 @@ msgid "Channels Region"
 msgstr "4 Kanaler"
 
 
-msgid "Vector handle selected color"
-msgstr "Markera Länkad"
-
-
-msgid "Vector handle color"
-msgstr "Vektor Handtag"
-
-
-msgid "Last selected point"
-msgstr "Göm Markerad"
-
-
 msgid "Vertex Select"
 msgstr "Vektor Måla"
 
@@ -27983,14 +27943,6 @@ msgstr "Göm Markerad"
 
 msgid "Face Dot Size"
 msgstr "Paketstorlek"
-
-
-msgid "Stitch preview active island"
-msgstr "Anpassa förhandsvisning till fönster"
-
-
-msgid "Stitch preview vertex color"
-msgstr "Rendera"
 
 
 msgid "Theme Info"
@@ -28173,10 +28125,6 @@ msgid "Scene Strip"
 msgstr "Lägg till Stripp"
 
 
-msgid "Transition Strip"
-msgstr "Markera Länkad"
-
-
 msgid "Theme Space Settings"
 msgstr "Verktyg"
 
@@ -28353,10 +28301,6 @@ msgid "Theme settings for the 3D View"
 msgstr "Materialets volym-inställningar"
 
 
-msgid "Active spline"
-msgstr "Aktiv spline"
-
-
 msgid "Bone Pose"
 msgstr "Bengrupper"
 
@@ -28407,22 +28351,6 @@ msgstr "NURBS Kurva"
 
 msgid "Face Normal"
 msgstr "Beräkna Normaler"
-
-
-msgid "NURBS active U-lines"
-msgstr "Aktiv spline"
-
-
-msgid "NURBS active V-lines"
-msgstr "Aktiv spline"
-
-
-msgid "NURBS U-lines"
-msgstr "NURBS-cylinder"
-
-
-msgid "NURBS V-lines"
-msgstr "NURBS-cylinder"
 
 
 msgid "Object Selected"
@@ -28715,10 +28643,6 @@ msgstr "Dela"
 
 msgid "Number of grid lines to display in perspective view"
 msgstr "Brännvidd (mm) i perspektivvyn"
-
-
-msgid "Distance between 3D View grid lines"
-msgstr "Radera"
 
 
 msgid "Grid Scale Unit"
@@ -29524,6 +29448,10 @@ msgid "Use Channel:"
 msgstr "4 Kanaler"
 
 
+msgid "Detail"
+msgstr "Visa inställningar för kant"
+
+
 msgctxt "Operator"
 msgid "Selection to Grid"
 msgstr "Markera Länkad"
@@ -29729,10 +29657,6 @@ msgstr "Dämpning"
 
 msgid "Auto-Step"
 msgstr "Automatiska steg"
-
-
-msgid "Shadow Samples"
-msgstr "Rensa Rotation"
 
 
 msgid "Refraction"
@@ -32670,10 +32594,6 @@ msgstr "Höjd"
 
 msgid "Reflection"
 msgstr "Markera Länkad"
-
-
-msgid "Detail"
-msgstr "Visa inställningar för kant"
 
 
 msgid "Detail Scale"

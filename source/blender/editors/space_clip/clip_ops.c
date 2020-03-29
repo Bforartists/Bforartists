@@ -1316,8 +1316,8 @@ typedef struct ProxyThread {
 
 static unsigned char *proxy_thread_next_frame(ProxyQueue *queue,
                                               MovieClip *clip,
-                                              size_t *size_r,
-                                              int *cfra_r)
+                                              size_t *r_size,
+                                              int *r_cfra)
 {
   unsigned char *mem = NULL;
 
@@ -1354,8 +1354,8 @@ static unsigned char *proxy_thread_next_frame(ProxyQueue *queue,
       return NULL;
     }
 
-    *size_r = size;
-    *cfra_r = queue->cfra;
+    *r_size = size;
+    *r_cfra = queue->cfra;
 
     queue->cfra++;
     close(file);
