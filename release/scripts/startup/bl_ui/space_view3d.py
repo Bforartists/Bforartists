@@ -6903,8 +6903,6 @@ class VIEW3D_PT_shading_options(Panel):
             col.prop(shading, "show_backface_culling")
 
         row = col.row(align=True)
-        
-        
 
         if shading.type == 'WIREFRAME':
             row.prop(shading, "show_xray_wireframe")
@@ -6912,51 +6910,54 @@ class VIEW3D_PT_shading_options(Panel):
             sub.use_property_split = True
             sub.active = shading.show_xray_wireframe
             sub.prop(shading, "xray_alpha_wireframe", text="")
+
         elif shading.type == 'SOLID':
-            row.prop(shading, "show_xray")
-            sub = row.row()     
-            sub.use_property_split = True
-            if shading.show_xray:
-                sub.prop(shading, "xray_alpha", text = "")
-                # X-ray mode is off when alpha is 1.0
-                xray_active = shading.show_xray and shading.xray_alpha != 1
+            row.prop(shading, "show_xray", text="")
+            sub = row.row()
+            sub.active = shading.show_xray
+            sub.prop(shading, "xray_alpha", text="X-Ray")
+            # X-ray mode is off when alpha is 1.0
+            xray_active = shading.show_xray and shading.xray_alpha != 1
 
-            else:
+            row = col.row(align=True)
+            row.prop(shading, "show_shadows", text="")
+            row.active = not xray_active
+            sub = row.row(align=True)
+            sub.active = shading.show_shadows
+            sub.prop(shading, "shadow_intensity", text="Shadow")
+            sub.popover(
+                panel="VIEW3D_PT_shading_options_shadow",
+                icon='PREFERENCES',
+                text="",
+            )
 
-                row = col.row(align=True)
-                row.prop(shading, "show_shadows")
-                row.active = not shading.show_xray
-                
-                sub = row.row(align=True)
-                if shading.show_shadows:
-                    sub.prop(shading, "shadow_intensity", text="")
-                    sub.popover(panel="VIEW3D_PT_shading_options_shadow", icon='PREFERENCES', text="")
+            col = layout.column()
 
-                col = layout.column()
+            row = col.row()
+            row.prop(shading, "show_cavity")
 
-                row = col.row()
-                row.active = not shading.show_xray
-                row.prop(shading, "show_cavity")
-
-            if shading.show_cavity and not shading.show_xray:
+            if shading.show_cavity:
                 row.prop(shading, "cavity_type", text="Type")
 
                 if shading.cavity_type in {'WORLD', 'BOTH'}:
-                    col.label(text="World Space - Ridge / Valley")
+                    col.label(text="World Space")
                     sub = col.row(align=True)
-                    sub.prop(shading, "cavity_ridge_factor", text="")
-                    sub.prop(shading, "cavity_valley_factor", text="")
+                    sub.prop(shading, "cavity_ridge_factor", text="Ridge")
+                    sub.prop(shading, "cavity_valley_factor", text="Valley")
                     sub.popover(
                         panel="VIEW3D_PT_shading_options_ssao",
                         icon='PREFERENCES',
-                        text=""
+                        text="",
                     )
 
                 if shading.cavity_type in {'SCREEN', 'BOTH'}:
-                    col.label(text="Screen Space - Ridge / Valley")
+                    col.label(text="Screen Space")
                     sub = col.row(align=True)
-                    sub.prop(shading, "curvature_ridge_factor", text="")
-                    sub.prop(shading, "curvature_valley_factor", text="")
+                    sub.prop(shading, "curvature_ridge_factor", text="Ridge")
+                    sub.prop(shading, "curvature_valley_factor", text="Valley")
+                    
+            row = col.row()
+            row.prop(shading, "use_dof", text="Depth Of Field")
 
         if shading.type in {'WIREFRAME', 'SOLID'}:
             row = layout.split()
