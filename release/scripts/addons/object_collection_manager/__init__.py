@@ -22,7 +22,7 @@ bl_info = {
     "name": "Collection Manager",
     "description": "Manage collections and their objects",
     "author": "Ryan Inch",
-    "version": (1,10,0),
+    "version": (2,4,5),
     "blender": (2, 80, 0),
     "location": "View3D - Object Mode (Shortcut - M)",
     "warning": '',  # used for warning icon and text in addons panel
@@ -36,19 +36,29 @@ if "bpy" in locals():
 
     importlib.reload(internals)
     importlib.reload(operators)
+    importlib.reload(qcd_move_widget)
+    importlib.reload(qcd_operators)
     importlib.reload(ui)
+    importlib.reload(qcd_init)
+    importlib.reload(preferences)
 
 else:
     from . import internals
     from . import operators
+    from . import qcd_move_widget
+    from . import qcd_operators
     from . import ui
+    from . import qcd_init
+    from . import preferences
 
 import bpy
 from bpy.types import PropertyGroup
 from bpy.props import (
     CollectionProperty,
+    EnumProperty,
     IntProperty,
     BoolProperty,
+    StringProperty,
     PointerProperty,
     )
 
@@ -64,6 +74,10 @@ class CollectionManagerProperties(PropertyGroup):
     show_render: BoolProperty(default=False, name="Disable in Renders")
 
     in_phantom_mode: BoolProperty(default=False)
+
+    update_header: CollectionProperty(type=internals.CMListCollection)
+
+    qcd_slots_blend_data: StringProperty()
 
 
 addon_keymaps = []
@@ -87,11 +101,14 @@ classes = (
     operators.CMRemoveCollectionOperator,
     operators.CMSetCollectionOperator,
     operators.CMPhantomModeOperator,
+    preferences.CMPreferences,
     ui.CM_UL_items,
     ui.CollectionManager,
     ui.CMRestrictionTogglesPanel,
     CollectionManagerProperties,
     )
+
+
 
 def register():
     for cls in classes:
@@ -105,6 +122,9 @@ def register():
     kmi = km.keymap_items.new('view3d.collection_manager', 'M', 'PRESS')
     addon_keymaps.append((km, kmi))
 
+    if bpy.context.preferences.addons[__package__].preferences.enable_qcd:
+        qcd_init.register_qcd()
+
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
@@ -115,6 +135,9 @@ def unregister():
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
+
+    qcd_init.unregister_qcd()
+
 
 if __name__ == "__main__":
     register()

@@ -281,10 +281,20 @@ typedef enum eBrushClothDeformType {
   BRUSH_CLOTH_DEFORM_EXPAND = 6,
 } eBrushClothDeformType;
 
+typedef enum eBrushSmoothDeformType {
+  BRUSH_SMOOTH_DEFORM_LAPLACIAN = 0,
+  BRUSH_SMOOTH_DEFORM_SURFACE = 1,
+} eBrushSmoothDeformType;
+
 typedef enum eBrushClothForceFalloffType {
   BRUSH_CLOTH_FORCE_FALLOFF_RADIAL = 0,
   BRUSH_CLOTH_FORCE_FALLOFF_PLANE = 1,
 } eBrushClothForceFalloffType;
+
+typedef enum eBrushPoseOriginType {
+  BRUSH_POSE_ORIGIN_TOPOLOGY = 0,
+  BRUSH_POSE_ORIGIN_FACE_SETS = 1,
+} eBrushPoseOriginType;
 
 /* Gpencilsettings.Vertex_mode */
 typedef enum eGp_Vertex_Mode {
@@ -401,7 +411,7 @@ typedef struct Brush {
   /** Source for fill tool color gradient application. */
   char gradient_fill_mode;
 
-  char _pad0[5];
+  char _pad0[1];
 
   /** Projection shape (sphere, circle). */
   char falloff_shape;
@@ -462,6 +472,7 @@ typedef struct Brush {
   float pose_offset;
   int pose_smooth_iterations;
   int pose_ik_segments;
+  int pose_origin_type;
 
   /* cloth */
   int cloth_deform_type;
@@ -472,6 +483,12 @@ typedef struct Brush {
 
   float cloth_sim_limit;
   float cloth_sim_falloff;
+
+  /* smooth */
+  int smooth_deform_type;
+  float surface_smooth_shape_preservation;
+  float surface_smooth_current_vertex;
+  int surface_smooth_iterations;
 
   /* multiplane scrape */
   float multiplane_scrape_angle;

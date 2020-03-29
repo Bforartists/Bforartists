@@ -664,7 +664,7 @@ class _draw_tool_settings_context_mode:
         }:
             # is_paint = False
             pass
-        elif tool.idname == "Cutter":
+        elif tool.idname == "builtin.cutter":
             row = layout.row(align=True)
             row.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
             return False
@@ -3960,6 +3960,13 @@ class VIEW3D_MT_face_sets(Menu):
 
         op = layout.operator("sculpt.face_sets_create", text='Face Set From Visible', icon = "FILL_MASK")
         op.mode = 'VISIBLE'
+        
+        op = layout.operator("sculpt.face_sets_create", text='Face Set From Edit Mode Selection')
+        op.mode = 'SELECTION'
+
+        layout.separator()
+        
+        layout.menu("VIEW3D_MT_face_sets_init", text="Init Face Sets")
 
         layout.separator()
 
@@ -4043,6 +4050,37 @@ class VIEW3D_MT_hide_mask(Menu):
 
         props = layout.operator("view3d.select_box", text="Box Mask", icon = "BOX_MASK")
         props = layout.operator("paint.mask_lasso_gesture", text="Lasso Mask", icon = "LASSO_MASK")
+
+
+class VIEW3D_MT_face_sets_init(Menu):
+    bl_label = "Face Sets Init"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        op = layout.operator("sculpt.face_sets_init", text='By Loose Parts')
+        op.mode = 'LOOSE_PARTS'
+
+        op = layout.operator("sculpt.face_sets_init", text='By Materials')
+        op.mode = 'MATERIALS'
+
+        op = layout.operator("sculpt.face_sets_init", text='By Normals')
+        op.mode = 'NORMALS'
+
+        op = layout.operator("sculpt.face_sets_init", text='By UV Seams')
+        op.mode = 'UV_SEAMS'
+
+        op = layout.operator("sculpt.face_sets_init", text='By Edge Creases')
+        op.mode = 'CREASES'
+
+        op = layout.operator("sculpt.face_sets_init", text='By Edge Bevel Weight')
+        op.mode = 'BEVEL_WEIGHT'
+
+        op = layout.operator("sculpt.face_sets_init", text='By Sharp Edges')
+        op.mode = 'SHARP_EDGES'
+
+        op = layout.operator("sculpt.face_sets_init", text='By Face Maps')
+        op.mode = 'FACE_MAPS'
 
 
 class VIEW3D_MT_particle(Menu):
@@ -8518,6 +8556,7 @@ classes = (
     VIEW3D_MT_sculpt_set_pivot,
     VIEW3D_MT_mask,
     VIEW3D_MT_face_sets,
+    VIEW3D_MT_face_sets_init,
     VIEW3D_MT_hide_mask,
     VIEW3D_MT_particle,
     VIEW3D_MT_particle_context_menu,

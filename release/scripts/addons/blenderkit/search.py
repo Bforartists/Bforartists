@@ -154,6 +154,8 @@ def timer_update():
     if first_time:# first time
         first_time = False
         if preferences.show_on_start or preferences.first_run:
+            # TODO here it should check if there are some results, and only open assetbar if this is the case, not search.
+            #if bpy.context.scene.get('search results') is None:
             search()
             preferences.first_run = False
         if preferences.tips_on_start:
@@ -236,6 +238,9 @@ def timer_update():
                             if durl and tname:
 
                                 tooltip = generate_tooltip(r)
+                                #for some reason, the id was still int on some occurances. investigate this.
+                                r['author']['id'] = str(r['author']['id'])
+
                                 asset_data = {'thumbnail': tname,
                                               'thumbnail_small': small_tname,
                                               # 'thumbnails':allthumbs,
@@ -248,7 +253,7 @@ def timer_update():
                                               'tags': r['tags'],
                                               'can_download': r.get('canDownload', True),
                                               'verification_status': r['verificationStatus'],
-                                              'author_id': str(r['author']['id']),
+                                              'author_id': r['author']['id'],
                                               # 'author': r['author']['firstName'] + ' ' + r['author']['lastName']
                                               # 'description': r['description'],
                                               }

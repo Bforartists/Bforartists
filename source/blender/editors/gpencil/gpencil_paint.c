@@ -30,6 +30,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
+#include "BLI_hash.h"
 #include "BLI_math.h"
 #include "BLI_math_geom.h"
 #include "BLI_rand.h"
@@ -353,7 +354,7 @@ static void gp_get_3d_reference(tGPsdata *p, float vec[3])
   if (p->ownerPtr.type == &RNA_Object) {
     ob = (Object *)p->ownerPtr.data;
   }
-  ED_gpencil_drawing_reference_get(p->scene, ob, p->gpl, *p->align_flag, vec);
+  ED_gpencil_drawing_reference_get(p->scene, ob, *p->align_flag, vec);
 }
 
 /* Stroke Editing ---------------------------- */
@@ -486,6 +487,7 @@ static void gp_stroke_convertcoords(tGPsdata *p, const float mval[2], float out[
 /* Apply jitter to stroke point. */
 static void gp_brush_jitter(bGPdata *gpd, tGPspoint *pt, const float amplitude)
 {
+  const float axis[2] = {0.0f, 1.0f};
   /* Jitter is applied perpendicular to the mouse movement vector (2D space). */
   float mvec[2];
   /* Mouse movement in ints -> floats. */
@@ -493,16 +495,15 @@ static void gp_brush_jitter(bGPdata *gpd, tGPspoint *pt, const float amplitude)
     tGPspoint *pt_prev = pt - 1;
     sub_v2_v2v2(mvec, &pt->x, &pt_prev->x);
     normalize_v2(mvec);
+    /* Rotate mvec by 90 degrees... */
+    float angle = angle_v2v2(mvec, axis);
+    /* Reduce noise in the direction of the stroke. */
+    mvec[0] *= cos(angle);
+    mvec[1] *= sin(angle);
+
+    /* Scale by displacement amount, and apply. */
+    madd_v2_v2fl(&pt->x, mvec, amplitude * 10.0f);
   }
-  else {
-    mvec[0] = 0.0f;
-    mvec[1] = 0.0f;
-  }
-  /* Rotate mvec by 90 degrees... */
-  SWAP(float, mvec[0], mvec[1]);
-  mvec[0] -= mvec[0];
-  /* Scale by displacement amount, and apply. */
-  madd_v2_v2fl(&pt->x, mvec, amplitude);
 }
 
 /* apply pressure change depending of the angle of the stroke to simulate a pen with shape */
@@ -788,8 +789,10 @@ static short gp_stroke_addpoint(tGPsdata *p, const float mval[2], float pressure
       }
       /* apply randomness to uv texture rotation */
       if (brush_settings->uv_random > 0.0f) {
-        float rand = BLI_rng_get_float(p->rng) * 2.0f - 1.0f;
-        pt->uv_rot += rand * M_PI * brush_settings->uv_random;
+        float rand = BLI_hash_int_01(BLI_hash_int_2d((int)pt->x, gpd->runtime.sbuffer_used)) *
+                         2.0f -
+                     1.0f;
+        pt->uv_rot += rand * M_PI_2 * brush_settings->uv_random;
         CLAMP(pt->uv_rot, -M_PI_2, M_PI_2);
       }
       /* apply randomness to color strength */
@@ -1356,7 +1359,6 @@ static void gp_stroke_eraser_dostroke(tGPsdata *p,
                                       bGPDframe *gpf,
                                       bGPDstroke *gps,
                                       const float mval[2],
-                                      const float mvalo[2],
                                       const int radius,
                                       const rcti *rect)
 {
@@ -1475,7 +1477,7 @@ static void gp_stroke_eraser_dostroke(tGPsdata *p,
          * eraser region  (either within stroke painted, or on its lines)
          * - this assumes that linewidth is irrelevant
          */
-        if (gp_stroke_inside_circle(mval, mvalo, radius, pc0[0], pc0[1], pc2[0], pc2[1])) {
+        if (gp_stroke_inside_circle(mval, radius, pc0[0], pc0[1], pc2[0], pc2[1])) {
           if ((gp_stroke_eraser_is_occluded(p, pt0, pc0[0], pc0[1]) == false) ||
               (gp_stroke_eraser_is_occluded(p, pt1, pc1[0], pc1[1]) == false) ||
               (gp_stroke_eraser_is_occluded(p, pt2, pc2[0], pc2[1]) == false)) {
@@ -1632,7 +1634,7 @@ static void gp_stroke_doeraser(tGPsdata *p)
        * (e.g. 2D space strokes in the 3D view, if the same datablock is shared)
        */
       if (ED_gpencil_stroke_can_use_direct(p->sa, gps)) {
-        gp_stroke_eraser_dostroke(p, gpf, gps, p->mval, p->mvalo, calc_radius, &rect);
+        gp_stroke_eraser_dostroke(p, gpf, gps, p->mval, calc_radius, &rect);
       }
     }
   }
@@ -3142,7 +3144,7 @@ static void gpencil_add_arc_points(tGPsdata *p, float mval[2], int segments)
   if (gpd->runtime.sbuffer_used < 3) {
     return;
   }
-
+  BrushGpencilSettings *brush_settings = p->brush->gpencil_settings;
   int idx_prev = gpd->runtime.sbuffer_used;
 
   /* Add space for new arc points. */
@@ -3206,6 +3208,27 @@ static void gpencil_add_arc_points(tGPsdata *p, float mval[2], int segments)
     /* Set pressure and strength equals to previous. It will be smoothed later. */
     pt->pressure = pt_prev->pressure;
     pt->strength = pt_prev->strength;
+
+    /* Apply randomness to pressure. */
+    if (brush_settings->draw_random_press > 0.0f) {
+      float rand = BLI_rng_get_float(p->rng) * 2.0f - 1.0f;
+      pt->pressure *= 1.0 + rand * 2.0 * brush_settings->draw_random_press;
+      CLAMP(pt->pressure, GPENCIL_STRENGTH_MIN, 1.0f);
+    }
+    /* Apply randomness to color strength. */
+    if (brush_settings->draw_random_strength) {
+      float rand = BLI_rng_get_float(p->rng) * 2.0f - 1.0f;
+      pt->strength *= 1.0 + rand * brush_settings->draw_random_strength;
+      CLAMP(pt->strength, GPENCIL_STRENGTH_MIN, 1.0f);
+    }
+    /* Apply randomness to uv texture rotation. */
+    if (brush_settings->uv_random > 0.0f) {
+      float rand = BLI_hash_int_01(BLI_hash_int_2d((int)pt->x, gpd->runtime.sbuffer_used + i)) *
+                       2.0f -
+                   1.0f;
+      pt->uv_rot += rand * M_PI_2 * brush_settings->uv_random;
+      CLAMP(pt->uv_rot, -M_PI_2, M_PI_2);
+    }
 
     a += step;
   }

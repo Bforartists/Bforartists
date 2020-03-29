@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -21326,10 +21326,6 @@ msgid "List objects under the mouse (object mode only)"
 msgstr "Листа објеката под мишем (само у режиму објекта)"
 
 
-msgid "Use object selection (editmode only)"
-msgstr "Користи избор објекта (само у режиму измене)"
-
-
 msgctxt "Operator"
 msgid "Select Menu"
 msgstr "Мени извора"
@@ -22393,16 +22389,8 @@ msgid "Styles"
 msgstr "Стилови"
 
 
-msgid "Video Sequence Editor"
-msgstr "Уређивач видео секвенци"
-
-
 msgid "User Interface"
 msgstr "Корисничко окружење"
-
-
-msgid "3D View"
-msgstr "3D поглед"
 
 
 msgid "Gradient Colors"
@@ -25484,6 +25472,10 @@ msgid "Name of the theme"
 msgstr "Назив теме"
 
 
+msgid "3D View"
+msgstr "3D поглед"
+
+
 msgid "Color used for active bones"
 msgstr "Боја активних костију"
 
@@ -25508,22 +25500,6 @@ msgid "Color of disabled marker"
 msgstr "Боја у зениту"
 
 
-msgid "Auto handle color"
-msgstr "Аутоматска боја ручке"
-
-
-msgid "Free handle color"
-msgstr "Боја слободне ручке"
-
-
-msgid "Align handle selected color"
-msgstr "Поравнај поглед према изабраном (одозго)"
-
-
-msgid "Free handle selected color"
-msgstr "Боја изабране слободне ручке"
-
-
 msgid "Locked Marker"
 msgstr "Закључани маркер"
 
@@ -25532,16 +25508,8 @@ msgid "Color of locked marker"
 msgstr "Боја закључаног маркера"
 
 
-msgid "Marker Color"
-msgstr "Боја маркера"
-
-
 msgid "Color of marker"
 msgstr "Боја маркера"
-
-
-msgid "Marker Outline Color"
-msgstr "Боја оквира маркера"
 
 
 msgid "Color of marker's outline"
@@ -25650,18 +25618,6 @@ msgstr "Боја позадине теме"
 
 msgid "Channels Region"
 msgstr "Регион канала"
-
-
-msgid "Vector handle selected color"
-msgstr "Боја изабране векторске ручке"
-
-
-msgid "Vector handle color"
-msgstr "Боја векторске ручке"
-
-
-msgid "Last selected point"
-msgstr "Последња изабрана тачака"
 
 
 msgid "Vertex Select"
@@ -25838,10 +25794,6 @@ msgstr "Позадина прегледа"
 
 msgid "Scene Strip"
 msgstr "Трака сцене"
-
-
-msgid "Transition Strip"
-msgstr "Трака прелаза"
 
 
 msgid "Window Background"
@@ -26378,6 +26330,10 @@ msgstr "Начин приказа/сенчења објеката у 3D погл
 
 msgid "Alpha Threshold"
 msgstr "Праг провидности"
+
+
+msgid "Unknown"
+msgstr "Непознато"
 
 
 msgid "Jump Height"
@@ -27365,6 +27321,10 @@ msgid "Use Channel:"
 msgstr "Користи канал:"
 
 
+msgid "Detail"
+msgstr "Детаљност"
+
+
 msgid "Priority"
 msgstr "Приоритет"
 
@@ -27611,10 +27571,6 @@ msgstr "Одлагање"
 
 msgid "Auto-Step"
 msgstr "Аутоматско корачање"
-
-
-msgid "Shadow Samples"
-msgstr "Узорака сенке"
 
 
 msgid "Paths:"
@@ -29303,10 +29259,6 @@ msgid "ID-Block:"
 msgstr "ID-блок"
 
 
-msgid "Unknown"
-msgstr "Непознато"
-
-
 msgid "Pos"
 msgstr "Поз"
 
@@ -30855,10 +30807,6 @@ msgstr "Висина реда"
 
 msgid "Reflection"
 msgstr "Одсјај"
-
-
-msgid "Detail"
-msgstr "Детаљност"
 
 
 msgid "Detail Scale"

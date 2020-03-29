@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -12178,10 +12178,6 @@ msgid "Text Style"
 msgstr "ﺖﻟﺎﺣ"
 
 
-msgid "3D View"
-msgstr "ﯼﺪﻌﺑ ﻪﺳ ﺪﯾﺩ"
-
-
 msgid "Gradient Colors"
 msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
 
@@ -12931,6 +12927,10 @@ msgstr "ﻩﺭﺫ/ﻪﺘﺷﺭ"
 
 msgid "Clip Editor"
 msgstr "ﻑﺍﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
+
+
+msgid "3D View"
+msgstr "ﯼﺪﻌﺑ ﻪﺳ ﺪﯾﺩ"
 
 
 msgid "Theme Clip Editor"

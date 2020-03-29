@@ -20,7 +20,7 @@
 bl_info = {
     "name": "Bsurfaces GPL Edition",
     "author": "Eclectiel, Vladimir Spivak (cwolf3d)",
-    "version": (1, 7, 7),
+    "version": (1, 7, 8),
     "blender": (2, 80, 0),
     "location": "View3D EditMode > Sidebar > Edit Tab",
     "description": "Modeling and retopology tool",
@@ -3045,6 +3045,9 @@ class MESH_OT_SURFSK_add_surface(Operator):
         me_surf = bpy.data.meshes.new(surf_me_name)
         me_surf.from_pydata(all_surface_verts_co, [], all_surface_faces)
         ob_surface = object_utils.object_data_add(context, me_surf)
+        ob_surface.location = (0.0, 0.0, 0.0)
+        ob_surface.rotation_euler = (0.0, 0.0, 0.0)
+        ob_surface.scale = (1.0, 1.0, 1.0)
 
         # Select all the "unselected but participating" verts, from closed selection
         # or double selections with middle-vertex, for later join with remove doubles

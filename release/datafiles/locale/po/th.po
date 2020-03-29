@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -3610,10 +3610,6 @@ msgid "User Interface"
 msgstr "อินเตอร์เฟสผู้ใช้"
 
 
-msgid "3D View"
-msgstr "มุมมองสามมิติ"
-
-
 msgctxt "Operator"
 msgid "Measure"
 msgstr "วัดขนาด"
@@ -4051,6 +4047,10 @@ msgid "3D"
 msgstr "สามมิติ"
 
 
+msgid "3D View"
+msgstr "มุมมองสามมิติ"
+
+
 msgid "Selected Text"
 msgstr "ข้อความที่ถูกเลือก"
 
@@ -4360,6 +4360,10 @@ msgstr "เรนเดอร์:"
 
 msgid "Viewport:"
 msgstr "วิวพอร์ต:"
+
+
+msgid "Detail"
+msgstr "รายละเอียด"
 
 
 msgid "Selection By:"
@@ -6192,10 +6196,6 @@ msgstr "ตัวแก้ไขเชดเดอร์"
 
 msgid "View Distance"
 msgstr "ระยะมุมมอง"
-
-
-msgid "Detail"
-msgstr "รายละเอียด"
 
 
 msgid "Texture Node Editor"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -15729,6 +15729,10 @@ msgid "Vector font for Text objects"
 msgstr "ﺺﻨﻟﺍ ﺕﺎﻨﺋﺎﻜﻟ ﻪﺠﺘﻣ ﻂﺧ"
 
 
+msgid "Offset the number of the frame to use in the animation"
+msgstr "ﺔﻛﺮﺤﻟﺍ ﻲﻓ  ﻡﺍﺪﺨﺘﺳﻺ﻿ﻟ ﺭﺎﻃﻻ﻿ﺍ ﻢﻗﺭ ﺡﺯﺍ"
+
+
 msgid "Window Manager"
 msgstr "ﺬﻓﺍﻮﻧ ﺮﻳﺪﻣ"
 
@@ -16107,10 +16111,6 @@ msgstr "ﺓﺭﻮﻟﺍ ﻢﺠﺣ"
 
 msgid "Number of images of a movie to use"
 msgstr " ﻢﻠﻔﻟ ﺔﻣﺪﺨﺘﺴﻤﻟﺍ ﺭﻮﺼﻟﺍ ﺩﺪﻋ"
-
-
-msgid "Offset the number of the frame to use in the animation"
-msgstr "ﺔﻛﺮﺤﻟﺍ ﻲﻓ  ﻡﺍﺪﺨﺘﺳﻺ﻿ﻟ ﺭﺎﻃﻻ﻿ﺍ ﻢﻗﺭ ﺡﺯﺍ"
 
 
 msgid "Global starting frame of the movie/sequence, assuming first picture has a #1"
@@ -22482,6 +22482,15 @@ msgstr "ﺭﺮﻛ"
 
 
 msgctxt "Operator"
+msgid "Set Keyframe Easing Type"
+msgstr "ﺡﺎﺘﻔﻤﻠﻟ ﻞﻴﻬﺴﺗ ﻉﻮﻧ ﻊﺿ"
+
+
+msgid "Set easing type for the F-Curve segments starting from the selected keyframes"
+msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﻦﻣ ﺃﺪﺑ ﻞﻤﻌﻟﺍ ﻰﻨﺤﻨﻣ ﻡﺎﺴﻗﻷ﻿ ﻞﻴﻬﺴﺘﻟﺍ ﻉﻮﻧ ﻊﺿ"
+
+
+msgctxt "Operator"
 msgid "Set Keyframe Extrapolation"
 msgstr "ﺢﻴﺗﺎﻔﻤﻠﻟ ﻲﻠﺒﻘﺘﺴﻤﻟﺍ ﻊﻗﻮﺘﻟﺍ ﻊﺿ"
 
@@ -25363,15 +25372,6 @@ msgstr "ﻰﻨﺤﻨﻤﻟﺍ ﻲﻓ ﺢﻴﺗﺎﻔﻤﻟﺍ ﻞﻛ ﺮﺘﺧ�
 msgctxt "Operator"
 msgid "Set Cursor"
 msgstr "ﺮﺷﺆﻤﻟﺍ ﻊﺿ"
-
-
-msgctxt "Operator"
-msgid "Set Keyframe Easing Type"
-msgstr "ﺡﺎﺘﻔﻤﻠﻟ ﻞﻴﻬﺴﺗ ﻉﻮﻧ ﻊﺿ"
-
-
-msgid "Set easing type for the F-Curve segments starting from the selected keyframes"
-msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﻦﻣ ﺃﺪﺑ ﻞﻤﻌﻟﺍ ﻰﻨﺤﻨﻣ ﻡﺎﺴﻗﻷ﻿ ﻞﻴﻬﺴﺘﻟﺍ ﻉﻮﻧ ﻊﺿ"
 
 
 msgctxt "Operator"
@@ -32553,16 +32553,8 @@ msgid "Styles"
 msgstr "ﺐﻴﻟﺎﺳﻷ﻿ﺍ"
 
 
-msgid "Video Sequence Editor"
-msgstr "ﻮﻳﺪﻴﻔﻟﺍ ﺕﻼ﻿ﺴﻠﺴﺗ ﺭﺮﺤﻣ"
-
-
 msgid "Text Style"
 msgstr "ﻂﻤﻨﻟﺍ ﻊﺿ"
-
-
-msgid "3D View"
-msgstr "ﺩﺎﻌﺑﻷ﻿ﺍ ﻲﺛﻼ﻿ﺛ ﺽﺮﻋ"
 
 
 msgid "Gradient Colors"
@@ -37671,6 +37663,10 @@ msgid "Clip Editor"
 msgstr "ﻢﻴﻠﻘﺘﻟﺍ ﺭﺮﺤﻣ"
 
 
+msgid "3D View"
+msgstr "ﺩﺎﻌﺑﻷ﻿ﺍ ﻲﺛﻼ﻿ﺛ ﺽﺮﻋ"
+
+
 msgid "Color used for active bones"
 msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﻡﺎﻈﻌﻠﻟ ﻡﺪﺨﺘﺴﻤﻟﺍ ﻥﻮﻠﻟﺍ"
 
@@ -37691,18 +37687,6 @@ msgid "Disabled Marker"
 msgstr "ﺔﻠﻄّﻌﻣ ﺔﻣﻼ﻿ﻋ"
 
 
-msgid "Auto handle color"
-msgstr "ﺎﻴﺗﺍﺫ ﻥﻮﻠﻟﺍ ﺞﻟﺎﻋ"
-
-
-msgid "Free handle color"
-msgstr "ﺮﺤﻟﺍ ﺾﺒﻘﻤﻟﺍ ﻥﻮﻟ"
-
-
-msgid "Auto handle selected color"
-msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﻥﻮﻠﻟﺍ ﻊﻣ ﺎﻴﺗﺍﺫ ﻞﻣﺎﻌﺗ"
-
-
 msgid "Locked Marker"
 msgstr "ﺔﻠﻔﻘﻣ ﺔﻣﻼ﻿ﻋ"
 
@@ -37711,16 +37695,8 @@ msgid "Color of locked marker"
 msgstr "ﺔﻠﻔﻘﻤﻟﺍ ﺔﻣﻼ﻿ﻌﻟﺍ ﻥﻮﻟ"
 
 
-msgid "Marker Color"
-msgstr "ﺔﻣﻼ﻿ﻌﻟﺍ ﻥﻮﻟ"
-
-
 msgid "Color of marker"
 msgstr "ﺔﻣﻼ﻿ﻌﻟﺍ ﻥﻮﻟ"
-
-
-msgid "Marker Outline Color"
-msgstr "ﺔﻣﻼ﻿ﻌﻟﺍ ﺭﺎﻃﺍ ﻥﻮﻟ"
 
 
 msgid "Color of marker's outline"
@@ -37905,14 +37881,6 @@ msgstr "ﻢﺳﺮﻟﺍ ﻰﻨﺤﻨﻣ ﺾﺒﻘﻣ"
 
 msgid "Paint Curve Pivot"
 msgstr "ﻢﺳﺮﻟﺍ ﻰﻨﺤﻨﻣ ﺭﻮﺤﻣ"
-
-
-msgid "Stitch preview active island"
-msgstr "ﺓﺯﺮﻐﻠﻟ ﺔﻟﺎﻌﻔﻟﺍ ﺓﺮﻳﺰﺠﻟﺍ ﻦﻳﺎﻋ"
-
-
-msgid "Stitch preview edge color"
-msgstr "ﺓﺯﺮﻐﻟﺍ ﺔﻨﻳﺎﻌﻣ ﺔﻓﺎﺣ ﻥﻮﻟ"
 
 
 msgid "Wire Edit"
@@ -38171,10 +38139,6 @@ msgid "Theme settings for the 3D View"
 msgstr "ﻲﺛﻼ﻿ﺜﻟﺍ ﺮﻈﻨﻤﻠﻟ ﻂﻤﻨﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
-msgid "Active spline"
-msgstr "ﻝﺎﻌّﻔﻟﺍ ﻰﻨﺤﻨﻤﻟﺍ"
-
-
 msgid "Bone Pose"
 msgstr "ﻢﻈﻋ ﺔﻔﻗﻭ"
 
@@ -38241,22 +38205,6 @@ msgstr "ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻗ ﺔﻄﻘﻧ"
 
 msgid "Face Normal"
 msgstr "ﻪﺟﻭﻷ﻿ﺍ ﺕﺎﻤﻇﺎﻧ"
-
-
-msgid "NURBS active U-lines"
-msgstr "NURBS ﺔﻟﺎﻌﻓ U-ﻁﻮﻄﺧ"
-
-
-msgid "NURBS active V-lines"
-msgstr "NURBS ﺔﻟﺎﻌﻓ V-ﻁﻮﻄﺧ"
-
-
-msgid "NURBS U-lines"
-msgstr "NURBS U ﻁﻮﻄﺧ"
-
-
-msgid "NURBS V-lines"
-msgstr "NURBS V-ﻁﻮﻄﺧ"
 
 
 msgid "Object Origin Size"
@@ -40208,6 +40156,10 @@ msgid "Use Channel:"
 msgstr ":ﺓﺎﻨﻗ ﻡﺪﺨﺘﺳﺍ"
 
 
+msgid "Detail"
+msgstr "ﻞﻴﺼﻔﺘﻟﺍ"
+
+
 msgid "Priority"
 msgstr "ﺔﻳﻮﻟﻭﻷ﻿ﺍ"
 
@@ -40505,10 +40457,6 @@ msgstr "ﻒﻴﻄﻠﺘﻟﺍ"
 
 msgid "Auto-Step"
 msgstr "ﻲﺋﺎﻘﻠﺗ ﻡﺪﻘﺗ"
-
-
-msgid "Shadow Samples"
-msgstr "ﻞﻈﻟﺍ ﺕﺎﻨﻴﻋ"
 
 
 msgid "Refraction"
@@ -44746,10 +44694,6 @@ msgstr "ﺮﻄﺴﻟﺍ ﻉﺎﻔﺗﺭﺍ"
 
 msgid "Reflection"
 msgstr "ﺱﺎﻜﻌﻧﻹ﻿ﺍ"
-
-
-msgid "Detail"
-msgstr "ﻞﻴﺼﻔﺘﻟﺍ"
 
 
 msgid "Detail Scale"

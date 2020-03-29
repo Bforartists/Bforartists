@@ -4747,8 +4747,9 @@ def write_pov(filename, scene=None, info_callback=None):
         tabWrite("assumed_gamma 1.0\n")
         tabWrite("max_trace_level %d\n" % scene.pov.max_trace_level)
 
-        if scene.pov.charset != 'ascii':
-            file.write("    charset %s\n" % scene.pov.charset)
+        # Deprecated (autodetected in pov3.8):
+        # if scene.pov.charset != 'ascii':
+            # file.write("    charset %s\n" % scene.pov.charset)
         if scene.pov.global_settings_advanced:
             if scene.pov.radio_enable == False:
                 file.write("    adc_bailout %.6f\n" % scene.pov.adc_bailout)

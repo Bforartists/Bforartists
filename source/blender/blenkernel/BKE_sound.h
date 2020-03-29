@@ -117,6 +117,9 @@ void BKE_sound_ensure_scene(struct Scene *scene);
 
 void BKE_sound_destroy_scene(struct Scene *scene);
 
+void BKE_sound_lock(void);
+void BKE_sound_unlock(void);
+
 void BKE_sound_reset_scene_specs(struct Scene *scene);
 
 void BKE_sound_mute_scene(struct Scene *scene, int muted);

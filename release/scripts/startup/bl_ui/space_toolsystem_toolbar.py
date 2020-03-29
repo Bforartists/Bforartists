@@ -1052,6 +1052,9 @@ class _defs_sculpt:
             layout.prop(props, "strength")
             layout.prop(props, "deform_axis")
             layout.prop(props, "use_face_sets")
+            if (props.type == "SURFACE_SMOOTH"):
+                layout.prop(props, "surface_smooth_shape_preservation", expand=False)
+                layout.prop(props, "surface_smooth_current_vertex", expand=False)
 
         return dict(
             idname="builtin.mesh_filter",
@@ -1493,6 +1496,17 @@ class _defs_gpencil_paint:
 
 
 class _defs_gpencil_edit:
+    def is_segment(context):
+        ts = context.scene.tool_settings
+        if context.mode == 'EDIT_GPENCIL':
+            return ts.gpencil_selectmode_edit == 'SEGMENT'
+        elif context.mode == 'SCULPT_GPENCIL':
+            return ts.use_gpencil_select_mask_segment
+        elif context.mode == 'VERTEX_GPENCIL':
+            return ts.use_gpencil_vertex_select_mask_segment
+        else:
+            return False
+
     @ToolDef.from_fn
     def bend():
         return dict(
@@ -1506,7 +1520,8 @@ class _defs_gpencil_edit:
     @ToolDef.from_fn
     def select():
         def draw_settings(context, layout, _tool):
-            layout.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
+            if _defs_gpencil_edit.is_segment(context):
+                layout.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
         return dict(
             idname="builtin.select",
             label="Tweak",
@@ -1523,7 +1538,8 @@ class _defs_gpencil_edit:
             row = layout.row()
             row.use_property_split = False
             row.prop(props, "mode", text="", expand=True, icon_only=True)
-            layout.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
+            if _defs_gpencil_edit.is_segment(context):
+                layout.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
         return dict(
             idname="builtin.select_box",
             label="Select Box",
@@ -1540,7 +1556,8 @@ class _defs_gpencil_edit:
             row = layout.row()
             row.use_property_split = False
             row.prop(props, "mode", text="", expand=True, icon_only=True)
-            layout.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
+            if _defs_gpencil_edit.is_segment(context):
+                layout.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
         return dict(
             idname="builtin.select_lasso",
             label="Select Lasso",
@@ -1558,7 +1575,8 @@ class _defs_gpencil_edit:
             row.use_property_split = False
             row.prop(props, "mode", text="", expand=True, icon_only=True)
             layout.prop(props, "radius")
-            layout.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
+            if _defs_gpencil_edit.is_segment(context):
+                layout.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
 
         def draw_cursor(_context, tool, xy):
             from gpu_extras.presets import draw_circle_2d
@@ -1924,6 +1942,8 @@ class IMAGE_PT_tools_active(ToolSelectPanelHelper, Panel):
         ],
         'PAINT': [
             _defs_texture_paint.generate_from_brushes,
+            None,
+            *_tools_annotate,
         ],
     }
 # ------------------------------------------------- shader editor, compositor, texture node editor  -------------------------------------------------------
