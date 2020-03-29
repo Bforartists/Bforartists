@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -9023,6 +9023,10 @@ msgid "Vector font for Text objects"
 msgstr "Vytvořit proxy objekt"
 
 
+msgid "Offset the number of the frame to use in the animation"
+msgstr "Zobrazit počet materiálů a aktivní materiál u daného objektu"
+
+
 msgid "Window Manager"
 msgstr "Typ okna:"
 
@@ -9220,10 +9224,6 @@ msgstr "Obrázek: velikost "
 
 
 msgid "Number of images of a movie to use"
-msgstr "Zobrazit počet materiálů a aktivní materiál u daného objektu"
-
-
-msgid "Offset the number of the frame to use in the animation"
 msgstr "Zobrazit počet materiálů a aktivní materiál u daného objektu"
 
 
@@ -24619,10 +24619,6 @@ msgid "List objects under the mouse (object mode only)"
 msgstr "Zarovnat výběr na střed"
 
 
-msgid "Use object selection (editmode only)"
-msgstr "Zarovnat výběr na střed"
-
-
 msgid "Select items using circle selection"
 msgstr "Vybere předměty použitím kruhového výběru"
 
@@ -25812,20 +25808,12 @@ msgid "Styles"
 msgstr "Kroky:"
 
 
-msgid "Video Sequence Editor"
-msgstr "Nelineární video editor "
-
-
 msgid "Text Style"
 msgstr "Zhranatit"
 
 
 msgid "User Interface"
 msgstr "Uživatelské rozhraní"
-
-
-msgid "3D View"
-msgstr "3D pohled"
 
 
 msgid "Gradient Colors"
@@ -29851,6 +29839,10 @@ msgid "Active Theme Area"
 msgstr "Aktivní vrstva"
 
 
+msgid "3D View"
+msgstr "3D pohled"
+
+
 msgid "Theme Bone Color Set"
 msgstr "Barva "
 
@@ -29895,22 +29887,6 @@ msgid "Color of disabled marker"
 msgstr "Sledovat cestu"
 
 
-msgid "Auto handle color"
-msgstr "Úchop Vektoru"
-
-
-msgid "Align handle selected color"
-msgstr "Zarovnat pohled na vybrané"
-
-
-msgid "Auto handle selected color"
-msgstr "Odstranit označené značky"
-
-
-msgid "Free handle selected color"
-msgstr "Odstranit označené Objekt(y)"
-
-
 msgid "Handle Vertex"
 msgstr "Přidat UVkouly"
 
@@ -29931,16 +29907,8 @@ msgid "Color of locked marker"
 msgstr "Na Vybraných Značkách"
 
 
-msgid "Marker Color"
-msgstr "Zrcadlit UV"
-
-
 msgid "Color of marker"
 msgstr "O(d)značit vše"
-
-
-msgid "Marker Outline Color"
-msgstr "Zobrazit Outliner"
 
 
 msgid "Color of marker's outline"
@@ -30135,18 +30103,6 @@ msgid "Channels Region"
 msgstr "Změnit pruh"
 
 
-msgid "Vector handle selected color"
-msgstr "Vyrovná úhly označených plošek"
-
-
-msgid "Vector handle color"
-msgstr "Úchop Vektoru"
-
-
-msgid "Last selected point"
-msgstr "Otočí vybrané předměty"
-
-
 msgid "Vertex Select"
 msgstr "Výběr vrcholů"
 
@@ -30185,14 +30141,6 @@ msgstr "Mód vybírání plošek"
 
 msgid "Face Dot Size"
 msgstr "Velikost tečky plošky"
-
-
-msgid "Stitch preview active island"
-msgstr "Renderovat plošky z obou stran"
-
-
-msgid "Stitch preview vertex color"
-msgstr "Načíst uložené Render Hladiny"
 
 
 msgid "Theme Info"
@@ -30379,10 +30327,6 @@ msgid "Scene Strip"
 msgstr "Přidat action strip"
 
 
-msgid "Transition Strip"
-msgstr "Typ přeměny"
-
-
 msgid "Theme Space Settings"
 msgstr "Nastavení částic"
 
@@ -30563,10 +30507,6 @@ msgid "Theme settings for the 3D View"
 msgstr "Zobrazit nastavení vláken pro statické částice"
 
 
-msgid "Active spline"
-msgstr "Aktivní kosti"
-
-
 msgid "Bone Pose"
 msgstr "Původni velikost"
 
@@ -30621,22 +30561,6 @@ msgstr "Velikost plošek"
 
 msgid "Face Normal"
 msgstr "Vypocitat normaly"
-
-
-msgid "NURBS active U-lines"
-msgstr "Žádná aktivní kost"
-
-
-msgid "NURBS active V-lines"
-msgstr "Žádná aktivní kost"
-
-
-msgid "NURBS U-lines"
-msgstr "Válec"
-
-
-msgid "NURBS V-lines"
-msgstr "Válec"
 
 
 msgid "Object Origin Size"
@@ -30993,10 +30917,6 @@ msgstr "Čáry mřížky"
 
 msgid "Number of grid lines to display in perspective view"
 msgstr "Úhel čočky v perspektivním pohledu"
-
-
-msgid "Distance between 3D View grid lines"
-msgstr "Vybrat následující klíč"
 
 
 msgid "Grid Scale Unit"
@@ -31798,6 +31718,10 @@ msgid "Use Channel:"
 msgstr "Změnit pruh"
 
 
+msgid "Detail"
+msgstr "Zobrazit:"
+
+
 msgid "Priority"
 msgstr "Přednost"
 
@@ -32000,10 +31924,6 @@ msgstr "Tlumení"
 
 msgid "Auto-Step"
 msgstr "Automaticky"
-
-
-msgid "Shadow Samples"
-msgstr "Začátek akce:"
 
 
 msgid "Refraction"
@@ -35177,10 +35097,6 @@ msgstr "Výška"
 
 msgid "Reflection"
 msgstr "Zrcadlení"
-
-
-msgid "Detail"
-msgstr "Zobrazit:"
 
 
 msgid "Detail Scale"

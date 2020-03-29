@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -4940,16 +4940,8 @@ msgid "Shaded"
 msgstr "छायांकित"
 
 
-msgid "Video Sequence Editor"
-msgstr "वीडियो अनुक्रम संपादक"
-
-
 msgid "Text Style"
 msgstr "पाठ शैली"
-
-
-msgid "3D View"
-msgstr "त्रि-आयाम दृश्य"
 
 
 msgid "Motion Tracking"
@@ -5448,16 +5440,16 @@ msgid "Clip Editor"
 msgstr "छांटन संपादक"
 
 
+msgid "3D View"
+msgstr "त्रि-आयाम दृश्य"
+
+
 msgid "Theme Bone Color Set"
 msgstr "प्रसंग हड्डी रंग समूह"
 
 
 msgid "Active Marker"
 msgstr "सक्रिय चिन्हक"
-
-
-msgid "Marker Color"
-msgstr "चिन्हक रंग"
 
 
 msgid "Color of marker"
@@ -5522,6 +5514,10 @@ msgstr "चयनित बाह्य रेखा"
 
 msgid "Relationship Lines"
 msgstr "संबंध रेखाएँ"
+
+
+msgid "Unknown"
+msgstr "अज्ञात"
 
 
 msgctxt "WindowManager"
@@ -7114,10 +7110,6 @@ msgstr "हेक्स"
 
 msgid "%s parent deform"
 msgstr "%s कारण विरूपण"
-
-
-msgid "Unknown"
-msgstr "अज्ञात"
 
 
 msgid "Pos"

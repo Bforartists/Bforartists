@@ -870,6 +870,10 @@ static void wm_operator_reports(bContext *C, wmOperator *op, int retval, bool ca
     }
   }
 
+  /* Refresh Info Editor with reports immediately, even if op returned OPERATOR_CANCELLED. */
+  if ((retval & OPERATOR_CANCELLED) && !BLI_listbase_is_empty(&op->reports->list)) {
+    WM_event_add_notifier(C, NC_SPACE | ND_SPACE_INFO_REPORT, NULL);
+  }
   /* if the caller owns them, handle this */
   wm_add_reports(op->reports);
 }
@@ -1864,6 +1868,8 @@ static wmKeyMapItem *wm_eventmatch_modal_keymap_items(const wmKeyMap *keymap,
                                                       const wmEvent *event)
 {
   for (wmKeyMapItem *kmi = keymap->items.first; kmi; kmi = kmi->next) {
+    /* Should already be handled by #wm_user_modal_keymap_set_items. */
+    BLI_assert(kmi->propvalue_str[0] == '\0');
     if (wm_eventmatch(event, kmi)) {
       if ((keymap->poll_modal_item == NULL) || (keymap->poll_modal_item(op, kmi->propvalue))) {
         return kmi;

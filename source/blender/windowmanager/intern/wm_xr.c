@@ -300,7 +300,13 @@ static void wm_xr_draw_data_populate(const wmXrSessionState *state,
 
   wm_xr_base_pose_calc(scene, settings, &r_draw_data->base_pose);
 
-  if (position_tracking_toggled || !state->is_view_data_set) {
+  /* Set the eye position offset, it's used to offset the base pose when changing positional
+   * tracking. */
+  if (!state->is_view_data_set) {
+    /* Always use the exact base pose with no offset when starting the session. */
+    copy_v3_fl(r_draw_data->eye_position_ofs, 0.0f);
+  }
+  else if (position_tracking_toggled) {
     if (use_position_tracking) {
       copy_v3_fl(r_draw_data->eye_position_ofs, 0.0f);
     }
@@ -748,8 +754,8 @@ void wm_xr_draw_view(const GHOST_XrDrawViewInfo *draw_view, void *customdata)
    * viewport buffers composited together and potentially color managed for display on screen.
    * It needs a bound frame-buffer to draw into, for which we simply reuse the GPUOffscreen one.
    *
-   * In a next step, Ghost-XR will use the the currently bound frame-buffer to retrieve the image
-   * to be submitted to the OpenXR swap-chain. So do not un-bind the offscreen yet! */
+   * In a next step, Ghost-XR will use the currently bound frame-buffer to retrieve the image
+   * to be submitted to the OpenXR swap-chain. So do not un-bind the off-screen yet! */
 
   GPU_offscreen_bind(surface_data->offscreen, false);
 

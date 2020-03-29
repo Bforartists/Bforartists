@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
@@ -2876,10 +2876,6 @@ msgid "Styles"
 msgstr "Стилдер"
 
 
-msgid "3D View"
-msgstr "3D-көрүнүш"
-
-
 msgctxt "Operator"
 msgid "Line"
 msgstr "Түз сызык"
@@ -3165,6 +3161,10 @@ msgstr "Кубат талаасы"
 
 msgid "Clip Editor"
 msgstr "Клип редактору"
+
+
+msgid "3D View"
+msgstr "3D-көрүнүш"
 
 
 msgid "Active Marker"

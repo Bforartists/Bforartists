@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -1593,6 +1593,10 @@ msgstr "버전"
 
 msgid "Version of Blender the .blend was saved with"
 msgstr "다음과 함께 .blend가 저장된 블렌더 버전"
+
+
+msgid "Volumes"
+msgstr "볼륨"
 
 
 msgid "Window Managers"
@@ -7912,14 +7916,6 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "그리스 팬슬 관련 애니메이션 데이터 및 프레임의 시각화를 포함"
 
 
-msgid "Active Scene Only"
-msgstr "활성 씬 만"
-
-
-msgid "Only show Grease Pencil data-blocks used as part of the active scene"
-msgstr "활성 씬의 일부로 사용되는 그리스 펜슬 데이터-블록 만 표시"
-
-
 msgid "Display Hidden"
 msgstr "숨긴 대상을 표시"
 
@@ -11365,10 +11361,6 @@ msgid "Clipping"
 msgstr "클리핑"
 
 
-msgid "Value under which voxels are considered empty space to optimize caching and rendering"
-msgstr "복셀이 캐싱 및 렌더링을 최적화하기 위해 빈 공간으로 간주되는 값"
-
-
 msgid "Field"
 msgstr "필드"
 
@@ -14701,10 +14693,6 @@ msgid "Number of frames before recalculate random values again"
 msgstr "다시 렌덤 값을 재계산하기 전의 프레임 수"
 
 
-msgid "The modifier affects the position of the point"
-msgstr "모디파이어는 포인트의 위치에 영향을 줍니다"
-
-
 msgid "Offset Modifier"
 msgstr "오프셋 모디파이어"
 
@@ -14803,6 +14791,10 @@ msgstr "적용 할 스무스 양"
 
 msgid "Number of times to apply smooth (high numbers can reduce fps)"
 msgstr "부드럽게 적용 할 횟수 (높은 수치는 fps를 줄일 수 있음)"
+
+
+msgid "The modifier affects the position of the point"
+msgstr "모디파이어는 포인트의 위치에 영향을 줍니다"
 
 
 msgid "The modifier affects the color strength of the point"
@@ -14925,16 +14917,8 @@ msgid "Tint Modifier"
 msgstr "틴트 모디파이어"
 
 
-msgid "Tint Stroke Color modifier"
-msgstr "틴트 스트로크 컬러 모디파이어"
-
-
 msgid "Color used for tinting"
 msgstr "틴트에 사용되는 컬러"
-
-
-msgid "Factor for mixing color"
-msgstr "혼합하는 컬러의 팩터"
 
 
 msgid "Vertex Group Element"
@@ -23864,6 +23848,10 @@ msgid "Vector font for Text objects"
 msgstr "텍스트 오브젝트에 대한 벡터 폰트"
 
 
+msgid "Offset the number of the frame to use in the animation"
+msgstr "에니메이션에서 사용하는 프레임의 번호를 오프셋"
+
+
 msgid "Window Manager"
 msgstr "창 관리자"
 
@@ -24610,10 +24598,6 @@ msgstr "이미지 시퀀스 또는 무비에서 현재 프레임 번호"
 
 msgid "Number of images of a movie to use"
 msgstr "사용하는 무비 이미지의 개수"
-
-
-msgid "Offset the number of the frame to use in the animation"
-msgstr "에니메이션에서 사용하는 프레임의 번호를 오프셋"
 
 
 msgid "Global starting frame of the movie/sequence, assuming first picture has a #1"
@@ -27958,16 +27942,16 @@ msgid "Clean Up"
 msgstr "정리"
 
 
-msgid "Material Specials"
-msgstr "매테리얼 지정"
-
-
 msgid "GP Vertex Groups"
 msgstr "GP 버텍스 그룹"
 
 
 msgid "Layer Specials"
 msgstr "레이어 지정"
+
+
+msgid "Material Specials"
+msgstr "매테리얼 지정"
 
 
 msgid "Move to Layer"
@@ -38330,6 +38314,15 @@ msgstr "모드 유형으로 선택된 항목을 변환"
 
 
 msgctxt "Operator"
+msgid "Set Keyframe Easing Type"
+msgstr "키 프레임 완화 유형을 설정"
+
+
+msgid "Set easing type for the F-Curve segments starting from the selected keyframes"
+msgstr "선택한 키 프레임에서 시작하는 F- 커브 부분의 완화 유형을 설정"
+
+
+msgctxt "Operator"
 msgid "Set Keyframe Extrapolation"
 msgstr "키 프레임 외삽법을 설정"
 
@@ -44666,76 +44659,6 @@ msgstr "활성 상태가 아닌 모든 레이어에 빈 프레임을 만듭니�
 
 
 msgctxt "Operator"
-msgid "Hide Color(s)"
-msgstr "컬러(들)을 숨기기"
-
-
-msgid "Hide selected/unselected Grease Pencil colors"
-msgstr "선택/선택되지 않은 그리스 펜슬 컬러를 숨기기"
-
-
-msgid "Hide unselected rather than selected colors"
-msgstr "선택된 컬러 대신 선택되지 않은 컬러를 숨기기"
-
-
-msgctxt "Operator"
-msgid "Isolate Color"
-msgstr "컬러를 분리"
-
-
-msgid "Toggle whether the active color is the only one that is editable and/or visible"
-msgstr "활성 컬러이 편집 및/또는 표시 가능한 유일한 컬러인지 여부를 토글합니다"
-
-
-msgid "Affect Visibility"
-msgstr "가시성에 주는 영향"
-
-
-msgid "In addition to toggling the editability, also affect the visibility"
-msgstr "편집 가능성을 전환하는 것 외에도 가시성에 영향을 줍니다"
-
-
-msgctxt "Operator"
-msgid "Lock All Colors"
-msgstr "모든 컬러를 잠금"
-
-
-msgid "Lock all Grease Pencil colors to prevent them from being accidentally modified"
-msgstr "그리스 팬슬 컬러를 실수로 수정하지 않도록 모두 잠금"
-
-
-msgctxt "Operator"
-msgid "Show All Colors"
-msgstr "모든 컬러를 표시"
-
-
-msgid "Unhide all hidden Grease Pencil colors"
-msgstr "모든 숨겨진 그리스 펜슬 컬러를 숨기기"
-
-
-msgctxt "Operator"
-msgid "Select Color"
-msgstr "컬러를 선택"
-
-
-msgid "Select all Grease Pencil strokes using current color"
-msgstr "현재의 컬러를 사용하여 모든 그리스 펜슬 스트로크를 선택"
-
-
-msgid "Unselect strokes"
-msgstr "스트로크 선택을 취소"
-
-
-msgctxt "Operator"
-msgid "Unlock All Colors"
-msgstr "모든 컬러를 잠금 해제"
-
-
-msgid "Unlock all Grease Pencil colors so that they can be edited"
-msgstr "그리스 팬슬 컬러를 모두 편집하여 편집 가능"
-
-
-msgctxt "Operator"
 msgid "Convert Grease Pencil"
 msgstr "그리스 펜슬을 변환"
 
@@ -45246,6 +45169,14 @@ msgid "Toggle whether the active layer is the only one that can be edited and/or
 msgstr "활성 레이어가 편집 및/또는 표시 가능한 유일한 레이어인지 여부를 토글"
 
 
+msgid "Affect Visibility"
+msgstr "가시성에 주는 영향"
+
+
+msgid "In addition to toggling the editability, also affect the visibility"
+msgstr "편집 가능성을 전환하는 것 외에도 가시성에 영향을 줍니다"
+
+
 msgctxt "Operator"
 msgid "Remove Mask Layer"
 msgstr "마스크 레이어를 제거"
@@ -45294,6 +45225,10 @@ msgstr "사용하지 않는 레이어 컬러를 사용하지 않도록 설정"
 
 msgid "Lock and hide any color not used in any layer"
 msgstr "모든 계층에서 사용되지 않는 컬러를 숨기 및 잠금"
+
+
+msgid "Hide unselected rather than selected colors"
+msgstr "선택된 컬러 대신 선택되지 않은 컬러를 숨기기"
 
 
 msgctxt "Operator"
@@ -45540,6 +45475,10 @@ msgid "Select all points in same strokes as already selected points"
 msgstr "이미 선택된 포인트와 동일한 스트로크에서 모든 포인트를 선택"
 
 
+msgid "Unselect strokes"
+msgstr "스트로크 선택을 취소"
+
+
 msgid "Grow sets of selected Grease Pencil points"
 msgstr "선택된 그리스 펜슬 포인트의 성장 설정"
 
@@ -45731,15 +45670,6 @@ msgstr "합치기"
 
 msgid "Join and Copy"
 msgstr "합치기 및 복사"
-
-
-msgctxt "Operator"
-msgid "Lock Unused Colors"
-msgstr "사용하지 않는 컬러를 잠금"
-
-
-msgid "Lock any color not used in any selected stroke"
-msgstr "선택한 스트로크에 사용되지 않은 컬러를 잠그기"
 
 
 msgctxt "Operator"
@@ -46159,15 +46089,6 @@ msgstr "기존 교체"
 
 msgid "Replace existing driver variables, instead of just appending to the end of the existing list"
 msgstr "기존 목록의 끝에 추가하는 대신 기존 드라이버 변수를 바꿉니다"
-
-
-msgctxt "Operator"
-msgid "Set Keyframe Easing Type"
-msgstr "키 프레임 완화 유형을 설정"
-
-
-msgid "Set easing type for the F-Curve segments starting from the selected keyframes"
-msgstr "선택한 키 프레임에서 시작하는 F- 커브 부분의 완화 유형을 설정"
 
 
 msgctxt "Operator"
@@ -62527,20 +62448,12 @@ msgid "Select and activate item(s)"
 msgstr "항목을 선택 및 활성화"
 
 
-msgid "Use the object center when selecting, in editmode used to extend object selection"
-msgstr "오브젝트 선택을 확장할 때 사용되는 에디트 모드에서 오브젝트 중심을 선택합니다"
-
-
 msgid "Enumerate"
 msgstr "열거"
 
 
 msgid "List objects under the mouse (object mode only)"
 msgstr "마우스 아래에 오브젝트를 목록 (오브젝트 모드 전용)"
-
-
-msgid "Use object selection (editmode only)"
-msgstr "오브젝트 선택을 사용 (에디트 모드 만)"
 
 
 msgid "Select items using box selection"
@@ -65754,10 +65667,6 @@ msgid "Subdivision"
 msgstr "섭디비젼"
 
 
-msgid "Volumes"
-msgstr "볼륨"
-
-
 msgid "Render Pass"
 msgstr "렌더 패스"
 
@@ -66723,20 +66632,12 @@ msgid "Toolbar Item"
 msgstr "툴바 항목"
 
 
-msgid "Video Sequence Editor"
-msgstr "비디오 시퀀스 에디터"
-
-
 msgid "Text Style"
 msgstr "텍스트 스타일"
 
 
 msgid "User Interface"
 msgstr "사용자 인터페이스"
-
-
-msgid "3D View"
-msgstr "3D 뷰"
 
 
 msgid "Gradient Colors"
@@ -71839,10 +71740,6 @@ msgid "Number of volume scattering samples to render for each AA sample"
 msgstr "각 AA 샘플에 대해 렌더하는 볼륨 산란 샘플의 수"
 
 
-msgid "Distance between volume shader samples when rendering the volume (lower values give more accurate and detailed results, but also increased render time)"
-msgstr "볼륨을 렌더링 할 때 볼륨 셰이더 샘플 간의 거리 (값이 낮을수록 정확하고 자세한 결과를 얻을 수 있지만 렌더링 시간은 늘어납니다)"
-
-
 msgid "Render pass to show in the 3D Viewport"
 msgstr "3D 뷰포트에 표시할 렌더 패스"
 
@@ -71993,6 +71890,10 @@ msgstr "샘플링 맵의 해상도를 수동으로 설정합니다. 값이 높�
 
 msgid "Interpolation method to use for volumes"
 msgstr "볼륨에 사용하는 보간 방법"
+
+
+msgid "Distance between volume shader samples when rendering the volume (lower values give more accurate and detailed results, but also increased render time)"
+msgstr "볼륨을 렌더링 할 때 볼륨 셰이더 샘플 간의 거리 (값이 낮을수록 정확하고 자세한 결과를 얻을 수 있지만 렌더링 시간은 늘어납니다)"
 
 
 msgid "Settings/info about a language"
@@ -75648,10 +75549,6 @@ msgstr "스트립 설정 당 사용하여 프록시를 저장"
 
 msgid "Store proxies using project directory"
 msgstr "프로젝트 디렉토리를 사용하여 프록시를 저장"
-
-
-msgid "Recycle Up to Cost"
-msgstr "최대 비용으로 재활용"
 
 
 msgid "Only frames with cost lower than this value will be recycled"
@@ -79572,6 +79469,10 @@ msgid "Active Theme Area"
 msgstr "활성 테마 영역"
 
 
+msgid "3D View"
+msgstr "3D 뷰"
+
+
 msgid "Theme Bone Color Set"
 msgstr "테마 본 컬러 설정"
 
@@ -79624,38 +79525,6 @@ msgid "Color of disabled marker"
 msgstr "사용 중지된 마커의 컬러"
 
 
-msgid "Align handle color"
-msgstr "정렬 핸들 컬러"
-
-
-msgid "Auto handle color"
-msgstr "자동 핸들 컬러"
-
-
-msgid "Auto-Clamped handle color"
-msgstr "자동 클램프된 핸들 컬러"
-
-
-msgid "Free handle color"
-msgstr "자유 핸들 컬러"
-
-
-msgid "Align handle selected color"
-msgstr "정렬 핸들 선택됨 컬러"
-
-
-msgid "Auto handle selected color"
-msgstr "자동 핸들 선택됨 컬러"
-
-
-msgid "Auto-Clamped handle selected color"
-msgstr "자동 클램프된 핸들 선택됨 컬러"
-
-
-msgid "Free handle selected color"
-msgstr "자유 핸들 선택됨 컬러"
-
-
 msgid "Handle Vertex"
 msgstr "핸들 버텍스"
 
@@ -79676,16 +79545,8 @@ msgid "Color of locked marker"
 msgstr "잠긴 마커의 컬러"
 
 
-msgid "Marker Color"
-msgstr "마커 컬러"
-
-
 msgid "Color of marker"
 msgstr "마커의 컬러"
-
-
-msgid "Marker Outline Color"
-msgstr "마커 윤곽선 컬러"
 
 
 msgid "Color of marker's outline"
@@ -80040,18 +79901,6 @@ msgid "Channels Region"
 msgstr "채널 지역"
 
 
-msgid "Vector handle selected color"
-msgstr "벡터 핸들 선택됨 컬러"
-
-
-msgid "Vector handle color"
-msgstr "벡터 핸들 컬러"
-
-
-msgid "Last selected point"
-msgstr "마지막 선택된 포인트"
-
-
 msgid "Vertex Bevel"
 msgstr "버텍스 베벨"
 
@@ -80114,34 +79963,6 @@ msgstr "페인트 커브 핸들"
 
 msgid "Paint Curve Pivot"
 msgstr "페인트 커브 피벗"
-
-
-msgid "Stitch preview active island"
-msgstr "봉합 미리보기 활성 아일랜드"
-
-
-msgid "Stitch preview edge color"
-msgstr "봉합 미리보기 에지 컬러"
-
-
-msgid "Stitch preview face color"
-msgstr "봉합 미리보기 페이스 컬러"
-
-
-msgid "Stitch preview stitchable color"
-msgstr "봉합 미리보기 봉합 가능 컬러"
-
-
-msgid "Stitch preview unstitchable color"
-msgstr "봉합 미리보기 봉합 불가능 컬러"
-
-
-msgid "Stitch preview vertex color"
-msgstr "봉합 미리보기 버텍스 컬러"
-
-
-msgid "Scope region background color"
-msgstr "지역의 배경색 범위"
 
 
 msgid "Other Object UVs"
@@ -80458,10 +80279,6 @@ msgstr "씬 스트립"
 
 msgid "Text Strip"
 msgstr "텍스트 스트립"
-
-
-msgid "Transition Strip"
-msgstr "전환 스트립"
 
 
 msgid "Theme Space Settings"
@@ -80808,10 +80625,6 @@ msgid "Theme settings for the 3D View"
 msgstr "3D 뷰에 대한 테마 설정"
 
 
-msgid "Active spline"
-msgstr "활성 스플라인"
-
-
 msgid "Bone Pose"
 msgstr "본 포즈"
 
@@ -80886,22 +80699,6 @@ msgstr "그리스 펜슬 버텍스 크기"
 
 msgid "Face Normal"
 msgstr "페이스 노멀"
-
-
-msgid "NURBS active U-lines"
-msgstr "넙스 활성 U-라인"
-
-
-msgid "NURBS active V-lines"
-msgstr "넙스 활성 V-라인"
-
-
-msgid "NURBS U-lines"
-msgstr "넙스 U-라인"
-
-
-msgid "NURBS V-lines"
-msgstr "넙스 V-라인"
 
 
 msgid "Object Origin Size"
@@ -82105,10 +81902,6 @@ msgid "Number of grid lines to display in perspective view"
 msgstr "원근법 뷰에서 표시하는 격자 라인의 수"
 
 
-msgid "Distance between 3D View grid lines"
-msgstr "3D 뷰 격자 라인 사이의 거리"
-
-
 msgid "Grid Scale Unit"
 msgstr "격자 축적 단위"
 
@@ -82847,6 +82640,10 @@ msgstr "이 뷰 레이어의 렌더링을 사용 또는 사용안함"
 
 msgid "Render stylized strokes in this Layer"
 msgstr "이 레이어에서 스타일화된 스트로크를 렌더"
+
+
+msgid "Unknown"
+msgstr "알 수 없는"
 
 
 msgid "Walk navigation settings"
@@ -85616,10 +85413,6 @@ msgid "Build and Time Offset modifier not compatible"
 msgstr "빌드 및 시간 오프셋 모디파이어가 호환되지 않습니다"
 
 
-msgid "Use Object As Pivot"
-msgstr "오브젝트를 피벗으로 사용"
-
-
 msgid "Use Wave Effect"
 msgstr "웨이브 이펙트를 사용"
 
@@ -85630,6 +85423,10 @@ msgstr "거리 참조"
 
 msgid "Angle Outer"
 msgstr "각도 바깥"
+
+
+msgid "Detail"
+msgstr "디테일"
 
 
 msgid "Edge Detection Options:"
@@ -86544,16 +86341,8 @@ msgid "Particles Maximum"
 msgstr "파티클 최대"
 
 
-msgid "Particle Sampling"
-msgstr "파티클 샘플링"
-
-
 msgid "Narrow Band Width"
 msgstr "좁은 밴드 폭"
-
-
-msgid "Particle Randomness"
-msgstr "파티클 렌덤성"
 
 
 msgid "Obstacle-Fluid Threshold"
@@ -86799,10 +86588,6 @@ msgid "Light Clamping"
 msgstr "라이트 클램핑"
 
 
-msgid "Shadow Samples"
-msgstr "섀도우 샘플"
-
-
 msgid "Refraction"
 msgstr "굴절"
 
@@ -86827,10 +86612,6 @@ msgstr "확산 폐색"
 
 msgid "Irradiance Size"
 msgstr "방사 조도 크기"
-
-
-msgid "Viewport Render"
-msgstr "뷰포트 렌더"
 
 
 msgid "Max Child Particles"
@@ -89477,13 +89258,13 @@ msgstr "싱글 본"
 
 
 msgctxt "Operator"
-msgid "Grease Pencil"
-msgstr "그리스 펜슬"
+msgid "Empty"
+msgstr "엠프티"
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "엠프티"
+msgid "Grease Pencil"
+msgstr "그리스 펜슬"
 
 
 msgctxt "Operator"
@@ -93288,10 +93069,6 @@ msgid "More..."
 msgstr "더 많이..."
 
 
-msgid "Unknown"
-msgstr "알 수 없는"
-
-
 msgid "Flip Color Ramp"
 msgstr "컬러 램프를 뒤집기"
 
@@ -96136,22 +95913,6 @@ msgid "Saved %s"
 msgstr "저장된 %s"
 
 
-msgid "Packed library image: %s from library %s can't be saved"
-msgstr "포장된 라이브러리 이미지 : %s을 라이브러리 %s에서 저장할 수 없습니다"
-
-
-msgid "Image %s can't be saved automatically, must use a different file format"
-msgstr "이미지 %s는 자동으로 저장할 수 없으며 다른 파일 형식을 사용해야합니다"
-
-
-msgid "File path used by more than one saved image: %s"
-msgstr "둘 이상의 저장된 이미지가 사용하는 파일 경로: %s"
-
-
-msgid "Image %s can't be saved, no valid file path: %s"
-msgstr "이미지 %s을 저장할 수 없으며 올바른 파일 경로가 없음: %s"
-
-
 msgid "can't save image while rendering"
 msgstr "렌더링하는 동안 이미지를 저장할 수 없습니다"
 
@@ -98780,10 +98541,6 @@ msgid "Gizmo group '%s' not found!"
 msgstr "기즈모 그룹 '%s'을 찾을 수 없습니다!"
 
 
-msgid "Enable 'Auto Smooth' option in mesh settings for hardening"
-msgstr "경화를 위해 메쉬 설정에서 '자동 스무스' 옵션을 사용"
-
-
 msgid "Cannot execute boolean operation"
 msgstr "불리언 작업을 실행 할 수 없습니다"
 
@@ -98806,10 +98563,6 @@ msgstr "오브젝트는 메쉬가 아님"
 
 msgid "Original vertex count mismatch: %u to %u"
 msgstr "원본 버텍스 개수 불일치: %u 를 %u 에"
-
-
-msgid "Enable 'Auto Smooth' option in mesh settings"
-msgstr "메쉬 설정에서 '자동 스무스' 옵션을 사용"
 
 
 msgid "You are using a rather high poly as source or destination, computation might be slow"
@@ -99328,10 +99081,6 @@ msgid "Reflection"
 msgstr "반사"
 
 
-msgid "Detail"
-msgstr "디테일"
-
-
 msgid "Detail Scale"
 msgstr "디테일 축적"
 
@@ -99570,10 +99319,6 @@ msgstr "스크립트를 사용"
 
 msgid "Continue using file without Python scripts"
 msgstr "Python 스크립트없이 파일 사용을 계속하기"
-
-
-msgid "Save changes to \"%s\" before closing?"
-msgstr "닫기 전에 \"%s\"로 변경 사항을 저장 하시겠습니까?"
 
 
 msgid "Path is empty, cannot save"

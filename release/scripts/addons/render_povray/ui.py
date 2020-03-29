@@ -1203,7 +1203,8 @@ class RENDER_PT_POV_render_settings(RenderButtonsPanel, Panel):
         col.prop(scene.pov, "max_trace_level", text="Ray Depth")
         align = True
         layout.active = scene.pov.global_settings_advanced
-        layout.prop(scene.pov, "charset")
+        # Deprecated (autodetected in pov3.8):
+        # layout.prop(scene.pov, "charset")
         row = layout.row(align=align)
         row.prop(scene.pov, "adc_bailout")
         row = layout.row(align=align)

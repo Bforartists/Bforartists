@@ -414,3 +414,63 @@ class PDT_PT_PanelCommandLine(Panel):
         row.operator("pdt.command_rerun", text="", icon="LOOP_BACK")
         row = layout.row()
         row.prop(pdt_pg, "maths_output", text="Maths Output")
+
+class PDT_PT_PanelTangent(Panel):
+    bl_idname = "PDT_PT_PanelTangent"
+    bl_label = "PDT Tangents"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "PDT"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self,context):
+        layout = self.layout
+        pdt_pg = context.scene.pdt_pg
+
+        if pdt_pg.menu_expand:
+            icon_e = "EVENT_C"
+        else:
+            icon_e = "EVENT_E"
+        row = layout.row()
+        row.label(text=f"Working {PDT_LAB_PLANE}:")
+        row.prop(pdt_pg, "plane", text="")
+        row = layout.row()
+        row.label(text="Tan Mode")
+        row.prop(pdt_pg, "tangent_mode", text="")
+        row = layout.row()
+        row.operator("pdt.tangentoperatesel", text="Tangents from Selection", icon="NONE")
+        row = layout.row()
+        row.label(text="Or Use Tangents From Inputs")
+        row.operator("pdt.tangentexpandmenu", text="", icon=icon_e)
+
+        box = layout.box()
+        row = box.row()
+        split = row.split(factor=0.35, align=True)
+        split.label(text="Tan Point")
+        split.prop(pdt_pg, "tangent_point2", text="")
+        row = box.row()
+        row.operator("pdt.tangentset3", text="from Cursor")
+        row.operator("pdt.tangentset4", text="from Vertex")
+
+        if pdt_pg.menu_expand:
+            box = layout.box()
+            row = box.row()
+            split = row.split(factor=0.35, align=True)
+            split.label(text="Centre 1")
+            split.prop(pdt_pg, "tangent_point0", text="")
+            row = box.row()
+            split = row.split(factor=0.45, align=False)
+            split.operator("pdt.tangentset1", text="Set From Arc")
+            split.prop(pdt_pg, "tangent_radius0", text="")
+
+            # Second Centre & Radius
+            row = box.row()
+            split = row.split(factor=0.35, align=True)
+            split.label(text="Centre 2")
+            split.prop(pdt_pg, "tangent_point1", text="")
+            row = box.row()
+            split = row.split(factor=0.45, align=False)
+            split.operator("pdt.tangentset2", text="Set From Arc")
+            split.prop(pdt_pg, "tangent_radius1", text="")
+            row = box.row()
+            row.operator("pdt.tangentoperate", text="Tangents From Inputs", icon="NONE")

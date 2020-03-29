@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -6914,6 +6914,10 @@ msgid "Vector font for Text objects"
 msgstr "Comprimir Dades"
 
 
+msgid "Offset the number of the frame to use in the animation"
+msgstr "Seleccionar connectats"
+
+
 msgid "Window Manager"
 msgstr "Duplicar"
 
@@ -7047,10 +7051,6 @@ msgstr "Image Displist"
 
 
 msgid "Number of images of a movie to use"
-msgstr "Seleccionar connectats"
-
-
-msgid "Offset the number of the frame to use in the animation"
 msgstr "Seleccionar connectats"
 
 
@@ -19873,10 +19873,6 @@ msgid "Enumerate"
 msgstr "Enumerar"
 
 
-msgid "Use object selection (editmode only)"
-msgstr "Amagar Seleccionats"
-
-
 msgid "Select items using circle selection"
 msgstr "Seleccionar connectats"
 
@@ -20767,10 +20763,6 @@ msgstr "Seleccionar connectats"
 
 msgid "User Interface"
 msgstr "Superfície"
-
-
-msgid "3D View"
-msgstr "Vista"
 
 
 msgid "Gradient Colors"
@@ -23916,6 +23908,10 @@ msgid "Active Theme Area"
 msgstr "Moure a Capa"
 
 
+msgid "3D View"
+msgstr "Vista"
+
+
 msgid "Theme Bone Color Set"
 msgstr "Desparentar"
 
@@ -23960,22 +23956,6 @@ msgid "Color of disabled marker"
 msgstr "Desparentar"
 
 
-msgid "Auto handle color"
-msgstr "Tangents lineals"
-
-
-msgid "Align handle selected color"
-msgstr "Amagar Seleccionats"
-
-
-msgid "Auto handle selected color"
-msgstr "Seleccionar connectats"
-
-
-msgid "Free handle selected color"
-msgstr "Seleccionar connectats"
-
-
 msgid "Handle Vertex"
 msgstr "Moure a Capa"
 
@@ -23996,16 +23976,8 @@ msgid "Color of locked marker"
 msgstr "Menú Esborrar"
 
 
-msgid "Marker Color"
-msgstr "Seleccionar fila"
-
-
 msgid "Color of marker"
 msgstr "Menú Esborrar"
-
-
-msgid "Marker Outline Color"
-msgstr "Image Displist"
 
 
 msgid "Color of marker's outline"
@@ -24180,18 +24152,6 @@ msgid "Channels Region"
 msgstr "Seleccionar fila"
 
 
-msgid "Vector handle selected color"
-msgstr "Seleccionar connectats"
-
-
-msgid "Vector handle color"
-msgstr "Tangents lineals"
-
-
-msgid "Last selected point"
-msgstr "Amagar Seleccionats"
-
-
 msgid "Vertex Select"
 msgstr "Pintura Vectorial"
 
@@ -24226,14 +24186,6 @@ msgstr "Amagar Seleccionats"
 
 msgid "Face Dot Size"
 msgstr "Duplicar"
-
-
-msgid "Stitch preview active island"
-msgstr "Finestra de Render"
-
-
-msgid "Stitch preview vertex color"
-msgstr "Render"
 
 
 msgid "Theme Info"
@@ -24416,10 +24368,6 @@ msgid "Scene Strip"
 msgstr "Afegir Tira"
 
 
-msgid "Transition Strip"
-msgstr "Seleccionar connectats"
-
-
 msgid "Theme Space Settings"
 msgstr "Eines"
 
@@ -24592,10 +24540,6 @@ msgid "Theme settings for the 3D View"
 msgstr "Començar a renderitzar una seqüència"
 
 
-msgid "Active spline"
-msgstr "Moure a Capa"
-
-
 msgid "Bone Pose"
 msgstr "Afegir Tira"
 
@@ -24646,22 +24590,6 @@ msgstr "Corba NURBS"
 
 msgid "Face Normal"
 msgstr "Calcular Normals"
-
-
-msgid "NURBS active U-lines"
-msgstr "Moure a Capa"
-
-
-msgid "NURBS active V-lines"
-msgstr "Moure a Capa"
-
-
-msgid "NURBS U-lines"
-msgstr "Cilindre"
-
-
-msgid "NURBS V-lines"
-msgstr "Cilindre"
 
 
 msgid "Object Selected"
@@ -24962,10 +24890,6 @@ msgstr "Seleccionar fila"
 
 msgid "Grid Lines"
 msgstr "Partir"
-
-
-msgid "Distance between 3D View grid lines"
-msgstr "Esborrar"
 
 
 msgid "Grid Scale Unit"
@@ -25624,6 +25548,10 @@ msgid "Use Channel:"
 msgstr "Finestra de Render"
 
 
+msgid "Detail"
+msgstr "Mostrar propietats de les arestes"
+
+
 msgctxt "Operator"
 msgid "Selection to Grid"
 msgstr "Seleccionar connectats"
@@ -25760,10 +25688,6 @@ msgstr "Centre"
 
 msgid "Auto-Step"
 msgstr "Autocomençar"
-
-
-msgid "Shadow Samples"
-msgstr "Esborrar Rotació"
 
 
 msgid "Refraction"
@@ -28361,10 +28285,6 @@ msgstr "Dreta"
 
 msgid "Reflection"
 msgstr "Seleccionar connectats"
-
-
-msgid "Detail"
-msgstr "Mostrar propietats de les arestes"
 
 
 msgid "Detail Scale"

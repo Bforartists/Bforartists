@@ -3142,7 +3142,7 @@ static void SCREEN_OT_screen_set(wmOperatorType *ot)
   ot->poll = ED_operator_screenactive;
 
   /* rna */
-  RNA_def_int(ot->srna, "delta", 0, INT_MIN, INT_MAX, "Delta", "", INT_MIN, INT_MAX);
+  RNA_def_int(ot->srna, "delta", 1, -1, 1, "Delta", "", -1, 1);
 }
 
 /** \} */
@@ -3992,7 +3992,7 @@ static bool region_toggle_poll(bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
 
-  /* don't flip anything around in topbar */
+  /* Don't flip anything around in top-bar. */
   if (area && area->spacetype == SPACE_TOPBAR) {
     CTX_wm_operator_poll_msg_set(C, "Toggling regions in the Top-bar is not allowed");
     return 0;
@@ -4060,7 +4060,7 @@ static bool region_flip_poll(bContext *C)
 {
   ScrArea *area = CTX_wm_area(C);
 
-  /* don't flip anything around in topbar */
+  /* Don't flip anything around in top-bar. */
   if (area && area->spacetype == SPACE_TOPBAR) {
     CTX_wm_operator_poll_msg_set(C, "Flipping regions in the Top-bar is not allowed");
     return 0;
@@ -4517,7 +4517,7 @@ void ED_screens_footer_tools_menu_create(bContext *C, uiLayout *layout, void *UN
 
   uiItemO(layout, but_flip_str, ICON_FLIP, "SCREEN_OT_region_flip");
 
-  /* file browser should be fullscreen all the time, topbar should
+  /* File browser should be fullscreen all the time, top-bar should
    * never be. But other regions can be maximized/restored... */
   if (!ELEM(sa->spacetype, SPACE_FILE, SPACE_TOPBAR)) {
     uiItemS(layout);
@@ -5122,9 +5122,9 @@ static void SCREEN_OT_box_select(wmOperatorType *ot)
 
 /* -------------------------------------------------------------------- */
 /** \name Full Screen Back Operator
+ *
+ * Use for generic full-screen 'back' button.
  * \{ */
-
-/* *********************** generic fullscreen 'back' button *************** */
 
 static int fullscreen_back_exec(bContext *C, wmOperator *op)
 {
@@ -5860,7 +5860,7 @@ static void keymap_modal_set(wmKeyConfig *keyconf)
   wmKeyMap *keymap;
 
   /* Standard Modal keymap ------------------------------------------------ */
-  keymap = WM_modalkeymap_add(keyconf, "Standard Modal Map", modal_items);
+  keymap = WM_modalkeymap_ensure(keyconf, "Standard Modal Map", modal_items);
 
   WM_modalkeymap_assign(keymap, "SCREEN_OT_area_move");
 }
@@ -5868,7 +5868,7 @@ static void keymap_modal_set(wmKeyConfig *keyconf)
 static bool blend_file_drop_poll(bContext *UNUSED(C),
                                  wmDrag *drag,
                                  const wmEvent *UNUSED(event),
-                                 const char **UNUSED(tooltip))
+                                 const char **UNUSED(r_tooltip))
 {
   if (drag->type == WM_DRAG_PATH) {
     if (drag->icon == ICON_FILE_BLEND) {

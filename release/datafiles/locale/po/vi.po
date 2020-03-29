@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
@@ -1592,6 +1592,10 @@ msgstr "Phiên Bản"
 
 msgid "Version of Blender the .blend was saved with"
 msgstr "Phiên bản của Blender thì đã được lưu tệp .blender"
+
+
+msgid "Volumes"
+msgstr "Các Thể Tích"
 
 
 msgid "Window Managers"
@@ -7927,14 +7931,6 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "Gồm sự hiện thị cho dữ liệu và bức hoạt hình liên quan với Bút Sáp"
 
 
-msgid "Active Scene Only"
-msgstr "Chỉ Cảnh Hoạt Động"
-
-
-msgid "Only show Grease Pencil data-blocks used as part of the active scene"
-msgstr "Chỉ hiện cục dữ liệu Bút Sáp đang được dùng trong cảnh hoạt động"
-
-
 msgid "Display Hidden"
 msgstr "Hiển Thị Ẩn"
 
@@ -11416,10 +11412,6 @@ msgid "Clipping"
 msgstr "Cắt"
 
 
-msgid "Value under which voxels are considered empty space to optimize caching and rendering"
-msgstr "Giá trị thì thể thích tử nhỏ hơn được chấp nhận là không gian trống rỗng cho tối ưu đệm chứa và kết xuất"
-
-
 msgid "Field"
 msgstr "Trường"
 
@@ -11570,10 +11562,6 @@ msgstr "Độ dục khi vẽ khói trong màn chiếu"
 
 msgid "Dissolve Speed"
 msgstr "Tốc Độ Hòa Tan"
-
-
-msgid "Determine how quickly the smoke dissolves (higher value makes smoke disappear faster)"
-msgstr "Xác định tốc độ sự hòa tan của khói (gí trị càg cao khói biến mất càng nhanh)"
 
 
 msgid "res"
@@ -14900,10 +14888,6 @@ msgid "Number of frames before recalculate random values again"
 msgstr "Số lượng bức trước được tính lại giá trị ngẫu nhiên lần nữa"
 
 
-msgid "The modifier affects the position of the point"
-msgstr "Cụ sửa đổi được ảnh hướng vị trí của điểm"
-
-
 msgid "Offset Modifier"
 msgstr "Cụ Sửa Đổi Dịch"
 
@@ -15002,6 +14986,10 @@ msgstr "Mức mịn hóa để áp dụng"
 
 msgid "Number of times to apply smooth (high numbers can reduce fps)"
 msgstr "Số lần để áp dụng mịn hóa (số lớn có thể giảm bức/giây)"
+
+
+msgid "The modifier affects the position of the point"
+msgstr "Cụ sửa đổi được ảnh hướng vị trí của điểm"
 
 
 msgid "The modifier affects the color strength of the point"
@@ -15124,16 +15112,8 @@ msgid "Tint Modifier"
 msgstr "Cụ Sửa Đổi Nhiễm Màu"
 
 
-msgid "Tint Stroke Color modifier"
-msgstr "Cụ Sửa Đổi Nhiễm Màu Nét"
-
-
 msgid "Color used for tinting"
 msgstr "Màu sử dụng cho nhiễm màu"
-
-
-msgid "Factor for mixing color"
-msgstr "Hệ số cho pha trộn màu"
 
 
 msgid "Vertex Group Element"
@@ -24107,6 +24087,10 @@ msgid "Vector font for Text objects"
 msgstr "Phông vectơ cho Vật Thể Văn Bản"
 
 
+msgid "Offset the number of the frame to use in the animation"
+msgstr "Dịch số bức để dùng cho hoạt hình"
+
+
 msgid "Window Manager"
 msgstr "Bộ Quản Lý Cửa Sổ"
 
@@ -24853,10 +24837,6 @@ msgstr "Số bức trong trình tự hay phim"
 
 msgid "Number of images of a movie to use"
 msgstr "Số lượng ảnh cúa một phim để dùng"
-
-
-msgid "Offset the number of the frame to use in the animation"
-msgstr "Dịch số bức để dùng cho hoạt hình"
 
 
 msgid "Global starting frame of the movie/sequence, assuming first picture has a #1"
@@ -28199,16 +28179,16 @@ msgid "Clean Up"
 msgstr "Làm Sạch"
 
 
-msgid "Material Specials"
-msgstr "Đồ Đặc Biệt Vật Liệu"
-
-
 msgid "GP Vertex Groups"
 msgstr "Bút Sáp Nhóm Đỉnh"
 
 
 msgid "Layer Specials"
 msgstr "Đồ Đặc Biệt Lớp"
+
+
+msgid "Material Specials"
+msgstr "Đồ Đặc Biệt Vật Liệu"
 
 
 msgid "Move to Layer"
@@ -38571,6 +38551,15 @@ msgstr "Biến hóa đồ được chọn tùy loại chế độ"
 
 
 msgctxt "Operator"
+msgid "Set Keyframe Easing Type"
+msgstr "Đặt Loại Xoa Bịu Bức Mẫu"
+
+
+msgid "Set easing type for the F-Curve segments starting from the selected keyframes"
+msgstr "Đặt loại xoa dịu cho khúc Cong-F bắt đầu từ các bức được chọn"
+
+
+msgctxt "Operator"
 msgid "Set Keyframe Extrapolation"
 msgstr "Đặt Suy Ngoại Bức Mẫu"
 
@@ -44920,76 +44909,6 @@ msgstr "Chế tạo bức rỗng trong tất cả lớp, không phải chỉ l�
 
 
 msgctxt "Operator"
-msgid "Hide Color(s)"
-msgstr "Ẩn (Các) Màu"
-
-
-msgid "Hide selected/unselected Grease Pencil colors"
-msgstr "Ẩn các lớp Bút Sáp chưa/được chọn"
-
-
-msgid "Hide unselected rather than selected colors"
-msgstr "Ẩn các màu chưa chọn thay thế các màu được chọn"
-
-
-msgctxt "Operator"
-msgid "Isolate Color"
-msgstr "Cô Lập Màu"
-
-
-msgid "Toggle whether the active color is the only one that is editable and/or visible"
-msgstr "Bật/tắt có thể biên tập và/hay hiển chỉ màu hoạt động"
-
-
-msgid "Affect Visibility"
-msgstr "Ảnh Hưởng Sự Hiển Thị"
-
-
-msgid "In addition to toggling the editability, also affect the visibility"
-msgstr "Còn có thể bật/tắt biên tập, cũng có thể ảnh hưởng hiển thị"
-
-
-msgctxt "Operator"
-msgid "Lock All Colors"
-msgstr "Khóa Hết Màu"
-
-
-msgid "Lock all Grease Pencil colors to prevent them from being accidentally modified"
-msgstr "Khóa hết màu Bút Sáp cho không chỉnh sửa vô ý"
-
-
-msgctxt "Operator"
-msgid "Show All Colors"
-msgstr "Hiện Hết Màu"
-
-
-msgid "Unhide all hidden Grease Pencil colors"
-msgstr "Hiện tất cả màu Bút Sáp được ẩn"
-
-
-msgctxt "Operator"
-msgid "Select Color"
-msgstr "Chọn Màu"
-
-
-msgid "Select all Grease Pencil strokes using current color"
-msgstr "Chọn hết nét Bút Sáp bằng màu hiện tại"
-
-
-msgid "Unselect strokes"
-msgstr "Thả nét"
-
-
-msgctxt "Operator"
-msgid "Unlock All Colors"
-msgstr "Mở Khóa Hết Màu"
-
-
-msgid "Unlock all Grease Pencil colors so that they can be edited"
-msgstr "Mở khóa hết màu Bút Sáp cho chỉnh sửa lại được chúng nó"
-
-
-msgctxt "Operator"
 msgid "Convert Grease Pencil"
 msgstr "Biến Đổi Bút Sáp"
 
@@ -45527,6 +45446,14 @@ msgid "Toggle whether the active layer is the only one that can be edited and/or
 msgstr "Bật/tắt chỉ có thể biên tập và/hay hiển thị lớp hoạt động"
 
 
+msgid "Affect Visibility"
+msgstr "Ảnh Hưởng Sự Hiển Thị"
+
+
+msgid "In addition to toggling the editability, also affect the visibility"
+msgstr "Còn có thể bật/tắt biên tập, cũng có thể ảnh hưởng hiển thị"
+
+
 msgctxt "Operator"
 msgid "Remove Mask Layer"
 msgstr "Xóa Lớp Mặt Nạ"
@@ -45575,6 +45502,10 @@ msgstr "Tắt Màu Lớp Không Dùng"
 
 msgid "Lock and hide any color not used in any layer"
 msgstr "Khóa và ẳn màu nào không dùng trong bắt cứ lớp nào"
+
+
+msgid "Hide unselected rather than selected colors"
+msgstr "Ẩn các màu chưa chọn thay thế các màu được chọn"
 
 
 msgctxt "Operator"
@@ -45821,6 +45752,10 @@ msgid "Select all points in same strokes as already selected points"
 msgstr "Chọn hết điểm trong cùng nét với điểm được chọn rồi"
 
 
+msgid "Unselect strokes"
+msgstr "Thả nét"
+
+
 msgid "Grow sets of selected Grease Pencil points"
 msgstr "Mở rộng các tập điểm Bút Sáp được chọn"
 
@@ -46012,15 +45947,6 @@ msgstr "Kết Nối"
 
 msgid "Join and Copy"
 msgstr "Kết Nối Và Chép"
-
-
-msgctxt "Operator"
-msgid "Lock Unused Colors"
-msgstr "Khóa Màu Không Dùng"
-
-
-msgid "Lock any color not used in any selected stroke"
-msgstr "Khóa bắt cứ màu nào không dùng trong nét nào được chọn"
 
 
 msgctxt "Operator"
@@ -46440,15 +46366,6 @@ msgstr "Thay Thế Tồn Tại"
 
 msgid "Replace existing driver variables, instead of just appending to the end of the existing list"
 msgstr "Thay thế cho biến của đồ dắt đang tồn tại, thay thé chỉ kèm vào đuôi của danh sách biến"
-
-
-msgctxt "Operator"
-msgid "Set Keyframe Easing Type"
-msgstr "Đặt Loại Xoa Bịu Bức Mẫu"
-
-
-msgid "Set easing type for the F-Curve segments starting from the selected keyframes"
-msgstr "Đặt loại xoa dịu cho khúc Cong-F bắt đầu từ các bức được chọn"
 
 
 msgctxt "Operator"
@@ -62808,20 +62725,12 @@ msgid "Select and activate item(s)"
 msgstr "Chọn và hoạt động (các) mặt hàng"
 
 
-msgid "Use the object center when selecting, in editmode used to extend object selection"
-msgstr "Dùng trung tâm vật thể khi chọn, trong chế độ biên tập dùng sự lựa chọn mở rộng"
-
-
 msgid "Enumerate"
 msgstr "Liệt Kê"
 
 
 msgid "List objects under the mouse (object mode only)"
 msgstr "Làm danh sách cho vật thể ở dưới chuột (chỉ trong chế độ vật thể)"
-
-
-msgid "Use object selection (editmode only)"
-msgstr "Sử dụng sự lựa chọn vật thể (chỉ cho chế độ biên tập)"
 
 
 msgid "Select items using box selection"
@@ -66035,10 +65944,6 @@ msgid "Subdivision"
 msgstr "Phân Hóa"
 
 
-msgid "Volumes"
-msgstr "Các Thể Tích"
-
-
 msgid "Render Pass"
 msgstr "Vòng Kết Xuất"
 
@@ -67004,20 +66909,12 @@ msgid "Toolbar Item"
 msgstr "Mặt Hàng Thanh Dụng Cụ"
 
 
-msgid "Video Sequence Editor"
-msgstr "Biên Tập Trình Tự Video"
-
-
 msgid "Text Style"
 msgstr "Phong Cách Văn Bản"
 
 
 msgid "User Interface"
 msgstr "Giao Diện Người Dùng"
-
-
-msgid "3D View"
-msgstr "Màn 3D"
 
 
 msgid "Gradient Colors"
@@ -72153,10 +72050,6 @@ msgid "Number of volume scattering samples to render for each AA sample"
 msgstr "Số lượng mẫu vật để kết xuất qua thể tích tán xạ cho mỗi mẫu vật khử răng cưa"
 
 
-msgid "Distance between volume shader samples when rendering the volume (lower values give more accurate and detailed results, but also increased render time)"
-msgstr "Khoảng cách giữa mẫu vật bộ tô sắc thể tích khi kết xuất thể tích (giá trị càng thấp càng chính xác và chi tiết nhiều hơn nhưng chậm hơn)"
-
-
 msgid "Render pass to show in the 3D Viewport"
 msgstr "Hiện vòng kết xuất trong màn chiếu 3D"
 
@@ -72307,6 +72200,10 @@ msgstr "Đặt bằng tay độ phân giải của bản đồ mẫu vật, giá
 
 msgid "Interpolation method to use for volumes"
 msgstr "Dùng phương pháp suy nội nào cho thể tích"
+
+
+msgid "Distance between volume shader samples when rendering the volume (lower values give more accurate and detailed results, but also increased render time)"
+msgstr "Khoảng cách giữa mẫu vật bộ tô sắc thể tích khi kết xuất thể tích (giá trị càng thấp càng chính xác và chi tiết nhiều hơn nhưng chậm hơn)"
 
 
 msgid "Settings/info about a language"
@@ -75962,10 +75859,6 @@ msgstr "Chứa đại lý dùng cài đặt từng đoạn"
 
 msgid "Store proxies using project directory"
 msgstr "Chứa đại lý bằng thư mục dự án"
-
-
-msgid "Recycle Up to Cost"
-msgstr "Tái Tạo đến Giá"
 
 
 msgid "Only frames with cost lower than this value will be recycled"
@@ -79886,6 +79779,10 @@ msgid "Active Theme Area"
 msgstr "Khu Vực Phong Cách Hoạt Động"
 
 
+msgid "3D View"
+msgstr "Màn 3D"
+
+
 msgid "Theme Bone Color Set"
 msgstr "Tập Phong Cách Màu Sắc Xương"
 
@@ -79938,38 +79835,6 @@ msgid "Color of disabled marker"
 msgstr "Màu cho ký hiệu tắt"
 
 
-msgid "Align handle color"
-msgstr "Màu tay cầm sắp xếp"
-
-
-msgid "Auto handle color"
-msgstr "Màu tay cầm tự động"
-
-
-msgid "Auto-Clamped handle color"
-msgstr "Màu tay cầm Tụ Động Kẹp Lại"
-
-
-msgid "Free handle color"
-msgstr "Màu tay cầm tự do"
-
-
-msgid "Align handle selected color"
-msgstr "Màu tay cầm sắp xếp được chọn"
-
-
-msgid "Auto handle selected color"
-msgstr "Màu tay cầm tự động được chọn"
-
-
-msgid "Auto-Clamped handle selected color"
-msgstr "Màu tay cầm Tự Động Kẹp Lại được chọn"
-
-
-msgid "Free handle selected color"
-msgstr "Màu tay cầm tự do được chọn"
-
-
 msgid "Handle Vertex"
 msgstr "Đỉnh Tay Cầm"
 
@@ -79990,16 +79855,8 @@ msgid "Color of locked marker"
 msgstr "Màu cho ký hiệu được khóa"
 
 
-msgid "Marker Color"
-msgstr "Màu Ký Hiệu"
-
-
 msgid "Color of marker"
 msgstr "Màu ký hiệu"
-
-
-msgid "Marker Outline Color"
-msgstr "Màu Nét Ngoài Ký Hiệu"
 
 
 msgid "Color of marker's outline"
@@ -80354,18 +80211,6 @@ msgid "Channels Region"
 msgstr "Vùng Kênh"
 
 
-msgid "Vector handle selected color"
-msgstr "Màu tay cầm vectơ được chọn"
-
-
-msgid "Vector handle color"
-msgstr "Màu tay cầm đỉnh"
-
-
-msgid "Last selected point"
-msgstr "Điểm cuối được chọn"
-
-
 msgid "Vertex Bevel"
 msgstr "Xiên Đỉnh"
 
@@ -80428,34 +80273,6 @@ msgstr "Sơn Tay Cầm Cong"
 
 msgid "Paint Curve Pivot"
 msgstr "Sơn Điểm Tựa Đường Cong"
-
-
-msgid "Stitch preview active island"
-msgstr "Dự khán may - đảo hoạt động "
-
-
-msgid "Stitch preview edge color"
-msgstr "Dự khán may - màu cạnh"
-
-
-msgid "Stitch preview face color"
-msgstr "Dự khán may - màu mặt"
-
-
-msgid "Stitch preview stitchable color"
-msgstr "Dự khán may - màu cho có thế may"
-
-
-msgid "Stitch preview unstitchable color"
-msgstr "Dự khán may - màu cho không thế may"
-
-
-msgid "Stitch preview vertex color"
-msgstr "Dự khán may - màu đỉnh"
-
-
-msgid "Scope region background color"
-msgstr "Màu cho nền vùng kế"
 
 
 msgid "Other Object UVs"
@@ -80772,10 +80589,6 @@ msgstr "Đoạn Cảnh"
 
 msgid "Text Strip"
 msgstr "Đoạn Văn Bản"
-
-
-msgid "Transition Strip"
-msgstr "Đoạn Tiến Triển"
 
 
 msgid "Theme Space Settings"
@@ -81122,10 +80935,6 @@ msgid "Theme settings for the 3D View"
 msgstr "Cài đặt phong cách cho màn 3D"
 
 
-msgid "Active spline"
-msgstr "Mẫu cong hoạt động"
-
-
 msgid "Bone Pose"
 msgstr "Dạng Đứng Xương"
 
@@ -81200,22 +81009,6 @@ msgstr "Kích Cỡ Đỉnh Bút Sáp"
 
 msgid "Face Normal"
 msgstr "Pháp Tuyến Mặt"
-
-
-msgid "NURBS active U-lines"
-msgstr "NURBS đường-U hoạt động"
-
-
-msgid "NURBS active V-lines"
-msgstr "NURBS đường-V hoạt động"
-
-
-msgid "NURBS U-lines"
-msgstr "NURNS đường-U"
-
-
-msgid "NURBS V-lines"
-msgstr "NURBS đường-V"
 
 
 msgid "Object Origin Size"
@@ -82419,10 +82212,6 @@ msgid "Number of grid lines to display in perspective view"
 msgstr "Hiển thị số lượng đường đồ thị trong màn chiếu phối cảnh"
 
 
-msgid "Distance between 3D View grid lines"
-msgstr "Khoảng cách giữa các đường đồ thị Màn 3 Chiều"
-
-
 msgid "Grid Scale Unit"
 msgstr "Đơn Vị Phóng To Đồ Thị"
 
@@ -83161,6 +82950,10 @@ msgstr "Bật hay tắt kết xuất Lớp Hiển Thị này"
 
 msgid "Render stylized strokes in this Layer"
 msgstr "Kết xuất nét có phong cách trong Lớp này"
+
+
+msgid "Unknown"
+msgstr "Lạ"
 
 
 msgid "Walk navigation settings"
@@ -85939,10 +85732,6 @@ msgid "Build and Time Offset modifier not compatible"
 msgstr "Cụ sửa đổi Xây Dựng và Dịch Thời Gian không thích hợp nhau"
 
 
-msgid "Use Object As Pivot"
-msgstr "Dùng Vật Thể Làm Điểm Tựa"
-
-
 msgid "Use Wave Effect"
 msgstr "Dùng Hiệu Ứng Sóng"
 
@@ -85953,6 +85742,10 @@ msgstr "Khoảng Cách Tham Chiếu"
 
 msgid "Angle Outer"
 msgstr "Góc Ngoài"
+
+
+msgid "Detail"
+msgstr "Chi Tiết"
 
 
 msgid "Edge Detection Options:"
@@ -86879,16 +86672,8 @@ msgid "Particles Maximum"
 msgstr "Hạt Cực Đại"
 
 
-msgid "Particle Sampling"
-msgstr "Mẫu Hạt"
-
-
 msgid "Narrow Band Width"
 msgstr "Vành Đai Bề Rộng Hẹp"
-
-
-msgid "Particle Randomness"
-msgstr "Độ Ngẫu Nhiên Hạt"
 
 
 msgid "Obstacle-Fluid Threshold"
@@ -87139,10 +86924,6 @@ msgid "Light Clamping"
 msgstr "Kẹp Lại Ánh Sáng"
 
 
-msgid "Shadow Samples"
-msgstr "Mẫu Vật Bóng Tối"
-
-
 msgid "Refraction"
 msgstr "Khúc Xạ"
 
@@ -87167,10 +86948,6 @@ msgstr "Hấp thụ Tán Xạ"
 
 msgid "Irradiance Size"
 msgstr "Kích Cỡ Sự Rọi"
-
-
-msgid "Viewport Render"
-msgstr "Kết Xuất Màn Chiếu"
 
 
 msgid "Max Child Particles"
@@ -89817,13 +89594,13 @@ msgstr "Một Xương"
 
 
 msgctxt "Operator"
-msgid "Grease Pencil"
-msgstr "Bút Sáp"
+msgid "Empty"
+msgstr "Vật Thể Rỗng"
 
 
 msgctxt "Operator"
-msgid "Empty"
-msgstr "Vật Thể Rỗng"
+msgid "Grease Pencil"
+msgstr "Bút Sáp"
 
 
 msgctxt "Operator"
@@ -93640,10 +93417,6 @@ msgid "More..."
 msgstr "Thêm..."
 
 
-msgid "Unknown"
-msgstr "Lạ"
-
-
 msgid "Flip Color Ramp"
 msgstr "Lật Dốc Màu"
 
@@ -96504,22 +96277,6 @@ msgid "Saved %s"
 msgstr "Đã Lưu %s"
 
 
-msgid "Packed library image: %s from library %s can't be saved"
-msgstr "Ảnh thư viện được gói lại: %s từ thư viện %s không thể lưu"
-
-
-msgid "Image %s can't be saved automatically, must use a different file format"
-msgstr "Ảnh %s không thể luư tự động, phải dùng một định dạng tệp khác"
-
-
-msgid "File path used by more than one saved image: %s"
-msgstr "Hơn một ảnh được lưu đang sử dụng đường dẫn: %s"
-
-
-msgid "Image %s can't be saved, no valid file path: %s"
-msgstr "Không thể lưu ảnh %s, không có đường dẫn không hợp lệ: %s"
-
-
 msgid "can't save image while rendering"
 msgstr "Không thể lưu ảnh khi đang kết xuất"
 
@@ -99136,10 +98893,6 @@ msgid "Gizmo group '%s' not found!"
 msgstr "Nhóm đồ đạc '%s' không tìm được!"
 
 
-msgid "Enable 'Auto Smooth' option in mesh settings for hardening"
-msgstr "Bật tùy chọn 'Tự Động Mịn Hóa' trong cài đặt mạng lưới để cứng hóa"
-
-
 msgid "Cannot execute boolean operation"
 msgstr "Không được thực hành thao tác bool"
 
@@ -99162,10 +98915,6 @@ msgstr "Vật thể không phải là mạng lưới"
 
 msgid "Original vertex count mismatch: %u to %u"
 msgstr "Số lượng đỉnh ban đầu không giống nhau: %u đến %u"
-
-
-msgid "Enable 'Auto Smooth' option in mesh settings"
-msgstr "Bật tùy chọn 'Tự Mịn' trong cài đặt mạng lưới"
 
 
 msgid "You are using a rather high poly as source or destination, computation might be slow"
@@ -99684,10 +99433,6 @@ msgid "Reflection"
 msgstr "Phản Xạ"
 
 
-msgid "Detail"
-msgstr "Chi Tiết"
-
-
 msgid "Detail Scale"
 msgstr "Phóng To Chi Tiết"
 
@@ -99926,10 +99671,6 @@ msgstr "Bật văn thảo"
 
 msgid "Continue using file without Python scripts"
 msgstr "Sử dụng tệp tiếp tục mà không có văn thảo Python"
-
-
-msgid "Save changes to \"%s\" before closing?"
-msgstr "Lưu sự thay đổi vào \"%s\" trước đóng?"
 
 
 msgid "Path is empty, cannot save"
