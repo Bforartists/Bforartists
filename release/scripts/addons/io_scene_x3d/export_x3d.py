@@ -499,9 +499,9 @@ def export(file,
         fw(ident_step + 'location="%.4f %.4f %.4f"\n' % location)
         fw(ident_step + '/>\n')
 
-    def writeIndexedFaceSet(ident, obj, mesh, matrix, world):
+    def writeIndexedFaceSet(ident, obj, mesh, mesh_name, matrix, world):
         obj_id = quoteattr(unique_name(obj, OB_ + obj.name, uuid_cache_object, clean_func=clean_def, sep="_"))
-        mesh_id = quoteattr(unique_name(mesh, ME_ + mesh.name, uuid_cache_mesh, clean_func=clean_def, sep="_"))
+        mesh_id = quoteattr(unique_name(mesh, ME_ + mesh_name, uuid_cache_mesh, clean_func=clean_def, sep="_"))
         mesh_id_group = prefix_quoted_str(mesh_id, group_)
         mesh_id_coords = prefix_quoted_str(mesh_id, 'coords_')
         mesh_id_normals = prefix_quoted_str(mesh_id, 'normals_')
@@ -699,7 +699,7 @@ def export(file,
                         fw('%s<IndexedTriangleSet ' % ident)))
 
                         # --- Write IndexedTriangleSet Attributes (same as IndexedFaceSet)
-                        fw('solid="false"\n')  # not available anymore: bool_as_str(material and material.game_settings.use_backface_culling))
+                        fw('solid="%s"\n' % bool_as_str(material and material.use_backface_culling))
 
                         if use_normals or is_force_normals:
                             fw(ident_step + 'normalPerVertex="true"\n')
@@ -834,7 +834,7 @@ def export(file,
                         fw('%s<IndexedFaceSet ' % ident)))
 
                         # --- Write IndexedFaceSet Attributes (same as IndexedTriangleSet)
-                        fw('solid="false"\n')  # not available anymore: bool_as_str(material and material.game_settings.use_backface_culling)
+                        fw('solid="%s"\n' % bool_as_str(material and material.use_backface_culling))
                         if is_smooth:
                             # use Auto-Smooth angle, if enabled. Otherwise make
                             # the mesh perfectly smooth by creaseAngle > pi.
@@ -1436,20 +1436,21 @@ def export(file,
                     # ensure unique name, we could also do this by
                     # postponing mesh removal, but clearing data - TODO
                     if do_remove:
-                        me.name = obj.name.rstrip("1234567890").rstrip(".")
-                        me_name_new = me_name_org = me.name
+                        me_name_new = me_name_original = obj.name.rstrip("1234567890").rstrip(".")
                         count = 0
                         while me_name_new in mesh_name_set:
-                            me.name = "%.17s.%03d" % (me_name_org, count)
-                            me_name_new = me.name
+                            me_name_new = "%.17s.%03d" % (me_name_original, count)
                             count += 1
                         mesh_name_set.add(me_name_new)
-                        del me_name_new, me_name_org, count
+                        mesh_name = me_name_new
+                        del me_name_new, me_name_original, count
+                    else:
+                        mesh_name = me.name
                     # done
 
-                    writeIndexedFaceSet(ident, obj, me, obj_matrix, world)
+                    writeIndexedFaceSet(ident, obj, me, mesh_name, obj_matrix, world)
 
-                    # free mesh created with create_mesh()
+                    # free mesh created with to_mesh()
                     if do_remove:
                         obj_for_mesh.to_mesh_clear()
 

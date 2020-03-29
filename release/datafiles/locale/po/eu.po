@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 7) (b'a46836854049')\n"
+"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1790,14 +1790,6 @@ msgid "Development"
 msgstr "Garapena"
 
 
-msgid "Video Sequence Editor"
-msgstr "Bideo Sekuentzia Editorea"
-
-
-msgid "3D View"
-msgstr "3D Bista"
-
-
 msgctxt "Operator"
 msgid "Circle"
 msgstr "Zirkulua"
@@ -1899,6 +1891,10 @@ msgid "3D"
 msgstr "3D"
 
 
+msgid "3D View"
+msgstr "3D Bista"
+
+
 msgctxt "WindowManager"
 msgid "Window"
 msgstr "Leihoa"
@@ -1971,6 +1967,10 @@ msgstr "Animazioa"
 
 msgid "AO"
 msgstr "Inguruneko Oklusioa"
+
+
+msgid "Detail"
+msgstr "Xehetasuna"
 
 
 msgid "Priority"
@@ -2515,10 +2515,6 @@ msgstr "Lerroaren Altuera"
 
 msgid "Reflection"
 msgstr "Islapena"
-
-
-msgid "Detail"
-msgstr "Xehetasuna"
 
 
 msgid "Detail Scale"

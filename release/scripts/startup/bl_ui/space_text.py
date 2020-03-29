@@ -278,6 +278,11 @@ class TEXT_MT_text(Menu):
         layout.operator("wm.debug_menu", icon='DEBUG') # debug menu
         layout.operator("script.reload", icon='FILE_REFRESH') # Reload all python scripts. Mainly meant for the UI scripts.
 
+        layout.separator()
+        
+        layout.operator("screen.spacedata_cleanup", icon = "APPTEMPLATE")
+        layout.operator("wm.memory_statistics", icon = "SYSTEM")
+
 
 class TEXT_MT_templates_py(Menu):
     bl_label = "Python"

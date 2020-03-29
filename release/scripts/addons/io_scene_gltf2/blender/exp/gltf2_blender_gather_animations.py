@@ -43,12 +43,20 @@ def gather_animations(blender_object: bpy.types.Object,
     current_action = None
     if blender_object.animation_data and blender_object.animation_data.action:
         current_action = blender_object.animation_data.action
+    # Remove any solo (starred) NLA track. Restored after export
+    solo_track = None
+    if blender_object.animation_data:
+        for track in blender_object.animation_data.nla_tracks:
+            if track.is_solo:
+                solo_track = track
+                track.is_solo = False
+                break
 
     # Export all collected actions.
-    for blender_action, track_name in blender_actions:
+    for blender_action, track_name, on_type in blender_actions:
 
         # Set action as active, to be able to bake if needed
-        if blender_action.id_root == "OBJECT" and blender_object.animation_data: # Not for shapekeys!
+        if on_type == "OBJECT": # Not for shapekeys!
             if blender_object.animation_data.action is None \
                     or (blender_object.animation_data.action.name != blender_action.name):
                 if blender_object.animation_data.is_property_readonly('action'):
@@ -78,6 +86,7 @@ def gather_animations(blender_object: bpy.types.Object,
                     tracks[track_name].append(offset + len(animations)-1) # Store index of animation in animations
 
     # Restore action status
+    # TODO: do this in a finally
     if blender_object.animation_data:
         if blender_object.animation_data.action is not None:
             if current_action is None:
@@ -86,6 +95,8 @@ def gather_animations(blender_object: bpy.types.Object,
             elif blender_object.animation_data.action.name != current_action.name:
                 # Restore action that was active at start of exporting
                 blender_object.animation_data.action = current_action
+        if solo_track is not None:
+            solo_track.is_solo = True
 
     return animations, tracks
 
@@ -199,15 +210,17 @@ def __link_samplers(animation: gltf2_io.Animation, export_settings):
 
 def __get_blender_actions(blender_object: bpy.types.Object,
                             export_settings
-                          ) -> typing.List[typing.Tuple[bpy.types.Action, str]]:
+                          ) -> typing.List[typing.Tuple[bpy.types.Action, str, str]]:
     blender_actions = []
     blender_tracks = {}
+    action_on_type = {}
 
     if blender_object.animation_data is not None:
         # Collect active action.
         if blender_object.animation_data.action is not None:
             blender_actions.append(blender_object.animation_data.action)
             blender_tracks[blender_object.animation_data.action.name] = None
+            action_on_type[blender_object.animation_data.action.name] = "OBJECT"
 
         # Collect associated strips from NLA tracks.
         if export_settings['gltf_nla_strips'] is True:
@@ -220,6 +233,7 @@ def __get_blender_actions(blender_object: bpy.types.Object,
                 for strip in non_muted_strips:
                     blender_actions.append(strip.action)
                     blender_tracks[strip.action.name] = track.name # Always set after possible active action -> None will be overwrite
+                    action_on_type[strip.action.name] = "OBJECT"
 
     if blender_object.type == "MESH" \
             and blender_object.data is not None \
@@ -229,6 +243,7 @@ def __get_blender_actions(blender_object: bpy.types.Object,
             if blender_object.data.shape_keys.animation_data.action is not None:
                 blender_actions.append(blender_object.data.shape_keys.animation_data.action)
                 blender_tracks[blender_object.data.shape_keys.animation_data.action.name] = None
+                action_on_type[blender_object.data.shape_keys.animation_data.action.name] = "SHAPEKEY"
 
             if export_settings['gltf_nla_strips'] is True:
                 for track in blender_object.data.shape_keys.animation_data.nla_tracks:
@@ -240,10 +255,11 @@ def __get_blender_actions(blender_object: bpy.types.Object,
                     for strip in non_muted_strips:
                         blender_actions.append(strip.action)
                         blender_tracks[strip.action.name] = track.name # Always set after possible active action -> None will be overwrite
+                        action_on_type[strip.action.name] = "SHAPEKEY"
 
     # Remove duplicate actions.
     blender_actions = list(set(blender_actions))
     # sort animations alphabetically (case insensitive) so they have a defined order and match Blender's Action list
     blender_actions.sort(key = lambda a: a.name.lower())
 
-    return [(blender_action, blender_tracks[blender_action.name]) for blender_action in blender_actions]
+    return [(blender_action, blender_tracks[blender_action.name], action_on_type[blender_action.name]) for blender_action in blender_actions]

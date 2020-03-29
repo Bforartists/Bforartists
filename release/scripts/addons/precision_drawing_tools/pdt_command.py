@@ -32,6 +32,8 @@ from .pdt_functions import (
     obj_check,
     oops,
     update_sel,
+    view_coords,
+    view_dir,
 )
 from .pdt_command_functions import (
     vector_build,
@@ -154,7 +156,7 @@ def command_run(self, context):
     # Check Object Type & Mode First
     obj = context.view_layer.objects.active
     if obj is not None and command[0].upper() not in {"M", "?", "HELP"}:
-        if obj.mode not in {"OBJECT", "EDIT"} or obj.type != "MESH":
+        if obj.mode not in {"OBJECT", "EDIT"} or obj.type not in {"MESH", "EMPTY"}:
             pg.error = PDT_OBJ_MODE_ERROR
             context.window_manager.popup_menu(oops, title="Error", icon="ERROR")
             raise PDT_ObjectModeError
@@ -458,9 +460,10 @@ def command_parse(context):
                 obj_loc = obj.matrix_world.decompose()[0]
                 verts = []
             else:
-                pg.error = PDT_OBJ_MODE_ERROR
-                context.window_manager.popup_menu(oops, title="Error", icon="ERROR")
-                raise PDT_ObjectModeError
+                if operation != "G":
+                    pg.error = PDT_OBJ_MODE_ERROR
+                    context.window_manager.popup_menu(oops, title="Error", icon="ERROR")
+                    raise PDT_ObjectModeError
         else:
             pg.error = PDT_ERR_NO_ACT_OBJ
             context.window_manager.popup_menu(oops, title="Error", icon="ERROR")
@@ -535,6 +538,10 @@ def move_cursor_pivot(context, pg, operation, mode, obj, verts, values):
         elif operation == "P":
             pg.pivot_loc = vector_delta
     elif mode in {"d", "i"}:
+        if pg.plane == "LO" and mode == "d":
+            vector_delta = view_coords(vector_delta.x, vector_delta.y, vector_delta.z)
+        elif pg.plane == "LO" and mode == "i":
+            vector_delta = view_dir(pg.distance, pg.angle)
         if mode_sel == "REL":
             if operation == "C":
                 scene.cursor.location = scene.cursor.location + vector_delta
@@ -613,6 +620,12 @@ def move_entities(context, pg, operation, mode, obj, bm, verts, values):
                 vector_delta = vector_build(context, pg, obj, operation, values, 2)
             except:
                 raise PDT_InvalidVector
+
+        if pg.plane == "LO" and mode == "d":
+            vector_delta = view_coords(vector_delta.x, vector_delta.y, vector_delta.z)
+        elif pg.plane == "LO" and mode == "i":
+            vector_delta = view_dir(pg.distance, pg.angle)
+
         if obj.mode == "EDIT":
             bmesh.ops.translate(
                 bm, verts=[v for v in bm.verts if v.select], vec=vector_delta
@@ -652,10 +665,11 @@ def add_new_vertex(context, pg, operation, mode, obj, bm, verts, values):
         pg.error = PDT_ERR_ADDVEDIT
         context.window_manager.popup_menu(oops, title="Error", icon="ERROR")
         raise PDT_SelectionError
-    if not isinstance(verts[0], bmesh.types.BMVert):
-        pg.error = PDT_ERR_VERT_MODE
-        context.window_manager.popup_menu(oops, title="Error", icon="ERROR")
-        raise PDT_FeatureError
+    if mode not in {"a"}:
+        if not isinstance(verts[0], bmesh.types.BMVert):
+            pg.error = PDT_ERR_VERT_MODE
+            context.window_manager.popup_menu(oops, title="Error", icon="ERROR")
+            raise PDT_FeatureError
     # Absolute/Global Coordinates
     if mode == "a":
         try:
@@ -669,6 +683,8 @@ def add_new_vertex(context, pg, operation, mode, obj, bm, verts, values):
             vector_delta = vector_build(context, pg, obj, operation, values, 3)
         except:
             raise PDT_InvalidVector
+        if pg.plane == "LO":
+            vector_delta = view_coords(vector_delta.x, vector_delta.y, vector_delta.z)
         new_vertex = bm.verts.new(verts[-1].co + vector_delta)
     # Direction/Polar Coordinates
     elif mode == "i":
@@ -676,6 +692,8 @@ def add_new_vertex(context, pg, operation, mode, obj, bm, verts, values):
             vector_delta = vector_build(context, pg, obj, operation, values, 2)
         except:
             raise PDT_InvalidVector
+        if pg.plane == "LO":
+            vector_delta = view_dir(pg.distance, pg.angle)
         new_vertex = bm.verts.new(verts[-1].co + vector_delta)
     # Percent Options Only Other Choice
     else:
@@ -839,6 +857,8 @@ def extrude_vertices(context, pg, operation, mode, obj, obj_loc, bm, verts, valu
             vector_delta = vector_build(context, pg, obj, operation, values, 3)
         except:
             raise PDT_InvalidVector
+        if pg.plane == "LO":
+            vector_delta = view_coords(vector_delta.x, vector_delta.y, vector_delta.z)
         for v in verts:
             new_vertex = bm.verts.new(v.co)
             new_vertex.co = new_vertex.co + vector_delta
@@ -851,6 +871,8 @@ def extrude_vertices(context, pg, operation, mode, obj, obj_loc, bm, verts, valu
             vector_delta = vector_build(context, pg, obj, operation, values, 2)
         except:
             raise PDT_InvalidVector
+        if pg.plane == "LO":
+            vector_delta = view_dir(pg.distance, pg.angle)
         for v in verts:
             new_vertex = bm.verts.new(v.co)
             new_vertex.co = new_vertex.co + vector_delta
@@ -924,6 +946,12 @@ def extrude_geometry(context, pg, operation, mode, obj, bm, values):
     edges_extr = [e for e in geom_extr if isinstance(e, bmesh.types.BMEdge)]
     faces_extr = [f for f in geom_extr if isinstance(f, bmesh.types.BMFace)]
     del ret
+
+    if pg.plane == "LO" and mode == "d":
+        vector_delta = view_coords(vector_delta.x, vector_delta.y, vector_delta.z)
+    elif pg.plane == "LO" and mode == "i":
+        vector_delta = view_dir(pg.distance, pg.angle)
+
     bmesh.ops.translate(bm, verts=verts_extr, vec=vector_delta)
     update_sel(bm, verts_extr, edges_extr, faces_extr)
     bmesh.update_edit_mesh(obj.data)
@@ -977,6 +1005,12 @@ def duplicate_geometry(context, pg, operation, mode, obj, bm, values):
     edges_dupe = [e for e in geom_dupe if isinstance(e, bmesh.types.BMEdge)]
     faces_dupe = [f for f in geom_dupe if isinstance(f, bmesh.types.BMFace)]
     del ret
+
+    if pg.plane == "LO" and mode == "d":
+        vector_delta = view_coords(vector_delta.x, vector_delta.y, vector_delta.z)
+    elif pg.plane == "LO" and mode == "i":
+        vector_delta = view_dir(pg.distance, pg.angle)
+
     bmesh.ops.translate(bm, verts=verts_dupe, vec=vector_delta)
     update_sel(bm, verts_dupe, edges_dupe, faces_dupe)
     bmesh.update_edit_mesh(obj.data)

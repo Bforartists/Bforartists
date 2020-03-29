@@ -579,17 +579,17 @@ class RenderPovSettingsScene(PropertyGroup):
         options={'ANIMATABLE'},
         subtype='COLOR'
     )
-
-    charset: EnumProperty(
-        name="Charset",
-        description="This allows you to specify the assumed character set of all text strings",
-        items=(
-            ("ascii", "ASCII", ""),
-            ("utf8", "UTF-8", ""),
-            ("sys", "SYS", "")
-        ),
-        default="utf8",
-    )
+    # Deprecated (autodetected in pov3.8):
+    # charset: EnumProperty(
+        # name="Charset",
+        # description="This allows you to specify the assumed character set of all text strings",
+        # items=(
+            # ("ascii", "ASCII", ""),
+            # ("utf8", "UTF-8", ""),
+            # ("sys", "SYS", "")
+        # ),
+        # default="utf8",
+    # )
 
     max_intersections_enable: BoolProperty(
         name="Enable",
