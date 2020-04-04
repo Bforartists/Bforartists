@@ -935,7 +935,7 @@ node_crop
 node_curve_time
 node_defocus
 node_despeckle
-#def_icon_blank(951
+lock_to_camview
 node_diffuseshader
 
 empty_axis
