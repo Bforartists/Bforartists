@@ -290,6 +290,8 @@ class VIEW3D_HT_header(Header):
         # layout.popover(panel="VIEW3D_PT_collections", icon='GROUP', text="")
 
         # Viewport Settings
+        if context.space_data.region_3d.view_perspective == "CAMERA":
+            layout.prop(view, "lock_camera", icon = "LOCK_TO_CAMVIEW", icon_only=True )
         layout.popover(panel = "VIEW3D_PT_object_type_visibility", icon_value = view.icon_from_show_object_viewport, text="")
 
 
