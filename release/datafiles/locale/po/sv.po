@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -5771,10 +5771,6 @@ msgid "Compositing node viewer"
 msgstr "Komponering"
 
 
-msgid "Tiled"
-msgstr "Arkiv"
-
-
 msgid "How to generate the image"
 msgstr "Rotera"
 
@@ -8823,6 +8819,10 @@ msgid "Text"
 msgstr "Text"
 
 
+msgid "System"
+msgstr "System"
+
+
 msgid "File"
 msgstr "Arkiv"
 
@@ -9207,12 +9207,12 @@ msgid "Explode"
 msgstr "Spräng"
 
 
-msgid "Particle Instance"
-msgstr "Visa inställningar för kant"
-
-
 msgid "Fluid Simulation"
 msgstr "Renderings Fönster"
+
+
+msgid "Particle Instance"
+msgstr "Visa inställningar för kant"
 
 
 msgid "Armature deformation modifier"
@@ -10399,16 +10399,8 @@ msgid "Warp modifier"
 msgstr "Radera Allt"
 
 
-msgid "From"
-msgstr "Från:"
-
-
 msgid "Object to transform from"
 msgstr "Applicera Deformering"
-
-
-msgid "To"
-msgstr "Ovan"
 
 
 msgid "Object to transform to"
@@ -13338,19 +13330,6 @@ msgstr "Flytta Till Lager"
 
 
 msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "Packa Data"
-
-
-msgid "Merge continuous chains of selected bones"
-msgstr "Markera Länkad"
-
-
-msgid "Within Chains"
-msgstr "Renderings Fönster"
-
-
-msgctxt "Operator"
 msgid "Clear Parent"
 msgstr "Rensa Förälder"
 
@@ -16106,6 +16085,10 @@ msgid "Image height"
 msgstr "Bild Aspekt"
 
 
+msgid "Tiled"
+msgstr "Arkiv"
+
+
 msgid "Image width"
 msgstr "Bild Displist"
 
@@ -17038,11 +17021,6 @@ msgstr "Bana"
 
 msgid "Extrude Region"
 msgstr "Extruderingshöjd"
-
-
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "Text"
 
 
 msgid "Extrude selected vertices, edges or faces repeatedly"
@@ -19931,18 +19909,8 @@ msgid "Context menu for item operations"
 msgstr "Göm Markerad"
 
 
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "Rensa Förälder"
-
-
 msgid "Drag to clear parent in Outliner"
 msgstr "Genomskinlighet"
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "Markera Rad"
 
 
 msgid "Drag to parent in Outliner"
@@ -23619,11 +23587,6 @@ msgid "Operator Cheat Sheet"
 msgstr "Lathund för operatorer"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "Förvalt övertoning"
-
-
 msgid "Set the active operator to its default values"
 msgstr "Markera Länkad"
 
@@ -24110,10 +24073,6 @@ msgstr "Filter"
 
 msgid "Bookmarks"
 msgstr "Raderings Meny"
-
-
-msgid "System"
-msgstr "System"
 
 
 msgid "Fluid Presets"
@@ -28849,6 +28808,10 @@ msgstr "Animationsnyckel-nummer"
 
 msgid "After"
 msgstr "Efter"
+
+
+msgid "To"
+msgstr "Ovan"
 
 
 msgid "+ Non-Grouped Keyframes"

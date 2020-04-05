@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
@@ -2166,10 +2166,6 @@ msgid "Proximity Mode"
 msgstr "Modus Sunting"
 
 
-msgid "To"
-msgstr "Atas"
-
-
 msgid "Boundary"
 msgstr "Suara"
 
@@ -3055,11 +3051,6 @@ msgstr "Modus Sunting"
 msgctxt "Operator"
 msgid "Show All Layers"
 msgstr "Nama"
-
-
-msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "Induk"
 
 
 msgctxt "Operator"
@@ -4396,11 +4387,6 @@ msgstr "Partikel"
 
 
 msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "Tekstur"
-
-
-msgctxt "Operator"
 msgid "Extrude Only Vertices and Move"
 msgstr "Partikel"
 
@@ -5251,16 +5237,6 @@ msgstr "Warna Standar"
 msgctxt "Operator"
 msgid "Drop Material on Object"
 msgstr "Bahan"
-
-
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "Induk"
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "Induk"
 
 
 msgctxt "Operator"
@@ -7119,6 +7095,10 @@ msgstr "Seleksi"
 msgctxt "Operator"
 msgid "Invert Selection"
 msgstr "Seleksi"
+
+
+msgid "To"
+msgstr "Atas"
 
 
 msgctxt "Operator"

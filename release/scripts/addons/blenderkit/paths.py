@@ -84,12 +84,21 @@ def get_temp_dir(subdir=None):
     tempdir = os.path.join(user_preferences.global_dir, 'temp')
     if tempdir.startswith('//'):
         tempdir = bpy.path.abspath(tempdir)
-    if not os.path.exists(tempdir):
-        os.makedirs(tempdir)
-    if subdir is not None:
-        tempdir = os.path.join(tempdir, subdir)
+    try:
         if not os.path.exists(tempdir):
             os.makedirs(tempdir)
+        if subdir is not None:
+            tempdir = os.path.join(tempdir, subdir)
+            if not os.path.exists(tempdir):
+                os.makedirs(tempdir)
+    except:
+        print('Cache directory not found. Resetting Cache folder path.')
+        p = default_global_dict()
+        if p == user_preferences.global_dir:
+            print('Global dir was already default, plese set a global directory in addon preferences to a dir where you have write permissions.')
+            return None
+        user_preferences.global_dir = p
+        tempdir = get_temp_dir(subdir = subdir)
     return tempdir
 
 

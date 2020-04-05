@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -2516,10 +2516,6 @@ msgstr "Wiederholungen"
 
 msgid "Mode Type"
 msgstr "Modustyp"
-
-
-msgid "Both"
-msgstr "Beides"
 
 
 msgid "Background Image"
@@ -7946,6 +7942,10 @@ msgid "Radius of the brush in pixels"
 msgstr "Pinselradius in Pixeln"
 
 
+msgid "Laplacian"
+msgstr "Laplace"
+
+
 msgid "Smooth Stroke Factor"
 msgstr "Weicher-Strich-Faktor"
 
@@ -9114,10 +9114,6 @@ msgid "Compositing node viewer"
 msgstr "Compositingknoten-Betrachter"
 
 
-msgid "Tiled"
-msgstr "Gekachelt"
-
-
 msgid "Multilayer"
 msgstr "Mehrfachebenen"
 
@@ -9816,6 +9812,10 @@ msgstr "Ursprungs-Versatz"
 
 msgid "Origin offset distance"
 msgstr "Entfernung begrenzen"
+
+
+msgid "Both"
+msgstr "Beides"
 
 
 msgid "Verts"
@@ -12615,6 +12615,10 @@ msgid "Support Blender"
 msgstr "Blender unterstützen"
 
 
+msgid "System"
+msgstr "System"
+
+
 msgid "File"
 msgstr "Datei"
 
@@ -13127,16 +13131,16 @@ msgid "Explode"
 msgstr "Explosion"
 
 
+msgid "Fluid Simulation"
+msgstr "Flüssigkeitssimulation"
+
+
 msgid "Ocean"
 msgstr "Ozean"
 
 
 msgid "Particle Instance"
 msgstr "Partikelinstanz"
-
-
-msgid "Fluid Simulation"
-msgstr "Flüssigkeitssimulation"
 
 
 msgid "Soft Body"
@@ -14318,16 +14322,8 @@ msgid "Warp modifier"
 msgstr "Wölbung modifizieren"
 
 
-msgid "From"
-msgstr "Von"
-
-
 msgid "Object to transform from"
 msgstr "Objektbeschränkungen"
-
-
-msgid "To"
-msgstr "Nach"
 
 
 msgid "Object to transform to"
@@ -17621,11 +17617,6 @@ msgstr "Alle Ebenen zeigen"
 
 
 msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "Knochen zusammenführen"
-
-
-msgctxt "Operator"
 msgid "Clear Parent"
 msgstr "Elternteil entfernen"
 
@@ -20119,6 +20110,10 @@ msgid "Image height"
 msgstr "Bildhöhe"
 
 
+msgid "Tiled"
+msgstr "Gekachelt"
+
+
 msgid "Image width"
 msgstr "Bildbreite"
 
@@ -21008,11 +21003,6 @@ msgstr "Bereich extrudieren und Ergebnis verschieben"
 
 msgid "Extrude Region"
 msgstr "Region extrudieren"
-
-
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "Wiederholtes Mesh extrudieren"
 
 
 msgctxt "Operator"
@@ -23688,18 +23678,8 @@ msgid "Select Hierarchy"
 msgstr "Hierarchie auswählen"
 
 
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "Ziehen um Elternteil zu löschen"
-
-
 msgid "Drag to clear parent in Outliner"
 msgstr "Ziehen um Elternteil im Outliner zu löschen"
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "Ziehen um Elternteil festzulegen"
 
 
 msgid "Drag to parent in Outliner"
@@ -26935,11 +26915,6 @@ msgid "Operator Cheat Sheet"
 msgstr "Operator-Schummelzettel"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "Markierungen synchronisieren"
-
-
 msgid "Set the active operator to its default values"
 msgstr "Den Wert dieser Einstellung auf ihren Standardwert zurücksetzen"
 
@@ -27111,6 +27086,10 @@ msgstr "Aktuelle Blender-Datei speichern"
 msgctxt "Operator"
 msgid "Search Menu"
 msgstr "Suchen Menü"
+
+
+msgid "Menu"
+msgstr "Menü"
 
 
 msgctxt "Operator"
@@ -27530,10 +27509,6 @@ msgstr "Lesezeichen"
 
 msgid "Favorites"
 msgstr "Favoriten"
-
-
-msgid "System"
-msgstr "System"
 
 
 msgid "Attributes"
@@ -27990,10 +27965,6 @@ msgstr "Stile"
 
 msgid "List Item"
 msgstr "Listeneintrag"
-
-
-msgid "Menu"
-msgstr "Menü"
 
 
 msgid "Menu Back"
@@ -33994,10 +33965,6 @@ msgid "Relaxation Method"
 msgstr "Entspannungs-Methode"
 
 
-msgid "Laplacian"
-msgstr "Laplace"
-
-
 msgid "UV Sculpt"
 msgstr "Skulpturmodus"
 
@@ -34841,6 +34808,10 @@ msgstr "Schlüsselbildnummern"
 
 msgid "After"
 msgstr "Danach"
+
+
+msgid "To"
+msgstr "Nach"
 
 
 msgctxt "Operator"

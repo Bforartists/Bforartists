@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1245,10 +1245,6 @@ msgstr "Filter"
 
 msgid "Iterations"
 msgstr "Font rozhraní:  "
-
-
-msgid "Both"
-msgstr "Oba"
 
 
 msgid "Background Image"
@@ -6585,10 +6581,6 @@ msgid "Compositing node viewer"
 msgstr "Kompoziční uzly"
 
 
-msgid "Tiled"
-msgstr "Dlažďice"
-
-
 msgid "How to generate the image"
 msgstr "Hladké "
 
@@ -7327,6 +7319,10 @@ msgstr "Kompenzace:"
 
 msgid "Origin offset distance"
 msgstr "Zobrazit:"
+
+
+msgid "Both"
+msgstr "Oba"
 
 
 msgid "Settings for using the object as a field in physics simulation"
@@ -9869,6 +9865,10 @@ msgid "Text"
 msgstr "Text"
 
 
+msgid "System"
+msgstr "Systém"
+
+
 msgid "File"
 msgstr "Soubor"
 
@@ -10297,12 +10297,12 @@ msgid "Dynamic Paint"
 msgstr "Dynamický"
 
 
-msgid "Particle Instance"
-msgstr "Částice"
-
-
 msgid "Fluid Simulation"
 msgstr "Přpíná simulaci mlhy"
+
+
+msgid "Particle Instance"
+msgstr "Částice"
 
 
 msgid "Soft Body"
@@ -11545,16 +11545,8 @@ msgid "Warp modifier"
 msgstr "Kopírovat modifikátor"
 
 
-msgid "From"
-msgstr "Od:"
-
-
 msgid "Object to transform from"
 msgstr "Použít transformace objektu"
-
-
-msgid "To"
-msgstr "Shora"
 
 
 msgid "Object to transform to"
@@ -14608,19 +14600,6 @@ msgstr "Zviditelnit všechny vrstvy kostry"
 
 
 msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "Sloučit "
-
-
-msgid "Merge continuous chains of selected bones"
-msgstr "Přidat vazbu aktivní kosti"
-
-
-msgid "Within Chains"
-msgstr "Změnit pruh"
-
-
-msgctxt "Operator"
 msgid "Clear Parent"
 msgstr "Vyčistit rodičovskou vazbu"
 
@@ -17444,6 +17423,10 @@ msgid "Image height"
 msgstr "Poměr obrázku"
 
 
+msgid "Tiled"
+msgstr "Dlažďice"
+
+
 msgid "Image width"
 msgstr "Obrázek "
 
@@ -18412,11 +18395,6 @@ msgstr "Opakované tažení"
 
 msgid "Extrude Region"
 msgstr "Táhnout oblast"
-
-
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "Opakované tažení"
 
 
 msgid "Extrude selected vertices, edges or faces repeatedly"
@@ -21357,18 +21335,8 @@ msgid "Object Operation"
 msgstr "Animace"
 
 
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "Zrušit rodiče..."
-
-
 msgid "Drag to clear parent in Outliner"
 msgstr "Průhlednost"
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "Označit... "
 
 
 msgid "Drag to parent in Outliner"
@@ -25125,11 +25093,6 @@ msgid "Operator Cheat Sheet"
 msgstr "Seznam funkcí"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "Defaultní nastavení"
-
-
 msgid "Set the active operator to its default values"
 msgstr "Přidat vazbu aktivní kosti"
 
@@ -25644,10 +25607,6 @@ msgstr "Filtry"
 
 msgid "Bookmarks"
 msgstr "Přidat háček"
-
-
-msgid "System"
-msgstr "Systém"
 
 
 msgid "Fluid Presets"
@@ -31139,6 +31098,10 @@ msgstr "Čísla snímků"
 
 msgid "Keyframe Numbers"
 msgstr "Poslední frame"
+
+
+msgid "To"
+msgstr "Shora"
 
 
 msgid "+ Non-Grouped Keyframes"
