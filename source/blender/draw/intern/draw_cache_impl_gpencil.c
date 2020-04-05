@@ -62,8 +62,6 @@ typedef struct GpencilBatchCache {
 
   /** Cache is dirty */
   bool is_dirty;
-  /** Edit mode flag */
-  bool is_editmode;
   /** Last cache frame */
   int cache_frame;
 } GpencilBatchCache;
@@ -71,19 +69,15 @@ typedef struct GpencilBatchCache {
 static bool gpencil_batch_cache_valid(GpencilBatchCache *cache, bGPdata *gpd, int cfra)
 {
   bool valid = true;
+
   if (cache == NULL) {
     return false;
   }
 
-  cache->is_editmode = GPENCIL_ANY_EDIT_MODE(gpd);
   if (cfra != cache->cache_frame) {
     valid = false;
   }
   else if (gpd->flag & GP_DATA_CACHE_IS_DIRTY) {
-    valid = false;
-  }
-  else if (gpd->flag & GP_DATA_PYTHON_UPDATED) {
-    gpd->flag &= ~GP_DATA_PYTHON_UPDATED;
     valid = false;
   }
   else if (cache->is_dirty) {
@@ -106,7 +100,6 @@ static GpencilBatchCache *gpencil_batch_cache_init(Object *ob, int cfra)
     memset(cache, 0, sizeof(*cache));
   }
 
-  cache->is_editmode = GPENCIL_ANY_EDIT_MODE(gpd);
   cache->is_dirty = true;
   cache->cache_frame = cfra;
   return cache;
@@ -181,7 +174,8 @@ static GPUVertFormat *gpencil_stroke_format(void)
     GPU_vertformat_attr_add(&format, "ma", GPU_COMP_I32, 4, GPU_FETCH_INT);
     GPU_vertformat_attr_add(&format, "pos", GPU_COMP_F32, 4, GPU_FETCH_FLOAT);
     GPU_vertformat_attr_add(&format, "uv", GPU_COMP_F32, 4, GPU_FETCH_FLOAT);
-    /* IMPORTANT: This means having only 4 attributes to fit into GPU module limit of 16 attrib. */
+    /* IMPORTANT: This means having only 4 attributes
+     * to fit into GPU module limit of 16 attributes. */
     GPU_vertformat_multiload_enable(&format, 4);
   }
   return &format;
@@ -215,7 +209,8 @@ static GPUVertFormat *gpencil_color_format(void)
   if (format.attr_len == 0) {
     GPU_vertformat_attr_add(&format, "col", GPU_COMP_F32, 4, GPU_FETCH_FLOAT);
     GPU_vertformat_attr_add(&format, "fcol", GPU_COMP_F32, 4, GPU_FETCH_FLOAT);
-    /* IMPORTANT: This means having only 4 attributes to fit into GPU module limit of 16 attrib. */
+    /* IMPORTANT: This means having only 4 attributes
+     * to fit into GPU module limit of 16 attributes. */
     GPU_vertformat_multiload_enable(&format, 4);
   }
   return &format;

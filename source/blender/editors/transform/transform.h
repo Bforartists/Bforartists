@@ -581,7 +581,7 @@ typedef struct TransInfo {
   void *view;
   /** Only valid (non null) during an operator called function. */
   struct bContext *context;
-  struct ScrArea *sa;
+  struct ScrArea *area;
   struct ARegion *region;
   struct Depsgraph *depsgraph;
   struct Scene *scene;
@@ -967,14 +967,14 @@ bool checkUseAxisMatrix(TransInfo *t);
   (BLI_assert((t)->data_container_len == 1), (&(t)->data_container[0]))
 
 #define FOREACH_TRANS_DATA_CONTAINER(t, th) \
-  for (TransDataContainer *tc = t->data_container, \
-                          *tc_end = t->data_container + t->data_container_len; \
+  for (TransDataContainer *tc = (t)->data_container, \
+                          *tc_end = (t)->data_container + (t)->data_container_len; \
        th != tc_end; \
        th++)
 
 #define FOREACH_TRANS_DATA_CONTAINER_INDEX(t, th, i) \
-  for (TransDataContainer *tc = ((i = 0), t->data_container), \
-                          *tc_end = t->data_container + t->data_container_len; \
+  for (TransDataContainer *tc = ((i = 0), (t)->data_container), \
+                          *tc_end = (t)->data_container + (t)->data_container_len; \
        th != tc_end; \
        th++, i++)
 

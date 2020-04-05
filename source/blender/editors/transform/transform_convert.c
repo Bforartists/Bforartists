@@ -459,14 +459,19 @@ int count_set_pose_transflags(Object *ob,
 
   for (pchan = ob->pose->chanbase.first; pchan; pchan = pchan->next) {
     bone = pchan->bone;
-    bone->flag &= ~(BONE_TRANSFORM | BONE_TRANSFORM_MIRROR);
     if (PBONE_VISIBLE(arm, bone)) {
       if ((bone->flag & BONE_SELECTED)) {
         bone->flag |= BONE_TRANSFORM;
       }
+      else {
+        bone->flag &= ~BONE_TRANSFORM;
+      }
 
       bone->flag &= ~BONE_HINGE_CHILD_TRANSFORM;
       bone->flag &= ~BONE_TRANSFORM_CHILD;
+    }
+    else {
+      bone->flag &= ~BONE_TRANSFORM;
     }
   }
 
@@ -1021,7 +1026,7 @@ static void posttrans_fcurve_clean(FCurve *fcu,
   }
   else {
     /* Compute the average values for each retained keyframe */
-    for (tRetainedKeyframe *rk = retained_keys.first; rk; rk = rk->next) {
+    LISTBASE_FOREACH (tRetainedKeyframe *, rk, &retained_keys) {
       rk->val = rk->val / (float)rk->tot_count;
     }
   }
@@ -1123,10 +1128,10 @@ static void posttrans_action_clean(bAnimContext *ac, bAction *act)
 /* struct for use in re-sorting BezTriples during Graph Editor transform */
 typedef struct BeztMap {
   BezTriple *bezt;
-  unsigned int oldIndex; /* index of bezt in fcu->bezt array before sorting */
-  unsigned int newIndex; /* index of bezt in fcu->bezt array after sorting */
-  short swapHs;          /* swap order of handles (-1=clear; 0=not checked, 1=swap) */
-  char pipo, cipo;       /* interpolation of current and next segments */
+  uint oldIndex;   /* index of bezt in fcu->bezt array before sorting */
+  uint newIndex;   /* index of bezt in fcu->bezt array after sorting */
+  short swapHs;    /* swap order of handles (-1=clear; 0=not checked, 1=swap) */
+  char pipo, cipo; /* interpolation of current and next segments */
 } BeztMap;
 
 /* This function converts an FCurve's BezTriple array to a BeztMap array
@@ -1304,7 +1309,7 @@ static void beztmap_to_data(TransInfo *t, FCurve *fcu, BeztMap *bezms, int totve
  */
 void remake_graph_transdata(TransInfo *t, ListBase *anim_data)
 {
-  SpaceGraph *sipo = (SpaceGraph *)t->sa->spacedata.first;
+  SpaceGraph *sipo = (SpaceGraph *)t->area->spacedata.first;
   bAnimListElem *ale;
   const bool use_handle = (sipo->flag & SIPO_NOHANDLES) == 0;
 
@@ -1581,137 +1586,7 @@ void autokeyframe_pose(bContext *C, Scene *scene, Object *ob, int tmode, short t
   FCurve *fcu;
 
   // TODO: this should probably be done per channel instead...
-  if (autokeyframe_cfra_can_key(scene, id)) {
-    ReportList *reports = CTX_wm_reports(C);
-    ToolSettings *ts = scene->toolsettings;
-    KeyingSet *active_ks = ANIM_scene_get_active_keyingset(scene);
-    ListBase nla_cache = {NULL, NULL};
-    float cfra = (float)CFRA;
-    eInsertKeyFlags flag = 0;
-
-    /* flag is initialized from UserPref keyframing settings
-     * - special exception for targetless IK - INSERTKEY_MATRIX keyframes should get
-     *   visual keyframes even if flag not set, as it's not that useful otherwise
-     *   (for quick animation recording)
-     */
-    flag = ANIM_get_keyframing_flags(scene, true);
-
-    if (targetless_ik) {
-      flag |= INSERTKEY_MATRIX;
-    }
-
-    for (pchan = pose->chanbase.first; pchan; pchan = pchan->next) {
-      if ((pchan->bone->flag & BONE_TRANSFORM) ||
-          ((pose->flag & POSE_MIRROR_EDIT) && (pchan->bone->flag & BONE_TRANSFORM_MIRROR))) {
-        ListBase dsources = {NULL, NULL};
-
-        /* clear any 'unkeyed' flag it may have */
-        pchan->bone->flag &= ~BONE_UNKEYED;
-
-        /* add datasource override for the camera object */
-        ANIM_relative_keyingset_add_source(&dsources, id, &RNA_PoseBone, pchan);
-
-        /* only insert into active keyingset? */
-        if (IS_AUTOKEY_FLAG(scene, ONLYKEYINGSET) && (active_ks)) {
-          /* run the active Keying Set on the current datasource */
-          ANIM_apply_keyingset(C, &dsources, NULL, active_ks, MODIFYKEY_MODE_INSERT, cfra);
-        }
-        /* only insert into available channels? */
-        else if (IS_AUTOKEY_FLAG(scene, INSERTAVAIL)) {
-          if (act) {
-            for (fcu = act->curves.first; fcu; fcu = fcu->next) {
-              /* only insert keyframes for this F-Curve if it affects the current bone */
-              if (strstr(fcu->rna_path, "bones")) {
-                char *pchanName = BLI_str_quoted_substrN(fcu->rna_path, "bones[");
-
-                /* only if bone name matches too...
-                 * NOTE: this will do constraints too, but those are ok to do here too?
-                 */
-                if (pchanName && STREQ(pchanName, pchan->name)) {
-                  insert_keyframe(bmain,
-                                  reports,
-                                  id,
-                                  act,
-                                  ((fcu->grp) ? (fcu->grp->name) : (NULL)),
-                                  fcu->rna_path,
-                                  fcu->array_index,
-                                  cfra,
-                                  ts->keyframe_type,
-                                  &nla_cache,
-                                  flag);
-                }
-
-                if (pchanName) {
-                  MEM_freeN(pchanName);
-                }
-              }
-            }
-          }
-        }
-        /* only insert keyframe if needed? */
-        else if (IS_AUTOKEY_FLAG(scene, INSERTNEEDED)) {
-          bool do_loc = false, do_rot = false, do_scale = false;
-
-          /* Filter the conditions when this happens
-           * (assume that 'curarea->spacetype == SPACE_VIEW3D'). */
-          if (tmode == TFM_TRANSLATION) {
-            if (targetless_ik) {
-              do_rot = true;
-            }
-            else {
-              do_loc = true;
-            }
-          }
-          else if (ELEM(tmode, TFM_ROTATION, TFM_TRACKBALL)) {
-            if (ELEM(scene->toolsettings->transform_pivot_point,
-                     V3D_AROUND_CURSOR,
-                     V3D_AROUND_ACTIVE)) {
-              do_loc = true;
-            }
-
-            if ((scene->toolsettings->transform_flag & SCE_XFORM_AXIS_ALIGN) == 0) {
-              do_rot = true;
-            }
-          }
-          else if (tmode == TFM_RESIZE) {
-            if (ELEM(scene->toolsettings->transform_pivot_point,
-                     V3D_AROUND_CURSOR,
-                     V3D_AROUND_ACTIVE)) {
-              do_loc = true;
-            }
-
-            if ((scene->toolsettings->transform_flag & SCE_XFORM_AXIS_ALIGN) == 0) {
-              do_scale = true;
-            }
-          }
-
-          if (do_loc) {
-            KeyingSet *ks = ANIM_builtin_keyingset_get_named(NULL, ANIM_KS_LOCATION_ID);
-            ANIM_apply_keyingset(C, &dsources, NULL, ks, MODIFYKEY_MODE_INSERT, cfra);
-          }
-          if (do_rot) {
-            KeyingSet *ks = ANIM_builtin_keyingset_get_named(NULL, ANIM_KS_ROTATION_ID);
-            ANIM_apply_keyingset(C, &dsources, NULL, ks, MODIFYKEY_MODE_INSERT, cfra);
-          }
-          if (do_scale) {
-            KeyingSet *ks = ANIM_builtin_keyingset_get_named(NULL, ANIM_KS_SCALING_ID);
-            ANIM_apply_keyingset(C, &dsources, NULL, ks, MODIFYKEY_MODE_INSERT, cfra);
-          }
-        }
-        /* insert keyframe in all (transform) channels */
-        else {
-          KeyingSet *ks = ANIM_builtin_keyingset_get_named(NULL, ANIM_KS_LOC_ROT_SCALE_ID);
-          ANIM_apply_keyingset(C, &dsources, NULL, ks, MODIFYKEY_MODE_INSERT, cfra);
-        }
-
-        /* free temp info */
-        BLI_freelistN(&dsources);
-      }
-    }
-
-    BKE_animsys_free_nla_keyframing_context_cache(&nla_cache);
-  }
-  else {
+  if (!autokeyframe_cfra_can_key(scene, id)) {
     /* tag channels that should have unkeyed data */
     for (pchan = pose->chanbase.first; pchan; pchan = pchan->next) {
       if (pchan->bone->flag & BONE_TRANSFORM) {
@@ -1719,7 +1594,140 @@ void autokeyframe_pose(bContext *C, Scene *scene, Object *ob, int tmode, short t
         pchan->bone->flag |= BONE_UNKEYED;
       }
     }
+    return;
   }
+
+  ReportList *reports = CTX_wm_reports(C);
+  ToolSettings *ts = scene->toolsettings;
+  KeyingSet *active_ks = ANIM_scene_get_active_keyingset(scene);
+  ListBase nla_cache = {NULL, NULL};
+  float cfra = (float)CFRA;
+  eInsertKeyFlags flag = 0;
+
+  /* flag is initialized from UserPref keyframing settings
+   * - special exception for targetless IK - INSERTKEY_MATRIX keyframes should get
+   *   visual keyframes even if flag not set, as it's not that useful otherwise
+   *   (for quick animation recording)
+   */
+  flag = ANIM_get_keyframing_flags(scene, true);
+
+  if (targetless_ik) {
+    flag |= INSERTKEY_MATRIX;
+  }
+
+  for (pchan = pose->chanbase.first; pchan; pchan = pchan->next) {
+    if ((pchan->bone->flag & BONE_TRANSFORM) == 0 &&
+        !((pose->flag & POSE_MIRROR_EDIT) && (pchan->bone->flag & BONE_TRANSFORM_MIRROR))) {
+      continue;
+    }
+
+    ListBase dsources = {NULL, NULL};
+
+    /* clear any 'unkeyed' flag it may have */
+    pchan->bone->flag &= ~BONE_UNKEYED;
+
+    /* add datasource override for the camera object */
+    ANIM_relative_keyingset_add_source(&dsources, id, &RNA_PoseBone, pchan);
+
+    /* only insert into active keyingset? */
+    if (IS_AUTOKEY_FLAG(scene, ONLYKEYINGSET) && (active_ks)) {
+      /* run the active Keying Set on the current datasource */
+      ANIM_apply_keyingset(C, &dsources, NULL, active_ks, MODIFYKEY_MODE_INSERT, cfra);
+    }
+    /* only insert into available channels? */
+    else if (IS_AUTOKEY_FLAG(scene, INSERTAVAIL)) {
+      if (act) {
+        for (fcu = act->curves.first; fcu; fcu = fcu->next) {
+          /* only insert keyframes for this F-Curve if it affects the current bone */
+          if (strstr(fcu->rna_path, "bones") == NULL) {
+            continue;
+          }
+          char *pchanName = BLI_str_quoted_substrN(fcu->rna_path, "bones[");
+
+          /* only if bone name matches too...
+           * NOTE: this will do constraints too, but those are ok to do here too?
+           */
+          if (pchanName && STREQ(pchanName, pchan->name)) {
+            insert_keyframe(bmain,
+                            reports,
+                            id,
+                            act,
+                            ((fcu->grp) ? (fcu->grp->name) : (NULL)),
+                            fcu->rna_path,
+                            fcu->array_index,
+                            cfra,
+                            ts->keyframe_type,
+                            &nla_cache,
+                            flag);
+          }
+
+          if (pchanName) {
+            MEM_freeN(pchanName);
+          }
+        }
+      }
+    }
+    /* only insert keyframe if needed? */
+    else if (IS_AUTOKEY_FLAG(scene, INSERTNEEDED)) {
+      bool do_loc = false, do_rot = false, do_scale = false;
+
+      /* Filter the conditions when this happens
+       * (assume that 'curarea->spacetype == SPACE_VIEW3D'). */
+      if (tmode == TFM_TRANSLATION) {
+        if (targetless_ik) {
+          do_rot = true;
+        }
+        else {
+          do_loc = true;
+        }
+      }
+      else if (ELEM(tmode, TFM_ROTATION, TFM_TRACKBALL)) {
+        if (ELEM(scene->toolsettings->transform_pivot_point,
+                 V3D_AROUND_CURSOR,
+                 V3D_AROUND_ACTIVE)) {
+          do_loc = true;
+        }
+
+        if ((scene->toolsettings->transform_flag & SCE_XFORM_AXIS_ALIGN) == 0) {
+          do_rot = true;
+        }
+      }
+      else if (tmode == TFM_RESIZE) {
+        if (ELEM(scene->toolsettings->transform_pivot_point,
+                 V3D_AROUND_CURSOR,
+                 V3D_AROUND_ACTIVE)) {
+          do_loc = true;
+        }
+
+        if ((scene->toolsettings->transform_flag & SCE_XFORM_AXIS_ALIGN) == 0) {
+          do_scale = true;
+        }
+      }
+
+      if (do_loc) {
+        KeyingSet *ks = ANIM_builtin_keyingset_get_named(NULL, ANIM_KS_LOCATION_ID);
+        ANIM_apply_keyingset(C, &dsources, NULL, ks, MODIFYKEY_MODE_INSERT, cfra);
+      }
+      if (do_rot) {
+        KeyingSet *ks = ANIM_builtin_keyingset_get_named(NULL, ANIM_KS_ROTATION_ID);
+        ANIM_apply_keyingset(C, &dsources, NULL, ks, MODIFYKEY_MODE_INSERT, cfra);
+      }
+      if (do_scale) {
+        KeyingSet *ks = ANIM_builtin_keyingset_get_named(NULL, ANIM_KS_SCALING_ID);
+        ANIM_apply_keyingset(C, &dsources, NULL, ks, MODIFYKEY_MODE_INSERT, cfra);
+      }
+    }
+    /* insert keyframe in all (transform) channels */
+    else {
+      KeyingSet *ks = ANIM_builtin_keyingset_get_named(NULL, ANIM_KS_LOC_ROT_SCALE_ID);
+      ANIM_apply_keyingset(C, &dsources, NULL, ks, MODIFYKEY_MODE_INSERT, cfra);
+    }
+
+    /* free temp info */
+    BLI_freelistN(&dsources);
+  }
+
+  BKE_animsys_free_nla_keyframing_context_cache(&nla_cache);
 }
 
 /** \} */
@@ -1741,13 +1749,12 @@ bool motionpath_need_update_pose(Scene *scene, Object *ob)
 
 static void special_aftertrans_update__movieclip(bContext *C, TransInfo *t)
 {
-  SpaceClip *sc = t->sa->spacedata.first;
+  SpaceClip *sc = t->area->spacedata.first;
   MovieClip *clip = ED_space_clip_get_clip(sc);
   ListBase *plane_tracks_base = BKE_tracking_get_active_plane_tracks(&clip->tracking);
   const int framenr = ED_space_clip_get_clip_frame_number(sc);
   /* Update coordinates of modified plane tracks. */
-  for (MovieTrackingPlaneTrack *plane_track = plane_tracks_base->first; plane_track;
-       plane_track = plane_track->next) {
+  LISTBASE_FOREACH (MovieTrackingPlaneTrack *, plane_track, plane_tracks_base) {
     bool do_update = false;
     if (plane_track->flag & PLANE_TRACK_HIDDEN) {
       continue;
@@ -1783,11 +1790,11 @@ static void special_aftertrans_update__mask(bContext *C, TransInfo *t)
   Mask *mask = NULL;
 
   if (t->spacetype == SPACE_CLIP) {
-    SpaceClip *sc = t->sa->spacedata.first;
+    SpaceClip *sc = t->area->spacedata.first;
     mask = ED_space_clip_get_mask(sc);
   }
   else if (t->spacetype == SPACE_IMAGE) {
-    SpaceImage *sima = t->sa->spacedata.first;
+    SpaceImage *sima = t->area->spacedata.first;
     mask = ED_space_image_get_mask(sima);
   }
   else {
@@ -1818,7 +1825,7 @@ static void special_aftertrans_update__node(bContext *C, TransInfo *t)
 
   if (canceled && t->remove_on_cancel) {
     /* remove selected nodes on cancel */
-    SpaceNode *snode = (SpaceNode *)t->sa->spacedata.first;
+    SpaceNode *snode = (SpaceNode *)t->area->spacedata.first;
     bNodeTree *ntree = snode->edittree;
     if (ntree) {
       bNode *node, *node_next;
@@ -1941,7 +1948,7 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
     /* freeSeqData in transform_conversions.c does this
      * keep here so the else at the end wont run... */
 
-    SpaceSeq *sseq = (SpaceSeq *)t->sa->spacedata.first;
+    SpaceSeq *sseq = (SpaceSeq *)t->area->spacedata.first;
 
     /* Marker transform, not especially nice but we may want to move markers
      * at the same time as strips in the Video Sequencer. */
@@ -1967,16 +1974,16 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
     }
   }
   else if (t->spacetype == SPACE_NODE) {
-    SpaceNode *snode = (SpaceNode *)t->sa->spacedata.first;
+    SpaceNode *snode = (SpaceNode *)t->area->spacedata.first;
     special_aftertrans_update__node(C, t);
     if (canceled == 0) {
       ED_node_post_apply_transform(C, snode->edittree);
 
-      ED_node_link_insert(bmain, t->sa);
+      ED_node_link_insert(bmain, t->area);
     }
 
     /* clear link line */
-    ED_node_link_intersect_test(t->sa, 0);
+    ED_node_link_intersect_test(t->area, 0);
   }
   else if (t->spacetype == SPACE_CLIP) {
     if (t->options & CTX_MOVIECLIP) {
@@ -1987,7 +1994,7 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
     }
   }
   else if (t->spacetype == SPACE_ACTION) {
-    SpaceAction *saction = (SpaceAction *)t->sa->spacedata.first;
+    SpaceAction *saction = (SpaceAction *)t->area->spacedata.first;
     bAnimContext ac;
 
     /* initialize relevant anim-context 'context' data */
@@ -2070,12 +2077,12 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
         const int filter = ANIMFILTER_DATA_VISIBLE;
         ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
-        for (bAnimListElem *ale = anim_data.first; ale; ale = ale->next) {
+        LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
           if (ale->datatype == ALE_GPFRAME) {
             ale->id->tag |= LIB_TAG_DOIT;
           }
         }
-        for (bAnimListElem *ale = anim_data.first; ale; ale = ale->next) {
+        LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
           if (ale->datatype == ALE_GPFRAME) {
             if (ale->id->tag & LIB_TAG_DOIT) {
               ale->id->tag &= ~LIB_TAG_DOIT;
@@ -2101,12 +2108,12 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
         const int filter = ANIMFILTER_DATA_VISIBLE;
         ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
-        for (bAnimListElem *ale = anim_data.first; ale; ale = ale->next) {
+        LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
           if (ale->datatype == ALE_MASKLAY) {
             ale->id->tag |= LIB_TAG_DOIT;
           }
         }
-        for (bAnimListElem *ale = anim_data.first; ale; ale = ale->next) {
+        LISTBASE_FOREACH (bAnimListElem *, ale, &anim_data) {
           if (ale->datatype == ALE_MASKLAY) {
             if (ale->id->tag & LIB_TAG_DOIT) {
               ale->id->tag &= ~LIB_TAG_DOIT;
@@ -2151,7 +2158,7 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
     saction->flag &= ~SACTION_MOVING;
   }
   else if (t->spacetype == SPACE_GRAPH) {
-    SpaceGraph *sipo = (SpaceGraph *)t->sa->spacedata.first;
+    SpaceGraph *sipo = (SpaceGraph *)t->area->spacedata.first;
     bAnimContext ac;
     const bool use_handle = (sipo->flag & SIPO_NOHANDLES) == 0;
 
@@ -2240,9 +2247,8 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
   else if (t->flag & T_EDIT) {
     if (t->obedit_type == OB_MESH) {
       FOREACH_TRANS_DATA_CONTAINER (t, tc) {
-        BMEditMesh *em = BKE_editmesh_from_object(tc->obedit);
         /* table needs to be created for each edit command, since vertices can move etc */
-        ED_mesh_mirror_spatial_table(tc->obedit, em, NULL, NULL, 'e');
+        ED_mesh_mirror_spatial_table_end(tc->obedit);
         /* TODO(campbell): xform: We need support for many mirror objects at once! */
         break;
       }

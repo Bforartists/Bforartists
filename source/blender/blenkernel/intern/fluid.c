@@ -36,6 +36,7 @@
 #include "DNA_fluid_types.h"
 #include "DNA_modifier_types.h"
 #include "DNA_object_types.h"
+#include "DNA_rigidbody_types.h"
 
 #include "BKE_effect.h"
 #include "BKE_fluid.h"
@@ -644,6 +645,11 @@ static bool is_static_object(Object *ob)
     }
   }
 
+  /* Active rigid body objects considered to be dynamic fluid objects. */
+  if (ob->rigidbody_object && ob->rigidbody_object->type == RBO_TYPE_ACTIVE) {
+    return false;
+  }
+
   /* Finally, check if the object has animation data. If so, it is considered dynamic. */
   return !BKE_object_moves_in_time(ob, true);
 }
@@ -1226,52 +1232,31 @@ static void update_obstacles(Depsgraph *depsgraph,
         continue;
       }
 
-      /* Length of one adaptive frame. If using adaptive stepping, length is smaller than actual
-       * frame length */
-      float adaptframe_length = time_per_frame / frame_length;
-      /* Adaptive frame length as percentage */
-      CLAMP(adaptframe_length, 0.0f, 1.0f);
-
-      /* More splitting because of emission subframe: If no subframes present, sample_size is 1. */
-      float sample_size = 1.0f / (float)(subframes + 1);
-
       /* First frame cannot have any subframes because there is (obviously) no previous frame from
        * where subframes could come from. */
       if (is_first_frame) {
         subframes = 0;
       }
 
-      int subframe;
+      /* More splitting because of emission subframe: If no subframes present, sample_size is 1. */
+      float sample_size = 1.0f / (float)(subframes + 1);
       float subframe_dt = dt * sample_size;
 
       /* Emission loop. When not using subframes this will loop only once. */
-      for (subframe = subframes; subframe >= 0; subframe--) {
+      for (int subframe = 0; subframe <= subframes; subframe++) {
 
         /* Temporary emission map used when subframes are enabled, i.e. at least one subframe. */
         FluidObjectBB bb_temp = {NULL};
 
         /* Set scene time */
         /* Handle emission subframe */
-        if (subframe > 0 && !is_first_frame) {
-          scene->r.subframe = adaptframe_length -
-                              sample_size * (float)(subframe) * (dt / frame_length);
+        if (subframe < subframes || time_per_frame + dt + FLT_EPSILON < frame_length) {
+          scene->r.subframe = (time_per_frame + (subframe + 1.0f) * subframe_dt) / frame_length;
           scene->r.cfra = frame - 1;
         }
-        /* Last frame in this loop (subframe == suframes). Can be real end frame or in between
-         * frames (adaptive frame). */
         else {
-          /* Handle adaptive subframe (ie has subframe fraction). Need to set according scene
-           * subframe parameter. */
-          if (time_per_frame < frame_length) {
-            scene->r.subframe = adaptframe_length;
-            scene->r.cfra = frame - 1;
-          }
-          /* Handle absolute endframe (ie no subframe fraction). Need to set the scene subframe
-           * parameter to 0 and advance current scene frame. */
-          else {
-            scene->r.subframe = 0.0f;
-            scene->r.cfra = frame;
-          }
+          scene->r.subframe = 0.0f;
+          scene->r.cfra = frame;
         }
         /* Sanity check: subframe portion must be between 0 and 1. */
         CLAMP(scene->r.subframe, 0.0f, 1.0f);
@@ -2762,53 +2747,31 @@ static void update_flowsfluids(struct Depsgraph *depsgraph,
         continue;
       }
 
-      /* Length of one adaptive frame. If using adaptive stepping, length is smaller than actual
-       * frame length */
-      float adaptframe_length = time_per_frame / frame_length;
-      /* Adaptive frame length as percentage */
-      CLAMP(adaptframe_length, 0.0f, 1.0f);
-
-      /* More splitting because of emission subframe: If no subframes present, sample_size is 1. */
-      float sample_size = 1.0f / (float)(subframes + 1);
-
       /* First frame cannot have any subframes because there is (obviously) no previous frame from
        * where subframes could come from. */
       if (is_first_frame) {
         subframes = 0;
       }
 
-      int subframe;
+      /* More splitting because of emission subframe: If no subframes present, sample_size is 1. */
+      float sample_size = 1.0f / (float)(subframes + 1);
       float subframe_dt = dt * sample_size;
 
       /* Emission loop. When not using subframes this will loop only once. */
-      for (subframe = subframes; subframe >= 0; subframe--) {
-
+      for (int subframe = 0; subframe <= subframes; subframe++) {
         /* Temporary emission map used when subframes are enabled, i.e. at least one subframe. */
         FluidObjectBB bb_temp = {NULL};
 
         /* Set scene time */
-        /* Handle emission subframe */
-        if (subframe > 0 && !is_first_frame) {
-          scene->r.subframe = adaptframe_length -
-                              sample_size * (float)(subframe) * (dt / frame_length);
+        if (subframe < subframes || time_per_frame + dt + FLT_EPSILON < frame_length) {
+          scene->r.subframe = (time_per_frame + (subframe + 1.0f) * subframe_dt) / frame_length;
           scene->r.cfra = frame - 1;
         }
-        /* Last frame in this loop (subframe == suframes). Can be real end frame or in between
-         * frames (adaptive frame). */
         else {
-          /* Handle adaptive subframe (ie has subframe fraction). Need to set according scene
-           * subframe parameter. */
-          if (time_per_frame < frame_length) {
-            scene->r.subframe = adaptframe_length;
-            scene->r.cfra = frame - 1;
-          }
-          /* Handle absolute endframe (ie no subframe fraction). Need to set the scene subframe
-           * parameter to 0 and advance current scene frame. */
-          else {
-            scene->r.subframe = 0.0f;
-            scene->r.cfra = frame;
-          }
+          scene->r.subframe = 0.0f;
+          scene->r.cfra = frame;
         }
+
         /* Sanity check: subframe portion must be between 0 and 1. */
         CLAMP(scene->r.subframe, 0.0f, 1.0f);
 #  ifdef DEBUG_PRINT
@@ -3710,8 +3673,14 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
   uint numobj = 0;
   FluidModifierData *mmd_parent = NULL;
 
-  bool is_startframe;
+  bool is_startframe, has_advanced;
   is_startframe = (scene_framenr == mds->cache_frame_start);
+  has_advanced = (scene_framenr == mmd->time + 1);
+
+  /* Do not process modifier if current frame is out of cache range. */
+  if (scene_framenr < mds->cache_frame_start || scene_framenr > mds->cache_frame_end) {
+    return;
+  }
 
   /* Reset fluid if no fluid present. */
   if (!mds->fluid) {
@@ -3803,6 +3772,20 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
   read_cache = false;
   bake_cache = baking_data || baking_noise || baking_mesh || baking_particles || baking_guide;
 
+  bool next_data, next_noise, next_mesh, next_particles, next_guide;
+  next_data = manta_has_data(mds->fluid, mmd, scene_framenr + 1);
+  next_noise = manta_has_noise(mds->fluid, mmd, scene_framenr + 1);
+  next_mesh = manta_has_mesh(mds->fluid, mmd, scene_framenr + 1);
+  next_particles = manta_has_particles(mds->fluid, mmd, scene_framenr + 1);
+  next_guide = manta_has_guiding(mds->fluid, mmd, scene_framenr + 1, guide_parent);
+
+  bool prev_data, prev_noise, prev_mesh, prev_particles, prev_guide;
+  prev_data = manta_has_data(mds->fluid, mmd, scene_framenr - 1);
+  prev_noise = manta_has_noise(mds->fluid, mmd, scene_framenr - 1);
+  prev_mesh = manta_has_mesh(mds->fluid, mmd, scene_framenr - 1);
+  prev_particles = manta_has_particles(mds->fluid, mmd, scene_framenr - 1);
+  prev_guide = manta_has_guiding(mds->fluid, mmd, scene_framenr - 1, guide_parent);
+
   bool with_gdomain;
   with_gdomain = (mds->guide_source == FLUID_DOMAIN_GUIDE_SRC_DOMAIN);
 
@@ -3861,6 +3844,7 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
     default:
       /* Always trying to read the cache in replay mode. */
       read_cache = true;
+      bake_cache = false;
       break;
   }
 
@@ -3945,7 +3929,7 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
           BKE_fluid_reallocate_fluid(mds, mds->res, 1);
         }
         /* Read data cache */
-        if (!baking_data && !baking_particles && !baking_mesh && !mode_replay) {
+        if (!baking_data && !baking_particles && !baking_mesh && next_data) {
           has_data = manta_update_smoke_structures(mds->fluid, mmd, data_frame);
         }
         else {
@@ -3970,18 +3954,21 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *mmd,
       break;
     case FLUID_DOMAIN_CACHE_REPLAY:
     default:
-      baking_data = !has_data;
+      baking_data = !has_data && (is_startframe || prev_data);
       if (with_smoke && with_noise) {
-        baking_noise = !has_noise;
+        baking_noise = !has_noise && (is_startframe || prev_noise);
       }
       if (with_liquid && with_mesh) {
-        baking_mesh = !has_mesh;
+        baking_mesh = !has_mesh && (is_startframe || prev_mesh);
       }
       if (with_liquid && with_particles) {
-        baking_particles = !has_particles;
+        baking_particles = !has_particles && (is_startframe || prev_particles);
       }
 
-      bake_cache = baking_data || baking_noise || baking_mesh || baking_particles;
+      /* Only bake if time advanced by one frame. */
+      if (is_startframe || has_advanced) {
+        bake_cache = baking_data || baking_noise || baking_mesh || baking_particles;
+      }
       break;
   }
 
@@ -4464,6 +4451,18 @@ void BKE_fluid_particle_system_destroy(struct Object *ob, const int particle_typ
  *
  * Use for versioning, even when fluids are disabled.
  * \{ */
+
+void BKE_fluid_cache_startframe_set(FluidDomainSettings *settings, int value)
+{
+  settings->cache_frame_start = (value > settings->cache_frame_end) ? settings->cache_frame_end :
+                                                                      value;
+}
+
+void BKE_fluid_cache_endframe_set(FluidDomainSettings *settings, int value)
+{
+  settings->cache_frame_end = (value < settings->cache_frame_start) ? settings->cache_frame_start :
+                                                                      value;
+}
 
 void BKE_fluid_cachetype_mesh_set(FluidDomainSettings *settings, int cache_mesh_format)
 {
