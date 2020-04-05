@@ -1333,7 +1333,7 @@ static int gp_strokes_copy_exec(bContext *C, wmOperator *op)
   if (gp_strokes_copypastebuf.first) {
     gp_strokes_copypastebuf_colors = BLI_ghash_int_new("GPencil CopyBuf Colors");
     GHash *ma_to_name = gp_strokes_copypastebuf_colors_material_to_name_create(bmain);
-    for (bGPDstroke *gps = gp_strokes_copypastebuf.first; gps; gps = gps->next) {
+    LISTBASE_FOREACH (bGPDstroke *, gps, &gp_strokes_copypastebuf) {
       if (ED_gpencil_stroke_can_use(C, gps)) {
         Material *ma = BKE_object_material_get(ob, gps->mat_nr + 1);
         /* Avoid default material. */
@@ -1379,8 +1379,8 @@ void GPENCIL_OT_copy(wmOperatorType *ot)
 
 static bool gp_strokes_paste_poll(bContext *C)
 {
-  ScrArea *sa = CTX_wm_area(C);
-  if (!((sa != NULL) && (sa->spacetype == SPACE_VIEW3D))) {
+  ScrArea *area = CTX_wm_area(C);
+  if (!((area != NULL) && (area->spacetype == SPACE_VIEW3D))) {
     return false;
   }
   /* 1) Must have GP datablock to paste to
@@ -1569,7 +1569,13 @@ static int gp_move_to_layer_exec(bContext *C, wmOperator *op)
   }
 
   /* Try to get layer */
-  target_layer = BLI_findlink(&gpd->layers, layer_num);
+  if (layer_num > -1) {
+    target_layer = BLI_findlink(&gpd->layers, layer_num);
+  }
+  else {
+    /* Create a new layer. */
+    target_layer = BKE_gpencil_layer_addnew(gpd, "GP_Layer", true);
+  }
 
   if (target_layer == NULL) {
     /* back autolock status */
@@ -1655,7 +1661,8 @@ void GPENCIL_OT_move_to_layer(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* GPencil layer to use. */
-  ot->prop = RNA_def_int(ot->srna, "layer", 0, 0, INT_MAX, "Grease Pencil Layer", "", 0, INT_MAX);
+  ot->prop = RNA_def_int(
+      ot->srna, "layer", 0, -1, INT_MAX, "Grease Pencil Layer", "", -1, INT_MAX);
   RNA_def_property_flag(ot->prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
@@ -2603,11 +2610,11 @@ void GPENCIL_OT_dissolve(wmOperatorType *ot)
  */
 static bool gp_snap_poll(bContext *C)
 {
-  ScrArea *sa = CTX_wm_area(C);
+  ScrArea *area = CTX_wm_area(C);
   Object *ob = CTX_data_active_object(C);
 
   return (ob != NULL) && (ob->type == OB_GPENCIL) &&
-         ((sa != NULL) && (sa->spacetype == SPACE_VIEW3D));
+         ((area != NULL) && (area->spacetype == SPACE_VIEW3D));
 }
 
 /* --------------------------------- */
@@ -3241,9 +3248,9 @@ static void gpencil_stroke_join_strokes(bGPDstroke *gps_a,
   }
 
   /* define start and end points of each stroke */
-  float sa[3], sb[3], ea[3], eb[3];
+  float area[3], sb[3], ea[3], eb[3];
   pt = &gps_a->points[0];
-  copy_v3_v3(sa, &pt->x);
+  copy_v3_v3(area, &pt->x);
 
   pt = &gps_a->points[gps_a->totpoints - 1];
   copy_v3_v3(ea, &pt->x);
@@ -4370,6 +4377,7 @@ static int gp_stroke_separate_exec(bContext *C, wmOperator *op)
   DEG_relations_tag_update(bmain);
   WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, NULL);
   WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_EDITED, NULL);
+  WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_SELECTED, NULL);
 
   return OPERATOR_FINISHED;
 }
@@ -4630,7 +4638,7 @@ static int gpencil_cutter_lasso_select(bContext *C,
                                        void *user_data)
 {
   bGPdata *gpd = ED_gpencil_data_get_active(C);
-  ScrArea *sa = CTX_wm_area(C);
+  ScrArea *area = CTX_wm_area(C);
   ToolSettings *ts = CTX_data_tool_settings(C);
   const float scale = ts->gp_sculpt.isect_threshold;
 
@@ -4641,7 +4649,7 @@ static int gpencil_cutter_lasso_select(bContext *C,
   bool changed = false;
 
   /* sanity checks */
-  if (sa == NULL) {
+  if (area == NULL) {
     BKE_report(op->reports, RPT_ERROR, "No active area");
     return OPERATOR_CANCELLED;
   }
@@ -4737,9 +4745,9 @@ static bool gpencil_cutter_poll(bContext *C)
 
 static int gpencil_cutter_exec(bContext *C, wmOperator *op)
 {
-  ScrArea *sa = CTX_wm_area(C);
+  ScrArea *area = CTX_wm_area(C);
   /* sanity checks */
-  if (sa == NULL) {
+  if (area == NULL) {
     BKE_report(op->reports, RPT_ERROR, "No active area");
     return OPERATOR_CANCELLED;
   }

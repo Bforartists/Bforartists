@@ -188,7 +188,7 @@ static void seq_proxy_build_job(const bContext *C, ReportList *reports)
   struct Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   Scene *scene = CTX_data_scene(C);
   Editing *ed = BKE_sequencer_editing_get(scene, false);
-  ScrArea *sa = CTX_wm_area(C);
+  ScrArea *area = CTX_wm_area(C);
   Sequence *seq;
   GSet *file_list;
 
@@ -236,7 +236,7 @@ static void seq_proxy_build_job(const bContext *C, ReportList *reports)
     WM_jobs_start(CTX_wm_manager(C), wm_job);
   }
 
-  ED_area_tag_redraw(sa);
+  ED_area_tag_redraw(area);
 }
 
 /* ********************************************************************** */
@@ -1432,7 +1432,7 @@ static void transseq_restore(TransSeq *ts, Sequence *seq)
   seq->len = ts->len;
 }
 
-static int slip_add_sequences_rec(
+static int slip_add_sequences_recursive(
     ListBase *seqbasep, Sequence **seq_array, bool *trim, int offset, bool do_trim)
 {
   Sequence *seq;
@@ -1446,7 +1446,7 @@ static int slip_add_sequences_rec(
 
       if (seq->type == SEQ_TYPE_META) {
         /* trim the sub-sequences */
-        num_items += slip_add_sequences_rec(
+        num_items += slip_add_sequences_recursive(
             &seq->seqbase, seq_array, trim, num_items + offset, false);
       }
       else if (seq->type & SEQ_TYPE_EFFECT) {
@@ -1458,7 +1458,7 @@ static int slip_add_sequences_rec(
   return num_items;
 }
 
-static int slip_count_sequences_rec(ListBase *seqbasep, bool first_level)
+static int slip_count_sequences_recursive(ListBase *seqbasep, bool first_level)
 {
   Sequence *seq;
   int trimmed_sequences = 0;
@@ -1469,7 +1469,7 @@ static int slip_count_sequences_rec(ListBase *seqbasep, bool first_level)
 
       if (seq->type == SEQ_TYPE_META) {
         /* trim the sub-sequences */
-        trimmed_sequences += slip_count_sequences_rec(&seq->seqbase, false);
+        trimmed_sequences += slip_count_sequences_recursive(&seq->seqbase, false);
       }
     }
   }
@@ -1487,7 +1487,7 @@ static int sequencer_slip_invoke(bContext *C, wmOperator *op, const wmEvent *eve
   View2D *v2d = UI_view2d_fromcontext(C);
 
   /* first recursively count the trimmed elements */
-  num_seq = slip_count_sequences_rec(ed->seqbasep, true);
+  num_seq = slip_count_sequences_recursive(ed->seqbasep, true);
 
   if (num_seq == 0) {
     return OPERATOR_CANCELLED;
@@ -1505,7 +1505,7 @@ static int sequencer_slip_invoke(bContext *C, wmOperator *op, const wmEvent *eve
   data->num_input.unit_sys = USER_UNIT_NONE;
   data->num_input.unit_type[0] = 0;
 
-  slip_add_sequences_rec(ed->seqbasep, data->seq_array, data->trim, 0, true);
+  slip_add_sequences_recursive(ed->seqbasep, data->seq_array, data->trim, 0, true);
 
   for (i = 0; i < num_seq; i++) {
     transseq_backup(data->ts + i, data->seq_array[i]);
@@ -1599,7 +1599,7 @@ static int sequencer_slip_exec(bContext *C, wmOperator *op)
   bool success = false;
 
   /* first recursively count the trimmed elements */
-  num_seq = slip_count_sequences_rec(ed->seqbasep, true);
+  num_seq = slip_count_sequences_recursive(ed->seqbasep, true);
 
   if (num_seq == 0) {
     return OPERATOR_CANCELLED;
@@ -1611,7 +1611,7 @@ static int sequencer_slip_exec(bContext *C, wmOperator *op)
   data->trim = MEM_mallocN(num_seq * sizeof(bool), "trimdata_trim");
   data->num_seq = num_seq;
 
-  slip_add_sequences_rec(ed->seqbasep, data->seq_array, data->trim, 0, true);
+  slip_add_sequences_recursive(ed->seqbasep, data->seq_array, data->trim, 0, true);
 
   for (i = 0; i < num_seq; i++) {
     transseq_backup(data->ts + i, data->seq_array[i]);
@@ -1634,11 +1634,11 @@ static int sequencer_slip_exec(bContext *C, wmOperator *op)
   }
 }
 
-static void sequencer_slip_update_header(Scene *scene, ScrArea *sa, SlipData *data, int offset)
+static void sequencer_slip_update_header(Scene *scene, ScrArea *area, SlipData *data, int offset)
 {
   char msg[UI_MAX_DRAW_STR];
 
-  if (sa) {
+  if (area) {
     if (hasNumInput(&data->num_input)) {
       char num_str[NUM_STR_REP_LEN];
       outputNumInput(&data->num_input, num_str, &scene->unit);
@@ -1649,7 +1649,7 @@ static void sequencer_slip_update_header(Scene *scene, ScrArea *sa, SlipData *da
     }
   }
 
-  ED_area_status_text(sa, msg);
+  ED_area_status_text(area, msg);
 }
 
 static int sequencer_slip_modal(bContext *C, wmOperator *op, const wmEvent *event)
@@ -1657,7 +1657,7 @@ static int sequencer_slip_modal(bContext *C, wmOperator *op, const wmEvent *even
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   SlipData *data = (SlipData *)op->customdata;
-  ScrArea *sa = CTX_wm_area(C);
+  ScrArea *area = CTX_wm_area(C);
   const bool has_numInput = hasNumInput(&data->num_input);
   bool handled = true;
 
@@ -1666,7 +1666,7 @@ static int sequencer_slip_modal(bContext *C, wmOperator *op, const wmEvent *even
     float offset;
     applyNumInput(&data->num_input, &offset);
 
-    sequencer_slip_update_header(scene, sa, data, (int)offset);
+    sequencer_slip_update_header(scene, area, data, (int)offset);
 
     RNA_int_set(op->ptr, "offset", offset);
 
@@ -1698,7 +1698,7 @@ static int sequencer_slip_modal(bContext *C, wmOperator *op, const wmEvent *even
         UI_view2d_region_to_view(v2d, mouse_x, 0, &mouseloc[0], &mouseloc[1]);
         offset = mouseloc[0] - data->init_mouseloc[0];
 
-        sequencer_slip_update_header(scene, sa, data, offset);
+        sequencer_slip_update_header(scene, area, data, offset);
 
         RNA_int_set(op->ptr, "offset", offset);
 
@@ -1717,8 +1717,8 @@ static int sequencer_slip_modal(bContext *C, wmOperator *op, const wmEvent *even
       MEM_freeN(data->ts);
       MEM_freeN(data);
       op->customdata = NULL;
-      if (sa) {
-        ED_area_status_text(sa, NULL);
+      if (area) {
+        ED_area_status_text(area, NULL);
       }
       DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER_STRIPS);
       WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
@@ -1750,8 +1750,8 @@ static int sequencer_slip_modal(bContext *C, wmOperator *op, const wmEvent *even
 
       BKE_sequencer_free_imbuf(scene, &ed->seqbase, false);
 
-      if (sa) {
-        ED_area_status_text(sa, NULL);
+      if (area) {
+        ED_area_status_text(area, NULL);
       }
 
       return OPERATOR_CANCELLED;
@@ -1780,7 +1780,7 @@ static int sequencer_slip_modal(bContext *C, wmOperator *op, const wmEvent *even
     float offset;
     applyNumInput(&data->num_input, &offset);
 
-    sequencer_slip_update_header(scene, sa, data, (int)offset);
+    sequencer_slip_update_header(scene, area, data, (int)offset);
 
     RNA_int_set(op->ptr, "offset", offset);
 
@@ -2954,7 +2954,7 @@ void SEQUENCER_OT_view_frame(wmOperatorType *ot)
 /* view_all operator */
 static int sequencer_view_all_preview_exec(bContext *C, wmOperator *UNUSED(op))
 {
-  bScreen *sc = CTX_wm_screen(C);
+  bScreen *screen = CTX_wm_screen(C);
   ScrArea *area = CTX_wm_area(C);
 #if 0
   ARegion *region = CTX_wm_region(C);
@@ -2965,7 +2965,7 @@ static int sequencer_view_all_preview_exec(bContext *C, wmOperator *UNUSED(op))
 
   v2d->cur = v2d->tot;
   UI_view2d_curRect_validate(v2d);
-  UI_view2d_sync(sc, area, v2d, V2D_LOCK_COPY);
+  UI_view2d_sync(screen, area, v2d, V2D_LOCK_COPY);
 
 #if 0
   /* Like zooming on an image view */
@@ -3480,7 +3480,7 @@ static int sequencer_copy_exec(bContext *C, wmOperator *op)
   seqbase_clipboard_frame = scene->r.cfra;
 
   /* Need to remove anything that references the current scene */
-  for (Sequence *seq = seqbase_clipboard.first; seq; seq = seq->next) {
+  LISTBASE_FOREACH (Sequence *, seq, &seqbase_clipboard) {
     seq_copy_del_sound(scene, seq);
   }
 

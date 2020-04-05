@@ -44,7 +44,6 @@
 
 #include "BLT_translation.h"
 
-#include "BKE_animsys.h"
 #include "BKE_brush.h"
 #include "BKE_ccg.h"
 #include "BKE_colortools.h"
@@ -1522,9 +1521,12 @@ static void sculpt_update_object(
   /* NOTE: Weight pPaint require mesh info for loop lookup, but it never uses multires code path,
    * so no extra checks is needed here. */
   if (mmd) {
-    ss->multires = mmd;
+    ss->multires.active = true;
+    ss->multires.modifier = mmd;
+    ss->multires.level = mmd->sculptlvl;
     ss->totvert = me_eval->totvert;
     ss->totpoly = me_eval->totpoly;
+    ss->totfaces = me->totpoly;
     ss->mvert = NULL;
     ss->mpoly = NULL;
     ss->mloop = NULL;
@@ -1532,31 +1534,37 @@ static void sculpt_update_object(
   else {
     ss->totvert = me->totvert;
     ss->totpoly = me->totpoly;
+    ss->totfaces = me->totpoly;
     ss->mvert = me->mvert;
     ss->mpoly = me->mpoly;
     ss->mloop = me->mloop;
-    ss->multires = NULL;
+    ss->multires.active = false;
+    ss->multires.modifier = NULL;
+    ss->multires.level = 0;
     ss->vmask = CustomData_get_layer(&me->vdata, CD_PAINT_MASK);
-
-    /* Sculpt Face Sets. */
-    if (!CustomData_has_layer(&me->pdata, CD_SCULPT_FACE_SETS)) {
-      ss->face_sets = CustomData_add_layer(
-          &me->pdata, CD_SCULPT_FACE_SETS, CD_CALLOC, NULL, me->totpoly);
-      for (int i = 0; i < me->totpoly; i++) {
-        ss->face_sets[i] = 1;
-      }
-
-      /* Set the default face set color if the datalayer did not exist. */
-      me->face_sets_color_default = 1;
-    }
-    ss->face_sets = CustomData_get_layer(&me->pdata, CD_SCULPT_FACE_SETS);
   }
+
+  /* Sculpt Face Sets. */
+  if (!CustomData_has_layer(&me->pdata, CD_SCULPT_FACE_SETS)) {
+    ss->face_sets = CustomData_add_layer(
+        &me->pdata, CD_SCULPT_FACE_SETS, CD_CALLOC, NULL, me->totpoly);
+    for (int i = 0; i < me->totpoly; i++) {
+      ss->face_sets[i] = 1;
+    }
+
+    /* Set the default face set color if the datalayer did not exist. */
+    me->face_sets_color_default = 1;
+  }
+  ss->face_sets = CustomData_get_layer(&me->pdata, CD_SCULPT_FACE_SETS);
 
   ss->subdiv_ccg = me_eval->runtime.subdiv_ccg;
 
   PBVH *pbvh = BKE_sculpt_object_pbvh_ensure(depsgraph, ob);
   BLI_assert(pbvh == ss->pbvh);
   UNUSED_VARS_NDEBUG(pbvh);
+
+  BKE_pbvh_subdiv_cgg_set(ss->pbvh, ss->subdiv_ccg);
+  BKE_pbvh_face_sets_set(ss->pbvh, ss->face_sets);
 
   BKE_pbvh_face_sets_color_set(ss->pbvh, me->face_sets_color_seed, me->face_sets_color_default);
 
