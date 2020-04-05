@@ -970,6 +970,8 @@ typedef struct Sculpt {
   // float pivot[3]; XXX not used?
   int flags;
 
+  int automasking_flags;
+
   /* Control tablet input */
   // char tablet_size, tablet_strength; XXX not used?
   int radial_symm[3];
@@ -987,7 +989,6 @@ typedef struct Sculpt {
   /** Constant detail resolution (Blender unit / constant_detail). */
   float constant_detail;
   float detail_percent;
-  char _pad[4];
 
   struct Object *gravity_object;
 } Sculpt;
@@ -2136,6 +2137,7 @@ typedef enum ePaintFlags {
   PAINT_FAST_NAVIGATE = (1 << 1),
   PAINT_SHOW_BRUSH_ON_SURFACE = (1 << 2),
   PAINT_USE_CAVITY_MASK = (1 << 3),
+  PAINT_SCULPT_DELAY_UPDATES = (1 << 4),
 } ePaintFlags;
 
 /* Paint.symmetry_flags

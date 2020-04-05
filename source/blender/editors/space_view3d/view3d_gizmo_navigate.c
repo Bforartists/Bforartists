@@ -306,6 +306,7 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
   if (show_navigate) {
     int icon_mini_slot = 0;
     if ((RV3D_LOCK_FLAGS(rv3d) & RV3D_LOCK_ZOOM_AND_DOLLY) == 0) {
+      gz = navgroup->gz_array[GZ_INDEX_ZOOM];
       gz->matrix_basis[3][0] = roundf(co[0]) - (icon_offset_mini * icon_mini_slot++);/* bfa- changed back navigation buttons to horizontal*/
       gz->matrix_basis[3][1] = roundf(co[1]);/* bfa- changed back navigation buttons to horizontal*/
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
