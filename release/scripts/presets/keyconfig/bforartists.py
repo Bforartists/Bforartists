@@ -1,5 +1,25 @@
 keyconfig_data = \
-[("3D View Tool: Edit Gpencil, Tweak",
+[("Image Editor Tool: Uv, Tweak",
+  {"space_type": 'IMAGE_EDITOR', "region_type": 'WINDOW'},
+  {"items":
+   [("uv.select",
+     {"type": 'LEFTMOUSE', "value": 'PRESS'},
+     {"properties":
+      [("deselect_all", False),
+       ],
+      },
+     ),
+    ("uv.select",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
+     {"properties":
+      [("extend", True),
+       ],
+      },
+     ),
+    ],
+   },
+  ),
+ ("3D View Tool: Edit Gpencil, Tweak",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
   {"items":
    [("gpencil.select",
@@ -3052,7 +3072,7 @@ keyconfig_data = \
      ),
     ("armature.select_more", {"type": 'NUMPAD_PLUS', "value": 'PRESS', "ctrl": True}, None),
     ("armature.select_less", {"type": 'NUMPAD_MINUS', "value": 'PRESS', "ctrl": True}, None),
-    ("armature.select_linked",{"type": 'L', "value": 'PRESS'}, None),
+    ("armature.select_linked", {"type": 'L', "value": 'PRESS'}, None),
     ("armature.shortest_path_pick", {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True}, None),
     ("armature.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
     ("armature.extrude_move", {"type": 'S', "value": 'PRESS'}, None),
