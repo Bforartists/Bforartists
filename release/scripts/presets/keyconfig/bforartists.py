@@ -3,9 +3,10 @@ keyconfig_data = \
   {"space_type": 'IMAGE_EDITOR', "region_type": 'WINDOW'},
   {"items":
    [("uv.select",
-     {"type": 'LEFTMOUSE', "value": 'PRESS'},
+     {"type": 'LEFTMOUSE', "value": 'RELEASE'},
      {"properties":
-      [("deselect_all", False),
+      [("extend", False),
+       ("deselect_all", True),
        ],
       },
      ),
