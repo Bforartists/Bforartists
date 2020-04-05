@@ -334,18 +334,22 @@ typedef struct ScrArea {
   /* Temporarily used while switching area type, otherwise this should be
 	 * SPACE_EMPTY. Also, versioning uses it to nicely replace deprecated
 	 * editors. It's been there for ages, name doesn't fit any more... */
-  char butspacetype; /* eSpace_Type (SPACE_FOO) */
+  /** #eSpace_Type (SPACE_FOO). */
+  char butspacetype;
   short butspacetype_subtype;
 
   /** Size. */
   short winx, winy;
 
-  char headertype DNA_DEPRECATED; /* OLD! 0=no header, 1= down, 2= up */
-  char do_refresh;                /* private, for spacetype refresh callback */
+  /** OLD! 0=no header, 1= down, 2= up. */
+  char headertype DNA_DEPRECATED;
+  /** Private, for spacetype refresh callback. */
+  char do_refresh;
 
   char temp, _pad[5]; /* bfa - changed to allow int*/
 
-  struct SpaceType *type; /* callbacks for this space type */
+  /** Callbacks for this space type. */
+  struct SpaceType *type;
 
   /* Non-NULL if this area is global. */
   ScrGlobalAreaData *global;
