@@ -22,7 +22,7 @@ bl_info = {
     "name": "Collection Manager",
     "description": "Manage collections and their objects",
     "author": "Ryan Inch",
-    "version": (2,4,5),
+    "version": (2,4,12),
     "blender": (2, 80, 0),
     "location": "View3D - Object Mode (Shortcut - M)",
     "warning": '',  # used for warning icon and text in addons panel
@@ -126,6 +126,9 @@ def register():
         qcd_init.register_qcd()
 
 def unregister():
+    if bpy.context.preferences.addons[__package__].preferences.enable_qcd:
+        qcd_init.unregister_qcd()
+
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
@@ -135,8 +138,6 @@ def unregister():
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
-
-    qcd_init.unregister_qcd()
 
 
 if __name__ == "__main__":

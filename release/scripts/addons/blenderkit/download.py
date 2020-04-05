@@ -446,12 +446,12 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
     # report_use_success(asset_data['id'])
 
 
-@bpy.app.handlers.persistent
+# @bpy.app.handlers.persistent
 def timer_update():  # TODO might get moved to handle all blenderkit stuff, not to slow down.
     '''check for running and finished downloads and react. write progressbars too.'''
     global download_threads
     if len(download_threads) == 0:
-        return 1
+        return 1.0
     s = bpy.context.scene
     for threaddata in download_threads:
         t = threaddata[0]
@@ -951,7 +951,7 @@ def register_download():
     bpy.utils.register_class(BlenderkitKillDownloadOperator)
     bpy.app.handlers.load_post.append(scene_load)
     bpy.app.handlers.save_pre.append(scene_save)
-    bpy.app.timers.register(timer_update, persistent=True)
+    bpy.app.timers.register(timer_update)
 
 
 def unregister_download():

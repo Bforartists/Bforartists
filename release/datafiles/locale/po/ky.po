@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
@@ -1455,6 +1455,10 @@ msgid "Text"
 msgstr "Текст"
 
 
+msgid "System"
+msgstr "Система"
+
+
 msgid "File"
 msgstr "Файл"
 
@@ -1561,10 +1565,6 @@ msgstr "Таяныч чекити"
 
 msgid "Projectors"
 msgstr "Проекторлор"
-
-
-msgid "To"
-msgstr "Кимге"
 
 
 msgid "Units"
@@ -2826,10 +2826,6 @@ msgid "Bookmarks"
 msgstr "Чөп каттар"
 
 
-msgid "System"
-msgstr "Система"
-
-
 msgctxt "Operator"
 msgid "Scale"
 msgstr "Масштаб"
@@ -3354,6 +3350,10 @@ msgstr "[{}]: \"{}\" ({})"
 msgctxt "Operator"
 msgid "Edit"
 msgstr "Оңдоо"
+
+
+msgid "To"
+msgstr "Кимге"
 
 
 msgid "Location:"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -2899,10 +2899,6 @@ msgstr "Usar a força conforme a pressão"
 
 msgid "Use tablet pressure for color strength"
 msgstr "Usa a pressão da mesa de desenho para a aplicação de força nas cores."
-
-
-msgid "Both"
-msgstr "Ambos"
 
 
 msgid "Background Image"
@@ -11897,6 +11893,14 @@ msgid "If a vertex is further away from offset plane than this, then it is not a
 msgstr "Caso um vértice esteja mais distante que o valor fornecido a partir do plano de deslocamento, então não será afetado."
 
 
+msgid "Topology"
+msgstr "Topologia"
+
+
+msgid "Face Sets"
+msgstr "Conjuntos de faces"
+
+
 msgid "Rake"
 msgstr "Alisar"
 
@@ -12003,6 +12007,10 @@ msgstr "Ajuste abaixo do qual, nenhuma acentuação da nitidez é feita."
 
 msgid "Radius of the brush in pixels"
 msgstr "Raio do pincel em pixeis."
+
+
+msgid "Laplacian"
+msgstr "Laplaciano"
 
 
 msgid "Smooth Stroke Factor"
@@ -14125,10 +14133,6 @@ msgid "Compositing node viewer"
 msgstr "Visualizador de nó de composição."
 
 
-msgid "Tiled"
-msgstr "Ladrilhado"
-
-
 msgid "Stereo 3D Format"
 msgstr "Formato 3D estéreo"
 
@@ -15395,6 +15399,10 @@ msgstr "Deslocamento da origem"
 
 msgid "Origin offset distance"
 msgstr "Distância de deslocamento da origem."
+
+
+msgid "Both"
+msgstr "Ambos"
 
 
 msgid "Settings for using the object as a field in physics simulation"
@@ -21923,6 +21931,10 @@ msgid "Text"
 msgstr "Texto"
 
 
+msgid "System"
+msgstr "Sistema"
+
+
 msgid "File"
 msgstr "Ficheiro"
 
@@ -22033,10 +22045,6 @@ msgstr "Esfera-meta"
 
 msgid "Special Characters"
 msgstr "Caracteres especiais"
-
-
-msgid "Face Sets"
-msgstr "Conjuntos de faces"
 
 
 msgid "Hooks"
@@ -22791,16 +22799,16 @@ msgid "Explode"
 msgstr "Explodir"
 
 
+msgid "Fluid Simulation"
+msgstr "Simulação de fluidos"
+
+
 msgid "Ocean"
 msgstr "Oceano"
 
 
 msgid "Particle Instance"
 msgstr "Instância de partículas"
-
-
-msgid "Fluid Simulation"
-msgstr "Simulação de fluidos"
 
 
 msgid "Soft Body"
@@ -23409,10 +23417,6 @@ msgstr "Mapeamento de arestas"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Método utilizado para mapear as arestas da fonte para aquelas presentes na destinação."
-
-
-msgid "Topology"
-msgstr "Topologia"
 
 
 msgid "Copy from identical topology meshes"
@@ -25638,16 +25642,8 @@ msgid "Radius to apply"
 msgstr "Raio para aplicar"
 
 
-msgid "From"
-msgstr "A partir de"
-
-
 msgid "Object to transform from"
 msgstr "Objeto a partir do qual se transformar."
-
-
-msgid "To"
-msgstr "Para"
 
 
 msgid "Object to transform to"
@@ -31707,19 +31703,6 @@ msgstr "Ativa todas as camadas ou somente as 16 primeiras (linha de cima)."
 
 
 msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "Fundir ossos"
-
-
-msgid "Merge continuous chains of selected bones"
-msgstr "Funde os ossos selecionados em cadeias contínuas."
-
-
-msgid "Within Chains"
-msgstr "Dentro das cadeias"
-
-
-msgctxt "Operator"
 msgid "Clear Parent"
 msgstr "Limpar parentesco"
 
@@ -36964,6 +36947,10 @@ msgid "Image data-block name"
 msgstr "Nome do bloco de dados de imagem."
 
 
+msgid "Tiled"
+msgstr "Ladrilhado"
+
+
 msgid "Create an image with left and right views"
 msgstr "Cria uma imagem com as visualizações esquerda e direita."
 
@@ -38698,11 +38685,6 @@ msgstr "Executar extrusão da região"
 msgctxt "Operator"
 msgid "Extrude Region and Shrink/Fatten"
 msgstr "Executar extrusão da região e encolher ou engordar."
-
-
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "Executar extrusão repetindo a malha"
 
 
 msgid "Extrude selected vertices, edges or faces repeatedly"
@@ -43621,18 +43603,8 @@ msgid "Purge All"
 msgstr "Expurgar tudo"
 
 
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "Soltar para limpar parentesco"
-
-
 msgid "Drag to clear parent in Outliner"
 msgstr "Arraste para limpar o parentesco no organizador."
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "Soltar para definir o parentesco"
 
 
 msgid "Drag to parent in Outliner"
@@ -50744,11 +50716,6 @@ msgid "List all the Operators in a text-block, useful for scripting"
 msgstr "Lista todos os operadores em um bloco de texto, útil para a criação de Scripts."
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "Restaurar padrões"
-
-
 msgid "Set the active operator to its default values"
 msgstr "Define o operador ativo aos seus valores padrão."
 
@@ -52039,10 +52006,6 @@ msgstr "Filtros avançados"
 
 msgid "Bookmarks"
 msgstr "Favoritos"
-
-
-msgid "System"
-msgstr "Sistema"
 
 
 msgid "Fluid Presets"
@@ -63244,10 +63207,6 @@ msgid "Algorithm used for UV relaxation"
 msgstr "Algoritmo usado para o relaxamento UV."
 
 
-msgid "Laplacian"
-msgstr "Laplaciano"
-
-
 msgid "Use Laplacian method for relaxation"
 msgstr "Usa o método laplaciano para relaxamento."
 
@@ -65061,6 +65020,10 @@ msgstr "Números dos fotogramas chave"
 
 msgid "After"
 msgstr "Depois"
+
+
+msgid "To"
+msgstr "Para"
 
 
 msgid "Nothing to show yet..."
@@ -69037,10 +69000,6 @@ msgstr "Não é possível encontrar as extremidades da região de dissolução."
 
 msgid "Could not create merged face"
 msgstr "Não é possível criar arestas ou faces fundidas nos elementos selecionados."
-
-
-msgid "Select two edge loops"
-msgstr "Seleciona dois anéis de arestas."
 
 
 msgid "Closed loops unsupported"

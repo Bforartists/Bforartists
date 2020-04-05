@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -657,10 +657,6 @@ msgstr "पदार्थ"
 
 msgid "Iterations"
 msgstr "पुनरूक्तियाँ"
-
-
-msgid "Both"
-msgstr "दोनों"
 
 
 msgid "Background Image"
@@ -2166,10 +2162,6 @@ msgid "Viewer"
 msgstr "प्रदर्शक"
 
 
-msgid "Tiled"
-msgstr "खण्ड की गईं"
-
-
 msgid "Multilayer"
 msgstr "बहुपरत"
 
@@ -2356,6 +2348,10 @@ msgstr "ठोस"
 
 msgid "Circle"
 msgstr "चक्र"
+
+
+msgid "Both"
+msgstr "दोनों"
 
 
 msgid "Verts"
@@ -3210,14 +3206,6 @@ msgid "Use distance between affected object's vertices and target object, or tar
 msgstr "प्रभावित ऑब्जेक्ट सकें और लक्ष्य ऑब्जेक्ट के बीच दूरी का उपयोग करें, या लक्ष्य वस्तु की ज्यामिति"
 
 
-msgid "From"
-msgstr "द्वारा"
-
-
-msgid "To"
-msgstr "करने के लिए"
-
-
 msgid "Tracks"
 msgstr "पटरियां"
 
@@ -3966,6 +3954,10 @@ msgstr "उच्चतम आवृत्ति"
 
 msgid "Create a new image"
 msgstr "एक नई छवि बनाएँ"
+
+
+msgid "Tiled"
+msgstr "खण्ड की गईं"
 
 
 msgid "X End"
@@ -5770,6 +5762,10 @@ msgstr "संपादन"
 
 msgid "After"
 msgstr "के बाद"
+
+
+msgid "To"
+msgstr "करने के लिए"
 
 
 msgctxt "Operator"

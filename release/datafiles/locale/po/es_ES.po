@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3452,10 +3452,6 @@ msgstr "Factor de aleatoriedad para la rotación de las UV autogeneradas"
 
 msgid "Mode Type"
 msgstr "Modo"
-
-
-msgid "Both"
-msgstr "Ambos"
 
 
 msgid "Background Image"
@@ -12292,10 +12288,6 @@ msgid "Subframes"
 msgstr "Subfotogramas"
 
 
-msgid "Distance around mesh surface to consider as effector"
-msgstr "Distancia alrededor de la superficie de la malla para considerar como un efector"
-
-
 msgid "Is Planar"
 msgstr "Es plano"
 
@@ -14122,6 +14114,14 @@ msgid "Duplicate strokes like a mirror"
 msgstr "Duplica los trazos en forma simétrica"
 
 
+msgid "Multiple Strokes"
+msgstr "Múltiples trazos"
+
+
+msgid "Produce multiple strokes along one stroke"
+msgstr "Produce múltiples trazos a lo largo de un trazo"
+
+
 msgid "Simplify stroke reducing number of points"
 msgstr "Simplifica el trazo reduciendo su cantidad de puntos"
 
@@ -14132,14 +14132,6 @@ msgstr "Subdividir"
 
 msgid "Subdivide stroke adding more control points"
 msgstr "Subdivide el trazo agregando más puntos de control"
-
-
-msgid "Multiple Strokes"
-msgstr "Múltiples trazos"
-
-
-msgid "Produce multiple strokes along one stroke"
-msgstr "Produce múltiples trazos a lo largo de un trazo"
 
 
 msgid "Deform stroke points using armature object"
@@ -15869,6 +15861,14 @@ msgid "Offset of the pose origin in relation to the brush radius"
 msgstr "Desplazamiento del origen de la pose en relación al radio del pincel"
 
 
+msgid "Topology"
+msgstr "Topología"
+
+
+msgid "Face Sets"
+msgstr "Conjuntos de caras"
+
+
 msgid "Smooth Iterations"
 msgstr "Iteraciones de suavizado"
 
@@ -15995,6 +15995,10 @@ msgstr "Previsualiza los planos de raspado en el puntero mientras se dibuja el t
 
 msgid "Radius of the brush in pixels"
 msgstr "Radio del pincel en píxeles"
+
+
+msgid "Laplacian"
+msgstr "Laplaciano"
 
 
 msgid "Smooth Stroke Factor"
@@ -18609,12 +18613,8 @@ msgid "Compositing node viewer"
 msgstr "Visor de nodos de composición"
 
 
-msgid "Tiled"
-msgstr "Imagen compuesta"
-
-
-msgid "Tiled image texture"
-msgstr "Textura de imagen compuesta (UDIM)"
+msgid "UDIM Tiles"
+msgstr "Celdas UDIM"
 
 
 msgid "Stereo 3D Format"
@@ -20553,6 +20553,10 @@ msgstr "Vacío Lado de imagen"
 
 msgid "Show front/back side"
 msgstr "Mostrar lado frontal/trasero"
+
+
+msgid "Both"
+msgstr "Ambos"
 
 
 msgid "Maps of faces of the object"
@@ -27797,10 +27801,6 @@ msgid "Shift Texture in 2d Space"
 msgstr "Desplazar textura en espacio 2D"
 
 
-msgid "Texture Opacity"
-msgstr "Opacidad textura"
-
-
 msgid "Scale Factor for Texture"
 msgstr "Factor de escala de la textura"
 
@@ -28164,6 +28164,10 @@ msgid "Support Blender"
 msgstr "Apoyar a Blender"
 
 
+msgid "System"
+msgstr "Sistema"
+
+
 msgctxt "Operator"
 msgid "TOPBAR_MT_edit_curve_add"
 msgstr "TOPBAR_MT_edit_curve_add"
@@ -28348,10 +28352,6 @@ msgstr "Caracteres especiales"
 
 msgid "Text Context Menu"
 msgstr "Texto - menú contextual"
-
-
-msgid "Face Sets"
-msgstr "Conjuntos de caras"
 
 
 msgid "Generate Weights"
@@ -29162,10 +29162,6 @@ msgid "UV Warp"
 msgstr "Deformar UV"
 
 
-msgid "Transform the UV map using the the difference between two objects"
-msgstr "Permite transformar el mapa UV usando la diferencia entre dos objetos"
-
-
 msgid "Vertex Weight Edit"
 msgstr "Editar influencias de vértices"
 
@@ -29418,6 +29414,10 @@ msgid "Break apart the mesh faces and let them follow particles"
 msgstr "Separa las caras de la malla, permitiéndoles seguir el movimiento de partículas"
 
 
+msgid "Fluid Simulation"
+msgstr "Fluido"
+
+
 msgid "Ocean"
 msgstr "Océano"
 
@@ -29432,10 +29432,6 @@ msgstr "Instancia de partículas"
 
 msgid "Spawn particles from the shape"
 msgstr "Permite generar partículas a partir de una forma"
-
-
-msgid "Fluid Simulation"
-msgstr "Fluido"
 
 
 msgid "Soft Body"
@@ -30208,10 +30204,6 @@ msgstr "Mapeo de bordes"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Método usado para mapear los bordes de origen a los de destino"
-
-
-msgid "Topology"
-msgstr "Topología"
 
 
 msgid "Copy from identical topology meshes"
@@ -32734,16 +32726,8 @@ msgid "Radius to apply"
 msgstr "Radio a aplicar"
 
 
-msgid "From"
-msgstr "Desde"
-
-
 msgid "Object to transform from"
 msgstr "Objeto desde el cual transformar"
-
-
-msgid "To"
-msgstr "A"
 
 
 msgid "Object to transform to"
@@ -39690,19 +39674,6 @@ msgstr "Habilita todas las capas o sólo las primeras 16 (fila superior)"
 
 
 msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "Fusionar huesos"
-
-
-msgid "Merge continuous chains of selected bones"
-msgstr "Fusionar cadenas continuas de huesos seleccionadas"
-
-
-msgid "Within Chains"
-msgstr "Encadenado"
-
-
-msgctxt "Operator"
 msgid "Clear Parent"
 msgstr "Eliminar superior"
 
@@ -46479,6 +46450,10 @@ msgid "Image data-block name"
 msgstr "Nombre del bloque de datos de imagen"
 
 
+msgid "Tiled"
+msgstr "Imagen compuesta"
+
+
 msgid "Create a tiled image"
 msgstr "Crea una imagen compuesta (UDIM)"
 
@@ -48780,11 +48755,6 @@ msgstr "Extruir región y contraer/expandir"
 
 msgid "Extrude region together along local normals"
 msgstr "Extruye una región en conjunto a lo largo de las normales de cada cara"
-
-
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "Extruir repetidamente malla"
 
 
 msgid "Extrude selected vertices, edges or faces repeatedly"
@@ -55248,18 +55218,8 @@ msgid "Clear all orphaned data-blocks without any users from the file"
 msgstr "Limpiar del archivo todos los bloques de datos huérfanos"
 
 
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "Soltar para eliminar superior"
-
-
 msgid "Drag to clear parent in Outliner"
 msgstr "Arrastrar para eliminar el superior en el Listado"
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "Soltar para definir superior"
 
 
 msgid "Drag to parent in Outliner"
@@ -64013,11 +63973,6 @@ msgid "List all the Operators in a text-block, useful for scripting"
 msgstr "Lista todos los operadores en un bloque de texto, útil para la creación de scripts"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "Restablecer predefinidos"
-
-
 msgid "Set the active operator to its default values"
 msgstr "Vuelve el operador activo a sus valores predefinidos"
 
@@ -64549,6 +64504,10 @@ msgstr "Buscar menú"
 
 msgid "Pop-up a search menu over all available operators in current context"
 msgstr "Hace emerger un menú de búsqueda sobre todos los operadores disponibles en el contexto actual"
+
+
+msgid "Menu"
+msgstr "Menú"
 
 
 msgctxt "Operator"
@@ -65772,10 +65731,6 @@ msgid "Favorites"
 msgstr "Favoritos"
 
 
-msgid "System"
-msgstr "Sistema"
-
-
 msgid "Attributes"
 msgstr "Atributos"
 
@@ -65945,10 +65900,6 @@ msgstr "Textura de máscara"
 
 msgid "UDIM Grid"
 msgstr "Cuadrícula UDIM"
-
-
-msgid "UDIM Tiles"
-msgstr "Celdas UDIM"
 
 
 msgid "2D Cursor"
@@ -66575,10 +66526,6 @@ msgstr "Estilos"
 
 msgid "List Item"
 msgstr "Elemento de lista"
-
-
-msgid "Menu"
-msgstr "Menú"
 
 
 msgid "Menu Back"
@@ -73087,14 +73034,6 @@ msgstr "Usar simplificación"
 
 msgid "Enable simplification of scene for quicker preview renders"
 msgstr "Habilita la simplificación de la escena para procesar previsualizaciones más rápidas"
-
-
-msgid "Use High-resolution Smoke"
-msgstr "Usar humo de alta resolución"
-
-
-msgid "Display high-resolution smoke in the viewport"
-msgstr "Mostrar humo de alta resolución en las vistas"
 
 
 msgid "Render Single Layer"
@@ -81419,10 +81358,6 @@ msgid "Algorithm used for UV relaxation"
 msgstr "Algoritmo usado para la distensión de UV"
 
 
-msgid "Laplacian"
-msgstr "Laplaciano"
-
-
 msgid "Use Laplacian method for relaxation"
 msgstr "Usa el método Laplaciano para la distensión"
 
@@ -84311,6 +84246,10 @@ msgid "After"
 msgstr "Después"
 
 
+msgid "To"
+msgstr "A"
+
+
 msgid "Nothing to show yet..."
 msgstr "Nada que mostrar aún..."
 
@@ -85851,6 +85790,10 @@ msgid "Edge To Edge"
 msgstr "De lado a lado"
 
 
+msgid "Texture Opacity"
+msgstr "Opacidad textura"
+
+
 msgid "Mask Texture Opacity"
 msgstr "Opacidad textura de máscara"
 
@@ -86613,10 +86556,6 @@ msgstr "Tamaño irradiación"
 
 msgid "Max Child Particles"
 msgstr "Partículas secundarias máx"
-
-
-msgid "High-resolution Smoke"
-msgstr "Humo de alta resolución"
 
 
 msgid "Render Engine"
@@ -91585,10 +91524,6 @@ msgstr "No fue posible encontrar el límite de la región a disolver"
 
 msgid "Could not create merged face"
 msgstr "No fue posible crear una cara fusionada"
-
-
-msgid "Select two edge loops"
-msgstr "Seleccionar dos bucles de bordes"
 
 
 msgid "Closed loops unsupported"
