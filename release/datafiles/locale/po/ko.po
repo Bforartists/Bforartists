@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -3453,10 +3453,6 @@ msgstr "자동 생성된 UV 회전의 랜덤 팩터"
 
 msgid "Mode Type"
 msgstr "모드 유형"
-
-
-msgid "Both"
-msgstr "양쪽"
 
 
 msgid "Background Image"
@@ -12293,10 +12289,6 @@ msgid "Subframes"
 msgstr "하위 프레임"
 
 
-msgid "Distance around mesh surface to consider as effector"
-msgstr "이펙터로 고려할 메쉬 표면 주위의 거리"
-
-
 msgid "Is Planar"
 msgstr "Is 평면"
 
@@ -14123,6 +14115,14 @@ msgid "Duplicate strokes like a mirror"
 msgstr "미러 같은 스트로크의 복제"
 
 
+msgid "Multiple Strokes"
+msgstr "여러 스트로크"
+
+
+msgid "Produce multiple strokes along one stroke"
+msgstr "하나의 스트로크를 따라 여러 스트로크를 생성"
+
+
 msgid "Simplify stroke reducing number of points"
 msgstr "포인트 수를 줄이면서 스트로크를 단순화합니다"
 
@@ -14133,14 +14133,6 @@ msgstr "섭디비젼"
 
 msgid "Subdivide stroke adding more control points"
 msgstr "더 많은 제어점을 추가하는 스트로크 분할"
-
-
-msgid "Multiple Strokes"
-msgstr "여러 스트로크"
-
-
-msgid "Produce multiple strokes along one stroke"
-msgstr "하나의 스트로크를 따라 여러 스트로크를 생성"
 
 
 msgid "Deform stroke points using armature object"
@@ -15870,6 +15862,14 @@ msgid "Offset of the pose origin in relation to the brush radius"
 msgstr "브러시 반경과 관련된 포즈 오리진의 오프셋"
 
 
+msgid "Topology"
+msgstr "토폴로지"
+
+
+msgid "Face Sets"
+msgstr "페이스 설정"
+
+
 msgid "Smooth Iterations"
 msgstr "스무스 반복"
 
@@ -15996,6 +15996,10 @@ msgstr "스트로크 하는 동안 커서에서 스크랩 평면을 미리보기
 
 msgid "Radius of the brush in pixels"
 msgstr "픽셀 단위 브러시의 반경"
+
+
+msgid "Laplacian"
+msgstr "라플라시안"
 
 
 msgid "Smooth Stroke Factor"
@@ -18610,12 +18614,8 @@ msgid "Compositing node viewer"
 msgstr "컴포지팅 노드 뷰어"
 
 
-msgid "Tiled"
-msgstr "타일화"
-
-
-msgid "Tiled image texture"
-msgstr "타일된 이미지 텍스처"
+msgid "UDIM Tiles"
+msgstr "UDIM 타일"
 
 
 msgid "Stereo 3D Format"
@@ -20554,6 +20554,10 @@ msgstr "엠프티 이미지 측면"
 
 msgid "Show front/back side"
 msgstr "전면/후면을 보기"
+
+
+msgid "Both"
+msgstr "양쪽"
 
 
 msgid "Maps of faces of the object"
@@ -27800,10 +27804,6 @@ msgid "Shift Texture in 2d Space"
 msgstr "2D 공간에서 텍스처를 바꾸기"
 
 
-msgid "Texture Opacity"
-msgstr "텍스처 불투명도"
-
-
 msgid "Scale Factor for Texture"
 msgstr "텍스처에대한 축적 팩터"
 
@@ -28167,6 +28167,10 @@ msgid "Support Blender"
 msgstr "블렌더 지원"
 
 
+msgid "System"
+msgstr "시스템"
+
+
 msgctxt "Operator"
 msgid "TOPBAR_MT_edit_curve_add"
 msgstr "TOPBAR_MT_edit_curve_add"
@@ -28351,10 +28355,6 @@ msgstr "특수 문자"
 
 msgid "Text Context Menu"
 msgstr "텍스트 컨텍스트 메뉴"
-
-
-msgid "Face Sets"
-msgstr "페이스 설정"
 
 
 msgid "Generate Weights"
@@ -29165,10 +29165,6 @@ msgid "UV Warp"
 msgstr "UV 왜곡"
 
 
-msgid "Transform the UV map using the the difference between two objects"
-msgstr "두 오브젝트의 차이를 사용하여 UV 맵을 변환합니다"
-
-
 msgid "Vertex Weight Edit"
 msgstr "버텍스 웨이트 편집"
 
@@ -29421,6 +29417,10 @@ msgid "Break apart the mesh faces and let them follow particles"
 msgstr "메쉬 페이스를 분리하여 파티클을 따라 가도록합니다"
 
 
+msgid "Fluid Simulation"
+msgstr "유체 시뮬레이션"
+
+
 msgid "Ocean"
 msgstr "오션"
 
@@ -29435,10 +29435,6 @@ msgstr "파티클 인스턴스"
 
 msgid "Spawn particles from the shape"
 msgstr "셰이프에서 파티클을 스폰합니다"
-
-
-msgid "Fluid Simulation"
-msgstr "유체 시뮬레이션"
 
 
 msgid "Soft Body"
@@ -30211,10 +30207,6 @@ msgstr "에지 맵핑"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "목적지들에 소스 에지를 맵하는 데 사용된 메서드"
-
-
-msgid "Topology"
-msgstr "토폴로지"
 
 
 msgid "Copy from identical topology meshes"
@@ -32737,16 +32729,8 @@ msgid "Radius to apply"
 msgstr "적용하는 반경"
 
 
-msgid "From"
-msgstr "다음에서"
-
-
 msgid "Object to transform from"
 msgstr "다음에서 변환하는 오브젝트"
-
-
-msgid "To"
-msgstr "다음으로"
 
 
 msgid "Object to transform to"
@@ -39693,19 +39677,6 @@ msgstr "모든 레이어를 활성화하거나 처음 16 개만 활성화 (맨 �
 
 
 msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "본을 병합"
-
-
-msgid "Merge continuous chains of selected bones"
-msgstr "선택된 본에서 연속 체인을 병합"
-
-
-msgid "Within Chains"
-msgstr "체인 내에서"
-
-
-msgctxt "Operator"
 msgid "Clear Parent"
 msgstr "부모를 지우기"
 
@@ -46482,6 +46453,10 @@ msgid "Image data-block name"
 msgstr "이미지 데이터 블럭 이름"
 
 
+msgid "Tiled"
+msgstr "타일화"
+
+
 msgid "Create a tiled image"
 msgstr "타일된 이미지를 생성"
 
@@ -48783,11 +48758,6 @@ msgstr "지역을 돌출 및 팽창/수축"
 
 msgid "Extrude region together along local normals"
 msgstr "지역 노멀을 따라 영역을 함께 돌출시킵니다"
-
-
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "반복 메쉬를 돌출"
 
 
 msgid "Extrude selected vertices, edges or faces repeatedly"
@@ -55251,18 +55221,8 @@ msgid "Clear all orphaned data-blocks without any users from the file"
 msgstr "파일의 사용자가없는 고아가된 모든 데이터 블록을 지우기"
 
 
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "부모를 지우기하는 드롭"
-
-
 msgid "Drag to clear parent in Outliner"
 msgstr "아웃 라이너에서 부모를 지우는 드래그"
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "부모를 설정에 드롭"
 
 
 msgid "Drag to parent in Outliner"
@@ -64016,11 +63976,6 @@ msgid "List all the Operators in a text-block, useful for scripting"
 msgstr "스크립트에 유용한 모든 작업자를 텍스트 블록에 나열"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "기본 값을 복원"
-
-
 msgid "Set the active operator to its default values"
 msgstr "기본 값으로 활성 작업자를 설정"
 
@@ -64552,6 +64507,10 @@ msgstr "검색 메뉴"
 
 msgid "Pop-up a search menu over all available operators in current context"
 msgstr "현재 컨텍스트에서 사용 가능한 모든 작업자에 대한 검색 메뉴를 팝업"
+
+
+msgid "Menu"
+msgstr "메뉴"
 
 
 msgctxt "Operator"
@@ -65775,10 +65734,6 @@ msgid "Favorites"
 msgstr "즐겨 찾기"
 
 
-msgid "System"
-msgstr "시스템"
-
-
 msgid "Attributes"
 msgstr "속성"
 
@@ -65948,10 +65903,6 @@ msgstr "텍스처 마스크"
 
 msgid "UDIM Grid"
 msgstr "UDIM 그리드"
-
-
-msgid "UDIM Tiles"
-msgstr "UDIM 타일"
 
 
 msgid "2D Cursor"
@@ -66578,10 +66529,6 @@ msgstr "스타일"
 
 msgid "List Item"
 msgstr "목록 항목"
-
-
-msgid "Menu"
-msgstr "메뉴"
 
 
 msgid "Menu Back"
@@ -73090,14 +73037,6 @@ msgstr "단순화를 사용"
 
 msgid "Enable simplification of scene for quicker preview renders"
 msgstr "빠른 미리보기 렌더를 위해 씬의 단순화를 사용"
-
-
-msgid "Use High-resolution Smoke"
-msgstr "고해상도 스모크를 사용"
-
-
-msgid "Display high-resolution smoke in the viewport"
-msgstr "뷰포트에 고해상도 스모크를 표시합니다"
 
 
 msgid "Render Single Layer"
@@ -81422,10 +81361,6 @@ msgid "Algorithm used for UV relaxation"
 msgstr "UV 릴렉스에 사용되는 알고리즘"
 
 
-msgid "Laplacian"
-msgstr "라플라시안"
-
-
 msgid "Use Laplacian method for relaxation"
 msgstr "릴렉스에 대해 라플라시안 메서드를 사용"
 
@@ -84314,6 +84249,10 @@ msgid "After"
 msgstr "이후"
 
 
+msgid "To"
+msgstr "다음으로"
+
+
 msgid "Nothing to show yet..."
 msgstr "아직 표시할 항목이 없음..."
 
@@ -85854,6 +85793,10 @@ msgid "Edge To Edge"
 msgstr "에지에서 에지"
 
 
+msgid "Texture Opacity"
+msgstr "텍스처 불투명도"
+
+
 msgid "Mask Texture Opacity"
 msgstr "마스크 텍스처 불투명도"
 
@@ -86616,10 +86559,6 @@ msgstr "방사 조도 크기"
 
 msgid "Max Child Particles"
 msgstr "최대 자식 입자"
-
-
-msgid "High-resolution Smoke"
-msgstr "고해상도 스모크"
 
 
 msgid "Render Engine"
@@ -91588,10 +91527,6 @@ msgstr "디졸브 지역의 경계를 찾을 수 없음"
 
 msgid "Could not create merged face"
 msgstr "병합된 페이스를 만들 수 없음"
-
-
-msgid "Select two edge loops"
-msgstr "두 개의 에지 루프를 선택"
 
 
 msgid "Closed loops unsupported"

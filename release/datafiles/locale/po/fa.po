@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -722,10 +722,6 @@ msgstr "AA ﯼﺎﻫ‌ﻪﻧﻮﻤﻧ"
 
 msgid "Material"
 msgstr "ﻩﺩﺎﻣ"
-
-
-msgid "Both"
-msgstr "ﻭﺩ ﺮﻫ"
 
 
 msgid "Background Image"
@@ -3350,6 +3346,10 @@ msgid "Origin offset distance"
 msgstr "DOF ﻪﻠﺻﺎﻓ"
 
 
+msgid "Both"
+msgstr "ﻭﺩ ﺮﻫ"
+
+
 msgid "Verts"
 msgstr "ﺱﻮﺋﺭ"
 
@@ -4481,6 +4481,10 @@ msgid "Text"
 msgstr "ﻦﺘﻣ"
 
 
+msgid "System"
+msgstr "ﻢﺘﺴﯿﺳ"
+
+
 msgid "File"
 msgstr "ﻞﯾﺎﻓ"
 
@@ -5151,10 +5155,6 @@ msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 msgid "Object to transform from"
 msgstr "ءﺎﯿﺷﺍ ﯼﺎﻫ‌ﺖﯾﺩﻭﺪﺤﻣ"
-
-
-msgid "To"
-msgstr "ﻻ﻿ﺎﺑ"
 
 
 msgid "Object to transform to"
@@ -6708,11 +6708,6 @@ msgstr "ﻪﺒﻟ ﺏﺎﺨﺘﻧﺍ ﺖﻟﺎﺣ:"
 msgctxt "Operator"
 msgid "Show All Layers"
 msgstr "1 ﻪﺘﺳﺩ ﻉﻮﻧ"
-
-
-msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "DOF ﻪﻠﺻﺎﻓ"
 
 
 msgctxt "Operator"
@@ -8643,11 +8638,6 @@ msgstr "ﺪﻟﺍﻭ ﺱﻮﺋﺭ"
 
 
 msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
-
-
-msgctxt "Operator"
 msgid "Extrude Only Vertices and Move"
 msgstr "ﺪﻟﺍﻭ ﺱﻮﺋﺭ"
 
@@ -10087,16 +10077,6 @@ msgstr "ﻥﺩﺮﮐ‌ﮏﻨﯿﻟ ﯼﺍﺮﺑ ﻩﺩﺎﻣ ﺶﻨﯾﺰﮔ"
 msgctxt "Operator"
 msgid "Outliner Object Operation"
 msgstr "ﻂﺧ ﺮﻫ ﺭﺩ ﯽﺷ ﮏﯾ"
-
-
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "ﻊﺒﻨﻣ"
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "ﻊﺒﻨﻣ"
 
 
 msgctxt "Operator"
@@ -11852,11 +11832,6 @@ msgid "Operator Cheat Sheet"
 msgstr "ﺮﺑﺭﺎﮐ ﺐﻠﻘﺗ ﻪﮔﺮﺑ"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "ﻥﺪﻧﺍﺩﺮﮔﺯﺎﺑ"
-
-
 msgid "Operator"
 msgstr "ﻞﻣﺎﻋ"
 
@@ -12090,10 +12065,6 @@ msgstr "ﯽﻨﺘﻣ ﯼﺎﻫ‌ﻪﺒﻌﺟ"
 
 msgid "Bookmarks"
 msgstr "ﺎﻫ‌ﻪﻧﺎﺸﻧ"
-
-
-msgid "System"
-msgstr "ﻢﺘﺴﯿﺳ"
 
 
 msgid "Fluid Presets"
@@ -13257,6 +13228,10 @@ msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﻞﻔﻗ"
 msgctxt "Operator"
 msgid "Edit"
 msgstr "ﺶﯾﺍﺮﯾﻭ"
+
+
+msgid "To"
+msgstr "ﻻ﻿ﺎﺑ"
 
 
 msgctxt "Operator"

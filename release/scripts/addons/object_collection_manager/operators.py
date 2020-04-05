@@ -461,9 +461,6 @@ class CMUnExcludeAllOperator(Operator):
                     copy_buffer["values"].append(laycol["ptr"].exclude)
 
             else:
-                if len(copy_buffer["values"]) != len(layer_collections):
-                    return {'CANCELLED'}
-
                 # paste
                 for x, laycol in enumerate(layer_collections.values()):
                     laycol["ptr"].exclude = copy_buffer["values"][x]
@@ -482,9 +479,6 @@ class CMUnExcludeAllOperator(Operator):
                     swap_buffer["A"]["values"].append(laycol["ptr"].exclude)
 
             else:
-                if len(swap_buffer["A"]["values"]) != len(layer_collections):
-                    return {'CANCELLED'}
-
                 # get B
                 swap_buffer["B"]["RTO"] = "exclude"
                 for laycol in layer_collections.values():
@@ -793,9 +787,6 @@ class CMUnRestrictSelectAllOperator(Operator):
                     copy_buffer["values"].append(laycol["ptr"].collection.hide_select)
 
             else:
-                if len(copy_buffer["values"]) != len(layer_collections):
-                    return {'CANCELLED'}
-
                 # paste
                 for x, laycol in enumerate(layer_collections.values()):
                     laycol["ptr"].collection.hide_select = copy_buffer["values"][x]
@@ -814,9 +805,6 @@ class CMUnRestrictSelectAllOperator(Operator):
                     swap_buffer["A"]["values"].append(laycol["ptr"].collection.hide_select)
 
             else:
-                if len(swap_buffer["A"]["values"]) != len(layer_collections):
-                    return {'CANCELLED'}
-
                 # get B
                 swap_buffer["B"]["RTO"] = "collection.hide_select"
                 for laycol in layer_collections.values():
@@ -1121,9 +1109,6 @@ class CMUnHideAllOperator(Operator):
                     copy_buffer["values"].append(laycol["ptr"].hide_viewport)
 
             else:
-                if len(copy_buffer["values"]) != len(layer_collections):
-                    return {'CANCELLED'}
-
                 # paste
                 for x, laycol in enumerate(layer_collections.values()):
                     laycol["ptr"].hide_viewport = copy_buffer["values"][x]
@@ -1142,9 +1127,6 @@ class CMUnHideAllOperator(Operator):
                     swap_buffer["A"]["values"].append(laycol["ptr"].hide_viewport)
 
             else:
-                if len(swap_buffer["A"]["values"]) != len(layer_collections):
-                    return {'CANCELLED'}
-
                 # get B
                 swap_buffer["B"]["RTO"] = "hide_viewport"
                 for laycol in layer_collections.values():
@@ -1447,9 +1429,6 @@ class CMUnDisableViewportAllOperator(Operator):
                     copy_buffer["values"].append(laycol["ptr"].collection.hide_viewport)
 
             else:
-                if len(copy_buffer["values"]) != len(layer_collections):
-                    return {'CANCELLED'}
-
                 # paste
                 for x, laycol in enumerate(layer_collections.values()):
                     laycol["ptr"].collection.hide_viewport = copy_buffer["values"][x]
@@ -1468,9 +1447,6 @@ class CMUnDisableViewportAllOperator(Operator):
                     swap_buffer["A"]["values"].append(laycol["ptr"].collection.hide_viewport)
 
             else:
-                if len(swap_buffer["A"]["values"]) != len(layer_collections):
-                    return {'CANCELLED'}
-
                 # get B
                 swap_buffer["B"]["RTO"] = "collection.hide_viewport"
                 for laycol in layer_collections.values():
@@ -1776,9 +1752,6 @@ class CMUnDisableRenderAllOperator(Operator):
                     copy_buffer["values"].append(laycol["ptr"].collection.hide_render)
 
             else:
-                if len(copy_buffer["values"]) != len(layer_collections):
-                    return {'CANCELLED'}
-
                 # paste
                 for x, laycol in enumerate(layer_collections.values()):
                     laycol["ptr"].collection.hide_render = copy_buffer["values"][x]
@@ -1797,9 +1770,6 @@ class CMUnDisableRenderAllOperator(Operator):
                     swap_buffer["A"]["values"].append(laycol["ptr"].collection.hide_render)
 
             else:
-                if len(swap_buffer["A"]["values"]) != len(layer_collections):
-                    return {'CANCELLED'}
-
                 # get B
                 swap_buffer["B"]["RTO"] = "collection.hide_render"
                 for laycol in layer_collections.values():
@@ -1905,8 +1875,8 @@ class CMRemoveCollectionOperator(Operator):
 
 
         # update qcd
-        if self.collection_name in qcd_slots:
-            qcd_slots.del_slot(self.collection_name)
+        if qcd_slots.contains(name=self.collection_name):
+            qcd_slots.del_slot(name=self.collection_name)
 
         if self.collection_name in qcd_slots.overrides:
             del qcd_slots.overrides[self.collection_name]

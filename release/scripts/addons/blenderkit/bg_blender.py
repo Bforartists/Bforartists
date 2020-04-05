@@ -97,7 +97,7 @@ def progress(text, n=None):
     sys.stdout.flush()
 
 
-@bpy.app.handlers.persistent
+# @bpy.app.handlers.persistent
 def bg_update():
     '''monitoring of background process'''
     text = ''
@@ -232,7 +232,7 @@ def add_bg_process(location=None, name=None, eval_path_computing='', eval_path_s
 
 def register():
     bpy.utils.register_class(KillBgProcess)
-    bpy.app.timers.register(bg_update, persistent=True)
+    bpy.app.timers.register(bg_update)
 
 
 def unregister():

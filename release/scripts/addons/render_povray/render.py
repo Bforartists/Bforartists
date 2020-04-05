@@ -660,15 +660,38 @@ def write_pov(filename, scene=None, info_callback=None):
             tabWrite("}\n")
             tabWrite("location <0,0,.01>")
             tabWrite("direction <0,0,-1>")
-        # Using standard camera otherwise
+
         else:
-            tabWrite("location  <0, 0, 0>\n")
-            tabWrite("look_at  <0, 0, -1>\n")
-            tabWrite("right <%s, 0, 0>\n" % -Qsize)
-            tabWrite("up <0, 1, 0>\n")
-            tabWrite(
-                "angle  %f\n" % (360.0 * atan(16.0 / camera.data.lens) / pi)
-            )
+            if camera.data.type == 'ORTHO':
+                SensorHeightRatio = render.resolution_x * camera.data.ortho_scale / render.resolution_y
+                tabWrite("orthographic\n")
+                # Blender angle is radian so should be converted to degrees:
+                # % (camera.data.angle * (180.0 / pi) )
+                # but actually argument is not compulsory after angle in pov ortho mode
+                tabWrite("angle\n")
+                tabWrite("right <%6f, 0, 0>\n" % -camera.data.ortho_scale)
+                tabWrite("location  <0, 0, 0>\n")
+                tabWrite("look_at  <0, 0, -1>\n")
+                tabWrite("up <0, %6f, 0>\n" % (camera.data.ortho_scale / Qsize))
+
+            elif camera.data.type == 'PANO':
+                tabWrite("panoramic\n")
+                tabWrite("location  <0, 0, 0>\n")
+                tabWrite("look_at  <0, 0, -1>\n")
+                tabWrite("right <%s, 0, 0>\n" % -Qsize)
+                tabWrite("up <0, 1, 0>\n")
+                tabWrite(
+                    "angle  %f\n" % (360.0 * atan(16.0 / camera.data.lens) / pi)
+                )
+            elif camera.data.type == 'PERSP':
+                # Standard camera otherwise would be default in pov
+                tabWrite("location  <0, 0, 0>\n")
+                tabWrite("look_at  <0, 0, -1>\n")
+                tabWrite("right <%s, 0, 0>\n" % -Qsize)
+                tabWrite("up <0, 1, 0>\n")
+                tabWrite(
+                    "angle  %f\n" % (360.0 * atan(16.0 / camera.data.lens) / pi)
+                )
 
             tabWrite(
                 "rotate  <%.6f, %.6f, %.6f>\n"

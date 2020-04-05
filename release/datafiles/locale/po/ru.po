@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -3492,10 +3492,6 @@ msgstr "Цвета вершин влияют только на штрихи"
 
 msgid "Vertex Color affects to Fill only"
 msgstr "Цвета вершин влияют только на заливку"
-
-
-msgid "Both"
-msgstr "Оба(е)"
 
 
 msgid "Vertex Color affects to Stroke and Fill"
@@ -15601,6 +15597,14 @@ msgid "Offset of the pose origin in relation to the brush radius"
 msgstr "Величина смещения точки начала кости в соотношении с размером кисти"
 
 
+msgid "Topology"
+msgstr "Топология"
+
+
+msgid "Face Sets"
+msgstr "Наборы граней"
+
+
 msgid "Smooth Iterations"
 msgstr "Итераций сглаживания"
 
@@ -15715,6 +15719,10 @@ msgstr "Порог, ниже которого усиление резкости 
 
 msgid "Radius of the brush in pixels"
 msgstr "Радиус кисти в пикселях"
+
+
+msgid "Laplacian"
+msgstr "Оператор Лапласа"
 
 
 msgid "Smooth Stroke Factor"
@@ -18321,10 +18329,6 @@ msgid "Compositing node viewer"
 msgstr "Нод постобработки для предпросмотра"
 
 
-msgid "Tiled"
-msgstr "Черепица"
-
-
 msgid "Stereo 3D Format"
 msgstr "Формат стерео 3D"
 
@@ -20253,6 +20257,10 @@ msgstr "Сторона изображения-пустышки"
 
 msgid "Show front/back side"
 msgstr "Показать переднюю/заднюю стороны"
+
+
+msgid "Both"
+msgstr "Оба(е)"
 
 
 msgid "Maps of faces of the object"
@@ -27480,10 +27488,6 @@ msgid "Shift Texture in 2d Space"
 msgstr "Сдвинуть текстуру в 2D-пространстве"
 
 
-msgid "Texture Opacity"
-msgstr "Прозрачность текстуры"
-
-
 msgid "Scale Factor for Texture"
 msgstr "Коэффициент масштабирования для текстуры"
 
@@ -27843,6 +27847,10 @@ msgid "Support Blender"
 msgstr "Поддержать Blender"
 
 
+msgid "System"
+msgstr "Система"
+
+
 msgctxt "Operator"
 msgid "TOPBAR_MT_edit_curve_add"
 msgstr "TOPBAR_MT_edit_curve_add"
@@ -28023,10 +28031,6 @@ msgstr "Спецсимволы"
 
 msgid "Text Context Menu"
 msgstr "Контекстное меню текстовых объектов"
-
-
-msgid "Face Sets"
-msgstr "Наборы граней"
 
 
 msgid "Generate Weights"
@@ -28921,16 +28925,16 @@ msgid "Explode"
 msgstr "Взрыв"
 
 
+msgid "Fluid Simulation"
+msgstr "Симуляция жидкости"
+
+
 msgid "Ocean"
 msgstr "Океан"
 
 
 msgid "Particle Instance"
 msgstr "Экземпляр частицы"
-
-
-msgid "Fluid Simulation"
-msgstr "Симуляция жидкости"
 
 
 msgid "Soft Body"
@@ -29675,10 +29679,6 @@ msgstr "Сопоставление рёбер"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Способ сопоставления рёбер источника и рёбер получателя"
-
-
-msgid "Topology"
-msgstr "Топология"
 
 
 msgid "Copy from identical topology meshes"
@@ -32129,16 +32129,8 @@ msgid "Radius to apply"
 msgstr "Радиус применения"
 
 
-msgid "From"
-msgstr "От"
-
-
 msgid "Object to transform from"
 msgstr "Объект, от которого происходит трансформация"
-
-
-msgid "To"
-msgstr "Кому"
 
 
 msgid "Object to transform to"
@@ -38921,19 +38913,6 @@ msgstr "Включить все слои или только первые 16 (в
 
 
 msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "Объединить кости"
-
-
-msgid "Merge continuous chains of selected bones"
-msgstr "Объединить выделенные кости, связанные друг с другом"
-
-
-msgid "Within Chains"
-msgstr "Внутри цепи"
-
-
-msgctxt "Operator"
 msgid "Clear Parent"
 msgstr "Очистить родителя"
 
@@ -45493,6 +45472,10 @@ msgid "Image data-block name"
 msgstr "Название датаблока изображения"
 
 
+msgid "Tiled"
+msgstr "Черепица"
+
+
 msgid "Create an image with left and right views"
 msgstr "Создать изображение с левым и правым видами"
 
@@ -47719,11 +47702,6 @@ msgstr "Экструдировать регион и сжать/расширит
 
 msgid "Extrude region together along local normals"
 msgstr "Экструдировать область целиком, но переместить вдоль отдельных нормалей"
-
-
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "Экструдировать меш с повтором"
 
 
 msgid "Extrude selected vertices, edges or faces repeatedly"
@@ -54153,18 +54131,8 @@ msgid "Clear all orphaned data-blocks without any users from the file"
 msgstr "Удалить все неиспользуемые датаблоки из файла"
 
 
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "Отпустите для очистки родителя"
-
-
 msgid "Drag to clear parent in Outliner"
 msgstr "Перетащить для очистки родителя в структуре проекта"
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "Бросить для установки родителя"
 
 
 msgid "Drag to parent in Outliner"
@@ -62847,11 +62815,6 @@ msgid "List all the Operators in a text-block, useful for scripting"
 msgstr "Создать список всех операторов в текстовом блоке; полезно для написания скрипта"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "Сбросить настройки"
-
-
 msgid "Set the active operator to its default values"
 msgstr "Сбросить настройки активного оператора на значения по умолчанию"
 
@@ -63383,6 +63346,10 @@ msgstr "Меню поиска"
 
 msgid "Pop-up a search menu over all available operators in current context"
 msgstr "Показать всплывающее меню со всеми доступными операторами текущего контекста"
+
+
+msgid "Menu"
+msgstr "Меню"
 
 
 msgctxt "Operator"
@@ -64580,10 +64547,6 @@ msgid "Recent"
 msgstr "Недавнее"
 
 
-msgid "System"
-msgstr "Система"
-
-
 msgid "Attributes"
 msgstr "Атрибуты"
 
@@ -65337,10 +65300,6 @@ msgstr "Стили"
 
 msgid "List Item"
 msgstr "Элемент списка"
-
-
-msgid "Menu"
-msgstr "Меню"
 
 
 msgid "Menu Back"
@@ -71768,14 +71727,6 @@ msgstr "Использовать упрощение"
 
 msgid "Enable simplification of scene for quicker preview renders"
 msgstr "Упрощать сцену для ускорения предварительных рендеров"
-
-
-msgid "Use High-resolution Smoke"
-msgstr "Использовать дым высокого разрешения"
-
-
-msgid "Display high-resolution smoke in the viewport"
-msgstr "Отображать дым в высоком разрешении во вьюпорте"
 
 
 msgid "Render Single Layer"
@@ -80056,10 +80007,6 @@ msgid "Algorithm used for UV relaxation"
 msgstr "Алгоритм, используемый для UV-релаксации"
 
 
-msgid "Laplacian"
-msgstr "Оператор Лапласа"
-
-
 msgid "Use Laplacian method for relaxation"
 msgstr "Метод Лапласа для релаксации"
 
@@ -82896,6 +82843,10 @@ msgid "After"
 msgstr "После"
 
 
+msgid "To"
+msgstr "Кому"
+
+
 msgid "Nothing to show yet..."
 msgstr "Пока нечего показать…"
 
@@ -84399,6 +84350,10 @@ msgid "Edge To Edge"
 msgstr "Ребро к ребру"
 
 
+msgid "Texture Opacity"
+msgstr "Прозрачность текстуры"
+
+
 msgid "Thickness Profile"
 msgstr "Профиль толщины"
 
@@ -84954,10 +84909,6 @@ msgstr "Размер семплов освещённости"
 
 msgid "Max Child Particles"
 msgstr "Максимум дочерних частиц"
-
-
-msgid "High-resolution Smoke"
-msgstr "Дым высокого разрешения"
 
 
 msgid "Render Engine"
@@ -89856,10 +89807,6 @@ msgstr "Не удалось найти границу участка раств�
 
 msgid "Could not create merged face"
 msgstr "Не удалось создать объединённую грань"
-
-
-msgid "Select two edge loops"
-msgstr "Выделите две петли рёбер"
 
 
 msgid "Closed loops unsupported"

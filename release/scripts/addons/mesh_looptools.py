@@ -23,7 +23,7 @@
 bl_info = {
     "name": "LoopTools",
     "author": "Bart Crouch, Vladimir Spivak (cwolf3d)",
-    "version": (4, 7, 2),
+    "version": (4, 7, 3),
     "blender": (2, 80, 0),
     "location": "View3D > Sidebar > Edit Tab / Edit Mode Context Menu",
     "warning": "",
@@ -443,9 +443,9 @@ def face_edgekeys(face):
 
 
 # calculate input loops
-def get_connected_input(object, bm, input):
+def get_connected_input(object, bm, not_use_mirror, input):
     # get mesh with modifiers applied
-    derived, bm_mod = get_derived_bmesh(object, bm)
+    derived, bm_mod = get_derived_bmesh(object, bm, not_use_mirror)
 
     # calculate selected loops
     edge_keys = [edgekey(edge) for edge in bm_mod.edges if edge.select and not edge.hide]
@@ -532,7 +532,7 @@ def get_connected_selections(edge_keys):
 
 
 # get the derived mesh data, if there is a mirror modifier
-def get_derived_bmesh(object, bm):
+def get_derived_bmesh(object, bm, not_use_mirror):
     # check for mirror modifiers
     if 'MIRROR' in [mod.type for mod in object.modifiers if mod.show_viewport]:
         derived = True
@@ -545,7 +545,8 @@ def get_derived_bmesh(object, bm):
             #leave the merge points untouched
             if mod.type == 'MIRROR':
                 merge.append(mod.use_mirror_merge)
-                mod.use_mirror_merge = False
+                if not_use_mirror:
+                    mod.use_mirror_merge = False
         # get derived mesh
         bm_mod = bmesh.new()
         depsgraph = bpy.context.evaluated_depsgraph_get()
@@ -2007,7 +2008,7 @@ def circle_flatten_singles(bm_mod, com, p, q, normal, single_loop):
 # calculate input loops
 def circle_get_input(object, bm):
     # get mesh with modifiers applied
-    derived, bm_mod = get_derived_bmesh(object, bm)
+    derived, bm_mod = get_derived_bmesh(object, bm, False)
 
     # create list of edge-keys based on selection state
     faces = False
@@ -2352,7 +2353,7 @@ def curve_cut_boundaries(bm_mod, loops):
 # calculate input loops
 def curve_get_input(object, bm, boundaries):
     # get mesh with modifiers applied
-    derived, bm_mod = get_derived_bmesh(object, bm)
+    derived, bm_mod = get_derived_bmesh(object, bm, False)
 
     # vertices that still need a loop to run through it
     verts_unsorted = [
@@ -3524,7 +3525,7 @@ class Circle(Operator):
         cached, single_loops, loops, derived, mapping = cache_read("Circle",
             object, bm, False, False)
         if cached:
-            derived, bm_mod = get_derived_bmesh(object, bm)
+            derived, bm_mod = get_derived_bmesh(object, bm, False)
         else:
             # find loops
             derived, bm_mod, single_vertices, single_loops, loops = \
@@ -3688,7 +3689,7 @@ class Curve(Operator):
         cached, single_loops, loops, derived, mapping = cache_read("Curve",
             object, bm, False, self.boundaries)
         if cached:
-            derived, bm_mod = get_derived_bmesh(object, bm)
+            derived, bm_mod = get_derived_bmesh(object, bm, False)
         else:
             # find loops
             derived, bm_mod, loops = curve_get_input(object, bm, self.boundaries)
@@ -4069,12 +4070,12 @@ class GStretch(Operator):
                 bm_mod.faces.ensure_lookup_table()
                 strokes = gstretch_get_fake_strokes(object, bm_mod, loops)
             if not straightening:
-                derived, bm_mod = get_derived_bmesh(object, bm)
+                derived, bm_mod = get_derived_bmesh(object, bm, False)
         else:
             # get loops and strokes
             if get_strokes(self, context):
                 # find loops
-                derived, bm_mod, loops = get_connected_input(object, bm, input='selected')
+                derived, bm_mod, loops = get_connected_input(object, bm, False, input='selected')
                 mapping = get_mapping(derived, bm, bm_mod, False, False, loops)
                 loops = check_loops(loops, mapping, bm_mod)
                 # get strokes
@@ -4220,10 +4221,10 @@ class Relax(Operator):
         cached, single_loops, loops, derived, mapping = cache_read("Relax",
             object, bm, self.input, False)
         if cached:
-            derived, bm_mod = get_derived_bmesh(object, bm)
+            derived, bm_mod = get_derived_bmesh(object, bm, False)
         else:
             # find loops
-            derived, bm_mod, loops = get_connected_input(object, bm, self.input)
+            derived, bm_mod, loops = get_connected_input(object, bm, False, self.input)
             mapping = get_mapping(derived, bm, bm_mod, False, False, loops)
             loops = check_loops(loops, mapping, bm_mod)
         knots, points = relax_calculate_knots(loops)
@@ -4342,10 +4343,10 @@ class Space(Operator):
         cached, single_loops, loops, derived, mapping = cache_read("Space",
             object, bm, self.input, False)
         if cached:
-            derived, bm_mod = get_derived_bmesh(object, bm)
+            derived, bm_mod = get_derived_bmesh(object, bm, True)
         else:
             # find loops
-            derived, bm_mod, loops = get_connected_input(object, bm, self.input)
+            derived, bm_mod, loops = get_connected_input(object, bm, True, self.input)
             mapping = get_mapping(derived, bm, bm_mod, False, False, loops)
             loops = check_loops(loops, mapping, bm_mod)
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -1805,11 +1805,6 @@ msgstr "Namen Omdraaien"
 msgctxt "Operator"
 msgid "Show All Layers"
 msgstr "Toon Alle Lagen"
-
-
-msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "Botten Samenvoegen"
 
 
 msgctxt "Operator"

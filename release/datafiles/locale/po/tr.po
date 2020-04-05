@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -868,10 +868,6 @@ msgstr "Parçacık Hareketi"
 
 msgid "Material"
 msgstr "Malzeme"
-
-
-msgid "Both"
-msgstr "İkisi de"
 
 
 msgid "Background Image"
@@ -5232,6 +5228,10 @@ msgid "Origin offset distance"
 msgstr "Izgara çizgileri arasındaki mesafeyi ayarlayın"
 
 
+msgid "Both"
+msgstr "İkisi de"
+
+
 msgid "Verts"
 msgstr "Noktalar"
 
@@ -7019,6 +7019,10 @@ msgid "Text"
 msgstr "Metin"
 
 
+msgid "System"
+msgstr "Sistem"
+
+
 msgid "File"
 msgstr "Dosya"
 
@@ -7339,12 +7343,12 @@ msgid "Dynamic Paint"
 msgstr "Çoklu-Boyama"
 
 
-msgid "Particle Instance"
-msgstr "Parçacık Modu"
-
-
 msgid "Fluid Simulation"
 msgstr "Akışkan Simülasyonu"
+
+
+msgid "Particle Instance"
+msgstr "Parçacık Modu"
 
 
 msgid "Armature deformation modifier"
@@ -8215,16 +8219,8 @@ msgid "Radius to apply"
 msgstr "Ölçeyi/Çevrimi Uygula"
 
 
-msgid "From"
-msgstr "Buradan:"
-
-
 msgid "Object to transform from"
 msgstr "Dönüşüm Konumlarını Hizala"
-
-
-msgid "To"
-msgstr "Kenardan Kenara"
 
 
 msgid "Object to transform to"
@@ -13451,11 +13447,6 @@ msgid "Extrude Region"
 msgstr "Ekstrüzyon Boyutu"
 
 
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "Mesh Gölgesini Çiz"
-
-
 msgid "Extrude Only Vertices"
 msgstr "Noktaları Göster/Gizle"
 
@@ -15639,11 +15630,6 @@ msgstr "Tüm Nesne Merkezleri"
 
 msgid "Object Operation"
 msgstr "Boolean İşlemi..."
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "Ayarlanan boyutun %50 si ölçeğinde işle"
 
 
 msgctxt "Operator"
@@ -18442,11 +18428,6 @@ msgid "Trusted Source"
 msgstr "Arkaplan Kaynağı"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "Kullanıcı ayarlarını (varsayılanı) kaydet"
-
-
 msgid "Set the active operator to its default values"
 msgstr "Kullanıcı ayarlarını (varsayılanı) kaydet"
 
@@ -18778,10 +18759,6 @@ msgstr "Metni Düzenle:"
 
 msgid "Bookmarks"
 msgstr "Yer imleri"
-
-
-msgid "System"
-msgstr "Sistem"
 
 
 msgid "Fluid Presets"
@@ -22973,6 +22950,10 @@ msgstr "Anahtarkare Numaralarını Göster"
 
 msgid "After"
 msgstr "Sonra"
+
+
+msgid "To"
+msgstr "Kenardan Kenara"
 
 
 msgid "+ Non-Grouped Keyframes"
