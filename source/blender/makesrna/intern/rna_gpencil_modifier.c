@@ -144,7 +144,7 @@ static const EnumPropertyItem modifier_modify_opacity_items[] = {
     {GP_MODIFY_COLOR_BOTH, "BOTH", 0, "Stroke and Fill", "Modify fill and stroke colors"},
     {GP_MODIFY_COLOR_STROKE, "STROKE", 0, "Stroke", "Modify stroke color only"},
     {GP_MODIFY_COLOR_FILL, "FILL", 0, "Fill", "Modify fill color only"},
-    {GP_MODIFY_COLOR_HARDENESS, "HARDENESS", 0, "Hardeness", "Modify stroke hardeness"},
+    {GP_MODIFY_COLOR_HARDNESS, "HARDNESS", 0, "Hardness", "Modify stroke hardness"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -1360,12 +1360,12 @@ static void rna_def_modifier_gpencilopacity(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Opacity Factor", "Factor of Opacity");
   RNA_def_property_update(prop, 0, "rna_GpencilModifier_update");
 
-  prop = RNA_def_property(srna, "hardeness", PROP_FLOAT, PROP_NONE);
+  prop = RNA_def_property(srna, "hardness", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, NULL, "hardeness");
   RNA_def_property_range(prop, 0.0, FLT_MAX);
   RNA_def_property_ui_range(prop, 0.0, FLT_MAX, 0.1, 2);
   RNA_def_property_float_default(prop, 1.0f);
-  RNA_def_property_ui_text(prop, "Hardeness", "Factor of stroke hardeness");
+  RNA_def_property_ui_text(prop, "Hardness", "Factor of stroke hardness");
   RNA_def_property_update(prop, 0, "rna_GpencilModifier_update");
 
   prop = RNA_def_property(srna, "pass_index", PROP_INT, PROP_NONE);

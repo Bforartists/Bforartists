@@ -807,6 +807,9 @@ bool UI_context_copy_to_selected_list(bContext *C,
   else if (RNA_struct_is_a(ptr->type, &RNA_FCurve)) {
     *r_lb = CTX_data_collection_get(C, "selected_editable_fcurves");
   }
+  else if (RNA_struct_is_a(ptr->type, &RNA_NlaStrip)) {
+    *r_lb = CTX_data_collection_get(C, "selected_nla_strips");
+  }
   else if (RNA_struct_is_a(ptr->type, &RNA_Constraint) &&
            (path_from_bone = RNA_path_resolve_from_type_to_property(ptr, prop, &RNA_PoseBone)) !=
                NULL) {
@@ -1305,9 +1308,9 @@ static int editsource_text_edit(bContext *C,
   else {
     /* naughty!, find text area to set, not good behavior
      * but since this is a dev tool lets allow it - campbell */
-    ScrArea *sa = BKE_screen_find_big_area(CTX_wm_screen(C), SPACE_TEXT, 0);
-    if (sa) {
-      SpaceText *st = sa->spacedata.first;
+    ScrArea *area = BKE_screen_find_big_area(CTX_wm_screen(C), SPACE_TEXT, 0);
+    if (area) {
+      SpaceText *st = area->spacedata.first;
       st->text = text;
     }
     else {
@@ -1617,13 +1620,14 @@ static void UI_OT_reloadtranslation(wmOperatorType *ot)
 
 static int ui_button_press_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
-  bScreen *sc = CTX_wm_screen(C);
+  bScreen *screen = CTX_wm_screen(C);
   const bool skip_depressed = RNA_boolean_get(op->ptr, "skip_depressed");
-  ARegion *ar_prev = CTX_wm_region(C);
-  ARegion *region = sc ? BKE_screen_find_region_xy(sc, RGN_TYPE_ANY, event->x, event->y) : NULL;
+  ARegion *region_prev = CTX_wm_region(C);
+  ARegion *region = screen ? BKE_screen_find_region_xy(screen, RGN_TYPE_ANY, event->x, event->y) :
+                             NULL;
 
   if (region == NULL) {
-    region = ar_prev;
+    region = region_prev;
   }
 
   if (region == NULL) {
@@ -1632,7 +1636,7 @@ static int ui_button_press_invoke(bContext *C, wmOperator *op, const wmEvent *ev
 
   CTX_wm_region_set(C, region);
   uiBut *but = UI_context_active_but_get(C);
-  CTX_wm_region_set(C, ar_prev);
+  CTX_wm_region_set(C, region_prev);
 
   if (but == NULL) {
     return OPERATOR_PASS_THROUGH;

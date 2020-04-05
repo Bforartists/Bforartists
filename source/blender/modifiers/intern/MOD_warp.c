@@ -30,9 +30,9 @@
 #include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
 
+#include "BKE_action.h" /* BKE_pose_channel_find_name */
 #include "BKE_colortools.h"
 #include "BKE_deform.h"
-#include "BKE_action.h" /* BKE_pose_channel_find_name */
 #include "BKE_editmesh.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
@@ -86,11 +86,16 @@ static void requiredDataMask(Object *UNUSED(ob),
   }
 }
 
-static void matrix_from_obj_pchan(float mat[4][4], float obinv[4][4], Object *ob, const char *bonename)
+static void matrix_from_obj_pchan(float mat[4][4],
+                                  const float obinv[4][4],
+                                  Object *ob,
+                                  const char *bonename)
 {
   bPoseChannel *pchan = BKE_pose_channel_find_name(ob->pose, bonename);
   if (pchan) {
-    mul_m4_m4m4(mat, obinv, pchan->pose_mat);
+    float mat_bone_world[4][4];
+    mul_m4_m4m4(mat_bone_world, ob->obmat, pchan->pose_mat);
+    mul_m4_m4m4(mat, obinv, mat_bone_world);
   }
   else {
     mul_m4_m4m4(mat, obinv, ob->obmat);
@@ -148,8 +153,8 @@ static void foreachTexLink(ModifierData *md, Object *ob, TexWalkFunc walk, void 
 }
 
 static void warp_deps_object_bone_new(struct DepsNodeHandle *node,
-                                         Object *object,
-                                         const char *bonename)
+                                      Object *object,
+                                      const char *bonename)
 {
   if (bonename[0] && object->type == OB_ARMATURE) {
     DEG_add_object_relation(node, object, DEG_OB_COMP_EVAL_POSE, "Warp Modifier");
