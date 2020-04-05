@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3467,10 +3467,6 @@ msgstr "自动创建的UV进行随机旋转"
 
 msgid "Mode Type"
 msgstr "模式类型"
-
-
-msgid "Both"
-msgstr "两者"
 
 
 msgid "Background Image"
@@ -12439,10 +12435,6 @@ msgid "Subframes"
 msgstr "子帧"
 
 
-msgid "Distance around mesh surface to consider as effector"
-msgstr "将网格表面周围视为效果器的距离"
-
-
 msgid "Is Planar"
 msgstr "是否平面"
 
@@ -14249,6 +14241,14 @@ msgid "Duplicate strokes like a mirror"
 msgstr "像一面镜子复制笔画"
 
 
+msgid "Multiple Strokes"
+msgstr "多重笔画"
+
+
+msgid "Produce multiple strokes along one stroke"
+msgstr "沿一个笔画生成多个笔画"
+
+
 msgid "Simplify stroke reducing number of points"
 msgstr "简化笔画减少点数"
 
@@ -14259,14 +14259,6 @@ msgstr "细分"
 
 msgid "Subdivide stroke adding more control points"
 msgstr "细分笔画添加更多控制点"
-
-
-msgid "Multiple Strokes"
-msgstr "多重笔画"
-
-
-msgid "Produce multiple strokes along one stroke"
-msgstr "沿一个笔画生成多个笔画"
 
 
 msgid "Deform stroke points using armature object"
@@ -15632,10 +15624,6 @@ msgid "Shape used in the brush to apply force to the cloth"
 msgstr "笔刷中用于对布料施加外力的形状"
 
 
-msgid "Cloth mass"
-msgstr "布料质量"
-
-
 msgid "Mass of each simulation particle"
 msgstr "每个模拟粒子的质量"
 
@@ -16044,6 +16032,14 @@ msgid "Offset of the pose origin in relation to the brush radius"
 msgstr "相对于画笔半径的姿势原点偏移"
 
 
+msgid "Topology"
+msgstr "拓扑"
+
+
+msgid "Face Sets"
+msgstr "面集合"
+
+
 msgid "Smooth Iterations"
 msgstr "平滑迭代"
 
@@ -16182,6 +16178,10 @@ msgstr "使用笔画期间预览游标中的刮削平面"
 
 msgid "Radius of the brush in pixels"
 msgstr "笔刷的半径像素值"
+
+
+msgid "Laplacian"
+msgstr "拉普拉斯"
 
 
 msgid "Smooth Stroke Factor"
@@ -18508,12 +18508,8 @@ msgid "Compositing node viewer"
 msgstr "合成节点预览器"
 
 
-msgid "Tiled"
-msgstr "平铺"
-
-
-msgid "Tiled image texture"
-msgstr "平铺图像纹理"
+msgid "UDIM Tiles"
+msgstr "UDIM分块"
 
 
 msgid "Stereo 3D Format"
@@ -20288,6 +20284,10 @@ msgstr "原点偏移"
 
 msgid "Origin offset distance"
 msgstr "原点偏移距离"
+
+
+msgid "Both"
+msgstr "两者"
 
 
 msgid "Settings for using the object as a field in physics simulation"
@@ -27105,10 +27105,6 @@ msgid "Shift Texture in 2d Space"
 msgstr "在2D空间中偏移纹理"
 
 
-msgid "Texture Opacity"
-msgstr "纹理不透明度"
-
-
 msgid "Scale Factor for Texture"
 msgstr "纹理缩放因子"
 
@@ -27464,6 +27460,10 @@ msgid "Support Blender"
 msgstr "支持Blender"
 
 
+msgid "System"
+msgstr "系统"
+
+
 msgctxt "Operator"
 msgid "TOPBAR_MT_edit_curve_add"
 msgstr "TOPBAR_MT_edit_curve_add"
@@ -27650,10 +27650,6 @@ msgid "Text Context Menu"
 msgstr "文本上下文菜单"
 
 
-msgid "Face Sets"
-msgstr "面集合"
-
-
 msgid "Generate Weights"
 msgstr "生成权重"
 
@@ -27704,6 +27700,10 @@ msgstr "关系"
 
 msgid "Rigid Body"
 msgstr "刚体"
+
+
+msgid "Vertex Group Locks"
+msgstr "顶点组锁"
 
 
 msgid "Particle Context Menu"
@@ -27768,10 +27768,6 @@ msgstr "视图框"
 
 msgid "Viewpoint"
 msgstr "视图"
-
-
-msgid "Vertex Group Locks"
-msgstr "顶点组锁"
 
 
 msgid "Operator Presets"
@@ -28410,10 +28406,6 @@ msgid "UV Warp"
 msgstr "UV 偏移"
 
 
-msgid "Transform the UV map using the the difference between two objects"
-msgstr "使用两个物体之间的差异变换UV 贴图"
-
-
 msgid "Vertex Weight Edit"
 msgstr "顶点权重编辑"
 
@@ -28670,6 +28662,10 @@ msgid "Break apart the mesh faces and let them follow particles"
 msgstr "分解网格面，使其跟随粒子"
 
 
+msgid "Fluid Simulation"
+msgstr "流体模拟"
+
+
 msgid "Ocean"
 msgstr "洋面"
 
@@ -28684,10 +28680,6 @@ msgstr "粒子实例"
 
 msgid "Spawn particles from the shape"
 msgstr "从形状生成粒子"
-
-
-msgid "Fluid Simulation"
-msgstr "流体模拟"
 
 
 msgid "Soft Body"
@@ -29444,10 +29436,6 @@ msgstr "边映射"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "映射源连线至目标的方法"
-
-
-msgid "Topology"
-msgstr "拓扑"
 
 
 msgid "Copy from identical topology meshes"
@@ -31750,16 +31738,8 @@ msgid "Radius to apply"
 msgstr "应用半径"
 
 
-msgid "From"
-msgstr "从"
-
-
 msgid "Object to transform from"
 msgstr "变换起始处的物体"
-
-
-msgid "To"
-msgstr "顶"
 
 
 msgid "Object to transform to"
@@ -38590,19 +38570,6 @@ msgstr "启用全部层或仅前16层(顶行)"
 
 
 msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "合并骨骼"
-
-
-msgid "Merge continuous chains of selected bones"
-msgstr "合并所选骨骼的连续链"
-
-
-msgid "Within Chains"
-msgstr "在骨骼链内"
-
-
-msgctxt "Operator"
 msgid "Clear Parent"
 msgstr "清空父级"
 
@@ -45255,6 +45222,10 @@ msgid "Image data-block name"
 msgstr "图像数据块名称"
 
 
+msgid "Tiled"
+msgstr "平铺"
+
+
 msgid "Create a tiled image"
 msgstr "创建平铺图像"
 
@@ -47404,11 +47375,6 @@ msgstr "挤出区域并沿法线方向缩放"
 
 msgid "Extrude region together along local normals"
 msgstr "沿着局部法线挤出整体区域"
-
-
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "重复挤出网格"
 
 
 msgid "Extrude selected vertices, edges or faces repeatedly"
@@ -53589,18 +53555,8 @@ msgid "Purge All"
 msgstr "全部清除"
 
 
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "释放以清空父级"
-
-
 msgid "Drag to clear parent in Outliner"
 msgstr "在大纲视图中拖拽, 以清除父级"
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "释放以设置父级"
 
 
 msgid "Drag to parent in Outliner"
@@ -62264,11 +62220,6 @@ msgid "List all the Operators in a text-block, useful for scripting"
 msgstr "在一个文本块列出所有操作, 写脚本时非常有用"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "恢复默认"
-
-
 msgid "Set the active operator to its default values"
 msgstr "将当前属性值恢复到默认值"
 
@@ -62800,6 +62751,10 @@ msgstr "搜索菜单"
 
 msgid "Pop-up a search menu over all available operators in current context"
 msgstr "在当前环境下, 在所有的有效操作项上弹出搜索菜单"
+
+
+msgid "Menu"
+msgstr "菜单"
 
 
 msgctxt "Operator"
@@ -64032,10 +63987,6 @@ msgid "Recent"
 msgstr "最近打开的文件"
 
 
-msgid "System"
-msgstr "系统"
-
-
 msgid "Attributes"
 msgstr "属性"
 
@@ -64205,10 +64156,6 @@ msgstr "纹理遮罩"
 
 msgid "UDIM Grid"
 msgstr "UDIM栅格"
-
-
-msgid "UDIM Tiles"
-msgstr "UDIM分块"
 
 
 msgid "2D Cursor"
@@ -64840,10 +64787,6 @@ msgstr "样式"
 
 msgid "List Item"
 msgstr "列表条目"
-
-
-msgid "Menu"
-msgstr "菜单"
 
 
 msgid "Menu Back"
@@ -71338,14 +71281,6 @@ msgstr "简化"
 
 msgid "Enable simplification of scene for quicker preview renders"
 msgstr "简化场景设置以便进行快速的预览渲染"
-
-
-msgid "Use High-resolution Smoke"
-msgstr "使用高精度烟雾"
-
-
-msgid "Display high-resolution smoke in the viewport"
-msgstr "在视口中显示高分辨率烟雾"
 
 
 msgid "Render Single Layer"
@@ -79750,10 +79685,6 @@ msgid "Algorithm used for UV relaxation"
 msgstr "UV 的松弛算法"
 
 
-msgid "Laplacian"
-msgstr "拉普拉斯"
-
-
 msgid "Use Laplacian method for relaxation"
 msgstr "为松弛操作使用拉普拉斯算法"
 
@@ -82709,6 +82640,10 @@ msgid "After"
 msgstr "后显帧数"
 
 
+msgid "To"
+msgstr "顶"
+
+
 msgid "Nothing to show yet..."
 msgstr "无可显示的内容..."
 
@@ -84249,6 +84184,10 @@ msgid "Edge To Edge"
 msgstr "边到边"
 
 
+msgid "Texture Opacity"
+msgstr "纹理不透明度"
+
+
 msgid "Mask Texture Opacity"
 msgstr "遮罩纹理不透明度"
 
@@ -85036,10 +84975,6 @@ msgstr "辐射尺寸"
 
 msgid "Max Child Particles"
 msgstr "最大子粒子"
-
-
-msgid "High-resolution Smoke"
-msgstr "高精度烟雾"
 
 
 msgid "Render Engine"
@@ -87869,6 +87804,36 @@ msgstr "添加新组"
 
 
 msgctxt "Operator"
+msgid "Unlock All"
+msgstr "全部解锁"
+
+
+msgctxt "Operator"
+msgid "Lock Selected"
+msgstr "锁定未选中"
+
+
+msgctxt "Operator"
+msgid "Unlock Selected"
+msgstr "解锁选中"
+
+
+msgctxt "Operator"
+msgid "Lock Only Selected"
+msgstr "仅锁定选中"
+
+
+msgctxt "Operator"
+msgid "Lock Only Unselected"
+msgstr "仅锁定未选中"
+
+
+msgctxt "Operator"
+msgid "Invert Locks"
+msgstr "反转锁定状态"
+
+
+msgctxt "Operator"
 msgid "Normalize All"
 msgstr "全部规格化"
 
@@ -88312,36 +88277,6 @@ msgstr "显示Gizmo"
 
 msgid "Toggle Overlays"
 msgstr "切换叠加层"
-
-
-msgctxt "Operator"
-msgid "Unlock All"
-msgstr "全部解锁"
-
-
-msgctxt "Operator"
-msgid "Unlock Selected"
-msgstr "解锁选中"
-
-
-msgctxt "Operator"
-msgid "Lock Selected"
-msgstr "锁定未选中"
-
-
-msgctxt "Operator"
-msgid "Lock Only Selected"
-msgstr "仅锁定选中"
-
-
-msgctxt "Operator"
-msgid "Lock Only Unselected"
-msgstr "仅锁定未选中"
-
-
-msgctxt "Operator"
-msgid "Invert Locks"
-msgstr "反转锁定状态"
 
 
 msgid "Local Camera"
@@ -90088,10 +90023,6 @@ msgstr "未能找到融并范围的边界"
 
 msgid "Could not create merged face"
 msgstr "无法创建合并面"
-
-
-msgid "Select two edge loops"
-msgstr "选择两个循环边"
 
 
 msgid "Closed loops unsupported"

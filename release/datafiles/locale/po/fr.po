@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3238,6 +3238,10 @@ msgid "Smear"
 msgstr "Enduire"
 
 
+msgid "Hardeness"
+msgstr "Dureté"
+
+
 msgid "Amount of gradient for Dot and Box strokes (set to 1 for full solid)"
 msgstr "Quantité de dégradé pour les traits pointillés et boîte (définir à 1 pour totalement solides)"
 
@@ -3464,10 +3468,6 @@ msgstr "Facteur d’aléatoire pour la rotation UV auto-générée"
 
 msgid "Mode Type"
 msgstr "Type de mode"
-
-
-msgid "Both"
-msgstr "Les deux"
 
 
 msgid "Background Image"
@@ -13542,6 +13542,10 @@ msgid "Duplicate strokes like a mirror"
 msgstr "Dupliquer les traits comme un miroir"
 
 
+msgid "Produce multiple strokes along one stroke"
+msgstr "Produire plusieurs traits le long d’un seul"
+
+
 msgid "Simplify stroke reducing number of points"
 msgstr "Simplifier les traits en réduisant le nombre de points"
 
@@ -13552,10 +13556,6 @@ msgstr "Subdiviser"
 
 msgid "Subdivide stroke adding more control points"
 msgstr "Subdiviser le trait en ajoutant des points de contrôle"
-
-
-msgid "Produce multiple strokes along one stroke"
-msgstr "Produire plusieurs traits le long d’un seul"
 
 
 msgid "Deform stroke points using armature object"
@@ -14945,6 +14945,10 @@ msgid "Clamp"
 msgstr "Tronquer"
 
 
+msgid "Hardness"
+msgstr "Dureté"
+
+
 msgid "Brush Height"
 msgstr "Hauteur de brosse"
 
@@ -15053,6 +15057,14 @@ msgid "Offset of the pose origin in relation to the brush radius"
 msgstr "Décalage de l’origine de la pose en relation au rayon de la brosse"
 
 
+msgid "Topology"
+msgstr "Topologie"
+
+
+msgid "Face Sets"
+msgstr "Ensembles de faces"
+
+
 msgid "Rake"
 msgstr "Ratisser"
 
@@ -15159,6 +15171,10 @@ msgstr "Limite en-dessous de laquelle aucun “durcissement” n’est effectué
 
 msgid "Radius of the brush in pixels"
 msgstr "Rayon de la brosse, en pixels"
+
+
+msgid "Laplacian"
+msgstr "Laplacien"
 
 
 msgid "Smooth Stroke Factor"
@@ -17749,10 +17765,6 @@ msgid "Compositing node viewer"
 msgstr "Nœuds de compositing visualisateur"
 
 
-msgid "Tiled"
-msgstr "En damier"
-
-
 msgid "Stereo 3D Format"
 msgstr "Format 3D stéréo"
 
@@ -19629,6 +19641,10 @@ msgstr "Côté de l’empty image"
 
 msgid "Show front/back side"
 msgstr "Afficher l’avant/l’arrière"
+
+
+msgid "Both"
+msgstr "Les deux"
 
 
 msgid "Maps of faces of the object"
@@ -26417,10 +26433,6 @@ msgid "Stroke Style"
 msgstr "Style de trait"
 
 
-msgid "Texture Opacity"
-msgstr "Opacité de texture"
-
-
 msgid "Material slot in an object"
 msgstr "Emplacement de matériau dans un objet"
 
@@ -26696,6 +26708,10 @@ msgid "Support Blender"
 msgstr "Supporter Blender"
 
 
+msgid "System"
+msgstr "Système"
+
+
 msgid "File"
 msgstr "Fichier"
 
@@ -26840,10 +26856,6 @@ msgid "Text Context Menu"
 msgstr "Menu contextuel - Texte"
 
 
-msgid "Face Sets"
-msgstr "Ensembles de faces"
-
-
 msgid "Generate Weights"
 msgstr "Générer poids"
 
@@ -26857,7 +26869,7 @@ msgstr "Ajouter image"
 
 
 msgid "Light"
-msgstr "Légère"
+msgstr "Lampe"
 
 
 msgid "Light Probe"
@@ -27672,16 +27684,16 @@ msgid "Explode"
 msgstr "Exploser"
 
 
+msgid "Fluid Simulation"
+msgstr "Simulation de fluide"
+
+
 msgid "Ocean"
 msgstr "Océan"
 
 
 msgid "Particle Instance"
 msgstr "Instance de particules"
-
-
-msgid "Fluid Simulation"
-msgstr "Simulation de fluide"
 
 
 msgid "Soft Body"
@@ -28342,10 +28354,6 @@ msgstr "Correspondance d’arête"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Méthode utilisée pour faire correspondre les arêtes source avec celles de destination"
-
-
-msgid "Topology"
-msgstr "Topologie"
 
 
 msgid "Copy from identical topology meshes"
@@ -30668,16 +30676,8 @@ msgid "Radius to apply"
 msgstr "Rayon d’application"
 
 
-msgid "From"
-msgstr "Depuis"
-
-
 msgid "Object to transform from"
 msgstr "Objet duquel transformer"
-
-
-msgid "To"
-msgstr "À"
 
 
 msgid "Object to transform to"
@@ -36942,19 +36942,6 @@ msgstr "Active tous les calques, ou juste les 16 premiers (ligne supérieure)"
 
 
 msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "Fusionner os"
-
-
-msgid "Merge continuous chains of selected bones"
-msgstr "Fusionner les chaînes continues d’os sélectionnés"
-
-
-msgid "Within Chains"
-msgstr "Au sein de chaînes"
-
-
-msgctxt "Operator"
 msgid "Clear Parent"
 msgstr "Supprimer parenté"
 
@@ -42769,6 +42756,10 @@ msgid "Image data-block name"
 msgstr "Nom du bloc de données image"
 
 
+msgid "Tiled"
+msgstr "En damier"
+
+
 msgid "Create an image with left and right views"
 msgstr "Créer une image avec les vues gauche et droite"
 
@@ -44640,11 +44631,6 @@ msgstr "Extruder région"
 msgctxt "Operator"
 msgid "Extrude Region and Shrink/Fatten"
 msgstr "Extruder la région, et compresser/dilater"
-
-
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "Extruder mesh à répétition"
 
 
 msgid "Extrude selected vertices, edges or faces repeatedly"
@@ -50096,18 +50082,8 @@ msgid "Purge All"
 msgstr "Purger tous"
 
 
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "Lâcher pour effacer parent"
-
-
 msgid "Drag to clear parent in Outliner"
 msgstr "Tirer pour effacer le parent dans l’Outliner"
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "Lâcher pour définir parent"
 
 
 msgid "Drag to parent in Outliner"
@@ -57647,11 +57623,6 @@ msgid "List all the Operators in a text-block, useful for scripting"
 msgstr "Lister tous les opérateurs dans un bloc de données texte, utile pour le scripting"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "Restaurer valeurs par défaut"
-
-
 msgid "Set the active operator to its default values"
 msgstr "Ré-initialiser l’opérateur actif à ses valeurs par défaut"
 
@@ -58121,6 +58092,10 @@ msgstr "Menu chercher"
 
 msgid "Pop-up a search menu over all available operators in current context"
 msgstr "Afficher un menu de recherche sur tous les opérateurs disponibles dans le contexte courant"
+
+
+msgid "Menu"
+msgstr "Menu"
 
 
 msgctxt "Operator"
@@ -59102,10 +59077,6 @@ msgid "Bookmarks"
 msgstr "Signets"
 
 
-msgid "System"
-msgstr "Système"
-
-
 msgid "Fluid Presets"
 msgstr "Pré-réglages de fluide"
 
@@ -59701,10 +59672,6 @@ msgstr "Styles"
 
 msgid "List Item"
 msgstr "Élément de liste"
-
-
-msgid "Menu"
-msgstr "Menu"
 
 
 msgid "Menu Back"
@@ -71431,10 +71398,6 @@ msgid "Algorithm used for UV relaxation"
 msgstr "Algorithme utilisé pour la relaxation UV"
 
 
-msgid "Laplacian"
-msgstr "Laplacien"
-
-
 msgid "Use Laplacian method for relaxation"
 msgstr "Utiliser la méthode Laplacienne pour la relaxation"
 
@@ -73307,6 +73270,10 @@ msgid "After"
 msgstr "Après"
 
 
+msgid "To"
+msgstr "À"
+
+
 msgid "Nothing to show yet..."
 msgstr "Rien à montrer pour l’instant…"
 
@@ -74426,6 +74393,10 @@ msgstr "Échantillon de biais"
 
 msgid "Edge To Edge"
 msgstr "Arête à arête"
+
+
+msgid "Texture Opacity"
+msgstr "Opacité de texture"
 
 
 msgid "Source Clone Slot"
@@ -77636,10 +77607,6 @@ msgstr "Impossible de trouver les limites de la région de dissolution"
 
 msgid "Could not create merged face"
 msgstr "Impossible de créer la face fusionnée"
-
-
-msgid "Select two edge loops"
-msgstr "Sélectionner deux boucles d’arêtes"
 
 
 msgid "Closed loops unsupported"

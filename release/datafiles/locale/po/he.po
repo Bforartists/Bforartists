@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -65,10 +65,6 @@ msgstr "לדחמ תרירב"
 
 msgid "Smooth"
 msgstr "קלח"
-
-
-msgid "Both"
-msgstr "םהינש"
 
 
 msgid "Rotation"
@@ -279,6 +275,10 @@ msgid "Specular"
 msgstr "רלקפסא"
 
 
+msgid "Both"
+msgstr "םהינש"
+
+
 msgid "Sculpt Mode"
 msgstr "לוסיפ בצמ"
 
@@ -306,6 +306,10 @@ msgstr "ףסוה"
 
 msgid "Python"
 msgstr "Python"
+
+
+msgid "System"
+msgstr "תכרעמ"
 
 
 msgid "Apply"
@@ -499,21 +503,12 @@ msgid "Rotate View"
 msgstr "בוביס"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "לדחמה תרירב יכרעל לכה לחתא"
-
-
 msgid "Tooltip"
 msgstr "םילכ"
 
 
 msgid "Detail Size"
 msgstr "טוריפ"
-
-
-msgid "System"
-msgstr "תכרעמ"
 
 
 msgid "Color Management"

@@ -1285,7 +1285,6 @@ class AssetBarOperator(bpy.types.Operator):
             # we check again and quit if things weren't fixed this way.
             if newarea == None:
                 self.exit_modal()
-                ui_props.assetbar_on = False
                 return {'CANCELLED'}
 
         update_ui_size(self.area, self.region)
@@ -1306,7 +1305,6 @@ class AssetBarOperator(bpy.types.Operator):
         s = context.scene
 
         if ui_props.turn_off:
-            ui_props.assetbar_on = False
             ui_props.turn_off = False
             self.exit_modal()
             ui_props.draw_tooltip = False

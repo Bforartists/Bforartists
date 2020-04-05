@@ -33,7 +33,7 @@ from bpy.app.handlers import persistent
 bl_info = {
     "name": "VR Scene Inspection",
     "author": "Julian Eisel (Severin)",
-    "version": (0, 0, 7),
+    "version": (0, 1, 0),
     "blender": (2, 83, 8),
     "location": "3D View > Sidebar > VR",
     "description": ("View the viewport with virtual reality glasses "
@@ -41,6 +41,7 @@ bl_info = {
     "support": "OFFICIAL",
     "warning": "This is an early, limited preview of in development "
                "VR support for Blender.",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/3d_view/vr_scene_inspection.html",
     "category": "3D View",
 }
 

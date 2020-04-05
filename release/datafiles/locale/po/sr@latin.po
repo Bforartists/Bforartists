@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -1333,10 +1333,6 @@ msgstr "Nervozno"
 
 msgid "Iterations"
 msgstr "Iteracije"
-
-
-msgid "Both"
-msgstr "Obe"
 
 
 msgid "Background Image"
@@ -5598,6 +5594,10 @@ msgid "Radius of the brush in pixels"
 msgstr "Poluprečnik četkice u piksele"
 
 
+msgid "Laplacian"
+msgstr "Laplasovo"
+
+
 msgid "Smooth Stroke Factor"
 msgstr "Faktor umekšanja poteza"
 
@@ -6510,10 +6510,6 @@ msgid "Compositing node viewer"
 msgstr "Pogledač čvora slaganja"
 
 
-msgid "Tiled"
-msgstr "Popločano"
-
-
 msgid "Settings for stereo 3d"
 msgstr "Podešavanja stereo 3D-a"
 
@@ -7212,6 +7208,10 @@ msgstr "Jedna strelica"
 
 msgid "Circle"
 msgstr "Krug"
+
+
+msgid "Both"
+msgstr "Obe"
 
 
 msgid "Settings for using the object as a field in physics simulation"
@@ -9655,6 +9655,10 @@ msgid "Python"
 msgstr "Python"
 
 
+msgid "System"
+msgstr "Sistem"
+
+
 msgid "File"
 msgstr "Datoteka"
 
@@ -10087,16 +10091,16 @@ msgid "Explode"
 msgstr "Ekspozicija"
 
 
+msgid "Fluid Simulation"
+msgstr "Simulacija tečnosti"
+
+
 msgid "Ocean"
 msgstr "Okean"
 
 
 msgid "Particle Instance"
 msgstr "Čestice"
-
-
-msgid "Fluid Simulation"
-msgstr "Simulacija tečnosti"
 
 
 msgid "Soft Body"
@@ -11038,16 +11042,8 @@ msgid "Compute distance to nearest edge"
 msgstr "Izračunaj rastojanje do najbliže ivice"
 
 
-msgid "From"
-msgstr "Od"
-
-
 msgid "Object to transform from"
 msgstr "Primeni transformaciju objekta"
-
-
-msgid "To"
-msgstr "Ka"
 
 
 msgid "Object to transform to"
@@ -13310,15 +13306,6 @@ msgstr "Prikaži sve slojeve kostura"
 
 msgid "Enable all layers or just the first 16 (top row)"
 msgstr "Omogući sve slojeve ili samo prvih 16 (gornji red)"
-
-
-msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "Sjedini kosti"
-
-
-msgid "Within Chains"
-msgstr "U okviru lanca"
 
 
 msgctxt "Operator"
@@ -15880,6 +15867,10 @@ msgid "Image height"
 msgstr "Visina sliku"
 
 
+msgid "Tiled"
+msgstr "Popločano"
+
+
 msgid "Image width"
 msgstr "Širina slike"
 
@@ -16632,11 +16623,6 @@ msgstr "Izvuci ponovo"
 
 msgid "Extrude Region"
 msgstr "Izvuci region"
-
-
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "Izvuci ponovo"
 
 
 msgctxt "Operator"
@@ -21710,11 +21696,6 @@ msgid "Allow .blend file to execute scripts automatically, default available fro
 msgstr "Omogući .blend datotekama automatsko pokretanje skripti, trenutno dostupno kroz podešavanja sistema"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "Prati na početno"
-
-
 msgid "Set the active operator to its default values"
 msgstr "Postavi početne vrednosti aktivnog operatora"
 
@@ -22233,10 +22214,6 @@ msgstr "Filter"
 
 msgid "Bookmarks"
 msgstr "Obeleživači"
-
-
-msgid "System"
-msgstr "Sistem"
 
 
 msgid "Fluid Presets"
@@ -26092,10 +26069,6 @@ msgid "Snap during transform"
 msgstr "Lepi prilikom transformacije"
 
 
-msgid "Laplacian"
-msgstr "Laplasovo"
-
-
 msgid "Use Laplacian method for relaxation"
 msgstr "Koristi Laplasov metod za opuštanje"
 
@@ -26778,6 +26751,10 @@ msgstr "Brojevi ključnih kadrova"
 
 msgid "After"
 msgstr "Posle"
+
+
+msgid "To"
+msgstr "Ka"
 
 
 msgid "+ Non-Grouped Keyframes"
