@@ -69,7 +69,7 @@ extern "C" {
 #include "DNA_world_types.h"
 
 #include "BKE_action.h"
-#include "BKE_animsys.h"
+#include "BKE_anim_data.h"
 #include "BKE_armature.h"
 #include "BKE_collection.h"
 #include "BKE_collision.h"
@@ -1789,7 +1789,7 @@ void DepsgraphRelationBuilder::build_particle_systems(Object *object)
       }
     }
     /* Keyed particle targets. */
-    if (part->phystype == PART_PHYS_KEYED) {
+    if (ELEM(part->phystype, PART_PHYS_KEYED, PART_PHYS_BOIDS)) {
       LISTBASE_FOREACH (ParticleTarget *, particle_target, &psys->targets) {
         if (particle_target->ob == nullptr || particle_target->ob == object) {
           continue;

@@ -541,7 +541,12 @@ bGPDstroke *BKE_gpencil_stroke_new(int mat_idx, int totpoints, short thickness)
   gps->flag = GP_STROKE_3DSPACE;
 
   gps->totpoints = totpoints;
-  gps->points = MEM_callocN(sizeof(bGPDspoint) * gps->totpoints, "gp_stroke_points");
+  if (gps->totpoints > 0) {
+    gps->points = MEM_callocN(sizeof(bGPDspoint) * gps->totpoints, "gp_stroke_points");
+  }
+  else {
+    gps->points = NULL;
+  }
 
   /* initialize triangle memory to dummy data */
   gps->triangles = NULL;
@@ -639,7 +644,7 @@ bGPDframe *BKE_gpencil_frame_duplicate(const bGPDframe *gpf_src)
 
   /* copy strokes */
   BLI_listbase_clear(&gpf_dst->strokes);
-  for (bGPDstroke *gps_src = gpf_src->strokes.first; gps_src; gps_src = gps_src->next) {
+  LISTBASE_FOREACH (bGPDstroke *, gps_src, &gpf_src->strokes) {
     /* make copy of source stroke */
     gps_dst = BKE_gpencil_stroke_duplicate(gps_src, true);
     BLI_addtail(&gpf_dst->strokes, gps_dst);
@@ -660,7 +665,7 @@ void BKE_gpencil_frame_copy_strokes(bGPDframe *gpf_src, struct bGPDframe *gpf_ds
 
   /* copy strokes */
   BLI_listbase_clear(&gpf_dst->strokes);
-  for (bGPDstroke *gps_src = gpf_src->strokes.first; gps_src; gps_src = gps_src->next) {
+  LISTBASE_FOREACH (bGPDstroke *, gps_src, &gpf_src->strokes) {
     /* make copy of source stroke */
     gps_dst = BKE_gpencil_stroke_duplicate(gps_src, true);
     BLI_addtail(&gpf_dst->strokes, gps_dst);

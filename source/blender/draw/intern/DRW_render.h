@@ -404,11 +404,11 @@ void DRW_shgroup_call_instances(DRWShadingGroup *shgroup,
                                 Object *ob,
                                 struct GPUBatch *geom,
                                 uint count);
-/* Warning: Only use with Shaders that have INSTANCED_ATTRIB defined. */
-void DRW_shgroup_call_instances_with_attribs(DRWShadingGroup *shgroup,
-                                             Object *ob,
-                                             struct GPUBatch *geom,
-                                             struct GPUBatch *inst_attributes);
+/* Warning: Only use with Shaders that have INSTANCED_ATTR defined. */
+void DRW_shgroup_call_instances_with_attrs(DRWShadingGroup *shgroup,
+                                           Object *ob,
+                                           struct GPUBatch *geom,
+                                           struct GPUBatch *inst_attributes);
 
 void DRW_shgroup_call_sculpt(DRWShadingGroup *sh, Object *ob, bool wire, bool mask, bool vcol);
 void DRW_shgroup_call_sculpt_with_materials(DRWShadingGroup **sh, Object *ob, bool vcol);
@@ -670,6 +670,7 @@ bool DRW_state_do_color_management(void);
 bool DRW_state_is_scene_render(void);
 bool DRW_state_is_opengl_render(void);
 bool DRW_state_is_playback(void);
+bool DRW_state_is_navigating(void);
 bool DRW_state_show_text(void);
 bool DRW_state_draw_support(void);
 bool DRW_state_draw_background(void);

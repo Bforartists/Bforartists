@@ -31,10 +31,10 @@
 
 #include "BLF_api.h"
 
-#include "BKE_anim.h"
 #include "BKE_colortools.h"
 #include "BKE_context.h"
 #include "BKE_curve.h"
+#include "BKE_duplilist.h"
 #include "BKE_editmesh.h"
 #include "BKE_global.h"
 #include "BKE_gpencil.h"
@@ -145,11 +145,8 @@ bool DRW_object_is_renderable(const Object *ob)
 
   if (ob->type == OB_MESH) {
     if ((ob == DST.draw_ctx.object_edit) || DRW_object_is_in_edit_mode(ob)) {
-
       View3D *v3d = DST.draw_ctx.v3d;
-      const int mask = (V3D_OVERLAY_EDIT_OCCLUDE_WIRE | V3D_OVERLAY_EDIT_WEIGHT);
-
-      if (v3d && v3d->overlay.edit_flag & mask) {
+      if (v3d && v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_OCCLUDE_WIRE) {
         return false;
       }
     }
@@ -693,8 +690,7 @@ void **DRW_duplidata_get(void *vedata)
 
 void *DRW_view_layer_engine_data_get(DrawEngineType *engine_type)
 {
-  for (ViewLayerEngineData *sled = DST.draw_ctx.view_layer->drawdata.first; sled;
-       sled = sled->next) {
+  LISTBASE_FOREACH (ViewLayerEngineData *, sled, &DST.draw_ctx.view_layer->drawdata) {
     if (sled->engine_type == engine_type) {
       return sled->storage;
     }
@@ -925,7 +921,7 @@ void DRW_cache_free_old_batches(Main *bmain)
 
 static void drw_engines_init(void)
 {
-  for (LinkData *link = DST.enabled_engines.first; link; link = link->next) {
+  LISTBASE_FOREACH (LinkData *, link, &DST.enabled_engines) {
     DrawEngineType *engine = link->data;
     ViewportEngineData *data = drw_viewport_engine_data_ensure(engine);
     PROFILE_START(stime);
@@ -969,7 +965,7 @@ static void drw_engines_world_update(Scene *scene)
     return;
   }
 
-  for (LinkData *link = DST.enabled_engines.first; link; link = link->next) {
+  LISTBASE_FOREACH (LinkData *, link, &DST.enabled_engines) {
     DrawEngineType *engine = link->data;
     ViewportEngineData *data = drw_viewport_engine_data_ensure(engine);
 
@@ -1035,7 +1031,7 @@ static void drw_engines_cache_finish(void)
 
 static void drw_engines_draw_scene(void)
 {
-  for (LinkData *link = DST.enabled_engines.first; link; link = link->next) {
+  LISTBASE_FOREACH (LinkData *, link, &DST.enabled_engines) {
     DrawEngineType *engine = link->data;
     ViewportEngineData *data = drw_viewport_engine_data_ensure(engine);
     PROFILE_START(stime);
@@ -1058,7 +1054,7 @@ static void drw_engines_draw_scene(void)
 
 static void drw_engines_draw_text(void)
 {
-  for (LinkData *link = DST.enabled_engines.first; link; link = link->next) {
+  LISTBASE_FOREACH (LinkData *, link, &DST.enabled_engines) {
     DrawEngineType *engine = link->data;
     ViewportEngineData *data = drw_viewport_engine_data_ensure(engine);
     PROFILE_START(stime);
@@ -1074,7 +1070,7 @@ static void drw_engines_draw_text(void)
 /* Draw render engine info. */
 void DRW_draw_region_engine_info(int xoffset, int yoffset)
 {
-  for (LinkData *link = DST.enabled_engines.first; link; link = link->next) {
+  LISTBASE_FOREACH (LinkData *, link, &DST.enabled_engines) {
     DrawEngineType *engine = link->data;
     ViewportEngineData *data = drw_viewport_engine_data_ensure(engine);
 
@@ -1181,7 +1177,7 @@ static void drw_engines_data_validate(void)
   void **engine_handle_array = BLI_array_alloca(engine_handle_array, enabled_engines + 1);
   int i = 0;
 
-  for (LinkData *link = DST.enabled_engines.first; link; link = link->next) {
+  LISTBASE_FOREACH (LinkData *, link, &DST.enabled_engines) {
     DrawEngineType *engine = link->data;
     engine_handle_array[i++] = engine;
   }
@@ -1248,7 +1244,7 @@ void DRW_notify_view_update(const DRWUpdateContext *update_ctx)
     drw_engines_enable(view_layer, engine_type, gpencil_engine_needed);
     drw_engines_data_validate();
 
-    for (LinkData *link = DST.enabled_engines.first; link; link = link->next) {
+    LISTBASE_FOREACH (LinkData *, link, &DST.enabled_engines) {
       DrawEngineType *draw_engine = link->data;
       ViewportEngineData *data = drw_viewport_engine_data_ensure(draw_engine);
 
@@ -2572,6 +2568,15 @@ bool DRW_state_is_playback(void)
     return ED_screen_animation_playing(wm) != NULL;
   }
   return false;
+}
+
+/**
+ * Is the user navigating the region.
+ */
+bool DRW_state_is_navigating(void)
+{
+  const RegionView3D *rv3d = DST.draw_ctx.rv3d;
+  return (rv3d) && (rv3d->rflag & (RV3D_NAVIGATING | RV3D_PAINTING));
 }
 
 /**

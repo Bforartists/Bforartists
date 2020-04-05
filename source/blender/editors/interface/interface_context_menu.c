@@ -1229,9 +1229,9 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
 /**
  * menu to show when right clicking on the panel header
  */
-void ui_popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *pa)
+void ui_popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *panel)
 {
-  bScreen *sc = CTX_wm_screen(C);
+  bScreen *screen = CTX_wm_screen(C);
   const bool has_panel_category = UI_panel_category_is_visible(region);
   const bool any_item_visible = has_panel_category;
   PointerRNA ptr;
@@ -1241,11 +1241,11 @@ void ui_popup_context_menu_for_panel(bContext *C, ARegion *region, Panel *pa)
   if (!any_item_visible) {
     return;
   }
-  if (pa->type->parent != NULL) {
+  if (panel->type->parent != NULL) {
     return;
   }
 
-  RNA_pointer_create(&sc->id, &RNA_Panel, pa, &ptr);
+  RNA_pointer_create(&screen->id, &RNA_Panel, panel, &ptr);
 
   pup = UI_popup_menu_begin(C, IFACE_("Panel"), ICON_NONE);
   layout = UI_popup_menu_layout(pup);

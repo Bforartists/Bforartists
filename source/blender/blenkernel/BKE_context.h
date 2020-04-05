@@ -179,7 +179,7 @@ struct SpaceToolbar *CTX_wm_space_toolbar(const bContext *C); // bfa - toolbar e
 void CTX_wm_manager_set(bContext *C, struct wmWindowManager *wm);
 void CTX_wm_window_set(bContext *C, struct wmWindow *win);
 void CTX_wm_screen_set(bContext *C, struct bScreen *screen); /* to be removed */
-void CTX_wm_area_set(bContext *C, struct ScrArea *sa);
+void CTX_wm_area_set(bContext *C, struct ScrArea *area);
 void CTX_wm_region_set(bContext *C, struct ARegion *region);
 void CTX_wm_menu_set(bContext *C, struct ARegion *menu);
 void CTX_wm_gizmo_group_set(bContext *C, struct wmGizmoGroup *gzgroup);

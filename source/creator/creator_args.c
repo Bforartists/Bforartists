@@ -619,7 +619,7 @@ static int arg_handle_print_help(int UNUSED(argc), const char **UNUSED(argv), vo
   printf("Misc Options:\n");
   BLI_argsPrintArgDoc(ba, "--app-template");
   BLI_argsPrintArgDoc(ba, "--factory-startup");
-  BLI_argsPrintArgDoc(ba, "--enable-library-override");
+  BLI_argsPrintArgDoc(ba, "--disable-library-override");
   BLI_argsPrintArgDoc(ba, "--enable-event-simulate");
   printf("\n");
   BLI_argsPrintArgDoc(ba, "--env-system-datafiles");
@@ -1929,7 +1929,9 @@ static int arg_handle_python_use_system_env_set(int UNUSED(argc),
                                                 const char **UNUSED(argv),
                                                 void *UNUSED(data))
 {
+#  ifdef WITH_PYTHON
   BPY_python_use_system_env();
+#  endif
   return 0;
 }
 

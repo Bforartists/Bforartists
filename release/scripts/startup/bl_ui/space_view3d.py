@@ -1917,45 +1917,34 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.operator("curve.select_more", text= "More", icon = "SELECTMORE")
         layout.operator("curve.select_less", text= "Less", icon = "SELECTLESS")
 
-class VIEW3D_MT_edit_text_context_menu(Menu):
-    bl_label = "Text Context Menu"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_DEFAULT'
-
-        layout.operator("font.text_cut", text="Cut", icon = "CUT")
-        layout.operator("font.text_copy", text="Copy", icon='COPYDOWN')
-        layout.operator("font.text_paste", text="Paste", icon='PASTEDOWN')
-
-        layout.separator()
-
-        layout.operator("font.select_all", icon = "SELECT_ALL")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_edit_text_chars")
 
 class VIEW3D_MT_select_edit_text(Menu):
-    # intentional name mismatch
-    # select menu for 3d-text doesn't make sense
-    bl_label = "Edit"
+    bl_label = "Select"
 
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("font.text_cut", text="Cut", icon = "CUT")
-        layout.operator("font.text_copy", text="Copy", icon='COPYDOWN')
-        layout.operator("font.text_paste", text="Paste", icon='PASTEDOWN')
+        layout.operator("font.select_all", text="All")
 
         layout.separator()
 
-        layout.operator("font.text_paste_from_file", icon = "PASTEFILE")
+        layout.operator("font.move_select", text="Previous Block").type = 'PREVIOUS_PAGE'
+        layout.operator("font.move_select", text="Next Block").type = 'NEXT_PAGE'
 
         layout.separator()
 
-        layout.operator("font.select_all", icon = "SELECT_ALL")
+        layout.operator("font.move_select", text="Line Begin").type = 'LINE_BEGIN'
+        layout.operator("font.move_select", text="Line End").type = 'LINE_END'
+
+        layout.separator()
+
+        layout.operator("font.move_select", text="Previous Line").type = 'PREVIOUS_LINE'
+        layout.operator("font.move_select", text="Next Line").type = 'NEXT_LINE'
+
+        layout.separator()
+
+        layout.operator("font.move_select", text="Previous Word").type = 'PREVIOUS_WORD'
+        layout.operator("font.move_select", text="Next Word").type = 'NEXT_WORD'
 
 
 # Workaround to separate the tooltips
@@ -2118,6 +2107,10 @@ class VIEW3D_MT_select_edit_armature(Menu):
         
         layout.operator("armature.select_mirror", text="Mirror Selection", icon = "TRANSFORM_MIRROR").extend = False
         layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
+
+        layout.separator()
+
+        layout.operator("armature.select_linked", text="Linked")
 
         layout.separator()
 
@@ -3962,12 +3955,12 @@ class VIEW3D_MT_face_sets(Menu):
 
         op = layout.operator("sculpt.face_sets_create", text='Face Set From Visible', icon = "FILL_MASK")
         op.mode = 'VISIBLE'
-        
+
         op = layout.operator("sculpt.face_sets_create", text='Face Set From Edit Mode Selection')
         op.mode = 'SELECTION'
 
         layout.separator()
-        
+
         layout.menu("VIEW3D_MT_face_sets_init", text="Init Face Sets")
 
         layout.separator()
@@ -4530,7 +4523,15 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.operator("mesh.duplicate_move", text="Duplicate", icon = "DUPLICATE")
         layout.menu("VIEW3D_MT_edit_mesh_extrude")
-        layout.operator("mesh.split", icon = "SPLIT")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_edit_mesh_merge", text="Merge", icon = "MERGE")
+        layout.menu("VIEW3D_MT_edit_mesh_split", text="Split", icon = "MERGE")
+        layout.operator_menu_enum("mesh.separate", "type")
+
+        layout.separator()
+
         layout.operator("mesh.knife_project", icon='KNIFE_PROJECT')
 
         if with_bullet:
@@ -4552,7 +4553,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_mesh_show_hide")
-        layout.operator_menu_enum("mesh.separate", "type")
         layout.menu("VIEW3D_MT_edit_mesh_clean")
 
         layout.separator()
@@ -4845,6 +4845,10 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
         for menu_id in self.extrude_options(context):
             self._extrude_funcs[menu_id](layout)
 
+        layout.separator()
+
+        layout.operator("mesh.extrude_repeat", icon = "REPEAT")
+
 
 class VIEW3D_MT_edit_mesh_vertices(Menu):
     bl_label = "Vertex"
@@ -4859,18 +4863,14 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         layout.separator()
 
-        layout.operator_context = 'EXEC_DEFAULT'
-        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator_context = 'EXEC_DEFAULT'      
         layout.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
+        layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.separator()
 
         layout.operator("mesh.blend_from_shape", icon = "BLENDFROMSHAPE")
         layout.operator("mesh.shape_propagate_to_all", text="Propagate to Shapes", icon = "SHAPEPROPAGATE")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_edit_mesh_merge", text="Merge Vertices")
 
         layout.separator()
 
@@ -4928,6 +4928,7 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
+        layout.operator("mesh.screw", icon = "MOD_SCREW")
 
         layout.separator()
 
@@ -4939,10 +4940,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
         layout.operator("mesh.edge_rotate", text="Rotate Edge CCW", icon = "ROTATECW").use_ccw = True
-
-        layout.separator()
-
-        layout.operator("mesh.edge_split", icon = "SPLITEDGE")
 
         layout.separator()
 
@@ -5236,6 +5233,19 @@ class VIEW3D_MT_edit_mesh_merge(Menu):
         layout.operator("mesh.remove_doubles", text="By Distance", icon = "REMOVE_DOUBLES")
 
 
+class VIEW3D_MT_edit_mesh_split(Menu):
+    bl_label = "Split"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("mesh.split", text="Selection")
+
+        layout.separator()
+
+        layout.operator_enum("mesh.edge_split", "type")
+
+
 class VIEW3D_MT_edit_mesh_show_hide(Menu):
     bl_label = "Show/Hide"
 
@@ -5291,6 +5301,9 @@ def draw_curve(self, _context):
 
     layout.operator("curve.split", icon = "SPLIT")
     layout.operator("curve.separate", icon = "SEPARATE")
+
+    layout.separator()
+
     layout.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
     if edit_object.type == 'CURVE':
         layout.operator("curve.decimate", icon = "DECIMATE")
@@ -5490,39 +5503,44 @@ class VIEW3D_MT_edit_surface(Menu):
     draw = draw_curve
 
 
-class VIEW3D_MT_edit_font(Menu):
-    bl_label = "Font"
+class VIEW3D_MT_edit_font_chars(Menu):
+    bl_label = "Special Characters"
 
     def draw(self, _context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_edit_text_chars")
+        layout.operator("font.text_insert", text="Copyright").text = "\u00A9"
+        layout.operator("font.text_insert", text="Registered Trademark").text = "\u00AE"
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_font_move_select")
-        layout.menu("VIEW3D_MT_edit_font_move")
-        
-        layout.separator()
-
-        layout.operator("font.style_toggle", text="Toggle Bold", icon = 'BOLD').style = 'BOLD'
-        layout.operator("font.style_toggle", text="Toggle Italic", icon = 'ITALIC').style = 'ITALIC'
+        layout.operator("font.text_insert", text="Degree Sign").text = "\u00B0"
+        layout.operator("font.text_insert", text="Multiplication Sign").text = "\u00D7"
+        layout.operator("font.text_insert", text="Circle").text = "\u008A"
 
         layout.separator()
 
-        layout.operator("font.style_toggle", text="Toggle Underline", icon = 'UNDERLINED').style = 'UNDERLINE'
-        layout.operator("font.style_toggle", text="Toggle Small Caps", icon = "SMALL_CAPS").style = 'SMALL_CAPS'
+        layout.operator("font.text_insert", text="Superscript 1").text = "\u00B9"
+        layout.operator("font.text_insert", text="Superscript 2").text = "\u00B2"
+        layout.operator("font.text_insert", text="Superscript 3").text = "\u00B3"
 
         layout.separator()
 
-        layout.operator("font.case_set", icon = 'SET_UPPERCASE', text = "Set Uppercase").case = 'UPPER'
-        layout.operator("font.case_set", icon = 'SET_LOWERCASE', text = "Set Lowercase").case = 'LOWER'
+        layout.operator("font.text_insert", text="Double >>").text = "\u00BB"
+        layout.operator("font.text_insert", text="Double <<").text = "\u00AB"
+        layout.operator("font.text_insert", text="Promillage").text = "\u2030"
 
         layout.separator()
 
-        layout.operator("font.delete", icon = "DELETE").type = 'NEXT_OR_SELECTION'
+        layout.operator("font.text_insert", text="Dutch Florin").text = "\u00A4"
+        layout.operator("font.text_insert", text="British Pound").text = "\u00A3"
+        layout.operator("font.text_insert", text="Japanese Yen").text = "\u00A5"
 
-        layout.menu("VIEW3D_MT_edit_font_kerning")
+        layout.separator()
+
+        layout.operator("font.text_insert", text="German S").text = "\u00DF"
+        layout.operator("font.text_insert", text="Spanish Question Mark").text = "\u00BF"
+        layout.operator("font.text_insert", text="Spanish Exclamation Mark").text = "\u00A1"
 
 
 class VIEW3D_MT_edit_font_kerning(Menu):
@@ -5568,44 +5586,74 @@ class VIEW3D_MT_edit_font_move_select(Menu):
         layout.operator("font.move_select", text = "Next Character", icon = "HAND").type = 'NEXT_CHARACTER'
 
 
-class VIEW3D_MT_edit_text_chars(Menu):
-    bl_label = "Special Characters"
+class VIEW3D_MT_edit_font_delete(Menu):
+    bl_label = "Delete"
 
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("font.text_insert", text="Copyright", icon = "COPYRIGHT").text = "\u00A9"
-        layout.operator("font.text_insert", text="Registered Trademark", icon = "TRADEMARK").text = "\u00AE"
+        layout.operator("font.delete", text="Previous Character").type = 'PREVIOUS_CHARACTER'
+        layout.operator("font.delete", text="Next Character").type = 'NEXT_CHARACTER'
+        layout.operator("font.delete", text="Previous Word").type = 'PREVIOUS_WORD'
+        layout.operator("font.delete", text="Next Word").type = 'NEXT_WORD'
+
+
+class VIEW3D_MT_edit_font(Menu):
+    bl_label = "Text"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("font.text_cut", text="Cut")
+        layout.operator("font.text_copy", text="Copy", icon='COPYDOWN')
+        layout.operator("font.text_paste", text="Paste", icon='PASTEDOWN')
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Degree Sign", icon = "DEGREE").text = "\u00B0"
-        layout.operator("font.text_insert", text="Multiplication Sign", icon = "MULTIPLICATION").text = "\u00D7"
-        layout.operator("font.text_insert", text="Circle", icon = "CIRCLE").text = "\u008A"
+        layout.operator("font.text_paste_from_file")
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Superscript 1", icon = "SUPER_ONE").text = "\u00B9"
-        layout.operator("font.text_insert", text="Superscript 2", icon = "SUPER_TWO").text = "\u00B2"
-        layout.operator("font.text_insert", text="Superscript 3", icon = "SUPER_THREE").text = "\u00B3"
+        layout.operator("font.case_set", text="To Uppercase").case = 'UPPER'
+        layout.operator("font.case_set", text="To Lowercase").case = 'LOWER'
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Double >>", icon = "DOUBLE_RIGHT").text = "\u00BB"
-        layout.operator("font.text_insert", text="Double <<", icon = "DOUBLE_LEFT").text = "\u00AB"
-        layout.operator("font.text_insert", text="Promillage", icon = "PROMILLE").text = "\u2030"
+        layout.menu("VIEW3D_MT_edit_font_chars")
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Dutch Florin", icon = "DUTCH_FLORIN").text = "\u00A4"
-        layout.operator("font.text_insert", text="British Pound", icon = "POUND").text = "\u00A3"
-        layout.operator("font.text_insert", text="Japanese Yen", icon = "YEN").text = "\u00A5"
+        layout.operator("font.style_toggle", text="Toggle Bold", icon='BOLD').style = 'BOLD'
+        layout.operator("font.style_toggle", text="Toggle Italic", icon='ITALIC').style = 'ITALIC'
+        layout.operator("font.style_toggle", text="Toggle Underline", icon='UNDERLINE').style = 'UNDERLINE'
+        layout.operator("font.style_toggle", text="Toggle Small Caps", icon='SMALL_CAPS').style = 'SMALL_CAPS'
+
+        layout.menu("VIEW3D_MT_edit_font_kerning")
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="German S", icon = "GERMAN_S").text = "\u00DF"
-        layout.operator("font.text_insert", text="Spanish Question Mark", icon = "SPANISH_QUESTION").text = "\u00BF"
-        layout.operator("font.text_insert", text="Spanish Exclamation Mark", icon = "SPANISH_EXCLAMATION").text = "\u00A1"
+        layout.menu("VIEW3D_MT_edit_font_delete")
+
+
+class VIEW3D_MT_edit_font_context_menu(Menu):
+    bl_label = "Text Context Menu"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_DEFAULT'
+
+        layout.operator("font.text_cut", text="Cut")
+        layout.operator("font.text_copy", text="Copy", icon='COPYDOWN')
+        layout.operator("font.text_paste", text="Paste", icon='PASTEDOWN')
+
+        layout.separator()
+
+        layout.operator("font.select_all")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_edit_font")
 
 
 class VIEW3D_MT_edit_meta(Menu):
@@ -5715,6 +5763,9 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.operator("armature.duplicate_move", icon = "DUPLICATE")
         layout.operator("armature.merge", icon = "MERGE")
         layout.operator("armature.fill", icon = "FILLBETWEEN")
+
+        layout.separator()
+
         layout.operator("armature.split", icon = "SPLIT")
         layout.operator("armature.separate", icon = "SEPARATE")
         layout.operator("armature.symmetrize", icon = "SYMMETRIZE")
@@ -5814,7 +5865,6 @@ class VIEW3D_MT_armature_context_menu(Menu):
         # Remove
         layout.operator("armature.split", icon = "SPLIT")
         layout.operator("armature.separate", icon = "SEPARATE")
-        layout.operator("armature.merge", icon = "MERGE")
         layout.operator("armature.dissolve", icon = "DELETE")
         layout.operator("armature.delete", icon = "DELETE")
 
@@ -8483,7 +8533,6 @@ classes = (
     VIEW3D_MT_select_edit_curve,
     VIEW3D_MT_select_edit_curve_select_similar,
     VIEW3D_MT_select_edit_surface,
-    VIEW3D_MT_edit_text_context_menu,
     VIEW3D_MT_select_edit_text,
     VIEW3D_MT_select_edit_metaball_inverse,
     VIEW3D_MT_select_edit_metaball_none,
@@ -8601,6 +8650,7 @@ classes = (
     VIEW3D_MT_edit_mesh_clean,
     VIEW3D_MT_edit_mesh_delete,
     VIEW3D_MT_edit_mesh_merge,
+    VIEW3D_MT_edit_mesh_split,
     VIEW3D_MT_edit_mesh_dissolve,
     VIEW3D_mesh_hide_unselected,
     VIEW3D_curve_hide_unselected,
@@ -8628,10 +8678,12 @@ classes = (
     VIEW3D_MT_edit_curve_show_hide,
     VIEW3D_MT_edit_surface,
     VIEW3D_MT_edit_font,
+    VIEW3D_MT_edit_font_chars,
     VIEW3D_MT_edit_font_kerning,
     VIEW3D_MT_edit_font_move,
     VIEW3D_MT_edit_font_move_select,
-    VIEW3D_MT_edit_text_chars,
+    VIEW3D_MT_edit_font_delete,
+    VIEW3D_MT_edit_font_context_menu,
     VIEW3D_MT_edit_meta,
     VIEW3D_MT_edit_meta_showhide_unselected,
     VIEW3D_MT_edit_meta_showhide,
