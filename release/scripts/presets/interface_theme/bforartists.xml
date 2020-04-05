@@ -9,13 +9,16 @@
         widget_emboss="#ffffff05"
         editor_outline="#1f1f1f"
         widget_text_cursor="#3399e6"
+        transparent_checker_primary="#333333"
+        transparent_checker_secondary="#262626"
+        transparent_checker_size="8"
         axis_x="#ff3352"
         axis_y="#00ff00"
         axis_z="#0080dc"
         gizmo_hi="#ffffff"
         gizmo_primary="#f5f14d"
         gizmo_secondary="#63ffff"
-        gizmo_view_align="#000000"
+        gizmo_view_align="#ffffff"
         gizmo_a="#4da84d"
         gizmo_b="#a33535"
         icon_scene="#00000000"
@@ -1162,6 +1165,7 @@
     </console>
     <clip_editor>
       <ThemeClipEditor
+        grid="#000000"
         marker_outline="#000000"
         marker="#7f7f00"
         active_marker="#ffffff"
