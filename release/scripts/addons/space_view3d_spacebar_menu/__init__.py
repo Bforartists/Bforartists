@@ -897,7 +897,7 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.VIEW3D_MT_edit_text_context_menu.append(menu_func)
+    bpy.types.VIEW3D_MT_edit_font_context_menu.append(menu_func)
 
     object_menus.register()
     edit_mesh.register()
@@ -942,7 +942,7 @@ def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
 
-    bpy.types.VIEW3D_MT_edit_text_context_menu.remove(menu_func)
+    bpy.types.VIEW3D_MT_edit_font_context_menu.remove(menu_func)
 
 if __name__ == "__main__":
     register()

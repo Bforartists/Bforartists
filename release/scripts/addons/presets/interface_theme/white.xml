@@ -9,6 +9,9 @@
         widget_emboss="#9e9e9e12"
         editor_outline="#a5a5a5"
         widget_text_cursor="#ffac0d"
+        transparent_checker_primary="#ffffff"
+        transparent_checker_secondary="#f0f0f0"
+        transparent_checker_size="10"
         axis_x="#ff0900"
         axis_y="#93e700"
         axis_z="#007bff"
@@ -366,7 +369,7 @@
         vertex_select="#ff7f00"
         vertex_size="3"
         vertex_bevel="#00a5ff"
-        vertex_unreferenced="#000000"
+        vertex_unreferenced="#525252"
         edge_select="#ffa000"
         edge_seam="#9f09db"
         edge_sharp="#356cff"
@@ -399,7 +402,7 @@
         extra_edge_angle="#4d4d00"
         extra_face_angle="#0000cc"
         extra_face_area="#004d00"
-        editmesh_active="#ffaf006c"
+        editmesh_active="#ffe2656c"
         normal="#22dddd"
         vertex_normal="#2361dd"
         split_normal="#dd23dd"
@@ -433,7 +436,7 @@
             navigation_bar="#00000000"
             execution_buts="#00000000"
             tab_active="#59b9ff"
-            tab_inactive="#e4e4e4"
+            tab_inactive="#fafafa"
             tab_back="#ddddddff"
             tab_outline="#cecece"
             >
@@ -482,7 +485,7 @@
         handle_sel_vect="#40c030"
         handle_align="#803060"
         handle_sel_free="#000000"
-        handle_sel_auto="#f0ff40"
+        handle_sel_auto="#dda700"
         handle_sel_align="#f090a0"
         handle_auto_clamped="#994030"
         handle_sel_auto_clamped="#f0af90"
@@ -506,9 +509,9 @@
             button_text_hi="#000000"
             navigation_bar="#00000000"
             execution_buts="#00000000"
-            tab_active="#ffffff"
-            tab_inactive="#e4e4e4"
-            tab_back="#cececeff"
+            tab_active="#59b9ff"
+            tab_inactive="#fafafa"
+            tab_back="#ddddddff"
             tab_outline="#cecece"
             >
             <panelcolors>
@@ -551,9 +554,9 @@
             button_text_hi="#000000"
             navigation_bar="#00000000"
             execution_buts="#ffffffff"
-            tab_active="#ffffff"
-            tab_inactive="#e4e4e4"
-            tab_back="#cececeff"
+            tab_active="#59b9ff"
+            tab_inactive="#fafafa"
+            tab_back="#ddddddff"
             tab_outline="#cecece"
             >
             <panelcolors>
@@ -609,9 +612,9 @@
             button_text_hi="#000000"
             navigation_bar="#00000000"
             execution_buts="#00000000"
-            tab_active="#ffffff"
-            tab_inactive="#e4e4e4"
-            tab_back="#cececeff"
+            tab_active="#59b9ff"
+            tab_inactive="#fafafa"
+            tab_back="#ddddddff"
             tab_outline="#cecece"
             >
             <panelcolors>
@@ -684,9 +687,9 @@
             button_text_hi="#000000"
             navigation_bar="#00000000"
             execution_buts="#00000000"
-            tab_active="#ffffff"
-            tab_inactive="#e4e4e4"
-            tab_back="#cececeff"
+            tab_active="#59b9ff"
+            tab_inactive="#fafafa"
+            tab_back="#ddddddff"
             tab_outline="#cecece"
             >
             <panelcolors>
@@ -768,9 +771,9 @@
             button_text_hi="#000000"
             navigation_bar="#00000000"
             execution_buts="#00000000"
-            tab_active="#ffffff"
-            tab_inactive="#e4e4e4"
-            tab_back="#cececeff"
+            tab_active="#59b9ff"
+            tab_inactive="#fafafa"
+            tab_back="#ddddddff"
             tab_outline="#cecece"
             >
             <panelcolors>
@@ -829,7 +832,7 @@
             execution_buts="#00000000"
             tab_active="#59b9ff"
             tab_inactive="#fafafa"
-            tab_back="#e0e0e0ff"
+            tab_back="#ddddddff"
             tab_outline="#cecece"
             >
             <panelcolors>
@@ -908,9 +911,9 @@
             button_text_hi="#000000"
             navigation_bar="#00000000"
             execution_buts="#00000000"
-            tab_active="#ffffff"
-            tab_inactive="#e4e4e4"
-            tab_back="#cececeff"
+            tab_active="#59b9ff"
+            tab_inactive="#fafafa"
+            tab_back="#ddddddff"
             tab_outline="#cecece"
             >
             <panelcolors>
@@ -969,9 +972,9 @@
             navigation_bar="#00000000"
             execution_buts="#00000000"
             tab_active="#59b9ff"
-            tab_inactive="#f8f8f8"
+            tab_inactive="#fafafa"
             tab_back="#ddddddff"
-            tab_outline="#e9e9e9"
+            tab_outline="#cecece"
             >
             <panelcolors>
               <ThemePanelColors
@@ -1019,9 +1022,9 @@
             button_text_hi="#000000"
             navigation_bar="#ffffff00"
             execution_buts="#00000000"
-            tab_active="#ffffff"
-            tab_inactive="#e4e4e4"
-            tab_back="#cececeff"
+            tab_active="#59b9ff"
+            tab_inactive="#fafafa"
+            tab_back="#ddddddff"
             tab_outline="#cecece"
             >
             <panelcolors>
@@ -1068,9 +1071,9 @@
             button_text_hi="#000000"
             navigation_bar="#00000000"
             execution_buts="#00000000"
-            tab_active="#ffffff"
-            tab_inactive="#e4e4e4"
-            tab_back="#cececeff"
+            tab_active="#59b9ff"
+            tab_inactive="#fafafa"
+            tab_back="#ddddddff"
             tab_outline="#cecece"
             >
             <panelcolors>
@@ -1143,9 +1146,9 @@
             button_text_hi="#000000"
             navigation_bar="#00000000"
             execution_buts="#00000000"
-            tab_active="#ffffff"
-            tab_inactive="#e4e4e4"
-            tab_back="#cececeff"
+            tab_active="#59b9ff"
+            tab_inactive="#fafafa"
+            tab_back="#ddddddff"
             tab_outline="#cecece"
             >
             <panelcolors>
@@ -1162,54 +1165,55 @@
     </console>
     <clip_editor>
       <ThemeClipEditor
-        marker_outline="#000000"
+        grid="#d3d3d3"
+        marker_outline="#444444"
         marker="#7f7f00"
-        active_marker="#000000"
-        selected_marker="#ffff00"
-        disabled_marker="#7f0000"
+        active_marker="#fff097"
+        selected_marker="#ffad00"
+        disabled_marker="#c54442"
         locked_marker="#7f7f7f"
         path_before="#ff0000"
         path_after="#0000ff"
         path_keyframe_before="#ffc4c4"
         path_keyframe_after="#c4c4ff"
-        frame_current="#5680c2"
-        time_scrub_background="#292929e6"
+        frame_current="#0074e8"
+        time_scrub_background="#bae2ffca"
         time_marker_line="#00000060"
         time_marker_line_selected="#ffa60060"
-        strips="#0c0a0a"
+        strips="#a7a39f"
         strips_selected="#ff8c00"
-        metadatabg="#000000"
-        metadatatext="#ffffff"
+        metadatabg="#ffffff"
+        metadatatext="#7f7f7f"
         handle_free="#000000"
-        handle_auto="#909000"
-        handle_align="#803060"
-        handle_sel_free="#000000"
-        handle_sel_auto="#f0ff40"
+        handle_auto="#ad8300"
+        handle_align="#ca4c98"
+        handle_sel_free="#7f7f7f"
+        handle_sel_auto="#dda700"
         handle_sel_align="#f090a0"
-        handle_auto_clamped="#000000"
-        handle_sel_auto_clamped="#000000"
-        handle_vertex="#000000"
-        handle_vertex_select="#ffff00"
+        handle_auto_clamped="#519931"
+        handle_sel_auto_clamped="#63bb3d"
+        handle_vertex="#7f7f7f"
+        handle_vertex_select="#ff9c00"
         handle_vertex_size="5"
         >
         <space>
           <ThemeSpaceGeneric
             back="#ffffff"
             title="#eeeeee"
-            text="#000000"
+            text="#444444"
             text_hi="#000000"
             header="#ffffffff"
             header_text="#eeeeee"
             header_text_hi="#000000"
             button="#ffffffff"
-            button_title="#000000"
+            button_title="#5c5c5c"
             button_text="#3a3a3a"
             button_text_hi="#000000"
             navigation_bar="#00000000"
             execution_buts="#00000000"
-            tab_active="#ffffff"
-            tab_inactive="#e4e4e4"
-            tab_back="#cececeff"
+            tab_active="#59b9ff"
+            tab_inactive="#fafafa"
+            tab_back="#ddddddff"
             tab_outline="#cecece"
             >
             <panelcolors>
@@ -1224,10 +1228,10 @@
         </space>
         <space_list>
           <ThemeSpaceListGeneric
-            list="#666666"
-            list_title="#000000"
-            list_text="#000000"
-            list_text_hi="#000000"
+            list="#d6d6d6"
+            list_title="#585858"
+            list_text="#414141"
+            list_text_hi="#ffa10e"
             >
           </ThemeSpaceListGeneric>
         </space_list>

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -6360,6 +6360,10 @@ msgid "Rotate"
 msgstr "Obróć"
 
 
+msgid "Laplacian"
+msgstr "Laplacian"
+
+
 msgid "Clip End"
 msgstr "Koniec przycinania"
 
@@ -6551,10 +6555,6 @@ msgstr "Ograniczenia"
 
 msgid "Target Object"
 msgstr "Obiekt docelowy"
-
-
-msgid "To"
-msgstr "Do"
 
 
 msgid "Active Track"
@@ -6829,12 +6829,12 @@ msgid "Animated"
 msgstr "Animowana"
 
 
-msgid "Laplacian"
-msgstr "Laplacian"
-
-
 msgid "Unknown"
 msgstr "Nieznany"
+
+
+msgid "To"
+msgstr "Do"
 
 
 msgctxt "Operator"
@@ -7365,10 +7365,6 @@ msgstr "Nie udało się odnaleźć ograniczenia regionu rozposzczania"
 
 msgid "Could not create merged face"
 msgstr "Nie można było utworzyć scalonej ściany"
-
-
-msgid "Select two edge loops"
-msgstr "Zaznacz dwie pętle krawędzi"
 
 
 msgid "Closed loops unsupported"

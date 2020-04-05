@@ -3,6 +3,7 @@ import bpy
 import bpy.utils.previews
 from bpy.app.handlers import persistent
 
+from . import internals
 from . import preferences
 from . import qcd_move_widget
 from . import qcd_operators
@@ -27,8 +28,11 @@ def depsgraph_update_post_handler(dummy):
 
     qcd_operators.move_selection.clear()
     qcd_operators.move_active = None
-    qcd_operators.get_move_selection()
-    qcd_operators.get_move_active()
+
+@persistent
+def undo_redo_post_handler(dummy):
+    qcd_operators.move_selection.clear()
+    qcd_operators.move_active = None
 
 @persistent
 def save_internal_data(dummy):
@@ -63,6 +67,8 @@ def register_qcd():
     addon_qcd_keymaps.append((km, kmi))
 
     bpy.app.handlers.depsgraph_update_post.append(depsgraph_update_post_handler)
+    bpy.app.handlers.undo_post.append(undo_redo_post_handler)
+    bpy.app.handlers.redo_post.append(undo_redo_post_handler)
     bpy.app.handlers.save_pre.append(save_internal_data)
     bpy.app.handlers.load_post.append(load_internal_data)
 
@@ -117,6 +123,8 @@ def unregister_qcd():
         bpy.utils.unregister_class(cls)
 
     bpy.app.handlers.depsgraph_update_post.remove(depsgraph_update_post_handler)
+    bpy.app.handlers.undo_post.remove(undo_redo_post_handler)
+    bpy.app.handlers.redo_post.remove(undo_redo_post_handler)
     bpy.app.handlers.save_pre.remove(save_internal_data)
     bpy.app.handlers.load_post.remove(load_internal_data)
 
