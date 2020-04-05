@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -4936,10 +4936,6 @@ msgid "Viewer"
 msgstr "Vista"
 
 
-msgid "Tiled"
-msgstr "Arxiu"
-
-
 msgid "How to generate the image"
 msgstr "Amagar Seleccionats"
 
@@ -7576,6 +7572,10 @@ msgid "Text"
 msgstr "Texte"
 
 
+msgid "System"
+msgstr "Sistema"
+
+
 msgid "File"
 msgstr "Arxiu"
 
@@ -7876,12 +7876,12 @@ msgid "Dynamic Paint"
 msgstr "Image Displist"
 
 
-msgid "Particle Instance"
-msgstr "Mostrar propietats de les arestes"
-
-
 msgid "Fluid Simulation"
 msgstr "Finestra de Render"
+
+
+msgid "Particle Instance"
+msgstr "Mostrar propietats de les arestes"
 
 
 msgid "Soft Body"
@@ -9000,16 +9000,8 @@ msgid "Warp modifier"
 msgstr "Esborrar tot"
 
 
-msgid "From"
-msgstr "Seleccionar connectats"
-
-
 msgid "Object to transform from"
 msgstr "Aplicar Deformació"
-
-
-msgid "To"
-msgstr "Superior"
 
 
 msgid "Object to transform to"
@@ -11569,19 +11561,6 @@ msgstr "Moure a Capa"
 
 
 msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "Separar"
-
-
-msgid "Merge continuous chains of selected bones"
-msgstr "Seleccionar connectats"
-
-
-msgid "Within Chains"
-msgstr "Finestra de Render"
-
-
-msgctxt "Operator"
 msgid "Clear Parent"
 msgstr "Desparentar"
 
@@ -13901,6 +13880,10 @@ msgid "Image height"
 msgstr "Aspecte d'imatge"
 
 
+msgid "Tiled"
+msgstr "Arxiu"
+
+
 msgid "Image width"
 msgstr "Image Displist"
 
@@ -14755,11 +14738,6 @@ msgstr "Corba"
 
 msgid "Extrude Region"
 msgstr "Extrusionar"
-
-
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "Texte"
 
 
 msgctxt "Operator"
@@ -17258,18 +17236,8 @@ msgid "Object Operation"
 msgstr "Finestra de Render"
 
 
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "Desparentar"
-
-
 msgid "Drag to clear parent in Outliner"
 msgstr "Seleccionar connectats"
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "Seleccionar fila"
 
 
 msgid "Drag to parent in Outliner"
@@ -20195,11 +20163,6 @@ msgid "Operator Cheat Sheet"
 msgstr "Render"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "Començar Joc"
-
-
 msgid "Set the active operator to its default values"
 msgstr "Seleccionar connectats"
 
@@ -20638,10 +20601,6 @@ msgstr "Duplicar"
 
 msgid "Bookmarks"
 msgstr "Menú Esborrar"
-
-
-msgid "System"
-msgstr "Sistema"
 
 
 msgid "Fluid Presets"
@@ -25079,6 +25038,10 @@ msgstr "Joc"
 
 msgid "Keyframe Numbers"
 msgstr "Joc"
+
+
+msgid "To"
+msgstr "Superior"
 
 
 msgid "+ Non-Grouped Keyframes"

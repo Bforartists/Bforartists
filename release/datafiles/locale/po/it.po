@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -2880,10 +2880,6 @@ msgstr "Usa Forza Pressione"
 
 msgid "Use tablet pressure for color strength"
 msgstr "Usa la sensibilità di pressione della tavoletta per l'intensità del colore"
-
-
-msgid "Both"
-msgstr "Entrambi"
 
 
 msgid "Background Image"
@@ -10792,6 +10788,10 @@ msgid "If a vertex is further away from offset plane than this, then it is not a
 msgstr "Se un vertice è più lontano di questo dal piano di scostamento, allora non è influenzato"
 
 
+msgid "Topology"
+msgstr "Topologia"
+
+
 msgid "Rake"
 msgstr "Graffia"
 
@@ -10886,6 +10886,10 @@ msgstr "Soglia Affilatura"
 
 msgid "Radius of the brush in pixels"
 msgstr "Raggio del Pennello in pixels"
+
+
+msgid "Laplacian"
+msgstr "Laplaciano"
 
 
 msgid "Stencil Dimensions"
@@ -12424,10 +12428,6 @@ msgid "Viewer"
 msgstr "Visualizzatore"
 
 
-msgid "Tiled"
-msgstr "Tassellato"
-
-
 msgid "Stereo 3D Format"
 msgstr "Formato Stereo 3D"
 
@@ -13680,6 +13680,10 @@ msgstr "Cerchio"
 
 msgid "Origin Offset"
 msgstr "Scostamento Origine"
+
+
+msgid "Both"
+msgstr "Entrambi"
 
 
 msgid "Settings for using the object as a field in physics simulation"
@@ -19086,6 +19090,10 @@ msgid "Support Blender"
 msgstr "Supporta Blender"
 
 
+msgid "System"
+msgstr "Sistema"
+
+
 msgid "File"
 msgstr "File"
 
@@ -19830,16 +19838,16 @@ msgid "Explode"
 msgstr "Esplosione"
 
 
+msgid "Fluid Simulation"
+msgstr "Simulazione Fluidi"
+
+
 msgid "Ocean"
 msgstr "Oceano"
 
 
 msgid "Particle Instance"
 msgstr "Istanza di Particella"
-
-
-msgid "Fluid Simulation"
-msgstr "Simulazione Fluidi"
 
 
 msgid "Soft Body"
@@ -20412,10 +20420,6 @@ msgstr "Mappatura Spigolo"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Metodo usato per mappare gli spigoli di origine a quelli di destinazione"
-
-
-msgid "Topology"
-msgstr "Topologia"
 
 
 msgid "Copy from identical topology meshes"
@@ -22453,16 +22457,8 @@ msgid "Radius to apply"
 msgstr "Raggio da applicare"
 
 
-msgid "From"
-msgstr "Da"
-
-
 msgid "Object to transform from"
 msgstr "Oggetto da trasformare da"
-
-
-msgid "To"
-msgstr "A"
 
 
 msgid "Object to transform to"
@@ -27138,19 +27134,6 @@ msgstr "Abilita tutti i livelli o solo i primi 16 (riga in alto)"
 
 
 msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "Unisci Ossa"
-
-
-msgid "Merge continuous chains of selected bones"
-msgstr "Unisci le catene continue delle ossa selezionate"
-
-
-msgid "Within Chains"
-msgstr "All'interno delle Catene"
-
-
-msgctxt "Operator"
 msgid "Clear Parent"
 msgstr "Cancella Parentela"
 
@@ -31667,6 +31650,10 @@ msgid "Image data-block name"
 msgstr "Nome blocco dati Immagine"
 
 
+msgid "Tiled"
+msgstr "Tassellato"
+
+
 msgid "Create an image with left and right views"
 msgstr "Crrea un'immagine con la vista destra e sinistra"
 
@@ -33201,11 +33188,6 @@ msgstr "Estrudi Regione"
 msgctxt "Operator"
 msgid "Extrude Region and Shrink/Fatten"
 msgstr "Estrudi Regione e Restringi/Allarga"
-
-
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "Estrudi Mesh Ripetutamente"
 
 
 msgid "Extrude selected vertices, edges or faces repeatedly"
@@ -37840,18 +37822,8 @@ msgid "Purge All"
 msgstr "Ripulisci Tutto"
 
 
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "Cancella Parentela"
-
-
 msgid "Drag to clear parent in Outliner"
 msgstr "Trascina per cancellare la parentela in Vista Struttura"
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "Imposta Genitore"
 
 
 msgid "Drag to parent in Outliner"
@@ -44150,11 +44122,6 @@ msgid "Operator Cheat Sheet"
 msgstr "Preimpostazione Operatore"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "Ripristina Valori Predefiniti"
-
-
 msgid "Set the active operator to its default values"
 msgstr "Reimposta l'operatore attivo ai suoi valori predefiniti"
 
@@ -44502,6 +44469,10 @@ msgstr "Salva il file Blender attuale"
 msgctxt "Operator"
 msgid "Search Menu"
 msgstr "Menu Cerca"
+
+
+msgid "Menu"
+msgstr "Menu"
 
 
 msgctxt "Operator"
@@ -45252,10 +45223,6 @@ msgid "Bookmarks"
 msgstr "Segnalibri"
 
 
-msgid "System"
-msgstr "Sistema"
-
-
 msgid "Fluid Presets"
 msgstr "Preimpostazioni Fluido"
 
@@ -45728,10 +45695,6 @@ msgstr "Stili"
 
 msgid "List Item"
 msgstr "Lista Elementi"
-
-
-msgid "Menu"
-msgstr "Menu"
 
 
 msgid "Menu Item"
@@ -54802,10 +54765,6 @@ msgid "Algorithm used for UV relaxation"
 msgstr "Algoritmo usato per il rilassamento dell'UV"
 
 
-msgid "Laplacian"
-msgstr "Laplaciano"
-
-
 msgid "UV Sculpt"
 msgstr "Scultura UV"
 
@@ -56463,6 +56422,10 @@ msgstr "Numeri Fotogrammi Chiave"
 
 msgid "After"
 msgstr "Dopo"
+
+
+msgid "To"
+msgstr "A"
 
 
 msgid "Nothing to show yet..."
@@ -61347,10 +61310,6 @@ msgstr "Seleziona almeno due anelli di spigoli"
 
 msgid "Could not create merged face"
 msgstr "Impossibile creare la faccia unita"
-
-
-msgid "Select two edge loops"
-msgstr "Seleziona due anelli di spigoli"
 
 
 msgid "Closed loops unsupported"

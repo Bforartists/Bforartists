@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -2141,6 +2141,10 @@ msgid "Blender"
 msgstr "Blender"
 
 
+msgid "System"
+msgstr "ระบบ"
+
+
 msgid "File"
 msgstr "ไฟล์"
 
@@ -2384,14 +2388,6 @@ msgstr "ศูนย์กลาง UV"
 msgctxt "Curve"
 msgid "Random"
 msgstr "สุ่ม"
-
-
-msgid "From"
-msgstr "จาก"
-
-
-msgid "To"
-msgstr "ไปยัง"
 
 
 msgid "X Normal"
@@ -3415,11 +3411,6 @@ msgid "Play"
 msgstr "เล่น"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "คืนค่าเดิม"
-
-
 msgid "Tooltip"
 msgstr "ตัวช่วยเครื่องมือ"
 
@@ -3505,10 +3496,6 @@ msgstr "ตัวกรอง"
 
 msgid "Favorites"
 msgstr "ล่าสุด"
-
-
-msgid "System"
-msgstr "ระบบ"
 
 
 msgctxt "Operator"
@@ -4287,6 +4274,10 @@ msgstr "[{}]: \"{}\" ({})"
 
 msgid "Frame Numbers"
 msgstr "หมายเลขเฟรม"
+
+
+msgid "To"
+msgstr "ไปยัง"
 
 
 msgid "+ Non-Grouped Keyframes"

@@ -653,10 +653,10 @@ def allocate_main_ui(self, context):
         for num in range(button_group):
             slot_num = row_num + num
 
-            qcd_slot = qcd_slots.get_name(f"{slot_num}")
+            qcd_slot_name = qcd_slots.get_name(f"{slot_num}")
 
-            if qcd_slot:
-                qcd_laycol = layer_collections[qcd_slot]["ptr"]
+            if qcd_slot_name:
+                qcd_laycol = layer_collections[qcd_slot_name]["ptr"]
                 collection_objects = qcd_laycol.collection.objects
                 selected_objects = qcd_operators.get_move_selection()
                 active_object = qcd_operators.get_move_active()
@@ -815,16 +815,16 @@ def draw_callback_px(self, context):
             rounding = 5
 
             if num < 10:
-                if not f"{num+2}" in qcd_slots:
+                if not qcd_slots.contains(idx=f"{num+2}"):
                     tr = rounding
 
-                if not f"{num}" in qcd_slots:
+                if not qcd_slots.contains(idx=f"{num}"):
                     tl = rounding
             else:
-                if not f"{num+2}" in qcd_slots:
+                if not qcd_slots.contains(idx=f"{num+2}"):
                     br = rounding
 
-                if not f"{num}" in qcd_slots:
+                if not qcd_slots.contains(idx=f"{num}"):
                     bl = rounding
 
             if num in [0,5]:

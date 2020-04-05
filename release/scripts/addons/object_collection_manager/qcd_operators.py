@@ -47,35 +47,22 @@ def get_move_selection():
     global move_selection
 
     if not move_selection:
-        move_selection = bpy.context.selected_objects
+        move_selection = [obj.name for obj in bpy.context.selected_objects]
 
-    return move_selection
+    return [bpy.data.objects[name] for name in move_selection]
 
 def get_move_active():
     global move_active
     global move_selection
 
     if not move_active:
-        move_active = bpy.context.view_layer.objects.active
+        move_active = getattr(bpy.context.view_layer.objects.active, "name", None)
 
-    if move_active not in get_move_selection():
+    if move_active not in [obj.name for obj in get_move_selection()]:
         move_active = None
 
-    if move_active:
-        try:
-            move_active.name
+    return bpy.data.objects[move_active] if move_active else None
 
-        except:
-            move_active = None
-            move_selection = []
-
-            # update header widget
-            cm = bpy.context.scene.collection_manager
-            cm.update_header.clear()
-            new_update_header = cm.update_header.add()
-            new_update_header.name = "updated"
-
-    return move_active
 
 class MoveToQCDSlot(Operator):
     '''Move object(s) to QCD slot'''
@@ -94,10 +81,11 @@ class MoveToQCDSlot(Operator):
         selected_objects = get_move_selection()
         active_object = get_move_active()
         move_triggered = True
-        qcd_laycol = qcd_slots.get_name(self.slot)
+        qcd_laycol = None
+        slot_name = qcd_slots.get_name(self.slot)
 
-        if qcd_laycol:
-            qcd_laycol = layer_collections[qcd_laycol]["ptr"]
+        if slot_name:
+            qcd_laycol = layer_collections[slot_name]["ptr"]
 
         else:
             return {'CANCELLED'}
@@ -138,10 +126,12 @@ class MoveToQCDSlot(Operator):
                         collection.objects.unlink(obj)
 
 
+        # update the active object if needed
         if not context.active_object:
             try:
                 context.view_layer.objects.active = active_object
-            except:
+
+            except RuntimeError: # object not in visible slot
                 pass
 
         # update header UI
@@ -213,10 +203,11 @@ class ViewQCDSlot(Operator):
         global layer_collections
         global rto_history
 
-        qcd_laycol = qcd_slots.get_name(self.slot)
+        qcd_laycol = None
+        slot_name = qcd_slots.get_name(self.slot)
 
-        if qcd_laycol:
-            qcd_laycol = layer_collections[qcd_laycol]["ptr"]
+        if slot_name:
+            qcd_laycol = layer_collections[slot_name]["ptr"]
 
         else:
             return {'CANCELLED'}
@@ -297,6 +288,6 @@ class RenumerateQCDSlots(Operator):
         if event.ctrl:
             qcd_slots.overrides.clear()
 
-        update_property_group(context, renumerate=True)
+        update_property_group(context, renumerate_qcd=True)
 
         return {'FINISHED'}

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
@@ -3376,10 +3376,6 @@ msgstr "Фактор випадковості для автогенерован�
 
 msgid "Mode Type"
 msgstr "Тип Режиму"
-
-
-msgid "Both"
-msgstr "Обидва"
 
 
 msgid "Background Image"
@@ -14413,6 +14409,14 @@ msgid "If a vertex is further away from offset plane than this, then it is not a
 msgstr "Якщо вершина знаходиться далі від площини зсуву, ніж це значення, то на неї не впливає"
 
 
+msgid "Topology"
+msgstr "Топологія"
+
+
+msgid "Face Sets"
+msgstr "Набори граней"
+
+
 msgid "Rake"
 msgstr "Граблі"
 
@@ -14519,6 +14523,10 @@ msgstr "Порг, нижче від якого загострювання не �
 
 msgid "Radius of the brush in pixels"
 msgstr "Радіус пензля у пікселях"
+
+
+msgid "Laplacian"
+msgstr "Лапласіан"
 
 
 msgid "Smooth Stroke Factor"
@@ -17029,10 +17037,6 @@ msgid "Compositing node viewer"
 msgstr "Оглядач вузлів компонування"
 
 
-msgid "Tiled"
-msgstr "Черепиця"
-
-
 msgid "Stereo 3D Format"
 msgstr "Формат 3D-стерео"
 
@@ -18857,6 +18861,10 @@ msgstr "Бік Зображення Порожні"
 
 msgid "Show front/back side"
 msgstr "Показ переднього/заднього боку"
+
+
+msgid "Both"
+msgstr "Обидва"
 
 
 msgid "Maps of faces of the object"
@@ -25992,10 +26000,6 @@ msgid "Shift Texture in 2d Space"
 msgstr "Зсунути Текстуру у 2D Просторі"
 
 
-msgid "Texture Opacity"
-msgstr "Безпрозорість Текстури"
-
-
 msgid "Scale Factor for Texture"
 msgstr "Фактор Масштабу для Текстури"
 
@@ -26326,6 +26330,10 @@ msgid "Support Blender"
 msgstr "Підтримати Blender"
 
 
+msgid "System"
+msgstr "Система"
+
+
 msgctxt "Operator"
 msgid "TOPBAR_MT_edit_curve_add"
 msgstr "TOPBAR_MT_edit_curve_add"
@@ -26502,10 +26510,6 @@ msgstr "Спеціальні символи"
 
 msgid "Text Context Menu"
 msgstr "Контекстне Меню Текстів"
-
-
-msgid "Face Sets"
-msgstr "Набори граней"
 
 
 msgid "Generate Weights"
@@ -27392,16 +27396,16 @@ msgid "Explode"
 msgstr "Вибух"
 
 
+msgid "Fluid Simulation"
+msgstr "Симуляція Рідини"
+
+
 msgid "Ocean"
 msgstr "Океан"
 
 
 msgid "Particle Instance"
 msgstr "Примірник частинки"
-
-
-msgid "Fluid Simulation"
-msgstr "Симуляція Рідини"
 
 
 msgid "Soft Body"
@@ -28138,10 +28142,6 @@ msgstr "Розкладка ребер"
 
 msgid "Method used to map source edges to destination ones"
 msgstr "Метод, використовуваний для розкладки ребер джерела на об'єкті призначення"
-
-
-msgid "Topology"
-msgstr "Топологія"
 
 
 msgid "Copy from identical topology meshes"
@@ -30580,16 +30580,8 @@ msgid "Radius to apply"
 msgstr "Радіус застосування"
 
 
-msgid "From"
-msgstr "Від"
-
-
 msgid "Object to transform from"
 msgstr "Об'єкт, від якого відбуваються трансформації"
-
-
-msgid "To"
-msgstr "До"
 
 
 msgid "Object to transform to"
@@ -37095,19 +37087,6 @@ msgstr "Увімкнути всі шари або лише перші 16 (вер
 
 
 msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "Об'єднати кістки"
-
-
-msgid "Merge continuous chains of selected bones"
-msgstr "Об'єднати безперервні ланцюги вибраних кісток"
-
-
-msgid "Within Chains"
-msgstr "У ланцюгах"
-
-
-msgctxt "Operator"
 msgid "Clear Parent"
 msgstr "Зчистити приріднення"
 
@@ -43468,6 +43447,10 @@ msgid "Image data-block name"
 msgstr "Ім'я блоку даних зображення"
 
 
+msgid "Tiled"
+msgstr "Черепиця"
+
+
 msgid "Create an image with left and right views"
 msgstr "Створити зображення з лівим та правим виглядами"
 
@@ -45608,11 +45591,6 @@ msgstr "Видавити Регіон і Стоншення/Потовщення
 
 msgid "Extrude region together along local normals"
 msgstr "Видавити регіон разом уздовж локальних нормалей"
-
-
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "Видавити Повторно Сіть"
 
 
 msgid "Extrude selected vertices, edges or faces repeatedly"
@@ -51739,18 +51717,8 @@ msgid "Clear all orphaned data-blocks without any users from the file"
 msgstr "Вичистити всі осиротілі блоки даних без будь-яких користувачів з цього файлу"
 
 
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "Кинути для зчищення приріднення"
-
-
 msgid "Drag to clear parent in Outliner"
 msgstr "Перетягти, щоб зчистити приріднення у Структураторі"
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "Кинути для задання приріднення"
 
 
 msgid "Drag to parent in Outliner"
@@ -59921,11 +59889,6 @@ msgid "List all the Operators in a text-block, useful for scripting"
 msgstr "Перелічити всі оператори в текстовому блоці, зручно для розробки сценаріїв"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "Відновити стандартні значення"
-
-
 msgid "Set the active operator to its default values"
 msgstr "Скинути значення цього оператора до його стандартних значень"
 
@@ -60441,6 +60404,10 @@ msgstr "Меню пошуку"
 
 msgid "Pop-up a search menu over all available operators in current context"
 msgstr "Показувати меню пошуку зі всіма доступними операторами поточного контексту"
+
+
+msgid "Menu"
+msgstr "Меню"
 
 
 msgctxt "Operator"
@@ -61605,10 +61572,6 @@ msgid "Favorites"
 msgstr "Улюблене"
 
 
-msgid "System"
-msgstr "Система"
-
-
 msgid "Fluid Presets"
 msgstr "Передустави Рідини"
 
@@ -62313,10 +62276,6 @@ msgstr "Стилі"
 
 msgid "List Item"
 msgstr "Елемент Списку"
-
-
-msgid "Menu"
-msgstr "Меню"
 
 
 msgid "Menu Back"
@@ -68316,14 +68275,6 @@ msgstr "Вжити спрощення"
 
 msgid "Enable simplification of scene for quicker preview renders"
 msgstr "Дозволити спрощення сцени для швидшого передогляду рендерів"
-
-
-msgid "Use High-resolution Smoke"
-msgstr "Вжити Високо-роздільний Дим"
-
-
-msgid "Display high-resolution smoke in the viewport"
-msgstr "Показувати високо-роздільний дим у вікні огляду"
 
 
 msgid "Render Single Layer"
@@ -76360,10 +76311,6 @@ msgid "Algorithm used for UV relaxation"
 msgstr "Алгоритм, який використовується для UV-релаксації"
 
 
-msgid "Laplacian"
-msgstr "Лапласіан"
-
-
 msgid "Use Laplacian method for relaxation"
 msgstr "Використати метод Лапласа для релаксації"
 
@@ -79077,6 +79024,10 @@ msgid "After"
 msgstr "Після"
 
 
+msgid "To"
+msgstr "До"
+
+
 msgid "Nothing to show yet..."
 msgstr "Немає що показувати..."
 
@@ -80547,6 +80498,10 @@ msgid "Edge To Edge"
 msgstr "Ребро до ребра"
 
 
+msgid "Texture Opacity"
+msgstr "Безпрозорість Текстури"
+
+
 msgid "Thickness Profile"
 msgstr "Профіль Товщини"
 
@@ -81098,10 +81053,6 @@ msgstr "Розмір Опроміненості"
 
 msgid "Max Child Particles"
 msgstr "Макс Нащадкових Частинок"
-
-
-msgid "High-resolution Smoke"
-msgstr "Високо-роздільний Дим"
 
 
 msgid "Render Engine"
@@ -85497,10 +85448,6 @@ msgstr "Не виявлено меж області розчинення"
 
 msgid "Could not create merged face"
 msgstr "Неможливо створити об'єднану грань"
-
-
-msgid "Select two edge loops"
-msgstr "Виберіть дві петлі ребер"
 
 
 msgid "Closed loops unsupported"

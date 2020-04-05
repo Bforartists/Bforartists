@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 10) (b'8ba9efb7d8ff')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -2089,10 +2089,6 @@ msgstr "!"
 
 msgid "Iterations"
 msgstr "ﺕﺍﺭﺍﺮﻜﺘﻟﺍ"
-
-
-msgid "Both"
-msgstr "ﺎﻤﻫﻼ﻿ﻛ"
 
 
 msgid "Background Image"
@@ -9787,6 +9783,10 @@ msgid "Radius of the brush in pixels"
 msgstr "ﺕﻼ﻿ﺴﻜﺒﻟﺎﺑ ﺓﺎﺷﺮﻔﻟﺍ ﻉﺎﻌﺷ"
 
 
+msgid "Laplacian"
+msgstr "ﻥﺎﻴﺳﻼ﻿ﺑﻻ﻿"
+
+
 msgid "Smooth Stroke Factor"
 msgstr "ﺔﺒﻄﺸﻟﺍ ﺔﻣﻮﻌﻧ ﻞﻣﺎﻌﻣ"
 
@@ -11739,10 +11739,6 @@ msgid "Compositing node viewer"
 msgstr "ﺐﻛّﺮﻤﻠﻟ ﺪﻘﻌﻟﺍ ﺽﺭﺎﻋ"
 
 
-msgid "Tiled"
-msgstr "ﺕﺎﻨﺒﻟ ﻭﺫ"
-
-
 msgid "Stereo 3D Format"
 msgstr " ﺩﺎﻌﺑﻻ﻿ﺍ ﻲﺛﻼ﻿ﺛ ﻲﺟﺍﻭﺩﺯﺍ ﻖﻴﺴﻨﺗ"
 
@@ -12921,6 +12917,10 @@ msgstr "ﻞﺻﻻ﻿ﺍ ﻦﻋ ﺔﺣﺍﺯﻹ﻿ﺍ"
 
 msgid "Origin offset distance"
 msgstr "ﻞﺻﻻ﻿ﺍ ﻦﻋ ﺔﺣﺍﺯﻹ﻿ﺍ ﺔﻓﺎﺴﻣ"
+
+
+msgid "Both"
+msgstr "ﺎﻤﻫﻼ﻿ﻛ"
 
 
 msgid "Settings for using the object as a field in physics simulation"
@@ -17860,6 +17860,10 @@ msgid "Text"
 msgstr "ﺺﻧ"
 
 
+msgid "System"
+msgstr "ﻡﺎﻈﻧ"
+
+
 msgid "File"
 msgstr "ﻒﻠﻣ"
 
@@ -18444,16 +18448,16 @@ msgid "Explode"
 msgstr "ﺭﺎﺠﻔﻧﺍ"
 
 
+msgid "Fluid Simulation"
+msgstr "ﻞﺋﺎﺳ ﺓﺎﻛﺎﺤﻣ"
+
+
 msgid "Ocean"
 msgstr "ﻂﻴﺤﻣ"
 
 
 msgid "Particle Instance"
 msgstr "ﺕﺎﺌﻳﺰﺟ ﺙﺎﻌﺒﻧﺍ"
-
-
-msgid "Fluid Simulation"
-msgstr "ﻞﺋﺎﺳ ﺓﺎﻛﺎﺤﻣ"
 
 
 msgid "Soft Body"
@@ -19835,16 +19839,8 @@ msgid "Radius to apply"
 msgstr "ﻖﺒّﻄﻤﻟﺍ ﺮﻄﻘﻟﺍ ﻒﺼﻧ"
 
 
-msgid "From"
-msgstr "ﻦﻣ"
-
-
 msgid "Object to transform from"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﻦﻣ ﻝﻮﺤﺗ"
-
-
-msgid "To"
-msgstr "ـﻟ"
 
 
 msgid "Object to transform to"
@@ -23128,11 +23124,6 @@ msgstr "ﺓﺮﻫﺎﻇ ﻞﻜﻴﻬﻟﺍ ﺕﺎﻘﺒﻃ ﻞﻛ ﻞﻌﺟﺇ"
 
 
 msgctxt "Operator"
-msgid "Merge Bones"
-msgstr "ﻡﺎﻈﻌﻟﺍ ﺞﻣﺩﺍ"
-
-
-msgctxt "Operator"
 msgid "Clear Parent"
 msgstr "ﻞﺻﻻ﻿ﺍ ﺭﺮﺣ"
 
@@ -25482,6 +25473,10 @@ msgid "New Image"
 msgstr "ﺓﺪﻳﺪﺟ ﺓﺭﻮﺻ"
 
 
+msgid "Tiled"
+msgstr "ﺕﺎﻨﺒﻟ ﻭﺫ"
+
+
 msgctxt "Operator"
 msgid "Open Image"
 msgstr "ﺓﺭﻮﺻ ﺢﺘﻓﺍ"
@@ -26369,11 +26364,6 @@ msgstr "ﻪﺟﻭﻻ﻿ﺍ ﺔﻘﻄﻨﻣ ﻖﺜﺑﺍ"
 
 msgid "Extrude region and move result"
 msgstr "ﺔﺠﻴﺘﻨﻟﺍ ﻙﺮّﺣ ﻭ ﺔﻘﻄﻨﻤﻟﺍ ﻖﺜﺑﺍ"
-
-
-msgctxt "Operator"
-msgid "Extrude Repeat Mesh"
-msgstr "ﻢﺴﺠﻤﻟﺍ ﺭﺮﻛﻭ ﻖﺜﺑﺍ"
 
 
 msgctxt "Operator"
@@ -28744,18 +28734,8 @@ msgid "Delete Hierarchy"
 msgstr "ﺔﻴﻠﻜﻴﻬﻟﺍ ﻑﺬﺣﺇ"
 
 
-msgctxt "Operator"
-msgid "Drop to Clear Parent"
-msgstr "ﻞﺻﻻ﻿ﺍ ﺔﻟﺍﺯﻹ﻿ ﻙﺮﺗﺍ"
-
-
 msgid "Drag to clear parent in Outliner"
 msgstr "ﻞﻜﻴﻬﻤﻟﺍ ﻲﻓ ﻞﺻﻻ﻿ﺍ ﻑﺬﺤﻟ ﺐﺤﺳﺍ"
-
-
-msgctxt "Operator"
-msgid "Drop to Set Parent"
-msgstr "ﻞﺻﻻ﻿ﺍ ﻊﻀﺘﻟ ﻙﺮﺗﺍ"
 
 
 msgid "Drag to parent in Outliner"
@@ -31773,11 +31753,6 @@ msgid "Operator Cheat Sheet"
 msgstr "ﻞﻣﺎﻌﻟﺍ ﺎﻳﺎﺒﺧ ﺔﻗﺭﻭ"
 
 
-msgctxt "Operator"
-msgid "Restore Defaults"
-msgstr "ﻞﻣﺎﻌﻠﻟ ﺔﻴﻠﺻﻻ﻿ﺍ ﻢﻴﻘﻠﻟ ﺮﻔﺻ"
-
-
 msgid "Set the active operator to its default values"
 msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﻡﺎﻈﻌﻠﻟ ﻞﺻﺄﻛ ﺔﻟﺎﻌﻔﻟﺍ ﺔﻤﻈﻌﻟﺍ ﻊﺿ"
 
@@ -32361,10 +32336,6 @@ msgstr "ﺕﺎﻴﻔﺼﻣ"
 
 msgid "Bookmarks"
 msgstr "ﺔﺼﺼﺨﻣ ﻂﺑﺍﻭﺭ"
-
-
-msgid "System"
-msgstr "ﻡﺎﻈﻧ"
 
 
 msgid "Fluid Presets"
@@ -38519,10 +38490,6 @@ msgid "Algorithm used for UV relaxation"
 msgstr "UV ـﻟﺍ ءﺎﺧﺭﻹ﻿ ﺔﻠﻤﻌﺘﺴﻣ ﺔﻴﻣﺯﺭﺍﻮﺧ"
 
 
-msgid "Laplacian"
-msgstr "ﻥﺎﻴﺳﻼ﻿ﺑﻻ﻿"
-
-
 msgid "Use Laplacian method for relaxation"
 msgstr " ءﺎﺧﺭﻺ﻿ﻟ ﻥﺎﻴﺳﻼ﻿ﺑﻻ﻿ ﺔﻘﻳﺮﻃ ﻡﺪﺨﺘﺳﺍ"
 
@@ -39447,6 +39414,10 @@ msgstr "ﺡﺎﺘﻔﻤﻟﺍ ﻡﺎﻗﺭﺍ"
 
 msgid "After"
 msgstr "ﺪﻌﺑ"
+
+
+msgid "To"
+msgstr "ـﻟ"
 
 
 msgid "Nothing to show yet..."

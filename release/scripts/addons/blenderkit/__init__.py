@@ -92,7 +92,7 @@ def scene_load(context):
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     preferences.login_attempt = False
 
-
+@bpy.app.handlers.persistent
 def check_timers_timer():
     ''' checks if all timers are registered regularly. Prevents possible bugs from stopping the addon.'''
     if not bpy.app.timers.is_registered(search.timer_update):
