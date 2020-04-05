@@ -156,10 +156,6 @@ void *WM_opengl_context_create(void);
 void WM_opengl_context_dispose(void *context);
 void WM_opengl_context_activate(void *context);
 void WM_opengl_context_release(void *context);
-#ifdef WIN32
-void *WM_directx_context_create(void);
-void WM_directx_context_dispose(void *context);
-#endif
 
 struct wmWindow *WM_window_open(struct bContext *C, const struct rcti *rect);
 struct wmWindow *WM_window_open_temp(struct bContext *C,
@@ -192,7 +188,7 @@ void WM_lib_reload(struct Library *lib, struct bContext *C, struct ReportList *r
 
 /* mouse cursors */
 void WM_cursor_set(struct wmWindow *win, int curs);
-bool WM_cursor_set_from_tool(struct wmWindow *win, const ScrArea *sa, const ARegion *region);
+bool WM_cursor_set_from_tool(struct wmWindow *win, const ScrArea *area, const ARegion *region);
 void WM_cursor_modal_set(struct wmWindow *win, int curs);
 void WM_cursor_modal_restore(struct wmWindow *win);
 void WM_cursor_wait(bool val);
@@ -798,7 +794,7 @@ const char *WM_window_cursor_keymap_status_get(const struct wmWindow *win,
 void WM_window_cursor_keymap_status_refresh(struct bContext *C, struct wmWindow *win);
 
 void WM_window_status_area_tag_redraw(struct wmWindow *win);
-struct ScrArea *WM_window_status_area_find(struct wmWindow *win, struct bScreen *sc);
+struct ScrArea *WM_window_status_area_find(struct wmWindow *win, struct bScreen *screen);
 bool WM_window_modal_keymap_status_draw(struct bContext *C,
                                         struct wmWindow *win,
                                         struct uiLayout *layout);
@@ -845,18 +841,18 @@ typedef struct ARegion *(*wmTooltipInitFn)(struct bContext *C,
 
 void WM_tooltip_immediate_init(struct bContext *C,
                                struct wmWindow *win,
-                               struct ScrArea *sa,
+                               struct ScrArea *area,
                                struct ARegion *region,
                                wmTooltipInitFn init);
 void WM_tooltip_timer_init_ex(struct bContext *C,
                               struct wmWindow *win,
-                              struct ScrArea *sa,
+                              struct ScrArea *area,
                               struct ARegion *region,
                               wmTooltipInitFn init,
                               double delay);
 void WM_tooltip_timer_init(struct bContext *C,
                            struct wmWindow *win,
-                           struct ScrArea *sa,
+                           struct ScrArea *area,
                            struct ARegion *region,
                            wmTooltipInitFn init);
 void WM_tooltip_timer_clear(struct bContext *C, struct wmWindow *win);

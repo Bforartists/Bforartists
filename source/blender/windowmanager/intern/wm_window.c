@@ -65,6 +65,9 @@
 #include "wm_platform_support.h"
 #include "wm_window.h"
 #include "wm_window_private.h"
+#ifdef WITH_XR_OPENXR
+#  include "wm_xr.h"
+#endif
 
 #include "ED_anim_api.h"
 #include "ED_fileselect.h"
@@ -430,7 +433,7 @@ void wm_window_close(bContext *C, wmWindowManager *wm, wmWindow *win)
 
   /* Close child windows and bring windows back to front that dialogs have pushed behind the main
    * window. */
-  for (wmWindow *iter_win = wm->windows.first; iter_win; iter_win = iter_win->next) {
+  LISTBASE_FOREACH (wmWindow *, iter_win, &wm->windows) {
     if (iter_win->parent == win) {
       wm_window_close(C, wm, iter_win);
     }
@@ -781,7 +784,7 @@ void wm_window_ghostwindows_ensure(wmWindowManager *wm)
 #endif
   }
 
-  for (wmWindow *win = wm->windows.first; win; win = win->next) {
+  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
     wm_window_ghostwindow_ensure(wm, win, false);
   }
 }
@@ -854,7 +857,7 @@ wmWindow *WM_window_open_temp(bContext *C,
   wmWindow *win_prev = CTX_wm_window(C);
   wmWindow *win;
   bScreen *screen;
-  ScrArea *sa;
+  ScrArea *area;
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
@@ -932,10 +935,10 @@ wmWindow *WM_window_open_temp(bContext *C,
    */
 
   /* ensure it shows the right spacetype editor */
-  sa = screen->areabase.first;
-  CTX_wm_area_set(C, sa);
+  area = screen->areabase.first;
+  CTX_wm_area_set(C, area);
 
-  ED_area_newspace(C, sa, space_type, false);
+  ED_area_newspace(C, area, space_type, false);
 
   ED_screen_change(C, screen);
   ED_screen_refresh(wm, win); /* test scale */
@@ -2169,8 +2172,7 @@ void WM_window_screen_rect_calc(const wmWindow *win, rcti *r_rect)
   screen_rect = window_rect;
 
   /* Subtract global areas from screen rectangle. */
-  for (ScrArea *global_area = win->global_areas.areabase.first; global_area;
-       global_area = global_area->next) {
+  LISTBASE_FOREACH (ScrArea *, global_area, &win->global_areas.areabase) {
     int height = ED_area_global_size_y(global_area) - 1;
 
     if (global_area->global->flag & GLOBAL_AREA_IS_HIDDEN) {
@@ -2218,7 +2220,7 @@ bool WM_window_is_maximized(const wmWindow *win)
  */
 void WM_windows_scene_data_sync(const ListBase *win_lb, Scene *scene)
 {
-  for (wmWindow *win = win_lb->first; win; win = win->next) {
+  LISTBASE_FOREACH (wmWindow *, win, win_lb) {
     if (WM_window_get_active_scene(win) == scene) {
       ED_workspace_scene_data_sync(win->workspace_hook, scene);
     }
@@ -2227,7 +2229,7 @@ void WM_windows_scene_data_sync(const ListBase *win_lb, Scene *scene)
 
 Scene *WM_windows_scene_get_from_screen(const wmWindowManager *wm, const bScreen *screen)
 {
-  for (wmWindow *win = wm->windows.first; win; win = win->next) {
+  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
     if (WM_window_get_active_screen(win) == screen) {
       return WM_window_get_active_scene(win);
     }
@@ -2238,7 +2240,7 @@ Scene *WM_windows_scene_get_from_screen(const wmWindowManager *wm, const bScreen
 
 WorkSpace *WM_windows_workspace_get_from_screen(const wmWindowManager *wm, const bScreen *screen)
 {
-  for (wmWindow *win = wm->windows.first; win; win = win->next) {
+  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
     if (WM_window_get_active_screen(win) == screen) {
       return WM_window_get_active_workspace(win);
     }
@@ -2266,7 +2268,7 @@ void WM_window_set_active_scene(Main *bmain, bContext *C, wmWindow *win, Scene *
     changed = true;
   }
 
-  for (wmWindow *win_child = wm->windows.first; win_child; win_child = win_child->next) {
+  LISTBASE_FOREACH (wmWindow *, win_child, &wm->windows) {
     if (win_child->parent == win_parent && win_child->scene != scene) {
       ED_screen_scene_change(C, win_child, scene);
       changed = true;
@@ -2312,7 +2314,7 @@ void WM_window_set_active_view_layer(wmWindow *win, ViewLayer *view_layer)
   wmWindow *win_parent = (win->parent) ? win->parent : win;
 
   /* Set view layer in parent and child windows. */
-  for (wmWindow *win_iter = wm->windows.first; win_iter; win_iter = win_iter->next) {
+  LISTBASE_FOREACH (wmWindow *, win_iter, &wm->windows) {
     if ((win_iter == win_parent) || (win_iter->parent == win_parent)) {
       STRNCPY(win_iter->view_layer_name, view_layer->name);
       bScreen *screen = BKE_workspace_active_screen_get(win_iter->workspace_hook);
@@ -2344,7 +2346,7 @@ void WM_window_set_active_workspace(bContext *C, wmWindow *win, WorkSpace *works
 
   ED_workspace_change(workspace, C, wm, win);
 
-  for (wmWindow *win_child = wm->windows.first; win_child; win_child = win_child->next) {
+  LISTBASE_FOREACH (wmWindow *, win_child, &wm->windows) {
     if (win_child->parent == win_parent) {
       bScreen *screen = WM_window_get_active_screen(win_child);
       /* Don't change temporary screens, they only serve a single purpose. */
@@ -2458,24 +2460,3 @@ void WM_ghost_show_message_box(const char *title,
   GHOST_ShowMessageBox(g_system, title, message, help_label, continue_label, link, dialog_options);
 }
 /** \} */
-
-#ifdef WIN32
-/* -------------------------------------------------------------------- */
-/** \name Direct DirectX Context Management
- * \{ */
-
-void *WM_directx_context_create(void)
-{
-  BLI_assert(GPU_framebuffer_active_get() == NULL);
-  return GHOST_CreateDirectXContext(g_system);
-}
-
-void WM_directx_context_dispose(void *context)
-{
-  BLI_assert(GPU_framebuffer_active_get() == NULL);
-  GHOST_DisposeDirectXContext(g_system, context);
-}
-
-/** \} */
-
-#endif

@@ -92,7 +92,7 @@ void ED_armature_edit_validate_active(struct bArmature *arm)
 void ED_armature_edit_refresh_layer_used(bArmature *arm)
 {
   arm->layer_used = 0;
-  for (EditBone *ebo = arm->edbo->first; ebo; ebo = ebo->next) {
+  LISTBASE_FOREACH (EditBone *, ebo, arm->edbo) {
     arm->layer_used |= ebo->layer;
   }
 }
@@ -142,7 +142,7 @@ void bone_free(bArmature *arm, EditBone *bone)
   }
 
   /* Clear references from other edit bones. */
-  for (EditBone *ebone = arm->edbo->first; ebone; ebone = ebone->next) {
+  LISTBASE_FOREACH (EditBone *, ebone, arm->edbo) {
     if (ebone->bbone_next == bone) {
       ebone->bbone_next = NULL;
     }
@@ -196,13 +196,12 @@ bool ED_armature_ebone_is_child_recursive(EditBone *ebone_parent, EditBone *ebon
  * \param ebone_child_tot: Size of the ebone_child array
  * \return The shared parent or NULL.
  */
-EditBone *ED_armature_ebone_find_shared_parent(EditBone *ebone_child[],
-                                               const unsigned int ebone_child_tot)
+EditBone *ED_armature_ebone_find_shared_parent(EditBone *ebone_child[], const uint ebone_child_tot)
 {
-  unsigned int i;
+  uint i;
   EditBone *ebone_iter;
 
-#define EBONE_TEMP_UINT(ebone) (*((unsigned int *)(&((ebone)->temp))))
+#define EBONE_TEMP_UINT(ebone) (*((uint *)(&((ebone)->temp))))
 
   /* clear all */
   for (i = 0; i < ebone_child_tot; i++) {
@@ -473,7 +472,7 @@ void ED_armature_ebone_transform_mirror_update(bArmature *arm, EditBone *ebo, bo
 void ED_armature_edit_transform_mirror_update(Object *obedit)
 {
   bArmature *arm = obedit->data;
-  for (EditBone *ebo = arm->edbo->first; ebo; ebo = ebo->next) {
+  LISTBASE_FOREACH (EditBone *, ebo, arm->edbo) {
     ED_armature_ebone_transform_mirror_update(arm, ebo, true);
   }
 }
@@ -482,10 +481,10 @@ void ED_armature_edit_transform_mirror_update(Object *obedit)
 /* Armature EditMode Conversions */
 
 /* converts Bones to EditBone list, used for tools as well */
-static EditBone *make_boneList_rec(ListBase *edbo,
-                                   ListBase *bones,
-                                   EditBone *parent,
-                                   Bone *actBone)
+static EditBone *make_boneList_recursive(ListBase *edbo,
+                                         ListBase *bones,
+                                         EditBone *parent,
+                                         Bone *actBone)
 {
   EditBone *eBone;
   EditBone *eBoneAct = NULL;
@@ -564,7 +563,7 @@ static EditBone *make_boneList_rec(ListBase *edbo,
 
     /* Add children if necessary. */
     if (curBone->childbase.first) {
-      eBoneTest = make_boneList_rec(edbo, &curBone->childbase, eBone, actBone);
+      eBoneTest = make_boneList_recursive(edbo, &curBone->childbase, eBone, actBone);
       if (eBoneTest) {
         eBoneAct = eBoneTest;
       }
@@ -581,7 +580,7 @@ static EditBone *make_boneList_rec(ListBase *edbo,
 static EditBone *find_ebone_link(ListBase *edbo, Bone *link)
 {
   if (link != NULL) {
-    for (EditBone *ebone = edbo->first; ebone; ebone = ebone->next) {
+    LISTBASE_FOREACH (EditBone *, ebone, edbo) {
       if (ebone->temp.bone == link) {
         return ebone;
       }
@@ -595,9 +594,9 @@ EditBone *make_boneList(ListBase *edbo, ListBase *bones, struct Bone *actBone)
 {
   BLI_assert(!edbo->first && !edbo->last);
 
-  EditBone *active = make_boneList_rec(edbo, bones, NULL, actBone);
+  EditBone *active = make_boneList_recursive(edbo, bones, NULL, actBone);
 
-  for (EditBone *ebone = edbo->first; ebone; ebone = ebone->next) {
+  LISTBASE_FOREACH (EditBone *, ebone, edbo) {
     Bone *bone = ebone->temp.bone;
 
     /* Convert custom B-Bone handle links. */
