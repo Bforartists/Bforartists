@@ -4351,12 +4351,7 @@ static void SCREEN_OT_header_toolbar_misc(wmOperatorType *ot)
   ot->poll = ED_operator_areaactive;
   ot->flag = 0;
 }
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Header Tools Operator
- * \{ */
+/*--------------- bfa end -------------------------------------*/
 
 void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *UNUSED(arg))
 {
