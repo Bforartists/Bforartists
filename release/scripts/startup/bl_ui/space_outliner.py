@@ -75,12 +75,9 @@ class OUTLINER_HT_header(Header):
         layout.prop(space, "display_mode", icon_only=True)
 
         OUTLINER_MT_editor_menus.draw_collapsible(context, layout) # Collapsing everything in OUTLINER_MT_editor_menus when ticking collapse menus checkbox
-
-        #layout.separator_spacer()
-    
-        
+      
         layout.separator_spacer()
-        
+
         row = layout.row(align=True)
 
         row.prop(addon_prefs,"outliner_show_search", icon='VIEWZOOM', text = "") # show search text prop
@@ -243,7 +240,6 @@ class OUTLINER_MT_view(Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
-
 
 
 class OUTLINER_MT_edit_datablocks(Menu):
@@ -494,7 +490,6 @@ classes = (
     OUTLINER_MT_collection_visibility,
     OUTLINER_MT_object,
     OUTLINER_PT_filter,
-
 )
 
 if __name__ == "__main__":  # only for live edit.
