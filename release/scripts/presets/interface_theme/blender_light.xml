@@ -9,6 +9,9 @@
         widget_emboss="#00000005"
         editor_outline="#1f1f1f"
         widget_text_cursor="#3399e6"
+        transparent_checker_primary="#333333"
+        transparent_checker_secondary="#262626"
+        transparent_checker_size="8"
         axis_x="#ff3352"
         axis_y="#8bdc00"
         axis_z="#2890ff"
@@ -1162,6 +1165,7 @@
     </console>
     <clip_editor>
       <ThemeClipEditor
+        grid="#000000"
         marker_outline="#000000"
         marker="#7f7f00"
         active_marker="#ffffff"
