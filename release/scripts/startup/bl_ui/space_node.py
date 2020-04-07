@@ -254,7 +254,7 @@ class NODE_MT_view(Menu):
 
         layout.prop(snode, "show_region_toolbar")
         layout.prop(snode, "show_region_ui")
-        
+
         layout.separator()
 
         layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
@@ -569,7 +569,7 @@ class NODE_PT_active_node_color(Panel):
         node = context.active_node
         self.layout.prop(node, "use_custom_color", text="")
 
-    def draw_header_preset(self, context):
+    def draw_header_preset(self, _context):
         NODE_PT_node_color_presets.draw_panel_header(self.layout)
 
     def draw(self, context):
@@ -769,8 +769,6 @@ class NODE_PT_annotation(AnnotationDataPanel, Panel):
 
 def node_draw_tree_view(_layout, _context):
     pass
-
-
 
 
 # Adapt properties editor panel to display in node editor. We have to

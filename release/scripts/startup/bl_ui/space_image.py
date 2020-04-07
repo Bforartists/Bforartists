@@ -881,7 +881,6 @@ class IMAGE_MT_mask_context_menu(Menu):
         layout = self.layout
         from .properties_mask_common import draw_mask_context_menu
         draw_mask_context_menu(layout, context)
-        sima = context.space_data
 
 
 # -----------------------------------------------------------------------------
@@ -1058,7 +1057,6 @@ class IMAGE_PT_view_display(Panel):
         ima = sima.image
 
         show_uvedit = sima.show_uvedit
-        show_maskedit = sima.show_maskedit
         uvedit = sima.uv_editor
 
         col = layout.column()
@@ -1426,7 +1424,7 @@ class IMAGE_PT_uv_sculpt_options(Panel, ImagePaintPanel, UVSculptPanel):
         col.prop(tool_settings, "uv_sculpt_lock_borders")
         col.prop(tool_settings, "uv_sculpt_all_islands")
         col.prop(uvsculpt, "show_brush", text="Display Cursor")
- 
+
 
 class ImageScopesPanel:
     @classmethod
