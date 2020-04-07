@@ -259,7 +259,7 @@ class CLIP_HT_header(Header):
         layout = self.layout
 
         sc = context.space_data
-       
+
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         layout.prop(sc, "mode", text="")
@@ -506,7 +506,7 @@ class CLIP_PT_tracking_settings(CLIP_PT_tracking_panel, Panel):
 
         col.prop(settings, "default_motion_model")
         col.prop(settings, "default_pattern_match", text="Match")
-        
+
         col.use_property_split = False
         col.prop(settings, "use_default_brute")
         col.prop(settings, "use_default_normalization")
@@ -631,8 +631,7 @@ class CLIP_PT_tools_solve(CLIP_PT_tracking_panel, Panel):
         tracking = clip.tracking
         settings = tracking.settings
         tracking_object = tracking.objects.active
-        
-        
+
         col = layout.column()     
         col.use_property_split = False
         col.prop(settings, "use_tripod_solver", text="Tripod")
@@ -905,7 +904,7 @@ class CLIP_PT_track_settings(CLIP_PT_tracking_panel, Panel):
         if active:
             col.prop(active, "motion_model")
             col.prop(active, "pattern_match", text="Match")
-            
+
             col.use_property_split = False
             col.prop(active, "use_brute")
             col.prop(active, "use_normalization")
@@ -1189,7 +1188,7 @@ class CLIP_PT_proxy(CLIP_PT_clip_view_panel, Panel):
         layout.use_property_decorate = False
         col = layout.column()
         col.prop(clip.proxy, "quality")
-        
+
         col.use_property_split = False
         col.prop(clip, "use_proxy_custom_directory")
         if clip.use_proxy_custom_directory:
@@ -1348,11 +1347,10 @@ class CLIP_MT_view(Menu):
         sc = context.space_data
 
         if sc.view == 'CLIP':
-
             layout.prop(sc, "show_region_ui")
             layout.prop(sc, "show_region_toolbar")
             layout.prop(sc, "show_region_hud")
-            
+
             layout.separator()
 
             layout.operator("clip.view_selected", icon = "VIEW_SELECTED")

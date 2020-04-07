@@ -408,6 +408,7 @@ class TOPBAR_MT_file_export(Menu):
             self.layout.operator(
                 "wm.usd_export", text="Universal Scene Description (.usd, .usdc, .usda)")
 
+
 class TOPBAR_MT_file_external_data(Menu):
     bl_label = "External Data"
 
@@ -664,7 +665,6 @@ class TOPBAR_MT_workspace_menu(Menu):
         props.direction = 'PREV'
         props = layout.operator("screen.workspace_cycle", text="Next Workspace", icon='FORWARD')
         props.direction = 'NEXT'
-
 
 
 # Grease Pencil Object - Primitive curve

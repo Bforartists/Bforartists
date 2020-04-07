@@ -225,11 +225,9 @@ class DATA_PT_texture_space(MeshButtonsPanel, Panel):
         layout.separator()
 
         layout.prop(mesh, "use_auto_texspace")
-        
-        if not mesh.use_auto_texspace:
 
-            layout.prop(mesh, "texspace_location", text="Location")
-            layout.prop(mesh, "texspace_size", text="Size")
+        layout.prop(mesh, "texspace_location", text="Location")
+        layout.prop(mesh, "texspace_size", text="Size")
 
 
 class DATA_PT_vertex_groups(MeshButtonsPanel, Panel):

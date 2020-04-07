@@ -602,6 +602,8 @@ class _draw_tool_settings_context_mode:
 
         brush_basic_texpaint_settings(layout, context, brush, compact=True)
 
+        return True
+
     @staticmethod
     def PAINT_WEIGHT(context, layout, tool):
         if (tool is None) or (not tool.has_datablock):
@@ -647,7 +649,6 @@ class _draw_tool_settings_context_mode:
         )
 
         return True
-
 
     @staticmethod
     def PAINT_GPENCIL(context, layout, tool):
@@ -713,7 +714,6 @@ class _draw_tool_settings_context_mode:
                 sub_row = row.row(align=True)
                 sub_row.enabled = settings.color_mode == 'VERTEXCOLOR'
                 sub_row.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_gpencil_vertexcolor")
-
 
         row = layout.row(align=True)
         tool_settings = context.scene.tool_settings
@@ -2539,11 +2539,15 @@ class VIEW3D_MT_add(Menu):
             VIEW3D_MT_camera_add.draw(self, context)
 
         layout.menu("VIEW3D_MT_light_add", icon='OUTLINER_OB_LIGHT')
+
         layout.separator()
+
         layout.menu("VIEW3D_MT_lightprobe_add", icon='OUTLINER_OB_LIGHTPROBE')
+
         layout.separator()
 
         layout.operator_menu_enum("object.effector_add", "type", text="Force Field", icon='OUTLINER_OB_FORCE_FIELD')
+
         layout.separator()
 
         has_collections = bool(bpy.data.collections)
@@ -2929,16 +2933,15 @@ class VIEW3D_MT_object_context_menu(Menu):
         '''
 
         # If something is selected
-
-        if obj is None:
-            pass
-        elif obj.type == 'MESH':
-
+        if obj is not None and obj.type in {'MESH', 'CURVE', 'SURFACE'}:
             layout.operator("object.shade_smooth", text="Shade Smooth", icon ='SHADING_SMOOTH')
             layout.operator("object.shade_flat", text="Shade Flat", icon ='SHADING_FLAT')
 
             layout.separator()
 
+        if obj is None:
+            pass
+        elif obj.type == 'MESH':
             layout.operator_context = 'INVOKE_REGION_WIN'
             layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
 
@@ -2969,7 +2972,7 @@ class VIEW3D_MT_object_context_menu(Menu):
                 props.input_scale = 0.01
                 props.header_text = "Camera Lens Scale: %.3f"
 
-            if not obj.data.dof_object:
+            if not obj.data.dof.focus_object:
                 if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
                     props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)", icon = "DOF")
                 else:
@@ -5282,6 +5285,8 @@ class VIEW3D_MT_sculpt_gpencil_copy(Menu):
 
 # Edit Curve
 # draw_curve is used by VIEW3D_MT_edit_curve and VIEW3D_MT_edit_surface
+
+
 def draw_curve(self, _context):
     layout = self.layout
 
@@ -6596,7 +6601,7 @@ class VIEW3D_PT_view3d_camera_lock(Panel):
                     view, "lock_bone", lock_object.data,
                     "edit_bones" if lock_object.mode == 'EDIT'
                     else "bones",
-                    text=""
+                    text="",
                 )
         else:
             subcol.use_property_split = False
@@ -6684,8 +6689,6 @@ class VIEW3D_PT_collections(Panel):
 
         for child in collection.children:
             index = self._draw_collection(layout, view_layer, use_local_collections, child, index)
-
-        return index
 
         return index
 
@@ -6799,7 +6802,7 @@ class VIEW3D_PT_shading_lighting(Panel):
     def poll(cls, context):
         shading = VIEW3D_PT_shading.get_shading(context)
         engine = context.scene.render.engine
-        return shading.type in {'SOLID', 'MATERIAL'} or engine == 'BLENDER_EEVEE' and shading.type
+        return shading.type in {'SOLID', 'MATERIAL'} or engine == 'BLENDER_EEVEE' and shading.type == 'RENDERED'
 
     def draw(self, context):
         layout = self.layout
@@ -7007,7 +7010,7 @@ class VIEW3D_PT_shading_options(Panel):
                     sub = col.row(align=True)
                     sub.prop(shading, "curvature_ridge_factor", text="Ridge")
                     sub.prop(shading, "curvature_valley_factor", text="Valley")
-                    
+
             row = col.row()
             row.prop(shading, "use_dof", text="Depth Of Field")
 
@@ -7130,7 +7133,8 @@ class VIEW3D_PT_overlay(Panel):
     bl_ui_units_x = 13
 
     def draw(self, _context):
-        pass
+        layout = self.layout
+        layout.label(text="Viewport Overlays")
 
 
 class VIEW3D_PT_overlay_guides(Panel):
@@ -7636,6 +7640,7 @@ class VIEW3D_PT_overlay_vertex_paint(Panel):
 
         col.prop(overlay, "vertex_paint_mode_opacity", text="Opacity")
         col.prop(overlay, "show_paint_wire")
+
 
 class VIEW3D_PT_overlay_weight_paint(Panel):
     bl_space_type = 'VIEW_3D'

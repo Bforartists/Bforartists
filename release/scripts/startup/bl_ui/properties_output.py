@@ -124,7 +124,7 @@ class RENDER_PT_dimensions(RenderOutputButtonsPanel, Panel):
         col = layout.column(align=True)
         col.prop(rd, "pixel_aspect_x", text="Aspect X")
         col.prop(rd, "pixel_aspect_y", text="Y")
-            
+
         row = layout.row(align=False)
         row.use_property_split = False
         row.prop(rd, "use_border")     
