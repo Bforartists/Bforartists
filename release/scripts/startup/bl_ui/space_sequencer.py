@@ -401,6 +401,7 @@ class SEQUENCER_MT_select_playhead(Menu):
         props.left_right = 'RIGHT'
         props.linked_time = True
 
+
 class SEQUENCER_MT_select(Menu):
     bl_label = "Select"
 
@@ -440,6 +441,8 @@ class SEQUENCER_MT_marker(Menu):
         from bl_ui.space_time import marker_menu_generic
         marker_menu_generic(layout, context)
 
+        if is_sequencer_view:
+            layout.prop(st, "use_marker_sync")
 
 
 class SEQUENCER_MT_change(Menu):
@@ -675,7 +678,6 @@ class SEQUENCER_MT_strip_input(Menu):
                 prop.filter_movie = True
             elif strip_type == 'SOUND':
                 prop.filter_sound = True
-
 
 
 class SEQUENCER_MT_strip_lock_mute(Menu):
@@ -1012,7 +1014,7 @@ class SEQUENCER_PT_adjust_transform_crop(SequencerButtonsPanel, Panel):
         col.prop(strip.crop, "min_x")
         col.prop(strip.crop, "max_x")
         col.prop(strip.crop, "max_y")
-        col.prop(strip.crop, "min_y" )
+        col.prop(strip.crop, "min_y")
 
 
 class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
@@ -1378,7 +1380,6 @@ class SEQUENCER_PT_sound(SequencerButtonsPanel, Panel):
                 split.operator("sound.pack", icon='UGLYPACKAGE', text="")
 
             layout.prop(sound, "use_memory_cache")
-
 
 
 class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
@@ -1949,6 +1950,7 @@ class SEQUENCER_PT_strip_cache(SequencerButtonsPanel, Panel):
         col.prop(strip, "use_cache_preprocessed")
         col.prop(strip, "use_cache_composite")
 
+
 class SEQUENCER_PT_preview(SequencerButtonsPanel_Output, Panel):
     bl_label = "Scene Preview/Render"
     bl_space_type = 'SEQUENCE_EDITOR'
@@ -2292,7 +2294,7 @@ classes = (
     SEQUENCER_PT_adjust_video,
     SEQUENCER_PT_adjust_color,
     SEQUENCER_PT_adjust_sound,
-   
+
     SEQUENCER_PT_scene,
     SEQUENCER_PT_mask,
     SEQUENCER_PT_effect_text_style,

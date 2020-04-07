@@ -104,7 +104,6 @@ class TEXT_HT_footer(Header):
                 )
 
 
-
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
     bl_label = ""
@@ -148,7 +147,6 @@ class TEXT_PT_properties(Panel):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
-
         st = context.space_data
 
         flow = layout.column_flow()
@@ -183,7 +181,6 @@ class TEXT_PT_find(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         st = context.space_data
 
         # find
@@ -352,10 +349,10 @@ class TEXT_MT_edit(Menu):
     bl_label = "Edit"
 
     @classmethod
-    def poll(cls, _context):
+    def poll(cls, context):
         return context.space_data.text is not None
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("text.cut", icon = "CUT")

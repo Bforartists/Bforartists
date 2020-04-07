@@ -256,8 +256,31 @@ class MASK_PT_display:
         row = layout.row(align=True)
         row.prop(space_data, "show_mask_overlay", text="Overlay")
         sub = row.row()
-        if space_data.show_mask_overlay:
-            sub.prop(space_data, "mask_overlay_mode", text="")
+        sub.active = space_data.show_mask_overlay
+        sub.prop(space_data, "mask_overlay_mode", text="")
+
+
+class MASK_PT_transforms:
+    # subclasses must define...
+    # ~ bl_space_type = 'CLIP_EDITOR'
+    # ~ bl_region_type = 'TOOLS'
+    bl_label = "Transforms"
+    bl_category = "Mask"
+
+    @classmethod
+    def poll(cls, context):
+        space_data = context.space_data
+        return space_data.mask and space_data.mode == 'MASK'
+
+    def draw(self, _context):
+        layout = self.layout
+
+        col = layout.column(align=True)
+        col.label(text="Transform:")
+        col.operator("transform.translate")
+        col.operator("transform.rotate")
+        col.operator("transform.resize", text="Scale")
+        col.operator("transform.transform", text="Scale Feather").mode = 'MASK_SHRINKFATTEN'
 
 
 class MASK_PT_tools:

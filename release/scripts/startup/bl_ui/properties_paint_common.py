@@ -656,7 +656,8 @@ def brush_settings(layout, context, brush, popover=False):
             layout.separator()
             layout.prop(brush, "cloth_mass")
             layout.prop(brush, "cloth_damping")
-            layout.separator()  
+
+            layout.separator()
 
         if brush.sculpt_tool == 'SCRAPE':
             row = layout.row()
@@ -1200,6 +1201,10 @@ def brush_basic_gpencil_vertex_settings(layout, _context, brush, *, compact=Fals
         row = layout.row(align=True)
         row.prop(gp_settings, "pen_strength", slider=True)
         row.prop(gp_settings, "use_strength_pressure", text="", icon='STYLUS_PRESSURE')
+
+    if brush.gpencil_vertex_tool in {'DRAW', 'REPLACE'}:
+        row = layout.row(align=True)
+        row.prop(gp_settings, "vertex_mode", text="Mode")
 
 
 classes = (

@@ -517,7 +517,6 @@ class _defs_edit_mesh:
             props_macro = props.MESH_OT_polybuild_face_at_cursor
             layout.use_property_split = False
             layout.prop(props_macro, "create_quads")
-            
         return dict(
             idname="builtin.poly_build",
             label="Poly Build",
@@ -640,7 +639,7 @@ class _defs_edit_mesh:
                 layout.prop(props, "mark_seam")
                 layout.prop(props, "mark_sharp")
                 layout.prop(props, "harden_normals")
-                
+
                 layout.use_property_split = True
                 layout.prop(props, "material")
 
@@ -648,13 +647,12 @@ class _defs_edit_mesh:
                 layout.prop(props, "miter_inner", text="Inner Miter")
                 if props.miter_inner == 'ARC':
                     layout.prop(props, "spread")
-                    
+
                 layout.use_property_split = False
                 layout.prop(props, "use_custom_profile")
                 if props.use_custom_profile:
                     tool_settings = context.tool_settings
                     layout.template_curveprofile(tool_settings, "custom_bevel_profile_preset")
-
 
         return dict(
             idname="builtin.bevel",
@@ -2072,7 +2070,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
         ),
     )
 
-    _tools_default = (    
+    _tools_default = (
         *_tools_select,
         _defs_view3d_generic.cursor,
         None,

@@ -30,6 +30,7 @@ class INFO_HT_header(Header):
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         INFO_MT_editor_menus.draw_collapsible(context, layout)
 
+
 class INFO_MT_editor_menus(Menu):
     bl_idname = "INFO_MT_editor_menus"
     bl_label = ""
@@ -90,6 +91,7 @@ class ALL_MT_editormenu(Menu):
         row = layout.row(align=True)
         row.template_header() # editor type menus
 
+
 # Workaround to separate the tooltips for Toggle Maximize Area
 class INFO_OT_Toggle_Maximize_Area(bpy.types.Operator):
     """Toggle display selected area as maximized"""      # blender will use this as a tooltip for menu items and buttons.
@@ -102,7 +104,6 @@ class INFO_OT_Toggle_Maximize_Area(bpy.types.Operator):
         return {'FINISHED'}  
 
 
-# Not really info, just add to re-usable location.
 class INFO_MT_area(Menu):
     bl_label = "Area"
 
