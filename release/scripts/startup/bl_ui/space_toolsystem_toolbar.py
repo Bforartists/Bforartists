@@ -95,6 +95,7 @@ class _defs_view3d_generic:
             layout.prop(props, "use_depth")
             layout.use_property_split = True
             layout.prop(props, "orientation")
+            layout.use_property_split = False
         return dict(
             idname="builtin.cursor",
             label="Cursor",
