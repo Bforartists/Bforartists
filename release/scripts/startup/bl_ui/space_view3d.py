@@ -61,14 +61,7 @@ class VIEW3D_HT_header(Header):
             orient_slot = scene.transform_orientation_slots[0]
             row = layout.row(align=True)
 
-            sub = row.row()
-            sub.ui_units_x = 4
-            sub.prop_with_popover(
-                orient_slot,
-                "type",
-                text="",
-                panel="VIEW3D_PT_transform_orientations",
-            )
+            row.prop_with_popover(orient_slot, "type", text="", panel="VIEW3D_PT_transform_orientations",)
 
         # Pivot
         if object_mode in {'OBJECT', 'EDIT', 'EDIT_GPENCIL', 'SCULPT_GPENCIL'} or has_pose_mode:
