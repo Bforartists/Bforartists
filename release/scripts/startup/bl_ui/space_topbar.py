@@ -602,7 +602,7 @@ class TOPBAR_MT_help(Menu):
         layout.separator()
 
         layout.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "https://www.bforartists.de"
-        layout.operator("wm.url_open", text="Quickstart Learning Videos (Youtube)", icon='URL').url = "https://www.youtube.com/playlist?list=PLB0iqEbIPQTZEkNWmGcIFGubrLYSDi5Og"
+        layout.operator("wm.url_open", text="Quickstart Learning Videos (Youtube)", icon='URL').url = "https://www.youtube.com/watch?v=sZlqqMAGgMs&list=PLB0iqEbIPQTZArhZspyYSJOS_00jURpUB"
 
         layout.separator()
 
