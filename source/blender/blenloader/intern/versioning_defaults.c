@@ -296,13 +296,14 @@ static void blo_update_defaults_scene(Main *bmain, Scene *scene)
 
   scene->r.cfra = 1.0f;
 
-  /* Don't enable compositing nodes. */
-  if (scene->nodetree) {
-    ntreeFreeNestedTree(scene->nodetree);
-    MEM_freeN(scene->nodetree);
-    scene->nodetree = NULL;
-    scene->use_nodes = false;
-  }
+  /* bfa - NOPE. WE TURN USE NODES ON BY DEFAULT!*/
+  ///* Don't enable compositing nodes. */
+  //if (scene->nodetree) {
+  //  ntreeFreeNestedTree(scene->nodetree);
+  //  MEM_freeN(scene->nodetree);
+  //  scene->nodetree = NULL;
+  //  scene->use_nodes = false;
+  //}
 
   /* Rename render layers. */
   BKE_view_layer_rename(bmain, scene, scene->view_layers.first, "View Layer");
