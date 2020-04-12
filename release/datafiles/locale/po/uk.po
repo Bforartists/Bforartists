@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
@@ -3152,10 +3152,6 @@ msgstr "Розмив"
 
 msgid "Smear"
 msgstr "Розмазування"
-
-
-msgid "Amount of gradient for Dot and Box strokes (set to 1 for full solid)"
-msgstr "Величина градієнта для штрихів Точками та Коробками (задати як 1 для повної суцільності)"
 
 
 msgid "Input Samples"
@@ -12112,6 +12108,10 @@ msgid "Blend mode"
 msgstr "Режим змішання"
 
 
+msgid "Hard Light"
+msgstr "Жорстке Світло"
+
+
 msgid "Custom Channel Color"
 msgstr "Власний колір каналу"
 
@@ -14071,10 +14071,6 @@ msgstr "Режим змішування пензля"
 
 msgid "Linear Burn"
 msgstr "Лінеарне Вигоряння"
-
-
-msgid "Hard Light"
-msgstr "Жорстке Світло"
 
 
 msgid "Vivid Light"
@@ -26436,6 +26432,14 @@ msgid "Curve Context Menu"
 msgstr "Контекстне Меню Кривих"
 
 
+msgid "Special Characters"
+msgstr "Спеціальні символи"
+
+
+msgid "Text Context Menu"
+msgstr "Контекстне Меню Текстів"
+
+
 msgid "Kerning"
 msgstr "Кернінг"
 
@@ -26502,14 +26506,6 @@ msgstr "Метакуля"
 
 msgid "Metaball Context Menu"
 msgstr "Контекстне Меню Метакуль"
-
-
-msgid "Special Characters"
-msgstr "Спеціальні символи"
-
-
-msgid "Text Context Menu"
-msgstr "Контекстне Меню Текстів"
 
 
 msgid "Generate Weights"
@@ -27394,10 +27390,6 @@ msgstr "Динамічне малювання"
 
 msgid "Explode"
 msgstr "Вибух"
-
-
-msgid "Fluid Simulation"
-msgstr "Симуляція Рідини"
 
 
 msgid "Ocean"
@@ -37185,12 +37177,8 @@ msgstr "Зняти вибір з кісток на межі кожної з ви
 
 
 msgctxt "Operator"
-msgid "Select Connected"
-msgstr "Вибрати з'єднані"
-
-
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "Вибрати кістки, пов'язані з вибраними зв'язками предок / нащадок"
+msgid "Select Linked All"
+msgstr "Виділити все пов'язане"
 
 
 msgctxt "Operator"
@@ -39516,11 +39504,6 @@ msgstr "(Не) вибрати всі керувальні точки"
 
 msgid "Reduce current selection by deselecting boundary elements"
 msgstr "Зменшити поточний вибір, знявши вибір з крайніх елементів"
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "Виділити все пов'язане"
 
 
 msgid "Select all control points linked to the current selection"
@@ -45417,15 +45400,6 @@ msgstr "Дублювати сіть і рухати"
 
 msgid "Duplicate"
 msgstr "Дублювання"
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "Стягнути ребра"
-
-
-msgid "Collapse selected edges"
-msgstr "Стягнути вибрані ребра"
 
 
 msgctxt "Operator"
@@ -53336,6 +53310,15 @@ msgstr "Спільна група"
 
 msgid "All bones affected by active Keying Set"
 msgstr "Всі кістки, на які впливає активний набір ключів"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "Вибрати з'єднані"
+
+
+msgid "Select bones related to selected ones by parent/child relationships"
+msgstr "Вибрати кістки, пов'язані з вибраними зв'язками предок / нащадок"
 
 
 msgctxt "Operator"
@@ -83981,16 +83964,6 @@ msgstr "Кільця ребер"
 
 
 msgctxt "Operator"
-msgid "To Uppercase"
-msgstr "У верхній регістр"
-
-
-msgctxt "Operator"
-msgid "To Lowercase"
-msgstr "У нижній регістр"
-
-
-msgctxt "Operator"
 msgid "Armature"
 msgstr "Арматура"
 
@@ -84240,26 +84213,6 @@ msgstr "Видалити Точку"
 
 
 msgctxt "Operator"
-msgid "Toggle Bold"
-msgstr "Перемкнути Жирно"
-
-
-msgctxt "Operator"
-msgid "Toggle Italic"
-msgstr "Перемкнути Курсив"
-
-
-msgctxt "Operator"
-msgid "Toggle Underline"
-msgstr "Перемкнути Підкреслено"
-
-
-msgctxt "Operator"
-msgid "Toggle Small Caps"
-msgstr "Перемкнути Зменшені Заголовні"
-
-
-msgctxt "Operator"
 msgid "Copyright"
 msgstr "Авторське право"
 
@@ -84337,6 +84290,36 @@ msgstr "Іспанський знак питання"
 msgctxt "Operator"
 msgid "Spanish Exclamation Mark"
 msgstr "Іспанський знак оклику"
+
+
+msgctxt "Operator"
+msgid "To Uppercase"
+msgstr "У верхній регістр"
+
+
+msgctxt "Operator"
+msgid "To Lowercase"
+msgstr "У нижній регістр"
+
+
+msgctxt "Operator"
+msgid "Toggle Bold"
+msgstr "Перемкнути Жирно"
+
+
+msgctxt "Operator"
+msgid "Toggle Italic"
+msgstr "Перемкнути Курсив"
+
+
+msgctxt "Operator"
+msgid "Toggle Underline"
+msgstr "Перемкнути Підкреслено"
+
+
+msgctxt "Operator"
+msgid "Toggle Small Caps"
+msgstr "Перемкнути Зменшені Заголовні"
 
 
 msgctxt "Operator"
@@ -84709,18 +84692,6 @@ msgid "Not supported in sculpt mode"
 msgstr "Не підтримується в режимі ліплення"
 
 
-msgid ", cannot have single-frame paths"
-msgstr ", не може мати однокадрових шляхів"
-
-
-msgid "Motion path frame extents invalid for %s (%d to %d)%s"
-msgstr "Неправильна тривалість для кадру траєкторії  %s (%d до %d)%s"
-
-
-msgid "KeyingSet"
-msgstr "НабірКлючів"
-
-
 msgid "No AnimData to set action on"
 msgstr "Немає анімаційних даних для задання дії"
 
@@ -84731,6 +84702,18 @@ msgstr "Неможливо змінити дію, вона ще редагуєт
 
 msgid "Could not set action '%s' onto ID '%s', as it does not have suitably rooted paths for this purpose"
 msgstr "Неможливо задати дію '%s' для ID '%s', оскільки немає придатних для цього кореневих шляхів"
+
+
+msgid "KeyingSet"
+msgstr "НабірКлючів"
+
+
+msgid ", cannot have single-frame paths"
+msgstr ", не може мати однокадрових шляхів"
+
+
+msgid "Motion path frame extents invalid for %s (%d to %d)%s"
+msgstr "Неправильна тривалість для кадру траєкторії  %s (%d до %d)%s"
 
 
 msgid "Library file, loading empty scene"
@@ -88906,30 +88889,6 @@ msgid "No active vertex group for painting, aborting"
 msgstr "Немає активної групи вершин для фарбування; припинення"
 
 
-msgid "Warning!"
-msgstr "Обережно!"
-
-
-msgid "OK"
-msgstr "Гаразд"
-
-
-msgid "Vertex Data Detected!"
-msgstr "Виявлено дані вершин!"
-
-
-msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
-msgstr "Динамічна топологія не зберігає кольорів вершин, UV та інших власних даних"
-
-
-msgid "Generative Modifiers Detected!"
-msgstr "Виявлено генерувальні модифікатори!"
-
-
-msgid "Keeping the modifiers will increase polycount when returning to object mode"
-msgstr "Якщо залишити модифікатори, то при поверненні до об'єктного режиму кількість багатокутників зросте"
-
-
 msgid "non-triangle face"
 msgstr "не трикутна грань"
 
@@ -88954,10 +88913,6 @@ msgid "constructive modifier"
 msgstr "модифікатор конструктивності"
 
 
-msgid "Click on the mesh to set the detail"
-msgstr "Клацнути на сіті для задання детальності"
-
-
 msgid "Object has non-uniform scale, sculpting may be unpredictable"
 msgstr "Об'єкт має неоднорідний масштаб, ліплення може бути непередбачуваним"
 
@@ -88968,6 +88923,34 @@ msgstr "Об'єкт має від'ємний масштаб, ліплення м
 
 msgid "Dynamic Topology found: %s, disabled"
 msgstr "Знайдена Динамічна топологія: %s, вимкнено"
+
+
+msgid "Click on the mesh to set the detail"
+msgstr "Клацнути на сіті для задання детальності"
+
+
+msgid "Warning!"
+msgstr "Обережно!"
+
+
+msgid "OK"
+msgstr "Гаразд"
+
+
+msgid "Vertex Data Detected!"
+msgstr "Виявлено дані вершин!"
+
+
+msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
+msgstr "Динамічна топологія не зберігає кольорів вершин, UV та інших власних даних"
+
+
+msgid "Generative Modifiers Detected!"
+msgstr "Виявлено генерувальні модифікатори!"
+
+
+msgid "Keeping the modifiers will increase polycount when returning to object mode"
+msgstr "Якщо залишити модифікатори, то при поверненні до об'єктного режиму кількість багатокутників зросте"
 
 
 msgid "Compiled without sound support"

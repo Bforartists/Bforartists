@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -3225,10 +3225,6 @@ msgstr "블러"
 
 msgid "Smear"
 msgstr "문지르기"
-
-
-msgid "Amount of gradient for Dot and Box strokes (set to 1 for full solid)"
-msgstr "도트 및 박스 스트로크의 그래디언트 양 (완전 솔리드인 경우 1로 설정)"
 
 
 msgid "Input Samples"
@@ -13241,6 +13237,10 @@ msgid "Blend mode"
 msgstr "혼합 모드"
 
 
+msgid "Hard Light"
+msgstr "하드 라이트"
+
+
 msgid "Custom Channel Color"
 msgstr "커스텀 채널 컬러"
 
@@ -15360,10 +15360,6 @@ msgstr "페인팅하는 동안 오버레이 블렌딩 모드를 사용"
 
 msgid "Use Soft Light blending mode while painting"
 msgstr "페인팅하는 동안 소프트 라이트 블렌딩 모드를 사용"
-
-
-msgid "Hard Light"
-msgstr "하드 라이트"
 
 
 msgid "Use Hard Light blending mode while painting"
@@ -28277,6 +28273,14 @@ msgid "Curve Context Menu"
 msgstr "커브 컨텍스트 메뉴"
 
 
+msgid "Special Characters"
+msgstr "특수 문자"
+
+
+msgid "Text Context Menu"
+msgstr "텍스트 컨텍스트 메뉴"
+
+
 msgid "Kerning"
 msgstr "자간"
 
@@ -28347,14 +28351,6 @@ msgstr "메타볼"
 
 msgid "Metaball Context Menu"
 msgstr "메타볼 컨텍스트 메뉴"
-
-
-msgid "Special Characters"
-msgstr "특수 문자"
-
-
-msgid "Text Context Menu"
-msgstr "텍스트 컨텍스트 메뉴"
 
 
 msgid "Generate Weights"
@@ -29415,10 +29411,6 @@ msgstr "폭발"
 
 msgid "Break apart the mesh faces and let them follow particles"
 msgstr "메쉬 페이스를 분리하여 파티클을 따라 가도록합니다"
-
-
-msgid "Fluid Simulation"
-msgstr "유체 시뮬레이션"
 
 
 msgid "Ocean"
@@ -39775,12 +39767,8 @@ msgstr "각 선택 지역의 경계에서 해당 본의 선택 해제"
 
 
 msgctxt "Operator"
-msgid "Select Connected"
-msgstr "연결된 선택"
-
-
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "부모/자식 관계 별로 선택한 것들과 관련된 본을 선택"
+msgid "Select Linked All"
+msgstr "연결된 모두 선택"
 
 
 msgctxt "Operator"
@@ -42213,11 +42201,6 @@ msgstr "모든 컨트롤 포인트를 선택(취소)"
 
 msgid "Reduce current selection by deselecting boundary elements"
 msgstr "경계 요소를 선택 해제하여 현재 선택을 감소"
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "연결된 모두 선택"
 
 
 msgid "Select all control points linked to the current selection"
@@ -48584,15 +48567,6 @@ msgstr "메쉬를 복제하고 이동"
 
 msgid "Duplicate"
 msgstr "복제"
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "에지 축소"
-
-
-msgid "Collapse selected edges"
-msgstr "선택된 에지를 축소"
 
 
 msgctxt "Operator"
@@ -56865,6 +56839,15 @@ msgstr "공유된 그룹"
 
 msgid "All bones affected by active Keying Set"
 msgstr "활성 키잉 설정으로 영향을 준 모든 본"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "연결된 선택"
+
+
+msgid "Select bones related to selected ones by parent/child relationships"
+msgstr "부모/자식 관계 별로 선택한 것들과 관련된 본을 선택"
 
 
 msgctxt "Operator"
@@ -89927,16 +89910,6 @@ msgstr "에지 링"
 
 
 msgctxt "Operator"
-msgid "To Uppercase"
-msgstr "대문자로"
-
-
-msgctxt "Operator"
-msgid "To Lowercase"
-msgstr "소문자로"
-
-
-msgctxt "Operator"
 msgid "Armature"
 msgstr "아마튜어"
 
@@ -90191,26 +90164,6 @@ msgstr "포인트를 삭제"
 
 
 msgctxt "Operator"
-msgid "Toggle Bold"
-msgstr "굵기를 토글"
-
-
-msgctxt "Operator"
-msgid "Toggle Italic"
-msgstr "기울임을 토글"
-
-
-msgctxt "Operator"
-msgid "Toggle Underline"
-msgstr "밑줄을 토글"
-
-
-msgctxt "Operator"
-msgid "Toggle Small Caps"
-msgstr "작은 대문자를 토글"
-
-
-msgctxt "Operator"
 msgid "Copyright"
 msgstr "저작권"
 
@@ -90288,6 +90241,36 @@ msgstr "스페인어 물음표"
 msgctxt "Operator"
 msgid "Spanish Exclamation Mark"
 msgstr "스페인어 느낌표"
+
+
+msgctxt "Operator"
+msgid "To Uppercase"
+msgstr "대문자로"
+
+
+msgctxt "Operator"
+msgid "To Lowercase"
+msgstr "소문자로"
+
+
+msgctxt "Operator"
+msgid "Toggle Bold"
+msgstr "굵기를 토글"
+
+
+msgctxt "Operator"
+msgid "Toggle Italic"
+msgstr "기울임을 토글"
+
+
+msgctxt "Operator"
+msgid "Toggle Underline"
+msgstr "밑줄을 토글"
+
+
+msgctxt "Operator"
+msgid "Toggle Small Caps"
+msgstr "작은 대문자를 토글"
 
 
 msgctxt "Operator"
@@ -90776,18 +90759,6 @@ msgid "Not supported in sculpt mode"
 msgstr "스컬프트 모드에서 지원되지 않습니다"
 
 
-msgid ", cannot have single-frame paths"
-msgstr ", 싱글 프레임 경로를 사용할 수 없습니다"
-
-
-msgid "Motion path frame extents invalid for %s (%d to %d)%s"
-msgstr "%s (%d to %d)%s 에 대한 모션 경로 프레임 범위가 유효하지 않습니다"
-
-
-msgid "KeyingSet"
-msgstr "키잉 설정"
-
-
 msgid "No AnimData to set action on"
 msgstr "다음에 액션을 설정하는 AnimData가 없음"
 
@@ -90798,6 +90769,18 @@ msgstr "NLA에서 여전히 편집중이므로 작업을 변경할 수 없습니
 
 msgid "Could not set action '%s' onto ID '%s', as it does not have suitably rooted paths for this purpose"
 msgstr "액션 '%s'을 ID '%s'에 설정할 수 없음, 이 경로는 적절하지 않습니다"
+
+
+msgid "KeyingSet"
+msgstr "키잉 설정"
+
+
+msgid ", cannot have single-frame paths"
+msgstr ", 싱글 프레임 경로를 사용할 수 없습니다"
+
+
+msgid "Motion path frame extents invalid for %s (%d to %d)%s"
+msgstr "%s (%d to %d)%s 에 대한 모션 경로 프레임 범위가 유효하지 않습니다"
 
 
 msgid "Library file, loading empty scene"
@@ -95163,30 +95146,6 @@ msgid "No active vertex group for painting, aborting"
 msgstr "페인팅을 위한 활성 버텍스 그룹이 없음, 중단하기"
 
 
-msgid "Warning!"
-msgstr "경고!"
-
-
-msgid "OK"
-msgstr "OK"
-
-
-msgid "Vertex Data Detected!"
-msgstr "버텍스 데이터 감지됨!"
-
-
-msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
-msgstr "다인토포는 버텍스 컬러, UV 또는 다른 커스텀 데이터를 보존하지 않습니다"
-
-
-msgid "Generative Modifiers Detected!"
-msgstr "생성 모디파이어 감지됨!"
-
-
-msgid "Keeping the modifiers will increase polycount when returning to object mode"
-msgstr "오브젝트 모드로 돌아갈 때 모디파이어를 유지하면 폴리 숫자가 증가합니다"
-
-
 msgid "non-triangle face"
 msgstr "비 삼각형 페이스"
 
@@ -95211,10 +95170,6 @@ msgid "constructive modifier"
 msgstr "구조적인 모디파이어"
 
 
-msgid "Click on the mesh to set the detail"
-msgstr "디테일을 설정하려면 메쉬를 클릭하십시오"
-
-
 msgid "Object has non-uniform scale, sculpting may be unpredictable"
 msgstr "오브젝트의 축적이 일정하지 않고 스컬프트을 예측할 수 없음"
 
@@ -95225,6 +95180,34 @@ msgstr "오브젝트의 축적이 음수이고 스컬프트을 예측할 수 없
 
 msgid "Dynamic Topology found: %s, disabled"
 msgstr "발견된 다이나믹 토폴로지: %s, 비활성화됨"
+
+
+msgid "Click on the mesh to set the detail"
+msgstr "디테일을 설정하려면 메쉬를 클릭하십시오"
+
+
+msgid "Warning!"
+msgstr "경고!"
+
+
+msgid "OK"
+msgstr "OK"
+
+
+msgid "Vertex Data Detected!"
+msgstr "버텍스 데이터 감지됨!"
+
+
+msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
+msgstr "다인토포는 버텍스 컬러, UV 또는 다른 커스텀 데이터를 보존하지 않습니다"
+
+
+msgid "Generative Modifiers Detected!"
+msgstr "생성 모디파이어 감지됨!"
+
+
+msgid "Keeping the modifiers will increase polycount when returning to object mode"
+msgstr "오브젝트 모드로 돌아갈 때 모디파이어를 유지하면 폴리 숫자가 증가합니다"
 
 
 msgid "Compiled without sound support"

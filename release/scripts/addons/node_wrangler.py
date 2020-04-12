@@ -3797,6 +3797,7 @@ class NodeWranglerMenu(Menu, NWBase):
     bl_label = "Node Wrangler"
 
     def draw(self, context):
+        self.layout.operator_context = 'INVOKE_DEFAULT'
         drawlayout(context, self.layout)
 
 
