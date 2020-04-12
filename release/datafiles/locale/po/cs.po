@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -9921,6 +9921,10 @@ msgid "Bone Roll"
 msgstr "Kost"
 
 
+msgid "Special Characters"
+msgstr "Znaky"
+
+
 msgid "Interpolate"
 msgstr "Mód Interpolace"
 
@@ -9947,10 +9951,6 @@ msgstr "Síťový mód výběru"
 
 msgid "Metaball"
 msgstr "Meta objekt"
-
-
-msgid "Special Characters"
-msgstr "Znaky"
 
 
 msgid "Hooks"
@@ -10295,10 +10295,6 @@ msgstr "Zbortit/pokřivit"
 
 msgid "Dynamic Paint"
 msgstr "Dynamický"
-
-
-msgid "Fluid Simulation"
-msgstr "Přpíná simulaci mlhy"
 
 
 msgid "Particle Instance"
@@ -14669,8 +14665,8 @@ msgstr "Vybrat cestu"
 
 
 msgctxt "Operator"
-msgid "Select Connected"
-msgstr "Vybrat spojené"
+msgid "Select Linked All"
+msgstr "Vybrat Propojené"
 
 
 msgctxt "Operator"
@@ -16047,11 +16043,6 @@ msgstr "O(d)značit vše"
 
 msgid "Reduce current selection by deselecting boundary elements"
 msgstr "Odstranit označené Objekt(y)"
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "Vybrat Propojené"
 
 
 msgid "Select all control points linked to already selected ones"
@@ -18255,15 +18246,6 @@ msgstr "Zdvojit síť"
 
 msgid "Duplicate"
 msgstr "Zdvojit"
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "Zbortit"
-
-
-msgid "Collapse selected edges"
-msgstr "Skrýt označené plošky"
 
 
 msgctxt "Operator"
@@ -22204,6 +22186,11 @@ msgstr "Sdílená Barva Vertexu"
 
 msgid "All bones affected by active Keying Set"
 msgstr "Odstranit aktivní klíčovací sestavu"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "Vybrat spojené"
 
 
 msgctxt "Operator"

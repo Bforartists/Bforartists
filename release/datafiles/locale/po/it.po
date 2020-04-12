@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -9713,6 +9713,10 @@ msgid "Blend Mode"
 msgstr "Modalità Fusione"
 
 
+msgid "Hard Light"
+msgstr "Luce Intensa"
+
+
 msgid "Frames"
 msgstr "Fotogrammi"
 
@@ -10574,10 +10578,6 @@ msgstr "Modalità fusione pennello"
 
 msgid "Linear Burn"
 msgstr "Brucia Lineare"
-
-
-msgid "Hard Light"
-msgstr "Luce Intensa"
 
 
 msgid "Vivid Light"
@@ -19174,6 +19174,14 @@ msgid "Bone Roll"
 msgstr "Rollio Osso"
 
 
+msgid "Special Characters"
+msgstr "Caratteri Speciali"
+
+
+msgid "Text Context Menu"
+msgstr "Menu Contesto Testo"
+
+
 msgid "Interpolate"
 msgstr "Interpola"
 
@@ -19228,14 +19236,6 @@ msgstr "Seleziona Simili"
 
 msgid "Metaball"
 msgstr "Metaball"
-
-
-msgid "Special Characters"
-msgstr "Caratteri Speciali"
-
-
-msgid "Text Context Menu"
-msgstr "Menu Contesto Testo"
 
 
 msgid "Hooks"
@@ -19836,10 +19836,6 @@ msgstr "Pittura Dinamica"
 
 msgid "Explode"
 msgstr "Esplosione"
-
-
-msgid "Fluid Simulation"
-msgstr "Simulazione Fluidi"
 
 
 msgid "Ocean"
@@ -27228,12 +27224,8 @@ msgstr "Deseleziona quelle ossa al confine di ogni regione di selezione"
 
 
 msgctxt "Operator"
-msgid "Select Connected"
-msgstr "Seleziona Connesse"
-
-
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "Seleziona le ossa relativamente a quelle selezionate in base al loro rapporto genitore/figlio"
+msgid "Select Linked All"
+msgstr "Seleziona Tutti Collegati"
 
 
 msgctxt "Operator"
@@ -29114,11 +29106,6 @@ msgstr "(De)seleziona tutti i rapporti"
 
 msgid "Reduce current selection by deselecting boundary elements"
 msgstr "Cambia la selezione di tutti i meta elementi"
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "Seleziona Tutti Collegati"
 
 
 msgid "Select all control points linked to already selected ones"
@@ -33039,15 +33026,6 @@ msgstr "Duplica mesh e muovi"
 
 msgid "Duplicate"
 msgstr "Duplica"
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "Collassa Spigoli"
-
-
-msgid "Collapse selected edges"
-msgstr "Collassa gli spigoli selezionati"
 
 
 msgctxt "Operator"
@@ -39203,6 +39181,15 @@ msgstr "Condivide gruppo"
 
 msgid "All bones affected by active Keying Set"
 msgstr "Tutte le ossa sono influenzate dal Gruppo Chiavi attivo"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "Seleziona Connesse"
+
+
+msgid "Select bones related to selected ones by parent/child relationships"
+msgstr "Seleziona le ossa relativamente a quelle selezionate in base al loro rapporto genitore/figlio"
 
 
 msgctxt "Operator"
@@ -60416,26 +60403,6 @@ msgstr "Cancella Punto"
 
 
 msgctxt "Operator"
-msgid "Toggle Bold"
-msgstr "Alterna Grassetto"
-
-
-msgctxt "Operator"
-msgid "Toggle Italic"
-msgstr "Alterna Corsivo"
-
-
-msgctxt "Operator"
-msgid "Toggle Underline"
-msgstr "Alterna Sottolineato"
-
-
-msgctxt "Operator"
-msgid "Toggle Small Caps"
-msgstr "Alterna Maiuscolo (?)"
-
-
-msgctxt "Operator"
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -60513,6 +60480,26 @@ msgstr "Punto Interrogativo Spagnolo"
 msgctxt "Operator"
 msgid "Spanish Exclamation Mark"
 msgstr "Punto Esclamativo Spagnolo"
+
+
+msgctxt "Operator"
+msgid "Toggle Bold"
+msgstr "Alterna Grassetto"
+
+
+msgctxt "Operator"
+msgid "Toggle Italic"
+msgstr "Alterna Corsivo"
+
+
+msgctxt "Operator"
+msgid "Toggle Underline"
+msgstr "Alterna Sottolineato"
+
+
+msgctxt "Operator"
+msgid "Toggle Small Caps"
+msgstr "Alterna Maiuscolo (?)"
 
 
 msgctxt "Operator"
@@ -60853,16 +60840,16 @@ msgid "Not supported in sculpt mode"
 msgstr "Non supportato in modalità scultura"
 
 
-msgid ", cannot have single-frame paths"
-msgstr ", impossibile avere percorsi mono-frame"
+msgid "No AnimData to set action on"
+msgstr "Livello dell'animazione su cui eseguire l'azione"
 
 
 msgid "KeyingSet"
 msgstr "GruppoChiavi"
 
 
-msgid "No AnimData to set action on"
-msgstr "Livello dell'animazione su cui eseguire l'azione"
+msgid ", cannot have single-frame paths"
+msgstr ", impossibile avere percorsi mono-frame"
 
 
 msgid "File written by newer Blender binary (%d.%d), expect loss of data!"
@@ -63369,30 +63356,6 @@ msgid "Multipaint group is locked, aborting"
 msgstr "Il gruppo multipittura è bloccato, comando annullato"
 
 
-msgid "Warning!"
-msgstr "Attenzione!"
-
-
-msgid "OK"
-msgstr "OK"
-
-
-msgid "Vertex Data Detected!"
-msgstr "Rilevati Dati Vertice!"
-
-
-msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
-msgstr "Topologia Dinamica non preserva i colori vertici, le UV o altri dati personalizzati"
-
-
-msgid "Generative Modifiers Detected!"
-msgstr "Rilevati Modificatori Generativi!"
-
-
-msgid "Keeping the modifiers will increase polycount when returning to object mode"
-msgstr "Mantenere i modificatori aumenterà il conteggio dei poligoni ritornando alla modalità oggetto"
-
-
 msgid "non-triangle face"
 msgstr "faccia non triangolare"
 
@@ -63427,6 +63390,30 @@ msgstr "L'oggetto ha una scala negativa, la scultura può avere esiti imprevedib
 
 msgid "Dynamic Topology found: %s, disabled"
 msgstr "Rilevata Topologia Dinamica:  %s, disabilitato"
+
+
+msgid "Warning!"
+msgstr "Attenzione!"
+
+
+msgid "OK"
+msgstr "OK"
+
+
+msgid "Vertex Data Detected!"
+msgstr "Rilevati Dati Vertice!"
+
+
+msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
+msgstr "Topologia Dinamica non preserva i colori vertici, le UV o altri dati personalizzati"
+
+
+msgid "Generative Modifiers Detected!"
+msgstr "Rilevati Modificatori Generativi!"
+
+
+msgid "Keeping the modifiers will increase polycount when returning to object mode"
+msgstr "Mantenere i modificatori aumenterà il conteggio dei poligoni ritornando alla modalità oggetto"
 
 
 msgid "Compiled without sound support"

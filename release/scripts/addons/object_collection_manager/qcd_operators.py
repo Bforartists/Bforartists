@@ -30,38 +30,19 @@ from bpy.props import (
     IntProperty
 )
 
+from . import internals
+
 from .internals import (
     layer_collections,
     qcd_slots,
     update_property_group,
     get_modifiers,
+    get_move_selection,
+    get_move_active,
+    update_qcd_header,
 )
 
 from .operators import rto_history
-
-move_triggered = False
-move_selection = []
-move_active = None
-
-def get_move_selection():
-    global move_selection
-
-    if not move_selection:
-        move_selection = [obj.name for obj in bpy.context.selected_objects]
-
-    return [bpy.data.objects[name] for name in move_selection]
-
-def get_move_active():
-    global move_active
-    global move_selection
-
-    if not move_active:
-        move_active = getattr(bpy.context.view_layer.objects.active, "name", None)
-
-    if move_active not in [obj.name for obj in get_move_selection()]:
-        move_active = None
-
-    return bpy.data.objects[move_active] if move_active else None
 
 
 class MoveToQCDSlot(Operator):
@@ -76,11 +57,11 @@ class MoveToQCDSlot(Operator):
     def execute(self, context):
         global qcd_slots
         global layer_collections
-        global move_triggered
 
         selected_objects = get_move_selection()
         active_object = get_move_active()
-        move_triggered = True
+        internals.move_triggered = True
+
         qcd_laycol = None
         slot_name = qcd_slots.get_name(self.slot)
 
@@ -135,10 +116,7 @@ class MoveToQCDSlot(Operator):
                 pass
 
         # update header UI
-        cm = bpy.context.scene.collection_manager
-        cm.update_header.clear()
-        new_update_header = cm.update_header.add()
-        new_update_header.name = "updated"
+        update_qcd_header()
 
         return {'FINISHED'}
 
@@ -159,9 +137,9 @@ class ViewMoveQCDSlot(Operator):
         slot_string = f"QCD Slot {properties.slot}: \"{slot_name}\"\n"
 
         hotkey_string = (
-            "  * Shift-Click to toggle QCD slot.\n"
-            "  * Ctrl-Click to move objects to QCD slot.\n"
-            "  * Ctrl-Shift-Click to toggle objects' slot"
+            "  * Shift+LMB - Toggle QCD slot.\n"
+            "  * Ctrl+LMB - Move objects to QCD slot.\n"
+            "  * Ctrl+Shift+Click - Toggle objects' slot"
             )
 
         return f"{slot_string}{hotkey_string}"
@@ -260,10 +238,7 @@ class ViewQCDSlot(Operator):
             context.view_layer.active_layer_collection = qcd_laycol
 
         # update header UI
-        cm = bpy.context.scene.collection_manager
-        cm.update_header.clear()
-        new_update_header = cm.update_header.add()
-        new_update_header.name = "updated"
+        update_qcd_header()
 
         view_layer = context.view_layer.name
         if view_layer in rto_history["exclude"]:
@@ -275,15 +250,18 @@ class ViewQCDSlot(Operator):
 
 
 class RenumerateQCDSlots(Operator):
-    '''Re-numerate QCD slots\n  * Ctrl-Click to include collections marked by the user as non QCD slots'''
     bl_label = "Re-numerate QCD Slots"
+    bl_description = (
+        "Re-numerate QCD slots\n"
+        "  * Ctrl+LMB - Include collections marked by the user as non QCD slots"
+        )
     bl_idname = "view3d.renumerate_qcd_slots"
     bl_options = {'REGISTER', 'UNDO'}
 
     def invoke(self, context, event):
         global qcd_slots
 
-        qcd_slots.clear()
+        qcd_slots.clear_slots()
 
         if event.ctrl:
             qcd_slots.overrides.clear()

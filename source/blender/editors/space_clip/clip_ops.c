@@ -286,7 +286,7 @@ static int open_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event)
     BLI_strncpy(path, clip->name, sizeof(path));
 
     BLI_path_abs(path, CTX_data_main(C)->name);
-    BLI_parent_dir(path);
+    BLI_path_parent_dir(path);
   }
   else {
     BLI_strncpy(path, U.textudir, sizeof(path));
@@ -1435,7 +1435,7 @@ static void do_sequence_proxy(void *pjv,
   queue.do_update = do_update;
   queue.progress = progress;
 
-  task_pool = BLI_task_pool_create(task_scheduler, &queue);
+  task_pool = BLI_task_pool_create(task_scheduler, &queue, TASK_PRIORITY_LOW);
   handles = MEM_callocN(sizeof(ProxyThread) * tot_thread, "proxy threaded handles");
   for (i = 0; i < tot_thread; i++) {
     ProxyThread *handle = &handles[i];
@@ -1452,7 +1452,7 @@ static void do_sequence_proxy(void *pjv,
       handle->distortion = BKE_tracking_distortion_new(&clip->tracking, width, height);
     }
 
-    BLI_task_pool_push(task_pool, proxy_task_func, handle, false, TASK_PRIORITY_LOW);
+    BLI_task_pool_push(task_pool, proxy_task_func, handle, false, NULL);
   }
 
   BLI_task_pool_work_and_wait(task_pool);

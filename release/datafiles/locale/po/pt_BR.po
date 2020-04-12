@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -10674,6 +10674,10 @@ msgid "Blend Mode"
 msgstr "Modo de mesclagem"
 
 
+msgid "Hard Light"
+msgstr "Luz direta"
+
+
 msgid "Frames"
 msgstr "Quadros"
 
@@ -11627,10 +11631,6 @@ msgstr "O modo para mesclar pincéis."
 
 msgid "Linear Burn"
 msgstr "Queima linear"
-
-
-msgid "Hard Light"
-msgstr "Luz direta"
 
 
 msgid "Vivid Light"
@@ -22075,6 +22075,10 @@ msgid "Bone Roll"
 msgstr "Rolagem dos ossos"
 
 
+msgid "Special Characters"
+msgstr "Caracteres especiais"
+
+
 msgid "Interpolate"
 msgstr "Interpolar"
 
@@ -22125,10 +22129,6 @@ msgstr "Selecionar por similaridades"
 
 msgid "Metaball"
 msgstr "Esfera-meta"
-
-
-msgid "Special Characters"
-msgstr "Caracteres especiais"
 
 
 msgid "Hooks"
@@ -22885,10 +22885,6 @@ msgstr "Pintura dinâmica"
 
 msgid "Explode"
 msgstr "Explodir"
-
-
-msgid "Fluid Simulation"
-msgstr "Simulação de fluidos"
 
 
 msgid "Ocean"
@@ -32009,12 +32005,8 @@ msgstr "De-seleciona estes ossos nas extremidades de cada região da seleção."
 
 
 msgctxt "Operator"
-msgid "Select Connected"
-msgstr "Selecionar conectados"
-
-
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "Seleciona os ossos relacionados aos selecionados pelas suas relações de parentesco - parentes ou crianças."
+msgid "Select Linked All"
+msgstr "Selecionar todos os conectados"
 
 
 msgctxt "Operator"
@@ -34209,11 +34201,6 @@ msgstr "(De)seleciona todos os pontos de controle."
 
 msgid "Reduce current selection by deselecting boundary elements"
 msgstr "Reduz a seleção atual pela de-seleção dos elementos nas extremidades."
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "Selecionar todos os conectados"
 
 
 msgid "Select all control points linked to already selected ones"
@@ -38774,15 +38761,6 @@ msgstr "Duplica as malhas selecionadas e permite movê-las."
 
 msgid "Duplicate"
 msgstr "Duplicar"
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "Encolher arestas"
-
-
-msgid "Collapse selected edges"
-msgstr "Encolhe as arestas selecionadas."
 
 
 msgctxt "Operator"
@@ -45405,6 +45383,15 @@ msgstr "Grupos compartilhados."
 
 msgid "All bones affected by active Keying Set"
 msgstr "Todos os ossos afetados pelo conjunto de inserção de chaves ativo."
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "Selecionar conectados"
+
+
+msgid "Select bones related to selected ones by parent/child relationships"
+msgstr "Seleciona os ossos relacionados aos selecionados pelas suas relações de parentesco - parentes ou crianças."
 
 
 msgctxt "Operator"
@@ -68675,26 +68662,6 @@ msgstr "Recalcular para dentro"
 
 
 msgctxt "Operator"
-msgid "Toggle Bold"
-msgstr "Alternar negrito"
-
-
-msgctxt "Operator"
-msgid "Toggle Italic"
-msgstr "Alternar itálico"
-
-
-msgctxt "Operator"
-msgid "Toggle Underline"
-msgstr "Alternar sublinhado"
-
-
-msgctxt "Operator"
-msgid "Toggle Small Caps"
-msgstr "Alternar versalete"
-
-
-msgctxt "Operator"
 msgid "Copyright"
 msgstr "Copyright (Direitos autorais)"
 
@@ -68772,6 +68739,26 @@ msgstr "Interrogação hispânica"
 msgctxt "Operator"
 msgid "Spanish Exclamation Mark"
 msgstr "Exclamação hispânica"
+
+
+msgctxt "Operator"
+msgid "Toggle Bold"
+msgstr "Alternar negrito"
+
+
+msgctxt "Operator"
+msgid "Toggle Italic"
+msgstr "Alternar itálico"
+
+
+msgctxt "Operator"
+msgid "Toggle Underline"
+msgstr "Alternar sublinhado"
+
+
+msgctxt "Operator"
+msgid "Toggle Small Caps"
+msgstr "Alternar versalete"
 
 
 msgctxt "Operator"
@@ -68962,18 +68949,6 @@ msgid "Not supported in sculpt mode"
 msgstr "Não suportado em modo de escultura."
 
 
-msgid ", cannot have single-frame paths"
-msgstr ", não é possível ter caminhos de um único quadro."
-
-
-msgid "Motion path frame extents invalid for %s (%d to %d)%s"
-msgstr "Extensão de caminho de quadros de movimento inválido para %s (%d para %d)%s"
-
-
-msgid "KeyingSet"
-msgstr "Conjunto de inserção de chaves"
-
-
 msgid "No AnimData to set action on"
 msgstr "Sem dados de animação para os quais configurar a ação."
 
@@ -68984,6 +68959,18 @@ msgstr "Não é possível alterar a ação, pois esta ainda está sendo editada 
 
 msgid "Could not set action '%s' onto ID '%s', as it does not have suitably rooted paths for this purpose"
 msgstr "Não é possível configurar a ação '%s' no identificador '%s', pelo fato dela não possuir caminhos devidamente enraizados para esta finalidade."
+
+
+msgid "KeyingSet"
+msgstr "Conjunto de inserção de chaves"
+
+
+msgid ", cannot have single-frame paths"
+msgstr ", não é possível ter caminhos de um único quadro."
+
+
+msgid "Motion path frame extents invalid for %s (%d to %d)%s"
+msgstr "Extensão de caminho de quadros de movimento inválido para %s (%d para %d)%s"
 
 
 msgid "Library file, loading empty scene"
@@ -72387,30 +72374,6 @@ msgid "No active vertex group for painting, aborting"
 msgstr "Sem grupo de vértices ativos para pintura, abortando."
 
 
-msgid "Warning!"
-msgstr "Aviso !"
-
-
-msgid "OK"
-msgstr "OK"
-
-
-msgid "Vertex Data Detected!"
-msgstr "Dados de vértices detectados !"
-
-
-msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
-msgstr "Topologia dinâmica não irá preservar as cores dos vértices, UVs ou outros dados personalizados."
-
-
-msgid "Generative Modifiers Detected!"
-msgstr "Modificadores de geração detectados !"
-
-
-msgid "Keeping the modifiers will increase polycount when returning to object mode"
-msgstr "Manter os modificadores irá aumentar a contagem de polígonos ao retornar para o modo de objeto."
-
-
 msgid "non-triangle face"
 msgstr "faces não triangulares"
 
@@ -72445,6 +72408,30 @@ msgstr "O objeto possui uma escala negativa, operações de escultura podem ser 
 
 msgid "Dynamic Topology found: %s, disabled"
 msgstr "Topologia dinâmica encontrada: %s, desabilitados(as)."
+
+
+msgid "Warning!"
+msgstr "Aviso !"
+
+
+msgid "OK"
+msgstr "OK"
+
+
+msgid "Vertex Data Detected!"
+msgstr "Dados de vértices detectados !"
+
+
+msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
+msgstr "Topologia dinâmica não irá preservar as cores dos vértices, UVs ou outros dados personalizados."
+
+
+msgid "Generative Modifiers Detected!"
+msgstr "Modificadores de geração detectados !"
+
+
+msgid "Keeping the modifiers will increase polycount when returning to object mode"
+msgstr "Manter os modificadores irá aumentar a contagem de polígonos ao retornar para o modo de objeto."
 
 
 msgid "Compiled without sound support"
