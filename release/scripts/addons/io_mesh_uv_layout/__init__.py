@@ -100,6 +100,11 @@ class ExportUVLayout(bpy.types.Operator):
         default=0.25,
         description="Set amount of opacity for exported UV layout",
     )
+    # For the file-selector.
+    check_existing: BoolProperty(
+        default=True,
+        options={'HIDDEN'},
+    )
 
     @classmethod
     def poll(cls, context):

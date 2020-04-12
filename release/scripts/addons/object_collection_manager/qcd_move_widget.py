@@ -912,7 +912,7 @@ def draw_callback_px(self, context):
         if self.draw_tooltip:
             slot_name = qcd_slots.get_name(f"{tooltip_slot_idx}")
             slot_string = f"QCD Slot {tooltip_slot_idx}: \"{slot_name}\"\n"
-            hotkey_string = "  * Shift-Click to toggle objects\' slot."
+            hotkey_string = "  * Shift+LMB - Toggle objects\' slot."
 
             draw_tooltip(self, context, shader, f"{slot_string}{hotkey_string}")
 

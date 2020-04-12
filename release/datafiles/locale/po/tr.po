@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -7343,10 +7343,6 @@ msgid "Dynamic Paint"
 msgstr "Çoklu-Boyama"
 
 
-msgid "Fluid Simulation"
-msgstr "Akışkan Simülasyonu"
-
-
 msgid "Particle Instance"
 msgstr "Parçacık Modu"
 
@@ -10553,8 +10549,8 @@ msgstr "Seçim Çevresi"
 
 
 msgctxt "Operator"
-msgid "Select Connected"
-msgstr "Ters Seçim"
+msgid "Select Linked All"
+msgstr "Tümünü Seç/Bırak"
 
 
 msgctxt "Operator"
@@ -11588,11 +11584,6 @@ msgstr "Eğriyi buna Çevir"
 
 msgid "(De)select all control points"
 msgstr "Katmandan Tümünü Seç"
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "Tümünü Seç/Bırak"
 
 
 msgctxt "Operator"
@@ -13336,15 +13327,6 @@ msgstr "Mesh Araçları"
 
 msgid "Duplicate"
 msgstr "Çoğalt"
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "Kenar Döngüsü"
-
-
-msgid "Collapse selected edges"
-msgstr "Seçilen kenarları vurgulayarak görüntüler"
 
 
 msgctxt "Operator"
@@ -16254,6 +16236,11 @@ msgstr "Hedef değişkeni sil"
 
 msgid "Shared group"
 msgstr "Yeni Gurup"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "Ters Seçim"
 
 
 msgctxt "Operator"

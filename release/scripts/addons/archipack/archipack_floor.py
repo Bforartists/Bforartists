@@ -318,6 +318,8 @@ class FloorGenerator(CutAblePolygon, CutAbleGenerator):
             for v in verts:
                 v.co.z = bottom
 
+            bm.normal_update()
+
             # bevel
             if d.bevel:
                 for v in bm.verts:

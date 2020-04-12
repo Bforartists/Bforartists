@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2020-03-28 00:56+0800\n"
@@ -18609,6 +18609,10 @@ msgid "Bone Roll"
 msgstr "骨骼滾動"
 
 
+msgid "Special Characters"
+msgstr "特殊字元"
+
+
 msgid "Interpolate"
 msgstr "插補"
 
@@ -18651,10 +18655,6 @@ msgstr "選取相似者"
 
 msgid "Metaball"
 msgstr "變幻球"
-
-
-msgid "Special Characters"
-msgstr "特殊字元"
 
 
 msgid "Hooks"
@@ -19243,10 +19243,6 @@ msgstr "動態繪製"
 
 msgid "Explode"
 msgstr "爆炸"
-
-
-msgid "Fluid Simulation"
-msgstr "流體模擬"
 
 
 msgid "Ocean"
@@ -27143,12 +27139,8 @@ msgstr "擴展選取項"
 
 
 msgctxt "Operator"
-msgid "Select Connected"
-msgstr "選取已連接者"
-
-
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "選取與所選骨骼關聯的親代/子代關係骨骼"
+msgid "Select Linked All"
+msgstr "選取所有連結項"
 
 
 msgctxt "Operator"
@@ -29252,11 +29244,6 @@ msgstr "(取消)全選控制點"
 
 msgid "Reduce current selection by deselecting boundary elements"
 msgstr "藉取消選取邊界元素來減少目前的選取"
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "選取所有連結項"
 
 
 msgid "Select all control points linked to already selected ones"
@@ -32732,15 +32719,6 @@ msgstr "製作網格複本並移動"
 
 msgid "Duplicate"
 msgstr "製作複本"
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "邊線塌陷"
-
-
-msgid "Collapse selected edges"
-msgstr "讓所選的邊線塌陷"
 
 
 msgctxt "Operator"
@@ -38498,6 +38476,15 @@ msgstr "共享群組"
 
 msgid "All bones affected by active Keying Set"
 msgstr "受作用中鍵處理集影響的所有骨骼"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "選取已連接者"
+
+
+msgid "Select bones related to selected ones by parent/child relationships"
+msgstr "選取與所選骨骼關聯的親代/子代關係骨骼"
 
 
 msgctxt "Operator"
@@ -58059,26 +58046,6 @@ msgstr "重算內部"
 
 
 msgctxt "Operator"
-msgid "Toggle Bold"
-msgstr "切換粗體"
-
-
-msgctxt "Operator"
-msgid "Toggle Italic"
-msgstr "切換斜體"
-
-
-msgctxt "Operator"
-msgid "Toggle Underline"
-msgstr "切換底線"
-
-
-msgctxt "Operator"
-msgid "Toggle Small Caps"
-msgstr "切換小型大寫字"
-
-
-msgctxt "Operator"
 msgid "Copyright"
 msgstr "著作權"
 
@@ -58156,6 +58123,26 @@ msgstr "西班牙文問號"
 msgctxt "Operator"
 msgid "Spanish Exclamation Mark"
 msgstr "西班牙文驚嘆號"
+
+
+msgctxt "Operator"
+msgid "Toggle Bold"
+msgstr "切換粗體"
+
+
+msgctxt "Operator"
+msgid "Toggle Italic"
+msgstr "切換斜體"
+
+
+msgctxt "Operator"
+msgid "Toggle Underline"
+msgstr "切換底線"
+
+
+msgctxt "Operator"
+msgid "Toggle Small Caps"
+msgstr "切換小型大寫字"
 
 
 msgctxt "Operator"
@@ -58329,18 +58316,6 @@ msgid "Not supported in sculpt mode"
 msgstr "雕塑模式中不支援"
 
 
-msgid ", cannot have single-frame paths"
-msgstr "，無法有單框幀路徑"
-
-
-msgid "Motion path frame extents invalid for %s (%d to %d)%s"
-msgstr "%s 運動路徑框幀範圍無效 (%d 到 %d)%s"
-
-
-msgid "KeyingSet"
-msgstr "鍵處理集"
-
-
 msgid "No AnimData to set action on"
 msgstr "無可設定動作的動畫資料"
 
@@ -58351,6 +58326,18 @@ msgstr "無法變更動作，因為它仍在 NLA 編輯中"
 
 msgid "Could not set action '%s' onto ID '%s', as it does not have suitably rooted paths for this purpose"
 msgstr "無法設定動作「%s」於 ID「%s」上，因為對於此用途來說它沒有適當根生的路徑"
+
+
+msgid "KeyingSet"
+msgstr "鍵處理集"
+
+
+msgid ", cannot have single-frame paths"
+msgstr "，無法有單框幀路徑"
+
+
+msgid "Motion path frame extents invalid for %s (%d to %d)%s"
+msgstr "%s 運動路徑框幀範圍無效 (%d 到 %d)%s"
 
 
 msgid "Unable to create userpref path"
@@ -60767,18 +60754,6 @@ msgid "Missing%s%s%s%s detected!"
 msgstr "偵測到遺失%s%s%s%s！"
 
 
-msgid "Warning!"
-msgstr "警告！"
-
-
-msgid "OK"
-msgstr "確定"
-
-
-msgid "Vertex Data Detected!"
-msgstr "已偵測到頂點資料！"
-
-
 msgid "non-triangle face"
 msgstr "非三角面"
 
@@ -60797,6 +60772,18 @@ msgstr "邊線資料"
 
 msgid "face data"
 msgstr "面資料"
+
+
+msgid "Warning!"
+msgstr "警告！"
+
+
+msgid "OK"
+msgstr "確定"
+
+
+msgid "Vertex Data Detected!"
+msgstr "已偵測到頂點資料！"
 
 
 msgid "Compiled without sound support"
