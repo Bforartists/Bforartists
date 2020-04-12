@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -1832,11 +1832,6 @@ msgstr "Selecteer Hiearchie"
 
 
 msgctxt "Operator"
-msgid "Select Connected"
-msgstr "Selecteer Gekoppeld"
-
-
-msgctxt "Operator"
 msgid "Flip Active/Selected Bone"
 msgstr "Flip Actieve/Geselecteerde Botten"
 
@@ -3469,6 +3464,11 @@ msgstr "Maak Paden van Botten Leeg"
 msgctxt "Operator"
 msgid "Update Bone Paths"
 msgstr "Update Paden van Botten"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "Selecteer Gekoppeld"
 
 
 msgctxt "Operator"

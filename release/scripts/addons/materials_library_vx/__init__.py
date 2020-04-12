@@ -33,8 +33,10 @@ bl_info = {
 
 
 import bpy
-import os
 import json
+import os
+from pathlib import Path
+
 from bpy.app.handlers import persistent
 from bpy.props import (
     StringProperty, IntProperty, BoolProperty,
@@ -50,11 +52,16 @@ from rna_prop_ui import PropertyPanel
 
 dev = False
 
-matlib_path = os.path.dirname(__file__)
+user_path = Path(bpy.utils.resource_path('USER')).parent
+matlib_path = os.path.join(user_path, "matlib")
 
-if dev:
-    print (30*"-")
-    matlib_path = r"D:\Blender Foundation\Blender\2.72\scripts\addons\matlib"
+if not os.path.exists(matlib_path):
+    import shutil
+    os.mkdir(matlib_path)
+    addon_path = os.path.dirname(__file__)
+    shutil.copy2(os.path.join(addon_path, "categories.txt"), matlib_path)
+    shutil.copy2(os.path.join(addon_path, "templates.blend"), matlib_path)
+    shutil.copy2(os.path.join(addon_path, "sample_materials.blend"), matlib_path)
 
 ##debug print variables
 def dd(*args, dodir=False):
@@ -264,15 +271,6 @@ class Library():
 
 def get_libraries():
     libs = [Library(matlib_path, f) for f in os.listdir(matlib_path) if f[-5::] == "blend"]
-    try:
-        user_path = bpy.context.preferences.addons[__name__].preferences.matlib_path
-        if user_path:
-            if os.path.exists(user_path):
-                libs.extend([Library(user_path, f) for f in os.listdir(user_path) if f[-5::] == "blend"])
-            else:
-                print("path not found %s" % user_path)
-    except:
-        pass
     return sorted(libs, key=lambda x: bpy.path.display_name(x.name))
 
 libraries = []
@@ -1215,10 +1213,16 @@ MATLIB_MT_CatsMenu
 @persistent
 def refresh_libs(dummy=None):
     global libraries
+    global matlib_path
+    default_path = bpy.context.preferences.addons[__name__].preferences.matlib_path
+    if default_path is not None and default_path != '':
+        matlib_path = default_path
+
     libraries = get_libraries()
 
 
 def reload_library(self, context):
+    bpy.context.preferences.addons[__name__].preferences.matlib_path = bpy.path.abspath(bpy.context.preferences.addons[__name__].preferences.matlib_path)
     refresh_libs(self)
 
 
@@ -1268,14 +1272,14 @@ matlibvxPref
 ]
 """
 def register():
-    global libraries
+    global matlib_path
 
     for c in classes:
         bpy.utils.register_class(c)
     Scene.matlib_categories = CollectionProperty(type=EmptyGroup)
     Scene.matlib = PointerProperty(type = matlibProperties)
     bpy.app.handlers.load_post.append(refresh_libs)
-    libraries = get_libraries()
+    refresh_libs()
 
 
 def unregister():

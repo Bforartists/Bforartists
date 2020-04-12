@@ -34,12 +34,13 @@ if not bpy.app.background:
     single_color_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
     smooth_color_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
 else:
-  single_color_shader = None
-  smooth_color_shader = None
+    single_color_shader = None
+    smooth_color_shader = None
 
 COLOR_POINT = (1.0, 0.0, 1.0, 1)
 COLOR_LINE = (0.5, 0.5, 1, 1)
 COLOR_BOUNDING_BOX = (1.0, 1.0, 1.0, 1.0)
+
 
 def tag_redraw_areas():
     context = bpy.context
@@ -88,7 +89,6 @@ def draw_callback_px():
     if not data_matrix and not data_quat and not data_euler and not data_vector and not data_vector_array:
         return
 
-
     region = context.region
     region3d = context.space_data.region_3d
 
@@ -133,6 +133,7 @@ def draw_callback_px():
             draw_text(key, loc, dy=-offset_y)
             offset_y += 20
 
+
 def draw_callback_view():
     settings = bpy.context.window_manager.MathVisProp
     scale = settings.bbox_scale
@@ -170,11 +171,13 @@ def draw_callback_view():
             derived_matrices.append(matrix)
         draw_matrices(derived_matrices, scale, with_bounding_box)
 
+
 def draw_points(points):
     batch = batch_from_points(points, "POINTS")
     single_color_shader.bind()
     single_color_shader.uniform_float("color", COLOR_POINT)
     batch.draw(single_color_shader)
+
 
 def draw_line(points):
     batch = batch_from_points(points, "LINE_STRIP")
@@ -182,23 +185,25 @@ def draw_line(points):
     single_color_shader.uniform_float("color", COLOR_LINE)
     batch.draw(single_color_shader)
 
+
 def batch_from_points(points, type):
-    return batch_for_shader(single_color_shader, type, {"pos" : points})
+    return batch_for_shader(single_color_shader, type, {"pos": points})
+
 
 def draw_matrices(matrices, scale, with_bounding_box):
-    x_p = Vector(( scale,   0.0,   0.0))
-    x_n = Vector((-scale,   0.0,   0.0))
-    y_p = Vector((0.0,    scale,   0.0))
-    y_n = Vector((0.0,   -scale,   0.0))
-    z_p = Vector((0.0,      0.0,  scale))
-    z_n = Vector((0.0,      0.0, -scale))
+    x_p = Vector((scale, 0.0, 0.0))
+    x_n = Vector((-scale, 0.0, 0.0))
+    y_p = Vector((0.0, scale, 0.0))
+    y_n = Vector((0.0, -scale, 0.0))
+    z_p = Vector((0.0, 0.0, scale))
+    z_n = Vector((0.0, 0.0, -scale))
 
-    red_dark =    (0.2, 0.0, 0.0, 1.0)
-    red_light =   (1.0, 0.2, 0.2, 1.0)
-    green_dark =  (0.0, 0.2, 0.0, 1.0)
+    red_dark = (0.2, 0.0, 0.0, 1.0)
+    red_light = (1.0, 0.2, 0.2, 1.0)
+    green_dark = (0.0, 0.2, 0.0, 1.0)
     green_light = (0.2, 1.0, 0.2, 1.0)
-    blue_dark =   (0.0, 0.0, 0.2, 1.0)
-    blue_light =  (0.4, 0.4, 1.0, 1.0)
+    blue_dark = (0.0, 0.0, 0.2, 1.0)
+    blue_light = (0.4, 0.4, 1.0, 1.0)
 
     coords = []
     colors = []
@@ -214,13 +219,14 @@ def draw_matrices(matrices, scale, with_bounding_box):
         colors.extend((blue_dark, blue_light))
 
     batch = batch_for_shader(smooth_color_shader, "LINES", {
-        "pos" : coords,
-        "color" : colors
+        "pos": coords,
+        "color": colors
     })
     batch.draw(smooth_color_shader)
 
     if with_bounding_box:
         draw_bounding_boxes(matrices, scale, COLOR_BOUNDING_BOX)
+
 
 def draw_bounding_boxes(matrices, scale, color):
     boundbox_points = []

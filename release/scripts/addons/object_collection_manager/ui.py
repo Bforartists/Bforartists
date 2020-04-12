@@ -18,6 +18,8 @@
 
 # Copyright 2011, Ryan Inch
 
+import bpy
+
 from bpy.types import (
     Operator,
     Panel,
@@ -36,6 +38,9 @@ from .internals import (
     update_collection_tree,
     update_property_group,
     generate_state,
+    get_move_selection,
+    get_move_active,
+    update_qcd_header,
 )
 
 from .operators import (
@@ -45,8 +50,6 @@ from .operators import (
     expand_history,
     phantom_history,
     )
-
-from . import qcd_operators
 
 
 preview_collections = {}
@@ -60,14 +63,23 @@ class CollectionManager(Operator):
 
     last_view_layer = ""
 
+    window_open = False
+
+    def __init__(self):
+        self.window_open = True
+
     def draw(self, context):
+        cls = CollectionManager
         layout = self.layout
         cm = context.scene.collection_manager
         view_layer = context.view_layer
 
-        if view_layer.name != self.last_view_layer:
+        if view_layer.name != cls.last_view_layer:
+            if context.preferences.addons[__package__].preferences.enable_qcd:
+                bpy.app.timers.register(update_qcd_header)
+
             update_collection_tree(context)
-            self.last_view_layer = view_layer.name
+            cls.last_view_layer = view_layer.name
 
         title_row = layout.split(factor=0.5)
         main = title_row.row()
@@ -328,6 +340,10 @@ class CollectionManager(Operator):
     def __del__(self):
         global collection_state
 
+        if not self.window_open:
+            # prevent destructor execution when changing templates
+            return
+
         collection_state.clear()
         collection_state.update(generate_state())
 
@@ -353,6 +369,8 @@ class CM_UL_items(UIList):
         view_layer = context.view_layer
         laycol = layer_collections[item.name]
         collection = laycol["ptr"].collection
+        selected_objects = get_move_selection()
+        active_object = get_move_active()
 
         split = layout.split(factor=0.96)
         row = split.row(align=True)
@@ -409,9 +427,13 @@ class CM_UL_items(UIList):
 
         icon = 'MESH_CUBE'
 
-        if len(context.selected_objects) > 0 and context.active_object:
-            if context.active_object.name in collection.objects:
+        if selected_objects:
+            if active_object and active_object.name in collection.objects:
                 icon = 'SNAP_VOLUME'
+
+            elif not set(selected_objects).isdisjoint(collection.objects):
+                icon = 'STICKY_UVS_LOC'
+
         else:
             row_setcol.enabled = False
 
@@ -561,6 +583,11 @@ class CMRestrictionTogglesPanel(Panel):
         cm = context.scene.collection_manager
 
         layout = self.layout
+
+        name_row = layout.row()
+        name_row.alignment = 'LEFT'
+        name_row.label(text="Filter Restriction Toggles")
+
         row = layout.row()
 
         row.prop(cm, "show_exclude", icon='CHECKBOX_HLT', icon_only=True)
@@ -588,8 +615,8 @@ def view3d_header_qcd_slots(self, context):
         if qcd_slot_name:
             qcd_laycol = layer_collections[qcd_slot_name]["ptr"]
             collection_objects = qcd_laycol.collection.objects
-            selected_objects = qcd_operators.get_move_selection()
-            active_object = qcd_operators.get_move_active()
+            selected_objects = get_move_selection()
+            active_object = get_move_active()
 
             icon_value = 0
 
@@ -629,6 +656,12 @@ def view3d_header_qcd_slots(self, context):
             row.scale_y = 0.5
 
         idx += 1
+
+
+def view_layer_update(self, context):
+    if context.view_layer.name != CollectionManager.last_view_layer:
+        bpy.app.timers.register(update_qcd_header)
+        CollectionManager.last_view_layer = context.view_layer.name
 
 
 def get_active_icon(context, qcd_laycol):

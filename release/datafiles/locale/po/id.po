@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
@@ -3069,8 +3069,8 @@ msgstr "Seleksi"
 
 
 msgctxt "Operator"
-msgid "Select Connected"
-msgstr "Warna Standar"
+msgid "Select Linked All"
+msgstr "Seleksi"
 
 
 msgctxt "Operator"
@@ -3570,11 +3570,6 @@ msgstr "Partikel"
 
 msgid "(De)select all control points"
 msgstr "Bahan"
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "Seleksi"
 
 
 msgctxt "Operator"
@@ -4321,11 +4316,6 @@ msgstr "Buyarkan Terpilih"
 
 msgid "Duplicate mesh and move"
 msgstr "Tekstur"
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "Buat"
 
 
 msgctxt "Operator"
@@ -5543,6 +5533,11 @@ msgstr "lokasi"
 msgctxt "Operator"
 msgid "Select Constraint Target"
 msgstr "Seleksi"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "Warna Standar"
 
 
 msgctxt "Operator"

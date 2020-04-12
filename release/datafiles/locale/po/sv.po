@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -8875,6 +8875,10 @@ msgid "Bone Roll"
 msgstr "Massiv"
 
 
+msgid "Special Characters"
+msgstr "Tecken:"
+
+
 msgid "Interpolate"
 msgstr "Interpolering:"
 
@@ -8901,10 +8905,6 @@ msgstr "Markera Rad"
 
 msgid "Metaball"
 msgstr "Metaball"
-
-
-msgid "Special Characters"
-msgstr "Tecken:"
 
 
 msgid "Light"
@@ -9205,10 +9205,6 @@ msgstr "Partikelfriktion:"
 
 msgid "Explode"
 msgstr "Spräng"
-
-
-msgid "Fluid Simulation"
-msgstr "Renderings Fönster"
 
 
 msgid "Particle Instance"
@@ -13403,7 +13399,7 @@ msgstr "Markera Länkad"
 
 
 msgctxt "Operator"
-msgid "Select Connected"
+msgid "Select Linked All"
 msgstr "Avmarkera Länkad"
 
 
@@ -14746,11 +14742,6 @@ msgstr "Raderings Meny"
 
 msgid "Reduce current selection by deselecting boundary elements"
 msgstr "Markera Länkad"
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "Avmarkera Länkad"
 
 
 msgid "Select all control points linked to already selected ones"
@@ -16881,15 +16872,6 @@ msgstr "Duplicera"
 
 msgid "Duplicate"
 msgstr "Duplicera"
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "Arkiv"
-
-
-msgid "Collapse selected edges"
-msgstr "Dela upp markerade kanter"
 
 
 msgctxt "Operator"
@@ -20742,6 +20724,11 @@ msgstr "Rökgrupper"
 
 msgid "All bones affected by active Keying Set"
 msgstr "Renderings Fönster"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "Avmarkera Länkad"
 
 
 msgctxt "Operator"

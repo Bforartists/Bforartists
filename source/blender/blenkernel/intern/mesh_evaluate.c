@@ -1012,7 +1012,7 @@ void BKE_mesh_loop_manifold_fan_around_vert_next(const MLoop *mloops,
 static void split_loop_nor_single_do(LoopSplitTaskDataCommon *common_data, LoopSplitTaskData *data)
 {
   MLoopNorSpaceArray *lnors_spacearr = common_data->lnors_spacearr;
-  short(*clnors_data)[2] = common_data->clnors_data;
+  const short(*clnors_data)[2] = common_data->clnors_data;
 
   const MVert *mverts = common_data->mverts;
   const MEdge *medges = common_data->medges;
@@ -1555,7 +1555,7 @@ static void loop_split_generator(TaskPool *pool, LoopSplitTaskDataCommon *common
         if (pool) {
           data_idx++;
           if (data_idx == LOOP_SPLIT_TASK_BLOCK_SIZE) {
-            BLI_task_pool_push(pool, loop_split_worker, data_buff, true, TASK_PRIORITY_LOW);
+            BLI_task_pool_push(pool, loop_split_worker, data_buff, true, NULL);
             data_idx = 0;
           }
         }
@@ -1572,7 +1572,7 @@ static void loop_split_generator(TaskPool *pool, LoopSplitTaskDataCommon *common
   /* Last block of data... Since it is calloc'ed and we use first NULL item as stopper,
    * everything is fine. */
   if (pool && data_idx) {
-    BLI_task_pool_push(pool, loop_split_worker, data_buff, true, TASK_PRIORITY_LOW);
+    BLI_task_pool_push(pool, loop_split_worker, data_buff, true, NULL);
   }
 
   if (edge_vectors) {
@@ -1708,7 +1708,7 @@ void BKE_mesh_normals_loop_split(const MVert *mverts,
     TaskPool *task_pool;
 
     task_scheduler = BLI_task_scheduler_get();
-    task_pool = BLI_task_pool_create(task_scheduler, &common_data);
+    task_pool = BLI_task_pool_create(task_scheduler, &common_data, TASK_PRIORITY_HIGH);
 
     loop_split_generator(task_pool, &common_data);
 

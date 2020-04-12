@@ -21,20 +21,6 @@ qcd_classes = (
     )
 
 @persistent
-def depsgraph_update_post_handler(dummy):
-    if qcd_operators.move_triggered:
-        qcd_operators.move_triggered = False
-        return
-
-    qcd_operators.move_selection.clear()
-    qcd_operators.move_active = None
-
-@persistent
-def undo_redo_post_handler(dummy):
-    qcd_operators.move_selection.clear()
-    qcd_operators.move_active = None
-
-@persistent
 def save_internal_data(dummy):
     cm = bpy.context.scene.collection_manager
 
@@ -66,9 +52,6 @@ def register_qcd():
     kmi = km.keymap_items.new('view3d.qcd_move_widget', 'V', 'PRESS')
     addon_qcd_keymaps.append((km, kmi))
 
-    bpy.app.handlers.depsgraph_update_post.append(depsgraph_update_post_handler)
-    bpy.app.handlers.undo_post.append(undo_redo_post_handler)
-    bpy.app.handlers.redo_post.append(undo_redo_post_handler)
     bpy.app.handlers.save_pre.append(save_internal_data)
     bpy.app.handlers.load_post.append(load_internal_data)
 
@@ -76,6 +59,7 @@ def register_qcd():
         register_qcd_view_hotkeys()
 
     bpy.types.VIEW3D_HT_header.append(ui.view3d_header_qcd_slots)
+    bpy.types.TOPBAR_HT_upper_bar.append(ui.view_layer_update)
 
 def register_qcd_view_hotkeys():
     wm = bpy.context.window_manager
@@ -118,13 +102,11 @@ def register_qcd_view_hotkeys():
 
 def unregister_qcd():
     bpy.types.VIEW3D_HT_header.remove(ui.view3d_header_qcd_slots)
+    bpy.types.TOPBAR_HT_upper_bar.remove(ui.view_layer_update)
 
     for cls in qcd_classes:
         bpy.utils.unregister_class(cls)
 
-    bpy.app.handlers.depsgraph_update_post.remove(depsgraph_update_post_handler)
-    bpy.app.handlers.undo_post.remove(undo_redo_post_handler)
-    bpy.app.handlers.redo_post.remove(undo_redo_post_handler)
     bpy.app.handlers.save_pre.remove(save_internal_data)
     bpy.app.handlers.load_post.remove(load_internal_data)
 

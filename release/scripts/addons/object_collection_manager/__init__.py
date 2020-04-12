@@ -22,7 +22,7 @@ bl_info = {
     "name": "Collection Manager",
     "description": "Manage collections and their objects",
     "author": "Ryan Inch",
-    "version": (2,4,12),
+    "version": (2,5,4),
     "blender": (2, 80, 0),
     "location": "View3D - Object Mode (Shortcut - M)",
     "warning": '',  # used for warning icon and text in addons panel
@@ -52,6 +52,7 @@ else:
     from . import preferences
 
 import bpy
+from bpy.app.handlers import persistent
 from bpy.types import PropertyGroup
 from bpy.props import (
     CollectionProperty,
@@ -67,11 +68,11 @@ class CollectionManagerProperties(PropertyGroup):
     cm_list_collection: CollectionProperty(type=internals.CMListCollection)
     cm_list_index: IntProperty(update=ui.update_selection)
 
-    show_exclude: BoolProperty(default=True, name="Exclude from View Layer")
-    show_selectable: BoolProperty(default=True, name="Selectable")
-    show_hide_viewport: BoolProperty(default=True, name="Hide in Viewport")
-    show_disable_viewport: BoolProperty(default=False, name="Disable in Viewports")
-    show_render: BoolProperty(default=False, name="Disable in Renders")
+    show_exclude: BoolProperty(default=True, name="[EC] Exclude from View Layer")
+    show_selectable: BoolProperty(default=True, name="[SS] Disable Selection")
+    show_hide_viewport: BoolProperty(default=True, name="[VV] Hide in Viewport")
+    show_disable_viewport: BoolProperty(default=False, name="[DV] Disable in Viewports")
+    show_render: BoolProperty(default=False, name="[RR] Disable in Renders")
 
     in_phantom_mode: BoolProperty(default=False)
 
@@ -108,7 +109,19 @@ classes = (
     CollectionManagerProperties,
     )
 
+@persistent
+def depsgraph_update_post_handler(dummy):
+    if internals.move_triggered:
+        internals.move_triggered = False
+        return
 
+    internals.move_selection.clear()
+    internals.move_active = None
+
+@persistent
+def undo_redo_post_handler(dummy):
+    internals.move_selection.clear()
+    internals.move_active = None
 
 def register():
     for cls in classes:
@@ -122,6 +135,10 @@ def register():
     kmi = km.keymap_items.new('view3d.collection_manager', 'M', 'PRESS')
     addon_keymaps.append((km, kmi))
 
+    bpy.app.handlers.depsgraph_update_post.append(depsgraph_update_post_handler)
+    bpy.app.handlers.undo_post.append(undo_redo_post_handler)
+    bpy.app.handlers.redo_post.append(undo_redo_post_handler)
+
     if bpy.context.preferences.addons[__package__].preferences.enable_qcd:
         qcd_init.register_qcd()
 
@@ -131,6 +148,10 @@ def unregister():
 
     for cls in classes:
         bpy.utils.unregister_class(cls)
+
+    bpy.app.handlers.depsgraph_update_post.remove(depsgraph_update_post_handler)
+    bpy.app.handlers.undo_post.remove(undo_redo_post_handler)
+    bpy.app.handlers.redo_post.remove(undo_redo_post_handler)
 
     del bpy.types.Scene.collection_manager
 
