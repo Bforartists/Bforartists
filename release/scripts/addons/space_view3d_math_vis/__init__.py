@@ -68,7 +68,8 @@ class PanelConsoleVars(Panel):
 
     def draw(self, context):
         layout = self.layout
-        state_props = bpy.context.window_manager.MathVisStatePropList
+        wm = context.window_manager
+        state_props = wm.MathVisStatePropList
 
         if len(state_props) == 0:
             box = layout.box()
@@ -76,7 +77,7 @@ class PanelConsoleVars(Panel):
             col.label(text="No vars to display")
         else:
             layout.template_list(
-                'MathVisVarList',
+                MathVisVarList.bl_idname,
                 'MathVisStatePropList',
                 bpy.context.window_manager,
                 'MathVisStatePropList',
@@ -85,10 +86,11 @@ class PanelConsoleVars(Panel):
                 rows=10
             )
         col = layout.column()
-        col.prop(bpy.context.window_manager.MathVisProp, "name_hide")
-        col.prop(bpy.context.window_manager.MathVisProp, "bbox_hide")
-        col.prop(bpy.context.window_manager.MathVisProp, "in_front")
-        col.prop(bpy.context.window_manager.MathVisProp, "bbox_scale")
+        mvp = wm.MathVisProp
+        col.prop(mvp, "name_hide")
+        col.prop(mvp, "bbox_hide")
+        col.prop(mvp, "in_front")
+        col.prop(mvp, "bbox_scale")
         col.operator("mathvis.cleanup_console")
 
 
@@ -248,6 +250,7 @@ class MathVis(PropertyGroup):
         description="Draw Points and lines always in front",
         update=call_console_hook
     )
+
 
 classes = (
     PanelConsoleVars,

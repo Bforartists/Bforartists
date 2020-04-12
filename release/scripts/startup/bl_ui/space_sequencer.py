@@ -307,6 +307,7 @@ class SEQUENCER_MT_view(Menu):
             layout.separator()
             layout.operator_context = 'INVOKE_REGION_WIN'
             layout.operator("sequencer.refresh_all", icon='FILE_REFRESH', text="Refresh All")
+            layout.prop(st, "show_fcurves")
 
         layout.separator()
 

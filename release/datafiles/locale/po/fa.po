@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -6731,8 +6731,8 @@ msgstr "ﻮﺠﺘﺴﺟ ﺏﺎﺨﺘﻧﺍ"
 
 
 msgctxt "Operator"
-msgid "Select Connected"
-msgstr "ﺱﺃﺭ ﻪﻋﻮﻤﺠﻣ"
+msgid "Select Linked All"
+msgstr "ﻪﻘﻠﺣ ﺏﺎﺨﺘﻧﺍ"
 
 
 msgctxt "Operator"
@@ -7428,11 +7428,6 @@ msgstr "ﺕﺍﺭﺫ"
 
 msgid "(De)select all control points"
 msgstr "ﻪﻤﻫ ﺏﺎﺨﺘﻧﺍ ﻡﺪﻋ/ﺏﺎﺨﺘﻧﺍ"
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "ﻪﻘﻠﺣ ﺏﺎﺨﺘﻧﺍ"
 
 
 msgid "Select all control points linked to already selected ones"
@@ -8559,15 +8554,6 @@ msgstr "ﻪﻠﺻﺎﻓ ﻥﺩﺮﮐ ﺩﻭﺪﺤﻣ"
 
 msgid "Duplicate mesh and move"
 msgstr "ﻪﻨﺤﺻ ﻪﺑ ﺮﮕﻧﺎﺸﻧ ﺮﯿﺜﮑﺗ..."
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "ﺎﻫ‌ﻦﯿﭼ"
-
-
-msgid "Collapse selected edges"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
 
 
 msgctxt "Operator"
@@ -10508,6 +10494,11 @@ msgstr "ﻦﯿﺑﺭﻭﺩ ﺰﻨﻟ ﻩﺯﺍﺪﻧﺍ"
 msgctxt "Operator"
 msgid "Select Constraint Target"
 msgstr "ءﺎﯿﺷﺍ ﯼﺎﻫ‌ﺖﯾﺩﻭﺪﺤﻣ"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "ﺱﺃﺭ ﻪﻋﻮﻤﺠﻣ"
 
 
 msgctxt "Operator"

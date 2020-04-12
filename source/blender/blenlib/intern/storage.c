@@ -232,8 +232,9 @@ eFileAttributes BLI_file_attributes(const char *path)
   int ret = 0;
 
 #  ifdef WIN32
-  wchar_t wline[FILE_MAXDIR];
-  BLI_strncpy_wchar_from_utf8(wline, path, ARRAY_SIZE(wline));
+  WCHAR wline[FILE_MAXDIR];
+  size_t bsize = count_utf_16_from_8(path);
+  conv_utf_8_to_16(path, wline, bsize);
   DWORD attr = GetFileAttributesW(wline);
   if (attr & FILE_ATTRIBUTE_READONLY) {
     ret |= FILE_ATTR_READONLY;
@@ -316,7 +317,7 @@ int BLI_exists(const char *name)
    * 2. after the C:\ when the path is the volume only
    */
   if ((len >= 3) && (tmp_16[0] == L'\\') && (tmp_16[1] == L'\\')) {
-    BLI_cleanup_unc_16(tmp_16);
+    BLI_path_normalize_unc_16(tmp_16);
   }
 
   if ((tmp_16[1] == L':') && (tmp_16[2] == L'\0')) {

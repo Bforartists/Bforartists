@@ -4231,12 +4231,7 @@ class VIEW3D_MT_pose(Menu):
 
         layout.separator()
 
-        layout.operator_context = 'EXEC_AREA'
-        layout.operator("pose.autoside_names", text="AutoName Left/Right", icon = "STRING").axis = 'XAXIS'
-        layout.operator("pose.autoside_names", text="AutoName Front/Back", icon = "STRING").axis = 'YAXIS'
-        layout.operator("pose.autoside_names", text="AutoName Top/Bottom", icon = "STRING").axis = 'ZAXIS'
-
-        layout.operator("pose.flip_names", icon = "FLIP")
+        layout.menu("VIEW3D_MT_pose_names")
         layout.operator("pose.quaternions_flip", icon = "FLIP")
 
         layout.separator()
@@ -4372,6 +4367,18 @@ class VIEW3D_MT_pose_constraints(Menu):
         layout.operator("pose.constraint_add_with_targets", text="Add (With Targets)", icon = "CONSTRAINT_DATA")
         layout.operator("pose.constraints_copy", icon = "COPYDOWN")
         layout.operator("pose.constraints_clear", icon = "CLEAR_CONSTRAINT")
+
+class VIEW3D_MT_pose_names(Menu):
+    bl_label = "Names"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator_context = 'EXEC_REGION_WIN'
+        layout.operator("pose.autoside_names", text="AutoName Left/Right", icon = "STRING").axis = 'XAXIS'
+        layout.operator("pose.autoside_names", text="AutoName Front/Back", icon = "STRING").axis = 'YAXIS'
+        layout.operator("pose.autoside_names", text="AutoName Top/Bottom", icon = "STRING").axis = 'ZAXIS'
+        layout.operator("pose.flip_names", icon = "FLIP")
 
 
 # Workaround to separate the tooltips for Show Hide for Armature in Pose mode
@@ -5111,7 +5118,7 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
 
         layout.operator("mesh.normals_tools", text="Copy Vectors", icon = "COPYDOWN").mode = 'COPY'
         layout.operator("mesh.normals_tools", text="Paste Vectors", icon = "PASTEDOWN").mode = 'PASTE'
-        layout.operator("mesh.smoothen_normals", text="Smoothen Vectors", icon = "NORMAL_SMOOTH")
+        layout.operator("mesh.smooth_normals", text="Smooth Vectors", icon = "NORMAL_SMOOTH")
         layout.operator("mesh.normals_tools", text="Reset Vectors", icon = "RESET").mode = 'RESET'
 
         layout.separator()
@@ -8621,6 +8628,7 @@ classes = (
     VIEW3D_MT_pose_group,
     VIEW3D_MT_pose_ik,
     VIEW3D_MT_pose_constraints,
+    VIEW3D_MT_pose_names,
     VIEW3D_MT_pose_hide_unselected,
     VIEW3D_MT_pose_show_hide,
     VIEW3D_MT_pose_apply,

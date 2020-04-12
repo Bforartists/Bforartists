@@ -11,7 +11,7 @@
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
+#  along with this program; if not, write to the Free Software Foundation,F
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
@@ -783,7 +783,7 @@ class IMAGE_HT_header(Header):
                 layout.prop(tool_settings, "uv_select_mode", text="", expand=True)
                 layout.prop(uvedit, "sticky_select_mode", icon_only=True)
 
-        MASK_MT_editor_menus.draw_collapsible(context, layout)    
+        IMAGE_MT_editor_menus.draw_collapsible(context, layout)    
 
         #layout.separator_spacer()
 
@@ -838,8 +838,8 @@ class ALL_MT_editormenu(Menu):
         row = layout.row(align=True)
         row.template_header() # editor type menus
 
-class MASK_MT_editor_menus(Menu):
-    bl_idname = "MASK_MT_editor_menus"
+class IMAGE_MT_editor_menus(Menu):
+    bl_idname = "IMAGE_MT_editor_menus"
     bl_label = ""
 
     def draw(self, context):
@@ -1626,7 +1626,7 @@ classes = (
     IMAGE_MT_uvs_snap_pie,
     IMAGE_HT_tool_header,
     IMAGE_HT_header,
-    MASK_MT_editor_menus,
+    IMAGE_MT_editor_menus,
     IMAGE_PT_active_tool,
     IMAGE_PT_mask,
     IMAGE_PT_mask_layers,

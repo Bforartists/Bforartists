@@ -51,6 +51,7 @@ from oscurart_tools.render import render_tokens
 from oscurart_tools.render import batch_maker
 from oscurart_tools.render import material_overrides
 from oscurart_tools.mesh import flipped_uvs
+from oscurart_tools.mesh import print_uv_stats
 
 from bpy.types import (
         AddonPreferences,
@@ -75,11 +76,13 @@ class VIEW3D_MT_edit_mesh_oscurarttools(Menu):
         layout.operator("mesh.uv_island_copy")
         layout.operator("mesh.uv_island_paste")
         layout.operator("mesh.select_doubles")
+        layout.operator("mesh.print_uv_stats")        
         layout.separator()
         layout.operator("image.reload_images_osc")
         layout.operator("file.save_incremental_backup")
         layout.operator("file.collect_all_images")
         layout.operator("file.create_batch_maker_osc")
+
 
 def menu_funcMesh(self, context):
     self.layout.menu("VIEW3D_MT_edit_mesh_oscurarttools")
@@ -121,6 +124,7 @@ class VIEW3D_MT_object_oscurarttools(Menu):
         layout.operator("object.search_and_select_osc")
         layout.operator("object.shape_key_to_objects_osc")
         layout.operator("mesh.apply_linked_meshes")
+        layout.operator("mesh.print_uv_stats")        
         layout.separator()
         layout.operator("image.reload_images_osc")
         layout.operator("file.save_incremental_backup")
@@ -160,7 +164,8 @@ classes = (
     material_overrides.OscOverridesUp,
     material_overrides.OscOverridesDown,
     material_overrides.OscOverridesKill,
-    flipped_uvs.selectFlippedUvs
+    flipped_uvs.selectFlippedUvs,
+    print_uv_stats.uvStats
     )
 
 def register():

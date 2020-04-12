@@ -129,6 +129,7 @@ typedef struct MeshRenderData {
 
 static MeshRenderData *mesh_render_data_create(Mesh *me,
                                                const bool is_editmode,
+                                               const bool is_paint_mode,
                                                const float obmat[4][4],
                                                const bool do_final,
                                                const bool do_uvedit,
@@ -192,7 +193,7 @@ static MeshRenderData *mesh_render_data_create(Mesh *me,
     mr->me = me;
     mr->edit_bmesh = NULL;
 
-    bool use_mapped = mr->me && !mr->me->runtime.is_original;
+    bool use_mapped = is_paint_mode && mr->me && !mr->me->runtime.is_original;
     if (use_mapped) {
       mr->v_origindex = CustomData_get_layer(&mr->me->vdata, CD_ORIGINDEX);
       mr->e_origindex = CustomData_get_layer(&mr->me->edata, CD_ORIGINDEX);
@@ -4523,7 +4524,7 @@ static void extract_range_task_create(
   taskdata->iter_type = type;
   taskdata->start = start;
   taskdata->end = start + length;
-  BLI_task_pool_push(task_pool, extract_run, taskdata, true, TASK_PRIORITY_HIGH);
+  BLI_task_pool_push(task_pool, extract_run, taskdata, true, NULL);
 }
 
 static void extract_task_create(TaskPool *task_pool,
@@ -4582,7 +4583,7 @@ static void extract_task_create(TaskPool *task_pool,
   else if (use_thread) {
     /* One task for the whole VBO. */
     (*task_counter)++;
-    BLI_task_pool_push(task_pool, extract_run, taskdata, true, TASK_PRIORITY_HIGH);
+    BLI_task_pool_push(task_pool, extract_run, taskdata, true, NULL);
   }
   else {
     /* Single threaded extraction. */
@@ -4596,6 +4597,7 @@ void mesh_buffer_cache_create_requested(MeshBatchCache *cache,
                                         MeshBufferCache mbc,
                                         Mesh *me,
                                         const bool is_editmode,
+                                        const bool is_paint_mode,
                                         const float obmat[4][4],
                                         const bool do_final,
                                         const bool do_uvedit,
@@ -4657,8 +4659,16 @@ void mesh_buffer_cache_create_requested(MeshBatchCache *cache,
   double rdata_start = PIL_check_seconds_timer();
 #endif
 
-  MeshRenderData *mr = mesh_render_data_create(
-      me, is_editmode, obmat, do_final, do_uvedit, iter_flag, data_flag, cd_layer_used, ts);
+  MeshRenderData *mr = mesh_render_data_create(me,
+                                               is_editmode,
+                                               is_paint_mode,
+                                               obmat,
+                                               do_final,
+                                               do_uvedit,
+                                               iter_flag,
+                                               data_flag,
+                                               cd_layer_used,
+                                               ts);
   mr->cache = cache; /* HACK */
   mr->use_hide = use_hide;
   mr->use_subsurf_fdots = use_subsurf_fdots;
@@ -4672,7 +4682,7 @@ void mesh_buffer_cache_create_requested(MeshBatchCache *cache,
   TaskPool *task_pool;
 
   task_scheduler = BLI_task_scheduler_get();
-  task_pool = BLI_task_pool_create_suspended(task_scheduler, NULL);
+  task_pool = BLI_task_pool_create_suspended(task_scheduler, NULL, TASK_PRIORITY_HIGH);
 
   size_t counters_size = (sizeof(mbc) / sizeof(void *)) * sizeof(int32_t);
   int32_t *task_counters = MEM_callocN(counters_size, __func__);

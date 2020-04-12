@@ -626,7 +626,7 @@ def Create_CounterSink_Head(HOLE_DIA, HEAD_DIA, SHANK_DIA, HEIGHT, RAD1, DIV_COU
     sVerts, sFaces = SpinDup(verts, faces, 360, DIV_COUNT, 'z')
     sVerts.extend(verts)    # add the start verts to the Spin verts to complete the loop
 
-    faces.extend(Build_Face_List_Quads(FaceStart, Row - 1, DIV_COUNT, 1))
+    faces.extend(Build_Face_List_Quads(FaceStart, Row - 1, DIV_COUNT))
 
     return sVerts, faces, HEIGHT
 

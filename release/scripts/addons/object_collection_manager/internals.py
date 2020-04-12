@@ -32,6 +32,10 @@ from bpy.props import (
     IntProperty,
 )
 
+move_triggered = False
+move_selection = []
+move_active = None
+
 layer_collections = {}
 collection_tree = []
 collection_state = {}
@@ -185,6 +189,7 @@ def update_col_name(self, context):
             update_property_group(context)
 
         self.last_name = self.name
+
 
 def update_qcd_slot(self, context):
     global qcd_slots
@@ -357,6 +362,7 @@ def get_modifiers(event):
 
     return set(modifiers)
 
+
 def generate_state():
     global layer_collections
 
@@ -379,6 +385,34 @@ def generate_state():
 
     return state
 
+
+def get_move_selection():
+    global move_selection
+
+    if not move_selection:
+        move_selection = [obj.name for obj in bpy.context.selected_objects]
+
+    return [bpy.data.objects[name] for name in move_selection]
+
+
+def get_move_active():
+    global move_active
+    global move_selection
+
+    if not move_active:
+        move_active = getattr(bpy.context.view_layer.objects.active, "name", None)
+
+    if move_active not in [obj.name for obj in get_move_selection()]:
+        move_active = None
+
+    return bpy.data.objects[move_active] if move_active else None
+
+
+def update_qcd_header():
+    cm = bpy.context.scene.collection_manager
+    cm.update_header.clear()
+    new_update_header = cm.update_header.add()
+    new_update_header.name = "updated"
 
 
 class CMSendReport(Operator):
