@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -17904,6 +17904,10 @@ msgid "Bone Roll"
 msgstr "ﺔﻤﻈﻌﻟﺍ ءﺍﻮﺘﻟﺍ"
 
 
+msgid "Special Characters"
+msgstr "ﺔﺻﺎﺧ ﻑﺮﺣﺃ"
+
+
 msgid "Interpolate"
 msgstr "ﺪﻟّﻭ"
 
@@ -17942,10 +17946,6 @@ msgstr "ﻞﺛﺎﻤﻤﻟﺍ ﺮﺘﺧﺇ"
 
 msgid "Metaball"
 msgstr "ﺔﻠﻋﺎﻔﺘﻣ ﺓﺮﻛ"
-
-
-msgid "Special Characters"
-msgstr "ﺔﺻﺎﺧ ﻑﺮﺣﺃ"
 
 
 msgid "Hooks"
@@ -18446,10 +18446,6 @@ msgstr "ﻱﻮﻴﺣ ﻢﺳﺭ"
 
 msgid "Explode"
 msgstr "ﺭﺎﺠﻔﻧﺍ"
-
-
-msgid "Fluid Simulation"
-msgstr "ﻞﺋﺎﺳ ﺓﺎﻛﺎﺤﻣ"
 
 
 msgid "Ocean"
@@ -23152,8 +23148,8 @@ msgstr "ﺔﻴﻠﻜﻴﻬﻟﺍ ﺭﺎﺘﺧﺇ"
 
 
 msgctxt "Operator"
-msgid "Select Connected"
-msgstr "ﺔﻠﺼﺘﻤﻟﺍ ﺭﺎﺘﺧﺍ"
+msgid "Select Linked All"
+msgstr "ﺔﻄﺒﺗﺮﻤﻟﺍ ﻞﻛ ﺮﺘﺧﺍ"
 
 
 msgid "Active Only"
@@ -24356,11 +24352,6 @@ msgstr "ﻢﻜﺤﺘﻟﺍ ﻁﺎﻘﻧ ﻞﻛ ﺮﺘﺨﺗ ﻻ﻿/ﺮﺘﺧﺍ"
 
 msgid "Reduce current selection by deselecting boundary elements"
 msgstr "ﺩﻭﺪﺤﻟﺍ ﺮﺻﺎﻨﻋ ﻙﺮﺘﺑ ﻲﻟﺎﺤﻟﺍ ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﻒﻔﺧ"
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "ﺔﻄﺒﺗﺮﻤﻟﺍ ﻞﻛ ﺮﺘﺧﺍ"
 
 
 msgctxt "Operator"
@@ -26252,15 +26243,6 @@ msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﻪﺟﻭﻷ﻿ﺍ ،ﻑﺍﻮﺤﻟﺍ ،ﻂ�
 
 msgid "Duplicate mesh and move"
 msgstr "ﻙﺮّﺣ ﻭ ﻢﺴﺠﻤﻟﺍ ﺭﺮﻛ"
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "ﺔﻓﺎﺤﻟﺍ ﻱﻮﻃ"
-
-
-msgid "Collapse selected edges"
-msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﻑﺍﻮﺤﻟﺍ ﻱﻮﻃﺍ"
 
 
 msgctxt "Operator"
@@ -29442,6 +29424,11 @@ msgstr "ﺪﻴﻘﻟﺍ ﻑﺪﻫ ﺮﺘﺧﺍ"
 
 msgid "Select all visible bones grouped by similar properties"
 msgstr "ﺔﻠﺛﺎﻤﺘﻤﻟﺍ ﺹﺍﻮﺨﻟﺎﺑ ﺔﻋﻮﻤﺠﻤﻟﺍ ﻭ ﺓﺮﻫﺎﻈﻟﺍ ﻡﺎﻈﻌﻟﺍ ﻞﻛ ﺮﺘﺧﺍ"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "ﺔﻠﺼﺘﻤﻟﺍ ﺭﺎﺘﺧﺍ"
 
 
 msgctxt "Operator"
@@ -41872,26 +41859,6 @@ msgstr "ﻞﺧﺍﺪﻟﺎﺑ ﺐﺴﺣﺃ"
 
 
 msgctxt "Operator"
-msgid "Toggle Bold"
-msgstr "ﺢﺿﺍﻮﻟﺍ ﺐﻠﻗ"
-
-
-msgctxt "Operator"
-msgid "Toggle Italic"
-msgstr "ﻞﺋﺎﻤﻟﺍ ﺐﻠﻗ"
-
-
-msgctxt "Operator"
-msgid "Toggle Underline"
-msgstr "ﺮﻴﻄﺴﺘﻟﺍ ﺐﻠﻗ"
-
-
-msgctxt "Operator"
-msgid "Toggle Small Caps"
-msgstr "ﺓﺮﻴﻐﺼﻟﺍ ﻁﻮﻄﺨﻟﺍ ﺐﻠﻗ"
-
-
-msgctxt "Operator"
 msgid "Copyright"
 msgstr "ﺦﺴﻨﻟﺍ ﻖﺣ"
 
@@ -41959,6 +41926,26 @@ msgstr "ﺔﻴﻧﺎﺒﺳﺃ ﻡﺎﻬﻔﺘﺳﺇ ﺔﻣﻼ﻿ﻋ"
 msgctxt "Operator"
 msgid "Spanish Exclamation Mark"
 msgstr "ﺔﻴﻧﺎﺒﺳﺃ ﺐﺠﻌﺗ ﺔﻣﻼ﻿ﻋ"
+
+
+msgctxt "Operator"
+msgid "Toggle Bold"
+msgstr "ﺢﺿﺍﻮﻟﺍ ﺐﻠﻗ"
+
+
+msgctxt "Operator"
+msgid "Toggle Italic"
+msgstr "ﻞﺋﺎﻤﻟﺍ ﺐﻠﻗ"
+
+
+msgctxt "Operator"
+msgid "Toggle Underline"
+msgstr "ﺮﻴﻄﺴﺘﻟﺍ ﺐﻠﻗ"
+
+
+msgctxt "Operator"
+msgid "Toggle Small Caps"
+msgstr "ﺓﺮﻴﻐﺼﻟﺍ ﻁﻮﻄﺨﻟﺍ ﺐﻠﻗ"
 
 
 msgctxt "Operator"
@@ -42096,12 +42083,12 @@ msgid "Not supported in sculpt mode"
 msgstr "ﺖﺤﻨﻟﺍ ﻂﻤﻧ ﻲﻓ ﻡﻮﻋﺪﻣ ﺮﻴﻏ"
 
 
-msgid "KeyingSet"
-msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ"
-
-
 msgid "No AnimData to set action on"
 msgstr "ﺙﺪﺤﻟﺍ ﺎﻬﻴﻠﻋ ﺽﻭﺮﻌﻤﻟﺍ ﺔﻛﺮﺤﻟﺍ ﺔﻘﺒﻃ"
+
+
+msgid "KeyingSet"
+msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ"
 
 
 msgid "Out of memory on allocating clmd->clothObject"

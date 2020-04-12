@@ -676,7 +676,7 @@ static void bm_mesh_loops_calc_normals(BMesh *bm,
                                        const float (*fnos)[3],
                                        float (*r_lnos)[3],
                                        MLoopNorSpaceArray *r_lnors_spacearr,
-                                       short (*clnors_data)[2],
+                                       const short (*clnors_data)[2],
                                        const int cd_loop_clnors_offset,
                                        const bool do_rebuild)
 {
@@ -786,8 +786,9 @@ static void bm_mesh_loops_calc_normals(BMesh *bm,
           BKE_lnor_space_add_loop(r_lnors_spacearr, lnor_space, l_curr_index, l_curr, true);
 
           if (has_clnors) {
-            short(*clnor)[2] = clnors_data ? &clnors_data[l_curr_index] :
-                                             BM_ELEM_CD_GET_VOID_P(l_curr, cd_loop_clnors_offset);
+            const short(*clnor)[2] = clnors_data ? &clnors_data[l_curr_index] :
+                                                   (const void *)BM_ELEM_CD_GET_VOID_P(
+                                                       l_curr, cd_loop_clnors_offset);
             BKE_lnor_space_custom_data_to_normal(lnor_space, *clnor, r_lnos[l_curr_index]);
           }
         }
@@ -820,7 +821,7 @@ static void bm_mesh_loops_calc_normals(BMesh *bm,
 
         /* We validate clnors data on the fly - cheapest way to do! */
         int clnors_avg[2] = {0, 0};
-        short(*clnor_ref)[2] = NULL;
+        const short(*clnor_ref)[2] = NULL;
         int clnors_nbr = 0;
         bool clnors_invalid = false;
 
@@ -886,9 +887,9 @@ static void bm_mesh_loops_calc_normals(BMesh *bm,
 
             if (has_clnors) {
               /* Accumulate all clnors, if they are not all equal we have to fix that! */
-              short(*clnor)[2] = clnors_data ?
-                                     &clnors_data[lfan_pivot_index] :
-                                     BM_ELEM_CD_GET_VOID_P(lfan_pivot, cd_loop_clnors_offset);
+              const short(*clnor)[2] = clnors_data ? &clnors_data[lfan_pivot_index] :
+                                                     (const void *)BM_ELEM_CD_GET_VOID_P(
+                                                         lfan_pivot, cd_loop_clnors_offset);
               if (clnors_nbr) {
                 clnors_invalid |= ((*clnor_ref)[0] != (*clnor)[0] ||
                                    (*clnor_ref)[1] != (*clnor)[1]);
@@ -1049,7 +1050,7 @@ void BM_mesh_loop_normals_update(BMesh *bm,
                                  const float split_angle,
                                  float (*r_lnos)[3],
                                  MLoopNorSpaceArray *r_lnors_spacearr,
-                                 short (*clnors_data)[2],
+                                 const short (*clnors_data)[2],
                                  const int cd_loop_clnors_offset)
 {
   const bool has_clnors = clnors_data || (cd_loop_clnors_offset != -1);
@@ -1625,20 +1626,6 @@ void BM_loop_normal_editdata_array_free(BMLoopNorEditDataArray *lnors_ed_arr)
   MEM_SAFE_FREE(lnors_ed_arr->lnor_editdata);
   MEM_SAFE_FREE(lnors_ed_arr->lidx_to_lnor_editdata);
   MEM_freeN(lnors_ed_arr);
-}
-
-int BM_total_loop_select(BMesh *bm)
-{
-  int r_sel = 0;
-  BMVert *v;
-  BMIter viter;
-
-  BM_ITER_MESH (v, &viter, bm, BM_VERTS_OF_MESH) {
-    if (BM_elem_flag_test(v, BM_ELEM_SELECT)) {
-      r_sel += BM_vert_face_count(v);
-    }
-  }
-  return r_sel;
 }
 
 /**

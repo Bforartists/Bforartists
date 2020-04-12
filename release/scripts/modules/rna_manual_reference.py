@@ -9,27 +9,25 @@ else:
 
 url_manual_prefix = "https://docs.blender.org/manual/en/" + manual_version + "/"
 
-language = ""
-if bpy.context.preferences.view.use_international_fonts:
-    language = bpy.context.preferences.view.language
-    if language == 'DEFAULT':
-        import os
-        language = os.getenv('LANG', '').split('.')[0]
+language = bpy.context.preferences.view.language
+if language == 'DEFAULT':
+    import os
+    language = os.getenv('LANG', '').split('.')[0]
 
 LANG = {
-    "de_DE":        "de",
-    "ru_RU":        "ru",
-    "uk_UA":        "uk",
-    "es":           "es",
-    "fr_FR":        "fr",
-    "it_IT":        "it",
-    "ja_JP":        "ja",
-    "ko_KR":        "ko",
-    "pt_PT":        "pt",
-    "pt_BR":        "pt",
-    "vi_VN":        "vi",
-    "zh_CN":        "zh-hans",
-    "zh_TW":        "zh-hant",
+"de_DE":        "de",
+"ru_RU":        "ru",
+"uk_UA":        "uk",
+"es":           "es",
+"fr_FR":        "fr",
+"it_IT":        "it",
+"ja_JP":        "ja",
+"ko_KR":        "ko",
+"pt_PT":        "pt",
+"pt_BR":        "pt",
+"vi_VN":        "vi",
+"zh_CN":        "zh-hans",
+"zh_TW":        "zh-hant",
 }.get(language)
 
 if LANG is not None:
@@ -621,7 +619,7 @@ url_manual_mapping = (
 	("bpy.ops.mesh.dissolve_limited*", "modeling/meshes/editing/mesh/delete.html#bpy-ops-mesh-dissolve-limited"),
 	("bpy.ops.mesh.face_make_planar*", "modeling/meshes/editing/mesh/cleanup.html#bpy-ops-mesh-face-make-planar"),
 	("bpy.ops.mesh.paint_mask_slice*", "sculpt_paint/sculpting/hide_mask.html#bpy-ops-mesh-paint-mask-slice"),
-	("bpy.ops.mesh.smoothen_normals*", "modeling/meshes/editing/mesh/normals.html#bpy-ops-mesh-smoothen-normals"),
+	("bpy.ops.mesh.smooth_normals*", "modeling/meshes/editing/mesh/normals.html#bpy-ops-mesh-smooth-normals"),
 	("bpy.ops.object.duplicate_move*", "scene_layout/object/editing/duplicate.html#bpy-ops-object-duplicate-move"),
 	("bpy.ops.object.hook_add_selob*", "modeling/meshes/editing/vertex/hooks.html#bpy-ops-object-hook-add-selob"),
 	("bpy.ops.object.select_by_type*", "scene_layout/object/selecting.html#bpy-ops-object-select-by-type"),

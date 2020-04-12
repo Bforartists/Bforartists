@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -9772,6 +9772,14 @@ msgid "No active vertex group for painting, aborting"
 msgstr "Brak aktywnej grupy wierzchołków do malowania, rezygnuję"
 
 
+msgid "Object has non-uniform scale, sculpting may be unpredictable"
+msgstr "Obiekt ma niejednolitą skalę, rzeźbienie może dać nieprzewidywalne skutki"
+
+
+msgid "Object has negative scale, sculpting may be unpredictable"
+msgstr "Obiekt ma skalę ujemną, rzeźbienie może dać nieprzewidywalne skutki"
+
+
 msgid "Warning!"
 msgstr "Uwaga!"
 
@@ -9794,14 +9802,6 @@ msgstr "Wykryto Modyfikatory Produktywne!"
 
 msgid "Keeping the modifiers will increase polycount when returning to object mode"
 msgstr "Zachowanie modyfikatorów zwiększy gęstość geometrii przy powrocie do trybu obiektowego"
-
-
-msgid "Object has non-uniform scale, sculpting may be unpredictable"
-msgstr "Obiekt ma niejednolitą skalę, rzeźbienie może dać nieprzewidywalne skutki"
-
-
-msgid "Object has negative scale, sculpting may be unpredictable"
-msgstr "Obiekt ma skalę ujemną, rzeźbienie może dać nieprzewidywalne skutki"
 
 
 msgid "Compiled without sound support"

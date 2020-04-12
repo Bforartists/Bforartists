@@ -375,6 +375,9 @@ static void wm_init_userdef(Main *bmain)
 
   /* update tempdir from user preferences */
   BKE_tempdir_init(U.tempdir);
+
+  /* Update tablet API preference. */
+  WM_init_tablet_api();
 }
 
 /* return codes */
@@ -1433,6 +1436,9 @@ static bool wm_file_write(bContext *C, const char *filepath, int fileflags, Repo
       ibuf_thumb = IMB_thumb_create(filepath, THB_LARGE, THB_SOURCE_BLEND, ibuf_thumb);
     }
 
+    /* Without this there is no feedback the file was saved. */
+    BKE_reportf(reports, RPT_INFO, "Saved \"%s\"", BLI_path_basename(filepath));
+
     /* Success. */
     ok = true;
   }
@@ -2298,7 +2304,7 @@ static bool wm_open_mainfile_check(bContext *UNUSED(C), wmOperator *op)
   RNA_string_get(op->ptr, "filepath", path);
 
   /* get the dir */
-  lslash = (char *)BLI_last_slash(path);
+  lslash = (char *)BLI_path_slash_rfind(path);
   if (lslash) {
     *(lslash + 1) = '\0';
   }
@@ -2536,7 +2542,7 @@ void WM_OT_recover_auto_save(wmOperatorType *ot)
 static void wm_filepath_default(char *filepath)
 {
   if (G.save_over == false) {
-    BLI_ensure_filename(filepath, FILE_MAX, "untitled.blend");
+    BLI_path_filename_ensure(filepath, FILE_MAX, "untitled.blend");
   }
 }
 
@@ -2715,8 +2721,6 @@ static int wm_save_mainfile_invoke(bContext *C, wmOperator *op, const wmEvent *U
 
     RNA_string_get(op->ptr, "filepath", path);
     ret = wm_save_as_mainfile_exec(C, op);
-    /* Without this there is no feedback the file was saved. */
-    BKE_reportf(op->reports, RPT_INFO, "Saved \"%s\"", BLI_path_basename(path));
   }
   else {
     WM_event_add_fileselect(C, op);

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -3240,14 +3240,6 @@ msgstr "Размытие"
 
 msgid "Smear"
 msgstr "Размазывание"
-
-
-msgid "Hardeness"
-msgstr "Жёсткость"
-
-
-msgid "Amount of gradient for Dot and Box strokes (set to 1 for full solid)"
-msgstr "Количество градиента для штрихов-точек и квадратов (установите 1, чтобы не использовать градиент)"
 
 
 msgid "Input Samples"
@@ -13088,6 +13080,10 @@ msgid "Blend mode"
 msgstr "Режим смеси"
 
 
+msgid "Hard Light"
+msgstr "Жёсткий свет"
+
+
 msgid "Custom Channel Color"
 msgstr "Особый цвет канала"
 
@@ -15159,10 +15155,6 @@ msgstr "Использовать режим смешивания «Наложе�
 
 msgid "Use Soft Light blending mode while painting"
 msgstr "Использовать режим смешивания «Мягкий свет» при рисовании"
-
-
-msgid "Hard Light"
-msgstr "Жёсткий свет"
 
 
 msgid "Use Hard Light blending mode while painting"
@@ -27953,6 +27945,14 @@ msgid "Curve Context Menu"
 msgstr "Контекстное меню кривых"
 
 
+msgid "Special Characters"
+msgstr "Спецсимволы"
+
+
+msgid "Text Context Menu"
+msgstr "Контекстное меню текстовых объектов"
+
+
 msgid "Kerning"
 msgstr "Кернинг"
 
@@ -28023,14 +28023,6 @@ msgstr "Метасфера"
 
 msgid "Metaball Context Menu"
 msgstr "Контекстное меню метасфер"
-
-
-msgid "Special Characters"
-msgstr "Спецсимволы"
-
-
-msgid "Text Context Menu"
-msgstr "Контекстное меню текстовых объектов"
 
 
 msgid "Generate Weights"
@@ -28923,10 +28915,6 @@ msgstr "Дин. рисование"
 
 msgid "Explode"
 msgstr "Взрыв"
-
-
-msgid "Fluid Simulation"
-msgstr "Симуляция жидкости"
 
 
 msgid "Ocean"
@@ -39011,12 +38999,8 @@ msgstr "Снять выделение с костей на концах кажд
 
 
 msgctxt "Operator"
-msgid "Select Connected"
-msgstr "Выделить соединённые"
-
-
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "Выделить кости, связанные с уже выделенными костями отношениями родитель/потомок"
+msgid "Select Linked All"
+msgstr "Выделить все связанные"
 
 
 msgctxt "Operator"
@@ -41436,11 +41420,6 @@ msgstr "Установить/снять выделение со всех кон�
 
 msgid "Reduce current selection by deselecting boundary elements"
 msgstr "Уменьшить текущее выделение, сняв выделение с граничных элементов"
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "Выделить все связанные"
 
 
 msgid "Select all control points linked to the current selection"
@@ -47528,15 +47507,6 @@ msgstr "Дублировать меш и переместить"
 
 msgid "Duplicate"
 msgstr "Дублировать"
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "Схлопнуть ребро"
-
-
-msgid "Collapse selected edges"
-msgstr "Схлопнуть выделенные рёбра"
 
 
 msgctxt "Operator"
@@ -55775,6 +55745,15 @@ msgstr "Общая группа"
 
 msgid "All bones affected by active Keying Set"
 msgstr "Все кости под влиянием активного набора ключей"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "Выделить соединённые"
+
+
+msgid "Select bones related to selected ones by parent/child relationships"
+msgstr "Выделить кости, связанные с уже выделенными костями отношениями родитель/потомок"
 
 
 msgctxt "Operator"
@@ -88215,16 +88194,6 @@ msgstr "Кольца рёбер"
 
 
 msgctxt "Operator"
-msgid "To Uppercase"
-msgstr "В верхний регистр"
-
-
-msgctxt "Operator"
-msgid "To Lowercase"
-msgstr "В нижний регистр"
-
-
-msgctxt "Operator"
 msgid "Armature"
 msgstr "Арматура"
 
@@ -88479,26 +88448,6 @@ msgstr "Удалить точку"
 
 
 msgctxt "Operator"
-msgid "Toggle Bold"
-msgstr "Переключить жирность шрифта"
-
-
-msgctxt "Operator"
-msgid "Toggle Italic"
-msgstr "Переключить курсивность шрифта"
-
-
-msgctxt "Operator"
-msgid "Toggle Underline"
-msgstr "Переключить подчёркивание"
-
-
-msgctxt "Operator"
-msgid "Toggle Small Caps"
-msgstr "Переключить капитель"
-
-
-msgctxt "Operator"
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -88576,6 +88525,36 @@ msgstr "Перевёрнутый знак вопроса"
 msgctxt "Operator"
 msgid "Spanish Exclamation Mark"
 msgstr "Перевёрнутый восклицательный знак"
+
+
+msgctxt "Operator"
+msgid "To Uppercase"
+msgstr "В верхний регистр"
+
+
+msgctxt "Operator"
+msgid "To Lowercase"
+msgstr "В нижний регистр"
+
+
+msgctxt "Operator"
+msgid "Toggle Bold"
+msgstr "Переключить жирность шрифта"
+
+
+msgctxt "Operator"
+msgid "Toggle Italic"
+msgstr "Переключить курсивность шрифта"
+
+
+msgctxt "Operator"
+msgid "Toggle Underline"
+msgstr "Переключить подчёркивание"
+
+
+msgctxt "Operator"
+msgid "Toggle Small Caps"
+msgstr "Переключить капитель"
 
 
 msgctxt "Operator"
@@ -89064,18 +89043,6 @@ msgid "Not supported in sculpt mode"
 msgstr "Не поддерживается в режиме лепки"
 
 
-msgid ", cannot have single-frame paths"
-msgstr ", невозможно создать траекторию из одного кадра"
-
-
-msgid "Motion path frame extents invalid for %s (%d to %d)%s"
-msgstr "Неверная протяжённость для кадра траектории движения %s (%d — %d)%s"
-
-
-msgid "KeyingSet"
-msgstr "НаборКлючей"
-
-
 msgid "No AnimData to set action on"
 msgstr "Нет данных анимации, над которыми устанавливается действие"
 
@@ -89086,6 +89053,18 @@ msgstr "Невозможно изменить действие, поскольк
 
 msgid "Could not set action '%s' onto ID '%s', as it does not have suitably rooted paths for this purpose"
 msgstr "Невозможно установить действие «%s» для ID «%s», поскольку отсутствует необходимое количество корневых путей для этой цели"
+
+
+msgid "KeyingSet"
+msgstr "НаборКлючей"
+
+
+msgid ", cannot have single-frame paths"
+msgstr ", невозможно создать траекторию из одного кадра"
+
+
+msgid "Motion path frame extents invalid for %s (%d to %d)%s"
+msgstr "Неверная протяжённость для кадра траектории движения %s (%d — %d)%s"
 
 
 msgid "Library file, loading empty scene"
@@ -93391,30 +93370,6 @@ msgid "No active vertex group for painting, aborting"
 msgstr "Нет активной группы вершин для рисования, операция прервана"
 
 
-msgid "Warning!"
-msgstr "Предупреждение!"
-
-
-msgid "OK"
-msgstr "ДА"
-
-
-msgid "Vertex Data Detected!"
-msgstr "Обнаружены данные вершин!"
-
-
-msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
-msgstr "Динамическая топология уничтожает цвета вершин, UV и другие настраиваемые данные"
-
-
-msgid "Generative Modifiers Detected!"
-msgstr "Обнаружены генерирующие модификаторы!"
-
-
-msgid "Keeping the modifiers will increase polycount when returning to object mode"
-msgstr "Сохранение модификаторов приведёт к увеличению числа полигонов при возврате в режим объекта"
-
-
 msgid "non-triangle face"
 msgstr "нетреугольная грань"
 
@@ -93439,10 +93394,6 @@ msgid "constructive modifier"
 msgstr "создающий модификатор"
 
 
-msgid "Click on the mesh to set the detail"
-msgstr "Кликните на меш, чтобы установить уровень детализации"
-
-
 msgid "Object has non-uniform scale, sculpting may be unpredictable"
 msgstr "Масштабы объекта не совпадают, результат скульптинга может быть непредсказуем"
 
@@ -93453,6 +93404,34 @@ msgstr "Объект использует отрицательный масшт�
 
 msgid "Dynamic Topology found: %s, disabled"
 msgstr "Найдена динамическая топология: %s, отключено"
+
+
+msgid "Click on the mesh to set the detail"
+msgstr "Кликните на меш, чтобы установить уровень детализации"
+
+
+msgid "Warning!"
+msgstr "Предупреждение!"
+
+
+msgid "OK"
+msgstr "ДА"
+
+
+msgid "Vertex Data Detected!"
+msgstr "Обнаружены данные вершин!"
+
+
+msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
+msgstr "Динамическая топология уничтожает цвета вершин, UV и другие настраиваемые данные"
+
+
+msgid "Generative Modifiers Detected!"
+msgstr "Обнаружены генерирующие модификаторы!"
+
+
+msgid "Keeping the modifiers will increase polycount when returning to object mode"
+msgstr "Сохранение модификаторов приведёт к увеличению числа полигонов при возврате в режим объекта"
 
 
 msgid "Compiled without sound support"

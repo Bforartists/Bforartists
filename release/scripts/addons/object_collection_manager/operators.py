@@ -32,12 +32,17 @@ from bpy.props import (
     IntProperty
 )
 
+from . import internals
+
 from .internals import (
     expanded,
     layer_collections,
     qcd_slots,
     update_property_group,
     get_modifiers,
+    get_move_selection,
+    get_move_active,
+    update_qcd_header,
     send_report,
 )
 
@@ -79,8 +84,13 @@ class ExpandAllOperator(Operator):
 
 expand_history = {"target": "", "history": []}
 class ExpandSublevelOperator(Operator):
-    '''  * Ctrl-Click to expand/collapse all sublevels\n  * Shift-Click to isolate/restore tree\n  * Alt-Click to discard history'''
+    ''''''
     bl_label = "Expand Sublevel Items"
+    bl_description = (
+        "  * Ctrl+LMB - Expand/Collapse all sublevels\n"
+        "  * Shift+LMB - Isolate tree/Restore\n"
+        "  * Alt+LMB - Discard history"
+        )
     bl_idname = "view3d.expand_sublevel"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -178,8 +188,11 @@ class ExpandSublevelOperator(Operator):
 
 
 class CMSetCollectionOperator(Operator):
-    '''  * Click to move object to collection.\n  * Shift-Click to add/remove object from collection'''
     bl_label = "Set Object Collection"
+    bl_description = (
+        "  * LMB - Move object to collection.\n"
+        "  * Shift+LMB - Add/Remove object from collection"
+        )
     bl_idname = "view3d.set_collection"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -187,37 +200,83 @@ class CMSetCollectionOperator(Operator):
     collection_name: StringProperty()
 
     def invoke(self, context, event):
-        collection = layer_collections[self.collection_name]["ptr"].collection
+        laycol = layer_collections[self.collection_name]
+        target_collection = laycol["ptr"].collection
+
+        selected_objects = get_move_selection()
+        active_object = get_move_active()
+
+        internals.move_triggered = True
+
+        if not selected_objects:
+            return {'CANCELLED'}
 
         if event.shift:
-            # add object to collection
+            # add objects to collection
+
+            # make sure there is an active object
+            if not active_object:
+                active_object = selected_objects[0]
 
             # check if in collection
-            if context.active_object.name not in collection.objects:
+            if not active_object.name in target_collection.objects:
                 # add to collection
-                bpy.ops.object.link_to_collection(collection_index=self.collection_index)
+                for obj in selected_objects:
+                    if obj.name not in target_collection.objects:
+                        target_collection.objects.link(obj)
 
             else:
-                # check and disallow removing from all collections
-                for obj in context.selected_objects:
-                    if len(obj.users_collection) == 1:
-                        send_report("Error removing 1 or more objects from this collection.\nObjects would be left without a collection")
+                errors = False
 
-                        return {'FINISHED'}
+                # remove from collections
+                for obj in selected_objects:
+                    if obj.name in target_collection.objects:
 
-                # remove from collection
-                bpy.ops.collection.objects_remove(collection=collection.name)
+                        # disallow removing if only one
+                        if len(obj.users_collection) == 1:
+                            errors = True
+                            continue
+
+                        # remove from collection
+                        target_collection.objects.unlink(obj)
+
+                if errors:
+                    send_report("Error removing 1 or more objects from this collection.\nObjects would be left without a collection")
+
 
         else:
-            # move object to collection
-            bpy.ops.object.move_to_collection(collection_index=self.collection_index)
+            # move objects to collection
+            for obj in selected_objects:
+                if obj.name not in target_collection.objects:
+                    target_collection.objects.link(obj)
+
+                # remove from all other collections
+                for collection in obj.users_collection:
+                    if collection.name != target_collection.name:
+                        collection.objects.unlink(obj)
+
+        # update the active object if needed
+        if not context.active_object:
+            try:
+                context.view_layer.objects.active = active_object
+
+            except RuntimeError: # object not in visible collection
+                pass
+
+        # update qcd header UI
+        update_qcd_header()
 
         return {'FINISHED'}
 
 
 class CMExcludeOperator(Operator):
-    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children\n  * Shift-Ctrl-Click to toggle nested isolation\n  * Alt-Click to discard history'''
-    bl_label = "Exclude Collection from View Layer"
+    bl_label = "[EC] Exclude from View Layer"
+    bl_description = (
+        "  * Shift+LMB - Isolate/Restore.\n"
+        "  * Shift+Ctrl+LMB - Isolate nested/Restore.\n"
+        "  * Ctrl+LMB - Toggle nested.\n"
+        "  * Alt+LMB - Discard history"
+        )
     bl_idname = "view3d.exclude_collection"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -417,8 +476,14 @@ class CMExcludeOperator(Operator):
 
 
 class CMUnExcludeAllOperator(Operator):
-    '''  * Click to toggle between current excluded state and all included.\n  * Shift-Click to invert excluded status of all collections\n  * Ctrl-Click to Copy/Paste RTOs\n  * Ctrl-Alt-Click to swap RTOs\n  * Alt-Click to discard history and copy/swap actions'''
-    bl_label = "Toggle Excluded Status Of All Collections"
+    bl_label = "[EC Global] Exclude from View Layer"
+    bl_description = (
+        "  * LMB - Enable all/Restore.\n"
+        "  * Shift+LMB - Invert.\n"
+        "  * Ctrl+LMB - Copy/Paste RTOs.\n"
+        "  * Ctrl+Alt+LMB - Swap RTOs.\n"
+        "  * Alt+LMB - Discard history"
+        )
     bl_idname = "view3d.un_exclude_all_collections"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -547,8 +612,13 @@ class CMUnExcludeAllOperator(Operator):
 
 
 class CMRestrictSelectOperator(Operator):
-    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children\n  * Shift-Ctrl-Click to toggle nested isolation\n  * Alt-Click to discard history'''
-    bl_label = "Disable Selection of Collection"
+    bl_label = "[SS] Disable Selection"
+    bl_description = (
+        "  * Shift+LMB - Isolate/Restore.\n"
+        "  * Shift+Ctrl+LMB - Isolate nested/Restore.\n"
+        "  * Ctrl+LMB - Toggle nested.\n"
+        "  * Alt+LMB - Discard history"
+        )
     bl_idname = "view3d.restrict_select_collection"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -743,8 +813,14 @@ class CMRestrictSelectOperator(Operator):
 
 
 class CMUnRestrictSelectAllOperator(Operator):
-    '''  * Click to toggle between current selectable state and all selectable.\n  * Shift-Click to invert selectable status of all collections\n  * Ctrl-Click to Copy/Paste RTOs\n  * Ctrl-Alt-Click to swap RTOs\n  * Alt-Click to discard history and copy/swap actions'''
-    bl_label = "Toggle Selectable Status Of All Collections"
+    bl_label = "[SS Global] Disable Selection"
+    bl_description = (
+        "  * LMB - Enable all/Restore.\n"
+        "  * Shift+LMB - Invert.\n"
+        "  * Ctrl+LMB - Copy/Paste RTOs.\n"
+        "  * Ctrl+Alt+LMB - Swap RTOs.\n"
+        "  * Alt+LMB - Discard history"
+        )
     bl_idname = "view3d.un_restrict_select_all_collections"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -869,8 +945,13 @@ class CMUnRestrictSelectAllOperator(Operator):
 
 
 class CMHideOperator(Operator):
-    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children\n  * Shift-Ctrl-Click to toggle nested isolation\n  * Alt-Click to discard history'''
-    bl_label = "Hide Collection"
+    bl_label = "[VV] Hide in Viewport"
+    bl_description = (
+        "  * Shift+LMB - Isolate/Restore.\n"
+        "  * Shift+Ctrl+LMB - Isolate nested/Restore.\n"
+        "  * Ctrl+LMB - Toggle nested.\n"
+        "  * Alt+LMB - Discard history"
+        )
     bl_idname = "view3d.hide_collection"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -1065,8 +1146,14 @@ class CMHideOperator(Operator):
 
 
 class CMUnHideAllOperator(Operator):
-    '''  * Click to toggle between current visibility state and all visible.\n  * Shift-Click to invert visibility status of all collections\n  * Ctrl-Click to Copy/Paste RTOs\n  * Ctrl-Alt-Click to swap RTOs\n  * Alt-Click to discard history and copy/swap actions'''
-    bl_label = "Toggle Hidden Status Of All Collections"
+    bl_label = "[VV Global] Hide in Viewport"
+    bl_description = (
+        "  * LMB - Enable all/Restore.\n"
+        "  * Shift+LMB - Invert.\n"
+        "  * Ctrl+LMB - Copy/Paste RTOs.\n"
+        "  * Ctrl+Alt+LMB - Swap RTOs.\n"
+        "  * Alt+LMB - Discard history"
+        )
     bl_idname = "view3d.un_hide_all_collections"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -1189,8 +1276,13 @@ class CMUnHideAllOperator(Operator):
 
 
 class CMDisableViewportOperator(Operator):
-    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children\n  * Shift-Ctrl-Click to toggle nested isolation\n  * Alt-Click to discard history'''
-    bl_label = "Disable Collection in Viewport"
+    bl_label = "[DV] Disable in Viewports"
+    bl_description = (
+        "  * Shift+LMB - Isolate/Restore.\n"
+        "  * Shift+Ctrl+LMB - Isolate nested/Restore.\n"
+        "  * Ctrl+LMB - Toggle nested.\n"
+        "  * Alt+LMB - Discard history"
+        )
     bl_idname = "view3d.disable_viewport_collection"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -1385,8 +1477,14 @@ class CMDisableViewportOperator(Operator):
 
 
 class CMUnDisableViewportAllOperator(Operator):
-    '''  * Click to toggle between current viewport display and all enabled.\n  * Shift-Click to invert viewport display of all collections\n  * Ctrl-Click to Copy/Paste RTOs\n  * Ctrl-Alt-Click to swap RTOs\n  * Alt-Click to discard history and copy/swap actions'''
-    bl_label = "Toggle Viewport Display of All Collections"
+    bl_label = "[DV Global] Disable in Viewports"
+    bl_description = (
+        "  * LMB - Enable all/Restore.\n"
+        "  * Shift+LMB - Invert.\n"
+        "  * Ctrl+LMB - Copy/Paste RTOs.\n"
+        "  * Ctrl+Alt+LMB - Swap RTOs.\n"
+        "  * Alt+LMB - Discard history"
+        )
     bl_idname = "view3d.un_disable_viewport_all_collections"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -1511,8 +1609,13 @@ class CMUnDisableViewportAllOperator(Operator):
 
 
 class CMDisableRenderOperator(Operator):
-    '''  * Shift-Click to isolate/restore previous state\n  * Ctrl-Click to toggle children\n  * Shift-Ctrl-Click to toggle nested isolation\n  * Alt-Click to discard history'''
-    bl_label = "Disable Collection in Render"
+    bl_label = "[RR] Disable in Renders"
+    bl_description = (
+        "  * Shift+LMB - Isolate/Restore.\n"
+        "  * Shift+Ctrl+LMB - Isolate nested/Restore.\n"
+        "  * Ctrl+LMB - Toggle nested.\n"
+        "  * Alt+LMB - Discard history"
+        )
     bl_idname = "view3d.disable_render_collection"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -1708,8 +1811,14 @@ class CMDisableRenderOperator(Operator):
 
 
 class CMUnDisableRenderAllOperator(Operator):
-    '''  * Click to toggle between current render status and all rendered.\n  * Shift-Click to invert render status of all collections\n  * Ctrl-Click to Copy/Paste RTOs\n  * Ctrl-Alt-Click to swap RTOs\n  * Alt-Click to discard history and copy/swap actions'''
-    bl_label = "Toggle Render Status of All Collections"
+    bl_label = "[RR Global] Disable in Renders"
+    bl_description = (
+        "  * LMB - Enable all/Restore.\n"
+        "  * Shift+LMB - Invert.\n"
+        "  * Ctrl+LMB - Copy/Paste RTOs.\n"
+        "  * Ctrl+Alt+LMB - Swap RTOs.\n"
+        "  * Alt+LMB - Discard history"
+        )
     bl_idname = "view3d.un_disable_render_all_collections"
     bl_options = {'REGISTER', 'UNDO'}
 

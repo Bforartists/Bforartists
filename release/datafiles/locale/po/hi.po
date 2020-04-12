@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -6709,16 +6709,16 @@ msgid "Not supported in sculpt mode"
 msgstr "गढ़न विधा में यह सहयोग नहीं करता"
 
 
+msgid "No AnimData to set action on"
+msgstr "कार्य पर स्थापित करने के लिए कोई अनुप्राणन सामग्री नहीं"
+
+
 msgid ", cannot have single-frame paths"
 msgstr ", एकल गठन पथ नहीं हो सकता है"
 
 
 msgid "Motion path frame extents invalid for %s (%d to %d)%s"
 msgstr "गति पथ गठन विस्तार के लिए अमान्य %s (%d to %d)%s"
-
-
-msgid "No AnimData to set action on"
-msgstr "कार्य पर स्थापित करने के लिए कोई अनुप्राणन सामग्री नहीं"
 
 
 msgid "Loading failed: "

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12699,6 +12699,14 @@ msgid "Curve Context Menu"
 msgstr "Kurven Kontextmenü"
 
 
+msgid "Special Characters"
+msgstr "Sonderzeichen"
+
+
+msgid "Text Context Menu"
+msgstr "Text Kontextmenü"
+
+
 msgid "Interpolate"
 msgstr "Interpolieren"
 
@@ -12753,14 +12761,6 @@ msgstr "Metaball"
 
 msgid "Metaball Context Menu"
 msgstr "Metaball Kontextmenü"
-
-
-msgid "Special Characters"
-msgstr "Sonderzeichen"
-
-
-msgid "Text Context Menu"
-msgstr "Text Kontextmenü"
 
 
 msgid "Generate Weights"
@@ -13129,10 +13129,6 @@ msgstr "Dynamisch Malen"
 
 msgid "Explode"
 msgstr "Explosion"
-
-
-msgid "Fluid Simulation"
-msgstr "Flüssigkeitssimulation"
 
 
 msgid "Ocean"
@@ -17657,7 +17653,7 @@ msgstr "Kind auswählen"
 
 
 msgctxt "Operator"
-msgid "Select Connected"
+msgid "Select Linked All"
 msgstr "Verknüpfte auswählen"
 
 
@@ -18984,11 +18980,6 @@ msgstr "Kontrollpunkte aus-/abwählen"
 
 msgid "Reduce current selection by deselecting boundary elements"
 msgstr "Zwischen ausgewählten Markierungen"
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "Verknüpfte auswählen"
 
 
 msgid "Select all control points linked to already selected ones"
@@ -20875,15 +20866,6 @@ msgstr "Mesh duplizieren und bewegen"
 
 msgid "Duplicate"
 msgstr "Duplizieren"
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "Freihand malen"
-
-
-msgid "Collapse selected edges"
-msgstr "Ausgewählte Knoten löschen"
 
 
 msgctxt "Operator"
@@ -24258,6 +24240,11 @@ msgstr "Kamera auswählen"
 
 msgid "Shared group"
 msgstr "Gemeinsame Gruppe"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "Verknüpfte auswählen"
 
 
 msgctxt "Operator"
@@ -36998,16 +36985,6 @@ msgstr "Inneres neu berechnen"
 
 
 msgctxt "Operator"
-msgid "Toggle Italic"
-msgstr "Kursiv an/aus"
-
-
-msgctxt "Operator"
-msgid "Toggle Underline"
-msgstr "Unterstrich an/aus"
-
-
-msgctxt "Operator"
 msgid "Spanish Question Mark"
 msgstr "Spanisches Fragezeichen"
 
@@ -37015,6 +36992,16 @@ msgstr "Spanisches Fragezeichen"
 msgctxt "Operator"
 msgid "Spanish Exclamation Mark"
 msgstr "Spanisches Ausrufezeichen"
+
+
+msgctxt "Operator"
+msgid "Toggle Italic"
+msgstr "Kursiv an/aus"
+
+
+msgctxt "Operator"
+msgid "Toggle Underline"
+msgstr "Unterstrich an/aus"
 
 
 msgid "X-Ray"

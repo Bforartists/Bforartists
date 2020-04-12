@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -9711,6 +9711,10 @@ msgid "Bone Roll"
 msgstr "Ролна костију"
 
 
+msgid "Special Characters"
+msgstr "Специјални знаци"
+
+
 msgid "Mesh"
 msgstr "Меш"
 
@@ -9733,10 +9737,6 @@ msgstr "Мод избора мреже"
 
 msgid "Metaball"
 msgstr "Мета лопта"
-
-
-msgid "Special Characters"
-msgstr "Специјални знаци"
 
 
 msgid "Hooks"
@@ -10089,10 +10089,6 @@ msgstr "Динамичко бојење"
 
 msgid "Explode"
 msgstr "Експозиција"
-
-
-msgid "Fluid Simulation"
-msgstr "Симулација течности"
 
 
 msgid "Ocean"
@@ -13362,8 +13358,8 @@ msgstr "Изабери дете"
 
 
 msgctxt "Operator"
-msgid "Select Connected"
-msgstr "Изабери повезано"
+msgid "Select Linked All"
+msgstr "Изабери све повезане"
 
 
 msgid "Active Only"
@@ -14526,11 +14522,6 @@ msgstr "Формира путању"
 msgctxt "Operator"
 msgid "Set Curve Radius"
 msgstr "Подеси полупречник криве"
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "Изабери све повезане"
 
 
 msgctxt "Operator"
@@ -16516,15 +16507,6 @@ msgstr "Дуплира и премеша меш"
 
 msgid "Duplicate"
 msgstr "Дуплирај"
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "Сажми ивице"
-
-
-msgid "Collapse selected edges"
-msgstr "Сажима изабране ивице"
 
 
 msgctxt "Operator"
@@ -19365,6 +19347,11 @@ msgstr "Очисти увећање позе"
 
 msgid "Shared group"
 msgstr "Дељена група"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "Изабери повезано"
 
 
 msgctxt "Operator"

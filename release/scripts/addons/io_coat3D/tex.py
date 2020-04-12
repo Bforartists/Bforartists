@@ -146,22 +146,32 @@ def updatetextures(objekti): # Update 3DC textures
                 elif (node.name == '3DC_alpha'):
                     node.image.reload()
 
-def link_material_into_uvset(objekti, material, material_index):
-
-    for layer in objekti.data.uv_layers:
-        for face in objekti.data.polygons:
-            for vert_idx, loop_idx in zip(face.vertices, face.loop_indices):
-                uv_coords = layer.data[loop_idx].uv
+def testi(objekti, texture_info, index_mat_name, uv_MODE_mat, mat_index):
+    if uv_MODE_mat == 'UV':
+        
+        uv_set_founded = False
+        for uvset in objekti.data.uv_layers:
+          
+            if(uvset.name == texture_info):
+                uv_set_founded = True
+               
+                break
+            
+        if(uv_set_founded):
+            for uv_poly in objekti.data.uv_layers[texture_info].id_data.polygons:
+                if(mat_index == uv_poly.material_index):
+                    return True
+        else:
+            return False
+            
+    elif uv_MODE_mat == 'MAT':
+        return (texture_info == index_mat_name)
 
 def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures): #read textures from texture file
 
-    # Let's check are we UVSet or MATERIAL mode
-
+    # Let's check are we UVSet or MATERIAL modee
     create_nodes = False
-
     for ind, index_mat in enumerate(objekti.material_slots):
-
-        active_uvset = link_material_into_uvset(objekti, index_mat, ind)
 
         if(udim_textures):
             tile_list = UVTiling(objekti,ind, texturelist)
@@ -181,124 +191,82 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures): #r
 
         create_group_node = False
         if(udim_textures == False):
-            for texture_info in texturelist:
+            for slot_index, texture_info in enumerate(texturelist):
 
-                if is_new == False:
-                    if texture_info[0] == index_mat.name:
-                        if texture_info[2] == 'color' or texture_info[2] == 'diffuse':
-                            if(index_mat.material.coat3D_diffuse):
-                                texcoat['color'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2] == 'metalness' or texture_info[2] == 'specular' or texture_info[2] == 'reflection':
-                            if (index_mat.material.coat3D_metalness):
-                                texcoat['metalness'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2] == 'rough' or texture_info[2] == 'roughness':
-                            if (index_mat.material.coat3D_roughness):
-                                texcoat['rough'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2] == 'nmap' or texture_info[2] == 'normalmap' or texture_info[2] == 'normal_map'  or texture_info[2] == 'normal':
-                            if (index_mat.material.coat3D_normal):
-                                texcoat['nmap'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2] == 'emissive':
-                            if (index_mat.material.coat3D_emissive):
-                                texcoat['emissive'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2] == 'emissive_power':
-                            if (index_mat.material.coat3D_emissive):
-                                texcoat['emissive_power'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2] == 'ao':
-                            if (index_mat.material.coat3D_ao):
-                                texcoat['ao'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2].startswith('displacement'):
-                            if (index_mat.material.coat3D_displacement):
-                                texcoat['displacement'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2] == 'alpha' or texture_info[2] == 'opacity':
-                            if (index_mat.material.coat3D_alpha):
-                                texcoat['alpha'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        create_group_node = True
-                else:
-                    if index_mat.name.startswith(texture_info[0]):
-                        if texture_info[2] == 'color' or texture_info[2] == 'diffuse':
-                            if (index_mat.material.coat3D_diffuse):
-                                texcoat['color'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2] == 'metalness' or texture_info[2] == 'specular' or texture_info[
-                            2] == 'reflection':
-                            if (index_mat.material.coat3D_metalness):
-                                texcoat['metalness'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2] == 'rough' or texture_info[2] == 'roughness':
-                            if (index_mat.material.coat3D_roughness):
-                                texcoat['rough'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2] == 'nmap' or texture_info[2] == 'normalmap' or texture_info[
-                            2] == 'normal_map' or texture_info[2] == 'normal':
-                            if (index_mat.material.coat3D_normal):
-                                texcoat['nmap'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2] == 'emissive':
-                            if (index_mat.material.coat3D_emissive):
-                                texcoat['emissive'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2] == 'emissive_power':
-                            if (index_mat.material.coat3D_emissive):
-                                texcoat['emissive_power'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2] == 'ao':
-                            if (index_mat.material.coat3D_ao):
-                                texcoat['ao'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2].startswith('displacement'):
-                            if (index_mat.material.coat3D_displacement):
-                                texcoat['displacement'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        elif texture_info[2] == 'alpha' or texture_info[2] == 'opacity':
-                            if (index_mat.material.coat3D_alpha):
-                                texcoat['alpha'].append(texture_info[3])
-                                create_nodes = True
-                            else:
-                                os.remove(texture_info[3])
-                        create_group_node = True
+                uv_MODE_mat = 'MAT' 
+                for index, layer in enumerate(objekti.data.uv_layers):
+                    if(layer.name == texturelist[slot_index][0]):
+                        uv_MODE_mat = 'UV'
+                        break
+
+                
+                if(testi(objekti, texturelist[slot_index][0], index_mat.name, uv_MODE_mat, ind)) :
+                    if texture_info[2] == 'color' or texture_info[2] == 'diffuse':
+                        if(index_mat.material.coat3D_diffuse):
+                            
+                            texcoat['color'].append(texture_info[3])
+                            create_nodes = True
+                        else:
+                            os.remove(texture_info[3])
+
+                    elif texture_info[2] == 'metalness' or texture_info[2] == 'specular' or texture_info[2] == 'reflection':
+                        if (index_mat.material.coat3D_metalness):
+                            texcoat['metalness'].append(texture_info[3])
+                            create_nodes = True
+                        else:
+                            os.remove(texture_info[3])
+
+                    elif texture_info[2] == 'rough' or texture_info[2] == 'roughness':
+                        if (index_mat.material.coat3D_roughness):
+                            texcoat['rough'].append(texture_info[3])
+                            create_nodes = True
+                        else:
+                            os.remove(texture_info[3])
+
+                    elif texture_info[2] == 'nmap' or texture_info[2] == 'normalmap' or texture_info[2] == 'normal_map'  or texture_info[2] == 'normal':
+                        if (index_mat.material.coat3D_normal):
+                            texcoat['nmap'].append(texture_info[3])
+                            create_nodes = True
+                        else:
+                            os.remove(texture_info[3])
+
+                    elif texture_info[2] == 'emissive':
+                        if (index_mat.material.coat3D_emissive):
+                            texcoat['emissive'].append(texture_info[3])
+                            create_nodes = True
+                        else:
+                            os.remove(texture_info[3])
+
+                    elif texture_info[2] == 'emissive_power':
+                        if (index_mat.material.coat3D_emissive):
+                            texcoat['emissive_power'].append(texture_info[3])
+                            create_nodes = True
+                        else:
+                            os.remove(texture_info[3])
+
+                    elif texture_info[2] == 'ao':
+                        if (index_mat.material.coat3D_ao):
+                            texcoat['ao'].append(texture_info[3])
+                            create_nodes = True
+                        else:
+                            os.remove(texture_info[3])
+
+                    elif texture_info[2].startswith('displacement'):
+                        if (index_mat.material.coat3D_displacement):
+                            texcoat['displacement'].append(texture_info[3])
+                            create_nodes = True
+                        else:
+                            os.remove(texture_info[3])
+
+                    elif texture_info[2] == 'alpha' or texture_info[2] == 'opacity':
+                        if (index_mat.material.coat3D_alpha):
+                            texcoat['alpha'].append(texture_info[3])
+                            create_nodes = True
+                        else:
+                            os.remove(texture_info[3])
+
+                    create_group_node = True
+              
 
         else:
             for texture_info in texturelist:
@@ -333,7 +301,7 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures): #r
                     texcoat['alpha'].append([texture_info[0], texture_info[3]])
                     create_nodes = True
                 create_group_node = True
-
+     
         if(create_nodes):
             coat3D = bpy.context.scene.coat3D
             path3b_n = coat3D.exchangedir
@@ -380,7 +348,6 @@ def createnodes(active_mat,texcoat, create_group_node, tile_list, objekti, ind, 
             applink_tree = node
             break
 
-    print('TeXture UPDATE happens')
     for node in act_material.nodes:
         if (node.type != 'GROUP'):
             if (node.type != 'GROUP_OUTPUT'):
@@ -687,8 +654,19 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
             if(input_color != -1):
                 break
 
-    if(tile_list == []):
-        node.image = bpy.data.images.load(texcoat[type['name']][0])
+    if (tile_list == []):
+
+        load_image = True
+
+        for image in bpy.data.images:
+            if(texcoat[type['name']][0] == image.filepath):
+                load_image = False
+                node.image = image
+                break
+
+        if (load_image):
+            node.image = bpy.data.images.load(texcoat[type['name']][0])
+        
         if node.image and type['colorspace'] == 'noncolor':
             node.image.colorspace_settings.is_data = True
 
@@ -843,13 +821,15 @@ def matlab(objekti,mat_list,texturelist,is_new):
 
     updatetextures(objekti)
 
+    ''' Check if bind textures with UVs or Materials '''
+
     if(texturelist != []):
+    
         udim_textures = False
         if texturelist[0][0].startswith('100'):
             udim_textures = True
 
         if(udim_textures == False):
-
             readtexturefolder(objekti,mat_list,texturelist,is_new, udim_textures)
         else:
             path = texturelist[0][3]

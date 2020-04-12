@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'513885a99118')\n"
+"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
@@ -3242,12 +3242,8 @@ msgid "Smear"
 msgstr "Nhẹp"
 
 
-msgid "Hardeness"
+msgid "Hardness"
 msgstr "Độ Cứng"
-
-
-msgid "Amount of gradient for Dot and Box strokes (set to 1 for full solid)"
-msgstr "Mức chuyển sắc cho nét Dấu Chấm và Hộp (đặt = 1 cho tô rắn)"
 
 
 msgid "Input Samples"
@@ -13728,6 +13724,10 @@ msgid "Blend mode"
 msgstr "Chế độ pha trộn"
 
 
+msgid "Hard Light"
+msgstr "Ánh Sáng Cứng"
+
+
 msgid "Custom Channel Color"
 msgstr "Kênh Màu Tùy Chọn"
 
@@ -16105,10 +16105,6 @@ msgid "Use Soft Light blending mode while painting"
 msgstr "Dùng chế độ pha trộn Ánh Sáng Mềm khi sơn"
 
 
-msgid "Hard Light"
-msgstr "Ánh Sáng Cứng"
-
-
 msgid "Use Hard Light blending mode while painting"
 msgstr "Dùng chế độ pha trộn Ánh Sáng Cứng khi sơn"
 
@@ -16523,10 +16519,6 @@ msgstr "Lặp Lại"
 
 msgid "Clamp"
 msgstr "Kẹp Lại"
-
-
-msgid "Hardness"
-msgstr "Độ Cứng"
 
 
 msgid "How close the brush falloff starts from the edge of the brush"
@@ -29275,6 +29267,14 @@ msgid "Curve Context Menu"
 msgstr "Danh Bạ Bối Cảnh Đường Cong"
 
 
+msgid "Special Characters"
+msgstr "Ký Tự Đặc Biệt"
+
+
+msgid "Text Context Menu"
+msgstr "Danh Bạ Bối Cảnh Văn Bản"
+
+
 msgid "Kerning"
 msgstr "Cách Giữa Ký Tự"
 
@@ -29345,14 +29345,6 @@ msgstr "Siêu Cầu"
 
 msgid "Metaball Context Menu"
 msgstr "Danh Bạ Bối Cảnh Siêu Cầu"
-
-
-msgid "Special Characters"
-msgstr "Ký Tự Đặc Biệt"
-
-
-msgid "Text Context Menu"
-msgstr "Danh Bạ Bối Cảnh Văn Bản"
 
 
 msgid "Generate Weights"
@@ -30425,10 +30417,6 @@ msgstr "Nổ"
 
 msgid "Break apart the mesh faces and let them follow particles"
 msgstr "Chẻ các mặt mạng lưới và cho chúng nó đi theo những hạt"
-
-
-msgid "Fluid Simulation"
-msgstr "Mô Phỏng Chất Lỏng"
 
 
 msgid "Ocean"
@@ -40978,12 +40966,8 @@ msgstr "Thả xương tại ranh giới của mỗi khu vực sự lựa chọn"
 
 
 msgctxt "Operator"
-msgid "Select Connected"
-msgstr "Chọn Được Kết Nối"
-
-
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "Chọn xương có liên hệ phụ huynh/con cái với xương được chọn rồi"
+msgid "Select Linked All"
+msgstr "Chọn Hết Được Liên Kết"
 
 
 msgctxt "Operator"
@@ -43416,11 +43400,6 @@ msgstr "Chọn/thả hết điểm điều khiển"
 
 msgid "Reduce current selection by deselecting boundary elements"
 msgstr "Giảm bất sự lựa chọn hiện tại bằng thả phần tử ranh giới"
-
-
-msgctxt "Operator"
-msgid "Select Linked All"
-msgstr "Chọn Hết Được Liên Kết"
 
 
 msgid "Select all control points linked to the current selection"
@@ -50071,15 +50050,6 @@ msgstr "sao chép mạng lưới và di chuyển"
 
 msgid "Duplicate"
 msgstr "Dao Chép"
-
-
-msgctxt "Operator"
-msgid "Edge Collapse"
-msgstr "Tóp Cạnh"
-
-
-msgid "Collapse selected edges"
-msgstr "Tóp cạnh được chọn"
 
 
 msgctxt "Operator"
@@ -58444,6 +58414,15 @@ msgstr "Nhóm được chia sẻ"
 
 msgid "All bones affected by active Keying Set"
 msgstr "Hết xương được ảnh hưởng bằng Tặp Bức Mẫu hoạt động"
+
+
+msgctxt "Operator"
+msgid "Select Connected"
+msgstr "Chọn Được Kết Nối"
+
+
+msgid "Select bones related to selected ones by parent/child relationships"
+msgstr "Chọn xương có liên hệ phụ huynh/con cái với xương được chọn rồi"
 
 
 msgctxt "Operator"
@@ -92650,16 +92629,6 @@ msgstr "Vành Cạnh"
 
 
 msgctxt "Operator"
-msgid "To Uppercase"
-msgstr "Đến Chữ Hoa"
-
-
-msgctxt "Operator"
-msgid "To Lowercase"
-msgstr "Đến Chữ Thường"
-
-
-msgctxt "Operator"
 msgid "Armature"
 msgstr "Cốt"
 
@@ -92914,41 +92883,6 @@ msgstr "Xoá Điểm"
 
 
 msgctxt "Operator"
-msgid "Toggle Bold"
-msgstr "Bật/Tắt Đậm"
-
-
-msgctxt "Operator"
-msgid "Toggle Italic"
-msgstr "Bật/Tắt Nghiêng"
-
-
-msgctxt "Operator"
-msgid "Toggle Underline"
-msgstr "Bật/tắt Gạch Dưới"
-
-
-msgctxt "Operator"
-msgid "Toggle Small Caps"
-msgstr "Bật/Tắt Chữ Hoa Nhỏ"
-
-
-msgctxt "Operator"
-msgid "Decrease Kerning"
-msgstr "Giảm Cách Giữa"
-
-
-msgctxt "Operator"
-msgid "Increase Kerning"
-msgstr "Tăng Cách Giữa"
-
-
-msgctxt "Operator"
-msgid "Reset Kerning"
-msgstr "Đặt Lại Cách Giữa"
-
-
-msgctxt "Operator"
 msgid "Copyright"
 msgstr "Bản Quyền"
 
@@ -93026,6 +92960,51 @@ msgstr "Dấu Hỏi Tây Ban Nhà"
 msgctxt "Operator"
 msgid "Spanish Exclamation Mark"
 msgstr "Dấu Cảm Lật"
+
+
+msgctxt "Operator"
+msgid "Decrease Kerning"
+msgstr "Giảm Cách Giữa"
+
+
+msgctxt "Operator"
+msgid "Increase Kerning"
+msgstr "Tăng Cách Giữa"
+
+
+msgctxt "Operator"
+msgid "Reset Kerning"
+msgstr "Đặt Lại Cách Giữa"
+
+
+msgctxt "Operator"
+msgid "To Uppercase"
+msgstr "Đến Chữ Hoa"
+
+
+msgctxt "Operator"
+msgid "To Lowercase"
+msgstr "Đến Chữ Thường"
+
+
+msgctxt "Operator"
+msgid "Toggle Bold"
+msgstr "Bật/Tắt Đậm"
+
+
+msgctxt "Operator"
+msgid "Toggle Italic"
+msgstr "Bật/Tắt Nghiêng"
+
+
+msgctxt "Operator"
+msgid "Toggle Underline"
+msgstr "Bật/tắt Gạch Dưới"
+
+
+msgctxt "Operator"
+msgid "Toggle Small Caps"
+msgstr "Bật/Tắt Chữ Hoa Nhỏ"
 
 
 msgctxt "Operator"
@@ -93526,18 +93505,6 @@ msgid "Sculpt: Hide, Mask and optimized display disabled"
 msgstr "Khắc: Ẩn, Mặt Nạ và hiển thị tối ưu bị tắt rồi"
 
 
-msgid ", cannot have single-frame paths"
-msgstr ", không thể có đường một bức"
-
-
-msgid "Motion path frame extents invalid for %s (%d to %d)%s"
-msgstr "Phạm vi đường chuyển động không phụ hợp cho %s (%d đến %d)%s"
-
-
-msgid "KeyingSet"
-msgstr "Tập Mẫu Dạng"
-
-
 msgid "No AnimData to set action on"
 msgstr "Không có DữLiệuHoạtHình để đặt hành động"
 
@@ -93548,6 +93515,18 @@ msgstr "Không được đổi hành động, vì nó vẫn đang biên tập tr
 
 msgid "Could not set action '%s' onto ID '%s', as it does not have suitably rooted paths for this purpose"
 msgstr "Không được đặt hành động '%s' vào ID '%s', vì nó không có đường rể phù hợp cho công việc này"
+
+
+msgid "KeyingSet"
+msgstr "Tập Mẫu Dạng"
+
+
+msgid ", cannot have single-frame paths"
+msgstr ", không thể có đường một bức"
+
+
+msgid "Motion path frame extents invalid for %s (%d to %d)%s"
+msgstr "Phạm vi đường chuyển động không phụ hợp cho %s (%d đến %d)%s"
 
 
 msgid "Library file, loading empty scene"
@@ -98049,30 +98028,6 @@ msgid "No active vertex group for painting, aborting"
 msgstr "Không có nhóm đỉnh hoạt động để sơn, đang hủy"
 
 
-msgid "Warning!"
-msgstr "Cảnh Báo!"
-
-
-msgid "OK"
-msgstr "Được"
-
-
-msgid "Vertex Data Detected!"
-msgstr "Được Phát Hiện Dữ Liệu Đỉnh!"
-
-
-msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
-msgstr "Hình dạng học động lý sẽ không giữ nguyên màu đỉnh, UV, hay dữ liệu khác tùy chọn"
-
-
-msgid "Generative Modifiers Detected!"
-msgstr "Được Phát Hiện Cụ Sửa Đổi Chế Tạo!"
-
-
-msgid "Keeping the modifiers will increase polycount when returning to object mode"
-msgstr "Giữ các cụ sửa đổi sẽ tăng lượng da giác khi trở lại chế độ vật thể"
-
-
 msgid "non-triangle face"
 msgstr "mặt vô tam giác"
 
@@ -98097,14 +98052,6 @@ msgid "constructive modifier"
 msgstr "cụ sửa đổi xây dựng"
 
 
-msgid "Click on the mesh to set the detail"
-msgstr "Bấm trên mạng lưới để đặc chi tiết"
-
-
-msgid "Move the mouse to expand the mask from the active vertex. LMB: confirm mask, ESC/RMB: cancel"
-msgstr "Di chuyển chuột để mở rộng mặt nạ từ đỉnh hoạt động. NCT: chấp nhận mặt nạ, ESC/NCP: hủy"
-
-
 msgid "Object has non-uniform scale, sculpting may be unpredictable"
 msgstr "Vật thể có phóng to không đều, khắc có thế không theo dự đoán"
 
@@ -98115,6 +98062,38 @@ msgstr "Vật thể có phóng to âm, khắc có thế không theo dự đoán"
 
 msgid "Dynamic Topology found: %s, disabled"
 msgstr "Tìm được Hình Thể Động Lý: %s, bị tắt"
+
+
+msgid "Click on the mesh to set the detail"
+msgstr "Bấm trên mạng lưới để đặc chi tiết"
+
+
+msgid "Warning!"
+msgstr "Cảnh Báo!"
+
+
+msgid "OK"
+msgstr "Được"
+
+
+msgid "Vertex Data Detected!"
+msgstr "Được Phát Hiện Dữ Liệu Đỉnh!"
+
+
+msgid "Dyntopo will not preserve vertex colors, UVs, or other customdata"
+msgstr "Hình dạng học động lý sẽ không giữ nguyên màu đỉnh, UV, hay dữ liệu khác tùy chọn"
+
+
+msgid "Generative Modifiers Detected!"
+msgstr "Được Phát Hiện Cụ Sửa Đổi Chế Tạo!"
+
+
+msgid "Keeping the modifiers will increase polycount when returning to object mode"
+msgstr "Giữ các cụ sửa đổi sẽ tăng lượng da giác khi trở lại chế độ vật thể"
+
+
+msgid "Move the mouse to expand the mask from the active vertex. LMB: confirm mask, ESC/RMB: cancel"
+msgstr "Di chuyển chuột để mở rộng mặt nạ từ đỉnh hoạt động. NCT: chấp nhận mặt nạ, ESC/NCP: hủy"
 
 
 msgid "Compiled without sound support"

@@ -77,7 +77,10 @@ def get_center(o):
 def apply_simple_material(o, name, color):
     m = bpy.data.materials.new(name)
     m.use_nodes = True
-    m.node_tree.nodes[1].inputs[0].default_value = color
+    for node in m.node_tree.nodes:
+        if node.bl_idname == "ShaderNodeBsdfPrincipled":
+            node.inputs[0].default_value = color
+            break
     o.data.materials.append(m)
 
 
