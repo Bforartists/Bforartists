@@ -1917,27 +1917,27 @@ class VIEW3D_MT_select_edit_text(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("font.select_all", text="All")
+        layout.operator("font.select_all", text="All", icon = "SELECT_ALL")
 
         layout.separator()
 
-        layout.operator("font.move_select", text="Previous Block").type = 'PREVIOUS_PAGE'
-        layout.operator("font.move_select", text="Next Block").type = 'NEXT_PAGE'
+        layout.operator("font.move_select", text = "Line End", icon = "HAND").type = 'LINE_END'
+        layout.operator("font.move_select", text = "Line Begin", icon = "HAND").type = 'LINE_BEGIN'
 
         layout.separator()
 
-        layout.operator("font.move_select", text="Line Begin").type = 'LINE_BEGIN'
-        layout.operator("font.move_select", text="Line End").type = 'LINE_END'
+        layout.operator("font.move_select", text = "Previous Character", icon = "HAND").type = 'PREVIOUS_CHARACTER'
+        layout.operator("font.move_select", text = "Next Character", icon = "HAND").type = 'NEXT_CHARACTER'
 
         layout.separator()
 
-        layout.operator("font.move_select", text="Previous Line").type = 'PREVIOUS_LINE'
-        layout.operator("font.move_select", text="Next Line").type = 'NEXT_LINE'
+        layout.operator("font.move_select", text = "Previous Word", icon = "HAND").type = 'PREVIOUS_WORD'
+        layout.operator("font.move_select", text = "Next Word", icon = "HAND").type = 'NEXT_WORD'
 
         layout.separator()
 
-        layout.operator("font.move_select", text="Previous Word").type = 'PREVIOUS_WORD'
-        layout.operator("font.move_select", text="Next Word").type = 'NEXT_WORD'
+        layout.operator("font.move_select", text = "Previous Line", icon = "HAND").type = 'PREVIOUS_LINE'
+        layout.operator("font.move_select", text = "Next Line", icon = "HAND").type = 'NEXT_LINE'
 
 
 # Workaround to separate the tooltips
@@ -5514,38 +5514,38 @@ class VIEW3D_MT_edit_font_chars(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("font.text_insert", text="Copyright").text = "\u00A9"
-        layout.operator("font.text_insert", text="Registered Trademark").text = "\u00AE"
+        layout.operator("font.text_insert", text="Copyright", icon = "COPYRIGHT").text = "\u00A9"
+        layout.operator("font.text_insert", text="Registered Trademark", icon = "TRADEMARK").text = "\u00AE"
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Degree Sign").text = "\u00B0"
-        layout.operator("font.text_insert", text="Multiplication Sign").text = "\u00D7"
-        layout.operator("font.text_insert", text="Circle").text = "\u008A"
+        layout.operator("font.text_insert", text="Degree Sign", icon = "DEGREE").text = "\u00B0"
+        layout.operator("font.text_insert", text="Multiplication Sign", icon = "MULTIPLICATION").text = "\u00D7"
+        layout.operator("font.text_insert", text="Circle", icon = "CIRCLE").text = "\u008A"
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Superscript 1").text = "\u00B9"
-        layout.operator("font.text_insert", text="Superscript 2").text = "\u00B2"
-        layout.operator("font.text_insert", text="Superscript 3").text = "\u00B3"
+        layout.operator("font.text_insert", text="Superscript 1", icon = "SUPER_ONE").text = "\u00B9"
+        layout.operator("font.text_insert", text="Superscript 2", icon = "SUPER_TWO").text = "\u00B2"
+        layout.operator("font.text_insert", text="Superscript 3", icon = "SUPER_THREE").text = "\u00B3"
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Double >>").text = "\u00BB"
-        layout.operator("font.text_insert", text="Double <<").text = "\u00AB"
-        layout.operator("font.text_insert", text="Promillage").text = "\u2030"
+        layout.operator("font.text_insert", text="Double >>", icon = "DOUBLE_RIGHT").text = "\u00BB"
+        layout.operator("font.text_insert", text="Double <<", icon = "DOUBLE_LEFT").text = "\u00AB"
+        layout.operator("font.text_insert", text="Promillage", icon = "PROMILLE").text = "\u2030"
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Dutch Florin").text = "\u00A4"
-        layout.operator("font.text_insert", text="British Pound").text = "\u00A3"
-        layout.operator("font.text_insert", text="Japanese Yen").text = "\u00A5"
+        layout.operator("font.text_insert", text="Dutch Florin", icon = "DUTCH_FLORIN").text = "\u00A4"
+        layout.operator("font.text_insert", text="British Pound", icon = "POUND").text = "\u00A3"
+        layout.operator("font.text_insert", text="Japanese Yen", icon = "YEN").text = "\u00A5"
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="German S").text = "\u00DF"
-        layout.operator("font.text_insert", text="Spanish Question Mark").text = "\u00BF"
-        layout.operator("font.text_insert", text="Spanish Exclamation Mark").text = "\u00A1"
+        layout.operator("font.text_insert", text="German S", icon = "GERMAN_S").text = "\u00DF"
+        layout.operator("font.text_insert", text="Spanish Question Mark", icon = "SPANISH_QUESTION").text = "\u00BF"
+        layout.operator("font.text_insert", text="Spanish Exclamation Mark", icon = "SPANISH_EXCLAMATION").text = "\u00A1"
 
 
 class VIEW3D_MT_edit_font_kerning(Menu):
@@ -5570,25 +5570,6 @@ class VIEW3D_MT_edit_font_move(Menu):
         layout = self.layout
         
         layout.operator_enum("font.move", "type")
-   
-
-# move_select submenu
-class VIEW3D_MT_edit_font_move_select(Menu):
-    bl_label = "Select Text"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("font.move_select", text = "Line End", icon = "HAND").type = 'LINE_END'
-        layout.operator("font.move_select", text = "Line Begin", icon = "HAND").type = 'LINE_BEGIN'
-        layout.operator("font.move_select", text = "Previous Character", icon = "HAND").type = 'PREVIOUS_CHARACTER'
-        layout.operator("font.move_select", text = "Next Character", icon = "HAND").type = 'NEXT_CHARACTER'
-        layout.operator("font.move_select", text = "Previous Word", icon = "HAND").type = 'PREVIOUS_WORD'
-        layout.operator("font.move_select", text = "Next Word", icon = "HAND").type = 'NEXT_WORD'
-        layout.operator("font.move_select", text = "Previous Line", icon = "HAND").type = 'PREVIOUS_LINE'
-        layout.operator("font.move_select", text = "Next Line", icon = "HAND").type = 'NEXT_LINE'
-        layout.operator("font.move_select", text = "Previous Character", icon = "HAND").type = 'PREVIOUS_CHARACTER'
-        layout.operator("font.move_select", text = "Next Character", icon = "HAND").type = 'NEXT_CHARACTER'
 
 
 class VIEW3D_MT_edit_font_delete(Menu):
@@ -5597,10 +5578,10 @@ class VIEW3D_MT_edit_font_delete(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("font.delete", text="Previous Character").type = 'PREVIOUS_CHARACTER'
-        layout.operator("font.delete", text="Next Character").type = 'NEXT_CHARACTER'
-        layout.operator("font.delete", text="Previous Word").type = 'PREVIOUS_WORD'
-        layout.operator("font.delete", text="Next Word").type = 'NEXT_WORD'
+        layout.operator("font.delete", text="Previous Character", icon = "DELETE").type = 'PREVIOUS_CHARACTER'
+        layout.operator("font.delete", text="Next Character", icon = "DELETE").type = 'NEXT_CHARACTER'
+        layout.operator("font.delete", text="Previous Word", icon = "DELETE").type = 'PREVIOUS_WORD'
+        layout.operator("font.delete", text="Next Word", icon = "DELETE").type = 'NEXT_WORD'
 
 
 class VIEW3D_MT_edit_font(Menu):
@@ -5609,22 +5590,23 @@ class VIEW3D_MT_edit_font(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("font.text_cut", text="Cut")
+        layout.operator("font.text_cut", text="Cut", icon = "CUT")
         layout.operator("font.text_copy", text="Copy", icon='COPYDOWN')
         layout.operator("font.text_paste", text="Paste", icon='PASTEDOWN')
 
         layout.separator()
 
-        layout.operator("font.text_paste_from_file")
+        layout.operator("font.text_paste_from_file", icon='PASTEDOWN')
 
         layout.separator()
 
-        layout.operator("font.case_set", text="To Uppercase").case = 'UPPER'
-        layout.operator("font.case_set", text="To Lowercase").case = 'LOWER'
+        layout.operator("font.case_set", text="To Uppercase", icon = "SET_UPPERCASE").case = 'UPPER'
+        layout.operator("font.case_set", text="To Lowercase", icon = "SET_LOWERCASE").case = 'LOWER'
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_font_chars")
+        layout.menu("VIEW3D_MT_edit_font_move")
 
         layout.separator()
 
@@ -5648,7 +5630,7 @@ class VIEW3D_MT_edit_font_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_DEFAULT'
 
-        layout.operator("font.text_cut", text="Cut")
+        layout.operator("font.text_cut", text="Cut", icon = "CUT")
         layout.operator("font.text_copy", text="Copy", icon='COPYDOWN')
         layout.operator("font.text_paste", text="Paste", icon='PASTEDOWN')
 
@@ -8687,7 +8669,6 @@ classes = (
     VIEW3D_MT_edit_font_chars,
     VIEW3D_MT_edit_font_kerning,
     VIEW3D_MT_edit_font_move,
-    VIEW3D_MT_edit_font_move_select,
     VIEW3D_MT_edit_font_delete,
     VIEW3D_MT_edit_font_context_menu,
     VIEW3D_MT_edit_meta,
