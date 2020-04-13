@@ -34,7 +34,7 @@ But the code is just half of the show. Another important bit are the non code th
 - We have a improved manual. The Blender manual is in big parts unsearchable, has an odd structure, and still now relies heavily at the Blender keymap to name just a few flaws. This makes it nearly  unusable for users. And that’s why we rewrite it, piece by piece.
 - We are not not bound to the Blender bubble. Bforartists has its own eco system.
 
-This youtube video describes the differences by showing them. It is currently the old vidoe, but will be replaced by a new video shortly.
+This youtube video describes the differences by showing them. It is currently the old video for Bforartists 1, but will be replaced by a new video shortly.
 
 [![Youtube Introduction](https://img.youtube.com/vi/zSbxfYF7rIY/0.jpg)](https://www.youtube.com/watch?v=zSbxfYF7rIY)
 
