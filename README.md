@@ -34,17 +34,15 @@ But the code is just half of the show. Another important bit are the non code th
 - We have a improved manual. The Blender manual is in big parts unsearchable, has an odd structure, and still now relies heavily at the Blender keymap to name just a few flaws. This makes it nearly  unusable for users. And that’s why we rewrite it, piece by piece.
 - We are not not bound to the Blender bubble. Bforartists has its own eco system.
 
-This youtube video describes the differences by showing them. It is currently the old video for Bforartists 1, but will be replaced by a new video shortly.
+This youtube video describes the differences by showing them.
 
-[![Youtube Introduction](https://img.youtube.com/vi/zSbxfYF7rIY/0.jpg)](https://www.youtube.com/watch?v=zSbxfYF7rIY)
-
-https://youtu.be/zSbxfYF7rIY
+[![Youtube Introduction](https://img.youtube.com/vi/xAJQsKRi3sY/0.jpg)](https://www.youtube.com/watch?v=xAJQsKRi3sY)
 
 Here's a Youtube playlist with some quickstart videos:
 
 https://www.youtube.com/watch?v=sZlqqMAGgMs&list=PLB0iqEbIPQTZArhZspyYSJOS_00jURpUB
 
-This list is currently incomplete, we are in the process to update the documentation to Bforartists 2. So here the quickstart videos for the older version:
+This list is currently incomplete, we are in the process to update the documentation to Bforartists 2. So here you can still find the quickstart videos for the older version:
 
 https://youtu.be/Gm7aCzI4xws?list=PLB0iqEbIPQTZEkNWmGcIFGubrLYSDi5O
 
