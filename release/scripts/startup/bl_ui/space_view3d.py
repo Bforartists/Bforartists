@@ -4529,8 +4529,8 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_mesh_merge", text="Merge", icon = "MERGE")
-        layout.menu("VIEW3D_MT_edit_mesh_split", text="Split", icon = "MERGE")
+        layout.menu("VIEW3D_MT_edit_mesh_merge", text="Merge")
+        layout.menu("VIEW3D_MT_edit_mesh_split", text="Split")
         layout.operator_menu_enum("mesh.separate", "type")
 
         layout.separator()
@@ -5242,7 +5242,7 @@ class VIEW3D_MT_edit_mesh_split(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mesh.split", text="Selection")
+        layout.operator("mesh.split", text="Selection", icon = "SPLIT")
 
         layout.separator()
 
