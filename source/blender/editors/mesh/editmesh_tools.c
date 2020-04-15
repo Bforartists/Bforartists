@@ -1876,10 +1876,10 @@ void MESH_OT_edge_split(wmOperatorType *ot)
 
   /* properties */
   static const EnumPropertyItem merge_type_items[] = {
-      {BM_EDGE, "EDGE", 0, "Faces by Edges", "Split faces along selected edges"},
+      {BM_EDGE, "EDGE", ICON_SPLIT, "Faces by Edges", "Split faces along selected edges"},
       {BM_VERT,
        "VERT",
-       0,
+       ICON_SPLIT,
        "Faces & Edges by Vertices",
        "Split faces & edges connected to selected vertices"},
       {0, NULL, 0, NULL, NULL},
