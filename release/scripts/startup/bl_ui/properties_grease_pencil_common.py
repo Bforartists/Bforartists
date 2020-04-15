@@ -220,6 +220,7 @@ class GreasePencilDisplayPanel:
             col.active = settings.show_brush
 
             if brush.gpencil_tool == 'DRAW':
+                col.use_property_split = False
                 col.prop(gp_settings, "show_lasso", text="Show Fill Color While Drawing")
 
         elif ob.mode == 'SCULPT_GPENCIL':
