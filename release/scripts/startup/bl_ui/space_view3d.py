@@ -3952,7 +3952,7 @@ class VIEW3D_MT_face_sets(Menu):
         op = layout.operator("sculpt.face_sets_create", text='Face Set From Visible', icon = "FILL_MASK")
         op.mode = 'VISIBLE'
 
-        op = layout.operator("sculpt.face_sets_create", text='Face Set From Edit Mode Selection')
+        op = layout.operator("sculpt.face_sets_create", text='Face Set From Edit Mode Selection', icon = "EDITMODE_HLT")
         op.mode = 'SELECTION'
 
         layout.separator()
@@ -4049,28 +4049,28 @@ class VIEW3D_MT_face_sets_init(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        op = layout.operator("sculpt.face_sets_init", text='By Loose Parts')
+        op = layout.operator("sculpt.face_sets_init", text='By Loose Parts', icon = "SELECT_LOOSE")
         op.mode = 'LOOSE_PARTS'
 
-        op = layout.operator("sculpt.face_sets_init", text='By Materials')
+        op = layout.operator("sculpt.face_sets_init", text='By Materials', icon = "MATERIAL_DATA")
         op.mode = 'MATERIALS'
 
-        op = layout.operator("sculpt.face_sets_init", text='By Normals')
+        op = layout.operator("sculpt.face_sets_init", text='By Normals', icon = "RECALC_NORMALS")
         op.mode = 'NORMALS'
 
-        op = layout.operator("sculpt.face_sets_init", text='By UV Seams')
+        op = layout.operator("sculpt.face_sets_init", text='By UV Seams', icon = "MARK_SEAM")
         op.mode = 'UV_SEAMS'
 
-        op = layout.operator("sculpt.face_sets_init", text='By Edge Creases')
+        op = layout.operator("sculpt.face_sets_init", text='By Edge Creases', icon = "CREASE")
         op.mode = 'CREASES'
 
-        op = layout.operator("sculpt.face_sets_init", text='By Edge Bevel Weight')
+        op = layout.operator("sculpt.face_sets_init", text='By Edge Bevel Weight', icon = "BEVEL")
         op.mode = 'BEVEL_WEIGHT'
 
-        op = layout.operator("sculpt.face_sets_init", text='By Sharp Edges')
+        op = layout.operator("sculpt.face_sets_init", text='By Sharp Edges', icon = "SELECT_SHARPEDGES")
         op.mode = 'SHARP_EDGES'
 
-        op = layout.operator("sculpt.face_sets_init", text='By Face Maps')
+        op = layout.operator("sculpt.face_sets_init", text='By Face Maps', icon = "FACE_MAPS")
         op.mode = 'FACE_MAPS'
 
 
