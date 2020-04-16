@@ -1480,12 +1480,10 @@ class CYCLES_LIGHT_PT_light(CyclesButtonsPanel, Panel):
 
         sub = col.column(align=True)
         sub.active = not (light.type == 'AREA' and clamp.is_portal)
-        sub.use_property_split = False
         sub.prop(clamp, "cast_shadow")
         sub.prop(clamp, "use_multiple_importance_sampling", text="Multiple Importance")
 
         if light.type == 'AREA':
-            col.use_property_split = False
             col.prop(clamp, "is_portal", text="Portal")
 
 
