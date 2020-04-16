@@ -3722,23 +3722,23 @@ class VIEW3D_MT_paint_weight_lock(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        op = layout.operator("object.vertex_group_lock", icon='LOCKED', text="Lock All")
+        op = layout.operator("object.vertex_group_lock", text="Lock All", icon='LOCKED')
         op.action, op.mask = 'LOCK', 'ALL'
-        op = layout.operator("object.vertex_group_lock", icon='UNLOCKED', text="Unlock All")
+        op = layout.operator("object.vertex_group_lock", text="Unlock All", icon='UNLOCKED')
         op.action, op.mask = 'UNLOCK', 'ALL'
-        op = layout.operator("object.vertex_group_lock", icon='LOCKED', text="Lock Selected")
+        op = layout.operator("object.vertex_group_lock", text="Lock Selected", icon='LOCKED')
         op.action, op.mask = 'LOCK', 'SELECTED'
-        op = layout.operator("object.vertex_group_lock", icon='UNLOCKED', text="Unlock Selected")
+        op = layout.operator("object.vertex_group_lock", text="Unlock Selected", icon='UNLOCKED')
         op.action, op.mask = 'UNLOCK', 'SELECTED'
-        op = layout.operator("object.vertex_group_lock", icon='LOCKED', text="Lock Unselected")
+        op = layout.operator("object.vertex_group_lock", text="Lock Unselected", icon='LOCKED')
         op.action, op.mask = 'LOCK', 'UNSELECTED'
-        op = layout.operator("object.vertex_group_lock", icon='UNLOCKED', text="Unlock Unselected")
+        op = layout.operator("object.vertex_group_lock",  text="Unlock Unselected", icon='UNLOCKED')
         op.action, op.mask = 'UNLOCK', 'UNSELECTED'
-        op = layout.operator("object.vertex_group_lock", text="Lock Only Selected")
+        op = layout.operator("object.vertex_group_lock", text="Lock Only Selected", icon='RESTRICT_SELECT_OFF')
         op.action, op.mask = 'LOCK', 'INVERT_UNSELECTED'
-        op = layout.operator("object.vertex_group_lock", text="Lock Only Unselected")
+        op = layout.operator("object.vertex_group_lock", text="Lock Only Unselected", icon='RESTRICT_SELECT_ON')
         op.action, op.mask = 'UNLOCK', 'INVERT_UNSELECTED'
-        op = layout.operator("object.vertex_group_lock", text="Invert Locks")
+        op = layout.operator("object.vertex_group_lock", text="Invert Locks", icon='INVERSE')
         op.action, op.mask = 'INVERT', 'ALL'
 
 
