@@ -62,6 +62,15 @@ if not os.path.exists(matlib_path):
     shutil.copy2(os.path.join(addon_path, "categories.txt"), matlib_path)
     shutil.copy2(os.path.join(addon_path, "templates.blend"), matlib_path)
     shutil.copy2(os.path.join(addon_path, "sample_materials.blend"), matlib_path)
+    # bforartists libraries
+    shutil.copy2(os.path.join(addon_path, "basic.blend"), matlib_path)
+    shutil.copy2(os.path.join(addon_path, "Ceramic.blend"), matlib_path)
+    shutil.copy2(os.path.join(addon_path, "foliage.blend"), matlib_path)
+    shutil.copy2(os.path.join(addon_path, "Glass.blend"), matlib_path)
+    shutil.copy2(os.path.join(addon_path, "Liquids.blend"), matlib_path)
+    shutil.copy2(os.path.join(addon_path, "Metal.blend"), matlib_path)
+    shutil.copy2(os.path.join(addon_path, "Paint.blend"), matlib_path)
+
 
 ##debug print variables
 def dd(*args, dodir=False):
