@@ -5748,7 +5748,6 @@ class VIEW3D_MT_edit_armature(Menu):
             layout.operator("armature.extrude_forked", icon = "EXTRUDE_REGION")
 
         layout.operator("armature.duplicate_move", icon = "DUPLICATE")
-        layout.operator("armature.merge", icon = "MERGE")
         layout.operator("armature.fill", icon = "FILLBETWEEN")
 
         layout.separator()
