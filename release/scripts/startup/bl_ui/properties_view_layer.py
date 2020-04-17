@@ -56,9 +56,11 @@ class VIEWLAYER_PT_layer(ViewLayerButtonsPanel, Panel):
         rd = scene.render
         layer = context.view_layer
 
-        col = flow.column()
+        col = layout.column()
         col.prop(layer, "use", text="Use for Rendering")
         col = flow.column()
+        col = layout.column()
+        col.use_property_split = False
         col.prop(rd, "use_single_layer", text="Render Single Layer")
 
 
@@ -78,7 +80,7 @@ class VIEWLAYER_PT_eevee_layer_passes_data(ViewLayerButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         scene = context.scene
@@ -135,6 +137,7 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
         col = layout.column(align=True)
+        col.use_property_split = False
         col.prop(view_layer, "use_pass_emit", text="Emission")
         col.prop(view_layer, "use_pass_environment")
         col.prop(view_layer, "use_pass_shadow")
@@ -162,6 +165,7 @@ class VIEWLAYER_PT_eevee_layer_passes_effects(ViewLayerButtonsPanel, Panel):
         scene_eevee = scene.eevee
 
         col = flow.column()
+        col.use_property_split = False
         col.prop(view_layer_eevee, "use_pass_bloom", text="Bloom")
         col.active = scene_eevee.use_bloom
 
