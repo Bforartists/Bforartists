@@ -579,7 +579,7 @@ UserDef *BKE_blendfile_userdef_from_defaults(void)
         "io_scene_gltf2",
         "io_scene_obj",
         "io_scene_x3d",
-	"cycles",
+	      "cycles",
         "materials_library_vx",
         "minilightlib",
         "bforartists_toolbar_settings",
@@ -587,6 +587,7 @@ UserDef *BKE_blendfile_userdef_from_defaults(void)
         "edit_dimensions",
         "reset3dview",
         "smartdelete_bfa",
+        "align_view_buttons",
     };
     for (int i = 0; i < ARRAY_SIZE(addons); i++) {
       bAddon *addon = BKE_addon_new();
