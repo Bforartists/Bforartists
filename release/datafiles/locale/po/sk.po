@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
-"PO-Revision-Date: 2020-04-03 09:53+0200\n"
+"PO-Revision-Date: 2020-04-12 14:00+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: pegas\n"
 "Language: sk_SK\n"
@@ -3261,6 +3261,10 @@ msgstr "Rozmazanie"
 
 msgid "Hardness"
 msgstr "Tvrdosť"
+
+
+msgid "Gradient from the center of Dot and Box strokes (set to 1 for a solid stroke)"
+msgstr "Stupňovitosť od stredu ťahov Bodka a Schránka (nastavený na 1 pre plný ťah)"
 
 
 msgid "Input Samples"
@@ -15454,6 +15458,14 @@ msgid "Factor of Opacity"
 msgstr "Faktor priehľadnosti"
 
 
+msgid "Factor of stroke hardness"
+msgstr "Faktor tvrdosti ťahu"
+
+
+msgid "Modify stroke hardness"
+msgstr "Upraví tvrdosť ťahu"
+
+
 msgid "Uniform Opacity"
 msgstr "Rovnomerná nepriehľadnosť"
 
@@ -16145,6 +16157,10 @@ msgstr "Množstvo vyhladenia, ktoré sa automaticky použije pri každom ťahu"
 
 msgid "Propagation Steps"
 msgstr "Kroky propagácie"
+
+
+msgid "Distance where boundary edge automasking is going to protect vertices from the fully masked edge"
+msgstr "Vzdialenosť automatického maskovania hrán okrajov chrániaca vrcholy pred plne maskovanou hranou"
 
 
 msgid "Blending Mode"
@@ -16967,10 +16983,6 @@ msgid "Smooths the surface and the volume"
 msgstr "Vyhladiť povrch a objem"
 
 
-msgid "Smooths the surface of the mesh, preserving the volue"
-msgstr "Vyhladí povrchové siete a zachováva objem"
-
-
 msgid "Smooth Stroke Factor"
 msgstr "Faktor vyhladenia ťahu"
 
@@ -17149,6 +17161,14 @@ msgstr "Automatické maskovanie okrajov povrchovej siete"
 
 msgid "Do not affect non manifold boundary edges"
 msgstr "Neovplyvňujú nerozmanité okrajové hrany"
+
+
+msgid "Face Sets Boundary Automasking"
+msgstr "Automatické maskovanie nastavenia okrajov plôšok"
+
+
+msgid "Do not affect vertices that belong to a Face Set boundary"
+msgstr "Neovplyvňujú vrcholy, ktoré patria do okrajov sústavy plôšky"
 
 
 msgid "Face Sets Auto-masking"
@@ -24987,6 +25007,10 @@ msgstr "Blok údajov objemu pre mriežky 3D objemu"
 
 msgid "Volume display settings for 3d viewport"
 msgstr "Nastavenie zobrazenia objemu pre 3D záber"
+
+
+msgid "Volume file used by this Volume data-block"
+msgstr "Súbor objemu použitý v tomto bloku údajov objemu"
 
 
 msgid "Number of frames of the sequence to use"
@@ -33044,6 +33068,10 @@ msgstr "Výstup s vyhladeným povrchom bez zistených ostrých čŕt"
 
 msgid "Output a surface that reproduces sharp edges and corners from the input mesh"
 msgstr "Výstup povrchu, ktorý reprodukuje ostré hrany a rohy z vstupnej povrchovej siete"
+
+
+msgid "Output a mesh corresponding to the volume of the original mesh"
+msgstr "Výstup povrchovej siete zodpovedajúcej objemu pôvodnej povrchovej siete"
 
 
 msgid "Octree Depth"
@@ -41330,12 +41358,20 @@ msgid "Select Linked All"
 msgstr "Vybrať všetky pripojené"
 
 
+msgid "Select all bones linked by parent/child connections to the current selection"
+msgstr "Vyberie všetky napojené kosti podľa rodič/potomok na aktuálny výber"
+
+
 msgid "All Forks"
 msgstr "Všetky vidlice"
 
 
 msgid "Follow forks in the parents chain"
 msgstr "Nasleduje vidlice v reťazci rodičov"
+
+
+msgid "(De)select bones linked by parent/child connections under the mouse cursor"
+msgstr "Pod kurzorom myši zruší výber/vyberie kosti napojené podľa rodič/potomok"
 
 
 msgctxt "Operator"
@@ -41416,8 +41452,8 @@ msgstr "Oddelí vybrané kosti od pripojených nevybraných kostí"
 
 
 msgctxt "Operator"
-msgid "Subdivide Multi"
-msgstr "Viacnásobné delenie"
+msgid "Subdivide"
+msgstr "Rozdeliť"
 
 
 msgid "Break selected bones into chains of smaller bones"
@@ -43987,11 +44023,6 @@ msgstr "Nastaví cieľovú váhu mäkkého telesa pre vybrané body"
 
 msgid "Split off selected points from connected unselected points"
 msgstr "Oddelí vybrané body od pripojených nevybratých bodov"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "Rozdeliť"
 
 
 msgid "Subdivide selected segments"
@@ -46713,10 +46744,6 @@ msgstr "Vytvorí inverzný obrázok na maskovanie použitím alfa kanála"
 
 msgid "Point Size"
 msgstr "Veľkosť bodu"
-
-
-msgid "Size used for graese pencil points"
-msgstr "Veľkosť použitá na body pastelky"
 
 
 msgctxt "Operator"
@@ -50557,6 +50584,15 @@ msgstr "Vytvoriť kópiu"
 
 
 msgctxt "Operator"
+msgid "Collapse Edges & Faces"
+msgstr "Zbúrať hrany a plôšky"
+
+
+msgid "Collapse isolated edges & faces regions, merging data such as UV's and vertex colors. This can collapse edge-rings as well as regions of connected faces into vertices"
+msgstr "Zbúra izolované oblasti okrajov a plôšok, zlučuje údaje ako UV a farby vrcholov. To môže zbúrať prstence okrajov, ako aj oblasti plôšok napojených na vrcholyh"
+
+
+msgctxt "Operator"
 msgid "Make Edge/Face"
 msgstr "Vytvoriť hranu/plôšku"
 
@@ -50581,6 +50617,26 @@ msgstr "Oddeliť hranu"
 
 msgid "Split selected edges so that each neighbor face gets its own copy"
 msgstr "Oddelí vybrané hrany tak, aby každá susedná plôška dostala svoju vlastnú kópiu"
+
+
+msgid "Method to use for splitting"
+msgstr "Metóda použitá na rozdelenie"
+
+
+msgid "Faces by Edges"
+msgstr "Plôšky podľa hrán"
+
+
+msgid "Split faces along selected edges"
+msgstr "Rozdelí plôšky pozdĺž vybraných hrán"
+
+
+msgid "Faces & Edges by Vertices"
+msgstr "Plôšky a hrany podľa vrcholov"
+
+
+msgid "Split faces & edges connected to selected vertices"
+msgstr "Rozdelí plôšky a hrany napojené na vybrané vrcholy"
 
 
 msgctxt "Operator"
@@ -52428,10 +52484,6 @@ msgstr "Vyberie najkratšiu cestu medzi dvomi vrcholmi/hranami/plôškami"
 msgctxt "Operator"
 msgid "Smooth Normals Vectors"
 msgstr "Vyhladiť vektory kolmíc"
-
-
-msgid "Smoothen custom normals based on adjacent vertex normals"
-msgstr "Vyhladí vlastné kolmice založené na priľahlých kolmiciach vrcholov"
 
 
 msgid "Specifies weight of smooth vs original normal"
@@ -56656,6 +56708,15 @@ msgstr "Vypočíta novú rozmanitú povrchovú sieť založenú na objeme aktuá
 
 
 msgctxt "Operator"
+msgid "Edit Voxel Size"
+msgstr "Upraviť veľkosť voxelu"
+
+
+msgid "Modify the mesh voxel size interactively used in the voxel remesher"
+msgstr "Upraví veľkosť voxelu povrchovej siete interaktívne použitého v pretváračovi topológie voxelu"
+
+
+msgctxt "Operator"
 msgid "Outliner Set Action"
 msgstr "Nastaviť akciu Líniového prehľadu"
 
@@ -57487,15 +57548,6 @@ msgstr "Pridať zásuvku maľby textúry"
 
 msgid "Add a texture paint slot"
 msgstr "Pridá zásuvku maľby textúry"
-
-
-msgctxt "Operator"
-msgid "Brush Colors Flip"
-msgstr "Preklopiť farby štetca"
-
-
-msgid "Toggle foreground and background brush colors"
-msgstr "Prepína farby popredia a pozadia štetca"
 
 
 msgctxt "Operator"
@@ -67479,6 +67531,14 @@ msgid "Mask painting according to mesh geometry cavity"
 msgstr "Maska nakreslená podľa geometrie dutiny povrchovej siete"
 
 
+msgid "Delay Viewport Updates"
+msgstr "Obnovenia oneskorení záberu"
+
+
+msgid "Update the geometry when it enters the view, providing faster view navigation"
+msgstr "Obnoví geometriu pri vstupe do zobrazenia, čím sa získa rýchlejšia navigácia zobrazenia"
+
+
 msgid "Symmetry Feathering"
 msgstr "Zjemnenie symetrie"
 
@@ -67825,6 +67885,10 @@ msgstr "Zobrazí masku ako navrstvenie objektu"
 
 msgid "Source and destination for symmetrize operator"
 msgstr "Zdroj a cieľ pre opreátor symetrie"
+
+
+msgid "Face Sets Boundary Auto-masking"
+msgstr "Automatické maskovanie nastavenia okrajov plôšok"
 
 
 msgid "Use Deform Only"
@@ -72889,14 +72953,6 @@ msgstr "Otvorenie smeru nasledovania obsahu"
 
 msgid "Otherwise menus, etc will always be top to bottom, left to right, no matter opening direction"
 msgstr "Inak ponuky, atď. bude vždy zhora nadol, zľava doprava, bez ohľadu na otvorenie smeru"
-
-
-msgid "Translate UI"
-msgstr "Preložiť užívateľské rozhranie"
-
-
-msgid "Enable UI translation and use international fonts"
-msgstr "Povolí preklad užívateľského rozhrania a používanie medzinárodných písiem"
 
 
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
@@ -81077,7 +81133,15 @@ msgstr "Použiť pozadie"
 
 
 msgid "Display result under strips"
-msgstr "Zobrazí výsledok pod pásmi"
+msgstr "Zobraziť výsledok pod pásmi"
+
+
+msgid "Show F-Curves"
+msgstr "Zobraziť F-krivky"
+
+
+msgid "Display strip opacity/volume curve"
+msgstr "Zobrazí krivku nepriehľadnosti/objemu pásu"
 
 
 msgid "Display Frames"
@@ -86201,6 +86265,14 @@ msgid "Frame number that volume grids will be loaded at, based on scene time and
 msgstr "Počet snímok, do ktorých sa načítajú mriežky objemu, na základe času scény a parametrov objemu"
 
 
+msgid "Frame File Path"
+msgstr "Cesta súboru snímky"
+
+
+msgid "Volume file used for loading the volume at the current frame. Empty if the volume has not be loaded or the frame only exists in memory"
+msgstr "Súbor objemu použitý na načítanie objemu aktuálne snímky. Je prázdny, ak objem nebol načítaný, alebo ak snímka existuje iba v pamäti"
+
+
 msgid "List of grids and metadata are loaded in memory"
 msgstr "Zoznam mriežok a metaúdajov načítaných do pamäte"
 
@@ -87525,12 +87597,12 @@ msgid "Subsurface"
 msgstr "Podpovrchové"
 
 
-msgid "Min Samples"
-msgstr "Minimálne vzorky"
-
-
 msgid "Noise Threshold"
 msgstr "Prah šumu"
+
+
+msgid "Min Samples"
+msgstr "Minimálne vzorky"
 
 
 msgid "Dicing Rate Render"
@@ -87717,6 +87789,14 @@ msgstr "Neplatný cieľ %r (musí byť 'KOSTRA' alebo 'OBJEKT')"
 
 msgid "Cameras & Markers (.py)"
 msgstr "Kamery a označenia (.py)"
+
+
+msgid "Operation aborted by user"
+msgstr "Operácia prerušená užívateľom"
+
+
+msgid "utf-8surrogateescape"
+msgstr "utf-8surrogateescape"
 
 
 msgid "Unable to parse XML, %s:%s for file %r"
@@ -93816,11 +93896,6 @@ msgstr "Ukázať na cieľ..."
 
 
 msgctxt "Operator"
-msgid "Smoothen Vectors"
-msgstr "Vyhladené vektory"
-
-
-msgctxt "Operator"
 msgid "Smooth Faces"
 msgstr "Vyhladiť plôšky"
 
@@ -93843,6 +93918,11 @@ msgstr "Hrany slučiek"
 msgctxt "Operator"
 msgid "By Distance"
 msgstr "Podľa vzdialenosti"
+
+
+msgctxt "Operator"
+msgid "Selection"
+msgstr "Výber"
 
 
 msgctxt "Operator"
@@ -94089,6 +94169,16 @@ msgstr "Prstence hrán"
 
 
 msgctxt "Operator"
+msgid "Previous Block"
+msgstr "Predošlý blok"
+
+
+msgctxt "Operator"
+msgid "Next Block"
+msgstr "Ďalší blok"
+
+
+msgctxt "Operator"
 msgid "Vertex Color"
 msgstr "Farba vrcholov"
 
@@ -94194,21 +94284,6 @@ msgstr "Prilepiť prevrátenú pózu"
 
 
 msgctxt "Operator"
-msgid "AutoName Left/Right"
-msgstr "Automatický názov vľavo/vpravo"
-
-
-msgctxt "Operator"
-msgid "AutoName Front/Back"
-msgstr "Automatický názov dopredu/dozadu"
-
-
-msgctxt "Operator"
-msgid "AutoName Top/Bottom"
-msgstr "Automatický názov hore/dole"
-
-
-msgctxt "Operator"
 msgid "To Next Keyframe"
 msgstr "Do ďalšej kľúčovej snímky"
 
@@ -94226,6 +94301,21 @@ msgstr "Na vybraných kľúčových snímkach"
 msgctxt "Operator"
 msgid "On Selected Markers"
 msgstr "Na vybraných značkách"
+
+
+msgctxt "Operator"
+msgid "AutoName Left/Right"
+msgstr "Automatický názov vľavo/vpravo"
+
+
+msgctxt "Operator"
+msgid "AutoName Front/Back"
+msgstr "Automatický názov dopredu/dozadu"
+
+
+msgctxt "Operator"
+msgid "AutoName Top/Bottom"
+msgstr "Automatický názov hore/dole"
 
 
 msgctxt "Operator"
@@ -94450,6 +94540,16 @@ msgstr "Zvýšiť medziznakovú medzeru"
 msgctxt "Operator"
 msgid "Reset Kerning"
 msgstr "Obnoviť medziznakovú medzeru"
+
+
+msgctxt "Operator"
+msgid "Previous Character"
+msgstr "Predošlý znak"
+
+
+msgctxt "Operator"
+msgid "Next Character"
+msgstr "Ďalší znak"
 
 
 msgctxt "Operator"
@@ -98783,6 +98883,10 @@ msgstr "Kolekciu '%s' (vytvorenú podľa aktívneho objektu) nie je možné prep
 
 msgid "Active object '%s' is not overridable"
 msgstr "Aktívny objekt '%s' nie je možné prepísať"
+
+
+msgid "Move the mouse to change the voxel size. LBM: confirm size, ESC/RMB: cancel"
+msgstr "Posúvaním myši zmeníte veľkosť voxelu. ĽTM: potvrdiť veľkosť, ESC/PTM: zrušiť"
 
 
 msgid "Voxel remesher cannot run with a voxel size of 0.0"
@@ -103867,12 +103971,12 @@ msgid "Cannot overwrite used library '%.240s'"
 msgstr "Použitú knižnicu '%.240s' nemožno prepísať"
 
 
-msgid "Can't read alternative start-up file: '%s'"
-msgstr "Nemožno načítať alternatívny spúšťací súbor: '%s'"
-
-
 msgid "Saved \"%s\""
 msgstr "Uložené \"%s\""
+
+
+msgid "Can't read alternative start-up file: '%s'"
+msgstr "Nemožno načítať alternatívny spúšťací súbor: '%s'"
 
 
 msgid "Not a library"

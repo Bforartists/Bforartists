@@ -205,6 +205,7 @@ struct uiBut {
   uiButSearchFunc search_func;
   void *search_arg;
   uiButSearchArgFreeFunc search_arg_free_func;
+  const char *search_sep_string;
 
   uiButHandleRenameFunc rename_func;
   void *rename_arg1;
@@ -789,6 +790,11 @@ float ui_block_calc_pie_segment(struct uiBlock *block, const float event_xy[2]);
 
 void ui_but_add_shortcut(uiBut *but, const char *key_str, const bool do_strip);
 void ui_but_clipboard_free(void);
+bool ui_but_rna_equals(const uiBut *a, const uiBut *b);
+bool ui_but_rna_equals_ex(const uiBut *but,
+                          const PointerRNA *ptr,
+                          const PropertyRNA *prop,
+                          int index);
 uiBut *ui_but_find_old(uiBlock *block_old, const uiBut *but_new);
 uiBut *ui_but_find_new(uiBlock *block_old, const uiBut *but_new);
 
@@ -851,7 +857,8 @@ void ui_draw_menu_item(const struct uiFontStyle *fstyle,
                        const char *name,
                        int iconid,
                        int state,
-                       bool use_sep);
+                       bool use_sep,
+                       int *r_xmax);
 void ui_draw_preview_item(
     const struct uiFontStyle *fstyle, rcti *rect, const char *name, int iconid, int state);
 
@@ -915,6 +922,7 @@ bool ui_but_is_toggle(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
 bool ui_but_is_interactive(const uiBut *but, const bool labeledit) ATTR_WARN_UNUSED_RESULT;
 bool ui_but_is_popover_once_compat(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
 bool ui_but_has_array_value(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
+int ui_but_icon(const uiBut *but);
 void ui_but_pie_dir(RadialDirection dir, float vec[2]);
 
 bool ui_but_is_cursor_warp(const uiBut *but) ATTR_WARN_UNUSED_RESULT;

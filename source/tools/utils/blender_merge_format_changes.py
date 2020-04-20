@@ -101,7 +101,7 @@ if code != 0:
         # Otherwise create a commit for formatting.
         os.system('git commit -m "Cleanup: apply clang format"')
 
-# Rebase remaning commits
+# Rebase remaining commits
 code = os.system('git ' + mode_cmd + ' ' + base_branch)
 if code != 0:
     print("BLENDER MERGE: resolve conflicts, complete " + mode + " and you're done")

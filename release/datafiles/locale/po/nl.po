@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -1854,11 +1854,6 @@ msgstr "Pak Korste Route"
 msgctxt "Operator"
 msgid "Split"
 msgstr "Splits"
-
-
-msgctxt "Operator"
-msgid "Subdivide Multi"
-msgstr "Verdeel Meerdere Keren"
 
 
 msgctxt "Operator"

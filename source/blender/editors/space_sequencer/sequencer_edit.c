@@ -723,7 +723,7 @@ static void recurs_del_seq_flag(Scene *scene, ListBase *lb, short flag, short de
       if (seq->type == SEQ_TYPE_META) {
         recurs_del_seq_flag(scene, &seq->seqbase, flag, 1);
       }
-      BKE_sequence_free(scene, seq);
+      BKE_sequence_free(scene, seq, true);
     }
     seq = seqn;
   }
@@ -841,6 +841,7 @@ static Sequence *split_seq_hard(
 
     BKE_sequence_reload_new_file(bmain, scene, seqn, false);
     BKE_sequence_calc(scene, seqn);
+    BKE_sequence_invalidate_cache_in_range(scene, seq, seqn, SEQ_CACHE_ALL_TYPES);
   }
   return seqn;
 }
@@ -940,6 +941,7 @@ static Sequence *split_seq_soft(
     }
 
     BKE_sequence_calc(scene, seqn);
+    BKE_sequence_invalidate_cache_in_range(scene, seq, seqn, SEQ_CACHE_ALL_TYPES);
   }
   return seqn;
 }
@@ -2644,7 +2646,7 @@ static int sequencer_separate_images_exec(bContext *C, wmOperator *op)
       }
 
       seq_next = seq->next;
-      BKE_sequence_free(scene, seq);
+      BKE_sequence_free(scene, seq, true);
       seq = seq_next;
     }
     else {
@@ -2869,7 +2871,7 @@ static int sequencer_meta_separate_exec(bContext *C, wmOperator *UNUSED(op))
   BLI_listbase_clear(&last_seq->seqbase);
 
   BLI_remlink(ed->seqbasep, last_seq);
-  BKE_sequence_free(scene, last_seq);
+  BKE_sequence_free(scene, last_seq, true);
 
   /* Empty meta strip, delete all effects depending on it. */
   for (seq = ed->seqbasep->first; seq; seq = seq->next) {

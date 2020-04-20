@@ -135,7 +135,10 @@ typedef struct IDOverrideLibraryPropertyOperation {
   /* Type of override. */
   short operation;
   short flag;
-  char _pad0[4];
+
+  /** Runtime, tags are common to both IDOverrideProperty and IDOverridePropertyOperation. */
+  short tag;
+  char _pad0[2];
 
   /* Sub-item references, if needed (for arrays or collections only).
    * We need both reference and local values to allow e.g. insertion into collections
@@ -189,7 +192,17 @@ typedef struct IDOverrideLibraryProperty {
 
   /** List of overriding operations (IDOverridePropertyOperation) applied to this property. */
   ListBase operations;
+
+  /** Runtime, tags are common to both IDOverrideProperty and IDOverridePropertyOperation. */
+  short tag;
+  char _pad0[6];
 } IDOverrideLibraryProperty;
+
+/* IDOverrideProperty->tag and IDOverridePropertyOperation->tag. */
+enum {
+  /** This override property (operation) is unused and should be removed by cleanup process. */
+  IDOVERRIDE_LIBRARY_TAG_UNUSED = 1 << 0,
+};
 
 /* We do not need a full struct for that currently, just a GHash. */
 typedef struct GHash IDOverrideLibraryRuntime;
@@ -246,19 +259,22 @@ typedef struct ID {
   int icon_id;
   int recalc;
   /**
-   * Used by undo code. Value of recalc is stored there when reading an ID from memfile, and not
-   * touched by anything, which means it can be used as 'reference' recalc value for the next undo
-   * step, when going backward (i.e. actual undo, redo can just use recalc value directly).
+   * Used by undo code. recalc_after_undo_push contains the changes between the
+   * last undo push and the current state. This is accumulated as IDs are tagged
+   * for update in the depsgraph, and only cleared on undo push.
+   *
+   * recalc_up_to_undo_push is saved to undo memory, and is the value of
+   * recalc_after_undo_push at the time of the undo push. This means it can be
+   * used to find the changes between undo states.
    */
-  int recalc_undo_accumulated;
+  int recalc_up_to_undo_push;
+  int recalc_after_undo_push;
 
   /**
    * A session-wide unique identifier for a given ID, that remain the same across potential
    * re-allocations (e.g. due to undo/redo steps).
    */
   unsigned int session_uuid;
-
-  char _pad[4];
 
   IDProperty *properties;
 
@@ -536,9 +552,9 @@ enum {
   /* RESET_NEVER tag data-block as needing an auto-override execution, if enabled. */
   LIB_TAG_OVERRIDE_LIBRARY_AUTOREFRESH = 1 << 17,
 
-  /* tag data-block has having an extra user. */
+  /* tag data-block as having an extra user. */
   LIB_TAG_EXTRAUSER = 1 << 2,
-  /* tag data-block has having actually increased usercount for the extra virtual user. */
+  /* tag data-block as having actually increased usercount for the extra virtual user. */
   LIB_TAG_EXTRAUSER_SET = 1 << 7,
 
   /* RESET_AFTER_USE tag newly duplicated/copied IDs.

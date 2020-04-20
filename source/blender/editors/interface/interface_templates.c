@@ -287,8 +287,14 @@ static uiBlock *template_common_search_menu(const bContext *C,
                          0,
                          "");
   }
-  UI_but_func_search_set(
-      but, ui_searchbox_create_generic, search_func, search_arg, NULL, handle_func, active_item);
+  UI_but_func_search_set(but,
+                         ui_searchbox_create_generic,
+                         search_func,
+                         search_arg,
+                         NULL,
+                         handle_func,
+                         NULL,
+                         active_item);
 
   UI_block_bounds_set_normal(block, 0.3f * U.widget_unit);
   UI_block_direction_set(block, UI_DIR_DOWN);
@@ -530,6 +536,7 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
 
       if (id && CTX_wm_window(C)->eventstate->shift) {
         /* only way to force-remove data (on save) */
+        id_us_clear_real(id);
         id_fake_user_clear(id);
         id->us = 0;
       }
@@ -2245,6 +2252,10 @@ static uiLayout *gpencil_draw_modifier(uiLayout *layout, Object *ob, GpencilModi
                 0,
                 "apply_as",
                 MODIFIER_APPLY_DATA);
+
+    UI_block_lock_clear(block);
+    UI_block_lock_set(block, ob && ID_IS_LINKED(ob), ERROR_LIBDATA_MESSAGE);
+
     uiItemO(row,
             CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy"),
             ICON_NONE,
@@ -2424,27 +2435,257 @@ uiLayout *uiTemplateShaderFx(uiLayout *layout, bContext *UNUSED(C), PointerRNA *
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Operator Redo Buttons Template
+/** \name Operator Property Buttons Template
  * \{ */
 
-static void template_operator_redo_property_buts_draw(
-    const bContext *C, wmOperator *op, uiLayout *layout, int layout_flags, bool *r_has_advanced)
+typedef struct uiTemplateOperatorPropertyPollParam {
+  const bContext *C;
+  wmOperator *op;
+  short flag;
+} uiTemplateOperatorPropertyPollParam;
+
+#ifdef USE_OP_RESET_BUT
+static void ui_layout_operator_buts__reset_cb(bContext *UNUSED(C),
+                                              void *op_pt,
+                                              void *UNUSED(arg_dummy2))
+{
+  WM_operator_properties_reset((wmOperator *)op_pt);
+}
+#endif
+
+static bool ui_layout_operator_buts_poll_property(struct PointerRNA *UNUSED(ptr),
+                                                  struct PropertyRNA *prop,
+                                                  void *user_data)
+{
+  uiTemplateOperatorPropertyPollParam *params = user_data;
+
+  if ((params->flag & UI_TEMPLATE_OP_PROPS_HIDE_ADVANCED) &&
+      (RNA_property_tags(prop) & OP_PROP_TAG_ADVANCED)) {
+    return false;
+  }
+  return params->op->type->poll_property(params->C, params->op, prop);
+}
+
+static eAutoPropButsReturn template_operator_property_buts_draw_single(
+    const bContext *C,
+    wmOperator *op,
+    uiLayout *layout,
+    const eButLabelAlign label_align,
+    int layout_flags)
+{
+  uiBlock *block = uiLayoutGetBlock(layout);
+  eAutoPropButsReturn return_info = 0;
+
+  if (!op->properties) {
+    IDPropertyTemplate val = {0};
+    op->properties = IDP_New(IDP_GROUP, &val, "wmOperatorProperties");
+  }
+
+  /* poll() on this operator may still fail,
+   * at the moment there is no nice feedback when this happens just fails silently. */
+  if (!WM_operator_repeat_check(C, op)) {
+    UI_block_lock_set(block, true, "Operator can't' redo");
+    return return_info;
+  }
+  else {
+    /* useful for macros where only one of the steps can't be re-done */
+    UI_block_lock_clear(block);
+  }
+
+  if (layout_flags & UI_TEMPLATE_OP_PROPS_SHOW_TITLE) {
+    uiItemL(layout, WM_operatortype_name(op->type, op->ptr), ICON_NONE);
+  }
+
+  /* menu */
+  if (op->type->flag & OPTYPE_PRESET) {
+    /* XXX, no simple way to get WM_MT_operator_presets.bl_label
+     * from python! Label remains the same always! */
+    PointerRNA op_ptr;
+    uiLayout *row;
+
+    block->ui_operator = op;
+
+    row = uiLayoutRow(layout, true);
+    uiItemM(row, "WM_MT_operator_presets", NULL, ICON_NONE);
+
+    wmOperatorType *ot = WM_operatortype_find("WM_OT_operator_preset_add", false);
+    uiItemFullO_ptr(row, ot, "", ICON_ADD, NULL, WM_OP_INVOKE_DEFAULT, 0, &op_ptr);
+    RNA_string_set(&op_ptr, "operator", op->type->idname);
+
+    uiItemFullO_ptr(row, ot, "", ICON_REMOVE, NULL, WM_OP_INVOKE_DEFAULT, 0, &op_ptr);
+    RNA_string_set(&op_ptr, "operator", op->type->idname);
+    RNA_boolean_set(&op_ptr, "remove_active", true);
+  }
+
+  if (op->type->ui) {
+    op->layout = layout;
+    op->type->ui((bContext *)C, op);
+    op->layout = NULL;
+
+    /* UI_LAYOUT_OP_SHOW_EMPTY ignored. retun_info is ignored too. We could
+     * allow ot.ui callback to return this, but not needed right now. */
+  }
+  else {
+    wmWindowManager *wm = CTX_wm_manager(C);
+    PointerRNA ptr;
+    uiTemplateOperatorPropertyPollParam user_data = {.C = C, .op = op, .flag = layout_flags};
+    const bool use_prop_split = (layout_flags & UI_TEMPLATE_OP_PROPS_NO_SPLIT_LAYOUT) == 0;
+
+    RNA_pointer_create(&wm->id, op->type->srna, op->properties, &ptr);
+
+    uiLayoutSetPropSep(layout, use_prop_split);
+    uiLayoutSetPropDecorate(layout, false);
+
+    /* main draw call */
+    return_info = uiDefAutoButsRNA(
+        layout,
+        &ptr,
+        op->type->poll_property ? ui_layout_operator_buts_poll_property : NULL,
+        op->type->poll_property ? &user_data : NULL,
+        op->type->prop,
+        label_align,
+        (layout_flags & UI_TEMPLATE_OP_PROPS_COMPACT));
+
+    if ((return_info & UI_PROP_BUTS_NONE_ADDED) &&
+        (layout_flags & UI_TEMPLATE_OP_PROPS_SHOW_EMPTY)) {
+      uiItemL(layout, IFACE_("No Properties"), ICON_NONE);
+    }
+  }
+
+#ifdef USE_OP_RESET_BUT
+  /* its possible that reset can do nothing if all have PROP_SKIP_SAVE enabled
+   * but this is not so important if this button is drawn in those cases
+   * (which isn't all that likely anyway) - campbell */
+  if (op->properties->len) {
+    uiBut *but;
+    uiLayout *col; /* needed to avoid alignment errors with previous buttons */
+
+    col = uiLayoutColumn(layout, false);
+    block = uiLayoutGetBlock(col);
+    but = uiDefIconTextBut(block,
+                           UI_BTYPE_BUT,
+                           0,
+                           ICON_FILE_REFRESH,
+                           IFACE_("Reset"),
+                           0,
+                           0,
+                           UI_UNIT_X,
+                           UI_UNIT_Y,
+                           NULL,
+                           0.0,
+                           0.0,
+                           0.0,
+                           0.0,
+                           TIP_("Reset operator defaults"));
+    UI_but_func_set(but, ui_layout_operator_buts__reset_cb, op, NULL);
+  }
+#endif
+
+  /* set various special settings for buttons */
+
+  /* Only do this if we're not refreshing an existing UI. */
+  if (block->oldblock == NULL) {
+    const bool is_popup = (block->flag & UI_BLOCK_KEEP_OPEN) != 0;
+    uiBut *but;
+
+    for (but = block->buttons.first; but; but = but->next) {
+      /* no undo for buttons for operator redo panels */
+      UI_but_flag_disable(but, UI_BUT_UNDO);
+
+      /* only for popups, see [#36109] */
+
+      /* if button is operator's default property, and a text-field, enable focus for it
+       * - this is used for allowing operators with popups to rename stuff with fewer clicks
+       */
+      if (is_popup) {
+        if ((but->rnaprop == op->type->prop) && (but->type == UI_BTYPE_TEXT)) {
+          UI_but_focus_on_enter_event(CTX_wm_window(C), but);
+        }
+      }
+    }
+  }
+
+  return return_info;
+}
+
+static void template_operator_property_buts_draw_recursive(const bContext *C,
+                                                           wmOperator *op,
+                                                           uiLayout *layout,
+                                                           const eButLabelAlign label_align,
+                                                           int layout_flags,
+                                                           bool *r_has_advanced)
 {
   if (op->type->flag & OPTYPE_MACRO) {
     LISTBASE_FOREACH (wmOperator *, macro_op, &op->macro) {
-      template_operator_redo_property_buts_draw(C, macro_op, layout, layout_flags, r_has_advanced);
+      template_operator_property_buts_draw_recursive(
+          C, macro_op, layout, label_align, layout_flags, r_has_advanced);
     }
   }
   else {
     /* Might want to make label_align adjustable somehow. */
-    eAutoPropButsReturn return_info = uiTemplateOperatorPropertyButs(
-        C, layout, op, UI_BUT_LABEL_ALIGN_NONE, layout_flags);
+    eAutoPropButsReturn return_info = template_operator_property_buts_draw_single(
+        C, op, layout, label_align, layout_flags);
     if (return_info & UI_PROP_BUTS_ANY_FAILED_CHECK) {
       if (r_has_advanced) {
         *r_has_advanced = true;
       }
     }
   }
+}
+
+static bool ui_layout_operator_properties_only_booleans(const bContext *C,
+                                                        wmWindowManager *wm,
+                                                        wmOperator *op,
+                                                        int layout_flags)
+{
+  if (op->type->flag & OPTYPE_MACRO) {
+    LISTBASE_FOREACH (wmOperator *, macro_op, &op->macro) {
+      if (!ui_layout_operator_properties_only_booleans(C, wm, macro_op, layout_flags)) {
+        return false;
+      }
+    }
+  }
+  else {
+    uiTemplateOperatorPropertyPollParam user_data = {.C = C, .op = op, .flag = layout_flags};
+    PointerRNA ptr;
+
+    RNA_pointer_create(&wm->id, op->type->srna, op->properties, &ptr);
+
+    RNA_STRUCT_BEGIN (&ptr, prop) {
+      if (RNA_property_flag(prop) & PROP_HIDDEN) {
+        continue;
+      }
+      if (op->type->poll_property &&
+          !ui_layout_operator_buts_poll_property(&ptr, prop, &user_data)) {
+        continue;
+      }
+      if (RNA_property_type(prop) != PROP_BOOLEAN) {
+        return false;
+      }
+    }
+    RNA_STRUCT_END;
+  }
+
+  return true;
+}
+
+/**
+ * Draw Operator property buttons for redoing execution with different settings.
+ * This function does not initialize the layout,
+ * functions can be called on the layout before and after.
+ */
+void uiTemplateOperatorPropertyButs(
+    const bContext *C, uiLayout *layout, wmOperator *op, eButLabelAlign label_align, short flag)
+{
+  wmWindowManager *wm = CTX_wm_manager(C);
+
+  /* If there are only checkbox items, don't use split layout by default. It looks weird if the
+   * checkboxes only use half the width. */
+  if (ui_layout_operator_properties_only_booleans(C, wm, op, flag)) {
+    flag |= UI_TEMPLATE_OP_PROPS_NO_SPLIT_LAYOUT;
+  }
+
+  template_operator_property_buts_draw_recursive(C, op, layout, label_align, flag, NULL);
 }
 
 void uiTemplateOperatorRedoProperties(uiLayout *layout, const bContext *C)
@@ -2479,8 +2720,8 @@ void uiTemplateOperatorRedoProperties(uiLayout *layout, const bContext *C)
 #endif
 
     UI_block_func_handle_set(block, ED_undo_operator_repeat_cb_evt, op);
-    template_operator_redo_property_buts_draw(
-        C, op, layout, layout_flags, NULL /* &has_advanced */);
+    template_operator_property_buts_draw_recursive(
+        C, op, layout, UI_BUT_LABEL_ALIGN_NONE, layout_flags, NULL /* &has_advanced */);
     /* Warning! this leaves the handle function for any other users of this block. */
 
 #if 0
@@ -6663,8 +6904,14 @@ static void operator_search_cb(const bContext *C,
 
 void UI_but_func_operator_search(uiBut *but)
 {
-  UI_but_func_search_set(
-      but, ui_searchbox_create_operator, operator_search_cb, NULL, false, operator_call_cb, NULL);
+  UI_but_func_search_set(but,
+                         ui_searchbox_create_operator,
+                         operator_search_cb,
+                         NULL,
+                         false,
+                         operator_call_cb,
+                         NULL,
+                         NULL);
 }
 
 void uiTemplateOperatorSearch(uiLayout *layout)
@@ -6686,6 +6933,9 @@ void uiTemplateOperatorSearch(uiLayout *layout)
 /* -------------------------------------------------------------------- */
 /** \name Menu Search Template
  * \{ */
+
+/* Unicode arrow. */
+#define MENU_SEP "\xe2\x96\xb6"
 
 struct MenuSearch_Parent {
   struct MenuSearch_Parent *parent;
@@ -6806,7 +7056,7 @@ static bool menu_items_from_ui_create_item_from_button(struct MenuSearch_Data *d
   if (item != NULL) {
     /* Handle shared settings. */
     item->drawstr = strdup_memarena(memarena, but->drawstr);
-    item->icon = but->icon;
+    item->icon = ui_but_icon(but);
     item->state = (but->flag & (UI_BUT_DISABLED | UI_BUT_INACTIVE | UI_BUT_REDALERT));
     item->mt = mt;
     item->drawstr_submenu = drawstr_submenu ? strdup_memarena(memarena, drawstr_submenu) : NULL;
@@ -6955,7 +7205,7 @@ static struct MenuSearch_Data *menu_items_from_ui_create(bContext *C,
         SPACE_MENU_MAP(SPACE_INFO, "INFO_MT_editor_menus");
         SPACE_MENU_MAP(SPACE_SEQ, "SEQUENCER_MT_editor_menus");
         SPACE_MENU_MAP(SPACE_TEXT, "TEXT_MT_editor_menus");
-        SPACE_MENU_MAP(SPACE_ACTION, "ACTION_MT_editor_menus");
+        SPACE_MENU_MAP(SPACE_ACTION, "DOPESHEET_MT_editor_menus");
         SPACE_MENU_MAP(SPACE_NLA, "NLA_MT_editor_menus");
         SPACE_MENU_MAP(SPACE_NODE, "NODE_MT_editor_menus");
         SPACE_MENU_MAP(SPACE_CONSOLE, "CONSOLE_MT_editor_menus");
@@ -6997,7 +7247,7 @@ static struct MenuSearch_Data *menu_items_from_ui_create(bContext *C,
 
     UI_block_flag_enable(block, UI_BLOCK_SHOW_SHORTCUT_ALWAYS);
 
-    uiLayoutSetOperatorContext(layout, WM_OP_EXEC_REGION_WIN);
+    uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_REGION_WIN);
     UI_menutype_draw(C, mt, layout);
 
     UI_block_end(C, block);
@@ -7130,9 +7380,6 @@ static struct MenuSearch_Data *menu_items_from_ui_create(bContext *C,
   /* NOTE: currently this builds the full path for each menu item,
    * that could be moved into the parent menu. */
 
-  /* Unicode arrow. */
-#define MENU_SEP "\xe2\x86\x92"
-
   /* Set names as full paths. */
   LISTBASE_FOREACH (struct MenuSearch_Item *, item, &data->items) {
     if (item->menu_parent != NULL) {
@@ -7179,7 +7426,6 @@ static struct MenuSearch_Data *menu_items_from_ui_create(bContext *C,
     BLI_dynstr_clear(dyn_str);
   }
   BLI_dynstr_free(dyn_str);
-#undef MENU_SEP
 
   /* Finally sort menu items.
    *
@@ -7312,6 +7558,7 @@ void UI_but_func_menu_search(uiBut *but)
                          data,
                          menu_items_from_ui_destroy,
                          menu_call_fn,
+                         MENU_SEP,
                          NULL);
 }
 
@@ -7329,186 +7576,7 @@ void uiTemplateMenuSearch(uiLayout *layout)
   UI_but_func_menu_search(but);
 }
 
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Operator Redo Properties Template
- * \{ */
-
-#ifdef USE_OP_RESET_BUT
-static void ui_layout_operator_buts__reset_cb(bContext *UNUSED(C),
-                                              void *op_pt,
-                                              void *UNUSED(arg_dummy2))
-{
-  WM_operator_properties_reset((wmOperator *)op_pt);
-}
-#endif
-
-struct uiTemplateOperatorPropertyPollParam {
-  const bContext *C;
-  wmOperator *op;
-  short flag;
-};
-
-static bool ui_layout_operator_buts_poll_property(struct PointerRNA *UNUSED(ptr),
-                                                  struct PropertyRNA *prop,
-                                                  void *user_data)
-{
-  struct uiTemplateOperatorPropertyPollParam *params = user_data;
-  if ((params->flag & UI_TEMPLATE_OP_PROPS_HIDE_ADVANCED) &&
-      (RNA_property_tags(prop) & OP_PROP_TAG_ADVANCED)) {
-    return false;
-  }
-  return params->op->type->poll_property(params->C, params->op, prop);
-}
-
-/**
- * Draw Operator property buttons for redoing execution with different settings.
- * This function does not initialize the layout,
- * functions can be called on the layout before and after.
- */
-eAutoPropButsReturn uiTemplateOperatorPropertyButs(const bContext *C,
-                                                   uiLayout *layout,
-                                                   wmOperator *op,
-                                                   const eButLabelAlign label_align,
-                                                   const short flag)
-{
-  uiBlock *block = uiLayoutGetBlock(layout);
-  eAutoPropButsReturn return_info = 0;
-
-  if (!op->properties) {
-    IDPropertyTemplate val = {0};
-    op->properties = IDP_New(IDP_GROUP, &val, "wmOperatorProperties");
-  }
-
-  /* poll() on this operator may still fail,
-   * at the moment there is no nice feedback when this happens just fails silently. */
-  if (!WM_operator_repeat_check(C, op)) {
-    UI_block_lock_set(block, true, "Operator can't' redo");
-    return return_info;
-  }
-  else {
-    /* useful for macros where only one of the steps can't be re-done */
-    UI_block_lock_clear(block);
-  }
-
-  if (flag & UI_TEMPLATE_OP_PROPS_SHOW_TITLE) {
-    uiItemL(layout, WM_operatortype_name(op->type, op->ptr), ICON_NONE);
-  }
-
-  /* menu */
-  if (op->type->flag & OPTYPE_PRESET) {
-    /* XXX, no simple way to get WM_MT_operator_presets.bl_label
-     * from python! Label remains the same always! */
-    PointerRNA op_ptr;
-    uiLayout *row;
-
-    block->ui_operator = op;
-
-    row = uiLayoutRow(layout, true);
-    uiItemM(row, "WM_MT_operator_presets", NULL, ICON_NONE);
-
-    wmOperatorType *ot = WM_operatortype_find("WM_OT_operator_preset_add", false);
-    uiItemFullO_ptr(row, ot, "", ICON_ADD, NULL, WM_OP_INVOKE_DEFAULT, 0, &op_ptr);
-    RNA_string_set(&op_ptr, "operator", op->type->idname);
-
-    uiItemFullO_ptr(row, ot, "", ICON_REMOVE, NULL, WM_OP_INVOKE_DEFAULT, 0, &op_ptr);
-    RNA_string_set(&op_ptr, "operator", op->type->idname);
-    RNA_boolean_set(&op_ptr, "remove_active", true);
-  }
-
-  if (op->type->ui) {
-    op->layout = layout;
-    op->type->ui((bContext *)C, op);
-    op->layout = NULL;
-
-    /* UI_LAYOUT_OP_SHOW_EMPTY ignored. return_info is ignored too. We could
-     * allow ot.ui callback to return this, but not needed right now. */
-  }
-  else {
-    wmWindowManager *wm = CTX_wm_manager(C);
-    PointerRNA ptr;
-    struct uiTemplateOperatorPropertyPollParam user_data = {
-        .C = C,
-        .op = op,
-        .flag = flag,
-    };
-
-    RNA_pointer_create(&wm->id, op->type->srna, op->properties, &ptr);
-
-    uiLayoutSetPropSep(layout, true);
-    uiLayoutSetPropDecorate(layout, false);
-
-    /* main draw call */
-    return_info = uiDefAutoButsRNA(
-        layout,
-        &ptr,
-        op->type->poll_property ? ui_layout_operator_buts_poll_property : NULL,
-        op->type->poll_property ? &user_data : NULL,
-        op->type->prop,
-        label_align,
-        (flag & UI_TEMPLATE_OP_PROPS_COMPACT));
-
-    if ((return_info & UI_PROP_BUTS_NONE_ADDED) && (flag & UI_TEMPLATE_OP_PROPS_SHOW_EMPTY)) {
-      uiItemL(layout, IFACE_("No Properties"), ICON_NONE);
-    }
-  }
-
-#ifdef USE_OP_RESET_BUT
-  /* its possible that reset can do nothing if all have PROP_SKIP_SAVE enabled
-   * but this is not so important if this button is drawn in those cases
-   * (which isn't all that likely anyway) - campbell */
-  if (op->properties->len) {
-    uiBut *but;
-    uiLayout *col; /* needed to avoid alignment errors with previous buttons */
-
-    col = uiLayoutColumn(layout, false);
-    block = uiLayoutGetBlock(col);
-    but = uiDefIconTextBut(block,
-                           UI_BTYPE_BUT,
-                           0,
-                           ICON_FILE_REFRESH,
-                           IFACE_("Reset"),
-                           0,
-                           0,
-                           UI_UNIT_X,
-                           UI_UNIT_Y,
-                           NULL,
-                           0.0,
-                           0.0,
-                           0.0,
-                           0.0,
-                           TIP_("Reset operator defaults"));
-    UI_but_func_set(but, ui_layout_operator_buts__reset_cb, op, NULL);
-  }
-#endif
-
-  /* set various special settings for buttons */
-
-  /* Only do this if we're not refreshing an existing UI. */
-  if (block->oldblock == NULL) {
-    const bool is_popup = (block->flag & UI_BLOCK_KEEP_OPEN) != 0;
-    uiBut *but;
-
-    for (but = block->buttons.first; but; but = but->next) {
-      /* no undo for buttons for operator redo panels */
-      UI_but_flag_disable(but, UI_BUT_UNDO);
-
-      /* only for popups, see [#36109] */
-
-      /* if button is operator's default property, and a text-field, enable focus for it
-       * - this is used for allowing operators with popups to rename stuff with fewer clicks
-       */
-      if (is_popup) {
-        if ((but->rnaprop == op->type->prop) && (but->type == UI_BTYPE_TEXT)) {
-          UI_but_focus_on_enter_event(CTX_wm_window(C), but);
-        }
-      }
-    }
-  }
-
-  return return_info;
-}
+#undef MENU_SEP
 
 /** \} */
 

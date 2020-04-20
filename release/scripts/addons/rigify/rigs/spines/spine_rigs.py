@@ -40,10 +40,10 @@ class BaseSpineRig(TweakChainRig):
     """
 
     bbone_segments = 8
+    min_chain_length = 3
 
     def initialize(self):
-        if len(self.bones.org) < 3:
-            self.raise_error("Input to rig type must be a chain of 3 or more bones.")
+        super().initialize()
 
         self.use_torso_pivot = self.params.make_custom_pivot
         self.length = sum([self.get_bone(b).length for b in self.bones.org])

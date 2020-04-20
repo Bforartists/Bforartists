@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -39081,8 +39081,8 @@ msgstr "Отделить выделенные кости от соединённ
 
 
 msgctxt "Operator"
-msgid "Subdivide Multi"
-msgstr "Множественно подразделить"
+msgid "Subdivide"
+msgstr "Подразделить"
 
 
 msgid "Break selected bones into chains of smaller bones"
@@ -41635,11 +41635,6 @@ msgstr "Установить вес цели мягкого тела для вы
 
 msgid "Split off selected points from connected unselected points"
 msgstr "Отделить выделенные точки от связанных невыделенных точек"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "Подразделить"
 
 
 msgid "Subdivide selected segments"
@@ -49349,10 +49344,6 @@ msgid "Smooth Normals Vectors"
 msgstr "Сгладить вектора нормалей"
 
 
-msgid "Smoothen custom normals based on adjacent vertex normals"
-msgstr "Сгладить настраиваемые нормали на основе смежных нормалей вершин"
-
-
 msgid "Specifies weight of smooth vs original normal"
 msgstr "Указывает степень сглаженности или использования оригинальной нормали"
 
@@ -54329,15 +54320,6 @@ msgstr "Добавить слот текстурного рисования"
 
 msgid "Add a texture paint slot"
 msgstr "Добавить слот текстурного рисования"
-
-
-msgctxt "Operator"
-msgid "Brush Colors Flip"
-msgstr "Переключить цвета кисти"
-
-
-msgid "Toggle foreground and background brush colors"
-msgstr "Поменять местами основной и фоновый цвета кисти"
 
 
 msgctxt "Operator"
@@ -68838,14 +68820,6 @@ msgstr "Содержание следует направлению открыт�
 
 msgid "Otherwise menus, etc will always be top to bottom, left to right, no matter opening direction"
 msgstr "Если отключено, то меню и пр. будут размещаться сверху-вниз и слева-направо вне зависимости от направления открытия"
-
-
-msgid "Translate UI"
-msgstr "Переводить интерфейс"
-
-
-msgid "Enable UI translation and use international fonts"
-msgstr "Включить перевод интерфейса и использовать интернациональные шрифты"
 
 
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
@@ -87935,11 +87909,6 @@ msgstr "Направить на цель…"
 
 
 msgctxt "Operator"
-msgid "Smoothen Vectors"
-msgstr "Сгладить вектора"
-
-
-msgctxt "Operator"
 msgid "Smooth Faces"
 msgstr "Сгладить грани"
 
@@ -88284,21 +88253,6 @@ msgstr "Вставить отражённую позу"
 
 
 msgctxt "Operator"
-msgid "AutoName Left/Right"
-msgstr "Автоименовать слева/справа"
-
-
-msgctxt "Operator"
-msgid "AutoName Front/Back"
-msgstr "Автоименовать спереди/сзади"
-
-
-msgctxt "Operator"
-msgid "AutoName Top/Bottom"
-msgstr "Автоименовать сверху/снизу"
-
-
-msgctxt "Operator"
 msgid "To Next Keyframe"
 msgstr "До следующего ключевого кадра"
 
@@ -88316,6 +88270,21 @@ msgstr "На выделенных ключевых кадрах"
 msgctxt "Operator"
 msgid "On Selected Markers"
 msgstr "На выделенных маркерах"
+
+
+msgctxt "Operator"
+msgid "AutoName Left/Right"
+msgstr "Автоименовать слева/справа"
+
+
+msgctxt "Operator"
+msgid "AutoName Front/Back"
+msgstr "Автоименовать спереди/сзади"
+
+
+msgctxt "Operator"
+msgid "AutoName Top/Bottom"
+msgstr "Автоименовать сверху/снизу"
 
 
 msgctxt "Operator"
@@ -97463,12 +97432,12 @@ msgid "Cannot overwrite used library '%.240s'"
 msgstr "Невозможно перезаписать используемую библиотеку «%.240s»"
 
 
-msgid "Can't read alternative start-up file: '%s'"
-msgstr "Не удалось прочитать альтернативный стартовый файл: «%s»"
-
-
 msgid "Saved \"%s\""
 msgstr " «%s» сохранено"
+
+
+msgid "Can't read alternative start-up file: '%s'"
+msgstr "Не удалось прочитать альтернативный стартовый файл: «%s»"
 
 
 msgid "Not a library"
