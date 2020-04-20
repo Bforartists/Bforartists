@@ -40,11 +40,13 @@ class Rig(BaseHeadTailRig):
     """
 
     use_connect_reverse = False
+    min_chain_length = 1
 
     def initialize(self):
         super().initialize()
 
         self.long_neck = len(self.bones.org) > 3
+        self.has_neck = len(self.bones.org) > 1
 
     ####################################################
     # BONES
@@ -78,8 +80,11 @@ class Rig(BaseHeadTailRig):
         orgs = self.bones.org
         ctrl = self.bones.ctrl
 
-        ctrl.neck = self.make_neck_control_bone(orgs[0], 'neck', orgs[-1])
+        if self.has_neck:
+            ctrl.neck = self.make_neck_control_bone(orgs[0], 'neck', orgs[-1])
+
         ctrl.head = self.make_head_control_bone(orgs[-1], 'head')
+
         if self.long_neck:
             ctrl.neck_bend = self.make_neck_bend_control_bone(orgs[0], 'neck_bend', ctrl.neck)
 
@@ -118,14 +123,16 @@ class Rig(BaseHeadTailRig):
     def parent_control_chain(self):
         ctrl = self.bones.ctrl
         mch = self.bones.mch
-        self.set_bone_parent(ctrl.neck, mch.rot_neck)
+        if self.has_neck:
+            self.set_bone_parent(ctrl.neck, mch.rot_neck)
         self.set_bone_parent(ctrl.head, mch.rot_head)
         if self.long_neck:
             self.set_bone_parent(ctrl.neck_bend, mch.stretch)
 
     @stage.configure_bones
     def configure_control_chain(self):
-        self.configure_control_bone(0, self.bones.ctrl.neck, self.bones.org[0])
+        if self.has_neck:
+            self.configure_control_bone(0, self.bones.ctrl.neck, self.bones.org[0])
         self.configure_control_bone(2, self.bones.ctrl.head, self.bones.org[-1])
         if self.long_neck:
             self.configure_control_bone(1, self.bones.ctrl.neck_bend, self.bones.org[0])
@@ -133,7 +140,8 @@ class Rig(BaseHeadTailRig):
     @stage.generate_widgets
     def make_control_widgets(self):
         ctrl = self.bones.ctrl
-        self.make_neck_widget(ctrl.neck)
+        if self.has_neck:
+            self.make_neck_widget(ctrl.neck)
         self.make_head_widget(ctrl.head)
         if self.long_neck:
             self.make_neck_bend_widget(ctrl.neck_bend)
@@ -178,9 +186,10 @@ class Rig(BaseHeadTailRig):
         orgs = self.bones.org
         mch = self.bones.mch
 
-        mch.rot_neck = self.make_mch_follow_bone(orgs[0], 'neck', 0.5, copy_scale=True)
+        if self.has_neck:
+            mch.rot_neck = self.make_mch_follow_bone(orgs[0], 'neck', 0.5, copy_scale=True)
+            mch.stretch = self.make_mch_stretch_bone(orgs[0], 'STR-neck', orgs[-1])
         mch.rot_head = self.make_mch_follow_bone(orgs[-1], 'head', 0.0, copy_scale=True)
-        mch.stretch = self.make_mch_stretch_bone(orgs[0], 'STR-neck', orgs[-1])
 
     def make_mch_stretch_bone(self, org, name, org_head):
         name = self.copy_bone(org, make_derived_name(name, 'mch'), parent=False)
@@ -189,13 +198,17 @@ class Rig(BaseHeadTailRig):
 
     @stage.parent_bones
     def parent_mch_control_bones(self):
-        self.set_bone_parent(self.bones.mch.rot_neck, self.rig_parent_bone)
-        self.set_bone_parent(self.bones.mch.rot_head, self.bones.ctrl.neck)
-        self.set_bone_parent(self.bones.mch.stretch, self.bones.ctrl.neck)
+        if self.has_neck:
+            self.set_bone_parent(self.bones.mch.rot_neck, self.rig_parent_bone)
+            self.set_bone_parent(self.bones.mch.rot_head, self.bones.ctrl.neck)
+            self.set_bone_parent(self.bones.mch.stretch, self.bones.ctrl.neck)
+        else:
+            self.set_bone_parent(self.bones.mch.rot_head, self.rig_parent_bone)
 
     @stage.rig_bones
     def rig_mch_control_bones(self):
-        self.rig_mch_stretch_bone(self.bones.mch.stretch, self.bones.ctrl.head)
+        if self.has_neck:
+            self.rig_mch_stretch_bone(self.bones.mch.stretch, self.bones.ctrl.head)
 
     def rig_mch_stretch_bone(self, mch, head):
         self.make_constraint(mch, 'DAMPED_TRACK', head)
@@ -299,14 +312,19 @@ class Rig(BaseHeadTailRig):
     def make_tweak_chain(self):
         orgs = self.bones.org
         self.bones.ctrl.tweak = map_list(self.make_tweak_bone, count(0), orgs[0:-1])
+        if not self.has_neck:
+            self.check_connect_tweak(orgs[0])
 
     @stage.parent_bones
     def parent_tweak_chain(self):
         ctrl = self.bones.ctrl
         mch = self.bones.mch
 
-        for args in zip(ctrl.tweak, [ctrl.neck, *mch.chain]):
-            self.set_bone_parent(*args)
+        if self.has_neck:
+            for args in zip(ctrl.tweak, [ctrl.neck, *mch.chain]):
+                self.set_bone_parent(*args)
+        elif self.connected_tweak:
+            self.set_bone_parent(self.connected_tweak, ctrl.head)
 
     @stage.rig_bones
     def generate_neck_tweak_widget(self):
@@ -333,7 +351,11 @@ class Rig(BaseHeadTailRig):
 
     @stage.rig_bones
     def rig_org_chain(self):
-        tweaks = self.bones.ctrl.tweak + [self.bones.ctrl.head]
+        if self.has_neck:
+            tweaks = self.bones.ctrl.tweak + [self.bones.ctrl.head]
+        else:
+            tweaks = [self.connected_tweak or self.bones.ctrl.head]
+
         for args in zip(count(0), self.bones.org, tweaks, tweaks[1:] + [None]):
             self.rig_org_bone(*args)
 

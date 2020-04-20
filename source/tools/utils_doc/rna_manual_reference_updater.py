@@ -57,38 +57,36 @@ fw("    manual_version = '%d.%d' % bpy.app.version[:2]\n")
 fw("else:\n")
 fw("    manual_version = 'dev'\n\n")
 fw("url_manual_prefix = \"https://docs.blender.org/manual/en/\" + manual_version + \"/\"\n\n")
-fw("language = \"\"\n")
-fw("if bpy.context.preferences.view.use_international_fonts:\n")
-fw("    language = bpy.context.preferences.view.language\n")
-fw("    if language == 'DEFAULT':\n")
-fw("        import os\n")
-fw("        language = os.getenv('LANG', '').split('.')[0]\n\n")
+fw("language = bpy.context.preferences.view.language\n")
+fw("if language == 'DEFAULT':\n")
+fw("    import os\n")
+fw("    language = os.getenv('LANG', '').split('.')[0]\n\n")
 fw("LANG = {\n")
-# fw("    \"ar_EG":         \"ar",\n")
-# fw("    \"bg_BG":         \"bg",\n")
-# fw("    \"ca_AD":         \"ca",\n")
-# fw("    \"cs_CZ":         \"cz",\n")
-fw("    \"de_DE\":        \"de\",\n")  # German
-# fw("    \"el_GR":         \"el",\n")
-fw("    \"ru_RU\":        \"ru\",\n")  # Russian
-# fw("    \"sr_RS":         \"sr",\n")
-# fw("    \"sv_SE":         \"sv",\n")
-# fw("    \"tr_TR":         \"th",\n")
-fw("    \"uk_UA\":        \"uk\",\n")  # Ukrainian
-fw("    \"es\":           \"es\",\n")  # Spanish
-# fw("    \"fi_FI":         \"fi",\n")
-fw("    \"fr_FR\":        \"fr\",\n")  # French
-# fw("    \"id_ID":         \"id",\n")
-fw("    \"it_IT\":        \"it\",\n")  # Italian
-fw("    \"ja_JP\":        \"ja\",\n")  # Japanese
-fw("    \"ko_KR\":        \"ko\",\n")  # Korean
-# fw("    \"nl_NL":         \"nl",\n")
-# fw("    \"pl_PL":         \"pl",\n")
-fw("    \"pt_PT\":        \"pt\",\n")  # Portuguese
-fw("    \"pt_BR\":        \"pt\",\n")  # Portuguese - for until we have a pt_BR version
-fw("    \"vi_VN\":        \"vi\",\n")  # Vietnamese
-fw("    \"zh_CN\":        \"zh-hans\",\n")  # Simplified Chinese
-fw("    \"zh_TW\":        \"zh-hant\",\n")  # Traditional Chinese
+# fw("\"ar_EG":         \"ar",\n")
+# fw("\"bg_BG":         \"bg",\n")
+# fw("\"ca_AD":         \"ca",\n")
+# fw("\"cs_CZ":         \"cz",\n")
+fw("\"de_DE\":        \"de\",\n")  # German
+# fw("\"el_GR":         \"el",\n")
+fw("\"ru_RU\":        \"ru\",\n")  # Russian
+# fw("\"sr_RS":         \"sr",\n")
+# fw("\"sv_SE":         \"sv",\n")
+# fw("\"tr_TR":         \"th",\n")
+fw("\"uk_UA\":        \"uk\",\n")  # Ukrainian
+fw("\"es\":           \"es\",\n")  # Spanish
+# fw("\"fi_FI":         \"fi",\n")
+fw("\"fr_FR\":        \"fr\",\n")  # French
+# fw("\"id_ID":         \"id",\n")
+fw("\"it_IT\":        \"it\",\n")  # Italian
+fw("\"ja_JP\":        \"ja\",\n")  # Japanese
+fw("\"ko_KR\":        \"ko\",\n")  # Korean
+# fw("\"nl_NL":         \"nl",\n")
+# fw("\"pl_PL":         \"pl",\n")
+fw("\"pt_PT\":        \"pt\",\n")  # Portuguese
+fw("\"pt_BR\":        \"pt\",\n")  # Portuguese - for until we have a pt_BR version
+fw("\"vi_VN\":        \"vi\",\n")  # Vietnamese
+fw("\"zh_CN\":        \"zh-hans\",\n")  # Simplified Chinese
+fw("\"zh_TW\":        \"zh-hant\",\n")  # Traditional Chinese
 fw("}.get(language)\n\n")
 fw("if LANG is not None:\n")
 fw("    url_manual_prefix = url_manual_prefix.replace(\"manual/en\", \"manual/\" + LANG)\n\n")

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -17066,10 +17066,6 @@ msgstr "ラプラシアン"
 
 msgid "Smooths the surface and the volume"
 msgstr "サーフェスとボリュームをスムーズにします"
-
-
-msgid "Smooths the surface of the mesh, preserving the volue"
-msgstr "メッシュのサーフェスを、ボリュームを維持してスムーズにします"
 
 
 msgid "Smooth Stroke Factor"
@@ -41503,8 +41499,8 @@ msgstr "選択中のボーンを、つながる非選択のボーンから分離
 
 
 msgctxt "Operator"
-msgid "Subdivide Multi"
-msgstr "細分化 (マルチ)"
+msgid "Subdivide"
+msgstr "細分化"
 
 
 msgid "Break selected bones into chains of smaller bones"
@@ -44080,11 +44076,6 @@ msgstr "選択中の制御点にソフトボディのゴールウェイトを設
 
 msgid "Split off selected points from connected unselected points"
 msgstr "選択中の制御点を、つながる非選択の制御点から分離します"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "細分化"
 
 
 msgid "Subdivide selected segments"
@@ -46843,10 +46834,6 @@ msgstr "アルファチャンネルを使用し、マスク用の反転画像を
 
 msgid "Point Size"
 msgstr "ポイントサイズ"
-
-
-msgid "Size used for graese pencil points"
-msgstr "グリースペンシルポイントに使用するサイズ"
 
 
 msgctxt "Operator"
@@ -52524,10 +52511,6 @@ msgid "Smooth Normals Vectors"
 msgstr "法線ベクトルをスムーズに"
 
 
-msgid "Smoothen custom normals based on adjacent vertex normals"
-msgstr "カスタム法線を周囲の頂点の法線を元にスムージングします"
-
-
 msgid "Specifies weight of smooth vs original normal"
 msgstr "元の法線に対するスムージングのウェイトを指定します"
 
@@ -57587,15 +57570,6 @@ msgstr "テクスチャペイントスロットを追加"
 
 msgid "Add a texture paint slot"
 msgstr "テクスチャペイントスロットを追加します"
-
-
-msgctxt "Operator"
-msgid "Brush Colors Flip"
-msgstr "ブラシカラーを切替え"
-
-
-msgid "Toggle foreground and background brush colors"
-msgstr "前景と背景のブラシカラーを切り替えます"
 
 
 msgctxt "Operator"
@@ -72991,14 +72965,6 @@ msgid "Otherwise menus, etc will always be top to bottom, left to right, no matt
 msgstr "メニューを常に上から下方向、左から右方向に開くようにします"
 
 
-msgid "Translate UI"
-msgstr "翻訳UI"
-
-
-msgid "Enable UI translation and use international fonts"
-msgstr "UI の翻訳と国際フォントの使用を有効にします"
-
-
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
 msgstr "メニューにマウスを重ねるとメニューが自動で開くようになります"
 
@@ -87582,12 +87548,12 @@ msgid "Subsurface"
 msgstr "サブサーフェス"
 
 
-msgid "Min Samples"
-msgstr "最低サンプル数"
-
-
 msgid "Noise Threshold"
 msgstr "ノイズしきい値"
+
+
+msgid "Min Samples"
+msgstr "最低サンプル数"
 
 
 msgid "Dicing Rate Render"
@@ -93818,11 +93784,6 @@ msgstr "ターゲットの方へ..."
 
 
 msgctxt "Operator"
-msgid "Smoothen Vectors"
-msgstr "ベクトルをスムーズに"
-
-
-msgctxt "Operator"
 msgid "Smooth Faces"
 msgstr "面をスムーズに"
 
@@ -94191,21 +94152,6 @@ msgstr "ポーズを反転して貼り付け"
 
 
 msgctxt "Operator"
-msgid "AutoName Left/Right"
-msgstr "自動ネーム（左右）"
-
-
-msgctxt "Operator"
-msgid "AutoName Front/Back"
-msgstr "自動ネーム（前後）"
-
-
-msgctxt "Operator"
-msgid "AutoName Top/Bottom"
-msgstr "自動ネーム（上下）"
-
-
-msgctxt "Operator"
 msgid "To Next Keyframe"
 msgstr "次のキーフレームへ"
 
@@ -94223,6 +94169,21 @@ msgstr "選択中のキーフレーム上"
 msgctxt "Operator"
 msgid "On Selected Markers"
 msgstr "選択中のマーカー上"
+
+
+msgctxt "Operator"
+msgid "AutoName Left/Right"
+msgstr "自動ネーム（左右）"
+
+
+msgctxt "Operator"
+msgid "AutoName Front/Back"
+msgstr "自動ネーム（前後）"
+
+
+msgctxt "Operator"
+msgid "AutoName Top/Bottom"
+msgstr "自動ネーム（上下）"
 
 
 msgctxt "Operator"
@@ -103850,12 +103811,12 @@ msgid "Cannot overwrite used library '%.240s'"
 msgstr "使用中のライブラリ '%.240s' が上書きできません"
 
 
-msgid "Can't read alternative start-up file: '%s'"
-msgstr "代替スタートアップファイル「%s」が読み込みできません"
-
-
 msgid "Saved \"%s\""
 msgstr "「%s」を保存"
+
+
+msgid "Can't read alternative start-up file: '%s'"
+msgstr "代替スタートアップファイル「%s」が読み込みできません"
 
 
 msgid "Not a library"

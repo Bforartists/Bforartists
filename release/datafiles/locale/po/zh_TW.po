@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2020-03-28 00:56+0800\n"
@@ -27205,8 +27205,8 @@ msgstr "分割"
 
 
 msgctxt "Operator"
-msgid "Subdivide Multi"
-msgstr "細分多"
+msgid "Subdivide"
+msgstr "細分"
 
 
 msgid "Break selected bones into chains of smaller bones"
@@ -29423,11 +29423,6 @@ msgstr "設定目的權重"
 
 msgid "Set softbody goal weight for selected points"
 msgstr "為所選的點設定柔體目的權重"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "細分"
 
 
 msgid "Subdivide selected segments"
@@ -57986,21 +57981,6 @@ msgstr "傳輸權重"
 
 
 msgctxt "Operator"
-msgid "AutoName Left/Right"
-msgstr "自動命名左/右"
-
-
-msgctxt "Operator"
-msgid "AutoName Front/Back"
-msgstr "自動命名前/後"
-
-
-msgctxt "Operator"
-msgid "AutoName Top/Bottom"
-msgstr "自動命名頂/底"
-
-
-msgctxt "Operator"
 msgid "To Next Keyframe"
 msgstr "至下一鍵幀"
 
@@ -58013,6 +57993,21 @@ msgstr "至最末鍵幀 (建立循環)"
 msgctxt "Operator"
 msgid "On Selected Markers"
 msgstr "於所選標記"
+
+
+msgctxt "Operator"
+msgid "AutoName Left/Right"
+msgstr "自動命名左/右"
+
+
+msgctxt "Operator"
+msgid "AutoName Front/Back"
+msgstr "自動命名前/後"
+
+
+msgctxt "Operator"
+msgid "AutoName Top/Bottom"
+msgstr "自動命名頂/底"
 
 
 msgctxt "Operator"
@@ -63443,12 +63438,12 @@ msgid "Cannot overwrite used library '%.240s'"
 msgstr "無法覆寫已使用的函式庫「%.240s」"
 
 
-msgid "Can't read alternative start-up file: '%s'"
-msgstr "無法讀取替代性初始啟動檔：「%s」"
-
-
 msgid "Saved \"%s\""
 msgstr "已儲存「%s」"
+
+
+msgid "Can't read alternative start-up file: '%s'"
+msgstr "無法讀取替代性初始啟動檔：「%s」"
 
 
 msgid "Not a library"

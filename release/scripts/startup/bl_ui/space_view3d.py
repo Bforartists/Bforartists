@@ -4842,6 +4842,8 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
         return menu
 
     def draw(self, context):
+        from math import pi
+
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
@@ -4850,7 +4852,8 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.extrude_repeat", icon = "REPEAT")
+        layout.operator("mesh.extrude_repeat")
+        layout.operator("mesh.spin").angle = pi * 2
 
 
 class VIEW3D_MT_edit_mesh_vertices(Menu):
@@ -6514,8 +6517,7 @@ class VIEW3D_PT_view3d_properties(Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        flow = layout.grid_flow(row_major=True, columns=0, even_columns=False, even_rows=False, align=True)
-        col = flow.column()
+        col = layout.column()
 
         subcol = col.column()
         subcol.active = bool(view.region_3d.view_perspective != 'CAMERA' or view.region_quadviews)
@@ -6536,10 +6538,11 @@ class VIEW3D_PT_view3d_properties(Panel):
         if view.use_local_camera:
             subcol = col.column()
             subcol.use_property_split = True
-            subcol.prop(view, "camera", text="Local Cam")
+            subcol.prop(view, "camera", text="")
             
         subcol.use_property_split = False
         subcol.prop(view, "use_render_border")
+
         
 class VIEW3D_PT_view3d_properties_edit(Panel):
     bl_space_type = 'VIEW_3D'
@@ -6571,14 +6574,14 @@ class VIEW3D_PT_view3d_camera_lock(Panel):
         view = context.space_data
 
         col = layout.column(align=True)
-        subcol = col.column()
-        subcol.active = bool(view.region_3d.view_perspective != 'CAMERA' or view.region_quadviews)
+        sub = col.column()
+        sub.active = bool(view.region_3d.view_perspective != 'CAMERA' or view.region_quadviews)
 
-        subcol.prop(view, "lock_object")
+        sub.prop(view, "lock_object")
         lock_object = view.lock_object
         if lock_object:
             if lock_object.type == 'ARMATURE':
-                subcol.prop_search(
+                sub.prop_search(
                     view, "lock_bone", lock_object.data,
                     "edit_bones" if lock_object.mode == 'EDIT'
                     else "bones",
@@ -6586,9 +6589,11 @@ class VIEW3D_PT_view3d_camera_lock(Panel):
                 )
         else:
             subcol.use_property_split = False
-            subcol.prop(view, "lock_cursor", text="Lock to 3D Cursor")
+            subcol = sub.column(heading="Lock")
+            subcol.prop(view, "lock_cursor", text="To 3D Cursor")
+
         col.use_property_split = False
-        col.prop(view, "lock_camera")
+        col.prop(view, "lock_camera", text="Camera to View")
 
 
 class VIEW3D_PT_view3d_cursor(Panel):

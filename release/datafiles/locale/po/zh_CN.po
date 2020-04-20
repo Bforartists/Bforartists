@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3263,6 +3263,10 @@ msgstr "涂抹"
 
 msgid "Hardness"
 msgstr "硬度"
+
+
+msgid "Gradient from the center of Dot and Box strokes (set to 1 for a solid stroke)"
+msgstr "从点和框笔画中心的渐变(设置为1时为实体笔画)"
 
 
 msgid "Input Samples"
@@ -9115,7 +9119,7 @@ msgstr "画布表面"
 
 
 msgid "Collection of Dynamic Paint Canvas surfaces"
-msgstr "动态绘画画布表面集合"
+msgstr "动态绘画画布表面组"
 
 
 msgid "Active Surface"
@@ -16045,6 +16049,10 @@ msgid "Propagation Steps"
 msgstr "传递步数"
 
 
+msgid "Distance where boundary edge automasking is going to protect vertices from the fully masked edge"
+msgstr "边界边自动生成保护顶点免受完全遮罩边缘的距离"
+
+
 msgid "Blending Mode"
 msgstr "混合模式"
 
@@ -16706,11 +16714,11 @@ msgstr "使用网格的拓扑和形状作为参考自动设置旋转原点"
 
 
 msgid "Face Sets"
-msgstr "面集合"
+msgstr "面组"
 
 
 msgid "Creates a pose segment per face sets, starting from the active face set"
-msgstr "从活动面集合开始，创建每个面集合的姿势段"
+msgstr "从活动面组开始，创建每个面组的姿势段"
 
 
 msgid "Smooth Iterations"
@@ -16830,7 +16838,7 @@ msgstr "布料"
 
 
 msgid "Draw Face Sets"
-msgstr "绘制面集合"
+msgstr "绘制面组"
 
 
 msgid "Secondary Color"
@@ -16863,10 +16871,6 @@ msgstr "拉普拉斯"
 
 msgid "Smooths the surface and the volume"
 msgstr "平滑表面和体积"
-
-
-msgid "Smooths the surface of the mesh, preserving the volue"
-msgstr "平滑网格表面，同时保留体积"
 
 
 msgid "Smooth Stroke Factor"
@@ -17049,12 +17053,20 @@ msgid "Do not affect non manifold boundary edges"
 msgstr "不影响非流形边界边"
 
 
+msgid "Face Sets Boundary Automasking"
+msgstr "面组边界自动遮蔽"
+
+
+msgid "Do not affect vertices that belong to a Face Set boundary"
+msgstr "不影响属于面组边界的顶点"
+
+
 msgid "Face Sets Auto-masking"
-msgstr "面集合自动遮蔽"
+msgstr "面组自动遮蔽"
 
 
 msgid "Affect only vertices that share Face Sets with the active vertex"
-msgstr "仅影响与活动顶点共享面集合的顶点"
+msgstr "仅影响与活动顶点共享面组的顶点"
 
 
 msgid "Topology Auto-masking"
@@ -20692,11 +20704,11 @@ msgstr "在新建网格上保留当前遮罩"
 
 
 msgid "Preserve Face Sets"
-msgstr "保留面集合"
+msgstr "保留面组"
 
 
 msgid "Keep the current Face Sets on the new mesh"
-msgstr "在新建网格上保留当前面集合"
+msgstr "在新建网格上保留当前面组"
 
 
 msgid "Projects the mesh to preserve the volume and details of the original mesh"
@@ -24697,6 +24709,10 @@ msgstr "用于3D体积栅格的体积数据块"
 
 msgid "Volume display settings for 3d viewport"
 msgstr "3D 视图的体积显示设置"
+
+
+msgid "Volume file used by this Volume data-block"
+msgstr "供该体积数据块所使用的体积文件"
 
 
 msgid "Number of frames of the sequence to use"
@@ -29296,7 +29312,7 @@ msgstr "融球上下文菜单"
 
 
 msgid "Face Sets Init"
-msgstr "面集合初始化"
+msgstr "面组初始化"
 
 
 msgid "Generate Weights"
@@ -29384,7 +29400,7 @@ msgstr "雕刻模式"
 
 
 msgid "Face Sets Edit"
-msgstr "面集合编辑"
+msgstr "面组编辑"
 
 
 msgid "Mask Edit"
@@ -32403,6 +32419,14 @@ msgid "Space to use for copying mesh data"
 msgstr "用于复制网格数据的空间"
 
 
+msgid "Use offset from the particle object in the instance object"
+msgstr "使用实例物体中的粒子物体的偏移"
+
+
+msgid "Use world space offset in the instance object"
+msgstr "在实例物体中使用世界空间偏移量"
+
+
 msgctxt "ParticleSettings"
 msgid "Children"
 msgstr "子级"
@@ -32474,6 +32498,10 @@ msgstr "输出为一个光滑表面, 不检测锐利特征"
 
 msgid "Output a surface that reproduces sharp edges and corners from the input mesh"
 msgstr "输出为一个表面, 重制输出网格的锐边及转角"
+
+
+msgid "Output a mesh corresponding to the volume of the original mesh"
+msgstr "输出与原始网格的体积对应的网格"
 
 
 msgid "Octree Depth"
@@ -40562,12 +40590,20 @@ msgid "Select Linked All"
 msgstr "选择所有相连元素"
 
 
+msgid "Select all bones linked by parent/child connections to the current selection"
+msgstr "选择以父/子关系关联到当前选中项的所有骨骼"
+
+
 msgid "All Forks"
 msgstr "全部分支"
 
 
 msgid "Follow forks in the parents chain"
 msgstr "跟随父级链中的分支"
+
+
+msgid "(De)select bones linked by parent/child connections under the mouse cursor"
+msgstr "(取消)选择鼠标光标下的以父/子关系关联的骨骼"
 
 
 msgctxt "Operator"
@@ -40648,8 +40684,8 @@ msgstr "将选中的骨骼从相连的未选中的骨骼上分离"
 
 
 msgctxt "Operator"
-msgid "Subdivide Multi"
-msgstr "多段细分"
+msgid "Subdivide"
+msgstr "细分"
 
 
 msgid "Break selected bones into chains of smaller bones"
@@ -43211,11 +43247,6 @@ msgstr "为所选的点设置柔性目标权重"
 
 msgid "Split off selected points from connected unselected points"
 msgstr "将选中的点与未选中的相连点分离"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "细分"
 
 
 msgid "Subdivide selected segments"
@@ -45919,10 +45950,6 @@ msgstr "使用 alpha 通道创建用于屏蔽的反转图像"
 
 msgid "Point Size"
 msgstr "点大小"
-
-
-msgid "Size used for graese pencil points"
-msgstr "蜡笔点的大小"
 
 
 msgctxt "Operator"
@@ -49679,6 +49706,15 @@ msgstr "复制"
 
 
 msgctxt "Operator"
+msgid "Collapse Edges & Faces"
+msgstr "塌陷边线&面"
+
+
+msgid "Collapse isolated edges & faces regions, merging data such as UV's and vertex colors. This can collapse edge-rings as well as regions of connected faces into vertices"
+msgstr "塌陷隔离的边&面区域，合并UV和顶点颜色等数据。这可以将循环边以及相连的面区域塌陷到顶点"
+
+
+msgctxt "Operator"
 msgid "Make Edge/Face"
 msgstr "创建边 / 面"
 
@@ -49703,6 +49739,26 @@ msgstr "拆边"
 
 msgid "Split selected edges so that each neighbor face gets its own copy"
 msgstr "分离选中的边, 以便让各相邻面获得各自的副本"
+
+
+msgid "Method to use for splitting"
+msgstr "用于拆分的方法"
+
+
+msgid "Faces by Edges"
+msgstr "沿边拆面"
+
+
+msgid "Split faces along selected edges"
+msgstr "沿选定边拆分面"
+
+
+msgid "Faces & Edges by Vertices"
+msgstr "按顶点拆分面&边"
+
+
+msgid "Split faces & edges connected to selected vertices"
+msgstr "拆分与选定顶点相连的面&边"
 
 
 msgctxt "Operator"
@@ -55506,6 +55562,15 @@ msgid "Voxel Remesh"
 msgstr "体素重构"
 
 
+msgid "Calculates a new manifold mesh based on the volume of the current mesh. All data layers will be lost"
+msgstr "根据当前网格的体积计算新的流形网格。所有数据层都将丢失"
+
+
+msgctxt "Operator"
+msgid "Edit Voxel Size"
+msgstr "编辑体素大小"
+
+
 msgctxt "Operator"
 msgid "Outliner Set Action"
 msgstr "大纲设置动作"
@@ -56286,11 +56351,6 @@ msgstr "添加纹理绘制槽"
 
 msgid "Add a texture paint slot"
 msgstr "添加一个纹理绘制槽"
-
-
-msgctxt "Operator"
-msgid "Brush Colors Flip"
-msgstr "笔刷颜色翻转"
 
 
 msgctxt "Operator"
@@ -59416,11 +59476,11 @@ msgstr "雕刻时, 动态拓扑会改变网格的拓扑结构"
 
 msgctxt "Operator"
 msgid "Face Sets Visibility"
-msgstr "面集合可见性"
+msgstr "面组可见性"
 
 
 msgid "Change the visibility of the Face Sets of the sculpt"
-msgstr "更改雕刻的面集合可见性"
+msgstr "更改雕刻的面组可见性"
 
 
 msgid "Toggle Visibility"
@@ -59428,138 +59488,138 @@ msgstr "切换可见性"
 
 
 msgid "Hide all Face Sets except for the active one"
-msgstr "隐藏除活动面集合之外的所有面集合"
+msgstr "隐藏除活动面组之外的所有面组"
 
 
 msgid "Show Active Face Set"
-msgstr "显示活动面集合"
+msgstr "显示活动面组"
 
 
 msgid "Hide Active Face Sets"
-msgstr "隐藏活动面集合"
+msgstr "隐藏活动面组"
 
 
 msgid "Invert Face Set Visibility"
-msgstr "反转面集合可见性"
+msgstr "反转面组可见性"
 
 
 msgid "Show All Face Sets"
-msgstr "显示全部面集合"
+msgstr "显示全部面组"
 
 
 msgctxt "Operator"
 msgid "Create Face Set"
-msgstr "创建面集合"
+msgstr "创建面组"
 
 
 msgid "Create a new Face Set"
-msgstr "创建新的面集合"
+msgstr "创建新的面组"
 
 
 msgid "Face Set From Masked"
-msgstr "从被遮蔽面创建面集合"
+msgstr "从被遮蔽面创建面组"
 
 
 msgid "Create a new Face Set from the masked faces"
-msgstr "从被遮蔽面创建新的面集合"
+msgstr "从被遮蔽面创建新的面组"
 
 
 msgid "Face Set From Visible"
-msgstr "从可见面创建面集合"
+msgstr "从可见面创建面组"
 
 
 msgid "Create a new Face Set from the visible vertices"
-msgstr "从可见顶点创建新的面集合"
+msgstr "从可见顶点创建新的面组"
 
 
 msgid "Face Set Full Mesh"
-msgstr "全网格面集合"
+msgstr "全网格面组"
 
 
 msgid "Create an unique Face Set with all faces in the sculpt"
-msgstr "创建包含雕刻中所有面的独特面集合"
+msgstr "创建包含雕刻中所有面的独特面组"
 
 
 msgid "Face Set From Edit Mode Selection"
-msgstr "从编辑模式选择项创建面集合"
+msgstr "从编辑模式选择项创建面组"
 
 
 msgid "Create an Face Set corresponding to the Edit Mode face selection"
-msgstr "创建与编辑模式选中面对应的面集合"
+msgstr "创建与编辑模式选中面对应的面组"
 
 
 msgctxt "Operator"
 msgid "Init Face Sets"
-msgstr "初始化面集合"
+msgstr "初始化面组"
 
 
 msgid "Initializes all Face Sets in the mesh"
-msgstr "初始化网格中的所有面集合"
+msgstr "初始化网格中的所有面组"
 
 
 msgid "Face Sets From Loose Parts"
-msgstr "从松散块创建面集合"
+msgstr "从松散块创建面组"
 
 
 msgid "Create a Face Set per loose part in the mesh"
-msgstr "从网格的松散块创建面集合"
+msgstr "从网格的松散块创建面组"
 
 
 msgid "Face Sets From Material Slots"
-msgstr "从材质槽创建面集合"
+msgstr "从材质槽创建面组"
 
 
 msgid "Create a Face Set per Material Slot"
-msgstr "为每个材质槽创建一个面集合"
+msgstr "为每个材质槽创建一个面组"
 
 
 msgid "Face Sets From Mesh Normals"
-msgstr "从网格法向创建面集合"
+msgstr "从网格法向创建面组"
 
 
 msgid "Create Face Sets for Faces that have similar normal"
-msgstr "为有相似法向的面创建面集合"
+msgstr "为有相似法向的面创建面组"
 
 
 msgid "Face Sets From UV Seams"
-msgstr "从UV缝合边创建面集合"
+msgstr "从UV缝合边创建面组"
 
 
 msgid "Create Face Sets using UV Seams as boundaries"
-msgstr "以UV缝合边为边界创建面集合"
+msgstr "以UV缝合边为边界创建面组"
 
 
 msgid "Face Sets From Edge Creases"
-msgstr "从折痕边创建面集合"
+msgstr "从折痕边创建面组"
 
 
 msgid "Create Face Sets using Edge Creases as boundaries"
-msgstr "以折痕边为边界创建面集合"
+msgstr "以折痕边为边界创建面组"
 
 
 msgid "Face Sets From Bevel Weight"
-msgstr "从倒角权重创建面集合"
+msgstr "从倒角权重创建面组"
 
 
 msgid "Create Face Sets using Bevel Weights as boundaries"
-msgstr "以倒角权重为边界创建面集合"
+msgstr "以倒角权重为边界创建面组"
 
 
 msgid "Face Sets From Sharp Edges"
-msgstr "从锐边创建面集合"
+msgstr "从锐边创建面组"
 
 
 msgid "Create Face Sets using Sharp Edges as boundaries"
-msgstr "以锐边为边界创建面集合"
+msgstr "以锐边为边界创建面组"
 
 
 msgctxt "Operator"
 msgid "Randomize Face Sets Colors"
-msgstr "面集合颜色随机化"
+msgstr "面组颜色随机化"
 
 
 msgid "Generates a new set of random colors to render the Face Sets in the viewport"
-msgstr "生成一组随机色渲染视图上的面集合"
+msgstr "生成一组随机色渲染视图上的面组"
 
 
 msgctxt "Operator"
@@ -59770,11 +59830,11 @@ msgstr "松弛网格"
 
 
 msgid "Relax Face Sets"
-msgstr "松弛面集合"
+msgstr "松弛面组"
 
 
 msgid "Smooth the edges of all the Face Sets"
-msgstr "平滑全部面集合的边线"
+msgstr "平滑全部面组的边线"
 
 
 msgid "Surface Smooth"
@@ -59786,7 +59846,7 @@ msgstr "平滑网格表面，同时保留体积"
 
 
 msgid "Use Face Sets"
-msgstr "使用面集合"
+msgstr "使用面组"
 
 
 msgid "Apply the filter only to the Face Mask under the cursor"
@@ -66130,6 +66190,14 @@ msgid "Cavity Mask"
 msgstr "空腔遮罩"
 
 
+msgid "Delay Viewport Updates"
+msgstr "延迟视口更新"
+
+
+msgid "Update the geometry when it enters the view, providing faster view navigation"
+msgstr "在进入视图时更新几何体，提供更快的视图导航"
+
+
 msgid "Symmetry Feathering"
 msgstr "对称羽化"
 
@@ -66451,11 +66519,11 @@ msgstr "笔刷沿表面的复制次数"
 
 
 msgid "Show Face Sets"
-msgstr "显示面集合"
+msgstr "显示面组"
 
 
 msgid "Show Face Sets as overlay on object"
-msgstr "显示面集合为物体上的叠加层"
+msgstr "显示面组为物体上的叠加层"
 
 
 msgid "Show Mask"
@@ -66468,6 +66536,10 @@ msgstr "将遮罩显示为物体上的叠加层。"
 
 msgid "Source and destination for symmetrize operator"
 msgstr "对称操作项的源和目标"
+
+
+msgid "Face Sets Boundary Auto-masking"
+msgstr "面组边界自动遮蔽"
 
 
 msgid "Use Deform Only"
@@ -68113,7 +68185,7 @@ msgstr "简化"
 
 msgctxt "Operator"
 msgid "Draw Face Sets"
-msgstr "绘制面集合"
+msgstr "绘制面组"
 
 
 msgctxt "Operator"
@@ -71456,14 +71528,6 @@ msgstr "内容跟随开启方向"
 
 msgid "Otherwise menus, etc will always be top to bottom, left to right, no matter opening direction"
 msgstr "无论置顶还是底, 左还是右, 均保持为展开的方向"
-
-
-msgid "Translate UI"
-msgstr "翻译用户界面"
-
-
-msgid "Enable UI translation and use international fonts"
-msgstr "启用界面翻译并使用国际化字体"
 
 
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
@@ -79529,6 +79593,14 @@ msgid "Display result under strips"
 msgstr "在所有片段下方显示"
 
 
+msgid "Show F-Curves"
+msgstr "显示函数曲线"
+
+
+msgid "Display strip opacity/volume curve"
+msgstr "显示片断不透明度/体积曲线"
+
+
 msgid "Display Frames"
 msgstr "显示帧数"
 
@@ -83615,7 +83687,7 @@ msgstr "在3D视图中显示法线的尺寸"
 
 
 msgid "Sculpt Face Sets Opacity"
-msgstr "雕刻面集合不透明度"
+msgstr "雕刻面组不透明度"
 
 
 msgid "Sculpt Mask Opacity"
@@ -84584,6 +84656,14 @@ msgstr "活动的体积栅格编号"
 
 msgid "If loading grids failed, error message with details"
 msgstr "如果加载栅格失败，则错误消息包含详细信息"
+
+
+msgid "Frame File Path"
+msgstr "帧文件路径"
+
+
+msgid "Volume file used for loading the volume at the current frame. Empty if the volume has not be loaded or the frame only exists in memory"
+msgstr "用于在当前帧加载体积的体积文件。如果未加载体积或帧仅存在于内存中，则为空"
 
 
 msgid "List of grids and metadata are loaded in memory"
@@ -85854,12 +85934,12 @@ msgid "Subsurface"
 msgstr "次表面"
 
 
-msgid "Min Samples"
-msgstr "最小采样"
-
-
 msgid "Noise Threshold"
 msgstr "噪波阈值"
+
+
+msgid "Min Samples"
+msgstr "最小采样"
 
 
 msgid "Dicing Rate Render"
@@ -86046,6 +86126,14 @@ msgstr "无效目标 %r (必须为骨架或者物体)"
 
 msgid "Cameras & Markers (.py)"
 msgstr "相机&标记(.py)"
+
+
+msgid "Operation aborted by user"
+msgstr "用户已中止操作"
+
+
+msgid "utf-8surrogateescape"
+msgstr "utf-8surrogateescape"
 
 
 msgid "Unable to parse XML, %s:%s for file %r"
@@ -91842,31 +91930,31 @@ msgstr "遮蔽切片到新物体"
 
 msgctxt "Operator"
 msgid "Face Set From Masked"
-msgstr "从被遮蔽面创建面集合"
+msgstr "从被遮蔽面创建面组"
 
 
 msgctxt "Operator"
 msgid "Face Set From Visible"
-msgstr "从可见面创建面集合"
+msgstr "从可见面创建面组"
 
 
 msgctxt "Operator"
 msgid "Face Set From Edit Mode Selection"
-msgstr "从编辑模式选择项创建面集合"
+msgstr "从编辑模式选择项创建面组"
 
 
 msgid "Init Face Sets"
-msgstr "初始化面集合"
+msgstr "初始化面组"
 
 
 msgctxt "Operator"
 msgid "Invert Visible Face Sets"
-msgstr "反转可见面集合"
+msgstr "反转可见面组"
 
 
 msgctxt "Operator"
 msgid "Show All Face Sets"
-msgstr "显示全部面集合"
+msgstr "显示全部面组"
 
 
 msgctxt "Operator"
@@ -92124,11 +92212,6 @@ msgstr "指向目标体..."
 
 
 msgctxt "Operator"
-msgid "Smoothen Vectors"
-msgstr "平滑矢量"
-
-
-msgctxt "Operator"
 msgid "Smooth Faces"
 msgstr "平滑面"
 
@@ -92151,6 +92234,11 @@ msgstr "循环边"
 msgctxt "Operator"
 msgid "By Distance"
 msgstr "按距离"
+
+
+msgctxt "Operator"
+msgid "Selection"
+msgstr "选中项"
 
 
 msgctxt "Operator"
@@ -92397,6 +92485,16 @@ msgstr "并排边"
 
 
 msgctxt "Operator"
+msgid "Previous Block"
+msgstr "上一块"
+
+
+msgctxt "Operator"
+msgid "Next Block"
+msgstr "下一块"
+
+
+msgctxt "Operator"
 msgid "Vertex Color"
 msgstr "顶点颜色"
 
@@ -92502,21 +92600,6 @@ msgstr "粘贴已翻转姿态"
 
 
 msgctxt "Operator"
-msgid "AutoName Left/Right"
-msgstr "左/右自动命名"
-
-
-msgctxt "Operator"
-msgid "AutoName Front/Back"
-msgstr "前/后自动命名"
-
-
-msgctxt "Operator"
-msgid "AutoName Top/Bottom"
-msgstr "上/下自动命名"
-
-
-msgctxt "Operator"
 msgid "To Next Keyframe"
 msgstr "到下一关键帧"
 
@@ -92534,6 +92617,21 @@ msgstr "在选定的关键帧"
 msgctxt "Operator"
 msgid "On Selected Markers"
 msgstr "在所选标记处"
+
+
+msgctxt "Operator"
+msgid "AutoName Left/Right"
+msgstr "左/右自动命名"
+
+
+msgctxt "Operator"
+msgid "AutoName Front/Back"
+msgstr "前/后自动命名"
+
+
+msgctxt "Operator"
+msgid "AutoName Top/Bottom"
+msgstr "上/下自动命名"
 
 
 msgctxt "Operator"
@@ -92758,6 +92856,16 @@ msgstr "调高字距"
 msgctxt "Operator"
 msgid "Reset Kerning"
 msgstr "重置字距"
+
+
+msgctxt "Operator"
+msgid "Previous Character"
+msgstr "上一字符"
+
+
+msgctxt "Operator"
+msgid "Next Character"
+msgstr "下一字符"
 
 
 msgctxt "Operator"
@@ -96959,6 +97067,10 @@ msgstr "集合 ‘%s’ (由活动物体实例化) 不可覆盖"
 
 msgid "Active object '%s' is not overridable"
 msgstr "活动物体 '%s' 不可重写"
+
+
+msgid "Move the mouse to change the voxel size. LBM: confirm size, ESC/RMB: cancel"
+msgstr "移动鼠标以更改体素大小。LBM：确认大小，ESC/RMB：取消"
 
 
 msgid "Voxel remesher cannot run with a voxel size of 0.0"
@@ -101903,12 +102015,12 @@ msgid "Cannot overwrite used library '%.240s'"
 msgstr "无法覆写已使用的库 '%.240s'"
 
 
-msgid "Can't read alternative start-up file: '%s'"
-msgstr "无法读取备用启动文件: '%s'"
-
-
 msgid "Saved \"%s\""
 msgstr "已保存 \"%s\""
+
+
+msgid "Can't read alternative start-up file: '%s'"
+msgstr "无法读取备用启动文件: '%s'"
 
 
 msgid "Not a library"

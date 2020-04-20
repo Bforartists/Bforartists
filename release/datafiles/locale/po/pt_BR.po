@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -32087,8 +32087,8 @@ msgstr "Divide os ossos selecionados e os separa, a partir dos ossos conectados 
 
 
 msgctxt "Operator"
-msgid "Subdivide Multi"
-msgstr "Múltiplas subdivisões"
+msgid "Subdivide"
+msgstr "Subdividir"
 
 
 msgid "Break selected bones into chains of smaller bones"
@@ -34392,11 +34392,6 @@ msgstr "Ajusta os pesos de influência de objetivo do corpo maleável para os po
 
 msgid "Split off selected points from connected unselected points"
 msgstr "Separa os pontos selecionados para fora, a partir dos pontos conectados não selecionados."
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "Subdividir"
 
 
 msgid "Subdivide selected segments"
@@ -44041,15 +44036,6 @@ msgstr "Adicionar compartimento de pintura de textura."
 
 msgid "Add a texture paint slot"
 msgstr "Adiciona um novo compartimento de pintura de textura."
-
-
-msgctxt "Operator"
-msgid "Brush Colors Flip"
-msgstr "Inverter as cores do pincel"
-
-
-msgid "Toggle foreground and background brush colors"
-msgstr "Alterna a cor dos pincéis entre as cores de plano de frente e de fundo."
 
 
 msgctxt "Operator"
@@ -68597,21 +68583,6 @@ msgstr "Transferir pesos"
 
 
 msgctxt "Operator"
-msgid "AutoName Left/Right"
-msgstr "Nomear automaticamente esquerda e direita"
-
-
-msgctxt "Operator"
-msgid "AutoName Front/Back"
-msgstr "Nomear automaticamente frente e trás"
-
-
-msgctxt "Operator"
-msgid "AutoName Top/Bottom"
-msgstr "Nomear automaticamente topo e base"
-
-
-msgctxt "Operator"
 msgid "To Next Keyframe"
 msgstr "Para o próximo quadro-chave"
 
@@ -68629,6 +68600,21 @@ msgstr "Nos quadros-chave selecionados"
 msgctxt "Operator"
 msgid "On Selected Markers"
 msgstr "Nos marcadores selecionados"
+
+
+msgctxt "Operator"
+msgid "AutoName Left/Right"
+msgstr "Nomear automaticamente esquerda e direita"
+
+
+msgctxt "Operator"
+msgid "AutoName Front/Back"
+msgstr "Nomear automaticamente frente e trás"
+
+
+msgctxt "Operator"
+msgid "AutoName Top/Bottom"
+msgstr "Nomear automaticamente topo e base"
 
 
 msgctxt "Operator"

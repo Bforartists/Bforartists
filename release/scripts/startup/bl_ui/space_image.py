@@ -1102,6 +1102,7 @@ class IMAGE_PT_view_display_uv_edit_overlays(Panel):
         col.use_property_split = False
         col.prop(uvedit, "show_smooth_edges", text="Smooth")
         col.prop(uvedit, "show_modified_edges", text="Modified")
+        col.prop(uvedit, "uv_opacity")
 
 
 class IMAGE_PT_view_display_uv_edit_overlays_stretch(Panel):

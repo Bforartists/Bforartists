@@ -73,6 +73,7 @@ class add_mesh_bolt(Operator, AddObjectHelper):
     # Bit Types
     Bit_Type_List = [('bf_Bit_None', 'NONE', 'No Bit Type'),
                     ('bf_Bit_Allen', 'ALLEN', 'Allen Bit Type'),
+                    ('bf_Bit_Torx', 'TORX', 'Torx Bit Type'),
                     ('bf_Bit_Philips', 'PHILLIPS', 'Phillips Bit Type')]
     bf_Bit_Type: EnumProperty(
             attr='bf_Bit_Type',
@@ -127,6 +128,30 @@ class add_mesh_bolt(Operator, AddObjectHelper):
             min=0, soft_min=0,
             max=MAX_INPUT_NUMBER,
             description='Flat Distance of the Allen Bit',
+            unit='LENGTH',
+            )
+    # Torx Size Types
+    Torx_Size_Type_List = [('bf_Torx_T10', 'T10', 'T10'),
+                    ('bf_Torx_T20', 'T20', 'T20'),
+                    ('bf_Torx_T25', 'T25', 'T25'),
+                    ('bf_Torx_T30', 'T30', 'T30'),
+                    ('bf_Torx_T40', 'T40', 'T40'),
+                    ('bf_Torx_T50', 'T50', 'T50'),
+                    ('bf_Torx_T55', 'T55', 'T55'),
+                    ]
+    
+    bf_Torx_Size_Type: EnumProperty(
+            attr='bf_Torx_Size_Type',
+            name='Torx Size',
+            description='Size of the Torx Bit',
+            items=Torx_Size_Type_List, default='bf_Torx_T20'
+            )
+    bf_Torx_Bit_Depth: FloatProperty(
+            attr='bf_Torx_Bit_Depth',
+            name='Bit Depth', default=1.5,
+            min=0, soft_min=0,
+            max=MAX_INPUT_NUMBER,
+            description='Depth of the Torx Bit',
             unit='LENGTH',
             )
     bf_Hex_Head_Height: FloatProperty(
@@ -434,6 +459,8 @@ def BoltParameters():
     "bf_Phillips_Bit_Depth",
     "bf_Allen_Bit_Depth",
     "bf_Allen_Bit_Flat_Distance",
+    "bf_Torx_Bit_Depth",
+    "bf_Torx_Size_Type",
     "bf_Hex_Head_Height",
     "bf_Hex_Head_Flat_Distance",
     "bf_CounterSink_Head_Dia",

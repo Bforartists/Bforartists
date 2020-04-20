@@ -641,6 +641,26 @@ static int ui_but_calc_float_precision(uiBut *but, double value)
 
 /* ************** BLOCK ENDING FUNCTION ************* */
 
+bool ui_but_rna_equals(const uiBut *a, const uiBut *b)
+{
+  return ui_but_rna_equals_ex(a, &b->rnapoin, b->rnaprop, b->rnaindex);
+}
+
+bool ui_but_rna_equals_ex(const uiBut *but,
+                          const PointerRNA *ptr,
+                          const PropertyRNA *prop,
+                          int index)
+{
+  if (but->rnapoin.data != ptr->data) {
+    return false;
+  }
+  if (but->rnaprop != prop || but->rnaindex != index) {
+    return false;
+  }
+
+  return true;
+}
+
 /* NOTE: if but->poin is allocated memory for every defbut, things fail... */
 static bool ui_but_equals_old(const uiBut *but, const uiBut *oldbut)
 {
@@ -649,10 +669,7 @@ static bool ui_but_equals_old(const uiBut *but, const uiBut *oldbut)
   if (but->retval != oldbut->retval) {
     return false;
   }
-  if (but->rnapoin.data != oldbut->rnapoin.data) {
-    return false;
-  }
-  if (but->rnaprop != oldbut->rnaprop || but->rnaindex != oldbut->rnaindex) {
+  if (!ui_but_rna_equals(but, oldbut)) {
     return false;
   }
   if (but->func != oldbut->func) {
@@ -979,7 +996,9 @@ static void ui_menu_block_set_keyaccels(uiBlock *block)
                 UI_BTYPE_BUT_MENU,
                 UI_BTYPE_MENU,
                 UI_BTYPE_BLOCK,
-                UI_BTYPE_PULLDOWN) ||
+                UI_BTYPE_PULLDOWN,
+                /* For PIE-menus. */
+                UI_BTYPE_ROW) ||
           (but->flag & UI_HIDDEN)) {
         /* pass */
       }
@@ -1299,9 +1318,8 @@ static bool ui_but_event_property_operator_string(const bContext *C,
       }
       else if (GS(id->name) == ID_SCE) {
         if (RNA_struct_is_a(ptr->type, &RNA_ToolSettings)) {
-          /* toolsettings property
-           * NOTE: toolsettings is usually accessed directly (i.e. not through scene)
-           */
+          /* Tool-settings property:
+           * NOTE: tool-settings is usually accessed directly (i.e. not through scene). */
           data_path = RNA_path_from_ID_to_property(ptr, prop);
         }
         else {
@@ -6333,7 +6351,9 @@ uiBut *uiDefSearchBut(uiBlock *block,
 /**
  * \param search_func, bfunc: both get it as \a arg.
  * \param arg: user value,
- * \param  active: when set, button opens with this item visible and selected.
+ * \param active: when set, button opens with this item visible and selected.
+ * \param separator_string: when not NULL, this string is used as a separator,
+ * showing the icon and highlighted text after the last instance of this string.
  */
 void UI_but_func_search_set(uiBut *but,
                             uiButSearchCreateFunc search_create_func,
@@ -6341,6 +6361,7 @@ void UI_but_func_search_set(uiBut *but,
                             void *arg,
                             uiButSearchArgFreeFunc search_arg_free_func,
                             uiButHandleFunc bfunc,
+                            const char *search_sep_string,
                             void *active)
 {
   /* needed since callers don't have access to internal functions
@@ -6359,6 +6380,7 @@ void UI_but_func_search_set(uiBut *but,
 
   but->search_arg = arg;
   but->search_arg_free_func = search_arg_free_func;
+  but->search_sep_string = search_sep_string;
 
   if (bfunc) {
 #ifdef DEBUG
@@ -6468,6 +6490,7 @@ uiBut *uiDefSearchButO_ptr(uiBlock *block,
                          but,
                          NULL,
                          operator_enum_call_cb,
+                         NULL,
                          NULL);
 
   but->optype = ot;
@@ -6480,6 +6503,13 @@ uiBut *uiDefSearchButO_ptr(uiBlock *block,
   }
 
   return but;
+}
+
+void UI_but_node_link_set(uiBut *but, bNodeSocket *socket, const float draw_color[4])
+{
+  but->flag |= UI_BUT_NODE_LINK;
+  but->custom_data = socket;
+  rgba_float_to_uchar(but->col, draw_color);
 }
 
 /**
