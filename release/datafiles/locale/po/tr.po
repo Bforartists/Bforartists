@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -10572,8 +10572,8 @@ msgstr "Dağıt"
 
 
 msgctxt "Operator"
-msgid "Subdivide Multi"
-msgstr "Çoklu Bölümleme"
+msgid "Subdivide"
+msgstr "Tekrar Böl"
 
 
 msgid "Number of Cuts"
@@ -11664,11 +11664,6 @@ msgstr "Seçili Kamerayı Aktif Yap"
 msgctxt "Operator"
 msgid "Set Goal Weight"
 msgstr "Kesit Sınırı Oluştur"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "Tekrar Böl"
 
 
 msgid "Subdivide selected segments"
@@ -24692,6 +24687,16 @@ msgstr "Katman"
 
 
 msgctxt "Operator"
+msgid "To Next Keyframe"
+msgstr "Sonraki Anahtarkareyi Seç"
+
+
+msgctxt "Operator"
+msgid "On Selected Markers"
+msgstr "Seçili İşaretlerde"
+
+
+msgctxt "Operator"
 msgid "AutoName Left/Right"
 msgstr "Otomatik İsimlendir Sol/Sağ"
 
@@ -24704,16 +24709,6 @@ msgstr "Otomatik İsimlendir Ön/Arka"
 msgctxt "Operator"
 msgid "AutoName Top/Bottom"
 msgstr "Otomatik İsimlendir Üst/Alt"
-
-
-msgctxt "Operator"
-msgid "To Next Keyframe"
-msgstr "Sonraki Anahtarkareyi Seç"
-
-
-msgctxt "Operator"
-msgid "On Selected Markers"
-msgstr "Seçili İşaretlerde"
 
 
 msgctxt "Operator"

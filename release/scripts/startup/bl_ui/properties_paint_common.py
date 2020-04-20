@@ -594,9 +594,9 @@ def brush_settings(layout, context, brush, popover=False):
             
             layout.separator()
             
-            row = layout.row()
+            row = layout.row(heading="Plane Trim")
             row.use_property_split = False
-            row.prop(brush, "use_plane_trim", text="Plane Trim")
+            row.prop(brush, "use_plane_trim", text="")
             
             if brush.use_plane_trim:
                 row.prop(brush, "plane_trim", slider=True, text="")
@@ -609,20 +609,12 @@ def brush_settings(layout, context, brush, popover=False):
         # use_persistent, set_persistent_base
         if capabilities.has_persistence:
             ob = context.sculpt_object
-            do_persistent = True
 
-            # not supported yet for this case
-            for md in ob.modifiers:
-                if md.type == 'MULTIRES':
-                    do_persistent = False
-                    break
-
-            if do_persistent:
-                layout.separator()
-                layout.use_property_split = False
-                layout.prop(brush, "use_persistent")
-                layout.operator("sculpt.set_persistent_base")
-                layout.separator()
+            layout.separator()
+            layout.use_property_split = False
+            layout.prop(brush, "use_persistent")
+            layout.operator("sculpt.set_persistent_base")
+            layout.separator()
 
         if brush.sculpt_tool == 'CLAY_STRIPS':
             row = layout.row()
@@ -835,25 +827,28 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         use_accumulate = capabilities.has_accumulate
         use_frontface = True
 
+        col = layout.column(heading="Auto-Masking", align=True)
+
         # topology automasking
-        layout.use_property_split = False
-        layout.prop(brush, "use_automasking_topology")
+        col.use_property_split = False
+        col.prop(brush, "use_automasking_topology")
 
         # face masks automasking
-        layout.prop(brush, "use_automasking_face_sets")
+        col.prop(brush, "use_automasking_face_sets")
        
         # boundary edges/face sets automasking
-        layout.prop(brush, "use_automasking_boundary_edges")
-        layout.prop(brush, "use_automasking_boundary_face_sets")
-        layout.prop(brush, "automasking_boundary_edges_propagation_steps")
+        col.prop(brush, "use_automasking_boundary_edges", text="Mesh Boundary")
+        col.prop(brush, "use_automasking_boundary_face_sets", text="Face Sets")
+        col.prop(brush, "automasking_boundary_edges_propagation_steps")
 
         # sculpt plane settings
         if capabilities.has_sculpt_plane:
-            layout.use_property_split = True
-            layout.prop(brush, "sculpt_plane")
-            layout.use_property_split = False
-            layout.prop(brush, "use_original_normal")
-            layout.prop(brush, "use_original_plane")
+            col.use_property_split = True
+            col.prop(brush, "sculpt_plane")
+            col.use_property_split = False
+            col = layout.column(heading="Use Original", align=True)
+            col.prop(brush, "use_original_normal", text="Normal")
+            col.prop(brush, "use_original_plane", text="Plane")
             layout.separator()
 
     # 3D and 2D Texture Paint.

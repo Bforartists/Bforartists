@@ -516,7 +516,8 @@ class TOPBAR_MT_edit(Menu):
 
         layout.separator()
 
-        layout.operator("wm.search_menu", text="Operator Search", icon='VIEWZOOM')
+        layout.operator("wm.search_menu", text="Menu Search", icon='VIEWZOOM')
+        layout.operator("wm.search_operator", text="Operator Search", icon='VIEWZOOM')
 
         layout.separator()
 

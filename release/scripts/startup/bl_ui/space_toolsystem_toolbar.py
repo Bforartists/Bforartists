@@ -637,9 +637,10 @@ class _defs_edit_mesh:
                 layout.prop(props, "vertex_only")
                 layout.prop(props, "clamp_overlap")
                 layout.prop(props, "loop_slide")
-                layout.prop(props, "mark_seam")
-                layout.prop(props, "mark_sharp")
                 layout.prop(props, "harden_normals")
+                col = layout.column(heading="Mark")
+                col.prop(props, "mark_seam", text="Seam")
+                col.prop(props, "mark_sharp", text="Sharp")
 
                 layout.use_property_split = True
                 layout.prop(props, "material")
@@ -679,6 +680,19 @@ class _defs_edit_mesh:
             operator="view3d.edit_mesh_extrude_move_normal",
             keymap=(),
             draw_settings=_template_widget.VIEW3D_GGT_xform_extrude.draw_settings,
+        )
+
+    @ToolDef.from_fn
+    def extrude_dissolve_and_intersect():
+        return dict(
+            idname="builtin.extrude_dissolve_and_intersect",
+            label="Extrude Dissolve and Intersect",
+            description=(
+                "Extrude, dissolves edges whose faces form a flat surface and intersect new edges"
+            ),
+            icon="none",
+            widget="VIEW3D_GGT_tool_generic_handle_normal",
+            keymap=(),
         )
 
     @ToolDef.from_fn
@@ -1054,6 +1068,8 @@ class _defs_sculpt:
             if (props.type == "SURFACE_SMOOTH"):
                 layout.prop(props, "surface_smooth_shape_preservation", expand=False)
                 layout.prop(props, "surface_smooth_current_vertex", expand=False)
+            if (props.type == "SHARPEN"):
+                layout.prop(props, "sharpen_smooth_ratio", expand=False)
 
         return dict(
             idname="builtin.mesh_filter",
@@ -1827,6 +1843,21 @@ class _defs_sequencer_generic:
             draw_settings=draw_settings,
         )
 
+    @ToolDef.from_fn
+    def sample():
+        def draw_settings(_context, layout, tool):
+            props = tool.operator_properties("sequencer.sample")
+        return dict(
+            idname="builtin.sample",
+            label="Sample",
+            description=(
+                "Sample pixel values under the cursor"
+            ),
+            icon="ops.paint.weight_sample",  # XXX, needs own icon.
+            keymap="Sequencer Tool: Sample",
+            draw_settings=draw_settings,
+        )
+
 
 class _defs_sequencer_select:
     @ToolDef.from_fn
@@ -2119,6 +2150,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             None,
             (
                 _defs_edit_mesh.extrude,
+                _defs_edit_mesh.extrude_dissolve_and_intersect,
                 _defs_edit_mesh.extrude_normals,
                 _defs_edit_mesh.extrude_individual,
                 _defs_edit_mesh.extrude_cursor,
@@ -2373,6 +2405,7 @@ class SEQUENCER_PT_tools_active(ToolSelectPanelHelper, Panel):
         None: [
         ],
         'PREVIEW': [
+            _defs_sequencer_generic.sample,
             *_tools_annotate,
         ],
         'SEQUENCER': [
@@ -2380,6 +2413,7 @@ class SEQUENCER_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_sequencer_generic.blade,
         ],
         'SEQUENCER_PREVIEW': [
+            _defs_sequencer_generic.sample,
             *_tools_select,
             *_tools_annotate,
             _defs_sequencer_generic.blade,

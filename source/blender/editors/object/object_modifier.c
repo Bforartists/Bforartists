@@ -86,6 +86,7 @@
 #include "ED_mesh.h"
 #include "ED_object.h"
 #include "ED_screen.h"
+#include "ED_sculpt.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -141,10 +142,11 @@ static void object_force_modifier_bind_simple_options(Depsgraph *depsgraph,
   md_eval->mode = mode;
 }
 
-/** Add a modifier to given object, including relevant extra processing needed by some physics
- * types (particles, simulations...).
+/**
+ * Add a modifier to given object, including relevant extra processing needed by some physics types
+ * (particles, simulations...).
  *
- * \param scene is only used to set current frame in some cases, and may be NULL.
+ * \param scene: is only used to set current frame in some cases, and may be NULL.
  */
 ModifierData *ED_object_modifier_add(
     ReportList *reports, Main *bmain, Scene *scene, Object *ob, const char *name, int type)
@@ -1697,7 +1699,11 @@ static int multires_base_apply_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
+  ED_sculpt_undo_push_multires_mesh_begin(C, op->type->name);
+
   multiresModifier_base_apply(depsgraph, object, mmd);
+
+  ED_sculpt_undo_push_multires_mesh_end(C, op->type->name);
 
   DEG_id_tag_update(&object->id, ID_RECALC_GEOMETRY);
   WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER, object);
@@ -1726,7 +1732,7 @@ void OBJECT_OT_multires_base_apply(wmOperatorType *ot)
   ot->exec = multires_base_apply_exec;
 
   /* flags */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_INTERNAL;
   edit_modifier_properties(ot);
 }
 
@@ -2450,7 +2456,7 @@ static int ocean_bake_exec(bContext *C, wmOperator *op)
      * No drivers or other modifier parameters. */
     /* TODO(sergey): This operates on an original data, so no flush is needed. However, baking
      * usually should happen on an evaluated objects, so this seems to be deeper issue here. */
-    BKE_animsys_evaluate_animdata(scene, (ID *)ob, ob->adt, f, ADT_RECALC_ANIM, false);
+    BKE_animsys_evaluate_animdata((ID *)ob, ob->adt, f, ADT_RECALC_ANIM, false);
 
     och->time[i] = omd->time;
     i++;

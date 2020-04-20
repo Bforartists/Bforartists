@@ -83,24 +83,13 @@ class DATA_PT_display(ArmatureButtonsPanel, Panel):
         arm = context.armature
 
         layout.prop(arm, "display_type", text="Display As")
-        layout.use_property_split = False
-        layout.prop(arm, "display_type", text="Display As", expand = True)
-        
-        layout.use_property_split = True
-        
-        layout.separator()
-        
-        flow = layout.grid_flow(row_major=False, columns=0, even_columns=False, even_rows=False, align=True)
-        col = flow.column()
+
+        col = layout.column(heading="Show")
         col.prop(arm, "show_names", text="Names")
-        col = flow.column()
         col.prop(arm, "show_axes", text="Axes")
-        col = flow.column()
         col.prop(arm, "show_bone_custom_shapes", text="Shapes")
-        col = flow.column()
         col.prop(arm, "show_group_colors", text="Group Colors")
         if ob:
-            col = flow.column()
             col.prop(ob, "show_in_front", text="In Front")
 
 

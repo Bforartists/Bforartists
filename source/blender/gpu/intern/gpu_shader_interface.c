@@ -68,6 +68,7 @@ static const char *BuiltinUniform_name(GPUUniformBuiltin u)
       [GPU_UNIFORM_BASE_INSTANCE] = "baseInstance",
       [GPU_UNIFORM_RESOURCE_CHUNK] = "resourceChunk",
       [GPU_UNIFORM_RESOURCE_ID] = "resourceId",
+      [GPU_UNIFORM_SRGB_TRANSFORM] = "srgbTarget",
 
       [GPU_UNIFORM_CUSTOM] = NULL,
       [GPU_NUM_UNIFORMS] = NULL,
@@ -253,8 +254,12 @@ GPUShaderInterface *GPU_shaderinterface_create(int32_t program)
     }
 
     /* TODO: reject DOUBLE gl_types */
-
     input->location = glGetAttribLocation(program, name);
+    /* Ignore OpenGL names like `gl_BaseInstanceARB`, `gl_InstanceID` and `gl_VertexID`. */
+    if (input->location == -1) {
+      MEM_freeN(input);
+      continue;
+    }
 
     shaderface->enabled_attr_mask |= (1 << input->location);
 

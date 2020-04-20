@@ -22,7 +22,7 @@ bl_info = {
     "name": "Collection Manager",
     "description": "Manage collections and their objects",
     "author": "Ryan Inch",
-    "version": (2,5,4),
+    "version": (2,7,11),
     "blender": (2, 80, 0),
     "location": "View3D - Object Mode (Shortcut - M)",
     "warning": '',  # used for warning icon and text in addons panel
@@ -35,6 +35,7 @@ if "bpy" in locals():
     import importlib
 
     importlib.reload(internals)
+    importlib.reload(operator_utils)
     importlib.reload(operators)
     importlib.reload(qcd_move_widget)
     importlib.reload(qcd_operators)
@@ -44,6 +45,7 @@ if "bpy" in locals():
 
 else:
     from . import internals
+    from . import operator_utils
     from . import operators
     from . import qcd_move_widget
     from . import qcd_operators
@@ -86,6 +88,7 @@ addon_keymaps = []
 classes = (
     internals.CMListCollection,
     internals.CMSendReport,
+    operators.SetActiveCollection,
     operators.ExpandAllOperator,
     operators.ExpandSublevelOperator,
     operators.CMExcludeOperator,
@@ -111,12 +114,25 @@ classes = (
 
 @persistent
 def depsgraph_update_post_handler(dummy):
+    move_triggered = False
     if internals.move_triggered:
         internals.move_triggered = False
-        return
+        move_triggered = True
 
-    internals.move_selection.clear()
-    internals.move_active = None
+    qcd_view_op_triggered = False
+    if internals.qcd_view_op_triggered or internals.in_qcd_view_op:
+        internals.qcd_view_op_triggered = False
+        qcd_view_op_triggered = True
+
+
+    if not move_triggered:
+        internals.move_selection.clear()
+        internals.move_active = None
+
+    if not qcd_view_op_triggered:
+        for obj in list(internals.edit_mode_selection):
+            if obj in bpy.context.view_layer.objects:
+                internals.edit_mode_selection.remove(obj)
 
 @persistent
 def undo_redo_post_handler(dummy):

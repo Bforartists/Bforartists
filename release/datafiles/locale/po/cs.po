@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -14697,8 +14697,8 @@ msgstr "Rozdělit"
 
 
 msgctxt "Operator"
-msgid "Subdivide Multi"
-msgstr "Násobné rozdělení"
+msgid "Subdivide"
+msgstr "Rozdělit"
 
 
 msgid "Break selected bones into chains of smaller bones"
@@ -16160,11 +16160,6 @@ msgstr "Mód Úchopu"
 msgctxt "Operator"
 msgid "Set Goal Weight"
 msgstr "Nastavit váhu cíle"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "Rozdělit"
 
 
 msgid "Subdivide selected segments"
@@ -33012,21 +33007,6 @@ msgstr "Váha vrstvy"
 
 
 msgctxt "Operator"
-msgid "AutoName Left/Right"
-msgstr "Automatický název Levý/Pravý"
-
-
-msgctxt "Operator"
-msgid "AutoName Front/Back"
-msgstr "Automatický název přední/Zadní"
-
-
-msgctxt "Operator"
-msgid "AutoName Top/Bottom"
-msgstr "Automatický název Horní/Spodní"
-
-
-msgctxt "Operator"
 msgid "To Next Keyframe"
 msgstr "Další klíč"
 
@@ -33039,6 +33019,21 @@ msgstr "Na poslední klíčový snímek (Vytvoří smyčku)"
 msgctxt "Operator"
 msgid "On Selected Markers"
 msgstr "Na Vybraných Značkách"
+
+
+msgctxt "Operator"
+msgid "AutoName Left/Right"
+msgstr "Automatický název Levý/Pravý"
+
+
+msgctxt "Operator"
+msgid "AutoName Front/Back"
+msgstr "Automatický název přední/Zadní"
+
+
+msgctxt "Operator"
+msgid "AutoName Top/Bottom"
+msgstr "Automatický název Horní/Spodní"
 
 
 msgctxt "Operator"

@@ -181,21 +181,21 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
         if not use_optix(context):
             layout.prop(cscene, "progressive")
         
-        col = layout.column()
+        col = layout.column() # bfa
 
         if not use_branched_path(context):
             col.prop(cscene, "samples", text="Render")
             col.prop(cscene, "preview_samples", text="Viewport")
-            col = layout.column()
-            col.use_property_split = False
-            col.prop(cscene, "use_square_samples")
+            col = layout.column() # bfa
+            col.use_property_split = False # bfa
+            col.prop(cscene, "use_square_samples") # bfa
             
         else:
             col.prop(cscene, "aa_samples", text="Render")
             col.prop(cscene, "preview_aa_samples", text="Viewport")
-            col = layout.column()
-            col.use_property_split = False
-            col.prop(cscene, "use_square_samples")
+            col = layout.column() # bfa
+            col.use_property_split = False # bfa
+            col.prop(cscene, "use_square_samples") # bfa
 
         # Viewport denoising is currently only supported with OptiX
         if show_optix_denoising(context):
@@ -260,8 +260,8 @@ class CYCLES_RENDER_PT_sampling_adaptive(CyclesButtonsPanel, Panel):
         layout.active = cscene.use_adaptive_sampling
 
         col = layout.column(align=True)
-        col.prop(cscene, "adaptive_min_samples", text="Min Samples")
         col.prop(cscene, "adaptive_threshold", text="Noise Threshold")
+        col.prop(cscene, "adaptive_min_samples", text="Min Samples")
 
 class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
     bl_label = "Advanced"
@@ -779,20 +779,13 @@ class CYCLES_RENDER_PT_filter(CyclesButtonsPanel, Panel):
         rd = scene.render
         view_layer = context.view_layer
 
-        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
-
-        col = flow.column()
+        col = layout.column(heading="Include")
         col.prop(view_layer, "use_sky", text="Environment")
-        col = flow.column()
         col.prop(view_layer, "use_ao", text="Ambient Occlusion")
-        col = flow.column()
         col.prop(view_layer, "use_solid", text="Surfaces")
-        col = flow.column()
         col.prop(view_layer, "use_strand", text="Hair")
-        col = flow.column()
         col.prop(view_layer, "use_volumes", text="Volumes")
         if with_freestyle:
-            col = flow.column()
             col.prop(view_layer, "use_freestyle", text="Freestyle")
             col.active = rd.use_freestyle
 
@@ -836,33 +829,24 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         view_layer = context.view_layer
         cycles_view_layer = view_layer.cycles
 
-        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
-        col = flow.column()
+        col = layout.column(heading="Include", align=True)
         col.prop(view_layer, "use_pass_combined")
-        col = flow.column()
         col.prop(view_layer, "use_pass_z")
-        col = flow.column()
         col.prop(view_layer, "use_pass_mist")
-        col = flow.column()
         col.prop(view_layer, "use_pass_normal")
-        col = flow.column()
-        col.prop(view_layer, "use_pass_vector")
-        col.active = not rd.use_motion_blur
-        col = flow.column()
+        sub = col.column()
+        sub.active = not rd.use_motion_blur
+        sub.prop(view_layer, "use_pass_vector")
         col.prop(view_layer, "use_pass_uv")
-        col = flow.column()
+
+        col.prop(cycles_view_layer, "denoising_store_passes", text="Denoising Data")
+
+        col = layout.column(heading="Indexes", align=True)
         col.prop(view_layer, "use_pass_object_index")
-        col = flow.column()
         col.prop(view_layer, "use_pass_material_index")
 
-        layout.separator()
-
-        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
-        col = flow.column()
-        col.prop(cycles_view_layer, "denoising_store_passes", text="Denoising Data")
-        col = flow.column()
+        col = layout.column(heading="Debug", align=True)
         col.prop(cycles_view_layer, "pass_debug_render_time", text="Render Time")
-        col = flow.column()
         col.prop(cycles_view_layer, "pass_debug_sample_count", text="Sample Count")
 
         layout.separator()
@@ -885,38 +869,26 @@ class CYCLES_RENDER_PT_passes_light(CyclesButtonsPanel, Panel):
         view_layer = context.view_layer
         cycles_view_layer = view_layer.cycles
 
-        split = layout.split(factor=0.35)
-        split.use_property_split = False
-        split.label(text="Diffuse")
-        row = split.row(align=True)
-        row.prop(view_layer, "use_pass_diffuse_direct", text="Direct", toggle=True)
-        row.prop(view_layer, "use_pass_diffuse_indirect", text="Indirect", toggle=True)
-        row.prop(view_layer, "use_pass_diffuse_color", text="Color", toggle=True)
+        col = layout.column(heading="Diffuse", align=True)
+        col.prop(view_layer, "use_pass_diffuse_direct", text="Direct")
+        col.prop(view_layer, "use_pass_diffuse_indirect", text="Indirect")
+        col.prop(view_layer, "use_pass_diffuse_color", text="Color")
 
-        split = layout.split(factor=0.35)
-        split.use_property_split = False
-        split.label(text="Glossy")
-        row = split.row(align=True)
-        row.prop(view_layer, "use_pass_glossy_direct", text="Direct", toggle=True)
-        row.prop(view_layer, "use_pass_glossy_indirect", text="Indirect", toggle=True)
-        row.prop(view_layer, "use_pass_glossy_color", text="Color", toggle=True)
+        col = layout.column(heading="Glossy", align=True)
+        col.prop(view_layer, "use_pass_glossy_direct", text="Direct")
+        col.prop(view_layer, "use_pass_glossy_indirect", text="Indirect")
+        col.prop(view_layer, "use_pass_glossy_color", text="Color")
 
-        split = layout.split(factor=0.35)
-        split.use_property_split = False
-        split.label(text="Transmission")
-        row = split.row(align=True)
-        row.prop(view_layer, "use_pass_transmission_direct", text="Direct", toggle=True)
-        row.prop(view_layer, "use_pass_transmission_indirect", text="Indirect", toggle=True)
-        row.prop(view_layer, "use_pass_transmission_color", text="Color", toggle=True)
+        col = layout.column(heading="Transmission", align=True)
+        col.prop(view_layer, "use_pass_transmission_direct", text="Direct")
+        col.prop(view_layer, "use_pass_transmission_indirect", text="Indirect")
+        col.prop(view_layer, "use_pass_transmission_color", text="Color")
 
-        split = layout.split(factor=0.35)
-        split.use_property_split = False
-        split.label(text="Volume")
-        row = split.row(align=True)
-        row.prop(cycles_view_layer, "use_pass_volume_direct", text="Direct", toggle=True)
-        row.prop(cycles_view_layer, "use_pass_volume_indirect", text="Indirect", toggle=True)
+        col = layout.column(heading="Volume", align=True)
+        col.prop(cycles_view_layer, "use_pass_volume_direct", text="Direct")
+        col.prop(cycles_view_layer, "use_pass_volume_indirect", text="Indirect")
 
-        col = layout.column(align=True)
+        col = layout.column(heading="Other", align=True)
         col.use_property_split = False
         col.prop(view_layer, "use_pass_emit", text="Emission")
         col.prop(view_layer, "use_pass_environment")
@@ -939,11 +911,11 @@ class CYCLES_RENDER_PT_passes_crypto(CyclesButtonsPanel, Panel):
 
         cycles_view_layer = context.view_layer.cycles
 
-        row = layout.row(align=True)
-        row.use_property_split = False
-        row.prop(cycles_view_layer, "use_pass_crypto_object", text="Object", toggle=True)
-        row.prop(cycles_view_layer, "use_pass_crypto_material", text="Material", toggle=True)
-        row.prop(cycles_view_layer, "use_pass_crypto_asset", text="Asset", toggle=True)
+        col = layout.column(heading="Include", align=True)
+        col.use_property_split = False
+        col.prop(cycles_view_layer, "use_pass_crypto_object", text="Object")
+        col.prop(cycles_view_layer, "use_pass_crypto_material", text="Material")
+        col.prop(cycles_view_layer, "use_pass_crypto_asset", text="Asset")
 
         layout.prop(cycles_view_layer, "pass_crypto_depth", text="Levels")
 
@@ -1034,21 +1006,21 @@ class CYCLES_RENDER_PT_denoising(CyclesButtonsPanel, Panel):
         view_layer = context.view_layer
         cycles_view_layer = view_layer.cycles
 
-        split = layout.split()
-        split.active = cycles_view_layer.use_denoising
+        layout.active = cycles_view_layer.use_denoising
 
-        col = split.column(align=True)
+        col = layout.column()
 
         if show_optix_denoising(context):
             col.prop(cycles_view_layer, "use_optix_denoising")
             col.separator(factor=2.0)
-
 
             if cycles_view_layer.use_optix_denoising:
                 col.prop(cycles_view_layer, "denoising_optix_input_passes")
                 return
 
         col.prop(cycles_view_layer, "denoising_radius", text="Radius")
+
+        col = layout.column()
         col.prop(cycles_view_layer, "denoising_strength", slider=True, text="Strength")
         col.prop(cycles_view_layer, "denoising_feature_strength", slider=True, text="Feature Strength")
         col.separator()
@@ -1057,44 +1029,23 @@ class CYCLES_RENDER_PT_denoising(CyclesButtonsPanel, Panel):
 
         layout.separator()
 
-        split = layout.split(factor=0.5)
-        split.active = cycles_view_layer.use_denoising or cycles_view_layer.denoising_store_passes
+        col = layout.column()
+        col.active = cycles_view_layer.use_denoising or cycles_view_layer.denoising_store_passes
 
-        col = split.column()
-        col.alignment = 'RIGHT'
-        col.label(text="Diffuse")
-
-        row = split.row(align=True)
+        row = col.row(heading="Diffuse", align=True)
         row.use_property_split = False
         row.prop(cycles_view_layer, "denoising_diffuse_direct", text="Direct", toggle=True)
         row.prop(cycles_view_layer, "denoising_diffuse_indirect", text="Indirect", toggle=True)
 
-        split = layout.split(factor=0.5)
-        split.active = cycles_view_layer.use_denoising or cycles_view_layer.denoising_store_passes
-
-        col = split.column()
-        col.alignment = 'RIGHT'
-        col.label(text="Glossy")
-
-        row = split.row(align=True)
+        row = col.row(heading="Glossy", align=True)
         row.use_property_split = False
         row.prop(cycles_view_layer, "denoising_glossy_direct", text="Direct", toggle=True)
         row.prop(cycles_view_layer, "denoising_glossy_indirect", text="Indirect", toggle=True)
 
-        split = layout.split(factor=0.5)
-        split.active = cycles_view_layer.use_denoising or cycles_view_layer.denoising_store_passes
-
-        col = split.column()
-        col.alignment = 'RIGHT'
-        col.label(text="Transmission")
-
-        row = split.row(align=True)
+        row = col.row(heading="Transmission", align=True)
         row.use_property_split = False
         row.prop(cycles_view_layer, "denoising_transmission_direct", text="Direct", toggle=True)
         row.prop(cycles_view_layer, "denoising_transmission_indirect", text="Indirect", toggle=True)
-
-        split = layout.split(factor=0.5)
-        split.active = cycles_view_layer.use_denoising or cycles_view_layer.denoising_store_passes
 
 
 class CYCLES_PT_post_processing(CyclesButtonsPanel, Panel):
@@ -1109,7 +1060,7 @@ class CYCLES_PT_post_processing(CyclesButtonsPanel, Panel):
 
         rd = context.scene.render
 
-        col = layout.column(align=True)
+        col = layout.column(align=True, heading="Pipeline")
         col.use_property_split = False
         col.prop(rd, "use_compositing")
         col.prop(rd, "use_sequencer")
@@ -1299,22 +1250,18 @@ class CYCLES_OBJECT_PT_visibility(CyclesButtonsPanel, Panel):
         layout = self.layout
         layout.use_property_split = True
 
-        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-        layout = self.layout
         ob = context.object
 
-        col = flow.column()
-        col.prop(ob, "hide_viewport", text="Show in Viewports", invert_checkbox=True, toggle=False)
-        col = flow.column()
-        col.prop(ob, "hide_render", text="Show in Renders", invert_checkbox=True, toggle=False)
-        col = flow.column()
-        col.prop(ob, "hide_select", text="Selectable", invert_checkbox=True, toggle=False)
+        layout.prop(ob, "hide_select", text="Selectable", invert_checkbox=True, toggle=False)
+
+        col = layout.column(heading="Show in")
+        col.prop(ob, "hide_viewport", text="Viewports", invert_checkbox=True, toggle=False)
+        col.prop(ob, "hide_render", text="Renders", invert_checkbox=True, toggle=False)
 
         if has_geometry_visibility(ob):
             cob = ob.cycles
-            col = flow.column()
+            col = layout.column(heading="Mask")
             col.prop(cob, "is_shadow_catcher")
-            col = flow.column()
             col.prop(cob, "is_holdout")
 
 
@@ -1338,24 +1285,16 @@ class CYCLES_OBJECT_PT_visibility_ray_visibility(CyclesButtonsPanel, Panel):
         cob = ob.cycles
         visibility = ob.cycles_visibility
 
-        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
-
-        col = flow.column()
+        col = layout.column()
         col.prop(visibility, "camera")
-        col = flow.column()
         col.prop(visibility, "diffuse")
-        col = flow.column()
         col.prop(visibility, "glossy")
-        col = flow.column()
         col.prop(visibility, "transmission")
-        col = flow.column()
         col.prop(visibility, "scatter")
 
         if ob.type != 'LIGHT':
-            col = flow.column()
-            col.prop(visibility, "shadow")
-
-        layout.separator()
+            sub = col.column()
+            sub.prop(visibility, "shadow")
 
 
 class CYCLES_OBJECT_PT_visibility_culling(CyclesButtonsPanel, Panel):
@@ -1378,15 +1317,13 @@ class CYCLES_OBJECT_PT_visibility_culling(CyclesButtonsPanel, Panel):
         ob = context.object
         cob = ob.cycles
 
-        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
+        row = layout.row()
+        row.active = scene.render.use_simplify and cscene.use_camera_cull
+        row.prop(cob, "use_camera_cull")
 
-        col = flow.column()
-        col.active = scene.render.use_simplify and cscene.use_camera_cull
-        col.prop(cob, "use_camera_cull")
-
-        col = flow.column()
-        col.active = scene.render.use_simplify and cscene.use_distance_cull
-        col.prop(cob, "use_distance_cull")
+        row = layout.row()
+        row.active = scene.render.use_simplify and cscene.use_distance_cull
+        row.prop(cob, "use_distance_cull")
 
 
 def panel_node_draw(layout, id_data, output_type, input_name):
@@ -1936,27 +1873,26 @@ class CYCLES_RENDER_PT_bake_influence(CyclesButtonsPanel, Panel):
             sub.prop(cbk, "normal_b", text="B")
 
         elif cscene.bake_type == 'COMBINED':
-            row = col.row(align=True)
-            row.use_property_split = False
-            row.prop(cbk, "use_pass_direct", toggle=True)
-            row.prop(cbk, "use_pass_indirect", toggle=True)
 
-            flow = col.grid_flow(row_major=False, columns=0, even_columns=False, even_rows=False, align=True)
+            col = layout.column(heading="Lighting", align=True)
+            col.use_property_split = False
+            col.prop(cbk, "use_pass_direct")
+            col.prop(cbk, "use_pass_indirect")
 
-            flow.active = cbk.use_pass_direct or cbk.use_pass_indirect
-            flow.use_property_split = False
-            flow.prop(cbk, "use_pass_diffuse")
-            flow.prop(cbk, "use_pass_glossy")
-            flow.prop(cbk, "use_pass_transmission")
-            flow.prop(cbk, "use_pass_ambient_occlusion")
-            flow.prop(cbk, "use_pass_emit")
+            col = layout.column(heading="Contributions", align=True)
+            col.use_property_split = False
+            col.prop(cbk, "use_pass_diffuse")
+            col.prop(cbk, "use_pass_glossy")
+            col.prop(cbk, "use_pass_transmission")
+            col.prop(cbk, "use_pass_ambient_occlusion")
+            col.prop(cbk, "use_pass_emit")
 
         elif cscene.bake_type in {'DIFFUSE', 'GLOSSY', 'TRANSMISSION'}:
-            row = col.row(align=True)
+            col = layout.column(heading="Contributions", align=True)
             row.use_property_split = False
-            row.prop(cbk, "use_pass_direct", toggle=True)
-            row.prop(cbk, "use_pass_indirect", toggle=True)
-            row.prop(cbk, "use_pass_color", toggle=True)
+            col.prop(cbk, "use_pass_direct")
+            col.prop(cbk, "use_pass_indirect")
+            col.prop(cbk, "use_pass_color")
 
 
 class CYCLES_RENDER_PT_bake_selected_to_active(CyclesButtonsPanel, Panel):
@@ -2164,18 +2100,17 @@ class CYCLES_RENDER_PT_simplify_culling(CyclesButtonsPanel, Panel):
 
         layout.active = rd.use_simplify
 
-        row = layout.row()
+        row = layout.row(heading="Camera Culling")
         row.use_property_split = False
-        row.prop(cscene, "use_camera_cull")
-        sub = row.row()
-        sub.use_property_split = True
+        row.prop(cscene, "use_camera_cull", text="")
+        sub = row.column()
         sub.active = cscene.use_camera_cull
         sub.prop(cscene, "camera_cull_margin", text = "")
 
-        row = layout.row()
+        row = layout.row(heading="Distance Culling")
         row.use_property_split = False
-        row.prop(cscene, "use_distance_cull")
-        sub = row.row()
+        row.prop(cscene, "use_distance_cull", text="")
+        sub = row.column()
         sub.use_property_split = True
         sub.active = cscene.use_distance_cull
         sub.prop(cscene, "distance_cull_margin", text="")

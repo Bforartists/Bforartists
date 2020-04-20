@@ -19,7 +19,7 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "Hotkey: 'O'",
+    "name": "Hotkey: 'Shift O'",
     "description": "Proportional Object/Edit Tools",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 1),

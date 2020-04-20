@@ -590,7 +590,7 @@ static uiBlock *merged_element_search_menu(bContext *C, ARegion *region, void *d
   but = uiDefSearchBut(
       block, search, 0, ICON_VIEWZOOM, sizeof(search), 10, 10, menu_width, UI_UNIT_Y, 0, 0, "");
   UI_but_func_search_set(
-      but, NULL, merged_element_search_cb, data, NULL, merged_element_search_call_cb, NULL);
+      but, NULL, merged_element_search_cb, data, NULL, merged_element_search_call_cb, NULL, NULL);
   UI_but_flag_enable(but, UI_BUT_ACTIVATE_ON_INIT);
 
   /* Fake button to hold space for search items */
@@ -2332,11 +2332,10 @@ static int outliner_operator_menu(bContext *C, const char *opname)
   uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_REGION_WIN);
   uiItemsEnumO(layout, ot->idname, RNA_property_identifier(ot->prop));
 
-  /*MenuType *mt = WM_menutype_find("OUTLINER_MT_context", false);*/  //- bfa - removed the OUTLINER_MT_context menu
-  /*if (mt) {
-		uiItemS(layout);
-		UI_menutype_draw(C, mt, layout);
-	}*/
+//- bfa - removed the OUTLINER_MT_context menu
+  /*uiItemS(layout);
+
+  uiItemMContents(layout, "OUTLINER_MT_context_menu");*/
 
   UI_popup_menu_end(C, pup);
 
@@ -2471,14 +2470,8 @@ static int outliner_operation(bContext *C, wmOperator *UNUSED(op), const wmEvent
     }
   }
 
-  /* Menus for clicking in empty space. */
-  if (soops->outlinevis == SO_VIEW_LAYER) {
-    WM_menu_name_call(C, "OUTLINER_MT_collection_new", WM_OP_INVOKE_REGION_WIN);
-    return OPERATOR_FINISHED;
-  }
-
-  /*WM_menu_name_call(C, "OUTLINER_MT_context", WM_OP_INVOKE_REGION_WIN);*/  //- bfa, removed the OUTLINER_MT_context menu
-  return OPERATOR_FINISHED;
+  /* Let this fall through to 'OUTLINER_MT_context_menu'. */
+  return OPERATOR_PASS_THROUGH;
 }
 
 /* Menu only! Calls other operators */

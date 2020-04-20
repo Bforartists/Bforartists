@@ -20,4 +20,4 @@
 
 # QCD
 slots = {}
-overrides = {}
+overrides = set()
