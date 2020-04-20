@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -13435,8 +13435,8 @@ msgstr "Dela"
 
 
 msgctxt "Operator"
-msgid "Subdivide Multi"
-msgstr "Dela upp i flera"
+msgid "Subdivide"
+msgstr "Dela upp"
 
 
 msgid "Break selected bones into chains of smaller bones"
@@ -14854,11 +14854,6 @@ msgstr "Vertexgrupp"
 
 msgid "Set softbody goal weight for selected points"
 msgstr "Mjukkroppsmål"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "Dela upp"
 
 
 msgid "Subdivide selected segments"
@@ -30748,21 +30743,6 @@ msgstr "Höger"
 
 
 msgctxt "Operator"
-msgid "AutoName Left/Right"
-msgstr "Höger"
-
-
-msgctxt "Operator"
-msgid "AutoName Front/Back"
-msgstr "Fram"
-
-
-msgctxt "Operator"
-msgid "AutoName Top/Bottom"
-msgstr "Fram"
-
-
-msgctxt "Operator"
 msgid "To Next Keyframe"
 msgstr "Radera"
 
@@ -30775,6 +30755,21 @@ msgstr "Starta Spel"
 msgctxt "Operator"
 msgid "On Selected Markers"
 msgstr "Raderings Meny"
+
+
+msgctxt "Operator"
+msgid "AutoName Left/Right"
+msgstr "Höger"
+
+
+msgctxt "Operator"
+msgid "AutoName Front/Back"
+msgstr "Fram"
+
+
+msgctxt "Operator"
+msgid "AutoName Top/Bottom"
+msgstr "Fram"
 
 
 msgctxt "Operator"

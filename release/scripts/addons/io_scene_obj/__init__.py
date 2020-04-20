@@ -255,10 +255,16 @@ class OBJ_PT_export_include(bpy.types.Panel):
         sfile = context.space_data
         operator = sfile.active_operator
 
-        layout.prop(operator, 'use_selection')
-        layout.prop(operator, 'use_blen_objects')
-        layout.prop(operator, 'group_by_object')
-        layout.prop(operator, 'group_by_material')
+        col = layout.column(heading = "Limit to")
+        col.prop(operator, 'use_selection')
+
+        col = layout.column(heading = "Objects as", align = True)
+        col.prop(operator, 'use_blen_objects', text = "OBJ Objects")
+        col.prop(operator, 'group_by_object', text = "OBJ Groups")
+        col.prop(operator, 'group_by_material')
+
+        layout.separator()
+
         layout.prop(operator, 'use_animation')
 
 

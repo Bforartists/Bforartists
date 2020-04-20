@@ -34,15 +34,19 @@ from . import internals
 
 from .internals import (
     layer_collections,
+    rto_history,
     qcd_slots,
     update_property_group,
     get_modifiers,
     get_move_selection,
     get_move_active,
+    get_edit_mode_selection,
     update_qcd_header,
 )
 
-from .operators import rto_history
+from .operator_utils import (
+    apply_to_children,
+)
 
 
 class MoveToQCDSlot(Operator):
@@ -171,7 +175,7 @@ class ViewQCDSlot(Operator):
     '''View objects in QCD slot'''
     bl_label = "View QCD Slot"
     bl_idname = "view3d.view_qcd_slot"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'UNDO'}
 
     slot: StringProperty()
     toggle: BoolProperty()
@@ -184,6 +188,10 @@ class ViewQCDSlot(Operator):
         qcd_laycol = None
         slot_name = qcd_slots.get_name(self.slot)
 
+        edit_mode_selection = get_edit_mode_selection()
+        internals.qcd_view_op_triggered = True
+        internals.in_qcd_view_op = True
+
         if slot_name:
             qcd_laycol = layer_collections[slot_name]["ptr"]
 
@@ -194,16 +202,10 @@ class ViewQCDSlot(Operator):
             # get current child exclusion state
             child_exclusion = []
 
-            laycol_iter_list = [qcd_laycol.children]
-            while len(laycol_iter_list) > 0:
-                new_laycol_iter_list = []
-                for laycol_iter in laycol_iter_list:
-                    for layer_collection in laycol_iter:
-                        child_exclusion.append([layer_collection, layer_collection.exclude])
-                        if len(layer_collection.children) > 0:
-                            new_laycol_iter_list.append(layer_collection.children)
+            def get_child_exclusion(layer_collection):
+                child_exclusion.append([layer_collection, layer_collection.exclude])
 
-                laycol_iter_list = new_laycol_iter_list
+            apply_to_children(qcd_laycol, get_child_exclusion)
 
             # toggle exclusion of qcd_laycol
             qcd_laycol.exclude = not qcd_laycol.exclude
@@ -223,16 +225,10 @@ class ViewQCDSlot(Operator):
             qcd_laycol.exclude = False
 
             # exclude all children
-            laycol_iter_list = [qcd_laycol.children]
-            while len(laycol_iter_list) > 0:
-                new_laycol_iter_list = []
-                for laycol_iter in laycol_iter_list:
-                    for layer_collection in laycol_iter:
-                        layer_collection.exclude = True
-                        if len(layer_collection.children) > 0:
-                            new_laycol_iter_list.append(layer_collection.children)
+            def exclude_all_children(layer_collection):
+                layer_collection.exclude = True
 
-                laycol_iter_list = new_laycol_iter_list
+            apply_to_children(qcd_laycol, exclude_all_children)
 
             # set layer as active layer collection
             context.view_layer.active_layer_collection = qcd_laycol
@@ -245,6 +241,36 @@ class ViewQCDSlot(Operator):
             del rto_history["exclude"][view_layer]
         if view_layer in rto_history["exclude_all"]:
             del rto_history["exclude_all"][view_layer]
+
+
+        if edit_mode_selection and not set(edit_mode_selection).isdisjoint(context.view_layer.objects):
+            if context.view_layer.objects:
+                if context.view_layer.objects != edit_mode_selection:
+                    try:
+                        bpy.ops.object.select_all(action='DESELECT')
+                    except RuntimeError: # context is incorrect
+                        # triggered when toggling slots
+                        pass
+
+                    for obj in edit_mode_selection:
+                        if obj.name in context.view_layer.objects:
+                            obj.select_set(True)
+
+                if not context.active_object or not context.active_object in edit_mode_selection:
+                    for obj in edit_mode_selection:
+                            if obj.name in context.view_layer.objects:
+                                context.view_layer.objects.active = obj
+                                break
+
+                if context.active_object:
+                    if context.active_object.type == 'GPENCIL':
+                        bpy.ops.object.mode_set(mode='EDIT_GPENCIL')
+
+                    else:
+                        bpy.ops.object.mode_set(mode='EDIT')
+
+
+        internals.in_qcd_view_op = False
 
         return {'FINISHED'}
 

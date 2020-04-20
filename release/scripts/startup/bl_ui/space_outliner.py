@@ -316,11 +316,16 @@ class OUTLINER_MT_collection(Menu):
 class OUTLINER_MT_collection_new(Menu):
     bl_label = "Collection"
 
+    @staticmethod
+    def draw_without_context_menu(context, layout):
+        layout.operator("outliner.collection_new", text="New Collection").nested = False
+        layout.operator("outliner.id_paste", text="Paste Data-Blocks", icon='PASTEDOWN')
+
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("outliner.collection_new", text="New", icon='COLLECTION_NEW')
         layout.operator("outliner.collection_new", text="New Nested", icon='COLLECTION_NEW').nested = True
+        layout.operator("outliner.collection_new", text="New", icon='COLLECTION_NEW')
         layout.operator("outliner.id_paste", text="Paste", icon='PASTEDOWN')
 
 

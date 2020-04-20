@@ -11,17 +11,51 @@ def ApplyOverrides(dummy):
     global obDict
 
     for override in bpy.context.scene.ovlist:
-        for ob in bpy.data.collections[override.grooverride].all_objects:
+        
+        # set collections clean name
+        if override.grooverride.endswith("]"):
+            collClean = override.grooverride[3:].split("[")[0][:-1]
+        else:
+            collClean = override.grooverride[3:]        
+        
+        for ob in bpy.data.collections[collClean].all_objects:
             if ob.type == "MESH":
                 if not ob.hide_viewport and not ob.hide_render:
                     obDict.append([ob,[mat for mat in ob.data.materials]])
+            if ob.type == "EMPTY":
+                if not ob.instance_collection == None:
+                        for iob in ob.instance_collection.all_objects:
+                            if iob.type == "MESH":
+                                if not iob.hide_viewport and not iob.hide_render:
+                                    obDict.append([iob,[mat for mat in iob.data.materials]])                  
+                            
 
     for override in bpy.context.scene.ovlist:
-        for ob in bpy.data.collections[override.grooverride].all_objects:
+        
+        # set collections clean name
+        if override.grooverride.endswith("]"):
+            collClean = override.grooverride[3:].split("[")[0][:-1]            
+        else:
+            collClean = override.grooverride[3:]               
+        # set material clean name    
+        if override.matoverride.endswith("]"):  
+            matClean = override.matoverride[3:].split("[")[0][:-1]
+        else:
+            matClean = override.matoverride[3:]       
+            
+        
+        for ob in bpy.data.collections[collClean].all_objects:
             if ob.type == "MESH":
                 if not ob.hide_viewport and not ob.hide_render:
                     for i,mat  in enumerate(ob.data.materials):
-                        ob.data.materials[i] = bpy.data.materials[override.matoverride]
+                        ob.data.materials[i] = bpy.data.materials[matClean]
+            if ob.type == "EMPTY":
+                if not ob.instance_collection == None:
+                        for iob in ob.instance_collection.all_objects:
+                            if iob.type == "MESH":
+                                if not iob.hide_viewport and not iob.hide_render:
+                                    for i,mat  in enumerate(iob.data.materials):
+                                        iob.data.materials[i] = bpy.data.materials[matClean]                  
 
 
 @persistent

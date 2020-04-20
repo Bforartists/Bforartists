@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -17685,7 +17685,7 @@ msgstr "Splitten"
 
 
 msgctxt "Operator"
-msgid "Subdivide Multi"
+msgid "Subdivide"
 msgstr "Unterteilen"
 
 
@@ -19085,11 +19085,6 @@ msgstr "Anfasser"
 msgctxt "Operator"
 msgid "Set Goal Weight"
 msgstr "Bildhöhe"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "Unterteilen"
 
 
 msgid "Subdivide selected segments"
@@ -23707,15 +23702,6 @@ msgstr "Alle Einträge um eine Ebene ein-/ausklappen"
 
 msgid "Expand all entries one level deep"
 msgstr "Alle Einträge eine Ebene tief ausklappen"
-
-
-msgctxt "Operator"
-msgid "Brush Colors Flip"
-msgstr "Pinselfarben tauschen"
-
-
-msgid "Toggle foreground and background brush colors"
-msgstr "Vertauscht Vordergrund- und Hintergrundpinselfarben miteinander"
 
 
 msgctxt "Operator"
@@ -40065,12 +40051,12 @@ msgid "Cannot overwrite used library '%.240s'"
 msgstr "Kann die genutzte Bibliothek  '%.240s' nicht überschreiben"
 
 
-msgid "Can't read alternative start-up file: '%s'"
-msgstr "Alternative Startdatei '%s' konnte nicht gelesen werden."
-
-
 msgid "Saved \"%s\""
 msgstr "Gespeichert \"%s\""
+
+
+msgid "Can't read alternative start-up file: '%s'"
+msgstr "Alternative Startdatei '%s' konnte nicht gelesen werden."
 
 
 msgid "Not a library"

@@ -285,6 +285,29 @@ def Fill_Ring_Face(OFFSET, NUM, FACE_DOWN=0):
         Face[2] = TempFace[2]
     return Ret
 
+# Returns a list of faces that makes up a fill pattern around the last vert
+def Fill_Fan_Face(OFFSET, NUM, FACE_DOWN=0):
+    Ret = []
+    Face = [NUM-1,0,1]
+    TempFace = [0, 0, 0]
+    A = 0  
+    #B = 1 unsed
+    C = 2
+    if NUM < 3:
+        return None
+    for _i in range(NUM - 2):
+        TempFace[0] = Face[A]
+        TempFace[1] = Face[C] 
+        TempFace[2] = Face[C]+1
+        if FACE_DOWN:
+            Ret.append([OFFSET + Face[2], OFFSET + Face[1], OFFSET + Face[0]])
+        else:
+            Ret.append([OFFSET + Face[2], OFFSET + Face[1], OFFSET + Face[0]])
+
+        Face[0] = TempFace[0]
+        Face[1] = TempFace[1]
+        Face[2] = TempFace[2]
+    return Ret
 
 # ####################################################################
 #                    Create Allen Bit
@@ -378,7 +401,175 @@ def Create_Allen_Bit(FLAT_DISTANCE, HEIGHT):
     faces.extend(M_Faces)
 
     return verts, faces, OUTTER_RADIUS * 2.0
+# ####################################################################
+#                    Create Torx Bit
+# ####################################################################
 
+def Torx_Bit_Size_To_Point_Distance(Bit_Size):
+    if Bit_Size == 'bf_Torx_T10':
+        return 2.83
+    elif Bit_Size == 'bf_Torx_T20':
+        return 3.94
+    elif Bit_Size == 'bf_Torx_T25':
+        return 4.52
+    elif Bit_Size == 'bf_Torx_T30':
+        return 5.61
+    elif Bit_Size == 'bf_Torx_T40':
+        return 6.75
+    elif Bit_Size == 'bf_Torx_T50':
+        return 8.94
+    elif Bit_Size == 'bf_Torx_T55':
+        return 8.94
+    else:
+        return 2.83  #default to M3
+
+def Torx_Fill(OFFSET, FLIP=0):
+    faces = []
+    Lookup = [[0,10,11],
+            [0,11, 12],
+            [0,12,1],
+            
+            [1, 12, 13],
+            [1, 13, 14],
+            [1, 14, 15],
+            [1, 15, 2],
+            
+            [2, 15, 16],
+            [2, 16, 17],
+            [2, 17, 18],
+            [2, 18, 19],
+            [2, 19, 3],
+            
+            [3, 19, 20],
+            [3, 20, 21],
+            [3, 21, 22],
+            [3, 22, 23],
+            [3, 23, 24],
+            [3, 24, 25],
+            [3, 25, 4],
+            
+            
+            [4, 25, 26],
+            [4, 26, 27],
+            [4, 27, 28],
+            [4, 28, 29],
+            [4, 29, 30],
+            [4, 30, 31],
+            [4, 31, 5],
+            
+            [5, 31, 32],
+            [5, 32, 33],
+            [5, 33, 34],
+            [5, 34, 35],
+            [5, 35, 36],
+            [5, 36, 6],
+            
+            [6, 36, 37],
+            [6, 37, 38],
+            [6, 38, 39],
+            [6, 39, 7],
+            
+            [7, 39, 40],
+            [7, 40, 41],
+            [7, 41, 42],
+            [7, 42, 43],
+            [7, 43, 8],
+            
+            [8, 43, 44],
+            [8, 44, 45],
+            [8, 45, 46],
+            [8, 46, 47],
+            [8, 47, 48],
+            [8, 48, 49],
+            [8, 49, 50],
+            [8, 50, 51],
+            [8, 51, 52],
+            [8, 52, 9],
+              ]
+    for i in Lookup:
+        if FLIP:
+            faces.append([OFFSET + i[2], OFFSET + i[1], OFFSET + i[0]])
+        else:
+            faces.append([OFFSET + i[0], OFFSET + i[1], OFFSET + i[2]])
+
+    return faces
+
+
+
+def Create_Torx_Bit(Point_Distance, HEIGHT):
+    verts = []
+    faces = []
+
+    POINT_RADIUS = Point_Distance * 0.5
+    OUTTER_RADIUS = POINT_RADIUS * 1.05
+
+    POINT_1_Y = POINT_RADIUS * 0.816592592592593
+    POINT_2_X = POINT_RADIUS * 0.511111111111111 
+    POINT_2_Y = POINT_RADIUS * 0.885274074074074     
+    POINT_3_X = POINT_RADIUS * 0.7072 
+    POINT_3_Y = POINT_RADIUS * 0.408296296296296 
+    POINT_4_X = POINT_RADIUS * 1.02222222222222 
+    SMALL_RADIUS = POINT_RADIUS * 0.183407407407407 
+    BIG_RADIUS = POINT_RADIUS * 0.333333333333333 
+#     Values for T40    #     POINT_1_Y = 2.756
+#     POINT_2_X = 1.725
+#     POINT_2_Y = 2.9878    
+#     POINT_3_X = 2.3868
+#     POINT_3_Y = 1.378
+#     POINT_4_X = 3.45
+#     
+#     SMALL_RADIUS = 0.619
+#     BIG_RADIUS = 1.125
+
+    def Do_Curve(Curve_Height):
+        for i in range(0, 90, 10):  
+            x = sin(radians(i)) * SMALL_RADIUS
+            y = cos(radians(i)) * SMALL_RADIUS
+            verts.append([x, POINT_1_Y + y, Curve_Height])
+    
+        for i in range(260, 150, -10):  
+            x = sin(radians(i)) * BIG_RADIUS
+            y = cos(radians(i)) * BIG_RADIUS
+            verts.append([POINT_2_X + x, POINT_2_Y + y, Curve_Height])
+    
+        for i in range(340, 150 + 360, 10):
+            x = sin(radians(i%360)) * SMALL_RADIUS
+            y = cos(radians(i%360)) * SMALL_RADIUS
+            verts.append([POINT_3_X + x, POINT_3_Y + y, Curve_Height])
+    
+        for i in range(320, 260, -10):  
+            x = sin(radians(i)) * BIG_RADIUS
+            y = cos(radians(i)) * BIG_RADIUS
+            verts.append([POINT_4_X + x, y, Curve_Height])
+
+    FaceStart_Outside = len(verts)
+
+    for i in range(0, 100, 10):
+        x = sin(radians(i)) * OUTTER_RADIUS
+        y = cos(radians(i)) * OUTTER_RADIUS
+        verts.append([x, y, 0])
+
+    FaceStart_Top_Curve= len(verts)
+    Do_Curve(0)
+    faces.extend(Torx_Fill(FaceStart_Outside, 0))
+    
+    FaceStart_Bottom_Curve= len(verts)
+    Do_Curve(0 - HEIGHT)
+    
+    faces.extend(Build_Face_List_Quads(FaceStart_Top_Curve,42 ,1 , True))
+ 
+    verts.append([0,0,0 - HEIGHT]) # add center point for fill Fan
+    faces.extend(Fill_Fan_Face(FaceStart_Bottom_Curve, 44))
+ 
+    M_Verts, M_Faces = Mirror_Verts_Faces(verts, faces, 'x')
+    verts.extend(M_Verts)
+    faces.extend(M_Faces)
+  
+    M_Verts, M_Faces = Mirror_Verts_Faces(verts, faces, 'y')
+    verts.extend(M_Verts)
+    faces.extend(M_Faces)
+
+    return verts, faces, OUTTER_RADIUS * 2.0
 
 # ####################################################################
 #                    Create Phillips Bit
@@ -1516,7 +1707,7 @@ def add_Nylon_Head(OUTSIDE_RADIUS, Z_LOCATION, DIV_COUNT):
     sVerts, sFaces = SpinDup(verts, faces, 360, DIV_COUNT, 'z')
     sVerts.extend(verts)        # add the start verts to the Spin verts to complete the loop
 
-    faces.extend(Build_Face_List_Quads(FaceStart, Row - 1, DIV_COUNT))
+    faces.extend(Build_Face_List_Quads(FaceStart, Row - 1, DIV_COUNT,1))
 
     return Move_Verts_Up_Z(sVerts, 0), faces, Lowest_Z_Vert
 
@@ -1881,7 +2072,8 @@ def Bolt_Mesh(props, context):
         if Allen_Bit_Dia(props.bf_Allen_Bit_Flat_Distance) > Max_Pan_Bit_Dia(props.bf_Pan_Head_Dia):
             ReSized_Allen_Bit_Flat_Distance = Allen_Bit_Dia_To_Flat(
                                                 Max_Pan_Bit_Dia(props.bf_Pan_Head_Dia)
-                                                ) * 1.05
+                                                )
+            ReSized_Allen_Bit_Flat_Distance -= ReSized_Allen_Bit_Flat_Distance * 0.05   # It looks better if it is just a bit smaller
             # print ("Resized Allen Bit Flat Distance to ",ReSized_Allen_Bit_Flat_Distance)
 
     # Bit Mesh
