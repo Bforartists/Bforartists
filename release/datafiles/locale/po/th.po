@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -2569,6 +2569,11 @@ msgid "(De)select All"
 msgstr "(ยกเลิก)เลือกทั้งหมด"
 
 
+msgctxt "Operator"
+msgid "Subdivide"
+msgstr "แบ่งย่อย"
+
+
 msgid "-X to +X"
 msgstr "-X ไป +X"
 
@@ -2665,11 +2670,6 @@ msgstr "แรเงาแบบราบแบน"
 msgctxt "Operator"
 msgid "Shade Smooth"
 msgstr "แรเงาแบบราบเรียบ"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "แบ่งย่อย"
 
 
 msgctxt "Operator"

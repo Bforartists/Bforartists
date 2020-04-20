@@ -1011,7 +1011,7 @@ keyconfig_data = \
     ("wm.call_menu",
      {"type": 'NDOF_BUTTON_MENU', "value": 'PRESS'},
      {"properties":
-      [("name", 'USERPREF_MT_ndof_settings'),
+      [("name", 'USERPREF_PT_ndof_settings'),
        ],
       },
      ),

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -3636,6 +3636,11 @@ msgid "Split"
 msgstr "विभक्त करें"
 
 
+msgctxt "Operator"
+msgid "Subdivide"
+msgstr "प्रितभाग"
+
+
 msgid "Number of Cuts"
 msgstr "कटौती की संख्या"
 
@@ -3808,11 +3813,6 @@ msgstr "चिकना"
 msgctxt "Operator"
 msgid "Spin"
 msgstr "चक्रण"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "प्रितभाग"
 
 
 msgid "Subdivide selected segments"

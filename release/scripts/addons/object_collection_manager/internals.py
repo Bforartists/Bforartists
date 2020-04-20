@@ -36,20 +36,76 @@ move_triggered = False
 move_selection = []
 move_active = None
 
+qcd_view_op_triggered = False
+in_qcd_view_op = False
+edit_mode_selection = []
+
 layer_collections = {}
 collection_tree = []
 collection_state = {}
-expanded = []
+expanded = set()
 row_index = 0
-
 max_lvl = 0
+
+rto_history = {
+    "exclude": {},
+    "exclude_all": {},
+    "select": {},
+    "select_all": {},
+    "hide": {},
+    "hide_all": {},
+    "disable": {},
+    "disable_all": {},
+    "render": {},
+    "render_all": {}
+}
+
+expand_history = {
+    "target": "",
+    "history": []
+    }
+
+phantom_history = {
+    "view_layer": "",
+    "initial_state": {},
+
+    "exclude_history": {},
+    "select_history": {},
+    "hide_history": {},
+    "disable_history": {},
+    "render_history": {},
+
+    "exclude_all_history": [],
+    "select_all_history": [],
+    "hide_all_history": [],
+    "disable_all_history": [],
+    "render_all_history": []
+                   }
+
+copy_buffer = {
+    "RTO": "",
+    "values": []
+    }
+
+swap_buffer = {
+    "A": {
+        "RTO": "",
+        "values": []
+        },
+    "B": {
+        "RTO": "",
+        "values": []
+        }
+    }
+
+
 def get_max_lvl():
     return max_lvl
 
 
 class QCDSlots():
     _slots = {}
-    overrides = {}
+    overrides = set()
     allow_update = True
 
     def __init__(self):
@@ -85,8 +141,8 @@ class QCDSlots():
         for key, value in blend_slots.items():
             self._slots[key] = value
 
-        for key, value in blend_overrides.items():
-            self.overrides[key] = value
+        for key in blend_overrides:
+            self.overrides.add(key)
 
     def length(self):
         return len(self._slots)
@@ -108,7 +164,7 @@ class QCDSlots():
         self._slots[idx] = name
 
         if name in self.overrides:
-            del self.overrides[name]
+            self.overrides.remove(name)
 
     def update_slot(self, idx, name):
         self.add_slot(idx, name)
@@ -127,7 +183,7 @@ class QCDSlots():
 
     def add_override(self, name):
         qcd_slots.del_slot(name=name)
-        qcd_slots.overrides[name] = True
+        qcd_slots.overrides.add(name)
 
     def clear_slots(self):
         self._slots.clear()
@@ -171,22 +227,125 @@ qcd_slots = QCDSlots()
 def update_col_name(self, context):
     global layer_collections
     global qcd_slots
+    global rto_history
+    global expand_history
 
     if self.name != self.last_name:
         if self.name == '':
             self.name = self.last_name
             return
 
+        # if statement prevents update on list creation
         if self.last_name != '':
+            view_layer_name = context.view_layer.name
+
             # update collection name
             layer_collections[self.last_name]["ptr"].collection.name = self.name
+
+            # update expanded
+            orig_expanded = {x for x in expanded}
+
+            if self.last_name in orig_expanded:
+                expanded.remove(self.last_name)
+                expanded.add(self.name)
 
             # update qcd_slot
             idx = qcd_slots.get_idx(self.last_name)
             if idx:
                 qcd_slots.update_slot(idx, self.name)
 
+            # update qcd_overrides
+            if self.last_name in qcd_slots.overrides:
+                qcd_slots.overrides.remove(self.last_name)
+                qcd_slots.overrides.add(self.name)
+
+            # update history
+            rtos = [
+                "exclude",
+                "select",
+                "hide",
+                "disable",
+                "render"
+                ]
+
+            orig_targets = {
+                rto: rto_history[rto][view_layer_name]["target"]
+                for rto in rtos
+                if rto_history[rto].get(view_layer_name)
+                }
+
+            for rto in rtos:
+                history = rto_history[rto].get(view_layer_name)
+
+                if history and orig_targets[rto] == self.last_name:
+                    history["target"] = self.name
+
+            # update expand history
+            orig_expand_target = expand_history["target"]
+            orig_expand_history = [x for x in expand_history["history"]]
+
+            if orig_expand_target == self.last_name:
+                expand_history["target"] = self.name
+
+            for x, name in enumerate(orig_expand_history):
+                if name == self.last_name:
+                    expand_history["history"][x] = self.name
+
+            # update names in expanded, qcd slots, and rto_history for any other
+            # collection names that changed as a result of this name change
+            cm_list_collection = context.scene.collection_manager.cm_list_collection
+            count = 0
+            laycol_iter_list = list(context.view_layer.layer_collection.children)
+
+            while laycol_iter_list:
+                layer_collection = laycol_iter_list[0]
+                cm_list_item = cm_list_collection[count]
+
+                if cm_list_item.name != layer_collection.name:
+                    # update expanded
+                    if cm_list_item.last_name in orig_expanded:
+                        if not cm_list_item.last_name in layer_collections:
+                            expanded.remove(cm_list_item.name)
+
+                        expanded.add(layer_collection.name)
+
+                    # update qcd_slot
+                    idx = cm_list_item.qcd_slot_idx
+                    if idx:
+                        qcd_slots.update_slot(idx, layer_collection.name)
+
+                    # update qcd_overrides
+                    if cm_list_item.name in qcd_slots.overrides:
+                        if not cm_list_item.name in layer_collections:
+                            qcd_slots.overrides.remove(cm_list_item.name)
+
+                        qcd_slots.overrides.add(layer_collection.name)
+
+                    # update history
+                    for rto in rtos:
+                        history = rto_history[rto].get(view_layer_name)
+
+                        if history and orig_targets[rto] == cm_list_item.last_name:
+                            history["target"] = layer_collection.name
+
+                    # update expand history
+                    if orig_expand_target == cm_list_item.last_name:
+                        expand_history["target"] = layer_collection.name
+
+                    for x, name in enumerate(orig_expand_history):
+                        if name == cm_list_item.last_name:
+                            expand_history["history"][x] = layer_collection.name
+
+                if layer_collection.children:
+                    laycol_iter_list[0:0] = list(layer_collection.children)
+
+
+                laycol_iter_list.remove(layer_collection)
+                count += 1
+
+
             update_property_group(context)
+
 
         self.last_name = self.name
 
@@ -406,6 +565,20 @@ def get_move_active():
         move_active = None
 
     return bpy.data.objects[move_active] if move_active else None
+
+def get_edit_mode_selection():
+    global edit_mode_selection
+
+    if not edit_mode_selection:
+        edit_mode_selection = [obj.name for obj in bpy.context.selected_objects
+                               if obj.mode == 'EDIT' or obj.mode == 'EDIT_GPENCIL']
+
+    else:
+        for obj in bpy.context.selected_objects:
+            if obj.mode == 'EDIT' or obj.mode == 'EDIT_GPENCIL':
+                edit_mode_selection.append(obj.name)
+
+    return [bpy.data.objects[name] for name in edit_mode_selection]
 
 
 def update_qcd_header():

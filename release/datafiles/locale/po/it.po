@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -27302,8 +27302,8 @@ msgstr "Dividi"
 
 
 msgctxt "Operator"
-msgid "Subdivide Multi"
-msgstr "Multi Suddivisione"
+msgid "Subdivide"
+msgstr "Suddividi"
 
 
 msgid "Break selected bones into chains of smaller bones"
@@ -29285,11 +29285,6 @@ msgstr "Imposta peso di obiettivo corpo morbido per i punti selezionati"
 
 msgid "Split off selected points from connected unselected points"
 msgstr "Separa i punti selezionati dai punti connessi non selezionati"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "Suddividi"
 
 
 msgid "Subdivide selected segments"
@@ -37977,15 +37972,6 @@ msgstr "Aggiungi Slot Pittura Texture"
 
 msgid "Add a texture paint slot"
 msgstr "Aggiunge uno slot pittura texture"
-
-
-msgctxt "Operator"
-msgid "Brush Colors Flip"
-msgstr "Scambia Colori Pennello"
-
-
-msgid "Toggle foreground and background brush colors"
-msgstr "Scambia i colori di sfondo e primo piano del pennello"
 
 
 msgctxt "Operator"
@@ -48112,10 +48098,6 @@ msgstr "Contenuto Ordinato per Direzione Apertura"
 
 msgid "Otherwise menus, etc will always be top to bottom, left to right, no matter opening direction"
 msgstr "Altrimenti menu ecc. sono sempre dall'alto in basso, da sinistra a destra, indipendentemente dalla direzione di apertura"
-
-
-msgid "Translate UI"
-msgstr "Traduzione UI"
 
 
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
@@ -60254,21 +60236,6 @@ msgstr "Trasferisci Pesi"
 
 
 msgctxt "Operator"
-msgid "AutoName Left/Right"
-msgstr "AutoNomina Sinistra/Destra"
-
-
-msgctxt "Operator"
-msgid "AutoName Front/Back"
-msgstr "AutoNomina Fronte/Retro"
-
-
-msgctxt "Operator"
-msgid "AutoName Top/Bottom"
-msgstr "AutoNomina Alto/Basso"
-
-
-msgctxt "Operator"
 msgid "To Next Keyframe"
 msgstr "Al Fotogramma Chiave Successivo"
 
@@ -60286,6 +60253,21 @@ msgstr "Su Fotogrammi Chiave Selezionati"
 msgctxt "Operator"
 msgid "On Selected Markers"
 msgstr "Su Marcatori Selezionati"
+
+
+msgctxt "Operator"
+msgid "AutoName Left/Right"
+msgstr "AutoNomina Sinistra/Destra"
+
+
+msgctxt "Operator"
+msgid "AutoName Front/Back"
+msgstr "AutoNomina Fronte/Retro"
+
+
+msgctxt "Operator"
+msgid "AutoName Top/Bottom"
+msgstr "AutoNomina Alto/Basso"
 
 
 msgctxt "Operator"
@@ -65765,12 +65747,12 @@ msgid "Cannot save blend file, path '%s' is not writable"
 msgstr "Impossibile salvare il file blend, il percorso '%s' è di sola lettura"
 
 
-msgid "Can't read alternative start-up file: '%s'"
-msgstr "Impossibile leggere il file d'avvio alternativo: '%s'"
-
-
 msgid "Saved \"%s\""
 msgstr "Salvato \"%s\""
+
+
+msgid "Can't read alternative start-up file: '%s'"
+msgstr "Impossibile leggere il file d'avvio alternativo: '%s'"
 
 
 msgid "Not a library"
