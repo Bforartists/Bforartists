@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -39849,8 +39849,8 @@ msgstr "연결된 비선택 본에서 선택된 본을 분할"
 
 
 msgctxt "Operator"
-msgid "Subdivide Multi"
-msgstr "다중의 섭디비젼"
+msgid "Subdivide"
+msgstr "섭디비젼"
 
 
 msgid "Break selected bones into chains of smaller bones"
@@ -42416,11 +42416,6 @@ msgstr "선택된 포인트에 대한 소프트 바디 목표 웨이트를 설�
 
 msgid "Split off selected points from connected unselected points"
 msgstr "연결된 비선택 포인트에서 선택된 포인트를 분할합니다"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "섭디비젼"
 
 
 msgid "Subdivide selected segments"
@@ -50430,10 +50425,6 @@ msgid "Smooth Normals Vectors"
 msgstr "스무스 노멀 벡터"
 
 
-msgid "Smoothen custom normals based on adjacent vertex normals"
-msgstr "인접한 버텍스 노멀을 기반으로 커스텀 노멀을 부드럽게 처리합니다"
-
-
 msgid "Specifies weight of smooth vs original normal"
 msgstr "매끄러운 vs 원래 노멀의 웨이트를 지정합니다"
 
@@ -55423,15 +55414,6 @@ msgstr "텍스처 페인트 슬롯을 추가"
 
 msgid "Add a texture paint slot"
 msgstr "텍스처 페인트 슬롯을 추가"
-
-
-msgctxt "Operator"
-msgid "Brush Colors Flip"
-msgstr "브러시 컬러 뒤집기"
-
-
-msgid "Toggle foreground and background brush colors"
-msgstr "전경 및 배경 브러시 컬러를 토글"
 
 
 msgctxt "Operator"
@@ -70104,14 +70086,6 @@ msgstr "내용 열기 방향 따라 가기"
 
 msgid "Otherwise menus, etc will always be top to bottom, left to right, no matter opening direction"
 msgstr "그렇지 않으면 메뉴, 등은 항상 위에서 아래로, 왼쪽에서 오른쪽으로, 문제 여는 방향이 없음"
-
-
-msgid "Translate UI"
-msgstr "UI를 번역"
-
-
-msgid "Enable UI translation and use international fonts"
-msgstr "UI 번역 사용 및 국제 글꼴 사용합니다"
 
 
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
@@ -89651,11 +89625,6 @@ msgstr "대상으로 포인트..."
 
 
 msgctxt "Operator"
-msgid "Smoothen Vectors"
-msgstr "부드러운 버텍스"
-
-
-msgctxt "Operator"
 msgid "Smooth Faces"
 msgstr "스무스 페이스"
 
@@ -90000,21 +89969,6 @@ msgstr "뒤집힌 포즈를 붙여 넣기"
 
 
 msgctxt "Operator"
-msgid "AutoName Left/Right"
-msgstr "자동이름 왼쪽/오른쪽"
-
-
-msgctxt "Operator"
-msgid "AutoName Front/Back"
-msgstr "자동이름 앞쪽/뒤쪽"
-
-
-msgctxt "Operator"
-msgid "AutoName Top/Bottom"
-msgstr "자동이름 위쪽/아래쪽"
-
-
-msgctxt "Operator"
 msgid "To Next Keyframe"
 msgstr "다음 키 프레임으로"
 
@@ -90032,6 +89986,21 @@ msgstr "선택된 키 프레임에"
 msgctxt "Operator"
 msgid "On Selected Markers"
 msgstr "선택된 마커에"
+
+
+msgctxt "Operator"
+msgid "AutoName Left/Right"
+msgstr "자동이름 왼쪽/오른쪽"
+
+
+msgctxt "Operator"
+msgid "AutoName Front/Back"
+msgstr "자동이름 앞쪽/뒤쪽"
+
+
+msgctxt "Operator"
+msgid "AutoName Top/Bottom"
+msgstr "자동이름 위쪽/아래쪽"
 
 
 msgctxt "Operator"
@@ -99291,12 +99260,12 @@ msgid "Cannot overwrite used library '%.240s'"
 msgstr "사용된 라이브러리 '%.240s'를 덮어쓸 수 없습니다"
 
 
-msgid "Can't read alternative start-up file: '%s'"
-msgstr "대체된 스타트업 파일을 읽을수 없음: '%s'"
-
-
 msgid "Saved \"%s\""
 msgstr "저장된 \"%s\""
+
+
+msgid "Can't read alternative start-up file: '%s'"
+msgstr "대체된 스타트업 파일을 읽을수 없음: '%s'"
 
 
 msgid "Not a library"

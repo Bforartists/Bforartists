@@ -35,6 +35,9 @@ def update_qcd_status(self, context):
         if self.enable_qcd_view_hotkeys:
             qcd_init.register_qcd_view_hotkeys()
 
+        if self.enable_qcd_view_edit_mode_hotkeys:
+            qcd_init.register_qcd_view_edit_mode_hotkeys()
+
     else:
         qcd_init.unregister_qcd()
 
@@ -43,6 +46,12 @@ def update_qcd_view_hotkeys_status(self, context):
         qcd_init.register_qcd_view_hotkeys()
     else:
         qcd_init.unregister_qcd_view_hotkeys()
+
+def update_qcd_view_edit_mode_hotkeys_status(self, context):
+    if self.enable_qcd_view_edit_mode_hotkeys:
+        qcd_init.register_qcd_view_edit_mode_hotkeys()
+    else:
+        qcd_init.unregister_qcd_view_edit_mode_hotkeys()
 
 def get_tool_text(self):
     if self.tool_text_override:
@@ -192,6 +201,13 @@ class CMPreferences(AddonPreferences):
         description="Enable/Disable the numerical hotkeys to view QCD slots",
         default=True,
         update=update_qcd_view_hotkeys_status,
+        )
+
+    enable_qcd_view_edit_mode_hotkeys: BoolProperty(
+        name="QCD Edit Mode Hotkeys",
+        description="Enable/Disable the numerical hotkeys to view QCD slots in Edit Mode",
+        default=False,
+        update=update_qcd_view_edit_mode_hotkeys_status,
         )
 
 
@@ -416,6 +432,7 @@ class CMPreferences(AddonPreferences):
             return
 
         box.row().prop(self, "enable_qcd_view_hotkeys")
+        box.row().prop(self, "enable_qcd_view_edit_mode_hotkeys")
 
         box.row().label(text="QCD Move Widget")
 

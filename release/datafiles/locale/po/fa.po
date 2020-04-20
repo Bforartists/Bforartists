@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -6759,6 +6759,11 @@ msgstr "ﺎﻫUV ﻥﺩﺮﮐ ﺍﺪﺟ:"
 
 
 msgctxt "Operator"
+msgid "Subdivide"
+msgstr "ﻢﯿﺴﻘﺗ"
+
+
+msgctxt "Operator"
 msgid "Switch Direction"
 msgstr "ﺪﯿﺷﺭﻮﺧ ﺖﻬﺟ"
 
@@ -7512,11 +7517,6 @@ msgstr "ﻪﻠﺻﺎﻓ ﻉﻮﻧ"
 msgctxt "Operator"
 msgid "Set Goal Weight"
 msgstr "ﻥﺯﻭ ﻦﯿﯿﻌﺗ"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "ﻢﯿﺴﻘﺗ"
 
 
 msgctxt "Operator"

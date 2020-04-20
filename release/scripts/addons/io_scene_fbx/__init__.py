@@ -103,7 +103,7 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
             )
 
     use_custom_normals: BoolProperty(
-            name="Import Normals",
+            name="Import Custom Normals",
             description="Import custom normals, if available (otherwise Blender will recompute them)",
             default=True,
             )
@@ -241,9 +241,9 @@ class FBX_PT_import_include(bpy.types.Panel):
         sfile = context.space_data
         operator = sfile.active_operator
 
-        layout.prop(operator, "use_custom_normals")
-        layout.prop(operator, "use_subsurf")
-        layout.prop(operator, "use_custom_props")
+        layout.prop(operator, "use_custom_normals", text="Custom Normals")
+        layout.prop(operator, "use_subsurf", text="Subdivision Data")
+        layout.prop(operator, "use_custom_props", text="Custom Properties")
         sub = layout.row()
         sub.enabled = operator.use_custom_props
         sub.prop(operator, "use_custom_props_enum_as_string")
@@ -273,7 +273,9 @@ class FBX_PT_import_transform(bpy.types.Panel):
 
         layout.prop(operator, "global_scale")
         layout.prop(operator, "decal_offset")
-        layout.prop(operator, "bake_space_transform")
+        row = layout.row()
+        row.prop(operator, "bake_space_transform", text = "Apply Transform")
+        row.label(text="", icon='ERROR')
         layout.prop(operator, "use_prepost_rot")
 
 
@@ -688,7 +690,7 @@ class FBX_PT_export_include(bpy.types.Panel):
         sfile = context.space_data
         operator = sfile.active_operator
 
-        sublayout = layout.column()
+        sublayout = layout.column(heading = "Limit to")
         sublayout.enabled = (operator.batch_mode == 'OFF')
         sublayout.prop(operator, "use_selection")
         sublayout.prop(operator, "use_active_collection")
@@ -725,7 +727,9 @@ class FBX_PT_export_transform(bpy.types.Panel):
         layout.prop(operator, "axis_up")
 
         layout.prop(operator, "apply_unit_scale")
-        layout.prop(operator, "bake_space_transform")
+        row = layout.row()
+        row.prop(operator, "bake_space_transform", text ="Apply Transform")
+        row.label(text="", icon='ERROR')
 
 
 class FBX_PT_export_geometry(bpy.types.Panel):

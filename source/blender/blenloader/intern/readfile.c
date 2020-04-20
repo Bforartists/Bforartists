@@ -2762,6 +2762,8 @@ static void direct_link_id_override_property_operation_cb(FileData *fd, void *da
 
   opop->subitem_reference_name = newdataadr(fd, opop->subitem_reference_name);
   opop->subitem_local_name = newdataadr(fd, opop->subitem_local_name);
+
+  opop->tag = 0; /* Runtime only. */
 }
 
 static void direct_link_id_override_property_cb(FileData *fd, void *data)
@@ -2769,6 +2771,9 @@ static void direct_link_id_override_property_cb(FileData *fd, void *data)
   IDOverrideLibraryProperty *op = data;
 
   op->rna_path = newdataadr(fd, op->rna_path);
+
+  op->tag = 0; /* Runtime only. */
+
   link_list_ex(fd, &op->operations, direct_link_id_override_property_operation_cb);
 }
 
@@ -2845,11 +2850,11 @@ static int direct_link_id_restore_recalc(const FileData *fd,
      * that we need to perform again. */
     if (fd->undo_direction < 0) {
       /* Undo: tags from target to the current state. */
-      recalc |= id_current->recalc_undo_accumulated;
+      recalc |= id_current->recalc_up_to_undo_push;
     }
     else {
       /* Redo: tags from current to the target state. */
-      recalc |= id_target->recalc_undo_accumulated;
+      recalc |= id_target->recalc_up_to_undo_push;
     }
   }
 
@@ -2880,11 +2885,11 @@ static void direct_link_id_common(FileData *fd, ID *id, ID *id_old, const int ta
    * the version the file has been saved with. */
   if (fd->memfile == NULL) {
     id->recalc = 0;
-    id->recalc_undo_accumulated = 0;
+    id->recalc_after_undo_push = 0;
   }
   else if ((fd->skip_flags & BLO_READ_SKIP_UNDO_OLD_MAIN) == 0) {
     id->recalc = direct_link_id_restore_recalc(fd, id, id_old, false);
-    id->recalc_undo_accumulated = 0;
+    id->recalc_after_undo_push = 0;
   }
 
   /* Link direct data of overrides. */
@@ -3834,20 +3839,11 @@ typedef struct tConstraintLinkData {
 /* callback function used to relink constraint ID-links */
 static void lib_link_constraint_cb(bConstraint *UNUSED(con),
                                    ID **idpoin,
-                                   bool is_reference,
+                                   bool UNUSED(is_reference),
                                    void *userdata)
 {
   tConstraintLinkData *cld = (tConstraintLinkData *)userdata;
-
-  /* for reference types, we need to increment the user-counts on load... */
-  if (is_reference) {
-    /* reference type - with usercount */
-    *idpoin = newlibadr(cld->fd, cld->id->lib, *idpoin);
-  }
-  else {
-    /* target type - no usercount needed */
-    *idpoin = newlibadr(cld->fd, cld->id->lib, *idpoin);
-  }
+  *idpoin = newlibadr(cld->fd, cld->id->lib, *idpoin);
 }
 
 static void lib_link_constraints(FileData *fd, ID *id, ListBase *conlist)
@@ -9555,7 +9551,7 @@ static void read_libblock_undo_restore_identical(
 
   /* Recalc flags, mostly these just remain as they are. */
   id_old->recalc |= direct_link_id_restore_recalc_exceptions(id_old);
-  id_old->recalc_undo_accumulated = 0;
+  id_old->recalc_after_undo_push = 0;
 
   /* As usual, proxies require some special love...
    * In `blo_clear_proxy_pointers_from_lib()` we clear all `proxy_from` pointers to local IDs, for
@@ -9920,6 +9916,7 @@ static void do_versions(FileData *fd, Library *lib, Main *main)
   blo_do_versions_260(fd, lib, main);
   blo_do_versions_270(fd, lib, main);
   blo_do_versions_280(fd, lib, main);
+  blo_do_versions_290(fd, lib, main);
   blo_do_versions_cycles(fd, lib, main);
 
   /* WATCH IT!!!: pointers from libdata have not been converted yet here! */

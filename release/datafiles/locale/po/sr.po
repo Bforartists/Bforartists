@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 11) (b'2a2d0d463a4a')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -13419,8 +13419,8 @@ msgstr "Раздвој изабране кости од повезаних не�
 
 
 msgctxt "Operator"
-msgid "Subdivide Multi"
-msgstr "Вишеструка подела"
+msgid "Subdivide"
+msgstr "Издели"
 
 
 msgid "Number of Cuts"
@@ -14639,11 +14639,6 @@ msgstr "Ручке"
 
 msgid "Split off selected points from connected unselected points"
 msgstr "Раздвој изабране тачке од неизабраних повезаних тачака"
-
-
-msgctxt "Operator"
-msgid "Subdivide"
-msgstr "Издели"
 
 
 msgid "Subdivide selected segments"
@@ -28626,16 +28621,6 @@ msgstr "Објекти на сцену..."
 
 
 msgctxt "Operator"
-msgid "AutoName Front/Back"
-msgstr "Спреда"
-
-
-msgctxt "Operator"
-msgid "AutoName Top/Bottom"
-msgstr "Доле"
-
-
-msgctxt "Operator"
 msgid "To Next Keyframe"
 msgstr "На следећи кључни кадар"
 
@@ -28648,6 +28633,16 @@ msgstr "На последњи кључни кадар (циклично)"
 msgctxt "Operator"
 msgid "On Selected Markers"
 msgstr "На изабране маркере"
+
+
+msgctxt "Operator"
+msgid "AutoName Front/Back"
+msgstr "Спреда"
+
+
+msgctxt "Operator"
+msgid "AutoName Top/Bottom"
+msgstr "Доле"
 
 
 msgctxt "Operator"

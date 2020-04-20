@@ -36,9 +36,11 @@ class SimpleChainRig(BaseRig):
     def find_org_bones(self, bone):
         return [bone.name] + connected_children_names(self.obj, bone.name)
 
+    min_chain_length = 2
+
     def initialize(self):
-        if len(self.bones.org) <= 1:
-            self.raise_error("Input to rig type must be a chain of 2 or more bones.")
+        if len(self.bones.org) < self.min_chain_length:
+            self.raise_error("Input to rig type must be a chain of {} or more bones.", self.min_chain_length)
 
     def parent_bones(self):
         self.rig_parent_bone = self.get_bone_parent(self.bones.org[0])
