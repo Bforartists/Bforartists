@@ -1823,6 +1823,7 @@ class SEQUENCER_PT_cache_settings(SequencerButtonsPanel, Panel):
 
         col = layout.column()
 
+
         col.prop(ed, "use_cache_raw")
         col.prop(ed, "use_cache_preprocessed")
         col.prop(ed, "use_cache_composite")
@@ -1879,7 +1880,7 @@ class SEQUENCER_PT_strip_proxy(SequencerButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         ed = context.scene.sequence_editor
@@ -1893,24 +1894,23 @@ class SEQUENCER_PT_strip_proxy(SequencerButtonsPanel, Panel):
             if ed.proxy_storage == 'PER_STRIP':
                 flow.prop(proxy, "use_proxy_custom_directory")
                 flow.prop(proxy, "use_proxy_custom_file")
-
+                flow.use_property_split = True
                 if proxy.use_proxy_custom_directory and not proxy.use_proxy_custom_file:
                     flow.prop(proxy, "directory")
                 if proxy.use_proxy_custom_file:
                     flow.prop(proxy, "filepath")
-
-            box = layout.box()
-            row = box.row(align=True)
-            row.prop(strip.proxy, "build_25")
-            row.prop(strip.proxy, "build_75")
-            row = box.row(align=True)
-            row.prop(strip.proxy, "build_50")
-            row.prop(strip.proxy, "build_100")
-
+            
             layout.use_property_split = True
-            layout.use_property_decorate = False
-
+            row = layout.row(heading="Resolutions", align=True)
+            row.prop(strip.proxy, "build_25", toggle=True)
+            row.prop(strip.proxy, "build_75", toggle=True)
+            row.prop(strip.proxy, "build_50", toggle=True)
+            row.prop(strip.proxy, "build_100", toggle=True)
+            
+            layout.use_property_split = False
             layout.prop(proxy, "use_overwrite")
+            
+            layout.use_property_split = True
 
             col = layout.column()
             col.prop(proxy, "quality", text="Build JPEG Quality")
@@ -1940,7 +1940,7 @@ class SEQUENCER_PT_strip_cache(SequencerButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         strip = act_strip(context)
