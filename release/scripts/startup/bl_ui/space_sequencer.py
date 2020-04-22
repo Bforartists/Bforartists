@@ -1309,7 +1309,10 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
                 col.prop(strip.colorspace_settings, "name", text="Color Space")
                 col.prop(strip, "mpeg_preseek")
                 col.prop(strip, "stream_index")
+                
+                col.use_property_split = False
                 col.prop(strip, "use_deinterlace")
+                col.use_property_split = True
 
             if scene.render.use_multiview:
                 layout.prop(strip, "use_multiview")
@@ -1903,8 +1906,8 @@ class SEQUENCER_PT_strip_proxy(SequencerButtonsPanel, Panel):
             layout.use_property_split = True
             row = layout.row(heading="Resolutions", align=True)
             row.prop(strip.proxy, "build_25", toggle=True)
-            row.prop(strip.proxy, "build_75", toggle=True)
             row.prop(strip.proxy, "build_50", toggle=True)
+            row.prop(strip.proxy, "build_75", toggle=True)       
             row.prop(strip.proxy, "build_100", toggle=True)
             
             layout.use_property_split = False
