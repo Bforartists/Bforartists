@@ -377,14 +377,33 @@ class DATA_PT_camera_display(CameraButtonsPanel, Panel):
         cam = context.camera
 
         col = layout.column(align=True)
-
         col.prop(cam, "display_size", text="Size")
 
-        col = layout.column(heading="Show")
-        col.prop(cam, "show_limits", text="Limits")
-        col.prop(cam, "show_mist", text="Mist")
-        col.prop(cam, "show_sensor", text="Sensor")
-        col.prop(cam, "show_name", text="Name")
+        layout.label( text = "Show")
+     
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(cam, "show_limits", text="Limits")
+        row.prop_decorator(cam, "show_limits")
+
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(cam, "show_mist", text="Mist")
+        row.prop_decorator(cam, "show_mist")
+
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(cam, "show_sensor", text="Sensor")
+        row.prop_decorator(cam, "show_sensor")
+
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(cam, "show_name", text="Name")
+        row.prop_decorator(cam, "show_name")
 
 
 class DATA_PT_camera_display_composition_guides(CameraButtonsPanel, Panel):
@@ -399,20 +418,55 @@ class DATA_PT_camera_display_composition_guides(CameraButtonsPanel, Panel):
 
         cam = context.camera
 
-        layout.prop(cam, "show_composition_thirds")
+        row = layout.row()
+        row.use_property_split = False    
+        row.prop(cam, "show_composition_thirds")
+        row.prop_decorator(cam, "show_composition_thirds")
 
-        col = layout.column(heading="Center", align=True)
-        col.prop(cam, "show_composition_center")
-        col.prop(cam, "show_composition_center_diagonal", text="Diagonal")
+        layout.label(text = "Center")
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(cam, "show_composition_center")
+        row.prop_decorator(cam, "show_composition_center")
+        
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(cam, "show_composition_center_diagonal", text="Diagonal")
+        row.prop_decorator(cam, "show_composition_center_diagonal")
 
-        col = layout.column(heading="Golden", align=True)
-        col.prop(cam, "show_composition_golden", text="Ratio")
-        col.prop(cam, "show_composition_golden_tria_a", text="Triangle A")
-        col.prop(cam, "show_composition_golden_tria_b", text="Triangle B")
+        layout.label(text = "Golden")       
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(cam, "show_composition_golden", text="Ratio")
+        row.prop_decorator(cam, "show_composition_golden")
 
-        col = layout.column(heading="Harmony", align=True)
-        col.prop(cam, "show_composition_harmony_tri_a", text="Triangle A")
-        col.prop(cam, "show_composition_harmony_tri_b", text="Triangle B")
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(cam, "show_composition_golden_tria_a", text="Triangle A")
+        row.prop_decorator(cam, "show_composition_golden_tria_a")
+
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(cam, "show_composition_golden_tria_b", text="Triangle B")
+        row.prop_decorator(cam, "show_composition_golden_tria_b")
+
+        layout.label(text = "Harmony")
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(cam, "show_composition_harmony_tri_a", text="Triangle A")
+        row.prop_decorator(cam, "show_composition_harmony_tri_a")
+
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(cam, "show_composition_harmony_tri_b", text="Triangle B")
+        row.prop_decorator(cam, "show_composition_harmony_tri_b")
 
 
 class DATA_PT_camera_display_passepartout(CameraButtonsPanel, Panel):
