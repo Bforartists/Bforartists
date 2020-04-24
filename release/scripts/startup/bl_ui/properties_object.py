@@ -221,25 +221,58 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         is_dupli = (obj.instance_type != 'NONE')
         is_gpencil = (obj_type == 'GPENCIL')
 
-        col = layout.column(heading="Show")
-        col.prop(obj, "show_name", text="Name")
-        col.prop(obj, "show_axis", text="Axis")
+        #col = layout.column(heading="Show")
+        layout.label(text = "Show")
+        
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False   
+        row.prop(obj, "show_name", text="Name")
+        row.prop_decorator(obj, "show_name")
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False  
+        row.prop(obj, "show_axis", text="Axis")
+        row.prop_decorator(obj, "show_axis")
 
         # Makes no sense for cameras, armatures, etc.!
         # but these settings do apply to dupli instances
         if is_geometry or is_dupli:
-            col.prop(obj, "show_wire", text="Wireframe")
+            row = layout.row()
+            row.separator()
+            row.use_property_split = False  
+            row.prop(obj, "show_wire", text="Wireframe")
+            row.prop_decorator(obj, "show_wire")
         if obj_type == 'MESH' or is_dupli:
-            col.prop(obj, "show_all_edges", text="All Edges")
+            row = layout.row()
+            row.separator()
+            row.use_property_split = False  
+            row.prop(obj, "show_all_edges", text="All Edges")
+            row.prop_decorator(obj, "show_all_edges")
         if is_geometry:
-            col.prop(obj, "show_texture_space", text="Texture Space")
-            col.prop(obj.display, "show_shadows", text="Shadow")
-        col.prop(obj, "show_in_front", text="In Front")
+            row = layout.row()
+            row.separator()
+            row.use_property_split = False  
+            row.prop(obj, "show_texture_space", text="Texture Space")
+            row.prop_decorator(obj, "show_texture_space")
+            row = layout.row()
+            row.separator()
+            row.use_property_split = False  
+            row.prop(obj.display, "show_shadows", text="Shadow")               
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False  
+        row.prop(obj, "show_in_front", text="In Front")
+        row.prop_decorator(obj, "show_in_front")      
+        
         # if obj_type == 'MESH' or is_empty_image:
         #    col.prop(obj, "show_transparent", text="Transparency")
+        
+        col = layout.column()
         if is_wire:
             # wire objects only use the max. display type for duplis
             col.active = is_dupli
+            
         col.prop(obj, "display_type", text="Display As")
 
         if is_geometry or is_dupli or is_empty_image or is_gpencil:
@@ -269,19 +302,34 @@ class OBJECT_PT_instancing(ObjectButtonsPanel, Panel):
         row = layout.row()
         row.prop(ob, "instance_type", expand=True)
 
-        layout.use_property_split = True
+        layout.use_property_split = False
 
         if ob.instance_type == 'VERTS':
-            layout.prop(ob, "use_instance_vertices_rotation", text="Align to Vertex Normal")
+            row = layout.row()
+
+            row.prop(ob, "use_instance_vertices_rotation", text="Align to Vertex Normal")
+            row.prop_decorator(ob, "use_instance_vertices_rotation")
 
         elif ob.instance_type == 'COLLECTION':
-            col = layout.column()
-            col.prop(ob, "instance_collection", text="Collection")
+            row = layout.row()
 
-        if ob.instance_type != 'NONE' or ob.particle_systems:
-            col = layout.column(heading="Show Instancer", align=True)
-            col.prop(ob, "show_instancer_for_viewport", text="Viewport")
-            col.prop(ob, "show_instancer_for_render", text="Render")
+            row.prop(ob, "instance_collection", text="Collection")
+            row.prop_decorator(ob, "instance_collection")
+
+        if ob.instance_type != 'NONE' or ob.particle_systems:          
+            layout.label(text = "Show Instancer")
+            
+            row = layout.row()
+
+            row.separator()
+            row.prop(ob, "show_instancer_for_viewport", text="Viewport")
+            row.prop_decorator(ob, "show_instancer_for_viewport")
+            
+            row = layout.row()
+
+            row.separator()
+            row.prop(ob, "show_instancer_for_render", text="Render")
+            row.prop_decorator(ob, "show_instancer_for_render")
 
 
 class OBJECT_PT_instancing_size(ObjectButtonsPanel, Panel):
@@ -357,20 +405,36 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
 
         layout = self.layout
         ob = context.object
-
+        
+        layout.use_property_split = False
         layout.prop(ob, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
+        layout.use_property_split = True
+        
+        layout.label(text = "Show in")
 
-        col = layout.column(heading="Show in")
-        col.prop(ob, "hide_viewport", text="Viewports", toggle=False, invert_checkbox=True)
-        col.prop(ob, "hide_render", text="Renders", toggle=False, invert_checkbox=True)
+        row = layout.row()
+        row.use_property_split = False   
+        row.separator()
+        row.prop(ob, "hide_viewport", text="Viewports", toggle=False, invert_checkbox=True)
+        row.prop_decorator(ob, "hide_viewport")
+        
+        row = layout.row()
+        row.use_property_split = False
+        row.separator()     
+        row.prop(ob, "hide_render", toggle=False, invert_checkbox=True)
+        row.prop_decorator(ob, "hide_render")
 
         if context.object.type == 'GPENCIL':
-            col = layout.column(heading="Grease Pencil")
-            col.prop(ob, "use_grease_pencil_lights", toggle=False)
+            
+            layout.label(text = "Grease Pencil")
+            row = layout.row()
+            row.separator()
+            row.use_property_split = False    
+            row.prop(ob, "use_grease_pencil_lights", toggle=False)
+            row.prop_decorator(ob, "use_grease_pencil_lights")
 
 
 class OBJECT_PT_custom_props(ObjectButtonsPanel, PropertyPanel, Panel):

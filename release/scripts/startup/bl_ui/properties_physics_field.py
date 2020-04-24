@@ -364,7 +364,9 @@ class PHYSICS_PT_collision_particle(PhysicButtonsPanel, Panel):
         col = flow.column()
         col.prop(settings, "permeability", slider=True)
         col.prop(settings, "stickiness")
+        col.use_property_split = False
         col.prop(settings, "use_particle_kill")
+        col.use_property_split = True
 
         col = flow.column()
         sub = col.column(align=True)
