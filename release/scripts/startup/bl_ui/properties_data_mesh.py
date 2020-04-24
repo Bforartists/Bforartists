@@ -234,10 +234,11 @@ class DATA_PT_texture_space(MeshButtonsPanel, Panel):
         mesh = context.mesh
 
         layout.prop(mesh, "texture_mesh")
-
-        layout.separator()
-
-        layout.prop(mesh, "use_auto_texspace")
+        
+        row = layout.row()
+        row.use_property_split = False    
+        row.prop(mesh, "use_auto_texspace")
+        row.prop_decorator(mesh, "use_auto_texspace")
 
         layout.prop(mesh, "texspace_location", text="Location")
         layout.prop(mesh, "texspace_size", text="Size")
@@ -492,14 +493,23 @@ class DATA_PT_remesh(MeshButtonsPanel, Panel):
         if mesh.remesh_mode == 'VOXEL':
             col.prop(mesh, "remesh_voxel_size")
             col.prop(mesh, "remesh_voxel_adaptivity")
+            col.use_property_split = False
             col.prop(mesh, "use_remesh_fix_poles")
             col.prop(mesh, "use_remesh_smooth_normals")
-
-            col = layout.column(heading="Preserve")
-            col.prop(mesh, "use_remesh_preserve_volume", text="Volume")
-            col.prop(mesh, "use_remesh_preserve_paint_mask", text="Paint Mask")
-            col.prop(mesh, "use_remesh_preserve_sculpt_face_sets", text="Face Sets")
-            col.operator("object.voxel_remesh", text="Voxel Remesh")
+            
+            layout.label(text = "Preserve")
+            layout.use_property_split = False
+            row = layout.row()
+            row.separator()
+            row.prop(mesh, "use_remesh_preserve_volume", text="Volume")
+            row = layout.row()
+            row.separator()
+            row.prop(mesh, "use_remesh_preserve_paint_mask", text="Paint Mask")
+            row = layout.row()
+            row.separator()
+            row.prop(mesh, "use_remesh_preserve_sculpt_face_sets", text="Face Sets")
+            row = layout.row()
+            row.operator("object.voxel_remesh", text="Voxel Remesh")
         else:
             col.operator("object.quadriflow_remesh", text="QuadriFlow Remesh")
 
@@ -525,13 +535,15 @@ class DATA_PT_customdata(MeshButtonsPanel, Panel):
             col.operator("mesh.customdata_custom_splitnormals_clear", icon='X')
         else:
             col.operator("mesh.customdata_custom_splitnormals_add", icon='ADD')
+            
+        layout.separator()
 
-        col = layout.column(heading="Store")
-
+        col = layout.column()
+        col.use_property_split = False
         col.enabled = obj is not None and obj.mode != 'EDIT'
-        col.prop(me, "use_customdata_vertex_bevel", text="Vertex Bevel Weight")
-        col.prop(me, "use_customdata_edge_bevel", text="Edge Bevel Weight")
-        col.prop(me, "use_customdata_edge_crease", text="Edge Crease")
+        col.prop(me, "use_customdata_vertex_bevel", text="Store Vertex Bevel Weight")
+        col.prop(me, "use_customdata_edge_bevel", text="Store Edge Bevel Weight")
+        col.prop(me, "use_customdata_edge_crease", text="Store Edge Crease")
 
 
 class DATA_PT_custom_props_mesh(MeshButtonsPanel, PropertyPanel, Panel):

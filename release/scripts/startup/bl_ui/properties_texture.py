@@ -387,7 +387,11 @@ def texture_filter_common(tex, layout):
             col.prop(tex, "filter_eccentricity", text="Eccentricity")
 
     layout.prop(tex, "filter_size", text="Size")
-    layout.prop(tex, "use_filter_size_min", text="Minimum Size")
+    
+    row = layout.row()
+    row.use_property_split = False    
+    row.prop(tex, "use_filter_size_min", text="Minimum Size")
+    row.prop_decorator(tex, "use_filter_size_min")
 
 
 class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
@@ -405,15 +409,26 @@ class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
         tex = context.texture
 
         col = flow.column()
-        col.prop(tex, "use_interpolation")
 
-        col.separator()
+        row = col.row()
+        row.use_property_split = False    
+        row.prop(tex, "use_interpolation")
+        row.prop_decorator(tex, "use_interpolation")
+        
+        row = col.row()
+        row.use_property_split = False    
+        row.prop(tex, "use_mipmap")
+        row.prop_decorator(tex, "use_mipmap")
+        
+        if tex.use_mipmap:
+        
+            row = col.row()
+            row.use_property_split = False  
+            row.separator()  
+            row.prop(tex, "use_mipmap_gauss", text="Gaussian Filter")
+            row.prop_decorator(tex, "use_mipmap_gauss")
 
         col = flow.column()
-        col.prop(tex, "use_mipmap")
-        sub = col.column()
-        sub.active = tex.use_mipmap
-        sub.prop(tex, "use_mipmap_gauss", text="Gaussian Filter")
 
         col.separator()
 
@@ -455,14 +470,14 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
         layout.use_property_split = True
 
         tex = context.texture
+        
+        row = layout.row()
+        row.use_property_split = False    
+        row.prop(tex, "use_flip_axis", text="Flip Axes")
+        row.prop_decorator(tex, "use_flip_axis")
 
         col = layout.column()
-        col.prop(tex, "use_flip_axis", text="Flip Axes")
-
-        col.separator()
-
-        subcol = layout.column()
-        subcol.prop(tex, "extension")  # use layout, to keep the same location in case of button cycling.
+        col.prop(tex, "extension")  # use layout, to keep the same location in case of button cycling.
 
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
 
@@ -472,25 +487,36 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
             sub = col.column(align=True)
             sub.prop(tex, "repeat_x", text="Repeat X")
             sub.prop(tex, "repeat_y", text="Y")
-
-            col = flow.column()
-            sub = col.column()
-            sub.active = (tex.repeat_x > 1)
-            sub.prop(tex, "use_mirror_x", text="Mirror X")
-
-            sub = col.column()
-            sub.active = (tex.repeat_y > 1)
-            sub.prop(tex, "use_mirror_y", text="Y")
+            
+            row = layout.row()
+            row.active = (tex.repeat_x > 1)
+            row.use_property_split = False    
+            row.prop(tex, "use_mirror_x", text="Mirror X")
+            row.prop_decorator(tex, "use_mirror_x")
+            
+            row = layout.row()
+            row.active = (tex.repeat_y > 1)
+            row.use_property_split = False    
+            row.prop(tex, "use_mirror_y", text="Y")
+            row.prop_decorator(tex, "use_mirror_y")
 
         elif tex.extension == 'CHECKER':
-            subcol.separator()
 
             col = flow.column()
             col.prop(tex, "checker_distance", text="Distance")
 
             col = flow.column()
-            col.prop(tex, "use_checker_even", text="Tiles Even")
-            col.prop(tex, "use_checker_odd", text="Odd")
+            
+            row = layout.row()
+            row.use_property_split = False    
+            row.prop(tex, "use_checker_even", text="Tiles Even")
+            row.prop_decorator(tex, "use_checker_even")   
+
+            row = layout.row()
+            row.use_property_split = False    
+            row.prop(tex, "use_checker_odd", text="Odd")
+            row.prop_decorator(tex, "use_checker_odd")
+
         else:
             del flow
 
@@ -818,7 +844,13 @@ class TEXTURE_PT_colors(TextureButtonsPanel, TextureColorsPoll, Panel):
         tex = context.texture
 
         col = flow.column()
-        col.prop(tex, "use_clamp", text="Clamp")
+        
+        row = col.row()
+        row.use_property_split = False    
+        row.prop(tex, "use_clamp", text="Clamp")
+        row.prop_decorator(tex, "use_clamp")
+        
+        col.separator()
 
         col = flow.column(align=True)
         col.prop(tex, "factor_red", text="Multiply R")

@@ -52,10 +52,14 @@ class VIEWLAYER_PT_layer(ViewLayerButtonsPanel, Panel):
         rd = scene.render
         layer = context.view_layer
 
-        col = layout.column()
-        col.prop(layer, "use", text="Use for Rendering")
-        col.use_property_split = False
-        col.prop(rd, "use_single_layer", text="Render Single Layer")
+        
+        row = layout.row()
+        row.use_property_split = False    
+        row.prop(layer, "use", text="Use for Rendering")
+        row.prop_decorator(layer, "use")
+        row = layout.row()
+        row.use_property_split = False  
+        row.prop(rd, "use_single_layer", text="Render Single Layer")
 
 
 class VIEWLAYER_PT_eevee_layer_passes(ViewLayerButtonsPanel, Panel):
