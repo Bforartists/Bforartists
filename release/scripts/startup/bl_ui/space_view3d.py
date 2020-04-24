@@ -6529,7 +6529,7 @@ class VIEW3D_PT_view3d_properties(Panel):
 
         subcol.separator()
 
-        col = flow.column()
+        col = layout.column()
 
         subcol = col.column()
         subcol.use_property_split = False
@@ -6588,9 +6588,9 @@ class VIEW3D_PT_view3d_camera_lock(Panel):
                     text="",
                 )
         else:
-            subcol.use_property_split = False
-            subcol = sub.column(heading="Lock")
-            subcol.prop(view, "lock_cursor", text="To 3D Cursor")
+            col = layout.column(align=True)
+            col.use_property_split = False
+            col.prop(view, "lock_cursor", text="Lock To 3D Cursor")
 
         col.use_property_split = False
         col.prop(view, "lock_camera", text="Camera to View")
