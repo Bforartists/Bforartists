@@ -534,10 +534,11 @@ class RENDER_PT_eevee_performance(RenderButtonsPanel, Panel):
         scene = context.scene
         rd = scene.render
 
-        layout.use_property_split = True
-
-        layout.prop(rd, "use_high_quality_normals")
-
+        layout.use_property_split = False
+        
+        row = layout.row()
+        row.prop(rd, "use_high_quality_normals")
+        row.prop_decorator(rd, "use_high_quality_normals")
 
 class RENDER_PT_opengl_sampling(RenderButtonsPanel, Panel):
     bl_label = "Sampling"

@@ -84,13 +84,38 @@ class DATA_PT_display(ArmatureButtonsPanel, Panel):
 
         layout.prop(arm, "display_type", text="Display As")
 
-        col = layout.column(heading="Show")
-        col.prop(arm, "show_names", text="Names")
-        col.prop(arm, "show_axes", text="Axes")
-        col.prop(arm, "show_bone_custom_shapes", text="Shapes")
-        col.prop(arm, "show_group_colors", text="Group Colors")
+        layout.label(text = "Show")
+        
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(arm, "show_names", text="Names")
+        row.prop_decorator(arm, "show_names")
+        
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(arm, "show_axes", text="Axes")
+        row.prop_decorator(arm, "show_axes")
+        
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(arm, "show_bone_custom_shapes", text="Shapes")
+        row.prop_decorator(arm, "show_bone_custom_shapes")
+        
+        row = layout.row()
+        row.separator()
+        row.use_property_split = False    
+        row.prop(arm, "show_group_colors", text="Group Colors")
+        row.prop_decorator(arm, "show_group_colors")
+        
         if ob:
-            col.prop(ob, "show_in_front", text="In Front")
+            row = layout.row()
+            row.separator()
+            row.use_property_split = False    
+            row.prop(ob, "show_in_front", text="In Front")
+            row.prop_decorator(ob, "show_in_front")
 
 
 class DATA_MT_bone_group_context_menu(Menu):

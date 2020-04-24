@@ -269,7 +269,11 @@ class RENDER_PT_stamp_burn(RenderOutputButtonsPanel, Panel):
         col.prop(rd, "stamp_font_size", text="Font Size")
         col.column().prop(rd, "stamp_foreground", slider=True)
         col.column().prop(rd, "stamp_background", slider=True)
-        col.prop(rd, "use_stamp_labels", text="Include Labels")
+        row = layout.row()
+        row.active = rd.use_stamp
+        row.use_property_split = False
+        row.prop(rd, "use_stamp_labels", text="Include Labels")
+        row.prop_decorator(rd, "use_stamp_labels")
 
 
 class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
@@ -295,9 +299,9 @@ class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
         layout.template_image_settings(image_settings, color_management=False)
         
         if is_eevee or is_workbench:
-            layout.use_property_split = True
-            layout.use_property_decorate = True       
-            layout.prop(rd, "film_transparent", text="Transparent")
+            row = layout.row()
+            row.prop(rd, "film_transparent", text="Transparent")
+            row.prop_decorator(rd, "film_transparent")
 
         if not rd.is_movie_format:
             col = layout.column(heading="Image Sequence")
