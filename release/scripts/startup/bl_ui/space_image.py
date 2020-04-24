@@ -617,6 +617,8 @@ class IMAGE_HT_tool_header(Header):
 
         layout.separator_spacer()
 
+        IMAGE_HT_header.draw_xform_template(layout, context)
+
         self.draw_mode_settings(context)
 
     def draw_tool_settings(self, context):
@@ -765,6 +767,7 @@ class IMAGE_HT_header(Header):
         show_render = sima.show_render
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
+        show_region_tool_header = sima.show_region_tool_header
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
@@ -797,6 +800,9 @@ class IMAGE_HT_header(Header):
             layout.prop(sima, "use_image_pin", text="", emboss=False)
 
         layout.separator_spacer()
+
+        if not show_region_tool_header:
+            IMAGE_HT_header.draw_xform_template(layout, context)
 
         if show_uvedit:
             uvedit = sima.uv_editor
