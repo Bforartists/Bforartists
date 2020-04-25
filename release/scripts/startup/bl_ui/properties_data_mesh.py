@@ -43,8 +43,8 @@ class MESH_MT_vertex_group_context_menu(Menu):
         layout.operator("object.vertex_group_copy_to_linked", icon='LINK_AREA')
         layout.operator("object.vertex_group_copy_to_selected", icon='LINK_AREA')
         layout.separator()
-        layout.operator("object.vertex_group_mirror", icon='ARROW_LEFTRIGHT').use_topology = False
-        layout.operator("object.vertex_group_mirror", text="Mirror Vertex Group (Topology)", icon='ARROW_LEFTRIGHT').use_topology = True
+        layout.operator("object.vertex_group_mirror", icon='TRANSFORM_MIRROR').use_topology = False
+        layout.operator("object.vertex_group_mirror", text="Mirror Vertex Group (Topology)", icon='TRANSFORM_MIRROR').use_topology = True
         layout.separator()
         layout.operator("object.vertex_group_remove_from", text="Remove from All Groups", icon='REMOVE_FROM_ALL_GROUPS').use_all_groups = True
         layout.operator("object.vertex_group_remove_from", text="Clear Active Group", icon='CLEAR').use_all_verts = True
