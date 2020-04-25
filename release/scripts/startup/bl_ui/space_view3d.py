@@ -3165,7 +3165,7 @@ class VIEW3D_MT_object_parent(Menu):
         layout.separator()
 
         layout.operator_context = 'EXEC_DEFAULT'
-        layout.operator("object.parent_no_inverse_set")
+        layout.operator("object.parent_no_inverse_set", icon = "PARENT")
         layout.operator_context = operator_context_default
 
         layout.separator()
