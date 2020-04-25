@@ -46,16 +46,16 @@ class MESH_MT_vertex_group_context_menu(Menu):
         layout.operator("object.vertex_group_mirror", icon='ARROW_LEFTRIGHT').use_topology = False
         layout.operator("object.vertex_group_mirror", text="Mirror Vertex Group (Topology)", icon='ARROW_LEFTRIGHT').use_topology = True
         layout.separator()
-        layout.operator("object.vertex_group_remove_from", icon='X', text="Remove from All Groups").use_all_groups = True
-        layout.operator("object.vertex_group_remove_from", text="Clear Active Group", icon='X').use_all_verts = True
-        layout.operator("object.vertex_group_remove", text="Delete All Unlocked Groups", icon='X').all_unlocked = True
-        layout.operator("object.vertex_group_remove", text="Delete All Groups", icon='X').all = True
+        layout.operator("object.vertex_group_remove_from", text="Remove from All Groups", icon='REMOVE_FROM_ALL_GROUPS').use_all_groups = True
+        layout.operator("object.vertex_group_remove_from", text="Clear Active Group", icon='CLEAR').use_all_verts = True
+        layout.operator("object.vertex_group_remove", text="Delete All Unlocked Groups", icon='DELETE').all_unlocked = True
+        layout.operator("object.vertex_group_remove", text="Delete All Groups", icon='DELETE').all = True
         layout.separator()
-        props = layout.operator("object.vertex_group_lock", icon='LOCKED', text="Lock All")
+        props = layout.operator("object.vertex_group_lock", text="Lock All", icon='LOCKED')
         props.action, props.mask = 'LOCK', 'ALL'
-        props = layout.operator("object.vertex_group_lock", icon='UNLOCKED', text="UnLock All")
+        props = layout.operator("object.vertex_group_lock", text="UnLock All", icon='UNLOCKED')
         props.action, props.mask = 'UNLOCK', 'ALL'
-        props = layout.operator("object.vertex_group_lock", text="Lock Invert All")
+        props = layout.operator("object.vertex_group_lock", text="Lock Invert All", icon = "INVERSE")
         props.action, props.mask = 'INVERT', 'ALL'
 
 
@@ -67,13 +67,13 @@ class MESH_MT_shape_key_context_menu(Menu):
 
         layout.operator("object.shape_key_add", icon='ADD', text="New Shape From Mix").from_mix = True
         layout.separator()
-        layout.operator("object.shape_key_mirror", icon='ARROW_LEFTRIGHT').use_topology = False
-        layout.operator("object.shape_key_mirror", text="Mirror Shape Key (Topology)").use_topology = True
+        layout.operator("object.shape_key_mirror", icon='TRANSFORM_MIRROR').use_topology = False
+        layout.operator("object.shape_key_mirror", text="Mirror Shape Key (Topology)", icon = "TRANSFORM_MIRROR").use_topology = True
         layout.separator()
-        layout.operator("object.join_shapes")
-        layout.operator("object.shape_key_transfer")
+        layout.operator("object.join_shapes", icon = "JOIN")
+        layout.operator("object.shape_key_transfer", icon = "SHAPEKEY_DATA")
         layout.separator()
-        layout.operator("object.shape_key_remove", icon='X', text="Delete All Shape Keys").all = True
+        layout.operator("object.shape_key_remove", icon='DELETE', text="Delete All Shape Keys").all = True
         layout.separator()
         layout.operator("object.shape_key_move", icon='TRIA_UP_BAR', text="Move to Top").type = 'TOP'
         layout.operator("object.shape_key_move", icon='TRIA_DOWN_BAR', text="Move to Bottom").type = 'BOTTOM'
