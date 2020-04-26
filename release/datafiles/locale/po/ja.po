@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-04-20 13:27:14\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
 "Last-Translator: \n"
 "Language-Team: Japanese Translation Team (https://sites.google.com/site/blugjp/blender-translators)\n"
@@ -14473,10 +14473,6 @@ msgid "UV Translation"
 msgstr "UVの移動"
 
 
-msgid "Translation of default UV postion"
-msgstr "デフォルトのUVの位置の移動"
-
-
 msgid "Vertex Fill Color"
 msgstr "頂点フィルカラー"
 
@@ -15105,10 +15101,6 @@ msgstr "ランダムシード"
 
 msgid "Enable offset"
 msgstr "オフセットを有効化"
-
-
-msgid "Enable obejct offset"
-msgstr "オブジェクトのオフセットを有効にします"
 
 
 msgid "Shift"
@@ -15963,10 +15955,6 @@ msgstr "データブロックのベースタイプ。一意の名前を持ち、
 
 msgid "Embedded Data"
 msgstr "添付データ"
-
-
-msgid "This data-block is not an independant one, but is actually a sub-data of another ID (typical example: root node trees or master collections)"
-msgstr "このデータブロックは単独して存在せず、実際には他のIDのサブデータとなります（例：ノードツリーのルートやマスターコレクションなど）"
 
 
 msgid "Is Evaluated"
@@ -33495,6 +33483,10 @@ msgid "Flat open perimeter shape"
 msgstr "フラットで開いた形状の境界"
 
 
+msgid "Merge Threshold"
+msgstr "マージのしきい値"
+
+
 msgid "Thickness Mode"
 msgstr "厚み付けモード"
 
@@ -47081,10 +47073,6 @@ msgstr "パレットを作成"
 
 msgid "Create a new palette with colors"
 msgstr "色から新規パレットを作成します"
-
-
-msgid "Remove Unused Materiales"
-msgstr "未使用マテリアルを削除"
 
 
 msgid "Remove any unused material after the conversion"
@@ -66715,12 +66703,6 @@ msgid "Use Soft Limits"
 msgstr "ソフトリミットを使用"
 
 
-msgid "Limits the Property Value slider to a range, values outside the range must be inputed numerically"
-msgstr ""
-"プロパティ値のスライダーを範囲制限します\n"
-"範囲外の値は数値入力する必要があります"
-
-
 msgid "Property value edit"
 msgstr "プロパティ値の編集"
 
@@ -67264,65 +67246,6 @@ msgstr "ID（任意）"
 
 msgid "Site"
 msgstr "サイト"
-
-
-msgctxt "Operator"
-msgid "Export USD"
-msgstr "USDをエクスポート"
-
-
-msgid "Export current scene in a USD archive"
-msgstr "現在のシーンを USD アーカイブでエクスポートします"
-
-
-msgid "Use Settings for"
-msgstr "使用する設定"
-
-
-msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
-msgstr "オブジェクトの表示設定やモディファイアーの設定など、ビューポートとレンダリングで別々の設定のある所で、どちらの設定を使用するかを決めます"
-
-
-msgid "Use Render settings for object visibility, modifier settings, etc"
-msgstr "オブジェクトの表示やモディファイアーの設定などにレンダー用設定を使用します"
-
-
-msgid "Use Viewport settings for object visibility, modifier settings, etc"
-msgstr "オブジェクトの表示やモディファイアーの設定などにビューポート用設定を使用します"
-
-
-msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
-msgstr "チェック時、レンダーフレーム範囲がエクスポートされます。False の時は現在のフレームのみエクスポートされます"
-
-
-msgid "When checked, hair is exported as USD curves"
-msgstr "チェック時、ヘアーが USD カーブとしてエクスポートされます"
-
-
-msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
-msgstr "チェック時、マテリアルのビューポート設定が USD プレビューマテリアルとしてエクスポートされ、マテリアルの割り当てが geometry subsets としてエクスポートされます"
-
-
-msgid "When checked, normals of exported meshes are included in the export"
-msgstr "チェック時、エクスポートするメッシュの法線がエクスポートに同梱されます"
-
-
-msgid "UV Maps"
-msgstr "UVマップ"
-
-
-msgid "When checked, all UV maps of exported meshes are included in the export"
-msgstr "チェック時、エクスポートするメッシュの全 UV マップがエクスポートに同梱されます"
-
-
-msgid "Instancing"
-msgstr "インスタンス化"
-
-
-msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
-msgstr ""
-"チェック時、オブジェクトのインスタンスが USD 内の参照としてエクスポートされます。\n"
-"未チェック時はオブジェクトのインスタンスは実在のオブジェクトとしてエクスポートされます"
 
 
 msgctxt "Operator"
@@ -68350,6 +68273,10 @@ msgid "Text Boxes"
 msgstr "テキストボックス"
 
 
+msgid "UV Maps"
+msgstr "UVマップ"
+
+
 msgid "OpenVDB File"
 msgstr "OpenVDBファイル"
 
@@ -68620,6 +68547,10 @@ msgstr "リンクカット"
 
 msgid "Delta Transform"
 msgstr "デルタトランスフォーム"
+
+
+msgid "Instancing"
+msgstr "インスタンス化"
 
 
 msgid "Scale by Face Size"
@@ -71314,14 +71245,6 @@ msgstr "実験的機能"
 
 msgid "Menu Search"
 msgstr "メニュー検索"
-
-
-msgid "Undo Speedup"
-msgstr "高速に元に戻す"
-
-
-msgid "Use new undo speedup (WARNING: can lead to crashes and serious .blend file corruption)"
-msgstr "新しく高速になった「元に戻す」を使用します（注：クラッシュや .blend ファイルを壊してしまう可能性があります）"
 
 
 msgid "Animation Player"
@@ -79061,10 +78984,6 @@ msgid "Color selected to apply glow"
 msgstr "グローを適用する色"
 
 
-msgid "Size of th effect"
-msgstr "エフェクトのサイズ"
-
-
 msgid "Limit to select color for glow effect"
 msgstr "グロー効果を選択した色に限定します"
 
@@ -84257,10 +84176,6 @@ msgstr "カーブ断面ウィジェット"
 
 msgid "Used for defining a profile's path"
 msgstr "断面のパスの定義に使用します"
-
-
-msgid "Merge Threshold"
-msgstr "マージのしきい値"
 
 
 msgid "Threshold distance for Auto Merge"
@@ -92714,20 +92629,16 @@ msgid "Undo Memory Limit"
 msgstr "「元に戻す」のメモリー制限"
 
 
-msgid "Sequencer Cache Limit"
-msgstr "最大シーケンサーキャッシュ"
-
-
-msgid "Console Scrollback Lines"
-msgstr "コンソールでスクロールを戻す行数"
-
-
 msgid "Garbage Collection Rate"
 msgstr "ガーベジコレクションレート"
 
 
 msgid "Vbo Time Out"
 msgstr "VBOタイムアウト"
+
+
+msgid "Console Scrollback Lines"
+msgstr "コンソールでスクロールを戻す行数"
 
 
 msgid "View Name"

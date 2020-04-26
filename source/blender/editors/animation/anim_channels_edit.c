@@ -139,7 +139,8 @@ void ANIM_set_active_channel(bAnimContext *ac,
       case ANIMTYPE_DSMCLIP:
       case ANIMTYPE_DSHAIR:
       case ANIMTYPE_DSPOINTCLOUD:
-      case ANIMTYPE_DSVOLUME: {
+      case ANIMTYPE_DSVOLUME:
+      case ANIMTYPE_DSSIMULATION: {
         /* need to verify that this data is valid for now */
         if (ale->adt) {
           ACHANNEL_SET_FLAG(ale->adt, ACHANNEL_SETFLAG_CLEAR, ADT_UI_ACTIVE);
@@ -195,7 +196,8 @@ void ANIM_set_active_channel(bAnimContext *ac,
       case ANIMTYPE_DSMCLIP:
       case ANIMTYPE_DSHAIR:
       case ANIMTYPE_DSPOINTCLOUD:
-      case ANIMTYPE_DSVOLUME: {
+      case ANIMTYPE_DSVOLUME:
+      case ANIMTYPE_DSSIMULATION: {
         /* need to verify that this data is valid for now */
         if (ale && ale->adt) {
           ale->adt->flag |= ADT_UI_ACTIVE;
@@ -333,7 +335,8 @@ void ANIM_deselect_anim_channels(
         case ANIMTYPE_DSMCLIP:
         case ANIMTYPE_DSHAIR:
         case ANIMTYPE_DSPOINTCLOUD:
-        case ANIMTYPE_DSVOLUME: {
+        case ANIMTYPE_DSVOLUME:
+        case ANIMTYPE_DSSIMULATION: {
           if ((ale->adt) && (ale->adt->flag & ADT_UI_SELECTED)) {
             sel = ACHANNEL_SETFLAG_CLEAR;
           }
@@ -429,7 +432,8 @@ void ANIM_deselect_anim_channels(
       case ANIMTYPE_DSMCLIP:
       case ANIMTYPE_DSHAIR:
       case ANIMTYPE_DSPOINTCLOUD:
-      case ANIMTYPE_DSVOLUME: {
+      case ANIMTYPE_DSVOLUME:
+      case ANIMTYPE_DSSIMULATION: {
         /* need to verify that this data is valid for now */
         if (ale->adt) {
           ACHANNEL_SET_FLAG(ale->adt, sel, ADT_UI_SELECTED);
@@ -2269,7 +2273,8 @@ static int animchannels_clean_empty_exec(bContext *C, wmOperator *UNUSED(op))
   }
 
   /* get animdata blocks */
-  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_ANIMDATA);
+  filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_ANIMDATA |
+            ANIMFILTER_NODUPLIS);
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 
   for (ale = anim_data.first; ale; ale = ale->next) {
@@ -2965,7 +2970,8 @@ static int mouse_anim_channels(bContext *C, bAnimContext *ac, int channel_index,
     case ANIMTYPE_DSMCLIP:
     case ANIMTYPE_DSHAIR:
     case ANIMTYPE_DSPOINTCLOUD:
-    case ANIMTYPE_DSVOLUME: {
+    case ANIMTYPE_DSVOLUME:
+    case ANIMTYPE_DSSIMULATION: {
       /* sanity checking... */
       if (ale->adt) {
         /* select/deselect */

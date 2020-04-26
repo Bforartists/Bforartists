@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-04-20 13:27:14\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -21904,10 +21904,6 @@ msgid "URL"
 msgstr "Adresa"
 
 
-msgid "UV Maps"
-msgstr "UV Mape"
-
-
 msgid "Toggle the current window fullscreen"
 msgstr "Prikazuje tekući prozor preko celog ekrana"
 
@@ -22188,6 +22184,10 @@ msgstr "Skelet"
 
 msgid "Text Boxes"
 msgstr "Blok teksta"
+
+
+msgid "UV Maps"
+msgstr "UV Mape"
 
 
 msgid "Filters"

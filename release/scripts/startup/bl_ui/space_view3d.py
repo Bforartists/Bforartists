@@ -981,6 +981,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base):
 
         if obj.type == 'MESH':
             layout.operator("transform.shrink_fatten", text="Shrink Fatten", icon = 'SHRINK_FATTEN')
+            layout.operator("transform.skin_resize")
 
         elif obj.type == 'CURVE':
             layout.operator("transform.transform", text="Shrink Fatten", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
@@ -7176,15 +7177,16 @@ class VIEW3D_PT_overlay_guides(Panel):
         split = col.split()
         sub = split.column()
         sub.prop(overlay, "show_text", text="Text Info")
+        sub.prop(overlay, "show_stats", text="Statistics")
+
         sub = split.column()
         sub.prop(overlay, "show_cursor", text="3D Cursor")
+        sub.prop(overlay, "show_annotation", text="Annotations")
 
         if shading.type == 'MATERIAL':
             row = col.row()
             row.active = shading.render_pass == 'COMBINED'
             row.prop(overlay, "show_look_dev")
-
-        col.prop(overlay, "show_annotation", text="Annotations")
 
 
 class VIEW3D_PT_overlay_object(Panel):

@@ -924,11 +924,11 @@ static void rna_Scene_volume_update(Main *UNUSED(bmain), Scene *UNUSED(scene), P
   DEG_id_tag_update(&scene->id, ID_RECALC_AUDIO_VOLUME | ID_RECALC_SEQUENCER_STRIPS);
 }
 
-static const char *rna_Scene_statistics_string_get(Scene *scene,
-                                                   Main *bmain,
+static const char *rna_Scene_statistics_string_get(Scene *UNUSED(scene),
+                                                   Main *UNUSED(bmain),
                                                    ViewLayer *view_layer)
 {
-  return ED_info_stats_string(bmain, scene, view_layer);
+  return ED_info_footer_string(view_layer);
 }
 
 static void rna_Scene_framelen_update(Main *UNUSED(bmain), Scene *scene, PointerRNA *UNUSED(ptr))
@@ -2026,6 +2026,24 @@ static void rna_View3DCursor_matrix_set(PointerRNA *ptr, const float *values)
   BKE_scene_cursor_from_mat4(cursor, unit_mat, false);
 }
 
+static char *rna_TransformOrientationSlot_path(PointerRNA *ptr)
+{
+  Scene *scene = (Scene *)ptr->owner_id;
+  TransformOrientationSlot *orientation_slot = ptr->data;
+
+  if (!ELEM(NULL, scene, orientation_slot)) {
+    for (int i = 0; i < ARRAY_SIZE(scene->orientation_slots); i++) {
+      if (&scene->orientation_slots[i] == orientation_slot) {
+        return BLI_sprintfN("transform_orientation_slots[%d]", i);
+      }
+    }
+  }
+
+  /* Should not happen, but in case, just return defqult path. */
+  BLI_assert(0);
+  return BLI_strdup("transform_orientation_slots[0]");
+}
+
 static char *rna_View3DCursor_path(PointerRNA *UNUSED(ptr))
 {
   return BLI_strdup("cursor");
@@ -2664,6 +2682,7 @@ static void rna_def_transform_orientation_slot(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "TransformOrientationSlot", NULL);
   RNA_def_struct_sdna(srna, "TransformOrientationSlot");
+  RNA_def_struct_path_func(srna, "rna_TransformOrientationSlot_path");
   RNA_def_struct_ui_text(srna, "Orientation Slot", "");
 
   /* Orientations */

@@ -133,6 +133,7 @@
 #include "DNA_sdna_types.h"
 #include "DNA_sequence_types.h"
 #include "DNA_shader_fx_types.h"
+#include "DNA_simulation_types.h"
 #include "DNA_sound_types.h"
 #include "DNA_space_types.h"
 #include "DNA_speaker_types.h"
@@ -990,9 +991,19 @@ static void write_node_socket_default_value(WriteData *wd, bNodeSocket *sock)
     case SOCK_STRING:
       writestruct(wd, DATA, bNodeSocketValueString, 1, sock->default_value);
       break;
+    case SOCK_OBJECT:
+      writestruct(wd, DATA, bNodeSocketValueObject, 1, sock->default_value);
+      break;
+    case SOCK_IMAGE:
+      writestruct(wd, DATA, bNodeSocketValueImage, 1, sock->default_value);
+      break;
     case __SOCK_MESH:
     case SOCK_CUSTOM:
     case SOCK_SHADER:
+    case SOCK_EMITTERS:
+    case SOCK_EVENTS:
+    case SOCK_FORCES:
+    case SOCK_CONTROL_FLOW:
       BLI_assert(false);
       break;
   }
@@ -2194,7 +2205,7 @@ static void write_customdata(WriteData *wd,
         datasize = structnum * count;
         writestruct_id(wd, DATA, structname, datasize, layer->data);
       }
-      else {
+      else if (!wd->use_memfile) { /* Do not warn on undo. */
         printf("%s error: layer '%s':%d - can't be written to file\n",
                __func__,
                structname,
@@ -2577,6 +2588,12 @@ static void write_lightcache(WriteData *wd, LightCache *cache)
 
 static void write_scene(WriteData *wd, Scene *sce, const void *id_address)
 {
+  if (wd->use_memfile) {
+    /* Clean up, important in undo case to reduce false detection of changed datablocks. */
+    /* XXX This UI data should not be stored in Scene at all... */
+    memset(&sce->cursor, 0, sizeof(sce->cursor));
+  }
+
   /* write LibData */
   writestruct_at_address(wd, ID_SCE, Scene, 1, id_address, sce);
   write_iddata(wd, &sce->id);
@@ -3851,6 +3868,24 @@ static void write_volume(WriteData *wd, Volume *volume, const void *id_address)
   }
 }
 
+static void write_simulation(WriteData *wd, Simulation *simulation)
+{
+  if (simulation->id.us > 0 || wd->use_memfile) {
+    writestruct(wd, ID_SIM, Simulation, 1, simulation);
+    write_iddata(wd, &simulation->id);
+
+    if (simulation->adt) {
+      write_animdata(wd, simulation->adt);
+    }
+
+    /* nodetree is integral part of simulation, no libdata */
+    if (simulation->nodetree) {
+      writestruct(wd, DATA, bNodeTree, 1, simulation->nodetree);
+      write_nodetree_nolib(wd, simulation->nodetree);
+    }
+  }
+}
+
 /* Keep it last of write_foodata functions. */
 static void write_libraries(WriteData *wd, Main *main)
 {
@@ -4199,6 +4234,9 @@ static bool write_file_handle(Main *mainvar,
             break;
           case ID_VO:
             write_volume(wd, (Volume *)id_buffer, id);
+            break;
+          case ID_SIM:
+            write_simulation(wd, (Simulation *)id);
             break;
           case ID_LI:
             /* Do nothing, handled below - and should never be reached. */

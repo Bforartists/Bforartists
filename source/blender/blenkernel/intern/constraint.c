@@ -1009,8 +1009,8 @@ static void trackto_new_data(void *cdata)
 {
   bTrackToConstraint *data = (bTrackToConstraint *)cdata;
 
-  data->reserved1 = TRACK_Y;
-  data->reserved2 = UP_Z;
+  data->reserved1 = TRACK_nZ;
+  data->reserved2 = UP_Y;
 }
 
 static void trackto_id_looper(bConstraint *con, ConstraintIDFunc func, void *userdata)
@@ -4694,7 +4694,7 @@ static void followtrack_evaluate(bConstraint *con, bConstraintOb *cob, ListBase 
         pos[0] *= width;
         pos[1] *= height;
 
-        BKE_tracking_undistort_v2(tracking, pos, pos);
+        BKE_tracking_undistort_v2(tracking, width, height, pos, pos);
 
         /* Normalize pixel coordinates back. */
         pos[0] /= width;

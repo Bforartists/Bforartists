@@ -1,5 +1,5 @@
-#include "BLI_set.h"
-#include "BLI_vector.h"
+#include "BLI_set.hh"
+#include "BLI_vector.hh"
 #include "testing/testing.h"
 
 using BLI::Set;
@@ -153,16 +153,6 @@ TEST(set, AddMultipleNew)
   a.add_multiple_new({5, 6});
   EXPECT_TRUE(a.contains(5));
   EXPECT_TRUE(a.contains(6));
-}
-
-TEST(set, ToSmallVector)
-{
-  IntSet a = {5, 2, 8};
-  BLI::Vector<int> vec = a.to_small_vector();
-  EXPECT_EQ(vec.size(), 3);
-  EXPECT_TRUE(vec.contains(5));
-  EXPECT_TRUE(vec.contains(2));
-  EXPECT_TRUE(vec.contains(8));
 }
 
 TEST(set, Iterator)

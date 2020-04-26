@@ -48,20 +48,14 @@ endfunction()
 
 # Run Python script outside Blender.
 function(add_python_test testname testscript)
-  if(MSVC)
-    add_test(
-      NAME ${testname}
-      COMMAND
-        "$<TARGET_FILE_DIR:bforartists>/${BLENDER_VERSION_MAJOR}.${BLENDER_VERSION_MINOR}/python/bin/python$<$<CONFIG:Debug>:_d>"
-        ${testscript} ${ARGN}
-    )
-  else()
-    add_test(
-      NAME ${testname}
-      COMMAND ${testscript} ${ARGN}
-    )
+  if(NOT TEST_PYTHON_EXE)
+    message(FATAL_ERROR "No Python configured for running tests, set TEST_PYTHON_EXE.")
   endif()
 
+  add_test(
+    NAME ${testname}
+    COMMAND ${TEST_PYTHON_EXE} ${testscript} ${ARGN}
+  )
   set_tests_properties(${testname} PROPERTIES ENVIRONMENT LSAN_OPTIONS=exitcode=0)
 endfunction()
 
@@ -581,7 +575,7 @@ if(WITH_CYCLES OR WITH_OPENGL_RENDER_TESTS)
           cycles_${render_test}
           ${CMAKE_CURRENT_LIST_DIR}/cycles_render_tests.py
           -blender "$<TARGET_FILE:bforartists>"
-          -testdir "${TEST_SRC_DIR}/render/${subject}"
+          -testdir "${TEST_SRC_DIR}/render/${render_test}"
           -idiff "${OPENIMAGEIO_IDIFF}"
           -outdir "${TEST_OUT_DIR}/cycles"
         )

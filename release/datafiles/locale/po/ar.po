@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-04-20 13:27:14\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -31961,10 +31961,6 @@ msgid "Open a website in the web-browser"
 msgstr "ﺖﻧﺮﺘﻧﻻ﻿ﺍ ﺢﻔﺼﺘﻤﻟﺍ ﻲﻓ ﻊﻗﻮﻣ ﺢﺘﻓﺇ"
 
 
-msgid "UV Maps"
-msgstr "UV ﻂﺋﺍﺮﺧ"
-
-
 msgctxt "Operator"
 msgid "Toggle Window Fullscreen"
 msgstr "ﺔﻠﻣﺎﻛ ﺔﺷﺎﺷ ﺓﺬﻓﺎﻨﻟﺍ ﺐﻠﻗﺇ"
@@ -32310,6 +32306,10 @@ msgstr "ﻞﻜﻴﻫ"
 
 msgid "Text Boxes"
 msgstr "ﺔﺑﺎﺘﻜﻟﺍ ﺕﺎﻧﺎﺧ"
+
+
+msgid "UV Maps"
+msgstr "UV ﻂﺋﺍﺮﺧ"
 
 
 msgid "Filters"

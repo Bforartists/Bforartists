@@ -124,6 +124,14 @@ class NODE_HT_header(Header):
 
             NODE_MT_editor_menus.draw_collapsible(context, layout)
 
+        elif snode.tree_type == 'SimulationNodeTree':
+            row = layout.row(align=True)
+            row.prop(snode, "simulation", text="")
+            row.operator("simulation.new", text="", icon='ADD')
+            simulation = snode.simulation
+            if simulation:
+                row.prop(snode.simulation, "use_fake_user", text="")
+
         else:
             # Custom node tree is edited as independent ID block
             NODE_MT_editor_menus.draw_collapsible(context, layout)
