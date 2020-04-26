@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-04-20 13:27:14\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
 "Last-Translator: Lockal <lockalsash@gmail.com>, 2020\n"
 "Language-Team: Russian (https://www.transifex.com/translateblender/teams/82039/ru/)\n"
@@ -31516,6 +31516,10 @@ msgstr "Смещение материала обода"
 
 msgid "Offset material index of generated rim faces"
 msgstr "Сместить индекс материала для генерируемых граней обода"
+
+
+msgid "Merge Threshold"
+msgstr "Порог объединения"
 
 
 msgid "Offset the thickness from the center"
@@ -63500,14 +63504,6 @@ msgid "Site"
 msgstr "Сайт"
 
 
-msgid "UV Maps"
-msgstr "UV-карты"
-
-
-msgid "Instancing"
-msgstr "Создание экземпляров"
-
-
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "Добавить путь автозапуска"
@@ -64480,6 +64476,10 @@ msgid "Text Boxes"
 msgstr "Текстовые блоки"
 
 
+msgid "UV Maps"
+msgstr "UV-карты"
+
+
 msgid "Filters"
 msgstr "Фильтры"
 
@@ -64730,6 +64730,10 @@ msgstr "Обрезка соединений"
 
 msgid "Delta Transform"
 msgstr "Дельта-трансформация"
+
+
+msgid "Instancing"
+msgstr "Создание экземпляров"
 
 
 msgid "Scale by Face Size"
@@ -79451,10 +79455,6 @@ msgid "Add & Replace"
 msgstr "Добавить и заменить"
 
 
-msgid "Merge Threshold"
-msgstr "Порог объединения"
-
-
 msgid "Threshold distance for Auto Merge"
 msgstr "Пороговое расстояние для автообъединения"
 
@@ -86947,20 +86947,16 @@ msgid "Undo Memory Limit"
 msgstr "Ограничение памяти на отмену"
 
 
-msgid "Sequencer Cache Limit"
-msgstr "Ограничение кэша видеоредактора"
-
-
-msgid "Console Scrollback Lines"
-msgstr "Строки прокрутки консоли"
-
-
 msgid "Garbage Collection Rate"
 msgstr "Интервал сборки мусора"
 
 
 msgid "Vbo Time Out"
 msgstr "Время ожидания VBO"
+
+
+msgid "Console Scrollback Lines"
+msgstr "Строки прокрутки консоли"
 
 
 msgid "View Name"

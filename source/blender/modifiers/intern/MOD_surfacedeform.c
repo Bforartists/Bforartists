@@ -112,7 +112,7 @@ typedef struct SDefDeformData {
   const SDefVert *const bind_verts;
   float (*const targetCos)[3];
   float (*const vertexCos)[3];
-  float(*const weights);
+  float *const weights;
   float const strength;
 } SDefDeformData;
 
@@ -1395,7 +1395,10 @@ ModifierTypeInfo modifierType_SurfaceDeform = {
     /* deformMatrices */ NULL,
     /* deformVertsEM */ deformVertsEM,
     /* deformMatricesEM */ NULL,
-    /* applyModifier */ NULL,
+    /* modifyMesh */ NULL,
+    /* modifyHair */ NULL,
+    /* modifyPointCloud */ NULL,
+    /* modifyVolume */ NULL,
 
     /* initData */ initData,
     /* requiredDataMask */ requiredDataMask,

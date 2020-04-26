@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-04-20 13:27:14\n"
 "PO-Revision-Date: \n"
 "Last-Translator: DeathBlood\n"
 "Language-Team: \n"
@@ -14272,10 +14272,6 @@ msgid "UV Translation"
 msgstr "UV平移"
 
 
-msgid "Translation of default UV postion"
-msgstr "默认UV位置的平移"
-
-
 msgid "Vertex Fill Color"
 msgstr "顶点填充颜色"
 
@@ -14900,10 +14896,6 @@ msgstr "随机种"
 
 msgid "Enable offset"
 msgstr "启用偏移"
-
-
-msgid "Enable obejct offset"
-msgstr "启用物体偏移"
 
 
 msgid "Shift"
@@ -15758,10 +15750,6 @@ msgstr "数据块的基本类型, 定义一个唯一的名称, 链接至其他�
 
 msgid "Embedded Data"
 msgstr "嵌入的数据"
-
-
-msgid "This data-block is not an independant one, but is actually a sub-data of another ID (typical example: root node trees or master collections)"
-msgstr "此数据块不是独立的数据块，而实际上是另一个 ID的子数据(典型例子如：根节点树或主集合)"
 
 
 msgid "Is Evaluated"
@@ -16871,6 +16859,10 @@ msgstr "拉普拉斯"
 
 msgid "Smooths the surface and the volume"
 msgstr "平滑表面和体积"
+
+
+msgid "Smooths the surface of the mesh, preserving the volume"
+msgstr "平滑网格表面，同时保留体积"
 
 
 msgid "Smooth Stroke Factor"
@@ -31595,6 +31587,14 @@ msgid "Use UV coordinates for the texture coordinates"
 msgstr "将 UV 坐标用于纹理坐标"
 
 
+msgid "Texture Coordinate Bone"
+msgstr "纹理坐标骨骼"
+
+
+msgid "Bone to set the texture coordinates"
+msgstr "用于设置纹理坐标系的骨骼"
+
+
 msgid "Texture Coordinate Object"
 msgstr "纹理坐标系物体"
 
@@ -32876,6 +32876,10 @@ msgid "Flat open perimeter shape"
 msgstr "平整开放边缘形状"
 
 
+msgid "Merge Threshold"
+msgstr "合并阈值"
+
+
 msgid "Thickness Mode"
 msgstr "厚度模式"
 
@@ -33285,6 +33289,10 @@ msgstr "自定义映射曲线"
 
 msgid "Global influence of current modifications on vgroup"
 msgstr "当前顶点组修改结果的全局影响量"
+
+
+msgid "Which bone to take texture coordinates from"
+msgstr "纹理坐标的源骨骼"
 
 
 msgid "Which object to take texture coordinates from"
@@ -45936,6 +45944,11 @@ msgid "Hide unselected rather than selected layers"
 msgstr "隐藏未选中项而非已选中的层"
 
 
+msgctxt "Operator"
+msgid "Generate Grease Pencil Object using image as source"
+msgstr "使用图像作为源生成蜡笔物体"
+
+
 msgid "Generate a Grease Pencil Object using Image as source"
 msgstr "使用图像作为源生成蜡笔物体"
 
@@ -45950,6 +45963,10 @@ msgstr "使用 alpha 通道创建用于屏蔽的反转图像"
 
 msgid "Point Size"
 msgstr "点大小"
+
+
+msgid "Size used for grease pencil points"
+msgstr "蜡笔点的大小"
 
 
 msgctxt "Operator"
@@ -46195,10 +46212,6 @@ msgstr "创建调色板"
 
 msgid "Create a new palette with colors"
 msgstr "使用颜色创建新调色板"
-
-
-msgid "Remove Unused Materiales"
-msgstr "删除未用到的材质"
 
 
 msgid "Remove any unused material after the conversion"
@@ -56354,6 +56367,15 @@ msgstr "添加一个纹理绘制槽"
 
 
 msgctxt "Operator"
+msgid "Swap Colors"
+msgstr "切换颜色"
+
+
+msgid "Swap primary and secondary brush colors"
+msgstr "在笔刷主色和次色之间切换"
+
+
+msgctxt "Operator"
 msgid "Brush Select"
 msgstr "笔刷选择"
 
@@ -65386,10 +65408,6 @@ msgid "Use Soft Limits"
 msgstr "使用软限制"
 
 
-msgid "Limits the Property Value slider to a range, values outside the range must be inputed numerically"
-msgstr "限制属性值滑块限制在一个范围，范围以外的值必须以数字方式输入"
-
-
 msgid "Property value edit"
 msgstr "编辑属性值"
 
@@ -65917,67 +65935,6 @@ msgstr "可选标识符"
 
 msgid "Site"
 msgstr "站点"
-
-
-msgctxt "Operator"
-msgid "Export USD"
-msgstr "导出USD"
-
-
-msgid "Export current scene in a USD archive"
-msgstr "将当前场景导出为USD档"
-
-
-msgid "Use Settings for"
-msgstr "设置用于"
-
-
-msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
-msgstr "确定物体可见性、修改器设置和其他具有不同设置的视图和渲染区域"
-
-
-msgid "Use Render settings for object visibility, modifier settings, etc"
-msgstr "对物体可见性、修改器设置等使用渲染设置"
-
-
-msgid "Use Viewport settings for object visibility, modifier settings, etc"
-msgstr "对物体可见性、修改器设置等使用视图设置"
-
-
-msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
-msgstr "勾选后，将导出整个渲染帧范围。取消勾选，仅导出当前帧。"
-
-
-msgid "When checked, hair is exported as USD curves"
-msgstr "选中后，毛发将导出为USD曲线"
-
-
-msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
-msgstr "勾选后，材质的视图设置将导出为USD预览材质，材质指定将导出为几何子集"
-
-
-msgid "When checked, normals of exported meshes are included in the export"
-msgstr "勾选后，导出时将包含网格法线"
-
-
-msgid "UV Maps"
-msgstr "UV 贴图"
-
-
-msgid "When checked, all UV maps of exported meshes are included in the export"
-msgstr "勾选后，导出时将包含所有被导出网格中的UV 贴图"
-
-
-msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
-msgstr "仅导出选中的物体。所选物体的未选定父级物体将导出为空变换"
-
-
-msgid "Instancing"
-msgstr "实例化"
-
-
-msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
-msgstr "勾选后，实例化物体将作为引用导出至USD。不勾选，实例化物体将作为真实物体导出"
 
 
 msgctxt "Operator"
@@ -66977,6 +66934,10 @@ msgid "Text Boxes"
 msgstr "文本框"
 
 
+msgid "UV Maps"
+msgstr "UV 贴图"
+
+
 msgid "OpenVDB File"
 msgstr "OpenVDB文件"
 
@@ -67247,6 +67208,10 @@ msgstr "切断连接"
 
 msgid "Delta Transform"
 msgstr "变换增量"
+
+
+msgid "Instancing"
+msgstr "实例化"
 
 
 msgid "Scale by Face Size"
@@ -69948,14 +69913,6 @@ msgstr "菜单查找"
 
 msgid "Search actions by menus instead of operators"
 msgstr "按菜单而非操作查找动作"
-
-
-msgid "Undo Speedup"
-msgstr "撤消加速"
-
-
-msgid "Use new undo speedup (WARNING: can lead to crashes and serious .blend file corruption)"
-msgstr "使用新的撤消加速(警告：可能导致崩溃和严重的.blend 文件损坏)"
 
 
 msgid "Animation Player"
@@ -77499,10 +77456,6 @@ msgid "Color selected to apply glow"
 msgstr "应用于辉光的选定颜色"
 
 
-msgid "Size of th effect"
-msgstr "效果的大小"
-
-
 msgid "Limit to select color for glow effect"
 msgstr "限制选择的颜色对辉光效果的影响"
 
@@ -82669,10 +82622,6 @@ msgid "Used for defining a profile's path"
 msgstr "用于定义轮廓的路径"
 
 
-msgid "Merge Threshold"
-msgstr "合并阈值"
-
-
 msgid "Threshold distance for Auto Merge"
 msgstr "自动合并的距离阈值"
 
@@ -86126,14 +86075,6 @@ msgstr "无效目标 %r (必须为骨架或者物体)"
 
 msgid "Cameras & Markers (.py)"
 msgstr "相机&标记(.py)"
-
-
-msgid "Operation aborted by user"
-msgstr "用户已中止操作"
-
-
-msgid "utf-8surrogateescape"
-msgstr "utf-8surrogateescape"
 
 
 msgid "Unable to parse XML, %s:%s for file %r"
@@ -91109,20 +91050,16 @@ msgid "Undo Memory Limit"
 msgstr "取消内存限制"
 
 
-msgid "Sequencer Cache Limit"
-msgstr "序列缓存限值"
-
-
-msgid "Console Scrollback Lines"
-msgstr "控制台回查行数"
-
-
 msgid "Garbage Collection Rate"
 msgstr "垃圾回收率"
 
 
 msgid "Vbo Time Out"
 msgstr "Vbo超时"
+
+
+msgid "Console Scrollback Lines"
+msgstr "控制台回查行数"
 
 
 msgid "View Name"
@@ -92209,6 +92146,11 @@ msgstr "旋转..."
 msgctxt "Operator"
 msgid "Point to Target..."
 msgstr "指向目标体..."
+
+
+msgctxt "Operator"
+msgid "Smooth Vectors"
+msgstr "平滑矢量"
 
 
 msgctxt "Operator"
@@ -95201,10 +95143,6 @@ msgid "Nothing to merge"
 msgstr "没有要合并的"
 
 
-msgid "Merged %d materiales of %d"
-msgstr "已合并 %d 材质，总数 %d"
-
-
 msgid "Grease Pencil Erase Session: Hold and drag LMB or RMB to erase | ESC/Enter to end  (or click outside this area)"
 msgstr "蜡笔擦除会话: 按下并拖拽鼠标左键, 或按右键进行清除 | 按ESC / 回车键(或在区域外单击)结束"
 
@@ -97067,10 +97005,6 @@ msgstr "集合 ‘%s’ (由活动物体实例化) 不可覆盖"
 
 msgid "Active object '%s' is not overridable"
 msgstr "活动物体 '%s' 不可重写"
-
-
-msgid "Move the mouse to change the voxel size. LBM: confirm size, ESC/RMB: cancel"
-msgstr "移动鼠标以更改体素大小。LBM：确认大小，ESC/RMB：取消"
 
 
 msgid "Voxel remesher cannot run with a voxel size of 0.0"
@@ -99206,6 +99140,10 @@ msgstr "无法删除间接关联的 id '%s'"
 
 msgid "Cannot delete id '%s', indirectly used data-blocks need at least one user"
 msgstr "无法删除 id '%s', 需要至少一个用户间接使用数据块"
+
+
+msgid "Cannot delete currently visible workspace id '%s'"
+msgstr "无法删除当前可见的工作空间id '%s'"
 
 
 msgid "Invalid old/new ID pair ('%s' / '%s')"
@@ -101725,6 +101663,10 @@ msgstr "反射"
 
 msgid "Detail Scale"
 msgstr "细节缩放"
+
+
+msgid "Detail Roughness"
+msgstr "细节糙度"
 
 
 msgid "Color Attribute"

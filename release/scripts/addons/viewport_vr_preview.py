@@ -33,7 +33,7 @@ from bpy.app.handlers import persistent
 bl_info = {
     "name": "VR Scene Inspection",
     "author": "Julian Eisel (Severin)",
-    "version": (0, 1, 0),
+    "version": (0, 2, 0),
     "blender": (2, 83, 8),
     "location": "3D View > Sidebar > VR",
     "description": ("View the viewport with virtual reality glasses "
@@ -214,7 +214,9 @@ class VIEW3D_UL_vr_landmarks(bpy.types.UIList):
 
         layout.prop(landmark, "name", text="")
 
-        icon = 'SOLO_ON' if (index == landmark_active_idx) else 'SOLO_OFF'
+        icon = (
+            'RADIOBUT_ON' if (index == landmark_active_idx) else 'RADIOBUT_OFF'
+        )
         props = layout.operator(
             "view3d.vr_landmark_activate", text="", icon=icon)
         props.index = index
@@ -269,10 +271,9 @@ class VIEW3D_PT_vr_session_view(bpy.types.Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        layout.prop(session_settings, "show_floor", text="Floor")
-        layout.prop(session_settings, "show_annotation", text="Annotations")
-
-        layout.separator()
+        col = layout.column(align=True, heading="Show")
+        col.prop(session_settings, "show_floor", text="Floor")
+        col.prop(session_settings, "show_annotation", text="Annotations")
 
         col = layout.column(align=True)
         col.prop(session_settings, "clip_start", text="Clip Start")
@@ -289,8 +290,7 @@ class VIEW3D_PT_vr_session(bpy.types.Panel):
         layout = self.layout
         session_settings = context.window_manager.xr_session_settings
 
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
+        layout.use_property_split = False
 
         is_session_running = bpy.types.XrSessionState.is_running(context)
 
@@ -380,6 +380,13 @@ class VIEW3D_PT_vr_viewport_feedback(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         view3d = context.space_data
+
+        col = layout.column(align=True)
+        col.label(icon='ERROR', text="Note:")
+        col.label(text="Settings here may have a significant")
+        col.label(text="performance impact!")
+
+        layout.separator()
 
         layout.prop(view3d.shading, "vr_show_virtual_camera")
         layout.prop(view3d, "mirror_xr_session")

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-04-20 13:27:14\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzán <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -14373,10 +14373,6 @@ msgid "UV Translation"
 msgstr "Traslación UV"
 
 
-msgid "Translation of default UV postion"
-msgstr "Traslación de la posición predefinida de las UV"
-
-
 msgid "Vertex Fill Color"
 msgstr "Color de relleno de vértices"
 
@@ -15001,10 +14997,6 @@ msgstr "Semilla aleatoria"
 
 msgid "Enable offset"
 msgstr "Habilita el desplazamiento"
-
-
-msgid "Enable obejct offset"
-msgstr "Habilita el desplazamiento usando un objeto"
 
 
 msgid "Shift"
@@ -15867,10 +15859,6 @@ msgstr "Tipo base para bloques de datos, define un nombre único, vinculando des
 
 msgid "Embedded Data"
 msgstr "Datos incorporados"
-
-
-msgid "This data-block is not an independant one, but is actually a sub-data of another ID (typical example: root node trees or master collections)"
-msgstr "Este no es un bloque de datos independiente, sino que se trata de un sub-bloque de otro ID (ejemplos típicos serían: los árboles de nodos principales o las colecciones principales)"
 
 
 msgid "Is Evaluated"
@@ -16980,6 +16968,10 @@ msgstr "Laplaciano"
 
 msgid "Smooths the surface and the volume"
 msgstr "Suaviza la superficie y el volumen"
+
+
+msgid "Smooths the surface of the mesh, preserving the volume"
+msgstr "Suaviza la superficie de la malla, preservando el volumen"
 
 
 msgid "Smooth Stroke Factor"
@@ -32052,6 +32044,14 @@ msgid "Use UV coordinates for the texture coordinates"
 msgstr "Usar las coordenadas UV para las coordenadas de texturizado"
 
 
+msgid "Texture Coordinate Bone"
+msgstr "Hueso de coordenadas de texturizado"
+
+
+msgid "Bone to set the texture coordinates"
+msgstr "Hueso para definir las coordenadas de texturizado"
+
+
 msgid "Texture Coordinate Object"
 msgstr "Objeto de coordenadas texturizado"
 
@@ -33445,6 +33445,10 @@ msgid "Flat open perimeter shape"
 msgstr "Perímetro abierto plano"
 
 
+msgid "Merge Threshold"
+msgstr "Umbral de fusión"
+
+
 msgid "Thickness Mode"
 msgstr "Modo de grosor"
 
@@ -33866,6 +33870,10 @@ msgstr "Curva de mapeo personalizada"
 
 msgid "Global influence of current modifications on vgroup"
 msgstr "Influencia global de las modificaciones actuales para el grupo de vértices"
+
+
+msgid "Which bone to take texture coordinates from"
+msgstr "De qué hueso tomar las coordenadas de texturizado"
 
 
 msgid "Which object to take texture coordinates from"
@@ -46743,6 +46751,10 @@ msgid "Point Size"
 msgstr "Tamaño de puntos"
 
 
+msgid "Size used for grease pencil points"
+msgstr "Tamaño usado para los puntos de lápiz de cera"
+
+
 msgctxt "Operator"
 msgid "Grease Pencil Interpolation"
 msgstr "Interpolación de lápiz de cera"
@@ -46998,10 +47010,6 @@ msgstr "Crear paleta"
 
 msgid "Create a new palette with colors"
 msgstr "Crea una nueva paleta con colores"
-
-
-msgid "Remove Unused Materiales"
-msgstr "Eliminar materiales no usados"
 
 
 msgid "Remove any unused material after the conversion"
@@ -52483,6 +52491,10 @@ msgid "Smooth Normals Vectors"
 msgstr "Suavizar vectores normales"
 
 
+msgid "Smooth custom normals based on adjacent vertex normals"
+msgstr "Suaviza las normales personalizadas basándose en las normales de los vértices adyacentes"
+
+
 msgid "Specifies weight of smooth vs original normal"
 msgstr "Especifica la influencia del suavizado en relación a la normal original"
 
@@ -57548,6 +57560,15 @@ msgstr "Permite agregar un contenedor donde pintar una textura"
 
 
 msgctxt "Operator"
+msgid "Swap Colors"
+msgstr "Intercambiar colores"
+
+
+msgid "Swap primary and secondary brush colors"
+msgstr "Intercambia los colores primario y secundario del pincel"
+
+
+msgctxt "Operator"
 msgid "Brush Select"
 msgstr "Selección de pincel"
 
@@ -60825,10 +60846,6 @@ msgstr "Conjuntos de caras desde mapas de caras"
 
 msgid "Create a Face Set per Face Map"
 msgstr "Crea un conjunto de caras por cada mapa de caras"
-
-
-msgid "Minimum value to consider a certain atribute a boundary when creating the Face Sets"
-msgstr "Valor mínimo para considerar un cierto atributo como un límite, al crear los conjuntos de caras"
 
 
 msgctxt "Operator"
@@ -66700,10 +66717,6 @@ msgid "Use Soft Limits"
 msgstr "Usar límites difusos"
 
 
-msgid "Limits the Property Value slider to a range, values outside the range must be inputed numerically"
-msgstr "Limita el deslizador de valores de la propiedad a un rango, los valores que se encuentren por fuera del mismo deberán ser ingresados manualmente"
-
-
 msgid "Property value edit"
 msgstr "Edita el valor de la propiedad"
 
@@ -67247,67 +67260,6 @@ msgstr "Identificador opcional"
 
 msgid "Site"
 msgstr "Sitio"
-
-
-msgctxt "Operator"
-msgid "Export USD"
-msgstr "Exportar USD"
-
-
-msgid "Export current scene in a USD archive"
-msgstr "Exportar la escena actual a un archivo USD"
-
-
-msgid "Use Settings for"
-msgstr "Usar opciones de"
-
-
-msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
-msgstr "Determina la visibilidad de objetos, opciones de modificadores y otras áreas donde existan distintas opciones para visualización en la vista 3D y el procesamiento"
-
-
-msgid "Use Render settings for object visibility, modifier settings, etc"
-msgstr "Usar opciones de procesamiento para visibilidad de objetos, opciones de modificadores, etc"
-
-
-msgid "Use Viewport settings for object visibility, modifier settings, etc"
-msgstr "Usar opciones de visualización para visibilidad de objetos, opciones de modificadores, etc"
-
-
-msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
-msgstr "Exporta el rango de procesamiento completo. Si está inactiva, se exportará sólo el fotograma actual"
-
-
-msgid "When checked, hair is exported as USD curves"
-msgstr "Exporta el pelo como curvas USD"
-
-
-msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
-msgstr "Exporta las opciones de visualización de los materiales como materiales de previsualización USD, y los materiales asignados se exportarán como subconjuntos de geometría"
-
-
-msgid "When checked, normals of exported meshes are included in the export"
-msgstr "Incluye las normales de las mallas exportadas"
-
-
-msgid "UV Maps"
-msgstr "Mapas UV"
-
-
-msgid "When checked, all UV maps of exported meshes are included in the export"
-msgstr "Incluye todos los mapas UV de las mallas exportadas"
-
-
-msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
-msgstr "Exporta sólo los objetos seleccionados. Los superiores de dichos objetos, que no se encontraran también seleccionados, serán exportados como transformaciones vacías"
-
-
-msgid "Instancing"
-msgstr "Instanciado"
-
-
-msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
-msgstr "Exporta los objetos instanciados como referencias en el USD. Si está inactiva, los mismos serán exportados como objetos reales"
 
 
 msgctxt "Operator"
@@ -68343,6 +68295,10 @@ msgid "Text Boxes"
 msgstr "Marcos de texto"
 
 
+msgid "UV Maps"
+msgstr "Mapas UV"
+
+
 msgid "OpenVDB File"
 msgstr "Archivo OpenVDB"
 
@@ -68613,6 +68569,10 @@ msgstr "Cortar vínculos"
 
 msgid "Delta Transform"
 msgstr "Transformación relativa"
+
+
+msgid "Instancing"
+msgstr "Instanciado"
 
 
 msgid "Scale by Face Size"
@@ -71318,14 +71278,6 @@ msgstr "Buscar por menúes"
 
 msgid "Search actions by menus instead of operators"
 msgstr "Buscar acciones por menú, en vez de por operadores"
-
-
-msgid "Undo Speedup"
-msgstr "Deshacer acelerado"
-
-
-msgid "Use new undo speedup (WARNING: can lead to crashes and serious .blend file corruption)"
-msgstr "Usar nueva aceleración de la función Deshacer (ADVERTENCIA: puede provocar cuelgues y una corrupción seria de archivos .blend)"
 
 
 msgid "Animation Player"
@@ -79015,10 +78967,6 @@ msgid "Color selected to apply glow"
 msgstr "Color al cual aplicar el resplandor"
 
 
-msgid "Size of th effect"
-msgstr "Tamaño del efecto"
-
-
 msgid "Limit to select color for glow effect"
 msgstr "Umbral para seleccionar a qué partes aplicar el resplandor"
 
@@ -84237,10 +84185,6 @@ msgid "Used for defining a profile's path"
 msgstr "Usado para definir una curva de perfil"
 
 
-msgid "Merge Threshold"
-msgstr "Umbral de fusión"
-
-
 msgid "Threshold distance for Auto Merge"
 msgstr "Umbral de distancia para Fusionar automáticamente"
 
@@ -87786,14 +87730,6 @@ msgstr "Objetivo inválido %r (debe ser 'ARMATURE' u 'OBJECT')"
 
 msgid "Cameras & Markers (.py)"
 msgstr "Cámaras y marcadores (.py)"
-
-
-msgid "Operation aborted by user"
-msgstr "Operación abortada por el usuario"
-
-
-msgid "utf-8surrogateescape"
-msgstr "utf-8sustitutoescape"
 
 
 msgid "Unable to parse XML, %s:%s for file %r"
@@ -92785,20 +92721,16 @@ msgid "Undo Memory Limit"
 msgstr "Límite de memoria deshacer"
 
 
-msgid "Sequencer Cache Limit"
-msgstr "Límite caché secuenciador"
-
-
-msgid "Console Scrollback Lines"
-msgstr "Líneas de retroceso en consola"
-
-
 msgid "Garbage Collection Rate"
 msgstr "Frecuencia recolección basura"
 
 
 msgid "Vbo Time Out"
 msgstr "Tiempo de espera VBO"
+
+
+msgid "Console Scrollback Lines"
+msgstr "Líneas de retroceso en consola"
 
 
 msgid "View Name"
@@ -93890,6 +93822,11 @@ msgstr "Rotar..."
 msgctxt "Operator"
 msgid "Point to Target..."
 msgstr "Apuntar a objetivo..."
+
+
+msgctxt "Operator"
+msgid "Smooth Vectors"
+msgstr "Suavizar vectores"
 
 
 msgctxt "Operator"
@@ -96954,10 +96891,6 @@ msgid "Nothing to merge"
 msgstr "Nada que fusionar"
 
 
-msgid "Merged %d materiales of %d"
-msgstr "Se fusionaron %d materiales de un total de %d"
-
-
 msgid "Grease Pencil Erase Session: Hold and drag LMB or RMB to erase | ESC/Enter to end  (or click outside this area)"
 msgstr "Lápiz de cera - Borrador: Arrastrar con botón Izq o Der para borrar | Esc/Intro para finalizar  (o clic fuera de esta área)"
 
@@ -98880,10 +98813,6 @@ msgstr "La colección '%s' (instanciada por el objeto activo) no es redefinible"
 
 msgid "Active object '%s' is not overridable"
 msgstr "El objeto activo '%s' no es redefinible"
-
-
-msgid "Move the mouse to change the voxel size. LBM: confirm size, ESC/RMB: cancel"
-msgstr "Mover el ratón para cambiar el tamaño de los vóxeles. clic Izq: confirmar tamaño, Esc/clic Der: cancelar"
 
 
 msgid "Voxel remesher cannot run with a voxel size of 0.0"
@@ -101043,6 +100972,10 @@ msgstr "No es posible borrar el ID '%s' vinculado indirectamente"
 
 msgid "Cannot delete id '%s', indirectly used data-blocks need at least one user"
 msgstr "No es posible borrar el ID '%s', los bloques de datos usados indirectamente necesitan al menos un usuario"
+
+
+msgid "Cannot delete currently visible workspace id '%s'"
+msgstr "No es posible borrar el espacio con ID '%s', actualmente visible"
 
 
 msgid "Invalid old/new ID pair ('%s' / '%s')"
@@ -103674,6 +103607,10 @@ msgstr "Reflectividad"
 
 msgid "Detail Scale"
 msgstr "Escala del detalle"
+
+
+msgid "Detail Roughness"
+msgstr "Rugosidad del detalle"
 
 
 msgid "Color Attribute"
