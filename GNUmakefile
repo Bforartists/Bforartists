@@ -30,6 +30,7 @@ Convenience Targets
    Provided for building Blender, (multiple at once can be used).
 
    * debug:         Build a debug binary.
+   * release:       Builds the release cmake configuration.
    * full:          Enable all supported dependencies & options.
    * lite:          Disable non essential features for a smaller binary and faster build.
    * headless:      Build without an interface (renderfarm or server automation).
@@ -198,6 +199,10 @@ endif
 ifneq "$(findstring debug, $(MAKECMDGOALS))" ""
 	BUILD_DIR:=$(BUILD_DIR)_debug
 	BUILD_TYPE:=Debug
+endif
+ifneq "$(findstring release, $(MAKECMDGOALS))" ""
+	BUILD_DIR:=$(BUILD_DIR)_release
+	CMAKE_CONFIG_ARGS:=-C"$(BLENDER_DIR)/build_files/cmake/config/blender_release.cmake" $(CMAKE_CONFIG_ARGS)
 endif
 ifneq "$(findstring full, $(MAKECMDGOALS))" ""
 	BUILD_DIR:=$(BUILD_DIR)_full
