@@ -388,7 +388,7 @@ void BKE_pbvh_sync_face_sets_to_grids(PBVH *bvh)
   const int gridsize = bvh->gridkey.grid_size;
   for (int i = 0; i < bvh->totgrid; i++) {
     BLI_bitmap *gh = bvh->grid_hidden[i];
-    const int face_index = BKE_subdiv_cgg_grid_to_face_index(bvh->subdiv_ccg, i);
+    const int face_index = BKE_subdiv_ccg_grid_to_face_index(bvh->subdiv_ccg, i);
     if (!gh && bvh->face_sets[face_index] < 0) {
       gh = bvh->grid_hidden[i] = BLI_BITMAP_NEW(bvh->gridkey.grid_area, "partialvis_update_grids");
     }
@@ -2958,7 +2958,7 @@ bool pbvh_has_face_sets(PBVH *bvh)
 {
   switch (bvh->type) {
     case PBVH_GRIDS:
-      return false;
+      return (bvh->pdata && CustomData_get_layer(bvh->pdata, CD_SCULPT_FACE_SETS));
     case PBVH_FACES:
       return (bvh->pdata && CustomData_get_layer(bvh->pdata, CD_SCULPT_FACE_SETS));
     case PBVH_BMESH:

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-04-20 13:27:14\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -29975,6 +29975,10 @@ msgstr "Зміщення матеріалу ободу"
 
 msgid "Offset material index of generated rim faces"
 msgstr "Змістити індекс матеріалу генерованих граней ободу"
+
+
+msgid "Merge Threshold"
+msgstr "Поріг Злиття"
 
 
 msgid "Offset the thickness from the center"
@@ -60545,14 +60549,6 @@ msgid "URL to open"
 msgstr "URL для відкриття"
 
 
-msgid "UV Maps"
-msgstr "UV-карти"
-
-
-msgid "Instancing"
-msgstr "Примірникування"
-
-
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "Додати шлях автозапуску"
@@ -61521,6 +61517,10 @@ msgid "Text Boxes"
 msgstr "Текстові поля"
 
 
+msgid "UV Maps"
+msgstr "UV-карти"
+
+
 msgid "Filters"
 msgstr "Фільтри"
 
@@ -61738,6 +61738,10 @@ msgstr "Різання Пов'язань"
 
 msgid "Delta Transform"
 msgstr "Дельта-трансформація"
+
+
+msgid "Instancing"
+msgstr "Примірникування"
 
 
 msgid "Scale by Face Size"
@@ -75811,10 +75815,6 @@ msgid "Add & Replace"
 msgstr "Додати і Замінити"
 
 
-msgid "Merge Threshold"
-msgstr "Поріг Злиття"
-
-
 msgid "Threshold distance for Auto Merge"
 msgstr "Порогова відстань для Авто Злиття"
 
@@ -82825,20 +82825,16 @@ msgid "Undo Memory Limit"
 msgstr "Ліміт Пам'яті Скасувань"
 
 
-msgid "Sequencer Cache Limit"
-msgstr "Ліміт Кешу Рядника"
-
-
-msgid "Console Scrollback Lines"
-msgstr "Лінії Прокрутки Консолі"
-
-
 msgid "Garbage Collection Rate"
 msgstr "Частота Збирання Сміття"
 
 
 msgid "Vbo Time Out"
 msgstr "Перечікування Vbo"
+
+
+msgid "Console Scrollback Lines"
+msgstr "Лінії Прокрутки Консолі"
 
 
 msgid "View Name"

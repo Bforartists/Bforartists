@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-04-20 13:27:14\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -27082,10 +27082,6 @@ msgid "URL to open"
 msgstr "Zu öffnende URL"
 
 
-msgid "UV Maps"
-msgstr "UV-Maps"
-
-
 msgid "Toggle the current window fullscreen"
 msgstr "Vollbildmodus für aktuelles Fenster aktivieren/deaktivieren"
 
@@ -27458,6 +27454,10 @@ msgstr "Skellet"
 
 msgid "Text Boxes"
 msgstr "Textboxen"
+
+
+msgid "UV Maps"
+msgstr "UV-Maps"
 
 
 msgid "Filters"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-04-20 13:27:14\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -23780,10 +23780,6 @@ msgid "URL to open"
 msgstr "Webbaddress som skall öppnas"
 
 
-msgid "UV Maps"
-msgstr "Mappning"
-
-
 msgid "Toggle the current window fullscreen"
 msgstr "Växla fullskrmsläge för aktivt fönster"
 
@@ -24047,6 +24043,10 @@ msgstr "Renderings Fönster"
 
 msgid "Text Boxes"
 msgstr "Textrutor"
+
+
+msgid "UV Maps"
+msgstr "Mappning"
 
 
 msgid "Filters"

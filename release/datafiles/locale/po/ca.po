@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-04-20 13:27:14\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -20336,10 +20336,6 @@ msgid "URL to open"
 msgstr "URL per obrir"
 
 
-msgid "UV Maps"
-msgstr "Image Displist"
-
-
 msgctxt "Operator"
 msgid "New World"
 msgstr "Sigüent"
@@ -20575,6 +20571,10 @@ msgstr "Finestra de Render"
 
 msgid "Text Boxes"
 msgstr "Texte"
+
+
+msgid "UV Maps"
+msgstr "Image Displist"
 
 
 msgid "Filters"
