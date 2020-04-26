@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-04-20 13:27:14\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
 "Last-Translator: MT\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -21920,6 +21920,10 @@ msgstr "Scostamento Materiale Orlo"
 
 msgid "Offset material index of generated rim faces"
 msgstr "Indice di scostamento del materiale delle facce generate dell'orlo"
+
+
+msgid "Merge Threshold"
+msgstr "Soglia Unione"
 
 
 msgid "Offset the thickness from the center"
@@ -44575,10 +44579,6 @@ msgid "URL to open"
 msgstr "URL da aprire"
 
 
-msgid "UV Maps"
-msgstr "Mappe UV"
-
-
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "Aggiungi Percorso Esecuzione Automatica"
@@ -45182,6 +45182,10 @@ msgstr "Scheletro"
 
 msgid "Text Boxes"
 msgstr "Caselle di Testo"
+
+
+msgid "UV Maps"
+msgstr "Mappe UV"
 
 
 msgid "Filters"
@@ -54436,10 +54440,6 @@ msgstr "Modalità per l'inserimento automatico di chiavi per Oggetti ed Ossa"
 
 msgid "Add & Replace"
 msgstr "Aggiungi & Sostituisci"
-
-
-msgid "Merge Threshold"
-msgstr "Soglia Unione"
 
 
 msgid "Threshold distance for Auto Merge"

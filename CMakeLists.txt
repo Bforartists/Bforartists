@@ -323,6 +323,10 @@ option(WITH_FREESTYLE     "Enable Freestyle (advanced edges rendering)" ON)
 option(WITH_NEW_OBJECT_TYPES "Enable new hair and pointcloud objects (use for development only, don't save in files)" OFF)
 mark_as_advanced(WITH_NEW_OBJECT_TYPES)
 
+# New simulation data block
+option(WITH_NEW_SIMULATION_TYPE "Enable simulation data block (use for development only, don't save in files)" OFF)
+mark_as_advanced(WITH_NEW_SIMULATION_TYPE)
+
 # Misc
 if(WIN32)
   option(WITH_INPUT_IME "Enable Input Method Editor (IME) for complex Asian character input" ON)
@@ -429,6 +433,8 @@ endif()
 option(WITH_GTESTS "Enable GTest unit testing" OFF)
 option(WITH_OPENGL_RENDER_TESTS "Enable OpenGL render related unit testing (Experimental)" OFF)
 option(WITH_OPENGL_DRAW_TESTS "Enable OpenGL UI drawing related unit testing (Experimental)" OFF)
+set(TEST_PYTHON_EXE "" CACHE PATH "Python executable to run unit tests")
+mark_as_advanced(TEST_PYTHON_EXE)
 
 # Documentation
 if(UNIX AND NOT APPLE)
@@ -531,6 +537,9 @@ if(WIN32)
 
   option(WITH_WINDOWS_BUNDLE_CRT "Bundle the C runtime for install free distribution." ON)
   mark_as_advanced(WITH_WINDOWS_BUNDLE_CRT)
+
+  option(WITH_WINDOWS_SCCACHE "Use sccache to speed up builds (Ninja builder only)" OFF)
+  mark_as_advanced(WITH_WINDOWS_SCCACHE)
 
 endif()
 

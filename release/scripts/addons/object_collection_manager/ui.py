@@ -150,7 +150,7 @@ class CollectionManager(Operator):
 
         prop = master_collection_row.operator("view3d.set_active_collection",
                                               text='', icon='GROUP', depress=highlight)
-        prop.collection_index = 0
+        prop.collection_index = -1
         prop.collection_name = 'Master Collection'
 
         master_collection_row.separator()
@@ -322,15 +322,6 @@ class CollectionManager(Operator):
 
         self.view_layer = view_layer.name
 
-        # sync selection in ui list with active layer collection
-        try:
-            active_laycol_name = view_layer.active_layer_collection.name
-            active_laycol_row_index = layer_collections[active_laycol_name]["row_index"]
-            cm.cm_list_index = active_laycol_row_index
-
-        except KeyError: # Master Collection is special and not part of regular collections
-            cm.cm_list_index = -1
-
         # check if expanded & history/buffer state still correct
         if collection_state:
             new_state = generate_state()
@@ -387,11 +378,16 @@ class CollectionManager(Operator):
         # handle window sizing
         max_width = 960
         min_width = 456
+        row_indent_width = 15
         width_step = 21
+        qcd_width = 30
         scrollbar_width = 21
         lvl = get_max_lvl()
 
-        width = min_width + (width_step * lvl)
+        width = min_width + row_indent_width + (width_step * lvl)
+
+        if bpy.context.preferences.addons[__package__].preferences.enable_qcd:
+            width += qcd_width
 
         if len(layer_collections) > 14:
             width += scrollbar_width
@@ -440,6 +436,9 @@ class CM_UL_items(UIList):
         row = split.row(align=True)
         row.alignment = 'LEFT'
 
+        # allow room to select the row from the beginning
+        row.separator()
+
         # indent child items
         if laycol["lvl"] > 0:
             for _ in range(laycol["lvl"]):
@@ -471,7 +470,17 @@ class CM_UL_items(UIList):
             row.label(icon='BLANK1')
 
 
-        row.label(icon='GROUP')
+        # collection icon
+        c_icon = row.row()
+        highlight = False
+        if (context.view_layer.active_layer_collection == laycol["ptr"]):
+                highlight = True
+
+        prop = c_icon.operator("view3d.set_active_collection", text='', icon='GROUP',
+                                              emboss=highlight, depress=highlight)
+
+        prop.collection_index = laycol["row_index"]
+        prop.collection_name = item.name
 
         if context.preferences.addons[__package__].preferences.enable_qcd:
             QCD = row.row()
@@ -790,18 +799,6 @@ def update_icon(base, icon, theme_color):
         colored_icon.append(a)
 
     icon.icon_pixels_float = colored_icon
-
-
-def update_selection(self, context):
-    cm = context.scene.collection_manager
-
-    if cm.cm_list_index == -1:
-        return
-
-    selected_item = cm.cm_list_collection[cm.cm_list_index]
-    layer_collection = layer_collections[selected_item.name]["ptr"]
-
-    context.view_layer.active_layer_collection = layer_collection
 
 
 def filter_items_by_name_insensitive(pattern, bitflag, items, propname="name", flags=None, reverse=False):

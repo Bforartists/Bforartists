@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-04-20 13:27:14\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -32076,6 +32076,10 @@ msgstr "라운드 오픈 프리미더 셰이프"
 
 msgid "Flat open perimeter shape"
 msgstr "플렛 오픈 프리미더 셰이프"
+
+
+msgid "Merge Threshold"
+msgstr "병합 임계 값"
 
 
 msgid "Thickness Mode"
@@ -64691,14 +64695,6 @@ msgid "Site"
 msgstr "사이트"
 
 
-msgid "UV Maps"
-msgstr "UV 맵"
-
-
-msgid "Instancing"
-msgstr "인스턴싱"
-
-
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "자동 실행 경로를 추가"
@@ -65675,6 +65671,10 @@ msgid "Text Boxes"
 msgstr "텍스트 박스"
 
 
+msgid "UV Maps"
+msgstr "UV 맵"
+
+
 msgid "Filters"
 msgstr "필터"
 
@@ -65937,6 +65937,10 @@ msgstr "연결 잘라내기"
 
 msgid "Delta Transform"
 msgstr "델타 변환"
+
+
+msgid "Instancing"
+msgstr "인스턴싱"
 
 
 msgid "Scale by Face Size"
@@ -80805,10 +80809,6 @@ msgid "Used for defining a profile's path"
 msgstr "프로파일의 경로를 정의하는 데 사용"
 
 
-msgid "Merge Threshold"
-msgstr "병합 임계 값"
-
-
 msgid "Threshold distance for Auto Merge"
 msgstr "자동 병합을 위한 임계 값 거리"
 
@@ -88644,20 +88644,16 @@ msgid "Undo Memory Limit"
 msgstr "실행 취소 메모리 제한"
 
 
-msgid "Sequencer Cache Limit"
-msgstr "시퀀서 캐시 제한"
-
-
-msgid "Console Scrollback Lines"
-msgstr "콘솔 스크롤 막대 라인"
-
-
 msgid "Garbage Collection Rate"
 msgstr "가비지 컬렉션 비율"
 
 
 msgid "Vbo Time Out"
 msgstr "VBO 타임 아웃"
+
+
+msgid "Console Scrollback Lines"
+msgstr "콘솔 스크롤 막대 라인"
 
 
 msgid "View Name"
