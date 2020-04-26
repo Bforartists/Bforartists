@@ -40,7 +40,6 @@ from .internals import (
     get_modifiers,
     get_move_selection,
     get_move_active,
-    get_edit_mode_selection,
     update_qcd_header,
 )
 
@@ -188,17 +187,29 @@ class ViewQCDSlot(Operator):
         qcd_laycol = None
         slot_name = qcd_slots.get_name(self.slot)
 
-        edit_mode_selection = get_edit_mode_selection()
-        internals.qcd_view_op_triggered = True
-        internals.in_qcd_view_op = True
-
         if slot_name:
             qcd_laycol = layer_collections[slot_name]["ptr"]
 
         else:
             return {'CANCELLED'}
 
+
+        # get objects not in object mode
+        locked_active_obj = context.view_layer.objects.active
+        locked_objs = []
+        locked_objs_mode = ""
+        for obj in context.view_layer.objects:
+            if obj.mode != 'OBJECT':
+                locked_objs.append(obj)
+                locked_objs_mode = obj.mode
+
+
         if self.toggle:
+            # check if slot can be toggled off.
+            for obj in qcd_laycol.collection.objects:
+                if obj.mode != 'OBJECT':
+                    return {'CANCELLED'}
+
             # get current child exclusion state
             child_exclusion = []
 
@@ -214,24 +225,47 @@ class ViewQCDSlot(Operator):
             for laycol in child_exclusion:
                 laycol[0].exclude = laycol[1]
 
+            # restore locked objects back to their original mode
+            # needed because of exclude child updates
+            if locked_objs:
+                context.view_layer.objects.active = locked_active_obj
+                bpy.ops.object.mode_set(mode=locked_objs_mode)
+
             # set layer as active layer collection
             context.view_layer.active_layer_collection = qcd_laycol
 
         else:
+            # exclude all collections
             for laycol in layer_collections.values():
                 if laycol["name"] != qcd_laycol.name:
-                    laycol["ptr"].exclude = True
+                    # prevent exclusion if locked objects in this collection
+                    if set(locked_objs).isdisjoint(laycol["ptr"].collection.objects):
+                        laycol["ptr"].exclude = True
+                    else:
+                        laycol["ptr"].exclude = False
 
+            # un-exclude target collection
             qcd_laycol.exclude = False
 
             # exclude all children
             def exclude_all_children(layer_collection):
-                layer_collection.exclude = True
+                # prevent exclusion if locked objects in this collection
+                if set(locked_objs).isdisjoint(layer_collection.collection.objects):
+                    layer_collection.exclude = True
+                else:
+                    layer_collection.exclude = False
 
             apply_to_children(qcd_laycol, exclude_all_children)
 
+            # restore locked objects back to their original mode
+            # needed because of exclude child updates
+            if locked_objs:
+                context.view_layer.objects.active = locked_active_obj
+                bpy.ops.object.mode_set(mode=locked_objs_mode)
+
             # set layer as active layer collection
             context.view_layer.active_layer_collection = qcd_laycol
+
 
         # update header UI
         update_qcd_header()
@@ -243,43 +277,15 @@ class ViewQCDSlot(Operator):
             del rto_history["exclude_all"][view_layer]
 
 
-        if edit_mode_selection and not set(edit_mode_selection).isdisjoint(context.view_layer.objects):
-            if context.view_layer.objects:
-                if context.view_layer.objects != edit_mode_selection:
-                    try:
-                        bpy.ops.object.select_all(action='DESELECT')
-                    except RuntimeError: # context is incorrect
-                        # triggered when toggling slots
-                        pass
-
-                    for obj in edit_mode_selection:
-                        if obj.name in context.view_layer.objects:
-                            obj.select_set(True)
-
-                if not context.active_object or not context.active_object in edit_mode_selection:
-                    for obj in edit_mode_selection:
-                            if obj.name in context.view_layer.objects:
-                                context.view_layer.objects.active = obj
-                                break
-
-                if context.active_object:
-                    if context.active_object.type == 'GPENCIL':
-                        bpy.ops.object.mode_set(mode='EDIT_GPENCIL')
-
-                    else:
-                        bpy.ops.object.mode_set(mode='EDIT')
-
-
-        internals.in_qcd_view_op = False
-
         return {'FINISHED'}
 
 
 class RenumerateQCDSlots(Operator):
-    bl_label = "Re-numerate QCD Slots"
+    bl_label = "Renumerate QCD Slots"
     bl_description = (
-        "Re-numerate QCD slots\n"
-        "  * Ctrl+LMB - Include collections marked by the user as non QCD slots"
+        "Renumerate QCD slots.\n"
+        "  * LMB - Renumerate starting from the slot designated 1.\n"
+        "  * Alt+LMB - Renumerate from the beginning"
         )
     bl_idname = "view3d.renumerate_qcd_slots"
     bl_options = {'REGISTER', 'UNDO'}
@@ -287,11 +293,14 @@ class RenumerateQCDSlots(Operator):
     def invoke(self, context, event):
         global qcd_slots
 
-        qcd_slots.clear_slots()
+        modifiers = get_modifiers(event)
 
-        if event.ctrl:
-            qcd_slots.overrides.clear()
+        if modifiers == {'alt'}:
+            qcd_slots.renumerate(beginning=True)
 
-        update_property_group(context, renumerate_qcd=True)
+        else:
+            qcd_slots.renumerate()
+
+        update_property_group(context)
 
         return {'FINISHED'}

@@ -1282,7 +1282,7 @@ static void ui_multibut_states_create(uiBut *but_active, uiHandleButtonData *dat
    * note: if we mix buttons which are proportional and others which are not,
    * this may work a bit strangely */
   if ((but_active->rnaprop && (RNA_property_flag(but_active->rnaprop) & PROP_PROPORTIONAL)) ||
-      ELEM(but_active->unit_type, PROP_UNIT_LENGTH)) {
+      ELEM(but_active->unit_type, RNA_SUBTYPE_UNIT_VALUE(PROP_UNIT_LENGTH))) {
     if (data->origvalue != 0.0) {
       data->multi_data.is_proportional = true;
     }
@@ -2942,7 +2942,7 @@ static void ui_textedit_set_cursor_pos(uiBut *but, uiHandleButtonData *data, con
       if (but->pos <= 0) {
         break;
       }
-      if (BLI_str_cursor_step_prev_utf8(str, but->ofs, &pos_i)) {
+      if (BLI_str_cursor_step_prev_utf8(str + but->ofs, but->ofs, &pos_i)) {
         but->pos = pos_i;
         str_last = &str[but->pos + but->ofs];
       }

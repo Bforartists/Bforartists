@@ -118,9 +118,11 @@ class ArchipackActiveManip:
             Check for manipulable validity
             to disable modal when required
         """
+        o = bpy.data.objects.get(self.object_name)
         return (
             self.manipulable is None or
-            bpy.data.objects.find(self.object_name) < 0
+            o is None or
+            not o.select_get()
             )
 
     def exit(self):
@@ -167,7 +169,6 @@ def check_stack(key):
         # print("check_stack : key.dirty %s" % (key))
         remove_manipulable(key)
         return True
-
     return False
 
 

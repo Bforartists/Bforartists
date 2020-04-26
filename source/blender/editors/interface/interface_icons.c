@@ -1129,8 +1129,8 @@ void UI_icons_free(void)
 #ifndef WITH_HEADLESS
   free_icons_textures();
   free_iconfile_list(&iconfilelist);
-  BKE_icons_free();
 #endif
+  BKE_icons_free();
 }
 
 void UI_icons_free_drawinfo(void *drawinfo)
@@ -2326,6 +2326,9 @@ int UI_idcode_icon_get(const int idcode)
       return ICON_WORLD;
     case ID_WS:
       return ICON_WORKSPACE;
+    case ID_SIM:
+      /* TODO: Use correct icon. */
+      return ICON_PHYSICS;
     default:
       return ICON_NONE;
   }
