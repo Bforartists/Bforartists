@@ -71,7 +71,7 @@ typedef enum TaskPriority {
 
 typedef struct TaskPool TaskPool;
 typedef void (*TaskRunFunction)(TaskPool *__restrict pool, void *taskdata, int threadid);
-typedef void (*TaskFreeFunction)(TaskPool *__restrict pool, void *taskdata, int threadid);
+typedef void (*TaskFreeFunction)(TaskPool *__restrict pool, void *taskdata);
 
 TaskPool *BLI_task_pool_create(TaskScheduler *scheduler, void *userdata, TaskPriority priority);
 TaskPool *BLI_task_pool_create_background(TaskScheduler *scheduler,
@@ -105,7 +105,7 @@ void BLI_task_pool_cancel(TaskPool *pool);
 bool BLI_task_pool_canceled(TaskPool *pool);
 
 /* optional userdata pointer to pass along to run function */
-void *BLI_task_pool_userdata(TaskPool *pool);
+void *BLI_task_pool_user_data(TaskPool *pool);
 
 /* optional mutex to use from run function */
 ThreadMutex *BLI_task_pool_user_mutex(TaskPool *pool);
@@ -200,18 +200,6 @@ void BLI_task_parallel_range(const int start,
                              void *userdata,
                              TaskParallelRangeFunc func,
                              TaskParallelSettings *settings);
-
-typedef struct TaskParallelRangePool TaskParallelRangePool;
-struct TaskParallelRangePool *BLI_task_parallel_range_pool_init(
-    const struct TaskParallelSettings *settings);
-void BLI_task_parallel_range_pool_push(struct TaskParallelRangePool *range_pool,
-                                       const int start,
-                                       const int stop,
-                                       void *userdata,
-                                       TaskParallelRangeFunc func,
-                                       const struct TaskParallelSettings *settings);
-void BLI_task_parallel_range_pool_work_and_wait(struct TaskParallelRangePool *range_pool);
-void BLI_task_parallel_range_pool_free(struct TaskParallelRangePool *range_pool);
 
 /* This data is shared between all tasks, its access needs thread lock or similar protection.
  */

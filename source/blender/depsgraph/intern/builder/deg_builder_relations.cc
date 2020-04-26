@@ -28,7 +28,6 @@
 #include <cstring> /* required for STREQ later on. */
 #include <stdio.h>
 #include <stdlib.h>
-#include <unordered_set>
 
 #include "MEM_guardedalloc.h"
 
@@ -62,6 +61,7 @@ extern "C" {
 #include "DNA_rigidbody_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_sequence_types.h"
+#include "DNA_simulation_types.h"
 #include "DNA_sound_types.h"
 #include "DNA_speaker_types.h"
 #include "DNA_texture_types.h"
@@ -120,8 +120,6 @@ extern "C" {
 #include "intern/depsgraph_type.h"
 
 namespace DEG {
-
-using std::unordered_set;
 
 /* ***************** */
 /* Relations Builder */
@@ -557,6 +555,9 @@ void DepsgraphRelationBuilder::build_id(ID *id)
       break;
     case ID_SCE:
       build_scene_parameters((Scene *)id);
+      break;
+    case ID_SIM:
+      build_simulation((Simulation *)id);
       break;
     default:
       fprintf(stderr, "Unhandled ID %s\n", id->name);
@@ -2345,21 +2346,27 @@ void DepsgraphRelationBuilder::build_texture(Tex *texture)
     return;
   }
   /* texture itself */
+  ComponentKey texture_key(&texture->id, NodeType::GENERIC_DATABLOCK);
   build_animdata(&texture->id);
   build_parameters(&texture->id);
+
   /* texture's nodetree */
   build_nodetree(texture->nodetree);
+  build_nested_nodetree(&texture->id, texture->nodetree);
+
   /* Special cases for different IDs which texture uses. */
   if (texture->type == TEX_IMAGE) {
     if (texture->ima != nullptr) {
       build_image(texture->ima);
+
+      ComponentKey image_key(&texture->ima->id, NodeType::GENERIC_DATABLOCK);
+      add_relation(image_key, texture_key, "Texture Image");
     }
   }
-  build_nested_nodetree(&texture->id, texture->nodetree);
+
   if (check_id_has_anim_component(&texture->id)) {
     ComponentKey animation_key(&texture->id, NodeType::ANIMATION);
-    ComponentKey datablock_key(&texture->id, NodeType::GENERIC_DATABLOCK);
-    add_relation(animation_key, datablock_key, "Datablock Animation");
+    add_relation(animation_key, texture_key, "Datablock Animation");
   }
 }
 
@@ -2500,6 +2507,15 @@ void DepsgraphRelationBuilder::build_sound(bSound *sound)
   }
   build_animdata(&sound->id);
   build_parameters(&sound->id);
+}
+
+void DepsgraphRelationBuilder::build_simulation(Simulation *simulation)
+{
+  if (built_map_.checkIsBuiltAndTag(simulation)) {
+    return;
+  }
+  build_animdata(&simulation->id);
+  build_parameters(&simulation->id);
 }
 
 void DepsgraphRelationBuilder::build_scene_sequencer(Scene *scene)
@@ -2659,7 +2675,7 @@ void DepsgraphRelationBuilder::build_copy_on_write_relations(IDNode *id_node)
       rel->flag |= rel_flag;
     }
     /* All dangling operations should also be executed after copy-on-write. */
-    GHASH_FOREACH_BEGIN (OperationNode *, op_node, comp_node->operations_map) {
+    for (OperationNode *op_node : comp_node->operations_map->values()) {
       if (op_node == op_entry) {
         continue;
       }
@@ -2685,7 +2701,6 @@ void DepsgraphRelationBuilder::build_copy_on_write_relations(IDNode *id_node)
         }
       }
     }
-    GHASH_FOREACH_END();
     /* NOTE: We currently ignore implicit relations to an external
      * data-blocks for copy-on-write operations. This means, for example,
      * copy-on-write component of Object will not wait for copy-on-write
@@ -2743,7 +2758,7 @@ static bool is_reachable(const Node *const from, const Node *const to)
   // Perform a graph walk from 'to' towards its incoming connections.
   // Walking from 'from' towards its outgoing connections is 10x slower on the Spring rig.
   deque<const Node *> queue;
-  unordered_set<const Node *> seen;
+  Set<const Node *> seen;
   queue.push_back(to);
   while (!queue.empty()) {
     // Visit the next node to inspect.
@@ -2757,7 +2772,7 @@ static bool is_reachable(const Node *const from, const Node *const to)
     // Queue all incoming relations that we haven't seen before.
     for (Relation *relation : visit->inlinks) {
       const Node *prev_node = relation->from;
-      if (seen.insert(prev_node).second) {
+      if (seen.add(prev_node)) {
         queue.push_back(prev_node);
       }
     }

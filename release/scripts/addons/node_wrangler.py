@@ -19,8 +19,8 @@
 bl_info = {
     "name": "Node Wrangler",
     "author": "Bartek Skorupa, Greg Zaal, Sebastian Koenig, Christian Brinkmann, Florian Meyer",
-    "version": (3, 36),
-    "blender": (2, 80, 0),
+    "version": (3, 37),
+    "blender": (2, 83, 0),
     "location": "Node Editor Toolbar or Shift-W",
     "description": "Various tools to enhance and speed up node-based workflow",
     "warning": "",
@@ -90,61 +90,73 @@ rl_outputs = (
 # shader nodes
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 shaders_input_nodes_props = (
-    ('ShaderNodeTexCoord', 'TEX_COORD', 'Texture Coordinate'),
+    ('ShaderNodeAmbientOcclusion', 'AMBIENT_OCCLUSION', 'Ambient Occlusion'),
     ('ShaderNodeAttribute', 'ATTRIBUTE', 'Attribute'),
-    ('ShaderNodeLightPath', 'LIGHT_PATH', 'Light Path'),
-    ('ShaderNodeFresnel', 'FRESNEL', 'Fresnel'),
-    ('ShaderNodeLayerWeight', 'LAYER_WEIGHT', 'Layer Weight'),
-    ('ShaderNodeRGB', 'RGB', 'RGB'),
-    ('ShaderNodeValue', 'VALUE', 'Value'),
-    ('ShaderNodeTangent', 'TANGENT', 'Tangent'),
-    ('ShaderNodeNewGeometry', 'NEW_GEOMETRY', 'Geometry'),
-    ('ShaderNodeWireframe', 'WIREFRAME', 'Wireframe'),
-    ('ShaderNodeObjectInfo', 'OBJECT_INFO', 'Object Info'),
-    ('ShaderNodeHairInfo', 'HAIR_INFO', 'Hair Info'),
-    ('ShaderNodeParticleInfo', 'PARTICLE_INFO', 'Particle Info'),
+    ('ShaderNodeBevel', 'BEVEL', 'Bevel'),
     ('ShaderNodeCameraData', 'CAMERA', 'Camera Data'),
+    ('ShaderNodeFresnel', 'FRESNEL', 'Fresnel'),
+    ('ShaderNodeNewGeometry', 'NEW_GEOMETRY', 'Geometry'),
+    ('ShaderNodeHairInfo', 'HAIR_INFO', 'Hair Info'),
+    ('ShaderNodeLayerWeight', 'LAYER_WEIGHT', 'Layer Weight'),
+    ('ShaderNodeLightPath', 'LIGHT_PATH', 'Light Path'),
+    ('ShaderNodeObjectInfo', 'OBJECT_INFO', 'Object Info'),
+    ('ShaderNodeParticleInfo', 'PARTICLE_INFO', 'Particle Info'),
+    ('ShaderNodeRGB', 'RGB', 'RGB'),
+    ('ShaderNodeTangent', 'TANGENT', 'Tangent'),
+    ('ShaderNodeTexCoord', 'TEX_COORD', 'Texture Coordinate'),
     ('ShaderNodeUVMap', 'UVMAP', 'UV Map'),
+    ('ShaderNodeValue', 'VALUE', 'Value'),
+    ('ShaderNodeVertexColor', 'VERTEX_COLOR', 'Vertex Color'),
+    ('ShaderNodeVolumeInfo', 'VOLUME_INFO', 'Volume Info'),
+    ('ShaderNodeWireframe', 'WIREFRAME', 'Wireframe'),
+
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 shaders_output_nodes_props = (
-    ('ShaderNodeOutputMaterial', 'OUTPUT_MATERIAL', 'Material Output'),
+    ('ShaderNodeOutputAOV', 'OUTPUT_AOV', 'AOV Output'),
     ('ShaderNodeOutputLight', 'OUTPUT_LIGHT', 'Light Output'),
+    ('ShaderNodeOutputMaterial', 'OUTPUT_MATERIAL', 'Material Output'),
     ('ShaderNodeOutputWorld', 'OUTPUT_WORLD', 'World Output'),
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 shaders_shader_nodes_props = (
-    ('ShaderNodeMixShader', 'MIX_SHADER', 'Mix Shader'),
     ('ShaderNodeAddShader', 'ADD_SHADER', 'Add Shader'),
-    ('ShaderNodeBsdfDiffuse', 'BSDF_DIFFUSE', 'Diffuse BSDF'),
-    ('ShaderNodeBsdfGlossy', 'BSDF_GLOSSY', 'Glossy BSDF'),
-    ('ShaderNodeBsdfTransparent', 'BSDF_TRANSPARENT', 'Transparent BSDF'),
-    ('ShaderNodeBsdfRefraction', 'BSDF_REFRACTION', 'Refraction BSDF'),
-    ('ShaderNodeBsdfGlass', 'BSDF_GLASS', 'Glass BSDF'),
-    ('ShaderNodeBsdfTranslucent', 'BSDF_TRANSLUCENT', 'Translucent BSDF'),
     ('ShaderNodeBsdfAnisotropic', 'BSDF_ANISOTROPIC', 'Anisotropic BSDF'),
-    ('ShaderNodeBsdfVelvet', 'BSDF_VELVET', 'Velvet BSDF'),
-    ('ShaderNodeBsdfToon', 'BSDF_TOON', 'Toon BSDF'),
-    ('ShaderNodeSubsurfaceScattering', 'SUBSURFACE_SCATTERING', 'Subsurface Scattering'),
+    ('ShaderNodeBsdfDiffuse', 'BSDF_DIFFUSE', 'Diffuse BSDF'),
     ('ShaderNodeEmission', 'EMISSION', 'Emission'),
+    ('ShaderNodeBsdfGlass', 'BSDF_GLASS', 'Glass BSDF'),
+    ('ShaderNodeBsdfGlossy', 'BSDF_GLOSSY', 'Glossy BSDF'),
     ('ShaderNodeBsdfHair', 'BSDF_HAIR', 'Hair BSDF'),
-    ('ShaderNodeBackground', 'BACKGROUND', 'Background'),
-    ('ShaderNodeAmbientOcclusion', 'AMBIENT_OCCLUSION', 'Ambient Occlusion'),
     ('ShaderNodeHoldout', 'HOLDOUT', 'Holdout'),
+    ('ShaderNodeMixShader', 'MIX_SHADER', 'Mix Shader'),
+    ('ShaderNodeBsdfPrincipled', 'BSDF_PRINCIPLED', 'Principled BSDF'),
+    ('ShaderNodeBsdfHairPrincipled', 'BSDF_HAIR_PRINCIPLED', 'Principled Hair BSDF'),
+    ('ShaderNodeVolumePrincipled', 'PRINCIPLED_VOLUME', 'Principled Volume'),
+    ('ShaderNodeBsdfRefraction', 'BSDF_REFRACTION', 'Refraction BSDF'),
+    ('ShaderNodeSubsurfaceScattering', 'SUBSURFACE_SCATTERING', 'Subsurface Scattering'),
+    ('ShaderNodeBsdfToon', 'BSDF_TOON', 'Toon BSDF'),
+    ('ShaderNodeBsdfTranslucent', 'BSDF_TRANSLUCENT', 'Translucent BSDF'),
+    ('ShaderNodeBsdfTransparent', 'BSDF_TRANSPARENT', 'Transparent BSDF'),
+    ('ShaderNodeBsdfVelvet', 'BSDF_VELVET', 'Velvet BSDF'),
+    ('ShaderNodeBackground', 'BACKGROUND', 'Background'),
     ('ShaderNodeVolumeAbsorption', 'VOLUME_ABSORPTION', 'Volume Absorption'),
     ('ShaderNodeVolumeScatter', 'VOLUME_SCATTER', 'Volume Scatter'),
-    ('ShaderNodeBsdfPrincipled', 'BSDF_PRINCIPLED', 'Principled BSDF'),
 )
 # (rna_type.identifier, type, rna_type.name)
+# Keeping things in alphabetical orde so we don't need to sort later.
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
 shaders_texture_nodes_props = (
     ('ShaderNodeTexBrick', 'TEX_BRICK', 'Brick Texture'),
     ('ShaderNodeTexChecker', 'TEX_CHECKER', 'Checker Texture'),
     ('ShaderNodeTexEnvironment', 'TEX_ENVIRONMENT', 'Environment Texture'),
     ('ShaderNodeTexGradient', 'TEX_GRADIENT', 'Gradient Texture'),
+    ('ShaderNodeTexIES', 'TEX_IES', 'IES Texture'),
     ('ShaderNodeTexImage', 'TEX_IMAGE', 'Image Texture'),
     ('ShaderNodeTexMagic', 'TEX_MAGIC', 'Magic Texture'),
     ('ShaderNodeTexMusgrave', 'TEX_MUSGRAVE', 'Musgrave Texture'),
@@ -153,46 +165,55 @@ shaders_texture_nodes_props = (
     ('ShaderNodeTexSky', 'TEX_SKY', 'Sky Texture'),
     ('ShaderNodeTexVoronoi', 'TEX_VORONOI', 'Voronoi Texture'),
     ('ShaderNodeTexWave', 'TEX_WAVE', 'Wave Texture'),
+    ('ShaderNodeTexWhiteNoise', 'TEX_WHITE_NOISE', 'White Noise'),
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 shaders_color_nodes_props = (
-    ('ShaderNodeMixRGB', 'MIX_RGB', 'MixRGB'),
-    ('ShaderNodeRGBCurve', 'CURVE_RGB', 'RGB Curves'),
+    ('ShaderNodeBrightContrast', 'BRIGHTCONTRAST', 'Bright Contrast'),
+    ('ShaderNodeGamma', 'GAMMA', 'Gamma'),
+    ('ShaderNodeHueSaturation', 'HUE_SAT', 'Hue/Saturation'),
     ('ShaderNodeInvert', 'INVERT', 'Invert'),
     ('ShaderNodeLightFalloff', 'LIGHT_FALLOFF', 'Light Falloff'),
-    ('ShaderNodeHueSaturation', 'HUE_SAT', 'Hue/Saturation'),
-    ('ShaderNodeGamma', 'GAMMA', 'Gamma'),
-    ('ShaderNodeBrightContrast', 'BRIGHTCONTRAST', 'Bright Contrast'),
+    ('ShaderNodeMixRGB', 'MIX_RGB', 'MixRGB'),
+    ('ShaderNodeRGBCurve', 'CURVE_RGB', 'RGB Curves'),
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 shaders_vector_nodes_props = (
-    ('ShaderNodeMapping', 'MAPPING', 'Mapping'),
     ('ShaderNodeBump', 'BUMP', 'Bump'),
-    ('ShaderNodeNormalMap', 'NORMAL_MAP', 'Normal Map'),
+    ('ShaderNodeDisplacement', 'DISPLACEMENT', 'Displacement'),
+    ('ShaderNodeMapping', 'MAPPING', 'Mapping'),
     ('ShaderNodeNormal', 'NORMAL', 'Normal'),
+    ('ShaderNodeNormalMap', 'NORMAL_MAP', 'Normal Map'),
     ('ShaderNodeVectorCurve', 'CURVE_VEC', 'Vector Curves'),
+    ('ShaderNodeVectorDisplacement', 'VECTOR_DISPLACEMENT', 'Vector Displacement'),
     ('ShaderNodeVectorTransform', 'VECT_TRANSFORM', 'Vector Transform'),
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 shaders_converter_nodes_props = (
-    ('ShaderNodeMath', 'MATH', 'Math'),
-    ('ShaderNodeValToRGB', 'VALTORGB', 'ColorRamp'),
-    ('ShaderNodeRGBToBW', 'RGBTOBW', 'RGB to BW'),
-    ('ShaderNodeVectorMath', 'VECT_MATH', 'Vector Math'),
-    ('ShaderNodeSeparateRGB', 'SEPRGB', 'Separate RGB'),
-    ('ShaderNodeCombineRGB', 'COMBRGB', 'Combine RGB'),
-    ('ShaderNodeSeparateXYZ', 'SEPXYZ', 'Separate XYZ'),
-    ('ShaderNodeCombineXYZ', 'COMBXYZ', 'Combine XYZ'),
-    ('ShaderNodeSeparateHSV', 'SEPHSV', 'Separate HSV'),
-    ('ShaderNodeCombineHSV', 'COMBHSV', 'Combine HSV'),
-    ('ShaderNodeWavelength', 'WAVELENGTH', 'Wavelength'),
     ('ShaderNodeBlackbody', 'BLACKBODY', 'Blackbody'),
+    ('ShaderNodeClamp', 'CLAMP', 'Clamp'),
+    ('ShaderNodeValToRGB', 'VALTORGB', 'ColorRamp'),
+    ('ShaderNodeCombineHSV', 'COMBHSV', 'Combine HSV'),
+    ('ShaderNodeCombineRGB', 'COMBRGB', 'Combine RGB'),
+    ('ShaderNodeCombineXYZ', 'COMBXYZ', 'Combine XYZ'),
+    ('ShaderNodeMapRange', 'MAP_RANGE', 'Map Range'),
+    ('ShaderNodeMath', 'MATH', 'Math'),
+    ('ShaderNodeRGBToBW', 'RGBTOBW', 'RGB to BW'),
+    ('ShaderNodeSeparateRGB', 'SEPRGB', 'Separate RGB'),
+    ('ShaderNodeSeparateXYZ', 'SEPXYZ', 'Separate XYZ'),
+    ('ShaderNodeSeparateHSV', 'SEPHSV', 'Separate HSV'),
+    ('ShaderNodeVectorMath', 'VECT_MATH', 'Vector Math'),
+    ('ShaderNodeWavelength', 'WAVELENGTH', 'Wavelength'),
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 shaders_layout_nodes_props = (
     ('NodeFrame', 'FRAME', 'Frame'),
     ('NodeReroute', 'REROUTE', 'Reroute'),
@@ -201,122 +222,134 @@ shaders_layout_nodes_props = (
 # compositing nodes
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 compo_input_nodes_props = (
-    ('CompositorNodeRLayers', 'R_LAYERS', 'Render Layers'),
-    ('CompositorNodeImage', 'IMAGE', 'Image'),
-    ('CompositorNodeMovieClip', 'MOVIECLIP', 'Movie Clip'),
-    ('CompositorNodeMask', 'MASK', 'Mask'),
-    ('CompositorNodeRGB', 'RGB', 'RGB'),
-    ('CompositorNodeValue', 'VALUE', 'Value'),
-    ('CompositorNodeTexture', 'TEXTURE', 'Texture'),
     ('CompositorNodeBokehImage', 'BOKEHIMAGE', 'Bokeh Image'),
+    ('CompositorNodeImage', 'IMAGE', 'Image'),
+    ('CompositorNodeMask', 'MASK', 'Mask'),
+    ('CompositorNodeMovieClip', 'MOVIECLIP', 'Movie Clip'),
+    ('CompositorNodeRLayers', 'R_LAYERS', 'Render Layers'),
+    ('CompositorNodeRGB', 'RGB', 'RGB'),
+    ('CompositorNodeTexture', 'TEXTURE', 'Texture'),
     ('CompositorNodeTime', 'TIME', 'Time'),
     ('CompositorNodeTrackPos', 'TRACKPOS', 'Track Position'),
+    ('CompositorNodeValue', 'VALUE', 'Value'),
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 compo_output_nodes_props = (
     ('CompositorNodeComposite', 'COMPOSITE', 'Composite'),
-    ('CompositorNodeViewer', 'VIEWER', 'Viewer'),
-    ('CompositorNodeSplitViewer', 'SPLITVIEWER', 'Split Viewer'),
     ('CompositorNodeOutputFile', 'OUTPUT_FILE', 'File Output'),
     ('CompositorNodeLevels', 'LEVELS', 'Levels'),
+    ('CompositorNodeSplitViewer', 'SPLITVIEWER', 'Split Viewer'),
+    ('CompositorNodeViewer', 'VIEWER', 'Viewer'),
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 compo_color_nodes_props = (
-    ('CompositorNodeMixRGB', 'MIX_RGB', 'Mix'),
     ('CompositorNodeAlphaOver', 'ALPHAOVER', 'Alpha Over'),
-    ('CompositorNodeInvert', 'INVERT', 'Invert'),
-    ('CompositorNodeCurveRGB', 'CURVE_RGB', 'RGB Curves'),
-    ('CompositorNodeHueSat', 'HUE_SAT', 'Hue Saturation Value'),
-    ('CompositorNodeColorBalance', 'COLORBALANCE', 'Color Balance'),
-    ('CompositorNodeHueCorrect', 'HUECORRECT', 'Hue Correct'),
     ('CompositorNodeBrightContrast', 'BRIGHTCONTRAST', 'Bright/Contrast'),
-    ('CompositorNodeGamma', 'GAMMA', 'Gamma'),
+    ('CompositorNodeColorBalance', 'COLORBALANCE', 'Color Balance'),
     ('CompositorNodeColorCorrection', 'COLORCORRECTION', 'Color Correction'),
+    ('CompositorNodeGamma', 'GAMMA', 'Gamma'),
+    ('CompositorNodeHueCorrect', 'HUECORRECT', 'Hue Correct'),
+    ('CompositorNodeHueSat', 'HUE_SAT', 'Hue Saturation Value'),
+    ('CompositorNodeInvert', 'INVERT', 'Invert'),
+    ('CompositorNodeMixRGB', 'MIX_RGB', 'Mix'),
+    ('CompositorNodeCurveRGB', 'CURVE_RGB', 'RGB Curves'),
     ('CompositorNodeTonemap', 'TONEMAP', 'Tonemap'),
     ('CompositorNodeZcombine', 'ZCOMBINE', 'Z Combine'),
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 compo_converter_nodes_props = (
-    ('CompositorNodeMath', 'MATH', 'Math'),
-    ('CompositorNodeValToRGB', 'VALTORGB', 'ColorRamp'),
-    ('CompositorNodeSetAlpha', 'SETALPHA', 'Set Alpha'),
     ('CompositorNodePremulKey', 'PREMULKEY', 'Alpha Convert'),
+    ('CompositorNodeValToRGB', 'VALTORGB', 'ColorRamp'),
+    ('CompositorNodeCombHSVA', 'COMBHSVA', 'Combine HSVA'),
+    ('CompositorNodeCombRGBA', 'COMBRGBA', 'Combine RGBA'),
+    ('CompositorNodeCombYCCA', 'COMBYCCA', 'Combine YCbCrA'),
+    ('CompositorNodeCombYUVA', 'COMBYUVA', 'Combine YUVA'),
     ('CompositorNodeIDMask', 'ID_MASK', 'ID Mask'),
+    ('CompositorNodeMath', 'MATH', 'Math'),
     ('CompositorNodeRGBToBW', 'RGBTOBW', 'RGB to BW'),
     ('CompositorNodeSepRGBA', 'SEPRGBA', 'Separate RGBA'),
-    ('CompositorNodeCombRGBA', 'COMBRGBA', 'Combine RGBA'),
     ('CompositorNodeSepHSVA', 'SEPHSVA', 'Separate HSVA'),
-    ('CompositorNodeCombHSVA', 'COMBHSVA', 'Combine HSVA'),
     ('CompositorNodeSepYUVA', 'SEPYUVA', 'Separate YUVA'),
-    ('CompositorNodeCombYUVA', 'COMBYUVA', 'Combine YUVA'),
     ('CompositorNodeSepYCCA', 'SEPYCCA', 'Separate YCbCrA'),
-    ('CompositorNodeCombYCCA', 'COMBYCCA', 'Combine YCbCrA'),
+    ('CompositorNodeSetAlpha', 'SETALPHA', 'Set Alpha'),
+    ('CompositorNodeSwitchView', 'VIEWSWITCH', 'View Switch'),
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 compo_filter_nodes_props = (
-    ('CompositorNodeBlur', 'BLUR', 'Blur'),
     ('CompositorNodeBilateralblur', 'BILATERALBLUR', 'Bilateral Blur'),
-    ('CompositorNodeDilateErode', 'DILATEERODE', 'Dilate/Erode'),
-    ('CompositorNodeDespeckle', 'DESPECKLE', 'Despeckle'),
-    ('CompositorNodeFilter', 'FILTER', 'Filter'),
+    ('CompositorNodeBlur', 'BLUR', 'Blur'),
     ('CompositorNodeBokehBlur', 'BOKEHBLUR', 'Bokeh Blur'),
-    ('CompositorNodeVecBlur', 'VECBLUR', 'Vector Blur'),
     ('CompositorNodeDefocus', 'DEFOCUS', 'Defocus'),
+    ('CompositorNodeDenoise', 'DENOISE', 'Denoise'),
+    ('CompositorNodeDespeckle', 'DESPECKLE', 'Despeckle'),
+    ('CompositorNodeDilateErode', 'DILATEERODE', 'Dilate/Erode'),
+    ('CompositorNodeDBlur', 'DBLUR', 'Directional Blur'),
+    ('CompositorNodeFilter', 'FILTER', 'Filter'),
     ('CompositorNodeGlare', 'GLARE', 'Glare'),
     ('CompositorNodeInpaint', 'INPAINT', 'Inpaint'),
-    ('CompositorNodeDBlur', 'DBLUR', 'Directional Blur'),
     ('CompositorNodePixelate', 'PIXELATE', 'Pixelate'),
     ('CompositorNodeSunBeams', 'SUNBEAMS', 'Sun Beams'),
+    ('CompositorNodeVecBlur', 'VECBLUR', 'Vector Blur'),
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 compo_vector_nodes_props = (
-    ('CompositorNodeNormal', 'NORMAL', 'Normal'),
-    ('CompositorNodeMapValue', 'MAP_VALUE', 'Map Value'),
     ('CompositorNodeMapRange', 'MAP_RANGE', 'Map Range'),
+    ('CompositorNodeMapValue', 'MAP_VALUE', 'Map Value'),
+    ('CompositorNodeNormal', 'NORMAL', 'Normal'),
     ('CompositorNodeNormalize', 'NORMALIZE', 'Normalize'),
     ('CompositorNodeCurveVec', 'CURVE_VEC', 'Vector Curves'),
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 compo_matte_nodes_props = (
-    ('CompositorNodeKeying', 'KEYING', 'Keying'),
-    ('CompositorNodeKeyingScreen', 'KEYINGSCREEN', 'Keying Screen'),
-    ('CompositorNodeChannelMatte', 'CHANNEL_MATTE', 'Channel Key'),
-    ('CompositorNodeColorSpill', 'COLOR_SPILL', 'Color Spill'),
     ('CompositorNodeBoxMask', 'BOXMASK', 'Box Mask'),
-    ('CompositorNodeEllipseMask', 'ELLIPSEMASK', 'Ellipse Mask'),
-    ('CompositorNodeLumaMatte', 'LUMA_MATTE', 'Luminance Key'),
-    ('CompositorNodeDiffMatte', 'DIFF_MATTE', 'Difference Key'),
-    ('CompositorNodeDistanceMatte', 'DISTANCE_MATTE', 'Distance Key'),
+    ('CompositorNodeChannelMatte', 'CHANNEL_MATTE', 'Channel Key'),
     ('CompositorNodeChromaMatte', 'CHROMA_MATTE', 'Chroma Key'),
     ('CompositorNodeColorMatte', 'COLOR_MATTE', 'Color Key'),
+    ('CompositorNodeColorSpill', 'COLOR_SPILL', 'Color Spill'),
+    ('CompositorNodeCryptomatte', 'CRYPTOMATTE', 'Cryptomatte'),
+    ('CompositorNodeDiffMatte', 'DIFF_MATTE', 'Difference Key'),
+    ('CompositorNodeDistanceMatte', 'DISTANCE_MATTE', 'Distance Key'),
     ('CompositorNodeDoubleEdgeMask', 'DOUBLEEDGEMASK', 'Double Edge Mask'),
+    ('CompositorNodeEllipseMask', 'ELLIPSEMASK', 'Ellipse Mask'),
+    ('CompositorNodeKeying', 'KEYING', 'Keying'),
+    ('CompositorNodeKeyingScreen', 'KEYINGSCREEN', 'Keying Screen'),
+    ('CompositorNodeLumaMatte', 'LUMA_MATTE', 'Luminance Key'),
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 compo_distort_nodes_props = (
-    ('CompositorNodeScale', 'SCALE', 'Scale'),
-    ('CompositorNodeLensdist', 'LENSDIST', 'Lens Distortion'),
-    ('CompositorNodeMovieDistortion', 'MOVIEDISTORTION', 'Movie Distortion'),
-    ('CompositorNodeTranslate', 'TRANSLATE', 'Translate'),
-    ('CompositorNodeRotate', 'ROTATE', 'Rotate'),
-    ('CompositorNodeFlip', 'FLIP', 'Flip'),
+    ('CompositorNodeCornerPin', 'CORNERPIN', 'Corner Pin'),
     ('CompositorNodeCrop', 'CROP', 'Crop'),
     ('CompositorNodeDisplace', 'DISPLACE', 'Displace'),
+    ('CompositorNodeFlip', 'FLIP', 'Flip'),
+    ('CompositorNodeLensdist', 'LENSDIST', 'Lens Distortion'),
     ('CompositorNodeMapUV', 'MAP_UV', 'Map UV'),
-    ('CompositorNodeTransform', 'TRANSFORM', 'Transform'),
-    ('CompositorNodeStabilize', 'STABILIZE2D', 'Stabilize 2D'),
+    ('CompositorNodeMovieDistortion', 'MOVIEDISTORTION', 'Movie Distortion'),
     ('CompositorNodePlaneTrackDeform', 'PLANETRACKDEFORM', 'Plane Track Deform'),
-    ('CompositorNodeCornerPin', 'CORNERPIN', 'Corner Pin'),
+    ('CompositorNodeRotate', 'ROTATE', 'Rotate'),
+    ('CompositorNodeScale', 'SCALE', 'Scale'),
+    ('CompositorNodeStabilize', 'STABILIZE2D', 'Stabilize 2D'),
+    ('CompositorNodeTransform', 'TRANSFORM', 'Transform'),
+    ('CompositorNodeTranslate', 'TRANSLATE', 'Translate'),
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
+# Keeping things in alphabetical orde so we don't need to sort later.
 compo_layout_nodes_props = (
     ('NodeFrame', 'FRAME', 'Frame'),
     ('NodeReroute', 'REROUTE', 'Reroute'),
@@ -484,21 +517,42 @@ operations = [
     ('SUBTRACT', 'Subtract', 'Subtract Mode'),
     ('MULTIPLY', 'Multiply', 'Multiply Mode'),
     ('DIVIDE', 'Divide', 'Divide Mode'),
+    ('MULTIPLY_ADD', 'Multiply Add', 'Multiply Add Mode'),
     ('SINE', 'Sine', 'Sine Mode'),
     ('COSINE', 'Cosine', 'Cosine Mode'),
     ('TANGENT', 'Tangent', 'Tangent Mode'),
     ('ARCSINE', 'Arcsine', 'Arcsine Mode'),
     ('ARCCOSINE', 'Arccosine', 'Arccosine Mode'),
     ('ARCTANGENT', 'Arctangent', 'Arctangent Mode'),
+    ('ARCTAN2', 'Arctan2', 'Arctan2 Mode'),
+    ('SINH', 'Hyperbolic Sine', 'Hyperbolic Sine Mode'),
+    ('COSH', 'Hyperbolic Cosine', 'Hyperbolic Cosine Mode'),
+    ('TANH', 'Hyperbolic Tangent', 'Hyperbolic Tangent Mode'),
     ('POWER', 'Power', 'Power Mode'),
     ('LOGARITHM', 'Logatithm', 'Logarithm Mode'),
+    ('SQRT', 'Square Root', 'Square Root Mode'),
+    ('INVERSE_SQRT', 'Inverse Square Root', 'Inverse Square Root Mode'),
+    ('EXPONENT', 'Exponent', 'Exponent Mode'),
     ('MINIMUM', 'Minimum', 'Minimum Mode'),
     ('MAXIMUM', 'Maximum', 'Maximum Mode'),
-    ('ROUND', 'Round', 'Round Mode'),
     ('LESS_THAN', 'Less Than', 'Less Than Mode'),
     ('GREATER_THAN', 'Greater Than', 'Greater Than Mode'),
+    ('SIGN', 'Sign', 'Sign Mode'),
+    ('COMPARE', 'Compare', 'Compare Mode'),
+    ('SMOOTH_MIN', 'Smooth Minimum', 'Smooth Minimum Mode'),
+    ('SMOOTH_MAX', 'Smooth Maximum', 'Smooth Maximum Mode'),
+    ('FRACT', 'Fraction', 'Fraction Mode'),
     ('MODULO', 'Modulo', 'Modulo Mode'),
+    ('SNAP', 'Snap', 'Snap Mode'),
+    ('WRAP', 'Wrap', 'Wrap Mode'),
+    ('PINGPONG', 'Pingpong', 'Pingpong Mode'),
     ('ABSOLUTE', 'Absolute', 'Absolute Mode'),
+    ('ROUND', 'Round', 'Round Mode'),
+    ('FLOOR', 'Floor', 'Floor Mode'),
+    ('CEIL', 'Ceil', 'Ceil Mode'),
+    ('TRUNCATE', 'Truncate', 'Truncate Mode'),
+    ('RADIANS', 'To Radians', 'To Radians Mode'),
+    ('DEGREES', 'To Degrees', 'To Degrees Mode'),
 ]
 
 # in NWBatchChangeNodes additional types/operations. Can be used as 'items' for EnumProperty.
@@ -542,9 +596,10 @@ draw_color_sets = {
     )
 }
 
+viewer_socket_name = "tmp_viewer"
 
 def is_visible_socket(socket):
-    return not socket.hide and socket.enabled
+    return not socket.hide and socket.enabled and socket.type != 'CUSTOM'
 
 def nice_hotkey_name(punc):
     # convert the ugly string name into the actual character
@@ -976,10 +1031,9 @@ def draw_callback_nodeoutline(self, context, mode):
 
         bgl.glDisable(bgl.GL_BLEND)
         bgl.glDisable(bgl.GL_LINE_SMOOTH)
-
-def get_nodes_links(context):
+def get_active_tree(context):
     tree = context.space_data.node_tree
-
+    path = []
     # Get nodes from currently edited tree.
     # If user is editing a group, space_data.node_tree is still the base level (outside group).
     # context.active_node is in the group though, so if space_data.node_tree.nodes.active is not
@@ -988,8 +1042,70 @@ def get_nodes_links(context):
     if tree.nodes.active:
         while tree.nodes.active != context.active_node:
             tree = tree.nodes.active.node_tree
+            path.append(tree)
+    return tree, path
 
+def get_nodes_links(context):
+    tree, path = get_active_tree(context)
     return tree.nodes, tree.links
+
+def is_viewer_socket(socket):
+    # checks if a internal socket is a valid viewer socket
+    return socket.name == viewer_socket_name and socket.NWViewerSocket
+
+def get_internal_socket(socket):
+    #get the internal socket from a socket inside or outside the group
+    node = socket.node
+    if node.type == 'GROUP_OUTPUT':
+        source_iterator = node.inputs
+        iterator = node.id_data.outputs
+    elif node.type == 'GROUP_INPUT':
+        source_iterator = node.outputs
+        iterator = node.id_data.inputs
+    elif hasattr(node, "node_tree"):
+        if socket.is_output:
+            source_iterator = node.outputs
+            iterator = node.node_tree.outputs
+        else:
+            source_iterator = node.inputs
+            iterator = node.node_tree.inputs
+    else:
+        return None
+
+    for i, s in enumerate(source_iterator):
+        if s == socket:
+            break
+    return iterator[i]
+
+def is_viewer_link(link, output_node):
+    if "Emission Viewer" in link.to_node.name or link.to_node == output_node and link.to_socket == output_node.inputs[0]:
+        return True
+    if link.to_node.type == 'GROUP_OUTPUT':
+        socket = get_internal_socket(link.to_socket)
+        if is_viewer_socket(socket):
+            return True
+    return False
+
+def get_group_output_node(tree):
+    for node in tree.nodes:
+        if node.type == 'GROUP_OUTPUT' and node.is_active_output == True:
+            return node
+
+def get_output_location(tree):
+    # get right-most location
+    sorted_by_xloc = (sorted(tree.nodes, key=lambda x: x.location.x))
+    max_xloc_node = sorted_by_xloc[-1]
+    if max_xloc_node.name == 'Emission Viewer':
+        max_xloc_node = sorted_by_xloc[-2]
+
+    # get average y location
+    sum_yloc = 0
+    for node in tree.nodes:
+        sum_yloc += node.location.y
+
+    loc_x = max_xloc_node.location.x + max_xloc_node.dimensions.x + 80
+    loc_y = sum_yloc / len(tree.nodes)
+    return loc_x, loc_y
 
 # Principled prefs
 class NWPrincipledPreferences(bpy.types.PropertyGroup):
@@ -1570,12 +1686,16 @@ class NWAddAttrNode(Operator, NWBase):
         nodes.active.attribute_name = self.attr_name
         return {'FINISHED'}
 
-
 class NWEmissionViewer(Operator, NWBase):
     bl_idname = "node.nw_emission_viewer"
     bl_label = "Emission Viewer"
     bl_description = "Connect active node to Emission Shader for shadeless previews"
     bl_options = {'REGISTER', 'UNDO'}
+
+    def __init__(self):
+        self.shader_output_type = ""
+        self.shader_output_ident = ""
+        self.shader_viewer_ident = ""
 
     @classmethod
     def poll(cls, context):
@@ -1589,35 +1709,160 @@ class NWEmissionViewer(Operator, NWBase):
                     return True
         return False
 
+    def ensure_viewer_socket(self, node, socket_type, connect_socket=None):
+        #check if a viewer output already exists in a node group otherwise create
+        if hasattr(node, "node_tree"):
+            index = None
+            if len(node.node_tree.outputs):
+                free_socket = None
+                for i, socket in enumerate(node.node_tree.outputs):
+                    if is_viewer_socket(socket) and is_visible_socket(node.outputs[i]) and socket.type == socket_type:
+                        #if viewer output is already used but leads to the same socket we can still use it
+                        is_used = self.is_socket_used_other_mats(socket)
+                        if is_used:
+                            if connect_socket == None:
+                                continue
+                            groupout = get_group_output_node(node.node_tree)
+                            groupout_input = groupout.inputs[i]
+                            links = groupout_input.links
+                            if connect_socket not in [link.from_socket for link in links]:
+                                continue
+                            index=i
+                            break
+                        if not free_socket:
+                            free_socket = i
+                if not index and free_socket:
+                    index = free_socket
+
+            if not index:
+                #create viewer socket
+                node.node_tree.outputs.new(socket_type, viewer_socket_name)
+                index = len(node.node_tree.outputs) - 1
+                node.node_tree.outputs[index].NWViewerSocket = True
+            return index
+
+    def init_shader_variables(self, space, shader_type):
+        if shader_type == 'OBJECT':
+            if space.id not in [light for light in bpy.data.lights]:  # cannot use bpy.data.lights directly as iterable
+                self.shader_output_type = "OUTPUT_MATERIAL"
+                self.shader_output_ident = "ShaderNodeOutputMaterial"
+                self.shader_viewer_ident = "ShaderNodeEmission"
+            else:
+                self.shader_output_type = "OUTPUT_LIGHT"
+                self.shader_output_ident = "ShaderNodeOutputLight"
+                self.shader_viewer_ident = "ShaderNodeEmission"
+
+        elif shader_type == 'WORLD':
+            self.shader_output_type = "OUTPUT_WORLD"
+            self.shader_output_ident = "ShaderNodeOutputWorld"
+            self.shader_viewer_ident = "ShaderNodeBackground"
+
+    def get_shader_output_node(self, tree):
+        for node in tree.nodes:
+            if node.type == self.shader_output_type and node.is_active_output == True:
+                return node
+
+    @classmethod
+    def ensure_group_output(cls, tree):
+        #check if a group output node exists otherwise create
+        groupout = get_group_output_node(tree)
+        if not groupout:
+            groupout = tree.nodes.new('NodeGroupOutput')
+            loc_x, loc_y = get_output_location(tree)
+            groupout.location.x = loc_x
+            groupout.location.y = loc_y
+            groupout.select = False
+        return groupout
+
+    @classmethod
+    def search_sockets(cls, node, sockets, index=None):
+        #recursevley scan nodes for viewer sockets and store in list
+        for i, input_socket in enumerate(node.inputs):
+            if index and i != index:
+                continue
+            if len(input_socket.links):
+                link = input_socket.links[0]
+                next_node = link.from_node
+                external_socket = link.from_socket
+                if hasattr(next_node, "node_tree"):
+                    for socket_index, s in enumerate(next_node.outputs):
+                        if s == external_socket:
+                            break
+                    socket = next_node.node_tree.outputs[socket_index]
+                    if is_viewer_socket(socket) and socket not in sockets:
+                        sockets.append(socket)
+                        #continue search inside of node group but restrict socket to where we came from
+                        groupout = get_group_output_node(next_node.node_tree)
+                        cls.search_sockets(groupout, sockets, index=socket_index)
+
+    @classmethod
+    def scan_nodes(cls, tree, selection, sockets):
+        # get all selcted nodes and all viewer sockets in a material tree
+        for node in tree.nodes:
+            if node.select:
+                selection.append(node)
+                node.select = False
+
+            if hasattr(node, "node_tree"):
+                for socket in node.node_tree.outputs:
+                    if is_viewer_socket(socket) and (socket not in sockets):
+                        sockets.append(socket)
+                cls.scan_nodes(node.node_tree, selection, sockets)
+
+    def link_leads_to_used_socket(self, link):
+        #return True if link leads to a socket that is already used in this material
+        socket = get_internal_socket(link.to_socket)
+        return (socket and self.is_socket_used_active_mat(socket))
+
+    def is_socket_used_active_mat(self, socket):
+        #ensure used sockets in active material is calculated and check given socket
+        if not hasattr(self, "used_viewer_sockets_active_mat"):
+            self.used_viewer_sockets_active_mat = []
+            materialout = self.get_shader_output_node(bpy.context.space_data.node_tree)
+            if materialout:
+                emission = self.get_viewer_node(materialout)
+                self.search_sockets((emission if emission else materialout), self.used_viewer_sockets_active_mat)
+        return socket in self.used_viewer_sockets_active_mat
+
+    def is_socket_used_other_mats(self, socket):
+        #ensure used sockets in other materials are calculated and check given socket
+        if not hasattr(self, "used_viewer_sockets_other_mats"):
+            self.used_viewer_sockets_other_mats = []
+            for mat in bpy.data.materials:
+                if mat.node_tree == bpy.context.space_data.node_tree or not hasattr(mat.node_tree, "nodes"):
+                    continue
+                # get viewer node
+                materialout = self.get_shader_output_node(mat.node_tree)
+                if materialout:
+                    emission = self.get_viewer_node(materialout)
+                    self.search_sockets((emission if emission else materialout), self.used_viewer_sockets_other_mats)
+        return socket in self.used_viewer_sockets_other_mats
+
+    @staticmethod
+    def get_viewer_node(materialout):
+        input_socket = materialout.inputs[0]
+        if len(input_socket.links) > 0:
+            node = input_socket.links[0].from_node
+            if node.type == 'EMISSION' and node.name == "Emission Viewer":
+                return node
+
     def invoke(self, context, event):
         space = context.space_data
         shader_type = space.shader_type
-        if shader_type == 'OBJECT':
-            if space.id not in [light for light in bpy.data.lights]:  # cannot use bpy.data.lights directly as iterable
-                shader_output_type = "OUTPUT_MATERIAL"
-                shader_output_ident = "ShaderNodeOutputMaterial"
-                shader_viewer_ident = "ShaderNodeEmission"
-            else:
-                shader_output_type = "OUTPUT_LIGHT"
-                shader_output_ident = "ShaderNodeOutputLight"
-                shader_viewer_ident = "ShaderNodeEmission"
-
-        elif shader_type == 'WORLD':
-            shader_output_type = "OUTPUT_WORLD"
-            shader_output_ident = "ShaderNodeOutputWorld"
-            shader_viewer_ident = "ShaderNodeBackground"
+        self.init_shader_variables(space, shader_type)
         shader_types = [x[1] for x in shaders_shader_nodes_props]
         mlocx = event.mouse_region_x
         mlocy = event.mouse_region_y
         select_node = bpy.ops.node.select(mouse_x=mlocx, mouse_y=mlocy, extend=False)
         if 'FINISHED' in select_node:  # only run if mouse click is on a node
-            nodes, links = get_nodes_links(context)
-            in_group = context.active_node != space.node_tree.nodes.active
+            active_tree, path_to_tree = get_active_tree(context)
+            nodes, links = active_tree.nodes, active_tree.links
+            base_node_tree = space.node_tree
             active = nodes.active
             output_types = [x[1] for x in shaders_output_nodes_props]
             valid = False
             if active:
-                if (active.name != "Emission Viewer") and (active.type not in output_types) and not in_group:
+                if (active.name != "Emission Viewer") and (active.type not in output_types):
                     for out in active.outputs:
                         if is_visible_socket(out):
                             valid = True
@@ -1626,30 +1871,15 @@ class NWEmissionViewer(Operator, NWBase):
                 # get material_output node, store selection, deselect all
                 materialout = None  # placeholder node
                 selection = []
-                for node in nodes:
-                    if node.type == shader_output_type:
-                        materialout = node
-                    if node.select:
-                        selection.append(node.name)
-                    node.select = False
+                delete_sockets = []
+
+                #scan through every single node in tree including nodes inside of groups
+                self.scan_nodes(base_node_tree, selection, delete_sockets)
+
+                materialout = self.get_shader_output_node(base_node_tree)
                 if not materialout:
-                    # get right-most location
-                    sorted_by_xloc = (sorted(nodes, key=lambda x: x.location.x))
-                    max_xloc_node = sorted_by_xloc[-1]
-                    if max_xloc_node.name == 'Emission Viewer':
-                        max_xloc_node = sorted_by_xloc[-2]
-
-                    # get average y location
-                    sum_yloc = 0
-                    for node in nodes:
-                        sum_yloc += node.location.y
-
-                    new_locx = max_xloc_node.location.x + max_xloc_node.dimensions.x + 80
-                    new_locy = sum_yloc / len(nodes)
-
-                    materialout = nodes.new(shader_output_ident)
-                    materialout.location.x = new_locx
-                    materialout.location.y = new_locy
+                    materialout = base_node_tree.nodes.new(self.shader_output_ident)
+                    materialout.location = get_output_location(base_node_tree)
                     materialout.select = False
                 # Analyze outputs, add "Emission Viewer" if needed, make links
                 out_i = None
@@ -1661,24 +1891,28 @@ class NWEmissionViewer(Operator, NWBase):
                     out_i = valid_outputs[0]  # Start index of node's outputs
                 for i, valid_i in enumerate(valid_outputs):
                     for out_link in active.outputs[valid_i].links:
-                        if "Emission Viewer" in out_link.to_node.name or (out_link.to_node == materialout and out_link.to_socket == materialout.inputs[0]):
-                            if i < len(valid_outputs) - 1:
-                                out_i = valid_outputs[i + 1]
-                            else:
-                                out_i = valid_outputs[0]
+                        if is_viewer_link(out_link, materialout):
+                            if nodes == base_node_tree.nodes or self.link_leads_to_used_socket(out_link):
+                                if i < len(valid_outputs) - 1:
+                                    out_i = valid_outputs[i + 1]
+                                else:
+                                    out_i = valid_outputs[0]
+
                 make_links = []  # store sockets for new links
+                delete_nodes = [] # store unused nodes to delete in the end
                 if active.outputs:
                     # If output type not 'SHADER' - "Emission Viewer" needed
                     if active.outputs[out_i].type != 'SHADER':
+                        socket_type = 'NodeSocketColor'
                         # get Emission Viewer node
                         emission_exists = False
-                        emission_placeholder = nodes[0]
-                        for node in nodes:
+                        emission_placeholder = base_node_tree.nodes[0]
+                        for node in base_node_tree.nodes:
                             if "Emission Viewer" in node.name:
                                 emission_exists = True
                                 emission_placeholder = node
                         if not emission_exists:
-                            emission = nodes.new(shader_viewer_ident)
+                            emission = base_node_tree.nodes.new(self.shader_viewer_ident)
                             emission.hide = True
                             emission.location = [materialout.location.x, (materialout.location.y + 40)]
                             emission.label = "Viewer"
@@ -1688,7 +1922,7 @@ class NWEmissionViewer(Operator, NWBase):
                             emission.select = False
                         else:
                             emission = emission_placeholder
-                        make_links.append((active.outputs[out_i], emission.inputs[0]))
+                        output_socket = emission.inputs[0]
 
                         # If Viewer is connected to output by user, don't change those connections (patch by gandalf3)
                         if emission.outputs[0].links.__len__() > 0:
@@ -1708,17 +1942,54 @@ class NWEmissionViewer(Operator, NWBase):
 
                     else:
                         # Output type is 'SHADER', no Viewer needed. Delete Viewer if exists.
-                        make_links.append((active.outputs[out_i], materialout.inputs[1 if active.outputs[out_i].name == "Volume" else 0]))
-                        for node in nodes:
+                        socket_type = 'NodeSocketShader'
+                        materialout_index = 1 if active.outputs[out_i].name == "Volume" else 0
+                        make_links.append((active.outputs[out_i], materialout.inputs[materialout_index]))
+                        output_socket = materialout.inputs[materialout_index]
+                        for node in base_node_tree.nodes:
                             if node.name == 'Emission Viewer':
-                                node.select = True
-                                bpy.ops.node.delete()
+                                delete_nodes.append((base_node_tree, node))
                     for li_from, li_to in make_links:
-                        links.new(li_from, li_to)
+                        base_node_tree.links.new(li_from, li_to)
+
+                    # Crate links through node groups until we reach the active node
+                    tree = base_node_tree
+                    link_end = output_socket
+                    while tree.nodes.active != active:
+                        node = tree.nodes.active
+                        index = self.ensure_viewer_socket(node, socket_type, connect_socket=active.outputs[out_i] if node.node_tree.nodes.active == active else None)
+                        link_start = node.outputs[index]
+                        node_socket = node.node_tree.outputs[index]
+                        if node_socket in delete_sockets:
+                            delete_sockets.remove(node_socket)
+                        tree.links.new(link_start, link_end)
+                        # Iterate
+                        link_end = self.ensure_group_output(node.node_tree).inputs[index]
+                        tree = tree.nodes.active.node_tree
+                    tree.links.new(active.outputs[out_i], link_end)
+
+                # Delete sockets
+                for socket in delete_sockets:
+                    if not self.is_socket_used_other_mats(socket):
+                        tree = socket.id_data
+                        tree.outputs.remove(socket)
+
+                # Delete nodes
+                for node in delete_nodes:
+                    space.node_tree = node[0]
+                    node[1].select = True
+                    bpy.ops.node.delete()
+
                 # Restore selection
+                path = space.path
+                path.start(base_node_tree)
+                if len(path_to_tree):
+                    for tree in path_to_tree:
+                        path.append(tree)
+
                 nodes.active = active
                 for node in nodes:
-                    if node.name in selection:
+                    if node in selection:
                         node.select = True
                 force_update(context)
             return {'FINISHED'}
@@ -3547,7 +3818,7 @@ class NWSaveViewer(bpy.types.Operator, ExportHelper):
     filename_ext: EnumProperty(
             name="Format",
             description="Choose the file format to save to",
-            items=(('.bmp', "PNG", ""),
+            items=(('.bmp', "BMP", ""),
                    ('.rgb', 'IRIS', ""),
                    ('.png', 'PNG', ""),
                    ('.jpg', 'JPEG', ""),
@@ -4102,7 +4373,7 @@ class NWSwitchShadersInputSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(shaders_input_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in shaders_input_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4113,7 +4384,7 @@ class NWSwitchShadersOutputSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(shaders_output_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in shaders_output_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4124,7 +4395,7 @@ class NWSwitchShadersShaderSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(shaders_shader_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in shaders_shader_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4135,7 +4406,7 @@ class NWSwitchShadersTextureSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(shaders_texture_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in shaders_texture_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4146,7 +4417,7 @@ class NWSwitchShadersColorSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(shaders_color_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in shaders_color_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4157,7 +4428,7 @@ class NWSwitchShadersVectorSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(shaders_vector_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in shaders_vector_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4168,7 +4439,7 @@ class NWSwitchShadersConverterSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(shaders_converter_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in shaders_converter_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4179,7 +4450,7 @@ class NWSwitchShadersLayoutSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(shaders_layout_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in shaders_layout_nodes_props:
             if node_type != 'FRAME':
                 props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
                 props.to_type = ident
@@ -4191,7 +4462,7 @@ class NWSwitchCompoInputSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(compo_input_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in compo_input_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4202,7 +4473,7 @@ class NWSwitchCompoOutputSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(compo_output_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in compo_output_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4213,7 +4484,7 @@ class NWSwitchCompoColorSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(compo_color_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in compo_color_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4224,7 +4495,7 @@ class NWSwitchCompoConverterSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(compo_converter_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in compo_converter_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4235,7 +4506,7 @@ class NWSwitchCompoFilterSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(compo_filter_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in compo_filter_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4246,7 +4517,7 @@ class NWSwitchCompoVectorSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(compo_vector_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in compo_vector_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4257,7 +4528,7 @@ class NWSwitchCompoMatteSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(compo_matte_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in compo_matte_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4268,7 +4539,7 @@ class NWSwitchCompoDistortSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(compo_distort_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in compo_distort_nodes_props:
             props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
             props.to_type = ident
 
@@ -4279,7 +4550,7 @@ class NWSwitchCompoLayoutSubmenu(Menu, NWBase):
 
     def draw(self, context):
         layout = self.layout
-        for ident, node_type, rna_name in sorted(compo_layout_nodes_props, key=lambda k: k[2]):
+        for ident, node_type, rna_name in compo_layout_nodes_props:
             if node_type != 'FRAME':
                 props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
                 props.to_type = ident
@@ -4793,6 +5064,11 @@ def register():
         name="Source Socket!",
         default=0,
         description="An internal property used to store the source socket in a Lazy Connect operation")
+    bpy.types.NodeSocketInterface.NWViewerSocket = BoolProperty(
+        name="NW Socket",
+        default=False,
+        description="An internal property used to determine if a socket is generated by the addon"
+    )
 
     for cls in classes:
         register_class(cls)
@@ -4828,6 +5104,7 @@ def unregister():
     del bpy.types.Scene.NWLazySource
     del bpy.types.Scene.NWLazyTarget
     del bpy.types.Scene.NWSourceSocket
+    del bpy.types.NodeSocketInterface.NWViewerSocket
 
     # keymaps
     for km, kmi in addon_keymaps:

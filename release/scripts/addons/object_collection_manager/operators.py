@@ -69,22 +69,27 @@ class SetActiveCollection(Operator):
     '''Set the active collection'''
     bl_label = "Set Active Collection"
     bl_idname = "view3d.set_active_collection"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'UNDO'}
 
     collection_index: IntProperty()
     collection_name: StringProperty()
 
     def execute(self, context):
-        if self.collection_index == 0:
-            cm = context.scene.collection_manager
-            cm.cm_list_index = -1
+        if self.collection_index == -1:
             layer_collection = context.view_layer.layer_collection
 
         else:
             laycol = layer_collections[self.collection_name]
             layer_collection = laycol["ptr"]
 
+            # set selection to this row
+            cm = context.scene.collection_manager
+            cm.cm_list_index = laycol["row_index"]
+
         context.view_layer.active_layer_collection = layer_collection
+
+        if context.view_layer.active_layer_collection != layer_collection:
+            self.report({'WARNING'}, "Can't set excluded collection as active")
 
         return {'FINISHED'}
 
@@ -116,7 +121,6 @@ class ExpandAllOperator(Operator):
 
 
 class ExpandSublevelOperator(Operator):
-    ''''''
     bl_label = "Expand Sublevel Items"
     bl_description = (
         "  * Ctrl+LMB - Expand/Collapse all sublevels\n"
@@ -201,8 +205,7 @@ class ExpandSublevelOperator(Operator):
             expand_history["history"].clear()
 
 
-        # set selected row to the collection you're expanding/collapsing and update tree view
-        context.scene.collection_manager.cm_list_index = self.index
+        #update tree view
         update_property_group(context)
 
         return {'FINISHED'}
@@ -859,6 +862,7 @@ class CMRemoveCollectionOperator(Operator):
         laycol = layer_collections[self.collection_name]
         collection = laycol["ptr"].collection
         parent_collection = laycol["parent"]["ptr"].collection
+        selected_row_name = cm.cm_list_collection[cm.cm_list_index].name
 
 
         # shift all objects in this collection to the parent collection
@@ -886,9 +890,21 @@ class CMRemoveCollectionOperator(Operator):
         update_property_group(context)
 
 
-        if len(cm.cm_list_collection) == cm.cm_list_index:
-            cm.cm_list_index = len(cm.cm_list_collection) - 1
-            update_property_group(context)
+        # update selected row
+        laycol = layer_collections.get(selected_row_name, None)
+        if laycol:
+            cm.cm_list_index = laycol["row_index"]
+
+        elif len(cm.cm_list_collection) == cm.cm_list_index:
+            cm.cm_list_index -=  1
+
+            if cm.cm_list_index > -1:
+                name = cm.cm_list_collection[cm.cm_list_index].name
+                laycol = layer_collections[name]
+                while not laycol["visible"]:
+                    laycol = laycol["parent"]
+
+                cm.cm_list_index = laycol["row_index"]
 
 
         # update qcd
@@ -960,6 +976,11 @@ class CMNewCollectionOperator(Operator):
             update_property_group(context)
 
             cm.cm_list_index = 0
+
+
+        # set new collection to active
+        layer_collection = layer_collections[new_collection.name]["ptr"]
+        context.view_layer.active_layer_collection = layer_collection
 
         global rename
         rename[0] = True

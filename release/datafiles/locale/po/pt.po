@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-04-20 13:27:14\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Inês Almeida, João Brandão (ULISBOA), Paulo Martins <ivan.paulos.tome@yandex.com>\n"
@@ -51265,10 +51265,6 @@ msgid "URL to open"
 msgstr "A localização do tipo \"URL\" a ser aberta"
 
 
-msgid "UV Maps"
-msgstr "Mapas UV"
-
-
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "Adicionar caminho de auto-execução"
@@ -51967,6 +51963,10 @@ msgstr "Esqueleto"
 
 msgid "Text Boxes"
 msgstr "Caixas de texto"
+
+
+msgid "UV Maps"
+msgstr "Mapas UV"
 
 
 msgid "Filters"

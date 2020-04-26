@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'2ec6eca518ef')\n"
+"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-04-20 13:27:14\n"
 "PO-Revision-Date: 2020-04-12 14:00+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: pegas\n"
@@ -14374,10 +14374,6 @@ msgid "UV Translation"
 msgstr "Presun UV"
 
 
-msgid "Translation of default UV postion"
-msgstr "Presun predvolenej UV pozície"
-
-
 msgid "Vertex Fill Color"
 msgstr "Farba výplne vrcholov"
 
@@ -15002,10 +14998,6 @@ msgstr "Náhodné rozosiatie"
 
 msgid "Enable offset"
 msgstr "Povoliť posuv"
-
-
-msgid "Enable obejct offset"
-msgstr "Povolí posuv objektu"
 
 
 msgid "Shift"
@@ -15868,10 +15860,6 @@ msgstr "Základný typ pre bloky údajov, definovanie jedinečného názvu, prep
 
 msgid "Embedded Data"
 msgstr "Vsadené údaje"
-
-
-msgid "This data-block is not an independant one, but is actually a sub-data of another ID (typical example: root node trees or master collections)"
-msgstr "Tento blok údajov nie je nezávislý, ale v skutočnosti je pod-údajmi iného ID (typický príklad: stromy koreňových uzlov alebo hlavné kolekcie)."
 
 
 msgid "Is Evaluated"
@@ -33446,6 +33434,10 @@ msgid "Flat open perimeter shape"
 msgstr "Plochý tvar otvoreného obvodu"
 
 
+msgid "Merge Threshold"
+msgstr "Prah zlúčenia"
+
+
 msgid "Thickness Mode"
 msgstr "Režim hrúbky"
 
@@ -47001,10 +46993,6 @@ msgstr "Vytvoriť paletu"
 
 msgid "Create a new palette with colors"
 msgstr "Vytvorí novú paletu farieb"
-
-
-msgid "Remove Unused Materiales"
-msgstr "Odstráni nepoužité materiály"
 
 
 msgid "Remove any unused material after the conversion"
@@ -60830,10 +60818,6 @@ msgid "Create a Face Set per Face Map"
 msgstr "Vytvorí sústavu plôšok podľa mapy plôšok"
 
 
-msgid "Minimum value to consider a certain atribute a boundary when creating the Face Sets"
-msgstr "Minimálna hodnota, považovaná za určitú hranicu atribútu pri vytváraní sústavy plôšok"
-
-
 msgctxt "Operator"
 msgid "Randomize Face Sets Colors"
 msgstr "Nastavenie farieb náhodnou farbou"
@@ -66703,10 +66687,6 @@ msgid "Use Soft Limits"
 msgstr "Použiť mäkké limity"
 
 
-msgid "Limits the Property Value slider to a range, values outside the range must be inputed numerically"
-msgstr "Limit rozsahu jazdca hodnota vlastnosti, hodnoty mimo rozsah sa musia zadávať číselne"
-
-
 msgid "Property value edit"
 msgstr "Úprava hodnoty vlastnosti"
 
@@ -67250,67 +67230,6 @@ msgstr "Nepovinný identifikátor"
 
 msgid "Site"
 msgstr "Stránka"
-
-
-msgctxt "Operator"
-msgid "Export USD"
-msgstr "Exportovať USD"
-
-
-msgid "Export current scene in a USD archive"
-msgstr "Exportuje aktuálnu scény do archívu USD"
-
-
-msgid "Use Settings for"
-msgstr "Použiť nastavenia pre"
-
-
-msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
-msgstr "Určuje viditeľnosť objektov, nastavenia modifikátora a ďalších oblastí, kde existujú rôzne nastavenia záberu a prevodu"
-
-
-msgid "Use Render settings for object visibility, modifier settings, etc"
-msgstr "Použije nastavenie prevodu na zviditeľnenie objektu, nastavenie modifikátora atď"
-
-
-msgid "Use Viewport settings for object visibility, modifier settings, etc"
-msgstr "Použije nastavenie záberu na zviditeľnenie objektu, nastavenie modifikátora atď"
-
-
-msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
-msgstr "Ak je začiarknuté, exportujú sa všetky snímky vykonaného prevodu. Ak je hodnota false, exportuje sa iba aktuálna snímka"
-
-
-msgid "When checked, hair is exported as USD curves"
-msgstr "Keď je zaškrtnuté sa vlasy exportujú ako USD krivky"
-
-
-msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
-msgstr "Ak je začiarknuté, nastavenia záberu materiálov sú exportované ako materiály náhľadu USD a priradenia materiálov sa exportujú ako podskupiny geometrie"
-
-
-msgid "When checked, normals of exported meshes are included in the export"
-msgstr "Ak je začiarknuté, do exportu sú zahrnuté kolmice exportovaných povrchových sietí"
-
-
-msgid "UV Maps"
-msgstr "UV mapy"
-
-
-msgid "When checked, all UV maps of exported meshes are included in the export"
-msgstr "Ak je zaškrtnuté, do exportu sú zahrnuté všetky UV mapy exportovaných povrchových sietí"
-
-
-msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
-msgstr "Exportujú sa iba vybrané objekty. Nevybraní rodičia vybratých objektov sa exportujú ako prázdna transformácia"
-
-
-msgid "Instancing"
-msgstr "Vyhotovenie"
-
-
-msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
-msgstr "Ak je začiarknuté, inštancie objektov sa exportujú ako referencie v USD. Ak nie je začiarknuté, inštancie objektov sa exportujú ako skutočné objekty"
 
 
 msgctxt "Operator"
@@ -68346,6 +68265,10 @@ msgid "Text Boxes"
 msgstr "Textové okienko"
 
 
+msgid "UV Maps"
+msgstr "UV mapy"
+
+
 msgid "OpenVDB File"
 msgstr "Súbor OpenVDB"
 
@@ -68616,6 +68539,10 @@ msgstr "Línie rezu"
 
 msgid "Delta Transform"
 msgstr "Delta transformácia"
+
+
+msgid "Instancing"
+msgstr "Vyhotovenie"
 
 
 msgid "Scale by Face Size"
@@ -71321,14 +71248,6 @@ msgstr "Prehľadať ponuky"
 
 msgid "Search actions by menus instead of operators"
 msgstr "Vyhľadá akcie podľa ponúk namiesto operátorov"
-
-
-msgid "Undo Speedup"
-msgstr "Vrátiť zrýchlenie"
-
-
-msgid "Use new undo speedup (WARNING: can lead to crashes and serious .blend file corruption)"
-msgstr "Použije nový návrat zrýchlenia (VAROVANIE: môže viesť k zrúteniu a vážnemu poškodeniu .blend súboru)"
 
 
 msgid "Animation Player"
@@ -79018,10 +78937,6 @@ msgid "Color selected to apply glow"
 msgstr "Vybraná farba na použitie žiary"
 
 
-msgid "Size of th effect"
-msgstr "Veľkosť efektu"
-
-
 msgid "Limit to select color for glow effect"
 msgstr "Limit pre výber farby efektu žiary"
 
@@ -84240,10 +84155,6 @@ msgid "Used for defining a profile's path"
 msgstr "Používa sa na definovanie cesty profilu"
 
 
-msgid "Merge Threshold"
-msgstr "Prah zlúčenia"
-
-
 msgid "Threshold distance for Auto Merge"
 msgstr "Prahová vzdialenosť pre automatické zlúčenie"
 
@@ -87789,14 +87700,6 @@ msgstr "Neplatný cieľ %r (musí byť 'KOSTRA' alebo 'OBJEKT')"
 
 msgid "Cameras & Markers (.py)"
 msgstr "Kamery a označenia (.py)"
-
-
-msgid "Operation aborted by user"
-msgstr "Operácia prerušená užívateľom"
-
-
-msgid "utf-8surrogateescape"
-msgstr "utf-8surrogateescape"
 
 
 msgid "Unable to parse XML, %s:%s for file %r"
@@ -92788,20 +92691,16 @@ msgid "Undo Memory Limit"
 msgstr "Limit pamäte krokov späť"
 
 
-msgid "Sequencer Cache Limit"
-msgstr "Limit zásobníka radiča"
-
-
-msgid "Console Scrollback Lines"
-msgstr "Riadky spätného posuvu konzoly"
-
-
 msgid "Garbage Collection Rate"
 msgstr "Frekvencia zberu odpadu"
 
 
 msgid "Vbo Time Out"
 msgstr "Výstupný čas VBO"
+
+
+msgid "Console Scrollback Lines"
+msgstr "Riadky spätného posuvu konzoly"
 
 
 msgid "View Name"
@@ -96957,10 +96856,6 @@ msgid "Nothing to merge"
 msgstr "Nič na zlúčenie"
 
 
-msgid "Merged %d materiales of %d"
-msgstr "Zlúčených %d materiálov z %d"
-
-
 msgid "Grease Pencil Erase Session: Hold and drag LMB or RMB to erase | ESC/Enter to end  (or click outside this area)"
 msgstr "Relácia pastelky: Pridržať a ťahať ĽTM alebo PTM na vymazanie | ESC/Enter na ukončenie  (alebo kliknite mimo túto oblasť)"
 
@@ -98883,10 +98778,6 @@ msgstr "Kolekciu '%s' (vytvorenú podľa aktívneho objektu) nie je možné prep
 
 msgid "Active object '%s' is not overridable"
 msgstr "Aktívny objekt '%s' nie je možné prepísať"
-
-
-msgid "Move the mouse to change the voxel size. LBM: confirm size, ESC/RMB: cancel"
-msgstr "Posúvaním myši zmeníte veľkosť voxelu. ĽTM: potvrdiť veľkosť, ESC/PTM: zrušiť"
 
 
 msgid "Voxel remesher cannot run with a voxel size of 0.0"
