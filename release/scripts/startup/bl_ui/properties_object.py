@@ -279,15 +279,15 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
             # Only useful with object having faces/materials...
             col.prop(obj, "color")
 
-        col = layout.column(align=False, heading="Bounds")
+        col = layout.column()
         col.use_property_decorate = False
         row = col.row(align=True)
-        sub = row.row(align=True)
-        sub.prop(obj, "show_bounds", text="")
-        sub = sub.row(align=True)
-        sub.active = obj.show_bounds or (obj.display_type == 'BOUNDS')
-        sub.prop(obj, "display_bounds_type", text="")
-        row.prop_decorator(obj, "display_bounds_type")
+        row.use_property_split = False
+        row.prop(obj, "show_bounds", text="Bounds")
+        if obj.show_bounds or (obj.display_type == 'BOUNDS'):
+            row.use_property_split = True
+            row.prop(obj, "display_bounds_type", text="")      
+            row.prop_decorator(obj, "display_bounds_type")
 
 
 class OBJECT_PT_instancing(ObjectButtonsPanel, Panel):
