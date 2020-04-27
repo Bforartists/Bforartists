@@ -491,6 +491,35 @@ class VIEW3D_HT_tool_header(Header):
             sub.prop(vpaint, "use_symmetry_z", text="    ", icon='MIRROR_Z', toggle=True)
             row.popover(panel="VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar", text="")
 
+        # Expand panels from the side-bar as popovers.
+        popover_kw = {"space_type": 'VIEW_3D', "region_type": 'UI', "category": "Tool"}
+
+        if mode_string == 'SCULPT':
+            layout.popover_group(context=".sculpt_mode", **popover_kw)
+        elif mode_string == 'PAINT_VERTEX':
+            layout.popover_group(context=".vertexpaint", **popover_kw)
+        elif mode_string == 'PAINT_WEIGHT':
+            layout.popover_group(context=".weightpaint", **popover_kw)
+        elif mode_string == 'PAINT_TEXTURE':
+            layout.popover_group(context=".imagepaint", **popover_kw)
+        elif mode_string == 'EDIT_TEXT':
+            layout.popover_group(context=".text_edit", **popover_kw)
+        elif mode_string == 'EDIT_ARMATURE':
+            layout.popover_group(context=".armature_edit", **popover_kw)
+        elif mode_string == 'EDIT_METABALL':
+            layout.popover_group(context=".mball_edit", **popover_kw)
+        elif mode_string == 'EDIT_LATTICE':
+            layout.popover_group(context=".lattice_edit", **popover_kw)
+        elif mode_string == 'EDIT_CURVE':
+            layout.popover_group(context=".curve_edit", **popover_kw)
+        elif mode_string == 'EDIT_MESH':
+            layout.popover_group(context=".mesh_edit", **popover_kw)
+        elif mode_string == 'POSE':
+            layout.popover_group(context=".posemode", **popover_kw)
+        elif mode_string == 'PARTICLE':
+            layout.popover_group(context=".particlemode", **popover_kw)
+        elif mode_string == 'OBJECT':
+            layout.popover_group(context=".objectmode", **popover_kw)
         elif mode_string in {'PAINT_GPENCIL', 'EDIT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL'}:
             # Grease pencil layer.
             gpl = context.active_gpencil_layer
