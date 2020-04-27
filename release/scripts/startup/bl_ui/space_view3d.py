@@ -3994,9 +3994,13 @@ class VIEW3D_MT_face_sets(Menu):
 
         op = layout.operator("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon = "INVERT_MASK")
         op.mode = 'INVERT'
-
+        
         op = layout.operator("sculpt.face_set_change_visibility", text='Show All Face Sets', icon = "HIDE_OFF")
         op.mode = 'SHOW_ALL'
+        op = layout.operator("sculpt.face_set_change_visibility", text='Toggle Visibility', icon = "HIDE_UNSELECTED")
+        op.mode = 'TOGGLE'
+        op = layout.operator("sculpt.face_set_change_visibility", text='Hide Active Face Sets', icon = "HIDE_ON")
+        op.mode = 'HIDE_ACTIVE'
 
         layout.separator()
 
