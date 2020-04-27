@@ -203,6 +203,7 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
 
         ob = context.active_object
         mesh = ob.data
+        tool_settings = context.tool_settings
 
         split = layout.split()
 
@@ -217,6 +218,8 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
         row = layout.row(align=True)
         row.active = ob.data.use_mirror_x or ob.data.use_mirror_y or ob.data.use_mirror_z
         row.prop(mesh, "use_mirror_topology")
+   
+        layout.prop(tool_settings, "use_edge_path_live_unwrap", text = "Live Unwrap Edge Path")
 
 
 class VIEW3D_PT_tools_meshedit_options_automerge(View3DPanel, Panel):
