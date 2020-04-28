@@ -212,7 +212,6 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         layout = self.layout
         layout.use_property_split = True
 
-
         obj = context.object
         obj_type = obj.type
         is_geometry = (obj_type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'VOLUME', 'HAIR', 'POINTCLOUD'})
@@ -221,15 +220,15 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         is_dupli = (obj.instance_type != 'NONE')
         is_gpencil = (obj_type == 'GPENCIL')
 
-        #col = layout.column(heading="Show")
-        layout.label(text = "Show")
+        col = layout.column()
+        col.label(text = "Show")        
         
-        row = layout.row()
+        row = col.row()
         row.separator()
         row.use_property_split = False   
         row.prop(obj, "show_name", text="Name")
         row.prop_decorator(obj, "show_name")
-        row = layout.row()
+        row = col.row()
         row.separator()
         row.use_property_split = False  
         row.prop(obj, "show_axis", text="Axis")
@@ -238,35 +237,35 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         # Makes no sense for cameras, armatures, etc.!
         # but these settings do apply to dupli instances
         if is_geometry or is_dupli:
-            row = layout.row()
+            row = col.row()
             row.separator()
             row.use_property_split = False  
             row.prop(obj, "show_wire", text="Wireframe")
             row.prop_decorator(obj, "show_wire")
         if obj_type == 'MESH' or is_dupli:
-            row = layout.row()
+            row = col.row()
             row.separator()
             row.use_property_split = False  
             row.prop(obj, "show_all_edges", text="All Edges")
             row.prop_decorator(obj, "show_all_edges")
         if is_geometry:
-            row = layout.row()
+            row = col.row()
             row.separator()
             row.use_property_split = False  
             row.prop(obj, "show_texture_space", text="Texture Space")
             row.prop_decorator(obj, "show_texture_space")
-            row = layout.row()
+            row = col.row()
             row.separator()
             row.use_property_split = False  
             row.prop(obj.display, "show_shadows", text="Shadow")               
-        row = layout.row()
+        row = col.row()
         row.separator()
         row.use_property_split = False  
         row.prop(obj, "show_in_front", text="In Front")
         row.prop_decorator(obj, "show_in_front")      
         
         # if obj_type == 'MESH' or is_empty_image:
-        #    col.prop(obj, "show_transparent", text="Transparency")
+        #    col.prop(obj, "show_transparent", text="Transparency") #bfa - we have it in the output
         
         col = layout.column()
         if is_wire:
@@ -413,15 +412,16 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         layout.prop(ob, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
         layout.use_property_split = True
         
-        layout.label(text = "Show in")
+        col = layout.column()     
+        col.label(text = "Show in")
 
-        row = layout.row()
+        row = col.row()
         row.use_property_split = False   
         row.separator()
         row.prop(ob, "hide_viewport", text="Viewports", toggle=False, invert_checkbox=True)
         row.prop_decorator(ob, "hide_viewport")
         
-        row = layout.row()
+        row = col.row()
         row.use_property_split = False
         row.separator()     
         row.prop(ob, "hide_render", toggle=False, invert_checkbox=True)
@@ -430,7 +430,7 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         if context.object.type == 'GPENCIL':
             
             layout.label(text = "Grease Pencil")
-            row = layout.row()
+            row = col.row()
             row.separator()
             row.use_property_split = False    
             row.prop(ob, "use_grease_pencil_lights", toggle=False)
