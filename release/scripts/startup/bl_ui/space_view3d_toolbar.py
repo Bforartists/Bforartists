@@ -876,11 +876,18 @@ class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
         col.prop(mesh, "remesh_voxel_adaptivity")
         col.prop(mesh, "use_remesh_fix_poles")
         col.prop(mesh, "use_remesh_smooth_normals")
-
-        col = layout.column(heading="Preserve", align=True)
-        col.prop(mesh, "use_remesh_preserve_volume", text="Volume")
-        col.prop(mesh, "use_remesh_preserve_paint_mask", text="Paint Mask")
-        col.prop(mesh, "use_remesh_preserve_sculpt_face_sets", text="Face Sets")
+        
+        col.label(text = "Preserve")
+        
+        row = col.row()
+        row.separator()
+        row.prop(mesh, "use_remesh_preserve_volume", text="Volume")
+        row = col.row()
+        row.separator()
+        row.prop(mesh, "use_remesh_preserve_paint_mask", text="Paint Mask")
+        row = col.row() 
+        row.separator()
+        row.prop(mesh, "use_remesh_preserve_sculpt_face_sets", text="Face Sets")
 
         layout.operator("object.voxel_remesh", text="Remesh")
 
@@ -903,19 +910,37 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
         tool_settings = context.tool_settings
         sculpt = tool_settings.sculpt
 
-        col = layout.column(heading="Display", align=True)
-        col.prop(sculpt, "use_threaded", text="Threaded Sculpt")
-        col.prop(sculpt, "show_low_resolution")
-        col.prop(sculpt, "use_sculpt_delay_updates")
-        col.prop(sculpt, "use_deform_only")
+        col = layout.column()
+        col.label(text = "Display")
+        
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_threaded", text="Threaded Sculpt")
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "show_low_resolution")
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_sculpt_delay_updates")
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_deform_only")
 
-        col.separator()
-
-        col = layout.column(heading="Auto-Masking", align=True)
-        col.prop(sculpt, "use_automasking_topology", text="Topology")
-        col.prop(sculpt, "use_automasking_face_sets", text="Face Sets")
-        col.prop(sculpt, "use_automasking_boundary_edges", text="Boundary Edges")
-        col.prop(sculpt, "use_automasking_boundary_face_sets", text="Boundary Face Sets")
+        col = layout.column()
+        col.label(text = "Auto-Masking")
+        
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_automasking_topology", text="Topology")
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_automasking_face_sets", text="Face Sets")
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_automasking_boundary_edges", text="Boundary Edges")
+        row = col.row()
+        row.separator()
+        row.prop(sculpt, "use_automasking_boundary_face_sets", text="Boundary Face Sets")
 
 
 class VIEW3D_PT_sculpt_options_gravity(Panel, View3DPaintPanel):
@@ -977,8 +1002,10 @@ class VIEW3D_PT_sculpt_symmetry(Panel, View3DPaintPanel):
         row.prop(sculpt, "tile_x", text="X", toggle=True)
         row.prop(sculpt, "tile_y", text="Y", toggle=True)
         row.prop(sculpt, "tile_z", text="Z", toggle=True)
-
+        
+        layout.use_property_split = False
         layout.prop(sculpt, "use_symmetry_feather", text="Feather")
+        layout.use_property_split = True
         layout.prop(sculpt, "radial_symmetry", text="Radial")
         layout.prop(sculpt, "tile_offset", text="Tile Offset")
 
