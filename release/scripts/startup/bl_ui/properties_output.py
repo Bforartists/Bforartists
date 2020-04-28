@@ -292,9 +292,14 @@ class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
 
         layout.prop(rd, "filepath", text="")
 
-        col = layout.column(heading="Saving")
-        col.prop(rd, "use_file_extension")
-        col.prop(rd, "use_render_cache")
+        col = layout.column(align = True)
+        col.label(text = "Saving")
+        row = col.row()
+        row.separator()
+        row.prop(rd, "use_file_extension")
+        row = col.row()
+        row.separator()
+        row.prop(rd, "use_render_cache")
 
         layout.template_image_settings(image_settings, color_management=False)
         
@@ -304,9 +309,14 @@ class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
             row.prop_decorator(rd, "film_transparent")
 
         if not rd.is_movie_format:
-            col = layout.column(heading="Image Sequence")
-            col.prop(rd, "use_overwrite")
-            col.prop(rd, "use_placeholder")
+            col = layout.column(align = True)
+            col.label(text = "Image Sequence")
+            row = col.row()
+            row.separator()
+            row.prop(rd, "use_overwrite")
+            row = col.row()
+            row.separator()
+            row.prop(rd, "use_placeholder")
 
 # Options subpanel for the output panel
 class RENDER_PT_output_options(RenderOutputButtonsPanel, Panel):
