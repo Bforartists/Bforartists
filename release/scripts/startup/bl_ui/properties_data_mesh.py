@@ -497,18 +497,18 @@ class DATA_PT_remesh(MeshButtonsPanel, Panel):
             col.prop(mesh, "use_remesh_fix_poles")
             col.prop(mesh, "use_remesh_smooth_normals")
             
-            layout.label(text = "Preserve")
-            layout.use_property_split = False
-            row = layout.row()
+            col.label(text = "Preserve")
+            row.use_property_split = False
+            row = col.row()
             row.separator()
             row.prop(mesh, "use_remesh_preserve_volume", text="Volume")
-            row = layout.row()
+            row = col.row()
             row.separator()
             row.prop(mesh, "use_remesh_preserve_paint_mask", text="Paint Mask")
-            row = layout.row()
+            row = col.row()
             row.separator()
             row.prop(mesh, "use_remesh_preserve_sculpt_face_sets", text="Face Sets")
-            row = layout.row()
+            row = col.row()
             row.operator("object.voxel_remesh", text="Voxel Remesh")
         else:
             col.operator("object.quadriflow_remesh", text="QuadriFlow Remesh")
