@@ -121,6 +121,7 @@ class DATA_PT_shape_curve(CurveButtonsPanel, Panel):
             col = layout.column()
             
             col.separator()
+            
 
             sub = col.column()
             sub.active = (curve.dimensions == '2D' or (curve.bevel_object is None and curve.dimensions == '3D'))
@@ -128,24 +129,21 @@ class DATA_PT_shape_curve(CurveButtonsPanel, Panel):
             
             row = sub.row()
             row = sub.row() # two ones, no bug, using this as a separator
-            row.use_property_split = False    
+            
+            row.use_property_split = False          
             row.prop(curve, "use_fill_deform")
             row.prop_decorator(curve, "use_fill_deform")
 
-        if is_curve:         
-        
-            row = layout.row()
-            row.use_property_split = False    
+        if is_curve:
+            
+            col.use_property_split = False                
+            row = col.row()
             row.prop(curve, "use_radius")
-            row.prop_decorator(curve, "use_radius")
-            
-            row = layout.row()
-            row.use_property_split = False    
+            row.prop_decorator(curve, "use_radius")          
+            row = col.row()
             row.prop(curve, "use_stretch")
-            row.prop_decorator(curve, "use_stretch")
-            
-            row = layout.row()
-            row.use_property_split = False    
+            row.prop_decorator(curve, "use_stretch")       
+            row = col.row()
             row.prop(curve, "use_deform_bounds")
             row.prop_decorator(curve, "use_deform_bounds")
 
