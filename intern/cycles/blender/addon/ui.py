@@ -1060,10 +1060,15 @@ class CYCLES_PT_post_processing(CyclesButtonsPanel, Panel):
 
         rd = context.scene.render
 
-        col = layout.column(align=True, heading="Pipeline")
+        col = layout.column(align = True)
+        col.label(text = "Pipeline")
         col.use_property_split = False
-        col.prop(rd, "use_compositing")
-        col.prop(rd, "use_sequencer")
+        row = col.row()
+        row.separator()
+        row.prop(rd, "use_compositing")
+        row = col.row()
+        row.separator()
+        row.prop(rd, "use_sequencer")
 
         layout.prop(rd, "dither_intensity", text="Dither", slider=True)
 
