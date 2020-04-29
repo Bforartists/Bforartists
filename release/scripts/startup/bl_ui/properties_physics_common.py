@@ -313,10 +313,17 @@ def basic_force_field_settings_ui(self, field):
     else:
         col.prop(field, "flow")
 
-    sub = col.column(heading="Affect")
-
-    sub.prop(field, "apply_to_location", text="Location")
-    sub.prop(field, "apply_to_rotation", text="Rotation")
+    col = layout.column(align=True)
+    col.label( text = "Affect")
+    col.use_property_split = False
+    row = col.row()
+    row.separator()
+    row.prop(field, "apply_to_location", text="Location")
+    row.prop_decorator(field, "apply_to_location")
+    row = col.row()
+    row.separator()
+    row.prop(field, "apply_to_rotation", text="Rotation")
+    row.prop_decorator(field, "apply_to_rotation")
 
     col = flow.column()
     sub = col.column(align=True)
@@ -324,15 +331,27 @@ def basic_force_field_settings_ui(self, field):
     sub.prop(field, "seed", text="Seed")
 
     if field.type == 'TURBULENCE':
-        col.prop(field, "use_global_coords", text="Global")
+        row = col.row()
+        row.use_property_split = False  
+        row.prop(field, "use_global_coords", text="Global")
+        row.prop_decorator(field, "use_global_coords")
 
     elif field.type == 'HARMONIC':
-        col.prop(field, "use_multiple_springs")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(field, "use_multiple_springs")
+        row.prop_decorator(field, "use_multiple_springs")
 
     if field.type == 'FORCE':
-        col.prop(field, "use_gravity_falloff", text="Gravitation")
-
-    col.prop(field, "use_absorption")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(field, "use_gravity_falloff", text="Gravitation")
+        row.prop_decorator(field, "use_gravity_falloff")
+        
+    row = col.row()
+    row.use_property_split = False  
+    row.prop(field, "use_absorption")
+    row.prop_decorator(field, "use_absorption")
 
 
 def basic_force_field_falloff_ui(self, field):
