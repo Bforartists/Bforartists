@@ -159,7 +159,7 @@ class DATA_PT_lightprobe_display(DataButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
 
         ob = context.object
         probe = context.lightprobe
