@@ -779,15 +779,28 @@ class CYCLES_RENDER_PT_filter(CyclesButtonsPanel, Panel):
         rd = scene.render
         view_layer = context.view_layer
 
-        col = layout.column(heading="Include")
-        col.prop(view_layer, "use_sky", text="Environment")
-        col.prop(view_layer, "use_ao", text="Ambient Occlusion")
-        col.prop(view_layer, "use_solid", text="Surfaces")
-        col.prop(view_layer, "use_strand", text="Hair")
-        col.prop(view_layer, "use_volumes", text="Volumes")
+        col = layout.column(align = True)
+        col.label(text = "Include")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_sky", text="Environment")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_ao", text="Ambient Occlusion")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_solid", text="Surfaces")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_strand", text="Hair")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_volumes", text="Volumes")
         if with_freestyle:
-            col.prop(view_layer, "use_freestyle", text="Freestyle")
-            col.active = rd.use_freestyle
+            row = col.row()
+            row.separator()
+            row.active = rd.use_freestyle
+            row.prop(view_layer, "use_freestyle", text="Freestyle")
 
 
 class CYCLES_RENDER_PT_override(CyclesButtonsPanel, Panel):
@@ -829,25 +842,48 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         view_layer = context.view_layer
         cycles_view_layer = view_layer.cycles
 
-        col = layout.column(heading="Include", align=True)
-        col.prop(view_layer, "use_pass_combined")
-        col.prop(view_layer, "use_pass_z")
-        col.prop(view_layer, "use_pass_mist")
-        col.prop(view_layer, "use_pass_normal")
-        sub = col.column()
-        sub.active = not rd.use_motion_blur
-        sub.prop(view_layer, "use_pass_vector")
-        col.prop(view_layer, "use_pass_uv")
+        col = layout.column( align=True)
+        col.label(text = "Include")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_combined")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_z")
+        row = col.row()
+        row.separator() 
+        row.prop(view_layer, "use_pass_mist")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_normal")
+        row = col.row()
+        row.separator()
+        row.active = not rd.use_motion_blur
+        row.prop(view_layer, "use_pass_vector")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_uv")
+        row = col.row()
+        row.separator()
+        row.prop(cycles_view_layer, "denoising_store_passes", text="Denoising Data")
 
-        col.prop(cycles_view_layer, "denoising_store_passes", text="Denoising Data")
+        col = layout.column(align=True)
+        col.label(text = "Indexes")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_object_index")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_material_index")
 
-        col = layout.column(heading="Indexes", align=True)
-        col.prop(view_layer, "use_pass_object_index")
-        col.prop(view_layer, "use_pass_material_index")
-
-        col = layout.column(heading="Debug", align=True)
-        col.prop(cycles_view_layer, "pass_debug_render_time", text="Render Time")
-        col.prop(cycles_view_layer, "pass_debug_sample_count", text="Sample Count")
+        col = layout.column(align=True)
+        col.label(text = "Debug")
+        row = col.row()
+        row.separator()
+        row.prop(cycles_view_layer, "pass_debug_render_time", text="Render Time")
+        row = col.row()
+        row.separator()
+        row.prop(cycles_view_layer, "pass_debug_sample_count", text="Sample Count")
 
         layout.separator()
         
@@ -911,11 +947,18 @@ class CYCLES_RENDER_PT_passes_crypto(CyclesButtonsPanel, Panel):
 
         cycles_view_layer = context.view_layer.cycles
 
-        col = layout.column(heading="Include", align=True)
+        col = layout.column(align=True)
+        col.label(text = "Include")
         col.use_property_split = False
-        col.prop(cycles_view_layer, "use_pass_crypto_object", text="Object")
-        col.prop(cycles_view_layer, "use_pass_crypto_material", text="Material")
-        col.prop(cycles_view_layer, "use_pass_crypto_asset", text="Asset")
+        row = col.row()
+        row.separator()
+        row.prop(cycles_view_layer, "use_pass_crypto_object", text="Object")
+        row = col.row()
+        row.separator()
+        row.prop(cycles_view_layer, "use_pass_crypto_material", text="Material")
+        row = col.row()
+        row.separator()
+        row.prop(cycles_view_layer, "use_pass_crypto_asset", text="Asset")
 
         layout.prop(cycles_view_layer, "pass_crypto_depth", text="Levels")
 
