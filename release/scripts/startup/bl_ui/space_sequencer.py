@@ -369,9 +369,6 @@ class SEQUENCER_MT_select_channel(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("sequencer.select_active_side", text="Left", icon = "RESTRICT_SELECT_OFF").side = 'LEFT'
-        layout.operator("sequencer.select_active_side", text="Right", icon = "RESTRICT_SELECT_OFF").side = 'RIGHT'
-
         layout.operator("sequencer.select_side", text="Left", icon = "RESTRICT_SELECT_OFF").side = 'LEFT'
         layout.operator("sequencer.select_side", text="Right", icon = "RESTRICT_SELECT_OFF").side = 'RIGHT'
         layout.separator()
