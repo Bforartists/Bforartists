@@ -220,7 +220,7 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         is_dupli = (obj.instance_type != 'NONE')
         is_gpencil = (obj_type == 'GPENCIL')
 
-        col = layout.column()
+        col = layout.column(align = True)
         col.label(text = "Show")        
         
         row = col.row()
@@ -412,7 +412,7 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         layout.prop(ob, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
         layout.use_property_split = True
         
-        col = layout.column()     
+        col = layout.column(align = True)     
         col.label(text = "Show in")
 
         row = col.row()
