@@ -67,12 +67,21 @@ class PHYSICS_PT_rigid_body_constraint_settings(PHYSICS_PT_rigidbody_constraint_
         rbc = ob.rigid_body_constraint
 
         col = flow.column()
-        col.prop(rbc, "enabled")
-        col.prop(rbc, "disable_collisions")
+        row = col.row()
+        row.use_property_split = False  
+        row.prop(rbc, "enabled")
+        row.prop_decorator(rbc, "enabled")
+        row = col.row()
+        row.use_property_split = False  
+        row.prop(rbc, "disable_collisions")
+        row.prop_decorator(rbc, "disable_collisions")
 
         if rbc.type != 'MOTOR':
             col = flow.column()
-            col.prop(rbc, "use_breaking")
+            row = col.row()
+            row.use_property_split = False  
+            row.prop(rbc, "use_breaking")
+            row.prop_decorator(rbc, "use_breaking")
 
             sub = col.column()
             sub.active = rbc.use_breaking
@@ -167,7 +176,10 @@ class PHYSICS_PT_rigid_body_constraint_limits_linear(PHYSICS_PT_rigidbody_constr
 
         if rbc.type in {'PISTON', 'SLIDER'}:
             col = flow.column()
-            col.prop(rbc, "use_limit_lin_x")
+            row = col.row()
+            row.use_property_split = False 
+            row.prop(rbc, "use_limit_lin_x")
+            row.prop_decorator(rbc, "use_limit_lin_x")
 
             sub = col.column(align=True)
             sub.active = rbc.use_limit_lin_x
@@ -176,7 +188,10 @@ class PHYSICS_PT_rigid_body_constraint_limits_linear(PHYSICS_PT_rigidbody_constr
 
         elif rbc.type in {'GENERIC', 'GENERIC_SPRING'}:
             col = flow.column()
-            col.prop(rbc, "use_limit_lin_x")
+            row = col.row()
+            row.use_property_split = False   
+            row.prop(rbc, "use_limit_lin_x")
+            row.prop_decorator(rbc, "use_limit_lin_x")
 
             sub = col.column(align=True)
             sub.active = rbc.use_limit_lin_x
@@ -184,7 +199,10 @@ class PHYSICS_PT_rigid_body_constraint_limits_linear(PHYSICS_PT_rigidbody_constr
             sub.prop(rbc, "limit_lin_x_upper", text="Upper")
 
             col = flow.column()
-            col.prop(rbc, "use_limit_lin_y")
+            row = col.row()
+            row.use_property_split = False   
+            row.prop(rbc, "use_limit_lin_y")
+            row.prop_decorator(rbc, "use_limit_lin_y")
 
             sub = col.column(align=True)
             sub.active = rbc.use_limit_lin_y
@@ -192,7 +210,10 @@ class PHYSICS_PT_rigid_body_constraint_limits_linear(PHYSICS_PT_rigidbody_constr
             sub.prop(rbc, "limit_lin_y_upper", text="Upper")
 
             col = flow.column()
-            col.prop(rbc, "use_limit_lin_z")
+            row = col.row()
+            row.use_property_split = False   
+            row.prop(rbc, "use_limit_lin_z")
+            row.prop_decorator(rbc, "use_limit_lin_z")
 
             sub = col.column(align=True)
             sub.active = rbc.use_limit_lin_z
@@ -224,7 +245,10 @@ class PHYSICS_PT_rigid_body_constraint_limits_angular(PHYSICS_PT_rigidbody_const
 
         if rbc.type == 'HINGE':
             col = flow.column()
-            col.prop(rbc, "use_limit_ang_z")
+            row = col.row()
+            row.use_property_split = False   
+            row.prop(rbc, "use_limit_ang_z")
+            row.prop_decorator(rbc, "use_limit_ang_z")
 
             sub = col.column(align=True)
             sub.active = rbc.use_limit_ang_z
@@ -233,7 +257,10 @@ class PHYSICS_PT_rigid_body_constraint_limits_angular(PHYSICS_PT_rigidbody_const
 
         elif rbc.type == 'PISTON':
             col = flow.column()
-            col.prop(rbc, "use_limit_ang_x")
+            row = col.row()
+            row.use_property_split = False   
+            row.prop(rbc, "use_limit_ang_x")
+            row.prop_decorator(rbc, "use_limit_ang_x")
 
             sub = col.column(align=True)
             sub.active = rbc.use_limit_ang_x
@@ -242,7 +269,10 @@ class PHYSICS_PT_rigid_body_constraint_limits_angular(PHYSICS_PT_rigidbody_const
 
         elif rbc.type in {'GENERIC', 'GENERIC_SPRING'}:
             col = flow.column()
-            col.prop(rbc, "use_limit_ang_x")
+            row = col.row()
+            row.use_property_split = False               
+            row.prop(rbc, "use_limit_ang_x")
+            row.prop_decorator(rbc, "use_limit_ang_x")
 
             sub = col.column(align=True)
             sub.active = rbc.use_limit_ang_x
@@ -250,7 +280,10 @@ class PHYSICS_PT_rigid_body_constraint_limits_angular(PHYSICS_PT_rigidbody_const
             sub.prop(rbc, "limit_ang_x_upper", text="Upper")
 
             col = flow.column()
-            col.prop(rbc, "use_limit_ang_y")
+            row = col.row()
+            row.use_property_split = False   
+            row.prop(rbc, "use_limit_ang_y")
+            row.prop_decorator(rbc, "use_limit_ang_y")
 
             sub = col.column(align=True)
             sub.active = rbc.use_limit_ang_y
@@ -258,7 +291,10 @@ class PHYSICS_PT_rigid_body_constraint_limits_angular(PHYSICS_PT_rigidbody_const
             sub.prop(rbc, "limit_ang_y_upper", text="Upper")
 
             col = flow.column()
-            col.prop(rbc, "use_limit_ang_z")
+            row = col.row()
+            row.use_property_split = False   
+            row.prop(rbc, "use_limit_ang_z")
+            row.prop_decorator(rbc, "use_limit_ang_z")
 
             sub = col.column(align=True)
             sub.active = rbc.use_limit_ang_z
