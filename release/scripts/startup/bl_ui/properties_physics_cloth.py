@@ -286,7 +286,10 @@ class PHYSICS_PT_cloth_shape(PhysicButtonsPanel, Panel):
         col.separator()
 
         col = flow.column(align=True)
-        col.prop(cloth, "use_sewing_springs", text="Sewing")
+        row = col.row()
+        row.use_property_split = False   
+        row.prop(cloth, "use_sewing_springs", text="Sewing")
+        row.prop_decorator(cloth, "use_sewing_springs")
 
         sub = col.column(align=True)
         sub.active = cloth.use_sewing_springs
@@ -298,7 +301,10 @@ class PHYSICS_PT_cloth_shape(PhysicButtonsPanel, Panel):
         col.prop(cloth, "shrink_min", text="Shrinking Factor")
 
         col = flow.column()
-        col.prop(cloth, "use_dynamic_mesh", text="Dynamic Mesh")
+        row = col.row()
+        row.use_property_split = False   
+        row.prop(cloth, "use_dynamic_mesh", text="Dynamic Mesh")
+        row.prop_decorator(cloth, "use_dynamic_mesh")
 
         key = ob.data.shape_keys
 
