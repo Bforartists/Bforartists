@@ -339,13 +339,14 @@ class CLIP_GRAPH_MT_select(Menu):
 
         layout.operator_context = 'INVOKE_REGION_PREVIEW'
 
-        layout.operator("clip.graph_select_box", icon = 'BORDER_RECT')
-
-        layout.separator()
-
         layout.operator("clip.graph_select_all_markers", icon = 'SELECT_ALL').action = 'SELECT'
         layout.operator("clip.graph_select_all_markers_inverse", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("clip.graph_select_all_markers_none", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+
+        layout.separator()
+
+        layout.operator("clip.graph_select_box", icon = 'BORDER_RECT')
+
 
 class CLIP_GRAPH_MT_graph(Menu):
     bl_label = "Graph"
@@ -466,17 +467,17 @@ class CLIP_PT_tools_marker(CLIP_PT_tracking_panel, Panel):
         layout = self.layout
 
         col = layout.column(align=True)
-        
+
         col.operator("clip.detect_features", icon = "DETECT")
 
         col = layout.column(align=True)
-        col.operator("clip.add_marker_at_click", text="Add Marker", icon = "MARKER")   
+        col.operator("clip.add_marker_at_click", text="Add Marker", icon = "MARKER")
         col.operator("clip.disable_markers", text="Enable Markers" , icon = "ENABLE").action = 'ENABLE'
         col.operator("clip.disable_markers", text="Disable markers", icon = "DISABLE").action = 'DISABLE'
         col.operator("clip.delete_marker", text="Delete Marker", icon = "DELETE")
-        
-        col = layout.column(align=True)       
-        
+
+        col = layout.column(align=True)
+
         col.operator("clip.delete_track", text="Delete Track        ", icon = "DELETE")
 
 
@@ -544,7 +545,7 @@ class CLIP_PT_tracking_settings_extras(CLIP_PT_tracking_panel, Panel):
         col = layout.column(align=True)
         col.prop(settings, "default_correlation_min")
         col.prop(settings, "default_margin")
-        
+
         col.use_property_split = False
         col.prop(settings, "use_default_mask")
 
@@ -632,11 +633,11 @@ class CLIP_PT_tools_solve(CLIP_PT_tracking_panel, Panel):
         settings = tracking.settings
         tracking_object = tracking.objects.active
 
-        col = layout.column()     
+        col = layout.column()
         col.use_property_split = False
         col.prop(settings, "use_tripod_solver", text="Tripod")
         col.active = not settings.use_tripod_solver
-        col.prop(settings, "use_keyframe_selection", text="Keyframe")      
+        col.prop(settings, "use_keyframe_selection", text="Keyframe")
 
         col = layout.column(align=True)
         col.active = (not settings.use_tripod_solver and
@@ -1076,8 +1077,8 @@ class CLIP_PT_stabilization(CLIP_PT_reconstruction_panel, Panel):
         layout.prop(stab, "anchor_frame")
 
         row = layout.row(align=False)
-        row.prop(stab, "use_stabilize_rotation", text="Rotation")    
-        if stab.use_stabilize_rotation:  
+        row.prop(stab, "use_stabilize_rotation", text="Rotation")
+        if stab.use_stabilize_rotation:
             row.prop(stab, "use_stabilize_scale", text="Scale")
 
         box = layout.box()
@@ -1126,11 +1127,11 @@ class CLIP_PT_stabilization(CLIP_PT_reconstruction_panel, Panel):
 
         layout.label(text = "Expected Position:")
         col = layout.column(align=True)
-        row = col.row(align=True)      
+        row = col.row(align=True)
         row.prop(stab, "target_position", text = "")
         col.prop(stab, "target_rotation")
         row = col.row(align=True)
-        
+
         if not stab.use_autoscale:
             row.prop(stab, "target_scale")
         #row.active = not stab.use_autoscale
@@ -1138,7 +1139,7 @@ class CLIP_PT_stabilization(CLIP_PT_reconstruction_panel, Panel):
         col = layout.column(align=True)
         col.prop(stab, "influence_location")
         sub = col.column(align=True)
-        
+
         if stab.use_stabilize_rotation:
         #sub.active = stab.use_stabilize_rotation
             sub.prop(stab, "influence_rotation")
@@ -1494,7 +1495,7 @@ class CLIP_MT_select(Menu):
         layout.operator("clip.select_all", text = "All", icon = 'SELECT_ALL').action = 'SELECT'
         layout.operator("clip.select_all_none", text = "None", icon = 'SELECT_NONE') # bfa - separated tooltip
         layout.operator("clip.select_all_inverse", text = "Inverse", icon = 'INVERSE') # bfa - separated tooltip
-        
+
         layout.separator()
 
         layout.operator("clip.select_box", icon = 'BORDER_RECT')
