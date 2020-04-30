@@ -433,12 +433,12 @@ static const char *footer_string(ViewLayer *view_layer)
     }
   }
 
-  BLI_snprintf(view_layer->footer_str,
+    BLI_snprintf(view_layer->footer_str,
                sizeof(view_layer->footer_str),
-               "%s%s | %s",
-               memstr,
+               "%s%s",
                gpumemstr,
-               versionstr);
+               memstr);
+  /*BLI_snprintf(view_layer->footer_str, sizeof(view_layer->footer_str), "%s%s | %s", memstr, gpumemstr, versionstr);*/ /* bfa - removed version string*/
 
   return view_layer->footer_str;
 
