@@ -177,7 +177,11 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
             col.prop(domain, "cfl_condition", text="CFL Number")
 
             col = flow.column()
-            col.prop(domain, "use_adaptive_timesteps")
+            row = col.row()
+            row.use_property_split = False              
+            row.prop(domain, "use_adaptive_timesteps")
+            row.prop_decorator(domain, "use_adaptive_timesteps")
+            
             sub = col.column(align=True)
             sub.active = domain.use_adaptive_timesteps
             sub.prop(domain, "timesteps_max", text="Timesteps Maximum")
@@ -196,7 +200,10 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
             col = flow.column()
             if PhysicButtonsPanel.poll_gas_domain(context):
                 col.prop(domain, "clipping", text="Empty Space")
-            col.prop(domain, "delete_in_obstacle", text="Delete In Obstacle")
+            row = col.row()
+            row.use_property_split = False  
+            row.prop(domain, "delete_in_obstacle", text="Delete In Obstacle")
+            row.prop_decorator(domain, "delete_in_obstacle")
 
             if domain.cache_type == 'MODULAR':
                 col.separator()
@@ -393,7 +400,10 @@ class PHYSICS_PT_smoke_dissolve(PhysicButtonsPanel, Panel):
         col.prop(domain, "dissolve_speed", text="Time")
 
         col = flow.column()
-        col.prop(domain, "use_dissolve_smoke_log", text="Slow")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(domain, "use_dissolve_smoke_log", text="Slow")
+        row.prop_decorator(domain, "use_dissolve_smoke_log")
 
 
 class PHYSICS_PT_fire(PhysicButtonsPanel, Panel):
@@ -489,7 +499,10 @@ class PHYSICS_PT_liquid(PhysicButtonsPanel, Panel):
         col.prop(domain, "particle_band_width", text="Narrow Band Width")
 
         col = col.column()
-        col.prop(domain, "use_fractions", text="Fractional Obstacles")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(domain, "use_fractions", text="Fractional Obstacles")
+        row.prop_decorator(domain, "use_fractions")
         sub = col.column()
         sub.active = domain.use_fractions
         sub.prop(domain, "fractions_threshold", text="Obstacle-Fluid Threshold")
@@ -868,8 +881,14 @@ class PHYSICS_PT_particles(PhysicButtonsPanel, Panel):
         col = flow.column()
         row = col.row()
         row.enabled = sndparticle_combined_export in {'OFF', 'FOAM + BUBBLES'}
+        row = col.row()
+        row.use_property_split = False 
         row.prop(domain, "use_spray_particles", text="Spray")
+        row = col.row()
+        row.use_property_split = False 
         row.prop(domain, "use_foam_particles", text="Foam")
+        row = col.row()
+        row.use_property_split = False 
         row.prop(domain, "use_bubble_particles", text="Bubbles")
 
         col.separator()
