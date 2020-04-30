@@ -84,10 +84,16 @@ class PHYSICS_PT_rigid_body_settings(PHYSICS_PT_rigidbody_panel, Panel):
 
         if rbo.type == 'ACTIVE':
             col.prop(rbo, "mass")
-            col.prop(rbo, "enabled", text="Dynamic")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(rbo, "enabled", text="Dynamic")
+            row.prop_decorator(rbo, "enabled")
 
-        col = flow.column()
-        col.prop(rbo, "kinematic", text="Animated")
+        col = layout.column()
+        row = col.row()
+        row.use_property_split = False
+        row.prop(rbo, "kinematic", text="Animated")
+        row.prop_decorator(rbo, "kinematic")
 
 
 class PHYSICS_PT_rigid_body_collisions(PHYSICS_PT_rigidbody_panel, Panel):
@@ -113,7 +119,10 @@ class PHYSICS_PT_rigid_body_collisions(PHYSICS_PT_rigidbody_panel, Panel):
             layout.prop(rbo, "mesh_source", text="Source")
 
         if rbo.collision_shape == 'MESH' and rbo.mesh_source == 'DEFORM':
-            layout.prop(rbo, "use_deform", text="Deforming")
+            row = layout.row()
+            row.use_property_split = False
+            row.prop(rbo, "use_deform", text="Deforming")
+            row.prop_decorator(rbo, "use_deform")
 
 
 class PHYSICS_PT_rigid_body_collisions_surface(PHYSICS_PT_rigidbody_panel, Panel):
@@ -166,7 +175,10 @@ class PHYSICS_PT_rigid_body_collisions_sensitivity(PHYSICS_PT_rigidbody_panel, P
         else:
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
             col = flow.column()
-            col.prop(rbo, "use_margin")
+            row = col.row()
+            row.use_property_split = False   
+            row.prop(rbo, "use_margin")
+            row.prop_decorator(rbo, "use_margin")
 
             col = flow.column()
             col.active = rbo.use_margin
