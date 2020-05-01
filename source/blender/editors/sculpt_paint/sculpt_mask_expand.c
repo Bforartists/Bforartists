@@ -478,7 +478,7 @@ void SCULPT_OT_mask_expand(wmOperatorType *ot)
   /* Identifiers. */
   ot->name = "Mask Expand";
   ot->idname = "SCULPT_OT_mask_expand";
-  ot->description = "Expands a mask from the initial active vertex under the cursor";
+  ot->description = "Expands a mask from the initial active vertex under the cursor\nHotkey tool. It depends of the mouse position";
 
   /* API callbacks. */
   ot->invoke = sculpt_mask_expand_invoke;
