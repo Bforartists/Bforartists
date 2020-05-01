@@ -316,7 +316,7 @@ all: .FORCE
 	$(BUILD_COMMAND) -C "$(BUILD_DIR)" -j $(NPROCS) install
 	@echo
 	@echo edit build configuration with: "$(BUILD_DIR)/CMakeCache.txt" run make again to rebuild.
-	@echo Bforartists successfully built, run from: $(BFORARTISTS_BIN)
+	@echo Bforartists successfully built, run from: $(BLENDER_BIN)
 	@echo
 
 debug: all
