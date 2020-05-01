@@ -4642,7 +4642,7 @@ keyconfig_data = \
     ("outliner.id_copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
     ("outliner.id_paste", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
     ("outliner.object_operation",
-     {"type": 'DEL', "value": 'PRESS'},
+     {"type": 'DEL', "value": 'RELEASE'},
      {"properties":
       [("type", 'DELETE'),
        ],
