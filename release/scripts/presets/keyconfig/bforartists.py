@@ -6478,7 +6478,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("wm.call_menu",
+    ("wm.call_panel",
      {"type": 'NDOF_BUTTON_MENU', "value": 'PRESS'},
      {"properties":
       [("name", 'USERPREF_PT_ndof_settings'),
