@@ -29,8 +29,8 @@ from bpy.app.translations import contexts as i18n_contexts
 # Use by both image & clip context menus.
 def draw_mask_context_menu(layout, context):
     layout.operator_menu_enum("mask.handle_type_set", "type")
-    layout.operator("mask.switch_direction")
-    layout.operator("mask.cyclic_toggle")
+    layout.operator("mask.switch_direction", icon = "SWITCH_DIRECTION")
+    layout.operator("mask.cyclic_toggle", icon = "TOGGLE_CYCLIC")
 
     layout.separator()
     layout.operator("mask.copy_splines", icon='COPYDOWN')
@@ -38,18 +38,18 @@ def draw_mask_context_menu(layout, context):
 
     layout.separator()
 
-    layout.operator("mask.shape_key_rekey", text="Re-key Shape Points")
-    layout.operator("mask.feather_weight_clear")
-    layout.operator("mask.shape_key_feather_reset", text="Reset Feather Animation")
+    layout.operator("mask.shape_key_rekey", text="Re-key Shape Points", icon = "SHAPEKEY_DATA")
+    layout.operator("mask.feather_weight_clear", icon = "KEYFRAMES_CLEAR")
+    layout.operator("mask.shape_key_feather_reset", text="Reset Feather Animation", icon = "RESET")
 
     layout.separator()
 
-    layout.operator("mask.parent_set")
-    layout.operator("mask.parent_clear")
+    layout.operator("mask.parent_set", icon = "PARENT_SET")
+    layout.operator("mask.parent_clear", icon = "PARENT_CLEAR")
 
     layout.separator()
 
-    layout.operator("mask.delete")
+    layout.operator("mask.delete", icon = "DELETE")
 
 
 class MASK_UL_layers(UIList):
