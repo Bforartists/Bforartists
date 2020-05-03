@@ -447,12 +447,12 @@ static void bone_children_clear_transflag(int mode, short around, ListBase *lb)
   }
 }
 
-/* sets transform flags in the bones
- * returns total number of bones with BONE_TRANSFORM */
-int count_set_pose_transflags(Object *ob,
-                              const int mode,
-                              const short around,
-                              bool has_translate_rotate[2])
+/* Sets transform flags in the bones.
+ * Returns total number of bones with `BONE_TRANSFORM`. */
+int transform_convert_pose_transflags_update(Object *ob,
+                                             const int mode,
+                                             const short around,
+                                             bool has_translate_rotate[2])
 {
   bArmature *arm = ob->data;
   bPoseChannel *pchan;
@@ -819,25 +819,28 @@ void clipUVData(TransInfo *t)
  * \{ */
 
 /**
- * For modal operation: `t->center_global` may not have been set yet.
+ * Used for `TFM_TIME_EXTEND`.
  */
-void transform_convert_center_global_v2(TransInfo *t, float r_center[2])
+char transform_convert_frame_side_dir_get(TransInfo *t, float cframe)
 {
+  char r_dir;
+  float center[2];
   if (t->flag & T_MODAL) {
     UI_view2d_region_to_view(
-        (View2D *)t->view, t->mouse.imval[0], t->mouse.imval[1], &r_center[0], &r_center[1]);
+        (View2D *)t->view, t->mouse.imval[0], t->mouse.imval[1], &center[0], &center[1]);
+    r_dir = (center[0] > cframe) ? 'R' : 'L';
+    {
+      /* XXX: This saves the direction in the "mirror" property to be used for redo! */
+      if (r_dir == 'R') {
+        t->flag |= T_NO_MIRROR;
+      }
+    }
   }
   else {
-    copy_v2_v2(r_center, t->center_global);
+    r_dir = (t->flag & T_NO_MIRROR) ? 'R' : 'L';
   }
-}
 
-void transform_convert_center_global_v2_int(TransInfo *t, int r_center[2])
-{
-  float center[2];
-  transform_convert_center_global_v2(t, center);
-  r_center[0] = round_fl_to_int(center[0]);
-  r_center[1] = round_fl_to_int(center[1]);
+  return r_dir;
 }
 
 /* This function tests if a point is on the "mouse" side of the cursor/frame-marking */
@@ -2283,7 +2286,7 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
 
       /* set BONE_TRANSFORM flags for autokey, gizmo draw might have changed them */
       if (!canceled && (t->mode != TFM_DUMMY)) {
-        count_set_pose_transflags(ob, t->mode, t->around, NULL);
+        transform_convert_pose_transflags_update(ob, t->mode, t->around, NULL);
       }
 
       /* if target-less IK grabbing, we calculate the pchan transforms and clear flag */

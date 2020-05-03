@@ -388,6 +388,10 @@ void paint_brush_color_get(struct Scene *scene,
           break;
         }
       }
+      /* Gradient / Colorband colors are not considered PROP_COLOR_GAMMA.
+       * Brush colors are expected to be in sRGB though. */
+      IMB_colormanagement_scene_linear_to_srgb_v3(color_gr);
+
       copy_v3_v3(color, color_gr);
     }
     else {
@@ -1305,20 +1309,20 @@ void ED_imapaint_bucket_fill(struct bContext *C,
                              wmOperator *op,
                              const int mouse[2])
 {
-  wmWindowManager *wm = CTX_wm_manager(C);
   SpaceImage *sima = CTX_wm_space_image(C);
-  Image *ima = sima->image;
 
-  BKE_undosys_step_push_init_with_type(wm->undo_stack, C, op->type->name, BKE_UNDOSYS_TYPE_IMAGE);
+  if (sima && sima->image) {
+    Image *ima = sima->image;
 
-  ED_image_undo_push_begin(op->type->name, PAINT_MODE_TEXTURE_2D);
+    ED_image_undo_push_begin(op->type->name, PAINT_MODE_TEXTURE_2D);
 
-  float mouse_init[2] = {mouse[0], mouse[1]};
-  paint_2d_bucket_fill(C, color, NULL, mouse_init, NULL, NULL);
+    float mouse_init[2] = {mouse[0], mouse[1]};
+    paint_2d_bucket_fill(C, color, NULL, mouse_init, NULL, NULL);
 
-  BKE_undosys_step_push(wm->undo_stack, C, op->type->name);
+    ED_image_undo_push_end();
 
-  DEG_id_tag_update(&ima->id, 0);
+    DEG_id_tag_update(&ima->id, 0);
+  }
 }
 
 static bool texture_paint_poll(bContext *C)

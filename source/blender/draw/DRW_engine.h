@@ -77,7 +77,7 @@ typedef bool (*DRW_SelectPassFn)(eDRWSelectStage stage, void *user_data);
 typedef bool (*DRW_ObjectFilterFn)(struct Object *ob, void *user_data);
 
 void DRW_draw_view(const struct bContext *C);
-void DRW_draw_region_engine_info(int xoffset, int yoffset);
+void DRW_draw_region_engine_info(int xoffset, int *yoffset, int line_height);
 
 void DRW_draw_render_loop_ex(struct Depsgraph *depsgraph,
                              struct RenderEngineType *engine_type,
@@ -118,7 +118,8 @@ void DRW_draw_depth_loop_gpencil(struct Depsgraph *depsgraph,
                                  struct ARegion *region,
                                  struct View3D *v3d,
                                  struct GPUViewport *viewport);
-void DRW_draw_depth_object(struct ARegion *region,
+void DRW_draw_depth_object(struct Scene *scene,
+                           struct ARegion *region,
                            struct View3D *v3d,
                            struct GPUViewport *viewport,
                            struct Object *object);
