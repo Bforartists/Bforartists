@@ -268,12 +268,21 @@ void immBegin(GPUPrimType prim_type, uint vertex_len)
   else {
     /* orphan this buffer & start with a fresh one */
     /* this method works on all platforms, old & new */
-    glBufferData(GL_ARRAY_BUFFER, active_buffer->buffer_size, NULL, GL_DYNAMIC_DRAW);
+    /* `GL_DYNAMIC_DRAW` was causing problems when closing temporary windows on old AMD GPUs. */
+    glBufferData(GL_ARRAY_BUFFER, active_buffer->buffer_size, NULL, GL_STATIC_DRAW);
 
     active_buffer->buffer_offset = 0;
   }
 
   /*  printf("mapping %u to %u\n", imm.buffer_offset, imm.buffer_offset + bytes_needed - 1); */
+
+#if TRUST_NO_ONE
+  {
+    GLint bufsize;
+    glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &bufsize);
+    assert(active_buffer->buffer_offset + bytes_needed <= bufsize);
+  }
+#endif
 
   active_buffer->buffer_data = glMapBufferRange(
       GL_ARRAY_BUFFER,

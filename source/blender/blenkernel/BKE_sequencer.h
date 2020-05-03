@@ -218,6 +218,15 @@ struct ImBuf *BKE_sequencer_give_ibuf_seqbase(const SeqRenderData *context,
                                               float cfra,
                                               int chan_shown,
                                               struct ListBase *seqbasep);
+struct ImBuf *BKE_sequencer_effect_execute_threaded(struct SeqEffectHandle *sh,
+                                                    const SeqRenderData *context,
+                                                    struct Sequence *seq,
+                                                    float cfra,
+                                                    float facf0,
+                                                    float facf1,
+                                                    struct ImBuf *ibuf1,
+                                                    struct ImBuf *ibuf2,
+                                                    struct ImBuf *ibuf3);
 
 /* **********************************************************************
  * sequencer.c
@@ -374,6 +383,10 @@ struct Sequence *BKE_sequencer_prefetch_get_original_sequence(struct Sequence *s
 /* intern */
 struct SeqEffectHandle BKE_sequence_get_blend(struct Sequence *seq);
 void BKE_sequence_effect_speed_rebuild_map(struct Scene *scene, struct Sequence *seq, bool force);
+float BKE_sequencer_speed_effect_target_frame_get(const SeqRenderData *context,
+                                                  struct Sequence *seq,
+                                                  float cfra,
+                                                  int input);
 
 /* extern */
 struct SeqEffectHandle BKE_sequence_get_effect(struct Sequence *seq);
@@ -496,6 +509,7 @@ typedef struct SeqLoadInfo {
 #define SEQ_DUPE_CONTEXT (1 << 1)
 #define SEQ_DUPE_ANIM (1 << 2)
 #define SEQ_DUPE_ALL (1 << 3) /* otherwise only selected are copied */
+#define SEQ_DUPE_IS_RECURSIVE_CALL (1 << 4)
 
 /* use as an api function */
 typedef struct Sequence *(*SeqLoadFn)(struct bContext *, ListBase *, struct SeqLoadInfo *);
@@ -506,6 +520,7 @@ void BKE_sequence_alpha_mode_from_extension(struct Sequence *seq);
 void BKE_sequence_init_colorspace(struct Sequence *seq);
 
 float BKE_sequence_get_fps(struct Scene *scene, struct Sequence *seq);
+float BKE_sequencer_give_stripelem_index(struct Sequence *seq, float cfra);
 
 /* RNA enums, just to be more readable */
 enum {
