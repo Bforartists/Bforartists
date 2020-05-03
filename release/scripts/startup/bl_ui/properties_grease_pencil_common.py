@@ -362,6 +362,35 @@ class GPENCIL_MT_layer_active(Menu):
         layout.operator("gpencil.layer_add", text="New Layer", icon='ADD')
 
 
+class GPENCIL_MT_material_active(Menu):
+    bl_label = "Change Active Material"
+
+    @classmethod
+    def poll(cls, context):
+        ob = context.active_object
+        tool_settings = context.scene.tool_settings
+        mode = tool_settings.gpencil_paint.color_mode
+        if mode != 'MATERIAL':
+            return False
+
+        if ob is None or len(ob.material_slots) == 0:
+            return False
+
+        return True
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        ob = context.active_object
+        mat_active = ob.active_material
+
+        for slot in ob.material_slots:
+            mat = slot.material
+            if mat:
+                icon = mat.id_data.preview.icon_id
+                layout.operator("gpencil.material_set", text=mat.name, icon_value=icon).slot = mat.name
+
+
 class GPENCIL_MT_gpencil_draw_delete(Menu):
     bl_label = "Delete"
 
@@ -387,7 +416,7 @@ class GPENCIL_MT_cleanup(Menu):
 
         if ob.mode != 'PAINT_GPENCIL':
             layout.operator("gpencil.stroke_merge_by_distance", text="Merge by Distance", icon = "MERGE")
- 
+
         layout.separator()
 
         layout.operator("gpencil.frame_clean_fill", text="Boundary Strokes", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
@@ -633,8 +662,8 @@ class GreasePencilMaterialsPanel:
                 if ob.data.use_stroke_edit_mode:
                     row = layout.row(align=True)
                     row.operator("gpencil.stroke_change_color", text="Assign")
-                    row.operator("gpencil.select_material", text="Select").deselect = False
-                    row.operator("gpencil.select_material", text="Deselect").deselect = True
+                    row.operator("gpencil.material_select", text="Select").deselect = False
+                    row.operator("gpencil.material_select", text="Deselect").deselect = True
         # stroke color
             ma = None
             if is_view3d and brush is not None:
@@ -934,6 +963,7 @@ classes = (
     GPENCIL_MT_cleanup,
     GPENCIL_MT_move_to_layer,
     GPENCIL_MT_layer_active,
+    GPENCIL_MT_material_active,
 
     GPENCIL_MT_gpencil_draw_delete,
     GPENCIL_MT_layer_mask_menu,

@@ -134,19 +134,29 @@ static bool seq_prefetch_job_is_waiting(Scene *scene)
   return pfjob->waiting;
 }
 
+static Sequence *sequencer_prefetch_get_original_sequence(Sequence *seq, ListBase *seqbase)
+{
+  LISTBASE_FOREACH (Sequence *, seq_orig, seqbase) {
+    if (strcmp(seq->name, seq_orig->name) == 0) {
+      return seq_orig;
+    }
+
+    if (seq_orig->type == SEQ_TYPE_META) {
+      Sequence *match = sequencer_prefetch_get_original_sequence(seq, &seq_orig->seqbase);
+      if (match != NULL) {
+        return match;
+      }
+    }
+  }
+
+  return NULL;
+}
+
 /* for cache context swapping */
 Sequence *BKE_sequencer_prefetch_get_original_sequence(Sequence *seq, Scene *scene)
 {
   Editing *ed = scene->ed;
-  ListBase *seqbase = &ed->seqbase;
-  Sequence *seq_orig = NULL;
-
-  for (seq_orig = (Sequence *)seqbase->first; seq_orig; seq_orig = seq_orig->next) {
-    if (strcmp(seq->name, seq_orig->name) == 0) {
-      break;
-    }
-  }
-  return seq_orig;
+  return sequencer_prefetch_get_original_sequence(seq, &ed->seqbase);
 }
 
 /* for cache context swapping */
@@ -331,13 +341,13 @@ static void *seq_prefetch_frames(void *job)
   while (pfjob->cfra + pfjob->num_frames_prefetched <= pfjob->scene->r.efra) {
     pfjob->scene_eval->ed->prefetch_job = NULL;
 
+    seq_prefetch_update_depsgraph(pfjob);
     AnimData *adt = BKE_animdata_from_id(&pfjob->context_cpy.scene->id);
     BKE_animsys_evaluate_animdata(&pfjob->context_cpy.scene->id,
                                   adt,
                                   pfjob->cfra + pfjob->num_frames_prefetched,
                                   ADT_RECALC_ALL,
                                   false);
-    seq_prefetch_update_depsgraph(pfjob);
 
     /* This is quite hacky solution:
      * We need cross-reference original scene with copy for cache.
