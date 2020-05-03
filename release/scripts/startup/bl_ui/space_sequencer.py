@@ -243,7 +243,7 @@ class SEQUENCER_MT_preview_zoom(Menu):
 
             layout.operator(
                 "sequencer.view_zoom_ratio",
-                text=iface_("Zoom %d:%d") % (a, b), icon = "ZOOM_SET", 
+                text=iface_("Zoom %d:%d") % (a, b), icon = "ZOOM_SET",
                 translate=False,
             ).ratio = a / b
         layout.operator_context = 'INVOKE_DEFAULT'
@@ -287,7 +287,7 @@ class SEQUENCER_MT_view(Menu):
 
             layout.separator()
 
-            layout.operator("sequencer.view_all_preview", text="Fit Preview in window", icon = "VIEW_FIT")     
+            layout.operator("sequencer.view_all_preview", text="Fit Preview in window", icon = "VIEW_FIT")
 
             if is_sequencer_view:
                 layout.menu("SEQUENCER_MT_preview_zoom", text="Fractional Preview Zoom")
@@ -1154,6 +1154,8 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
         col = layout.column(align=True)
         if strip_type == 'SPEED':
             col.prop(strip, "multiply_speed")
+            col.prop(strip, "frame_interpolation_mode")
+
         elif strip_type in {'CROSS', 'GAMMA_CROSS', 'WIPE', 'ALPHA_OVER', 'ALPHA_UNDER', 'OVER_DROP'}:
             col.prop(strip, "use_default_fade", text="Default fade")
             if not strip.use_default_fade:
@@ -1306,7 +1308,7 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
                 col.prop(strip.colorspace_settings, "name", text="Color Space")
                 col.prop(strip, "mpeg_preseek")
                 col.prop(strip, "stream_index")
-                
+
                 col.use_property_split = False
                 col.prop(strip, "use_deinterlace")
                 col.use_property_split = True
@@ -1899,17 +1901,17 @@ class SEQUENCER_PT_strip_proxy(SequencerButtonsPanel, Panel):
                     flow.prop(proxy, "directory")
                 if proxy.use_proxy_custom_file:
                     flow.prop(proxy, "filepath")
-            
+
             layout.use_property_split = True
             row = layout.row(heading="Resolutions", align=True)
             row.prop(strip.proxy, "build_25", toggle=True)
             row.prop(strip.proxy, "build_50", toggle=True)
-            row.prop(strip.proxy, "build_75", toggle=True)       
+            row.prop(strip.proxy, "build_75", toggle=True)
             row.prop(strip.proxy, "build_100", toggle=True)
-            
+
             layout.use_property_split = False
             layout.prop(proxy, "use_overwrite")
-            
+
             layout.use_property_split = True
 
             col = layout.column()
@@ -1995,10 +1997,10 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
         elif st.display_mode == 'WAVEFORM':
             col.use_property_split = False
             col.prop(st, "show_separate_color")
-        
+
         col.use_property_split = True
         col.prop(st, "proxy_render_size")
-        
+
         col.use_property_split = False
         col.prop(ed, "use_prefetch")
 
@@ -2013,7 +2015,7 @@ class SEQUENCER_PT_frame_overlay(SequencerButtonsPanel_Output, Panel):
         ed = scene.sequence_editor
 
         self.layout.prop(ed, "show_overlay", text="")
-        
+
     def draw_header(self, context):
         scene = context.scene
         ed = scene.sequence_editor
@@ -2119,10 +2121,12 @@ class SEQUENCER_PT_modifiers(SequencerButtonsPanel, Panel):
             box = layout.box()
 
             row = box.row()
+            row.use_property_decorate = False
             row.prop(mod, "show_expanded", text="", emboss=False)
             row.prop(mod, "name", text="")
 
             row.prop(mod, "mute", text="")
+            row.use_property_decorate = True
 
             sub = row.row(align=True)
             props = sub.operator("sequencer.strip_modifier_move", text="", icon='TRIA_UP')
@@ -2241,7 +2245,7 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
             layout.prop(st, "waveform_display_type")
 
             layout.separator()
-            
+
             layout.use_property_split = False
             layout.prop(st, "show_markers")
 

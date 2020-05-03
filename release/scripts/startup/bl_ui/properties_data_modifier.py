@@ -686,8 +686,7 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         split = layout.split()
         col = split.column()
         col.prop(md, "levels", text="Preview")
-        # TODO(sergey): Expose it again after T58473 is solved.
-        # col.prop(md, "sculpt_levels", text="Sculpt")
+        col.prop(md, "sculpt_levels", text="Sculpt")
         col.prop(md, "render_levels", text="Render")
 
         row = col.row()
@@ -697,10 +696,20 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         col = split.column()
 
         col.enabled = ob.mode != 'EDIT'
-        col.operator("object.multires_subdivide", text="Subdivide")
+        op = col.operator("object.multires_subdivide", text="Subdivide")
+        op.mode = 'CATMULL_CLARK'
+
+        op = col.operator("object.multires_subdivide", text="Subdivide Simple")
+        op.mode = 'SIMPLE'
+
+        op = col.operator("object.multires_subdivide", text="Subdivide Linear")
+        op.mode = 'LINEAR'
+
         col.operator("object.multires_higher_levels_delete", text="Delete Higher")
+        col.operator("object.multires_unsubdivide", text="Unsubdivide")
         col.operator("object.multires_reshape", text="Reshape")
         col.operator("object.multires_base_apply", text="Apply Base")
+        col.operator("object.multires_rebuild_subdiv", text="Rebuild Subdivisions")
         col.prop(md, "uv_smooth", text="")
         col.prop(md, "show_only_control_edges")
         col.prop(md, "use_creases")
@@ -1341,7 +1350,7 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         if md.mode == 'VOXEL':
             layout.prop(md, "voxel_size")
             layout.prop(md, "adaptivity")
-        else: 
+        else:
             row.prop(md, "octree_depth")
             row.prop(md, "scale")
 
@@ -1981,7 +1990,7 @@ class DATA_PT_gpencil_modifiers(ModifierButtonsPanel, Panel):
 
         col.prop(md, "mode")
         if md.mode in {'STROKE', 'STROKE_AND_FILL'}:
-            col.label(text="Stroke Texture Control:")
+            col.label(text="Stroke Texture:")
             col.prop(md, "fit_method")
             col.prop(md, "uv_offset")
             col.prop(md, "uv_scale")
@@ -1990,7 +1999,7 @@ class DATA_PT_gpencil_modifiers(ModifierButtonsPanel, Panel):
             col.separator()
 
         if md.mode in {'FILL', 'STROKE_AND_FILL'}:
-            col.label(text="Fill Texture Control:")
+            col.label(text="Fill Texture:")
             col.prop(md, "fill_rotation", text="Rotation")
             col.prop(md, "fill_offset", text="Location")
             col.prop(md, "fill_scale", text="Scale")

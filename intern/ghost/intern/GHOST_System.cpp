@@ -309,12 +309,12 @@ GHOST_TSuccess GHOST_System::init()
   m_windowManager = new GHOST_WindowManager();
   m_eventManager = new GHOST_EventManager();
 
-#ifdef GHOST_DEBUG
+#ifdef WITH_GHOST_DEBUG
   if (m_eventManager) {
     m_eventPrinter = new GHOST_EventPrinter();
     m_eventManager->addConsumer(m_eventPrinter);
   }
-#endif  // GHOST_DEBUG
+#endif  // WITH_GHOST_DEBUG
 
   if (m_timerManager && m_windowManager && m_eventManager) {
     return GHOST_kSuccess;
@@ -367,7 +367,7 @@ GHOST_TSuccess GHOST_System::createFullScreenWindow(GHOST_Window **window,
   GHOST_ASSERT(m_displayManager,
                "GHOST_System::createFullScreenWindow(): invalid display manager");
   // GHOST_PRINT("GHOST_System::createFullScreenWindow(): creating full-screen window\n");
-  *window = (GHOST_Window *)createWindow(STR_String(""),
+  *window = (GHOST_Window *)createWindow("",
                                          0,
                                          0,
                                          settings.xPixels,

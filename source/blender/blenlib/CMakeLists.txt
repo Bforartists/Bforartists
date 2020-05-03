@@ -64,6 +64,7 @@ set(SRC
   intern/buffer.c
   intern/convexhull_2d.c
   intern/delaunay_2d.c
+  intern/dot_export.cc
   intern/dynlib.c
   intern/easing.c
   intern/edgehash.c
@@ -118,8 +119,10 @@ set(SRC
   intern/string_utf8.c
   intern/string_utils.c
   intern/system.c
-  intern/task_pool.cc
   intern/task_iterator.c
+  intern/task_pool.cc
+  intern/task_range.cc
+  intern/task_scheduler.cc
   intern/threads.c
   intern/time.c
   intern/timecode.c
@@ -161,6 +164,8 @@ set(SRC
   BLI_delaunay_2d.h
   BLI_dial_2d.h
   BLI_dlrbTree.h
+  BLI_dot_export.hh
+  BLI_dot_export_attribute_enums.hh
   BLI_dynlib.h
   BLI_dynstr.h
   BLI_easing.h
@@ -275,12 +280,23 @@ if(WITH_MEM_VALGRIND)
   add_definitions(-DWITH_MEM_VALGRIND)
 endif()
 
+if(WITH_TBB)
+  add_definitions(-DWITH_TBB)
+
+  list(APPEND INC_SYS
+    ${TBB_INCLUDE_DIRS}
+  )
+endif()
+
 if(WIN32)
   list(APPEND INC
     ../../../intern/utfconv
   )
   list(APPEND LIB
     bf_intern_utfconv
+  )
+  list(APPEND SRC
+    intern/system_win32.c
   )
 endif()
 
