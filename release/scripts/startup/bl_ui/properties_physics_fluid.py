@@ -178,10 +178,10 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
 
             col = flow.column()
             row = col.row()
-            row.use_property_split = False              
+            row.use_property_split = False
             row.prop(domain, "use_adaptive_timesteps")
             row.prop_decorator(domain, "use_adaptive_timesteps")
-            
+
             sub = col.column(align=True)
             sub.active = domain.use_adaptive_timesteps
             sub.prop(domain, "timesteps_max", text="Timesteps Maximum")
@@ -201,7 +201,7 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
             if PhysicButtonsPanel.poll_gas_domain(context):
                 col.prop(domain, "clipping", text="Empty Space")
             row = col.row()
-            row.use_property_split = False  
+            row.use_property_split = False
             row.prop(domain, "delete_in_obstacle", text="Delete In Obstacle")
             row.prop_decorator(domain, "delete_in_obstacle")
 
@@ -882,13 +882,13 @@ class PHYSICS_PT_particles(PhysicButtonsPanel, Panel):
         row = col.row()
         row.enabled = sndparticle_combined_export in {'OFF', 'FOAM + BUBBLES'}
         row = col.row()
-        row.use_property_split = False 
+        row.use_property_split = False
         row.prop(domain, "use_spray_particles", text="Spray")
         row = col.row()
-        row.use_property_split = False 
+        row.use_property_split = False
         row.prop(domain, "use_foam_particles", text="Foam")
         row = col.row()
-        row.use_property_split = False 
+        row.use_property_split = False
         row.prop(domain, "use_bubble_particles", text="Bubbles")
 
         col.separator()
@@ -1021,7 +1021,6 @@ class PHYSICS_PT_diffusion(PhysicButtonsPanel, Panel):
         col.prop(domain, "viscosity_exponent", text="Exponent", slider=True)
 
         col = flow.column()
-        col.prop(domain, "domain_size", text="Real World Size")
         col.prop(domain, "surface_tension", text="Surface Tension")
 
 

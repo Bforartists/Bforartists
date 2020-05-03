@@ -163,6 +163,8 @@ class TEXTURE_PT_node(TextureButtonsPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
+        layout.use_property_split = True
+
         node = context.texture_node
         ntree = node.id_data
         layout.template_node_view(ntree, node, None)
@@ -387,9 +389,9 @@ def texture_filter_common(tex, layout):
             col.prop(tex, "filter_eccentricity", text="Eccentricity")
 
     layout.prop(tex, "filter_size", text="Size")
-    
+
     row = layout.row()
-    row.use_property_split = False    
+    row.use_property_split = False
     row.prop(tex, "use_filter_size_min", text="Minimum Size")
     row.prop_decorator(tex, "use_filter_size_min")
 
@@ -411,20 +413,20 @@ class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
         col = flow.column()
 
         row = col.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(tex, "use_interpolation")
         row.prop_decorator(tex, "use_interpolation")
-        
+
         row = col.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(tex, "use_mipmap")
         row.prop_decorator(tex, "use_mipmap")
-        
+
         if tex.use_mipmap:
-        
+
             row = col.row()
-            row.use_property_split = False  
-            row.separator()  
+            row.use_property_split = False
+            row.separator()
             row.prop(tex, "use_mipmap_gauss", text="Gaussian Filter")
             row.prop_decorator(tex, "use_mipmap_gauss")
 
@@ -470,9 +472,9 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
         layout.use_property_split = True
 
         tex = context.texture
-        
+
         row = layout.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(tex, "use_flip_axis", text="Flip Axes")
         row.prop_decorator(tex, "use_flip_axis")
 
@@ -487,16 +489,16 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
             sub = col.column(align=True)
             sub.prop(tex, "repeat_x", text="Repeat X")
             sub.prop(tex, "repeat_y", text="Y")
-            
+
             row = layout.row()
             row.active = (tex.repeat_x > 1)
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(tex, "use_mirror_x", text="Mirror X")
             row.prop_decorator(tex, "use_mirror_x")
-            
+
             row = layout.row()
             row.active = (tex.repeat_y > 1)
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(tex, "use_mirror_y", text="Y")
             row.prop_decorator(tex, "use_mirror_y")
 
@@ -506,14 +508,14 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
             col.prop(tex, "checker_distance", text="Distance")
 
             col = flow.column()
-            
-            row = layout.row()
-            row.use_property_split = False    
-            row.prop(tex, "use_checker_even", text="Tiles Even")
-            row.prop_decorator(tex, "use_checker_even")   
 
             row = layout.row()
-            row.use_property_split = False    
+            row.use_property_split = False
+            row.prop(tex, "use_checker_even", text="Tiles Even")
+            row.prop_decorator(tex, "use_checker_even")
+
+            row = layout.row()
+            row.use_property_split = False
             row.prop(tex, "use_checker_odd", text="Odd")
             row.prop_decorator(tex, "use_checker_odd")
 
@@ -844,12 +846,12 @@ class TEXTURE_PT_colors(TextureButtonsPanel, TextureColorsPoll, Panel):
         tex = context.texture
 
         col = flow.column()
-        
+
         row = col.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(tex, "use_clamp", text="Clamp")
         row.prop_decorator(tex, "use_clamp")
-        
+
         col.separator()
 
         col = flow.column(align=True)
