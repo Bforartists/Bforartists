@@ -335,12 +335,7 @@ typedef struct uiHandleButtonData {
   int maxlen;
   /* Button text selection:
    * extension direction, selextend, inside ui_do_but_TEX */
-  enum {
-    EXTEND_NONE = 0,
-    EXTEND_LEFT = 1,
-    EXTEND_RIGHT = 2,
-  } selextend;
-  float selstartx;
+  int sel_pos_init;
   /* allow to realloc str/editstr and use 'maxlen' to track alloc size (maxlen + 1) */
   bool is_str_dynamic;
 
@@ -2853,6 +2848,23 @@ static bool ui_textedit_delete_selection(uiBut *but, uiHandleButtonData *data)
   return changed;
 }
 
+static bool ui_textedit_set_cursor_pos_foreach_glyph(const char *UNUSED(str),
+                                                     const size_t str_step_ofs,
+                                                     const rcti *glyph_step_bounds,
+                                                     const int UNUSED(glyph_advance_x),
+                                                     const rctf *glyph_bounds,
+                                                     const float UNUSED(glyph_bearing[2]),
+                                                     void *user_data)
+{
+  int *cursor_data = user_data;
+  float center = glyph_step_bounds->xmin + (BLI_rctf_size_x(glyph_bounds) / 2.0f);
+  if (cursor_data[0] < center) {
+    cursor_data[1] = str_step_ofs;
+    return false;
+  }
+  return true;
+}
+
 /**
  * \param x: Screen space cursor location - #wmEvent.x
  *
@@ -2888,8 +2900,7 @@ static void ui_textedit_set_cursor_pos(uiBut *but, uiHandleButtonData *data, con
       startx += UI_DPI_ICON_SIZE / aspect;
     }
   }
-  /* But this extra .05 makes clicks in between characters feel nicer. */
-  startx += ((UI_TEXT_MARGIN_X + 0.05f) * U.widget_unit) / aspect;
+  startx += (UI_TEXT_MARGIN_X * U.widget_unit) / aspect;
 
   /* mouse dragged outside the widget to the left */
   if (x < startx) {
@@ -2912,48 +2923,24 @@ static void ui_textedit_set_cursor_pos(uiBut *but, uiHandleButtonData *data, con
     but->pos = but->ofs;
   }
   /* mouse inside the widget, mouse coords mapped in widget space */
-  else { /* (x >= startx) */
-    int pos_i;
-
-    /* keep track of previous distance from the cursor to the char */
-    float cdist, cdist_prev = 0.0f;
-    short pos_prev;
-
-    str_last = &str[strlen(str)];
-
-    but->pos = pos_prev = ((str_last - str) - but->ofs);
-
-    while (true) {
-      cdist = startx + BLF_width(fstyle.uifont_id, str + but->ofs, (str_last - str) - but->ofs);
-
-      /* check if position is found */
-      if (cdist < x) {
-        /* check is previous location was in fact closer */
-        if ((x - cdist) > (cdist_prev - x)) {
-          but->pos = pos_prev;
-        }
-        break;
-      }
-      cdist_prev = cdist;
-      pos_prev = but->pos;
-      /* done with tricky distance checks */
-
-      pos_i = but->pos;
-      if (but->pos <= 0) {
-        break;
-      }
-      if (BLI_str_cursor_step_prev_utf8(str + but->ofs, but->ofs, &pos_i)) {
-        but->pos = pos_i;
-        str_last = &str[but->pos + but->ofs];
-      }
-      else {
-        break; /* unlikely but possible */
-      }
+  else {
+    str_last = &str[but->ofs];
+    const int str_last_len = strlen(str_last);
+    int x_pos = (int)(x - startx);
+    int glyph_data[2] = {
+        x_pos, /* horizontal position to test. */
+        -1,    /* Write the character offset here. */
+    };
+    BLF_boundbox_foreach_glyph(fstyle.uifont_id,
+                               str + but->ofs,
+                               INT_MAX,
+                               ui_textedit_set_cursor_pos_foreach_glyph,
+                               glyph_data);
+    /* If value untouched then we are to the right. */
+    if (glyph_data[1] == -1) {
+      glyph_data[1] = str_last_len;
     }
-    but->pos += but->ofs;
-    if (but->pos < 0) {
-      but->pos = 0;
-    }
+    but->pos = glyph_data[1] + but->ofs;
   }
 
   if (fstyle.kerning == 1) {
@@ -2965,20 +2952,12 @@ static void ui_textedit_set_cursor_pos(uiBut *but, uiHandleButtonData *data, con
 
 static void ui_textedit_set_cursor_select(uiBut *but, uiHandleButtonData *data, const float x)
 {
-  if (x > data->selstartx) {
-    data->selextend = EXTEND_RIGHT;
-  }
-  else if (x < data->selstartx) {
-    data->selextend = EXTEND_LEFT;
-  }
-
   ui_textedit_set_cursor_pos(but, data, x);
 
-  if (data->selextend == EXTEND_RIGHT) {
-    but->selend = but->pos;
-  }
-  else if (data->selextend == EXTEND_LEFT) {
-    but->selsta = but->pos;
+  but->selsta = but->pos;
+  but->selend = data->sel_pos_init;
+  if (but->selend < but->selsta) {
+    SWAP(short, but->selsta, but->selend);
   }
 
   ui_but_update(but);
@@ -3074,7 +3053,7 @@ static void ui_textedit_move(uiBut *but,
         but->pos = but->selend = but->selsta;
       }
     }
-    data->selextend = EXTEND_NONE;
+    data->sel_pos_init = but->pos;
   }
   else {
     int pos_i = but->pos;
@@ -3082,48 +3061,14 @@ static void ui_textedit_move(uiBut *but,
     but->pos = pos_i;
 
     if (select) {
-      /* existing selection */
-      if (has_sel) {
-
-        if (data->selextend == EXTEND_NONE) {
-          data->selextend = EXTEND_RIGHT;
-        }
-
-        if (direction) {
-          if (data->selextend == EXTEND_RIGHT) {
-            but->selend = but->pos;
-          }
-          else {
-            but->selsta = but->pos;
-          }
-        }
-        else {
-          if (data->selextend == EXTEND_LEFT) {
-            but->selsta = but->pos;
-          }
-          else {
-            but->selend = but->pos;
-          }
-        }
-
-        if (but->selend < but->selsta) {
-          SWAP(short, but->selsta, but->selend);
-          data->selextend = (data->selextend == EXTEND_RIGHT) ? EXTEND_LEFT : EXTEND_RIGHT;
-        }
-
-      } /* new selection */
-      else {
-        if (direction) {
-          data->selextend = EXTEND_RIGHT;
-          but->selend = but->pos;
-          but->selsta = pos_prev;
-        }
-        else {
-          data->selextend = EXTEND_LEFT;
-          but->selend = pos_prev;
-          but->selsta = but->pos;
-        }
+      if (has_sel == false) {
+        data->sel_pos_init = pos_prev;
       }
+      but->selsta = but->pos;
+      but->selend = data->sel_pos_init;
+    }
+    if (but->selend < but->selsta) {
+      SWAP(short, but->selsta, but->selend);
     }
   }
 }
@@ -3353,8 +3298,7 @@ static void ui_textedit_begin(bContext *C, uiBut *but, uiHandleButtonData *data)
   len = strlen(data->str);
 
   data->origstr = BLI_strdupn(data->str, len);
-  data->selextend = EXTEND_NONE;
-  data->selstartx = 0.0f;
+  data->sel_pos_init = 0;
 
   /* set cursor pos to the end of the text */
   but->editstr = data->str;
@@ -3560,7 +3504,7 @@ static void ui_do_but_textedit(
         if (ui_but_contains_pt(but, mx, my)) {
           ui_textedit_set_cursor_pos(but, data, event->x);
           but->selsta = but->selend = but->pos;
-          data->selstartx = event->x;
+          data->sel_pos_init = but->pos;
 
           button_activate_state(C, but, BUTTON_STATE_TEXT_SELECTING);
           retval = WM_UI_HANDLER_BREAK;

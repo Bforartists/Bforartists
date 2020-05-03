@@ -172,10 +172,11 @@ class EEVEE_MATERIAL_PT_surface(MaterialButtonsPanel, Panel):
         layout.prop(mat, "use_nodes", icon='NODETREE')
         layout.separator()
 
+        layout.use_property_split = True
+
         if mat.use_nodes:
             panel_node_draw(layout, mat.node_tree, 'OUTPUT_MATERIAL', "Surface")
         else:
-            layout.use_property_split = True
             layout.prop(mat, "diffuse_color", text="Base Color")
             layout.prop(mat, "metallic")
             layout.prop(mat, "specular_intensity", text="Specular")
@@ -197,6 +198,8 @@ class EEVEE_MATERIAL_PT_volume(MaterialButtonsPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
+        layout.use_property_split = True
+
         mat = context.material
 
         panel_node_draw(layout, mat.node_tree, 'OUTPUT_MATERIAL', "Volume")
@@ -208,11 +211,11 @@ def draw_material_settings(self, context):
     layout.use_property_decorate = False
 
     mat = context.material
-    
+
     layout.use_property_split = False
     layout.prop(mat, "use_backface_culling")
     layout.use_property_split = True
-    
+
     layout.prop(mat, "blend_method")
     layout.prop(mat, "shadow_method")
 
@@ -223,14 +226,14 @@ def draw_material_settings(self, context):
 
     if mat.blend_method not in {'OPAQUE', 'CLIP', 'HASHED'}:
         layout.prop(mat, "show_transparent_back")
-        
-    row = layout.row()       
+
+    row = layout.row()
     row.use_property_split = False
     row.prop(mat, "use_screen_refraction")
     if mat.use_screen_refraction:
         row.prop(mat, "refraction_depth", text = "")
-    
-    row = layout.row()  
+
+    row = layout.row()
     row.use_property_split = False
     row.prop(mat, "use_sss_translucency")
     if mat.use_sss_translucency:

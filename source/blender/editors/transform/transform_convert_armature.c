@@ -669,7 +669,9 @@ void createTransPose(TransInfo *t)
     const bool mirror = ((pose->flag & POSE_MIRROR_EDIT) != 0);
 
     /* set flags and count total */
-    tc->data_len = count_set_pose_transflags(ob, t->mode, t->around, has_translate_rotate);
+    tc->data_len = transform_convert_pose_transflags_update(
+        ob, t->mode, t->around, has_translate_rotate);
+
     if (tc->data_len == 0) {
       continue;
     }
@@ -685,6 +687,9 @@ void createTransPose(TransInfo *t)
     if (mirror) {
       int total_mirrored = 0;
       LISTBASE_FOREACH (bPoseChannel *, pchan, &ob->pose->chanbase) {
+        /* Clear the MIRROR flag from previous runs. */
+        pchan->bone->flag &= ~BONE_TRANSFORM_MIRROR;
+
         if ((pchan->bone->flag & BONE_TRANSFORM) &&
             BKE_pose_channel_get_mirrored(ob->pose, pchan->name)) {
           total_mirrored++;

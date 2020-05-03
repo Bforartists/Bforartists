@@ -2048,6 +2048,7 @@ static int object_duplicates_make_real_exec(bContext *C, wmOperator *op)
   DEG_relations_tag_update(bmain);
   WM_event_add_notifier(C, NC_SCENE, scene);
   WM_main_add_notifier(NC_OBJECT | ND_DRAW, NULL);
+  ED_outliner_select_sync_from_object_tag(C);
 
   return OPERATOR_FINISHED;
 }
@@ -2380,13 +2381,8 @@ static int convert_exec(bContext *C, wmOperator *op)
 
       cu = newob->data;
 
-      /* TODO(sergey): Ideally DAG will create nurbs list for a curve data
-       *               datablock, but for until we've got granular update
-       *               lets take care by selves.
-       */
-      /* XXX This may fail/crash, since BKE_vfont_to_curve()
-       * accesses evaluated data in some cases (bastien). */
-      BKE_vfont_to_curve(newob, FO_EDIT);
+      Object *ob_eval = DEG_get_evaluated_object(depsgraph, ob);
+      BKE_vfont_to_curve_ex(ob_eval, ob_eval->data, FO_EDIT, &cu->nurb, NULL, NULL, NULL, NULL);
 
       newob->type = OB_CURVE;
       cu->type = OB_CURVE;

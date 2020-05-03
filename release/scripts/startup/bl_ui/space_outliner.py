@@ -27,8 +27,8 @@ from bpy.app.translations import (
 
 ################################ Switch between the editors ##########################################
 
-# Editor types: 
-# ('VIEW_3D', 'TIMELINE', 'GRAPH_EDITOR', 'DOPESHEET_EDITOR', 'NLA_EDITOR', 'IMAGE_EDITOR', 
+# Editor types:
+# ('VIEW_3D', 'TIMELINE', 'GRAPH_EDITOR', 'DOPESHEET_EDITOR', 'NLA_EDITOR', 'IMAGE_EDITOR',
 # 'CLIP_EDITOR', 'TEXT_EDITOR', 'NODE_EDITOR', 'PROPERTIES', 'OUTLINER', 'USER_PREFERENCES', 'INFO', 'FILE_BROWSE)
 
 class OUTLINER_OT_switch_editors_to_properties(bpy.types.Operator):
@@ -49,7 +49,7 @@ class OUTLINER_OT_switch_editors_to_outliner(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.wm.context_set_enum(data_path="area.type", value="OUTLINER")
-        return {'FINISHED'} 
+        return {'FINISHED'}
 
 
 class OUTLINER_HT_header(Header):
@@ -75,14 +75,14 @@ class OUTLINER_HT_header(Header):
         layout.prop(space, "display_mode", icon_only=True)
 
         OUTLINER_MT_editor_menus.draw_collapsible(context, layout) # Collapsing everything in OUTLINER_MT_editor_menus when ticking collapse menus checkbox
-      
+
         layout.separator_spacer()
 
         row = layout.row(align=True)
 
         row.prop(addon_prefs,"outliner_show_search", icon='VIEWZOOM', text = "") # show search text prop
         if addon_prefs.outliner_show_search:
-            row.prop(space, "filter_text", text="")     
+            row.prop(space, "filter_text", text="")
 
         if display_mode == 'SEQUENCE':
             row = layout.row(align=True)
@@ -153,7 +153,7 @@ class OUTLINER_MT_editor_menus(Menu):
     def draw(self, context):
         layout = self.layout
         space = context.space_data
-        
+
         space = context.space_data
         display_mode = space.display_mode
 
@@ -161,19 +161,19 @@ class OUTLINER_MT_editor_menus(Menu):
 
         if display_mode == 'DATA_API':
             layout.menu("OUTLINER_MT_edit_datablocks")
-            
-        elif display_mode == 'VIEW_LAYER':                  
+
+        elif display_mode == 'VIEW_LAYER':
             layout.menu("OUTLINER_MT_object_collection", text = "Col")
-            
+
             layout.separator()
-            
+
             layout.operator("outliner.collection_new", text="", icon='COLLECTION_NEW')
-            
+
         elif display_mode == 'ORPHAN_DATA':
             layout.separator()
-            
+
             layout.operator("outliner.orphans_purge", text="Purge")
-            
+
 
 # Workaround to separate the tooltips for Hide one level
 class OUTLINER_MT_view_hide_one_level(bpy.types.Operator):
@@ -215,7 +215,7 @@ class OUTLINER_MT_view(Menu):
 
     def draw(self, context):
         layout = self.layout
-        
+
         space = context.space_data
 
         layout.operator("outliner.show_active", icon = "CENTER")
@@ -230,7 +230,7 @@ class OUTLINER_MT_view(Menu):
         layout.separator()
 
         layout.operator("outliner.select_box", icon = 'BORDER_RECT')
-        
+
         layout.separator()
 
         layout.operator("outliner.select_all", text = "Select All", icon='SELECT_ALL').action = 'SELECT'
@@ -288,8 +288,8 @@ class OUTLINER_MT_collection(Menu):
 
         layout.separator()
 
-        layout.operator("outliner.collection_delete", text="Delete", icon="DELETE").hierarchy = False
-        layout.operator("outliner.collection_delete", text="Delete Hierarchy", icon="DELETE").hierarchy = True
+        layout.operator("outliner.delete", text="Delete", icon="DELETE")
+        layout.operator("outliner.collection_delete", text="Delete Hierarchy", icon="DELETE")
 
         layout.separator()
 
@@ -350,7 +350,7 @@ class OUTLINER_MT_object(Menu):
 
         layout.separator()
 
-        layout.operator("outliner.object_operation", text="Delete", icon="DELETE").type = 'DELETE'
+        layout.operator("outliner.delete", text="Delete", icon="DELETE")
 
         if space.display_mode == 'VIEW_LAYER' and not space.use_filter_collection:
             layout.operator("outliner.object_operation", text="Delete Hierarchy", icon="DELETE").type = 'DELETE_HIERARCHY'
