@@ -324,8 +324,22 @@ class MASK_MT_mask(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mask.delete", icon = "DELETE")
+        layout.menu("MASK_MT_transform")
+
+        layout.separator()
+
         layout.operator("mask.duplicate_move", text = "Duplicate", icon = "DUPLICATE")
+        layout.operator("mask.delete", icon = "DELETE")
+
+        layout.separator()
+
+        layout.operator("mask.copy_splines", icon = "COPYDOWN")
+        layout.operator("mask.paste_splines", icon = "PASTEDOWN")
+
+        layout.separator()
+
+        layout.operator("mask.parent_set", icon = "PARENT_SET")
+        layout.operator("mask.parent_clear", icon = "PARENT_CLEAR")
 
         layout.separator()
 
@@ -336,19 +350,8 @@ class MASK_MT_mask(Menu):
 
         layout.separator()
 
-        layout.operator("mask.parent_clear", icon = "PARENT_CLEAR")
-        layout.operator("mask.parent_set", icon = "PARENT_SET")
-
-        layout.separator()
-
-        layout.operator("mask.copy_splines", icon = "COPYDOWN")
-        layout.operator("mask.paste_splines", icon = "PASTEDOWN")
-
-        layout.separator()
-
-        layout.menu("MASK_MT_visibility")
-        layout.menu("MASK_MT_transform")
         layout.menu("MASK_MT_animation")
+        layout.menu("MASK_MT_visibility")
 
 
 class MASK_MT_add(Menu):
