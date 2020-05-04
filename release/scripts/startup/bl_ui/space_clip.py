@@ -113,7 +113,6 @@ class CLIP_PT_clip_display(Panel):
         row = layout.row()
         col = row.column()
         col.prop(sc.clip_user, "use_render_undistorted", text="Render Undistorted")
-        col.prop(sc, "lock_selection", text="Lock to Selection")
         col.prop(sc, "show_metadata")
 
         col = row.column()
