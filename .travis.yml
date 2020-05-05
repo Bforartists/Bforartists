@@ -37,7 +37,10 @@ matrix:
           - cmake
           - doxygen
           - libpython3.6-dev
-    install: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm --no-build --build-oiio --force-oiio
+    install: 
+      - mkdir ../lib && cd ../lib/ && RUN svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
+      - cd ../ && ls & cd bforartists
+      - make -f GNUmakefile 
     before_deploy:
       - export RELEASE_FILE=$(ls *.deb)
       - echo "Deploying $RELEASE_FILE to GitHub"
