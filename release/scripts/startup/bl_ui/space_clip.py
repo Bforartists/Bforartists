@@ -243,8 +243,8 @@ class CLIP_HT_header(Header):
             row = layout.row(align=True)
             row.prop(tool_settings, "use_proportional_edit_mask", text="", icon_only=True)
             sub = row.row(align=True)
-            sub.active = tool_settings.use_proportional_edit_mask
-            sub.prop(tool_settings, "proportional_edit_falloff", text="", icon_only=True)
+            if tool_settings.use_proportional_edit_mask:
+                sub.prop(tool_settings, "proportional_edit_falloff", text="", icon_only=True)
 
             row = layout.row()
             row.template_ID(sc, "mask", new="mask.new")
