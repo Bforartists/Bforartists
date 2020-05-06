@@ -9,11 +9,6 @@ addons:
     packages:
       - cmake-data
       - cmake
-      
-cache:
-  timeout: 5000
-  directories:
-    - $HOME
 
 compiler:
   - gcc
