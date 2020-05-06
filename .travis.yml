@@ -63,6 +63,7 @@ matrix:
         packages:
           - svn
     install: svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/darwin ../lib/darwin --trust-server-cert --non-interactive
+    install: travis_wait 60 mvn install
     before_deploy:
       - export RELEASE_FILE=$(ls *.dmg)
       - echo "Deploying $RELEASE_FILE to GitHub"
