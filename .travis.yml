@@ -35,6 +35,9 @@ matrix:
           - libxi-dev 
           - libxmu-dev
           - libxxf86vm-dev
+          - libglu1-mesa-dev 
+          - freeglut3-dev 
+          - mesa-common-dev
     install: 
       - svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64 ../lib/linux_centos7_x86_64
       - make -f GNUmakefile 
