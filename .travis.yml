@@ -38,10 +38,9 @@ matrix:
           - doxygen
           - libpython3.6-dev
     install: 
-      - mkdir ../lib && cd ../lib/ && RUN svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
+      - travis_wait 60 mkdir ../lib && cd ../lib/ && RUN svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
       - cd ../ && ls & cd bforartists
       - make -f GNUmakefile 
-      - travis_wait 60 mvn install
     before_deploy:
       - export RELEASE_FILE=$(ls *.deb)
       - echo "Deploying $RELEASE_FILE to GitHub"
