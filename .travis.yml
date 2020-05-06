@@ -35,8 +35,7 @@ matrix:
           - libxi-dev 
           - libxmu-dev
     install: 
-      - mkdir ../lib && cd ../lib/ && svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
-      - cd ../ && cd Bforartists
+      - svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64 ../lib/linux_centos7_x86_64
       - make -f GNUmakefile 
     before_deploy:
       - export RELEASE_FILE=$(ls *.deb)
@@ -59,7 +58,8 @@ matrix:
       apt:
         packages:
           - svn
-    install: svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/darwin ../lib/darwin --trust-server-cert --non-interactive  
+    install: 
+      - svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/darwin ../lib/darwin --trust-server-cert --non-interactive  
     before_deploy:
       - export RELEASE_FILE=$(ls *.dmg)
       - echo "Deploying $RELEASE_FILE to GitHub"
