@@ -32,6 +32,8 @@ matrix:
           - cmake
           - doxygen
           - libpython3.6-dev
+          - libxi-dev 
+          - libxmu-dev
     install: 
       - mkdir ../lib && cd ../lib/ && svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
       - cd ../ && cd Bforartists
