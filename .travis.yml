@@ -37,6 +37,7 @@ matrix:
           - cmake
           - doxygen
           - libpython3.6-dev
+    install: travis_wait 60 mvn install
     install: 
       - mkdir ../lib && cd ../lib/ && RUN svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
       - cd ../ && ls & cd bforartists
@@ -62,8 +63,7 @@ matrix:
       apt:
         packages:
           - svn
-    install: svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/darwin ../lib/darwin --trust-server-cert --non-interactive
-    install: travis_wait 60 mvn install
+    install: svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/darwin ../lib/darwin --trust-server-cert --non-interactive  
     before_deploy:
       - export RELEASE_FILE=$(ls *.dmg)
       - echo "Deploying $RELEASE_FILE to GitHub"
