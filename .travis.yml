@@ -33,7 +33,7 @@ matrix:
           - doxygen
           - libpython3.6-dev
     install: 
-      - travis_wait 60 mkdir ../lib && cd ../lib/ && RUN svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
+      - mkdir ../lib && cd ../lib/ && RUN svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
       - cd ../ && ls & cd bforartists
       - make -f GNUmakefile 
     before_deploy:
