@@ -953,7 +953,6 @@ keyconfig_data = \
      {"properties":
       [("extend", True),
        ],
-    "active":False,
       },
      ),
     ("clip.select_all",
