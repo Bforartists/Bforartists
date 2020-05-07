@@ -2535,9 +2535,9 @@ class WM_MT_splash(Menu):
             # Links if no recent files
             col2_title.label(text="Getting Started")
 
-            col2.operator("wm.url_open", text="Manual", icon='URL').url = "https://www.bforartists.de/wiki/bforartists-2-manual"
-            col2.operator("wm.url_open", text="Release Notes", icon='URL').url = "https://www.bforartists.de/wiki/release-notes"
-            col2.operator("wm.url_open", text="Credits", icon='URL').url = "https://www.bforartists.de/wiki/credits-page-bforartists"
+            col2.operator("wm.url_open", text="Manual", icon='URL').url = "https://www.bforartists.de/bforartists-2-reference-manual/"
+            col2.operator("wm.url_open", text="Release Notes", icon='URL').url = "https://www.bforartists.de/release-notes/"
+            col2.operator("wm.url_open", text="Credits", icon='URL').url = "https://www.bforartists.de/credits-page-bforartists/"
 
         layout.separator()
 
