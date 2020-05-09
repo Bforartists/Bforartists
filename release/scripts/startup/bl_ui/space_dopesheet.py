@@ -182,7 +182,7 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
             DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
 
             layout.prop(st.dopesheet, "use_multi_word_filter", text="Multi-word Match Search")
-            
+
 ################################ Switch between the editors ##########################################
 
 class ANIM_OT_switch_editors_to_dopesheet(bpy.types.Operator):
@@ -228,7 +228,7 @@ class ANIM_OT_switch_editors_to_nla(bpy.types.Operator):
         bpy.ops.wm.context_set_enum(data_path="area.type", value="NLA_EDITOR")
         return {'FINISHED'}
 
-			
+
 # The blank button, we don't want to switch to the editor in which we are already.
 
 class ANIM_OT_switch_editors_in_dopesheet(bpy.types.Operator):
@@ -262,19 +262,19 @@ class DOPESHEET_HT_header(Header):
             TIME_MT_editor_menus.draw_collapsible(context, layout)
             TIME_HT_editor_buttons.draw_header(context, layout)
         else:
-                    
+
             ########################### Switch between the editors
 
             # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
             row = layout.row(align=True)
-            
+
             row.operator("wm.switch_editor_in_dopesheet", text="", icon='DOPESHEET_ACTIVE')
             row.operator("wm.switch_editor_to_graph", text="", icon='GRAPH')
             row.operator("wm.switch_editor_to_driver", text="", icon='DRIVER')
-            row.operator("wm.switch_editor_to_nla", text="", icon='NLA')  
-            
+            row.operator("wm.switch_editor_to_nla", text="", icon='NLA')
+
             ###########################
-            
+
             layout.prop(st, "ui_mode", text="")
 
             DOPESHEET_MT_editor_menus.draw_collapsible(context, layout)
@@ -361,10 +361,10 @@ class DOPESHEET_HT_editor_buttons(Header):
         if tool_settings.use_proportional_action:
             sub = row.row(align=True)
             sub.prop(tool_settings, "proportional_edit_falloff", text="", icon_only=True)
-            
+
         layout.operator_menu_enum("action.handle_type", "type", text="", icon = "HANDLE_AUTO")
         layout.operator_menu_enum("action.interpolation_type", "type", text="", icon = "INTERPOLATE")
-        layout.prop(tool_settings, "keyframe_type", text="", icon_only=True)
+        layout.operator_menu_enum("action.keyframe_type", "type", text="", icon = "SPACE2")
 
 
 class DOPESHEET_MT_editor_menus(Menu):
@@ -572,7 +572,7 @@ class DOPESHEET_MT_channel(Menu):
         # The marker menu is a shared menu from the time line. And the time line editor and nla does not have a channel menu.
         #layout.separator()
 
-        #layout.operator("anim.channels_find", icon = "VIEWZOOM") 
+        #layout.operator("anim.channels_find", icon = "VIEWZOOM")
 
         layout.separator()
 
@@ -600,7 +600,7 @@ class DOPESHEET_MT_key_clean_channels(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.action.clean(channels = True)
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class DOPESHEET_MT_key(Menu):
@@ -619,7 +619,7 @@ class DOPESHEET_MT_key(Menu):
 
         layout.separator()
 
-        layout.operator("action.frame_jump", icon = 'JUMP_TO_KEYFRAMES')   
+        layout.operator("action.frame_jump", icon = 'JUMP_TO_KEYFRAMES')
 
         layout.separator()
 
@@ -686,11 +686,11 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
     def poll(cls, context):
         # only for dopesheet editor
         return cls.in_dopesheet(context)
-    
+
     def draw(self, context):
         sc = context.scene
         layout = self.layout
-        
+
         st = context.space_data
 
         layout.prop(st, "use_realtime_update")
@@ -706,7 +706,7 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
         layout.prop(st, "show_sliders")
         layout.prop(st, "show_group_colors")
         layout.prop(st, "show_interpolation")
-        layout.prop(st, "show_extremes")       
+        layout.prop(st, "show_extremes")
         layout.prop(st, "use_auto_merge_keyframes")
 
 
@@ -973,7 +973,7 @@ class DOPESHEET_PT_gpencil_layer_display(LayersDopeSheetPanel, GreasePencilLayer
 classes = (
     ALL_MT_editormenu,
     ANIM_OT_switch_editors_to_dopesheet,
-    ANIM_OT_switch_editors_to_graph,  
+    ANIM_OT_switch_editors_to_graph,
     ANIM_OT_switch_editors_to_driver,
     ANIM_OT_switch_editors_to_nla,
     ANIM_OT_switch_editors_in_dopesheet,
