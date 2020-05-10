@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software  Foundation,
+ * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * The Original Code is Copyright (C) 2016 Kévin Dietrich.
@@ -26,14 +26,12 @@
 #include "abc_reader_transform.h"
 #include "abc_util.h"
 
-extern "C" {
 #include "DNA_mesh_types.h"
 #include "DNA_object_types.h"
 
 #include "BKE_customdata.h"
 #include "BKE_mesh.h"
 #include "BKE_object.h"
-}
 
 using Alembic::AbcGeom::kWrapExisting;
 using Alembic::AbcGeom::N3fArraySamplePtr;

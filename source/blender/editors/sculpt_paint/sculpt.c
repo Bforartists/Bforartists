@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software  Foundation,
+ * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * The Original Code is Copyright (C) 2006 by Nicholas Bishop
@@ -952,11 +952,11 @@ static bool sculpt_has_active_modifiers(Scene *scene, Object *ob)
   ModifierData *md;
   VirtualModifierData virtualModifierData;
 
-  md = modifiers_getVirtualModifierList(ob, &virtualModifierData);
+  md = BKE_modifiers_get_virtual_modifierlist(ob, &virtualModifierData);
 
   /* Exception for shape keys because we can edit those. */
   for (; md; md = md->next) {
-    if (modifier_isEnabled(scene, md, eModifierMode_Realtime)) {
+    if (BKE_modifier_is_enabled(scene, md, eModifierMode_Realtime)) {
       return true;
     }
   }
@@ -2100,7 +2100,7 @@ static float brush_strength(const Sculpt *sd,
       return alpha * pressure * overlap * feather * 2.0f;
     case SCULPT_TOOL_CLAY_STRIPS:
       /* Clay Strips needs less strength to compensate the curve. */
-      final_pressure = pressure * pressure * pressure;
+      final_pressure = powf(pressure, 1.5f);
       return alpha * flip * final_pressure * overlap * feather * 0.3f;
     case SCULPT_TOOL_CLAY_THUMB:
       final_pressure = pressure * pressure;
@@ -4165,8 +4165,7 @@ static void do_layer_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode
   SculptSession *ss = ob->sculpt;
   Brush *brush = BKE_paint_brush(&sd->paint);
 
-  if (ss->cache->mirror_symmetry_pass == 0 && ss->cache->radial_symmetry_pass == 0 &&
-      ss->cache->first_time) {
+  if (ss->cache->layer_displacement_factor == NULL) {
     ss->cache->layer_displacement_factor = MEM_callocN(sizeof(float) * SCULPT_vertex_count_get(ss),
                                                        "layer displacement factor");
   }
@@ -4624,7 +4623,7 @@ static void do_clay_strips_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int t
   const bool flip = (ss->cache->bstrength < 0.0f);
   const float radius = flip ? -ss->cache->radius : ss->cache->radius;
   const float offset = SCULPT_brush_plane_offset_get(sd, ss);
-  const float displace = radius * (0.25f + offset);
+  const float displace = radius * (0.18f + offset);
 
   /* The sculpt-plane normal (whatever its set to). */
   float area_no_sp[3];
@@ -5299,6 +5298,23 @@ static void do_brush_action(Sculpt *sd, Object *ob, Brush *brush, UnifiedPaintSe
     nodes = sculpt_pbvh_gather_generic(ob, sd, brush, use_original, radius_scale, &totnode);
   }
 
+  /* Draw Face Sets in draw mode makes a single undo push, in alt-smooth mode deforms the
+   * vertices and uses regular coords undo. */
+  /* It also assigns the paint_face_set here as it needs to be done regardless of the stroke type
+   * and the number of nodes under the brush influence. */
+  if (brush->sculpt_tool == SCULPT_TOOL_DRAW_FACE_SETS && ss->cache->first_time &&
+      ss->cache->mirror_symmetry_pass == 0 && !ss->cache->alt_smooth) {
+    SCULPT_undo_push_node(ob, NULL, SCULPT_UNDO_FACE_SETS);
+    if (ss->cache->invert) {
+      /* When inverting the brush, pick the paint face mask ID from the mesh. */
+      ss->cache->paint_face_set = SCULPT_active_face_set_get(ss);
+    }
+    else {
+      /* By default create a new Face Sets. */
+      ss->cache->paint_face_set = SCULPT_face_set_next_available_get(ss);
+    }
+  }
+
   /* Only act if some verts are inside the brush area. */
   if (totnode) {
     float location[3];
@@ -5313,13 +5329,6 @@ static void do_brush_action(Sculpt *sd, Object *ob, Brush *brush, UnifiedPaintSe
     TaskParallelSettings settings;
     BKE_pbvh_parallel_range_settings(&settings, (sd->flags & SCULPT_USE_OPENMP), totnode);
     BLI_task_parallel_range(0, totnode, &task_data, do_brush_action_task_cb, &settings);
-
-    /* Draw Face Sets in draw mode makes a single undo push, in alt-smooth mode deforms the
-     * vertices and uses regular coords undo. */
-    if (brush->sculpt_tool == SCULPT_TOOL_DRAW_FACE_SETS && ss->cache->first_time &&
-        ss->cache->mirror_symmetry_pass == 0 && !ss->cache->alt_smooth) {
-      SCULPT_undo_push_node(ob, nodes[0], SCULPT_UNDO_FACE_SETS);
-    }
 
     if (sculpt_brush_needs_normal(ss, brush)) {
       update_sculpt_normal(sd, ob, nodes, totnode);
@@ -6189,7 +6198,7 @@ static float sculpt_brush_dynamic_size_get(Brush *brush, StrokeCache *cache, flo
     case SCULPT_TOOL_CLAY:
       return max_ff(initial_size * 0.20f, initial_size * pow3f(cache->pressure));
     case SCULPT_TOOL_CLAY_STRIPS:
-      return max_ff(initial_size * 0.30f, initial_size * pow2f(cache->pressure));
+      return max_ff(initial_size * 0.30f, initial_size * powf(cache->pressure, 1.5f));
     case SCULPT_TOOL_CLAY_THUMB: {
       float clay_stabilized_pressure = sculpt_clay_thumb_get_stabilized_pressure(cache);
       return initial_size * clay_stabilized_pressure;
@@ -6858,6 +6867,7 @@ static void sculpt_brush_stroke_init(bContext *C, wmOperator *op)
 
 static void sculpt_restore_mesh(Sculpt *sd, Object *ob)
 {
+  SculptSession *ss = ob->sculpt;
   Brush *brush = BKE_paint_brush(&sd->paint);
 
   /* Restore the mesh before continuing with anchored stroke. */
@@ -6867,7 +6877,19 @@ static void sculpt_restore_mesh(Sculpt *sd, Object *ob)
         brush->sculpt_tool == SCULPT_TOOL_CLOTH) &&
        BKE_brush_use_size_pressure(brush)) ||
       (brush->flag & BRUSH_DRAG_DOT)) {
+
+    SculptUndoNode *unode = SCULPT_undo_get_first_node();
+    if (unode && unode->type == SCULPT_UNDO_FACE_SETS) {
+      for (int i = 0; i < ss->totfaces; i++) {
+        ss->face_sets[i] = unode->face_sets[i];
+      }
+    }
+
     paint_mesh_restore_co(sd, ob);
+
+    if (ss->cache) {
+      MEM_SAFE_FREE(ss->cache->layer_displacement_factor);
+    }
   }
 }
 

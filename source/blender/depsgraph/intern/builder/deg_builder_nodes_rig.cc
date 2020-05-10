@@ -34,7 +34,6 @@
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
-extern "C" {
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
 #include "DNA_constraint_types.h"
@@ -44,7 +43,6 @@ extern "C" {
 #include "BKE_action.h"
 #include "BKE_armature.h"
 #include "BKE_constraint.h"
-} /* extern "C" */
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
@@ -143,8 +141,7 @@ void DepsgraphNodeBuilder::build_rig(Object *object, bool is_object_visible)
   Scene *scene_cow = get_cow_datablock(scene_);
   Object *object_cow = get_cow_datablock(object);
   OperationNode *op_node;
-  /* Animation and/or drivers linking posebones to base-armature used to
-   * define them.
+  /* Animation and/or drivers linking pose-bones to base-armature used to define them.
    *
    * NOTE: AnimData here is really used to control animated deform properties,
    *       which ideally should be able to be unique across different

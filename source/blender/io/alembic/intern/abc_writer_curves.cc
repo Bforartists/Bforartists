@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software  Foundation,
+ * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * The Original Code is Copyright (C) 2016 Kévin Dietrich.
@@ -22,17 +22,16 @@
  */
 
 #include "abc_writer_curves.h"
+#include "abc_axis_conversion.h"
 #include "abc_reader_curves.h"
 #include "abc_writer_transform.h"
 
-extern "C" {
 #include "DNA_curve_types.h"
 #include "DNA_object_types.h"
 
 #include "BKE_curve.h"
 #include "BKE_mesh.h"
 #include "BKE_object.h"
-}
 
 using Alembic::AbcGeom::OCompoundProperty;
 using Alembic::AbcGeom::OCurves;
