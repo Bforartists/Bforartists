@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software  Foundation,
+ * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * The Original Code is Copyright (C) 2006 by Nicholas Bishop
@@ -890,6 +890,17 @@ SculptUndoNode *SCULPT_undo_get_node(PBVHNode *node)
   }
 
   return BLI_findptr(&usculpt->nodes, node, offsetof(SculptUndoNode, node));
+}
+
+SculptUndoNode *SCULPT_undo_get_first_node()
+{
+  UndoSculpt *usculpt = sculpt_undo_get_nodes();
+
+  if (usculpt == NULL) {
+    return NULL;
+  }
+
+  return usculpt->nodes.first;
 }
 
 static void sculpt_undo_alloc_and_store_hidden(PBVH *pbvh, SculptUndoNode *unode)

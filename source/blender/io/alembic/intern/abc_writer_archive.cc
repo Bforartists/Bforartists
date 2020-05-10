@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software  Foundation,
+ * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * The Original Code is Copyright (C) 2016 Kévin Dietrich.
@@ -22,14 +22,13 @@
  */
 
 #include "abc_writer_archive.h"
-extern "C" {
+
 #include "BKE_blender_version.h"
 
 #include "BLI_path_util.h"
 #include "BLI_string.h"
 
 #include "DNA_scene_types.h"
-}
 
 #ifdef WIN32
 #  include "utfconv.h"

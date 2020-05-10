@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software  Foundation,
+ * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * The Original Code is Copyright (C) 2005 by the Blender Foundation.
@@ -68,7 +68,7 @@ static void copyData(const ModifierData *md, ModifierData *target, const int fla
 #endif
   SubsurfModifierData *tsmd = (SubsurfModifierData *)target;
 
-  modifier_copyData_generic(md, target, flag);
+  BKE_modifier_copydata_generic(md, target, flag);
 
   tsmd->emCache = tsmd->mCache = NULL;
 }
@@ -210,7 +210,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
 {
   Mesh *result = mesh;
 #if !defined(WITH_OPENSUBDIV)
-  modifier_setError(md, "Disabled, built without OpenSubdiv");
+  BKE_modifier_set_error(md, "Disabled, built without OpenSubdiv");
   return result;
 #endif
   SubsurfModifierData *smd = (SubsurfModifierData *)md;
@@ -249,7 +249,7 @@ static void deformMatrices(ModifierData *md,
                            int num_verts)
 {
 #if !defined(WITH_OPENSUBDIV)
-  modifier_setError(md, "Disabled, built without OpenSubdiv");
+  BKE_modifier_set_error(md, "Disabled, built without OpenSubdiv");
   return;
 #endif
 

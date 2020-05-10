@@ -266,7 +266,7 @@ const EnumPropertyItem rna_enum_object_modifier_type_items[] = {
      ICON_MOD_WAVE,
      "Wave",
      "Adds a ripple-like motion to an object’s geometry"},
-    {0, "", 0, N_("Simulate"), ""},
+    {0, "", 0, N_("Physics"), ""},
     {eModifierType_Cloth, "CLOTH", ICON_MOD_CLOTH, "Cloth", ""},
     {eModifierType_Collision, "COLLISION", ICON_MOD_PHYSICS, "Collision", ""},
     {eModifierType_DynamicPaint, "DYNAMIC_PAINT", ICON_MOD_DYNAMICPAINT, "Dynamic Paint", ""},
@@ -741,7 +741,7 @@ static void rna_Modifier_name_set(PointerRNA *ptr, const char *value)
   /* make sure the name is truly unique */
   if (ptr->owner_id) {
     Object *ob = (Object *)ptr->owner_id;
-    modifier_unique_name(&ob->modifiers, md);
+    BKE_modifier_unique_name(&ob->modifiers, md);
   }
 
   /* fix all the animation data which may link to this */
@@ -2109,6 +2109,12 @@ static void rna_def_modifier_mirror(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "flag", MOD_MIR_MIRROR_V);
   RNA_def_property_ui_text(
       prop, "Mirror V", "Mirror the V texture coordinate around the flip offset point");
+  RNA_def_property_update(prop, 0, "rna_Modifier_update");
+
+  prop = RNA_def_property(srna, "use_mirror_udim", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "flag", MOD_MIR_MIRROR_UDIM);
+  RNA_def_property_ui_text(
+      prop, "Mirror UDIM", "Mirror the texture coordinate around each tile center");
   RNA_def_property_update(prop, 0, "rna_Modifier_update");
 
   prop = RNA_def_property(srna, "mirror_offset_u", PROP_FLOAT, PROP_FACTOR);
