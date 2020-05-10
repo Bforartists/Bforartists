@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software  Foundation,
+ * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
@@ -1779,7 +1779,7 @@ static BMesh *build_skin(SkinNode *skin_nodes,
   skin_update_merged_vertices(skin_nodes, totvert);
 
   if (!skin_output_branch_hulls(&so, skin_nodes, totvert, emap, medge)) {
-    modifier_setError(&smd->modifier, "Hull error");
+    BKE_modifier_set_error(&smd->modifier, "Hull error");
   }
 
   /* Merge triangles here in the hope of providing better target
@@ -1862,7 +1862,7 @@ static Mesh *base_skin(Mesh *origmesh, SkinModifierData *smd)
   MEM_freeN(emapmem);
 
   if (!has_valid_root) {
-    modifier_setError(
+    BKE_modifier_set_error(
         &smd->modifier,
         "No valid root vertex found (you need one per mesh island you want to skin)");
   }
@@ -1935,7 +1935,7 @@ ModifierTypeInfo modifierType_Skin = {
     /* type */ eModifierTypeType_Constructive,
     /* flags */ eModifierTypeFlag_AcceptsMesh | eModifierTypeFlag_SupportsEditmode,
 
-    /* copyData */ modifier_copyData_generic,
+    /* copyData */ BKE_modifier_copydata_generic,
 
     /* deformVerts */ NULL,
     /* deformMatrices */ NULL,

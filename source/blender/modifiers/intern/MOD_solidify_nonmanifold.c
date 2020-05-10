@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software  Foundation,
+ * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
@@ -2424,15 +2424,15 @@ Mesh *MOD_solidify_nonmanifold_modifyMesh(ModifierData *md,
     MEM_freeN(face_edges);
   }
   if (edge_index != numNewEdges) {
-    modifier_setError(
+    BKE_modifier_set_error(
         md, "Internal Error: edges array wrong size: %u instead of %u", numNewEdges, edge_index);
   }
   if (poly_index != numNewPolys) {
-    modifier_setError(
+    BKE_modifier_set_error(
         md, "Internal Error: polys array wrong size: %u instead of %u", numNewPolys, poly_index);
   }
   if (loop_index != numNewLoops) {
-    modifier_setError(
+    BKE_modifier_set_error(
         md, "Internal Error: loops array wrong size: %u instead of %u", numNewLoops, loop_index);
   }
   BLI_assert(edge_index == numNewEdges);

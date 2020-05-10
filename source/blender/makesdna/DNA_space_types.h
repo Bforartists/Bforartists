@@ -1732,7 +1732,7 @@ typedef enum eSpace_Type {
   SPACE_STATUSBAR = 22,
   SPACE_TOOLBAR = 23, /*bfa - toolbar*/
 
-  SPACE_TYPE_LAST = SPACE_TOOLBAR
+#define SPACE_TYPE_LAST SPACE_TOOLBAR
 } eSpace_Type;
 
 /* use for function args */

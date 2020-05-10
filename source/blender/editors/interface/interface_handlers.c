@@ -417,7 +417,7 @@ typedef struct uiAfterFunc {
   PropertyRNA *rnaprop;
 
   void *search_arg;
-  uiButSearchArgFreeFunc search_arg_free_func;
+  uiButSearchArgFreeFn search_arg_free_fn;
 
   bContextStore *context;
 
@@ -753,10 +753,12 @@ static void ui_apply_but_func(bContext *C, uiBut *but)
     after->rnapoin = but->rnapoin;
     after->rnaprop = but->rnaprop;
 
-    after->search_arg_free_func = but->search_arg_free_func;
-    after->search_arg = but->search_arg;
-    but->search_arg_free_func = NULL;
-    but->search_arg = NULL;
+    if (but->search != NULL) {
+      after->search_arg_free_fn = but->search->arg_free_fn;
+      after->search_arg = but->search->arg;
+      but->search->arg_free_fn = NULL;
+      but->search->arg = NULL;
+    }
 
     if (but->context) {
       after->context = CTX_store_copy(but->context);
@@ -924,8 +926,8 @@ static void ui_apply_but_funcs_after(bContext *C)
       MEM_freeN(after.rename_orig);
     }
 
-    if (after.search_arg_free_func) {
-      after.search_arg_free_func(after.search_arg);
+    if (after.search_arg_free_fn) {
+      after.search_arg_free_fn(after.search_arg);
     }
 
     ui_afterfunc_update_preferences_dirty(&after);
@@ -2853,7 +2855,7 @@ static bool ui_textedit_set_cursor_pos_foreach_glyph(const char *UNUSED(str),
                                                      const rcti *glyph_step_bounds,
                                                      const int UNUSED(glyph_advance_x),
                                                      const rctf *glyph_bounds,
-                                                     const float UNUSED(glyph_bearing[2]),
+                                                     const int UNUSED(glyph_bearing[2]),
                                                      void *user_data)
 {
   int *cursor_data = user_data;
@@ -3308,7 +3310,7 @@ static void ui_textedit_begin(bContext *C, uiBut *but, uiHandleButtonData *data)
 
   /* optional searchbox */
   if (but->type == UI_BTYPE_SEARCH_MENU) {
-    data->searchbox = but->search_create_func(C, data->region, but);
+    data->searchbox = but->search->create_fn(C, data->region, but);
     ui_searchbox_update(C, data->searchbox, but, true); /* true = reset */
   }
 
@@ -3471,6 +3473,16 @@ static void ui_do_but_textedit(
     case RIGHTMOUSE:
     case EVT_ESCKEY:
       if (event->val == KM_PRESS) {
+        /* Support search context menu. */
+        if (event->type == RIGHTMOUSE) {
+          if (data->searchbox) {
+            if (ui_searchbox_event(C, data->searchbox, but, event)) {
+              /* Only break if the event was handled. */
+              break;
+            }
+          }
+        }
+
 #ifdef WITH_INPUT_IME
         /* skips button handling since it is not wanted */
         if (is_ime_composing) {
@@ -9331,6 +9343,11 @@ static int ui_handle_menu_button(bContext *C, const wmEvent *event, uiPopupBlock
     if (event->val == KM_RELEASE) {
       /* pass, needed so we can exit active menu-items when click-dragging out of them */
     }
+    else if (but->type == UI_BTYPE_SEARCH_MENU) {
+      /* Pass, needed so search popup can have RMB context menu.
+       * This may be useful for other interactions which happen in the search popup
+       * without being directly over the search button. */
+    }
     else if (!ui_block_is_menu(but->block) || ui_block_is_pie_menu(but->block)) {
       /* pass, skip for dialogs */
     }
@@ -10763,9 +10780,6 @@ static int ui_popup_handler(bContext *C, const wmEvent *event, void *userdata)
     if ((temp.menuretval & UI_RETURN_OK) || (temp.menuretval & UI_RETURN_POPUP_OK)) {
       if (temp.popup_func) {
         temp.popup_func(C, temp.popup_arg, temp.retvalue);
-      }
-      if (temp.optype) {
-        WM_operator_name_call_ptr(C, temp.optype, temp.opcontext, NULL);
       }
     }
     else if (temp.cancel_func) {

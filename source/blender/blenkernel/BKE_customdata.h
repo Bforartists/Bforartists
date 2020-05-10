@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software  Foundation,
+ * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * The Original Code is Copyright (C) 2006 Blender Foundation.
@@ -25,14 +25,14 @@
 #ifndef __BKE_CUSTOMDATA_H__
 #define __BKE_CUSTOMDATA_H__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "BLI_sys_types.h"
 #include "BLI_utildefines.h"
 
 #include "DNA_customdata_types.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 struct BMesh;
 struct CustomData;
