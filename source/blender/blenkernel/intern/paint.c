@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software  Foundation,
+ * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * The Original Code is Copyright (C) 2009 by Nicholas Bishop
@@ -1406,11 +1406,11 @@ MultiresModifierData *BKE_sculpt_multires_active(Scene *scene, Object *ob)
     return NULL;
   }
 
-  for (md = modifiers_getVirtualModifierList(ob, &virtualModifierData); md; md = md->next) {
+  for (md = BKE_modifiers_get_virtual_modifierlist(ob, &virtualModifierData); md; md = md->next) {
     if (md->type == eModifierType_Multires) {
       MultiresModifierData *mmd = (MultiresModifierData *)md;
 
-      if (!modifier_isEnabled(scene, md, eModifierMode_Realtime)) {
+      if (!BKE_modifier_is_enabled(scene, md, eModifierMode_Realtime)) {
         continue;
       }
 
@@ -1443,12 +1443,12 @@ static bool sculpt_modifiers_active(Scene *scene, Sculpt *sd, Object *ob)
     return true;
   }
 
-  md = modifiers_getVirtualModifierList(ob, &virtualModifierData);
+  md = BKE_modifiers_get_virtual_modifierlist(ob, &virtualModifierData);
 
   /* exception for shape keys because we can edit those */
   for (; md; md = md->next) {
-    const ModifierTypeInfo *mti = modifierType_getInfo(md->type);
-    if (!modifier_isEnabled(scene, md, eModifierMode_Realtime)) {
+    const ModifierTypeInfo *mti = BKE_modifier_get_info(md->type);
+    if (!BKE_modifier_is_enabled(scene, md, eModifierMode_Realtime)) {
       continue;
     }
     if (md->type == eModifierType_Multires && (ob->mode & OB_MODE_SCULPT)) {

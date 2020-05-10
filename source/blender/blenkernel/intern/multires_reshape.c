@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software  Foundation,
+ * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * The Original Code is Copyright (C) 2020 Blender Foundation.
@@ -121,7 +121,7 @@ bool multiresModifier_reshapeFromDeformModifier(struct Depsgraph *depsgraph,
       .object = object,
       .flag = MOD_APPLY_USECACHE | MOD_APPLY_IGNORE_SIMPLIFY,
   };
-  modwrap_deformVerts(
+  BKE_modifier_deform_verts(
       deform_md, &modifier_ctx, multires_mesh, deformed_verts, multires_mesh->totvert);
   BKE_id_free(NULL, multires_mesh);
 

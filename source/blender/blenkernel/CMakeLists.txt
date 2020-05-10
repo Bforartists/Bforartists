@@ -122,6 +122,7 @@ set(SRC
   intern/font.c
   intern/freestyle.c
   intern/gpencil.c
+  intern/gpencil_curve.c
   intern/gpencil_geom.c
   intern/gpencil_modifier.c
   intern/hair.c
@@ -308,6 +309,7 @@ set(SRC
   BKE_freestyle.h
   BKE_global.h
   BKE_gpencil.h
+  BKE_gpencil_curve.h
   BKE_gpencil_geom.h
   BKE_gpencil_modifier.h
   BKE_hair.h
@@ -670,17 +672,6 @@ if(WITH_QUADRIFLOW)
      bf_intern_quadriflow
   )
   add_definitions(-DWITH_QUADRIFLOW)
-endif()
-
-if(WITH_TBB)
-  add_definitions(-DWITH_TBB)
-
-  list(APPEND INC_SYS
-    ${TBB_INCLUDE_DIRS}
-  )
-  list(APPEND LIB
-    ${TBB_LIBRARIES}
-  )
 endif()
 
 if(WITH_XR_OPENXR)
