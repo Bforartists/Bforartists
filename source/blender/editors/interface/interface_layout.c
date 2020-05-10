@@ -2080,7 +2080,7 @@ void uiItemFullR(uiLayout *layout,
   if (use_prop_sep) {
     if (type == PROP_BOOLEAN && (icon == ICON_NONE) && !icon_only) {
       use_prop_sep_split_label = false;
-      /* For checkboxes we make an expection: We allow showing them in a split row even without
+      /* For check-boxes we make an exception: We allow showing them in a split row even without
        * label. It typically relates to its neighbor items, so no need for an extra label. */
       use_split_empty_name = true;
     }
@@ -2645,7 +2645,7 @@ static void search_id_collection(StructRNA *ptype, PointerRNA *r_ptr, PropertyRN
   RNA_STRUCT_END;
 }
 
-static void ui_rna_collection_search_free_cb(void *ptr)
+static void ui_rna_collection_search_arg_free_fn(void *ptr)
 {
   uiRNACollectionSearch *coll_search = ptr;
   UI_butstore_free(coll_search->butstore_block, coll_search->butstore);
@@ -2697,10 +2697,9 @@ void ui_but_add_search(
 
     UI_but_func_search_set(but,
                            ui_searchbox_create_generic,
-                           ui_rna_collection_search_cb,
+                           ui_rna_collection_search_update_fn,
                            coll_search,
-                           ui_rna_collection_search_free_cb,
-                           NULL,
+                           ui_rna_collection_search_arg_free_fn,
                            NULL,
                            NULL);
   }

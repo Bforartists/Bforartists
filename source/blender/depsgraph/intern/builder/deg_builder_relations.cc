@@ -34,7 +34,6 @@
 #include "BLI_blenlib.h"
 #include "BLI_utildefines.h"
 
-extern "C" {
 #include "DNA_action_types.h"
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
@@ -99,7 +98,6 @@ extern "C" {
 
 #include "RNA_access.h"
 #include "RNA_types.h"
-} /* extern "C" */
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
@@ -660,19 +658,19 @@ void DepsgraphRelationBuilder::build_object(Base *base, Object *object)
   if (object->modifiers.first != nullptr) {
     BuilderWalkUserData data;
     data.builder = this;
-    modifiers_foreachIDLink(object, modifier_walk, &data);
+    BKE_modifiers_foreach_ID_link(object, modifier_walk, &data);
   }
   /* Grease Pencil Modifiers. */
   if (object->greasepencil_modifiers.first != nullptr) {
     BuilderWalkUserData data;
     data.builder = this;
-    BKE_gpencil_modifiers_foreachIDLink(object, modifier_walk, &data);
+    BKE_gpencil_modifiers_foreach_ID_link(object, modifier_walk, &data);
   }
   /* Shader FX. */
   if (object->shader_fx.first != nullptr) {
     BuilderWalkUserData data;
     data.builder = this;
-    BKE_shaderfx_foreachIDLink(object, modifier_walk, &data);
+    BKE_shaderfx_foreach_ID_link(object, modifier_walk, &data);
   }
   /* Constraints. */
   if (object->constraints.first != nullptr) {
@@ -1235,6 +1233,12 @@ void DepsgraphRelationBuilder::build_animdata(ID *id)
   build_animdata_curves(id);
   /* Drivers. */
   build_animdata_drivers(id);
+
+  if (check_id_has_anim_component(id)) {
+    ComponentKey animation_key(id, NodeType::ANIMATION);
+    ComponentKey parameters_key(id, NodeType::PARAMETERS);
+    add_relation(animation_key, parameters_key, "Animation -> Parameters");
+  }
 }
 
 void DepsgraphRelationBuilder::build_animdata_curves(ID *id)
@@ -1872,8 +1876,9 @@ void DepsgraphRelationBuilder::build_particle_settings(ParticleSettings *part)
     ComponentKey texture_key(&mtex->tex->id, NodeType::GENERIC_DATABLOCK);
     add_relation(texture_key,
                  particle_settings_reset_key,
-                 "Particle Texture",
+                 "Particle Texture -> Particle Reset",
                  RELATION_FLAG_FLUSH_USER_EDIT_ONLY);
+    add_relation(texture_key, particle_settings_eval_key, "Particle Texture -> Particle Eval");
     /* TODO(sergey): Consider moving texture space handling to an own
      * function. */
     if (mtex->texco == TEXCO_OBJECT && mtex->object != nullptr) {
@@ -1966,7 +1971,7 @@ void DepsgraphRelationBuilder::build_object_data_geometry(Object *object)
     ctx.scene = scene_;
     ctx.object = object;
     LISTBASE_FOREACH (ModifierData *, md, &object->modifiers) {
-      const ModifierTypeInfo *mti = modifierType_getInfo((ModifierType)md->type);
+      const ModifierTypeInfo *mti = BKE_modifier_get_info((ModifierType)md->type);
       if (mti->updateDepsgraph) {
         DepsNodeHandle handle = create_node_handle(obdata_ubereval_key);
         ctx.node = reinterpret_cast<::DepsNodeHandle *>(&handle);
@@ -1984,7 +1989,7 @@ void DepsgraphRelationBuilder::build_object_data_geometry(Object *object)
     ctx.scene = scene_;
     ctx.object = object;
     LISTBASE_FOREACH (GpencilModifierData *, md, &object->greasepencil_modifiers) {
-      const GpencilModifierTypeInfo *mti = BKE_gpencil_modifierType_getInfo(
+      const GpencilModifierTypeInfo *mti = BKE_gpencil_modifier_get_info(
           (GpencilModifierType)md->type);
       if (mti->updateDepsgraph) {
         DepsNodeHandle handle = create_node_handle(obdata_ubereval_key);
@@ -2003,7 +2008,7 @@ void DepsgraphRelationBuilder::build_object_data_geometry(Object *object)
     ctx.scene = scene_;
     ctx.object = object;
     LISTBASE_FOREACH (ShaderFxData *, fx, &object->shader_fx) {
-      const ShaderFxTypeInfo *fxi = BKE_shaderfxType_getInfo((ShaderFxType)fx->type);
+      const ShaderFxTypeInfo *fxi = BKE_shaderfx_get_info((ShaderFxType)fx->type);
       if (fxi->updateDepsgraph) {
         DepsNodeHandle handle = create_node_handle(obdata_ubereval_key);
         ctx.node = reinterpret_cast<::DepsNodeHandle *>(&handle);

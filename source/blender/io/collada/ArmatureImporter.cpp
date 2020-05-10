@@ -25,14 +25,12 @@
 
 #include "COLLADAFWUniqueId.h"
 
-extern "C" {
 #include "BKE_action.h"
 #include "BKE_armature.h"
 #include "BKE_object.h"
 #include "BLI_listbase.h"
 #include "BLI_string.h"
 #include "ED_armature.h"
-}
 
 #include "DEG_depsgraph.h"
 
@@ -335,7 +333,7 @@ void ArmatureImporter::connect_bone_chains(bArmature *armature, Bone *parentbone
       /*
        * It is possible that the child's head is located on the parents head.
        * When this happens, then moving the parent's tail to the child's head
-       * would result in a zero sized bone and Blender would  silently remove the bone.
+       * would result in a zero sized bone and Blender would silently remove the bone.
        * So we move the tail only when the resulting bone has a minimum length:
        */
 

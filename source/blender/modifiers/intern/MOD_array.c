@@ -10,7 +10,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software  Foundation,
+ * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * The Original Code is Copyright (C) 2005 by the Blender Foundation.
@@ -503,7 +503,7 @@ static Mesh *arrayModifier_doArray(ArrayModifierData *amd,
     }
 
     if (offset_is_too_small) {
-      modifier_setError(
+      BKE_modifier_set_error(
           &amd->modifier,
           "The offset is too small, we cannot generate the amount of geometry it would require");
     }
@@ -514,9 +514,9 @@ static Mesh *arrayModifier_doArray(ArrayModifierData *amd,
   else if (((size_t)count * (size_t)chunk_nverts + (size_t)start_cap_nverts +
             (size_t)end_cap_nverts) > max_num_vertices) {
     count = 1;
-    modifier_setError(&amd->modifier,
-                      "The amount of copies is too high, we cannot generate the amount of "
-                      "geometry it would require");
+    BKE_modifier_set_error(&amd->modifier,
+                           "The amount of copies is too high, we cannot generate the amount of "
+                           "geometry it would require");
   }
 
   if (count < 1) {
@@ -831,7 +831,7 @@ ModifierTypeInfo modifierType_Array = {
         eModifierTypeFlag_SupportsEditmode | eModifierTypeFlag_EnableInEditmode |
         eModifierTypeFlag_AcceptsCVs,
 
-    /* copyData */ modifier_copyData_generic,
+    /* copyData */ BKE_modifier_copydata_generic,
 
     /* deformVerts */ NULL,
     /* deformMatrices */ NULL,
