@@ -2252,7 +2252,7 @@ bool PE_circle_select(bContext *C, const int sel_op, const int mval[2], float ra
 
 /************************ lasso select operator ************************/
 
-int PE_lasso_select(bContext *C, const int mcords[][2], const short moves, const int sel_op)
+int PE_lasso_select(bContext *C, const int mcoords[][2], const int mcoords_len, const int sel_op)
 {
   Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   Scene *scene = CTX_data_scene(C);
@@ -2296,7 +2296,8 @@ int PE_lasso_select(bContext *C, const int mcords[][2], const short moves, const
         const bool is_inside =
             ((ED_view3d_project_int_global(region, co, screen_co, V3D_PROJ_TEST_CLIP_WIN) ==
               V3D_PROJ_RET_OK) &&
-             BLI_lasso_is_point_inside(mcords, moves, screen_co[0], screen_co[1], IS_CLIPPED) &&
+             BLI_lasso_is_point_inside(
+                 mcoords, mcoords_len, screen_co[0], screen_co[1], IS_CLIPPED) &&
              key_test_depth(&data, co, screen_co));
         const int sel_op_result = ED_select_op_action_deselected(sel_op, is_select, is_inside);
         if (sel_op_result != -1) {
@@ -2315,7 +2316,8 @@ int PE_lasso_select(bContext *C, const int mcords[][2], const short moves, const
         const bool is_inside =
             ((ED_view3d_project_int_global(region, co, screen_co, V3D_PROJ_TEST_CLIP_WIN) ==
               V3D_PROJ_RET_OK) &&
-             BLI_lasso_is_point_inside(mcords, moves, screen_co[0], screen_co[1], IS_CLIPPED) &&
+             BLI_lasso_is_point_inside(
+                 mcoords, mcoords_len, screen_co[0], screen_co[1], IS_CLIPPED) &&
              key_test_depth(&data, co, screen_co));
         const int sel_op_result = ED_select_op_action_deselected(sel_op, is_select, is_inside);
         if (sel_op_result != -1) {
@@ -2829,8 +2831,8 @@ static void remove_tagged_keys(Depsgraph *depsgraph, Object *ob, ParticleSystem 
   if (pe_x_mirror(ob)) {
     /* mirror key tags */
     ParticleSystemModifierData *psmd = psys_get_modifier(ob, psys);
-    ParticleSystemModifierData *psmd_eval = (ParticleSystemModifierData *)modifier_get_evaluated(
-        depsgraph, ob, &psmd->modifier);
+    ParticleSystemModifierData *psmd_eval = (ParticleSystemModifierData *)
+        BKE_modifier_get_evaluated(depsgraph, ob, &psmd->modifier);
 
     LOOP_POINTS {
       LOOP_TAGGED_KEYS {
@@ -5125,7 +5127,8 @@ void PE_create_particle_edit(
   int totpoint;
 
   if (psmd != NULL) {
-    psmd_eval = (ParticleSystemModifierData *)modifiers_findByName(ob_eval, psmd->modifier.name);
+    psmd_eval = (ParticleSystemModifierData *)BKE_modifiers_findny_name(ob_eval,
+                                                                        psmd->modifier.name);
   }
 
   /* no psmd->dm happens in case particle system modifier is not enabled */
@@ -5252,8 +5255,8 @@ static bool particle_edit_toggle_poll(bContext *C)
     return 0;
   }
 
-  return (ob->particlesystem.first || modifiers_findByType(ob, eModifierType_Cloth) ||
-          modifiers_findByType(ob, eModifierType_Softbody));
+  return (ob->particlesystem.first || BKE_modifiers_findby_type(ob, eModifierType_Cloth) ||
+          BKE_modifiers_findby_type(ob, eModifierType_Softbody));
 }
 
 static void free_all_psys_edit(Object *object)
@@ -5298,7 +5301,7 @@ static int particle_edit_toggle_exec(bContext *C, wmOperator *op)
        * with possible changes applied when object was outside of the
        * edit mode. */
       Object *object_eval = DEG_get_evaluated_object(depsgraph, ob);
-      edit->psmd_eval = (ParticleSystemModifierData *)modifiers_findByName(
+      edit->psmd_eval = (ParticleSystemModifierData *)BKE_modifiers_findny_name(
           object_eval, edit->psmd->modifier.name);
       recalc_emitter_field(depsgraph, ob, edit->psys);
     }

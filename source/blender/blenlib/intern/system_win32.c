@@ -24,13 +24,11 @@
 #include <shlwapi.h>
 #include <tlhelp32.h>
 
-#include "BLI_fileops.h"
-#include "BLI_path_util.h"
 #include "BLI_string.h"
 
 #include "MEM_guardedalloc.h"
 
-static EXCEPTION_POINTERS *current_exception;
+static EXCEPTION_POINTERS *current_exception = NULL;
 
 static const char *bli_windows_get_exception_description(const DWORD exceptioncode)
 {
@@ -214,20 +212,25 @@ static bool BLI_windows_system_backtrace_run_trace(FILE *fp, HANDLE hThread, PCO
   return result;
 }
 
-static void bli_windows_system_backtrace_stack_thread(FILE *fp, HANDLE hThread)
+static bool bli_windows_system_backtrace_stack_thread(FILE *fp, HANDLE hThread)
 {
+  CONTEXT context = {0};
+  context.ContextFlags = CONTEXT_ALL;
+  /* GetThreadContext requires the thread to be in a suspended state, which is problematic for the
+   * currently running thread, RtlCaptureContext is used as an alternative to sidestep this */
   if (hThread != GetCurrentThread()) {
     SuspendThread(hThread);
-  }
-  CONTEXT context;
-  context.ContextFlags = CONTEXT_ALL;
-  if (!GetThreadContext(hThread, &context)) {
-    fprintf(fp, "Cannot get thread context : 0x0%.8x\n", GetLastError());
-  }
-  BLI_windows_system_backtrace_run_trace(fp, hThread, &context);
-  if (hThread != GetCurrentThread()) {
+    bool success = GetThreadContext(hThread, &context);
     ResumeThread(hThread);
+    if (!success) {
+      fprintf(fp, "Cannot get thread context : 0x0%.8x\n", GetLastError());
+      return false;
+    }
   }
+  else {
+    RtlCaptureContext(&context);
+  }
+  return BLI_windows_system_backtrace_run_trace(fp, hThread, &context);
 }
 
 static void bli_windows_system_backtrace_modules(FILE *fp)
@@ -250,7 +253,21 @@ static void bli_windows_system_backtrace_modules(FILE *fp)
     if (me32.th32ProcessID == GetCurrentProcessId()) {
       char version[MAX_PATH];
       bli_windows_get_module_version(me32.szExePath, version, sizeof(version));
-      fprintf(fp, "0x%p %-20s %s\n", me32.modBaseAddr, version, me32.szModule);
+
+      IMAGEHLP_MODULE64 m64;
+      m64.SizeOfStruct = sizeof(m64);
+      if (SymGetModuleInfo64(GetCurrentProcess(), (DWORD64)me32.modBaseAddr, &m64)) {
+        fprintf(fp,
+                "0x%p %-20s %s %s %s\n",
+                me32.modBaseAddr,
+                version,
+                me32.szModule,
+                m64.LoadedPdbName,
+                m64.PdbUnmatched ? "[unmatched]" : "");
+      }
+      else {
+        fprintf(fp, "0x%p %-20s %s\n", me32.modBaseAddr, version, me32.szModule);
+      }
     }
   } while (Module32Next(hModuleSnap, &me32));
 }
@@ -289,8 +306,17 @@ static void bli_windows_system_backtrace_threads(FILE *fp)
 static bool BLI_windows_system_backtrace_stack(FILE *fp)
 {
   fprintf(fp, "Stack trace:\n");
-  CONTEXT TempContext = *current_exception->ContextRecord;
-  return BLI_windows_system_backtrace_run_trace(fp, GetCurrentThread(), &TempContext);
+  /* If we are handling an exception use the context record from that. */
+  if (current_exception && current_exception->ExceptionRecord->ExceptionAddress) {
+    /* The back trace code will write to the context record, to protect the original record from
+     * modifications give the backtrace a copy to work on.  */
+    CONTEXT TempContext = *current_exception->ContextRecord;
+    return BLI_windows_system_backtrace_run_trace(fp, GetCurrentThread(), &TempContext);
+  }
+  else {
+    /* If there is no current exception or the address is not set, walk the current stack. */
+    return bli_windows_system_backtrace_stack_thread(fp, GetCurrentThread());
+  }
 }
 
 static bool bli_private_symbols_loaded()
@@ -298,8 +324,7 @@ static bool bli_private_symbols_loaded()
   IMAGEHLP_MODULE64 m64;
   m64.SizeOfStruct = sizeof(m64);
   if (SymGetModuleInfo64(GetCurrentProcess(), (DWORD64)GetModuleHandle(NULL), &m64)) {
-    PathStripPath(m64.LoadedPdbName);
-    return BLI_strcasecmp(m64.LoadedPdbName, "blender_private.pdb") == 0;
+    return m64.GlobalSymbols;
   }
   return false;
 }
@@ -319,24 +344,29 @@ static void bli_load_symbols()
     PathRemoveFileSpecA(pdb_file);
     /* append blender.pdb */
     PathAppendA(pdb_file, "blender.pdb");
-    if (BLI_exists(pdb_file)) {
+    if (PathFileExistsA(pdb_file)) {
       HMODULE mod = GetModuleHandle(NULL);
       if (mod) {
-        size_t size = BLI_file_size(pdb_file);
+        WIN32_FILE_ATTRIBUTE_DATA file_data;
+        if (GetFileAttributesExA(pdb_file, GetFileExInfoStandard, &file_data)) {
+          /* SymInitialize will try to load symbols on its own, so we first must unload whatever it
+           * did trying to help */
+          SymUnloadModule64(GetCurrentProcess(), (DWORD64)mod);
 
-        /* SymInitialize will try to load symbols on its own, so we first must unload whatever it
-         * did trying to help */
-        SymUnloadModule64(GetCurrentProcess(), (DWORD64)mod);
-
-        DWORD64 module_base = SymLoadModule(
-            GetCurrentProcess(), NULL, pdb_file, NULL, (DWORD64)mod, (DWORD)size);
-        if (module_base == 0) {
-          fprintf(stderr,
-                  "Error loading symbols %s\n\terror:0x%.8x\n\tsize = %zi\n\tbase=0x%p\n",
-                  pdb_file,
-                  GetLastError(),
-                  size,
-                  (LPVOID)mod);
+          DWORD64 module_base = SymLoadModule(GetCurrentProcess(),
+                                              NULL,
+                                              pdb_file,
+                                              NULL,
+                                              (DWORD64)mod,
+                                              (DWORD)file_data.nFileSizeLow);
+          if (module_base == 0) {
+            fprintf(stderr,
+                    "Error loading symbols %s\n\terror:0x%.8x\n\tsize = %d\n\tbase=0x%p\n",
+                    pdb_file,
+                    GetLastError(),
+                    file_data.nFileSizeLow,
+                    (LPVOID)mod);
+          }
         }
       }
     }
@@ -347,7 +377,9 @@ void BLI_system_backtrace(FILE *fp)
 {
   SymInitialize(GetCurrentProcess(), NULL, TRUE);
   bli_load_symbols();
-  bli_windows_system_backtrace_exception_record(fp, current_exception->ExceptionRecord);
+  if (current_exception) {
+    bli_windows_system_backtrace_exception_record(fp, current_exception->ExceptionRecord);
+  }
   if (BLI_windows_system_backtrace_stack(fp)) {
     /* When the blender symbols are missing the stack traces will be unreliable
      * so only run if the previous step completed successfully. */
@@ -360,16 +392,19 @@ void BLI_system_backtrace(FILE *fp)
 void BLI_windows_handle_exception(EXCEPTION_POINTERS *exception)
 {
   current_exception = exception;
-  fprintf(stderr,
-          "Error   : %s\n",
-          bli_windows_get_exception_description(exception->ExceptionRecord->ExceptionCode));
-  fflush(stderr);
+  if (current_exception) {
+    fprintf(stderr,
+            "Error   : %s\n",
+            bli_windows_get_exception_description(exception->ExceptionRecord->ExceptionCode));
+    fflush(stderr);
 
-  LPVOID address = exception->ExceptionRecord->ExceptionAddress;
-  fprintf(stderr, "Address : 0x%p\n", address);
+    LPVOID address = exception->ExceptionRecord->ExceptionAddress;
+    fprintf(stderr, "Address : 0x%p\n", address);
 
-  CHAR modulename[MAX_PATH];
-  bli_windows_get_module_name(address, modulename, sizeof(modulename));
-  fprintf(stderr, "Module  : %s\n", modulename);
+    CHAR modulename[MAX_PATH];
+    bli_windows_get_module_name(address, modulename, sizeof(modulename));
+    fprintf(stderr, "Module  : %s\n", modulename);
+    fprintf(stderr, "Thread  : %.8x\n", GetCurrentThreadId());
+  }
   fflush(stderr);
 }

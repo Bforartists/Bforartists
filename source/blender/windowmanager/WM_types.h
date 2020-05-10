@@ -109,10 +109,6 @@
 #ifndef __WM_TYPES_H__
 #define __WM_TYPES_H__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 struct ID;
 struct ImBuf;
 struct bContext;
@@ -132,6 +128,10 @@ struct wmWindowManager;
 
 /* Include external gizmo API's */
 #include "gizmo/WM_gizmo_api.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct wmGenericUserData {
   void *data;
@@ -310,7 +310,7 @@ typedef struct wmNotifier {
 #define ND_HISTORY (4 << 16)
 #define ND_JOB (5 << 16)
 #define ND_UNDO (6 << 16)
-#define ND_XR_DATA_CHANGED (7 << 17)
+#define ND_XR_DATA_CHANGED (7 << 16)
 
 /* NC_SCREEN */
 #define ND_LAYOUTBROWSE (1 << 16)
