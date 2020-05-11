@@ -1397,6 +1397,7 @@ keyconfig_data = \
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
       [("extend", False),
+       ("deselect_all", True),
        ("column", False),
        ("channel", False),
        ],
@@ -2072,6 +2073,7 @@ keyconfig_data = \
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
       [("extend", False),
+       ("deselect_all", True),
        ("column", False),
        ("curves", False),
        ],
@@ -3775,6 +3777,7 @@ keyconfig_data = \
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
       [("extend", False),
+       ("deselect_all", True),
        ],
       },
      ),
