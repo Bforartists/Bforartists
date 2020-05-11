@@ -1350,7 +1350,7 @@ void ACTION_OT_interpolation_type(wmOperatorType *ot)
   ot->name = "Set Keyframe Interpolation";
   ot->idname = "ACTION_OT_interpolation_type";
   ot->description =
-      "Set interpolation mode for the F-Curve segments starting from the selected keyframes";
+      "Keyframe Interpolation\nSet interpolation mode for the F-Curve segments starting from the selected keyframes";
 
   /* api callbacks */
   ot->invoke = WM_menu_invoke;
@@ -1484,7 +1484,7 @@ void ACTION_OT_handle_type(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Keyframe Handle Type";
   ot->idname = "ACTION_OT_handle_type";
-  ot->description = "Set type of handle for selected keyframes";
+  ot->description = "Keyframe Handle Type\nSet type of handle for selected keyframes";
 
   /* api callbacks */
   ot->invoke = WM_menu_invoke;
@@ -1590,7 +1590,7 @@ void ACTION_OT_keyframe_type(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Keyframe Type";
   ot->idname = "ACTION_OT_keyframe_type";
-  ot->description = "Set type of keyframe for the selected keyframes";
+  ot->description = "Keyframe Type\nSet type of keyframe for the selected keyframes";
 
   /* api callbacks */
   ot->invoke = WM_menu_invoke;
