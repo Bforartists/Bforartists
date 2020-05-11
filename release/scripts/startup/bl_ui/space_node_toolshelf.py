@@ -1359,6 +1359,8 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
+        engine = context.engine
+
         ##### Textbuttons
 
         if not addon_prefs.Node_text_or_icon:
@@ -1371,11 +1373,25 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "ShaderNodeOutputMaterial"
 
+                if engine == 'CYCLES':
+
+                    props = col.operator("node.add_node", text=" Light Output    ", icon = "LIGHT")
+                    props.use_transform = True
+                    props.type = "ShaderNodeOutputLight"
+
+                    props = col.operator("node.add_node", text=" AOV Output    ", icon = "NODE_VALUE")
+                    props.use_transform = True
+                    props.type = "ShaderNodeOutputAOV"
+
             elif context.space_data.shader_type == 'WORLD':
 
                 props = col.operator("node.add_node", text=" World Output    ", icon = "WORLD")
                 props.use_transform = True
                 props.type = "ShaderNodeOutputWorld"
+
+                props = col.operator("node.add_node", text=" AOV Output    ", icon = "NODE_VALUE")
+                props.use_transform = True
+                props.type = "ShaderNodeOutputAOV"
 
             elif context.space_data.shader_type == 'LINESTYLE':
 
