@@ -1412,11 +1412,25 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "ShaderNodeOutputMaterial"
 
+                if engine == 'CYCLES':
+
+                    props = row.operator("node.add_node", text="", icon = "LIGHT")
+                    props.use_transform = True
+                    props.type = "ShaderNodeOutputLight"
+
+                    props = row.operator("node.add_node", text="", icon = "NODE_VALUE")
+                    props.use_transform = True
+                    props.type = "ShaderNodeOutputAOV"
+
             elif context.space_data.shader_type == 'WORLD':
 
                 props = row.operator("node.add_node", text = "", icon = "WORLD")
                 props.use_transform = True
                 props.type = "ShaderNodeOutputWorld"
+
+                props = row.operator("node.add_node", text="", icon = "NODE_VALUE")
+                props.use_transform = True
+                props.type = "ShaderNodeOutputAOV"
 
             elif context.space_data.shader_type == 'LINESTYLE':
 
