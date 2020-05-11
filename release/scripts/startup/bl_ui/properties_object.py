@@ -162,9 +162,9 @@ class COLLECTION_MT_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.collection_unlink", icon='X')
-        layout.operator("object.collection_objects_select")
-        layout.operator("object.instance_offset_from_cursor")
+        layout.operator("object.collection_unlink", text = "Delete", icon='DELETE')
+        layout.operator("object.collection_objects_select", icon = "HAND")
+        layout.operator("object.instance_offset_from_cursor", icon = "CURSOR")
 
 
 class OBJECT_PT_collections(ObjectButtonsPanel, Panel):
@@ -221,16 +221,16 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         is_gpencil = (obj_type == 'GPENCIL')
 
         col = layout.column(align = True)
-        col.label(text = "Show")        
-        
+        col.label(text = "Show")
+
         row = col.row()
         row.separator()
-        row.use_property_split = False   
+        row.use_property_split = False
         row.prop(obj, "show_name", text="Name")
         row.prop_decorator(obj, "show_name")
         row = col.row()
         row.separator()
-        row.use_property_split = False  
+        row.use_property_split = False
         row.prop(obj, "show_axis", text="Axis")
         row.prop_decorator(obj, "show_axis")
 
@@ -239,39 +239,39 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         if is_geometry or is_dupli:
             row = col.row()
             row.separator()
-            row.use_property_split = False  
+            row.use_property_split = False
             row.prop(obj, "show_wire", text="Wireframe")
             row.prop_decorator(obj, "show_wire")
         if obj_type == 'MESH' or is_dupli:
             row = col.row()
             row.separator()
-            row.use_property_split = False  
+            row.use_property_split = False
             row.prop(obj, "show_all_edges", text="All Edges")
             row.prop_decorator(obj, "show_all_edges")
         if is_geometry:
             row = col.row()
             row.separator()
-            row.use_property_split = False  
+            row.use_property_split = False
             row.prop(obj, "show_texture_space", text="Texture Space")
             row.prop_decorator(obj, "show_texture_space")
             row = col.row()
             row.separator()
-            row.use_property_split = False  
-            row.prop(obj.display, "show_shadows", text="Shadow")               
+            row.use_property_split = False
+            row.prop(obj.display, "show_shadows", text="Shadow")
         row = col.row()
         row.separator()
-        row.use_property_split = False  
+        row.use_property_split = False
         row.prop(obj, "show_in_front", text="In Front")
-        row.prop_decorator(obj, "show_in_front")      
-        
+        row.prop_decorator(obj, "show_in_front")
+
         # if obj_type == 'MESH' or is_empty_image:
         #    col.prop(obj, "show_transparent", text="Transparency") #bfa - we have it in the output
-        
+
         col = layout.column()
         if is_wire:
             # wire objects only use the max. display type for duplis
             col.active = is_dupli
-            
+
         col.prop(obj, "display_type", text="Display As")
 
         if is_geometry or is_dupli or is_empty_image or is_gpencil:
@@ -285,7 +285,7 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         row.prop(obj, "show_bounds", text="Bounds")
         if obj.show_bounds or (obj.display_type == 'BOUNDS'):
             row.use_property_split = True
-            row.prop(obj, "display_bounds_type", text="")      
+            row.prop(obj, "display_bounds_type", text="")
             row.prop_decorator(obj, "display_bounds_type")
 
 
@@ -315,15 +315,15 @@ class OBJECT_PT_instancing(ObjectButtonsPanel, Panel):
             row.prop(ob, "instance_collection", text="Collection")
             row.prop_decorator(ob, "instance_collection")
 
-        if ob.instance_type != 'NONE' or ob.particle_systems:          
+        if ob.instance_type != 'NONE' or ob.particle_systems:
             layout.label(text = "Show Instancer")
-            
+
             row = layout.row()
 
             row.separator()
             row.prop(ob, "show_instancer_for_viewport", text="Viewport")
             row.prop_decorator(ob, "show_instancer_for_viewport")
-            
+
             row = layout.row()
 
             row.separator()
@@ -407,32 +407,32 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
 
         layout = self.layout
         ob = context.object
-        
+
         layout.use_property_split = False
         layout.prop(ob, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
         layout.use_property_split = True
-        
-        col = layout.column(align = True)     
+
+        col = layout.column(align = True)
         col.label(text = "Show in")
 
         row = col.row()
-        row.use_property_split = False   
+        row.use_property_split = False
         row.separator()
         row.prop(ob, "hide_viewport", text="Viewports", toggle=False, invert_checkbox=True)
         row.prop_decorator(ob, "hide_viewport")
-        
+
         row = col.row()
         row.use_property_split = False
-        row.separator()     
+        row.separator()
         row.prop(ob, "hide_render", toggle=False, invert_checkbox=True)
         row.prop_decorator(ob, "hide_render")
 
         if context.object.type == 'GPENCIL':
-            
+
             layout.label(text = "Grease Pencil")
             row = col.row()
             row.separator()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(ob, "use_grease_pencil_lights", toggle=False)
             row.prop_decorator(ob, "use_grease_pencil_lights")
 
