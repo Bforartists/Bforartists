@@ -18,7 +18,6 @@
 
 # <pep8 compliant>
 import bpy
-import os
 
 from bpy.types import Header, Menu, Panel
 
@@ -499,8 +498,6 @@ class TOPBAR_MT_edit(Menu):
 
     def draw(self, context):
         layout = self.layout
-        appdata = os.getenv('APPDATA')
-        appdatapath = appdata + "\\Bforartists\\Bforartists\\"
 
         layout.operator("ed.undo", icon='UNDO')
         layout.operator("ed.redo", icon='REDO')
@@ -533,9 +530,8 @@ class TOPBAR_MT_edit(Menu):
         layout.operator("wm.batch_rename", icon='RENAME')
 
         layout.separator()
-
+       
         layout.operator("preferences.app_template_install", text="Install Application Template", icon = "APPTEMPLATE")
-
         layout.separator()
 
         layout.operator_context = 'INVOKE_AREA'
@@ -554,9 +550,8 @@ class TOPBAR_MT_edit(Menu):
             props.app_template = app_template
 
         layout.separator()
-
         layout.operator("screen.userpref_show", text="Preferences", icon='PREFERENCES')
-        layout.operator("wm.url_open", text="Open Preferences Folder", icon = "FOLDER_REDIRECT").url = appdatapath
+
 
 
 class TOPBAR_MT_window(Menu):

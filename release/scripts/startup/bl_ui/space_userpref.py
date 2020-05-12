@@ -18,6 +18,17 @@
 
 # <pep8 compliant>
 import bpy
+
+#work
+import os 
+from pathlib import Path
+
+user_path = Path(bpy.utils.resource_path('USER')).parent
+local_path = Path(bpy.utils.resource_path('LOCAL')).parent
+
+
+
+
 from bpy.types import (
     Header,
     Menu,
@@ -125,6 +136,15 @@ class USERPREF_MT_save_load(Menu):
         layout.operator_context = 'INVOKE_AREA'
         layout.operator("wm.read_factory_userpref", text="Load Factory Preferences")
 
+#work        
+        layout.separator()
+
+        if os.path.isdir(Path(bpy.utils.resource_path('USER'))): 
+            layout.operator("wm.path_open", text="Open Appdata Folder", icon = "FOLDER_REDIRECT").filepath = str(user_path)
+        else:
+            layout.operator("wm.path_open", text="Open Appdata Folder", icon = "FOLDER_REDIRECT").filepath = str(local_path)
+        
+        
 
 class USERPREF_PT_save_preferences(Panel):
     bl_label = "Save Preferences"
