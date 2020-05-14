@@ -4335,7 +4335,7 @@ static uiBlock *curvemap_tools_func(
     uiDefIconTextBut(block,
                      UI_BTYPE_BUT_MENU,
                      1,
-                     ICON_HANDLE_AUTO_CLAMPED,
+                     ICON_HANDLE_AUTOCLAMPED,
                      IFACE_("Auto Clamped Handle"),
                      0,
                      yco -= UI_UNIT_Y,

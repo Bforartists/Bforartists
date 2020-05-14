@@ -5430,7 +5430,7 @@ class VIEW3D_MT_edit_curve_handle_type_set(Menu):
 
         layout.operator("curve.handle_type_set", icon = 'HANDLE_AUTO', text="Automatic").type = 'AUTOMATIC'
         layout.operator("curve.handle_type_set", icon = 'HANDLE_VECTOR', text="Vector").type = 'VECTOR'
-        layout.operator("curve.handle_type_set", icon = 'HANDLE_ALIGN',text="Aligned").type = 'ALIGNED'
+        layout.operator("curve.handle_type_set", icon = 'HANDLE_ALIGNED',text="Aligned").type = 'ALIGNED'
         layout.operator("curve.handle_type_set", icon = 'HANDLE_FREE', text="Free").type = 'FREE_ALIGN'
 
         layout.separator()
