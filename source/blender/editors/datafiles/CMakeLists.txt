@@ -412,7 +412,7 @@ view_active_bottom
 view_active_front
 
 mirror_time
-handle_auto_clamped
+handle_autoclamped
 move_down
 move_to_bottom
 move_to_top
@@ -862,7 +862,7 @@ toggle_cyclic
 switch_direction
 handle_auto
 handle_vector
-handle_align
+handle_aligned
 handle_free
 radius
 type
@@ -1574,8 +1574,8 @@ anchor_top
 #def_icon_blank(1587
 #def_icon_blank(1588
 #def_icon_blank(1589
-#def_icon_blank(1590
-#def_icon_blank(1591
+#def_icon_blank(1593
+outliner_data_volume
 
 # ------------------------- row 28 --------------------------*/
 
@@ -1612,27 +1612,27 @@ smooth_tilt
 smooth_weight
 clear_tilt
 
-#def_icon_blank(1628
-#def_icon_blank(1629
+outliner_data_pointcloud
+outliner_data_hair
 node_zcombine
 node_keying
-#def_icon_blank(1632
-#def_icon_blank(1633
+lockview_off
+lockview_on
 node_spill
 remove_active_group
 remove_all_groups
 set_frames
 
-#def_icon_blank(1639
-#def_icon_blank(1640
-#def_icon_blank(1641
-#def_icon_blank(1642
-#def_icon_blank(1643
-#def_icon_blank(1644
-#def_icon_blank(1645
-#def_icon_blank(1646
-#def_icon_blank(1647
-#def_icon_blank(1648
+play_sound
+mod_instance
+image_plane
+restrict_instanced_on
+restrict_instanced_off
+heart
+fund
+decorate_library_override
+decorate_linked
+preset_new
 
 # ------------------------- row 29 --------------------------*/
 
@@ -1682,14 +1682,14 @@ planetrack
 
 seq_swap_left
 seq_swap_right
-#def_icon_blank(1701
+texture_data
 #def_icon_blank(1702
 toggle_meta
 seq_snap_strip
-#def_icon_blank(1705
-#def_icon_blank(1706
-#def_icon_blank(1707
-#def_icon_blank(1708
+world_data
+node_texture
+anim
+trash
 
 # ------------------------- row 30 --------------------------*/
 
@@ -1739,14 +1739,14 @@ trademark
 
 seq_snap_to_frame
 seq_clear_offset
-#def_icon_blank(1758
-#def_icon_blank(1759
+rna_add
+strands
 seq_deinterlace
 seq_move_extend
 seq_slip_contents
 seq_remove_gaps
 seq_insert_gaps
-#def_icon_blank(1765
+three_rows
 )
 
 # This section is maintained by the updating script, keep BEGIN/END comments.
