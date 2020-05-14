@@ -676,9 +676,9 @@ void ACTION_OT_unlink(wmOperatorType *ot)
   PropertyRNA *prop;
 
   /* identifiers */
-  ot->name = "Unlink Action";
+  ot->name = "Remove Action";
   ot->idname = "ACTION_OT_unlink";
-  ot->description = "Unlink this action from the active action slot (and/or exit Tweak Mode)";
+  ot->description = "Remove this action from the active action slot (and/or exit Tweak Mode)";
 
   /* callbacks */
   ot->invoke = action_unlink_invoke;
