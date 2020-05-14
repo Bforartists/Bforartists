@@ -1669,7 +1669,7 @@ void MASK_OT_handle_type_set(wmOperatorType *ot)
       {HD_AUTO, "AUTO", ICON_HANDLE_AUTO, "Auto", ""},
       {HD_VECT, "VECTOR", ICON_HANDLE_VECTOR, "Vector", ""},
       {HD_ALIGN, "ALIGNED", ICON_HANDLE_ALIGN_SINGLE, "Aligned Single", ""},
-      {HD_ALIGN_DOUBLESIDE, "ALIGNED_DOUBLESIDE", ICON_HANDLE_ALIGN, "Aligned", ""},
+      {HD_ALIGN_DOUBLESIDE, "ALIGNED_DOUBLESIDE", ICON_HANDLE_ALIGNED, "Aligned", ""},
       {HD_FREE, "FREE", ICON_HANDLE_FREE, "Free", ""},
       {0, NULL, 0, NULL, NULL},
   };
