@@ -96,17 +96,16 @@ class GPENCIL_MT_layer_context_menu(Menu):
         layout.separator()
 
         layout.operator("gpencil.reveal", icon='HIDE_OFF', text="Show All")
-        layout.operator("gpencil.hide", icon='HIDE_ON', text="Hide Others").unselected = True
+        layout.operator("gpencil.hide", icon='HIDE_UNSELECTED', text="Hide Others").unselected = True
 
         layout.separator()
 
         layout.operator("gpencil.lock_all", icon='LOCKED', text="Lock All")
         layout.operator("gpencil.unlock_all", icon='UNLOCKED', text="UnLock All")
-        layout.prop(gpd, "use_autolock_layers", text="Autolock Inactive Layers")
 
         layout.separator()
 
-        layout.operator("gpencil.layer_merge", icon='SORT_ASC', text="Merge Down")
+        layout.operator("gpencil.layer_merge", icon='SORT_DESC', text="Merge Down")
 
         layout.separator()
         layout.menu("VIEW3D_MT_gpencil_copy_layer")
