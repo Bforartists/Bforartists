@@ -933,8 +933,10 @@ class DOPESHEET_PT_gpencil_mode(LayersDopeSheetPanel, Panel):
             row = layout.row(align=True)
             row.prop(gpl, "opacity", text="Opacity", slider=True)
 
-            row = layout.row(align=True)
-            row.prop(gpl, "use_lights")
+            col = layout.column( align=True)
+            col.use_property_split = False
+            col.prop(gpl, "use_lights")
+            col.prop(gpd, "use_autolock_layers", text="Autolock Inactive Layers")
 
 
 class DOPESHEET_PT_gpencil_layer_masks(LayersDopeSheetPanel, GreasePencilLayerMasksPanel, Panel):
