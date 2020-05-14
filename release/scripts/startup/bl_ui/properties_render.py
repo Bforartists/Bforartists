@@ -318,8 +318,6 @@ class RENDER_PT_eevee_subsurface_scattering(RenderButtonsPanel, Panel):
         col = layout.column()
         col.prop(props, "sss_samples")
         col.prop(props, "sss_jitter_threshold")
-        col.use_property_split = False
-        col.prop(props, "use_sss_separate_albedo")
 
 
 class RENDER_PT_eevee_screen_space_reflections(RenderButtonsPanel, Panel):
