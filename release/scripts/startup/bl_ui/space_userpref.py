@@ -117,13 +117,13 @@ class USERPREF_MT_save_load(Menu):
 
         layout.operator_context = 'EXEC_AREA'
         if prefs.use_preferences_save:
-            layout.operator("wm.save_userpref", text="Save Preferences")
+            layout.operator("wm.save_userpref", text="Save Preferences", icon='SAVE_PREFS')
         sub_revert = layout.column(align=True)
         sub_revert.active = prefs.is_dirty
-        sub_revert.operator("wm.read_userpref", text="Revert to Saved Preferences")
+        sub_revert.operator("wm.read_userpref", text="Revert to Saved Preferences", icon = "UNDO")
 
         layout.operator_context = 'INVOKE_AREA'
-        layout.operator("wm.read_factory_userpref", text="Load Factory Preferences")
+        layout.operator("wm.read_factory_userpref", text="Load Factory Preferences", icon='LOAD_FACTORY')
 
 
 class USERPREF_PT_save_preferences(Panel):
