@@ -604,9 +604,9 @@ void NLA_OT_action_unlink(wmOperatorType *ot)
   PropertyRNA *prop;
 
   /* identifiers */
-  ot->name = "Unlink Action";
+  ot->name = "Remove Action";
   ot->idname = "NLA_OT_action_unlink";
-  ot->description = "Unlink this action from the active action slot (and/or exit Tweak Mode)";
+  ot->description = "Remove this action from the active action slot (and/or exit Tweak Mode)";
 
   /* callbacks */
   ot->invoke = nla_action_unlink_invoke;
