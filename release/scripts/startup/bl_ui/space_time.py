@@ -84,11 +84,11 @@ class TIME_HT_editor_buttons(Header):
         row.operator("anim.keyframe_delete", text="", icon='KEY_DEHLT')
 
         layout.separator_spacer()
-            
+
         row = layout.row(align=True)
 
-        row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)           
-        row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")   
+        row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
+        row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
 
         layout.popover(panel="TIME_PT_playback", text="Playback")
         layout.popover(panel="TIME_PT_keyframing_settings", text="Keying")
@@ -157,7 +157,7 @@ class TIME_MT_marker_jump_previous(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.screen.marker_jump(next = False)
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 def marker_menu_generic(layout, context):
@@ -189,11 +189,6 @@ def marker_menu_generic(layout, context):
 
     layout.operator("screen.marker_jump", text="Jump to Next Marker", icon = "NEXT_KEYFRAME").next = True
     layout.operator("screen.marker_jump_previous", text="Jump to Previous Marker", icon = "PREV_KEYFRAME") # bfa - the separated tooltip
-
-    layout.separator()
-
-    layout.operator("anim.channels_find", icon = "VIEWZOOM")
-
 
 
 ###################################
@@ -313,18 +308,18 @@ class TIME_PT_view_view_options(TimelinePanelButtons, Panel):
     def poll(cls, context):
         # only for timeline editor
         return cls.has_timeline(context)
-    
+
     def draw(self, context):
         sc = context.scene
         layout = self.layout
-        
+
         st = context.space_data
         scene = context.scene
 
         layout.prop(st, "show_markers")
 
         layout.separator()
-        
+
         layout.prop(scene, "show_keys_from_selected_only")
 
         layout.separator()
@@ -342,11 +337,11 @@ class TIME_PT_view_view_cache(TimelinePanelButtons, Panel):
     def poll(cls, context):
         # only for timeline editor
         return cls.has_timeline(context)
-    
+
     def draw(self, context):
         sc = context.scene
         layout = self.layout
-        
+
         st = context.space_data
 
         layout.prop(st, "show_cache")
