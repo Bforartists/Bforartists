@@ -739,7 +739,7 @@ class DOPESHEET_MT_gpencil_channel(Menu):
 
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
 
-        layout.operator("anim.channels_delete")
+        layout.operator("anim.channels_delete", icon = "DELETE")
 
         layout.separator()
 
@@ -750,10 +750,6 @@ class DOPESHEET_MT_gpencil_channel(Menu):
         layout.separator()
 
         layout.operator("anim.channels_editable_toggle", icon = "LOCKED")
-
-        layout.separator()
-
-        layout.operator("anim.channels_editable_toggle")
 
         # XXX: to be enabled when these are ready for use!
         # layout.separator()
