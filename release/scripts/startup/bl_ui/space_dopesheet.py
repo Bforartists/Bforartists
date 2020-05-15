@@ -559,12 +559,6 @@ class DOPESHEET_MT_channel(Menu):
 
         layout.menu("GRAPH_MT_channel_move") #bfa - menu comes from space_graph
 
-        # bfa - the channels find menu item is already in the marker menu. But should be here.
-        # The marker menu is a shared menu from the time line. And the time line editor and nla does not have a channel menu.
-        #layout.separator()
-
-        #layout.operator("anim.channels_find", icon = "VIEWZOOM")
-
         layout.separator()
 
         layout.operator("anim.channels_fcurves_enable", icon = "UNLOCKED")
