@@ -33,7 +33,7 @@ class ANIM_OT_switch_editor_in_graph(bpy.types.Operator):
     bl_idname = "wm.switch_editor_in_graph"        # unique identifier for buttons and menu items to reference.
     bl_label = "Graph Editor"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-    
+
     def execute(self, context):        # Blank button, we don't execute anything here.
         return {'FINISHED'}
 
@@ -63,11 +63,11 @@ class GRAPH_HT_header(Header):
 
         # Now a exposed as a sub-space type
         # layout.prop(st, "mode", text="")
-        
+
         ############################ Switch between the editors
 
         if context.space_data.mode == 'FCURVES':
-        
+
             # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
             row = layout.row(align=True)
 
@@ -77,7 +77,7 @@ class GRAPH_HT_header(Header):
             row.operator("wm.switch_editor_to_nla", text="", icon='NLA')
 
         elif context.space_data.mode == 'DRIVERS':
-        
+
             # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
             row = layout.row(align=True)
 
@@ -85,7 +85,7 @@ class GRAPH_HT_header(Header):
             row.operator("wm.switch_editor_to_graph", text="", icon='GRAPH')
             row.operator("wm.switch_editor_in_driver", text="", icon='DRIVER_ACTIVE')
             row.operator("wm.switch_editor_to_nla", text="", icon='NLA')
-            
+
         #############################
 
         GRAPH_MT_editor_menus.draw_collapsible(context, layout)
@@ -115,14 +115,14 @@ class GRAPH_HT_header(Header):
         row = layout.row(align=True)
         row.prop(tool_settings, "use_proportional_fcurve", text="", icon_only=True)
         sub = row.row(align=True)
-        
+
         if tool_settings.use_proportional_fcurve:
             sub.prop(tool_settings, "proportional_edit_falloff", text="", icon_only=True)
 
         layout.prop(st, "pivot_point", icon_only=True)
-        
+
         layout.operator_menu_enum("graph.easing_type", "type", text="", icon = "IPO_EASE_IN_OUT")
-        layout.operator_menu_enum("graph.handle_type", "type", text="", icon = "HANDLE_AUTO")        
+        layout.operator_menu_enum("graph.handle_type", "type", text="", icon = "HANDLE_AUTO")
         layout.operator_menu_enum("graph.interpolation_type", "type", text="", icon = "INTERPOLATE")
         layout.prop(tool_settings, "keyframe_type", text="", icon_only=True)
 
@@ -159,7 +159,7 @@ class GRAPH_PT_properties_Marker_options(Panel):
     bl_category = "View"
     bl_space_type = 'GRAPH_EDITOR'
     bl_region_type = 'UI'
-    
+
     def draw(self, context):
 
         layout = self.layout
@@ -173,11 +173,11 @@ class GRAPH_PT_properties_view_options(Panel):
     bl_category = "View"
     bl_space_type = 'GRAPH_EDITOR'
     bl_region_type = 'UI'
-    
+
     def draw(self, context):
         sc = context.scene
         layout = self.layout
-        
+
         st = context.space_data
 
         layout.prop(st, "use_realtime_update")
@@ -185,15 +185,15 @@ class GRAPH_PT_properties_view_options(Panel):
             layout.separator()
             layout.prop(st, "show_markers")
         layout.separator()
-        
+
         layout.prop(st, "show_seconds")
         layout.prop(st, "show_locked_time")
-        
+
         layout.separator()
-        
+
         layout.prop(st, "show_cursor")
         layout.prop(st, "show_sliders")
-        layout.prop(st, "show_group_colors")        
+        layout.prop(st, "show_group_colors")
         layout.prop(st, "use_auto_merge_keyframes")
         layout.prop(st, "use_beauty_drawing")
 
@@ -201,7 +201,7 @@ class GRAPH_PT_properties_view_options(Panel):
 
         layout.prop(st, "show_handles")
         layout.prop(st, "use_only_selected_curves_handles")
-        layout.prop(st, "use_only_selected_keyframe_handles")    
+        layout.prop(st, "use_only_selected_keyframe_handles")
 
 
 class GRAPH_MT_editor_menus(Menu):
@@ -237,7 +237,7 @@ class GRAPH_MT_view(Menu):
         layout.operator("graph.previewrange_set", icon='BORDER_RECT')
 
         layout.separator()
-        
+
         layout.operator("view2d.zoom_in", text = "Zoom In", icon = "ZOOM_IN")
         layout.operator("view2d.zoom_out", text = "Zoom Out", icon = "ZOOM_OUT")
         layout.operator("view2d.zoom_border", icon = "ZOOM_BORDER")
@@ -309,10 +309,10 @@ class GRAPH_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("graph.select_linked", text = "Linked", icon = "CONNECTED")  
+        layout.operator("graph.select_linked", text = "Linked", icon = "CONNECTED")
 
         layout.separator()
-        
+
         props = layout.operator("graph.select_leftright", text="Before Current Frame", icon = "BEFORE_CURRENT_FRAME")
         props.extend = False
         props.mode = 'LEFT'
@@ -346,7 +346,7 @@ class GRAPH_MT_channel_hide_unselected_curves(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.graph.hide(unselected = True)
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class GRAPH_MT_channel(Menu):
@@ -378,7 +378,7 @@ class GRAPH_MT_channel(Menu):
         layout.separator()
 
         layout.operator("graph.reveal", icon = "HIDE_OFF")
-        layout.operator("graph.hide", text="Hide Selected Curves", icon = "HIDE_ON").unselected = False 
+        layout.operator("graph.hide", text="Hide Selected Curves", icon = "HIDE_ON").unselected = False
         layout.operator("graph.hide_unselected_curves", text="Hide Unselected Curves", icon = "HIDE_UNSELECTED")
 
         layout.separator()
@@ -393,12 +393,6 @@ class GRAPH_MT_channel(Menu):
         layout.separator()
 
         layout.operator("anim.channels_fcurves_enable", icon = "UNLOCKED")
-        
-        # bfa - the channels find menu item is already in the marker menu. But should be here.
-        # The marker menu is a shared menu from the time line. And the time line and nla editor does not have a channel menu.
-        #layout.separator()
-
-        #layout.operator("anim.channels_find", icon = "VIEWZOOM") 
 
 
 class GRAPH_MT_channel_settings_toggle(Menu):
@@ -483,7 +477,7 @@ class GRAPH_MT_key(Menu):
         layout.operator_context = 'EXEC_DEFAULT'
         layout.operator("graph.decimate", text="Decimate (Allowed Change)", icon = "DECIMATE").mode = 'ERROR'
         layout.operator_context = operator_context
-        
+
         layout.operator("graph.clean", icon = "CLEAN_KEYS").channels = False
         layout.operator("graph.clean", text="Clean Channels", icon = "CLEAN_CHANNELS").channels = True
         layout.operator("graph.smooth", icon = "SMOOTH_KEYFRAMES")

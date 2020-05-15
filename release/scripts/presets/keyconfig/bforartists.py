@@ -660,7 +660,6 @@ keyconfig_data = \
        ],
       },
      ),
-    ("anim.channels_find", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
     ("anim.channels_select_all",
      {"type": 'A', "value": 'PRESS'},
      {"properties":
@@ -1507,7 +1506,6 @@ keyconfig_data = \
     ("action.view_all", {"type": 'NDOF_BUTTON_FIT', "value": 'PRESS'}, None),
     ("action.view_selected", {"type": 'NUMPAD_0', "value": 'PRESS'}, None),
     ("action.view_frame", {"type": 'NUMPAD_PERIOD', "value": 'PRESS'}, None),
-    ("anim.channels_find", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
     ("transform.transform",
      {"type": 'W', "value": 'PRESS'},
      {"properties":
@@ -2231,7 +2229,6 @@ keyconfig_data = \
        ],
       },
      ),
-    ("anim.channels_find", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
     ("graph.hide",
      {"type": 'H', "value": 'PRESS'},
      {"properties":
@@ -3916,7 +3913,6 @@ keyconfig_data = \
        ],
       },
      ),
-    ("anim.channels_find", {"type": 'F', "value": 'PRESS', "ctrl": True}, None),
     ],
    },
   ),
