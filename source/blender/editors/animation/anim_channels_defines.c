@@ -4898,13 +4898,13 @@ static void draw_setting_widget(bAnimContext *ac,
       icon = ICON_HIDE_ON;
 
       if (ELEM(ale->type, ANIMTYPE_FCURVE, ANIMTYPE_NLACURVE)) {
-        tooltip = TIP_("F-Curve visibility in Graph Editor");
+        tooltip = TIP_("Visibility\nF-Curve visibility in Graph Editor");
       }
       else if (ale->type == ANIMTYPE_GPLAYER) {
-        tooltip = TIP_("Grease Pencil layer is visible in the viewport");
+        tooltip = TIP_("Visibility\nGrease Pencil layer is visible in the viewport");
       }
       else {
-        tooltip = TIP_("Show\nChannels are visible in Graph Editor for editing");
+        tooltip = TIP_("Visibility\nChannels are visible in Graph Editor for editing");
       }
       break;
 
@@ -4921,14 +4921,14 @@ static void draw_setting_widget(bAnimContext *ac,
     case ACHANNEL_SETTING_EXPAND: /* expanded triangle */
       // icon = ((enabled) ? ICON_TRIA_DOWN : ICON_TRIA_RIGHT);
       icon = ICON_TRIA_RIGHT;
-      tooltip = TIP_("Make channels grouped under this channel visible");
+      tooltip = TIP_("Expand\nMake channels grouped under this channel visible");
       break;
 
     case ACHANNEL_SETTING_SOLO: /* NLA Tracks only */
       // icon = ((enabled) ? ICON_SOLO_OFF : ICON_SOLO_ON);
       icon = ICON_SOLO_OFF;
       tooltip = TIP_(
-          "NLA Track is the only one evaluated in this animation data-block, with all others "
+          "Solo\nNLA Track is the only one evaluated in this animation data-block, with all others "
           "muted");
       break;
 
