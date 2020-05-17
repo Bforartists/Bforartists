@@ -225,6 +225,9 @@ class AddTwistedTorus(bpy.types.Operator, object_utils.AddObjectHelper):
             col.prop(self, 'rotation', expand=True)
 
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
 
         if self.use_abso is True:
             extra_helper = (self.abso_major_rad - self.abso_minor_rad) * 0.5
@@ -287,6 +290,12 @@ class AddTwistedTorus(bpy.types.Operator, object_utils.AddObjectHelper):
             bpy.ops.object.join()
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')
+
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 
         return {'FINISHED'}
 

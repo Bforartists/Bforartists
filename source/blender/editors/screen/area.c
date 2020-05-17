@@ -249,7 +249,9 @@ static void draw_azone_arrow(float x1, float y1, float x2, float y2, AZEdge edge
   uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 
   GPU_blend(true);
-  immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+  /* NOTE(fclem): There is something strange going on with Mesa and GPU_SHADER_2D_UNIFORM_COLOR
+   * that causes a crash on some GPUs (see T76113). Using 3D variant avoid the issue. */
+  immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
   immUniformColor4f(0.8f, 0.8f, 0.8f, 0.4f);
 
   immBegin(GPU_PRIM_TRI_FAN, 6);
@@ -267,7 +269,7 @@ static void draw_azone_arrow(float x1, float y1, float x2, float y2, AZEdge edge
   GPU_blend(false);
 }
 
-static void region_draw_azone_tab_arrow(AZone *az)
+static void region_draw_azone_tab_arrow(ScrArea *area, ARegion *region, AZone *az)
 {
   GPU_blend(true);
 
@@ -287,7 +289,9 @@ static void region_draw_azone_tab_arrow(AZone *az)
       break;
   }
 
-  float color[4] = {0.05f, 0.05f, 0.05f, 0.4f};
+  /* Workaround for different color spaces between normal areas and the ones using GPUViewports. */
+  float alpha = WM_region_use_viewport(area, region) ? 0.6f : 0.4f;
+  float color[4] = {0.05f, 0.05f, 0.05f, alpha};
   UI_draw_roundbox_aa(
       true, (float)az->x1, (float)az->y1, (float)az->x2, (float)az->y2, 4.0f, color);
 
@@ -328,7 +332,7 @@ static void region_draw_azones(ScrArea *area, ARegion *region)
         if (az->region) {
           /* only display tab or icons when the region is hidden */
           if (az->region->flag & (RGN_FLAG_HIDDEN | RGN_FLAG_TOO_SMALL)) {
-            region_draw_azone_tab_arrow(az);
+            region_draw_azone_tab_arrow(area, region, az);
           }
         }
       }

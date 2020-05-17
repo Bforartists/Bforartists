@@ -252,7 +252,7 @@ class Unfolder:
             # TODO: do we really need all this recollection?
             recall = rd.engine, sce.cycles.bake_type, sce.cycles.samples, bk.use_selected_to_active, bk.margin, bk.cage_extrusion, bk.use_cage, bk.use_clear
             rd.engine = 'CYCLES'
-            recall_pass = {p: getattr(bk, f"use_pass_{p}") for p in ('ambient_occlusion', 'color', 'diffuse', 'direct', 'emit', 'glossy', 'indirect', 'subsurface', 'transmission')}
+            recall_pass = {p: getattr(bk, f"use_pass_{p}") for p in ('ambient_occlusion', 'color', 'diffuse', 'direct', 'emit', 'glossy', 'indirect', 'transmission')}
             for p in recall_pass:
                 setattr(bk, f"use_pass_{p}", (properties.output_type != 'TEXTURE'))
             lookup = {'TEXTURE': 'DIFFUSE', 'AMBIENT_OCCLUSION': 'AO', 'RENDER': 'COMBINED', 'SELECTED_TO_ACTIVE': 'COMBINED'}
@@ -266,7 +266,7 @@ class Unfolder:
                 sce.cycles.samples = properties.bake_samples
             if sce.cycles.bake_type == 'COMBINED':
                 bk.use_pass_direct, bk.use_pass_indirect = True, True
-                bk.use_pass_diffuse, bk.use_pass_glossy, bk.use_pass_transmission, bk.use_pass_subsurface, bk.use_pass_ambient_occlusion, bk.use_pass_emit = True, False, False, True, True, True
+                bk.use_pass_diffuse, bk.use_pass_glossy, bk.use_pass_transmission, bk.use_pass_ambient_occlusion, bk.use_pass_emit = True, False, False, True, True
 
             if image_packing == 'PAGE_LINK':
                 self.mesh.save_image(printable_size * ppm, filepath)

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -4759,6 +4759,10 @@ msgid "ID"
 msgstr "ID"
 
 
+msgid "Shading"
+msgstr "Cieniowanie"
+
+
 msgid "Transform"
 msgstr "Transformuj"
 
@@ -6252,10 +6256,6 @@ msgid "Save"
 msgstr "Zapisz"
 
 
-msgid "Shading"
-msgstr "Cieniowanie"
-
-
 msgid "Time"
 msgstr "Czas"
 
@@ -7393,10 +7393,6 @@ msgstr "Para Pierścieni Krawędzi nie jest połączona"
 
 msgid "Edge-rings are not connected"
 msgstr "Pierścienie Krawędzi nie są połączone"
-
-
-msgid "F-Curve is visible in Graph Editor for editing"
-msgstr "Krzywa-F jest widoczna w Edytorze Krzywych-F dla edycji"
 
 
 msgid "Channels are visible in Graph Editor for editing"
@@ -10895,10 +10891,6 @@ msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts sele
 msgstr "Zaznaczanie wierzchołków - Shift-klik dla trybów mieszanych, Ctrl-klik zawęża wybór"
 
 
-msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection"
-msgstr "Zaznaczanie krawędzi - Shift-klik dla trybów mieszanych, Ctrl-klik rozszerza/zawęża wybór"
-
-
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
 msgstr "Zaznaczanie ścian - Shift-klik dla trybów mieszanych, Ctrl-klik rozszerza wybór"
 
@@ -12040,10 +12032,6 @@ msgstr "Nieprawidłowe ustawienia celu"
 
 msgid "Hull error"
 msgstr "Błąd hull"
-
-
-msgid "Faces needed for useful output"
-msgstr "Ściany potrzebne dla użytecznego output"
 
 
 msgid "Convertor"

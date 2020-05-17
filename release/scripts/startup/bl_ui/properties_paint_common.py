@@ -544,7 +544,7 @@ def brush_settings(layout, context, brush, popover=False):
         # normal_radius_factor
         layout.prop(brush, "normal_radius_factor", slider=True)
         layout.prop(brush, "hardness", slider=True)
-        
+
         layout.separator()
 
         # auto_smooth_factor and use_inverse_smooth_pressure
@@ -591,16 +591,16 @@ def brush_settings(layout, context, brush, popover=False):
                 pressure_name="use_offset_pressure",
                 slider=True,
             )
-            
+
             layout.separator()
-            
+
             row = layout.row(heading="Plane Trim")
             row.use_property_split = False
             row.prop(brush, "use_plane_trim", text="")
-            
+
             if brush.use_plane_trim:
                 row.prop(brush, "plane_trim", slider=True, text="")
-                
+
 
         # height
         if capabilities.has_height:
@@ -632,10 +632,10 @@ def brush_settings(layout, context, brush, popover=False):
             layout.prop(brush, "pose_offset")
             layout.prop(brush, "pose_smooth_iterations")
             layout.prop(brush, "pose_ik_segments")
-            
+
             layout.separator()
 
-            layout.use_property_split = False           
+            layout.use_property_split = False
             layout.prop(brush, "use_pose_ik_anchored")
 
         if brush.sculpt_tool == 'CLOTH':
@@ -655,24 +655,24 @@ def brush_settings(layout, context, brush, popover=False):
             row = layout.row()
             row.prop(brush, "area_radius_factor", slider=True)
             row = layout.row()
-            row.use_property_split = False     
+            row.use_property_split = False
             row.prop(brush, "invert_to_scrape_fill", text="Invert to Fill")
 
         if brush.sculpt_tool == 'FILL':
             row = layout.row()
             row.prop(brush, "area_radius_factor", slider=True)
             row = layout.row()
-            row.use_property_split = False     
+            row.use_property_split = False
             row.prop(brush, "invert_to_scrape_fill", text="Invert to Scrape")
 
         if brush.sculpt_tool == 'GRAB':
-            layout.use_property_split = False  
+            layout.use_property_split = False
             layout.prop(brush, "use_grab_active_vertex")
 
         if brush.sculpt_tool == 'MULTIPLANE_SCRAPE':
             col = layout.column()
             col.prop(brush, "multiplane_scrape_angle")
-            col.use_property_split = False  
+            col.use_property_split = False
             col.prop(brush, "use_multiplane_scrape_dynamic")
             col.prop(brush, "show_multiplane_scrape_planes_preview")
 
@@ -840,14 +840,14 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         row = col.row()
         row.separator()
         row.prop(brush, "use_automasking_face_sets")
-       
+
         # boundary edges/face sets automasking
         row = col.row()
         row.separator()
         row.prop(brush, "use_automasking_boundary_edges", text="Mesh Boundary")
         row = col.row()
         row.separator()
-        row.prop(brush, "use_automasking_boundary_face_sets", text="Face Sets")
+        row.prop(brush, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
         col.use_property_split = True
         col.prop(brush, "automasking_boundary_edges_propagation_steps")
 
@@ -856,7 +856,7 @@ def brush_settings_advanced(layout, context, brush, popover=False):
             col.use_property_split = True
             col.prop(brush, "sculpt_plane")
             col.use_property_split = False
-            
+
             col = layout.column()
             col.label(text = "Use Original")
             col.use_property_split = False
@@ -866,14 +866,14 @@ def brush_settings_advanced(layout, context, brush, popover=False):
             row = col.row()
             row.separator()
             row.prop(brush, "use_original_plane", text="Plane")
-            
+
             layout.separator()
 
     # 3D and 2D Texture Paint.
     elif mode in {'PAINT_TEXTURE', 'PAINT_2D'}:
         capabilities = brush.image_paint_capabilities
         use_accumulate = capabilities.has_accumulate
-        
+
         layout.use_property_split = False
 
         if mode == 'PAINT_2D':

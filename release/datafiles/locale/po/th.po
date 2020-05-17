@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -758,6 +758,10 @@ msgid "Scene"
 msgstr "ฉาก"
 
 
+msgid "Shading"
+msgstr "แรเงา"
+
+
 msgid "Transform"
 msgstr "การปรับเปลี่ยน"
 
@@ -1122,10 +1126,6 @@ msgstr "บันทึก"
 
 msgid "Miscellaneous"
 msgstr "เบ็ดเตล็ด"
-
-
-msgid "Shading"
-msgstr "แรเงา"
 
 
 msgid "Fonts"
@@ -6017,10 +6017,6 @@ msgstr "ทัศนมิติ"
 
 msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
 msgstr "เลือกจุดยอด"
-
-
-msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection"
-msgstr "เลือกเส้นขอบ"
 
 
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"

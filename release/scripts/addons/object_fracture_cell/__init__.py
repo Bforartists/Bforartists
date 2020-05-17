@@ -35,13 +35,13 @@ bl_info = {
 
 import bpy
 from bpy.props import (
-        StringProperty,
-        BoolProperty,
-        IntProperty,
-        FloatProperty,
-        FloatVectorProperty,
-        EnumProperty,
-        )
+    StringProperty,
+    BoolProperty,
+    IntProperty,
+    FloatProperty,
+    FloatVectorProperty,
+    EnumProperty,
+)
 
 from bpy.types import Operator
 
@@ -80,18 +80,22 @@ def main_object(context, obj, level, **kw):
         obj.display_type = 'WIRE'
 
     objects = fracture_cell_setup.cell_fracture_objects(context, obj, **kw_copy)
-    objects = fracture_cell_setup.cell_fracture_boolean(context, obj, objects,
-                                                        use_island_split=use_island_split,
-                                                        use_interior_hide=(use_interior_vgroup or use_sharp_edges),
-                                                        use_debug_bool=use_debug_bool,
-                                                        use_debug_redraw=kw_copy["use_debug_redraw"],
-                                                        level=level,
-                                                        )
+    objects = fracture_cell_setup.cell_fracture_boolean(
+        context, obj, objects,
+        use_island_split=use_island_split,
+        use_interior_hide=(use_interior_vgroup or use_sharp_edges),
+        use_debug_bool=use_debug_bool,
+        use_debug_redraw=kw_copy["use_debug_redraw"],
+        level=level,
+    )
 
     # must apply after boolean.
     if use_recenter:
-        bpy.ops.object.origin_set({"selected_editable_objects": objects},
-                                  type='ORIGIN_GEOMETRY', center='MEDIAN')
+        bpy.ops.object.origin_set(
+            {"selected_editable_objects": objects},
+            type='ORIGIN_GEOMETRY',
+            center='MEDIAN',
+        )
 
     #----------
     # Recursion
@@ -105,9 +109,10 @@ def main_object(context, obj, level, **kw):
                 if recursion_chance_select == 'RANDOM':
                     random.shuffle(objects_recurse_input)
                 elif recursion_chance_select in {'SIZE_MIN', 'SIZE_MAX'}:
-                    objects_recurse_input.sort(key=lambda ob_pair:
-                        (Vector(ob_pair[1].bound_box[0]) -
-                         Vector(ob_pair[1].bound_box[6])).length_squared)
+                    objects_recurse_input.sort(key=lambda ob_pair: (
+                        Vector(ob_pair[1].bound_box[0]) -
+                        Vector(ob_pair[1].bound_box[6])
+                    ).length_squared)
                     if recursion_chance_select == 'SIZE_MAX':
                         objects_recurse_input.reverse()
                 elif recursion_chance_select in {'CURSOR_MIN', 'CURSOR_MAX'}:
@@ -142,11 +147,12 @@ def main_object(context, obj, level, **kw):
     if level == 0:
         # import pdb; pdb.set_trace()
         if use_interior_vgroup or use_sharp_edges:
-            fracture_cell_setup.cell_fracture_interior_handle(objects,
-                                                              use_interior_vgroup=use_interior_vgroup,
-                                                              use_sharp_edges=use_sharp_edges,
-                                                              use_sharp_edges_apply=use_sharp_edges_apply,
-                                                              )
+            fracture_cell_setup.cell_fracture_interior_handle(
+                objects,
+                use_interior_vgroup=use_interior_vgroup,
+                use_sharp_edges=use_sharp_edges,
+                use_sharp_edges_apply=use_sharp_edges_apply,
+            )
 
     #--------------
     # Scene Options
@@ -242,173 +248,183 @@ def main(context, **kw):
 class FractureCell(Operator):
     bl_idname = "object.add_fracture_cell_objects"
     bl_label = "Cell fracture selected mesh objects"
-    bl_options = {'PRESET'}
+    bl_options = {'PRESET', 'UNDO'}
 
     # -------------------------------------------------------------------------
     # Source Options
     source: EnumProperty(
-            name="Source",
-            items=(('VERT_OWN', "Own Verts", "Use own vertices"),
-                   ('VERT_CHILD', "Child Verts", "Use child object vertices"),
-                   ('PARTICLE_OWN', "Own Particles", ("All particle systems of the "
-                                                      "source object")),
-                   ('PARTICLE_CHILD', "Child Particles", ("All particle systems of the "
-                                                          "child objects")),
-                   ('PENCIL', "Annotation Pencil", "Annotation Grease Pencil."),
-                   ),
-            options={'ENUM_FLAG'},
-            default={'PARTICLE_OWN'},
-            )
+        name="Source",
+        items=(
+            ('VERT_OWN', "Own Verts", "Use own vertices"),
+            ('VERT_CHILD', "Child Verts", "Use child object vertices"),
+            ('PARTICLE_OWN', "Own Particles", (
+                "All particle systems of the "
+                "source object"
+            )),
+            ('PARTICLE_CHILD', "Child Particles", (
+                "All particle systems of the "
+                "child objects"
+            )),
+            ('PENCIL', "Annotation Pencil", "Annotation Grease Pencil."),
+        ),
+        options={'ENUM_FLAG'},
+        default={'PARTICLE_OWN'},
+    )
 
     source_limit: IntProperty(
-            name="Source Limit",
-            description="Limit the number of input points, 0 for unlimited",
-            min=0, max=5000,
-            default=100,
-            )
+        name="Source Limit",
+        description="Limit the number of input points, 0 for unlimited",
+        min=0, max=5000,
+        default=100,
+    )
 
     source_noise: FloatProperty(
-            name="Noise",
-            description="Randomize point distribution",
-            min=0.0, max=1.0,
-            default=0.0,
-            )
+        name="Noise",
+        description="Randomize point distribution",
+        min=0.0, max=1.0,
+        default=0.0,
+    )
 
     cell_scale: FloatVectorProperty(
-            name="Scale",
-            description="Scale Cell Shape",
-            size=3,
-            min=0.0, max=1.0,
-            default=(1.0, 1.0, 1.0),
-            )
+        name="Scale",
+        description="Scale Cell Shape",
+        size=3,
+        min=0.0, max=1.0,
+        default=(1.0, 1.0, 1.0),
+    )
 
     # -------------------------------------------------------------------------
     # Recursion
 
     recursion: IntProperty(
-            name="Recursion",
-            description="Break shards recursively",
-            min=0, max=5000,
-            default=0,
-            )
+        name="Recursion",
+        description="Break shards recursively",
+        min=0, max=5000,
+        default=0,
+    )
 
     recursion_source_limit: IntProperty(
-            name="Source Limit",
-            description="Limit the number of input points, 0 for unlimited (applies to recursion only)",
-            min=0, max=5000,
-            default=8,
-            )
+        name="Source Limit",
+        description="Limit the number of input points, 0 for unlimited (applies to recursion only)",
+        min=0, max=5000,
+        default=8,
+    )
 
     recursion_clamp: IntProperty(
-            name="Clamp Recursion",
-            description="Finish recursion when this number of objects is reached (prevents recursing for extended periods of time), zero disables",
-            min=0, max=10000,
-            default=250,
-            )
+        name="Clamp Recursion",
+        description=(
+            "Finish recursion when this number of objects is reached "
+            "(prevents recursing for extended periods of time), zero disables"
+        ),
+        min=0, max=10000,
+        default=250,
+    )
 
     recursion_chance: FloatProperty(
-            name="Random Factor",
-            description="Likelihood of recursion",
-            min=0.0, max=1.0,
-            default=0.25,
-            )
+        name="Random Factor",
+        description="Likelihood of recursion",
+        min=0.0, max=1.0,
+        default=0.25,
+    )
 
     recursion_chance_select: EnumProperty(
-            name="Recurse Over",
-            items=(('RANDOM', "Random", ""),
-                   ('SIZE_MIN', "Small", "Recursively subdivide smaller objects"),
-                   ('SIZE_MAX', "Big", "Recursively subdivide bigger objects"),
-                   ('CURSOR_MIN', "Cursor Close", "Recursively subdivide objects closer to the cursor"),
-                   ('CURSOR_MAX', "Cursor Far", "Recursively subdivide objects farther from the cursor"),
-                   ),
-            default='SIZE_MIN',
-            )
+        name="Recurse Over",
+        items=(
+            ('RANDOM', "Random", ""),
+            ('SIZE_MIN', "Small", "Recursively subdivide smaller objects"),
+            ('SIZE_MAX', "Big", "Recursively subdivide bigger objects"),
+            ('CURSOR_MIN', "Cursor Close", "Recursively subdivide objects closer to the cursor"),
+            ('CURSOR_MAX', "Cursor Far", "Recursively subdivide objects farther from the cursor"),
+        ),
+        default='SIZE_MIN',
+    )
 
     # -------------------------------------------------------------------------
     # Mesh Data Options
 
     use_smooth_faces: BoolProperty(
-            name="Smooth Interior",
-            description="Smooth Faces of inner side",
-            default=False,
-            )
+        name="Smooth Interior",
+        description="Smooth Faces of inner side",
+        default=False,
+    )
 
     use_sharp_edges: BoolProperty(
-            name="Sharp Edges",
-            description="Set sharp edges when disabled",
-            default=True,
-            )
+        name="Sharp Edges",
+        description="Set sharp edges when disabled",
+        default=True,
+    )
 
     use_sharp_edges_apply: BoolProperty(
-            name="Apply Split Edge",
-            description="Split sharp hard edges",
-            default=True,
-            )
+        name="Apply Split Edge",
+        description="Split sharp hard edges",
+        default=True,
+    )
 
     use_data_match: BoolProperty(
-            name="Match Data",
-            description="Match original mesh materials and data layers",
-            default=True,
-            )
+        name="Match Data",
+        description="Match original mesh materials and data layers",
+        default=True,
+    )
 
     use_island_split: BoolProperty(
-            name="Split Islands",
-            description="Split disconnected meshes",
-            default=True,
-            )
+        name="Split Islands",
+        description="Split disconnected meshes",
+        default=True,
+    )
 
     margin: FloatProperty(
-            name="Margin",
-            description="Gaps for the fracture (gives more stable physics)",
-            min=0.0, max=1.0,
-            default=0.001,
-            )
+        name="Margin",
+        description="Gaps for the fracture (gives more stable physics)",
+        min=0.0, max=1.0,
+        default=0.001,
+    )
 
     material_index: IntProperty(
-            name="Material",
-            description="Material index for interior faces",
-            default=0,
-            )
+        name="Material",
+        description="Material index for interior faces",
+        default=0,
+    )
 
     use_interior_vgroup: BoolProperty(
-            name="Interior VGroup",
-            description="Create a vertex group for interior verts",
-            default=False,
-            )
+        name="Interior VGroup",
+        description="Create a vertex group for interior verts",
+        default=False,
+    )
 
     # -------------------------------------------------------------------------
     # Physics Options
 
     mass_mode: EnumProperty(
-            name="Mass Mode",
-            items=(('VOLUME', "Volume", "Objects get part of specified mass based on their volume"),
-                   ('UNIFORM', "Uniform", "All objects get the specified mass"),
-                   ),
-            default='VOLUME',
-            )
+        name="Mass Mode",
+        items=(
+            ('VOLUME', "Volume", "Objects get part of specified mass based on their volume"),
+            ('UNIFORM', "Uniform", "All objects get the specified mass"),
+        ),
+        default='VOLUME',
+    )
 
     mass: FloatProperty(
-            name="Mass",
-            description="Mass to give created objects",
-            min=0.001, max=1000.0,
-            default=1.0,
-            )
+        name="Mass",
+        description="Mass to give created objects",
+        min=0.001, max=1000.0,
+        default=1.0,
+    )
 
 
     # -------------------------------------------------------------------------
     # Object Options
 
     use_recenter: BoolProperty(
-            name="Recenter",
-            description="Recalculate the center points after splitting",
-            default=True,
-            )
+        name="Recenter",
+        description="Recalculate the center points after splitting",
+        default=True,
+    )
 
     use_remove_original: BoolProperty(
-            name="Remove Original",
-            description="Removes the parents used to create the shatter",
-            default=True,
-            )
+        name="Remove Original",
+        description="Removes the parents used to create the shatter",
+        default=True,
+    )
 
     # -------------------------------------------------------------------------
     # Scene Options
@@ -417,30 +433,32 @@ class FractureCell(Operator):
     #    are setup in the scene.
 
     collection_name: StringProperty(
-            name="Collection",
-            description="Create objects in a collection "
-                        "(use existing or create new)",
-            )
+        name="Collection",
+        description=(
+            "Create objects in a collection "
+            "(use existing or create new)"
+        ),
+    )
 
     # -------------------------------------------------------------------------
     # Debug
     use_debug_points: BoolProperty(
-            name="Debug Points",
-            description="Create mesh data showing the points used for fracture",
-            default=False,
-            )
+        name="Debug Points",
+        description="Create mesh data showing the points used for fracture",
+        default=False,
+    )
 
     use_debug_redraw: BoolProperty(
-            name="Show Progress Realtime",
-            description="Redraw as fracture is done",
-            default=True,
-            )
+        name="Show Progress Realtime",
+        description="Redraw as fracture is done",
+        default=True,
+    )
 
     use_debug_bool: BoolProperty(
-            name="Debug Boolean",
-            description="Skip applying the boolean modifier",
-            default=False,
-            )
+        name="Debug Boolean",
+        description="Skip applying the boolean modifier",
+        default=False,
+    )
 
     def execute(self, context):
         keywords = self.as_keywords()  # ignore=("blah",)

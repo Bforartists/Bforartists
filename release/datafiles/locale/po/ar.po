@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -5144,6 +5144,10 @@ msgid "Geometry"
 msgstr "ﻢﺴﺠﻤﻟﺍ"
 
 
+msgid "Shading"
+msgstr "ﻞﻴﻠﻈﺘﻟﺍ"
+
+
 msgid "Transform"
 msgstr "ﻝﻮﺤﺗ"
 
@@ -7623,10 +7627,6 @@ msgstr "ﺕﺎﻜﻳﺮﺤﺘﻟﺍ"
 
 msgid "Environment"
 msgstr "ﻂﻴﺤﻣ"
-
-
-msgid "Shading"
-msgstr "ﻞﻴﻠﻈﺘﻟﺍ"
 
 
 msgid "Fonts"
@@ -40394,10 +40394,6 @@ msgstr "ﻥﻮﻟ ﺔﻘﺒﻃ"
 
 msgid "Wave Clamp"
 msgstr "ﺔﺟﻮﻤﻟﺍ ﺪﺣ"
-
-
-msgid "Real World Size"
-msgstr "ﻲﻘﻴﻘﺤﻟﺍ ﻢﻟﺎﻌﻟﺍ ﻢﺠﺣ"
 
 
 msgid "Bounciness"

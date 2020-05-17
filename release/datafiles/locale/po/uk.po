@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -7295,6 +7295,10 @@ msgid "Object geometry is updated"
 msgstr "Геометрія об'єкта оновлена"
 
 
+msgid "Shading"
+msgstr "Відтінювання"
+
+
 msgid "Transform"
 msgstr "Трансформація"
 
@@ -10386,10 +10390,6 @@ msgstr "Різне"
 
 msgid "Objects & Collections"
 msgstr "Об'єкти і Колекції"
-
-
-msgid "Shading"
-msgstr "Відтінювання"
 
 
 msgid "Fonts"
@@ -38801,10 +38801,6 @@ msgid "The collection to remove other selected objects from"
 msgstr "Колекція для вилучення з неї інших вибраних об'єктів"
 
 
-msgid "Remove selected objects from all collections not used in a scene"
-msgstr "Вилучити вибрані об'єкти з усіх колекцій, що не вживаються у сцені"
-
-
 msgctxt "Operator"
 msgid "Console Autocomplete"
 msgstr "Автозавершення у консолі"
@@ -53301,10 +53297,6 @@ msgstr "Всі кістки, на які впливає активний наб�
 msgctxt "Operator"
 msgid "Select Connected"
 msgstr "Вибрати з'єднані"
-
-
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "Вибрати кістки, пов'язані з вибраними зв'язками предок / нащадок"
 
 
 msgctxt "Operator"
@@ -80902,10 +80894,6 @@ msgid "Add Resolution"
 msgstr "Додати Роздільність"
 
 
-msgid "Real World Size"
-msgstr "Розмір реального світу"
-
-
 msgid "Slicing"
 msgstr "Розкраювання"
 
@@ -85470,20 +85458,12 @@ msgid "NLA Strip Controls"
 msgstr "Керування смужками НЛА"
 
 
-msgid "F-Curve is visible in Graph Editor for editing"
-msgstr "Ф-крива є видимою у редакторі графіків для редагування"
-
-
 msgid "Grease Pencil layer is visible in the viewport"
 msgstr "Шар Нарисного олівця видимий у вигляді"
 
 
 msgid "Channels are visible in Graph Editor for editing"
 msgstr "Канали видимі у редакторі зображень для редагування"
-
-
-msgid "F-Curve modifiers are disabled"
-msgstr "Модифікатори Ф-кривих вимкнено"
 
 
 msgid "Make channels grouped under this channel visible"
@@ -90573,10 +90553,6 @@ msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts sele
 msgstr "Вибір вершин - Shift-клацок для вибору кількох режимів вибору, Ctrl-клацок зменшує кількість режимів вибору"
 
 
-msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection"
-msgstr "Вибір ребер - Shift-клацок для вибору кількох режимів вибору, Ctrl-клацок розширює/зменшує вибір режимів вибору"
-
-
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
 msgstr "Вибір граней - Shift-клацнути для декількох режимів, Ctrl-клацнути - розширити вибір"
 
@@ -92126,10 +92102,6 @@ msgstr "Помилка оболонки"
 
 msgid "No valid root vertex found (you need one per mesh island you want to skin)"
 msgstr "Не знайдено правильної кореневої вершини (потрібна на кожен острів сіті, який потрібно покрити)"
-
-
-msgid "Faces needed for useful output"
-msgstr "Для успішного виводу потрібні грані"
 
 
 msgid "Out of memory"

@@ -234,103 +234,6 @@ class OBJ_PT_import_geometry(bpy.types.Panel):
             col.prop(operator, "use_groups_as_vgroups")
 
 
-class OBJ_PT_export_include(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Include"
-    bl_parent_id = "FILE_PT_operator"
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "EXPORT_SCENE_OT_obj"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        col = layout.column(heading = "Limit to")
-        col.prop(operator, 'use_selection')
-
-        col = layout.column(heading = "Objects as", align = True)
-        col.prop(operator, 'use_blen_objects', text = "OBJ Objects")
-        col.prop(operator, 'group_by_object', text = "OBJ Groups")
-        col.prop(operator, 'group_by_material')
-
-        layout.separator()
-
-        layout.prop(operator, 'use_animation')
-
-
-class OBJ_PT_export_transform(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Transform"
-    bl_parent_id = "FILE_PT_operator"
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "EXPORT_SCENE_OT_obj"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layout.prop(operator, 'global_scale')
-        layout.prop(operator, 'path_mode')
-        layout.prop(operator, 'axis_forward')
-        layout.prop(operator, 'axis_up')
-
-
-class OBJ_PT_export_geometry(bpy.types.Panel):
-    bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOL_PROPS'
-    bl_label = "Geometry"
-    bl_parent_id = "FILE_PT_operator"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        return operator.bl_idname == "EXPORT_SCENE_OT_obj"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
-
-        sfile = context.space_data
-        operator = sfile.active_operator
-
-        layout.prop(operator, 'use_mesh_modifiers')
-        # Property definition disabled, not working in 2.8 currently.
-        # layout.prop(operator, 'use_mesh_modifiers_render')
-        layout.prop(operator, 'use_smooth_groups')
-        layout.prop(operator, 'use_smooth_groups_bitflags')
-        layout.prop(operator, 'use_normals')
-        layout.prop(operator, 'use_uvs')
-        layout.prop(operator, 'use_materials')
-        layout.prop(operator, 'use_triangles')
-        layout.prop(operator, 'use_nurbs', text="Curves as NURBS")
-        layout.prop(operator, 'use_vertex_groups')
-        layout.prop(operator, 'keep_vertex_order')
-
-
 @orientation_helper(axis_forward='-Z', axis_up='Y')
 class ExportOBJ(bpy.types.Operator, ExportHelper):
     """Save a Wavefront OBJ File"""
@@ -344,7 +247,7 @@ class ExportOBJ(bpy.types.Operator, ExportHelper):
             default="*.obj;*.mtl",
             options={'HIDDEN'},
             )
-
+ 
     # context group
     use_selection: BoolProperty(
             name="Selection Only",
@@ -421,18 +324,18 @@ class ExportOBJ(bpy.types.Operator, ExportHelper):
 
     # grouping group
     use_blen_objects: BoolProperty(
-            name="Objects as OBJ Objects",
-            description="",
+            name="OBJ Objects",
+            description="Export Blender objects as OBJ objects",
             default=True,
             )
     group_by_object: BoolProperty(
-            name="Objects as OBJ Groups ",
-            description="",
+            name="OBJ Groups",
+            description="Export Blender objects as OBJ groups",
             default=False,
             )
     group_by_material: BoolProperty(
             name="Material Groups",
-            description="",
+            description="Generate an OBJ group for each part of a geometry using a different material",
             default=False,
             )
     keep_vertex_order: BoolProperty(
@@ -472,6 +375,103 @@ class ExportOBJ(bpy.types.Operator, ExportHelper):
 
     def draw(self, context):
         pass
+
+
+class OBJ_PT_export_include(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Include"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENE_OT_obj"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        col = layout.column(heading="Limit to")
+        col.prop(operator, 'use_selection')
+
+        col = layout.column(heading="Objects as", align=True)
+        col.prop(operator, 'use_blen_objects')
+        col.prop(operator, 'group_by_object')
+        col.prop(operator, 'group_by_material')
+
+        layout.separator()
+
+        layout.prop(operator, 'use_animation')
+
+
+class OBJ_PT_export_transform(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Transform"
+    bl_parent_id = "FILE_PT_operator"
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENE_OT_obj"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, 'global_scale')
+        layout.prop(operator, 'path_mode')
+        layout.prop(operator, 'axis_forward')
+        layout.prop(operator, 'axis_up')
+
+
+class OBJ_PT_export_geometry(bpy.types.Panel):
+    bl_space_type = 'FILE_BROWSER'
+    bl_region_type = 'TOOL_PROPS'
+    bl_label = "Geometry"
+    bl_parent_id = "FILE_PT_operator"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        return operator.bl_idname == "EXPORT_SCENE_OT_obj"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        layout.prop(operator, 'use_mesh_modifiers')
+        # Property definition disabled, not working in 2.8 currently.
+        # layout.prop(operator, 'use_mesh_modifiers_render')
+        layout.prop(operator, 'use_smooth_groups')
+        layout.prop(operator, 'use_smooth_groups_bitflags')
+        layout.prop(operator, 'use_normals')
+        layout.prop(operator, 'use_uvs')
+        layout.prop(operator, 'use_materials')
+        layout.prop(operator, 'use_triangles')
+        layout.prop(operator, 'use_nurbs', text="Curves as NURBS")
+        layout.prop(operator, 'use_vertex_groups')
+        layout.prop(operator, 'keep_vertex_order')
 
 
 def menu_func_import(self, context):
