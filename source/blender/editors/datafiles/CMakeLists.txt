@@ -1746,7 +1746,7 @@ seq_move_extend
 seq_slip_contents
 seq_remove_gaps
 seq_insert_gaps
-three_rows
+three_dots
 )
 
 # This section is maintained by the updating script, keep BEGIN/END comments.
