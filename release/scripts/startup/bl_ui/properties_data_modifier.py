@@ -714,7 +714,10 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         col.operator("object.multires_rebuild_subdiv", text="Rebuild Subdivisions")
         col.prop(md, "uv_smooth", text="")
         col.prop(md, "show_only_control_edges")
-        col.prop(md, "use_creases")
+
+        row = col.row()
+        row.enabled = not have_displacement
+        row.prop(md, "use_creases")
 
         layout.separator()
 
@@ -1823,6 +1826,10 @@ class DATA_PT_modifiers(ModifierButtonsPanel, Panel):
         col.prop(md, "thresh", text="Threshold")
         col.prop(md, "face_influence")
 
+    def SIMULATION(self, layout, ob, md):
+        layout.prop(md, "simulation")
+        layout.prop(md, "data_path")
+
 
 class DATA_PT_gpencil_modifiers(ModifierButtonsPanel, Panel):
     bl_label = "Modifiers"
@@ -1884,7 +1891,15 @@ class DATA_PT_gpencil_modifiers(ModifierButtonsPanel, Panel):
         split = col2.split(factor=0.6)
 
         row = split.row(align=True)
-        row.prop_search(md, "material", gpd, "materials", text="", icon='SHADING_TEXTURE')
+
+        valid = md.material in (slot.material for slot in ob.material_slots) or md.material is None
+        if valid:
+            icon = 'SHADING_TEXTURE'
+        else:
+            icon = 'ERROR'
+
+        row.alert = not valid
+        row.prop_search(md, "material", gpd, "materials", text="", icon=icon)
         row.prop(md, "invert_materials", text="", icon='ARROW_LEFTRIGHT')
 
         row = split.row(align=True)
@@ -2181,6 +2196,11 @@ class DATA_PT_gpencil_modifiers(ModifierButtonsPanel, Panel):
         sub.active = md.use_restrict_frame_range
         sub.prop(md, "frame_start", text="Start")
         sub.prop(md, "frame_end", text="End")
+
+        col.prop(md, "use_percentage")
+        sub = col.column(align=True)
+        sub.active = md.use_percentage
+        sub.prop(md, "percentage_factor")
 
         layout.label(text="Influence Filters:")
 

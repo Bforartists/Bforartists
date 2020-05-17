@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
 "Last-Translator: MT\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -5987,6 +5987,10 @@ msgid "Geometry"
 msgstr "Geometria"
 
 
+msgid "Shading"
+msgstr "Ombreggiatura"
+
+
 msgid "Transform"
 msgstr "Trasforma"
 
@@ -8555,10 +8559,6 @@ msgstr "Miscellanea"
 
 msgid "Objects & Collections"
 msgstr "Oggetti & Raccolte"
-
-
-msgid "Shading"
-msgstr "Ombreggiatura"
 
 
 msgid "Fonts"
@@ -39178,10 +39178,6 @@ msgid "Select Connected"
 msgstr "Seleziona Connesse"
 
 
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "Seleziona le ossa relativamente a quelle selezionate in base al loro rapporto genitore/figlio"
-
-
 msgctxt "Operator"
 msgid "Select Parent Bone"
 msgstr "Seleziona Osso Genitore"
@@ -57768,10 +57764,6 @@ msgid "Wave Clamp"
 msgstr "Limite Onda"
 
 
-msgid "Real World Size"
-msgstr "Dimensione Mondo Reale"
-
-
 msgid "Bounciness"
 msgstr "Rimbalzi"
 
@@ -61321,16 +61313,8 @@ msgid "NLA Strip Controls"
 msgstr "Controlli Spezzoni NLA"
 
 
-msgid "F-Curve is visible in Graph Editor for editing"
-msgstr "La Curva-F è visibile nell'Editor Grafi per la modifica"
-
-
 msgid "Channels are visible in Graph Editor for editing"
 msgstr "I canali sono visibili nell'Editor Grafi per la modifica"
-
-
-msgid "F-Curve modifiers are disabled"
-msgstr "I modificatori della Curva-Funzione sono disabilitati"
 
 
 msgid "Make channels grouped under this channel visible"
@@ -64400,10 +64384,6 @@ msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts sele
 msgstr "Selezione vertice - Shift-Click per modalità multiple, Ctrl-Click riduce la selezione"
 
 
-msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection"
-msgstr "Selezione spigolo - Shift-Click per modalità multiple, Ctrl-Click espande/riduce la selezione"
-
-
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
 msgstr "Selezione faccia - Shift-Click per modalità multiple, Ctrl-Click espande la selezione"
 
@@ -65193,10 +65173,6 @@ msgstr "Impostazioni obiettivo errate"
 
 msgid "Hull error"
 msgstr "Errore Guscio"
-
-
-msgid "Faces needed for useful output"
-msgstr "Necessarie facce per un risultato utile"
 
 
 msgid "Out of memory"

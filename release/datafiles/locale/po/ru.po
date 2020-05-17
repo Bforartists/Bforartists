@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
 "Last-Translator: Lockal <lockalsash@gmail.com>, 2020\n"
 "Language-Team: Russian (https://www.transifex.com/translateblender/teams/82039/ru/)\n"
@@ -7835,6 +7835,10 @@ msgid "Object geometry is updated"
 msgstr "Геометрия объекта была обновлена"
 
 
+msgid "Shading"
+msgstr "Затенение"
+
+
 msgid "Transform"
 msgstr "Трансформация"
 
@@ -11020,10 +11024,6 @@ msgid "Show scenes"
 msgstr "Показать сцены"
 
 
-msgid "Shading"
-msgstr "Затенение"
-
-
 msgid "Show materials, nodetrees, textures and Freestyle's linestyles"
 msgstr "Показать материалы, системы нодов и стили линий Freestyle"
 
@@ -11762,14 +11762,6 @@ msgstr "res"
 
 msgid "Smoke Grid Resolution"
 msgstr "Разрешение сетки дыма"
-
-
-msgid "Meters"
-msgstr "Метры"
-
-
-msgid "Domain size in meters (longest domain side)"
-msgstr "Размер наибольшей стороны домена в метрах"
 
 
 msgid "Domain Type"
@@ -40668,15 +40660,6 @@ msgstr "Коллекция, из которой удаляются другие 
 
 
 msgctxt "Operator"
-msgid "Remove from All Unlinked Collections"
-msgstr "Удалить из всех несвязанных коллекций"
-
-
-msgid "Remove selected objects from all collections not used in a scene"
-msgstr "Удалить выделенные объекты из всех коллекций, не используемых в сцене"
-
-
-msgctxt "Operator"
 msgid "Console Autocomplete"
 msgstr "Автодополнение в консоли"
 
@@ -55736,10 +55719,6 @@ msgstr "Все кости под влиянием активного набор�
 msgctxt "Operator"
 msgid "Select Connected"
 msgstr "Выделить соединённые"
-
-
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "Выделить кости, связанные с уже выделенными костями отношениями родитель/потомок"
 
 
 msgctxt "Operator"
@@ -84754,10 +84733,6 @@ msgid "Add Resolution"
 msgstr "Добавляемое разрешение"
 
 
-msgid "Real World Size"
-msgstr "Размер реального мира"
-
-
 msgid "Slicing"
 msgstr "Нарезка"
 
@@ -89829,20 +89804,12 @@ msgid "NLA Strip Controls"
 msgstr "Элементы управления дорожек НЛА"
 
 
-msgid "F-Curve is visible in Graph Editor for editing"
-msgstr "F-кривая видима в редакторе графов для редактирования"
-
-
 msgid "Grease Pencil layer is visible in the viewport"
 msgstr "Слой Grease Pencil показывается во вьюпорте"
 
 
 msgid "Channels are visible in Graph Editor for editing"
 msgstr "Каналы видимы в редакторе графов для редактирования"
-
-
-msgid "F-Curve modifiers are disabled"
-msgstr "Отключить модификаторы F-кривой"
 
 
 msgid "Make channels grouped under this channel visible"
@@ -95117,10 +95084,6 @@ msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts sele
 msgstr "Выделение вершин — нажмите с Shift для нескольких режимов, с Ctrl для сужения текущего выделения"
 
 
-msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection"
-msgstr "Выделение рёбер — нажмите с Shift для нескольких режимов, с Ctrl для расширения/сужения текущего выделения"
-
-
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
 msgstr "Выделение граней — нажмите с Shift для нескольких режимов, с Ctrl для расширения выделения"
 
@@ -96706,10 +96669,6 @@ msgstr "Ошибка оболочки"
 
 msgid "No valid root vertex found (you need one per mesh island you want to skin)"
 msgstr "Нет подходящих основных вершин (для каждого меш-острова должна быть одна)"
-
-
-msgid "Faces needed for useful output"
-msgstr "Для правильной обработки нужны грани"
 
 
 msgid "Out of memory"

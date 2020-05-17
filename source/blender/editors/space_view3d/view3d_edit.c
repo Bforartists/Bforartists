@@ -2980,7 +2980,7 @@ static int view3d_all_exec(bContext *C, wmOperator *op)
 void VIEW3D_OT_view_all(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "View All";
+  ot->name = "Frame All";
   ot->description = "View all objects in scene";
   ot->idname = "VIEW3D_OT_view_all";
 
@@ -5375,6 +5375,7 @@ void VIEW3D_OT_toggle_xray(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Toggle X-Ray";
   ot->idname = "VIEW3D_OT_toggle_xray";
+  ot->description = "Transparent scene display. Allow selecting through items";
 
   /* api callbacks */
   ot->exec = toggle_xray_exec;

@@ -347,7 +347,7 @@ static void gizmo_get_axis_color(const int axis_idx,
   if (axis_idx >= MAN_AXIS_RANGE_ROT_START && axis_idx < MAN_AXIS_RANGE_ROT_END) {
     /* Never fade rotation rings. */
     /* trackball rotation axis is a special case, we only draw a slight overlay */
-    alpha_fac = (axis_idx == MAN_AXIS_ROT_T) ? 0.1f : 1.0f;
+    alpha_fac = (axis_idx == MAN_AXIS_ROT_T) ? 0.05f : 1.0f;
   }
   else {
     bool is_plane = false;
@@ -713,7 +713,9 @@ void ED_transform_calc_orientation_from_type_ex(const bContext *C,
       ok = true;
       break;
     }
-    case V3D_ORIENT_CUSTOM: {
+    case V3D_ORIENT_CUSTOM:
+    default: {
+      BLI_assert(orientation_type >= V3D_ORIENT_CUSTOM);
       TransformOrientation *custom_orientation = BKE_scene_transform_orientation_find(
           scene, orientation_index_custom);
       if (applyTransformOrientation(custom_orientation, r_mat, NULL)) {

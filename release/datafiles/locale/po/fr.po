@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -3262,6 +3262,10 @@ msgid "Hardness"
 msgstr "Dureté"
 
 
+msgid "Gradient from the center of Dot and Box strokes (set to 1 for a solid stroke)"
+msgstr "Dégradé depuis le centre des traits Point et Boîte (définir à 1 pour un trait solide)"
+
+
 msgid "Input Samples"
 msgstr "Échantillons d’entrée"
 
@@ -3486,8 +3490,32 @@ msgid "Vertex Color Factor"
 msgstr "Facteur de couleur de vertices"
 
 
+msgid "Factor used to mix vertex color to get final color"
+msgstr "Facteur de mélange de la couleur de vertex pour obtenir la couleur finale"
+
+
 msgid "Mode Type"
 msgstr "Type de mode"
+
+
+msgid "Defines how vertex color affect to the strokes"
+msgstr "Définit comment la couleur de vertex affecte les traits"
+
+
+msgid "Vertex Color affects to Stroke only"
+msgstr "La couleur de vertex n’affecte que le trait"
+
+
+msgid "Vertex Color affects to Fill only"
+msgstr "La couleur de vertex n’affecte que le remplissage"
+
+
+msgid "Stroke and Fill"
+msgstr "Trait et remplissage"
+
+
+msgid "Vertex Color affects to Stroke and Fill"
+msgstr "La couleur de vertex affecte le trait et le remplissage"
 
 
 msgid "Background Image"
@@ -5493,6 +5521,14 @@ msgstr "Inverser matrice"
 
 msgid "Transformation matrix to apply before"
 msgstr "Matrice de transformation à appliquer avant"
+
+
+msgid "Set Inverse Pending"
+msgstr "Définir inverse en attente"
+
+
+msgid "Set to true to request recalculation of the inverse matrix"
+msgstr "Définir à Vrai pour demander un nouveau calcul de la matrice inverse"
 
 
 msgid "Location X"
@@ -7825,6 +7861,14 @@ msgstr "Géométrie"
 
 msgid "Object geometry is updated"
 msgstr "La géométrie de l’objet est mise à jour"
+
+
+msgid "Shading"
+msgstr "Ombrage"
+
+
+msgid "Object shading is updated"
+msgstr "L’ombrage de l’objet est actualisé"
 
 
 msgid "Transform"
@@ -10973,6 +11017,10 @@ msgid "Whether this path is saved in bookmarks, or generated from OS"
 msgstr "Si ce chemin est enregistré dans les signets, ou généré par l’OS"
 
 
+msgid "File Select ID Filter"
+msgstr "Filtre ID sélecteur de fichier"
+
+
 msgid "Which ID types to show/hide, when browsing a library"
 msgstr "Quels types d‘ID afficher/cacher, lors de la navigation dans une bibliothèque"
 
@@ -11023,10 +11071,6 @@ msgstr "Afficher les objets et collections"
 
 msgid "Show scenes"
 msgstr "Afficher les scènes"
-
-
-msgid "Shading"
-msgstr "Ombrage"
 
 
 msgid "Show materials, nodetrees, textures and Freestyle's linestyles"
@@ -11465,6 +11509,10 @@ msgid "Filter Volume"
 msgstr "Filtrer Volume"
 
 
+msgid "Show 3D volume files"
+msgstr "Afficher fichiers de volume 3D"
+
+
 msgid "Library Browser"
 msgstr "Navigateur de bibliothèque"
 
@@ -11745,6 +11793,14 @@ msgid "Full float (32 bit data)"
 msgstr "Flottant complet (données 32bits)"
 
 
+msgid "Clear In Obstacle"
+msgstr "Supprimer obstacle intérieur"
+
+
+msgid "Delete fluid inside obstacles"
+msgstr "Supprimer le fluide à l’intérieur des obstacles"
+
+
 msgid "Density Grid"
 msgstr "Grille de densité"
 
@@ -11787,14 +11843,6 @@ msgstr "res"
 
 msgid "Smoke Grid Resolution"
 msgstr "Résolution de grille de fumée"
-
-
-msgid "Meters"
-msgstr "Mètres"
-
-
-msgid "Domain size in meters (longest domain side)"
-msgstr "Taille de domaine en mètres (côté le plus long du domaine)"
 
 
 msgid "Domain Type"
@@ -11973,20 +12021,72 @@ msgid "Nearest"
 msgstr "Plus proche"
 
 
+msgid "Lower Concavity"
+msgstr "Concavité inférieure"
+
+
+msgid "Lower mesh concavity bound (high values tend to smoothen and fill out concave regions)"
+msgstr "Limite de concavité inférieure du mesh (de hautes valeurs tendent à adoucir et remplir les régions concaves)"
+
+
+msgid "Upper Concavity"
+msgstr "Concavité supérieure"
+
+
+msgid "Upper mesh concavity bound (high values tend to smoothen and fill out concave regions)"
+msgstr "Limite de concavité supérieure du mesh (de hautes valeurs tendent à adoucir et remplir les régions concaves)"
+
+
+msgid "Mesh generator"
+msgstr "Générateur de mesh"
+
+
+msgid "Which particle level set generator to use"
+msgstr "Quel générateur d’ensemble de niveaux de particules utiliser"
+
+
+msgid "Use improved particle level set (slower but more precise and with mesh smoothening options)"
+msgstr "Utiliser l’ensemble de niveaux de particules amélioré (plus lent, mais plus précis, et avec options d’adoucissement du mesh)"
+
+
 msgid "Preview"
 msgstr "Prévisualisation"
+
+
+msgid "Use union particle level set (faster but lower quality)"
+msgstr "Utiliser l’ensemble de niveaux de particules union (plus rapide mais de moins bonne qualité)"
 
 
 msgid "Radius"
 msgstr "Rayon"
 
 
+msgid "Particle radius factor (higher value results in larger (meshed) particles). Needs to be adjusted after changing the mesh scale"
+msgstr "Facteur de rayon de particule (de plus hautes valeurs donnent de plus grandes particules “meshées”). À ajuster après changement de la taille du mesh"
+
+
+msgid "Mesh scale"
+msgstr "Taille de mesh"
+
+
+msgid "The mesh simulation is scaled up by this factor (compared to the base resolution of the domain). For best meshing, it is recommended to adjust the mesh particle radius alongside this value"
+msgstr "Le mesh de simulation est redimensionné de ce facteur (comparé à la résolution de base du domaine). Pour un “meshing” optimal, il est recommandé d’ajuster le rayon de particule de mesh en même temps"
+
+
 msgid "Smoothen Neg"
 msgstr "Lissage nég"
 
 
+msgid "Negative mesh smoothening"
+msgstr "Adoucissement de mesh négatif"
+
+
 msgid "Smoothen Pos"
 msgstr "Lissage pos"
+
+
+msgid "Positive mesh smoothening"
+msgstr "Adoucissement de mesh positif"
 
 
 msgid "Fluid Mesh Vertices"
@@ -11997,8 +12097,16 @@ msgid "Vertices of the fluid mesh generated by simulation"
 msgstr "Vertices du mesh fluide générés par la simulation"
 
 
+msgid "Scale of noise (higher value results in larger vortices)"
+msgstr "Taille du bruit (de plus hautes valeurs donnent de plus grands vortex)"
+
+
 msgid "Noise Scale"
 msgstr "Taille de bruit"
+
+
+msgid "The noise simulation is scaled up by this factor (compared to the base resolution of the domain)"
+msgstr "La simulation du bruit est redimensionnée de ce facteur (comparé à la résolution de base du domaine)"
 
 
 msgid "Strength of noise"
@@ -12007,6 +12115,10 @@ msgstr "Force du bruit"
 
 msgid "Time"
 msgstr "Temps"
+
+
+msgid "Animation time of noise"
+msgstr "Temps de l’animation du bruit"
 
 
 msgid "Noise Method"
@@ -12049,16 +12161,44 @@ msgid "Do not use any compression"
 msgstr "N’utiliser aucune compression"
 
 
+msgid "Particle (narrow) band width (higher value results in thicker band and more particles)"
+msgstr "Épaisseur (étroite) de bande de particules (de plus hautes valeurs donnent des bandes plus épaisses et plus de particules)"
+
+
+msgid "Maximum number of particles per cell (ensures that each cell has at most this amount of particles)"
+msgstr "Nombre maximum de particules par cellules (garantit que chaque cellule a au maximum cette quantité de particules)"
+
+
+msgid "Minimum number of particles per cell (ensures that each cell has at least this amount of particles)"
+msgstr "Nombre minimum de particules par cellules (garantit que chaque cellule a au moins cette quantité de particules)"
+
+
 msgid "Number"
 msgstr "Numéro/Nombre"
+
+
+msgid "Particle number factor (higher value results in more particles)"
+msgstr "Facteur de nombre de particules (de plus hautes valeurs donnent plus de particules)"
+
+
+msgid "Particle radius factor. Increase this value if the simulation appears to leak volume, decrease it if the simulation seems to gain volume"
+msgstr "Facteur de rayon de particules (augmenter cette valeur si la simulation semble perdre en volume, la diminuer si la simulation semble augmenter de volume)"
 
 
 msgid "Randomness"
 msgstr "Randomisation"
 
 
+msgid "Randomness factor for particle sampling"
+msgstr "Facteur aléatoire pour l’échantillonnage des particules"
+
+
 msgid "Particle scale"
 msgstr "Taille de particule"
+
+
+msgid "The particle simulation is scaled up by this factor (compared to the base resolution of the domain)"
+msgstr "La simulation de particules est agrandie de ce facteur (par rapport à la résolution de base du domaine)"
 
 
 msgid "Cache Compression"
@@ -12081,6 +12221,10 @@ msgid "Maximum Resolution"
 msgstr "Résolution maximale"
 
 
+msgid "Resolution used for the fluid domain. Value corresponds to the longest domain side (resolution for other domain sides is calculated automatically)"
+msgstr "Résolution utilisée pour le domaine fluide (la valeur correspond au côté le plus long du domaine, les résolutions des autres côtés sont calculées automatiquement)"
+
+
 msgid "Display Velocity"
 msgstr "Afficher vélocité"
 
@@ -12091,6 +12235,14 @@ msgstr "(Dés)activer la visualisation du champs de vélocité par des aiguilles
 
 msgid "Simulation Method"
 msgstr "Méthode de simulation"
+
+
+msgid "Change the underlying simulation method"
+msgstr "Modifier la méthode de simulation sous-jacente"
+
+
+msgid "Use FLIP as the simulation method"
+msgstr "Utiliser FLIP comme méthode de simulation"
 
 
 msgid "Adjust slice direction according to the view direction"
@@ -12137,8 +12289,44 @@ msgid "How many slices per voxel should be generated"
 msgstr "Combien de coupes par voxel générer"
 
 
+msgid "Particles in Boundary"
+msgstr "Particules aux limites"
+
+
+msgid "How particles that left the domain are treated"
+msgstr "Comment sont traitées les particules qui ont quitté le domaine"
+
+
 msgid "Delete"
 msgstr "Supprimer"
+
+
+msgid "Delete secondary particles that are inside obstacles or left the domain"
+msgstr "Supprimer les particules secondaires qui sont dans des obstacles ou ont quitté le domaine"
+
+
+msgid "Push Out"
+msgstr "Repousser"
+
+
+msgid "Push secondary particles that left the domain back into the domain"
+msgstr "Repousser les particules secondaires qui ont quitté le domaine dans celui-ci"
+
+
+msgid "Bubble Buoyancy"
+msgstr "Flottabilité de bulle"
+
+
+msgid "Amount of buoyancy force that rises bubbles (high value results in bubble movement mainly upwards)"
+msgstr " sont traitées"
+
+
+msgid "Bubble Drag"
+msgstr "Traînée de bulles"
+
+
+msgid "Amount of drag force that moves bubbles along with the fluid (high value results in bubble movement mainly along with the fluid)"
+msgstr "Quantité de force de traînée qui entraîne les bulles avec le fluide (de hautes valeurs donnent des bulles suivant essentiellement le fluide)"
 
 
 msgid "Minimum Lifetime"
@@ -12293,6 +12481,10 @@ msgid "Negative exponent for the viscosity value (to simplify entering small val
 msgstr "Exposant négatif pour la valeur de viscosité (pour simplifier l’entrée de petites valeurs, par ex. 5*10^-6)"
 
 
+msgid "Amount of turbulence and rotation in smoke"
+msgstr "Quantité de turbulence et rotation dans la fumée"
+
+
 msgid "Fluid Mesh Velocity"
 msgstr "Vélocité du mesh fluide"
 
@@ -12301,8 +12493,16 @@ msgid "Velocity of a simulated fluid mesh"
 msgstr "Vélocité d’un mesh de fluide simulé"
 
 
+msgid "Effector Settings"
+msgstr "Réglage de l’effecteur"
+
+
 msgid "Smoke collision settings"
 msgstr "Réglages de collision de fumée"
+
+
+msgid "Effector Type"
+msgstr "Type d’effecteur"
 
 
 msgid "Collision"
@@ -12317,16 +12517,36 @@ msgid "Maximize"
 msgstr "Maximiser"
 
 
+msgid "Minimize"
+msgstr "Minimiser"
+
+
 msgid "Override"
 msgstr "Remplacer"
+
+
+msgid "Averaged"
+msgstr "Moyenné"
 
 
 msgid "Subframes"
 msgstr "Sous-frames"
 
 
+msgid "Number of additional samples to take between frames to improve quality of fast moving effector objects"
+msgstr "Nombre d’échantillons supplémentaires à prendre entre les frames pour améliorer la qualité des objets effecteurs se déplaçant rapidement"
+
+
+msgid "Is Planar"
+msgstr "Est planaire"
+
+
 msgid "Flow Settings"
 msgstr "Réglages de flux"
+
+
+msgid "Fluid flow settings"
+msgstr "Réglages de flux de fluide"
 
 
 msgid "Vertex Group"
@@ -12337,12 +12557,32 @@ msgid "Name of vertex group which determines surface emission rate"
 msgstr "Nom du groupe de vertices qui détermine le taux d’émission de la surface"
 
 
+msgid "Flow Behavior"
+msgstr "Comportement de flux"
+
+
+msgid "Add fluid to simulation"
+msgstr "Ajouter du fluide à la simulation"
+
+
 msgid "Outflow"
 msgstr "Flux de sortie"
 
 
+msgid "Delete fluid from simulation"
+msgstr "Supprimer du fluide de la simulation"
+
+
+msgid "Change how fluid is emitted"
+msgstr "Modifier la façon dont le fluide est émis"
+
+
 msgid "Flow Type"
 msgstr "Type de flux"
+
+
+msgid "Change type of fluid in the simulation"
+msgstr "Modifier le type de fluide dans la simulation"
 
 
 msgid "Add smoke"
@@ -12389,6 +12629,10 @@ msgid "Number of additional samples to take between frames to improve quality of
 msgstr "Nombre d’échantillons supplémentaires à prendre entre les frames pour améliorer la qualité des flux rapides"
 
 
+msgid "Surface Emission"
+msgstr "Émission de surface"
+
+
 msgid "Temp. Diff."
 msgstr "Diff. temp."
 
@@ -12429,8 +12673,16 @@ msgid "Absolute Density"
 msgstr "Densité absolue"
 
 
+msgid "Only allow given density value in emitter area and will not add up"
+msgstr "Ne permettre qu’une valeur de densité donnée dans la zone de l’émetteur, non cumulable"
+
+
 msgid "Initial Velocity"
 msgstr "Vitesse initiale"
+
+
+msgid "Fluid has some initial velocity when it is emitted"
+msgstr "Le fluide a une vitesse initiale quand il est émis"
 
 
 msgid "Set Size"
@@ -12451,6 +12703,10 @@ msgstr "Utiliser une texture pour contrôler la force de l’émission"
 
 msgid "Initial"
 msgstr "Initial"
+
+
+msgid "Initial velocity in X, Y and Z direction"
+msgstr "Vitesse initiale dans les directions X, Y et Z"
 
 
 msgid "Normal"
@@ -12831,6 +13087,10 @@ msgstr "Réglages Freestyle"
 
 msgid "Freestyle settings for a ViewLayer data-block"
 msgstr "Réglages de Freestyle pour un bloc de données calque de vue"
+
+
+msgid "As Render Pass"
+msgstr "Comme passe de rendu"
 
 
 msgid "Crease Angle"
@@ -13249,6 +13509,10 @@ msgid "True when the layer parent object is set"
 msgstr "Vrai quand l’objet parent du calque est défini"
 
 
+msgid "Ruler"
+msgstr "Régle"
+
+
 msgid "This is a special ruler layer"
 msgstr "Ceci est un calque de règle spécial"
 
@@ -13381,8 +13645,16 @@ msgid "Display annotation onion skins before and after the current frame"
 msgstr "Afficher les “peaux d’oignon” d’annotation avant et après la frame actuelle"
 
 
+msgid "Use Lights"
+msgstr "Utiliser lumières"
+
+
 msgid "Mask Layer"
 msgstr "Calque de masquage"
+
+
+msgid "Mask pixels from underlying layers drawing"
+msgstr "Enlever tous les pixels en-dehors du dessin des calques sous-jacents"
 
 
 msgid "Display onion skins before and after the current frame"
@@ -13397,6 +13669,10 @@ msgid "In Paint mode display only layers with keyframe in current frame"
 msgstr "En mode peinture, n’afficher que les calques avec une image-clé à la frame courante"
 
 
+msgid "Vertex Paint Opacity"
+msgstr "Opacité de peinture de vertices"
+
+
 msgid "ViewLayer"
 msgstr "Calque de vue"
 
@@ -13405,8 +13681,20 @@ msgid "Only include Layer in this View Layer render output (leave blank to inclu
 msgstr "N’inclure que le calque dans le rendu de ce calque de vue (laisser vide pour toujours inclure)"
 
 
+msgid "Grease Pencil Masking Layers"
+msgstr "Calques de masquage de crayon gras"
+
+
+msgid "Set mask Visibility"
+msgstr "Définir visibilité du masque"
+
+
 msgid "Invert"
 msgstr "Inverser"
+
+
+msgid "Invert mask"
+msgstr "Inverser masque"
 
 
 msgid "Layer"
@@ -13489,6 +13777,10 @@ msgid "Isometric"
 msgstr "Isométrique"
 
 
+msgid "Grid allows isometric and vertical lines"
+msgstr "La grille permet des lignes isométriques et verticales"
+
+
 msgid "Use Guides"
 msgstr "Utiliser guides"
 
@@ -13507,6 +13799,10 @@ msgstr "Activer les options d’aimantation aux guides angulaires ou d’espacem
 
 msgid "GPencil Sculpt Settings"
 msgstr "Réglages de sculpture crayon gras"
+
+
+msgid "General properties for Grease Pencil stroke sculpting tools"
+msgstr "Propriétés générales pour les outils de sculpture de traits de crayon gras"
 
 
 msgid "Threshold for stroke intersections"
@@ -13563,6 +13859,10 @@ msgstr "Utiliser atténuation"
 
 msgid "Use falloff effect when edit in multiframe mode to compute brush effect by frame"
 msgstr "Utiliser l’effet d’atténuation lors de l’édition en mode multi-frames pour calculer l’effet de la brosse par frame"
+
+
+msgid "Scale Stroke Thickness"
+msgstr "Redimensionner épaisseur de trait"
 
 
 msgid "Use Curve"
@@ -13699,6 +13999,18 @@ msgstr "Données de triangulation pour le remplissage haute-qualité"
 
 msgid "UV Rotation"
 msgstr "Rotation UV"
+
+
+msgid "UV Scale"
+msgstr "Échelle UV"
+
+
+msgid "UV Translation"
+msgstr "Translation UV"
+
+
+msgid "Vertex Fill Color"
+msgstr "Couleur de vertices de remplissage"
 
 
 msgid "Grease Pencil Stroke Point"
@@ -14079,6 +14391,10 @@ msgid "Duplicate strokes like a mirror"
 msgstr "Dupliquer les traits comme un miroir"
 
 
+msgid "Multiple Strokes"
+msgstr "Traits multiples"
+
+
 msgid "Produce multiple strokes along one stroke"
 msgstr "Produire plusieurs traits le long d’un seul"
 
@@ -14231,12 +14547,20 @@ msgid "Inverse Layers"
 msgstr "Inverser calques"
 
 
+msgid "Inverse Materials"
+msgstr "Inverser matériaux"
+
+
 msgid "Pass"
 msgstr "Passe"
 
 
 msgid "Layer pass index"
 msgstr "Indice de passe de calque"
+
+
+msgid "Material name"
+msgstr "Nom du matériau"
 
 
 msgid "Object Offset"
@@ -14249,6 +14573,14 @@ msgstr "Utiliser les position et rotation d’un autre objet pour déterminer le
 
 msgid "Pass index"
 msgstr "Indice de passe"
+
+
+msgid "Random Offset"
+msgstr "Décalage aléatoire"
+
+
+msgid "Value for changes in location"
+msgstr "Valeur de changement dans la position"
 
 
 msgid "Random Rotation"
@@ -14275,8 +14607,16 @@ msgid "Index of the material used for generated strokes (0 keep original materia
 msgstr "Indice du matériau utilisé pour les traits générés (0 pour conserver le matériau d’origine)"
 
 
+msgid "Random seed"
+msgstr "Graine aléatoire"
+
+
 msgid "Shift"
 msgstr "Décalage"
+
+
+msgid "Enable shift"
+msgstr "Activer décalage"
 
 
 msgid "Build Modifier"
@@ -14497,6 +14837,10 @@ msgid "Constant"
 msgstr "Constante"
 
 
+msgid "Inverse Vertex Group"
+msgstr "Inverser groupe de vertices"
+
+
 msgid "Matrix"
 msgstr "Matrice"
 
@@ -14565,6 +14909,10 @@ msgid "Mirror this axis"
 msgstr "Faire un miroir sur cet axe"
 
 
+msgid "Multiply Modifier"
+msgstr "Modificateur multiplication"
+
+
 msgid "Generate multiple strokes from one stroke"
 msgstr "Générer plusieurs traits à partir d’un seul"
 
@@ -14573,8 +14921,16 @@ msgid "Distance of duplications"
 msgstr "Distance de duplication"
 
 
+msgid "Duplicates"
+msgstr "Copies"
+
+
 msgid "How many copies of strokes be displayed"
 msgstr "Combien de copies du trait sont affichées"
+
+
+msgid "Angle Splitting"
+msgstr "Division d’angle"
 
 
 msgid "Enable angle splitting"
@@ -14593,8 +14949,16 @@ msgid "Fade influence of stroke's thickness"
 msgstr "Atténuer l’influence de l’épaisseur du trait"
 
 
+msgid "Offset of duplicates. -1 to 1: inner to outer"
+msgstr "Décalage des copies, de -1 à 1 : de l’intérieur vers l’extérieur"
+
+
 msgid "Split angle for segments"
 msgstr "Angle de division pour les segments"
+
+
+msgid "Enable Fade"
+msgstr "Activer fondu"
 
 
 msgid "Noise Modifier"
@@ -15204,6 +15568,10 @@ msgstr "Appliquer les changement à l’os correspondant de l’autre côté de 
 
 msgid "Brush data-block for storing brush settings for painting and sculpting"
 msgstr "Bloc de données brosse pour stocker les réglages pour les peinture et sculpture"
+
+
+msgid "Area Radius"
+msgstr "Rayon d’aire"
 
 
 msgid "Autosmooth"
@@ -52156,10 +52524,6 @@ msgid "Select Connected"
 msgstr "Sélectionner connectés"
 
 
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "Sélectionner les os liés à ceux déjà sélectionnés par des relations de parenté"
-
-
 msgctxt "Operator"
 msgid "Select Parent Bone"
 msgstr "Sélectionner os parent"
@@ -74034,6 +74398,22 @@ msgid "Error: Potentially corrupt library, run 'Sanitize' operator to fix"
 msgstr "Erreur : bibliothèque potentiellement corrompue, lancer l’opérateur “Assainir” pour régler le problème"
 
 
+msgid "Steps Min"
+msgstr "Étapes min"
+
+
+msgid "Curve In X"
+msgstr "Courbe entrée X"
+
+
+msgid "Curve Out X"
+msgstr "Courbe sortie X"
+
+
+msgid "Envelope Multiply"
+msgstr "Multiplication d’enveloppe"
+
+
 msgid "Control Rotation"
 msgstr "Contrôler rotation"
 
@@ -74051,12 +74431,24 @@ msgid "Views Format:"
 msgstr "Format des vues :"
 
 
+msgid "Latitude Min"
+msgstr "Latitude min"
+
+
+msgid "Longitude Min"
+msgstr "Longitude min"
+
+
 msgid "Render U"
 msgstr "Rendu U"
 
 
 msgid "Bold & Italic"
 msgstr "Gras & italique"
+
+
+msgid "Bevel Mapping Start"
+msgstr "Début de correspondance de biseautage"
 
 
 msgctxt "Operator"
@@ -74074,6 +74466,10 @@ msgid "UnLock All"
 msgstr "Tout déverrouiller"
 
 
+msgid "Autolock Inactive Layers"
+msgstr "Auto-blocage des calques inactifs"
+
+
 msgid "Before"
 msgstr "Avant"
 
@@ -74086,6 +74482,10 @@ msgstr "Cacher autres"
 msgctxt "Operator"
 msgid "New Layer"
 msgstr "Nouveau calque"
+
+
+msgid "Multiuser datablock not supported"
+msgstr "Bloc de données multi-utilisateurs non supportés"
 
 
 msgctxt "Operator"
@@ -74108,8 +74508,16 @@ msgid "Remove All Groups"
 msgstr "Enlever tous les groupes"
 
 
+msgid "Clipping Offset"
+msgstr "Décalage de troncature"
+
+
 msgid "Bleed Bias"
 msgstr "Biais de bavure"
+
+
+msgid "Arrow Size"
+msgstr "Taille de flèche"
 
 
 msgctxt "Operator"
@@ -74164,6 +74572,14 @@ msgstr "Copier en miroir la clé de forme (topologie)"
 
 msgid "Relative To"
 msgstr "Relatif à"
+
+
+msgid "Influence Threshold"
+msgstr "Limite d’influence"
+
+
+msgid "Update on Edit"
+msgstr "Mettre à jour à l’édition"
 
 
 msgid "Object:"
@@ -74359,6 +74775,10 @@ msgid "Create Along Paths"
 msgstr "Créer le long de chemins"
 
 
+msgid "Value Layer"
+msgstr "Calque de valeur"
+
+
 msgid "Settings can be found inside the Particle context"
 msgstr "Les réglages se trouvent dans le contexte Particule"
 
@@ -74527,6 +74947,10 @@ msgid "Weighting Mode:"
 msgstr "Mode de pondération :"
 
 
+msgid "Influence Filters:"
+msgstr "Filtres d’influence :"
+
+
 msgid "Layer:"
 msgstr "Calque :"
 
@@ -74624,8 +75048,28 @@ msgid "Use Channel:"
 msgstr "Utiliser canal :"
 
 
+msgid "Build and Time Offset modifier not compatible"
+msgstr "Modificateurs construction et décalage temporel incompatibles"
+
+
+msgid "Use Object as Pivot"
+msgstr "Utiliser objet comme pivot"
+
+
+msgid "Use Wave Effect"
+msgstr "Utiliser effet de vague"
+
+
+msgid "Angle Outer"
+msgstr "Angle externe"
+
+
 msgid "Detail"
 msgstr "Détail"
+
+
+msgid "Failed to load volume:"
+msgstr "Échec de chargement du volume :"
 
 
 msgid "Edge Detection Options:"
@@ -74777,8 +75221,22 @@ msgstr "Curseur vers sélection"
 
 
 msgctxt "Operator"
+msgid "Cursor to World Origin"
+msgstr "Curseur vers origine du monde"
+
+
+msgctxt "Operator"
 msgid "Cursor to Grid"
 msgstr "Curseur vers grille"
+
+
+msgctxt "Operator"
+msgid "Delete Active Keyframes (All Layers)"
+msgstr "Supprimer les images clé actives (tous les calques)"
+
+
+msgid "Show Only On Keyframed"
+msgstr "Ne montrer qu’avec image clé"
 
 
 msgctxt "Operator"
@@ -74795,8 +75253,31 @@ msgid "Selection to Cursor"
 msgstr "Sélection vers curseur"
 
 
+msgctxt "Operator"
+msgid "Delete Active Keyframe (Active Layer)"
+msgstr "Supprimer l’images clé active (calque actif)"
+
+
+msgctxt "Operator"
+msgid "Boundary Strokes"
+msgstr "Traits limites"
+
+
+msgctxt "Operator"
+msgid "Boundary Strokes all Frames"
+msgstr "Traits limites toutes les frames"
+
+
+msgid "Show Fill Color While Drawing"
+msgstr "Afficher couleur de remplissage durant le dessin"
+
+
 msgid "Lock Frame"
 msgstr "Verrouiller frame"
+
+
+msgid "Inverse Cursor Color"
+msgstr "Inverser couleur de curseur"
 
 
 msgid "Unlocked"
@@ -74805,6 +75286,16 @@ msgstr "Déverrouillé"
 
 msgid "Frame: %d (%s)"
 msgstr "Frame : %d  (%s)"
+
+
+msgctxt "Operator"
+msgid "Re-key Shape Points"
+msgstr "Re-définir points de forme"
+
+
+msgctxt "Operator"
+msgid "Reset Feather Animation"
+msgstr "Réinitialiser animation de plume"
 
 
 msgid "Parent:"
@@ -74833,6 +75324,11 @@ msgid "Animation:"
 msgstr "Animation :"
 
 
+msgctxt "Operator"
+msgid "Re-Key Shape Points"
+msgstr "Re-définir points de forme"
+
+
 msgid "Holes"
 msgstr "Trous"
 
@@ -74857,8 +75353,17 @@ msgid "Invert"
 msgstr "Inverser"
 
 
+msgctxt "Operator"
+msgid "Convert Materials to Vertex Color"
+msgstr "Convertir matériaux en couleur de vertices"
+
+
 msgid "Tracking Axis"
 msgstr "Axes de suivi"
+
+
+msgid "Align to Vertex Normal"
+msgstr "Aligner sur normales de vertices"
 
 
 msgid "Old"
@@ -74869,6 +75374,10 @@ msgid "Date"
 msgstr "Date"
 
 
+msgid "Hostname"
+msgstr "Nom d’hôte"
+
+
 msgid "Max B-frames"
 msgstr "B-frames max"
 
@@ -74877,8 +75386,20 @@ msgid "Buffer"
 msgstr "Mémoire tampon"
 
 
+msgid "Custom (%.4g fps)"
+msgstr "Personnalisé (%.4g fps)"
+
+
+msgid "%.4g fps"
+msgstr "%.4g fps"
+
+
 msgid "Mask Mapping"
 msgstr "Correspondance de masque"
+
+
+msgid "Pressure Masking"
+msgstr "Masque de pression"
 
 
 msgid "Front Faces Only"
@@ -74895,6 +75416,14 @@ msgstr "Arête à arête"
 
 msgid "Texture Opacity"
 msgstr "Opacité de texture"
+
+
+msgid "Invert to Fill"
+msgstr "Inverser pour remplir"
+
+
+msgid "Invert to Scrape"
+msgstr "Inverser pour gratter"
 
 
 msgid "Source Clone Slot"
@@ -74931,12 +75460,20 @@ msgid "Copy All to Selected Objects"
 msgstr "Copier tous vers objets sélectionnés"
 
 
+msgid "Quality Steps"
+msgstr "Étapes de qualité"
+
+
 msgid "Air Drag"
 msgstr "“Traction” de l’air"
 
 
 msgid "Density Target"
 msgstr "Densité cible"
+
+
+msgid "Display Amount"
+msgstr "Quantité d’affichage"
 
 
 msgid "Roughness 1"
@@ -74955,6 +75492,14 @@ msgid "Strand Shape"
 msgstr "Forme de fibre"
 
 
+msgid "Diameter Root"
+msgstr "Diamètre initial"
+
+
+msgid "Lifetime Randomness"
+msgstr "Durée de vie aléatoire"
+
+
 msgid "Iterations: %d .. %d (avg. %d)"
 msgstr "Itérations : %d … %d (moy. %d)"
 
@@ -74969,6 +75514,10 @@ msgstr "Espacement : %g"
 
 msgid "Endpoint"
 msgstr "Point terminal"
+
+
+msgid "Randomize Amplitude"
+msgstr "Rendre amplitude aléatoire"
 
 
 msgid "Settings used for fluid"
@@ -75009,8 +75558,36 @@ msgid "Disconnect All"
 msgstr "Tout déconnecter"
 
 
+msgid "Max Spring Creation Length"
+msgstr "Longueur maximale de création de ressort"
+
+
+msgid "Max Creation Diversion"
+msgstr "Dispersion de création max"
+
+
+msgid "Check Surface Normals"
+msgstr "Vérifier normales de surface"
+
+
+msgid "Sewing"
+msgstr "Couture"
+
+
 msgid "Dynamic Mesh"
 msgstr "Mesh dynamique"
+
+
+msgid "Max Shearing"
+msgstr "Cisaillement max"
+
+
+msgid "Bending Group"
+msgstr "Group de déformation"
+
+
+msgid "Shrinking Group"
+msgstr "Groupe de réduction"
 
 
 msgid "Max Shrinking"
@@ -75106,8 +75683,16 @@ msgid "Wave Clamp"
 msgstr "Limite de vague"
 
 
-msgid "Real World Size"
-msgstr "Taille réelle du monde"
+msgid "No collision settings available"
+msgstr "Pas de réglages de collision disponibles"
+
+
+msgid "Clumping amount"
+msgstr "Quantité de mise en touffe"
+
+
+msgid "Flame Smoke"
+msgstr "Fumée de flame"
 
 
 msgid "Slicing"
@@ -78159,20 +78744,12 @@ msgid "NLA Strip Controls"
 msgstr "Contrôles de bande NLA"
 
 
-msgid "F-Curve is visible in Graph Editor for editing"
-msgstr "La F-courbe est visible dans l’éditeur de graphe pour l’édition"
-
-
 msgid "Grease Pencil layer is visible in the viewport"
 msgstr "Le calque de crayon gras est visible dans la vue 3D"
 
 
 msgid "Channels are visible in Graph Editor for editing"
 msgstr "Les canaux sont visibles dans l’éditeur de graphes pour l’édition"
-
-
-msgid "F-Curve modifiers are disabled"
-msgstr "Les modificateurs de F-Courbe sont désactivés"
 
 
 msgid "Make channels grouped under this channel visible"
@@ -82457,10 +83034,6 @@ msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts sele
 msgstr "Sélection de vertex – maj-cliquer pour activer plusieurs modes, ctrl-cliquer pour étendre/réduire la sélection"
 
 
-msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection"
-msgstr "Sélection d’arêtes – maj-cliquer pour activer plusieurs modes, ctrl-cliquer pour étendre/réduire la sélection"
-
-
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
 msgstr "Sélection de faces – maj-cliquer pour activer plusieurs modes, ctrl-cliquer pour étendre la sélection"
 
@@ -83982,10 +84555,6 @@ msgstr "Erreur de coque"
 
 msgid "No valid root vertex found (you need one per mesh island you want to skin)"
 msgstr "Aucun vertex racine valide de trouvé (vous devez en avoir un par île de mesh que vous voulez “skinner”)"
-
-
-msgid "Faces needed for useful output"
-msgstr "Faces nécessaires pour une sortie utile"
 
 
 msgid "Out of memory"

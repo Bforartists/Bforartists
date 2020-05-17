@@ -78,15 +78,17 @@ class CollectionManager(Operator):
         cls = CollectionManager
         layout = self.layout
         cm = context.scene.collection_manager
+        prefs = context.preferences.addons[__package__].preferences
         view_layer = context.view_layer
 
         if view_layer.name != cls.last_view_layer:
-            if context.preferences.addons[__package__].preferences.enable_qcd:
+            if prefs.enable_qcd:
                 bpy.app.timers.register(update_qcd_header)
 
             update_collection_tree(context)
             cls.last_view_layer = view_layer.name
 
+        # title and view layer
         title_row = layout.split(factor=0.5)
         main = title_row.row()
         view = title_row.row(align=True)
@@ -108,6 +110,7 @@ class CollectionManager(Operator):
         layout.row().separator()
         layout.row().separator()
 
+        # buttons
         button_row = layout.row()
 
         op_sec = button_row.row()
@@ -129,11 +132,12 @@ class CollectionManager(Operator):
                 collapse_sec.enabled = True
                 break
 
-        if context.preferences.addons[__package__].preferences.enable_qcd:
+        if prefs.enable_qcd:
             renum_sec = op_sec.row()
             renum_sec.alignment = 'LEFT'
             renum_sec.operator("view3d.renumerate_qcd_slots")
 
+        # filter
         filter_sec = button_row.row()
         filter_sec.alignment = 'RIGHT'
 
@@ -143,24 +147,28 @@ class CollectionManager(Operator):
         mc_box = layout.box()
         master_collection_row = mc_box.row(align=True)
 
+        # collection icon
+        c_icon = master_collection_row.row()
         highlight = False
         if (context.view_layer.active_layer_collection ==
             context.view_layer.layer_collection):
                 highlight = True
 
-        prop = master_collection_row.operator("view3d.set_active_collection",
+        prop = c_icon.operator("view3d.set_active_collection",
                                               text='', icon='GROUP', depress=highlight)
         prop.collection_index = -1
         prop.collection_name = 'Master Collection'
 
         master_collection_row.separator()
 
+        # name
         name_row = master_collection_row.row()
         name_row.prop(self, "master_collection", text='')
         name_row.enabled = False
 
         master_collection_row.separator()
 
+        # global rtos
         global_rto_row = master_collection_row.row()
         global_rto_row.alignment = 'RIGHT'
 
@@ -287,12 +295,14 @@ class CollectionManager(Operator):
 
             global_rto_row.operator("view3d.un_disable_render_all_collections", text="", icon=icon, depress=depress)
 
+        # treeview
         layout.row().template_list("CM_UL_items", "",
                                    cm, "cm_list_collection",
                                    cm, "cm_list_index",
                                    rows=15,
                                    sort_lock=True)
 
+        # add collections
         addcollec_row = layout.row()
         addcollec_row.operator("view3d.add_collection", text="Add Collection",
                                icon='COLLECTION_NEW').child = False
@@ -300,16 +310,19 @@ class CollectionManager(Operator):
         addcollec_row.operator("view3d.add_collection", text="Add SubCollection",
                                icon='COLLECTION_NEW').child = True
 
+        # phantom mode
         phantom_row = layout.row()
         toggle_text = "Disable " if cm.in_phantom_mode else "Enable "
         phantom_row.operator("view3d.toggle_phantom_mode", text=toggle_text+"Phantom Mode")
 
         if cm.in_phantom_mode:
             view.enabled = False
-            addcollec_row.enabled = False
+            if prefs.enable_qcd:
+                renum_sec.enabled = False
 
-            if context.preferences.addons[__package__].preferences.enable_qcd:
-                renum.enabled = False
+            c_icon.enabled = False
+            row_setcol.enabled = False
+            addcollec_row.enabled = False
 
 
     def execute(self, context):
@@ -426,6 +439,7 @@ class CM_UL_items(UIList):
         self.use_filter_show = True
 
         cm = context.scene.collection_manager
+        prefs = context.preferences.addons[__package__].preferences
         view_layer = context.view_layer
         laycol = layer_collections[item.name]
         collection = laycol["ptr"].collection
@@ -482,7 +496,7 @@ class CM_UL_items(UIList):
         prop.collection_index = laycol["row_index"]
         prop.collection_name = item.name
 
-        if context.preferences.addons[__package__].preferences.enable_qcd:
+        if prefs.enable_qcd:
             QCD = row.row()
             QCD.scale_x = 0.4
             QCD.prop(item, "qcd_slot_idx", text="")
@@ -586,11 +600,12 @@ class CM_UL_items(UIList):
                        emboss=False).collection_name = item.name
 
         if cm.in_phantom_mode:
+            c_icon.enabled = False
             name_row.enabled = False
             row_setcol.enabled = False
             rm_op.enabled = False
 
-            if context.preferences.addons[__package__].preferences.enable_qcd:
+            if prefs.enable_qcd:
                 QCD.enabled = False
 
 

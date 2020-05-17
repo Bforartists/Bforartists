@@ -277,8 +277,8 @@ class SEQUENCER_MT_view(Menu):
 
         if is_sequencer_view:
             layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator("sequencer.view_all", text="View all Sequences", icon = "VIEWALL" )
-            layout.operator("sequencer.view_selected", text = "View Selected", icon='VIEW_SELECTED')
+            layout.operator("sequencer.view_all", text="Frame All", icon = "VIEWALL" )
+            layout.operator("sequencer.view_selected", text = "Frame Selected", icon='VIEW_SELECTED')
             layout.operator("sequencer.view_frame", icon = "VIEW_FRAME" )
             layout.operator("view2d.zoom_border", text = "Zoom Border", icon = "ZOOM_BORDER")
 
@@ -294,8 +294,6 @@ class SEQUENCER_MT_view(Menu):
             else:
                 layout.operator("view2d.zoom_border", text="Zoom Border", icon = "ZOOM_BORDER")
                 layout.menu("SEQUENCER_MT_preview_zoom")
-
-            layout.operator_context = 'INVOKE_DEFAULT'
 
             layout.operator_context = 'INVOKE_DEFAULT'
 

@@ -52,6 +52,7 @@
 #include "BKE_idtype.h"
 #include "BKE_key.h"
 #include "BKE_lib_id.h"
+#include "BKE_lib_query.h"
 #include "BKE_main.h"
 #include "BKE_material.h"
 #include "BKE_object.h"
@@ -117,6 +118,22 @@ static void curve_free_data(ID *id)
   MEM_SAFE_FREE(curve->tb);
 }
 
+static void curve_foreach_id(ID *id, LibraryForeachIDData *data)
+{
+  Curve *curve = (Curve *)id;
+  BKE_LIB_FOREACHID_PROCESS(data, curve->bevobj, IDWALK_CB_NOP);
+  BKE_LIB_FOREACHID_PROCESS(data, curve->taperobj, IDWALK_CB_NOP);
+  BKE_LIB_FOREACHID_PROCESS(data, curve->textoncurve, IDWALK_CB_NOP);
+  BKE_LIB_FOREACHID_PROCESS(data, curve->key, IDWALK_CB_USER);
+  for (int i = 0; i < curve->totcol; i++) {
+    BKE_LIB_FOREACHID_PROCESS(data, curve->mat[i], IDWALK_CB_USER);
+  }
+  BKE_LIB_FOREACHID_PROCESS(data, curve->vfont, IDWALK_CB_USER);
+  BKE_LIB_FOREACHID_PROCESS(data, curve->vfontb, IDWALK_CB_USER);
+  BKE_LIB_FOREACHID_PROCESS(data, curve->vfonti, IDWALK_CB_USER);
+  BKE_LIB_FOREACHID_PROCESS(data, curve->vfontbi, IDWALK_CB_USER);
+}
+
 IDTypeInfo IDType_ID_CU = {
     .id_code = ID_CU,
     .id_filter = FILTER_ID_CU,
@@ -131,6 +148,7 @@ IDTypeInfo IDType_ID_CU = {
     .copy_data = curve_copy_data,
     .free_data = curve_free_data,
     .make_local = NULL,
+    .foreach_id = curve_foreach_id,
 };
 
 static int cu_isectLL(const float v1[3],
@@ -4151,7 +4169,8 @@ void BKE_nurb_handle_calc_simple_auto(Nurb *nu, BezTriple *bezt)
  */
 void BKE_nurb_bezt_handle_test(BezTriple *bezt,
                                const eBezTriple_Flag__Alias sel_flag,
-                               const bool use_handle)
+                               const bool use_handle,
+                               const bool use_around_local)
 {
   short flag = 0;
 
@@ -4172,6 +4191,10 @@ void BKE_nurb_bezt_handle_test(BezTriple *bezt,
   }
   else {
     flag = (bezt->f2 & sel_flag) ? (SEL_F1 | SEL_F2 | SEL_F3) : 0;
+  }
+
+  if (use_around_local) {
+    flag &= ~SEL_F2;
   }
 
   /* check for partial selection */
@@ -4200,7 +4223,7 @@ void BKE_nurb_bezt_handle_test(BezTriple *bezt,
 #undef SEL_F3
 }
 
-void BKE_nurb_handles_test(Nurb *nu, const bool use_handle)
+void BKE_nurb_handles_test(Nurb *nu, const bool use_handle, const bool use_around_local)
 {
   BezTriple *bezt;
   int a;
@@ -4212,7 +4235,7 @@ void BKE_nurb_handles_test(Nurb *nu, const bool use_handle)
   bezt = nu->bezt;
   a = nu->pntsu;
   while (a--) {
-    BKE_nurb_bezt_handle_test(bezt, SELECT, use_handle);
+    BKE_nurb_bezt_handle_test(bezt, SELECT, use_handle, use_around_local);
     bezt++;
   }
 
