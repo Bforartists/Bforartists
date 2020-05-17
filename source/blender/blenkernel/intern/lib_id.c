@@ -963,6 +963,8 @@ void *BKE_libblock_alloc(Main *bmain, short type, const char *name, const int fl
       id->us = 1;
     }
     if ((flag & LIB_ID_CREATE_NO_MAIN) == 0) {
+      /* Note that 2.8x versioning has tested not to cause conflicts. */
+      BLI_assert(bmain->is_locked_for_linking == false || ELEM(type, ID_WS, ID_GR));
       ListBase *lb = which_libbase(bmain, type);
 
       BKE_main_lock(bmain);
@@ -1007,12 +1009,6 @@ void BKE_libblock_init_empty(ID *id)
 
 /* ********** ID session-wise UUID management. ********** */
 static uint global_session_uuid = 0;
-
-/** Reset the session-wise uuid counter (used when reading a new file e.g.). */
-void BKE_lib_libblock_session_uuid_reset()
-{
-  global_session_uuid = 0;
-}
 
 /**
  * Generate a session-wise uuid for the given \a id.

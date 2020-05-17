@@ -793,7 +793,7 @@ force_boid
 
 force_turbulence
 force_drag
-force_smokeflow
+force_fluidflow
 recalc_normals
 recalc_normals_inside
 flip_normals

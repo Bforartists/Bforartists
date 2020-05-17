@@ -66,6 +66,7 @@ struct wmJob;
 struct wmOperator;
 struct wmOperatorType;
 struct wmPaintCursor;
+struct wmTabletData;
 
 #ifdef WITH_INPUT_NDOF
 struct wmNDOFMotionData;
@@ -785,6 +786,8 @@ bool write_crash_blend(void);
 /* Lock the interface for any communication */
 void WM_set_locked_interface(struct wmWindowManager *wm, bool lock);
 
+void WM_event_tablet_data_default_set(struct wmTabletData *tablet_data);
+
 /* For testing only 'G_FLAG_EVENT_SIMULATE' */
 struct wmEvent *WM_event_add_simulate(struct wmWindow *win, const struct wmEvent *event_to_add);
 
@@ -866,6 +869,8 @@ struct wmGenericCallback *WM_generic_callback_steal(struct wmGenericCallback *ca
 void WM_generic_callback_free(struct wmGenericCallback *callback);
 
 void WM_generic_user_data_free(struct wmGenericUserData *user_data);
+
+bool WM_region_use_viewport(struct ScrArea *area, struct ARegion *region);
 
 #ifdef WITH_XR_OPENXR
 /* wm_xr.c */

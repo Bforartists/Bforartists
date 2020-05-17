@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -7776,6 +7776,10 @@ msgid "Object geometry is updated"
 msgstr "오브젝트 지오메트리가 업데이트되었습니다"
 
 
+msgid "Shading"
+msgstr "셰이딩"
+
+
 msgid "Transform"
 msgstr "변환"
 
@@ -10933,10 +10937,6 @@ msgid "Objects & Collections"
 msgstr "오브젝트 & 컬렉션"
 
 
-msgid "Shading"
-msgstr "셰이딩"
-
-
 msgid "Fonts"
 msgstr "폰트"
 
@@ -11511,14 +11511,6 @@ msgstr "res"
 
 msgid "Smoke Grid Resolution"
 msgstr "스모크 격자 해상도"
-
-
-msgid "Meters"
-msgstr "미터"
-
-
-msgid "Domain size in meters (longest domain side)"
-msgstr "미터 단위의 도메인 크기 (가장 긴 도메인 측)"
 
 
 msgid "Domain Type"
@@ -36110,10 +36102,6 @@ msgid "The smallest integer greater than or equal A"
 msgstr "A보다 크거나 같은 가장 작은 정수"
 
 
-msgid "trunc(A)"
-msgstr "trunc(A)"
-
-
 msgid "Fraction"
 msgstr "분수"
 
@@ -41437,15 +41425,6 @@ msgstr "활성 오브젝트를 포함하는 오브젝트 컬렉션에서 오브�
 
 msgid "The collection to remove other selected objects from"
 msgstr "다음에서 선택된 다른 오브젝트를 제거하는 컬렉션"
-
-
-msgctxt "Operator"
-msgid "Remove from All Unlinked Collections"
-msgstr "연결 해제된 모든 컬렉션에서 제거"
-
-
-msgid "Remove selected objects from all collections not used in a scene"
-msgstr "씬에서 사용되지 않는 모든 컬렉션으로 부터 선택된 오브젝트를 제거"
 
 
 msgctxt "Operator"
@@ -56830,10 +56809,6 @@ msgstr "활성 키잉 설정으로 영향을 준 모든 본"
 msgctxt "Operator"
 msgid "Select Connected"
 msgstr "연결된 선택"
-
-
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "부모/자식 관계 별로 선택한 것들과 관련된 본을 선택"
 
 
 msgctxt "Operator"
@@ -86301,10 +86276,6 @@ msgid "Particles in Boundary:"
 msgstr "경계의 파티클:"
 
 
-msgid "Real World Size"
-msgstr "실제 월드 크기"
-
-
 msgid "Surface Tension"
 msgstr "표면 장력"
 
@@ -86382,10 +86353,6 @@ msgstr "메쉬 파일 형식"
 msgctxt "Operator"
 msgid "Baking All - ESC to pause"
 msgstr "모두 베이킹 - ESC 일시 중지"
-
-
-msgid "Use Inflow"
-msgstr "유입을 사용"
 
 
 msgid "Surface Thickness"
@@ -91553,20 +91520,12 @@ msgid "NLA Strip Controls"
 msgstr "NLA 스트립 컨트롤"
 
 
-msgid "F-Curve is visible in Graph Editor for editing"
-msgstr "편집을 위해 F-Curve가 그래프 에디터에 보입니다"
-
-
 msgid "Grease Pencil layer is visible in the viewport"
 msgstr "그리스 펜슬 레이어가 뷰포트에 표시됩니다"
 
 
 msgid "Channels are visible in Graph Editor for editing"
 msgstr "편집을 위해 그래프 에디터에 채널이 보입니다"
-
-
-msgid "F-Curve modifiers are disabled"
-msgstr "F-커브 모디파이어를 사용할 수 없음"
 
 
 msgid "Make channels grouped under this channel visible"
@@ -96909,10 +96868,6 @@ msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts sele
 msgstr "버텍스 선택 - 여러 개를 선택할 경우 Shift+클릭, 선택을 줄일 때 Ctrl+클릭"
 
 
-msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection"
-msgstr "에지 선택 -여러 개를 선택할 경우 Shift+클릭, 선택을 줄일 때 Ctrl+클릭"
-
-
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
 msgstr "페이스 선택 - 여러 개를 선택할 경우 Shift+클릭, 선택을 줄일 때 Ctrl+클릭"
 
@@ -98518,10 +98473,6 @@ msgstr "선체 오류"
 
 msgid "No valid root vertex found (you need one per mesh island you want to skin)"
 msgstr "유효한 루트 버텍스가 없습니다 (스킨하려는 메쉬 아일랜드마다 하나씩 필요함)"
-
-
-msgid "Faces needed for useful output"
-msgstr "유용한 출력을 위해 필요한 페이스"
 
 
 msgid "Internal Error: edges array wrong size: %u instead of %u"

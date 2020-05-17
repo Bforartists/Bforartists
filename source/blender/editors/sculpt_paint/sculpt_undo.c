@@ -1332,6 +1332,9 @@ void SCULPT_undo_push_end_ex(const bool use_nested_undo)
   if (wm->op_undo_depth == 0 || use_nested_undo) {
     UndoStack *ustack = ED_undo_stack_get();
     BKE_undosys_step_push(ustack, NULL, NULL);
+    if (wm->op_undo_depth == 0) {
+      BKE_undosys_stack_limit_steps_and_memory_defaults(ustack);
+    }
     WM_file_tag_modified();
   }
 }
@@ -1565,6 +1568,17 @@ static bool sculpt_undo_use_multires_mesh(bContext *C)
 static void sculpt_undo_push_all_grids(Object *object)
 {
   SculptSession *ss = object->sculpt;
+
+  /* It is possible that undo push is done from an object state where there is no PBVH. This
+   * happens, for example, when an operation which tagged for geometry update was performed prior
+   * to the current operation without making any stroke inbetween.
+   *
+   * Skip pushing nodes based on the following logic: on redo SCULPT_UNDO_COORDS will ensure
+   * PBVH for the new base geometry, which will have same coordinates as if we create PBVH here. */
+  if (ss->pbvh == NULL) {
+    return;
+  }
+
   PBVHNode **nodes;
   int totnodes;
 

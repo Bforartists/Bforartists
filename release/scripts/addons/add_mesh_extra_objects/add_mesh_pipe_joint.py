@@ -169,6 +169,10 @@ class AddElbowJoint(Operator, object_utils.AddObjectHelper):
             box.prop(self, 'rotation', expand=True)
 
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
+
         radius = self.radius
         div = self.div
 
@@ -258,6 +262,12 @@ class AddElbowJoint(Operator, object_utils.AddObjectHelper):
             bpy.ops.object.join()
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')
+
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 
         return {'FINISHED'}
 
@@ -360,6 +370,10 @@ class AddTeeJoint(Operator, object_utils.AddObjectHelper):
             box.prop(self, 'rotation', expand=True)
 
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
+
         radius = self.radius
         div = self.div
 
@@ -514,6 +528,12 @@ class AddTeeJoint(Operator, object_utils.AddObjectHelper):
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')
 
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
+
         return {'FINISHED'}
 
 def WyeJointParameters():
@@ -622,6 +642,10 @@ class AddWyeJoint(Operator, object_utils.AddObjectHelper):
             box.prop(self, 'rotation', expand=True)
 
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
+
         radius = self.radius
         div = self.div
 
@@ -786,6 +810,12 @@ class AddWyeJoint(Operator, object_utils.AddObjectHelper):
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')
 
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
+
         return {'FINISHED'}
 
 
@@ -911,6 +941,10 @@ class AddCrossJoint(Operator, object_utils.AddObjectHelper):
             box.prop(self, 'rotation', expand=True)
 
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
+
         radius = self.radius
         div = self.div
 
@@ -1122,6 +1156,12 @@ class AddCrossJoint(Operator, object_utils.AddObjectHelper):
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')
 
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
+
         return {'FINISHED'}
 
 
@@ -1198,6 +1238,10 @@ class AddNJoint(Operator, object_utils.AddObjectHelper):
             box.prop(self, 'rotation', expand=True)
 
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
+
         radius = self.radius
         div = self.div
         number = self.number
@@ -1352,5 +1396,11 @@ class AddNJoint(Operator, object_utils.AddObjectHelper):
             bpy.ops.object.join()
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')
+
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 
         return {'FINISHED'}

@@ -59,32 +59,28 @@ def create_mesh_object(context, verts, edges, faces, name):
 def grid_gen(sub_d_x, sub_d_y, tri, meshsize_x, meshsize_y, props, water_plane, water_level):
     verts = []
     faces = []
+    vappend = verts.append
+    fappend = faces.append
     for i in range (0, sub_d_x):
         x = meshsize_x * (i / (sub_d_x - 1) - 1 / 2)
         for j in range(0, sub_d_y):
             y = meshsize_y * (j / (sub_d_y - 1) - 1 / 2)
-            if water_plane:
-                z = water_level
-            else:
+            if not water_plane:
                 z = noise_gen((x, y, 0), props)
-
-            verts.append((x,y,z))
-
-    count = 0
-    for i in range (0, sub_d_y * (sub_d_x - 1)):
-        if count < sub_d_y - 1 :
-            A = i + 1
-            B = i
-            C = (i + sub_d_y)
-            D = (i + sub_d_y) + 1
-            if tri:
-                faces.append((A, B, D))
-                faces.append((B, C, D))
             else:
-                faces.append((A, B, C, D))
-            count = count + 1
-        else:
-            count = 0
+                z = water_level
+            vappend((x,y,z))
+
+            if i > 0 and j > 0:
+                A = i * sub_d_y + (j - 1)
+                B = i * sub_d_y + j
+                C = (i - 1) * sub_d_y + j
+                D = (i - 1) * sub_d_y + (j - 1)
+                if not tri:
+                    fappend((A, B, C, D))
+                else:
+                    fappend((A, B, D))
+                    fappend((B, C, D))
 
     return verts, faces
 
@@ -93,6 +89,8 @@ def grid_gen(sub_d_x, sub_d_y, tri, meshsize_x, meshsize_y, props, water_plane, 
 def sphere_gen(sub_d_x, sub_d_y, tri, meshsize, props, water_plane, water_level):
     verts = []
     faces = []
+    vappend = verts.append
+    fappend = faces.append
     sub_d_x += 1
     sub_d_y += 1
     for i in range(0, sub_d_x):
@@ -104,7 +102,7 @@ def sphere_gen(sub_d_x, sub_d_y, tri, meshsize, props, water_plane, water_level)
                 h = water_level
             else:
                 h = noise_gen((u, v, w), props) / meshsize
-            verts.append(((u + u * h), (v + v * h), (w + w * h)))
+            vappend(((u + u * h), (v + v * h), (w + w * h)))
 
     count = 0
     for i in range (0, sub_d_y * (sub_d_x - 1)):
@@ -114,10 +112,10 @@ def sphere_gen(sub_d_x, sub_d_y, tri, meshsize, props, water_plane, water_level)
             C = (i + sub_d_y)
             D = (i + sub_d_y) + 1
             if tri:
-                faces.append((A, B, D))
-                faces.append((B, C, D))
+                fappend((A, B, D))
+                fappend((B, C, D))
             else:
-                faces.append((A, B, C, D))
+                fappend((A, B, C, D))
             count = count + 1
         else:
             count = 0
@@ -137,8 +135,7 @@ class AntLandscapeRefresh(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         ob = bpy.context.active_object
-        return (ob.ant_landscape and not ob.ant_landscape['sphere_mesh'])
-
+        return (ob.ant_landscape and not ob.ant_landscape.sphere_mesh)
 
     def execute(self, context):
         # ant object items

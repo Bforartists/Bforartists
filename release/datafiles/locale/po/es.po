@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzán <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -2447,7 +2447,7 @@ msgstr "Hueso que sirve como asa inicial de la curva del hueso flexible"
 
 
 msgid "Ease In"
-msgstr "Relajación de entrada"
+msgstr "Aceleración de salida"
 
 
 msgid "Length of first Bezier Handle (for B-Bones only)"
@@ -2455,7 +2455,7 @@ msgstr "Longitud de la primera asa Bézier (sólo para huesos flexibles)"
 
 
 msgid "Ease Out"
-msgstr "Relajación de salida"
+msgstr "Aceleración de entrada"
 
 
 msgid "Length of second Bezier Handle (for B-Bones only)"
@@ -7860,7 +7860,15 @@ msgstr "Geometría"
 
 
 msgid "Object geometry is updated"
-msgstr "La geometría del objeto es actualizada"
+msgstr "Geometría del objeto actualizada"
+
+
+msgid "Shading"
+msgstr "Sombreado"
+
+
+msgid "Object shading is updated"
+msgstr "Sombreado del objeto actualizado"
 
 
 msgid "Transform"
@@ -7868,7 +7876,7 @@ msgstr "Transformación"
 
 
 msgid "Object transformation is updated"
-msgstr "Las transformaciones del objeto son actualizadas"
+msgstr "Transformaciones del objeto actualizadas"
 
 
 msgid "Safe Areas"
@@ -11065,10 +11073,6 @@ msgid "Show scenes"
 msgstr "Mostrar escenas"
 
 
-msgid "Shading"
-msgstr "Sombreado"
-
-
 msgid "Show materials, nodetrees, textures and Freestyle's linestyles"
 msgstr "Mostrar materiales, árboles de nodos, texturas y estilos de línea de Freestyle"
 
@@ -11839,14 +11843,6 @@ msgstr "res"
 
 msgid "Smoke Grid Resolution"
 msgstr "Resolución de la cuadrícula del humo"
-
-
-msgid "Meters"
-msgstr "Metros"
-
-
-msgid "Domain size in meters (longest domain side)"
-msgstr "Tamaño del dominio en metros (de su lado mayor)"
 
 
 msgid "Domain Type"
@@ -13574,27 +13570,27 @@ msgstr "Opciones para las herramientas de interpolación de lápiz de cera"
 
 
 msgid "Amount to boost elastic bounces for 'elastic' easing"
-msgstr "Cuánto potenciar los rebotes elásticos de la relajación tipo 'Elastico'"
+msgstr "Cuánto potenciar los rebotes elásticos de la aceleración de tipo 'Elastica'"
 
 
 msgid "Amount of overshoot for 'back' easing"
-msgstr "Cantidad de rebase de la relajación tipo 'Trasera'"
+msgstr "Cantidad de rebase de la aceleración de tipo 'Trasera'"
 
 
 msgid "Easing"
-msgstr "Relajación"
+msgstr "Aceleración"
 
 
 msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
-msgstr "A qué extremo del segmento, entre el fotograma anterior y el siguiente del lápiz de cera, se aplicará la interpolación relajada"
+msgstr "A qué extremo del segmento, entre el fotograma anterior y el siguiente del lápiz de cera, se aplicará la interpolación acelerada"
 
 
 msgid "Automatic Easing"
-msgstr "Relajación automática"
+msgstr "Aceleración automática"
 
 
 msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
-msgstr "El método de relajación será escogido automáticamente, basándose en el tipo de interpolación usado (p.ej: 'Relajación de entrada' para tipos de transición y 'Relajación de salida' para efectos dinámicos)"
+msgstr "El método de aceleración será escogido automáticamente, basándose en el tipo de interpolación usado (p.ej: 'Aceleración de salida' para tipos de transición y 'Aceleración de entrada' para efectos dinámicos)"
 
 
 msgid "Only on the end closest to the next keyframe"
@@ -13606,7 +13602,7 @@ msgstr "Sólo en el extremo derecho del fotograma clave"
 
 
 msgid "Ease In and Out"
-msgstr "Relajación de entrada y salida"
+msgstr "Aceleración de entrada y salida"
 
 
 msgid "Segment between both keyframes"
@@ -13642,7 +13638,7 @@ msgstr "Período"
 
 
 msgid "Time between bounces for elastic easing"
-msgstr "Tiempo entre rebotes en la relajación elástica"
+msgstr "Tiempo entre rebotes en la aceleración elástica"
 
 
 msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
@@ -13650,7 +13646,7 @@ msgstr "Método de interpolación a usar la próxima vez que se use el comando '
 
 
 msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
-msgstr "Interpolación lineal recta entre A y B (sin relajación de entrada/salida)"
+msgstr "Interpolación lineal recta entre A y B (sin aceleración de entrada/salida)"
 
 
 msgid "Custom"
@@ -13666,7 +13662,7 @@ msgstr "Sinusoidal"
 
 
 msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
-msgstr "Relajación sinusoidal (la más débil, casi lineal, pero con una ligera curvatura)"
+msgstr "Aceleración sinusoidal (la más débil, casi lineal, pero con una ligera curvatura)"
 
 
 msgid "Quadratic"
@@ -13674,11 +13670,11 @@ msgstr "Cuadrática"
 
 
 msgid "Quadratic easing"
-msgstr "Relajación cuadrática"
+msgstr "Aceleración cuadrática"
 
 
 msgid "Cubic easing"
-msgstr "Relajación cúbica"
+msgstr "Aceleración cúbica"
 
 
 msgid "Quartic"
@@ -13686,7 +13682,7 @@ msgstr "De cuarto grado"
 
 
 msgid "Quartic easing"
-msgstr "Relajación de cuarto grado"
+msgstr "Aceleración de cuarto grado"
 
 
 msgid "Quintic"
@@ -13694,7 +13690,7 @@ msgstr "De quinto grado"
 
 
 msgid "Quintic easing"
-msgstr "Relajación de quinto grado"
+msgstr "Aceleración de quinto grado"
 
 
 msgid "Exponential"
@@ -13702,7 +13698,7 @@ msgstr "Exponencial"
 
 
 msgid "Exponential easing (dramatic)"
-msgstr "Relajación exponencial (drástica)"
+msgstr "Aceleración exponencial (drástica)"
 
 
 msgid "Circular"
@@ -13710,11 +13706,11 @@ msgstr "Circular"
 
 
 msgid "Circular easing (strongest and most dynamic)"
-msgstr "Relajación circular (la más intensa y dinámica)"
+msgstr "Aceleración circular (la más intensa y dinámica)"
 
 
 msgid "Cubic easing with overshoot and settle"
-msgstr "Relajación cúbica con rebase y amortiguación"
+msgstr "Aceleración cúbica con rebase y amortiguación"
 
 
 msgid "Bounce"
@@ -13726,7 +13722,7 @@ msgstr "Rebote parabólico con decaimiento exponencial, como cuando dos objetos 
 
 
 msgid "Elastic"
-msgstr "Elástico"
+msgstr "Elástica"
 
 
 msgid "Exponentially decaying sine wave, like an elastic band"
@@ -14373,6 +14369,10 @@ msgid "UV Translation"
 msgstr "Traslación UV"
 
 
+msgid "Translation of default UV position"
+msgstr "Traslación de la posición predefinida de las UV"
+
+
 msgid "Vertex Fill Color"
 msgstr "Color de relleno de vértices"
 
@@ -14997,6 +14997,10 @@ msgstr "Semilla aleatoria"
 
 msgid "Enable offset"
 msgstr "Habilita el desplazamiento"
+
+
+msgid "Enable object offset"
+msgstr "Habilita el desplazamiento usando un objeto"
 
 
 msgid "Shift"
@@ -15859,6 +15863,10 @@ msgstr "Tipo base para bloques de datos, define un nombre único, vinculando des
 
 msgid "Embedded Data"
 msgstr "Datos incorporados"
+
+
+msgid "This data-block is not an independent one, but is actually a sub-data of another ID (typical example: root node trees or master collections)"
+msgstr "Este bloque de datos no es independiente, sino que se trata de un sub-bloque de otro ID (ejemplos típicos serían: los árboles de nodos principales o las colecciones principales)"
 
 
 msgid "Is Evaluated"
@@ -27275,7 +27283,7 @@ msgstr "Punto de una curva Bézier con dos asas que define un fotograma clave en
 
 
 msgid "Which ends of the segment between this and the next keyframe easing interpolation is applied to"
-msgstr "A qué extremo del segmento entre este fotograma clave y el siguiente se aplicará la relajación"
+msgstr "A qué extremo del segmento entre este fotograma clave y el siguiente se aplicará la interpolación acelerada"
 
 
 msgid "Left Handle"
@@ -29311,6 +29319,10 @@ msgstr "Nodo"
 
 msgid "Node Color Specials"
 msgstr "Especiales de color del nodo"
+
+
+msgid "Outliner Context Menu"
+msgstr "Listado - menú contextual"
 
 
 msgid "Particle Specials"
@@ -33377,6 +33389,14 @@ msgid "Create a solid skin, compensating for sharp angles"
 msgstr "Crea una cubierta sólida, compensando los ángulos definidos"
 
 
+msgid "Bevel Convex"
+msgstr "Biselado convexo"
+
+
+msgid "Edge bevel weight to be added to outside edges"
+msgstr "Influencia de biselado de bordes a ser agregado a los bordes exteriores"
+
+
 msgid "Inner Crease"
 msgstr "Pliegue interior"
 
@@ -33447,6 +33467,10 @@ msgstr "Perímetro abierto plano"
 
 msgid "Merge Threshold"
 msgstr "Umbral de fusión"
+
+
+msgid "Distance within which degenerated geometry is merged"
+msgstr "Distancia dentro de la cual la geometría generada se fusionará"
 
 
 msgid "Thickness Mode"
@@ -33529,6 +33553,14 @@ msgid "Maintain thickness by adjusting for sharp corners (slow, disable when not
 msgstr "Mantiene el grosor uniforme, compensando los ángulos agudos (lento, deshabilitar cuando no sea necesario)"
 
 
+msgid "Flat Faces"
+msgstr "Caras planas"
+
+
+msgid "Make faces use the minimal vertex weight assigned to their vertices(ensures new faces remain parallel to their original ones, slow, disable when not needed)"
+msgstr "Hace que las caras usen la influencia mínima asignada a sus vértices (asegura que las nuevas caras se mantengan paralelas a las originales, es lento, deshabilitar cuando no sea necesario)"
+
+
 msgid "Flip Normals"
 msgstr "Invertir normales"
 
@@ -33558,7 +33590,7 @@ msgstr "Sólo el canto"
 
 
 msgid "Only add the rim to the original data"
-msgstr "Solo agrega el canto a la geometría original"
+msgstr "Sólo generar el canto"
 
 
 msgid "Angle Clamp"
@@ -37529,10 +37561,6 @@ msgid "The smallest integer greater than or equal A"
 msgstr "El menor entero mayor o igual que A"
 
 
-msgid "trunc(A)"
-msgstr "trunc(A)"
-
-
 msgid "Fraction"
 msgstr "Fracción"
 
@@ -39834,7 +39862,7 @@ msgstr "Copiar claves"
 
 
 msgid "Copy selected keyframes to the copy/paste buffer"
-msgstr "Copia los fotogramas clave seleccionados al portapapeles"
+msgstr "Permite copiar los fotogramas clave seleccionados al portapapeles"
 
 
 msgctxt "Operator"
@@ -39843,7 +39871,7 @@ msgstr "Borrar fotogramas clave"
 
 
 msgid "Remove all selected keyframes"
-msgstr "Remueve todos los fotogramas clave seleccionados"
+msgstr "Permite remover todos los fotogramas clave seleccionados"
 
 
 msgctxt "Operator"
@@ -39852,7 +39880,7 @@ msgstr "Duplicar fotogramas clave"
 
 
 msgid "Make a copy of all selected keyframes"
-msgstr "Hace una copia de todos los fotogramas clave seleccionados"
+msgstr "Permite hacer una copia de todos los fotogramas clave seleccionados"
 
 
 msgctxt "Operator"
@@ -39861,7 +39889,7 @@ msgstr "Duplicar"
 
 
 msgid "Make a copy of all selected keyframes and move them"
-msgstr "Hacer una copia de todos los fotogramas clave seleccionados y moverlos"
+msgstr "Permite hacer una copia de todos los fotogramas clave seleccionados y moverlos"
 
 
 msgid "Duplicate Keyframes"
@@ -39869,25 +39897,25 @@ msgstr "Duplicar fotogramas clave"
 
 
 msgid "Transform selected items by mode type"
-msgstr "Transforma los elementos seleccionados por tipo de modo"
+msgstr "Permite transformar los elementos seleccionados por tipo de modo"
 
 
 msgctxt "Operator"
 msgid "Set Keyframe Easing Type"
-msgstr "Definir tipo de relajación de fotogramas clave"
+msgstr "Definir tipo de aceleración para fotogramas clave"
 
 
 msgid "Set easing type for the F-Curve segments starting from the selected keyframes"
-msgstr "Permite definir el tipo de relajación para los segmentos de la curva-f, a partir de los fotogramas clave seleccionados"
+msgstr "Permite definir el tipo de aceleración para los segmentos de la curva-f que comiencen a partir de los fotogramas clave seleccionados"
 
 
 msgctxt "Operator"
 msgid "Set Keyframe Extrapolation"
-msgstr "Definir extrapolación fotogramas clave"
+msgstr "Definir extrapolación de fotogramas clave"
 
 
 msgid "Set extrapolation mode for selected F-Curves"
-msgstr "Define el modo de extrapolación para las curvas-f seleccionadas"
+msgstr "Permite definir el modo de extrapolación para las curvas-f seleccionadas"
 
 
 msgid "Constant Extrapolation"
@@ -39895,7 +39923,7 @@ msgstr "Constante"
 
 
 msgid "Values on endpoint keyframes are held"
-msgstr "Se mantiene el valor de los fotogramas en los extremos"
+msgstr "Mantiene constante el valor de los fotogramas clave en los extremos de la curva"
 
 
 msgid "Linear Extrapolation"
@@ -39903,7 +39931,7 @@ msgstr "Lineal"
 
 
 msgid "Straight-line slope of end segments are extended past the endpoint keyframes"
-msgstr "Los fotogramas en los extremos son extendidos con pendientes lineales"
+msgstr "El valor de los fotogramas clave en los extremos de la curva será extendido usando una pendiente lineal"
 
 
 msgid "Make Cyclic (F-Modifier)"
@@ -39911,7 +39939,7 @@ msgstr "Repetición (modificador-f)"
 
 
 msgid "Add Cycles F-Modifier if one doesn't exist already"
-msgstr "Agrega el modificador-f Repetición, si no existiera uno ya"
+msgstr "Permite agregar el modificador-f Repetición, si no existiera uno ya"
 
 
 msgid "Clear Cyclic (F-Modifier)"
@@ -39919,7 +39947,7 @@ msgstr "Eliminar Repetición (modificador-f)"
 
 
 msgid "Remove Cycles F-Modifier if not needed anymore"
-msgstr "Remueve el modificador-f Repetición, si ya no es necesario"
+msgstr "Permite eliminar el modificador-f Repetición, si ya no fuera necesario"
 
 
 msgctxt "Operator"
@@ -43048,12 +43076,12 @@ msgstr "Colección de la cual eliminar a los otros objetos seleccionados"
 
 
 msgctxt "Operator"
-msgid "Remove from All Unlinked Collections"
-msgstr "Eliminar de todas las colecciones no vinculadas"
+msgid "Remove from All Collections"
+msgstr "Eliminar de todas las colecciones"
 
 
-msgid "Remove selected objects from all collections not used in a scene"
-msgstr "Elimina a los objetos seleccionados de todas las colecciones no usadas en la escena"
+msgid "Remove selected objects from all collections"
+msgstr "Elimina a los objetos seleccionados de todas las colecciones"
 
 
 msgctxt "Operator"
@@ -47012,6 +47040,10 @@ msgid "Create a new palette with colors"
 msgstr "Crea una nueva paleta con colores"
 
 
+msgid "Remove Unused Materials"
+msgstr "Eliminar materiales no usados"
+
+
 msgid "Remove any unused material after the conversion"
 msgstr "Elimina cualquier material no usado luego de la conversión"
 
@@ -48219,7 +48251,7 @@ msgstr "Tiempo de relajación"
 
 
 msgid "Value for the hull curve calculation that tells how fast the hull curve can fall (the lower the value the steeper it can fall)"
-msgstr "Valor del cálculo de la curva de la envolvente que define que tan rápidamente puede descender la curva (cuanto más bajo el valor, más pronunciado puede descender)"
+msgstr "Valor del cálculo de la curva de la envolvente que define que tan rápidamente puede descender la curva (cuanto más bajo el valor, más pronunciado podrá descender)"
 
 
 msgid "Square Threshold"
@@ -59040,10 +59072,6 @@ msgid "Select Connected"
 msgstr "Seleccionar conectados"
 
 
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "Selecciona huesos relacionados con los actualmente seleccionados por relación de jerarquía"
-
-
 msgctxt "Operator"
 msgid "Select Parent Bone"
 msgstr "Seleccionar hueso superior"
@@ -60848,6 +60876,10 @@ msgid "Create a Face Set per Face Map"
 msgstr "Crea un conjunto de caras por cada mapa de caras"
 
 
+msgid "Minimum value to consider a certain attribute a boundary when creating the Face Sets"
+msgstr "Valor mínimo para considerar un cierto atributo como un límite, al crear los conjuntos de caras"
+
+
 msgctxt "Operator"
 msgid "Randomize Face Sets Colors"
 msgstr "Aleatorizar colores de conjuntos de caras"
@@ -61028,6 +61060,14 @@ msgid "Deform in the Z axis"
 msgstr "Deformar en el eje Z"
 
 
+msgid "Smooth Ratio"
+msgstr "Tasa de suavizado"
+
+
+msgid "How much smoothing is applied to polished surfaces"
+msgstr "Qué tanto suavizado será aplicado para pulir las superficies"
+
+
 msgid "Filter Strength"
 msgstr "Intensidad del filtro"
 
@@ -61078,6 +61118,10 @@ msgstr "Suavizar superficie"
 
 msgid "Smooth the surface of the mesh, preserving the volume"
 msgstr "Suaviza la superficie de la malla, preservando el volumen"
+
+
+msgid "Sharpen the cavities of the mesh"
+msgstr "Destaca las cavidades de la malla"
 
 
 msgid "Use Face Sets"
@@ -66717,6 +66761,10 @@ msgid "Use Soft Limits"
 msgstr "Usar límites difusos"
 
 
+msgid "Limits the Property Value slider to a range, values outside the range must be inputted numerically"
+msgstr "Limita el deslizador de valores de la propiedad a un rango, los valores que se encuentren por fuera del mismo deberán ser ingresados manualmente"
+
+
 msgid "Property value edit"
 msgstr "Edita el valor de la propiedad"
 
@@ -71278,6 +71326,14 @@ msgstr "Buscar por menúes"
 
 msgid "Search actions by menus instead of operators"
 msgstr "Buscar acciones por menú, en vez de por operadores"
+
+
+msgid "Undo Legacy"
+msgstr "Deshacer antiguo"
+
+
+msgid "Use legacy undo (slower than the new default one, but may be more stable in some cases)"
+msgstr "Usar la función deshacer antigua (más lenta que la nueva predefinida, pero más estable en algunos casos)"
 
 
 msgid "Animation Player"
@@ -78965,6 +79021,10 @@ msgstr "Seleccionar color"
 
 msgid "Color selected to apply glow"
 msgstr "Color al cual aplicar el resplandor"
+
+
+msgid "Size of the effect"
+msgstr "Tamaño del efecto"
 
 
 msgid "Limit to select color for glow effect"
@@ -89190,6 +89250,10 @@ msgid "Crease:"
 msgstr "Plegado:"
 
 
+msgid "Bevel:"
+msgstr "Biselado:"
+
+
 msgid "Render:"
 msgstr "Procesamiento:"
 
@@ -90283,10 +90347,6 @@ msgid "Particles in Boundary:"
 msgstr "Partículas en límites:"
 
 
-msgid "Real World Size"
-msgstr "Tamaño a escala real"
-
-
 msgid "Surface Tension"
 msgstr "Tensión superficial"
 
@@ -90382,8 +90442,8 @@ msgid "Unbaked Guides: Bake Guides or disable them"
 msgstr "Guías no capturadas: Capturarlas o deshabilitarlas"
 
 
-msgid "Use Inflow"
-msgstr "Usar adición de flujo"
+msgid "Use Flow"
+msgstr "Usar flujo"
 
 
 msgid "Surface Thickness"
@@ -91237,7 +91297,7 @@ msgstr "Marco de selección (incluyendo asas)"
 
 msgctxt "Operator"
 msgid "Easing Type"
-msgstr "Tipo de relajación"
+msgstr "Tipo de aceleración"
 
 
 msgctxt "Operator"
@@ -91684,6 +91744,11 @@ msgstr "Instanciar a escena"
 msgctxt "Operator"
 msgid "ID Data"
 msgstr "ID de datos"
+
+
+msgctxt "Operator"
+msgid "Paste Data-Blocks"
+msgstr "Pegar bloques de datos"
 
 
 msgid "Sync Selection"
@@ -92731,6 +92796,10 @@ msgstr "Tiempo de espera VBO"
 
 msgid "Console Scrollback Lines"
 msgstr "Líneas de retroceso en consola"
+
+
+msgid "Cache Limit"
+msgstr "Límite del caché"
 
 
 msgid "View Name"
@@ -95875,8 +95944,8 @@ msgid "NLA Strip Controls"
 msgstr "Controles de clips de ANL"
 
 
-msgid "F-Curve is visible in Graph Editor for editing"
-msgstr "La curva-f se encuentra visible en el Editor de curvas para su edición"
+msgid "F-Curve visibility in Graph Editor"
+msgstr "Visibilidad de la curva-f en el Editor de curvas"
 
 
 msgid "Grease Pencil layer is visible in the viewport"
@@ -95887,8 +95956,8 @@ msgid "Channels are visible in Graph Editor for editing"
 msgstr "Los canales se encuentran visibles en el Editor de curvas para su edición"
 
 
-msgid "F-Curve modifiers are disabled"
-msgstr "Los modificadores de curvas-f están desabilitados"
+msgid "Enable F-Curve modifiers"
+msgstr "Habilitar modificadores de curvas-f"
 
 
 msgid "Make channels grouped under this channel visible"
@@ -96889,6 +96958,10 @@ msgstr "Se esperaba que el fotograma actual fuera un intermedio"
 
 msgid "Nothing to merge"
 msgstr "Nada que fusionar"
+
+
+msgid "Merged %d materials of %d"
+msgstr "Se fusionaron %d materiales de un total de %d"
 
 
 msgid "Grease Pencil Erase Session: Hold and drag LMB or RMB to erase | ESC/Enter to end  (or click outside this area)"
@@ -98813,6 +98886,10 @@ msgstr "La colección '%s' (instanciada por el objeto activo) no es redefinible"
 
 msgid "Active object '%s' is not overridable"
 msgstr "El objeto activo '%s' no es redefinible"
+
+
+msgid "Move the mouse to change the voxel size. LMB: confirm size, ESC/RMB: cancel"
+msgstr "Mover el ratón para cambiar el tamaño de los vóxeles. clic Izq: confirmar tamaño, Esc/clic Der: cancelar"
 
 
 msgid "Voxel remesher cannot run with a voxel size of 0.0"
@@ -101487,15 +101564,15 @@ msgstr "Manipuladores ocultos en esta vista"
 
 
 msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
-msgstr "Selección de vértices - Mayúsculas-clic para modo múltiple, Ctrl-clic contrae la selección"
+msgstr "Selección de vértices - Mayúsculas-clic para varios modos, Ctrl-clic contrae la selección"
 
 
-msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection"
-msgstr "Selección de bordes - Mayúsculas-clic para modo múltiple, Ctrl-clic expande/contrae la selección"
+msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection depending on the current mode"
+msgstr "Selección de bordes - Mayúsculas-clic para varios modos, Ctrl-clic expande/contrae la selección dependiendo del modo actual"
 
 
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
-msgstr "Selección de caras - Mayúsculas-clic para modo múltiple, Ctrl-clic expande la selección"
+msgstr "Selección de caras - Mayúsculas-clic para varios modos, Ctrl-clic expande la selección"
 
 
 msgid "No objects to paste"
@@ -101958,6 +102035,10 @@ msgid "Create Orientation's 'use' parameter only valid in a 3DView context"
 msgstr "El parámetro Usar de 'Crear orientación' sólo es válido en un contexto de vista 3D"
 
 
+msgid "Unable to create orientation"
+msgstr "No es posible crear la orientación"
+
+
 msgid "custom"
 msgstr "personalizado"
 
@@ -102280,7 +102361,7 @@ msgstr "El objetivo no se encuentra en la lista de objetivos de la restricción"
 
 
 msgid "Easing (by strength)"
-msgstr "Relajación (según su intensidad)"
+msgstr "Aceleración (según su intensidad)"
 
 
 msgid "Dynamic Effects"
@@ -103061,6 +103142,14 @@ msgid "Gizmo group '%s' not found!"
 msgstr "Grupo de manipulador '%s' no encontrado!"
 
 
+msgid "The offset is too small, we cannot generate the amount of geometry it would require"
+msgstr "El desplazamiento es demasiado pequeño, no es posible generar la cantidad de geometría que esto requeriría"
+
+
+msgid "The amount of copies is too high, we cannot generate the amount of geometry it would require"
+msgstr "La cantidad de copias es demasiado alta, no es posible generar la cantidad de geometría que esto requeriría"
+
+
 msgid "Enable 'Auto Smooth' in Object Data Properties"
 msgstr "Habilitar el 'Suavizado automático' en las Propiedades de datos del objeto"
 
@@ -103159,10 +103248,6 @@ msgstr "Error en envolvente"
 
 msgid "No valid root vertex found (you need one per mesh island you want to skin)"
 msgstr "No se encontró un vértice raíz válido (se necesita uno por isla de malla que se desee forrar)"
-
-
-msgid "Faces needed for useful output"
-msgstr "Se necesitan caras para producir algo útil"
 
 
 msgid "Internal Error: edges array wrong size: %u instead of %u"

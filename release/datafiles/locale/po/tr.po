@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -2223,6 +2223,10 @@ msgid "Geometry"
 msgstr "Geometri "
 
 
+msgid "Shading"
+msgstr "Gölgeleme"
+
+
 msgid "Transform"
 msgstr "Dönüştür"
 
@@ -3166,10 +3170,6 @@ msgstr "Kaydet"
 
 msgid "Environment"
 msgstr "Çevre"
-
-
-msgid "Shading"
-msgstr "Gölgeleme"
 
 
 msgid "Fonts"
@@ -23607,10 +23607,6 @@ msgstr "Pozu Sil..."
 
 msgid "Displace Type"
 msgstr "Kesme Biçimi "
-
-
-msgid "Real World Size"
-msgstr "Yazıtipi Boyutu Seçin:"
 
 
 msgid "Bounciness"

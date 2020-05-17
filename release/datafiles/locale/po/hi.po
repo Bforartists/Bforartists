@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -1068,6 +1068,10 @@ msgid "ID"
 msgstr "आईडी"
 
 
+msgid "Shading"
+msgstr "छायाप्रभाव"
+
+
 msgid "Transform"
 msgstr "संरचनांतरण"
 
@@ -1451,10 +1455,6 @@ msgstr "द्वि-आयाम"
 
 msgid "Save"
 msgstr "सहेजें"
-
-
-msgid "Shading"
-msgstr "छायाप्रभाव"
 
 
 msgid "Fonts"

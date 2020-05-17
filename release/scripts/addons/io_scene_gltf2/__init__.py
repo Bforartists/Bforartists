@@ -15,8 +15,8 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (1, 3, 7),
-    'blender': (2, 83, 9),
+    "version": (1, 3, 12),
+    'blender': (2, 90, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
     'warning': '',
@@ -25,6 +25,7 @@ bl_info = {
     'support': 'OFFICIAL',
     'category': 'Import-Export',
 }
+
 
 def get_version_string():
     return str(bl_info['version'][0]) + '.' + str(bl_info['version'][1]) + '.' + str(bl_info['version'][2])
@@ -274,8 +275,12 @@ class ExportGLTF2_Base:
     )
 
     export_nla_strips: BoolProperty(
-        name='NLA Strips',
-        description='Export NLA Strip animations',
+        name='Group by NLA Track',
+        description=(
+            "When on, multiple actions become part of the same glTF animation if\n"
+            "they're pushed onto NLA tracks with the same name.\n"
+            "When off, all the currently assigned actions become one glTF animation"
+        ),
         default=True
     )
 
