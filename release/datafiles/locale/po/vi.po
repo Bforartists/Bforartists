@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -7863,6 +7863,10 @@ msgid "Object geometry is updated"
 msgstr "Hình dạng vật thể được nâng cấp"
 
 
+msgid "Shading"
+msgstr "Tô Sắc"
+
+
 msgid "Transform"
 msgstr "Biến Hóa"
 
@@ -11065,10 +11069,6 @@ msgid "Show scenes"
 msgstr "Hiện các cảnh"
 
 
-msgid "Shading"
-msgstr "Tô Sắc"
-
-
 msgid "Show materials, nodetrees, textures and Freestyle's linestyles"
 msgstr "Hiện vật liệu, cây giao điểm, họa tiết, và phong cách nét của Phong Cạch Tự Do"
 
@@ -11839,14 +11839,6 @@ msgstr "Độ phân giải"
 
 msgid "Smoke Grid Resolution"
 msgstr "Độ Phân Giải Đồ Thị Khói"
-
-
-msgid "Meters"
-msgstr "Mét"
-
-
-msgid "Domain size in meters (longest domain side)"
-msgstr "Kích thước của phạm vi bằng mét (bên dài nhất)"
 
 
 msgid "Domain Type"
@@ -37529,10 +37521,6 @@ msgid "The smallest integer greater than or equal A"
 msgstr "Số nguyên nhỏ nhất nhưng lớn hơn hoặc bằng A"
 
 
-msgid "trunc(A)"
-msgstr "trònSố(A)"
-
-
 msgid "Fraction"
 msgstr "Phân Số"
 
@@ -43045,15 +43033,6 @@ msgstr "Xóa vật thể từ một sưu tập vật thể đang có sở hữu 
 
 msgid "The collection to remove other selected objects from"
 msgstr "Sưu tập để xóa các vật thể khác được chọn"
-
-
-msgctxt "Operator"
-msgid "Remove from All Unlinked Collections"
-msgstr "Xóa từ Tất Cả Sưu Tập Không Liên Kết"
-
-
-msgid "Remove selected objects from all collections not used in a scene"
-msgstr "Xóa vật thể được chọn từ tất cả sưu tập không được sử dụng trong một cảnh"
 
 
 msgctxt "Operator"
@@ -59034,10 +59013,6 @@ msgstr "Hết xương được ảnh hưởng bằng Tặp Bức Mẫu hoạt đ
 msgctxt "Operator"
 msgid "Select Connected"
 msgstr "Chọn Được Kết Nối"
-
-
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "Chọn xương có liên hệ phụ huynh/con cái với xương được chọn rồi"
 
 
 msgctxt "Operator"
@@ -90279,10 +90254,6 @@ msgid "Particles in Boundary:"
 msgstr "Các Hạt trong Ranh Giới:"
 
 
-msgid "Real World Size"
-msgstr "Kích Cỡ Thế Giới Thực"
-
-
 msgid "Surface Tension"
 msgstr "Lực Kéo Bề Mặt"
 
@@ -90376,10 +90347,6 @@ msgstr "Đang Nướng Hết - Bấm ESC để dừng lại"
 
 msgid "Unbaked Guides: Bake Guides or disable them"
 msgstr "Đồ Dẫn Chưa Nướng: Nướng Đồ Dẫn hay tắt chúng nó"
-
-
-msgid "Use Inflow"
-msgstr "Dùng Luồng Nhập"
 
 
 msgid "Surface Thickness"
@@ -95871,20 +95838,12 @@ msgid "NLA Strip Controls"
 msgstr "Đồ Điều Khiển Đoạn NLA"
 
 
-msgid "F-Curve is visible in Graph Editor for editing"
-msgstr "Cong-F đang hiện trong Bộ Biên Tập Biểu Đồ để biên tập"
-
-
 msgid "Grease Pencil layer is visible in the viewport"
 msgstr "Lớp Bút Sáp đang hiển thị trong màn chiếu"
 
 
 msgid "Channels are visible in Graph Editor for editing"
 msgstr "Các kênh trong đang hiện trong Bộ Biên Tập Biểu Đồ để biên tập"
-
-
-msgid "F-Curve modifiers are disabled"
-msgstr "Cụ sửa đổi Cong-F bị tắt"
 
 
 msgid "Make channels grouped under this channel visible"
@@ -101462,10 +101421,6 @@ msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts sele
 msgstr "Lựa chọn đỉnh - Shift-Bấm cho nhiều chế độ, Ctrl-Bấm rút sự lựa chọn nhỏ"
 
 
-msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection"
-msgstr "Lựa chọn cạnh - Shift-Bấm cho nhiều chế độ, Ctrl-Bấm rút sự lựa chọn nhỏ"
-
-
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
 msgstr "Lựa chọn mặt - Shift-Bấm cho nhiều chế độ, Ctrl-Bấm rút sự lựa chọn nhỏ"
 
@@ -103131,10 +103086,6 @@ msgstr "Sai lầm vỏ"
 
 msgid "No valid root vertex found (you need one per mesh island you want to skin)"
 msgstr "Không tìm được đỉnh rẽ (bạn cần một đỉnh rẽ cho mỗi đảo mạng lưới bạn muốn da hóa)"
-
-
-msgid "Faces needed for useful output"
-msgstr "Mặt cần cho ngõ ra có sử dụng"
 
 
 msgid "Internal Error: edges array wrong size: %u instead of %u"

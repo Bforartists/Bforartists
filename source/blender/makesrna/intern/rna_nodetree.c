@@ -960,12 +960,11 @@ static bool rna_NodeTree_check(bNodeTree *ntree, ReportList *reports)
 static void rna_NodeTree_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *ptr)
 {
   bNodeTree *ntree = (bNodeTree *)ptr->owner_id;
-  bNode *node = (bNode *)ptr->data;
 
   WM_main_add_notifier(NC_NODE | NA_EDITED, NULL);
   WM_main_add_notifier(NC_SCENE | ND_NODES, &ntree->id);
 
-  ED_node_tag_update_nodetree(bmain, ntree, node);
+  ED_node_tag_update_nodetree(bmain, ntree, NULL);
 }
 
 static bNode *rna_NodeTree_node_new(bNodeTree *ntree,
@@ -2035,6 +2034,11 @@ static bNodeSocket *rna_Node_inputs_new(ID *id,
                                         const char *name,
                                         const char *identifier)
 {
+
+  if (ELEM(node->type, NODE_GROUP_INPUT, NODE_FRAME)) {
+    BKE_report(reports, RPT_ERROR, "Unable to create socket");
+    return NULL;
+  }
   /* Adding an input to a group node is not working,
    * simpler to add it to its underlying nodetree. */
   if (ELEM(node->type, NODE_GROUP, NODE_CUSTOM_GROUP) && node->id != NULL) {
@@ -2065,6 +2069,10 @@ static bNodeSocket *rna_Node_outputs_new(ID *id,
                                          const char *name,
                                          const char *identifier)
 {
+  if (ELEM(node->type, NODE_GROUP_OUTPUT, NODE_FRAME)) {
+    BKE_report(reports, RPT_ERROR, "Unable to create socket");
+    return NULL;
+  }
   /* Adding an output to a group node is not working,
    * simpler to add it to its underlying nodetree. */
   if (ELEM(node->type, NODE_GROUP, NODE_CUSTOM_GROUP) && node->id != NULL) {

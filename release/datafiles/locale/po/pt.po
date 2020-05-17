@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Inês Almeida, João Brandão (ULISBOA), Paulo Martins <ivan.paulos.tome@yandex.com>\n"
@@ -6234,6 +6234,10 @@ msgid "Geometry"
 msgstr "Geometria"
 
 
+msgid "Shading"
+msgstr "Sombreamento"
+
+
 msgid "Transform"
 msgstr "Transformações"
 
@@ -9028,10 +9032,6 @@ msgstr "Imagens e sons"
 
 msgid "Miscellaneous"
 msgstr "Miscelânea"
-
-
-msgid "Shading"
-msgstr "Sombreamento"
 
 
 msgid "Fonts"
@@ -45097,10 +45097,6 @@ msgid "Select Connected"
 msgstr "Selecionar conectados"
 
 
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "Seleciona os ossos relacionados aos selecionados pelas suas relações de parentesco - parentes ou crianças."
-
-
 msgctxt "Operator"
 msgid "Select Parent Bone"
 msgstr "Selecionar osso parente"
@@ -66241,10 +66237,6 @@ msgid "Wave Clamp"
 msgstr "Limitar onda"
 
 
-msgid "Real World Size"
-msgstr "Tamanho real do ambiente"
-
-
 msgid "Bounciness"
 msgstr "Saltitamento"
 
@@ -69027,20 +69019,12 @@ msgid "NLA Strip Controls"
 msgstr "Controlos das faixas de animação não linear"
 
 
-msgid "F-Curve is visible in Graph Editor for editing"
-msgstr "A curva-f está visível no editor gráfico para edição."
-
-
 msgid "Grease Pencil layer is visible in the viewport"
 msgstr "A camada de lápis de cera está visível dentro da porta de visão."
 
 
 msgid "Channels are visible in Graph Editor for editing"
 msgstr "Canais são visíveis dentro do editor gráfico para edição."
-
-
-msgid "F-Curve modifiers are disabled"
-msgstr "Os modificadores de Curvas-f estão desativados."
 
 
 msgid "Make channels grouped under this channel visible"
@@ -73101,10 +73085,6 @@ msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts sele
 msgstr "Seleção de vértices - Shift + clique para múltiplos modos, Ctrl + clique contrai a seleção."
 
 
-msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection"
-msgstr "Seleção de arestas - Shift + clique para múltiplos modos, Ctrl + clique expande ou contrai a seleção."
-
-
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
 msgstr "Seleção de faces - Shift + clique para múltiplos modos, Ctrl + clique expande a seleção."
 
@@ -74370,10 +74350,6 @@ msgstr "Erro de casco."
 
 msgid "No valid root vertex found (you need one per mesh island you want to skin)"
 msgstr "Nenhuma raiz de vértice válida encontrada (é necessário haver ao menos uma para cada ilha da malha que você deseja recobrir)."
-
-
-msgid "Faces needed for useful output"
-msgstr "Faces necessárias para uma saída útil."
 
 
 msgid "Out of memory"

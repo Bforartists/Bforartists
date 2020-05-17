@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: 2020-03-28 00:56+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -5481,6 +5481,10 @@ msgid "Geometry"
 msgstr "幾何"
 
 
+msgid "Shading"
+msgstr "著色"
+
+
 msgid "Transform"
 msgstr "變換"
 
@@ -8200,10 +8204,6 @@ msgstr "此路徑是否儲存於書籤、或是從作業系統生成"
 
 msgid "Environment"
 msgstr "環境"
-
-
-msgid "Shading"
-msgstr "著色"
 
 
 msgid "Fonts"
@@ -28584,11 +28584,6 @@ msgstr "從作用中選集移除所選項"
 
 
 msgctxt "Operator"
-msgid "Remove from All Unlinked Collections"
-msgstr "從所有未連結的選集中移除"
-
-
-msgctxt "Operator"
 msgid "Console Autocomplete"
 msgstr "主控臺自動補完"
 
@@ -38476,10 +38471,6 @@ msgstr "受作用中鍵處理集影響的所有骨骼"
 msgctxt "Operator"
 msgid "Select Connected"
 msgstr "選取已連接者"
-
-
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "選取與所選骨骼關聯的親代/子代關係骨骼"
 
 
 msgctxt "Operator"
@@ -56400,10 +56391,6 @@ msgid "Wave Clamp"
 msgstr "波形緊固"
 
 
-msgid "Real World Size"
-msgstr "真實世界大小"
-
-
 msgid "Bounciness"
 msgstr "反彈"
 
@@ -62860,10 +62847,6 @@ msgstr "無效的目標設定"
 
 msgid "Hull error"
 msgstr "淘選錯誤"
-
-
-msgid "Faces needed for useful output"
-msgstr "需要有面才能取得有用輸出"
 
 
 msgid "Convertor"

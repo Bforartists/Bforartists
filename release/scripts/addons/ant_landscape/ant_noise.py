@@ -565,15 +565,15 @@ def noise_gen(coords, props):
         o_range = 1.0
     else:
         # Randomise origin
-        o_range = 10000.0
+        o_range = 100
         seed_set(rseed)
         origin = random_unit_vector()
         ox = (origin[0] * o_range)
         oy = (origin[1] * o_range)
-        oz = (origin[2] * o_range)
-        origin_x = (ox - (ox / 2)) + x_offset
-        origin_y = (oy - (oy / 2)) + y_offset
-        origin_z = (oz - (oz / 2)) + z_offset
+        oz = 0
+        origin_x = (ox - (ox * 0.5)) + x_offset
+        origin_y = (oy - (oy * 0.5)) + y_offset
+        origin_z = oz + z_offset
 
     ncoords = (x / (nsize * size_x) + origin_x, y / (nsize * size_y) + origin_y, z / (nsize * size_z) + origin_z)
 

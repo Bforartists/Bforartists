@@ -730,11 +730,6 @@ class addBeam(Operator, object_utils.AddObjectHelper):
             default=0,
             description="Angle beam edges"
             )
-    Cursor: BoolProperty(
-            name="Use 3D Cursor",
-            default=False,
-            description="Draw the beam where the 3D Cursor is"
-            )
 
     def draw(self, context):
         layout = self.layout
@@ -742,7 +737,6 @@ class addBeam(Operator, object_utils.AddObjectHelper):
         box = layout.box()
         split = box.split(factor=0.85, align=True)
         split.prop(self, "Type", text="")
-        split.prop(self, "Cursor", text="")
 
         box.prop(self, "beamZ")
         box.prop(self, "beamX")
@@ -760,6 +754,10 @@ class addBeam(Operator, object_utils.AddObjectHelper):
             box.prop(self, 'rotation', expand=True)
 
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
+
         if bpy.context.mode == "OBJECT":
 
             if context.selected_objects != [] and context.active_object and \
@@ -781,20 +779,10 @@ class addBeam(Operator, object_utils.AddObjectHelper):
                 bpy.ops.transform.rotate(value=1.570796, constraint_axis=[False, True, False])
                 bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 
-            if self.Cursor:
-                if beamObj.select_get() is True:
-                    # we also have to check if we're considered to be in 3D View (view3d)
-                    if bpy.ops.view3d.snap_selected_to_cursor.poll():
-                        bpy.ops.view3d.snap_selected_to_cursor()
-                    else:
-                        self.Cursor = False
-
             obj.data["Beam"] = True
             obj.data["change"] = False
             for prm in BeamParameters():
                 obj.data[prm] = getattr(self, prm)
-
-            return {'FINISHED'}
 
         if bpy.context.mode == "EDIT_MESH":
             active_object = context.active_object
@@ -808,6 +796,12 @@ class addBeam(Operator, object_utils.AddObjectHelper):
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')
 
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
+
         return {'FINISHED'}
 
 def BeamParameters():
@@ -818,6 +812,5 @@ def BeamParameters():
             "beamY",
             "beamW",
             "edgeA",
-            "Cursor",
             ]
     return BeamParameters

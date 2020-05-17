@@ -9,9 +9,10 @@ import mathutils
 import io
 import operator
 import functools
+from bpy_extras import object_utils
 
 
-class AddTeapot(bpy.types.Operator):
+class AddTeapot(bpy.types.Operator, object_utils.AddObjectHelper):
     bl_idname = "mesh.primitive_teapot_add"
     bl_label = "Add Teapot"
     bl_description = "Construct a teapot or teaspoon mesh"
@@ -31,16 +32,42 @@ class AddTeapot(bpy.types.Operator):
             default='1',
             )
 
+    def draw(self, context):
+        layout = self.layout
+
+        box = layout.box()
+        box.prop(self, 'resolution')
+
+        box = layout.box()
+        box.prop(self, 'objecttype')
+
+        # generic transform props
+        box = layout.box()
+        box.prop(self, 'align', expand=True)
+        box.prop(self, 'location', expand=True)
+        box.prop(self, 'rotation', expand=True)
+
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
+
         cmode = bpy.context.mode
         verts, faces = make_teapot(self.objecttype,
                                    self.resolution)
         # Actually create the mesh object from this geometry data.
-        obj = create_mesh_object(context, verts, [], faces, "Teapot")
+        obj = create_mesh_object(self, context, verts, [], faces, "Teapot")
         bpy.ops.object.mode_set(mode='EDIT')
         bpy.ops.mesh.remove_doubles()
         if cmode != "EDIT_MESH":
             bpy.ops.object.mode_set(mode=cmode)
+
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
+
         return {'FINISHED'}
 
 
@@ -56,7 +83,7 @@ def create_mesh_face_hack(faces):
     faces[:] = faces_copy
 
 
-def create_mesh_object(context, verts, edges, faces, name):
+def create_mesh_object(self, context, verts, edges, faces, name):
 
     create_mesh_face_hack(faces)
 
@@ -66,8 +93,8 @@ def create_mesh_object(context, verts, edges, faces, name):
     mesh.from_pydata(verts, edges, faces)
     # Update mesh geometry after adding stuff.
     mesh.update()
-    from bpy_extras import object_utils
-    return object_utils.object_data_add(context, mesh, operator=None)
+
+    return object_utils.object_data_add(context, mesh, operator=self)
 
 
 # ==========================

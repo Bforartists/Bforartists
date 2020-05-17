@@ -95,7 +95,7 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
             default=1.0,
             )
     bake_space_transform: BoolProperty(
-            name="!EXPERIMENTAL! Apply Transform",
+            name="Apply Transform",
             description="Bake space transform into object data, avoids getting unwanted rotations to objects when "
                         "target space is not aligned with Blender's space "
                         "(WARNING! experimental option, use at own risks, known broken with armatures/animations)",
@@ -103,7 +103,7 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
             )
 
     use_custom_normals: BoolProperty(
-            name="Import Custom Normals",
+            name="Custom Normals",
             description="Import custom normals, if available (otherwise Blender will recompute them)",
             default=True,
             )
@@ -138,13 +138,13 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
             )
 
     use_subsurf: BoolProperty(
-            name="Import Subdivision Surface",
+            name="Subdivision Data",
             description="Import FBX subdivision information as subdivision surface modifiers",
             default=False,
             )
 
     use_custom_props: BoolProperty(
-            name="Import User Properties",
+            name="Custom Properties",
             description="Import user properties as custom properties",
             default=True,
             )
@@ -241,9 +241,9 @@ class FBX_PT_import_include(bpy.types.Panel):
         sfile = context.space_data
         operator = sfile.active_operator
 
-        layout.prop(operator, "use_custom_normals", text="Custom Normals")
-        layout.prop(operator, "use_subsurf", text="Subdivision Data")
-        layout.prop(operator, "use_custom_props", text="Custom Properties")
+        layout.prop(operator, "use_custom_normals")
+        layout.prop(operator, "use_subsurf")
+        layout.prop(operator, "use_custom_props")
         sub = layout.row()
         sub.enabled = operator.use_custom_props
         sub.prop(operator, "use_custom_props_enum_as_string")
@@ -274,7 +274,7 @@ class FBX_PT_import_transform(bpy.types.Panel):
         layout.prop(operator, "global_scale")
         layout.prop(operator, "decal_offset")
         row = layout.row()
-        row.prop(operator, "bake_space_transform", text = "Apply Transform")
+        row.prop(operator, "bake_space_transform")
         row.label(text="", icon='ERROR')
         layout.prop(operator, "use_prepost_rot")
 
@@ -427,7 +427,7 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
                         "but many other applications do not handle the same way)",
             )
     bake_space_transform: BoolProperty(
-            name="!EXPERIMENTAL! Apply Transform",
+            name="Apply Transform",
             description="Bake space transform into object data, avoids getting unwanted rotations to objects when "
                         "target space is not aligned with Blender's space "
                         "(WARNING! experimental option, use at own risks, known broken with armatures/animations)",
@@ -690,7 +690,7 @@ class FBX_PT_export_include(bpy.types.Panel):
         sfile = context.space_data
         operator = sfile.active_operator
 
-        sublayout = layout.column(heading = "Limit to")
+        sublayout = layout.column(heading="Limit to")
         sublayout.enabled = (operator.batch_mode == 'OFF')
         sublayout.prop(operator, "use_selection")
         sublayout.prop(operator, "use_active_collection")
@@ -728,7 +728,7 @@ class FBX_PT_export_transform(bpy.types.Panel):
 
         layout.prop(operator, "apply_unit_scale")
         row = layout.row()
-        row.prop(operator, "bake_space_transform", text ="Apply Transform")
+        row.prop(operator, "bake_space_transform")
         row.label(text="", icon='ERROR')
 
 

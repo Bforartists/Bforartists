@@ -1391,7 +1391,6 @@ def km_time_scrub(_params):
 
     items.extend([
         ("anim.change_frame", {"type": "LEFTMOUSE", "value": 'PRESS'}, None),
-        ("graph.cursor_set", {"type": "LEFTMOUSE", "value": 'PRESS'}, None),
     ])
 
     return keymap
@@ -3027,6 +3026,8 @@ def km_grease_pencil(_params):
     items.extend([
         # Draw
         ("gpencil.annotate", {"type": 'LEFTMOUSE', "value": 'PRESS', "key_modifier": 'D'},
+         {"properties": [("mode", 'DRAW'), ("wait_for_input", False)]}),
+        ("gpencil.annotate", {"type": 'LEFTMOUSE', "value": 'PRESS', "key_modifier": 'D', "shift": True},
          {"properties": [("mode", 'DRAW'), ("wait_for_input", False)]}),
         # Draw - straight lines
         ("gpencil.annotate", {"type": 'LEFTMOUSE', "value": 'PRESS', "alt": True, "key_modifier": 'D'},
