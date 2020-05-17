@@ -311,18 +311,17 @@ class VIEW3D_HT_header(Header):
 
         # While exposing 'shading.show_xray(_wireframe)' is correct.
         # this hides the key shortcut from users: T70433.
+        if has_pose_mode:
+            draw_depressed = overlay.show_xray_bone
+        elif shading.type == 'WIREFRAME':
+            draw_depressed = shading.show_xray_wireframe
+        else:
+            draw_depressed = shading.show_xray
         row.operator(
             "view3d.toggle_xray",
             text="",
             icon='XRAY',
-            depress=(
-                overlay.show_xray_bone if has_pose_mode else
-                getattr(
-                    shading,
-                    "show_xray_wireframe" if shading.type == 'WIREFRAME' else
-                    "show_xray"
-                )
-            ),
+            depress=draw_depressed,
         )
 
         row = layout.row(align=True)
@@ -1223,7 +1222,7 @@ class VIEW3D_MT_view_all_all_regions(bpy.types.Operator):
 class VIEW3D_MT_view_center_cursor_and_view_all(bpy.types.Operator):
     """Views all objects in scene and centers the 3D cursor"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "view3d.view_all_center_cursor"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Center Cursor and View All"         # display name in the interface.
+    bl_label = "Center Cursor and Frame All"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     def execute(self, context):        # execute() is called by blender when running the operator.
@@ -1260,7 +1259,7 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("render.opengl", text="OpenGL Render Image", icon='RENDER_STILL') #BFA - by Draise
+        layout.operator("render.opengl", text="OpenGL Render Image", icon='RENDER_STILL')
         layout.operator("render.opengl", text="OpenGL Render Animation", icon='RENDER_ANIMATION').animation = True
         props = layout.operator("render.opengl", text="OpenGL Render Keyframes", icon='RENDER_ANIMATION')
         props.animation = True
@@ -1295,10 +1294,10 @@ class VIEW3D_MT_view(Menu):
         layout.operator("view3d.view_selected", text="View Selected", icon = "VIEW_SELECTED").use_all_regions = False
         if view.region_quadviews:
             layout.operator("view3d.view_selected_all_regions", text="View Selected (Quad View)", icon = "ALIGNCAMERA_ACTIVE")
-        layout.operator("view3d.view_all", text="View All", icon = "VIEWALL").center = False
+        layout.operator("view3d.view_all", text="Frame All", icon = "VIEWALL").center = False
         if view.region_quadviews:
             layout.operator("view3d.view_all_all_regions", text = "View All (Quad View)", icon = "VIEWALL" ) # bfa - separated tooltip
-        layout.operator("view3d.view_all_center_cursor", text="Center Cursor and View All", icon = "VIEWALL_RESETCURSOR") # bfa - separated tooltip
+        layout.operator("view3d.view_all_center_cursor", text="Center Cursor and Frame All", icon = "VIEWALL_RESETCURSOR") # bfa - separated tooltip
 
         layout.separator()
 
@@ -4741,11 +4740,6 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             col.separator()
 
-            col.operator("mesh.mark_seam", icon = "MARK_SEAM").clear = False
-            col.operator("mesh.mark_seam", text="Clear Seam", icon = 'CLEAR_SEAM').clear = True
-
-            col.separator()
-
             col.operator("mesh.mark_sharp", icon = "MARKSHARPEDGES")
             col.operator("mesh.mark_sharp", text="Clear Sharp", icon = "CLEARSHARPEDGES").clear = True
 
@@ -4979,6 +4973,8 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
         layout.operator("mesh.edge_rotate", text="Rotate Edge CCW", icon = "ROTATECW").use_ccw = True
+
+        layout.operator("mesh.offset_edge_loops_slide", icon = "OFFSET_EDGE_SLIDE")
 
         layout.separator()
 
@@ -7896,9 +7892,10 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
         col = layout.column()
         row = col.row()
         row.prop(overlay, "use_gpencil_grid", text="")
-        sub = row.row()
+        sub = row.row(align=True)
         sub.active = overlay.use_gpencil_grid
         sub.prop(overlay, "gpencil_grid_opacity", text="Canvas", slider=True)
+        sub.prop(overlay, "use_gpencil_canvas_xray", text="", icon='XRAY')
 
         row = col.row()
         row.prop(overlay, "use_gpencil_fade_layers", text="")

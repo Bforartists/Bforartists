@@ -1970,6 +1970,84 @@ void MESH_OT_duplicate(wmOperatorType *ot)
   RNA_def_int(ot->srna, "mode", TFM_TRANSLATION, 0, INT_MAX, "Mode", "", 0, INT_MAX);
 }
 
+static BMLoopNorEditDataArray *flip_custom_normals_init_data(BMesh *bm)
+{
+  BMLoopNorEditDataArray *lnors_ed_arr = NULL;
+  if (CustomData_has_layer(&bm->ldata, CD_CUSTOMLOOPNORMAL)) {
+    /* The mesh has custom normal data, update these too.
+     * Otherwise they will be left in a mangled state.
+     */
+    BM_lnorspace_update(bm);
+    lnors_ed_arr = BM_loop_normal_editdata_array_init(bm, true);
+  }
+
+  return lnors_ed_arr;
+}
+
+static bool flip_custom_normals(BMesh *bm, BMLoopNorEditDataArray *lnors_ed_arr)
+{
+  if (!lnors_ed_arr) {
+    return false;
+  }
+
+  if (lnors_ed_arr->totloop == 0) {
+    /* No loops normals to flip, exit early! */
+    return false;
+  }
+
+  bm->spacearr_dirty |= BM_SPACEARR_DIRTY_ALL;
+  BM_lnorspace_update(bm);
+
+  /* We need to recreate the custom normal array because the clnors_data will
+   * be mangled because we swapped the loops around when we flipped the faces. */
+  BMLoopNorEditDataArray *lnors_ed_arr_new_full = BM_loop_normal_editdata_array_init(bm, true);
+
+  {
+    /* We need to recalculate all loop normals in the affected area. Even the ones that are not
+     * going to be flipped because the clnors data is mangled. */
+
+    BMLoopNorEditData *lnor_ed_new_full = lnors_ed_arr_new_full->lnor_editdata;
+    for (int i = 0; i < lnors_ed_arr_new_full->totloop; i++, lnor_ed_new_full++) {
+
+      BMLoopNorEditData *lnor_ed =
+          lnors_ed_arr->lidx_to_lnor_editdata[lnor_ed_new_full->loop_index];
+
+      BLI_assert(lnor_ed != NULL);
+
+      BKE_lnor_space_custom_normal_to_data(
+          bm->lnor_spacearr->lspacearr[lnor_ed_new_full->loop_index],
+          lnor_ed->nloc,
+          lnor_ed_new_full->clnors_data);
+    }
+  }
+
+  BMFace *f;
+  BMLoop *l;
+  BMIter iter_f, iter_l;
+  BM_ITER_MESH (f, &iter_f, bm, BM_FACES_OF_MESH) {
+    if (!BM_elem_flag_test(f, BM_ELEM_SELECT)) {
+      continue;
+    }
+    /* Flip all the custom loop normals on the selected faces. */
+
+    BM_ITER_ELEM (l, &iter_l, f, BM_LOOPS_OF_FACE) {
+
+      int loop_index = BM_elem_index_get(l);
+
+      BMLoopNorEditData *lnor_ed = lnors_ed_arr->lidx_to_lnor_editdata[loop_index];
+      BMLoopNorEditData *lnor_ed_new = lnors_ed_arr_new_full->lidx_to_lnor_editdata[loop_index];
+      BLI_assert(lnor_ed != NULL && lnor_ed_new != NULL);
+
+      negate_v3(lnor_ed->nloc);
+
+      BKE_lnor_space_custom_normal_to_data(
+          bm->lnor_spacearr->lspacearr[loop_index], lnor_ed->nloc, lnor_ed_new->clnors_data);
+    }
+  }
+  BM_loop_normal_editdata_array_free(lnors_ed_arr_new_full);
+  return true;
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -1977,6 +2055,8 @@ void MESH_OT_duplicate(wmOperatorType *ot)
  * \{ */
 static int edbm_flip_normals_exec(bContext *C, wmOperator *op)
 {
+  const bool only_clnors = RNA_boolean_get(op->ptr, "only_clnors");
+
   ViewLayer *view_layer = CTX_data_view_layer(C);
   uint objects_len = 0;
   Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
@@ -1986,15 +2066,48 @@ static int edbm_flip_normals_exec(bContext *C, wmOperator *op)
     Object *obedit = objects[ob_index];
     BMEditMesh *em = BKE_editmesh_from_object(obedit);
 
+    if (only_clnors) {
+      if (CustomData_has_layer(&em->bm->ldata, CD_CUSTOMLOOPNORMAL)) {
+        /* The mesh has custom normal data, flip them. */
+        BMesh *bm = em->bm;
+
+        BM_lnorspace_update(bm);
+        BMLoopNorEditDataArray *lnors_ed_arr = BM_loop_normal_editdata_array_init(bm, false);
+        BMLoopNorEditData *lnor_ed = lnors_ed_arr->lnor_editdata;
+
+        for (int i = 0; i < lnors_ed_arr->totloop; i++, lnor_ed++) {
+          negate_v3(lnor_ed->nloc);
+
+          BKE_lnor_space_custom_normal_to_data(bm->lnor_spacearr->lspacearr[lnor_ed->loop_index],
+                                               lnor_ed->nloc,
+                                               lnor_ed->clnors_data);
+        }
+        BM_loop_normal_editdata_array_free(lnors_ed_arr);
+        EDBM_update_generic(obedit->data, true, false);
+      }
+      continue;
+    }
+
     if (em->bm->totfacesel == 0) {
       continue;
     }
 
-    if (!EDBM_op_callf(em, op, "reverse_faces faces=%hf flip_multires=%b", BM_ELEM_SELECT, true)) {
-      continue;
+    bool has_flipped_faces = false;
+
+    /* See if we have any custom normals to flip. */
+    BMLoopNorEditDataArray *lnors_ed_arr = flip_custom_normals_init_data(em->bm);
+
+    if (EDBM_op_callf(em, op, "reverse_faces faces=%hf flip_multires=%b", BM_ELEM_SELECT, true)) {
+      has_flipped_faces = true;
     }
 
-    EDBM_update_generic(obedit->data, true, false);
+    if (flip_custom_normals(em->bm, lnors_ed_arr) || has_flipped_faces) {
+      EDBM_update_generic(obedit->data, true, false);
+    }
+
+    if (lnors_ed_arr != NULL) {
+      BM_loop_normal_editdata_array_free(lnors_ed_arr);
+    }
   }
 
   MEM_freeN(objects);
@@ -2014,6 +2127,12 @@ void MESH_OT_flip_normals(wmOperatorType *ot)
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+  RNA_def_boolean(ot->srna,
+                  "only_clnors",
+                  false,
+                  "Custom Normals Only",
+                  "Only flip the custom loop normals of the selected elements");
 }
 
 /** \} */
@@ -2276,6 +2395,7 @@ void MESH_OT_reveal(wmOperatorType *ot)
 static int edbm_normals_make_consistent_exec(bContext *C, wmOperator *op)
 {
   ViewLayer *view_layer = CTX_data_view_layer(C);
+  const bool inside = RNA_boolean_get(op->ptr, "inside");
 
   uint objects_len = 0;
   Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
@@ -2288,11 +2408,23 @@ static int edbm_normals_make_consistent_exec(bContext *C, wmOperator *op)
       continue;
     }
 
+    BMLoopNorEditDataArray *lnors_ed_arr = NULL;
+
+    if (inside) {
+      /* Save custom normal data for later so we can flip them correctly. */
+      lnors_ed_arr = flip_custom_normals_init_data(em->bm);
+    }
+
     if (!EDBM_op_callf(em, op, "recalc_face_normals faces=%hf", BM_ELEM_SELECT)) {
       continue;
     }
-    if (RNA_boolean_get(op->ptr, "inside")) {
+
+    if (inside) {
       EDBM_op_callf(em, op, "reverse_faces faces=%hf flip_multires=%b", BM_ELEM_SELECT, true);
+      flip_custom_normals(em->bm, lnors_ed_arr);
+      if (lnors_ed_arr != NULL) {
+        BM_loop_normal_editdata_array_free(lnors_ed_arr);
+      }
     }
 
     EDBM_update_generic(obedit->data, true, false);
@@ -7082,36 +7214,16 @@ void MESH_OT_wireframe(wmOperatorType *ot)
 
 static int edbm_offset_edgeloop_exec(bContext *C, wmOperator *op)
 {
-  bool mode_change = false;
   const bool use_cap_endpoint = RNA_boolean_get(op->ptr, "use_cap_endpoint");
-  int ret = OPERATOR_CANCELLED;
-
-  {
-    Object *obedit = CTX_data_edit_object(C);
-    BMEditMesh *em = BKE_editmesh_from_object(obedit);
-    if (em->selectmode == SCE_SELECT_FACE) {
-      EDBM_selectmode_to_scene(C);
-      mode_change = true;
-    }
-  }
-
+  bool changed_multi = false;
+  Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  uint objects_len = 0;
-  Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(
-      view_layer, CTX_wm_view3d(C), &objects_len);
-  for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
-    Object *obedit = objects[ob_index];
+  uint bases_len = 0;
+  Base **bases = BKE_view_layer_array_from_bases_in_edit_mode_unique_data(
+      view_layer, CTX_wm_view3d(C), &bases_len);
+  for (uint base_index = 0; base_index < bases_len; base_index++) {
+    Object *obedit = bases[base_index]->object;
     BMEditMesh *em = BKE_editmesh_from_object(obedit);
-
-    /** If in face-only select mode, switch to edge select mode so that
-     * an edge-only selection is not inconsistent state.
-     *
-     * We need to run this for all objects, even when nothing is selected.
-     * This way we keep them in sync. */
-    if (mode_change) {
-      em->selectmode = SCE_SELECT_EDGE;
-      EDBM_selectmode_set(em);
-    }
 
     if (em->bm->totedgesel == 0) {
       continue;
@@ -7132,16 +7244,26 @@ static int edbm_offset_edgeloop_exec(bContext *C, wmOperator *op)
     BMO_slot_buffer_hflag_enable(
         em->bm, bmop.slots_out, "edges.out", BM_EDGE, BM_ELEM_SELECT, true);
 
-    if (!EDBM_op_finish(em, &bmop, op, true)) {
-      continue;
-    }
-    else {
+    if (EDBM_op_finish(em, &bmop, op, true)) {
       EDBM_update_generic(obedit->data, true, true);
-      ret = OPERATOR_FINISHED;
+      changed_multi = true;
     }
   }
-  MEM_freeN(objects);
-  return ret;
+
+  if (changed_multi) {
+    /** If in face-only select mode, switch to edge select mode so that
+     * an edge-only selection is not inconsistent state.
+     *
+     * We need to run this for all objects, even when nothing is selected.
+     * This way we keep them in sync. */
+    if (scene->toolsettings->selectmode == SCE_SELECT_FACE) {
+      EDBM_selectmode_disable_multi_ex(scene, bases, bases_len, SCE_SELECT_FACE, SCE_SELECT_EDGE);
+    }
+  }
+
+  MEM_freeN(bases);
+
+  return changed_multi ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 void MESH_OT_offset_edge_loops(wmOperatorType *ot)
@@ -8323,6 +8445,8 @@ static void normals_merge(BMesh *bm, BMLoopNorEditDataArray *lnors_ed_arr)
   BM_normals_loops_edges_tag(bm, false);
 
   for (int i = 0; i < lnors_ed_arr->totloop; i++, lnor_ed++) {
+    BLI_assert(BLI_SMALLSTACK_IS_EMPTY(clnors));
+
     if (BM_elem_flag_test(lnor_ed->loop, BM_ELEM_TAG)) {
       continue;
     }
@@ -8365,8 +8489,12 @@ static void normals_split(BMesh *bm)
 
   BM_normals_loops_edges_tag(bm, true);
 
+  BLI_SMALLSTACK_DECLARE(loop_stack, BMLoop *);
+
   const int cd_clnors_offset = CustomData_get_offset(&bm->ldata, CD_CUSTOMLOOPNORMAL);
   BM_ITER_MESH (f, &fiter, bm, BM_FACES_OF_MESH) {
+    BLI_assert(BLI_SMALLSTACK_IS_EMPTY(loop_stack));
+
     l_curr = l_first = BM_FACE_FIRST_LOOP(f);
     do {
       if (BM_elem_flag_test(l_curr->v, BM_ELEM_SELECT) &&
@@ -8388,7 +8516,6 @@ static void normals_split(BMesh *bm)
 
           lfan_pivot = l_curr;
           e_next = lfan_pivot->e;
-          BLI_SMALLSTACK_DECLARE(loops, BMLoop *);
           float avg_normal[3] = {0.0f};
 
           while (true) {
@@ -8400,7 +8527,7 @@ static void normals_split(BMesh *bm)
               e_next = (lfan_pivot->e == e_next) ? lfan_pivot->prev->e : lfan_pivot->e;
             }
 
-            BLI_SMALLSTACK_PUSH(loops, lfan_pivot);
+            BLI_SMALLSTACK_PUSH(loop_stack, lfan_pivot);
             add_v3_v3(avg_normal, lfan_pivot->f->no);
 
             if (!BM_elem_flag_test(e_next, BM_ELEM_TAG) || (e_next == e_org)) {
@@ -8412,7 +8539,7 @@ static void normals_split(BMesh *bm)
             /* If avg normal is nearly 0, set clnor to default value. */
             zero_v3(avg_normal);
           }
-          while ((l = BLI_SMALLSTACK_POP(loops))) {
+          while ((l = BLI_SMALLSTACK_POP(loop_stack))) {
             const int l_index = BM_elem_index_get(l);
             short *clnors = BM_ELEM_CD_GET_VOID_P(l, cd_clnors_offset);
             BKE_lnor_space_custom_normal_to_data(
@@ -8554,7 +8681,13 @@ static int edbm_average_normals_exec(bContext *C, wmOperator *op)
   const float absweight = (float)RNA_int_get(op->ptr, "weight");
   const float threshold = RNA_float_get(op->ptr, "threshold");
 
+  HeapSimple *loop_weight = BLI_heapsimple_new();
+  BLI_SMALLSTACK_DECLARE(loop_stack, BMLoop *);
+
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+    BLI_assert(BLI_SMALLSTACK_IS_EMPTY(loop_stack));
+    BLI_assert(BLI_heapsimple_is_empty(loop_weight));
+
     Object *obedit = objects[ob_index];
     BMEditMesh *em = BKE_editmesh_from_object(obedit);
     BMesh *bm = em->bm;
@@ -8580,8 +8713,6 @@ static int edbm_average_normals_exec(bContext *C, wmOperator *op)
     }
 
     BM_normals_loops_edges_tag(bm, true);
-
-    HeapSimple *loop_weight = BLI_heapsimple_new();
 
     BM_ITER_MESH (f, &fiter, bm, BM_FACES_OF_MESH) {
       l_curr = l_first = BM_FACE_FIRST_LOOP(f);
@@ -8632,7 +8763,6 @@ static int edbm_average_normals_exec(bContext *C, wmOperator *op)
               lfan_pivot = lfan_pivot_next;
             }
 
-            BLI_SMALLSTACK_DECLARE(loops, BMLoop *);
             float wnor[3], avg_normal[3] = {0.0f}, count = 0;
             float val = BLI_heapsimple_top_value(loop_weight);
 
@@ -8643,7 +8773,7 @@ static int edbm_average_normals_exec(bContext *C, wmOperator *op)
                 val = cur_val;
               }
               l = BLI_heapsimple_pop_min(loop_weight);
-              BLI_SMALLSTACK_PUSH(loops, l);
+              BLI_SMALLSTACK_PUSH(loop_stack, l);
 
               const float n_weight = pow(weight, count);
 
@@ -8664,7 +8794,7 @@ static int edbm_average_normals_exec(bContext *C, wmOperator *op)
               /* If avg normal is nearly 0, set clnor to default value. */
               zero_v3(avg_normal);
             }
-            while ((l = BLI_SMALLSTACK_POP(loops))) {
+            while ((l = BLI_SMALLSTACK_POP(loop_stack))) {
               const int l_index = BM_elem_index_get(l);
               short *clnors = BM_ELEM_CD_GET_VOID_P(l, cd_clnors_offset);
               BKE_lnor_space_custom_normal_to_data(
@@ -8675,9 +8805,10 @@ static int edbm_average_normals_exec(bContext *C, wmOperator *op)
       } while ((l_curr = l_curr->next) != l_first);
     }
 
-    BLI_heapsimple_free(loop_weight, NULL);
     EDBM_update_generic(obedit->data, true, false);
   }
+
+  BLI_heapsimple_free(loop_weight, NULL);
 
   MEM_freeN(objects);
   return OPERATOR_FINISHED;

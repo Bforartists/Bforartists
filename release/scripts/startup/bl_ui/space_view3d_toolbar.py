@@ -212,13 +212,13 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
         sub.prop(mesh, "use_mirror_x", text="X", toggle=True)
         sub.prop(mesh, "use_mirror_y", text="Y", toggle=True)
         sub.prop(mesh, "use_mirror_z", text="Z", toggle=True)
-        
+
         layout.use_property_split = False
 
         row = layout.row(align=True)
         row.active = ob.data.use_mirror_x or ob.data.use_mirror_y or ob.data.use_mirror_z
         row.prop(mesh, "use_mirror_topology")
-   
+
         layout.prop(tool_settings, "use_edge_path_live_unwrap", text = "Live Unwrap Edge Path")
 
 
@@ -249,66 +249,9 @@ class VIEW3D_PT_tools_meshedit_options_automerge(View3DPanel, Panel):
         col = layout.column(align=True)
         col.active = tool_settings.use_mesh_automerge
         col.prop(tool_settings, "use_mesh_automerge_and_split", toggle=False)
-        
+
         col.use_property_split = True
         col.prop(tool_settings, "double_threshold", text="Threshold")
-
-
-# ********** default tools for editmode_curve ****************
-
-
-class VIEW3D_PT_tools_curveedit_options_stroke(View3DPanel, Panel):
-    bl_category = "Tool"
-    bl_context = ".curve_edit"  # dot on purpose (access from topbar)
-    bl_label = "Curve Stroke"
-
-    def draw(self, context):
-        layout = self.layout
-
-        tool_settings = context.tool_settings
-        cps = tool_settings.curve_paint_settings
-
-        col = layout.column()
-
-        col.prop(cps, "curve_type")
-
-        if cps.curve_type == 'BEZIER':
-            col.label(text="Bezier Options:")
-            col.prop(cps, "error_threshold")
-            col.prop(cps, "fit_method")
-            col.prop(cps, "use_corners_detect")
-
-            col = layout.column()
-            col.active = cps.use_corners_detect
-            col.prop(cps, "corner_angle")
-
-        col.label(text="Pressure Radius:")
-        row = layout.row(align=True)
-        rowsub = row.row(align=True)
-        rowsub.prop(cps, "radius_min", text="Min")
-        rowsub.prop(cps, "radius_max", text="Max")
-
-        row.prop(cps, "use_pressure_radius", text="", icon_only=True)
-
-        col = layout.column()
-        col.label(text="Taper Radius:")
-        row = layout.row(align=True)
-        row.prop(cps, "radius_taper_start", text="Start")
-        row.prop(cps, "radius_taper_end", text="End")
-
-        col = layout.column()
-        col.label(text="Projection Depth:")
-        row = layout.row(align=True)
-        row.prop(cps, "depth_mode", expand=True)
-
-        col = layout.column()
-        if cps.depth_mode == 'SURFACE':
-            col.prop(cps, "surface_offset")
-            col.prop(cps, "use_offset_absolute")
-            col.prop(cps, "use_stroke_endpoints")
-            if cps.use_stroke_endpoints:
-                colsub = layout.column(align=True)
-                colsub.prop(cps, "surface_plane", expand=True)
 
 
 # ********** default tools for editmode_armature ****************
@@ -537,13 +480,13 @@ class VIEW3D_PT_slots_projectpaint(View3DPanel, Panel):
         ob = context.active_object
 
         layout.prop(settings, "mode", text="Mode")
-        
+
         layout.separator()
 
         if settings.mode == 'MATERIAL':
-                       
+
             layout.operator_menu_enum("paint.add_texture_paint_slot", "type", icon='ADD', text="Add Texture Paint Slot")
-            
+
             if len(ob.material_slots) > 1:
                 layout.template_list("MATERIAL_UL_matslots", "layers",
                                      ob, "material_slots",
@@ -568,7 +511,7 @@ class VIEW3D_PT_slots_projectpaint(View3DPanel, Panel):
                 box.label(text="No Textures")
                 box.label(text="Add a Texture Paint Slot")
                 have_image = False
-            
+
 
         elif settings.mode == 'IMAGE':
             mesh = ob.data
@@ -844,7 +787,7 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
 
         if sculpt.detail_type_method in {'CONSTANT', 'MANUAL'}:
             col.separator()
-            col.operator("sculpt.detail_flood_fill")           
+            col.operator("sculpt.detail_flood_fill")
 
         col.separator()
         col.use_property_split = False
@@ -873,21 +816,21 @@ class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
         row = col.row(align=True)
         row.prop(mesh, "remesh_voxel_size")
         props = row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
-        props.mode = 'VOXEL'       
+        props.mode = 'VOXEL'
         col.prop(mesh, "remesh_voxel_adaptivity")
         col.use_property_split = False
         col.prop(mesh, "use_remesh_fix_poles")
         col.prop(mesh, "use_remesh_smooth_normals")
-        
+
         col.label(text = "Preserve")
-        
+
         row = col.row()
         row.separator()
         row.prop(mesh, "use_remesh_preserve_volume", text="Volume")
         row = col.row()
         row.separator()
         row.prop(mesh, "use_remesh_preserve_paint_mask", text="Paint Mask")
-        row = col.row() 
+        row = col.row()
         row.separator()
         row.prop(mesh, "use_remesh_preserve_sculpt_face_sets", text="Face Sets")
 
@@ -914,7 +857,7 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
 
         col = layout.column()
         col.label(text = "Display")
-        
+
         row = col.row()
         row.separator()
         row.prop(sculpt, "use_threaded", text="Threaded Sculpt")
@@ -930,7 +873,7 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
 
         col = layout.column()
         col.label(text = "Auto-Masking")
-        
+
         row = col.row()
         row.separator()
         row.prop(sculpt, "use_automasking_topology", text="Topology")
@@ -939,10 +882,10 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
         row.prop(sculpt, "use_automasking_face_sets", text="Face Sets")
         row = col.row()
         row.separator()
-        row.prop(sculpt, "use_automasking_boundary_edges", text="Boundary Edges")
+        row.prop(sculpt, "use_automasking_boundary_edges", text="Mesh Boundary")
         row = col.row()
         row.separator()
-        row.prop(sculpt, "use_automasking_boundary_face_sets", text="Boundary Face Sets")
+        row.prop(sculpt, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
 
 
 class VIEW3D_PT_sculpt_options_gravity(Panel, View3DPaintPanel):
@@ -1004,7 +947,7 @@ class VIEW3D_PT_sculpt_symmetry(Panel, View3DPaintPanel):
         row.prop(sculpt, "tile_x", text="X", toggle=True)
         row.prop(sculpt, "tile_y", text="Y", toggle=True)
         row.prop(sculpt, "tile_z", text="Z", toggle=True)
-        
+
         layout.use_property_split = False
         layout.prop(sculpt, "use_symmetry_feather", text="Feather")
         layout.use_property_split = True
@@ -1429,6 +1372,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_select(Panel, View3DPanel, GreasePenci
 
 class VIEW3D_PT_tools_grease_pencil_brush_settings(Panel, View3DPanel, GreasePencilPaintPanel):
     bl_label = "Brush Settings"
+    bl_options = {'DEFAULT_CLOSED'}
 
     # What is the point of brush presets? Seems to serve the exact same purpose as brushes themselves??
     def draw_header_preset(self, _context):
@@ -2106,7 +2050,6 @@ class VIEW3D_PT_tools_grease_pencil_brush_mixcolor(View3DPanel, Panel):
     bl_context = ".greasepencil_paint"
     bl_label = "Color"
     bl_category = "Tool"
-    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -2166,7 +2109,6 @@ class VIEW3D_PT_tools_grease_pencil_brush_mix_palette(View3DPanel, Panel):
     bl_label = "Palette"
     bl_category = "Tool"
     bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_mixcolor'
-    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -2255,7 +2197,6 @@ classes = (
     VIEW3D_PT_tools_object_options_transform,
     VIEW3D_PT_tools_meshedit_options,
     VIEW3D_PT_tools_meshedit_options_automerge,
-    VIEW3D_PT_tools_curveedit_options_stroke,
     VIEW3D_PT_tools_armatureedit_options,
     VIEW3D_PT_tools_posemode_options,
 

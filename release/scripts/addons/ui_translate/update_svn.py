@@ -34,6 +34,7 @@ else:
     from bl_i18n_utils import utils as utils_i18n
     from bl_i18n_utils import utils_languages_menu
 
+import concurrent.futures
 import io
 import os
 import shutil
@@ -42,6 +43,18 @@ import tempfile
 
 
 # Operators ###################################################################
+
+def i18n_updatetranslation_svn_branches_callback(pot, lng, settings):
+    if not lng['use']:
+        return
+    if os.path.isfile(lng['po_path']):
+        po = utils_i18n.I18nMessages(uid=lng['uid'], kind='PO', src=lng['po_path'], settings=settings)
+        po.update(pot)
+    else:
+        po = pot
+    po.write(kind="PO", dest=lng['po_path'])
+    print("{} PO written!".format(lng['uid']))
+
 
 class UI_OT_i18n_updatetranslation_svn_branches(Operator):
     """Update i18n svn's branches (po files)"""
@@ -88,24 +101,33 @@ class UI_OT_i18n_updatetranslation_svn_branches(Operator):
                 return {'CANCELLED'}
 
         # Now we should have a valid POT file, we have to merge it in all languages po's...
-        pot = utils_i18n.I18nMessages(kind='PO', src=self.settings.FILE_NAME_POT, settings=self.settings)
-        for progress, lng in enumerate(i18n_sett.langs):
-            context.window_manager.progress_update(progress + 2)
-            if not lng.use:
-                continue
-            if os.path.isfile(lng.po_path):
-                po = utils_i18n.I18nMessages(uid=lng.uid, kind='PO', src=lng.po_path, settings=self.settings)
-                po.update(pot)
-            else:
-                po = pot
-            po.write(kind="PO", dest=lng.po_path)
-            print("{} PO written!".format(lng.uid))
+        with concurrent.futures.ProcessPoolExecutor() as exctr:
+            pot = utils_i18n.I18nMessages(kind='PO', src=self.settings.FILE_NAME_POT, settings=self.settings)
+            num_langs = len(i18n_sett.langs)
+            for progress, _ in enumerate(exctr.map(i18n_updatetranslation_svn_branches_callback,
+                                                   (pot,) * num_langs,
+                                                   [dict(lng.items()) for lng in i18n_sett.langs],
+                                                   (self.settings,) * num_langs,
+                                                   chunksize=4)):
+                context.window_manager.progress_update(progress + 2)
         context.window_manager.progress_end()
         return {'FINISHED'}
 
     def invoke(self, context, event):
         wm = context.window_manager
         return wm.invoke_props_dialog(self)
+
+
+def i18n_cleanuptranslation_svn_branches_callback(lng, settings):
+    if not lng['use']:
+        print("Skipping {} language ({}).".format(lng['name'], lng['uid']))
+        return
+    po = utils_i18n.I18nMessages(uid=lng['uid'], kind='PO', src=lng['po_path'], settings=settings)
+    errs = po.check(fix=True)
+    po.write(kind="PO", dest=lng['po_path'])
+    print("Processing {} language ({}).\n"
+          "Cleaned up {} commented messages.\n".format(lng['name'], lng['uid'], po.clean_commented()) +
+          ("Errors in this po, solved as best as possible!\n\t" + "\n\t".join(errs) if errs else "") + "\n")
 
 
 class UI_OT_i18n_cleanuptranslation_svn_branches(Operator):
@@ -122,24 +144,39 @@ class UI_OT_i18n_cleanuptranslation_svn_branches(Operator):
 
         context.window_manager.progress_begin(0, len(i18n_sett.langs) + 1)
         context.window_manager.progress_update(0)
-        for progress, lng in enumerate(i18n_sett.langs):
-            context.window_manager.progress_update(progress + 1)
-            if not lng.use:
-                print("Skipping {} language ({}).".format(lng.name, lng.uid))
-                continue
-            print("Processing {} language ({}).".format(lng.name, lng.uid))
-            po = utils_i18n.I18nMessages(uid=lng.uid, kind='PO', src=lng.po_path, settings=self.settings)
-            print("Cleaned up {} commented messages.".format(po.clean_commented()))
-            errs = po.check(fix=True)
-            if errs:
-                print("Errors in this po, solved as best as possible!")
-                print("\t" + "\n\t".join(errs))
-            po.write(kind="PO", dest=lng.po_path)
-            print("\n")
+        with concurrent.futures.ProcessPoolExecutor() as exctr:
+            num_langs = len(i18n_sett.langs)
+            for progress, _ in enumerate(exctr.map(i18n_cleanuptranslation_svn_branches_callback,
+                                                   [dict(lng.items()) for lng in i18n_sett.langs],
+                                                   (self.settings,) * num_langs,
+                                                   chunksize=4)):
+                context.window_manager.progress_update(progress + 1)
 
         context.window_manager.progress_end()
 
         return {'FINISHED'}
+
+
+def i18n_updatetranslation_svn_trunk_callback(lng, settings):
+    if lng['uid'] in settings.IMPORT_LANGUAGES_SKIP:
+        print("Skipping {} language ({}), edit settings if you want to enable it.\n".format(lng['name'], lng['uid']))
+        return lng['uid'], 0.0
+    if not lng['use']:
+        print("Skipping {} language ({}).\n".format(lng['name'], lng['uid']))
+        return lng['uid'], 0.0
+    po = utils_i18n.I18nMessages(uid=lng['uid'], kind='PO', src=lng['po_path'], settings=settings)
+    errs = po.check(fix=True)
+    print("Processing {} language ({}).\n"
+          "Cleaned up {} commented messages.\n".format(lng['name'], lng['uid'], po.clean_commented()) +
+          ("Errors in this po, solved as best as possible!\n\t" + "\n\t".join(errs) if errs else "") + "\n")
+    if lng['uid'] in settings.IMPORT_LANGUAGES_RTL:
+        po.write(kind="PO", dest=lng['po_path_trunk'][:-3] + "_raw.po")
+        po.rtl_process()
+    po.write(kind="PO", dest=lng['po_path_trunk'])
+    po.write(kind="PO_COMPACT", dest=lng['po_path_git'])
+    po.write(kind="MO", dest=lng['mo_path_trunk'])
+    po.update_info()
+    return lng['uid'], po.nbr_trans_msgs / po.nbr_msgs
 
 
 class UI_OT_i18n_updatetranslation_svn_trunk(Operator):
@@ -156,30 +193,14 @@ class UI_OT_i18n_updatetranslation_svn_trunk(Operator):
 
         context.window_manager.progress_begin(0, len(i18n_sett.langs) + 1)
         context.window_manager.progress_update(0)
-        for progress, lng in enumerate(i18n_sett.langs):
-            context.window_manager.progress_update(progress + 1)
-            if lng.uid in self.settings.IMPORT_LANGUAGES_SKIP:
-                print("Skipping {} language ({}), edit settings if you want to enable it.".format(lng.name, lng.uid))
-                continue
-            if not lng.use:
-                print("Skipping {} language ({}).".format(lng.name, lng.uid))
-                continue
-            print("Processing {} language ({}).".format(lng.name, lng.uid))
-            po = utils_i18n.I18nMessages(uid=lng.uid, kind='PO', src=lng.po_path, settings=self.settings)
-            print("Cleaned up {} commented messages.".format(po.clean_commented()))
-            errs = po.check(fix=True)
-            if errs:
-                print("Errors in this po, solved as best as possible!")
-                print("\t" + "\n\t".join(errs))
-            if lng.uid in self.settings.IMPORT_LANGUAGES_RTL:
-                po.write(kind="PO", dest=lng.po_path_trunk[:-3] + "_raw.po")
-                po.rtl_process()
-            po.write(kind="PO", dest=lng.po_path_trunk)
-            po.write(kind="PO_COMPACT", dest=lng.po_path_git)
-            po.write(kind="MO", dest=lng.mo_path_trunk)
-            po.update_info()
-            stats[lng.uid] = po.nbr_trans_msgs / po.nbr_msgs
-            print("\n")
+        with concurrent.futures.ProcessPoolExecutor() as exctr:
+            num_langs = len(i18n_sett.langs)
+            for progress, (lng_uid, stats_val) in enumerate(exctr.map(i18n_updatetranslation_svn_trunk_callback,
+                                                                      [dict(lng.items()) for lng in i18n_sett.langs],
+                                                                      (self.settings,) * num_langs,
+                                                                      chunksize=4)):
+                context.window_manager.progress_update(progress + 1)
+                stats[lng_uid] = stats_val
 
         # Copy pot file from branches to trunk.
         shutil.copy2(self.settings.FILE_NAME_POT, self.settings.TRUNK_PO_DIR)

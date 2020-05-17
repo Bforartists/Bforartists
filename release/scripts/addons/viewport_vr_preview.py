@@ -136,10 +136,15 @@ def xr_landmark_camera_object_poll(self, object):
 
 
 def xr_landmark_active_update(self, context):
+    wm = context.window_manager
+
     xr_landmark_active_type_update(self, context)
     xr_landmark_active_camera_update(self, context)
     xr_landmark_active_base_pose_location_update(self, context)
     xr_landmark_active_base_pose_angle_update(self, context)
+
+    if wm.xr_session_state:
+      wm.xr_session_state.reset_to_base_pose(context)
 
 
 class VRLandmark(bpy.types.PropertyGroup):

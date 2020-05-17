@@ -683,6 +683,9 @@ class AddGear(Operator, object_utils.AddObjectHelper):
         return context.scene is not None
 
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
 
         if bpy.context.mode == "OBJECT":
             if context.selected_objects != [] and context.active_object and \
@@ -737,6 +740,12 @@ class AddGear(Operator, object_utils.AddObjectHelper):
             bpy.ops.object.join()
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')
+
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 
         return {'FINISHED'}
 
@@ -894,6 +903,9 @@ class AddWormGear(Operator, object_utils.AddObjectHelper):
             box.prop(self, 'rotation', expand=True)
 
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
 
         if bpy.context.mode == "OBJECT":
             if context.selected_objects != [] and context.active_object and \
@@ -949,6 +961,12 @@ class AddWormGear(Operator, object_utils.AddObjectHelper):
             bpy.ops.object.join()
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')
+
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 
         return {'FINISHED'}
 

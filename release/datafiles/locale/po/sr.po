@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -2996,6 +2996,10 @@ msgid "Geometry"
 msgstr "Геометрија"
 
 
+msgid "Shading"
+msgstr "Сенчење"
+
+
 msgid "Transform"
 msgstr "Трансформација"
 
@@ -4319,10 +4323,6 @@ msgstr "Сачувај"
 
 msgid "Environment"
 msgstr "Окружење"
-
-
-msgid "Shading"
-msgstr "Сенчење"
 
 
 msgid "Fonts"
@@ -27514,10 +27514,6 @@ msgstr "Уклони четкицу"
 
 msgid "Color Layer"
 msgstr "Боја слоја"
-
-
-msgid "Real World Size"
-msgstr "Реална величина света"
 
 
 msgid "Bounciness"

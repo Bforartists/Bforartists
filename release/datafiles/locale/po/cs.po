@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -3208,6 +3208,10 @@ msgid "Geometry"
 msgstr "Geometrie:"
 
 
+msgid "Shading"
+msgstr "Stínování"
+
+
 msgid "Transform"
 msgstr "Transformace"
 
@@ -4567,10 +4571,6 @@ msgstr "Uložit"
 
 msgid "Environment"
 msgstr "Inkrementální"
-
-
-msgid "Shading"
-msgstr "Stínování"
 
 
 msgid "Fonts"
@@ -31853,10 +31853,6 @@ msgstr "Přemístit typ"
 
 msgid "Wave Clamp"
 msgstr "Uložit kopii"
-
-
-msgid "Real World Size"
-msgstr "Velikost krychle"
 
 
 msgid "Bounciness"

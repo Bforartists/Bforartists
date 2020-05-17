@@ -82,7 +82,7 @@ class IMAGE_MT_view_view_fit(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.image.view_all(fit_view = True)
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class IMAGE_MT_view(Menu):
@@ -115,7 +115,7 @@ class IMAGE_MT_view(Menu):
         if show_uvedit:
             layout.operator("image.view_selected", text = "View Selected", icon='VIEW_SELECTED')
 
-        layout.operator("image.view_all", icon = "VIEWALL" )
+        layout.operator("image.view_all", text="Frame All", icon = "VIEWALL")
         layout.operator("image.view_all_fit", text="View Fit", icon = "VIEW_FIT") # bfa - separated tooltip
 
         if sima.mode != 'UV':
@@ -197,7 +197,7 @@ class IMAGE_MT_select(Menu):
         layout.operator("uv.select_box", text = "Box Select Pinned", icon='BORDER_RECT').pinned = True
 
         layout.separator()
-      
+
         layout.operator("uv.select_linked", text = "Linked", icon = "LINKED")
         myop = layout.operator("uv.select_linked_pick", text="Linked Pick", icon = "LINKED")
         myop.extend = True
@@ -429,7 +429,7 @@ class IMAGE_MT_uvs_clear_seam(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.uv.mark_seam(clear=True)
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class IMAGE_MT_uvs(Menu):
@@ -451,7 +451,7 @@ class IMAGE_MT_uvs(Menu):
         layout.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
         layout.operator("uv.follow_active_quads", icon = "FOLLOWQUADS")
         layout.operator("uv.pin", icon = "PINNED").clear = False
-        layout.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True      
+        layout.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
 
         layout.separator()
 
@@ -786,7 +786,7 @@ class IMAGE_HT_header(Header):
                 layout.prop(tool_settings, "uv_select_mode", text="", expand=True)
                 layout.prop(uvedit, "sticky_select_mode", icon_only=True)
 
-        IMAGE_MT_editor_menus.draw_collapsible(context, layout)    
+        IMAGE_MT_editor_menus.draw_collapsible(context, layout)
 
         #layout.separator_spacer()
 
@@ -1481,7 +1481,7 @@ class IMAGE_PT_view_waveform(ImageScopesPanel, Panel):
         layout = self.layout
 
         sima = context.space_data
-        
+
         layout.use_property_split = True
 
         layout.template_waveform(sima, "scopes")
@@ -1499,12 +1499,12 @@ class IMAGE_PT_view_vectorscope(ImageScopesPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        
+
         layout.use_property_split = True
 
         sima = context.space_data
         layout.template_vectorscope(sima, "scopes")
-        
+
         row = layout.split(factor=0.5)
         row.label(text = "Opacity")
         row.prop(sima.scopes, "vectorscope_alpha", text = "")

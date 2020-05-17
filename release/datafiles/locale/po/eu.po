@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -357,6 +357,10 @@ msgid "Render"
 msgstr "Render"
 
 
+msgid "Shading"
+msgstr "Itzalak"
+
+
 msgid "Force"
 msgstr "Indarra"
 
@@ -379,10 +383,6 @@ msgstr "Gorde"
 
 msgid "Environment"
 msgstr "Ingurunea"
-
-
-msgid "Shading"
-msgstr "Itzalak"
 
 
 msgid "Display Mode"
