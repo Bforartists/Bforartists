@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
-"PO-Revision-Date: 2020-04-12 14:00+0200\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"PO-Revision-Date: 2020-05-01 08:09+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: pegas\n"
 "Language: sk_SK\n"
@@ -7864,6 +7864,14 @@ msgid "Object geometry is updated"
 msgstr "Objekt geometrie je aktualizovaný"
 
 
+msgid "Shading"
+msgstr "Tieňovanie"
+
+
+msgid "Object shading is updated"
+msgstr "Tienenie objektov sa aktualizuje"
+
+
 msgid "Transform"
 msgstr "Transformácia"
 
@@ -11066,10 +11074,6 @@ msgid "Show scenes"
 msgstr "Zobrazí scény"
 
 
-msgid "Shading"
-msgstr "Tieňovanie"
-
-
 msgid "Show materials, nodetrees, textures and Freestyle's linestyles"
 msgstr "Zobrazí materiály, stromy ulov, textúry a typy čiar Voľným štýlom"
 
@@ -11840,14 +11844,6 @@ msgstr "rozlíšenie"
 
 msgid "Smoke Grid Resolution"
 msgstr "Rozlíšenie mriežky dymu"
-
-
-msgid "Meters"
-msgstr "Metre"
-
-
-msgid "Domain size in meters (longest domain side)"
-msgstr "Veľkosť oblasti v metroch (najdlhšia strana oblasti)"
 
 
 msgid "Domain Type"
@@ -14374,6 +14370,10 @@ msgid "UV Translation"
 msgstr "Presun UV"
 
 
+msgid "Translation of default UV position"
+msgstr "Presunúť z predvolenej UV polohy"
+
+
 msgid "Vertex Fill Color"
 msgstr "Farba výplne vrcholov"
 
@@ -14998,6 +14998,10 @@ msgstr "Náhodné rozosiatie"
 
 msgid "Enable offset"
 msgstr "Povoliť posuv"
+
+
+msgid "Enable object offset"
+msgstr "Povoliť posuv objektu"
 
 
 msgid "Shift"
@@ -15860,6 +15864,10 @@ msgstr "Základný typ pre bloky údajov, definovanie jedinečného názvu, prep
 
 msgid "Embedded Data"
 msgstr "Vsadené údaje"
+
+
+msgid "This data-block is not an independent one, but is actually a sub-data of another ID (typical example: root node trees or master collections)"
+msgstr "Tento blok údajov nie je nezávislý, ale v skutočnosti je podúdajmi iného ID (typický príklad: stromy koreňových uzlov alebo hlavné kolekcie)."
 
 
 msgid "Is Evaluated"
@@ -16969,6 +16977,10 @@ msgstr "Laplacian"
 
 msgid "Smooths the surface and the volume"
 msgstr "Vyhladiť povrch a objem"
+
+
+msgid "Smooths the surface of the mesh, preserving the volume"
+msgstr "Vyhladzuje povrch siete a zachováva objem"
 
 
 msgid "Smooth Stroke Factor"
@@ -29310,6 +29322,10 @@ msgid "Node Color Specials"
 msgstr "Špeciality farby uzla"
 
 
+msgid "Outliner Context Menu"
+msgstr "Kontextová ponuka Líniového prehľadu"
+
+
 msgid "Particle Specials"
 msgstr "Špeciality častíc"
 
@@ -32041,6 +32057,14 @@ msgid "Use UV coordinates for the texture coordinates"
 msgstr "Použije UV súradnice pre súradnice textúry"
 
 
+msgid "Texture Coordinate Bone"
+msgstr "Súradnice textúry kosti"
+
+
+msgid "Bone to set the texture coordinates"
+msgstr "Kosť na nastavenie súradníc textúry"
+
+
 msgid "Texture Coordinate Object"
 msgstr "Objekt súradníc textúry"
 
@@ -33366,6 +33390,14 @@ msgid "Create a solid skin, compensating for sharp angles"
 msgstr "Vytvára pevný plášť, kompenzovaním ostrých uhlov"
 
 
+msgid "Bevel Convex"
+msgstr "Vyduté skosenie"
+
+
+msgid "Edge bevel weight to be added to outside edges"
+msgstr "Váha skosenia hrany na pripočítanie k vonkajším hranám"
+
+
 msgid "Inner Crease"
 msgstr "Vnútorný záhyb"
 
@@ -33436,6 +33468,10 @@ msgstr "Plochý tvar otvoreného obvodu"
 
 msgid "Merge Threshold"
 msgstr "Prah zlúčenia"
+
+
+msgid "Distance within which degenerated geometry is merged"
+msgstr "Vzdialenosť, v ktorej sa zlúči degenerovaná geometria"
 
 
 msgid "Thickness Mode"
@@ -33516,6 +33552,14 @@ msgstr "Rovnomerné hrúbky"
 
 msgid "Maintain thickness by adjusting for sharp corners (slow, disable when not needed)"
 msgstr "Udržuje hrúbku úpravou ostrých rohov (pomalé, vypnúť, ak nie je potrebné)"
+
+
+msgid "Flat Faces"
+msgstr "Ploché plôšky"
+
+
+msgid "Make faces use the minimal vertex weight assigned to their vertices(ensures new faces remain parallel to their original ones, slow, disable when not needed)"
+msgstr "Vytvára plôšky tak, aby používali minimálnu váhu vrcholu priradenú ich vrcholom (zaisťuje, že nové plôšky zostanú rovnobežné s pôvodnými, pomalé, možno deaktivovať ak nie je potrebné)"
 
 
 msgid "Flip Normals"
@@ -33859,6 +33903,10 @@ msgstr "Vlastná krivka mapovania"
 
 msgid "Global influence of current modifications on vgroup"
 msgstr "Globálny vplyv súčasných modifikácií na skupinu vrcholov"
+
+
+msgid "Which bone to take texture coordinates from"
+msgstr "Z ktorej kosti sa zoberú súradnice textúry"
 
 
 msgid "Which object to take texture coordinates from"
@@ -37514,10 +37562,6 @@ msgstr "Horná hranica"
 
 msgid "The smallest integer greater than or equal A"
 msgstr "Najmenšie celé číslo väčšie alebo rovnaké A"
-
-
-msgid "trunc(A)"
-msgstr "trunc(A)"
 
 
 msgid "Fraction"
@@ -43035,11 +43079,11 @@ msgstr "Kolekcia na odstránenie iných vybratých objektov z"
 
 
 msgctxt "Operator"
-msgid "Remove from All Unlinked Collections"
-msgstr "Odstrániť zo všetkých nepripojených kolekcií"
+msgid "Remove from All Collections"
+msgstr "Odstrániť zo všetkých kolekcií"
 
 
-msgid "Remove selected objects from all collections not used in a scene"
+msgid "Remove selected objects from all collections"
 msgstr "Odstráni vybrané objekty zo všetkých kolekcií, ktoré sa v scéne nepoužívajú"
 
 
@@ -46738,6 +46782,10 @@ msgid "Point Size"
 msgstr "Veľkosť bodu"
 
 
+msgid "Size used for grease pencil points"
+msgstr "Veľkosť použitá na body pastelky"
+
+
 msgctxt "Operator"
 msgid "Grease Pencil Interpolation"
 msgstr "Interpolácia pastelky"
@@ -46993,6 +47041,10 @@ msgstr "Vytvoriť paletu"
 
 msgid "Create a new palette with colors"
 msgstr "Vytvorí novú paletu farieb"
+
+
+msgid "Remove Unused Materials"
+msgstr "Odstráni nepoužité materiály"
 
 
 msgid "Remove any unused material after the conversion"
@@ -52474,6 +52526,10 @@ msgid "Smooth Normals Vectors"
 msgstr "Vyhladiť vektory kolmíc"
 
 
+msgid "Smooth custom normals based on adjacent vertex normals"
+msgstr "Vyhladí vlastné kolmice založené na priľahlých kolmiciach vrcholov"
+
+
 msgid "Specifies weight of smooth vs original normal"
 msgstr "Určiť váhu vyhladených proti originálnym kolmiciam"
 
@@ -57539,6 +57595,15 @@ msgstr "Pridá zásuvku maľby textúry"
 
 
 msgctxt "Operator"
+msgid "Swap Colors"
+msgstr "Prehodiť farby"
+
+
+msgid "Swap primary and secondary brush colors"
+msgstr "Prehodí primárnu a sekundárnu farbu štetca"
+
+
+msgctxt "Operator"
 msgid "Brush Select"
 msgstr "Výber štetca"
 
@@ -59008,10 +59073,6 @@ msgstr "Všetky kosti ovplyvnené aktívnym nastavením kľúčovania"
 msgctxt "Operator"
 msgid "Select Connected"
 msgstr "Vybrať pripojené"
-
-
-msgid "Select bones related to selected ones by parent/child relationships"
-msgstr "Vyberie kosti súvisiace s vybratými porovnateľnými rodičmi/potomkami"
 
 
 msgctxt "Operator"
@@ -60818,6 +60879,10 @@ msgid "Create a Face Set per Face Map"
 msgstr "Vytvorí sústavu plôšok podľa mapy plôšok"
 
 
+msgid "Minimum value to consider a certain attribute a boundary when creating the Face Sets"
+msgstr "Minimálna hodnota, považovaná za určitú hranicu atribútu pri vytváraní sústavy plôšok"
+
+
 msgctxt "Operator"
 msgid "Randomize Face Sets Colors"
 msgstr "Nastavenie farieb náhodnou farbou"
@@ -60998,6 +61063,14 @@ msgid "Deform in the Z axis"
 msgstr "Deformácia v osi Z"
 
 
+msgid "Smooth Ratio"
+msgstr "Dosah vyhladenia"
+
+
+msgid "How much smoothing is applied to polished surfaces"
+msgstr "Koľko vyhladenia sa použije na leštené povrchy"
+
+
 msgid "Filter Strength"
 msgstr "Intenzita filtra"
 
@@ -61048,6 +61121,10 @@ msgstr "Vyhladiť povrch"
 
 msgid "Smooth the surface of the mesh, preserving the volume"
 msgstr "Vyhladí povrch siete a zachová objem"
+
+
+msgid "Sharpen the cavities of the mesh"
+msgstr "Zhranatiť dutiny povrchovej siete"
 
 
 msgid "Use Face Sets"
@@ -66687,6 +66764,10 @@ msgid "Use Soft Limits"
 msgstr "Použiť mäkké limity"
 
 
+msgid "Limits the Property Value slider to a range, values outside the range must be inputted numerically"
+msgstr "Limit hodnoty vlastnosti jazdca pre rozsah, hodnoty mimo rozsah sa musia zadávať číselne"
+
+
 msgid "Property value edit"
 msgstr "Úprava hodnoty vlastnosti"
 
@@ -71248,6 +71329,14 @@ msgstr "Prehľadať ponuky"
 
 msgid "Search actions by menus instead of operators"
 msgstr "Vyhľadá akcie podľa ponúk namiesto operátorov"
+
+
+msgid "Undo Legacy"
+msgstr "Späť staršie"
+
+
+msgid "Use legacy undo (slower than the new default one, but may be more stable in some cases)"
+msgstr "Použije späť staršie (pomalšie ako nové predvolené nastavenie, v niektorých prípadoch však môže byť stabilnejšie)"
 
 
 msgid "Animation Player"
@@ -78935,6 +79024,10 @@ msgstr "Vybrať farbu"
 
 msgid "Color selected to apply glow"
 msgstr "Vybraná farba na použitie žiary"
+
+
+msgid "Size of the effect"
+msgstr "Veľkosť efektu"
 
 
 msgid "Limit to select color for glow effect"
@@ -89160,6 +89253,10 @@ msgid "Crease:"
 msgstr "Záhyb:"
 
 
+msgid "Bevel:"
+msgstr "Skosenie:"
+
+
 msgid "Render:"
 msgstr "Zachytávanie:"
 
@@ -90253,10 +90350,6 @@ msgid "Particles in Boundary:"
 msgstr "Častice na okrajoch:"
 
 
-msgid "Real World Size"
-msgstr "Veľkosť reálneho sveta"
-
-
 msgid "Surface Tension"
 msgstr "Povrchové napätie"
 
@@ -90352,8 +90445,8 @@ msgid "Unbaked Guides: Bake Guides or disable them"
 msgstr "Nezapečené vedenie: Zapečte vedenie alebo ho vypnite"
 
 
-msgid "Use Inflow"
-msgstr "Použite prítok"
+msgid "Use Flow"
+msgstr "Použiť prúdenie"
 
 
 msgid "Surface Thickness"
@@ -91656,6 +91749,11 @@ msgid "ID Data"
 msgstr "ID údaje"
 
 
+msgctxt "Operator"
+msgid "Paste Data-Blocks"
+msgstr "Prilepiť bloky údajov"
+
+
 msgid "Sync Selection"
 msgstr "Synchronizácia výberu"
 
@@ -92701,6 +92799,10 @@ msgstr "Výstupný čas VBO"
 
 msgid "Console Scrollback Lines"
 msgstr "Riadky spätného posuvu konzoly"
+
+
+msgid "Cache Limit"
+msgstr "Limit zásobníka"
 
 
 msgid "View Name"
@@ -93792,6 +93894,11 @@ msgstr "Rotovať..."
 msgctxt "Operator"
 msgid "Point to Target..."
 msgstr "Ukázať na cieľ..."
+
+
+msgctxt "Operator"
+msgid "Smooth Vectors"
+msgstr "Vyhladiť vektory"
 
 
 msgctxt "Operator"
@@ -95840,8 +95947,8 @@ msgid "NLA Strip Controls"
 msgstr "Ovládače NLA pásu"
 
 
-msgid "F-Curve is visible in Graph Editor for editing"
-msgstr "Krivka funkcie je viditeľná v editore grafov pre úpravu"
+msgid "F-Curve visibility in Graph Editor"
+msgstr "Viditeľnosť F-krivky v editore grafov"
 
 
 msgid "Grease Pencil layer is visible in the viewport"
@@ -95852,8 +95959,8 @@ msgid "Channels are visible in Graph Editor for editing"
 msgstr "Kanály sú viditeľné v editore grafov pre úpravu"
 
 
-msgid "F-Curve modifiers are disabled"
-msgstr "Modifikátory F-krivky sú vypnuté"
+msgid "Enable F-Curve modifiers"
+msgstr "Povoliť modifikátory F-krivky"
 
 
 msgid "Make channels grouped under this channel visible"
@@ -96854,6 +96961,10 @@ msgstr "Očakávaná aktuálna snímka bude rozpadnutá"
 
 msgid "Nothing to merge"
 msgstr "Nič na zlúčenie"
+
+
+msgid "Merged %d materials of %d"
+msgstr "Zlúčených %d materiálov z %d"
 
 
 msgid "Grease Pencil Erase Session: Hold and drag LMB or RMB to erase | ESC/Enter to end  (or click outside this area)"
@@ -98778,6 +98889,10 @@ msgstr "Kolekciu '%s' (vytvorenú podľa aktívneho objektu) nie je možné prep
 
 msgid "Active object '%s' is not overridable"
 msgstr "Aktívny objekt '%s' nie je možné prepísať"
+
+
+msgid "Move the mouse to change the voxel size. LMB: confirm size, ESC/RMB: cancel"
+msgstr "Posúvaním myši zmeníte veľkosť voxelu. ĽTM: potvrdiť veľkosť, ESC/PTM: zrušiť"
 
 
 msgid "Voxel remesher cannot run with a voxel size of 0.0"
@@ -100939,6 +101054,10 @@ msgid "Cannot delete id '%s', indirectly used data-blocks need at least one user
 msgstr "Nemožno odstrániť ID '%s', nepriamo použité bloky údajov potrebujú aspoň jedného užívateľa"
 
 
+msgid "Cannot delete currently visible workspace id '%s'"
+msgstr "Nemožno odstrániť momentálne viditeľné pracovné priestory ID '%s'"
+
+
 msgid "Invalid old/new ID pair ('%s' / '%s')"
 msgstr "Neplatný starý/nový pár ID ('%s' / '%s')"
 
@@ -101451,8 +101570,8 @@ msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts sele
 msgstr "Výber vrcholu - Shift-klik pre viacnásobné režimy, Ctrl-klik zmenšenie výberu"
 
 
-msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection"
-msgstr "Výber hrany - Shift-klik pre viacnásobné režimy, Ctrl-klik zväčšenie/zmenšenie výberu"
+msgid "Edge select - Shift-Click for multiple modes, Ctrl-Click expands/contracts selection depending on the current mode"
+msgstr "Výber hrán - Shift-klik pre viac režimov, Ctrl-klik rozšíriť/zúžiť výber podľa aktuálneho režimu"
 
 
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
@@ -101917,6 +102036,10 @@ msgstr "Vertikálny posun: "
 
 msgid "Create Orientation's 'use' parameter only valid in a 3DView context"
 msgstr "Vytvorí orientáciu 'použitia' parametru platného iba v kontexte 3D zobrazenia"
+
+
+msgid "Unable to create orientation"
+msgstr "Nemožno vytvoriť orientáciu"
 
 
 msgid "custom"
@@ -103022,6 +103145,14 @@ msgid "Gizmo group '%s' not found!"
 msgstr "Skupina manipulačného prvku '%s' nebola nájdená!"
 
 
+msgid "The offset is too small, we cannot generate the amount of geometry it would require"
+msgstr "Posuv je príliš malý, nemožno vygenerovať požadované množstvo geometrie"
+
+
+msgid "The amount of copies is too high, we cannot generate the amount of geometry it would require"
+msgstr "Počet kópií je príliš vysoký, nemožno vygenerovať množstvo geometrie, ktoré by bolo potrebné"
+
+
 msgid "Enable 'Auto Smooth' in Object Data Properties"
 msgstr "Povoľte „Automatické vyhladenie“ vo vlastnostiach údajov objektu"
 
@@ -103120,10 +103251,6 @@ msgstr "Chyba trupu"
 
 msgid "No valid root vertex found (you need one per mesh island you want to skin)"
 msgstr "Nenájdené žiadne platné koreňové vrcholy (potrebujete nejaké na ostrovček povrchovej siete, ktorý chcete opláštiť)"
-
-
-msgid "Faces needed for useful output"
-msgstr "Potrebné plôšky pre použiteľný výstup"
 
 
 msgid "Internal Error: edges array wrong size: %u instead of %u"
@@ -103568,6 +103695,10 @@ msgstr "Zrkadlenie"
 
 msgid "Detail Scale"
 msgstr "Mierka detailu"
+
+
+msgid "Detail Roughness"
+msgstr "Detail drsnosti"
 
 
 msgid "Color Attribute"

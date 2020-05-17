@@ -249,6 +249,9 @@ def Extras_contex_menu(self, context):
     obj = context.object
     layout = self.layout
 
+    if obj == None:
+        return
+
     if 'Gear' in obj.data.keys():
         props = layout.operator("mesh.primitive_gear", text="Change Gear")
         props.change = True

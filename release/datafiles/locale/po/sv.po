@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -2810,6 +2810,10 @@ msgid "Geometry"
 msgstr "Geometri"
 
 
+msgid "Shading"
+msgstr "Skuggning:"
+
+
 msgid "Transform"
 msgstr "Transformera"
 
@@ -3973,10 +3977,6 @@ msgstr "Markera Rad"
 
 msgid "Save"
 msgstr "Spara som"
-
-
-msgid "Shading"
-msgstr "Skuggning:"
 
 
 msgid "Fonts"
@@ -29586,10 +29586,6 @@ msgstr "Markera Rad"
 
 msgid "Wave Clamp"
 msgstr "Spara"
-
-
-msgid "Real World Size"
-msgstr "Verklig storlek:"
 
 
 msgid "Bounciness"

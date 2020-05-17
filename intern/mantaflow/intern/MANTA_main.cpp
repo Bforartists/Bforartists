@@ -552,31 +552,49 @@ MANTA::~MANTA()
   (void)result;  // not needed in release
 }
 
+/**
+ * Store a pointer to the __main__ module used by mantaflow. This is necessary, because sometimes
+ * Blender will overwrite that module. That happens when e.g. scripts are executed in the text
+ * editor.
+ *
+ * Mantaflow stores many variables in the globals() dict of the __main__ module. To be able to
+ * access these variables, the same __main__ module has to be used every time.
+ *
+ * Unfortunately, we also depend on the fact that mantaflow dumps variables into this module using
+ * PyRun_SimpleString. So we can't easily create a separate module without changing mantaflow.
+ */
+static PyObject *manta_main_module = nullptr;
+
 bool MANTA::runPythonString(vector<string> commands)
 {
-  int success = -1;
+  bool success = true;
   PyGILState_STATE gilstate = PyGILState_Ensure();
-  for (vector<string>::iterator it = commands.begin(); it != commands.end(); ++it) {
-    string command = *it;
 
-#ifdef WIN32
-    // special treatment for windows when running python code
-    size_t cmdLength = command.length();
-    char *buffer = new char[cmdLength + 1];
-    memcpy(buffer, command.data(), cmdLength);
+  if (manta_main_module == nullptr) {
+    manta_main_module = PyImport_ImportModule("__main__");
+  }
 
-    buffer[cmdLength] = '\0';
-    success = PyRun_SimpleString(buffer);
-    delete[] buffer;
-#else
-    success = PyRun_SimpleString(command.c_str());
-#endif
+  for (vector<std::string>::iterator it = commands.begin(); it != commands.end(); ++it) {
+    std::string command = *it;
+
+    PyObject *globals_dict = PyModule_GetDict(manta_main_module);
+    PyObject *return_value = PyRun_String(
+        command.c_str(), Py_file_input, globals_dict, globals_dict);
+
+    if (return_value == nullptr) {
+      success = false;
+      if (PyErr_Occurred()) {
+        PyErr_Print();
+      }
+    }
+    else {
+      Py_DECREF(return_value);
+    }
   }
   PyGILState_Release(gilstate);
 
-  /* PyRun_SimpleString returns 0 on success, -1 when an error occurred. */
-  assert(success == 0);
-  return (success != -1);
+  assert(success);
+  return success;
 }
 
 void MANTA::initializeMantaflow()
@@ -779,13 +797,13 @@ void MANTA::initializeRNAMap(FluidModifierData *mmd)
   mRNAMap["FLAME_SMOKE_COLOR_X"] = to_string(mds->flame_smoke_color[0]);
   mRNAMap["FLAME_SMOKE_COLOR_Y"] = to_string(mds->flame_smoke_color[1]);
   mRNAMap["FLAME_SMOKE_COLOR_Z"] = to_string(mds->flame_smoke_color[2]);
-  mRNAMap["CURRENT_FRAME"] = to_string(mmd->time);
+  mRNAMap["CURRENT_FRAME"] = to_string(int(mmd->time));
   mRNAMap["START_FRAME"] = to_string(mds->cache_frame_start);
   mRNAMap["END_FRAME"] = to_string(mds->cache_frame_end);
-  mRNAMap["CACHE_DATA_FORMAT"] = to_string(mds->cache_data_format);
-  mRNAMap["CACHE_MESH_FORMAT"] = to_string(mds->cache_mesh_format);
-  mRNAMap["CACHE_NOISE_FORMAT"] = to_string(mds->cache_noise_format);
-  mRNAMap["CACHE_PARTICLE_FORMAT"] = to_string(mds->cache_particle_format);
+  mRNAMap["CACHE_DATA_FORMAT"] = getCacheFileEnding(mds->cache_data_format);
+  mRNAMap["CACHE_MESH_FORMAT"] = getCacheFileEnding(mds->cache_mesh_format);
+  mRNAMap["CACHE_NOISE_FORMAT"] = getCacheFileEnding(mds->cache_noise_format);
+  mRNAMap["CACHE_PARTICLE_FORMAT"] = getCacheFileEnding(mds->cache_particle_format);
   mRNAMap["SIMULATION_METHOD"] = simulationMethod;
   mRNAMap["FLIP_RATIO"] = to_string(mds->flip_ratio);
   mRNAMap["PARTICLE_RANDOMNESS"] = to_string(mds->particle_randomness);
@@ -1988,19 +2006,18 @@ static PyObject *callPythonFunction(string varName, string functionName, bool is
   }
 
   PyGILState_STATE gilstate = PyGILState_Ensure();
-  PyObject *main = nullptr, *var = nullptr, *func = nullptr, *returnedValue = nullptr;
+  PyObject *var = nullptr, *func = nullptr, *returnedValue = nullptr;
 
-  /* Be sure to initialise Python before importing main. */
+  /* Be sure to initialize Python before using it. */
   Py_Initialize();
 
   // Get pyobject that holds result value
-  main = PyImport_ImportModule("__main__");
-  if (!main) {
+  if (!manta_main_module) {
     PyGILState_Release(gilstate);
     return nullptr;
   }
 
-  var = PyObject_GetAttrString(main, varName.c_str());
+  var = PyObject_GetAttrString(manta_main_module, varName.c_str());
   if (!var) {
     PyGILState_Release(gilstate);
     return nullptr;

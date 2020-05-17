@@ -174,6 +174,9 @@ def createMeshObject(context, verts, edges, faces, name):
     # Update mesh geometry after adding stuff.
     mesh.update()
 
+    if bpy.context.mode == "EDIT_MESH":
+        bpy.ops.object.mode_set(mode='OBJECT')
+
     return object_utils.object_data_add(context, mesh, operator=None)
 
 
@@ -749,7 +752,7 @@ def generateRocks(context, scaleX, skewX, scaleY, skewY, scaleZ, skewZ,
                   scale_fac, detail, display_detail, deform, rough,
                   smooth_fac, smooth_it,
                   numOfRocks=1, userSeed=1.0,
-                  scaleDisplace=False, randomSeed=True):
+                  scaleDisplace=False, randomSeed=True, use_enter_edit_mode=False):
     global LASTROCK
     sigmaX = 0
     sigmaY = 0
@@ -822,6 +825,8 @@ def generateRocks(context, scaleX, skewX, scaleY, skewY, scaleZ, skewZ,
             upperSkewZ = True
     else:
         muZ = scaleZ
+
+    rocks = []
 
     for i in range(numOfRocks):
         # todo: enable different random values for each (x,y,z) corrdinate for
@@ -928,13 +933,20 @@ def generateRocks(context, scaleX, skewX, scaleY, skewY, scaleZ, skewZ,
         bpy.ops.mesh.normals_make_consistent()
         bpy.ops.object.editmode_toggle()
 
+        if use_enter_edit_mode:
+            for m in rock.modifiers:
+                m.show_in_editmode = True
+                m.show_on_cage = True
+
         # Store the last value of i:
         shift = i
+
+        rocks.append(rock)
 
     # Add the shift to LASTROCK:
     LASTROCK += shift + 1
 
-    return
+    return rocks
 
 
 # Much of the code below is more-or-less imitation of other addons and as such
@@ -1087,12 +1099,10 @@ class OBJECT_OT_add_mesh_rock(bpy.types.Operator):
             box.prop(self, 'user_seed')
         box.prop(self, 'preset_values')
 
-    @classmethod
-    def poll(cls, context):
-        return context.mode == 'OBJECT'
-        # return (context.object is not None and context.object.mode == 'OBJECT')
-
     def execute(self, context):
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
 
         # The following "if" block loads preset values:
         if self.lastPreset != int(self.preset_values):
@@ -1120,7 +1130,7 @@ class OBJECT_OT_add_mesh_rock(bpy.types.Operator):
         #   *** Eliminated "deform_Var" and "rough_Var" so the script is not
         #       as complex to use.  May add in again as advanced features. ***
         if self.use_generate:
-            generateRocks(context,
+            rocks = generateRocks(context,
                           self.scale_X,
                           self.skew_X,
                           self.scale_Y,
@@ -1137,10 +1147,19 @@ class OBJECT_OT_add_mesh_rock(bpy.types.Operator):
                           self.num_of_rocks,
                           self.user_seed,
                           self.use_scale_dis,
-                          self.use_random_seed)
+                          self.use_random_seed,
+                          use_enter_edit_mode)
+
+        for rock in rocks:
+            rock.select_set(True)
+
+        if use_enter_edit_mode:
+            bpy.ops.object.mode_set(mode = 'EDIT')
+
+        # restore pre operator state
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 
         return {'FINISHED'}
-
 
 # Register:
 def menu_func_rocks(self, context):

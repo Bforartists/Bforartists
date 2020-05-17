@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -546,6 +546,10 @@ msgid "Scene"
 msgstr "Сахна"
 
 
+msgid "Shading"
+msgstr "Көлөкөлөө"
+
+
 msgid "Transform"
 msgstr "Өзгөртүү"
 
@@ -765,10 +769,6 @@ msgstr "Өлчөмү"
 
 msgid "Save"
 msgstr "Сактоо"
-
-
-msgid "Shading"
-msgstr "Көлөкөлөө"
 
 
 msgid "Fonts"

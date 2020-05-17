@@ -2721,7 +2721,7 @@ static void lib_link_id(FileData *fd, Main *bmain, ID *id);
 static void lib_link_nodetree(FileData *fd, Main *bmain, bNodeTree *ntree);
 static void lib_link_collection(FileData *fd, Main *bmain, Collection *collection);
 
-static void lib_link_id_private_id(FileData *fd, Main *bmain, ID *id)
+static void lib_link_id_embedded_id(FileData *fd, Main *bmain, ID *id)
 {
   /* Handle 'private IDs'. */
   bNodeTree *nodetree = ntreeFromID(id);
@@ -2755,7 +2755,7 @@ static void lib_link_id(FileData *fd, Main *bmain, ID *id)
     id->override_library->storage = newlibadr(fd, id->lib, id->override_library->storage);
   }
 
-  lib_link_id_private_id(fd, bmain, id);
+  lib_link_id_embedded_id(fd, bmain, id);
 }
 
 static void direct_link_id_override_property_operation_cb(FileData *fd, void *data)
@@ -2779,18 +2779,22 @@ static void direct_link_id_override_property_cb(FileData *fd, void *data)
   link_list_ex(fd, &op->operations, direct_link_id_override_property_operation_cb);
 }
 
-static void direct_link_id_common(FileData *fd, ID *id, ID *id_old, const int tag);
+static void direct_link_id_common(
+    FileData *fd, Library *current_library, ID *id, ID *id_old, const int tag);
 static void direct_link_nodetree(FileData *fd, bNodeTree *ntree);
 static void direct_link_collection(FileData *fd, Collection *collection);
 
-static void direct_link_id_private_id(FileData *fd, ID *id, ID *id_old)
+static void direct_link_id_embedded_id(FileData *fd, Library *current_library, ID *id, ID *id_old)
 {
   /* Handle 'private IDs'. */
   bNodeTree **nodetree = BKE_ntree_ptr_from_id(id);
   if (nodetree != NULL && *nodetree != NULL) {
     *nodetree = newdataadr(fd, *nodetree);
-    direct_link_id_common(
-        fd, (ID *)*nodetree, id_old != NULL ? (ID *)ntreeFromID(id_old) : NULL, 0);
+    direct_link_id_common(fd,
+                          current_library,
+                          (ID *)*nodetree,
+                          id_old != NULL ? (ID *)ntreeFromID(id_old) : NULL,
+                          0);
     direct_link_nodetree(fd, *nodetree);
   }
 
@@ -2799,6 +2803,7 @@ static void direct_link_id_private_id(FileData *fd, ID *id, ID *id_old)
     if (scene->master_collection != NULL) {
       scene->master_collection = newdataadr(fd, scene->master_collection);
       direct_link_id_common(fd,
+                            current_library,
                             &scene->master_collection->id,
                             id_old != NULL ? &((Scene *)id_old)->master_collection->id : NULL,
                             0);
@@ -2863,18 +2868,40 @@ static int direct_link_id_restore_recalc(const FileData *fd,
   return recalc;
 }
 
-static void direct_link_id_common(FileData *fd, ID *id, ID *id_old, const int tag)
+static void direct_link_id_common(
+    FileData *fd, Library *current_library, ID *id, ID *id_old, const int tag)
 {
+  if (fd->memfile == NULL) {
+    /* When actually reading a file , we do want to reset/re-generate session uuids.
+     * In undo case, we want to re-use existing ones. */
+    id->session_uuid = MAIN_ID_SESSION_UUID_UNSET;
+  }
+
+  BKE_lib_libblock_session_uuid_ensure(id);
+
+  id->lib = current_library;
+  id->us = ID_FAKE_USERS(id);
+  id->icon_id = 0;
+  id->newid = NULL; /* Needed because .blend may have been saved with crap value here... */
+  id->orig_id = NULL;
+  id->py_instance = NULL;
+
+  /* Initialize with provided tag. */
+  id->tag = tag;
+
+  if (tag & LIB_TAG_ID_LINK_PLACEHOLDER) {
+    /* For placeholder we only need to set the tag and properly init generic ID fieds above, no
+     * further data to read. */
+    return;
+  }
+
   /*link direct data of ID properties*/
   if (id->properties) {
     id->properties = newdataadr(fd, id->properties);
     /* this case means the data was written incorrectly, it should not happen */
     IDP_DirectLinkGroup_OrFree(&id->properties, (fd->flags & FD_FLAGS_SWITCH_ENDIAN), fd);
   }
-  id->py_instance = NULL;
 
-  /* Initialize with provided tag. */
-  id->tag = tag;
   id->flag &= ~LIB_INDIRECT_WEAK_LINK;
 
   /* NOTE: It is important to not clear the recalc flags for undo/redo.
@@ -2907,7 +2934,7 @@ static void direct_link_id_common(FileData *fd, ID *id, ID *id_old, const int ta
   }
 
   /* Handle 'private IDs'. */
-  direct_link_id_private_id(fd, id, id_old);
+  direct_link_id_embedded_id(fd, current_library, id, id_old);
 }
 
 /** \} */
@@ -9361,28 +9388,14 @@ static const char *dataname(short id_code)
 
 static bool direct_link_id(FileData *fd, Main *main, const int tag, ID *id, ID *id_old)
 {
-  if (fd->memfile == NULL) {
-    /* When actually reading a file , we do want to reset/re-generate session uuids.
-     * In undo case, we want to re-use existing ones. */
-    id->session_uuid = MAIN_ID_SESSION_UUID_UNSET;
-  }
-
-  BKE_lib_libblock_session_uuid_ensure(id);
-
-  id->lib = main->curlib;
-  id->us = ID_FAKE_USERS(id);
-  id->icon_id = 0;
-  id->newid = NULL; /* Needed because .blend may have been saved with crap value here... */
-  id->orig_id = NULL;
+  /* Read part of datablock that is common between real and embedded datablocks. */
+  direct_link_id_common(fd, main->curlib, id, id_old, tag);
 
   if (tag & LIB_TAG_ID_LINK_PLACEHOLDER) {
     /* For placeholder we only need to set the tag, no further data to read. */
     id->tag = tag;
     return true;
   }
-
-  /* Read part of datablock that is common between real and embedded datablocks. */
-  direct_link_id_common(fd, id, id_old, tag);
 
   /* XXX Very weakly handled currently, see comment in read_libblock() before trying to
    * use it for anything new. */
@@ -10003,6 +10016,9 @@ static void do_versions(FileData *fd, Library *lib, Main *main)
 {
   /* WATCH IT!!!: pointers from libdata have not been converted */
 
+  /* Don't allow versioning to create new data-blocks. */
+  main->is_locked_for_linking = true;
+
   if (G.debug & G_DEBUG) {
     char build_commit_datetime[32];
     time_t temp_time = main->build_commit_timestamp;
@@ -10034,6 +10050,8 @@ static void do_versions(FileData *fd, Library *lib, Main *main)
   /* WATCH IT 2!: Userdef struct init see do_versions_userdef() above! */
 
   /* don't forget to set version number in BKE_blender_version.h! */
+
+  main->is_locked_for_linking = false;
 }
 
 static void do_versions_after_linking(Main *main, ReportList *reports)
@@ -10041,11 +10059,16 @@ static void do_versions_after_linking(Main *main, ReportList *reports)
   //  printf("%s for %s (%s), %d.%d\n", __func__, main->curlib ? main->curlib->name : main->name,
   //         main->curlib ? "LIB" : "MAIN", main->versionfile, main->subversionfile);
 
+  /* Don't allow versioning to create new data-blocks. */
+  main->is_locked_for_linking = true;
+
   do_versions_after_linking_250(main);
   do_versions_after_linking_260(main);
   do_versions_after_linking_270(main);
   do_versions_after_linking_280(main, reports);
   do_versions_after_linking_cycles(main);
+
+  main->is_locked_for_linking = false;
 }
 
 /** \} */
@@ -10910,7 +10933,7 @@ static void expand_id(FileData *fd, Main *mainvar, ID *id);
 static void expand_nodetree(FileData *fd, Main *mainvar, bNodeTree *ntree);
 static void expand_collection(FileData *fd, Main *mainvar, Collection *collection);
 
-static void expand_id_private_id(FileData *fd, Main *mainvar, ID *id)
+static void expand_id_embedded_id(FileData *fd, Main *mainvar, ID *id)
 {
   /* Handle 'private IDs'. */
   bNodeTree *nodetree = ntreeFromID(id);
@@ -10942,7 +10965,7 @@ static void expand_id(FileData *fd, Main *mainvar, ID *id)
     expand_animdata(fd, mainvar, adt);
   }
 
-  expand_id_private_id(fd, mainvar, id);
+  expand_id_embedded_id(fd, mainvar, id);
 }
 
 static void expand_action(FileData *fd, Main *mainvar, bAction *act)
@@ -11942,6 +11965,7 @@ static void add_collections_to_scene(Main *mainvar,
       /* BKE_object_add(...) messes with the selection. */
       Object *ob = BKE_object_add_only_object(bmain, OB_EMPTY, collection->id.name + 2);
       ob->type = OB_EMPTY;
+      ob->empty_drawsize = U.collection_instance_empty_size;
 
       BKE_collection_object_add(bmain, active_collection, ob);
       Base *base = BKE_view_layer_base_find(view_layer, ob);

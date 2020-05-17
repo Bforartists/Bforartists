@@ -1796,18 +1796,14 @@ class NWEmissionViewer(Operator, NWBase):
                         cls.search_sockets(groupout, sockets, index=socket_index)
 
     @classmethod
-    def scan_nodes(cls, tree, selection, sockets):
-        # get all selcted nodes and all viewer sockets in a material tree
+    def scan_nodes(cls, tree, sockets):
+        # get all viewer sockets in a material tree
         for node in tree.nodes:
-            if node.select:
-                selection.append(node)
-                node.select = False
-
             if hasattr(node, "node_tree"):
                 for socket in node.node_tree.outputs:
                     if is_viewer_socket(socket) and (socket not in sockets):
                         sockets.append(socket)
-                cls.scan_nodes(node.node_tree, selection, sockets)
+                cls.scan_nodes(node.node_tree, sockets)
 
     def link_leads_to_used_socket(self, link):
         #return True if link leads to a socket that is already used in this material
@@ -1868,13 +1864,12 @@ class NWEmissionViewer(Operator, NWBase):
                             valid = True
                             break
             if valid:
-                # get material_output node, store selection, deselect all
+                # get material_output node
                 materialout = None  # placeholder node
-                selection = []
                 delete_sockets = []
 
-                #scan through every single node in tree including nodes inside of groups
-                self.scan_nodes(base_node_tree, selection, delete_sockets)
+                #scan through all nodes in tree including nodes inside of groups to find viewer sockets
+                self.scan_nodes(base_node_tree, delete_sockets)
 
                 materialout = self.get_shader_output_node(base_node_tree)
                 if not materialout:
@@ -1975,23 +1970,14 @@ class NWEmissionViewer(Operator, NWBase):
                         tree.outputs.remove(socket)
 
                 # Delete nodes
-                for node in delete_nodes:
-                    space.node_tree = node[0]
-                    node[1].select = True
-                    bpy.ops.node.delete()
-
-                # Restore selection
-                path = space.path
-                path.start(base_node_tree)
-                if len(path_to_tree):
-                    for tree in path_to_tree:
-                        path.append(tree)
+                for tree, node in delete_nodes:
+                    tree.nodes.remove(node)
 
                 nodes.active = active
-                for node in nodes:
-                    if node in selection:
-                        node.select = True
+                active.select = True
+
                 force_update(context)
+
             return {'FINISHED'}
         else:
             return {'CANCELLED'}

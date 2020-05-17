@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 13) (b'aa2544793dc2')\n"
+"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-20 13:27:14\n"
+"POT-Creation-Date: 2020-05-04 10:26:18\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -2403,6 +2403,10 @@ msgid "UV coordinates in parent object space"
 msgstr "Texte"
 
 
+msgid "Shading"
+msgstr "Esborrar Rotació"
+
+
 msgid "Safe Areas"
 msgstr "Corba NURBS"
 
@@ -3410,10 +3414,6 @@ msgstr "Seleccionar fila"
 
 msgid "Save"
 msgstr "Guardar"
-
-
-msgid "Shading"
-msgstr "Esborrar Rotació"
 
 
 msgid "Fonts"
@@ -25621,10 +25621,6 @@ msgstr "Seleccionar fila"
 
 msgid "Wave Clamp"
 msgstr "Guardar"
-
-
-msgid "Real World Size"
-msgstr "Extrusionar"
 
 
 msgid "Bounciness"
