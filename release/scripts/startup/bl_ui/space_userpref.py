@@ -274,8 +274,8 @@ class USERPREF_PT_interface_editors(InterfacePanel, CenterAlignMixIn, Panel):
         flow.prop(system, "use_region_overlap")
         flow.prop(view, "show_layout_ui", text="Corner Splitting")
         flow.prop(view, "show_navigate_ui")
-        
-        flow.use_property_split = True      
+
+        flow.use_property_split = True
         flow.prop(view, "color_picker_type")
         flow.row().prop(view, "header_align")
         flow.prop(view, "factor_display_type")
@@ -375,6 +375,7 @@ class USERPREF_PT_edit_objects_new(EditingPanel, CenterAlignMixIn, Panel):
 
         flow.use_property_split = False
         flow.prop(edit, "use_enter_edit_mode", text="Enter Edit Mode")
+        flow.use_property_split = True
         flow.prop(edit, "collection_instance_empty_size", text="Instance Empty Size")
 
 
@@ -1416,7 +1417,7 @@ class USERPREF_PT_input_keyboard(InputPanel, CenterAlignMixIn, Panel):
     def draw_centered(self, context, layout):
         prefs = context.preferences
         inputs = prefs.inputs
-        
+
         layout.use_property_split = False
         layout.prop(inputs, "use_emulate_numpad")
         layout.prop(inputs, "use_numeric_input_advanced")
@@ -1431,7 +1432,7 @@ class USERPREF_PT_input_mouse(InputPanel, CenterAlignMixIn, Panel):
         inputs = prefs.inputs
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-        
+
         flow.use_property_split = False
         flow.prop(inputs, "use_mouse_emulate_3_button")
         if sys.platform[:3] != "win":
@@ -1440,7 +1441,7 @@ class USERPREF_PT_input_mouse(InputPanel, CenterAlignMixIn, Panel):
             rowsub.prop(inputs, "mouse_emulate_3_button_modifier")
         flow.prop(inputs, "use_mouse_continuous")
         flow.prop(inputs, "use_drag_immediately")
-        
+
         flow.use_property_split = True
         flow.prop(inputs, "mouse_double_click_time", text="Double Click Speed")
         flow.prop(inputs, "drag_threshold_mouse")
