@@ -303,15 +303,6 @@ class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
 
         layout.prop(rd, "filepath", text="")
 
-        col = layout.column(align = True)
-        col.label(text = "Saving")
-        row = col.row()
-        row.separator()
-        row.prop(rd, "use_file_extension")
-        row = col.row()
-        row.separator()
-        row.prop(rd, "use_render_cache")
-
         layout.template_image_settings(image_settings, color_management=False)
         
         if is_eevee or is_workbench:
@@ -319,15 +310,6 @@ class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
             row.prop(rd, "film_transparent", text="Transparent")
             row.prop_decorator(rd, "film_transparent")
 
-        if not rd.is_movie_format:
-            col = layout.column(align = True)
-            col.label(text = "Image Sequence")
-            row = col.row()
-            row.separator()
-            row.prop(rd, "use_overwrite")
-            row = col.row()
-            row.separator()
-            row.prop(rd, "use_placeholder")
 
 # Options subpanel for the output panel
 class RENDER_PT_output_options(RenderOutputButtonsPanel, Panel):
@@ -343,19 +325,25 @@ class RENDER_PT_output_options(RenderOutputButtonsPanel, Panel):
 
         rd = context.scene.render
         image_settings = rd.image_settings
-
-        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
-
-        col = flow.column()
-        col.active = not rd.is_movie_format
-        col.prop(rd, "use_overwrite")
-        col = flow.column()
-        col.active = not rd.is_movie_format
-        col.prop(rd, "use_placeholder")
-        col = flow.column()
-        col.prop(rd, "use_file_extension")
-        col = flow.column()
-        col.prop(rd, "use_render_cache")
+        
+        col = layout.column(align = True)
+        col.label(text = "Saving")
+        row = col.row()
+        row.separator()
+        row.prop(rd, "use_file_extension")
+        row = col.row()
+        row.separator()
+        row.prop(rd, "use_render_cache")
+        
+        if not rd.is_movie_format:
+            col = layout.column(align = True)
+            col.label(text = "Image Sequence")
+            row = col.row()
+            row.separator()
+            row.prop(rd, "use_overwrite")
+            row = col.row()
+            row.separator()
+            row.prop(rd, "use_placeholder")
 
 
 class RENDER_PT_output_views(RenderOutputButtonsPanel, Panel):
