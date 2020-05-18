@@ -2613,14 +2613,14 @@ keyconfig_data = \
     ("wm.radial_control",
      {"type": 'F', "value": 'PRESS', "shift": True},
      {"properties":
-      [("data_path_primary", 'tool_settings.gpencil_sculpt.brush.strength'),
+      [("data_path_primary", 'tool_settings.gpencil_sculpt_paint.brush.strength'),
        ],
       },
      ),
     ("wm.radial_control",
      {"type": 'F', "value": 'PRESS'},
      {"properties":
-      [("data_path_primary", 'tool_settings.gpencil_sculpt.brush.size'),
+      [("data_path_primary", 'tool_settings.gpencil_sculpt_paint.brush.size'),
        ],
       },
      ),
