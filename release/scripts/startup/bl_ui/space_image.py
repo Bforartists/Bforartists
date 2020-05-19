@@ -742,17 +742,20 @@ class IMAGE_HT_header(Header):
             )
 
             # Proportional Editing
+            
+            kw = {}         
+            if tool_settings.use_proportional_edit:
+                kw["icon"] = 'PROP_ON'
+            else:
+                kw["icon"] = 'PROP_OFF'
+
             row = layout.row(align=True)
-            row.prop(tool_settings, "use_proportional_edit", icon_only=True)
+            row.prop(tool_settings, "use_proportional_edit", icon_only=True, **kw)
             sub = row.row(align=True)
-            sub.active = tool_settings.use_proportional_edit
-            sub.prop_with_popover(
-                tool_settings,
-                "proportional_edit_falloff",
-                text="",
-                icon_only=True,
-                panel="IMAGE_PT_proportional_edit",
-            )
+           # proportional editing settings
+            if tool_settings.use_proportional_edit is True:
+                sub = row.row(align=True)
+                sub.prop_with_popover(tool_settings,"proportional_edit_falloff",text="", icon_only=True, panel="VIEW3D_PT_proportional_edit")
 
 
     def draw(self, context):
