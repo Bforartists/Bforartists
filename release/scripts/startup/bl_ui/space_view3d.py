@@ -991,9 +991,6 @@ class VIEW3D_MT_transform_base(Menu):
             layout.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE').offset = 0.1
             layout.operator_context = 'INVOKE_REGION_WIN'
 
-            if obj.type == 'MESH':
-                layout.operator("transform.skin_resize", text="Skin Resize", icon = "MOD_SKIN")
-
 
 # Generic transform menu - geometry types
 class VIEW3D_MT_transform(VIEW3D_MT_transform_base):
@@ -1008,7 +1005,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base):
 
         if obj.type == 'MESH':
             layout.operator("transform.shrink_fatten", text="Shrink Fatten", icon = 'SHRINK_FATTEN')
-            layout.operator("transform.skin_resize")
+            layout.operator("transform.skin_resize", icon = "MOD_SKIN")
 
         elif obj.type == 'CURVE':
             layout.operator("transform.transform", text="Shrink Fatten", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
