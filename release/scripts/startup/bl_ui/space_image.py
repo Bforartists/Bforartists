@@ -474,6 +474,7 @@ class IMAGE_MT_uvs(Menu):
         layout.separator()
 
         layout.menu("IMAGE_MT_uvs_showhide")
+        layout.operator("uv.reset", icon = "RESET")
 
 
 class IMAGE_MT_uvs_select_mode(Menu):
@@ -984,6 +985,8 @@ class IMAGE_PT_image_options(Panel):
             layout.prop(tool_settings, "show_uv_local_view")
 
         layout.prop(uv, "show_metadata")
+        
+        layout.prop_menu_enum(uv, "pixel_snap_mode")
 
         if paint.brush and (context.image_paint_object or sima.mode == 'PAINT'):
             layout.prop(uv, "show_texpaint")
