@@ -155,6 +155,7 @@ class MATERIAL_PT_gpencil_strokecolor(GPMaterialButtonsPanel, Panel):
                 row.enabled = not gpcolor.lock
                 col = row.column(align=True)
                 col.template_ID(gpcolor, "stroke_image", open="image.open")
+                col.separator()
 
             if gpcolor.stroke_style == 'TEXTURE':
                 row = col.row()
@@ -203,7 +204,11 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
             col.prop(gpcolor, "fill_color", text="Base Color")
             col.prop(gpcolor, "mix_color", text="Secondary Color")
             col.prop(gpcolor, "mix_factor", text="Blend", slider=True)
-            col.prop(gpcolor, "flip", text="Flip Colors")
+            
+            row = col.row(align = True)
+            row.use_property_split = False    
+            row.prop(gpcolor, "flip", text="Flip Colors")
+            row.prop_decorator(gpcolor, "flip")
 
             col.prop(gpcolor, "texture_offset", text="Location")
 
@@ -222,8 +227,12 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
 
             col.prop(gpcolor, "texture_offset", text="Location")
             col.prop(gpcolor, "texture_angle", text="Rotation")
-            col.prop(gpcolor, "texture_scale", text="Scale")
-            col.prop(gpcolor, "texture_clamp", text="Clip Image")
+            col.prop(gpcolor, "texture_scale", text="Scale")          
+            
+            row = col.row(align = True)
+            row.use_property_split = False    
+            row.prop(gpcolor, "texture_clamp", text="Clip Image")
+            row.prop_decorator(gpcolor, "texture_clamp")
 
 
 class MATERIAL_PT_gpencil_preview(GPMaterialButtonsPanel, Panel):
