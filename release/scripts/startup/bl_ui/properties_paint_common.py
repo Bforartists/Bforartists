@@ -594,9 +594,9 @@ def brush_settings(layout, context, brush, popover=False):
 
             layout.separator()
 
-            row = layout.row(heading="Plane Trim")
+            row = layout.row(align = True)
             row.use_property_split = False
-            row.prop(brush, "use_plane_trim", text="")
+            row.prop(brush, "use_plane_trim", text="Plane Trim")
 
             if brush.use_plane_trim:
                 row.prop(brush, "plane_trim", slider=True, text="")

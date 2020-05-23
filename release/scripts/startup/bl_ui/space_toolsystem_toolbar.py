@@ -1134,7 +1134,9 @@ class _defs_sculpt:
             layout.prop(props, "type", expand=False)
             layout.prop(props, "strength")
             layout.prop(props, "deform_axis")
+            layout.use_property_split = False
             layout.prop(props, "use_face_sets")
+            layout.use_property_split = True
             if (props.type == "SURFACE_SMOOTH"):
                 layout.prop(props, "surface_smooth_shape_preservation", expand=False)
                 layout.prop(props, "surface_smooth_current_vertex", expand=False)
