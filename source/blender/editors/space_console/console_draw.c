@@ -91,7 +91,6 @@ void console_scrollback_prompt_end(SpaceConsole *sc, ConsoleLine *cl_dummy)
 static int console_textview_begin(TextViewContext *tvc)
 {
   SpaceConsole *sc = (SpaceConsole *)tvc->arg1;
-  tvc->lheight = sc->lheight * UI_DPI_FAC;
   tvc->sel_start = sc->sel_start;
   tvc->sel_end = sc->sel_end;
 
@@ -143,10 +142,7 @@ static void console_cursor_wrap_offset(
   return;
 }
 
-static void console_textview_draw_cursor(TextViewContext *tvc,
-                                         int cwidth,
-                                         int columns,
-                                         int descender)
+static void console_textview_draw_cursor(TextViewContext *tvc, int cwidth, int columns)
 {
   int pen[2];
   {
@@ -157,10 +153,10 @@ static void console_textview_draw_cursor(TextViewContext *tvc,
     console_cursor_wrap_offset(sc->prompt, columns, &offl, &offc, NULL);
     console_cursor_wrap_offset(cl->line, columns, &offl, &offc, cl->line + cl->cursor);
     pen[0] = cwidth * offc;
-    pen[1] = -2 - (tvc->lheight + descender) * offl;
+    pen[1] = -tvc->lheight * offl;
 
     console_cursor_wrap_offset(cl->line + cl->cursor, columns, &offl, &offc, NULL);
-    pen[1] += (tvc->lheight + descender) * offl;
+    pen[1] += tvc->lheight * offl;
 
     pen[0] += tvc->draw_rect.xmin;
     pen[1] += tvc->draw_rect.ymin;
@@ -172,8 +168,7 @@ static void console_textview_draw_cursor(TextViewContext *tvc,
   immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
   immUniformThemeColor(TH_CONSOLE_CURSOR);
 
-  immRectf(
-      pos, pen[0] - U.pixelsize, pen[1], pen[0] + U.pixelsize, pen[1] + tvc->lheight + descender);
+  immRectf(pos, pen[0] - U.pixelsize, pen[1], pen[0] + U.pixelsize, pen[1] + tvc->lheight);
 
   immUnbindProgram();
 }
@@ -229,7 +224,7 @@ static int console_textview_main__internal(SpaceConsole *sc,
   /* view */
   tvc.sel_start = sc->sel_start;
   tvc.sel_end = sc->sel_end;
-  tvc.lheight = sc->lheight * 1.2f * UI_DPI_FAC;
+  tvc.lheight = sc->lheight * UI_DPI_FAC;
   tvc.scroll_ymin = v2d->cur.ymin;
   tvc.scroll_ymax = v2d->cur.ymax;
 

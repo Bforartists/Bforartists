@@ -114,6 +114,8 @@ def get_tangent_points(context, hloc_0, vloc_0, radius_0, hloc_p, vloc_p):
         vloc_t2: Vertical Location of Second Tangent Point
     """
 
+    # Uses basic Pythagorus' theorem to compute locations
+    #
     numerator = (radius_0 ** 2 * (hloc_p - hloc_0)) + (
         radius_0
         * (vloc_p - vloc_0)
@@ -186,6 +188,8 @@ def make_vectors(coords, a1, a2, a3, pg):
     tangent_vector_o4[a3] = coords[8]
 
     if pg.plane == "LO":
+        # Reset coordinates from view local (Horiz, Vert, depth) to World XYZ.
+        #
         tangent_vector_o1 = view_coords(
             tangent_vector_o1[a1], tangent_vector_o1[a2], tangent_vector_o1[a3]
         )
@@ -223,6 +227,8 @@ def tangent_setup(context, pg, plane, obj_data, centre_0, centre_1, centre_2, ra
     a1, a2, a3 = set_mode(plane)
     mode = pg.tangent_mode
     if plane == "LO":
+        # Translate world cordinates into view local (horiz, vert, depth)
+        #
         centre_0 = view_coords_i(centre_0[a1], centre_0[a2], centre_0[a3])
         centre_1 = view_coords_i(centre_1[a1], centre_1[a2], centre_1[a3])
         centre_2 = view_coords_i(centre_2[a1], centre_2[a2], centre_2[a3])
@@ -239,6 +245,7 @@ def tangent_setup(context, pg, plane, obj_data, centre_0, centre_1, centre_2, ra
         (distance <= radius_0 or distance <= radius_1 and mode in {"outer", "both"})
         ):
         # Cannot execute, centres are too close.
+        #
         pg.error = f"{PDT_ERR_BADDISTANCE}"
         context.window_manager.popup_menu(oops, title="Error", icon="ERROR")
         return {"FINISHED"}
@@ -260,6 +267,7 @@ def tangent_setup(context, pg, plane, obj_data, centre_0, centre_1, centre_2, ra
             context.window_manager.popup_menu(oops, title="Error", icon="ERROR")
             return {"FINISHED"}
         # Point Tangents
+        #
         tangent_vector_o1 = Vector((0, 0, 0))
         tangent_vector_o1[a1] = hloc_to1
         tangent_vector_o1[a2] = vloc_to1
@@ -269,6 +277,8 @@ def tangent_setup(context, pg, plane, obj_data, centre_0, centre_1, centre_2, ra
         tangent_vector_o2[a2] = vloc_to2
         tangent_vector_o2[a3] = centre_2[a3]
         if pg.plane == "LO":
+            # Translate view local coordinates (horiz, vert, depth) into World XYZ
+            #
             centre_2 = view_coords(centre_2[a1], centre_2[a2], centre_2[a3])
             tangent_vector_o1 = view_coords(
                 tangent_vector_o1[a1], tangent_vector_o1[a2], tangent_vector_o1[a3]
@@ -287,8 +297,11 @@ def tangent_setup(context, pg, plane, obj_data, centre_0, centre_1, centre_2, ra
     """
 
     if mode in {"outer", "both"}:
+        # Uses basic trigonometry and Pythagorus' theorem to compute locations
+        #
         if radius_0 == radius_1:
             # No intersection point for outer tangents
+            #
             sin_angle = (centre_1[a2] - centre_0[a2]) / distance
             cos_angle = (centre_1[a1] - centre_0[a1]) / distance
             hloc_to1 = centre_0[a1] + (radius_0 * sin_angle)
@@ -342,6 +355,8 @@ def tangent_setup(context, pg, plane, obj_data, centre_0, centre_1, centre_2, ra
     """
 
     if mode in {"inner", "both"}:
+        # Uses basic trigonometry and Pythagorus' theorem to compute locations
+        #
         hloc_pi, vloc_pi = get_tangent_intersect_inner(
             centre_0[a1], centre_0[a2], centre_1[a1], centre_1[a2], radius_0, radius_1
         )
@@ -442,6 +457,8 @@ def analyse_arc(context, pg):
             context.window_manager.popup_menu(oops, title="Error", icon="ERROR")
             raise PDT_SelectionError
         vector_a = verts[0].co
+        # Get the nearest to middle vertex of the arc
+        #
         vector_b = verts[int(floor(len(verts) / 2))].co
         vector_c = verts[-1].co
         vector_delta, radius = arc_centre(vector_a, vector_b, vector_c)
@@ -484,6 +501,7 @@ class PDT_OT_TangentOperate(Operator):
         Returns:
             Nothing.
         """
+
         scene = context.scene
         pg = scene.pdt_pg
         plane = pg.plane
@@ -521,7 +539,7 @@ class PDT_OT_TangentOperateSel(Operator):
     bl_idname = "pdt.tangentoperatesel"
     bl_label = "Calculate Tangents"
     bl_options = {"REGISTER", "UNDO"}
-    bl_description = "Calculate Tangents to Arcs from 2 Selected Vertices, or 1 & Point"
+    bl_description = "Calculate Tangents to Arcs from 2 Selected Vertices, or 1 & Point in Menu"
 
     @classmethod
     def poll(cls, context):
@@ -601,6 +619,8 @@ class PDT_OT_TangentOperateSel(Operator):
             e.select_set(False)
         bmesh.update_edit_mesh(obj.data)
         bm.select_history.clear()
+        # Select the nearest to middle vertex in the arc
+        #
         verts1 = [verts1[0].co, verts1[int(floor(len(verts1) / 2))].co, verts1[-1].co]
         vertsn = [vertsn[0].co, vertsn[int(floor(len(vertsn) / 2))].co, vertsn[-1].co]
         centre_0, radius_0 = arc_centre(verts1[0], verts1[1], verts1[2])
@@ -755,6 +775,9 @@ class PDT_OT_TangentExpandMenu(Operator):
 
     def execute(self, context):
         """Expand/Collapse Tangent Menu.
+
+        Note:
+            This is used to add further options to the menu.
 
         Args:
             context: Blender bpy.context instance.

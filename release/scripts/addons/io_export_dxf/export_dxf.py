@@ -35,7 +35,7 @@ def exportDXF(context, filePath, settings):
     """
     print("----------\nExporting to {}".format(filePath))
     import time
-    time1 = time.clock()
+    time1 = time.perf_counter()
 
     if settings['verbose']:
         print("Generating Object list for export... (Root parents only)")
@@ -71,7 +71,7 @@ def exportDXF(context, filePath, settings):
 
             drawing.convert(filePath)
 
-        duration = time.clock() - time1
+        duration = time.perf_counter() - time1
         print('%s objects exported in %.2f seconds. -----DONE-----' %\
             (exported, duration))
     except IOError:

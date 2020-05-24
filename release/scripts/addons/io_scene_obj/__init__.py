@@ -247,7 +247,7 @@ class ExportOBJ(bpy.types.Operator, ExportHelper):
             default="*.obj;*.mtl",
             options={'HIDDEN'},
             )
- 
+
     # context group
     use_selection: BoolProperty(
             name="Selection Only",

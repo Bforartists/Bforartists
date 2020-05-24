@@ -252,12 +252,8 @@ void uv_poly_copy_aspect(float uv_orig[][2], float uv[][2], float aspx, float as
   }
 }
 
-bool ED_uvedit_minmax_multi(const Scene *scene,
-                            Image *ima,
-                            Object **objects_edit,
-                            uint objects_len,
-                            float r_min[2],
-                            float r_max[2])
+bool ED_uvedit_minmax_multi(
+    const Scene *scene, Object **objects_edit, uint objects_len, float r_min[2], float r_max[2])
 {
   bool changed = false;
   INIT_MINMAX2(r_min, r_max);
@@ -274,7 +270,7 @@ bool ED_uvedit_minmax_multi(const Scene *scene,
     const int cd_loop_uv_offset = CustomData_get_offset(&em->bm->ldata, CD_MLOOPUV);
 
     BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-      if (!uvedit_face_visible_test(scene, obedit, ima, efa)) {
+      if (!uvedit_face_visible_test(scene, efa)) {
         continue;
       }
 
@@ -290,10 +286,9 @@ bool ED_uvedit_minmax_multi(const Scene *scene,
   return changed;
 }
 
-bool ED_uvedit_minmax(
-    const Scene *scene, Image *ima, Object *obedit, float r_min[2], float r_max[2])
+bool ED_uvedit_minmax(const Scene *scene, Object *obedit, float r_min[2], float r_max[2])
 {
-  return ED_uvedit_minmax_multi(scene, ima, &obedit, 1, r_min, r_max);
+  return ED_uvedit_minmax_multi(scene, &obedit, 1, r_min, r_max);
 }
 
 /* Be careful when using this, it bypasses all synchronization options */
@@ -314,8 +309,10 @@ void ED_uvedit_select_all(BMesh *bm)
   }
 }
 
-static bool ED_uvedit_median_multi(
-    const Scene *scene, Image *ima, Object **objects_edit, uint objects_len, float co[2])
+static bool ED_uvedit_median_multi(const Scene *scene,
+                                   Object **objects_edit,
+                                   uint objects_len,
+                                   float co[2])
 {
   uint sel = 0;
   zero_v2(co);
@@ -332,7 +329,7 @@ static bool ED_uvedit_median_multi(
     const int cd_loop_uv_offset = CustomData_get_offset(&em->bm->ldata, CD_MLOOPUV);
 
     BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-      if (!uvedit_face_visible_test(scene, obedit, ima, efa)) {
+      if (!uvedit_face_visible_test(scene, efa)) {
         continue;
       }
 
@@ -351,24 +348,20 @@ static bool ED_uvedit_median_multi(
   return (sel != 0);
 }
 
-bool ED_uvedit_center_multi(const Scene *scene,
-                            Image *ima,
-                            Object **objects_edit,
-                            uint objects_len,
-                            float cent[2],
-                            char mode)
+bool ED_uvedit_center_multi(
+    const Scene *scene, Object **objects_edit, uint objects_len, float cent[2], char mode)
 {
   bool changed = false;
 
   if (mode == V3D_AROUND_CENTER_BOUNDS) { /* bounding box */
     float min[2], max[2];
-    if (ED_uvedit_minmax_multi(scene, ima, objects_edit, objects_len, min, max)) {
+    if (ED_uvedit_minmax_multi(scene, objects_edit, objects_len, min, max)) {
       mid_v2_v2v2(cent, min, max);
       changed = true;
     }
   }
   else {
-    if (ED_uvedit_median_multi(scene, ima, objects_edit, objects_len, cent)) {
+    if (ED_uvedit_median_multi(scene, objects_edit, objects_len, cent)) {
       changed = true;
     }
   }
@@ -392,8 +385,7 @@ bool ED_uvedit_center_from_pivot_ex(SpaceImage *sima,
         uint objects_len = 0;
         Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
             view_layer, ((View3D *)NULL), &objects_len);
-        *r_has_select = uvedit_select_is_any_selected_multi(
-            scene, sima->image, objects, objects_len);
+        *r_has_select = uvedit_select_is_any_selected_multi(scene, objects, objects_len);
         MEM_freeN(objects);
       }
       break;
@@ -402,7 +394,7 @@ bool ED_uvedit_center_from_pivot_ex(SpaceImage *sima,
       uint objects_len = 0;
       Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
           view_layer, ((View3D *)NULL), &objects_len);
-      changed = ED_uvedit_center_multi(scene, sima->image, objects, objects_len, r_center, mode);
+      changed = ED_uvedit_center_multi(scene, objects, objects_len, r_center, mode);
       MEM_freeN(objects);
       if (r_has_select != NULL) {
         *r_has_select = changed;
@@ -440,7 +432,6 @@ static void uv_weld_align(bContext *C, eUVWeldAlign tool)
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceImage *sima = CTX_wm_space_image(C);
-  Image *ima = CTX_data_edit_image(C);
   const ToolSettings *ts = scene->toolsettings;
   const bool synced_selection = (ts->uv_flag & UV_SYNC_SELECTION) != 0;
   float cent[2], min[2], max[2];
@@ -467,7 +458,7 @@ static void uv_weld_align(bContext *C, eUVWeldAlign tool)
       BMLoop *l;
 
       BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-        if (!uvedit_face_visible_test(scene, obedit, ima, efa)) {
+        if (!uvedit_face_visible_test(scene, efa)) {
           continue;
         }
 
@@ -482,7 +473,7 @@ static void uv_weld_align(bContext *C, eUVWeldAlign tool)
     tool = (max[0] - min[0] >= max[1] - min[1]) ? UV_ALIGN_Y : UV_ALIGN_X;
   }
 
-  ED_uvedit_center_multi(scene, ima, objects, objects_len, cent, 0);
+  ED_uvedit_center_multi(scene, objects, objects_len, cent, 0);
 
   for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
     Object *obedit = objects[ob_index];
@@ -501,7 +492,7 @@ static void uv_weld_align(bContext *C, eUVWeldAlign tool)
       BMLoop *l;
 
       BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-        if (!uvedit_face_visible_test(scene, obedit, ima, efa)) {
+        if (!uvedit_face_visible_test(scene, efa)) {
           continue;
         }
 
@@ -521,7 +512,7 @@ static void uv_weld_align(bContext *C, eUVWeldAlign tool)
       BMLoop *l;
 
       BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-        if (!uvedit_face_visible_test(scene, obedit, ima, efa)) {
+        if (!uvedit_face_visible_test(scene, efa)) {
           continue;
         }
 
@@ -548,7 +539,7 @@ static void uv_weld_align(bContext *C, eUVWeldAlign tool)
       /* tag verts with a selected UV */
       BM_ITER_MESH (eve, &iter, em->bm, BM_VERTS_OF_MESH) {
         BM_ITER_ELEM (l, &liter, eve, BM_LOOPS_OF_VERT) {
-          if (!uvedit_face_visible_test(scene, obedit, ima, l->f)) {
+          if (!uvedit_face_visible_test(scene, l->f)) {
             continue;
           }
 
@@ -619,9 +610,9 @@ static void uv_weld_align(bContext *C, eUVWeldAlign tool)
 
           /* we know the returns from these must be valid */
           const float *uv_start = uvedit_first_selected_uv_from_vertex(
-              scene, obedit, ima, eve_line[0], cd_loop_uv_offset);
+              scene, eve_line[0], cd_loop_uv_offset);
           const float *uv_end = uvedit_first_selected_uv_from_vertex(
-              scene, obedit, ima, eve_line[BLI_array_len(eve_line) - 1], cd_loop_uv_offset);
+              scene, eve_line[BLI_array_len(eve_line) - 1], cd_loop_uv_offset);
           /* For UV_STRAIGHTEN_X & UV_STRAIGHTEN_Y modes */
           float a = 0.0f;
           eUVWeldAlign tool_local = tool;
@@ -646,7 +637,7 @@ static void uv_weld_align(bContext *C, eUVWeldAlign tool)
           /* go over all verts except for endpoints */
           for (i = 0; i < BLI_array_len(eve_line); i++) {
             BM_ITER_ELEM (l, &liter, eve_line[i], BM_LOOPS_OF_VERT) {
-              if (!uvedit_face_visible_test(scene, obedit, ima, l->f)) {
+              if (!uvedit_face_visible_test(scene, l->f)) {
                 continue;
               }
 
@@ -755,7 +746,6 @@ static int uv_remove_doubles_to_selected(bContext *C, wmOperator *op)
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceImage *sima = CTX_wm_space_image(C);
-  Image *ima = CTX_data_edit_image(C);
   const ToolSettings *ts = scene->toolsettings;
 
   const float threshold = RNA_float_get(op->ptr, "threshold");
@@ -809,7 +799,7 @@ static int uv_remove_doubles_to_selected(bContext *C, wmOperator *op)
     const int cd_loop_uv_offset = CustomData_get_offset(&em->bm->ldata, CD_MLOOPUV);
 
     BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-      if (!uvedit_face_visible_test(scene, obedit, ima, efa)) {
+      if (!uvedit_face_visible_test(scene, efa)) {
         continue;
       }
 
@@ -900,7 +890,6 @@ static int uv_remove_doubles_to_unselected(bContext *C, wmOperator *op)
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceImage *sima = CTX_wm_space_image(C);
-  Image *ima = CTX_data_edit_image(C);
   const ToolSettings *ts = scene->toolsettings;
 
   const float threshold = RNA_float_get(op->ptr, "threshold");
@@ -940,7 +929,7 @@ static int uv_remove_doubles_to_unselected(bContext *C, wmOperator *op)
     const int cd_loop_uv_offset = CustomData_get_offset(&em->bm->ldata, CD_MLOOPUV);
 
     BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-      if (!uvedit_face_visible_test(scene, obedit, ima, efa)) {
+      if (!uvedit_face_visible_test(scene, efa)) {
         continue;
       }
 
@@ -973,7 +962,7 @@ static int uv_remove_doubles_to_unselected(bContext *C, wmOperator *op)
     const int cd_loop_uv_offset = CustomData_get_offset(&em->bm->ldata, CD_MLOOPUV);
 
     BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-      if (!uvedit_face_visible_test(scene, obedit, ima, efa)) {
+      if (!uvedit_face_visible_test(scene, efa)) {
         continue;
       }
 
@@ -1087,10 +1076,12 @@ static void uv_snap_cursor_to_pixels(SpaceImage *sima)
   uv_snap_to_pixel(sima->cursor, width, height);
 }
 
-static bool uv_snap_cursor_to_selection(
-    Scene *scene, Image *ima, Object **objects_edit, uint objects_len, SpaceImage *sima)
+static bool uv_snap_cursor_to_selection(Scene *scene,
+                                        Object **objects_edit,
+                                        uint objects_len,
+                                        SpaceImage *sima)
 {
-  return ED_uvedit_center_multi(scene, ima, objects_edit, objects_len, sima->cursor, sima->around);
+  return ED_uvedit_center_multi(scene, objects_edit, objects_len, sima->cursor, sima->around);
 }
 
 static int uv_snap_cursor_exec(bContext *C, wmOperator *op)
@@ -1106,13 +1097,12 @@ static int uv_snap_cursor_exec(bContext *C, wmOperator *op)
       break;
     case 1: {
       Scene *scene = CTX_data_scene(C);
-      Image *ima = CTX_data_edit_image(C);
       ViewLayer *view_layer = CTX_data_view_layer(C);
 
       uint objects_len = 0;
       Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
           view_layer, ((View3D *)NULL), &objects_len);
-      changed = uv_snap_cursor_to_selection(scene, ima, objects, objects_len, sima);
+      changed = uv_snap_cursor_to_selection(scene, objects, objects_len, sima);
       MEM_freeN(objects);
       break;
     }
@@ -1156,7 +1146,7 @@ static void UV_OT_snap_cursor(wmOperatorType *ot)
 /** \name Snap Selection Operator
  * \{ */
 
-static bool uv_snap_uvs_to_cursor(Scene *scene, Image *ima, Object *obedit, const float cursor[2])
+static bool uv_snap_uvs_to_cursor(Scene *scene, Object *obedit, const float cursor[2])
 {
   BMEditMesh *em = BKE_editmesh_from_object(obedit);
   BMFace *efa;
@@ -1168,7 +1158,7 @@ static bool uv_snap_uvs_to_cursor(Scene *scene, Image *ima, Object *obedit, cons
   const int cd_loop_uv_offset = CustomData_get_offset(&em->bm->ldata, CD_MLOOPUV);
 
   BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-    if (!uvedit_face_visible_test(scene, obedit, ima, efa)) {
+    if (!uvedit_face_visible_test(scene, efa)) {
       continue;
     }
 
@@ -1184,7 +1174,7 @@ static bool uv_snap_uvs_to_cursor(Scene *scene, Image *ima, Object *obedit, cons
   return changed;
 }
 
-static bool uv_snap_uvs_offset(Scene *scene, Image *ima, Object *obedit, const float offset[2])
+static bool uv_snap_uvs_offset(Scene *scene, Object *obedit, const float offset[2])
 {
   BMEditMesh *em = BKE_editmesh_from_object(obedit);
   BMFace *efa;
@@ -1196,7 +1186,7 @@ static bool uv_snap_uvs_offset(Scene *scene, Image *ima, Object *obedit, const f
   const int cd_loop_uv_offset = CustomData_get_offset(&em->bm->ldata, CD_MLOOPUV);
 
   BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-    if (!uvedit_face_visible_test(scene, obedit, ima, efa)) {
+    if (!uvedit_face_visible_test(scene, efa)) {
       continue;
     }
 
@@ -1212,7 +1202,7 @@ static bool uv_snap_uvs_offset(Scene *scene, Image *ima, Object *obedit, const f
   return changed;
 }
 
-static bool uv_snap_uvs_to_adjacent_unselected(Scene *scene, Image *ima, Object *obedit)
+static bool uv_snap_uvs_to_adjacent_unselected(Scene *scene, Object *obedit)
 {
   BMEditMesh *em = BKE_editmesh_from_object(obedit);
   BMesh *bm = em->bm;
@@ -1226,7 +1216,7 @@ static bool uv_snap_uvs_to_adjacent_unselected(Scene *scene, Image *ima, Object 
   /* index every vert that has a selected UV using it, but only once so as to
    * get unique indices and to count how much to malloc */
   BM_ITER_MESH (f, &iter, bm, BM_FACES_OF_MESH) {
-    if (uvedit_face_visible_test(scene, obedit, ima, f)) {
+    if (uvedit_face_visible_test(scene, f)) {
       BM_elem_flag_enable(f, BM_ELEM_TAG);
       BM_ITER_ELEM (l, &liter, f, BM_LOOPS_OF_FACE) {
         BM_elem_flag_set(l, BM_ELEM_TAG, uvedit_uv_select_test(scene, l, cd_loop_uv_offset));
@@ -1270,7 +1260,6 @@ static bool uv_snap_uvs_to_adjacent_unselected(Scene *scene, Image *ima, Object 
 static bool uv_snap_uvs_to_pixels(SpaceImage *sima, Scene *scene, Object *obedit)
 {
   BMEditMesh *em = BKE_editmesh_from_object(obedit);
-  Image *ima = sima->image;
   BMFace *efa;
   BMLoop *l;
   BMIter iter, liter;
@@ -1286,7 +1275,7 @@ static bool uv_snap_uvs_to_pixels(SpaceImage *sima, Scene *scene, Object *obedit
   h = (float)height;
 
   BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-    if (!uvedit_face_visible_test(scene, obedit, ima, efa)) {
+    if (!uvedit_face_visible_test(scene, efa)) {
       continue;
     }
 
@@ -1308,7 +1297,6 @@ static int uv_snap_selection_exec(bContext *C, wmOperator *op)
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   SpaceImage *sima = CTX_wm_space_image(C);
-  Image *ima = CTX_data_edit_image(C);
   const ToolSettings *ts = scene->toolsettings;
   const bool synced_selection = (ts->uv_flag & UV_SYNC_SELECTION) != 0;
   const int target = RNA_enum_get(op->ptr, "target");
@@ -1320,7 +1308,7 @@ static int uv_snap_selection_exec(bContext *C, wmOperator *op)
 
   if (target == 2) {
     float center[2];
-    if (!ED_uvedit_center_multi(scene, ima, objects, objects_len, center, sima->around)) {
+    if (!ED_uvedit_center_multi(scene, objects, objects_len, center, sima->around)) {
       MEM_freeN(objects);
       return OPERATOR_CANCELLED;
     }
@@ -1342,13 +1330,13 @@ static int uv_snap_selection_exec(bContext *C, wmOperator *op)
         changed = uv_snap_uvs_to_pixels(sima, scene, obedit);
         break;
       case 1:
-        changed = uv_snap_uvs_to_cursor(scene, ima, obedit, sima->cursor);
+        changed = uv_snap_uvs_to_cursor(scene, obedit, sima->cursor);
         break;
       case 2:
-        changed = uv_snap_uvs_offset(scene, ima, obedit, offset);
+        changed = uv_snap_uvs_offset(scene, obedit, offset);
         break;
       case 3:
-        changed = uv_snap_uvs_to_adjacent_unselected(scene, ima, obedit);
+        changed = uv_snap_uvs_to_adjacent_unselected(scene, obedit);
         break;
     }
 
@@ -1399,7 +1387,6 @@ static int uv_pin_exec(bContext *C, wmOperator *op)
 {
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  Image *ima = CTX_data_edit_image(C);
   BMFace *efa;
   BMLoop *l;
   BMIter iter, liter;
@@ -1424,7 +1411,7 @@ static int uv_pin_exec(bContext *C, wmOperator *op)
     }
 
     BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-      if (!uvedit_face_visible_test(scene, obedit, ima, efa)) {
+      if (!uvedit_face_visible_test(scene, efa)) {
         continue;
       }
 
@@ -1502,11 +1489,9 @@ static bool bm_face_is_all_uv_sel(BMFace *f, bool select_test, const int cd_loop
 static int uv_hide_exec(bContext *C, wmOperator *op)
 {
   ViewLayer *view_layer = CTX_data_view_layer(C);
-  SpaceImage *sima = CTX_wm_space_image(C);
   Scene *scene = CTX_data_scene(C);
   const ToolSettings *ts = scene->toolsettings;
   const bool swap = RNA_boolean_get(op->ptr, "unselected");
-  Image *ima = sima ? sima->image : NULL;
   const int use_face_center = (ts->uv_selectmode == UV_SELECT_FACE);
 
   uint objects_len = 0;
@@ -1533,7 +1518,7 @@ static int uv_hide_exec(bContext *C, wmOperator *op)
     BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
       int hide = 0;
 
-      if (!uvedit_face_visible_test(scene, ob, ima, efa)) {
+      if (!uvedit_face_visible_test(scene, efa)) {
         continue;
       }
 
@@ -2007,8 +1992,6 @@ static void UV_OT_seams_from_islands(wmOperatorType *ot)
 
 static int uv_mark_seam_exec(bContext *C, wmOperator *op)
 {
-  SpaceImage *sima = CTX_wm_space_image(C);
-  Image *ima = sima ? sima->image : NULL;
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   const ToolSettings *ts = scene->toolsettings;
@@ -2039,7 +2022,7 @@ static int uv_mark_seam_exec(bContext *C, wmOperator *op)
     const int cd_loop_uv_offset = CustomData_get_offset(&bm->ldata, CD_MLOOPUV);
 
     BM_ITER_MESH (efa, &iter, bm, BM_FACES_OF_MESH) {
-      if (uvedit_face_visible_test(scene, ob, ima, efa)) {
+      if (uvedit_face_visible_test(scene, efa)) {
         BM_ITER_ELEM (loop, &liter, efa, BM_LOOPS_OF_FACE) {
           if (uvedit_edge_select_test(scene, loop, cd_loop_uv_offset)) {
             BM_elem_flag_set(loop->e, BM_ELEM_SEAM, flag_set);

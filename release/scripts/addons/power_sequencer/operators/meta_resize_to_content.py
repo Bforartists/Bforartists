@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -47,5 +47,5 @@ class POWER_SEQUENCER_OT_meta_resize_to_content(bpy.types.Operator):
     def execute(self, context):
         selected_meta_strips = (s for s in context.selected_sequences if s.type == "META")
         for s in selected_meta_strips:
-            s.frame_final_start, s.frame_final_end = get_frame_range(context, s.sequences)
+            s.frame_final_start, s.frame_final_end = get_frame_range(s.sequences)
         return {"FINISHED"}

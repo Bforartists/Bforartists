@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -49,5 +49,5 @@ class POWER_SEQUENCER_OT_open_scene_strip(bpy.types.Operator):
             return {"FINISHED"}
 
         strip_scene = active_strip.scene
-        context.screen.scene = bpy.data.scenes[strip_scene.name]
+        context.window.scene = bpy.data.scenes[strip_scene.name]
         return {"FINISHED"}

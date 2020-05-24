@@ -56,14 +56,14 @@ static void initShear_mouseInputMode(TransInfo *t)
   copy_v3_v3(dir, t->spacemtx[t->orient_axis_ortho]);
 
   /* Needed for axis aligned view gizmo. */
-  if (t->orientation.types[t->orientation.index] == V3D_ORIENT_VIEW) {
+  if (t->orient[t->orient_curr].type == V3D_ORIENT_VIEW) {
     if (t->orient_axis_ortho == 0) {
-      if (t->center2d[1] < t->mouse.imval[1]) {
+      if (t->center2d[1] > t->mouse.imval[1]) {
         dir_flip = !dir_flip;
       }
     }
     else if (t->orient_axis_ortho == 1) {
-      if (t->center2d[0] < t->mouse.imval[0]) {
+      if (t->center2d[0] > t->mouse.imval[0]) {
         dir_flip = !dir_flip;
       }
     }

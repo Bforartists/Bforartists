@@ -576,6 +576,14 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
 
     blen_curves = []
     props = []
+    keyframes = {}
+
+    # Add each keyframe to the keyframe dict
+    def store_keyframe(fc, frame, value):
+        fc_key = (fc.data_path, fc.array_index)
+        if not keyframes.get(fc_key):
+            keyframes[fc_key] = []
+        keyframes[fc_key].extend((frame, value))
 
     if isinstance(item, Material):
         grpname = item.name
@@ -618,7 +626,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
                 value[channel] = v
 
             for fc, v in zip(blen_curves, value):
-                fc.keyframe_points.insert(frame, v, options={'NEEDED', 'FAST'}).interpolation = 'LINEAR'
+                store_keyframe(fc, frame, v)
 
     elif isinstance(item, ShapeKey):
         for frame, values in blen_read_animations_curves_iter(fbx_curves, anim_offset, 0, fps):
@@ -629,7 +637,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
                 value = v / 100.0
 
             for fc, v in zip(blen_curves, (value,)):
-                fc.keyframe_points.insert(frame, v, options={'NEEDED', 'FAST'}).interpolation = 'LINEAR'
+                store_keyframe(fc, frame, v)
 
     elif isinstance(item, Camera):
         for frame, values in blen_read_animations_curves_iter(fbx_curves, anim_offset, 0, fps):
@@ -640,7 +648,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
                 value = v
 
             for fc, v in zip(blen_curves, (value,)):
-                fc.keyframe_points.insert(frame, v, options={'NEEDED', 'FAST'}).interpolation = 'LINEAR'
+                store_keyframe(fc, frame, v)
 
     else:  # Object or PoseBone:
         if item.is_bone:
@@ -651,7 +659,6 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
         transform_data = item.fbx_transform_data
         rot_eul_prev = bl_obj.rotation_euler.copy()
         rot_quat_prev = bl_obj.rotation_quaternion.copy()
-
 
         # Pre-compute inverted local rest matrix of the bone, if relevant.
         restmat_inv = item.get_bind_matrix().inverted_safe() if item.is_bone else None
@@ -694,10 +701,24 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
             else:  # Euler
                 rot = rot.to_euler(rot_mode, rot_eul_prev)
                 rot_eul_prev = rot
-            for fc, value in zip(blen_curves, chain(loc, rot, sca)):
-                fc.keyframe_points.insert(frame, value, options={'NEEDED', 'FAST'}).interpolation = 'LINEAR'
 
-    # Since we inserted our keyframes in 'FAST' mode, we have to update the fcurves now.
+            # Add each keyframe and its value to the keyframe dict
+            for fc, value in zip(blen_curves, chain(loc, rot, sca)):
+                store_keyframe(fc, frame, value)
+
+    # Add all keyframe points to the fcurves at once and modify them after
+    for fc_key, key_values in keyframes.items():
+        data_path, index = fc_key
+
+        # Add all keyframe points at once
+        fcurve = action.fcurves.find(data_path=data_path, index=index)
+        num_keys = len(key_values) // 2
+        fcurve.keyframe_points.add(num_keys)
+        fcurve.keyframe_points.foreach_set('co', key_values)
+        linear_enum_value = bpy.types.Keyframe.bl_rna.properties['interpolation'].enum_items['LINEAR'].value
+        fcurve.keyframe_points.foreach_set('interpolation', (linear_enum_value,) * num_keys)
+
+    # Since we inserted our keyframes in 'ultra-fast' mode, we have to update the fcurves now.
     for fc in blen_curves:
         fc.update()
 
