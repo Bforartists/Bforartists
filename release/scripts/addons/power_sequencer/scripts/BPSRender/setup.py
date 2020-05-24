@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License along with Power Sequencer. If
 # not, see <https://www.gnu.org/licenses/>.
 #
+from setuptools import setup
+
 
 def readme():
     with open("README.rst") as f:
@@ -21,8 +23,6 @@ def readme():
 
 
 if __name__ == "__main__":
-    from setuptools import setup
-
     setup(
         name="bpsrender",
         version="0.1.40.post1",

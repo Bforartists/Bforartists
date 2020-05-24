@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -53,35 +53,40 @@ class POWER_SEQUENCER_OT_scene_create_from_selection(bpy.types.Operator):
 
     def execute(self, context):
         start_scene_name = context.scene.name
+        
+        if len(context.selected_sequences) != 0:
+            selection = context.selected_sequences[:]
+            selection_start_frame = min(
+                selection, key=attrgetter("frame_final_start")
+            ).frame_final_start
+            selection_start_channel = min(selection, key=attrgetter("channel")).channel
 
-        selection = context.selected_sequences
-        selection_start_frame = min(
-            selection, key=attrgetter("frame_final_start")
-        ).frame_final_start
-        selection_start_channel = min(selection, key=attrgetter("channel")).channel
+            # Create new scene for the scene strip
+            bpy.ops.scene.new(type="FULL_COPY")
+                       
+            context.window.scene.name = context.selected_sequences[0].name
+            new_scene_name = context.window.scene.name
+            
+            
+            ###after full copy also unselected strips are in the sequencer... Delete those strips
+            bpy.ops.sequencer.select_all(action="INVERT")
+            bpy.ops.power_sequencer.delete_direct()
+            frame_offset = selection_start_frame - 1
+            for s in context.sequences:
+                try:
+                    s.frame_start -= frame_offset
+                except Exception:
+                    continue
+            bpy.ops.sequencer.select_all()
+            bpy.ops.power_sequencer.preview_to_selection()
 
-        # Create new scene for the scene strip
-        bpy.ops.scene.new(type="FULL_COPY")
-        new_scene_name = context.scene.name
+            # Back to start scene  
+            bpy.context.window.scene = bpy.data.scenes[start_scene_name]
 
-        bpy.ops.sequencer.select_all(action="INVERT")
-        bpy.ops.power_sequencer.delete_direct()
-        frame_offset = selection_start_frame - 1
-        for s in context.sequences:
-            try:
-                s.frame_start -= frame_offset
-            except Exception:
-                continue
-        bpy.ops.sequencer.select_all()
-        bpy.ops.power_sequencer.preview_to_selection()
-
-        # Back to start scene
-        context.screen.scene = bpy.data.scenes[start_scene_name]
-
-        bpy.ops.power_sequencer.delete_direct()
-        bpy.ops.sequencer.scene_strip_add(
-            frame_start=selection_start_frame, channel=selection_start_channel, scene=new_scene_name
-        )
-        scene_strip = context.selected_sequences[0]
-        scene_strip.use_sequence = True
+            bpy.ops.power_sequencer.delete_direct()
+            bpy.ops.sequencer.scene_strip_add(
+                frame_start=selection_start_frame, channel=selection_start_channel, scene=new_scene_name
+            )
+            scene_strip = context.selected_sequences[0]
+           # scene_strip.use_sequence = True
         return {"FINISHED"}

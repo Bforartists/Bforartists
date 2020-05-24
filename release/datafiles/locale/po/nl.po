@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -4508,11 +4508,6 @@ msgstr "Actieve Strip"
 
 msgid "Shape Key"
 msgstr "Sleutelvorm"
-
-
-msgctxt "MovieClip"
-msgid "Grease Pencil Source"
-msgstr "Vetkrijt Bron"
 
 
 msgid "Alpha Channel"

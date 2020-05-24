@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -77,7 +77,7 @@ class POWER_SEQUENCER_OT_preview_closest_cut(bpy.types.Operator):
             return {"CANCELLED"}
 
         if scene.frame_preview_start == start and scene.frame_preview_end == end:
-            start, end = get_frame_range(context, context.sequences)
+            start, end = get_frame_range(context.sequences)
         set_preview_range(context, start, end)
         return {"FINISHED"}
 

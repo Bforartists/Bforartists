@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -24,7 +24,7 @@ class POWER_SEQUENCER_OT_snap_selection(bpy.types.Operator):
     *Brief* Snap the entire selection to the time cursor.
 
     Automatically selects sequences if there is no active selection.
-    To snap each strip individually, see Snap.
+    To snap each strip individually, see Snap
     """
 
     doc = {
@@ -32,7 +32,11 @@ class POWER_SEQUENCER_OT_snap_selection(bpy.types.Operator):
         "demo": "",
         "description": doc_description(__doc__),
         "shortcuts": [
-            ({"type": "S", "value": "PRESS", "alt": True}, {}, "Snap selection to cursor")
+            (
+                {"type": "S", "value": "PRESS", "alt": True},
+                {},
+                "Snap selection to cursor",
+            )
         ],
         "keymap": "Sequencer",
     }
@@ -51,7 +55,9 @@ class POWER_SEQUENCER_OT_snap_selection(bpy.types.Operator):
             if context.selected_sequences
             else get_sequences_under_cursor(context)
         )
-        frame_first = min(sequences, key=lambda s: s.frame_final_start).frame_final_start
+        frame_first = min(
+            sequences, key=lambda s: s.frame_final_start
+        ).frame_final_start
         time_offset = context.scene.frame_current - frame_first
         apply_time_offset(context, sequences, time_offset)
         return {"FINISHED"}

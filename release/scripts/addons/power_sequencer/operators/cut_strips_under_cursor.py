@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -23,14 +23,16 @@ from .utils.functions import get_mouse_frame_and_channel
 class POWER_SEQUENCER_OT_split_strips_under_cursor(bpy.types.Operator):
     """
     Splits all strips under cursor including muted strips, but excluding locked strips.
-    Auto selects sequences under the time cursor when you don't have a selection.
+    Auto selects sequences under the time cursor when you don't have a selection
     """
 
     doc = {
         "name": doc_name(__qualname__),
         "demo": "https://i.imgur.com/ZyEd0jD.gif",
         "description": doc_description(__doc__),
-        "shortcuts": [({"type": "K", "value": "PRESS"}, {}, "Cut All Strips Under Cursor")],
+        "shortcuts": [
+            ({"type": "K", "value": "PRESS"}, {}, "Cut All Strips Under Cursor")
+        ],
         "keymap": "Sequencer",
     }
     bl_idname = doc_idname(__qualname__)
@@ -39,7 +41,10 @@ class POWER_SEQUENCER_OT_split_strips_under_cursor(bpy.types.Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     side: bpy.props.EnumProperty(
-        items=[("LEFT", "", ""), ("RIGHT", "", "")], name="Side", default="LEFT", options={"HIDDEN"}
+        items=[("LEFT", "", ""), ("RIGHT", "", "")],
+        name="Side",
+        default="LEFT",
+        options={"HIDDEN"},
     )
 
     @classmethod
@@ -61,5 +66,10 @@ class POWER_SEQUENCER_OT_split_strips_under_cursor(bpy.types.Operator):
                 deselect = False
         if deselect:
             bpy.ops.sequencer.select_all(action="DESELECT")
-        (context.selected_sequences or bpy.ops.power_sequencer.select_strips_under_cursor())
-        return bpy.ops.sequencer.cut(frame=context.scene.frame_current, side=self.side)
+        (
+            context.selected_sequences
+            or bpy.ops.power_sequencer.select_strips_under_cursor()
+        )
+        return bpy.ops.sequencer.split(
+            frame=context.scene.frame_current, side=self.side
+        )

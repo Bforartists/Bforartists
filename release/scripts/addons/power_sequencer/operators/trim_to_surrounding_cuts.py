@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -22,7 +22,7 @@ import bpy
 
 from .utils.functions import convert_duration_to_frames, trim_strips
 from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
-from .utils.functions import find_closest_surrounding_cuts_frames
+from .utils.functions import find_closest_surrounding_cuts_frames, find_strips_in_range
 
 
 class POWER_SEQUENCER_OT_trim_to_surrounding_cuts(bpy.types.Operator):
@@ -87,7 +87,9 @@ class POWER_SEQUENCER_OT_trim_to_surrounding_cuts(bpy.types.Operator):
             )
             return {"CANCELLED"}
 
-        to_delete, to_trim = self.find_strips_in_range(context, left_cut_frame, right_cut_frame)
+        to_delete, to_trim = find_strips_in_range(
+            left_cut_frame, right_cut_frame, context.sequences
+        )
         trim_start, trim_end = (left_cut_frame + margin_frame, right_cut_frame - margin_frame)
 
         trim_strips(context, trim_start, trim_end, to_trim, to_delete)
@@ -100,36 +102,3 @@ class POWER_SEQUENCER_OT_trim_to_surrounding_cuts(bpy.types.Operator):
             context.scene.frame_current = trim_start
 
         return {"FINISHED"}
-
-    def find_strips_in_range(
-        self, context, start_frame, end_frame, sequences=[], find_overlapping=True
-    ):
-        """
-        Returns strips which start and end within a certain frame range, or that overlap a
-        certain frame range
-        Args:
-        - start_frame, the start of the frame range
-        - end_frame, the end of the frame range
-        - sequences (optional): only work with these sequences.
-        If it doesn't receive any, the function works with all the sequences in the current context
-        - find_overlapping (optional): find and return a list of strips that overlap the
-          frame range
-
-        Returns a tuple of two lists:
-        [0], strips entirely in the frame range
-        [1], strips that only overlap the frame range
-        """
-        strips_in_range = []
-        strips_overlapping_range = []
-        sequences = sequences if sequences else context.sequences
-        for s in sequences:
-            if start_frame < s.frame_final_start <= end_frame:
-                if start_frame <= s.frame_final_end < end_frame:
-                    strips_in_range.append(s)
-                elif find_overlapping:
-                    strips_overlapping_range.append(s)
-            elif find_overlapping and start_frame <= s.frame_final_end <= end_frame:
-                strips_overlapping_range.append(s)
-            if s.frame_final_start < start_frame and s.frame_final_end > end_frame:
-                strips_overlapping_range.append(s)
-        return strips_in_range, strips_overlapping_range

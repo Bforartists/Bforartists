@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -18,6 +18,13 @@ import bpy
 from operator import attrgetter
 
 from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
+from .utils.functions import (
+    slice_selection,
+    get_frame_range,
+    get_channel_range,
+    trim_strips,
+    find_strips_in_range,
+)
 
 
 class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
@@ -36,9 +43,19 @@ class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
                 "Move to Open Channel Above",
             ),
             (
+                {"type": "UP_ARROW", "value": "PRESS", "ctrl": True, "alt": True},
+                {"direction": "up", "trim_target_channel": True},
+                "Move to Channel Above and Trim",
+            ),
+            (
                 {"type": "DOWN_ARROW", "value": "PRESS", "alt": True},
                 {"direction": "down"},
                 "Move to Open Channel Below",
+            ),
+            (
+                {"type": "DOWN_ARROW", "value": "PRESS", "ctrl": True, "alt": True},
+                {"direction": "down", "trim_target_channel": True},
+                "Move to Channel Below and Trim",
             ),
         ],
         "keymap": "Sequencer",
@@ -57,6 +74,11 @@ class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
         description="Move the sequences up or down",
         default="up",
     )
+    trim_target_channel: bpy.props.BoolProperty(
+        name="Trim strips",
+        description="Trim strips to make space in the target channel",
+        default=False,
+    )
 
     @classmethod
     def poll(cls, context):
@@ -65,15 +87,27 @@ class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
     def execute(self, context):
         selection = [s for s in context.selected_sequences if not s.lock]
         if not selection:
-            return {"CANCELLED"}
+            return {"FINISHED"}
 
-        selection = sorted(selection, key=attrgetter("channel", "frame_final_start"))
+        selection_blocks = slice_selection(context, selection)
+        for block in selection_blocks:
+            sequences = sorted(block, key=attrgetter("channel", "frame_final_start"))
+            frame_start, frame_end = get_frame_range(sequences)
+            channel_start, channel_end = get_channel_range(sequences)
 
-        if self.direction == "up":
-            for s in reversed(selection):
-                s.channel += 1
-        elif self.direction == "down":
-            for s in selection:
-                if s.channel > 1:
-                    s.channel -= 1
+            if self.trim_target_channel:
+                to_delete, to_trim = find_strips_in_range(frame_start, frame_end, context.sequences)
+                channel_trim = (
+                    channel_end + 1 if self.direction == "up" else max(1, channel_start - 1)
+                )
+                to_trim = [s for s in to_trim if s.channel == channel_trim]
+                to_delete = [s for s in to_delete if s.channel == channel_trim]
+                trim_strips(context, frame_start, frame_end, to_trim, to_delete)
+
+            if self.direction == "up":
+                for s in reversed(sequences):
+                    s.channel += 1
+            elif self.direction == "down":
+                for s in sequences:
+                    s.channel = max(1, s.channel - 1)
         return {"FINISHED"}

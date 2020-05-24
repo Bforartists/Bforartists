@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -15779,10 +15779,6 @@ msgstr "ﺺﺤﻔﻟﺍ ﺖﺤﺗ"
 
 msgid "Newly contributed scripts (excluded from release builds)"
 msgstr "(ﺔﻣﺎﺘﻟﺍ ﺦﺴﻨﻟﺍ ﻦﻣ ﺓﺪﻌﺒﺘﺴﻣ) ﺓﺪﻳﺪﺟ ﺓﺪّﻌﻣ ﺕﺎﺘﺒﻳﺮﻜﺳ"
-
-
-msgid "Text Clipboard"
-msgstr "ﺺﻨﻟﺍ ﻥﺰﺨﻣ"
 
 
 msgid "Key Configurations"
@@ -31961,6 +31957,10 @@ msgid "Open a website in the web-browser"
 msgstr "ﺖﻧﺮﺘﻧﻻ﻿ﺍ ﺢﻔﺼﺘﻤﻟﺍ ﻲﻓ ﻊﻗﻮﻣ ﺢﺘﻓﺇ"
 
 
+msgid "UV Maps"
+msgstr "UV ﻂﺋﺍﺮﺧ"
+
+
 msgctxt "Operator"
 msgid "Toggle Window Fullscreen"
 msgstr "ﺔﻠﻣﺎﻛ ﺔﺷﺎﺷ ﺓﺬﻓﺎﻨﻟﺍ ﺐﻠﻗﺇ"
@@ -32306,10 +32306,6 @@ msgstr "ﻞﻜﻴﻫ"
 
 msgid "Text Boxes"
 msgstr "ﺔﺑﺎﺘﻜﻟﺍ ﺕﺎﻧﺎﺧ"
-
-
-msgid "UV Maps"
-msgstr "UV ﻂﺋﺍﺮﺧ"
 
 
 msgid "Filters"
@@ -36834,15 +36830,6 @@ msgstr "ءﺎﻀﻔﻟﺍ ﺕﺎﻧﺎﻴﺑ ﻉﻮﻧ"
 
 msgid "Space Clip Editor"
 msgstr "ﺔﺻﺎﺼﻘﻟﺍ ءﺎﻀﻓ ﺭﺮﺤﻣ"
-
-
-msgctxt "MovieClip"
-msgid "Grease Pencil Source"
-msgstr "ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻗ ﺭﺪﺼﻣ"
-
-
-msgid "Where the grease pencil comes from"
-msgstr "ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻗ ﻲﺗﺄﻳ ﻦﻳﺍ ﻦﻣ"
 
 
 msgctxt "MovieClip"
@@ -42350,18 +42337,6 @@ msgstr "ﻲﻧﺎﺜﻟﺍ ﻞﻣﺎﻌﻤﻟﺍ"
 
 msgid "Add a new control-point to the envelope on the current frame"
 msgstr "ﻲﻟﺎﺤﻟﺍ ﺭﺎﻃﻻ﻿ﺍ ﻰﻠﻋ ﻒﻠﻐﻤﻠﻟ ﺓﺪﻳﺪﺟ ﻢﻜﺤﺗ ﺔﻄﻘﻧ ﻒﺿﺍ"
-
-
-msgid "Frame that envelope point occurs"
-msgstr "ﻒﻠﻐﻤﻟﺍ ﺔﻄﻘﻧ ﻪﻴﻠﻋ ﺙﺪﺤﻳ ﻱﺬﻟﺍ ﺭﺎﻃﻹ﻿ﺍ"
-
-
-msgid "Minimum bound of envelope at this point"
-msgstr "ﺔﻄﻘﻧ ﻩﺬﻫ ﻲﻓ ﻒﻠﻐﻤﻠﻟ ﺎﻴﻧﺪﻟﺍ ﺩﻭﺪﺤﻟﺍ"
-
-
-msgid "Maximum bound of envelope at this point"
-msgstr "ﺔﻄﻘﻧ ﻩﺬﻫ ﻲﻓ ﻒﻠﻐﻤﻠﻟ ﺎﻴﻠﻌﻟﺍ ﺩﻭﺪﺤﻟﺍ"
 
 
 msgid "Delete envelope control point"

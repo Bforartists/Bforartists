@@ -80,11 +80,11 @@ mantaMsg('Liquid alloc')\n\
 phiParts_s$ID$   = s$ID$.create(LevelsetGrid)\n\
 phi_s$ID$        = s$ID$.create(LevelsetGrid)\n\
 phiTmp_s$ID$     = s$ID$.create(LevelsetGrid)\n\
-curvature_s$ID$  = s$ID$.create(RealGrid)\n\
 velOld_s$ID$     = s$ID$.create(MACGrid)\n\
 velParts_s$ID$   = s$ID$.create(MACGrid)\n\
 mapWeights_s$ID$ = s$ID$.create(MACGrid)\n\
 fractions_s$ID$  = None # allocated dynamically\n\
+curvature_s$ID$  = None\n\
 \n\
 pp_s$ID$         = s$ID$.create(BasicParticleSystem)\n\
 pVel_pp$ID$      = pp_s$ID$.create(PdataVec3)\n\
@@ -123,6 +123,11 @@ liquid_mesh_dict_s$ID$ = dict(lMesh=mesh_sm$ID$)\n\
 \n\
 if using_speedvectors_s$ID$:\n\
     liquid_meshvel_dict_s$ID$ = dict(lVelMesh=mVel_mesh$ID$)\n";
+
+const std::string liquid_alloc_curvature =
+    "\n\
+mantaMsg('Liquid alloc curvature')\n\
+curvature_s$ID$  = s$ID$.create(RealGrid)\n";
 
 const std::string liquid_alloc_particles =
     "\n\
@@ -227,7 +232,7 @@ def liquid_step_$ID$():\n\
     mantaMsg('Liquid step')\n\
     \n\
     mantaMsg('Advecting particles')\n\
-    pp_s$ID$.advectInGrid(flags=flags_s$ID$, vel=vel_s$ID$, integrationMode=IntRK4, deleteInObstacle=deleteInObstacle_s$ID$, stopInObstacle=False)\n\
+    pp_s$ID$.advectInGrid(flags=flags_s$ID$, vel=vel_s$ID$, integrationMode=IntRK4, deleteInObstacle=deleteInObstacle_s$ID$, stopInObstacle=False, skipNew=True)\n\
     \n\
     mantaMsg('Pushing particles out of obstacles')\n\
     pushOutofObs(parts=pp_s$ID$, flags=flags_s$ID$, phiObs=phiObs_s$ID$)\n\
@@ -284,11 +289,12 @@ def liquid_step_$ID$():\n\
         alphaV = viscosity_s$ID$ * s$ID$.timestep * float(res_s$ID$*res_s$ID$)\n\
         setWallBcs(flags=flags_s$ID$, vel=vel_s$ID$, obvel=None if using_fractions_s$ID$ else obvel_s$ID$, phiObs=phiObs_s$ID$, fractions=fractions_s$ID$)\n\
         cgSolveDiffusion(flags_s$ID$, vel_s$ID$, alphaV)\n\
+        \n\
+        mantaMsg('Curvature')\n\
+        getLaplacian(laplacian=curvature_s$ID$, grid=phi_s$ID$)\n\
+        curvature_s$ID$.clamp(-1.0, 1.0)\n\
     \n\
     setWallBcs(flags=flags_s$ID$, vel=vel_s$ID$, obvel=None if using_fractions_s$ID$ else obvel_s$ID$, phiObs=phiObs_s$ID$, fractions=fractions_s$ID$)\n\
-    \n\
-    mantaMsg('Calculating curvature')\n\
-    getLaplacian(laplacian=curvature_s$ID$, grid=phi_s$ID$)\n\
     \n\
     if using_guiding_s$ID$:\n\
         mantaMsg('Guiding and pressure')\n\
@@ -343,7 +349,10 @@ def liquid_step_mesh_$ID$():\n\
         interpolateMACGrid(target=vel_sm$ID$, source=vel_s$ID$)\n\
         mVel_mesh$ID$.setSource(vel_sm$ID$, isMAC=True)\n\
     \n\
-    phi_sm$ID$.setBound(0.5,int(((upres_sm$ID$)*2)-2) )\n\
+    # Set 0.5 boundary at walls + account for extra wall thickness in fractions mode + account for grid scaling:\n\
+    # E.g. at upres=1 we expect 1 cell border (or 2 with fractions), at upres=2 we expect 2 cell border (or 4 with fractions), etc.\n\
+    # Use -1 since setBound() starts counting at 0 (and additional -1 for fractions to account for solid/fluid interface cells)\n\
+    phi_sm$ID$.setBound(value=0.5, boundaryWidth=(upres_sm$ID$*2)-2 if using_fractions_s$ID$ else upres_sm$ID$-1)\n\
     phi_sm$ID$.createMesh(mesh_sm$ID$)\n";
 
 const std::string liquid_step_particles =

@@ -55,7 +55,7 @@ from bpy.types import (
 import requests, os, random
 import time
 import threading
-import tempfile
+import platform
 import json
 import bpy
 
@@ -133,19 +133,20 @@ last_clipboard = ''
 
 def check_clipboard():
     # clipboard monitoring to search assets from web
-    global last_clipboard
-    if bpy.context.window_manager.clipboard != last_clipboard:
-        last_clipboard = bpy.context.window_manager.clipboard
-        instr = 'asset_base_id:'
-        # first check if contains asset id, then asset type
-        if last_clipboard[:len(instr)] == instr:
-            atstr = 'asset_type:'
-            ati = last_clipboard.find(atstr)
-            # this only checks if the asset_type keyword is there but let's the keywords update function do the parsing.
-            if ati > -1:
-                search_props = utils.get_search_props()
-                search_props.search_keywords = last_clipboard
-                # don't run search after this - assigning to keywords runs the search_update function.
+    if platform.system() != 'Linux':
+        global last_clipboard
+        if bpy.context.window_manager.clipboard != last_clipboard:
+            last_clipboard = bpy.context.window_manager.clipboard
+            instr = 'asset_base_id:'
+            # first check if contains asset id, then asset type
+            if last_clipboard[:len(instr)] == instr:
+                atstr = 'asset_type:'
+                ati = last_clipboard.find(atstr)
+                # this only checks if the asset_type keyword is there but let's the keywords update function do the parsing.
+                if ati > -1:
+                    search_props = utils.get_search_props()
+                    search_props.search_keywords = last_clipboard
+                    # don't run search after this - assigning to keywords runs the search_update function.
 
 
 # @bpy.app.handlers.persistent

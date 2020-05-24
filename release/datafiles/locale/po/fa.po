@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -4161,10 +4161,6 @@ msgstr "ﻪﻠﺻﺎﻓ ﻉﻮﻧ"
 
 msgid "Community"
 msgstr "ﯼﺮﺑﺭﺎﮐ ﻪﻌﻣﺎﺟ"
-
-
-msgid "Text Clipboard"
-msgstr "ﻦﺘﻣ ﮓﻧﺭ"
 
 
 msgid "Operators"
@@ -11929,6 +11925,10 @@ msgid "URL to open"
 msgstr "ﻥﺩﺮﮐ‌ﺯﺎﺑ ﯼﺍﺮﺑ ﯽﺘﻧﺮﺘﻨﯾﺍ ﺱﺭﺩﺁ"
 
 
+msgid "UV Maps"
+msgstr ":UV ﯼﺭﺍﺩﺮﺑ ﻪﺸﻘﻧ"
+
+
 msgctxt "Operator"
 msgid "New World"
 msgstr "ﻥﺎﻬﺟ"
@@ -12048,10 +12048,6 @@ msgstr "ﺮﯿﺴﻣ ﺩﺍﺪﺘﻣﺍ ﺭﺩ ﻦﺸﯿﻤﯿﻧﺍ"
 
 msgid "Text Boxes"
 msgstr "ﯽﻨﺘﻣ ﯼﺎﻫ‌ﻪﺒﻌﺟ"
-
-
-msgid "UV Maps"
-msgstr ":UV ﯼﺭﺍﺩﺮﺑ ﻪﺸﻘﻧ"
 
 
 msgid "Bookmarks"

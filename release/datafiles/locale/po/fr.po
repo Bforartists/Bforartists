@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -12705,10 +12705,6 @@ msgid "Initial"
 msgstr "Initial"
 
 
-msgid "Initial velocity in X, Y and Z direction"
-msgstr "Vitesse initiale dans les directions X, Y et Z"
-
-
 msgid "Normal"
 msgstr "Normale"
 
@@ -23838,10 +23834,6 @@ msgstr "En test"
 
 msgid "Newly contributed scripts (excluded from release builds)"
 msgstr "Scripts nouvellement proposés (exclus des versions officielles)"
-
-
-msgid "Text Clipboard"
-msgstr "Presse-papier texte"
 
 
 msgid "Key Configurations"
@@ -44177,10 +44169,6 @@ msgid "Use pre/post rotation from FBX transform (you may have to disable that in
 msgstr "Utiliser les pré-/post-rotations des transformations FBX (vous pouvez avoir besoin de désactiver cela dans certains cas)"
 
 
-msgid "Pack images"
-msgstr "Empaqueter les images"
-
-
 msgid "Use Normal Data"
 msgstr "Utiliser données normales"
 
@@ -59109,6 +59097,10 @@ msgid "URL to open"
 msgstr "URL à ouvrir"
 
 
+msgid "UV Maps"
+msgstr "Cartes UV"
+
+
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "Ajouter chemin autoexec"
@@ -59925,10 +59917,6 @@ msgstr "Squelette"
 
 msgid "Text Boxes"
 msgstr "Boîtes de texte"
-
-
-msgid "UV Maps"
-msgstr "Cartes UV"
 
 
 msgid "Filters"
@@ -68453,15 +68441,6 @@ msgstr "Espace de l’éditeur de clips"
 
 msgid "Clip editor space data"
 msgstr "Données de l’espace de l’éditeur de clips"
-
-
-msgctxt "MovieClip"
-msgid "Grease Pencil Source"
-msgstr "Source du crayon gras"
-
-
-msgid "Where the grease pencil comes from"
-msgstr "D’où provient le crayon gras"
 
 
 msgctxt "MovieClip"
@@ -78916,18 +78895,6 @@ msgid "Add a new control-point to the envelope on the current frame"
 msgstr "Ajouter un nouveau point de contrôle à l’enveloppe à la frame courante"
 
 
-msgid "Frame that envelope point occurs"
-msgstr "Frame à laquelle est placé ce point d’enveloppe"
-
-
-msgid "Minimum bound of envelope at this point"
-msgstr "Limite inférieure de l’enveloppe à ce point"
-
-
-msgid "Maximum bound of envelope at this point"
-msgstr "Limite supérieure de l’enveloppe à ce point"
-
-
 msgid "Delete envelope control point"
 msgstr "Supprimer point de contrôle d’enveloppe"
 
@@ -85109,6 +85076,10 @@ msgid "Cannot save render buffers, check the temp default path"
 msgstr "Impossible d’enregistrer les tampons de rendu, vérifiez le chemin temp par défaut"
 
 
+msgid "Border rendering is not supported by sequencer"
+msgstr "Le rendu partiel n’est pas supporté par le séquenceur"
+
+
 msgid "No node tree in scene"
 msgstr "Pas d’arborescence de nœuds dans la scène"
 
@@ -85119,10 +85090,6 @@ msgstr "Pas de nœud de sortie du rendu dans la scène"
 
 msgid "Full sample AA not supported without 3D rendering"
 msgstr "L’anti-aliasing en échantillonnage complet n’est pas supporté sans rendu 3D"
-
-
-msgid "Border rendering is not supported by sequencer"
-msgstr "Le rendu partiel n’est pas supporté par le séquenceur"
 
 
 msgid "All render layers are disabled"

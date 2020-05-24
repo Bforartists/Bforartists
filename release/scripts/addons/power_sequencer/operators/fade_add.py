@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -22,7 +22,7 @@ from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 
 
 class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
-    """*brief* Adds or updates a fade animation for either visual or audio strips.
+    """*brief* Adds or updates a fade animation for either visual or audio strips
 
     Fade options:
 
@@ -31,7 +31,7 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
     - From playhead: the fade animation goes from the start of sequences under the playhead to the playhead
     - To playhead: the fade animation goes from the playhead to the end of sequences under the playhead
 
-    By default, the duration of the fade is 1 second.
+    By default, the duration of the fade is 1 second
     """
 
     doc = {
@@ -51,7 +51,10 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     duration_seconds: bpy.props.FloatProperty(
-        name="Fade Duration", description="Duration of the fade in seconds", default=1.0, min=0.01
+        name="Fade Duration",
+        description="Duration of the fade in seconds",
+        default=1.0,
+        min=0.01,
     )
     type: bpy.props.EnumProperty(
         items=[
@@ -95,8 +98,12 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
                 if s.frame_final_start < context.scene.frame_current < s.frame_final_end
             ]
 
-        max_duration = min(sequences, key=lambda s: s.frame_final_duration).frame_final_duration
-        max_duration = floor(max_duration / 2.0) if self.type == "IN_OUT" else max_duration
+        max_duration = min(
+            sequences, key=lambda s: s.frame_final_duration
+        ).frame_final_duration
+        max_duration = (
+            floor(max_duration / 2.0) if self.type == "IN_OUT" else max_duration
+        )
 
         faded_sequences = []
         for sequence in sequences:
@@ -106,16 +113,25 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
             if not self.is_long_enough(sequence, duration):
                 continue
 
-            animated_property = "volume" if hasattr(sequence, "volume") else "blend_alpha"
-            fade_fcurve = fade_find_or_create_fcurve(context, sequence, animated_property)
-            fades = self.calculate_fades(sequence, fade_fcurve, animated_property, duration)
+            animated_property = (
+                "volume" if hasattr(sequence, "volume") else "blend_alpha"
+            )
+            fade_fcurve = fade_find_or_create_fcurve(
+                context, sequence, animated_property
+            )
+            fades = self.calculate_fades(
+                sequence, fade_fcurve, animated_property, duration
+            )
             fade_animation_clear(context, fade_fcurve, fades)
             fade_animation_create(fade_fcurve, fades)
             faded_sequences.append(sequence)
 
         sequence_string = "sequence" if len(faded_sequences) == 1 else "sequences"
         self.report(
-            {"INFO"}, "Added fade animation to {} {}.".format(len(faded_sequences), sequence_string)
+            {"INFO"},
+            "Added fade animation to {} {}.".format(
+                len(faded_sequences), sequence_string
+            ),
         )
         return {"FINISHED"}
 
@@ -216,9 +232,13 @@ class Fade:
 
         if type == "IN":
             self.start = Vector((sequence.frame_final_start, 0.0))
-            self.end = Vector((sequence.frame_final_start + self.duration, self.max_value))
+            self.end = Vector(
+                (sequence.frame_final_start + self.duration, self.max_value)
+            )
         elif type == "OUT":
-            self.start = Vector((sequence.frame_final_end - self.duration, self.max_value))
+            self.start = Vector(
+                (sequence.frame_final_end - self.duration, self.max_value)
+            )
             self.end = Vector((sequence.frame_final_end, 0.0))
 
     def calculate_max_value(self, sequence, fade_fcurve):
@@ -233,11 +253,15 @@ class Fade:
         else:
             if self.type == "IN":
                 fade_end = sequence.frame_final_start + self.duration
-                keyframes = (k for k in fade_fcurve.keyframe_points if k.co[0] >= fade_end)
+                keyframes = (
+                    k for k in fade_fcurve.keyframe_points if k.co[0] >= fade_end
+                )
             if self.type == "OUT":
                 fade_start = sequence.frame_final_end - self.duration
                 keyframes = (
-                    k for k in reversed(fade_fcurve.keyframe_points) if k.co[0] <= fade_start
+                    k
+                    for k in reversed(fade_fcurve.keyframe_points)
+                    if k.co[0] <= fade_start
                 )
             try:
                 max_value = next(keyframes).co[1]
@@ -251,4 +275,6 @@ class Fade:
 
 
 def calculate_duration_frames(context, duration_seconds):
-    return round(duration_seconds * context.scene.render.fps / context.scene.render.fps_base)
+    return round(
+        duration_seconds * context.scene.render.fps / context.scene.render.fps_base
+    )

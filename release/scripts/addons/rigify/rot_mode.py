@@ -225,7 +225,7 @@ convert = convert()
 class VIEW3D_PT_rigify_rot_mode(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'View'
+    bl_category = 'Rigify'
     bl_context = "posemode"
     bl_label = 'Rigify Quat/Euler Converter'
 
