@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -81,7 +81,7 @@ class POWER_SEQUENCER_OT_ripple_delete(bpy.types.Operator):
                 sequencer.select_all(action="DESELECT")
                 for s in block:
                     s.select = True
-                selection_start = get_frame_range(context, block)[0]
+                selection_start = get_frame_range(block)[0]
                 sequencer.delete()
 
                 scene.frame_current = selection_start

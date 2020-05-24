@@ -10,7 +10,7 @@ bl_info = {
     "name": "Auto Mirror",
     "description": "Super fast cutting and mirroring for mesh",
     "author": "Lapineige",
-    "version": (2, 5, 2),
+    "version": (2, 5, 3),
     "blender": (2, 80, 0),
     "location": "View 3D > Sidebar > Edit Tab > AutoMirror (panel)",
     "warning": "",
@@ -139,6 +139,8 @@ class AutoMirror(bpy.types.Operator):
         return v2-v1
 
     def execute(self, context):
+        context.active_object.select_set(True)
+
         automirror = context.scene.automirror
 
         X,Y,Z = 0,0,0

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -38,11 +38,11 @@ bl_info = {
     "name": "Power Sequencer",
     "description": "Video editing tools for content creators",
     "author": "Nathan Lovato",
-    "version": (1, 4, 0),
-    "blender": (2, 80, 0),
+    "version": (1, 5, 0),
+    "blender": (2, 81, 0),
     "location": "Sequencer",
     "tracker_url": "https://github.com/GDquest/Blender-power-sequencer/issues",
-    "doc_url": "https://www.gdquest.com/docs/documentation/power-sequencer/",
+    "wiki_url": "https://www.gdquest.com/docs/documentation/power-sequencer/",
     "support": "COMMUNITY",
     "category": "Sequencer",
 }
@@ -70,13 +70,11 @@ def register():
         bpy.utils.register_class(cls)
 
     # Register tools
-    version_min_toolbar = (2, 83, 0)
-    if is_blender_version_compatible(version_min_toolbar):
-        classes_tool = get_tool_classes()
-        last_tool = {"builtin.cut"}
-        for index, cls in enumerate(classes_tool):
-            bpy.utils.register_tool(cls, after=last_tool, separator=index == 0)
-            last_tool = {cls.bl_idname}
+    classes_tool = get_tool_classes()
+    last_tool = {"builtin.blade"}
+    for index, cls in enumerate(classes_tool):
+        bpy.utils.register_tool(cls, after=last_tool, separator=index == 0)
+        last_tool = {cls.bl_idname}
 
     # Register keymaps
     keymaps = register_shortcuts(classes_operator)
@@ -98,10 +96,8 @@ def unregister():
     for cls in classes_operator:
         bpy.utils.unregister_class(cls)
 
-    version_min_toolbar = (2, 82, 0)
-    if is_blender_version_compatible(version_min_toolbar):
-        for cls in classes_tool:
-            bpy.utils.unregister_tool(cls)
+    for cls in classes_tool:
+        bpy.utils.unregister_tool(cls)
 
     unregister_ui()
     unregister_preferences()
@@ -109,11 +105,3 @@ def unregister():
     unregister_handlers()
 
     print("Unregistered {}".format(bl_info["name"]))
-
-
-def is_blender_version_compatible(version: Tuple[int, int, int]) -> bool:
-    """Returns True if the `version` is greater or equal to the current Blender version.
-    Converts the versions to integers to compare them."""
-    version_int = version[0] * 1000 + version[1] * 10 + version[2]
-    blender_version_int = bpy.app.version[0] * 1000 + bpy.app.version[1] * 10 + bpy.app.version[2]
-    return blender_version_int >= version_int

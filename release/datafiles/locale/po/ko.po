@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -12465,10 +12465,6 @@ msgid "Initial"
 msgstr "초기"
 
 
-msgid "Initial velocity in X, Y and Z direction"
-msgstr "X, Y 및 Z 방향의 초기 속도"
-
-
 msgid "Multiplier of source velocity passed to fluid (source velocity is non-zero only if object is moving)"
 msgstr "소스 속도의 승수가 유체로 전달됨 (오브젝트가 움직이는 경우에만 소스 속도가 0이 아님)"
 
@@ -23898,10 +23894,6 @@ msgstr "테스트중"
 
 msgid "Newly contributed scripts (excluded from release builds)"
 msgstr "새로 기여된 스크립트 (릴리즈 빌드에서 제외된)"
-
-
-msgid "Text Clipboard"
-msgstr "텍스트 클립 보드"
 
 
 msgid "Key Configurations"
@@ -43269,10 +43261,6 @@ msgid "Export the scene in the current animation frame"
 msgstr "현재 애니메이션 프레임에서 씬을 내보내기"
 
 
-msgid "Export Deformation bones only"
-msgstr "변형 본만 내보내기"
-
-
 msgid "Export Deformation bones only (and needed bones for hierarchy)"
 msgstr "변형 본만 내보내기 (및 계층 구조에 필요한 본)"
 
@@ -43419,10 +43407,6 @@ msgstr "셰이프 키 탄젠트"
 
 msgid "Export vertex tangents with shape keys (morph targets)"
 msgstr "셰이프 키로 버텍스 탄젠트를 내보내기 (모프 타겟)"
-
-
-msgid "Export NLA Strip animations"
-msgstr "NLA 스트립 애니메이션을 내보내기"
 
 
 msgid "Export vertex normals with meshes"
@@ -47226,10 +47210,6 @@ msgstr "glTF 2.0를 가져 오기"
 
 msgid "Load a glTF 2.0 file"
 msgstr "glTF 2.0 파일을 불러 오기"
-
-
-msgid "Pack images"
-msgstr "이미지를 포장"
 
 
 msgid "Pack all images into .blend file"
@@ -64670,6 +64650,14 @@ msgid "Site"
 msgstr "사이트"
 
 
+msgid "UV Maps"
+msgstr "UV 맵"
+
+
+msgid "Instancing"
+msgstr "인스턴싱"
+
+
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "자동 실행 경로를 추가"
@@ -65646,10 +65634,6 @@ msgid "Text Boxes"
 msgstr "텍스트 박스"
 
 
-msgid "UV Maps"
-msgstr "UV 맵"
-
-
 msgid "Filters"
 msgstr "필터"
 
@@ -65912,10 +65896,6 @@ msgstr "연결 잘라내기"
 
 msgid "Delta Transform"
 msgstr "델타 변환"
-
-
-msgid "Instancing"
-msgstr "인스턴싱"
 
 
 msgid "Scale by Face Size"
@@ -76400,15 +76380,6 @@ msgstr "공간 클립 에디터"
 
 msgid "Clip editor space data"
 msgstr "클립 에디터 공간 데이터"
-
-
-msgctxt "MovieClip"
-msgid "Grease Pencil Source"
-msgstr "그리스 펜슬 소스"
-
-
-msgid "Where the grease pencil comes from"
-msgstr "다음에서 어디에 그리스 펜슬 제공"
 
 
 msgid "Show annotation data-block which belongs to movie clip"
@@ -91700,18 +91671,6 @@ msgid "Add a new control-point to the envelope on the current frame"
 msgstr "현재 프레임에서 엔벨로프에 새로운 컨트롤 포인트를 추가"
 
 
-msgid "Frame that envelope point occurs"
-msgstr "이 엔벨로프 포인트 발생하는 프레임"
-
-
-msgid "Minimum bound of envelope at this point"
-msgstr "이 포인트에서 엠벨로프의 최소의 경계"
-
-
-msgid "Maximum bound of envelope at this point"
-msgstr "이 포인트에서 엠벨로프의 최대의 경계"
-
-
 msgid "Delete envelope control point"
 msgstr "엔벨로프 컨트롤 포인트를 삭제"
 
@@ -99047,6 +99006,10 @@ msgid "Cannot save render buffers, check the temp default path"
 msgstr "렌더 버퍼를 저장 할 수 없음, 임시 기본 경로를 확인해 보세요"
 
 
+msgid "Border rendering is not supported by sequencer"
+msgstr "시퀀서에서 경계 렌더링을 지원하지 않습니다"
+
+
 msgid "No node tree in scene"
 msgstr "씬에 노드 트리 없음"
 
@@ -99057,10 +99020,6 @@ msgstr "씬에 렌더 출력 노드 없음"
 
 msgid "Full sample AA not supported without 3D rendering"
 msgstr "전체 샘플 AA는 3D 렌더링 없이 지원되지 않음"
-
-
-msgid "Border rendering is not supported by sequencer"
-msgstr "시퀀서에서 경계 렌더링을 지원하지 않습니다"
 
 
 msgid "All render layers are disabled"

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -93,7 +93,6 @@ class POWER_SEQUENCER_OT_import_local_footage(bpy.types.Operator):
         files_to_import = [
             os.path.join(self.directory, f) for f in self.find_new_files_to_import(filepaths)
         ]
-        print(files_to_import)
         if not files_to_import:
             self.report({"INFO"}, "No new files to import found")
             return {"FINISHED"}

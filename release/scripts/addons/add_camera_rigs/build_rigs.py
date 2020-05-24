@@ -164,6 +164,8 @@ def setup_3d_rig(rig, cam):
     con.subtarget = "Camera"
 
     con = pose_bones['Camera'].constraints.new('TRACK_TO')
+    con.track_axis = 'TRACK_Y'
+    con.up_axis = 'UP_Z'
     con.target = rig
     con.subtarget = "Aim"
     con.use_target_z = True

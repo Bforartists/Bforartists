@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
 "Last-Translator: MT\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -16417,10 +16417,6 @@ msgstr "In Test"
 
 msgid "Newly contributed scripts (excluded from release builds)"
 msgstr "Nuovi script (esclusi dalle build di rilascio)"
-
-
-msgid "Text Clipboard"
-msgstr "Appunti Testo"
 
 
 msgid "Key Configurations"
@@ -44575,6 +44571,10 @@ msgid "URL to open"
 msgstr "URL da aprire"
 
 
+msgid "UV Maps"
+msgstr "Mappe UV"
+
+
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "Aggiungi Percorso Esecuzione Automatica"
@@ -45178,10 +45178,6 @@ msgstr "Scheletro"
 
 msgid "Text Boxes"
 msgstr "Caselle di Testo"
-
-
-msgid "UV Maps"
-msgstr "Mappe UV"
 
 
 msgid "Filters"
@@ -51587,15 +51583,6 @@ msgstr "Quads Rigidi"
 
 msgid "Goal Vertex Group"
 msgstr "Obiettivi Gruppo di Vertici"
-
-
-msgctxt "MovieClip"
-msgid "Grease Pencil Source"
-msgstr "Origine Matita"
-
-
-msgid "Where the grease pencil comes from"
-msgstr "Da dove arriva la matita"
 
 
 msgctxt "MovieClip"
@@ -61441,18 +61428,6 @@ msgid "Add a new control-point to the envelope on the current frame"
 msgstr "Aggiunge un nuovo punto-controllo all'inviluppo sul fotogramma corrente"
 
 
-msgid "Frame that envelope point occurs"
-msgstr "Questo punto del fotogramma si verifica un controllo"
-
-
-msgid "Minimum bound of envelope at this point"
-msgstr "Limite superiore del punto di controllo dell'inviluppo"
-
-
-msgid "Maximum bound of envelope at this point"
-msgstr "Limite superiore del punto di controllo dell'inviluppo"
-
-
 msgid "Delete envelope control point"
 msgstr "Cancella punto di controllo involucro"
 
@@ -65627,16 +65602,16 @@ msgid "Cannot render, no camera"
 msgstr "Impossibile renderizzare, nessuna camera"
 
 
+msgid "Border rendering is not supported by sequencer"
+msgstr "Il rendering parziale non è supportato dall'editor sequenze video"
+
+
 msgid "No node tree in scene"
 msgstr "Nessun albero nodi nella scena"
 
 
 msgid "No render output node in scene"
 msgstr "Nessun nodo di output nella scena"
-
-
-msgid "Border rendering is not supported by sequencer"
-msgstr "Il rendering parziale non è supportato dall'editor sequenze video"
 
 
 msgid "All render layers are disabled"

@@ -140,8 +140,9 @@ class ViewMoveQCDSlot(Operator):
         slot_string = f"QCD Slot {properties.slot}: \"{slot_name}\"\n"
 
         hotkey_string = (
-            "  * Shift+LMB - Toggle QCD slot.\n"
-            "  * Ctrl+LMB - Move objects to QCD slot.\n"
+            "  * LMB - Isolate slot.\n"
+            "  * Shift+LMB - Toggle slot.\n"
+            "  * Ctrl+LMB - Move objects to slot.\n"
             "  * Ctrl+Shift+LMB - Toggle objects' slot"
             )
 
@@ -281,11 +282,11 @@ class ViewQCDSlot(Operator):
 
 
 class RenumerateQCDSlots(Operator):
-    bl_label = "Renumerate QCD Slots"
+    bl_label = "Renumber QCD Slots"
     bl_description = (
-        "Renumerate QCD slots.\n"
-        "  * LMB - Renumerate starting from the slot designated 1.\n"
-        "  * Alt+LMB - Renumerate from the beginning"
+        "Renumber QCD slots.\n"
+        "  * LMB - Renumber starting from the slot designated 1.\n"
+        "  * Alt+LMB - Renumber from the beginning"
         )
     bl_idname = "view3d.renumerate_qcd_slots"
     bl_options = {'REGISTER', 'UNDO'}
