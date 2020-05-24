@@ -29,8 +29,8 @@
 bl_info = {
     "name": "Precision Drawing Tools (PDT)",
     "author": "Alan Odom (Clockmender), Rune Morling (ermo)",
-    "version": (1, 3, 0),
-    "blender": (2, 82, 0),
+    "version": (1, 4, 0),
+    "blender": (2, 83, 0),
     "location": "View3D > UI > PDT",
     "description": "Precision Drawing Tools for Acccurate Modelling",
     "warning": "",
@@ -54,6 +54,7 @@ if "bpy" in locals():
     importlib.reload(pdt_bix)
     importlib.reload(pdt_etof)
     importlib.reload(pdt_tangent)
+    importlib.reload(pdt_trig_waves)
 else:
     from . import pdt_design
     from . import pdt_pivot_point
@@ -64,11 +65,17 @@ else:
     from . import pdt_bix
     from . import pdt_etof
     from . import pdt_tangent
+    from . import pdt_trig_waves
 
 import bpy
 import os
 from pathlib import Path
-from bpy.types import AddonPreferences, PropertyGroup, Scene, WindowManager
+from bpy.types import (
+    AddonPreferences,
+    PropertyGroup, Scene,
+    WindowManager,
+    Object,
+)
 from bpy.props import (
     BoolProperty,
     CollectionProperty,
@@ -130,6 +137,39 @@ _pdt_col_items = []
 _pdt_mat_items = []
 
 
+class PDTPreferences(AddonPreferences):
+    # This must match the addon name, use '__package__'
+    # when defining this in a submodule of a python package.
+
+    bl_idname = __name__
+
+    debug: BoolProperty(
+        name="Enable console debug output from PDT scripts",
+        default=False,
+        description="NOTE: Does not enable debugging globally in Blender (only in PDT scripts)",
+    )
+
+    pdt_ui_width: IntProperty(
+        name="UI Width Cut-off",
+        default=350,
+        description="Cutoff width for shrinking items per line in menus",
+    )
+
+    pdt_input_round: IntProperty(
+        name="Input Rounding", default=5, description="Rounding Factor for Inputs"
+    )
+
+    def draw(self, context):
+        layout = self.layout
+
+        box = layout.box()
+        row1 = box.row()
+        row2 = box.row()
+        row1.prop(self, "debug")
+        row2.prop(self, "pdt_ui_width")
+        row2.prop(self, "pdt_input_round")
+
+
 def enumlist_objects(self, context):
     """Populate Objects List from Parts Library.
 
@@ -145,8 +185,8 @@ def enumlist_objects(self, context):
 
     scene = context.scene
     pg = scene.pdt_pg
-    file_path = context.preferences.addons[__package__].preferences.pdt_library_path
-    path = Path(file_path)
+    file_path = pg.pdt_library_path
+    path = Path(bpy.path.abspath(file_path))
     _pdt_obj_items.clear()
 
     if path.is_file() and ".blend" in str(path):
@@ -158,7 +198,7 @@ def enumlist_objects(self, context):
         for object_name in object_names:
             _pdt_obj_items.append((object_name, object_name, ""))
     else:
-        _pdt_obj_items.append(("MISSING", "Library is Missing", ""))
+        _pdt_obj_items.append(("MISSING", "Library Not Set", ""))
     return _pdt_obj_items
 
 
@@ -177,8 +217,8 @@ def enumlist_collections(self, context):
 
     scene = context.scene
     pg = scene.pdt_pg
-    file_path = context.preferences.addons[__package__].preferences.pdt_library_path
-    path = Path(file_path)
+    file_path = pg.pdt_library_path
+    path = Path(bpy.path.abspath(file_path))
     _pdt_col_items.clear()
 
     if path.is_file() and ".blend" in str(path):
@@ -192,7 +232,7 @@ def enumlist_collections(self, context):
         for object_name in object_names:
             _pdt_col_items.append((object_name, object_name, ""))
     else:
-        _pdt_col_items.append(("MISSING", "Library is Missing", ""))
+        _pdt_col_items.append(("MISSING", "Library Not Set", ""))
     return _pdt_col_items
 
 
@@ -211,8 +251,8 @@ def enumlist_materials(self, context):
 
     scene = context.scene
     pg = scene.pdt_pg
-    file_path = context.preferences.addons[__package__].preferences.pdt_library_path
-    path = Path(file_path)
+    file_path = pg.pdt_library_path
+    path = Path(bpy.path.abspath(file_path))
     _pdt_mat_items.clear()
 
     if path.is_file() and ".blend" in str(path):
@@ -226,12 +266,20 @@ def enumlist_materials(self, context):
         for object_name in object_names:
             _pdt_mat_items.append((object_name, object_name, ""))
     else:
-        _pdt_mat_items.append(("MISSING", "Library is Missing", ""))
+        _pdt_mat_items.append(("MISSING", "Library Not Set", ""))
     return _pdt_mat_items
 
 
 class PDTSceneProperties(PropertyGroup):
     """Contains all PDT related properties."""
+
+    pdt_library_path: StringProperty(
+        name="Library",
+        default="",
+        description="Parts Library File",
+        maxlen=1024,
+        subtype="FILE_PATH",
+    )
 
     object_search_string: StringProperty(name="Search", default="", description=PDT_DES_LIBSER)
     collection_search_string: StringProperty(name="Search", default="", description=PDT_DES_LIBSER)
@@ -429,48 +477,34 @@ class PDTSceneProperties(PropertyGroup):
         description=PDT_DES_TANMODE,
     )
 
-
-class PDTPreferences(AddonPreferences):
-    # This must match the addon name, use '__package__'
-    # when defining this in a submodule of a python package.
-
-    bl_idname = __name__
-
-    pdt_library_path: StringProperty(
-        name="Parts Library",
-        default="",
-        description="Parts Library File",
-        maxlen=1024,
-        subtype="FILE_PATH",
+    # For Trig Waves
+    trig_type : EnumProperty(
+        items=(
+            ("sin", "Sine", "Sine Wave"),
+            ("cos", "Cosine", "Cosine Wave"),
+            ("tan", "Tangent", "Tangent Wave"),
+        ),
+        name="Wave Form",
+        default="sin",
+        description="Trig. Wave Form",
     )
-
-    debug: BoolProperty(
-        name="Enable console debug output from PDT scripts",
-        default=False,
-        description="NOTE: Does not enable debugging globally in Blender (only in PDT scripts)",
-    )
-
-    pdt_ui_width: IntProperty(
-        name="UI Width Cut-off",
-        default=350,
-        description="Cutoff width for shrinking items per line in menus",
-    )
-
-    pdt_input_round: IntProperty(
-        name="Input Rounding", default=5, description="Rounding Factor for Inputs"
-    )
-
-    def draw(self, context):
-        layout = self.layout
-
-        box = layout.box()
-        row1 = box.row()
-        row2 = box.row()
-        row3 = box.row()
-        row1.prop(self, "debug")
-        row2.prop(self, "pdt_ui_width")
-        row2.prop(self, "pdt_input_round")
-        row3.prop(self, "pdt_library_path")
+    trig_cycles : IntProperty(name="Cycles #", default=1, min=1,
+        description="1 Cycle = 180 Degrees")
+    trig_amp : FloatProperty(name="Amplitude", default=1, min=0.01,
+        description="Maximum Height of 1 Cycle (forms Basis for Tangents)")
+    trig_len : FloatProperty(name="Cycle Length", default=2, min=0.02,
+        description="Length in Blender Units of 1 Cycle")
+    trig_obj : PointerProperty(name="Object", type=Object)
+    trig_del : BoolProperty(name="Empty Object", default=False,
+        description="Delete ALL Vertices in Object First")
+    trig_res : IntProperty(name="Resolution", default=18, min=4, max=72,
+        description="Number of Vertices per Cycle (180 Degrees)")
+    trig_tanmax : FloatProperty(name="Tangent Max", default=10, min=0.1,
+        description="Maximum Permitted Tangent Value")
+    trig_off : FloatVectorProperty(name="Start Loc", default=(0,0,0),
+        description="Location in World Space for Origin of Wave")
+    trig_abs : BoolProperty(name="Absolute", default=False,
+        description="Use Absolute Values Only")
 
 
 # List of All Classes in the Add-on to register
@@ -479,8 +513,8 @@ class PDTPreferences(AddonPreferences):
 # (and unloaded last)
 #
 classes = (
-    PDTSceneProperties,
     PDTPreferences,
+    PDTSceneProperties,
     pdt_bix.PDT_OT_LineOnBisection,
     pdt_command.PDT_OT_CommandReRun,
     pdt_design.PDT_OT_PlacementAbs,
@@ -507,6 +541,7 @@ classes = (
     pdt_menus.PDT_PT_PanelViewControl,
     pdt_menus.PDT_PT_PanelPivotPoint,
     pdt_menus.PDT_PT_PanelPartsLibrary,
+    pdt_menus.PDT_PT_PanelTrig,
     pdt_pivot_point.PDT_OT_ModalDrawOperator,
     pdt_pivot_point.PDT_OT_ViewPlaneRotate,
     pdt_pivot_point.PDT_OT_ViewPlaneScale,
@@ -523,6 +558,7 @@ classes = (
     pdt_tangent.PDT_OT_TangentSet3,
     pdt_tangent.PDT_OT_TangentSet4,
     pdt_tangent.PDT_OT_TangentExpandMenu,
+    pdt_trig_waves.PDT_OT_WaveGenerator,
     pdt_view.PDT_OT_ViewRot,
     pdt_view.PDT_OT_ViewRotL,
     pdt_view.PDT_OT_ViewRotR,

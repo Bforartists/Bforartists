@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -22,7 +22,7 @@ from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 
 class POWER_SEQUENCER_OT_delete_direct(bpy.types.Operator):
     """
-    Deletes strips without confirmation, and cleans up crossfades nicely.
+    Deletes strips without confirmation, and cleans up crossfades nicely
     """
 
     doc = {
@@ -50,7 +50,9 @@ class POWER_SEQUENCER_OT_delete_direct(bpy.types.Operator):
     bl_description = doc_brief(doc["description"])
     bl_options = {"REGISTER", "UNDO"}
 
-    is_removing_transitions: bpy.props.BoolProperty(name="Remove Transitions", default=False)
+    is_removing_transitions: bpy.props.BoolProperty(
+        name="Remove Transitions", default=False
+    )
 
     @classmethod
     def poll(cls, context):
@@ -59,12 +61,17 @@ class POWER_SEQUENCER_OT_delete_direct(bpy.types.Operator):
     def invoke(self, context, event):
         frame, channel = get_mouse_frame_and_channel(context, event)
         if not context.selected_sequences:
-            bpy.ops.power_sequencer.select_closest_to_mouse(frame=frame, channel=channel)
+            bpy.ops.power_sequencer.select_closest_to_mouse(
+                frame=frame, channel=channel
+            )
         return self.execute(context)
 
     def execute(self, context):
         selection = context.selected_sequences
-        if self.is_removing_transitions and bpy.ops.power_sequencer.transitions_remove.poll():
+        if (
+            self.is_removing_transitions
+            and bpy.ops.power_sequencer.transitions_remove.poll()
+        ):
             bpy.ops.power_sequencer.transitions_remove()
         bpy.ops.sequencer.delete()
 

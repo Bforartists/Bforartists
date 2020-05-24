@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
 "Last-Translator: Lockal <lockalsash@gmail.com>, 2020\n"
 "Language-Team: Russian (https://www.transifex.com/translateblender/teams/82039/ru/)\n"
@@ -23599,10 +23599,6 @@ msgid "Newly contributed scripts (excluded from release builds)"
 msgstr "Расширения, поддерживаемые с недавнего времени (исключаемые из релизных сборок)"
 
 
-msgid "Text Clipboard"
-msgstr "Буфер обмена текстом"
-
-
 msgid "Key Configurations"
 msgstr "Конфигурации клавиш"
 
@@ -42602,10 +42598,6 @@ msgid "Export vertex tangents with shape keys (morph targets)"
 msgstr "Экспортировать касательные вершин с ключами формы (целями морфинга)"
 
 
-msgid "Export NLA Strip animations"
-msgstr "Экспортировать анимации стрипов NLA"
-
-
 msgid "Export vertex normals with meshes"
 msgstr "Экспортировать нормали вершин вместе с мешами"
 
@@ -46190,10 +46182,6 @@ msgstr "Импорт glTF 2.0"
 
 msgid "Load a glTF 2.0 file"
 msgstr "Загрузить файл glTF 2.0"
-
-
-msgid "Pack images"
-msgstr "Запаковать изображения"
 
 
 msgid "Pack all images into .blend file"
@@ -63483,6 +63471,14 @@ msgid "Site"
 msgstr "Сайт"
 
 
+msgid "UV Maps"
+msgstr "UV-карты"
+
+
+msgid "Instancing"
+msgstr "Создание экземпляров"
+
+
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "Добавить путь автозапуска"
@@ -64455,10 +64451,6 @@ msgid "Text Boxes"
 msgstr "Текстовые блоки"
 
 
-msgid "UV Maps"
-msgstr "UV-карты"
-
-
 msgid "Filters"
 msgstr "Фильтры"
 
@@ -64709,10 +64701,6 @@ msgstr "Обрезка соединений"
 
 msgid "Delta Transform"
 msgstr "Дельта-трансформация"
-
-
-msgid "Instancing"
-msgstr "Создание экземпляров"
 
 
 msgid "Scale by Face Size"
@@ -75090,15 +75078,6 @@ msgstr "Пространство редактора клипов"
 
 msgid "Clip editor space data"
 msgstr "Данные пространства редактора клипов"
-
-
-msgctxt "MovieClip"
-msgid "Grease Pencil Source"
-msgstr "Источник Grease Pencil"
-
-
-msgid "Where the grease pencil comes from"
-msgstr "Место происхождения Grease Pencil"
 
 
 msgid "Show annotation data-block which belongs to movie clip"
@@ -89984,18 +89963,6 @@ msgid "Add a new control-point to the envelope on the current frame"
 msgstr "Добавить новую контрольную точку в оболочку на текущем кадре"
 
 
-msgid "Frame that envelope point occurs"
-msgstr "Кадр, на котором расположена контрольная точка оболочки"
-
-
-msgid "Minimum bound of envelope at this point"
-msgstr "Минимальная граница оболочки на этой точке"
-
-
-msgid "Maximum bound of envelope at this point"
-msgstr "Максимальная граница оболочки на этой точке"
-
-
 msgid "Delete envelope control point"
 msgstr "Удалить контрольную точку оболочки"
 
@@ -97227,6 +97194,10 @@ msgid "Cannot save render buffers, check the temp default path"
 msgstr "Не удалось сохранить рендер-буфер, проверьте путь к временной папке по умолчанию"
 
 
+msgid "Border rendering is not supported by sequencer"
+msgstr "Рендеринг части изображения не поддерживается видеоредактором"
+
+
 msgid "No node tree in scene"
 msgstr "Нет нодовой системы в сцене"
 
@@ -97237,10 +97208,6 @@ msgstr "Нет ноды вывода рендера в сцене"
 
 msgid "Full sample AA not supported without 3D rendering"
 msgstr "Сглаживание с полной выборкой не поддерживается без 3D-рендеринга"
-
-
-msgid "Border rendering is not supported by sequencer"
-msgstr "Рендеринг части изображения не поддерживается видеоредактором"
 
 
 msgid "All render layers are disabled"

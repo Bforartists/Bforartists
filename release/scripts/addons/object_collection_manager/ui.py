@@ -335,6 +335,10 @@ class CollectionManager(Operator):
 
         self.view_layer = view_layer.name
 
+        # make sure list index is valid
+        if cm.cm_list_index >= len(cm.cm_list_collection):
+            cm.cm_list_index = -1
+
         # check if expanded & history/buffer state still correct
         if collection_state:
             new_state = generate_state()

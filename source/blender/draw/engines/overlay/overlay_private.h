@@ -54,7 +54,7 @@ typedef struct OVERLAY_PassList {
   DRWPass *antialiasing_ps;
   DRWPass *armature_ps[2];
   DRWPass *armature_bone_select_ps;
-  DRWPass *armature_transp_ps;
+  DRWPass *armature_transp_ps[2];
   DRWPass *background_ps;
   DRWPass *clipping_frustum_ps;
   DRWPass *edit_curve_wire_ps[2];
@@ -253,8 +253,9 @@ typedef struct OVERLAY_PrivateData {
   DRWShadingGroup *particle_shapes_grp;
   DRWShadingGroup *pointcloud_dots_grp;
   DRWShadingGroup *sculpt_mask_grp;
-  DRWShadingGroup *wires_grp[2][2];     /* With and without coloring. */
-  DRWShadingGroup *wires_all_grp[2][2]; /* With and without coloring. */
+  DRWShadingGroup *wires_grp[2][2];      /* With and without coloring. */
+  DRWShadingGroup *wires_all_grp[2][2];  /* With and without coloring. */
+  DRWShadingGroup *wires_hair_grp[2][2]; /* With and without coloring. */
   DRWShadingGroup *wires_sculpt_grp[2];
 
   DRWView *view_default;

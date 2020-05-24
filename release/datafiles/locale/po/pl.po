@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -7517,18 +7517,6 @@ msgstr "Drugi współczynnik"
 
 msgid "Add a new control-point to the envelope on the current frame"
 msgstr "Dodaj nowy punkt kontrolny do otoczki na obecnej klatce"
-
-
-msgid "Frame that envelope point occurs"
-msgstr "Klatka, w której pojawia się punkt otoczki"
-
-
-msgid "Minimum bound of envelope at this point"
-msgstr "Minimalna granica otoczki w tym punkcie"
-
-
-msgid "Maximum bound of envelope at this point"
-msgstr "Maksymalna granica otoczki w tym punkcie"
 
 
 msgid "Delete envelope control point"

@@ -68,6 +68,8 @@ class DATA_PT_rigify_buttons(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
+        if not context.object:
+            return False
         return context.object.type == 'ARMATURE' and context.active_object.data.get("rig_id") is None
 
     def draw(self, context):
@@ -197,6 +199,8 @@ class DATA_PT_rigify_layer_names(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
+        if not context.object:
+            return False
         return context.object.type == 'ARMATURE' and context.active_object.data.get("rig_id") is None
 
     def draw(self, context):
@@ -280,7 +284,7 @@ class DATA_OT_rigify_add_bone_groups(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object.type == 'ARMATURE'
+        return context.object and context.object.type == 'ARMATURE'
 
     def execute(self, context):
         obj = context.object
@@ -323,7 +327,7 @@ class DATA_OT_rigify_use_standard_colors(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object.type == 'ARMATURE'
+        return context.object and context.object.type == 'ARMATURE'
 
     def execute(self, context):
         obj = context.object
@@ -350,7 +354,7 @@ class DATA_OT_rigify_apply_selection_colors(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object.type == 'ARMATURE'
+        return context.object and context.object.type == 'ARMATURE'
 
     def execute(self, context):
         obj = context.object
@@ -374,7 +378,7 @@ class DATA_OT_rigify_bone_group_add(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object.type == 'ARMATURE'
+        return context.object and context.object.type == 'ARMATURE'
 
     def execute(self, context):
         obj = context.object
@@ -428,7 +432,7 @@ class DATA_OT_rigify_bone_group_add_theme(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object.type == 'ARMATURE'
+        return context.object and context.object.type == 'ARMATURE'
 
     def execute(self, context):
         obj = context.object
@@ -460,7 +464,7 @@ class DATA_OT_rigify_bone_group_remove(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object.type == 'ARMATURE'
+        return context.object and context.object.type == 'ARMATURE'
 
     def execute(self, context):
         obj = context.object
@@ -482,7 +486,7 @@ class DATA_OT_rigify_bone_group_remove_all(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.object.type == 'ARMATURE'
+        return context.object and context.object.type == 'ARMATURE'
 
     def execute(self, context):
         obj = context.object
@@ -533,6 +537,8 @@ class DATA_PT_rigify_bone_groups(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
+        if not context.object:
+            return False
         return context.object.type == 'ARMATURE' and context.active_object.data.get("rig_id") is None
 
     def draw(self, context):
@@ -575,7 +581,8 @@ class BONE_PT_rigify_buttons(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-
+        if not context.object:
+            return False
         return context.object.type == 'ARMATURE' and context.active_pose_bone\
                and context.active_object.data.get("rig_id") is None
 
@@ -624,7 +631,7 @@ class VIEW3D_PT_tools_rigify_dev(bpy.types.Panel):
     bl_label = "Rigify Dev Tools"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'View'
+    bl_category = 'Rigify'
 
     @classmethod
     def poll(cls, context):
@@ -653,7 +660,7 @@ class VIEW3D_PT_rigify_animation_tools(bpy.types.Panel):
     bl_context = "posemode"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'View'
+    bl_category = 'Rigify'
 
     @classmethod
     def poll(cls, context):

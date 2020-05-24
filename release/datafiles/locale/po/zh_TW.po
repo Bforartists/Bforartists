@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: 2020-03-28 00:56+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -16573,10 +16573,6 @@ msgstr "測試中"
 
 msgid "Newly contributed scripts (excluded from release builds)"
 msgstr "新貢獻的指令稿 (未包含於於發行組建中)"
-
-
-msgid "Text Clipboard"
-msgstr "文字剪貼簿"
 
 
 msgid "Key Configurations"
@@ -43891,6 +43887,10 @@ msgid "URL to open"
 msgstr "要開啟的 URL"
 
 
+msgid "UV Maps"
+msgstr "UV 映射"
+
+
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "添加自動執行路徑"
@@ -44407,10 +44407,6 @@ msgstr "骨骼"
 
 msgid "Text Boxes"
 msgstr "文字方塊"
-
-
-msgid "UV Maps"
-msgstr "UV 映射"
 
 
 msgid "Filters"
@@ -50412,15 +50408,6 @@ msgstr "空間剪輯編輯器"
 
 msgid "Clip editor space data"
 msgstr "剪輯編輯器空間資料"
-
-
-msgctxt "MovieClip"
-msgid "Grease Pencil Source"
-msgstr "蠟筆來源"
-
-
-msgid "Where the grease pencil comes from"
-msgstr "蠟筆來自的地方"
 
 
 msgctxt "MovieClip"
@@ -58886,18 +58873,6 @@ msgstr "第二係數"
 
 msgid "Add a new control-point to the envelope on the current frame"
 msgstr "添加新的控制點到目前此框幀的封套"
-
-
-msgid "Frame that envelope point occurs"
-msgstr "封套點出現的框幀"
-
-
-msgid "Minimum bound of envelope at this point"
-msgstr "封套於此點上的最小邊界"
-
-
-msgid "Maximum bound of envelope at this point"
-msgstr "封套於此點上的最大邊界"
 
 
 msgid "Delete envelope control point"

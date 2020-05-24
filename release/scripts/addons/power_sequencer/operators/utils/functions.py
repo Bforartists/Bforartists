@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -40,7 +40,7 @@ def find_linked(context, sequences, selected_sequences):
 
     Returns a list of all the linked sequences, but not the sequences passed to the function
     """
-    start, end = get_frame_range(context, sequences, selected_sequences)
+    start, end = get_frame_range(sequences, selected_sequences)
     sequences_in_range = [s for s in sequences if is_in_range(context, s, start, end)]
     effects = (s for s in sequences_in_range if s.type in SequenceTypes.EFFECT)
     selected_effects = (s for s in sequences if s.type in SequenceTypes.EFFECT)
@@ -158,7 +158,7 @@ def find_strips_mouse(context, frame, channel, select_linked=False):
     return sequences
 
 
-def get_frame_range(context, sequences=[], get_from_start=False):
+def get_frame_range(sequences, get_from_start=False):
     """
     Returns a tuple with the minimum and maximum frames of the
     list of passed sequences.
@@ -174,6 +174,16 @@ def get_frame_range(context, sequences=[], get_from_start=False):
         else min(sequences, key=attrgetter("frame_final_start")).frame_final_start
     )
     end = max(sequences, key=attrgetter("frame_final_end")).frame_final_end
+    return start, end
+
+
+def get_channel_range(sequences):
+    """
+    Returns a tuple with the minimum and maximum channels of the
+    list of passed sequences.
+    """
+    start = min(sequences, key=attrgetter("channel")).channel
+    end = max(sequences, key=attrgetter("channel")).channel
     return start, end
 
 
@@ -259,12 +269,13 @@ def slice_selection(context, sequences):
     return broken_selection
 
 
-def trim_strips(context, start_frame, end_frame, to_trim=[], to_delete=[]):
+def trim_strips(context, frame_start, frame_end, to_trim, to_delete=[]):
     """
-    Remove the footage and audio between start_frame and end_frame.
+    Removes the footage and audio between frame_start and frame_end.
+    You must pass the list of strips to trim to the function for it to work.
     """
-    trim_start = min(start_frame, end_frame)
-    trim_end = max(start_frame, end_frame)
+    trim_start = min(frame_start, frame_end)
+    trim_end = max(frame_start, frame_end)
 
     to_trim = [s for s in to_trim if s.type in SequenceTypes.CUTABLE]
 
@@ -276,8 +287,8 @@ def trim_strips(context, start_frame, end_frame, to_trim=[], to_delete=[]):
         if is_strip_longer_than_trim_range:
             bpy.ops.sequencer.select_all(action="DESELECT")
             s.select = True
-            bpy.ops.sequencer.cut(frame=trim_start, type="SOFT", side="RIGHT")
-            bpy.ops.sequencer.cut(frame=trim_end, type="SOFT", side="LEFT")
+            bpy.ops.sequencer.split(frame=trim_start, type="SOFT", side="RIGHT")
+            bpy.ops.sequencer.split(frame=trim_end, type="SOFT", side="LEFT")
             to_delete.append(context.selected_sequences[0])
             continue
 
@@ -291,11 +302,11 @@ def trim_strips(context, start_frame, end_frame, to_trim=[], to_delete=[]):
     return {"FINISHED"}
 
 
-def delete_strips(to_delete=[]):
+def delete_strips(to_delete):
     """
-    Remove the footage and audio between start_frame and end_frame.
+    Deletes the list of sequences `to_delete`
     """
-    if to_delete == []:
+    if not to_delete:
         return
     bpy.ops.sequencer.select_all(action="DESELECT")
     for s in to_delete:
@@ -391,3 +402,39 @@ def apply_time_offset(context, sequences=[], offset=0):
     bpy.ops.sequencer.select_all(action="DESELECT")
     for s in selection:
         s.select = True
+
+
+def find_strips_in_range(frame_start, frame_end, sequences, find_overlapping=True):
+    """
+    Returns a tuple of two lists: (strips_inside_range, strips_overlapping_range)
+    strips_inside_range are strips entirely contained in the frame range.
+    strips_overlapping_range are strips that only overlap the frame range.
+
+    Args:
+    - frame_start, the start of the frame range
+    - frame_end, the end of the frame range
+    - sequences (optional): only work with these sequences.
+    If it doesn't receive any, the function works with all the sequences in the current context
+    - find_overlapping (optional): find and return a list of strips that overlap the
+        frame range
+
+    """
+    strips_inside_range = []
+    strips_overlapping_range = []
+    for s in sequences:
+        if (
+            frame_start <= s.frame_final_start <= frame_end
+            and frame_start <= s.frame_final_end <= frame_end
+        ):
+            strips_inside_range.append(s)
+        elif find_overlapping:
+            if (
+                frame_start <= s.frame_final_end <= frame_end
+                or frame_start <= s.frame_final_start <= frame_end
+            ):
+                strips_overlapping_range.append(s)
+
+        if find_overlapping:
+            if s.frame_final_start < frame_start and s.frame_final_end > frame_end:
+                strips_overlapping_range.append(s)
+    return strips_inside_range, strips_overlapping_range
