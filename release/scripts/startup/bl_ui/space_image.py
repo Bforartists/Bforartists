@@ -743,8 +743,8 @@ class IMAGE_HT_header(Header):
             )
 
             # Proportional Editing
-            
-            kw = {}         
+
+            kw = {}
             if tool_settings.use_proportional_edit:
                 kw["icon"] = 'PROP_ON'
             else:
@@ -981,11 +981,9 @@ class IMAGE_PT_image_options(Panel):
             layout.prop(uv, "use_live_unwrap")
 
         layout.prop(sima, "use_realtime_update")
-        if show_uvedit:
-            layout.prop(tool_settings, "show_uv_local_view")
 
         layout.prop(uv, "show_metadata")
-        
+
         layout.prop_menu_enum(uv, "pixel_snap_mode")
 
         if paint.brush and (context.image_paint_object or sima.mode == 'PAINT'):

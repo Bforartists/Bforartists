@@ -202,7 +202,7 @@ class VIEW3D_PT_tools_rigify_dev(bpy.types.Panel):
     bl_label = "Rigify Dev Tools"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'View'
+    bl_category = 'Rigify'
 
     @classmethod
     def poll(cls, context):

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzán <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3"
+"X-Generator: Poedit 2.3.1"
 
 
 msgid "Action F-Curves"
@@ -219,11 +219,11 @@ msgstr "Índice del marcador de pose activo"
 
 
 msgid "Add-on"
-msgstr "Agregado"
+msgstr "Complemento"
 
 
 msgid "Python add-ons to be loaded automatically"
-msgstr "Agregados Python a ser cargados automáticamente"
+msgstr "Complementos Python a ser cargados automáticamente"
 
 
 msgid "Module"
@@ -235,7 +235,7 @@ msgstr "Nombre del módulo"
 
 
 msgid "Add-on Preferences"
-msgstr "Opciones de agregados"
+msgstr "Opciones de complementos"
 
 
 msgid "Password"
@@ -327,11 +327,11 @@ msgstr "El nombre de un archivo json que almacena estas opciones (desafortunadam
 
 
 msgid "User Add-ons"
-msgstr "Agregados de usuario"
+msgstr "Complementos del usuario"
 
 
 msgid "Collection of add-ons"
-msgstr "Colección de agregados"
+msgstr "Colección de complementos"
 
 
 msgid "Object Path"
@@ -1903,11 +1903,11 @@ msgstr "Colección de espacios de trabajo"
 
 
 msgid "Main Worlds"
-msgstr "Universos principales"
+msgstr "Entornos principales"
 
 
 msgid "Collection of worlds"
-msgstr "Colección de universos"
+msgstr "Colección de entornos"
 
 
 msgid "Blender RNA"
@@ -4671,7 +4671,7 @@ msgstr "Espacio de color"
 
 
 msgid "Color space that the sequencer operates in"
-msgstr "Espacio de color en el que opera el secuenciador"
+msgstr "Espacio de color en el que opera el editor de video"
 
 
 msgid "Color management settings used for displaying images on the display"
@@ -6976,7 +6976,7 @@ msgstr "Eje Z del objetivo"
 
 
 msgid "Target's Z axis, not World Z axis, will constraint the Up direction"
-msgstr "El eje Z del objetivo, no el Z universal, restringirá la dirección hacia arriba"
+msgstr "El eje Z del objetivo, no el Z global, restringirá la dirección hacia arriba"
 
 
 msgid "Transform Cache Constraint"
@@ -7884,7 +7884,7 @@ msgstr "Áreas de seguridad"
 
 
 msgid "Safe areas used in 3D view and the sequencer"
-msgstr "Áreas de seguridad usadas en las vistas 3D y el editor de secuencias de video"
+msgstr "Áreas de seguridad usadas en las vistas 3D y el editor de video"
 
 
 msgid "Action Safe Margins"
@@ -10518,7 +10518,7 @@ msgstr "Índice"
 
 
 msgid "Index number of the face map"
-msgstr "Número de índice del grupo de caras"
+msgstr "Número de índice del mapa de caras"
 
 
 msgid "Face map name"
@@ -11566,7 +11566,7 @@ msgstr "Rebanar el objeto de dominio por completo"
 
 
 msgid "Single"
-msgstr "Individual"
+msgstr "Único"
 
 
 msgid "Perform a single slice of the domain object"
@@ -13007,10 +13007,6 @@ msgstr "Usar una textura para controlar la intensidad de la emisión"
 
 msgid "Initial"
 msgstr "Inicial"
-
-
-msgid "Initial velocity in X, Y and Z direction"
-msgstr "Velocidad inicial en las direcciones X, Y y Z"
 
 
 msgid "Multiplier of source velocity passed to fluid (source velocity is non-zero only if object is moving)"
@@ -14491,7 +14487,7 @@ msgstr "Matriz del espacio"
 
 
 msgid "Final World Matrix"
-msgstr "Matriz final del universo"
+msgstr "Matriz global final"
 
 
 msgid "Scale Basis"
@@ -15522,7 +15518,7 @@ msgstr "Remuestrea el trazo usando segmentos de la longitud especificada"
 
 
 msgid "Merge"
-msgstr "Fusión"
+msgstr "Fusionar"
 
 
 msgid "Simplify the stroke by merging vertices closer than a given distance"
@@ -17535,7 +17531,7 @@ msgstr "Define si se usará un fotograma personalizado al obtener los datos desd
 
 
 msgid "Value by which to enlarge or shrink the object with respect to the world's origin (only applicable through a Transform Cache constraint)"
-msgstr "Valor por el cual agrandar/achicar el objeto con respecto al origen del universo (sólo aplicable mediante la restricción Caché de transformaciones)"
+msgstr "Valor por el cual agrandar/achicar el objeto con respecto al origen del entorno (sólo aplicable mediante la restricción Caché de transformaciones)"
 
 
 msgid "Up"
@@ -19247,11 +19243,11 @@ msgstr "Grosor del trazo"
 
 
 msgid "Set stroke thickness in screen space or world space"
-msgstr "Permite definir el grosor del trazo en espacio de la pantalla o universal"
+msgstr "Permite definir el grosor del trazo en espacio de la pantalla o espacio global"
 
 
 msgid "Set stroke thickness relative to the world space"
-msgstr "Define el grosor del trazo en relación al espacio universal"
+msgstr "Define el grosor del trazo en relación al espacio global"
 
 
 msgid "Screen Space"
@@ -20025,7 +20021,7 @@ msgstr "Distancia sombra contacto"
 
 
 msgid "World space distance in which to search for screen space occluder"
-msgstr "Distancia en términos absolutos dentro de la cual buscar oclusores en espacio de pantalla"
+msgstr "Distancia global dentro de la cual buscar oclusores en espacio de pantalla"
 
 
 msgid "Contact Shadow Thickness"
@@ -20445,11 +20441,11 @@ msgstr "Índice de la capa activa en la lista de capas de máscara"
 
 
 msgid "Final frame of the mask (used for sequencer)"
-msgstr "Fotograma final de la máscara (usado en el secuenciador)"
+msgstr "Fotograma final de la máscara (usado en el editor de video)"
 
 
 msgid "First frame of the mask (used for sequencer)"
-msgstr "Fotograma inicial de la máscara (usado en el secuenciador)"
+msgstr "Fotograma inicial de la máscara (usado en el editor de video)"
 
 
 msgid "Collection of layers which defines this mask"
@@ -23615,11 +23611,11 @@ msgstr "Editor de video"
 
 
 msgid "Sequencer Color Space Settings"
-msgstr "Opciones de espacio de color del secuenciador"
+msgstr "Editor de video - Opciones de espacio de color"
 
 
 msgid "Settings of color space sequencer is working in"
-msgstr "Opciones del espacio de color en el que trabaja el secuenciador"
+msgstr "Opciones del espacio de color en el que trabaja el editor de video"
 
 
 msgid "Only Keyframes from Selected Channels"
@@ -23827,7 +23823,7 @@ msgstr "Editores de propiedades"
 
 
 msgid "Sequencer Editors"
-msgstr "Editores de secuencias"
+msgstr "Editores de video"
 
 
 msgid "Top-Left 3D Editor"
@@ -25077,7 +25073,7 @@ msgstr "Categoría"
 
 
 msgid "Filter add-ons by category"
-msgstr "Filtrar agregados por categoría"
+msgstr "Filtrar complementos por categoría"
 
 
 msgid "Search"
@@ -25097,7 +25093,7 @@ msgstr "Mostrar nivel de soporte"
 
 
 msgid "Official"
-msgstr "Oficial"
+msgstr "Oficiales"
 
 
 msgid "Officially supported"
@@ -25118,10 +25114,6 @@ msgstr "A prueba"
 
 msgid "Newly contributed scripts (excluded from release builds)"
 msgstr "Scripts de reciente aparición (excluidos de las versiones lanzadas hasta el momento)"
-
-
-msgid "Text Clipboard"
-msgstr "Portapapeles de texto"
 
 
 msgid "Is Interface Locked"
@@ -25917,11 +25909,11 @@ msgstr "Configuración de teclado activa (ajuste predefinido)"
 
 
 msgid "Add-on Key Configuration"
-msgstr "Configuración de teclado de agregado"
+msgstr "Configuración de teclado del complemento"
 
 
 msgid "Key configuration that can be extended by add-ons, and is added to the active configuration when handling events"
-msgstr "Configuración de teclado que puede ser extendida por agregados y es añadida a la configuración activa al administrar eventos"
+msgstr "Configuración de teclado que puede ser extendida por complementos y es agregada a la configuración activa al administrar eventos"
 
 
 msgid "Default Key Configuration"
@@ -25937,7 +25929,7 @@ msgstr "Configuración de teclado del usuario"
 
 
 msgid "Final key configuration that combines keymaps from the active and add-on configurations, and can be edited by the user"
-msgstr "Configuración final de teclado que combina los mapas de teclado de las configuraciones activa y de agregado, y que puede ser editado por el usuario"
+msgstr "Configuración final de teclado que combina los mapas de teclado de las configuraciones activa y de complementos, y que puede ser editado por el usuario"
 
 
 msgid "Key Map"
@@ -29351,7 +29343,7 @@ msgstr "Cambiar"
 
 
 msgid "Sequencer Context Menu"
-msgstr "Secuenciador - menú contextual"
+msgstr "Editor de video - menú contextual"
 
 
 msgid "Navigation"
@@ -29829,7 +29821,7 @@ msgstr "Capa de mapa de caras de malla"
 
 
 msgid "Per-face map index"
-msgstr "Índice de mapa por caras"
+msgstr "Índice del mapa de caras"
 
 
 msgid "Name of face-map layer"
@@ -32492,6 +32484,14 @@ msgid "Mirror the U texture coordinate around the flip offset point"
 msgstr "Invierte las coordenadas de texturizado U alrededor del punto de desplazamiento"
 
 
+msgid "Mirror UDIM"
+msgstr "Simetrizar UDIM"
+
+
+msgid "Mirror the texture coordinate around each tile center"
+msgstr "Invierte las coordenadas de texturizado alrededor del centro de cada celda"
+
+
 msgid "Mirror V"
 msgstr "Simetrizar V"
 
@@ -33005,7 +33005,7 @@ msgstr "Usar el desplazamiento del objeto de partículas en el objeto instanciad
 
 
 msgid "Use world space offset in the instance object"
-msgstr "Usar un desplazamiento en espacio universal en el objeto instanciado"
+msgstr "Usar un desplazamiento en espacio global en el objeto instanciado"
 
 
 msgctxt "ParticleSettings"
@@ -34433,7 +34433,7 @@ msgstr "Remueve la geometría original"
 
 
 msgid "Cache of the worldspace positions of an element over a frame range"
-msgstr "Caché de las posiciones absolutas de un elemento a lo largo de un rango de fotogramas"
+msgstr "Caché de las posiciones globales de un elemento a lo largo de un rango de fotogramas"
 
 
 msgid "Custom color for motion path"
@@ -37561,6 +37561,10 @@ msgid "The smallest integer greater than or equal A"
 msgstr "El menor entero mayor o igual que A"
 
 
+msgid "The integer part of A, removing fractional digits"
+msgstr "La parte entera de A, eliminando los dígitos fraccionarios"
+
+
 msgid "Fraction"
 msgstr "Fracción"
 
@@ -38319,7 +38323,7 @@ msgstr "El desplazamiento está en espacio del objeto, siendo afectado por la es
 
 
 msgid "Displacement is in world space, not affected by object scale"
-msgstr "El desplazamiento está en espacio del universo, no siendo afectado por la escala del objeto"
+msgstr "El desplazamiento está en espacio global, no siendo afectado por la escala del objeto"
 
 
 msgid "Emission"
@@ -39107,7 +39111,7 @@ msgstr "Mapeo de desplazamiento vectorial en espacio del objeto"
 
 
 msgid "World space vector displacement mapping"
-msgstr "Mapeo de desplazamiento vectorial en espacio universal"
+msgstr "Mapeo de desplazamiento vectorial en espacio global"
 
 
 msgid "Vector Math"
@@ -39299,7 +39303,7 @@ msgstr "Tamaño píxeles"
 
 
 msgid "Use screen pixel size instead of world units"
-msgstr "Usa un tamaño definido en píxeles, en vez de en unidades de Blender"
+msgstr "Usa un tamaño definido en píxeles, en vez de en unidades globales"
 
 
 msgid "Texture Node"
@@ -43759,7 +43763,7 @@ msgstr "La alineación del nuevo objeto"
 
 
 msgid "Align the new object to the world"
-msgstr "Alínea el nuevo objeto al universo"
+msgstr "Alinea el nuevo objeto al espacio global"
 
 
 msgid "Align the new object to the view"
@@ -44934,12 +44938,12 @@ msgid "Export the scene in the current animation frame"
 msgstr "Exportar la escena en el fotograma actual de la animación"
 
 
-msgid "Export Deformation bones only"
+msgid "Export Deformation Bones Only"
 msgstr "Exportar sólo huesos de deformación"
 
 
 msgid "Export Deformation bones only (and needed bones for hierarchy)"
-msgstr "Exportar sólo huesos de deformación (y huesos usados en la jerarquía)"
+msgstr "Exportar sólo huesos de deformación (y huesos necesarios para la jerarquía)"
 
 
 msgid "Displacement Textures (EXPERIMENTAL)"
@@ -45102,8 +45106,18 @@ msgid "Export vertex tangents with shape keys (morph targets)"
 msgstr "Exportar tangentes a los vértices junto con las Formas clave"
 
 
-msgid "Export NLA Strip animations"
-msgstr "Exportar animaciones en clips de ANL"
+msgid "Group by NLA Track"
+msgstr "Agrupar por pista de ANL"
+
+
+msgid ""
+"When on, multiple actions become part of the same glTF animation if\n"
+"they're pushed onto NLA tracks with the same name.\n"
+"When off, all the currently assigned actions become one glTF animation"
+msgstr ""
+"Cuando se encuentre activado, varias acciones podrán formar parte de la misma animación glTF\n"
+"si hubieran sido empujadas sobre pistas de ANL con el mismo nombre.\n"
+"Cuando se encuentre desactivado, todas las acciones actualmente asignadas serán tomadas como una única animación glTF"
 
 
 msgid "Export vertex normals with meshes"
@@ -47454,15 +47468,15 @@ msgstr "Enviar al fondo"
 
 msgctxt "Operator"
 msgid "Set Caps Mode"
-msgstr "Definir modo de tapas"
+msgstr "Definir modo de extremos"
 
 
 msgid "Change Stroke caps mode (rounded or flat)"
-msgstr "Permite cambiar el modo de las tapas (redondeadas o planas)"
+msgstr "Cambia la forma de los extremos del trazo, entre redondeado y plano"
 
 
 msgid "Set as default rounded"
-msgstr "Definir redondeadas como predefinido"
+msgstr "Usar el modo Redondeado predefinido"
 
 
 msgctxt "Operator"
@@ -49289,7 +49303,7 @@ msgstr ""
 "Sin embargo, hay que advertir que las escalas no uniformes podrían ocasionar problemas"
 
 
-msgid "Guess original bind pose"
+msgid "Guess Original Bind Pose"
 msgstr "Adivinar pose de enlace original"
 
 
@@ -49301,7 +49315,7 @@ msgstr ""
 "Cuando se encuentre desactivada, usará la pose de reposo predefinida como pose de enlace"
 
 
-msgid "Pack images"
+msgid "Pack Images"
 msgstr "Empacar imágenes"
 
 
@@ -50431,11 +50445,11 @@ msgstr "Elimina de la malla los datos de enmascaramiento de vértices de esculpi
 
 msgctxt "Operator"
 msgid "Add Skin Data"
-msgstr "Agregar datos de piel"
+msgstr "Agregar datos de forro"
 
 
 msgid "Add a vertex skin layer"
-msgstr "Agrega una capa de vértices de piel"
+msgstr "Agrega una capa de datos de forro a los vértices"
 
 
 msgctxt "Operator"
@@ -50444,7 +50458,7 @@ msgstr "Eliminar datos de forro"
 
 
 msgid "Clear vertex skin layer"
-msgstr "Elimina capa de vértices de piel"
+msgstr "Elimina la capa de datos de forro de los vértices"
 
 
 msgctxt "Operator"
@@ -50869,11 +50883,11 @@ msgstr "Permite fusionar bordes sueltos en caras (dividiéndolos en nuevas caras
 
 msgctxt "Operator"
 msgid "Copy Mirrored UV Coords"
-msgstr "Copiar coordenadas UV simétricas"
+msgstr "Copiar coordenadas UV invertidas"
 
 
 msgid "Copy mirror UV coordinates on the X axis based on a mirrored mesh"
-msgstr "Copia las coordenadas UV simétricas con respecto al eje X, de un objeto simetrizado"
+msgstr "Copia las coordenadas UV, provenientes de un objeto inverso, invertidas en el eje X"
 
 
 msgid "Axis Direction"
@@ -52148,7 +52162,7 @@ msgstr "Orientación de los ejes"
 
 
 msgid "Align the transformation axes to world space"
-msgstr "Alinea los ejes del manipulador al sistema de coordenadas universal"
+msgstr "Alinea los ejes del manipulador al sistema de coordenadas global"
 
 
 msgid "Align the transformation axes to the selected objects' local space"
@@ -59072,6 +59086,10 @@ msgid "Select Connected"
 msgstr "Seleccionar conectados"
 
 
+msgid "Select bones linked by parent/child connections under the mouse cursor"
+msgstr "Selecciona los huesos vinculados jerárquicamente con el que se encuentre bajo el puntero"
+
+
 msgctxt "Operator"
 msgid "Select Parent Bone"
 msgstr "Seleccionar hueso superior"
@@ -59114,49 +59132,49 @@ msgstr "Aplica la posición final de los huesos, posados mediante restricciones,
 
 msgctxt "Operator"
 msgid "Disable Add-on"
-msgstr "Deshabilitar agregado"
+msgstr "Deshabilitar complemento"
 
 
 msgid "Disable an add-on"
-msgstr "Permite deshabilitar un agregado"
+msgstr "Permite deshabilitar un complemento"
 
 
 msgid "Module name of the add-on to disable"
-msgstr "Nombre del módulo del agregado a deshabilitar"
+msgstr "Nombre del módulo del complemento a deshabilitar"
 
 
 msgctxt "Operator"
 msgid "Enable Add-on"
-msgstr "Habilitar agregado"
+msgstr "Habilitar complemento"
 
 
 msgid "Enable an add-on"
-msgstr "Permite habilitar un agregado"
+msgstr "Permite habilitar un complemento"
 
 
 msgid "Module name of the add-on to enable"
-msgstr "Nombre del módulo del agregado a habilitar"
+msgstr "Nombre del módulo del complemento a habilitar"
 
 
 msgid "Display information and preferences for this add-on"
-msgstr "Mostrar información y preferencias de este agregado"
+msgstr "Mostrar información y preferencias de este complemento"
 
 
 msgid "Module name of the add-on to expand"
-msgstr "Nombre de módulo del agregado a expandir"
+msgstr "Nombre de módulo del complemento a expandir"
 
 
 msgctxt "Operator"
 msgid "Install Add-on"
-msgstr "Instalar agregado"
+msgstr "Instalar complemento"
 
 
 msgid "Install an add-on"
-msgstr "Permite instalar un agregado"
+msgstr "Permite instalar un complemento"
 
 
 msgid "Remove existing add-ons with the same ID"
-msgstr "Remueve los agregados existentes que posean el mismo ID"
+msgstr "Remueve los complementos existentes que posean el mismo ID"
 
 
 msgid "Target Path"
@@ -59173,24 +59191,24 @@ msgstr "Refrescar"
 
 
 msgid "Scan add-on directories for new modules"
-msgstr "Permite comprobar si hay nuevos módulos en los directorios de agregados"
+msgstr "Permite comprobar si hay nuevos módulos en los directorios de complementos"
 
 
 msgctxt "Operator"
 msgid "Remove Add-on"
-msgstr "Eliminar agregado"
+msgstr "Eliminar complemento"
 
 
 msgid "Delete the add-on from the file system"
-msgstr "Permite borrar el agregado del disco"
+msgstr "Permite borrar el complemento del disco"
 
 
 msgid "Module name of the add-on to remove"
-msgstr "Nombre de módulo del agregado a eliminar"
+msgstr "Nombre de módulo del complemento a eliminar"
 
 
 msgid "Show add-on preferences"
-msgstr "Mostrar las preferencias de agregados"
+msgstr "Mostrar las preferencias del complemento"
 
 
 msgctxt "Operator"
@@ -59497,11 +59515,11 @@ msgstr "Procesa sólo aquellos fotogramas donde los objetos seleccionados conten
 
 
 msgid "Sequencer"
-msgstr "Secuenciador"
+msgstr "Editor de video"
 
 
 msgid "Render using the sequencer's OpenGL display"
-msgstr "Procesar usando la visualización OpenGL de la secuencia"
+msgstr "Procesar usando la visualización OpenGL del editor de video"
 
 
 msgid "View Context"
@@ -61298,7 +61316,7 @@ msgstr "Cambiar tipo de efecto"
 
 
 msgid "Sequencer effect type"
-msgstr "Tipo de efecto del secuenciador"
+msgstr "Tipo de efecto del editor de video"
 
 
 msgid "Crossfade"
@@ -61435,7 +61453,7 @@ msgstr "Borrar clips"
 
 
 msgid "Erase selected strips from the sequencer"
-msgstr "Borra los clips seleccionados del secuenciador"
+msgstr "Borra los clips seleccionados del editor de video"
 
 
 msgid "Duplicate the selected strips"
@@ -61460,7 +61478,7 @@ msgstr "Agregar clip de efecto"
 
 
 msgid "Add an effect to the sequencer, most are applied on top of existing strips"
-msgstr "Agrega un efecto al secuenciador, usualmente se aplican sobre clips ya existentes"
+msgstr "Agrega un efecto al editor de video, usualmente se aplican sobre clips ya existentes"
 
 
 msgid "Channel to place this strip into"
@@ -61623,7 +61641,7 @@ msgstr "Agregar clip de imagen"
 
 
 msgid "Add an image or image sequence to the sequencer"
-msgstr "Agrega una imagen o secuencia de imágenes al secuenciador"
+msgstr "Agrega una imagen o secuencia de imágenes al editor de video"
 
 
 msgctxt "Operator"
@@ -61654,7 +61672,7 @@ msgstr "Agregar clip de máscara"
 
 
 msgid "Add a mask strip to the sequencer"
-msgstr "Agrega un clip de máscara al secuenciador"
+msgstr "Agrega un clip de máscara al editor de video"
 
 
 msgctxt "Operator"
@@ -61672,7 +61690,7 @@ msgstr "Deshacer meta-clip"
 
 
 msgid "Put the contents of a metastrip back in the sequencer"
-msgstr "Coloca el contenido de un meta-clip de vuelta en el secuenciador"
+msgstr "Coloca el contenido de un meta-clip de vuelta en el editor de video"
 
 
 msgctxt "Operator"
@@ -61690,7 +61708,7 @@ msgstr "Agregar clip de película"
 
 
 msgid "Add a movie strip to the sequencer"
-msgstr "Agrega un clip de película al secuenciador"
+msgstr "Agrega un clip de película al editor de video"
 
 
 msgid "Load sound with the movie"
@@ -61711,7 +61729,7 @@ msgstr "Agregar clip de película"
 
 
 msgid "Add a movieclip strip to the sequencer"
-msgstr "Agrega un clip de película al secuenciador"
+msgstr "Agrega un clip de película al editor de video"
 
 
 msgctxt "Operator"
@@ -61760,11 +61778,11 @@ msgstr "Reconstruir todos los reemplazos e índices de código de tiempo selecci
 
 msgctxt "Operator"
 msgid "Refresh Sequencer"
-msgstr "Refrescar secuenciador"
+msgstr "Refrescar editor de video"
 
 
 msgid "Refresh the sequencer editor"
-msgstr "Refresca el editor de secuencias"
+msgstr "Refresca el editor de video"
 
 
 msgctxt "Operator"
@@ -61773,7 +61791,7 @@ msgstr "Recargar clips"
 
 
 msgid "Reload strips in the sequencer"
-msgstr "Recarga clips en el secuenciador"
+msgstr "Recarga clips en el editor de video"
 
 
 msgid "Adjust Length"
@@ -61803,7 +61821,7 @@ msgstr "Agregar clip de escena"
 
 
 msgid "Add a strip to the sequencer using a blender scene as a source"
-msgstr "Agrega un clip al secuenciador usando como fuente una escena de Blender"
+msgstr "Agrega un clip al editor de video usando como fuente una escena de Blender"
 
 
 msgid "Select a strip (last selected becomes the \"active strip\")"
@@ -62014,7 +62032,7 @@ msgstr "Agregar clip de sonido"
 
 
 msgid "Add a sound strip to the sequencer"
-msgstr "Agrega un clip de sonido al secuenciador"
+msgstr "Agrega un clip de sonido al editor de video"
 
 
 msgid "Cache the sound in memory"
@@ -62162,11 +62180,11 @@ msgstr "Lado del clip a intercambiar"
 
 msgctxt "Operator"
 msgid "Sequencer Swap Data"
-msgstr "Intercambiar datos del secuenciador"
+msgstr "Intercambiar datos"
 
 
 msgid "Swap 2 sequencer strips"
-msgstr "Intercambia 2 clips del secuenciador"
+msgstr "Intercambia 2 clips del editor de video"
 
 
 msgctxt "Operator"
@@ -62201,7 +62219,7 @@ msgstr "Habilitar los clips no seleccionados"
 
 
 msgid "View all the strips in the sequencer"
-msgstr "Ver todos los clips en el secuenciador"
+msgstr "Ver todos los clips en el editor de video"
 
 
 msgid "Zoom preview to fit in the area"
@@ -62218,7 +62236,7 @@ msgstr "Define los límites del marco usado para desplazar la vista"
 
 
 msgid "Zoom the sequencer on the selected strips"
-msgstr "Acerca el secuenciador a los clips seleccionados"
+msgstr "Acerca el editor de video a los clips seleccionados"
 
 
 msgctxt "Operator"
@@ -62227,16 +62245,16 @@ msgstr "Cambiar vista"
 
 
 msgid "Toggle between sequencer views (sequence, preview, both)"
-msgstr "Alterna entre diferentes vistas del secuenciador (secuencia, previsualización, ambas)"
+msgstr "Alterna entre diferentes vistas del editor de video (editor de video, previsualización, ambas)"
 
 
 msgctxt "Operator"
 msgid "Sequencer View Zoom Ratio"
-msgstr "Magnitud del zoom del secuenciador"
+msgstr "Magnitud del zoom del editor de video"
 
 
 msgid "Change zoom ratio of sequencer preview"
-msgstr "Cambia el zoom de la previsualización del secuenciador"
+msgstr "Cambia el zoom de la previsualización del editor de video"
 
 
 msgctxt "Operator"
@@ -62849,7 +62867,7 @@ msgstr "Escala el tamaño de visualización de los huesos flexibles seleccionado
 
 
 msgid "Constraint Axis"
-msgstr "Restricción eje"
+msgstr "Restringir eje"
 
 
 msgid "Matrix Orientation"
@@ -63012,7 +63030,7 @@ msgstr "Transformar desde manipulador"
 
 
 msgid "Mirror selected items around one or more axes"
-msgstr "Simetriza los elementos seleccionados con respecto a uno o más ejes"
+msgstr "Permite invertir los elementos seleccionados con respecto a uno o más ejes"
 
 
 msgctxt "Operator"
@@ -63559,15 +63577,15 @@ msgstr "Permite escoger un bloque de datos desde la vista 3D para almacenarlo en
 
 msgctxt "Operator"
 msgid "I18n Add-on Export"
-msgstr "Exportar i18n del agregado"
+msgstr "Exportar i18n del complemento"
 
 
 msgid "Export given add-on's translation data as PO files"
-msgstr "Permite exportar los datos de traducción del agregado como archivos PO"
+msgstr "Permite exportar los datos de traducción del complemento como archivos PO"
 
 
 msgid "Add-on to process"
-msgstr "Agregado a procesar"
+msgstr "Complemento a procesar"
 
 
 msgid "Export POT"
@@ -63588,16 +63606,16 @@ msgstr "Actualiza los archivos .po existentes, si existieran, en vez de sobrescr
 
 msgctxt "Operator"
 msgid "I18n Add-on Import"
-msgstr "Importar i18n del agregado"
+msgstr "Importar i18n del complemento"
 
 
 msgid "Import given add-on's translation data from PO files"
-msgstr "Importa los datos de traducción del agregado especificado desde un archivo PO"
+msgstr "Importa los datos de traducción del complemento especificado desde un archivo PO"
 
 
 msgctxt "Operator"
 msgid "Update I18n Add-on"
-msgstr "Actualizar i18n del agregado"
+msgstr "Actualizar i18n del complemento"
 
 
 msgid "Wrapper operator which will invoke given op after setting its module_name"
@@ -63613,7 +63631,7 @@ msgstr "Nombre (id) del operador a invocar"
 
 
 msgid "Update given add-on's translation data (found as a py tuple in the add-on's source code)"
-msgstr "Actualiza los datos de traducción del agregado especificado (que aparecen en forma de tuplas Python en el código fuente del agregado)"
+msgstr "Actualiza los datos de traducción del complemento especificado (que aparecen en forma de tuplas Python en el código fuente del complemento)"
 
 
 msgctxt "Operator"
@@ -64969,11 +64987,11 @@ msgstr "Adhiere el cursor 3D al elemento activo"
 
 msgctxt "Operator"
 msgid "Snap Cursor to World Origin"
-msgstr "Adherir cursor al origen"
+msgstr "Adherir cursor a origen global"
 
 
 msgid "Snap 3D cursor to the world origin"
-msgstr "Adhiere el cursor 3D al origen del universo"
+msgstr "Adhiere el cursor 3D al origen global"
 
 
 msgctxt "Operator"
@@ -65389,7 +65407,7 @@ msgstr "Hace coincidir la cámara 1 a 1 con el tamaño de la imagen procesada"
 
 msgctxt "Operator"
 msgid "Export Alembic"
-msgstr "Exportar a Alembic"
+msgstr "Exportar Alembic"
 
 
 msgid "Export current scene in an Alembic archive"
@@ -65457,7 +65475,7 @@ msgstr "No preservar las relaciones jerárquicas de los objetos"
 
 
 msgid "Value by which to enlarge or shrink the objects with respect to the world's origin"
-msgstr "Valor por el cual multiplicar el tamaño de los objetos, con respecto al origen del universo"
+msgstr "Valor por el cual multiplicar el tamaño de los objetos, con respecto al origen global"
 
 
 msgid "Geometry Samples"
@@ -67311,6 +67329,67 @@ msgstr "Sitio"
 
 
 msgctxt "Operator"
+msgid "Export USD"
+msgstr "Exportar USD"
+
+
+msgid "Export current scene in a USD archive"
+msgstr "Exportar la escena actual a una archivo de Universal Scene Description"
+
+
+msgid "Use Settings for"
+msgstr "Usar opciones de"
+
+
+msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
+msgstr "Determina la visibilidad de los objetos, opciones de modificadores y otras áreas donde existan diferentes para visualización en la vista 3D y el procesamiento"
+
+
+msgid "Use Render settings for object visibility, modifier settings, etc"
+msgstr "Usar opciones de procesamiento para visibilidad de objetos, opciones de modificadores, etc"
+
+
+msgid "Use Viewport settings for object visibility, modifier settings, etc"
+msgstr "Usar opciones de visualización para visibilidad de objetos, opciones de modificadores, etc"
+
+
+msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
+msgstr "Exporta el rango de procesamiento completo. Si está inactiva, se exportará sólo el fotograma actual"
+
+
+msgid "When checked, hair is exported as USD curves"
+msgstr "Exporta el pelo como curvas USD"
+
+
+msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
+msgstr "Exporta las opciones de Visualización en vistas de los materiales como materiales de previsualización USD, y los materiales asignados se exportarán como subconjuntos de geometría"
+
+
+msgid "When checked, normals of exported meshes are included in the export"
+msgstr "Incluye las normales de las mallas exportadas"
+
+
+msgid "UV Maps"
+msgstr "Mapas UV"
+
+
+msgid "When checked, all UV maps of exported meshes are included in the export"
+msgstr "Incluye todos los mapas UV de las mallas exportadas"
+
+
+msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
+msgstr "Exporta sólo los objetos seleccionados. Los superiores de dichos objetos, que no se encontraran también seleccionados, serán exportados como transformaciones vacías"
+
+
+msgid "Instancing"
+msgstr "Instanciado"
+
+
+msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
+msgstr "Exporta los objetos instanciados como referencias en el USD. Si está inactiva, los mismos serán exportados como objetos reales"
+
+
+msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "Agregar ruta de auto ejecución"
 
@@ -68343,10 +68422,6 @@ msgid "Text Boxes"
 msgstr "Marcos de texto"
 
 
-msgid "UV Maps"
-msgstr "Mapas UV"
-
-
 msgid "OpenVDB File"
 msgstr "Archivo OpenVDB"
 
@@ -68617,10 +68692,6 @@ msgstr "Cortar vínculos"
 
 msgid "Delta Transform"
 msgstr "Transformación relativa"
-
-
-msgid "Instancing"
-msgstr "Instanciado"
 
 
 msgid "Scale by Face Size"
@@ -69012,7 +69083,7 @@ msgstr "I18n actualizar traducción"
 
 
 msgid "Add-ons"
-msgstr "Agregados"
+msgstr "Complementos"
 
 
 msgid "Auto-Keyframing"
@@ -69741,7 +69812,7 @@ msgstr "Respuesta del visor"
 
 
 msgid "Filter Add-ons"
-msgstr "Filtrar agregados"
+msgstr "Filtrar complementos"
 
 
 msgid "Particle in a particle system"
@@ -71093,11 +71164,11 @@ msgstr "Alinear objeto a"
 
 
 msgid "When adding objects from a 3D View menu, either align them with that view or with the world"
-msgstr "Al agregar objetos desde el menú de una vista 3D, alinearlos a esa vista o a las coordenadas universales"
+msgstr "Al agregar objetos desde el menú de una vista 3D, alinearlos a esa vista o a las coordenadas globales"
 
 
 msgid "Align newly added objects to the world coordinate system"
-msgstr "Alinea los nuevos objetos al sistema de coordenadas universal"
+msgstr "Alinea los nuevos objetos al sistema de coordenadas globales"
 
 
 msgid "Align newly added objects to the active 3D View direction"
@@ -71305,7 +71376,7 @@ msgstr "Usa la profundidad de las superficies para ubicar el cursor 3D"
 
 
 msgid "Allow Negative Frames"
-msgstr "Permitir fotogr. negativos"
+msgstr "Permitir fotogramas negativos"
 
 
 msgid "Current frame number can be manually set to a negative value"
@@ -71477,7 +71548,7 @@ msgstr "Directorio de scripts Python"
 
 
 msgid "Alternate script path, matching the default layout with subdirs: startup, add-ons & modules (requires restart)"
-msgstr "Ruta alternativa para scripts, debe coincidir con la organización predefinida de subdirectorios: startup, addons y modules (requiere reiniciar)"
+msgstr "Ruta alternativa para scripts, debe coincidir con la organización predefinida de subdirectorios: startup, add-ons y modules (requiere reiniciar)"
 
 
 msgid "Hide Dot Files/Data-blocks"
@@ -72357,7 +72428,7 @@ msgstr "Grosor líneas IU"
 
 
 msgid "Suggested line thickness and point size in pixels, for add-ons drawing custom user interface elements, based on operating system settings and Blender UI scale"
-msgstr "Grosor de línea y tamaño de punto sugeridos, expresado en píxeles, para que los agregados dibujen elementos personalizados en la interfaz de usuario, está basado en las opciones del sistema operativo y la escala de la interfaz de Blender"
+msgstr "Grosor de línea y tamaño de punto sugeridos, expresado en píxeles, para que los complementos dibujen elementos personalizados en la interfaz de usuario, está basado en las opciones del sistema operativo y la escala de la interfaz de Blender"
 
 
 msgid "UI Scale"
@@ -72765,11 +72836,11 @@ msgstr "Intervalo de rotación para las teclas numéricas (2 4 6 8)"
 
 
 msgid "Enabled Add-ons Only"
-msgstr "Sólo agregados habilitados"
+msgstr "Sólo complementos habilitados"
 
 
 msgid "Only show enabled add-ons. Un-check to see all installed add-ons"
-msgstr "Sólo mostrar agregados habilitados. Desmarcar para ver todos los agregados instalados"
+msgstr "Sólo mostrar complementos habilitados. Desmarcar para ver todos los complementos instalados"
 
 
 msgid "Toolbox Column Layout"
@@ -75041,7 +75112,7 @@ msgstr "Divide el trazo en los vértices invisibles"
 
 
 msgid "SVG Export"
-msgstr "Exportar a SVG"
+msgstr "Exportar SVG"
 
 
 msgid "Export Freestyle edges to an .svg format"
@@ -75737,11 +75808,11 @@ msgstr "Cantidad vertical de píxeles en la imagen procesada"
 
 
 msgid "Sequencer Preview Shading"
-msgstr "Sombreado de previsualización del secuenciador"
+msgstr "Sombreado de previsualización del editor de video"
 
 
 msgid "Method to draw in the sequencer view"
-msgstr "Método de visualización en la vista del secuenciador"
+msgstr "Método de visualización en la vista del editor de video"
 
 
 msgid "Display the object as wire edges"
@@ -76017,7 +76088,7 @@ msgstr "Almacena las celdas para todas las capas de procesamiento y los nodos de
 
 
 msgid "Process the render (and composited) result through the video sequence editor pipeline, if sequencer strips exist"
-msgstr "Procesa el resultado final (compuesto) del procesamiento, a través del sistema de edición de secuencias de video, si existen clips del secuenciador"
+msgstr "Procesa el resultado final (compuesto) del procesamiento, a través del sistema de edición de video, si existieran clips del editor de video"
 
 
 msgid "Override Scene Settings"
@@ -76025,7 +76096,7 @@ msgstr "Redefinir opciones de escena"
 
 
 msgid "Use workbench render settings from the sequencer scene, instead of each individual scene used in the strip"
-msgstr "Usa las opciones de procesamiento de Workbench en la escena del secuenciador, en lugar de las de cada escena usada en los clips"
+msgstr "Usa las opciones de procesamiento de Workbench de la escena del editor de video, en lugar de las opciones de cada escena particular, usada en los clips"
 
 
 msgid "Use Simplify"
@@ -76169,7 +76240,7 @@ msgstr "Metadatos de clips"
 
 
 msgid "Use metadata from the strips in the sequencer"
-msgstr "Usar los metadatos de los clips en el secuenciador"
+msgstr "Usar los metadatos de los clips en el editor de video"
 
 
 msgid "Stamp Time"
@@ -77811,7 +77882,7 @@ msgstr "Usar modificadores en modo lineal"
 
 
 msgid "Calculate modifiers in linear space instead of sequencer's space"
-msgstr "Calcular los modificadores en espacio lineal, en vez de usar el espacio del secuenciador"
+msgstr "Calcular los modificadores en espacio lineal, en vez de usar el espacio del editor de video"
 
 
 msgid "Effect Sequence"
@@ -78500,7 +78571,7 @@ msgstr "Clip activo"
 
 
 msgid "Sequencer's active strip"
-msgstr "Clip activo del secuenciador"
+msgstr "Clip activo del editor de video"
 
 
 msgid "Meta Stack"
@@ -78608,7 +78679,7 @@ msgstr "Mostrar superposición"
 
 
 msgid "Partial overlay on top of the sequencer with a frame offset"
-msgstr "Superposición parcial sobre el secuenciador con un desplazamiento de fotogramas"
+msgstr "Superposición parcial sobre el editor de video, con un desplazamiento de fotogramas"
 
 
 msgid "Cache Final"
@@ -78688,7 +78759,7 @@ msgstr "Tipo de dato de entrada usado como máscara"
 
 
 msgid "Use sequencer strip as mask input"
-msgstr "Usar clip de la secuencia como entrada de la máscara"
+msgstr "Usar clip del editor de video como entrada de la máscara"
 
 
 msgid "Use mask ID as mask input"
@@ -79568,12 +79639,12 @@ msgstr "Datos del espacio del editor de clips"
 
 
 msgctxt "MovieClip"
-msgid "Grease Pencil Source"
-msgstr "Origen lápiz de cera"
+msgid "Annotation Source"
+msgstr "Origen de la anotación"
 
 
-msgid "Where the grease pencil comes from"
-msgstr "De dónde proviene el lápiz de cera"
+msgid "Where the annotation comes from"
+msgstr "De dónde proviene la anotación"
 
 
 msgid "Show annotation data-block which belongs to movie clip"
@@ -80669,7 +80740,7 @@ msgstr "Editar nodos de sombreado de objetos"
 
 
 msgid "Edit shader nodes from World"
-msgstr "Editar nodos de sombreado de entorno"
+msgstr "Editar nodos de sombreado del entorno"
 
 
 msgid "Edit shader nodes from Line Style"
@@ -80689,7 +80760,7 @@ msgstr "Tipo de dato de donde tomar la textura"
 
 
 msgid "Edit texture nodes from World"
-msgstr "Editar nodos de texturizado de entorno"
+msgstr "Editar nodos de texturizado del entorno"
 
 
 msgid "Edit texture nodes from Brush"
@@ -81054,7 +81125,7 @@ msgstr "El número del canal a mostrar en la previsualización de la imagen. 0 e
 
 
 msgid "View mode to use for displaying sequencer output"
-msgstr "Modo de visualización a usar para mostrar la salida del secuenciador"
+msgstr "Modo de visualización a usar para mostrar la salida del editor de video"
 
 
 msgid "Luma Waveform"
@@ -81194,11 +81265,11 @@ msgstr "Transforma los marcadores junto con los clips"
 
 
 msgid "Type of the Sequencer view (sequencer, preview or both)"
-msgstr "Tipo de vista del secuenciador (secuenciador, previsualización o ambas)"
+msgstr "Tipo de vista del editor de video (editor de video, previsualización o ambas)"
 
 
 msgid "Sequencer/Preview"
-msgstr "Secuenciador / Previsualización"
+msgstr "Editor de video / Previsualización"
 
 
 msgid "Waveform Displaying"
@@ -81798,7 +81869,7 @@ msgstr "Mostrar superpuesta la capa UV, al pintar texturas"
 
 
 msgid "Sticky Selection Mode"
-msgstr "Modo selección adhesiva"
+msgstr "Modo de selección adhesiva"
 
 
 msgid "Automatically select also UVs sharing the same vertex as the ones being selected"
@@ -84206,7 +84277,7 @@ msgstr "Adherir el trazo a superficies"
 
 
 msgid "Stroke Placement (Sequencer Preview)"
-msgstr "Ubicación de trazos (previsualización del secuenciador)"
+msgstr "Ubicación de trazos (previsualización editor de video)"
 
 
 msgid "Stroke Placement (2D View)"
@@ -84302,7 +84373,7 @@ msgstr "Adherencia del trazo"
 
 
 msgid "All points"
-msgstr "Todos los puntos"
+msgstr "Todos"
 
 
 msgid "Snap to all points"
@@ -84475,7 +84546,7 @@ msgstr "Visualización de estadísticas de mallas"
 
 
 msgid "Transform Pivot Point"
-msgstr "Transformar pivote"
+msgstr "Pivote para transformaciones"
 
 
 msgid "Unified Paint Settings"
@@ -84771,7 +84842,7 @@ msgstr "Permite transformar los superiores, manteniendo a los subordinados en el
 
 
 msgid "UV Sync Selection"
-msgstr "Sincroniz sel. UV"
+msgstr "Sincronizar selección de UV"
 
 
 msgid "Keep UV and edit mode mesh selection in sync"
@@ -84815,7 +84886,7 @@ msgstr "Deshabilita la edición de los bordes limítrofes"
 
 
 msgid "UV Selection Mode"
-msgstr "Modo selección UV"
+msgstr "Modo de selección de UV"
 
 
 msgid "UV selection and display mode"
@@ -85739,15 +85810,15 @@ msgstr "Tema"
 
 
 msgid "Use the theme for background color"
-msgstr "Usa el tema para el color de fondo"
+msgstr "Usa el tema como color de fondo"
 
 
 msgid "Use the world for background color"
-msgstr "Usa el entorno para el color de fondo"
+msgstr "Usa el entorno como color de fondo"
 
 
 msgid "Use a custom color limited to this viewport only"
-msgstr "Usa un color personalizado para el color de fondo"
+msgstr "Usa un color personalizado como color de fondo sólo de esta vista"
 
 
 msgid "Cavity Ridge"
@@ -85767,7 +85838,7 @@ msgstr "Forma de representar el sombreado de cavidades"
 
 
 msgid "Cavity shading computed in world space, useful for larger-scale occlusion"
-msgstr "Sombreado de cavidades calculado en espacio universal, útil para oclusiones a gran escala"
+msgstr "Sombreado de cavidades calculado en espacio global, útil para oclusiones a gran escala"
 
 
 msgid "Curvature-based shading, useful for making fine details more visible"
@@ -85931,7 +86002,7 @@ msgstr "Configuración de la iluminación de estudio"
 
 
 msgid "World Opacity"
-msgstr "Opacidad entorno"
+msgstr "Opacidad del entorno"
 
 
 msgid "Show the studiolight in the background"
@@ -86287,7 +86358,7 @@ msgstr "Opciones de procesamiento de objetos volumétricos"
 
 
 msgid "Specify volume density and step size  in object or world space"
-msgstr "Permite especificar la densidad y el tamaño de intervalo del volumen, en espacio del objeto o universal"
+msgstr "Permite especificar la densidad y el tamaño de intervalo del volumen, en espacio del objeto o global"
 
 
 msgid "Keep volume opacity and detail the same regardless of object scale"
@@ -86295,11 +86366,7 @@ msgstr "Mantiene la opacidad y el detalle del volumen sin cambios, independiente
 
 
 msgid "Specify volume step size and density in world space"
-msgstr "Especifica el tamaño de los intervalos y la densidad del volumen en espacio universal"
-
-
-msgid "Distance between volume samples. Higher values render more detail at the cost of performance. If set to zero, the step size is automatically determined based on voxel size"
-msgstr "Distancia entre las muestras del volumen. Valores mayores producirán más detalle a costa del rendimiento. Al usar cero, el tamaño del intervalo será determinado automáticamente, basado en el tamaño de los vóxeles"
+msgstr "Especifica el tamaño de los intervalos y la densidad del volumen en espacio global"
 
 
 msgid "Walk navigation settings"
@@ -86399,7 +86466,7 @@ msgstr "Usa la oclusión ambiental para agregar sombreado basado en la distancia
 
 
 msgid "World Mist"
-msgstr "Niebla entorno"
+msgstr "Niebla del entorno"
 
 
 msgid "Mist settings for a World data-block"
@@ -86447,7 +86514,7 @@ msgstr "Usar niebla"
 
 
 msgid "Occlude objects with the environment color as they are further away"
-msgstr "Ocluír objetos con el color de ambiente cuando estén muy lejos"
+msgstr "Permite ocluir objetos usando el color del entorno, a medida que se alejan"
 
 
 msgid "Rotation angle around the Z-Axis to apply the rotation deltas from the VR headset to"
@@ -86847,7 +86914,7 @@ msgstr "Escultura:"
 
 msgctxt "Operator"
 msgid "Sequencer:"
-msgstr "Secuenciador:"
+msgstr "Editor de video:"
 
 
 msgctxt "Operator"
@@ -86907,7 +86974,7 @@ msgstr "Espacio de trabajo:"
 
 msgctxt "Operator"
 msgid "World:"
-msgstr "Universo:"
+msgstr "Entorno:"
 
 
 msgctxt "WindowManager"
@@ -87267,17 +87334,17 @@ msgstr "Nodo - Genérico"
 
 msgctxt "WindowManager"
 msgid "Sequencer"
-msgstr "Video"
+msgstr "Editor de video"
 
 
 msgctxt "WindowManager"
 msgid "SequencerCommon"
-msgstr "Video - Común"
+msgstr "Editor de video - Común"
 
 
 msgctxt "WindowManager"
 msgid "SequencerPreview"
-msgstr "Video - Previsualización"
+msgstr "Editor de video - Previsualización"
 
 
 msgctxt "WindowManager"
@@ -88049,7 +88116,7 @@ msgstr "No fue posible guardar al archivo .po ({})"
 
 
 msgid "WARNING: preferences are lost when add-on is disabled, be sure to use \"Save Persistent\" if you want to keep your settings!"
-msgstr "ADVERTENCIA: Las preferencias se perderán al deshabilitar el agregado, asegurarse de usar \"Guardar persistente\" si se desea conservar las mismas!"
+msgstr "ADVERTENCIA: Las preferencias se perderán al deshabilitar el complemento, usar \"Guardar persistente a...\" para conservar las mismas!"
 
 
 msgctxt "Operator"
@@ -88068,11 +88135,11 @@ msgstr "Cargar"
 
 
 msgid "No add-on module given!"
-msgstr "¡Ningún módulo de agregado especificado!"
+msgstr "¡No se especificó ningún módulo de complemento!"
 
 
 msgid "Add-on '{}' not found!"
-msgstr "¡Agregado '{}' no encontrado!"
+msgstr "¡Complemento '{}' no encontrado!"
 
 
 msgid "Info written to {} text datablock!"
@@ -88088,7 +88155,7 @@ msgstr "¡No fue posible inicializar los datos de idiomas!"
 
 
 msgid "Please edit the preferences of the UI Translate add-on"
-msgstr "Por favor editar las preferencias del agregado Translate UI"
+msgstr "Por favor editar las preferencias del complemento UI Translate"
 
 
 msgctxt "Operator"
@@ -88122,7 +88189,7 @@ msgstr "Estadísticas"
 
 
 msgid "Add-ons:"
-msgstr "Agregados:"
+msgstr "Complementos:"
 
 
 msgctxt "Operator"
@@ -88948,6 +89015,10 @@ msgid "Flip V"
 msgstr "Invertir en V"
 
 
+msgid "Flip UDIM"
+msgstr "Invertir UDIM"
+
+
 msgctxt "Operator"
 msgid "Delete Higher"
 msgstr "Borrar el más alto"
@@ -89491,7 +89562,7 @@ msgstr "Cursor a seleccionado"
 
 msgctxt "Operator"
 msgid "Cursor to World Origin"
-msgstr "Cursor al origen del universo"
+msgstr "Cursor al origen global"
 
 
 msgctxt "Operator"
@@ -90704,7 +90775,7 @@ msgstr "Dispersión"
 
 
 msgid "Unknown add-ons"
-msgstr "Agregados desconocidos"
+msgstr "Complementos desconocidos"
 
 
 msgid "%s: %s"
@@ -91836,7 +91907,7 @@ msgstr "Definir rango de fotogramas de clips"
 
 msgctxt "Operator"
 msgid "Sequence Render Animation"
-msgstr "Procesar secuencia de animación"
+msgstr "Procesar animación"
 
 
 msgctxt "Operator"
@@ -91996,7 +92067,7 @@ msgstr "Refrescar todo"
 
 msgctxt "Operator"
 msgid "Sequence Render Image"
-msgstr "Procesar secuencia de imágenes"
+msgstr "Procesar fotograma"
 
 
 msgctxt "Operator"
@@ -92598,7 +92669,7 @@ msgstr "Universal Scene Description (.usd, .usdc, .usda)"
 
 msgctxt "Operator"
 msgid "Render Image"
-msgstr "Procesar imagen"
+msgstr "Procesar fotograma"
 
 
 msgctxt "Operator"
@@ -92731,7 +92802,7 @@ msgstr "Color de superposición de escultura"
 
 
 msgid "Node Auto-offset Margin"
-msgstr "Margen desplazamiento automático"
+msgstr "Margen desplazamiento de nodos"
 
 
 msgid "Minimum Grid Spacing"
@@ -92942,7 +93013,7 @@ msgstr "Opciones de volar/transitar"
 
 
 msgid "Multiple add-ons with the same name found!"
-msgstr "¡Se han encontrado múltiples agregados con el mismo nombre!"
+msgstr "¡Se han encontrado múltiples complementos con el mismo nombre!"
 
 
 msgid "Delete one of each pair to resolve:"
@@ -93036,12 +93107,12 @@ msgstr "Perspectiva/Ortogonal"
 
 msgctxt "Operator"
 msgid "Viewport Render Image"
-msgstr "Procesar vista - Imagen"
+msgstr "Procesar fotograma"
 
 
 msgctxt "Operator"
 msgid "Viewport Render Keyframes"
-msgstr "Procesar vista - Fotogramas clave"
+msgstr "Procesar fotogramas clave"
 
 
 msgctxt "Operator"
@@ -93975,7 +94046,7 @@ msgstr "Cerrar"
 
 msgctxt "Operator"
 msgid "Toggle Caps"
-msgstr "Mayús/minús."
+msgstr "Modificar extremos"
 
 
 msgctxt "Operator"
@@ -94143,7 +94214,7 @@ msgstr "Proyectar desde vista (hasta límites)"
 
 msgctxt "Operator"
 msgid "Viewport Render Animation"
-msgstr "Procesar vista - Animación"
+msgstr "Procesar animación"
 
 
 msgctxt "Operator"
@@ -95538,7 +95609,7 @@ msgstr "No es posible agregar un cuerpo rígido a un objeto no poligonal"
 
 
 msgid "Can't create Rigid Body world"
-msgstr "No se puede crear entorno de cuerpos rígidos"
+msgstr "No se puede crear un entorno de cuerpos rígidos"
 
 
 msgid "RenderView"
@@ -95585,6 +95656,10 @@ msgstr "Los clips no son compatibles"
 
 msgid "Strips must have the same number of inputs"
 msgstr "Los clips deben tener la misma cantidad de entradas"
+
+
+msgid "Recursion detected in video sequencer. Strip %s at frame %d will not be rendered"
+msgstr "Se ha detectado una recursión en el editor de video. En el clip %s el fotograma %d no será procesado"
 
 
 msgctxt "MovieClip"
@@ -96130,18 +96205,6 @@ msgstr "Segundo coeficiente"
 
 msgid "Add a new control-point to the envelope on the current frame"
 msgstr "Agrega un nuevo punto de control a la envolvente en el fotograma actual"
-
-
-msgid "Frame that envelope point occurs"
-msgstr "Fotograma en el que se encuentra el punto de la envolvente"
-
-
-msgid "Minimum bound of envelope at this point"
-msgstr "Límite mínimo de la envolvente en este punto"
-
-
-msgid "Maximum bound of envelope at this point"
-msgstr "Límite máximo de la envolvente en este punto"
 
 
 msgid "Delete envelope control point"
@@ -96920,10 +96983,6 @@ msgid "Fill tool needs active material"
 msgstr "La herramienta Rellenar necesita un material activo"
 
 
-msgid "Fill canceled. No edges detected"
-msgstr "Relleno cancelado. No se detectaron bordes"
-
-
 msgid "Active region not valid for filling operator"
 msgstr "La región activa no es válida para el operador de relleno"
 
@@ -97274,7 +97333,7 @@ msgstr "Ver '%s' en el editor de texto"
 
 
 msgid "Could not find operator '%s'! Please enable ui_translate add-on in the User Preferences"
-msgstr "¡No fue posible encontrar el operador '%s'! Por favor habilitar el agregado ui_translate en las Preferencias de usuario"
+msgstr "¡No fue posible encontrar el operador '%s'! Por favor habilitar el complemento ui_translate en las Preferencias de usuario"
 
 
 msgid "No valid po found for language '%s' under %s"
@@ -98865,7 +98924,7 @@ msgstr "Omitida la edición de datos de objeto de biblioteca"
 
 
 msgid "Orphan library objects added to the current scene to avoid loss"
-msgstr "Objetos huérfanos, procedentes de bibliotecas, agregados a la escena actual para evitar su pérdida"
+msgstr "Objetos huérfanos procedentes de bibliotecas, han sido agregados a la escena actual para evitar su pérdida"
 
 
 msgid "Can only make library override for a referenced object or collection"
@@ -103003,7 +103062,7 @@ msgstr "Registrando clase de menú: '%s' es demasiado largo, la longitud máxima
 
 
 msgid "Add-on is no longer valid"
-msgstr "El agregado ya no es válido"
+msgstr "El complemento ya no es válido"
 
 
 msgid "Excluded path is no longer valid"
@@ -103011,7 +103070,7 @@ msgstr "La trayectoria excluida ya no es válida"
 
 
 msgid "Registering add-on preferences class: '%s' is too long, maximum length is %d"
-msgstr "Registrando clase de opciones de agregado: '%s' es demasiado largo, la longitud máxima es %d"
+msgstr "Registrando clase de opciones de complemento: '%s' es demasiado largo, la longitud máxima es %d"
 
 
 msgid "Font not packed"
@@ -103079,7 +103138,7 @@ msgstr "El elemento de teclado '%s' no puede ser removido de '%s'"
 
 
 msgid "Modal key-maps not supported for add-on key-config"
-msgstr "No se soportan mapas modales de teclado para configurar atajos de agregados"
+msgstr "No se soportan mapas modales de teclado para configurar atajos de complementos"
 
 
 msgid "KeyConfig '%s' cannot be removed"
@@ -103826,6 +103885,10 @@ msgid "Cannot save render buffers, check the temp default path"
 msgstr "No es posible guardar los buffers de procesamiento, comprobar la ruta temporal predefinida"
 
 
+msgid "Border rendering is not supported by sequencer"
+msgstr "El marco de procesamiento no es soportado por el editor de video"
+
+
 msgid "No node tree in scene"
 msgstr "Ningún árbol de nodos en la escena"
 
@@ -103836,10 +103899,6 @@ msgstr "Ningún nodo de salida de procesamiento en la escena"
 
 msgid "Full sample AA not supported without 3D rendering"
 msgstr "Suavizado de bordes con muestreo completo no soportado sin procesamiento 3D"
-
-
-msgid "Border rendering is not supported by sequencer"
-msgstr "El marco de procesamiento no es soportado por el secuenciador"
 
 
 msgid "All render layers are disabled"
@@ -103955,7 +104014,7 @@ msgstr "Ventana del contexto no definida"
 
 
 msgid "Engine '%s' not available for scene '%s' (an add-on may need to be installed or enabled)"
-msgstr "El motor '%s' no está disponible para la escena '%s' (es posible que se necesite instalar o activar un agregado)"
+msgstr "El motor '%s' no está disponible para la escena '%s' (es posible que se necesite instalar o activar un complemento)"
 
 
 msgid "Cannot read file '%s': %s"
@@ -104223,11 +104282,11 @@ msgstr "El modo 3D estéreo requiere que la ventana se encuentre a pantalla comp
 
 
 msgid "All Add-ons"
-msgstr "Todos los agregados"
+msgstr "Todos los complementos"
 
 
 msgid "All Add-ons Installed by User"
-msgstr "Todos los agregados instalados por el usuario"
+msgstr "Todos los complementos instalados por el usuario"
 
 
 msgid "Add Curve"

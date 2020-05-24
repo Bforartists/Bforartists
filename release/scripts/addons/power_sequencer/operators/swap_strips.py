@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -57,6 +57,9 @@ class POWER_SEQUENCER_OT_swap_strips(bpy.types.Operator):
         return context.selected_sequences
 
     def execute(self, context):
+        if len(context.selected_sequences) != 2:
+            return {"CANCELLED"}
+
         strip_1 = context.selected_sequences[0]
         if len(context.selected_sequences) == 1:
             strip_2 = self.find_closest_strip_vertical(context, strip_1, self.direction)
@@ -229,19 +232,19 @@ class POWER_SEQUENCER_OT_swap_strips(bpy.types.Operator):
                 return
             return max(strips_below, key=attrgetter("channel"))
 
-        def are_linked(self, strip_1, strip_2):
-            return (
-                strip_1.frame_final_start == strip_2.frame_final_start
-                and strip_1.frame_final_end == strip_2.frame_final_end
-            )
+    def are_linked(self, strip_1, strip_2):
+        return (
+            strip_1.frame_final_start == strip_2.frame_final_start
+            and strip_1.frame_final_end == strip_2.frame_final_end
+        )
 
-        def swap_with_effect(self, strip_1, strip_2):
-            effect_strip = strip_1 if hasattr(strip_1, "input_1") else strip_2
-            other_strip = strip_1 if effect_strip != strip_1 else strip_2
+    def swap_with_effect(self, strip_1, strip_2):
+        effect_strip = strip_1 if hasattr(strip_1, "input_1") else strip_2
+        other_strip = strip_1 if effect_strip != strip_1 else strip_2
 
-            effect_strip_channel = effect_strip.channel
-            other_strip_channel = other_strip.channel
+        effect_strip_channel = effect_strip.channel
+        other_strip_channel = other_strip.channel
 
-            effect_strip.channel -= 1
-            other_strip.channel = effect_strip_channel
-            effect_strip.channel = other_strip_channel
+        effect_strip.channel -= 1
+        other_strip.channel = effect_strip_channel
+        effect_strip.channel = other_strip_channel

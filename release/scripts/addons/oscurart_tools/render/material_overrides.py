@@ -13,10 +13,7 @@ def ApplyOverrides(dummy):
     for override in bpy.context.scene.ovlist:
         
         # set collections clean name
-        if override.grooverride.endswith("]"):
-            collClean = override.grooverride[3:].split("[")[0][:-1]
-        else:
-            collClean = override.grooverride[3:]        
+        collClean = override.grooverride     
         
         for ob in bpy.data.collections[collClean].all_objects:
             if ob.type == "MESH":
@@ -33,15 +30,9 @@ def ApplyOverrides(dummy):
     for override in bpy.context.scene.ovlist:
         
         # set collections clean name
-        if override.grooverride.endswith("]"):
-            collClean = override.grooverride[3:].split("[")[0][:-1]            
-        else:
-            collClean = override.grooverride[3:]               
+        collClean = override.grooverride              
         # set material clean name    
-        if override.matoverride.endswith("]"):  
-            matClean = override.matoverride[3:].split("[")[0][:-1]
-        else:
-            matClean = override.matoverride[3:]       
+        matClean = override.matoverride      
             
         
         for ob in bpy.data.collections[collClean].all_objects:

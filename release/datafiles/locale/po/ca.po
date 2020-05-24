@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -6928,10 +6928,6 @@ msgstr "Mostrar propietats de les arestes"
 
 msgid "Testing"
 msgstr "Editar"
-
-
-msgid "Text Clipboard"
-msgstr "Rotar"
 
 
 msgid "Key Configurations"
@@ -20336,6 +20332,10 @@ msgid "URL to open"
 msgstr "URL per obrir"
 
 
+msgid "UV Maps"
+msgstr "Image Displist"
+
+
 msgctxt "Operator"
 msgid "New World"
 msgstr "Sigüent"
@@ -20571,10 +20571,6 @@ msgstr "Finestra de Render"
 
 msgid "Text Boxes"
 msgstr "Texte"
-
-
-msgid "UV Maps"
-msgstr "Image Displist"
 
 
 msgid "Filters"
@@ -23003,10 +22999,6 @@ msgstr "Image Displist"
 
 msgid "Clip editor space data"
 msgstr "Image Displist"
-
-
-msgid "Where the grease pencil comes from"
-msgstr "Seleccionar connectats"
 
 
 msgid "Lock to Selection"

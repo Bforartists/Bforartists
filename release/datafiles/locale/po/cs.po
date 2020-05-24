@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -9053,10 +9053,6 @@ msgstr "Uživatelská komunita"
 
 msgid "Testing"
 msgstr "Editace"
-
-
-msgid "Text Clipboard"
-msgstr "Vzorky"
 
 
 msgid "Key Configurations"
@@ -25310,6 +25306,10 @@ msgid "URL to open"
 msgstr "URL k otevření"
 
 
+msgid "UV Maps"
+msgstr "Použít Ořez"
+
+
 msgid "Toggle the current window fullscreen"
 msgstr "Přepne současné okno na celou obrazovku"
 
@@ -25577,10 +25577,6 @@ msgstr "Přehrát animaci"
 
 msgid "Text Boxes"
 msgstr "Textury"
-
-
-msgid "UV Maps"
-msgstr "Použít Ořez"
 
 
 msgid "Filters"
@@ -28698,10 +28694,6 @@ msgstr "Nelineární video editor"
 
 msgid "Clip editor space data"
 msgstr "NLA editor"
-
-
-msgid "Where the grease pencil comes from"
-msgstr "Hladké "
 
 
 msgid "Lock to Selection"

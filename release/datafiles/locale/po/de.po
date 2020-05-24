@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -11502,10 +11502,6 @@ msgstr "Durch Community-Entwickler erstellt"
 
 msgid "Testing"
 msgstr "Testen"
-
-
-msgid "Text Clipboard"
-msgstr "Text-Zwischenablage"
 
 
 msgid "Key Configurations"
@@ -27082,6 +27078,10 @@ msgid "URL to open"
 msgstr "Zu öffnende URL"
 
 
+msgid "UV Maps"
+msgstr "UV-Maps"
+
+
 msgid "Toggle the current window fullscreen"
 msgstr "Vollbildmodus für aktuelles Fenster aktivieren/deaktivieren"
 
@@ -27454,10 +27454,6 @@ msgstr "Skellet"
 
 msgid "Text Boxes"
 msgstr "Textboxen"
-
-
-msgid "UV Maps"
-msgstr "UV-Maps"
 
 
 msgid "Filters"
@@ -31823,15 +31819,6 @@ msgstr "Ziel-Vertexgruppe"
 
 msgid "Space Clip Editor"
 msgstr "Sequenzeditor"
-
-
-msgctxt "MovieClip"
-msgid "Grease Pencil Source"
-msgstr "Wachsstift-Quelle"
-
-
-msgid "Where the grease pencil comes from"
-msgstr "Woher der Wachsstift stammt"
 
 
 msgctxt "MovieClip"
@@ -37490,14 +37477,6 @@ msgstr "Koeffizent von x"
 
 msgid "Second coefficient"
 msgstr "Zweiter Koeffizient"
-
-
-msgid "Minimum bound of envelope at this point"
-msgstr "Minimale Einhüllenden-Grenze bei diesem Punkt"
-
-
-msgid "Maximum bound of envelope at this point"
-msgstr "Maximale Einhüllenden-Grenze bei diesem Punkt"
 
 
 msgid "Delete envelope control point"

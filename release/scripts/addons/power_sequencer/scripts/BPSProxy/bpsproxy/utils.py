@@ -36,7 +36,7 @@ def checktools(tools):
         msg = ["BPSProxy couldn't find external dependencies:"]
         msg += [
             "[{check}] {tool}: {path}".format(
-                check="v" if path != "" else "X", tool=tool, path=path or "NOT FOUND"
+                check="v" if path is not "" else "X", tool=tool, path=path or "NOT FOUND"
             )
             for tool, path in check["tools"]
         ]

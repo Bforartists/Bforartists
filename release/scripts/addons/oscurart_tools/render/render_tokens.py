@@ -25,6 +25,7 @@ from bpy.app.handlers import persistent
 @persistent
 def replaceTokens (dummy):
     global renpath
+    global nodeDict
     tokens = {
     "$Scene":bpy.context.scene.name,
     "$File":os.path.basename(bpy.data.filepath).split(".")[0],
@@ -32,6 +33,16 @@ def replaceTokens (dummy):
     "$Camera":bpy.context.scene.camera.name}
 
     renpath = bpy.context.scene.render.filepath
+    
+    nodeDict = []
+    #compositor nodes
+    if bpy.context.scene.use_nodes:
+        for node in bpy.context.scene.node_tree.nodes:
+            if node.type == "OUTPUT_FILE":
+                nodeDict.append([node,node.base_path])   
+                node.base_path = node.base_path.replace("$Scene",tokens["$Scene"]).replace("$File",tokens["$File"]).replace("$ViewLayer",tokens["$ViewLayer"]).replace("$Camera",tokens["$Camera"])
+                          
+            
 
     bpy.context.scene.render.filepath = renpath.replace("$Scene",tokens["$Scene"]).replace("$File",tokens["$File"]).replace("$ViewLayer",tokens["$ViewLayer"]).replace("$Camera",tokens["$Camera"])
     print(bpy.context.scene.render.filepath)
@@ -41,6 +52,10 @@ def replaceTokens (dummy):
 def restoreTokens (dummy):
     global renpath
     bpy.context.scene.render.filepath = renpath
+    
+    #restore nodes
+    for node in nodeDict:
+        node[0].base_path = node[1]
 
 
 # //RENDER/$Scene/$File/$ViewLayer/$Camera

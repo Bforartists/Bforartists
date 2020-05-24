@@ -848,6 +848,7 @@ static void wm_draw_window(bContext *C, wmWindow *win)
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, GPU_texture_opengl_bindcode(texture));
 
+        wmWindowViewport(win);
         if (win->stereo3d_format->display_mode == S3D_DISPLAY_SIDEBYSIDE) {
           wm_stereo3d_draw_sidebyside(win, view);
         }
@@ -981,10 +982,6 @@ void wm_draw_update(bContext *C)
   Main *bmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
   wmWindow *win;
-
-#ifdef WITH_OPENSUBDIV
-  BKE_subsurf_free_unused_buffers();
-#endif
 
   GPU_free_unused_buffers(bmain);
 
