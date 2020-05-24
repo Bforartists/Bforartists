@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -6327,10 +6327,6 @@ msgstr "Satırları topla"
 
 msgid "Community"
 msgstr "Geliştirici Toplulukları"
-
-
-msgid "Text Clipboard"
-msgstr "Metni Düzenle:"
 
 
 msgid "Key Configurations"
@@ -18582,6 +18578,10 @@ msgid "URL to open"
 msgstr "Kütüphaneye Ekle"
 
 
+msgid "UV Maps"
+msgstr "UV "
+
+
 msgctxt "Operator"
 msgid "New World"
 msgstr "Dünya butonları"
@@ -18733,10 +18733,6 @@ msgstr "Animasyon Pencereleri"
 
 msgid "Text Boxes"
 msgstr "Metni Düzenle:"
-
-
-msgid "UV Maps"
-msgstr "UV "
 
 
 msgid "Bookmarks"

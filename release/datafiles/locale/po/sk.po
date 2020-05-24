@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: 2020-05-01 08:09+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: pegas\n"
@@ -13010,10 +13010,6 @@ msgid "Initial"
 msgstr "Počiatočná"
 
 
-msgid "Initial velocity in X, Y and Z direction"
-msgstr "Počiatočná rýchlosť v smere X, Y a Z"
-
-
 msgid "Multiplier of source velocity passed to fluid (source velocity is non-zero only if object is moving)"
 msgstr "Násobiteľ rýchlosti zdroja prešiel do kvapaliny (rýchlosť zdroja je nenulová, iba ak sa objekt pohybuje)"
 
@@ -25119,10 +25115,6 @@ msgstr "Testovacie"
 
 msgid "Newly contributed scripts (excluded from release builds)"
 msgstr "Nové príspevky skriptov (vylúčené z uvoľnenej zostavy)"
-
-
-msgid "Text Clipboard"
-msgstr "Textová schránka"
 
 
 msgid "Is Interface Locked"
@@ -44937,10 +44929,6 @@ msgid "Export the scene in the current animation frame"
 msgstr "Exportuje scénu do aktuálnej snímky animácie"
 
 
-msgid "Export Deformation bones only"
-msgstr "Exportuje iba deformácie kostí"
-
-
 msgid "Export Deformation bones only (and needed bones for hierarchy)"
 msgstr "Exportuje iba deformácie kostí (a potrebné kosti pre hierarchiu)"
 
@@ -45103,10 +45091,6 @@ msgstr "Dotyčnice kľúčového tvaru"
 
 msgid "Export vertex tangents with shape keys (morph targets)"
 msgstr "Exportuje dotyčnice vrcholov s kľúčovými tvarmi (ciele Morph)"
-
-
-msgid "Export NLA Strip animations"
-msgstr "Exportuje animácie pásov NLA"
 
 
 msgid "Export vertex normals with meshes"
@@ -49292,20 +49276,12 @@ msgstr ""
 "Nerovnomernou zmenou veľkosti to však môže byť znehodnotené, takže buďte opatrní"
 
 
-msgid "Guess original bind pose"
-msgstr "Odhadnúť originálnu väzbu pózy"
-
-
 msgid ""
 "Try to guess the original bind pose for skinned meshes from the inverse bind matrices.\n"
 "When off, use default/rest pose as bind pose"
 msgstr ""
 "Pokúsi sa odhadnúť pôvodnú väzbu pózy pre opláštenú povrchovú sieť z inverzných matríc väzby.\n"
 "Ak je vypnutá, použije ako väzbu pózy predvolenú/kľudovú pózu"
-
-
-msgid "Pack images"
-msgstr "Zbaliť obrázky"
 
 
 msgid "Pack all images into .blend file"
@@ -67313,6 +67289,14 @@ msgid "Site"
 msgstr "Stránka"
 
 
+msgid "UV Maps"
+msgstr "UV mapy"
+
+
+msgid "Instancing"
+msgstr "Vyhotovenie"
+
+
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "Pridať cestu automatického spúšťania"
@@ -68346,10 +68330,6 @@ msgid "Text Boxes"
 msgstr "Textové okienko"
 
 
-msgid "UV Maps"
-msgstr "UV mapy"
-
-
 msgid "OpenVDB File"
 msgstr "Súbor OpenVDB"
 
@@ -68620,10 +68600,6 @@ msgstr "Línie rezu"
 
 msgid "Delta Transform"
 msgstr "Delta transformácia"
-
-
-msgid "Instancing"
-msgstr "Vyhotovenie"
 
 
 msgid "Scale by Face Size"
@@ -79570,15 +79546,6 @@ msgid "Clip editor space data"
 msgstr "Údaje priestoru editora klipov"
 
 
-msgctxt "MovieClip"
-msgid "Grease Pencil Source"
-msgstr "Zdroj pastelky"
-
-
-msgid "Where the grease pencil comes from"
-msgstr "Odkiaľ pochádza pastelka"
-
-
 msgid "Show annotation data-block which belongs to movie clip"
 msgstr "Zobrazí blok údajov poznámky patriaceho do filmového klipu"
 
@@ -86299,10 +86266,6 @@ msgstr "Zachová nepriehľadnosť objemu a rovnaké detaily bez ohľadu na mierk
 
 msgid "Specify volume step size and density in world space"
 msgstr "Určí veľkosť kroku objemu a hustotu vo svete"
-
-
-msgid "Distance between volume samples. Higher values render more detail at the cost of performance. If set to zero, the step size is automatically determined based on voxel size"
-msgstr "Vzdialenosť medzi snímkami objemu. Vyššie hodnoty poskytujú viac detailov na úkor výkonu. Ak je nastavená na nulu, veľkosť kroku sa automaticky určí na základe veľkosti voxelu"
 
 
 msgid "Walk navigation settings"
@@ -96135,18 +96098,6 @@ msgid "Add a new control-point to the envelope on the current frame"
 msgstr "Pridá nový riadiaci bod na plášť v aktuálnej snímke"
 
 
-msgid "Frame that envelope point occurs"
-msgstr "Snímka výskytu bodu plášťa"
-
-
-msgid "Minimum bound of envelope at this point"
-msgstr "Minimálna väzba plášťa v tomto bode"
-
-
-msgid "Maximum bound of envelope at this point"
-msgstr "Maximálna väzba plášťa v tomto bode"
-
-
 msgid "Delete envelope control point"
 msgstr "Odstrániť riadiaci bod plášťa"
 
@@ -96921,10 +96872,6 @@ msgstr "Vyplnenie: ESC/PTM zrušiť, ĽTM vyplniť, Shift kreslenie na pozadí"
 
 msgid "Fill tool needs active material"
 msgstr "Nástroj na vyplňovanie vyžaduje aktívny materiál"
-
-
-msgid "Fill canceled. No edges detected"
-msgstr "Vyplňovanie zrušené. Nenašli sa žiadne hrany"
 
 
 msgid "Active region not valid for filling operator"
@@ -103829,6 +103776,10 @@ msgid "Cannot save render buffers, check the temp default path"
 msgstr "Nemožno uložiť zásobníky prevodu, skontrolujte predvolenú cestu temp"
 
 
+msgid "Border rendering is not supported by sequencer"
+msgstr "Radič nepodporuje ohraničený prevod"
+
+
 msgid "No node tree in scene"
 msgstr "Žiadny strom uzla na scéne"
 
@@ -103839,10 +103790,6 @@ msgstr "Nevykonať žiadny prevod výstupného uzla na scéne"
 
 msgid "Full sample AA not supported without 3D rendering"
 msgstr "Plná snímka AA nie je podporovaná bez 3D prevodu"
-
-
-msgid "Border rendering is not supported by sequencer"
-msgstr "Radič nepodporuje ohraničený prevod"
 
 
 msgid "All render layers are disabled"

@@ -121,7 +121,7 @@ class PIE_MT_ViewNumpad(Menu):
         box = pie.split().column()
 
         row = box.row(align=True)
-        row.operator("view3d.view_all", text="View All").center = True
+        row.operator("view3d.view_all").center = True
         row.operator("view3d.view_selected", text="Selected")
 
         row = box.row(align=True)

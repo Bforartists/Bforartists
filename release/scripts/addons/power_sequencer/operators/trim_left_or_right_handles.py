@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -26,7 +26,7 @@ class POWER_SEQUENCER_OT_trim_left_or_right_handles(bpy.types.Operator):
     Trims or extends the handle closest to the time cursor for all selected strips.
 
     If you keep the Shift key down, the edit will ripple through the timeline.
-    Auto selects sequences under the time cursor when you don't have a selection.
+    Auto selects sequences under the time cursor when you don't have a selection
     """
 
     doc = {
@@ -78,9 +78,16 @@ class POWER_SEQUENCER_OT_trim_left_or_right_handles(bpy.types.Operator):
         frame_current = context.scene.frame_current
 
         # Only select sequences under the time cursor
-        sequences = context.selected_sequences if context.selected_sequences else context.sequences
+        sequences = (
+            context.selected_sequences
+            if context.selected_sequences
+            else context.sequences
+        )
         for s in sequences:
-            s.select = s.frame_final_start <= frame_current and s.frame_final_end >= frame_current
+            s.select = (
+                s.frame_final_start <= frame_current
+                and s.frame_final_end >= frame_current
+            )
         sequences = [s for s in sequences if s.select]
         if not sequences:
             return {"FINISHED"}

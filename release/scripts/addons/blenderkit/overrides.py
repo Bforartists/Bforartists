@@ -187,18 +187,18 @@ class BringToScene(Operator):
         return bpy.context.view_layer.objects.active is not None
 
     def execute(self, context):
-        import bpy
 
         s = bpy.context.scene
         sobs = s.collection.all_objects
         aob = bpy.context.active_object
         dg = aob.instance_collection
-        instances = []
+        vlayer = bpy.context.view_layer
+        instances_emptys = []
 
         # first, find instances of this collection in the scene
         for ob in sobs:
-            if ob.instance_collection == dg and ob not in instances:
-                instances.append(ob)
+            if ob.instance_collection == dg and ob not in instances_emptys:
+                instances_emptys.append(ob)
                 ob.instance_collection = None
                 ob.instance_type = 'NONE'
         # dg.make_local
@@ -208,21 +208,28 @@ class BringToScene(Operator):
             dg.objects.unlink(ob)
             try:
                 s.collection.objects.link(ob)
-
+                ob.select_set(True)
+                obs.append(ob)
                 if ob.parent == None:
                     parent = ob
                     bpy.context.view_layer.objects.active = parent
             except Exception as e:
                 print(e)
-            ob.select_set(True)
-            obs.append(ob)
+
         bpy.ops.object.make_local(type='ALL')
-        for ob in obs:
-            ob.select_set(True)
+
+        for i, ob in enumerate(obs):
+            if ob.name in vlayer.objects:
+                obs[i] = vlayer.objects[ob.name]
+                try:
+                    ob.select_set(True)
+                except Exception as e:
+                    print('failed to select an object from the collection, getting a replacement.')
+                    print(e)
 
         related = []
 
-        for i, ob in enumerate(instances):
+        for i, ob in enumerate(instances_emptys):
             if i > 0:
                 bpy.ops.object.duplicate(linked=True)
 

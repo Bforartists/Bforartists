@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -22167,10 +22167,6 @@ msgid "Newly contributed scripts (excluded from release builds)"
 msgstr "Нові скрипти (виключені з випуску версії)"
 
 
-msgid "Text Clipboard"
-msgstr "Текстовий буфер обміну"
-
-
 msgid "Key Configurations"
 msgstr "Конфігурації клавіш"
 
@@ -44159,10 +44155,6 @@ msgid "Load a glTF 2.0 file"
 msgstr "Завантажити файл glTF 2.0"
 
 
-msgid "Pack images"
-msgstr "Упакувати зображення"
-
-
 msgid "Pack all images into .blend file"
 msgstr "Упакувати усі зображення у файл .blend"
 
@@ -60541,6 +60533,14 @@ msgid "URL to open"
 msgstr "URL для відкриття"
 
 
+msgid "UV Maps"
+msgstr "UV-карти"
+
+
+msgid "Instancing"
+msgstr "Примірникування"
+
+
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "Додати шлях автозапуску"
@@ -61509,10 +61509,6 @@ msgid "Text Boxes"
 msgstr "Текстові поля"
 
 
-msgid "UV Maps"
-msgstr "UV-карти"
-
-
 msgid "Filters"
 msgstr "Фільтри"
 
@@ -61730,10 +61726,6 @@ msgstr "Різання Пов'язань"
 
 msgid "Delta Transform"
 msgstr "Дельта-трансформація"
-
-
-msgid "Instancing"
-msgstr "Примірникування"
 
 
 msgid "Scale by Face Size"
@@ -71587,15 +71579,6 @@ msgstr "Простір редактора кліпів"
 
 msgid "Clip editor space data"
 msgstr "Дані простору редактора кліпів"
-
-
-msgctxt "MovieClip"
-msgid "Grease Pencil Source"
-msgstr "Джерело нарисного олівця"
-
-
-msgid "Where the grease pencil comes from"
-msgstr "Звідки взято нарисний олівець"
 
 
 msgid "Show annotation data-block which belongs to movie clip"
@@ -85638,18 +85621,6 @@ msgid "Add a new control-point to the envelope on the current frame"
 msgstr "Додати нову керувальну точку до оболонки на поточному кадрі"
 
 
-msgid "Frame that envelope point occurs"
-msgstr "Кадр, на якому розміщена точка оболонки"
-
-
-msgid "Minimum bound of envelope at this point"
-msgstr "Найменша межа оболонки у цій точці"
-
-
-msgid "Maximum bound of envelope at this point"
-msgstr "Найбільша межа оболонки у цій точці"
-
-
 msgid "Delete envelope control point"
 msgstr "Видалити керувальну точку оболонки"
 
@@ -92648,6 +92619,10 @@ msgid "Cannot save render buffers, check the temp default path"
 msgstr "Неможливо зберегти буфери рендера, перевірте стандартний шлях до тимчасової теки"
 
 
+msgid "Border rendering is not supported by sequencer"
+msgstr "Рендеринг у границях не підтримується секвенсером"
+
+
 msgid "No node tree in scene"
 msgstr "Сцена не має дерева вузлів"
 
@@ -92658,10 +92633,6 @@ msgstr "У сцені немає вузла виводу рендера"
 
 msgid "Full sample AA not supported without 3D rendering"
 msgstr "Загладжування з повною вибіркою не підтримується без 3D рендерингу"
-
-
-msgid "Border rendering is not supported by sequencer"
-msgstr "Рендеринг у границях не підтримується секвенсером"
 
 
 msgid "All render layers are disabled"

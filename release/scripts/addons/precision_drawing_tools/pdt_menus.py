@@ -306,6 +306,8 @@ class PDT_PT_PanelPartsLibrary(Panel):
         layout = self.layout
         pdt_pg = context.scene.pdt_pg
         row = layout.row()
+        row.prop(pdt_pg, "pdt_library_path")
+        row = layout.row()
         col = row.column()
         col.operator("pdt.append", text="Append")
         col = row.column()
@@ -339,7 +341,7 @@ class PDT_PT_PanelPartsLibrary(Panel):
         row = box.row()
         row.prop(pdt_pg, "lib_materials", text="")
         row = box.row()
-        row.operator("pdt.lib_show", text="Show Library File", icon='INFO')
+        #row.operator("pdt.lib_show", text="Load Library File", icon='INFO')
 
 
 class PDT_PT_PanelViewControl(Panel):
@@ -474,3 +476,40 @@ class PDT_PT_PanelTangent(Panel):
             split.prop(pdt_pg, "tangent_radius1", text="")
             row = box.row()
             row.operator("pdt.tangentoperate", text="Tangents From Inputs", icon="NONE")
+
+class PDT_PT_PanelTrig(Panel):
+    bl_idname = "PDT_PT_PanelTrig"
+    bl_label = "PDT Trigonometrical Waves"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "PDT"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self,context):
+        layout = self.layout
+        pdt_pg = context.scene.pdt_pg
+        row = layout.row()
+        row.label(text=f"Working {PDT_LAB_PLANE}:")
+        row.prop(pdt_pg, "plane", text="")
+
+        row = layout.row()
+        split = row.split(factor=0.5, align=True)
+        split.prop(pdt_pg, "trig_type")
+        split.prop(pdt_pg, "trig_cycles")
+        row = layout.row()
+        split = row.split(factor=0.5, align=True)
+        split.prop(pdt_pg, "trig_amp")
+        split.prop(pdt_pg, "trig_len")
+        row = layout.row()
+        split = row.split(factor=0.5, align=True)
+        split.prop(pdt_pg, "trig_obj", text="")
+        split.prop(pdt_pg, "trig_del")
+        row = layout.row()
+        split = row.split(factor=0.5, align=True)
+        split.prop(pdt_pg, "trig_res")
+        split.prop(pdt_pg, "trig_tanmax")
+        row = layout.row()
+        row.prop(pdt_pg, "trig_off")
+        row = layout.row()
+        row.operator("pdt.wave_generator", icon="SEQ_LUMA_WAVEFORM")
+        row.prop(pdt_pg, "trig_abs")

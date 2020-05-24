@@ -50,7 +50,7 @@ class VIEW3D_MT_View_Menu(Menu):
         layout.operator("view3d.view_selected", text="Frame Selected").use_all_regions = False
         if view.region_quadviews:
             layout.operator("view3d.view_selected", text="Frame Selected (Quad View)").use_all_regions = True
-        layout.operator("view3d.view_all", text="Frame All").center = False
+        layout.operator("view3d.view_all").center = False
         layout.separator()
 
         layout.operator("view3d.view_persportho", text="Perspective/Orthographic")

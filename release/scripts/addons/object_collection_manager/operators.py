@@ -412,6 +412,7 @@ class CMUnExcludeAllOperator(Operator):
     def invoke(self, context, event):
         global rto_history
 
+        orig_active_collection = context.view_layer.active_layer_collection
         view_layer = context.view_layer.name
         modifiers = get_modifiers(event)
 
@@ -435,6 +436,9 @@ class CMUnExcludeAllOperator(Operator):
 
         else:
             activate_all_rtos(view_layer, "exclude")
+
+        # reset active collection
+        context.view_layer.active_layer_collection = orig_active_collection
 
         return {'FINISHED'}
 

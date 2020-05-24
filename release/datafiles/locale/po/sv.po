@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -8119,10 +8119,6 @@ msgstr "Användargemenskap"
 
 msgid "Testing"
 msgstr "Vridning:"
-
-
-msgid "Text Clipboard"
-msgstr "Rotera"
 
 
 msgid "Key Configurations"
@@ -23780,6 +23776,10 @@ msgid "URL to open"
 msgstr "Webbaddress som skall öppnas"
 
 
+msgid "UV Maps"
+msgstr "Mappning"
+
+
 msgid "Toggle the current window fullscreen"
 msgstr "Växla fullskrmsläge för aktivt fönster"
 
@@ -24043,10 +24043,6 @@ msgstr "Renderings Fönster"
 
 msgid "Text Boxes"
 msgstr "Textrutor"
-
-
-msgid "UV Maps"
-msgstr "Mappning"
 
 
 msgid "Filters"
@@ -26688,10 +26684,6 @@ msgstr "Bild Displist"
 
 msgid "Clip editor space data"
 msgstr "Bild Displist"
-
-
-msgid "Where the grease pencil comes from"
-msgstr "Markera Länkad"
 
 
 msgid "Lock to Selection"

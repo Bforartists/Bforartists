@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016-2019 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
+# Copyright (C) 2016-2020 by Nathan Lovato, Daniel Oakey, Razvan Radulescu, and contributors
 #
 # This file is part of Power Sequencer.
 #
@@ -68,7 +68,7 @@ class POWER_SEQUENCER_MT_strips(bpy.types.Menu):
 
         layout.separator()
 
-        layout.operator("power_sequencer.make_still_image")
+        layout.operator("power_sequencer.make_hold_frame")
 
 
 class POWER_SEQUENCER_MT_transitions(bpy.types.Menu):

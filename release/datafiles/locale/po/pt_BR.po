@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Dalai Felinto, Bruno Gonçalves Pirajá, Samuel Arataca, Daniel Tavares, Moraes Junior <ivan.paulos.tome@yandex.com>\n"
@@ -18437,10 +18437,6 @@ msgstr "Em testes"
 
 msgid "Newly contributed scripts (excluded from release builds)"
 msgstr "Scripts recentes a partir de contribuições (excluídos das construções de lançamentos)."
-
-
-msgid "Text Clipboard"
-msgstr "Área de transferência de texto."
 
 
 msgid "Key Configurations"
@@ -51574,6 +51570,10 @@ msgid "URL to open"
 msgstr "A localização do tipo \"URL\" a ser aberta"
 
 
+msgid "UV Maps"
+msgstr "Mapas UV"
+
+
 msgctxt "Operator"
 msgid "Add Autoexec Path"
 msgstr "Adicionar caminho de auto-execução"
@@ -52280,10 +52280,6 @@ msgstr "Esqueleto"
 
 msgid "Text Boxes"
 msgstr "Caixas de texto"
-
-
-msgid "UV Maps"
-msgstr "Mapas UV"
 
 
 msgid "Filters"
@@ -59896,15 +59892,6 @@ msgstr "Espaço do editor de clipes"
 
 msgid "Clip editor space data"
 msgstr "Espaço de dados do editor de clipes."
-
-
-msgctxt "MovieClip"
-msgid "Grease Pencil Source"
-msgstr "Fonte de lápis de cera"
-
-
-msgid "Where the grease pencil comes from"
-msgstr "De onde vem o lápis de cera."
 
 
 msgctxt "MovieClip"
@@ -69804,18 +69791,6 @@ msgid "Add a new control-point to the envelope on the current frame"
 msgstr "Adiciona um novo ponto de controle para o envelope no quadro atual."
 
 
-msgid "Frame that envelope point occurs"
-msgstr "Quadro no qual ocorre o ponto de envelope."
-
-
-msgid "Minimum bound of envelope at this point"
-msgstr "Limite mínimo do envelope neste ponto."
-
-
-msgid "Maximum bound of envelope at this point"
-msgstr "Limite máximo do envelope neste ponto."
-
-
 msgid "Delete envelope control point"
 msgstr "Apaga os pontos de controle do envelope."
 
@@ -75441,6 +75416,10 @@ msgid "Cannot save render buffers, check the temp default path"
 msgstr "Não é possível salvar os contingenciadores de renderização, cheque o seu caminho temporário padrão."
 
 
+msgid "Border rendering is not supported by sequencer"
+msgstr "A renderização de margens não é suportada pelo sequenciador."
+
+
 msgid "No node tree in scene"
 msgstr "Sem árvore de nós na cena."
 
@@ -75451,10 +75430,6 @@ msgstr "Sem nó de saída de renderização na cena."
 
 msgid "Full sample AA not supported without 3D rendering"
 msgstr "Amostragem completa de antisserrilhamento, não suportada sem renderização 3D."
-
-
-msgid "Border rendering is not supported by sequencer"
-msgstr "A renderização de margens não é suportada pelo sequenciador."
 
 
 msgid "All render layers are disabled"

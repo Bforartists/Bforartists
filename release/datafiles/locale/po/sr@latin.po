@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 15) (b'000fdd8a6eae')\n"
+"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-04 10:26:18\n"
+"POT-Creation-Date: 2020-05-18 09:40:57\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -21904,6 +21904,10 @@ msgid "URL"
 msgstr "Adresa"
 
 
+msgid "UV Maps"
+msgstr "UV Mape"
+
+
 msgid "Toggle the current window fullscreen"
 msgstr "Prikazuje tekući prozor preko celog ekrana"
 
@@ -22184,10 +22188,6 @@ msgstr "Skelet"
 
 msgid "Text Boxes"
 msgstr "Blok teksta"
-
-
-msgid "UV Maps"
-msgstr "UV Mape"
 
 
 msgid "Filters"
@@ -24690,15 +24690,6 @@ msgstr "Koristi cilj"
 
 msgid "Goal Vertex Group"
 msgstr "Ciljna grupa temena"
-
-
-msgctxt "MovieClip"
-msgid "Grease Pencil Source"
-msgstr "Izvor skice"
-
-
-msgid "Where the grease pencil comes from"
-msgstr "Odakle dolazi skica"
 
 
 msgctxt "MovieClip"
