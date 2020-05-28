@@ -176,10 +176,17 @@ class VIEW3D_PT_tools_object_options_transform(View3DPanel, Panel):
 
         tool_settings = context.tool_settings
 
-        col = layout.column(heading="Affect Only", align=True)
-        col.prop(tool_settings, "use_transform_data_origin", text="Origins")
-        col.prop(tool_settings, "use_transform_pivot_point_align", text="Locations")
-        col.prop(tool_settings, "use_transform_skip_children", text="Parents")
+        col = layout.column( align=True)
+        col.label(text = "Affect Only")
+        row = col.row()
+        row.separator()
+        row.prop(tool_settings, "use_transform_data_origin", text="Origins")
+        row = col.row()
+        row.separator()
+        row.prop(tool_settings, "use_transform_pivot_point_align", text="Locations")
+        row = col.row()
+        row.separator()
+        row.prop(tool_settings, "use_transform_skip_children", text="Parents")
 
 
 # ********** default tools for editmode_mesh ****************
