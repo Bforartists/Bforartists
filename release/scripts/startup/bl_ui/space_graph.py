@@ -89,7 +89,7 @@ class GRAPH_HT_header(Header):
         #############################
 
         GRAPH_MT_editor_menus.draw_collapsible(context, layout)
-        
+
         layout.separator_spacer()
 
         row = layout.row(align=True)
@@ -558,7 +558,7 @@ class GRAPH_MT_context_menu(Menu):
 
         layout.operator_menu_enum("graph.handle_type", "type", text="Handle Type")
         layout.operator_menu_enum("graph.interpolation_type", "type", text="Interpolation Mode")
-        layout.operator_menu_enum("graph.easing_type", "type", text="Easing Type")
+        layout.operator_menu_enum("graph.easing_type", "type", text="Easing Mode")
 
         layout.separator()
 
