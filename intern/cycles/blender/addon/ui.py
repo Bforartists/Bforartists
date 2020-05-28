@@ -180,7 +180,7 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
 
         if not use_optix(context):
             layout.prop(cscene, "progressive")
-        
+
         col = layout.column() # bfa
 
         if not use_branched_path(context):
@@ -189,7 +189,7 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
             col = layout.column() # bfa
             col.use_property_split = False # bfa
             col.prop(cscene, "use_square_samples") # bfa
-            
+
         else:
             col.prop(cscene, "aa_samples", text="Render")
             col.prop(cscene, "preview_aa_samples", text="Viewport")
@@ -411,12 +411,12 @@ class CYCLES_RENDER_PT_hair(CyclesButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(ccscene, "shape", text="Shape")
-        if not (ccscene.primitive in {'CURVE_SEGMENTS', 'LINE_SEGMENTS'} and ccscene.shape == 'RIBBONS'):         
+        if not (ccscene.primitive in {'CURVE_SEGMENTS', 'LINE_SEGMENTS'} and ccscene.shape == 'RIBBONS'):
             col = layout.column()
             col.use_property_split = False
             col.prop(ccscene, "cull_backfacing", text="Cull back-faces")
             col.use_property_split = True
-            
+
         col.prop(ccscene, "primitive", text="Primitive")
 
         if ccscene.primitive == 'TRIANGLES' and ccscene.shape == 'THICK':
@@ -509,7 +509,7 @@ class CYCLES_RENDER_PT_light_paths_caustics(CyclesButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(cscene, "blur_glossy")
-        
+
         col.use_property_split = False
         col.prop(cscene, "caustics_reflective")
         col.prop(cscene, "caustics_refractive")
@@ -851,7 +851,7 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         row.separator()
         row.prop(view_layer, "use_pass_z")
         row = col.row()
-        row.separator() 
+        row.separator()
         row.prop(view_layer, "use_pass_mist")
         row = col.row()
         row.separator()
@@ -886,7 +886,7 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         row.prop(cycles_view_layer, "pass_debug_sample_count", text="Sample Count")
 
         layout.separator()
-        
+
         layout.use_property_split = True
         layout.prop(view_layer, "pass_alpha_threshold")
 
@@ -899,37 +899,71 @@ class CYCLES_RENDER_PT_passes_light(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         view_layer = context.view_layer
         cycles_view_layer = view_layer.cycles
 
-        col = layout.column(heading="Diffuse", align=True)
-        col.prop(view_layer, "use_pass_diffuse_direct", text="Direct")
-        col.prop(view_layer, "use_pass_diffuse_indirect", text="Indirect")
-        col.prop(view_layer, "use_pass_diffuse_color", text="Color")
+        col = layout.column(align=True)
+        col.label(text = "Diffuse")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_diffuse_direct", text="Direct")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_diffuse_indirect", text="Indirect")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_diffuse_color", text="Color")
 
-        col = layout.column(heading="Glossy", align=True)
-        col.prop(view_layer, "use_pass_glossy_direct", text="Direct")
-        col.prop(view_layer, "use_pass_glossy_indirect", text="Indirect")
-        col.prop(view_layer, "use_pass_glossy_color", text="Color")
+        col = layout.column(align=True)
+        col.label(text = "Glossy")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_glossy_direct", text="Direct")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_glossy_indirect", text="Indirect")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_glossy_color", text="Color")
 
-        col = layout.column(heading="Transmission", align=True)
-        col.prop(view_layer, "use_pass_transmission_direct", text="Direct")
-        col.prop(view_layer, "use_pass_transmission_indirect", text="Indirect")
-        col.prop(view_layer, "use_pass_transmission_color", text="Color")
+        col = layout.column( align=True)
+        col.label(text = "Transmission")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_transmission_direct", text="Direct")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_transmission_indirect", text="Indirect")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_transmission_color", text="Color")
 
-        col = layout.column(heading="Volume", align=True)
-        col.prop(cycles_view_layer, "use_pass_volume_direct", text="Direct")
-        col.prop(cycles_view_layer, "use_pass_volume_indirect", text="Indirect")
+        col = layout.column(align=True)
+        col.label(text = "Volume")
+        row = col.row()
+        row.separator()
+        row.prop(cycles_view_layer, "use_pass_volume_direct", text="Direct")
+        row = col.row()
+        row.separator()
+        row.prop(cycles_view_layer, "use_pass_volume_indirect", text="Indirect")
 
-        col = layout.column(heading="Other", align=True)
-        col.use_property_split = False
-        col.prop(view_layer, "use_pass_emit", text="Emission")
-        col.prop(view_layer, "use_pass_environment")
-        col.prop(view_layer, "use_pass_shadow")
-        col.prop(view_layer, "use_pass_ambient_occlusion", text="Ambient Occlusion")
+        col = layout.column(align=True)
+        col.label(text = "Other")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_emit", text="Emission")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_environment")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_shadow")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_ambient_occlusion", text="Ambient Occlusion")
 
 
 class CYCLES_RENDER_PT_passes_crypto(CyclesButtonsPanel, Panel):
@@ -1465,11 +1499,23 @@ class CYCLES_LIGHT_PT_light(CyclesButtonsPanel, Panel):
 
         sub = col.column(align=True)
         sub.active = not (light.type == 'AREA' and clamp.is_portal)
-        sub.prop(clamp, "cast_shadow")
-        sub.prop(clamp, "use_multiple_importance_sampling", text="Multiple Importance")
+
+
+        row = sub.row()
+        row.use_property_split = False
+        row.prop(clamp, "cast_shadow")
+        row.prop_decorator(clamp, "cast_shadow")
+
+        row = sub.row()
+        row.use_property_split = False
+        row.prop(clamp, "use_multiple_importance_sampling", text="Multiple Importance")
+        row.prop_decorator(clamp, "use_multiple_importance_sampling")
 
         if light.type == 'AREA':
-            col.prop(clamp, "is_portal", text="Portal")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(clamp, "is_portal", text="Portal")
+            row.prop_decorator(clamp, "is_portal")
 
 
 class CYCLES_LIGHT_PT_nodes(CyclesButtonsPanel, Panel):
@@ -1507,6 +1553,7 @@ class CYCLES_LIGHT_PT_spot(CyclesButtonsPanel, Panel):
         col = layout.column()
         col.prop(light, "spot_size", text="Size")
         col.prop(light, "spot_blend", text="Blend", slider=True)
+        col.use_property_split = False
         col.prop(light, "show_cone")
 
 
@@ -1708,7 +1755,9 @@ class CYCLES_WORLD_PT_settings_volume(CyclesButtonsPanel, Panel):
         sub.active = use_cpu(context)
         sub.prop(cworld, "volume_sampling", text="Sampling")
         col.prop(cworld, "volume_interpolation", text="Interpolation")
+        col.use_property_split = False
         col.prop(cworld, "homogeneous_volume", text="Homogeneous")
+        col.use_property_split = True
         sub = col.column()
         sub.active = not cworld.homogeneous_volume
         sub.prop(cworld, "volume_step_size")
@@ -2153,16 +2202,16 @@ class CYCLES_RENDER_PT_simplify_culling(CyclesButtonsPanel, Panel):
 
         layout.active = rd.use_simplify
 
-        row = layout.row(heading="Camera Culling")
+        row = layout.row()
         row.use_property_split = False
-        row.prop(cscene, "use_camera_cull", text="")
+        row.prop(cscene, "use_camera_cull", text="Camera Culling")
         sub = row.column()
         sub.active = cscene.use_camera_cull
         sub.prop(cscene, "camera_cull_margin", text = "")
 
-        row = layout.row(heading="Distance Culling")
+        row = layout.row()
         row.use_property_split = False
-        row.prop(cscene, "use_distance_cull", text="")
+        row.prop(cscene, "use_distance_cull", text="Distance Culling")
         sub = row.column()
         sub.use_property_split = True
         sub.active = cscene.use_distance_cull

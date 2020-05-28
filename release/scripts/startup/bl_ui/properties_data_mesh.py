@@ -187,15 +187,15 @@ class DATA_PT_normals(MeshButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
 
         mesh = context.mesh
 
-        col = layout.column(align=False, heading="Auto Smooth")
+        col = layout.column(align=False)
         col.use_property_decorate = False
         row = col.row(align=True)
         sub = row.row(align=True)
-        sub.prop(mesh, "use_auto_smooth", text="")
+        sub.prop(mesh, "use_auto_smooth", text="Auto Smooth")
         sub = sub.row(align=True)
         sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
         sub.prop(mesh, "auto_smooth_angle", text="")
@@ -234,9 +234,9 @@ class DATA_PT_texture_space(MeshButtonsPanel, Panel):
         mesh = context.mesh
 
         layout.prop(mesh, "texture_mesh")
-        
+
         row = layout.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(mesh, "use_auto_texspace")
         row.prop_decorator(mesh, "use_auto_texspace")
 
@@ -496,7 +496,7 @@ class DATA_PT_remesh(MeshButtonsPanel, Panel):
             col.use_property_split = False
             col.prop(mesh, "use_remesh_fix_poles")
             col.prop(mesh, "use_remesh_smooth_normals")
-            
+
             col.label(text = "Preserve")
             row.use_property_split = False
             row = col.row()
@@ -535,7 +535,7 @@ class DATA_PT_customdata(MeshButtonsPanel, Panel):
             col.operator("mesh.customdata_custom_splitnormals_clear", icon='X')
         else:
             col.operator("mesh.customdata_custom_splitnormals_add", icon='ADD')
-            
+
         layout.separator()
 
         col = layout.column()
