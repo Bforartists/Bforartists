@@ -89,14 +89,14 @@ class GRAPH_HT_header(Header):
         #############################
 
         GRAPH_MT_editor_menus.draw_collapsible(context, layout)
+        
+        layout.separator_spacer()
 
         row = layout.row(align=True)
-        row.prop(st, "use_normalization", icon='NORMALIZE_FCURVES', text="Normalize", toggle=True)
+        row.prop(st, "use_normalization", icon='NORMALIZE_FCURVES', text="", toggle=True)
         sub = row.row(align=True)
-        sub.active = st.use_normalization
-        sub.prop(st, "use_auto_normalization", icon='FILE_REFRESH', text="", toggle=True)
-
-        layout.separator_spacer()
+        if st.use_normalization:
+            sub.prop(st, "use_auto_normalization", icon='FILE_REFRESH', text="", toggle=True)
 
         row = layout.row(align=True)
         if st.has_ghost_curves:
