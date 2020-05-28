@@ -89,7 +89,7 @@ class GRAPH_HT_header(Header):
         #############################
 
         GRAPH_MT_editor_menus.draw_collapsible(context, layout)
-
+        
         layout.separator_spacer()
 
         row = layout.row(align=True)
@@ -569,9 +569,8 @@ class GRAPH_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("graph.mirror", "type", text="Mirror", icon = "TRANSFORM_MIRROR")
-        layout.operator_menu_enum("graph.snap", "type", text="Snap", icon = "SNAP_ON")
-
+        layout.operator_menu_enum("graph.mirror", "type", text="Mirror")
+        layout.operator_menu_enum("graph.snap", "type", text="Snap")
 
 
 class GRAPH_MT_pivot_pie(Menu):
