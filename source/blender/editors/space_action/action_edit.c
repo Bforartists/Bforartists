@@ -1398,7 +1398,7 @@ void ACTION_OT_easing_type(wmOperatorType *ot)
   ot->name = "Set Keyframe Easing Type";
   ot->idname = "ACTION_OT_easing_type";
   ot->description =
-      "Set easing type for the F-Curve segments starting from the selected keyframes";
+      "Easing Mode\nSet easing type for the F-Curve segments starting from the selected keyframes";
 
   /* api callbacks */
   ot->invoke = WM_menu_invoke;
