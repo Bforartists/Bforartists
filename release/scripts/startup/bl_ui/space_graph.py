@@ -89,7 +89,7 @@ class GRAPH_HT_header(Header):
         #############################
 
         GRAPH_MT_editor_menus.draw_collapsible(context, layout)
-        
+
         layout.separator_spacer()
 
         row = layout.row(align=True)
@@ -290,12 +290,6 @@ class GRAPH_MT_select(Menu):
 
         props = layout.operator("graph.select_box", icon='BORDER_RECT')
         props = layout.operator("graph.select_box", text="Box Select (Axis Range)", icon='BORDER_RECT')
-        props.axis_range = True
-        props = layout.operator("graph.select_box", text="Box Select (Include Handles)", icon='BORDER_RECT')
-        props.include_handles = True
-        props = layout.operator("graph.select_box", text="Box Select (Axis + Handles)", icon='BORDER_RECT')
-        props.axis_range = True
-        props.include_handles = True
 
         layout.operator("graph.select_circle", icon = 'CIRCLE_SELECT')
 
