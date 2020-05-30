@@ -2552,9 +2552,10 @@ class WM_MT_splash(Menu):
         col2 = split.column()
 
         col2.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "https://www.bforartists.de/"
+        col2.operator("wm.url_open", text="Quickstart Learning Videos (Youtube)", icon='URL').url = "https://www.youtube.com/watch?v=sZlqqMAGgMs&list=PLB0iqEbIPQTZArhZspyYSJOS_00jURpUB/"
 
         layout.separator()
-        
+
         layout.label(text = "Bforartists 2.0.0 is based on Blender 2.83 Beta")
 
         layout.separator()
