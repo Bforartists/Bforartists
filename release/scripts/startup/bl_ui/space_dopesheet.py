@@ -600,7 +600,7 @@ class DOPESHEET_MT_key(Menu):
 
         layout.separator()
 
-        layout.operator("action.keyframe_insert", icon = 'KEYFRAMES_INSERT')
+        layout.operator_menu_enum("action.keyframe_insert", "type")
 
         layout.separator()
 
