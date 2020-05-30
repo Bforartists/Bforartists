@@ -777,8 +777,6 @@ class DOPESHEET_MT_gpencil_frame(Menu):
 
         layout.separator()
 
-        layout.operator("action.keyframe_type", icon = "SPACE2")
-
         # layout.separator()
         # layout.operator("action.copy")
         # layout.operator("action.paste")
