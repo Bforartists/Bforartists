@@ -692,10 +692,10 @@ void ACTION_OT_paste(wmOperatorType *ot)
 
 /* defines for insert keyframes tool */
 static const EnumPropertyItem prop_actkeys_insertkey_types[] = {
-    {1, "ALL", 0, "All Channels", ""},
-    {2, "SEL", 0, "Only Selected Channels", ""},
+    {1, "ALL", ICON_KEYFRAMES_INSERT, "All Channels", ""},
+    {2, "SEL", ICON_KEYFRAMES_INSERT, "Only Selected Channels", ""},
     /* XXX not in all cases. */
-    {3, "GROUP", 0, "In Active Group", ""},
+    {3, "GROUP", ICON_KEYFRAMES_INSERT, "In Active Group", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
