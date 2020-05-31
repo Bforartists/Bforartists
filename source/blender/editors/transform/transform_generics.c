@@ -1626,7 +1626,7 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
     }
 
     if (t_values_set_is_array && t->flag & T_INPUT_IS_VALUES_FINAL) {
-      /* For operators whose `t->values` is array, set contrain so that the
+      /* For operators whose `t->values` is array, set constraint so that the
        * orientation is more intuitive in the Redo Panel. */
       for (int i = 3; i--;) {
         constraint_axis[i] |= t->values[i] != 0.0f;
@@ -1649,13 +1649,17 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
   }
 
   {
-    TransformOrientationSlot *orient_slot = &t->scene->orientation_slots[SCE_ORIENT_DEFAULT];
     short orient_type_set = -1;
     short orient_type_matrix_set = -1;
-    short orient_type_scene = orient_slot->type;
-    if (orient_type_scene == V3D_ORIENT_CUSTOM) {
-      const int index_custom = orient_slot->index_custom;
-      orient_type_scene += index_custom;
+    short orient_type_scene = V3D_ORIENT_GLOBAL;
+
+    if ((t->spacetype == SPACE_VIEW3D) && (t->region->regiontype == RGN_TYPE_WINDOW)) {
+      TransformOrientationSlot *orient_slot = &t->scene->orientation_slots[SCE_ORIENT_DEFAULT];
+      orient_type_scene = orient_slot->type;
+      if (orient_type_scene == V3D_ORIENT_CUSTOM) {
+        const int index_custom = orient_slot->index_custom;
+        orient_type_scene += index_custom;
+      }
     }
 
     short orient_types[3];
