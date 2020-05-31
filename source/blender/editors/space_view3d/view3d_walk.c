@@ -374,16 +374,19 @@ static bool walk_floor_distance_get(RegionView3D *rv3d,
   mul_v3_v3fl(dvec_tmp, dvec, walk->grid);
   add_v3_v3(ray_start, dvec_tmp);
 
-  ret = ED_transform_snap_object_project_ray(walk->snap_context,
-                                             walk->depsgraph,
-                                             &(const struct SnapObjectParams){
-                                                 .snap_select = SNAP_ALL,
-                                             },
-                                             ray_start,
-                                             ray_normal,
-                                             r_distance,
-                                             r_location,
-                                             r_normal_dummy);
+  ret = ED_transform_snap_object_project_ray(
+      walk->snap_context,
+      walk->depsgraph,
+      &(const struct SnapObjectParams){
+          .snap_select = SNAP_ALL,
+          /* Avoid having to convert the edit-mesh to a regular mesh. */
+          .use_object_edit_cage = true,
+      },
+      ray_start,
+      ray_normal,
+      r_distance,
+      r_location,
+      r_normal_dummy);
 
   /* artificially scale the distance to the scene size */
   *r_distance /= walk->grid;
@@ -449,7 +452,6 @@ static float userdef_speed = -1.f;
 static bool initWalkInfo(bContext *C, WalkInfo *walk, wmOperator *op)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
-  Main *bmain = CTX_data_main(C);
   wmWindow *win = CTX_wm_window(C);
 
   walk->rv3d = CTX_wm_region_view3d(C);
@@ -553,7 +555,7 @@ static bool initWalkInfo(bContext *C, WalkInfo *walk, wmOperator *op)
   walk->rv3d->rflag |= RV3D_NAVIGATING;
 
   walk->snap_context = ED_transform_snap_object_context_create_view3d(
-      bmain, walk->scene, 0, walk->region, walk->v3d);
+      walk->scene, 0, walk->region, walk->v3d);
 
   walk->v3d_camera_control = ED_view3d_cameracontrol_acquire(
       walk->depsgraph,
