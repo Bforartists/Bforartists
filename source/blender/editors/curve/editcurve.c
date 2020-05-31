@@ -4923,7 +4923,7 @@ bool ED_curve_editnurb_select_pick(
       }
     }
     else {
-      BKE_nurbList_flag_set(editnurb, 0);
+      BKE_nurbList_flag_set(editnurb, SELECT, false);
 
       if (bezt) {
 
@@ -5635,7 +5635,7 @@ static int add_vertex_invoke(bContext *C, wmOperator *op, const wmEvent *event)
       const float mval[2] = {UNPACK2(event->mval)};
 
       struct SnapObjectContext *snap_context = ED_transform_snap_object_context_create_view3d(
-          vc.bmain, vc.scene, 0, vc.region, vc.v3d);
+          vc.scene, 0, vc.region, vc.v3d);
 
       ED_transform_snap_object_project_view3d(
           snap_context,

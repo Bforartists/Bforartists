@@ -325,7 +325,7 @@ class SEQUENCER_MT_export(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("sequencer.export_subtitles", text="Export Subtitles", icon="EXPORT")
+        layout.operator("sequencer.export_subtitles", text="Export Subtitles", icon='EXPORT')
 
 
 # Workaround to separate the tooltips
@@ -1044,10 +1044,14 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
 
         if strip.input_count > 0:
             col = layout.column()
-            col.enabled = False
-            col.prop(strip, "input_1")
+            row = col.row()
+            row.prop(strip, "input_1")
+
             if strip.input_count > 1:
-                col.prop(strip, "input_2")
+                row.operator("sequencer.swap_inputs", text="", icon='SORT_ASC')
+                row = col.row()
+                row.prop(strip, "input_2")
+                row.operator("sequencer.swap_inputs", text="", icon='SORT_DESC')
 
         strip_type = strip.type
 
@@ -1208,31 +1212,14 @@ class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
         col.prop(strip, "font_size")
         col.prop(strip, "color")
 
-
-class SEQUENCER_PT_effect_text_style_shadow(SequencerButtonsPanel, Panel):
-    bl_label = "Shadow"
-    bl_parent_id = "SEQUENCER_PT_effect_text_style"
-    bl_options = {'DEFAULT_CLOSED'}
-    bl_category = "Strip"
-
-    @classmethod
-    def poll(cls, context):
-        strip = act_strip(context)
-        return strip.type != 'SOUND'
-
-    def draw_header(self, context):
-        strip = act_strip(context)
-        self.layout.prop(strip, "use_shadow", text="")
-
-    def draw(self, context):
-        strip = act_strip(context)
-        layout = self.layout
-        layout.use_property_split = True
-
-        layout.active = strip.use_shadow and (not strip.mute)
-
-        col = layout.column(align=True)
-        col.prop(strip, "shadow_color", text="Color")
+        row = layout.row(align=True, heading="Shadow")
+        row.use_property_decorate = False
+        sub = row.row(align=True)
+        sub.prop(strip, "use_shadow", text="")
+        subsub = sub.row(align=True)
+        subsub.active = strip.use_shadow and (not strip.mute)
+        subsub.prop(strip, "shadow_color", text="")
+        row.prop_decorator(strip, "shadow_color")
 
 
 class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
@@ -1953,7 +1940,7 @@ class SEQUENCER_PT_strip_cache(SequencerButtonsPanel, Panel):
 
 
 class SEQUENCER_PT_preview(SequencerButtonsPanel_Output, Panel):
-    bl_label = "Scene Preview/Render"
+    bl_label = "Scene Strip Display"
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'UI'
     bl_options = {'DEFAULT_CLOSED'}
@@ -1967,7 +1954,7 @@ class SEQUENCER_PT_preview(SequencerButtonsPanel_Output, Panel):
         render = context.scene.render
 
         col = layout.column()
-        col.prop(render, "sequencer_gl_preview", text="Preview Shading")
+        col.prop(render, "sequencer_gl_preview", text="Shading")
 
         if render.sequencer_gl_preview in {'SOLID', 'WIREFRAME'}:
             col.use_property_split = False
@@ -2292,10 +2279,16 @@ classes = (
     SEQUENCER_MT_strip_input,
     SEQUENCER_MT_strip_lock_mute,
     SEQUENCER_MT_context_menu,
+
     SEQUENCER_PT_active_tool,
     SEQUENCER_PT_strip,
 
     SEQUENCER_PT_effect,
+    SEQUENCER_PT_scene,
+    SEQUENCER_PT_mask,
+    SEQUENCER_PT_effect_text_style,
+    SEQUENCER_PT_effect_text_layout,
+
     SEQUENCER_PT_adjust,
     SEQUENCER_PT_adjust_comp,
     SEQUENCER_PT_adjust_transform,
@@ -2304,12 +2297,6 @@ classes = (
     SEQUENCER_PT_adjust_video,
     SEQUENCER_PT_adjust_color,
     SEQUENCER_PT_adjust_sound,
-
-    SEQUENCER_PT_scene,
-    SEQUENCER_PT_mask,
-    SEQUENCER_PT_effect_text_style,
-    SEQUENCER_PT_effect_text_layout,
-    SEQUENCER_PT_effect_text_style_shadow,
 
     SEQUENCER_PT_time,
     SEQUENCER_PT_source,
@@ -2323,11 +2310,11 @@ classes = (
 
     SEQUENCER_PT_custom_props,
 
-    SEQUENCER_PT_preview,
     SEQUENCER_PT_view,
     SEQUENCER_PT_frame_overlay,
     SEQUENCER_PT_view_safe_areas,
     SEQUENCER_PT_view_safe_areas_center_cut,
+    SEQUENCER_PT_preview,
 
     SEQUENCER_PT_annotation,
 
