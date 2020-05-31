@@ -3792,11 +3792,9 @@ static void write_cachefile(WriteData *wd, CacheFile *cache_file, const void *id
 
 static void write_workspace(WriteData *wd, WorkSpace *workspace, const void *id_address)
 {
-  ListBase *layouts = BKE_workspace_layouts_get(workspace);
-
   writestruct_at_address(wd, ID_WS, WorkSpace, 1, id_address, workspace);
   write_iddata(wd, &workspace->id);
-  writelist(wd, DATA, WorkSpaceLayout, layouts);
+  writelist(wd, DATA, WorkSpaceLayout, &workspace->layouts);
   writelist(wd, DATA, WorkSpaceDataRelation, &workspace->hook_layout_relations);
   writelist(wd, DATA, wmOwnerID, &workspace->owner_ids);
   writelist(wd, DATA, bToolRef, &workspace->tools);
@@ -3920,6 +3918,11 @@ static void write_libraries(WriteData *wd, Main *main)
     if (main->curlib && main->curlib->packedfile) {
       found_one = true;
     }
+    else if (wd->use_memfile) {
+      /* When writing undo step we always write all existing libraries, makes reading undo step
+       * much easier when dealing with purely indirectly used libraries. */
+      found_one = true;
+    }
     else {
       found_one = false;
       while (!found_one && tot--) {
@@ -4007,12 +4010,12 @@ static void write_global(WriteData *wd, int fileflags, Main *mainvar)
 
   fg.globalf = G.f;
   BLI_strncpy(fg.filename, mainvar->name, sizeof(fg.filename));
-  sprintf(subvstr, "%4d", BLENDER_SUBVERSION);
+  sprintf(subvstr, "%4d", BLENDER_FILE_SUBVERSION);
   memcpy(fg.subvstr, subvstr, 4);
 
-  fg.subversion = BLENDER_SUBVERSION;
-  fg.minversion = BLENDER_MINVERSION;
-  fg.minsubversion = BLENDER_MINSUBVERSION;
+  fg.subversion = BLENDER_FILE_SUBVERSION;
+  fg.minversion = BLENDER_FILE_MIN_VERSION;
+  fg.minsubversion = BLENDER_FILE_MIN_SUBVERSION;
 #ifdef WITH_BUILDINFO
   {
     extern unsigned long build_commit_timestamp;
@@ -4066,7 +4069,7 @@ static bool write_file_handle(Main *mainvar,
           "BLENDER%c%c%.3d",
           (sizeof(void *) == 8) ? '-' : '_',
           (ENDIAN_ORDER == B_ENDIAN) ? 'V' : 'v',
-          BLENDER_VERSION);
+          BLENDER_FILE_VERSION);
 
   mywrite(wd, buf, 12);
 
@@ -4141,6 +4144,11 @@ static bool write_file_handle(Main *mainvar,
         memcpy(id_buffer, id, idtype_struct_size);
 
         ((ID *)id_buffer)->tag = 0;
+        /* Those listbase data change everytime we add/remove an ID, and also often when renaming
+         * one (due to re-sorting). This avoids generating a lot of false 'is changed' detections
+         * between undo steps. */
+        ((ID *)id_buffer)->prev = NULL;
+        ((ID *)id_buffer)->next = NULL;
 
         switch ((ID_Type)GS(id->name)) {
           case ID_WM:

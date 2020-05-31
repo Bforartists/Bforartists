@@ -125,7 +125,7 @@ class UnifiedPaintPanel:
 
         if unified_name and not header:
             # NOTE: We don't draw UnifiedPaintSettings in the header to reduce clutter. D5928#136281
-            row.prop(ups, unified_name, text="", icon="BRUSHES_ALL")
+            row.prop(ups, unified_name, text="", icon='BRUSHES_ALL')
 
         return row
 
@@ -628,10 +628,13 @@ def brush_settings(layout, context, brush, popover=False):
 
         if brush.sculpt_tool == 'POSE':
             layout.separator()
+            layout.prop(brush, "pose_deform_type")
             layout.prop(brush, "pose_origin_type")
             layout.prop(brush, "pose_offset")
             layout.prop(brush, "pose_smooth_iterations")
-            layout.prop(brush, "pose_ik_segments")
+            if brush.pose_deform_type == 'ROTATE_TWIST':
+              layout.prop(brush, "pose_ik_segments")
+            layout.prop(brush, "use_pose_ik_anchored")
 
             layout.separator()
 

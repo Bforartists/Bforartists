@@ -79,8 +79,7 @@ class PHYSICS_PT_rigid_body_settings(PHYSICS_PT_rigidbody_panel, Panel):
             rigid_body_warning(layout)
             return
 
-        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
-        col = flow.column()
+        col = layout.column()
 
         if rbo.type == 'ACTIVE':
             col.prop(rbo, "mass")

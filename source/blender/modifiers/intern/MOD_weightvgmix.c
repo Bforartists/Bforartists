@@ -224,6 +224,17 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
   int numIdx = 0;
   int i;
   const bool invert_vgroup_mask = (wmd->flag & MOD_WVG_MIX_INVERT_VGROUP_MASK) != 0;
+  const bool do_normalize = (wmd->flag & MOD_WVG_MIX_WEIGHTS_NORMALIZE) != 0;
+
+  /*
+   * Note that we only invert the weight values within provided vgroups, the selection based on
+   * which vertice is affected because it belongs or not to a group remains unchanged.
+   * In other words, vertices not belonging to a group won't be affected, even though their
+   * inverted 'virtual' weight would be 1.0f.
+   */
+  const bool invert_vgroup_a = (wmd->flag & MOD_WVG_MIX_INVERT_VGROUP_A) != 0;
+  const bool invert_vgroup_b = (wmd->flag & MOD_WVG_MIX_INVERT_VGROUP_B) != 0;
+
   /* Flags. */
 #if 0
   const bool do_prev = (wmd->modifier.mode & eModifierMode_DoWeightPreview) != 0;
@@ -378,8 +389,18 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
   /* Mix weights. */
   for (i = 0; i < numIdx; i++) {
     float weight2;
-    org_w[i] = dw1[i] ? dw1[i]->weight : wmd->default_weight_a;
-    weight2 = dw2[i] ? dw2[i]->weight : wmd->default_weight_b;
+    if (invert_vgroup_a) {
+      org_w[i] = 1.0f - (dw1[i] ? dw1[i]->weight : wmd->default_weight_a);
+    }
+    else {
+      org_w[i] = dw1[i] ? dw1[i]->weight : wmd->default_weight_a;
+    }
+    if (invert_vgroup_b) {
+      weight2 = 1.0f - (dw2[i] ? dw2[i]->weight : wmd->default_weight_b);
+    }
+    else {
+      weight2 = dw2[i] ? dw2[i]->weight : wmd->default_weight_b;
+    }
 
     new_w[i] = mix_weight(org_w[i], weight2, wmd->mix_mode);
   }
@@ -408,7 +429,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
    * XXX Depending on the MOD_WVG_SET_xxx option chosen, we might have to add vertices to vgroup.
    */
   weightvg_update_vg(
-      dvert, defgrp_index, dw1, numIdx, indices, org_w, true, -FLT_MAX, false, 0.0f);
+      dvert, defgrp_index, dw1, numIdx, indices, org_w, true, -FLT_MAX, false, 0.0f, do_normalize);
 
   /* If weight preview enabled... */
 #if 0 /* XXX Currently done in mod stack :/ */
