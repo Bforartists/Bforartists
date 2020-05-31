@@ -438,7 +438,7 @@ static const char *footer_string(ViewLayer *view_layer)
                "%s%s",
                gpumemstr,
                memstr);
-  /*BLI_snprintf(view_layer->footer_str, sizeof(view_layer->footer_str), "%s%s | %s", memstr, gpumemstr, versionstr);*/ /* bfa - removed version string*/
+  /*BLI_snprintf(view_layer->footer_str, sizeof(view_layer->footer_str), "%s%s | %s", memstr, gpumemstr, BKE_blender_version_string());*/ /* bfa - removed version string*/
 
   return view_layer->footer_str;
 

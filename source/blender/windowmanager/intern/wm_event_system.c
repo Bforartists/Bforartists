@@ -563,7 +563,7 @@ void wm_event_do_notifiers(bContext *C)
 static int wm_event_always_pass(const wmEvent *event)
 {
   /* some events we always pass on, to ensure proper communication */
-  return ISTIMER(event->type) || (event->type == WINDEACTIVATE) || (event->type == EVT_FILESELECT);
+  return ISTIMER(event->type) || (event->type == WINDEACTIVATE);
 }
 
 /** \} */
@@ -600,6 +600,12 @@ static int wm_handler_ui_call(bContext *C,
     else if (wm_event_always_pass(event) == 0) {
       do_wheel_ui = true;
     }
+  }
+
+  /* Don't block file-select events. Those are triggered by a separate file browser window.
+   * See T75292. */
+  if (event->type == EVT_FILESELECT) {
+    return WM_UI_HANDLER_CONTINUE;
   }
 
   /* we set context to where ui handler came from */
@@ -2584,7 +2590,7 @@ static int wm_handlers_do_gizmo_handler(bContext *C,
 
     if (wm_gizmomap_highlight_set(gzmap, C, gz, part)) {
       if (gz != NULL) {
-        if (U.flag & USER_TOOLTIPS) {
+        if ((U.flag & USER_TOOLTIPS) && (gz->flag & WM_GIZMO_NO_TOOLTIP) == 0) {
           WM_tooltip_timer_init(C, CTX_wm_window(C), area, region, WM_gizmomap_tooltip_init);
         }
       }
@@ -2596,7 +2602,7 @@ static int wm_handlers_do_gizmo_handler(bContext *C,
 
   if (handle_keymap) {
     /* Handle highlight gizmo. */
-    if (gz != NULL) {
+    if ((gz != NULL) && (gz->flag & WM_GIZMO_HIDDEN_KEYMAP) == 0) {
       bool keymap_poll = false;
       wmGizmoGroup *gzgroup = gz->parent_gzgroup;
       wmKeyMap *keymap = WM_keymap_active(wm, gz->keymap ? gz->keymap : gzgroup->type->keymap);

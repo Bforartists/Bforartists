@@ -138,7 +138,7 @@ Nurb *ED_curve_add_nurbs_primitive(
     copy_v3_v3(zvec, rv3d->viewinv[2]);
   }
 
-  BKE_nurbList_flag_set(editnurb, 0);
+  BKE_nurbList_flag_set(editnurb, SELECT, false);
 
   /* these types call this function to return a Nurb */
   if (stype != CU_PRIM_TUBE && stype != CU_PRIM_DONUT) {
@@ -521,7 +521,7 @@ static int curvesurf_prim_add(bContext *C, wmOperator *op, int type, int isSurf)
   WM_operator_view3d_unit_defaults(C, op);
 
   if (!ED_object_add_generic_get_opts(
-          C, op, 'Z', loc, rot, &enter_editmode, &local_view_bits, NULL)) {
+          C, op, 'Z', loc, rot, NULL, &enter_editmode, &local_view_bits, NULL)) {
     return OPERATOR_CANCELLED;
   }
 
