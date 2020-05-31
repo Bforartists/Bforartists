@@ -182,26 +182,28 @@ class GRAPH_PT_properties_view_options(Panel):
 
         layout.prop(st, "use_realtime_update")
         if st.mode != 'DRIVERS':
-            layout.separator()
             layout.prop(st, "show_markers")
-        layout.separator()
-
-        layout.prop(st, "show_seconds")
-        layout.prop(st, "show_locked_time")
 
         layout.separator()
 
-        layout.prop(st, "show_cursor")
-        layout.prop(st, "show_sliders")
-        layout.prop(st, "show_group_colors")
-        layout.prop(st, "use_auto_merge_keyframes")
-        layout.prop(st, "use_beauty_drawing")
+        col = layout.column(align = True)
+        col.prop(st, "show_seconds")
+        col.prop(st, "show_locked_time")
 
         layout.separator()
 
-        layout.prop(st, "show_handles")
-        layout.prop(st, "use_only_selected_curves_handles")
-        layout.prop(st, "use_only_selected_keyframe_handles")
+        col = layout.column(align = True)
+        col.prop(st, "show_sliders")
+        col.prop(st, "show_group_colors")
+        col.prop(st, "use_auto_merge_keyframes")
+        col.prop(st, "use_beauty_drawing")
+
+        layout.separator()
+
+        col = layout.column(align = True)
+        col.prop(st, "show_handles")
+        col.prop(st, "use_only_selected_curves_handles")
+        col.prop(st, "use_only_selected_keyframe_handles")
 
 
 class GRAPH_MT_editor_menus(Menu):
