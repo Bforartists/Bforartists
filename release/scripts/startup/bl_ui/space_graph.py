@@ -355,7 +355,7 @@ class GRAPH_MT_channel(Menu):
 
         layout.operator("anim.channels_delete", icon = "DELETE")
         if context.space_data.mode == 'DRIVERS':
-            layout.operator("graph.driver_delete_invalid")
+            layout.operator("graph.driver_delete_invalid", icon = "DELETE")
 
         layout.separator()
 
