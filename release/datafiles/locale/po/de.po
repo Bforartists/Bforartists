@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -4695,8 +4695,8 @@ msgid "Collapse Summary"
 msgstr "Zusammenfassung einklappen"
 
 
-msgid "Display Hidden"
-msgstr "Ausgeblendete anzeigen"
+msgid "Show Hidden"
+msgstr "Verborgene anzeigen"
 
 
 msgid "Include channels from objects/bone that are not visible"
@@ -4759,16 +4759,8 @@ msgid "Include visualization of node related animation data"
 msgstr "Einschließlich Visualisierung der Knoten bezogenen Animationsdaten"
 
 
-msgid "Show Errors"
-msgstr "Fehler anzeigen"
-
-
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "Nur F-Kurven und Treiber einschließen, die deaktiviert sind oder Fehler haben"
-
-
-msgid "Only Selected"
-msgstr "Nur Ausgewähltes"
 
 
 msgid "Only include channels relating to selected objects and data"
@@ -6250,10 +6242,6 @@ msgstr "Aktive Datei im Dateibrowser"
 
 msgid "Extension Filter"
 msgstr "Erweiterungsfilter"
-
-
-msgid "Show Hidden"
-msgstr "Verborgene anzeigen"
 
 
 msgid "Show hidden dot files"
@@ -14574,8 +14562,16 @@ msgid "Match-moving dopesheet data"
 msgstr "Partikelsystem-Einstellungen"
 
 
+msgid "Display Hidden"
+msgstr "Ausgeblendete anzeigen"
+
+
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "Einschließlich Kanäle von Objekten/Knochen die unsichtbar sind"
+
+
+msgid "Only Selected"
+msgstr "Nur Ausgewähltes"
 
 
 msgid "Dopesheet Sort Field"
@@ -33801,10 +33797,6 @@ msgid "Auto-Keying Mode"
 msgstr "Automatischer Schlüsselbildmodus"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "Modus um automatisch Schlüsselbilder für Objekte und Knochen einzufügen"
-
-
 msgid "Add & Replace"
 msgstr "Hinzufügen & Ersetzen"
 
@@ -33891,10 +33883,6 @@ msgstr "Nur Endpunkte"
 
 msgid "Auto Keying"
 msgstr "Automatische Schlüsselbilder"
-
-
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "Automatisches Einfügen von Schlüsselbildern für Objekte und Knochen"
 
 
 msgid "Proportional Editing using connected geometry only"
@@ -36353,10 +36341,6 @@ msgstr "Mausrad-Zoomrichtung umkehren"
 
 msgid "Color Set d"
 msgstr "Farbpalette d"
-
-
-msgid "Orbit Style"
-msgstr "Orbitstil"
 
 
 msgid "Missing script files"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -8003,8 +8003,8 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "Inclure la visualisation des données d’animation et images relatives au crayon gras"
 
 
-msgid "Display Hidden"
-msgstr "Montrer cachés"
+msgid "Show Hidden"
+msgstr "Afficher cachés"
 
 
 msgid "Include channels from objects/bone that are not visible"
@@ -8091,16 +8091,8 @@ msgid "Include visualization of node related animation data"
 msgstr "Inclure la visualisation des données d’animation relatives aux nœuds"
 
 
-msgid "Show Errors"
-msgstr "Afficher erreurs"
-
-
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "N’inclure que les F-courbes et les contrôleurs qui sont désactivés ou ont des erreurs"
-
-
-msgid "Only Selected"
-msgstr "Sélectionnées seulement"
 
 
 msgid "Only include channels relating to selected objects and data"
@@ -11371,10 +11363,6 @@ msgstr "Taille de fichier"
 
 msgid "Draw a column listing the size of each file"
 msgstr "Afficher une colonne listant la taille de chaque fichier"
-
-
-msgid "Show Hidden"
-msgstr "Afficher cachés"
 
 
 msgid "Show hidden dot files"
@@ -32153,8 +32141,16 @@ msgid "Match-moving dopesheet data"
 msgstr "Données de “dopesheet” de “match-moving”"
 
 
+msgid "Display Hidden"
+msgstr "Montrer cachés"
+
+
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "Inclure les canaux des objets/os invisibles"
+
+
+msgid "Only Selected"
+msgstr "Sélectionnées seulement"
 
 
 msgid "Dopesheet Sort Field"
@@ -71931,10 +71927,6 @@ msgid "Auto-Keying Mode"
 msgstr "Mode d’automation"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "Mode d’automation pour les objets et os"
-
-
 msgid "Add & Replace"
 msgstr "Ajouter & remplacer"
 
@@ -72121,10 +72113,6 @@ msgstr "N’utiliser que les première et dernières parties du trait pour l’a
 
 msgid "Auto Keying"
 msgstr "Automation"
-
-
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "Activer l’automation (insertion automatique d’images clé) pour les objets et os"
 
 
 msgid "Auto Keyframe Insert Keying Set"
@@ -76877,20 +76865,12 @@ msgid "Timer (mins)"
 msgstr "Délai (mins)"
 
 
-msgid "Pan Sensitivity"
-msgstr "Sensibilité en panoramique"
-
-
 msgid "Invert Wheel Zoom Direction"
 msgstr "Inverser direction du zoom"
 
 
-msgid "Pan Options"
-msgstr "Options de défilement"
-
-
-msgid "Zoom Options"
-msgstr "Options de zoom"
+msgid "Pan Sensitivity"
+msgstr "Sensibilité en panoramique"
 
 
 msgid "Color Set d"
@@ -76903,18 +76883,6 @@ msgstr "Direction trackpad naturelle"
 
 msgid "Invert Mouse Zoom Direction"
 msgstr "Inverser direction du zoom de la souris"
-
-
-msgid "Orbit Style"
-msgstr "Style d’orbite"
-
-
-msgid "Orbit Options"
-msgstr "Options de rotation"
-
-
-msgid "Fly/Walk Options"
-msgstr "Options de vol/marche"
 
 
 msgid "Multiple add-ons with the same name found!"

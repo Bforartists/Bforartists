@@ -34,6 +34,7 @@ set(INC
   ../imbuf
   ../makesdna
   ../makesrna
+  ../nodes
   ../render/extern/include
   ../render/intern/include
   ../windowmanager
@@ -303,8 +304,8 @@ data_to_c_simple(engines/select/shaders/selection_id_3D_vert.glsl SRC)
 data_to_c_simple(engines/select/shaders/selection_id_frag.glsl SRC)
 
 data_to_c_simple(engines/basic/shaders/conservative_depth_geom.glsl SRC)
-data_to_c_simple(engines/basic/shaders/conservative_depth_vert.glsl SRC)
-data_to_c_simple(engines/basic/shaders/conservative_depth_frag.glsl SRC)
+data_to_c_simple(engines/basic/shaders/depth_vert.glsl SRC)
+data_to_c_simple(engines/basic/shaders/depth_frag.glsl SRC)
 
 data_to_c_simple(engines/overlay/shaders/antialiasing_frag.glsl SRC)
 data_to_c_simple(engines/overlay/shaders/antialiasing_vert.glsl SRC)

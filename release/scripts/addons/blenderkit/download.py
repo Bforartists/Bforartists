@@ -770,6 +770,8 @@ def get_download_url(asset_data, scene_id, api_key, tcom=None):
     data = {
         'scene_uuid': scene_id
     }
+    r = None
+
     try:
         r = rerequests.get(asset_data['download_url'], params=data, headers=headers)
     except Exception as e:

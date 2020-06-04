@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzán <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -8003,7 +8003,7 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "Incluir la visualización de los fotogramas y datos de animación relativos a lápices de cera"
 
 
-msgid "Display Hidden"
+msgid "Show Hidden"
 msgstr "Mostrar ocultos"
 
 
@@ -8091,15 +8091,15 @@ msgid "Include visualization of node related animation data"
 msgstr "Incluir la visualización de los datos de animación relativos a nodos"
 
 
-msgid "Show Errors"
-msgstr "Mostrar errores"
+msgid "Only Show Errors"
+msgstr "Sólo errores"
 
 
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "Sólo incluir curvas-f y controladores que se encuentren deshabilitados o presenten errores"
 
 
-msgid "Only Selected"
+msgid "Only Show Selected"
 msgstr "Sólo lo seleccionado"
 
 
@@ -11373,10 +11373,6 @@ msgid "Draw a column listing the size of each file"
 msgstr "Muestra una columna listando el tamaño de cada archivo"
 
 
-msgid "Show Hidden"
-msgstr "Mostrar ocultos"
-
-
 msgid "Show hidden dot files"
 msgstr "Mostrar archivos ocultos precedidos por un punto"
 
@@ -12973,8 +12969,12 @@ msgid "Only allow given density value in emitter area and will not add up"
 msgstr "Sólo se permitirá el valor de densidad indicado en el área del emisor y ésta no se irá adicionando"
 
 
-msgid "Control when to apply inflow"
-msgstr "Controla cuándo aplicar adición de flujo"
+msgid "Use Flow"
+msgstr "Usar flujo"
+
+
+msgid "Control when to apply fluid flow"
+msgstr "Controla cuándo aplicar la adición de flujo"
 
 
 msgid "Initial Velocity"
@@ -13007,6 +13007,10 @@ msgstr "Usar una textura para controlar la intensidad de la emisión"
 
 msgid "Initial"
 msgstr "Inicial"
+
+
+msgid "Initial velocity in X, Y and Z direction in world space"
+msgstr "Velocidad inicial en las direcciones X, Y y Z globales"
 
 
 msgid "Multiplier of source velocity passed to fluid (source velocity is non-zero only if object is moving)"
@@ -23562,6 +23566,10 @@ msgid "Grease Pencil data-block used for annotations in the 3D view"
 msgstr "Bloque de datos de lápiz de cera usado para anotaciones en la vista 3D"
 
 
+msgid "Grease Pencil settings for the scene"
+msgstr "Opciones de lápiz de cera de la escena"
+
+
 msgid "NLA TweakMode"
 msgstr "Modo de retoque de ANL"
 
@@ -24162,6 +24170,10 @@ msgstr "Generada - bandas o anillos generados mediante ondas, con ruido opcional
 
 msgid "Set negative texture RGB and intensity values to zero, for some uses like displacement this option can be disabled to get the full range"
 msgstr "Define los valores negativos de RVA e intensidades a cero, para ciertos usos, como en desplazamientos, está opción puede ser deshabilitada para preservar así el rango completo"
+
+
+msgid "Map the texture intensity to the color ramp. Note that the alpha value is used for image textures, enable \"Calculate Alpha\" for images without an alpha channel"
+msgstr "Mapea la intensidad de la textura a la rampa de color. Nótese que el valor de alfa será usado para las imágenes de textura, habilitar \"Calcular alfa\" para imágenes que no posean un canal alfa"
 
 
 msgid "Make this a node-based texture"
@@ -34824,8 +34836,16 @@ msgid "Match-moving dopesheet data"
 msgstr "Datos de la planilla de tiempos de rastreo de movimiento"
 
 
+msgid "Display Hidden"
+msgstr "Mostrar ocultos"
+
+
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "Incluir canales de objetos o huesos ocultos"
+
+
+msgid "Only Selected"
+msgstr "Sólo lo seleccionado"
 
 
 msgid "Dopesheet Sort Field"
@@ -61276,6 +61296,10 @@ msgid "Symmetrize the topology modifications"
 msgstr "Simetriza las modificaciones topológicas"
 
 
+msgid "Distance within which symmetrical vertices are merged"
+msgstr "Distancia dentro de la cual se fusionarán los vértices simétricos"
+
+
 msgctxt "Operator"
 msgid "Sculpt UVs"
 msgstr "Esculpir UV"
@@ -64846,7 +64870,7 @@ msgstr "Orbitar vista con NDOF"
 
 
 msgid "Orbit the view using the 3D mouse"
-msgstr "Orbitar la vista usando el ratón 3D"
+msgstr "Orbita la vista usando el ratón 3D"
 
 
 msgctxt "Operator"
@@ -65214,7 +65238,7 @@ msgstr "Orbitar"
 
 
 msgid "Direction of View Orbit"
-msgstr "Dirección de órbita de vista"
+msgstr "Dirección para orbitar vista"
 
 
 msgid "Orbit Left"
@@ -71748,7 +71772,7 @@ msgstr "Mantiene el nivel del horizonte al volar con el ratón 3D"
 
 
 msgid "Orbit Sensitivity"
-msgstr "Sensibilidad de órbita"
+msgstr "Sensibilidad al orbitar"
 
 
 msgid "Overall sensitivity of the 3D Mouse for orbiting"
@@ -71976,11 +72000,11 @@ msgstr "Acerca hacia la posición del ratón en la vista 3D, en vez de al centro
 
 
 msgid "Orbit Method"
-msgstr "Método de órbita"
+msgstr "Método para orbitar"
 
 
 msgid "Orbit method in the viewport"
-msgstr "Método de orbitar en las vistas 3D"
+msgstr "Método para orbitar en las vistas 3D"
 
 
 msgid "Turntable keeps the Z-axis upright while orbiting"
@@ -71992,7 +72016,7 @@ msgstr "Rotación esférica, permite inclinar la vista en cualquier ángulo"
 
 
 msgid "Scale trackball orbit sensitivity"
-msgstr "Sensibilidad de la órbita de rotación esférica"
+msgstr "Sensibilidad de rotación esférica al orbitar"
 
 
 msgid "Rotation amount per-pixel to control how fast the viewport orbits"
@@ -77521,6 +77545,22 @@ msgstr "2 px"
 
 msgid "4 px"
 msgstr "4 px"
+
+
+msgid "Grease Pencil Render"
+msgstr "Procesamiento de lápiz de cera"
+
+
+msgid "Render settings"
+msgstr "Opciones de procesamiento"
+
+
+msgid "Anti-Aliasing Threshold"
+msgstr "Umbral de suavizado de bordes"
+
+
+msgid "Threshold for edge detection algorithm (higher values might overblur some part of the image)"
+msgstr "Umbral para el algoritmo de detección de bordes (valores elevados podrían desenfocar en demasía ciertas partes de la imagen)"
 
 
 msgid "Scene Objects"
@@ -84300,8 +84340,8 @@ msgid "Auto-Keying Mode"
 msgstr "Modo claves automáticos"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "Modo de inserción automática de fotogramas clave para objetos y huesos"
+msgid "Mode of automatic keyframe insertion for Objects, Bones and Masks"
+msgstr "Modo de inserción automática de claves para Objetos, Huesos y Máscaras"
 
 
 msgid "Add & Replace"
@@ -84645,8 +84685,8 @@ msgid "Auto Keying"
 msgstr "Claves automáticos"
 
 
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "Inserción automática de fotogramas clave para objetos y huesos"
+msgid "Automatic keyframe insertion for Objects, Bones and Masks"
+msgstr "Inserción automática de fotogramas clave para Objetos, Huesos y Máscaras"
 
 
 msgid "Auto Keyframe Insert Keying Set"
@@ -86367,6 +86407,10 @@ msgstr "Mantiene la opacidad y el detalle del volumen sin cambios, independiente
 
 msgid "Specify volume step size and density in world space"
 msgstr "Especifica el tamaño de los intervalos y la densidad del volumen en espacio global"
+
+
+msgid "Distance between volume samples. Lower values render more detail at the cost of performance. If set to zero, the step size is automatically determined based on voxel size"
+msgstr "Distancia entre las muestras del volumen. Valores bajos producirán más detalle a costa del rendimiento. Al usar cero, el tamaño del intervalo será determinado automáticamente, basado en el tamaño de los vóxeles"
 
 
 msgid "Walk navigation settings"
@@ -90513,10 +90557,6 @@ msgid "Unbaked Guides: Bake Guides or disable them"
 msgstr "Guías no capturadas: Capturarlas o deshabilitarlas"
 
 
-msgid "Use Flow"
-msgstr "Usar flujo"
-
-
 msgid "Surface Thickness"
 msgstr "Grosor de la superficie"
 
@@ -92942,10 +92982,6 @@ msgid "Double Click Speed"
 msgstr "Velocidad doble clic"
 
 
-msgid "Pan Sensitivity"
-msgstr "Sensibilidad de desplazamiento"
-
-
 msgid "Zoom Method"
 msgstr "Método de zoom"
 
@@ -92954,16 +92990,20 @@ msgid "Invert Wheel Zoom Direction"
 msgstr "Invertir dirección de rueda de ratón"
 
 
-msgid "Pan Options"
-msgstr "Opciones de desplazamiento"
+msgid "Pan Sensitivity"
+msgstr "Sensibilidad de desplazamiento"
 
 
-msgid "Invert Axis"
-msgstr "Invertir eje"
+msgid "Swap Y and Z Pan Axes"
+msgstr "Intercambiar ejes de desplazamiento Y y Z"
 
 
-msgid "Zoom Options"
-msgstr "Opciones de zoom"
+msgid "Invert Axis Pan"
+msgstr "Invertir eje desplazamiento"
+
+
+msgid "Invert Pan Axis"
+msgstr "Invertir eje desplazamiento"
 
 
 msgid "Use Light"
@@ -92996,20 +93036,12 @@ msgid "Invert Mouse Zoom Direction"
 msgstr "Invertir dirección del zoom del ratón"
 
 
-msgid "Orbit Style"
-msgstr "Estilo de órbita"
+msgid "Invert Axis Orbit"
+msgstr "Invertir eje órbita"
 
 
-msgid "Navigate"
-msgstr "Navegación"
-
-
-msgid "Orbit Options"
-msgstr "Opciones de órbita"
-
-
-msgid "Fly/Walk Options"
-msgstr "Opciones de volar/transitar"
+msgid "Fly/Walk Lock Horizon"
+msgstr "Bloquear horizonte al Volar/Transitar"
 
 
 msgid "Multiple add-ons with the same name found!"
@@ -94112,6 +94144,10 @@ msgstr "Visibilidad por tipo"
 
 msgid "Viewport Gizmos"
 msgstr "Manipuladores"
+
+
+msgid "Navigate"
+msgstr "Navegación"
 
 
 msgid "Active Tools"
@@ -98615,6 +98651,14 @@ msgid "Active object contains no collections"
 msgstr "El objeto activo no contiene colecciones"
 
 
+msgid "Could not add the collection because it is overridden."
+msgstr "No fue posible agregar la colección porque se encuentra redefinida"
+
+
+msgid "Could not add the collection because it is linked."
+msgstr "No fue posible agregar la colección porque se encuentra vinculada"
+
+
 msgid "Could not add the collection because of dependency cycle detected"
 msgstr "No fue posible agregar la colección porque se detectó una dependencia cíclica"
 
@@ -101070,6 +101114,10 @@ msgid "Cannot edit sequence name"
 msgstr "No es posible editar el nombre de la secuencia"
 
 
+msgid "Cannot edit name of an override data-block"
+msgstr "No es posible editar el nombre de un bloque de datos redefinido"
+
+
 msgid "Cannot edit name of master collection"
 msgstr "No es posible editar el nombre de la colección principal"
 
@@ -101607,7 +101655,7 @@ msgstr "Rayos X no disponibles en el modo actual"
 
 
 msgid "Cannot fly a camera from an external library"
-msgstr "No es posible volar una cámara desde una biblioteca externa"
+msgstr "No es posible volar desde una cámara de una biblioteca externa"
 
 
 msgid "Cannot fly when the view offset is locked"
@@ -101615,7 +101663,7 @@ msgstr "No es posible volar cuando el desplazamiento de la vista se encuentra bl
 
 
 msgid "Cannot fly an object with constraints"
-msgstr "No es posible volar un objeto con restricciones"
+msgstr "No es posible volar desde un objeto con restricciones"
 
 
 msgid "Gizmos hidden in this view"
@@ -102373,6 +102421,14 @@ msgstr "El esqueleto '%s' no contiene al hueso '%s'"
 
 msgid "Background image cannot be removed"
 msgstr "La imagen de fondo no puede ser removida"
+
+
+msgid "Could not link the object '%s' because the collection '%s' is overridden."
+msgstr "No fue posible vincular el objeto '%s' porque la colección '%s' se encuentra redefinida"
+
+
+msgid "Could not link the object '%s' because the collection '%s' is linked."
+msgstr "No fue posible vincular el objeto '%s' porque la colección '%s' se encuentra vinculada"
 
 
 msgid "Object '%s' already in collection '%s'"
