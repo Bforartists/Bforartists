@@ -3,10 +3,10 @@
     <user_interface>
       <ThemeUserInterface
         menu_shadow_fac="0.215574"
-        menu_shadow_width="13"
+        menu_shadow_width="15"
         icon_alpha="1"
         icon_saturation="1"
-        widget_emboss="#9e9e9e12"
+        widget_emboss="#9e9e9e0d"
         editor_outline="#a5a5a5"
         widget_text_cursor="#ffac0d"
         transparent_checker_primary="#ffffff"
@@ -802,8 +802,8 @@
         meta_strip="#6d9183"
         mask_strip="#666666"
         text_strip="#dbda79"
-        active_strip="#d9d9d9"
-        selected_strip="#ff8f0d"
+        active_strip="#ffbb00"
+        selected_strip="#ff7020"
         frame_current="#0074e8"
         time_scrub_background="#bae2ffca"
         time_marker_line="#00000060"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -2435,10 +2435,6 @@ msgid "Show Datablock Filters"
 msgstr "Mostrar fotogrames per segon i perfil"
 
 
-msgid "Display Hidden"
-msgstr "Mostrar propietats de les arestes"
-
-
 msgid "Display Lattices"
 msgstr "Mostrar propietats de les arestes"
 
@@ -2457,14 +2453,6 @@ msgstr "Duplicar"
 
 msgid "Display Node"
 msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Show Errors"
-msgstr "Seleccionar fila"
-
-
-msgid "Only Selected"
-msgstr "Seleccionar fila"
 
 
 msgid "Display Particle"
@@ -9190,6 +9178,14 @@ msgstr "Afegir Tira"
 
 msgid "Match-moving dopesheet data"
 msgstr "Moure a Capa"
+
+
+msgid "Display Hidden"
+msgstr "Mostrar propietats de les arestes"
+
+
+msgid "Only Selected"
+msgstr "Seleccionar fila"
 
 
 msgid "Dopesheet Sort Field"

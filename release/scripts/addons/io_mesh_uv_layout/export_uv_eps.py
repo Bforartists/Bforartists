@@ -22,7 +22,7 @@ import bpy
 
 
 def export(filepath, face_data, colors, width, height, opacity):
-    with open(filepath, "w") as file:
+    with open(filepath, 'w', encoding='utf-8') as file:
         for text in get_file_parts(face_data, colors, width, height, opacity):
             file.write(text)
 

@@ -1,17 +1,17 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
-"PO-Revision-Date: 2020-05-01 08:09+0200\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
+"PO-Revision-Date: 2020-05-19 08:12+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: pegas\n"
 "Language: sk_SK\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.3.1\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);"
 
 
@@ -732,7 +732,7 @@ msgstr "Editor nástrojov tieňovania a kompozície založené na uzle"
 
 
 msgid "Video Sequencer"
-msgstr "Video sekvencer"
+msgstr "Video radič"
 
 
 msgid "Video editing tools"
@@ -7885,7 +7885,7 @@ msgstr "Bezpečné priestory"
 
 
 msgid "Safe areas used in 3D view and the sequencer"
-msgstr "Bezpečné priestory používané v 3D zobrazení a sekvencer"
+msgstr "Bezpečné priestory používané v 3D zobrazení a radič"
 
 
 msgid "Action Safe Margins"
@@ -8004,7 +8004,7 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "Zahrnie zviditeľnenie súvisiacich údajov animácie z Pastelky"
 
 
-msgid "Display Hidden"
+msgid "Show Hidden"
 msgstr "Zobraziť skryté"
 
 
@@ -8092,16 +8092,8 @@ msgid "Include visualization of node related animation data"
 msgstr "Zahrnie zviditeľnenie súvisiacich údajov animácie uzla"
 
 
-msgid "Show Errors"
-msgstr "Zobraziť chyby"
-
-
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "Zahrnie iba F-krivku a ovládače, ktoré sú vypnuté alebo majú chyby"
-
-
-msgid "Only Selected"
-msgstr "Len vybrané"
 
 
 msgid "Only include channels relating to selected objects and data"
@@ -11374,10 +11366,6 @@ msgid "Draw a column listing the size of each file"
 msgstr "Vykreslí stĺpec so zoznamom veľkosti každého súboru"
 
 
-msgid "Show Hidden"
-msgstr "Zobraziť skryté"
-
-
 msgid "Show hidden dot files"
 msgstr "Zobraziť skryté bodky súborov"
 
@@ -12974,8 +12962,8 @@ msgid "Only allow given density value in emitter area and will not add up"
 msgstr "Povolí iba danú hodnotu hustoty v oblasti emitora a nezapočítava ju"
 
 
-msgid "Control when to apply inflow"
-msgstr "Kontrola použitia prítoku"
+msgid "Use Flow"
+msgstr "Použiť prúdenie"
 
 
 msgid "Initial Velocity"
@@ -13008,6 +12996,10 @@ msgstr "Použije textúru na ovládanie intenzity emisie"
 
 msgid "Initial"
 msgstr "Počiatočná"
+
+
+msgid "Initial velocity in X, Y and Z direction in world space"
+msgstr "Počiatočná rýchlosť v smere X, Y a Z v priestore sveta"
 
 
 msgid "Multiplier of source velocity passed to fluid (source velocity is non-zero only if object is moving)"
@@ -20442,11 +20434,11 @@ msgstr "Index aktívnej vrstvy v zozname všetkých vrstiev masky"
 
 
 msgid "Final frame of the mask (used for sequencer)"
-msgstr "Posledná snímka masky (používa sa pre sekvencer)"
+msgstr "Posledná snímka masky (používa sa pre radič)"
 
 
 msgid "First frame of the mask (used for sequencer)"
-msgstr "Prvá snímka masky (používa sa pre sekvencer)"
+msgstr "Prvá snímka masky (používa sa pre radič)"
 
 
 msgid "Collection of layers which defines this mask"
@@ -23563,6 +23555,10 @@ msgid "Grease Pencil data-block used for annotations in the 3D view"
 msgstr "Blok údajov pastelky použitý pre poznámky v 3D zobrazení"
 
 
+msgid "Grease Pencil settings for the scene"
+msgstr "Nastavenia pastelky pre scénu"
+
+
 msgid "NLA TweakMode"
 msgstr "Režim vyladenia NLA"
 
@@ -23612,11 +23608,11 @@ msgstr "Editor sekvencie"
 
 
 msgid "Sequencer Color Space Settings"
-msgstr "Nastavenie farebného priestoru sekvencera"
+msgstr "Nastavenie farebného priestoru radiča"
 
 
 msgid "Settings of color space sequencer is working in"
-msgstr "Nastavenie sekvencera pracujúceho vo farebnom priestore"
+msgstr "Nastavenie radiča pracujúceho vo farebnom priestore"
 
 
 msgid "Only Keyframes from Selected Channels"
@@ -32485,6 +32481,14 @@ msgid "Mirror the U texture coordinate around the flip offset point"
 msgstr "Zrkadlo U súradnice textúry okolo bodu posuvu preklápania"
 
 
+msgid "Mirror UDIM"
+msgstr "Zrkadlo UDIM"
+
+
+msgid "Mirror the texture coordinate around each tile center"
+msgstr "Zrkadlenie súradníc textúry okolo každého stredu dlaždíc"
+
+
 msgid "Mirror V"
 msgstr "Zrkadlo V"
 
@@ -34819,8 +34823,16 @@ msgid "Match-moving dopesheet data"
 msgstr "Údaje informačného listu prispôsobenia pohybu"
 
 
+msgid "Display Hidden"
+msgstr "Zobraziť skryté"
+
+
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "Zahrnie kanály objektov/kostí, ktoré nie sú viditeľné"
+
+
+msgid "Only Selected"
+msgstr "Len vybrané"
 
 
 msgid "Dopesheet Sort Field"
@@ -37554,6 +37566,10 @@ msgstr "Horná hranica"
 
 msgid "The smallest integer greater than or equal A"
 msgstr "Najmenšie celé číslo väčšie alebo rovnaké A"
+
+
+msgid "The integer part of A, removing fractional digits"
+msgstr "Celá časť A, odstránenie desatinných číslic"
 
 
 msgid "Fraction"
@@ -44929,6 +44945,10 @@ msgid "Export the scene in the current animation frame"
 msgstr "Exportuje scénu do aktuálnej snímky animácie"
 
 
+msgid "Export Deformation Bones Only"
+msgstr "Exportovať iba deformácie kostí"
+
+
 msgid "Export Deformation bones only (and needed bones for hierarchy)"
 msgstr "Exportuje iba deformácie kostí (a potrebné kosti pre hierarchiu)"
 
@@ -45091,6 +45111,20 @@ msgstr "Dotyčnice kľúčového tvaru"
 
 msgid "Export vertex tangents with shape keys (morph targets)"
 msgstr "Exportuje dotyčnice vrcholov s kľúčovými tvarmi (ciele Morph)"
+
+
+msgid "Group by NLA Track"
+msgstr "Skupina podľa stopy NLA"
+
+
+msgid ""
+"When on, multiple actions become part of the same glTF animation if\n"
+"they're pushed onto NLA tracks with the same name.\n"
+"When off, all the currently assigned actions become one glTF animation"
+msgstr ""
+"Keď je zapnutá, viac akcií sa stane súčasťou rovnakej animácie glTF, ak\n"
+"sú stlačené do skladby NLA s rovnakým názvom.\n"
+"Keď je vypnutá, všetky aktuálne priradené akcie sa stanú jednou animáciou glTF"
 
 
 msgid "Export vertex normals with meshes"
@@ -49276,12 +49310,20 @@ msgstr ""
 "Nerovnomernou zmenou veľkosti to však môže byť znehodnotené, takže buďte opatrní"
 
 
+msgid "Guess Original Bind Pose"
+msgstr "Odhadnúť originálnu väzbu pózy"
+
+
 msgid ""
 "Try to guess the original bind pose for skinned meshes from the inverse bind matrices.\n"
 "When off, use default/rest pose as bind pose"
 msgstr ""
 "Pokúsi sa odhadnúť pôvodnú väzbu pózy pre opláštenú povrchovú sieť z inverzných matríc väzby.\n"
 "Ak je vypnutá, použije ako väzbu pózy predvolenú/kľudovú pózu"
+
+
+msgid "Pack Images"
+msgstr "Zbaliť obrázky"
 
 
 msgid "Pack all images into .blend file"
@@ -59051,6 +59093,10 @@ msgid "Select Connected"
 msgstr "Vybrať pripojené"
 
 
+msgid "Select bones linked by parent/child connections under the mouse cursor"
+msgstr "Pod kurzorom myši vyberie kosti spojené pomocou spojenia rodič/potomok"
+
+
 msgctxt "Operator"
 msgid "Select Parent Bone"
 msgstr "Vybrať rodičovskú kosť"
@@ -67289,12 +67335,65 @@ msgid "Site"
 msgstr "Stránka"
 
 
+msgctxt "Operator"
+msgid "Export USD"
+msgstr "Exportovať USD"
+
+
+msgid "Export current scene in a USD archive"
+msgstr "Exportuje aktuálnu scény do archívu USD"
+
+
+msgid "Use Settings for"
+msgstr "Použiť nastavenia pre"
+
+
+msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
+msgstr "Určuje viditeľnosť objektov, nastavenia modifikátora a ďalších oblastí, kde existujú rôzne nastavenia záberu a prevodu"
+
+
+msgid "Use Render settings for object visibility, modifier settings, etc"
+msgstr "Použije nastavenie prevodu na zviditeľnenie objektu, nastavenie modifikátora atď."
+
+
+msgid "Use Viewport settings for object visibility, modifier settings, etc"
+msgstr "Použije nastavenie záberu na zviditeľnenie objektu, nastavenie modifikátora atď."
+
+
+msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
+msgstr "Ak je začiarknuté, exportujú sa všetky snímky vykonaného prevodu. Ak je hodnota false, exportuje sa iba aktuálna snímka"
+
+
+msgid "When checked, hair is exported as USD curves"
+msgstr "Keď je zaškrtnuté sa vlasy exportujú ako USD krivky"
+
+
+msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
+msgstr "Ak je začiarknuté, nastavenia záberu materiálov sú exportované ako materiály náhľadu USD a priradenia materiálov sa exportujú ako podskupiny geometrie"
+
+
+msgid "When checked, normals of exported meshes are included in the export"
+msgstr "Ak je začiarknuté, do exportu sú zahrnuté kolmice exportovaných povrchových sietí"
+
+
 msgid "UV Maps"
 msgstr "UV mapy"
 
 
+msgid "When checked, all UV maps of exported meshes are included in the export"
+msgstr "Ak je zaškrtnuté, do exportu sú zahrnuté všetky UV mapy exportovaných povrchových sietí"
+
+
+msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
+msgstr "Exportujú sa iba vybrané objekty. Nevybraní rodičia vybratých objektov sa exportujú ako prázdna transformácia"
+
+
 msgid "Instancing"
 msgstr "Vyhotovenie"
+
+
+msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
+msgstr "Ak je začiarknuté, inštancie objektov sa exportujú ako referencie v USD. Ak nie je začiarknuté, inštancie objektov sa exportujú ako skutočné objekty"
 
 
 msgctxt "Operator"
@@ -77431,6 +77530,22 @@ msgid "4 px"
 msgstr "4 px"
 
 
+msgid "Grease Pencil Render"
+msgstr "Prevod pastelky"
+
+
+msgid "Render settings"
+msgstr "Nastavenia prevodu"
+
+
+msgid "Anti-Aliasing Threshold"
+msgstr "Prah vyhladzovania hrán"
+
+
+msgid "Threshold for edge detection algorithm (higher values might overblur some part of the image)"
+msgstr "Prahová hodnota pre algoritmus detekcie hrán (vyššie hodnoty môžu premazať niektorú časť obrázka)"
+
+
 msgid "Scene Objects"
 msgstr "Objekty scény"
 
@@ -78355,7 +78470,7 @@ msgstr "Použije 3D kameru scény ako vstup"
 
 
 msgid "Use the Scene's Sequencer timeline as input"
-msgstr "Použije časovú os sekvencera scény ako vstup"
+msgstr "Použije časovú os radiča scény ako vstup"
 
 
 msgid "Use Grease Pencil"
@@ -79544,6 +79659,15 @@ msgstr "Editor klipu priestoru"
 
 msgid "Clip editor space data"
 msgstr "Údaje priestoru editora klipov"
+
+
+msgctxt "MovieClip"
+msgid "Annotation Source"
+msgstr "Zdroj poznámky"
+
+
+msgid "Where the annotation comes from"
+msgstr "Kde poznámka pochádza z"
 
 
 msgid "Show annotation data-block which belongs to movie clip"
@@ -84199,10 +84323,6 @@ msgid "Auto-Keying Mode"
 msgstr "Režim automatického kľúčovania"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "Režim automatického vkladania kľúčovej snímky pre objekty a kosti"
-
-
 msgid "Add & Replace"
 msgstr "Pridať a nahradiť"
 
@@ -84542,10 +84662,6 @@ msgstr "Pri kanáloch s cyklickou extrapoláciou sa vkladanie kľúčových sní
 
 msgid "Auto Keying"
 msgstr "Automatické kľúčovanie"
-
-
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "Automaticky vkladá kľúčové snímky pre objekty a kosti"
 
 
 msgid "Auto Keyframe Insert Keying Set"
@@ -86266,6 +86382,10 @@ msgstr "Zachová nepriehľadnosť objemu a rovnaké detaily bez ohľadu na mierk
 
 msgid "Specify volume step size and density in world space"
 msgstr "Určí veľkosť kroku objemu a hustotu vo svete"
+
+
+msgid "Distance between volume samples. Lower values render more detail at the cost of performance. If set to zero, the step size is automatically determined based on voxel size"
+msgstr "Vzdialenosť medzi snímkami objemu. Nižšie hodnoty poskytujú viac detailov na úkor výkonu. Ak je nastavená na nulu, veľkosť kroku sa automaticky určí na základe veľkosti voxelu"
 
 
 msgid "Walk navigation settings"
@@ -88914,6 +89034,10 @@ msgid "Flip V"
 msgstr "Preklopiť V"
 
 
+msgid "Flip UDIM"
+msgstr "Preklopiť UDIM"
+
+
 msgctxt "Operator"
 msgid "Delete Higher"
 msgstr "Odstrániť vyššie"
@@ -90406,10 +90530,6 @@ msgstr "Zapečenie všetkých - ESC na pozastavenie"
 
 msgid "Unbaked Guides: Bake Guides or disable them"
 msgstr "Nezapečené vedenie: Zapečte vedenie alebo ho vypnite"
-
-
-msgid "Use Flow"
-msgstr "Použiť prúdenie"
 
 
 msgid "Surface Thickness"
@@ -92837,10 +92957,6 @@ msgid "Double Click Speed"
 msgstr "Rýchlosť dvojitého kliknutia"
 
 
-msgid "Pan Sensitivity"
-msgstr "Citlivosť panorámy"
-
-
 msgid "Zoom Method"
 msgstr "Metóda priblíženia"
 
@@ -92849,16 +92965,8 @@ msgid "Invert Wheel Zoom Direction"
 msgstr "Obrátený smer kolieska priblíženia"
 
 
-msgid "Pan Options"
-msgstr "Možnosti posunu"
-
-
-msgid "Invert Axis"
-msgstr "Invertovať osi"
-
-
-msgid "Zoom Options"
-msgstr "Možnosti priblíženia"
+msgid "Pan Sensitivity"
+msgstr "Citlivosť panorámy"
 
 
 msgid "Use Light"
@@ -92889,22 +92997,6 @@ msgstr "Prirodzený smer trackpadu"
 
 msgid "Invert Mouse Zoom Direction"
 msgstr "Invertovať smer priblíženia myši"
-
-
-msgid "Orbit Style"
-msgstr "Štýl obiehania"
-
-
-msgid "Navigate"
-msgstr "Navigácia"
-
-
-msgid "Orbit Options"
-msgstr "Možnosti obiehania"
-
-
-msgid "Fly/Walk Options"
-msgstr "Voľby lietanie/chôdza"
 
 
 msgid "Multiple add-ons with the same name found!"
@@ -94007,6 +94099,10 @@ msgstr "Viditeľnosť typov objektov"
 
 msgid "Viewport Gizmos"
 msgstr "Manipulačné prvky záberu"
+
+
+msgid "Navigate"
+msgstr "Navigácia"
 
 
 msgid "Active Tools"
@@ -95551,6 +95647,10 @@ msgstr "Pásy neboli kompatibilné"
 
 msgid "Strips must have the same number of inputs"
 msgstr "Pásy musia mať rovnaký počet vstupov"
+
+
+msgid "Recursion detected in video sequencer. Strip %s at frame %d will not be rendered"
+msgstr "V radiči videa bola zistená rekurzia. Prevod pásu %s na snímke %d nebude vykonaný"
 
 
 msgctxt "MovieClip"
@@ -98506,6 +98606,14 @@ msgid "Active object contains no collections"
 msgstr "Aktívny objekt neobsahuje žiadne kolekcie"
 
 
+msgid "Could not add the collection because it is overridden."
+msgstr "Kolekciu sa nepodarilo pridať, pretože je prepísaná."
+
+
+msgid "Could not add the collection because it is linked."
+msgstr "Kolekciu sa nepodarilo pridať, pretože je prepojená."
+
+
 msgid "Could not add the collection because of dependency cycle detected"
 msgstr "Kolekciu nebolo možné pridať z dôvodu zisteného zacyklenia závislosti"
 
@@ -100961,6 +101069,10 @@ msgid "Cannot edit sequence name"
 msgstr "Nemožno upraviť názov sekvencie"
 
 
+msgid "Cannot edit name of an override data-block"
+msgstr "Názov prepísaného bloku údajov sa nedá upravovať"
+
+
 msgid "Cannot edit name of master collection"
 msgstr "Nemožno upraviť názov hlavnej kolekcie"
 
@@ -102264,6 +102376,14 @@ msgstr "Kostra '%s' neobsahuje kosť '%s'"
 
 msgid "Background image cannot be removed"
 msgstr "Obrázok pozadia nemožno odstrániť"
+
+
+msgid "Could not link the object '%s' because the collection '%s' is overridden."
+msgstr "Nepodarilo sa prepojiť objekt '%s', pretože kolekcia '%s' je prepísaná."
+
+
+msgid "Could not link the object '%s' because the collection '%s' is linked."
+msgstr "Nepodarilo sa prepojiť objekt '%s', pretože kolekcia '%s' je prepojená."
 
 
 msgid "Object '%s' already in collection '%s'"

@@ -61,7 +61,18 @@ static CLG_LogRef LOG = {"rna.define"};
 
 /* Global used during defining */
 
-BlenderDefRNA DefRNA = {NULL, {NULL, NULL}, {NULL, NULL}, NULL, 0, 0, 0, 1, 1};
+BlenderDefRNA DefRNA = {
+    .sdna = NULL,
+    .structs = {NULL, NULL},
+    .allocs = {NULL, NULL},
+    .laststruct = NULL,
+    .error = 0,
+    .silent = false,
+    .preprocess = false,
+    .verify = true,
+    .animate = true,
+    .make_overridable = false,
+};
 
 #ifndef RNA_RUNTIME
 static struct {
@@ -691,13 +702,13 @@ BlenderRNA *RNA_create(void)
   BLI_listbase_clear(&DefRNA.structs);
   brna->structs_map = BLI_ghash_str_new_ex(__func__, 2048);
 
-  DefRNA.error = 0;
-  DefRNA.preprocess = 1;
+  DefRNA.error = false;
+  DefRNA.preprocess = true;
 
   DefRNA.sdna = DNA_sdna_from_data(DNAstr, DNAlen, false, false, &error_message);
   if (DefRNA.sdna == NULL) {
     CLOG_ERROR(&LOG, "Failed to decode SDNA: %s.", error_message);
-    DefRNA.error = 1;
+    DefRNA.error = true;
   }
 
   /* We need both alias and static (on-disk) DNA names. */
@@ -737,12 +748,21 @@ void RNA_define_free(BlenderRNA *UNUSED(brna))
     DefRNA.sdna = NULL;
   }
 
-  DefRNA.error = 0;
+  DefRNA.error = false;
 }
 
 void RNA_define_verify_sdna(bool verify)
 {
   DefRNA.verify = verify;
+}
+
+/**
+ * Properties defined when this is enabled are lib-overridable by default (except for Pointer
+ * ones).
+ */
+void RNA_define_lib_overridable(const bool make_overridable)
+{
+  DefRNA.make_overridable = make_overridable;
 }
 
 #ifndef RNA_RUNTIME
@@ -910,7 +930,7 @@ StructRNA *RNA_def_struct_ptr(BlenderRNA *brna, const char *identifier, StructRN
 
     if (rna_validate_identifier(identifier, error, false) == 0) {
       CLOG_ERROR(&LOG, "struct identifier \"%s\" error - %s", identifier, error);
-      DefRNA.error = 1;
+      DefRNA.error = true;
     }
   }
 
@@ -1040,7 +1060,7 @@ StructRNA *RNA_def_struct(BlenderRNA *brna, const char *identifier, const char *
     srnafrom = BLI_ghash_lookup(brna->structs_map, from);
     if (!srnafrom) {
       CLOG_ERROR(&LOG, "struct %s not found to define %s.", from, identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
     }
   }
 
@@ -1065,7 +1085,7 @@ void RNA_def_struct_sdna(StructRNA *srna, const char *structname)
   if (DNA_struct_find_nr_wrapper(DefRNA.sdna, structname) == -1) {
     if (!DefRNA.silent) {
       CLOG_ERROR(&LOG, "%s not found.", structname);
-      DefRNA.error = 1;
+      DefRNA.error = true;
     }
     return;
   }
@@ -1093,7 +1113,7 @@ void RNA_def_struct_sdna_from(StructRNA *srna, const char *structname, const cha
   if (DNA_struct_find_nr_wrapper(DefRNA.sdna, structname) == -1) {
     if (!DefRNA.silent) {
       CLOG_ERROR(&LOG, "%s not found.", structname);
-      DefRNA.error = 1;
+      DefRNA.error = true;
     }
     return;
   }
@@ -1106,7 +1126,7 @@ void RNA_def_struct_name_property(struct StructRNA *srna, struct PropertyRNA *pr
 {
   if (prop->type != PROP_STRING) {
     CLOG_ERROR(&LOG, "\"%s.%s\", must be a string property.", srna->identifier, prop->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
   }
   else {
     srna->nameproperty = prop;
@@ -1121,7 +1141,7 @@ void RNA_def_struct_nested(BlenderRNA *brna, StructRNA *srna, const char *struct
   srnafrom = BLI_ghash_lookup(brna->structs_map, structname);
   if (!srnafrom) {
     CLOG_ERROR(&LOG, "struct %s not found for %s.", structname, srna->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
   }
 
   srna->nested = srnafrom;
@@ -1271,7 +1291,7 @@ PropertyRNA *RNA_def_property(StructOrFunctionRNA *cont_,
     if (rna_validate_identifier(identifier, error, true) == 0) {
       CLOG_ERROR(
           &LOG, "property identifier \"%s.%s\" - %s", CONTAINER_RNA_ID(cont), identifier, error);
-      DefRNA.error = 1;
+      DefRNA.error = true;
     }
 
     dcont = rna_find_container_def(cont);
@@ -1279,7 +1299,7 @@ PropertyRNA *RNA_def_property(StructOrFunctionRNA *cont_,
     /* XXX - toto, detect supertype collisions */
     if (rna_findlink(&dcont->properties, identifier)) {
       CLOG_ERROR(&LOG, "duplicate identifier \"%s.%s\"", CONTAINER_RNA_ID(cont), identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
     }
 
     dprop = MEM_callocN(sizeof(PropertyDefRNA), "PropertyDefRNA");
@@ -1294,7 +1314,7 @@ PropertyRNA *RNA_def_property(StructOrFunctionRNA *cont_,
                  CONTAINER_RNA_ID(cont),
                  identifier,
                  error);
-      DefRNA.error = 1;
+      DefRNA.error = true;
     }
 #endif
   }
@@ -1309,7 +1329,7 @@ PropertyRNA *RNA_def_property(StructOrFunctionRNA *cont_,
                      "subtype does not apply to 'PROP_BOOLEAN' \"%s.%s\"",
                      CONTAINER_RNA_ID(cont),
                      identifier);
-          DefRNA.error = 1;
+          DefRNA.error = true;
         }
       }
       break;
@@ -1322,7 +1342,7 @@ PropertyRNA *RNA_def_property(StructOrFunctionRNA *cont_,
                    "subtype does not apply to 'PROP_INT' \"%s.%s\"",
                    CONTAINER_RNA_ID(cont),
                    identifier);
-        DefRNA.error = 1;
+        DefRNA.error = true;
       }
 #endif
 
@@ -1371,7 +1391,7 @@ PropertyRNA *RNA_def_property(StructOrFunctionRNA *cont_,
       break;
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", invalid property type.", CONTAINER_RNA_ID(cont), identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       return NULL;
   }
 
@@ -1404,6 +1424,14 @@ PropertyRNA *RNA_def_property(StructOrFunctionRNA *cont_,
     }
   }
 
+#ifndef RNA_RUNTIME
+  if (type != PROP_POINTER) {
+    if (DefRNA.make_overridable) {
+      prop->flag_override |= PROPOVERRIDE_OVERRIDABLE_LIBRARY;
+    }
+  }
+#endif
+
   if (type == PROP_STRING) {
     /* used so generated 'get/length/set' functions skip a NULL check
      * in some cases we want it */
@@ -1413,42 +1441,42 @@ PropertyRNA *RNA_def_property(StructOrFunctionRNA *cont_,
   if (DefRNA.preprocess) {
     switch (type) {
       case PROP_BOOLEAN:
-        DefRNA.silent = 1;
+        DefRNA.silent = true;
         RNA_def_property_boolean_sdna(prop, NULL, identifier, 0);
-        DefRNA.silent = 0;
+        DefRNA.silent = false;
         break;
       case PROP_INT: {
-        DefRNA.silent = 1;
+        DefRNA.silent = true;
         RNA_def_property_int_sdna(prop, NULL, identifier);
-        DefRNA.silent = 0;
+        DefRNA.silent = false;
         break;
       }
       case PROP_FLOAT: {
-        DefRNA.silent = 1;
+        DefRNA.silent = true;
         RNA_def_property_float_sdna(prop, NULL, identifier);
-        DefRNA.silent = 0;
+        DefRNA.silent = false;
         break;
       }
       case PROP_STRING: {
-        DefRNA.silent = 1;
+        DefRNA.silent = true;
         RNA_def_property_string_sdna(prop, NULL, identifier);
-        DefRNA.silent = 0;
+        DefRNA.silent = false;
         break;
       }
       case PROP_ENUM:
-        DefRNA.silent = 1;
+        DefRNA.silent = true;
         RNA_def_property_enum_sdna(prop, NULL, identifier);
-        DefRNA.silent = 0;
+        DefRNA.silent = false;
         break;
       case PROP_POINTER:
-        DefRNA.silent = 1;
+        DefRNA.silent = true;
         RNA_def_property_pointer_sdna(prop, NULL, identifier);
-        DefRNA.silent = 0;
+        DefRNA.silent = false;
         break;
       case PROP_COLLECTION:
-        DefRNA.silent = 1;
+        DefRNA.silent = true;
         RNA_def_property_collection_sdna(prop, NULL, identifier, NULL);
-        DefRNA.silent = 0;
+        DefRNA.silent = false;
         break;
     }
   }
@@ -1543,7 +1571,7 @@ void RNA_def_property_array(PropertyRNA *prop, int length)
                "\"%s.%s\", array length must be zero of greater.",
                srna->identifier,
                prop->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
     return;
   }
 
@@ -1553,7 +1581,7 @@ void RNA_def_property_array(PropertyRNA *prop, int length)
                srna->identifier,
                prop->identifier,
                RNA_MAX_ARRAY_LENGTH);
-    DefRNA.error = 1;
+    DefRNA.error = true;
     return;
   }
 
@@ -1563,7 +1591,7 @@ void RNA_def_property_array(PropertyRNA *prop, int length)
                srna->identifier,
                prop->identifier,
                prop->arraydimension);
-    DefRNA.error = 1;
+    DefRNA.error = true;
     return;
   }
 
@@ -1580,7 +1608,7 @@ void RNA_def_property_array(PropertyRNA *prop, int length)
                  "\"%s.%s\", only boolean/int/float can be array.",
                  srna->identifier,
                  prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -1606,7 +1634,7 @@ void RNA_def_property_multi_array(PropertyRNA *prop, int dimension, const int le
                srna->identifier,
                prop->identifier,
                RNA_MAX_ARRAY_DIMENSION);
-    DefRNA.error = 1;
+    DefRNA.error = true;
     return;
   }
 
@@ -1620,7 +1648,7 @@ void RNA_def_property_multi_array(PropertyRNA *prop, int dimension, const int le
                  "\"%s.%s\", only boolean/int/float can be array.",
                  srna->identifier,
                  prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 
@@ -1680,22 +1708,22 @@ void RNA_def_property_ui_range(
 #ifndef NDEBUG
   if (min > max) {
     CLOG_ERROR(&LOG, "\"%s.%s\", min > max.", srna->identifier, prop->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
   }
 
   if (step < 0 || step > 100) {
     CLOG_ERROR(&LOG, "\"%s.%s\", step outside range.", srna->identifier, prop->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
   }
 
   if (step == 0) {
     CLOG_ERROR(&LOG, "\"%s.%s\", step is zero.", srna->identifier, prop->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
   }
 
   if (precision < -1 || precision > UI_PRECISION_FLOAT_MAX) {
     CLOG_ERROR(&LOG, "\"%s.%s\", precision outside range.", srna->identifier, prop->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
   }
 #endif
 
@@ -1718,7 +1746,7 @@ void RNA_def_property_ui_range(
     default:
       CLOG_ERROR(
           &LOG, "\"%s.%s\", invalid type for ui range.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -1730,7 +1758,7 @@ void RNA_def_property_range(PropertyRNA *prop, double min, double max)
 #ifdef DEBUG
   if (min > max) {
     CLOG_ERROR(&LOG, "\"%s.%s\", min > max.", srna->identifier, prop->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
   }
 #endif
 
@@ -1753,7 +1781,7 @@ void RNA_def_property_range(PropertyRNA *prop, double min, double max)
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", invalid type for range.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -1781,7 +1809,7 @@ void RNA_def_property_struct_type(PropertyRNA *prop, const char *type)
     default:
       CLOG_ERROR(
           &LOG, "\"%s.%s\", invalid type for struct type.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -1814,7 +1842,7 @@ void RNA_def_property_struct_runtime(PropertyRNA *prop, StructRNA *type)
     default:
       CLOG_ERROR(
           &LOG, "\"%s.%s\", invalid type for struct type.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -1831,7 +1859,7 @@ void RNA_def_property_enum_native_type(PropertyRNA *prop, const char *native_enu
     default:
       CLOG_ERROR(
           &LOG, "\"%s.%s\", invalid type for struct type.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -1856,7 +1884,7 @@ void RNA_def_property_enum_items(PropertyRNA *prop, const EnumPropertyItem *item
                        "\"%s.%s\", enum identifiers must not contain spaces.",
                        srna->identifier,
                        prop->identifier);
-            DefRNA.error = 1;
+            DefRNA.error = true;
             break;
           }
           else if (item[i].value == eprop->defaultvalue) {
@@ -1879,7 +1907,7 @@ void RNA_def_property_enum_items(PropertyRNA *prop, const EnumPropertyItem *item
     default:
       CLOG_ERROR(
           &LOG, "\"%s.%s\", invalid type for struct type.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -1896,7 +1924,7 @@ void RNA_def_property_string_maxlength(PropertyRNA *prop, int maxlength)
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not string.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -1920,7 +1948,7 @@ void RNA_def_property_boolean_default(PropertyRNA *prop, bool value)
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not boolean.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -1937,7 +1965,7 @@ void RNA_def_property_boolean_array_default(PropertyRNA *prop, const bool *array
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not boolean.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -1959,7 +1987,7 @@ void RNA_def_property_int_default(PropertyRNA *prop, int value)
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not int.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -1981,7 +2009,7 @@ void RNA_def_property_int_array_default(PropertyRNA *prop, const int *array)
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not int.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -2003,7 +2031,7 @@ void RNA_def_property_float_default(PropertyRNA *prop, float value)
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not float.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -2025,7 +2053,7 @@ void RNA_def_property_float_array_default(PropertyRNA *prop, const float *array)
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not float.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -2043,7 +2071,7 @@ void RNA_def_property_string_default(PropertyRNA *prop, const char *value)
                    "\"%s.%s\", NULL string passed (dont call in this case).",
                    srna->identifier,
                    prop->identifier);
-        DefRNA.error = 1;
+        DefRNA.error = true;
         break;
       }
 
@@ -2052,7 +2080,7 @@ void RNA_def_property_string_default(PropertyRNA *prop, const char *value)
                    "\"%s.%s\", empty string passed (dont call in this case).",
                    srna->identifier,
                    prop->identifier);
-        DefRNA.error = 1;
+        DefRNA.error = true;
         // BLI_assert(0);
         break;
       }
@@ -2066,7 +2094,7 @@ void RNA_def_property_string_default(PropertyRNA *prop, const char *value)
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not string.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -2096,7 +2124,7 @@ void RNA_def_property_enum_default(PropertyRNA *prop, int value)
                      srna->identifier,
                      prop->identifier,
                      eprop->defaultvalue & ~totflag);
-          DefRNA.error = 1;
+          DefRNA.error = true;
         }
       }
       else {
@@ -2113,7 +2141,7 @@ void RNA_def_property_enum_default(PropertyRNA *prop, int value)
           else {
             CLOG_ERROR(
                 &LOG, "\"%s.%s\", default is not in items.", srna->identifier, prop->identifier);
-            DefRNA.error = 1;
+            DefRNA.error = true;
           }
         }
       }
@@ -2122,7 +2150,7 @@ void RNA_def_property_enum_default(PropertyRNA *prop, int value)
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not enum.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -2175,7 +2203,7 @@ static PropertyDefRNA *rna_def_property_sdna(PropertyRNA *prop,
                  structname,
                  propname,
                  prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       return NULL;
     }
   }
@@ -2219,13 +2247,13 @@ void RNA_def_property_boolean_sdna(PropertyRNA *prop,
 
   if (prop->type != PROP_BOOLEAN) {
     CLOG_ERROR(&LOG, "\"%s.%s\", type is not boolean.", srna->identifier, prop->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
     return;
   }
 
   if ((dp = rna_def_property_sdna(prop, structname, propname))) {
 
-    if (DefRNA.silent == 0) {
+    if (!DefRNA.silent) {
       /* error check to ensure floats are not wrapped as ints/bools */
       if (dp->dnatype && *dp->dnatype && IS_DNATYPE_BOOLEAN_COMPAT(dp->dnatype) == 0) {
         CLOG_ERROR(&LOG,
@@ -2234,7 +2262,7 @@ void RNA_def_property_boolean_sdna(PropertyRNA *prop,
                    prop->identifier,
                    dp->dnatype,
                    RNA_property_typename(prop->type));
-        DefRNA.error = 1;
+        DefRNA.error = true;
         return;
       }
     }
@@ -2323,14 +2351,14 @@ void RNA_def_property_int_sdna(PropertyRNA *prop, const char *structname, const 
 
   if (prop->type != PROP_INT) {
     CLOG_ERROR(&LOG, "\"%s.%s\", type is not int.", srna->identifier, prop->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
     return;
   }
 
   if ((dp = rna_def_property_sdna(prop, structname, propname))) {
 
     /* error check to ensure floats are not wrapped as ints/bools */
-    if (DefRNA.silent == 0) {
+    if (!DefRNA.silent) {
       if (dp->dnatype && *dp->dnatype && IS_DNATYPE_INT_COMPAT(dp->dnatype) == 0) {
         CLOG_ERROR(&LOG,
                    "%s.%s is a '%s' but wrapped as type '%s'.",
@@ -2338,7 +2366,7 @@ void RNA_def_property_int_sdna(PropertyRNA *prop, const char *structname, const 
                    prop->identifier,
                    dp->dnatype,
                    RNA_property_typename(prop->type));
-        DefRNA.error = 1;
+        DefRNA.error = true;
         return;
       }
     }
@@ -2470,13 +2498,13 @@ void RNA_def_property_float_sdna(PropertyRNA *prop, const char *structname, cons
 
   if (prop->type != PROP_FLOAT) {
     CLOG_ERROR(&LOG, "\"%s.%s\", type is not float.", srna->identifier, prop->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
     return;
   }
 
   if ((dp = rna_def_property_sdna(prop, structname, propname))) {
     /* silent is for internal use */
-    if (DefRNA.silent == 0) {
+    if (!DefRNA.silent) {
       if (dp->dnatype && *dp->dnatype && IS_DNATYPE_FLOAT_COMPAT(dp->dnatype) == 0) {
         /* Colors are an exception. these get translated. */
         if (prop->subtype != PROP_COLOR_GAMMA) {
@@ -2486,7 +2514,7 @@ void RNA_def_property_float_sdna(PropertyRNA *prop, const char *structname, cons
                      prop->identifier,
                      dp->dnatype,
                      RNA_property_typename(prop->type));
-          DefRNA.error = 1;
+          DefRNA.error = true;
           return;
         }
       }
@@ -2578,7 +2606,7 @@ void RNA_def_property_enum_sdna(PropertyRNA *prop, const char *structname, const
 
   if (prop->type != PROP_ENUM) {
     CLOG_ERROR(&LOG, "\"%s.%s\", type is not enum.", srna->identifier, prop->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
     return;
   }
 
@@ -2589,7 +2617,7 @@ void RNA_def_property_enum_sdna(PropertyRNA *prop, const char *structname, const
 
       if (!DefRNA.silent) {
         CLOG_ERROR(&LOG, "\"%s.%s\", array not supported for enum type.", structname, propname);
-        DefRNA.error = 1;
+        DefRNA.error = true;
       }
     }
 
@@ -2672,7 +2700,7 @@ void RNA_def_property_string_sdna(PropertyRNA *prop, const char *structname, con
 
   if (prop->type != PROP_STRING) {
     CLOG_ERROR(&LOG, "\"%s.%s\", type is not string.", srna->identifier, prop->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
     return;
   }
 
@@ -2716,7 +2744,7 @@ void RNA_def_property_pointer_sdna(PropertyRNA *prop, const char *structname, co
 
   if (prop->type != PROP_POINTER) {
     CLOG_ERROR(&LOG, "\"%s.%s\", type is not pointer.", srna->identifier, prop->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
     return;
   }
 
@@ -2727,7 +2755,7 @@ void RNA_def_property_pointer_sdna(PropertyRNA *prop, const char *structname, co
 
       if (!DefRNA.silent) {
         CLOG_ERROR(&LOG, "\"%s.%s\", array not supported for pointer type.", structname, propname);
-        DefRNA.error = 1;
+        DefRNA.error = true;
       }
     }
   }
@@ -2749,7 +2777,7 @@ void RNA_def_property_collection_sdna(PropertyRNA *prop,
 
   if (prop->type != PROP_COLLECTION) {
     CLOG_ERROR(&LOG, "\"%s.%s\", type is not collection.", srna->identifier, prop->identifier);
-    DefRNA.error = 1;
+    DefRNA.error = true;
     return;
   }
 
@@ -2760,7 +2788,7 @@ void RNA_def_property_collection_sdna(PropertyRNA *prop,
 
       if (!DefRNA.silent) {
         CLOG_ERROR(&LOG, "\"%s.%s\", array of collections not supported.", structname, propname);
-        DefRNA.error = 1;
+        DefRNA.error = true;
       }
     }
 
@@ -2806,7 +2834,7 @@ void RNA_def_property_collection_sdna(PropertyRNA *prop,
     else {
       if (!DefRNA.silent) {
         CLOG_ERROR(&LOG, "\"%s.%s\" not found.", structname, lengthpropname);
-        DefRNA.error = 1;
+        DefRNA.error = true;
       }
     }
   }
@@ -2904,7 +2932,7 @@ void RNA_def_property_dynamic_array_funcs(PropertyRNA *prop, const char *getleng
 
   if (!(prop->flag & PROP_DYNAMIC)) {
     CLOG_ERROR(&LOG, "property is a not dynamic array.");
-    DefRNA.error = 1;
+    DefRNA.error = true;
     return;
   }
 
@@ -2946,7 +2974,7 @@ void RNA_def_property_boolean_funcs(PropertyRNA *prop, const char *get, const ch
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not boolean.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -3036,7 +3064,7 @@ void RNA_def_property_int_funcs(PropertyRNA *prop,
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not int.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -3134,7 +3162,7 @@ void RNA_def_property_float_funcs(PropertyRNA *prop,
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not float.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -3222,7 +3250,7 @@ void RNA_def_property_enum_funcs(PropertyRNA *prop,
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not enum.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -3289,7 +3317,7 @@ void RNA_def_property_string_funcs(PropertyRNA *prop,
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not string.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -3351,7 +3379,7 @@ void RNA_def_property_pointer_funcs(
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not pointer.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -3405,7 +3433,7 @@ void RNA_def_property_collection_funcs(PropertyRNA *prop,
     }
     default:
       CLOG_ERROR(&LOG, "\"%s.%s\", type is not collection.", srna->identifier, prop->identifier);
-      DefRNA.error = 1;
+      DefRNA.error = true;
       break;
   }
 }
@@ -4170,7 +4198,7 @@ static FunctionRNA *rna_def_function(StructRNA *srna, const char *identifier)
 
     if (rna_validate_identifier(identifier, error, false) == 0) {
       CLOG_ERROR(&LOG, "function identifier \"%s\" - %s", identifier, error);
-      DefRNA.error = 1;
+      DefRNA.error = true;
     }
   }
 
