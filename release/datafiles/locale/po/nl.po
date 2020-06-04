@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -431,6 +431,10 @@ msgid "Shading"
 msgstr "Arcering"
 
 
+msgid "Show Hidden"
+msgstr "Toon Niet Zichtbaar"
+
+
 msgid "Replace Color"
 msgstr "Vervang Kleur"
 
@@ -498,10 +502,6 @@ msgstr "Opslaan"
 
 msgid "Animations"
 msgstr "Animaties"
-
-
-msgid "Show Hidden"
-msgstr "Toon Niet Zichtbaar"
 
 
 msgid "End"

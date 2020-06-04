@@ -546,6 +546,13 @@ def dict_to_params(inputs, parameters=None):
     return parameters
 
 
+def user_logged_in():
+    a = bpy.context.window_manager.get('bkit profile')
+    if a is not None:
+        return True
+    return False
+
+
 def profile_is_validator():
     a = bpy.context.window_manager.get('bkit profile')
     if a is not None and a['user'].get('exmenu'):

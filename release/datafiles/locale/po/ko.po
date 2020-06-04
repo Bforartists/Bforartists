@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -7912,8 +7912,8 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "그리스 팬슬 관련 애니메이션 데이터 및 프레임의 시각화를 포함"
 
 
-msgid "Display Hidden"
-msgstr "숨긴 대상을 표시"
+msgid "Show Hidden"
+msgstr "숨겨진 항목을 표시"
 
 
 msgid "Include channels from objects/bone that are not visible"
@@ -8000,16 +8000,8 @@ msgid "Include visualization of node related animation data"
 msgstr "노드 관련 애니메이션 데이터의 시각화를 포함"
 
 
-msgid "Show Errors"
-msgstr "오류를 표시"
-
-
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "문제가 있거나 오류가 있는 F- 커브 및 드라이버 만 포함"
-
-
-msgid "Only Selected"
-msgstr "선택된 항목 만"
 
 
 msgid "Only include channels relating to selected objects and data"
@@ -11105,10 +11097,6 @@ msgid "Draw a column listing the size of each file"
 msgstr "각 파일의 크기가 나열된 열을 그립니다"
 
 
-msgid "Show Hidden"
-msgstr "숨겨진 항목을 표시"
-
-
 msgid "Show hidden dot files"
 msgstr "숨겨진 도트 파일을 표시"
 
@@ -12431,10 +12419,6 @@ msgstr "절대적인 밀도"
 
 msgid "Only allow given density value in emitter area and will not add up"
 msgstr "이미터 영역에서 주어진 밀도 값만 허용하고 합산하지 않습니다"
-
-
-msgid "Control when to apply inflow"
-msgstr "유입 적용시기를 제어"
 
 
 msgid "Initial Velocity"
@@ -33357,8 +33341,16 @@ msgid "Match-moving dopesheet data"
 msgstr "이동 일치하는 도프시트 데이터"
 
 
+msgid "Display Hidden"
+msgstr "숨긴 대상을 표시"
+
+
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "보이지 않는 오브젝트/본으로부터의 채널을 포함"
+
+
+msgid "Only Selected"
+msgstr "선택된 항목 만"
 
 
 msgid "Dopesheet Sort Field"
@@ -80739,10 +80731,6 @@ msgid "Auto-Keying Mode"
 msgstr "자동-키잉 모드"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "오브젝트 및 본에 대해 자동 키 프레임 삽입의 모드"
-
-
 msgid "Add & Replace"
 msgstr "추가 & 교체"
 
@@ -81070,10 +81058,6 @@ msgstr "Cyclic 외삽법을 사용하는 채널의 경우 키 프레임 삽입�
 
 msgid "Auto Keying"
 msgstr "자동 키잉"
-
-
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "오브젝트 및 본에 대해 자동 키 프레임을 삽입"
 
 
 msgid "Auto Keyframe Insert Keying Set"
@@ -88663,10 +88647,6 @@ msgid "Double Click Speed"
 msgstr "더블 클릭 속력"
 
 
-msgid "Pan Sensitivity"
-msgstr "팬 감도"
-
-
 msgid "Zoom Method"
 msgstr "줌 메서드"
 
@@ -88675,16 +88655,8 @@ msgid "Invert Wheel Zoom Direction"
 msgstr "휠 줌 방향을 반전"
 
 
-msgid "Pan Options"
-msgstr "팬 옵션"
-
-
-msgid "Invert Axis"
-msgstr "축을 반전"
-
-
-msgid "Zoom Options"
-msgstr "줌 옵션"
+msgid "Pan Sensitivity"
+msgstr "팬 감도"
 
 
 msgid "Use Light"
@@ -88715,22 +88687,6 @@ msgstr "자연 트랙 패드 방향"
 
 msgid "Invert Mouse Zoom Direction"
 msgstr "마우스 줌 방향을 반전"
-
-
-msgid "Orbit Style"
-msgstr "오비트 스타일"
-
-
-msgid "Navigate"
-msgstr "네비게이트"
-
-
-msgid "Orbit Options"
-msgstr "오비트 옵션"
-
-
-msgid "Fly/Walk Options"
-msgstr "비행/걷기 옵션"
 
 
 msgid "Multiple add-ons with the same name found!"
@@ -89686,6 +89642,10 @@ msgstr "오브젝트 유형 가시성"
 
 msgid "Viewport Gizmos"
 msgstr "뷰 기즈모"
+
+
+msgid "Navigate"
+msgstr "네비게이트"
 
 
 msgid "Active Tools"

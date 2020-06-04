@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
 "Last-Translator: \n"
 "Language-Team: Japanese Translation Team (https://sites.google.com/site/blugjp/blender-translators)\n"
@@ -5540,7 +5540,7 @@ msgstr "トラッキングデータを取得するためのビデオクリップ
 
 
 msgid "Active Clip"
-msgstr "アクティブなクリップ"
+msgstr "アクティブクリップ"
 
 
 msgid "Use active clip defined in scene"
@@ -8059,8 +8059,8 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "グリースペンシルに関連するアニメーションデータとフレームを表示します"
 
 
-msgid "Display Hidden"
-msgstr "非表示を表示"
+msgid "Show Hidden"
+msgstr "隠しファイルを表示"
 
 
 msgid "Include channels from objects/bone that are not visible"
@@ -8149,16 +8149,16 @@ msgid "Include visualization of node related animation data"
 msgstr "ノードに関するアニメーションデータを表示します"
 
 
-msgid "Show Errors"
-msgstr "エラー表示"
+msgid "Only Show Errors"
+msgstr "エラーのみ表示"
 
 
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "使用不可またはエラーのあるFカーブとドライバーのみ表示します"
 
 
-msgid "Only Selected"
-msgstr "選択物のみ"
+msgid "Only Show Selected"
+msgstr "選択物のみ表示"
 
 
 msgid "Only include channels relating to selected objects and data"
@@ -9732,7 +9732,7 @@ msgstr "FFmpeg設定"
 
 
 msgid "FFmpeg related settings for the scene"
-msgstr "シーンのためのFFmpeg関連の設定"
+msgstr "このシーンの FFmpeg 関連設定"
 
 
 msgid "Bitrate"
@@ -11435,10 +11435,6 @@ msgid "Draw a column listing the size of each file"
 msgstr "各ファイルをサイズ順に並べて表示します"
 
 
-msgid "Show Hidden"
-msgstr "隠しファイルを表示"
-
-
 msgid "Show hidden dot files"
 msgstr "ドットで開始するファイルを表示します"
 
@@ -13105,7 +13101,11 @@ msgid "Only allow given density value in emitter area and will not add up"
 msgstr "発生領域で与えられた密度値のみ有効にし、上がらないようにします"
 
 
-msgid "Control when to apply inflow"
+msgid "Use Flow"
+msgstr "フローを使用"
+
+
+msgid "Control when to apply fluid flow"
 msgstr "流入口を適用する時間をコントロールします"
 
 
@@ -13141,6 +13141,10 @@ msgstr "発生の強さをコントロールするのにテクスチャを使用
 
 msgid "Initial"
 msgstr "初期"
+
+
+msgid "Initial velocity in X, Y and Z direction in world space"
+msgstr "X、Y および Z 方向の初期速度（ワールド空間）"
 
 
 msgid "Multiplier of source velocity passed to fluid (source velocity is non-zero only if object is moving)"
@@ -23759,6 +23763,10 @@ msgid "Grease Pencil data-block used for annotations in the 3D view"
 msgstr "3Dビュー内のアノテーションに使用されるグリースペンシルデータブロック"
 
 
+msgid "Grease Pencil settings for the scene"
+msgstr "このシーンのグリースペンシル設定"
+
+
 msgid "NLA TweakMode"
 msgstr "NLA調整モード"
 
@@ -24363,6 +24371,13 @@ msgstr "手続き型 - オプションのノイズと共に、帯状もしくは
 
 msgid "Set negative texture RGB and intensity values to zero, for some uses like displacement this option can be disabled to get the full range"
 msgstr "負のテクスチャRGB値と輝度値を0にします。ディスプレイスメントのように全範囲を使用する場合、このオプションはOFFにしてください"
+
+
+msgid "Map the texture intensity to the color ramp. Note that the alpha value is used for image textures, enable \"Calculate Alpha\" for images without an alpha channel"
+msgstr ""
+"テクスチャの明るさをカラーランプにマップします\n"
+"アルファ値は画像テクスチャの物を使用します\n"
+"アルファチャンネルのない画像では「アルファを計算」を有効にしてください"
 
 
 msgid "Make this a node-based texture"
@@ -35064,8 +35079,16 @@ msgid "Match-moving dopesheet data"
 msgstr "マッチムーブのドープシートデータ"
 
 
+msgid "Display Hidden"
+msgstr "非表示を表示"
+
+
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "非表示オブジェクト/ボーンのチャンネルも含めます"
+
+
+msgid "Only Selected"
+msgstr "選択物のみ"
 
 
 msgid "Dopesheet Sort Field"
@@ -61614,6 +61637,10 @@ msgid "Symmetrize the topology modifications"
 msgstr "トポロジーの変更を対称化します"
 
 
+msgid "Distance within which symmetrical vertices are merged"
+msgstr "対称の位置の差がこの距離内にある頂点を結合します"
+
+
 msgctxt "Operator"
 msgid "Sculpt UVs"
 msgstr "UVをスカルプト"
@@ -74274,7 +74301,9 @@ msgstr "最小適応サンプル数"
 
 
 msgid "Minimum AA samples for adaptive sampling, to discover noisy features before stopping sampling. Zero for automatic setting based on number of AA samples"
-msgstr "サンプリング停止までにノイズの多い特徴点を発見する適応サンプリングの最小 AA サンプル数0 で AA サンプル数を元に自動設定します"
+msgstr ""
+"サンプリング停止までにノイズの多い特徴点を発見する適応サンプリングの最小 AA サンプル数\n"
+"0 で AA サンプル数を元に自動設定します"
 
 
 msgid "Adaptive Sampling Threshold"
@@ -74282,7 +74311,10 @@ msgstr "適応サンプリングのしきい値"
 
 
 msgid "Noise level step to stop sampling at, lower values reduce noise the cost of render time. Zero for automatic setting based on number of AA samples"
-msgstr "サンプリングを止めるノイズレベルステップ小さい値でレンダリング時間と引き換えにノイズを減らします0 で AA サンプル数を元に自動設定します"
+msgstr ""
+"サンプリングを止めるノイズレベルステップ\n"
+"小さい値でレンダリング時間と引き換えにノイズを減らします\n"
+"0 で AA サンプル数を元に自動設定します"
 
 
 msgid "AO Bounces"
@@ -77975,6 +78007,24 @@ msgstr "2ピクセル"
 
 msgid "4 px"
 msgstr "4ピクセル"
+
+
+msgid "Grease Pencil Render"
+msgstr "グリースペンシルレンダー"
+
+
+msgid "Render settings"
+msgstr "レンダー設定"
+
+
+msgid "Anti-Aliasing Threshold"
+msgstr "アンチエイリアシングしきい値"
+
+
+msgid "Threshold for edge detection algorithm (higher values might overblur some part of the image)"
+msgstr ""
+"エッジ検出アルゴリズムのしきい値\n"
+"（大きくすると画像の一部がぼやける可能性があります）"
 
 
 msgid "Scene Objects"
@@ -84762,8 +84812,8 @@ msgid "Auto-Keying Mode"
 msgstr "自動キー挿入モード"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "オブジェクトやボーンに自動的にキーフレームを挿入するモード"
+msgid "Mode of automatic keyframe insertion for Objects, Bones and Masks"
+msgstr "オブジェクトやボーン、マスクに自動的にキーフレームを挿入するモード"
 
 
 msgid "Add & Replace"
@@ -85109,8 +85159,8 @@ msgid "Auto Keying"
 msgstr "自動キー挿入"
 
 
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "自動キーフレーム挿入 (オブジェクトまたはボーンを変形させるとキーフレームが自動で挿入されます)"
+msgid "Automatic keyframe insertion for Objects, Bones and Masks"
+msgstr "オブジェクトやボーン、マスク用の自動キーフレーム挿入"
 
 
 msgid "Auto Keyframe Insert Keying Set"
@@ -86837,6 +86887,13 @@ msgstr "オブジェクトのスケールに関係なく、ボリュームの不
 
 msgid "Specify volume step size and density in world space"
 msgstr "ボリュームのステップサイズと密度をワールド空間で指定します"
+
+
+msgid "Distance between volume samples. Lower values render more detail at the cost of performance. If set to zero, the step size is automatically determined based on voxel size"
+msgstr ""
+"ボリュームサンプル間の距離\n"
+"小さな値でパフォーマンスと引き換えに細かくレンダリングされます\n"
+"0の場合、ボクセルサイズを元にステップサイズを自動的に設定します"
 
 
 msgid "Walk navigation settings"
@@ -90991,10 +91048,6 @@ msgid "Unbaked Guides: Bake Guides or disable them"
 msgstr "ガイドが未ベイク：ガイドをベイクするか、無効にしてください"
 
 
-msgid "Use Flow"
-msgstr "フローを使用"
-
-
 msgid "Surface Thickness"
 msgstr "サーフェスの厚さ"
 
@@ -93420,10 +93473,6 @@ msgid "Double Click Speed"
 msgstr "ダブルクリック速度"
 
 
-msgid "Pan Sensitivity"
-msgstr "パン感度"
-
-
 msgid "Zoom Method"
 msgstr "ズーム方法"
 
@@ -93432,16 +93481,16 @@ msgid "Invert Wheel Zoom Direction"
 msgstr "ホイールのズーム方向を逆に"
 
 
-msgid "Pan Options"
-msgstr "パンオプション"
+msgid "Pan Sensitivity"
+msgstr "パン感度"
 
 
-msgid "Invert Axis"
-msgstr "軸を反転"
+msgid "Swap Y and Z Pan Axes"
+msgstr "Y軸とZ軸のパン入れ替え"
 
 
-msgid "Zoom Options"
-msgstr "ズームオプション"
+msgid "Invert Axis Pan"
+msgstr "パンの軸を反転"
 
 
 msgid "Use Light"
@@ -93474,20 +93523,12 @@ msgid "Invert Mouse Zoom Direction"
 msgstr "マウスズームの方向を反転"
 
 
-msgid "Orbit Style"
-msgstr "周回スタイル"
+msgid "Invert Axis Orbit"
+msgstr "周回の軸を反転"
 
 
-msgid "Navigate"
-msgstr "ナビゲート"
-
-
-msgid "Orbit Options"
-msgstr "周回オプション"
-
-
-msgid "Fly/Walk Options"
-msgstr "フライ/ウォークオプション"
+msgid "Fly/Walk Lock Horizon"
+msgstr "フライ/ウォークの水平を固定"
 
 
 msgid "Multiple add-ons with the same name found!"
@@ -94590,6 +94631,10 @@ msgstr "オブジェクトタイプの可視性"
 
 msgid "Viewport Gizmos"
 msgstr "ビューポートギズモ"
+
+
+msgid "Navigate"
+msgstr "ナビゲート"
 
 
 msgid "Active Tools"
@@ -99097,6 +99142,14 @@ msgid "Active object contains no collections"
 msgstr "アクティブオブジェクトにコレクションがありません"
 
 
+msgid "Could not add the collection because it is overridden."
+msgstr "オーバーライドされているためコレクションを追加できません"
+
+
+msgid "Could not add the collection because it is linked."
+msgstr "リンクされているためコレクションを追加できません"
+
+
 msgid "Could not add the collection because of dependency cycle detected"
 msgstr "循環依存があるため、コレクションを追加できませんでした"
 
@@ -101556,6 +101609,10 @@ msgid "Cannot edit sequence name"
 msgstr "シーケンス名は編集できません"
 
 
+msgid "Cannot edit name of an override data-block"
+msgstr "オーバーライドデータブロックの名前は編集できません"
+
+
 msgid "Cannot edit name of master collection"
 msgstr "masterコレクションの名前は編集できません"
 
@@ -102742,7 +102799,7 @@ msgstr "リンクされたデータブロックのプロパティは編集でき
 
 
 msgid "Can't edit this property from an override data-block"
-msgstr "オーバーライドデータブロックのこのプロパティは編集できません"
+msgstr "オーバーライドされたデータブロックのプロパティは編集できません"
 
 
 msgid "Only boolean, int and float properties supported"
@@ -102859,6 +102916,14 @@ msgstr "アーマチュア「%s」にはボーン「%s」がありません"
 
 msgid "Background image cannot be removed"
 msgstr "背景画像が削除できません"
+
+
+msgid "Could not link the object '%s' because the collection '%s' is overridden."
+msgstr "オブジェクト「%s」はコレクション「%s」がオーバーライドされているためリンクできません"
+
+
+msgid "Could not link the object '%s' because the collection '%s' is linked."
+msgstr "オブジェクト「%s」はコレクション「%s」がリンクされているためリンクできません"
 
 
 msgid "Object '%s' already in collection '%s'"

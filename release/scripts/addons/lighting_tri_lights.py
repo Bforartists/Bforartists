@@ -142,7 +142,8 @@ class OBJECT_OT_TriLighting(Operator):
                 scene.camera = cam_obj
                 bpy.ops.view3d.camera_to_view()
                 camera = cam_obj
-                bpy.ops.view3d.view_axis(type='TOP')
+                # Leave camera view again, otherwise redo does not work correctly.
+                bpy.ops.view3d.view_camera()
 
             obj = bpy.context.view_layer.objects.active
 

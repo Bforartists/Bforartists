@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -2259,7 +2259,7 @@ msgid "Collapse Summary"
 msgstr "Satırları topla"
 
 
-msgid "Display Hidden"
+msgid "Show Hidden"
 msgstr "Gizlileri Göster"
 
 
@@ -2285,14 +2285,6 @@ msgstr "Bağlama verileri eksik."
 
 msgid "Display Node"
 msgstr "Düğüm Editörü"
-
-
-msgid "Show Errors"
-msgstr "Aktif olanı göster"
-
-
-msgid "Only Selected"
-msgstr "Seçilenler"
 
 
 msgid "Display Particle"
@@ -3190,10 +3182,6 @@ msgstr "Dosya adı"
 
 msgid "Extension Filter"
 msgstr "Dosya Uzantılarını Filtrele"
-
-
-msgid "Show Hidden"
-msgstr "Gizlileri Göster"
 
 
 msgid "Sort files by size"
@@ -8365,6 +8353,14 @@ msgstr "Tüm Nesne Merkezleri"
 
 msgid "Match-moving dopesheet data"
 msgstr "Fabrika Ayarlarını Yükle"
+
+
+msgid "Display Hidden"
+msgstr "Gizlileri Göster"
+
+
+msgid "Only Selected"
+msgstr "Seçilenler"
 
 
 msgid "Dopesheet Sort Field"

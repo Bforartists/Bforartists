@@ -99,17 +99,18 @@ def register_qcd_view_hotkeys():
     ]
 
     for key in qcd_hotkeys:
-        km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
-        kmi = km.keymap_items.new('view3d.view_qcd_slot', key[0], 'PRESS', alt=key[1])
-        kmi.properties.slot = key[2]
-        kmi.properties.toggle = False
-        addon_qcd_view_hotkey_keymaps.append((km, kmi))
+        for mode in ['Object Mode', 'Pose', 'Weight Paint']:
+            km = wm.keyconfigs.addon.keymaps.new(name=mode)
+            kmi = km.keymap_items.new('view3d.view_qcd_slot', key[0], 'PRESS', alt=key[1])
+            kmi.properties.slot = key[2]
+            kmi.properties.toggle = False
+            addon_qcd_view_hotkey_keymaps.append((km, kmi))
 
-        km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
-        kmi = km.keymap_items.new('view3d.view_qcd_slot', key[0], 'PRESS',shift=True,  alt=key[1])
-        kmi.properties.slot = key[2]
-        kmi.properties.toggle = True
-        addon_qcd_view_hotkey_keymaps.append((km, kmi))
+            km = wm.keyconfigs.addon.keymaps.new(name=mode)
+            kmi = km.keymap_items.new('view3d.view_qcd_slot', key[0], 'PRESS',shift=True,  alt=key[1])
+            kmi.properties.slot = key[2]
+            kmi.properties.toggle = True
+            addon_qcd_view_hotkey_keymaps.append((km, kmi))
 
 
 def register_qcd_view_edit_mode_hotkeys():

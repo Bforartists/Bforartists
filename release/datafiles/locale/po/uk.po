@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -7431,7 +7431,7 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "Включати візуалізацію Нарисного Олівця залежно від даних та кадрів анімації"
 
 
-msgid "Display Hidden"
+msgid "Show Hidden"
 msgstr "Показати приховане"
 
 
@@ -7511,16 +7511,8 @@ msgid "Include visualization of node related animation data"
 msgstr "Включити візуалізацію анімаційних даних вузла"
 
 
-msgid "Show Errors"
-msgstr "Показати помилки"
-
-
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "Включити лише Ф-криві та драйвери, які вимкнені або мають помилки"
-
-
-msgid "Only Selected"
-msgstr "Лише вибране"
 
 
 msgid "Only include channels relating to selected objects and data"
@@ -10522,10 +10514,6 @@ msgstr "Три рівні"
 
 msgid "List all sub-directories' content, three levels of recursion"
 msgstr "Показувати вміст всіх підтек, три рівні рекурсії"
-
-
-msgid "Show Hidden"
-msgstr "Показати приховане"
 
 
 msgid "Show hidden dot files"
@@ -31204,8 +31192,16 @@ msgid "Match-moving dopesheet data"
 msgstr "Дані експозицій узгодження переміщення"
 
 
+msgid "Display Hidden"
+msgstr "Показати приховане"
+
+
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "Включити канали з невидимих об'єктів/кісток"
+
+
+msgid "Only Selected"
+msgstr "Лише вибране"
 
 
 msgid "Dopesheet Sort Field"
@@ -75782,10 +75778,6 @@ msgid "Auto-Keying Mode"
 msgstr "Режим Авто-Ключування"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "Режим автоматичного вставляння ключових кадрів для об'єктів та кісток"
-
-
 msgid "Add & Replace"
 msgstr "Додати і Замінити"
 
@@ -76077,10 +76069,6 @@ msgstr "Для каналів із зацикленою екстраполяці
 
 msgid "Auto Keying"
 msgstr "Автоключування"
-
-
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "Автоматичне вставляння ключових кадрів для об'єктів та кісток"
 
 
 msgid "Auto Keyframe Insert Keying Set"
@@ -82877,10 +82865,6 @@ msgid "Double Click Speed"
 msgstr "Швидкість Подвійного Клацка"
 
 
-msgid "Pan Sensitivity"
-msgstr "Чутливість панорамування"
-
-
 msgid "Zoom Method"
 msgstr "Метод Зума"
 
@@ -82889,12 +82873,8 @@ msgid "Invert Wheel Zoom Direction"
 msgstr "Інвертувати зумування коліщатком"
 
 
-msgid "Pan Options"
-msgstr "Опції панорамування"
-
-
-msgid "Zoom Options"
-msgstr "Опції зумування"
+msgid "Pan Sensitivity"
+msgstr "Чутливість панорамування"
 
 
 msgid "Use Light"
@@ -82920,22 +82900,6 @@ msgstr "Природний напрям трекпаду"
 
 msgid "Invert Mouse Zoom Direction"
 msgstr "Інвертувати зумування мишею"
-
-
-msgid "Orbit Style"
-msgstr "Стиль обльоту"
-
-
-msgid "Navigate"
-msgstr "Навігація"
-
-
-msgid "Orbit Options"
-msgstr "Опції обльоту"
-
-
-msgid "Fly/Walk Options"
-msgstr "Опції ходьби/польоту"
 
 
 msgid "Multiple add-ons with the same name found!"
@@ -83777,6 +83741,10 @@ msgstr "Видимість Типів Об'єктів"
 
 msgid "Viewport Gizmos"
 msgstr "Гізмо вікна огляду"
+
+
+msgid "Navigate"
+msgstr "Навігація"
 
 
 msgid "Active Tools"

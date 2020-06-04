@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -8003,8 +8003,8 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "Gồm sự hiện thị cho dữ liệu và bức hoạt hình liên quan với Bút Sáp"
 
 
-msgid "Display Hidden"
-msgstr "Hiển Thị Ẩn"
+msgid "Show Hidden"
+msgstr "Hiện Ẩn"
 
 
 msgid "Include channels from objects/bone that are not visible"
@@ -8091,16 +8091,8 @@ msgid "Include visualization of node related animation data"
 msgstr "Gồm sự hiển thị của dữ liệu hoạt hình liên quan với giao điểm"
 
 
-msgid "Show Errors"
-msgstr "Hiển Thị Sai Lầm"
-
-
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "Chỉ gồm Cong-F và đồ dắt đã tắt hay có sai lầm"
-
-
-msgid "Only Selected"
-msgstr "Chỉ Được Chọn"
 
 
 msgid "Only include channels relating to selected objects and data"
@@ -11373,10 +11365,6 @@ msgid "Draw a column listing the size of each file"
 msgstr "Vẽ một cột để chiếu kích cữ của mỗi tệp"
 
 
-msgid "Show Hidden"
-msgstr "Hiện Ẩn"
-
-
 msgid "Show hidden dot files"
 msgstr "Hiện tệp ẩn bắt đầu với dấu chấm (.*)"
 
@@ -12973,8 +12961,8 @@ msgid "Only allow given density value in emitter area and will not add up"
 msgstr "Chỉ cho giá trị tỉ trọng được xác định trong khu vực phát và sẽ không cộng lên"
 
 
-msgid "Control when to apply inflow"
-msgstr "Kiểm soát khi áp dụng lưu nhập"
+msgid "Use Flow"
+msgstr "Dùng Luồng"
 
 
 msgid "Initial Velocity"
@@ -34824,8 +34812,16 @@ msgid "Match-moving dopesheet data"
 msgstr "Dữ liệu bảng hoạt hình chuyển động giống"
 
 
+msgid "Display Hidden"
+msgstr "Hiển Thị Ẩn"
+
+
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "Gồm kênh từ vật thể/xương không hiển thị"
+
+
+msgid "Only Selected"
+msgstr "Chỉ Được Chọn"
 
 
 msgid "Dopesheet Sort Field"
@@ -84296,10 +84292,6 @@ msgid "Auto-Keying Mode"
 msgstr "Chế Độ Mẫu Tự Động"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "Chế độ cho tự động chèn bức mẫu cho Vật Thể và Xương"
-
-
 msgid "Add & Replace"
 msgstr "Thêm & Thay Thế"
 
@@ -84639,10 +84631,6 @@ msgstr "Cho kênh có suy ngoại chu trình, chèn bức mẫu tự động đ�
 
 msgid "Auto Keying"
 msgstr "Bức Mẫu Tự Động"
-
-
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "Tự động chèn bức mẫu cho Vật Thể và Xương"
 
 
 msgid "Auto Keyframe Insert Keying Set"
@@ -90509,10 +90497,6 @@ msgid "Unbaked Guides: Bake Guides or disable them"
 msgstr "Đồ Dẫn Chưa Nướng: Nướng Đồ Dẫn hay tắt chúng nó"
 
 
-msgid "Use Flow"
-msgstr "Dùng Luồng"
-
-
 msgid "Surface Thickness"
 msgstr "Bề Dày Bề Mặt"
 
@@ -92938,10 +92922,6 @@ msgid "Double Click Speed"
 msgstr "Tộc Độ Bấm Hai Lần"
 
 
-msgid "Pan Sensitivity"
-msgstr "Cảm Biến Dời Đi"
-
-
 msgid "Zoom Method"
 msgstr "Phương Pháp Phóng Vào"
 
@@ -92950,16 +92930,8 @@ msgid "Invert Wheel Zoom Direction"
 msgstr "Đảo Nghịch Hướng Phóng Nút Cuộn"
 
 
-msgid "Pan Options"
-msgstr "Tùy Chọn Dời Đi"
-
-
-msgid "Invert Axis"
-msgstr "Đảo Nhgịch Trục"
-
-
-msgid "Zoom Options"
-msgstr "Tùy Chọn Thu Phóng"
+msgid "Pan Sensitivity"
+msgstr "Cảm Biến Dời Đi"
 
 
 msgid "Use Light"
@@ -92990,22 +92962,6 @@ msgstr "Hướng Bàn Vẽ Thiên Nhiên"
 
 msgid "Invert Mouse Zoom Direction"
 msgstr "Đảo Nghịch Hướng Phóng To Chuột"
-
-
-msgid "Orbit Style"
-msgstr "Phong Cách Quay"
-
-
-msgid "Navigate"
-msgstr "Chuyển Hướng"
-
-
-msgid "Orbit Options"
-msgstr "Tùy Chọn Quay"
-
-
-msgid "Fly/Walk Options"
-msgstr "Tùy Chọn Bay/Đi Bộ"
 
 
 msgid "Multiple add-ons with the same name found!"
@@ -94108,6 +94064,10 @@ msgstr "Sự Hiển Thị Loại Vật Thể"
 
 msgid "Viewport Gizmos"
 msgstr "Đồ Đạc Màn Chiếu"
+
+
+msgid "Navigate"
+msgstr "Chuyển Hướng"
 
 
 msgid "Active Tools"

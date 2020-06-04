@@ -34,7 +34,7 @@ bl_info = {
     "name": "VR Scene Inspection",
     "author": "Julian Eisel (Severin)",
     "version": (0, 2, 0),
-    "blender": (2, 83, 8),
+    "blender": (2, 83, 0),
     "location": "3D View > Sidebar > VR",
     "description": ("View the viewport with virtual reality glasses "
                     "(head-mounted displays)"),

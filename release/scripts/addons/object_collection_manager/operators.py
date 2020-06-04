@@ -105,6 +105,7 @@ class ExpandAllOperator(Operator):
 
         if len(expanded) > 0:
             expanded.clear()
+            context.scene.collection_manager.cm_list_index = 0
         else:
             for laycol in layer_collections.values():
                 if laycol["ptr"].children:
@@ -204,6 +205,9 @@ class ExpandSublevelOperator(Operator):
             expand_history["target"] = ""
             expand_history["history"].clear()
 
+        # set the selected row to the collection you're expanding/collapsing to
+        # preserve the tree view's scrolling
+        context.scene.collection_manager.cm_list_index = self.index
 
         #update tree view
         update_property_group(context)

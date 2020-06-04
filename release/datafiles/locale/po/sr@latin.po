@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -3052,7 +3052,7 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "Uključi prikaz podataka skiciranog crteža animacije i kadrova"
 
 
-msgid "Display Hidden"
+msgid "Show Hidden"
 msgstr "Prikaži sakriveno"
 
 
@@ -3106,14 +3106,6 @@ msgstr "Prikaži čvorove"
 
 msgid "Include visualization of node related animation data"
 msgstr "Uključi prikaz podataka vezanih za prikaz animacije čvorova"
-
-
-msgid "Show Errors"
-msgstr "Prikaži greške"
-
-
-msgid "Only Selected"
-msgstr "Samo izabrano"
 
 
 msgid "Display Particle"
@@ -4367,10 +4359,6 @@ msgstr "Filter nastavaka"
 
 msgid "Filter by name, supports '*' wildcard"
 msgstr "Filtriraj po imenu, podržan je džoker znak '*'"
-
-
-msgid "Show Hidden"
-msgstr "Prikaži sakriveno"
 
 
 msgid "Show hidden dot files"
@@ -11230,8 +11218,16 @@ msgid "Use millimeters for units of focal length"
 msgstr "Koristi milimetre za dužinu fokusa kamere"
 
 
+msgid "Display Hidden"
+msgstr "Prikaži sakriveno"
+
+
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "Uključi prikaz kanala animacije objekata/kostiju koji nisu vidljivi"
+
+
+msgid "Only Selected"
+msgstr "Samo izabrano"
 
 
 msgid "Longest"
@@ -25926,10 +25922,6 @@ msgid "Time Step"
 msgstr "Prozor renderovanja"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "Samostalno umeći ključeve na ipo krivoj objekta"
-
-
 msgid "Add & Replace"
 msgstr "Dodaj i zameni"
 
@@ -26016,10 +26008,6 @@ msgstr "Opšta podešavanja bojenja"
 
 msgid "Only Endpoints"
 msgstr "Samo krajnje tačke"
-
-
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "Samostalno umeći ključeve na ipo krivoj objekta"
 
 
 msgid "Automatic keyframe insertion using active Keying Set only"
