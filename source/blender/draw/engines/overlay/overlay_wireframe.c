@@ -91,7 +91,7 @@ void OVERLAY_wireframe_cache_init(OVERLAY_Data *vedata)
 
     for (int use_coloring = 0; use_coloring < 2; use_coloring++) {
       pd->wires_grp[xray][use_coloring] = grp = DRW_shgroup_create(wires_sh, pass);
-      DRW_shgroup_uniform_block_persistent(grp, "globalsBlock", G_draw.block_ubo);
+      DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
       DRW_shgroup_uniform_texture_ref(grp, "depthTex", depth_tx);
       DRW_shgroup_uniform_float_copy(grp, "wireStepParam", pd->shdata.wire_step_param);
       DRW_shgroup_uniform_bool_copy(grp, "useColoring", use_coloring);
@@ -197,13 +197,15 @@ void OVERLAY_wireframe_cache_populate(OVERLAY_Data *vedata,
     struct GPUBatch *geom = NULL;
     switch (ob->type) {
       case OB_CURVE:
-        if (ob->runtime.curve_cache && BKE_displist_has_faces(&ob->runtime.curve_cache->disp)) {
+        if (!pd->wireframe_mode && !use_wire && ob->runtime.curve_cache &&
+            BKE_displist_has_faces(&ob->runtime.curve_cache->disp)) {
           break;
         }
         geom = DRW_cache_curve_edge_wire_get(ob);
         break;
       case OB_FONT:
-        if (ob->runtime.curve_cache && BKE_displist_has_faces(&ob->runtime.curve_cache->disp)) {
+        if (!pd->wireframe_mode && !use_wire && ob->runtime.curve_cache &&
+            BKE_displist_has_faces(&ob->runtime.curve_cache->disp)) {
           break;
         }
         geom = DRW_cache_text_loose_edges_get(ob);

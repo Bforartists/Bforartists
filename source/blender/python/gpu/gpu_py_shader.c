@@ -78,7 +78,7 @@ static int bpygpu_uniform_location_get(GPUShader *shader,
                                        const char *name,
                                        const char *error_prefix)
 {
-  int uniform = GPU_shader_get_uniform_ensure(shader, name);
+  int uniform = GPU_shader_get_uniform(shader, name);
 
   if (uniform == -1) {
     PyErr_Format(PyExc_ValueError, "%s: uniform %.32s not found", error_prefix, name);
@@ -524,7 +524,7 @@ PyDoc_STRVAR(bpygpu_shader_calc_format_doc,
 static PyObject *bpygpu_shader_calc_format(BPyGPUShader *self, PyObject *UNUSED(arg))
 {
   BPyGPUVertFormat *ret = (BPyGPUVertFormat *)BPyGPUVertFormat_CreatePyObject(NULL);
-  GPU_vertformat_from_interface(&ret->fmt, GPU_shader_get_interface(self->shader));
+  GPU_vertformat_from_shader(&ret->fmt, self->shader);
   return (PyObject *)ret;
 }
 

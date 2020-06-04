@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Dalai Felinto, Bruno Gonçalves Pirajá, Samuel Arataca, Daniel Tavares, Moraes Junior <ivan.paulos.tome@yandex.com>\n"
@@ -6354,7 +6354,7 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "Inclui a visualização dos dados e quadros de animação relacionados ao lápis de cera."
 
 
-msgid "Display Hidden"
+msgid "Show Hidden"
 msgstr "Mostrar ocultos"
 
 
@@ -6426,16 +6426,8 @@ msgid "Include visualization of node related animation data"
 msgstr "Inclui a visualização dos dados de animação relacionados aos nós."
 
 
-msgid "Show Errors"
-msgstr "Mostrar erros"
-
-
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "Inclui somente as curvas-f e controladores que estão desabilitados ou possuem erros."
-
-
-msgid "Only Selected"
-msgstr "Somente selecionados"
 
 
 msgid "Only include channels relating to selected objects and data"
@@ -9180,10 +9172,6 @@ msgstr "Três níveis"
 
 msgid "List all sub-directories' content, three levels of recursion"
 msgstr "Lista o conteúdo de todos os sub-diretórios, com três níveis de recursão."
-
-
-msgid "Show Hidden"
-msgstr "Mostrar ocultos"
 
 
 msgid "Show hidden dot files"
@@ -26350,8 +26338,16 @@ msgid "Match-moving dopesheet data"
 msgstr "Combina com a movimentação dos dados da tabela de animação."
 
 
+msgid "Display Hidden"
+msgstr "Mostrar ocultos"
+
+
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "Inclui os canais a partir dos objetos ou ossos que não estão visíveis."
+
+
+msgid "Only Selected"
+msgstr "Somente selecionados"
 
 
 msgid "Dopesheet Sort Field"
@@ -63362,10 +63358,6 @@ msgid "Auto-Keying Mode"
 msgstr "Modo de auto inserção de chaves"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "Modo de inserção automática de quadros-chave para objetos e ossos."
-
-
 msgid "Add & Replace"
 msgstr "Adicionar e substituir"
 
@@ -63552,10 +63544,6 @@ msgstr "Somente usa as primeiras e últimas terminações dos traços para atra�
 
 msgid "Auto Keying"
 msgstr "Inserção de chaves automática"
-
-
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "Inserção de quadro-chave automática para objetos e ossos."
 
 
 msgid "Auto Keyframe Insert Keying Set"
@@ -67817,20 +67805,12 @@ msgid "Timer (mins)"
 msgstr "Temporizador (mins)"
 
 
-msgid "Pan Sensitivity"
-msgstr "Sensibilidade para panorama"
-
-
 msgid "Invert Wheel Zoom Direction"
 msgstr "Inverter ampliação pela roda do mouse"
 
 
-msgid "Pan Options"
-msgstr "Opções de panorama"
-
-
-msgid "Zoom Options"
-msgstr "Opções de ampliação"
+msgid "Pan Sensitivity"
+msgstr "Sensibilidade para panorama"
 
 
 msgid "Natural Trackpad Direction"
@@ -67839,18 +67819,6 @@ msgstr "Direção natural da mesa de tração"
 
 msgid "Invert Mouse Zoom Direction"
 msgstr "Inverter direção de ampliação do mouse"
-
-
-msgid "Orbit Style"
-msgstr "Estilo de órbita"
-
-
-msgid "Orbit Options"
-msgstr "Opções de órbita"
-
-
-msgid "Fly/Walk Options"
-msgstr "Opções de voo e caminhada"
 
 
 msgid "Multiple add-ons with the same name found!"

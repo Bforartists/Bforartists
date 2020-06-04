@@ -55,7 +55,7 @@ def pretty_print_POST(req):
     ))
 
 
-def uplaod_rating_thread(url, ratings, headers):
+def upload_rating_thread(url, ratings, headers):
     ''' Upload rating thread function / disconnected from blender data.'''
     utils.p('upload rating', url, ratings)
     for rating_name, score in ratings:
@@ -75,17 +75,17 @@ def uplaod_rating_thread(url, ratings, headers):
 def send_rating_to_thread_quality(url, ratings, headers):
     '''Sens rating into thread rating, main purpose is for tasks_queue.
     One function per property to avoid lost data due to stashing.'''
-    thread = threading.Thread(target=uplaod_rating_thread, args=(url, ratings, headers))
+    thread = threading.Thread(target=upload_rating_thread, args=(url, ratings, headers))
     thread.start()
 
 def send_rating_to_thread_work_hours(url, ratings, headers):
     '''Sens rating into thread rating, main purpose is for tasks_queue.
     One function per property to avoid lost data due to stashing.'''
-    thread = threading.Thread(target=uplaod_rating_thread, args=(url, ratings, headers))
+    thread = threading.Thread(target=upload_rating_thread, args=(url, ratings, headers))
     thread.start()
 
 
-def uplaod_review_thread(url, reviews, headers):
+def upload_review_thread(url, reviews, headers):
     r = rerequests.put(url, data=reviews, verify=True, headers=headers)
 
     # except requests.exceptions.RequestException as e:
@@ -109,6 +109,7 @@ def get_rating(asset_id):
 def update_ratings_quality(self, context):
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     api_key = user_preferences.api_key
+
     headers = utils.get_headers(api_key)
     asset = self.id_data
     bkit_ratings = asset.bkit_ratings
@@ -150,7 +151,7 @@ def upload_rating(asset):
     if bkit_ratings.rating_work_hours > 0.1:
         ratings.append(('working_hours', round(bkit_ratings.rating_work_hours, 1)))
 
-    thread = threading.Thread(target=uplaod_rating_thread, args=(url, ratings, headers))
+    thread = threading.Thread(target=upload_rating_thread, args=(url, ratings, headers))
     thread.start()
 
     url = paths.get_api_url() + 'assets/' + asset['asset_data']['id'] + '/review'
@@ -160,7 +161,7 @@ def upload_rating(asset):
         'reviewTextProblems': bkit_ratings.rating_problems,
     }
     if not (bkit_ratings.rating_compliments == '' and bkit_ratings.rating_compliments == ''):
-        thread = threading.Thread(target=uplaod_review_thread, args=(url, reviews, headers))
+        thread = threading.Thread(target=upload_review_thread, args=(url, reviews, headers))
         thread.start()
 
     # the info that the user rated an item is stored in the scene

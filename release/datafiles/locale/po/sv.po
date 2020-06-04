@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -2846,10 +2846,6 @@ msgid "Show Datablock Filters"
 msgstr "Visa fart på nyckelbilder och profil"
 
 
-msgid "Display Hidden"
-msgstr "Visa inställningar för kant"
-
-
 msgid "Display Lattices"
 msgstr "Visa inställningar för kant"
 
@@ -2868,14 +2864,6 @@ msgstr "Duplicera"
 
 msgid "Display Node"
 msgstr "Visa inställningar för kant"
-
-
-msgid "Show Errors"
-msgstr "Markera Rad"
-
-
-msgid "Only Selected"
-msgstr "Markera Rad"
 
 
 msgid "Display Particle"
@@ -10629,6 +10617,14 @@ msgstr "Lägg till Stripp"
 
 msgid "Match-moving dopesheet data"
 msgstr "Flytta Till Lager"
+
+
+msgid "Display Hidden"
+msgstr "Visa inställningar för kant"
+
+
+msgid "Only Selected"
+msgstr "Markera Rad"
 
 
 msgid "Dopesheet Sort Field"
