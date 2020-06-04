@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: 2020-03-28 00:56+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -5593,8 +5593,8 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "具現化蠟筆相關動畫資料與框幀"
 
 
-msgid "Display Hidden"
-msgstr "顯示隱藏項"
+msgid "Show Hidden"
+msgstr "顯示/隱藏"
 
 
 msgid "Include channels from objects/bone that are not visible"
@@ -5657,16 +5657,8 @@ msgid "Include visualization of node related animation data"
 msgstr "具現化節點相關動畫資料相關動畫資料"
 
 
-msgid "Show Errors"
-msgstr "顯示錯誤"
-
-
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "僅包含停用的或有錯誤的 F 曲線與驅動器"
-
-
-msgid "Only Selected"
-msgstr "僅所選項目"
 
 
 msgid "Only include channels relating to selected objects and data"
@@ -8264,10 +8256,6 @@ msgstr "副檔名過濾器"
 
 msgid "Filter by name, supports '*' wildcard"
 msgstr "依名稱過濾，支援「*」萬用字符"
-
-
-msgid "Show Hidden"
-msgstr "顯示/隱藏"
 
 
 msgid "Show hidden dot files"
@@ -22152,8 +22140,16 @@ msgid "Match-moving dopesheet data"
 msgstr "比對移動律表資料"
 
 
+msgid "Display Hidden"
+msgstr "顯示隱藏項"
+
+
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "包含不可見物體/骨骼的通道"
+
+
+msgid "Only Selected"
+msgstr "僅所選項目"
 
 
 msgid "Dopesheet Sort Field"
@@ -53591,10 +53587,6 @@ msgid "Auto-Keying Mode"
 msgstr "自動鍵處理模式"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "物體和骨骼的自動鍵幀插入模式"
-
-
 msgid "Add & Replace"
 msgstr "添加與替換"
 
@@ -53734,10 +53726,6 @@ msgstr "快抓貼附時僅使用筆劃的最前與最後部份"
 
 msgid "Auto Keying"
 msgstr "自動鍵處理"
-
-
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "物體和骨骼的自動鍵幀插入"
 
 
 msgid "Auto Keyframe Insert Keying Set"

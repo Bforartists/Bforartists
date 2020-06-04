@@ -173,7 +173,10 @@ def main():
     kwargs = {}
     if not VERBOSE:
         kwargs["stdout"] = subprocess.DEVNULL
+
+    os.chdir(BUILD_DIR)
     subprocess.call(arg_split, **kwargs)
+
     del kwargs
 
     if not os.path.exists(source_asm):

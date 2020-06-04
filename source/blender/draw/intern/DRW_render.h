@@ -210,10 +210,7 @@ struct GPUShader *DRW_shader_create_with_transform_feedback(const char *vert,
                                                             const eGPUShaderTFBType prim_type,
                                                             const char **varying_names,
                                                             const int varying_count);
-struct GPUShader *DRW_shader_create_2d(const char *frag, const char *defines);
-struct GPUShader *DRW_shader_create_3d(const char *frag, const char *defines);
 struct GPUShader *DRW_shader_create_fullscreen(const char *frag, const char *defines);
-struct GPUShader *DRW_shader_create_3d_depth_only(eGPUShaderConfig slot);
 struct GPUMaterial *DRW_shader_find_from_world(struct World *wo,
                                                const void *engine_type,
                                                const int options,
@@ -224,6 +221,7 @@ struct GPUMaterial *DRW_shader_find_from_material(struct Material *ma,
                                                   bool deferred);
 struct GPUMaterial *DRW_shader_create_from_world(struct Scene *scene,
                                                  struct World *wo,
+                                                 struct bNodeTree *ntree,
                                                  const void *engine_type,
                                                  const int options,
                                                  const bool is_volume_shader,
@@ -234,6 +232,7 @@ struct GPUMaterial *DRW_shader_create_from_world(struct Scene *scene,
                                                  bool deferred);
 struct GPUMaterial *DRW_shader_create_from_material(struct Scene *scene,
                                                     struct Material *ma,
+                                                    struct bNodeTree *ntree,
                                                     const void *engine_type,
                                                     const int options,
                                                     const bool is_volume_shader,
@@ -365,6 +364,8 @@ DRWShadingGroup *DRW_shgroup_transform_feedback_create(struct GPUShader *shader,
                                                        DRWPass *pass,
                                                        struct GPUVertBuf *tf_target);
 
+void DRW_shgroup_add_material_resources(DRWShadingGroup *grp, struct GPUMaterial *material);
+
 /* return final visibility */
 typedef bool(DRWCallVisibilityFn)(bool vis_in, void *user_data);
 
@@ -460,18 +461,15 @@ void DRW_shgroup_clear_framebuffer(DRWShadingGroup *shgroup,
 void DRW_shgroup_uniform_texture(DRWShadingGroup *shgroup,
                                  const char *name,
                                  const struct GPUTexture *tex);
-void DRW_shgroup_uniform_texture_persistent(DRWShadingGroup *shgroup,
-                                            const char *name,
-                                            const struct GPUTexture *tex);
-void DRW_shgroup_uniform_block(DRWShadingGroup *shgroup,
-                               const char *name,
-                               const struct GPUUniformBuffer *ubo);
-void DRW_shgroup_uniform_block_persistent(DRWShadingGroup *shgroup,
-                                          const char *name,
-                                          const struct GPUUniformBuffer *ubo);
 void DRW_shgroup_uniform_texture_ref(DRWShadingGroup *shgroup,
                                      const char *name,
                                      struct GPUTexture **tex);
+void DRW_shgroup_uniform_block(DRWShadingGroup *shgroup,
+                               const char *name,
+                               const struct GPUUniformBuffer *ubo);
+void DRW_shgroup_uniform_block_ref(DRWShadingGroup *shgroup,
+                                   const char *name,
+                                   struct GPUUniformBuffer **ubo);
 void DRW_shgroup_uniform_float(DRWShadingGroup *shgroup,
                                const char *name,
                                const float *value,
@@ -530,6 +528,8 @@ bool DRW_shgroup_is_empty(DRWShadingGroup *shgroup);
 
 /* Passes */
 DRWPass *DRW_pass_create(const char *name, DRWState state);
+DRWPass *DRW_pass_create_instance(const char *name, DRWPass *original, DRWState state);
+void DRW_pass_link(DRWPass *first, DRWPass *second);
 /* TODO Replace with passes inheritance. */
 void DRW_pass_state_set(DRWPass *pass, DRWState state);
 void DRW_pass_state_add(DRWPass *pass, DRWState state);
@@ -543,6 +543,8 @@ void DRW_pass_sort_shgroup_reverse(DRWPass *pass);
 bool DRW_pass_is_empty(DRWPass *pass);
 
 #define DRW_PASS_CREATE(pass, state) (pass = DRW_pass_create(#pass, state))
+#define DRW_PASS_INSTANCE_CREATE(pass, original, state) \
+  (pass = DRW_pass_create_instance(#pass, (original), state))
 
 /* Views */
 DRWView *DRW_view_create(const float viewmat[4][4],
@@ -695,6 +697,8 @@ typedef struct DRWContextState {
   struct RenderEngineType *engine_type;
 
   struct Depsgraph *depsgraph;
+
+  struct TaskGraph *task_graph;
 
   eObjectMode object_mode;
 

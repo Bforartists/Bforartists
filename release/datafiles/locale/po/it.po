@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
 "Last-Translator: MT\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -6099,7 +6099,7 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "Include la visualizzazione dei dati animazione e frames relativi alla Matita"
 
 
-msgid "Display Hidden"
+msgid "Show Hidden"
 msgstr "Mostra Nascosti"
 
 
@@ -6171,16 +6171,8 @@ msgid "Include visualization of node related animation data"
 msgstr "Include la visualizzazione dei dati animazione relativi ai Nodi"
 
 
-msgid "Show Errors"
-msgstr "Mostra Errori"
-
-
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "Include solo le Curve-F e le Guide che sono disabilitate o hanno errori"
-
-
-msgid "Only Selected"
-msgstr "Solo Selezionati"
 
 
 msgid "Only include channels relating to selected objects and data"
@@ -8667,10 +8659,6 @@ msgstr "Due Livelli"
 
 msgid "Three Levels"
 msgstr "Tre Livelli"
-
-
-msgid "Show Hidden"
-msgstr "Mostra Nascosti"
 
 
 msgid "Show hidden dot files"
@@ -22865,8 +22853,16 @@ msgid "Movie Tracking Dopesheet"
 msgstr "Dato del tracking del filmato"
 
 
+msgid "Display Hidden"
+msgstr "Mostra Nascosti"
+
+
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "Include i canali da oggetti/ossa che non sono visibili"
+
+
+msgid "Only Selected"
+msgstr "Solo Selezionati"
 
 
 msgid "Dopesheet Sort Field"
@@ -54417,10 +54413,6 @@ msgid "Auto-Keying Mode"
 msgstr "Modalità Auto-Chiavi"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "Modalità per l'inserimento automatico di chiavi per Oggetti ed Ossa"
-
-
 msgid "Add & Replace"
 msgstr "Aggiungi & Sostituisci"
 
@@ -54619,10 +54611,6 @@ msgstr "Usa solo la parte iniziale e finale del tratto per lo snap"
 
 msgid "Auto Keying"
 msgstr "Auto-Chiavi"
-
-
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "Inserimento automatico fotogrammi chiave per Oggetti ed Ossa"
 
 
 msgid "Automatic keyframe insertion using active Keying Set only"
@@ -59226,20 +59214,12 @@ msgid "Double Click Speed"
 msgstr "Velocità Doppio Click"
 
 
-msgid "Pan Sensitivity"
-msgstr "Sensibilità Pan"
-
-
 msgid "Invert Wheel Zoom Direction"
 msgstr "Inverti Direzione Zoom Rotella"
 
 
-msgid "Pan Options"
-msgstr "Opzioni Pan"
-
-
-msgid "Zoom Options"
-msgstr "Opzioni Zoom"
+msgid "Pan Sensitivity"
+msgstr "Sensibilità Pan"
 
 
 msgid "Use Light"
@@ -59257,18 +59237,6 @@ msgstr "Direzione Naturale Trackpad"
 
 msgid "Invert Mouse Zoom Direction"
 msgstr "Inverti Direzione Zoom Mouse"
-
-
-msgid "Orbit Style"
-msgstr "Stile Orbit"
-
-
-msgid "Orbit Options"
-msgstr "Opzioni Orbita"
-
-
-msgid "Fly/Walk Options"
-msgstr "Opzioni Volo/Camminata"
 
 
 msgid "Multiple add-ons with the same name found!"

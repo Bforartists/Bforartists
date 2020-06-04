@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -5252,7 +5252,7 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻘﺑ ﺔﻘﻠﻌﺘﻤﻟﺍ ﺮﻃﻷ﻿ﺍ ﻭ ﺔﻛﺮﺤﻟﺍ ﺕﺎﻧﺎﻴﺑ ﺔﻨﻳﺎﻌﻣ ﻦﻤّﺿ"
 
 
-msgid "Display Hidden"
+msgid "Show Hidden"
 msgstr "ﻲﻔﺨﻟﺍ ﺮﻬﻇﺃ"
 
 
@@ -5316,16 +5316,8 @@ msgid "Include visualization of node related animation data"
 msgstr "ﺪﻘﻌﻟﺎﺑ ﺔﻘﻠﻌﺘﻤﻟﺍ ﺔﻛﺮﺤﻟﺍ ﺕﺎﻧﺎﻴﺒﻟ ﺔﻨﻳﺎﻌﻣ ﻦﻤﻀﺘﻳ"
 
 
-msgid "Show Errors"
-msgstr "ﺕﺍﺮﻌﺸﺘﺴﻤﻟﺍ ﺮﻬﻇﺃ"
-
-
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "ءﺎﻄﺧﺃ ﺎﻬﻳﺪﻟ ﻲﺘﻟﺍ ﻭﺍ ﺔﻠﻄﻌﻤﻟﺍ ﺕﺎﻛﺮّﺤﻤﻟﺍ ﻭ ﻞﻤﻌﻟﺍ ﺕﺎﻴﻨﺤﻨﻣ ﻦﻤّﺿ ﻂﻘﻓ"
-
-
-msgid "Only Selected"
-msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﻂﻘﻓ"
 
 
 msgid "Only include channels relating to selected objects and data"
@@ -7715,10 +7707,6 @@ msgstr "ﺭﺪﻨﻠﺑ ﻒﻠﻣ"
 
 msgid "Two Levels"
 msgstr "ﻥﺎﻳﻮَﺘﺴﻣ"
-
-
-msgid "Show Hidden"
-msgstr "ﻲﻔﺨﻟﺍ ﺮﻬﻇﺃ"
 
 
 msgid "Show hidden dot files"
@@ -20123,8 +20111,16 @@ msgid "Match-moving dopesheet data"
 msgstr "ﺔﻛﺮﺤﻟﺍ ﺔﻘﻓﺍﻮﻣ ﻂﻴﻄﺨﺗ ﺔﻗﺭﻭ ﺕﺎﻧﺎﻴﺑ"
 
 
+msgid "Display Hidden"
+msgstr "ﻲﻔﺨﻟﺍ ﺮﻬﻇﺃ"
+
+
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "ﺔﻴﺋﺮﻣ ﺮﻴﻐﻟﺍ ﻡﺎﻈﻌﻟﺍ/ﺕﺎﻨﺋﺎﻜﻟﺍ ﻦﻣ ﺕﺍﻮﻨﻗ ﻦﻤﻀﺘﻳ"
+
+
+msgid "Only Selected"
+msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﻂﻘﻓ"
 
 
 msgid "Dopesheet Sort Field"
@@ -38267,10 +38263,6 @@ msgid "Auto-Keying Mode"
 msgstr "ﺔﻴﺗﺍﺬﻟﺍ ﺔﻓﺎﺿﻹ﻿ﺍ ﻊﺿﻭ"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "ﻡﺎﻈﻌﻟﺍ ﻭ ﺕﺎﻨﺋﺎﻜﻠﻟ ﺎﻴﺗﺍﺫ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻓﺎﺿﺇ ﻊﺿﻭ"
-
-
 msgid "Add & Replace"
 msgstr "ﻝﺪّﺑ ﻭ ﻒﺿﺃ"
 
@@ -38365,10 +38357,6 @@ msgstr "ﺓﺍﺫﺎﺤﻤﻠﻟ ﺔﺒﻄﺸﻠﻟ ءﺍﺰﺟﺍ ﺮﺧﺁ ﻭ
 
 msgid "Auto Keying"
 msgstr "ﺔﻴﺗﺍﺫ ﺔﻓﺎﺿﺇ"
-
-
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "ﻡﺎﻈﻌﻟﺍ ﻭ ﺕﺎﻨﺋﺎﻜﻠﻟ ﺢﻴﺗﺎﻔﻤﻠﻟ ﺔﻴﺗﺍﺫ ﺔﻓﺎﺿﺇ"
 
 
 msgid "Auto Keyframe Insert Keying Set"

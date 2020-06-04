@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -4863,10 +4863,6 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "Pokazuj wizualizację szkicownika związaną z danymi animacji oraz klatkami animacji"
 
 
-msgid "Display Hidden"
-msgstr "Pokaż ukryte"
-
-
 msgid "Include channels from objects/bone that are not visible"
 msgstr "Pokazuj kanały z obiektów/kości, które są niewidoczne"
 
@@ -4927,16 +4923,8 @@ msgid "Include visualization of node related animation data"
 msgstr "Pokaż wizualizacje nodów związanych z danymi animacji"
 
 
-msgid "Show Errors"
-msgstr "Pokaż błęd"
-
-
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "Pokazuj tylko krzywe-F i sterowniki które są wyłączone lub mają błędy"
-
-
-msgid "Only Selected"
-msgstr "Tylko wybrane"
 
 
 msgid "Only include channels relating to selected objects and data"
@@ -6555,6 +6543,14 @@ msgstr "Ograniczenia"
 
 msgid "Target Object"
 msgstr "Obiekt docelowy"
+
+
+msgid "Display Hidden"
+msgstr "Pokaż ukryte"
+
+
+msgid "Only Selected"
+msgstr "Tylko wybrane"
 
 
 msgid "Active Track"

@@ -201,15 +201,17 @@ class ViewQCDSlot(Operator):
         locked_objs_mode = ""
         for obj in context.view_layer.objects:
             if obj.mode != 'OBJECT':
-                locked_objs.append(obj)
-                locked_objs_mode = obj.mode
+                if obj.mode not in ['POSE', 'WEIGHT_PAINT'] or obj == locked_active_obj:
+                    locked_objs.append(obj)
+                    locked_objs_mode = obj.mode
 
 
         if self.toggle:
             # check if slot can be toggled off.
             for obj in qcd_laycol.collection.objects:
                 if obj.mode != 'OBJECT':
-                    return {'CANCELLED'}
+                    if obj.mode not in ['POSE', 'WEIGHT_PAINT'] or obj == locked_active_obj:
+                        return {'CANCELLED'}
 
             # get current child exclusion state
             child_exclusion = []

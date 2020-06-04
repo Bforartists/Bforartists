@@ -73,6 +73,11 @@ def draw_ratings(layout, context):
     # this function should run only when asset was already checked to be existing
     if asset == None:
         return;
+
+    if not utils.user_logged_in():
+        label_multiline(layout, text='Please login or sign up '
+                                     'to rate assets.')
+        return
     bkit_ratings = asset.bkit_ratings
 
     ratings.draw_rating(layout, bkit_ratings, 'rating_quality', 'Quality')
@@ -89,6 +94,14 @@ def draw_ratings(layout, context):
     # op = row.operator("object.blenderkit_rating_upload", text="Send rating", icon='URL')
     # return op
 
+def draw_not_logged_in(source):
+    title = "User not logged in"
+    def draw_message(source, context):
+        layout = source.layout
+        label_multiline(layout, text='Please login or sign up '
+                                               'to upload files.')
+        draw_login_buttons(layout)
+    bpy.context.window_manager.popup_menu(draw_message, title=title, icon='INFO')
 
 def draw_upload_common(layout, props, asset_type, context):
     op = layout.operator("wm.url_open", text="Read upload instructions",
@@ -919,8 +932,10 @@ class OBJECT_MT_blenderkit_asset_menu(bpy.types.Menu):
         op = layout.operator('view3d.blenderkit_search', text='Search Similar')
         op.keywords = asset_data['name'] + ' ' + asset_data['description'] + ' ' + ' '.join(asset_data['tags'])
         if asset_data.get('canDownload') != 0:
-            if bpy.context.view_layer.objects.active is not None and ui_props.asset_type == 'MODEL':
+            if len(bpy.context.selected_objects)>0 and ui_props.asset_type == 'MODEL':
                 aob = bpy.context.active_object
+                if aob is None:
+                    aob = bpy.context.selected_objects[0]
                 op = layout.operator('scene.blenderkit_download', text='Replace Active Models')
                 op.asset_type = ui_props.asset_type
                 op.asset_index = ui_props.active_index
@@ -1124,7 +1139,7 @@ class VIEW3D_PT_blenderkit_downloads(Panel):
 
 
 def header_search_draw(self, context):
-    '''Top bar menu in 3d view'''
+    '''Top bar menu in 3D view'''
 
     if not utils.guard_from_crash():
         return;

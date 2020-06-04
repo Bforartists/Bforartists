@@ -750,6 +750,8 @@ class UploadOperator(Operator):
 
         return result
 
+
+
     def draw(self, context):
         props = utils.get_upload_props()
         layout = self.layout
@@ -773,6 +775,10 @@ class UploadOperator(Operator):
 
     def invoke(self, context, event):
         props = utils.get_upload_props()
+
+        if not utils.user_logged_in():
+            ui_panels.draw_not_logged_in(self)
+            return {'CANCELLED'}
 
         if props.is_private == 'PUBLIC':
             return context.window_manager.invoke_props_dialog(self)

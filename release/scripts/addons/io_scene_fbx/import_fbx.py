@@ -328,9 +328,15 @@ def blen_read_custom_properties(fbx_obj, blen_obj, settings):
                     items = fbx_prop.props[4].decode('utf-8', 'replace')
                     for item in items.split('\r\n'):
                         if item:
-                            prop_name, prop_value = item.split('=', 1)
-                            prop_name = validate_blend_names(prop_name.strip().encode('utf-8'))
-                            blen_obj[prop_name] = prop_value.strip()
+                            split_item = item.split('=', 1)
+                            if len(split_item) != 2:
+                                split_item = item.split(':', 1)
+                            if len(split_item) != 2:
+                                print("cannot parse UDP3DSMAX custom property '%s', ignoring..." % item)
+                            else:
+                                prop_name, prop_value = split_item
+                                prop_name = validate_blend_names(prop_name.strip().encode('utf-8'))
+                                blen_obj[prop_name] = prop_value.strip()
                 else:
                     prop_name = validate_blend_names(fbx_prop.props[0])
                     prop_type = fbx_prop.props[1]
