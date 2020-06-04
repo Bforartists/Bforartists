@@ -101,7 +101,11 @@ def clang_format_ensure_version():
     clang_format_cmd = None
     version_output = None
     for i in range(2, -1, -1):
-        clang_format_cmd = "clang-format-" + (".".join(["%d"] * i) % VERSION_MIN[:i]) if i > 0 else "clang-format"
+        clang_format_cmd = (
+            "clang-format-" + (".".join(["%d"] * i) % VERSION_MIN[:i])
+            if i > 0 else
+            "clang-format"
+        )
         try:
             version_output = subprocess.check_output((clang_format_cmd, "-version")).decode('utf-8')
         except FileNotFoundError as e:
@@ -173,8 +177,15 @@ def main():
         print("Version of clang-format is too old:", version, "<", VERSION_MIN)
         sys.exit(1)
     if version > VERSION_MAX_RECOMMENDED:
-        print("WARNING: Version of clang-format is too recent:", version, ">=", VERSION_MIN)
-        print("You may want to install clang-format-%d.%d, or use the precompiled libs repository." % (version[0], version[1]))
+        print(
+            "WARNING: Version of clang-format is too recent:",
+            version, ">=", VERSION_MAX_RECOMMENDED,
+        )
+        print(
+            "You may want to install clang-format-%d.%d, "
+            "or use the precompiled libs repository." %
+            (version[0], version[1]),
+        )
 
     args = argparse_create().parse_args()
 

@@ -156,7 +156,7 @@ def timer_update():
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     if first_time:  # first time
         first_time = False
-        if preferences.show_on_start or preferences.first_run:
+        if preferences.show_on_start:
             # TODO here it should check if there are some results, and only open assetbar if this is the case, not search.
             # if bpy.context.scene.get('search results') is None:
             search()
@@ -167,7 +167,11 @@ def timer_update():
             ui.add_report(text='BlenderKit Tip: ' + random.choice(rtips), timeout=12, color=colors.GREEN)
         return 3.0
 
-    check_clipboard()
+    if preferences.first_run:
+        search()
+        preferences.first_run = False
+
+    #check_clipboard()
 
     global search_threads
     if len(search_threads) == 0:
@@ -765,7 +769,11 @@ class Searcher(threading.Thread):
         if query.get('query') is None and query.get('category_subtree') == None:
             # assumes no keywords and no category, thus an empty search that is triggered on start.
             # orders by last core file upload
-            requeststring += '+order:-last_upload'
+            if query.get('verification_status') == 'uploaded':
+                #for validators, sort uploaded from oldest
+                requeststring += '+order:created'
+            else:
+                requeststring += '+order:-last_upload'
         elif query.get('author_id') is not None and utils.profile_is_validator():
 
             requeststring += '+order:-created'

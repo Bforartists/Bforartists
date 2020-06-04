@@ -139,6 +139,7 @@ class Logout(bpy.types.Operator):
         preferences.login_attempt = False
         preferences.api_key_refresh = ''
         preferences.api_key = ''
+        del (bpy.context.window_manager['bkit profile'])
         return {'FINISHED'}
 
 

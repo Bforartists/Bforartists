@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -3248,7 +3248,7 @@ msgid "Collapse Summary"
 msgstr "Zbortit"
 
 
-msgid "Display Hidden"
+msgid "Show Hidden"
 msgstr "Zobrazit skryté"
 
 
@@ -3270,14 +3270,6 @@ msgstr "Zobrazit meta objekt"
 
 msgid "Display Node"
 msgstr "Zobrazit uzel"
-
-
-msgid "Show Errors"
-msgstr "Ukázat chybu"
-
-
-msgid "Only Selected"
-msgstr "Pouze vybrané"
 
 
 msgid "Display Particle"
@@ -4599,10 +4591,6 @@ msgstr "Název souboru"
 
 msgid "Extension Filter"
 msgstr "Filtr přípon"
-
-
-msgid "Show Hidden"
-msgstr "Zobrazit skryté"
 
 
 msgid "Show hidden dot files"
@@ -11787,6 +11775,14 @@ msgstr "Přidat action strip"
 
 msgid "Match-moving dopesheet data"
 msgstr "Nastavení mapování"
+
+
+msgid "Display Hidden"
+msgstr "Zobrazit skryté"
+
+
+msgid "Only Selected"
+msgstr "Pouze vybrané"
 
 
 msgid "Dopesheet Sort Field"
@@ -30580,10 +30576,6 @@ msgid "Auto-Keying Mode"
 msgstr "Další klíč"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "Automaticky vkládat klíče objektu a Action Ipo křivky"
-
-
 msgid "Add & Replace"
 msgstr "Nahrazeno "
 
@@ -30666,10 +30658,6 @@ msgstr "Koncový bod: "
 
 msgid "Auto Keying"
 msgstr "Další klíč"
-
-
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "Automaticky vkládat klíče objektu a Action Ipo křivky"
 
 
 msgid "Auto Keyframe Insert Keying Set"

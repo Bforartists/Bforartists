@@ -343,25 +343,10 @@ GPUShader *DRW_shader_create_with_transform_feedback(const char *vert,
                               __func__);
 }
 
-GPUShader *DRW_shader_create_2d(const char *frag, const char *defines)
-{
-  return GPU_shader_create(datatoc_gpu_shader_2D_vert_glsl, frag, NULL, NULL, defines, __func__);
-}
-
-GPUShader *DRW_shader_create_3d(const char *frag, const char *defines)
-{
-  return GPU_shader_create(datatoc_gpu_shader_3D_vert_glsl, frag, NULL, NULL, defines, __func__);
-}
-
 GPUShader *DRW_shader_create_fullscreen(const char *frag, const char *defines)
 {
   return GPU_shader_create(
       datatoc_common_fullscreen_vert_glsl, frag, NULL, NULL, defines, __func__);
-}
-
-GPUShader *DRW_shader_create_3d_depth_only(eGPUShaderConfig sh_cfg)
-{
-  return GPU_shader_get_builtin_shader_with_config(GPU_SHADER_3D_DEPTH_ONLY, sh_cfg);
 }
 
 GPUMaterial *DRW_shader_find_from_world(World *wo,
@@ -398,6 +383,7 @@ GPUMaterial *DRW_shader_find_from_material(Material *ma,
 
 GPUMaterial *DRW_shader_create_from_world(struct Scene *scene,
                                           World *wo,
+                                          struct bNodeTree *ntree,
                                           const void *engine_type,
                                           const int options,
                                           const bool is_volume_shader,
@@ -408,7 +394,7 @@ GPUMaterial *DRW_shader_create_from_world(struct Scene *scene,
                                           bool deferred)
 {
   GPUMaterial *mat = NULL;
-  if (DRW_state_is_image_render()) {
+  if (DRW_state_is_image_render() || !deferred) {
     mat = GPU_material_from_nodetree_find(&wo->gpumaterial, engine_type, options);
   }
 
@@ -416,7 +402,7 @@ GPUMaterial *DRW_shader_create_from_world(struct Scene *scene,
     scene = (Scene *)DEG_get_original_id(&DST.draw_ctx.scene->id);
     mat = GPU_material_from_nodetree(scene,
                                      NULL,
-                                     wo->nodetree,
+                                     ntree,
                                      &wo->gpumaterial,
                                      engine_type,
                                      options,
@@ -437,6 +423,7 @@ GPUMaterial *DRW_shader_create_from_world(struct Scene *scene,
 
 GPUMaterial *DRW_shader_create_from_material(struct Scene *scene,
                                              Material *ma,
+                                             struct bNodeTree *ntree,
                                              const void *engine_type,
                                              const int options,
                                              const bool is_volume_shader,
@@ -447,7 +434,7 @@ GPUMaterial *DRW_shader_create_from_material(struct Scene *scene,
                                              bool deferred)
 {
   GPUMaterial *mat = NULL;
-  if (DRW_state_is_image_render()) {
+  if (DRW_state_is_image_render() || !deferred) {
     mat = GPU_material_from_nodetree_find(&ma->gpumaterial, engine_type, options);
   }
 
@@ -455,7 +442,7 @@ GPUMaterial *DRW_shader_create_from_material(struct Scene *scene,
     scene = (Scene *)DEG_get_original_id(&DST.draw_ctx.scene->id);
     mat = GPU_material_from_nodetree(scene,
                                      ma,
-                                     ma->nodetree,
+                                     ntree,
                                      &ma->gpumaterial,
                                      engine_type,
                                      options,

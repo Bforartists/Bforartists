@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
 "Last-Translator: Lockal <lockalsash@gmail.com>, 2020\n"
 "Language-Team: Russian (https://www.transifex.com/translateblender/teams/82039/ru/)\n"
@@ -7971,8 +7971,8 @@ msgid "Include visualization of Grease Pencil related animation data and frames"
 msgstr "Включить визуализацию данных анимации, связанных с Grease Pencil и кадрами"
 
 
-msgid "Display Hidden"
-msgstr "Показывать скрытое"
+msgid "Show Hidden"
+msgstr "Отображать скрытое"
 
 
 msgid "Include channels from objects/bone that are not visible"
@@ -8059,16 +8059,8 @@ msgid "Include visualization of node related animation data"
 msgstr "Включить отображение данных об анимации, относящихся к нодам"
 
 
-msgid "Show Errors"
-msgstr "Отображать ошибки"
-
-
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "Показывать только отключённые или ошибочные F-кривые или драйвера"
-
-
-msgid "Only Selected"
-msgstr "Только выделенное"
 
 
 msgid "Only include channels relating to selected objects and data"
@@ -11318,10 +11310,6 @@ msgstr "Размер файла"
 
 msgid "Draw a column listing the size of each file"
 msgstr "Вывести столбец с указанием размера каждого файла"
-
-
-msgid "Show Hidden"
-msgstr "Отображать скрытое"
 
 
 msgid "Show hidden dot files"
@@ -32741,8 +32729,16 @@ msgid "Match-moving dopesheet data"
 msgstr "Данные экспозиционного листа о захвате траектории"
 
 
+msgid "Display Hidden"
+msgstr "Показывать скрытое"
+
+
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "Показывать каналы невидимых объектов и костей"
+
+
+msgid "Only Selected"
+msgstr "Только выделенное"
 
 
 msgid "Dopesheet Sort Field"
@@ -79405,10 +79401,6 @@ msgid "Auto-Keying Mode"
 msgstr "Режим автосоздания ключей"
 
 
-msgid "Mode of automatic keyframe insertion for Objects and Bones"
-msgstr "Режим автоматической вставки ключевых кадров для объектов и костей"
-
-
 msgid "Add & Replace"
 msgstr "Добавить и заменить"
 
@@ -79728,10 +79720,6 @@ msgstr "Автоматически пересчитывать временной
 
 msgid "Auto Keying"
 msgstr "Автосоздание ключей"
-
-
-msgid "Automatic keyframe insertion for Objects and Bones"
-msgstr "Автоматически вставлять ключевые кадры для объектов и костей"
 
 
 msgid "Auto Keyframe Insert Keying Set"
@@ -86982,10 +86970,6 @@ msgid "Double Click Speed"
 msgstr "Скорость двойного клика"
 
 
-msgid "Pan Sensitivity"
-msgstr "Чувствительность панорамирования"
-
-
 msgid "Zoom Method"
 msgstr "Метод масштабирования"
 
@@ -86994,12 +86978,8 @@ msgid "Invert Wheel Zoom Direction"
 msgstr "Инв. масштабирование колёсиком"
 
 
-msgid "Pan Options"
-msgstr "Опции панорамирования"
-
-
-msgid "Zoom Options"
-msgstr "Опции масшабирования"
+msgid "Pan Sensitivity"
+msgstr "Чувствительность панорамирования"
 
 
 msgid "Use Light"
@@ -87030,22 +87010,6 @@ msgstr "Естественное направление трекпада"
 
 msgid "Invert Mouse Zoom Direction"
 msgstr "Инв. масштабирование мышью"
-
-
-msgid "Orbit Style"
-msgstr "Способ вращения"
-
-
-msgid "Navigate"
-msgstr "Навигация"
-
-
-msgid "Orbit Options"
-msgstr "Опции вращения"
-
-
-msgid "Fly/Walk Options"
-msgstr "Настройки ходьбы/полёта"
 
 
 msgid "Multiple add-ons with the same name found!"
@@ -87986,6 +87950,10 @@ msgstr "Видимость типов объектов"
 
 msgid "Viewport Gizmos"
 msgstr "Манипуляторы вьюпорта"
+
+
+msgid "Navigate"
+msgstr "Навигация"
 
 
 msgid "Active Tools"

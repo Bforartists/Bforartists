@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83 (sub 17) (b'008e96494008')\n"
+"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 09:40:57\n"
+"POT-Creation-Date: 2020-06-01 09:45:22\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -1084,8 +1084,8 @@ msgid "Collapse Summary"
 msgstr "संक्षिप्त सारांश"
 
 
-msgid "Display Hidden"
-msgstr "छिपे हुए का प्रदर्शित करें"
+msgid "Show Hidden"
+msgstr "छुपी हुई दिखाएँ"
 
 
 msgid "Display Lattices"
@@ -1094,14 +1094,6 @@ msgstr "जाली प्रदर्शित करें"
 
 msgid "Display Material"
 msgstr "पदार्थ प्रदर्शित करें"
-
-
-msgid "Show Errors"
-msgstr "त्रुटियाँ दिखाएँ"
-
-
-msgid "Only Selected"
-msgstr "केवल चयनित"
 
 
 msgid "Only include channels relating to selected objects and data"
@@ -1479,10 +1471,6 @@ msgstr "प्रदर्शित रूप"
 
 msgid "File Name"
 msgstr "संचिका का नाम"
-
-
-msgid "Show Hidden"
-msgstr "छुपी हुई दिखाएँ"
 
 
 msgid "Sort"
@@ -3232,6 +3220,14 @@ msgstr "पिक्सल"
 
 msgid "mm"
 msgstr "मिली मी."
+
+
+msgid "Display Hidden"
+msgstr "छिपे हुए का प्रदर्शित करें"
+
+
+msgid "Only Selected"
+msgstr "केवल चयनित"
 
 
 msgid "Total"

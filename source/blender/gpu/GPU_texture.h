@@ -41,6 +41,31 @@ struct PreviewImage;
 struct GPUFrameBuffer;
 typedef struct GPUTexture GPUTexture;
 
+/* GPU Samplers state
+ * - Specify the sampler state to bind a texture with.
+ * - Internally used by textures.
+ * - All states are created at startup to avoid runtime costs.
+ */
+
+typedef enum eGPUSamplerState {
+  GPU_SAMPLER_FILTER = (1 << 0),
+  GPU_SAMPLER_MIPMAP = (1 << 1),
+  GPU_SAMPLER_REPEAT_S = (1 << 2),
+  GPU_SAMPLER_REPEAT_T = (1 << 3),
+  GPU_SAMPLER_REPEAT_R = (1 << 4),
+  GPU_SAMPLER_CLAMP_BORDER = (1 << 5), /* Clamp to border color instead of border texel. */
+  GPU_SAMPLER_COMPARE = (1 << 6),
+  GPU_SAMPLER_ANISO = (1 << 7),
+  /* Don't use that. */
+  GPU_SAMPLER_MAX = (1 << 8),
+} eGPUSamplerState;
+
+#define GPU_SAMPLER_DEFAULT GPU_SAMPLER_FILTER
+#define GPU_SAMPLER_REPEAT (GPU_SAMPLER_REPEAT_S | GPU_SAMPLER_REPEAT_T | GPU_SAMPLER_REPEAT_R)
+
+void GPU_samplers_init(void);
+void GPU_samplers_free(void);
+
 /* GPU Texture
  * - always returns unsigned char RGBA textures
  * - if texture with non square dimensions is created, depending on the
@@ -236,8 +261,9 @@ void GPU_texture_free(GPUTexture *tex);
 
 void GPU_texture_ref(GPUTexture *tex);
 void GPU_texture_bind(GPUTexture *tex, int number);
+void GPU_texture_bind_ex(GPUTexture *tex, eGPUSamplerState state, int unit, const bool set_number);
 void GPU_texture_unbind(GPUTexture *tex);
-int GPU_texture_bound_number(GPUTexture *tex);
+void GPU_texture_unbind_all(void);
 
 void GPU_texture_copy(GPUTexture *dst, GPUTexture *src);
 
