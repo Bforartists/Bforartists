@@ -289,7 +289,7 @@ class OUTLINER_MT_collection(Menu):
         layout.separator()
 
         layout.operator("outliner.delete", text="Delete", icon="DELETE")
-        layout.operator("outliner.collection_delete", text="Delete Hierarchy", icon="DELETE")
+        layout.operator("outliner.collection_hierarchy_delete", text="Delete Hierarchy", icon="DELETE")
 
         layout.separator()
 
