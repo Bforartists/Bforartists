@@ -402,23 +402,6 @@ class SEQUENCER_MT_select_linked(Menu):
         layout.operator("sequencer.select_more", text="More", icon = "SELECTMORE")
 
 
-class SEQUENCER_MT_select_side_of_frame(Menu):
-    bl_label = "Side of Current Frame"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        props = layout.operator("sequencer.select", text="Overlap")
-        props.left_right = 'OVERLAP'
-        props.linked_time = True
-        props = layout.operator("sequencer.select", text="Left")
-        props.left_right = 'LEFT'
-        props.linked_time = True
-        props = layout.operator("sequencer.select", text="Right")
-        props.left_right = 'RIGHT'
-        props.linked_time = True
-
-
 class SEQUENCER_MT_select(Menu):
     bl_label = "Select"
 
@@ -437,7 +420,7 @@ class SEQUENCER_MT_select(Menu):
 
         layout.separator()
 
-        layout.menu("SEQUENCER_MT_select_side_of_frame")
+        layout.operator_menu_enum("sequencer.select_side_of_frame", "side", text="Side of Frame...")
         layout.menu("SEQUENCER_MT_select_handle", text="Handle")
         layout.menu("SEQUENCER_MT_select_channel", text="Channel")
         layout.menu("SEQUENCER_MT_select_linked", text="Linked")
@@ -2286,7 +2269,6 @@ classes = (
     SEQUENCER_MT_view_toggle,
     SEQUENCER_MT_preview_zoom,
     SEQUENCER_MT_proxy,
-    SEQUENCER_MT_select_side_of_frame,
     SEQUENCER_MT_select_handle,
     SEQUENCER_MT_select_channel,
     SEQUENCER_MT_select_linked,
