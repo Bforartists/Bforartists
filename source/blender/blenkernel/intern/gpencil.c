@@ -839,12 +839,7 @@ bool BKE_gpencil_layer_is_editable(const bGPDlayer *gpl)
 
   /* Layer must be: Visible + Editable */
   if ((gpl->flag & (GP_LAYER_HIDE | GP_LAYER_LOCKED)) == 0) {
-    /* Opacity must be sufficiently high that it is still "visible"
-     * Otherwise, it's not really "visible" to the user, so no point editing...
-     */
-    if (gpl->opacity > GPENCIL_ALPHA_OPACITY_THRESH) {
-      return true;
-    }
+    return true;
   }
 
   /* Something failed */
@@ -1458,13 +1453,11 @@ void BKE_gpencil_vgroup_remove(Object *ob, bDeformGroup *defgroup)
               if (dw != NULL) {
                 BKE_defvert_remove_group(dvert, dw);
               }
-              else {
-                /* Reorganize weights for other groups after deleted one. */
-                for (int g = 0; g < totgrp; g++) {
-                  dw = BKE_defvert_find_index(dvert, g);
-                  if ((dw != NULL) && (dw->def_nr > def_nr)) {
-                    dw->def_nr--;
-                  }
+              /* Reorganize weights for other groups after deleted one. */
+              for (int g = 0; g < totgrp; g++) {
+                dw = BKE_defvert_find_index(dvert, g);
+                if ((dw != NULL) && (dw->def_nr > def_nr)) {
+                  dw->def_nr--;
                 }
               }
             }

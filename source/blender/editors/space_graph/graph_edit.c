@@ -127,7 +127,8 @@ void get_graph_keyframe_extents(bAnimContext *ac,
       float unitFac, offset;
 
       /* get range */
-      if (calc_fcurve_bounds(fcu, &txmin, &txmax, &tymin, &tymax, do_sel_only, include_handles)) {
+      if (BKE_fcurve_calc_bounds(
+              fcu, &txmin, &txmax, &tymin, &tymax, do_sel_only, include_handles)) {
         short mapping_flag = ANIM_get_normalization_flags(ac);
 
         /* apply NLA scaling */
@@ -410,7 +411,7 @@ static void create_ghost_curves(bAnimContext *ac, int start, int end)
   int filter;
 
   /* free existing ghost curves */
-  free_fcurves(&sipo->runtime.ghost_curves);
+  BKE_fcurves_free(&sipo->runtime.ghost_curves);
 
   /* sanity check */
   if (start >= end) {
@@ -426,7 +427,7 @@ static void create_ghost_curves(bAnimContext *ac, int start, int end)
   /* loop through filtered data and add keys between selected keyframes on every frame  */
   for (ale = anim_data.first; ale; ale = ale->next) {
     FCurve *fcu = (FCurve *)ale->key_data;
-    FCurve *gcu = MEM_callocN(sizeof(FCurve), "Ghost FCurve");
+    FCurve *gcu = BKE_fcurve_create();
     AnimData *adt = ANIM_nla_mapping_get(ac, ale);
     ChannelDriver *driver = fcu->driver;
     FPoint *fpt;
@@ -537,7 +538,7 @@ static int graphkeys_clear_ghostcurves_exec(bContext *C, wmOperator *UNUSED(op))
     return OPERATOR_CANCELLED;
   }
   /* free ghost curves */
-  free_fcurves(&sipo->runtime.ghost_curves);
+  BKE_fcurves_free(&sipo->runtime.ghost_curves);
 
   /* update this editor only */
   ED_area_tag_redraw(CTX_wm_area(C));
@@ -807,7 +808,7 @@ static int graphkeys_click_insert_exec(bContext *C, wmOperator *op)
   /* when there are F-Modifiers on the curve, only allow adding
    * keyframes if these will be visible after doing so...
    */
-  if (fcurve_is_keyframable(fcu)) {
+  if (BKE_fcurve_is_keyframable(fcu)) {
     ListBase anim_data;
     ToolSettings *ts = ac.scene->toolsettings;
 
