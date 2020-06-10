@@ -576,6 +576,8 @@ static StructRNA *rna_Space_refine(struct PointerRNA *ptr)
       return &RNA_SpacePreferences;
     case SPACE_CLIP:
       return &RNA_SpaceClipEditor;
+    case SPACE_TOOLBAR: /*bfa - the toolbar editor*/
+      return &RNA_SpaceToolbarEditor;
 
       /* Currently no type info. */
     case SPACE_SCRIPT:
