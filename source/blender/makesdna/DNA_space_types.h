@@ -1663,15 +1663,6 @@ typedef struct SpaceTopBar {
   /* End 'SpaceLink' header. */
 } SpaceTopBar;
 
-/* bfa - Toolbar Editor */
-typedef struct SpaceToolbar {
-  SpaceLink *next, *prev;
-  ListBase regionbase;
-  int spacetype;
-  char _pad[4];
-
-} SpaceToolbar;
-
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -1691,6 +1682,22 @@ typedef struct SpaceStatusBar {
   char _pad0[6];
   /* End 'SpaceLink' header. */
 } SpaceStatusBar;
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Toolbar
+ * \{ */
+
+/* bfa - Toolbar Editor */
+typedef struct SpaceToolbar {
+  SpaceLink *next, *prev;
+  ListBase regionbase;
+  char spacetype;
+  char link_flag;
+  char _pad0[6];
+  /* End 'SpaceLink' header. */
+} SpaceToolbar;
 
 /** \} */
 
