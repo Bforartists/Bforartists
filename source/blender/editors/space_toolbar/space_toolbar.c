@@ -54,39 +54,39 @@
 
 static SpaceLink *toolbar_new(const ScrArea *toolbar_new, const Scene *scene)
 {
-	ARegion *ar;
+  ARegion *region;
 	SpaceToolbar *stoolbar;
 
 	stoolbar = MEM_callocN(sizeof(SpaceToolbar), "inittoolbar");
 	stoolbar->spacetype = SPACE_TOOLBAR;
 
 	/* header */
-	ar = MEM_callocN(sizeof(ARegion), "header for toolbar");
+  region = MEM_callocN(sizeof(ARegion), "header for toolbar");
 
-	BLI_addtail(&stoolbar->regionbase, ar);
-	ar->regiontype = RGN_TYPE_HEADER;
-	ar->alignment = RGN_ALIGN_TOP;
+	BLI_addtail(&stoolbar->regionbase, region);
+  region->regiontype = RGN_TYPE_HEADER;
+  region->alignment = RGN_ALIGN_TOP;
 
 	/* main area */
-	ar = MEM_callocN(sizeof(ARegion), "main area for toolbar");
+  region = MEM_callocN(sizeof(ARegion), "main area for toolbar");
 
-	BLI_addtail(&stoolbar->regionbase, ar);
-	ar->regiontype = RGN_TYPE_WINDOW;
+	BLI_addtail(&stoolbar->regionbase, region);
+  region->regiontype = RGN_TYPE_WINDOW;
 
 	return (SpaceLink *)stoolbar;
 }
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void toolbar_main_area_init(wmWindowManager *wm, ARegion *ar)
+static void toolbar_main_area_init(wmWindowManager *wm, ARegion *region)
 {
-	UI_view2d_region_reinit(&ar->v2d, V2D_COMMONVIEW_CUSTOM, ar->winx, ar->winy);
+	UI_view2d_region_reinit(&region->v2d, V2D_COMMONVIEW_CUSTOM, region->winx, region->winy);
 }
 
-static void toolbar_main_area_draw(const bContext *C, ARegion *ar)
+static void toolbar_main_area_draw(const bContext *C, ARegion *region)
 {
 	/* draw entirely, view changes should be handled here */
 	SpaceToolbar *stoolbar = CTX_wm_space_toolbar(C);
-	View2D *v2d = &ar->v2d;
+	View2D *v2d = &region->v2d;
 	View2DScrollers *scrollers;
 
 	/* clear and setup matrix */
@@ -106,18 +106,19 @@ static void toolbar_main_area_draw(const bContext *C, ARegion *ar)
 	
 }
 
-static void toolbar_header_area_init(wmWindowManager *UNUSED(wm), ARegion *ar)
+static void toolbar_header_area_init(wmWindowManager *UNUSED(wm), ARegion *region)
 {
-	ED_region_header_init(ar);
+	ED_region_header_init(region);
 }
 
-static void toolbar_header_area_draw(const bContext *C, ARegion *ar)
+static void toolbar_header_area_draw(const bContext *C, ARegion *region)
 {
-	ED_region_header(C, ar);
+	ED_region_header(C, region);
 }
 
-static void toolbar_main_area_listener(
-	wmWindow *UNUSED(win), ScrArea *UNUSED(sa), ARegion *ar,
+static void toolbar_main_area_listener(wmWindow *UNUSED(win),
+                                       ScrArea *UNUSED(area),
+                                       ARegion *region,
 	wmNotifier *wmn, const Scene *UNUSED(scene))
 {
 	// SpaceInfo *sinfo = sa->spacedata.first;
@@ -127,33 +128,34 @@ static void toolbar_main_area_listener(
 	case NC_SPACE:
 		if (wmn->data == ND_SPACE_INFO_REPORT) {
 			/* redraw also but only for report view, could do less redraws by checking the type */
-			ED_region_tag_redraw(ar);
+			ED_region_tag_redraw(region);
 		}
 		break;
 	}
 }
 
-static void toolbar_header_listener(
-	wmWindow *UNUSED(win), ScrArea *UNUSED(sa), ARegion *ar,
+static void toolbar_header_listener(wmWindow *UNUSED(win),
+                                    ScrArea *UNUSED(area),
+                                    ARegion *region,
 	wmNotifier *wmn, const Scene *UNUSED(scene))
 {
 	/* context changes */
 	switch (wmn->category) {
 	case NC_WM:
 		if (wmn->data == ND_JOB)
-			ED_region_tag_redraw(ar);
+			ED_region_tag_redraw(region);
 		break;
 	case NC_SCENE:
 		if (wmn->data == ND_RENDER_RESULT)
-			ED_region_tag_redraw(ar);
+			ED_region_tag_redraw(region);
 		break;
 	case NC_SPACE:
 		if (wmn->data == ND_SPACE_INFO)
-			ED_region_tag_redraw(ar);
+			ED_region_tag_redraw(region);
 		break;
 	case NC_ID:
 		if (wmn->action == NA_RENAME)
-			ED_region_tag_redraw(ar);
+			ED_region_tag_redraw(region);
 		break;
 	}
 
