@@ -4423,7 +4423,7 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *UN
 void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void *UNUSED(arg))
 {
   ScrArea *area = CTX_wm_area(C);
-  ARegion *region = CTX_wm_region(C);
+  /*ARegion *region = CTX_wm_region(C);*/ /*bfa - commented out, obviously not needed*/
 
   // bfa - show hide the File toolbar
   uiItemO(layout,
