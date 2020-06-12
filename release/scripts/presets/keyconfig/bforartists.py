@@ -3159,7 +3159,7 @@ keyconfig_data = \
  ("Info",
   {"space_type": 'INFO', "region_type": 'WINDOW'},
   {"items":
-   [("info.select_pick", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
+   [("info.select_pick", {"type": 'LEFTMOUSE', "value": 'CLICK'}, None),
     ("info.select_all_toggle", {"type": 'A', "value": 'PRESS'}, None),
     ("info.select_box", {"type": 'B', "value": 'PRESS'}, None),
     ("info.report_replay", {"type": 'R', "value": 'PRESS'}, None),
@@ -3173,7 +3173,7 @@ keyconfig_data = \
       },
      ),
     ("info.select_pick",
-     {"type": 'LEFTMOUSE', "value": 'CLICK'},
+     {"type": 'LEFTMOUSE', "value": 'CLICK', "shift": True},
      {"properties":
       [("extend", True),
        ],
