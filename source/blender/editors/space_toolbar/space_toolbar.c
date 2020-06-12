@@ -85,7 +85,7 @@ static void toolbar_main_area_init(wmWindowManager *wm, ARegion *region)
 static void toolbar_main_area_draw(const bContext *C, ARegion *region)
 {
 	/* draw entirely, view changes should be handled here */
-	SpaceToolbar *stoolbar = CTX_wm_space_toolbar(C);
+  /*SpaceToolbar *stoolbar = CTX_wm_space_toolbar(C);*/ /*bfa - commented out. variable not needed yet*/
 	View2D *v2d = &region->v2d;
 	View2DScrollers *scrollers;
 
