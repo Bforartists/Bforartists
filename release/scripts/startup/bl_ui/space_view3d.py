@@ -4742,11 +4742,6 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             col.separator()
 
-            col.operator("mesh.mark_seam").clear = False
-            col.operator("mesh.mark_seam", text="Clear Seam").clear = True
-
-            col.separator()
-
             col.operator("mesh.mark_sharp", icon = "MARKSHARPEDGES")
             col.operator("mesh.mark_sharp", text="Clear Sharp", icon = "CLEARSHARPEDGES").clear = True
 
