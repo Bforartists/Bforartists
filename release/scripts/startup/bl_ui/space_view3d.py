@@ -4679,7 +4679,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("transform.shrink_fatten", text="Shrink/Fatten", icon = 'SHRINK_FATTEN')
             col.operator("transform.shear", text="Shear", icon = "SHEAR")
             col.operator_context = 'EXEC_DEFAULT'
-            col.operator("transform.vertex_random", text="Randomize Vertices")
+            col.operator("transform.vertex_random", text="Randomize Vertices", icon = 'RANDOMIZE')
             col.operator_context = 'INVOKE_REGION_WIN'
             col.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
 
