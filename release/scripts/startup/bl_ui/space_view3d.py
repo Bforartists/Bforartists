@@ -4886,8 +4886,8 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.extrude_repeat")
-        layout.operator("mesh.spin").angle = pi * 2
+        layout.operator("mesh.extrude_repeat", icon = "REPEAT")
+        layout.operator("mesh.spin", icon = "SPIN").angle = pi * 2
 
 
 class VIEW3D_MT_edit_mesh_vertices(Menu):
