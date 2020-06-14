@@ -1013,7 +1013,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base):
             layout.operator("transform.skin_resize", icon = "MOD_SKIN")
 
         elif obj.type == 'CURVE':
-            layout.operator("transform.transform", text="Shrink Fatten", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
+            layout.operator("transform.transform", text="Radius", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
 
         layout.separator()
 
@@ -5473,7 +5473,7 @@ class VIEW3D_MT_edit_curve_context_menu(Menu):
         layout.separator()
 
         # Transform
-        layout.operator("transform.transform", text="Radius").mode = 'CURVE_SHRINKFATTEN'
+        layout.operator("transform.transform", text = "Radius", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
         layout.operator("transform.tilt", icon = 'TILT')
         layout.operator("curve.tilt_clear", icon = "CLEAR_TILT")
         layout.operator("curve.smooth", icon = 'SHADING_SMOOTH')
