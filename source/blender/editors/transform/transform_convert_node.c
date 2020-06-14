@@ -104,7 +104,7 @@ static bool is_node_parent_select(bNode *node)
   return false;
 }
 
-void createTransNodeData(bContext *UNUSED(C), TransInfo *t)
+void createTransNodeData(TransInfo *t)
 {
   const float dpi_fac = UI_DPI_FAC;
   TransData *td;
@@ -191,6 +191,42 @@ void flushTransNodes(TransInfo *t)
       ED_node_link_intersect_test(t->area, 1);
     }
   }
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Special After Transform Node
+ * \{ */
+
+void special_aftertrans_update__node(bContext *C, TransInfo *t)
+{
+  struct Main *bmain = CTX_data_main(C);
+  const bool canceled = (t->state == TRANS_CANCEL);
+
+  SpaceNode *snode = (SpaceNode *)t->area->spacedata.first;
+  if (canceled && t->remove_on_cancel) {
+    /* remove selected nodes on cancel */
+    bNodeTree *ntree = snode->edittree;
+    if (ntree) {
+      bNode *node, *node_next;
+      for (node = ntree->nodes.first; node; node = node_next) {
+        node_next = node->next;
+        if (node->flag & NODE_SELECT) {
+          nodeRemoveNode(bmain, ntree, node, true);
+        }
+      }
+      ntreeUpdateTree(bmain, ntree);
+    }
+  }
+
+  if (!canceled) {
+    ED_node_post_apply_transform(C, snode->edittree);
+    ED_node_link_insert(bmain, t->area);
+  }
+
+  /* clear link line */
+  ED_node_link_intersect_test(t->area, 0);
 }
 
 /** \} */

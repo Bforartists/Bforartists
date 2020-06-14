@@ -57,6 +57,7 @@
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
 #include "BKE_mesh.h"
+#include "BKE_mesh_wrapper.h"
 #include "BKE_multires.h"
 #include "BKE_object.h"
 
@@ -877,10 +878,7 @@ void BKE_modifier_free_temporary_data(ModifierData *md)
   if (md->type == eModifierType_Armature) {
     ArmatureModifierData *amd = (ArmatureModifierData *)md;
 
-    if (amd->prevCos) {
-      MEM_freeN(amd->prevCos);
-      amd->prevCos = NULL;
-    }
+    MEM_SAFE_FREE(amd->vert_coords_prev);
   }
 }
 

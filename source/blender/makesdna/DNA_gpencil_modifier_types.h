@@ -24,6 +24,8 @@
 #include "DNA_defs.h"
 #include "DNA_listBase.h"
 
+struct LatticeDeformData;
+
 /* WARNING ALERT! TYPEDEF VALUES ARE WRITTEN IN FILES! SO DO NOT CHANGE!
  * (ONLY ADD NEW ITEMS AT THE END)
  */
@@ -445,8 +447,8 @@ typedef struct LatticeGpencilModifierData {
   float strength;
   /** Custom index for passes. */
   int layer_pass;
-  /** Runtime only (LatticeDeformData). */
-  void *cache_data;
+  /** Runtime only. */
+  struct LatticeDeformData *cache_data;
 } LatticeGpencilModifierData;
 
 typedef enum eLatticeGpencil_Flag {
@@ -655,12 +657,12 @@ typedef enum eSmoothGpencil_Flag {
 
 typedef struct ArmatureGpencilModifierData {
   GpencilModifierData modifier;
-  /** Deformflag replaces armature->deformflag. */
+  /** #eArmature_DeformFlag use instead of #bArmature.deformflag. */
   short deformflag, multi;
   int _pad;
   struct Object *object;
-  /** Stored input of previous modifier, for vertexgroup blending. */
-  float *prevCos;
+  /** Stored input of previous modifier, for vertex-group blending. */
+  float (*vert_coords_prev)[3];
   /** MAX_VGROUP_NAME. */
   char vgname[64];
 

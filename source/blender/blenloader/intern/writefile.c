@@ -126,6 +126,7 @@
 #include "DNA_object_types.h"
 #include "DNA_packedFile_types.h"
 #include "DNA_particle_types.h"
+#include "DNA_pointcache_types.h"
 #include "DNA_pointcloud_types.h"
 #include "DNA_rigidbody_types.h"
 #include "DNA_scene_types.h"
@@ -980,10 +981,10 @@ static void write_curvemapping(BlendWriter *writer, CurveMapping *cumap)
   write_curvemapping_curves(writer, cumap);
 }
 
-static void write_CurveProfile(WriteData *wd, CurveProfile *profile)
+static void write_CurveProfile(BlendWriter *writer, CurveProfile *profile)
 {
-  writestruct(wd, DATA, CurveProfile, 1, profile);
-  writestruct(wd, DATA, CurveProfilePoint, profile->path_len, profile->path);
+  BLO_write_struct(writer, CurveProfile, profile);
+  BLO_write_struct_array(writer, CurveProfilePoint, profile->path_len, profile->path);
 }
 
 static void write_node_socket_default_value(BlendWriter *writer, bNodeSocket *sock)
@@ -1135,7 +1136,7 @@ static void write_nodetree_nolib(BlendWriter *writer, bNodeTree *ntree)
         }
         BLO_write_struct_by_name(writer, node->typeinfo->storagename, node->storage);
       }
-      else {
+      else if (node->typeinfo != &NodeTypeUndefined) {
         BLO_write_struct_by_name(writer, node->typeinfo->storagename, node->storage);
       }
     }
@@ -1324,39 +1325,39 @@ static void write_userdef(BlendWriter *writer, const UserDef *userdef)
   }
 }
 
-static void write_boid_state(WriteData *wd, BoidState *state)
+static void write_boid_state(BlendWriter *writer, BoidState *state)
 {
   BoidRule *rule = state->rules.first;
 
-  writestruct(wd, DATA, BoidState, 1, state);
+  BLO_write_struct(writer, BoidState, state);
 
   for (; rule; rule = rule->next) {
     switch (rule->type) {
       case eBoidRuleType_Goal:
       case eBoidRuleType_Avoid:
-        writestruct(wd, DATA, BoidRuleGoalAvoid, 1, rule);
+        BLO_write_struct(writer, BoidRuleGoalAvoid, rule);
         break;
       case eBoidRuleType_AvoidCollision:
-        writestruct(wd, DATA, BoidRuleAvoidCollision, 1, rule);
+        BLO_write_struct(writer, BoidRuleAvoidCollision, rule);
         break;
       case eBoidRuleType_FollowLeader:
-        writestruct(wd, DATA, BoidRuleFollowLeader, 1, rule);
+        BLO_write_struct(writer, BoidRuleFollowLeader, rule);
         break;
       case eBoidRuleType_AverageSpeed:
-        writestruct(wd, DATA, BoidRuleAverageSpeed, 1, rule);
+        BLO_write_struct(writer, BoidRuleAverageSpeed, rule);
         break;
       case eBoidRuleType_Fight:
-        writestruct(wd, DATA, BoidRuleFight, 1, rule);
+        BLO_write_struct(writer, BoidRuleFight, rule);
         break;
       default:
-        writestruct(wd, DATA, BoidRule, 1, rule);
+        BLO_write_struct(writer, BoidRule, rule);
         break;
     }
   }
 #if 0
   BoidCondition *cond = state->conditions.first;
   for (; cond; cond = cond->next) {
-    writestruct(wd, DATA, BoidCondition, 1, cond);
+    BLO_write_struct(writer, BoidCondition, cond);
   }
 #endif
 }
@@ -1375,6 +1376,7 @@ static const char *ptcache_data_struct[] = {
 static const char *ptcache_extra_struct[] = {
     "",
     "ParticleSpring",
+    "vec3f",
 };
 static void write_pointcaches(BlendWriter *writer, ListBase *ptcaches)
 {
@@ -1464,7 +1466,7 @@ static void write_particlesettings(BlendWriter *writer,
       BLO_write_struct(writer, BoidSettings, part->boids);
 
       LISTBASE_FOREACH (BoidState *, state, &part->boids->states) {
-        write_boid_state(writer->wd, state);
+        write_boid_state(writer, state);
       }
     }
     if (part->fluid && part->phystype == PART_PHYS_FLUID) {
@@ -1834,7 +1836,7 @@ static void write_modifiers(BlendWriter *writer, ListBase *modbase)
     else if (md->type == eModifierType_Bevel) {
       BevelModifierData *bmd = (BevelModifierData *)md;
       if (bmd->custom_profile) {
-        write_CurveProfile(writer->wd, bmd->custom_profile);
+        write_CurveProfile(writer, bmd->custom_profile);
       }
     }
   }
@@ -2577,7 +2579,7 @@ static void write_view_layer(BlendWriter *writer, ViewLayer *view_layer)
   write_layer_collections(writer, &view_layer->layer_collections);
 }
 
-static void write_lightcache_texture(WriteData *wd, LightCacheTexture *tex)
+static void write_lightcache_texture(BlendWriter *writer, LightCacheTexture *tex)
 {
   if (tex->data) {
     size_t data_size = tex->components * tex->tex_size[0] * tex->tex_size[1] * tex->tex_size[2];
@@ -2587,24 +2589,24 @@ static void write_lightcache_texture(WriteData *wd, LightCacheTexture *tex)
     else if (tex->data_type == LIGHTCACHETEX_UINT) {
       data_size *= sizeof(uint);
     }
-    writedata(wd, DATA, data_size, tex->data);
+    BLO_write_raw(writer, data_size, tex->data);
   }
 }
 
-static void write_lightcache(WriteData *wd, LightCache *cache)
+static void write_lightcache(BlendWriter *writer, LightCache *cache)
 {
-  write_lightcache_texture(wd, &cache->grid_tx);
-  write_lightcache_texture(wd, &cache->cube_tx);
+  write_lightcache_texture(writer, &cache->grid_tx);
+  write_lightcache_texture(writer, &cache->cube_tx);
 
   if (cache->cube_mips) {
-    writestruct(wd, DATA, LightCacheTexture, cache->mips_len, cache->cube_mips);
+    BLO_write_struct_array(writer, LightCacheTexture, cache->mips_len, cache->cube_mips);
     for (int i = 0; i < cache->mips_len; i++) {
-      write_lightcache_texture(wd, &cache->cube_mips[i]);
+      write_lightcache_texture(writer, &cache->cube_mips[i]);
     }
   }
 
-  writestruct(wd, DATA, LightGridCache, cache->grid_len, cache->grid_data);
-  writestruct(wd, DATA, LightProbeCache, cache->cube_len, cache->cube_data);
+  BLO_write_struct_array(writer, LightGridCache, cache->grid_len, cache->grid_data);
+  BLO_write_struct_array(writer, LightProbeCache, cache->cube_len, cache->cube_data);
 }
 
 static void write_scene(BlendWriter *writer, Scene *sce, const void *id_address)
@@ -2673,7 +2675,7 @@ static void write_scene(BlendWriter *writer, Scene *sce, const void *id_address)
   }
   /* Write the curve profile to the file. */
   if (tos->custom_bevel_profile_preset) {
-    write_CurveProfile(writer->wd, tos->custom_bevel_profile_preset);
+    write_CurveProfile(writer, tos->custom_bevel_profile_preset);
   }
 
   write_paint(writer, &tos->imapaint.paint);
@@ -2829,7 +2831,7 @@ static void write_scene(BlendWriter *writer, Scene *sce, const void *id_address)
   /* Eevee Lightcache */
   if (sce->eevee.light_cache_data && !BLO_write_is_undo(writer)) {
     BLO_write_struct(writer, LightCache, sce->eevee.light_cache_data);
-    write_lightcache(writer->wd, sce->eevee.light_cache_data);
+    write_lightcache(writer, sce->eevee.light_cache_data);
   }
 
   write_view3dshading(writer, &sce->display.shading);
@@ -3918,6 +3920,30 @@ static void write_simulation(BlendWriter *writer, Simulation *simulation, const 
       BLO_write_struct(writer, bNodeTree, simulation->nodetree);
       write_nodetree_nolib(writer, simulation->nodetree);
     }
+
+    LISTBASE_FOREACH (SimulationState *, state, &simulation->states) {
+      switch ((eSimulationStateType)state->type) {
+        case SIM_STATE_TYPE_PARTICLES: {
+          ParticleSimulationState *particle_state = (ParticleSimulationState *)state;
+          BLO_write_struct(writer, ParticleSimulationState, particle_state);
+
+          CustomDataLayer *layers = NULL;
+          CustomDataLayer layers_buff[CD_TEMP_CHUNK_SIZE];
+          CustomData_file_write_prepare(
+              &particle_state->attributes, &layers, layers_buff, ARRAY_SIZE(layers_buff));
+
+          write_customdata(writer,
+                           &simulation->id,
+                           particle_state->tot_particles,
+                           &particle_state->attributes,
+                           layers,
+                           CD_MASK_ALL);
+
+          write_pointcaches(writer, &particle_state->ptcaches);
+          break;
+        }
+      }
+    }
   }
 }
 
@@ -4526,8 +4552,7 @@ void BLO_write_raw(BlendWriter *writer, int size_in_bytes, const void *data_ptr)
 
 void BLO_write_struct_by_name(BlendWriter *writer, const char *struct_name, const void *data_ptr)
 {
-  int struct_id = BLO_get_struct_id_by_name(writer, struct_name);
-  BLO_write_struct_by_id(writer, struct_id, data_ptr);
+  BLO_write_struct_array_by_name(writer, struct_name, 1, data_ptr);
 }
 
 void BLO_write_struct_array_by_name(BlendWriter *writer,
@@ -4536,6 +4561,10 @@ void BLO_write_struct_array_by_name(BlendWriter *writer,
                                     const void *data_ptr)
 {
   int struct_id = BLO_get_struct_id_by_name(writer, struct_name);
+  if (UNLIKELY(struct_id == -1)) {
+    printf("error: can't find SDNA code <%s>\n", struct_name);
+    return;
+  }
   BLO_write_struct_array_by_id(writer, struct_id, array_size, data_ptr);
 }
 
@@ -4573,7 +4602,12 @@ void BLO_write_struct_list_by_id(BlendWriter *writer, int struct_id, ListBase *l
 
 void BLO_write_struct_list_by_name(BlendWriter *writer, const char *struct_name, ListBase *list)
 {
-  BLO_write_struct_list_by_id(writer, BLO_get_struct_id_by_name(writer, struct_name), list);
+  int struct_id = BLO_get_struct_id_by_name(writer, struct_name);
+  if (UNLIKELY(struct_id == -1)) {
+    printf("error: can't find SDNA code <%s>\n", struct_name);
+    return;
+  }
+  BLO_write_struct_list_by_id(writer, struct_id, list);
 }
 
 void blo_write_id_struct(BlendWriter *writer, int struct_id, const void *id_address, const ID *id)
@@ -4584,7 +4618,6 @@ void blo_write_id_struct(BlendWriter *writer, int struct_id, const void *id_addr
 int BLO_get_struct_id_by_name(BlendWriter *writer, const char *struct_name)
 {
   int struct_id = DNA_struct_find_nr(writer->wd->sdna, struct_name);
-  BLI_assert(struct_id >= 0);
   return struct_id;
 }
 

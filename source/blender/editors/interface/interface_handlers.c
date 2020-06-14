@@ -585,7 +585,7 @@ static bool ui_but_dragedit_update_mval(uiHandleButtonData *data, int mx)
   return true;
 }
 
-static void ui_rna_update_preferences_dirty(PointerRNA *ptr, PropertyRNA *prop)
+static bool ui_rna_is_userdef(PointerRNA *ptr, PropertyRNA *prop)
 {
   /* Not very elegant, but ensures preference changes force re-save. */
   bool tag = false;
@@ -598,8 +598,18 @@ static void ui_rna_update_preferences_dirty(PointerRNA *ptr, PropertyRNA *prop)
       tag = true;
     }
   }
+  return tag;
+}
 
-  if (tag) {
+bool UI_but_is_userdef(const uiBut *but)
+{
+  /* This is read-only, RNA API isn't using const when it could. */
+  return ui_rna_is_userdef((PointerRNA *)&but->rnapoin, but->rnaprop);
+}
+
+static void ui_rna_update_preferences_dirty(PointerRNA *ptr, PropertyRNA *prop)
+{
+  if (ui_rna_is_userdef(ptr, prop)) {
     U.runtime.is_dirty = true;
     WM_main_add_notifier(NC_WINDOW, NULL);
   }
@@ -7963,7 +7973,7 @@ static void button_activate_state(bContext *C, uiBut *but, uiHandleButtonState s
   }
 
   /* redraw */
-  ED_region_tag_redraw(data->region);
+  ED_region_tag_redraw_no_rebuild(data->region);
 }
 
 static void button_activate_init(bContext *C,
@@ -8174,7 +8184,7 @@ static void button_activate_exit(
   }
 
   /* redraw and refresh (for popups) */
-  ED_region_tag_redraw(data->region);
+  ED_region_tag_redraw_no_rebuild(data->region);
   ED_region_tag_refresh_ui(data->region);
 
   /* clean up button */
@@ -8474,7 +8484,11 @@ static int ui_handle_button_over(bContext *C, const wmEvent *event, ARegion *reg
   return WM_UI_HANDLER_CONTINUE;
 }
 
-/* exported to interface.c: UI_but_active_only() */
+/**
+ * Exported to interface.c: #UI_but_active_only()
+ * \note The region is only for the button.
+ * The context needs to be set by the caller.
+ */
 void ui_but_activate_event(bContext *C, ARegion *region, uiBut *but)
 {
   wmWindow *win = CTX_wm_window(C);
@@ -8488,10 +8502,7 @@ void ui_but_activate_event(bContext *C, ARegion *region, uiBut *but)
   event.customdata = but;
   event.customdatafree = false;
 
-  ARegion *region_ctx = CTX_wm_region(C);
-  CTX_wm_region_set(C, region);
   ui_do_button(C, but->block, but, &event);
-  CTX_wm_region_set(C, region_ctx);
 }
 
 /**
@@ -8766,14 +8777,14 @@ static int ui_handle_button_event(bContext *C, const wmEvent *event, uiBut *but)
           if (!(but->flag & UI_SELECT)) {
             but->flag |= (UI_SELECT | UI_ACTIVE);
             data->cancel = false;
-            ED_region_tag_redraw(data->region);
+            ED_region_tag_redraw_no_rebuild(data->region);
           }
         }
         else {
           if (but->flag & UI_SELECT) {
             but->flag &= ~(UI_SELECT | UI_ACTIVE);
             data->cancel = true;
-            ED_region_tag_redraw(data->region);
+            ED_region_tag_redraw_no_rebuild(data->region);
           }
         }
         break;
