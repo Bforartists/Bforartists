@@ -29,11 +29,13 @@
 extern "C" {
 #endif
 
+struct BMEditMesh;
 struct BezTriple;
 struct Curve;
 struct Depsgraph;
 struct GHash;
 struct ListBase;
+struct MDeformVert;
 struct Main;
 struct Nurb;
 struct Object;
@@ -278,7 +280,15 @@ enum {
 void BKE_curve_batch_cache_dirty_tag(struct Curve *cu, int mode);
 void BKE_curve_batch_cache_free(struct Curve *cu);
 
-/* curve_decimate.c */
+extern void (*BKE_curve_batch_cache_dirty_tag_cb)(struct Curve *cu, int mode);
+extern void (*BKE_curve_batch_cache_free_cb)(struct Curve *cu);
+
+/* -------------------------------------------------------------------- */
+/** \name Decimate Curve (curve_decimate.c)
+ *
+ * Simplify curve data.
+ * \{ */
+
 unsigned int BKE_curve_decimate_bezt_array(struct BezTriple *bezt_array,
                                            const unsigned int bezt_array_len,
                                            const unsigned int resolu,
@@ -293,8 +303,38 @@ void BKE_curve_decimate_nurb(struct Nurb *nu,
                              const float error_sq_max,
                              const unsigned int error_target_len);
 
-extern void (*BKE_curve_batch_cache_dirty_tag_cb)(struct Curve *cu, int mode);
-extern void (*BKE_curve_batch_cache_free_cb)(struct Curve *cu);
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Deform 3D Coordinates by Curve (curve_deform.c)
+ * \{ */
+
+void BKE_curve_deform_coords(const struct Object *ob_curve,
+                             const struct Object *ob_target,
+                             float (*vert_coords)[3],
+                             const int vert_coords_len,
+                             const struct MDeformVert *dvert,
+                             const int defgrp_index,
+                             const short flag,
+                             const short defaxis);
+
+void BKE_curve_deform_coords_with_editmesh(const Object *ob_curve,
+                                           const Object *ob_target,
+                                           float (*vert_coords)[3],
+                                           const int vert_coords_len,
+                                           const int defgrp_index,
+                                           const short flag,
+                                           const short defaxis,
+                                           struct BMEditMesh *em_target);
+
+void BKE_curve_deform_co(const struct Object *ob_curve,
+                         const struct Object *ob_target,
+                         const float orco[3],
+                         float vec[3],
+                         const int no_rot_axis,
+                         float r_mat[3][3]);
+
+/** \} */
 
 #ifdef __cplusplus
 }

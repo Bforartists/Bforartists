@@ -33,11 +33,13 @@
 #include "DNA_screen_types.h"
 
 #include "BKE_context.h"
+#include "BKE_curve.h"
+#include "BKE_deform.h"
 #include "BKE_editmesh.h"
-#include "BKE_lattice.h"
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
 #include "BKE_mesh.h"
+#include "BKE_mesh_wrapper.h"
 #include "BKE_modifier.h"
 #include "BKE_screen.h"
 
@@ -128,16 +130,17 @@ static void deformVerts(ModifierData *md,
   int defgrp_index = -1;
   MOD_get_vgroup(ctx->object, mesh_src, cmd->name, &dvert, &defgrp_index);
 
-  /* silly that defaxis and curve_deform_verts are off by 1
+  /* Silly that defaxis and BKE_curve_deform_coords are off by 1
    * but leave for now to save having to call do_versions */
-  curve_deform_verts(cmd->object,
-                     ctx->object,
-                     vertexCos,
-                     numVerts,
-                     dvert,
-                     defgrp_index,
-                     cmd->flag,
-                     cmd->defaxis - 1);
+
+  BKE_curve_deform_coords(cmd->object,
+                          ctx->object,
+                          vertexCos,
+                          numVerts,
+                          dvert,
+                          defgrp_index,
+                          cmd->flag,
+                          cmd->defaxis - 1);
 
   if (!ELEM(mesh_src, NULL, mesh)) {
     BKE_id_free(NULL, mesh_src);
@@ -146,22 +149,41 @@ static void deformVerts(ModifierData *md,
 
 static void deformVertsEM(ModifierData *md,
                           const ModifierEvalContext *ctx,
-                          struct BMEditMesh *em,
-                          Mesh *mesh,
+                          BMEditMesh *em,
+                          Mesh *UNUSED(mesh),
                           float (*vertexCos)[3],
                           int numVerts)
 {
-  Mesh *mesh_src = MOD_deform_mesh_eval_get(ctx->object, em, mesh, NULL, numVerts, false, false);
+  CurveModifierData *cmd = (CurveModifierData *)md;
+  bool use_dverts = false;
+  int defgrp_index = -1;
 
-  /* TODO(Campbell): use edit-mode data only (remove this line). */
-  if (mesh_src != NULL) {
-    BKE_mesh_wrapper_ensure_mdata(mesh_src);
+  if (ctx->object->type == OB_MESH && cmd->name[0] != '\0') {
+    defgrp_index = BKE_object_defgroup_name_index(ctx->object, cmd->name);
+    if (defgrp_index != -1) {
+      use_dverts = true;
+    }
   }
 
-  deformVerts(md, ctx, mesh_src, vertexCos, numVerts);
-
-  if (!ELEM(mesh_src, NULL, mesh)) {
-    BKE_id_free(NULL, mesh_src);
+  if (use_dverts) {
+    BKE_curve_deform_coords_with_editmesh(cmd->object,
+                                          ctx->object,
+                                          vertexCos,
+                                          numVerts,
+                                          defgrp_index,
+                                          cmd->flag,
+                                          cmd->defaxis - 1,
+                                          em);
+  }
+  else {
+    BKE_curve_deform_coords(cmd->object,
+                            ctx->object,
+                            vertexCos,
+                            numVerts,
+                            NULL,
+                            defgrp_index,
+                            cmd->flag,
+                            cmd->defaxis - 1);
   }
 }
 
